@@ -300,13 +300,9 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 			}
 			
 			EXTGestorAdicionalAsunto gestorAsunto = null;
-			
 			if(gestoresAsunto.size()==1){
-				
 				gestorAsunto = gestoresAsunto.get(0);
-				
 			}else if(gestoresAsunto.size()>1){
-				
 				gestorAsunto = gestoresAsunto.get(0);
 				for(EXTGestorAdicionalAsunto gaa : gestoresAsunto){
 					if(gaa.getGestor().getGestorPorDefecto()){
@@ -314,13 +310,13 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 						break;
 					}
 				}
-				
 			}
-			
+
 			if(gestorAsunto != null){
 				acuerdo.setGestorDespacho(gestorAsunto.getGestor());
 			}
-		}else{
+
+		} else {
 			Expediente exp = genericDao.get(Expediente.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdExpediente()));
 			if(!Checks.esNulo(exp)) acuerdo.setExpediente(exp);
 		}
@@ -348,49 +344,6 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 			acuerdo.setPeriodicidadAcuerdo(periodicidadAcuerdo);
 		}
 		acuerdo.setPeriodo(dto.getPeriodo());
-		
-
-		// Boolean matarTareas = false;
-
-		// Si se ha cancelado el acuerdo O se ha cerrado se deben matar las
-		// tareas
-//		if (DDEstadoAcuerdo.ACUERDO_CANCELADO.equals(dto.getEstado()) || DDEstadoAcuerdo.ACUERDO_FINALIZADO.equals(dto.getEstado()) || DDEstadoAcuerdo.ACUERDO_RECHAZADO.equals(dto.getEstado())
-//				|| (dto.getFechaCierre() != null)) {
-//
-//			for (TareaNotificacion tarea : acuerdo.getAsunto().getTareas()) {
-//				if (SubtipoTarea.CODIGO_GESTIONES_CERRAR_ACUERDO.equals(tarea.getSubtipoTarea().getCodigoSubtarea())) {
-//					Long idBPM = acuerdo.getIdJBPM();
-//					executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, idBPM, TareaBPMConstants.TRANSITION_TAREA_RESPONDIDA);
-//				}
-//			}
-//			executor.execute(ComunBusinessOperation.BO_TAREA_MGR_CREAR_NOTIFICACION, acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, SubtipoTarea.CODIGO_ACUERDO_CERRADO, null);
-//
-//		}
-
-		// VEO SI ESTAN CERRANDO EL ACUERDO
-//		if (!Checks.esNulo(dto.getFechaCierre())) {
-//			// Esta fecha solo viene cuando el estado es vigente y el gestor la
-//			// carga
-//			SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");
-//			try {
-//				acuerdo.setFechaCierre(sdf1.parse(dto.getFechaCierre()));
-//			} catch (ParseException e) {
-//				logger.error("Error parseando la fecha", e);
-//			}
-//			DDEstadoAcuerdo estadoAcuerdoFinalizado = (DDEstadoAcuerdo) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDEstadoAcuerdo.class, DDEstadoAcuerdo.ACUERDO_FINALIZADO);
-//
-//			acuerdo.setEstadoAcuerdo(estadoAcuerdoFinalizado);
-//		} else if (DDEstadoAcuerdo.ACUERDO_ACEPTADO.equals(dto.getEstado())) {
-//			
-//			//Si tiene el permiso CIERRE_ACUERDO_LIT_DESDE_APP_EXTERNA entonces NO DEBE generar la tarea
-//			Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
-//			if (!funcionManager.tieneFuncion(usuarioLogado, "CIERRE_ACUERDO_LIT_DESDE_APP_EXTERNA")){
-//				Long idJBPM = (Long) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_CREAR_TAREA_CON_BPM, acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO,
-//					SubtipoTarea.CODIGO_GESTIONES_CERRAR_ACUERDO, PlazoTareasDefault.CODIGO_CIERRE_ACUERDO);
-//				acuerdo.setIdJBPM(idJBPM);
-//			}
-//
-//		}
 		
 		// Fecha limite
 		SimpleDateFormat sdf2 = new SimpleDateFormat("dd/MM/yyyy");
@@ -1268,7 +1221,6 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
     	}
     	
 	}
-
 
 	@BusinessOperation(BO_ACUERDO_MGR_GET_VALIDACION_TRAMITE_CORRESPONDIENTE)
     @Transactional(readOnly = false)

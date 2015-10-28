@@ -31,6 +31,9 @@ import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.PluginMejorasBOConstants;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.MEJDecisionProcedimientoManager;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoProcedimientoDerivado;
+import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.nuevosmanagers.MEJTipoActuacionManager;
+import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.nuevosmanagers.MEJTipoProcedimientoManager;
+import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.nuevosmanagers.MEJTipoReclamacionManager;
 import es.pfsgroup.testfwk.DInjector;
 
 public class ActualizarActuacionTest {
@@ -100,7 +103,7 @@ public class ActualizarActuacionTest {
 		obtenerDecision(ID_DECISION, null);
 		try{
 			manager.actualizarActuacion(ID_DECISION, dto);
-			fail("Debería  haberse lanzado una excepción");
+			fail("Deberï¿½a  haberse lanzado una excepciï¿½n");
 		}catch (BusinessOperationException e) {
 			assertTrue(true);
 		}
@@ -115,7 +118,7 @@ public class ActualizarActuacionTest {
 		obtenerDecision(ID_DECISION, creaDecisionBuena(null));
 		try{
 			manager.actualizarActuacion(ID_DECISION, dto);
-			fail("Debería  haberse lanzado una excepción");
+			fail("Deberï¿½a  haberse lanzado una excepciï¿½n");
 		}catch (BusinessOperationException e) {
 			assertTrue(true);
 		}
@@ -142,16 +145,16 @@ public class ActualizarActuacionTest {
 
 	private DDTipoReclamacion obtenerTipoReclamacion(
 			MEJDtoProcedimientoDerivado dto) {
-		return (DDTipoReclamacion) executor.execute(PluginMejorasBOConstants.BO_TRE_MGR_GET_BY_CODIGO,dto.getTipoReclamacion());
+		return (DDTipoReclamacion) executor.execute(MEJTipoReclamacionManager.BO_TRE_MGR_GET_BY_CODIGO,dto.getTipoReclamacion());
 	}
 
 	private TipoProcedimiento obtenerTipoProcedimiento(
 			MEJDtoProcedimientoDerivado dto) {
-		return (TipoProcedimiento) executor.execute(PluginMejorasBOConstants.BO_TPO_MGR_GET_BY_CODIGO,dto.getTipoProcedimiento());
+		return (TipoProcedimiento) executor.execute(MEJTipoProcedimientoManager.BO_TPO_MGR_GET_BY_CODIGO,dto.getTipoProcedimiento());
 	}
 
 	private DDTipoActuacion obtenerTipoActuacion(MEJDtoProcedimientoDerivado dto) {
-		return (DDTipoActuacion) executor.execute(PluginMejorasBOConstants.BO_TAC_MGR_GET_BY_CODIGO,dto.getTipoActuacion());
+		return (DDTipoActuacion) executor.execute(MEJTipoActuacionManager.BO_TAC_MGR_GET_BY_CODIGO,dto.getTipoActuacion());
 	}
 
 	private List<Persona> obtenerPersonasAfectadas() {

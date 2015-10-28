@@ -520,7 +520,8 @@ public class InformeSubastaSarebBean extends InformeSubastaCommon {
 								lb.setFinca(Checks.esNulo(nmbBienLote.getDatosRegistralesActivo()) ? null : nmbBienLote.getDatosRegistralesActivo().getNumFinca());
 								// contrato
 								// Mayor
-								lb.setDeudaJudicial(null);
+								
+								lb.setDeudaJudicial(l.getDeudaJudicial());
 								Float tipoSubasta = nmbBienLote.getTipoSubasta();
 								if(Checks.esNulo(tipoSubasta)){
 									tipoSubasta = l.getInsValorSubasta();

@@ -567,6 +567,33 @@
 				 ]
 	});	
 	
+	var isFondoTitulizado = false;
+	
+	var fondoTitulizado = function() {
+		Ext.Ajax.request({
+			url : page.resolveUrl('editbien/isFondoTitulizado'), 
+			method: 'POST',
+			params: {codigoFondo:fondo.getValue()},
+			success: function ( result, request ) {
+				var r = Ext.util.JSON.decode(result.responseText);
+				if(r.okko == 'OK') isFondoTitulizado = true;
+				if(r.okko == 'KO') isFondoTitulizado = false;
+			}
+		});
+	}
+	
+	var validarCampos = function() {
+		if(entidadAdjudicataria.getValue() == '2' && (cesionRemate.getValue() == 'Si' || cesionRemate.getValue() == '01')){
+			return 1;
+		}
+		
+		if(entidadAdjudicataria.getValue() == '1' && (cesionRemate.getValue() == 'No' || cesionRemate.getValue() == '02') && isFondoTitulizado){
+			return 2;
+		}
+		
+		return 0;
+	} 
+	
 	
 	<sec:authorize ifAllGranted="SOLVENCIA_EDITAR">
 		var btnEditar = new Ext.Button({
@@ -577,7 +604,9 @@
 			,style:'margin-left:2px;padding-top:0px'
 		    ,handler:function(){
 		    	var p = getParametros();
-		    	Ext.Ajax.request({
+		    	var res = validarCampos();
+		    	if(res == 0){
+		    		Ext.Ajax.request({
 						url : page.resolveUrl('editbien/saveAdjudicacion'), 
 						params : p ,
 						method: 'POST',
@@ -585,6 +614,23 @@
 							page.fireEvent(app.event.DONE);
 						}
 					});
+				}
+				else if(res == 1){
+					Ext.MessageBox.show({
+			           title: 'Guardado',
+			           msg: '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabAdjudicacion.datosEconomicos.validacion1" text="**No es posible completar la operación, con cesión de remate la adjudicación debe ser a la Entidad, no a un tercero."/>',
+			           width:300,
+			           buttons: Ext.MessageBox.OK
+			       });
+			    }
+				else if(res == 2){
+					Ext.MessageBox.show({
+			           title: 'Guardado',
+			           msg: '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabAdjudicacion.datosEconomicos.validacion2" text="**No es posible completar la operación, los bienes titulizados con adjudicación a la Entidad necesariamente deben tener cesión de remate."/>',
+			           width:300,
+			           buttons: Ext.MessageBox.OK
+			       });
+				}
 	        }
 		});
 	</sec:authorize>
@@ -661,7 +707,7 @@
 	fechaEnvioDepositario.setDisabled(true);
 	fechaRecepcionDepositarioFinal.setDisabled(true);
 	
-	<sec:authorize ifAllGranted="BIEN_ADJUDICACION_EDITAR">
+	<%--<sec:authorize ifAllGranted="BIEN_ADJUDICACION_EDITAR">--%>
 		fechaDecretoNoFirme.setDisabled(false);
 		fechaDecretoFirme.setDisabled(false);
 		gestoriaAdjudicataria.setDisabled(false);
@@ -702,8 +748,8 @@
 		fechaRecepcionDepositario.setDisabled(false);
 		nombreDepositarioFinal.setDisabled(false);
 		fechaEnvioDepositario.setDisabled(false);
-		fechaRecepcionDepositarioFinal.setDisabled(false);	
-	</sec:authorize>
+		fechaRecepcionDepositarioFinal.setDisabled(false);
+	<%--</sec:authorize>--%>	
 	
 	<sec:authorize ifAllGranted="SOLVENCIA_EDITAR">
 	 	panel.getBottomToolbar().addButton([btnEditar]);
@@ -711,6 +757,17 @@
 	
 	panel.getBottomToolbar().addButton([btnCancelar]);
 	
+	fondo.on('afterRender',function(){
+		if(fondo.getValue() != null && fondo.getValue() != ''){
+			fondoTitulizado();
+		}
+	});
+	
+	fondo.on('change',function(){
+		if(fondo.getValue() != null && fondo.getValue() != ''){
+			fondoTitulizado();
+		}
+	});
 		
 	page.add(panel);
 	

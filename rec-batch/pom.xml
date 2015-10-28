@@ -711,9 +711,8 @@
 			<version>STABLE</version>
 		</dependency>
 		<dependency>
-			<groupId>batch.libraries</groupId>
-			<artifactId>servlet-api-2.5</artifactId>
-			<version>STABLE</version>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>batch.libraries</groupId>

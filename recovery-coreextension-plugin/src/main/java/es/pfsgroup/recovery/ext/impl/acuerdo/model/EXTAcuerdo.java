@@ -22,8 +22,6 @@ private static final long serialVersionUID = 2075119525614504409L;
 	//***************ATENCIÓN NO METAIS NADA AQUI***************
 	// USAR es.capgemini.pfs.acuerdo.model.Acuerdo
 
-
-
 	@Transient
 	public static EXTAcuerdo instanceOf(Acuerdo acuerdo) {
 		EXTAcuerdo extAcuerdo = null;
@@ -36,4 +34,5 @@ private static final long serialVersionUID = 2075119525614504409L;
 		}
 		return extAcuerdo;
 	}
+
 }

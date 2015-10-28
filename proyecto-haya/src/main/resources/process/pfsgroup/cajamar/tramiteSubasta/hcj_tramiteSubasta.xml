@@ -3,7 +3,7 @@
 <process-definition xmlns="" name="hcj_tramiteSubasta">
 
 	<start-state name="Inicio">
-		<transition to="H002_ComprobarProcedeSubastaSuspendida" name="iniciarProceso"></transition>
+		<transition to="H002_SolicitudSubasta" name="iniciarProceso"></transition>
 	</start-state>
 
 
@@ -205,7 +205,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>genericEnterActionHandler
+				<targetBean>subastaComprobarProcedeSubastaSuspendidaHandler
 				</targetBean>
 			</action>
 		</event>
@@ -660,15 +660,6 @@
 		<transition to="H002_RegistrarResSuspSubasta" name="avanzaBPM"></transition>
 		<transition to="Fin3" name="Fin"></transition>
 	</state>
-
-	<node name="H002_ComprobarProcedeSubastaSuspendida">
-		<action name="miTarea" config-type="bean"
-			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>subastaComprobarProcedeSubastaSuspendidaHandler</targetBean>
-		</action>
-		<transition to="Fin5" name="Fin"></transition>
-		<transition to="H002_SolicitudSubasta" name="avanzaBPM"></transition>
-	</node>
 
 	<end-state name="Fin">
 		<event type="node-enter">

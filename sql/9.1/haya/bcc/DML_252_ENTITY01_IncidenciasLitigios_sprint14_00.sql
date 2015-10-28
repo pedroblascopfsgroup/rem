@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Gonzalo E
---## FECHA_CREACION=20151022
+--## FECHA_CREACION=20151026
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.7-hy
 --## INCIDENCIA_LINK=VARIAS
@@ -109,7 +109,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-930');
 	V_TAREA:='H015_ConfirmarFormalizacion';
 	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET ' ||
-	  ' TFI_LABEL=''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">En esta tarea deberá indicar si ha formalizado o no el alquiler social. En caso negativo, deberá indicar en el campo "Es posible la formalización" si preveé que es posible que se firme o si definitivamente no se formalizar en ningún caso.</p><p style="margin-bottom: 10px">Tenga en cuenta que en caso de haya lanzamiento, deberá registar primera la fecha de lanzamiento en la tarea correspondiente, antes de finalizar ésta.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla:</p><p style="margin-bottom: 10px">-En caso de que se haya formalizado el alquiler social y no haya lanzamiento, deberá finalizar esta actuación a través de la pestaña "Decisiones" indicando el motivo de la finalización.</p><p style="margin-bottom: 10px">-En caso de que se haya formalizado el alquiler social y haya fijada una fecha para el lanzamiento, se lanzará una tarea a la entidad para autorizar la suspensión del lanzamiento.</p><p style="margin-bottom: 10px">-En caso de que no se haya formalizado pero sí sea posible formalizarlo y haya fijada una fecha para el lanzamiento, se lanzará una tarea a la entidad para autorizar la suspensión del lanzamiento.</p><p style="margin-bottom: 10px">-En caso de que no se formalice el alquiler y no sea posible formalizarlo, deberá continuar con el lanzamiento.</p></div>'' ' ||
+	  ' TFI_LABEL=''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Tras la suspensión del lanzamiento, deberá indicar la fecha en la que finalmente formaliza el alquiler social. En caso de que no se llegase a formalizar, deberán indicarlo en el campo correspondiente.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellena esta pantalla, en caso de que haya formalizado el contrato, deberá finalizar esta actuación a través de la pestaña "Decisiones" indicando el motivo de la finalización. En caso contrario, se le abrirá una tarea en la que propondrá, según su criterio, la siguiente actuación al responsable de la entidad.</p></div>'' ' ||
 	  ' WHERE TFI_NOMBRE=''titulo'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
 	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-930');
 	

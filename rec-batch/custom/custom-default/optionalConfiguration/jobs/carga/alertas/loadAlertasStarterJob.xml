@@ -29,8 +29,10 @@
                      <property name="dataSource" ref="entityDataSource" />
                      <property name="afterScript">
                         <value>
+                              BEGIN
                                 UPDATE tmp_ale_alertas SET tmp_ale_fichero_carga = '${inFile}';
-                                ANALYZE TABLE tmp_ale_alertas ${sql.analyze};
+                                OPERACION_DDL.DDL_TABLE('STATS','tmp_ale_alertas');
+                              END;
                         </value>
                      </property>                      
 				     <!-- Parámetros Fijos del DataLoader que vienen en los JobParameters -->

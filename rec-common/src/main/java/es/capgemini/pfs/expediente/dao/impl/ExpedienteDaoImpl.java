@@ -1281,7 +1281,7 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
                                                     //Desvincular filtros de pestañas Recobro, Incidencia, Acuerdo,
                                                     //de la busqueda principal con expedientes,
                                                     //si no se busca por ningún parámetro que requiera Expediente
-                                                    if (isBusquedaExpedientes(dtoExpediente)) {
+                                                    //if (isBusquedaExpedientes(dtoExpediente)) {
                                                         hql.append(" and EXISTS ( ");
                                                         hql.append(filtro.obtenerFiltroRecobro(paramDinamico));
                                                         
@@ -1296,11 +1296,10 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
                                                         }
                                                         
                                                         hql.append(" ) ");
-                                                    }else{
-                                                        hql = new StringBuilder();
-                                                        hql.append(filtro.obtenerFiltroRecobro(paramDinamico));
+                                                    //}else{
+                                                    //    hql.append(filtro.obtenerFiltroRecobro(paramDinamico));
                                                         //Sin vinculación, solo se hace la subconsulta a otras Entidades
-                                                    }
+                                                    //}
 							
 						}
 					}

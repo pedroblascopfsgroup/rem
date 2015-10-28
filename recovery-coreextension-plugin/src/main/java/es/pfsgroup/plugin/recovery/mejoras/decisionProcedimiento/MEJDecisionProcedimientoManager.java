@@ -683,8 +683,8 @@ public class MEJDecisionProcedimientoManager extends
                 try {
                 	
                     jbpmUtil.finalizarProcedimiento(p.getId());
-                    //p.setEstadoProcedimiento(genericDao.get(DDEstadoProcedimiento.class, genericDao
-            				//.createFilter(FilterType.EQUALS, "codigo", DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO)));
+                    p.setEstadoProcedimiento(genericDao.get(DDEstadoProcedimiento.class, genericDao
+            				.createFilter(FilterType.EQUALS, "codigo", DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO)));
 
                 	// Integración con mensajería
                     integracionBpmService.finalizarBPM(p);

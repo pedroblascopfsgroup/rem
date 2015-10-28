@@ -69,7 +69,7 @@ public interface GENINFInformesApi {
 	public FileItem generarInformePDF(String plantilla, Map<String, Object> mapaValores, List<Object> array);
 	
 	@BusinessOperationDefinition(MSV_GENERAR_ESCRITO_VARIABLES)
-	FileItem generarEscritoConVariables(HashMap<String, String> mapaVariables, String escrito,InputStream is) throws Throwable;
+	FileItem generarEscritoConVariables(HashMap<String, Object> mapaVariables, String escrito,InputStream is) throws Throwable;
 	
 	@BusinessOperationDefinition(MSV_GENERAR_ESCRITO_DOCX_FROM_HTML)
 	InputStream createDocxFileFromHtmlText(String htmlText,String nombreFichero) throws Exception;

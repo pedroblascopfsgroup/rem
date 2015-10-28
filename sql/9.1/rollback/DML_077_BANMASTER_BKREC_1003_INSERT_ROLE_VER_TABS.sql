@@ -31,14 +31,14 @@ DECLARE
   	
     V_ENTIDAD_ID NUMBER(16);
     --Insertando valores en FUN_FUNCIONES
-    TYPE ROL_ARRAY IS VARRAY(4) OF VARCHAR2(128);
+    TYPE ROL_ARRAY IS VARRAY(5) OF VARCHAR2(128);
     V_FUNCION_DESC_LARGA ROL_ARRAY := ROL_ARRAY(
     	'Permite ver la pestaña Clientes de expediente', 'Permite ver la pestaña Titulo de expediente',
-      	'Permite ver la pestaña Gestión de expediente','Permite ver la pestaña Cumplimiento de expediente'
+      	'Permite ver la pestaña Gestión de expediente','Permite ver la pestaña Cumplimiento de expediente','Permite ver la pestaña Contratos de expediente'
     );
     V_FUNCION_ROL ROL_ARRAY := ROL_ARRAY(
      	'ROLE_PUEDE_VER_TAB_EXP_CLIENTES', 'ROLE_PUEDE_VER_TAB_EXP_TITULOS',
-      	'ROLE_PUEDE_VER_TAB_EXP_GESTION','ROLE_PUEDE_VER_TAB_EXP_CUMPLIMIENTO'
+      	'ROLE_PUEDE_VER_TAB_EXP_GESTION','ROLE_PUEDE_VER_TAB_EXP_CUMPLIMIENTO','ROLE_PUEDE_VER_TAB_EXP_CONTRATOS'
     );
     
 

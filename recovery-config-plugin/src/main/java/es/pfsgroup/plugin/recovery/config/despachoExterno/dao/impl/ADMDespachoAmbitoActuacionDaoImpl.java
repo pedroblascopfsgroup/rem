@@ -2,6 +2,9 @@ package es.pfsgroup.plugin.recovery.config.despachoExterno.dao.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -30,28 +33,31 @@ public class ADMDespachoAmbitoActuacionDaoImpl extends
 	@SuppressWarnings("unchecked")
 	public List<DespachoAmbitoActuacion> getAmbitosActuacionExcluidos(Long idDespacho, String listadoComunidades, String listadoProvincias) {
 		
-		String hqlAmbitosExcluidos = 
-				"select distinct daa from DespachoAmbitoActuacion daa where daa.despacho.id=" + idDespacho + " and daa.auditoria.borrado = false";
-		
+		DetachedCriteria crit = DetachedCriteria.forClass(DespachoAmbitoActuacion.class);
+        crit.add(Restrictions.eq("despacho.id", idDespacho));
+        crit.add(Restrictions.eq("auditoria.borrado", false));
+        
 		if(listadoComunidades != null && !listadoComunidades.equals("")) {
-			hqlAmbitosExcluidos += " and daa.comunidad.codigo NOT IN (" + listadoComunidades + ") ";
+			crit.createCriteria("comunidad").add(Restrictions.not(Restrictions.in("codigo", StringUtils.split(listadoComunidades, ","))));
 	    }
 		else {
-			hqlAmbitosExcluidos += " and daa.comunidad IS NOT NULL";
+			crit.add(Restrictions.isNotNull("comunidad"));
 		}
 		
-		List<DespachoAmbitoActuacion> listDespachoAmbitoActuacion = getHibernateTemplate().find(hqlAmbitosExcluidos); 
+		List<DespachoAmbitoActuacion> listDespachoAmbitoActuacion = getHibernateTemplate().findByCriteria(crit); 
 		
-		hqlAmbitosExcluidos = "select distinct daa from DespachoAmbitoActuacion daa where daa.despacho.id=" + idDespacho + " and daa.auditoria.borrado = false";
+		crit = DetachedCriteria.forClass(DespachoAmbitoActuacion.class);
+        crit.add(Restrictions.eq("despacho.id", idDespacho));
+        crit.add(Restrictions.eq("auditoria.borrado", false));
 		
 		if(listadoProvincias != null && !listadoProvincias.equals("")) {
-			hqlAmbitosExcluidos += " and daa.provincia.codigo NOT IN (" + listadoProvincias + ")";
+			crit.createCriteria("provincia").add(Restrictions.not(Restrictions.in("codigo", StringUtils.split(listadoComunidades, ","))));
         }
         else {
-        	hqlAmbitosExcluidos += " and daa.provincia IS NOT NULL";
+			crit.add(Restrictions.isNotNull("provincia"));
         }
         
-		listDespachoAmbitoActuacion.addAll(getHibernateTemplate().find(hqlAmbitosExcluidos));
+		listDespachoAmbitoActuacion.addAll(getHibernateTemplate().findByCriteria(crit));
 		
         return listDespachoAmbitoActuacion;		
 	}

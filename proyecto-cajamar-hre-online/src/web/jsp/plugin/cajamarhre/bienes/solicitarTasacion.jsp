@@ -97,7 +97,7 @@
 						else {
 							Ext.Msg.show({
 								title:'Operaci&oacute;n no disponible',
-								msg: '<s:message code="plugin.nuevoModeloBienes.cajamar.tasacion.ko"/>',
+								msg: '<s:message code="plugin.cajamarbienes.tasacion.ko"/>',
 								buttons: Ext.Msg.OK,
 								icon:Ext.MessageBox.INFO
 							});

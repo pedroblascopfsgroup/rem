@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -67,12 +68,14 @@ import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDEstadoSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
-import es.pfsgroup.plugin.recovery.mejoras.PluginMejorasBOConstants;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoProcedimientoDerivado;
-import es.pfsgroup.plugin.recovery.mejoras.procedimiento.MEJProcedimientoApi;
+import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.nuevosmanagers.MEJTipoActuacionManager;
+import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.nuevosmanagers.MEJTipoProcedimientoManager;
+import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.nuevosmanagers.MEJTipoReclamacionManager;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJConfiguracionDerivacionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
+import es.pfsgroup.recovery.ext.api.procedimiento.EXTProcedimientoApi;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 
@@ -170,7 +173,7 @@ public class MEJDecisionProcedimientoManager extends
 	 * @param dto
 	 *            Datos del procedimiento a actualizar.
 	 */
-	@BusinessOperation(PluginMejorasBOConstants.BO_DEC_PCR_ACTUALIZAR_PROCEDIMIENTO)
+	@BusinessOperation(BO_DEC_PCR_ACTUALIZAR_PROCEDIMIENTO)
 	public void actualizarActuacion(Long id, MEJDtoProcedimientoDerivado dto) {
 		Long idProcedimiento = dto.getId();
 		Procedimiento procedimiento = getProcedimiento(id, idProcedimiento);
@@ -199,7 +202,7 @@ public class MEJDecisionProcedimientoManager extends
 	 * @param idProcedimiento
 	 *            Id actuacion a eliminar
 	 */
-	@BusinessOperation(PluginMejorasBOConstants.BO_DEC_PCR_ELIMINAR_PROCEDIMIENTO)
+	@BusinessOperation(BO_DEC_PCR_ELIMINAR_PROCEDIMIENTO)
 	@Transactional(readOnly = false)
 	public void borrarActuacion(Long id, Long idProcedimiento) {
 		Procedimiento procedimiento = getProcedimiento(id, idProcedimiento);
@@ -240,20 +243,20 @@ public class MEJDecisionProcedimientoManager extends
 	private DDTipoReclamacion obtenerTipoReclamacion(
 			MEJDtoProcedimientoDerivado dto) {
 		return (DDTipoReclamacion) executor.execute(
-				PluginMejorasBOConstants.BO_TRE_MGR_GET_BY_CODIGO, dto
+				MEJTipoReclamacionManager.BO_TRE_MGR_GET_BY_CODIGO, dto
 						.getTipoReclamacion());
 	}
 
 	private TipoProcedimiento obtenerTipoProcedimiento(
 			MEJDtoProcedimientoDerivado dto) {
 		return (TipoProcedimiento) executor.execute(
-				PluginMejorasBOConstants.BO_TPO_MGR_GET_BY_CODIGO, dto
+				MEJTipoProcedimientoManager.BO_TPO_MGR_GET_BY_CODIGO, dto
 						.getTipoProcedimiento());
 	}
 
 	private DDTipoActuacion obtenerTipoActuacion(MEJDtoProcedimientoDerivado dto) {
 		return (DDTipoActuacion) executor.execute(
-				PluginMejorasBOConstants.BO_TAC_MGR_GET_BY_CODIGO, dto
+				MEJTipoActuacionManager.BO_TAC_MGR_GET_BY_CODIGO, dto
 						.getTipoActuacion());
 	}
 
@@ -293,7 +296,7 @@ public class MEJDecisionProcedimientoManager extends
 	}
 
 	@Override
-	@BusinessOperation(PluginMejorasBOConstants.MEJ_BO_DECISIONPROCEDIMIENTO_REANUDAR)
+	@BusinessOperation(MEJ_BO_DECISIONPROCEDIMIENTO_REANUDAR)
 	@Transactional(readOnly = false)
 	public void reanudarProcedimientoParalizado(Long id) {
 		if (id != null) {
@@ -510,7 +513,7 @@ public class MEJDecisionProcedimientoManager extends
         String codigoTipoEntidad = DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO;
         
         // l�gica para decidir si la notificacion se env�a al gestor CEX o JUD
-        Boolean esSupervisorCEX = (Boolean) executor.execute(MEJProcedimientoApi.MEJ_BO_PRC_ES_SUPERVISOR_CEX ,
+        Boolean esSupervisorCEX = (Boolean) executor.execute(EXTProcedimientoApi.MEJ_BO_PRC_ES_SUPERVISOR_CEX ,
     			dp.getProcedimiento().getId(), DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO);
         
         Boolean esSupervisor = (Boolean) executor.execute(ExternaBusinessOperation.BO_ASU_MGR_ES_SUPERVISOR,
@@ -546,7 +549,6 @@ public class MEJDecisionProcedimientoManager extends
 	@Override
 	public void aceptarPropuesta(
 			MEJDtoDecisionProcedimiento dtoDecisionProcedimiento) {
-	    //TODO Simplificar este m�todo, demasiado complejo
 		boolean esGestor = !proxyFactory.proxy(ProcedimientoApi.class)
 				.esSupervisor(dtoDecisionProcedimiento.getIdProcedimiento());
 		Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
@@ -558,6 +560,13 @@ public class MEJDecisionProcedimientoManager extends
 						"S�lo el supervisor puede finalizar o paralizar el origen");
 			}
 		}
+		this.aceptarPropuestaSinControl(dtoDecisionProcedimiento);
+	}
+
+	@Transactional(readOnly = false)
+	public void aceptarPropuestaSinControl(
+			MEJDtoDecisionProcedimiento dtoDecisionProcedimiento) {
+	    //TODO Simplificar este m�todo, demasiado complejo
 
 		DecisionProcedimiento decisionPropuesta = null;
         if (dtoDecisionProcedimiento.getDecisionProcedimiento().getId() != null) {
@@ -572,7 +581,7 @@ public class MEJDecisionProcedimientoManager extends
 		}catch(Exception exc){
 			throw new BusinessOperationException(exc);
 		}
-		
+			
 		//JZ
 		Boolean isDerivable = false;
         List<ProcedimientoDerivado> derivarA = decision.getProcedimientosDerivados();
@@ -595,7 +604,7 @@ public class MEJDecisionProcedimientoManager extends
         TareaNotificacion tarea = dp.getTareaAsociada();
         
         List<TareaNotificacion> vTareas = (List<TareaNotificacion>) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET_LIST_BY_PROC_SUBTIPO,
-                dtoDecisionProcedimiento.getDecisionProcedimiento().getProcedimiento().getId(), SubtipoTarea.CODIGO_TOMA_DECISION_BPM);
+                dp.getProcedimiento().getId(), SubtipoTarea.CODIGO_TOMA_DECISION_BPM);
 
 
         if (vTareas != null && vTareas.size() > 0) {
@@ -672,15 +681,16 @@ public class MEJDecisionProcedimientoManager extends
             if (dp.getFinalizada()) {
                 // FINALIZADO:Parar definitivamente el procedimiento origen
                 try {
+                	
                     jbpmUtil.finalizarProcedimiento(p.getId());
                     p.setEstadoProcedimiento(genericDao.get(DDEstadoProcedimiento.class, genericDao
             				.createFilter(FilterType.EQUALS, "codigo", DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO)));
 
-                    // Integración con mensajería
+                	// Integración con mensajería
                     integracionBpmService.finalizarBPM(p);
 
                     cancelarSubastaActiva(p);
-                    
+
                 } catch (Exception e) {
                     logger.error("Error al finalizar el procedimiento " + p.getId(), e);
                 }
@@ -750,8 +760,15 @@ public class MEJDecisionProcedimientoManager extends
 		//generaNotificacion(dtoDecisionProcedimiento.getIdProcedimiento(), messageService.getMessage("decisionProcedimiento.resultado.aceptado", param));
 	}
 
+	@Transactional(readOnly = false)
 	private void cancelarSubastaActiva(MEJProcedimiento p) {
-		if("P401".equals(p.getTipoProcedimiento().getCodigo()) || "P409".equals(p.getTipoProcedimiento().getCodigo())){
+		Set<String> codigosSubasta = new HashSet<String>();
+		codigosSubasta.add("P401");
+		codigosSubasta.add("P409");
+		codigosSubasta.add("H002");
+		codigosSubasta.add("H003");
+		codigosSubasta.add("H004");
+		if(codigosSubasta.contains(p.getTipoProcedimiento().getCodigo())){
 			Subasta sub = proxyFactory.proxy(SubastaProcedimientoApi.class).obtenerSubastaByPrcId(p.getId());
 			if(!Checks.esNulo(sub)){
 				sub.setEstadoSubasta(genericDao.get(DDEstadoSubasta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoSubasta.CAN)));
@@ -759,7 +776,6 @@ public class MEJDecisionProcedimientoManager extends
 				
 				// Mensaje de integración para notificar fin de BPM.
 				integracionBpmService.enviarDatos(sub);
-				
 			}
 		}
 	}
@@ -769,7 +785,7 @@ public class MEJDecisionProcedimientoManager extends
 		
 		
 		// l�gica para decidir si la notificacion se env�a al gestor CEX o JUD
-        Boolean esSupervisorCEX = (Boolean) executor.execute(MEJProcedimientoApi.MEJ_BO_PRC_ES_SUPERVISOR_CEX ,
+        Boolean esSupervisorCEX = (Boolean) executor.execute(EXTProcedimientoApi.MEJ_BO_PRC_ES_SUPERVISOR_CEX ,
         		idProcedimiento, DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO);
     	
         String subtipoTarea = "9999999999";
@@ -837,7 +853,7 @@ public class MEJDecisionProcedimientoManager extends
         // + dp.getProcedimiento().getNombreProcedimiento();
         // crear tarea para el supervisor de judicial o CEX seg�n el usuario que haya propuesto la decisi�n
     	
-    	Boolean esGestorCEX = (Boolean) executor.execute(MEJProcedimientoApi.MEJ_BO_PRC_ES_GESTOR_CEX ,
+    	Boolean esGestorCEX = (Boolean) executor.execute(EXTProcedimientoApi.MEJ_BO_PRC_ES_GESTOR_CEX ,
     			dp.getProcedimiento().getId(), DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO);
     	Long idJBPM;
     	if (esGestorCEX)
@@ -949,7 +965,7 @@ public class MEJDecisionProcedimientoManager extends
 	 * @param idProcedimiento
 	 *            Id actuacion a eliminar
 	 */
-	@BusinessOperation(PluginMejorasBOConstants.MEJ_BO_DECISIONPROCEDIMIENTO_LISTA)
+	@BusinessOperation(MEJ_BO_DECISIONPROCEDIMIENTO_LISTA)
 	public List<DecisionProcedimiento> getListDecisionProcedimientoSoloConDecisionFinal(Long id) {		
 		
 		List<DecisionProcedimiento> datosConsulta = null;

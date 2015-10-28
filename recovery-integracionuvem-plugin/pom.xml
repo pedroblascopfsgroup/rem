@@ -276,6 +276,11 @@
 			<artifactId>ejb-api</artifactId>
 			<version>3.0</version>
 		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<optional>true</optional>
+		</dependency>
 	</dependencies>
 
 	<build>

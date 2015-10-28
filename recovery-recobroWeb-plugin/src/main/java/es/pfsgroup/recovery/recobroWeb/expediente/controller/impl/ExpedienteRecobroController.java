@@ -268,7 +268,8 @@ public class ExpedienteRecobroController implements	ExpedienteRecobroControllerA
 		List<Contrato> contratosRiesgo = new ArrayList<Contrato>();
 		for (Contrato c : expediente.getTodosLosContratos()){
 			
-			if(c != null && c.getLastMovimiento() != null && c.getLastMovimiento().getRiesgo() >=0 ){
+			//Obtenemos todos los contratos --> BKREC-702
+			if(c != null && c.getLastMovimiento() != null){
 				contratosRiesgo.add(c);
 			}
 		}

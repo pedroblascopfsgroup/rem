@@ -24,7 +24,7 @@ import es.capgemini.pfs.diccionarios.Dictionary;
  */
 
 @Entity
-@Table(name = "DD_TDV_TRAMOS_DIAS_VENCIDOS", schema = "${master.schema}")
+@Table(name = "DD_TDV_TRAMOS_DIAS_VENCIDOS", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class DDTramosDiasVencidos implements Dictionary, Auditable {
 	

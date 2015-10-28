@@ -30,6 +30,7 @@ DECLARE
 
     V_TAREA VARCHAR(50 CHAR);
     
+    V_DD_TAC_ID		DD_TAC_TIPO_ACTUACION.DD_TAC_ID%TYPE;
 BEGIN	
 
 	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-730');
@@ -47,6 +48,42 @@ BEGIN
 		' SET BORRADO=1,USUARIOBORRAR=''GONZALO'' WHERE DD_TAC_ID IN ' || 
 		' (select dd_tac_id from '||V_ESQUEMA||'.Dd_Tac_Tipo_Actuacion tac where borrado=0 and not exists (select 1 from '||V_ESQUEMA||'.Dd_Tpo_Tipo_Procedimiento prc where prc.dd_Tac_id=tac.dd_tac_id and prc.borrado=0))';
 
+	-- La secuencia no está correcta, se calcula a partir del max y posteriormente se lanzará la corrección de la secuencia
+	V_MSQL := 'SELECT MAX(DD_TAC_ID) + 1 FROM '||V_ESQUEMA||'.DD_TAC_TIPO_ACTUACION';
+	EXECUTE IMMEDIATE V_MSQL INTO V_DD_TAC_ID;
+		
+	V_MSQL := 'INSERT
+		INTO '||V_ESQUEMA||'.DD_TAC_TIPO_ACTUACION
+		  (
+		    DD_TAC_ID,
+		    DD_TAC_CODIGO,
+		    DD_TAC_DESCRIPCION,
+		    DD_TAC_DESCRIPCION_LARGA,
+		    VERSION,
+		    USUARIOCREAR,
+		    FECHACREAR,
+		    BORRADO
+		  )
+		  VALUES
+		  (
+		    ' || V_DD_TAC_ID || ',
+		    ''TR_REM'',
+		    ''Trámites remotos'',
+		    ''Tipo de Actuación Trámites Remotos'',
+		    0,
+		    ''DD'',
+		    SYSDATE,
+		    1
+		  )';	
+		  
+	EXECUTE IMMEDIATE V_MSQL;		  
+		  
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO' ||
+		' SET BORRADO=0 ,USUARIOBORRAR=NULL, DD_TAC_ID = ' || V_DD_TAC_ID || ' WHERE DD_TPO_CODIGO IN ' || 
+		' (''H016'',''H018'',''H020'',''H001'',''H022'',''H024'',''H026'',''H028'',''H005'',''HC100'',''H030'',''HC101'',''H006'' '||
+		' ,''H064'',''H032'',''H007'',''H034'',''H036'',''H038'',''H040'',''H066'',''H042'',''H044'',''HC102'',''H046'',''H011'',''P400'' '||
+		' ,''H048'',''H015'',''H050'',''HC103'',''H008'',''HC104'',''H002'',''H004'',''H052'',''H065'',''H054'',''H058'',''H062'',''HC105'',''HC106'')';
+		
 	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-730');
 	
 COMMIT;

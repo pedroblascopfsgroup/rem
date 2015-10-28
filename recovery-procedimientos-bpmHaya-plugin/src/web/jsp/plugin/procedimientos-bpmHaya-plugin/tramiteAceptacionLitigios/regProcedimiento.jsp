@@ -154,10 +154,12 @@ comboDocCompleta.on('select', function(){
 	if(comboDocCompleta.getValue() == '01') {//si
 		fechaEnvio.setDisabled(true);
 		tipoProcedimiento.setDisabled(false);
+		tipoProcedimiento.allowBlank = false;
 	}
 	else if(comboDocCompleta.getValue() == '02') {//no
 		fechaEnvio.setDisabled(false);
 		tipoProcedimiento.setDisabled(true);
+		tipoProcedimiento.allowBlank = true;
 	}
 });
 

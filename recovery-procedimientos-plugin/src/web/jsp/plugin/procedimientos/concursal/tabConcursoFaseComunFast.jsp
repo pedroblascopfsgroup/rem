@@ -268,6 +268,15 @@
 		collapsible="false" titleKey="asunto.concurso.tabFaseComun.title" autoexpand="true"
 		bbar="btAddCredito,btEditCreditoGestor, btEditCreditoSupervisor, btEditCreditoDefinitivo,btnEditarTodos, btRemoveCredito" />
 
+	<sec:authorize ifAllGranted="SOLO_CONSULTA">
+		btAddCredito.hide();
+		btEditCreditoGestor.hide();
+		btEditCreditoSupervisor.hide();
+		btEditCreditoDefinitivo.hide();
+		btnEditarTodos.hide();
+		btRemoveCredito.hide();
+	</sec:authorize>
+
 	grid.on('rowclick', function(grid, rowIndex, e) {
 		btEditCredito.setDisabled(true);
 		btEditCreditoSupervisor.setDisabled(true);

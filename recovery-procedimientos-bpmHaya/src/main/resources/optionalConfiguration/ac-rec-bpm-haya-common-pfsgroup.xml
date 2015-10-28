@@ -876,6 +876,12 @@
 			
 	            	return demandadosNotificados.toString();
 	            }            	
+	            
+				def comprobarExisteDocumentoIFISCAL = {
+					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "IFISCAL");
+				}
+				
   			 ]]>
   			</value>
   		</list>

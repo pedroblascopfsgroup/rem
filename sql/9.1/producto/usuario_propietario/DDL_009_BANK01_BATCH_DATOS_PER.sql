@@ -67,7 +67,7 @@ BEGIN
 		,PER_DEUDA_IRREGULAR    NUMBER
 		,PER_RIESGO_DIRECTO    NUMBER
 		,PER_RIESGO_INDIRECTO    NUMBER
-               )';
+               ) on commit preserve rows';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.BATCH_DATOS_PER... Tabla creada');
 

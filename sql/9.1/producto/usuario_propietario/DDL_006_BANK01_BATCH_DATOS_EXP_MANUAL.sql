@@ -70,7 +70,7 @@ BEGIN
 		,RCF_SCA_ID    NUMBER (16)
 		,EXP_MARCADO_BPM    NUMBER
 		,EXP_MANUAL    NUMBER (1)
-               )';
+               ) on commit preserve rows';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.BATCH_DATOS_EXP_MANUAL... Tabla creada');
 

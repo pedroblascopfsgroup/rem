@@ -62,7 +62,7 @@ BEGIN
                (
 		CLI_ID    NUMBER (16)
 		,PER_ID    NUMBER (16)
-               )';
+               ) on commit preserve rows';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.BATCH_DATOS_CLI... Tabla creada');
    

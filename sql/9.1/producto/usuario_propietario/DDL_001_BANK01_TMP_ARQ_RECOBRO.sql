@@ -62,7 +62,7 @@ BEGIN
 		ARQ_ID         NUMBER(16)
 		,ARQ_PRIORIDAD  NUMBER(16)
 		,ARQ_NOMBRE     VARCHAR2(100 Char)        
-               )';
+               ) on commit preserve rows';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.TMP_ARQ_RECOBRO... Tabla creada');
     

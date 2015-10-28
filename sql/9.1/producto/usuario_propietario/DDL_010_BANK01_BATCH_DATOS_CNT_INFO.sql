@@ -64,7 +64,7 @@ BEGIN
 		,CODIGO_PROPIETARIO    NUMBER (5)
 		,TIPO_PRODUCTO    VARCHAR2 (1024 Char)
 		,NUMERO_CONTRATO    VARCHAR2 (50 Char)
-               )';
+               ) on commit preserve rows';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.BATCH_DATOS_CNT_INFO... Tabla creada');
 

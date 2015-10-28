@@ -73,7 +73,7 @@ BEGIN
 					USUARIOBORRAR                  VARCHAR2(10 CHAR), 
 					FECHABORRAR                    TIMESTAMP (6), 
 					BORRADO NUMBER(1,0)            DEFAULT 0 NOT NULL ENABLE
-				   )';
+				   ) on commit preserve rows';
 	 
   
     EXECUTE IMMEDIATE V_MSQL;

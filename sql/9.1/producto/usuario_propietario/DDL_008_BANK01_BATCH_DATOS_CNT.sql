@@ -62,7 +62,7 @@ BEGIN
 		CNT_ID    NUMBER (16)
 		,OFI_ID    NUMBER (16)
 		,CNT_RIESGO    NUMBER
-               )';
+               ) on commit preserve rows';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.BATCH_DATOS_CNT... Tabla creada');
 

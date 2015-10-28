@@ -125,7 +125,7 @@ BEGIN
 		,RCF_SUR_POSICION INTEGER
 		,RCF_SUR_PORCENTAJE NUMBER (16)
 		,RCF_SUR_BORRADO NUMBER (1)     
-               )';
+               ) on commit preserve rows';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.BATCH_RCF_ENTRADA... Tabla creada');
 

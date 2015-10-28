@@ -65,7 +65,7 @@ BEGIN
 		,CNT_PER_TIN    VARCHAR2 (10 Char)
 		,CNT_PER_OIN    INTEGER
 		,CNT_PER_ARRASTRE    NUMBER (1)
-               )';
+               ) on commit preserve rows';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.BATCH_DATOS_CNT_PER... Tabla creada');
 

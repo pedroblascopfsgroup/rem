@@ -66,7 +66,7 @@ BEGIN
 		,DD_MOB_CODIGO    VARCHAR2 (50 Char)
 		,DD_MOB_BORRADO    NUMBER
 		,EXC_ID    NUMBER (16)
-               )';
+               ) on commit preserve rows';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.BATCH_DATOS_EXCEPTUADOS... Tabla creada');
 

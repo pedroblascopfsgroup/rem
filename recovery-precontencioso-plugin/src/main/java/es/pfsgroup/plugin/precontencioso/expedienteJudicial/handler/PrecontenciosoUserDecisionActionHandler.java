@@ -5,8 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.dao.SubtipoTareaDao;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
@@ -15,6 +17,7 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.manager.Procedimient
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.procedimientos.PROBaseActionHandler;
+import es.pfsgroup.recovery.ext.turnadodespachos.TurnadoDespachosManager;
 
 public class PrecontenciosoUserDecisionActionHandler extends PROBaseActionHandler {
 
@@ -34,7 +37,14 @@ public class PrecontenciosoUserDecisionActionHandler extends PROBaseActionHandle
 	
 	@Autowired
 	PrecontenciosoProjectContext precontenciosoContext;
-
+	
+	@Autowired
+	TurnadoDespachosManager turnadoDespachosManager;
+	
+	@Autowired
+	UsuarioManager usuarioManager;
+	
+	
 	@Override
 	public void run(ExecutionContext executionContext) throws Exception {
 
@@ -57,13 +67,11 @@ public class PrecontenciosoUserDecisionActionHandler extends PROBaseActionHandle
 	        //executionContext.getToken().signal();
 		} else if (PrecontenciosoBPMConstants.PCO_PreTurnado.equals(getNombreNodo(executionContext)) 
 				&& PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(precontenciosoContext.getRecovery())) {
-			// TODO para bankia
 			executor.execute("plugin.precontencioso.inicializarPco", prc);
-			pcoManager.obtenerNuevoLetrado(prc);
-		
+			turnadoDespachosManager.turnar(prc.getAsunto().getId(), usuarioManager.getUsuarioLogado().getUsername(), EXTDDTipoGestor.CODIGO_TIPO_LETRADO);
 		} else if (PrecontenciosoBPMConstants.PCO_PostTurnado.equals(getNombreNodo(executionContext))
 				&& PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(precontenciosoContext.getRecovery())) {
-			pcoManager.obtenerNuevoLetrado(prc);		
+			turnadoDespachosManager.turnar(prc.getAsunto().getId(), usuarioManager.getUsuarioLogado().getUsername(), EXTDDTipoGestor.CODIGO_TIPO_LETRADO);
 		}
 		// Avanzamos BPM
 		executionContext.getToken().signal();

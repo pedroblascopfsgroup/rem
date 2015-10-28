@@ -1,9 +1,10 @@
 package es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.api;
 
+import java.util.List;
+
 import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.dto.ListadoPreProyectadoDTO;
 import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.model.VListadoPreProyectadoCnt;
 import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.model.VListadoPreProyectadoExp;
-import java.util.List;
 
 public interface ListadoPreProyectadoApi {
 	

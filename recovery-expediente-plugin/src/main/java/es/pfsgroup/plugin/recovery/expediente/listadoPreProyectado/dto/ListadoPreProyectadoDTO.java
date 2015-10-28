@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.dto;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
@@ -15,10 +16,10 @@ public class ListadoPreProyectadoDTO {
 	//Pestanya datos generales
 	private String codEstadoGestion;
 	private String codTipoPersona;
-	private Long minRiesgoTotal;
-	private Long maxRiesgoTotal;
-	private Long minDeudaIrregular;
-	private Long maxDeudaIrregular;
+	private BigDecimal minRiesgoTotal;
+	private BigDecimal maxRiesgoTotal;
+	private BigDecimal minDeudaIrregular;
+	private BigDecimal maxDeudaIrregular;
 	private String codAgruparPor;
 	private List<String> tramos;
 	private List<String> propuestas;
@@ -50,35 +51,35 @@ public class ListadoPreProyectadoDTO {
 		this.codTipoPersona = codTipoPersona;
 	}
 	
-	public Long getMinRiesgoTotal() {
+	public BigDecimal getMinRiesgoTotal() {
 		return minRiesgoTotal;
 	}
 	
-	public void setMinRiesgoTotal(Long minRiesgoTotal) {
+	public void setMinRiesgoTotal(BigDecimal minRiesgoTotal) {
 		this.minRiesgoTotal = minRiesgoTotal;
 	}
 	
-	public Long getMaxRiesgoTotal() {
+	public BigDecimal getMaxRiesgoTotal() {
 		return maxRiesgoTotal;
 	}
 	
-	public void setMaxRiesgoTotal(Long maxRiesgoTotal) {
+	public void setMaxRiesgoTotal(BigDecimal maxRiesgoTotal) {
 		this.maxRiesgoTotal = maxRiesgoTotal;
 	}
 	
-	public Long getMinDeudaIrregular() {
+	public BigDecimal getMinDeudaIrregular() {
 		return minDeudaIrregular;
 	}
 	
-	public void setMinDeudaIrregular(Long minDeudaIrregular) {
+	public void setMinDeudaIrregular(BigDecimal minDeudaIrregular) {
 		this.minDeudaIrregular = minDeudaIrregular;
 	}
 	
-	public Long getMaxDeudaIrregular() {
+	public BigDecimal getMaxDeudaIrregular() {
 		return maxDeudaIrregular;
 	}
 	
-	public void setMaxDeudaIrregular(Long maxDeudaIrregular) {
+	public void setMaxDeudaIrregular(BigDecimal maxDeudaIrregular) {
 		this.maxDeudaIrregular = maxDeudaIrregular;
 	}
 	

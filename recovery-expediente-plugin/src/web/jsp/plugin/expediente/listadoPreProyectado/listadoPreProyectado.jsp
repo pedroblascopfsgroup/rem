@@ -7,6 +7,9 @@
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms"%>
 <fwk:page>
 
+	var tabExpediente= false;
+	var tabContrato = false;
+
 	//TAB DATOS GENERALES
 	
 	//Combo Estado Gestión
@@ -135,14 +138,15 @@
 	});    
 	
 	
+	var dobleSelCentro = app.creaDblSelect(centro
+                              ,'<s:message code="plugin.mejoras.listadoPreProyectado.expediente.centros" text="**Centro" />'
+                              ,{store:optionsCentrosStore, funcionReset:recargarComboCentrosExp, width:175});	
 	
-           	
-    var recargarComboCentrosExp = function(){
+	var recargarComboCentrosExp = function(){
 		if (comboJerarquia.getValue()!=null && comboJerarquia.getValue()!='' && comboJerarquia.getValue()!='---'){
 			optionsCentrosStore.webflow({id:comboJerarquia.getValue()});
 		}else{
 			optionsCentrosStore.webflow({id:0});
-			dobleSelCentro.setValue('');
 			optionsCentrosStore.removeAll();
 		}
 	}
@@ -150,11 +154,9 @@
 	var limpiarYRecargar = function(){
 		app.resetCampos([dobleSelCentro]);
 		recargarComboCentrosExp();
+	
 	}
 	
-	var dobleSelCentro = app.creaDblSelect(centro
-                              ,'<s:message code="plugin.mejoras.listadoPreProyectado.expediente.centros" text="**Centro" />'
-                              ,{store:optionsCentrosStore, funcionReset:recargarComboCentrosExp, width:175},{<app:test id="dobleSelCentro" />});	
 	comboJerarquia.on('select',limpiarYRecargar);
 	
 	recargarComboCentrosExp();
@@ -246,7 +248,7 @@
 			optionsCentrosContratoStore.webflow({id:comboJerarquiaContrato.getValue()});
 		}else{
 			optionsCentrosContratoStore.webflow({id:0});
-			dobleSelCentroContrato.setValue('');
+<!-- 			dobleSelCentroContrato.setValue(''); -->
 			optionsCentrosContratoStore.removeAll();
 		}
 	}
@@ -255,6 +257,7 @@
 		app.resetCampos([dobleSelCentroContrato]);
 		recargarComboCentros();
 	}
+	
 	comboJerarquiaContrato.on('select',limpiarYRecargar);
 	
 	recargarComboCentros();
@@ -280,6 +283,8 @@
 		
 	});
 	
+	
+	
 	//filtro Expediente
 	var filtrosTabExpediente = new Ext.Panel({
 		title:'<s:message code="plugin.mejoras.listadoPreProyectado.expediente" text="**Expediente" />'
@@ -296,6 +301,10 @@
 					,items:[dobleSelFase]
 				}
 				]
+	});
+	
+	filtrosTabExpediente.on('activate',function(){
+		tabExpediente=true;
 	});
 	
 	//Filtro Contrato
@@ -317,6 +326,10 @@
 					layout:'form'
 					,items:[comboJerarquiaContrato,dobleSelCentroContrato]
 				}]
+	});
+	
+	filtrosTabContrato.on('activate',function(){
+		tabContrato=true;
 	});
 	
 	//filtro pestañas
@@ -403,61 +416,125 @@
 		if(!mmDeudaIrregular.max.getValue() === ''){
 			return true;		
 		}
+		
 		if(comboAgruparPor.getValue() != ''){
 			return true;		
 		}
+		
 		if(dobleSelTramo.getValue() != ''){
 			return true;		
 		}
 		if(dobleSelPropuesta.getValue() != ''){
 			return true;		
 		}
-		if(txtCodExpediente.getValue() != ''){
-			return true;		
+		if(tabExpediente){
+			if(txtCodExpediente.getValue() != ''){
+				return true;		
+			}
+			
+			if(dobleSelCentro.getValue() != ''){  
+				return true;
+			}
+					  
+			if(dobleSelFase.getValue() != ''){ 
+				return true;
+			}
 		}
-		if(dobleSelCentro.getValue() != ''){  
-			return true;
+		
+		if(tabContrato){		 
+			if(txtCodContrato.getValue() != ''){
+				return true;		
+			}
+			if(filtroFechaDesde.getValue() != ''){
+				return true;		
+			}
+			if(filtroFechaHasta.getValue() != ''){
+				return true;		
+			}
+			if(dobleSelCentroContrato.getValue() != ''){
+	 			return true;		 
+			} 
 		}
-				  
-		if(dobleSelFase.getValue() != ''){ 
-			return true;
-		}		 
-		if(txtCodContrato.getValue() != ''){
-			return true;		
-		}
-		if(filtroFechaDesde.getValue() != ''){
-			return true;		
-		}
-		if(filtroFechaHasta.getValue() != ''){
-			return true;		
-		}
-		if(dobleSelCentroContrato.getValue() != ''){
- 			return true;		 
-		} 
+		
+		
 		
 		return false;
 	}
+	var param = new Object();
+	var getParametrosExpediente = function(){
+		if(tabExpediente){
+			if(txtCodExpediente.getValue() == 'undefined' || !txtCodExpediente.getValue()){
+				txtCodExpediente.setValue('');
+			}
+			
+			if(dobleSelCentro.getValue() == 'undefined' || !dobleSelCentro.getValue()){
+				txtCodExpediente.setValue('');
+			}
+			
+			if(dobleSelFase.getValue() == 'undefined' || !dobleSelFase.getValue()){
+				dobleSelFase.setValue('');
+			}
+		}
+		
+		if(tabExpediente){
+			param.codExpediente=txtCodExpediente.getValue()
+			param.zonasExp=dobleSelCentro.getValue()
+			param.itinerarios=dobleSelFase.getValue()
+		}
+		
+		return param;
+	}
+	
+	var getParametrosContrato = function(){
+		if(tabContrato){
+			if(txtCodContrato.getValue() == 'undefined' || !txtCodContrato.getValue()){
+				txtCodContrato.setValue('');
+			}
+			
+			if(filtroFechaDesde.getValue() == 'undefined' || !filtroFechaDesde.getValue()){
+				filtroFechaDesde.setValue('');
+			}
+			
+			if(filtroFechaHasta.getValue() == 'undefined' || !filtroFechaHasta.getValue()){
+				filtroFechaHasta.setValue('');
+			}
+			
+			if(dobleSelCentroContrato.getValue() == 'undefined' || !dobleSelCentroContrato.getValue()){
+				dobleSelCentroContrato.setValue('');
+			}
+		}
+		
+		if(tabContrato){
+			param.codContrato=txtCodContrato.getValue()
+			param.fechaPrevRegularizacion=filtroFechaDesde.getValue()
+			param.fechaPrevRegularizacionHasta=filtroFechaHasta.getValue()
+			param.zonasCto=dobleSelCentroContrato.getValue()
+		}
+		
+		return param;
+	}
+	
+	
 	
 	var getParametros = function(){
-		return{
-			codEstadoGestion:comboEstadoGestion.getValue()
-			,codTipoPersona:comboTipoPersona.getValue()
-			,minRiesgoTotal:mmRiesgoTotal.min.getValue()
-			,maxRiesgoTotal:mmRiesgoTotal.max.getValue()
-			,minDeudaIrregular:mmDeudaIrregular.min.getValue()
-			,maxDeudaIrregular:mmDeudaIrregular.max.getValue()
-			,codAgruparPor:comboAgruparPor.getValue()
-			,tramos:dobleSelTramo.getValue()
-			,propuestas:dobleSelPropuesta.getValue()
-			,codExpediente:txtCodExpediente.getValue()
- 			,zonasExp:dobleSelCentro.getValue()
-			,itinerarios:dobleSelFase.getValue()
-			,codContrato:txtCodContrato.getValue()
-			,fechaPrevRegularizacion:filtroFechaDesde.getValue()
-			,fechaPrevRegularizacionHasta:filtroFechaHasta.getValue()
-			,zonasCto:dobleSelCentroContrato.getValue()
-		};
+		
+		getParametrosExpediente();
+		getParametrosContrato();
+		
+		
+		param.codEstadoGestion=comboEstadoGestion.getValue()
+		param.codTipoPersona=comboTipoPersona.getValue()
+		param.minRiesgoTotal=mmRiesgoTotal.min.getValue()
+		param.maxRiesgoTotal=mmRiesgoTotal.max.getValue()
+		param.minDeudaIrregular=mmDeudaIrregular.min.getValue()
+		param.maxDeudaIrregular=mmDeudaIrregular.max.getValue()
+		param.codAgruparPor=comboAgruparPor.getValue()
+		param.tramos=dobleSelTramo.getValue()
+		param.propuestas=dobleSelPropuesta.getValue()
+			
+		return param;
 	};
+	
 	
 	var buscarFunc = function(){
 		if(validarEmptyForm()){

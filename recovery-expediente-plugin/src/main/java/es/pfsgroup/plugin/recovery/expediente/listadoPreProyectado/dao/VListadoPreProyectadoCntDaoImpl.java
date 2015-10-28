@@ -30,7 +30,7 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 		if (!Checks.esNulo(dto.getCodEstadoGestion())) {
 			sb.append(" and c.estadoGestionCod = '" + dto.getCodEstadoGestion() + "' ");
 		}
-		
+			
 		if (!Checks.esNulo(dto.getCodTipoPersona())) {
 			sb.append(" and c.tipoPersonaCod = '" + dto.getCodTipoPersona() + "' ");
 		}
@@ -51,65 +51,73 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 			sb.append(" and c.deudaIrregular <= " + dto.getMaxDeudaIrregular() + " ");
 		}
 		
-		if (!Checks.esNulo(dto.getTramos()) && !Checks.estaVacio(dto.getTramos())) {
-			sb.append(" and ( ");
-			Iterator<String> tramos = dto.getTramos().iterator();
-			do {
-				String tramo = tramos.next();
-				sb.append(" tramoCod = '" + tramo + "' ");
-				if (tramos.hasNext()) {
-					sb.append(" or ");
+		if (!Checks.esNulo(dto.getTramos())) {
+			String[] tramos = dto.getTramos().split(",");
+			if (tramos.length>0) {
+				sb.append(" and ( ");
+				for (int i = 0; i < tramos.length; i++) {
+					String tramo = tramos[i];
+					sb.append(" c.tramoCod = '" + tramo + "' ");
+					if (i<tramos.length-1) {
+						sb.append(" or ");
+					}
 				}
-			} while (tramos.hasNext());
-			sb.append(" ) ");
+				sb.append(" ) ");
+			}
 		}
 		
-		if (!Checks.esNulo(dto.getPropuestas()) && !Checks.estaVacio(dto.getPropuestas())) {
-			sb.append(" and (");
-			Iterator<String> tiposPropuesta = dto.getPropuestas().iterator();
-			do {
-				String tipoPropuesta = tiposPropuesta.next();
-				if (tipoPropuesta.equals(DDTipoAcuerdo.SIN_PROPUESTA)) {
-					sb.append(" nPropuestas = 0 ");
-				} else {
-					sb.append(" tipoPropuestaCod = '" + tipoPropuesta + "' ");
-				}
+		if (!Checks.esNulo(dto.getPropuestas())) {
+			String[] propuestas = dto.getPropuestas().split(",");
+			if (propuestas.length>0) {
+				sb.append(" and (");
+				for (int i = 0; i < propuestas.length; i++) {
+					String tipoPropuesta = propuestas[i];
+					if (tipoPropuesta.equals(DDTipoAcuerdo.SIN_PROPUESTA)) {
+						sb.append(" c.nPropuestas = 0 ");
+					} else {
+						sb.append(" c.tipoPropuestaCod = '" + tipoPropuesta + "' ");
+					}
 				
-				if (tiposPropuesta.hasNext()) {
-					sb.append(" or ");
+					if (i<propuestas.length-1) {
+						sb.append(" or ");
+					}
 				}
-			} while (tiposPropuesta.hasNext());
-			sb.append(" ) ");
+				sb.append(" ) ");
+			}
 		}
 		
 		if (!Checks.esNulo(dto.getCodExpediente())) {
 			sb.append(" and c.expId = " + dto.getCodExpediente() + " ");
 		}
 		
-		if (!Checks.esNulo(dto.getZonasExp()) && !Checks.estaVacio(dto.getZonasExp())) {
-			sb.append(" and (");
-			Iterator<String> zonasExp = dto.getZonasExp().iterator();
-			do {
-				String zonaExp = zonasExp.next();
-				sb.append(" zonExp = '" + zonaExp + "' ");
-				if (zonasExp.hasNext()) {
-					sb.append(" or ");
+		if (!Checks.esNulo(dto.getZonasExp())) {
+			String[] zonasExp = dto.getZonasExp().split(",");
+			if (zonasExp.length>0) {
+				sb.append(" and (");
+				for (int i = 0; i < zonasExp.length; i++) {
+					String zonaExp = zonasExp[i];
+					sb.append(" c.zonExp = '" + zonaExp + "' ");
+					if (i<zonasExp.length-1) {
+						sb.append(" or ");
+					}
 				}
-			} while (zonasExp.hasNext());
-			sb.append(" ) ");
+				sb.append(" ) ");
+			}
 		}
 		
-		if (!Checks.esNulo(dto.getItinerarios()) && !Checks.estaVacio(dto.getItinerarios())) {
-			sb.append(" and (");
-			Iterator<String> fases = dto.getItinerarios().iterator();
-			do {
-				String fase = fases.next();
-				sb.append(" faseCod = '" + fase + "' ");
-				if (fases.hasNext()) {
-					sb.append(" or ");
+		if (!Checks.esNulo(dto.getItinerarios())) {
+			String[] fases = dto.getItinerarios().split(",");
+			if (fases.length>0) {
+				sb.append(" and (");
+				for (int i = 0; i < fases.length; i++) {
+					String fase = fases[i];
+					sb.append(" c.faseCod = '" + fase + "' ");
+					if (i<fases.length-1) {
+						sb.append(" or ");
+					}
 				}
-			} while (fases.hasNext());
-			sb.append(" ) ");
+				sb.append(" ) ");
+			}
 		}
 		
 		if (!Checks.esNulo(dto.getCodContrato())) {
@@ -125,20 +133,22 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 			sb.append(" and c.fechaPrevReguCnt <= TO_DATE('" + dto.getFechaPrevRegularizacionHasta().substring(0,10) + "','yyyy-MM-dd') ");
 		}
 		
-		if (!Checks.esNulo(dto.getZonasCto()) && !Checks.estaVacio(dto.getZonasCto())) {
-			sb.append(" and (");
-			Iterator<String> zonasCnt = dto.getZonasCto().iterator();
-			do {
-				String zonaCnt = zonasCnt.next();
-				sb.append(" zonCodContrato='" + zonaCnt + "' ");
-				if (zonasCnt.hasNext()) {
-					sb.append(" or ");
+		if (!Checks.esNulo(dto.getZonasCto())) {
+			String[] zonasCnt = dto.getZonasCto().split(",");
+			if (zonasCnt.length>0) {
+				sb.append(" and (");
+				for (int i = 0; i < zonasCnt.length; i++) {
+					String zonaCnt = zonasCnt[i];
+					sb.append(" c.zonCodContrato='" + zonaCnt + "' ");
+					if (i<zonasCnt.length-1) {
+						sb.append(" or ");
+					}
 				}
-			} while (zonasCnt.hasNext());
-			sb.append(" ) ");
+				sb.append(" ) ");
+			}
 		}
 		
-		return (List<VListadoPreProyectadoCnt>)getHibernateTemplate().find(sb.toString(), new Object[] {});
+		return getHibernateTemplate().find(sb.toString(), new Object[] {});
 	}
 
 }

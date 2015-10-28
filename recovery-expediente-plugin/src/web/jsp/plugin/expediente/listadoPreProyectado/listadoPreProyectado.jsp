@@ -183,11 +183,12 @@
 	//TAB CONTRATO
 	
 	// codigo contrato
-	var txtCodContrato = new Ext.form.NumberField({
+	//var txtCodContrato = new Ext.form.NumberField({
+	var txtCodContrato = new Ext.form.TextField({
 		fieldLabel:'<s:message code="plugin.mejoras.listadoPreProyectado.contrato.codContrato" text="**Codigo Contrato" />'
 		,enableKeyEvents: true
-		,allowDecimals: false
-		,allowNegative: false
+		//,allowDecimals: false
+		//,allowNegative: false
 		,style : 'margin:0px'
 		,autoCreate : {tag: "input", type: "text",maxLength:"16", autocomplete: "off"}
 		//,vtype:'numeric'
@@ -408,7 +409,7 @@
 		,storeId : 'preProStore'
 		,limit: limit
 		,baseParams:paramsBusquedaInicial
-		,flow:'listadopreproyectado/getListPreproyectadoExp'
+		,flow:'listadopreproyectado/getListPreproyectadoCnt'
  		,reader : new Ext.data.JsonReader({root:'listado',totalProperty : 'total'})
 	});
  	

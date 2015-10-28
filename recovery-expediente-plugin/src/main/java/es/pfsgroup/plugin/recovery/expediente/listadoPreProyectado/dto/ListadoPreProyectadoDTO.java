@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.dto;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
@@ -21,19 +22,19 @@ public class ListadoPreProyectadoDTO {
 	private BigDecimal minDeudaIrregular;
 	private BigDecimal maxDeudaIrregular;
 	private String codAgruparPor;
-	private List<String> tramos;
-	private List<String> propuestas;
+	private String tramos;
+	private String propuestas;
 	
 	//Pestanya Expediente
 	private String codExpediente;
-	private List<String> zonasExp;
-	private List<String> itinerarios;
+	private String zonasExp;
+	private String itinerarios;
 	
 	//Pestanya Contrato
 	private String codContrato;
 	private String fechaPrevRegularizacion;
 	private String fechaPrevRegularizacionHasta;
-	private List<String> zonasCto;
+	private String zonasCto;
 	
 	public String getCodEstadoGestion() {
 		return codEstadoGestion;
@@ -91,19 +92,19 @@ public class ListadoPreProyectadoDTO {
 		this.codAgruparPor = codAgruparPor;
 	}
 	
-	public List<String> getTramos() {
+	public String getTramos() {
 		return tramos;
 	}
 	
-	public void setTramos(List<String> tramos) {
+	public void setTramos(String tramos) {
 		this.tramos = tramos;
 	}
 	
-	public List<String> getPropuestas() {
+	public String getPropuestas() {
 		return propuestas;
 	}
 	
-	public void setPropuestas(List<String> propuestas) {
+	public void setPropuestas(String propuestas) {
 		this.propuestas = propuestas;
 	}
 	
@@ -115,19 +116,19 @@ public class ListadoPreProyectadoDTO {
 		this.codExpediente = codExpediente;
 	}
 	
-	public List<String> getZonasExp() {
+	public String getZonasExp() {
 		return zonasExp;
 	}
 	
-	public void setZonasExp(List<String> zonasExp) {
+	public void setZonasExp(String zonasExp) {
 		this.zonasExp = zonasExp;
 	}
 	
-	public List<String> getItinerarios() {
+	public String getItinerarios() {
 		return itinerarios;
 	}
 	
-	public void setItinerarios(List<String> itinerarios) {
+	public void setItinerarios(String itinerarios) {
 		this.itinerarios = itinerarios;
 	}
 	
@@ -155,11 +156,11 @@ public class ListadoPreProyectadoDTO {
 		this.fechaPrevRegularizacionHasta = fechaPrevRegularizacionHasta;
 	}
 	
-	public List<String> getZonasCto() {
+	public String getZonasCto() {
 		return zonasCto;
 	}
 	
-	public void setZonasCto(List<String> zonasCto) {
+	public void setZonasCto(String zonasCto) {
 		this.zonasCto = zonasCto;
 	}
 	

@@ -331,7 +331,12 @@ function restore_or_confirm_flahsback () {
 
 # Creamos el workspace
 if [[ "x$VAR_WORKSPACE_CHANGED" == "xyes" ]]; then
+	echo "[INFO] Se va a usar el siguiente directorio como WORKSPACE: $WORKSPACE_DIR"
+else
 	echo "[WARNING] Se va a usar el siguiente directorio como WORKSPACE: $WORKSPACE_DIR"
+	echo "[WARNING]  esto no es conveniente si se quiere conservar el estado de la BD"
+	echo "[WARNING]  independiente del repositorio de versiones."
+	echo "[WARNING] Usa el parámetro -workspace para ocultar este aviso."
 fi
 
 if [[ "x$VAR_OUTTER_ERROR_LOG" != "x" ]]; then

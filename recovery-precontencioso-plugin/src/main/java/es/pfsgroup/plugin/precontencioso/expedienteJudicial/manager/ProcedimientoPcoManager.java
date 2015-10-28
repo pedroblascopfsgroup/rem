@@ -787,9 +787,4 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 				genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 	}
 
-	public void obtenerNuevoLetrado(Procedimiento prc) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

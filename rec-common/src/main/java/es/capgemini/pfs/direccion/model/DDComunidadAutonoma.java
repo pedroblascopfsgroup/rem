@@ -3,10 +3,7 @@ package es.capgemini.pfs.direccion.model;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -21,29 +18,22 @@ import es.capgemini.pfs.diccionarios.Dictionary;
  * Diccionario de provincias.
  */
 @Entity
-@Table(name = "DD_PRV_PROVINCIA", schema = "${master.schema}")
+@Table(name = "DD_CCA_COMUNIDAD", schema = "${master.schema}")
 @Cache(usage=CacheConcurrencyStrategy.READ_ONLY)
-public class DDProvincia implements Dictionary, Auditable {
+public class DDComunidadAutonoma implements Dictionary, Auditable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "DD_PRV_ID")
+    @Column(name = "DD_CCA_ID")
     private Long id;
 
-    @Column(name = "DD_PRV_CODIGO")
+    @Column(name = "DD_CCA_CODIGO")
     private String codigo;
 
-    @Column(name = "DD_PRV_DESCRIPCION")
+    @Column(name = "DD_CCA_DESCRIPCION")
     private String descripcion;
 
-    @Column(name = "DD_PRV_DESCRIPCION_LARGA")
-    private String descripcionLarga;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DD_CCA_ID")
-    private DDComunidadAutonoma comunidad;
-    
     @Embedded
     private Auditoria auditoria;
 
@@ -96,14 +86,7 @@ public class DDProvincia implements Dictionary, Auditable {
      * @return the descripcionLarga
      */
     public String getDescripcionLarga() {
-        return descripcionLarga;
-    }
-
-    /**
-     * @param descripcionLarga the descripcionLarga to set
-     */
-    public void setDescripcionLarga(String descripcionLarga) {
-        this.descripcionLarga = descripcionLarga;
+        return descripcion;
     }
 
     /**
@@ -134,13 +117,4 @@ public class DDProvincia implements Dictionary, Auditable {
         this.version = version;
     }
 
-	public DDComunidadAutonoma getComunidad() {
-		return comunidad;
-	}
-
-	public void setComunidad(DDComunidadAutonoma comunidad) {
-		this.comunidad = comunidad;
-	}
-
-    
 }

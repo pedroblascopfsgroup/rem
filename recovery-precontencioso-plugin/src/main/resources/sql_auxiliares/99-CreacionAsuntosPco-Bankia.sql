@@ -495,7 +495,7 @@ V_SQL := q'[INSERT INTO BANKMASTER.JBPM_VARIABLEINSTANCE (ID_, CLASS_, VERSION_,
   DBMS_OUTPUT.PUT_LINE('BLOQUE 5: Gestores');
   DBMS_OUTPUT.PUT_LINE('***************************');
 
-  V_SQL := q'[MERGE INTO TAR_TAREAS_NOTIFICACIONES TAR USING (SELECT TAR.TAR_ID, TAR.TAR_TAREA, TAR_TAREA, TAP.TAP_DESCRIPCION 
+  V_SQL := q'[MERGE INTO TAR_TAREAS_NOTIFICACIONES TAR USING (SELECT TAR.TAR_ID, TAR.TAR_TAREA, TAR_DESCRIPCION, TAP.TAP_DESCRIPCION 
     FROM TAR_TAREAS_NOTIFICACIONES TAR 
       JOIN TEX_TAREA_EXTERNA TEX ON TAR.TAR_ID = TEX.TAR_ID 
       JOIN TAP_TAREA_PROCEDIMIENTO TAP ON TEX.TAP_ID = TAP.TAP_ID 
@@ -775,7 +775,7 @@ SELECT S_PCO_BUR_BUROFAX_ID.NEXTVAL, PPCO.PCO_PRC_ID, CPE.PER_ID, BFE.DD_PCO_BFE
   V_SQL := q'[INSERT INTO TAR_TAREAS_NOTIFICACIONES (TAR_ID, EXP_ID, ASU_ID, DD_EST_ID, DD_EIN_ID, DD_STA_ID, TAR_CODIGO, TAR_TAREA, TAR_DESCRIPCION, 
     TAR_FECHA_INI, TAR_EN_ESPERA, TAR_ALERTA, TAR_EMISOR, 
     VERSION, USUARIOCREAR, FECHACREAR, BORRADO, PRC_ID, DTYPE, NFA_TAR_REVISADA)
-SELECT S_TAR_TAREAS_NOTIFICACIONES.NEXTVAL, null, PRO.ASU_ID, '6', '5', DD_STA_ID, '1', TAP_DESCRIPCION, TAP_DESCRIPCION, 
+SELECT S_TAR_TAREAS_NOTIFICACIONES.NEXTVAL, null, PRO.ASU_ID, '6', '5', DD_STA_ID, '1', TAP_CODIGO, TAP_DESCRIPCION, 
     SYSDATE, '0', '0', 'AUTOMATICA', '0', 
     'CARGA_PCO', SYSDATE, '0', PRC_ID, 'EXTTareaNotificacion', '0' 
   FROM CNV_AUX_ALTA_PRC PRC 
@@ -789,7 +789,7 @@ SELECT S_TAR_TAREAS_NOTIFICACIONES.NEXTVAL, null, PRO.ASU_ID, '6', '5', DD_STA_I
   V_SQL := q'[INSERT INTO TAR_TAREAS_NOTIFICACIONES (TAR_ID, EXP_ID, ASU_ID, DD_EST_ID, DD_EIN_ID, DD_STA_ID, TAR_CODIGO, TAR_TAREA, TAR_DESCRIPCION, 
     TAR_FECHA_INI, TAR_EN_ESPERA, TAR_ALERTA, TAR_EMISOR, 
     VERSION, USUARIOCREAR, FECHACREAR, BORRADO, PRC_ID, DTYPE, NFA_TAR_REVISADA)
-SELECT S_TAR_TAREAS_NOTIFICACIONES.NEXTVAL, null, PRO.ASU_ID, '6', '5', DD_STA_ID, '1', TAP_DESCRIPCION, TAP_DESCRIPCION, 
+SELECT S_TAR_TAREAS_NOTIFICACIONES.NEXTVAL, null, PRO.ASU_ID, '6', '5', DD_STA_ID, '1', TAP_CODIGO, TAP_DESCRIPCION, 
     SYSDATE, '0', '0', 'AUTOMATICA', '0', 
     'CARGA_PCO', SYSDATE, '0', PRC_ID, 'EXTTareaNotificacion', '0' 
   FROM CNV_AUX_ALTA_PRC PRC 
@@ -810,6 +810,17 @@ SELECT S_TEX_TAREA_EXTERNA.NEXTVAL, TAR_ID, TAP_ID, '0', '0', 'CARGA_PCO', SYSDA
   EXECUTE IMMEDIATE V_SQL; 
   DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '...' || sql%rowcount);
 
+  V_SQL := q'[merge into tex_tarea_externa te using (select tex.tex_id, pi.roottoken_ from prc_procedimientos p
+    inner join BANKMASTER.jbpm_processinstance pi on pi.id_=p.prc_process_bpm
+    inner join tar_tareas_notificaciones tar on tar.prc_id=p.prc_id
+    inner join tex_tarea_externa tex on tex.tar_id=tar.tar_id
+    where p.usuariocrear='CARGA_PCO') q
+on (q.tex_id=te.tex_id)
+when matched THEN
+  update set te.tex_token_id_bpm=q.roottoken_]';
+  EXECUTE IMMEDIATE V_SQL; 
+  DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '...' || sql%rowcount);
+
   V_SQL := q'[UPDATE TAR_TAREAS_NOTIFICACIONES SET TAR_TAREA=(SELECT TAP_DESCRIPCION FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='PCO_GenerarLiq')
       WHERE TAR_TAREA='PCO_GenerarLiq']';
   --DBMS_OUTPUT.PUT_LINE(V_SQL);
@@ -821,17 +832,6 @@ SELECT S_TEX_TAREA_EXTERNA.NEXTVAL, TAR_ID, TAP_ID, '0', '0', 'CARGA_PCO', SYSDA
   --DBMS_OUTPUT.PUT_LINE(V_SQL);
   EXECUTE IMMEDIATE V_SQL; 
   DBMS_OUTPUT.PUT_LINE(substr(V_SQL, 1, 60) || '...' || sql%rowcount);
-
-  V_SQL := q'[merge into tex_tarea_externa te using (select tex.tex_id, pi.roottoken_ from prc_procedimientos p
-    inner join BANKMASTER.jbpm_processinstance pi on pi.id_=p.prc_process_bpm
-    inner join tar_tareas_notificaciones tar on tar.prc_id=p.prc_id
-    inner join tex_tarea_externa tex on tex.tar_id=tar.tar_id
-    where p.usuariocrear='CARGA_PCO') q
-on (q.tex_id=te.tex_id)
-when matched THEN
-  update set te.tex_token_id_bpm=q.roottoken_]';
-  EXECUTE IMMEDIATE V_SQL; 
-  DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '...' || sql%rowcount);
 
   COMMIT;
   DBMS_OUTPUT.PUT_LINE('[FIN] 99-CreacionAsuntosPco-Bankia.sql');    

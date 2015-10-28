@@ -22,6 +22,8 @@
 		<dependency>
 			<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
 			<artifactId>com.springsource.org.apache.commons.lang</artifactId>
+			<version>UNKNOWN</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>

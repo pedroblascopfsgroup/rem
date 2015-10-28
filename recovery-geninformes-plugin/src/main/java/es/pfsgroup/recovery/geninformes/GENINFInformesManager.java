@@ -868,7 +868,7 @@ public class GENINFInformesManager implements GENINFInformesApi {
 	 */
 	@Override
 	@BusinessOperation(MSV_GENERAR_ESCRITO_VARIABLES)
-	public FileItem generarEscritoConVariables(HashMap<String, String> mapaVariables, String escrito,InputStream is) throws Throwable {
+	public FileItem generarEscritoConVariables(HashMap<String, Object> mapaVariables, String escrito,InputStream is) throws Throwable {
 		File fileSalidaTemporal = null;
 		FileItem resultado = null;
 		OutputStream out = null;
@@ -888,7 +888,7 @@ public class GENINFInformesManager implements GENINFInformesApi {
 			IContext context = report.createContext();
 			
 			// Metemos los valores de las variables !! MUY IMPORTANTE: Si hay definidas variables y no se pueblan a continuación , NO FUNCIONA
-			for(Map.Entry<String, String> entry : mapaVariables.entrySet()){
+			for(Map.Entry<String, Object> entry : mapaVariables.entrySet()){
 				context.put(entry.getKey(),entry.getValue());	
 				
 			}

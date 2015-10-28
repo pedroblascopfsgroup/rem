@@ -17,7 +17,7 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.GestorTareasDao;
 public class GestorTareasDaoImpl extends AbstractEntityDao<Serializable, Long>
 		implements GestorTareasDao {
 
-	private static final String CONSULTA_BPMPROCESS = " select t from TareaExterna t where t.tareaPadre.procedimiento.processBPM = ? and t.auditoria.borrado = false ";
+	private static final String CONSULTA_BPMPROCESS = " select t from TareaExterna t where t.tareaPadre.procedimiento.processBPM = ? ";
 
 	@Override
 	public Long getTokenId(Long idProcessBPM) {

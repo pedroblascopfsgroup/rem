@@ -79,12 +79,6 @@ public class ListadoPreProyectadoController {
 		ArrayList<Nivel> jerarquias = (ArrayList<Nivel>) utilDiccionario.dameValoresDiccionario(Nivel.class);
 		model.put("nivelesExp", jerarquias);
 		
-		ArrayList<DDZona> ddZona = (ArrayList<DDZona>) utilDiccionario.dameValoresDiccionario(DDZona.class);
-		model.put("centro", ddZona);
-		
-		ArrayList<DDZona> ddZonaContrato = (ArrayList<DDZona>) utilDiccionario.dameValoresDiccionario(DDZona.class);
-		model.put("centros", ddZonaContrato);
-		
 		ArrayList<DDEstadoItinerario> ddEstadoItinerario = (ArrayList<DDEstadoItinerario>) utilDiccionario.dameValoresDiccionario(DDEstadoItinerario.class);
 		model.put("fase", ddEstadoItinerario);
 		

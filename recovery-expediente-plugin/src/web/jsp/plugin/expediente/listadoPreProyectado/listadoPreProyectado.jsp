@@ -13,7 +13,7 @@
 	//TAB DATOS GENERALES
 	
 	//Combo Estado Gestión
-	var estadosGestion = <app:dict value="${estadosGestion}" blankElement="true" blankElementValue="" blankElementText="---" />;
+	var estadosGestion = <app:dict value="${estadosGestion}" blankElement="true" blankElementValue=""/>;
 	var optionsEstadoGestionStore = new Ext.data.JsonStore({
 		fields: ['codigo', 'descripcion']
 	       ,root: 'diccionario'
@@ -28,6 +28,8 @@
 		,style:'margin:0px'
 		,width:170
 		,triggerAction:'all'
+		,editable: false
+		,emptyText:'---'
 		,fieldLabel:'<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales.estadoGestion" text="**Estado gestión"/>'
 	});
 	
@@ -47,6 +49,7 @@
 		,mode:'local'
 		,style:'margin:0px'
 		,triggerAction:'all'
+		,editable: false
 		,fieldLabel:'<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales.tipoPersona" text="**Tipo Persona"/>'
 	});
 	
@@ -73,6 +76,7 @@
 		,mode:'local'
 		,style:'margin:0px'
 		,triggerAction:'all'
+		,editable: false
 		,value:optionsAgruparPorStore.getAt(0).get('codigo')
 		,fieldLabel:'<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales.agruparPor" text="**Agrupar por"/>'
 	});
@@ -137,29 +141,37 @@
 	       
 	});    
 	
-	
-	var dobleSelCentro = app.creaDblSelect(centro
-                              ,'<s:message code="plugin.mejoras.listadoPreProyectado.expediente.centros" text="**Centro" />'
-                              ,{store:optionsCentrosStore, funcionReset:recargarComboCentrosExp, width:175});	
-	
 	var recargarComboCentrosExp = function(){
 		if (comboJerarquia.getValue()!=null && comboJerarquia.getValue()!='' && comboJerarquia.getValue()!='---'){
 			optionsCentrosStore.webflow({id:comboJerarquia.getValue()});
-		}else{
-			optionsCentrosStore.webflow({id:0});
-			optionsCentrosStore.removeAll();
 		}
+<!-- 		else{ -->
+<!-- 			optionsCentrosStore.webflow({id:0}); -->
+<!-- 		} -->
 	}
+	
+	recargarComboCentrosExp();
+	
+	comboJerarquia.on('select',function(){
+		dobleSelCentro.reset();
+		recargarComboCentrosExp();
+	});
+	
+	var dobleSelCentro = app.creaDblSelect(centro
+                              ,'<s:message code="plugin.mejoras.listadoPreProyectado.expediente.centros" text="**Centro" />'
+                              ,{store:optionsCentrosStore, /*funcionReset:recargarComboCentrosExp,*/ width:160});	
+	
+	
 	
 	var limpiarYRecargar = function(){
 		app.resetCampos([dobleSelCentro]);
-		recargarComboCentrosExp();
+		//recargarComboCentrosExp();
 	
 	}
 	
 	comboJerarquia.on('select',limpiarYRecargar);
 	
-	recargarComboCentrosExp();
+	
            	                              
 	//Doble sel fase
 	var dobleSelFase = app.creaDblSelect(fases
@@ -221,7 +233,7 @@
 	
 	var comboJerarquiaContrato = app.creaCombo({triggerAction: 'all', data:jerarquia, value:jerarquia.diccionario[0].codigo, name: 'jerarquia',fieldLabel:'<s:message code="plugin.mejoras.listadoPreProyectado.contrato.jerarquia" text="**Jerarquía"/>' })
 	
-	var centros = <app:dict value="${centros}" />;
+	var centros = <app:dict value="${zonas}" />;
 	
 	//Doble sel centro
 	
@@ -231,6 +243,7 @@
 		
 	]);
 	
+	
 	var optionsCentrosContratoStore = page.getStore({
 	       flow: 'clientes/buscarZonas'
 	       ,reader: new Ext.data.JsonReader({
@@ -239,27 +252,32 @@
 	       
 	}); 
 	
-	var dobleSelCentroContrato = app.creaDblSelect(centros
-                              ,'<s:message code="plugin.mejoras.listadoPreProyectado.contrato.centros" text="**Centro" />'
-                              ,{store:optionsCentrosContratoStore, funcionReset:recargarComboCentros, width:175},{<app:test id="dobleSelCentroContrato" />});	
-    
-    var recargarComboCentros = function(){
-		if (comboJerarquiaContrato.getValue()!=null && comboJerarquiaContrato.getValue()!='' && comboJerarquiaContrato.getValue()!='---'){
+	var recargarComboCentros = function(){
+		if (comboJerarquiaContrato.getValue()!=null && comboJerarquiaContrato.getValue()!=''){
 			optionsCentrosContratoStore.webflow({id:comboJerarquiaContrato.getValue()});
 		}else{
-			optionsCentrosContratoStore.webflow({id:0});
-			optionsCentrosContratoStore.removeAll();
+			//optionsCentrosContratoStore.webflow({id:0});
 		}
 	}
+	
+	recargarComboCentros();
+	
+	comboJerarquiaContrato.on('select',function(){
+		dobleSelCentroContrato.reset();
+		recargarComboCentros();
+	});
+	
+	var dobleSelCentroContrato = app.creaDblSelect(centros
+                              ,'<s:message code="plugin.mejoras.listadoPreProyectado.contrato.centros" text="**Centro" />'
+                              ,{store:optionsCentrosContratoStore, /*funcionReset:recargarComboCentros,*/ width:160});	
+    
+    
     
     var limpiarYRecargar = function(){
 		app.resetCampos([dobleSelCentroContrato]);
-		recargarComboCentros();
 	}
 	
 	comboJerarquiaContrato.on('select',limpiarYRecargar);
-	
-	recargarComboCentros();
 	
 	
 	 //filtro Datos Generales
@@ -581,6 +599,7 @@
 		,titleCollapse:true
 		,border:true
 		,autoHeight:true
+		,autoWidth:true
 		,items:[filtroTabPanel]
  		,tbar : [btnBuscar,btnReset,btnExportarXls,'->',app.crearBotonAyuda()] 
 	});

@@ -14,7 +14,6 @@ do
 done
 for directory in `ls -d */`
 do
-    chmod -f 777 ${directory}
     chmod -f a+x ${directory}/*.sh
 done
 rm *.zip

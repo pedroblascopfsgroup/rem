@@ -1,7 +1,5 @@
 package es.pfsgroup.recovery.integration.bpm;
 
-import java.util.Date;
-
 import es.capgemini.pfs.acuerdo.model.ActuacionesAExplorarAcuerdo;
 import es.capgemini.pfs.acuerdo.model.ActuacionesRealizadasAcuerdo;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
@@ -25,8 +23,6 @@ public interface IntegracionBpmService {
 	public static final String TIPO_PRORROGA_TAREA = "BPM-TAREA-PRORROGA";
 	public static final String TIPO_FIN_BPM = "BPM-FIN";
 	
-	public static final String TIPO_FINALIZAR_BPM = "DO-FINALIZAR-BPM";
-	public static final String TIPO_PARALIZAR_BPM = "DO-PARALIZAR-BPM";
 	public static final String TIPO_ACTIVAR_BPM = "DO-ACTIVAR-BPM";
 
 	public final static String TIPO_DATOS_ACUERDO = "DATOS-ACUERDO";
@@ -39,6 +35,7 @@ public interface IntegracionBpmService {
 	public final static String TIPO_DATOS_SUBASTA = "DATOS-SUBASTA";  
 	
 	public final static String TIPO_DATOS_DECISION_PROCEDIMIENTO = "DATOS-DECISION-PROCEDIMIENTO";
+	
 	
 	/**
 	 * Envia mensaje de notificación de tarea
@@ -86,50 +83,12 @@ public interface IntegracionBpmService {
 	void notificaActivarTarea(TareaExterna tareaExterna);
 
 	/**
-	 * Notificar crear tarea notificacion
-	 * 
-     * @param tareaExterna
-	void notificaInicioRecurso(TareaNotificacion tarea);
-	 */
-
-	/**
-	 * Notificar borrado de tarea notificacion
-	 * 
-     * @param tareaExterna
-	void notificaFinRecurso(TareaNotificacion tarea);
-	 */
-	
-	/**
 	 * Notificar finalización de BPM
 	 * 
 	 * @param procedimiento
 	 * @param nombre
 	 */
 	void notificaFinBPM(Procedimiento procedimiento, String tarGuidOrigen, String nombre);
-
-	
-	/**
-	 * Genera una transicion de BPM
-	 * 
-	 * @param tipoProcedimiento
-	 * @param procPadre
-	 */
-	//void transicionarBPM(Procedimiento procedimiento, String transicion);
-
-	/**
-	 * Genera una transición en una tarea de un BPM
-	 * 
-	 * @param tareaExterna
-	 * @param transicion
-	 */
-	//void transicionarBPM(TareaExterna tareaExterna, String transicion);
-
-	/**
-	 * Genera una transicion de Paralizar un BPM
-	 * 
-	 * @param tipoProcedimiento
-	 */
-	void paralizarBPM(Procedimiento procedimiento, Date fechaActivacion);
 
 	/**
 	 * Genera una transicion de Activar un BPM
@@ -138,15 +97,7 @@ public interface IntegracionBpmService {
 	 * @param procPadre
 	 */
 	void activarBPM(Procedimiento procedimiento);
-	
-	/**
-	 * Genera una transicion de Fin a un BPM
-	 * 
-	 * @param tipoProcedimiento
-	 * @param procPadre
-	 */
-	void finalizarBPM(Procedimiento procedimiento);
-	
+
 	/**
 	 * Envía un mensaje de actualización de un recurso
 	 * 
@@ -168,6 +119,11 @@ public interface IntegracionBpmService {
 	void enviarDatos(ActuacionesAExplorarAcuerdo actuacionAExplorar);
 	void enviarDatos(TerminoAcuerdo terminoAcuerdo);
 
+	/**
+	 * Envía una decisión sobre un procedimiento mediante mensajería.
+	 * 
+	 * @param decisionProcedimiento
+	 */
 	void enviarDatos(DecisionProcedimiento decisionProcedimiento);
 
 

@@ -201,49 +201,6 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
     	}
 	}
 
-	@Override
-	public void finalizarBPM(final Procedimiento procedimiento) {
-    	if (!isActive() || notificacionGateway==null) {
-			return;
-		}
-    	logger.info("[INTEGRACION] Preparando para envío finalizarBPM...");
-    	if (isTransactional()) {
-	    	TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
-	    		@Override
-	    		public void beforeCommit(boolean readOnly) {
-	    			super.beforeCommit(readOnly);
-	    			notificacionGateway.finalizarBPM(procedimiento, TIPO_FINALIZAR_BPM, DbIdContextHolder.getDbSchema());
-	    			logger.info("[INTEGRACION] Enviado finalizarBPM!!!");
-	    		}
-			});
-    	} else {
-    		notificacionGateway.finalizarBPM(procedimiento, TIPO_FINALIZAR_BPM, DbIdContextHolder.getDbSchema());
-			logger.info("[INTEGRACION] Enviado finalizarBPM!!!");
-    	}
-	}
-
-	@Override
-	public void paralizarBPM(Procedimiento procedimiento, Date fechaActivacion) {
-    	if (!isActive() || notificacionGateway==null) {
-			return;
-		}
-    	logger.info("[INTEGRACION] Preparando para envío paralizarBPM...");
-    	final ParalizarBPMMsg mensaje = new ParalizarBPMMsg(procedimiento, fechaActivacion);
-    	if (isTransactional()) {
-	    	TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
-	    		@Override
-	    		public void beforeCommit(boolean readOnly) {
-	    			super.beforeCommit(readOnly);
-	    			notificacionGateway.paralizarBPM(mensaje, TIPO_PARALIZAR_BPM, DbIdContextHolder.getDbSchema());
-	    			logger.info("[INTEGRACION] Enviado paralizarBPM!!!");
-	    		}
-			});
-    	} else {
-    		notificacionGateway.paralizarBPM(mensaje, TIPO_PARALIZAR_BPM, DbIdContextHolder.getDbSchema());
-			logger.info("[INTEGRACION] Enviado paralizarBPM!!!");
-    	}
-    	
-	}
 
 	@Override
 	public void activarBPM(final Procedimiento procedimiento) {

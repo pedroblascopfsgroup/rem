@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.recovery.mejoras.procedimiento;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +34,6 @@ import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.web.DynamicElementApi;
 import es.capgemini.pfs.decisionProcedimiento.DecisionProcedimientoManager;
-import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.expediente.model.DDAmbitoExpediente;
@@ -49,7 +47,6 @@ import es.capgemini.pfs.persona.dao.EXTPersonaDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
-import es.capgemini.pfs.recurso.model.Recurso;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.utils.JBPMProcessManager;
@@ -227,86 +224,6 @@ public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProce
 
 	public void setProcedimientoDao(ProcedimientoDao procedimientoDao) {
 		this.procedimientoDao = procedimientoDao;
-	}
-
-	@Override
-	@BusinessOperation(MEJ_BO_PRC_SE_PUEDE_DESPARALIZAR)
-	public boolean isDespararizable(Long idProcedimiento) {
-		MEJProcedimiento prc = genericDao.get(MEJProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", idProcedimiento),
-				genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-
-		if (prc != null && prc.isEstaParalizado()) {
-			
-			// Se recupera la decisión de paralización para comprobar si se ha tomado desde la misma entidad en que estamos actualmente
-			DecisionProcedimiento decisionParalizacion = null;
-			for(DecisionProcedimiento decisionProcedimiento : decisionProcedimientoManager.getList(idProcedimiento)) {
-				
-				if(decisionProcedimiento.getParalizada()) {
-					
-					if(decisionParalizacion != null) {
-						if(decisionProcedimiento.getAuditoria().getFechaCrear().after(decisionParalizacion.getAuditoria().getFechaCrear())) {
-							decisionParalizacion = decisionProcedimiento;
-						}
-					}
-					else {
-						decisionParalizacion = decisionProcedimiento;
-					}
-				}
-			}
-			
-			if(decisionParalizacion != null && decisionParalizacion.getEntidad() != null && !"".equals(decisionParalizacion.getEntidad())) {				
-				return decisionParalizacion.getEntidad().equals(usuarioManager.getUsuarioLogado().getEntidad().getDescripcion());
-			}
-			
-			return true;
-		}
-
-		return false;
-	}
-
-	@Override
-	@BusinessOperation(MEJ_BO_PRC_DESPARALIZAR)
-	@Transactional(readOnly = false)
-	public void desparalizarProcedimiento(Long idProcedimiento) {
-		MEJProcedimiento prc = genericDao.get(MEJProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", idProcedimiento),
-				genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-		if (prc != null) {
-			Map<String, Object> variables = new HashMap<String, Object>();
-
-			if (!Checks.esNulo(prc.getPlazoParalizacion())) {
-				// FIXME Poner la constante PLAZO_TAREAS_DEFAULT en alg�n sitio
-				variables.put("PLAZO_TAREA_DEFAULT", prc.getPlazoParalizacion());
-			}
-			
-			// Antes de desparalizar las tareas hay que comprobar que no haya recursos pendientes
-			boolean recSinFinalizar = false;
-			List<Recurso> listRecProc = recursoDao.getRecursosPorProcedimiento(idProcedimiento);
-			
-			if (listRecProc != null){
-				for (Recurso rec : listRecProc) {
-					if(Checks.esNulo(rec.getResultadoResolucion())){
-						recSinFinalizar = true;
-					}
-				}
-			}
-			
-			if (!recSinFinalizar){
-				jbpmUtil.addVariablesToProcess(prc.getProcessBPM(), variables);
-				jbpmUtil.activarProcesosBPM(prc.getProcessBPM());
-			}
-			
-			GregorianCalendar fechaParalizacion = new GregorianCalendar();
-			fechaParalizacion.setTime(prc.getFechaUltimaParalizacion());
-
-			prc.setEstaParalizado(false);
-			prc.setFechaUltimaParalizacion(null);
-			prc.setPlazoParalizacion(null);
-
-			genericDao.save(MEJProcedimiento.class, prc);
-			
-			
-		}
-
 	}
 
 	@BusinessOperation(overrides = ExternaBusinessOperation.BO_PRC_MGR_SALVAR_PROCEDIMIMENTO)

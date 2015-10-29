@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20151027
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.8
---## INCIDENCIA_LINK=
+--## INCIDENCIA_LINK=CMREC-884
 --## PRODUCTO=SI
 --##
 --## Finalidad: Se crean los campos para guardar la entidad desde la que se ha tomado la decisión y la comunicación entre recoverys

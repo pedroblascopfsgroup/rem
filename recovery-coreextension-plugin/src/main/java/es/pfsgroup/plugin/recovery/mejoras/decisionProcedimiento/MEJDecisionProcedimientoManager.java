@@ -30,7 +30,6 @@ import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.asunto.model.DDTipoActuacion;
 import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.asunto.model.ProcedimientoFAKE;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
@@ -592,7 +591,7 @@ public class MEJDecisionProcedimientoManager extends
 
 		Procedimiento procedimiento = prcManager.getProcedimiento(dtoDecisionProcedimiento.getIdProcedimiento());
 		DecisionProcedimiento decision = dtoDecisionProcedimiento.getDecisionProcedimiento();
-		
+
 		boolean estabaPropuesto = decision !=null 
 				&& decision.getEstadoDecision() != null 
 				&& decision.getEstadoDecision().getCodigo().equals(DDEstadoDecision.ESTADO_PROPUESTO);
@@ -689,13 +688,10 @@ public class MEJDecisionProcedimientoManager extends
 			if (decision.getFinalizada()) {
 				// FINALIZADO:Parar definitivamente el procedimiento origen
 				try {
-
-					ProcedimientoFAKE procedimiento2 = genericDao.get(ProcedimientoFAKE.class, genericDao.createFilter(FilterType.EQUALS,  "id", procedimiento.getId()));
 					DDEstadoProcedimiento estadoFin = (DDEstadoProcedimiento)diccionarioApi
 							.dameValorDiccionarioByCod(DDEstadoProcedimiento.class, DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO); 
-			 		procedimiento2.setEstadoProcedimiento(estadoFin);
-					genericDao.save(ProcedimientoFAKE.class, procedimiento2);
-					procedimiento = genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS,  "id", procedimiento.getId()));
+			 		procedimiento.setEstadoProcedimiento(estadoFin);
+					genericDao.save(Procedimiento.class, procedimiento);
 					
     				jbpmUtil.finalizarProcedimiento(procedimiento.getId());
 

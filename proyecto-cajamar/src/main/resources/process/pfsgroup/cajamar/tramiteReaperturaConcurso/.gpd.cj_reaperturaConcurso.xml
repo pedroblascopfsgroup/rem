@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="cj_reaperturaConcurso" width="1108" height="746">
+  <node name="Inicio" x="296" y="28" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H043_AutoDeclarandoConcurso" x="247" y="130" width="227" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-287" h1="0" w2="-88" h2="-579"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H043_ActualizarInsinuacionCreditos" x="224" y="264" width="274" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-250" h1="3" w2="-50" h2="-442"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="184" h1="-135" w2="185" h2="-1"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H043_RevisarInsinuacionCreditos" x="238" y="405" width="245" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-225" h1="-2" w2="-23" h2="-306"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="221" h1="-138" w2="213" h2="3"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H043_RevisarInsinuacionCreditosDecision" x="224" y="506" width="273" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H043_RectificarInsinuacionCreditos" x="580" y="514" width="279" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="264" h1="-1" w2="822" h2="-196"/>
+      <bendpoint w1="262" h1="194" w2="820" h2="-1"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H043_ReaperturaGesConDecision" x="221" y="620" width="284" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H043_ReaperturaGesHREDecision" x="587" y="621" width="266" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="95" y="709" width="132" height="36"/>
+</root-container>

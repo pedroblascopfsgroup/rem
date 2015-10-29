@@ -8,6 +8,7 @@ import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.bo.Executor;
+import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
@@ -33,6 +34,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicatari
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 //public class SubastaV4HayaConcursalLeaveActionHandler extends SubastaV4LeaveActionHandler {
 public class SubastaV4HayaConcursalLeaveActionHandler extends PROGenericLeaveActionHandler {
@@ -53,6 +55,9 @@ public class SubastaV4HayaConcursalLeaveActionHandler extends PROGenericLeaveAct
 	@Autowired
 	private JBPMProcessManager jbpmUtil;
 
+    @Autowired
+    private IntegracionBpmService bpmIntegracionService;
+	
 	private ExecutionContext executionContext;
 
 	private final String SALIDA_ETIQUETA = "DecisionRama_%d";
@@ -65,6 +70,17 @@ public class SubastaV4HayaConcursalLeaveActionHandler extends PROGenericLeaveAct
 		super.process(delegateTransitionClass, delegateSpecificClass, executionContext);
 		this.executionContext = executionContext;
 
+		String transition = executionContext.getTransition().getName();
+		Boolean transicionTemporal = (
+				transition.equals(BPMContants.TRANSICION_PRORROGA) || 
+				transition.equals(BPMContants.TRANSICION_FIN) || 
+				transition.equals(BPMContants.TRANSICION_APLAZAR_TAREAS) || 
+				transition.equals(BPMContants.TRANSICION_PARALIZAR_TAREAS) || 
+				transition.equals(BPMContants.TRANSICION_ACTIVAR_TAREAS));
+		if (transicionTemporal) {
+			return;
+		}
+		
 		avanzamosEstadoSubasta();
 	}
 
@@ -169,12 +185,13 @@ public class SubastaV4HayaConcursalLeaveActionHandler extends PROGenericLeaveAct
 			}
 		}
 
-		genericDao.save(Subasta.class, sub);		
+		genericDao.save(Subasta.class, sub);
+		bpmIntegracionService.enviarDatos(sub);
 	}
 	
 	private void cambiaEstadoSubasta(Subasta sub, String estado) {
 		if (!Checks.esNulo(sub.getEstadoSubasta().getCodigo()) && 
-				(DDEstadoSubasta.CEL.compareTo(sub.getEstadoSubasta().getCodigo()) != 0 || 
+				(DDEstadoSubasta.CEL.compareTo(sub.getEstadoSubasta().getCodigo()) != 0 && 
 				DDEstadoSubasta.SUS.compareTo(sub.getEstadoSubasta().getCodigo()) != 0)) {
 			DDEstadoSubasta esu = genericDao.get(DDEstadoSubasta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estado), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 			sub.setEstadoSubasta(esu);

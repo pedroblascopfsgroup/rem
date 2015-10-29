@@ -56,26 +56,22 @@
         });
     
    var revisionCuotaRenderer = function(value) {  
-   		debugger; 
    		var valueRendered = parseInt(value)/100;   		
    		return Ext.isEmpty(valueRendered) ? "" : valueRendered.toFixed(3).replace(".", app.format.DECIMAL_SEPARATOR);
    }; 
    
    var tipoRenderer = function(value) {
-   		debugger;   
    		var valueRendered = value;
    		
    		return Ext.isEmpty(valueRendered) ? "0,000" : valueRendered.toFixed(3).replace(".", ",");
    }; 
    
    var razonProgresionRenderer = function(value) {
-   		debugger;   
    		var valueRendered = parseInt(value)/100;
    		return Ext.isEmpty(valueRendered) ? "" : valueRendered.toFixed(3).replace(".", app.format.DECIMAL_SEPARATOR);
    };
    
    var cuotaRenderer = function(value) {
-   		debugger;   
    		var valueRendered = value;
    		return Ext.isEmpty(valueRendered) ? "0,00" : valueRendered.toFixed(2).replace(".", ",");
    }; 

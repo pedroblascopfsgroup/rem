@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="" name="cj_tramiteMoratoriaLanzamiento">
+
+	<start-state name="Inicio">
+		<transition to="CJ011_RegistrarSolicitudMoratoria" name="iniciarProceso"></transition>
+	</start-state>
+   
+	<state name="CJ011_RegistrarSolicitudMoratoria">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>adjudicacionHayaLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="CJ011_RegistrarSolicitudMoratoria" name="activarAlerta"></transition>
+		<transition to="CJ011_RegistrarAdmisionYEmplazamiento" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+	
+	<state name="CJ011_RegistrarAdmisionYEmplazamiento">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="CJ011_RegistrarAdmisionYEmplazamiento" name="activarAlerta"></transition>	
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ011_RegistrarSolicitudMoratoria" name="vueltaAtras"></transition>
+		<transition to="CJ011_RegistrarInformeMoratoria" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="CJ011_RegistrarInformeMoratoria">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="CJ011_RegistrarInformeMoratoria" name="activarAlerta"></transition>	
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ011_RegistrarAdmisionYEmplazamiento" name="vueltaAtras"></transition>
+		<transition to="CJ011_RevisarInformeLetradoMoratoria" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="CJ011_RevisarInformeLetradoMoratoria">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="CJ011_RevisarInformeLetradoMoratoria" name="activarAlerta"></transition>	
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ011_RegistrarInformeMoratoria" name="vueltaAtras"></transition>
+		<transition to="CJ011_LecturaInstruccionesMoratoria" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="CJ011_LecturaInstruccionesMoratoria">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="CJ011_LecturaInstruccionesMoratoria" name="activarAlerta"></transition>	
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ011_RevisarInformeLetradoMoratoria" name="vueltaAtras"></transition>
+		<transition to="CJ011_LecturaInstruccionesMoratoriaDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="CJ011_LecturaInstruccionesMoratoriaDecision" expression="#{CJ011_LecturaInstruccionesMoratoriaDecision}">
+		<transition to="CJ011_CelebracionVista" name="HayVista"></transition>
+		<transition to="CJ011_RegistrarResolucion" name="NoHayVista"></transition>
+		<transition to="CJ011_PresentarConformidadMoratoria" name="PresentarConformidad"></transition>
+	</decision>
+	
+	<state name="CJ011_CelebracionVista">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="CJ011_CelebracionVista" name="activarAlerta"></transition>	
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ011_LecturaInstruccionesMoratoria" name="vueltaAtras"></transition>
+		<transition to="CJ011_RegistrarResolucion" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="CJ011_RegistrarResolucion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>adjudicacionHayaLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="CJ011_RegistrarResolucion" name="activarAlerta"></transition>	
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ011_LecturaInstruccionesMoratoria" name="vueltaAtras"></transition>
+		<transition to="CJ011_RegistrarResolucionDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="CJ011_PresentarConformidadMoratoria">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="CJ011_PresentarConformidadMoratoria" name="activarAlerta"></transition>	
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ011_LecturaInstruccionesMoratoria" name="vueltaAtras"></transition>
+		<transition to="CJ011_RegistrarResolucion" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="CJ011_SolicitarInstrucciones">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="CJ011_SolicitarInstrucciones" name="activarAlerta"></transition>	
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ011_RegistrarResolucion" name="vueltaAtras"></transition>
+		<transition to="CJ011_InstruccionesDecision" name="avanzaBPM"></transition>
+	</state>	
+	
+	<node name="CJ011_InstruccionesDecision">
+		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+         	<targetBean>genericUserDecisionActionHandler</targetBean>
+      	</action>
+		<transition to="Fin"></transition>
+	</node>
+
+	<node name="estamosADosMeses">
+		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+         	<targetBean>estamosADosMesesHandler</targetBean>
+      	</action>
+		<transition to="CJ011_SolicitarInstrucciones" name="avanzaBPM"></transition>
+	</node>
+
+	<decision name="CJ011_RegistrarResolucionDecision" expression="#{CJ011_RegistrarResolucionDecision}">
+		<transition to="estamosADosMeses" name="Desfavorable"></transition>
+		<transition to="Fin" name="Favorable"></transition>
+	</decision>
+	
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+</process-definition>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="hcj_solicitudSolvenciaPatrimonial" width="1045" height="887">
+  <node name="Inicio" x="336" y="34" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC104_SolicitarSolvenciaPatrimonial" x="249" y="123" width="307" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="455" h1="2" w2="2" h2="-235"/>
+    </edge>
+  </node>
+  <node name="HC104_RegistrarResultadoSolvencia" x="239" y="224" width="330" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-276" h1="-103" w2="-274" h2="-2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="162" h1="-12" w2="-339" h2="-144"/>
+      <bendpoint w1="429" h1="-11" w2="-72" h2="-143"/>
+    </edge>
+  </node>
+  <node name="HC104_RegistrarResultadoSolvenciaDecision" x="234" y="323" width="339" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC104_SolicitudSolvenciaPatrimonial" x="41" y="436" width="311" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-169" h1="285" w2="-878" h2="365"/>
+      <bendpoint w1="805" h1="287" w2="149" h2="308"/>
+    </edge>
+  </node>
+  <node name="HC104_RevisarSolvencia" x="460" y="436" width="227" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-70" y="-10"/>
+      <bendpoint w1="86" h1="-209" w2="255" h2="3"/>
+    </edge>
+  </node>
+  <node name="HC104_AutorizarPropuestaDecision" x="433" y="643" width="283" height="36">
+    <edge>
+      <label x="-33" y="-12"/>
+      <bendpoint w1="266" h1="2" w2="-67" h2="292"/>
+    </edge>
+    <edge>
+      <label x="-19" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC104_AutorizarPropuesta" x="437" y="546" width="274" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="9" y="-13"/>
+    </edge>
+    <edge>
+      <label x="-49" y="-10"/>
+      <bendpoint w1="191" h1="-1" w2="-20" h2="266"/>
+    </edge>
+  </node>
+  <node name="Fin" x="839" y="356" width="132" height="36"/>
+  <node name="HC104_DecisionGestorContencioso" x="94" y="640" width="251" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-1" h1="68" w2="-687" h2="352"/>
+      <bendpoint w1="720" h1="67" w2="34" h2="351"/>
+    </edge>
+  </node>
+</root-container>

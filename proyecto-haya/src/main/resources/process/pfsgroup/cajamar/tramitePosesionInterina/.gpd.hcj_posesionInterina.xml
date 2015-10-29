@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="hcj_posesionInterina" width="1883" height="1375">
+  <node name="Inicio" x="444" y="7" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC105_SolicitudPosesionInterina" x="393" y="98" width="235" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-478" h1="3" w2="-472" h2="-503"/>
+      <bendpoint w1="-479" h1="505" w2="-473" h2="-1"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC105_DecretoAdmision" x="404" y="220" width="214" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-457" h1="0" w2="-450" h2="-384"/>
+      <bendpoint w1="-456" h1="379" w2="-449" h2="-5"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-214" h1="-113" w2="-216" h2="12"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC105_DecretoAdmisionDecision" x="392" y="325" width="234" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-105" y="-9"/>
+    </edge>
+    <edge>
+      <label x="-85" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-184" y="-6"/>
+    </edge>
+  </node>
+  <node name="HC015_DecisionLetrado" x="759" y="146" width="203" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-5" h1="683" w2="822" h2="4"/>
+    </edge>
+  </node>
+  <node name="HC105_NotificacionOcupante" x="171" y="447" width="200" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="1" h1="-135" w2="-239" h2="92"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC105_RegistrarFechaPosesionInterina" x="374" y="534" width="270" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-258" h1="-4" w2="218" h2="-295"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC105_RendicionCuentasSecretarioJudicial" x="362" y="657" width="294" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-334" h1="-3" w2="142" h2="-171"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-234" h1="-109" w2="-234" h2="14"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC105_AprobacionRendicionCuentas" x="378" y="778" width="264" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-247" h1="-111" w2="-246" h2="10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC105_AprobacionRendicionCuentasDecision" x="350" y="895" width="319" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="361" h1="-1" w2="10" h2="748"/>
+    </edge>
+  </node>
+  <node name="HC105_PresentacionRendicionCuentas" x="1078" y="325" width="276" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="379" h1="-1" w2="10" h2="-710"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC105_RegistrarNotificacionRendicionCuentas" x="1060" y="445" width="313" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="363" h1="-1" w2="0" h2="-591"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-241" h1="-105" w2="-241" h2="15"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC105_RegistrarDisconformidadEjecutado" x="1069" y="560" width="295" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="333" h1="1" w2="-18" h2="-472"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="235" h1="-106" w2="235" h2="9"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC105_RegistrarDisconformidadEjecutadoDecision" x="1038" y="663" width="353" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="327" h1="1" w2="-44" h2="-370"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-287" h1="1" w2="-289" h2="339"/>
+      <bendpoint w1="-292" h1="-325" w2="-294" h2="13"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC105_AlegacionesDisconformidad" x="1084" y="774" width="261" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="315" h1="2" w2="-41" h2="-261"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-43" y="81"/>
+      <bendpoint w1="184" h1="-10" w2="197" h2="201"/>
+      <bendpoint w1="184" h1="-202" w2="197" h2="9"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC105_AlegacionesDisconformidadDecision" x="1051" y="882" width="321" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="327" h1="-2" w2="-32" h2="-157"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-331" h1="-15" w2="-321" h2="539"/>
+      <bendpoint w1="-342" h1="-549" w2="-332" h2="5"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC105_ConfirmaFechaVista" x="1097" y="995" width="229" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="51" y="85"/>
+      <bendpoint w1="-253" h1="-2" w2="-236" h2="220"/>
+      <bendpoint w1="-255" h1="-222" w2="-238" h2="0"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC105_CelebracionVista" x="1082" y="1102" width="258" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-215" h1="-97" w2="-216" h2="11"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC105_RegistrarResolucion" x="1094" y="1221" width="232" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-230" h1="-118" w2="-231" h2="1"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC105_RegistrarResolucionDecision" x="1073" y="1338" width="273" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-323" h1="-4" w2="26" h2="1188"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="450" h1="0" w2="458" h2="1012"/>
+      <bendpoint w1="449" h1="-1030" w2="457" h2="-18"/>
+    </edge>
+  </node>
+  <node name="Fin" x="-33" y="825" width="132" height="36"/>
+  <node name="Fin2" x="1519" y="1034" width="132" height="36"/>
+</root-container>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="hcj_tramiteConsignacion" width="1045" height="568">
+  <node name="Inicio" x="15" y="11" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H064_solicitarAutorizacionConsignacionSareb" x="15" y="81" width="299" height="48">
+    <edge>
+      <label x="5" y="-22"/>
+    </edge>
+    <edge>
+      <label x="1" y="-12"/>
+      <bendpoint w1="33" h1="24" w2="33" h2="24"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H064_resultadoSolicitudConsignacion" x="20" y="185" width="279" height="43">
+    <edge>
+      <label x="-21" y="-22"/>
+    </edge>
+    <edge>
+      <label x="3" y="-9"/>
+      <bendpoint w1="39" h1="22" w2="39" h2="22"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-138" h1="-48" w2="-143" h2="53"/>
+    </edge>
+  </node>
+  <node name="H064_confirmarRealizacionConsignacion" x="25" y="382" width="278" height="43">
+    <edge>
+      <label x="-28" y="-18"/>
+      <bendpoint w1="505" h1="21" w2="-52" h2="198"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="32" h1="22" w2="32" h2="22"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="3" y="25"/>
+      <bendpoint w1="-154" h1="-60" w2="-149" h2="137"/>
+      <bendpoint w1="-153" h1="-154" w2="-148" h2="43"/>
+    </edge>
+  </node>
+  <node name="H064_presentacionJuzgado" x="43" y="517" width="239" height="44">
+    <edge>
+      <label x="-5" y="-21"/>
+      <bendpoint w1="541" h1="12" w2="-18" h2="325"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-138" h1="-55" w2="-141" h2="60"/>
+    </edge>
+    <edge>
+      <label x="-187" y="-20"/>
+      <bendpoint w1="503" h1="-17" w2="-56" h2="296"/>
+    </edge>
+  </node>
+  <node name="H064_resultadoSolicitudConsignacionDecision" x="21" y="275" width="308" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-30" y="-23"/>
+    </edge>
+  </node>
+  <node name="Fin" x="655" y="208" width="132" height="36"/>
+</root-container>

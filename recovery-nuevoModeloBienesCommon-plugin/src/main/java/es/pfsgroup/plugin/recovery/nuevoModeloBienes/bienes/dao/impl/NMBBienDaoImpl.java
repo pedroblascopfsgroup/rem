@@ -229,7 +229,8 @@ public class NMBBienDaoImpl extends AbstractEntityDao<NMBBien, Long> implements 
 				+ usuLogado.getId() + "))";
 		//String multigestor = " (asu.id in (select gaa.asunto.id from EXTGestorAdicionalAsunto gaa where gaa.gestor.usuario.id = "+ +usuLogado.getId() + "))";
 		
-		String multigestor = filtroGestorGrupo(extGrupoUsuariosDao.getIdsUsuariosGrupoUsuario(usuLogado));
+		List<Long> idsGrpUsuario = extGrupoUsuariosDao.buscaGruposUsuario(usuLogado);
+		String multigestor = filtroGestorGrupo(idsGrpUsuario);
 		if(!Checks.esNulo(multigestor)){
 			return " and (" + monogestor + " or " + multigestor + ")";
 		}

@@ -44,6 +44,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
@@ -87,6 +88,9 @@ public class coreextensionManager implements coreextensionApi {
 	
 	@Autowired
 	EXTDDTipoGestorManager tipoGestorManager;
+	
+	@Autowired
+	CoreProjectContext coreProjectContext;
 	
 	@Override
 	@BusinessOperation(GET_LIST_TIPO_GESTOR)
@@ -384,7 +388,7 @@ public class coreextensionManager implements coreextensionApi {
 	private List<TipoProcedimiento> eliminarOpcionTramiteSubastaByPropiedadAsunto(List<TipoProcedimiento> listado) {
 		
 		
-		return null;
+		return listado;
 	}
 
 	@Override
@@ -416,17 +420,23 @@ public class coreextensionManager implements coreextensionApi {
 		// Todos los despachos
 		List<DespachoExterno> listaDespachos = getListDespachos(idTipoGestor);
 
-		// TODO: Esto hay que mejorarlo porque está hardcodeado GEST
+		
 		if (adicional) {
-			EXTDDTipoGestor tipoGestoria = tipoGestorManager.getByCod("GEST");
-			if (idTipoGestor.equals(tipoGestoria.getId())) 
-				return listaDespachos;
+			List<EXTDDTipoGestor> tiposGestorias = tipoGestorManager.getByListCod(coreProjectContext.getTiposGestorGestoria());
+			for(EXTDDTipoGestor gestoria : tiposGestorias){
+				if (gestoria.getId().equals(idTipoGestor)){
+					return listaDespachos;
+				}
+			}
 		}
 		
 		if (procuradorAdicional) {
-			EXTDDTipoGestor tipoGestoria = tipoGestorManager.getByCod("PROC");
-			if (idTipoGestor.equals(tipoGestoria.getId())) 
-				return listaDespachos;
+			List<EXTDDTipoGestor> tiposProcurador = tipoGestorManager.getByListCod(coreProjectContext.getTiposGestorProcurador());
+			for(EXTDDTipoGestor procurador : tiposProcurador){
+				if (procurador.getId().equals(idTipoGestor)){
+					return listaDespachos;
+				}
+			}
 		}
 		
 		// quitamos los que no puede ver.
@@ -482,14 +492,14 @@ public class coreextensionManager implements coreextensionApi {
 			// Si estamos hablando de datos adicionales "GEST" no se elimina
 			// TODO: Esto hay que mejorarlo porque está hardcodeado GEST
 			if (adicional &&
-					tipoGestor.getCodigo().equals("GEST") &&
+					coreProjectContext.getTiposGestorGestoria().contains(tipoGestor.getCodigo()) &&
 					!encontrados.contains(tipoGestor)) {
 				encontrados.add(tipoGestor);
 				continue;
 			}
 			// Si estamos hablando de datos procuradores adicionales "PROC" no se elimina
 			if (procuradorAdicional &&
-					tipoGestor.getCodigo().equals("PROC") &&
+					coreProjectContext.getTiposGestorProcurador().contains(tipoGestor.getCodigo()) &&
 					!encontrados.contains(tipoGestor)) {
 				encontrados.add(tipoGestor);
 				continue;
@@ -550,17 +560,20 @@ public class coreextensionManager implements coreextensionApi {
 				if (!Checks.esNulo(prc)) {
 					EXTAsunto asu = genericDao.get(EXTAsunto.class, genericDao.createFilter(FilterType.EQUALS, "id", prc.getAsunto().getId()));
 					String eliminar;
-					propiedad = asu.getPropiedadAsunto().getCodigo();
-					if (DDPropiedadAsunto.PROPIEDAD_BANKIA.equals(propiedad)) {
-						eliminar = "P409";
-					} else {
-						eliminar = "P401";
-					}
-					for (TipoProcedimiento tipo : list)
-						if (eliminar.equals(tipo.getCodigo())) {
-							list.remove(tipo);
-							break;
+					if(!Checks.esNulo(asu.getPropiedadAsunto())){
+						propiedad = asu.getPropiedadAsunto().getCodigo();
+						if (DDPropiedadAsunto.PROPIEDAD_BANKIA.equals(propiedad)) {
+							eliminar = "P409";
+						} else {
+							eliminar = "P401";
 						}
+						for (TipoProcedimiento tipo : list){
+							if (eliminar.equals(tipo.getCodigo())) {
+								list.remove(tipo);
+								break;
+							}
+						}
+					}
 				}
 			}
 			return list;

@@ -34,6 +34,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicatari
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 //public class SubastaV4HayaLeaveActionHandler extends SubastaV4LeaveActionHandler {
 public class SubastaV4HayaLeaveActionHandler extends
@@ -64,6 +65,9 @@ public class SubastaV4HayaLeaveActionHandler extends
 	private SubastaCalculoManager subastaCalculoManager;
 
 	private ExecutionContext executionContext;
+	
+    @Autowired
+    private IntegracionBpmService bpmIntegracionService;
 
 	private final String SALIDA_ETIQUETA = "DecisionRama_%d";
 	private final String SALIDA_SI = "si";
@@ -76,24 +80,29 @@ public class SubastaV4HayaLeaveActionHandler extends
 		super.process(delegateTransitionClass, delegateSpecificClass,
 				executionContext);
 		this.executionContext = executionContext;
-
-		Boolean tareaTemporal = (executionContext.getTransition().getName()
-				.equals(BPMContants.TRANSICION_PARALIZAR_TAREAS) || executionContext
-				.getTransition().getName()
-				.equals(BPMContants.TRANSICION_ACTIVAR_TAREAS));
-		if (!tareaTemporal) {
-			Procedimiento procedimiento = getProcedimiento(executionContext);
-			TareaExterna tareaExterna = getTareaExterna(executionContext);
-			if (tareaExterna != null
-					&& tareaExterna.getTareaProcedimiento() != null
-					&& (TAP_SOLICITUD_SUBASTA_SAREB.equals(tareaExterna
-							.getTareaProcedimiento().getCodigo()) || TAP_SENYALAMIENTO_SUBASTA_SAREB
-							.equals(tareaExterna.getTareaProcedimiento()
-									.getCodigo()))) {
-				subastaCalculoManager.actualizarTipoSubasta(procedimiento);
-			}
-			avanzamosEstadoSubasta();
+		
+		String transition = executionContext.getTransition().getName();
+		Boolean transicionTemporal = (
+				transition.equals(BPMContants.TRANSICION_PRORROGA) || 
+				transition.equals(BPMContants.TRANSICION_FIN) || 
+				transition.equals(BPMContants.TRANSICION_APLAZAR_TAREAS) || 
+				transition.equals(BPMContants.TRANSICION_PARALIZAR_TAREAS) || 
+				transition.equals(BPMContants.TRANSICION_ACTIVAR_TAREAS));
+		if (transicionTemporal) {
+			return;
 		}
+		
+		Procedimiento procedimiento = getProcedimiento(executionContext);
+		TareaExterna tareaExterna = getTareaExterna(executionContext);
+		if (tareaExterna != null
+				&& tareaExterna.getTareaProcedimiento() != null
+				&& (TAP_SOLICITUD_SUBASTA_SAREB.equals(tareaExterna
+						.getTareaProcedimiento().getCodigo()) || TAP_SENYALAMIENTO_SUBASTA_SAREB
+						.equals(tareaExterna.getTareaProcedimiento()
+								.getCodigo()))) {
+			subastaCalculoManager.actualizarTipoSubasta(procedimiento);
+		}
+		avanzamosEstadoSubasta();
 	}
 
 	@Transactional
@@ -226,12 +235,13 @@ public class SubastaV4HayaLeaveActionHandler extends
 		}
 
 		genericDao.save(Subasta.class, sub);
+		bpmIntegracionService.enviarDatos(sub);
 	}
 
 	private void cambiaEstadoSubasta(Subasta sub, String estado) {
 		if (!Checks.esNulo(sub.getEstadoSubasta().getCodigo())
 				&& (DDEstadoSubasta.CEL.compareTo(sub.getEstadoSubasta()
-						.getCodigo()) != 0 || DDEstadoSubasta.SUS.compareTo(sub.getEstadoSubasta()
+						.getCodigo()) != 0 && DDEstadoSubasta.SUS.compareTo(sub.getEstadoSubasta()
 								.getCodigo()) != 0)) {
 			DDEstadoSubasta esu = genericDao.get(DDEstadoSubasta.class,
 					genericDao

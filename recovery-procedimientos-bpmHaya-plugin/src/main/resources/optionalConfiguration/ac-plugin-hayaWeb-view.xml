@@ -18,4 +18,11 @@
 		p:fileName="/WEB-INF/jsp/plugin/mejoras/asuntos/tabs/tabHistoricoAsunto.jsp"
 		p:priority="2" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
 	
+	<!-- Ficha bien -->
+		
+	<bean p:entity="bien.tabs" p:name="tabCabeceraBien" p:order="10"
+		p:fileName="/WEB-INF/jsp/plugin/cajamar/bienes/tabs/tabCabecera.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+	
+	
 </beans>

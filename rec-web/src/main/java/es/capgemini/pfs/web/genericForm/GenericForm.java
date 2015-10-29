@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 
 public class GenericForm implements Serializable {
@@ -27,6 +28,8 @@ public class GenericForm implements Serializable {
 
     private String view = "generico/genericForm";
 
+    private boolean readOnly = false;
+    
     public void setView(String view) {
         if (!StringUtils.isBlank(view)) this.view = view;
     }
@@ -130,5 +133,13 @@ public class GenericForm implements Serializable {
     public String getErrorValidacion() {
         return errorValidacion;
     }
+
+	public boolean isReadOnly() {
+		return readOnly;
+	}
+
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
+	}
 
 }

@@ -19,7 +19,7 @@
 	var username = new Ext.form.TextField({
 		fieldLabel:'<s:message code="plugin.config.usuarios.field.username" text="**Username" />'
 		,value:'${usuario.username}'
-		,maxLength:10
+		,maxLength:50
 		,width :175
 		,allowBlank: false	
 	});

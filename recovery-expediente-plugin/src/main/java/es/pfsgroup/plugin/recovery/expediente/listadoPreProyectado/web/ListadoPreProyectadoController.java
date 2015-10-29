@@ -119,7 +119,7 @@ public class ListadoPreProyectadoController {
 			filaExportar.add(ObjectUtils.toString(row.getTramo())); 	//Tramo
 			filaExportar.add(ObjectUtils.toString(row.getDiasVencidos())); 	//Dias vencidos
 			filaExportar.add(ObjectUtils.toString(row.getFechaPaseAMoraCnt())); 	//Fecha pase a mora
-			filaExportar.add(ObjectUtils.toString(row.getnPropuestas())); 	//Propuesta
+			filaExportar.add(ObjectUtils.toString(row.getPropuesta())); 	//Propuesta
 			filaExportar.add(ObjectUtils.toString(row.getEstadoGestion())); 	//Estado Gestion
 			filaExportar.add(ObjectUtils.toString(row.getFechaPrevReguCnt())); 	//Fecha prevista regularizacion
 			

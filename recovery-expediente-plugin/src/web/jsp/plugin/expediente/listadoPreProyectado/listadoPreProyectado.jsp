@@ -190,7 +190,7 @@
 		//,allowDecimals: false
 		//,allowNegative: false
 		,style : 'margin:0px'
-		,autoCreate : {tag: "input", type: "text",maxLength:"16", autocomplete: "off"}
+		,autoCreate : {tag: "input", type: "text",maxLength:"50f", autocomplete: "off"}
 		//,vtype:'numeric'
 		
 		});

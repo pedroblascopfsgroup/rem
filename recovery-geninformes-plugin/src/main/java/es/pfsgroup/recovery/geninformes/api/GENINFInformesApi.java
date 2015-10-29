@@ -20,6 +20,7 @@ public interface GENINFInformesApi {
 	public static final String MSV_BO_GENERAR_INFORME_PDF = "es.pfsgroup.plugin.recovery.masivo.api.generarInformePDF";
 	public static final String MSV_GENERAR_ESCRITO_VARIABLES = "es.pfsgroup.plugin.recovery.masivo.api.generarEscritoConVariables";
 	public static final String MSV_GENERAR_ESCRITO_DOCX_FROM_HTML = "es.pfsgroup.plugin.recovery.masivo.api.createDocxFileFromHtmlText";
+	public static final String MSV_GENERAR_ESCRITO_PDF_FROM_HTML = "es.pfsgroup.plugin.recovery.masivo.api.createPdfFileFromHtmlText";
 	
 	
 	
@@ -73,5 +74,8 @@ public interface GENINFInformesApi {
 	
 	@BusinessOperationDefinition(MSV_GENERAR_ESCRITO_DOCX_FROM_HTML)
 	InputStream createDocxFileFromHtmlText(String htmlText,String nombreFichero) throws Exception;
+	
+	@BusinessOperationDefinition(MSV_GENERAR_ESCRITO_PDF_FROM_HTML)
+	InputStream createPdfFileFromHtmlText(String htmlText,String nombreFichero) throws Exception;
 
 }

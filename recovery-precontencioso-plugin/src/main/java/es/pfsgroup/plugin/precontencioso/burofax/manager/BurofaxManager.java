@@ -1,7 +1,11 @@
 package es.pfsgroup.plugin.precontencioso.burofax.manager;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,6 +19,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.lowagie.text.pdf.codec.Base64.OutputStream;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
@@ -32,6 +38,7 @@ import es.capgemini.pfs.direccion.api.DireccionApi;
 import es.capgemini.pfs.direccion.dto.DireccionAltaDto;
 import es.capgemini.pfs.direccion.model.Direccion;
 import es.capgemini.pfs.movimiento.model.Movimiento;
+import es.capgemini.pfs.parametrizacion.dao.ParametrizacionDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.utils.FormatUtils;
@@ -89,7 +96,11 @@ public class BurofaxManager implements BurofaxApi {
 	@Autowired
 	LiquidacionDao liquidacionDao; 
 	
+	@Autowired
+	ParametrizacionDao parametrizacionDao;
+	
 	private final Log logger = LogFactory.getLog(getClass());
+	private final String DIRECTORIO_PDF_BUROFAX_PCO = "directorioPdfBurofaxPCO";
 
 	@Override
 	@BusinessOperation(TIPO_BUROFAX_DEFAULT)
@@ -477,6 +488,47 @@ public class BurofaxManager implements BurofaxApi {
 				if(precontenciosoContext.isGenerarArchivoBurofax()){
 					FileItem archivoBurofax=generarDocumentoBurofax(envioBurofax);
 					envioIntegracion.setArchivoBurofax(archivoBurofax);
+					
+					InputStream inputStream = archivoBurofax.getInputStream();
+					FileOutputStream outputStream = null;
+					String directorio = parametrizacionDao.buscarParametroPorNombre(DIRECTORIO_PDF_BUROFAX_PCO).getValor();
+
+					try {
+
+						// write the inputStream to a FileOutputStream
+						outputStream = new FileOutputStream(new File(directorio+"/pruebaPCO.docx"));
+
+						int read = 0;
+						byte[] bytes = new byte[1024];
+
+						while ((read = inputStream.read(bytes)) != -1) {
+							outputStream.write(bytes, 0, read);
+						}
+
+						
+
+					} catch (IOException e) {
+						e.printStackTrace();
+					} finally {
+						if (inputStream != null) {
+							try {
+								inputStream.close();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+						if (outputStream != null) {
+							try {
+								// outputStream.flush();
+								outputStream.close();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+
+						}
+					}
+					
+
 				}
 				else{
 					envioIntegracion.setArchivoBurofax(new FileItem(File.createTempFile("TMP", ".log")));
@@ -663,9 +715,6 @@ public class BurofaxManager implements BurofaxApi {
 			}else{
 				mapaVariables.put("bienes","[ERROR - No existe valor]");
 			}
-			
-			
-			
 			
 			
 			archivoBurofax=informesManager.generarEscritoConVariables(mapaVariables,nombreFichero,is);

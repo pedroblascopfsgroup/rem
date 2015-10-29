@@ -29,15 +29,9 @@ DECLARE
 
     V_TEXT1        VARCHAR2(2400 CHAR); -- Vble. auxiliar
     
-    TYPE T_ESQUEMA IS TABLE OF VARCHAR2(30) INDEX BY BINARY_INTEGER;
-    V_ESQUEMA_GRANT T_ESQUEMA;
 
 BEGIN
     
-    v_esquema_grant(1) := '#ESQUEMA_MASTER#';  --'BANKMASTER';
-    v_esquema_grant(2) := '#ESQUEMA_MINIREC#'; --'MINIREC';
-    v_esquema_grant(3) := '#ESQUEMA_DWH#';     --'RECOVERY_BANKIA_DWH';
-    v_esquema_grant(4) := '#ESQUEMA_STG#';     --'RECOVERY_BANKIA_DATASTAGE';
 
     -------------------------------------
     --  T_ARP_ARQ_RECOBRO_PERSONA_SIM  --
@@ -68,42 +62,18 @@ BEGIN
 					ARQ_PRIO                       NUMBER(16,0), 
 					ARQ_DATE                       TIMESTAMP (6), 
 					VERSION                        NUMBER(1,0) DEFAULT 0, 
-					USUARIOCREAR                   VARCHAR2(10 CHAR) NOT NULL ENABLE, 
-					FECHACREAR                     TIMESTAMP (6) DEFAULT SYSDATE NOT NULL ENABLE, 
+					USUARIOCREAR                   VARCHAR2(10 CHAR) NOT NULL, 
+					FECHACREAR                     TIMESTAMP (6) DEFAULT SYSDATE NOT NULL, 
 					USUARIOMODIFICAR               VARCHAR2(10 CHAR), 
 					FECHAMODIFICAR                 TIMESTAMP (6), 
 					USUARIOBORRAR                  VARCHAR2(10 CHAR), 
 					FECHABORRAR                    TIMESTAMP (6), 
-					BORRADO NUMBER(1,0)            DEFAULT 0 NOT NULL ENABLE
+					BORRADO NUMBER(1,0)            DEFAULT 0 NOT NULL
 				   )';
 	 
   
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.T_ARP_ARQ_RECOBRO_PERSONA_SIM... Tabla creada');
-
-    --** Damos permisos a otros esquemas
-    IF v_esquema_grant.count = 0 THEN
-    DBMS_OUTPUT.PUT_LINE('No existen esquemas para Grants.');
-      ELSE
-        FOR i IN v_esquema_grant.FIRST .. v_esquema_grant.LAST
-         LOOP
-          v_num_tablas := 0;
-          v_sql := 'select count(1) from all_users
-                     where username='''||v_esquema_grant(i)||'''';
-          execute immediate v_sql into v_num_tablas;
-                 
-          if v_num_tablas > 0 then
-            v_sql := 'grant select, update, delete, insert
-                         on '||v_esquema||'.T_ARP_ARQ_RECOBRO_PERSONA_SIM
-                         to '||v_esquema_grant(i);
-            DBMS_OUTPUT.PUT_LINE('[INFO]: ' || v_sql);
-            execute immediate v_sql;
-          else
-            DBMS_OUTPUT.PUT_LINE('[INFO]: Esquema '||v_esquema_grant(i)||' NO EXISTE');
-          end if;
-                 
-         END LOOP;
-    END IF;
 
     
 EXCEPTION

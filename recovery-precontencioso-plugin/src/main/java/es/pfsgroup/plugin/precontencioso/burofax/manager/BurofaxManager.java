@@ -1,11 +1,9 @@
 package es.pfsgroup.plugin.precontencioso.burofax.manager;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,8 +17,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.lowagie.text.pdf.codec.Base64.OutputStream;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
@@ -101,6 +97,7 @@ public class BurofaxManager implements BurofaxApi {
 	
 	private final Log logger = LogFactory.getLog(getClass());
 	private final String DIRECTORIO_PDF_BUROFAX_PCO = "directorioPdfBurofaxPCO";
+	private final String FICHERO_DOCUMENTO_RANKIA = "RBANKIA"; 
 
 	@Override
 	@BusinessOperation(TIPO_BUROFAX_DEFAULT)
@@ -483,6 +480,7 @@ public class BurofaxManager implements BurofaxApi {
 				envioIntegracion.setFechaEnvio(new Date());
 				envioIntegracion.setFechaAcuse(new Date());
 				envioIntegracion.setCertificado(certificado);
+				
 		
 				
 				if(precontenciosoContext.isGenerarArchivoBurofax()){
@@ -494,9 +492,11 @@ public class BurofaxManager implements BurofaxApi {
 					String directorio = parametrizacionDao.buscarParametroPorNombre(DIRECTORIO_PDF_BUROFAX_PCO).getValor();
 
 					try {
-
+						String nombreFichero = obtenerNombreFichero();
+						envioIntegracion.setNombreFichero(nombreFichero);
+						envioIntegracion.setIdAsunto(envioBurofax.getBurofax().getProcedimientoPCO().getProcedimiento().getAsunto().getId());
 						// write the inputStream to a FileOutputStream
-						outputStream = new FileOutputStream(new File(directorio+"/pruebaPCO.docx"));
+						outputStream = new FileOutputStream(new File(directorio+"/"+nombreFichero));
 
 						int read = 0;
 						byte[] bytes = new byte[1024];
@@ -543,6 +543,11 @@ public class BurofaxManager implements BurofaxApi {
 			logger.error(e);
 		}
 		
+	}
+	
+	private String obtenerNombreFichero() {
+		Long secuencia = burofaxDao.obtenerSecuenciaFicheroDocBurofax();
+		return FICHERO_DOCUMENTO_RANKIA+String.format("%011d", secuencia)+".docx";
 	}
 	
 	

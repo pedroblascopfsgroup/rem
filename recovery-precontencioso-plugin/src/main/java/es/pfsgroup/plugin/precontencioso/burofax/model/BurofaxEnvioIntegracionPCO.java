@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.precontencioso.burofax.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -11,8 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
-
-import java.util.Date;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -79,6 +78,12 @@ public class BurofaxEnvioIntegracionPCO implements Serializable, Auditable {
 	
 	@Column(name = "PCO_BUR_CERTIFICADO")
 	private Boolean certificado ;
+
+	@Column(name = "ID_ASUNTO_RCV")
+	private Long idAsunto;
+	
+	@Column(name = "PCO_BUR_FICHERO_DOC")
+	private String nombreFichero;
 	
 	@Version
 	private Integer version;
@@ -221,9 +226,22 @@ public class BurofaxEnvioIntegracionPCO implements Serializable, Auditable {
 	public void setContenido(String contenido) {
 		this.contenido = contenido;
 	}
-	
-	
 
+	public Long getIdAsunto() {
+		return idAsunto;
+	}
+	
+	public void setIdAsunto(Long idAsunto) {
+		this.idAsunto = idAsunto;
+	}
+
+	public String getNombreFichero() {
+		return nombreFichero;
+	}
+
+	public void setNombreFichero(String nombreFichero) {
+		this.nombreFichero = nombreFichero;
+	}
 	
 }
 

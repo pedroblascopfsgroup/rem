@@ -37,6 +37,8 @@ public class MEJDtoDecisionProcedimiento extends WebDto {
     private Boolean paralizar;
     private Date fechaParalizacion;
     private String comentarios="";
+    private String entidad;
+    private String guid;
 
     /**
      * constructor.
@@ -262,5 +264,21 @@ public class MEJDtoDecisionProcedimiento extends WebDto {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public String getEntidad() {
+		return entidad;
+	}
+
+	public void setEntidad(String entidad) {
+		this.entidad = entidad;
+	}
+
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
 	}
 }

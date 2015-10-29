@@ -25,7 +25,8 @@ public class DtoProcedimientoDerivado extends WebDto {
 	private Integer porcentajeRecuperacion;
 	private Integer plazoRecuperacion;
 	private BigDecimal saldoRecuperacion;
-
+	private String guid;
+	
 	/**
 	 * constructor.
 	 */
@@ -160,6 +161,14 @@ public class DtoProcedimientoDerivado extends WebDto {
 	 */
 	public void setSaldoRecuperacion(BigDecimal saldoRecuperacion) {
 		this.saldoRecuperacion = saldoRecuperacion;
+	}
+
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
 	}
 
 }

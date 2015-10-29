@@ -21,9 +21,13 @@ public class DecisionProcedimientoPayloadRegexRule extends TypePayloadRegexRule<
 		this.paralizar = (paralizar!=null && paralizar);
 	}
 
-
 	public void setFinalizar(Boolean finalizar) {
 		this.finalizar = (finalizar!=null && finalizar);
+	}
+	
+	public void setCodigoTiposProcedimientoDerivados(
+			Pattern codigoTiposProcedimientoDerivados) {
+		this.codigoTiposProcedimientoDerivados = codigoTiposProcedimientoDerivados;
 	}
 
 	@Override

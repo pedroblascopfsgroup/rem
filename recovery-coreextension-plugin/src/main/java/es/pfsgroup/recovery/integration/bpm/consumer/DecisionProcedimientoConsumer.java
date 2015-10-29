@@ -1,14 +1,16 @@
 package es.pfsgroup.recovery.integration.bpm.consumer;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import es.capgemini.devon.exception.FrameworkException;
 import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
+import es.capgemini.pfs.procedimientoDerivado.ProcedimientoDerivadoManager;
 import es.capgemini.pfs.procedimientoDerivado.dto.DtoProcedimientoDerivado;
+import es.capgemini.pfs.procedimientoDerivado.model.ProcedimientoDerivado;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.MEJDecisionProcedimientoManager;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
@@ -17,7 +19,6 @@ import es.pfsgroup.recovery.integration.ConsumerAction;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
 import es.pfsgroup.recovery.integration.IntegrationDataException;
 import es.pfsgroup.recovery.integration.Rule;
-import es.pfsgroup.recovery.integration.bpm.DiccionarioDeCodigos;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 import es.pfsgroup.recovery.integration.bpm.payload.DecisionProcedimientoPayload;
 import es.pfsgroup.recovery.integration.bpm.payload.ProcedimientoDerivadoPayload;
@@ -26,18 +27,31 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 
 	protected final Log logger = LogFactory.getLog(getClass());
 	
+	private final String tratamientoDecision;
+	
+	private enum TipoTratamiento
+	{
+	    SOLO_CREAR, CREAR_Y_DERIVAR
+	}
+	
     @Autowired
     private MEJDecisionProcedimientoManager decisionProcedimientoManager;
     
 	@Autowired
 	private EXTProcedimientoManager extProcedimientoManager;
+	
+	@Autowired
+	private ProcedimientoDerivadoManager procedimientoDerivadoManager;
+
     	
-	public DecisionProcedimientoConsumer(Rule<DataContainerPayload> rule, DiccionarioDeCodigos diccionarioCodigos) {
+	public DecisionProcedimientoConsumer(Rule<DataContainerPayload> rule, String tratamientoDecision) {
 		super(rule);
+		this.tratamientoDecision = tratamientoDecision;
 	}
 	
-	public DecisionProcedimientoConsumer(List<Rule<DataContainerPayload>> rules, DiccionarioDeCodigos diccionarioCodigos) {
+	public DecisionProcedimientoConsumer(List<Rule<DataContainerPayload>> rules, String tratamientoDecision) {
 		super(rules);
+		this.tratamientoDecision = tratamientoDecision;
 	}
 
 	private String getGuidProcedimiento(DecisionProcedimientoPayload decisionProcedimientoPayload) {
@@ -47,27 +61,60 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 	@Override
 	protected void doAction(DataContainerPayload payload) {
 
-		DecisionProcedimientoPayload decisionProcedimientoPayload = new DecisionProcedimientoPayload(payload);
-		String asuGUID = decisionProcedimientoPayload.getProcedimiento().getAsunto().getGuid();
-		String prcUUID = getGuidProcedimiento(decisionProcedimientoPayload);
-		
-		if (payload.getTipo().equals(IntegracionBpmService.TIPO_DATOS_DECISION_PROCEDIMIENTO)) {
-			logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] Guardando decisión procedimiento...", asuGUID, prcUUID));
+		try {
+			DecisionProcedimientoPayload decisionProcedimientoPayload = new DecisionProcedimientoPayload(payload);
+			String asuGUID = decisionProcedimientoPayload.getProcedimiento().getAsunto().getGuid();
+			String prcUUID = getGuidProcedimiento(decisionProcedimientoPayload);
 			
-			MEJDtoDecisionProcedimiento dtoDecisionProcedimiento = load(decisionProcedimientoPayload);
-			
-			DecisionProcedimiento dec = null;
-			MEJProcedimiento prc = extProcedimientoManager.getProcedimientoByGuid(prcUUID);
-			if (prc==null) {
-				throw new IntegrationDataException(String.format("[INTEGRACION] El procedimiento con guid %s asociado a la decisión no existe", prcUUID)); 
-			}
+			if (payload.getTipo().equals(IntegracionBpmService.TIPO_DATOS_DECISION_PROCEDIMIENTO)) {
+				logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] Guardando decisión procedimiento...", asuGUID, prcUUID));
+				
+				MEJDtoDecisionProcedimiento dtoDecisionProcedimiento = load(decisionProcedimientoPayload);
+				
+				MEJProcedimiento prc = extProcedimientoManager.getProcedimientoByGuid(prcUUID);
+				if (prc==null) {
+					throw new IntegrationDataException(String.format("[INTEGRACION] El procedimiento con guid %s asociado a la decisión no existe", prcUUID)); 
+				}
+			     
+				DecisionProcedimiento dec = decisionProcedimientoManager.getDecisionProcedimientoByGuid(dtoDecisionProcedimiento.getGuid());
+				if(dec == null) {
+					dec = new DecisionProcedimiento();
+					dec.setProcedimiento(prc);
+			 	}
+				
+		        dtoDecisionProcedimiento.setDecisionProcedimiento(dec);
+		        
+		        switch (TipoTratamiento.valueOf(tratamientoDecision)) {
+				case CREAR_Y_DERIVAR:
+					decisionProcedimientoManager.aceptarPropuestaSinControl(dtoDecisionProcedimiento);
+					break;
+				case SOLO_CREAR:
+					decisionProcedimientoManager.createOrUpdate(dtoDecisionProcedimiento, prc);
+		        	
+		    		if (dtoDecisionProcedimiento.getCausaDecisionFinalizar() != null) {
+		    			if (dtoDecisionProcedimiento.getFinalizar()) {
+		    				decisionProcedimientoManager.finalizarProcedimiento(prc);
+		    			}
+		            }
+		    		if (dtoDecisionProcedimiento.getCausaDecisionParalizar() != null) {
+		    			if (dtoDecisionProcedimiento.getParalizar()) {
+		    				decisionProcedimientoManager.paralizarProcedimiento(prc);
+		    			}
+		    		}
+		    		
+		    		decisionProcedimientoManager.finalizaTareaTomaDecision(prc);
+		    		decisionProcedimientoManager.actualizarEstadoAsunto(prc);
 		     
-			dec = new DecisionProcedimiento();
-		    dec.setProcedimiento(prc);
-			
-	        dtoDecisionProcedimiento.setDecisionProcedimiento(dec);
-			
-			decisionProcedimientoManager.aceptarPropuestaSinControl(dtoDecisionProcedimiento);
+					break;
+				default:
+					logger.error("El tipo de tratamiento recibido no corresponde con ninguno de los declarados. La decisión no se ha creado");
+					break;
+				}
+			}
+		}
+		catch(Exception e) {
+			logger.error("Error en el método doAction: " + e.getMessage());
+			throw new FrameworkException(e);
 		}
 	}
 
@@ -75,6 +122,7 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 			DecisionProcedimientoPayload decisionProcedimientoPayload) {
 		
 		MEJDtoDecisionProcedimiento dtoDecisionProcedimiento = new MEJDtoDecisionProcedimiento();
+		dtoDecisionProcedimiento.setGuid(decisionProcedimientoPayload.getGuid());
 		dtoDecisionProcedimiento.setCausaDecisionFinalizar(decisionProcedimientoPayload.getCausaDecisionFinalizar());
 		dtoDecisionProcedimiento.setCausaDecisionParalizar(decisionProcedimientoPayload.getCausaDecisionParalizar());
 		dtoDecisionProcedimiento.setComentarios(decisionProcedimientoPayload.getComentarios());
@@ -90,39 +138,54 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 		dtoDecisionProcedimiento.setIdProcedimiento(prc.getId());
 		dtoDecisionProcedimiento.setParalizar(decisionProcedimientoPayload.getParalizada());
 		
-		List<DtoProcedimientoDerivado> dtoProcedimientoDerivados = new LinkedList<DtoProcedimientoDerivado>();
-		
-		for(ProcedimientoDerivadoPayload procedimientoDerivadoPayload : decisionProcedimientoPayload.getProcedimientoDerivado()) {
+		if(decisionProcedimientoPayload.getProcedimientoDerivado() != null) {
+			DtoProcedimientoDerivado[] dtoProcedimientoDerivados = new DtoProcedimientoDerivado[decisionProcedimientoPayload.getProcedimientoDerivado().size()];
+			int indice = 0;
 			
-			DtoProcedimientoDerivado dtoProcedimientoDerivado = new DtoProcedimientoDerivado();
-			
-			List<Long> lPersonas = new LinkedList<Long>();
-			
-			for(String sPersona : procedimientoDerivadoPayload.getPersonas()) {
-				lPersonas.add(Long.valueOf(sPersona));
+			for(ProcedimientoDerivadoPayload procedimientoDerivadoPayload : decisionProcedimientoPayload.getProcedimientoDerivado()) {
+				
+				DtoProcedimientoDerivado dtoProcedimientoDerivado = new DtoProcedimientoDerivado();
+				
+				ProcedimientoDerivado procedimientoDerivado = procedimientoDerivadoManager.getProcedimientoDerivadoByGuid(procedimientoDerivadoPayload.getGuid());
+				if(procedimientoDerivado != null) {
+					dtoProcedimientoDerivado.setId(procedimientoDerivado.getId());
+				}
+				
+				dtoProcedimientoDerivado.setGuid(procedimientoDerivadoPayload.getGuid());
+				
+				Long[] lPersonas = new Long[procedimientoDerivadoPayload.getPersonas().size()];
+				int i = 0;
+				
+				for(String sPersona : procedimientoDerivadoPayload.getPersonas()) {
+					lPersonas[i]= Long.valueOf(sPersona);
+					i++;
+				}
+				
+				dtoProcedimientoDerivado.setPersonas(lPersonas);
+				dtoProcedimientoDerivado.setId(procedimientoDerivadoPayload.getId());
+				
+				MEJProcedimiento prcPadre = extProcedimientoManager.getProcedimientoByGuid(procedimientoDerivadoPayload.getGuidProcedimientoPadre());
+				if (prcPadre==null) {
+					throw new IntegrationDataException(String.format("[INTEGRACION] El procedimiento con guid %s asociado al procedimiento derivado s no existe", procedimientoDerivadoPayload.getGuidProcedimientoPadre())); 
+				}
+				
+				dtoProcedimientoDerivado.setProcedimientoPadre(prcPadre.getId());
+				dtoProcedimientoDerivado.setTipoActuacion(procedimientoDerivadoPayload.getTipoActuacion());
+				dtoProcedimientoDerivado.setTipoReclamacion(procedimientoDerivadoPayload.getTipoReclamacion());
+				dtoProcedimientoDerivado.setTipoProcedimiento(procedimientoDerivadoPayload.getTipoProcedimiento());
+				dtoProcedimientoDerivado.setPorcentajeRecuperacion(procedimientoDerivadoPayload.getPorcentajeRecuperacion());
+				dtoProcedimientoDerivado.setPlazoRecuperacion(procedimientoDerivadoPayload.getPlazoRecuperacion());
+				dtoProcedimientoDerivado.setSaldoRecuperacion(procedimientoDerivadoPayload.getSaldoRecuperacion());
+				
+				dtoProcedimientoDerivados[indice] = dtoProcedimientoDerivado;
+				indice++;
 			}
 			
-			dtoProcedimientoDerivado.setPersonas((Long[]) lPersonas.toArray());
-			dtoProcedimientoDerivado.setId(procedimientoDerivadoPayload.getId());
-			
-			MEJProcedimiento prcPadre = extProcedimientoManager.getProcedimientoByGuid(procedimientoDerivadoPayload.getGuidProcedimientoPadre());
-			if (prcPadre==null) {
-				throw new IntegrationDataException(String.format("[INTEGRACION] El procedimiento con guid %s asociado al procedimiento derivado s no existe", procedimientoDerivadoPayload.getGuidProcedimientoPadre())); 
-			}
-			
-			dtoProcedimientoDerivado.setProcedimientoPadre(prcPadre.getId());
-			dtoProcedimientoDerivado.setTipoActuacion(procedimientoDerivadoPayload.getTipoActuacion());
-			dtoProcedimientoDerivado.setTipoReclamacion(procedimientoDerivadoPayload.getTipoReclamacion());
-			dtoProcedimientoDerivado.setTipoProcedimiento(procedimientoDerivadoPayload.getTipoProcedimiento());
-			dtoProcedimientoDerivado.setPorcentajeRecuperacion(procedimientoDerivadoPayload.getPorcentajeRecuperacion());
-			dtoProcedimientoDerivado.setPlazoRecuperacion(procedimientoDerivadoPayload.getPlazoRecuperacion());
-			dtoProcedimientoDerivado.setSaldoRecuperacion(procedimientoDerivadoPayload.getSaldoRecuperacion());
-			
-			dtoProcedimientoDerivados.add(dtoProcedimientoDerivado);
+			dtoDecisionProcedimiento.setProcedimientosDerivados(dtoProcedimientoDerivados);
 		}
-
-		dtoDecisionProcedimiento.setProcedimientosDerivados((DtoProcedimientoDerivado[]) dtoProcedimientoDerivados.toArray());
-		dtoDecisionProcedimiento.setStrEstadoDecision(decisionProcedimientoPayload.getEstadoDecision());		
+		
+		dtoDecisionProcedimiento.setStrEstadoDecision(decisionProcedimientoPayload.getEstadoDecision());
+		dtoDecisionProcedimiento.setEntidad(decisionProcedimientoPayload.getEntidad());
 		
 		return dtoDecisionProcedimiento;
 	}

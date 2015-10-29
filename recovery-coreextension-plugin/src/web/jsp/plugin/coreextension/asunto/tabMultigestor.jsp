@@ -25,6 +25,11 @@
 		 procuradorAdicional = true;
 		</sec:authorize>
 	</sec:authorize>
+	<sec:authorize ifAllGranted="ASU_MULTIGESTOR_SUPERVISOR">
+		porUsuario = false;
+		adicional = false;
+		procuradorAdicional = false;
+	</sec:authorize>
 	
 	var ugCodigo = '3';
 	var gestor = Ext.data.Record.create([

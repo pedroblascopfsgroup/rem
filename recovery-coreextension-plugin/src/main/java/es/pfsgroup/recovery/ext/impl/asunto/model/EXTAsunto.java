@@ -128,6 +128,16 @@ public class EXTAsunto extends Asunto {
     @JoinColumn(name = "DD_GES_ID")
 	private DDGestionAsunto gestionAsunto;
 	
+	@Column(name="SYS_GUID")
+	private String guid;
+
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
 	
 	//private Boolean esMultigestor;
 
@@ -360,7 +370,6 @@ public class EXTAsunto extends Asunto {
 		}
 		return ultimoProc;
 	}
-
 
 	@Transient
 	public static EXTAsunto instanceOf(Asunto asunto) {

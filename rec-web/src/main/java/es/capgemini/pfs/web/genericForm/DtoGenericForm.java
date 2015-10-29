@@ -10,6 +10,7 @@ import org.springframework.binding.message.MessageContext;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.scripting.ScriptingUtils;
+import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 
 public class DtoGenericForm extends WebDto {
 

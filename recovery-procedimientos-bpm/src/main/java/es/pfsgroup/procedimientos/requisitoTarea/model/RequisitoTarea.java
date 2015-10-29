@@ -13,8 +13,8 @@ import javax.persistence.Version;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
-import es.capgemini.pfs.web.genericForm.GenericFormItem;
 
 @Entity
 @Table(name = "RET_REQUISITO_TAREA", schema = "${entity.schema}")

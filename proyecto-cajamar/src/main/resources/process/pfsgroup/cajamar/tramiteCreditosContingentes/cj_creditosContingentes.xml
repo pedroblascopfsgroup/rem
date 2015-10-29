@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="cj_creditosContingentes" xmlns="urn:jbpm.org:jpdl-3.2">
+
+	<start-state name="Inicio">
+		<transition to="CJ003_RevisarCreditosContingentes" name="inicioTramite"></transition>
+	</start-state>
+
+	<state name="CJ003_RevisarCreditosContingentes">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>creditosContingentesLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ003_RevisarCreditosContingentes" name="activarAlerta"></transition>
+		<transition to="CJ003_RevisarCreditosContingentesDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="CJ003_RevisarCreditosContingentesDecision" expression="#{CJ003_RevisarCreditosContingentesDecision}">
+		<transition to="CJ003_RevisarCreditosContingentes" name="si"></transition>
+		<transition to="Fin" name="no"></transition>
+	</decision>
+	
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+	
+</process-definition>

@@ -15,7 +15,7 @@ public class ADMDtoUsuario extends WebDto {
 
 	@NotEmpty(message = "plugin.config.usuarios.alta.message.usernameEmpty")
 	@NotNull(message = "plugin.config.usuarios.alta.message.usernameEmpty")
-	@Size(max = 10, message = "plugin.config.usuarios.alta.message.usernameSize")
+	@Size(max = 50, message = "plugin.config.usuarios.alta.message.usernameSize")
 	private String username;
 
 	private String password;

@@ -12,7 +12,11 @@
 // Datos sobre el estado del cumplimiento del acuerdo
 //----------------------------------------------------------------
 
-var crearCumplimiento=function(){
+var crearCumplimiento=function(idAcuerdo){
+  
+	<pfs:hidden name="idAcuerdoHidden" value=""/>
+	idAcuerdoHidden.setValue(idAcuerdo);
+	
 
 	<pfs:defineRecordType name="cumplimientoRT">
 		<pfs:defineTextColumn name="id"/>
@@ -23,7 +27,7 @@ var crearCumplimiento=function(){
 		<pfs:defineTextColumn name="cerrado"/>
 	</pfs:defineRecordType>
 	
-	<pfs:defineParameters name="parametro" paramId="${acuerdo.id}"/>	
+	<pfs:defineParameters name="parametro" paramId="" idAcuerdo="idAcuerdoHidden"/>	
 
 	<pfs:remoteStore name="cumplimientoStore"
 				dataFlow="cumplimientoacuerdo/listacumplimiento"
@@ -53,18 +57,34 @@ var crearCumplimiento=function(){
          ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
    }); 
    
-  
-   return {
-		title:'<s:message code="plugin.mejoras.acuerdos.cumplimiento.titulo" text="**Detalles sobre el cumplimiento del acuerdo"/>'
+    var panelCumplimiento=new Ext.Panel({
+		layout:'form'
+		,border : false
+		,autoScroll:false
+<!-- 		,bodyStyle:'padding:5px;margin:5px' -->
+		,bodyStyle:'margin:5px'
 		,autoHeight:true
-		,xtype:'fieldset'
-		,border:true
-		,bodyStyle:'padding:5px;cellspacing:20px;'
-		,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false, style:'margin:4px;width:97%',border:true}
-		,items : [
-		 	cumplimientoGrid
-		]
-	}
+		,autoWidth : true
+		,nombreTab : 'cumplimiento'
+		,items : [ 
+ 		 	cumplimientoGrid 
+ 		]
+	});
+   
+   
+   return panelCumplimiento;
+  
+<!--    return { -->
+<%-- 		title:'<s:message code="plugin.mejoras.acuerdos.cumplimiento.titulo" text="**Detalles sobre el cumplimiento del acuerdo"/>' --%>
+<!-- 		,autoHeight:true -->
+<!-- 		,xtype:'fieldset' -->
+<!-- 		,border:true -->
+<!-- 		,bodyStyle:'padding:5px;cellspacing:20px;' -->
+<!-- 		,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false, style:'margin:4px;width:97%',border:true} -->
+<!-- 		,items : [ -->
+<!-- 		 	cumplimientoGrid -->
+<!-- 		] -->
+<!-- 	} -->
    
 
 

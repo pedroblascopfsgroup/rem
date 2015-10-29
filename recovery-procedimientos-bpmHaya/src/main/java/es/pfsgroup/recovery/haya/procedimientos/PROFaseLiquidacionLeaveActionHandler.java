@@ -10,6 +10,8 @@ import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.devon.bo.BusinessOperationDefinitionNotFoundException;
+import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bpm.ProcessManager;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
@@ -114,8 +116,16 @@ public class PROFaseLiquidacionLeaveActionHandler extends PROGenericLeaveActionH
 	
 	private Long getIdTareaExterna(String nombreTarea){
 		
-		return (Long)getVariable("id"+nombreTarea+"."+executionContext.getToken().getId(), executionContext);
-		
+		Long idTarea =  (Long)getVariable("id"+nombreTarea+"."+executionContext.getToken().getId(), executionContext);
+		// buscamos en el padre si es null
+		if (idTarea == null){
+			idTarea =  (Long)getVariable("id"+nombreTarea+"."+executionContext.getToken().getParent().getId(), executionContext);
+		}
+		// si en el padre no la encontramos entonces petamos
+		if (idTarea == null) {
+			throw new BusinessOperationException("No he podido encontrar el id para la tarea " + nombreTarea);
+		}
+		return idTarea;
 	}
 	
 }

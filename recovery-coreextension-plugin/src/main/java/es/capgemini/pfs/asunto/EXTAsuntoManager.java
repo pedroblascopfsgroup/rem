@@ -123,7 +123,6 @@ import es.pfsgroup.recovery.ext.impl.zona.dao.EXTZonaDao;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.multigestor.model.EXTTipoGestorPropiedad;
 
-
 @Component
 public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> implements es.pfsgroup.recovery.api.AsuntoApi, AsuntoApi, EXTAsuntoApi {
 
@@ -1535,8 +1534,10 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		
 		dto.setCodigoZonas(getCodigosDeZona(dto));
 		dto.setTiposProcedimiento(getTiposProcedimiento(dto));
-		if (usuarioLogado.getUsuarioExterno())
-			dto.setIdsUsuariosGrupos(extGrupoUsuariosDao.getIdsUsuariosGrupoUsuario(usuarioLogado));
+		if (usuarioLogado.getUsuarioExterno()) {
+			List<Long> idGrpsUsuario = extGrupoUsuariosDao.buscaGruposUsuario(usuarioLogado);
+			dto.setIdsUsuariosGrupos(idGrpsUsuario);
+		}
 		
 		return asuntoDao.buscarAsuntosPaginatedDinamico(usuarioLogado, dto, params);
 	}
@@ -1839,8 +1840,11 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		
 		dto.setCodigoZonas(getCodigosDeZona(dto));
 		dto.setTiposProcedimiento(getTiposProcedimiento(dto));
-		if (usuarioLogado.getUsuarioExterno())
-			dto.setIdsUsuariosGrupos(extGrupoUsuariosDao.getIdsUsuariosGrupoUsuario(usuarioLogado));
+		
+		if (usuarioLogado.getUsuarioExterno()) {
+			List<Long> idsGruposUsuario = extGrupoUsuariosDao.buscaGruposUsuario(usuarioLogado);
+			dto.setIdsUsuariosGrupos(idsGruposUsuario);
+		}
 		
 		Parametrizacion param = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
                 Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_ASUNTOS);		
@@ -1870,7 +1874,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			return esUsuarioGestorDecision(id);
 			
 		} catch (Exception e) {
-			logger.fatal("No se ha podido comprobar si el usuario puede ver el botón de tomar una decisión en el asunto: "+id);
+			logger.error("No se ha podido comprobar si el usuario puede ver el botón de tomar una decisión en el asunto: "+id, e);
 			return false;
 			//throw new BusinessOperationException(e);
 		}
@@ -1899,11 +1903,10 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		for (String st : staC) {
 			
 			EXTSubtipoTarea extSubtipoTarea = genericdDao.get(EXTSubtipoTarea.class, genericdDao.createFilter(FilterType.EQUALS, "codigoSubtarea", st));
-			listaCodigosGestor.add(extSubtipoTarea.getTipoGestor().getCodigo());
-			
+			if (extSubtipoTarea!=null) {
+				listaCodigosGestor.add(extSubtipoTarea.getTipoGestor().getCodigo());
+			}
 		}
-		
-		
 		
 		boolean gestor = false;
 
@@ -1917,8 +1920,6 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		}*/
 
 		return gestor;
-		
-		
 	}
 
 	@Override
@@ -1949,6 +1950,19 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		
 	}
 	
+
+	public EXTAsunto getAsuntoByGuid(String guid) {
+		Filter filter = genericdDao.createFilter(FilterType.EQUALS, "guid", guid);
+		EXTAsunto extAsunto = genericdDao.get(EXTAsunto.class, filter);
+		return extAsunto;
+	}
+
+	public EXTAsunto getAsuntoById(Long id) {
+		Filter filter = genericdDao.createFilter(FilterType.EQUALS, "id", id);
+		EXTAsunto extAsunto = genericdDao.get(EXTAsunto.class, filter);
+		return extAsunto;
+	}
+
 	@BusinessOperation(EXT_BO_ES_TIPO_GESTOR_ASIGNADO)
 	public Boolean esTipoGestorAsignado(Long idAsunto, String codigoTipoGestor){
 		List<EXTGestorAdicionalAsunto> gestores = getGestoresAdicionalesAsunto(idAsunto);

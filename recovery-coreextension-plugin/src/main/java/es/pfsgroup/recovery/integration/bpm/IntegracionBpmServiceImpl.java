@@ -18,6 +18,7 @@ import es.capgemini.pfs.acuerdo.model.ActuacionesAExplorarAcuerdo;
 import es.capgemini.pfs.acuerdo.model.ActuacionesRealizadasAcuerdo;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.termino.model.TerminoAcuerdo;
@@ -409,6 +410,27 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
     	} else {
     		notificacionGateway.enviar(terminoAcuerdo, TIPO_DATOS_ACUERDO_TERMINO, DbIdContextHolder.getDbSchema());
 			logger.info("[INTEGRACION] Enviado enviarDatos-Acuerdo-Actuaciones-Termino!!!");
+    	}
+	}
+	
+	@Override
+	public void enviarDatos(final DecisionProcedimiento decisionProcedimiento) {
+    	if (!isActive() || notificacionGateway==null) {
+			return;
+		}
+    	logger.info("[INTEGRACION] Preparando para envío enviarDatos-Decision-Procedimiento...");
+    	if (isTransactional()) {
+	    	TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+	    		@Override
+	    		public void beforeCommit(boolean readOnly) {
+	    			super.beforeCommit(readOnly);
+	    			notificacionGateway.enviar(decisionProcedimiento, TIPO_DATOS_DECISION_PROCEDIMIENTO, DbIdContextHolder.getDbSchema());
+	    			logger.info("[INTEGRACION] Enviado enviarDatos-Decision-Procedimiento!!!");
+	    		}
+			});
+    	} else {
+    		notificacionGateway.enviar(decisionProcedimiento, TIPO_DATOS_DECISION_PROCEDIMIENTO, DbIdContextHolder.getDbSchema());
+			logger.info("[INTEGRACION] Enviado enviarDatos-Decision-Procedimiento!!!");
     	}
 	}
 

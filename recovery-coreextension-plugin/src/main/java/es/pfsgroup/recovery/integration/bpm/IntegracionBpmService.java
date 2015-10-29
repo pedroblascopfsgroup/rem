@@ -6,6 +6,7 @@ import es.capgemini.pfs.acuerdo.model.ActuacionesAExplorarAcuerdo;
 import es.capgemini.pfs.acuerdo.model.ActuacionesRealizadasAcuerdo;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.termino.model.TerminoAcuerdo;
@@ -36,7 +37,9 @@ public interface IntegracionBpmService {
 	
 	public final static String TIPO_DATOS_RECURSO = "DATOS-RECURSO";  
 	public final static String TIPO_DATOS_SUBASTA = "DATOS-SUBASTA";  
-
+	
+	public final static String TIPO_DATOS_DECISION_PROCEDIMIENTO = "DATOS-DECISION-PROCEDIMIENTO";
+	
 	/**
 	 * Envia mensaje de notificación de tarea
 	 * 
@@ -164,6 +167,8 @@ public interface IntegracionBpmService {
 	void enviarDatos(ActuacionesRealizadasAcuerdo actuacionRealizada);
 	void enviarDatos(ActuacionesAExplorarAcuerdo actuacionAExplorar);
 	void enviarDatos(TerminoAcuerdo terminoAcuerdo);
+
+	void enviarDatos(DecisionProcedimiento decisionProcedimiento);
 
 
 }

@@ -77,8 +77,14 @@ public class DecisionProcedimiento implements Serializable, Auditable {
     
     @OneToOne
     @JoinColumn(name = "DD_DPA_ID")
-    private DDCausaDecisionParalizar causaDecisionParalizar; 
+    private DDCausaDecisionParalizar causaDecisionParalizar;
     
+    @Column(name = "DPR_ENTIDAD")
+    private String entidad;
+    
+    @Column(name="SYS_GUID")
+	private String guid;
+
     public DDCausaDecisionFinalizar getCausaDecisionFinalizar() {
 		return causaDecisionFinalizar;
 	}
@@ -307,4 +313,25 @@ public class DecisionProcedimiento implements Serializable, Auditable {
         return tareaAsociada;
     }
 
+	/**
+	 * @return the entidad
+	 */
+	public String getEntidad() {
+		return entidad;
+	}
+
+	/**
+	 * @param entidad the entidad to set
+	 */
+	public void setEntidad(String entidad) {
+		this.entidad = entidad;
+	}
+	
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
 }

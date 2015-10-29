@@ -36,7 +36,6 @@ import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi;
-import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.decisionProcedimiento.dao.DecisionProcedimientoDao;
 import es.capgemini.pfs.decisionProcedimiento.model.DDCausaDecisionFinalizar;
 import es.capgemini.pfs.decisionProcedimiento.model.DDCausaDecisionParalizar;
@@ -58,6 +57,7 @@ import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.process.TareaBPMConstants;
 import es.capgemini.pfs.users.FuncionManager;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.utils.JBPMProcessManager;
 import es.pfsgroup.commons.utils.Checks;
@@ -80,6 +80,7 @@ import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.nuevosmanagers.
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJConfiguracionDerivacionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.recovery.ext.api.procedimiento.EXTProcedimientoApi;
+import es.pfsgroup.recovery.integration.Guid;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 
@@ -93,6 +94,9 @@ public class MEJDecisionProcedimientoManager extends
 	
 	@Autowired
 	private FuncionManager funcionManager;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
 
 	@Autowired
 	private Executor executor;
@@ -480,7 +484,11 @@ public class MEJDecisionProcedimientoManager extends
             decisionProcedimiento.setProcedimientosDerivados(new ArrayList<ProcedimientoDerivado>());
         }
 
-        int counter = 0;
+        if(decisionProcedimiento.getEntidad() == null || "".equals(decisionProcedimiento.getEntidad())) {
+        	Usuario usuario = usuarioManager.getUsuarioLogado();
+        	decisionProcedimiento.setEntidad(usuario.getEntidad().getDescripcion());
+        }
+        
         for (DtoProcedimientoDerivado procDerivado : dtoDecisionProcedimiento.getProcedimientosDerivados()) {
             if (procDerivado.getProcedimientoPadre() == null) {
                 continue;
@@ -493,12 +501,10 @@ public class MEJDecisionProcedimientoManager extends
 
             }
             if (prc != null) {
-                counter++;
                 continue;
             }
 
             prc = crearProcedimientoDerivado(procDerivado, decisionProcedimiento);
-            counter++;
             // Busco si el objeto existe en la lista de procedmientos derivados
             if (prc.getId() != null) {
                 for (int i = 0; i < decisionProcedimiento.getProcedimientosDerivados().size(); i++) {
@@ -515,6 +521,8 @@ public class MEJDecisionProcedimientoManager extends
 
         decisionProcedimientoDao.saveOrUpdate(decisionProcedimiento);
         decisionProcedimiento = decisionProcedimientoDao.get(decisionProcedimiento.getId());
+        integracionBpmService.enviarDatos(decisionProcedimiento);
+        
         return decisionProcedimiento;
     }
     
@@ -785,31 +793,6 @@ public class MEJDecisionProcedimientoManager extends
 	}
 
 
-	private void generaNotificacion(Long idProcedimiento, String string) {
-		
-		
-		// l�gica para decidir si la notificacion se env�a al gestor CEX o JUD
-        Boolean esSupervisorCEX = (Boolean) executor.execute(EXTProcedimientoApi.MEJ_BO_PRC_ES_SUPERVISOR_CEX ,
-        		idProcedimiento, DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO);
-    	
-        String subtipoTarea = "9999999999";
-    	if (esSupervisorCEX)
-    		subtipoTarea = EXTSubtipoTarea.CODIGO_ACEPTACION_DECISION_PROCEDIMIENTO_GESTOR_2_CONFECCION_EXPTE;
-		
-		SubtipoTarea st = genericDao.get(SubtipoTarea.class, genericDao
-				.createFilter(FilterType.EQUALS, "codigoSubtarea", subtipoTarea));
-		
-		if (st == null) {
-			logger.warn("No se ha configurado el Subtipo Tarea Base "
-					+ subtipoTarea
-					+ ", no se va a mandar la segunda notificaci�n");
-		} else {
-			proxyFactory.proxy(TareaNotificacionApi.class).crearNotificacion(
-					idProcedimiento,
-					DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO, subtipoTarea,
-					string);
-		}
-	}
 
 	private void finalizaTareaTomaDecision(Procedimiento prc) {
 		Set<String> tomasDeDecision = coreProjectContext.getCategoriasSubTareas().get(CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION);
@@ -827,29 +810,7 @@ public class MEJDecisionProcedimientoManager extends
 		}
 	}
 	
-	private String getNombreProcedimiento(Long idProcedimiento) {
-		Procedimiento p = proxyFactory.proxy(es.pfsgroup.recovery.api.ProcedimientoApi.class).getProcedimiento(idProcedimiento);
-		if (p == null){
-			return "";
-		}else{
-			return p.getAsunto().getNombre() + "-" + p.getTipoProcedimiento().getDescripcion();
-		}
-	}
-	
-    private void notificarSupervisor(DecisionProcedimiento dp) {
-        // Crear una notificaci�n al Supervisor
-        // String descripcion =
-        // "Se ha realizado una propuesta de decision sobre el  procedimiento  "
-        // + dp.getProcedimiento().getNombreProcedimiento();
-        // crear tareas para el supervisor
-        Long idJBPM = (Long) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_CREAR_TAREA_CON_BPM, dp.getProcedimiento().getId(),
-                DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO, SubtipoTarea.CODIGO_PROPUESTA_DECISION_PROCEDIMIENTO,
-                PlazoTareasDefault.CODIGO_PROPUESTA_DECISION_PROCEDIMIENTO);
-        dp.setProcessBPM(idJBPM);
-        genericDao.update(DecisionProcedimiento.class, dp);
-    }
-    
-    private void notificarSupervisorConEspera(DecisionProcedimiento dp) {
+	private void notificarSupervisorConEspera(DecisionProcedimiento dp) {
         // Crear una notificaci�n al Supervisor
         // "Se ha realizado una propuesta de decision sobre el  procedimiento  "
         // + dp.getProcedimiento().getNombreProcedimiento();
@@ -1001,5 +962,26 @@ public class MEJDecisionProcedimientoManager extends
 		return datosConsulta;
 	}		
 	
-	
+	public DecisionProcedimiento prepareGuid(DecisionProcedimiento decisionProcedimiento) {
+		if (Checks.esNulo(decisionProcedimiento.getGuid())) {
+			decisionProcedimiento.setGuid(Guid.getNewInstance().toString());
+			decisionProcedimientoDao.saveOrUpdate(decisionProcedimiento);
+		}
+		
+		if (decisionProcedimiento.getProcedimientosDerivados() != null) {
+			for (ProcedimientoDerivado procedimientoDerivado : decisionProcedimiento.getProcedimientosDerivados()) {
+				prepareGuid(procedimientoDerivado);
+			}
+		}
+		
+		return decisionProcedimiento;
+	}
+
+	private void prepareGuid(ProcedimientoDerivado procedimientoDerivado) {
+		
+		if (Checks.esNulo(procedimientoDerivado.getGuid())) {
+			procedimientoDerivado.setGuid(Guid.getNewInstance().toString());
+			genericDao.save(ProcedimientoDerivado.class, procedimientoDerivado);
+		}	
+	}	
 }

@@ -7,6 +7,7 @@ import es.capgemini.pfs.acuerdo.model.ActuacionesAExplorarAcuerdo;
 import es.capgemini.pfs.acuerdo.model.ActuacionesRealizadasAcuerdo;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.termino.model.TerminoAcuerdo;
@@ -135,5 +136,11 @@ public interface NotificarEventosBPMGateway {
 			, @Header(TypePayload.HEADER_MSG_TYPE) String type
     		, @Header(TypePayload.HEADER_MSG_ENTIDAD) String entidad
 			);
+
+	@Gateway
+	void enviar(DecisionProcedimiento decisionProcedimiento
+			, @Header(TypePayload.HEADER_MSG_TYPE) String type
+    		, @Header(TypePayload.HEADER_MSG_ENTIDAD) String entidad
+    );
 
 }

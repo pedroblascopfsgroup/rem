@@ -17,7 +17,6 @@ import es.pfsgroup.recovery.integration.ConsumerAction;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
 import es.pfsgroup.recovery.integration.IntegrationDataException;
 import es.pfsgroup.recovery.integration.Rule;
-import es.pfsgroup.recovery.integration.bpm.DiccionarioDeCodigos;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 import es.pfsgroup.recovery.integration.bpm.payload.DecisionProcedimientoPayload;
 import es.pfsgroup.recovery.integration.bpm.payload.ProcedimientoDerivadoPayload;
@@ -32,11 +31,11 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 	@Autowired
 	private EXTProcedimientoManager extProcedimientoManager;
     	
-	public DecisionProcedimientoConsumer(Rule<DataContainerPayload> rule, DiccionarioDeCodigos diccionarioCodigos) {
+	public DecisionProcedimientoConsumer(Rule<DataContainerPayload> rule) {
 		super(rule);
 	}
 	
-	public DecisionProcedimientoConsumer(List<Rule<DataContainerPayload>> rules, DiccionarioDeCodigos diccionarioCodigos) {
+	public DecisionProcedimientoConsumer(List<Rule<DataContainerPayload>> rules) {
 		super(rules);
 	}
 
@@ -64,7 +63,7 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 		     
 			dec = new DecisionProcedimiento();
 		    dec.setProcedimiento(prc);
-			
+		 	
 	        dtoDecisionProcedimiento.setDecisionProcedimiento(dec);
 			
 			decisionProcedimientoManager.aceptarPropuestaSinControl(dtoDecisionProcedimiento);
@@ -90,19 +89,22 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 		dtoDecisionProcedimiento.setIdProcedimiento(prc.getId());
 		dtoDecisionProcedimiento.setParalizar(decisionProcedimientoPayload.getParalizada());
 		
-		List<DtoProcedimientoDerivado> dtoProcedimientoDerivados = new LinkedList<DtoProcedimientoDerivado>();
+		DtoProcedimientoDerivado[] dtoProcedimientoDerivados = new DtoProcedimientoDerivado[decisionProcedimientoPayload.getProcedimientoDerivado().size()];
+		int indice = 0;
 		
 		for(ProcedimientoDerivadoPayload procedimientoDerivadoPayload : decisionProcedimientoPayload.getProcedimientoDerivado()) {
 			
 			DtoProcedimientoDerivado dtoProcedimientoDerivado = new DtoProcedimientoDerivado();
 			
-			List<Long> lPersonas = new LinkedList<Long>();
+			Long[] lPersonas = new Long[procedimientoDerivadoPayload.getPersonas().size()];
+			int i = 0;
 			
 			for(String sPersona : procedimientoDerivadoPayload.getPersonas()) {
-				lPersonas.add(Long.valueOf(sPersona));
+				lPersonas[i]= Long.valueOf(sPersona);
+				i++;
 			}
 			
-			dtoProcedimientoDerivado.setPersonas((Long[]) lPersonas.toArray());
+			dtoProcedimientoDerivado.setPersonas(lPersonas);
 			dtoProcedimientoDerivado.setId(procedimientoDerivadoPayload.getId());
 			
 			MEJProcedimiento prcPadre = extProcedimientoManager.getProcedimientoByGuid(procedimientoDerivadoPayload.getGuidProcedimientoPadre());
@@ -118,11 +120,13 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 			dtoProcedimientoDerivado.setPlazoRecuperacion(procedimientoDerivadoPayload.getPlazoRecuperacion());
 			dtoProcedimientoDerivado.setSaldoRecuperacion(procedimientoDerivadoPayload.getSaldoRecuperacion());
 			
-			dtoProcedimientoDerivados.add(dtoProcedimientoDerivado);
+			dtoProcedimientoDerivados[indice] = dtoProcedimientoDerivado;
+			indice++;
 		}
 
-		dtoDecisionProcedimiento.setProcedimientosDerivados((DtoProcedimientoDerivado[]) dtoProcedimientoDerivados.toArray());
-		dtoDecisionProcedimiento.setStrEstadoDecision(decisionProcedimientoPayload.getEstadoDecision());		
+		dtoDecisionProcedimiento.setProcedimientosDerivados(dtoProcedimientoDerivados);
+		dtoDecisionProcedimiento.setStrEstadoDecision(decisionProcedimientoPayload.getEstadoDecision());
+		dtoDecisionProcedimiento.setEntidad(decisionProcedimientoPayload.getEntidad());
 		
 		return dtoDecisionProcedimiento;
 	}

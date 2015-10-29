@@ -289,6 +289,14 @@ var actualizarBotonesLiquidacion = function() {
 			btnGenerar.setDisabled(true);
 			break;
 
+		case 'INC':
+			btnSolicitar.setDisabled(true);
+			btnEditarValores.setDisabled(true);
+			btnConfirmar.setDisabled(true);
+			btnDescartar.setDisabled(false);
+			btnGenerar.setDisabled(true);
+			break;
+
 		default:
 			btnSolicitar.setDisabled(true);
 			btnEditarValores.setDisabled(true);

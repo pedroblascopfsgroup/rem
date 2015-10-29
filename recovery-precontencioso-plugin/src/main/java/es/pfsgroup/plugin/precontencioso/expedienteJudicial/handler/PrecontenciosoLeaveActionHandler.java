@@ -9,10 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
-import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -25,7 +23,6 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 import es.pfsgroup.recovery.ext.turnadodespachos.AplicarTurnadoException;
-import es.pfsgroup.recovery.ext.turnadodespachos.TurnadoDespachosManager;
 
 public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandler {
 	/**
@@ -52,12 +49,6 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 	
 	@Autowired
 	PrecontenciosoProjectContext precontenciosoContext;
-	
-	@Autowired
-	TurnadoDespachosManager turnadoDespachosManager;
-	
-	@Autowired
-	UsuarioManager usuarioManager;
 
 	@Override
 	protected void process(Object delegateTransitionClass, Object delegateSpecificClass, ExecutionContext executionContext) {
@@ -94,15 +85,15 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 		if (PrecontenciosoBPMConstants.PCO_PreTurnadoManual.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
 		} else if (PrecontenciosoBPMConstants.PCO_PreTurnado.equals(tex.getTareaProcedimiento().getCodigo())) {
-			if(PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(precontenciosoContext.getRecovery())){
-				executor.execute("plugin.precontencioso.inicializarPco", prc);
-			}
+
 		} else if (PrecontenciosoBPMConstants.PCO_RegistrarAceptacion.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
 		} else if (PrecontenciosoBPMConstants.PCO_RevisarNoAceptacion.equals(tex.getTareaProcedimiento().getCodigo())) {
 
 		} else if (PrecontenciosoBPMConstants.PCO_RevisarExpediente.equals(tex.getTareaProcedimiento().getCodigo())) {
-			executor.execute("plugin.precontencioso.inicializarPco", prc);
+			if(PrecontenciosoProjectContextImpl.RECOVERY_HAYA.equals(precontenciosoContext.getRecovery())){
+				executor.execute("plugin.precontencioso.inicializarPco", prc);
+			}
 		} else if (PrecontenciosoBPMConstants.PCO_PrepararExpediente.equals(tex.getTareaProcedimiento().getCodigo())) {
 
 			// Funcionalidad incluida en el botón de Finalizar

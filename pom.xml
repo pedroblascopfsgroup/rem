@@ -41,7 +41,6 @@
 		<plugins.sidhi.version>1.1.0_rc1</plugins.sidhi.version>
 		<plugin.sidhiweb.version>1.0.6</plugin.sidhiweb.version>
 		<plugins.sidhibatch.version>1.0.0_rc32</plugins.sidhibatch.version>
-		<servlet.api.version>2.3</servlet.api.version>
 	</properties>
 
 	<repositories>
@@ -281,6 +280,24 @@
 				<groupId>es.pfsgroup.plugin</groupId>
 				<artifactId>recovery-sidhi-batch</artifactId>
 				<version>${plugins.sidhibatch.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>es.pfsgroup</groupId>
+						<artifactId>recovery-domain</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>capgemini</groupId>
+						<artifactId>devon-batch</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework.batch</groupId>
+						<artifactId>org.springframework.batch.core</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>es.pfs</groupId>
+						<artifactId>pfs-rec-core</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>es.pfs</groupId>
@@ -295,6 +312,11 @@
 			<dependency>
 				<groupId>es.pfsgroup.recovery</groupId>
 				<artifactId>rec-encrypt</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>es.pfgroup.monioring</groupId>
+				<artifactId>batch-monitor</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -380,11 +402,6 @@
 				<version>1.9.5</version>
 				<scope>test</scope>
 			</dependency>
-			<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.3</version>
-		</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -459,6 +476,8 @@
 		<module>recovery-bi-plugin</module>
 		<module>pfs-commons-java</module>
 		<module>rec-encrypt</module>
+		<module>batch-monitor</module>
+		<module>batch-shell</module>
 		<module>rec-common</module>
 		<module>recovery-domain</module>
 		<!--module>recovery-api-plugin</module-->
@@ -500,7 +519,7 @@
 				<module>recovery-bankiaWeb-plugin</module>
 				<module>recovery-iplus-plugin</module>
 				<module>recovery-integracionuvem-plugin</module>
-
+				
 				<module>rec-web</module>
 				<module>rec-batch</module>
 			</modules>

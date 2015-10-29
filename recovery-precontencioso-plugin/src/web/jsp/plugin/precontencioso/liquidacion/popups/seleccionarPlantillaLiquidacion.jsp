@@ -11,7 +11,14 @@
 	<%-- Combo Tipo Gestor --%>
 	
 	var idLiquidacionSeleccionada = '${idLiquidacionSeleccionada}';
-	var ocultarCombo = '${ocultarCombo}';
+	var ocultarCombo = function() {
+		var ocultar = '${ocultarCombo}';
+		if(ocultar == 'false') {
+			return false;
+		}else{
+			return true;
+		}
+	} ;
 	
 	var labelInformativa = new Ext.form.Label({
 		text: 'Se va a generar un pdf de la liquidacion seleccionada'
@@ -40,7 +47,7 @@
 		forceSelection: true,
 		triggerAction: 'all',
 		disabled: false,
-		hidden: ocultarCombo,
+		hidden: ocultarCombo(),
 		fieldLabel: '<s:message code="plugin.precontencioso.liquidaciones.generar.plantillas" text="**Plantillas" />'
 	});
 	
@@ -67,9 +74,8 @@
 	});
 	
 	var validarForm = function() {
-		debugger;
 		var mensaje = '';
-		if (comboPlantillas.getValue() == '' && !ocultarCombo) {
+		if (comboPlantillas.getValue() == '' && !ocultarCombo()) {
 			mensaje = 'Debe rellenar los campos obligatorios';
 		}
 		return mensaje;

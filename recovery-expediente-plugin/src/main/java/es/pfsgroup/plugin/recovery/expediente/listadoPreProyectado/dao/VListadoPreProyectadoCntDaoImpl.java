@@ -21,7 +21,7 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 	public List<VListadoPreProyectadoCnt> getListadoPreProyectadoCnt(ListadoPreProyectadoDTO dto) {
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append("Select distinct c ");
+		//sb.append("Select distinct c ");
 		sb.append("from VListadoPreProyectadoCnt c ");
 		sb.append(" where c.cntId IN (select distinct f.cntId from VListadoPreProyectadoCntFiltros f where 1=1 ");
 		

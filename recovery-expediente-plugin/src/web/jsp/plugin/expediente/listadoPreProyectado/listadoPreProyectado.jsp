@@ -64,7 +64,7 @@
 		fields: ['codigo', 'descripcion']
  	       ,data : [
  	       			{"codigo":"EXP", "descripcion":"Expediente"}
- 	       			,{"codigo":"CTO", "descripcion":"Contrato"}
+ 	       			,{"codigo":"CNT", "descripcion":"Contrato"}
  	       	
  	       ]
  	}); 
@@ -400,18 +400,58 @@
 		 start:0
 		,limit:limit
 	};
+	
+	var contratosRecord = Ext.data.Record.create([
+		{name:'cntId'}
+		,{name:'contrato'}
+		,{name:'expId'}
+		,{name:'riesgoTotal'}
+		,{name:'deudaIrregular'}
+		,{name:'tramo'}
+		,{name:'diasVencidos'}
+		,{name:'fechaPaseAMoraCnt'}
+		,{name:'propuesta'}
+		,{name:'estadoGestion'}
+		,{name:'fechaPrevReguCnt'}
+	]);
 
-	 var preProStore = page.getStore({
-	 
+	 var preProCntsStore = page.getStore({
 		id:'preProStore'
-		,remoteSort:true
-		,event:'listado'
-		,storeId : 'preProStore'
+		//,remoteSort:true
+		//,event:'listado'
+		,storeId : 'preProCntsStore'
 		,limit: limit
-		,baseParams:paramsBusquedaInicial
+		,baseParams: paramsBusquedaInicial
 		,flow:'listadopreproyectado/getListPreproyectadoCnt'
- 		,reader : new Ext.data.JsonReader({root:'listado',totalProperty : 'total'})
+ 		//,reader : new Ext.data.JsonReader({root:'contratos',totalProperty : 'total'}, contratosRecord)
+ 		,reader : new Ext.data.JsonReader({root:'contratos'}, contratosRecord)
 	});
+	
+	var contratosCM = new Ext.grid.ColumnModel([
+		{dataIndex: 'cntId',sortable:false, hidden: true}
+		,{header: '<s:message code="preproyectado.contratos.nrocontrato" text="**Nro. contrato" />',dataIndex: 'contrato',sortable:true}		
+		,{header: '<s:message code="preproyectado.contratos.idexpediente" text="**ID Expediente" />',dataIndex: 'expId',sortable:true}
+		,{header: '<s:message code="preproyectado.contratos.riesgoTotal" text="**Riesgo Total" />',dataIndex: 'riesgoTotal',sortable:true, renderer: app.format.moneyRenderer, align: 'right'}
+		,{header: '<s:message code="preproyectado.contratos.deudaIrregular" text="**Deuda Irregular" />',dataIndex: 'deudaIrregular',sortable:true, renderer: app.format.moneyRenderer, align: 'right'}
+		,{header: '<s:message code="preproyectado.contratos.tramo" text="**Tramo" />',dataIndex: 'tramo',sortable:true}
+		,{header: '<s:message code="preproyectado.contratos.diasVencidos" text="**Días vencidos" />',dataIndex: 'diasVencidos',sortable:true, align: 'right'}
+		,{header: '<s:message code="preproyectado.contratos.fechaPaseAMora" text="**Fecha pase a mora" />',dataIndex: 'fechaPaseAMoraCnt',sortable:true}
+		,{header: '<s:message code="preproyectado.contratos.propuesta" text="**Propuesta" />',dataIndex: 'propuesta',sortable:true}
+		,{header: '<s:message code="preproyectado.contratos.estadoGestion" text="**Estado Gestión" />',dataIndex: 'estadoGestion',sortable:true}
+		,{header: '<s:message code="preproyectado.contratos.fechaPrevistaRegularizacion" text="**Fecha prevista regularización" />',dataIndex: 'fechaPrevReguCnt',sortable:true}
+	]);
+	
+	var contratosGrid=app.crearEditorGrid(preProCntsStore,contratosCM,{
+        title:'<s:message code="preproyectado.contratos.cabecera" text="**Contratos" />'
+        ,id:'cntId'
+        ,style : 'margin-bottom:10px;padding-right:10px'
+        ,autoWidth: true
+        ,height:350
+        ,loadMask: {msg: "Cargando...", msgCls: "x-mask-loading"}
+        //,bbar : [pagingBar]
+        ,collapsed: true
+        ,hidden: true
+    });	
  	
 	var validarEmptyForm = function(){
 		if(comboEstadoGestion.getValue() != ''){
@@ -552,9 +592,12 @@
 	var buscarFunc = function(){
 		if(validarEmptyForm()){
 			if(validaMinMax()){
-			
 				panelFiltros.collapse(true);
-				preProStore.webflow(getParametros());
+				if (comboAgruparPor.getValue()=='CNT') {
+					contratosGrid.show();
+					contratosGrid.expand(true);
+					preProCntsStore.webflow(getParametros());
+				}
 			}else{
 				Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="validaciones.dblText.minMax"/>');
 			}
@@ -615,7 +658,7 @@
 				,defaults : {xtype:'panel' ,cellCls : 'vtop'}
 				,border:false
 				,bodyStyle:'margin:10px;padding:5px;cellspacing:10px;margin-bottom:0px'
-				,items:[panelFiltros]
+				,items:[panelFiltros,contratosGrid]
 			}
 		]
 		,autoHeight : true

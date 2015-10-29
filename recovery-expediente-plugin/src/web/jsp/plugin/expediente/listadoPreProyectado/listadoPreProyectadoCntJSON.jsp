@@ -13,11 +13,14 @@
 			<json:property name="deudaIrregular" value="${cnt.deudaIrregular}"/>
 			<json:property name="tramo" value="${cnt.tramo}" />
 			<json:property name="diasVencidos" value="${cnt.diasVencidos}" />
-			<json:property name="diasVencidos" value="${cnt.diasVencidos}" />
-			<json:property name="fechaPaseAMoraCnt" ><fwk:date value="${cnt.fechaPaseAMoraCnt}"/></json:property>
+			<json:property name="fechaPaseAMoraCnt" >
+				<fwk:date value="${cnt.fechaPaseAMoraCnt}"/>
+			</json:property>
 			<json:property name="propuesta" value="${cnt.propuesta}" />
 			<json:property name="estadoGestion" value="${cnt.estadoGestion}" />
-			<json:property name="fechaPrevReguCnt" ><fwk:date value="${cnt.fechaPrevReguCnt}"/></json:property>
+			<json:property name="fechaPrevReguCnt" >
+				<fwk:date value="${cnt.fechaPrevReguCnt}"/>
+			</json:property>
 		</json:object>
 	</json:array>
 </fwk:json>

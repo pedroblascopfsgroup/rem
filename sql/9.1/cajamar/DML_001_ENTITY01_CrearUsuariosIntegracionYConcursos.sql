@@ -164,6 +164,46 @@ DECLARE
     ); 
     V_TMP_TIPO_TFA T_TIPO_TFA;
     
+    
+    
+     --Valores a insertar
+    TYPE T_TIPO_PEF IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_PEF IS TABLE OF T_TIPO_PEF;
+    V_TIPO_PEF T_ARRAY_PEF := T_ARRAY_PEF(  
+      T_TIPO_PEF(
+      	/*descripcion larga*/ 'Acceso a las funcionalidades de Gestor de riesgos',
+      	/*descripcion......*/ 'Gestor de riesgos',
+      	/*carterizado......*/ '0',
+      	/*codigo...........*/ 'GES_RIESGOS'
+      	),
+      	T_TIPO_PEF(
+      	/*descripcion larga*/ 'Acceso a las funcionalidades de Director de riesgos',
+      	/*descripcion......*/ 'Director de riesgos',
+      	/*carterizado......*/ '0',
+      	/*codigo...........*/ 'DIR_RIESGOS'
+      	),
+      	T_TIPO_PEF(
+      	/*descripcion larga*/ 'Acceso a las funcionalidades de oficina',
+      	/*descripcion......*/ 'Oficina',
+      	/*carterizado......*/ '0',
+      	/*codigo...........*/ 'OFI_OFICINA'
+      	),
+      	T_TIPO_PEF(
+      	/*descripcion larga*/ 'Acceso a las funcionalidades de Servicios centrales',
+      	/*descripcion......*/ 'Servicios centrales',
+      	/*carterizado......*/ '0',
+      	/*codigo...........*/ 'SER_CENTRALES'
+      	)
+        
+); 
+    V_TMP_TIPO_PEF T_TIPO_PEF;
+    
+    
+    
+    
+    
+    
+    
 BEGIN
 	
 	/*
@@ -261,13 +301,56 @@ BEGIN
     
     
 	DBMS_OUTPUT.PUT_LINE('[INICIO] Comenzando con DES_DESPACHO_EXTERNO');  
-	-- LOOP Insertando valores en dd_tfa_fichero_adjunto
-	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.des_despacho_externo... Empezando a crear despachos...');
+	DBMS_OUTPUT.PUT_LINE('[INFO] Comprobando perfiles...');
+		
+	
+	-------------------------------
+	FOR I IN V_TIPO_PEF.FIRST .. V_TIPO_PEF.LAST
+      LOOP              
+            V_TMP_TIPO_PEF := V_TIPO_PEF(I);          		
+            
+             --Comprobamos que no exista el perfil
+            V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = ''' || V_TMP_TIPO_PEF(4) || '''';
+            --DBMS_OUTPUT.PUT_LINE(V_MSQL);
+            EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+
+            --Si no existe el usuario lo damos de alta
+          IF V_NUM_TABLAS < 1 THEN 
+          
+					--Por último, damos los perfiles necesarios al usuario creado.
+					V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.PEF_PERFILES (' ||
+							  ' PEF_ID,PEF_DESCRIPCION_LARGA, PEF_DESCRIPCION,VERSION,USUARIOCREAR,FECHACREAR,BORRADO,PEF_CODIGO,PEF_ES_CARTERIZADO,DTYPE) VALUES (' ||
+							  V_ESQUEMA||'.S_PEF_PERFILES.NEXTVAL, ' || 
+							  '''' ||V_TMP_TIPO_PEF(1) || ''','   ||
+							  '''' ||V_TMP_TIPO_PEF(2) || ''','   ||
+							  '''0'',' ||
+							  '''CMREC-383'',' ||
+							  'sysdate,' ||
+							  '0,' ||
+							  '''' ||V_TMP_TIPO_PEF(4) || ''','   ||
+							  '''' || V_TMP_TIPO_PEF(3) || ''',' ||
+							  '''EXTPerfil'')';
+							
+					--DBMS_OUTPUT.PUT_LINE(V_MSQL);
+              		
+					EXECUTE IMMEDIATE V_MSQL;	
+					
+					DBMS_OUTPUT.PUT_LINE('Creado el perfil '''||V_TMP_TIPO_PEF(4)||'''');	
+          
+          ELSE
+           DBMS_OUTPUT.PUT_LINE('El perfil '||V_TMP_TIPO_PEF(4)
+						||' ya existe, NO se creará de nuevo otra vez.');
+          END IF;
+    END LOOP;
+	
+  
+  DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.des_despacho_externo... Empezando a crear despachos...');
+	
     
 	FOR I IN V_TIPO_TFA.FIRST .. V_TIPO_TFA.LAST
       LOOP              
             V_TMP_TIPO_TFA := V_TIPO_TFA(I);          		
-            
+              
             --Vamos a comprobar primero si existe el usuario que queremos crear
             V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME='''||V_TMP_TIPO_TFA(2)||''' ';
             --DBMS_OUTPUT.PUT_LINE(V_MSQL);
@@ -403,8 +486,9 @@ BEGIN
           
           
           
+          
           --Comprobamos que no exista la relacion usd
-            V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ZON_PEF_USU WHERE ZON_ID = (SELECT ZON_ID FROM '||V_ESQUEMA||'.ZON_ZONIFICACION WHERE ZON_COD = ''01'' AND BORRADO=0) AND USU_ID=' || V_USUARIO_ID  || ' AND PEF_ID = (SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO=''FPFSRLETEXT'') ';
+            V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ZON_PEF_USU WHERE ZON_ID = (SELECT ZON_ID FROM '||V_ESQUEMA||'.ZON_ZONIFICACION WHERE ZON_COD = ''01'' AND BORRADO=0) AND USU_ID=' || V_USUARIO_ID  || ' AND PEF_ID = (SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO=''' || V_TMP_TIPO_TFA(6) || ''') ';
             --DBMS_OUTPUT.PUT_LINE(V_MSQL);
             EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
 
@@ -427,11 +511,11 @@ BEGIN
               		
 					EXECUTE IMMEDIATE V_MSQL;	
 					
-					DBMS_OUTPUT.PUT_LINE('Ya dado el perfil ''FPFSRLETEXT'' () al usuario '||V_TMP_TIPO_TFA(2));	
+					DBMS_OUTPUT.PUT_LINE('Ya dado el perfil '''||V_TMP_TIPO_TFA(6)||''' al usuario '||V_TMP_TIPO_TFA(2));	
           
           ELSE
            DBMS_OUTPUT.PUT_LINE('La zonificación  del usuario '||V_TMP_TIPO_TFA(2)
-						||' con el perfil ''FPFSRLETEXT'' ya existe, NO se creará de nuevo otra vez.');
+						||' con el perfil '''||V_TMP_TIPO_TFA(6)||''' ya existe, NO se creará de nuevo otra vez.');
           END IF;
 			
 			--Si el usuario ya existe

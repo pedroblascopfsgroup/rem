@@ -32,4 +32,7 @@
 	<import resource="classpath:bankia/jobs/carga/gcl/loadGruposClientesStarterJob.xml" />
 	<import resource="classpath:bankia/jobs/carga/gcl/validacionesGruposClientesJob.xml" />
 
+	<!-- Sobreescribimos este bean definido en devon-batch debido al cambio en Oracle Dialect -->
+	<bean id="batch.task.DataLoader" abstract="true" class="es.capgemini.devon.batch.tasks.${master.dialect9i}DataLoaderTasklet"/>
+
 </beans>

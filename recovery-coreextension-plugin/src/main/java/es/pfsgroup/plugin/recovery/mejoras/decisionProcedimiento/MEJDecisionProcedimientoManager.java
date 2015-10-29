@@ -485,8 +485,14 @@ public class MEJDecisionProcedimientoManager extends
         }
 
         if(decisionProcedimiento.getEntidad() == null || "".equals(decisionProcedimiento.getEntidad())) {
-        	Usuario usuario = usuarioManager.getUsuarioLogado();
-        	decisionProcedimiento.setEntidad(usuario.getEntidad().getDescripcion());
+        	
+        	if(dtoDecisionProcedimiento.getEntidad() != null && !"".equals(dtoDecisionProcedimiento.getEntidad())) {
+        		decisionProcedimiento.setEntidad(dtoDecisionProcedimiento.getEntidad());
+        	}
+        	else {
+        		Usuario usuario = usuarioManager.getUsuarioLogado();
+        		decisionProcedimiento.setEntidad(usuario.getEntidad().getDescripcion());
+        	}
         }
         
         for (DtoProcedimientoDerivado procDerivado : dtoDecisionProcedimiento.getProcedimientosDerivados()) {
@@ -521,7 +527,10 @@ public class MEJDecisionProcedimientoManager extends
 
         decisionProcedimientoDao.saveOrUpdate(decisionProcedimiento);
         decisionProcedimiento = decisionProcedimientoDao.get(decisionProcedimiento.getId());
-        integracionBpmService.enviarDatos(decisionProcedimiento);
+        
+        if(decisionProcedimiento.getGuid() == null) {
+        	integracionBpmService.enviarDatos(decisionProcedimiento);
+        }
         
         return decisionProcedimiento;
     }

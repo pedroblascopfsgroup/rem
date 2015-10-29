@@ -175,17 +175,29 @@ public class DecisionProcedimientoPayload {
 		if(decisionProcedimiento.getCausaDecision() != null) {
 			setCausaDecision(decisionProcedimiento.getCausaDecision().getCodigo());
 		}
+		else {
+			setCausaDecision("");
+		}
 		
 		if(decisionProcedimiento.getCausaDecisionFinalizar() != null) {
 			setCausaDecisionFinalizar(decisionProcedimiento.getCausaDecisionFinalizar().getCodigo());
+		}
+		else {
+			setCausaDecisionFinalizar("");
 		}
 		
 		if(decisionProcedimiento.getCausaDecisionParalizar() != null) {
 			setCausaDecisionParalizar(decisionProcedimiento.getCausaDecisionParalizar().getCodigo());
 		}
+		else {
+			setCausaDecisionParalizar("");
+		}
 		
 		if(decisionProcedimiento.getEstadoDecision() != null) {
 			setEstadoDecision(decisionProcedimiento.getEstadoDecision().getCodigo());
+		}
+		else {
+			setEstadoDecision("");
 		}
 		
 		setFechaParalizacion(decisionProcedimiento.getFechaParalizacion());

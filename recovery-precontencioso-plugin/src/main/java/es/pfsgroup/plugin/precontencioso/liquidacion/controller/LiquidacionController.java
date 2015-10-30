@@ -212,25 +212,27 @@ public class LiquidacionController {
 	}
 
 	@RequestMapping
-	public String generar(@RequestParam(value = "idLiquidacion", required = true) Long id, ModelMap model) {
+	public String generar(@RequestParam(value = "idLiquidacion", required = true) Long idLiquidacion, Long idPlantilla, ModelMap model) {
 
 		if (generarLiquidacionApi == null) {
 			logger.error("liquidacioncontroller.generar: No existe una implementacion para generar liquidaciones");
 			throw new BusinessOperationException("Not implemented generarLiquidacionApi");
 		}
 
-		FileItem documentoLiquidacion = generarLiquidacionApi.generarDocumento(id);
+		FileItem documentoLiquidacion = generarLiquidacionApi.generarDocumento(idLiquidacion, idPlantilla);
 		model.put("fileItem", documentoLiquidacion);
 
 		return JSP_DOWNLOAD_FILE;
 	}
-	
+
 	@RequestMapping
 	public String getPlantillasLiquidacion(ModelMap model) {
+
 		if (generarLiquidacionApi == null) {
 			logger.error("liquidacioncontroller.generar: No existe una implementacion para generar liquidaciones");
 			throw new BusinessOperationException("Not implemented generarLiquidacionApi");
 		}
+
 		List<DDTipoLiquidacionPCO> plantillas = generarLiquidacionApi.getPlantillasLiquidacion();
 		model.put("plantillas", plantillas);
 		return JSON_PLANTILLAS;
@@ -239,12 +241,14 @@ public class LiquidacionController {
 	@RequestMapping
 	public String abrirPlantillasLiquidacion(@RequestParam(value = "idLiquidacion", required = true) Long id, ModelMap model) {
 		List<DDTipoLiquidacionPCO> plantillas = null;
+
 		if (generarLiquidacionApi != null) {
 			plantillas = generarLiquidacionApi.getPlantillasLiquidacion();
 		}
+
 		model.put("ocultarCombo", Checks.estaVacio(plantillas));
 		model.put("idLiquidacionSeleccionada", id);
 		return JSP_PLANTILLAS_LIQUIDACION;
 	}
-	
+
 }

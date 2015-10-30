@@ -722,7 +722,7 @@ public class BurofaxManager implements BurofaxApi {
 			}
 			
 			
-			archivoBurofax=informesManager.generarEscritoConVariables(mapaVariables,nombreFichero,is);
+			//archivoBurofax=informesManager.generarEscritoConVariables(mapaVariables,nombreFichero,is);
 	       
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block

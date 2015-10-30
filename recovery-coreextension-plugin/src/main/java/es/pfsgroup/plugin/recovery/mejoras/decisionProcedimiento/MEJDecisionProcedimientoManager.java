@@ -66,7 +66,6 @@ import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDEstadoSubasta;
@@ -144,7 +143,6 @@ public class MEJDecisionProcedimientoManager extends
 	public void rechazarPropuesta(MEJDtoDecisionProcedimiento dtoDecisionProcedimiento) {
 		try {
 			DecisionProcedimiento dp = dtoDecisionProcedimiento.getDecisionProcedimiento();
-			//DecisionProcedimiento dp2 = HibernateUtils.merge(dp);
 			dtoDecisionProcedimiento.setDecisionProcedimiento(dp);
 			 // Setear Decision como rechazada
 	        DecisionProcedimiento decisionProcedimiento = dtoDecisionProcedimiento.getDecisionProcedimiento();
@@ -715,7 +713,6 @@ public class MEJDecisionProcedimientoManager extends
     			.dameValorDiccionarioByCod(DDEstadoDecision.class, DDEstadoDecision.ESTADO_ACEPTADO); 
 		decision.setEstadoDecision(estadoDecision);
         genericDao.update(DecisionProcedimiento.class, decision);
-        //HibernateUtils.merge(decision);
 
         // Si tiene una tarea asignada a la decisi�n la finalizamos
         TareaNotificacion tarea = decision.getTareaAsociada();
@@ -771,9 +768,6 @@ public class MEJDecisionProcedimientoManager extends
 
 			cancelarSubastaActiva(procedimiento);
 
-			//procedimiento = HibernateUtils.merge(procedimiento);
-			//HibernateUtils.flush();
-			
 			for (TareaNotificacion t : procedimiento.getTareas()){
 				if (!t.getAuditoria().isBorrado()) {
 					if(t.getTareaFinalizada() == null || (t.getTareaFinalizada()!=null && !t.getTareaFinalizada())){
@@ -818,7 +812,6 @@ public class MEJDecisionProcedimientoManager extends
 				if (!tn.getAuditoria().isBorrado()) {
 					tn.setTareaFinalizada(true);
 					genericDao.update(TareaNotificacion.class, tn);
-					//HibernateUtils.merge(tn);
 				}
 			}
 		}

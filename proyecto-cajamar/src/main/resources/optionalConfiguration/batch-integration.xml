@@ -296,7 +296,7 @@
 				</bean>
 
 				<!-- Decisión de procedimiento -->
-				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.TransicionarBPM">
+				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.DecisionProcedimientoConsumer">
 					<constructor-arg index="0">
 						<bean class="es.pfsgroup.recovery.integration.bpm.DecisionProcedimientoPayloadRegexRule">
 							<property name="tipo" value="DATOS-DECISION-PROCEDIMIENTO" />
@@ -305,6 +305,7 @@
 							<property name="finalizar" value="true" />
 						</bean>
 					</constructor-arg>
+					<constructor-arg index="1" value="${integracion.tareas.tratamiento.decision}"/>
 					<property name="description" value="Crea una toma de decisión mediante un procedimiento"/>
 					<!-- property name="modoFuncionamiento" value="ACEPTAR_DECISION"/ -->
 				</bean>

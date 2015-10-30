@@ -26,11 +26,10 @@ public class DecisionProcedimientoPayloadRegexRule extends TypePayloadRegexRule<
 		this.paralizar = (paralizar!=null && paralizar);
 	}
 
-
 	public void setFinalizar(Boolean finalizar) {
 		this.finalizar = (finalizar!=null && finalizar);
 	}
-
+	
 	@Override
 	protected boolean isValidRule() {
 		return (super.isValidRule() 

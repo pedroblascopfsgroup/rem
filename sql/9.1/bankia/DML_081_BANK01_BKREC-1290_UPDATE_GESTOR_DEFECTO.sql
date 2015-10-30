@@ -35,23 +35,15 @@ BEGIN
 
 	DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
-	V_SQL := 'select USU_ID from '||V_ESQUEMA_M||'.USU_USUARIOS where USU_USERNAME=''A172244''';
-	execute immediate V_SQL  INTO V_NUM1;
-	V_SQL := 'select USU_ID from '||V_ESQUEMA_M||'.USU_USUARIOS where USU_USERNAME=''A127028''';
-	execute immediate V_SQL INTO V_NUM2;
-	V_SQL := 'select USU_ID from '||V_ESQUEMA_M||'.USU_USUARIOS where USU_USERNAME=''A112600''';
-	execute immediate V_SQL INTO V_NUM3;
-	V_SQL := 'select USU_ID from '||V_ESQUEMA_M||'.USU_USUARIOS where USU_USERNAME=''A168771''';
-	execute immediate V_SQL INTO V_NUM4;
-	--/**
-	-- * Modificación de USD_USUARIOS_DESPACHOS, donde dejaremos solamente un 1 USD_GESTOR_DEFECTO activo por DES_ID (despacho)
-	-- */
-	execute immediate 'update '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS set USD_GESTOR_DEFECTO=0 where DES_ID=1218 and USU_ID='||V_NUM1||'';
-	execute immediate 'update '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS set USD_GESTOR_DEFECTO=0 where DES_ID=5120 and USU_ID='||V_NUM2||'';
-	execute immediate 'update '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS set USD_GESTOR_DEFECTO=0 where DES_ID=5120 and USU_ID='||V_NUM3||'';
-	execute immediate 'update '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS set USD_GESTOR_DEFECTO=0 where DES_ID=142353 and USU_ID='||V_NUM4||'';
+	 --/**
+    -- * Modificación de USD_USUARIOS_DESPACHOS, donde dejaremos solamente un 1 USD_GESTOR_DEFECTO activo por DES_ID (despacho)
+    -- */
+    execute immediate 'update '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS set USD_GESTOR_DEFECTO=0 where DES_ID=(select des_id from '||V_ESQUEMA||'.des_despacho_externo where des_despacho=''ACUERDO'') and USU_ID=(select USU_ID from '||V_ESQUEMA_M||'.USU_USUARIOS where USU_USERNAME=''A172244'')';
+    execute immediate 'update '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS set USD_GESTOR_DEFECTO=0 where DES_ID=(select des_id from '||V_ESQUEMA||'.des_despacho_externo where des_despacho=''HAYA'') and USU_ID=(select USU_ID from '||V_ESQUEMA_M||'.USU_USUARIOS where USU_USERNAME=''A127028'')';
+    execute immediate 'update '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS set USD_GESTOR_DEFECTO=0 where DES_ID=(select des_id from '||V_ESQUEMA||'.des_despacho_externo where des_despacho=''HAYA'') and USU_ID=(select USU_ID from '||V_ESQUEMA_M||'.USU_USUARIOS where USU_USERNAME=''A112600'')';
+    execute immediate 'update '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS set USD_GESTOR_DEFECTO=0 where DES_ID=(select des_id from '||V_ESQUEMA||'.des_despacho_externo where des_despacho=''LUPICINIO RODRIGUEZ JIMENEZ'') and USU_ID=(select USU_ID from '||V_ESQUEMA_M||'.USU_USUARIOS where USU_USERNAME=''A168771'')';
 
-	COMMIT;
+    COMMIT;
 
 	DBMS_OUTPUT.PUT_LINE('[FIN]');
 

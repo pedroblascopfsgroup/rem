@@ -1,6 +1,6 @@
 package es.pfsgroup.recovery.integration.bpm.consumer;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -55,17 +55,15 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 			
 			MEJDtoDecisionProcedimiento dtoDecisionProcedimiento = load(decisionProcedimientoPayload);
 			
-			DecisionProcedimiento dec = null;
+			
 			MEJProcedimiento prc = extProcedimientoManager.getProcedimientoByGuid(prcUUID);
 			if (prc==null) {
 				throw new IntegrationDataException(String.format("[INTEGRACION] El procedimiento con guid %s asociado a la decisión no existe", prcUUID)); 
 			}
 		     
-			dec = new DecisionProcedimiento();
-		    dec.setProcedimiento(prc);
-		 	
+			DecisionProcedimiento dec = new DecisionProcedimiento();
+	        dtoDecisionProcedimiento.setIdProcedimiento(prc.getId());
 	        dtoDecisionProcedimiento.setDecisionProcedimiento(dec);
-			
 			decisionProcedimientoManager.aceptarPropuestaSinControl(dtoDecisionProcedimiento);
 		}
 	}
@@ -89,7 +87,7 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 		dtoDecisionProcedimiento.setIdProcedimiento(prc.getId());
 		dtoDecisionProcedimiento.setParalizar(decisionProcedimientoPayload.getParalizada());
 		
-		DtoProcedimientoDerivado[] dtoProcedimientoDerivados = new DtoProcedimientoDerivado[decisionProcedimientoPayload.getProcedimientoDerivado().size()];
+		List<DtoProcedimientoDerivado> dtoProcedimientoDerivados = new ArrayList<DtoProcedimientoDerivado>();
 		int indice = 0;
 		
 		for(ProcedimientoDerivadoPayload procedimientoDerivadoPayload : decisionProcedimientoPayload.getProcedimientoDerivado()) {
@@ -120,7 +118,7 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 			dtoProcedimientoDerivado.setPlazoRecuperacion(procedimientoDerivadoPayload.getPlazoRecuperacion());
 			dtoProcedimientoDerivado.setSaldoRecuperacion(procedimientoDerivadoPayload.getSaldoRecuperacion());
 			
-			dtoProcedimientoDerivados[indice] = dtoProcedimientoDerivado;
+			dtoProcedimientoDerivados.add(dtoProcedimientoDerivado);
 			indice++;
 		}
 

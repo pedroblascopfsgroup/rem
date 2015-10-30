@@ -47,6 +47,7 @@ import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.capgemini.pfs.procedimientoDerivado.dto.DtoProcedimientoDerivado;
 import es.capgemini.pfs.procedimientoDerivado.model.ProcedimientoDerivado;
+import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.TareaNotificacionManager;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
@@ -132,6 +133,10 @@ public class MEJDecisionProcedimientoManager extends
 
 	@Autowired
 	private ProcedimientoManager prcManager;
+	
+	@Autowired
+	private TipoProcedimientoManager tipoProcedimientoManager;
+	
 
 	@BusinessOperation(overrides = ExternaBusinessOperation.BO_DEC_PRC_MGR_RECHAZAR_PROPUESTA)
 	@Transactional(readOnly = false)
@@ -444,7 +449,66 @@ public class MEJDecisionProcedimientoManager extends
         return procedimientoDerivado;
     }
 
+    private void validacionesPreviasCrearDecision(MEJDtoDecisionProcedimiento dtoDecisionProcedimiento, Procedimiento procedimiento) {
 
+    	logger.info("Validación 1. Los procedimientos hijos son derivables...");
+		if (dtoDecisionProcedimiento.getFinalizar()) {
+
+			List<TipoProcedimiento> tiposProcedimientosHijos = new ArrayList<TipoProcedimiento>();
+			DecisionProcedimiento decision = dtoDecisionProcedimiento.getDecisionProcedimiento(); 
+			
+			// Comprueba los de la decisión ya creada (en caso que la decisión estuviera creada)
+			if (decision!=null && decision.getProcedimientosDerivados()!=null) {
+				for (ProcedimientoDerivado prcDerivado : decision.getProcedimientosDerivados()) {
+					tiposProcedimientosHijos.add(prcDerivado.getProcedimiento().getTipoProcedimiento());
+				}
+			}
+			
+			for (DtoProcedimientoDerivado procedimientoDerivado : dtoDecisionProcedimiento.getProcedimientosDerivados()) {
+				String codTipoProcedimientoDerivado = procedimientoDerivado.getTipoProcedimiento();
+				TipoProcedimiento tipoProcedimiento = tipoProcedimientoManager.getByCodigo(codTipoProcedimientoDerivado);
+				tiposProcedimientosHijos.add(tipoProcedimiento);
+			}
+			
+			
+			// Comprueba
+			for (TipoProcedimiento tipoProcedimiento : tiposProcedimientosHijos) {
+				if (!tipoProcedimiento.getIsDerivable()) {
+					throw new BusinessOperationException(
+				 			"No es posible derivar a un Tramite de notificación o verbal desde monitorio, si se viene de una tarea de toma de decisi&oacute;n o se finaliza origen.");
+				}
+			}
+		}
+		
+
+		logger.info("Validación 2. El procedimiento orgien está activo...");
+		if (procedimiento.getEstadoProcedimiento() != null
+				&& (procedimiento.getEstadoProcedimiento().getCodigo().equals(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO) || 
+						procedimiento.getEstadoProcedimiento().getCodigo().equals(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO))){ 
+				throw new UserException("El procedimiento de origen no está activo");
+			}
+			
+		logger.info("Validación 3 en Aceptación de Decisión...");
+		Set<String> tomasDeDecision = coreProjectContext.getCategoriasSubTareas().get(CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION);
+		List<TareaNotificacion> vTareas = tareaNotifManager.getListByProcedimientoSubtipo(procedimiento.getId(), tomasDeDecision);
+        
+		if (vTareas != null && vTareas.size() > 0) {
+			Iterator<TareaNotificacion> it = vTareas.iterator();
+			while (it.hasNext()) {
+				TareaNotificacion tar = it.next();
+				if(tar.getSubtipoTarea().getCodigoSubtarea().compareTo(SubtipoTarea.CODIGO_TOMA_DECISION_BPM) == 0 && dtoDecisionProcedimiento.getParalizar()){
+				 	throw new BusinessOperationException(
+				 			"No esta permitido crear una decisión de tipo paralización cuando hay una tarea de tipo (Toma de decisión de continuidad) pendiente de completar por el usuario.");
+				 }
+				if (it.hasNext()){
+					throw new BusinessOperationException(
+				 			"No es posible derivar a un Tramite de notificación o verbal desde monitorio, si se viene de una tarea de toma de decisi&oacute;n o se finaliza origen.");
+				}
+			}
+		}
+    }
+    
+    
     /**
      * Crea o Actualiza un objeto DecisionProcedimiento en la BD.
      *
@@ -452,14 +516,22 @@ public class MEJDecisionProcedimientoManager extends
      * @return DecisionProcedimiento
      * @throws Exception e
      */
-    public DecisionProcedimiento createOrUpdate(MEJDtoDecisionProcedimiento dtoDecisionProcedimiento, Procedimiento procedimiento) throws Exception {
+    public DecisionProcedimiento createOrUpdate(MEJDtoDecisionProcedimiento dtoDecisionProcedimiento, Procedimiento procedimiento) 
+    		throws Exception {
 
         DecisionProcedimiento decisionProcedimiento = dtoDecisionProcedimiento.getDecisionProcedimiento();
         if (dtoDecisionProcedimiento.getDecisionProcedimiento().getId() == null) {
              decisionProcedimiento = new DecisionProcedimiento();
              decisionProcedimiento.setProcedimiento(procedimiento);
+             dtoDecisionProcedimiento.setDecisionProcedimiento(decisionProcedimiento);
+             
+     		Usuario usuario = usuarioManager.getUsuarioLogado();
+     		decisionProcedimiento.setEntidad(usuario.getEntidad().getDescripcion());
         }
 
+    	validacionesPreviasCrearDecision(dtoDecisionProcedimiento, procedimiento);
+    	logger.info("Validaciones OK!! Creando decisión en base de datos...");
+        
         DDEstadoDecision estadoDecision = (DDEstadoDecision)diccionarioApi.dameValorDiccionarioByCod(DDEstadoDecision.class, dtoDecisionProcedimiento.getStrEstadoDecision());
         decisionProcedimiento.setEstadoDecision(estadoDecision);
 
@@ -478,58 +550,23 @@ public class MEJDecisionProcedimientoManager extends
         decisionProcedimiento.setComentarios(dtoDecisionProcedimiento.getComentarios());
         decisionProcedimiento.setFechaParalizacion(dtoDecisionProcedimiento.getFechaParalizacion());
         
-        
         if (decisionProcedimiento.getProcedimientosDerivados() == null) {
             decisionProcedimiento.setProcedimientosDerivados(new ArrayList<ProcedimientoDerivado>());
         }
 
-        if(decisionProcedimiento.getEntidad() == null || "".equals(decisionProcedimiento.getEntidad())) {
-        	
-        	if(dtoDecisionProcedimiento.getEntidad() != null && !"".equals(dtoDecisionProcedimiento.getEntidad())) {
-        		decisionProcedimiento.setEntidad(dtoDecisionProcedimiento.getEntidad());
-        	}
-        	else {
-        		Usuario usuario = usuarioManager.getUsuarioLogado();
-        		decisionProcedimiento.setEntidad(usuario.getEntidad().getDescripcion());
-        	}
-        }
-        
         for (DtoProcedimientoDerivado procDerivado : dtoDecisionProcedimiento.getProcedimientosDerivados()) {
             if (procDerivado.getProcedimientoPadre() == null) {
                 continue;
             }
-
-            ProcedimientoDerivado prc = null;
-            if (procDerivado.getId() != null) {
-
-                prc = genericDao.get(ProcedimientoDerivado.class, genericDao.createFilter(FilterType.EQUALS, "id", procDerivado.getId()));
-
-            }
+            ProcedimientoDerivado prc = decisionProcedimiento.getProcedimientoDerivadoById(procDerivado.getId());
             if (prc != null) {
                 continue;
             }
-
             prc = crearProcedimientoDerivado(procDerivado, decisionProcedimiento);
-            // Busco si el objeto existe en la lista de procedmientos derivados
-            if (prc.getId() != null) {
-                for (int i = 0; i < decisionProcedimiento.getProcedimientosDerivados().size(); i++) {
-                    ProcedimientoDerivado prd = decisionProcedimiento.getProcedimientosDerivados().get(i);
-                    if (prc.getId().equals(prd.getId())) {
-                        decisionProcedimiento.getProcedimientosDerivados().set(i, prc);
-                    }
-                }
-            } else {
-                decisionProcedimiento.getProcedimientosDerivados().add(prc);
-            }
-
+            decisionProcedimiento.getProcedimientosDerivados().add(prc);
         }
 
         decisionProcedimientoDao.saveOrUpdate(decisionProcedimiento);
-        decisionProcedimiento = decisionProcedimientoDao.get(decisionProcedimiento.getId());
-        
-        if(decisionProcedimiento.getGuid() == null) {
-        	integracionBpmService.enviarDatos(decisionProcedimiento);
-        }
         
         return decisionProcedimiento;
     }
@@ -605,67 +642,37 @@ public class MEJDecisionProcedimientoManager extends
 				&& decision.getEstadoDecision() != null 
 				&& decision.getEstadoDecision().getCodigo().equals(DDEstadoDecision.ESTADO_PROPUESTO);
 
+		validacionesPreviasCrearDecision(dtoDecisionProcedimiento, procedimiento);
+		
+		logger.info("Validación 1 en Aceptación de Decisión (valida procedimientos derivados en propuestas que no hayan cambiado de estado) ...");
+		if (decision.getProcedimientosDerivados()!=null) {
+			for (ProcedimientoDerivado prd : decision.getProcedimientosDerivados()) {
+				//Procedimiento prc= genericDao.get(Procedimiento.class, genericDao
+				//		.createFilter(FilterType.EQUALS, "id", prd.getProcedimiento().getId()));
+				Procedimiento prc = prd.getProcedimiento();
+				// Validar estado del procedimiento
+				if (!prc.getEstadoProcedimiento().getCodigo().equals(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_DERIVADO)) { 
+					throw new UserException(String.format("El procedimiento %d no está en estado derivado, no se puede aceptar el procedimiento", prc.getId()));
+				}
+			}
+		}
+			
 		try{
+			logger.info("Todo correcto! Crea la decisión ...");
 			decision = createOrUpdate(dtoDecisionProcedimiento, procedimiento);
-		}catch(Exception exc){
+		} catch(UserException userException){
+			logger.error("Ups, Error al crear la decisión!!! Mensaje al usuario: ", userException);
+			throw userException;
+		} catch(Exception exc){
+			logger.error("Ups, Error al crear la decisión!!! Excepción general: ", exc);
 			throw new BusinessOperationException(exc);
 		}
-
 		
-		//JZ
-		Boolean isDerivable = false;
-		List<ProcedimientoDerivado> derivarA = decision.getProcedimientosDerivados();
-		if (derivarA != null && derivarA.size() > 0) {
-			for (ProcedimientoDerivado derivacion : derivarA) {
-				if (derivacion.getProcedimiento().getTipoProcedimiento().getIsDerivable()) {
-					isDerivable = true;
-				}
-			}
-		} else {
-			isDerivable = true;
-		}        
-
-		if (!isDerivable && dtoDecisionProcedimiento.getFinalizar()){
-			throw new BusinessOperationException(
-		 			"No es posible derivar a un Tramite de notificación o verbal desde monitorio, si se viene de una tarea de toma de decision o se finaliza origen.");
-		}
-
-		Set<String> tomasDeDecision = coreProjectContext.getCategoriasSubTareas().get(CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION);
-		List<TareaNotificacion> vTareas = tareaNotifManager.getListByProcedimientoSubtipo(procedimiento.getId(), tomasDeDecision);
-        
-		if (vTareas != null && vTareas.size() > 0) {
-			Iterator<TareaNotificacion> it = vTareas.iterator();
-			while (it.hasNext()) {
-				TareaNotificacion tar = it.next();
-				if(tar.getSubtipoTarea().getCodigoSubtarea().compareTo(SubtipoTarea.CODIGO_TOMA_DECISION_BPM) == 0 && dtoDecisionProcedimiento.getParalizar()){
-				 	throw new BusinessOperationException(
-				 			"No esta permitido crear una decisión de tipo paralización cuando hay una tarea de tipo (Toma de decisión de continuidad) pendiente de completar por el usuario.");
-				 }
-				if (it.hasNext() && !isDerivable ){
-					throw new BusinessOperationException(
-				 			"No es posible derivar a un Tramite de notificación o verbal desde monitorio, si se viene de una tarea de toma de decision o se finaliza origen.");
-				}
-			}
-		}
-
-		// VALIDACIONES
-		// No existen los procedimientos con los c�digos pasados como par�metros.
-		// El procedimiento origen no est� activo.
-		if (procedimiento.getEstadoProcedimiento() != null
-			&& (procedimiento.getEstadoProcedimiento().getCodigo().equals(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO) || 
-					procedimiento.getEstadoProcedimiento().getCodigo().equals(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO))){ 
-			throw new UserException("El procedimiento de origen no está activo");
-		}
-
+		logger.info("Todo correcto! Actualiza los procedimientos derivados con los valores del origen ...");
 		for (ProcedimientoDerivado prd : decision.getProcedimientosDerivados()) {
-			Procedimiento prc= genericDao.get(Procedimiento.class, genericDao
-					.createFilter(FilterType.EQUALS, "id", prd.getProcedimiento().getId()));
+			Procedimiento prc= prd.getProcedimiento();
 			
-			// Validar estado del procedimiento
-			if (!prc.getEstadoProcedimiento().getCodigo().equals(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_DERIVADO)) { throw new UserException(
-				"El procedimiento " + prc.getId() + " no est� en estado derivado"); }
-			
-			// Registrar los saldos vencido y no vencido originales del �ltimo
+			// Registrar los saldos vencido y no vencido originales del último
 			// movimiento de los contratos
 			Movimiento mv = null;
 			BigDecimal saldoOriginalNoVencido = new BigDecimal(0);
@@ -690,42 +697,36 @@ public class MEJDecisionProcedimientoManager extends
 			genericDao.update(Procedimiento.class, prc);
 		}
 
-		// Lanzar el/los proceso/s correspondiente/s (incluidos en la derivaci�n)
-		
 		// Verificar si se da por finalizado el procedimiento origen
-		if (decision.getCausaDecisionFinalizar() != null) {
-			if (decision.getFinalizada()) {
-				// FINALIZADO:Parar definitivamente el procedimiento origen
-				try {
-					DDEstadoProcedimiento estadoFin = (DDEstadoProcedimiento)diccionarioApi
-							.dameValorDiccionarioByCod(DDEstadoProcedimiento.class, DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO); 
-			 		procedimiento.setEstadoProcedimiento(estadoFin);
-					genericDao.save(Procedimiento.class, procedimiento);
-					
-    				jbpmUtil.finalizarProcedimiento(procedimiento.getId());
+		if (decision.getCausaDecisionFinalizar() != null && decision.getFinalizada()) {
+			logger.info("Finalizando origen ...");
+			// FINALIZADO:Parar definitivamente el procedimiento origen
+			try {
+				DDEstadoProcedimiento estadoFin = (DDEstadoProcedimiento)diccionarioApi
+						.dameValorDiccionarioByCod(DDEstadoProcedimiento.class, DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO); 
+		 		procedimiento.setEstadoProcedimiento(estadoFin);
+				genericDao.save(Procedimiento.class, procedimiento);
+				HibernateUtils.flush();
+				
+				jbpmUtil.finalizarProcedimiento(procedimiento.getId());
 
-    				cancelarSubastaActiva(procedimiento);
+				cancelarSubastaActiva(procedimiento);
 
-    				procedimiento = HibernateUtils.merge(procedimiento);
-    				HibernateUtils.flush();
 
-                } catch (Exception e) {
-                    logger.error(String.format("Error al finalizar el procedimiento %d", procedimiento.getId()), e);
-                }
+            } catch (Exception e) {
+                logger.error(String.format("Error al finalizar el procedimiento %d", procedimiento.getId()), e);
             }
         }
-		if (decision.getCausaDecisionParalizar() != null) {
+		
+		if (decision.getCausaDecisionParalizar() != null  && decision.getParalizada()) {
+			logger.info("Finalizando origen ...");
 			Long idProcessBPM = procedimiento.getProcessBPM();
-			if (decision.getParalizada()) {
-				// PARALIZADO: Paralizar* durante el periodo especificado en la
-				// decisión el procedimiento origen.
-				jbpmUtil.aplazarProcesosBPM(idProcessBPM, decision.getFechaParalizacion());
-				MEJProcedimiento mejProcedimiento = MEJProcedimiento.instanceOf(procedimiento); 
-				mejProcedimiento.setEstaParalizado(true);
-				mejProcedimiento.setFechaUltimaParalizacion(new Date());
-				genericDao.save(MEJProcedimiento.class, mejProcedimiento);
-
-			}
+			// PARALIZADO: Paralizar* durante el periodo especificado en la decisión el procedimiento origen.
+			jbpmUtil.aplazarProcesosBPM(idProcessBPM, decision.getFechaParalizacion());
+			MEJProcedimiento mejProcedimiento = MEJProcedimiento.instanceOf(procedimiento); 
+			mejProcedimiento.setEstaParalizado(true);
+			mejProcedimiento.setFechaUltimaParalizacion(new Date());
+			genericDao.save(MEJProcedimiento.class, mejProcedimiento);
 		}
 
         // Setear Decision como aceptada
@@ -770,7 +771,11 @@ public class MEJDecisionProcedimientoManager extends
 		if (estabaPropuesto) {
 			notificarGestor(decision, true);
 		}
-		
+	
+        if(decision.getGuid() == null) {
+        	integracionBpmService.enviarDatos(decision);
+        }
+        
 		logger.info("Finaliza aceptación de decisión!!!");
 		//Se comenta la notificaci�n al propio supervisor de la aceptaci�n de la propuesta ya que �l mismo la ha aceptado y es redundante
 		//Object[] param = new Object[] { getNombreProcedimiento(dtoDecisionProcedimiento.getIdProcedimiento()) };

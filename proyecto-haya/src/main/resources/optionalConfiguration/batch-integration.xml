@@ -195,7 +195,7 @@
 				</bean>
 
 				<!-- Decisión de procedimiento -->
-				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.TransicionarBPM">
+				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.DecisionProcedimientoConsumer">
 					<constructor-arg index="0">
 						<bean class="es.pfsgroup.recovery.integration.bpm.DecisionProcedimientoPayloadRegexRule">
 							<property name="tipo" value="DATOS-DECISION-PROCEDIMIENTO" />

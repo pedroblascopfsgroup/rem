@@ -121,7 +121,9 @@ function isDosFile() {
 
 function transformaDosFile() {
   if isDosFile $1 ; then
-    echo "Fichero $1 es DOS"
+    if [[ $VERBOSE == 1 ]]; then
+        echo "Fichero $1 es DOS"
+    fi
     dos2unix -q $1
     if [ "$?" == 0 ] ; then
       if [[ $VERBOSE == 1 ]]; then

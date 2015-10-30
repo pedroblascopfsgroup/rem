@@ -239,7 +239,7 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
         echo "export NLS_LANG=.AL32UTF8" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null 
     fi
     cp $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DML/DML-scripts.sh
-    cp $BASEDIR/scripts/DDL-scripts-one-user.sh $BASEDIR/tmp/package/DML/DML-scripts-one-user.sh
+    cp $BASEDIR/scripts/DxL-scripts-one-user.sh $BASEDIR/tmp/package/DML/DML-scripts-one-user.sh
     if [ -f $BASEDIR/tmp/DDL-scripts.sh ] ; then 
 
         # Herramientas de Pitertul (actualización)

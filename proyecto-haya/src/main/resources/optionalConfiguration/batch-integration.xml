@@ -204,7 +204,7 @@
 							<property name="finalizar" value="true" />
 						</bean>
 					</constructor-arg>
-					<constructor-arg index="1" value="${integracion.tareas.tratamiento.decision}"/>
+					<constructor-arg index="1" value="CREAR_Y_DERIVAR"/>
 					<property name="description" value="Crea una toma de decisión mediante un procedimiento"/>
 					<!-- property name="modoFuncionamiento" value="ACEPTAR_DECISION"/ -->
 				</bean>

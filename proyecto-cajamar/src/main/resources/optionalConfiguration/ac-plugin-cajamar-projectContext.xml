@@ -125,6 +125,11 @@
 				<value>H040</value>
 			</list>
 		</property>
+		<property name="entidadesDesparalizacion">
+			<set>
+				<value>BANKIA</value>
+			</set>
+		</property>
 	</bean>
 	
 	<bean id="procedimientosProjectContextHaya" parent="procedimientosProjectContextDefault">
@@ -182,8 +187,7 @@
 				<value>H033</value> <!-- fase liquidacion  -->
 			</set>
 		</property>
-	</bean>	
-
+	</bean>
 
 	<alias name="nmbCommonProjectContextHAYA" alias="nmbCommonProjectContext"/>
 	<alias name="procedimientosProjectContextHaya" alias="procedimientosProjectContext"/>		

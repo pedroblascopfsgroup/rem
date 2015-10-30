@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
 import es.capgemini.pfs.procedimientoDerivado.model.ProcedimientoDerivado;
+import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
 
 public class DecisionProcedimientoPayload {
@@ -24,6 +28,9 @@ public class DecisionProcedimientoPayload {
 
 	private final DataContainerPayload data;
 	private final ProcedimientoPayload procedimiento;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
 
 	public DecisionProcedimientoPayload(DataContainerPayload data) {
 		this.data = data;
@@ -202,7 +209,10 @@ public class DecisionProcedimientoPayload {
 		
 		setFechaParalizacion(decisionProcedimiento.getFechaParalizacion());
 		setComentarios(decisionProcedimiento.getComentarios());
-		setEntidad(decisionProcedimiento.getEntidad());
+		
+		// La entidad desde la que se toma la decisión solo se envía por mensaje. En la misma entidad el valor del campo es nulo.
+		Usuario usuario = usuarioManager.getUsuarioLogado();
+		setEntidad(usuario.getEntidad().getDescripcion());
 		
 		setBorrado(decisionProcedimiento.getAuditoria().isBorrado());
 		

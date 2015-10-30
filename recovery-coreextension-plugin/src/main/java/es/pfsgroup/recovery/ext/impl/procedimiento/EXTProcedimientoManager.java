@@ -1,11 +1,11 @@
 package es.pfsgroup.recovery.ext.impl.procedimiento;
 
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
@@ -34,6 +34,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJConfiguracionDerivacionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.Dao.MEJRecursoDao;
@@ -78,6 +79,9 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 	@Autowired
 	private IntegracionBpmService integracionBPMService;
 	
+	@Autowired
+	private CoreProjectContext coreProjectContext;
+		
 	/**
 	 * Busca procedimientos que contengan un determinado contrato
 	 * 
@@ -131,6 +135,7 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 	 * @param idProcedimiento Id del procedimiento del que queremos averiguar
 	 * @return Devuelve un STring con el nombre y el apellido
 	 */
+	@SuppressWarnings("unchecked")
 	public String getGestor(Long idProcedimiento){
 		
 		Procedimiento pr = extProcedimientoDao.get(idProcedimiento);
@@ -148,6 +153,7 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 		return "";
 	}
 	
+	@SuppressWarnings("unchecked")
 	public String getSupervisor(Long idProcedimiento){
 		
 		Procedimiento pr = extProcedimientoDao.get(idProcedimiento);
@@ -429,7 +435,8 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 
 		if (prc != null && prc.isEstaParalizado()) {
 			
-			// Se recupera la decisión de paralización para comprobar si se ha tomado desde la misma entidad en que estamos actualmente
+			// Se recupera la decisión de paralización para comprobar si se ha tomado desde la misma entidad en que estamos actualmente o en una de las
+			// que se permite la desparalización
 			DecisionProcedimiento decisionParalizacion = null;
 			for(DecisionProcedimiento decisionProcedimiento : decisionProcedimientoManager.getList(idProcedimiento)) {
 				
@@ -446,8 +453,10 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 				}
 			}
 			
-			if(decisionParalizacion != null && decisionParalizacion.getEntidad() != null && !"".equals(decisionParalizacion.getEntidad())) {				
-				return decisionParalizacion.getEntidad().equals(usuarioManager.getUsuarioLogado().getEntidad().getDescripcion());
+			if(decisionParalizacion != null && decisionParalizacion.getEntidad() != null && !"".equals(decisionParalizacion.getEntidad())) {
+				
+				Set<String> entidadesDesparalizables = coreProjectContext.getEntidadesDesparalizacion();
+				return entidadesDesparalizables.contains(decisionParalizacion.getEntidad());
 			}
 			
 			return true;

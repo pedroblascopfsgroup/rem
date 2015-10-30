@@ -7,7 +7,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import es.capgemini.devon.exception.FrameworkException;
 import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
 import es.capgemini.pfs.procedimientoDerivado.ProcedimientoDerivadoManager;
 import es.capgemini.pfs.procedimientoDerivado.dto.DtoProcedimientoDerivado;

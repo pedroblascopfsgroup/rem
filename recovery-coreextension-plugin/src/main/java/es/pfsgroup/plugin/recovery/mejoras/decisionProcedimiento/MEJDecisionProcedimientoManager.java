@@ -57,7 +57,6 @@ import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.process.TareaBPMConstants;
 import es.capgemini.pfs.users.FuncionManager;
-import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.utils.JBPMProcessManager;
 import es.pfsgroup.commons.utils.Checks;
@@ -95,9 +94,6 @@ public class MEJDecisionProcedimientoManager extends
 	@Autowired
 	private FuncionManager funcionManager;
 	
-	@Autowired
-	private UsuarioManager usuarioManager;
-
 	@Autowired
 	private Executor executor;
 	

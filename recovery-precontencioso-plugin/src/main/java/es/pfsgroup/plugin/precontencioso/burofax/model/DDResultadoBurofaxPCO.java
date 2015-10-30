@@ -39,6 +39,9 @@ public class DDResultadoBurofaxPCO implements Dictionary, Auditable {
 
 	@Column(name = "DD_PCO_BFR_DESCRIPCION_LARGA")
 	private String descripcionLarga;
+	
+	@Column(name = "DD_PCO_BFR_NOTIFICADO")
+	private Boolean implicaNotif;
 
 	@Version
 	private Integer version;
@@ -93,4 +96,13 @@ public class DDResultadoBurofaxPCO implements Dictionary, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+
+	public Boolean getImplicaNotif() {
+		return implicaNotif;
+	}
+
+	public void setImplicaNotif(Boolean implicaNotif) {
+		this.implicaNotif = implicaNotif;
+	}
+	
 }

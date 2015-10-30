@@ -9,8 +9,8 @@ public interface GenerarLiquidacionApi {
 
 	public static final String DIRECTORIO_PLANTILLAS_LIQUIDACION = "directorioPlantillasLiquidacion";
 
-	FileItem generarDocumento(Long idLiquidacion);
+	public FileItem generarDocumento(Long idLiquidacion, Long idPlantilla);
 	
-	List<DDTipoLiquidacionPCO> getPlantillasLiquidacion();
+	public List<DDTipoLiquidacionPCO> getPlantillasLiquidacion();
 	
 }

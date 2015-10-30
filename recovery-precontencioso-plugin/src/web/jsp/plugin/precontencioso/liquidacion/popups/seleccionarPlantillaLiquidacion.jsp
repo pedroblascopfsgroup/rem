@@ -64,7 +64,7 @@
 		handler: function() {
 			if (validarForm() == '') {
 				var flow='/pfs/liquidacion/generar';
-				var params={idLiquidacion:idLiquidacionSeleccionada};
+				var params={idLiquidacion: idLiquidacionSeleccionada, idPlantilla: comboPlantillas.getValue()};
 				app.openBrowserWindow(flow,params);
 				page.fireEvent(app.event.DONE);
 			}else{

@@ -21,8 +21,8 @@ public class DDResultadoBurofaxPCO implements Dictionary, Auditable {
 	private static final long serialVersionUID = 5519925945721182983L;
 	
 	public static final String ESTADO_PENDIENTE = "PENDIENTE";
-	public static final String ESTADO_PREPARADO = "PREPARADO";
-	public static final String ESTADO_ENVIADO = "ENVIADO";
+	public static final String ESTADO_PREPARADO = "11";
+	public static final String ESTADO_ENVIADO = "13";
 	
 
 	@Id

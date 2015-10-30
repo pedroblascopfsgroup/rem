@@ -455,7 +455,7 @@ public class BurofaxManager implements BurofaxApi {
 				
 				envioBurofax.setResultadoBurofax(resultado);
 				envioBurofax.setFechaSolicitud(new Date());
-				if(!envioBurofax.getResultadoBurofax().getCodigo().equals(DDResultadoBurofaxPCO.ESTADO_PREPARADO)){
+				if(Checks.esNulo(envioBurofax.getResultadoBurofax()) || (!Checks.esNulo(envioBurofax.getResultadoBurofax()) && !envioBurofax.getResultadoBurofax().getCodigo().equals(DDResultadoBurofaxPCO.ESTADO_PREPARADO))){
 					envioBurofax.setContenidoBurofax(replaceVariablesGeneracionBurofax(envioBurofax.getBurofax().getId(), envioBurofax.getTipoBurofax().getPlantilla()));
 				}
 				

@@ -797,13 +797,23 @@ public class BurofaxManager implements BurofaxApi {
 	@Override
 	@Transactional(readOnly = false)
 	@BusinessOperation(GUARDAR_INFORMACION_ENVIO)
-	public void guardaInformacionEnvio(String[] arrayIdEnvio,Long idEstadoEnvio,Date fechaEnvio,Date fechaAcuse){
+	public void guardaInformacionEnvio(String[] arrayIdEnvio,Long idResultadoEnvio,Date fechaEnvio,Date fechaAcuse){
 		
 		try{
 			for(int i=0;i<arrayIdEnvio.length;i++){
 				EnvioBurofaxPCO envio=getEnvioBurofaxById(Long.valueOf(arrayIdEnvio[i]));
 				
-				envio.getBurofax().setEstadoBurofax(getEstadoBurofaxById(idEstadoEnvio));
+				DDResultadoBurofaxPCO resultadoBurofax = getResultadoBurofaxPCOById(idResultadoEnvio);
+				
+				String codigoEstado = "";
+				if(resultadoBurofax.getImplicaNotif() != null && resultadoBurofax.getImplicaNotif()) {
+					codigoEstado = DDEstadoBurofaxPCO.NOTIFICADO;
+				}else{
+					codigoEstado = DDEstadoBurofaxPCO.NO_NOTIFICADO;
+				}
+				
+				envio.getBurofax().setEstadoBurofax(getEstadoBurofaxByCod(codigoEstado));
+				envio.setResultadoBurofax(resultadoBurofax);
 				envio.setFechaAcuse(fechaAcuse);
 				envio.setFechaEnvio(fechaEnvio);
 				
@@ -813,6 +823,24 @@ public class BurofaxManager implements BurofaxApi {
 			logger.error(e);
 		}
 		
+		
+	}
+	
+	private DDEstadoBurofaxPCO getEstadoBurofaxByCod(String codigo) {
+		return (DDEstadoBurofaxPCO) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDEstadoBurofaxPCO.class, codigo);
+	}
+	
+	private DDResultadoBurofaxPCO getResultadoBurofaxPCOById(Long id) {
+		DDResultadoBurofaxPCO resultadoBurofax=null;
+		
+		try{
+			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", id);
+			resultadoBurofax=(DDResultadoBurofaxPCO) genericDao.get(DDResultadoBurofaxPCO.class,filtro1);
+		}catch(Exception e){
+			logger.error(e);
+		}
+		
+		return resultadoBurofax;
 		
 	}
 	

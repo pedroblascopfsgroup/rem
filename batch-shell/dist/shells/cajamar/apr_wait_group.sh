@@ -3,13 +3,13 @@
  
 DIR_INPUT=/recovery/transferencia/aprov_troncal/
 MAX_WAITING_MINUTES=10
-ficheros=GRUPOS_CLIENTE,GRUPOS
+ficheros=GCL
 
 #echo $(basename $0)
 
 DIR_DESTINO=/recovery/batch-server/control/etl/input/
 
-mascara='_'$ENTIDAD'_'????????
+mascara='-'$ENTIDAD'-'????????
 extensionSem=".sem"
 extensionZip=".zip"
 

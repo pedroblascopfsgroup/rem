@@ -2336,6 +2336,8 @@
                                     <directory>src/custom/cajamar/webapp/</directory>
                                     <includes>
                                         <include>login.jsp</include>
+                                        <include>ntlm.php</include> <!-- Fichero proporcionado por CAJAMAR -->
+                                        <include>index.php</include> 
                                         <include>img/cliente_logo.gif</include>
                                     </includes>
                                     <filtering>true</filtering>

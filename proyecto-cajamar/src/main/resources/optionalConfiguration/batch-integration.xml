@@ -286,13 +286,23 @@
 				</bean>
 				
 				<!-- Activar un BPM paralizado-->
-				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.ActivarBPM">
+				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.ActivarBPMConsumer">
 					<constructor-arg index="0">
 						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
 							<property name="tipo" value="DO-ACTIVAR-BPM"/>
 						</bean>
 					</constructor-arg>
 					<property name="description" value="Activa un BPM paralizado"/>
+				</bean>
+
+				<!-- Finalizar un asunto-->
+				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.FinalizarAsuntoConsumer">
+					<constructor-arg index="0">
+						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
+							<property name="tipo" value="DO-FIN-ASUNTO"/>
+						</bean>
+					</constructor-arg>
+					<property name="description" value="Finalzia un Asunto de forma remota"/>
 				</bean>
 
 				<!-- Decisión de procedimiento -->

@@ -20,18 +20,18 @@ import es.pfsgroup.recovery.integration.bpm.payload.ProcedimientoPayload;
  * @author gonzalo
  *
  */
-public class ActivarBPM extends ConsumerAction<DataContainerPayload>  {
+public class ActivarBPMConsumer extends ConsumerAction<DataContainerPayload>  {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 	
     @Autowired
     private EXTProcedimientoManager extProcedimientoManager;
 
-	public ActivarBPM(Rule<DataContainerPayload> rule) {
+	public ActivarBPMConsumer(Rule<DataContainerPayload> rule) {
 		super(rule);
 	}
 	
-	public ActivarBPM(List<Rule<DataContainerPayload>> rules) {
+	public ActivarBPMConsumer(List<Rule<DataContainerPayload>> rules) {
 		super(rules);
 	}
 
@@ -58,7 +58,7 @@ public class ActivarBPM extends ConsumerAction<DataContainerPayload>  {
 			throw new IntegrationDataException(logMsg);
 		}
 		extProcedimientoManager.desparalizarProcedimiento(prc.getId());
-		logger.info(String.format("[INTEGRACION] PRC[%s] Procedimiento activado...", prcUUID));
+		logger.info(String.format("[INTEGRACION] PRC[%s] Procedimiento activado!!", prcUUID));
 	}
 	
 }

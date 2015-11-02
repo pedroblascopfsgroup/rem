@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.recovery.mejoras.asunto;
+package es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto;
 
 import java.util.Date;
 

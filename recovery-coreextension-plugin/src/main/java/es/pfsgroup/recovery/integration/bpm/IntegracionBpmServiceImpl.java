@@ -1,6 +1,5 @@
 package es.pfsgroup.recovery.integration.bpm;
 
-import java.util.Date;
 import java.util.Properties;
 
 import javax.annotation.Resource;
@@ -24,8 +23,8 @@ import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
+import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJFinalizarAsuntoDto;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.model.MEJRecurso;
-import es.pfsgroup.recovery.integration.bpm.message.ParalizarBPMMsg;
 
 @Service
 public class IntegracionBpmServiceImpl implements IntegracionBpmService {
@@ -388,6 +387,27 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
     	} else {
     		notificacionGateway.enviar(decisionProcedimiento, TIPO_DATOS_DECISION_PROCEDIMIENTO, DbIdContextHolder.getDbSchema());
 			logger.info("[INTEGRACION] Enviado enviarDatos-Decision-Procedimiento!!!");
+    	}
+	}
+
+	@Override
+	public void finalizarAsunto(final MEJFinalizarAsuntoDto finAsunto) {
+    	if (!isActive() || notificacionGateway==null) {
+			return;
+		}
+    	logger.info("[INTEGRACION] Preparando para envío Finalizar Asunto...");
+    	if (isTransactional()) {
+	    	TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+	    		@Override
+	    		public void beforeCommit(boolean readOnly) {
+	    			super.beforeCommit(readOnly);
+	    			notificacionGateway.finalizaAsunto(finAsunto, TIPO_FIN_ASUNTO, DbIdContextHolder.getDbSchema());
+	    			logger.info("[INTEGRACION] Enviado Finalizar Asunto!!!");
+	    		}
+			});
+    	} else {
+    		notificacionGateway.finalizaAsunto(finAsunto, TIPO_FIN_ASUNTO, DbIdContextHolder.getDbSchema());
+			logger.info("[INTEGRACION] Enviado Finalizar Asunto!!!");
     	}
 	}
 

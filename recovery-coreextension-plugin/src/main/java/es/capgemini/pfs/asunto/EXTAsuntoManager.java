@@ -100,7 +100,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.recovery.mejoras.asunto.MEJFinalizarAsuntoDto;
+import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJFinalizarAsuntoDto;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
@@ -120,6 +120,7 @@ import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 import es.pfsgroup.recovery.ext.impl.zona.dao.EXTZonaDao;
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 @Component
 public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> implements es.pfsgroup.recovery.api.AsuntoApi, AsuntoApi, EXTAsuntoApi {
@@ -178,6 +179,9 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 
 	@Autowired
 	private JBPMProcessManager jbpmUtil;
+	
+	@Autowired
+	private IntegracionBpmService integrationService;
 	
 	@Override
 	public String managerName() {
@@ -2087,6 +2091,9 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 				estado = (DDEstadoAsunto)diccionarioApi.dameValorDiccionarioByCod(DDEstadoAsunto.class, DDEstadoAsunto.ESTADO_ASUNTO_GESTION_FINALIZADA);
 			}
 
+			boolean sincronizar = (!asunto.getEstadoAsunto().getCodigo().equals(DDEstadoAsunto.ESTADO_ASUNTO_CERRADO) 
+					&& !asunto.getEstadoAsunto().getCodigo().equals(DDEstadoAsunto.ESTADO_ASUNTO_GESTION_FINALIZADA));
+
 			asunto.setEstadoAsunto(estado);
 			try {
 				asuntoDao.save(asunto);
@@ -2111,6 +2118,10 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 					genericDao.deleteById(TareaNotificacion.class, tn.getId());
 				}
 
+				if (sincronizar) {
+					integrationService.finalizarAsunto(dto);
+				}
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 				logger.error(e);

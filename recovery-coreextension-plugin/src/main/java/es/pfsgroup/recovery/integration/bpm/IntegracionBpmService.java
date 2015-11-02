@@ -9,6 +9,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
+import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJFinalizarAsuntoDto;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.model.MEJRecurso;
 
 public interface IntegracionBpmService {
@@ -24,6 +25,7 @@ public interface IntegracionBpmService {
 	public static final String TIPO_FIN_BPM = "BPM-FIN";
 	
 	public static final String TIPO_ACTIVAR_BPM = "DO-ACTIVAR-BPM";
+	public static final String TIPO_FIN_ASUNTO = "DO-FIN-ASUNTO";
 
 	public final static String TIPO_DATOS_ACUERDO = "DATOS-ACUERDO";
 
@@ -98,6 +100,13 @@ public interface IntegracionBpmService {
 	 */
 	void activarBPM(Procedimiento procedimiento);
 
+	/**
+	 * Genera una transicion para Finalizar un asunto.
+	 * 
+	 * @param asunto Asunto que vamos a finalizar.
+	 */
+	void finalizarAsunto(MEJFinalizarAsuntoDto finAsunto);
+	
 	/**
 	 * Envía un mensaje de actualización de un recurso
 	 * 

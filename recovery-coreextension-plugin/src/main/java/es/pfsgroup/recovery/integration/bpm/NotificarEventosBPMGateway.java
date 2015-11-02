@@ -14,6 +14,7 @@ import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.capgemini.pfs.termino.model.TerminoBien;
 import es.capgemini.pfs.termino.model.TerminoContrato;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
+import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJFinalizarAsuntoDto;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.model.MEJRecurso;
 import es.pfsgroup.recovery.integration.TypePayload;
 import es.pfsgroup.recovery.integration.bpm.message.ParalizarBPMMsg;
@@ -142,5 +143,10 @@ public interface NotificarEventosBPMGateway {
 			, @Header(TypePayload.HEADER_MSG_TYPE) String type
     		, @Header(TypePayload.HEADER_MSG_ENTIDAD) String entidad
     );
+
+	@Gateway
+	void finalizaAsunto(MEJFinalizarAsuntoDto finAsunto
+			, @Header(TypePayload.HEADER_MSG_TYPE) String tipoFinAsunto
+			, @Header(TypePayload.HEADER_MSG_ENTIDAD) String dbSchema);
 
 }

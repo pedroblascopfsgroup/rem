@@ -40,6 +40,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.manager.EXTSubastaManager;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoManager;
+import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJFinalizarAsuntoDto;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.MEJDecisionProcedimientoManager;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.MEJRecursoManager;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.model.MEJRecurso;
@@ -53,6 +54,7 @@ import es.pfsgroup.recovery.integration.bpm.payload.ActuacionesAExplorarPayload;
 import es.pfsgroup.recovery.integration.bpm.payload.ActuacionesRealizadasPayload;
 import es.pfsgroup.recovery.integration.bpm.payload.AcuerdoPayload;
 import es.pfsgroup.recovery.integration.bpm.payload.DecisionProcedimientoPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.FinAsuntoPayload;
 import es.pfsgroup.recovery.integration.bpm.payload.ProcedimientoPayload;
 import es.pfsgroup.recovery.integration.bpm.payload.RecursoPayload;
 import es.pfsgroup.recovery.integration.bpm.payload.SubastaPayload;
@@ -267,6 +269,29 @@ public class EntityToPayloadTransformer {
 		return newMessage;
 	}	
 
+	public Message<DataContainerPayload> transformFINASU(Message<MEJFinalizarAsuntoDto> message) {
+		logger.info("[INTEGRACION] Finalizando asunto...");
+		MEJFinalizarAsuntoDto dto = message.getPayload();
+
+		// Persistencia de IDs de sincronización
+		Long idAsunto = dto.getIdAsunto();
+		Asunto asu = extAsuntoManager.get(idAsunto);
+		 
+		// Carga los valores
+		DataContainerPayload data = getNewPayload(message);
+		FinAsuntoPayload finAsuPayload = new FinAsuntoPayload(data, asu, dto);
+
+		postProcessDataContainer(data);
+		
+		logger.debug(String.format("[INTEGRACION] Finalizando asunto %s!", finAsuPayload.getAsunto().getGuid()));
+		
+		//translateValues(message);
+		String grpId = finAsuPayload.getAsunto().getGuid();
+		Message<DataContainerPayload> newMessage = createMessage(message,  data, grpId);
+
+		return newMessage;
+	}	
+	
 	private ProcedimientoPayload prepararProcedimiento(Message<?> mensaje, Procedimiento procedimiento) {
 		// Persistencia de IDs de sincronización
 		extProcedimientoManager.prepareGuid(procedimiento);

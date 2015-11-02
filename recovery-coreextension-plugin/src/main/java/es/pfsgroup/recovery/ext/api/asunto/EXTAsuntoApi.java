@@ -13,7 +13,7 @@ import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.recovery.coreextension.api.AsuntoCoreApi;
-import es.pfsgroup.plugin.recovery.mejoras.asunto.MEJFinalizarAsuntoDto;
+import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJFinalizarAsuntoDto;
 import es.pfsgroup.recovery.ext.impl.asunto.dto.EXTDtoBusquedaAsunto;
 
 public interface EXTAsuntoApi extends AsuntoCoreApi {

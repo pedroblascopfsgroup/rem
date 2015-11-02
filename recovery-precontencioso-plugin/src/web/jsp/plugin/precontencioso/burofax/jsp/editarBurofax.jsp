@@ -13,20 +13,7 @@
 	
     var contenidoBurofax='${textoBurofax}';
     var arrayIdEnvios="${arrayIdEnvios}";
-    
-	
-	<%--	
-	var textoBurofax = new Ext.form.TextArea({
-		fieldLabel:'<s:message code="plugin.precontencioso.grid.burofax.contenido" text="**Contenido Burofax" />'
-		,name: 'prueba'
-		,value:'<s:message text='${textoBurofax}' javaScriptEscape="true" />'
-		,width: 400 
-		,height:400
-		, maxLength: 2000
-		,allowBlank: false
-	});	
-	--%>
-	
+   
 	var burofaxEditor = new Ext.form.HtmlEditor({
 			id:'htmlDescripcion'
 			,readOnly:false
@@ -43,7 +30,7 @@
         	,enableLinks:false
         	,enableLists:false
         	,enableSourceEdit:true
-        	,value:'<s:message text='${textoBurofax}' javaScriptEscape="true" />'
+        	,value:'${textoBurofax}'
 	});
 
 	var bottomBar = [];
@@ -51,7 +38,7 @@
 	var btnGuardar = new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
-		,handler : function(){	
+		,handler : function(){
 		    	Ext.Ajax.request({
 						url : page.resolveUrl('burofax/editarBurofax'), 
 						params : {contenidoBurofax:burofaxEditor.getValue(),arrayIdEnvios:arrayIdEnvios},

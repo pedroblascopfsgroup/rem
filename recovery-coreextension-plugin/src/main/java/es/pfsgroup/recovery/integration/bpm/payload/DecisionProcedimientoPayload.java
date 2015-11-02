@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
 import es.capgemini.pfs.procedimientoDerivado.model.ProcedimientoDerivado;
 import es.capgemini.pfs.users.UsuarioManager;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
 
 public class DecisionProcedimientoPayload {
@@ -21,7 +20,6 @@ public class DecisionProcedimientoPayload {
 	private static final String CAMPO_CAUSA_DECISION = String.format("%s.causaDecision", KEY);
 	private static final String CAMPO_CAUSA_DECISION_FINALIZAR = String.format("%s.causaDecisionFinalizar", KEY);
 	private static final String CAMPO_CAUSA_DECISION_PARALIZAR = String.format("%s.causaDecisionParalizar", KEY);
-	private static final String CAMPO_ENTIDAD = String.format("%s.entidad", KEY);
 	private static final String CAMPO_FECHA_PARALIZACION = String.format("%s.fechaParalizacion", KEY);
 	private static final String CAMPO_COMENTARIOS = String.format("%s.comentarios", KEY);
 	private static final String CAMPO_ESTADO_DECISION =  String.format("%s.estadoDecision", KEY);
@@ -108,14 +106,6 @@ public class DecisionProcedimientoPayload {
 
 	public String getCausaDecisionParalizar() {
 		return data.getCodigo(CAMPO_CAUSA_DECISION_PARALIZAR);
-	}
-	
-	private void setEntidad(String entidad) {
-		data.addExtraInfo(CAMPO_ENTIDAD, entidad);	
-	}
-
-	public String getEntidad() {
-		return data.getExtraInfo(CAMPO_ENTIDAD);
 	}
 	
 	private void setFechaParalizacion(Date fechaParalizacion) {
@@ -209,11 +199,6 @@ public class DecisionProcedimientoPayload {
 		
 		setFechaParalizacion(decisionProcedimiento.getFechaParalizacion());
 		setComentarios(decisionProcedimiento.getComentarios());
-		
-		// La entidad desde la que se toma la decisión solo se envía por mensaje. En la misma entidad el valor del campo es nulo.
-		Usuario usuario = usuarioManager.getUsuarioLogado();
-		setEntidad(usuario.getEntidad().getDescripcion());
-		
 		setBorrado(decisionProcedimiento.getAuditoria().isBorrado());
 		
 		List<ProcedimientoDerivado> procedimientoDerivados = decisionProcedimiento.getProcedimientosDerivados();

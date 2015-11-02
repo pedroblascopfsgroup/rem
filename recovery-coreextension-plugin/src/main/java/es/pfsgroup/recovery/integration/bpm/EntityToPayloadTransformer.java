@@ -481,7 +481,6 @@ public class EntityToPayloadTransformer {
 		logger.info("[INTEGRACION] Transformando DecisionProcedimiento...");
 		DecisionProcedimiento decisionProcedimiento = message.getPayload();
 		mejDecisionProcedimientoManager.prepareGuid(decisionProcedimiento);
-		extProcedimientoManager.prepareGuid(decisionProcedimiento.getProcedimiento());
 		
 		DataContainerPayload data = getNewPayload(message);
 		DecisionProcedimientoPayload payload = new DecisionProcedimientoPayload(data, decisionProcedimiento);

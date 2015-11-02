@@ -6,8 +6,11 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
+import es.capgemini.pfs.persona.PersonaManager;
+import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procedimientoDerivado.ProcedimientoDerivadoManager;
 import es.capgemini.pfs.procedimientoDerivado.dto.DtoProcedimientoDerivado;
 import es.capgemini.pfs.procedimientoDerivado.model.ProcedimientoDerivado;
@@ -42,8 +45,12 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 	
 	@Autowired
 	private ProcedimientoDerivadoManager procedimientoDerivadoManager;
+	
+	@Autowired
+	private PersonaManager personaManager;
 
-    	
+	private ProcedimientoConsumer procedimientoConsumer;
+
 	public DecisionProcedimientoConsumer(Rule<DataContainerPayload> rule, String tratamientoDecision) {
 		super(rule);
 		this.tratamientoDecision = tratamientoDecision;
@@ -57,7 +64,35 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 	private String getGuidProcedimiento(DecisionProcedimientoPayload decisionProcedimientoPayload) {
 		return decisionProcedimientoPayload.getProcedimiento().getGuid(); // String.format("%d-EXT", tareaExtenaPayload.getProcedimiento().getIdOrigen());
 	}
+	
 
+	public ProcedimientoConsumer getProcedimientoConsumer() {
+		return procedimientoConsumer;
+	}
+
+	public void setProcedimientoConsumer(ProcedimientoConsumer procedimientoConsumer) {
+		this.procedimientoConsumer = procedimientoConsumer;
+	}
+	
+	@Transactional(readOnly = false)
+	private MEJProcedimiento getProcedimiento(DecisionProcedimientoPayload decisionProcedimientoPayload) {
+		String prcUUID = getGuidProcedimiento(decisionProcedimientoPayload);
+		logger.debug(String.format("[INTEGRACION] PRC[%s] Configurando procedimiento", prcUUID));
+		MEJProcedimiento prc = extProcedimientoManager.getProcedimientoByGuid(prcUUID);
+		if (prc==null && procedimientoConsumer != null) {
+				String errorMsg = String.format("[INTEGRACION] PRC[%s] El procedimiento no existe!, se intenta crear uno nuevo.", prcUUID);
+				logger.warn(errorMsg);
+				procedimientoConsumer.doAction(decisionProcedimientoPayload.getData());
+				prc = extProcedimientoManager.getProcedimientoByGuid(prcUUID);
+		}
+		if (prc==null) {
+			String errorMsg = String.format("[INTEGRACION] PRC[%s] El procedimiento no existe!!, no podemos continuar!.", prcUUID);
+			logger.error(errorMsg);
+			throw new IntegrationDataException(errorMsg);
+		}
+		return prc;
+	}
+	
 	@Override
 	protected void doAction(DataContainerPayload payload) {
 
@@ -70,12 +105,9 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 				logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] Guardando decisión procedimiento...", asuGUID, prcUUID));
 				
 				MEJDtoDecisionProcedimiento dtoDecisionProcedimiento = load(decisionProcedimientoPayload);
-				
-				MEJProcedimiento prc = extProcedimientoManager.getProcedimientoByGuid(prcUUID);
-				if (prc==null) {
-					throw new IntegrationDataException(String.format("[INTEGRACION] El procedimiento con guid %s asociado a la decisión no existe", prcUUID)); 
-				}
-		        dtoDecisionProcedimiento.setIdProcedimiento(prc.getId());
+				MEJProcedimiento prc = getProcedimiento(decisionProcedimientoPayload); 
+						
+				dtoDecisionProcedimiento.setIdProcedimiento(prc.getId());
 			     
 				DecisionProcedimiento dec = decisionProcedimientoManager.getDecisionProcedimientoByGuid(dtoDecisionProcedimiento.getGuid());
 				if(dec == null) {
@@ -140,7 +172,6 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 		
 		if(decisionProcedimientoPayload.getProcedimientoDerivado() != null) {
 			List<DtoProcedimientoDerivado> dtoProcedimientoDerivados = new ArrayList<DtoProcedimientoDerivado>();
-			int indice = 0;
 			
 			for(ProcedimientoDerivadoPayload procedimientoDerivadoPayload : decisionProcedimientoPayload.getProcedimientoDerivado()) {
 				
@@ -156,8 +187,16 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 				Long[] lPersonas = new Long[procedimientoDerivadoPayload.getPersonas().size()];
 				int i = 0;
 				
-				for(String sPersona : procedimientoDerivadoPayload.getPersonas()) {
-					lPersonas[i]= Long.valueOf(sPersona);
+				for(String codClienteEntidad : procedimientoDerivadoPayload.getPersonas()) {
+					
+					Persona persona = personaManager.getByCodigo(codClienteEntidad);
+					if(persona != null) {
+						lPersonas[i] = persona.getId();
+					}
+					else {
+						lPersonas[i] = null;
+					}
+					
 					i++;
 				}
 				
@@ -170,6 +209,12 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 				}
 				
 				dtoProcedimientoDerivado.setProcedimientoPadre(prcPadre.getId());
+				
+				MEJProcedimiento prcHijo = extProcedimientoManager.getProcedimientoByGuid(procedimientoDerivadoPayload.getGuidProcedimientoHijo());
+				if(prcHijo != null) {
+					dtoProcedimientoDerivado.setProcedimientoHijo(prcHijo.getId());
+				}
+				
 				dtoProcedimientoDerivado.setTipoActuacion(procedimientoDerivadoPayload.getTipoActuacion());
 				dtoProcedimientoDerivado.setTipoReclamacion(procedimientoDerivadoPayload.getTipoReclamacion());
 				dtoProcedimientoDerivado.setTipoProcedimiento(procedimientoDerivadoPayload.getTipoProcedimiento());
@@ -178,13 +223,13 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 				dtoProcedimientoDerivado.setSaldoRecuperacion(procedimientoDerivadoPayload.getSaldoRecuperacion());
 				
 				dtoProcedimientoDerivados.add(dtoProcedimientoDerivado);
-				indice++;
 			}
 			
+			dtoDecisionProcedimiento.setProcedimientosDerivados(dtoProcedimientoDerivados);
 		}
 		
 		dtoDecisionProcedimiento.setStrEstadoDecision(decisionProcedimientoPayload.getEstadoDecision());
-		dtoDecisionProcedimiento.setEntidad(decisionProcedimientoPayload.getEntidad());
+		dtoDecisionProcedimiento.setEntidad(decisionProcedimientoPayload.getData().getEntidad());
 		
 		return dtoDecisionProcedimiento;
 	}

@@ -65,7 +65,6 @@ import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDEstadoSubasta;
@@ -79,6 +78,7 @@ import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.nuevosmanagers.
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJConfiguracionDerivacionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.recovery.ext.api.procedimiento.EXTProcedimientoApi;
+import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 import es.pfsgroup.recovery.integration.Guid;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
@@ -133,6 +133,8 @@ public class MEJDecisionProcedimientoManager extends
 	@Autowired
 	private TipoProcedimientoManager tipoProcedimientoManager;
 	
+	@Autowired
+	protected EXTProcedimientoManager extProcedimientoManager;
 
 	@BusinessOperation(overrides = ExternaBusinessOperation.BO_DEC_PRC_MGR_RECHAZAR_PROPUESTA)
 	@Transactional(readOnly = false)
@@ -341,99 +343,107 @@ public class MEJDecisionProcedimientoManager extends
      * @return ProcedimientoDerivado
      */
     private ProcedimientoDerivado crearProcedimientoDerivado(DtoProcedimientoDerivado dtoProc, DecisionProcedimiento decisionProcedimiento) {
-        MEJProcedimiento procHijo = new MEJProcedimiento();
-
-		Procedimiento procPadre = prcManager.getProcedimiento(dtoProc.getProcedimientoPadre());
-		
-		Filter filtroProcOr = genericDao.createFilter(FilterType.EQUALS, "tipoProcedimientoOrigen", procPadre.getTipoProcedimiento().getCodigo());
-		Filter filtroProcDest = genericDao.createFilter(FilterType.EQUALS, "tipoProcedimientoDestino", dtoProc.getTipoProcedimiento());
-		MEJConfiguracionDerivacionProcedimiento configuracion=genericDao.get(MEJConfiguracionDerivacionProcedimiento.class, filtroProcOr, filtroProcDest);
-
-        procHijo.setAuditoria(Auditoria.getNewInstance());
-        procHijo.setProcedimientoPadre(procPadre);
-        procHijo.setPlazoRecuperacion(dtoProc.getPlazoRecuperacion());
-        procHijo.setSaldoRecuperacion(dtoProc.getSaldoRecuperacion());
-        procHijo.setPorcentajeRecuperacion(dtoProc.getPorcentajeRecuperacion());
- 
-        if (Checks.esNulo(configuracion)){
-        	
-	        procHijo.setJuzgado(procPadre.getJuzgado());
-	        procHijo.setCodigoProcedimientoEnJuzgado(procPadre.getCodigoProcedimientoEnJuzgado());
-	        procHijo.setObservacionesRecopilacion(procPadre.getObservacionesRecopilacion());
-	        procHijo.setSaldoOriginalNoVencido(procPadre.getSaldoOriginalNoVencido());
-	        procHijo.setSaldoOriginalVencido(procPadre.getSaldoOriginalVencido());
-        } else {
-        	if (configuracion.getJuzgado()){
-        		procHijo.setJuzgado(procPadre.getJuzgado());
-        	}
-        	if (configuracion.getCodigoProcedimientoEnJuzgado()){
-        		procHijo.setCodigoProcedimientoEnJuzgado(procPadre.getCodigoProcedimientoEnJuzgado());
-        	}
-        	if (configuracion.getObservacionesRecopilacion()){
-        		procHijo.setObservacionesRecopilacion(procPadre.getObservacionesRecopilacion());
-        	}
-        	if (configuracion.getSaldoOriginalNoVencido()){
-        		procHijo.setSaldoOriginalNoVencido(procPadre.getSaldoOriginalNoVencido());
-        	} 
-        	if(configuracion.getSaldoOriginalVencido()){
-        		procHijo.setSaldoOriginalVencido(procPadre.getSaldoOriginalVencido());
-        	}
-        }
+    	
+    	MEJProcedimiento procHijo = null;
+    	if(dtoProc.getProcedimientoHijo() != null) {
+    		procHijo = (MEJProcedimiento) prcManager.getProcedimiento(dtoProc.getProcedimientoHijo());
+    	}
         
-        procHijo.setAsunto(procPadre.getAsunto());
-        procHijo.setExpedienteContratos(procPadre.getExpedienteContratos());
-        procHijo.setDecidido(procPadre.getDecidido());
-        procHijo.setFechaRecopilacion(procPadre.getFechaRecopilacion());
+        if(procHijo == null) {
+        	procHijo = new MEJProcedimiento();
         
-        
-        // seteo el procedimiento como 'derivado'
-        DDEstadoProcedimiento estadoProcedimiento = (DDEstadoProcedimiento) diccionarioApi
-        		.dameValorDiccionarioByCod(DDEstadoProcedimiento.class, DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_DERIVADO);
-        procHijo.setEstadoProcedimiento(estadoProcedimiento);
-
-        DDTipoActuacion tipoActuacion = (DDTipoActuacion) diccionarioApi
-        		.dameValorDiccionarioByCod(DDTipoActuacion.class, dtoProc.getTipoActuacion());
-        procHijo.setTipoActuacion(tipoActuacion);
-
-        TipoProcedimiento tipoProcedimiento= genericDao.get(TipoProcedimiento.class, genericDao
-				.createFilter(FilterType.EQUALS, "codigo", dtoProc.getTipoProcedimiento()));
-        
-        procHijo.setTipoProcedimiento(tipoProcedimiento);
-
-        DDTipoReclamacion tipoReclamacion = (DDTipoReclamacion) diccionarioApi
-        		.dameValorDiccionarioByCod(DDTipoReclamacion.class, dtoProc.getTipoReclamacion());
-        procHijo.setTipoReclamacion(tipoReclamacion);
-
-        // Agrego las personas al procedimiento
-        List<Persona> personas = new ArrayList<Persona>();
-        for (Long idPersona : dtoProc.getPersonas()) {
-            if (Checks.esNulo(idPersona) || idPersona == 0) {
-                continue;
-            }
-
-            personas.add(genericDao.get(Persona.class, genericDao
-    				.createFilter(FilterType.EQUALS, "id", idPersona)));
-        }
-        procHijo.setPersonasAfectadas(personas);
-        
-        if (!Checks.estaVacio(procPadre.getBienes())) {
-            // Agrego los bienes al procedimiento
-            List<ProcedimientoBien> procedimientosBien = new ArrayList<ProcedimientoBien>();
-	        if ((tipoProcedimiento.getIsUnicoBien() && procPadre.getBienes().size()==1) ||
-	        		(!tipoProcedimiento.getIsUnicoBien())) {
-		        for (ProcedimientoBien procBien : procPadre.getBienes()) {
-		        	
-		        	ProcedimientoBien procBienCopiado = new ProcedimientoBien();
-		        	procBienCopiado.setBien(procBien.getBien());
-		        	procBienCopiado.setSolvenciaGarantia(procBien.getSolvenciaGarantia());
-		        	procBienCopiado.setProcedimiento(procHijo);
-		        	genericDao.save(ProcedimientoBien.class, procBienCopiado);
-		        	procedimientosBien.add(procBienCopiado);
-		        }
+			Procedimiento procPadre = prcManager.getProcedimiento(dtoProc.getProcedimientoPadre());
+			
+			Filter filtroProcOr = genericDao.createFilter(FilterType.EQUALS, "tipoProcedimientoOrigen", procPadre.getTipoProcedimiento().getCodigo());
+			Filter filtroProcDest = genericDao.createFilter(FilterType.EQUALS, "tipoProcedimientoDestino", dtoProc.getTipoProcedimiento());
+			MEJConfiguracionDerivacionProcedimiento configuracion=genericDao.get(MEJConfiguracionDerivacionProcedimiento.class, filtroProcOr, filtroProcDest);
+	
+	        procHijo.setAuditoria(Auditoria.getNewInstance());
+	        procHijo.setProcedimientoPadre(procPadre);
+	        procHijo.setPlazoRecuperacion(dtoProc.getPlazoRecuperacion());
+	        procHijo.setSaldoRecuperacion(dtoProc.getSaldoRecuperacion());
+	        procHijo.setPorcentajeRecuperacion(dtoProc.getPorcentajeRecuperacion());
+	 
+	        if (Checks.esNulo(configuracion)){
+	        	
+		        procHijo.setJuzgado(procPadre.getJuzgado());
+		        procHijo.setCodigoProcedimientoEnJuzgado(procPadre.getCodigoProcedimientoEnJuzgado());
+		        procHijo.setObservacionesRecopilacion(procPadre.getObservacionesRecopilacion());
+		        procHijo.setSaldoOriginalNoVencido(procPadre.getSaldoOriginalNoVencido());
+		        procHijo.setSaldoOriginalVencido(procPadre.getSaldoOriginalVencido());
+	        } else {
+	        	if (configuracion.getJuzgado()){
+	        		procHijo.setJuzgado(procPadre.getJuzgado());
+	        	}
+	        	if (configuracion.getCodigoProcedimientoEnJuzgado()){
+	        		procHijo.setCodigoProcedimientoEnJuzgado(procPadre.getCodigoProcedimientoEnJuzgado());
+	        	}
+	        	if (configuracion.getObservacionesRecopilacion()){
+	        		procHijo.setObservacionesRecopilacion(procPadre.getObservacionesRecopilacion());
+	        	}
+	        	if (configuracion.getSaldoOriginalNoVencido()){
+	        		procHijo.setSaldoOriginalNoVencido(procPadre.getSaldoOriginalNoVencido());
+	        	} 
+	        	if(configuracion.getSaldoOriginalVencido()){
+	        		procHijo.setSaldoOriginalVencido(procPadre.getSaldoOriginalVencido());
+	        	}
 	        }
-	        procHijo.setBienes(procedimientosBien);
+	        
+	        procHijo.setAsunto(procPadre.getAsunto());
+	        procHijo.setExpedienteContratos(procPadre.getExpedienteContratos());
+	        procHijo.setDecidido(procPadre.getDecidido());
+	        procHijo.setFechaRecopilacion(procPadre.getFechaRecopilacion());
+	        
+	        
+	        // seteo el procedimiento como 'derivado'
+	        DDEstadoProcedimiento estadoProcedimiento = (DDEstadoProcedimiento) diccionarioApi
+	        		.dameValorDiccionarioByCod(DDEstadoProcedimiento.class, DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_DERIVADO);
+	        procHijo.setEstadoProcedimiento(estadoProcedimiento);
+	
+	        DDTipoActuacion tipoActuacion = (DDTipoActuacion) diccionarioApi
+	        		.dameValorDiccionarioByCod(DDTipoActuacion.class, dtoProc.getTipoActuacion());
+	        procHijo.setTipoActuacion(tipoActuacion);
+	
+	        TipoProcedimiento tipoProcedimiento= genericDao.get(TipoProcedimiento.class, genericDao
+					.createFilter(FilterType.EQUALS, "codigo", dtoProc.getTipoProcedimiento()));
+	        
+	        procHijo.setTipoProcedimiento(tipoProcedimiento);
+	
+	        DDTipoReclamacion tipoReclamacion = (DDTipoReclamacion) diccionarioApi
+	        		.dameValorDiccionarioByCod(DDTipoReclamacion.class, dtoProc.getTipoReclamacion());
+	        procHijo.setTipoReclamacion(tipoReclamacion);
+	
+	        // Agrego las personas al procedimiento
+	        List<Persona> personas = new ArrayList<Persona>();
+	        for (Long idPersona : dtoProc.getPersonas()) {
+	            if (Checks.esNulo(idPersona) || idPersona == 0) {
+	                continue;
+	            }
+	
+	            personas.add(genericDao.get(Persona.class, genericDao
+	    				.createFilter(FilterType.EQUALS, "id", idPersona)));
+	        }
+	        procHijo.setPersonasAfectadas(personas);
+	        
+	        if (!Checks.estaVacio(procPadre.getBienes())) {
+	            // Agrego los bienes al procedimiento
+	            List<ProcedimientoBien> procedimientosBien = new ArrayList<ProcedimientoBien>();
+		        if ((tipoProcedimiento.getIsUnicoBien() && procPadre.getBienes().size()==1) ||
+		        		(!tipoProcedimiento.getIsUnicoBien())) {
+			        for (ProcedimientoBien procBien : procPadre.getBienes()) {
+			        	
+			        	ProcedimientoBien procBienCopiado = new ProcedimientoBien();
+			        	procBienCopiado.setBien(procBien.getBien());
+			        	procBienCopiado.setSolvenciaGarantia(procBien.getSolvenciaGarantia());
+			        	procBienCopiado.setProcedimiento(procHijo);
+			        	genericDao.save(ProcedimientoBien.class, procBienCopiado);
+			        	procedimientosBien.add(procBienCopiado);
+			        }
+		        }
+		        procHijo.setBienes(procedimientosBien);
+	        }
+	        executor.execute(ExternaBusinessOperation.BO_PRC_MGR_SAVE_OR_UPDATE_PROCEDIMIMENTO, procHijo);
         }
-        executor.execute(ExternaBusinessOperation.BO_PRC_MGR_SAVE_OR_UPDATE_PROCEDIMIMENTO, procHijo);
     
         ProcedimientoDerivado procedimientoDerivado = new ProcedimientoDerivado();
         procedimientoDerivado.setId(dtoProc.getId());
@@ -554,6 +564,8 @@ public class MEJDecisionProcedimientoManager extends
             if (procDerivado.getProcedimientoPadre() == null) {
                 continue;
             }
+            
+            // Cambiar para que compruebe si existe el procedimiento hijo
             ProcedimientoDerivado prc = decisionProcedimiento.getProcedimientoDerivadoById(procDerivado.getId());
             if (prc != null) {
                 continue;
@@ -976,6 +988,8 @@ public class MEJDecisionProcedimientoManager extends
 		if (Checks.esNulo(decisionProcedimiento.getGuid())) {
 			decisionProcedimiento.setGuid(Guid.getNewInstance().toString());
 			decisionProcedimientoDao.saveOrUpdate(decisionProcedimiento);
+			
+			extProcedimientoManager.prepareGuid(decisionProcedimiento.getProcedimiento());
 		}
 		
 		if (decisionProcedimiento.getProcedimientosDerivados() != null) {
@@ -992,6 +1006,8 @@ public class MEJDecisionProcedimientoManager extends
 		if (Checks.esNulo(procedimientoDerivado.getGuid())) {
 			procedimientoDerivado.setGuid(Guid.getNewInstance().toString());
 			genericDao.save(ProcedimientoDerivado.class, procedimientoDerivado);
+			
+			extProcedimientoManager.prepareGuid(procedimientoDerivado.getProcedimiento());
 		}	
 	}
 	

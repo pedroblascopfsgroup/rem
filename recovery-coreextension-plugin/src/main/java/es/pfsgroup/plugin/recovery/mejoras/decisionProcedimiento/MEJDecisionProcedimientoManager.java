@@ -460,13 +460,18 @@ public class MEJDecisionProcedimientoManager extends
         DDEstadoDecision estadoDecision = (DDEstadoDecision)diccionarioApi.dameValorDiccionarioByCod(DDEstadoDecision.class, dtoDecisionProcedimiento.getStrEstadoDecision());
         decisionProcedimiento.setEstadoDecision(estadoDecision);
 
-        DDCausaDecisionFinalizar causaDecisionFinalizar = (DDCausaDecisionFinalizar) diccionarioApi
-        		.dameValorDiccionarioByCod(DDCausaDecisionFinalizar.class,dtoDecisionProcedimiento.getCausaDecisionFinalizar());
-        decisionProcedimiento.setCausaDecisionFinalizar(causaDecisionFinalizar);
-        DDCausaDecisionParalizar causaDecisionParalizar = (DDCausaDecisionParalizar) diccionarioApi
-        		.dameValorDiccionarioByCod(DDCausaDecisionParalizar.class,dtoDecisionProcedimiento.getCausaDecisionParalizar());
-        decisionProcedimiento.setCausaDecisionParalizar(causaDecisionParalizar);
-        
+		if (!Checks.esNulo(dtoDecisionProcedimiento.getCausaDecisionFinalizar())) {
+			DDCausaDecisionFinalizar causaDecisionFinalizar = (DDCausaDecisionFinalizar) diccionarioApi.dameValorDiccionarioByCod(DDCausaDecisionFinalizar.class,
+					dtoDecisionProcedimiento.getCausaDecisionFinalizar());
+			decisionProcedimiento.setCausaDecisionFinalizar(causaDecisionFinalizar);
+		}
+
+		if (!Checks.esNulo(dtoDecisionProcedimiento.getCausaDecisionParalizar())) {
+			DDCausaDecisionParalizar causaDecisionParalizar = (DDCausaDecisionParalizar) diccionarioApi.dameValorDiccionarioByCod(DDCausaDecisionParalizar.class,
+					dtoDecisionProcedimiento.getCausaDecisionParalizar());
+			decisionProcedimiento.setCausaDecisionParalizar(causaDecisionParalizar);
+		}
+
         decisionProcedimiento.setFinalizada(dtoDecisionProcedimiento.getFinalizar());
         decisionProcedimiento.setParalizada(dtoDecisionProcedimiento.getParalizar());
 
@@ -682,11 +687,11 @@ public class MEJDecisionProcedimientoManager extends
 				// FINALIZADO:Parar definitivamente el procedimiento origen
 				try {
 
-					ProcedimientoFAKE procedimiento2 = genericDao.get(ProcedimientoFAKE.class, genericDao.createFilter(FilterType.EQUALS,  "id", procedimiento.getId()));
+					//ProcedimientoFAKE procedimiento2 = genericDao.get(ProcedimientoFAKE.class, genericDao.createFilter(FilterType.EQUALS,  "id", procedimiento.getId()));
 					DDEstadoProcedimiento estadoFin = (DDEstadoProcedimiento)diccionarioApi
 							.dameValorDiccionarioByCod(DDEstadoProcedimiento.class, DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO); 
-			 		procedimiento2.setEstadoProcedimiento(estadoFin);
-					genericDao.save(ProcedimientoFAKE.class, procedimiento2);
+			 		procedimiento.setEstadoProcedimiento(estadoFin);
+					genericDao.save(Procedimiento.class, procedimiento);
 					procedimiento = genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS,  "id", procedimiento.getId()));
 					
     				jbpmUtil.finalizarProcedimiento(procedimiento.getId());

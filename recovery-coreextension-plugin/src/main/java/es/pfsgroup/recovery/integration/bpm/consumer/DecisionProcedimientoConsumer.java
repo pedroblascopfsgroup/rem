@@ -14,6 +14,7 @@ import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procedimientoDerivado.ProcedimientoDerivadoManager;
 import es.capgemini.pfs.procedimientoDerivado.dto.DtoProcedimientoDerivado;
 import es.capgemini.pfs.procedimientoDerivado.model.ProcedimientoDerivado;
+import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.ConfiguradorPropuesta;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.MEJDecisionProcedimientoManager;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
@@ -115,27 +116,19 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 			 	}
 		        dtoDecisionProcedimiento.setDecisionProcedimiento(dec);
 		        
+		        ConfiguradorPropuesta configuradorPropuesta = new ConfiguradorPropuesta();
+		        configuradorPropuesta.setConfiguracion(ConfiguradorPropuesta.SIN_ENVIO_DATOS);
+		        
 		        switch (TipoTratamiento.valueOf(tratamientoDecision)) {
 				case CREAR_Y_DERIVAR:
-					decisionProcedimientoManager.aceptarPropuestaSinControl(dtoDecisionProcedimiento);
+					
+					decisionProcedimientoManager.aceptarPropuestaSinControl(dtoDecisionProcedimiento, configuradorPropuesta);
 					break;
 				case SOLO_CREAR:
-					decisionProcedimientoManager.createOrUpdate(dtoDecisionProcedimiento, prc);
-		        	
-		    		if (dtoDecisionProcedimiento.getCausaDecisionFinalizar() != null) {
-		    			if (dtoDecisionProcedimiento.getFinalizar()) {
-		    				decisionProcedimientoManager.finalizarProcedimiento(prc);
-		    			}
-		            }
-		    		if (dtoDecisionProcedimiento.getCausaDecisionParalizar() != null) {
-		    			if (dtoDecisionProcedimiento.getParalizar()) {
-		    				decisionProcedimientoManager.paralizarProcedimiento(prc);
-		    			}
-		    		}
-		    		
-		    		decisionProcedimientoManager.finalizaTareaTomaDecision(prc);
-		    		decisionProcedimientoManager.actualizarEstadoAsunto(prc);
 		     
+					configuradorPropuesta.setConfiguracion(ConfiguradorPropuesta.SIN_BPMS);
+					decisionProcedimientoManager.aceptarPropuestaSinControl(dtoDecisionProcedimiento, configuradorPropuesta);
+					
 					break;
 				default:
 					logger.error("El tipo de tratamiento recibido no corresponde con ninguno de los declarados. La decisión no se ha creado");

@@ -23,6 +23,7 @@ import es.capgemini.pfs.core.api.web.DynamicElementApi;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
+import es.capgemini.pfs.users.FuncionManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.commons.utils.Checks;
@@ -82,6 +83,8 @@ public class ADMUsuarioManager {
 	@Autowired
 	private GenericABMDao genericDao;
 
+	@Autowired
+	private FuncionManager funcionManager;
 
 	public ADMUsuarioManager() {
 
@@ -332,9 +335,13 @@ public class ADMUsuarioManager {
 		}
 
 		List<GestorDespacho> lgd = gestorDespachoDao.getList();
-
-		if (dto.getUsuarioExterno()) {
-			if (dto.getDespachoExterno() == null) {
+		
+		//BKREC-970
+		Usuario usuLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		Boolean tieneFuncion = funcionManager.tieneFuncion(usuLogado, "ROLE_DESACTIVAR_DEPENDENCIA_USU_EXTERNO");
+				
+		if (dto.getUsuarioExterno() || tieneFuncion) {
+			if (dto.getDespachoExterno() == null && !tieneFuncion) {
 				throw new BusinessOperationException("plugin.config.perfiles.admusuariomanager.guardausuario.despachoexternonull");
 			}
 			

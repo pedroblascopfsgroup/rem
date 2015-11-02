@@ -8,7 +8,7 @@
 		<json:object>
 			<json:property name="id" value="${tramosCorrectores.id}"/>
 			<json:property name="posicion" value="${tramosCorrectores.rankingPosicion}º"/>
-			<json:property name="coeficiente" value="${tramosCorrectores.coeficiente}%"/>
+			<json:property name="coeficiente" value="${tramosCorrectores.coeficiente}"/>
 		</json:object>
 	</json:array>
 </fwk:json>		

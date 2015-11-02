@@ -1,7 +1,7 @@
 create or replace package OPERACION_DDL as
 ------------------------------------------------------------------------------------------------------
--- OPERACION DDL v.0.5
--- 17/09/2015
+-- OPERACION DDL v.0.7
+-- 23/09/2015
 -- Luis Ruiz Carlavilla
 --
 -- Descripción:
@@ -47,7 +47,7 @@ create or replace package OPERACION_DDL as
                                           , PARAMETROS IN VARCHAR2
                                           , ESTADO IN VARCHAR2);
 
-    -- Operativa sobre tablas
+    -- Operativa sobre tablas (GTT)
     procedure DDL_Table ( operacion  IN VARCHAR2
                         , nombre     IN VARCHAR2
                         , parametros IN VARCHAR2 DEFAULT NULL);

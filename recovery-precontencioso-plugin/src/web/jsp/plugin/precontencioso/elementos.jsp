@@ -25,7 +25,7 @@ var creaElemento = function(nombre,index,type,label,value,values){
 			return new Ext.ux.form.XDateField({fieldLabel:label, name:name, value:value,style:'margin:0px', disabled:isDisable});
 			break;
 		case 'combo' :
-			return app.creaCombo({name:name, fieldLabel:label, value:value, data:values, width:'170', disabled:isDisable});
+			return app.creaCombo({name:name, fieldLabel:label, value:value, data:values, width:'170', disabled:isDisable, nombre:nombre});
 			break;
 		case 'label' :
  			return { html:label, border:false};

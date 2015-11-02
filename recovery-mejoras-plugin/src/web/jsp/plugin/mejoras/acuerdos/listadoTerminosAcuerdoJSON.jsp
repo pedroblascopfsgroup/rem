@@ -14,6 +14,7 @@
 	        <json:property name="subTipoAcuerdo" value="${termino.subTipoAcuerdo.descripcion}" />                
 	        <json:property name="importe" value="${termino.importe}" />
 	        <json:property name="comisiones" value="${termino.comisiones}" />  
+	        <json:property name="estadoGestion" value="${termino.estadoGestion.descripcion}" />
 	        <c:if test="${termino.contratosTermino[0] != null}">
 		        <json:property name="idContrato" value="${termino.contratosTermino[0].id}"/>
 	            <json:property name="cc" value="${termino.contratosTermino[0].codigoContrato}" />                 

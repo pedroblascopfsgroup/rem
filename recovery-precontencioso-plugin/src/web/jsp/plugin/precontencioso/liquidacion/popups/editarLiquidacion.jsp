@@ -106,7 +106,7 @@
 	});
 
 	<c:if test="${ocultarBtnSolicitar}">
-		<pfsforms:datefield labelKey="plugin.precontencioso.grid.liquidacion.fechaCierre" label="**Fecha de cierre" name="fechaCierreField" obligatory="true"/>
+		<pfsforms:datefield labelKey="plugin.precontencioso.grid.liquidacion.fechaCierre" label="**Fecha de cierre" name="fechaCierreField" obligatory="true" value="${liquidacion.fechaCierre}"/>
 	</c:if>
 
 <%-- Apoderado --%>
@@ -278,7 +278,7 @@
 					}
 				});
 			} else {
-				Ext.Msg.alert('<s:message code="app.error" text="**Error" />', validarForm());
+				Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />', validarForm());
 			}
 		}
 	});

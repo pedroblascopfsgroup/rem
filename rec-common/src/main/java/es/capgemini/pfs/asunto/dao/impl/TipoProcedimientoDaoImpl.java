@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 import es.capgemini.pfs.asunto.dao.TipoProcedimientoDao;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
+import es.pfsgroup.commons.utils.HQLBuilder;
+import es.pfsgroup.commons.utils.HibernateQueryUtils;
 
 /**
  * Clase de acceso a datos para procedimientos.
@@ -36,5 +38,16 @@ public class TipoProcedimientoDaoImpl extends AbstractEntityDao<TipoProcedimient
         List<TipoProcedimiento> lista = (List<TipoProcedimiento>) getHibernateTemplate().find(hql, new Object[] { codigoActuacion });
         return lista;
     }
+
+	@Override
+	public List<TipoProcedimiento> busquedaProcedimientosAsignacionDeGestores() {
+		
+		HQLBuilder hb = new HQLBuilder("from TipoProcedimiento tpo");
+		hb.appendWhere("tpo.auditoria.borrado=false");
+		hb.appendWhere("tpo.descripcion like 'P%'");
+		hb.orderBy("tpo.descripcion", HQLBuilder.ORDER_ASC);
+		
+		return HibernateQueryUtils.list(this, hb);
+	}
 
 }

@@ -25,5 +25,11 @@ public interface TipoProcedimientoDao extends AbstractDao<TipoProcedimiento, Lon
      * @return
      */
     List<TipoProcedimiento> getTipoProcedimientosPorTipoActuacion(String codigoActuacion);
+    
+	/**
+	 * Busqueda de MEJTipoProcedimiento que la descripcion empiece po "P"
+	 * @return Listado de MEJTipoProcedimiento que cumplen dicho filtro.
+	 */
+	List<TipoProcedimiento> busquedaProcedimientosAsignacionDeGestores();
 
 }

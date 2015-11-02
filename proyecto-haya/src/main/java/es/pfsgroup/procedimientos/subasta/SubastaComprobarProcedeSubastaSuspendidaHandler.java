@@ -17,6 +17,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDDecisionSuspension;
+import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.ConfiguradorPropuesta;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.MEJDecisionProcedimientoManager;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
 import es.pfsgroup.procedimientos.PROGenericEnterActionHandler;
@@ -106,7 +107,7 @@ public class SubastaComprobarProcedeSubastaSuspendidaHandler extends PROGenericE
 			decisionProcedimiento.setComentarios("Paralizado por suspensión de subasta");
 			decisionProcedimiento.setFechaParalizacion(fecha);
 			decisionProcedimiento.setParalizar(true);
-			decisionManager.aceptarPropuestaSinControl(decisionProcedimiento);
+			decisionManager.aceptarPropuestaSinControl(decisionProcedimiento, new ConfiguradorPropuesta());
 		}
     }
 

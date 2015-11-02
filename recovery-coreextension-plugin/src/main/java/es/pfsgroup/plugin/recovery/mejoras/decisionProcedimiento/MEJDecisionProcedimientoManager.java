@@ -633,12 +633,19 @@ public class MEJDecisionProcedimientoManager extends
 						"Sólo el supervisor puede finalizar o paralizar el origen");
 			}
 		}
-		this.aceptarPropuestaSinControl(dtoDecisionProcedimiento);
+		
+		ConfiguradorPropuesta configuradorPropuesta = new ConfiguradorPropuesta();
+		Procedimiento procedimiento = prcManager.getProcedimiento(dtoDecisionProcedimiento.getIdProcedimiento());
+		if(procedimiento.getProcessBPM() == null) {
+			configuradorPropuesta.setConfiguracion(ConfiguradorPropuesta.SIN_BPMS);
+		}
+		
+		this.aceptarPropuestaSinControl(dtoDecisionProcedimiento, configuradorPropuesta);
 	}
 
 	@Transactional(readOnly = false)
 	public void aceptarPropuestaSinControl(
-			MEJDtoDecisionProcedimiento dtoDecisionProcedimiento) {
+			MEJDtoDecisionProcedimiento dtoDecisionProcedimiento, ConfiguradorPropuesta configuradorPropuesta) {
 		
 		logger.info("Aceptando decisión...");
 
@@ -654,8 +661,6 @@ public class MEJDecisionProcedimientoManager extends
 		logger.info("Validación 1 en Aceptación de Decisión (valida procedimientos derivados en propuestas que no hayan cambiado de estado) ...");
 		if (decision.getProcedimientosDerivados()!=null) {
 			for (ProcedimientoDerivado prd : decision.getProcedimientosDerivados()) {
-				//Procedimiento prc= genericDao.get(Procedimiento.class, genericDao
-				//		.createFilter(FilterType.EQUALS, "id", prd.getProcedimiento().getId()));
 				Procedimiento prc = prd.getProcedimiento();
 				// Validar estado del procedimiento
 				if (!prc.getEstadoProcedimiento().getCodigo().equals(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_DERIVADO)) { 
@@ -663,90 +668,119 @@ public class MEJDecisionProcedimientoManager extends
 				}
 			}
 		}
-			
-		try{
-			logger.info("Todo correcto! Crea la decisión ...");
-			decision = createOrUpdate(dtoDecisionProcedimiento, procedimiento);
-		} catch(UserException userException){
+		
+		try {
+			if(configuradorPropuesta.isCrearOActualizar()) {
+				logger.info("Todo correcto! Crea la decisión ...");
+				decision = createOrUpdate(dtoDecisionProcedimiento, procedimiento);
+			}
+		} 
+		catch(UserException userException){
 			logger.error("Ups, Error al crear la decisión!!! Mensaje al usuario: ", userException);
 			throw userException;
-		} catch(Exception exc){
+		} 
+		catch(Exception exc){
 			logger.error("Ups, Error al crear la decisión!!! Excepción general: ", exc);
 			throw new BusinessOperationException(exc);
 		}
 		
-		logger.info("Todo correcto! Actualiza los procedimientos derivados con los valores del origen ...");
-		for (ProcedimientoDerivado prd : decision.getProcedimientosDerivados()) {
-			Procedimiento prc= prd.getProcedimiento();
-			
-			// Registrar los saldos vencido y no vencido originales del último
-			// movimiento de los contratos
-			Movimiento mv = null;
-			BigDecimal saldoOriginalNoVencido = new BigDecimal(0);
-			BigDecimal saldoOriginalVencido = new BigDecimal(0);
-			for (ExpedienteContrato ec : prc.getExpedienteContratos()) {
-				mv = ec.getContrato().getLastMovimiento();
-				if (mv != null) {
-					saldoOriginalNoVencido = saldoOriginalNoVencido.add(new BigDecimal(mv.getPosVivaNoVencida().floatValue()));
-					saldoOriginalVencido = saldoOriginalVencido.add(new BigDecimal(mv.getPosVivaVencida().floatValue()));
+		if(configuradorPropuesta.isRegistrarSaldos()) {
+			logger.info("Todo correcto! Actualiza los procedimientos derivados con los valores del origen ...");
+			for (ProcedimientoDerivado prd : decision.getProcedimientosDerivados()) {
+				Procedimiento prc= prd.getProcedimiento();
+					
+				// Registrar los saldos vencido y no vencido originales del último
+				// movimiento de los contratos
+				Movimiento mv = null;
+				BigDecimal saldoOriginalNoVencido = new BigDecimal(0);
+				BigDecimal saldoOriginalVencido = new BigDecimal(0);
+				for (ExpedienteContrato ec : prc.getExpedienteContratos()) {
+					mv = ec.getContrato().getLastMovimiento();
+					if (mv != null) {
+						saldoOriginalNoVencido = saldoOriginalNoVencido.add(new BigDecimal(mv.getPosVivaNoVencida().floatValue()));
+						saldoOriginalVencido = saldoOriginalVencido.add(new BigDecimal(mv.getPosVivaVencida().floatValue()));
+					}
 				}
-			}
-			prc.setSaldoOriginalNoVencido(saldoOriginalNoVencido);
-			prc.setSaldoOriginalVencido(saldoOriginalVencido);
+				prc.setSaldoOriginalNoVencido(saldoOriginalNoVencido);
+				prc.setSaldoOriginalVencido(saldoOriginalVencido);
 			
-			// Lanzar los JBPM para cada procedimiento
-			String nombreJBPM = prc.getTipoProcedimiento().getXmlJbpm();
-			Map<String, Object> param = new HashMap<String, Object>();
-			param.put(BPMContants.PROCEDIMIENTO_TAREA_EXTERNA, prc.getId());
-			Long idBPM = jbpmUtil.crearNewProcess(nombreJBPM, param);
-			//
-			prc.setProcessBPM(idBPM);
-			genericDao.update(Procedimiento.class, prc);
+				if(configuradorPropuesta.isLanzarBPMs()) {
+					// Lanzar los JBPM para cada procedimiento
+					String nombreJBPM = prc.getTipoProcedimiento().getXmlJbpm();
+					Map<String, Object> param = new HashMap<String, Object>();
+					param.put(BPMContants.PROCEDIMIENTO_TAREA_EXTERNA, prc.getId());
+					Long idBPM = jbpmUtil.crearNewProcess(nombreJBPM, param);
+					//
+					prc.setProcessBPM(idBPM);
+				}
+				
+				genericDao.update(Procedimiento.class, prc);
+			}
 		}
-
+	
 		// Verificar si se da por finalizado el procedimiento origen
-		if (decision.getCausaDecisionFinalizar() != null && decision.getFinalizada()) {
+		if (configuradorPropuesta.isFinalizarProcedimiento() && decision.getCausaDecisionFinalizar() != null && decision.getFinalizada()) {
 			logger.info("Finalizando origen ...");
 			finalizarProcedimiento(procedimiento);
-        }
-		
-		if (decision.getCausaDecisionParalizar() != null  && decision.getParalizada()) {
+	    }
+			
+		if (configuradorPropuesta.isParalizarProcedimiento() && decision.getCausaDecisionParalizar() != null  && decision.getParalizada()) {
 			logger.info("Paralizando origen ...");
-			Long idProcessBPM = procedimiento.getProcessBPM();
-			jbpmUtil.aplazarProcesosBPM(idProcessBPM, decision.getFechaParalizacion());
+			
+			if(configuradorPropuesta.isAplazarBPMs()) {
+				Long idProcessBPM = procedimiento.getProcessBPM();
+				jbpmUtil.aplazarProcesosBPM(idProcessBPM, decision.getFechaParalizacion());
+			}
+			
 			paralizarProcedimiento(procedimiento);
 		}
-
-        // Setear Decision como aceptada
-		DDEstadoDecision estadoDecision = (DDEstadoDecision)diccionarioApi
-    			.dameValorDiccionarioByCod(DDEstadoDecision.class, DDEstadoDecision.ESTADO_ACEPTADO); 
-		decision.setEstadoDecision(estadoDecision);
-        genericDao.update(DecisionProcedimiento.class, decision);
-
-        // Si tiene una tarea asignada a la decisi�n la finalizamos
-        TareaNotificacion tarea = decision.getTareaAsociada();
-        if (tarea != null) {
-            executor.execute(ComunBusinessOperation.BO_TAREA_MGR_BORRAR_NOTIFICACION_TAREA_BY_ID, tarea.getId());
-        }
-
-		// borrar la tarea
-		if (decision.getProcessBPM() != null) {
-			finalizarTarea(decision.getProcessBPM());
-		}
-
-		// Finaliza las tareas
-		finalizaTareaTomaDecision(procedimiento);
-
-		//Actualizamos el estado del asunto
-		actualizarEstadoAsunto(procedimiento);
-
-		// Enviar al gestor una notificación con el resultado de aceptación. 
-		// Se genera despu�s de finalizar todas las tareas del procedimiento porque sin� se finaliza yno se muestra en las notificaciones 
-		if (estabaPropuesto) {
-			notificarGestor(decision, true);
+		
+		if(configuradorPropuesta.isAceptarDecision()) {
+	
+	        // Setear Decision como aceptada
+			DDEstadoDecision estadoDecision = (DDEstadoDecision)diccionarioApi
+	    			.dameValorDiccionarioByCod(DDEstadoDecision.class, DDEstadoDecision.ESTADO_ACEPTADO); 
+			decision.setEstadoDecision(estadoDecision);
+	        genericDao.update(DecisionProcedimiento.class, decision);
 		}
 		
-        if(dtoDecisionProcedimiento.getGuid() == null) {
+		if(configuradorPropuesta.isFinalizarTareaAsociada()) {
+	
+	        // Si tiene una tarea asignada a la decisi�n la finalizamos
+	        TareaNotificacion tarea = decision.getTareaAsociada();
+	        if (tarea != null) {
+	            executor.execute(ComunBusinessOperation.BO_TAREA_MGR_BORRAR_NOTIFICACION_TAREA_BY_ID, tarea.getId());
+	        }
+		}
+		
+		if(configuradorPropuesta.isBorrarTareaAsociada()) {
+	
+			// borrar la tarea
+			if (decision.getProcessBPM() != null) {
+				finalizarTarea(decision.getProcessBPM());
+			}
+		}
+	
+		if(configuradorPropuesta.isFinalizarTareasTomaDecision()) {
+			// Finaliza las tareas
+			finalizaTareaTomaDecision(procedimiento);
+		}
+		
+		if(configuradorPropuesta.isActualizarEstadoAsunto()) {
+	
+			//Actualizamos el estado del asunto
+			actualizarEstadoAsunto(procedimiento);
+		}
+	
+		if(configuradorPropuesta.isNotificarGestor()) {
+			// Enviar al gestor una notificación con el resultado de aceptación. 
+			// Se genera despu�s de finalizar todas las tareas del procedimiento porque sin� se finaliza yno se muestra en las notificaciones 
+			if (estabaPropuesto) {
+				notificarGestor(decision, true);
+			}
+		}
+		
+		if(configuradorPropuesta.isEnviarDatos()) {
         	integracionBpmService.enviarDatos(decision);
         }
         

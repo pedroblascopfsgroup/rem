@@ -341,7 +341,7 @@ public class DecisionProcedimiento implements Serializable, Auditable {
 			return null;
 		}
 		for (ProcedimientoDerivado pd : this.procedimientosDerivados) {
-			if (pd.getId().equals(id)) {
+			if (pd.getId()!=null && pd.getId().equals(id)) {
 				return pd;
 			}
 		}

@@ -142,6 +142,7 @@ var excluirDocButton = new Ext.Button({
 									method: 'POST',
 									success: function ( result, request ) {
 										refrescarDocumentosGrid();
+										gridDocumentos.getSelectionModel().clearSelections();
 									}
 							});
 	    				}

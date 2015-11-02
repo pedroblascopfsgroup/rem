@@ -47,5 +47,12 @@ public interface ProcedimientoPCODao extends AbstractDao<ProcedimientoPCO, Long>
 	 */
 	List<HashMap<String, Object>> busquedaBurofaxPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
 
+	/**
+	 * Busqueda los tipos de gestores asignados al asunto cuyo id se pasa como parámetro
+	 * @param idAsunto
+	 * @return Listado de códigos de tipo de gestor que cumplen dicho filtro.
+	 */
+	List<String> getTiposGestoresAsunto(Long idAsunto);
+
 }
 

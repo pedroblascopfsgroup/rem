@@ -103,6 +103,7 @@ var btnDescartar = new Ext.Button({
 
 var btnGenerar = new Ext.Button({
 	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.generar" text="**Generar" />',
+	hidden: true,
 	iconCls: 'icon_pdf',
 	cls: 'x-btn-text-icon',
 	handler: function() {
@@ -111,7 +112,11 @@ var btnGenerar = new Ext.Button({
 			app.openBrowserWindow(flow,params);
 			page.fireEvent(app.event.DONE);
 	}		
-});	
+});
+
+<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_LIQ_BTN_GENERAR">
+	btnGenerar.hidden = false;
+</sec:authorize>
 
 <%-- Grid --%>
 
@@ -184,7 +189,15 @@ var botonRefresh = new Ext.Button({
 
 var gridLiquidaciones = app.crearGrid(storeLiquidaciones, cmLiquidacion, {
 	title: '<s:message code="plugin.precontencioso.grid.liquidacion.titulo" text="**Liquidaciones" />',
-	bbar: [btnSolicitar, btnEditarValores, btnConfirmar, btnDescartar, new Ext.Toolbar.Fill(), btnGenerar,botonRefresh],
+	bbar: [
+		btnSolicitar, 
+		btnEditarValores, 
+		btnConfirmar, 
+		btnDescartar, 
+		new Ext.Toolbar.Fill(),
+		btnGenerar,
+		botonRefresh
+	],
 	height: 250,
 	autoWidth: true,
 	style:'padding-top: inherit',
@@ -268,7 +281,7 @@ var actualizarBotonesLiquidacion = function() {
 			btnDescartar.setDisabled(true);
 			btnGenerar.setDisabled(true);
 	}
-
+	
 	btnConfirmar.setDisabled(btnConfirmar.disabled || !comprobarDatosCalculoRellenos());
 
 }

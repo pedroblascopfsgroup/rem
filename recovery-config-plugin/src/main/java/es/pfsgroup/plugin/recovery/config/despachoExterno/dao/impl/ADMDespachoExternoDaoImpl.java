@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.recovery.config.despachoExterno.dao.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.hibernate.pagination.PaginationManager;
@@ -10,6 +11,10 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.users.dao.UsuarioDao;
+import es.capgemini.pfs.users.domain.Funcion;
+import es.capgemini.pfs.users.domain.Perfil;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Assertions;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
@@ -22,6 +27,9 @@ public class ADMDespachoExternoDaoImpl extends
 		AbstractEntityDao<DespachoExterno, Long> implements
 		ADMDespachoExternoDao {
 
+	@Autowired
+	UsuarioDao usuarioDao;
+	
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<GestorDespacho> buscarSupervisoresDespacho(Long idDespacho) {
@@ -93,8 +101,8 @@ public class ADMDespachoExternoDaoImpl extends
 //		PageHibernate page = new PageHibernate("from DespachoExterno desp", dto);
 //		getHibernateTemplate().execute(page);
 //		return page;
-
 	}
+	
 
 	private boolean soloDatosDespacho(ADMDtoBusquedaDespachoExterno dto) {
 		return Checks.esNulo(dto.getUsername())
@@ -104,6 +112,7 @@ public class ADMDespachoExternoDaoImpl extends
 				&& Checks.esNulo(dto.getSupervisor());
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public DespachoExterno buscarPorGestor(Long idUsuario) {
 		HQLBuilder b = new HQLBuilder(
@@ -113,7 +122,8 @@ public class ADMDespachoExternoDaoImpl extends
 
 		b.appendWhere("gd.supervisor = false");
 
-		b.appendWhere("gd.usuario.usuarioExterno = true");
+		//b.appendWhere("gd.usuario.usuarioExterno = true");
+		tieneFuncionDependenciaUsuExterno(idUsuario,b);
 
 		HQLBuilder.addFiltroIgualQue(b, "gd.usuario.id", idUsuario);
 
@@ -146,4 +156,26 @@ public class ADMDespachoExternoDaoImpl extends
 		return HibernateQueryUtils.list(this, b);
 	}
 
+	/**
+	 * Si el usuario logado no tiene el ROL, se requiere usuarioExterno=true para mostrar los despachos.
+	 * Si se tiene el ROL, entonces da igual que el campo usuarioExterno sea true o falso, por tanto no se incluye
+	 * en la consulta HQL.
+	 * @param idUsuario
+	 * @param b
+	 */
+	private void tieneFuncionDependenciaUsuExterno(Long idUsuario, HQLBuilder b) {
+        Usuario usuario = usuarioDao.get(idUsuario);
+		List<Perfil> perfiles = usuario.getPerfiles();
+		Boolean enc = false;
+		for (Perfil per : perfiles) {
+		    for (Funcion fun : per.getFunciones()) {
+		        if ("ROLE_DESACTIVAR_DEPENDENCIA_USU_EXTERNO".equals(fun.getDescripcion())) {  
+		            enc = true;
+		        }
+		    }
+		}
+		if(!enc){
+			b.appendWhere("gd.usuario.usuarioExterno = true");
+		}
+	}
 }

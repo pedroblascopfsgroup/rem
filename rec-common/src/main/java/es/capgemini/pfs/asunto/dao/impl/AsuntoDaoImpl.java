@@ -94,48 +94,23 @@ public class AsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements As
      * {@inheritDoc}
      */
     public Page obtenerAsuntosDeUnaPersonaPaginados(DtoListadoAsuntos dto) {
-        StringBuilder hqltemp = new StringBuilder();
         StringBuilder hql = new StringBuilder();
         
-        // TODO FASE 1154 Se deja la consulta anterior para hacer un estudio temporal lanzando al log los resultados que saldrian con esta consulta  y con la nueva. 
+        // FASE 1154 Se deja la consulta anterior para hacer un estudio temporal lanzando al log los resultados que saldrian con esta consulta  y con la nueva. 
         // Una vez realizado el estudio podriamos eliminar la variable hqltemp y sus referencias.        
-        hqltemp
-                .append("select distinct asu from Asunto asu, ExpedienteContrato cex, ProcedimientoContratoExpediente pce, ContratoPersona cpe, Procedimiento prc ");
-        hqltemp.append(" where cpe.contrato.id = cex.contrato.id ");
-        hqltemp.append(" and cex.id = pce.expedienteContrato and prc.id = pce.procedimiento ");
-        hqltemp.append(" and prc.asunto.id = asu.id ");
-        hqltemp.append(" and asu.auditoria.borrado = false ");
-        hqltemp.append(" and prc.auditoria.borrado = false ");
-        hqltemp.append(" and cpe.persona.id = :idPersona ");
-        
-        hql
-        .append("select distinct asu from Asunto asu, Procedimiento prc, ProcedimientoPersona prcper ");
+        hql.append("select distinct asu from Asunto asu, Procedimiento prc, ProcedimientoPersona prcper ");
 		hql.append(" where prc.asunto.id = asu.id ");
 		hql.append(" and prcper.procedimiento = prc");
 		hql.append(" and asu.auditoria.borrado = false ");
 		hql.append(" and prc.auditoria.borrado = false ");
 		hql.append(" and prcper.persona.id = :idPersona "); 
 		
-
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("idPersona", dto.getIdPersona());
         
-        Page pagetemp = paginationManager.getHibernatePage(getHibernateTemplate(), hqltemp.toString(), dto, params);
-        String ids = "";
-        for (Asunto asunto : (List<Asunto>) pagetemp.getResults()) {        	
-        	ids += asunto.getId() + ",";       
-        }        
-        System.out.println(" obtenerAsuntosDeUnaPersonaPaginados: [RESULTADO SQL] (TOTAL ASUNTOS DESDE CPE_CONTRATOS_PERSONAS) : " + pagetemp.getTotalCount() + " | IDS: " + ids );
-        
         Page page = paginationManager.getHibernatePage(getHibernateTemplate(), hql.toString(), dto, params);
-        String ids2 = "";
-        for (Asunto asunto : (List<Asunto>) page.getResults()) {        	
-        	ids2 += asunto.getId() + ",";       
-        }
-        
-        System.out.println(" obtenerAsuntosDeUnaPersonaPaginados: [RESULTADO SQL] (TOTAL ASUNTOS DESDE PRC_PER) : " + page.getTotalCount() + " | IDS: " + ids2 );
 
-        return page;//paginationManager.getHibernatePage(getHibernateTemplate(), hql.toString(), dto, params);
+        return page;
 
     }
 

@@ -51,6 +51,7 @@ public interface MEJAcuerdoApi {
 	public static final String BO_ACUERDO_MGR_CONTINUAR_ACUERDO = "mejacuerdo.continuarAcuerdo";
 	public static final String BO_ACUERDO_MGR_ACUERDO_CERRAR = "mejacuerdo.cerrarAcuerdo";
 	public static final String BO_ACUERDO_MGR_GET_VALIDACION_TRAMITE_CORRESPONDIENTE = "mejacuerdo.validacionTramiteCorrespondiente";
+	public static final String BO_ACUERDO_MGR_GUARDAR_ESTADO_GESTION = "mejacuerdo.guardarEstadoGestion";
 	
     
 	/**
@@ -59,7 +60,7 @@ public interface MEJAcuerdoApi {
      */
 	@BusinessOperationDefinition(BO_ACUERDO_MGR_RECHAZAR_ACUERDO_MOTIVO)
     @Transactional(readOnly = false)
-    public void rechazarAcuerdoMotivo(Long idAcuerdo, String motivo);
+    public void rechazarAcuerdoMotivo(Long idAcuerdo, Long idMotivo, String observaciones);
     
     @BusinessOperationDefinition(BO_EXT_ACUERDO_MGR_GUARDAR_ACUERDO)
     @Transactional(readOnly = false) 
@@ -147,6 +148,9 @@ public interface MEJAcuerdoApi {
 	
 	@BusinessOperationDefinition(BO_ACUERDO_MGR_GET_VALIDACION_TRAMITE_CORRESPONDIENTE)
 	public List<ACDAcuerdoDerivaciones> getValidacionTramiteCorrespondiente(EXTAcuerdo acuerdo, boolean soloTramitesSinIniciar);
+
+	@BusinessOperationDefinition(BO_ACUERDO_MGR_GUARDAR_ESTADO_GESTION)
+	public void guardarEstadoGestion(Long idTermino, Long nuevoEstadoGestion);
 	
 
 }

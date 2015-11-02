@@ -29,7 +29,7 @@ public class BusquedaExpedientesRecobro implements BusquedaExpedienteFiltroDinam
 		return false;
 	}
 
-	@Override
+        @Override
 	public String obtenerFiltro(String paramsDinamicos) {
 		StringBuilder filtro = new StringBuilder();				
 		BusquedaExpRecobroDto dto = creaDtoParametros(paramsDinamicos);	
@@ -98,6 +98,47 @@ public class BusquedaExpedientesRecobro implements BusquedaExpedienteFiltroDinam
 		}
 		
 		return dto;
+	}
+
+	@Override
+	public String obtenerFiltroRecobro(String paramsDinamicos) {
+		StringBuilder filtro = new StringBuilder();				
+		BusquedaExpRecobroDto dto = creaDtoParametros(paramsDinamicos);	
+		filtro= calculaFiltroRecobro(dto);		
+		return filtro.toString();
+	}
+
+	private StringBuilder calculaFiltroRecobro(BusquedaExpRecobroDto dto) {
+		StringBuilder filtro = new StringBuilder();
+//BKREC-943
+//		filtro.append(" SELECT distinct expRec.id FROM Expediente expRec ");		
+//		filtro.append(" WHERE expRec.id in( SELECT distinct cre.expediente.id FROM CicloRecobroExpediente cre WHERE 1=1 ");
+		filtro.append(" SELECT cre.expediente as exp FROM CicloRecobroExpediente cre WHERE 1=1 ");                
+		if (!Checks.esNulo(dto.getEsquema())){			
+			filtro.append(" AND cre.esquema.id = " + dto.getEsquema() );			
+		}
+		if (!Checks.esNulo(dto.getCartera())){
+			filtro.append(" AND cre.carteraEsquema.cartera.id = " + dto.getCartera() );
+		}
+		if (!Checks.esNulo(dto.getSubcartera())){
+			filtro.append(" AND cre.subcartera.id = " + dto.getSubcartera() );
+		}		
+		if (!Checks.esNulo(dto.getAgencia())) {
+			filtro.append(" AND cre.agencia.id = " + dto.getAgencia() );
+		}
+		if (!Checks.esNulo(dto.getMotivoBaja())) {
+			filtro.append(" AND cre.motivoBaja.id = " + dto.getMotivoBaja() );
+		}
+
+//BKREC-943		
+//		filtro.append(" ) ");
+		
+		if (!Checks.esNulo(dto.getSupervisor())) {
+			filtro.append(" AND EXISTS (SELECT 1 from GestorExpediente gae where cre.expediente.id = gae.expediente.id and gae.usuario.id = " + dto.getSupervisor() +") ");
+		}
+		
+		
+		return filtro;
 	}
 
 }

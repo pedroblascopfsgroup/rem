@@ -31,7 +31,7 @@ public interface BusquedaExpedienteFiltroDinamico {
 	
 	
 	/***
-	 * Devuelve un string con una subconsulta con los filtros dinámicos.
+	 * Devuelve un string con una subconsulta con los filtros dinámicos para el buscador de Expedientes.
 	 * La subconsulta debe devolver una lista de ids de asuntos que cumplan las condiciones de los parámetros
 	 * 
 	 * @param paramsDinamicos Es un string con una lista de parámetro-valor definida de la siguiente manera:
@@ -40,5 +40,14 @@ public interface BusquedaExpedienteFiltroDinamico {
 	 * **/
 	public String obtenerFiltro(String paramsDinamicos);
 	
-	
+	/***
+	 * Devuelve un string con una subconsulta con los filtros dinámicos para el buscador de Expedientes optimizado a Recobro.
+	 * La subconsulta debe devolver una lista de ids de asuntos que cumplan las condiciones de los parámetros
+	 * 
+	 * @param paramsDinamicos Es un string con una lista de parámetro-valor definida de la siguiente manera:
+	 * parámetroDinamico1:valor1;parámetroDinamico2:valor2;
+	 * 
+	 * **/
+	public String obtenerFiltroRecobro(String paramsDinamicos);
+        
 }

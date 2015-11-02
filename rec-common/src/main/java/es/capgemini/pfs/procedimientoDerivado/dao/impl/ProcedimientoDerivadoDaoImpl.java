@@ -2,7 +2,6 @@ package es.capgemini.pfs.procedimientoDerivado.dao.impl;
 
 import java.util.List;
 
-import org.hibernate.Criteria;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
 import org.springframework.stereotype.Repository;
@@ -22,11 +21,11 @@ public class ProcedimientoDerivadoDaoImpl extends AbstractEntityDao<Procedimient
 	@Override
 	public ProcedimientoDerivado getByGuid(String guid) {
 		
-		Criteria criteria = getSession().createCriteria(ProcedimientoDerivado.class, "prd");
+		DetachedCriteria criteria = DetachedCriteria.forClass(ProcedimientoDerivado.class, "prd");
 		criteria.add(Expression.eq("prd.guid", guid));
 		
 		@SuppressWarnings("unchecked")
-		List<ProcedimientoDerivado> list = getHibernateTemplate().findByCriteria((DetachedCriteria) criteria);
+		List<ProcedimientoDerivado> list = getHibernateTemplate().findByCriteria(criteria);
 		if(list.size() > 0) {
 			return list.get(0);
 		}

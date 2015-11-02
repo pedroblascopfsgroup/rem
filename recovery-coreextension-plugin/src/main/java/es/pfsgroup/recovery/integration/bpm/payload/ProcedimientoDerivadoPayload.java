@@ -17,6 +17,7 @@ public class ProcedimientoDerivadoPayload {
 	private static final String CAMPO_GUID_DECISION_PROCEDIMIENTO = String.format("%s.dpr_guid", KEY);
 	private static final String CAMPO_PERSONAS = String.format("%s.personas", KEY);
 	private static final String CAMPO_GUID_PROCEDIMIENTO_PADRE = String.format("%s.procedimientoPadre", KEY);
+	private static final String CAMPO_GUID_PROCEDIMIENTO_HIJO = String.format("%s.procedimientoHijo", KEY);
 	private static final String CAMPO_TIPO_ACTUACION = String.format("%s.tipoActuacion", KEY);
 	private static final String CAMPO_TIPO_RECLAMACION = String.format("%s.tipoReclamacion", KEY);
 	private static final String CAMPO_TIPO_PROCEDIMIENTO = String.format("%s.tipoProcedimiento", KEY);
@@ -83,6 +84,14 @@ public class ProcedimientoDerivadoPayload {
 		return data.getGuid(CAMPO_GUID_PROCEDIMIENTO_PADRE);		
 	}
 	
+	private void setGuidProcedimientoHijo(String guidProcedimientoHijo) {
+		data.addGuid(CAMPO_GUID_PROCEDIMIENTO_HIJO, guidProcedimientoHijo);		
+	}
+
+	public String getGuidProcedimientoHijo() {
+		return data.getGuid(CAMPO_GUID_PROCEDIMIENTO_HIJO);
+	}
+
 	private void setPersonas(String guidPersona) {
 		data.addRelacion(CAMPO_PERSONAS, guidPersona);		
 	}
@@ -153,8 +162,12 @@ public class ProcedimientoDerivadoPayload {
 		setGuidDecisionProcedimiento(decisionProcedimiento.getGuid());
 		
 		MEJProcedimiento procedimiento = (MEJProcedimiento) procedimientoDerivado.getProcedimiento();
-		if(procedimiento != null && procedimiento.getProcedimientoPadre() != null) {
-			setGuidProcedimientoPadre(((MEJProcedimiento)procedimiento.getProcedimientoPadre()).getGuid());
+		if(procedimiento != null) {
+			setGuidProcedimientoHijo(procedimiento.getGuid());
+			
+			if(procedimiento.getProcedimientoPadre() != null) {
+				setGuidProcedimientoPadre(((MEJProcedimiento)procedimiento.getProcedimientoPadre()).getGuid());
+			}
 		}
 		
 		if(procedimiento != null && procedimiento.getPersonasAfectadas() != null) {

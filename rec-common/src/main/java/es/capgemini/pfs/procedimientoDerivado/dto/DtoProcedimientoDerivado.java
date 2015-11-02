@@ -19,6 +19,7 @@ public class DtoProcedimientoDerivado extends WebDto {
 	private Long[] personas;
 	private Long id;
 	private Long procedimientoPadre;
+	private Long procedimientoHijo;
 	private String tipoActuacion;
 	private String tipoReclamacion;
 	private String tipoProcedimiento;
@@ -169,6 +170,14 @@ public class DtoProcedimientoDerivado extends WebDto {
 
 	public void setGuid(String guid) {
 		this.guid = guid;
+	}
+
+	public Long getProcedimientoHijo() {
+		return procedimientoHijo;
+	}
+
+	public void setProcedimientoHijo(Long procedimientoHijo) {
+		this.procedimientoHijo = procedimientoHijo;
 	}
 
 }

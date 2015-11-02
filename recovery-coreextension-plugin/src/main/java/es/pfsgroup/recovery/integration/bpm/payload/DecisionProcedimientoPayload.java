@@ -197,7 +197,6 @@ public class DecisionProcedimientoPayload {
 		
 		setFechaParalizacion(decisionProcedimiento.getFechaParalizacion());
 		setComentarios(decisionProcedimiento.getComentarios());
-		
 		setBorrado(decisionProcedimiento.getAuditoria().isBorrado());
 		
 		List<ProcedimientoDerivado> procedimientoDerivados = decisionProcedimiento.getProcedimientosDerivados();

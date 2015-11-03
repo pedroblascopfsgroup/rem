@@ -49,7 +49,7 @@ DECLARE
     V_TIPO_PLAZAS T_ARRAY_PLAZAS := T_ARRAY_PLAZAS(
       T_TIPO_PLAZAS(null,null,'PCO_RevisarExpedientePreparar','10*24*60*60*1000L','0','0','DD'),
       T_TIPO_PLAZAS(null,null,'PCO_AsignarGestorLiquidacion','1*24*60*60*1000L','0','0','DD'),
-      T_TIPO_PLAZAS(null,null,'PCO_RevisarExpedienteAsignarLetrado','3*24*60*60*1000L','0','0','DD'),
+      T_TIPO_PLAZAS(null,null,'PCO_RevisarExpedienteAsignarLetrado','3*24*60*60*1000L','0','0','DD')
     ); 
     V_TMP_TIPO_PLAZAS T_TIPO_PLAZAS;
     

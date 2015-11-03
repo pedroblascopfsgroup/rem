@@ -170,4 +170,20 @@
 		 </json:object>
 	</json:array>
   </json:object>
+  
+	<json:object name="otrosDatos">
+    	<json:property name="contratoPadreNivel2" value="${contrato.contratoPadreNivel2}" />
+    	<json:property name="charextra7" value="${contrato.charextra7}" />
+    	<json:property name="charextra9" value="${contrato.charextra9}" />
+    	<json:property name="charextra10" value="${contrato.charextra10}" />
+    	<json:property name="flagextra4" value="${contrato.flagextra4}" />
+    	<json:property name="dateextra2" value="${contrato.dateextra2}" />
+    	<json:property name="dateextra3" value="${contrato.dateextra3}" />
+    	<json:property name="dateextra4" value="${contrato.dateextra4}" />
+    	<json:property name="dateextra5" value="${contrato.dateextra5}" />
+    	<json:property name="dateextra6" value="${contrato.dateextra6}" />
+    	<json:property name="numextra4" value="${contrato.numextra4}" />
+    	<json:property name="numextra5" value="${contrato.numextra5}" />
+	</json:object>
+  
 </fwk:json>

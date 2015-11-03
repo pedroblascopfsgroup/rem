@@ -47,18 +47,21 @@ public class PROGenerarNotificacionExpedienteActionHandler extends PROBaseAction
         Long idTarea = null;
         try {
             if (generaAlerta(executionContext)) {
-                if (whereToGo.equals(COMPLETAR_EXPEDIENTE)) {
+                if (whereToGo.equals(COMPLETAR_EXPEDIENTE) || whereToGo.equals(TRANSITION_ENVIARAREVISION)) {
                     //debo activar la alerta para la tarea de completar expediente
                     idTarea = (Long) executionContext.getVariable(TAREA_ASOCIADA_CE);
-                } else if (whereToGo.equals(REVISION_EXPEDIENTE)) {
+                } else if (whereToGo.equals(REVISION_EXPEDIENTE) || whereToGo.equals(TRANSITION_ENVIARADECISIONCOMITE) ) {
                     //debo activar la alerta para la tarea de revisar expediente
                     idTarea = (Long) executionContext.getVariable(TAREA_ASOCIADA_RE);
                 } else if (whereToGo.equals(DECISION_COMITE)) {
                     //debo activar la alerta para la tarea de decision comite
                     idTarea = (Long) executionContext.getVariable(TAREA_ASOCIADA_DC);
-                }
+                } else if (whereToGo.equals(FORMALIZAR_PROPUESTA)) {
+                    //debo activar la alerta para la tarea de formalizar propuesta
+                    idTarea = (Long) executionContext.getVariable(TAREA_ASOCIADA_FP);
+                } 
 
-                //Parche por si la tarea no existe (versi�n de Fase 1)
+                //Parche por si la tarea no existe (versi�n de Fase 1)
                 if (idTarea != null) {
                     TareaNotificacion tarea = notificacionManager.get(idTarea);
                     tarea.setAlerta(Boolean.TRUE);
@@ -68,6 +71,13 @@ public class PROGenerarNotificacionExpedienteActionHandler extends PROBaseAction
         } catch (Exception e) {
             //Se pone la exception por si tira un error y no se ve en la consola
             logger.error("Error al generar la notificacion", e);
+        }
+        
+        //Si tiene que ir a alguna de estas transiciones se está avanzando de forma automática
+        if (whereToGo.equals(TRANSITION_ENVIARAREVISION) || whereToGo.equals(TRANSITION_ENVIARADECISIONCOMITE)) {
+        	executionContext.setVariable(AVANCE_AUTOMATICO, Boolean.TRUE);
+        } else {
+        	executionContext.setVariable(AVANCE_AUTOMATICO, Boolean.FALSE);
         }
         executionContext.getProcessInstance().signal(whereToGo);
     }

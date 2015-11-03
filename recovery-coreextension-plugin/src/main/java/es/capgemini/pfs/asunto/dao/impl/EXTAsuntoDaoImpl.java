@@ -485,6 +485,16 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 	public Long crearAsunto(GestorDespacho gestorDespacho,
 			GestorDespacho supervisor, GestorDespacho procurador,
 			String nombreAsunto, Expediente expediente, String observaciones) {
+		
+		return crearAsuntoConEstado(gestorDespacho, supervisor, procurador, nombreAsunto, expediente, observaciones, null);
+		
+	}
+	
+	@Override
+	public Long crearAsuntoConEstado(GestorDespacho gestorDespacho,
+			GestorDespacho supervisor, GestorDespacho procurador,
+			String nombreAsunto, Expediente expediente, String observaciones,
+			String codigoEstadoAsunto) {
 		EXTAsunto extAsunto = new EXTAsunto();
 
 		extAsunto.setObservacion(observaciones);
@@ -495,8 +505,12 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 
 		// Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo",
 		// DDEstadoAsunto.ESTADO_ASUNTO_EN_CONFORMACION);
-		Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo",
-				DDEstadoAsunto.ESTADO_ASUNTO_ACEPTADO);
+		Filter f1 = null;
+		if (Checks.esNulo(codigoEstadoAsunto)) {
+			f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoAsunto.ESTADO_ASUNTO_ACEPTADO);
+		} else {
+			f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstadoAsunto);
+		}
 		extAsunto.setEstadoAsunto(genericDao.get(DDEstadoAsunto.class, f1));
 
 		extAsunto.setNombre(nombreAsunto);
@@ -820,7 +834,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		//FILTRO ERROR CDD
 		if (!Checks.esNulo(dto.getComboErrorPreviCDD())) {
                         hql.append(" and cdd.fechaEntrega is null ");
-                        //Si se buscan KOs de Pivote, se debe filtrar también por fechaEntrega vacío
+            //Si se buscan KOs de Pivote, se debe filtrar también por fechaEntrega vacío
                         
 			if("Todos".equals(dto.getComboErrorPreviCDD())){
                                 hql.append(" and cdd.resultadoValidacion <> 1");

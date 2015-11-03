@@ -58,7 +58,7 @@ public class PROCompletarExpedienteActionHandler extends PROBaseActionHandler im
 
         String comeFrom = executionContext.getTransitionSource().getName();
         if (!GENERAR_NOTIFICACION.equals(comeFrom) && !SOLICITAR_PRORROGA_EXTRA.equals(comeFrom)) {
-            //Se deberá generar la tarea para el gestor
+            //Se deberï¿½ generar la tarea para el gestor
             Estado estadoCE = proxyFactory.proxy(ArquetipoApi.class).getWithEstado(idArquetipo).getItinerario().getEstado(DDEstadoItinerario.ESTADO_COMPLETAR_EXPEDIENTE);
             estadoProcesoManager.pasarDeEstado(idExpediente, DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, estadoCE, executionContext.getProcessInstance()
                     .getId());
@@ -78,18 +78,20 @@ public class PROCompletarExpedienteActionHandler extends PROBaseActionHandler im
 
             expedienteManager.setInstanteCambioEstadoExpediente(idExpediente);
             executionContext.setVariable(TAREA_ASOCIADA_CE, idTareaCE);
-            if (estadoCE.getAutomatico() != null && estadoCE.getAutomatico()) {
-                executionContext.setVariable(GENERAALERTA, Boolean.FALSE);
+            //Si venimos de "devolver a completar" se desactiva el avance automÃ¡tico en todos los casos.
+            if (!DEVOLVER_COMPLETAR.equals(comeFrom) && estadoCE.getAutomatico() != null && estadoCE.getAutomatico()) {
+                executionContext.setVariable(GENERAALERTA, Boolean.TRUE);
                 executionContext.setVariable(WHERE_TO_GO, TRANSITION_ENVIARAREVISION);
             } else {
                 executionContext.setVariable(GENERAALERTA, Boolean.TRUE);
                 executionContext.setVariable(WHERE_TO_GO, COMPLETAR_EXPEDIENTE);
             }
+            executionContext.setVariable(AVANCE_AUTOMATICO, Boolean.FALSE);
             BPMUtils.createTimer(executionContext, TIMER_TAREA_CE, seconds + " seconds", GENERAR_NOTIFICACION);
         }
 
         /**
-         * @deprecated Este trozo de código está deprecado, en fase 1 se usaba, ahora ya no
+         * @deprecated Este trozo de cï¿½digo estï¿½ deprecado, en fase 1 se usaba, ahora ya no
          */
 
         if (SOLICITAR_PRORROGA_EXTRA.equals(comeFrom)) {
@@ -100,12 +102,12 @@ public class PROCompletarExpedienteActionHandler extends PROBaseActionHandler im
             tarea.setFechaVenc(fechaPropuesta);
             notificacionManager.saveOrUpdate(tarea);
 
-            //Si el timer ya existía lo recalculamos
+            //Si el timer ya existï¿½a lo recalculamos
             Timer timer = BPMUtils.getTimer(executionContext.getJbpmContext(), executionContext.getProcessInstance(), TIMER_TAREA_CE);
             if (timer != null) {
                 jbpmUtils.recalculaTimer(executionContext.getProcessInstance().getId(), TIMER_TAREA_CE, fechaPropuesta);
             } else {
-                //Si el timer no existía lo creamos
+                //Si el timer no existï¿½a lo creamos
                 BPMUtils.createTimer(executionContext, TIMER_TAREA_CE, fechaPropuesta, GENERAR_NOTIFICACION);
             }
         }
@@ -124,7 +126,8 @@ public class PROCompletarExpedienteActionHandler extends PROBaseActionHandler im
         if (fechaFin != null) { return fechaFin - now; }
         Long creacionExp = expedienteManager.getExpediente(idExpediente).getAuditoria().getFechaCrear().getTime();
         Long tiempoTranscurrido = now - creacionExp;
-        return plazo - tiempoTranscurrido;
+        Long tiempoRestante = plazo - tiempoTranscurrido;        
+        return (tiempoRestante<0) ? (24*60*60*1000L) : tiempoRestante;
     }
 
     /**

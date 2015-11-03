@@ -1,7 +1,5 @@
 package es.pfsgroup.plugin.recovery.mejoras;
 
-import es.capgemini.pfs.expediente.dto.DtoInclusionExclusionContratoExpediente;
-
 public class PluginMejorasBOConstants {
 	
 	public static final String MEJ_BO_GUARDAR_FICHA_ACEPTACION = "MEJAsuntosManager.guardarFichaAceptacion";

@@ -629,6 +629,11 @@
 					
 				}
 				
+				var noPuedeEditarEstGest = true;
+				if(codigoEstado == app.codigoAcuerdoVigente && tipoDespachoLogado == tipoDespachoPropAcuerdo){
+					noPuedeEditarEstGest = false;
+				}
+				
 				panel.remove(acuerdosTabs);	
 				panel.remove(panelAnterior);
 				panel.remove(panelAnteriorTerminos);
@@ -660,7 +665,7 @@
 				    
 		
 				panelAnterior = recargarAcuerdo(idAcuerdo);
-				panelAnteriorTerminos = recargarAcuerdoTerminos(idAcuerdo,noPuedeModificar);
+				panelAnteriorTerminos = recargarAcuerdoTerminos(idAcuerdo,noPuedeModificar,noPuedeEditarEstGest);
 				
 				analisisTab.add(panelAnterior);
 				terminosTab.add(panelAnteriorTerminos);
@@ -735,11 +740,11 @@
 	};
 
 	
-	var recargarAcuerdoTerminos = function(idAcuerdo,noPuedeModificar){
+	var recargarAcuerdoTerminos = function(idAcuerdo,noPuedeModificar, noPuedeEditarEstadoGestion){
 		
 		<%@ include file="/WEB-INF/jsp/plugin/mejoras/acuerdos/detalleTerminos.jsp" %>
 
-		var panTerminos = crearTerminosAsuntos(noPuedeModificar);
+		var panTerminos = crearTerminosAsuntos(noPuedeModificar,false, noPuedeEditarEstadoGestion);
 
 		return panTerminos;
 		

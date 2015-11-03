@@ -90,13 +90,15 @@
 	<bean p:entity="menu" p:name="busquedas/expRecobro" p:order="125" p:fileName="/WEB-INF/jsp/main/menus/busquedas/expedientesRecobro.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"  p:permission="MENU-LIST-EXP-RECOBRO-ALL-USERS"/>
 	<bean p:entity="menu" p:name="busquedas/asuntos" p:order="130" p:fileName="/WEB-INF/jsp/main/menus/busquedas/asuntos.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"  p:permission="MENU-LIST-ASU"/>
 	<bean p:entity="menu" p:name="busquedas/contratos" p:order="140" p:fileName="/WEB-INF/jsp/main/menus/busquedas/contratos.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"  p:permission="MENU-LIST-CNT"/>
-	<bean p:entity="menu" p:name="comite" p:order="200" p:fileName="/WEB-INF/jsp/main/menus/comite.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="ROLE_COMITE"/>
+	<!-- Se modifica este menú en el plugin de NMB [CPI - 2015/09/09]
+	 <bean p:entity="menu" p:name="comite" p:order="200" p:fileName="/WEB-INF/jsp/main/menus/comite.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="ROLE_COMITE"/>-->
 	<bean p:entity="menu" p:name="analisis" p:order="300" p:fileName="/WEB-INF/jsp/main/menus/analisis/analisis.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="MENU-ANALISIS"/>
 	<bean p:entity="menu" p:name="analisis/mapaGlobal" p:order="310" p:fileName="/WEB-INF/jsp/main/menus/analisis/mapaGlobal.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="MENU-ANALISIS"/>
 	<bean p:entity="menu" p:name="analisis/externa" p:order="320" p:fileName="/WEB-INF/jsp/main/menus/analisis/externa.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="MENU-ANALISIS"/>
 	<bean p:entity="menu" p:name="scoring" p:order="400" p:fileName="/WEB-INF/jsp/main/menus/scoring.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="MENU-SCORING-ALERTAS"/>
 	<bean p:entity="menu" p:name="configuracion" p:order="500" p:fileName="/WEB-INF/jsp/main/menus/configuracion/configuracion.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="VER-CONFIGURACION"/>
-	<bean p:entity="menu" p:name="configuracion/arquetipos" p:order="510" p:fileName="/WEB-INF/jsp/main/menus/configuracion/configuracion_arquetipos.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="VER-CONFIGURACION"/>
+	<!-- Se elimina esta entrada del menu para pasarla al menu 'configuracion de arquetipos' tal y como indica el producto - 294 -->
+	<!--<bean p:entity="menu" p:name="configuracion/arquetipos" p:order="510" p:fileName="/WEB-INF/jsp/main/menus/configuracion/configuracion_arquetipos.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="VER-CONFIGURACION"/> -->
 	<bean p:entity="menu" p:name="seguridad" p:order="600" p:fileName="/WEB-INF/jsp/main/menus/seguridad/seguridad.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="CAMBIO-DATOS-ACCESO"/>
 	<bean p:entity="menu" p:name="seguridad/cambiar_datos" p:order="610" p:fileName="/WEB-INF/jsp/main/menus/seguridad/seguridad_cambiar_datos.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="CAMBIO-DATOS-ACCESO" />
 <!-- 

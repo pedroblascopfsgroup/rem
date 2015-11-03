@@ -58,7 +58,11 @@
 
 	<!-- Búsqueda Instrucciones -->
 	<bean p:entity="menu" p:name="comite" p:order="200" p:priority="1"  
-		p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/comite/menu/comite.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="ROLE_COMITE"/>
+		p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/comite/menu/comite.jsp" 
+		class="es.pfsgroup.web.menu.ElementoDinamicoPorFuncionYOperador"
+		p:permission="ROLE_COMITE_MENU,MSV-INST-SUBASTA"
+		p:operador="OR"
+		/>
 
 	<bean p:entity="plugin.nuevoModeloBienes.web.lotesubastas.busqueda.buttons.left" p:name="btnBuscarLoteSubasta" p:order="10"
 		  p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/subastas/buttons/btnBuscarLoteSubasta.jsp"

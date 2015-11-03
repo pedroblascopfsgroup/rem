@@ -567,6 +567,13 @@ public class Expediente implements Serializable, Auditable, Describible {
     public boolean getSeguimiento() {
         return arquetipo.getItinerario().getdDtipoItinerario().getItinerarioSeguimiento();
     }
+    
+    /**
+     * @return boolean: <code>true</code> si el itineario del expediente es de recuperacion
+     */
+    public boolean getRecuperacion() {
+        return arquetipo.getItinerario().getdDtipoItinerario().getItinerarioRecuperacion();
+    }
 
     /**
      * @return String: Descripci�n del itinerario del expediente
@@ -810,11 +817,19 @@ public class Expediente implements Serializable, Auditable, Describible {
     }
 
     /**
-     * Indica si el expediente est� en estado activo.
-     * @return true si est� congelado
+     * Indica si el expediente está en estado activo.
+     * @return true si está Activo
      */
     public boolean getEstaEstadoActivo() {
         return DDEstadoExpediente.ESTADO_EXPEDIENTE_ACTIVO.equals(estadoExpediente.getCodigo());
+    }
+    
+    /**
+     * Indica si el expediente está en estado cancelado.
+     * @return true si está cancelado
+     */
+    public boolean getEstaCancelado() {
+        return DDEstadoExpediente.ESTADO_EXPEDIENTE_CANCELADO.equals(estadoExpediente.getCodigo());
     }
 
     /**

@@ -1,5 +1,7 @@
 package es.capgemini.pfs.persona.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -11,7 +13,9 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "PER_PERSONAS_FORMULAS", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class PersonaFormulas {
+public class PersonaFormulas implements Serializable {
+
+	private static final long serialVersionUID = -3335787426750719296L;
 
 	@Id
 	@Column(name = "PER_ID")
@@ -71,6 +75,12 @@ public class PersonaFormulas {
 	@Column(name = "DESC_CNAE")
 	private String descripcionCnae;
 
+	@Column(name = "DESC_FECHA_SIT_CONCURSAL")
+	private String fechaSituacionConcursal;
+	
+	@Column(name = "DESC_CLIENTE_REESTRUC")
+	private Boolean clienteReestructurado;
+	
 	public Long getId() {
 		return id;
 	}
@@ -145,6 +155,22 @@ public class PersonaFormulas {
 
 	public String getDescripcionCnae() {
 		return descripcionCnae;
+	}
+
+	public String getFechaSituacionConcursal() {
+		return fechaSituacionConcursal;
+	}
+
+	public void setFechaSituacionConcursal(String fechaSituacionConcursal) {
+		this.fechaSituacionConcursal = fechaSituacionConcursal;
+	}
+
+	public Boolean getClienteReestructurado() {
+		return clienteReestructurado;
+	}
+
+	public void setClienteReestructurado(Boolean clienteReestructurado) {
+		this.clienteReestructurado = clienteReestructurado;
 	}
 
 	

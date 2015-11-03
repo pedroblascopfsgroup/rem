@@ -1,6 +1,8 @@
 package es.capgemini.pfs.arquetipo.dao.imp;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import es.capgemini.pfs.arquetipo.dao.ArquetipoDao;
 import es.capgemini.pfs.arquetipo.model.Arquetipo;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * Dao de arquetipo.
@@ -63,4 +66,62 @@ public class ArquetipoDaoImpl extends AbstractEntityDao<Arquetipo, Long> impleme
         Query query = session.createQuery(hql);	        
         return (Arquetipo) query.list().get(0);
 	}
+	
+    public Arquetipo getArquetipoPorPersona(Long idPersona){
+    	
+    	try{
+    		
+    		Arquetipo arquetipo = null;
+    		
+            Session session = getHibernateTemplate().getSessionFactory().getCurrentSession();
+            String hql = "select arr.arquetipo "
+            		+ "from ArquetipoRecuperacionPersona arr "
+            		+ "where arr.persona.id = :id and rownum = 1 order by arr.arquetipoFecha desc";
+            Query query = session.createQuery(hql);
+            query.setParameter("id", idPersona);
+            arquetipo = (Arquetipo) query.uniqueResult();
+    		
+    		return arquetipo;
+    		
+    	}catch(Exception e){
+    		return null;
+    	}
+    	
+    }
+
+	@Override
+	public List<Arquetipo> getListRecuperacion() {
+		List<Arquetipo> arquetipos = this.getList();
+		
+		List<Arquetipo> arquetiposRecup = new ArrayList<Arquetipo>();
+		
+		for (Arquetipo arquetipo : arquetipos) {
+			if ((!Checks.esNulo(arquetipo.getItinerario())) && 
+					(arquetipo.getItinerario().getdDtipoItinerario().getItinerarioRecuperacion()) && 
+					(!arquetipo.getAuditoria().isBorrado())) {
+				arquetiposRecup.add(arquetipo);
+			}
+		}
+		
+		return arquetiposRecup;
+		
+	}
+
+	@Override
+	public List<Arquetipo> getListSeguimiento() {
+		List<Arquetipo> arquetipos = this.getList();
+		
+		List<Arquetipo> arquetiposSeg = new ArrayList<Arquetipo>();
+		
+		for (Arquetipo arquetipo : arquetipos) {
+			if ((!Checks.esNulo(arquetipo.getItinerario())) && 
+					(arquetipo.getItinerario().getdDtipoItinerario().getItinerarioSeguimiento()) && 
+					(!arquetipo.getAuditoria().isBorrado())) {
+				arquetiposSeg.add(arquetipo);
+			}
+		}
+
+		return arquetiposSeg;
+	}
+
 }

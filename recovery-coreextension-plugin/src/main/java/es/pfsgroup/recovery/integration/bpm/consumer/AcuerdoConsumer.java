@@ -262,7 +262,7 @@ public class AcuerdoConsumer extends ConsumerAction<DataContainerPayload> {
 		}
 		
 		mejAcuerdoManager.saveTerminoAcuerdo(termino);
-		termino = null;//mejAcuerdoManager.getTerminoAcuerdoByGuid(guid);
+		//termino = mejAcuerdoManager.getTerminoAcuerdoByGuid(guid);
 		
 		mergeTerminosContrato(terminoPayload.getContratosRelacionados(), termino);
 		mergeTerminosBien(terminoPayload.getBienesRelacionados(), termino);
@@ -340,9 +340,9 @@ public class AcuerdoConsumer extends ConsumerAction<DataContainerPayload> {
 		dtoAcuerdo.setFechaEstado(acuerdoPayload.getFechaEstado());
 		
 		// Guarda el acuerdo.
-		Long idAcuerdo = null;//mejAcuerdoManager.guardar(dtoAcuerdo);
+		//Long idAcuerdo = mejAcuerdoManager.guardar(dtoAcuerdo);
 		if (acuerdo==null) {
-			acuerdo = null;//mejAcuerdoManager.getAcuerdoById(idAcuerdo);
+		//	acuerdo = mejAcuerdoManager.getAcuerdoById(idAcuerdo);
 		}
 		
 		// datos adicionales
@@ -355,7 +355,7 @@ public class AcuerdoConsumer extends ConsumerAction<DataContainerPayload> {
 		
 		//mergeActuacionesAExplorar(acuerdoPayload.getActuacionesAExplorar(), acuerdo);
 		//mergeActuacionesRealizadas(acuerdoPayload.getActuacionesRealizadas(), acuerdo);
-		actualizaAnalisis(acuerdoPayload, idAcuerdo);
+		//actualizaAnalisis(acuerdoPayload, idAcuerdo);
 		
 		acuerdoDao.saveOrUpdate(acuerdo);
 		

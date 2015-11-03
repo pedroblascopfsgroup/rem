@@ -21,6 +21,7 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.coreextension.dao.EXTGestoresDao;
 import es.pfsgroup.plugin.recovery.expediente.gestorEntidad.api.GestorEntidadApi;
 import es.pfsgroup.plugin.recovery.expediente.gestorEntidad.dao.GestorEntidadDao;
 import es.pfsgroup.plugin.recovery.expediente.gestorEntidad.dao.GestorEntidadHistoricoDao;
@@ -51,6 +52,10 @@ public class GestorEntidadManager implements GestorEntidadApi {
 
 	@Autowired
 	GestorEntidadDao gestorEntidadDao;
+	
+	@Autowired
+	EXTGestoresDao gestoresDao;
+	
 
 	@Override
 	@BusinessOperation(BO_GET_LIST_GESTORES_ADICIONALES_HISTORICO)
@@ -229,5 +234,5 @@ public class GestorEntidadManager implements GestorEntidadApi {
 	public List<Usuario> getListUsuariosGestoresExpedientePorTipo(Long idTipoGestor) {
 		return gestorEntidadDao.getListUsuariosGestoresExpedientePorTipo(idTipoGestor);
 	}	
-
+	
 }

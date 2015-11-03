@@ -14,6 +14,8 @@
     		 <evaluate expression="executor.execute('expedienteManager.findTitulosExpediente', id)" result="flowScope.titulos" />
     		 <evaluate expression="executor.execute('expedienteManager.getPersonasPoliticasDelExpediente', id)" result="flowScope.perPoliticas" />
              <evaluate expression="usuario.entidad.configValue('logo')" result="flowScope.logo" />
+             <evaluate expression="executor.execute('propuestaApi.listadoPropuestasRealizadasByExpedienteId', id)" result="flowScope.gestionesPrevias" />
+             <evaluate expression="executor.execute('propuestaApi.listadoPropuestasExplorarByExpedienteId', id)" result="flowScope.actuacionesExplorar" />
     	</on-entry>
     </end-state>
 

@@ -1,11 +1,17 @@
 package es.capgemini.pfs.itinerario.model;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -16,6 +22,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
+import es.capgemini.pfs.expediente.model.DDAmbitoExpediente;
 
 /**
  * Define un tipo de reglas de elevacion.
@@ -35,6 +42,7 @@ public class DDTipoReglasElevacion implements Dictionary, Auditable {
     public static final String MARCADO_ANTECEDENTES = "ANTECEDENTES";
     public static final String MARCADO_GESTION_ANALISIS = "GESTION_ANALISIS";
     public static final String MARCADO_DOCUMENTOS = "DOCUMENTOS";
+    public static final String MARCADO_GESTION_PROPUESTA = "GESTION_PROPUESTA";
 
     @Id
     @Column(name = "DD_TRE_ID")
@@ -51,6 +59,10 @@ public class DDTipoReglasElevacion implements Dictionary, Auditable {
     @Column(name = "DD_TRE_DESCRIPCION_LARGA")
     private String descripcionLarga;
 
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable (name ="REA_REGLA_AMBITO", joinColumns = @JoinColumn(name = "DD_TRE_ID", referencedColumnName = "DD_TRE_ID"), inverseJoinColumns = @JoinColumn(name="DD_AEX_ID", referencedColumnName = "DD_AEX_ID"))
+    private List<DDAmbitoExpediente> listAmbitos;
+    
     @Embedded
     private Auditoria auditoria;
 
@@ -144,4 +156,20 @@ public class DDTipoReglasElevacion implements Dictionary, Auditable {
     public void setVersion(Integer version) {
         this.version = version;
     }
+
+    /**
+     * Devuelve los ámbitos configurados para este tipo de regla.
+     * @return listAmbitos 
+     */
+	public List<DDAmbitoExpediente> getListAmbitos() {
+		return listAmbitos;
+	}
+
+	 /**
+     * Setea los ámbitos para este tipo de regla.
+     * @param listAmbitos 
+     */
+	public void setListAmbitos(List<DDAmbitoExpediente> listAmbitos) {
+		this.listAmbitos = listAmbitos;
+	}
 }

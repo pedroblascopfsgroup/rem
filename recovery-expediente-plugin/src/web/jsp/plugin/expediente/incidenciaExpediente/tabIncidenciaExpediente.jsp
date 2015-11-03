@@ -456,7 +456,10 @@
 	}
 
 	panel.setVisibleTab = function(data){
-		return true;
+		if (data.toolbar.tipoExpediente!='SEG' && data.toolbar.tipoExpediente!='RECU')
+			return true;
+		else
+			return false;
 	}
 	
   

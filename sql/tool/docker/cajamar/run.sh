@@ -13,10 +13,13 @@
 # Regenerar en MODO 2: importar un DUMP aleatorio
 # ./run.sh -impdp=<fichero_dump_a_importar> [-oradata=<directorio datafiles>]
 
-
+## Configuración del cliente y Locales
 CLIENTE=CAJAMAR
-CONTAINER_NAME=cajamar-bbdd
 CUSTOM_NLS_LANG=SPANISH_SPAIN.WE8MSWIN1252
+CUSTOM_LANG=es_ES.UTF-8
+
+
+CONTAINER_NAME=cajamar-bbdd
 IMAGE_NAME=filemon/oracle_11g
 DOCKER_PS="$(docker ps -a | grep $CONTAINER_NAME)"
 SQL_PACKAGE_DIR=$(pwd)/../../../tool/tmp/package
@@ -295,7 +298,7 @@ function show_install_info () {
 
 
 function do_install () {
-	$(pwd)/install.sh $CURRENT_DUMP_NAME $STARTING_TAG $CONTAINER_NAME $CUSTOM_NLS_LANG $OPTION_RANDOM_DUMP $OPTION_REMOVE $DOCKER_INNER_ERROR_LOG
+	$(pwd)/install.sh $CURRENT_DUMP_NAME $STARTING_TAG $CONTAINER_NAME $CUSTOM_NLS_LANG $CUSTOM_LANG $OPTION_RANDOM_DUMP $OPTION_REMOVE $DOCKER_INNER_ERROR_LOG
 }
 
 function restore_or_confirm_flahsback () {

@@ -56,11 +56,11 @@ DECLARE
 
  V_TVE T_ARRAY_TVE := T_ARRAY_TVE(
       T_TVE('VENCI','Vencidos','Vencidos: Operaciones que van entrando en impago en el mes en curso.','0','DD','SYSDATE','0')
-    , T_TVE('PREVI','Previo pre-proyectado','Previo pre-proyectado: Operaciones que entrar·n en dudoso en el mes en curso + 2.','0','DD','SYSDATE','0')
+    , T_TVE('PREVI','Previo pre-proyectado','Previo pre-proyectado: Operaciones que entrar√°n en dudoso en el mes en curso + 2.','0','DD','SYSDATE','0')
     , T_TVE('SEGESP','Seguimiento Especial','Seguimiento Especial','0','DD','SYSDATE','0')
-    , T_TVE('PRE','Pre-proyectado','Pre-proyectado: Operaciones que entrar·n en dudoso en el mes en curso + 1','0','DD','SYSDATE','0')
-    , T_TVE('PRO','Proyectado','Proyectado: Operaciones que entrar·n en dudoso en el mes en curso.','0','DD','SYSDATE','0')
-    , T_TVE('DUD','Dudosos','Dudosos: Operaciones que ya est·n en dudoso. AquÌ puede darse el caso que una operaciÛn estÈ en dudoso y adem·s, al no ser morosa, pueda estar tambiÈn en otro de los tramos anteriores.','0','DD','SYSDATE','0')
+    , T_TVE('PRE','Pre-proyectado','Pre-proyectado: Operaciones que entrar√°n en dudoso en el mes en curso + 1','0','DD','SYSDATE','0')
+    , T_TVE('PRO','Proyectado','Proyectado: Operaciones que entrar√°n en dudoso en el mes en curso.','0','DD','SYSDATE','0')
+    , T_TVE('DUD','Dudosos','Dudosos: Operaciones que ya est√°n en dudoso. Aqu√≠ puede darse el caso que una operaci√≥n est√© en dudoso y adem√°s, al no ser morosa, pueda estar tambi√©n en otro de los tramos anteriores.','0','DD','SYSDATE','0')
  );
 
 
@@ -77,7 +77,7 @@ DECLARE
     , T_MAD('005','ORDEN MANUAL OPERACION','ORDEN MANUAL OPERACION','0','DD','SYSDATE','0')
     , T_MAD('006','POR MOROSIDAD','POR MOROSIDAD','0','DD','SYSDATE','0')
     , T_MAD('007','REFINANCIACIONES','REFINANCIACIONES','0','DD','SYSDATE','0')
-    , T_MAD('008','ORDEN AUTAMTICA OPERACI”N','ORDEN AUTAMTICA OPERACI”N','0','DD','SYSDATE','0')
+    , T_MAD('008','ORDEN AUTAMTICA OPERACI√ìN','ORDEN AUTAMTICA OPERACI√ìN','0','DD','SYSDATE','0')
     , T_MAD('009','RETROCESION FALLIDO','RETROCESION FALLIDO','0','DD','SYSDATE','0')
     , T_MAD('010','VARIACION DUDOSO','VARIACION DUDOSO','0','DD','SYSDATE','0')
  );

@@ -54,10 +54,10 @@ DECLARE
 
  V_TVE T_ARRAY_TVE := T_ARRAY_TVE(
       T_TVE('VENCIDO','Vencidos','Vencidos: Operaciones que van entrando en impago en el mes en curso.','0','DD','SYSDATE','0')
-    , T_TVE('ANTPREPROY','Previo pre-proyectado','Previo pre-proyectado: Operaciones que entrar·n en dudoso en el mes en curso + 2.','0','DD','SYSDATE','0')
-    , T_TVE('PREPROYECT','Pre-proyectado','Pre-proyectado: Operaciones que entrar·n en dudoso en el mes en curso + 1','0','DD','SYSDATE','0')
-    , T_TVE('PROYECTADO','Proyectado','Proyectado: Operaciones que entrar·n en dudoso en el mes en curso.','0','DD','SYSDATE','0')
-    , T_TVE('DUDOSOS','Dudosos','Dudosos: Operaciones que ya est·n en dudoso. AquÌ puede darse el caso que una operaciÛn estÈ en dudoso y adem·s, al no ser morosa, pueda estar tambiÈn en otro de los tramos anteriores.','0','DD','SYSDATE','0')
+    , T_TVE('ANTPREPROY','Previo pre-proyectado','Previo pre-proyectado: Operaciones que entrar√°n en dudoso en el mes en curso + 2.','0','DD','SYSDATE','0')
+    , T_TVE('PREPROYECT','Pre-proyectado','Pre-proyectado: Operaciones que entrar√°n en dudoso en el mes en curso + 1','0','DD','SYSDATE','0')
+    , T_TVE('PROYECTADO','Proyectado','Proyectado: Operaciones que entrar√°n en dudoso en el mes en curso.','0','DD','SYSDATE','0')
+    , T_TVE('DUDOSOS','Dudosos','Dudosos: Operaciones que ya est√°n en dudoso. Aqu√≠ puede darse el caso que una operaci√≥n est√© en dudoso y adem√°s, al no ser morosa, pueda estar tambi√©n en otro de los tramos anteriores.','0','DD','SYSDATE','0')
  );
 
  V_TMP_TVE T_TVE;

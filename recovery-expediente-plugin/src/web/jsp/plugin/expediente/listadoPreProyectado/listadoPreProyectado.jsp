@@ -441,6 +441,8 @@
 		,{header: '<s:message code="preproyectado.contratos.fechaPrevistaRegularizacion" text="**Fecha prevista regularización" />',dataIndex: 'fechaPrevReguCnt',sortable:true}
 	]);
 	
+	var pagingBar = fwk.ux.getPaging(preProCntsStore);
+	
 	var contratosGrid=app.crearEditorGrid(preProCntsStore,contratosCM,{
         title:'<s:message code="preproyectado.contratos.cabecera" text="**Contratos" />'
         ,id:'cntId'
@@ -448,11 +450,166 @@
         ,autoWidth: true
         ,height:350
         ,loadMask: {msg: "Cargando...", msgCls: "x-mask-loading"}
-        //,bbar : [pagingBar]
+        ,bbar : [pagingBar]
         ,collapsed: true
         ,hidden: true
     });	
- 	
+    
+	contratosGrid.on('rowdblclick',function(grid, rowIndex, e) {
+		var recStore = grid.getStore().getAt(rowIndex);
+		if (recStore == null) return;
+		
+		var cntId = recStore.get('cntId');
+		var contrato = recStore.get('contrato');
+		
+		app.abreContrato(cntId, contrato);
+	});    
+    
+	var expedientesRecord = Ext.data.Record.create([
+		{name:'expId'}
+		,{name:'titular'}
+		,{name:'nifTitular'}
+		,{name:'telf1'}
+		,{name:'fase'}		
+		,{name:'fechaVtoTarea'}
+		,{name:'numContratos'}
+		,{name:'volRiesgoExp'}
+		,{name:'importeInicialExp'}
+		,{name:'regularizadoExp'}
+		,{name:'importeActual'}
+		,{name:'importePteDifer'}
+		,{name:'tramoExp'}
+		,{name:'diasVencidosExp'}
+		,{name:'fechaPaseAMoraExp'}
+		,{name:'propuesta'}
+		,{name:'fechaPrevReguExp'}
+		,{name:'expDescripcion'}
+		,{name:"contratos"}	
+	]);
+
+	 var preProExpsStore = page.getGroupingStore({
+		id:'preProStore'
+		//,remoteSort:true
+		//,event:'listado'
+		,storeId : 'preProExpsStore'
+		,limit: limit
+		,baseParams: paramsBusquedaInicial
+		,flow:'listadopreproyectado/getListPreproyectadoExp'
+ 		//,reader : new Ext.data.JsonReader({root:'expedientes',totalProperty : 'total'}, expedientesRecord)
+ 		,reader : new Ext.data.JsonReader({root:'expedientes'}, expedientesRecord)
+	});
+	
+	var expanderExp = new Ext.ux.grid.RowExpander({
+		renderer: function(v, p, record) {
+			if (record.data.contratos!=undefined) {
+				if (record.data.contratos.length>0) {
+					return '<div class="x-grid3-row-expander"></div>';
+				} else {
+					return ' ';
+				}
+			}
+		},
+		tpl : new Ext.Template('<div id="myrow-cnt-{expId}"></div>')
+	});
+	
+	function expandedRowExp(obj, record, body, rowIndex) {
+		var expId = record.get('expId');
+		var row = "myrow-cnt-" + record.get('expId');
+		
+		var contratos = record.get('contratos');
+		
+		if (contratos.length) {
+			var dynamicStoreExp = new Ext.data.JsonStore({
+				fields: ['cntId'
+						,'contrato'
+						,'expId'
+						,'riesgoTotal'
+						,'deudaIrregular'
+						,'tramo'
+						,'diasVencidos'
+						,'fechaPaseAMoraCnt'
+						,'propuesta'
+						,'estadoGestion'
+						,'fechaPrevReguCnt'				
+				],
+				data: contratos
+			});
+			
+			var id2 = "mygrid-exp-" + record.get('expId');
+			
+			var gridXExpediente = new Ext.grid.GridPanel({
+				store: dynamicStoreExp
+				,stripeRows: true
+				,autoHeight: true
+				,cm: contratosCM
+				,id: id2
+			});
+			
+			gridXExpediente.render(row);
+			gridXExpediente.getEl().swallowEvent(['mouseover','mousedown','click','dblclick']);
+			
+			
+			gridXExpediente.on('rowdblclick',function(grid, rowIndex, e) {
+				var recStore = grid.getStore().getAt(rowIndex);
+				if (recStore == null) return;
+				
+				var cntId = recStore.get('cntId');
+				var contrato = recStore.get('contrato');
+				
+				app.abreContrato(cntId, contrato);
+			});
+		}
+	}
+	
+	expanderExp.on('expand',expandedRowExp);
+	
+	var expedientesCM = new Ext.grid.ColumnModel([
+		expanderExp
+		,{dataIndex: 'expId',sortable:false, hidden: true}
+		,{header: '<s:message code="preproyectado.expedientes.idexpediente" text="**IDEXPEDIENTE" />',dataIndex: 'expId',sortable:true}		
+		,{header: '<s:message code="preproyectado.expedientes.titular" text="**Titular" />',dataIndex: 'titular',sortable:true}
+		,{header: '<s:message code="preproyectado.expedientes.niftitular" text="**NIF Titular" />',dataIndex: 'niftitular',sortable:true}
+		,{header: '<s:message code="preproyectado.expedientes.telef1" text="**Telf_1" />',dataIndex: 'telf1',sortable:true}
+		,{header: '<s:message code="preproyectado.expedientes.fase" text="**Fase" />',dataIndex: 'fase',sortable:true}
+		,{header: '<s:message code="preproyectado.expedientes.fechaVtoTarea" text="**Fecha vto tarea" />',dataIndex: 'fechaVtoTarea',sortable:true}
+		,{header: '<s:message code="preproyectado.expedientes.numContratos" text="**Nro. contratos" />',dataIndex: 'numContratos',sortable:true, align: 'right'}
+		,{header: '<s:message code="preproyectado.expedientes.volRiesgoExp" text="**Vol. Riesgo Exp." />',dataIndex: 'volRiesgoExp',sortable:true, renderer: app.format.moneyRenderer, align: 'right'}		
+		,{header: '<s:message code="preproyectado.expedientes.importeInicialExp" text="**Importe inicial" />',dataIndex: 'importeInicialExp',sortable:true, renderer: app.format.moneyRenderer, align: 'right'}
+		,{header: '<s:message code="preproyectado.expedientes.regularizadoExp" text="**Regularizado" />',dataIndex: 'regularizadoExp',sortable:true, renderer: app.format.moneyRenderer, align: 'right'}
+		,{header: '<s:message code="preproyectado.expedientes.importeActual" text="**Importe Actual" />',dataIndex: 'importeActual',sortable:true, renderer: app.format.moneyRenderer, align: 'right'}
+		,{header: '<s:message code="preproyectado.expedientes.importePteDifer" text="**Importe a diferir" />',dataIndex: 'importePteDifer',sortable:true, renderer: app.format.moneyRenderer, align: 'right'}
+		,{header: '<s:message code="preproyectado.expedientes.tramoExp" text="**Tramo" />',dataIndex: 'tramoExp',sortable:true}
+		,{header: '<s:message code="preproyectado.expedientes.diasVencidosExp" text="**Días vencidos" />',dataIndex: 'diasVencidosExp',sortable:true, align: 'right'}
+		,{header: '<s:message code="preproyectado.expedientes.fechaPaseAMoraExp" text="**Fecha pase a mora" />',dataIndex: 'fechaPaseAMoraExp',sortable:true}
+		,{header: '<s:message code="preproyectado.expedientes.propuesta" text="**Propuesta" />',dataIndex: 'propuesta',sortable:true}
+		,{header: '<s:message code="preproyectado.expedientes.fechaPrevReguExp" text="**Fecha prevista regularización" />',dataIndex: 'fechaPrevReguExp',sortable:true}		
+	]);
+	
+	var pagingBar = fwk.ux.getPaging(preProExpsStore);
+	
+	var expedientesGrid=app.crearEditorGrid(preProExpsStore,expedientesCM,{
+        title:'<s:message code="preproyectado.expedientes.cabecera" text="**Expedientes" />'
+        ,id:'expId'
+        ,style : 'margin-bottom:10px;padding-right:10px'
+        ,autoWidth: true
+        ,height:350
+        ,loadMask: {msg: "Cargando...", msgCls: "x-mask-loading"}
+        ,bbar : [pagingBar]
+        ,collapsed: true
+        ,hidden: true
+        ,plugins: expanderExp
+    });	
+    
+	expedientesGrid.on('rowdblclick',function(grid, rowIndex, e) {
+		var recStore = grid.getStore().getAt(rowIndex);
+		if (recStore == null) return;
+		
+		var expId = recStore.get('expId');
+		var expDescripcion = recStore.get('expDescripcion');
+		
+		app.abreExpediente(expId, expDescripcion);
+	});    
+	
 	var validarEmptyForm = function(){
 		if(comboEstadoGestion.getValue() != ''){
 			return true;
@@ -594,9 +751,18 @@
 			if(validaMinMax()){
 				panelFiltros.collapse(true);
 				if (comboAgruparPor.getValue()=='CNT') {
+					expedientesGrid.collapse(true);
+					expedientesGrid.hide();
 					contratosGrid.show();
 					contratosGrid.expand(true);
 					preProCntsStore.webflow(getParametros());
+				}
+				if (comboAgruparPor.getValue()=='EXP') {
+					contratosGrid.collapse(true);
+					contratosGrid.hide();
+					expedientesGrid.show();
+					expedientesGrid.expand(true);
+					preProExpsStore.webflow(getParametros());
 				}
 			}else{
 				Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="validaciones.dblText.minMax"/>');
@@ -658,7 +824,7 @@
 				,defaults : {xtype:'panel' ,cellCls : 'vtop'}
 				,border:false
 				,bodyStyle:'margin:10px;padding:5px;cellspacing:10px;margin-bottom:0px'
-				,items:[panelFiltros,contratosGrid]
+				,items:[panelFiltros,contratosGrid, expedientesGrid]
 			}
 		]
 		,autoHeight : true
@@ -666,7 +832,11 @@
 	});
 	
 		
-	//aÃ±adimos el panel principal a la pagina
+	//añadimos el panel principal a la pagina
 	page.add(mainPanel);
+	
+	expedientesGrid.hide();
+	contratosGrid.hide();	
+	
 
 </fwk:page>

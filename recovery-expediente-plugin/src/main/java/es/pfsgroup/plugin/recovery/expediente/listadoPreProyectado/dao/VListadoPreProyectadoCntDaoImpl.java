@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.Checks;
@@ -16,13 +17,11 @@ import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.model.VListad
 @Repository("VListadoPreProyectadoCntDao")
 public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoPreProyectadoCnt, Long> implements VListadoPreProyectadoCntDao {
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<VListadoPreProyectadoCnt> getListadoPreProyectadoCnt(ListadoPreProyectadoDTO dto) {
-		
+
+	private StringBuilder construirSql(ListadoPreProyectadoDTO dto) {
 		StringBuilder sb = new StringBuilder();
 		//sb.append("Select distinct c ");
-		sb.append("from VListadoPreProyectadoCnt c ");
+		sb.append(" from VListadoPreProyectadoCnt c ");
 		sb.append(" where c.cntId IN (select distinct f.cntId from VListadoPreProyectadoCntFiltros f where 1=1 ");
 		
 		if (!Checks.esNulo(dto.getCodEstadoGestion())) {
@@ -148,7 +147,36 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 		
 		sb.append(" ) ");
 		
+		return sb;
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VListadoPreProyectadoCnt> getListadoPreProyectadoCnt(ListadoPreProyectadoDTO dto) {
+		
+		StringBuilder sb = construirSql(dto);
+		
 		return getHibernateTemplate().find(sb.toString());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VListadoPreProyectadoCnt> getListadoPreProyectadoCntExp(Long expId) {
+		StringBuilder sb = new StringBuilder();
+		//sb.append("Select distinct c ");
+		sb.append(" from VListadoPreProyectadoCnt c ");
+		sb.append(" where c.expId = " + expId);
+		
+		return getHibernateTemplate().find(sb.toString());
+	}
+
+	@Override
+	public Page getListadoPreProyectadoCntPaginated(ListadoPreProyectadoDTO dto) {
+		StringBuilder sb = construirSql(dto);
+
+		HQLBuilder hb = new HQLBuilder(sb.toString());
+		return HibernateQueryUtils.page(this, hb, dto);
 	}
 
 }

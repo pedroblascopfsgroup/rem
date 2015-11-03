@@ -41,20 +41,20 @@ DECLARE
 BEGIN
 	
     -- Comprobamos si existe la vista   
-    V_SQL := 'SELECT COUNT(1) FROM ALL_VIEWS WHERE VIEW_NAME = '''||V_NOMBRE_VISTA||''' and owner = '''||V_ESQUEMA||'''';
+    V_SQL := 'SELECT COUNT(1) FROM ALL_MVIEWS WHERE MVIEW_NAME = '''||V_NOMBRE_VISTA||''' and owner = '''||V_ESQUEMA||'''';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
          
     if V_NUM_TABLAS > 0 
      
      then          
           DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_NOMBRE_VISTA||' Ya Existe');
-          V_MSQL := 'DROP VIEW '||V_ESQUEMA||'.'||V_NOMBRE_VISTA;
+          V_MSQL := 'DROP MATERIALIZED VIEW '||V_ESQUEMA||'.'||V_NOMBRE_VISTA;
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_NOMBRE_VISTA||'... Vista borrada');
     END IF;
         
     EXECUTE IMMEDIATE '
-		CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.'||V_NOMBRE_VISTA|| ' AS
+		CREATE MATERIALIZED VIEW '||V_ESQUEMA||'.'||V_NOMBRE_VISTA|| ' AS
 			WITH 
 			NUM_TERMINOS_CNT AS (
 			  SELECT /*+ MATERIALIZE */ CNT.CNT_ID, COUNT(1) TERMINOS

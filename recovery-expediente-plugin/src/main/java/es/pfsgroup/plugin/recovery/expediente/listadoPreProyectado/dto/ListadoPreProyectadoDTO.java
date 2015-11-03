@@ -4,13 +4,18 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
+import es.capgemini.devon.pagination.PaginationParamsImpl;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.vencidos.model.DDTramosDiasVencidos;
 import es.capgemini.pfs.zona.model.DDZona;
 
-public class ListadoPreProyectadoDTO {
+public class ListadoPreProyectadoDTO extends PaginationParamsImpl {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5491493462626948203L;
 	public static final String AGRUPADOPOREXP = "EXP";
 	public static final String AGRUPADOPORCTO = "CTO";
 	

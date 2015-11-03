@@ -4,7 +4,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags"%>
 <fwk:json>
-	<json:array name="contratos" items="${listadoPreProyectadoCnt}" var="cnt">
+	<json:property name="total" value="${listadoPreProyectadoCnt.totalCount}" />
+	<json:array name="contratos" items="${listadoPreProyectadoCnt.results}" var="cnt">
 		<json:object>			 
 			<json:property name="cntId" value="${cnt.cntId}" />
 			<json:property name="contrato" value="${cnt.contrato}" />

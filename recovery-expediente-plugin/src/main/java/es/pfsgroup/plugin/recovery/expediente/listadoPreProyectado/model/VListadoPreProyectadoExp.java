@@ -3,11 +3,13 @@ package es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;	
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -23,9 +25,6 @@ public class VListadoPreProyectadoExp implements Serializable {
 	private static final long serialVersionUID = 6947618963807794347L;
 
 	@Id
-	@Column(name="CNT_ID")
-	private Long cntId;	
-	
 	@Column(name = "EXP_ID")
 	private Long expId;
 	
@@ -77,40 +76,11 @@ public class VListadoPreProyectadoExp implements Serializable {
 	@Column(name="FECHA_PREV_REGU_EXP")
 	private Date fechaPrevReguExp;
 	
-	@Column(name="NRO_CONTRATO")
-	private String nroContrato;
+	@Column(name="EXP_DESCRIPCION")
+	private String expDescripcion;
 	
-	@Column(name="RIESGO_TOTAL_CNT")
-	private BigDecimal riesgoTotalCnt;
-	
-	@Column(name="DEUDA_IRREGULAR_CNT")
-	private BigDecimal deudaIrregularCnt;
-	
-	@Column(name="TRAMO_CNT")
-	private String tramoCnt;
-	
-	@Column(name="DIAS_VENCIDOS_CNT")
-	private Long diasVencidosCnt;
-	
-	@Column(name="FECHA_PASE_A_MORA_CNT")
-	private Date fechaPaseAMoraCnt;
-	
-	@Column(name="PROPUESTA_CNT")
-	private String propuestaCnt;
-	
-	@Column(name="ESTADO_GESTION_CNT")
-	private String estadoGestionCnt;
-	
-	@Column(name="FECHA_PREV_REGU_CNT")
-	private Date fechaPrevReguCnt;
-
-	public Long getCntId() {
-		return cntId;
-	}
-
-	public void setCntId(Long cntId) {
-		this.cntId = cntId;
-	}
+	@Transient
+	private List<VListadoPreProyectadoCnt> contratos;
 
 	public Long getExpId() {
 		return expId;
@@ -247,78 +217,20 @@ public class VListadoPreProyectadoExp implements Serializable {
 	public void setFechaPrevReguExp(Date fechaPrevReguExp) {
 		this.fechaPrevReguExp = fechaPrevReguExp;
 	}
-
-	public String getNroContrato() {
-		return nroContrato;
-	}
-
-	public void setNroContrato(String nroContrato) {
-		this.nroContrato = nroContrato;
-	}
-
-	public BigDecimal getRiesgoTotalCnt() {
-		return riesgoTotalCnt;
-	}
-
-	public void setRiesgoTotalCnt(BigDecimal riesgoTotalCnt) {
-		this.riesgoTotalCnt = riesgoTotalCnt;
-	}
-
-	public BigDecimal getDeudaIrregularCnt() {
-		return deudaIrregularCnt;
-	}
-
-	public void setDeudaIrregularCnt(BigDecimal deudaIrregularCnt) {
-		this.deudaIrregularCnt = deudaIrregularCnt;
-	}
-
-	public String getTramoCnt() {
-		return tramoCnt;
-	}
-
-	public void setTramoCnt(String tramoCnt) {
-		this.tramoCnt = tramoCnt;
-	}
-
-	public Long getDiasVencidosCnt() {
-		return diasVencidosCnt;
-	}
-
-	public void setDiasVencidosCnt(Long diasVencidosCnt) {
-		this.diasVencidosCnt = diasVencidosCnt;
-	}
-
-	public Date getFechaPaseAMoraCnt() {
-		return fechaPaseAMoraCnt;
-	}
-
-	public void setFechaPaseAMoraCnt(Date fechaPaseAMoraCnt) {
-		this.fechaPaseAMoraCnt = fechaPaseAMoraCnt;
-	}
-
-	public String getPropuestaCnt() {
-		return propuestaCnt;
-	}
-
-	public void setPropuestaCnt(String propuestaCnt) {
-		this.propuestaCnt = propuestaCnt;
-	}
-
-	public String getEstadoGestionCnt() {
-		return estadoGestionCnt;
-	}
-
-	public void setEstadoGestionCnt(String estadoGestionCnt) {
-		this.estadoGestionCnt = estadoGestionCnt;
-	}
-
-	public Date getFechaPrevReguCnt() {
-		return fechaPrevReguCnt;
-	}
-
-	public void setFechaPrevReguCnt(Date fechaPrevReguCnt) {
-		this.fechaPrevReguCnt = fechaPrevReguCnt;
-	}
 	
+	public String getExpDescripcion() {
+		return expDescripcion;
+	}
 
+	public void setExpDescripcion(String expDescripcion) {
+		this.expDescripcion = expDescripcion;
+	}	
+
+	public List<VListadoPreProyectadoCnt> getContratos() {
+		return contratos;
+	}
+
+	public void setContratos(List<VListadoPreProyectadoCnt> contratos) {
+		this.contratos = contratos;
+	}
 }

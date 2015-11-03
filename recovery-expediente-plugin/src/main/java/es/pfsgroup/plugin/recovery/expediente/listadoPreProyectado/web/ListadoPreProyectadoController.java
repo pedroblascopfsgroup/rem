@@ -16,6 +16,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
@@ -88,7 +89,8 @@ public class ListadoPreProyectadoController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getListPreproyectadoExp(ListadoPreProyectadoDTO dto, ModelMap map) {
-		List<VListadoPreProyectadoExp> listadoExp = listadoPreProyectado.getListPreproyectadoExp(dto);
+		//List<VListadoPreProyectadoExp> listadoExp = listadoPreProyectado.getListPreproyectadoExp(dto);
+		Page listadoExp = listadoPreProyectado.getListPreproyectadoExp(dto);
 		map.put("listadoPreProyectadoExp", listadoExp);
 		return LISTADO_PREPROYECTADO_EXP_JSON;
 	}
@@ -96,7 +98,7 @@ public class ListadoPreProyectadoController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getListPreproyectadoCnt(ListadoPreProyectadoDTO dto, ModelMap map) {
-		List<VListadoPreProyectadoCnt> listadoCnt = listadoPreProyectado.getListPreproyectadoCnt(dto);
+		Page listadoCnt = listadoPreProyectado.getListPreproyectadoCntPaginated(dto);
 		map.put("listadoPreProyectadoCnt", listadoCnt);
 		return LISTADO_PREPROYECTADO_CNT_JSON;
 	}

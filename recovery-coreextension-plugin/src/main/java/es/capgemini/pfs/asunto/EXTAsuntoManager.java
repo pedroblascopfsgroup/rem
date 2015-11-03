@@ -56,6 +56,7 @@ import es.capgemini.pfs.core.api.asunto.HistoricoAsuntoInfo;
 import es.capgemini.pfs.core.api.asunto.HistoricoAsuntoInfoImpl;
 import es.capgemini.pfs.core.api.registro.HistoricoProcedimientoApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.decisionProcedimiento.DecisionProcedimientoManager;
 import es.capgemini.pfs.decisionProcedimiento.model.DDCausaDecisionFinalizar;
 import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
@@ -101,6 +102,7 @@ import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJFinalizarAsuntoDto;
+import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.MEJDecisionProcedimientoManager;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
@@ -182,6 +184,12 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	
 	@Autowired
 	private IntegracionBpmService integrationService;
+	
+	@Autowired
+	private MEJDecisionProcedimientoManager mejDecisionProcedimientoManager;
+
+	@Autowired
+	private DecisionProcedimientoManager decisionProcedimientoManager;
 	
 	@Override
 	public String managerName() {
@@ -2032,10 +2040,15 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 
 	}
         
-        
 	@Override
 	@Transactional(readOnly = false)
 	public void finalizarAsunto(MEJFinalizarAsuntoDto dto) {
+		this.finalizarAsunto(dto, true);
+	}
+        
+	@Override
+	@Transactional(readOnly = false)
+	public void finalizarAsunto(MEJFinalizarAsuntoDto dto, boolean sincronizar) {
 
 		Asunto asunto = asuntoDao.get(dto.getIdAsunto());
 		
@@ -2061,16 +2074,13 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			
 			dtoDecisionProcedimiento.setStrEstadoDecision("02");
 
-			DecisionProcedimiento decisionProcedimiento = (DecisionProcedimiento) executor
-					.execute("decisionProcedimientoManager.getInstance",
-							proc.getId());
+			
+			DecisionProcedimiento decisionProcedimiento = decisionProcedimientoManager.getInstance(proc.getId());
 
 			dtoDecisionProcedimiento
 					.setDecisionProcedimiento(decisionProcedimiento);
 			try {
-				executor.execute(
-						ExternaBusinessOperation.BO_DEC_PRC_MGR_ACEPTAR_PROPUESTA,
-						dtoDecisionProcedimiento);
+				mejDecisionProcedimientoManager.aceptarPropuesta(dtoDecisionProcedimiento);
 			} catch (Exception e) {
 				e.printStackTrace();
 				logger.error("Ha habido un error al cerrar los procedimientos. "
@@ -2090,9 +2100,6 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			if ( prov != null && (Checks.esNulo(prov.getFechaBaja() )) ){
 				estado = (DDEstadoAsunto)diccionarioApi.dameValorDiccionarioByCod(DDEstadoAsunto.class, DDEstadoAsunto.ESTADO_ASUNTO_GESTION_FINALIZADA);
 			}
-
-			boolean sincronizar = (!asunto.getEstadoAsunto().getCodigo().equals(DDEstadoAsunto.ESTADO_ASUNTO_CERRADO) 
-					&& !asunto.getEstadoAsunto().getCodigo().equals(DDEstadoAsunto.ESTADO_ASUNTO_GESTION_FINALIZADA));
 
 			asunto.setEstadoAsunto(estado);
 			try {

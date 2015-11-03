@@ -119,6 +119,16 @@ public interface EXTAsuntoApi extends AsuntoCoreApi {
 	 */
 	void finalizarAsunto(MEJFinalizarAsuntoDto dto);
 	
+	
+	/**
+	 * Finaliza un asunto.
+	 * 
+	 * @param dto dto con los datos necesarios para finalizar en asunto. {@link MEJFinalizarAsuntoDto}
+	 * @param sincronizar Indica si debe sincronizar información.
+	 * 
+	 */
+	void finalizarAsunto(MEJFinalizarAsuntoDto dto, boolean sincronizar);
+	
 	/* (non-Javadoc)
 	 * @see es.pfsgroup.plugin.recovery.coreextension.api.AsuntoCoreApi#cancelaAsunto(es.capgemini.pfs.asunto.model.Asunto, java.util.Date)
 	 */

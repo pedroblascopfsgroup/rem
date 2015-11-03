@@ -41,7 +41,7 @@ public class FinalizarAsuntoConsumer extends ConsumerAction<DataContainerPayload
 	}
 
 	protected String getGuidAsunto(FinAsuntoPayload payload) {
-		return payload.getAsunto().getGuid(); 
+		return String.format("EXT-%d", payload.getAsunto().getIdOrigen()); // payload.getAsunto().getGuid(); 
 	}
 
 	@Override
@@ -63,7 +63,7 @@ public class FinalizarAsuntoConsumer extends ConsumerAction<DataContainerPayload
 		dto.setObservaciones(asuPayload.getObservaciones());
 		dto.setFechaFinalizacion(asuPayload.getFechaFin());
 		dto.setMotivoFinalizacion(asuPayload.getMotivo());
-		extAsuntoManager.finalizarAsunto(dto);
+		extAsuntoManager.finalizarAsunto(dto, false);
 		
 		logger.info(String.format("[INTEGRACION] ASU[%s] Asunto finalizado!!", asuUUID));
 	}

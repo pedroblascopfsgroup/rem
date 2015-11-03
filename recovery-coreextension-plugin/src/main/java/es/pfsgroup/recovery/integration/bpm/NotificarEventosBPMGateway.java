@@ -17,7 +17,6 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJFinalizarAsuntoDto;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.model.MEJRecurso;
 import es.pfsgroup.recovery.integration.TypePayload;
-import es.pfsgroup.recovery.integration.bpm.message.ParalizarBPMMsg;
 import es.pfsgroup.recovery.integration.bpm.payload.ProcedimientoPayload;
 
 public interface NotificarEventosBPMGateway {
@@ -71,18 +70,6 @@ public interface NotificarEventosBPMGateway {
     		, @Header(TypePayload.HEADER_MSG_ENTIDAD) String entidad
 			, @Header(ProcedimientoPayload.JBPM_TAR_GUID_ORIGEN) String tarGuidOrigen
 			, @Header(ProcedimientoPayload.JBPM_TRANSICION) String transicion);
-
-	@Gateway
-	void finalizarBPM(Procedimiento procedimiento
-			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo
-    		, @Header(TypePayload.HEADER_MSG_ENTIDAD) String entidad
-			);
-
-	@Gateway
-	void paralizarBPM(ParalizarBPMMsg mensaje
-			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo
-    		, @Header(TypePayload.HEADER_MSG_ENTIDAD) String entidad
-			);
 
 	@Gateway
 	void activarBPM(Procedimiento procedimiento

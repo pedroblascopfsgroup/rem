@@ -212,12 +212,12 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
-	    			notificacionGateway.finalizarBPM(procedimiento, TIPO_ACTIVAR_BPM, DbIdContextHolder.getDbSchema());
+	    			notificacionGateway.activarBPM(procedimiento, TIPO_ACTIVAR_BPM, DbIdContextHolder.getDbSchema());
 	    			logger.info("[INTEGRACION] Enviado activarBPM!!!");
 	    		}
 			});
     	} else {
-    		notificacionGateway.finalizarBPM(procedimiento, TIPO_ACTIVAR_BPM, DbIdContextHolder.getDbSchema());
+    		notificacionGateway.activarBPM(procedimiento, TIPO_ACTIVAR_BPM, DbIdContextHolder.getDbSchema());
 			logger.info("[INTEGRACION] Enviado activarBPM!!!");
     	}
 	}

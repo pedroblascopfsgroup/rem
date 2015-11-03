@@ -49,7 +49,6 @@ import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
 import es.pfsgroup.recovery.integration.IntegrationDataException;
 import es.pfsgroup.recovery.integration.TypePayload;
-import es.pfsgroup.recovery.integration.bpm.message.ParalizarBPMMsg;
 import es.pfsgroup.recovery.integration.bpm.payload.ActuacionesAExplorarPayload;
 import es.pfsgroup.recovery.integration.bpm.payload.ActuacionesRealizadasPayload;
 import es.pfsgroup.recovery.integration.bpm.payload.AcuerdoPayload;
@@ -302,24 +301,6 @@ public class EntityToPayloadTransformer {
 		return procPayload;
 	}
 	
-	public Message<DataContainerPayload> transformParalizarBPM(Message<ParalizarBPMMsg> message) {
-		logger.info("[INTEGRACION] Transformando paralizarBPM...");
-		ParalizarBPMMsg paralizarBPMMsg = message.getPayload();
-		
-		ProcedimientoPayload procPayload = prepararProcedimiento(message, paralizarBPMMsg.getProcedimiento());
-		DataContainerPayload data = procPayload.getData();
-		logger.debug(String.format("[INTEGRACION] Procedimiento Transformado %s!", procPayload.getGuid()));
-
-		data.addFecha(BPMContants.FECHA_APLAZAMIENTO_TAREAS, paralizarBPMMsg.getFechaActivacion());
-		
-		//translateValues(message);
-		String grpId = procPayload.getAsunto().getGuid();
-		Message<DataContainerPayload> newMessage = createMessage(message,  data, grpId);
-		
-		return newMessage;
-	}
-	
-
 	public Message<DataContainerPayload> transformPRC(Message<Procedimiento> message) {
 		logger.info("[INTEGRACION] Transformando Procedimiento...");
 		Procedimiento procedimiento = message.getPayload();

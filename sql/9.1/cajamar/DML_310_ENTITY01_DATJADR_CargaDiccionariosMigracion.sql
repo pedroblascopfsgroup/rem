@@ -6,14 +6,13 @@
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=CMREC-866
 --## PRODUCTO=NO
---## 
---## Finalidad: CARGA DE DICCIONARIOS DE MIGRACIÓN CAJAMAR
---## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--##
+--## Finalidad: CARGA DE DICCIONARIOS DE MIGRACION CAJAMAR
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Version inicial
 --##########################################
 --*/
-
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;

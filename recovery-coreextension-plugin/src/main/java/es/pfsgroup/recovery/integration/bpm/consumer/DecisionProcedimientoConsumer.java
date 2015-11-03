@@ -117,7 +117,6 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 		        dtoDecisionProcedimiento.setDecisionProcedimiento(dec);
 		        
 		        ConfiguradorPropuesta configuradorPropuesta = new ConfiguradorPropuesta();
-		        configuradorPropuesta.setConfiguracion(ConfiguradorPropuesta.SIN_ENVIO_DATOS);
 		        
 		        switch (TipoTratamiento.valueOf(tratamientoDecision)) {
 				case CREAR_Y_DERIVAR:
@@ -126,6 +125,7 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 					break;
 				case SOLO_CREAR:
 		     
+			        configuradorPropuesta.setConfiguracion(ConfiguradorPropuesta.SIN_ENVIO_DATOS);
 					configuradorPropuesta.setConfiguracion(ConfiguradorPropuesta.SIN_BPMS);
 					decisionProcedimientoManager.aceptarPropuestaSinControl(dtoDecisionProcedimiento, configuradorPropuesta);
 					

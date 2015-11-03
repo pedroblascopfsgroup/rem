@@ -7,12 +7,10 @@
 --## INCIDENCIA_LINK=CMREC-866
 --## PRODUCTO=NO
 --## 
---## Finalidad: Creación de TABLAS DE DICCIONARIOS DE VENCIDOS Y PRODUCCION
---##                   
---##                               , esquema CM01. Con estructura correcta
+--## Finalidad: Creacion de TABLAS DE DICCIONARIOS DE VENCIDOS Y PRODUCCION , esquema CM01. Con estructura correcta
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Version inicial
 --##########################################
 --*/
 

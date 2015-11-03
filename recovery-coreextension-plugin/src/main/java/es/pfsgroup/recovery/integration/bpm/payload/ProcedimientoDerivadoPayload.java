@@ -3,13 +3,10 @@ package es.pfsgroup.recovery.integration.bpm.payload;
 import java.math.BigDecimal;
 import java.util.List;
 
-import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
-import es.capgemini.pfs.persona.model.Persona;
+import es.capgemini.pfs.procedimientoDerivado.dto.DtoProcedimientoDerivado;
 import es.capgemini.pfs.procedimientoDerivado.model.ProcedimientoDerivado;
-import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
+import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
-import es.pfsgroup.recovery.integration.IntegrationDataException;
 
 public class ProcedimientoDerivadoPayload {
 	
@@ -26,11 +23,9 @@ public class ProcedimientoDerivadoPayload {
 	private static final String CAMPO_SALDO_RECUPERACION = String.format("%s.saldoRecuperacion", KEY);
 	
 	private final DataContainerPayload data;
-	private final ProcedimientoPayload procedimiento;
-
+	
 	public ProcedimientoDerivadoPayload(DataContainerPayload data) {
 		this.data = data;
-		this.procedimiento = new ProcedimientoPayload(data);
 	}
 	
 	public ProcedimientoDerivadoPayload(String tipo) {
@@ -39,11 +34,6 @@ public class ProcedimientoDerivadoPayload {
 	
 	public ProcedimientoDerivadoPayload(DataContainerPayload data, ProcedimientoDerivado procedimientoDerivado) {
 		this.data = data;
-		this.procedimiento = new ProcedimientoPayload(data, procedimientoDerivado.getProcedimiento());
-	}
-	
-	public ProcedimientoPayload getProcedimiento() {
-		return procedimiento;
 	}
 	
 	public DataContainerPayload getData() {
@@ -84,7 +74,7 @@ public class ProcedimientoDerivadoPayload {
 		return data.getGuid(CAMPO_GUID_PROCEDIMIENTO_PADRE);		
 	}
 	
-	private void setGuidProcedimientoHijo(String guidProcedimientoHijo) {
+	public void setGuidProcedimientoHijo(String guidProcedimientoHijo) {
 		data.addGuid(CAMPO_GUID_PROCEDIMIENTO_HIJO, guidProcedimientoHijo);		
 	}
 
@@ -92,7 +82,7 @@ public class ProcedimientoDerivadoPayload {
 		return data.getGuid(CAMPO_GUID_PROCEDIMIENTO_HIJO);
 	}
 
-	private void setPersonas(String guidPersona) {
+	public void setPersonas(String guidPersona) {
 		data.addRelacion(CAMPO_PERSONAS, guidPersona);		
 	}
 
@@ -148,61 +138,35 @@ public class ProcedimientoDerivadoPayload {
 		return data.getValBDec(CAMPO_SALDO_RECUPERACION);
 	}
 
-	public void build(ProcedimientoDerivado procedimientoDerivado) {
+	public void build(DtoProcedimientoDerivado dtoProcedimientoDerivado, MEJDtoDecisionProcedimiento dtoDecisionProcedimiento, ProcedimientoPayload procedimiento) {
 
-		setGuid(procedimientoDerivado.getGuid());
-		setId(procedimientoDerivado.getId());
+		setGuid(dtoProcedimientoDerivado.getGuid());
+		setId(dtoProcedimientoDerivado.getId());
 		
-		DecisionProcedimiento decisionProcedimiento = procedimientoDerivado.getDecisionProcedimiento();
-		
-		if (Checks.esNulo(decisionProcedimiento.getGuid())) {
-			throw new IntegrationDataException(String.format("[INTEGRACION] La decisión de procedimiento ID: %d no tiene referencia de sincronización", decisionProcedimiento.getId()));
-		}
-		
-		setGuidDecisionProcedimiento(decisionProcedimiento.getGuid());
-		
-		MEJProcedimiento procedimiento = (MEJProcedimiento) procedimientoDerivado.getProcedimiento();
-		if(procedimiento != null) {
-			setGuidProcedimientoHijo(procedimiento.getGuid());
+		if(dtoDecisionProcedimiento.getDecisionProcedimiento() != null) {
+			setGuidDecisionProcedimiento(dtoDecisionProcedimiento.getDecisionProcedimiento().getGuid());
 			
-			if(procedimiento.getProcedimientoPadre() != null) {
-				setGuidProcedimientoPadre(((MEJProcedimiento)procedimiento.getProcedimientoPadre()).getGuid());
+			if(dtoProcedimientoDerivado.getProcedimientoHijo() != null) {
+				setGuidProcedimientoHijo(dtoProcedimientoDerivado.getProcedimientoHijo().toString());
 			}
+			
+			setGuidProcedimientoPadre(procedimiento.getGuid());
 		}
 		
-		if(procedimiento != null && procedimiento.getPersonasAfectadas() != null) {
-			List<Persona> personas = procedimiento.getPersonasAfectadas();
-			for(Persona per : personas) {
-				if (per.getAuditoria().isBorrado()) {
-					continue;
+		if(dtoProcedimientoDerivado.getPersonas() != null) {
+			Long[] personas = dtoProcedimientoDerivado.getPersonas();
+			for(Long idPer : personas) {
+				if(idPer != 0) {
+					setPersonas(idPer.toString());
 				}
-				
-				setPersonas(per.getCodClienteEntidad().toString());
 			}
 		}
 			
-		if(procedimiento != null && procedimiento.getTipoActuacion() != null) {
-			setTipoActuacion(procedimiento.getTipoActuacion().getCodigo());
-		}
-		
-		if(procedimiento != null && procedimiento.getTipoReclamacion() != null) {
-			setTipoReclamacion(procedimiento.getTipoReclamacion().getCodigo());
-		}
-		
-		if(procedimiento != null && procedimiento.getTipoProcedimiento() != null) {
-			setTipoProcedimiento(procedimiento.getTipoProcedimiento().getCodigo());
-		}
-		
-		if(procedimiento != null) {
-			setPorcentajeRecuperacion(procedimiento.getPorcentajeRecuperacion());
-		}
-		
-		if(procedimiento != null) {
-			setPlazoRecuperacion(procedimiento.getPlazoRecuperacion());
-		}
-		
-		if(procedimiento != null) {
-			setSaldoRecuperacion(procedimiento.getSaldoRecuperacion());
-		}
+		setTipoActuacion(dtoProcedimientoDerivado.getTipoActuacion());
+		setTipoReclamacion(dtoProcedimientoDerivado.getTipoReclamacion());
+		setTipoProcedimiento(dtoProcedimientoDerivado.getTipoProcedimiento());
+		setPorcentajeRecuperacion(dtoProcedimientoDerivado.getPorcentajeRecuperacion());
+		setPlazoRecuperacion(dtoProcedimientoDerivado.getPlazoRecuperacion());
+		setSaldoRecuperacion(dtoProcedimientoDerivado.getSaldoRecuperacion());
 	}
 }

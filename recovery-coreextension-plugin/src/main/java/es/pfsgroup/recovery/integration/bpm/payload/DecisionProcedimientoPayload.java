@@ -4,17 +4,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
-import es.capgemini.pfs.procedimientoDerivado.model.ProcedimientoDerivado;
+import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.procedimientoDerivado.dto.DtoProcedimientoDerivado;
+import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
 
 public class DecisionProcedimientoPayload {
 	
 	public static final String KEY = "@dpr";
-	private static final String CAMPO_BORRADO = String.format("%s.borrado", KEY);
 	private static final String CAMPO_FINALIZADA = String.format("%s.finalizada", KEY);
 	private static final String CAMPO_PARALIZADA = String.format("%s.paralizada", KEY);
-	private static final String CAMPO_CAUSA_DECISION = String.format("%s.causaDecision", KEY);
 	private static final String CAMPO_CAUSA_DECISION_FINALIZAR = String.format("%s.causaDecisionFinalizar", KEY);
 	private static final String CAMPO_CAUSA_DECISION_PARALIZAR = String.format("%s.causaDecisionParalizar", KEY);
 	private static final String CAMPO_FECHA_PARALIZACION = String.format("%s.fechaParalizacion", KEY);
@@ -33,9 +32,9 @@ public class DecisionProcedimientoPayload {
 		this(new DataContainerPayload(null, null));
 	}
 	
-	public DecisionProcedimientoPayload(DataContainerPayload data, DecisionProcedimiento decisionProcedimiento) {
+	public DecisionProcedimientoPayload(DataContainerPayload data, Procedimiento procedimiento) {
 		this.data = data;
-		this.procedimiento = new ProcedimientoPayload(data, decisionProcedimiento.getProcedimiento());
+		this.procedimiento = new ProcedimientoPayload(data, procedimiento);
 	}
 	
 	public ProcedimientoPayload getProcedimiento() {
@@ -76,14 +75,6 @@ public class DecisionProcedimientoPayload {
 	
 	public Boolean getParalizada() {
 		return data.getFlag(CAMPO_PARALIZADA);
-	}
-
-	private void setCausaDecision(String codigo) {
-		data.addCodigo(CAMPO_CAUSA_DECISION, codigo);	
-	}
-
-	public String getCausaDecision() {
-		return data.getCodigo(CAMPO_CAUSA_DECISION);
 	}
 
 	private void setCausaDecisionFinalizar(String codigo) {
@@ -151,60 +142,46 @@ public class DecisionProcedimientoPayload {
 		return listado;
 	}
 
-	public void setBorrado(boolean borrado) {
-		data.addFlag(CAMPO_BORRADO, borrado);
-	}
-	
-	public boolean getBorrado() {
-		return data.getFlag(CAMPO_BORRADO);
-	}	
-	
-	public void build(DecisionProcedimiento decisionProcedimiento) {
+	public void build(MEJDtoDecisionProcedimiento dtoDecisionProcedimiento) {
 
-		setGuid(decisionProcedimiento.getGuid());
-		setId(decisionProcedimiento.getId());
-		
-		setFinalizada(decisionProcedimiento.getFinalizada());
-		setParalizada(decisionProcedimiento.getParalizada());
-		
-		if(decisionProcedimiento.getCausaDecision() != null) {
-			setCausaDecision(decisionProcedimiento.getCausaDecision().getCodigo());
-		}
-		else {
-			setCausaDecision("");
+		if(dtoDecisionProcedimiento.getDecisionProcedimiento() != null) {
+			setGuid(dtoDecisionProcedimiento.getDecisionProcedimiento().getGuid());
+			setId(dtoDecisionProcedimiento.getDecisionProcedimiento().getId());
 		}
 		
-		if(decisionProcedimiento.getCausaDecisionFinalizar() != null) {
-			setCausaDecisionFinalizar(decisionProcedimiento.getCausaDecisionFinalizar().getCodigo());
+		setFinalizada(dtoDecisionProcedimiento.getFinalizar());
+		setParalizada(dtoDecisionProcedimiento.getParalizar());
+		
+		if(dtoDecisionProcedimiento.getCausaDecisionFinalizar() != null) {
+			setCausaDecisionFinalizar(dtoDecisionProcedimiento.getCausaDecisionFinalizar());
 		}
 		else {
 			setCausaDecisionFinalizar("");
 		}
 		
-		if(decisionProcedimiento.getCausaDecisionParalizar() != null) {
-			setCausaDecisionParalizar(decisionProcedimiento.getCausaDecisionParalizar().getCodigo());
+		if(dtoDecisionProcedimiento.getCausaDecisionParalizar() != null) {
+			setCausaDecisionParalizar(dtoDecisionProcedimiento.getCausaDecisionParalizar());
 		}
 		else {
 			setCausaDecisionParalizar("");
 		}
 		
-		if(decisionProcedimiento.getEstadoDecision() != null) {
-			setEstadoDecision(decisionProcedimiento.getEstadoDecision().getCodigo());
+		if(dtoDecisionProcedimiento.getStrEstadoDecision() != null) {
+			setEstadoDecision(dtoDecisionProcedimiento.getStrEstadoDecision());
 		}
 		else {
 			setEstadoDecision("");
 		}
 		
-		setFechaParalizacion(decisionProcedimiento.getFechaParalizacion());
-		setComentarios(decisionProcedimiento.getComentarios());
-		setBorrado(decisionProcedimiento.getAuditoria().isBorrado());
+		setFechaParalizacion(dtoDecisionProcedimiento.getFechaParalizacion());
+		setComentarios(dtoDecisionProcedimiento.getComentarios());
 		
-		List<ProcedimientoDerivado> procedimientoDerivados = decisionProcedimiento.getProcedimientosDerivados();
+		List<DtoProcedimientoDerivado> procedimientoDerivados = dtoDecisionProcedimiento.getProcedimientosDerivados();
 		if (procedimientoDerivados != null) {
-			for(ProcedimientoDerivado procedimientoDerivado : procedimientoDerivados) {
+			for(DtoProcedimientoDerivado dtoProcedimientoDerivado : procedimientoDerivados) {
 				
 				ProcedimientoDerivadoPayload derivadoPayload = new ProcedimientoDerivadoPayload(ProcedimientoDerivadoPayload.KEY);
-				derivadoPayload.build(procedimientoDerivado);
+				derivadoPayload.build(dtoProcedimientoDerivado, dtoDecisionProcedimiento, procedimiento);
 
 				addProcedimientoDerivado(derivadoPayload);
 			}

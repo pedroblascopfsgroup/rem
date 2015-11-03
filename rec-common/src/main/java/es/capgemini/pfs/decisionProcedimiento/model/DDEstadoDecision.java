@@ -32,6 +32,7 @@ public class DDEstadoDecision implements Auditable, Dictionary {
 	public static final String ESTADO_PROPUESTO = "01";
 	public static final String ESTADO_ACEPTADO = "02";
 	public static final String ESTADO_RECHAZADO = "03";
+	public static final String ESTADO_EN_CONFORMACION = "04";
 	@Id
 	@Column(name = "DD_EDE_ID")
 	private Long id;

@@ -2,7 +2,10 @@ package es.capgemini.pfs.procedimientoDerivado.dto;
 
 import java.math.BigDecimal;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.pfs.asunto.ProcedimientoManager;
 
 /**
  * Dto para Procedimientos Derivados.
@@ -27,6 +30,9 @@ public class DtoProcedimientoDerivado extends WebDto {
 	private Integer plazoRecuperacion;
 	private BigDecimal saldoRecuperacion;
 	private String guid;
+	
+	@Autowired
+	private ProcedimientoManager prcManager;
 	
 	/**
 	 * constructor.
@@ -179,5 +185,4 @@ public class DtoProcedimientoDerivado extends WebDto {
 	public void setProcedimientoHijo(Long procedimientoHijo) {
 		this.procedimientoHijo = procedimientoHijo;
 	}
-
 }

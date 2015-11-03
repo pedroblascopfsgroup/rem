@@ -4,12 +4,13 @@ import es.capgemini.pfs.acuerdo.model.ActuacionesAExplorarAcuerdo;
 import es.capgemini.pfs.acuerdo.model.ActuacionesRealizadasAcuerdo;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
+import es.capgemini.pfs.integration.IntegrationClassCastException;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJFinalizarAsuntoDto;
+import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.model.MEJRecurso;
 
 public interface IntegracionBpmService {
@@ -133,7 +134,7 @@ public interface IntegracionBpmService {
 	 * 
 	 * @param decisionProcedimiento
 	 */
-	void enviarDatos(DecisionProcedimiento decisionProcedimiento);
+	void enviarDatos(MEJDtoDecisionProcedimiento dtoDecisionProcedimiento);
 
 
 }

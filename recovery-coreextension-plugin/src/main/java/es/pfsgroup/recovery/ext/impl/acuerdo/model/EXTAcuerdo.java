@@ -7,6 +7,7 @@ import org.hibernate.proxy.HibernateProxy;
 
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 
+
 /**
  * Esta clase esta deprecada. <br>
  * <b>Utilizar es.capgemini.pfs.acuerdo.model.Acuerdo</b><br>
@@ -16,8 +17,6 @@ import es.capgemini.pfs.acuerdo.model.Acuerdo;
  */
 @Entity
 public class EXTAcuerdo extends Acuerdo {
-
-private static final long serialVersionUID = 2075119525614504409L;
 
 
 	//***************ATENCIÓN NO METAIS NADA AQUI***************

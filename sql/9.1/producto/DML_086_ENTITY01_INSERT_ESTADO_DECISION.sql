@@ -41,7 +41,7 @@ BEGIN
 	
 	  execute immediate 'Insert into '||V_ESQUEMA_M||'.'||V_DDNAME||' '||
 	  '(DD_EDE_ID, DD_EDE_CODIGO,DD_EDE_DESCRIPCION,DD_EDE_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) values '||
-	  '('||V_ESQUEMA_M||'.S_DD_EDE_ESTADOS_DECISION.nextval,''04'',''EN CONFORMACIÓN'',''EN CONFORMACIÓN'',''0'',''PRODUCTO'',sysdate,''0'') ';
+	  '('||V_ESQUEMA_M||'.S_DD_EDE_ESTADOS_DECISION.nextval,''04'',''EN CONFORMACIÓN'',''EN CONFORMACIÓN'',''0'',''DD'',sysdate,''0'') ';
 	
 	  DBMS_OUTPUT.PUT_LINE('OK modificado');
 	

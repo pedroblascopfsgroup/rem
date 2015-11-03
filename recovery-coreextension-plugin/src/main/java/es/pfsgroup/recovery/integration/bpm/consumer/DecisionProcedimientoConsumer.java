@@ -203,9 +203,11 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 				
 				dtoProcedimientoDerivado.setProcedimientoPadre(prcPadre.getId());
 				
-				MEJProcedimiento prcHijo = extProcedimientoManager.getProcedimientoByGuid(procedimientoDerivadoPayload.getGuidProcedimientoHijo());
-				if(prcHijo != null) {
-					dtoProcedimientoDerivado.setProcedimientoHijo(prcHijo.getId());
+				if(procedimientoDerivadoPayload.getGuidProcedimientoHijo() != null) {
+					MEJProcedimiento prcHijo = extProcedimientoManager.getProcedimientoByGuid(procedimientoDerivadoPayload.getGuidProcedimientoHijo());
+					if(prcHijo != null) {
+						dtoProcedimientoDerivado.setProcedimientoHijo(prcHijo.getId());
+					}
 				}
 				
 				dtoProcedimientoDerivado.setTipoActuacion(procedimientoDerivadoPayload.getTipoActuacion());

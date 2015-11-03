@@ -388,43 +388,56 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 	@BusinessOperation(MEJ_BO_PRC_DESPARALIZAR)
 	@Transactional(readOnly = false)
 	public void desparalizarProcedimiento(Long idProcedimiento) {
+		desparalizarProcedimientoIntegracion(idProcedimiento, true);
+	}
+	
+	@Transactional(readOnly = false)
+	public void desparalizarProcedimientoIntegracion(Long idProcedimiento, boolean envioMsg) {
 		MEJProcedimiento prc = genericDao.get(MEJProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", idProcedimiento),
 				genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 
-		if (prc != null) {
+		if (prc == null || !prc.isEstaParalizado()) {
+			return;
+		} 
 			
-			// Antes de desparalizar las tareas hay que comprobar que no haya recursos pendientes
-			boolean recSinFinalizar = false;
-			List<Recurso> listRecProc = recursoDao.getRecursosPorProcedimiento(idProcedimiento);
-			
-			if (listRecProc != null){
-				for (Recurso rec : listRecProc) {
-					if(Checks.esNulo(rec.getResultadoResolucion())){
-						recSinFinalizar = true;
-					}
-				}
-			}
-			
-			if (!recSinFinalizar && prc.getProcessBPM()!=null){
-				Map<String, Object> variables = new HashMap<String, Object>();
-				if (!Checks.esNulo(prc.getPlazoParalizacion())) {
-					// FIXME Poner la constante PLAZO_TAREAS_DEFAULT en alg�n sitio
-					variables.put("PLAZO_TAREA_DEFAULT", prc.getPlazoParalizacion());
-				}
-				
-				jbpmUtil.addVariablesToProcess(prc.getProcessBPM(), variables);
-				jbpmUtil.activarProcesosBPM(prc.getProcessBPM());
-			}
-
-			prc.setEstaParalizado(false);
-			prc.setFechaUltimaParalizacion(null);
-			prc.setPlazoParalizacion(null);
-
-			genericDao.save(MEJProcedimiento.class, prc);
-
-			// Integración para enviar el procedimiento 
+		// Integración para enviar la acción de activación 
+		if (prc.getProcessBPM()==null && envioMsg) {
 			integracionBPMService.activarBPM(prc);
+			return;
 		}
+		
+		// Antes de desparalizar las tareas hay que comprobar que no haya recursos pendientes
+		boolean recSinFinalizar = false;
+		List<Recurso> listRecProc = recursoDao.getRecursosPorProcedimiento(idProcedimiento);
+		
+		if (listRecProc != null){
+			for (Recurso rec : listRecProc) {
+				if(Checks.esNulo(rec.getResultadoResolucion())){
+					recSinFinalizar = true;
+				}
+			}
+		}
+		
+		if (!recSinFinalizar && prc.getProcessBPM()!=null){
+			Map<String, Object> variables = new HashMap<String, Object>();
+			if (!Checks.esNulo(prc.getPlazoParalizacion())) {
+				// FIXME Poner la constante PLAZO_TAREAS_DEFAULT en alg�n sitio
+				variables.put("PLAZO_TAREA_DEFAULT", prc.getPlazoParalizacion());
+			}
+			
+			jbpmUtil.addVariablesToProcess(prc.getProcessBPM(), variables);
+			jbpmUtil.activarProcesosBPM(prc.getProcessBPM());
+		}
+
+		prc.setEstaParalizado(false);
+		prc.setFechaUltimaParalizacion(null);
+		prc.setPlazoParalizacion(null);
+
+		genericDao.save(MEJProcedimiento.class, prc);
+
+		// Integración para enviar el procedimiento, sólo para los originales 
+		integracionBPMService.activarBPM(prc);
+		
 	}
 	
 	@Override

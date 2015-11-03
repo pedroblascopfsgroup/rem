@@ -94,7 +94,7 @@
 		<constructor-arg>
 			<list>
 				<bean class="es.pfsgroup.recovery.integration.TypePayloadHeadersRegexRule">
-					<property name="tipo" value="BPM-FIN|DATOS-DECISION-PROCEDIMIENTO" />
+					<property name="tipo" value="BPM-FIN|DATOS-DECISION-PROCEDIMIENTO|DO-ACTIVAR-BPM|DO-FIN-ASUNTO" />
 				</bean>
 				<bean class="es.pfsgroup.recovery.integration.DenyAllRule" />
 			</list>
@@ -103,9 +103,6 @@
 	<bean id="filtroPorContenido" class="es.pfsgroup.recovery.integration.RuleMessageSelector">
 		<constructor-arg>
 			<list>
-				<bean class="es.pfsgroup.recovery.integration.TypePayloadHeadersRegexRule">
-					<property name="tipo" value="DO-FINALIZAR-BPM|DO-PARALIZAR-BPM" />
-				</bean>
 				<bean class="es.pfsgroup.recovery.integration.bpm.TareaExternaPayloadRegexRule">
 					<property name="tipo" value="BPM-FIN" />
 					<property name="codigoProcedimiento" value="HCJ001|HCJ002|HCJ003" />

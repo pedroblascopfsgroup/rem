@@ -72,29 +72,6 @@ DECLARE
 		T_TIPO_TFI('PCO_RevisarExpedienteAsignarLetrado','3','textarea','observaciones','Observaciones',null,null,null,null,'0','DD')
     ); 
     V_TMP_TIPO_TFI T_TIPO_TFI;
-
-    -- Actualización (borrado lógico) de tareas en de Pre y Posturnado
-    TYPE T_LINEA2 IS TABLE OF VARCHAR2(4000);
-    TYPE T_ARRAY_LINEA2 IS TABLE OF T_LINEA2;
-    V_TIPO_LINEA2 T_ARRAY_LINEA2 := T_ARRAY_LINEA2(
-		T_LINEA2('PCO_PreTurnadoManual'),
-		T_LINEA2('PCO_PreTurnado'),
-		T_LINEA2('PCO_RevisarNoAceptacion'),
-		T_LINEA2('PCO_RegistrarAceptacion'),
-		T_LINEA2('PCO_RevisarExpediente'),
-		T_LINEA2('PCO_PostTurnado')
-    ); 
-    V_TMP_TIPO_LINEA2 T_LINEA2;
-    
-    -- Actualización de script de decision de las tareas
-    TYPE T_LINEA3 IS TABLE OF VARCHAR2(4000);
-    TYPE T_ARRAY_LINEA3 IS TABLE OF T_LINEA3;
-    V_TIPO_LINEA3 T_ARRAY_LINEA3 := T_ARRAY_LINEA3(
-        T_LINEA3('PCO_PrepararExpediente', 'dameTipoAsunto()')
-    ); 
-    V_TMP_TIPO_LINEA3 T_LINEA3;
-
-    V_CONFIG VARCHAR2(4000 CHAR);      
     
 BEGIN	
 
@@ -105,7 +82,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
 
-    -- Nuevas TAP_TAREA_PROCEDIMIENTO PCO_RegResultadoDocG, PCO_AceptacionGestores, PCO_RevisarExpDigCONC, PCO_RevisarExpDigCONC, PCO_ResolverIncidenciaExpCONC
+    -- Nuevas TAP_TAREA_PROCEDIMIENTO 
 	V_TABLENAME := 'TAP_TAREA_PROCEDIMIENTO';
 	DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'.' || V_TABLENAME || '... Empezando a insertar TAREAS');
 	FOR I IN V_TIPO_TAP.FIRST .. V_TIPO_TAP.LAST

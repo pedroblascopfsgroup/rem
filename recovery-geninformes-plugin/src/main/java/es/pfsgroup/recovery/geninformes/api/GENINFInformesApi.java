@@ -1,5 +1,7 @@
 package es.pfsgroup.recovery.geninformes.api;
 
+import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +18,10 @@ public interface GENINFInformesApi {
 	public static final String MSV_BO_GENERAR_ESCRITO_EDITABLE = "es.pfsgroup.plugin.recovery.masivo.api.generarEscritoEditable";
 	public static final String MSV_BO_GENERAR_INFORME = "es.pfsgroup.plugin.recovery.masivo.api.generarInforme";
 	public static final String MSV_BO_GENERAR_INFORME_PDF = "es.pfsgroup.plugin.recovery.masivo.api.generarInformePDF";
+	public static final String MSV_GENERAR_ESCRITO_VARIABLES = "es.pfsgroup.plugin.recovery.masivo.api.generarEscritoConVariables";
+	public static final String MSV_GENERAR_ESCRITO_DOCX_FROM_HTML = "es.pfsgroup.plugin.recovery.masivo.api.createDocxFileFromHtmlText";
+	
+	
 	
 	/**
 	 * Recupera los datos referentes al tipo de entidad de la que trata el escrito.
@@ -60,6 +66,12 @@ public interface GENINFInformesApi {
 	public FileItem generarInforme(String plantilla, Map<String, Object> mapaValores, List<Object> array);
 	
 	@BusinessOperationDefinition(MSV_BO_GENERAR_INFORME_PDF)
-	public FileItem generarInformePDF(String plantilla, Map<String, Object> mapaValores, List<Object> array);	
+	public FileItem generarInformePDF(String plantilla, Map<String, Object> mapaValores, List<Object> array);
+	
+	@BusinessOperationDefinition(MSV_GENERAR_ESCRITO_VARIABLES)
+	FileItem generarEscritoConVariables(HashMap<String, String> mapaVariables, String escrito,InputStream is) throws Throwable;
+	
+	@BusinessOperationDefinition(MSV_GENERAR_ESCRITO_DOCX_FROM_HTML)
+	InputStream createDocxFileFromHtmlText(String htmlText,String nombreFichero) throws Exception;
 
 }

@@ -18,8 +18,10 @@ import javax.persistence.Version;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
 
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.Direccion;
@@ -141,14 +143,6 @@ public class EnvioBurofaxPCO implements Serializable, Auditable {
 		this.fechaAcuse = fechaAcuse;
 	}
 
-	public String getContenidoBurofax() {
-		return contenidoBurofax;
-	}
-
-	public void setContenidoBurofax(String contenidoBurofax) {
-		this.contenidoBurofax = contenidoBurofax;
-	}
-
 	public String getSysGuid() {
 		return sysGuid;
 	}
@@ -176,4 +170,14 @@ public class EnvioBurofaxPCO implements Serializable, Auditable {
 	public Long getId() {
 		return id;
 	}
+
+	public String getContenidoBurofax() {
+		return contenidoBurofax;
+	}
+
+	public void setContenidoBurofax(String contenidoBurofax) {
+		this.contenidoBurofax = contenidoBurofax;
+	}
+
+	
 }

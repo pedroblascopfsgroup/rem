@@ -21,6 +21,7 @@
 			<package-name>javax.mail.internet.*</package-name>
 			<package-name>javax.mail.search.*</package-name>
 			<package-name>javax.mail.util.*</package-name>
+			<package-name>org.docx4j.*</package-name>
 		</prefer-application-packages>
 		<servlet-reload-check-secs>-1</servlet-reload-check-secs>
 		<show-archived-real-path-enabled>true

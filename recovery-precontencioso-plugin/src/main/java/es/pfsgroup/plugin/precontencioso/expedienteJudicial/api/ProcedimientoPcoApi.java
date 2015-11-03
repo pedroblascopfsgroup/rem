@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.precontencioso.expedienteJudicial.api;
 
 import java.util.List;
 
+import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.ActualizarProcedimientoPcoDtoInfo;
@@ -15,13 +16,15 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoP
 public interface ProcedimientoPcoApi {
 
 	public static final String BO_PCO_EXPEDIENTE_BUSQUEDA_POR_PRC_ID = "plugin.precontencioso.getPrecontenciosoPorProcedimientoId";
+	public static final String BO_PCO_COMPROBAR_FINALIZAR_PREPARACION_EXPEDIENTE = "plugin.precontencioso.comprobarFinalizarPreparacionExpedienteJudicialPorProcedimientoId";
 	public static final String BO_PCO_FINALIZAR_PREPARACION_EXPEDIENTE_JUDICIAL_POR_PRC_ID = "plugin.precontencioso.finalizarPreparacionExpedienteJudicialPorProcedimientoId";
 	public static final String BO_PCO_DEVOLVER_PREPARACION_POR_PRC_ID = "plugin.precontencioso.devolverPreparacionPorProcedimientoId";
 	public static final String BO_PCO_ACTUALIZAR_PROCEDIMIENTO_Y_PCO = "plugin.precontencioso.actualizaProcedimientoPco";
 	public static final String BO_PCO_CAMBIAR_ESTADO_EXPEDIENTE = "plugin.precontencioso.cambiarEstadoExpediete";
 	public static final String BO_PCO_EXPEDIENTE_BY_PRC_ID = "plugin.precontencioso.getPCOByProcedimientoId";
 	public static final String BO_PCO_EXPEDIENTE_UPDATE = "plugin.precontencioso.update";
-
+	public static final String BO_PCO_INICIALIZAR = "plugin.precontencioso.inicializarPco";
+	public static final String BO_PCO_CREAR_PROCEDIMIENTO_PCO = "plugin.precontencioso.crearProcedimientoPco";
 	/**
 	 * Obtiene el historico de estados de un procedimientoPCO mediante un id procedimiento.
 	 * 
@@ -38,6 +41,9 @@ public interface ProcedimientoPcoApi {
 	 */
 	@BusinessOperationDefinition(BO_PCO_EXPEDIENTE_BUSQUEDA_POR_PRC_ID)
 	ProcedimientoPCODTO getPrecontenciosoPorProcedimientoId(Long idProcedimiento);
+
+	@BusinessOperationDefinition(BO_PCO_COMPROBAR_FINALIZAR_PREPARACION_EXPEDIENTE)
+	boolean comprobarFinalizarPreparacionExpedienteJudicialPorProcedimientoId(Long idProcedimiento);
 
 	@BusinessOperationDefinition(BO_PCO_FINALIZAR_PREPARACION_EXPEDIENTE_JUDICIAL_POR_PRC_ID)
 	boolean finalizarPreparacionExpedienteJudicialPorProcedimientoId(Long idProcedimiento);
@@ -102,5 +108,11 @@ public interface ProcedimientoPcoApi {
 	
 	@BusinessOperationDefinition(BO_PCO_EXPEDIENTE_UPDATE)
 	public void update(ProcedimientoPCO pco);
+
+	@BusinessOperationDefinition(BO_PCO_INICIALIZAR)
+	void inicializarPrecontencioso(Procedimiento procedimiento);
+
+	@BusinessOperationDefinition(BO_PCO_CREAR_PROCEDIMIENTO_PCO)
+	ProcedimientoPCO crearProcedimientoPco(Procedimiento procedimiento, String codigoEstadoInicial);
     
 }

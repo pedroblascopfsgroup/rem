@@ -12,29 +12,31 @@
     
 	var arrayIdBurofax='${arrayIdBurofax}';
     var arrayIdDirecciones='${arrayIdDirecciones}';
-    //var arrayIdEnvios='${arrayIdEnvios}';
+   
    
 
 	<pfsforms:ddCombo name="tipoBurofax"
 		labelKey="plugin.precontencioso.grid.burofax.tipoBurofax" 
  		label="**Tipo Burofax" value="" dd="${tipoBurofax}" 
-		propertyCodigo="id" propertyDescripcion="descripcion" />
+		propertyCodigo="id" propertyDescripcion="descripcion" obligatory="true" blankElement="" blankElementText=""/>
 
 	var bottomBar = [];
 
 	var btnGuardar = new Ext.Button({
 		text : '<s:message code="app.aceptar" text="**Aceptar" />'
 		,iconCls : 'icon_ok'
-		,handler : function(){	
-		    	Ext.Ajax.request({
-						url : page.resolveUrl('burofax/configurarTipoBurofax'), 
-						//params : {idTipoBurofax:tipoBurofax.value,idDireccion:idDireccion,idBurofax:idBurofax},
-						params : {idTipoBurofax:tipoBurofax.value,arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax},
-						method: 'POST',
-						success: function ( result, request ) {
-							page.fireEvent(app.event.DONE);
-						}
-					});
+		,handler : function(){
+				
+				if(tipoBurofax.validate()){	
+			    	Ext.Ajax.request({
+							url : page.resolveUrl('burofax/configurarTipoBurofax'), 
+							params : {idTipoBurofax:tipoBurofax.value,arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax},
+							method: 'POST',
+							success: function ( result, request ) {
+								page.fireEvent(app.event.DONE);
+							}
+						});
+				}
 		}
 	});
 	

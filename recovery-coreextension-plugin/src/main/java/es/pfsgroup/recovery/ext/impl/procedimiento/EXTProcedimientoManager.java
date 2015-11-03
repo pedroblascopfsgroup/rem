@@ -15,10 +15,13 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
+import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.dao.EXTPersonaDao;
 import es.capgemini.pfs.persona.model.Persona;
+import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -28,6 +31,7 @@ import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.recovery.ext.api.asunto.EXTAsuntoApi;
 import es.pfsgroup.recovery.ext.api.asunto.EXTUsuarioRelacionadoInfo;
 import es.pfsgroup.recovery.ext.api.procedimiento.EXTProcedimientoApi;
+import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.procedimiento.dao.EXTProcedimientoDao;
 import es.pfsgroup.recovery.integration.Guid;
 
@@ -312,5 +316,41 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 		executor.execute(ExternaBusinessOperation.BO_PRC_MGR_SAVE_OR_UPDATE_PROCEDIMIMENTO, procedimiento);
 		return procedimiento;// procedimientoManager.getProcedimiento(idProcedimiento);
 	}
-	
+
+	@Override
+	@BusinessOperation(MEJ_BO_PRC_ES_GESTOR_CEX)
+	public Boolean esGestorCEX(Long idProcedimiento, String codUg) {
+		if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equalsIgnoreCase(codUg)) {
+			Long idAsunto = procedimientoDao.get(idProcedimiento).getAsunto().getId();
+			EXTAsunto asunto = genericDao.get(EXTAsunto.class, genericDao.createFilter(FilterType.EQUALS, "id", idAsunto));
+
+			Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
+			if (asunto.getGestorCEXP() != null && asunto.getGestorCEXP().getUsuario() != null)
+				return asunto.getGestorCEXP().getUsuario().getId().equals(usuario.getId());
+			else
+				return false;
+
+		} else
+			return false;
+
+	}
+
+	@Override
+	@BusinessOperation(MEJ_BO_PRC_ES_SUPERVISOR_CEX)
+	public Boolean esSupervisorCEX(Long idProcedimiento, String codUg) {
+		if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equalsIgnoreCase(codUg)) {
+			Long idAsunto = procedimientoDao.get(idProcedimiento).getAsunto().getId();
+			EXTAsunto asunto = genericDao.get(EXTAsunto.class, genericDao.createFilter(FilterType.EQUALS, "id", idAsunto));
+
+			Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
+			if (asunto.getSupervisorCEXP() != null && asunto.getSupervisorCEXP().getUsuario() != null)
+				return asunto.getSupervisorCEXP().getUsuario().getId().equals(usuario.getId());
+			else
+				return false;
+
+		} else
+			return false;
+
+	}
+
 }

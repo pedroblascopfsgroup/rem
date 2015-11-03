@@ -1,8 +1,25 @@
 #!/bin/bash
 # Generado manualmente
  
+SERVER=10.64.132.59
+USER=ftpsocpart
+PASSW=tempo.99
+PORT=2153
+DIR_LOCAL=/mnt/fs_servicios/recovecb/transferencia/aprov_convivencia/salida
+DIR_DESTINO=/mnt/fs_servicios/socpart/SGPAR/RecoveryHaya/in/aprovisionamiento/troncal/ 
 DIR_BASE_ETL=/aplicaciones/recovecb/programas/etl
 
+
+
+	ftp -vn $SERVER <<END_OF_SESSION
+        user $USER $PASSW
+        lcd $DIR_LOCAL
+        cd $DIR_DESTINO
+        bin
+        get cnt_procedimientos_vivos_haya.dat
+        bye
+END_OF_SESSION
+	
 	filename=$(basename $0)
 	nameETL="${filename%.*}"
 

@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.BPMContants;
+import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
@@ -40,7 +42,6 @@ public class PrecontenciosoEnterActionHandler extends PROGenericEnterActionHandl
 		try {
 			super.process(delegateTransitionClass, delegateSpecificClass, executionContext);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -77,7 +78,14 @@ public class PrecontenciosoEnterActionHandler extends PROGenericEnterActionHandl
 			
 		} else if (PrecontenciosoBPMConstants.PCO_PrepararExpediente.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
-			executor.execute("plugin.precontencioso.cambiarEstadoExpediete", prc.getId(), PrecontenciosoBPMConstants.PCO_PREPARACION);
+			//Si es CONCURSO invocar inicializacion
+			if (DDTiposAsunto.CONCURSAL.equals(prc.getAsunto().getTipoAsunto().getCodigo())) {
+				if (prc.getProcessBPM() == null) {
+					prc.setProcessBPM(executionContext.getProcessInstance().getId());
+				}
+				executor.execute("plugin.precontencioso.inicializarPco", prc);
+			}
+			executor.execute("es.pfsgroup.plugin.precontencioso.expedienteJudicial.recalcularTareasPreparacionDocumental", prc.getId());
 			
 		} else if (PrecontenciosoBPMConstants.PCO_PostTurnado.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
@@ -90,19 +98,25 @@ public class PrecontenciosoEnterActionHandler extends PROGenericEnterActionHandl
 		} else if (PrecontenciosoBPMConstants.PCO_RegistrarTomaDec.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
 		} else if (PrecontenciosoBPMConstants.PCO_RevisarSubsanacion.equals(tex.getTareaProcedimiento().getCodigo())) {
-						
+			
+			executor.execute("plugin.precontencioso.cambiarEstadoExpediete", prc.getId(), PrecontenciosoBPMConstants.PCO_SUBSANAR);
+			
+		} else if (PrecontenciosoBPMConstants.PCO_RevisarSubsanacionCONC.equals(tex.getTareaProcedimiento().getCodigo())) {
+			
 			executor.execute("plugin.precontencioso.cambiarEstadoExpediete", prc.getId(), PrecontenciosoBPMConstants.PCO_SUBSANAR);
 			
 		} else if (PrecontenciosoBPMConstants.PCO_IniciarProcJudicial.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
-			executor.execute("plugin.precontencioso.cambiarEstadoExpediete", prc.getId(), PrecontenciosoBPMConstants.PCO_FINALIZADO);
-			
-	        ProcedimientoPCO pco = (ProcedimientoPCO) executor.execute("plugin.precontencioso.getPCOByProcedimientoId", prc.getId());
-	        final TipoProcedimiento tipoProcedimientoHijo = (Checks.esNulo(pco.getTipoProcIniciado()) ? 
-	        		pco.getTipoProcPropuesto() : pco.getTipoProcIniciado());
-
-	        creaProcedimientoHijo(executionContext, tipoProcedimientoHijo, prc, null, null);
-
+//			executor.execute("plugin.precontencioso.cambiarEstadoExpediete", prc.getId(), PrecontenciosoBPMConstants.PCO_FINALIZADO);
+//			
+//	        ProcedimientoPCO pco = (ProcedimientoPCO) executor.execute("plugin.precontencioso.getPCOByProcedimientoId", prc.getId());
+//	        final TipoProcedimiento tipoProcedimientoHijo = (Checks.esNulo(pco.getTipoProcIniciado()) ? 
+//	        		pco.getTipoProcPropuesto() : pco.getTipoProcIniciado());
+//
+//	        creaProcedimientoHijo(executionContext, tipoProcedimientoHijo, prc, null, null);
+//	        
+//	        //Avanzamos la tarea
+//	        executionContext.getToken().signal();
 			
 		} else if (PrecontenciosoBPMConstants.PCO_SubsanarIncidenciaExp.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
@@ -112,7 +126,11 @@ public class PrecontenciosoEnterActionHandler extends PROGenericEnterActionHandl
 			
 			executor.execute("plugin.precontencioso.cambiarEstadoExpediete", prc.getId(), PrecontenciosoBPMConstants.PCO_SUBSANAR_POR_CAMBIO);
 
-		} 
+		} else if (PrecontenciosoBPMConstants.PCO_AsignacionGestores.equals(tex.getTareaProcedimiento().getCodigo())) {
+			
+			executor.execute("plugin.precontencioso.cambiarEstadoExpediete", prc.getId(), PrecontenciosoBPMConstants.PCO_PREPARACION);
+
+		}
 		
 	}
 

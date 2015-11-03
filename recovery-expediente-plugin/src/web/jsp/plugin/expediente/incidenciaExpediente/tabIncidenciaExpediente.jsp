@@ -370,10 +370,14 @@
 		return true;
 	}
 	var buscarFunc=function(){
+
 		if(validarForm()){
 			isBusqueda=true;
 			panelFiltros.collapse(true);
 			incidenciasStore.webflow(getParametrosBusqueda());
+			
+			panelFiltros.getTopToolbar().setDisabled(true);	
+			
 		}else{
 			Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','Introduzca parámetros de búsqueda');
 		}
@@ -437,6 +441,10 @@
     
 	panel.getValue = function(){
 	}
+	
+	incidenciasStore.on('load',function(){
+           panelFiltros.getTopToolbar().setDisabled(false);
+    });
 	
 	var data;
 	

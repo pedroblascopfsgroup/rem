@@ -8,11 +8,9 @@
 --## PRODUCTO=NO
 --## 
 --## Finalidad: CARGA DE DICCIONARIOS DE MIGRACI”N CAJAMAR
---##                   
---##                               , esquema CM01. Con estructura correcta
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versi√≥n inicial
+--##        0.1 Version inicial
 --##########################################
 --*/
 

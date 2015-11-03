@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=CMREC-866
 --## PRODUCTO=NO
 --## 
---## Finalidad: CreaciÃ³n de TABLAS DE DICCIONARIOS DE VENCIDOS Y PRODUCCION
+--## Finalidad: Creacion de TABLAS DE DICCIONARIOS DE VENCIDOS Y PRODUCCION
 --##                   
 --##                               , esquema CM01. Con estructura correcta
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
@@ -58,11 +58,11 @@ DECLARE
 
  V_TVE T_ARRAY_TVE := T_ARRAY_TVE(
       T_TVE('VENCI','Vencidos','Vencidos: Operaciones que van entrando en impago en el mes en curso.','0','DD','SYSDATE','0')
-    , T_TVE('PREVI','Previo pre-proyectado','Previo pre-proyectado: Operaciones que entrarán en dudoso en el mes en curso + 2.','0','DD','SYSDATE','0')
+    , T_TVE('PREVI','Previo pre-proyectado','Previo pre-proyectado: Operaciones que entraran en dudoso en el mes en curso + 2.','0','DD','SYSDATE','0')
     , T_TVE('SEGESP','Seguimiento Especial','Seguimiento Especial','0','DD','SYSDATE','0')
-    , T_TVE('PRE','Pre-proyectado','Pre-proyectado: Operaciones que entrarán en dudoso en el mes en curso + 1','0','DD','SYSDATE','0')
-    , T_TVE('PRO','Proyectado','Proyectado: Operaciones que entrarán en dudoso en el mes en curso.','0','DD','SYSDATE','0')
-    , T_TVE('DUD','Dudosos','Dudosos: Operaciones que ya están en dudoso. Aquí puede darse el caso que una operación esté en dudoso y además, al no ser morosa, pueda estar también en otro de los tramos anteriores.','0','DD','SYSDATE','0')
+    , T_TVE('PRE','Pre-proyectado','Pre-proyectado: Operaciones que entraran en dudoso en el mes en curso + 1','0','DD','SYSDATE','0')
+    , T_TVE('PRO','Proyectado','Proyectado: Operaciones que entraran en dudoso en el mes en curso.','0','DD','SYSDATE','0')
+    , T_TVE('DUD','Dudosos','Dudosos: Operaciones que ya estan en dudoso. Aqui puede darse el caso que una operacion este en dudoso y ademas, al no ser morosa, pueda estar tambien en otro de los tramos anteriores.','0','DD','SYSDATE','0')
  );
 
 
@@ -79,7 +79,7 @@ DECLARE
     , T_MAD('005','ORDEN MANUAL OPERACION','ORDEN MANUAL OPERACION','0','DD','SYSDATE','0')
     , T_MAD('006','POR MOROSIDAD','POR MOROSIDAD','0','DD','SYSDATE','0')
     , T_MAD('007','REFINANCIACIONES','REFINANCIACIONES','0','DD','SYSDATE','0')
-    , T_MAD('008','ORDEN AUTAMTICA OPERACIÓN','ORDEN AUTAMTICA OPERACIÓN','0','DD','SYSDATE','0')
+    , T_MAD('008','ORDEN AUTAMTICA OPERACION','ORDEN AUTOMATICA OPERACION','0','DD','SYSDATE','0')
     , T_MAD('009','RETROCESION FALLIDO','RETROCESION FALLIDO','0','DD','SYSDATE','0')
     , T_MAD('010','VARIACION DUDOSO','VARIACION DUDOSO','0','DD','SYSDATE','0')
  );

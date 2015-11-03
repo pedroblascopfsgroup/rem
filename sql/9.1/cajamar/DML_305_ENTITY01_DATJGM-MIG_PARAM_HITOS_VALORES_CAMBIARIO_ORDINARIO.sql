@@ -31,7 +31,7 @@ DECLARE
 --*/
   -- Configuracion Esquemas
   
- V_ESQUEMA 			     VARCHAR2(25 CHAR):= 'ESQUEMA'; 				-- Configuracion Esquema
+ V_ESQUEMA 			     VARCHAR2(25 CHAR):= '#ESQUEMA#'; 				-- Configuracion Esquema
  V_ESQUEMA_MASTER    		     VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; 			-- Configuracion Esquema Master
  TABLA                               VARCHAR(100 CHAR):= 'MIG_PARAM_HITOS_VALORES';
  SECUENCIA                           VARCHAR(100 CHAR):= 'S_MIG_PARAM_HITOS_VALORES';

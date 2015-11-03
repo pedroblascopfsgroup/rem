@@ -8,11 +8,13 @@ import javax.annotation.Resource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.userdetails.UserDetails;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import es.capgemini.devon.beans.Service;
+import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.pfs.acuerdo.model.ActuacionesAExplorarAcuerdo;
 import es.capgemini.pfs.acuerdo.model.ActuacionesRealizadasAcuerdo;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
@@ -20,6 +22,7 @@ import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.dsm.model.Entidad;
 import es.capgemini.pfs.dsm.model.EntidadConfig;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.security.model.UsuarioSecurity;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.capgemini.pfs.users.UsuarioManager;
@@ -29,6 +32,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJFinalizarAsuntoDto;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.model.MEJRecurso;
+import es.pfsgroup.recovery.integration.IntegrationDataException;
 
 @Service
 public class IntegracionBpmServiceImpl implements IntegracionBpmService {
@@ -54,7 +58,12 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
 	}
 	
 	private String getEntidad() {
-		Usuario usuario = usuarioManager.getUsuarioLogado();
+		UserDetails userDetails = SecurityUtils.getCurrentUser();
+		if (userDetails==null || !(userDetails instanceof UsuarioSecurity)) {
+			throw new IntegrationDataException("[INTEGRACION] No se puede enviar el mensaje, no hay un usuario autenticado para firmarlo.");
+		}
+		
+		UsuarioSecurity usuario = (UsuarioSecurity)userDetails;
 		String entidad = "";
 		Map<String, EntidadConfig> mapa = usuario.getEntidad().getConfiguracion();
 		if (mapa.containsKey(Entidad.WORKING_CODE_KEY)) {

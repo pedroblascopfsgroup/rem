@@ -127,7 +127,7 @@
 		</property>
 		<property name="entidadesDesparalizacion">
 			<set>
-				<value>BANKIA</value>
+				<value>2039</value>
 			</set>
 		</property>
 	</bean>

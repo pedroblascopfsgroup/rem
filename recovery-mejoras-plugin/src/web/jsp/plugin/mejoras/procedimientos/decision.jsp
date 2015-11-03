@@ -733,7 +733,7 @@
 			if (isCheck){
 				if (comprobarPermitidoAceptar){
 					btnAceptarPropuesta.disable();
-					btnProponer.enable();
+					habilitarBotonProponer();
 				}
 			}else if (comprobarPermitidoAceptar){
 					btnAceptarPropuesta.enable();
@@ -790,7 +790,7 @@
 			if (isCheck){
 				if (comprobarPermitidoAceptar){
 					btnAceptarPropuesta.disable();
-					btnProponer.enable();
+					habilitarBotonProponer();				
 				}	
 			}else if (comprobarPermitidoAceptar){
 					btnAceptarPropuesta.enable();
@@ -952,6 +952,12 @@
 	   }
 	}
 	
+	function habilitarBotonProponer() {
+		if(!procedimientoRemoto) {
+			btnProponer.enable();
+		}
+	}
+	
 	var validarDatosFormulario = function(){
 	
 		var saldoRec=saldoARecuperar.getValue();
@@ -1011,7 +1017,7 @@
 				});
 			}
 			else{
-				btnProponer.enable();
+				habilitarBotonProponer();
 			}
 		}
 	});
@@ -1131,7 +1137,7 @@
 			if (decisionId != null)
 				bbar.push(btnRechazar);
 		}else {
-			if (decisionId == null && !procedimientoRemoto){
+			if (decisionId == null){
 				bbar.push(btnProponer);
 				btnProponer.disable();
 				comprobarPermitidoAceptar = true;

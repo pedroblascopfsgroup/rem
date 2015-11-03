@@ -43,11 +43,13 @@ public class MEJDtoDecisionProcedimiento extends WebDto {
     private String comentarios="";
     private String entidad;
     private String guid;
+    private Long id;
 
     /**
      * constructor.
      */
-    public MEJDtoDecisionProcedimiento() {
+    @SuppressWarnings("unchecked")
+	public MEJDtoDecisionProcedimiento() {
         procedimientosDerivados = new AutoPopulatingList(DtoProcedimientoDerivado.class);
         paralizar = false;
         finalizar = false;
@@ -279,5 +281,13 @@ public class MEJDtoDecisionProcedimiento extends WebDto {
 
 	public void setGuid(String guid) {
 		this.guid = guid;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 }

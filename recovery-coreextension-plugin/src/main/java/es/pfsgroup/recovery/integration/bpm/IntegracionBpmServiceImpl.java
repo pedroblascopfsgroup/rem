@@ -17,13 +17,13 @@ import es.capgemini.pfs.acuerdo.model.ActuacionesAExplorarAcuerdo;
 import es.capgemini.pfs.acuerdo.model.ActuacionesRealizadasAcuerdo;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJFinalizarAsuntoDto;
+import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.model.MEJRecurso;
 
 @Service
@@ -370,7 +370,7 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
 	}
 	
 	@Override
-	public void enviarDatos(final DecisionProcedimiento decisionProcedimiento) {
+	public void enviarDatos(final MEJDtoDecisionProcedimiento dtoDecisionProcedimiento) {
     	if (!isActive() || notificacionGateway==null) {
 			return;
 		}
@@ -380,12 +380,12 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
-	    			notificacionGateway.enviar(decisionProcedimiento, TIPO_DATOS_DECISION_PROCEDIMIENTO, DbIdContextHolder.getDbSchema());
+	    			notificacionGateway.enviar(dtoDecisionProcedimiento, TIPO_DATOS_DECISION_PROCEDIMIENTO, DbIdContextHolder.getDbSchema());
 	    			logger.info("[INTEGRACION] Enviado enviarDatos-Decision-Procedimiento!!!");
 	    		}
 			});
     	} else {
-    		notificacionGateway.enviar(decisionProcedimiento, TIPO_DATOS_DECISION_PROCEDIMIENTO, DbIdContextHolder.getDbSchema());
+    		notificacionGateway.enviar(dtoDecisionProcedimiento, TIPO_DATOS_DECISION_PROCEDIMIENTO, DbIdContextHolder.getDbSchema());
 			logger.info("[INTEGRACION] Enviado enviarDatos-Decision-Procedimiento!!!");
     	}
 	}

@@ -513,7 +513,6 @@ public class MEJDecisionProcedimientoManager extends
 		}
     }
     
-    
     /**
      * Crea o Actualiza un objeto DecisionProcedimiento en la BD.
      *
@@ -521,7 +520,7 @@ public class MEJDecisionProcedimientoManager extends
      * @return DecisionProcedimiento
      * @throws Exception e
      */
-    public DecisionProcedimiento createOrUpdate(MEJDtoDecisionProcedimiento dtoDecisionProcedimiento, Procedimiento procedimiento) 
+    public DecisionProcedimiento createCabecera(MEJDtoDecisionProcedimiento dtoDecisionProcedimiento, Procedimiento procedimiento) 
     		throws Exception {
 
         DecisionProcedimiento decisionProcedimiento = dtoDecisionProcedimiento.getDecisionProcedimiento();
@@ -539,6 +538,24 @@ public class MEJDecisionProcedimientoManager extends
         
         DDEstadoDecision estadoDecision = (DDEstadoDecision)diccionarioApi.dameValorDiccionarioByCod(DDEstadoDecision.class, dtoDecisionProcedimiento.getStrEstadoDecision());
         decisionProcedimiento.setEstadoDecision(estadoDecision);
+        decisionProcedimiento.setFinalizada(false);
+        decisionProcedimiento.setParalizada(false);
+
+        decisionProcedimientoDao.saveOrUpdate(decisionProcedimiento);
+        
+        return decisionProcedimiento;
+    }
+    
+    
+    /**
+     * Crea o Actualiza un objeto DecisionProcedimiento en la BD.
+     *
+     * @param dtoDecisionProcedimiento dtoDecisionProcedimiento
+     * @return DecisionProcedimiento
+     * @throws Exception e
+     */
+    public void createOrUpdate(DecisionProcedimiento decisionProcedimiento, MEJDtoDecisionProcedimiento dtoDecisionProcedimiento) 
+    		throws Exception {
 
         DDCausaDecisionFinalizar causaDecisionFinalizar = (DDCausaDecisionFinalizar) diccionarioApi
         		.dameValorDiccionarioByCod(DDCausaDecisionFinalizar.class,dtoDecisionProcedimiento.getCausaDecisionFinalizar());
@@ -574,8 +591,6 @@ public class MEJDecisionProcedimientoManager extends
         }
 
         decisionProcedimientoDao.saveOrUpdate(decisionProcedimiento);
-        
-        return decisionProcedimiento;
     }
     
     private void notificarGestor(DecisionProcedimiento dp, boolean aceptada) {
@@ -637,7 +652,8 @@ public class MEJDecisionProcedimientoManager extends
 		ConfiguradorPropuesta configuradorPropuesta = new ConfiguradorPropuesta();
 		Procedimiento procedimiento = prcManager.getProcedimiento(dtoDecisionProcedimiento.getIdProcedimiento());
 		if(procedimiento.getProcessBPM() == null) {
-			configuradorPropuesta.setConfiguracion(ConfiguradorPropuesta.SIN_BPMS);
+			configuradorPropuesta.setConfiguracion(ConfiguradorPropuesta.SOLO_ENVIAR);
+			dtoDecisionProcedimiento.setStrEstadoDecision(DDEstadoDecision.ESTADO_EN_CONFORMACION);
 		}
 		
 		this.aceptarPropuestaSinControl(dtoDecisionProcedimiento, configuradorPropuesta);
@@ -670,11 +686,14 @@ public class MEJDecisionProcedimientoManager extends
 		}
 		
 		try {
-			if(configuradorPropuesta.isCrearOActualizar()) {
+			if(configuradorPropuesta.isCrearCabecera()) {
 				logger.info("Todo correcto! Crea la decisión ...");
-				decision = createOrUpdate(dtoDecisionProcedimiento, procedimiento);
+				decision = createCabecera(dtoDecisionProcedimiento, procedimiento);
+				if(configuradorPropuesta.isCrearOActualizar()) {
+					createOrUpdate(decision, dtoDecisionProcedimiento);
+				}
 			}
-		} 
+		}
 		catch(UserException userException){
 			logger.error("Ups, Error al crear la decisión!!! Mensaje al usuario: ", userException);
 			throw userException;
@@ -781,7 +800,7 @@ public class MEJDecisionProcedimientoManager extends
 		}
 		
 		if(configuradorPropuesta.isEnviarDatos()) {
-        	integracionBpmService.enviarDatos(decision);
+        	integracionBpmService.enviarDatos(dtoDecisionProcedimiento);
         }
         
 		logger.info("Finaliza aceptación de decisión!!!");
@@ -901,7 +920,8 @@ public class MEJDecisionProcedimientoManager extends
 
         DecisionProcedimiento decisionProcedimiento = null;
         try{
-        	decisionProcedimiento = createOrUpdate(dtoDecisionProcedimiento, procedimiento);
+        	decisionProcedimiento = createCabecera(dtoDecisionProcedimiento, procedimiento);
+        	createOrUpdate(decisionProcedimiento, dtoDecisionProcedimiento);
 
         }catch(Exception exc){
         	throw new BusinessOperationException(exc);
@@ -1012,17 +1032,22 @@ public class MEJDecisionProcedimientoManager extends
 		return datosConsulta;
 	}		
 	
-	public DecisionProcedimiento prepareGuid(DecisionProcedimiento decisionProcedimiento) {
-		if (Checks.esNulo(decisionProcedimiento.getGuid())) {
-			decisionProcedimiento.setGuid(Guid.getNewInstance().toString());
-			decisionProcedimientoDao.saveOrUpdate(decisionProcedimiento);
-			
-			extProcedimientoManager.prepareGuid(decisionProcedimiento.getProcedimiento());
-		}
+	public DecisionProcedimiento prepareGuid(MEJDtoDecisionProcedimiento dtoDecisionProcedimiento) {
 		
-		if (decisionProcedimiento.getProcedimientosDerivados() != null) {
-			for (ProcedimientoDerivado procedimientoDerivado : decisionProcedimiento.getProcedimientosDerivados()) {
-				prepareGuid(procedimientoDerivado);
+		DecisionProcedimiento decisionProcedimiento = dtoDecisionProcedimiento.getDecisionProcedimiento();
+		if(decisionProcedimiento != null && decisionProcedimiento.getId() != null) {
+		
+			if ( Checks.esNulo(decisionProcedimiento.getGuid())) {
+				decisionProcedimiento.setGuid(Guid.getNewInstance().toString());
+				decisionProcedimientoDao.saveOrUpdate(decisionProcedimiento);
+				
+				extProcedimientoManager.prepareGuid(decisionProcedimiento.getProcedimiento());
+			}
+			
+			if (decisionProcedimiento.getProcedimientosDerivados() != null) {
+				for (ProcedimientoDerivado procedimientoDerivado : decisionProcedimiento.getProcedimientosDerivados()) {
+					prepareGuid(procedimientoDerivado);
+				}
 			}
 		}
 		

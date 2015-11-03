@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento;
 
 public class ConfiguradorPropuesta {
 
+	private boolean crearCabecera;
 	private boolean crearOActualizar;
 	private boolean registrarSaldos;
 	private boolean lanzarBPMs;
@@ -18,14 +19,17 @@ public class ConfiguradorPropuesta {
 	
 	public static final String SIN_BPMS = "SIN_BPMS";
 	public static final String SIN_ENVIO_DATOS = "SIN_ENVIO_DATOS";
+	public static final String SOLO_ENVIAR = "SOLO_ENVIAR";
 	
 	
 	public ConfiguradorPropuesta() {
+		this.crearCabecera = true;
 		this.crearOActualizar = true;
 		this.registrarSaldos = true;
 		this.lanzarBPMs = true;
 		this.finalizarProcedimiento = true;
 		this.paralizarProcedimiento = true;
+		this.aplazarBPMs = true;
 		this.aceptarDecision = true;
 		this.finalizarTareaAsociada = true;
 		this.borrarTareaAsociada = true;
@@ -35,6 +39,14 @@ public class ConfiguradorPropuesta {
 		this.enviarDatos = true;
 	}
 	
+	public boolean isCrearCabecera() {
+		return crearCabecera;
+	}
+
+	public void setCrearCabecera(boolean crearCabecera) {
+		this.crearCabecera = crearCabecera;
+	}
+
 	/**
 	 * @return the crearOActualizar
 	 */
@@ -209,6 +221,19 @@ public class ConfiguradorPropuesta {
 		}
 		else if(tipoConfiguracion.equals(SIN_ENVIO_DATOS)) {
 			this.setEnviarDatos(false);
+		}
+		else if(tipoConfiguracion.equals(SOLO_ENVIAR)) {
+			this.crearOActualizar = false;
+			this.registrarSaldos = false;
+			this.lanzarBPMs = false;
+			this.finalizarProcedimiento = false;
+			this.paralizarProcedimiento = false;
+			this.aceptarDecision = false;
+			this.finalizarTareaAsociada = false;
+			this.borrarTareaAsociada = false;
+			this.finalizarTareasTomaDecision = false;
+			this.actualizarEstadoAsunto = false;
+			this.notificarGestor = false;
 		}
 	}
 	

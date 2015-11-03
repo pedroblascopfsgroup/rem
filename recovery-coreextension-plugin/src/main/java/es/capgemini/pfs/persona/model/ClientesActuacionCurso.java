@@ -37,8 +37,8 @@ public class ClientesActuacionCurso implements Serializable, Auditable {
  
 	@Id
 	@Column(name = "CLA_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "ClientesActuacionCurso")
-	@SequenceGenerator(name = "ClientesActuacionCurso", sequenceName = "S_CLA_CLIENTES_ACTUACION_CURSO")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "ClientesActuacionCursoGenerator")
+	@SequenceGenerator(name = "ClientesActuacionCursoGenerator", sequenceName = "S_CLA_CLIENTES_ACTUACION_CURSO")
 	private Long id;
 	
 	@Column(name ="CLA_ACTUACION_EN_CURSO")

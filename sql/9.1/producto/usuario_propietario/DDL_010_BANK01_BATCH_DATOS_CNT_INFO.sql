@@ -52,20 +52,20 @@ BEGIN
 
     --** Creamos la tabla
 
-    V_MSQL := 'CREATE GLOBAL TEMPORARY TABLE ' ||v_esquema||'.BATCH_DATOS_CNT_INFO
+    V_MSQL := 'CREATE TABLE ' ||v_esquema||'.BATCH_DATOS_CNT_INFO
                (
 		CNT_ID    NUMBER (16)
 		,CODIGO_PROPIETARIO    NUMBER (5)
 		,TIPO_PRODUCTO    VARCHAR2 (1024 Char)
 		,NUMERO_CONTRATO    VARCHAR2 (50 Char)
-               ) on commit preserve rows';
+               ) nologging';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.BATCH_DATOS_CNT_INFO... Tabla creada');
 
 
     --** Creamos Indices
  
-    V_MSQL := 'CREATE INDEX IDX_BATCH_DATOS_CNT_INFO_1 ON '||v_esquema||'.BATCH_DATOS_CNT_INFO(CNT_ID)';
+    V_MSQL := 'CREATE INDEX IDX_BATCH_DATOS_CNT_INFO_1 ON '||v_esquema||'.BATCH_DATOS_CNT_INFO(CNT_ID) nologging';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.IDX_BATCH_DATOS_CNT_INFO_1... Indice creado');
     V_MSQL := 'CREATE INDEX IDX_BATCH_DATOS_CNT_INFO_2 ON '||v_esquema||'.BATCH_DATOS_CNT_INFO(NUMERO_CONTRATO)';

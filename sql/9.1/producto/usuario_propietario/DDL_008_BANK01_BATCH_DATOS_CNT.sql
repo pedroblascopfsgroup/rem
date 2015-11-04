@@ -50,22 +50,22 @@ BEGIN
 
     --** Creamos la tabla
 
-    V_MSQL := 'CREATE GLOBAL TEMPORARY TABLE ' ||v_esquema||'.BATCH_DATOS_CNT 
+    V_MSQL := 'CREATE TABLE ' ||v_esquema||'.BATCH_DATOS_CNT 
                (
 		CNT_ID    NUMBER (16)
 		,OFI_ID    NUMBER (16)
 		,CNT_RIESGO    NUMBER
-               ) on commit preserve rows';
+               ) nologging';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.BATCH_DATOS_CNT... Tabla creada');
 
 
     --** Creamos Indices
  
-    V_MSQL := 'CREATE INDEX IDX_BATCH_DATOS_CNT_1 ON '||v_esquema||'.BATCH_DATOS_CNT (CNT_ID)';
+    V_MSQL := 'CREATE INDEX IDX_BATCH_DATOS_CNT_1 ON '||v_esquema||'.BATCH_DATOS_CNT (CNT_ID) nologging';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.IDX_BATCH_DATOS_CNT_1... Indice creado');
-    V_MSQL := 'CREATE INDEX IDX_BATCH_DATOS_CNT_2 ON '||v_esquema||'.BATCH_DATOS_CNT (CNT_RIESGO)';
+    V_MSQL := 'CREATE INDEX IDX_BATCH_DATOS_CNT_2 ON '||v_esquema||'.BATCH_DATOS_CNT (CNT_RIESGO) nologging';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.IDX_BATCH_DATOS_CNT_2... Indice creado');
 

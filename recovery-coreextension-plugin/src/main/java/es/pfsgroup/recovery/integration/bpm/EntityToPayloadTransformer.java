@@ -1,7 +1,10 @@
 package es.pfsgroup.recovery.integration.bpm;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,10 +20,13 @@ import es.capgemini.pfs.acuerdo.model.ActuacionesAExplorarAcuerdo;
 import es.capgemini.pfs.acuerdo.model.ActuacionesRealizadasAcuerdo;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.asunto.EXTAsuntoManager;
+import es.capgemini.pfs.asunto.ProcedimientoManager;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
+import es.capgemini.pfs.persona.EXTPersonaManager;
+import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
@@ -39,6 +45,10 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.manager.EXTSubastaManager;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoManager;
+import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJFinalizarAsuntoDto;
+import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.MEJDecisionProcedimientoManager;
+import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
+import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.MEJRecursoManager;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.model.MEJRecurso;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.VTARBusquedaOptimizadaTareasDao;
@@ -46,10 +56,12 @@ import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
 import es.pfsgroup.recovery.integration.IntegrationDataException;
 import es.pfsgroup.recovery.integration.TypePayload;
-import es.pfsgroup.recovery.integration.bpm.message.ParalizarBPMMsg;
 import es.pfsgroup.recovery.integration.bpm.payload.ActuacionesAExplorarPayload;
 import es.pfsgroup.recovery.integration.bpm.payload.ActuacionesRealizadasPayload;
 import es.pfsgroup.recovery.integration.bpm.payload.AcuerdoPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.DecisionProcedimientoPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.FinAsuntoPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.ProcedimientoDerivadoPayload;
 import es.pfsgroup.recovery.integration.bpm.payload.ProcedimientoPayload;
 import es.pfsgroup.recovery.integration.bpm.payload.RecursoPayload;
 import es.pfsgroup.recovery.integration.bpm.payload.SubastaPayload;
@@ -61,6 +73,8 @@ public class EntityToPayloadTransformer {
 
     private final Log logger = LogFactory.getLog(getClass());
 
+    private static Map<String, String> mapaPersonas = new HashMap<String, String>();
+    
 	@Autowired
 	protected EXTProcedimientoManager extProcedimientoManager;
 
@@ -90,6 +104,15 @@ public class EntityToPayloadTransformer {
 	
 	@Autowired
 	private EXTSubastaManager extSubastaManager;
+	
+	@Autowired
+	private MEJDecisionProcedimientoManager mejDecisionProcedimientoManager;
+	
+	@Autowired
+	private ProcedimientoManager procedimientoManager;
+	
+	@Autowired
+	private EXTPersonaManager extPersonaManager;	
 	
 	private final DiccionarioDeCodigos diccionarioCodigos;
 	
@@ -261,6 +284,29 @@ public class EntityToPayloadTransformer {
 		return newMessage;
 	}	
 
+	public Message<DataContainerPayload> transformFINASU(Message<MEJFinalizarAsuntoDto> message) {
+		logger.info("[INTEGRACION] Finalizando asunto...");
+		MEJFinalizarAsuntoDto dto = message.getPayload();
+
+		// Persistencia de IDs de sincronización
+		Long idAsunto = dto.getIdAsunto();
+		Asunto asu = extAsuntoManager.get(idAsunto);
+		 
+		// Carga los valores
+		DataContainerPayload data = getNewPayload(message);
+		FinAsuntoPayload finAsuPayload = new FinAsuntoPayload(data, asu, dto);
+
+		postProcessDataContainer(data);
+		
+		logger.debug(String.format("[INTEGRACION] Finalizando asunto %s!", finAsuPayload.getAsunto().getGuid()));
+		
+		//translateValues(message);
+		String grpId = finAsuPayload.getAsunto().getGuid();
+		Message<DataContainerPayload> newMessage = createMessage(message,  data, grpId);
+
+		return newMessage;
+	}	
+	
 	private ProcedimientoPayload prepararProcedimiento(Message<?> mensaje, Procedimiento procedimiento) {
 		// Persistencia de IDs de sincronización
 		extProcedimientoManager.prepareGuid(procedimiento);
@@ -271,24 +317,6 @@ public class EntityToPayloadTransformer {
 		return procPayload;
 	}
 	
-	public Message<DataContainerPayload> transformParalizarBPM(Message<ParalizarBPMMsg> message) {
-		logger.info("[INTEGRACION] Transformando paralizarBPM...");
-		ParalizarBPMMsg paralizarBPMMsg = message.getPayload();
-		
-		ProcedimientoPayload procPayload = prepararProcedimiento(message, paralizarBPMMsg.getProcedimiento());
-		DataContainerPayload data = procPayload.getData();
-		logger.debug(String.format("[INTEGRACION] Procedimiento Transformado %s!", procPayload.getGuid()));
-
-		data.addFecha(BPMContants.FECHA_APLAZAMIENTO_TAREAS, paralizarBPMMsg.getFechaActivacion());
-		
-		//translateValues(message);
-		String grpId = procPayload.getAsunto().getGuid();
-		Message<DataContainerPayload> newMessage = createMessage(message,  data, grpId);
-		
-		return newMessage;
-	}
-	
-
 	public Message<DataContainerPayload> transformPRC(Message<Procedimiento> message) {
 		logger.info("[INTEGRACION] Transformando Procedimiento...");
 		Procedimiento procedimiento = message.getPayload();
@@ -471,5 +499,55 @@ public class EntityToPayloadTransformer {
 		return newMessage;
 	}
 	
-	
+	public Message<DataContainerPayload> transformDecisionProcedimiento(Message<MEJDtoDecisionProcedimiento> message) {
+		logger.info("[INTEGRACION] Transformando DecisionProcedimiento...");
+		MEJDtoDecisionProcedimiento dtoDecisionProcedimiento = message.getPayload();
+		mejDecisionProcedimientoManager.prepareGuid(dtoDecisionProcedimiento);
+		
+		DataContainerPayload data = getNewPayload(message);
+		
+		Procedimiento procedimiento = procedimientoManager.getProcedimiento(dtoDecisionProcedimiento.getIdProcedimiento());
+		DecisionProcedimientoPayload payload = new DecisionProcedimientoPayload(data, procedimiento);
+		payload.build(dtoDecisionProcedimiento);
+		
+		if(payload.getProcedimientoDerivado() != null) {
+			for(ProcedimientoDerivadoPayload procedimientoDerivadoPayload : payload.getProcedimientoDerivado()) {
+				
+				if(procedimientoDerivadoPayload.getGuidProcedimientoHijo() != null) {
+					
+					procedimiento = procedimientoManager.getProcedimiento(Long.valueOf(procedimientoDerivadoPayload.getGuidProcedimientoHijo()));
+					MEJProcedimiento mejProcedimiento = extProcedimientoManager.getInstanceOf(procedimiento);
+					procedimientoDerivadoPayload.setGuidProcedimientoHijo(mejProcedimiento.getGuid());
+				}				
+				
+				if(procedimientoDerivadoPayload.getPersonas() != null) {
+					List<String> lPersonas = new ArrayList<String>(procedimientoDerivadoPayload.getPersonas());
+					List<String> lCodigos = new ArrayList<String>();
+					
+					for(String idPersona : lPersonas) {
+						
+						if(mapaPersonas.get(idPersona) != null) {
+							lCodigos.add(mapaPersonas.get(idPersona));
+						}
+						else {
+							Persona persona = extPersonaManager.get(Long.valueOf(idPersona));
+							lCodigos.add(persona.getCodClienteEntidad().toString());
+							mapaPersonas.put(idPersona, persona.getCodClienteEntidad().toString());
+						}
+					}
+					
+					procedimientoDerivadoPayload.getPersonas().clear();
+					procedimientoDerivadoPayload.getPersonas().addAll(lCodigos);
+				}
+			}
+		}
+		
+		postProcessDataContainer(data);
+
+		logger.debug(String.format("[INTEGRACION] DecisionProcedimiento Transformado %s!", payload.getGuid()));
+
+		Message<DataContainerPayload> newMessage = createMessage(message,  data, payload.getProcedimiento().getAsunto().getGuid());
+		
+		return newMessage;
+	}	
 }

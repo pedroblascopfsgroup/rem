@@ -25,4 +25,6 @@ public interface CoreProjectContext {
 	Set<String> getTiposGestorGestoria();
 	
 	Set<String> getTiposGestorProcurador();
+	
+	Set<String> getEntidadesDesparalizacion();
 }

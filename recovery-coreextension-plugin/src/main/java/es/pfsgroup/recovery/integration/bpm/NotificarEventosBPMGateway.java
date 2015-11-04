@@ -13,9 +13,10 @@ import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.capgemini.pfs.termino.model.TerminoBien;
 import es.capgemini.pfs.termino.model.TerminoContrato;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
+import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJFinalizarAsuntoDto;
+import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.model.MEJRecurso;
 import es.pfsgroup.recovery.integration.TypePayload;
-import es.pfsgroup.recovery.integration.bpm.message.ParalizarBPMMsg;
 import es.pfsgroup.recovery.integration.bpm.payload.ProcedimientoPayload;
 
 public interface NotificarEventosBPMGateway {
@@ -71,18 +72,6 @@ public interface NotificarEventosBPMGateway {
 			, @Header(ProcedimientoPayload.JBPM_TRANSICION) String transicion);
 
 	@Gateway
-	void finalizarBPM(Procedimiento procedimiento
-			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo
-    		, @Header(TypePayload.HEADER_MSG_ENTIDAD) String entidad
-			);
-
-	@Gateway
-	void paralizarBPM(ParalizarBPMMsg mensaje
-			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo
-    		, @Header(TypePayload.HEADER_MSG_ENTIDAD) String entidad
-			);
-
-	@Gateway
 	void activarBPM(Procedimiento procedimiento
 			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo
     		, @Header(TypePayload.HEADER_MSG_ENTIDAD) String entidad
@@ -135,5 +124,16 @@ public interface NotificarEventosBPMGateway {
 			, @Header(TypePayload.HEADER_MSG_TYPE) String type
     		, @Header(TypePayload.HEADER_MSG_ENTIDAD) String entidad
 			);
+
+	@Gateway
+	void enviar(MEJDtoDecisionProcedimiento dtoDecisionProcedimiento
+			, @Header(TypePayload.HEADER_MSG_TYPE) String type
+    		, @Header(TypePayload.HEADER_MSG_ENTIDAD) String entidad
+    );
+
+	@Gateway
+	void finalizaAsunto(MEJFinalizarAsuntoDto finAsunto
+			, @Header(TypePayload.HEADER_MSG_TYPE) String tipoFinAsunto
+			, @Header(TypePayload.HEADER_MSG_ENTIDAD) String dbSchema);
 
 }

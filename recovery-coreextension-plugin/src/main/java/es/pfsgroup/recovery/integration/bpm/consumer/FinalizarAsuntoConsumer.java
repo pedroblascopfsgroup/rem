@@ -41,7 +41,7 @@ public class FinalizarAsuntoConsumer extends ConsumerAction<DataContainerPayload
 	}
 
 	protected String getGuidAsunto(FinAsuntoPayload payload) {
-		return String.format("EXT-%d", payload.getAsunto().getIdOrigen()); // payload.getAsunto().getGuid(); 
+		return payload.getAsunto().getGuid(); 
 	}
 
 	@Override

@@ -2059,6 +2059,10 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		DDEstadoProcedimiento ep = (DDEstadoProcedimiento)diccionarioApi.dameValorDiccionarioByCod(DDEstadoProcedimiento.class, DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO);
 		boolean error = false;
 		for (Procedimiento proc : asunto.getProcedimientos()) {
+			
+			if(proc.getEstadoProcedimiento().getCodigo().equals(ep.getCodigo())) {
+				continue;
+			}
 
 			MEJDtoDecisionProcedimiento dtoDecisionProcedimiento = new MEJDtoDecisionProcedimiento();
 

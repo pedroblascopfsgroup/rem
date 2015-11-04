@@ -173,6 +173,7 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 				ProcedimientoDerivado procedimientoDerivado = procedimientoDerivadoManager.getProcedimientoDerivadoByGuid(procedimientoDerivadoPayload.getGuid());
 				if(procedimientoDerivado != null) {
 					dtoProcedimientoDerivado.setId(procedimientoDerivado.getId());
+					dtoProcedimientoDerivado.setProcedimientoDerivado(procedimientoDerivado);
 				}
 				
 				dtoProcedimientoDerivado.setGuid(procedimientoDerivadoPayload.getGuid());
@@ -194,7 +195,6 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 				}
 				
 				dtoProcedimientoDerivado.setPersonas(lPersonas);
-				dtoProcedimientoDerivado.setId(procedimientoDerivadoPayload.getId());
 				
 				MEJProcedimiento prcPadre = extProcedimientoManager.getProcedimientoByGuid(procedimientoDerivadoPayload.getGuidProcedimientoPadre());
 				if (prcPadre==null) {

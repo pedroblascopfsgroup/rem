@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.asunto.ProcedimientoManager;
+import es.capgemini.pfs.procedimientoDerivado.model.ProcedimientoDerivado;
 
 /**
  * Dto para Procedimientos Derivados.
@@ -30,6 +31,7 @@ public class DtoProcedimientoDerivado extends WebDto {
 	private Integer plazoRecuperacion;
 	private BigDecimal saldoRecuperacion;
 	private String guid;
+	private ProcedimientoDerivado procedimientoDerivado;
 	
 	@Autowired
 	private ProcedimientoManager prcManager;
@@ -184,5 +186,13 @@ public class DtoProcedimientoDerivado extends WebDto {
 
 	public void setProcedimientoHijo(Long procedimientoHijo) {
 		this.procedimientoHijo = procedimientoHijo;
+	}
+
+	public ProcedimientoDerivado getProcedimientoDerivado() {
+		return procedimientoDerivado;
+	}
+
+	public void setProcedimientoDerivado(ProcedimientoDerivado procedimientoDerivado) {
+		this.procedimientoDerivado = procedimientoDerivado;
 	}
 }

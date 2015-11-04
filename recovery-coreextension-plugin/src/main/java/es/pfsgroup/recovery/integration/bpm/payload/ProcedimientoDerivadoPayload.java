@@ -146,8 +146,8 @@ public class ProcedimientoDerivadoPayload {
 		if(dtoDecisionProcedimiento.getDecisionProcedimiento() != null) {
 			setGuidDecisionProcedimiento(dtoDecisionProcedimiento.getDecisionProcedimiento().getGuid());
 			
-			if(dtoProcedimientoDerivado.getProcedimientoHijo() != null) {
-				setGuidProcedimientoHijo(dtoProcedimientoDerivado.getProcedimientoHijo().toString());
+			if(dtoProcedimientoDerivado.getProcedimientoDerivado() != null) {
+				setGuidProcedimientoHijo(dtoProcedimientoDerivado.getProcedimientoDerivado().getProcedimiento().getId().toString());
 			}
 			
 			setGuidProcedimientoPadre(procedimiento.getGuid());

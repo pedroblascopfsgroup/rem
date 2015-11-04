@@ -105,6 +105,8 @@ public class TurnadoDespachosController {
 	@RequestMapping
 	public String ventanaEditarLetrado(@RequestParam(value="id", required=true) Long idDespacho, 
 			Model model) {
+		EsquemaTurnado esquemaVigente = null;
+		
 		
 		DespachoExterno despacho = despachoExternoManager.getDespachoExterno(idDespacho);
 		model.addAttribute("despacho", despacho);
@@ -150,6 +152,11 @@ public class TurnadoDespachosController {
 				listTipoCalidadConcursal.add(config);
 			}			
 		}
+		try {
+			esquemaVigente = turnadoDespachosManager.getEsquemaVigente();
+		} catch (Exception exc) {
+			logger.warn("No existe esquema de turnado vigente..");
+		}
 		
 		model.addAttribute("tiposImporteLitigio", listTipoImporteLitigio);
 		model.addAttribute("tiposCalidadLitigio", listTipoCalidadLitigio);
@@ -158,6 +165,7 @@ public class TurnadoDespachosController {
 		
 		model.addAttribute("listaComunidadesAutonomas", utilDiccionarioManager.dameValoresDiccionario(DDComunidadAutonoma.class));
 		model.addAttribute("listaProvincias", utilDiccionarioManager.dameValoresDiccionario(DDProvincia.class));
+		model.addAttribute("esquemaVigente", esquemaVigente);
 		
 		return VIEW_ESQUEMA_TURNADO_LETRADO;
 	}
@@ -189,8 +197,7 @@ public class TurnadoDespachosController {
 	}
 
 	@RequestMapping
-	public String getEsquemaVigente(EsquemaTurnadoDto dto
-			, Model model) {
+	public String getEsquemaVigente(Model model) {
 		EsquemaTurnado esquema = turnadoDespachosManager.getEsquemaVigente();
 		model.addAttribute(KEY_DATA, esquema);
 		return VIEW_LETRADO_ESQUEMA_TURNADO_GET;

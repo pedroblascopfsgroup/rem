@@ -22,31 +22,26 @@
 		label="**Tipo calidad" name="turnadoConcursosTipoCalidad"
 		value="${despacho.turnadoCodigoCalidadConcursal}" readOnly="true" />		
 		
-	<c:if test="${not empty despacho.turnadoCodigoImporteLitigios or not empty despacho.turnadoCodigoImporteConcursal}">
-	page.webflow({
-		flow:'turnadodespachos/getEsquemaVigente'
-		,params: null
-		,success: function(data){
-			for(var i = 0; i < data.configuracion.length; i++) {
-				config = data.configuracion[i];
-				
-				if(config.tipo == 'LI' && config.codigo == turnadoLitigiosTipoImporte.value) {
-					turnadoLitigiosTipoImporte.value = config.descripcion;
-				}
-				else if(config.tipo == 'LC' && config.codigo == turnadoLitigiosTipoCalidad.value) {
-					turnadoLitigiosTipoCalidad.value = config.descripcion;
-				}
-				else if(config.tipo == 'CI' && config.codigo == turnadoConcursosTipoImporte.value) {
-					turnadoConcursosTipoImporte.value = config.descripcion;
-				}
-				else if(config.tipo == 'CC' && config.codigo == turnadoConcursosTipoCalidad.value) {
-					turnadoConcursosTipoCalidad.value = config.descripcion;
-				}
-			}
-    	}
-	});
-	</c:if>		
-
+	<c:if test="${not empty esquemaVigente and (not empty despacho.turnadoCodigoImporteLitigios or not empty despacho.turnadoCodigoImporteConcursal)}">
+		<c:forEach var="config" items='${esquemaVigente.configuracion}'>
+			<c:choose>
+				<c:when test="${config.tipo eq 'LI' and despacho.turnadoCodigoImporteLitigios eq config.codigo}">
+				turnadoLitigiosTipoImporte.value = <c:out value="${config.descripcion}"/>;
+				</c:when>
+				<c:when test="${config.tipo eq 'LC' and despacho.turnadoCodigoImporteLitigios eq config.codigo}">
+				turnadoLitigiosTipoCalidad.value = <c:out value="${config.descripcion}"/>;
+				</c:when>
+				<c:when test="${config.tipo eq 'CI' and despacho.turnadoCodigoImporteLitigios eq config.codigo}">
+				turnadoConcursosTipoImporte.value = <c:out value="${config.descripcion}"/>;
+				</c:when>
+				<c:when test="${config.tipo eq 'CC' and despacho.turnadoCodigoImporteLitigios eq config.codigo}">
+				turnadoConcursosTipoCalidad.value = <c:out value="${config.descripcion}"/>;
+				</c:when>
+			</c:choose>
+			
+		</c:forEach>
+	</c:if>
+	
 	<c:set var="comunidades" value="" scope="page" />
 	<c:set var="provincias" value="" scope="page" />
 	<c:forEach var="ambito" items='${ambitoGreograficoDespacho}'

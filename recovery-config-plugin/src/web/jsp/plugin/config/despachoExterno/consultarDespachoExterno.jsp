@@ -19,26 +19,25 @@
 		<%@ include file="tabGestoresDespachoExterno.jsp"%>
 	</pfslayout:includetab>
 
-	<pfslayout:includetab name="tabEsquemaTurnado">
-		<%@ include file="tabEsquemaTurnado.jsp"%>
-	</pfslayout:includetab>
-
 	<%--El tab supervisores solo lo mostramos en el caso que el despacho no sea de procuradores --%>
 	<c:if test="${despacho.tipoDespacho.codigo!=2 || despacho.tipoDespacho.codigo!=1}">
 		<pfslayout:includetab name="tabSupervisores">
 			<%@ include file="tabSupervisoresDespachoExterno.jsp"%>
 		</pfslayout:includetab>
 		<pfslayout:tabpanel name="tabsDespacho"
-			tabs="tabCabecera,tabGestores,tabSupervisores,tabEsquemaTurnado" />
+			tabs="tabCabecera,tabGestores,tabSupervisores" />
 	</c:if>
 	
 	<c:if test="${despacho.tipoDespacho.codigo==2}">
 		<pfslayout:tabpanel name="tabsDespacho"
-			tabs="tabCabecera,tabGestores,tabEsquemaTurnado" />
+			tabs="tabCabecera,tabGestores" />
 	</c:if>
 	
 	
 	<c:if test="${despacho.tipoDespacho.codigo==1}">
+		<pfslayout:includetab name="tabEsquemaTurnado">
+			<%@ include file="tabEsquemaTurnado.jsp"%>
+		</pfslayout:includetab>
 		<pfslayout:includetab name="tabProcuradores">
 			<%@ include file="tabProcuradoresDespachoExterno.jsp"%>
 		</pfslayout:includetab>	

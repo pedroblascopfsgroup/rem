@@ -45,6 +45,7 @@ import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.movimiento.model.Movimiento;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
+import es.capgemini.pfs.procedimientoDerivado.dao.ProcedimientoDerivadoDao;
 import es.capgemini.pfs.procedimientoDerivado.dto.DtoProcedimientoDerivado;
 import es.capgemini.pfs.procedimientoDerivado.model.ProcedimientoDerivado;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
@@ -135,6 +136,9 @@ public class MEJDecisionProcedimientoManager extends
 	
 	@Autowired
 	protected EXTProcedimientoManager extProcedimientoManager;
+	
+	@Autowired
+	ProcedimientoDerivadoDao procedimientoDerivadoDao; 
 
 	@BusinessOperation(overrides = ExternaBusinessOperation.BO_DEC_PRC_MGR_RECHAZAR_PROPUESTA)
 	@Transactional(readOnly = false)
@@ -581,12 +585,13 @@ public class MEJDecisionProcedimientoManager extends
                 continue;
             }
             
-            // Cambiar para que compruebe si existe el procedimiento hijo
             ProcedimientoDerivado prc = decisionProcedimiento.getProcedimientoDerivadoById(procDerivado.getId());
             if (prc != null) {
+            	procDerivado.setProcedimientoDerivado(prc);
                 continue;
             }
             prc = crearProcedimientoDerivado(procDerivado, decisionProcedimiento);
+            procDerivado.setProcedimientoDerivado(prc);
             decisionProcedimiento.getProcedimientosDerivados().add(prc);
         }
 
@@ -1044,9 +1049,11 @@ public class MEJDecisionProcedimientoManager extends
 				extProcedimientoManager.prepareGuid(decisionProcedimiento.getProcedimiento());
 			}
 			
-			if (decisionProcedimiento.getProcedimientosDerivados() != null) {
-				for (ProcedimientoDerivado procedimientoDerivado : decisionProcedimiento.getProcedimientosDerivados()) {
-					prepareGuid(procedimientoDerivado);
+			dtoDecisionProcedimiento.setGuid(decisionProcedimiento.getGuid());
+			
+			if (dtoDecisionProcedimiento.getProcedimientosDerivados() != null) {
+				for (DtoProcedimientoDerivado dtoProcedimientoDerivado : dtoDecisionProcedimiento.getProcedimientosDerivados()) {
+					prepareGuid(dtoProcedimientoDerivado);
 				}
 			}
 		}
@@ -1054,14 +1061,19 @@ public class MEJDecisionProcedimientoManager extends
 		return decisionProcedimiento;
 	}
 
-	private void prepareGuid(ProcedimientoDerivado procedimientoDerivado) {
-		
-		if (Checks.esNulo(procedimientoDerivado.getGuid())) {
-			procedimientoDerivado.setGuid(Guid.getNewInstance().toString());
-			genericDao.save(ProcedimientoDerivado.class, procedimientoDerivado);
-			
-			extProcedimientoManager.prepareGuid(procedimientoDerivado.getProcedimiento());
-		}	
+	private void prepareGuid(DtoProcedimientoDerivado dtoProcedimientoDerivado) {
+
+		ProcedimientoDerivado procedimientoDerivado = dtoProcedimientoDerivado.getProcedimientoDerivado();
+		if(procedimientoDerivado != null) {
+			if (Checks.esNulo(procedimientoDerivado.getGuid())) {
+				procedimientoDerivado.setGuid(Guid.getNewInstance().toString());
+				genericDao.save(ProcedimientoDerivado.class, procedimientoDerivado);
+				
+				extProcedimientoManager.prepareGuid(procedimientoDerivado.getProcedimiento());
+				
+				dtoProcedimientoDerivado.setGuid(procedimientoDerivado.getGuid());
+			}
+		}
 	}
 	
 	public DecisionProcedimiento getDecisionProcedimientoByGuid(String guid) {

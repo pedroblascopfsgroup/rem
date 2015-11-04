@@ -74,44 +74,44 @@ public class DecisionProcedimientoController {
 	}
 
 	@RequestMapping
-    public String aceptarPropuesta(MEJDtoDecisionProcedimiento dtoDecisionProcedimiento, 
-    		Long idProcedimiento, 
-    		@RequestParam(required=false) Long idDecision) throws Exception {
-		
+	public String aceptarPropuesta(MEJDtoDecisionProcedimiento dtoDecisionProcedimiento, 
+			Long idProcedimiento, 
+			@RequestParam(required=false) Long idDecision) throws Exception {
+
 		DecisionProcedimiento dec = null;
 		if (idDecision==null) {
-	        Procedimiento p = prcManager.getProcedimiento(idProcedimiento);
-	        dec = new DecisionProcedimiento();
-	        dec.setProcedimiento(p);
+			dec = new DecisionProcedimiento();
 		} else {
 			dec = decisionProcedimientoManager.get(idDecision);			
 		}
-        dtoDecisionProcedimiento.setDecisionProcedimiento(dec);
+
+		dtoDecisionProcedimiento.setDecisionProcedimiento(dec);
+		dtoDecisionProcedimiento.setIdProcedimiento(idProcedimiento);
 		mejDecisionProcedimientoManager.aceptarPropuesta(dtoDecisionProcedimiento);
 		return "default";
 	}
 
 	@RequestMapping
-    public String crearPropuesta(MEJDtoDecisionProcedimiento dtoDecisionProcedimiento
-    		,Long idProcedimiento
-    		,@RequestParam(required=false) Long idDecision) throws Exception {
+	public String crearPropuesta(MEJDtoDecisionProcedimiento dtoDecisionProcedimiento
+			,Long idProcedimiento
+			,Long idDecision) throws Exception {
 		DecisionProcedimiento dec = null;
 		if (idDecision==null) {
-	        Procedimiento p = prcManager.getProcedimiento(idProcedimiento);
-	        dec = new DecisionProcedimiento();
-	        dec.setProcedimiento(p);
+			dec = new DecisionProcedimiento();
 		} else {
 			dec = decisionProcedimientoManager.get(idDecision);			
 		}
-        dtoDecisionProcedimiento.setDecisionProcedimiento(dec);
-        mejDecisionProcedimientoManager.crearPropuesta(dtoDecisionProcedimiento);
+
+		dtoDecisionProcedimiento.setDecisionProcedimiento(dec);
+		dtoDecisionProcedimiento.setIdProcedimiento(idProcedimiento);
+		mejDecisionProcedimientoManager.crearPropuesta(dtoDecisionProcedimiento);
 		return "default";
 	}
 	
 	@RequestMapping
-	public String rechazarPropuesta(Long id) throws Exception {
+	public String rechazarPropuesta(Long idDecision) throws Exception {
 		MEJDtoDecisionProcedimiento dto = new MEJDtoDecisionProcedimiento();
-		DecisionProcedimiento dec = decisionProcedimientoManager.get(id);
+		DecisionProcedimiento dec = decisionProcedimientoManager.get(idDecision);
 		dto.setDecisionProcedimiento(dec);
         mejDecisionProcedimientoManager.rechazarPropuesta(dto);
 		return "default";

@@ -8,6 +8,8 @@
 --## PRODUCTO=SI
 --## Finalidad: DDL Crear vista que obtiene los ACUERDOS y las NOTIFICACIONES
 --##				faltaban 2 campos
+--## Carlos Perez dice: Se renombra el script de 078 a 085 por si se ejecuta
+--##  en secuencia desde el principio deje corregido el error
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:

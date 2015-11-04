@@ -122,16 +122,16 @@
 	var localidad_valor = '';
 	var unidadPoblacional_valor = '';
 	<c:if test="${NMBbien.localizacionActual!=null}">
-		provincia_valor = '${NMBbien.localizacionActual.provincia.descripcion}';
-		localidad_valor = '${NMBbien.localizacionActual.localidad.descripcion}';
-		unidadPoblacional_valor = '${NMBbien.localizacionActual.unidadPoblacional.descripcion}';
+		provincia_valor = '<s:message javaScriptEscape="true" text="${NMBbien.localizacionActual.provincia.descripcion}" />';
+		localidad_valor = '<s:message javaScriptEscape="true" text="${NMBbien.localizacionActual.localidad.descripcion}" />';
+		unidadPoblacional_valor = '<s:message javaScriptEscape="true" text="${NMBbien.localizacionActual.unidadPoblacional.descripcion}" />';
 	</c:if>
 	var poblacion			= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.poblacion" text="**Poblaci&oacute;n"/>', '<s:message javaScriptEscape="true" text="${NMBbien.localizacionActual.poblacion}" />',{labelStyle:labelStyle});
 	var codPostal			= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.codPostal" text="**Cod. Postal"/>','${NMBbien.localizacionActual.codPostal}',{labelStyle:labelStyle});
 	var provincia			= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.provincia" text="**Provincia"/>',provincia_valor,{labelStyle:labelStyle});
 	
 	var tipoVia				= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.tipoVia" text="**Tipo Via"/>','${NMBbien.localizacionActual.tipoVia.descripcion}',{labelStyle:labelStyle});
-	var nombreVia			= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.nombreVia" text="**Nombre Via"/>','${NMBbien.localizacionActual.nombreVia}',{labelStyle:labelStyle});
+	var nombreVia			= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.nombreVia" text="**Nombre Via"/>','<s:message javaScriptEscape="true" text="${NMBbien.localizacionActual.nombreVia}" />',{labelStyle:labelStyle});
 	var numeroDomicilio		= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.numeroDomicilio" text="**Num. Domicilio"/>','${NMBbien.localizacionActual.numeroDomicilio}',{labelStyle:labelStyle});
 	var portal				= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.portal" text="**Portal"/>','${NMBbien.localizacionActual.portal}',{labelStyle:labelStyle});
 	var bloque				= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.bloque" text="**Bloque"/>','${NMBbien.localizacionActual.bloque}',{labelStyle:labelStyle});

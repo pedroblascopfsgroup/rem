@@ -37,6 +37,11 @@
 	<c:if test="${usuario.usuarioExterno == true }">
 		<pfslayout:tabpanel name="tabsUsuario" tabs="tabCabecera,tabPerfiles,tabGrupos"/>
 	</c:if>
+	
+	<sec:authorize ifAllGranted="ROLE_DESACTIVAR_DEPENDENCIA_USU_EXTERNO">
+		<pfslayout:tabpanel name="tabsUsuario" tabs="tabCabecera,tabPerfiles,tabDespachos,tabGrupos"/>
+	</sec:authorize>
+	
 
 	
 	page.add(tabsUsuario);

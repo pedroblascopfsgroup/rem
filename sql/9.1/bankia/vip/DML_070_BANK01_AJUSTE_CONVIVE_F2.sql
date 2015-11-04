@@ -1,0 +1,175 @@
+--/*
+--##########################################
+--## AUTOR=DAVID GONZÁLEZ
+--## FECHA_CREACION=20151014
+--## ARTEFACTO=
+--## VERSION_ARTEFACTO=
+--## INCIDENCIA_LINK=BKREC-849
+--## PRODUCTO=NO
+--## Finalidad: DML
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+
+	V_SELECT VARCHAR2(4000 CHAR); -- SENTENCIA DE SELECT PARA CONSULTAR EXISTENCIA (ANTERIORMENTE V_SQL)
+	V_SENTENCIA VARCHAR2(32000 CHAR); -- SENTENCIA A EJECUTAR (ANTERIORMENTE V_MSQL)
+	V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- CONFIGURACIÓN ESQUEMA
+	V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- CONFIGURACIÓN ESQUEMA MASTER
+	V_NUM_TABLAS NUMBER(16); -- ALOJA EL RETORNO DE LA SENTENCIA SELECT
+	ERR_NUM NUMBER(25); -- REGISTRA NUMERO DE ERROR DE LOS ERRORES EN EL SCRIPT
+	ERR_MSG VARCHAR2(1024 CHAR); -- REGISTRA MENSAJE DE ERRORES EN EL SCRIPT
+	
+BEGIN
+
+	 -- BUSCA SI EXISTE EL CODIGO DE GESTOR -> GESTCDD, SI NO EXISTE, LO CREA [OK]
+	 
+	V_SELECT := ' SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = ''GESTCDD''';
+	
+    EXECUTE IMMEDIATE V_SELECT INTO V_NUM_TABLAS;    
+    DBMS_OUTPUT.PUT_LINE('[INFO] Verificando existencia del registro....1'); 
+    
+    IF V_NUM_TABLAS > 0 THEN            
+      DBMS_OUTPUT.put_line('[INFO] Ya existe el registro');
+    ELSE  
+    
+		V_SENTENCIA := 'insert into '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR tge (tge.DD_TGE_ID, tge.DD_TGE_CODIGO, tge.DD_TGE_DESCRIPCION, tge.DD_TGE_DESCRIPCION_LARGA, tge.DD_TGE_EDITABLE_WEB, tge.FECHACREAR, tge.USUARIOCREAR)
+		values ('||V_ESQUEMA_M||'.s_DD_TGE_TIPO_GESTOR.nextval, ''GESTCDD'', ''Gestor cierre de deuda'', ''Gestor cierre de deuda'', 1, sysdate, ''SAG'')';
+		EXECUTE IMMEDIATE V_SENTENCIA ; 
+        DBMS_OUTPUT.put_line('[INFO] Se ha añadido el registro');
+        
+    END IF ;
+    
+    
+	-- BUSCA SI EXISTE UN TIPO DE GESTOR DE PROPIEDAD CON EL CODIGO DE GESTOR 'GESTCDD' Y EL VALOR DE TIPO GESTOR PROPIEDAD 'GESTESP', SI NO LO CREA [OK]
+	
+	V_SELECT := ' SELECT COUNT(1) FROM '||V_ESQUEMA||'.TGP_TIPO_GESTOR_PROPIEDAD WHERE DD_TGE_ID = (select dd_tge_id from '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR where dd_tge_codigo = ''GESTCDD'') AND TGP_VALOR= ''GESTESP''';
+    
+    EXECUTE IMMEDIATE V_SELECT INTO V_NUM_TABLAS;    
+    DBMS_OUTPUT.PUT_LINE('[INFO] Verificando existencia del registro....2'); 
+    
+    IF V_NUM_TABLAS > 0 THEN            
+      DBMS_OUTPUT.put_line('[INFO] Ya existe el registro');
+    ELSE  
+    
+        V_SENTENCIA := 'insert into '||V_ESQUEMA||'.TGP_TIPO_GESTOR_PROPIEDAD tgp (tgp.TGP_ID, dd_tge_id, tgp_clave, tgp_valor, usuariocrear, fechacrear)
+        values 
+        ('||V_ESQUEMA||'.s_TGP_TIPO_GESTOR_PROPIEDAD.nextval, (select dd_tge_id from '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR where dd_tge_codigo = ''GESTCDD''),
+         ''DES_VALIDOS'', ''GESTESP'',
+        ''SAG'', sysdate)';
+        EXECUTE IMMEDIATE V_SENTENCIA ; 
+        DBMS_OUTPUT.put_line('[INFO] Se ha añadido el registro');
+        
+	END IF;
+	
+	
+	-- BUSCA SI EXISTE UN DESPACHO EXTERNO QUE SEA 'BP01 ACCENTURE', SI NO LO CREA [OK]
+	
+	V_SELECT := ' SELECT COUNT(1) FROM '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO WHERE DES_DESPACHO = ''BPO1 ACCENTURE''';
+	
+    EXECUTE IMMEDIATE V_SELECT INTO V_NUM_TABLAS;    
+    DBMS_OUTPUT.PUT_LINE('[INFO] Verificando existencia del registro....3'); 
+    
+    IF V_NUM_TABLAS > 0 THEN            
+      DBMS_OUTPUT.put_line('[INFO] Ya existe el registro');
+    ELSE   
+    
+        V_SENTENCIA := 'Insert into '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO (DES_ID,DES_DESPACHO,DES_TIPO_VIA,DES_DOMICILIO,DES_DOMICILIO_PLAZA,DES_CODIGO_POSTAL,DES_PERSONA_CONTACTO,DES_TELEFONO2,DES_TELEFONO1,VERSION,USUARIOCREAR,FECHACREAR,USUARIOMODIFICAR,FECHAMODIFICAR,USUARIOBORRAR,FECHABORRAR,BORRADO,ZON_ID,DD_TDE_ID,DES_CODIGO) 
+        values 
+        ('||V_ESQUEMA||'.S_DES_DESPACHO_EXTERNO.NEXTVAL,''BPO1 ACCENTURE'',null,null,null,null,null,null,null,0,''SAG'',SYSDATE,null,null,null,null,0,12501,1,null)';
+        EXECUTE IMMEDIATE V_SENTENCIA ; 
+	DBMS_OUTPUT.put_line('[INFO] Se ha añadido el registro');
+        
+    END IF;
+    
+    
+    -- BUSCA SI EXISTE UN DESPACHO EXTERNO QUE SEA 'HAYA GESTO ESPECIALIZADO', SI NO LO CREA [OK]
+    
+	V_SELECT := ' SELECT COUNT(1) FROM '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO WHERE DES_DESPACHO = ''HAYA GESTOR ESPECIALIZADO''';
+	
+    EXECUTE IMMEDIATE V_SELECT INTO V_NUM_TABLAS;    
+    DBMS_OUTPUT.PUT_LINE('[INFO] Verificando existencia del registro....4'); 
+    
+    IF V_NUM_TABLAS > 0 THEN            
+      DBMS_OUTPUT.put_line('[INFO] Ya existe el registro');
+    ELSE   
+    
+        V_SENTENCIA := 'Insert into '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO (DES_ID,DES_DESPACHO,DES_TIPO_VIA,DES_DOMICILIO,DES_DOMICILIO_PLAZA,DES_CODIGO_POSTAL,DES_PERSONA_CONTACTO,DES_TELEFONO2,DES_TELEFONO1,VERSION,USUARIOCREAR,FECHACREAR,USUARIOMODIFICAR,FECHAMODIFICAR,USUARIOBORRAR,FECHABORRAR,BORRADO,ZON_ID,DD_TDE_ID,DES_CODIGO) 
+        values 
+        ('||V_ESQUEMA||'.S_DES_DESPACHO_EXTERNO.NEXTVAL,''HAYA GESTOR ESPECIALIZADO'',null,null,null,null,null,null,null,0,''SAG'',SYSDATE,null,null,null,null,0,12501,1,null)';
+        EXECUTE IMMEDIATE V_SENTENCIA ; 
+	DBMS_OUTPUT.put_line('[INFO] Se ha añadido el registro');
+        
+    END IF;
+    
+    
+    -- BUSCA SI EXISTE UN USUARIO QUE SEA 'BP01ACCEN', SI NO LO CREA [OK]
+    
+	V_SELECT := ' SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE usu_username = ''BPO1ACCEN''';
+	
+    EXECUTE IMMEDIATE V_SELECT INTO V_NUM_TABLAS;    
+    DBMS_OUTPUT.PUT_LINE('[INFO] Verificando existencia del registro....5'); 
+    
+    IF V_NUM_TABLAS > 0 THEN            
+      DBMS_OUTPUT.put_line('[INFO] Ya existe el registro');
+    ELSE   
+    
+        V_SENTENCIA := 'Insert into '||V_ESQUEMA_M||'.USU_USUARIOS (USU_ID,ENTIDAD_ID,USU_USERNAME,USU_PASSWORD,USU_NOMBRE,USU_APELLIDO1,USU_APELLIDO2,USU_TELEFONO,USU_MAIL,VERSION,USUARIOCREAR,FECHACREAR,USUARIOMODIFICAR,FECHAMODIFICAR,USUARIOBORRAR,FECHABORRAR,BORRADO,USU_EXTERNO,USU_FECHA_VIGENCIA_PASS,USU_GRUPO,USU_FECHA_EXTRACCION,USU_BAJA_LDAP) 
+        values ('||V_ESQUEMA_M||'.s_usu_usuarios.nextval,1,''BPO1ACCEN'',''1234'',''GRUPO - BPO1 ACCETURE'',null,null,null,null,0,''SAG'',sysdate,1,null,1)';
+        EXECUTE IMMEDIATE V_SENTENCIA ; 
+	DBMS_OUTPUT.put_line('[INFO] Se ha añadido el registro');
+        
+    END IF;
+    
+    
+    -- BUSCA SI HAY ALGUNA FILA QUE REFERENCIE A UN USUARIO DESPACHO CON UN ID QUE EXISTA EN BANKMASTER.USU_USUARIOS CON NOMBRE 'BP01ACCEN' [OK]
+    
+	V_SELECT := ' SELECT COUNT(1) FROM '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS WHERE usu_id = (select usu_id from '||V_ESQUEMA_M||'.USU_USUARIOS WHERE usu_username = ''BPO1ACCEN'')';
+	
+    EXECUTE IMMEDIATE V_SELECT INTO V_NUM_TABLAS;    
+    DBMS_OUTPUT.PUT_LINE('[INFO] Verificando existencia del registro....6'); 
+    
+    IF V_NUM_TABLAS > 0 THEN            
+      DBMS_OUTPUT.put_line('[INFO] Ya existe el registro');
+    ELSE   
+    
+        V_SENTENCIA := 'Insert into '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS (USD_ID,USU_ID,DES_ID,USD_GESTOR_DEFECTO,USD_SUPERVISOR,VERSION,USUARIOCREAR,FECHACREAR,USUARIOMODIFICAR,FECHAMODIFICAR,USUARIOBORRAR,FECHABORRAR,BORRADO) 
+        values ('||V_ESQUEMA||'.S_USD_USUARIOS_DESPACHOS.NEXTVAL,30807,(SELECT DES_ID FROM '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO WHERE DES_DESPACHO = ''HAYA GESTOR ESPECIALIZADO''),1,0,0,''SAG'',SYSDATE,null,null,null,null,0)';
+        EXECUTE IMMEDIATE V_SENTENCIA ; 
+	DBMS_OUTPUT.put_line('[INFO] Se ha añadido el registro');
+        
+    END IF;
+    
+    
+    COMMIT;
+
+	DBMS_OUTPUT.PUT_LINE('[FIN]: Script ejecutado correctamente');
+
+
+
+	EXCEPTION
+	
+     WHEN OTHERS THEN
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
+
+          ROLLBACK;
+          RAISE;          
+
+	END;
+	/
+

@@ -779,4 +779,5 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	public DocumentoPCO getDocumentoPCOById(Long idDocPCO){
 		return documentoPCODao.get(idDocPCO);
 	}
- }
+
+}

@@ -51,17 +51,16 @@ BEGIN
 
     --** Creamos la tabla
 
-    V_MSQL := 'CREATE GLOBAL TEMPORARY TABLE ' ||v_esquema||'.TMP_ARQ_RECOBRO 
-               (
-		ARQ_ID         NUMBER(16)
-		,ARQ_PRIORIDAD  NUMBER(16)
-		,ARQ_NOMBRE     VARCHAR2(100 Char)        
-               ) on commit preserve rows';
+    V_MSQL := 'CREATE TABLE '||v_esquema||'.TMP_ARQ_RECOBRO 
+               (ARQ_ID         NUMBER(16)
+		       ,ARQ_PRIORIDAD  NUMBER(16)
+		       ,ARQ_NOMBRE     VARCHAR2(100 Char)        
+               ) nologging';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.TMP_ARQ_RECOBRO... Tabla creada');
     
      --** Creamos Indices
-    V_MSQL := 'CREATE INDEX IDX_TMP_ARQ_RECOBRO_1 ON '||v_esquema||'.TMP_ARQ_RECOBRO(ARQ_ID)';
+    V_MSQL := 'CREATE INDEX IDX_TMP_ARQ_RECOBRO_1 ON '||v_esquema||'.TMP_ARQ_RECOBRO(ARQ_ID) nologging';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.IDX_TMP_ARQ_RECOBRO_1... Indice creado');
 

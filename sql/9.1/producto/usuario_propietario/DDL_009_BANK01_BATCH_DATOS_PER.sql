@@ -53,7 +53,7 @@ BEGIN
 
     --** Creamos la tabla
 
-    V_MSQL := 'CREATE GLOBAL TEMPORARY TABLE ' ||v_esquema||'.BATCH_DATOS_PER
+    V_MSQL := 'CREATE TABLE ' ||v_esquema||'.BATCH_DATOS_PER
                (
 		PER_ID    NUMBER (16)
 		,PER_NOMBRE    VARCHAR2 (100 Char)
@@ -62,17 +62,17 @@ BEGIN
 		,PER_DEUDA_IRREGULAR    NUMBER
 		,PER_RIESGO_DIRECTO    NUMBER
 		,PER_RIESGO_INDIRECTO    NUMBER
-               ) on commit preserve rows';
+               ) nologging';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.BATCH_DATOS_PER... Tabla creada');
 
 
     --** Creamos Indices
  
-    V_MSQL := 'CREATE INDEX IDX_BATCH_DATOS_PER_1 ON '||v_esquema||'.BATCH_DATOS_PER(PER_DEUDA_IRREGULAR)';
+    V_MSQL := 'CREATE INDEX IDX_BATCH_DATOS_PER_1 ON '||v_esquema||'.BATCH_DATOS_PER(PER_DEUDA_IRREGULAR) nologging';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.IDX_BATCH_DATOS_PER_1... Indice creado');
-    V_MSQL := 'CREATE INDEX IDX_BATCH_DATOS_PER_2 ON '||v_esquema||'.BATCH_DATOS_PER(PER_ID)';
+    V_MSQL := 'CREATE INDEX IDX_BATCH_DATOS_PER_2 ON '||v_esquema||'.BATCH_DATOS_PER(PER_ID) nologging';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.IDX_BATCH_DATOS_PER_2... Indice creado');
    

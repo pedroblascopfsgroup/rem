@@ -52,7 +52,7 @@ BEGIN
 
     --** Creamos la tabla
 
-    V_MSQL := 'CREATE GLOBAL TEMPORARY TABLE ' ||v_esquema||'.BATCH_RCF_ENTRADA 
+    V_MSQL := 'CREATE TABLE ' ||v_esquema||'.BATCH_RCF_ENTRADA 
                (
 		RCF_ESQ_ID NUMBER (16)
 		,RCF_ESQ_PLAZO INTEGER
@@ -119,20 +119,20 @@ BEGIN
 		,RCF_SUR_POSICION INTEGER
 		,RCF_SUR_PORCENTAJE NUMBER (16)
 		,RCF_SUR_BORRADO NUMBER (1)     
-               ) on commit preserve rows';
+               ) nologging';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.BATCH_RCF_ENTRADA... Tabla creada');
 
 
     --** Creamos Indices
  
-    V_MSQL := 'CREATE INDEX IDX_BATCH_RCF_ENTRADA_CAR ON '||v_esquema||'.BATCH_RCF_ENTRADA (RCF_CAR_ID)';
+    V_MSQL := 'CREATE INDEX IDX_BATCH_RCF_ENTRADA_CAR ON '||v_esquema||'.BATCH_RCF_ENTRADA (RCF_CAR_ID) nologging';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.IDX_BATCH_RCF_ENTRADA_CAR... Indice creado');
-    V_MSQL := 'CREATE INDEX IDX_BATCH_RCF_ENTRADA_SCA ON '||v_esquema||'.BATCH_RCF_ENTRADA (RCF_SCA_ID)';
+    V_MSQL := 'CREATE INDEX IDX_BATCH_RCF_ENTRADA_SCA ON '||v_esquema||'.BATCH_RCF_ENTRADA (RCF_SCA_ID) nologging';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.IDX_BATCH_RCF_ENTRADA_SCA... Indice creado');
-    V_MSQL := 'CREATE BITMAP INDEX IDX_BATCH_RCF_ENTRADA_EES ON '||v_esquema||'.BATCH_RCF_ENTRADA (RCF_DD_EES_CODIGO)';
+    V_MSQL := 'CREATE BITMAP INDEX IDX_BATCH_RCF_ENTRADA_EES ON '||v_esquema||'.BATCH_RCF_ENTRADA (RCF_DD_EES_CODIGO) nologging';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.IDX_BATCH_RCF_ENTRADA_EES... Indice creado');
 

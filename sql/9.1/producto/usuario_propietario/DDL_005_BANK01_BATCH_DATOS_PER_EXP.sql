@@ -52,20 +52,20 @@ BEGIN
 
     --** Creamos la tabla
 
-    V_MSQL := 'CREATE GLOBAL TEMPORARY TABLE ' ||v_esquema||'.BATCH_DATOS_PER_EXP 
+    V_MSQL := 'CREATE TABLE ' ||v_esquema||'.BATCH_DATOS_PER_EXP 
                (
 		EXP_ID    NUMBER (16)
 		,PER_ID    NUMBER (16)
-               ) on commit preserve rows';
+               ) nologging';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.BATCH_DATOS_PER_EXP... Tabla creada');
 
     --** Creamos Indices
  
-    V_MSQL := 'CREATE INDEX IDX_BATCH_DATOS_PER_EXP_1 ON '||v_esquema||'.BATCH_DATOS_PER_EXP (EXP_ID)';
+    V_MSQL := 'CREATE INDEX IDX_BATCH_DATOS_PER_EXP_1 ON '||v_esquema||'.BATCH_DATOS_PER_EXP (EXP_ID) nologging';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.IDX_BATCH_DATOS_PER_EXP_1... Indice creado');
-    V_MSQL := 'CREATE INDEX IDX_BATCH_DATOS_PER_EXP_2 ON '||v_esquema||'.BATCH_DATOS_PER_EXP (PER_ID)';
+    V_MSQL := 'CREATE INDEX IDX_BATCH_DATOS_PER_EXP_2 ON '||v_esquema||'.BATCH_DATOS_PER_EXP (PER_ID) nologging';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.IDX_BATCH_DATOS_PER_EXP_2... Indice creado');
 

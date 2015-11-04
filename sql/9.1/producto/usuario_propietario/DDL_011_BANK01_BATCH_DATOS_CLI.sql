@@ -53,11 +53,11 @@ BEGIN
 
     --** Creamos la tabla
 
-    V_MSQL := 'CREATE GLOBAL TEMPORARY TABLE ' ||v_esquema||'.BATCH_DATOS_CLI
+    V_MSQL := 'CREATE TABLE ' ||v_esquema||'.BATCH_DATOS_CLI
                (
 		CLI_ID    NUMBER (16)
 		,PER_ID    NUMBER (16)
-               ) on commit preserve rows';
+               ) nologging';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.BATCH_DATOS_CLI... Tabla creada');
    

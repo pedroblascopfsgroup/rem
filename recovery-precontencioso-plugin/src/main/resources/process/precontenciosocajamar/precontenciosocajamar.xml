@@ -241,23 +241,53 @@
 
 	<state name="PCO_RevisarExpedientePreparar">
 		<transition to="PCO_RevisarExpedientePrepararDecision" name="avanzaBPM"></transition>
+		<event type="node-enter">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
+			</action>
+		</event>
 	</state>
 
 	<state name="PCO_AsignarGestorLiquidacion">
 		<transition to="PCO_PrepararExpediente" name="avanzaBPM"></transition>
+		<event type="node-enter">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
+			</action>
+		</event>
 	</state>
 
 	<state name="PCO_RevisarExpedienteAsignarLetrado">
 		<transition to="PCO_RevisarExpedienteAsignarLetradoDecision" name="avanzarBPM"></transition>
+		<event type="node-enter">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
+			</action>
+		</event>
 	</state>
 
-	<decision name="PCO_RevisarExpedientePrepararDecision">
+	<decision name="PCO_RevisarExpedientePrepararDecision" expression="#{PCO_RevisarExpedientePrepararDecision}">
 		<transition to="PCO_AsignarGestorLiquidacion" name="judicializar"></transition>
-		<transition to="Fin" name="avanzaBPM"></transition>
+		<transition to="Fin" name="fin"></transition>
 	</decision>
 
-	<decision name="PCO_RevisarExpedienteAsignarLetradoDecision">
-		<transition to="PCO_RegistrarAceptacionPost" name="avanzarBPM"></transition>
+	<decision name="PCO_RevisarExpedienteAsignarLetradoDecision" expression="#{PCO_RevisarExpedienteAsignarLetradoDecision}">
+		<transition to="PCO_RegistrarAceptacionPost" name="registrar"></transition>
 		<transition to="PCO_PrepararExpediente" name="reabreExp"></transition>
 	</decision>
 

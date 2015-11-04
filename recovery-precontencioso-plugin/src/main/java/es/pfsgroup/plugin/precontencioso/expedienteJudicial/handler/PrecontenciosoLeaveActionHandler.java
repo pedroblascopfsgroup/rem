@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.jbpm.graph.exe.ExecutionContext;
@@ -30,10 +29,7 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 	 */
 	private static final long serialVersionUID = -5583230911255732281L;
 	
-	private static final String TAREA_REGISTRAR_TOMA_DEC_COMBO_PROC_PROPUESTO = "proc_propuesto";
 	private static final String TAREA_REGISTRAR_TOMA_DEC_COMBO_PROC_INICIAR = "proc_a_iniciar";
-
-	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
 	@Autowired
 	GenericABMDao genericDao;
@@ -138,7 +134,13 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 			executor.execute("plugin.precontencioso.inicializarPco", prc);
 			
 		} else if (PrecontenciosoBPMConstants.PCO_DecTipoProcAutomatica.equals(tex.getTareaProcedimiento().getCodigo())) {
+	
+		} else if (PrecontenciosoBPMConstants.PCO_RevisarExpedientePreparar.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
+		} else if (PrecontenciosoBPMConstants.PCO_AsignarGestorLiquidacion.equals(tex.getTareaProcedimiento().getCodigo())) {
+			
+		} else if (PrecontenciosoBPMConstants.PCO_RevisarExpedienteAsignarLetrado.equals(tex.getTareaProcedimiento().getCodigo())) {
+		
 		}
 		
 	}

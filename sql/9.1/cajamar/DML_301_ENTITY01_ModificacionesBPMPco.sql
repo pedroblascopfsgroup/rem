@@ -16,8 +16,7 @@
 	
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
-SET DEFINE OFF;
-
+SET DEFINE OFF;	
 
 DECLARE
     V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
@@ -34,11 +33,11 @@ DECLARE
     TYPE T_TIPO_TAP IS TABLE OF VARCHAR2(2000);
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(    
-       T_TIPO_TAP('PCO','PCO_RevisarExpedientePreparar',null,null,null,null,null,'0','Revisar expediente a preparar',
+       T_TIPO_TAP('PCO','PCO_RevisarExpedientePreparar','plugin/precontencioso/tramite/revisarExpedientePreparar',null,null,null,null,'0','Revisar expediente a preparar',
             '0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_PREDOC',null,'PCO_SUP',null),
        T_TIPO_TAP('PCO','PCO_AsignarGestorLiquidacion',null,null,null,null,null,'0','Asignar gestor de liquidación',
             '0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_SUP',null,'PCO_SUP',null),
-       T_TIPO_TAP('PCO','PCO_RevisarExpedienteAsignarLetrado',null,null,null,null,null,'0','Revisar expediente y Asignar letrado',
+       T_TIPO_TAP('PCO','PCO_RevisarExpedienteAsignarLetrado','plugin/precontencioso/tramite/revisarExpedienteAsignarLetrado',null,null,null,null,'0','Revisar expediente y Asignar letrado',
             '0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_GEST',null,'PREDOC',null)
     ); 
     V_TMP_TIPO_TAP T_TIPO_TAP;
@@ -57,7 +56,7 @@ DECLARE
     TYPE T_TIPO_TFI IS TABLE OF VARCHAR2(5000);
     TYPE T_ARRAY_TFI IS TABLE OF T_TIPO_TFI;
     V_TIPO_TFI T_ARRAY_TFI := T_ARRAY_TFI(
-        T_TIPO_TFI('PCO_RevisarExpedientePreparar','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Antes de dar por terminada esta tarea, deberá realizar un estudio de las operaciones incluidas en el asunto y de la solvencia de los deudores para determinar si la recuperación de la deuda se hará por la vía judicial o a través de una agencia externa.</p><p style="margin-bottom: 10px">Para cada uno de los contratos incluidos en el expediente deberá informar en la ficha del contrato del riesgo operacional asociado al mismo. En caso de que no se ajuste a ninguno de los posibles deberá seleccionar “No procede” en la lista despegable.</p><p style="margin-bottom: 10px">En el campo “Fecha fin revisión” deberá indicar la fecha en la que finaliza este estudio.</p><p style="margin-bottom: 10px">En caso de que decida asignar el asunto a una agencia externa, deberá indicarlo en el Terminal Financiero de la entidad y seleccionar “SI” en el campo “Agencia externa”. En caso contrario deberá indicar, en la pestaña “Cabecera” del expediente, el tipo de actuación a iniciar una vez finalizada la preparación del expediente judicial.</p><p style="margin-bottom: 10px">En caso de considerar necesaria la paralización de la preparación del expediente judicial, puede prorrogar esta tarea hasta que estime oportuno a través de la solicitud de una prórroga. De igual modo, en caso de encontrarse en negociación de un acuerdo extrajudicial, regístrelo a través de la pestaña Acuerdos de la ficha del asunto correspondiente.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en este punto.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla y si ha marcado No en “Agencia externa”, se lanzará la tarea “Asignar gestor de liquidación. En caso contrario, finalizará el trámite</p></div>',null,null,null,null,'0','DD'),
+        T_TIPO_TFI('PCO_RevisarExpedientePreparar','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Antes de dar por terminada esta tarea, deberá realizar un estudio de las operaciones incluidas en el asunto y de la solvencia de los deudores para determinar si la recuperación de la deuda se hará por la vía judicial o a través de una agencia externa.</p><p style="margin-bottom: 10px">Para cada uno de los contratos incluidos en el expediente deberá informar en la ficha del contrato del riesgo operacional asociado al mismo. En caso de que no se ajuste a ninguno de los posibles deberá seleccionar “No procede” en la lista despegable.</p><p style="margin-bottom: 10px">En el campo “Fecha fin revisión” deberá indicar la fecha en la que finaliza este estudio.</p><p style="margin-bottom: 10px">En caso de que decida asignar el asunto a una agencia externa, deberá indicarlo en el Terminal Financiero de la entidad y seleccionar “SI” en el campo “Agencia externa”.En caso contrario deberá indicar en el selector de procedimiento el tipo de procedimiento a iniciar una vez termine la preparación del expediente judicial.</p><p style="margin-bottom: 10px">En caso de considerar necesaria la paralización de la preparación del expediente judicial, puede prorrogar esta tarea hasta que estime oportuno a través de la solicitud de una prórroga. De igual modo, en caso de encontrarse en negociación de un acuerdo extrajudicial, regístrelo a través de la pestaña Acuerdos de la ficha del asunto correspondiente.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en este punto.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla y si ha marcado No en “Agencia externa”, se lanzará la tarea “Asignar gestor de liquidación. En caso contrario, finalizará el trámite</p></div>',null,null,null,null,'0','DD'),
 		T_TIPO_TFI('PCO_RevisarExpedientePreparar','1','date','fecha_fin_revision','Fecha fin revisión','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),        
 		T_TIPO_TFI('PCO_RevisarExpedientePreparar','2','combo','agencia_externa','Agencia externa','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','DD'),
 		T_TIPO_TFI('PCO_RevisarExpedientePreparar','3','combo','proc_iniciar','Procedimiento iniciar','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'TipoProcedimiento','0','DD'),
@@ -68,16 +67,25 @@ DECLARE
 		
 		T_TIPO_TFI('PCO_RevisarExpedienteAsignarLetrado','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Para dar por finalizada esta tarea deberá añadir el letrado al que asigna el expediente judicial en la pestaña “Gestores” del expediente.</p><p style="margin-bottom: 10px">En el campo Fecha, indicar la fecha en la completa la tarea.</p><p style="margin-bottom: 10px">En el campo Letrado indicar el nombre del letrado asignado al asunto y en el campo “Motivo de asignación a Letrado” deberá elegir una de entre las opciones disponibles.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en este punto.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla:<ul><li>En caso de que no esté conforme con la finalización del expediente, la pestaña de Preparación Documental volverá a estar disponible y el Gestor de Documentación deberá realizar los cambios que le indique el supervisor.</li><li>En caso de que haya indicado que está conforme con la finalización del expediente, se lanzará la tarea “Registrar aceptación asunto” al letrado asignado.</li></ul></p></div>',null,null,null,null,'0','DD'),
 		T_TIPO_TFI('PCO_RevisarExpedienteAsignarLetrado','1','date','fecha_revision','Fecha de revisión','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
-		T_TIPO_TFI('PCO_RevisarExpedienteAsignarLetrado','2','combo','motivo_asignacion','Motivo de asignación a Letrado','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDMotivoAsignacion','0','DD'),		
-		T_TIPO_TFI('PCO_RevisarExpedienteAsignarLetrado','3','textarea','observaciones','Observaciones',null,null,null,null,'0','DD')
+		T_TIPO_TFI('PCO_RevisarExpedienteAsignarLetrado','2','combo','motivo_asignacion','Motivo de asignación a Letrado',null,null,null,'DDMotivoAsignacion','0','DD'),		
+		T_TIPO_TFI('PCO_RevisarExpedienteAsignarLetrado','3','combo','expediente_correcto','Expediente correcto','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','DD'),		
+		T_TIPO_TFI('PCO_RevisarExpedienteAsignarLetrado','4','textarea','observaciones','Observaciones',null,null,null,null,'0','DD')
     ); 
     V_TMP_TIPO_TFI T_TIPO_TFI;
+    
+    -- Actualización de script de decision de las tareas
+    TYPE T_LINEA3 IS TABLE OF VARCHAR2(4000);
+    TYPE T_ARRAY_LINEA3 IS TABLE OF T_LINEA3;
+    V_TIPO_LINEA3 T_ARRAY_LINEA3 := T_ARRAY_LINEA3(
+        T_LINEA3('PCO_PrepararExpediente', 'dameTipoAsunto()')
+    ); 
+    V_TMP_TIPO_LINEA3 T_LINEA3;
     
 BEGIN	
 
     -- Modificar bpm del TPO
     V_TABLENAME := 'DD_TPO_TIPO_PROCEDIMIENTO';
-    V_MSQL := 'UPDATE ' || V_ESQUEMA||'.' || V_TABLENAME ||  q'[ SET DD_TPO_XML_JBPM='precontenciosohaya' WHERE DD_TPO_CODIGO='PCO' ]';
+    V_MSQL := 'UPDATE ' || V_ESQUEMA||'.' || V_TABLENAME ||  q'[ SET DD_TPO_XML_JBPM='precontenciosocajamar' WHERE DD_TPO_CODIGO='PCO' ]';
     DBMS_OUTPUT.PUT_LINE('ACTUALIZANDO : ' || V_ESQUEMA||'.' || V_TABLENAME || ' A DD_TPO_XML_JBPM=''precontenciosocajamar''');
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
@@ -173,6 +181,26 @@ BEGIN
         END IF;
     END LOOP;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'.' || V_TABLENAME || '... Campos');
+    
+    -- Modificación de campo de decisión de PCO_PrepararExpediente
+    V_TABLENAME := 'TAP_TAREA_PROCEDIMIENTO';
+    DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'.' || V_TABLENAME || '... Empezando a actualizar campo decisión de tareas');
+    FOR I IN V_TIPO_LINEA3.FIRST .. V_TIPO_LINEA3.LAST
+      LOOP
+        V_TMP_TIPO_LINEA3 := V_TIPO_LINEA3(I);
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.' || V_TABLENAME || ' WHERE TAP_CODIGO = '''||TRIM(V_TMP_TIPO_LINEA3(1))||'''';
+        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;      
+        IF V_NUM_TABLAS > 0 THEN        
+            V_MSQL := 'UPDATE  '||V_ESQUEMA||'.' || V_TABLENAME || 
+                ' SET TAP_SCRIPT_DECISION=''' || TRIM(V_TMP_TIPO_LINEA3(2)) || 
+                '''  WHERE TAP_CODIGO='''|| TRIM(V_TMP_TIPO_LINEA3(1)) ||'''';
+            EXECUTE IMMEDIATE V_MSQL;
+            DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.' || V_TABLENAME || ' ACTUALIZACION DE TAP_SCRIPT_DECISION DE TAP_CODIGO = '''||TRIM(V_TMP_TIPO_LINEA3(1))||'''');
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('HAY QUE INSERTAR ESTA FILA: '  || V_TMP_TIPO_LINEA3(1));
+        END IF;
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'.' || V_TABLENAME || '.');
 
     COMMIT;
    

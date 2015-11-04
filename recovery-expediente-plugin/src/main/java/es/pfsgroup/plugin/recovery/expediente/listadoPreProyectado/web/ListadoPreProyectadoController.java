@@ -98,8 +98,11 @@ public class ListadoPreProyectadoController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getListPreproyectadoCnt(ListadoPreProyectadoDTO dto, ModelMap map) {
-		Page listadoCnt = listadoPreProyectado.getListPreproyectadoCntPaginated(dto);
+		List<VListadoPreProyectadoCnt> listadoCnt = listadoPreProyectado.getListPreproyectadoCntPaginated(dto);
 		map.put("listadoPreProyectadoCnt", listadoCnt);
+		
+		int registrosTotales = listadoPreProyectado.getCountListadoPreProyectadoCntPaginated(dto);
+		map.put("totalCount", registrosTotales);
 		return LISTADO_PREPROYECTADO_CNT_JSON;
 	}
 

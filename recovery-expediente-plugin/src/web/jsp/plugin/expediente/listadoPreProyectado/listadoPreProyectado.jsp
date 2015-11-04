@@ -428,7 +428,7 @@
 	});
 	
 	var contratosCM = new Ext.grid.ColumnModel([
-		{dataIndex: 'cntId',sortable:false, hidden: true}
+		{header: 'Id', dataIndex: 'cntId',sortable:false, hidden: true}
 		,{header: '<s:message code="preproyectado.contratos.nrocontrato" text="**Nro. contrato" />',dataIndex: 'contrato',sortable:true}		
 		,{header: '<s:message code="preproyectado.contratos.idexpediente" text="**ID Expediente" />',dataIndex: 'expId',sortable:true}
 		,{header: '<s:message code="preproyectado.contratos.riesgoTotal" text="**Riesgo Total" />',dataIndex: 'riesgoTotal',sortable:true, renderer: app.format.moneyRenderer, align: 'right'}
@@ -565,7 +565,7 @@
 	
 	var expedientesCM = new Ext.grid.ColumnModel([
 		expanderExp
-		,{dataIndex: 'expId',sortable:false, hidden: true}
+		,{header: 'Id', dataIndex: 'expId',sortable:false, hidden: true}
 		,{header: '<s:message code="preproyectado.expedientes.idexpediente" text="**IDEXPEDIENTE" />',dataIndex: 'expId',sortable:true}		
 		,{header: '<s:message code="preproyectado.expedientes.titular" text="**Titular" />',dataIndex: 'titular',sortable:true}
 		,{header: '<s:message code="preproyectado.expedientes.niftitular" text="**NIF Titular" />',dataIndex: 'niftitular',sortable:true}
@@ -619,17 +619,17 @@
 			return true;
 		}
 		
-		if(!mmRiesgoTotal.min.getValue() === ''){
+		if(!mmRiesgoTotal.min.getValue() == ''){
 			return true;
 		}
 		
- 		if(!mmRiesgoTotal.max.getValue() === ''){
+ 		if(!mmRiesgoTotal.max.getValue() == ''){
 			return true; 			
  		}
-		if(!mmDeudaIrregular.min.getValue() === ''){
+		if(!mmDeudaIrregular.min.getValue() == ''){
 			return true;		
 		}
-		if(!mmDeudaIrregular.max.getValue() === ''){
+		if(!mmDeudaIrregular.max.getValue() == ''){
 			return true;		
 		}
 		

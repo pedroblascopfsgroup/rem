@@ -37,8 +37,14 @@ public class ListadoPreProyectadoManager implements ListadoPreProyectadoApi {
 	}
 
 	@Override
-	public Page getListPreproyectadoCntPaginated(ListadoPreProyectadoDTO dto) {
+	public List<VListadoPreProyectadoCnt> getListPreproyectadoCntPaginated(ListadoPreProyectadoDTO dto) {
 		return vListadoPreProyectadoCntDao.getListadoPreProyectadoCntPaginated(dto);
+	}
+
+	@Override
+	public int getCountListadoPreProyectadoCntPaginated(
+			ListadoPreProyectadoDTO dto) {
+		return vListadoPreProyectadoCntDao.getCountListadoPreProyectadoCntPaginated(dto);
 	}
 
 }

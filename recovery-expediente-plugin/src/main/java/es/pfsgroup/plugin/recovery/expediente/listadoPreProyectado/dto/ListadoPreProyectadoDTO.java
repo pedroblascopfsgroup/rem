@@ -4,13 +4,14 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
+import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.PaginationParamsImpl;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.vencidos.model.DDTramosDiasVencidos;
 import es.capgemini.pfs.zona.model.DDZona;
 
-public class ListadoPreProyectadoDTO extends PaginationParamsImpl {
+public class ListadoPreProyectadoDTO extends WebDto {
 	
 	/**
 	 * 

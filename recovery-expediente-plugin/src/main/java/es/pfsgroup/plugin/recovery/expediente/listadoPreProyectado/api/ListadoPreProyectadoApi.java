@@ -12,6 +12,7 @@ public interface ListadoPreProyectadoApi {
 	Page getListPreproyectadoExp(ListadoPreProyectadoDTO dto);
 	
 	List<VListadoPreProyectadoCnt> getListPreproyectadoCnt(ListadoPreProyectadoDTO dto);
+	int getCountListadoPreProyectadoCntPaginated(ListadoPreProyectadoDTO dto);
 
-	Page getListPreproyectadoCntPaginated(ListadoPreProyectadoDTO dto);
+	List<VListadoPreProyectadoCnt> getListPreproyectadoCntPaginated(ListadoPreProyectadoDTO dto);
 }

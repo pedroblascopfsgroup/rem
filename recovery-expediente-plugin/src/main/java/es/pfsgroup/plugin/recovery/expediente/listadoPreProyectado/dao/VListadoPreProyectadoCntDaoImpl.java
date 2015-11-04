@@ -1,7 +1,14 @@
 package es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.dao;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import javax.mail.Session;
+
+import org.apache.commons.beanutils.BeanUtils;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.pagination.Page;
@@ -21,8 +28,11 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 	private StringBuilder construirSql(ListadoPreProyectadoDTO dto) {
 		StringBuilder sb = new StringBuilder();
 		//sb.append("Select distinct c ");
-		sb.append(" from VListadoPreProyectadoCnt c ");
-		sb.append(" where c.cntId IN (select distinct f.cntId from VListadoPreProyectadoCntFiltros f where 1=1 ");
+		sb.append("Select distinct f.cntId, f.contrato, f.expId, f.riesgoTotal, f.deudaIrregular, f.tramo, f.diasVencidos, f.fechaPaseAMoraCnt, f.propuesta, f.estadoGestion, f.fechaPrevReguCnt ");
+		//sb.append("select distinct f ");
+		sb.append(" from VListadoPreProyectadoCnt f ");
+		sb.append(" where 1=1 ");
+		//sb.append(" where c.cntId IN (select distinct f.cntId from VListadoPreProyectadoCntFiltros f where 1=1 ");
 		
 		if (!Checks.esNulo(dto.getCodEstadoGestion())) {
 			sb.append(" and f.estadoGestionCod = '" + dto.getCodEstadoGestion() + "' ");
@@ -145,7 +155,7 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 			}
 		}
 		
-		sb.append(" ) ");
+		//sb.append(" ) ");
 		
 		return sb;
 	}
@@ -157,7 +167,8 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 		
 		StringBuilder sb = construirSql(dto);
 		
-		return getHibernateTemplate().find(sb.toString());
+		List<Object[]> lista = getHibernateTemplate().find(sb.toString());
+		return castearListado(lista);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -165,18 +176,54 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 	public List<VListadoPreProyectadoCnt> getListadoPreProyectadoCntExp(Long expId) {
 		StringBuilder sb = new StringBuilder();
 		//sb.append("Select distinct c ");
-		sb.append(" from VListadoPreProyectadoCnt c ");
-		sb.append(" where c.expId = " + expId);
+		sb.append("Select distinct f.cntId, f.contrato, f.expId, f.riesgoTotal, f.deudaIrregular, f.tramo, f.diasVencidos, f.fechaPaseAMoraCnt, f.propuesta, f.estadoGestion, f.fechaPrevReguCnt ");
+		sb.append(" from VListadoPreProyectadoCnt f ");
+		sb.append(" where f.expId = " + expId);
 		
-		return getHibernateTemplate().find(sb.toString());
+		List<Object[]> lista = getHibernateTemplate().find(sb.toString());
+		return castearListado(lista);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Page getListadoPreProyectadoCntPaginated(ListadoPreProyectadoDTO dto) {
+	public List<VListadoPreProyectadoCnt> getListadoPreProyectadoCntPaginated(ListadoPreProyectadoDTO dto) {
 		StringBuilder sb = construirSql(dto);
-
+		
+		//List<Object[]> lista = getHibernateTemplate().find(sb.toString());
 		HQLBuilder hb = new HQLBuilder(sb.toString());
-		return HibernateQueryUtils.page(this, hb, dto);
+		Page pagina = HibernateQueryUtils.page(this, hb, dto);
+		return castearListado((List<Object[]>) pagina.getResults());
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public int getCountListadoPreProyectadoCntPaginated(ListadoPreProyectadoDTO dto) {
+		StringBuilder sb = construirSql(dto);
+		
+		List<Object[]> lista = getHibernateTemplate().find(sb.toString());
+		return lista.size();
+	}
+	
+	private List<VListadoPreProyectadoCnt> castearListado(List<Object[]> lista) {
+		List<VListadoPreProyectadoCnt> resultado = new ArrayList<VListadoPreProyectadoCnt>();
+		
+		for (Object[] item : lista) {
+			VListadoPreProyectadoCnt cnt = new VListadoPreProyectadoCnt();
+			cnt.setCntId((Long) item[0]);
+			cnt.setContrato((String) item[1]);
+			cnt.setExpId((Long) item[2]);
+			cnt.setRiesgoTotal((BigDecimal) item[3]);
+			cnt.setDeudaIrregular((BigDecimal) item[4]);
+			cnt.setTramo((String) item[5]);
+			cnt.setDiasVencidos((Long) item[6]);
+			cnt.setFechaPaseAMoraCnt((Date) item[7]);
+			cnt.setPropuesta((String) item[8]);
+			cnt.setEstadoGestion((String)item[9]);
+			cnt.setFechaPrevReguCnt((Date) item[10]);
+			
+			resultado.add(cnt);
+		}
+		
+		return resultado;
+	}
 }

@@ -1,6 +1,7 @@
 package es.capgemini.pfs.contrato.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -10,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -38,22 +40,19 @@ public class ContratosActuacionCurso implements Serializable, Auditable {
  
 	@Id
 	@Column(name = "CAC_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "ContratosActuacionCurso")
-	@SequenceGenerator(name = "ContratosActuacionCurso", sequenceName = "S_CAC_CNT_ACTUACION_CURSO")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "ContratosActuacionCursoGenerator")
+	@SequenceGenerator(name = "ContratosActuacionCursoGenerator", sequenceName = "S_CAC_CNT_ACTUACION_CURSO")
 	private Long id;
 	
-	@ManyToOne
+	@OneToOne
     @JoinColumn(name = "CNT_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private Contrato contrato;
 	
-	@OneToOne
+	@OneToMany
     @JoinColumn(name = "PER_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
-    private Persona persona;
-	
-	@Column(name="DD_TIN_ID")
-	private Integer ddTinId;
+    private List<Persona> personas;
 	
 	@Column(name ="CAC_ACTUACION_EN_CURSO")
 	private Boolean actuacionEnCurso;
@@ -96,29 +95,15 @@ public class ContratosActuacionCurso implements Serializable, Auditable {
 	/**
 	 * @return the persona
 	 */
-	public Persona getPersona() {
-		return persona;
+	public List<Persona> getPersona() {
+		return personas;
 	}
 
 	/**
 	 * @param persona the persona to set
 	 */
-	public void setPersona(Persona persona) {
-		this.persona = persona;
-	}
-
-	/**
-	 * @return the ddTinId
-	 */
-	public Integer getDdTinId() {
-		return ddTinId;
-	}
-
-	/**
-	 * @param ddTinId the ddTinId to set
-	 */
-	public void setDdTinId(Integer ddTinId) {
-		this.ddTinId = ddTinId;
+	public void setPersona(List<Persona> personas) {
+		this.personas = personas;
 	}
 
 	/**

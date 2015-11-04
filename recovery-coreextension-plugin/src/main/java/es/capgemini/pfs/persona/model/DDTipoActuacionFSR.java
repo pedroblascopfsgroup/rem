@@ -32,8 +32,8 @@ public class DDTipoActuacionFSR implements Dictionary, Auditable  {
 	
 	@Id
     @Column(name = "DD_TAF_ID")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoActuacionFSR")
-    @SequenceGenerator(name = "DDTipoActuacionFSR", sequenceName = "S_DD_TAF_TIPO_ACTUACION_FSR")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoActuacionFSRGenerator")
+    @SequenceGenerator(name = "DDTipoActuacionFSRGenerator", sequenceName = "S_DD_TAF_TIPO_ACTUACION_FSR")
 	private Long id; 
 	
 	@Column(name = "DD_TAF_CODIGO")
@@ -46,7 +46,7 @@ public class DDTipoActuacionFSR implements Dictionary, Auditable  {
     private String descripcionLarga;
     
     @Column(name = "DD_TAF_RESTRICTIVA")
-    private String restrictiva;
+    private Boolean restrictiva;
     
     @Version
     private Integer version;
@@ -113,14 +113,14 @@ public class DDTipoActuacionFSR implements Dictionary, Auditable  {
 	/**
 	 * @return the restrictiva
 	 */
-	public String getRestrictiva() {
+	public Boolean getRestrictiva() {
 		return restrictiva;
 	}
 
 	/**
 	 * @param restrictiva the restrictiva to set
 	 */
-	public void setRestrictiva(String restrictiva) {
+	public void setRestrictiva(Boolean restrictiva) {
 		this.restrictiva = restrictiva;
 	}
 

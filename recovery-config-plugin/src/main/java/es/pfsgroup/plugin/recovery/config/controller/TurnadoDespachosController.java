@@ -152,12 +152,7 @@ public class TurnadoDespachosController {
 				listTipoCalidadConcursal.add(config);
 			}			
 		}
-		try {
-			esquemaVigente = turnadoDespachosManager.getEsquemaVigente();
-		} catch (Exception exc) {
-			logger.warn("No existe esquema de turnado vigente..");
-		}
-		
+
 		model.addAttribute("tiposImporteLitigio", listTipoImporteLitigio);
 		model.addAttribute("tiposCalidadLitigio", listTipoCalidadLitigio);
 		model.addAttribute("tiposImporteConcursal", listTipoImporteConcursal);
@@ -165,7 +160,6 @@ public class TurnadoDespachosController {
 		
 		model.addAttribute("listaComunidadesAutonomas", utilDiccionarioManager.dameValoresDiccionario(DDComunidadAutonoma.class));
 		model.addAttribute("listaProvincias", utilDiccionarioManager.dameValoresDiccionario(DDProvincia.class));
-		model.addAttribute("esquemaVigente", esquemaVigente);
 		
 		return VIEW_ESQUEMA_TURNADO_LETRADO;
 	}

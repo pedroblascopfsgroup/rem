@@ -16,6 +16,9 @@
 	var estadoPendiente = <c:out value="${empty data.id or data.estado.codigo eq 'DEF'}"/>; // estado pendiente
 	var estadoVigente = <c:out value="${not empty data.estado and data.estado.codigo eq 'VIG'}"/>; // estado vigente
 	var modoConsulta = <c:out value="${modConsulta}"/>; // Usuario diferente o histórico
+	if (estadoVigente) {
+		modoConsulta = true;
+	}
 	if(modoConsulta) {
 		estadoVigente = estadoPendiente = false;
 	};

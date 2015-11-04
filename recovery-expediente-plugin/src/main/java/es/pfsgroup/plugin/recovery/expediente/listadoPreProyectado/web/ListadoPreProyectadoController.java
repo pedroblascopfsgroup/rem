@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.web;
 
 import java.io.File;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -113,7 +114,7 @@ public class ListadoPreProyectadoController {
 		List <VListadoPreProyectadoCnt> listadoCnt = listadoPreProyectado.getListPreproyectadoCnt(dto);
 		
 		List<List<String>> valores = new ArrayList<List<String>>();
-		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		for(VListadoPreProyectadoCnt row:listadoCnt){
 			List<String> filaExportar = new ArrayList<String>();
 			
@@ -123,10 +124,14 @@ public class ListadoPreProyectadoController {
 			filaExportar.add(ObjectUtils.toString(row.getDeudaIrregular())); 	//Deuda irregular
 			filaExportar.add(ObjectUtils.toString(row.getTramo())); 	//Tramo
 			filaExportar.add(ObjectUtils.toString(row.getDiasVencidos())); 	//Dias vencidos
-			filaExportar.add(ObjectUtils.toString(row.getFechaPaseAMoraCnt())); 	//Fecha pase a mora
+			if(!Checks.esNulo(row.getFechaPaseAMoraCnt())){
+					filaExportar.add(ObjectUtils.toString(sdf.format(row.getFechaPaseAMoraCnt())));//Fecha pase a mora
+			}
 			filaExportar.add(ObjectUtils.toString(row.getPropuesta())); 	//Propuesta
 			filaExportar.add(ObjectUtils.toString(row.getEstadoGestion())); 	//Estado Gestion
-			filaExportar.add(ObjectUtils.toString(row.getFechaPrevReguCnt())); 	//Fecha prevista regularizacion
+			if(!Checks.esNulo(row.getFechaPrevReguCnt())){
+				filaExportar.add(ObjectUtils.toString(sdf.format(row.getFechaPrevReguCnt()))); //Fecha prevista regularizacion	
+			}
 			
 			valores.add(filaExportar);
 		}

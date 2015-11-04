@@ -119,7 +119,7 @@ public class ListadoPreProyectadoController {
 			List<String> filaExportar = new ArrayList<String>();
 			
 			filaExportar.add(ObjectUtils.toString(row.getContrato())); 	//N.Contrato
-			filaExportar.add(ObjectUtils.toString(row.getCntId())); 	//Id expediente
+			filaExportar.add(ObjectUtils.toString(row.getExpId())); 	//Id expediente
 			filaExportar.add(ObjectUtils.toString(row.getRiesgoTotal())); 	//Riesgo total
 			filaExportar.add(ObjectUtils.toString(row.getDeudaIrregular())); 	//Deuda irregular
 			filaExportar.add(ObjectUtils.toString(row.getTramo())); 	//Tramo
@@ -167,7 +167,7 @@ public class ListadoPreProyectadoController {
 		cabeceras.add(formatearString("Tramo"));
 		cabeceras.add(formatearString("Días vencidos"));
 		cabeceras.add(formatearString("Fecha pase a mora"));
-		cabeceras.add(formatearString("Propuesta"));
+		cabeceras.add(formatearString("Última Propuesta"));
 		cabeceras.add(formatearString("Estado gestión"));
 		cabeceras.add(formatearString("Fecha prevista regularización"));
 		

@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.precontencioso.burofax.manager;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -20,14 +22,19 @@ import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.utils.MessageUtils;
+import es.capgemini.pfs.asunto.ProcedimientoManager;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.asunto.model.ProcedimientoContratoExpediente;
+import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
+import es.capgemini.pfs.contrato.model.DDTipoIntervencion;
 import es.capgemini.pfs.contrato.model.DDTipoProductoEntidad;
 import es.capgemini.pfs.direccion.api.DireccionApi;
 import es.capgemini.pfs.direccion.dto.DireccionAltaDto;
 import es.capgemini.pfs.direccion.model.Direccion;
+import es.capgemini.pfs.movimiento.model.Movimiento;
+import es.capgemini.pfs.parametrizacion.dao.ParametrizacionDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.utils.FormatUtils;
@@ -47,9 +54,12 @@ import es.pfsgroup.plugin.precontencioso.burofax.model.DDTipoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.ProcedimientoBurofaxTipoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.dao.LiquidacionDao;
 import es.pfsgroup.plugin.precontencioso.liquidacion.manager.LiquidacionManager;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienEntidad;
 import es.pfsgroup.recovery.geninformes.GENINFInformesManager;
 
 @Service
@@ -76,7 +86,18 @@ public class BurofaxManager implements BurofaxApi {
 	@Autowired
 	PrecontenciosoProjectContext precontenciosoContext;
 	
+	@Autowired
+	ProcedimientoManager procedimientoManager;
+	
+	@Autowired
+	LiquidacionDao liquidacionDao; 
+	
+	@Autowired
+	ParametrizacionDao parametrizacionDao;
+	
 	private final Log logger = LogFactory.getLog(getClass());
+	private final String DIRECTORIO_PDF_BUROFAX_PCO = "directorioPdfBurofaxPCO";
+	private final String FICHERO_DOCUMENTO_RANKIA = "RBANKIA"; 
 
 	@Override
 	@BusinessOperation(TIPO_BUROFAX_DEFAULT)
@@ -300,7 +321,8 @@ public class BurofaxManager implements BurofaxApi {
 				envio.setBurofax(burofax);
 				envio.setDireccion(direccion);
 				envio.setTipoBurofax(tipoBurofax);	
-				envio.setContenidoBurofax(tipoBurofax.getPlantilla());
+				//envio.setContenidoBurofax(tipoBurofax.getPlantilla());
+				envio.setContenidoBurofax(replaceVariablesGeneracionBurofax(burofax.getId(),tipoBurofax.getPlantilla()));
 				envio.setResultadoBurofax(resultadoBurofaxPCO);
 				
 				//Guardamos nuevo envio
@@ -433,6 +455,9 @@ public class BurofaxManager implements BurofaxApi {
 				
 				envioBurofax.setResultadoBurofax(resultado);
 				envioBurofax.setFechaSolicitud(new Date());
+				if(Checks.esNulo(envioBurofax.getResultadoBurofax()) || (!Checks.esNulo(envioBurofax.getResultadoBurofax()) && !envioBurofax.getResultadoBurofax().getCodigo().equals(DDResultadoBurofaxPCO.ESTADO_PREPARADO))){
+					envioBurofax.setContenidoBurofax(replaceVariablesGeneracionBurofax(envioBurofax.getBurofax().getId(), envioBurofax.getTipoBurofax().getPlantilla()));
+				}
 				
 				genericDao.save(EnvioBurofaxPCO.class, envioBurofax);
 				
@@ -456,9 +481,54 @@ public class BurofaxManager implements BurofaxApi {
 				envioIntegracion.setFechaAcuse(new Date());
 				envioIntegracion.setCertificado(certificado);
 				
+		
+				
 				if(precontenciosoContext.isGenerarArchivoBurofax()){
 					FileItem archivoBurofax=generarDocumentoBurofax(envioBurofax);
 					envioIntegracion.setArchivoBurofax(archivoBurofax);
+					
+					InputStream inputStream = archivoBurofax.getInputStream();
+					FileOutputStream outputStream = null;
+					String directorio = parametrizacionDao.buscarParametroPorNombre(DIRECTORIO_PDF_BUROFAX_PCO).getValor();
+
+					try {
+						String nombreFichero = obtenerNombreFichero();
+						envioIntegracion.setNombreFichero(nombreFichero);
+						envioIntegracion.setIdAsunto(envioBurofax.getBurofax().getProcedimientoPCO().getProcedimiento().getAsunto().getId());
+						// write the inputStream to a FileOutputStream
+						outputStream = new FileOutputStream(new File(directorio+"/"+nombreFichero));
+
+						int read = 0;
+						byte[] bytes = new byte[1024];
+
+						while ((read = inputStream.read(bytes)) != -1) {
+							outputStream.write(bytes, 0, read);
+						}
+
+						
+
+					} catch (IOException e) {
+						e.printStackTrace();
+					} finally {
+						if (inputStream != null) {
+							try {
+								inputStream.close();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+						if (outputStream != null) {
+							try {
+								// outputStream.flush();
+								outputStream.close();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+
+						}
+					}
+					
+
 				}
 				else{
 					envioIntegracion.setArchivoBurofax(new FileItem(File.createTempFile("TMP", ".log")));
@@ -473,6 +543,11 @@ public class BurofaxManager implements BurofaxApi {
 			logger.error(e);
 		}
 		
+	}
+	
+	private String obtenerNombreFichero() {
+		Long secuencia = burofaxDao.obtenerSecuenciaFicheroDocBurofax();
+		return FICHERO_DOCUMENTO_RANKIA+String.format("%011d", secuencia)+".docx";
 	}
 	
 	
@@ -515,7 +590,7 @@ public class BurofaxManager implements BurofaxApi {
 			String nombreFichero=envioBurofax.getBurofax().getDemandado().getApellidoNombre();
 		
 		
-			HashMap<String, String> mapaVariables=new HashMap<String, String>();
+			HashMap<String, Object> mapaVariables=new HashMap<String, Object>();
 			
 			if(!Checks.esNulo(envioBurofax.getBurofax().getContrato()) && !Checks.esNulo(envioBurofax.getBurofax().getContrato().getAplicativoOrigen())){
 				mapaVariables.put("origenContrato",envioBurofax.getBurofax().getContrato().getAplicativoOrigen().getDescripcion());
@@ -567,8 +642,87 @@ public class BurofaxManager implements BurofaxApi {
 				mapaVariables.put("totalLiq","[ERROR - No existe valor]");
 			}
 			
+			///Variables especificas BANKIA
+			LiquidacionPCO liquPCO = liquidacionDao.getLiquidacionDelContrato(envioBurofax.getBurofax().getContrato().getId());
 			
-			archivoBurofax=informesManager.generarEscritoConVariables(mapaVariables,nombreFichero,is);
+			if(!Checks.esNulo(envioBurofax.getBurofax().getContrato().getNroContratoFormat())){
+				mapaVariables.put("CODIGO_DE_CONTRATO_DE_17_DIGITOS", envioBurofax.getBurofax().getContrato().getNroContratoFormat());
+			}
+			else{
+				mapaVariables.put("CODIGO_DE_CONTRATO_DE_17_DIGITOS","[ERROR - No existe valor]");
+			}
+			
+			
+			if(!Checks.esNulo(envioBurofax.getBurofax().getContrato().getMovimientos())){
+				List<Movimiento> movimientos = envioBurofax.getBurofax().getContrato().getMovimientos(); 
+				if(movimientos.size()>0 && !Checks.esNulo(movimientos.get(movimientos.size() - 1).getFechaPosVencida())){
+					SimpleDateFormat fechaFormat = new SimpleDateFormat(FormatUtils.DD_DE_MES_DE_YYYY,MessageUtils.DEFAULT_LOCALE);
+					mapaVariables.put("MOV_FECHA_POS_VIVA_VENCIDA", fechaFormat.format(movimientos.get(movimientos.size() - 1).getFechaPosVencida()));	
+				}else{
+					mapaVariables.put("MOV_FECHA_POS_VIVA_VENCIDA","[ERROR - No existe valor]");
+				}
+			}
+			else{
+				mapaVariables.put("MOV_FECHA_POS_VIVA_VENCIDA","[ERROR - No existe valor]");
+			}
+			
+			if(!Checks.esNulo(liquPCO) && !Checks.esNulo(liquPCO.getFechaCierre())){
+				SimpleDateFormat fechaFormat = new SimpleDateFormat(FormatUtils.DD_DE_MES_DE_YYYY,MessageUtils.DEFAULT_LOCALE);
+				mapaVariables.put("FECHA_CIERRE_LIQUIDACION",fechaFormat.format(liquPCO.getFechaCierre()));
+			}
+			else{
+				mapaVariables.put("FECHA_CIERRE_LIQUIDACION","[ERROR - No existe valor]");
+			}
+			
+			
+			if(!Checks.esNulo(liquPCO) && (!Checks.esNulo(liquPCO.getTotal()) || !Checks.esNulo(liquPCO.getTotalOriginal()))){
+				if(!Checks.esNulo(liquPCO.getTotal())){
+					mapaVariables.put("TOTAL_LIQUIDACION",NumberFormat.getCurrencyInstance(new Locale("es","ES")).format(liquPCO.getTotal()));
+				}else{
+					mapaVariables.put("TOTAL_LIQUIDACION",NumberFormat.getCurrencyInstance(new Locale("es","ES")).format(liquPCO.getTotalOriginal()));
+				}
+			}
+			else{
+				mapaVariables.put("TOTAL_LIQUIDACION","[ERROR - No existe valor]");
+			}
+			
+			
+			if(!Checks.esNulo(envioBurofax.getBurofax().getContrato()) && !Checks.esNulo(envioBurofax.getBurofax().getContrato().getContratoAnterior()) && !envioBurofax.getBurofax().getContrato().getContratoAnterior().equals("0")){
+				mapaVariables.put("NUM_CUENTA_ANTERIOR",envioBurofax.getBurofax().getContrato().getContratoAnterior());
+			}
+			else{
+				mapaVariables.put("NUM_CUENTA_ANTERIOR","[ERROR - No existe valor]");
+			}
+			
+			
+			if(!Checks.esNulo(envioBurofax.getBurofax().getContrato()) && envioBurofax.getBurofax().getContrato().getContratoPersonaOrdenado().size()>0 ){
+				
+				ContratoPersona cntPers = envioBurofax.getBurofax().getContrato().getContratoPersonaOrdenado().get(0);
+				mapaVariables.put("TITULAR_ORDEN_MENOR_CONTRATO",cntPers.getPersona().getNombre()+" "+cntPers.getPersona().getApellido1()+" "+cntPers.getPersona().getApellido2());
+			}
+			else{
+				mapaVariables.put("TITULAR_ORDEN_MENOR_CONTRATO","[ERROR - No existe valor]");
+			}
+			
+			if(envioBurofax.getBurofax().getTipoIntervencion().getCodigo().equals(DDTipoIntervencion.CODIGO_TITULAR_REGISTRAL)){
+				List<Bien> bienes = procedimientoManager.getBienesDeUnProcedimiento(envioBurofax.getBurofax().getProcedimientoPCO().getProcedimiento().getId());
+				List<NMBBienEntidad> bienesNMBBienEntidad = new ArrayList<NMBBienEntidad>();
+				
+				for(Bien bien : bienes){
+					NMBBien nmb = genericDao.get(NMBBien.class, genericDao.createFilter(FilterType.EQUALS, "id", bien.getId()));
+					if(!Checks.esNulo(nmb.getBienEntidad())){
+						bienesNMBBienEntidad.add(nmb.getBienEntidad());
+					}
+				}
+				
+				mapaVariables.put("bienesEnt",bienesNMBBienEntidad);
+				
+			}else{
+				mapaVariables.put("bienes","[ERROR - No existe valor]");
+			}
+			
+			
+			//archivoBurofax=informesManager.generarEscritoConVariables(mapaVariables,nombreFichero,is);
 	       
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block
@@ -643,13 +797,23 @@ public class BurofaxManager implements BurofaxApi {
 	@Override
 	@Transactional(readOnly = false)
 	@BusinessOperation(GUARDAR_INFORMACION_ENVIO)
-	public void guardaInformacionEnvio(String[] arrayIdEnvio,Long idEstadoEnvio,Date fechaEnvio,Date fechaAcuse){
+	public void guardaInformacionEnvio(String[] arrayIdEnvio,Long idResultadoEnvio,Date fechaEnvio,Date fechaAcuse){
 		
 		try{
 			for(int i=0;i<arrayIdEnvio.length;i++){
 				EnvioBurofaxPCO envio=getEnvioBurofaxById(Long.valueOf(arrayIdEnvio[i]));
 				
-				envio.getBurofax().setEstadoBurofax(getEstadoBurofaxById(idEstadoEnvio));
+				DDResultadoBurofaxPCO resultadoBurofax = getResultadoBurofaxPCOById(idResultadoEnvio);
+				
+				String codigoEstado = "";
+				if(resultadoBurofax.getImplicaNotif() != null && resultadoBurofax.getImplicaNotif()) {
+					codigoEstado = DDEstadoBurofaxPCO.NOTIFICADO;
+				}else{
+					codigoEstado = DDEstadoBurofaxPCO.NO_NOTIFICADO;
+				}
+				
+				envio.getBurofax().setEstadoBurofax(getEstadoBurofaxByCod(codigoEstado));
+				envio.setResultadoBurofax(resultadoBurofax);
 				envio.setFechaAcuse(fechaAcuse);
 				envio.setFechaEnvio(fechaEnvio);
 				
@@ -659,6 +823,24 @@ public class BurofaxManager implements BurofaxApi {
 			logger.error(e);
 		}
 		
+		
+	}
+	
+	private DDEstadoBurofaxPCO getEstadoBurofaxByCod(String codigo) {
+		return (DDEstadoBurofaxPCO) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDEstadoBurofaxPCO.class, codigo);
+	}
+	
+	private DDResultadoBurofaxPCO getResultadoBurofaxPCOById(Long id) {
+		DDResultadoBurofaxPCO resultadoBurofax=null;
+		
+		try{
+			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", id);
+			resultadoBurofax=(DDResultadoBurofaxPCO) genericDao.get(DDResultadoBurofaxPCO.class,filtro1);
+		}catch(Exception e){
+			logger.error(e);
+		}
+		
+		return resultadoBurofax;
 		
 	}
 	
@@ -695,5 +877,74 @@ public class BurofaxManager implements BurofaxApi {
 		return burofaxEnvio;
 	}
 		
-	
+	private String replaceVariablesGeneracionBurofax(Long idPcoBurofax, String textoBuro){
+		
+		BurofaxPCO burofax=(BurofaxPCO) genericDao.get(BurofaxPCO.class,genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(idPcoBurofax)));
+		
+		String conCuentaAnterior = "";
+		String tipoIntervencion = "";
+		String aNombreDe = "";
+		String listaBienes = "";
+		
+		if(burofax.getContrato().getNroContrato()!=null){
+			conCuentaAnterior = "ANTERIORMENTE IDENTIFICADO CON EL NUM. ${NUM_CUENTA_ANTERIOR}";
+		}
+		
+		if(burofax.getTipoIntervencion().getCodigo().equals(DDTipoIntervencion.CODIGO_TITULAR_REGISTRAL)){
+			tipoIntervencion="TITULAR REGISTRAL";
+		}else if(burofax.getTipoIntervencion().getTitular()){
+			tipoIntervencion="TITULAR";
+		}else{
+			tipoIntervencion="FIADOR";
+		}
+		
+		if(burofax.getTipoIntervencion().getAvalista()){
+			aNombreDe = "A NOMBRE DE ${TITULAR_ORDEN_MENOR_CONTRATO} <br />";
+		}
+		
+		List<Bien> bienes = procedimientoManager.getBienesDeUnProcedimiento(burofax.getProcedimientoPCO().getProcedimiento().getId());
+		if(burofax.getTipoIntervencion().getCodigo().equals(DDTipoIntervencion.CODIGO_TITULAR_REGISTRAL) && bienes.size()>0){			
+			listaBienes += "<br />";
+			listaBienes += "[#list bienesEnt as bienEntidad]";
+			listaBienes += "<br />";
+			for(Bien bien : bienes){
+				NMBBienEntidad nmbe = genericDao.get(NMBBien.class, genericDao.createFilter(FilterType.EQUALS, "id", bien.getId())).getBienEntidad();
+				
+				listaBienes += "FINCA REGISTRAL NÚMERO ";
+				
+				if(!Checks.esNulo(nmbe) && !Checks.esNulo(nmbe.getNumFinca())){
+					listaBienes += "${bienEntidad.numFinca} ";
+				}else{
+					listaBienes += "[ERROR - No existe valor] ";
+				}
+				
+				listaBienes		+= "DEL REGISTRO DE LA PROPIEDAD NÚMERO ";
+				
+				if(!Checks.esNulo(nmbe) && !Checks.esNulo(nmbe.getNumRegistro())){
+					listaBienes += "${bienEntidad.numRegistro} ";
+				}else{
+					listaBienes += "[ERROR - No existe valor] ";
+				}
+				
+				listaBienes += "DE ";
+				
+				if(!Checks.esNulo(nmbe) && !Checks.esNulo(nmbe.getPoblacion())){
+					listaBienes += "${bienEntidad.poblacion} ";
+				}else{
+					listaBienes += "[ERROR - No existe valor] ";
+				}
+				
+				listaBienes += "<br />";		
+			}
+			listaBienes += "[/#list]";
+		}
+		
+		textoBuro = textoBuro.replace("#CON_CUENTA_ANTERIOR#", conCuentaAnterior);
+		textoBuro = textoBuro.replace("#TIPO_INTERVENCIO#", tipoIntervencion);
+		textoBuro = textoBuro.replace("#A_NOMBRE_DE#", aNombreDe);
+		textoBuro = textoBuro.replace("#LISTA_BIENES#", listaBienes);
+				
+		
+		return textoBuro;
+	}
 }

@@ -532,7 +532,9 @@
 	var gridHeight = 150;
 	var grid = app.crearGrid(store, cm, {
 		title : '<s:message code="asuntos.adjuntos.grid" text="**Ficheros adjuntos" />'
+		<sec:authorize ifNotGranted="SOLO_CONSULTA">
 		,bbar : [subir, borrar,editarDescripcionAdjuntoAsunto]
+		</sec:authorize>
 		,height: 180
 		,collapsible:true
 		,autoWidth: true
@@ -582,7 +584,9 @@
 	
 	var gridPersonas = app.crearGrid(storePersonas, cmPersonas, {
 		title : '<s:message code="asuntos.adjuntos.grid.personas" text="**Ficheros adjuntos Personas" />'
+		<sec:authorize ifNotGranted="SOLO_CONSULTA">
 		,bbar : [subirAdjuntoPersona,editarDescripcionAdjuntoPersona]
+		</sec:authorize>
 		,height: gridHeight
 		,autoWidth: true
 		,collapsible:true
@@ -632,7 +636,9 @@
 	
 	var gridExpedientes = app.crearGrid(storeExpedientes, cmExpedientes, {
 		title : '<s:message code="asuntos.adjuntos.grid.expediente" text="**Ficheros adjuntos del Expediente" />'
+		<sec:authorize ifNotGranted="SOLO_CONSULTA">
 		,bbar : [subirAdjuntoExpediente,editarDescripcionAdjuntoExpediente]
+		</sec:authorize>
 		,height: gridHeight
 		,autoWidth: true
 		,collapsible:true
@@ -682,7 +688,9 @@
 	
 	var gridContratos = app.crearGrid(storeContratos, cmContratos, {
 		title : '<s:message code="asuntos.adjuntos.grid.contratos" text="**Ficheros adjuntos Contratos" />'
+		<sec:authorize ifNotGranted="SOLO_CONSULTA">
 		,bbar : [subirAdjuntoContrato,editarDescripcionAdjuntoContrato]
+		</sec:authorize>
 		,height: gridHeight
 		,autoWidth: true
 		,collapsible:true

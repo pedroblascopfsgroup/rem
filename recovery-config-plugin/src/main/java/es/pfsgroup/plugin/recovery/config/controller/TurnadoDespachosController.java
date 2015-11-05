@@ -34,6 +34,7 @@ import es.capgemini.devon.validation.ErrorMessage;
 import es.capgemini.devon.validation.ErrorMessageUtils;
 import es.capgemini.devon.validation.ValidationException;
 import es.capgemini.devon.web.fileupload.FileUpload;
+import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.DespachoAmbitoActuacion;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.direccion.model.DDComunidadAutonoma;
@@ -105,6 +106,8 @@ public class TurnadoDespachosController {
 	@RequestMapping
 	public String ventanaEditarLetrado(@RequestParam(value="id", required=true) Long idDespacho, 
 			Model model) {
+		EsquemaTurnado esquemaVigente = null;
+		
 		
 		DespachoExterno despacho = despachoExternoManager.getDespachoExterno(idDespacho);
 		model.addAttribute("despacho", despacho);
@@ -150,7 +153,7 @@ public class TurnadoDespachosController {
 				listTipoCalidadConcursal.add(config);
 			}			
 		}
-		
+
 		model.addAttribute("tiposImporteLitigio", listTipoImporteLitigio);
 		model.addAttribute("tiposCalidadLitigio", listTipoCalidadLitigio);
 		model.addAttribute("tiposImporteConcursal", listTipoImporteConcursal);
@@ -189,8 +192,7 @@ public class TurnadoDespachosController {
 	}
 
 	@RequestMapping
-	public String getEsquemaVigente(EsquemaTurnadoDto dto
-			, Model model) {
+	public String getEsquemaVigente(Model model) {
 		EsquemaTurnado esquema = turnadoDespachosManager.getEsquemaVigente();
 		model.addAttribute(KEY_DATA, esquema);
 		return VIEW_LETRADO_ESQUEMA_TURNADO_GET;
@@ -273,8 +275,10 @@ public class TurnadoDespachosController {
 		String templatePar = ";Automatic;Text";
 		String templateImpar = ";Grey;Text";
 		String template = templatePar;
-		
-		List<DespachoExterno> despachosExternos = despachoExternoManager.buscaDespachosExternos();
+
+		// Se recuperan los datos únicamente de los despachos de tipo 'Despacho Externo'
+		DDTipoDespachoExterno tipoDespachoExterno = (DDTipoDespachoExterno) utilDiccionarioManager.dameValorDiccionarioByCod(DDTipoDespachoExterno.class, DDTipoDespachoExterno.CODIGO_DESPACHO_EXTERNO);
+		List<DespachoExterno> despachosExternos = despachoExternoManager.getDespachoExternoByTipo(tipoDespachoExterno.getId());
 		for(DespachoExterno despachoExterno : despachosExternos) {
 			
 			if(template == templateImpar) {

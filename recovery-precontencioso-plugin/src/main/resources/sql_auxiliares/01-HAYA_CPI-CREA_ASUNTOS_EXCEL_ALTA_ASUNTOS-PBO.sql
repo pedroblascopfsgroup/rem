@@ -85,7 +85,7 @@ INSERT INTO haya01.cli_clientes
              cli_telecobro, ofi_id)
    (SELECT apc.cli_id, apc.per_id, (SELECT arq_id
                                       FROM arq_arquetipos
-                                     WHERE (arq_nombre = 'Genérico' OR arq_nombre = 'Generico')) AS arq_id,
+                                     WHERE (arq_nombre = 'Generico seguimiento' OR arq_nombre = 'Generico seguimiento')) AS arq_id,
            1 AS dd_est_id, 3 AS dd_ecl_id, SYSDATE, 0 AS VERSION,
            'CARGA_PCO' AS usuariocrear, SYSDATE AS fechacrear, 1 AS borrado,
            SYSDATE AS cli_fecha_creacion, 0 AS cli_telecobro, apc.ofi_id
@@ -118,7 +118,7 @@ INSERT INTO haya01.exp_expedientes
    (SELECT apc.exp_id, 5 AS dd_est_id, SYSDATE AS exp_fecha_est_id,
            apc.ofi_id AS ofi_id, (SELECT arq_id
                                     FROM arq_arquetipos
-                                   WHERE (arq_nombre = 'Genérico' OR arq_nombre = 'Generico')) AS arq_id,
+                                   WHERE (arq_nombre = 'Generico seguimiento' OR arq_nombre = 'Generico seguimiento')) AS arq_id,
            0 AS VERSION, 'CARGA_PCO' AS usuariocrear, SYSDATE AS fechacrear,
            0 AS borrado, 4 AS dd_eex_id,
            apc.n_caso || '-'
@@ -320,7 +320,7 @@ FROM lin_asuntos_para_crear apc; */
 -- Trampeo para que se genere directamente la tarea de Asignación de Gestores de PCO-Litigio
 CREATE TABLE tmp_ugaspfs_bpm_input_con1 AS
 SELECT prc_id,
-(select tap_id from haya01.tap_tarea_procedimiento tap where tap.tap_codigo='PCO_AsignacionGestores') AS tap_id
+(select tap_id from haya01.tap_tarea_procedimiento tap where tap.tap_codigo='PCO_RegistrarAceptacion') AS tap_id
 FROM lin_asuntos_para_crear apc;
 
 

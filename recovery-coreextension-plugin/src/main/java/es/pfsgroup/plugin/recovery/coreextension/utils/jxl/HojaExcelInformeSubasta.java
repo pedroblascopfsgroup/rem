@@ -3,14 +3,13 @@ package es.pfsgroup.plugin.recovery.coreextension.utils.jxl;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
 
 import jxl.Workbook;
-import jxl.WorkbookSettings;
 import jxl.format.Alignment;
 import jxl.format.Border;
 import jxl.format.BorderLineStyle;
 import jxl.format.Colour;
+import jxl.format.UnderlineStyle;
 import jxl.read.biff.BiffException;
 import jxl.write.Label;
 import jxl.write.WritableCell;
@@ -103,7 +102,7 @@ public class HojaExcelInformeSubasta extends HojaExcel{
 					// Pintamos las cabeceras de las columnas.
 				    
 				    WritableFont cellFontBold10 = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD);
-				    WritableFont cellFontBold12 = new WritableFont(WritableFont.ARIAL, 12, WritableFont.BOLD);
+				    WritableFont cellFontBold12 = new WritableFont(WritableFont.ARIAL, 12, WritableFont.BOLD, false, UnderlineStyle.NO_UNDERLINE, Colour.WHITE);
 
 				    WritableCellFormat cellFormatCabeceras = new WritableCellFormat(cellFontBold12);
 				    cellFormatCabeceras.setFont(cellFontBold10);

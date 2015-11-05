@@ -27,10 +27,11 @@ import es.pfsgroup.plugin.precontencioso.burofax.dto.BurofaxDTO;
 import es.pfsgroup.plugin.precontencioso.burofax.manager.BurofaxManager;
 import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxEnvioIntegracionPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxPCO;
-import es.pfsgroup.plugin.precontencioso.burofax.model.DDEstadoBurofaxPCO;
+import es.pfsgroup.plugin.precontencioso.burofax.model.DDResultadoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDTipoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 
 @Controller
 public class BurofaxController {
@@ -484,9 +485,9 @@ public class BurofaxController {
     	
     	String arrayIdEnvios=request.getParameter("arrayIdEnvios");
     	
-    	List<DDEstadoBurofaxPCO> listaEstadoBurofax=burofaxManager.getEstadosBurofax();
+    	List<DDResultadoBurofaxPCO> listaResultadoBurofax = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDResultadoBurofaxPCO.class);
     	
-    	model.put("estadosBurofax", listaEstadoBurofax);
+    	model.put("resultadosBurofax", listaResultadoBurofax);
     	model.put("arrayIdEnvios", arrayIdEnvios);
     	
     	return JSP_AGREGAR_NOTIFICACION;
@@ -494,7 +495,7 @@ public class BurofaxController {
     }
     
     @RequestMapping
-    public String configuraInformacionEnvio(WebRequest request, ModelMap model,Long idEstadoBurofax,String fechaEnvio,String fechaAcuse){
+    public String configuraInformacionEnvio(WebRequest request, ModelMap model,Long idResultadoBurofax,String fechaEnvio,String fechaAcuse){
     	
     	String[] arrayIdEnvios=request.getParameter("arrayIdEnvios").replace("[","").replace("]","").replace("&quot;", "").split(",");
     	
@@ -507,7 +508,7 @@ public class BurofaxController {
     	}catch(Exception e){
     		logger.error(e);
     	}
-    	burofaxManager.guardaInformacionEnvio(arrayIdEnvios, idEstadoBurofax, fecEnvio, fecAcuse);
+    	burofaxManager.guardaInformacionEnvio(arrayIdEnvios, idResultadoBurofax, fecEnvio, fecAcuse);
     
 		EnvioBurofaxPCO envio = proxyFactory.proxy(BurofaxApi.class).getEnvioBurofaxById(Long.valueOf(arrayIdEnvios[0]));			
 		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(envio.getBurofax().getProcedimientoPCO().getProcedimiento().getId());

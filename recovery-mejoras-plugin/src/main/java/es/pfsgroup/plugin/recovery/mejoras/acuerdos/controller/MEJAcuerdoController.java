@@ -705,7 +705,7 @@ public class MEJAcuerdoController {
 		
 		return "default";
 	}
-
+		
 	/**
 	 * 
 	 * Devuelve la página de rechazo de acuerdo
@@ -723,4 +723,5 @@ public class MEJAcuerdoController {
 		
 		return JSP_RECHAZAR_ACUERDO;
 	}
+
 }

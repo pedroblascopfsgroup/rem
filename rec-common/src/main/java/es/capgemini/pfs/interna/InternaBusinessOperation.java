@@ -113,14 +113,14 @@ public final class InternaBusinessOperation {
     public static final String BO_EXP_MGR_GET_PERSONAS_MARCADO_OBLIGATORIO = "expedienteManager.getPersonasMarcadoObligatorio";
     public static final String BO_EXP_MGR_GET_PERSONAS_MARCADO_OPCIONAL = "expedienteManager.getPersonasMarcadoOpcional";
     public static final String BO_EXP_MGR_GET_PERSONAS_POLITICAS_DEL_EXPEDIENTE = "expedienteManager.getPersonasPoliticasDelExpediente";
-    public static final String BO_EXP_MGR_FIND_EXPEDIENTES_PAGINATED_DINAMICO = "expedienteManager.findExpedientesPaginatedDinamico";
-    public static final String BO_EXP_MGR_FIND_EXPEDIENTES_RECOBRO_PAGINATED_DINAMICO = "expedienteManager.findExpedientesRecobroPaginatedDinamico";
-    public static final String BO_EXP_MGR_FIND_EXPEDIENTES_PARA_EXCEL_DINAMICO = "expedienteManager.findExpedientesParaExcelDinamico";
 	public static final String BO_EXP_MGR_TIENE_EXPEDIENTE_SEGUIMIENTO = "expedienteManager.tieneExpedienteSeguimiento";
 	public static final String BO_EXP_MGR_TIENE_EXPEDIENTE_RECUPERACION = "expedienteManager.tieneExpedienteRecuperacion";
 	public static final String BO_EXP_MGR_ELEVAR_EXPEDIENTE_A_FORMALIZAR_PROPUESTA = "expedienteManager.elevarExpedienteAFormalizarPropuesta";
     public static final String BO_EXP_MGR_DEVOLVER_EXPEDIENTE_A_DECISION_COMITE = "expedienteManager.devolverExpedienteADecisionComite";
-
+    public static final String BO_EXP_MGR_FIND_EXPEDIENTES_PAGINATED_DINAMICO = "expedienteManager.findExpedientesPaginatedDinamico";
+    public static final String BO_EXP_MGR_FIND_EXPEDIENTES_RECOBRO_PAGINATED_DINAMICO = "expedienteManager.findExpedientesRecobroPaginatedDinamico";
+    public static final String BO_EXP_MGR_FIND_EXPEDIENTES_PARA_EXCEL_DINAMICO = "expedienteManager.findExpedientesParaExcelDinamico";
+   
     /*****************************************************************************
      ** PoliticaManager.
      ****************************************************************************/

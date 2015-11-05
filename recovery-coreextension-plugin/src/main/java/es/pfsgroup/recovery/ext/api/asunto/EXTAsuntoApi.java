@@ -12,11 +12,10 @@ import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
-import es.pfsgroup.plugin.recovery.coreextension.api.AsuntoCoreApi;
 import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJFinalizarAsuntoDto;
 import es.pfsgroup.recovery.ext.impl.asunto.dto.EXTDtoBusquedaAsunto;
 
-public interface EXTAsuntoApi extends AsuntoCoreApi {
+public interface EXTAsuntoApi  {
 
 	public static final String EXT_MGR_ASUNTO_GET_GESTORES = "es.pfsgroup.recovery.ext.api.asunto.getGestoresAsuto";
 	public static final String EXT_MGR_ASUNTO_GET_USUARIOS_RELACIONADOS = "es.pfsgroup.recovery.ext.api.asunto.getUsuariosAsociados";
@@ -128,11 +127,6 @@ public interface EXTAsuntoApi extends AsuntoCoreApi {
 	 * 
 	 */
 	void finalizarAsunto(MEJFinalizarAsuntoDto dto, boolean sincronizar);
-	
-	/* (non-Javadoc)
-	 * @see es.pfsgroup.plugin.recovery.coreextension.api.AsuntoCoreApi#cancelaAsunto(es.capgemini.pfs.asunto.model.Asunto, java.util.Date)
-	 */
-	void cancelaAsunto(Asunto asunto, Date fechaCancelacion);
 	
 	/* (non-Javadoc)
 	 * @see es.pfsgroup.plugin.recovery.coreextension.api.AsuntoCoreApi#paralizaAsunto(es.capgemini.pfs.asunto.model.Asunto, java.util.Date)

@@ -136,10 +136,10 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	private GenericABMDao genericDao;
 	
 	@Autowired
-	private EXTAsuntoDao asuntoDao;
+	private Executor executor;
 
 	@Autowired
-	private Executor executor;
+	private EXTAsuntoDao asuntoDao;
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -175,9 +175,6 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	
 	@Autowired
     private EXTZonaDao extZonaDao;
-
-	@Autowired
-	private ModificacionAsuntoListener mejModAsuntoREG;
 
 	@Autowired
 	private JBPMProcessManager jbpmUtil;
@@ -2144,37 +2141,6 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	}
 	
 	/* (non-Javadoc)
-	 * @see es.pfsgroup.plugin.recovery.mejoras.asunto.api.MEJFinalizarAsuntoApi#cancelaAsunto(es.capgemini.pfs.asunto.model.Asunto, java.util.Date)
-	 */
-	@Override
-	@Transactional(readOnly = false)
-	public void cancelaAsunto(Asunto asunto, Date fechaCancelacion) {
-		DDEstadoAsunto esAsuCancelado = (DDEstadoAsunto)diccionarioApi.dameValorDiccionarioByCod(DDEstadoAsunto.class, DDEstadoAsunto.ESTADO_ASUNTO_CANCELADO);
-		DDEstadoProcedimiento esPrcCerrado = (DDEstadoProcedimiento)diccionarioApi.dameValorDiccionarioByCod(DDEstadoProcedimiento.class, DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO);
-		List<Procedimiento> procedimientos = asunto.getProcedimientos();
-		for (Procedimiento procedimiento : procedimientos) {
-			if ((!DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(procedimiento.getEstadoProcedimiento().getCodigo())) &&
-				(!DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(procedimiento.getEstadoProcedimiento().getCodigo())))	 {
-					procedimiento.setEstadoProcedimiento(esPrcCerrado);
-					procedimientoDao.saveOrUpdate(procedimiento);
-				}
-		}
-
-		if (DDEstadoAsunto.ESTADO_ASUNTO_ACEPTADO.equals(asunto.getEstadoAsunto().getCodigo())) { 
-			
-			Map<String, Object> mapCancelacion = new HashMap<String, Object>();
-			mapCancelacion.put(ModificacionAsuntoListener.ID_ASUNTO, asunto.getId());
-			mapCancelacion.put("FechaCancelacion", fechaCancelacion);
-
-			mejModAsuntoREG.fireEvent(mapCancelacion);
-			
-			asunto.setEstadoAsunto(esAsuCancelado);	
-			asuntoDao.saveOrUpdate(asunto);
-		}
-
-	}
-
-	/* (non-Javadoc)
 	 * @see es.pfsgroup.plugin.recovery.mejoras.asunto.api.MEJFinalizarAsuntoApi#paralizaAsunto(es.capgemini.pfs.asunto.model.Asunto, java.util.Date)
 	 */
 	@Override
@@ -2215,11 +2181,4 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		return null;
 	}
 
-	// TODO Este método se creó en Lindorff, 
-	// revisar y ver si se saca de aquí y del coreextension, de momento llamamos al cancelaAsunto 
-	@Override
-	public void cancelaAsuntoConMotivo(Asunto asunto, Date fechaCancelacion, String motivo) {
-		this.cancelaAsunto(asunto, fechaCancelacion);		
-	}
-	
 }

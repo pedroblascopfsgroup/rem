@@ -1,12 +1,12 @@
 --/*
 --##########################################
 --## AUTOR=JAVIER RUIZ
---## FECHA_CREACION=26-10-2015
+--## FECHA_CREACION=05-11-2015
 --## ARTEFACTO=web
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=PRODUCTO-340
 --## PRODUCTO=SI
---## Finalidad: DDL Creación vista del listado de preproyectado agrupación por contratos
+--## Finalidad: DDL Creación vista del listado de preproyectado agrupación por contratos quitando los que esten en expedientes de recobro
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -110,6 +110,7 @@ BEGIN
 			FROM '||V_ESQUEMA||'.CNT_CONTRATOS CNT
 			  INNER JOIN '||V_ESQUEMA||'.CEX_CONTRATOS_EXPEDIENTE CEX ON CEX.CNT_ID = CNT.CNT_ID AND CEX.BORRADO = 0
 			    INNER JOIN '||V_ESQUEMA||'.EXP_EXPEDIENTES EXP ON EXP.EXP_ID = CEX.EXP_ID AND EXP.BORRADO = 0
+				  INNER JOIN '||V_ESQUEMA||'.DD_TPX_TIPO_EXPEDIENTE TPX ON TPX.DD_TPX_ID = EXP.DD_TPX_ID AND DD_TPX_CODIGO <> ''REC''
 			      LEFT JOIN '||V_ESQUEMA_M||'.DD_EST_ESTADOS_ITINERARIOS DDEST ON DDEST.DD_EST_ID = EXP.DD_EST_ID AND DDEST.BORRADO = 0    
 			      LEFT JOIN '||V_ESQUEMA||'.OFI_OFICINAS OFI ON OFI.OFI_ID = EXP.OFI_ID AND OFI.BORRADO = 0
 			        LEFT JOIN '||V_ESQUEMA||'.ZON_ZONIFICACION ZON ON ZON.OFI_ID = OFI.OFI_ID AND OFI.BORRADO = 0                  

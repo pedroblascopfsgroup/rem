@@ -650,17 +650,17 @@
 			return true;
 		}
 		
-		if(!mmRiesgoTotal.min.getValue() == ''){
+		if(!(mmRiesgoTotal.min.getValue() === '')){
 			return true;
 		}
 		
- 		if(!mmRiesgoTotal.max.getValue() == ''){
+ 		if(!(mmRiesgoTotal.max.getValue() === '')){
 			return true; 			
  		}
-		if(!mmDeudaIrregular.min.getValue() == ''){
+		if(!(mmDeudaIrregular.min.getValue() === '')){
 			return true;		
 		}
-		if(!mmDeudaIrregular.max.getValue() == ''){
+		if(!(mmDeudaIrregular.max.getValue() === '')){
 			return true;		
 		}
 		

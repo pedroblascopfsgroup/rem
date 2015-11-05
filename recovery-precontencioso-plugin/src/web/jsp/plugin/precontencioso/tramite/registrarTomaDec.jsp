@@ -95,16 +95,36 @@ docCompleta.on('select', function() {
 		fechaRecep.allowBlank = false;
 		docCompleta.allowBlank = false;
 		fechaEnvio.allowBlank = false;
+		fechaEnvio.setDisabled(false);
 		tipoProblema.allowBlank = false;
+		tipoProblema.setDisabled(false);
 		procedimientoPropuesto.allowBlank = false;
-		procedimientoIniciar.allowBlank = false;
+		procedimientoIniciar.allowBlank = true;
+		procedimientoIniciar.setDisabled(true);
+		procedimientoIniciar.setValue('');
 	}else{
 		fechaRecep.allowBlank = false;
 		docCompleta.allowBlank = false;
 		fechaEnvio.allowBlank = true;
+		fechaEnvio.setDisabled(true);
+		fechaEnvio.setValue('');
 		tipoProblema.allowBlank = true;
+		tipoProblema.setDisabled(true);
+		tipoProblema.setValue('');
 		procedimientoPropuesto.allowBlank = false;
 		procedimientoIniciar.allowBlank = false;
+		procedimientoIniciar.setDisabled(false);
+	}
+});
+
+tipoProblema.on('select', function() {
+	if(tipoProblema.getValue() == cambioProcedimiento) {
+		procedimientoIniciar.allowBlank = false;
+		procedimientoIniciar.setDisabled(false);
+	}else{
+		procedimientoIniciar.allowBlank = true;
+		procedimientoIniciar.setDisabled(true);
+		procedimientoIniciar.setValue('');
 	}
 });
 

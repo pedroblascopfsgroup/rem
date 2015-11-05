@@ -34,6 +34,7 @@ public interface AdjudicacionHandlerDelegateApi {
 	public static final String BO_ADJUDICACION_HANDLER_INSERT_POSESION_FECHA_LANZAMIENTO_EFECTUADO = "es.pfsgroup.recovery.posesion.fechaLanzamientoEfec";
 	public static final String BO_ADJUDICACION_HANDLER_INSERT_POSESION_LLAVES_NECESARIAS = "es.pfsgroup.recovery.posesion.llavesNecesarias";
 	public static final String BO_ADJUDICACION_HANDLER_INSERT_POSESION_FUERZA_PUBLICA = "es.pfsgroup.recovery.posesion.fuerzaPublica";
+	public static final String BO_ADJUDICACION_HANDLER_INSERT_POSESION_ENTREGA_VOLUNTARIA = "es.pfsgroup.recovery.posesion.entregaVoluntaria";
 		
 	public static final String BO_ADJUDICACION_HANDLER_INSERT_ADJUDICACION_FECHA_SOLICITUD_DECRETO = "es.pfsgroup.recovery.adjudicacion.fechaSolicitudDecreto";
 	public static final String BO_ADJUDICACION_HANDLER_INSERT_ADJUDICACION_FECHA_NOTIFICACION_DECRETO = "es.pfsgroup.recovery.adjudicacion.fechaNotificacionDecreto";
@@ -142,6 +143,9 @@ public interface AdjudicacionHandlerDelegateApi {
 
 	@BusinessOperationDefinition(BO_ADJUDICACION_HANDLER_INSERT_POSESION_FUERZA_PUBLICA) 
 	public void insertarPosesionComboFuerzaPublica(Long prcId, Boolean valor);
+	
+	@BusinessOperationDefinition(BO_ADJUDICACION_HANDLER_INSERT_POSESION_ENTREGA_VOLUNTARIA) 
+	public void insertarPosesionComboEntregaVoluntaria(Long prcId, Boolean valor);
 		
 	
 	

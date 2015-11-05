@@ -70,6 +70,7 @@ import es.capgemini.pfs.movimiento.model.Movimiento;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.oficina.model.Oficina;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
+import es.capgemini.pfs.persona.dao.PersonaDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
@@ -126,6 +127,9 @@ public class ExpedienteRecobroManager implements ExpedienteRecobroApi {
 
 	@Autowired
 	private ExpedienteDao expedienteDao;
+	
+	@Autowired
+	private PersonaDao personaDao;
 
 	@Autowired
 	private Executor executor;
@@ -225,7 +229,12 @@ public class ExpedienteRecobroManager implements ExpedienteRecobroApi {
 		if (!sinExpedientesActivos) {
 			throw new BusinessOperationException("expediente.creacionManual.existente", persona.getApellidoNombre());
 		}
-
+		
+		Long idExpedientePropuesto = personaDao.obtenerIdExpedientePropuestoPersona(idPersona);
+		if(!Checks.esNulo(idExpedientePropuesto)){
+			throw new BusinessOperationException("expediente.creacionManual.existente", persona.getApellidoNombre());
+		}
+		
 		Cliente cliente = persona.getClienteActivo();
 		//Obtenemos el arquetipo genérico de recobro
 		Arquetipo arquetipo = (Arquetipo) executor.execute(ConfiguracionBusinessOperation.BO_ARQ_MGR_GET_BY_NOMBRE,Arquetipo.ARQUETIPO_GEN_RECOBRO);
@@ -1825,7 +1834,7 @@ public class ExpedienteRecobroManager implements ExpedienteRecobroApi {
 				if (!Checks.esNulo(cicloRecobroExpediente.getSubcartera()) && !Checks.esNulo(cicloRecobroExpediente.getSubcartera().getItinerarioMetasVolantes())) {
 					dto.setItinerarioMV(cicloRecobroExpediente.getSubcartera().getItinerarioMetasVolantes());
 					
-					Date fechaAlta = cicloRecobroExpediente.getSubcartera().getItinerarioMetasVolantes().getFechaAlta();
+					Date fechaAlta = cicloRecobroExpediente.getFechaAlta();
 					Long plazoGestion = cicloRecobroExpediente.getSubcartera().getItinerarioMetasVolantes().getPlazoMaxGestion();
 					if (!Checks.esNulo(fechaAlta) && !Checks.esNulo(plazoGestion)) {
 						

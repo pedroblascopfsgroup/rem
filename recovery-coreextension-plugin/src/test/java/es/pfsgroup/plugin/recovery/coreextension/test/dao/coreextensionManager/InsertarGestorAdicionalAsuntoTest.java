@@ -20,7 +20,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 
 /**
- * Tests del método {@link es.pfsgroup.plugin.recovery.coreextension.dao.coreextensionManager#insertarGestorAdicionalAsunto(Long, Long, Long, Long)}
+ * Tests del mï¿½todo {@link es.pfsgroup.plugin.recovery.coreextension.dao.coreextensionManager#insertarGestorAdicionalAsunto(Long, Long, Long, Long)}
  * @author manuel
  *
  */
@@ -56,9 +56,10 @@ public class InsertarGestorAdicionalAsuntoTest extends AbstractCoreextensionMana
 	
 	/**
 	 * Test nuevo gestor.
+	 * @throws Exception 
 	 */
 	@Test
-	public void testInsertarGestorAdicionalAsunto(){
+	public void testInsertarGestorAdicionalAsunto() throws Exception{
 		
 		Long idAsunto = RandomUtils.nextLong();
 		Long idTipoGestor = RandomUtils.nextLong();
@@ -76,9 +77,10 @@ public class InsertarGestorAdicionalAsuntoTest extends AbstractCoreextensionMana
 	
 	/**
 	 * Test actualizar gestor.
+	 * @throws Exception 
 	 */
 	@Test
-	public void testActualizarGestorAdicionalAsunto(){
+	public void testActualizarGestorAdicionalAsunto() throws Exception{
 		
 		Long idAsunto = RandomUtils.nextLong();
 		Long idTipoGestor = RandomUtils.nextLong();
@@ -106,9 +108,10 @@ public class InsertarGestorAdicionalAsuntoTest extends AbstractCoreextensionMana
 	
 	/**
 	 * Test. Se acctualiza el gestor con el mismo gestor que ya era gestor, es decir, el idUsuario es igual a gestor.usuario.id.
+	 * @throws Exception 
 	 */
 	@Test
-	public void testActualizarGestorConUnGestorYaExistente(){
+	public void testActualizarGestorConUnGestorYaExistente() throws Exception{
 		
 		Long idAsunto = RandomUtils.nextLong();
 		Long idTipoGestor = RandomUtils.nextLong();

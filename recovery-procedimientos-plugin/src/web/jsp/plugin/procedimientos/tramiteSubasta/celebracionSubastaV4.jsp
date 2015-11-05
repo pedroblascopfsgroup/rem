@@ -66,15 +66,24 @@ cb_subastaCelebrada.on('select', function(){
 	
 	if(cb_subastaCelebrada.getValue() == '01') {//si
 		cb_cesionRemate.setDisabled(false);
+		cb_cesionRemate.allowBlank = false;
 		cb_elevarComite.setDisabled(true);
+		cb_elevarComite.allowBlank = true;
 		cb_decisionSuspension.setDisabled(true);
+		cb_decisionSuspension.allowBlank = true;
 		cb_motivo.setDisabled(true);
+		cb_motivo.allowBlank = true;
+		
 	}
 	else if(cb_subastaCelebrada.getValue() == '02') {//no
 		cb_cesionRemate.setDisabled(true);
+		cb_cesionRemate.allowBlank = true;
 		cb_elevarComite.setDisabled(true);
+		cb_elevarComite.allowBlank = true;
 		cb_decisionSuspension.setDisabled(false);
+		cb_decisionSuspension.allowBlank = false;
 		cb_motivo.setDisabled(false);
+		cb_motivo.allowBlank = false;
 	}
 });
 
@@ -84,13 +93,19 @@ cb_cesionRemate.on('select', function(){
 	
 	if(cb_cesionRemate.getValue() == '01') {//si
 		cb_elevarComite.setDisabled(false);
+		cb_elevarComite.allowBlank = false;
 		cb_decisionSuspension.setDisabled(true);
+		cb_decisionSuspencion.allowBlank = true;
 		cb_motivo.setDisabled(true);
+		cb_motivo.allowBlank = true;
 	}	
 	else if(cb_cesionRemate.getValue() == '02') {//si
 		cb_elevarComite.setDisabled(true);
+		cb_elevarComite.allowBlank = true;
 		cb_decisionSuspension.setDisabled(true);
+		cb_decisionSuspension.allowBlank = true;
 		cb_motivo.setDisabled(true);
+		cb_motivo.allowBlank = true;
 	}
 });
 

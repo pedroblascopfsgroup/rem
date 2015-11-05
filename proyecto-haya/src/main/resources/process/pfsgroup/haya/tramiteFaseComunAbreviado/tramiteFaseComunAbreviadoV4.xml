@@ -23,7 +23,7 @@
 		</event>
 		<transition to="Fin2" name="Fin"></transition>
 		<transition to="H009_RegistrarPublicacionBOE" name="activarAlerta"></transition>
-		<transition to="H009_BPMTramiteAceptacionConcurso" name="avanzaBPM"></transition>
+		<transition to="fork1" name="avanzaBPM"></transition>
 	</state>
 	
 	<state name="H009_BPMTramiteAceptacionConcurso">
@@ -255,6 +255,7 @@
 		<transition to="H009_RegistrarProyectoInventario" name="activarAlerta"></transition>
 		<transition to="H009_RegistrarProyectoInventarioDecision" name="avanzaBPM"></transition>
 		<transition to="H009_PresentarEscritoInsinuacion" name="vueltaAtras"></transition>
+		<transition to="Fin2" name="Fin"></transition>
 	</state>
 
 	<decision name="H009_RegistrarProyectoInventarioDecision" expression="#{H009_RegistrarProyectoInventarioDecision}">
@@ -301,6 +302,7 @@
 		<transition to="H009_RegistrarInsinuacionCreditos" name="vueltaAtras"></transition>
 		<transition to="ForkContactarDeudor" name="avanzaBPM"></transition>
 		<transition to="H009_RevisarInsinuacionCreditos" name="activarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
 	</state>
 
 	<state name="H009_BPMTramiteDemandaIncidental">
@@ -396,6 +398,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</state>
 
 	<fork name="ForkContactarDeudor">
@@ -411,6 +414,29 @@
 		</action>	
 		<transition to="Fin" name="Fin"></transition>
 	</node>
+
+	<fork name="fork1">
+		<transition to="H009_BPMTramiteAceptacionConcurso" name="aceptacion"></transition>
+		<transition to="H009_BPMPrecontencioso" name="precontencioso"></transition>
+	</fork>
+
+	<state name="H009_BPMPrecontencioso">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
 	
 	<end-state name="Fin">
 		<event type="node-enter">

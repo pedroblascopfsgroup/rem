@@ -8,6 +8,7 @@ public interface GestorTareasApi {
 	public static final String BO_PCO_GESTOR_TAREAS_RECALCULAR_ESTADO = "es.pfsgroup.plugin.precontencioso.expedienteJudicial.recalcularTareasPreparacionDocumentalEstado";
 	public static final String BO_PCO_GESTOR_TAREAS_CREAR = "es.pfsgroup.plugin.precontencioso.expedienteJudicial.crearTareaEspecial";
 	public static final String BO_PCO_GESTOR_TAREAS_CANCELAR = "es.pfsgroup.plugin.precontencioso.expedienteJudicial.cancelarTareaEspecial";
+	public static final String BO_PCO_ES_TAREA_ESPECIAL = "es.pfsgroup.plugin.precontencioso.expedienteJudicial.esTareaEspecial";
 
 	/**
 	 * Recalcula todas las acciones sobre las tareas (crear, cancelar)
@@ -46,5 +47,16 @@ public interface GestorTareasApi {
 	 */
 	@BusinessOperationDefinition(BO_PCO_GESTOR_TAREAS_CANCELAR)
 	boolean cancelarTareaEspecial (Long idProc, String tipoTarea);
+	
+	
+	/**
+	 * Devuelve si una tarea de precontencioso es de tipo especial
+	 * 
+	 * @param tareaId
+	 * @return resultado de la operación
+	 */
+	@BusinessOperationDefinition(BO_PCO_ES_TAREA_ESPECIAL)
+	boolean getEsTareaPrecontenciosoEspecial(Long tareaId);
+	
 	
 }

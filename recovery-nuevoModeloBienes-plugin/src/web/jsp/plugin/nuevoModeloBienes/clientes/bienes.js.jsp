@@ -598,6 +598,7 @@
 		);
 		
 		var hoy = new Date();
+		var fechaMinima = new Date(1900,0,1);
 
 		var fechaVerifNMB=new Ext.ux.form.XDateField({
 			fieldLabel:'<s:message code="bienesCliente.fechaverificacion" text="**Fecha VErificacion" />'
@@ -605,7 +606,8 @@
 			,name:'bien.fechaVerificacion'
 			,value:	'<fwk:date value="${NMBbien.fechaVerificacion}" />'
 			,maxValue: hoy
-			,style:'margin:0px'		
+			,style:'margin:0px'	
+			,minValue: fechaMinima		
 		});
 		
 		
@@ -849,6 +851,7 @@
 			,value:	'<fwk:date value="${NMBbien.datosRegistralesActivo != null ? NMBbien.datosRegistralesActivo.fechaInscripcion : ''}" />'
 			,maxValue: hoy
 			,style:'margin:0px'		
+			,minValue: fechaMinima	
 		});
 		var numRegistro = app.creaText('numRegistro', '<s:message code="plugin.nuevoModeloBienes.bienesNMB.numRegistro" text="**Número de registro" />' , numRegistro_valor, {maxLength:6,labelStyle : labelStyle});
 		var municipoLibro = app.creaText('municipoLibro','<s:message code="plugin.mejoras.bienesNMB.municipoLibroMigrado" text="**Municipio (migrado)" />' , municipoLibro_valor, {maxLength:50,labelStyle : labelStyle, disabled: true});
@@ -939,6 +942,7 @@
 			,value:	'<fwk:date value="${NMBbien.valoracionActiva != null ? NMBbien.valoracionActiva.fechaValorSubjetivo : ''}" />' 
 			,maxValue: hoy
 			,style:'margin:0px'	
+			,minValue: fechaMinima	
 		});
 		
 		var importeValorSubjetivo = app.creaNumber(
@@ -964,6 +968,7 @@
 			,value:	'<fwk:date value="${NMBbien.valoracionActiva != null ? NMBbien.valoracionActiva.fechaValorApreciacion : ''}" />'
 			,maxValue: hoy
 			,style:'margin:0px'		
+			,minValue: fechaMinima	
 		});
 		
 		var importeValorApreciacion = app.creaNumber(
@@ -988,6 +993,7 @@
 			,name:'fechaValorTasacion'
 			,value:	'<fwk:date value="${NMBbien.valoracionActiva != null ? NMBbien.valoracionActiva.fechaValorTasacion : ''}" />'
 			,style:'margin:0px'		
+			,minValue: fechaMinima	
 		});
 		
 		var importeValorTasacion = app.creaNumber(
@@ -1038,6 +1044,7 @@
 			,name:'fechaSolicitudDue'
 			,value:	'<fwk:date value="${NMBbien.fechaSolicitudDueD}" />'
 			,style:'margin:0px'		
+			,minValue: fechaMinima	
 		});
 		
 		var fechaRecepcionDue = new Ext.ux.form.XDateField({
@@ -1046,6 +1053,7 @@
 			,name:'fechaRecepcionDue'
 			,value:	'<fwk:date value="${NMBbien.fechaDueD}" />'
 			,style:'margin:0px'		
+			,minValue: fechaMinima	
 		});
 		
     	var fechaTasacionExterna = new Ext.ux.form.XDateField({
@@ -1054,6 +1062,7 @@
 			,name:'fechaTasacionExterna'
 			,value:	'<fwk:date value="${NMBbien.valoracionActiva != null ? NMBbien.valoracionActiva.fechaTasacionExterna : ''}" />'
 			,style:'margin:0px'		
+			,minValue: fechaMinima	
 			<c:if test="${operacion == 'editar'}">,disabled: true</c:if>
 		});
 
@@ -1074,6 +1083,7 @@
 			,name:'fechaSolicitudTasacion'
 			,value:	'<fwk:date value="${NMBbien.valoracionActiva != null ? NMBbien.valoracionActiva.fechaSolicitudTasacion : ''}" />'
 			,style:'margin:0px'	
+			,minValue: fechaMinima	
 		});
 
 		
@@ -1343,7 +1353,8 @@
 			,value:	'<fwk:date value="${NMBbien.adicional != null ? NMBbien.adicional.fechaMatricula : ''}" />'
 			,maxValue: today
 			,style:'margin:0px'	
-			,labelStyle : labelStyle	
+			,labelStyle : labelStyle
+			,minValue: fechaMinima	
 		});
 		var nBastidor = app.creaText('nBastidor', '<s:message code="plugin.nuevoModeloBienes.nBastidor" text="**Nº Bastidor" />' , nBastidor_valor, {style : 'text-transform: uppercase',maxLength:50,labelStyle : labelStyle});
 		
@@ -1413,6 +1424,7 @@
 		,value:	'<fwk:date value="${NMBbien.fechaVerificacion}" />'
 		,maxValue: today
 		,style:'margin:0px'		
+		,minValue: fechaMinima	
 	});
 	var valor = app.creaNumber(
 		'bien.valorActual'
@@ -1648,23 +1660,28 @@
 					<app:test id="btnGuardarBien" addComa="true" />
 					,iconCls : 'icon_ok'
 					,handler : function() {
-						if(validarFormNMB()){
-							var p = getParametros();
-							Ext.Ajax.request({
-								url : page.resolveUrl('editbien/saveBien'), 
-								params : p,
-								method: 'POST',
-								success: function ( result, request ) {
-									page.fireEvent(app.event.DONE);
+						if (panelEdicion.getForm().isValid()){
+							if(validarFormNMB()){
+								var p = getParametros();
+								Ext.Ajax.request({
+									url : page.resolveUrl('editbien/saveBien'), 
+									params : p,
+									method: 'POST',
+									success: function ( result, request ) {
+										page.fireEvent(app.event.DONE);
+									}
+								});
+							}else{
+								if (msgError == '') {
+									Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Debe completar todos los campos obligatorios." code="bienesCliente.form.camposIncompletos"/>');
+								} else {
+									Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>',msgError);
 								}
-							});
-						}else{
-							if (msgError == '') {
-								Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Debe completar todos los campos obligatorios." code="bienesCliente.form.camposIncompletos"/>');
-							} else {
-								Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>',msgError);
 							}
-						}
+					   }
+					   else{
+					   		Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor erróneo" code="fwk.ui.errorList.fieldLabel.error"/>');
+					   }
 				   }
 				});
 			</sec:authorize>
@@ -1675,27 +1692,32 @@
 					<app:test id="btnGuardarBien" addComa="true" />
 					,iconCls : 'icon_ok'
 					,handler : function() {
-						if(validarFormNMB()){
-							var p = getParametros();
-							Ext.Ajax.request({
-								url : page.resolveUrl('editbien/saveBien'), 
-								params : p,
-								method: 'POST',
-								success: function ( result, request ) {
-									if ('${NMBbien.id}'==''){
-										var r = Ext.util.JSON.decode(result.responseText);
-										app.abreBien(r.id, r.id + ' ' + r.tipo);
+						if (panelEdicion.getForm().isValid()){
+							if(validarFormNMB()){
+								var p = getParametros();
+								Ext.Ajax.request({
+									url : page.resolveUrl('editbien/saveBien'), 
+									params : p,
+									method: 'POST',
+									success: function ( result, request ) {
+										if ('${NMBbien.id}'==''){
+											var r = Ext.util.JSON.decode(result.responseText);
+											app.abreBien(r.id, r.id + ' ' + r.tipo);
+										}
+										page.fireEvent(app.event.DONE);
 									}
-									page.fireEvent(app.event.DONE);
+								});
+							}else{
+								if (msgError == '') {
+									Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Debe completar todos los campos obligatorios." code="bienesCliente.form.camposIncompletos"/>');
+								} else {
+									Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>',msgError);
 								}
-							});
-						}else{
-							if (msgError == '') {
-								Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Debe completar todos los campos obligatorios." code="bienesCliente.form.camposIncompletos"/>');
-							} else {
-								Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>',msgError);
 							}
-						}
+				   		}
+				   		else
+						{											   		
+							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor erróneo" code="fwk.ui.errorList.fieldLabel.error"/>');						}
 				   }
 				});
 			</sec:authorize>
@@ -1706,26 +1728,33 @@
 					<app:test id="btnGuardarBien" addComa="true" />
 					,iconCls : 'icon_ok'
 					,handler : function() {
-						if(validarFormNMB()){
-							var p = getParametros();
-							Ext.Ajax.request({
-								url : page.resolveUrl('editbien/saveBien'), 
-								params : p,
-								method: 'POST',
-								success: function ( result, request ) {
-									if ('${NMBbien.id}'==''){
-										var r = Ext.util.JSON.decode(result.responseText);
-										app.abreBien(r.id, r.id + ' ' + r.tipo);
+					
+						if (panelEdicion.getForm().isValid()){
+							if(validarFormNMB()){
+								var p = getParametros();
+								Ext.Ajax.request({
+									url : page.resolveUrl('editbien/saveBien'), 
+									params : p,
+									method: 'POST',
+									success: function ( result, request ) {
+										if ('${NMBbien.id}'==''){
+											var r = Ext.util.JSON.decode(result.responseText);
+											app.abreBien(r.id, r.id + ' ' + r.tipo);
+										}
+										page.fireEvent(app.event.DONE);
 									}
-									page.fireEvent(app.event.DONE);
+								});
+							}else{
+								if (msgError == '') {
+									Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Debe completar todos los campos obligatorios." code="bienesCliente.form.camposIncompletos"/>');
+								} else {
+									Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>',msgError);
 								}
-							});
-						}else{
-							if (msgError == '') {
-								Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Debe completar todos los campos obligatorios." code="bienesCliente.form.camposIncompletos"/>');
-							} else {
-								Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>',msgError);
 							}
+						}
+						else
+						{	
+							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor erróneo" code="fwk.ui.errorList.fieldLabel.error"/>');										   		
 						}
 				   }
 				});
@@ -1737,22 +1766,29 @@
 					<app:test id="btnGuardarBien" addComa="true" />
 					,iconCls : 'icon_ok'
 					,handler : function() {
-						if(validarFormNMB()){
-							var p = getParametros();
-							Ext.Ajax.request({
-								url : page.resolveUrl('editbien/saveBien'), 
-								params : p,
-								method: 'POST',
-								success: function ( result, request ) {
-									page.fireEvent(app.event.DONE);
+					
+						if (panelEdicion.getForm().isValid()){
+							if(validarFormNMB()){
+								var p = getParametros();
+								Ext.Ajax.request({
+									url : page.resolveUrl('editbien/saveBien'), 
+									params : p,
+									method: 'POST',
+									success: function ( result, request ) {
+										page.fireEvent(app.event.DONE);
+									}
+								});
+							}else{
+								if (msgError == '') {
+									Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Debe completar todos los campos obligatorios." code="bienesCliente.form.camposIncompletos"/>');
+								} else {
+									Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>',msgError);
 								}
-							});
-						}else{
-							if (msgError == '') {
-								Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Debe completar todos los campos obligatorios." code="bienesCliente.form.camposIncompletos"/>');
-							} else {
-								Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>',msgError);
 							}
+						}
+						else
+						{											   		
+							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor erróneo" code="fwk.ui.errorList.fieldLabel.error"/>');
 						}
 				   }
 				});
@@ -1963,18 +1999,24 @@
 					<app:test id="btnGuardarBien" addComa="true" />
 					,iconCls : 'icon_ok'
 					,handler : function() {						
-						if(validarForm()){
-							var p = getParametros();
-							Ext.Ajax.request({
-								url : page.resolveUrl('editbien/saveBien'), 
-								params : p,
-								method: 'POST',
-								success: function ( result, request ) {
-									page.fireEvent(app.event.DONE);
-								}
-							});
-						}else{
-							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Debe completar todos los campos obligatorios." code="bienesCliente.form.camposIncompletos"/>');
+						if (panelEdicion.getForm().isValid()){
+							if(validarForm()){
+								var p = getParametros();
+								Ext.Ajax.request({
+									url : page.resolveUrl('editbien/saveBien'), 
+									params : p,
+									method: 'POST',
+									success: function ( result, request ) {
+										page.fireEvent(app.event.DONE);
+									}
+								});
+							}else{
+								Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Debe completar todos los campos obligatorios." code="bienesCliente.form.camposIncompletos"/>');
+							}
+						}
+						else
+						{											   		
+							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor erróneo" code="fwk.ui.errorList.fieldLabel.error"/>');
 						}
 				   }
 				});
@@ -1986,20 +2028,25 @@
 					<app:test id="btnGuardarBien" addComa="true" />
 					,iconCls : 'icon_ok'
 					,handler : function() {
-						if(validarForm()){
-							var p = getParametros();
-							Ext.Ajax.request({
-								url : page.resolveUrl('editbien/saveBien'), 
-								params : p,
-								method: 'POST',
-								success: function ( result, request ) {
-									page.fireEvent(app.event.DONE);
-								}
-							});
-						}else{
-							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Debe completar todos los campos obligatorios." code="bienesCliente.form.camposIncompletos"/>');
+						if (panelEdicion.getForm().isValid()){
+							if(validarForm()){
+								var p = getParametros();
+								Ext.Ajax.request({
+									url : page.resolveUrl('editbien/saveBien'), 
+									params : p,
+									method: 'POST',
+									success: function ( result, request ) {
+										page.fireEvent(app.event.DONE);
+									}
+								});
+							}else{
+								Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Debe completar todos los campos obligatorios." code="bienesCliente.form.camposIncompletos"/>');
+							}
 						}
-				   }
+						else
+						{											   		
+							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor erróneo" code="fwk.ui.errorList.fieldLabel.error"/>');						}
+				   		}
 				});
 			</sec:authorize>
 		}

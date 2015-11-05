@@ -7,6 +7,7 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.acuerdo.model.DDSubTipoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.contrato.model.EXTContrato;
+import es.capgemini.pfs.termino.model.DDEstadoGestionTermino;
 
 public class ListadoTerminosAcuerdoDto extends WebDto{
 	
@@ -25,6 +26,7 @@ public class ListadoTerminosAcuerdoDto extends WebDto{
 	
 	private List<EXTContrato> contratosTermino;
 	
+	private DDEstadoGestionTermino estadoGestion;
 
 	public ListadoTerminosAcuerdoDto() {
 		super();
@@ -79,5 +81,13 @@ public class ListadoTerminosAcuerdoDto extends WebDto{
 		this.subTipoAcuerdo = subTipoAcuerdo;
 	}
 	
+	public DDEstadoGestionTermino getEstadoGestion() {
+		return estadoGestion;
+	}
+
+	public void setEstadoGestion(DDEstadoGestionTermino estadoGestion) {
+		this.estadoGestion = estadoGestion;
+	}
+
 
 }

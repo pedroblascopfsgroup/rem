@@ -48,7 +48,12 @@ public class SubastaSolicitarNumActivoHandler extends PROBaseActionHandler {
 				// para las que no tienen numero y hayan sido marcados para la subasta 
 				if (!tieneNumeroActivo) {
 					// llamada solicita_tasacion();
-					proxyFactory.proxy(SubastasServicioTasacionDelegateApi.class).solicitarNumeroActivoByPrcId(nmbBien.getId(), prc.getId());
+					try{
+						proxyFactory.proxy(SubastasServicioTasacionDelegateApi.class).solicitarNumeroActivoByPrcId(nmbBien.getId(), prc.getId());
+					}catch(Exception ex){
+						logger.error(ex.getMessage());
+						//seguimos con el siguiente
+					}
 				}
 			}
 		}

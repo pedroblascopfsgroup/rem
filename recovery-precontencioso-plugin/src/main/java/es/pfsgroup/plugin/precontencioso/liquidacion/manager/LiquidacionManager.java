@@ -16,10 +16,12 @@ import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.expediente.model.Expediente;
+import es.capgemini.pfs.parametrizacion.dao.ParametrizacionDao;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
@@ -58,7 +60,13 @@ public class LiquidacionManager implements LiquidacionApi {
 	@Autowired
 	private UsuarioManager usuarioManager;
 	
+	@Autowired
+	private ParametrizacionDao parametrizacionDao;
+	
 	private final Log logger = LogFactory.getLog(getClass());
+	
+    public static final String DIRECTORIO_PLANTILLAS_LIQUIDACION = "directorioPlantillasLiquidacion";
+
 
 
 	@Override
@@ -192,9 +200,11 @@ public class LiquidacionManager implements LiquidacionApi {
 	@BusinessOperation(PRECONTENCIOSO_BO_PRC_INCLUIR_LIQUIDACION_AL_PROCEDIMIENTO)
 	@Transactional(readOnly = false)
     public void incluirLiquidacionAlProcedimiento(InclusionLiquidacionProcedimientoDTO dto){
-		ProcedimientoPCO prcPCO = procedimientoPCODao.getProcedimientoPcoPorIdProcedimiento(dto.getIdProcedimiento());
+		//ProcedimientoPCO prcPCO = procedimientoPCODao.getProcedimientoPcoPorIdProcedimiento(dto.getIdProcedimiento());
+		ProcedimientoPCO prcPCO = genericDao.get(ProcedimientoPCO.class, 
+				genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", dto.getIdProcedimiento()));			
 		if(prcPCO != null && 
-				(DDEstadoPreparacionPCO.PRETURNADO.equals(prcPCO.getEstadoActual().getCodigo()) ||
+				(DDEstadoPreparacionPCO.EN_ESTUDIO.equals(prcPCO.getEstadoActual().getCodigo()) ||
 				DDEstadoPreparacionPCO.PREPARACION.equals(prcPCO.getEstadoActual().getCodigo()) ||
 				DDEstadoPreparacionPCO.SUBSANAR.equals(prcPCO.getEstadoActual().getCodigo())
 				)
@@ -230,6 +240,11 @@ public class LiquidacionManager implements LiquidacionApi {
 	@BusinessOperation(LIQUIDACION_PRECONTENCIOSO_BY_ID)
 	public LiquidacionPCO getLiquidacionPCOById(Long idLiquidacion) {
 		return liquidacionDao.get(idLiquidacion);
+	}
+	
+	@Override
+	public String obtenerDirectorioDocumentos(){
+		return parametrizacionDao.buscarParametroPorNombre(DIRECTORIO_PLANTILLAS_LIQUIDACION).getValor();
 	}
 
 }

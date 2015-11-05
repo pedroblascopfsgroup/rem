@@ -113,7 +113,7 @@
 		
 		<pfs:defineHeader dataIndex="coeficiente"
 			captionKey="plugin.recobroConfig.modeloFacturacion.corrector.cabeceraCoeficienteRanking" caption="**Coeficiente"
-			sortable="true" />
+			sortable="true" renderer="app.format.percentRendererComa" />
 			
 	</pfs:defineColumnModel>
 	

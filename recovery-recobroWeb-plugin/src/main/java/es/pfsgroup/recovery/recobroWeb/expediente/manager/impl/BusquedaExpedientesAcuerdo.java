@@ -144,4 +144,74 @@ public class BusquedaExpedientesAcuerdo implements BusquedaExpedienteFiltroDinam
 		return dto;
 	}
 
+	@Override
+	public String obtenerFiltroRecobro(String paramsDinamicos) {
+		StringBuilder filtro = new StringBuilder();				
+		BusquedaExpAcuerdoDto dto = creaDtoParametros(paramsDinamicos);	
+		filtro= calculaFiltroRecobro(dto);		
+		return filtro.toString();
+	}
+
+	private StringBuilder calculaFiltroRecobro(BusquedaExpAcuerdoDto dto) {
+		StringBuilder filtro = new StringBuilder();
+
+//BKREC-943
+//                filtro.append(" SELECT distinct expRec.id FROM Expediente expRec ");		
+//		filtro.append(" WHERE expRec.id in( SELECT distinct acu.expediente.id FROM Acuerdo acu WHERE 1=1 ");
+		filtro.append(" SELECT acu.expediente as exp FROM Acuerdo acu WHERE 1=1 ");
+		if (!Checks.esNulo(dto.getFechaDesdeAcuerdo())){			
+			if (dto.getFechaDesdeAcuerdo() != null
+					&& !"".equals(dto.getFechaDesdeAcuerdo())) {
+				SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");
+				try {
+					sdf1.parse(dto.getFechaDesdeAcuerdo());
+					filtro.append(" AND acu.auditoria.fechaCrear >= TO_DATE('"+dto.getFechaDesdeAcuerdo() + "','dd/MM/rrrr')" );
+				
+				} catch (ParseException e) {
+					logger.error("Error parseando la fecha desde", e);
+				}
+				
+			}
+		}
+		if (!Checks.esNulo(dto.getFechaHastaAcuerdo())){
+			if (dto.getFechaHastaAcuerdo() != null
+					&& !"".equals(dto.getFechaHastaAcuerdo())) {
+				SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");
+				try {
+					sdf1.parse(dto.getFechaHastaAcuerdo());
+					filtro.append(" AND acu.auditoria.fechaCrear <= TO_DATE('"+dto.getFechaHastaAcuerdo() + " 23:59:59','dd/MM/rrrr hh24:mi:ss')" );
+				} catch (ParseException e) {
+					logger.error("Error parseando la fecha hasta", e);
+				}
+				
+			}
+		}
+		if (!Checks.esNulo(dto.getEstadoAcuerdo())){
+			filtro.append(" AND acu.estadoAcuerdo.id = " + dto.getEstadoAcuerdo() );
+		}		
+		if (!Checks.esNulo(dto.getTipoAcuerdo())) {
+			filtro.append(" AND acu.tipoPalanca.id = " + dto.getTipoAcuerdo() );
+		}
+		if (!Checks.esNulo(dto.getSolicitante())) {
+			filtro.append(" AND acu.solicitante.id = " + dto.getSolicitante() );
+		}
+		if (!Checks.esNulo(dto.getMinImporteAcuerdo()) ) {
+			filtro.append(" AND acu.importePago >= " + dto.getMinImporteAcuerdo() );
+		}
+		if ( !Checks.esNulo(dto.getMaxImporteAcuerdo()) ) {
+			filtro.append(" AND acu.importePago <= " + dto.getMaxImporteAcuerdo() );
+		}
+		if (!Checks.esNulo(dto.getMinporcentajeQuita()) ) {
+			filtro.append(" AND acu.porcentajeQuita >= " + dto.getMinporcentajeQuita() );
+		}
+		if ( !Checks.esNulo(dto.getMaxporcentajeQuita()) ) {
+			filtro.append(" AND acu.porcentajeQuita <= " + dto.getMaxporcentajeQuita() );
+		}
+
+//BKREC-943
+//		filtro.append(" ) ");
+				
+		return filtro;
+	}
+
 }

@@ -64,6 +64,13 @@ public interface ZonaDao extends AbstractDao<DDZona, Long> {
     List<DDZona> buscarZonasPorPerfil(Long idPerfil);
 
     /**
+     * Obtiene las zonas relacionadas con el código del perfil de la tabla ZON_PEF_USU.
+     * @param codPerfil codigo 
+     * @return zonas
+     */
+    List<DDZona> buscarZonasPorCodigoPerfil(String codPerfil);
+    
+    /**
      * Consulta si para esa zona existe ese perfil
      * @param idZona
      * @param idPerfil

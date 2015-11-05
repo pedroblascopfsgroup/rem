@@ -75,9 +75,9 @@
 
     var recargarComboZonas = function(combo, store){
         if (combo.getValue()!=null && combo.getValue()!=''){
-            store.webflow({idPerfil:combo.getValue()});
+            store.webflow({codPerfil:combo.getValue()});
         }else{
-            store.webflow({idPerfil:0});
+            store.webflow({codPerfil:0});
         }
     };
 

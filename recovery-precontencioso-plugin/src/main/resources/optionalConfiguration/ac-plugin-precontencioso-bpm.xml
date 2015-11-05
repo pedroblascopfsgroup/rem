@@ -59,6 +59,36 @@
 				 return procedimientoPcoManager.comprobarExisteLetrado(idProcedimiento);
 			}
 			
+			def dameFechaSolicitudExpediente = {
+				 def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
+				 return procedimientoPcoManager.dameFechaSolicitudExpediente(idProcedimiento);
+			}
+			
+			def dameFechaSolicitudDocumentos = {
+				 def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
+				 return procedimientoPcoManager.dameFechaSolicitudDocumentos(idProcedimiento);
+			}
+			
+			def dameFechaResultadoArchivo = {
+				 def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
+				 return procedimientoPcoManager.dameFechaResultadoArchivo(idProcedimiento);
+			}
+			
+			def dameFechaEnvio = {
+				 def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
+				 return procedimientoPcoManager.dameFechaEnvio(idProcedimiento);
+			}
+			
+			def dameFechaFinalizacionTareasPrecedentes = {
+				 def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
+				 return procedimientoPcoManager.dameFechaFinalizacionTareasPrecedentes(idProcedimiento);
+			}
+			
+			def dameFechaUltimoEnvioExp = {
+				 def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
+				 return procedimientoPcoManager.dameFechaUltimoEnvioExp(idProcedimiento);
+			}
+			
 			]]></value>
   		</list>
   	</property>

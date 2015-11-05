@@ -29,6 +29,7 @@
 	<fork name="forkTrasAceptacion">
 		<transition to="H009_RevisarEjecuciones" name="ejecuciones"></transition>
 		<transition to="H009_RegistrarInsinuacionCreditos" name="insinuacion"></transition>
+		<transition to="H009_BPMPreparacionExpedienteJudicial" name="expediente"></transition>
 	</fork>
 		
 	<state name="H009_RevisarEjecuciones">
@@ -408,6 +409,24 @@
 		<transition to="H009_BPMTramiteFaseConvenioV4" name="faseConvenio"></transition>
 		<transition to="H009_BPMCreditosContingentes" name="creditosContingentes"></transition>
 	</fork>
+
+	<state name="H009_BPMPreparacionExpedienteJudicial">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="precontencioso"></transition>
+	</state>
 		
 	<end-state name="Fin">
 		<event type="node-enter">

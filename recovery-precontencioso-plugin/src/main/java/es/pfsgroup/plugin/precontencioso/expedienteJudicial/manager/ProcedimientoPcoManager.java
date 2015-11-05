@@ -31,6 +31,7 @@ import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.dao.TareaExternaDao;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
@@ -40,8 +41,10 @@ import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
 import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDEstadoBurofaxPCO;
@@ -785,6 +788,104 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		return genericDao.getList(EXTTareaExternaValor.class, genericDao
 				.createFilter(FilterType.EQUALS, "tareaExterna.id", texId),
 				genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+	}
+	
+	
+	private List<SolicitudDocumentoPCO> getSolicitudPlazoTareas(Long idProc, boolean paraExpediente){
+		
+		List<SolicitudDocumentoPCO> solicitudes = null;
+		
+		try {
+			Order order = new Order(OrderType.ASC, "id");
+			solicitudes = genericDao.getListOrdered(SolicitudDocumentoPCO.class, order, genericDao.createFilter(FilterType.EQUALS, "documento.procedimientoPCO.procedimiento.id", idProc),genericDao.createFilter(FilterType.EQUALS,"tipoActor.tratamientoExpediente",paraExpediente));
+
+		} catch (Exception e) {logger.error(e.getMessage());}
+		
+		return solicitudes;
+	}
+	
+	public Long dameFechaSolicitudExpediente(Long idProc) {
+		
+		List<SolicitudDocumentoPCO> solicitudes = getSolicitudPlazoTareas(idProc, true);
+		if(!Checks.esNulo(solicitudes)){
+			for(SolicitudDocumentoPCO solicitud : solicitudes){
+				if(!Checks.esNulo(solicitud.getFechaSolicitud())){
+					return solicitud.getFechaSolicitud().getTime();
+				}
+			}
+		}
+		return new Date().getTime();
+	}
+	
+	public Long dameFechaSolicitudDocumentos(Long idProc){
+		
+		List<SolicitudDocumentoPCO> solicitudes = getSolicitudPlazoTareas(idProc, false);
+		if(!Checks.esNulo(solicitudes)){
+			for(SolicitudDocumentoPCO solicitud : solicitudes){
+				if(!Checks.esNulo(solicitud.getFechaSolicitud())){
+					return solicitud.getFechaSolicitud().getTime();
+				}
+			}
+		}
+		return new Date().getTime();
+	}
+	
+	public Long dameFechaResultadoArchivo(Long idProc) {
+		
+		List<SolicitudDocumentoPCO> solicitudes = getSolicitudPlazoTareas(idProc, true);
+		if(!Checks.esNulo(solicitudes)){
+			for(SolicitudDocumentoPCO solicitud : solicitudes){
+				if(!Checks.esNulo(solicitud.getFechaResultado())){
+					return solicitud.getFechaResultado().getTime();
+				}
+			}
+		}
+		return new Date().getTime();
+	}
+	
+	public Long dameFechaEnvio(Long idProc) {
+		
+		List<SolicitudDocumentoPCO> solicitudes = getSolicitudPlazoTareas(idProc, false);
+		if(!Checks.esNulo(solicitudes)){
+			for(SolicitudDocumentoPCO solicitud : solicitudes){
+				if(!Checks.esNulo(solicitud.getFechaEnvio())){
+					return solicitud.getFechaEnvio().getTime();
+				}
+			}
+		}
+		return new Date().getTime();
+	}
+	
+	public Long dameFechaFinalizacionTareasPrecedentes(Long idProc) {
+		
+		try {
+			
+			List<TareaProcedimiento> precedentes = new ArrayList<TareaProcedimiento>();
+			precedentes.addAll(genericDao.getList(TareaProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", PrecontenciosoBPMConstants.PCO_RegistrarAceptacionPost)));
+			precedentes.addAll(genericDao.getList(TareaProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", PrecontenciosoBPMConstants.PCO_SubsanarIncidenciaExp)));
+			precedentes.addAll(genericDao.getList(TareaProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", PrecontenciosoBPMConstants.PCO_SubsanarCambioProc)));
+			
+			List<TareaExterna> tarsExt = procedimientoPcoDao.getTareasPrecedentes(idProc, precedentes, "DESC");
+			
+			if(tarsExt.size() > 0){
+				return tarsExt.get(0).getTareaPadre().getFechaFin().getTime();
+			}
+			
+		} catch (Exception e) {logger.error(e.getMessage());}
+		
+		return new Date().getTime();
+	}
+	
+	public Long dameFechaUltimoEnvioExp(Long idProc) {
+		List<SolicitudDocumentoPCO> solicitudes = getSolicitudPlazoTareas(idProc, true);
+		if(!Checks.esNulo(solicitudes)){
+			for(SolicitudDocumentoPCO solicitud : solicitudes){
+				if(!Checks.esNulo(solicitud.getFechaEnvio())){
+					return solicitud.getFechaEnvio().getTime();
+				}
+			}
+		}
+		return new Date().getTime();
 	}
 
 }

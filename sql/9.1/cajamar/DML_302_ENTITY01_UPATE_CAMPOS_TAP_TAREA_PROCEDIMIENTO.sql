@@ -38,7 +38,21 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... ACTUALIZACION DEL CAMPO TAP_SCRIPT_DECISION PCO_RevisarExpedientePreparar');
 
     	V_SQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''PCO_RevisarExpedientePreparar''''][''''agencia_externa''''] == DDSiNo.SI ? ''''fin'''': ''''judicializar'''' ''
+					, TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''PCO_RevisarExpedientePreparar''''][''''agencia_externa'''']==DDSiNo.NO && noExisteGestorDocumentacionAsignadoAsunto() ? ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">En caso de indicar Agencia Externa NO, para completar la tarea debera haber un gestor de la documentación asignado al asunto'''' : null) ''
 					WHERE TAP_CODIGO = ''PCO_RevisarExpedientePreparar'' ';
+
+		EXECUTE IMMEDIATE V_SQL;
+		
+    	DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'... ACTUALIZACION DE TABLA TAP_TAREA_PROCEDIMIENTO ' );
+    END IF;
+    
+    V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''PCO_AsignarGestorLiquidacion'' ';
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+    IF V_NUM_TABLAS > 0 THEN
+		DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... ACTUALIZACION DEL CAMPO TAP_SCRIPT_DECISION PCO_AsignarGestorLiquidacion');
+
+    	V_SQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION = ''comprobarExisteGestorLiquidacion() ? null : ''''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">Para completar esta tarea el asunto debe de tener asignado el tipo de gestor Gestor de liquidación.</div>'''' ''
+					WHERE TAP_CODIGO = ''PCO_AsignarGestorLiquidacion'' ';
 
 		EXECUTE IMMEDIATE V_SQL;
 		
@@ -51,6 +65,7 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... ACTUALIZACION DEL CAMPO TAP_SCRIPT_DECISION PCO_RevisarExpedienteAsignarLetrado');
 
     	V_SQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''PCO_RevisarExpedienteAsignarLetrado''''][''''expediente_correcto''''] == DDSiNo.NO ? ''''reabreExp'''': ''''registrar'''' ''
+					, TAP_SCRIPT_VALIDACION = ''comprobarExisteLetrado() ? null : ''''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">Para completar esta tarea deberá haber un letrado asignado al asunto.</div>'''' ''
 					WHERE TAP_CODIGO = ''PCO_RevisarExpedienteAsignarLetrado'' ';
 
 		EXECUTE IMMEDIATE V_SQL;

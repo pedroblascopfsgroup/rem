@@ -44,6 +44,21 @@
 				 return procedimientoPcoManager.dameTipoTurnado(idProcedimiento);
 			}
 			
+			def noExisteGestorDocumentacionAsignadoAsunto = {
+				 def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
+				 return procedimientoPcoManager.noExisteGestorDocumentacionAsignadoAsunto(idProcedimiento);
+			}
+			
+			def comprobarExisteGestorLiquidacion = {
+				 def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
+				 return procedimientoPcoManager.comprobarExisteGestorLiquidacion(idProcedimiento);
+			}
+			
+			def comprobarExisteLetrado = {
+				 def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
+				 return procedimientoPcoManager.comprobarExisteLetrado(idProcedimiento);
+			}
+			
 			]]></value>
   		</list>
   	</property>
@@ -54,6 +69,7 @@
     <property name="sourceList">
     	<list merge="true">    
     		<value>es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDTipoProblemaDocPco</value>
+    		<value>es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDMotivoAsignacionLetrado</value>
     	</list>
     </property>
    </bean>

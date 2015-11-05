@@ -268,7 +268,7 @@
 	</state>
 
 	<state name="PCO_RevisarExpedienteAsignarLetrado">
-		<transition to="PCO_RevisarExpedienteAsignarLetradoDecision" name="avanzarBPM"></transition>
+		<transition to="PCO_RevisarExpedienteAsignarLetradoDecision" name="avanzaBPM"></transition>
 		<event type="node-enter">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
 				<targetBean>precontenciosoEnterActionHandler</targetBean>

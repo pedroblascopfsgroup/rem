@@ -85,6 +85,8 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	private static final String SUPERVISOR = "SUP_PCO";
 	private static final String DIRLIT_PCO = "DULI";
 	private static final String PREDOC = "PREDOC";
+	private static final String GESTOR_DOC = "CM_GD_PCO";
+	private static final String GESTOR_LIQ = "CM_GL_PCO";
 
 	@Autowired
 	private ProcedimientoPCODao procedimientoPcoDao;
@@ -623,6 +625,51 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		procedimientoPco.setEstadosPreparacionProc(estadosPreparacionProc);
 		genericDao.save(ProcedimientoPCO.class, procedimientoPco);
 		return procedimientoPco;
+	}
+	
+	public Boolean noExisteGestorDocumentacionAsignadoAsunto(Long idProcedimiento) {
+		Boolean resultado = true;
+		try {
+			Procedimiento proc = procedimientoManager.getProcedimiento(idProcedimiento);
+			Long idAsunto = proc.getAsunto().getId();
+			List<String> listaTiposGestores = procedimientoPcoDao.getTiposGestoresAsunto(idAsunto);
+			if (listaTiposGestores.contains(GESTOR_DOC)) {
+				resultado = false;
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return resultado;
+	}
+	
+	public Boolean comprobarExisteGestorLiquidacion(Long idProcedimiento) {
+		Boolean resultado = false;
+		try {
+			Procedimiento proc = procedimientoManager.getProcedimiento(idProcedimiento);
+			Long idAsunto = proc.getAsunto().getId();
+			List<String> listaTiposGestores = procedimientoPcoDao.getTiposGestoresAsunto(idAsunto);
+			if (listaTiposGestores.contains(GESTOR_LIQ)) {
+				resultado = true;
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return resultado;
+	}
+	
+	public Boolean comprobarExisteLetrado(Long idProcedimiento) {
+		Boolean resultado = false;
+		try {
+			Procedimiento proc = procedimientoManager.getProcedimiento(idProcedimiento);
+			Long idAsunto = proc.getAsunto().getId();
+			List<String> listaTiposGestores = procedimientoPcoDao.getTiposGestoresAsunto(idAsunto);
+			if (listaTiposGestores.contains(LETRADO)) {
+				resultado = true;
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return resultado;
 	}
 	
 	private List<DocumentoPCO> obtenerNuevosDocumentos(ProcedimientoPCO procedimientoPco, 

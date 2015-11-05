@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.pfsgroup.commons.utils.Checks;
@@ -30,6 +31,7 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 	private static final long serialVersionUID = -5583230911255732281L;
 	
 	private static final String TAREA_REGISTRAR_TOMA_DEC_COMBO_PROC_INICIAR = "proc_a_iniciar";
+	private static final String TAREA_REVISAR_EXPEDIENTE_ASIGNAR_LETRADO = "expediente_correcto";
 
 	@Autowired
 	GenericABMDao genericDao;
@@ -136,13 +138,20 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 		} else if (PrecontenciosoBPMConstants.PCO_DecTipoProcAutomatica.equals(tex.getTareaProcedimiento().getCodigo())) {
 	
 		} else if (PrecontenciosoBPMConstants.PCO_RevisarExpedientePreparar.equals(tex.getTareaProcedimiento().getCodigo())) {
-			
+			executor.execute("plugin.precontencioso.inicializarPco", prc);
 		} else if (PrecontenciosoBPMConstants.PCO_AsignarGestorLiquidacion.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
 		} else if (PrecontenciosoBPMConstants.PCO_RevisarExpedienteAsignarLetrado.equals(tex.getTareaProcedimiento().getCodigo())) {
-		
-		}
-		
+			String exp_correcto = "";
+			for(EXTTareaExternaValor valor : listado) {
+				if(TAREA_REVISAR_EXPEDIENTE_ASIGNAR_LETRADO.equals(valor.getNombre())){
+					exp_correcto = valor.getValor();
+				}
+			}
+			if(DDSiNo.NO.equals(exp_correcto)) {
+				executor.execute("plugin.precontencioso.cambiarEstadoExpediete", prc.getId(), PrecontenciosoBPMConstants.PCO_PREPARACION);
+			}
+		}	
 	}
 
 	public List<EXTTareaExternaValor> obtenerValoresTareaByTexId(Long texId) {

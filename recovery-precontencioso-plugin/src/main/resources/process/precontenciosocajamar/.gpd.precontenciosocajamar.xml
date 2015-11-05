@@ -172,7 +172,7 @@
   </node>
   <node name="PCO_RevisarExpedienteAsignarLetrado" x="643" y="207" width="254" height="36">
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-32" y="-18"/>
     </edge>
   </node>
   <node name="PCO_RevisarExpedientePrepararDecision" x="983" y="91" width="342" height="36">

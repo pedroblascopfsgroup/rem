@@ -855,7 +855,13 @@
 				,defaults : {xtype:'panel' ,cellCls : 'vtop'}
 				,border:false
 				,bodyStyle:'margin:10px;padding:5px;cellspacing:10px;margin-bottom:0px'
-				,items:[panelFiltros,contratosGrid, expedientesGrid]
+				,items:[panelFiltros]
+			}
+			,{
+				defaults : {xtype:'panel' ,cellCls : 'vtop'}
+				,border:false
+				,bodyStyle:'margin:10px;padding:5px;cellspacing:10px;margin-bottom:0px'
+    			,items:[contratosGrid, expedientesGrid]
 			}
 		]
 		,autoHeight : true

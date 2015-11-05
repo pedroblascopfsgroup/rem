@@ -87,9 +87,9 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	private static final String LETRADO = "GEXT";
 	private static final String SUPERVISOR = "SUP_PCO";
 	private static final String DIRLIT_PCO = "DULI";
-	private static final String PREDOC = "PREDOC";
 	private static final String GESTOR_DOC = "CM_GD_PCO";
 	private static final String GESTOR_LIQ = "CM_GL_PCO";
+
 
 	@Autowired
 	private ProcedimientoPCODao procedimientoPcoDao;
@@ -488,19 +488,21 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	}
 	
 	/**
+	 *		SOLO PARA HAYA
 	 * Comprueba que el asunto correspondiente al procedimiento tenga los siguientes gestores asignados:
 	 * 	Letrado, Supervisor del asunto, Director unidad de litigio y Preparador documental.
 	 * @param idProcedimiento
 	 * @return
 	 */
 	public Boolean existenGestoresCorrectos(Long idProcedimiento) {
+		String predoc = "PREDOC";
 		Boolean resultado = false;
 		try {
 			Procedimiento proc = procedimientoManager.getProcedimiento(idProcedimiento);
 			Long idAsunto = proc.getAsunto().getId();
 			List<String> listaTiposGestores = procedimientoPcoDao.getTiposGestoresAsunto(idAsunto);
 			if (listaTiposGestores.contains(LETRADO) && listaTiposGestores.contains(SUPERVISOR) &&
-					listaTiposGestores.contains(DIRLIT_PCO) && listaTiposGestores.contains(PREDOC)) {
+					listaTiposGestores.contains(DIRLIT_PCO) && listaTiposGestores.contains(predoc)) {
 				resultado = true;
 			}
 		} catch (Exception e) {

@@ -2,6 +2,8 @@
 	titleKey="plugin.config.despachoExterno.turnado.tabEsquema.title"
 	title="**Turnado de despacho" items="panelSuperior">
 
+	var esquemaTurnadoVigente;
+		
 	<pfsforms:textfield
 		labelKey="plugin.config.despachoExterno.turnado.tabEsquema.litigios.tipoImporte"
 		label="**Tipo importe" name="turnadoLitigiosTipoImporte"
@@ -27,6 +29,7 @@
 		flow:'turnadodespachos/getEsquemaVigente'
 		,params: null
 		,success: function(data){
+			esquemaTurnadoVigente = true;
 			for(var i = 0; i < data.configuracion.length; i++) {
 				config = data.configuracion[i];
 				
@@ -124,6 +127,8 @@
 		,items:[{layout:'form',items:[comunidadesActuacion, provinciasActuacion]}
 		]
 	});
+
+	var labelError = new Ext.form.Label({style:'font-weight:bold'});
 	
 	<sec:authorize ifAllGranted="ROLE_ESQUEMA_TURNADO_EDITAR">
 	var btnEditarTurnadoLetrado = new Ext.Button({
@@ -148,8 +153,11 @@
 				w.on(app.event.CANCEL, function(){ w.close(); });
 			}
 	});
+	labelError.setText('<s:message code="plugin.config.esquematurnado.editar.sinEsquemaVigente" text="**no existe ningún esquema de turnado vigente."/>', false);
+	btnEditarTurnadoLetrado.setDisabled(true);
 	</sec:authorize>
 
+	
 	var panelSuperior = new Ext.Panel({
 		title:'<s:message code="plugin.config.despachoExterno.turnado.ventana.panel.titulo" text="**Datos turnado"/>'
 		,layout:'table'
@@ -167,7 +175,7 @@
 			  ,{width:330,items:[ambitosActuacionPanel]}
 			  ]
 <sec:authorize ifAllGranted="ROLE_ESQUEMA_TURNADO_EDITAR">
-		, bbar : [btnEditarTurnadoLetrado]
+		, bbar : [btnEditarTurnadoLetrado,labelError]
 </sec:authorize>
 	});
 	

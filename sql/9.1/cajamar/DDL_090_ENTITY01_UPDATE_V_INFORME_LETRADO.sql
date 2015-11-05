@@ -111,9 +111,9 @@ V_MSQL := 'CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.VINFSUBASTALETRADO (SUB_
                INNER JOIN '||V_ESQUEMA||'.tap_tarea_procedimiento tap ON tex.tap_id = tap.tap_id
                INNER JOIN '||V_ESQUEMA||'.tfi_tareas_form_items tfi ON tap.tap_id = tfi.tap_id
                INNER JOIN '||V_ESQUEMA||'.tev_tarea_externa_valor tev ON tev.tex_id = tex.tex_id AND UPPER (tev_nombre) IN (''FECHASOLICITUD'', ''FECHADEMANDA'')      --AND UPPER (tfi.tfi_nombre) = UPPER (tev.tev_nombre)
-         WHERE NOT tev.tev_valor IS NULL)
-          	/*AND tap.tap_codigo IN
-                  (''H001_DemandaCertificacionCargas'', ''H022_InterposicionDemanda'', ''H024_InterposicionDemanda''))*/ demanda ON prc.prc_id = demanda.prc_id
+         WHERE NOT tev.tev_valor IS NULL
+          	AND tap.tap_codigo IN
+                  (''H001_DemandaCertificacionCargas'', ''H022_InterposicionDemanda'', ''H024_InterposicionDemanda'')) demanda ON prc.prc_id = demanda.prc_id
        LEFT JOIN
        (SELECT /*+ MATERIALIZE */
                prc_id, cnt_id, cnt_num

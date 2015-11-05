@@ -38,9 +38,9 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... ACTUALIZACION DEL CAMPO TAP_SCRIPT_DECISION PCO_RevisarExpedientePreparar');
 
     	V_SQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''PCO_RevisarExpedientePreparar''''][''''agencia_externa''''] == DDSiNo.SI ? ''''fin'''': ''''judicializar'''' ''
-					, TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''PCO_RevisarExpedientePreparar''''][''''agencia_externa'''']==DDSiNo.NO && noExisteGestorDocumentacionAsignadoAsunto() ? ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">En caso de indicar Agencia Externa NO, para completar la tarea debera haber un gestor de la documentación asignado al asunto'''' : null) ''
+					, TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''PCO_RevisarExpedientePreparar''''][''''agencia_externa'''']==DDSiNo.NO && noExisteGestorDocumentacionAsignadoAsunto() ? ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">En caso de indicar Agencia Externa NO, para completar la tarea debera haber un gestor de la documentación asignado al asunto'''' : null ''
 					WHERE TAP_CODIGO = ''PCO_RevisarExpedientePreparar'' ';
-
+					
 		EXECUTE IMMEDIATE V_SQL;
 		
     	DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'... ACTUALIZACION DE TABLA TAP_TAREA_PROCEDIMIENTO ' );

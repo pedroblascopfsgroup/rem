@@ -436,7 +436,7 @@
 		,{header: '<s:message code="preproyectado.contratos.tramo" text="**Tramo" />',dataIndex: 'tramo',sortable:true}
 		,{header: '<s:message code="preproyectado.contratos.diasVencidos" text="**Días vencidos" />',dataIndex: 'diasVencidos',sortable:true, align: 'right'}
 		,{header: '<s:message code="preproyectado.contratos.fechaPaseAMora" text="**Fecha pase a mora" />',dataIndex: 'fechaPaseAMoraCnt',sortable:true}
-		,{header: '<s:message code="preproyectado.contratos.propuesta" text="**Propuesta" />',dataIndex: 'propuesta',sortable:true}
+		,{header: '<s:message code="preproyectado.contratos.propuesta" text="**Última Propuesta" />',dataIndex: 'propuesta',sortable:true}
 		,{header: '<s:message code="preproyectado.contratos.estadoGestion" text="**Estado Gestión" />',dataIndex: 'estadoGestion',sortable:true}
 		,{header: '<s:message code="preproyectado.contratos.fechaPrevistaRegularizacion" text="**Fecha prevista regularización" />',dataIndex: 'fechaPrevReguCnt',sortable:true}
 	]);
@@ -448,7 +448,7 @@
         ,id:'cntId'
         ,style : 'margin-bottom:10px;padding-right:10px'
         ,autoWidth: true
-        ,height:350
+        ,height:500 //350
         ,loadMask: {msg: "Cargando...", msgCls: "x-mask-loading"}
         ,bbar : [pagingBar]
         ,collapsed: true
@@ -563,38 +563,69 @@
 	
 	expanderExp.on('expand',expandedRowExp);
 	
+	var cssExp = 'background-color: #99CCFF;';
+	
 	var expedientesCM = new Ext.grid.ColumnModel([
 		expanderExp
 		,{header: 'Id', dataIndex: 'expId',sortable:false, hidden: true}
-		,{header: '<s:message code="preproyectado.expedientes.idexpediente" text="**IDEXPEDIENTE" />',dataIndex: 'expId',sortable:true}		
-		,{header: '<s:message code="preproyectado.expedientes.titular" text="**Titular" />',dataIndex: 'titular',sortable:true}
-		,{header: '<s:message code="preproyectado.expedientes.niftitular" text="**NIF Titular" />',dataIndex: 'niftitular',sortable:true}
-		,{header: '<s:message code="preproyectado.expedientes.telef1" text="**Telf_1" />',dataIndex: 'telf1',sortable:true}
-		,{header: '<s:message code="preproyectado.expedientes.fase" text="**Fase" />',dataIndex: 'fase',sortable:true}
-		,{header: '<s:message code="preproyectado.expedientes.fechaVtoTarea" text="**Fecha vto tarea" />',dataIndex: 'fechaVtoTarea',sortable:true}
-		,{header: '<s:message code="preproyectado.expedientes.numContratos" text="**Nro. contratos" />',dataIndex: 'numContratos',sortable:true, align: 'right'}
-		,{header: '<s:message code="preproyectado.expedientes.volRiesgoExp" text="**Vol. Riesgo Exp." />',dataIndex: 'volRiesgoExp',sortable:true, renderer: app.format.moneyRenderer, align: 'right'}		
-		,{header: '<s:message code="preproyectado.expedientes.importeInicialExp" text="**Importe inicial" />',dataIndex: 'importeInicialExp',sortable:true, renderer: app.format.moneyRenderer, align: 'right'}
-		,{header: '<s:message code="preproyectado.expedientes.regularizadoExp" text="**Regularizado" />',dataIndex: 'regularizadoExp',sortable:true, renderer: app.format.moneyRenderer, align: 'right'}
-		,{header: '<s:message code="preproyectado.expedientes.importeActual" text="**Importe Actual" />',dataIndex: 'importeActual',sortable:true, renderer: app.format.moneyRenderer, align: 'right'}
-		,{header: '<s:message code="preproyectado.expedientes.importePteDifer" text="**Importe a diferir" />',dataIndex: 'importePteDifer',sortable:true, renderer: app.format.moneyRenderer, align: 'right'}
-		,{header: '<s:message code="preproyectado.expedientes.tramoExp" text="**Tramo" />',dataIndex: 'tramoExp',sortable:true}
-		,{header: '<s:message code="preproyectado.expedientes.diasVencidosExp" text="**Días vencidos" />',dataIndex: 'diasVencidosExp',sortable:true, align: 'right'}
-		,{header: '<s:message code="preproyectado.expedientes.fechaPaseAMoraExp" text="**Fecha pase a mora" />',dataIndex: 'fechaPaseAMoraExp',sortable:true}
-		,{header: '<s:message code="preproyectado.expedientes.propuesta" text="**Propuesta" />',dataIndex: 'propuesta',sortable:true}
-		,{header: '<s:message code="preproyectado.expedientes.fechaPrevReguExp" text="**Fecha prevista regularización" />',dataIndex: 'fechaPrevReguExp',sortable:true}		
+		,{header: '<s:message code="preproyectado.expedientes.idexpediente" text="**IDEXPEDIENTE" />',dataIndex: 'expId',sortable:true, css: cssExp}		
+		,{header: '<s:message code="preproyectado.expedientes.titular" text="**Titular" />',dataIndex: 'titular',sortable:true, css: cssExp}
+		,{header: '<s:message code="preproyectado.expedientes.niftitular" text="**NIF Titular" />',dataIndex: 'niftitular',sortable:true, css: cssExp}
+		,{header: '<s:message code="preproyectado.expedientes.telef1" text="**Telf_1" />',dataIndex: 'telf1',sortable:true, css: cssExp}
+		,{header: '<s:message code="preproyectado.expedientes.fase" text="**Fase" />',dataIndex: 'fase',sortable:true, css: cssExp}
+		,{header: '<s:message code="preproyectado.expedientes.fechaVtoTarea" text="**Fecha vto tarea" />',dataIndex: 'fechaVtoTarea',sortable:true, css: cssExp}
+		,{header: '<s:message code="preproyectado.expedientes.numContratos" text="**Nro. contratos" />',dataIndex: 'numContratos',sortable:true, align: 'right', css: cssExp}
+		,{header: '<s:message code="preproyectado.expedientes.volRiesgoExp" text="**Vol. Riesgo Exp." />',dataIndex: 'volRiesgoExp',sortable:true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}		
+		,{header: '<s:message code="preproyectado.expedientes.importeInicialExp" text="**Importe inicial" />',dataIndex: 'importeInicialExp',sortable:true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}
+		,{header: '<s:message code="preproyectado.expedientes.regularizadoExp" text="**Regularizado" />',dataIndex: 'regularizadoExp',sortable:true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}
+		,{header: '<s:message code="preproyectado.expedientes.importeActual" text="**Importe Actual" />',dataIndex: 'importeActual',sortable:true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}
+		,{header: '<s:message code="preproyectado.expedientes.importePteDifer" text="**Importe a diferir" />',dataIndex: 'importePteDifer',sortable:true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}
+		,{header: '<s:message code="preproyectado.expedientes.tramoExp" text="**Tramo" />',dataIndex: 'tramoExp',sortable:true, css: cssExp}
+		,{header: '<s:message code="preproyectado.expedientes.diasVencidosExp" text="**Días vencidos" />',dataIndex: 'diasVencidosExp',sortable:true, align: 'right', css: cssExp}
+		,{header: '<s:message code="preproyectado.expedientes.fechaPaseAMoraExp" text="**Fecha pase a mora" />',dataIndex: 'fechaPaseAMoraExp',sortable:true, css: cssExp}
+		,{header: '<s:message code="preproyectado.expedientes.propuesta" text="**Propuesta" />',dataIndex: 'propuesta',sortable:true, css: cssExp}
+		,{header: '<s:message code="preproyectado.expedientes.fechaPrevReguExp" text="**Fecha prevista regularización" />',dataIndex: 'fechaPrevReguExp',sortable:true, css: cssExp}		
 	]);
 	
 	var pagingBar = fwk.ux.getPaging(preProExpsStore);
+	
+    var expandAll = function() {
+     	for (var i=0; i < preProExpsStore.getCount(); i++){
+	      expanderExp.expandRow(i);		  
+	    }
+    };
+    
+     var collapseAll = function() {
+     	for (var i=0; i < preProExpsStore.getCount(); i++){
+	      expanderExp.collapseRow(i);		  
+	    }
+    };	
+	
+	var btnCollapseAll =new Ext.Button({
+  		tooltip:'<s:message code="preproyectado.expedientes.collapseAll" text="**Contraer todo" />'
+        ,iconCls : 'icon_collapse'
+	    ,cls: 'x-btn-icon'
+	    ,handler:collapseAll
+	    ,disabled: false
+  	});
+  	
+  	var btnExpandAll =new Ext.Button({
+      	tooltip:'<s:message code="preproyectado.expedientes.expandAll" text="**Expandir todo" />'	    
+	    ,iconCls : 'icon_expand'
+	    ,cls: 'x-btn-icon'
+	    ,handler:expandAll
+	    ,disabled: false
+  	});
+	
 	
 	var expedientesGrid=app.crearEditorGrid(preProExpsStore,expedientesCM,{
         title:'<s:message code="preproyectado.expedientes.cabecera" text="**Expedientes" />'
         ,id:'expId'
         ,style : 'margin-bottom:10px;padding-right:10px'
         ,autoWidth: true
-        ,height:350
+        ,height:500 //350
         ,loadMask: {msg: "Cargando...", msgCls: "x-mask-loading"}
-        ,bbar : [pagingBar]
+        ,bbar : [btnExpandAll, btnCollapseAll, pagingBar]
         ,collapsed: true
         ,hidden: true
         ,plugins: expanderExp

@@ -345,14 +345,14 @@ var comprobarDatosCalculoRellenos = function() {
 	var liquidacion = gridLiquidaciones.getSelectionModel().getSelected();
 
 	return (liquidacion
-			&& liquidacion.get('capitalVencido') != ""
-			&& liquidacion.get('capitalNoVencido') != ""
-			&& liquidacion.get('interesesOrdinarios') != ""
-			&& liquidacion.get('interesesDemora') != ""
-			&& liquidacion.get('gastos') != ""
-			&& liquidacion.get('comisiones') != ""
-			&& liquidacion.get('impuestos') != ""
-			&& liquidacion.get('total') != "" );
+			&& liquidacion.get('capitalVencido') >= 0
+			&& liquidacion.get('capitalNoVencido') >= 0
+			&& liquidacion.get('interesesOrdinarios') >= 0
+			&& liquidacion.get('interesesDemora') >= 0
+			&& liquidacion.get('gastos') >= 0
+			&& liquidacion.get('comisiones') >= 0
+			&& liquidacion.get('impuestos') >= 0
+			&& liquidacion.get('total') >= 0 );
 }
 
 

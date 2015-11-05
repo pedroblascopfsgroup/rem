@@ -22,6 +22,7 @@ public class DDResultadoBurofaxPCO implements Dictionary, Auditable {
 	
 	public static final String ESTADO_PENDIENTE = "PENDIENTE";
 	public static final String ESTADO_PREPARADO = "11";
+	public static final String ESTADO_SOLICITADO = "12";
 	public static final String ESTADO_ENVIADO = "13";
 	
 

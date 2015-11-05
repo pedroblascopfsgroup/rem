@@ -2009,7 +2009,7 @@ BEGIN
                    , SUB_INSTRUCCIONES
                    , SUB_SUBASTA_REVISADA
                    , VERSION
-                   , USUARIOCREARa
+                   , USUARIOCREAR
                    , FECHACREAR
                    , BORRADO
                    , SUB_COSTAS_LETRADO

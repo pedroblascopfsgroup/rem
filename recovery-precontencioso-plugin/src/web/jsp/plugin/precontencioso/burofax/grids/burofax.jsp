@@ -344,7 +344,9 @@
        	,style:'padding-top:10px'
 		,cls:'cursor_pointer'
 		,iconCls : 'icon_asuntos'
-		,bbar : [ botonesTabla,btnAddPersona,btnEnviar, btnNuevaDir, btnEditar, btnPreparar,btnCancelar, btnNotificar,btnDescargarBurofax , new Ext.Toolbar.Fill(), botonRefresh ]
+		<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_BUR_BTN">
+			,bbar : [ botonesTabla,btnAddPersona,btnEnviar, btnNuevaDir, btnEditar, btnPreparar,btnCancelar, btnNotificar,btnDescargarBurofax , new Ext.Toolbar.Fill(), botonRefresh ]
+		</sec:authorize>
 		,autoWidth: true
 		,collapsible: true
 		

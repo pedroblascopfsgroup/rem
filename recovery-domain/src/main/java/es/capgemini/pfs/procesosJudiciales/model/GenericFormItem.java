@@ -47,9 +47,6 @@ public class GenericFormItem implements Serializable {
     private String label;
 
     @Column(name = "TFI_VALOR_INICIAL")
-    private String valueRO;
-    
-    @Transient
     private String value;
 
     @Column(name = "TFI_TIPO")
@@ -82,13 +79,12 @@ public class GenericFormItem implements Serializable {
     private Integer version;
 
     
-    public static GenericFormItem getInstance(int order, String label, String valueRO, String type, String values, String validation,
+    public static GenericFormItem getInstance(int order, String label, String value, String type, String values, String validation,
             String validationError) {
         GenericFormItem item = new GenericFormItem();
         item.setOrder(order);
         item.setLabel(label);
-        item.setValue(valueRO);
-        item.setValueRO(valueRO);
+        item.setValue(value);
         item.setType(type);
         item.setValuesBusinessOperation(values);
         item.setValidation(validation);
@@ -96,8 +92,8 @@ public class GenericFormItem implements Serializable {
         return item;
     }
 
-    public static GenericFormItem getInstance(int order, String label, String valueRO, String type) {
-        return getInstance(order, label, valueRO, type, "", "", "");
+    public static GenericFormItem getInstance(int order, String label, String value, String type) {
+        return getInstance(order, label, value, type, "", "", "");
     }
 
     public String getLabel() {
@@ -109,21 +105,10 @@ public class GenericFormItem implements Serializable {
     }
 
     public String getValue() {
-        if (value == null)
-            return valueRO;
-        else
-            return value;
-    }
-    
-    public String getValueRO() {
-        return valueRO;
+       	return value;
     }
 
-    public void setValueRO(String valueRO) {
-        this.valueRO = valueRO;
-    }
-	
-    public String getValuesBusinessOperation() {
+	public String getValuesBusinessOperation() {
         return valuesBusinessOperation;
     }
 

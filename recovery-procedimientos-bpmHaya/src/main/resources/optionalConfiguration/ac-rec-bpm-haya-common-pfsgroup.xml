@@ -684,6 +684,22 @@
 						{return false}
 				}
 				
+				def asuntoConGestorExpJudicial = {
+	            	def extAsuntoManager = ctx.getBean("EXTAsuntoManager");
+					if (procedimientoManager.getProcedimiento(idProcedimiento).getAsunto() != null ) 
+						return extAsuntoManager.esTipoGestorAsignado(procedimientoManager.getProcedimiento(idProcedimiento).getAsunto().getId(), "PREDOC");
+					else
+						{return false}
+				}
+				
+				def asuntoConSupExpJudicial = {
+	            	def extAsuntoManager = ctx.getBean("EXTAsuntoManager");
+					if (procedimientoManager.getProcedimiento(idProcedimiento).getAsunto() != null ) 
+						return extAsuntoManager.esTipoGestorAsignado(procedimientoManager.getProcedimiento(idProcedimiento).getAsunto().getId(), "SUP_PCO");
+					else
+						{return false}
+				}
+				
 				def comprobarExisteDocumentoESADJ = { 
 					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "ESADJ");
@@ -876,6 +892,12 @@
 			
 	            	return demandadosNotificados.toString();
 	            }            	
+	            
+				def comprobarExisteDocumentoIFISCAL = {
+					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "IFISCAL");
+				}
+				
   			 ]]>
   			</value>
   		</list>

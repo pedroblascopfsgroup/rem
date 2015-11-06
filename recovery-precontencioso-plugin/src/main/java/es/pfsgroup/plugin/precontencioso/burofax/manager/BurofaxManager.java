@@ -448,7 +448,7 @@ public class BurofaxManager implements BurofaxApi {
 		
 		try{
 
-			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigo", "ENVIADO");
+			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoBurofaxPCO.ESTADO_SOLICITADO);
 			DDResultadoBurofaxPCO resultado=(DDResultadoBurofaxPCO) genericDao.get(DDResultadoBurofaxPCO.class,filtro1);
 			
 			for(EnvioBurofaxPCO envioBurofax : listaEnvioBurofaxPCO){
@@ -567,7 +567,7 @@ public class BurofaxManager implements BurofaxApi {
 			}
 			String apellido2="";
 			if(!Checks.esNulo(envioBurofax.getBurofax().getDemandado().getApellido2())){
-				apellido1=envioBurofax.getBurofax().getDemandado().getApellido2();
+				apellido2=envioBurofax.getBurofax().getDemandado().getApellido2();
 			}
 			String domicilio=envioBurofax.getDireccion().toString();
 			
@@ -722,7 +722,7 @@ public class BurofaxManager implements BurofaxApi {
 			}
 			
 			
-			//archivoBurofax=informesManager.generarEscritoConVariables(mapaVariables,nombreFichero,is);
+			archivoBurofax=informesManager.generarEscritoConVariables(mapaVariables,nombreFichero,is);
 	       
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block

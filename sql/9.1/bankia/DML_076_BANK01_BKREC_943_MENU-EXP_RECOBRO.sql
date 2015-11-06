@@ -5,7 +5,7 @@
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.16-bk
 --## INCIDENCIA_LINK=BKREC-943
---## PRODUCTO=SI
+--## PRODUCTO=NO
 --## Finalidad: DML
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
@@ -40,7 +40,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
 	V_SQL := 'SELECT 
                 (SELECT COUNT(*) FROM '||V_ESQUEMA_M||'.fun_funciones fun1 WHERE fun1.fun_descripcion IN (''MENU-LIST-EXP-ALL-USERS'',''MENU-LIST-EXP-RECOBRO-ALL-USERS''))
                 +
-                (SELECT COUNT(*) FROM '||V_ESQUEMA||'.pef_perfiles pef1 WHERE pef1.pef_codigo IN (''FPFSRADMIN'',''FPFSRINT'',''FPFSREXT'')) AS SUMA
+                (SELECT COUNT(*) FROM '||V_ESQUEMA||'.pef_perfiles pef1 WHERE pef1.pef_codigo IN (''FPFSRADMIN'',''FPFSRINT'',''FPFSREXT'',''FPFSRSOPORT'',''FPFSRUSUREC'')) AS SUMA
                 FROM DUAL';
     EXECUTE IMMEDIATE V_SQL INTO CUENTA;
 	
@@ -50,10 +50,10 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
 	---- * Eliminar permisos actuales sobre ver MENU > EXPEDIENTES 
     -- * y sobre ver MENU > EXPEDIENTES RECOBRO
 	-- **/   
-	IF CUENTA < 5 THEN
+	IF CUENTA < 7 THEN
 
       DBMS_OUTPUT.PUT_LINE('[ERROR] No se ha podido realizar la operación de dar permisos para visualizar MENU > EXPEDIENTES RECOBRO');
-      DBMS_OUTPUT.PUT_LINE('[ERROR] CAUSA: Revise la existencia de las funciones: ''MENU-LIST-EXP-ALL-USERS'',  ''MENU-LIST-EXP-RECOBRO-ALL-USERS'' y los codigos de perfiles: ''FPFSRADMIN'',''FPFSRINT'',''FPFSREXT'' ');
+      DBMS_OUTPUT.PUT_LINE('[ERROR] CAUSA: Revise la existencia de las funciones: ''MENU-LIST-EXP-ALL-USERS'',  ''MENU-LIST-EXP-RECOBRO-ALL-USERS'' y los codigos de perfiles: ''FPFSRADMIN'',''FPFSRINT'',''FPFSREXT'',''FPFSRSOPORT'',''FPFSRUSUREC'' ');
   
   ELSE
 	
@@ -121,13 +121,14 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
               WHERE fun1.fun_descripcion = ''MENU-LIST-EXP-RECOBRO-ALL-USERS''
               ) AS fun_id ,
               pef.pef_id ,
-              S_FUN_PEF.nextval AS FP_ID ,
+              '||V_ESQUEMA||'.S_FUN_PEF.nextval AS FP_ID ,
               ''0''               AS VERSION ,
               ''BKREC-943''       AS USUARIOCREAR ,
               sysdate           AS FECHACREAR
-            FROM pef_perfiles pef
-            WHERE pef.pef_codigo IN (''FPFSRADMIN'',''FPFSRINT'',''FPFSREXT'')';
-
+            FROM '||V_ESQUEMA||'.pef_perfiles pef
+            WHERE pef.pef_codigo IN (''FPFSRADMIN'',''FPFSRINT'',''FPFSREXT'',''FPFSRSOPORT'',''FPFSRUSUREC'')';
+            
+            
     DBMS_OUTPUT.PUT_LINE('[INFO] Permisos sobre MENU > EXPEDIENTES RECOBRO, creados.');
   
   END IF;

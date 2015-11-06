@@ -7,6 +7,8 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
 
 (function(page,entidad){
 
@@ -65,9 +67,11 @@
         ,items:[{layout: 'form',items: [observaciones], border: false}]
         ,autoHeight:true
         ,autoWidth:true
-        ,bbar: [btModificar]  
+        <sec:authorize ifNotGranted="SOLO_CONSULTA">
+        ,bbar: [btModificar]
+        </sec:authorize>
     });
-     
+   
     observaciones.setWidth(1200);
     
     panel.getAsuntoId = function(){

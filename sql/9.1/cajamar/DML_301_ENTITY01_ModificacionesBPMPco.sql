@@ -34,11 +34,11 @@ DECLARE
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(    
        T_TIPO_TAP('PCO','PCO_RevisarExpedientePreparar','plugin/precontencioso/tramite/revisarExpedientePreparar',null,null,null,null,'0','Revisar expediente a preparar',
-            '0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_CM_GE_PCO',null,'PCO_SUP',null),
+            '0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_CM_GE_PCO',null,'SUP_PCO',null),
        T_TIPO_TAP('PCO','PCO_AsignarGestorLiquidacion',null,null,null,null,null,'0','Asignar gestor de liquidación',
-            '0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_CM_GD_PCO',null,'PCO_SUP',null),
+            '0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_CM_GD_PCO',null,'SUP_PCO',null),
        T_TIPO_TAP('PCO','PCO_RevisarExpedienteAsignarLetrado','plugin/precontencioso/tramite/revisarExpedienteAsignarLetrado',null,null,null,null,'0','Revisar expediente y Asignar letrado',
-            '0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_SUP',null,'PCO_SUP',null)
+            '0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'SUP_PCO',null,'SUP_PCO',null)
     ); 
     V_TMP_TIPO_TAP T_TIPO_TAP;
 
@@ -67,7 +67,7 @@ DECLARE
 		
 		T_TIPO_TFI('PCO_RevisarExpedienteAsignarLetrado','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Para dar por finalizada esta tarea deberá añadir el letrado al que asigna el expediente judicial en la pestaña “Gestores” del expediente.</p><p style="margin-bottom: 10px">En el campo Fecha, indicar la fecha en la completa la tarea.</p><p style="margin-bottom: 10px">En el campo Letrado indicar el nombre del letrado asignado al asunto y en el campo “Motivo de asignación a Letrado” deberá elegir una de entre las opciones disponibles.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en este punto.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla:<ul><li>En caso de que no esté conforme con la finalización del expediente, la pestaña de Preparación Documental volverá a estar disponible y el Gestor de Documentación deberá realizar los cambios que le indique el supervisor.</li><li>En caso de que haya indicado que está conforme con la finalización del expediente, se lanzará la tarea “Registrar aceptación asunto” al letrado asignado.</li></ul></p></div>',null,null,null,null,'0','DD'),
 		T_TIPO_TFI('PCO_RevisarExpedienteAsignarLetrado','1','date','fecha_revision','Fecha de revisión','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
-		T_TIPO_TFI('PCO_RevisarExpedienteAsignarLetrado','2','combo','motivo_asignacion','Motivo de asignación a Letrado',null,null,null,'DDMotivoAsignacion','0','DD'),		
+		T_TIPO_TFI('PCO_RevisarExpedienteAsignarLetrado','2','combo','motivo_asignacion','Motivo de asignación a Letrado',null,null,null,'DDMotivoAsignacionLetrado','0','DD'),		
 		T_TIPO_TFI('PCO_RevisarExpedienteAsignarLetrado','3','combo','expediente_correcto','Expediente correcto','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','DD'),		
 		T_TIPO_TFI('PCO_RevisarExpedienteAsignarLetrado','4','textarea','observaciones','Observaciones',null,null,null,null,'0','DD')
     ); 

@@ -1,12 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=JAVIER RUIZ
---## FECHA_CREACION=05-11-2015
+--## FECHA_CREACION=06-11-2015
 --## ARTEFACTO=web
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=PRODUCTO-340
 --## PRODUCTO=SI
 --## Finalidad: DDL Creación vista del listado de preproyectado agrupación por contratos quitando los que esten en expedientes de recobro
+--##				quitando tambien los que la deuda irregular sea <= 0
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -129,7 +130,7 @@ BEGIN
 			    LEFT JOIN '||V_ESQUEMA||'.PER_PERSONAS PER ON PER.PER_ID = CPE.PER_ID AND PER.BORRADO = 0
 			      LEFT JOIN '||V_ESQUEMA_M||'.DD_TPE_TIPO_PERSONA DDTPE ON DDTPE.DD_TPE_ID = PER.DD_TPE_ID AND DDTPE.BORRADO = 0
 			  LEFT JOIN '||V_ESQUEMA||'.ZON_ZONIFICACION ZONCNT ON ZONCNT.ZON_ID = CNT.ZON_ID AND ZONCNT.BORRADO = 0 
-			WHERE CNT.BORRADO = 0
+			WHERE CNT.BORRADO = 0 AND MOV.MOV_DEUDA_IRREGULAR > 0
 			ORDER BY CNT.CNT_CONTRATO';
 			
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_NOMBRE_VISTA||' Creada');			    

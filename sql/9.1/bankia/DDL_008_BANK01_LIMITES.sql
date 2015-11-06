@@ -1,4 +1,4 @@
---/*
+/*
 --##########################################
 --## AUTOR=Alejandro I�igo
 --## FECHA_CREACION=20151030
@@ -9,7 +9,7 @@
 --##########################################
 --*/
 
---Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
@@ -17,29 +17,29 @@ SET DEFINE OFF;
 
 DECLARE
 
-    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
-    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
-    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
-    V_TS_INDEX VARCHAR2(25 CHAR):= '#TABLESPACE_INDEX#'; -- Configuracion Indice
-    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
-    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.  
-    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
-    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_MSQL VARCHAR2(32000 CHAR); /* Sentencia a ejecutar    */
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; /* Configuracion Esquema*/
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; /* Configuracion Esquema Master*/
+    V_TS_INDEX VARCHAR2(25 CHAR):= '#TABLESPACE_INDEX#'; /* Configuracion Indice*/
+    V_SQL VARCHAR2(4000 CHAR); /* Vble. para consulta que valida la existencia de una tabla.*/
+    V_NUM_TABLAS NUMBER(16); /* Vble. para validar la existencia de una tabla.  */
+    ERR_NUM NUMBER(25);  /* Vble. auxiliar para registrar errores en el script.*/
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.*/
 
-    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
+    V_TEXT1 VARCHAR2(2400 CHAR); /* Vble. auxiliar*/
     
-    V_ESQUEMA_MIN VARCHAR2(25 CHAR):= '#ESQUEMA_MINI#'; -- Configuracion Esquema minirec
-    V_ESQUEMA_DWH VARCHAR2(25 CHAR):= '#ESQUEMA_DWH#'; -- Configuracion Esquema recovery_bankia_dwh
-    V_ESQUEMA_STG VARCHAR2(25 CHAR):= '#ESQUEMA_STG#'; -- Configuracion Esquema recovery_bankia_datastage
+    V_ESQUEMA_MIN VARCHAR2(25 CHAR):= '#ESQUEMA_MINIREC#'; /* Configuracion Esquema minirec*/
+    V_ESQUEMA_DWH VARCHAR2(25 CHAR):= '#ESQUEMA_DWH#'; /* Configuracion Esquema recovery_bankia_dwh*/
+    V_ESQUEMA_STG VARCHAR2(25 CHAR):= '#ESQUEMA_STG#'; /* Configuracion Esquema recovery_bankia_datastage*/
 	
 BEGIN
 
 
-    --  tabla LMT_LIMITES_LIQ <-- ELIMINAR
+    /*  tabla LMT_LIMITES_LIQ <-- ELIMINAR */
 
     DBMS_OUTPUT.PUT_LINE('[START] DROP TABLE tabla LMT_LIMITES_LIQ');
 
-    select count(1) into V_NUM_TABLAS from USER_tables where table_name = 'LMT_LIMITES_LIQ';
+    select count(1) into V_NUM_TABLAS from ALL_TABLES where table_name = 'LMT_LIMITES_LIQ';
     if V_NUM_TABLAS > 0 then
         EXECUTE IMMEDIATE ' DROP TABLE '|| V_ESQUEMA ||'.LMT_LIMITES_LIQ CASCADE CONSTRAINTS';
             DBMS_OUTPUT.PUT_LINE('DROP TABLE '|| V_ESQUEMA ||'.LMT_LIMITES_LIQ... Tabla borrada OK');
@@ -70,8 +70,7 @@ BEGIN
 		VERSION                   	INTEGER DEFAULT 0  NOT NULL,
 		USUARIOBORRAR             	VARCHAR2(50)         ,
 		FECHABORRAR               	TIMESTAMP(6)         ,
-		BORRADO                  	NUMBER(1) DEFAULT 0  NOT NULL,		
-	    --CONSTRAINT PK_LMT_PCO_LIQ_ID    PRIMARY KEY (LMT_PCO_LIQ_ID),
+		BORRADO                  	NUMBER(1) DEFAULT 0  NOT NULL,			    
 		CONSTRAINT LMT_UNIQUE_LIQ_EXTERN_ID UNIQUE (LMT_XCOEMP,LMT_COPSER,LMT_IDPRIG,LMT_IDCOEC,LMT_FEVACM,LMT_FEPEAU,LMT_CLLIQ1)						 ) ' ;    
 		
 		EXECUTE IMMEDIATE 'CREATE INDEX ' || V_ESQUEMA || '.IDX_LMT_PCO_LIQ_ID ON ' || V_ESQUEMA || '.LMT_LIMITES_LIQ (LMT_PCO_LIQ_ID) ' ||

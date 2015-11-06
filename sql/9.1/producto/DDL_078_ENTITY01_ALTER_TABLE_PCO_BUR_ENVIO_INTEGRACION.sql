@@ -46,19 +46,33 @@ DECLARE
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     -- Si existe la tabla procedemos a modificarla
     IF V_NUM_TABLAS = 1 THEN
-    		V_SQL := 'SELECT COUNT(1) FROM all_tab_columns WHERE TABLE_NAME = ''PCO_BUR_ENVIO_INTEGRACION'' and owner = '''||V_ESQUEMA||''' and column_name = ''PCO_BUR_FICHERO''';
+    		V_SQL := 'SELECT COUNT(1) FROM all_tab_columns WHERE TABLE_NAME = ''PCO_BUR_ENVIO_INTEGRACION'' and owner = '''||V_ESQUEMA||''' and column_name = ''PCO_BUR_FICHERO_DOC''';
     		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     		--si no existe la columna la creamos
     		IF V_NUM_TABLAS = 0 THEN
-	            V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.PCO_BUR_ENVIO_INTEGRACION ADD PCO_BUR_FICHERO BLOB';
+	            V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.PCO_BUR_ENVIO_INTEGRACION ADD PCO_BUR_FICHERO_DOC VARCHAR2(30 CHAR)';
 	            EXECUTE IMMEDIATE V_MSQL;
-	            DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.PCO_BUR_ENVIO_INTEGRACION columna PCO_BUR_FICHERO modificada');
+	            DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.PCO_BUR_ENVIO_INTEGRACION columna PCO_BUR_FICHERO_DOC modificada');
 	        ELSE
-	        	DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.PCO_BUR_ENVIO_INTEGRACION columna PCO_BUR_FICHERO ya existe');
+	        	DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.PCO_BUR_ENVIO_INTEGRACION columna PCO_BUR_FICHERO_DOC ya existe');
 	        END IF;	
+
+    		V_SQL := 'SELECT COUNT(1) FROM all_tab_columns WHERE TABLE_NAME = ''PCO_BUR_ENVIO_INTEGRACION'' and owner = '''||V_ESQUEMA||''' and column_name = ''ID_ASUNTO_RCV''';
+    		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+    		--si no existe la columna la creamos
+    		IF V_NUM_TABLAS = 0 THEN
+	            V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.PCO_BUR_ENVIO_INTEGRACION ADD ID_ASUNTO_RCV NUMBER(16)';
+	            EXECUTE IMMEDIATE V_MSQL;
+	            DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.PCO_BUR_ENVIO_INTEGRACION columna ID_ASUNTO_RCV modificada');
+	        ELSE
+	        	DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.PCO_BUR_ENVIO_INTEGRACION columna ID_ASUNTO_RCV ya existe');
+	        END IF;	
+
     ELSE	
 		    DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.PCO_BUR_ENVIO_INTEGRACION... La tabla NO existe.');
     END IF;
+    
+    
     
 EXCEPTION
   WHEN OTHERS THEN

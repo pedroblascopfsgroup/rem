@@ -260,7 +260,7 @@ var actualizarBotonesLiquidacion = function() {
 		case 'SOL':
 			btnSolicitar.setDisabled(true);
 			btnEditarValores.setDisabled(true);
-			btnConfirmar.setDisabled(false);
+			btnConfirmar.setDisabled(true);
 			btnDescartar.setDisabled(false);
 			btnGenerar.setDisabled(true);
 			break;
@@ -344,15 +344,14 @@ var btnSolicitarOculto = ocultarBtnSolicitar();
 var comprobarDatosCalculoRellenos = function() {
 	var liquidacion = gridLiquidaciones.getSelectionModel().getSelected();
 
-	return (liquidacion
-			&& liquidacion.get('capitalVencido') != ""
-			&& liquidacion.get('capitalNoVencido') != ""
-			&& liquidacion.get('interesesOrdinarios') != ""
-			&& liquidacion.get('interesesDemora') != ""
-			&& liquidacion.get('gastos') != ""
-			&& liquidacion.get('comisiones') != ""
-			&& liquidacion.get('impuestos') != ""
-			&& liquidacion.get('total') != "" );
+	return !(liquidacion.get('capitalVencido') === ""
+			|| liquidacion.get('capitalNoVencido') === ""
+			|| liquidacion.get('interesesOrdinarios') === ""
+			|| liquidacion.get('interesesDemora') === ""
+			|| liquidacion.get('gastos') === ""
+			|| liquidacion.get('comisiones') === ""
+			|| liquidacion.get('impuestos') === ""
+			|| liquidacion.get('total') === "" );
 }
 
 

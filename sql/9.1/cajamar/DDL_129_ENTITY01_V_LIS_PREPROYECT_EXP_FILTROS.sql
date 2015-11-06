@@ -1,12 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=JAVIER RUIZ
---## FECHA_CREACION=05-11-2015
+--## FECHA_CREACION=06-11-2015
 --## ARTEFACTO=web
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=PRODUCTO-340
 --## PRODUCTO=SI
 --## Finalidad: DDL Creación vista para filtrado del listado de preproyectado de expedientes <> recobro
+--##				quitando tambien los que la deuda irregular sea <= 0
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -123,7 +124,7 @@ BEGIN
 			  LEFT JOIN MOVS_EXP ON MOVS_EXP.EXP_ID = EXP.EXP_ID
 			  LEFT JOIN CNT_MAS_VENCIDO_EXP VENC_CNT ON VENC_CNT.EXP_ID = EXP.EXP_ID AND VENC_CNT.NUMERO = 1
 			    LEFT JOIN '||V_ESQUEMA||'.DD_TDV_TRAMOS_DIAS_VENCIDOS DDTDV ON VENC_CNT.DIAS_VENCIDOS BETWEEN DDTDV.DD_TDV_DIA_INICIO AND DDTDV.DD_TDV_DIA_FIN  
-			WHERE EXP.BORRADO = 0
+			WHERE EXP.BORRADO = 0  AND MOVS_EXP.DEUDA_IRREGULAR > 0
 			ORDER BY EXP.EXP_ID, CNT.CNT_ID';
 			    
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_NOMBRE_VISTA||' Creada');			    

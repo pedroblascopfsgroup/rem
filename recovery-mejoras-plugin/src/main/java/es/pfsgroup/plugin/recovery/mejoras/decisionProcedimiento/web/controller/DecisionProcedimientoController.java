@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import es.capgemini.pfs.asunto.ProcedimientoManager;
-import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.decisionProcedimiento.DecisionProcedimientoManager;
 import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
@@ -16,6 +15,7 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.MEJDecisionProcedimientoManager;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.MEJProcedimientoApi;
+import es.pfsgroup.recovery.ext.api.procedimiento.EXTProcedimientoApi;
 
 @Controller
 public class DecisionProcedimientoController {
@@ -42,7 +42,7 @@ public class DecisionProcedimientoController {
 	
 	@RequestMapping
 	public String desparalizarProcedimiento(Long idProcedimiento){
-		proxyFactory.proxy(MEJProcedimientoApi.class).desparalizarProcedimiento(idProcedimiento);
+		proxyFactory.proxy(EXTProcedimientoApi.class).desparalizarProcedimiento(idProcedimiento);
 		return "default";
 	}
 	
@@ -50,7 +50,7 @@ public class DecisionProcedimientoController {
 	@RequestMapping
 	public String isDesparalizable(Long idProcedimiento,ModelMap map){
 		
-		boolean res = proxyFactory.proxy(MEJProcedimientoApi.class).isDespararizable(idProcedimiento);
+		boolean res = proxyFactory.proxy(EXTProcedimientoApi.class).isDespararizable(idProcedimiento);
 		map.put("isDesparalizable", res);
 		return "plugin/mejoras/procedimientos/procedimientoDesparalizableJSON";
 	}

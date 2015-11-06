@@ -122,7 +122,7 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 		List<Bien> bienes = liquidacion.getContrato().getBienes();
 		datosLiquidacion.put("BIENES", bienes);
 
-		if (liquidacion.getContrato().getTitulares() != null) {
+		if (!liquidacion.getContrato().getTitulares().isEmpty()) {
 			Persona titualPrincipal = liquidacion.getContrato().getTitulares().get(0);
 			datosLiquidacion.put("NOMBRE_TITULAR_PRINCIPAL", titualPrincipal.getNom50());
 		} else {

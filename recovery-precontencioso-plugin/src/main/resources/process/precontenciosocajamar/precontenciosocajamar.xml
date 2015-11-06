@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition  xmlns="urn:jbpm.org:jpdl-3.2"  name="precontenciosocajamar">
+
+
+	<start-state name="Inicio">
+		<transition to="PCO_DecTipoProcAutomatica" name="avanzaBPM"/>
+	</start-state>
+
+
+	<state name="PCO_PrepararExpediente">
+		<event type="node-enter">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="PCO_PrepararExpedienteDecision" name="avanzaBPM"/>
+	</state>
+
+	<state name="PCO_SolicitarDoc"></state>
+
+	<state name="PCO_RegistrarAceptacionPost">
+		<transition to="PCO_RegistrarAceptacionPostDecision" name="avanzaBPM"/>
+		<event type="node-enter">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
+			</action>
+		</event>
+	</state>
+
+	<decision name="PCO_RegistrarAceptacionPostDecision" expression="#{PCO_RegistrarAceptacionPostDecision}">
+		<transition to="PCO_RevisarNoAceptacionPost" name="no_aceptacion"/>
+		<transition to="PCO_EnviarExpedienteLetrado" name="aceptacion"/>
+	</decision>
+
+	<state name="PCO_RevisarNoAceptacionPost">
+		<transition to="PCO_RegistrarAceptacionPost" name="avanzaBPM"/>
+		<event type="node-enter">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
+			</action>
+		</event>
+	</state>
+
+	<state name="PCO_EnviarExpedienteLetrado">
+		<transition to="PCO_RegistrarTomaDec" name="avanzaBPM"/>
+		<event type="node-enter">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
+			</action>
+		</event>
+	</state>
+
+	<state name="PCO_RegistrarTomaDec">
+		<transition to="PCO_RegistrarTomaDecDecision" name="avanzaBPM"/>
+		<event type="node-enter">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
+			</action>
+		</event>
+	</state>
+
+	<decision name="PCO_RegistrarTomaDecDecision" expression="#{PCO_RegistrarTomaDecDecision}">
+		<transition to="PCO_RevisarSubsanacion" name="requiere_subsanar"/>
+		<transition to="PCO_IniciarProcJudicial" name="ok"/>
+		<transition to="PCO_ValidarCambioProc" name="cambio_proc"></transition>
+	</decision>
+
+	<state name="PCO_RevisarSubsanacion">
+		<transition to="PCO_RevisarSubsanacionDecision" name="avanzaBPM"/>
+		<event type="node-enter">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
+			</action>
+		</event>
+	</state>
+
+	<decision name="PCO_RevisarSubsanacionDecision" expression="#{PCO_RevisarSubsanacionDecision}">
+		<transition to="PCO_RegistrarTomaDec" name="devolver"/>
+		<transition to="PCO_SubsanarIncidenciaExp" name="subsanar"/>
+	</decision>
+
+	<state name="PCO_SubsanarIncidenciaExp">
+		<transition to="PCO_EnviarExpedienteLetrado" name="avanzaBPM"/>
+		<event type="node-enter">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
+			</action>
+		</event>
+	</state>
+
+	<state name="PCO_ValidarCambioProc">
+		<transition to="PCO_ValidarCambioProcDecision" name="avanzaBPM"/>
+		<event type="node-enter">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
+			</action>
+		</event>
+	</state>
+
+	<state name="PCO_SubsanarCambioProc">
+		<transition to="PCO_EnviarExpedienteLetrado" name="avanzaBPM"/>
+		<event type="node-enter">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
+			</action>
+		</event>
+	</state>
+
+	<decision name="PCO_ValidarCambioProcDecision" expression="#{PCO_ValidarCambioProcDecision}">
+		<transition to="PCO_RegistrarTomaDec" name="no"/>
+		<transition to="PCO_SubsanarCambioProc" name="si_nueva_preparacion"/>
+		<transition to="PCO_IniciarProcJudicial" name="si_sin_nueva_prep"></transition>
+	</decision>
+
+	<state name="PCO_RegResultadoExped"></state>
+
+	<state name="PCO_RecepcionExped"></state>
+
+	<state name="PCO_RegResultadoDoc"></state>
+
+	<state name="PCO_RegEnvioDoc"></state>
+
+	<state name="PCO_RecepcionDoc"></state>
+
+	<state name="PCO_AdjuntarDoc"></state>
+
+	<state name="PCO_GenerarLiq"></state>
+
+	<state name="PCO_ConfirmarLiq"></state>
+
+	<state name="PCO_EnviarBurofax"></state>
+
+	<state name="PCO_AcuseReciboBurofax"></state>
+
+	<decision name="PCO_DecTipoProcAutomaticaDecision" expression="#{PCO_DecTipoProcAutomaticaDecision}">
+		<transition to="PCO_RevisarExpedientePreparar" name="litigio"/>
+		<transition to="PCO_PrepararExpediente" name="concurso"/>
+	</decision>
+
+	<state name="PCO_RegResultadoDocG"/>
+
+	<decision name="PCO_PrepararExpedienteDecision" expression="#{PCO_PrepararExpedienteDecision}">
+		<transition to="PCO_RevisarExpedienteAsignarLetrado" name="litigio"/>
+		<transition to="PCO_RevisarExpDigCONC" name="concurso"></transition>
+	</decision>
+
+	<state name="PCO_RevisarExpDigCONC">
+		<event type="node-enter">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="PCO_RevisarExpDigCONCDecision" name="avanzaBPM"/>
+	</state>
+
+	<decision name="PCO_RevisarExpDigCONCDecision" expression="#{PCO_RevisarExpDigCONCDecision}">
+		<transition to="PCO_ResolverIncidenciaExpCONC" name="requiere_subsanar"/>
+		<transition to="Fin" name="ok"/>
+	</decision>
+
+	<state name="PCO_ResolverIncidenciaExpCONC">
+		<event type="node-enter">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="PCO_RevisarExpDigCONC" name="avanzaBPM"/>
+	</state>
+
+	<node name="PCO_DecTipoProcAutomatica">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>precontenciosoDecisionActionHandler</targetBean>
+		</action>	
+		<transition to="PCO_DecTipoProcAutomaticaDecision" name="avanzaBPM"/>
+	</node>
+
+	<node name="PCO_IniciarProcJudicial">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>precontenciosoDecisionActionHandler</targetBean>
+		</action>	
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</node>
+
+	<state name="PCO_RevisarExpedientePreparar">
+		<transition to="PCO_RevisarExpedientePrepararDecision" name="avanzaBPM"></transition>
+		<event type="node-enter">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
+			</action>
+		</event>
+	</state>
+
+	<state name="PCO_AsignarGestorLiquidacion">
+		<transition to="PCO_PrepararExpediente" name="avanzaBPM"></transition>
+		<event type="node-enter">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
+			</action>
+		</event>
+	</state>
+
+	<state name="PCO_RevisarExpedienteAsignarLetrado">
+		<transition to="PCO_RevisarExpedienteAsignarLetradoDecision" name="avanzaBPM"></transition>
+		<event type="node-enter">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
+			</action>
+		</event>
+	</state>
+
+	<decision name="PCO_RevisarExpedientePrepararDecision" expression="#{PCO_RevisarExpedientePrepararDecision}">
+		<transition to="PCO_AsignarGestorLiquidacion" name="judicializar"></transition>
+		<transition to="Fin" name="fin"></transition>
+	</decision>
+
+	<decision name="PCO_RevisarExpedienteAsignarLetradoDecision" expression="#{PCO_RevisarExpedienteAsignarLetradoDecision}">
+		<transition to="PCO_RegistrarAceptacionPost" name="registrar"></transition>
+		<transition to="PCO_PrepararExpediente" name="reabreExp"></transition>
+	</decision>
+
+
+	<end-state name="Fin"></end-state>
+
+
+</process-definition>

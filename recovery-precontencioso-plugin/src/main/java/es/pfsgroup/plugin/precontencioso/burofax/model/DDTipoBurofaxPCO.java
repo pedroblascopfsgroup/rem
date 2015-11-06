@@ -10,6 +10,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.hibernate.annotations.Type;
+
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
@@ -37,7 +40,7 @@ public class DDTipoBurofaxPCO implements Dictionary, Auditable {
 
 	@Column(name = "DD_PCO_BFT_PLANTILLA")
 	private String plantilla;
-
+	
 	@Version
 	private Integer version;
 
@@ -99,4 +102,6 @@ public class DDTipoBurofaxPCO implements Dictionary, Auditable {
 	public void setPlantilla(String plantilla) {
 		this.plantilla = plantilla;
 	}
+
+	
 }

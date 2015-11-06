@@ -40,6 +40,43 @@
 				<entry key="SAREB" value="H002"/>
 			</map>
 		</property>
+		
+		<property name="codigoHipotecario">
+				<value>H001</value>
+		</property>
+		
+		<property name="codigoMonitorio">
+				<value>H022</value>
+		</property>
+		
+		<property name="codigoOrdinario">
+				<value>H024</value>
+		</property>
+		
+		<property name="codigoTareaDemandaHipotecario">
+				<value>H001_DemandaCertificacionCargas</value>
+		</property>
+		
+		<property name="codigoTareaDemandaMonitorio">
+				<value>H022_InterposicionDemanda</value>
+		</property>
+		
+		<property name="codigoTareaDemandaOrdinario">
+				<value>H024_InterposicionDemanda</value>
+		</property>
+		
+		<property name="fechaDemandaHipotecario">
+				<value>fechaDemanda</value>
+		</property>
+		
+		<property name="fechaDemandaMonitorio">
+				<value>fechaDemanda</value>
+		</property>
+		
+		<property name="fechaDemandaOrdinario">
+				<value>fechaDemanda</value>
+		</property>
+		
 	</bean>
 
 	<bean id="coreProjectContextHAYA" parent="coreProjectContextDefault">

@@ -152,6 +152,7 @@ public final class ConfiguracionBusinessOperation {
     public static final String BO_ZONA_MGR_GET_ZONAS_POR_NIVEL = "zonaManager.getZonasPorNivel";
     public static final String BO_ZONA_MGR_GET_ALL_ZONAS_POR_NIVEL = "zonaManager.getAllZonasPorNivel";
     public static final String BO_ZONA_MGR_GET_ZONA_POR_PERFIL = "zonaManager.getZonasPorPerfil";
+    public static final String BO_ZONA_MGR_GET_ZONA_POR_CODIGO_PERFIL = "zonaManager.getZonasPorCodigoPerfil";
     public static final String BO_ZONA_MGR_GET_ZONA_POR_CENTRO = "zonaManager.getZonaPorCentro";
     public static final String BO_ZONA_MGR_GET_ZONA_POR_CODIGO = "zonaManager.getZonaPorCodigo";
     public static final String BO_ZONA_MGR_GET_ZONA_POR_DESCRIPCION = "zonaManager.getZonaPorDescripcion";

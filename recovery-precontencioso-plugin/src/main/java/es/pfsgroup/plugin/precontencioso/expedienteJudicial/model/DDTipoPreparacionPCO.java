@@ -20,6 +20,9 @@ public class DDTipoPreparacionPCO implements Dictionary, Auditable {
 
 	private static final long serialVersionUID = 5392971820536499815L;
 
+	public static final String SENCILLO = "SE";
+	public static final String COMPLEJO = "CO";
+
 	@Id
 	@Column(name = "DD_PCO_PTP_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoPreparacionPCOGenerator")

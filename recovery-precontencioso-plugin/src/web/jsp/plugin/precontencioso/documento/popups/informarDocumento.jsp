@@ -81,7 +81,7 @@
 			return false;
 		}
 	
-		if ('${solicitud.actor}'=='GEST') {
+		if ('${solicitud.actor}' == '<fwk:const value="es.pfsgroup.plugin.precontencioso.documento.model.DDTipoActorPCO.GESTORIA" />') {
 			if (fechaResultado.getValue() == "" || comboRespuestasSolicitud.getValue() == "") {
 				Ext.Msg.alert('Error', '<s:message code="precontencioso.grid.documento.informarDocumento.resultadoObligatorio" text="**Son obligatorios los campos Fecha Resultado y Resultado." />');
 				fechaResultado.focus();
@@ -188,7 +188,7 @@
 	
 	function estadoInicial() {
 		comboEstadosDocumento.setDisabled(true);
-		if ('${solicitud.actor}'=='GEST') {
+		if ('${solicitud.actor}' == '<fwk:const value="es.pfsgroup.plugin.precontencioso.documento.model.DDTipoActorPCO.GESTORIA" />') {
 			adjuntado.setDisabled(true);
 			ejecutivo.setDisabled(true);
 			fechaEnvio.setDisabled(true);

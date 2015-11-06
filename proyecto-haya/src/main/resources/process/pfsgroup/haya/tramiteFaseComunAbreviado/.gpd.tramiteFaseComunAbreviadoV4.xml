@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteFaseComunAbreviadoV4" width="1233" height="1903">
+<root-container name="haya_tramiteFaseComunAbreviadoV4" width="1253" height="1903">
   <node name="Inicio" x="250" y="-238" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -168,7 +168,6 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
-      <bendpoint w1="-174" h1="-2" w2="86" h2="-126"/>
     </edge>
   </node>
   <node name="H009_RegistrarProyectoInventarioDecision" x="192" y="574" width="302" height="36">
@@ -207,8 +206,8 @@
       <label x="5" y="-10"/>
     </edge>
     <edge>
-      <label x="27" y="-24"/>
-      <bendpoint w1="-260" h1="4" w2="-3" h2="-440"/>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-244" h1="5" w2="13" h2="-439"/>
     </edge>
   </node>
   <node name="H009_BPMTramiteDemandaIncidental" x="538" y="1432" width="270" height="36">
@@ -271,8 +270,7 @@
       <label x="-77" y="-6"/>
     </edge>
     <edge>
-      <label x="0" y="-120"/>
-      <bendpoint w1="3" h1="160" w2="-295" h2="-12"/>
+      <label x="5" y="-10"/>
     </edge>
   </node>
   <node name="ForkContactarDeudor" x="215" y="268" width="252" height="24">
@@ -288,21 +286,21 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
+  <node name="fork1" x="659" y="-168" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H009_BPMPrecontencioso" x="898" y="-102" width="287" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="192" h1="101" w2="170" h2="-557"/>
+      <bendpoint w1="183" h1="669" w2="161" h2="11"/>
+    </edge>
+  </node>
   <node name="Fin" x="1012" y="556" width="103" height="36"/>
   <node name="Fin2" x="17" y="596" width="132" height="36"/>
-  <node name="fork1" x="614" y="-146" width="147" height="24">
-    <edge>
-      <label x="-34" y="-13"/>
-    </edge>
-    <edge>
-      <label x="-54" y="-20"/>
-    </edge>
-  </node>
-  <node name="H009_BPMPrecontencioso" x="888" y="-150" width="243" height="36">
-    <edge>
-      <label x="-80" y="-376"/>
-      <bendpoint w1="222" h1="4" w2="168" h2="-702"/>
-      <bendpoint w1="223" h1="704" w2="169" h2="-2"/>
-    </edge>
-  </node>
 </root-container>

@@ -436,35 +436,56 @@
        ,hidden:true      
 	});
 
-    function processResult(opt, text){
-       if(opt == 'cancel'){
-	      //Nada
-	   }
-	   if(opt == 'ok'){
-	   	   deshabilitarBotones();
-	       page.webflow({
-      			flow:'mejacuerdo/rechazarAcuerdoMotivo'
-      			,params:{
-      				idAcuerdo:acuerdoSeleccionado
-      				,motivo: text
-   				}
-   				,success: function(){
-	   				acuerdosStore.on('load',despuesDeEvento);
+<!--     function processResult(opt, text){ -->
+<!--        if(opt == 'cancel'){ -->
+<!-- 	      //Nada -->
+<!-- 	   } -->
+<!-- 	   if(opt == 'ok'){ -->
+<!-- 	   	   deshabilitarBotones(); -->
+<!-- 	       page.webflow({ -->
+<!--       			flow:'mejacuerdo/rechazarAcuerdoMotivo' -->
+<!--       			,params:{ -->
+<!--       				idAcuerdo:acuerdoSeleccionado -->
+<!--       				,motivo: text -->
+<!--    				} -->
+<!--    				,success: function(){ -->
+<!-- 	   				acuerdosStore.on('load',despuesDeEvento); -->
+<!-- 		   		 	acuerdosStore.webflow({id:panel.getAsuntoId()}); -->
+<!-- 		   		 	btnAceptarAcuerdo.hide(); -->
+<!-- 		   		 	btnRechazarAcuerdo.hide(); -->
+<!-- 		   		 	btnCerrarAcuerdo.hide(); -->
+<!-- 		   		 	btnIncumplirAcuerdo.hide(); -->
+<!-- 		   		 	btnVigenteAcuerdo.hide(); -->
+<!--    		 		} -->
+<!-- 	      	});	 -->
+<!--       		habilitarBotones(); -->
+<!-- 	   } -->
+<!-- 	} -->
+    
+	btnRechazarAcuerdo.on('click',function(){
+	
+				var w = app.openWindow({
+		       	   flow : 'mejacuerdo/openRechazarAcuerdo'
+		          ,closable:false
+		          ,width : 550
+		          ,title : '<s:message code="mejoras.plugin.acuerdos.rechazarAcuerdo" text="**Rechazar acuerdo" />'
+		          ,params : {idAcuerdo:acuerdoSeleccionado}
+		       	});
+		       	w.on(app.event.DONE, function(){
+					w.close();
+					acuerdosStore.on('load',despuesDeEvento);
 		   		 	acuerdosStore.webflow({id:panel.getAsuntoId()});
 		   		 	btnAceptarAcuerdo.hide();
 		   		 	btnRechazarAcuerdo.hide();
 		   		 	btnCerrarAcuerdo.hide();
 		   		 	btnIncumplirAcuerdo.hide();
 		   		 	btnVigenteAcuerdo.hide();
-   		 		}
-	      	});	
-      		habilitarBotones();
-	   }
-	}
-    
-	btnRechazarAcuerdo.on('click',function(){
+		       	});
+		       	w.on(app.event.CANCEL, function(){
+		        	w.close();
+		       	});
 	
-		  Ext.MessageBox.prompt('Motivo rechazo', 'Introduzca los motivos por los que rechaza el acuerdo:', processResult);
+<!-- 		  Ext.MessageBox.prompt('Motivo rechazo', 'Introduzca los motivos por los que rechaza el acuerdo:', processResult); -->
        		
 	});
 	
@@ -636,6 +657,7 @@
 					,items:[
 						terminosTab, analisisTab
 					]
+					,style:'padding-right:10px;margin-top: 20px;'
 					,autoHeight:true
 					,autoWidth : true
 					,border: true

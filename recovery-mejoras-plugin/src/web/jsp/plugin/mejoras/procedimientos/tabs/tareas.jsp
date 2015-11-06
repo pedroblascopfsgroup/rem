@@ -263,7 +263,9 @@
 		,cls:'cursor_pointer'
 		,width : 700
 		,height : 400
+		<sec:authorize ifNotGranted="SOLO_CONSULTA">
 		,bbar:btnBar
+		</sec:authorize>
     });
     
 

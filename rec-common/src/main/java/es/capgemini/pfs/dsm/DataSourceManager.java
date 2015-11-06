@@ -15,6 +15,7 @@ import es.capgemini.devon.dao.datasource.InitializingDataSourceFactoryBean;
 import es.capgemini.devon.events.EventManager;
 import es.capgemini.devon.exception.FrameworkException;
 import es.capgemini.devon.startup.Initializable;
+import es.capgemini.pfs.DevonPropertiesConstants.DatabaseConfig;
 import es.capgemini.pfs.dsm.dao.EntidadDao;
 import es.capgemini.pfs.dsm.model.Entidad;
 import es.pfsgroup.recovery.Encriptador;
@@ -39,11 +40,6 @@ public class DataSourceManager implements Initializable {
 
     public static final Long NO_DATASOURCE_ID = 0L;
     public static final Long MASTER_DATASOURCE_ID = -1L;
-
-    //Constante de devon.properties donde se indica si las contraseñas de BD van codificadas
-    public static final String CLAVE_PASSWORD = "dsm.prot.cnts";
-    public static final String PW_NO_CODIFICADA = "NO";
-    public static final String PW_CODIFICADA = "SI";
 
     @Autowired
     private EntidadDao entidadDao;
@@ -85,7 +81,7 @@ public class DataSourceManager implements Initializable {
             String url = entidad.configValue(URL_KEY);
             String username = entidad.configValue(USER_NAME_KEY);
             String password = entidad.configValue(PASSWORD_KEY);
-            if (appProperties.getProperty(CLAVE_PASSWORD,PW_NO_CODIFICADA).equalsIgnoreCase(PW_CODIFICADA)) {
+            if (appProperties.getProperty(DatabaseConfig.ENABLE_PASSWORD_ENCRYPT_KEY,DatabaseConfig.ENABLE_PASSWORD_ENCRYPT_VALUE_NO).equalsIgnoreCase(DatabaseConfig.ENABLE_PASSWORD_ENCRYPT_VALUE_SI)) {
             	try {
                 	String password_desencriptada = Encriptador.desencriptarPw(password);
 		            if (url.indexOf(password)>0) {

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
+import es.capgemini.devon.bo.BusinessOperationException;
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.core.api.parametrizacion.ParametrizacionApi;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
@@ -21,8 +23,10 @@ import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
+import es.pfsgroup.plugin.precontencioso.liquidacion.api.GenerarLiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDTipoLiquidacionPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 
@@ -31,9 +35,12 @@ public class LiquidacionController {
 
 	private static final String DEFAULT = "default";
 	private static final String JSON_LIQUIDACIONES = "plugin/precontencioso/liquidacion/json/liquidacionesJSON";
+	private static final String JSON_PLANTILLAS = "plugin/precontencioso/liquidacion/json/plantillasJSON";
 	private static final String JSON_OCULTAR_BOTON_SOLICITAR = "plugin/precontencioso/liquidacion/json/ocultarBtnSolicitarJSON";
 	private static final String JSP_EDITAR_LIQUIDACION = "plugin/precontencioso/liquidacion/popups/editarLiquidacion";
+	private static final String JSP_PLANTILLAS_LIQUIDACION = "plugin/precontencioso/liquidacion/popups/seleccionarPlantillaLiquidacion";
 	private static final String JSP_SOLICITAR_LIQUIDACION = "plugin/precontencioso/liquidacion/popups/solicitarLiquidacion";
+	private static final String JSP_DOWNLOAD_FILE = "plugin/geninformes/download";
 	
 	private static final String CODIGO_TIPO_GESTOR_APODERADO = "APOD";
 
@@ -43,13 +50,16 @@ public class LiquidacionController {
 	private ApiProxyFactory proxyFactory;
 	
 	@Autowired
-	LiquidacionApi liquidacionApi;
+	private LiquidacionApi liquidacionApi;
 
 	@Autowired
-	UtilDiccionarioApi diccionarioApi;
-	
+	private UtilDiccionarioApi diccionarioApi;
+
 	@Autowired
-	UsuarioManager usuarioManager;
+	private UsuarioManager usuarioManager;
+
+	@Autowired(required = false)
+	private GenerarLiquidacionApi generarLiquidacionApi;
 
 	@RequestMapping
 	public String getLiquidacionesPorProcedimientoId(@RequestParam(value = "idProcedimientoPCO", required = true) Long idProcedimientoPCO, ModelMap model) {
@@ -200,15 +210,45 @@ public class LiquidacionController {
 
 		return DEFAULT;
 	}
-	
-	@RequestMapping
-	public String generarDocumentoLiquidacion(@RequestParam(value = "idLiquidacion", required = true) Long id, 
-			ModelMap model) {
-		LiquidacionDTO liquidacionDto = new LiquidacionDTO();
-		liquidacionDto.setId(id);
-		model.put("liquidacion", liquidacionDto);
 
-		return JSP_SOLICITAR_LIQUIDACION;
+	@RequestMapping
+	public String generar(@RequestParam(value = "idLiquidacion", required = true) Long idLiquidacion, Long idPlantilla, ModelMap model) {
+
+		if (generarLiquidacionApi == null) {
+			logger.error("liquidacioncontroller.generar: No existe una implementacion para generar liquidaciones");
+			throw new BusinessOperationException("Not implemented generarLiquidacionApi");
+		}
+
+		FileItem documentoLiquidacion = generarLiquidacionApi.generarDocumento(idLiquidacion, idPlantilla);
+		model.put("fileItem", documentoLiquidacion);
+
+		return JSP_DOWNLOAD_FILE;
 	}
-	
+
+	@RequestMapping
+	public String getPlantillasLiquidacion(ModelMap model) {
+
+		if (generarLiquidacionApi == null) {
+			logger.error("liquidacioncontroller.generar: No existe una implementacion para generar liquidaciones");
+			throw new BusinessOperationException("Not implemented generarLiquidacionApi");
+		}
+
+		List<DDTipoLiquidacionPCO> plantillas = generarLiquidacionApi.getPlantillasLiquidacion();
+		model.put("plantillas", plantillas);
+		return JSON_PLANTILLAS;
+	}
+
+	@RequestMapping
+	public String abrirPlantillasLiquidacion(@RequestParam(value = "idLiquidacion", required = true) Long id, ModelMap model) {
+		List<DDTipoLiquidacionPCO> plantillas = null;
+
+		if (generarLiquidacionApi != null) {
+			plantillas = generarLiquidacionApi.getPlantillasLiquidacion();
+		}
+
+		model.put("ocultarCombo", Checks.estaVacio(plantillas));
+		model.put("idLiquidacionSeleccionada", id);
+		return JSP_PLANTILLAS_LIQUIDACION;
+	}
+
 }

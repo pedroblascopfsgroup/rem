@@ -21,8 +21,9 @@ public class DDResultadoBurofaxPCO implements Dictionary, Auditable {
 	private static final long serialVersionUID = 5519925945721182983L;
 	
 	public static final String ESTADO_PENDIENTE = "PENDIENTE";
-	public static final String ESTADO_PREPARADO = "PREPARADO";
-	public static final String ESTADO_ENVIADO = "ENVIADO";
+	public static final String ESTADO_PREPARADO = "11";
+	public static final String ESTADO_SOLICITADO = "12";
+	public static final String ESTADO_ENVIADO = "13";
 	
 
 	@Id
@@ -39,6 +40,9 @@ public class DDResultadoBurofaxPCO implements Dictionary, Auditable {
 
 	@Column(name = "DD_PCO_BFR_DESCRIPCION_LARGA")
 	private String descripcionLarga;
+	
+	@Column(name = "DD_PCO_BFR_NOTIFICADO")
+	private Boolean implicaNotif;
 
 	@Version
 	private Integer version;
@@ -93,4 +97,13 @@ public class DDResultadoBurofaxPCO implements Dictionary, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+
+	public Boolean getImplicaNotif() {
+		return implicaNotif;
+	}
+
+	public void setImplicaNotif(Boolean implicaNotif) {
+		this.implicaNotif = implicaNotif;
+	}
+	
 }

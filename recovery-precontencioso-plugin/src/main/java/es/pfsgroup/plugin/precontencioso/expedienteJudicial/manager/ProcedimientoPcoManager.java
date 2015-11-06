@@ -844,7 +844,7 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		
 		try {
 			Order order = new Order(OrderType.ASC, "id");
-			solicitudes = genericDao.getListOrdered(SolicitudDocumentoPCO.class, order, genericDao.createFilter(FilterType.EQUALS, "documento.procedimientoPCO.procedimiento.id", idProc),genericDao.createFilter(FilterType.EQUALS,"tipoActor.tratamientoExpediente",paraExpediente));
+			solicitudes = genericDao.getListOrdered(SolicitudDocumentoPCO.class, order, genericDao.createFilter(FilterType.EQUALS, "documento.procedimientoPCO.procedimiento.id", idProc),genericDao.createFilter(FilterType.EQUALS,"tipoActor.tratamientoExpediente",paraExpediente),genericDao.createFilter(FilterType.EQUALS,"auditoria.borrado",false));
 
 		} catch (Exception e) {logger.error(e.getMessage());}
 		
@@ -857,11 +857,11 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		if(!Checks.esNulo(solicitudes)){
 			for(SolicitudDocumentoPCO solicitud : solicitudes){
 				if(!Checks.esNulo(solicitud.getFechaSolicitud())){
-					return solicitud.getFechaSolicitud().getTime();
+					return solicitud.getFechaSolicitud().getTime() - System.currentTimeMillis();
 				}
 			}
 		}
-		return new Date().getTime();
+		return new Date().getTime() - System.currentTimeMillis();
 	}
 	
 	public Long dameFechaSolicitudDocumentos(Long idProc){
@@ -870,11 +870,11 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		if(!Checks.esNulo(solicitudes)){
 			for(SolicitudDocumentoPCO solicitud : solicitudes){
 				if(!Checks.esNulo(solicitud.getFechaSolicitud())){
-					return solicitud.getFechaSolicitud().getTime();
+					return solicitud.getFechaSolicitud().getTime() - System.currentTimeMillis();
 				}
 			}
 		}
-		return new Date().getTime();
+		return new Date().getTime() - System.currentTimeMillis();
 	}
 	
 	public Long dameFechaResultadoArchivo(Long idProc) {
@@ -883,11 +883,11 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		if(!Checks.esNulo(solicitudes)){
 			for(SolicitudDocumentoPCO solicitud : solicitudes){
 				if(!Checks.esNulo(solicitud.getFechaResultado())){
-					return solicitud.getFechaResultado().getTime();
+					return solicitud.getFechaResultado().getTime() - System.currentTimeMillis();
 				}
 			}
 		}
-		return new Date().getTime();
+		return new Date().getTime() - System.currentTimeMillis();
 	}
 	
 	public Long dameFechaEnvio(Long idProc) {
@@ -896,11 +896,11 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		if(!Checks.esNulo(solicitudes)){
 			for(SolicitudDocumentoPCO solicitud : solicitudes){
 				if(!Checks.esNulo(solicitud.getFechaEnvio())){
-					return solicitud.getFechaEnvio().getTime();
+					return solicitud.getFechaEnvio().getTime() - System.currentTimeMillis();
 				}
 			}
 		}
-		return new Date().getTime();
+		return new Date().getTime() - System.currentTimeMillis();
 	}
 	
 	public Long dameFechaFinalizacionTareasPrecedentes(Long idProc) {
@@ -915,12 +915,12 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			List<TareaExterna> tarsExt = procedimientoPcoDao.getTareasPrecedentes(idProc, precedentes, "DESC");
 			
 			if(tarsExt.size() > 0){
-				return tarsExt.get(0).getTareaPadre().getFechaFin().getTime();
+				return tarsExt.get(0).getTareaPadre().getFechaFin().getTime() - System.currentTimeMillis();
 			}
 			
 		} catch (Exception e) {logger.error(e.getMessage());}
 		
-		return new Date().getTime();
+		return new Date().getTime() - System.currentTimeMillis();
 	}
 	
 	public Long dameFechaUltimoEnvioExp(Long idProc) {
@@ -928,11 +928,11 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		if(!Checks.esNulo(solicitudes)){
 			for(SolicitudDocumentoPCO solicitud : solicitudes){
 				if(!Checks.esNulo(solicitud.getFechaEnvio())){
-					return solicitud.getFechaEnvio().getTime();
+					return solicitud.getFechaEnvio().getTime() - System.currentTimeMillis();
 				}
 			}
 		}
-		return new Date().getTime();
+		return new Date().getTime() - System.currentTimeMillis();
 	}
 
 }

@@ -204,6 +204,7 @@ var botonRefresh = new Ext.Button({
 
 var gridLiquidaciones = app.crearGrid(storeLiquidaciones, cmLiquidacion, {
 	title: '<s:message code="plugin.precontencioso.grid.liquidacion.titulo" text="**Liquidaciones" />',
+	<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_LIQ_BTN">
 	bbar: [
 		btnSolicitar, 
 		btnEditarValores, 
@@ -213,6 +214,7 @@ var gridLiquidaciones = app.crearGrid(storeLiquidaciones, cmLiquidacion, {
 		btnGenerar,
 		botonRefresh
 	],
+	</sec:authorize>
 	height: 250,
 	autoWidth: true,
 	style:'padding-top: inherit',

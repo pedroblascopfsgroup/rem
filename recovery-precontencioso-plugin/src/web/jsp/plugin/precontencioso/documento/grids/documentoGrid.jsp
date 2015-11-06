@@ -678,7 +678,9 @@ var gridDocumentos = new Ext.grid.GridPanel({
 		,titleCollapse : false
 		,autoHeight: false
 		,monitorResize: true
-		,bbar : [ incluirDocButton, excluirDocButton, descartarDocButton, editarDocButton, separadorButtons, anularSolicitudesButton, solicitarDocButton, informarDocButton, botonRefresh]
+		<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_DOC_BTN">
+			,bbar : [ incluirDocButton, excluirDocButton, descartarDocButton, editarDocButton, separadorButtons, anularSolicitudesButton, solicitarDocButton, informarDocButton, botonRefresh]
+		</sec:authorize>
 }); 
 
 gridDocumentos.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {

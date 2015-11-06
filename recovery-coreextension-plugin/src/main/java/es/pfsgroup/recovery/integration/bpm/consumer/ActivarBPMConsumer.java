@@ -52,7 +52,7 @@ public class ActivarBPMConsumer extends ConsumerAction<DataContainerPayload>  {
 			throw new IntegrationDataException(logMsg);
 			
 		}
-		if (extProcedimientoManager.isDespararizable(prc.getId())) {
+		if (!extProcedimientoManager.isDespararizable(prc.getId())) {
 			String logMsg = String.format("[INTEGRACION] PRC[%s] Procedimiento no es desparalizable!!!!, no se puede desparalizar!!", prcUUID);
 			logger.error(logMsg);
 			throw new IntegrationDataException(logMsg);

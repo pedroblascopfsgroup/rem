@@ -596,9 +596,13 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		query.createCriteria("tareaProcedimiento", "tareaProcedimiento");
 		query.createCriteria("tareaPadre", "tareaPadre");
+		query.createCriteria("auditoria", "auditoria");
 		
 		query.add(Restrictions.eq("tareaPadre.procedimiento.id", idProcedimiento));
 		query.add(Restrictions.in("tareaProcedimiento", precedentes));
+		
+		query.add(Restrictions.eq("auditoria.borrado", false));
+		
 		
 		if(order.toUpperCase().equals("ASC")){
 			query.addOrder(Order.asc("id"));

@@ -58,6 +58,7 @@
 	
 	// Field deuda irregular
 	var mmDeudaIrregular = app.creaMinMaxMoneda('<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales.deudaIrregular" text="**Deuda Irregular" />', 'deuda',{width : 80, labelWidth:105});
+	mmDeudaIrregular.min.setMinValue(0.01);
 	
 	//Combo Agrupar por
  	var optionsAgruparPorStore = new Ext.data.JsonStore({
@@ -384,6 +385,7 @@
  			
  	]);
  	
+ 	
  	var validaMinMax = function(){
 		if (!app.validaValoresDblText(mmRiesgoTotal)){
 			return false;
@@ -393,6 +395,17 @@
 		}
 		return true;
 	}
+	
+	var validaMinDeudaIrregular = function() {
+		if (mmDeudaIrregular.min.getValue()!=null 
+		&& (!(mmDeudaIrregular.min.getValue()===''))) {
+			if (new Number(mmDeudaIrregular.min.getValue()) < 0.01) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	
 	var limit = 25;
 	
@@ -776,24 +789,27 @@
 		return param;
 	};
 	
-	
 	var buscarFunc = function(){
 		if(validarEmptyForm()){
 			if(validaMinMax()){
-				panelFiltros.collapse(true);
-				if (comboAgruparPor.getValue()=='CNT') {
-					expedientesGrid.collapse(true);
-					expedientesGrid.hide();
-					contratosGrid.show();
-					contratosGrid.expand(true);
-					preProCntsStore.webflow(getParametros());
-				}
-				if (comboAgruparPor.getValue()=='EXP') {
-					contratosGrid.collapse(true);
-					contratosGrid.hide();
-					expedientesGrid.show();
-					expedientesGrid.expand(true);
-					preProExpsStore.webflow(getParametros());
+				if (validaMinDeudaIrregular()) {
+					panelFiltros.collapse(true);
+					if (comboAgruparPor.getValue()=='CNT') {
+						expedientesGrid.collapse(true);
+						expedientesGrid.hide();
+						contratosGrid.show();
+						contratosGrid.expand(true);
+						preProCntsStore.webflow(getParametros());
+					}
+					if (comboAgruparPor.getValue()=='EXP') {
+						contratosGrid.collapse(true);
+						contratosGrid.hide();
+						expedientesGrid.show();
+						expedientesGrid.expand(true);
+						preProExpsStore.webflow(getParametros());
+					}
+				} else {
+					Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="expedientes.listado.minDeudaIrregular"/>');
 				}
 			}else{
 				Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="validaciones.dblText.minMax"/>');
@@ -806,9 +822,13 @@
 	var exportarExcel = function(){
 		if(validarEmptyForm()){
 			if(validaMinMax()){
-				var params=getParametros();
-		        var flow='/pfs/listadopreproyectado/generarInformeListadoPreProyectado';
-		        app.openBrowserWindow(flow,params);
+				if (validaMinDeudaIrregular()) {
+					var params=getParametros();
+		        	var flow='/pfs/listadopreproyectado/generarInformeListadoPreProyectado';
+		        	app.openBrowserWindow(flow,params);
+				} else {
+					Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="expedientes.listado.minDeudaIrregular"/>');
+				}		        	
 			}else{
 				Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="validaciones.dblText.minMax"/>');
 			}

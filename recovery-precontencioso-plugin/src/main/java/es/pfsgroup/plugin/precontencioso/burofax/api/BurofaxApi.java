@@ -5,10 +5,12 @@ import java.util.Date;
 import java.util.List;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.direccion.dto.DireccionAltaDto;
 import es.capgemini.pfs.persona.model.Persona;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
+import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxEnvioIntegracionPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDEstadoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDTipoBurofaxPCO;
@@ -37,6 +39,7 @@ public interface BurofaxApi {
 	public static final String OBTENER_ESTADO_BUROFAX_BY_ID = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.getEstadoBurofaxById";
 	public static final String OBTENER_ESTADOS_BUROFAX = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.getEstadosBurofax";
 	public static final String OBTENER_TIPO_BUROFAX_BY_CODIGO = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.getTipoBurofaxByCodigo";
+	public static final String OBTENER_BUROFAX_ENVIO_INTE = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.getBurofaxEnvioIntegracionByIdEnvio";
 
 
 
@@ -157,15 +160,6 @@ public interface BurofaxApi {
 	@BusinessOperationDefinition(OBTENER_PERSONAS_CON_CONTRATO)
 	Collection<? extends Persona> getPersonasConContrato(String query);
 	
-	/**
-	 * Guarda en BD los datos del envio del burofax
-	 * @param idEnvio
-	 * @param contrato
-	 */
-	/*
-	@BusinessOperationDefinition(GUARDAR_ENVIO_BUROFAX)
-	void guardarEnvioBurofax(Long idEnvio,String contrato,Boolean certificado);
-	*/
 	
 	/**
 	 * Devuelve el tipo de burofax para un envio dado
@@ -215,6 +209,17 @@ public interface BurofaxApi {
 	 */
 	@BusinessOperationDefinition(OBTENER_ESTADOS_BUROFAX)
 	List<DDEstadoBurofaxPCO> getEstadosBurofax();
+	
+	/**
+	 * Guarda toda la información cuando se realiza el envio de un burofax
+	 * @param certificado
+	 * @param listaEnvioBurofaxPCO
+	 */
+	@BusinessOperationDefinition(GUARDAR_ENVIO_BUROFAX)
+	void guardarEnvioBurofax(Boolean certificado,List<EnvioBurofaxPCO> listaEnvioBurofaxPCO);
+	
+	@BusinessOperationDefinition(OBTENER_BUROFAX_ENVIO_INTE)
+	BurofaxEnvioIntegracionPCO getBurofaxEnvioIntegracionByIdEnvio(Long idEnvio);
 	
 	
 	

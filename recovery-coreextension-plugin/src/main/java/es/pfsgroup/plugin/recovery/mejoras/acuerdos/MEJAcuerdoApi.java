@@ -60,7 +60,7 @@ public interface MEJAcuerdoApi {
      */
 	@BusinessOperationDefinition(BO_ACUERDO_MGR_RECHAZAR_ACUERDO_MOTIVO)
     @Transactional(readOnly = false)
-    public void rechazarAcuerdoMotivo(Long idAcuerdo, String motivo);
+    public void rechazarAcuerdoMotivo(Long idAcuerdo, Long idMotivo, String observaciones);
     
     @BusinessOperationDefinition(BO_EXT_ACUERDO_MGR_GUARDAR_ACUERDO)
     @Transactional(readOnly = false) 

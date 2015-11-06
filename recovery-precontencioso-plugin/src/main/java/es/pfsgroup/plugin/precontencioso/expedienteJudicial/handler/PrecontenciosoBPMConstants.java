@@ -18,7 +18,17 @@ public class PrecontenciosoBPMConstants {
 	public static final String PCO_SubsanarIncidenciaExp = "PCO_SubsanarIncidenciaExp";
 	public static final String PCO_ValidarCambioProc = "PCO_ValidarCambioProc";
 	public static final String PCO_SubsanarCambioProc = "PCO_SubsanarCambioProc";
+	public static final String PCO_RegResultadoDocG = "PCO_RegResultadoDocG";
+	public static final String PCO_SolicitarDoc = "PCO_SolicitarDoc";
+	public static final String PCO_GenerarLiq = "PCO_GenerarLiq";
 	
+	//Particulares de HAYA
+	public static final String PCO_DecTipoProcAutomatica = "PCO_DecTipoProcAutomatica";
+	public static final String PCO_AsignacionGestores = "PCO_AsignacionGestores";
+	public static final String PCO_RevisarExpDigCONC = "PCO_RevisarExpDigCONC";
+	public static final String PCO_RevisarSubsanacionCONC = "PCO_RevisarSubsanacionCONC";
+	public static final String PCO_ResolverIncidenciaExpCONC = "PCO_ResolverIncidenciaExpCONC";
+	public static final String PCO_Campo_ProcPropuesto = "procPropuesto";
 
 	public static final String PCO_PRETURNADO = "PT";
 	public static final String PCO_PREPARACION = "PR";
@@ -29,5 +39,10 @@ public class PrecontenciosoBPMConstants {
 	public static final String PCO_SUBSANAR_POR_CAMBIO = "SC";
 	public static final String PCO_PARALIZADO = "PA";
 	public static final String PCO_CANCELADO = "CA";
+	
+	//Particulares de CAJAMAR
+	public static final String PCO_RevisarExpedientePreparar = "PCO_RevisarExpedientePreparar";
+	public static final String PCO_AsignarGestorLiquidacion = "PCO_AsignarGestorLiquidacion";
+	public static final String PCO_RevisarExpedienteAsignarLetrado = "PCO_RevisarExpedienteAsignarLetrado";	
 	
 }

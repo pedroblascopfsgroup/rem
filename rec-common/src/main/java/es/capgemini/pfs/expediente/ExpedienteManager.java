@@ -205,11 +205,23 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_EXPEDIENTES_PAGINATED_DINAMICO)
     public Page findExpedientesPaginatedDinamico(DtoBuscarExpedientes expedientes, String params) {
     	int limit = 25;
-    	return this.findExpedientesPaginatedDinamico(expedientes, params, limit);
+    	return this.findExpedientesPaginatedDinamico(expedientes, params, limit, false);
     }
 
-    private Page findExpedientesPaginatedDinamico(DtoBuscarExpedientes expedientes, String params, int limit) {
-    	
+    /**
+     * Busca expedientes para un filtro con busquedas optimizadas para Recobro.
+     *
+     * @param expedientes
+     *            DtoBuscarExpedientes el filtro
+     * @return List la lista
+     */
+    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_EXPEDIENTES_RECOBRO_PAGINATED_DINAMICO)
+    public Page findExpedientesRecobroPaginatedDinamico(DtoBuscarExpedientes expedientes, String params) {
+    	int limit = 25;
+    	return this.findExpedientesPaginatedDinamico(expedientes, params, limit, true);
+    }
+
+    private Page findExpedientesPaginatedDinamico(DtoBuscarExpedientes expedientes, String params, int limit, Boolean esBusquedaExpRecobro) {
     	Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
     	expedientes.setLimit(limit);
     	EventFactory.onMethodStart(this.getClass());
@@ -226,7 +238,12 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
             expedientes.setCodigoZonas(usuario.getCodigoZonas());
         }
         EventFactory.onMethodStop(this.getClass());
-        return expedienteDao.buscarExpedientesPaginadoDinamico(expedientes,usuario,params);
+        
+        if (esBusquedaExpRecobro) {
+            return expedienteDao.buscarExpedientesRecobroPaginadoDinamico(expedientes,usuario,params);
+        }else{
+            return expedienteDao.buscarExpedientesPaginadoDinamico(expedientes,usuario,params);
+        }
     }
 
 	/**
@@ -235,7 +252,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	@SuppressWarnings("unchecked")
     @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_EXPEDIENTES_PARA_EXCEL_DINAMICO)
     public List<Expediente> findExpedientesParaExcelDinamico(DtoBuscarExpedientes dto, String params) {
-        Page p = this.findExpedientesPaginatedDinamico(dto, params, 2000);
+        Page p = this.findExpedientesPaginatedDinamico(dto, params, 2000, false);
         return (List<Expediente>) p.getResults();
     }
     

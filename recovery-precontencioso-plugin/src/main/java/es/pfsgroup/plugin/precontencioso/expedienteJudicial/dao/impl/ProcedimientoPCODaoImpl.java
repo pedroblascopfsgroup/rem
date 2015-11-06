@@ -18,6 +18,9 @@ import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
@@ -28,6 +31,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 	@Override
 	public ProcedimientoPCO getProcedimientoPcoPorIdProcedimiento(Long idProcedimiento) {
+
 		Criteria query = getSession().createCriteria(ProcedimientoPCO.class);
 
 		query.createCriteria("procedimiento", "procedimiento");
@@ -564,5 +568,48 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		}
 
 		return idLongs;
+	}
+
+	public List<String> getTiposGestoresAsunto(Long idAsunto) {
+		
+		List<String> resultado = new ArrayList<String>();
+		
+		Criteria query = getSession().createCriteria(EXTGestorAdicionalAsunto.class);
+
+		query.createCriteria("asunto", "asunto");
+		query.add(Restrictions.eq("asunto.id", idAsunto));
+		query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		List<EXTGestorAdicionalAsunto> listaTiposGestores = query.list();
+
+		for (EXTGestorAdicionalAsunto gaa : listaTiposGestores) {
+			resultado.add(gaa.getTipoGestor().getCodigo());
+		}
+
+		return resultado;
+		
+	}
+
+	@Override
+	public List<TareaExterna> getTareasPrecedentes(Long idProcedimiento,List<TareaProcedimiento> precedentes,String order) {
+		
+		Criteria query = getSession().createCriteria(TareaExterna.class);
+
+		query.createCriteria("tareaProcedimiento", "tareaProcedimiento");
+		query.createCriteria("tareaPadre", "tareaPadre");
+		query.createCriteria("auditoria", "auditoria");
+		
+		query.add(Restrictions.eq("tareaPadre.procedimiento.id", idProcedimiento));
+		query.add(Restrictions.in("tareaProcedimiento", precedentes));
+		
+		query.add(Restrictions.eq("auditoria.borrado", false));
+		
+		
+		if(order.toUpperCase().equals("ASC")){
+			query.addOrder(Order.asc("id"));
+		}else{
+			query.addOrder(Order.desc("id"));
+		}
+		
+		return query.list();
 	}
 }

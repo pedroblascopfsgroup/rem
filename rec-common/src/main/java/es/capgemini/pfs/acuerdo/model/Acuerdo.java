@@ -25,6 +25,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
+import es.capgemini.pfs.acuerdo.model.DDMotivoRechazoAcuerdo;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -158,7 +159,11 @@ public class Acuerdo implements Serializable, Auditable {
     @ManyToOne
     @JoinColumn(name = "USD_ID")
 	private GestorDespacho gestorDespacho;
-    
+
+    @ManyToOne
+    @JoinColumn(name = "DD_MTR_ID")
+    private DDMotivoRechazoAcuerdo motivoRechazo;
+
     @Column(name = "SYS_GUID")
 	private String guid;
     
@@ -527,6 +532,14 @@ public class Acuerdo implements Serializable, Auditable {
 	public void setGestorDespacho(GestorDespacho gestorDespacho) {
 		this.gestorDespacho = gestorDespacho;
 	}
+
+    public DDMotivoRechazoAcuerdo getMotivoRechazo() {
+        return motivoRechazo;
+    }
+
+    public void setMotivoRechazo(DDMotivoRechazoAcuerdo motivoRechazo) {
+        this.motivoRechazo = motivoRechazo;
+    }
 
 	public Usuario getProponente() {
 		return proponente;

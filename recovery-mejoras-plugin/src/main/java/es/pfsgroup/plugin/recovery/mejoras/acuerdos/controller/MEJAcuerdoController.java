@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
+import es.capgemini.pfs.acuerdo.model.DDMotivoRechazoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDSubTipoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.asunto.model.Asunto;
@@ -69,6 +70,7 @@ public class MEJAcuerdoController {
 	static final String JSP_FINALIZACION_ACUERDO = "plugin/mejoras/acuerdos/finalizacionAcuerdo";
 	static final String JSON_LISTADO_DERIVACIONES = "plugin/mejoras/acuerdos/listadoDerivacionesAcuerdoJSON";	
 	static final String JSP_EDITAR_TERMINO_ESTADO_GESTION = "plugin/mejoras/acuerdos/edicionEstadoGestionTermino";
+	static final String JSP_RECHAZAR_ACUERDO = "plugin/mejoras/acuerdos/rechazarAcuerdo";
 	
 	@Autowired
 	IntegracionBpmService integracionBpmService;
@@ -93,9 +95,9 @@ public class MEJAcuerdoController {
      * @param idAcuerdo el id del acuerdo a rechazar
      */
 	@RequestMapping
-    public String rechazarAcuerdoMotivo(Long idAcuerdo, String motivo) {
+    public String rechazarAcuerdoMotivo(Long idAcuerdo, Long idMotivo, String observaciones) {
 		
-		proxyFactory.proxy(MEJAcuerdoApi.class).rechazarAcuerdoMotivo(idAcuerdo, motivo);
+		proxyFactory.proxy(MEJAcuerdoApi.class).rechazarAcuerdoMotivo(idAcuerdo, idMotivo, observaciones);
 		
 		return "default";
 	}
@@ -703,5 +705,23 @@ public class MEJAcuerdoController {
 		
 		return "default";
 	}
+		
+	/**
+	 * 
+	 * Devuelve la página de rechazo de acuerdo
+	 * 
+	 */
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String openRechazarAcuerdo(@RequestParam(value = "idAcuerdo", required = true) Long id, ModelMap map) {
+				
+		Acuerdo acuerdo = proxyFactory.proxy(AcuerdoApi.class).getAcuerdoById(id);
+		List<DDMotivoRechazoAcuerdo> motivosRechazo=diccionarioManager.dameValoresDiccionario(DDMotivoRechazoAcuerdo.class);
+		map.put("motivosRechazo", motivosRechazo);
+		map.put("acuerdo",acuerdo);
+		
+		return JSP_RECHAZAR_ACUERDO;
+	}
+
 }

@@ -39,7 +39,7 @@ DECLARE
     V_AUX3 VARCHAR2(1000) := q'['<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">El asunto debe tener asignado Letrado, Supervisor del asunto, Director unidad de litigio y Preparador documental.</div>']';
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
        T_TIPO_TAP('PCO','PCO_RegResultadoDocG','plugin/precontencioso/tramite/preparacion',null,null,null,null,'0','Registrar resultado para documento (Gestoría)',
-            '0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_GEST',null,'CM_GE_PCO',null),
+            '0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'TGESCON',null,'CM_GE_PCO',null),
        T_TIPO_TAP('PCO','PCO_RevisarExpDigCONC',null,null,null,V_AUX1,null,'0','Revisar Expediente Digital',
             '0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_LET',null,'PCO_SUP',null),
        T_TIPO_TAP('PCO','PCO_ResolverIncidenciaExpCONC',null,null,null,null,null,'0','Resolver Incidencia en Expediente',

@@ -7,7 +7,7 @@ fi
 echo "Comienzo del backup"
 
 fecha="$1"
-dat_dir="DAT/"
+dat_dir="dat/"
 bck_dir="dat_backup/"
 
 echo "Directorio backup: ""$bck_dir""$fecha"

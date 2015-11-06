@@ -1,6 +1,6 @@
 #!/bin/bash
 
-dat_dir="DAT/"
+dat_dir="dat/"
 
 echo "Directorio DAT: ""$dat_dir"
 

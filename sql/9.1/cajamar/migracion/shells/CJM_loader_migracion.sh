@@ -11,11 +11,11 @@ echo "Comienzo de la migración."
 
 fecha="$2"
 
-ctl_dir="CTL/"
-dat_dir="DAT/"
-log_dir="LOG/"
-bad_dir="BAD/"
-sql_dir="SQL/"
+ctl_dir="ctl/"
+dat_dir="dat/"
+log_dir="log/"
+bad_dir="bad/"
+sql_dir="sql/"
 
 echo "Datos de aprovisionamiento de fecha "$fecha
 echo "Directorio CTL: "$ctl_dir

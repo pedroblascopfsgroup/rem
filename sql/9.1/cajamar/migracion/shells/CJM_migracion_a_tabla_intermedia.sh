@@ -4,11 +4,11 @@ if [ "$#" -ne 1 ]; then
     exit
 fi
 
-ctl_dir="CTL/"
-dat_dir="DAT/"
-log_dir="LOG/"
-bad_dir="BAD/"
-sql_dir="SQL/"
+ctl_dir="ctl/"
+dat_dir="dat/"
+log_dir="log/"
+bad_dir="bad/"
+sql_dir="sql/"
 
 
 export NLS_LANG=SPANISH_SPAIN.AL32UTF8

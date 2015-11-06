@@ -14,9 +14,9 @@
     var arrayIdEnvios='${arrayIdEnvios}';
    
 
-	<pfsforms:ddCombo name="estadoBurofax"
-		labelKey="plugin.precontencioso.grid.burofax.estado" 
- 		label="**Estado Burofax" value="" dd="${estadosBurofax}" 
+	<pfsforms:ddCombo name="resultadosBurofax"
+		labelKey="plugin.precontencioso.grid.burofax.resultado" 
+ 		label="**Resultado Burofax" value="" dd="${resultadosBurofax}" 
 		propertyCodigo="id" propertyDescripcion="descripcion" />
 		
     var fechaAcuse = new Ext.ux.form.XDateField({
@@ -39,7 +39,7 @@
 		,handler : function(){	
 		    	Ext.Ajax.request({
 						url : page.resolveUrl('burofax/configuraInformacionEnvio'), 
-						params : {idEstadoBurofax:estadoBurofax.value,fechaAcuse:fechaAcuse.getValue().format('d/m/Y'),fechaEnvio:fechaEnvio.getValue().format('d/m/Y'),arrayIdEnvios:arrayIdEnvios},
+						params : {idResultadoBurofax:resultadosBurofax.value,fechaAcuse:fechaAcuse.getValue().format('d/m/Y'),fechaEnvio:fechaEnvio.getValue().format('d/m/Y'),arrayIdEnvios:arrayIdEnvios},
 						method: 'POST',
 						success: function ( result, request ) {
 							page.fireEvent(app.event.DONE);
@@ -66,7 +66,7 @@
 		,width:400
 		,bodyStyle:'padding:10px;cellspacing:20px'
 		,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
-		,items : [estadoBurofax,fechaEnvio,fechaAcuse]
+		,items : [resultadosBurofax,fechaEnvio,fechaAcuse]
 		,bbar:bottomBar
 	});
 	

@@ -19,7 +19,6 @@ import es.capgemini.pfs.acuerdo.model.Acuerdo;
 public class EXTAcuerdo extends Acuerdo {
 
 
-
 	//***************ATENCIÓN NO METAIS NADA AQUI***************
 	// USAR es.capgemini.pfs.acuerdo.model.Acuerdo
 

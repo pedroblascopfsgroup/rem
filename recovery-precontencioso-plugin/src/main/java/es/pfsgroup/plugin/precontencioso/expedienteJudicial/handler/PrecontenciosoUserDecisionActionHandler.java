@@ -1,27 +1,23 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler;
 
 import org.jbpm.graph.exe.ExecutionContext;
-import org.jbpm.graph.exe.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
-import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.dao.SubtipoTareaDao;
-import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
-import es.capgemini.pfs.tareaNotificacion.model.PlazoTareasDefault;
-import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
-import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
-import es.capgemini.pfs.tareaNotificacion.process.TareaBPMConstants;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
+import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContextImpl;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.manager.ProcedimientoPcoManager;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.procedimientos.PROBaseActionHandler;
-import es.pfsgroup.procedimientos.recoveryapi.JBPMProcessApi;
+import es.pfsgroup.recovery.ext.turnadodespachos.TurnadoDespachosManager;
 
 public class PrecontenciosoUserDecisionActionHandler extends PROBaseActionHandler {
 
@@ -38,7 +34,17 @@ public class PrecontenciosoUserDecisionActionHandler extends PROBaseActionHandle
 	
 	@Autowired
 	Executor executor;
-
+	
+	@Autowired
+	PrecontenciosoProjectContext precontenciosoContext;
+	
+	@Autowired
+	TurnadoDespachosManager turnadoDespachosManager;
+	
+	@Autowired
+	UsuarioManager usuarioManager;
+	
+	
 	@Override
 	public void run(ExecutionContext executionContext) throws Exception {
 
@@ -59,8 +65,14 @@ public class PrecontenciosoUserDecisionActionHandler extends PROBaseActionHandle
 	        creaProcedimientoHijo(executionContext, tipoProcedimientoHijo, prc, null, null);
 	        //Avanzamos la tarea
 	        //executionContext.getToken().signal();
+		} else if (PrecontenciosoBPMConstants.PCO_PreTurnado.equals(getNombreNodo(executionContext)) 
+				&& PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(precontenciosoContext.getRecovery())) {
+			executor.execute("plugin.precontencioso.inicializarPco", prc);
+			turnadoDespachosManager.turnar(prc.getAsunto().getId(), usuarioManager.getUsuarioLogado().getUsername(), EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO);
+		} else if (PrecontenciosoBPMConstants.PCO_PostTurnado.equals(getNombreNodo(executionContext))
+				&& PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(precontenciosoContext.getRecovery())) {
+			turnadoDespachosManager.turnar(prc.getAsunto().getId(), usuarioManager.getUsuarioLogado().getUsername(), EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO);
 		}
-		
 		// Avanzamos BPM
 		executionContext.getToken().signal();
 	}

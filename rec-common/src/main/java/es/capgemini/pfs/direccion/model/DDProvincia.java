@@ -3,7 +3,10 @@ package es.capgemini.pfs.direccion.model;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -37,6 +40,10 @@ public class DDProvincia implements Dictionary, Auditable {
     @Column(name = "DD_PRV_DESCRIPCION_LARGA")
     private String descripcionLarga;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_CCA_ID")
+    private DDComunidadAutonoma comunidad;
+    
     @Embedded
     private Auditoria auditoria;
 
@@ -127,4 +134,13 @@ public class DDProvincia implements Dictionary, Auditable {
         this.version = version;
     }
 
+	public DDComunidadAutonoma getComunidad() {
+		return comunidad;
+	}
+
+	public void setComunidad(DDComunidadAutonoma comunidad) {
+		this.comunidad = comunidad;
+	}
+
+    
 }

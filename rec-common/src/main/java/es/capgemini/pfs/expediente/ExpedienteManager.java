@@ -220,7 +220,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
     	int limit = 25;
     	return this.findExpedientesPaginatedDinamico(expedientes, params, limit, true);
     }
-    
+
     private Page findExpedientesPaginatedDinamico(DtoBuscarExpedientes expedientes, String params, int limit, Boolean esBusquedaExpRecobro) {
     	Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
     	expedientes.setLimit(limit);

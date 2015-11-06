@@ -45,6 +45,24 @@ var abrirPantallaSolicitar = function() {
 	});
 }
 
+var abrirPantallaPlantillasLiquidacion = function() {
+	var w = app.openWindow({
+		flow: 'liquidacion/abrirPlantillasLiquidacion',
+		params: {idLiquidacion:idLiquidacionSeleccionada()},
+		autoWidth: true,
+		closable: true,
+		title: '<s:message code="plugin.precontencioso.liquidaciones.generar.seleccionar.plantillas" text="**Seleccionar plantilla a generar" />'
+	});
+
+	w.on(app.event.DONE, function() {
+		w.close();
+	});
+
+	w.on(app.event.CANCEL, function() {
+		w.close();
+	});
+}
+
 var btnEditarValores = new Ext.Button({
 	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.editar" text="**Editar valores" />',
 	iconCls: 'icon_edit',
@@ -107,10 +125,7 @@ var btnGenerar = new Ext.Button({
 	iconCls: 'icon_pdf',
 	cls: 'x-btn-text-icon',
 	handler: function() {
-			var flow='/pfs/liquidacion/generarDocumentoLiquidacion';
-			var params={idLiquidacion:idLiquidacionSeleccionada()};
-			app.openBrowserWindow(flow,params);
-			page.fireEvent(app.event.DONE);
+			abrirPantallaPlantillasLiquidacion();
 	}		
 });
 
@@ -189,6 +204,7 @@ var botonRefresh = new Ext.Button({
 
 var gridLiquidaciones = app.crearGrid(storeLiquidaciones, cmLiquidacion, {
 	title: '<s:message code="plugin.precontencioso.grid.liquidacion.titulo" text="**Liquidaciones" />',
+	<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_LIQ_BTN">
 	bbar: [
 		btnSolicitar, 
 		btnEditarValores, 
@@ -198,6 +214,7 @@ var gridLiquidaciones = app.crearGrid(storeLiquidaciones, cmLiquidacion, {
 		btnGenerar,
 		botonRefresh
 	],
+	</sec:authorize>
 	height: 250,
 	autoWidth: true,
 	style:'padding-top: inherit',
@@ -235,8 +252,8 @@ var actualizarBotonesLiquidacion = function() {
 	switch(estadoCodigo) {
 
 		case 'PEN':
-			btnSolicitar.setDisabled(true);
-			btnEditarValores.setDisabled(false);
+			btnSolicitar.setDisabled(false);
+			btnEditarValores.setDisabled(!btnSolicitarOculto);
 			btnConfirmar.setDisabled(true);
 			btnDescartar.setDisabled(true);
 			btnGenerar.setDisabled(true);
@@ -245,14 +262,14 @@ var actualizarBotonesLiquidacion = function() {
 		case 'SOL':
 			btnSolicitar.setDisabled(true);
 			btnEditarValores.setDisabled(true);
-			btnConfirmar.setDisabled(false);
+			btnConfirmar.setDisabled(true);
 			btnDescartar.setDisabled(false);
 			btnGenerar.setDisabled(true);
 			break;
 
 		case 'DES':
 			btnSolicitar.setDisabled(false);
-			btnEditarValores.setDisabled(false);
+			btnEditarValores.setDisabled(!btnSolicitarOculto);
 			btnConfirmar.setDisabled(true);
 			btnDescartar.setDisabled(true);
 			btnGenerar.setDisabled(true);
@@ -267,9 +284,17 @@ var actualizarBotonesLiquidacion = function() {
 			break;
 
 		case 'CAL':
-			btnSolicitar.setDisabled(false);
+			btnSolicitar.setDisabled(true);
 			btnEditarValores.setDisabled(false);
 			btnConfirmar.setDisabled(false);
+			btnDescartar.setDisabled(false);
+			btnGenerar.setDisabled(true);
+			break;
+
+		case 'INC':
+			btnSolicitar.setDisabled(true);
+			btnEditarValores.setDisabled(true);
+			btnConfirmar.setDisabled(true);
 			btnDescartar.setDisabled(false);
 			btnGenerar.setDisabled(true);
 			break;
@@ -316,20 +341,19 @@ var ocultarBtnSolicitar = function(){
 }
 
 <%-- Acciones a tomar cuando la entidad tiene configurado que no soporta solicitar las liquidaciones --%>
-ocultarBtnSolicitar();
+var btnSolicitarOculto = ocultarBtnSolicitar();
 
 var comprobarDatosCalculoRellenos = function() {
 	var liquidacion = gridLiquidaciones.getSelectionModel().getSelected();
 
-	return (liquidacion
-			&& liquidacion.get('capitalVencido') != ""
-			&& liquidacion.get('capitalNoVencido') != ""
-			&& liquidacion.get('interesesOrdinarios') != ""
-			&& liquidacion.get('interesesDemora') != ""
-			&& liquidacion.get('gastos') != ""
-			&& liquidacion.get('comisiones') != ""
-			&& liquidacion.get('impuestos') != ""
-			&& liquidacion.get('total') != "" );
+	return !(liquidacion.get('capitalVencido') === ""
+			|| liquidacion.get('capitalNoVencido') === ""
+			|| liquidacion.get('interesesOrdinarios') === ""
+			|| liquidacion.get('interesesDemora') === ""
+			|| liquidacion.get('gastos') === ""
+			|| liquidacion.get('comisiones') === ""
+			|| liquidacion.get('impuestos') === ""
+			|| liquidacion.get('total') === "" );
 }
 
 

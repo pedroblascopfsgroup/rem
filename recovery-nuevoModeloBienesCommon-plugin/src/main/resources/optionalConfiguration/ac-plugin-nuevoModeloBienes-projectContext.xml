@@ -123,5 +123,20 @@
 	
 	<!-- Implementaciones por defecto-->
 	<bean id="nmbCommonProjectContext" parent="nmbCommonProjectContextDefault"/>
+	
+	<bean id="nmbCommonProjectContextCajamar"
+		class="es.pfsgroup.procedimientos.context.HayaProjectContextImpl" abstract="true">
+<!-- 		<property name="codigoHipotecario"> -->
+<!-- 				<value>H001</value> -->
+<!-- 		</property> -->
+		
+<!-- 		<property name="codigoMonitorio"> -->
+<!-- 				<value>H022</value> -->
+<!-- 		</property> -->
+		
+<!-- 		<property name="codigoOrdinario"> -->
+<!-- 				<value>H024</value> -->
+<!-- 		</property> -->
+	</bean>
 	 
 </beans>	

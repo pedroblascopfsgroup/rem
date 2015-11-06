@@ -12,15 +12,16 @@ create or replace package body OPERACION_DDL as
 /*
     execute immediate '    
           CREATE TABLE LOG_OPERACION_DLL
-          ( FILA_ID Number not null,
-            FECHA TIMESTAMP not null,
-            NUM_SID number not null,
-            TIPO VARCHAR2(100),
-            OPERACION VARCHAR2(100),
-            ESQUEMA VARCHAR2(100),
-            OBJETO VARCHAR2(100),
-            PARAMETROS VARCHAR2(254),
-            ESTADO VARCHAR(254)
+          ( FILA_ID NUMBER NOT NULL ENABLE, 
+			FECHA_INICIO TIMESTAMP (6) NOT NULL ENABLE, 
+			FECHA_FIN TIMESTAMP (6) NOT NULL ENABLE, 
+			NUM_SID NUMBER NOT NULL ENABLE, 
+			TIPO VARCHAR2(100 BYTE), 
+			OPERACION VARCHAR2(100 BYTE), 
+			ESQUEMA VARCHAR2(100 BYTE), 
+			OBJETO VARCHAR2(100 BYTE), 
+			PARAMETROS VARCHAR2(254 BYTE), 
+			ESTADO VARCHAR2(254 BYTE)
            )'; 
     commit;
     
@@ -129,7 +130,32 @@ create or replace package body OPERACION_DDL as
     
     select sys_context('USERENV','CURRENT_USER') into V_ESQUEMA from dual;
 
-    if V_OPERACION in ('DROP', 'TRUNCATE', 'ALTER', 'ANALYZE') then
+    if V_OPERACION in ('DROP') then
+      If OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE)  Then 
+          --**PFS - Función para drop de tablas, no se utiliza durante las cargas sólo en instalación
+		  OPERACION_DDL.ejecuta_str(''|| V_OPERACION || ' ' || V_TIPO || ' ' || V_ESQUEMA || '.' || V_NOMBRE || ' ' || V_PARAMETROS||'');
+		  --**Bankia - DROP_TEMP_TABLES función bankia para dropear tablas temporales
+		  --OPERACION_DDL.ejecuta_str('BEGIN DROP_TEMP_TABLES ('''||V_ESQUEMA||''', '''||V_NOMBRE||'''); END;');
+          execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
+      Else 
+        raise OBJECTNOTEXISTS;
+      End If;
+    end if;
+
+    if V_OPERACION in ('TRUNCATE') then
+      If OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE)  Then 
+	      --**PFS - Función para truncar tablas
+          --OPERACION_DDL.ejecuta_str(''|| V_OPERACION || ' ' || V_TIPO || ' ' || V_ESQUEMA || '.' || V_NOMBRE || ' ' || V_PARAMETROS||'');
+		  --**Bankia - TRUNCATE_TABLE función bankia para truncar tablas, se necesita avisar a DBA Bankia de las tablas a truncar
+          OPERACION_DDL.ejecuta_str('BEGIN TRUNCATE_TABLE('''||V_ESQUEMA||''', '''||V_NOMBRE||'''); END;');
+          execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
+      Else 
+        raise OBJECTNOTEXISTS;
+      End If;
+    end if;
+	
+	/*
+    if V_OPERACION in ('ALTER', 'ANALYZE') then
       If OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE)  Then 
           OPERACION_DDL.ejecuta_str(''|| V_OPERACION || ' ' || V_TIPO || ' ' || V_ESQUEMA || '.' || V_NOMBRE || ' ' || V_PARAMETROS||'');
           execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
@@ -137,17 +163,20 @@ create or replace package body OPERACION_DDL as
         raise OBJECTNOTEXISTS;
       End If;
     end if;
-
+	*/
 
     if V_OPERACION in ('CREATE') then
         If not OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE) Then 
+		  --**PFS - Función para crear tablas, no se utiliza durante las cargas sólo en instalación
           OPERACION_DDL.ejecuta_str(''|| V_OPERACION || ' ' || V_TIPO || ' ' || V_ESQUEMA || '.' || V_NOMBRE || ' (' || V_PARAMETROS || ')');
+		  --**Bankia - CREA_TEMP_TABLES función bankia para crear tablas temporales
+          --OPERACION_DDL.ejecuta_str('BEGIN CREA_TEMP_TABLES('''||V_ESQUEMA||''', '''||V_NOMBRE ||' '||V_PARAMETROS||'''); END;');
           execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
         Else 
           Raise OBJECTEXISTS;
         End If;
     end if;
-
+/*
     if V_OPERACION in ('CREATE_AS') then
         If not OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE) Then 
           OPERACION_DDL.ejecuta_str('CREATE '|| V_TIPO || ' ' || V_ESQUEMA || '.' || V_NOMBRE || ' ' || V_PARAMETROS || '');
@@ -156,7 +185,7 @@ create or replace package body OPERACION_DDL as
           Raise OBJECTEXISTS;
         End If;
     end if;
-
+*/
   EXCEPTION
     WHEN OBJECTEXISTS then
       O_ERROR_STATUS := 'La tabla ya existe';
@@ -268,11 +297,17 @@ create or replace package body OPERACION_DDL as
     if V_OPERACION = 'DROP' then
       If OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE) Then
           If V_DESACTIVAR = 'S' then 
-            OPERACION_DDL.ejecuta_str('ALTER INDEX ' || V_ESQUEMA || '.' || V_NOMBRE || ' UNUSABLE');
-            execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
+		    --**PFS - Función para desactivar indices
+            --OPERACION_DDL.ejecuta_str('ALTER INDEX ' || V_ESQUEMA || '.' || V_NOMBRE || ' UNUSABLE');
+            --**Bankia - ALTER_INDEX función bankia para desactivar indices
+			OPERACION_DDL.ejecuta_str('BEGIN ALTER_INDEX('''||v_esquema||''', '''||v_nombre||''', ''UNUSABLE''); END;');
+			execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
           else 
-            OPERACION_DDL.ejecuta_str('DROP INDEX ' || V_ESQUEMA || '.' || V_NOMBRE||'');
-            execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
+		    --**PFS - Función para drop de indices
+            --OPERACION_DDL.ejecuta_str('DROP INDEX ' || V_ESQUEMA || '.' || V_NOMBRE||'');
+            --**Bankia - CREA_DROP_INDEX función bankia para drop indices
+			OPERACION_DDL.ejecuta_str('BEGIN CREA_DROP_INDEX('''||V_ESQUEMA||''', '''||V_NOMBRE||''', null, ''DROP''); END;');
+			execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
           End if;
       End if;
       --Si no existe no tratamos la excepción... se continúa
@@ -280,11 +315,17 @@ create or replace package body OPERACION_DDL as
 
     If V_OPERACION = 'CREATE' then
       If not OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE) Then
-          OPERACION_DDL.ejecuta_str('CREATE '|| V_TIPO_INDEX ||' INDEX ' || V_ESQUEMA || '.' || V_NOMBRE || ' on ' || V_ESQUEMA || '.' || V_PARAMETROS ||'');
-          execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
+          --**PFS - Función para crear indices
+		  --OPERACION_DDL.ejecuta_str('CREATE '|| V_TIPO_INDEX ||' INDEX ' || V_ESQUEMA || '.' || V_NOMBRE || ' on ' || V_ESQUEMA || '.' || V_PARAMETROS ||'');
+          --**Bankia - CREA_DROP_INDEX función bankia para crear indices
+		  OPERACION_DDL.ejecuta_str('BEGIN CREA_DROP_INDEX('''||v_esquema||''', '''||v_nombre||''', '''||v_parametros||''', ''CREA''); END;');
+		  execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
       Else 
           If V_DESACTIVAR = 'S' then 
-            OPERACION_DDL.ejecuta_str('ALTER INDEX ' || V_ESQUEMA || '.' || V_NOMBRE || ' REBUILD PARALLEL');
+            --**PFS - Función para rebuild indices
+			--OPERACION_DDL.ejecuta_str('ALTER INDEX ' || V_ESQUEMA || '.' || V_NOMBRE || ' REBUILD PARALLEL');
+			--**Bankia - ALTER_INDEX función bankia para rebuild indices
+			OPERACION_DDL.ejecuta_str('BEGIN ALTER_INDEX('''||v_esquema||''', '''||v_nombre||''', ''REBUILD''); END;');
             execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
           else 
             Raise OBJECTEXISTS;          
@@ -294,6 +335,7 @@ create or replace package body OPERACION_DDL as
 
     If V_OPERACION = 'CREATE_AS' then
       If not OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE) Then
+	      --**PFS - Función para crear indices, no se utiliza durante las cargas sólo en instalación
           OPERACION_DDL.ejecuta_str('CREATE INDEX ' || V_PARAMETROS ||'');
           execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
       End if;

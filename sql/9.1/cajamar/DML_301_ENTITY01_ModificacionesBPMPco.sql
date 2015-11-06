@@ -34,9 +34,9 @@ DECLARE
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(    
        T_TIPO_TAP('PCO','PCO_RevisarExpedientePreparar','plugin/precontencioso/tramite/revisarExpedientePreparar',null,null,null,null,'0','Revisar expediente a preparar',
-            '0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_CM_GE_PCO',null,'SUP_PCO',null),
+            '0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_CM_GE',null,'SUP_PCO',null),
        T_TIPO_TAP('PCO','PCO_AsignarGestorLiquidacion',null,null,null,null,null,'0','Asignar gestor de liquidación',
-            '0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_CM_GD_PCO',null,'SUP_PCO',null),
+            '0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_CM_GD',null,'SUP_PCO',null),
        T_TIPO_TAP('PCO','PCO_RevisarExpedienteAsignarLetrado','plugin/precontencioso/tramite/revisarExpedienteAsignarLetrado',null,null,null,null,'0','Revisar expediente y Asignar letrado',
             '0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'SUP_PCO',null,'SUP_PCO',null)
     ); 

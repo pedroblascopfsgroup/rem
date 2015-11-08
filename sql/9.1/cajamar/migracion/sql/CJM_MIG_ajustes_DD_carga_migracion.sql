@@ -10,7 +10,7 @@ from des_despacho_externo;
 
 --insert de tabla de despachos	USUARIO = MIGRAGMN
 
-SELECT 'INSERT INTO des_despacho_externo (DES_ID, DES_DESPACHO, DES_TIPO_VIA, USUARIOCREAR, FECHACREAR, BORRADO, ZON_ID, DD_TDE_ID)
+SELECT 'INSERT INTO CM01.des_despacho_externo (DES_ID, DES_DESPACHO, DES_TIPO_VIA, USUARIOCREAR, FECHACREAR, BORRADO, ZON_ID, DD_TDE_ID)
          VALUES (s_des_despacho_externo.nextval, '''||cd_despacho||''', ''C/'', ''MIGRAGMN'', sysdate, 0, 12501, 186);' as texto
 from 
    (select distinct cd_despacho
@@ -26,7 +26,7 @@ from usd_usuarios_despachos;
 
 --insert de tabla de usuarios_despachos	USUARIO = MIGRAGMN
 
-SELECT 'INSERT INTO usd_usuarios_despachos (USD_ID, USU_ID, DES_ID, USD_GESTOR_DEFECTO, USD_SUPERVISOR, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+SELECT 'INSERT INTO CM01.usd_usuarios_despachos (USD_ID, USU_ID, DES_ID, USD_GESTOR_DEFECTO, USD_SUPERVISOR, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
          VALUES (s_usd_usuarios_despachos.nextval, 29467, '||DES_ID||', 1, 1, 0, ''MIGRAGMN'', sysdate, 0);'
 from 
    (select distinct DES_ID, DES_DESPACHO

@@ -53,7 +53,8 @@ BEGIN
         EXECUTE IMMEDIATE V_SQL INTO EXISTE;
         IF (EXISTE>0) 
           THEN 
-            EXECUTE IMMEDIATE('ANALYZE TABLE '||V_TEMP_TABLAS(1)||'.'||V_TEMP_TABLAS(2)||' COMPUTE STATISTICS');
+            DBMS_OUTPUT.PUT_LINE('CM01.UTILES.ANALIZA_TABLA( '''||V_TEMP_TABLAS(1)||''','''||V_TEMP_TABLAS(2)||''' )');
+            CM01.UTILES.ANALIZA_TABLA(V_TEMP_TABLAS(1),V_TEMP_TABLAS(2));
             DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' Estadisticas sobre '||V_TEMP_TABLAS(1)||'.'||V_TEMP_TABLAS(2)||' actualizadas.');
           ELSE 
             DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' La tabla '||V_TEMP_TABLAS(1)||'.'||V_TEMP_TABLAS(2)||' no existe.');
@@ -66,7 +67,7 @@ EXCEPTION
     ERR_NUM := SQLCODE;
     ERR_MSG := SQLERRM;
     DBMS_OUTPUT.put_line('[ERROR] - '||to_char(sysdate,'HH24:MI:SS')||' Error actualizando estadisticas.');
-    DBMS_OUTPUT.put_line('[ERROR] - '||to_char(sysdate,'HH24:MI:SS')||' Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+    DBMS_OUTPUT.put_line('[ERROR] - '||to_char(sysdate,'HH24:MI:SS')||' Se ha producido un error en la ejecuciÃ³n:'||TO_CHAR(ERR_NUM));
     DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
     DBMS_OUTPUT.put_line(ERR_MSG);
     ROLLBACK;

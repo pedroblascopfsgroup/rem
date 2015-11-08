@@ -17,4 +17,4 @@ do
 done
 
 # echo $APPCLASSPATH
-java -Djava.rmi.server.hostname=localhost -Xmx1024m -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -classpath $APPCLASSPATH es.capgemini.pfs.batch.Main &
+java -Dappname=batch -Djava.rmi.server.hostname=localhost -Xmx1024m -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -classpath $APPCLASSPATH es.capgemini.pfs.batch.Main &

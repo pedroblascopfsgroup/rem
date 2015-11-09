@@ -71,12 +71,16 @@ BEGIN
  LOOP
    V_TMP_PRV := V_PRV(I);
    V_EXISTE:=0; 
-   DBMS_OUTPUT.PUT_LINE('Creando '||TABLA||': '||V_TMP_PRV(1));   
-   
+      
   
    V_MSQL1 := 'SELECT COUNT(*) FROM ' || V_ESQUEMA_M || '.'||TABLA||' WHERE DD_PRV_CODIGO = ''' || V_TMP_PRV(1) || '''';
    EXECUTE IMMEDIATE V_MSQL1 INTO V_EXISTE;
   
+  IF V_EXISTE is not null and V_EXISTE = 1 then
+      DBMS_OUTPUT.PUT_LINE('[ATENCION] '||TABLA||' - '||V_TMP_PRV(1) || ' YA EXISTE');
+      
+  ELSE
+        DBMS_OUTPUT.PUT_LINE('Creando '||TABLA||': '||V_TMP_PRV(1));
         V_MSQL1 := 'INSERT INTO ' ||V_ESQUEMA_M|| '.'||TABLA||' 
                     ( DD_PRV_ID, DD_PRV_CODIGO, DD_PRV_DESCRIPCION, DD_PRV_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, USUARIOMODIFICAR, FECHAMODIFICAR, USUARIOBORRAR, FECHABORRAR, BORRADO)
                    VALUES ('||V_TMP_PRV(1)||q'[,]'
@@ -93,6 +97,8 @@ BEGIN
                         ||V_TMP_PRV(12)||q'[)]';
 
 EXECUTE IMMEDIATE V_MSQL1;
+
+ END IF;
     
  END LOOP; 
 
@@ -111,3 +117,4 @@ EXECUTE IMMEDIATE V_MSQL1;
  END;
   /
  EXIT;
+

@@ -6,8 +6,8 @@
     
 	<!-- nuevo para galicia -->
 <rule>
-        <from>^/external/(.+)/login\?u=(.+)&amp;t=([0-9]+)&amp;v=(.+)&amp;i=([0-9]+)$</from>
-        <to type="redirect">/pfs/j_spring_security_check?j_username=$2&amp;workingcode=$1&amp;timestamp=$3&amp;view=$4&amp;id=$5</to>
+        <from>^/external/(.+)/login\?u=(.+)&amp;t=([0-9]+)$</from>
+        <to type="redirect">/pfs/j_spring_security_check?j_username=$2&amp;workingcode=$1&amp;timestamp=$3</to>
     </rule>	
     <!-- redirect the RSI SSO model -->
     <rule>

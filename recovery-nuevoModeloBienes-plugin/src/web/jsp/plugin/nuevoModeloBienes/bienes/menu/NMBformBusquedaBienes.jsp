@@ -140,8 +140,29 @@ var formBusquedaBienes=function(){
 		tabFiltrosLocalizacion=true;
 	});
 		
-<%-- *************TABPANEL QUE CONTIENE TODAS LAS PESTAï¿½AS********************************   --%>
+<%-- ******************* MODIFICACION BOTON BUSCAR PARA QUE SE DESACTIVEN BUSQUEDAS EN PARALELO ******************** --%>		
+	var validarForm=function(){
+		if(txtPoblacion.getValue() != ''){
+			return true;
+		}
+	};
 	
+	var buscarFunc=function(){
+		if(validarForm()){
+			var isBusqueda=true;
+			panelFiltros.collapse(true);
+			bienesStore.webflow(getParametros());
+			panelFiltros.getTopToolbar().setDisabled(true);	
+		}else{
+			Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','Introduzca parámetros de búsqueda');
+		}
+	};
+    
+    buttonsL[0] = app.crearBotonBuscar({
+		handler : buscarFunc
+	});	
+		
+<%-- *************TABPANEL QUE CONTIENE TODAS LAS PESTAï¿½AS********************************   --%>	
 	var filtroTabPanel=new Ext.TabPanel({
 		items:[filtrosTabDatosBien, filtrosTabRelacionesBien, filtrosTabLocalizacionBien]
 		,id:'idTabFiltrosBien'
@@ -410,6 +431,10 @@ var formBusquedaBienes=function(){
     };
 	    	
 	bienesGrid.addListener('rowdblclick', bienesGridListener);
+	
+	bienesStore.on('load',function(){
+           panelFiltros.getTopToolbar().setDisabled(false);
+    });
 	
 	var mainPanel = new Ext.Panel({
 		items : [

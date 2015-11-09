@@ -296,6 +296,13 @@
         ]]>
     </entry>
 
+    <entry key="recobro.simulacion.drop2.tmp_arq_recobro.Oracle10gDialect">
+       <![CDATA[
+             BEGIN
+               OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_ARQ_RECOBRO');
+             END;
+         ]]>
+    </entry>
 
     <!-- PASO 4 - Insertar los nuevos clientes en CLI_CLIENTES -->
     <!--

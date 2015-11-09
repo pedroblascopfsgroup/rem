@@ -54,7 +54,7 @@
 		,style:'margin-left:5px; width:auto'
 		,width:'90%'
 		,maxLength:250
-		,name : 'observacionesRevisionSolvencia'
+		,name : 'observacionesSolvencia'
 		,value: ''
 	});
 
@@ -93,7 +93,7 @@
 					,width:650
 					,title : '<s:message code="plugin.nuevoModeloBienes.revisionSolvencias.boton" text="**Revisar solvencia" />'
 					,params : {idPersona: getPersonaId(),fechaRevision:fechaRevision.getValue(),observacionesRevisionSolvencia:observacionesRevisionSolvencia.getValue(),noTieneFincabilidad:noTieneFincabilidad.getValue()}
-				});
+				});git
 				w.on(app.event.DONE, function(){
 					w.close();
 				});
@@ -452,6 +452,9 @@
 			url : app.resolveFlow('clientes/solvenciaObservacionData')
 			,params : {id :getPersonaId()}
 		});
+		
+		
+		
 	};
 	panel.bienesGrid=app.crearGrid(bienesST,bienesCm,{
 		title:'<s:message code="menu.clientes.consultacliente.solvenciatab.bienes.title" text="**Bienes"/>'

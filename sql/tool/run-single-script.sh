@@ -199,6 +199,8 @@ nombreFicheroSinDir=`basename $FICHERO`
 nombreSinDirSinExt=${nombreFicheroSinDir%%.*}
 nombreSetEnv=setEnv_${nombreSinDirSinExt}.sh
 
+rm -f $BASEDIR/tmp/*$nombreSinDirSinExt* 
+
 if [[ ! $nombreFicheroSinDir =~ ^D[MD]L_[0-9]+_[^_]+_[^\.]+\.sql$ ]] ; then
     echo ""
     echo "El nombre del script $nombreFicheroSinDir no sigue la nomenclatura definida"

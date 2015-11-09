@@ -93,7 +93,7 @@
 					,width:650
 					,title : '<s:message code="plugin.nuevoModeloBienes.revisionSolvencias.boton" text="**Revisar solvencia" />'
 					,params : {idPersona: getPersonaId(),fechaRevision:fechaRevision.getValue(),observacionesRevisionSolvencia:observacionesRevisionSolvencia.getValue(),noTieneFincabilidad:noTieneFincabilidad.getValue()}
-				});git
+				});
 				w.on(app.event.DONE, function(){
 					w.close();
 				});

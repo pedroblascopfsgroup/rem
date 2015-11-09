@@ -2,7 +2,7 @@
 --##########################################
 --## AUTOR=DAVID GONZÁLEZ
 --## FECHA_CREACION=20151014
---## ARTEFACTO=
+--## ARTEFACTO=BATCH
 --## VERSION_ARTEFACTO= 0.1
 --## INCIDENCIA_LINK=BKREC-849
 --## PRODUCTO=NO

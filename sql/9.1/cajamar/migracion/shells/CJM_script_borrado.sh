@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ "$#" -ne 1 ]; then
-    echo "Parametros: <CM01/CM01_pass@host:puerto/ORACLE_SID>"
+    echo "Parametros: <CM01_pass@host:puerto/ORACLE_SID>"
     exit
 fi
 

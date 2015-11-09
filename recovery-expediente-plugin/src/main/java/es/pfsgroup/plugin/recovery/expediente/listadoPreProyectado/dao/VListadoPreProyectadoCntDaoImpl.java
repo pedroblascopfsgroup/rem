@@ -14,12 +14,14 @@ import org.springframework.stereotype.Repository;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.api.VListadoPreProyectadoCntDao;
 import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.dto.ListadoPreProyectadoDTO;
 import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.model.VListadoPreProyectadoCnt;
+import es.capgemini.pfs.users.domain.Usuario;
 
 @Repository("VListadoPreProyectadoCntDao")
 public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoPreProyectadoCnt, Long> implements VListadoPreProyectadoCntDao {
@@ -155,6 +157,21 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 			}
 		}
 		
+        //Filtrado visibilidad por zonas
+		if (!Checks.esNulo(dto.getUsuarioLogado())) {
+	        if (dto.getUsuarioLogado().getZonas().size() > 0) {
+	            sb.append(" and ( ");
+	            for (int i = 0; i < dto.getUsuarioLogado().getZonas().size(); i++) {
+	            	DDZona zona = dto.getUsuarioLogado().getZonas().get(i);
+	            	sb.append("f.zonCodContrato like '" + zona.getCodigo() + "%' ");
+	            	if (i<dto.getUsuarioLogado().getZonas().size()-1) {
+	            		sb.append(" or ");
+	            	}
+	            }
+	            sb.append(" ) ");
+	        }
+		}		
+		
 		//sb.append(" ) ");
 		
 		return sb;
@@ -173,12 +190,28 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<VListadoPreProyectadoCnt> getListadoPreProyectadoCntExp(Long expId) {
+	public List<VListadoPreProyectadoCnt> getListadoPreProyectadoCntExp(Long expId, Usuario usuarioLogado) {
 		StringBuilder sb = new StringBuilder();
 		//sb.append("Select distinct c ");
 		sb.append("Select distinct f.cntId, f.contrato, f.expId, f.riesgoTotal, f.deudaIrregular, f.tramo, f.diasVencidos, f.fechaPaseAMoraCnt, f.propuesta, f.estadoGestion, f.fechaPrevReguCnt ");
 		sb.append(" from VListadoPreProyectadoCnt f ");
 		sb.append(" where f.expId = " + expId);
+		
+		/*
+        //Filtrado visibilidad por zonas
+		if (!Checks.esNulo(usuarioLogado)) {
+	        if (usuarioLogado.getZonas().size() > 0) {
+	            sb.append(" and ( ");
+	            for (int i = 0; i < usuarioLogado.getZonas().size(); i++) {
+	            	DDZona zona = usuarioLogado.getZonas().get(i);
+	            	sb.append("f.zonCodContrato like '" + zona.getCodigo() + "%' ");
+	            	if (i<usuarioLogado.getZonas().size()-1) {
+	            		sb.append(" or ");
+	            	}
+	            }
+	            sb.append(" ) ");
+	        }
+		}*/	
 		
 		List<Object[]> lista = getHibernateTemplate().find(sb.toString());
 		return castearListado(lista);

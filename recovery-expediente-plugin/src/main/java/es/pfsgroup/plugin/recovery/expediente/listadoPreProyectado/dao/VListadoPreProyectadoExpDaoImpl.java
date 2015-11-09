@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
@@ -152,13 +153,28 @@ public class VListadoPreProyectadoExpDaoImpl extends AbstractEntityDao<VListadoP
 			}
 		}
 		
+        //Filtrado visibilidad por zonas
+		if (!Checks.esNulo(dto.getUsuarioLogado())) {
+	        if (dto.getUsuarioLogado().getZonas().size() > 0) {
+	            sb.append(" and ( ");
+	            for (int i = 0; i < dto.getUsuarioLogado().getZonas().size(); i++) {
+	            	DDZona zona = dto.getUsuarioLogado().getZonas().get(i);
+	            	sb.append("f.zonExp like '" + zona.getCodigo() + "%' ");
+	            	if (i<dto.getUsuarioLogado().getZonas().size()-1) {
+	            		sb.append(" or ");
+	            	}
+	            }
+	            sb.append(" ) ");
+	        }
+		}
+		
 		sb.append(" ) ");
 		
 		HQLBuilder hb = new HQLBuilder(sb.toString());
 		Page pagina = HibernateQueryUtils.page(this, hb, dto);
 		List<VListadoPreProyectadoExp> listado = (List<VListadoPreProyectadoExp>) pagina.getResults();
 		for (VListadoPreProyectadoExp exp : listado) {
-			exp.setContratos(vListadoPreProyectadoCntDao.getListadoPreProyectadoCntExp(exp.getExpId()));
+			exp.setContratos(vListadoPreProyectadoCntDao.getListadoPreProyectadoCntExp(exp.getExpId(),dto.getUsuarioLogado()));
 		}
 		
 		return pagina;

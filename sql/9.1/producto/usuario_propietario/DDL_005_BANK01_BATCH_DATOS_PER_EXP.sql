@@ -29,16 +29,10 @@ DECLARE
 
     V_TEXT1        VARCHAR2(2400 CHAR); -- Vble. auxiliar
     
-    TYPE T_ESQUEMA IS TABLE OF VARCHAR2(30) INDEX BY BINARY_INTEGER;
-    V_ESQUEMA_GRANT T_ESQUEMA;
+
 
 BEGIN
     
-    v_esquema_grant(1) := '#ESQUEMA_MASTER#';  --'BANKMASTER';
-    v_esquema_grant(2) := '#ESQUEMA_MINIREC#'; --'MINIREC';
-    v_esquema_grant(3) := '#ESQUEMA_DWH#';     --'RECOVERY_BANKIA_DWH';
-    v_esquema_grant(4) := '#ESQUEMA_STG#';     --'RECOVERY_BANKIA_DATASTAGE';
-
     ---------------------------
     --  BATCH_DATOS_PER_EXP  --
     --------------------------- 
@@ -58,47 +52,23 @@ BEGIN
 
     --** Creamos la tabla
 
-    V_MSQL := 'CREATE GLOBAL TEMPORARY TABLE ' ||v_esquema||'.BATCH_DATOS_PER_EXP 
+    V_MSQL := 'CREATE TABLE ' ||v_esquema||'.BATCH_DATOS_PER_EXP 
                (
 		EXP_ID    NUMBER (16)
 		,PER_ID    NUMBER (16)
-               )';
+               ) nologging';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.BATCH_DATOS_PER_EXP... Tabla creada');
 
     --** Creamos Indices
  
-    V_MSQL := 'CREATE INDEX IDX_BATCH_DATOS_PER_EXP_1 ON '||v_esquema||'.BATCH_DATOS_PER_EXP (EXP_ID)';
+    V_MSQL := 'CREATE INDEX IDX_BATCH_DATOS_PER_EXP_1 ON '||v_esquema||'.BATCH_DATOS_PER_EXP (EXP_ID) nologging';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.IDX_BATCH_DATOS_PER_EXP_1... Indice creado');
-    V_MSQL := 'CREATE INDEX IDX_BATCH_DATOS_PER_EXP_2 ON '||v_esquema||'.BATCH_DATOS_PER_EXP (PER_ID)';
+    V_MSQL := 'CREATE INDEX IDX_BATCH_DATOS_PER_EXP_2 ON '||v_esquema||'.BATCH_DATOS_PER_EXP (PER_ID) nologging';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.IDX_BATCH_DATOS_PER_EXP_2... Indice creado');
 
-
-    --** Damos permisos a otros esquemas
-    IF v_esquema_grant.count = 0 THEN
-    DBMS_OUTPUT.PUT_LINE('No existen esquemas para Grants.');
-      ELSE
-        FOR i IN v_esquema_grant.FIRST .. v_esquema_grant.LAST
-         LOOP
-          v_num_tablas := 0;
-          v_sql := 'select count(1) from all_users
-                     where username='''||v_esquema_grant(i)||'''';
-          execute immediate v_sql into v_num_tablas;
-                 
-          if v_num_tablas > 0 then
-            v_sql := 'grant select, update, delete, insert
-                         on '||v_esquema||'.BATCH_DATOS_PER_EXP
-                         to '||v_esquema_grant(i);
-            DBMS_OUTPUT.PUT_LINE('[INFO]: ' || v_sql);
-            execute immediate v_sql;
-          else
-            DBMS_OUTPUT.PUT_LINE('[INFO]: Esquema '||v_esquema_grant(i)||' NO EXISTE');
-          end if;
-                 
-         END LOOP;
-    END IF;
 
     
 EXCEPTION

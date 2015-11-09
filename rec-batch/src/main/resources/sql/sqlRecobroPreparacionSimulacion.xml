@@ -72,6 +72,14 @@
         ]]>
     </entry>
 
+    <!-- OBSOLETO. LO DEJAMOS PREPARADO PARA NUEVOS INDICES O ESTADISTICAS -->
+    <entry key="recobro.simulacion.creacion.indices.vistas.Oracle10gDialect">
+         <![CDATA[
+         select 1 from dual
+        ]]>
+    </entry>
+
+
     <!-- VOLVEMOS A GENERAR LA VISTA DE BATCH_RCF_ENTRADA -->
     <entry key="recobro.simulacion.borrado.batch_rcf_entrada.Oracle10gDialect">
         <![CDATA[

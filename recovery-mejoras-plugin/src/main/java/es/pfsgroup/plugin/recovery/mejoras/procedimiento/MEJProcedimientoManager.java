@@ -69,6 +69,7 @@ import es.pfsgroup.plugin.recovery.mejoras.MEJConstantes;
 import es.pfsgroup.plugin.recovery.mejoras.PluginMejorasBOConstants;
 import es.pfsgroup.plugin.recovery.mejoras.asunto.dao.MEJProcedimientoContratoExpedienteDao;
 import es.pfsgroup.plugin.recovery.mejoras.asunto.dao.impl.MEJProcedimientoContratoExpedienteDaoImpl;
+import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.AccionTomaDecision;
 import es.pfsgroup.plugin.recovery.mejoras.expediente.MEJExpedienteFacade;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.dto.MEJDtoBloquearProcedimientos;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.dto.MEJDtoInclusionExclusionContratoProcedimiento;
@@ -127,6 +128,9 @@ public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProce
 
 	@Autowired
 	private EXTProcedimientoManager extProcedimientoManager;
+	
+	@Autowired(required=false)
+	private List<AccionDesparalizarProcedimiento> accionesAdicionalTrasDesparalizar;
 	
 	@BusinessOperation("procedimiento.buttons")
 	public List<DynamicElement> getTabs(long idProcedimiento) {
@@ -280,6 +284,14 @@ public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProce
 
 			genericDao.save(MEJProcedimiento.class, prc);
 			
+			
+			// ACCIONES TRAS DESPARALIZAR
+			if (this.accionesAdicionalTrasDesparalizar!=null) {
+				for (AccionDesparalizarProcedimiento accion : this.accionesAdicionalTrasDesparalizar) {
+					accion.ejecutar(prc);
+				}
+			}
+			// FIN ACCIONES DESPARALIZAR
 			
 		}
 

@@ -7,16 +7,15 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
-import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.pfsgroup.procedimientos.PROBaseActionHandler;
 import es.pfsgroup.procedimientos.context.HayaProjectContext;
 
-public class AsignacionHayaEnterActionHandler extends PROBaseActionHandler {
+public class AsignacionHayaDecidirTipoAsuntoHandler extends PROBaseActionHandler {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 2156270993650719342L;
+	private static final long serialVersionUID = -1417606815140759L;
 
 	@Autowired
 	private Executor executor;
@@ -30,15 +29,13 @@ public class AsignacionHayaEnterActionHandler extends PROBaseActionHandler {
 	@Override
 	public void run(ExecutionContext executionContext) throws Exception {
 		Procedimiento prc = getProcedimiento(executionContext);
-		String codigoProcedimiento = null;
 		if (prc != null && prc.getAsunto() != null && prc.getAsunto().getTipoAsunto() != null) {
 			if (DDTiposAsunto.CONCURSAL.equals(prc.getAsunto().getTipoAsunto().getCodigo())) {
-				codigoProcedimiento = hayaProjectContext.getTareaInicioConcurso();
+				executionContext.getToken().signal("concurso");
 			} else {
-				codigoProcedimiento = hayaProjectContext.getTareaAceptacionLitigios();
+				executionContext.getToken().signal("litigio");
 			}
-			TipoProcedimiento tipoProcedimientoHijo = tipoProcedimientoManager.getByCodigo(codigoProcedimiento);
-			this.creaProcedimientoHijo(executionContext, tipoProcedimientoHijo, prc, null, null);
 		}
 	}
+
 }

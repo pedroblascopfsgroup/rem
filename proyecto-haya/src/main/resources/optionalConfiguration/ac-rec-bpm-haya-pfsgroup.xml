@@ -11,6 +11,7 @@
 	<!-- Beans,handlers,Managers ... --> 
  	<bean id="aceptacionHayaEnterActionHandler" class="es.pfsgroup.procedimientos.aceptacion.AceptacionHayaEnterActionHandler"></bean>
  	<bean id="asignacionHayaEnterActionHandler" class="es.pfsgroup.procedimientos.asignacion.AsignacionHayaEnterActionHandler"></bean>
+ 	<bean id="asignacionHayaDecidirTipoAsuntoHandler" class="es.pfsgroup.procedimientos.asignacion.AsignacionHayaDecidirTipoAsuntoHandler"></bean>
 		    
 	<!-- BPM activos -->
 	<!-- Cambios Rober -->

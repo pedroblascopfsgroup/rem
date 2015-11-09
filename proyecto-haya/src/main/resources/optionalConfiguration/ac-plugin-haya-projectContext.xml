@@ -306,6 +306,9 @@
 		<property name="tareaAceptacionLitigios">
 			<value>H068</value>
 		</property>
+		<property name="tareaInicioConcurso">
+			<value>H009</value>
+		</property>
 	</bean>  
 
 	<alias name="nmbCommonProjectContextHAYA" alias="nmbCommonProjectContext"/>

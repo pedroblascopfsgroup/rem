@@ -482,64 +482,57 @@ public class BurofaxManager implements BurofaxApi {
 				envioIntegracion.setCertificado(certificado);
 				
 		
-				
-				if(precontenciosoContext.isGenerarArchivoBurofax()){
-					FileItem archivoBurofax=generarDocumentoBurofax(envioBurofax);
+				if (precontenciosoContext.isGenerarArchivoBurofax()) {
+					FileItem archivoBurofax = generarDocumentoBurofax(envioBurofax);
 					envioIntegracion.setArchivoBurofax(archivoBurofax);
-					
-					InputStream inputStream = archivoBurofax.getInputStream();
-					FileOutputStream outputStream = null;
-					String directorio = parametrizacionDao.buscarParametroPorNombre(DIRECTORIO_PDF_BUROFAX_PCO).getValor();
+					if ("BANKIA".equals(precontenciosoContext.getRecovery())) {
+						InputStream inputStream = archivoBurofax.getInputStream();
+						FileOutputStream outputStream = null;
+						String directorio = parametrizacionDao.buscarParametroPorNombre(DIRECTORIO_PDF_BUROFAX_PCO).getValor();
 
-					try {
-						String nombreFichero = obtenerNombreFichero();
-						envioIntegracion.setNombreFichero(nombreFichero);
-						envioIntegracion.setIdAsunto(envioBurofax.getBurofax().getProcedimientoPCO().getProcedimiento().getAsunto().getId());
-						// write the inputStream to a FileOutputStream
-						outputStream = new FileOutputStream(new File(directorio+"/"+nombreFichero));
+						try {
+							String nombreFichero = obtenerNombreFichero();
+							envioIntegracion.setNombreFichero(nombreFichero);
+							envioIntegracion.setIdAsunto(envioBurofax.getBurofax().getProcedimientoPCO().getProcedimiento().getAsunto().getId());
+							// write the inputStream to a FileOutputStream
+							outputStream = new FileOutputStream(new File(directorio + "/" + nombreFichero));
 
-						int read = 0;
-						byte[] bytes = new byte[1024];
+							int read = 0;
+							byte[] bytes = new byte[1024];
 
-						while ((read = inputStream.read(bytes)) != -1) {
-							outputStream.write(bytes, 0, read);
-						}
-
-						
-
-					} catch (IOException e) {
-						e.printStackTrace();
-					} finally {
-						if (inputStream != null) {
-							try {
-								inputStream.close();
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-						}
-						if (outputStream != null) {
-							try {
-								// outputStream.flush();
-								outputStream.close();
-							} catch (IOException e) {
-								e.printStackTrace();
+							while ((read = inputStream.read(bytes)) != -1) {
+								outputStream.write(bytes, 0, read);
 							}
 
+						} catch (IOException e) {
+							e.printStackTrace();
+						} finally {
+							if (inputStream != null) {
+								try {
+									inputStream.close();
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+							}
+							if (outputStream != null) {
+								try {
+									// outputStream.flush();
+									outputStream.close();
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+							}
 						}
 					}
-					
-
-				}
-				else{
+				} else {
 					envioIntegracion.setArchivoBurofax(new FileItem(File.createTempFile("TMP", ".log")));
 				}
-				
+
 				envioIntegracion.setContenido(envioBurofax.getContenidoBurofax());
 
 				genericDao.save(BurofaxEnvioIntegracionPCO.class, envioIntegracion);
 			}
-		
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error(e);
 		}
 		
@@ -604,7 +597,8 @@ public class BurofaxManager implements BurofaxApi {
 			else{
 				mapaVariables.put("numeroContrato","[ERROR - No existe valor]");
 			}
-			if(!Checks.esNulo(envioBurofax.getBurofax().getContrato()) && !Checks.esNulo(envioBurofax.getBurofax().getContrato().getFirstMovimiento())){
+			if(!Checks.esNulo(envioBurofax.getBurofax().getContrato()) && !Checks.esNulo(envioBurofax.getBurofax().getContrato().getFirstMovimiento())
+					&& !Checks.esNulo(envioBurofax.getBurofax().getContrato().getFirstMovimiento().getFechaPosVencida())){
 				SimpleDateFormat fechaFormat = new SimpleDateFormat(FormatUtils.DD_DE_MES_DE_YYYY,MessageUtils.DEFAULT_LOCALE);
 				mapaVariables.put("fechaPosicionVencida",fechaFormat.format(envioBurofax.getBurofax().getContrato().getFirstMovimiento().getFechaPosVencida()));
 			}

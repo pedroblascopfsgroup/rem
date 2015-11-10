@@ -170,6 +170,8 @@
 	var btnPropuestaCancelacion = new Ext.Button({
 	    text : '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCargas.btnPropuestaCancelacion" text="**Prop. de cancelación de cargas" />'
 		,iconCls : 'icon_pdf'
+		<%--CMREC-960 se oculta el boton en este item provisionalmente --%>
+		,hidden : true
 		,handler : function(){
 			var flow = '/pfs/editbien/generarInformePropCancelacionCargas';
 			var params = {id:${NMBbien.id}};

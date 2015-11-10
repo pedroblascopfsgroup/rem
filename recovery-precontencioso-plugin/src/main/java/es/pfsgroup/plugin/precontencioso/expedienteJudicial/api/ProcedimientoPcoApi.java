@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.precontencioso.expedienteJudicial.api;
 
 import java.util.List;
 
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -114,5 +115,14 @@ public interface ProcedimientoPcoApi {
 
 	@BusinessOperationDefinition(BO_PCO_CREAR_PROCEDIMIENTO_PCO)
 	ProcedimientoPCO crearProcedimientoPco(Procedimiento procedimiento, String codigoEstadoInicial);
+
+	/**
+	 * Genera un fichero excel con los campos que se muestran en las búsquedas de elementos judiciales
+	 * 
+	 * @param filter
+	 * @return
+	 */
+	FileItem generarExcelExportacionElementos(
+			FiltroBusquedaProcedimientoPcoDTO filter);
 	
 }

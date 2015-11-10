@@ -1,12 +1,20 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.manager;
 
+import java.io.File;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +24,7 @@ import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.AsuntosManager;
 import es.capgemini.pfs.asunto.ProcedimientoManager;
@@ -38,6 +47,7 @@ import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.zona.dao.NivelDao;
 import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -69,6 +79,7 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.manager.LiquidacionManager;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDEstadoLiquidacionPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
@@ -86,6 +97,9 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	private static final String DIRLIT_PCO = "DULI";
 	private static final String PREDOC = "PREDOC";
 
+	@Resource
+	private Properties appProperties;
+	
 	@Autowired
 	private ProcedimientoPCODao procedimientoPcoDao;
 	
@@ -787,4 +801,153 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 				genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 	}
 
+	@Override
+	public FileItem generarExcelExportacionElementos(
+			FiltroBusquedaProcedimientoPcoDTO filter) {
+		
+		List<ProcedimientoPcoGridDTO> listaElementos = new ArrayList<ProcedimientoPcoGridDTO>();
+
+		// DOCUMENTO - LIQUIDACION - BUROFAX
+		if (FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_DOCUMENTO.equals(filter.getTipoBusqueda())) {
+			listaElementos = busquedaSolicitudesDocumentoPorFiltro(filter);
+		} 
+		else if (FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_LIQUIDACION.equals(filter.getTipoBusqueda())) {
+			listaElementos = busquedaLiquidacionesPorFiltro(filter);
+		} 
+		else if (FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_BUROFAX.equals(filter.getTipoBusqueda())) {
+			listaElementos = busquedaBurofaxPorFiltro(filter);
+		}
+		
+		return generarExcelElementos(listaElementos, filter.getTipoBusqueda());
+	}
+
+	private FileItem generarExcelElementos(
+			List<ProcedimientoPcoGridDTO> listaElementos, String tipoBusqueda) 
+	{
+		List<List<String>> valores = new ArrayList<List<String>>();
+
+		for (ProcedimientoPcoGridDTO row : listaElementos) {
+			List<String> filaExportar = new ArrayList<String>();
+
+			filaExportar.add(ObjectUtils.toString(row.getCodigo())); 						// Código del expediente judicial
+			filaExportar.add(ObjectUtils.toString(row.getNombreExpediente()));				// Nombre del expediente judicial
+			filaExportar.add(ObjectUtils.toString(row.getEstadoExpediente()));				// Estado del expediente
+			filaExportar.add(DateFormat.toString(row.getFechaEstado()));					// Fecha estado
+			filaExportar.add(DateFormat.toString(row.getFechaInicioPreparacion()));		// Fecha solicitud
+			filaExportar.add(ObjectUtils.toString(row.getTipoProcPropuesto()));			// Procedimiento propuesto
+			filaExportar.add(ObjectUtils.toString(row.getTipoPreparacion()));				// Tipo de preparación
+			filaExportar.add(ObjectUtils.toString(row.getDiasEnPreparacion()));				// Días en preparación
+			
+			if(FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_DOCUMENTO.equals(tipoBusqueda)) {
+				filaExportar.add(ObjectUtils.toString(row.getDocumento().getEstado()));				// Estado
+				filaExportar.add(ObjectUtils.toString(row.getDocumento().getUltimaRespuesta())); 	// Respuesta última solicitud
+				filaExportar.add(ObjectUtils.toString(row.getDocumento().getUltimoActor()));		// Actor última solicitud
+				filaExportar.add(DateFormat.toString(row.getDocumento().getFechaResultado()));		// Fecha resultado
+				filaExportar.add(DateFormat.toString(row.getDocumento().getFechaEnvio()));			// Fecha envío
+				filaExportar.add(DateFormat.toString(row.getDocumento().getFechaRecepcion()));		// Fecha recepción
+				filaExportar.add(row.getDocumento().getAdjunto() != null && row.getDocumento().getAdjunto()?"Sí":"No");						// Adjunto
+			}
+			else if(FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_LIQUIDACION.equals(tipoBusqueda)) {
+				filaExportar.add(ObjectUtils.toString(row.getLiquidacion().getEstado()));			// Estado
+				filaExportar.add(ObjectUtils.toString(row.getLiquidacion().getContrato()));			// Contrato
+				filaExportar.add(DateFormat.toString(row.getLiquidacion().getFechaRecepcion()));	// Fecha de recepción
+				filaExportar.add(DateFormat.toString(row.getLiquidacion().getFechaConfirmacion()));// Fecha de confirmación
+				filaExportar.add(DateFormat.toString(row.getLiquidacion().getFechaCierre()));		// Fecha del cierre
+				filaExportar.add(row.getLiquidacion().getTotal() != null?NumberFormat.getCurrencyInstance(new Locale("es","ES")).format(row.getLiquidacion().getTotal()):"");			// Total
+			}
+			else if(FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_BUROFAX.equals(tipoBusqueda)) {
+				filaExportar.add(ObjectUtils.toString(row.getBurofax().getEstado()));				// Estado
+				filaExportar.add(ObjectUtils.toString(row.getBurofax().getNif()));					// NIF
+				filaExportar.add(ObjectUtils.toString(row.getBurofax().getApellidoNombre()));		// Nombre apellidos		
+				filaExportar.add(DateFormat.toString(row.getBurofax().getFechaSolicitud()));		// Fecha solicitud		
+				filaExportar.add(DateFormat.toString(row.getBurofax().getFechaEnvio()));			// Fecha envío	
+				filaExportar.add(DateFormat.toString(row.getBurofax().getFechaAcuse()));			// Fecha acuse	
+				filaExportar.add(row.getBurofax().getResultado() != null && row.getBurofax().getResultado()?"Sí":"No");						// Resultado
+			}
+
+			valores.add(filaExportar);
+		}
+
+		String nombreFichero = (new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + "-listaElementos.xls";
+		String rutaCompletaFichero = !Checks.esNulo(appProperties.getProperty("files.temporaryPath")) ? appProperties.getProperty("files.temporaryPath") : "";
+
+		rutaCompletaFichero += File.separator.equals(rutaCompletaFichero.substring(rutaCompletaFichero.length()-1)) || rutaCompletaFichero.length() == 0 ? nombreFichero : File.separator+nombreFichero; 
+
+		//Creo el fichero excel
+		HojaExcel hojaExcel = new HojaExcel();
+		hojaExcel.crearNuevoExcel(rutaCompletaFichero, getListaCabecera(tipoBusqueda), valores);
+
+		FileItem excelFileItem = new FileItem(hojaExcel.getFile());
+		excelFileItem.setFileName(rutaCompletaFichero);
+		excelFileItem.setContentType(HojaExcel.TIPO_EXCEL);
+		excelFileItem.setLength(hojaExcel.getFile().length());
+
+		return excelFileItem;
+	}
+	
+	private ArrayList<String> getListaCabecera(String tipoBusqueda){
+		
+		ArrayList<String> cabeceras = new ArrayList<String>();
+		
+		
+		//Cabecera de las columnas
+		cabeceras.add(formatearString("Código del expediente judicial"));
+		cabeceras.add(formatearString("Nombre del expediente judicial"));
+		cabeceras.add(formatearString("Estado del expediente"));
+		cabeceras.add(formatearString("Fecha estado"));
+		cabeceras.add(formatearString("Fecha solicitud"));		
+		cabeceras.add(formatearString("Procedimiento propuesto"));		
+		cabeceras.add(formatearString("Tipo de preparación"));
+		cabeceras.add(formatearString("Días en preparación"));
+		
+		if(FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_DOCUMENTO.equals(tipoBusqueda)) {
+			cabeceras.add(formatearString("Estado"));
+			cabeceras.add(formatearString("Respuesta última solicitud"));
+			cabeceras.add(formatearString("Actor última solicitud"));
+			cabeceras.add(formatearString("Fecha resultado"));
+			cabeceras.add(formatearString("Fecha envío"));		
+			cabeceras.add(formatearString("Fecha recepción"));
+			cabeceras.add(formatearString("Adjunto"));
+		}
+		else if(FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_LIQUIDACION.equals(tipoBusqueda)) {
+			cabeceras.add(formatearString("Estado"));
+			cabeceras.add(formatearString("Contrato"));
+			cabeceras.add(formatearString("Fecha de recepción"));
+			cabeceras.add(formatearString("Fecha de confirmación"));
+			cabeceras.add(formatearString("Fecha del cierre"));
+			cabeceras.add(formatearString("Total"));
+		}
+		else if(FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_BUROFAX.equals(tipoBusqueda)) {
+			cabeceras.add(formatearString("Estado"));
+			cabeceras.add(formatearString("NIF"));
+			cabeceras.add(formatearString("Nombre apellidos"));
+			cabeceras.add(formatearString("Fecha solicitud"));
+			cabeceras.add(formatearString("Fecha envío"));
+			cabeceras.add(formatearString("Fecha acuse"));
+			cabeceras.add(formatearString("Resultado"));
+		}
+		
+		return cabeceras;
+	}
+	
+	//Formatea las String introducidas que desean verse correctamente en la hoja excel
+	private String formatearString(String texto){
+		
+		texto = texto.replace("ñ", "\u00f1");
+		texto = texto.replace("Ñ", "\u00d1");
+		
+		texto = texto.replace("á", "\u00e1");
+		texto = texto.replace("é", "\u00e9");
+		texto = texto.replace("í", "\u00ed");
+		texto = texto.replace("ó", "\u00f3");
+		texto = texto.replace("ú", "\u00fa");
+		
+		texto = texto.replace("Á", "\u00c1");
+		texto = texto.replace("É", "\u00c9");
+		texto = texto.replace("Í", "\u00cd");
+		texto = texto.replace("Ó", "\u00d3");
+		texto = texto.replace("Ú", "\u00da");
+		
+		return texto;
+	}
 }

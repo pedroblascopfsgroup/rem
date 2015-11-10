@@ -223,6 +223,7 @@ var formBusquedaBienes=function(){
 		if(validarForm()){
 			var isBusqueda=true;
 			panelFiltros.collapse(true);
+			pagingBar.show();
 			bienesStore.webflow(getParametros());
 			panelFiltros.getTopToolbar().setDisabled(true);	
 		}else{

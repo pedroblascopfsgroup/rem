@@ -586,16 +586,15 @@ var formBusquedaSubastas=function(){
 				hayParametros = true;
 			}
            
-           if (hayParametros) {
+           if (hayParametros) {		
+               	panelFiltros.collapse(true);
+               	pagingBar.show();
+				subastasStore.webflow(getParametros()); 
 			
-               panelFiltros.collapse(true);
-               pagingBar.show();
-			
-			subastasStore.webflow(getParametros()); 
-			
-			parametrosTab = new Array();            
-               panelFiltros.getTopToolbar().setDisabled(true);
-           } else {
+				parametrosTab = new Array();            
+               	panelFiltros.getTopToolbar().setDisabled(true);
+           } 
+           else {
                Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','Introduzca parámetros de búsqueda');
            }
 	};

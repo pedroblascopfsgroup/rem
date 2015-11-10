@@ -84,7 +84,7 @@ public interface PropuestaApi {
 	 * @param idPropuesta
 	 * @param motivo
 	 */
-	public void rechazar(Long idPropuesta, String motivo);
+	public void rechazar(Long idPropuesta, String motivo, String observaciones);
 	
     @BusinessOperationDefinition(BO_PROPUESTA_GET_EXPEDIENTES)
     public List<Bien> getBienesDelExpedienteParaLaPropuesta(Long idExpediente, List<Long> contratosIncluidos);

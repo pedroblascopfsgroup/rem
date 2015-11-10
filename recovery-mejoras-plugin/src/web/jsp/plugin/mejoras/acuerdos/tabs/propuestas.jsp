@@ -225,39 +225,24 @@
        <app:test id="btnRechazarAcuerdo" addComa="true" />
        ,iconCls : 'icon_menos'
        ,cls: 'x-btn-text-icon'
-       ,hidden:true      
+       ,hidden:true
+       ,handler:function(){
+      	       var w = app.openWindow({
+		          flow : 'propuestas/rechazarAcuerdo'
+		          ,closable:false
+		          ,width : 750
+		          ,title : '<s:message code="app.nuevoRegistro" text="**Nuevo registro" />'
+		          ,params : {idAcuerdo:acuerdoSeleccionado, readOnly:"false"}
+		       });
+		       w.on(app.event.DONE, function(){
+		          acuerdosStore.webflow({id:panel.getExpedienteId()});
+		          acuerdosStore.on('load',despuesDeNuevoAcuerdo);
+		          w.close();
+		       });
+		       w.on(app.event.CANCEL, function(){ w.close(); });
+     	}      
 	});
 
-    function processResult(opt, text){
-       if(opt == 'cancel'){
-	      //Nada
-	   }
-	   if(opt == 'ok'){
-	   	   deshabilitarBotones();
-	       page.webflow({
-      			flow:'propuestas/rechazar'
-      			,params:{
-      				idPropuesta:acuerdoSeleccionado
-      				,motivo: text
-   				}
-   				,success: function(){
-   					ocultarBotones();
-						acuerdosStore.on('load',despuesDeEvento);
-		   		 	acuerdosStore.webflow({id:panel.getExpedienteId()});
-   		 		}
-	      	});	
-      		habilitarBotones();
-	   }
-	}
-
-    
-	btnRechazarAcuerdo.on('click',function(){
-	
-		  Ext.MessageBox.prompt('Motivo rechazo', 'Introduzca los motivos por los que rechaza el acuerdo:', processResult);
-       		
-	});
-	
-   
    var deshabilitarBotones=function(){
    			btnProponerAcuerdo.disable();
    			btnCancelarAcuerdo.disable();

@@ -208,7 +208,14 @@
         <![CDATA[
             BEGIN
                 OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_ARQ_RECOBRO');
-            END;
+                
+                INSERT INTO TMP_ARQ_RECOBRO
+                SELECT DISTINCT RCF_CAR_ID ARQ_ID, RCF_ESC_PRIORIDAD ARQ_PRIORIDAD, RCF_CAR_NOMBRE ARQ_NOMBRE
+                   FROM BATCH_RCF_ENTRADA
+                  WHERE RCF_DD_EES_CODIGO = 'LBR';                
+                  
+                OPERACION_DDL.DDL_TABLE('STATS','TMP_ARQ_RECOBRO');
+                END;
         ]]>
     </entry>
 

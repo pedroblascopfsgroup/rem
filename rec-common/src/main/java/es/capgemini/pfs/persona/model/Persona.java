@@ -3039,14 +3039,13 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	}
 
 	public String getDispuestoNoVencido() {
-		String dispuestoNoVencido = this.getFormulas().getDispuestoNoVencido();
-		return Checks.esNulo(dispuestoNoVencido) ? null : dispuestoNoVencido.replaceAll(",", ".");
+		return this.getFormulas() == null ? null : Checks.esNulo(this.getFormulas().getDispuestoNoVencido()) ? null : this.getFormulas().getDispuestoNoVencido().replaceAll(",", ".");
+
 	}
 
 	public String getDispuestoVencido() {
-		String dispuestoVencido = this.getFormulas().getDispuestoVencido();
-		return (Checks.esNulo(dispuestoVencido)) ? null : dispuestoVencido
-				.replaceAll(",", ".");
+		return this.getFormulas() == null ? null : Checks.esNulo(this.getFormulas().getDispuestoVencido()) ? null : this.getFormulas().getDispuestoVencido().replaceAll(",", ".");
+
 	}
 
 	public String getEstadoCicloVida() {

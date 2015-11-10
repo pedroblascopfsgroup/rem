@@ -12,7 +12,6 @@ echo "#####    INICIO MIGRACION_A_TABLA_INTERMEDIA.sql"
 echo "########################################################"  
 echo "Migración en curso...."
 
-$ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"CJM_MIG_previo_a_tabla_intermedia.sql
 $ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"SP_MIG_A_TABLA_INTERMEDIA.sql  
 if [ $? != 0 ] ; then
    echo -e "\n\n======>>> "Error en @"$sql_dir"SP_MIG_A_TABLA_INTERMEDIA.sql

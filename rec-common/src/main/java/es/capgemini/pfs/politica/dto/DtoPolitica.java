@@ -21,6 +21,8 @@ public class DtoPolitica extends WebDto implements Serializable {
     private String codigoGestorZona;
     private String codigoSupervisorPerfil;
     private String codigoSupervisorZona;
+    private String motivo;
+    private String fecha;
 
     /**
      * @return the politica
@@ -147,5 +149,21 @@ public class DtoPolitica extends WebDto implements Serializable {
     public Long getIdExpediente() {
         return idExpediente;
     }
+
+	public String getMotivo() {
+		return motivo;
+	}
+
+	public void setMotivo(String motivo) {
+		this.motivo = motivo;
+	}
+
+	public String getFecha() {
+		return fecha;
+	}
+
+	public void setFecha(String fecha) {
+		this.fecha = fecha;
+	}
 
 }

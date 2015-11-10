@@ -2615,7 +2615,7 @@ BEGIN
     --------------------------------
     -- GAA_GESTOR_ADICIONAL_ASUNTO
     ----------------------------------
-    
+/*    
     --letrado procedimientos:
     --------------------------
     EXECUTE IMMEDIATE('INSERT INTO '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO 
@@ -2678,10 +2678,10 @@ BEGIN
 
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO cargada. Letrados de los Concursos. '||SQL%ROWCOUNT||' Filas.');
     COMMIT;
-    
+*/    
 /*    
     
-    -- Procuradores procedimientos
+    -- Procuradores procedimientos  
     ------------------------------
     EXECUTE IMMEDIATE('insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
     select '||V_ESQUEMA||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval uk,
@@ -2785,6 +2785,7 @@ BEGIN
 
     --letrado procedimientos:
     --------------------------    
+/*
     EXECUTE IMMEDIATE('INSERT INTO '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO GAH (GAH.GAH_ID, GAH.GAH_ASU_ID, GAH.GAH_GESTOR_ID, GAH.GAH_FECHA_DESDE, GAH.GAH_TIPO_GESTOR_ID, USUARIOCREAR, FECHACREAR)
     select '||V_ESQUEMA||'.s_GAH_GESTOR_ADIC_HISTORICO.nextval, 
            aux.asu_id, 
@@ -2814,7 +2815,7 @@ BEGIN
      
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAH_GESTOR_ADICIONAL_HISTORICO cargada. Letrados de los Litigios. '||SQL%ROWCOUNT||' Filas.');
     COMMIT;
-        
+        */
 /*    
     -- Procuradores
     --------------------------
@@ -2846,6 +2847,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAH_GESTOR_ADICIONAL_HISTORICO cargada. Procuradores. '||SQL%ROWCOUNT||' Filas.');
     COMMIT;
 */    
+/*
     --letrado en los concursos:
     --------------------------
     EXECUTE IMMEDIATE('insert into '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gah (gah.GAH_ID, gah.GAH_ASU_ID, gah.GAH_GESTOR_ID, gah.GAH_FECHA_DESDE, gah.GAH_TIPO_GESTOR_ID, usuariocrear, fechacrear)
@@ -2875,7 +2877,7 @@ BEGIN
 
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO_historico cargada. Letrados de los Concursos. '||SQL%ROWCOUNT||' Filas.');
     COMMIT;
-    
+    */
     /*
 
     --** Carterizar gestorias
@@ -3654,6 +3656,8 @@ and ges.dd_ges_codigo = ''HAYA'')
 
 
 */
+
+
 
     EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO COMPUTE STATISTICS');
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAH_GESTOR_ADICIONAL_ASUNTO Analizada');

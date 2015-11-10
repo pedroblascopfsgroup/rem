@@ -17,6 +17,8 @@
 	<bean id="precontenciosoLeaveActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoLeaveActionHandler"></bean>
 	<bean id="precontenciosoEnterActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoEnterActionHandler"></bean>
 	<bean id="precontenciosoDecisionActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoUserDecisionActionHandler"></bean>
+ 	<bean id="precontenciosoHayaDecisionActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoHayaUserDecisionActionHandler"></bean>
+ 	<bean id="precontenciosoHayaLeaveActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoHayaLeaveActionHandler"></bean>
  	
 	<bean id="jbpmUtilPrecontencioso" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.manager.JBPMProcessPrecontenciosoManager" >
   	<property name="contextScripts">

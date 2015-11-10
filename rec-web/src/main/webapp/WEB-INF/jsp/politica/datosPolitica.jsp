@@ -24,17 +24,22 @@
         ,name : 'estado'
     });
 
-    var motivoField = new Ext.ux.form.StaticTextField({
-        fieldLabel : '<s:message code="politica.motivo" text="**Motivo" />'
-        ,value : '${dtoPolitica.politica.motivo.descripcion}'
-        ,name : 'motivo'
+
+    var motivoField = app.creaCombo({
+    	data:<app:dict value="${motivos}"/>
+    	,name : 'motivo'
+    	,allowBlanck: false
+    	,fieldLabel : '<s:message code="politica.motivo" text="**Motivo" />'
+    	,value : '${dtoPolitica.politica.motivo.codigo}'
     });
 
-    var fechaField = new Ext.ux.form.StaticTextField({
-        fieldLabel : '<s:message code="politica.fechaCreacion" text="**Fecha creación" />'
-        ,value : '<fwk:date value="${dtoPolitica.politica.auditoria.fechaCrear}"/>'
-        ,name : 'fecha'
-    });
+    
+    var fechaField = new Ext.ux.form.XDateField({ 
+ 		name : 'fecha'
+ 		,fieldLabel : '<s:message code="politica.fechaCreacion" text="**Fecha creación" />' 
+ 		,value : '<fwk:date value="${dtoPolitica.politica.auditoria.fechaCrear}"/>'
+ 		,width:100 
+ 	}); 
 
 	
 

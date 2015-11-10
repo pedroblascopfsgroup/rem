@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.asunto.dao.TipoProcedimientoDao;
 import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
 import es.capgemini.pfs.asunto.model.Procedimiento;
@@ -71,6 +72,7 @@ public class ExpedienteJudicialController {
 	@Autowired
 	private TipoProcedimientoDao tipoProcedimientoDao;
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String comprobarFinalizacionPosible(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
 		boolean finalizado = procedimientoPcoApi.comprobarFinalizarPreparacionExpedienteJudicialPorProcedimientoId(idProcedimiento);
@@ -78,6 +80,7 @@ public class ExpedienteJudicialController {
 		return JSON_RESULTADO_FINALIZAR_PREPARACION;
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String finalizarPreparacion(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
 		boolean finalizado = procedimientoPcoApi.finalizarPreparacionExpedienteJudicialPorProcedimientoId(idProcedimiento);
@@ -95,6 +98,7 @@ public class ExpedienteJudicialController {
 		return DEFAULT;
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getHistoricoEstadosPorProcedimientoId(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
 
@@ -116,6 +120,7 @@ public class ExpedienteJudicialController {
 		return JSP_BUSQUEDA_ELEMENTOS_PRECONTENCIOSO;
 	}	
 
+	@SuppressWarnings("unchecked")
 	private ModelMap rellenarFormBusquedaPCO(ModelMap model) {
 		// General - Expediente judicial
 		List<TipoProcedimiento> tipoProcedimientoProcpuesto = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(TipoProcedimiento.class);
@@ -192,6 +197,7 @@ public class ExpedienteJudicialController {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String busquedaProcedimientos(FiltroBusquedaProcedimientoPcoDTO filter, ModelMap model) {
 		List<ProcedimientoPcoGridDTO> procedimientosPcoGrid = procedimientoPcoApi.busquedaProcedimientosPcoPorFiltro(filter);
@@ -204,6 +210,7 @@ public class ExpedienteJudicialController {
 		return JSON_BUSQUEDA_PROCEDIMIENTO;
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String busquedaElementosPco(FiltroBusquedaProcedimientoPcoDTO filter, ModelMap model) {
 		List<ProcedimientoPcoGridDTO> elementosGrid = new ArrayList<ProcedimientoPcoGridDTO>();
@@ -225,6 +232,7 @@ public class ExpedienteJudicialController {
 		return JSON_BUSQUEDA_PROCEDIMIENTO;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String editar(@RequestParam(value = "id", required = true) Long id, ModelMap map){
 		Procedimiento procedimiento = proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(id);
@@ -255,6 +263,7 @@ public class ExpedienteJudicialController {
 		return DynamicDtoUtils.create(ActualizarProcedimientoPcoDtoInfo.class, request);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String crearTareaEspecial(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
 		
@@ -270,6 +279,7 @@ public class ExpedienteJudicialController {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String cancelarTareaEspecial(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
 		
@@ -284,6 +294,7 @@ public class ExpedienteJudicialController {
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String recalcularTareasEspeciales(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
 		
@@ -302,6 +313,7 @@ public class ExpedienteJudicialController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getTiposProcedimientoAsignacionDeGestores(ModelMap model) {
 		
@@ -309,12 +321,42 @@ public class ExpedienteJudicialController {
 		return LISTA_PROCEDIMIENTOS_JSON;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getEsTareaPrecontenciosoEspecial(@RequestParam(value = "idTarea", required = true) Long idTarea, ModelMap model) {
 		
 		model.put("okko", gestorTareasApi.getEsTareaPrecontenciosoEspecial(idTarea));
 		
 		return OK_KO_RESPUESTA_JSON;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String exportarExcel(FiltroBusquedaProcedimientoPcoDTO filter, ModelMap model) 
+	{
+		filter.setStart(0);
+		filter.setLimit(Integer.MAX_VALUE);
+		
+		List<ProcedimientoPcoGridDTO> procedimientosPcoGrid = procedimientoPcoApi.busquedaProcedimientosPcoPorFiltro(filter);
+
+		model.put("expedientes", procedimientosPcoGrid);
+
+		Integer totalCount = procedimientoPcoApi.countBusquedaPorFiltro(filter);
+		model.put("totalCount", totalCount);
+
+		return "reportXLS/plugin/precontencioso/expedientes/listaExpedientes";
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String exportarExcelElementos(FiltroBusquedaProcedimientoPcoDTO filter, ModelMap model) {
+		
+		filter.setStart(0);
+		filter.setLimit(Integer.MAX_VALUE);
+		
+		FileItem fExcel = procedimientoPcoApi.generarExcelExportacionElementos(filter);
+		model.put("fileItem", fExcel);
+		return "plugin/precontencioso/download";
 	}
 
 }

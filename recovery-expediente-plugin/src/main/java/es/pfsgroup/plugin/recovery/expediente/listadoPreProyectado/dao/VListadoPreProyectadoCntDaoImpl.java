@@ -52,6 +52,9 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 			sb.append(" and f.riesgoTotal <= " + dto.getMaxRiesgoTotal() + " ");
 		}
 		
+		//Deuda irregular > 0
+		sb.append(" and f.deudaIrregular > 0 ");
+		
 		if (!Checks.esNulo(dto.getMinDeudaIrregular())) {
 			sb.append(" and f.deudaIrregular >= " + dto.getMinDeudaIrregular() + " ");
 		}
@@ -220,6 +223,8 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<VListadoPreProyectadoCnt> getListadoPreProyectadoCntPaginated(ListadoPreProyectadoDTO dto) {
+		//this.getSession().createSQLQuery("{call DBMS_MVIEW.REFRESH('V_LIS_PREPROYECT_CNT')}").executeUpdate();
+		
 		StringBuilder sb = construirSql(dto);
 		
 		//List<Object[]> lista = getHibernateTemplate().find(sb.toString());

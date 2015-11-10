@@ -81,11 +81,5 @@ public interface LiquidacionApi {
     
     @BusinessOperationDefinition(LIQUIDACION_PRECONTENCIOSO_BY_ID)
     LiquidacionPCO getLiquidacionPCOById(Long id);
-    
-    /**
-     * Obtiene el directorio donde se alamacenan las plantillas del documento de liquidaciones
-     * @return
-     */
-    String obtenerDirectorioDocumentos();
-    
+
 }

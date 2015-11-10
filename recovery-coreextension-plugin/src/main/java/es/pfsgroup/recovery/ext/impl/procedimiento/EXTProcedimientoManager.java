@@ -35,6 +35,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
+import es.pfsgroup.plugin.recovery.mejoras.procedimiento.AccionDesparalizarProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJConfiguracionDerivacionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.Dao.MEJRecursoDao;
@@ -81,6 +82,9 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 	
 	@Autowired
 	private CoreProjectContext coreProjectContext;
+	
+	@Autowired(required=false)
+	private List<AccionDesparalizarProcedimiento> accionesAdicionalTrasDesparalizar;
 		
 	/**
 	 * Busca procedimientos que contengan un determinado contrato
@@ -434,7 +438,13 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 		prc.setPlazoParalizacion(null);
 
 		genericDao.save(MEJProcedimiento.class, prc);
-
+		
+		if (this.accionesAdicionalTrasDesparalizar!=null) {
+			for (AccionDesparalizarProcedimiento accion : this.accionesAdicionalTrasDesparalizar) {
+				accion.ejecutar(prc);
+			}
+		}
+		
 		// Integración para enviar el procedimiento, sólo para los originales 
 		integracionBPMService.activarBPM(prc);
 		

@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.BPMContants;
-import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
@@ -16,11 +15,14 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
+import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContextImpl;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ProcedimientoPcoApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
+import es.pfsgroup.recovery.ext.turnadodespachos.AplicarTurnadoException;
 
 public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandler {
 	/**
@@ -44,6 +46,9 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 	
 	@Autowired
 	UtilDiccionarioApi diccionarioApi;
+	
+	@Autowired
+	PrecontenciosoProjectContext precontenciosoContext;
 
 	@Override
 	protected void process(Object delegateTransitionClass, Object delegateSpecificClass, ExecutionContext executionContext) {
@@ -55,11 +60,19 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 				|| executionContext.getTransition().getName().equals(BPMContants.TRANSICION_PRORROGA));  //"activarProrroga"
 		
 		if (!tareaTemporal) {
-			personalizacion(executionContext);
+			try {
+				personalizacion(executionContext);
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (AplicarTurnadoException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
-	private void personalizacion(ExecutionContext executionContext) {
+	private void personalizacion(ExecutionContext executionContext) throws IllegalArgumentException, AplicarTurnadoException {
 
 		// executionContext.getProcessDefinition().getName();
 		// executionContext.getEventSource().getName();
@@ -72,15 +85,17 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 		if (PrecontenciosoBPMConstants.PCO_PreTurnadoManual.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
 		} else if (PrecontenciosoBPMConstants.PCO_PreTurnado.equals(tex.getTareaProcedimiento().getCodigo())) {
-			
+
 		} else if (PrecontenciosoBPMConstants.PCO_RegistrarAceptacion.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
 		} else if (PrecontenciosoBPMConstants.PCO_RevisarNoAceptacion.equals(tex.getTareaProcedimiento().getCodigo())) {
-			
+
 		} else if (PrecontenciosoBPMConstants.PCO_RevisarExpediente.equals(tex.getTareaProcedimiento().getCodigo())) {
-			
+			if(PrecontenciosoProjectContextImpl.RECOVERY_HAYA.equals(precontenciosoContext.getRecovery())){
+				executor.execute("plugin.precontencioso.inicializarPco", prc);
+			}
 		} else if (PrecontenciosoBPMConstants.PCO_PrepararExpediente.equals(tex.getTareaProcedimiento().getCodigo())) {
-			
+
 			// Funcionalidad incluida en el botón de Finalizar
 			//proxyFactory.proxy(ProcedimientoPcoApi.class).cambiarEstadoExpediente(prc.getId(), DDEstadoPreparacionPCO.PREPARADO);
 			

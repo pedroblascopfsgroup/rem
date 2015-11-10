@@ -114,5 +114,5 @@ public interface ProcedimientoPcoApi {
 
 	@BusinessOperationDefinition(BO_PCO_CREAR_PROCEDIMIENTO_PCO)
 	ProcedimientoPCO crearProcedimientoPco(Procedimiento procedimiento, String codigoEstadoInicial);
-    
+	
 }

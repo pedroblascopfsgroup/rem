@@ -34,7 +34,7 @@ BEGIN
 
 DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
-	V_SQL := 'SELECT count(*) from '||V_ESQUEMA_M||'.PEN_PARAM_ENTIDAD WHERE PEN_PARAM = ''adjuntosDescargaZipExtensiones'' ';
+	V_SQL := 'SELECT count(*) from '||V_ESQUEMA||'.PEN_PARAM_ENTIDAD WHERE PEN_PARAM = ''adjuntosDescargaZipExtensiones'' ';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 	
 	IF V_NUM_TABLAS > 0 THEN
@@ -85,7 +85,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
   END IF;
 
 
-  V_SQL := 'SELECT count(*) from '||V_ESQUEMA_M||'.PEN_PARAM_ENTIDAD WHERE PEN_PARAM = ''adjuntosDescargaZipNivelCompresion'' ';
+  V_SQL := 'SELECT count(*) from '||V_ESQUEMA||'.PEN_PARAM_ENTIDAD WHERE PEN_PARAM = ''adjuntosDescargaZipNivelCompresion'' ';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
   
   IF V_NUM_TABLAS > 0 THEN

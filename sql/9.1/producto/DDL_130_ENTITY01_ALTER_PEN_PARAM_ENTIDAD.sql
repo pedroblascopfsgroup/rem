@@ -44,7 +44,7 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE(V_MSQL);
         EXECUTE IMMEDIATE V_MSQL; 
 
-        V_MSQL := 'COMMENT ON COLUMN PEN_PARAM_ENTIDAD.PEN_USOS IS ''Documentacion de uso del parametro. Syntaxis de valores.'' ';
+        V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.PEN_PARAM_ENTIDAD.PEN_USOS IS ''Documentacion de uso del parametro. Syntaxis de valores.'' ';
         DBMS_OUTPUT.PUT_LINE(V_MSQL);
         EXECUTE IMMEDIATE V_MSQL; 
 

@@ -209,17 +209,17 @@ fi
 
 #Ejecución del script en sí mismo
 dos2unix -q "$BASEDIR/${NOMBRE_SCRIPT}"
-sed $CADENAS_SUSTITUCION "$BASEDIR/${NOMBRE_SCRIPT}" > $BASEDIR/${nombreSinExt}-reg3.1.sql
+sed $CADENAS_SUSTITUCION "$BASEDIR/${NOMBRE_SCRIPT}" > $BASEDIR/${nombreSinExt}-$ESQUEMA_EJECUCION-reg3.1.sql
 if [[ $VERBOSE == 1 ]]; then
-    echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${nombreSinExt}-reg3.1.sql >> $BASEDIR/$nombreLog"
+    echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${nombreSinExt}-$ESQUEMA_EJECUCION-reg3.1.sql >> $BASEDIR/$nombreLog"
 fi
 if [[ $PACKAGE == 0 ]]; then
     echo "#####    Ejecución del script ${NOMBRE_SCRIPT}"  >> $BASEDIR/$nombreLog
-    exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${nombreSinExt}-reg3.1.sql >> $BASEDIR/$nombreLog
+    exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${nombreSinExt}-$ESQUEMA_EJECUCION-reg3.1.sql >> $BASEDIR/$nombreLog
     export RESULTADO=$?
 else
-    echo "  exit | sqlplus -s -l $ESQUEMA_EJECUCION/$executionPass @./scripts/${nombreSinExt}-reg3.1.sql > ${nombreSinExt}.log" >> ${executionFile}.sh
-    echo "  exit | sqlplus -s -l \$1 @./scripts/${nombreSinExt}-reg3.1.sql > ${nombreSinExt}.log" >> ${executionFile}-one-user.sh
+    echo "  exit | sqlplus -s -l $ESQUEMA_EJECUCION/$executionPass @./scripts/${nombreSinExt}-$ESQUEMA_EJECUCION-reg3.1.sql > ${nombreSinExt}.log" >> ${executionFile}.sh
+    echo "  exit | sqlplus -s -l \$1 @./scripts/${nombreSinExt}-$ESQUEMA_EJECUCION-reg3.1.sql > ${nombreSinExt}.log" >> ${executionFile}-one-user.sh
     echo '  export RESULTADO=$?' | tee -a ${executionFile}.sh ${executionFile}-one-user.sh > /dev/null
 fi
 

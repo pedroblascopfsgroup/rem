@@ -1,4 +1,4 @@
-package es.pfsgroup.gestordocumental.webservice;
+package es.pfsgroup.gestorDocumental.webservice;
 
 import java.net.MalformedURLException;
 import java.net.URL;

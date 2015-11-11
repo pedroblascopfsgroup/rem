@@ -1,4 +1,4 @@
-package es.pfsgroup.gestordocumental.webservice;
+package es.pfsgroup.gestorDocumental.webservice;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;

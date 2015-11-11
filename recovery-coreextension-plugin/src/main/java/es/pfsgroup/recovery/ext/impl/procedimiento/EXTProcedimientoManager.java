@@ -385,14 +385,15 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 	}
 
 	@Override
-	@BusinessOperation(MEJ_BO_PRC_DESPARALIZAR)
 	@Transactional(readOnly = false)
 	public void desparalizarProcedimiento(Long idProcedimiento) {
-		desparalizarProcedimientoIntegracion(idProcedimiento, true);
+		this.desparalizarProcedimiento(idProcedimiento, true);
 	}
 	
+	@Override
 	@Transactional(readOnly = false)
-	public void desparalizarProcedimientoIntegracion(Long idProcedimiento, boolean envioMsg) {
+	public void desparalizarProcedimiento(Long idProcedimiento, boolean envioMsg) {
+		
 		MEJProcedimiento prc = genericDao.get(MEJProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", idProcedimiento),
 				genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 
@@ -435,47 +436,56 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 
 		genericDao.save(MEJProcedimiento.class, prc);
 
-		// Integración para enviar el procedimiento, sólo para los originales 
-		integracionBPMService.activarBPM(prc);
+		// Integración para enviar el procedimiento, sólo para los originales
+		if (envioMsg) {
+			integracionBPMService.activarBPM(prc);
+		}
 		
 	}
 	
 	@Override
-	@BusinessOperation(MEJ_BO_PRC_SE_PUEDE_DESPARALIZAR)
-	public boolean isDespararizable(Long idProcedimiento) {
+	public MEJProcedimiento get(Long idProcedimiento) {
 		MEJProcedimiento prc = genericDao.get(MEJProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", idProcedimiento),
 				genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+		return prc;
+	}
+	
+	@Override
+	public boolean isDespararizable(Long idProcedimiento) {
+		MEJProcedimiento prc = this.get(idProcedimiento);
+		return (prc != null && prc.isEstaParalizado());
+	}
+	
+	@Override
+	public boolean isDespararizablePorEntidad(Long idProcedimiento) {
+		if (!isDespararizable(idProcedimiento)) {
+			return false;
+		}
 
-		if (prc != null && prc.isEstaParalizado()) {
-			
-			// Se recupera la decisión de paralización para comprobar si se ha tomado desde la misma entidad en que estamos actualmente o en una de las
-			// que se permite la desparalización
-			DecisionProcedimiento decisionParalizacion = null;
-			for(DecisionProcedimiento decisionProcedimiento : decisionProcedimientoManager.getList(idProcedimiento)) {
-				
-				if(decisionProcedimiento.getParalizada()) {
-					
-					if(decisionParalizacion != null) {
-						if(decisionProcedimiento.getAuditoria().getFechaCrear().after(decisionParalizacion.getAuditoria().getFechaCrear())) {
-							decisionParalizacion = decisionProcedimiento;
-						}
-					}
-					else {
+		// Comprueba que ha sido generado por la misma entidad
+		MEJProcedimiento prc = this.get(idProcedimiento);
+		// Se recupera la decisión de paralización para comprobar si se ha tomado desde la misma entidad en que estamos actualmente o en una de las
+		// que se permite la desparalización
+		DecisionProcedimiento decisionParalizacion = null;
+		for(DecisionProcedimiento decisionProcedimiento : decisionProcedimientoManager.getList(idProcedimiento)) {
+			if(decisionProcedimiento.getParalizada()) {
+				if(decisionParalizacion != null) {
+					if(decisionProcedimiento.getAuditoria().getFechaCrear().after(decisionParalizacion.getAuditoria().getFechaCrear())) {
 						decisionParalizacion = decisionProcedimiento;
 					}
 				}
+				else {
+					decisionParalizacion = decisionProcedimiento;
+				}
 			}
-			
-			if(decisionParalizacion != null && decisionParalizacion.getEntidad() != null && !"".equals(decisionParalizacion.getEntidad())) {
-				
-				Set<String> entidadesDesparalizables = coreProjectContext.getEntidadesDesparalizacion();
-				return entidadesDesparalizables.contains(decisionParalizacion.getEntidad());
-			}
-			
-			return true;
 		}
-
-		return false;
+		
+		if(decisionParalizacion != null && !Checks.esNulo(decisionParalizacion.getEntidad())) {
+			Set<String> entidadesDesparalizables = coreProjectContext.getEntidadesDesparalizacion();
+			return entidadesDesparalizables.contains(decisionParalizacion.getEntidad());
+		}
+		
+		return true;
 	}
 	
 }

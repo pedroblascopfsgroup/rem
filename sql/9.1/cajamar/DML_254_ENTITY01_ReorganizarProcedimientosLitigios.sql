@@ -73,7 +73,7 @@ BEGIN
 		    0,
 		    ''DD'',
 		    SYSDATE,
-		    1
+		    0
 		  )';	
 		  
 	EXECUTE IMMEDIATE V_MSQL;		  

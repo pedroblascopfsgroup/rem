@@ -16,6 +16,7 @@ import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.MEJDecisionProc
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.MEJProcedimientoApi;
 import es.pfsgroup.recovery.ext.api.procedimiento.EXTProcedimientoApi;
+import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 
 @Controller
 public class DecisionProcedimientoController {
@@ -39,10 +40,13 @@ public class DecisionProcedimientoController {
 	
 	@Autowired
 	private EXTProcedimientoManagerOverrider procedimientoManager;
+
+	@Autowired
+	private EXTProcedimientoManager extProcedimientoManager;
 	
 	@RequestMapping
 	public String desparalizarProcedimiento(Long idProcedimiento){
-		proxyFactory.proxy(EXTProcedimientoApi.class).desparalizarProcedimiento(idProcedimiento);
+		extProcedimientoManager.desparalizarProcedimiento(idProcedimiento);
 		return "default";
 	}
 	
@@ -50,23 +54,14 @@ public class DecisionProcedimientoController {
 	@RequestMapping
 	public String isDesparalizable(Long idProcedimiento,ModelMap map){
 		
-		boolean res = proxyFactory.proxy(EXTProcedimientoApi.class).isDespararizable(idProcedimiento);
+		boolean res = extProcedimientoManager.isDespararizablePorEntidad(idProcedimiento);
 		map.put("isDesparalizable", res);
 		return "plugin/mejoras/procedimientos/procedimientoDesparalizableJSON";
 	}
 
-	public void setProxyFactory(ApiProxyFactory proxyFactory) {
-		this.proxyFactory = proxyFactory;
-	}
-
-	public ApiProxyFactory getProxyFactory() {
-		return proxyFactory;
-	}
-	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String esTramiteSubastaByPrcId(Long prcId, ModelMap map){
-		
 		boolean res =  proxyFactory.proxy(MEJProcedimientoApi.class).esTramiteSubastaByPrcId(prcId);
 		map.put("esTramiteSubasta", res);
 

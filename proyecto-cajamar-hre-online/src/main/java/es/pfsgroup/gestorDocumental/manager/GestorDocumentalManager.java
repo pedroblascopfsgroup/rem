@@ -70,8 +70,6 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 			return outputDto;
 		}
 
-		callToWebService(inputDto);
-
 		guardarDatoEntidad(entidad, uploadForm);
 
 		return null;
@@ -148,18 +146,6 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 			asunto.addAdjunto(uploadForm.getFileItem());
 			asuntoDao.save(asunto);
 		}
-	}
-
-	private OUTPUT callToWebService(Object dto) {
-		// TODO assembler DTO to INPUT
-		INPUT input = new INPUT();
-
-		SMGESTIONDOCUMENTAL service = new SMGESTIONDOCUMENTAL();
-		SMGESTIONDOCUMENTALType servicePort = service
-				.getSMGESTIONDOCUMENTALPort();
-		OUTPUT output = servicePort.sMGESTIONDOCUMENTAL(input);
-
-		return output;
 	}
 
 }

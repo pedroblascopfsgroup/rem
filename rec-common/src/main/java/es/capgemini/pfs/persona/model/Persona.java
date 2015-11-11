@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -30,7 +29,6 @@ import javax.persistence.Version;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.LazyToOne;
 import org.hibernate.annotations.LazyToOneOption;
 import org.hibernate.annotations.Where;
@@ -42,7 +40,6 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.antecedente.model.Antecedente;
 import es.capgemini.pfs.antecedenteinterno.model.AntecedenteInterno;
-import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
@@ -54,8 +51,6 @@ import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.contrato.model.DDEstadoFinanciero;
 import es.capgemini.pfs.contrato.model.DDTipoProducto;
 import es.capgemini.pfs.direccion.model.Direccion;
-import es.capgemini.pfs.expediente.model.DDEstadoExpediente;
-import es.capgemini.pfs.expediente.model.DDTipoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.grupoCliente.model.PersonaGrupo;
@@ -3038,14 +3033,13 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	}
 
 	public String getDispuestoNoVencido() {
-		String dispuestoNoVencido = this.getFormulas().getDispuestoNoVencido();
-		return Checks.esNulo(dispuestoNoVencido) ? null : dispuestoNoVencido.replaceAll(",", ".");
+		return this.getFormulas() == null ? null : Checks.esNulo(this.getFormulas().getDispuestoNoVencido()) ? null : this.getFormulas().getDispuestoNoVencido().replaceAll(",", ".");
+
 	}
 
 	public String getDispuestoVencido() {
-		String dispuestoVencido = this.getFormulas().getDispuestoVencido();
-		return (Checks.esNulo(dispuestoVencido)) ? null : dispuestoVencido
-				.replaceAll(",", ".");
+		return this.getFormulas() == null ? null : Checks.esNulo(this.getFormulas().getDispuestoVencido()) ? null : this.getFormulas().getDispuestoVencido().replaceAll(",", ".");
+
 	}
 
 	public String getEstadoCicloVida() {

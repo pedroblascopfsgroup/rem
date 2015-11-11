@@ -268,9 +268,14 @@
 					}
 					,success:function(result, request){
 						var resultado = Ext.decode(result.responseText);
+						var tienePermisoCambioProcuradorConProvision = false;
 						
-						if((resultado.okko == 'KO') ||
-							((resultado.okko == 'OK') && (comboTipoGestor.getRawValue().toUpperCase() != 'PROCURADOR'))){
+						<sec:authorize ifAllGranted="ROLE_PUEDE_CAMBIAR_PROCURADORES_CON_PROVISION">
+						tienePermisoCambioProcuradorConProvision = true;
+						</sec:authorize>
+						
+						if((resultado.okko == 'KO') || (tienePermisoCambioProcuradorConProvision) ||
+							((resultado.okko == 'OK') && (comboTipoGestor.getRawValue().toUpperCase() != 'PROCURADOR' ))){
 							insertarFunction();
 							resetCombos();
 						}else{

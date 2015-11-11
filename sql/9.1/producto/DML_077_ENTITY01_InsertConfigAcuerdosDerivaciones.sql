@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Carlos Gil Gimeno
---## FECHA_CREACION=20150918
+--## FECHA_CREACION=20151019
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.3-hy-master
 --## INCIDENCIA_LINK=PRODUCTO-180
@@ -75,7 +75,7 @@ BEGIN
 			        EXECUTE IMMEDIATE V_SQL_TPO INTO V_ID_TPO;
 			            
 			        --Comprobamos el dato a insertar
-			        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACU_CDE_DERIVACIONES WHERE ACU_CDE_ID = '''||V_ID_TPA||'''';
+			        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACU_CDE_DERIVACIONES WHERE DD_TPA_ID = '''||V_ID_TPA||'''';
 			        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 			        
 			        IF V_NUM_TABLAS > 0 THEN				

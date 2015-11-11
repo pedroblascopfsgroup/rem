@@ -1,11 +1,14 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.manager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
@@ -26,6 +29,7 @@ import es.capgemini.pfs.utils.JBPMProcessManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.GestorTareasDao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
@@ -49,6 +53,7 @@ public class GestorTareasManager implements GestorTareasApi {
 	private static final String TXT_ERR_PLAZO_3 = "], tipoTarea [";
 	private static final String TXT_ERR_PLAZO_4 = "].";
     private static final String BPM_ERROR_SCRIPT = "bpm.error.script";
+    private static final List<String> CODIGOS_TAREAS_ESPECIALES_PRECONTENCIOSO = Arrays.asList("PCO_SolicitarDoc", "PCO_RegResultadoExped", "PCO_RecepcionExped", "PCO_RegResultadoDoc", "PCO_RegEnvioDoc", "PCO_RecepcionDoc", "PCO_AdjuntarDoc", "PCO_GenerarLiq", "PCO_ConfirmarLiq", "PCO_EnviarBurofax","PCO_AcuseReciboBurofax","PCO_RegResultadoDocG");
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -69,12 +74,12 @@ public class GestorTareasManager implements GestorTareasApi {
 
 	@Autowired
 	private ProcedimientoPCODao procedimientoPcoDao;
-	
+
     private static List<GestorTareasLineaConfigPCO> lineasConfig = null;
     
     @BusinessOperation(BO_PCO_GESTOR_TAREAS_RECALCULAR)
 	@Override
-	@Transactional(readOnly = false)
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	public void recalcularTareasPreparacionDocumental(Long idProc) {
 		
     	if (lineasConfig==null) {
@@ -280,7 +285,9 @@ public class GestorTareasManager implements GestorTareasApi {
 
 		String estadoActual = "";
 		
-		ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
+		//ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
+		ProcedimientoPCO procedimientoPco = genericDao.get(ProcedimientoPCO.class, 
+				genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProcedimiento));
 		
 		if (!Checks.esNulo(procedimientoPco)) {
 			HistoricoEstadoProcedimientoPCO historico = procedimientoPco.getEstadoActualByHistorico();
@@ -290,5 +297,15 @@ public class GestorTareasManager implements GestorTareasApi {
 		}
 		return estadoActual;
 
+	}
+
+	@Override
+	public boolean getEsTareaPrecontenciosoEspecial(Long tareaId) {
+
+		TareaExterna tareaExterna = genericDao.get(TareaExterna.class, genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", tareaId));
+		
+		boolean esEspecial = CODIGOS_TAREAS_ESPECIALES_PRECONTENCIOSO.contains(tareaExterna.getTareaProcedimiento().getCodigo()) ? true : false;
+
+		return esEspecial;
 	}
 }

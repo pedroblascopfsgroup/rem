@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dto.InclusionLiquidacionProcedimientoDTO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
@@ -80,5 +81,5 @@ public interface LiquidacionApi {
     
     @BusinessOperationDefinition(LIQUIDACION_PRECONTENCIOSO_BY_ID)
     LiquidacionPCO getLiquidacionPCOById(Long id);
-    
+
 }

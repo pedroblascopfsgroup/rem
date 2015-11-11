@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.precontencioso.burofax.dao.impl;
 
+import java.math.BigDecimal;
 import java.util.Collection;
+
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
@@ -75,5 +77,9 @@ public class BurofaxDaoImpl extends AbstractEntityDao<BurofaxPCO, Long> implemen
 		return q.list();
 	}
 	
+	public Long obtenerSecuenciaFicheroDocBurofax() {
+		String sql = "SELECT S_BUR_FICHERO_DOC.NEXTVAL FROM DUAL ";
+		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
+	}
 	
 }

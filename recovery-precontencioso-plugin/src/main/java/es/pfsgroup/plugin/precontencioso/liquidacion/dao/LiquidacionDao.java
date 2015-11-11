@@ -13,5 +13,12 @@ public interface LiquidacionDao extends AbstractDao<LiquidacionPCO, Long> {
 	 * @return
 	 */
 	List<LiquidacionPCO> getLiquidacionesPorIdProcedimientoPCO(Long idProcedimientoPCO);
+	
+	/**
+	 * Obtiene la liquidacion de un contrato
+	 * @param idContrato
+	 * @return
+	 */
+	LiquidacionPCO getLiquidacionDelContrato(Long idContrato);
 
 }

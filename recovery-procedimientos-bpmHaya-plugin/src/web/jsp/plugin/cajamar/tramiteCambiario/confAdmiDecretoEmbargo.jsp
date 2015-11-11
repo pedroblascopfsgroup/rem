@@ -45,13 +45,12 @@ var juzgadoAsignado = '';
 
 var bottomBar = [];
 
-//mostramos el botón guardar cuando la tarea no está terminada y cuando no hay errores de validacion
+//mostramos el botï¿½n guardar cuando la tarea no estï¿½ terminada y cuando no hay errores de validacion
 <c:if test="${form.tareaExterna.tareaPadre.fechaFin==null && form.errorValidacion==null && !readOnly}">
 	var btnGuardar = new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){
-			debugger;
 		
 			panelEdicion.getForm().items.each(function(itm){itm.setDisabled(false)});
 		
@@ -66,7 +65,7 @@ var bottomBar = [];
 		}
 	});
 	
-	//Si tiene más items que el propio label de descripción se crea el botón guardar
+	//Si tiene mï¿½s items que el propio label de descripciï¿½n se crea el botï¿½n guardar
 	if (items.length > 1)
 	{
 		bottomBar.push(btnGuardar);
@@ -94,7 +93,7 @@ if (muestraBotonGuardar==1){
 		}
 	});
 	
-	//Si tiene más items que el propio label de descripción se crea el botón guardar
+	//Si tiene mï¿½s items que el propio label de descripciï¿½n se crea el botï¿½n guardar
 	if (items.length > 1)	{
 		bottomBar.push(btnGuardar);
 	}
@@ -188,7 +187,7 @@ var anyadirFechaFaltante = function(response){
 
 
 // *************************************************************** //
-// ***  AÑADIMOS LAS FUNCIONALIDADES EXTRA DE ESTE FORMULARIO  *** //
+// ***  Aï¿½ADIMOS LAS FUNCIONALIDADES EXTRA DE ESTE FORMULARIO  *** //
 // *************************************************************** //
 	// combo plaza de juzgado ------------------------------------------
 	

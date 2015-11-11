@@ -12,10 +12,10 @@ public interface GestorDocumentalApi {
 	public static final String BO_GESTOR_DOCUMENTAL_RECUPERACION_DOCUMENTO = "es.pfsgroup.recovery.gestorDocumental.recuperacionDocumento";
 
 	@BusinessOperationDefinition(BO_GESTOR_DOCUMENTAL_ALTA_DOCUMENTO)
-	<T> GestorDocumentalOutputDto altaDocumento(GestorDocumentalInputDto inputDto, Class<T> entidad, WebFileItem uploadForm);
+	GestorDocumentalOutputDto altaDocumento(GestorDocumentalInputDto inputDto, String codEntidad, WebFileItem uploadForm);
 
 	@BusinessOperationDefinition(BO_GESTOR_DOCUMENTAL_LISTADO_DOCUMENTO)
-	<T> GestorDocumentalOutputDto listadoDocumentos(Long id, Class<T> entidad);
+	GestorDocumentalOutputDto listadoDocumentos(Long id, String codEntidad);
 
 	@BusinessOperationDefinition(BO_GESTOR_DOCUMENTAL_RECUPERACION_DOCUMENTO)
 	GestorDocumentalOutputDto recuperacionDocumento(Long id);

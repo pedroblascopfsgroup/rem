@@ -14,7 +14,6 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.asunto.dao.AsuntoDao;
 import es.capgemini.pfs.asunto.model.Asunto;
-import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.dao.ContratoDao;
 import es.capgemini.pfs.contrato.model.Contrato;
@@ -23,6 +22,7 @@ import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.persona.dao.PersonaDao;
 import es.capgemini.pfs.persona.model.Persona;
+import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.pfsgroup.gestorDocumental.api.GestorDocumentalApi;
 import es.pfsgroup.recovery.gestorDocumental.dto.GestorDocumentalInputDto;
 import es.pfsgroup.recovery.gestorDocumental.dto.GestorDocumentalOutputDto;
@@ -49,8 +49,8 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_ALTA_DOCUMENTO)
 	@Transactional(readOnly = false)
-	public <T> GestorDocumentalOutputDto altaDocumento(
-			GestorDocumentalInputDto inputDto, Class<T> entidad,
+	public GestorDocumentalOutputDto altaDocumento(
+			GestorDocumentalInputDto inputDto, String codEntidad,
 			WebFileItem uploadForm) {
 		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
 		FileItem fileItem = uploadForm.getFileItem();
@@ -60,7 +60,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 			return null;
 		}
 
-		Integer max = getLimiteFichero(getParametroLimite(entidad));
+		Integer max = getLimiteFichero(getParametroLimite(codEntidad));
 
 		if (fileItem.getLength() > max) {
 			AbstractMessageSource ms = MessageUtils.getMessageSource();
@@ -70,7 +70,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 			return outputDto;
 		}
 
-		guardarDatoEntidad(entidad, uploadForm);
+		guardarDatoEntidad(codEntidad, uploadForm);
 
 		return null;
 
@@ -78,8 +78,8 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_LISTADO_DOCUMENTO)
 	@Transactional(readOnly = false)
-	public <T> GestorDocumentalOutputDto listadoDocumentos(Long id,
-			Class<T> entidad) {
+	public GestorDocumentalOutputDto listadoDocumentos(Long id,
+			String codEntidad) {
 		return null;
 
 	}
@@ -109,38 +109,41 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 		}
 	}
 
-	private <T> String getParametroLimite(Object entidad) {
+	private String getParametroLimite(String codEntidad) {
 		String param = "";
-		if (entidad instanceof Expediente) {
+		if (DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE.equals(codEntidad)) {
 			param = Parametrizacion.LIMITE_FICHERO_EXPEDIENTE;
-		} else if (entidad instanceof Persona) {
+		} else if (DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE.equals(codEntidad)) {
 			param = Parametrizacion.LIMITE_FICHERO_PERSONA;
-		} else if (entidad instanceof Contrato) {
+		} else if (DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO.equals(codEntidad)) {
 			param = Parametrizacion.LIMITE_FICHERO_CONTRATO;
-		} else if (entidad instanceof Asunto) {
+		} else if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(codEntidad)
+				|| DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO
+						.equals(codEntidad)) {
 			param = Parametrizacion.LIMITE_FICHERO_ASUNTO;
 		}
 		return param;
 	}
 
-	private void guardarDatoEntidad(Object entidad, WebFileItem uploadForm) {
-		if (entidad instanceof Expediente) {
+	private void guardarDatoEntidad(String codEntidad, WebFileItem uploadForm) {
+		if (DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE.equals(codEntidad)) {
 			Expediente expediente = expedienteDao.get(Long.parseLong(uploadForm
 					.getParameter("id")));
 			expediente.addAdjunto(uploadForm.getFileItem());
 			expedienteDao.save(expediente);
-		} else if (entidad instanceof Persona) {
+		} else if (DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE.equals(codEntidad)) {
 			Persona persona = personaDao.get(Long.parseLong(uploadForm
 					.getParameter("id")));
 			persona.addAdjunto(uploadForm.getFileItem());
 			personaDao.save(persona);
-		} else if (entidad instanceof Contrato) {
+		} else if (DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO.equals(codEntidad)) {
 			Contrato contrato = contratoDao.get(Long.parseLong(uploadForm
 					.getParameter("id")));
 			contrato.addAdjunto(uploadForm.getFileItem());
 			contratoDao.save(contrato);
-		} else if (entidad instanceof Asunto
-				|| entidad instanceof Procedimiento) {
+		} else if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(codEntidad)
+				|| DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO
+						.equals(codEntidad)) {
 			Asunto asunto = asuntoDao.get(Long.parseLong(uploadForm
 					.getParameter("id")));
 			asunto.addAdjunto(uploadForm.getFileItem());

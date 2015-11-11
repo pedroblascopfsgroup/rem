@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.cajamar.ws.S_M_GESTIONDOCUMENTAL.INPUT;
 
-import es.pfsgroup.recovery.gestorDocumental.dto.GestorDocumentalInputDto;
+import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalInputDto;
 
 /**
  * Clase que se encarga de ensablar liquidacionPCO entity a DTO.

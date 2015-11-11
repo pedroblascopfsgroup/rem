@@ -7,10 +7,10 @@ import org.cajamar.ws.S_M_GESTIONDOCUMENTAL.OUTPUT;
 import org.cajamar.ws.S_M_GESTIONDOCUMENTAL.SMGESTIONDOCUMENTAL;
 import org.cajamar.ws.S_M_GESTIONDOCUMENTAL.SMGESTIONDOCUMENTALType;
 
+import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalInputDto;
+import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalOutputDto;
 import es.pfsgroup.recovery.cajamar.serviciosonline.GestorDocumentalWSApi;
 import es.pfsgroup.recovery.cajamar.ws.BaseWS;
-import es.pfsgroup.recovery.gestorDocumental.dto.GestorDocumentalInputDto;
-import es.pfsgroup.recovery.gestorDocumental.dto.GestorDocumentalOutputDto;
 
 public class GestorDocumentalWS extends BaseWS implements GestorDocumentalWSApi {
 

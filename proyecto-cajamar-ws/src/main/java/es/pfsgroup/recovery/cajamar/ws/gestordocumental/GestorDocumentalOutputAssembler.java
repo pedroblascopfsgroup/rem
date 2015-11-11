@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.cajamar.ws.S_M_GESTIONDOCUMENTAL.OUTPUT;
 
-import es.pfsgroup.recovery.gestorDocumental.dto.GestorDocumentalOutputDto;
-import es.pfsgroup.recovery.gestorDocumental.dto.GestorDocumentalOutputListDto;
+import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalOutputDto;
+import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalOutputListDto;
 
 public class GestorDocumentalOutputAssembler {
 

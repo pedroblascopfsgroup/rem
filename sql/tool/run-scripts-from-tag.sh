@@ -230,9 +230,15 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
     else
         passtring="entity01_pass@sid"
     fi
-    sed -e s/#ENTITY#/"${passtring}"/g $BASEDIR/scripts/DxL-scripts.sh > $BASEDIR/tmp/package/DML/DML-scripts.sh
-    cp $BASEDIR/tmp/package/DML/DML-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts.sh
+    sed -e s/#ENTITY#/"${passtring}"/g $BASEDIR/scripts/DxL-scripts.sh > $BASEDIR/tmp/package/DDL/DDL-scripts.sh
     cp $BASEDIR/scripts/DxL-scripts-one-user.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh
+    if [ $CUSTOMER_IN_UPPERCASE == 'CAJAMAR' ] ; then
+        echo "export NLS_LANG=AMERICAN.AL32UTF8" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null
+        echo "export NLS_DATE_FORMAT=\"DD-MON-RR\"" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null
+    else
+        echo "export NLS_LANG=.AL32UTF8" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null 
+    fi
+    cp $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DML/DML-scripts.sh
     cp $BASEDIR/scripts/DxL-scripts-one-user.sh $BASEDIR/tmp/package/DML/DML-scripts-one-user.sh
     if [ -f $BASEDIR/tmp/DDL-scripts.sh ] ; then 
 

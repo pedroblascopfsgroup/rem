@@ -1053,6 +1053,7 @@ public class AsuntosManager {
         fo.setFile(zipFile);
         fo.setFileName(fi.getFileName().concat(".zip"));
         fo.setLength(zipFile.length());
+        fo.setContentType("application/zip");
 
         return fo;
         

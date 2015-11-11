@@ -125,8 +125,9 @@ public class VListadoPreProyectadoExpDaoImpl extends AbstractEntityDao<VListadoP
 			}
 		}
 		
-		if (!Checks.esNulo(dto.getCodContrato())) {
-			sb.append(" and f.contrato = '" + dto.getCodContrato() + "' ");
+		if (!Checks.esNulo(dto.getCodContrato()) && dto.getCodContrato().trim().length()>0) {
+			//sb.append(" and f.contrato = '" + dto.getCodContrato() + "' ");
+			sb.append(" and f.contrato like '%"	+ dto.getCodContrato().trim() + "%' ");
 		}
 		
 		if (!Checks.esNulo(dto.getFechaPrevRegularizacion())) {

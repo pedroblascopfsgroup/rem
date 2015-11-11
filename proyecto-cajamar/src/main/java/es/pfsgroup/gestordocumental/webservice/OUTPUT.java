@@ -1,5 +1,5 @@
 
-package es.pfsgroup.gestorDocumental.webservice;
+package es.pfsgroup.gestordocumental.webservice;
 
 import java.util.ArrayList;
 import java.util.List;

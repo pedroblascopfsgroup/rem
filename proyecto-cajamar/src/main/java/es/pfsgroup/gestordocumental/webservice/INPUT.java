@@ -1,4 +1,4 @@
-package es.pfsgroup.gestorDocumental.webservice;
+package es.pfsgroup.gestordocumental.webservice;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

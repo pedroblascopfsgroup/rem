@@ -42,8 +42,7 @@ color : #666;
 </head>
 <body>
 <h1>
-<img width="100px" src="img/pfs-logo.png" style="margin-right:30px;">
-<img width="280px" src="img/recovery-logo.png">
+<img src="img/logopfs_recovery.png" style="margin-right:30px;">
 <span style="float:right;margin-top:60px;margin-right:2px;">Version 9.1 (${version})</span>
 </h1>
 
@@ -198,7 +197,7 @@ else{
 
 
 		var labelOlvidoPass = new Ext.form.Label({
-			html : '<s:message code="login.olvido_password" text="**Se te olvido?" /> <a href="#" onmousedown="olvidoPass();">Pulse aquí</a>'
+			html : ''
 			,style:'padding:0px;margin-top:0px;margin-bottom:0px;margin-left:150px;'			         
 		}); 
 

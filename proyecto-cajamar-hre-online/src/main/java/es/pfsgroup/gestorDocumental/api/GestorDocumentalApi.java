@@ -1,6 +1,9 @@
-package es.pfsgroup.recovery.gestorDocumental.api;
+package es.pfsgroup.gestorDocumental.api;
 
+import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
+import es.pfsgroup.recovery.gestorDocumental.dto.GestorDocumentalInputDto;
+import es.pfsgroup.recovery.gestorDocumental.dto.GestorDocumentalOutputDto;
 
 public interface GestorDocumentalApi {
 
@@ -9,12 +12,12 @@ public interface GestorDocumentalApi {
 	public static final String BO_GESTOR_DOCUMENTAL_RECUPERACION_DOCUMENTO = "es.pfsgroup.recovery.gestorDocumental.recuperacionDocumento";
 
 	@BusinessOperationDefinition(BO_GESTOR_DOCUMENTAL_ALTA_DOCUMENTO)
-	void altaDocumento(String entidad);
+	<T> GestorDocumentalOutputDto altaDocumento(GestorDocumentalInputDto inputDto, Class<T> entidad, WebFileItem uploadForm);
 
 	@BusinessOperationDefinition(BO_GESTOR_DOCUMENTAL_LISTADO_DOCUMENTO)
-	void listadoDocumentos(Long id, String tipoEntidad);
+	<T> GestorDocumentalOutputDto listadoDocumentos(Long id, Class<T> entidad);
 
 	@BusinessOperationDefinition(BO_GESTOR_DOCUMENTAL_RECUPERACION_DOCUMENTO)
-	void recuperacionDocumento(Long id);
+	GestorDocumentalOutputDto recuperacionDocumento(Long id);
 
 }

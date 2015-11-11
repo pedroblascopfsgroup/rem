@@ -121,7 +121,9 @@ function isDosFile() {
 
 function transformaDosFile() {
   if isDosFile $1 ; then
-    echo "Fichero $1 es DOS"
+    if [[ $VERBOSE == 1 ]]; then
+        echo "Fichero $1 es DOS"
+    fi
     dos2unix -q $1
     if [ "$?" == 0 ] ; then
       if [[ $VERBOSE == 1 ]]; then
@@ -196,6 +198,10 @@ transformaDosFile $FICHERO
 nombreFicheroSinDir=`basename $FICHERO`
 nombreSinDirSinExt=${nombreFicheroSinDir%%.*}
 nombreSetEnv=setEnv_${nombreSinDirSinExt}.sh
+
+if [[ $PACKAGE == 0 ]]; then
+    rm -f $BASEDIR/tmp/*$nombreSinDirSinExt* 
+fi
 
 if [[ ! $nombreFicheroSinDir =~ ^D[MD]L_[0-9]+_[^_]+_[^\.]+\.sql$ ]] ; then
     echo ""

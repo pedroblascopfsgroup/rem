@@ -27,7 +27,7 @@
 	<field name="numRegistro" class="java.lang.String"/>
 	<field name="municipio" class="java.lang.String"/>
 	<field name="importeTasacion" class="java.lang.Float"/>
-	<field name="importeAdjudicacion" class="java.lang.Float"/>
+	<field name="importeAdjudicacion" class="java.math.BigDecimal"/>
 	<field name="observaciones" class="java.lang.String"/>
 	<field name="resumen" class="java.lang.String"/>
 	<field name="propuesta" class="java.lang.String"/>

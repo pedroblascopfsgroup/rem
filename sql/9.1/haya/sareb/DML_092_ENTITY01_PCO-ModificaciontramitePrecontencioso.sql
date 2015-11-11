@@ -41,7 +41,7 @@ DECLARE
         /*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
         /*TAP_CODIGO...................:*/ 'PCO_ElevarSareb',
         /*TAP_VIEW.....................:*/ null,
-        /*TAP_SCRIPT_VALIDACION........:*/ 'comprobarExisteDocumentoINFTAVA() ? null : ''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Es necesario adjuntar el documento Informe de tasación / valoración al procedimiento.</div>'' ',
+        /*TAP_SCRIPT_VALIDACION........:*/ null,
         /*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
         /*TAP_SCRIPT_DECISION..........:*/ null,
         /*DD_TPO_ID_BPM(FK)............:*/ null,
@@ -66,7 +66,7 @@ DECLARE
         T_TIPO_TAP(
         /*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
         /*TAP_CODIGO...................:*/ 'PCO_ResolucionSareb',
-        /*TAP_VIEW.....................:*/ null,
+        /*TAP_VIEW.....................:*/ 'plugin/precontencioso/tramite/resolucionSareb',
         /*TAP_SCRIPT_VALIDACION........:*/ null,
         /*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
         /*TAP_SCRIPT_DECISION..........:*/ 'valores[''PCO_ResolucionSareb''][''comboContinuacion''] == DDSiNo.SI ? ''Si'': ''No'' ',
@@ -92,7 +92,7 @@ DECLARE
         T_TIPO_TAP(
         /*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
         /*TAP_CODIGO...................:*/ 'PCO_CerrarWorkflow',
-        /*TAP_VIEW.....................:*/ null,
+        /*TAP_VIEW.....................:*/ 'plugin/precontencioso/tramite/cerrarWorkflow',
         /*TAP_SCRIPT_VALIDACION........:*/ null,
         /*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
         /*TAP_SCRIPT_DECISION..........:*/ null,

@@ -199,7 +199,9 @@ nombreFicheroSinDir=`basename $FICHERO`
 nombreSinDirSinExt=${nombreFicheroSinDir%%.*}
 nombreSetEnv=setEnv_${nombreSinDirSinExt}.sh
 
-rm -f $BASEDIR/tmp/*$nombreSinDirSinExt* 
+if [[ $PACKAGE == 0 ]]; then
+    rm -f $BASEDIR/tmp/*$nombreSinDirSinExt* 
+fi
 
 if [[ ! $nombreFicheroSinDir =~ ^D[MD]L_[0-9]+_[^_]+_[^\.]+\.sql$ ]] ; then
     echo ""

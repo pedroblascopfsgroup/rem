@@ -9,14 +9,12 @@
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms"%>
 <fwk:page>
 	
-    
 	var idAcuerdo='${acuerdo.id}';
-	
 	<pfsforms:ddCombo name="motivoRechazo"
 		labelKey="mejoras.plugin.acuerdos.motivoRechazo" 
  		label="**Motivo rechazo" value="" dd="${motivosRechazo}" 
 		propertyCodigo="id" propertyDescripcion="descripcion" obligatory="true"/>
-		
+	
 	var observaciones = new Ext.form.HtmlEditor({
 		id:'observaciones'
 		,name:'observaciones'

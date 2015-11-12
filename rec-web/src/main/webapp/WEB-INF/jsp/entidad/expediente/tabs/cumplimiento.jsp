@@ -126,15 +126,34 @@
         ,height : 140
         ,cls:'cursor_pointer'
     });	
-	
+    
 	nivelCumplimientoGrid.on('rowclick',function(grid, rowIndex, e){
 		var rec = grid.getStore().getAt(rowIndex);
 		var idNivelCumplimiento = rec.get('idNivelCumplimiento');
+		
 		personasContratoStore.webflow({idReglaElevacion:idNivelCumplimiento,idExpediente:getIdExpediente()});
 	});	
-
-
-
+	
+	
+	//Cada vez que cargue se revisa si cumple todas las reglas o no
+	nivelCumplimientoStore.on('load', function(){
+		var resultado = true;
+		
+		for (var i=0; i < nivelCumplimientoStore.getCount(); i++)
+		{
+			var rec = nivelCumplimientoStore.getAt(i);
+			var cumple = rec.get('bCumple');
+			if (cumple == false || cumple == 'false') 
+			{
+				resultado = false;
+				break;
+			}
+		}
+		
+		if (resultado) preparadoPase.setValue('Si');
+		else preparadoPase.setValue('No');
+	});
+	
 	// *********************************** //
 	// * Definimos tabla específica      * //
 	// *********************************** //
@@ -285,17 +304,19 @@
 		}
 		
 		//Cada vez que cargue se revisa si cumple todas las reglas o no
-		var resultado = true;
-		for (var i=0; i < nivelCumplimientoStore.getCount(); i++){
-			var rec = nivelCumplimientoStore.getAt(i);
-			var cumple = rec.get('bCumple');
-			if (cumple == false || cumple == 'false') {
-				resultado = false;
-				break;
+		if(nivelCumplimientoStore.getCount() > 0){
+			var resultado = true;
+			for (var i=0; i < nivelCumplimientoStore.getCount(); i++){
+				var rec = nivelCumplimientoStore.getAt(i);
+				var cumple = rec.get('bCumple');
+				if (cumple == false || cumple == 'false') {
+					resultado = false;
+					break;
+				}
 			}
+			if (resultado) entidad.setLabel('preparadoPase', 'Si');
+			else entidad.setLabel('preparadoPase', 'No');
 		}
-		if (resultado) entidad.setLabel('preparadoPase', 'Si');
-		else entidad.setLabel('preparadoPase', 'No');
 
 	}
 	

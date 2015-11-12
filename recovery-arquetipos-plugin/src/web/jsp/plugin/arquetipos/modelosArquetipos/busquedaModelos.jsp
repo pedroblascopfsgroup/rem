@@ -17,7 +17,7 @@
 			value="" searchOnEnter="true" />
 			
 	<pfsforms:textfield name="filtroDescripcion"
-			labelKey="plugin.arquetipos.modelo.descripcion" label="**Descripcion"
+			labelKey="plugin.arquetipos.modelo.descripcion" label="**Descripcion" maxLength="50"
 			value="" searchOnEnter="true" />	
 		
 	<pfsforms:dblselect name="filtroArquetipo"

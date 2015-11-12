@@ -34,6 +34,10 @@ import es.pfsgroup.recovery.cajamar.serviciosonline.GestorDocumentalWSApi;
 @Component
 public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
+	private static final String ALTA_GESTOR_DOC = "A";
+	private static final String CONSULTA_GESTOR_DOC = "C";
+	private static final String LISTADO_GESTOR_DOC = "L";
+	
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
@@ -76,13 +80,13 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
 		guardarDatoEntidad(codEntidad, uploadForm);
 		
-		outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto("A", tipoDocumento, codEntidad, uploadForm));
+		outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(ALTA_GESTOR_DOC, tipoDocumento, codEntidad, uploadForm));
 
 	}
 	
 	private GestorDocumentalInputDto rellenaInputDto (String tipoGestion, String tipoDocumento, String codEntidad, WebFileItem uploadForm) {
 		GestorDocumentalInputDto inputDto = new GestorDocumentalInputDto();
-		if("A".equals(tipoGestion)) {
+		if(ALTA_GESTOR_DOC.equals(tipoGestion)) {
 			inputDto.setOperacion(ConstantesGestorDocumental.ALTA_DOCUMENTO_OPERACION);
 			inputDto.setExtensionFichero(uploadForm.getFileItem().getContentType());
 			inputDto.setOperacion(ConstantesGestorDocumental.GESTOR_DOCUMENTAL_ORIGEN);
@@ -91,11 +95,11 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			inputDto.setFicheroBase64(uploadForm.getFileItem().getFileName());
 			inputDto.setClaveAsociacion("");
 			inputDto.setFechaVigencia(new Date());
-		}else if("L".equals(tipoGestion)) {
+		}else if(LISTADO_GESTOR_DOC.equals(tipoGestion)) {
 			inputDto.setOperacion(ConstantesGestorDocumental.LISTADO_DOCUMENTO_OPERACION);
 			inputDto.setTipoDocumento(tipoDocumento);
 			inputDto.setTipoAsociacion(getTipoAsociacion(codEntidad));
-		}else if("C".equals(tipoGestion)) {
+		}else if(CONSULTA_GESTOR_DOC.equals(tipoGestion)) {
 			inputDto.setOperacion(ConstantesGestorDocumental.CONSULTA_DOCUMENTO_OPERACION);
 		}
 		
@@ -107,7 +111,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	public void listadoDocumentos(Long id, String tipoDocumento, String codEntidad) {
 		
 		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
-		outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto("L", tipoDocumento, codEntidad, null));
+		outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(LISTADO_GESTOR_DOC, tipoDocumento, codEntidad, null));
 	}
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_RECUPERACION_DOCUMENTO)
@@ -115,7 +119,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	public void recuperacionDocumento(Long id) {
 		
 		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
-		outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto("C",null, null, null));
+		outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(CONSULTA_GESTOR_DOC,null, null, null));
 
 	}
 

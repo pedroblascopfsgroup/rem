@@ -1,6 +1,7 @@
 package es.pfsgroup.recovery.cajamar.gestorDocumental.manager;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,7 +30,7 @@ import es.pfsgroup.gestorDocumental.api.GestorDocumentalApi;
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.ConstantesGestorDocumental;
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalInputDto;
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalOutputDto;
-import es.pfsgroup.recovery.cajamar.serviciosonline.GestorDocumentalWSApi;
+import es.pfsgroup.recovery.gestordocumental.dto.AdjuntoGridDto;
 
 @Component
 public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
@@ -60,7 +61,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_ALTA_DOCUMENTO)
 	@Transactional(readOnly = false)
-	public void altaDocumento(String codEntidad, String tipoDocumento, WebFileItem uploadForm) {
+	public String altaDocumento(String codEntidad, String tipoDocumento, WebFileItem uploadForm) {
 		
 		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
 		FileItem fileItem = uploadForm.getFileItem();
@@ -73,12 +74,13 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
 		if (fileItem.getLength() > max) {
 			AbstractMessageSource ms = MessageUtils.getMessageSource();
-			outputDto.setTxtError(ms.getMessage("fichero.limite.tamanyo",
+			return ms.getMessage("fichero.limite.tamanyo",
 					new Object[] { (int) ((float) max / 1024f) },
-					MessageUtils.DEFAULT_LOCALE));
+					MessageUtils.DEFAULT_LOCALE);
 		}
 
 		guardarDatoEntidad(codEntidad, uploadForm);
+		return null;
 		
 
 		//outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(ALTA_GESTOR_DOC, tipoDocumento, codEntidad, uploadForm));
@@ -109,9 +111,10 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_LISTADO_DOCUMENTO)
 	@Transactional(readOnly = false)
-	public void listadoDocumentos(Long id, String tipoDocumento, String codEntidad) {
+	public List<AdjuntoGridDto> listadoDocumentos(Long id, String tipoDocumento, String codEntidad) {
 		
 		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
+		return null;
 
 		//outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(LISTADO_GESTOR_DOC, tipoDocumento, codEntidad, null));
 
@@ -119,9 +122,10 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_RECUPERACION_DOCUMENTO)
 	@Transactional(readOnly = false)
-	public void recuperacionDocumento(Long id) {
+	public AdjuntoGridDto recuperacionDocumento(Long id) {
 		
 		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
+		return null;
 
 		//outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(CONSULTA_GESTOR_DOC,null, null, null));
 

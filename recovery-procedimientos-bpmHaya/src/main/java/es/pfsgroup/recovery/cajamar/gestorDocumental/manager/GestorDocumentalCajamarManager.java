@@ -51,8 +51,8 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	@Autowired
 	private AsuntoDao asuntoDao;
 	
-	@Autowired
-	private GestorDocumentalWSApi gestorDocumentalWSApi;
+	//@Autowired
+	//private GestorDocumentalWSApi gestorDocumentalWSApi;
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_ALTA_DOCUMENTO)
 	@Transactional(readOnly = false)
@@ -76,7 +76,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
 		guardarDatoEntidad(codEntidad, uploadForm);
 		
-		outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto("A", tipoDocumento, codEntidad, uploadForm));
+		//outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto("A", tipoDocumento, codEntidad, uploadForm));
 
 	}
 	
@@ -107,7 +107,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	public void listadoDocumentos(Long id, String tipoDocumento, String codEntidad) {
 		
 		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
-		outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto("L", tipoDocumento, codEntidad, null));
+		//outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto("L", tipoDocumento, codEntidad, null));
 	}
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_RECUPERACION_DOCUMENTO)
@@ -115,7 +115,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	public void recuperacionDocumento(Long id) {
 		
 		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
-		outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto("C",null, null, null));
+		//outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto("C",null, null, null));
 
 	}
 

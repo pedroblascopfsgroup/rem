@@ -30,13 +30,7 @@
 		  return app.creaLabel(text,"",  {id:'entidad-expediente-'+id});
 	 }
 	 
-	 var mensajeExceptuacionLabel = new Ext.form.Label({
-	   	text:'<s:message code="expedientes.consulta.tabcabecera.warning" text="**Faltan datos cartera/subcartera. Contactar Sistemas."/>'
-		,style:'font-weight:bold;font-size:13px;color:red;',id:'entidad-cliente-mensajeLabel'
-	});
-	
-	mensajeExceptuacionLabel.setVisible(false);
-	
+	 
 
    function fieldSet(title,items){
 	return new Ext.form.FieldSet({
@@ -117,7 +111,7 @@
 		
 //Panel propiamente dicho...
 
-  panel.add({items:[mensajeExceptuacionLabel],border:false});
+  
   panel.add(datosPrincipalesFieldSet);
   panel.add(datosGestionFieldSet);
   panel.add(datosRecobroFieldSet); 
@@ -187,15 +181,6 @@
 		entidad.setLabel('itinerarioMV', cabeceraRecobro.itinerarioMV);
 		entidad.setLabel('fechaMaxEnAgencia',cabeceraRecobro.fechaMaxEnAgencia);
 		entidad.setLabel('fechaMaxCobroParcial',cabeceraRecobro.fechaMaxCobroParcial);
-		
-		<sec:authorize ifAllGranted="PUEDE_VER_INFO_ADICIONAL_EXP">
-		if ((cabeceraRecobro.cartera == "" || cabeceraRecobro.subcartera == "") && cabecera.manual && entidad.get("data").toolbar.estaEstadoActivo){
-			mensajeExceptuacionLabel.setVisible(true);			
-		}
-		else{
-			mensajeExceptuacionLabel.setVisible(false);	
-		}
-		</sec:authorize>
 		
 		gestor.setVisible(false);
 		situacion.setVisible(false);

@@ -99,7 +99,6 @@ new Ext.Button({
 		},{
 			text: '<s:message code="plugin.precontencioso.button.devolverPreparacion" text="**Devolver a preparacion" />',
 			handler: function() {
-	
 				var estadoPreparado = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO.PREPARADO" />';
 
 				if(data.estadoPrecontencioso != estadoPreparado) {
@@ -111,37 +110,47 @@ new Ext.Button({
 						icon: Ext.MessageBox.WARNING
 					});
 					return;
+				}else {
+					Ext.Msg.confirm(
+						'<s:message code="plugin.precontencioso.button.devolverPreparacion.tituloPreguntaDevolucion" text="**Confirmacion" />', 
+						'<s:message code="plugin.precontencioso.button.devolverPreparacion.preguntaDevolucion"
+ 							text="**El expediente va a ser devuelto a prepración ¿Está usted seguro?" />', 
+							function(btn) {
+								if (btn == 'yes') {
+									var mask=new Ext.LoadMask(Ext.getBody(), {msg:'<s:message code="fwk.ui.form.cargando" text="**Cargando.."/>'});
+									mask.show();
+
+									var page = new fwk.Page("pfs", "", "", "");
+									Ext.Ajax.request({
+										url: page.resolveUrl('expedientejudicial/devolverPreparacion'),
+										params: {idProcedimiento: data.id},
+										method: 'POST',
+										success: function (result, request) {
+											mask.hide();
+											Ext.Msg.show({
+												title: fwk.constant.alert,
+												msg: '<s:message code="plugin.precontencioso.button.devolverPreparacion.correcto"
+							             				text="**El expediente judicial se ha devuelto a preparacion correctamente" />',
+												buttons: Ext.Msg.OK
+											});
+					
+											app.abreProcedimiento(data.id, data.nombreProcedimiento);
+										},
+										error: function() {
+											mask.hide();
+											Ext.MessageBox.show({
+									            title: fwk.constant.alert,
+									            msg: '<s:message code="plugin.precontencioso.button.finalizarPreparacion.error.exception" text="**Se ha producido un error. Consulte con soporte" />',
+									            width: 300,
+									            buttons: Ext.MessageBox.OK
+									        });
+										} 
+									});
+								}
+							}
+					);
 				}
 
-				var mask=new Ext.LoadMask(Ext.getBody(), {msg:'<s:message code="fwk.ui.form.cargando" text="**Cargando.."/>'});
-				mask.show();
-
-				var page = new fwk.Page("pfs", "", "", "");
-				Ext.Ajax.request({
-					url: page.resolveUrl('expedientejudicial/devolverPreparacion'),
-					params: {idProcedimiento: data.id},
-					method: 'POST',
-					success: function (result, request) {
-						mask.hide();
-						Ext.Msg.show({
-							title: fwk.constant.alert,
-							msg: '<s:message code="plugin.precontencioso.button.devolverPreparacion.correcto"
-		             				text="**El expediente judicial se ha devuelto a preparacion correctamente" />',
-							buttons: Ext.Msg.OK
-						});
-
-						app.abreProcedimiento(data.id, data.nombreProcedimiento);
-					},
-					error: function() {
-						mask.hide();
-						Ext.MessageBox.show({
-				            title: fwk.constant.alert,
-				            msg: '<s:message code="plugin.precontencioso.button.finalizarPreparacion.error.exception" text="**Se ha producido un error. Consulte con soporte" />',
-				            width: 300,
-				            buttons: Ext.MessageBox.OK
-				        });
-					} 
-				});
 			}
 		}]
 	}

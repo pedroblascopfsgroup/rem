@@ -456,7 +456,7 @@ public class BurofaxManager implements BurofaxApi {
 				envioBurofax.setResultadoBurofax(resultado);
 				envioBurofax.setFechaSolicitud(new Date());
 				if(Checks.esNulo(envioBurofax.getResultadoBurofax()) || (!Checks.esNulo(envioBurofax.getResultadoBurofax()) && !envioBurofax.getResultadoBurofax().getCodigo().equals(DDResultadoBurofaxPCO.ESTADO_PREPARADO))){
-					envioBurofax.setContenidoBurofax(replaceVariablesGeneracionBurofax(envioBurofax.getBurofax().getId(), envioBurofax.getTipoBurofax().getPlantilla()));
+					envioBurofax.setContenidoBurofax(replaceVariablesGeneracionBurofax(envioBurofax.getBurofax().getId(), envioBurofax.getContenidoBurofax()));
 				}
 				
 				genericDao.save(EnvioBurofaxPCO.class, envioBurofax);
@@ -477,8 +477,6 @@ public class BurofaxManager implements BurofaxApi {
 				}
 				envioIntegracion.setTipoBurofax(envioBurofax.getTipoBurofax().getDescripcion());
 				envioIntegracion.setFechaSolicitud(new Date());
-				envioIntegracion.setFechaEnvio(new Date());
-				envioIntegracion.setFechaAcuse(new Date());
 				envioIntegracion.setCertificado(certificado);
 				
 		

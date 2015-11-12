@@ -267,7 +267,7 @@
 	<node name="PCO_IniciarProcJudicial">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>"precontenciosoHayaDecisionActionHandler"</targetBean>
+			<targetBean>precontenciosoHayaDecisionActionHandler</targetBean>
 		</action>	
 		<transition to="Fin" name="avanzaBPM"></transition>
 	</node>

@@ -165,7 +165,7 @@
 	var charextra1    = label('charextra1','<s:message code="contrato.consulta.tabcabecera.charextra1" text="**Charextra1"/>');
 	var charextra2    = label('charextra2','<s:message code="contrato.consulta.tabcabecera.charextra2" text="**Charextra2"/>');
 	var charextra3    = label('charextra3','<s:message code="contrato.consulta.tabcabecera.charextra3" text="**Charextra3"/>');
-	var charextra4    = label('charextra4','<s:message code="contrato.consulta.tabcabecera.charextra4" text="**Charextra4"/>');
+	// var charextra4    = label('charextra4','<s:message code="contrato.consulta.tabcabecera.charextra4" text="**Charextra4"/>');
 	var charextra5    = label('charextra5','<s:message code="contrato.consulta.tabcabecera.charextra5" text="**Charextra5"/>');
 	var charextra6    = label('charextra6','<s:message code="contrato.consulta.tabcabecera.charextra6" text="**Charextra6"/>');
 	var charextra7    = label('charextra7','<s:message code="contrato.consulta.tabcabecera.charextra7" text="**Charextra7"/>');
@@ -287,7 +287,9 @@
 		  ,dateextra1
 		  ,flagextra1,flagextra2,flagextra3,indicador]},
 		   {items:[domiciExtTotal,contratoAnt,motivoRenum,riesgo
-		   ,charextra1,charextra2,charextra3,charextra4,charextra5,charextra6,charextra7,charextra8,marca,motivoMarca,contadorReincidencia]}
+		   ,charextra1,charextra2,charextra3,
+			   //charextra4,
+		   charextra5,charextra6,charextra7,charextra8,marca,motivoMarca,contadorReincidencia]}
 		  ]
 	  });
   
@@ -407,7 +409,7 @@
   entidad.setLabel('charextra1',d.charextra1);
   entidad.setLabel('charextra2',d.charextra2);
   entidad.setLabel('charextra3',d.charextra3);
-  entidad.setLabel('charextra4',d.charextra4);
+  //entidad.setLabel('charextra4',d.charextra4);
   entidad.setLabel('charextra5',d.charextra5);
   entidad.setLabel('charextra6',d.charextra6);
   entidad.setLabel('charextra7',d.charextra7);

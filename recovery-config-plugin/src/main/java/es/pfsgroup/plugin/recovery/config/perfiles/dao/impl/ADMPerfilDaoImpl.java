@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.recovery.config.perfiles.dao.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -11,6 +13,7 @@ import es.pfsgroup.commons.utils.Assertions;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.Conversiones;
 import es.pfsgroup.commons.utils.HQLBuilder;
+import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.recovery.config.perfiles.dao.ADMPerfilDao;
 import es.pfsgroup.plugin.recovery.config.perfiles.dto.ADMDtoBuscaPerfil;
 import es.pfsgroup.recovery.ext.impl.perfil.model.EXTPerfil;
@@ -86,5 +89,15 @@ public class ADMPerfilDaoImpl extends AbstractEntityDao<EXTPerfil, Long> impleme
 			throw new BusinessOperationException("plugin.config.perfiles.admperfildaoimpl.save.codigononumerico");
 		}
 	}
+
+	@Override
+	public List<EXTPerfil> getListUndeleted() {
+		HQLBuilder hb = new HQLBuilder("from Perfil ");
+		HQLBuilder.addFiltroIgualQue(hb, "borrado", 0);
+		
+		return HibernateQueryUtils.list(this, hb);
+	}
+	
+	
 
 }

@@ -1,5 +1,7 @@
 package es.capgemini.pfs.politica;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,6 +19,7 @@ import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.arquetipo.model.Arquetipo;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
@@ -127,6 +130,10 @@ public class PoliticaManager {
 
         DDZona zonaSupervisor = (DDZona) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDZona.class, dto
                 .getCodigoSupervisorZona());
+        
+        DDMotivo motivo = (DDMotivo) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDMotivo.class, dto.getMotivo());
+        
+        Auditoria auditoria = new Auditoria();
 
         politica.setTipoPolitica(tipo);
         politica.setCicloMarcadoPolitica(cicloMarcado);
@@ -144,6 +151,23 @@ public class PoliticaManager {
         if (zonaSupervisor != null) {
             politica.setZonaSupervisor(zonaSupervisor);
         }
+        
+        if(motivo != null){
+        	politica.setMotivo(motivo);
+        }
+        
+        if(dto.getFecha() != null){
+        	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        	Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
+        	try {
+				auditoria.setFechaCrear(sdf.parse(dto.getFecha()));
+				auditoria.setUsuarioCrear(usuario.getNombre());
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+        	politica.setAuditoria(auditoria);
+        }
+        
         politica.setUsuarioCreacion((Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO));
 
         if (politica.getId() == null) {
@@ -277,6 +301,18 @@ public class PoliticaManager {
     	} else {
     		return politicas;
     	}
+    }
+    
+    /**
+     * Recuperamos los motivos 
+     * @return
+     */
+    @BusinessOperation(InternaBusinessOperation.BO_POL_MGR_GET_TIPO_MOTIVO)
+    public List<DDMotivo> getMotivoList(){
+		
+    	List<DDMotivo> motivos = genericDao.getList(DDMotivo.class);
+    	
+		return motivos;
     }
 
     /**

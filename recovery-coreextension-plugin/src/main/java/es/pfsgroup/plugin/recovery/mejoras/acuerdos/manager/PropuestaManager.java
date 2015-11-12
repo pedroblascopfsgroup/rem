@@ -21,6 +21,7 @@ import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
 import es.capgemini.pfs.acuerdo.dao.DDEstadoAcuerdoDao;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
+import es.capgemini.pfs.acuerdo.model.DDMotivoRechazoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDSubtipoSolucionAmistosaAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDValoracionActuacionAmistosa;
 import es.capgemini.pfs.bien.model.Bien;
@@ -348,10 +349,15 @@ public class PropuestaManager implements PropuestaApi {
 	}
 
 	@Transactional(readOnly = false)
-	public void rechazar(Long idPropuesta, String motivo) {
+	public void rechazar(Long idPropuesta, String motivo, String observaciones) {
 		
 		EXTAcuerdo propuesta = genericDao.get(EXTAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", idPropuesta));
-		propuesta.setMotivo(motivo);
+		DDMotivoRechazoAcuerdo motivoRechazoAcuerdo = genericDao.get(DDMotivoRechazoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(motivo)));
+		propuesta.setMotivo(motivoRechazoAcuerdo.getDescripcion());
+		if(observaciones != null && observaciones != ""){
+			propuesta.setObservaciones(observaciones);	
+		}
+		
 		acuerdoDao.save(propuesta);
 		cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_RECHAZADO);
 		DDEstadoAcuerdo estadoFinalizacion = (DDEstadoAcuerdo) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAcuerdo.class, DDEstadoAcuerdo.ACUERDO_RECHAZADO);

@@ -7,7 +7,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <fwk:page>
-	var decisionId='${decisionProcedimiento.id}';
+	var decisionId=${decisionProcedimiento.id != null ? decisionProcedimiento.id : 'null'};
 	arrayProcedimientos=[];
 	var procedimientoPadre='${idProcedimiento}';
 	var labelStyleTextField='font-weight:bolder;margin-bottom:1px;margin-top:1px;width:160px';
@@ -16,6 +16,7 @@
 	var style='margin-bottom:1px;margin-top:1px';
 	var errores="";
 
+	var procedimientoRemoto = false;
 	var modoConsulta=false;
 	var faltaPermisos=false;
 	var esSolicitud=true;
@@ -23,6 +24,9 @@
 		if('${decisionProcedimiento.estadoDecision.codigo}' == '<fwk:const value="es.capgemini.pfs.decisionProcedimiento.model.DDEstadoDecision.ESTADO_ACEPTADO" />'
 			|| '${decisionProcedimiento.estadoDecision.codigo}' == '<fwk:const value="es.capgemini.pfs.decisionProcedimiento.model.DDEstadoDecision.ESTADO_RECHAZADO" />' || (${isConsulta != null} && ${isConsulta}))
 			modoConsulta=true;
+	</c:if>
+	<c:if test="${decisionProcedimiento!=null and empty decisionProcedimiento.procedimiento.processBPM}" >
+	procedimientoRemoto = true;
 	</c:if>
 	
 	var esGestor=${esGestor};
@@ -368,7 +372,7 @@
 	resetTitle();
 
 	procedimientoGrid.on('rowclick',function(grid, rowIndex, e){
-		if ((decisionId == '') || (modoConsulta)) return;
+		if ((decisionId == null) || (modoConsulta)) return;
 		if (!esSupervisor) return;
 		var rec=procedimientoStore.getAt(rowIndex);
 		var id=rec.get('idProcedimiento');
@@ -594,7 +598,7 @@
 	var btnAgregarProcedimiento = new Ext.Button({
 		text : '<s:message code="app.agregar" text="**Agregar" />'
 		,iconCls : 'icon_mas'
-		,hidden: (!esSupervisor) && (decisionId != '')
+		,hidden: (!esSupervisor) && (decisionId != null)
 		,handler : function(){
 			compruebaUnicoBien('addProcedimiento');
 		}
@@ -729,7 +733,7 @@
 			if (isCheck){
 				if (comprobarPermitidoAceptar){
 					btnAceptarPropuesta.disable();
-					btnProponer.enable();
+					habilitarBotonProponer();
 				}
 			}else if (comprobarPermitidoAceptar){
 					btnAceptarPropuesta.enable();
@@ -786,7 +790,7 @@
 			if (isCheck){
 				if (comprobarPermitidoAceptar){
 					btnAceptarPropuesta.disable();
-					btnProponer.enable();
+					habilitarBotonProponer();				
 				}	
 			}else if (comprobarPermitidoAceptar){
 					btnAceptarPropuesta.enable();
@@ -908,7 +912,7 @@
 				else{
 					var params = transform();
 					params["idProcedimiento"]='${idProcedimiento}';
-					params["idDecision"]='${id}';
+					params["idDecision"]=decisionId;
 					page.webflow({
 						flow: 'decisionprocedimiento/aceptarPropuesta'
 						,params: params
@@ -937,7 +941,7 @@
 	   if(opt == 'yes'){
 			var params = transform();
 			params["idProcedimiento"]='${idProcedimiento}';
-			params["idDecision"]='${id}';
+			params["idDecision"]=decisionId;
 			page.webflow({
 				flow: 'decisionprocedimiento/aceptarPropuesta'
 				,params: params
@@ -946,6 +950,12 @@
 				}
 			});
 	   }
+	}
+	
+	function habilitarBotonProponer() {
+		if(!procedimientoRemoto) {
+			btnProponer.enable();
+		}
 	}
 	
 	var validarDatosFormulario = function(){
@@ -1007,7 +1017,7 @@
 				});
 			}
 			else{
-				btnProponer.enable();
+				habilitarBotonProponer();
 			}
 		}
 	});
@@ -1024,7 +1034,7 @@
 
 			page.webflow({
 				flow: 'decisionprocedimiento/rechazarPropuesta'
-				,params: {id:decisionId}
+				,params: {idDecision:decisionId}
 				,success : function(){ 
 					page.fireEvent(app.event.DONE); 
 				}
@@ -1120,19 +1130,19 @@
 			]
 	};
 	var bbar = []
-	
-		if(!modoConsulta){		
-			bbar.push(btnAceptarPropuesta);
-			if(esSupervisor){					
-				if (!decisionId == '')
-					bbar.push(btnRechazar);
-			}else {
-				if (decisionId == ''){
-					bbar.push(btnProponer);
-					btnProponer.disable();
-					comprobarPermitidoAceptar = true;
-				}
+
+	if(!modoConsulta){		
+		bbar.push(btnAceptarPropuesta);
+		if(esSupervisor){					
+			if (decisionId != null)
+				bbar.push(btnRechazar);
+		}else {
+			if (decisionId == null){
+				bbar.push(btnProponer);
+				btnProponer.disable();
+				comprobarPermitidoAceptar = true;
 			}
+		}
 	}
 	
 	bbar.push(btnCancelar);

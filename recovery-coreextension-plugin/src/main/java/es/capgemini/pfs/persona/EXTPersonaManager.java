@@ -117,8 +117,7 @@ public class EXTPersonaManager extends BusinessOperationOverrider<PersonaApi> im
      * @param clientes dto clientes
      * @return Pagina de personas
      */
-    @SuppressWarnings("unchecked")
-	@BusinessOperation(BO_CORE_PERSONA_FINDCLIENTES_PROV_SOLVENCIA_EXCEL)
+    @BusinessOperation(BO_CORE_PERSONA_FINDCLIENTES_PROV_SOLVENCIA_EXCEL)
 	@Override
 	public List<Persona> findClientesProveedorSolvenciaExcel(EXTDtoBuscarClientes dto) {
     	dto.setCodigoZonas(getCodigosDeZona(dto));
@@ -285,8 +284,8 @@ public class EXTPersonaManager extends BusinessOperationOverrider<PersonaApi> im
 
 	@Override
 	public Persona get(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return personaDao.get(id);
 	}
 
 	@BusinessOperation(overrides=PrimariaBusinessOperation.BO_PER_MGR_FIND_CLIENTES_PAGINATED)

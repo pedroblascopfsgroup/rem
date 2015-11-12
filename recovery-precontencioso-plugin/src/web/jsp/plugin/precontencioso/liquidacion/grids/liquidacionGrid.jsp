@@ -230,7 +230,7 @@ var actualizarBotonesLiquidacion = function() {
 	// Se comprueba que el procedimiento se encuentre en un estado que permita editar las liquidaciones
 	if (data != null) {
 		var estadoActualCodigoProcedimiento = data.precontencioso.estadoActualCodigo;
-		if (estadoActualCodigoProcedimiento != 'PR'  && estadoActualCodigoProcedimiento != 'SU' && estadoActualCodigoProcedimiento != 'SC') {
+		if (!data.esExpedienteEditable || (estadoActualCodigoProcedimiento != 'PR'  && estadoActualCodigoProcedimiento != 'SU' && estadoActualCodigoProcedimiento != 'SC')) {
 			btnSolicitar.setDisabled(true);
 			btnEditarValores.setDisabled(true);
 			btnConfirmar.setDisabled(true);

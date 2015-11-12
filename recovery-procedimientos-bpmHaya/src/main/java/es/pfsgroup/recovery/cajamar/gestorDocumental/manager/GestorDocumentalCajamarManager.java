@@ -1,5 +1,6 @@
 package es.pfsgroup.recovery.cajamar.gestorDocumental.manager;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,6 +28,7 @@ import es.capgemini.pfs.persona.dao.PersonaDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.pfsgroup.gestorDocumental.api.GestorDocumentalApi;
+import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.AdjuntoGridAssembler;
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.ConstantesGestorDocumental;
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalInputDto;
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalOutputDto;
@@ -92,18 +94,25 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		if(ALTA_GESTOR_DOC.equals(tipoGestion)) {
 			inputDto.setOperacion(ConstantesGestorDocumental.ALTA_DOCUMENTO_OPERACION);
 			inputDto.setExtensionFichero(uploadForm.getFileItem().getContentType());
-			inputDto.setOperacion(ConstantesGestorDocumental.GESTOR_DOCUMENTAL_ORIGEN);
+			inputDto.setOrigen(ConstantesGestorDocumental.GESTOR_DOCUMENTAL_ORIGEN);
 			inputDto.setTipoAsociacion(getTipoAsociacion(codEntidad));
 			inputDto.setTipoDocumento(tipoDocumento);
+			// TODO Como es???
 			inputDto.setFicheroBase64(uploadForm.getFileItem().getFileName());
+			// TODO Cual es la clave de asociacion???
 			inputDto.setClaveAsociacion("");
+			// TODO Cual es la fecha de vigencia???
 			inputDto.setFechaVigencia(new Date());
 		}else if(LISTADO_GESTOR_DOC.equals(tipoGestion)) {
 			inputDto.setOperacion(ConstantesGestorDocumental.LISTADO_DOCUMENTO_OPERACION);
 			inputDto.setTipoDocumento(tipoDocumento);
+			// TODO Cual es la clave de asociacion???
+			inputDto.setClaveAsociacion("");
 			inputDto.setTipoAsociacion(getTipoAsociacion(codEntidad));
 		}else if(CONSULTA_GESTOR_DOC.equals(tipoGestion)) {
 			inputDto.setOperacion(ConstantesGestorDocumental.CONSULTA_DOCUMENTO_OPERACION);
+			// TODO Referencia centera???
+			inputDto.setLocalizador("");
 		}
 		
 		return inputDto;
@@ -114,10 +123,10 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	public List<AdjuntoGridDto> listadoDocumentos(Long id, String tipoDocumento, String codEntidad) {
 		
 		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
-		return null;
+		List<GestorDocumentalOutputDto> list = new ArrayList<GestorDocumentalOutputDto>();
 
 		//outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(LISTADO_GESTOR_DOC, tipoDocumento, codEntidad, null));
-
+		return AdjuntoGridAssembler.outputDtoToAdjuntoGridDto(outputDto);
 	}
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_RECUPERACION_DOCUMENTO)
@@ -125,7 +134,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	public AdjuntoGridDto recuperacionDocumento(Long id) {
 		
 		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
-		return null;
+		return AdjuntoGridAssembler.outputDtoToAdjuntoGridDto(outputDto).get(0);
 
 		//outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(CONSULTA_GESTOR_DOC,null, null, null));
 

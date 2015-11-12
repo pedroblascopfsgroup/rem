@@ -2,8 +2,8 @@
 --##########################################
 --## AUTOR=DAVID GONZÁLEZ
 --## FECHA_CREACION=20151014
---## ARTEFACTO=
---## VERSION_ARTEFACTO=
+--## ARTEFACTO=BATCH
+--## VERSION_ARTEFACTO= 0.1
 --## INCIDENCIA_LINK=BKREC-849
 --## PRODUCTO=NO
 --## Finalidad: DML
@@ -173,3 +173,4 @@ BEGIN
 	END;
 	/
 
+	EXIT;

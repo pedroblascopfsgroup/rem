@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.bienes.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 public class PropuestaCancelacionCargasDto implements Serializable {
@@ -15,7 +16,7 @@ public class PropuestaCancelacionCargasDto implements Serializable {
 	private String numRegistro;
 	private String municipio;
 	private Float importeTasacion;
-	private Float importeAdjudicacion;
+	private BigDecimal importeAdjudicacion;
 	private String observaciones;
 	private String resumen;
 	private String propuesta;
@@ -78,11 +79,11 @@ public class PropuestaCancelacionCargasDto implements Serializable {
 		this.importeTasacion = importeTasacion;
 	}
 
-	public Float getImporteAdjudicacion() {
+	public BigDecimal getImporteAdjudicacion() {
 		return importeAdjudicacion;
 	}
 
-	public void setImporteAdjudicacion(Float importeAdjudicacion) {
+	public void setImporteAdjudicacion(BigDecimal importeAdjudicacion) {
 		this.importeAdjudicacion = importeAdjudicacion;
 	}
 

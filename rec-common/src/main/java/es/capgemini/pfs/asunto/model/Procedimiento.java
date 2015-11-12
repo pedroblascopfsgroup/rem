@@ -49,6 +49,7 @@ import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
  *
  */
 @Entity
+@org.hibernate.annotations.Entity(dynamicUpdate=true)
 @Table(name = "PRC_PROCEDIMIENTOS", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 //@Inheritance(strategy = InheritanceType.JOINED)

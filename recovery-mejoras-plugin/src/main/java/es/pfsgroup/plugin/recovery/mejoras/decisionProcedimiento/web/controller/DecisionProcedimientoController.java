@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import es.capgemini.pfs.asunto.ProcedimientoManager;
-import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.decisionProcedimiento.DecisionProcedimientoManager;
 import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
@@ -16,6 +15,8 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.MEJDecisionProcedimientoManager;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.MEJProcedimientoApi;
+import es.pfsgroup.recovery.ext.api.procedimiento.EXTProcedimientoApi;
+import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 
 @Controller
 public class DecisionProcedimientoController {
@@ -39,10 +40,13 @@ public class DecisionProcedimientoController {
 	
 	@Autowired
 	private EXTProcedimientoManagerOverrider procedimientoManager;
+
+	@Autowired
+	private EXTProcedimientoManager extProcedimientoManager;
 	
 	@RequestMapping
 	public String desparalizarProcedimiento(Long idProcedimiento){
-		proxyFactory.proxy(MEJProcedimientoApi.class).desparalizarProcedimiento(idProcedimiento);
+		extProcedimientoManager.desparalizarProcedimiento(idProcedimiento);
 		return "default";
 	}
 	
@@ -50,23 +54,14 @@ public class DecisionProcedimientoController {
 	@RequestMapping
 	public String isDesparalizable(Long idProcedimiento,ModelMap map){
 		
-		boolean res = proxyFactory.proxy(MEJProcedimientoApi.class).isDespararizable(idProcedimiento);
+		boolean res = extProcedimientoManager.isDespararizablePorEntidad(idProcedimiento);
 		map.put("isDesparalizable", res);
 		return "plugin/mejoras/procedimientos/procedimientoDesparalizableJSON";
 	}
 
-	public void setProxyFactory(ApiProxyFactory proxyFactory) {
-		this.proxyFactory = proxyFactory;
-	}
-
-	public ApiProxyFactory getProxyFactory() {
-		return proxyFactory;
-	}
-	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String esTramiteSubastaByPrcId(Long prcId, ModelMap map){
-		
 		boolean res =  proxyFactory.proxy(MEJProcedimientoApi.class).esTramiteSubastaByPrcId(prcId);
 		map.put("esTramiteSubasta", res);
 
@@ -74,44 +69,44 @@ public class DecisionProcedimientoController {
 	}
 
 	@RequestMapping
-    public String aceptarPropuesta(MEJDtoDecisionProcedimiento dtoDecisionProcedimiento, 
-    		Long idProcedimiento, 
-    		@RequestParam(required=false) Long idDecision) throws Exception {
-		
+	public String aceptarPropuesta(MEJDtoDecisionProcedimiento dtoDecisionProcedimiento, 
+			Long idProcedimiento, 
+			@RequestParam(required=false) Long idDecision) throws Exception {
+
 		DecisionProcedimiento dec = null;
 		if (idDecision==null) {
-	        Procedimiento p = prcManager.getProcedimiento(idProcedimiento);
-	        dec = new DecisionProcedimiento();
-	        dec.setProcedimiento(p);
+			dec = new DecisionProcedimiento();
 		} else {
 			dec = decisionProcedimientoManager.get(idDecision);			
 		}
-        dtoDecisionProcedimiento.setDecisionProcedimiento(dec);
+
+		dtoDecisionProcedimiento.setDecisionProcedimiento(dec);
+		dtoDecisionProcedimiento.setIdProcedimiento(idProcedimiento);
 		mejDecisionProcedimientoManager.aceptarPropuesta(dtoDecisionProcedimiento);
 		return "default";
 	}
 
 	@RequestMapping
-    public String crearPropuesta(MEJDtoDecisionProcedimiento dtoDecisionProcedimiento
-    		,Long idProcedimiento
-    		,@RequestParam(required=false) Long idDecision) throws Exception {
+	public String crearPropuesta(MEJDtoDecisionProcedimiento dtoDecisionProcedimiento
+			,Long idProcedimiento
+			,Long idDecision) throws Exception {
 		DecisionProcedimiento dec = null;
 		if (idDecision==null) {
-	        Procedimiento p = prcManager.getProcedimiento(idProcedimiento);
-	        dec = new DecisionProcedimiento();
-	        dec.setProcedimiento(p);
+			dec = new DecisionProcedimiento();
 		} else {
 			dec = decisionProcedimientoManager.get(idDecision);			
 		}
-        dtoDecisionProcedimiento.setDecisionProcedimiento(dec);
-        mejDecisionProcedimientoManager.crearPropuesta(dtoDecisionProcedimiento);
+
+		dtoDecisionProcedimiento.setDecisionProcedimiento(dec);
+		dtoDecisionProcedimiento.setIdProcedimiento(idProcedimiento);
+		mejDecisionProcedimientoManager.crearPropuesta(dtoDecisionProcedimiento);
 		return "default";
 	}
 	
 	@RequestMapping
-	public String rechazarPropuesta(Long id) throws Exception {
+	public String rechazarPropuesta(Long idDecision) throws Exception {
 		MEJDtoDecisionProcedimiento dto = new MEJDtoDecisionProcedimiento();
-		DecisionProcedimiento dec = decisionProcedimientoManager.get(id);
+		DecisionProcedimiento dec = decisionProcedimientoManager.get(idDecision);
 		dto.setDecisionProcedimiento(dec);
         mejDecisionProcedimientoManager.rechazarPropuesta(dto);
 		return "default";

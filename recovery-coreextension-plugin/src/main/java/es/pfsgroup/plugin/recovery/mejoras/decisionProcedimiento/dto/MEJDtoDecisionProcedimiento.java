@@ -4,12 +4,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.persistence.Column;
+
+
+import java.util.List;
 
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
-
-import com.ibatis.sqlmap.engine.type.SimpleDateFormatter;
+import org.springframework.util.AutoPopulatingList;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.validation.ErrorMessageUtils;
@@ -28,29 +29,28 @@ public class MEJDtoDecisionProcedimiento extends WebDto {
      * serialVersionUID.
      */
     private static final long serialVersionUID = -390516773716052924L;
-    private static final int N = 10;
+
     private DecisionProcedimiento decisionProcedimiento;
     private Long idProcedimiento;
     //private String causaDecision;
     private String causaDecisionFinalizar;
     private String causaDecisionParalizar;    
     private String strEstadoDecision;
-    private DtoProcedimientoDerivado[] procedimientosDerivados;
+    private List<DtoProcedimientoDerivado> procedimientosDerivados;
     private Boolean finalizar;
     private Boolean paralizar;
     private Date fechaParalizacion;
     private String comentarios="";
+    private String entidad;
+    private String guid;
+    private Long id;
 
     /**
      * constructor.
      */
-    public MEJDtoDecisionProcedimiento() {
-        // inicializa array de procedimientos derivados
-        procedimientosDerivados = new DtoProcedimientoDerivado[N];
-        for (int i = 0; i < N; i++) {
-            procedimientosDerivados[i] = new DtoProcedimientoDerivado();
-        }
-
+    @SuppressWarnings("unchecked")
+	public MEJDtoDecisionProcedimiento() {
+        procedimientosDerivados = new AutoPopulatingList(DtoProcedimientoDerivado.class);
         paralizar = false;
         finalizar = false;
     }
@@ -186,7 +186,7 @@ public class MEJDtoDecisionProcedimiento extends WebDto {
     /**
      * @return the procedimientosDerivados
      */
-    public DtoProcedimientoDerivado[] getProcedimientosDerivados() {
+    public List<DtoProcedimientoDerivado> getProcedimientosDerivados() {
         return procedimientosDerivados;
     }
 
@@ -194,7 +194,7 @@ public class MEJDtoDecisionProcedimiento extends WebDto {
      * @param procedimientosDerivados
      *            the procedimientosDerivados to set
      */
-    public void setProcedimientosDerivados(DtoProcedimientoDerivado[] procedimientosDerivados) {
+    public void setProcedimientosDerivados(List<DtoProcedimientoDerivado> procedimientosDerivados) {
         this.procedimientosDerivados = procedimientosDerivados;
     }
 
@@ -265,5 +265,29 @@ public class MEJDtoDecisionProcedimiento extends WebDto {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public String getEntidad() {
+		return entidad;
+	}
+
+	public void setEntidad(String entidad) {
+		this.entidad = entidad;
+	}
+
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 }

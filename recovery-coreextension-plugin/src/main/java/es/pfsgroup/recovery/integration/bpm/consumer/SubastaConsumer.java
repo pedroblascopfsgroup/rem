@@ -31,7 +31,7 @@ import es.pfsgroup.recovery.integration.ConsumerAction;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
 import es.pfsgroup.recovery.integration.IntegrationDataException;
 import es.pfsgroup.recovery.integration.Rule;
-import es.pfsgroup.recovery.integration.bpm.LoteSubastaPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.LoteSubastaPayload;
 import es.pfsgroup.recovery.integration.bpm.payload.ProcedimientoPayload;
 import es.pfsgroup.recovery.integration.bpm.payload.SubastaPayload;
 

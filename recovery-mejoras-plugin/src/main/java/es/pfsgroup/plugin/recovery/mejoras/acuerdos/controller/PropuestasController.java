@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
+import com.tc.aspectwerkz.transform.inlining.compiler.CompilationInfo.Model;
+
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
+import es.capgemini.pfs.acuerdo.model.DDMotivoRechazoAcuerdo;
 import es.capgemini.pfs.core.api.acuerdo.AcuerdoApi;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
 import es.capgemini.pfs.users.UsuarioManager;
@@ -26,6 +29,7 @@ public class PropuestasController {
 	private static final String DEFAULT = "default";
 
 	private static final String JSP_ALTA_PROPUESTA = "plugin/mejoras/acuerdos/editaConclusionesAcuerdo";
+	private static final String JSP_RECHAZA_PROPUESTA = "plugin/mejoras/acuerdos/rechazarAcuerdo";
 	private static final String LISTADO_PROPUESTAS_JSON =  "plugin/mejoras/acuerdos/acuerdosJSON";
 	private static final String JSON_LISTADO_CONTRATOS = "plugin/mejoras/acuerdos/listadoContratosAsuntoJSON";
 	private static final String JSP_FINALIZACION_PROPUESTA = "plugin/mejoras/acuerdos/finalizacionPropuesta";
@@ -69,6 +73,20 @@ public class PropuestasController {
 		
 		
 		return JSP_ALTA_PROPUESTA;
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String rechazarAcuerdo(ModelMap model, Long idAcuerdo){
+		model.put("motivosRechazo", dictionaryManager.getList("DDMotivoRechazoAcuerdo")); 
+		
+		Acuerdo acuerdo = proxyFactory.proxy(AcuerdoApi.class).getAcuerdoById(idAcuerdo);
+		model.put("acuerdo",acuerdo);
+		
+		model.put("esPropuesta", true);
+
+		return JSP_RECHAZA_PROPUESTA;
 	}
 
 	@RequestMapping
@@ -128,8 +146,9 @@ public class PropuestasController {
 	}
 	
 	@RequestMapping
-    public String rechazar(@RequestParam(value = "idPropuesta", required = true) Long idPropuesta, String motivo) {
-		propuestaApi.rechazar(idPropuesta, motivo);
+    public String rechazar(@RequestParam(value = "idPropuesta", required = true) Long idPropuesta, @RequestParam(value = "idMotivo", required = true) String motivo, 
+    		@RequestParam(value = "observaciones") String observaciones) {
+		propuestaApi.rechazar(idPropuesta, motivo, observaciones);
 		return DEFAULT;
 	}
 

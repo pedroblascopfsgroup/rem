@@ -124,7 +124,7 @@ if ((view != null) && (id != null)){
 	<div id="west">
     	<div id="admin_tree"></div>
   	</div>
-  	<div id="north" style="background:url('/${appProperties.appName}/img/logo.gif') no-repeat 50% 0">
+  	<div id="north" style="background:url('/${appProperties.appName}/img/logo.png') no-repeat 50% 0">
 		<img src="/${appProperties.appName}/img/<c:out value="${logo}"/>" />
 		<div id="userInfo"><s:message code="main.userInfo.usuario" text="**Usuario : "/> ${usuario.username} (<a id="logout" href="#"><s:message code="main.logout" text="**desconectar"/></a> / <a id="logoutClose" href="#"><s:message code="main.logout.close" text="**desconectar y cerrar"/></a>)</div>
 		<div id="fechaCarga"><s:message code="main.fechaCarga" text="**&Uacute;ltima fecha de carga : "/><fwk:date value="${ultimaFechaCarga}"/></div>

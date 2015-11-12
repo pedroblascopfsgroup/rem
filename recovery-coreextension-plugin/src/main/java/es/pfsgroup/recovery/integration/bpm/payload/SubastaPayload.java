@@ -7,7 +7,6 @@ import java.util.List;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
-import es.pfsgroup.recovery.integration.bpm.LoteSubastaPayload;
 
 public class SubastaPayload {
 	

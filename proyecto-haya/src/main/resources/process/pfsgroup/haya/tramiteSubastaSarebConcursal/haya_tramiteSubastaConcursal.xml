@@ -123,6 +123,7 @@
 		<transition to="H003_PrepararPropuestaSubasta" name="prepararPropuestaSubasta"></transition>
 		<transition to="H003_CelebracionSubasta" name="celebracionDeSubasta"></transition>
 		<transition to="H003_AdjuntarInformeSubasta" name="adjuntarInformeDeSubasta"></transition>
+		<transition to="nActivo" name="numeroActivo"></transition>
 	</fork>
 
 	<state name="H003_SuspenderSubasta">
@@ -795,6 +796,16 @@
 		<transition to="H003_ElevarPropuestaAComite" name="avanzaBPM"></transition>
 		<transition to="Fin4" name="Fin"></transition>
 	</state>
+
+	<node name="nActivo">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>subastaSolicitarNumActivoHandler
+			</targetBean>
+		</action>
+		<transition to="Fin5" name="avanzaBPM"></transition>
+		<transition to="Fin5" name="Fin"></transition>
+	</node>
 
 	<end-state name="Fin">
 		<event type="node-enter">

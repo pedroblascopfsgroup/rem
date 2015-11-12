@@ -8,7 +8,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
 
 /**
- * Factoría para generar dtos de tipo {@link MEJDtoDecisionProcedimiento}
+ * Factorï¿½a para generar dtos de tipo {@link MEJDtoDecisionProcedimiento}
  * 
  * @author bruno
  * 
@@ -16,7 +16,7 @@ import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecis
 public class MEJDtoDecisionProcedimientoTestFactory {
 
     /**
-     * Crea un DTO que hace referencia a una DecisiónExistente.
+     * Crea un DTO que hace referencia a una Decisiï¿½nExistente.
      * 
      * @param idDecisionProcedimiento
      * @param idProcedimiento
@@ -28,7 +28,7 @@ public class MEJDtoDecisionProcedimientoTestFactory {
     }
 
     /**
-     * Crea un DTO que hace referencia a una DecisiónExistente con la derivación
+     * Crea un DTO que hace referencia a una Decisiï¿½nExistente con la derivaciï¿½n
      * de procedimientos.
      * 
      * @param idDecisionProcedimiento
@@ -42,7 +42,7 @@ public class MEJDtoDecisionProcedimientoTestFactory {
     }
 
     /**
-     * Devuelve un DTO para crear una nueva decisión.
+     * Devuelve un DTO para crear una nueva decisiï¿½n.
      * 
      * @param estadoDecision
      * @param causaDecision 
@@ -59,7 +59,7 @@ public class MEJDtoDecisionProcedimientoTestFactory {
     }
 
     /**
-     * Crea el dto básico para el caso de test.
+     * Crea el dto bï¿½sico para el caso de test.
      * 
      * @param idProcedimiento
      *            Id del procedimiento
@@ -68,8 +68,8 @@ public class MEJDtoDecisionProcedimientoTestFactory {
      * @param estadoDecision
      * @param derivadosId
      *            Id's de los procedimientos derivados que contiene la
-     *            propuesta. Si se pasa NULL o un array vacío se supondrá que no
-     *            se quiere derivar en ningún procedimiento
+     *            propuesta. Si se pasa NULL o un array vacï¿½o se supondrï¿½ que no
+     *            se quiere derivar en ningï¿½n procedimiento
      * @param causaDecision 
      * @return
      */
@@ -99,7 +99,7 @@ public class MEJDtoDecisionProcedimientoTestFactory {
                 dtopd.setId(derivadosId[i]);
                 derivados.add(dtopd);
             }
-            dto.setProcedimientosDerivados(derivados.toArray(new DtoProcedimientoDerivado[] {}));
+            dto.setProcedimientosDerivados(new ArrayList<DtoProcedimientoDerivado>());
         }
 
         return dto;

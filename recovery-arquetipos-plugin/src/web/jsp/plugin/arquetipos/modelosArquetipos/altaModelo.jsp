@@ -13,7 +13,7 @@
 	<pfs:textfield name="nombre" labelKey="plugin.arquetipos.modelo.nombre"
 		label="**Nombre" value="${modelo.nombre}" obligatory="true" />
 	
-	<pfs:textfield name="descripcion" labelKey="plugin.arquetipos.modelo.descripcion"
+	<pfs:textfield name="descripcion" labelKey="plugin.arquetipos.modelo.descripcion" maxLength="50"
 		label="**Descripción" value="${modelo.descripcion}" obligatory="true" />
 		
 	<pfs:defineParameters name="parametros" paramId="${modelo.id}" 

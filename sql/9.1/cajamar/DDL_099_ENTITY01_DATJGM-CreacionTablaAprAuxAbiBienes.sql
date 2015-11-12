@@ -21,7 +21,7 @@ SET SERVEROUTPUT ON;
 
 DECLARE
 
- V_ESQUEMA VARCHAR2(25 CHAR):=   'CM01'; 			-- Configuracion Esquema
+ V_ESQUEMA VARCHAR2(25 CHAR):=   '#ESQUEMA#'; 			-- Configuracion Esquema
  V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; 		-- Configuracion Esquema Master
  TABLA VARCHAR(30) :='APR_AUX_ABI_BIENES_CONSOL';
  err_num NUMBER;

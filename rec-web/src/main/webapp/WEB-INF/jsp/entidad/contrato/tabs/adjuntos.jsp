@@ -85,6 +85,8 @@
 			recargarAdjuntos();
 		}
 	});
+	<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>borrar.setVisible(false);</sec:authorize>
+	
 	subir.on('click', function(){
 		var upload = new Ext.FormPanel({
             fileUpload: true

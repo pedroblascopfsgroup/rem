@@ -175,6 +175,7 @@
 			recargarAdjuntos();
 		}
 	});
+	<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>borrar.setVisible(false);</sec:authorize>
 	
 	var tipoFicheroRecord = Ext.data.Record.create([
 		 {name:'codigo'}
@@ -533,7 +534,7 @@
 	var grid = app.crearGrid(store, cm, {
 		title : '<s:message code="asuntos.adjuntos.grid" text="**Ficheros adjuntos" />'
 		<sec:authorize ifNotGranted="SOLO_CONSULTA">
-		,bbar : [subir, borrar,editarDescripcionAdjuntoAsunto]
+		,bbar : [subir, borrar, editarDescripcionAdjuntoAsunto]
 		</sec:authorize>
 		,height: 180
 		,collapsible:true
@@ -541,6 +542,7 @@
 		,style:'padding-right:10px'
 		,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
 	});
+	
 	grid.on('expand', function(){
 				grid.setHeight(340);				
 				gridPersonas.collapse(true);				

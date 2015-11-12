@@ -56,6 +56,7 @@
 				recargarAdjuntos();
 			}
 		});
+		<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>borrar.setVisible(false);</sec:authorize>
 		
 	
 		var comprobarAdjuntosRecord = Ext.data.Record.create([
@@ -175,7 +176,7 @@
                                          flow: 'plugin/mejoras/asuntos/plugin.mejoras.asuntos.editarDescripAdjPersona'
                                          ,closable: true
                                          ,width : 700
-                                         ,title : '<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionPersona" text="**Editar descripción del adjunto de la persona" />'
+                                         ,title : '<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionPersona" text="**Editar descripciï¿½n del adjunto de la persona" />'
                                          ,params: parametros
                         });
            	 		w.on(app.event.DONE, function(){
@@ -188,7 +189,7 @@
 					});
 			
 			}else{
-				Ext.Msg.alert('<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionPersona" text="**Editar descripción del adjunto del expediente" />','<s:message code="plugin.mejoras.asunto.adjuntos.noValor" text="**Debe seleccionar un valor de la lista" />');
+				Ext.Msg.alert('<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionPersona" text="**Editar descripciï¿½n del adjunto del expediente" />','<s:message code="plugin.mejoras.asunto.adjuntos.noValor" text="**Debe seleccionar un valor de la lista" />');
 			}
 		}	
 		}

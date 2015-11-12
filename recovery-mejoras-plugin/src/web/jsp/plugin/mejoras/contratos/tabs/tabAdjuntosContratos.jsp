@@ -75,6 +75,7 @@
 			recargarAdjuntos();
 		}
 	});
+	<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>borrar.setVisible(false);</sec:authorize>
 
 	subir.on('click', function(){
 		var upload = new Ext.FormPanel({
@@ -159,7 +160,7 @@
                                          flow: 'plugin/mejoras/asuntos/plugin.mejoras.asuntos.editarDescripAdjContrato'
                                          ,closable: true
                                          ,width : 700
-                                         ,title : '<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionContrato" text="**Editar descripción del adjunto del contrato" />'
+                                         ,title : '<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionContrato" text="**Editar descripciï¿½n del adjunto del contrato" />'
                                          ,params: parametros
                         });
            	 		w.on(app.event.DONE, function(){
@@ -172,7 +173,7 @@
 					});
 			
 			}else{
-				Ext.Msg.alert('<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionContrato" text="**Editar descripción del adjunto del expediente" />','<s:message code="plugin.mejoras.asunto.adjuntos.noValor" text="**Debe seleccionar un valor de la lista" />');
+				Ext.Msg.alert('<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionContrato" text="**Editar descripciï¿½n del adjunto del expediente" />','<s:message code="plugin.mejoras.asunto.adjuntos.noValor" text="**Debe seleccionar un valor de la lista" />');
 			}
 		}	
 		}

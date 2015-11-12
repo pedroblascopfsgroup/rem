@@ -8,6 +8,7 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.PaginationParamsImpl;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.vencidos.model.DDTramosDiasVencidos;
 import es.capgemini.pfs.zona.model.DDZona;
 
@@ -41,6 +42,8 @@ public class ListadoPreProyectadoDTO extends WebDto {
 	private String fechaPrevRegularizacion;
 	private String fechaPrevRegularizacionHasta;
 	private String zonasCto;
+	
+	private Usuario usuarioLogado;
 	
 	public String getCodEstadoGestion() {
 		return codEstadoGestion;
@@ -168,6 +171,14 @@ public class ListadoPreProyectadoDTO extends WebDto {
 	
 	public void setZonasCto(String zonasCto) {
 		this.zonasCto = zonasCto;
+	}
+
+	public Usuario getUsuarioLogado() {
+		return usuarioLogado;
+	}
+
+	public void setUsuarioLogado(Usuario usuarioLogado) {
+		this.usuarioLogado = usuarioLogado;
 	}
 	
 		

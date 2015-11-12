@@ -533,7 +533,7 @@ public class BurofaxManager implements BurofaxApi {
 				genericDao.save(BurofaxEnvioIntegracionPCO.class, envioIntegracion);
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("guardarEnvioBurofax: " + e);
 		}
 		
 	}

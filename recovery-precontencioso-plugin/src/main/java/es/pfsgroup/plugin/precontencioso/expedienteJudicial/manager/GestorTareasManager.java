@@ -116,13 +116,18 @@ public class GestorTareasManager implements GestorTareasApi {
 			Long idProc, List<GestorTareasLineaConfigPCO> lineasConfig) {
 
 		List<GestorTareasAccionPCODto> listaAcciones = new ArrayList<GestorTareasAccionPCODto>();
-		for (GestorTareasLineaConfigPCO linea : lineasConfig) {
-			if (gestorTareasDao.evaluaCondicion(idProc, linea.getCondicionHQL())) {
-				GestorTareasAccionPCODto accion = new GestorTareasAccionPCODto();
-				accion.setTipoAccion(linea.getCodigoAccion());
-				accion.setTipoTarea(linea.getCodigoTarea());
-				listaAcciones.add(accion);
+		try{
+			for (GestorTareasLineaConfigPCO linea : lineasConfig) {
+				if (gestorTareasDao.evaluaCondicion(idProc, linea.getCondicionHQL())) {
+					GestorTareasAccionPCODto accion = new GestorTareasAccionPCODto();
+					accion.setTipoAccion(linea.getCodigoAccion());
+					accion.setTipoTarea(linea.getCodigoTarea());
+					listaAcciones.add(accion);
+				}
 			}
+		}
+		catch(Exception e){
+			logger.error("evaluarTareasProcedimiento: " + e);
 		}
 		return listaAcciones;
 		
@@ -168,43 +173,49 @@ public class GestorTareasManager implements GestorTareasApi {
 	@Transactional(readOnly = false)
 	public boolean crearTareaEspecial(Long idProc, String codigoTarea) {
 
-        Procedimiento procedimiento = proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(idProc);
-
-        //Buscamos la tarea perteneciente a ese procedimiento con el código tarea y el idTipoProcedimiento y extraemos su ID tarea
-        Long idTipoProcedimiento = procedimiento.getTipoProcedimiento().getId();
-        TareaProcedimiento tareaProcedimiento = proxyFactory.proxy(TareaProcedimientoApi.class)
-        		.getByCodigoTareaIdTipoProcedimiento(idTipoProcedimiento, codigoTarea);
-
-        Long idTareaProcedimiento = tareaProcedimiento.getId();
-        String nombreTarea = tareaProcedimiento.getDescripcion();
-
-        //Creamos una nueva tarea extendida con el idProcedimiento y el idTipoTarea y el timer asociado
-        //Por defecto la tarea será para un gestor
-        String subtipoTarea = EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR;
-
-        //Si está marcada como supervisor se cambia el subtipo tarea
-        if (tareaProcedimiento.getSupervisor()) {
-            subtipoTarea = EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_SUPERVISOR;
+        try{
+			Procedimiento procedimiento = proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(idProc);
+	
+	        //Buscamos la tarea perteneciente a ese procedimiento con el código tarea y el idTipoProcedimiento y extraemos su ID tarea
+	        Long idTipoProcedimiento = procedimiento.getTipoProcedimiento().getId();
+	        TareaProcedimiento tareaProcedimiento = proxyFactory.proxy(TareaProcedimientoApi.class)
+	        		.getByCodigoTareaIdTipoProcedimiento(idTipoProcedimiento, codigoTarea);
+	
+	        Long idTareaProcedimiento = tareaProcedimiento.getId();
+	        String nombreTarea = tareaProcedimiento.getDescripcion();
+	
+	        //Creamos una nueva tarea extendida con el idProcedimiento y el idTipoTarea y el timer asociado
+	        //Por defecto la tarea será para un gestor
+	        String subtipoTarea = EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR;
+	
+	        //Si está marcada como supervisor se cambia el subtipo tarea
+	        if (tareaProcedimiento.getSupervisor()) {
+	            subtipoTarea = EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_SUPERVISOR;
+	        }
+	
+	        TipoJuzgado juzgado = null;
+	        TipoPlaza plaza = null;
+	
+	        juzgado = procedimiento.getJuzgado();
+	        if (juzgado != null) plaza = juzgado.getPlaza();
+	
+	        Long idTipoPlaza = null;
+	        Long idTipoJuzgado = null;
+	
+	        if (juzgado != null) idTipoJuzgado = juzgado.getId();
+	        if (plaza != null) idTipoPlaza = plaza.getId();
+	
+	        Long plazoTarea = getPlazoTarea(idTipoPlaza, idTareaProcedimiento, idTipoJuzgado, idProc);
+	        Long idTarea = tareaExternaManager.crearTareaExterna(subtipoTarea, plazoTarea, nombreTarea, idProc, idTareaProcedimiento,
+	                getTokenId(procedimiento.getProcessBPM()));
+	
+	        if (logger.isDebugEnabled()) {
+	            logger.debug(TXT_CREAMOS_LA_TAREA + codigoTarea + ", " + idTarea);
+	        }
         }
-
-        TipoJuzgado juzgado = null;
-        TipoPlaza plaza = null;
-
-        juzgado = procedimiento.getJuzgado();
-        if (juzgado != null) plaza = juzgado.getPlaza();
-
-        Long idTipoPlaza = null;
-        Long idTipoJuzgado = null;
-
-        if (juzgado != null) idTipoJuzgado = juzgado.getId();
-        if (plaza != null) idTipoPlaza = plaza.getId();
-
-        Long plazoTarea = getPlazoTarea(idTipoPlaza, idTareaProcedimiento, idTipoJuzgado, idProc);
-        Long idTarea = tareaExternaManager.crearTareaExterna(subtipoTarea, plazoTarea, nombreTarea, idProc, idTareaProcedimiento,
-                getTokenId(procedimiento.getProcessBPM()));
-
-        if (logger.isDebugEnabled()) {
-            logger.debug(TXT_CREAMOS_LA_TAREA + codigoTarea + ", " + idTarea);
+        catch(Exception e){
+        	logger.error("crearTareaEspecial: " + e);
+        	return false;
         }
 
         return true;

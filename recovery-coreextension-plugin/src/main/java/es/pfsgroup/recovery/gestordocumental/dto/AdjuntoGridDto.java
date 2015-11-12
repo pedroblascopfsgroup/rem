@@ -4,27 +4,14 @@ import java.util.Date;
 
 public class AdjuntoGridDto {
 
-	// value="${dto.adjunto.id}
 	private Long idAdjunto;
-	// value="${dto.adjunto.nombre}"
 	private String nombre;
-	// value="${dto.adjunto.contentType}"
 	private String tipoDocumento;
-	// value="${dto.adjunto.descripcion}"
 	private String descripcion;
-	// value="${dto.adjunto.length}"
-	private String tamaño;
-	// <c:if test="${dto.adjunto.tipoFichero != null}">
-	// <json:property name="tipoFichero"
-	// value="${dto.adjunto.tipoFichero.descripcion}" />
-	// </c:if>
+	private String tamanyo;
 	private String tipo;
-	// <fmt:formatDate value="${dto.adjunto.auditoria.fechaCrear}"
-	// pattern="dd/MM/yyyy" />
 	private Date fechaSubida;
-	// value="${dto.adjunto.procedimiento.id}"
 	private Long numActuacion;
-	// value="${entity.descripcion}"
 	private String descripcionEntidad;
 
 	public Long getIdAdjunto() {
@@ -59,12 +46,12 @@ public class AdjuntoGridDto {
 		this.descripcion = descripcion;
 	}
 
-	public String getTamaño() {
-		return tamaño;
+	public String getTamanyo() {
+		return tamanyo;
 	}
-
-	public void setTamaño(String tamaño) {
-		this.tamaño = tamaño;
+	
+	public void setTamanyo(String tamanyo) {
+		this.tamanyo = tamanyo;
 	}
 
 	public String getTipo() {

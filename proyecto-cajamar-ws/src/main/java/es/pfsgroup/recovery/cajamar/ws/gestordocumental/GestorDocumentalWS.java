@@ -7,10 +7,10 @@ import org.cajamar.ws.S_M_GESTIONDOCUMENTAL.OUTPUT;
 import org.cajamar.ws.S_M_GESTIONDOCUMENTAL.SMGESTIONDOCUMENTAL;
 import org.cajamar.ws.S_M_GESTIONDOCUMENTAL.SMGESTIONDOCUMENTALType;
 
+import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalInputDto;
+import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalOutputDto;
 import es.pfsgroup.recovery.cajamar.serviciosonline.GestorDocumentalWSApi;
 import es.pfsgroup.recovery.cajamar.ws.BaseWS;
-import es.pfsgroup.recovery.gestorDocumental.dto.GestorDocumentalInputDto;
-import es.pfsgroup.recovery.gestorDocumental.dto.GestorDocumentalOutputDto;
 
 public class GestorDocumentalWS extends BaseWS implements GestorDocumentalWSApi {
 
@@ -25,15 +25,15 @@ public class GestorDocumentalWS extends BaseWS implements GestorDocumentalWSApi 
 
 	@Override
 	public GestorDocumentalOutputDto ejecutar(GestorDocumentalInputDto inputDto) {
-		//TODO assembler DTO to INPUT
-		INPUT input = new INPUT();
+		
+		INPUT input = GestorDocumentalInputAssembler.dtoToInput(inputDto); 
 
 		SMGESTIONDOCUMENTAL service = new SMGESTIONDOCUMENTAL();
 		SMGESTIONDOCUMENTALType servicePort = service.getSMGESTIONDOCUMENTALPort();
 		OUTPUT output = servicePort.sMGESTIONDOCUMENTAL(input);
 
-		//TODO assembler ouput to DTO
-		GestorDocumentalOutputDto out = new GestorDocumentalOutputDto();
+		GestorDocumentalOutputDto out = GestorDocumentalOutputAssembler.outputToDto(output);
+		GestorDocumentalInputAssembler.dtoToInput(inputDto);
 		return out;
 	}
 

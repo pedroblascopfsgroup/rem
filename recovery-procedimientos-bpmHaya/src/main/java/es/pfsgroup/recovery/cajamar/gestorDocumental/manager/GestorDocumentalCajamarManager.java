@@ -1,5 +1,7 @@
 package es.pfsgroup.recovery.cajamar.gestorDocumental.manager;
 
+import java.util.Date;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +26,18 @@ import es.capgemini.pfs.persona.dao.PersonaDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.pfsgroup.gestorDocumental.api.GestorDocumentalApi;
-import es.pfsgroup.recovery.gestorDocumental.dto.GestorDocumentalInputDto;
-import es.pfsgroup.recovery.gestorDocumental.dto.GestorDocumentalOutputDto;
+import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.ConstantesGestorDocumental;
+import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalInputDto;
+import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalOutputDto;
+import es.pfsgroup.recovery.cajamar.serviciosonline.GestorDocumentalWSApi;
 
 @Component
 public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
+	private static final String ALTA_GESTOR_DOC = "A";
+	private static final String CONSULTA_GESTOR_DOC = "C";
+	private static final String LISTADO_GESTOR_DOC = "L";
+	
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
@@ -46,18 +54,19 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
 	@Autowired
 	private AsuntoDao asuntoDao;
+	
+	@Autowired
+	private GestorDocumentalWSApi gestorDocumentalWSApi;
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_ALTA_DOCUMENTO)
 	@Transactional(readOnly = false)
-	public GestorDocumentalOutputDto altaDocumento(
-			GestorDocumentalInputDto inputDto, String codEntidad,
-			WebFileItem uploadForm) {
+	public void altaDocumento(String codEntidad, String tipoDocumento, WebFileItem uploadForm) {
+		
 		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
 		FileItem fileItem = uploadForm.getFileItem();
 
 		// En caso de que el fichero esté vacio, no subimos nada
 		if (fileItem == null || fileItem.getLength() <= 0) {
-			return null;
 		}
 
 		Integer max = getLimiteFichero(getParametroLimite(codEntidad));
@@ -67,27 +76,50 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			outputDto.setTxtError(ms.getMessage("fichero.limite.tamanyo",
 					new Object[] { (int) ((float) max / 1024f) },
 					MessageUtils.DEFAULT_LOCALE));
-			return outputDto;
 		}
 
 		guardarDatoEntidad(codEntidad, uploadForm);
+		
+		outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(ALTA_GESTOR_DOC, tipoDocumento, codEntidad, uploadForm));
 
-		return null;
-
+	}
+	
+	private GestorDocumentalInputDto rellenaInputDto (String tipoGestion, String tipoDocumento, String codEntidad, WebFileItem uploadForm) {
+		GestorDocumentalInputDto inputDto = new GestorDocumentalInputDto();
+		if(ALTA_GESTOR_DOC.equals(tipoGestion)) {
+			inputDto.setOperacion(ConstantesGestorDocumental.ALTA_DOCUMENTO_OPERACION);
+			inputDto.setExtensionFichero(uploadForm.getFileItem().getContentType());
+			inputDto.setOperacion(ConstantesGestorDocumental.GESTOR_DOCUMENTAL_ORIGEN);
+			inputDto.setTipoAsociacion(getTipoAsociacion(codEntidad));
+			inputDto.setTipoDocumento(tipoDocumento);
+			inputDto.setFicheroBase64(uploadForm.getFileItem().getFileName());
+			inputDto.setClaveAsociacion("");
+			inputDto.setFechaVigencia(new Date());
+		}else if(LISTADO_GESTOR_DOC.equals(tipoGestion)) {
+			inputDto.setOperacion(ConstantesGestorDocumental.LISTADO_DOCUMENTO_OPERACION);
+			inputDto.setTipoDocumento(tipoDocumento);
+			inputDto.setTipoAsociacion(getTipoAsociacion(codEntidad));
+		}else if(CONSULTA_GESTOR_DOC.equals(tipoGestion)) {
+			inputDto.setOperacion(ConstantesGestorDocumental.CONSULTA_DOCUMENTO_OPERACION);
+		}
+		
+		return inputDto;
 	}
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_LISTADO_DOCUMENTO)
 	@Transactional(readOnly = false)
-	public GestorDocumentalOutputDto listadoDocumentos(Long id,
-			String codEntidad) {
-		return null;
-
+	public void listadoDocumentos(Long id, String tipoDocumento, String codEntidad) {
+		
+		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
+		outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(LISTADO_GESTOR_DOC, tipoDocumento, codEntidad, null));
 	}
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_RECUPERACION_DOCUMENTO)
 	@Transactional(readOnly = false)
-	public GestorDocumentalOutputDto recuperacionDocumento(Long id) {
-		return null;
+	public void recuperacionDocumento(Long id) {
+		
+		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
+		outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(CONSULTA_GESTOR_DOC,null, null, null));
 
 	}
 
@@ -123,6 +155,22 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			param = Parametrizacion.LIMITE_FICHERO_ASUNTO;
 		}
 		return param;
+	}
+	
+	private String getTipoAsociacion(String codEntidad) {
+		String tipoAsociacion = "";
+		if (DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE.equals(codEntidad)) {
+			tipoAsociacion = ConstantesGestorDocumental.GESTOR_DOCUMENTAL_TIPO_ASOCIACION_EXPEDIENTE;
+		} else if (DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE.equals(codEntidad)) {
+			tipoAsociacion = ConstantesGestorDocumental.GESTOR_DOCUMENTAL_TIPO_ASOCIACION_PERSONA;
+		} else if (DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO.equals(codEntidad)) {
+			tipoAsociacion = ConstantesGestorDocumental.GESTOR_DOCUMENTAL_TIPO_ASOCIACION_CONTRATO;
+		} else if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(codEntidad)) {
+			tipoAsociacion = ConstantesGestorDocumental.GESTOR_DOCUMENTAL_TIPO_ASOCIACION_ASUNTO;
+		} else if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(codEntidad)) {
+			tipoAsociacion = ConstantesGestorDocumental.GESTOR_DOCUMENTAL_TIPO_ASOCIACION_PROCEDIMIENTO;
+		}
+		return tipoAsociacion;
 	}
 
 	private void guardarDatoEntidad(String codEntidad, WebFileItem uploadForm) {

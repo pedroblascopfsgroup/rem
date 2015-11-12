@@ -1,4 +1,4 @@
-package es.pfsgroup.recovery.gestorDocumental.dto;
+package es.pfsgroup.recovery.cajamar.gestorDocumental.dto;
 
 import java.util.Date;
 

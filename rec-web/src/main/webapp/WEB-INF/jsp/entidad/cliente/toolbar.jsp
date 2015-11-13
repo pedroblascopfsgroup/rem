@@ -272,7 +272,7 @@ function(entidad,page){
 		}
 	});
 	
-	<sec:authorize ifAnyGranted="SOLICITAR_EXP_MANUAL, SOLICITAR_EXP_MANUAL_SEG">
+	<sec:authorize ifAnyGranted="SOLICITAR_EXP_MANUAL_RECOBRO, SOLICITAR_EXP_MANUAL_SEGUIMIENTO, SOLICITAR_EXP_MANUAL_RECUPERACIONES">
 		toolbar.add(menuExpediente);
 	</sec:authorize>
 	<sec:authorize ifAllGranted="RESPONDER">
@@ -385,10 +385,9 @@ function(entidad,page){
 	}
 	
 
-
-	var permiso_SOLICITAR_EXP_MANUAL_SEG  = false <sec:authorize ifAllGranted="SOLICITAR_EXP_MANUAL_SEG"> || true </sec:authorize>;
-	var permiso_SOLICITAR_EXP_MANUAL  = false <sec:authorize ifAllGranted="SOLICITAR_EXP_MANUAL"> || true </sec:authorize>;
-
+	var permiso_SOLICITAR_EXP_MANUAL_RECOBRO  = false <sec:authorize ifAllGranted="SOLICITAR_EXP_MANUAL_RECOBRO"> || true </sec:authorize>;
+	var permiso_SOLICITAR_EXP_MANUAL_SEGUIMIENTO  = false <sec:authorize ifAllGranted="SOLICITAR_EXP_MANUAL_SEGUIMIENTO"> || true </sec:authorize>;
+	var permiso_SOLICITAR_EXP_MANUAL_RECUPERACIONES = false <sec:authorize ifAllGranted="SOLICITAR_EXP_MANUAL_RECUPERACIONES"> || true </sec:authorize>;
 
 	toolbar.setValue = function(data){
 		var i;
@@ -396,14 +395,15 @@ function(entidad,page){
 		var exclusionTelecobro=data.codigoTipoTarea==app.subtipoTarea.CODIGO_TAREA_VERIFICAR_TELECOBRO;
 		var decisionTelecobro=data.codigoTipoTarea==app.subtipoTarea.CODIGO_TAREA_SOLICITUD_EXCLUSION_TELECOBRO;
 		
+		
 		var esVisible = [
 			[menuExpediente, false]
-			<sec:authorize ifAnyGranted="SOLICITAR_EXP_MANUAL, SOLICITAR_EXP_MANUAL_SEG">
+			<sec:authorize ifAnyGranted="SOLICITAR_EXP_MANUAL_RECOBRO, SOLICITAR_EXP_MANUAL_SEGUIMIENTO, SOLICITAR_EXP_MANUAL_RECUPERACIONES">
 				,[menuExpediente, data.noHayExpedientes || !data.expedientePropuesto.isNull]
-				,[creacionExpedienteButton, permiso_SOLICITAR_EXP_MANUAL]
-				,[creacionExpedienteSeguimientoButton, permiso_SOLICITAR_EXP_MANUAL_SEG ]
+				,[creacionExpedienteButton, permiso_SOLICITAR_EXP_MANUAL_RECUPERACIONES]
+				,[creacionExpedienteSeguimientoButton, permiso_SOLICITAR_EXP_MANUAL_SEGUIMIENTO ]
 				,[rechazarExpedienteButton, !data.expedientePropuesto.isNull && toolbar.isSupervisor()] 
-				,[creacionExpedienteRecobroButton, permiso_SOLICITAR_EXP_MANUAL]
+				,[creacionExpedienteRecobroButton, permiso_SOLICITAR_EXP_MANUAL_RECOBRO]
 			</sec:authorize>	
 			,[botonComunicacion, toolbar.isSupervisor() || toolbar.isGestor()]
 			,[botonResponder, toolbar.isSupervisor() || toolbar.isGestor()]

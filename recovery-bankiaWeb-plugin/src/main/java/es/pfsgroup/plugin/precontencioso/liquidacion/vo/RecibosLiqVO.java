@@ -97,4 +97,9 @@ public class RecibosLiqVO {
 	public BigDecimal getRCB_IMDEUD() {
 		return RCB_IMDEUD;
 	}
+
+	public Date getRCB_FEVCTR() {
+		return RCB_FEVCTR;
+	}
+
 }

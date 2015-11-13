@@ -827,7 +827,11 @@
 		,bbar:[ btnExpandAll, btnCollapseAll, 
 				<sec:authorize ifNotGranted = "SOLO_CONSULTA">btnAgregarBien, btnExcluirBien, btnInstrucLotes</sec:authorize>
 				<sec:authorize ifAllGranted="ENVIO_CIERRE_DEUDA">, btnGenerarInformeCierre , btnEnviarCierre</sec:authorize>
-				<sec:authorize ifNotGranted = "SOLO_CONSULTA">,btnAccionesSubasta</sec:authorize>]
+				<sec:authorize ifNotGranted = "SOLO_CONSULTA">
+					<sec:authorize ifAllGranted="MENU_ACC_MULTIPLES_SUBASTA">
+						,btnAccionesSubasta
+					</sec:authorize>
+				</sec:authorize>]
 	};
 		
 	var gridLotes = app.crearGrid(lotesStore,lotesCM,cfg);

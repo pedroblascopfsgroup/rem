@@ -339,6 +339,7 @@ public class ExpedienteJudicialController {
 		
 		List<ProcedimientoPcoGridDTO> procedimientosPcoGrid = procedimientoPcoApi.busquedaProcedimientosPcoPorFiltro(filter);
 
+		
 		model.put("expedientes", procedimientosPcoGrid);
 
 		Integer totalCount = procedimientoPcoApi.countBusquedaPorFiltro(filter);
@@ -358,5 +359,14 @@ public class ExpedienteJudicialController {
 		model.put("fileItem", fExcel);
 		return "plugin/precontencioso/download";
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String isExpedienteEditable(Long idProcedimiento, ModelMap map){
+	
+		boolean res = procedimientoPcoApi.isExpedienteEditable(idProcedimiento);		
+		
+		map.put("isEditable", res);
+		return "plugin/precontencioso/acciones/json/expedienteEditableJSON";
+	}
 }

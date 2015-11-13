@@ -143,6 +143,14 @@ if [ $? != 0 ] ; then
 #   exit 1
 fi
 
+
+echo "MIG_ANOTACIONES"
+$ORACLE_HOME/bin/sqlldr control="$ctl_dir"anotaciones_expedientes_DataLoad.ctl log="$log_dir"ANOTACIONES_CLIENTES_"$fecha".log bad="$bad_dir"ANOTACIONES_CLIENTES_"$fecha".bad userid="$1" DIRECT=TRUE data="$dat_dir"ANOTACIONES-CLIENTES.dat
+if [ $? != 0 ] ; then 
+   echo -e "[ERROR] MIG_ANOTACIONES"
+#   exit 1
+fi
+
 $ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"CJM_MiG_estadisticas.sql 
 
 if [ $? != 0 ] ; then 

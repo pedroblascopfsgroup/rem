@@ -1925,21 +1925,21 @@
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[ANEXO II - REQUSITOS JURIDICOS REFERENTES A LAS INSTRUCCIONES DADAS POR LA SAREB]]></text>
+				<text><![CDATA[ANEXO II - REQUSITOS JURIDICOS REFERENTES A LAS INSTRUCCIONES DADAS POR CAJAMAR]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="0" y="20" width="555" height="271" uuid="246cd105-cd4b-4faf-a18b-55283c98321b"/>
 				<textElement textAlignment="Justified">
 					<font fontName="Arial" size="10" isBold="false"/>
 				</textElement>
-				<text><![CDATA[“De conformidad con la nota jurídica sobre actividad procesal recibida por la SAREB con fecha 15 de abril de 2013, sólo se deberá celebrar la subasta en dos supuestos:
+				<text><![CDATA[“De conformidad con la nota jurídica sobre actividad procesal recibida por la CAJAMAR con fecha 15 de abril de 2013, sólo se deberá celebrar la subasta en dos supuestos:
 
-	1. Se ha producido la sucesión procesal a favor de la SAREB antes de la fecha de subasta (la fecha prevista 	es el 26/06/2014);
-	2. Si el Procurador o el Letrado del procedimiento efectúan una gestión directa con el Secretario Judicial 	consultando la necesidad de efectuar o no antes de la celebración de la subasta la sucesión procesal a favor de 	SAREB y el Juzgado considera que no hay problema en la expedición del título a favor de SAREB para el caso 	de que resulte adjudicatario. En este supuesto, en el que a pesar de que no haya sido posible la sucesión 	procesal a favor de SAREB, el Juzgado admite la cesión del remate de la finca, la subasta se celebrará y, en 	caso de adjudicación a favor de bankia, se cederá posteriormente a SAREB el remate.
+	1. Se ha producido la sucesión procesal a favor de CAJAMAR antes de la fecha de subasta (la fecha prevista 	es el 26/06/2014);
+	2. Si el Procurador o el Letrado del procedimiento efectúan una gestión directa con el Secretario Judicial 	consultando la necesidad de efectuar o no antes de la celebración de la subasta la sucesión procesal a favor de 	CAJAMAR y el Juzgado considera que no hay problema en la expedición del título a favor de CAJAMAR para el caso 	de que resulte adjudicatario. En este supuesto, en el que a pesar de que no haya sido posible la sucesión 	procesal a favor de CAJAMAR, el Juzgado admite la cesión del remate de la finca, la subasta se celebrará y, en 	caso de adjudicación a favor de bankia, se cederá posteriormente a CAJAMAR el remate.
 
-Es necesario si se suspende la subasta de conformidad con lo expuesto en los apartados anteriores gestionar en el registro de la propiedad la titularidad de la carga a la SAREB a la mayor brevedad posible.
+Es necesario si se suspende la subasta de conformidad con lo expuesto en los apartados anteriores gestionar en el registro de la propiedad la titularidad de la carga a CAJAMAR a la mayor brevedad posible.
 
-Indicar que en el caso de que el Juzgado considere que pudiera haber dificultades en expedir un Decreto de Adjudicación a favor de SAREB de la finca adjudicada, se deberá solicitar la suspensión de la subasta.
+Indicar que en el caso de que el Juzgado considere que pudiera haber dificultades en expedir un Decreto de Adjudicación a favor de CAJAMAR de la finca adjudicada, se deberá solicitar la suspensión de la subasta.
 
 Por último, por lo que respecta a las cargas del inmueble, recordar que sólo persisten las cargas anteriores a nuestra hipoteca, cancelándose las posteriores.
 ]]></text>

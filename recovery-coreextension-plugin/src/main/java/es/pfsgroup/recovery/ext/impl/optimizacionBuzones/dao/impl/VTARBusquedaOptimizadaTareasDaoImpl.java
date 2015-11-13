@@ -310,8 +310,9 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
         hb.append(") OR (");
         
 		if (dto.getZonas().size()>0) {
+			hb.append("(");
 			for (DDZona zonCodigo : dto.getZonas()) {
-				hb.append(" (vtar.zonCodigo like '")
+				hb.append(" vtar.zonCodigo like '")
 						.append(zonCodigo.getCodigo()).append("%' OR");
 			}
 			hb.deleteCharAt(hb.length() - 1);

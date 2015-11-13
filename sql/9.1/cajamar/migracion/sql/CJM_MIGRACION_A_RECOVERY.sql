@@ -2679,7 +2679,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO cargada. Letrados de los Concursos. '||SQL%ROWCOUNT||' Filas.');
     COMMIT;
 */    
-/*    
+    
     
     -- Procuradores procedimientos  
     ------------------------------
@@ -2711,6 +2711,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO cargada. Procuradores. '||SQL%ROWCOUNT||' Filas.');
     COMMIT;
 
+    /*
        
     --Procurador en los concursos:
     ------------------------------
@@ -2816,7 +2817,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAH_GESTOR_ADICIONAL_HISTORICO cargada. Letrados de los Litigios. '||SQL%ROWCOUNT||' Filas.');
     COMMIT;
         */
-/*    
+    
     -- Procuradores
     --------------------------
     EXECUTE IMMEDIATE('insert into '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gah (gah.GAH_ID, gah.GAH_ASU_ID, gah.GAH_GESTOR_ID, gah.GAH_FECHA_DESDE, gah.GAH_TIPO_GESTOR_ID, usuariocrear, fechacrear)
@@ -2846,7 +2847,7 @@ BEGIN
     
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAH_GESTOR_ADICIONAL_HISTORICO cargada. Procuradores. '||SQL%ROWCOUNT||' Filas.');
     COMMIT;
-*/    
+    
 /*
     --letrado en los concursos:
     --------------------------

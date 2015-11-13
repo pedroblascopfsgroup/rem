@@ -35,6 +35,9 @@ import net.sf.jasperreports.engine.JRParameter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.poi.xwpf.converter.pdf.PdfConverter;
+import org.apache.poi.xwpf.converter.pdf.PdfOptions;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.docx4j.XmlUtils;
 import org.docx4j.convert.in.xhtml.XHTMLImporterImpl;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
@@ -77,14 +80,18 @@ import es.pfsgroup.recovery.geninformes.model.GENINFCorreoPendiente;
 import es.pfsgroup.recovery.geninformes.model.GENINFInforme;
 import es.pfsgroup.recovery.geninformes.model.GENINFInformeConfig;
 import es.pfsgroup.recovery.geninformes.model.GENINFParrafo;
+import fr.opensagres.xdocreport.core.document.SyntaxKind;
 import fr.opensagres.xdocreport.document.IXDocReport;
 import fr.opensagres.xdocreport.document.docx.preprocessor.dom.DOMFontsPreprocessor;
 import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
 import fr.opensagres.xdocreport.template.IContext;
 import fr.opensagres.xdocreport.template.TemplateEngineKind;
+import fr.opensagres.xdocreport.template.formatter.FieldsMetadata;
 
 @Service
 public class GENINFInformesManager implements GENINFInformesApi {
+
+	private static final String CONTENIDO = "contenido";
 
 	/** Logger available to subclasses */
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -1006,5 +1013,83 @@ public class GENINFInformesManager implements GENINFInformesApi {
 //		}
 		
 	}
+
+
+	public FileItem generarEscritoConContenidoHTML(String cabecera,
+			String contenidoParseadoFinal, String nombreFichero,
+			InputStream plantillaBurofax)  throws Throwable {
+
+		File fileSalidaTemporal = null;
+		FileItem resultado = null;
+		OutputStream out = null;
+		
+		try{
+			// Comprobamos que exista la plantilla
+			if (nombreFichero==null || nombreFichero.equals("")) {
+				throw new IllegalStateException("Nombre de fichero de plantilla vacio");
+			}
+						
+			if (plantillaBurofax == null) {
+				throw new IllegalStateException("No existe el fichero de plantilla " + nombreFichero);
+			}			
+			
+			// Inicializamos el motor de generación de los escritos
+			IXDocReport report = XDocReportRegistry.getRegistry().loadReport(plantillaBurofax, TemplateEngineKind.Freemarker);		
+			IContext context = report.createContext();
+
+
+            // Creamos campo de metadata para manejar el formateo del contenido 
+            FieldsMetadata metadataCuerpo = report.createFieldsMetadata();
+            metadataCuerpo.addFieldAsTextStyling(CONTENIDO, SyntaxKind.Html);
     
+            // Incluir el contenido de la cabecera
+            context.put(CONTENIDO,cabecera + contenidoParseadoFinal);
+			
+			// Preparamos el fichero temporal
+			fileSalidaTemporal = File.createTempFile("escrito", ".docx");
+			
+			fileSalidaTemporal.deleteOnExit();
+			if (fileSalidaTemporal.exists()) {
+				// Generamos el escrito
+				out = new FileOutputStream(fileSalidaTemporal);
+				report.process(context, out);
+			}
+			
+			resultado = new FileItem();
+			resultado.setFileName(nombreFichero + (new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + ".docx");
+			resultado.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+			resultado.setFile(fileSalidaTemporal);
+			
+		}catch(Throwable e){
+			throw e;
+		}finally{
+			if(!Checks.esNulo(out)){
+				out.close();
+			}
+			if(!Checks.esNulo(plantillaBurofax)){
+				plantillaBurofax.close();
+			}
+		}
+		return resultado;
+
+	}
+
+	public File convertirAPdf(FileItem archivoBurofax, String nombreFicheroPdfSalida) {
+
+		File respuesta = null;
+		OutputStream out = null;
+		try {
+			XWPFDocument document = new XWPFDocument(archivoBurofax.getInputStream());
+			respuesta = new File(nombreFicheroPdfSalida);
+			out = new FileOutputStream(respuesta);
+			PdfOptions options = null; // PdfOptions.create().fontEncoding("windows-1250");
+			PdfConverter.getInstance().convert(document, out, options);
+			out.flush();
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		return respuesta;
+
+	}
+
 }

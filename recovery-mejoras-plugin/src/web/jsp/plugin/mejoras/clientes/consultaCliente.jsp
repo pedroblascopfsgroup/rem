@@ -162,14 +162,14 @@
 	//Solicitar Exclusion Telecobro
 	//Solicitar Exclusioin Recobro
 
-	<sec:authorize ifAnyGranted="SOLICITAR_EXP_MANUAL, SOLICITAR_EXP_MANUAL_SEG">
+	<sec:authorize ifAnyGranted="SOLICITAR_EXP_MANUAL_RECOBRO, SOLICITAR_EXP_MANUAL_SEGUIMIENTO, SOLICITAR_EXP_MANUAL_RECUPERACIONES">
 		//Menú Creación Manual Expediente: book_add.png 
 		//Creación Manual Expediente: book_go.png 
 		//Rechazar Creación Manual Expediente: book_delete.png
 		var menuExpediente={
 					text : '<s:message code="expedientes.creacion.titulo" text="**Creación Manual Expediente" />'
 					,menu:[
-					   <sec:authorize ifAllGranted="SOLICITAR_EXP_MANUAL">
+					   <sec:authorize ifAllGranted="SOLICITAR_EXP_MANUAL_RECUPERACIONES">
 						   {
 								text : tituloCreacionExpedienteRecuperacion
 								,iconCls : 'icon_expediente_manual'
@@ -189,8 +189,8 @@
 								}
 							}
 						</sec:authorize>
-						<sec:authorize ifAllGranted="SOLICITAR_EXP_MANUAL_SEG">
-							<sec:authorize ifAllGranted="SOLICITAR_EXP_MANUAL_SEG">,</sec:authorize>
+						<sec:authorize ifAllGranted="SOLICITAR_EXP_MANUAL_SEGUIMIENTO">
+							<sec:authorize ifAllGranted="SOLICITAR_EXP_MANUAL_SEGUIMIENTO">,</sec:authorize>
 						    {
 								text : tituloCreacionExpedienteSeguimiento
 								,iconCls : 'icon_expediente_manual'
@@ -338,14 +338,14 @@
 	
 	<c:if test="${noHayExpedientes || expedientePropuesto!=null}">
 
-		<sec:authorize ifAnyGranted="SOLICITAR_EXP_MANUAL, SOLICITAR_EXP_MANUAL_SEG">
+		<sec:authorize ifAnyGranted="SOLICITAR_EXP_MANUAL_RECOBRO, SOLICITAR_EXP_MANUAL_SEGUIMIENTO, SOLICITAR_EXP_MANUAL_RECUPERACIONES">
 
 			var menuExpedienteNuevo = new Array();
 			var indexCrear = 0;
 			var indexCrearSeg = 0;
 			var indexRechazar = 1;
 
-			<sec:authorize ifAllGranted="SOLICITAR_EXP_MANUAL, SOLICITAR_EXP_MANUAL_SEG">
+			<sec:authorize ifAllGranted="SOLICITAR_EXP_MANUAL_SEGUIMIENTO, SOLICITAR_EXP_MANUAL_RECUPERACIONES">
 				indexCrearSeg = 1;
 				indexRechazar = 2;
 			</sec:authorize>
@@ -355,7 +355,7 @@
 			     || idCliente == null ) {
 			</sec:authorize>
 					
-				<sec:authorize ifAllGranted="SOLICITAR_EXP_MANUAL">
+				<sec:authorize ifAllGranted="SOLICITAR_EXP_MANUAL_RECOBRO">
 					menuExpedienteNuevo[indexCrear] = menuExpediente.menu[indexCrear];
 					<c:if test="${expedientePropuesto!=null && expedientePropuesto.seguimiento}">
 						menuExpedienteNuevo[indexCrear].disabled=true;
@@ -369,7 +369,7 @@
 					}
 				</sec:authorize>
 				
-				<sec:authorize ifAllGranted="SOLICITAR_EXP_MANUAL_SEG">
+				<sec:authorize ifAllGranted="SOLICITAR_EXP_MANUAL_SEGUIMIENTO">
 					menuExpedienteNuevo[indexCrearSeg] = menuExpediente.menu[indexCrearSeg];
 					<c:if test="${expedientePropuesto!=null && !expedientePropuesto.seguimiento}">
 						menuExpedienteNuevo[indexCrearSeg].disabled=true;

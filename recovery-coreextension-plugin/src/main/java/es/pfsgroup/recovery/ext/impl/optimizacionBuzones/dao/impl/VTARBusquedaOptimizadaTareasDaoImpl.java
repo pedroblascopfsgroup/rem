@@ -276,6 +276,7 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
     		listaIdUsuarios.append(sep).append(str);
     	    sep = ",";
     	}
+    	hb.append(" ( ");
         if (dto.isEnEspera()) {
         	String usuIdWhere = String.format(" vtar.usuarioEnEspera in (%s)", listaIdUsuarios);
         	hb.append(usuIdWhere);
@@ -286,6 +287,7 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
         	String usuIdWhere = String.format(" vtar.usuarioPendiente in (%s)", listaIdUsuarios);
         	hb.append(usuIdWhere);
         }
+        hb.append(" OR vtar.usuarioPendiente is null )");
 
         // Que la tarea est� pendiente
         if (hb.length()>0)
@@ -307,17 +309,17 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
         }
         
         //Parte Expedientes
-        hb.append(") OR (");
+        //hb.append(") OR (");
         
 		if (dto.getZonas().size()>0) {
-			hb.append("(");
+			hb.append(" AND (");
 			for (DDZona zonCodigo : dto.getZonas()) {
 				hb.append(" vtar.zonCodigo like '")
 						.append(zonCodigo.getCodigo()).append("%' OR");
 			}
-			hb.deleteCharAt(hb.length() - 1);
-			hb.deleteCharAt(hb.length() - 1);
-			hb.append(")");
+			//hb.deleteCharAt(hb.length() - 1);
+			//hb.deleteCharAt(hb.length() - 1);
+			hb.append(" vtar.zonCodigo is null )");
 		}
 		
 		if (dto.getPerfiles().size()>0) {
@@ -329,7 +331,7 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 			}		
 			hb.deleteCharAt(hb.length() - 1);
 			hb.append(")");
-			hb.append(")");
+			hb.append(" OR vtar.idPerfil is null )");
 		}
 		hb.append(")" );
 		

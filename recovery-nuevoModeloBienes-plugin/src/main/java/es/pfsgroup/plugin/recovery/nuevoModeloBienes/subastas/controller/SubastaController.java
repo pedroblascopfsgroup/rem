@@ -262,7 +262,7 @@ public class SubastaController {
 			model.put("fileItem", resultado);
 			
 			return GENINFVisorInformeController.JSP_DOWNLOAD_FILE;
-		} else {
+		} else if(SubastaApi.CODIGO_TIPO_PROCEDIMIENTO_SUBASTA_SAREB.compareTo(procedimientos.getTipoProcedimiento().getCodigo()) == 0) {
 			//sareb
 			plantilla = "reportInformeSubastaSareb.jrxml";
 			InformeSubastaSarebBean informe = new InformeSubastaSarebBean();
@@ -280,6 +280,23 @@ public class SubastaController {
 			
 			return GENINFVisorInformeController.JSP_DOWNLOAD_FILE;			
 			
+		}else{
+			//cajamar
+			plantilla = "reportInformeSubastaCajamar.jrxml";
+			InformeSubastaSarebBean informe = new InformeSubastaSarebBean();
+			informe.setIdAsunto(idAsunto);
+			informe.setIdSubasta(idSubasta);
+			informe.setProxyFactory(proxyFactory);
+			informe.setSubastaApi(subastaApi);
+			informe.setNmbCommonProjectContext(nmbProjectContext);
+			List<Object> array = informe.create();
+			Map<String, Object> mapaValores = null;
+			FileItem resultado = proxyFactory.proxy(GENINFInformesApi.class)
+			.generarInforme(plantilla, mapaValores, array);
+			
+			model.put("fileItem", resultado);
+			
+			return GENINFVisorInformeController.JSP_DOWNLOAD_FILE;	
 		}
 					
 	}

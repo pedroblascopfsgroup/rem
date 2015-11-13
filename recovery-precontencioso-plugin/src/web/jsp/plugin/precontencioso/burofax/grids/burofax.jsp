@@ -246,7 +246,11 @@
 				}
 				
 				<%-- Como se puede enviar sin estar preparado habilitamos el boton enviar--%>
-				btnEnviar.setDisabled(false);
+				if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Solicitado' || gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Enviado'){
+					btnEnviar.setDisabled(true);
+				} else {
+					btnEnviar.setDisabled(false);
+				}
 				
 				<%-- Si el Resultado es notificado habilitamos el boton de añadir notificacion --%>
 				if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Enviado'){
@@ -256,7 +260,7 @@
 					btnNotificar.setDisabled(true);
 				}
 				<%-- Si hay un envio seleccionado y su estado es ENVIADO habilitamos el boton de descargar burofax --%>
-				if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Enviado' && myCboxSelModel.getCount() == 1){
+				if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Solicitado' && myCboxSelModel.getCount() == 1){
 					btnDescargarBurofax.setDisabled(false);
 				}
 				else{

@@ -521,8 +521,8 @@ public class BurofaxController {
 		
     	BurofaxEnvioIntegracionPCO burofaxEnvio=burofaxManager.getBurofaxEnvioIntegracionByIdEnvio(idEnvio);
 		if(!Checks.esNulo(burofaxEnvio) && !Checks.esNulo(burofaxEnvio.getArchivoBurofax())){
-			burofaxEnvio.getArchivoBurofax().setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-			burofaxEnvio.getArchivoBurofax().setFileName("BUROFAX-"+burofaxEnvio.getCliente().replace(",","").trim()+".docx");
+			burofaxEnvio.getArchivoBurofax().setContentType("application/pdf");
+			burofaxEnvio.getArchivoBurofax().setFileName(burofaxEnvio.getNombreFichero());
 			model.put("fileItem", burofaxEnvio.getArchivoBurofax());
 		}
 

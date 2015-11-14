@@ -509,7 +509,7 @@
         	btnRechazarAcuerdo,
 			btnCumplimientoAcuerdo,
 			btnRegistrarFinalizacionAcuerdo,
-			btnVigenteAcuerdo,
+			btnVigenteAcuerdo
 	      ]
 
 	}); 

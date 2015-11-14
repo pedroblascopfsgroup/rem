@@ -521,7 +521,7 @@
 		{	/*Columna 0*/ header: '<s:message code="tareas.listado.tarea" text="**Tarea"/>', sortable: true, dataIndex: nombreTareaField}
 		,{	/*Columna 2*/ header: '<s:message code="tareas.listado.descripcion" text="**Descripcion"/>', sortable: false, dataIndex: 'descripcion'}
 		,{	/*Columna 1*/ header: '<s:message code="tareas.listado.entidadinformacion" text="**Entidad Informacion"/>', sortable: false, dataIndex: 'entidadInformacion'}
-		,{	/*Columna 3*/ header: '<s:message code="tareas.listado.itinerario" text="**Itinerario"/>', sortable: false, hidden:true, dataIndex: 'itinerario'}
+		,{	/*Columna 3*/ header: '<s:message code="tareas.listado.itinerario" text="**Itinerario"/>', sortable: false, dataIndex: 'itinerario'}
 		,{	/*Columna 4*/ header: '<s:message code="tareas.listado.fechainicio" text="**Fecha inicio"/>', sortable: true, hidden:true, dataIndex: 'fechaInicio', width:50}
 		,{	/*Columna 5*/ header: '<s:message code="tareas.listado.fechavenc" text="**Fecha Vto."/>', sortable: true, dataIndex: 'fechaVenc', width:50}
 		,{	/*Columna 5*/ header: '<s:message code="plugin.mejoras.tareas.listado.fechavencOri" text="**Fecha Vto. Orig."/>', sortable: true, dataIndex: 'fechaVencReal', width:50}
@@ -545,7 +545,7 @@
 			{	/*Columna 0*/ header: '<s:message code="tareas.listado.tarea" text="**Tarea"/>', sortable: true, dataIndex: nombreTareaField}
 			,{	/*Columna 2*/ header: '<s:message code="tareas.listado.descripcion" text="**Descripcion"/>', sortable: false, dataIndex: 'descripcion'}
 			,{	/*Columna 1*/ header: '<s:message code="tareas.listado.entidadinformacion" text="**Entidad Informacion"/>', sortable: false, dataIndex: 'entidadInformacion'}
-			,{	/*Columna 3*/ header: '<s:message code="tareas.listado.itinerario" text="**Itinerario"/>', sortable: false, hidden:true, dataIndex: 'itinerario'}
+			,{	/*Columna 3*/ header: '<s:message code="tareas.listado.itinerario" text="**Itinerario"/>', sortable: false, dataIndex: 'itinerario'}
 			,{	/*Columna 4*/ header: '<s:message code="tareas.listado.fechainicio" text="**Fecha inicio"/>', sortable: true, hidden:true, dataIndex: 'fechaInicio', width:50}
 			,{	/*Columna 5*/ header: '<s:message code="tareas.listado.fechavenc" text="**Fecha Vto."/>', sortable: true, dataIndex: 'fechaVenc', width:50}
 			,{	/*Columna 5*/ header: '<s:message code="plugin.mejoras.tareas.listado.fechavencOri" text="**Fecha Realizacion."/>', sortable: true, dataIndex: 'fechaVencReal', width:50}
@@ -569,7 +569,7 @@
 			{	/*Columna 0*/ header: '<s:message code="tareas.listado.tarea" text="**Tarea"/>', sortable: true, dataIndex: nombreTareaField}
 			,{	/*Columna 2*/ header: '<s:message code="tareas.listado.descripcion" text="**Descripcion"/>', sortable: false, dataIndex: 'descripcion'}
 			,{	/*Columna 1*/ header: '<s:message code="tareas.listado.entidadinformacion" text="**Entidad Informacion"/>', sortable: false, dataIndex: 'entidadInformacion'}
-			,{	/*Columna 3*/ header: '<s:message code="tareas.listado.itinerario" text="**Itinerario"/>', sortable: false, hidden:true, dataIndex: 'itinerario'}
+			,{	/*Columna 3*/ header: '<s:message code="tareas.listado.itinerario" text="**Itinerario"/>', sortable: false, dataIndex: 'itinerario'}
 			,{	/*Columna 4*/ header: '<s:message code="tareas.listado.fechainicio" text="**Fecha inicio"/>', sortable: true, hidden:true, dataIndex: 'fechaInicio', width:50}
 			,{	/*Columna 5*/ header: '<s:message code="tareas.listado.fechavenc" text="**Fecha Vto."/>', sortable: true, dataIndex: 'fechaVenc', width:50}
 			,{	/*Columna 5*/ header: '<s:message code="plugin.mejoras.tareas.listado.fechavencOri" text="**Fecha Realizacion."/>', sortable: true, dataIndex: 'fechaVencReal', width:50}
@@ -592,7 +592,7 @@
 			{	/*Columna 0*/ header: '<s:message code="tareas.listado.tarea" text="**Tarea"/>', sortable: true, dataIndex: nombreTareaField}
 			,{	/*Columna 2*/ header: '<s:message code="tareas.listado.descripcion" text="**Descripcion"/>', sortable: false, dataIndex: 'descripcion'}
 			,{	/*Columna 1*/ header: '<s:message code="tareas.listado.entidadinformacion" text="**Entidad Informacion"/>', sortable: false, dataIndex: 'entidadInformacion'}
-			,{	/*Columna 3*/ header: '<s:message code="tareas.listado.itinerario" text="**Itinerario"/>', sortable: false, hidden:true, dataIndex: 'itinerario'}
+			,{	/*Columna 3*/ header: '<s:message code="tareas.listado.itinerario" text="**Itinerario"/>', sortable: false, dataIndex: 'itinerario'}
 			,{	/*Columna 4*/ header: '<s:message code="tareas.listado.fechainicio" text="**Fecha inicio"/>', sortable: true, hidden:true, dataIndex: 'fechaInicio', width:50}
 			,{	/*Columna 5*/ header: '<s:message code="tareas.listado.fechavenc" text="**Fecha Vto."/>', sortable: true, dataIndex: 'fechaVenc', width:50}
 			,{	/*Columna 5*/ header: '<s:message code="plugin.mejoras.tareas.listado.fechavencOri" text="**Fecha Realizacion."/>', sortable: true, dataIndex: 'fechaVencReal', width:50}

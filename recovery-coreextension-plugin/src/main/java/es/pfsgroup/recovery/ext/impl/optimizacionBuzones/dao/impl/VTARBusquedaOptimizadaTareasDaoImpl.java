@@ -276,6 +276,7 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
     		listaIdUsuarios.append(sep).append(str);
     	    sep = ",";
     	}
+    	hb.append(" ( ");
         if (dto.isEnEspera()) {
         	String usuIdWhere = String.format(" vtar.usuarioEnEspera in (%s)", listaIdUsuarios);
         	hb.append(usuIdWhere);
@@ -310,14 +311,14 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
         hb.append(") OR (");
         
 		if (dto.getZonas().size()>0) {
-			hb.append("(");
+			hb.append(" (");
 			for (DDZona zonCodigo : dto.getZonas()) {
 				hb.append(" vtar.zonCodigo like '")
 						.append(zonCodigo.getCodigo()).append("%' OR");
 			}
 			hb.deleteCharAt(hb.length() - 1);
 			hb.deleteCharAt(hb.length() - 1);
-			hb.append(")");
+			hb.append(" )");
 		}
 		
 		if (dto.getPerfiles().size()>0) {
@@ -329,9 +330,9 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 			}		
 			hb.deleteCharAt(hb.length() - 1);
 			hb.append(")");
-			hb.append(")");
+			hb.append(") ");
 		}
-		hb.append(")" );
+		hb.append("))" );
 		
         return hb;
     }

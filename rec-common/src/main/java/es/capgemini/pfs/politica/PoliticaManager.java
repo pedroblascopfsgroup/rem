@@ -1096,6 +1096,17 @@ public class PoliticaManager {
     public Politica get(Long id) {
         return politicaDao.get(id);
     }
+    
+    
+    /**
+     * @param id long
+     * @return Politica
+     */
+    @BusinessOperation(InternaBusinessOperation.BO_POL_MGR_GET_POL_BY_CMP)
+    public List<Politica> getByCmp(Long id) {
+        //return politicaDao.get(id) ;
+    	return politicaDao.buscarPoliticasPorCmp(id);
+    }
 
     /**
      * Cancela una política y mata sus BPMs

@@ -33,6 +33,17 @@ public class PoliticaDaoImpl extends AbstractEntityDao<Politica, Long> implement
         String hql = "from CicloMarcadoPolitica c where c.persona.id = ? order by c.auditoria.fechaCrear desc";
         return getHibernateTemplate().find(hql, new Object[] { idPersona });
     }
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Politica> buscarPoliticasPorCmp(Long cmpId) {
+        String hql = "from Politica p where p.cicloMarcadoPolitica.id = ?";
+        return (List<Politica>) getHibernateTemplate().find(hql, new Object[] { cmpId });
+    }
 
     /**
      * {@inheritDoc}

@@ -464,6 +464,20 @@ public class AnalisisPoliticaManager {
         if (politica == null) { return null; }
         return politica.getCicloMarcadoPolitica().getAnalisisPersonaPolitica();
     }
+    
+    
+    @BusinessOperation(InternaBusinessOperation.BO_ANALISIS_POL_MGR_GET_ANALISIS_POLITICA_HISTORICO_BY_CMP)
+    public AnalisisPersonaPolitica getAnalisisPoliticaHistoricoByCmp(Long idPolitica) {
+        List<Politica> politicas = (List<Politica>) executor.execute(InternaBusinessOperation.BO_POL_MGR_GET_POL_BY_CMP, idPolitica);
+        if (politicas == null || politicas.size() == 0) { 
+        	return null; 
+        }else{
+           for(Politica politica : politicas){
+        	   return politica.getCicloMarcadoPolitica().getAnalisisPersonaPolitica();
+           }
+        }
+		return null;
+    }
 
     /**
      * Devuelve los tipos de gestión, marcando los que están seleccionados.

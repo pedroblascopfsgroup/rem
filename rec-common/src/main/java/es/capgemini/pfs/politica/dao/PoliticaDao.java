@@ -61,4 +61,6 @@ public interface PoliticaDao extends AbstractDao<Politica, Long> {
      * @return
      */
     CicloMarcadoPolitica buscarPoliticasParaPersonaExpediente(Long idPersona, Long idExpediente);
+    
+    List<Politica> buscarPoliticasPorCmp(Long cmpId);
 }

@@ -400,9 +400,10 @@ public class MEJAcuerdoController {
 			DDSubTipoAcuerdo subtipoAcuerdo = genericDao.get(DDSubTipoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", taDTO.getIdSubTipoAcuerdo()));
 			ta.setSubtipoAcuerdo(subtipoAcuerdo);	
 		}
-		
-		DDTipoProducto tipoProducto = genericDao.get(DDTipoProducto.class, genericDao.createFilter(FilterType.EQUALS, "id", taDTO.getIdTipoProducto()));
-		ta.setTipoProducto(tipoProducto);
+		if (!Checks.esNulo(taDTO.getIdTipoProducto())) {
+			DDTipoProducto tipoProducto = genericDao.get(DDTipoProducto.class, genericDao.createFilter(FilterType.EQUALS, "id", taDTO.getIdTipoProducto()));
+			ta.setTipoProducto(tipoProducto);
+		}
 		ta.setModoDesembolso(taDTO.getModoDesembolso());
 		ta.setFormalizacion(taDTO.getFormalizacion());
 		ta.setImporte(taDTO.getImporte());

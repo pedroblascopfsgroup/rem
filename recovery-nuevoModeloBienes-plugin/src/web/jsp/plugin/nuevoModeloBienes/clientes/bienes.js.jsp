@@ -170,11 +170,11 @@
 	<sec:authorize ifAllGranted="ESTRUCTURA_COMPLETA_BIENES">
 		if ('${NMBbien.origen.id}' == '2') {
 			/* AUTOMATICO */
-			
-			/* CPI - 14/11/2015
-			 Ya no se bloquean los campos, porque existe la pestaña datos_entidad 
+			/*
+			CPI - 14/11/2015
+			Se permite modificar bienes automaticos por tener la pestaña datos_entidad
 			bloquearCampos = 1;
-			*/ 
+			*/			 
 			bloquearCampos = 2; 
 			origen = 'Automático';
 		} else {

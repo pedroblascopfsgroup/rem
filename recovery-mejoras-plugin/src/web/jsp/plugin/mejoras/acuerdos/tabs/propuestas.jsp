@@ -277,7 +277,7 @@
           	btnProponerAcuerdo,
           	btnCancelarAcuerdo,
      	   	btnRegistrarFinalizacionAcuerdo,
-          	btnRechazarAcuerdo,
+          	btnRechazarAcuerdo
 	      ]
 
 	}); 

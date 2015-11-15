@@ -338,14 +338,14 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 		,{name:'descripcion'}
 	]);
 	
-	var optionsTipoProductoStore = page.getStore({
+	<%-- var optionsTipoProductoStore = page.getStore({
 	       flow: 'mejacuerdo/getListTipoProductosData'
 	       ,reader: new Ext.data.JsonReader({
 	    	 root : 'listadoProductos'
 	    }, tipoPro)	       
-	});	
+	});	--%>
 	
-	var comboTipoProducto = new Ext.form.ComboBox({
+	<%--var comboTipoProducto = new Ext.form.ComboBox({
 		store:optionsTipoProductoStore
         ,displayField:'descripcion'
         ,allowBlank:false
@@ -360,7 +360,7 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 		,fieldLabel: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.producto" text="**Producto" />'
 		,labelStyle: 'width:150px'
 		,width: 170					
-	});
+	});--%>
 	
 	
 	var flujoFieldSet = new Ext.FormPanel({
@@ -375,7 +375,7 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
 		,items : [
 		 	{items:[comboTipoAcuerdo,comboSubTipoAcuerdo],width:450}
-		 	,{items:[comboTipoProducto],width:450}
+		 	<%-- ,{items:[comboTipoProducto],width:450}--%>
 		]
 	});	
 	
@@ -475,7 +475,7 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 	       		Ext.apply(params, {idAcuerdo : '${idAcuerdo}' });
 	       		Ext.apply(params, {idTipoAcuerdo : comboTipoAcuerdo.getValue()});
 	       		Ext.apply(params, {idSubTipoAcuerdo : comboSubTipoAcuerdo.getValue()});
-	       		Ext.apply(params, {idTipoProducto : comboTipoProducto.getValue()});
+	       		<%--Ext.apply(params, {idTipoProducto : comboTipoProducto.getValue()});--%>
 	       		Ext.apply(params, {informeLetrado : informeLetrado.getValue()});
 	       		Ext.apply(params, {contratosIncluidos : '${contratosIncluidos}'});
 	       		Ext.apply(params, {bienesIncluidos : comboBienes.getValue()});     		
@@ -656,12 +656,12 @@ if("${esPropuesta}" == "true"){
 		       	});
 	       	}
 	       	
-	       	if("${termino.tipoProducto.id}"!=null && "${termino.tipoProducto.id}"!=''){
+	       	<%--if("${termino.tipoProducto.id}"!=null && "${termino.tipoProducto.id}"!=''){
 	       		comboTipoProducto.store.load();
 		    	comboTipoProducto.store.on('load', function(){  
 		        	comboTipoProducto.setValue(${termino.tipoProducto.id});
 		       	});
-	       	}
+	       	}--%>
 	       	
 	       	if("${termino.bienes}"!=null && "${termino.bienes}"!=''){
 	       		bienesStore.on('load', function(){  
@@ -678,7 +678,7 @@ if("${esPropuesta}" == "true"){
 	       	
 	       	comboTipoAcuerdo.setDisabled(false);
 	       	comboSubTipoAcuerdo.setDisabled(false);
-	       	comboTipoProducto.setDisabled(false);
+	       	<%--comboTipoProducto.setDisabled(false);--%>
 	       	comboBienes.setDisabled(false);
 	       	informeLetrado.setDisabled(false);
 	       	

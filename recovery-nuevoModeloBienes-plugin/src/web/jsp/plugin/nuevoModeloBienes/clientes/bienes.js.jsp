@@ -170,7 +170,12 @@
 	<sec:authorize ifAllGranted="ESTRUCTURA_COMPLETA_BIENES">
 		if ('${NMBbien.origen.id}' == '2') {
 			/* AUTOMATICO */
-			bloquearCampos = 1; 
+			/*
+			CPI - 14/11/2015
+			Se permite modificar bienes automaticos por tener la pestaña datos_entidad
+			bloquearCampos = 1;
+			*/			 
+			bloquearCampos = 2; 
 			origen = 'Automático';
 		} else {
 			/* MANUAL */

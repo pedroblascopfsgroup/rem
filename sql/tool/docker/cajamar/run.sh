@@ -401,6 +401,9 @@ else
 		echo "[INFO] Empaquetando y ejecutando scripts DDL y DML"
 		package_sql $STARTING_TAG $CLIENTE
 		$(pwd)/execute-scripts.sh $CONTAINER_NAME $DOCKER_INNER_ERROR_LOG
+        if [[ $? != 0 ]]; then
+            exit 1
+        fi
 	fi
 
 	if [[ "x$OPTION_RESTART" == "xyes" ]]; then

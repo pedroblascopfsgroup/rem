@@ -303,6 +303,10 @@ public class GestorTareasManager implements GestorTareasApi {
 	public boolean getEsTareaPrecontenciosoEspecial(Long tareaId) {
 
 		TareaExterna tareaExterna = genericDao.get(TareaExterna.class, genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", tareaId));
+	
+		if(tareaExterna == null){
+			return false;
+		}
 		
 		boolean esEspecial = CODIGOS_TAREAS_ESPECIALES_PRECONTENCIOSO.contains(tareaExterna.getTareaProcedimiento().getCodigo()) ? true : false;
 

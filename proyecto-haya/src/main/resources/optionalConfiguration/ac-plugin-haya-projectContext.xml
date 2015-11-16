@@ -131,6 +131,7 @@
 						<value>822</value>
 						<value>823</value>
 						<value>824</value>
+						<value>PCO_DPREDOC</value>
 						
 						<!-- HRE-BCC -->
 						<value>DGCONGE</value>
@@ -306,10 +307,20 @@
 		<property name="tareaAceptacionLitigios">
 			<value>H068</value>
 		</property>
+		<property name="tareaInicioConcurso">
+			<value>H009</value>
+		</property>
 	</bean>  
+	
+	<bean id="precontenciosoProjectContextHAYA" parent="precontenciosoProjectContextDefault">
+		<property name="recovery">
+			<value>HAYA</value>
+		</property>
+	</bean>
 
 	<alias name="nmbCommonProjectContextHAYA" alias="nmbCommonProjectContext"/>
 	<alias name="procedimientosProjectContextHaya" alias="procedimientosProjectContext"/>		
 	<alias name="coreProjectContextHAYA" alias="coreProjectContext"/>
+	<alias name="precontenciosoProjectContextHAYA" alias="precontenciosoProjectContext"/>
 	<bean id="hayaProjectContext" parent="hayaProjectContextDefault"/>
 </beans>	

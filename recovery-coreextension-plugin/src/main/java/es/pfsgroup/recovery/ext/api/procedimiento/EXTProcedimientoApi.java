@@ -14,6 +14,9 @@ public interface EXTProcedimientoApi {
 	public static final String MEJ_BO_PRC_ES_GESTOR_CEX = "es.pfsgroup.recovery.mejoras.api.procedimiento.esGestorCex";
 	public static final String MEJ_BO_PRC_ES_SUPERVISOR_CEX = "es.pfsgroup.recovery.mejoras.api.procedimiento.esSupervisorCex";
 
+	public static final String MEJ_BO_PRC_SE_PUEDE_DESPARALIZAR = "es.pfsgroup.recovery.mejoras.procedimiento.api.isDesparalizable";
+	public static final String MEJ_BO_PRC_DESPARALIZAR = "es.pfsgroup.recovery.mejoras.procedimiento.api.desparalizar";
+	
 	/**
 	 * Busca procedimientos que contengan un determinado contrato
 	 * 
@@ -40,5 +43,11 @@ public interface EXTProcedimientoApi {
     
     @BusinessOperationDefinition(MEJ_BO_PRC_ES_SUPERVISOR_CEX)
     public Boolean esSupervisorCEX(Long idProcedimiento,String codUg);
+
+    @BusinessOperationDefinition(MEJ_BO_PRC_SE_PUEDE_DESPARALIZAR)
+	public boolean isDespararizable(Long idProcedimiento);
+    
+    @BusinessOperationDefinition(MEJ_BO_PRC_DESPARALIZAR)
+	public void desparalizarProcedimiento(Long idProcedimiento);
 
 }

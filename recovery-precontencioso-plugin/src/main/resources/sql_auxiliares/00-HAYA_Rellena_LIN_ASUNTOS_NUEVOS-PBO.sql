@@ -19,7 +19,7 @@ id juzgado: 27562
 Concursal: 02
 **/
 
-alter table haya01.lin_asuntos_nuevos add dd_tas_codigo varchar2(10);
+--alter table haya01.lin_asuntos_nuevos add dd_tas_codigo varchar2(10);
 
 /*
 15 asuntos de prelitigio con los siguientes datos:

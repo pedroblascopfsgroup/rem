@@ -24,6 +24,7 @@
 			<bean class="es.pfsgroup.plugin.recovery.configuracionEmails.ConfiguracionEmailsManager"></bean>
 		</property>
 	</bean>	
+	<bean id="tramiteAceptacionUserDecisionActionHandler" class="es.pfsgroup.procedimientos.handlers.TramiteAceptacionUserDecisionActionHandler"></bean>
  	    
 	<!-- BPM activos -->
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDeclaracionIVAIGIC/hcj_declaracionIVAIGIC.xml" p:version="-1"/>

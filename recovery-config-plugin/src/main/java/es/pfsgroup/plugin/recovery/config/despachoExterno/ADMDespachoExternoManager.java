@@ -1,8 +1,13 @@
 package es.pfsgroup.plugin.recovery.config.despachoExterno;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,11 +16,15 @@ import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.devon.web.DynamicElement;
 import es.capgemini.pfs.core.api.web.DynamicElementApi;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
+import es.capgemini.pfs.despachoExterno.model.DespachoAmbitoActuacion;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.direccion.model.DDComunidadAutonoma;
+import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.multigestor.dao.EXTTipoGestorPropiedadDao;
@@ -25,9 +34,12 @@ import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.Assertions;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.config.PluginConfigBusinessOperations;
 import es.pfsgroup.plugin.recovery.config.dao.ADMAsuntoDao;
 import es.pfsgroup.plugin.recovery.config.despachoExterno.dao.ADMDDTipoViaDao;
+import es.pfsgroup.plugin.recovery.config.despachoExterno.dao.ADMDespachoAmbitoActuacionDao;
 import es.pfsgroup.plugin.recovery.config.despachoExterno.dao.ADMDespachoExternoDao;
 import es.pfsgroup.plugin.recovery.config.despachoExterno.dao.ADMGestorDespachoDao;
 import es.pfsgroup.plugin.recovery.config.despachoExterno.dao.ADMTipoDespachoExternoDao;
@@ -35,13 +47,22 @@ import es.pfsgroup.plugin.recovery.config.despachoExterno.dto.ADMDtoBusquedaDesp
 import es.pfsgroup.plugin.recovery.config.despachoExterno.dto.ADMDtoDespachoExterno;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTDDTipoGestorApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
+import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoDespachoDto;
 
 @Service("ADMDespachoExternoManager")
 public class ADMDespachoExternoManager {
+	
+	private final Log logger = LogFactory.getLog(getClass());
 
+	@Autowired
+	private GenericABMDao genericDao;
+		
 	@Autowired
 	private ADMDespachoExternoDao despachoExternoDao;
 
+	@Autowired
+	private ADMDespachoAmbitoActuacionDao despachoAmbitoActuacionDao;
+	
 	@Autowired
 	private ADMGestorDespachoDao gestorDespachoDao;
 
@@ -127,6 +148,17 @@ public class ADMDespachoExternoManager {
 		return despachoExternoDao.get(idDespachoExterno);
 	}
 
+	/**
+	 * Devuelve un el Despacho Externo con esa ID.
+	 * 
+	 * @param idDespachoExterno
+	 * @return
+	 */
+	@BusinessOperation("ADMDespachoExternoManager.getAmbitoGeograficoDespacho")
+	public List<DespachoAmbitoActuacion> getAmbitoGeograficoDespacho(Long idDespachoExterno) {
+		return despachoAmbitoActuacionDao.getAmbitoGeograficoDespacho(idDespachoExterno);
+	}
+	
 	/**
 	 * Almacena un despacho externo.
 	 * 
@@ -521,5 +553,70 @@ public class ADMDespachoExternoManager {
 		else
 			return l;
 	}
-
+	
+	@Transactional(readOnly = false)
+	public void saveEsquemaDespacho(EsquemaTurnadoDespachoDto dto) {
+		
+		try {
+			// Se guardan los datos directamente relacionados con el despacho
+			DespachoExterno despachoExterno = despachoExternoDao.get(dto.getId());
+			despachoExterno.setTurnadoCodigoImporteLitigios(dto.getTurnadoCodigoImporteLitigios());
+			despachoExterno.setTurnadoCodigoCalidadLitigios(dto.getTurnadoCodigoCalidadLitigios());
+			despachoExterno.setTurnadoCodigoImporteConcursal(dto.getTurnadoCodigoImporteConcursal());
+			despachoExterno.setTurnadoCodigoCalidadConcursal(dto.getTurnadoCodigoCalidadConcursal());
+			
+			despachoExternoDao.saveOrUpdate(despachoExterno);
+			
+			// Se marcan como borrados los ámbitos de actuación que han sido eliminados de la lista de comunidades y provincias
+			List<DespachoAmbitoActuacion> listDespachoAmbitoActuacion = despachoAmbitoActuacionDao.getAmbitosActuacionExcluidos(dto.getId(), dto.getListaComunidades(), dto.getListaProvincias());
+			for(DespachoAmbitoActuacion despachoAmbitoActuacion : listDespachoAmbitoActuacion) {
+				despachoAmbitoActuacion.getAuditoria().setFechaBorrar(new Date());
+				despachoAmbitoActuacion.getAuditoria().setUsuarioBorrar(SecurityUtils.getCurrentUser().getUsername());
+				despachoAmbitoActuacion.getAuditoria().setBorrado(true);
+			}
+			
+			// Se buscan las relaciones existentes entre el despacho y las comunidades. En caso de no existir se crea
+			List<String> listaComunidades = Arrays.asList(StringUtils.split(dto.getListaComunidades(), ","));
+			for(String codigoComunidad : listaComunidades) {
+				
+				DespachoAmbitoActuacion despachoAmbitoActuacion = despachoAmbitoActuacionDao.getByDespachoYComunidad(dto.getId(), codigoComunidad);
+				
+				if(despachoAmbitoActuacion == null) {
+					DDComunidadAutonoma comunidad = genericDao.get(DDComunidadAutonoma.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoComunidad));
+					
+					despachoAmbitoActuacion = new DespachoAmbitoActuacion();
+					despachoAmbitoActuacion.setDespacho(despachoExterno);
+					despachoAmbitoActuacion.setComunidad(comunidad);
+				}
+				
+				listDespachoAmbitoActuacion.add(despachoAmbitoActuacion);				
+			}
+			
+			// Se buscan las relaciones existentes entre el despacho y las provincias. En caso de no existir se crea
+			List<String> listaProvincias = Arrays.asList(StringUtils.split(dto.getListaProvincias(), ","));
+			for(String codigoProvincia : listaProvincias) {
+				
+				DespachoAmbitoActuacion despachoAmbitoActuacion = despachoAmbitoActuacionDao.getByDespachoYProvincia(dto.getId(), codigoProvincia);
+				
+				if(despachoAmbitoActuacion == null) {
+					DDProvincia provincia = genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoProvincia));
+					
+					despachoAmbitoActuacion = new DespachoAmbitoActuacion();
+					despachoAmbitoActuacion.setDespacho(despachoExterno);
+					despachoAmbitoActuacion.setProvincia(provincia);
+				}
+				
+				listDespachoAmbitoActuacion.add(despachoAmbitoActuacion);				
+			}
+			
+			// Se guardan las modificaciones realizadas en los ámbitos de actuación del despacho
+			for(DespachoAmbitoActuacion despachoAmbitoActuacion : listDespachoAmbitoActuacion) {
+				despachoAmbitoActuacionDao.saveOrUpdate(despachoAmbitoActuacion);
+			}
+		}
+		catch(Exception e) {
+			logger.error("Error en el método saveEsquemaDespacho: " + e .getMessage());
+			throw new BusinessOperationException(e);
+		}
+	}
 }

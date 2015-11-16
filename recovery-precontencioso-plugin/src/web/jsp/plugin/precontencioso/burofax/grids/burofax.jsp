@@ -175,13 +175,14 @@
 			text : '<s:message code="plugin.precontencioso.grid.burofax.añadir.informacion.envio" text="**Añadir Información de Envío" />'
 			,iconCls : 'icon_info'
 			,cls: 'x-btn-text-icon'
+			,hidden: true
 	});
 	
 	var btnDescargarBurofax = new Ext.Button({
 			text : '<s:message code="plugin.precontencioso.grid.burofax.descargar.burofax" text="**Descargar Burofax" />'
 			,iconCls : 'icon_download'
 			,cls: 'x-btn-text-icon'
-			,hidden:true
+<!-- 			,hidden:true -->
 	});		
 	
 	Ext.namespace('Ext.ux.plugins');
@@ -709,9 +710,10 @@
 	
 	var actualizarBotonesBurofax = function() {
 	// Se comprueba que el procedimiento se encuentre en un estado que permita editar los burofaxes
+	
 		if (data != null) {
 			var estadoActualCodigoProcedimiento = data.precontencioso.estadoActualCodigo;
-			if (estadoActualCodigoProcedimiento != 'PR'  && estadoActualCodigoProcedimiento != 'SU' && estadoActualCodigoProcedimiento != 'SC') {
+			if (!data.esExpedienteEditable || (estadoActualCodigoProcedimiento != 'PR'  && estadoActualCodigoProcedimiento != 'SU' && estadoActualCodigoProcedimiento != 'SC')) {
 				btnAddPersona.setDisabled(true);
 				btnEnviar.setDisabled(true);
 				btnNuevaDir.setDisabled(true);
@@ -727,9 +729,3 @@
 		return true;
 
 	}
-		
-		
-
-	
-	
-	

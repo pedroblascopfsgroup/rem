@@ -1127,16 +1127,6 @@
 			case app.subtipoTarea.CODIGO_RECOPILAR_DOCUMENTACION_PROCEDIMIENTO:
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'docRequerida');
 			break;
-			case app.subtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_GESTOR:
-			case app.subtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_SUPERVISOR:
-			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_PROCEDIMIENTO:
-			case app.subtipoTarea.CODIGO_TAREA_GESTOR_CONFECCION_EXPTE:
-			case app.subtipoTarea.CODIGO_TAREA_SUPERVISOR_CONFECCION_EXPTE:
-			case 'TCGA':
-			case 'TCRC':
-			case '100':
-			case '101':			
-			case '105':
 			case app.subtipoTarea.CODIGO_PRECONTENCIOSO_SUPERVISOR:
 			case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTORIA:
 		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR:
@@ -1165,9 +1155,17 @@
 					});
 		
 			break;
-			
-			
-			
+
+			case app.subtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_GESTOR:
+			case app.subtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_SUPERVISOR:
+			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_PROCEDIMIENTO:
+			case app.subtipoTarea.CODIGO_TAREA_GESTOR_CONFECCION_EXPTE:
+			case app.subtipoTarea.CODIGO_TAREA_SUPERVISOR_CONFECCION_EXPTE:
+			case 'TCGA':
+			case 'TCRC':
+			case '100':
+			case '101':			
+			case '105':
 			case '102':
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
 				break;			

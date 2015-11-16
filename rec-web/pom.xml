@@ -525,12 +525,6 @@
 			<artifactId>recovery-diccionarios-plugin</artifactId>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>es.pfsgroup.plugin</groupId>
-			<artifactId>recovery-bi-plugin</artifactId>
-			<scope>compile</scope>
-		</dependency>
-
 		<!-- Fin paquetes de Cap Gemini -->
 		<!-- Inicio de Devon -->
 		<dependency>
@@ -1361,6 +1355,28 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>2.0.5</version>
 		</dependency>
+		<!-- Dependencia para poblar de valores las variables de un documento docx -->
+		<dependency>
+		  <groupId>fr.opensagres.xdocreport</groupId>
+		  <artifactId>fr.opensagres.xdocreport.document.docx</artifactId>
+		  <version>1.0.4</version>
+		</dependency>
+		<dependency>
+		  <groupId>fr.opensagres.xdocreport</groupId>
+		  <artifactId>fr.opensagres.xdocreport.template.freemarker</artifactId>
+		  <version>1.0.4</version>
+		</dependency>
+		<!-- Dependencia para crear un docx a partir de texto html -->
+		<dependency>
+			<groupId>org.docx4j</groupId>
+			<artifactId>docx4j</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.docx4j</groupId>
+			<artifactId>docx4j-ImportXHTML</artifactId>
+			<version>3.0.0</version>
+		</dependency>
 		<!-- JasperReports Dependency -->
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
@@ -1948,6 +1964,11 @@
 						</exclusion>
 					</exclusions>
 				</dependency>
+                <dependency>
+                    <groupId>es.pfsgroup.plugin</groupId>
+                    <artifactId>recovery-bi-plugin</artifactId>
+                    <scope>compile</scope>
+                </dependency>
 			</dependencies>
 			<build>
 				<resources>
@@ -2137,28 +2158,6 @@
 							<artifactId>devon-batch</artifactId>
 						</exclusion>
 					</exclusions>
-				</dependency>
-				<!-- Dependencia para crear un docx a partir de texto html -->
-				<dependency>
-					<groupId>org.docx4j</groupId>
-					<artifactId>docx4j</artifactId>
-					<version>3.1.0</version>
-				</dependency>
-				<dependency>
-					<groupId>org.docx4j</groupId>
-					<artifactId>docx4j-ImportXHTML</artifactId>
-					<version>3.0.0</version>
-				</dependency>
-				<!-- Dependencia para poblar de valores las variables de un documento docx -->
-				<dependency>
-				  <groupId>fr.opensagres.xdocreport</groupId>
-				  <artifactId>fr.opensagres.xdocreport.document.docx</artifactId>
-				  <version>1.0.4</version>
-				</dependency>
-				<dependency>
-				  <groupId>fr.opensagres.xdocreport</groupId>
-				  <artifactId>fr.opensagres.xdocreport.template.freemarker</artifactId>
-				  <version>1.0.4</version>
 				</dependency>
 			</dependencies>
 			<build>

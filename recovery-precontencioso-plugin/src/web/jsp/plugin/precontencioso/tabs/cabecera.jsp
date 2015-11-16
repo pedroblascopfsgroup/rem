@@ -9,7 +9,7 @@
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 
 (function(page,entidad){
-  
+
 	var labelStyle='font-weight:bolder;width:150px';
 	var labelStyle2='font-weight:bolder;width:100px';
   
@@ -338,9 +338,7 @@
 			procedimientoInterno.label.update('<s:message code="plugin.precontencioso.cabecera.codigoExpediente" text="**Código expediente judicial"/>');
 			procedimientoJuzgado.label.update('<s:message code="plugin.precontencioso.cabecera.nAuto" text="**Número de Auto"/>');
 
-			<sec:authorize ifAllGranted="ACCIONES_PRECONTENCIOSO">
-				Ext.Element.get('prc-btnAccionesPrecontencioso-padre').show();
-			</sec:authorize>
+			comprobarExpedienteEditable();
 
 		} else {
 			panelProcedimientoPrecontencioso.hide();
@@ -358,6 +356,29 @@
 			entidad.setLabel('procedimientoInterno', entidad.get("data").cabecera.procedimientoInterno);
 		}
 	}
-
+	
+	var comprobarExpedienteEditable = function(){
+	
+		Ext.Ajax.request({
+			url: page.resolveUrl('expedientejudicial/isExpedienteEditable')
+			,params: {idProcedimiento:data.id}
+			,method: 'POST'
+			,success: function (result, request)
+			{
+				var r = Ext.util.JSON.decode(result.responseText);
+				data.esExpedienteEditable = r.isEditable;
+				
+				<sec:authorize ifAllGranted="ACCIONES_PRECONTENCIOSO">
+				if(!r.isEditable) {
+					Ext.Element.get('prc-btnAccionesPrecontencioso-padre').hide();
+				}
+				else {
+					Ext.Element.get('prc-btnAccionesPrecontencioso-padre').show();
+				}
+				</sec:authorize>
+			}
+		});
+	}
+	
 	return panel;
 })

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=ALBERTO CAMPOS
---## FECHA_CREACION=20151014
+--## FECHA_CREACION=20151116
 --## ARTEFACTO=producto
 --## VERSION_ARTEFACTO=9.1.13
 --## INCIDENCIA_LINK=BKREC-901

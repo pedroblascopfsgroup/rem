@@ -19,11 +19,9 @@ public class AdjuntoGridAssembler {
 		for(GestorDocumentalOutputListDto olDto : outputDto.getLbListadoDocumentos()) {
 			AdjuntoGridDto dto = new AdjuntoGridDto();
 			dto.setIdAdjunto(Long.parseLong(olDto.getIdDocumento()));
-			//TODO Nombre??
-			dto.setNombre("");
+			dto.setNombre(olDto.getClaveRelacion());
 			dto.setTipoDocumento(olDto.getNombreTipoDoc());
 			dto.setDescripcion(olDto.getDescripcion());
-			//TODO tamaño no existe en OUTPUT
 			dto.setTamanyo("");
 			dto.setTipo(olDto.getTipoDoc());
 			try {
@@ -31,7 +29,8 @@ public class AdjuntoGridAssembler {
 			} catch (ParseException e) {
 			}
 			//TODO cual es el num Actuacion???
-			dto.setNumActuacion(1L);
+			dto.setNumActuacion(null);
+			dto.setRefCentera(olDto.getRefCentera());
 			dto.setDescripcionEntidad(olDto.getClaveRelacion());
 			list.add(dto);
 		}

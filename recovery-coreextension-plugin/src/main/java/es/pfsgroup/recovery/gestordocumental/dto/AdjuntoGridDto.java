@@ -13,6 +13,7 @@ public class AdjuntoGridDto {
 	private Date fechaSubida;
 	private Long numActuacion;
 	private String descripcionEntidad;
+	private String refCentera;
 
 	public Long getIdAdjunto() {
 		return idAdjunto;
@@ -84,6 +85,14 @@ public class AdjuntoGridDto {
 
 	public void setDescripcionEntidad(String descripcionEntidad) {
 		this.descripcionEntidad = descripcionEntidad;
+	}
+	
+	public String getRefCentera() {
+		return refCentera;
+	}
+	
+	public void setRefCentera(String refCentera) {
+		this.refCentera = refCentera;
 	}
 
 }

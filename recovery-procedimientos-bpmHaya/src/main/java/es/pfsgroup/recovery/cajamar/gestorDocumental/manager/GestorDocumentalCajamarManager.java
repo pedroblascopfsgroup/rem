@@ -1,9 +1,13 @@
 package es.pfsgroup.recovery.cajamar.gestorDocumental.manager;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +36,7 @@ import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.AdjuntoGridAssembler;
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.ConstantesGestorDocumental;
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalInputDto;
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalOutputDto;
+import es.pfsgroup.recovery.cajamar.serviciosonline.GestorDocumentalWSApi;
 import es.pfsgroup.recovery.gestordocumental.dto.AdjuntoGridDto;
 
 @Component
@@ -58,12 +63,12 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	@Autowired
 	private AsuntoDao asuntoDao;
 	
-	//@Autowired
-	//private GestorDocumentalWSApi gestorDocumentalWSApi;
+	@Autowired(required=false)
+	private GestorDocumentalWSApi gestorDocumentalWSApi;
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_ALTA_DOCUMENTO)
 	@Transactional(readOnly = false)
-	public String altaDocumento(String codEntidad, String tipoDocumento, WebFileItem uploadForm) {
+	public String altaDocumento(Long id, String codEntidad, String tipoDocumento, WebFileItem uploadForm) {
 		
 		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
 		FileItem fileItem = uploadForm.getFileItem();
@@ -89,7 +94,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
 	}
 	
-	private GestorDocumentalInputDto rellenaInputDto (String tipoGestion, String tipoDocumento, String codEntidad, WebFileItem uploadForm) {
+	private GestorDocumentalInputDto rellenaInputDto (String id, String refCentera, String tipoGestion, String tipoDocumento, String codEntidad, WebFileItem uploadForm) {
 		GestorDocumentalInputDto inputDto = new GestorDocumentalInputDto();
 		if(ALTA_GESTOR_DOC.equals(tipoGestion)) {
 			inputDto.setOperacion(ConstantesGestorDocumental.ALTA_DOCUMENTO_OPERACION);
@@ -97,25 +102,46 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			inputDto.setOrigen(ConstantesGestorDocumental.GESTOR_DOCUMENTAL_ORIGEN);
 			inputDto.setTipoAsociacion(getTipoAsociacion(codEntidad));
 			inputDto.setTipoDocumento(tipoDocumento);
-			// TODO Como es???
-			inputDto.setFicheroBase64(uploadForm.getFileItem().getFileName());
-			// TODO Cual es la clave de asociacion???
-			inputDto.setClaveAsociacion("");
+			inputDto.setFicheroBase64(ficheroBase64(uploadForm));
+			inputDto.setClaveAsociacion(id);
 			// TODO Cual es la fecha de vigencia???
 			inputDto.setFechaVigencia(new Date());
 		}else if(LISTADO_GESTOR_DOC.equals(tipoGestion)) {
 			inputDto.setOperacion(ConstantesGestorDocumental.LISTADO_DOCUMENTO_OPERACION);
 			inputDto.setTipoDocumento(tipoDocumento);
-			// TODO Cual es la clave de asociacion???
-			inputDto.setClaveAsociacion("");
+			inputDto.setClaveAsociacion(id);
 			inputDto.setTipoAsociacion(getTipoAsociacion(codEntidad));
 		}else if(CONSULTA_GESTOR_DOC.equals(tipoGestion)) {
 			inputDto.setOperacion(ConstantesGestorDocumental.CONSULTA_DOCUMENTO_OPERACION);
-			// TODO Referencia centera???
-			inputDto.setLocalizador("");
+			inputDto.setLocalizador(refCentera);
 		}
 		
 		return inputDto;
+	}
+	
+	private String ficheroBase64(WebFileItem uploadForm) {
+		InputStream inputStream = uploadForm.getFileItem().getInputStream();
+		FileOutputStream outputStream = null;
+		String ficheroBase64 = "";
+		try {
+			// write the inputStream to a FileOutputStream
+			outputStream = new FileOutputStream(new File(""));
+
+			int read = 0;
+			byte[] bytes = new byte[1024];
+
+			while ((read = inputStream.read(bytes)) != -1) {
+				outputStream.write(bytes, 0, read);
+			}
+			
+			outputStream.close();
+			byte[] encoded = Base64.encodeBase64(bytes);
+			ficheroBase64 = new String(encoded);
+		}catch (Exception e) {
+			logger.error("Se ha producido un error al convertir el fichero en base64");
+		}
+		return ficheroBase64;
+			
 	}
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_LISTADO_DOCUMENTO)
@@ -216,5 +242,5 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			asuntoDao.save(asunto);
 		}
 	}
-
+	
 }

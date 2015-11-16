@@ -179,6 +179,7 @@ var gestionesGrid = new Ext.grid.GridPanel({
 		,handler : function(){
 			comentarioGestionesH.setValue(comentarioGestiones.getValue());
 			gestionesIncluirH.setValue(transform(gestionesGrid));
+			
 			page.submit({
 				eventName : 'update'
 				,formPanel : saveForm
@@ -226,7 +227,7 @@ var panel = new Ext.Panel({
 			,btnModificar
 		</c:if>
 	]
-	<c:if test="false">,bbar:[btnGuardar,btnCancelar]</c:if>
+	<c:if test="${!readOnly}">,bbar:[btnGuardar,btnCancelar]</c:if>
    });
 
 	gestionesStore.webflow({id:${analisisPolitica.cicloMarcadoPolitica.persona.id}});

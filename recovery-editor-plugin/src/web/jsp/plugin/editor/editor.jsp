@@ -15,7 +15,7 @@
 
     <script type="text/javascript" src="../js/fwk/ext3.4/locale/ext-lang-es.js?devon_version=${appProperties.jsVersion}"></script>
 
-	<!-- extensiones -->
+	<%-- extensiones --%>
     <script type="text/javascript" src="../js/fwk/ext.ux/Toast.js?devon_version=${appProperties.jsVersion}"></script>
     <script type="text/javascript" src="../js/fwk/ext.ux/StaticTextField.js?devon_version=${appProperties.jsVersion}"></script>
     <script type="text/javascript" src="../js/fwk/ext.ux/Multiselect/DDView.js?devon_version=${appProperties.jsVersion}"></script>
@@ -27,7 +27,7 @@
  
  
 	<link rel="stylesheet" type="text/css" href="../css/fwk/<c:out value="${theme}" />/<c:out value="${theme}" />.css?devon_version=${appProperties.jsVersion}" />
- 	<!-- editor -->
+ 	<%-- editor --%>
  	
  	<script>
  	<%@ include file="ux/CheckColumn.js" %>
@@ -98,7 +98,7 @@
 </style>
 <div id="header"><div style="float:right;margin:5px;" class="x-small-editor"></div></div>
 
-<!-- Template used for Feed Items -->
+<%-- Template used for Feed Items --%>
 <div id="preview-tpl" style="display:none;">
     <div class="post-data">
         <span class="post-date">{pubDate:date("M j, Y, g:i a")}</span>

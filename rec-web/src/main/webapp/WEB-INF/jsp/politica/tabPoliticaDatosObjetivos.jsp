@@ -146,7 +146,7 @@ var createDatosObjetivosPanel = function() {
     var objetivo = Ext.data.Record.create([
          {name : 'id'}
         ,{name : 'idPolitica'}
-        <!-- ,{name : 'padreId'}-->
+        <%-- ,{name : 'padreId'}--%>
         ,{name : 'resumen'}
         ,{name : 'observacion'}
         ,{name : 'tipo'}

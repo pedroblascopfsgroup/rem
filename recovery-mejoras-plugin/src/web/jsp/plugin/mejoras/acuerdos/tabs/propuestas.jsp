@@ -68,7 +68,7 @@
    });  
 
    
-   <!--    Desactivamos el boton de proponer si esxisten acuerdos en conformacion, propuesto o aceptado -->
+   <%--    Desactivamos el boton de proponer si esxisten acuerdos en conformacion, propuesto o aceptado --%>
    acuerdosStore.on('load', function () {
 		
 		if( (panel.getEstadoExpediente() != app.estExpediente.ESTADO_ACTIVO && panel.getEstadoExpediente() != app.estExpediente.ESTADO_CONGELADO)||

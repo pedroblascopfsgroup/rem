@@ -9,7 +9,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 (function(page,entidad){
-	<!-- valor seteado para pruebas -->
+	<%-- valor seteado para pruebas --%>
 	var idExpediente;
 	
 	var idIncidencia;
@@ -206,14 +206,14 @@
     		idIncidencia = recStore.get('idIncidencia');
     	}
     	
-    	<!-- Puede borrar sus propias incidencias -->
+    	<%-- Puede borrar sus propias incidencias --%>
     	btnBorrar.setDisabled(true);
     	if(app.usuarioLogado.apellidoNombre == recStore.get('usuario')){
     		btnBorrar.setDisabled(false);
     	}
     	
-    	<!-- El supervisor puede borrar todas las incidencias -->
-    	<!-- TODO -->
+    	<%-- El supervisor puede borrar todas las incidencias --%>
+    	<%-- TODO --%>
     	
     	
 	}); 

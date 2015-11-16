@@ -10,7 +10,7 @@
   <json:property name="nombreTab" value="${nombreTab}" />
   <json:object name="cabecera">
     <json:property name="primerTitular" value="${contrato.primerTitular}" />
-    <!-- Se cambia el codigo de contrato por el nro. de contrato, ya que ahora esta todo el codigo en el campo CNT_CONTRATO -->
+    <%-- Se cambia el codigo de contrato por el nro. de contrato, ya que ahora esta todo el codigo en el campo CNT_CONTRATO --%>
     <json:property name="codigoContrato" value="${contrato.codigoContrato}" />
     <json:property name="tipoProducto">${contrato.tipoProductoEntidad.descripcion} (${contrato.tipoProductoEntidad.codigo}) </json:property>
     <json:property name="tipoProductoComercial">${contrato.catalogo1.descripcion} </json:property>

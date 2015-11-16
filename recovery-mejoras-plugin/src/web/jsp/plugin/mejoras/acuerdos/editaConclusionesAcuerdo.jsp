@@ -7,12 +7,12 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <fwk:page>
 
-	var labelStyle='font-weight:bolder;margin-bottom:1px;margin-top:1px;width:120px'
-	var labelStyleTextField='font-weight:bolder;margin-bottom:1px;margin-top:1px;width:160px'	
+	var labelStyle='font-weight:bolder;margin-bottom:1px;margin-top:1px;width:120px';
+	var labelStyleTextField='font-weight:bolder;margin-bottom:1px;margin-top:1px;width:160px';	
 	var style='margin-bottom:1px;margin-top:1px';
-<!-- 	var sinTipoAcuerdo = false; -->
+<%-- 	var sinTipoAcuerdo = false; --%>
 <%-- 	<sec:authorize ifAllGranted="OCULTA_TIPO_ACUERDO"> --%>
-<!-- 		sinTipoAcuerdo = true; -->
+<%-- 		sinTipoAcuerdo = true; --%>
 <%-- 	</sec:authorize> --%>
 
 	//TIPO ACUERDO
@@ -183,7 +183,7 @@
 				      			<c:if test="${idExpediente!=null}">
 				      				idExpediente:${idExpediente},
 				      			</c:if>
-<!-- 		      				   tipoAcuerdo:tipoAcuerdoCombo.getValue() -->
+<%-- 		      				   tipoAcuerdo:tipoAcuerdoCombo.getValue() --%>
 		      				   solicitante:solicitanteCombo.getValue()
 		      				   ,estado:estadoCombo.getValue()
 		      				   ,observaciones:app.resolverSiNulo(observacionesConclusion.getValue())
@@ -200,11 +200,11 @@
 	      		}else{
 	      			<c:if test="${!(esGestor && acuerdo.estaVigente)}">
 	      				Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="plugin.mejoras.acuerdos.conclusiones.faltanDatosSinTipoAcuerdo" text="**Debe rellenar los datos"/>');
-<!-- 	      				if (sinTipoAcuerdo) { -->
+<%-- 	      				if (sinTipoAcuerdo) { --%>
 <%-- 							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="plugin.mejoras.acuerdos.conclusiones.faltanDatosSinTipoAcuerdo" text="**Debe rellenar los datos"/>'); --%>
-<!-- 						} else { -->
+<%-- 						} else { --%>
 <%-- 							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="plugin.mejoras.acuerdos.conclusiones.faltanDatos" text="**Debe rellenar los datos"/>'); --%>
-<!-- 						} -->
+<%-- 						} --%>
 	      			</c:if>
 	      			<c:if test="${esGestor && acuerdo.estaVigente}">
 	      				Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="acuerdos.conclusioes.faltaFechaCierre"/>');

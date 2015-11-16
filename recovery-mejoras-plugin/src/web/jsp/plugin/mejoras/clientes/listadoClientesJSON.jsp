@@ -23,8 +23,8 @@
 			<json:property name="deudaIrregular" value="${dto.persona.deudaIrregular}"/>
 			<json:property name="totalSaldo" value="${dto.riesgoTotal}"/>
 			<json:property name="diasVencido" value="${dto.diasVencidos}" />
-			<!--<json:property name="diasVencidoDirecto" value="${p.diasVencidoRiegoDirecto}" />
-			<json:property name="diasVencidoIndirecto" value="${p.diasVencidoRiegoIndirecto}" />-->
+			<%--<json:property name="diasVencidoDirecto" value="${p.diasVencidoRiegoDirecto}" />
+			<json:property name="diasVencidoIndirecto" value="${p.diasVencidoRiegoIndirecto}" />--%>
 			<json:property name="apellidoNombre" value="${dto.persona.apellidoNombre}"/>
             <c:if test="${dto.persona.clienteActivo != null}"> 
             	<json:property name="arquetipo" value="${dto.persona.clienteActivo.arquetipo.nombre}"/>

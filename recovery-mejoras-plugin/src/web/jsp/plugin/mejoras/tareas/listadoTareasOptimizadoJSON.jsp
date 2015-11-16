@@ -14,7 +14,7 @@
 			<json:property name="codigoSubtipoTarea" value="${tar.subtipoTareaCodigoSubtarea}" />
 			<json:property name="dtype" value="${tar.tipo}" />
 			<json:property name="categoriaTarea" value="${tar.categoriaTarea}" />
-			<!-- Si es gestion de vencidos, entra en el grupo "esta semana" -->
+			<%-- Si es gestion de vencidos, entra en el grupo "esta semana" --%>
 			<c:if test='${tar.subtipoTareaCodigoSubtarea == "1" || tar.subtipoTareaCodigoSubtarea == "98" || tar.subtipoTareaCodigoSubtarea == "99"}'>
 				<json:property name="group" value="2" />
 				<json:property name="nombreTarea" value="${tar.nombreTarea}"/>

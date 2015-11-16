@@ -9,7 +9,7 @@
         <json:object>
             <json:property name="id" value="${o.id}" />
             <json:property name="idPolitica" value="${o.politica.id}" />
-            <!--<json:property name="padreId" value="${o.objetivoPadre.id}" />-->            
+            <%--<json:property name="padreId" value="${o.objetivoPadre.id}" />--%>            
             <json:property name="resumen" value="${o.resumen}" />
             <json:property name="observacion" value="${o.observacion}" />
             <json:property name="tipo" value="${o.tipoObjetivo.descripcion}" />

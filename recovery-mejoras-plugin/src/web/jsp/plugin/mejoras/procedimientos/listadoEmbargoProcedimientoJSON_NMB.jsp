@@ -29,13 +29,13 @@
 				<json:property name="fechaAdjudicacion" >
 					<fwk:date value="${rec.embargoProcedimiento.fechaAdjudicacion}"/>
 				</json:property>		
-			<!-- 
+			<%-- 
 			forEach items="{rec.instruccionesSubasta}" var="ins">			
 			    if test="{ins.procedimiento.id == idProcedimiento}">
 					property name="instrucciones" value="1"/>
 					property name="idInstrucciones" value="{ins.id}"/>
 				if>
-			forEach> -->
+			forEach> --%>
 			<c:forEach items="${rec.personas}" var="per">
 				<json:property name="titular" value="${per.apellido1} , ${per.nombre}"/>
 			</c:forEach>

@@ -9,7 +9,7 @@
 	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
 	default-autowire="byName">
-	
+
 	<bean p:entity="tabs.procedimiento.fast" p:name="historicoProcedimiento"  p:order="900" 
 		p:fileName="/WEB-INF/jsp/entidad/procedimiento/tabs/historico.jsp" 
 		p:priority="2"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />

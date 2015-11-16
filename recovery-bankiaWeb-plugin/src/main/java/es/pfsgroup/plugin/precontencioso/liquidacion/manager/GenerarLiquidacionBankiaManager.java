@@ -243,6 +243,10 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 	private HashMap<String, Object> generarCamposConceptosFijos(final DatosGeneralesLiqVO datosGeneralesLiq, final List<RecibosLiqVO> recibosLiq, final List<InteresesContratoLiqVO> interesesContratoLiq) {
 		List<ConceptoLiqVO> conceptos = new ArrayList<ConceptoLiqVO>();
 
+		if (recibosLiq.isEmpty()) {
+			return new HashMap<String, Object>();
+		}
+
 		BigDecimal capitalInical = datosGeneralesLiq.getDGC_IMCCNS();
 
 		// saldo variable calculado en cada concepto respecto al anterior
@@ -308,7 +312,7 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 				tipoInteresAgrupado = tipoInteresActual;
 			}
 
-			// agrupacion de intereses ordinarios del mismo tipo de interes
+			// agrupacion de intereses demora del mismo tipo de interes
 			if (tipoInteresAgrupado.equals(tipoInteresActual)) {
 				sumIntereses = sumIntereses.add(recibo.getRCB_IMINDR());
 			} else {
@@ -332,11 +336,6 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 		HashMap<String, Object> datosLiquidacion = new HashMap<String, Object>();
 		datosLiquidacion.put("CONCEPTOS", conceptos);
 		return datosLiquidacion;
-	}
-
-	private BigDecimal interesesOrdinario(final List<RecibosLiqVO> recibosLiq, List<ConceptoLiqVO> conceptos, BigDecimal saldo) {
-
-		return saldo;
 	}
 
 	// saldo = saldo + debe - haber

@@ -14,21 +14,19 @@ public interface GestorDocumentalApi {
 
 	/**
 	 * idEntidad id del asunto/procedimiento/contrato/expediente/persona en el que nos encontramos
-	 * tipoEntidad tipo de entidad(asunto/procedimiento/contrato/expediente/persona)
 	 * tipoEntidadGrid entidad del grid (asunto/procedimiento/contrato/expediente/persona)
 	 * tipoDocumento tipoDocumento seleccionado
 	 */
 	@BusinessOperationDefinition(BO_GESTOR_DOCUMENTAL_ALTA_DOCUMENTO)
-	String altaDocumento(Long idEntidad, String tipoEntidad, String tipoEntidadGrid, String tipoDocumento, WebFileItem uploadForm);
+	String altaDocumento(Long idEntidad, String tipoEntidadGrid, String tipoDocumento, WebFileItem uploadForm);
 
 	/**
 	 * idEntidad id del asunto/procedimiento/contrato/expediente/persona en el que nos encontramos
-	 * tipoEntidad tipo de entidad(asunto/procedimiento/contrato/expediente/persona)
 	 * tipoEntidadGrid entidad del grid (asunto/procedimiento/contrato/expediente/persona)
 	 * tipoDocumento tipoDocumento seleccionado
 	 */
 	@BusinessOperationDefinition(BO_GESTOR_DOCUMENTAL_LISTADO_DOCUMENTO)
-	List<AdjuntoGridDto> listadoDocumentos(Long idEntidad, String tipoEntidad, String tipoEntidadGrid, String tipoDocumento);
+	List<AdjuntoGridDto> listadoDocumentos(Long idEntidad, String tipoEntidadGrid, String tipoDocumento);
 
 	/**
 	 * idRefCentera id del documento que queremos descargar

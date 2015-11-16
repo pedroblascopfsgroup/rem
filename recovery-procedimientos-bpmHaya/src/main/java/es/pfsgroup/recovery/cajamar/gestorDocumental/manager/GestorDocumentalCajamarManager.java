@@ -44,7 +44,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	private static final String ALTA_GESTOR_DOC = "A";
 	private static final String CONSULTA_GESTOR_DOC = "C";
 	private static final String LISTADO_GESTOR_DOC = "L";
-	
+
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
@@ -61,14 +61,14 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
 	@Autowired
 	private AsuntoDao asuntoDao;
-	
-	@Autowired(required=false)
+
+	@Autowired(required = false)
 	private GestorDocumentalWSApi gestorDocumentalWSApi;
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_ALTA_DOCUMENTO)
 	@Transactional(readOnly = false)
-	public String altaDocumento(Long idEntidad, String tipoEntidad, String tipoEntidadGrid, String tipoDocumento, WebFileItem uploadForm) {
-		
+	public String altaDocumento(Long idEntidad, String tipoEntidadGrid, String tipoDocumento, WebFileItem uploadForm) {
+
 		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
 		FileItem fileItem = uploadForm.getFileItem();
 
@@ -76,7 +76,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		if (fileItem == null || fileItem.getLength() <= 0) {
 		}
 
-		Integer max = getLimiteFichero(getParametroLimite(tipoEntidad));
+		Integer max = getLimiteFichero(getParametroLimite(tipoEntidadGrid));
 
 		if (fileItem.getLength() > max) {
 			AbstractMessageSource ms = MessageUtils.getMessageSource();
@@ -85,21 +85,23 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 					MessageUtils.DEFAULT_LOCALE);
 		}
 
-		String claveAsociacion = guardarRecuperarDatoEntidad(idEntidad, tipoEntidad, uploadForm);
-		
+		guardarRecuperarDatoEntidad(idEntidad, tipoEntidadGrid, uploadForm);
 
-		outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(claveAsociacion, ALTA_GESTOR_DOC, tipoDocumento, tipoEntidadGrid, uploadForm));
+		outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(
+				idEntidad.toString(), ALTA_GESTOR_DOC, tipoDocumento,
+				tipoEntidadGrid, uploadForm));
 
 		return outputDto.getTxtError();
 	}
-	
+
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_LISTADO_DOCUMENTO)
 	@Transactional(readOnly = false)
-	public List<AdjuntoGridDto> listadoDocumentos(Long idEntidad, String tipoEntidad, String tipoEntidadGrid, String tipoDocumento) {
-		
+	public List<AdjuntoGridDto> listadoDocumentos(Long idEntidad, String tipoEntidadGrid, String tipoDocumento) {
+
 		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
-		String claveAsociacion = guardarRecuperarDatoEntidad(idEntidad, tipoEntidad, null);
-		outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(claveAsociacion, LISTADO_GESTOR_DOC, tipoDocumento, tipoEntidadGrid, null));
+		outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(
+				idEntidad.toString(), LISTADO_GESTOR_DOC, tipoDocumento,
+				tipoEntidadGrid, null));
 		return AdjuntoGridAssembler.outputDtoToAdjuntoGridDto(outputDto);
 	}
 
@@ -115,12 +117,15 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		return AdjuntoGridAssembler.outputDtoToAdjuntoGridDto(outputDto).get(0);
 
 	}
-	
-	private GestorDocumentalInputDto rellenaInputDto (String claveAsociacion, String tipoGestion, String tipoDocumento, String tipoEntidadGrid, WebFileItem uploadForm) {
+
+	private GestorDocumentalInputDto rellenaInputDto(String claveAsociacion,
+			String tipoGestion, String tipoDocumento, String tipoEntidadGrid,
+			WebFileItem uploadForm) {
 		GestorDocumentalInputDto inputDto = new GestorDocumentalInputDto();
-		if(ALTA_GESTOR_DOC.equals(tipoGestion)) {
+		if (ALTA_GESTOR_DOC.equals(tipoGestion)) {
 			inputDto.setOperacion(ConstantesGestorDocumental.ALTA_DOCUMENTO_OPERACION);
-			inputDto.setExtensionFichero(uploadForm.getFileItem().getContentType());
+			inputDto.setExtensionFichero(uploadForm.getFileItem()
+					.getContentType());
 			inputDto.setOrigen(ConstantesGestorDocumental.GESTOR_DOCUMENTAL_ORIGEN);
 			inputDto.setTipoAsociacion(getTipoAsociacion(tipoEntidadGrid));
 			inputDto.setTipoDocumento(tipoDocumento);
@@ -128,16 +133,16 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			inputDto.setClaveAsociacion(claveAsociacion);
 			// TODO Cual es la fecha de vigencia???
 			inputDto.setFechaVigencia(new Date());
-		}else if(LISTADO_GESTOR_DOC.equals(tipoGestion)) {
+		} else if (LISTADO_GESTOR_DOC.equals(tipoGestion)) {
 			inputDto.setOperacion(ConstantesGestorDocumental.LISTADO_DOCUMENTO_OPERACION);
 			inputDto.setTipoDocumento(tipoDocumento);
 			inputDto.setClaveAsociacion(claveAsociacion);
 			inputDto.setTipoAsociacion(getTipoAsociacion(tipoEntidadGrid));
 		}
-		
+
 		return inputDto;
 	}
-	
+
 	private String ficheroBase64(WebFileItem uploadForm) {
 		InputStream inputStream = uploadForm.getFileItem().getInputStream();
 		FileOutputStream outputStream = null;
@@ -152,15 +157,15 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			while ((read = inputStream.read(bytes)) != -1) {
 				outputStream.write(bytes, 0, read);
 			}
-			
+
 			outputStream.close();
 			byte[] encoded = Base64.encodeBase64(bytes);
 			ficheroBase64 = new String(encoded);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Se ha producido un error al convertir el fichero en base64");
 		}
 		return ficheroBase64;
-			
+
 	}
 
 	/**
@@ -181,22 +186,22 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		}
 	}
 
-	private String getParametroLimite(String codEntidad) {
+	private String getParametroLimite(String tipoEntidad) {
 		String param = "";
-		if (DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE.equals(codEntidad)) {
+		if (DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE.equals(tipoEntidad)) {
 			param = Parametrizacion.LIMITE_FICHERO_EXPEDIENTE;
-		} else if (DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE.equals(codEntidad)) {
+		} else if (DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE.equals(tipoEntidad)) {
 			param = Parametrizacion.LIMITE_FICHERO_PERSONA;
-		} else if (DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO.equals(codEntidad)) {
+		} else if (DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO.equals(tipoEntidad)) {
 			param = Parametrizacion.LIMITE_FICHERO_CONTRATO;
-		} else if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(codEntidad)
+		} else if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidad)
 				|| DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO
-						.equals(codEntidad)) {
+						.equals(tipoEntidad)) {
 			param = Parametrizacion.LIMITE_FICHERO_ASUNTO;
 		}
 		return param;
 	}
-	
+
 	private String getTipoAsociacion(String codEntidad) {
 		String tipoAsociacion = "";
 		if (DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE.equals(codEntidad)) {
@@ -207,45 +212,34 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			tipoAsociacion = ConstantesGestorDocumental.GESTOR_DOCUMENTAL_TIPO_ASOCIACION_CONTRATO;
 		} else if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(codEntidad)) {
 			tipoAsociacion = ConstantesGestorDocumental.GESTOR_DOCUMENTAL_TIPO_ASOCIACION_ASUNTO;
-		} else if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(codEntidad)) {
+		} else if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO
+				.equals(codEntidad)) {
 			tipoAsociacion = ConstantesGestorDocumental.GESTOR_DOCUMENTAL_TIPO_ASOCIACION_PROCEDIMIENTO;
 		}
 		return tipoAsociacion;
 	}
 
-	private String guardarRecuperarDatoEntidad(Long idEntidad, String tipoEntidad, WebFileItem uploadForm) {
-		String codEntidad = "";
+	private void guardarRecuperarDatoEntidad(Long idEntidad,
+			String tipoEntidad, WebFileItem uploadForm) {
 		if (DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE.equals(tipoEntidad)) {
 			Expediente expediente = expedienteDao.get(idEntidad);
-			if (uploadForm != null){
-				expediente.addAdjunto(uploadForm.getFileItem());
-				expedienteDao.save(expediente);
-			}
-			codEntidad = expediente.getDescripcion();
+			expediente.addAdjunto(uploadForm.getFileItem());
+			expedienteDao.save(expediente);
 		} else if (DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE.equals(tipoEntidad)) {
 			Persona persona = personaDao.get(idEntidad);
-			if (uploadForm != null){
-				persona.addAdjunto(uploadForm.getFileItem());
-				personaDao.save(persona);
-			}
-			codEntidad = persona.getDescripcion();
+			persona.addAdjunto(uploadForm.getFileItem());
+			personaDao.save(persona);
 		} else if (DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO.equals(tipoEntidad)) {
 			Contrato contrato = contratoDao.get(idEntidad);
-			if (uploadForm != null){
-				contrato.addAdjunto(uploadForm.getFileItem());
-				contratoDao.save(contrato);				
-			}
-			codEntidad = contrato.getDescripcion();
+			contrato.addAdjunto(uploadForm.getFileItem());
+			contratoDao.save(contrato);
 		} else if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidad)
-				|| DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidad)) {
+				|| DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO
+						.equals(tipoEntidad)) {
 			Asunto asunto = asuntoDao.get(idEntidad);
-			if (uploadForm != null){
-				asunto.addAdjunto(uploadForm.getFileItem());
-				asuntoDao.save(asunto);				
-			}
-			codEntidad = asunto.getNombre();
+			asunto.addAdjunto(uploadForm.getFileItem());
+			asuntoDao.save(asunto);
 		}
-		return codEntidad;
 	}
-	
+
 }

@@ -38,9 +38,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.poi.xwpf.converter.pdf.PdfConverter;
 import org.apache.poi.xwpf.converter.pdf.PdfOptions;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.docx4j.XmlUtils;
-import org.docx4j.convert.in.xhtml.XHTMLImporterImpl;
-import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -932,33 +929,6 @@ public class GENINFInformesManager implements GENINFInformesApi {
 			}
 		}
 		return resultado;
-	}
-	
-	
-	/**
-	 * Creamos .docx temporal y convertimos las etiquetas HTML a formato docx
-	 * @param envioBurofax
-	 * @return
-	 * @throws Exception
-	 */
-	@Override
-	@BusinessOperation(MSV_GENERAR_ESCRITO_DOCX_FROM_HTML)
-	public InputStream createDocxFileFromHtmlText(String htmlText,String nombreFichero) throws Exception{
-		
-		File archivo = File.createTempFile(nombreFichero, ".docx");
-
-		WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.createPackage();
-		XHTMLImporterImpl XHTMLImporter = new XHTMLImporterImpl(wordMLPackage);				
-		wordMLPackage.getMainDocumentPart().getContent().addAll( 
-					XHTMLImporter.convert( "<HTML><BODY>"+htmlText+"</BODY></HTML>", null) );
-		System.out.println(
-				XmlUtils.marshaltoString(wordMLPackage.getMainDocumentPart().getJaxbElement(), true, true));
-		wordMLPackage.save(archivo);
-		
-		InputStream is=new FileInputStream(archivo);
-		
-		return is;
-		
 	}
 	
 	

@@ -253,7 +253,7 @@ var actualizarBotonesLiquidacion = function() {
 
 		case 'PEN':
 			btnSolicitar.setDisabled(false);
-			btnEditarValores.setDisabled(!btnSolicitarOculto);
+			btnEditarValores.setDisabled(btnSolicitar.isVisible());
 			btnConfirmar.setDisabled(true);
 			btnDescartar.setDisabled(true);
 			btnGenerar.setDisabled(true);
@@ -269,7 +269,7 @@ var actualizarBotonesLiquidacion = function() {
 
 		case 'DES':
 			btnSolicitar.setDisabled(false);
-			btnEditarValores.setDisabled(!btnSolicitarOculto);
+			btnEditarValores.setDisabled(btnSolicitar.isVisible());
 			btnConfirmar.setDisabled(true);
 			btnDescartar.setDisabled(true);
 			btnGenerar.setDisabled(true);
@@ -341,7 +341,7 @@ var ocultarBtnSolicitar = function(){
 }
 
 <%-- Acciones a tomar cuando la entidad tiene configurado que no soporta solicitar las liquidaciones --%>
-var btnSolicitarOculto = ocultarBtnSolicitar();
+ocultarBtnSolicitar();
 
 var comprobarDatosCalculoRellenos = function() {
 	var liquidacion = gridLiquidaciones.getSelectionModel().getSelected();

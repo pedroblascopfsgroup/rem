@@ -18,11 +18,11 @@ public class AdjuntoGridAssembler {
 		List<AdjuntoGridDto> list = new ArrayList<AdjuntoGridDto>();
 		for(GestorDocumentalOutputListDto olDto : outputDto.getLbListadoDocumentos()) {
 			AdjuntoGridDto dto = new AdjuntoGridDto();
-			dto.setIdAdjunto(Long.parseLong(olDto.getIdDocumento()));
+			dto.setId(Long.parseLong(olDto.getIdDocumento()));
 			dto.setNombre(olDto.getClaveRelacion());
-			dto.setTipoDocumento(olDto.getNombreTipoDoc());
+			dto.setContentType(olDto.getNombreTipoDoc());
 			dto.setDescripcion(olDto.getDescripcion());
-			dto.setTamanyo("");
+			dto.setLength("");
 			dto.setTipo(olDto.getTipoDoc());
 			try {
 				dto.setFechaSubida(frmt.parse(olDto.getAltaVersion()));

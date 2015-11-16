@@ -17,9 +17,19 @@
 						<json:property name="descripcion" >
 							<pfsformat:cut value="${entity.adjuntosAsList[0].descripcion}" max="27"/>
 						</json:property>
-						<json:property name="fechaCrear">
-						 	<fwk:date value="${entity.adjuntosAsList[0].auditoria.fechaCrear}"/>
-						</json:property>
+						<c:choose>
+						    <c:when test="${entity.adjuntosAsList[0].auditoria!=null}">
+							 	<json:property name="fechaCrear">
+								 	<fwk:date value="${entity.adjuntosAsList[0].auditoria.fechaCrear}"/>
+								</json:property>
+						    </c:when>
+	    					<c:otherwise>
+							 	<json:property name="fechaCrear">
+								 	<fwk:date value="${entity.adjuntosAsList[0].fechaSubida}"/>
+								</json:property>
+						    </c:otherwise>
+						</c:choose>
+
 					</c:if>
 			</json:object>
             <c:forEach items="${entity.adjuntos}" var="adj">
@@ -35,6 +45,18 @@
 						<json:property name="fechaCrear">
 						 	<fwk:date value="${adj.auditoria.fechaCrear}"/>
 						</json:property>
+						<c:choose>
+						    <c:when test="${adj.auditoria!=null}">
+							 	<json:property name="fechaCrear">
+								 	<fwk:date value="${adj.auditoria.fechaCrear}"/>
+								</json:property>
+						    </c:when>
+	    					<c:otherwise>
+							 	<json:property name="fechaCrear">
+								 	<fwk:date value="${adj.fechaSubida}"/>
+								</json:property>
+						    </c:otherwise>
+						</c:choose>
 		            </json:object>
 				</c:if>
             </c:forEach>

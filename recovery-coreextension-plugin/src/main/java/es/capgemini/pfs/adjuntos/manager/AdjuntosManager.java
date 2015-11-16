@@ -28,6 +28,7 @@ import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
+import es.capgemini.pfs.contrato.dao.AdjuntoContratoDao;
 import es.capgemini.pfs.contrato.dao.ContratoDao;
 import es.capgemini.pfs.contrato.model.AdjuntoContrato;
 import es.capgemini.pfs.contrato.model.Contrato;
@@ -37,12 +38,15 @@ import es.capgemini.pfs.core.api.asunto.EXTAdjuntoDto;
 import es.capgemini.pfs.core.api.persona.PersonaApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.eventfactory.EventFactory;
+import es.capgemini.pfs.expediente.dao.AdjuntoExpedienteDao;
 import es.capgemini.pfs.expediente.dao.ExpedienteDao;
 import es.capgemini.pfs.expediente.model.AdjuntoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
+import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.iplus.IPLUSAdjuntoAuxDto;
 import es.capgemini.pfs.iplus.IPLUSUtils;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
+import es.capgemini.pfs.persona.dao.AdjuntoPersonaDao;
 import es.capgemini.pfs.persona.dao.PersonaDao;
 import es.capgemini.pfs.persona.model.AdjuntoPersona;
 import es.capgemini.pfs.persona.model.Persona;
@@ -89,6 +93,15 @@ public class AdjuntosManager implements AdjuntosApi{
     
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+    private AdjuntoPersonaDao adjuntoPersonaDao;
+	
+	@Autowired
+    private AdjuntoExpedienteDao adjuntoExpedienteDao;
+	
+	@Autowired
+    private AdjuntoContratoDao adjuntoContratoDao;
 
 	@Override
 	@Transactional(readOnly = false)
@@ -702,6 +715,37 @@ public class AdjuntosManager implements AdjuntosApi{
 		return adjuntosConBorrado;
 	}
 	
+	@Override
+	@BusinessOperation(BO_ADJ_BAJAR_ADJUNTO_ASUNTO)
+	@Transactional(readOnly = false)
+	public FileItem bajarAdjuntoAsunto(Long asuntoId, Long adjuntoId) {
+        Asunto asunto = (Asunto) executor.execute(ExternaBusinessOperation.BO_ASU_MGR_GET, asuntoId); //get(asuntoId);
+        return asunto.getAdjunto(adjuntoId).getAdjunto().getFileItem();
+	}
+	
+	
+	@Override
+	@BusinessOperation(BO_ADJ_BAJAR_ADJUNTO_PERSONA)
+	@Transactional(readOnly = false)
+	public FileItem bajarAdjuntoPersona(Long adjuntoId) {
+		return adjuntoPersonaDao.get(adjuntoId).getAdjunto().getFileItem();
+	}
+	
+	
+	@Override
+	@BusinessOperation(BO_ADJ_BAJAR_ADJUNTO_EXPEDIENTE)
+	@Transactional(readOnly = false)
+	public FileItem bajarAdjuntoExpediente(Long adjuntoId) {
+		return adjuntoExpedienteDao.get(adjuntoId).getAdjunto().getFileItem();
+	}
+	
+	@Override
+	@BusinessOperation(BO_ADJ_BAJAR_ADJUNTO_CONTRATO)
+	@Transactional(readOnly = false)
+	public FileItem bajarAdjuntoContrato(Long adjuntoId) {
+		return adjuntoContratoDao.get(adjuntoId).getAdjunto().getFileItem();
+	}
+	
 	private boolean tieneFuncion(Usuario usuario, String codigo) {
 		List<Perfil> perfiles = usuario.getPerfiles();
 		for (Perfil per : perfiles) {
@@ -819,5 +863,6 @@ public class AdjuntosManager implements AdjuntosApi{
 		Expediente exp = genericDao.get(Expediente.class, filtroExpediente);
 		return exp;
 	}
+
 	
 }

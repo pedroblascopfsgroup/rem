@@ -2,83 +2,58 @@ package es.pfsgroup.recovery.gestordocumental.dto;
 
 import java.util.Date;
 
-import javax.crypto.Cipher;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-
 public class AdjuntoGridDto {
 
-	private final static String alg = "AES";
-    private final static String cI = "AES/CBC/PKCS5Padding";
-    
-	private Long idAdjunto;
+	private Long id;
 	private String nombre;
-	private String tipoDocumento;
+	private String contentType;
 	private String descripcion;
-	private String tamanyo;
+	private String length;
 	private String tipo;
 	private Date fechaSubida;
 	private Long numActuacion;
 	private String descripcionEntidad;
 	private String refCentera;
+	private String ficheroBase64;
 	
-	public static String encrypt(String key, String iv, String cleartext) throws Exception {
-        Cipher cipher = Cipher.getInstance(cI);
-        SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes(), alg);
-        IvParameterSpec ivParameterSpec = new IvParameterSpec(iv.getBytes());
-        cipher.init(Cipher.ENCRYPT_MODE, skeySpec, ivParameterSpec);
-        byte[] encrypted = cipher.doFinal(cleartext.getBytes());
-        return new String(encodeBase64(encrypted));
-}
+	public Long getId() {
+		return id;
+	}
 	
-	public static String decrypt(String key, String iv, String encrypted) throws Exception {
-        Cipher cipher = Cipher.getInstance(cI);
-        SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes(), alg);
-        IvParameterSpec ivParameterSpec = new IvParameterSpec(iv.getBytes());
-        byte[] enc = decodeBase64(encrypted);
-        cipher.init(Cipher.DECRYPT_MODE, skeySpec, ivParameterSpec);
-        byte[] decrypted = cipher.doFinal(enc);
-        return new String(decrypted);
-}
-
-	public Long getIdAdjunto() {
-		return idAdjunto;
+	public void setId(Long id) {
+		this.id = id;
 	}
-
-	public void setIdAdjunto(Long idAdjunto) {
-		this.idAdjunto = idAdjunto;
-	}
-
+	
 	public String getNombre() {
 		return nombre;
 	}
-
+	
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
-
-	public String getTipoDocumento() {
-		return tipoDocumento;
+	
+	public String getContentType() {
+		return contentType;
 	}
-
-	public void setTipoDocumento(String tipoDocumento) {
-		this.tipoDocumento = tipoDocumento;
+	
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
 	}
-
+	
 	public String getDescripcion() {
 		return descripcion;
 	}
-
+	
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
-
-	public String getTamanyo() {
-		return tamanyo;
+	
+	public String getLength() {
+		return length;
 	}
 	
-	public void setTamanyo(String tamanyo) {
-		this.tamanyo = tamanyo;
+	public void setLength(String length) {
+		this.length = length;
 	}
 
 	public String getTipo() {
@@ -119,6 +94,14 @@ public class AdjuntoGridDto {
 	
 	public void setRefCentera(String refCentera) {
 		this.refCentera = refCentera;
+	}
+
+	public String getFicheroBase64() {
+		return ficheroBase64;
+	}
+
+	public void setFicheroBase64(String ficheroBase64) {
+		this.ficheroBase64 = ficheroBase64;
 	}
 
 }

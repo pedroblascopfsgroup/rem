@@ -6,7 +6,7 @@
 	    
     <end-state id="listado" view="file" >
 		<on-entry>
-			<evaluate expression="executor.execute('expedienteManager.bajarAdjunto', id)" result="flowScope.fileItem"/>
+			<evaluate expression="executor.execute('adjuntosManager.bajarAdjuntoExpediente', id)" result="flowScope.fileItem"/>
 		</on-entry>
 	</end-state>
     

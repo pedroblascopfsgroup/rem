@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDto;
 import es.capgemini.pfs.core.api.asunto.AdjuntoDto;
@@ -17,6 +18,13 @@ public interface AdjuntosApi {
 	public static final String BO_ADJ_UPLOAD_PERSONA_ASUNTO = "adjuntosManager.uploadPersona";
 	public static final String BO_ADJ_UPLOAD_EXPEDIENTE_ASUNTO = "adjuntosManager.uploadExpediente";
 	public static final String BO_ADJ_UPLOAD_CONTRATO_ASUNTO = "adjuntosManager.uploadContrato";
+	public static final String BO_ADJ_BAJAR_ADJUNTO_ASUNTO = "adjuntosManager.bajarAdjuntoAsunto";
+	public static final String BO_ADJ_BAJAR_ADJUNTO_PERSONA = "adjuntosManager.bajarAdjuntoPersona";
+	public static final String BO_ADJ_BAJAR_ADJUNTO_EXPEDIENTE = "adjuntosManager.bajarAdjuntoExpediente";
+	public static final String BO_ADJ_BAJAR_ADJUNTO_CONTRATO = "adjuntosManager.bajarAdjuntoContrato";
+	
+	
+	
 
 	
 	/*ASUNTO*/
@@ -48,6 +56,10 @@ public interface AdjuntosApi {
 	@Transactional(readOnly = false)
 	public String uploadContrato(WebFileItem uploadForm);
 	
+	@BusinessOperationDefinition(BO_ADJ_BAJAR_ADJUNTO_ASUNTO)
+	@Transactional(readOnly = false)
+	public FileItem bajarAdjuntoAsunto(Long asuntoId, Long adjuntoId);
+	
 	/*PROCEDIMIENTO*/
 	@Transactional(readOnly = false)
 	public List<? extends AdjuntoDto> getAdjuntosConBorradoByPrcId(Long prcId);
@@ -62,12 +74,24 @@ public interface AdjuntosApi {
 	@Transactional(readOnly = false)
 	public List<ExtAdjuntoGenericoDto> getAdjuntosContratoExp(Long id);
 	
+	@BusinessOperationDefinition(BO_ADJ_BAJAR_ADJUNTO_EXPEDIENTE)
+	@Transactional(readOnly = false)
+	public FileItem bajarAdjuntoExpediente(Long adjuntoId);
+	
 	/*CONTRATO*/
 	@Transactional(readOnly = false)
 	public List<? extends AdjuntoDto> getAdjuntosCntConBorrado(Long id);
 	
+	@BusinessOperationDefinition(BO_ADJ_BAJAR_ADJUNTO_CONTRATO)
+	@Transactional(readOnly = false)
+	public FileItem bajarAdjuntoContrato(Long adjuntoId);
+	
 	/*CLIENTE*/
 	@Transactional(readOnly = false)
 	public List<? extends AdjuntoDto> getAdjuntosPersonaConBorrado(Long id);
+	
+	@BusinessOperationDefinition(BO_ADJ_BAJAR_ADJUNTO_PERSONA)
+	@Transactional(readOnly = false)
+	public FileItem bajarAdjuntoPersona(Long adjuntoId);
 
 }

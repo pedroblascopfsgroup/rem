@@ -24,4 +24,6 @@ public interface GestorTareasDao extends AbstractDao<Serializable,Long> {
 	 * @return boolean
 	 */
 	public boolean evaluaCondicion(Long idProc, String condicion);
+
+	String obtenerSubtipoTarea(String codigoTarea);
 }

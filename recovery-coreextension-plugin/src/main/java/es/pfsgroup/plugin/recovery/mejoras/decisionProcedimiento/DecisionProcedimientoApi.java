@@ -3,8 +3,6 @@ package es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
-import es.capgemini.devon.bo.annotations.BusinessOperation;
-import es.capgemini.pfs.decisionProcedimiento.dto.DtoDecisionProcedimiento;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
@@ -13,17 +11,16 @@ import java.util.List;
 
 public interface DecisionProcedimientoApi {
 
+	public static final String BO_DEC_PCR_ELIMINAR_PROCEDIMIENTO = "decisionProcedimientoManager.borrarProcedimiento";
+	public static final String BO_DEC_PCR_ACTUALIZAR_PROCEDIMIENTO = "decisionProcedimientoManager.actualizarProcedimiento";
+
+	public static final String MEJ_BO_DECISIONPROCEDIMIENTO_REANUDAR="plugin.mejoras.decisionProcedimiento.reanudarProcedimiento";
+	public static final String MEJ_BO_DECISIONPROCEDIMIENTO_LISTA="plugin.mejoras.decisionProcedimiento.getListDecisionProcedimiento";
+	
 	/**
 	 * reanuda las tareas que estaban paralizadas del procedimiento
 	 * @param id del procedimiento
 	 */
-	public static final String MEJ_BO_DECISIONPROCEDIMIENTO_REANUDAR="plugin.mejoras.decisionProcedimiento.reanudarProcedimiento";
-
-	public static final String BO_DEC_PCR_ELIMINAR_PROCEDIMIENTO = "decisionProcedimientoManager.borrarProcedimiento";
-	public static final String MEJ_BO_DECISIONPROCEDIMIENTO_LISTA="plugin.mejoras.decisionProcedimiento.getListDecisionProcedimiento";
-	public static final String BO_DEC_PCR_ACTUALIZAR_PROCEDIMIENTO = "decisionProcedimientoManager.actualizarProcedimiento";
-
-
 	@BusinessOperationDefinition(MEJ_BO_DECISIONPROCEDIMIENTO_REANUDAR)
 	@Transactional(readOnly = false)
 	public void reanudarProcedimientoParalizado(Long id);
@@ -33,7 +30,6 @@ public interface DecisionProcedimientoApi {
      * Lanza los correspondientes BPM.
      * @param dtoDecisionProcedimiento dtoDecisionProcedimiento
 	 * @throws Exception 
-     * @throws Exception e
      */
     @BusinessOperationDefinition(ExternaBusinessOperation.BO_DEC_PRC_MGR_ACEPTAR_PROPUESTA)
     public void aceptarPropuesta(MEJDtoDecisionProcedimiento dtoDecisionProcedimiento);
@@ -48,7 +44,6 @@ public interface DecisionProcedimientoApi {
 
 	
 	@BusinessOperationDefinition(ExternaBusinessOperation.BO_DEC_PRC_MGR_RECHAZAR_PROPUESTA)
-	@Transactional(readOnly = false)
 	public void rechazarPropuesta(MEJDtoDecisionProcedimiento dto);
 
 	@BusinessOperationDefinition(MEJ_BO_DECISIONPROCEDIMIENTO_LISTA)

@@ -1,11 +1,13 @@
 package es.pfsgroup.recovery.geninformes;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -40,6 +42,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.lowagie.text.Document;
+import com.lowagie.text.html.simpleparser.HTMLWorker;
+import com.lowagie.text.pdf.PdfWriter;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
@@ -868,7 +874,7 @@ public class GENINFInformesManager implements GENINFInformesApi {
 	 */
 	@Override
 	@BusinessOperation(MSV_GENERAR_ESCRITO_VARIABLES)
-	public FileItem generarEscritoConVariables(HashMap<String, String> mapaVariables, String escrito,InputStream is) throws Throwable {
+	public FileItem generarEscritoConVariables(HashMap<String, Object> mapaVariables, String escrito,InputStream is) throws Throwable {
 		File fileSalidaTemporal = null;
 		FileItem resultado = null;
 		OutputStream out = null;
@@ -888,7 +894,7 @@ public class GENINFInformesManager implements GENINFInformesApi {
 			IContext context = report.createContext();
 			
 			// Metemos los valores de las variables !! MUY IMPORTANTE: Si hay definidas variables y no se pueblan a continuación , NO FUNCIONA
-			for(Map.Entry<String, String> entry : mapaVariables.entrySet()){
+			for(Map.Entry<String, Object> entry : mapaVariables.entrySet()){
 				context.put(entry.getKey(),entry.getValue());	
 				
 			}
@@ -945,6 +951,59 @@ public class GENINFInformesManager implements GENINFInformesApi {
 		InputStream is=new FileInputStream(archivo);
 		
 		return is;
+		
+	}
+	
+	
+	/**
+	 * Creamos .pdf temporal y convertimos las etiquetas HTML a formato pdf
+	 * @param envioBurofax
+	 * @return
+	 * @throws Exception
+	 */
+	@Override
+	@BusinessOperation(MSV_GENERAR_ESCRITO_PDF_FROM_HTML)
+	public InputStream createPdfFileFromHtmlText(String htmlText,String nombreFichero) throws Exception{
+		
+		
+		File archivo = File.createTempFile(nombreFichero, ".pdf");
+		
+		try {
+		    
+			String k = "<html><body>"+htmlText+"</body></html>";
+		      
+		    OutputStream file = new FileOutputStream(archivo);
+		    Document document = new Document();
+		    PdfWriter.getInstance(document, file);
+		    document.open();
+		    HTMLWorker htmlWorker = new HTMLWorker(document);
+		    htmlWorker.parse(new StringReader(k));
+		    document.close();
+		    
+		    file.close();
+			
+
+			
+		} catch (Exception e) {
+		    e.printStackTrace();
+		}
+		
+	    InputStream is=new FileInputStream(archivo);
+		return is;
+		
+//		try {
+//		    String k = "<html><body> This is my Project </body></html>";
+//		    OutputStream file = new FileOutputStream(new File("C:\\Test.pdf"));
+//		    Document document = new Document();
+//		    PdfWriter writer = PdfWriter.getInstance(document, file);
+//		    document.open();
+//		    InputStream is = new ByteArrayInputStream(k.getBytes());
+//		    XMLWorkerHelper.getInstance().parseXHtml(writer, document, is);
+//		    document.close();
+//		    file.close();
+//		} catch (Exception e) {
+//		    e.printStackTrace();
+//		}
 		
 	}
     

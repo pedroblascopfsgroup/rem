@@ -16,6 +16,7 @@
 	var style='margin-bottom:1px;margin-top:1px';
 	var errores="";
 
+	var procedimientoRemoto = false;
 	var modoConsulta=false;
 	var faltaPermisos=false;
 	var esSolicitud=true;
@@ -23,6 +24,9 @@
 		if('${decisionProcedimiento.estadoDecision.codigo}' == '<fwk:const value="es.capgemini.pfs.decisionProcedimiento.model.DDEstadoDecision.ESTADO_ACEPTADO" />'
 			|| '${decisionProcedimiento.estadoDecision.codigo}' == '<fwk:const value="es.capgemini.pfs.decisionProcedimiento.model.DDEstadoDecision.ESTADO_RECHAZADO" />' || (${isConsulta != null} && ${isConsulta}))
 			modoConsulta=true;
+	</c:if>
+	<c:if test="${decisionProcedimiento!=null and empty decisionProcedimiento.procedimiento.processBPM}" >
+	procedimientoRemoto = true;
 	</c:if>
 	
 	var esGestor=${esGestor};
@@ -729,7 +733,7 @@
 			if (isCheck){
 				if (comprobarPermitidoAceptar){
 					btnAceptarPropuesta.disable();
-					btnProponer.enable();
+					habilitarBotonProponer();
 				}
 			}else if (comprobarPermitidoAceptar){
 					btnAceptarPropuesta.enable();
@@ -786,7 +790,7 @@
 			if (isCheck){
 				if (comprobarPermitidoAceptar){
 					btnAceptarPropuesta.disable();
-					btnProponer.enable();
+					habilitarBotonProponer();				
 				}	
 			}else if (comprobarPermitidoAceptar){
 					btnAceptarPropuesta.enable();
@@ -948,6 +952,12 @@
 	   }
 	}
 	
+	function habilitarBotonProponer() {
+		if(!procedimientoRemoto) {
+			btnProponer.enable();
+		}
+	}
+	
 	var validarDatosFormulario = function(){
 	
 		var saldoRec=saldoARecuperar.getValue();
@@ -1007,7 +1017,7 @@
 				});
 			}
 			else{
-				btnProponer.enable();
+				habilitarBotonProponer();
 			}
 		}
 	});

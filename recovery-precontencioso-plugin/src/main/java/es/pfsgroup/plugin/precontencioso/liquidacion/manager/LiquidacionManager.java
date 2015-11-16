@@ -64,10 +64,6 @@ public class LiquidacionManager implements LiquidacionApi {
 	private ParametrizacionDao parametrizacionDao;
 	
 	private final Log logger = LogFactory.getLog(getClass());
-	
-    public static final String DIRECTORIO_PLANTILLAS_LIQUIDACION = "directorioPlantillasLiquidacion";
-
-
 
 	@Override
 	public List<LiquidacionDTO> getLiquidacionesPorIdProcedimientoPCO(Long idProcedimientoPCO) {
@@ -240,11 +236,6 @@ public class LiquidacionManager implements LiquidacionApi {
 	@BusinessOperation(LIQUIDACION_PRECONTENCIOSO_BY_ID)
 	public LiquidacionPCO getLiquidacionPCOById(Long idLiquidacion) {
 		return liquidacionDao.get(idLiquidacion);
-	}
-	
-	@Override
-	public String obtenerDirectorioDocumentos(){
-		return parametrizacionDao.buscarParametroPorNombre(DIRECTORIO_PLANTILLAS_LIQUIDACION).getValor();
 	}
 
 }

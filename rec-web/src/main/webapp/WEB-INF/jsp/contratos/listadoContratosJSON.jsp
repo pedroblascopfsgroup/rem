@@ -13,9 +13,11 @@
 			<json:property name="codigoContrato" value="${cnt.codigoContrato}"/>
 			<json:property name="tipoProducto" value="${cnt.tipoProducto.descripcion}"/>
 			<json:property name="tipoProductoEntidad" value="(${cnt.tipoProductoEntidad.codigo}) ${cnt.tipoProductoEntidad.descripcion}"/>
-			<json:property name="saldoVencido" value="${cnt.lastMovimiento.posVivaVencidaAbsoluta}"/>
-			<json:property name="diasIrregular" value="${cnt.diasIrregular}"/>
-			<json:property name="riesgo" value="${cnt.lastMovimiento.riesgo}"/>
+			<c:if test="${cnt.lastMovimiento != null}">
+				<json:property name="saldoVencido" value="${cnt.lastMovimiento.posVivaVencidaAbsoluta}" />
+				<json:property name="diasIrregular" value="${cnt.diasIrregular}" />
+				<json:property name="riesgo" value="${cnt.lastMovimiento.riesgo}" />
+			</c:if>
 			<json:property name="situacion">
 				<s:message code="situacion.normal" text="**Normal" />
 			</json:property>

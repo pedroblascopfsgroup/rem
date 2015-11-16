@@ -1,10 +1,9 @@
 package es.pfsgroup.plugin.recovery.coreextension.api;
 
-import java.util.Map;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-
-import org.springframework.stereotype.Component;
 
 
 public class CoreProjectContextImpl implements CoreProjectContext {
@@ -13,6 +12,11 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	private List<String> tiposPrcAdjudicados;
 	private Set<String> tiposGestorGestoria;
 	private Set<String> tiposGestorProcurador;
+	private Set<String> entidadesDesparalizacion;
+	
+	public CoreProjectContextImpl() {
+		entidadesDesparalizacion = new HashSet<String>();
+	}
 
 	@Override
 	public Map<String, Set<String>> getCategoriasSubTareas() {
@@ -62,6 +66,13 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	public void setTiposGestorProcurador(Set<String> tiposGestorProcurador) {
 		this.tiposGestorProcurador = tiposGestorProcurador;
 	}
-	
-	
+
+	@Override
+	public Set<String> getEntidadesDesparalizacion() {
+		return entidadesDesparalizacion;
+	}
+
+	public void setEntidadesDesparalizacion(Set<String> entidadesDesparalizacion) {
+		this.entidadesDesparalizacion = entidadesDesparalizacion;
+	}	
 }

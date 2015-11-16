@@ -22,6 +22,12 @@ import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 public class DecisionProcedimientoController {
 
 	private static final String VENTANA_DECISION = "plugin/mejoras/procedimientos/decision";
+
+	/**
+	 * Decisión procedimiento actual seleccionado sobre el que se toma la decisión.
+	 */
+	protected static final String KEY_DECISION_PROCEDIMIENTO = "decisionProcedimiento";
+	protected static final String KEY_TIPOS_ACTUACION = "tiposActuacion";
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -128,11 +134,11 @@ public class DecisionProcedimientoController {
 			decisionProcedimiento = decisionProcedimientoManager.getInstance(idProcedimiento);
 		}
 		
-		map.put("decisionProcedimiento", decisionProcedimiento);
+		map.put(KEY_DECISION_PROCEDIMIENTO, decisionProcedimiento);
 		map.put("causaDecisionFinalizar", dictionaryManager.getList("DDCausaDecisionFinalizar"));
 		map.put("causaDecisionParalizar", dictionaryManager.getList("DDCausaDecisionParalizar"));				
 		map.put("estadoDecision", dictionaryManager.getList("DDEstadoDecision"));
-		map.put("tiposActuacion", prcManager.getTiposActuacion());
+		map.put(KEY_TIPOS_ACTUACION, prcManager.getTiposActuacion(decisionProcedimiento.getProcedimiento()));
 		map.put("tiposProcedimientos", prcManager.getTiposProcedimiento());
 		map.put("tiposReclamacion", procedimientoManager.getTiposReclamacion());
 		map.put("personas", prcManager.getPersonasAfectadas(idProcedimiento));

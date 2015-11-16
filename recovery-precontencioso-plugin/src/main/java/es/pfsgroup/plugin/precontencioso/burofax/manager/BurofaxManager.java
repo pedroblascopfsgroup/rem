@@ -1,17 +1,12 @@
 package es.pfsgroup.plugin.precontencioso.burofax.manager;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,23 +16,18 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
-import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.asunto.ProcedimientoManager;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.asunto.model.ProcedimientoContratoExpediente;
-import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
-import es.capgemini.pfs.contrato.model.DDTipoIntervencion;
 import es.capgemini.pfs.contrato.model.DDTipoProductoEntidad;
 import es.capgemini.pfs.direccion.api.DireccionApi;
 import es.capgemini.pfs.direccion.dto.DireccionAltaDto;
 import es.capgemini.pfs.direccion.model.Direccion;
-import es.capgemini.pfs.movimiento.model.Movimiento;
 import es.capgemini.pfs.parametrizacion.dao.ParametrizacionDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.users.UsuarioManager;
-import es.capgemini.pfs.utils.FormatUtils;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -57,10 +47,7 @@ import es.pfsgroup.plugin.precontencioso.burofax.model.ProcedimientoBurofaxTipoP
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dao.LiquidacionDao;
 import es.pfsgroup.plugin.precontencioso.liquidacion.manager.LiquidacionManager;
-import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienEntidad;
 import es.pfsgroup.recovery.geninformes.GENINFInformesManager;
 
 @Service
@@ -152,7 +139,7 @@ public class BurofaxManager implements BurofaxApi {
 			}
 
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getTipoBurofaxPorDefecto: " + e);
 		}
 		
 		if(!Checks.esNulo(procedimientoBurofaxTipoPCO)){
@@ -175,7 +162,7 @@ public class BurofaxManager implements BurofaxApi {
 			
 			contrato=genericDao.get(Contrato.class,filtro1);
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getContrato: " + e);
 		}
 		
 		return contrato;
@@ -191,7 +178,7 @@ public class BurofaxManager implements BurofaxApi {
 			
 			listaBurofax=(List<BurofaxPCO>) genericDao.getList(BurofaxPCO.class,filtro1);
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getListaBurofaxPCO: " + e);
 		}
 		
 		return listaBurofax;
@@ -208,7 +195,7 @@ public class BurofaxManager implements BurofaxApi {
 			idDireccion = proxyFactory.proxy(DireccionApi.class).guardarDireccionRetornaId(dto);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			logger.error(e);
+			logger.error("guardaDireccion: " + e);
 		}
 		return idDireccion;
 	}
@@ -222,8 +209,7 @@ public class BurofaxManager implements BurofaxApi {
 			dicionarioBurofax = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDTipoBurofaxPCO.class);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-			logger.error(e);
+			logger.error("getTiposBurofaxex: " + e);
 		}
 		
 		return dicionarioBurofax;
@@ -287,7 +273,7 @@ public class BurofaxManager implements BurofaxApi {
 			
 			
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("configurarTipoBurofax: " + e);
 		}
 		
 		return listaEnvioBurofax;
@@ -307,7 +293,7 @@ public class BurofaxManager implements BurofaxApi {
 			contenido= envioBurofax.getContenidoBurofax();
 			
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("obtenerContenidoBurofax: " + e);
 		}
 		
 		return contenido;
@@ -325,7 +311,7 @@ public class BurofaxManager implements BurofaxApi {
 			
 			genericDao.save(EnvioBurofaxPCO.class,envioBurofax);
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("configurarContenidoBurofax: " + e);
 		}
 	}
 	
@@ -340,7 +326,7 @@ public class BurofaxManager implements BurofaxApi {
 			persona=(Persona) genericDao.get(Persona.class,filtro1);
 			
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getPersonaById: "+ e);
 		}
 		
 		return persona;
@@ -373,7 +359,7 @@ public class BurofaxManager implements BurofaxApi {
 			
 			
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("guardaPersonaCreandoBurofax: " + e);
 		}
 	}
 	
@@ -498,7 +484,7 @@ public class BurofaxManager implements BurofaxApi {
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idEnvio);
 			envioBurofax=(EnvioBurofaxPCO) genericDao.get(EnvioBurofaxPCO.class,filtro1);
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getTipoBurofaxByIdEnvio: " + e);
 		}
 		
 		return envioBurofax.getTipoBurofax();
@@ -513,7 +499,7 @@ public class BurofaxManager implements BurofaxApi {
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
 			tipoBurofax=(DDTipoBurofaxPCO) genericDao.get(DDTipoBurofaxPCO.class,filtro1);
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getTipoBurofaxByCodigo: " + e);
 		}
 	
 		return tipoBurofax;
@@ -528,7 +514,7 @@ public class BurofaxManager implements BurofaxApi {
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idEnvio);
 			envioBurofax=(EnvioBurofaxPCO) genericDao.get(EnvioBurofaxPCO.class,filtro1);
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getEnvioBurofaxById: " + e);
 		}
 	
 		return envioBurofax;
@@ -543,9 +529,7 @@ public class BurofaxManager implements BurofaxApi {
 		try {
 			dicionarioEstadoBurofax = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDEstadoBurofaxPCO.class);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			logger.error(e);
+			logger.error("getEstadosBurofax: "+ e);
 		}
 		
 		return dicionarioEstadoBurofax;
@@ -578,7 +562,7 @@ public class BurofaxManager implements BurofaxApi {
 				genericDao.save(EnvioBurofaxPCO.class,envio);
 			}
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("guardaInformacionEnvio: " + e);
 		}
 		
 		
@@ -595,7 +579,7 @@ public class BurofaxManager implements BurofaxApi {
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", id);
 			resultadoBurofax=(DDResultadoBurofaxPCO) genericDao.get(DDResultadoBurofaxPCO.class,filtro1);
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getResultadoBurofaxPCOById: " + e);
 		}
 		
 		return resultadoBurofax;
@@ -612,7 +596,7 @@ public class BurofaxManager implements BurofaxApi {
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idEstado);
 			estadoBurofax=(DDEstadoBurofaxPCO) genericDao.get(DDEstadoBurofaxPCO.class,filtro1);
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getEstadoBurofaxById: " + e);
 		}
 		
 		return estadoBurofax;
@@ -629,7 +613,7 @@ public class BurofaxManager implements BurofaxApi {
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "envioId", idEnvio);
 			burofaxEnvio=(BurofaxEnvioIntegracionPCO) genericDao.get(BurofaxEnvioIntegracionPCO.class,filtro1);
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getBurofaxEnvioIntegracionByIdEnvio: " + e);
 		}
 		
 		return burofaxEnvio;

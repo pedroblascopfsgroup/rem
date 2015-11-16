@@ -246,7 +246,7 @@ public class GestorTareasManager implements GestorTareasApi {
             String result = processUtils.evaluaScript(idProcedimiento, null, idTipoTarea, null, script).toString();
             plazo = Long.parseLong(result.toString());
         } catch (Exception e) {
-            logger.error(TXT_ERR_PLAZO_1 + script + TXT_ERR_PLAZO_2 + idProcedimiento + TXT_ERR_PLAZO_3
+            logger.error("getPlazoTarea: " + TXT_ERR_PLAZO_1 + script + TXT_ERR_PLAZO_2 + idProcedimiento + TXT_ERR_PLAZO_3
                     + idTipoTarea + TXT_ERR_PLAZO_4, e);
             throw new UserException(BPM_ERROR_SCRIPT);
         }

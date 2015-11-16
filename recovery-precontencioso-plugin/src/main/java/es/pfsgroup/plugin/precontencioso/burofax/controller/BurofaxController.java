@@ -508,7 +508,7 @@ public class BurofaxController {
 	    	fecAcuse = webDateFormat.parse(fechaAcuse);
 	    	fecEnvio = webDateFormat.parse(fechaEnvio);
     	}catch(Exception e){
-    		logger.error(e);
+    		logger.error("configuraInformacionEnvio: " + e);
     	}
     	burofaxManager.guardaInformacionEnvio(arrayIdEnvios, idResultadoBurofax, fecEnvio, fecAcuse);
     

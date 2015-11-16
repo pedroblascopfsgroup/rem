@@ -50,7 +50,7 @@ EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 IF V_NUM_TABLAS = 0 THEN
     DBMS_OUTPUT.PUT_LINE('[INFO] Insertar tipo actor Gestor Documentacion');
     EXECUTE IMMEDIATE 'INSERT INTO ' || V_ESQUEMA || '.' || V_DDNAME || ' (DD_PCO_DSA_ID, DD_PCO_DSA_CODIGO, DD_PCO_DSA_DESCRIPCION, DD_PCO_DSA_DESCRIPCION_LARGA, DD_PCO_DSA_ACCESO_RECOVERY, VERSION, USUARIOCREAR, FECHACREAR) VALUES '
-     || ' ('||V_ESQUEMA||'.S_DD_PCO_DOC_SOLICIT_ACTOR.nextval, ''CM_GD_PCO'', ''Gestor Documentacion'', ''Gestor Documentacion'', 0, 0, ''PCO'', sysdate) ';
+     || ' ('||V_ESQUEMA||'.S_DD_PCO_DOC_SOLICIT_ACTOR.nextval, ''CM_GD_PCO'', ''Gestor Documentacion'', ''Gestor Documentacion'', 1, 0, ''PCO'', sysdate) ';
 END IF;
 
 -- tipo actor Gestor Liquidacion
@@ -62,7 +62,7 @@ EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 IF V_NUM_TABLAS = 0 THEN
     DBMS_OUTPUT.PUT_LINE('[INFO] Insertar tipo actor Gestor Liquidacion');
     EXECUTE IMMEDIATE 'INSERT INTO ' || V_ESQUEMA || '.' || V_DDNAME || ' (DD_PCO_DSA_ID, DD_PCO_DSA_CODIGO, DD_PCO_DSA_DESCRIPCION, DD_PCO_DSA_DESCRIPCION_LARGA, DD_PCO_DSA_ACCESO_RECOVERY, VERSION, USUARIOCREAR, FECHACREAR) VALUES '
-     || ' ('||V_ESQUEMA||'.S_DD_PCO_DOC_SOLICIT_ACTOR.nextval, ''CM_GL_PCO'', ''Gestor Liquidacion'', ''Gestor Liquidacion'', 0, 0, ''PCO'', sysdate) ';
+     || ' ('||V_ESQUEMA||'.S_DD_PCO_DOC_SOLICIT_ACTOR.nextval, ''CM_GL_PCO'', ''Gestor Liquidacion'', ''Gestor Liquidacion'', 1, 0, ''PCO'', sysdate) ';
 END IF;
 
 -- tipo actor Gestor Estudio
@@ -74,7 +74,7 @@ EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 IF V_NUM_TABLAS = 0 THEN
     DBMS_OUTPUT.PUT_LINE('[INFO] Insertar tipo actor Gestor Estudio');
     EXECUTE IMMEDIATE 'INSERT INTO ' || V_ESQUEMA || '.' || V_DDNAME || ' (DD_PCO_DSA_ID, DD_PCO_DSA_CODIGO, DD_PCO_DSA_DESCRIPCION, DD_PCO_DSA_DESCRIPCION_LARGA, DD_PCO_DSA_ACCESO_RECOVERY, VERSION, USUARIOCREAR, FECHACREAR) VALUES '
-     || ' ('||V_ESQUEMA||'.S_DD_PCO_DOC_SOLICIT_ACTOR.nextval, ''CM_GE_PCO'', ''Gestor Estudio'', ''Gestor Estudio'', 0, 0, ''PCO'', sysdate) ';
+     || ' ('||V_ESQUEMA||'.S_DD_PCO_DOC_SOLICIT_ACTOR.nextval, ''CM_GE_PCO'', ''Gestor Estudio'', ''Gestor Estudio'', 1, 0, ''PCO'', sysdate) ';
 END IF;
 
 -- tipo actor Gestor expediente judicial

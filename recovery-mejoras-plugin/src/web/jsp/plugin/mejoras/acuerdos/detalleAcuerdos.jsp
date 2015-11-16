@@ -18,11 +18,11 @@
 		var actAExpl = crearActuacionesAExplorar();
 	
 <%-- 		<%@ include file="/WEB-INF/jsp/plugin/mejoras/acuerdos/conclusionesAcuerdo.jsp" %>	 --%>
-<!-- 		var conclusiones = crearConclusiones(); -->
+<%-- 		var conclusiones = crearConclusiones(); --%>
 		
 		
 <%-- 		<%@ include file="listadoCumplimientoAcuerdo.jsp" %>	 --%>
-<!-- 		var cumplimiento = crearCumplimiento(); -->
+<%-- 		var cumplimiento = crearCumplimiento(); --%>
  
 
 
@@ -35,7 +35,7 @@
 		,autoHeight:true 
 		,autoWidth:true
 	      ,items:[
-<!-- 		   cumplimiento -->
+<%-- 		   cumplimiento --%>
 		    actuacionesRealizadas
 		    ,actAExpl]
 	   });

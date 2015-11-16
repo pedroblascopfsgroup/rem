@@ -597,7 +597,7 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			genericDao.save(ProcedimientoPCO.class, procedimientoPco);
 
 			try {
-				if (documentos.size()>0) {
+				if (documentos.size()>0 && esLitigio) {
 					gestorTareasManager.crearTareaEspecial(idProc,PrecontenciosoBPMConstants.PCO_SolicitarDoc);
 				}
 				if (liquidaciones.size()>0) {

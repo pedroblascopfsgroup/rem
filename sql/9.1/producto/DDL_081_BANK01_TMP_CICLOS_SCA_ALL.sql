@@ -50,7 +50,7 @@ BEGIN
     
    
     --** Creamos la tabla
-    V_MSQL := ' CREATE GLOBAL TEMPORARY TABLE TMP_CICLOS_SCA_ALL
+    V_MSQL := ' CREATE GLOBAL TEMPORARY TABLE '||v_esquema||'.TMP_CICLOS_SCA_ALL
 		(	
 			"CRE_ID"                  NUMBER(16,0) NOT NULL, 
 	        "RCF_SCA_ID"              NUMBER(16,0), 

@@ -50,7 +50,7 @@ BEGIN
     
    
     --** Creamos la tabla
-    V_MSQL := ' CREATE GLOBAL TEMPORARY TABLE TMP_PER_ARQ_PRI
+    V_MSQL := ' CREATE GLOBAL TEMPORARY TABLE '||v_esquema||'.TMP_PER_ARQ_PRI
 		(	
 			  "PER_ID"                  NUMBER(16,0), 
 			  "ARQ_ID"                  NUMBER(16,0)

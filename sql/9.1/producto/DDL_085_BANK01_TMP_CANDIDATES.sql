@@ -49,7 +49,7 @@ BEGIN
     
    
     --** Creamos la tabla
-    V_MSQL := ' CREATE GLOBAL TEMPORARY TABLE TMP_CANDIDATES
+    V_MSQL := ' CREATE GLOBAL TEMPORARY TABLE '||v_esquema||'.TMP_CANDIDATES
 		(	
 				"FECHA_MAX_REGULARIZACION"                DATE, 
 				"CRE_ID"                                  NUMBER, 

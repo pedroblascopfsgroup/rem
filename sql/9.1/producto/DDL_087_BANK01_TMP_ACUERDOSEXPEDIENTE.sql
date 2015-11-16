@@ -49,7 +49,7 @@ BEGIN
     
    
     --** Creamos la tabla
-    V_MSQL := ' CREATE GLOBAL TEMPORARY TABLE TMP_ACUERDOSEXPEDIENTE
+    V_MSQL := ' CREATE GLOBAL TEMPORARY TABLE '||v_esquema||'.TMP_ACUERDOSEXPEDIENTE
 		(	
      		   "EXP_ID"                        NUMBER(16,0) NOT NULL, 
 	           "RCF_SCA_ID"                    NUMBER(16,0), 

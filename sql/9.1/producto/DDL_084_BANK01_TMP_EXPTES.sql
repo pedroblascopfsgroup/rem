@@ -50,7 +50,7 @@ BEGIN
     
    
     --** Creamos la tabla
-    V_MSQL := ' CREATE GLOBAL TEMPORARY TABLE TMP_EXPTES
+    V_MSQL := ' CREATE GLOBAL TEMPORARY TABLE '||v_esquema||'.TMP_EXPTES
 		(	
 			"EXP_ID"                           NUMBER(16,0) NOT NULL, 
 	        "ID_SUBCARTERA"                    NUMBER(16,0), 

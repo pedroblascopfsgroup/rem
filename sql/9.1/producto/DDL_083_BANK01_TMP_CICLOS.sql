@@ -48,7 +48,7 @@ BEGIN
     
    
     --** Creamos la tabla
-    V_MSQL := ' CREATE GLOBAL TEMPORARY TABLE TMP_CICLOS
+    V_MSQL := ' CREATE GLOBAL TEMPORARY TABLE '||v_esquema||'.TMP_CICLOS
 		(	
 			"CRE_ID"                            NUMBER(16,0) NOT NULL, 
 	        "EXP_ID"                            NUMBER(16,0) NOT NULL, 

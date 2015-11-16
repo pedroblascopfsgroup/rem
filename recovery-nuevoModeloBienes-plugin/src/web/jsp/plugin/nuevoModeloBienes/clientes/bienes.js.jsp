@@ -1149,6 +1149,17 @@
 					focusError(pestanaValoraciones,porcentajeImpuestoCompra);
 					return false;
 				}
+				if(fechaValorSubjetivo.getValue() < fechaMinima){
+					msgError = '<s:message text="**Fecha erronea" code="plugin.nuevoModeloBienes.error.fechaValorSubjetivo"/>';
+					focusError(pestanaValoraciones,porcentajeImpuestoCompra);
+					return false;
+				}
+				
+				if(fechaValorApreciacion.getValue() < fechaMinima){
+					msgError = '<s:message text="**Fecha erronea" code="plugin.nuevoModeloBienes.error.fechaValorApreciacion"/>';
+					focusError(pestanaValoraciones,porcentajeImpuestoCompra);
+					return false;
+				}
 			
 			}
 			
@@ -1161,6 +1172,12 @@
 				
 				if(!referenciaCatastral.validate()){
 					msgError="<br><s:message code="" text="Validar referencia catastral"/>";	
+					return false;
+				}
+				
+				if(fechaInscripcion.getValue() < fechaMinima){
+					msgError = '<s:message text="**Fecha erronea" code="plugin.nuevoModeloBienes.error.fechaInscripcion"/>';
+					focusError(pestanaDatosRegistrales,fechaInscripcion);
 					return false;
 				}
 				<%-- Ya no es obligatorio segun bankia dgg 
@@ -1189,6 +1206,12 @@
 			}
 			
 			if (pestanaVehiculo == tab) {
+				if(fechaMatriculacion.getValue() < fechaMinima){
+					msgError = '<s:message text="**Fecha erronea" code="plugin.nuevoModeloBienes.error.fechaMatriculacion"/>';
+					focusError(pestanaVehiculo,fechaMatriculacion);
+					return false;
+				}
+				
 				/*if (marca.getValue() == null || marca.getValue() == '') {
 					msgError = '<s:message text="**La marca es un dato obligatorio obligatorio." code="plugin.nuevoModeloBienes.error.marca"/>';
 					focusError(pestanaVehiculo,marca);
@@ -1289,19 +1312,19 @@
 			if(tipoNMB.getValue() == null || tipoNMB.getValue() == '' ){
 				return false;
 			}
+			var tabs  = [pestanaPrincipal,pestanaValoraciones,pestanaDatosRegistrales,pestanaEmpresa,pestanaIAE,pestanaVehiculo,pestanaProductosBanco,pestanaLocalizacion,pestanaObservaciones,pestanaCuentaBancaria];
 			
-			for(var i=0;i < listaTabs.length;i++) {
-				if (listaTabs[i].tipoBien == tipoNMB.getValue())  {
-					for(var x=0;x < listaTabs[i].tabs.length; x++) {
-						if (!validaTab(listaTabs[i].tabs[x])) {
-							return false;
-						}
-					}
-					return true;
-				}				
+			for(var i=0;i < tabs.length;i++) {
+				<%-- if (listaTabs[i].tipoBien == tipoNMB.getValue())  {
+					for(var x=0;x < listaTabs[i].tabs.length; x++) {--%>
+				if (!validaTab(tabs[i])) {
+					return false;
+				}
+					//}
+				//return true;
+			//	}				
 			}
-			
-				return true;
+			return true;
 			
 		}
 		
@@ -1734,7 +1757,7 @@
 					,iconCls : 'icon_ok'
 					,handler : function() {
 					
-						if (panelEdicion.getForm().isValid()){
+						//if (panelEdicion.getForm().isValid()){
 							if(validarFormNMB()){
 								var p = getParametros();
 								Ext.Ajax.request({
@@ -1756,11 +1779,11 @@
 									Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>',msgError);
 								}
 							}
-						}
-						else
-						{	
-							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor erróneo" code="fwk.ui.errorList.fieldLabel.error"/>');										   		
-						}
+						//}
+						//else
+						//{	
+						//	Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor erróneo" code="fwk.ui.errorList.fieldLabel.error"/>');										   		
+						//}
 				   }
 				});
 			</sec:authorize>
@@ -1771,8 +1794,7 @@
 					<app:test id="btnGuardarBien" addComa="true" />
 					,iconCls : 'icon_ok'
 					,handler : function() {
-					
-						if (panelEdicion.getForm().isValid()){
+						//if (validaTab()){
 							if(validarFormNMB()){
 								var p = getParametros();
 								Ext.Ajax.request({
@@ -1790,11 +1812,11 @@
 									Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>',msgError);
 								}
 							}
-						}
-						else
-						{											   		
-							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor erróneo" code="fwk.ui.errorList.fieldLabel.error"/>');
-						}
+						//}
+						//else
+						//{											   		
+							//Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor erróneo" code="fwk.ui.errorList.fieldLabel.error"/>');
+						//}
 				   }
 				});
 			</sec:authorize>

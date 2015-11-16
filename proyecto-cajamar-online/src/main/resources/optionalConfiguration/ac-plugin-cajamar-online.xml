@@ -103,5 +103,19 @@
 		</property>
 	</bean>
 
+	<bean id="precontenciosoProjectContextCAJAMAR" parent="precontenciosoProjectContextDefault">
+		<property name="codigoFaseComun">
+			<value>H009</value>
+		</property>
+		<property name="recovery">
+			<value>CAJAMAR</value>
+		</property>
+		<property name="generarArchivoBurofax">
+			<value>false</value>
+		</property>
+	</bean>  
+	
 	<alias name="mapaTabsPorTipoBienCajamar" alias="mapaTabsPorTipoBien"/>
+	<alias name="precontenciosoProjectContextCAJAMAR" alias="precontenciosoProjectContext"/>
+
 </beans>	

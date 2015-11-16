@@ -226,21 +226,8 @@
 		</property>
 	</bean>	
 
-	<bean id="precontenciosoProjectContextCAJAMAR" parent="precontenciosoProjectContextDefault">
-		<property name="codigoFaseComun">
-			<value>H009</value>
-		</property>
-		<property name="recovery">
-			<value>CAJAMAR</value>
-		</property>
-		<property name="generarArchivoBurofax">
-			<value>false</value>
-		</property>
-	</bean>  
-	
 	<alias name="nmbCommonProjectContextHAYA" alias="nmbCommonProjectContext"/>
 	<alias name="procedimientosProjectContextHaya" alias="procedimientosProjectContext"/>		
 	<alias name="coreProjectContextHAYA" alias="coreProjectContext"/>
-	<alias name="precontenciosoProjectContextCAJAMAR" alias="precontenciosoProjectContext"/>
 	
 </beans>	

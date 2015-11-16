@@ -11,7 +11,7 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
 		layout:'form'
 		,border : false
 		,autoScroll:false
-<!-- 		,bodyStyle:'padding:5px;margin:5px' -->
+<%-- 		,bodyStyle:'padding:5px;margin:5px' --%>
 		,autoHeight:true
 		,autoWidth : true
 		,nombreTab : 'terminos'
@@ -38,8 +38,8 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
 	      {name : 'id' }
 		 ,{name : 'tipoAcuerdo'}
 		 ,{name : 'subTipoAcuerdo'}
-<!-- 		 ,{name : 'importe'} -->
-<!-- 		 ,{name : 'comisiones'} -->
+<%-- 		 ,{name : 'importe'} --%>
+<%-- 		 ,{name : 'comisiones'} --%>
 	 	 ,{name : 'idContrato'}
 		 ,{name : 'cc'}
 		 ,{name : 'tipo'}
@@ -158,7 +158,7 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
 			          ,autoHeight: true
 			          ,title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.agregar" text="**Agregar Termino" />'
 	     			  ,params:{
-<!-- 	      				  id:panel.getAsuntoId(), -->
+<%-- 	      				  id:panel.getAsuntoId(), --%>
 	      				  contratosIncluidos: contratosIncluidos,
 	      				  idAcuerdo : idAcuerdo,
 	      				  esPropuesta : esPropuesta
@@ -225,7 +225,7 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
 		          ,title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.editar" text="**Editar Termino" />'
 	    			  ,params:{
 	     				  id:idTerminoSeleccionado,
-<!-- 	     				  idAsunto:panel.getAsuntoId(), -->
+<%-- 	     				  idAsunto:panel.getAsuntoId(), --%>
 	     				  idAcuerdo : idAcuerdo,
 	     				  soloConsulta : 'false'     				  
 	     				}
@@ -395,11 +395,11 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
 	          ,title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.ver" text="**Ver Termino" />'
     			  ,params:{
      				  id:idTerminoSeleccionado,
-<!--      				  idAsunto:panel.getAsuntoId(), -->
+<%--      				  idAsunto:panel.getAsuntoId(), --%>
 					  idAcuerdo : idAcuerdo,
 					  soloConsulta : 'true'   				  
-<!--      				  contratosIncluidos: contratosIncluidos, -->
-<!--      				  idAcuerdo : idAcuerdo -->
+<%--      				  contratosIncluidos: contratosIncluidos, --%>
+<%--      				  idAcuerdo : idAcuerdo --%>
      				}
 	       });
 	       w.on(app.event.DONE, function(){

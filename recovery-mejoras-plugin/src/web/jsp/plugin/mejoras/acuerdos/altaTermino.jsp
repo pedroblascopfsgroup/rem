@@ -60,55 +60,55 @@
 	    
     });
     
-<!--     var creaCamposDynamics = function (cmp) { -->
+<%--     var creaCamposDynamics = function (cmp) { --%>
     	
-<!--     	var cmpLft = Ext.getCmp('dinamicElementsLeft'); -->
-<!-- 	   	if (cmpLft) { -->
-<!-- 	     	detalleFieldSet.remove(cmpLft, true); -->
-<!-- 	   	} -->
+<%--     	var cmpLft = Ext.getCmp('dinamicElementsLeft'); --%>
+<%-- 	   	if (cmpLft) { --%>
+<%-- 	     	detalleFieldSet.remove(cmpLft, true); --%>
+<%-- 	   	} --%>
 	   	
-<!-- 	  	var cmpRgt = Ext.getCmp('dinamicElementsRight'); -->
-<!-- 	   	if (cmpRgt) { -->
-<!-- 	     	detalleFieldSet.remove(cmpRgt, true);  -->
-<!-- 	   	} -->
+<%-- 	  	var cmpRgt = Ext.getCmp('dinamicElementsRight'); --%>
+<%-- 	   	if (cmpRgt) { --%>
+<%-- 	     	detalleFieldSet.remove(cmpRgt, true);  --%>
+<%-- 	   	} --%>
 	   	
-<!-- 	   	var v = cmp.getValue(); -->
-<!--     	var r = cmp.findRecord(cmp.valueField || cmp.displayField, v); -->
+<%-- 	   	var v = cmp.getValue(); --%>
+<%--     	var r = cmp.findRecord(cmp.valueField || cmp.displayField, v); --%>
     
-<!-- 	    var campos = arrayCampos[r.data.codigo]; -->
+<%-- 	    var campos = arrayCampos[r.data.codigo]; --%>
 	    
-<!-- 	    if(typeof(campos) != "undefined"){ -->
+<%-- 	    if(typeof(campos) != "undefined"){ --%>
 	    
-<!-- 	        var dinamicElementsLeft = []; -->
-<!-- 	    	var dinamicElementsRight = []; -->
+<%-- 	        var dinamicElementsLeft = []; --%>
+<%-- 	    	var dinamicElementsRight = []; --%>
 	    	
-<!-- 	    	for(var i=0;i < campos.length;i++){ -->
+<%-- 	    	for(var i=0;i < campos.length;i++){ --%>
 	    		
-<!-- 	    		var campo=campos[i]; -->
+<%-- 	    		var campo=campos[i]; --%>
 	    		
-<!-- 	    		if (i%2 == 0) -->
-<!-- 	    			dinamicElementsLeft.push(campo); -->
-<!-- 	    		else -->
-<!-- 	    			dinamicElementsRight.push(campo); -->
-<!-- 	    	} -->
+<%-- 	    		if (i%2 == 0) --%>
+<%-- 	    			dinamicElementsLeft.push(campo); --%>
+<%-- 	    		else --%>
+<%-- 	    			dinamicElementsRight.push(campo); --%>
+<%-- 	    	} --%>
 	    	
-<!-- 	    	detalleFieldSet.setVisible( true ); -->
-<!-- 	    	detalleFieldSetContenedor.setVisible( true ); -->
+<%-- 	    	detalleFieldSet.setVisible( true ); --%>
+<%-- 	    	detalleFieldSetContenedor.setVisible( true ); --%>
 	    	
-<!-- 	    	var dinamicElementsLeftSize = 400 -->
+<%-- 	    	var dinamicElementsLeftSize = 400 --%>
 	    	
-<!-- 	    	if(dinamicElementsRight.length < 1){ -->
-<!-- 	    		dinamicElementsLeftSize = 800 -->
-<!-- 	    	} -->
+<%-- 	    	if(dinamicElementsRight.length < 1){ --%>
+<%-- 	    		dinamicElementsLeftSize = 800 --%>
+<%-- 	    	} --%>
 			
-<!-- 			var dinamicElementsLeft2 = {id:'dinamicElementsLeft', width:dinamicElementsLeftSize,items:dinamicElementsLeft}; -->
-<!-- 	    	var dinamicElementsRight2 = {id:'dinamicElementsRight', width:400,items:dinamicElementsRight}; -->
+<%-- 			var dinamicElementsLeft2 = {id:'dinamicElementsLeft', width:dinamicElementsLeftSize,items:dinamicElementsLeft}; --%>
+<%-- 	    	var dinamicElementsRight2 = {id:'dinamicElementsRight', width:400,items:dinamicElementsRight}; --%>
 
-<!-- 			detalleFieldSet.add([dinamicElementsLeft2,dinamicElementsRight2]); -->
-<!-- 			detalleFieldSet.doLayout(); -->
+<%-- 			detalleFieldSet.add([dinamicElementsLeft2,dinamicElementsRight2]); --%>
+<%-- 			detalleFieldSet.doLayout(); --%>
 			
-<!-- 	    } -->
-<!-- 	}; -->
+<%-- 	    } --%>
+<%-- 	}; --%>
 	
 		
 	var creaCamposDynamics = function (cmp) {
@@ -385,29 +385,29 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 		,items: [flujoFieldSet]
 	});	
 	
-<!-- 	var detalleFieldSet = new Ext.form.FieldSet({ -->
+<%-- 	var detalleFieldSet = new Ext.form.FieldSet({ --%>
 <%-- 		title:'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.titulo" text="**Detalle operaciones"/>' --%>
-<!-- 		,autoHeight: true -->
-<!-- 		,autoWidth: true -->
-<!-- 		,border:true -->
-<!-- 		,style:'padding:0px' -->
-<!-- 		,layout:'table' -->
-<!-- 		,layoutConfig:{columns:3}	 -->
-<!-- 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375} -->
-<!-- 		,items : [ -->
+<%-- 		,autoHeight: true --%>
+<%-- 		,autoWidth: true --%>
+<%-- 		,border:true --%>
+<%-- 		,style:'padding:0px' --%>
+<%-- 		,layout:'table' --%>
+<%-- 		,layoutConfig:{columns:3}	 --%>
+<%-- 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375} --%>
+<%-- 		,items : [ --%>
 				
-<!-- 				{ -->
-<!-- 					layout:'form' -->
-<!-- 					,items: [comboTipoProducto,importe,periodicidad,interes] -->
-<!-- 				},{ -->
-<!-- 					layout:'form' -->
-<!-- 					,items: [modoDesembolso,comisiones,periodoFijo,periodoVariable] -->
-<!-- 				},{ -->
-<!-- 					layout:'form' -->
-<!-- 					,items: [formalizacion,periodoCarencia,sistemaAmortizacion] -->
-<!-- 				} -->
-<!-- 			] -->
-<!-- 	});	 -->
+<%-- 				{ --%>
+<%-- 					layout:'form' --%>
+<%-- 					,items: [comboTipoProducto,importe,periodicidad,interes] --%>
+<%-- 				},{ --%>
+<%-- 					layout:'form' --%>
+<%-- 					,items: [modoDesembolso,comisiones,periodoFijo,periodoVariable] --%>
+<%-- 				},{ --%>
+<%-- 					layout:'form' --%>
+<%-- 					,items: [formalizacion,periodoCarencia,sistemaAmortizacion] --%>
+<%-- 				} --%>
+<%-- 			] --%>
+<%-- 	});	 --%>
 
 	var detalleFieldSet = new Ext.FormPanel({
 		id:'dynamicForm'
@@ -480,41 +480,41 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 	       		Ext.apply(params, {contratosIncluidos : '${contratosIncluidos}'});
 	       		Ext.apply(params, {bienesIncluidos : comboBienes.getValue()});     		
 	       		Ext.apply(params, {idTermino : idTermino });     		
-	<!--        		Ext.apply(params, {modoDesembolso : modoDesembolso.getValue()}); -->
-	<!--        		Ext.apply(params, {formalizacion : formalizacion.getValue()}); -->
-	<!--        		Ext.apply(params, {importe : importe.getValue()}); -->
-	<!--        		Ext.apply(params, {comisiones : comisiones.getValue()}); -->
-	<!--        		Ext.apply(params, {periodoCarencia : periodoCarencia.getValue()}); -->
-	<!--        		Ext.apply(params, {periodicidad : periodicidad.getValue()}); -->
-	<!--        		Ext.apply(params, {periodoFijo : periodoFijo.getValue()}); -->
-	<!--        		Ext.apply(params, {sistemaAmortizacion : sistemaAmortizacion.getValue()}); -->
-	<!--        		Ext.apply(params, {interes : interes.getValue()}); -->
-	<!--        		Ext.apply(params, {periodoVariable : periodoVariable.getValue()}); -->
-	<!--        		Ext.apply(params, {informeLetrado : informeLetrado.getValue()}); -->
+	<%--        		Ext.apply(params, {modoDesembolso : modoDesembolso.getValue()}); --%>
+	<%--        		Ext.apply(params, {formalizacion : formalizacion.getValue()}); --%>
+	<%--        		Ext.apply(params, {importe : importe.getValue()}); --%>
+	<%--        		Ext.apply(params, {comisiones : comisiones.getValue()}); --%>
+	<%--        		Ext.apply(params, {periodoCarencia : periodoCarencia.getValue()}); --%>
+	<%--        		Ext.apply(params, {periodicidad : periodicidad.getValue()}); --%>
+	<%--        		Ext.apply(params, {periodoFijo : periodoFijo.getValue()}); --%>
+	<%--        		Ext.apply(params, {sistemaAmortizacion : sistemaAmortizacion.getValue()}); --%>
+	<%--        		Ext.apply(params, {interes : interes.getValue()}); --%>
+	<%--        		Ext.apply(params, {periodoVariable : periodoVariable.getValue()}); --%>
+	<%--        		Ext.apply(params, {informeLetrado : informeLetrado.getValue()}); --%>
 	<%--        		Ext.apply(params, {contratosIncluidos : '${contratosIncluidos}'}); --%>
-	<!--        		Ext.apply(params, {bienesIncluidos : comboBienes.getValue()}); -->
+	<%--        		Ext.apply(params, {bienesIncluidos : comboBienes.getValue()}); --%>
 	       		
 	       		Ext.Ajax.request({
 					url: page.resolveUrl('mejacuerdo/crearTerminoAcuerdo')
 					,method: 'POST'
-	<!-- 				,params:{ -->
+	<%-- 				,params:{ --%>
 	<%-- 						idAcuerdo : '${idAcuerdo}'  --%>
-	<!-- 						,idTipoAcuerdo : comboTipoAcuerdo.getValue() -->
-	<!-- 						,idTipoProducto : comboTipoProducto.getValue()  -->
-	<!-- 						,modoDesembolso : modoDesembolso.getValue() -->
-	<!-- 						,formalizacion : formalizacion.getValue() -->
-	<!-- 						,importe : importe.getValue() -->
-	<!-- 						,comisiones : comisiones.getValue() -->
-	<!-- 						,periodoCarencia : periodoCarencia.getValue() -->
-	<!-- 						,periodicidad : periodicidad.getValue() -->
-	<!-- 						,periodoFijo : periodoFijo.getValue()	 -->
-	<!-- 						,sistemaAmortizacion : sistemaAmortizacion.getValue()	 -->
-	<!-- 						,interes : interes.getValue()	 -->
-	<!-- 						,periodoVariable : periodoVariable.getValue() -->
-	<!-- 						,informeLetrado : informeLetrado.getValue() -->
+	<%-- 						,idTipoAcuerdo : comboTipoAcuerdo.getValue() --%>
+	<%-- 						,idTipoProducto : comboTipoProducto.getValue()  --%>
+	<%-- 						,modoDesembolso : modoDesembolso.getValue() --%>
+	<%-- 						,formalizacion : formalizacion.getValue() --%>
+	<%-- 						,importe : importe.getValue() --%>
+	<%-- 						,comisiones : comisiones.getValue() --%>
+	<%-- 						,periodoCarencia : periodoCarencia.getValue() --%>
+	<%-- 						,periodicidad : periodicidad.getValue() --%>
+	<%-- 						,periodoFijo : periodoFijo.getValue()	 --%>
+	<%-- 						,sistemaAmortizacion : sistemaAmortizacion.getValue()	 --%>
+	<%-- 						,interes : interes.getValue()	 --%>
+	<%-- 						,periodoVariable : periodoVariable.getValue() --%>
+	<%-- 						,informeLetrado : informeLetrado.getValue() --%>
 	<%-- 						,contratosIncluidos : '${contratosIncluidos}' --%>
-	<!-- 						,bienesIncluidos : comboBienes.getValue() -->
-	<!--       				} -->
+	<%-- 						,bienesIncluidos : comboBienes.getValue() --%>
+	<%--       				} --%>
 					,params:params 
 					,success: function (result, request){
 						 Ext.MessageBox.show({
@@ -628,7 +628,7 @@ if("${esPropuesta}" == "true"){
 	
 	Ext.onReady(function () {
 		
-		<!-- Modo Visualizacion -->
+		<%-- Modo Visualizacion --%>
 		if("${termino}"!=null && "${termino}"!=''){
 			
 			

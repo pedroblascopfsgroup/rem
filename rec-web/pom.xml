@@ -1997,7 +1997,7 @@
 									<filtering>true</filtering>
 								</resource>
 							</webResources>
-							<packagingExcludes>WEB-INF/lib/xml-apis*.jar</packagingExcludes>
+							<packagingExcludes>WEB-INF/lib/xml-apis-UNKNOWN.jar</packagingExcludes>
 						</configuration>
 					</plugin>
 				</plugins>

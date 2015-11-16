@@ -3,7 +3,6 @@ package es.pfsgroup.recovery.cajamar.gestorDocumental.manager;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -68,7 +67,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_ALTA_DOCUMENTO)
 	@Transactional(readOnly = false)
-	public String altaDocumento(Long id, String codEntidad, String tipoDocumento, WebFileItem uploadForm) {
+	public String altaDocumento(Long idEntidad, String tipoEntidad, String tipoEntidadGrid, String tipoDocumento, WebFileItem uploadForm) {
 		
 		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
 		FileItem fileItem = uploadForm.getFileItem();
@@ -77,7 +76,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		if (fileItem == null || fileItem.getLength() <= 0) {
 		}
 
-		Integer max = getLimiteFichero(getParametroLimite(codEntidad));
+		Integer max = getLimiteFichero(getParametroLimite(tipoEntidad));
 
 		if (fileItem.getLength() > max) {
 			AbstractMessageSource ms = MessageUtils.getMessageSource();
@@ -86,34 +85,54 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 					MessageUtils.DEFAULT_LOCALE);
 		}
 
-		guardarDatoEntidad(codEntidad, uploadForm);
-		return null;
+		String claveAsociacion = guardarRecuperarDatoEntidad(idEntidad, tipoEntidad, uploadForm);
 		
 
-		//outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(ALTA_GESTOR_DOC, tipoDocumento, codEntidad, uploadForm));
+		outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(claveAsociacion, ALTA_GESTOR_DOC, tipoDocumento, tipoEntidadGrid, uploadForm));
+
+		return outputDto.getTxtError();
+	}
+	
+	@BusinessOperation(BO_GESTOR_DOCUMENTAL_LISTADO_DOCUMENTO)
+	@Transactional(readOnly = false)
+	public List<AdjuntoGridDto> listadoDocumentos(Long idEntidad, String tipoEntidad, String tipoEntidadGrid, String tipoDocumento) {
+		
+		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
+		String claveAsociacion = guardarRecuperarDatoEntidad(idEntidad, tipoEntidad, null);
+		outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(claveAsociacion, LISTADO_GESTOR_DOC, tipoDocumento, tipoEntidadGrid, null));
+		return AdjuntoGridAssembler.outputDtoToAdjuntoGridDto(outputDto);
+	}
+
+	@BusinessOperation(BO_GESTOR_DOCUMENTAL_RECUPERACION_DOCUMENTO)
+	@Transactional(readOnly = false)
+	public AdjuntoGridDto recuperacionDocumento(Long idRefCentera) {
+		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
+		GestorDocumentalInputDto input = new GestorDocumentalInputDto();
+		input.setOperacion(ConstantesGestorDocumental.CONSULTA_DOCUMENTO_OPERACION);
+		input.setLocalizador(idRefCentera.toString());
+		outputDto = gestorDocumentalWSApi.ejecutar(input);
+
+		return AdjuntoGridAssembler.outputDtoToAdjuntoGridDto(outputDto).get(0);
 
 	}
 	
-	private GestorDocumentalInputDto rellenaInputDto (String id, String refCentera, String tipoGestion, String tipoDocumento, String codEntidad, WebFileItem uploadForm) {
+	private GestorDocumentalInputDto rellenaInputDto (String claveAsociacion, String tipoGestion, String tipoDocumento, String tipoEntidadGrid, WebFileItem uploadForm) {
 		GestorDocumentalInputDto inputDto = new GestorDocumentalInputDto();
 		if(ALTA_GESTOR_DOC.equals(tipoGestion)) {
 			inputDto.setOperacion(ConstantesGestorDocumental.ALTA_DOCUMENTO_OPERACION);
 			inputDto.setExtensionFichero(uploadForm.getFileItem().getContentType());
 			inputDto.setOrigen(ConstantesGestorDocumental.GESTOR_DOCUMENTAL_ORIGEN);
-			inputDto.setTipoAsociacion(getTipoAsociacion(codEntidad));
+			inputDto.setTipoAsociacion(getTipoAsociacion(tipoEntidadGrid));
 			inputDto.setTipoDocumento(tipoDocumento);
 			inputDto.setFicheroBase64(ficheroBase64(uploadForm));
-			inputDto.setClaveAsociacion(id);
+			inputDto.setClaveAsociacion(claveAsociacion);
 			// TODO Cual es la fecha de vigencia???
 			inputDto.setFechaVigencia(new Date());
 		}else if(LISTADO_GESTOR_DOC.equals(tipoGestion)) {
 			inputDto.setOperacion(ConstantesGestorDocumental.LISTADO_DOCUMENTO_OPERACION);
 			inputDto.setTipoDocumento(tipoDocumento);
-			inputDto.setClaveAsociacion(id);
-			inputDto.setTipoAsociacion(getTipoAsociacion(codEntidad));
-		}else if(CONSULTA_GESTOR_DOC.equals(tipoGestion)) {
-			inputDto.setOperacion(ConstantesGestorDocumental.CONSULTA_DOCUMENTO_OPERACION);
-			inputDto.setLocalizador(refCentera);
+			inputDto.setClaveAsociacion(claveAsociacion);
+			inputDto.setTipoAsociacion(getTipoAsociacion(tipoEntidadGrid));
 		}
 		
 		return inputDto;
@@ -142,29 +161,6 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		}
 		return ficheroBase64;
 			
-	}
-
-	@BusinessOperation(BO_GESTOR_DOCUMENTAL_LISTADO_DOCUMENTO)
-	@Transactional(readOnly = false)
-	public List<AdjuntoGridDto> listadoDocumentos(Long id, String tipoDocumento, String codEntidad) {
-		
-		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
-		List<GestorDocumentalOutputDto> list = new ArrayList<GestorDocumentalOutputDto>();
-
-		//outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(LISTADO_GESTOR_DOC, tipoDocumento, codEntidad, null));
-		return AdjuntoGridAssembler.outputDtoToAdjuntoGridDto(outputDto);
-	}
-
-	@BusinessOperation(BO_GESTOR_DOCUMENTAL_RECUPERACION_DOCUMENTO)
-	@Transactional(readOnly = false)
-	public AdjuntoGridDto recuperacionDocumento(Long id) {
-		
-		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
-		return AdjuntoGridAssembler.outputDtoToAdjuntoGridDto(outputDto).get(0);
-
-		//outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(CONSULTA_GESTOR_DOC,null, null, null));
-
-
 	}
 
 	/**
@@ -217,30 +213,39 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		return tipoAsociacion;
 	}
 
-	private void guardarDatoEntidad(String codEntidad, WebFileItem uploadForm) {
-		if (DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE.equals(codEntidad)) {
-			Expediente expediente = expedienteDao.get(Long.parseLong(uploadForm
-					.getParameter("id")));
-			expediente.addAdjunto(uploadForm.getFileItem());
-			expedienteDao.save(expediente);
-		} else if (DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE.equals(codEntidad)) {
-			Persona persona = personaDao.get(Long.parseLong(uploadForm
-					.getParameter("id")));
-			persona.addAdjunto(uploadForm.getFileItem());
-			personaDao.save(persona);
-		} else if (DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO.equals(codEntidad)) {
-			Contrato contrato = contratoDao.get(Long.parseLong(uploadForm
-					.getParameter("id")));
-			contrato.addAdjunto(uploadForm.getFileItem());
-			contratoDao.save(contrato);
-		} else if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(codEntidad)
-				|| DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO
-						.equals(codEntidad)) {
-			Asunto asunto = asuntoDao.get(Long.parseLong(uploadForm
-					.getParameter("id")));
-			asunto.addAdjunto(uploadForm.getFileItem());
-			asuntoDao.save(asunto);
+	private String guardarRecuperarDatoEntidad(Long idEntidad, String tipoEntidad, WebFileItem uploadForm) {
+		String codEntidad = "";
+		if (DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE.equals(tipoEntidad)) {
+			Expediente expediente = expedienteDao.get(idEntidad);
+			if (uploadForm != null){
+				expediente.addAdjunto(uploadForm.getFileItem());
+				expedienteDao.save(expediente);
+			}
+			codEntidad = expediente.getDescripcion();
+		} else if (DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE.equals(tipoEntidad)) {
+			Persona persona = personaDao.get(idEntidad);
+			if (uploadForm != null){
+				persona.addAdjunto(uploadForm.getFileItem());
+				personaDao.save(persona);
+			}
+			codEntidad = persona.getDescripcion();
+		} else if (DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO.equals(tipoEntidad)) {
+			Contrato contrato = contratoDao.get(idEntidad);
+			if (uploadForm != null){
+				contrato.addAdjunto(uploadForm.getFileItem());
+				contratoDao.save(contrato);				
+			}
+			codEntidad = contrato.getDescripcion();
+		} else if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidad)
+				|| DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidad)) {
+			Asunto asunto = asuntoDao.get(idEntidad);
+			if (uploadForm != null){
+				asunto.addAdjunto(uploadForm.getFileItem());
+				asuntoDao.save(asunto);				
+			}
+			codEntidad = asunto.getNombre();
 		}
+		return codEntidad;
 	}
 	
 }

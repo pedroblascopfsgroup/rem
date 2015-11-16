@@ -12,13 +12,28 @@ public interface GestorDocumentalApi {
 	public static final String BO_GESTOR_DOCUMENTAL_LISTADO_DOCUMENTO = "es.pfsgroup.recovery.gestorDocumental.listadoDocumentos";
 	public static final String BO_GESTOR_DOCUMENTAL_RECUPERACION_DOCUMENTO = "es.pfsgroup.recovery.gestorDocumental.recuperacionDocumento";
 
+	/**
+	 * idEntidad id del asunto/procedimiento/contrato/expediente/persona en el que nos encontramos
+	 * tipoEntidad tipo de entidad(asunto/procedimiento/contrato/expediente/persona)
+	 * tipoEntidadGrid entidad del grid (asunto/procedimiento/contrato/expediente/persona)
+	 * tipoDocumento tipoDocumento seleccionado
+	 */
 	@BusinessOperationDefinition(BO_GESTOR_DOCUMENTAL_ALTA_DOCUMENTO)
-	String altaDocumento(Long id, String codEntidad, String tipoDocumento, WebFileItem uploadForm);
+	String altaDocumento(Long idEntidad, String tipoEntidad, String tipoEntidadGrid, String tipoDocumento, WebFileItem uploadForm);
 
+	/**
+	 * idEntidad id del asunto/procedimiento/contrato/expediente/persona en el que nos encontramos
+	 * tipoEntidad tipo de entidad(asunto/procedimiento/contrato/expediente/persona)
+	 * tipoEntidadGrid entidad del grid (asunto/procedimiento/contrato/expediente/persona)
+	 * tipoDocumento tipoDocumento seleccionado
+	 */
 	@BusinessOperationDefinition(BO_GESTOR_DOCUMENTAL_LISTADO_DOCUMENTO)
-	List<AdjuntoGridDto> listadoDocumentos(Long id, String tipoDocumento, String codEntidad);
+	List<AdjuntoGridDto> listadoDocumentos(Long idEntidad, String tipoEntidad, String tipoEntidadGrid, String tipoDocumento);
 
+	/**
+	 * idRefCentera id del documento que queremos descargar
+	 */
 	@BusinessOperationDefinition(BO_GESTOR_DOCUMENTAL_RECUPERACION_DOCUMENTO)
-	AdjuntoGridDto recuperacionDocumento(Long id);
+	AdjuntoGridDto recuperacionDocumento(Long idRefCentera);
 
 }

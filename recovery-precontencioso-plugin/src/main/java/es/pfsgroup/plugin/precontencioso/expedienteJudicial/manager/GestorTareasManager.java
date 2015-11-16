@@ -180,7 +180,8 @@ public class GestorTareasManager implements GestorTareasApi {
 
         //Creamos una nueva tarea extendida con el idProcedimiento y el idTipoTarea y el timer asociado
         //Por defecto la tarea será para un gestor
-        String subtipoTarea = EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR;
+        //String subtipoTarea = EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR;
+        String subtipoTarea = obtenerSubtipoTarea(codigoTarea);
 
         //Si está marcada como supervisor se cambia el subtipo tarea
         if (tareaProcedimiento.getSupervisor()) {
@@ -211,7 +212,16 @@ public class GestorTareasManager implements GestorTareasApi {
 	}
 
 
-    private Long getTokenId(Long idProcessBPM) {
+    private String obtenerSubtipoTarea(String codigoTarea) {
+		
+    	String subtipo = gestorTareasDao.obtenerSubtipoTarea(codigoTarea); 
+    	if (subtipo == null) {
+    		subtipo = EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR;
+    	}
+		return subtipo;
+	}
+
+	private Long getTokenId(Long idProcessBPM) {
 		return gestorTareasDao.getTokenId(idProcessBPM);
 	}
 

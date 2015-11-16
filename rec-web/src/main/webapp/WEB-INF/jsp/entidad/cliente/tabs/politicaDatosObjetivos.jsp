@@ -142,7 +142,7 @@ var createDatosObjetivosPanel = function() {
     var objetivo = Ext.data.Record.create([
          {name : 'id'}
         ,{name : 'idPolitica'}
-        <!--,{name : 'padreId'}-->
+        <%--,{name : 'padreId'}--%>
         ,{name : 'resumen'}
         ,{name : 'observacion'}
         ,{name : 'tipo'}
@@ -175,7 +175,7 @@ var createDatosObjetivosPanel = function() {
 
     var objetivoCm  = new Ext.grid.ColumnModel([                                                                                                                         
         {header : '<s:message code="politica.codigo" text="**Código" />',dataIndex : 'id', width:75}
-<!--        	,{header : '<s:message code="politica.padre" text="**Padre" />', dataIndex : 'padreId', hidden:true, width:75} -->
+<%--        	,{header : '<s:message code="politica.padre" text="**Padre" />', dataIndex : 'padreId', hidden:true, width:75} --%>
         ,{header : '<s:message code="politica.objetivo" text="**Objetivo" />', dataIndex : 'resumen', width:250}
         ,{header : '<s:message code="politica.observaciones" text="**Observaciones" />', dataIndex : 'observacion', hidden:true, width:100}
         ,{header : '<s:message code="politica.tipo" text="**Tipo" />', dataIndex : 'tipo', width:150}

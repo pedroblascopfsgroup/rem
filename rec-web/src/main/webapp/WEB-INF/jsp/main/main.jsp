@@ -19,10 +19,10 @@
 	    <script type="text/javascript" src="../js/fwk/ext3/ext-all.js?devon_version=${appProperties.jsVersion}"></script>
 	</c:if>
 
-	<!-- traducción de ext -->
+	<%-- traducción de ext --%>
     <script type="text/javascript" src="../js/fwk/ext3/locale/ext-lang-es.js?devon_version=${appProperties.jsVersion}"></script>
 
-	<!-- extensiones -->
+	<%-- extensiones --%>
     <script type="text/javascript" src="../js/fwk/ext.ux/Toast.js?devon_version=${appProperties.jsVersion}"></script>
     <script type="text/javascript" src="../js/fwk/ext.ux/StaticTextField.js?devon_version=${appProperties.jsVersion}"></script>
     <script type="text/javascript" src="../js/fwk/ext.ux/Multiselect/DDView.js?devon_version=${appProperties.jsVersion}"></script>
@@ -34,7 +34,7 @@
     <script type="text/javascript" src="../js/ux/DynamicGridPanel.js?devon_version=${appProperties.jsVersion}"></script>
     <script type="text/javascript" src="../js/ux/RowEditor.js?devon_version=${appProperties.jsVersion}"></script>
     
-    <!-- framework -->
+    <%-- framework --%>
     <script type="text/javascript" src="../js/fwk/fwk.js.jsp?devon_version=${appProperties.jsVersion}"></script>
 	<c:if test="${appProperties.jsDebug}">
 		<link rel="stylesheet" type="text/css" href="../js/fwk/joe.css?devon_version=${appProperties.jsVersion}"/>
@@ -50,11 +50,11 @@
     <link rel="stylesheet" type="text/css" href="../js/fwk/ext.ux/FileUpload/css/fileuploadfield.css">
 
 
-    <!-- 
+    <%-- 
     <link rel="stylesheet" type="text/css" href="../js/fwk/ext.ux/FileUpload/css/icons.css">
   	<link rel="stylesheet" type="text/css" href="../js/fwk/ext.ux/FileUpload/css/filetype.css">
   	<link rel="stylesheet" type="text/css" href="../js/fwk/ext.ux/FileUpload/css/filetree.css">
-     -->
+     --%>
   
 
 	<link rel="stylesheet" type="text/css" href="../css/app.css" />

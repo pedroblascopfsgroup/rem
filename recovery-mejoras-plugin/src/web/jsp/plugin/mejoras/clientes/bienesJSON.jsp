@@ -28,10 +28,10 @@
             <json:property name="fechaVerificacion">
                 <fwk:date value="${b.fechaVerificacion}" />
             </json:property>
-			<!-- detalles de la configuracion--> 
+			<%-- detalles de la configuracion--%> 
 			<json:property name="email" value="${b.tipoBien.configuracionMailTipoBien.destinatario}" />
 			<json:property name="idconfigmail" value="${b.tipoBien.configuracionMailTipoBien.id}" />
-			<!-- nuevo modelo de bienes -->
+			<%-- nuevo modelo de bienes --%>
 			<json:property name="marca" value="${b.class.simpleName=='NMBBien' ? b.marcaExternos : ''}" />
 			<json:property name="contratos" value="${b.class.simpleName=='NMBBien' ? b.contratos[0].contrato.codigoContrato : ''}" />
 			<json:property name="codigoInterno" value="${b.class.simpleName=='NMBBien' ? b.codigoInterno : ''}" />

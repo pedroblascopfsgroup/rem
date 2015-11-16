@@ -182,7 +182,7 @@
 			text : '<s:message code="plugin.precontencioso.grid.burofax.descargar.burofax" text="**Descargar Burofax" />'
 			,iconCls : 'icon_download'
 			,cls: 'x-btn-text-icon'
-<!-- 			,hidden:true -->
+<%-- 			,hidden:true --%>
 	});		
 	
 	Ext.namespace('Ext.ux.plugins');

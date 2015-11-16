@@ -171,7 +171,7 @@ var esProveedorSolvencia = false;
 		,{header: 'Tipo', width: 120, sortable: true, dataIndex: 'tipoTelefono'}
 		,{header: 'Motivo', width: 120, sortable: true, dataIndex: 'motivoTelefono'}
 		,{header: 'Estado', width: 120, sortable: true, dataIndex: 'estadoTelefono'}
-		<!-- ,{header: 'consentimiento', width: 120, sortable: true, dataIndex: 'consentimiento'}-->
+		<%-- ,{header: 'consentimiento', width: 120, sortable: true, dataIndex: 'consentimiento'}--%>
 		,{header: 'prioridad', width: 120, sortable: true, dataIndex: 'prioridad'}
 	]);
 	

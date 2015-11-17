@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.cajamar.ws.S_M_GESTIONDOCUMENTAL.INPUT;
 
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalInputDto;
 
 /**
@@ -43,14 +44,16 @@ public class GestorDocumentalInputAssembler {
 			return null;
 		}
 
-		SimpleDateFormat frmt = new SimpleDateFormat("DDMMYYYY");
+		SimpleDateFormat frmt = new SimpleDateFormat("ddMMyyyy");
 		INPUT input = new INPUT();
 		input.setCLAVEASOCIACION(inputDto.getClaveAsociacion());
 		input.setCLAVEASOCIACION2(inputDto.getClaveAsociacion2());
 		input.setCLAVEASOCIACION3(inputDto.getClaveAsociacion3());
 		input.setDESCRIPCION(inputDto.getDescripcion());
 		input.setEXTENSIONFICHERO(inputDto.getExtensionFichero());
-		input.setFECHAVIGENCIA(frmt.format(inputDto.getFechaVigencia()));
+		if(!Checks.esNulo(inputDto.getFechaVigencia())) {
+			input.setFECHAVIGENCIA(frmt.format(inputDto.getFechaVigencia()));			
+		}
 	    input.setFICHEROBASE64(inputDto.getFicheroBase64());
 	    input.setLOCALIZADOR(inputDto.getLocalizador());
 	    input.setOPERACION(inputDto.getOperacion());

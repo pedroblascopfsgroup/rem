@@ -274,7 +274,7 @@ public class GENINFInformesManager implements GENINFInformesApi {
 						adjuntarInforme(tipoEntidad, entidad, fileItem, nombreEscrito , tipoFichero, hayErrores); 
 
 					} catch (Exception e) {
-						e.printStackTrace();
+						logger.error("adjuntarDocumentacionAdicional: " + e);
 					}
 
     			}
@@ -659,7 +659,7 @@ public class GENINFInformesManager implements GENINFInformesApi {
 					
 				}
 			} catch (Exception e) {
-				logger.error("Error al generar el informe: " + dto.getTipoEscrito() + "\nCausa: " + e.getMessage());
+				logger.error("generarEscritoEditable: Error al generar el informe: " + dto.getTipoEscrito() + "\nCausa: " + e.getMessage());
 			}
 
 		}
@@ -962,7 +962,7 @@ public class GENINFInformesManager implements GENINFInformesApi {
 
 			
 		} catch (Exception e) {
-		    e.printStackTrace();
+			logger.error("createPdfFileFromHtmlText: " + e);
 		}
 		
 	    InputStream is=new FileInputStream(archivo);
@@ -1056,7 +1056,7 @@ public class GENINFInformesManager implements GENINFInformesApi {
 			PdfConverter.getInstance().convert(document, out, options);
 			out.flush();
 		} catch (Throwable e) {
-			e.printStackTrace();
+			logger.error("convertirAPdf: " + e);
 		}
 		return respuesta;
 

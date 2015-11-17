@@ -152,6 +152,8 @@ app.subtipoTarea.CODIGO_PRECONTENCIOSO_SUPERVISOR = '<fwk:const value="es.capgem
 app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTORIA = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTORIA" />';
 app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR" />';
 app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_LETRADO = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_LETRADO" />';
+app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR_LIQUIDACIONES = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR_LIQUIDACIONES" />';
+app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR_DOCUMENTOS = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR_DOCUMENTOS" />';
 
 app.categoriaSubTipoTarea={};
 app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_TOMA_DECISION = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION" />';
@@ -1683,9 +1685,9 @@ app.promptPw=function(title,msg,handler){
 
 /* -------------------------------------------------------------------------------------------------------
 * ESPACIO PARA AGRUPAR LOS POSIBLES OVERRIDES DEL CORE DE EXTJS PARA SOLUCIONAR POSIBLES BUGS O
-* AÑADIR FUNCIONALIDADES NUEVAS.
+* Aï¿½ADIR FUNCIONALIDADES NUEVAS.
 *
-* FIXME En caso de incrementarse el número de overrides se puede plantear crear una clase overrides.js que los contenga
+* FIXME En caso de incrementarse el nï¿½mero de overrides se puede plantear crear una clase overrides.js que los contenga
 *		 
 * Overrides members of the specified `target` with the given values.
 *

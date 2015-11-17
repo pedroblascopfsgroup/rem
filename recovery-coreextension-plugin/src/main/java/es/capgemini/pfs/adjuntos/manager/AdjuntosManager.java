@@ -62,7 +62,7 @@ import es.pfsgroup.recovery.api.ProcedimientoApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
-@Component
+@Component("adjuntoManagerImplComun")
 public class AdjuntosManager implements AdjuntosApi{
 
 	private final Log logger = LogFactory.getLog(getClass());

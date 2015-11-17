@@ -12,6 +12,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,6 +67,7 @@ public class EXTPersonaManager extends BusinessOperationOverrider<PersonaApi> im
 	private GenericABMDao genericDao;
 	
 	@Autowired
+	@Qualifier("adjuntoManagerImpl")
 	private AdjuntosApi adjuntosApi; 
 	
 	private final Log logger = LogFactory.getLog(getClass());

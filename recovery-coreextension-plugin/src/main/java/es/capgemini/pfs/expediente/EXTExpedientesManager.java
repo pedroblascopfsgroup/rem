@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -95,6 +96,7 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 	private ExpedienteDao expedienteDao;
 	
 	@Autowired
+	@Qualifier("adjuntoManagerImpl")
 	private AdjuntosApi adjuntosApi;
 
 	@Override

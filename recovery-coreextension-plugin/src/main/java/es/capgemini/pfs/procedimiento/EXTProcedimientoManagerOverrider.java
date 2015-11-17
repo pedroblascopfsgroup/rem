@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +51,7 @@ public class EXTProcedimientoManagerOverrider extends
 	private List<ModificarProcedimientoListener> listeners;
 	
 	@Autowired
+	@Qualifier("adjuntoManagerImpl")
 	private AdjuntosApi adjuntosApi;
 
 	/**

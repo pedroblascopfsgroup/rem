@@ -39,7 +39,7 @@ import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 import es.pfsgroup.recovery.gestordocumental.dto.AdjuntoGridDto;
 
-@Component
+@Component("adjuntoManagerImpl")
 public class AdjuntoCajamarManager implements AdjuntosApi {
 
 	@Autowired
@@ -53,7 +53,8 @@ public class AdjuntoCajamarManager implements AdjuntosApi {
 
 	@Override
 	public List<? extends EXTAdjuntoDto> getAdjuntosConBorrado(Long id) {
-		return (List<? extends EXTAdjuntoDto>) listadoDocumentos(id, DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, null);
+		//return (List<? extends EXTAdjuntoDto>) listadoDocumentos(id, DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, null);
+		return null;
 	}
 
 	@Override
@@ -74,7 +75,7 @@ public class AdjuntoCajamarManager implements AdjuntosApi {
 	@Override
 	public String upload(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
-			return altaDocumento(Long.parseLong(uploadForm.getParameter("id")),DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, null, uploadForm);
+			return altaDocumento(Long.parseLong(uploadForm.getParameter("id")), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, null, uploadForm);
 		}else{
 			return null;
 		}
@@ -83,7 +84,7 @@ public class AdjuntoCajamarManager implements AdjuntosApi {
 	@Override
 	public String uploadPersona(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
-			return altaDocumento(Long.parseLong(uploadForm.getParameter("id")),DDTipoEntidad.CODIGO_ENTIDAD_PERSONA,DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, null, uploadForm);
+			return altaDocumento(Long.parseLong(uploadForm.getParameter("id")),DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, null, uploadForm);
 		}else{
 			return null;
 		}
@@ -92,7 +93,7 @@ public class AdjuntoCajamarManager implements AdjuntosApi {
 	@Override
 	public String uploadExpediente(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
-			return altaDocumento(Long.parseLong(uploadForm.getParameter("id")),DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE,DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null, uploadForm);
+			return altaDocumento(Long.parseLong(uploadForm.getParameter("id")),DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null, uploadForm);
 		}else{
 			return null;
 		}
@@ -101,7 +102,7 @@ public class AdjuntoCajamarManager implements AdjuntosApi {
 	@Override
 	public String uploadContrato(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
-			return altaDocumento(Long.parseLong(uploadForm.getParameter("id")),DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO,DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, null, uploadForm);
+			return altaDocumento(Long.parseLong(uploadForm.getParameter("id")),DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, null, uploadForm);
 		}else{
 			return null;
 		}
@@ -174,7 +175,7 @@ public class AdjuntoCajamarManager implements AdjuntosApi {
 
 					@Override
 					public Long getId() {
-						return idFinal; ///ENTIDAD.getId();
+						return adjDto.getId(); ///ENTIDAD.getId();
 					}
 
 					@Override
@@ -283,8 +284,8 @@ public class AdjuntoCajamarManager implements AdjuntosApi {
 		}
 	};
 	
-	private String altaDocumento(Long idEntidad, String tipoEntidad, String tipoEntidadGrid, String tipoDocumento, WebFileItem uploadForm){
-		return gestorDocumentalApi.altaDocumento(idEntidad, tipoEntidad, tipoEntidadGrid, tipoDocumento, uploadForm);
+	private String altaDocumento(Long idEntidad, String tipoEntidadGrid, String tipoDocumento, WebFileItem uploadForm){
+		return gestorDocumentalApi.altaDocumento(idEntidad, tipoEntidadGrid, tipoDocumento, uploadForm);
 	}
 	
 	private FileItem recuperacionDocumento(Long id){

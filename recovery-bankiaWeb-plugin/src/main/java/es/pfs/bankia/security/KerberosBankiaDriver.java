@@ -36,7 +36,8 @@ public class KerberosBankiaDriver implements KerberosDriver {
 			//Asignacion[] asignaciones = ssa.funcionesUsuario(username, TIPO_FUNCION_CLASICA, TIPO_APLICACION_PFS);
                         //Hubo un fallo en producción con LDAP por el uso de esta versión de "funcionesUsuario" con 3 params
                         //Bankia nos comunica que debemos hacer la llamada así BKREC-1026
-                        Asignacion[] asignaciones = ssa.funcionesUsuario(username, null, TIPO_APLICACION_PFS);
+                        //Cambio para verificar en DESA una incidencia con el cambio TIPO_FUNCION_CLASICA --> null - Usuario sin Zonificar puede loggearse
+                        Asignacion[] asignaciones = ssa.funcionesUsuario(username, TIPO_FUNCION_CLASICA, TIPO_APLICACION_PFS);
                         
 			for (Asignacion asignacion : asignaciones) {
 				listaAutorizaciones.add(asignacion.getFuncion());

@@ -204,20 +204,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	}
 
 	private String getTipoAsociacion(String codEntidad) {
-		String tipoAsociacion = "";
-		if (DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE.equals(codEntidad)) {
-			tipoAsociacion = ConstantesGestorDocumental.GESTOR_DOCUMENTAL_TIPO_ASOCIACION_EXPEDIENTE;
-		} else if (DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE.equals(codEntidad)) {
-			tipoAsociacion = ConstantesGestorDocumental.GESTOR_DOCUMENTAL_TIPO_ASOCIACION_PERSONA;
-		} else if (DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO.equals(codEntidad)) {
-			tipoAsociacion = ConstantesGestorDocumental.GESTOR_DOCUMENTAL_TIPO_ASOCIACION_CONTRATO;
-		} else if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(codEntidad)) {
-			tipoAsociacion = ConstantesGestorDocumental.GESTOR_DOCUMENTAL_TIPO_ASOCIACION_ASUNTO;
-		} else if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO
-				.equals(codEntidad)) {
-			tipoAsociacion = ConstantesGestorDocumental.GESTOR_DOCUMENTAL_TIPO_ASOCIACION_PROCEDIMIENTO;
-		}
-		return tipoAsociacion;
+		return ConstantesGestorDocumental.tipoAsociacionPorEntidad.get(codEntidad);
 	}
 
 	private void guardarRecuperarDatoEntidad(Long idEntidad,

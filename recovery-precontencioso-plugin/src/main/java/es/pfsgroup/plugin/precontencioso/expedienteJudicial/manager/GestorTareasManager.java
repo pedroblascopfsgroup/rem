@@ -26,6 +26,7 @@ import es.capgemini.pfs.prorroga.model.Prorroga;
 import es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.utils.JBPMProcessManager;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -50,7 +51,9 @@ public class GestorTareasManager implements GestorTareasApi {
 	private static final String TXT_ERR_PLAZO_3 = "], tipoTarea [";
 	private static final String TXT_ERR_PLAZO_4 = "].";
     private static final String BPM_ERROR_SCRIPT = "bpm.error.script";
-    private static final List<String> CODIGOS_TAREAS_ESPECIALES_PRECONTENCIOSO = Arrays.asList("PCO_SolicitarDoc", "PCO_RegResultadoExped", "PCO_RecepcionExped", "PCO_RegResultadoDoc", "PCO_RegEnvioDoc", "PCO_RecepcionDoc", "PCO_AdjuntarDoc", "PCO_GenerarLiq", "PCO_ConfirmarLiq", "PCO_VisarLiq", "PCO_EnviarBurofax","PCO_AcuseReciboBurofax","PCO_RegResultadoDocG");
+    private static final List<String> CODIGOS_TAREAS_ESPECIALES_PRECONTENCIOSO = Arrays.asList("PCO_SolicitarDoc", "PCO_RegResultadoExped", "PCO_RecepcionExped", 
+    		"PCO_RegResultadoDoc", "PCO_RegEnvioDoc", "PCO_RecepcionDoc", "PCO_AdjuntarDoc", "PCO_GenerarLiq", "PCO_ConfirmarLiq", "PCO_EnviarBurofax",
+    		"PCO_AcuseReciboBurofax","PCO_RegResultadoDocG");
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -177,7 +180,8 @@ public class GestorTareasManager implements GestorTareasApi {
 
         //Creamos una nueva tarea extendida con el idProcedimiento y el idTipoTarea y el timer asociado
         //Por defecto la tarea será para un gestor
-        String subtipoTarea = EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR;
+        //String subtipoTarea = EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR;
+        String subtipoTarea = obtenerSubtipoTarea(codigoTarea);
 
         //Si está marcada como supervisor se cambia el subtipo tarea
         if (tareaProcedimiento.getSupervisor()) {
@@ -208,7 +212,16 @@ public class GestorTareasManager implements GestorTareasApi {
 	}
 
 
-    private Long getTokenId(Long idProcessBPM) {
+    private String obtenerSubtipoTarea(String codigoTarea) {
+		
+    	String subtipo = gestorTareasDao.obtenerSubtipoTarea(codigoTarea); 
+    	if (subtipo == null) {
+    		subtipo = EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR;
+    	}
+		return subtipo;
+	}
+
+	private Long getTokenId(Long idProcessBPM) {
 		return gestorTareasDao.getTokenId(idProcessBPM);
 	}
 
@@ -287,8 +300,26 @@ public class GestorTareasManager implements GestorTareasApi {
 			return false;
 		}
 		
-		boolean esEspecial = CODIGOS_TAREAS_ESPECIALES_PRECONTENCIOSO.contains(tareaExterna.getTareaProcedimiento().getCodigo()) ? true : false;
-
-		return esEspecial;
+		if (Checks.esNulo(tareaExterna)) {
+			return false;
+		} else {
+			boolean esEspecial = CODIGOS_TAREAS_ESPECIALES_PRECONTENCIOSO.contains(tareaExterna.getTareaProcedimiento().getCodigo()) ? true : false;
+	
+			return esEspecial;
+		}
+	}
+	
+	public boolean existeTarea(Procedimiento proc, String codigoTarea) {
+		
+		boolean resultado = false;
+		List<TareaExterna> listaTareas = tareaExternaManager.getActivasByIdProcedimiento(proc.getId());
+		for (TareaExterna tareaExterna : listaTareas) {
+			if (codigoTarea.equals(tareaExterna.getTareaProcedimiento().getCodigo())) {
+				resultado = true;
+			}
+			
+		}
+		return resultado;
+		
 	}
 }

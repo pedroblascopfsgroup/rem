@@ -413,6 +413,7 @@ public class BurofaxManager implements BurofaxApi {
 				burofax.setProcedimientoPCO(procedimientoPCO);
 				burofax.setEstadoBurofax(estado);
 				burofax.setContrato(contratoPersona.getContrato());
+				burofax.setTipoIntervencion(contratoPersona.getTipoIntervencion());
 				burofaxDao.save(burofax);
 			}
 			

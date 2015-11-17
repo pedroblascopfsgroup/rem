@@ -26,7 +26,6 @@ import es.capgemini.pfs.prorroga.model.Prorroga;
 import es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.utils.JBPMProcessManager;
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -36,8 +35,6 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCO
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.GestorTareasAccionPCODto;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.GestorTareasLineaConfigPCO;
-import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.HistoricoEstadoProcedimientoPCO;
-import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.recovery.api.PlazoTareaExternaPlazaApi;
 import es.pfsgroup.recovery.api.TareaNotificacionApi;
 import es.pfsgroup.recovery.api.TareaProcedimientoApi;
@@ -53,7 +50,7 @@ public class GestorTareasManager implements GestorTareasApi {
 	private static final String TXT_ERR_PLAZO_3 = "], tipoTarea [";
 	private static final String TXT_ERR_PLAZO_4 = "].";
     private static final String BPM_ERROR_SCRIPT = "bpm.error.script";
-    private static final List<String> CODIGOS_TAREAS_ESPECIALES_PRECONTENCIOSO = Arrays.asList("PCO_SolicitarDoc", "PCO_RegResultadoExped", "PCO_RecepcionExped", "PCO_RegResultadoDoc", "PCO_RegEnvioDoc", "PCO_RecepcionDoc", "PCO_AdjuntarDoc", "PCO_GenerarLiq", "PCO_ConfirmarLiq", "PCO_EnviarBurofax","PCO_AcuseReciboBurofax","PCO_RegResultadoDocG");
+    private static final List<String> CODIGOS_TAREAS_ESPECIALES_PRECONTENCIOSO = Arrays.asList("PCO_SolicitarDoc", "PCO_RegResultadoExped", "PCO_RecepcionExped", "PCO_RegResultadoDoc", "PCO_RegEnvioDoc", "PCO_RecepcionDoc", "PCO_AdjuntarDoc", "PCO_GenerarLiq", "PCO_ConfirmarLiq", "PCO_VisarLiq", "PCO_EnviarBurofax","PCO_AcuseReciboBurofax","PCO_RegResultadoDocG");
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -281,24 +278,6 @@ public class GestorTareasManager implements GestorTareasApi {
 
 	}
 	
-	private String obtenerEstadoProcPco(long idProcedimiento) {
-
-		String estadoActual = "";
-		
-		//ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
-		ProcedimientoPCO procedimientoPco = genericDao.get(ProcedimientoPCO.class, 
-				genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProcedimiento));
-		
-		if (!Checks.esNulo(procedimientoPco)) {
-			HistoricoEstadoProcedimientoPCO historico = procedimientoPco.getEstadoActualByHistorico();
-			if (!Checks.esNulo(historico) && !Checks.esNulo(historico.getEstadoPreparacion())) {
-				estadoActual = historico.getEstadoPreparacion().getCodigo();
-			}
-		}
-		return estadoActual;
-
-	}
-
 	@Override
 	public boolean getEsTareaPrecontenciosoEspecial(Long tareaId) {
 

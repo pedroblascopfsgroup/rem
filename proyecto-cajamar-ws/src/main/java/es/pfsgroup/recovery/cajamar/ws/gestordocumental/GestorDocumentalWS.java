@@ -6,12 +6,14 @@ import org.cajamar.ws.S_M_GESTIONDOCUMENTAL.INPUT;
 import org.cajamar.ws.S_M_GESTIONDOCUMENTAL.OUTPUT;
 import org.cajamar.ws.S_M_GESTIONDOCUMENTAL.SMGESTIONDOCUMENTAL;
 import org.cajamar.ws.S_M_GESTIONDOCUMENTAL.SMGESTIONDOCUMENTALType;
+import org.springframework.stereotype.Component;
 
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalInputDto;
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalOutputDto;
 import es.pfsgroup.recovery.cajamar.serviciosonline.GestorDocumentalWSApi;
 import es.pfsgroup.recovery.cajamar.ws.BaseWS;
 
+@Component
 public class GestorDocumentalWS extends BaseWS implements GestorDocumentalWSApi {
 
 	private static final String WEB_SERVICE_NAME = "S_M_GESTIONDOCUMENTAL";

@@ -62,7 +62,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	@Autowired
 	private AsuntoDao asuntoDao;
 
-	@Autowired(required = false)
+	@Autowired
 	private GestorDocumentalWSApi gestorDocumentalWSApi;
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_ALTA_DOCUMENTO)

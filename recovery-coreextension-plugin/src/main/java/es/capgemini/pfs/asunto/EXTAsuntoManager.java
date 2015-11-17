@@ -34,7 +34,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.MessageUtils;
-import es.capgemini.pfs.adjuntos.api.AdjuntosApi;
+import es.capgemini.pfs.adjuntos.api.AdjuntoApi;
 import es.capgemini.pfs.asunto.dao.EXTAsuntoDao;
 import es.capgemini.pfs.asunto.dto.DtoAsunto;
 import es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto;
@@ -173,7 +173,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	
 	@Autowired
 	@Qualifier("adjuntoManagerImpl")
-	private AdjuntosApi adjuntosApi;
+	private AdjuntoApi adjuntosApi;
 	
 	@Override
 	public String managerName() {

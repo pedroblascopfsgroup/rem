@@ -11,7 +11,7 @@ import es.capgemini.pfs.core.api.asunto.AdjuntoDto;
 import es.capgemini.pfs.core.api.asunto.EXTAdjuntoDto;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 
-public interface AdjuntosApi {
+public interface AdjuntoApi {
 	
 
 	public static final String BO_ADJ_UPLOAD_ASUNTO = "adjuntosManager.upload";

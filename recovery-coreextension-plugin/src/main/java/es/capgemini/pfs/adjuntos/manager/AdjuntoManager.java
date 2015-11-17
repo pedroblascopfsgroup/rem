@@ -19,7 +19,7 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.MessageUtils;
-import es.capgemini.pfs.adjuntos.api.AdjuntosApi;
+import es.capgemini.pfs.adjuntos.api.AdjuntoApi;
 import es.capgemini.pfs.asunto.dao.AsuntoDao;
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDto;
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDtoImpl;
@@ -63,7 +63,7 @@ import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
 @Component("adjuntoManagerImplComun")
-public class AdjuntosManager implements AdjuntosApi{
+public class AdjuntoManager implements AdjuntoApi{
 
 	private final Log logger = LogFactory.getLog(getClass());
 

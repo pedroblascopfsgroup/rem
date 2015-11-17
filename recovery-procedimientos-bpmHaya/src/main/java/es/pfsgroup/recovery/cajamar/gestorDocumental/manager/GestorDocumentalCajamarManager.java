@@ -99,9 +99,10 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	public List<AdjuntoGridDto> listadoDocumentos(Long idEntidad,String tipoEntidad, String tipoEntidadGrid, String tipoDocumento) {
 
 		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
-		outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(
+		GestorDocumentalInputDto inputDto = rellenaInputDto(
 				idEntidad.toString(), LISTADO_GESTOR_DOC, tipoDocumento,
-				tipoEntidadGrid, null));
+				tipoEntidadGrid, null);
+		outputDto = gestorDocumentalWSApi.ejecutar(inputDto);
 		return AdjuntoGridAssembler.outputDtoToAdjuntoGridDto(outputDto);
 	}
 

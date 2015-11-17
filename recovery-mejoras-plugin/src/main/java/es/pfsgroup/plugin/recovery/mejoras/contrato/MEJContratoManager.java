@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.pagination.Page;
-import es.capgemini.pfs.adjuntos.api.AdjuntosApi;
+import es.capgemini.pfs.adjuntos.api.AdjuntoApi;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.contrato.dto.DtoBuscarContrato;
 import es.capgemini.pfs.contrato.model.AdjuntoContrato;
@@ -55,7 +55,7 @@ public class MEJContratoManager extends
 	
 	@Autowired
 	@Qualifier("adjuntoManagerImpl")
-	private AdjuntosApi adjuntosApi;
+	private AdjuntoApi adjuntosApi;
 		
 	
 	/**

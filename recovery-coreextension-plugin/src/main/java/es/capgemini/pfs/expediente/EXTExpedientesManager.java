@@ -18,7 +18,7 @@ import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.actitudAptitudActuacion.model.ActitudAptitudActuacion;
-import es.capgemini.pfs.adjuntos.api.AdjuntosApi;
+import es.capgemini.pfs.adjuntos.api.AdjuntoApi;
 import es.capgemini.pfs.arquetipo.model.Arquetipo;
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDto;
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDtoImpl;
@@ -97,7 +97,7 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 	
 	@Autowired
 	@Qualifier("adjuntoManagerImpl")
-	private AdjuntosApi adjuntosApi;
+	private AdjuntoApi adjuntosApi;
 
 	@Override
 	@BusinessOperation(BO_CORE_EXPEDIENTE_ADJUNTOSCONTRATOS_EXP)

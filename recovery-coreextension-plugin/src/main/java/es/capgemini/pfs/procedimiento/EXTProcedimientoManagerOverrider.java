@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
-import es.capgemini.pfs.adjuntos.api.AdjuntosApi;
+import es.capgemini.pfs.adjuntos.api.AdjuntoApi;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
 import es.capgemini.pfs.asunto.model.Procedimiento;
@@ -52,7 +52,7 @@ public class EXTProcedimientoManagerOverrider extends
 	
 	@Autowired
 	@Qualifier("adjuntoManagerImpl")
-	private AdjuntosApi adjuntosApi;
+	private AdjuntoApi adjuntosApi;
 
 	/**
 	 * Devuelve un procedimiento a partir de su id.

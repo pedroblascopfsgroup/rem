@@ -20,7 +20,7 @@ import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.pagination.Page;
-import es.capgemini.pfs.adjuntos.api.AdjuntosApi;
+import es.capgemini.pfs.adjuntos.api.AdjuntoApi;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.cliente.dto.DtoBuscarClientes;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
@@ -68,7 +68,7 @@ public class EXTPersonaManager extends BusinessOperationOverrider<PersonaApi> im
 	
 	@Autowired
 	@Qualifier("adjuntoManagerImpl")
-	private AdjuntosApi adjuntosApi; 
+	private AdjuntoApi adjuntosApi; 
 	
 	private final Log logger = LogFactory.getLog(getClass());
 

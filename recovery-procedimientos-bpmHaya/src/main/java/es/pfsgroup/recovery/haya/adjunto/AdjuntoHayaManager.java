@@ -1,4 +1,4 @@
-package es.pfsgroup.recovery.cajamar.gestorDocumental.manager;
+package es.pfsgroup.recovery.haya.adjunto;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +15,8 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
-import es.capgemini.pfs.adjuntos.api.AdjuntosApi;
+import es.capgemini.pfs.adjuntos.api.AdjuntoApi;
+import es.capgemini.pfs.adjuntos.manager.AdjuntoManager;
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDto;
 import es.capgemini.pfs.asunto.model.AdjuntoAsunto;
 import es.capgemini.pfs.asunto.model.Asunto;
@@ -40,7 +41,7 @@ import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 import es.pfsgroup.recovery.gestordocumental.dto.AdjuntoGridDto;
 
 @Component("adjuntoManagerImpl")
-public class AdjuntoCajamarManager implements AdjuntosApi {
+public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 
 	@Autowired
 	private GestorDocumentalApi gestorDocumentalApi;
@@ -50,6 +51,8 @@ public class AdjuntoCajamarManager implements AdjuntosApi {
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	private String ENTIDAD_CAJAMAR = "CAJAMAR";
 
 	@Override
 	public List<? extends EXTAdjuntoDto> getAdjuntosConBorrado(Long id) {
@@ -59,23 +62,39 @@ public class AdjuntoCajamarManager implements AdjuntosApi {
 
 	@Override
 	public List<ExtAdjuntoGenericoDto> getAdjuntosContratosAsu(Long id) {
-		return listadoDocumentosGeneric(id, DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, null);
+		if(esEntidadCajamar()){
+			return listadoDocumentosGeneric(id, DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, null);	
+		}else{
+			return super.getAdjuntosContratosAsu(id);
+		}
 	}
 
 	@Override
 	public List<ExtAdjuntoGenericoDto> getAdjuntosPersonaAsu(Long id) {
-		return listadoDocumentosGeneric(id, DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, null);
+		if(esEntidadCajamar()){
+			return listadoDocumentosGeneric(id, DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, null);	
+		}else{
+			return super.getAdjuntosPersonaAsu(id);
+		}
 	}
 
 	@Override
 	public List<ExtAdjuntoGenericoDto> getAdjuntosExpedienteAsu(Long id) {
-		return listadoDocumentosGeneric(id, DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null);
+		if(esEntidadCajamar()){
+			return listadoDocumentosGeneric(id, DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null);	
+		}else{
+			return super.getAdjuntosExpedienteAsu(id);
+		}
 	}
 
 	@Override
 	public String upload(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
-			return altaDocumento(Long.parseLong(uploadForm.getParameter("id")), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, null, uploadForm);
+			if(esEntidadCajamar()){
+				return altaDocumento(Long.parseLong(uploadForm.getParameter("id")), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, null, uploadForm);
+			}else{
+				return super.upload(uploadForm);
+			}
 		}else{
 			return null;
 		}
@@ -84,7 +103,11 @@ public class AdjuntoCajamarManager implements AdjuntosApi {
 	@Override
 	public String uploadPersona(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
-			return altaDocumento(Long.parseLong(uploadForm.getParameter("id")),DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, null, uploadForm);
+			if(esEntidadCajamar()){
+				return altaDocumento(Long.parseLong(uploadForm.getParameter("id")),DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, null, uploadForm);	
+			}else{
+				return super.uploadPersona(uploadForm);
+			}
 		}else{
 			return null;
 		}
@@ -93,7 +116,11 @@ public class AdjuntoCajamarManager implements AdjuntosApi {
 	@Override
 	public String uploadExpediente(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
-			return altaDocumento(Long.parseLong(uploadForm.getParameter("id")),DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null, uploadForm);
+			if(esEntidadCajamar()){
+				return altaDocumento(Long.parseLong(uploadForm.getParameter("id")),DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null, uploadForm);	
+			}else{
+				return super.uploadExpediente(uploadForm);
+			}
 		}else{
 			return null;
 		}
@@ -102,7 +129,11 @@ public class AdjuntoCajamarManager implements AdjuntosApi {
 	@Override
 	public String uploadContrato(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
-			return altaDocumento(Long.parseLong(uploadForm.getParameter("id")),DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, null, uploadForm);
+			if(esEntidadCajamar()){
+				return altaDocumento(Long.parseLong(uploadForm.getParameter("id")),DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, null, uploadForm);	
+			}else{
+				return super.uploadContrato(uploadForm);
+			}
 		}else{
 			return null;
 		}
@@ -110,52 +141,94 @@ public class AdjuntoCajamarManager implements AdjuntosApi {
 
 	@Override
 	public List<? extends AdjuntoDto> getAdjuntosConBorradoByPrcId(Long prcId) {
-		return listadoDocumentos(prcId, DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO, DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO, null);
+		if(esEntidadCajamar()){
+			return listadoDocumentos(prcId, DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO, DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO, null);	
+		}else{
+			return super.getAdjuntosConBorradoByPrcId(prcId);
+		}
+		
 	}
 
 	@Override
 	public List<? extends AdjuntoDto> getAdjuntosConBorradoExp(Long id) {
-		return listadoDocumentos(id, DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null);
+		if(esEntidadCajamar()){
+			return listadoDocumentos(id, DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null);	
+		}else{
+			return super.getAdjuntosConBorradoExp(id);
+		}
+		
 	}
 
 	@Override
 	public List<ExtAdjuntoGenericoDto> getAdjuntosPersonasExp(Long id) {
-		return listadoDocumentosGeneric(id, DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null);
+		if(esEntidadCajamar()){
+			return listadoDocumentosGeneric(id, DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null);	
+		}else{
+			return super.getAdjuntosPersonasExp(id);
+		}
 	}
 
 	@Override
 	public List<ExtAdjuntoGenericoDto> getAdjuntosContratoExp(Long id) {
-		return listadoDocumentosGeneric(id, DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null);
+		if(esEntidadCajamar()){
+			return listadoDocumentosGeneric(id, DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null);	
+		}else{
+			return super.getAdjuntosContratoExp(id);
+		}
 	}
 
 	@Override
 	public List<? extends AdjuntoDto> getAdjuntosCntConBorrado(Long id) {
-		return listadoDocumentos(id, DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, null);
+		if(esEntidadCajamar()){
+			return listadoDocumentos(id, DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, null);	
+		}else{
+			return super.getAdjuntosCntConBorrado(id);
+		}
 	}
 
 	@Override
 	public List<? extends AdjuntoDto> getAdjuntosPersonaConBorrado(Long id) {
-		return listadoDocumentos(id, DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, null);
+		if(esEntidadCajamar()){
+			return listadoDocumentos(id, DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, null);	
+		}else{
+			return super.getAdjuntosPersonaConBorrado(id);
+		}
 	}
 	
 	@Override
 	public FileItem bajarAdjuntoAsunto(Long asuntoId, Long adjuntoId) {
-		return recuperacionDocumento(adjuntoId);
+		if(esEntidadCajamar()){
+			return recuperacionDocumento(adjuntoId);	
+		}else{
+			return super.bajarAdjuntoAsunto(asuntoId, adjuntoId);
+		}
 	}
 	
 	@Override
 	public FileItem bajarAdjuntoExpediente(Long adjuntoId) {
-		return recuperacionDocumento(adjuntoId);
+		if(esEntidadCajamar()){
+			return recuperacionDocumento(adjuntoId);	
+		}else{
+			return super.bajarAdjuntoExpediente(adjuntoId);
+		}
 	}
 
 	@Override
 	public FileItem bajarAdjuntoContrato(Long adjuntoId) {
-		return recuperacionDocumento(adjuntoId);
+		if(esEntidadCajamar()){
+			return recuperacionDocumento(adjuntoId);	
+		}else{
+			return super.bajarAdjuntoContrato(adjuntoId);
+		}
 	}
 
 	@Override
 	public FileItem bajarAdjuntoPersona(Long adjuntoId) {
-		return recuperacionDocumento(adjuntoId);
+		if(esEntidadCajamar()){
+			return recuperacionDocumento(adjuntoId);
+		}else{
+			return super.bajarAdjuntoPersona(adjuntoId);
+		}
 	}
 
 	
@@ -322,5 +395,16 @@ public class AdjuntoCajamarManager implements AdjuntosApi {
 		}
 
 		return false;
+	}
+	
+	private boolean esEntidadCajamar(){
+		
+		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		if(ENTIDAD_CAJAMAR.equals(usuario.getEntidad().getDescripcion())){
+			return true;
+		}else{
+			return false;	
+		}
+		
 	}
 }

@@ -2037,7 +2037,7 @@ BEGIN
                          , TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'') AS FECHACREAR
                          , 0 AS BORRADO
                          , MINUTA_LETRADO AS SUB_COSTAS_LETRADO
-                         , MAX_CD_SUBASTA AS CD_SUBASTA_ORIG
+                         , MPS.CD_SUBASTA AS CD_SUBASTA_ORIG
                          , MPS.DEUDA_JUDICIAL
                    FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
                       , '||V_ESQUEMA||'.MIG_MAESTRA_HITOS MMH
@@ -2047,27 +2047,16 @@ BEGIN
                       , '||V_ESQUEMA||'.DD_REC_RESULTADO_COMITE rec
                       , '||V_ESQUEMA||'.DD_MSS_MOT_SUSP_SUBASTA mss 
                       , '||V_ESQUEMA||'.DD_MCS_MOT_CANCEL_SUBASTA mcs
-                     , (SELECT  MAX(CD_SUBASTA) MAX_CD_SUBASTA
-                              , MAX(fecha_celebracion_subasta) MAX_fec_cel_SUBASTA
-                              , MAX(subasta_celebrada) MAX_subasta_celebrada
-                              , MAX(FECHA_SENALAMIENTO_SUBASTA) as MAX_FECHA_SEN 
-                              , MAX(DEUDA_JUDICIAL) as MAX_DEUDA_JUDICIAL
-                          FROM MIG_PROCEDIMIENTOS_SUBASTAS GROUP BY CD_PROCEDIMIENTO ) Z                     
                    WHERE MMH.DD_TPO_CODIGO = ''H002''
                      AND PRC.PRC_ID           = MMH.PRC_ID  
                      AND MPS.CD_PROCEDIMIENTO = MMH.CD_PROCEDIMIENTO
-                     and MPS.CD_SUBASTA                 = Z.MAX_CD_SUBASTA            --Filtro correccion datos incorrectos origen         
-                     and MPS.FECHA_SENALAMIENTO_SUBASTA = Z.MAX_FECHA_SEN             --Filtro correccion datos incorrectos origen
-                     and MPS.fecha_celebracion_subasta  = Z.MAX_fec_cel_SUBASTA             --Filtro correccion datos incorrectos origen                     
-                     and MPS.subasta_celebrada          = Z.MAX_SUBASTA_CELEBRADA             --Filtro correccion datos incorrectos origen                     
-                     and MPS.deuda_judicial             = Z.MAX_DEUDA_JUDICIAL                --Filtro correccion datos incorrectos origen                                              
                      AND ASU.ASU_ID           = PRC.ASU_ID
         --Jaime Sanchez-Cuenca: 
                      AND Case When mps.SUSPENDIDA_POR <> 0 or trim(mps.MOTIVO_SUSPENSION) is not null
                                         Then ''SUS''
-                              When Z.MAX_SUBASTA_CELEBRADA=1
+                              When mps.SUBASTA_CELEBRADA=1
                                         Then ''CEL''
-                              WHEN Z.MAX_SUBASTA_CELEBRADA = 0 
+                              WHEN mps.SUBASTA_CELEBRADA = 0 
                                         THEN ''PIN''
                               When mps.MOTIVO_SUBASTA_CANCELADA <> 0
                                         Then ''CAN''

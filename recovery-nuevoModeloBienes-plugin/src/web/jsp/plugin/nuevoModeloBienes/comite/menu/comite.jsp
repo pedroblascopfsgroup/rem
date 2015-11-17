@@ -17,9 +17,12 @@ text : '<s:message code="menu.comite" text="**Comit� de Recuperaciones" />'
 						app.openTab("<s:message code="actas.listado.titulo" text="**Listado Actas"/>", "comites/listadoActas",  {evento : "listadoCerradoJSON"},{id:'listadoActas', iconCls:'icon_comite_actas'});
 				} 
 			 }
-			</sec:authorize>	
+			 	<sec:authorize ifAllGranted="MSV-INST-SUBASTA">
+			 ,
+			 	</sec:authorize>
+			 </sec:authorize>
 			<sec:authorize ifAllGranted="MSV-INST-SUBASTA">		
-			,{
+			{
 				text : '<s:message code="subastas.instruccionesLoteSubasta.menu.gestMasivaInstrucciones.tituloMenu" text="**Propuesta de Instrucciones" />' 
 				,iconCls : 'icon_subasta'	
 				,handler : function(){

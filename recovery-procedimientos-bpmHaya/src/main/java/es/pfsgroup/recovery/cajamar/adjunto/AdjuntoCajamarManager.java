@@ -12,6 +12,7 @@ import org.apache.tools.ant.taskdefs.TempFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
@@ -73,6 +74,7 @@ public class AdjuntoCajamarManager implements AdjuntoApi {
 	}
 
 	@Override
+	@BusinessOperation(overrides = BO_ADJ_UPLOAD_PERSONA_ASUNTO)
 	public String upload(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
 			return altaDocumento(Long.parseLong(uploadForm.getParameter("id")), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, null, uploadForm);
@@ -82,6 +84,7 @@ public class AdjuntoCajamarManager implements AdjuntoApi {
 	}
 
 	@Override
+	@BusinessOperation(overrides = BO_ADJ_UPLOAD_PERSONA_ASUNTO)
 	public String uploadPersona(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
 			return altaDocumento(Long.parseLong(uploadForm.getParameter("id")),DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, null, uploadForm);
@@ -91,6 +94,7 @@ public class AdjuntoCajamarManager implements AdjuntoApi {
 	}
 
 	@Override
+	@BusinessOperation(overrides = BO_ADJ_UPLOAD_EXPEDIENTE_ASUNTO)
 	public String uploadExpediente(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
 			return altaDocumento(Long.parseLong(uploadForm.getParameter("id")),DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null, uploadForm);
@@ -100,6 +104,7 @@ public class AdjuntoCajamarManager implements AdjuntoApi {
 	}
 
 	@Override
+	@BusinessOperation(overrides = BO_ADJ_UPLOAD_CONTRATO_ASUNTO)
 	public String uploadContrato(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
 			return altaDocumento(Long.parseLong(uploadForm.getParameter("id")),DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, null, uploadForm);
@@ -139,21 +144,25 @@ public class AdjuntoCajamarManager implements AdjuntoApi {
 	}
 	
 	@Override
+	@BusinessOperation(overrides = BO_ADJ_BAJAR_ADJUNTO_ASUNTO)
 	public FileItem bajarAdjuntoAsunto(Long asuntoId, Long adjuntoId) {
 		return recuperacionDocumento(adjuntoId);
 	}
 	
 	@Override
+	@BusinessOperation(overrides = BO_ADJ_BAJAR_ADJUNTO_EXPEDIENTE)
 	public FileItem bajarAdjuntoExpediente(Long adjuntoId) {
 		return recuperacionDocumento(adjuntoId);
 	}
 
 	@Override
+	@BusinessOperation(overrides = BO_ADJ_BAJAR_ADJUNTO_CONTRATO)
 	public FileItem bajarAdjuntoContrato(Long adjuntoId) {
 		return recuperacionDocumento(adjuntoId);
 	}
 
 	@Override
+	@BusinessOperation(overrides = BO_ADJ_BAJAR_ADJUNTO_PERSONA)
 	public FileItem bajarAdjuntoPersona(Long adjuntoId) {
 		return recuperacionDocumento(adjuntoId);
 	}
@@ -168,6 +177,22 @@ public class AdjuntoCajamarManager implements AdjuntoApi {
 		List<ExtAdjuntoGenericoDto> adjuntosMapeados = new ArrayList<ExtAdjuntoGenericoDto>();
 
 		if (!Checks.estaVacio(listDto)) {
+			
+			Comparator<AdjuntoGridDto> comparador = new Comparator<AdjuntoGridDto>() {
+				@Override
+				public int compare(AdjuntoGridDto o1, AdjuntoGridDto o2) {
+					if (Checks.esNulo(o1) && Checks.esNulo(o2)) {
+						return 0;
+					} else if (Checks.esNulo(o1)) {
+						return -1;
+					} else if (Checks.esNulo(o2)) {
+						return 1;
+					} else {
+						return o2.getDescripcionEntidad().compareTo(o1.getDescripcionEntidad());
+					}
+				}
+			};
+			
 			Collections.sort(listDto, comparador);
 
 			for(final AdjuntoGridDto adjDto : listDto){
@@ -218,6 +243,22 @@ public class AdjuntoCajamarManager implements AdjuntoApi {
 
 
 		if (!Checks.estaVacio(listDto)) {
+			
+			Comparator<AdjuntoGridDto> comparador = new Comparator<AdjuntoGridDto>() {
+				@Override
+				public int compare(AdjuntoGridDto o1, AdjuntoGridDto o2) {
+					if (Checks.esNulo(o1) && Checks.esNulo(o2)) {
+						return 0;
+					} else if (Checks.esNulo(o1)) {
+						return -1;
+					} else if (Checks.esNulo(o2)) {
+						return 1;
+					} else {
+						return o2.getFechaSubida().compareTo(o1.getFechaSubida());
+					}
+				}
+			};
+			
 			Collections.sort(listDto, comparador);
 			
 			for(final AdjuntoGridDto adjDto: listDto){
@@ -269,20 +310,6 @@ public class AdjuntoCajamarManager implements AdjuntoApi {
 		
 	}
 	
-	Comparator<AdjuntoGridDto> comparador = new Comparator<AdjuntoGridDto>() {
-		@Override
-		public int compare(AdjuntoGridDto o1, AdjuntoGridDto o2) {
-			if (Checks.esNulo(o1) && Checks.esNulo(o2)) {
-				return 0;
-			} else if (Checks.esNulo(o1)) {
-				return -1;
-			} else if (Checks.esNulo(o2)) {
-				return 1;
-			} else {
-				return o2.getFechaSubida().compareTo(o1.getFechaSubida());
-			}
-		}
-	};
 	
 	private String altaDocumento(Long idEntidad, String tipoEntidadGrid, String tipoDocumento, WebFileItem uploadForm){
 		return gestorDocumentalApi.altaDocumento(idEntidad, tipoEntidadGrid, tipoDocumento, uploadForm);

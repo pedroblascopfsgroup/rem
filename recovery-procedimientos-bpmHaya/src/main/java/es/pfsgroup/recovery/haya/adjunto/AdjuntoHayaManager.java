@@ -12,6 +12,7 @@ import org.apache.tools.ant.taskdefs.TempFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
@@ -31,6 +32,7 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -40,7 +42,7 @@ import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 import es.pfsgroup.recovery.gestordocumental.dto.AdjuntoGridDto;
 
-@Component("adjuntoManagerImpl")
+@Component("adjuntoManagerHayaImpl")
 public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 
 	@Autowired
@@ -88,6 +90,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	}
 
 	@Override
+	@BusinessOperation(overrides = BO_ADJ_UPLOAD_PERSONA_ASUNTO)
 	public String upload(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
 			if(esEntidadCajamar()){
@@ -101,6 +104,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	}
 
 	@Override
+	@BusinessOperation(overrides = BO_ADJ_UPLOAD_PERSONA_ASUNTO)
 	public String uploadPersona(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
 			if(esEntidadCajamar()){
@@ -114,6 +118,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	}
 
 	@Override
+	@BusinessOperation(overrides = BO_ADJ_UPLOAD_EXPEDIENTE_ASUNTO)
 	public String uploadExpediente(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
 			if(esEntidadCajamar()){
@@ -127,6 +132,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	}
 
 	@Override
+	@BusinessOperation(overrides = BO_ADJ_UPLOAD_CONTRATO_ASUNTO)
 	public String uploadContrato(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
 			if(esEntidadCajamar()){
@@ -196,6 +202,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	}
 	
 	@Override
+	@BusinessOperation(overrides = BO_ADJ_BAJAR_ADJUNTO_ASUNTO)
 	public FileItem bajarAdjuntoAsunto(Long asuntoId, Long adjuntoId) {
 		if(esEntidadCajamar()){
 			return recuperacionDocumento(adjuntoId);	
@@ -205,6 +212,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	}
 	
 	@Override
+	@BusinessOperation(overrides = BO_ADJ_BAJAR_ADJUNTO_EXPEDIENTE)
 	public FileItem bajarAdjuntoExpediente(Long adjuntoId) {
 		if(esEntidadCajamar()){
 			return recuperacionDocumento(adjuntoId);	
@@ -214,6 +222,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	}
 
 	@Override
+	@BusinessOperation(overrides = BO_ADJ_BAJAR_ADJUNTO_CONTRATO)
 	public FileItem bajarAdjuntoContrato(Long adjuntoId) {
 		if(esEntidadCajamar()){
 			return recuperacionDocumento(adjuntoId);	
@@ -223,6 +232,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	}
 
 	@Override
+	@BusinessOperation(overrides = BO_ADJ_BAJAR_ADJUNTO_PERSONA)
 	public FileItem bajarAdjuntoPersona(Long adjuntoId) {
 		if(esEntidadCajamar()){
 			return recuperacionDocumento(adjuntoId);

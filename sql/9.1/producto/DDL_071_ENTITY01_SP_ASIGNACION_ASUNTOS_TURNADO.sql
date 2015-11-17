@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=ALBERTO CAMPOS
---## FECHA_CREACION=20151014
+--## FECHA_CREACION=20151116
 --## ARTEFACTO=producto
 --## VERSION_ARTEFACTO=9.1.13
 --## INCIDENCIA_LINK=BKREC-901
@@ -18,54 +18,54 @@ SET SERVEROUTPUT ON;
 SET DEFINE OFF;
 
 create or replace PROCEDURE        asignacion_asuntos_turnado (
-   p_asu_id       bank01.asu_asuntos.asu_id%TYPE,
-   p_username     bankmaster.usu_usuarios.usu_username%TYPE,
-   p_tge_codigo   bankmaster.dd_tge_tipo_gestor.dd_tge_codigo%TYPE := 'GEXT'
+   p_asu_id       #ESQUEMA#.asu_asuntos.asu_id%TYPE,
+   p_username     #ESQUEMA_MASTER#.usu_usuarios.usu_username%TYPE,
+   p_tge_codigo   #ESQUEMA_MASTER#.dd_tge_tipo_gestor.dd_tge_codigo%TYPE := 'GEXT'
 )
 IS
-   CURSOR crs_datos_asunto (p_asu_id bank01.asu_asuntos.asu_id%TYPE)
+   CURSOR crs_datos_asunto (p_asu_id #ESQUEMA#.asu_asuntos.asu_id%TYPE)
    IS
       SELECT tas.dd_tas_codigo
-        FROM bank01.asu_asuntos asu, bankmaster.dd_tas_tipos_asunto tas
+        FROM #ESQUEMA#.asu_asuntos asu, #ESQUEMA_MASTER#.dd_tas_tipos_asunto tas
        WHERE asu.asu_id = p_asu_id AND asu.dd_tas_id = tas.dd_tas_id;
 
-   CURSOR crs_filtro_tipo_asunto (p_tas_codigo bankmaster.dd_tas_tipos_asunto.dd_tas_codigo%TYPE)
+   CURSOR crs_filtro_tipo_asunto (p_tas_codigo #ESQUEMA_MASTER#.dd_tas_tipos_asunto.dd_tas_codigo%TYPE)
    IS
       SELECT des.des_id
-        FROM bank01.des_despacho_externo des
+        FROM #ESQUEMA#.des_despacho_externo des
        WHERE (p_tas_codigo = '01' AND des.etc_lit_codigo_calidad IS NOT NULL AND des.etc_lit_codigo_importe IS NOT NULL)
           OR (p_tas_codigo = '02' AND des.etc_con_codigo_calidad IS NOT NULL AND des.etc_con_codigo_importe IS NOT NULL);
 
-   CURSOR crs_filtro_stock (p_tas_codigo bankmaster.dd_tas_tipos_asunto.dd_tas_codigo%TYPE)
+   CURSOR crs_filtro_stock (p_tas_codigo #ESQUEMA_MASTER#.dd_tas_tipos_asunto.dd_tas_codigo%TYPE)
    IS
       SELECT aat.des_id
-        FROM bank01.tmp_aat_asig_turnado_letrados aat,
+        FROM #ESQUEMA#.tmp_aat_asig_turnado_letrados aat,
              (SELECT CASE
                         WHEN p_tas_codigo = '01'
                            THEN etu.etu_lit_stock_anual
                         ELSE etu.etu_con_stock_anual
                      END AS etu_stock_anual
-                FROM bank01.etu_esquema_turnado etu, bank01.dd_eet_estado_esquema_turnado eet
+                FROM #ESQUEMA#.etu_esquema_turnado etu, #ESQUEMA#.dd_eet_estado_esquema_turnado eet
                WHERE eet.dd_eet_codigo = 'VIG' AND eet.dd_eet_id = etu.dd_eet_id) etu
        WHERE aat.porcentaje_interanual <= etu.etu_stock_anual;
 
-   CURSOR crs_filtro_conexionadas (p_asu_id bank01.asu_asuntos.asu_id%TYPE, p_tge_codigo bankmaster.dd_tge_tipo_gestor.dd_tge_codigo%TYPE)
+   CURSOR crs_filtro_conexionadas (p_asu_id #ESQUEMA#.asu_asuntos.asu_id%TYPE, p_tge_codigo #ESQUEMA_MASTER#.dd_tge_tipo_gestor.dd_tge_codigo%TYPE)
    IS
       SELECT DISTINCT FIRST_VALUE (usd.des_id) OVER (ORDER BY prc.prc_saldo_recuperacion DESC) AS des_id
                  FROM (SELECT DISTINCT per_id
-                                  FROM bank01.prc_procedimientos prc, bank01.prc_per pp
+                                  FROM #ESQUEMA#.prc_procedimientos prc, #ESQUEMA#.prc_per pp
                                  WHERE prc.asu_id = p_asu_id AND prc.prc_id = pp.prc_id) per,
-                      bank01.prc_per pp,
-                      bank01.prc_procedimientos prc,
-                      bank01.asu_asuntos asu,
-                      bankmaster.dd_eas_estado_asuntos eas,
-                      bank01.usd_usuarios_despachos usd,
-                      bank01.tmp_aat_asig_turnado_letrados aat,
-                      bank01.gaa_gestor_adicional_asunto gaa,
-                      bankmaster.dd_tge_tipo_gestor tge
+                      #ESQUEMA#.prc_per pp,
+                      #ESQUEMA#.prc_procedimientos prc,
+                      #ESQUEMA#.asu_asuntos asu,
+                      #ESQUEMA_MASTER#.dd_eas_estado_asuntos eas,
+                      #ESQUEMA#.usd_usuarios_despachos usd,
+                      #ESQUEMA#.tmp_aat_asig_turnado_letrados aat,
+                      #ESQUEMA#.gaa_gestor_adicional_asunto gaa,
+                      #ESQUEMA_MASTER#.dd_tge_tipo_gestor tge
                 WHERE per.per_id = pp.per_id
                   AND pp.prc_id NOT IN (SELECT prc_id
-                                          FROM bank01.prc_procedimientos
+                                          FROM #ESQUEMA#.prc_procedimientos
                                          WHERE asu_id = p_asu_id)
                   AND pp.prc_id = prc.prc_id
                   AND prc.asu_id = asu.asu_id
@@ -77,29 +77,29 @@ IS
                   AND gaa.usd_id = usd.usd_id
                   AND usd.des_id = aat.des_id;
 
-   CURSOR crs_filtro_situacion (p_asu_id bank01.asu_asuntos.asu_id%TYPE)
+   CURSOR crs_filtro_situacion (p_asu_id #ESQUEMA#.asu_asuntos.asu_id%TYPE)
    IS
       SELECT DISTINCT daa.des_id
                  FROM (SELECT DISTINCT FIRST_VALUE (cnt.ofi_id) OVER (ORDER BY mov.mov_pos_viva_vencida + mov.mov_pos_viva_no_vencida DESC) AS ofi_id
-                                  FROM bank01.asu_asuntos asu, bank01.exp_expedientes EXP, bank01.cex_contratos_expediente cex, bank01.cnt_contratos cnt, bank01.mov_movimientos mov
+                                  FROM #ESQUEMA#.asu_asuntos asu, #ESQUEMA#.exp_expedientes EXP, #ESQUEMA#.cex_contratos_expediente cex, #ESQUEMA#.cnt_contratos cnt, #ESQUEMA#.mov_movimientos mov
                                  WHERE asu.asu_id = p_asu_id AND asu.exp_id = EXP.exp_id AND EXP.exp_id = cex.exp_id AND cex.cnt_id = cnt.cnt_id AND cnt.cnt_id = mov.cnt_id) cnt,
-                      bank01.ofi_oficinas ofi,
-                      bankmaster.dd_prv_provincia prv,
-                      bank01.daa_despacho_ambito_actuacion daa,
-                      bank01.tmp_aat_asig_turnado_letrados aat
+                      #ESQUEMA#.ofi_oficinas ofi,
+                      #ESQUEMA_MASTER#.dd_prv_provincia prv,
+                      #ESQUEMA#.daa_despacho_ambito_actuacion daa,
+                      #ESQUEMA#.tmp_aat_asig_turnado_letrados aat
                 WHERE cnt.ofi_id = ofi.ofi_id AND ofi.dd_prv_id = prv.dd_prv_id AND (prv.dd_prv_id = daa.dd_prv_id OR prv.dd_cca_id = daa.dd_cca_id) AND daa.des_id = aat.des_id;
 
-   CURSOR crs_filtro_codigo_importe (p_asu_id bank01.asu_asuntos.asu_id%TYPE)
+   CURSOR crs_filtro_codigo_importe (p_asu_id #ESQUEMA#.asu_asuntos.asu_id%TYPE)
    IS
       SELECT des.des_id
         FROM (SELECT etc.etc_codigo, etc.etc_tipo
-                FROM bank01.etu_esquema_turnado etu,
-                     bank01.dd_eet_estado_esquema_turnado eet,
-                     bank01.etc_esquema_turnado_config etc,
-                     bank01.asu_asuntos asu,
-                     bankmaster.dd_tas_tipos_asunto tas,
+                FROM #ESQUEMA#.etu_esquema_turnado etu,
+                     #ESQUEMA#.dd_eet_estado_esquema_turnado eet,
+                     #ESQUEMA#.etc_esquema_turnado_config etc,
+                     #ESQUEMA#.asu_asuntos asu,
+                     #ESQUEMA_MASTER#.dd_tas_tipos_asunto tas,
                      (SELECT DISTINCT FIRST_VALUE (prc.prc_saldo_recuperacion) OVER (ORDER BY prc.prc_saldo_recuperacion DESC) AS prc_saldo_recuperacion
-                                 FROM bank01.prc_procedimientos prc
+                                 FROM #ESQUEMA#.prc_procedimientos prc
                                 WHERE prc.asu_id = p_asu_id) prc
                WHERE etu.dd_eet_id = eet.dd_eet_id
                  AND eet.dd_eet_codigo = 'VIG'
@@ -108,20 +108,20 @@ IS
                  AND asu.dd_tas_id = tas.dd_tas_id
                  AND ((tas.dd_tas_codigo = '01' AND etc.etc_tipo = 'LI') OR etc.etc_tipo = 'CI')
                  AND prc.prc_saldo_recuperacion BETWEEN etc.etc_importe_desde AND etc.etc_importe_hasta) etc,
-             bank01.des_despacho_externo des
+             #ESQUEMA#.des_despacho_externo des
        WHERE (etc.etc_tipo = 'LI' AND etc.etc_codigo = des.etc_lit_codigo_importe) OR etc.etc_codigo = des.etc_con_codigo_importe;
 
-   CURSOR crs_calificaciones_candidatos (p_asu_id bank01.asu_asuntos.asu_id%TYPE)
+   CURSOR crs_calificaciones_candidatos (p_asu_id #ESQUEMA#.asu_asuntos.asu_id%TYPE)
    IS
       SELECT DISTINCT aat.codigo_calidad
-                 FROM bank01.tmp_aat_asig_turnado_letrados aat
+                 FROM #ESQUEMA#.tmp_aat_asig_turnado_letrados aat
              ORDER BY aat.codigo_calidad DESC;
 
    CURSOR crs_porcentaje_asuntos (
-      p_asu_id       bank01.asu_asuntos.asu_id%TYPE,
-      p_codigo       bank01.etc_esquema_turnado_config.etc_codigo%TYPE,
-      p_tas_codigo   bankmaster.dd_tas_tipos_asunto.dd_tas_codigo%TYPE,
-      p_tge_codigo   bankmaster.dd_tge_tipo_gestor.dd_tge_codigo%TYPE
+      p_asu_id       #ESQUEMA#.asu_asuntos.asu_id%TYPE,
+      p_codigo       #ESQUEMA#.etc_esquema_turnado_config.etc_codigo%TYPE,
+      p_tas_codigo   #ESQUEMA_MASTER#.dd_tas_tipos_asunto.dd_tas_codigo%TYPE,
+      p_tge_codigo   #ESQUEMA_MASTER#.dd_tge_tipo_gestor.dd_tge_codigo%TYPE
    )
    IS
       SELECT CASE
@@ -130,14 +130,14 @@ IS
                 ELSE asignados.n_asuntos / totales.n_asuntos * 100
              END AS porcentaje
         FROM (SELECT COUNT (DISTINCT asu.asu_id) AS n_asuntos
-                FROM bank01.asu_asuntos asu,
-                     bank01.usd_usuarios_despachos usd,
-                     bank01.des_despacho_externo des,
+                FROM #ESQUEMA#.asu_asuntos asu,
+                     #ESQUEMA#.usd_usuarios_despachos usd,
+                     #ESQUEMA#.des_despacho_externo des,
                      (SELECT asu.dd_tas_id
-                        FROM bank01.asu_asuntos asu
+                        FROM #ESQUEMA#.asu_asuntos asu
                        WHERE asu.asu_id = p_asu_id) tas,
-                     bank01.gaa_gestor_adicional_asunto gaa,
-                     bankmaster.dd_tge_tipo_gestor tge
+                     #ESQUEMA#.gaa_gestor_adicional_asunto gaa,
+                     #ESQUEMA_MASTER#.dd_tge_tipo_gestor tge
                WHERE EXTRACT (MONTH FROM SYSDATE) = EXTRACT (MONTH FROM asu.fechacrear)
                  AND EXTRACT (YEAR FROM SYSDATE) = EXTRACT (YEAR FROM asu.fechacrear)
                  AND asu.dd_tas_id = tas.dd_tas_id
@@ -148,13 +148,13 @@ IS
                  AND usd.des_id = des.des_id
                  AND ((p_tas_codigo = '01' AND des.etc_lit_codigo_calidad = p_codigo) OR des.etc_con_codigo_calidad = p_codigo)) asignados,
              (SELECT COUNT (DISTINCT asu.asu_id) AS n_asuntos
-                FROM bank01.asu_asuntos asu,
-                     bank01.usd_usuarios_despachos usd,
+                FROM #ESQUEMA#.asu_asuntos asu,
+                     #ESQUEMA#.usd_usuarios_despachos usd,
                      (SELECT asu.dd_tas_id
-                        FROM bank01.asu_asuntos asu
+                        FROM #ESQUEMA#.asu_asuntos asu
                        WHERE asu.asu_id = p_asu_id) tas,
-                     bank01.gaa_gestor_adicional_asunto gaa,
-                     bankmaster.dd_tge_tipo_gestor tge
+                     #ESQUEMA#.gaa_gestor_adicional_asunto gaa,
+                     #ESQUEMA_MASTER#.dd_tge_tipo_gestor tge
                WHERE EXTRACT (MONTH FROM SYSDATE) = EXTRACT (MONTH FROM asu.fechacrear)
                  AND EXTRACT (YEAR FROM SYSDATE) = EXTRACT (YEAR FROM asu.fechacrear)
                  AND asu.dd_tas_id = tas.dd_tas_id
@@ -163,10 +163,10 @@ IS
                  AND tge.dd_tge_codigo = p_tge_codigo
                  AND gaa.usd_id = usd.usd_id) totales;
 
-   CURSOR crs_porcentaje_esquema (p_tas_codigo bankmaster.dd_tas_tipos_asunto.dd_tas_codigo%TYPE, p_etc_codigo bank01.etc_esquema_turnado_config.etc_codigo%TYPE)
+   CURSOR crs_porcentaje_esquema (p_tas_codigo #ESQUEMA_MASTER#.dd_tas_tipos_asunto.dd_tas_codigo%TYPE, p_etc_codigo #ESQUEMA#.etc_esquema_turnado_config.etc_codigo%TYPE)
    IS
       SELECT etc.etc_porcentaje
-        FROM bank01.etc_esquema_turnado_config etc, bank01.etu_esquema_turnado etu, bank01.dd_eet_estado_esquema_turnado eet
+        FROM #ESQUEMA#.etc_esquema_turnado_config etc, #ESQUEMA#.etu_esquema_turnado etu, #ESQUEMA#.dd_eet_estado_esquema_turnado eet
        WHERE ((p_tas_codigo = '01' AND etc.etc_tipo = 'LC') OR etc.etc_tipo = 'CC')
          AND etc.etc_codigo = p_etc_codigo
          AND etc.etu_id = etu.etu_id
@@ -176,15 +176,15 @@ IS
    CURSOR crs_despacho_elegido
    IS
       SELECT FIRST_VALUE (aat.des_id) OVER (ORDER BY aat.l_provincia DESC, aat.porcentaje_interanual ASC)
-        FROM bank01.tmp_aat_asig_turnado_letrados aat;
+        FROM #ESQUEMA#.tmp_aat_asig_turnado_letrados aat;
 
-   CURSOR crs_gestores_activos (p_tge_codigo bankmaster.dd_tge_tipo_gestor.dd_tge_codigo%TYPE, p_asu_id bank01.asu_asuntos.asu_id%TYPE)
+   CURSOR crs_gestores_activos (p_tge_codigo #ESQUEMA_MASTER#.dd_tge_tipo_gestor.dd_tge_codigo%TYPE, p_asu_id #ESQUEMA#.asu_asuntos.asu_id%TYPE)
    IS
       SELECT gaa.gaa_id, gaa.usd_id, gaa.fechacrear
-        FROM bank01.gaa_gestor_adicional_asunto gaa, bankmaster.dd_tge_tipo_gestor tge
+        FROM #ESQUEMA#.gaa_gestor_adicional_asunto gaa, #ESQUEMA_MASTER#.dd_tge_tipo_gestor tge
        WHERE tge.dd_tge_codigo = p_tge_codigo AND tge.dd_tge_id = gaa.dd_tge_id AND gaa.asu_id = p_asu_id AND gaa.borrado = 0;
 
-   v_des_id                  bank01.des_despacho_externo.des_id%TYPE;
+   v_des_id                  #ESQUEMA#.des_despacho_externo.des_id%TYPE;
    v_datos_asunto            crs_datos_asunto%ROWTYPE;
    v_filtro_tipo_asunto      SYS.odcinumberlist;
    v_filtro_stock            SYS.odcinumberlist;
@@ -205,7 +205,7 @@ BEGIN
    CLOSE crs_datos_asunto;
 
    -- Se rellena la tabla temporal
-   INSERT INTO bank01.tmp_aat_asig_turnado_letrados
+   INSERT INTO #ESQUEMA#.tmp_aat_asig_turnado_letrados
       SELECT des.des_id, CASE
                 WHEN v_datos_asunto.dd_tas_codigo = '01'
                    THEN des.etc_lit_codigo_importe
@@ -216,7 +216,7 @@ BEGIN
                 ELSE des.etc_con_codigo_calidad
              END,
                (  (SELECT COUNT (DISTINCT asu.asu_id) AS n_asuntos
-                     FROM bank01.asu_asuntos asu, bank01.gaa_gestor_adicional_asunto gaa, bankmaster.dd_tge_tipo_gestor tge, bank01.usd_usuarios_despachos usd
+                     FROM #ESQUEMA#.asu_asuntos asu, #ESQUEMA#.gaa_gestor_adicional_asunto gaa, #ESQUEMA_MASTER#.dd_tge_tipo_gestor tge, #ESQUEMA#.usd_usuarios_despachos usd
                     WHERE asu.asu_id = gaa.asu_id
                       AND gaa.dd_tge_id = tge.dd_tge_id
                       AND tge.dd_tge_codigo = p_tge_codigo
@@ -224,7 +224,7 @@ BEGIN
                       AND usd.des_id = des.des_id
                       AND asu.fechacrear BETWEEN ADD_MONTHS (SYSDATE, -12) AND SYSDATE)
                 / DECODE ((SELECT COUNT (DISTINCT asu.asu_id) AS n_asuntos
-                             FROM bank01.asu_asuntos asu, bank01.gaa_gestor_adicional_asunto gaa, bankmaster.dd_tge_tipo_gestor tge, bank01.usd_usuarios_despachos usd
+                             FROM #ESQUEMA#.asu_asuntos asu, #ESQUEMA#.gaa_gestor_adicional_asunto gaa, #ESQUEMA_MASTER#.dd_tge_tipo_gestor tge, #ESQUEMA#.usd_usuarios_despachos usd
                             WHERE asu.asu_id = gaa.asu_id
                               AND gaa.dd_tge_id = tge.dd_tge_id
                               AND tge.dd_tge_codigo = p_tge_codigo
@@ -232,7 +232,7 @@ BEGIN
                               AND asu.fechacrear BETWEEN ADD_MONTHS (SYSDATE, -12) AND SYSDATE),
                           0, 1,
                           (SELECT COUNT (DISTINCT asu.asu_id) AS n_asuntos
-                             FROM bank01.asu_asuntos asu, bank01.gaa_gestor_adicional_asunto gaa, bankmaster.dd_tge_tipo_gestor tge, bank01.usd_usuarios_despachos usd
+                             FROM #ESQUEMA#.asu_asuntos asu, #ESQUEMA#.gaa_gestor_adicional_asunto gaa, #ESQUEMA_MASTER#.dd_tge_tipo_gestor tge, #ESQUEMA#.usd_usuarios_despachos usd
                             WHERE asu.asu_id = gaa.asu_id
                               AND gaa.dd_tge_id = tge.dd_tge_id
                               AND tge.dd_tge_codigo = p_tge_codigo
@@ -244,16 +244,16 @@ BEGIN
              CASE
                 WHEN EXISTS (
                        SELECT 1
-                         FROM bank01.daa_despacho_ambito_actuacion daa,
+                         FROM #ESQUEMA#.daa_despacho_ambito_actuacion daa,
                               (SELECT DISTINCT FIRST_VALUE (cnt.ofi_id) OVER (ORDER BY mov.mov_pos_viva_vencida + mov.mov_pos_viva_no_vencida DESC) AS ofi_id
-                                          FROM bank01.asu_asuntos asu, bank01.exp_expedientes EXP, bank01.cex_contratos_expediente cex, bank01.cnt_contratos cnt, bank01.mov_movimientos mov
+                                          FROM #ESQUEMA#.asu_asuntos asu, #ESQUEMA#.exp_expedientes EXP, #ESQUEMA#.cex_contratos_expediente cex, #ESQUEMA#.cnt_contratos cnt, #ESQUEMA#.mov_movimientos mov
                                          WHERE asu.asu_id = p_asu_id AND asu.exp_id = EXP.exp_id AND EXP.exp_id = cex.exp_id AND cex.cnt_id = cnt.cnt_id AND cnt.cnt_id = mov.cnt_id) cnt,
-                              bank01.ofi_oficinas ofi
+                              #ESQUEMA#.ofi_oficinas ofi
                         WHERE daa.des_id = des.des_id AND daa.dd_prv_id = ofi.dd_prv_id AND ofi.ofi_id = cnt.ofi_id)
                    THEN 'S'
                 ELSE 'N'
              END
-        FROM bank01.des_despacho_externo des, bank01.daa_despacho_ambito_actuacion daa
+        FROM #ESQUEMA#.des_despacho_externo des, #ESQUEMA#.daa_despacho_ambito_actuacion daa
        WHERE des.des_id = daa.des_id AND des.borrado = 0;
 
    -- Se descartan los letrados que superan el stock interanual
@@ -272,7 +272,7 @@ BEGIN
    ELSE
       IF v_filtro_stock.COUNT > 0
       THEN
-         DELETE FROM bank01.tmp_aat_asig_turnado_letrados aat
+         DELETE FROM #ESQUEMA#.tmp_aat_asig_turnado_letrados aat
                WHERE aat.des_id NOT IN (SELECT COLUMN_VALUE
                                           FROM TABLE (v_filtro_stock));
       END IF;
@@ -293,7 +293,7 @@ BEGIN
       ELSE
          IF v_filtro_tipo_asunto.COUNT > 0
          THEN
-            DELETE FROM bank01.tmp_aat_asig_turnado_letrados aat
+            DELETE FROM #ESQUEMA#.tmp_aat_asig_turnado_letrados aat
                   WHERE aat.des_id NOT IN (SELECT COLUMN_VALUE
                                              FROM TABLE (v_filtro_tipo_asunto));
          END IF;
@@ -330,7 +330,7 @@ BEGIN
             ELSE
                IF v_filtro_situacion.COUNT > 0
                THEN
-                  DELETE FROM bank01.tmp_aat_asig_turnado_letrados aat
+                  DELETE FROM #ESQUEMA#.tmp_aat_asig_turnado_letrados aat
                         WHERE aat.des_id NOT IN (SELECT COLUMN_VALUE
                                                    FROM TABLE (v_filtro_situacion));
                END IF;
@@ -351,7 +351,7 @@ BEGIN
                ELSE
                   IF v_filtro_codigo_importe.COUNT > 0
                   THEN
-                     DELETE FROM bank01.tmp_aat_asig_turnado_letrados aat
+                     DELETE FROM #ESQUEMA#.tmp_aat_asig_turnado_letrados aat
                            WHERE aat.des_id NOT IN (SELECT COLUMN_VALUE
                                                       FROM TABLE (v_filtro_codigo_importe));
                   END IF;
@@ -397,7 +397,7 @@ BEGIN
                   -- Si no se ha encontrado ninguna calificación cuyo porcentaje de asuntos sea menor que el definido en el esquema nos quedamos con los letrados del primer tipo de calificación
                   IF v_enc = 'N'
                   THEN
-                     DELETE FROM bank01.tmp_aat_asig_turnado_letrados aat
+                     DELETE FROM #ESQUEMA#.tmp_aat_asig_turnado_letrados aat
                            WHERE aat.codigo_calidad <> v_primera_calificacion;
                   END IF;
 
@@ -420,25 +420,25 @@ BEGIN
       -- Si existe algún gestor activo del tipo indicado para el asunto, se añade al histórico y se borra la relación
       FOR relacion IN crs_gestores_activos (p_tge_codigo, p_asu_id)
       LOOP
-         INSERT INTO bank01.gah_gestor_adicional_historico
+         INSERT INTO #ESQUEMA#.gah_gestor_adicional_historico
                      (gah_id, gah_gestor_id, gah_asu_id, gah_tipo_gestor_id, gah_fecha_desde, gah_fecha_hasta, VERSION, usuariocrear, fechacrear, borrado)
-            (SELECT bank01.s_gah_gestor_adic_historico.NEXTVAL, relacion.usd_id, p_asu_id, tge.dd_tge_id, relacion.fechacrear, SYSDATE, 0, p_username, SYSDATE, 0
-               FROM bankmaster.dd_tge_tipo_gestor tge
+            (SELECT #ESQUEMA#.s_gah_gestor_adic_historico.NEXTVAL, relacion.usd_id, p_asu_id, tge.dd_tge_id, relacion.fechacrear, SYSDATE, 0, p_username, SYSDATE, 0
+               FROM #ESQUEMA_MASTER#.dd_tge_tipo_gestor tge
               WHERE tge.dd_tge_codigo = p_tge_codigo);
 
-         DELETE FROM bank01.gaa_gestor_adicional_asunto gaa
+         DELETE FROM #ESQUEMA#.gaa_gestor_adicional_asunto gaa
                WHERE gaa.gaa_id = relacion.gaa_id;
       END LOOP;
       
       -- Se añade la relación entre el despacho elegido y el asunto
-      INSERT INTO bank01.gaa_gestor_adicional_asunto
+      INSERT INTO #ESQUEMA#.gaa_gestor_adicional_asunto
                   (gaa_id, asu_id, usd_id, dd_tge_id, VERSION,
                    usuariocrear, fechacrear, borrado
                   )
-           VALUES (bank01.s_gaa_gestor_adicional_asunto.NEXTVAL, p_asu_id, (SELECT DISTINCT FIRST_VALUE (usd.usd_id) OVER (ORDER BY usd.usd_gestor_defecto DESC)
-                                                                              FROM bank01.usd_usuarios_despachos usd
+           VALUES (#ESQUEMA#.s_gaa_gestor_adicional_asunto.NEXTVAL, p_asu_id, (SELECT DISTINCT FIRST_VALUE (usd.usd_id) OVER (ORDER BY usd.usd_gestor_defecto DESC)
+                                                                              FROM #ESQUEMA#.usd_usuarios_despachos usd
                                                                              WHERE usd.des_id = v_des_id), (SELECT tge.dd_tge_id
-                                                                                                              FROM bankmaster.dd_tge_tipo_gestor tge
+                                                                                                              FROM #ESQUEMA_MASTER#.dd_tge_tipo_gestor tge
                                                                                                              WHERE tge.dd_tge_codigo = p_tge_codigo), 0,
                    p_username, SYSDATE, 0
                   );

@@ -48,4 +48,18 @@ public class GestorTareasDaoImpl extends AbstractEntityDao<Serializable, Long>
 		return resultado;
 	}
 
+	@Override
+	public String obtenerSubtipoTarea(String codigoTarea) {
+		
+		String resultado = "";
+		try {
+			resultado = (String) getSession().createSQLQuery("SELECT DD_STA_CODIGO FROM ${master.schema}.dd_sta_subtipo_tarea_base STA " + 
+					"INNER JOIN tap_tarea_procedimiento TAP ON TAP.DD_STA_ID=STA.DD_STA_ID WHERE TAP_CODIGO='PCO_GenerarLiq'").uniqueResult();
+		} catch (EmptyResultDataAccessException e) {
+			e.printStackTrace();
+		}
+		
+		return resultado;
+
+	}
 }

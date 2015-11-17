@@ -75,9 +75,15 @@ if [[ "x$OPTION_REMOVE" == "xyes" ]]; then
 	mkdir -p /oradata/flash
 	mkdir -p /oradata/redo
 	$ORACLE_HOME/bin/sqlplus system/admin@localhost:1521/orcl @/setup/SQL-SCRIPTS/alter-system-user.sql &>/dev/null
-	echo "<Docker [$CONTAINER_NAME]>: configurando NLS_PARAMETERS"
-	$ORACLE_HOME/bin/sqlplus / as sysdba @/setup/SQL-SCRIPTS/set_nls_parameters.sql
+	nls_lang_file=/setup/SQL-SCRIPTS/nls_parameters_$CUSTOM_NLS_LANG.sql
+	if [[ -f $nls_lang_file ]]; then
+		echo "<Docker [$CONTAINER_NAME]>: configurando NLS_PARAMETERS ($CUSTOM_NLS_LANG)"
+		$ORACLE_HOME/bin/sqlplus / as sysdba @${nls_lang_file}
+	else
+		echo "<Docker [$CONTAINER_NAME]>: [WARNING] se van a dejar los NLS_PARAMETERS por defecto en la BD"
+	fi
 	exit 1
+	
 	echo "<Docker [$CONTAINER_NAME]>: creando tablespaces y directorios..."
 	$ORACLE_HOME/bin/sqlplus system/admin@localhost:1521/orcl @/setup/SQL-SCRIPTS/script.sql
 	chmod go+rw /oradata/*

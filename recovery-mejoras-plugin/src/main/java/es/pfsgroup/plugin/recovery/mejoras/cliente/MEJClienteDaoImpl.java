@@ -15,6 +15,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.transform.ResultTransformer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.pagination.Page;
@@ -61,6 +62,9 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 	// variable no se accede directamente, sino a travÃ©s del mÃ©todo
 	// pasoDeVariables()
 	private Boolean pasoVariables;
+	
+	@Autowired
+	private EXTPersonaDao extPersonaDao;
 
 	private class RowWithTotalCount {
 		private Long id;
@@ -233,6 +237,14 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 						+ EXTPersona.class.getName());
 			}
 			EXTPersona p = (EXTPersona) o;
+			
+			
+			Integer cantidad = extPersonaDao.obtenerCantidadContratosPersona(p);
+			
+			if(cantidad != null){
+				p.setNumContratos(cantidad);
+			}
+			
 			EXTDtoClienteResultado dto = new EXTDtoClienteResultado();
 
 			dto.setPersona(p);

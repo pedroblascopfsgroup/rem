@@ -125,6 +125,23 @@ public class EXTPersonaDaoImpl extends AbstractEntityDao<EXTPersona, Long>
 
 		return cantidad;
 	}
+	
+	/**
+	 * 
+	 * @param personas
+	 * @return
+	 */
+	public Integer obtenerCantidadContratosPersona(Persona personas){
+		StringBuffer hql = new StringBuffer("SELECT count(cp) FROM ContratoPersona cp where cp.persona.id = "+personas.getId());
+		
+		Long cantidad = (Long) getSession().createQuery(hql.toString()).uniqueResult();
+		
+		if(cantidad == null){
+			cantidad = 0L;
+		}
+		
+		return (int) (long) cantidad;
+	}
 
 	private String generateHQLClientesVencidosFilterSQL(
 			DtoBuscarClientes clientes, boolean conCarterizacion,

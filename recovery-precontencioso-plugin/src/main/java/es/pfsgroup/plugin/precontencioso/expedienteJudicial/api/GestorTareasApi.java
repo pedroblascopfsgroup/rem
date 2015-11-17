@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.api;
 
+import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 
 public interface GestorTareasApi {
@@ -58,5 +59,12 @@ public interface GestorTareasApi {
 	@BusinessOperationDefinition(BO_PCO_ES_TAREA_ESPECIAL)
 	boolean getEsTareaPrecontenciosoEspecial(Long tareaId);
 	
+	/**
+	 * Comprueba si existe la tarea del código especificado, asociada al procedimiento pasado como parámetro
+	 * @param proc
+	 * @param codigoTarea
+	 * @return
+	 */
+	boolean existeTarea(Procedimiento proc, String codigoTarea);
 	
 }

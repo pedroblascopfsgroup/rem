@@ -1,7 +1,9 @@
 package es.pfsgroup.plugin.precontencioso.burofax.controller;
 
+import java.text.Collator;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -15,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
+import es.capgemini.pfs.diccionarios.Dictionary;
+import es.capgemini.pfs.diccionarios.DictionaryManager;
+import es.capgemini.pfs.diccionarios.comparator.DictionaryComparatorFactory;
 import es.capgemini.pfs.direccion.api.DireccionApi;
 import es.capgemini.pfs.direccion.dto.DireccionAltaDto;
 import es.capgemini.pfs.direccion.model.DDProvincia;
@@ -63,6 +68,9 @@ public class BurofaxController {
 	
 	@Autowired
 	private BurofaxManager burofaxManager;
+	
+	@Autowired
+	private DictionaryManager dictionaryManager;	
 	
 	@Autowired
 	private Executor executor;
@@ -304,13 +312,13 @@ public class BurofaxController {
 	@RequestMapping
 	private String getAltaDireccion(WebRequest request, ModelMap model,Long idProcedimiento,Long idCliente){
 		
-		List<DDProvincia> provincias = (List<DDProvincia>) executor.execute("dictionaryManager.getList", "DDProvincia");
+		List<Dictionary> provincias = dictionaryManager.getList("DDProvincia", DictionaryComparatorFactory.getInstance().create(DictionaryComparatorFactory.COMPARATOR_BY_DESCRIPCION));
 		model.put("provincias", provincias);
+
 		List<DDTipoVia> tiposVia = (List<DDTipoVia>) proxyFactory.proxy(DireccionApi.class).getListTiposVia();
 		model.put("tiposVia", tiposVia);
 		model.put("idCliente", idCliente);
 		model.put("idProcedimiento", idProcedimiento);
-		//model.put("idContrato", idContrato);
 		
 		return JSP_ALTA_DIRECCION;
 	}
@@ -518,7 +526,8 @@ public class BurofaxController {
     	return DEFAULT;
     }
     
-    @RequestMapping
+    @SuppressWarnings("unchecked")
+	@RequestMapping
 	private String descargarBurofax(WebRequest request, ModelMap model,@RequestParam(value = "idEnvio", required = true) Long idEnvio){
 		
     	BurofaxEnvioIntegracionPCO burofaxEnvio=burofaxManager.getBurofaxEnvioIntegracionByIdEnvio(idEnvio);
@@ -532,4 +541,20 @@ public class BurofaxController {
 		
 	}
 
+}
+
+class ProvinciasComparator implements Comparator<DDProvincia> 
+{
+	private Collator collator;
+	 
+	public ProvinciasComparator(Collator c) 
+	{
+		this.collator = c;
+	}
+
+	@Override
+	public int compare(DDProvincia o1, DDProvincia o2) 
+	{
+		return collator.compare(o1.getDescripcion(), o2.getDescripcion());
+	}
 }

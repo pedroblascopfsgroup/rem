@@ -36,8 +36,6 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCO
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.GestorTareasAccionPCODto;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.GestorTareasLineaConfigPCO;
-import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.HistoricoEstadoProcedimientoPCO;
-import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.recovery.api.PlazoTareaExternaPlazaApi;
 import es.pfsgroup.recovery.api.TareaNotificacionApi;
 import es.pfsgroup.recovery.api.TareaProcedimientoApi;
@@ -53,7 +51,9 @@ public class GestorTareasManager implements GestorTareasApi {
 	private static final String TXT_ERR_PLAZO_3 = "], tipoTarea [";
 	private static final String TXT_ERR_PLAZO_4 = "].";
     private static final String BPM_ERROR_SCRIPT = "bpm.error.script";
-    private static final List<String> CODIGOS_TAREAS_ESPECIALES_PRECONTENCIOSO = Arrays.asList("PCO_SolicitarDoc", "PCO_RegResultadoExped", "PCO_RecepcionExped", "PCO_RegResultadoDoc", "PCO_RegEnvioDoc", "PCO_RecepcionDoc", "PCO_AdjuntarDoc", "PCO_GenerarLiq", "PCO_ConfirmarLiq", "PCO_EnviarBurofax","PCO_AcuseReciboBurofax","PCO_RegResultadoDocG");
+    private static final List<String> CODIGOS_TAREAS_ESPECIALES_PRECONTENCIOSO = Arrays.asList("PCO_SolicitarDoc", "PCO_RegResultadoExped", "PCO_RecepcionExped", 
+    		"PCO_RegResultadoDoc", "PCO_RegEnvioDoc", "PCO_RecepcionDoc", "PCO_AdjuntarDoc", "PCO_GenerarLiq", "PCO_ConfirmarLiq", "PCO_EnviarBurofax",
+    		"PCO_AcuseReciboBurofax","PCO_RegResultadoDocG");
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -173,56 +173,61 @@ public class GestorTareasManager implements GestorTareasApi {
 	@Transactional(readOnly = false)
 	public boolean crearTareaEspecial(Long idProc, String codigoTarea) {
 
-        try{
-			Procedimiento procedimiento = proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(idProc);
-	
-	        //Buscamos la tarea perteneciente a ese procedimiento con el código tarea y el idTipoProcedimiento y extraemos su ID tarea
-	        Long idTipoProcedimiento = procedimiento.getTipoProcedimiento().getId();
-	        TareaProcedimiento tareaProcedimiento = proxyFactory.proxy(TareaProcedimientoApi.class)
-	        		.getByCodigoTareaIdTipoProcedimiento(idTipoProcedimiento, codigoTarea);
-	
-	        Long idTareaProcedimiento = tareaProcedimiento.getId();
-	        String nombreTarea = tareaProcedimiento.getDescripcion();
-	
-	        //Creamos una nueva tarea extendida con el idProcedimiento y el idTipoTarea y el timer asociado
-	        //Por defecto la tarea será para un gestor
-	        String subtipoTarea = EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR;
-	
-	        //Si está marcada como supervisor se cambia el subtipo tarea
-	        if (tareaProcedimiento.getSupervisor()) {
-	            subtipoTarea = EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_SUPERVISOR;
-	        }
-	
-	        TipoJuzgado juzgado = null;
-	        TipoPlaza plaza = null;
-	
-	        juzgado = procedimiento.getJuzgado();
-	        if (juzgado != null) plaza = juzgado.getPlaza();
-	
-	        Long idTipoPlaza = null;
-	        Long idTipoJuzgado = null;
-	
-	        if (juzgado != null) idTipoJuzgado = juzgado.getId();
-	        if (plaza != null) idTipoPlaza = plaza.getId();
-	
-	        Long plazoTarea = getPlazoTarea(idTipoPlaza, idTareaProcedimiento, idTipoJuzgado, idProc);
-	        Long idTarea = tareaExternaManager.crearTareaExterna(subtipoTarea, plazoTarea, nombreTarea, idProc, idTareaProcedimiento,
-	                getTokenId(procedimiento.getProcessBPM()));
-	
-	        if (logger.isDebugEnabled()) {
-	            logger.debug(TXT_CREAMOS_LA_TAREA + codigoTarea + ", " + idTarea);
-	        }
+    	Procedimiento procedimiento = proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(idProc);
+
+        //Buscamos la tarea perteneciente a ese procedimiento con el código tarea y el idTipoProcedimiento y extraemos su ID tarea
+        Long idTipoProcedimiento = procedimiento.getTipoProcedimiento().getId();
+        TareaProcedimiento tareaProcedimiento = proxyFactory.proxy(TareaProcedimientoApi.class)
+        		.getByCodigoTareaIdTipoProcedimiento(idTipoProcedimiento, codigoTarea);
+
+        Long idTareaProcedimiento = tareaProcedimiento.getId();
+        String nombreTarea = tareaProcedimiento.getDescripcion();
+
+        //Creamos una nueva tarea extendida con el idProcedimiento y el idTipoTarea y el timer asociado
+        //Por defecto la tarea será para un gestor
+        //String subtipoTarea = EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR;
+        String subtipoTarea = obtenerSubtipoTarea(codigoTarea);
+
+        //Si está marcada como supervisor se cambia el subtipo tarea
+        if (tareaProcedimiento.getSupervisor()) {
+            subtipoTarea = EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_SUPERVISOR;
         }
-        catch(Exception e){
-        	logger.error("crearTareaEspecial: " + e);
-        	return false;
+
+        TipoJuzgado juzgado = null;
+        TipoPlaza plaza = null;
+
+        juzgado = procedimiento.getJuzgado();
+        if (juzgado != null) plaza = juzgado.getPlaza();
+
+        Long idTipoPlaza = null;
+        Long idTipoJuzgado = null;
+
+        if (juzgado != null) idTipoJuzgado = juzgado.getId();
+        if (plaza != null) idTipoPlaza = plaza.getId();
+
+        Long plazoTarea = getPlazoTarea(idTipoPlaza, idTareaProcedimiento, idTipoJuzgado, idProc);
+        Long idTarea = tareaExternaManager.crearTareaExterna(subtipoTarea, plazoTarea, nombreTarea, idProc, idTareaProcedimiento,
+                getTokenId(procedimiento.getProcessBPM()));
+
+        if (logger.isDebugEnabled()) {
+            logger.debug(TXT_CREAMOS_LA_TAREA + codigoTarea + ", " + idTarea);
         }
+
 
         return true;
 	}
 
 
-    private Long getTokenId(Long idProcessBPM) {
+    private String obtenerSubtipoTarea(String codigoTarea) {
+		
+    	String subtipo = gestorTareasDao.obtenerSubtipoTarea(codigoTarea); 
+    	if (subtipo == null) {
+    		subtipo = EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR;
+    	}
+		return subtipo;
+	}
+
+	private Long getTokenId(Long idProcessBPM) {
 		return gestorTareasDao.getTokenId(idProcessBPM);
 	}
 
@@ -292,31 +297,30 @@ public class GestorTareasManager implements GestorTareasApi {
 
 	}
 	
-	private String obtenerEstadoProcPco(long idProcedimiento) {
-
-		String estadoActual = "";
-		
-		//ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
-		ProcedimientoPCO procedimientoPco = genericDao.get(ProcedimientoPCO.class, 
-				genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProcedimiento));
-		
-		if (!Checks.esNulo(procedimientoPco)) {
-			HistoricoEstadoProcedimientoPCO historico = procedimientoPco.getEstadoActualByHistorico();
-			if (!Checks.esNulo(historico) && !Checks.esNulo(historico.getEstadoPreparacion())) {
-				estadoActual = historico.getEstadoPreparacion().getCodigo();
-			}
-		}
-		return estadoActual;
-
-	}
-
 	@Override
 	public boolean getEsTareaPrecontenciosoEspecial(Long tareaId) {
 
 		TareaExterna tareaExterna = genericDao.get(TareaExterna.class, genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", tareaId));
 		
-		boolean esEspecial = CODIGOS_TAREAS_ESPECIALES_PRECONTENCIOSO.contains(tareaExterna.getTareaProcedimiento().getCodigo()) ? true : false;
-
-		return esEspecial;
+		if (Checks.esNulo(tareaExterna)) {
+			return false;
+		} else {
+			boolean esEspecial = CODIGOS_TAREAS_ESPECIALES_PRECONTENCIOSO.contains(tareaExterna.getTareaProcedimiento().getCodigo()) ? true : false;
+	
+			return esEspecial;
+		}
+	}
+	
+	public boolean existeTarea(Procedimiento proc, String codigoTarea) {
+		
+		boolean resultado = false;
+		List<TareaExterna> listaTareas = tareaExternaManager.getActivasByIdProcedimiento(proc.getId());
+		for (TareaExterna tareaExterna : listaTareas) {
+			if (codigoTarea.equals(tareaExterna.getTareaProcedimiento().getCodigo())) {
+				resultado = true;
+			}
+			
+		}
+		return resultado;
 	}
 }

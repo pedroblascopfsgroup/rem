@@ -53,7 +53,7 @@ var bottomBar = [];
 var cb_delegada = items[1 + muestraBotonGuardar];
 var num_prop = items[2 + muestraBotonGuardar];
 
-cb_delegada.setDisabled(true);	
+cb_delegada.setReadOnly(true);	
 num_prop.setDisabled(true);	
 
 

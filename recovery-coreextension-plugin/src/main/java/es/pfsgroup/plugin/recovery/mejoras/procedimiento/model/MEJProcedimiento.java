@@ -16,6 +16,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 
 //FIXME Mover esta clase de paquete, a uno de coreextension
 @Entity
+@org.hibernate.annotations.Entity(dynamicUpdate=true)
 public class MEJProcedimiento extends Procedimiento {
 
 	/**

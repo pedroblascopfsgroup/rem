@@ -710,9 +710,10 @@
 	
 	var actualizarBotonesBurofax = function() {
 	// Se comprueba que el procedimiento se encuentre en un estado que permita editar los burofaxes
+	
 		if (data != null) {
 			var estadoActualCodigoProcedimiento = data.precontencioso.estadoActualCodigo;
-			if (estadoActualCodigoProcedimiento != 'PR'  && estadoActualCodigoProcedimiento != 'SU' && estadoActualCodigoProcedimiento != 'SC') {
+			if (!data.esExpedienteEditable || (estadoActualCodigoProcedimiento != 'PR'  && estadoActualCodigoProcedimiento != 'SU' && estadoActualCodigoProcedimiento != 'SC')) {
 				btnAddPersona.setDisabled(true);
 				btnEnviar.setDisabled(true);
 				btnNuevaDir.setDisabled(true);
@@ -728,9 +729,3 @@
 		return true;
 
 	}
-		
-		
-
-	
-	
-	

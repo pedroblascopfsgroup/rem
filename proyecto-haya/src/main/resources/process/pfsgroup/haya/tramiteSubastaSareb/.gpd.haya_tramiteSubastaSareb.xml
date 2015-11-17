@@ -93,6 +93,9 @@
     <edge>
       <label x="-184" y="22"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
   </node>
   <node name="H002_SuspenderSubasta" x="1840" y="604" width="178" height="36">
     <edge>
@@ -557,4 +560,13 @@
   <node name="Fin3" x="1950" y="409" width="132" height="36"/>
   <node name="Fin4" x="1215" y="1046" width="132" height="36"/>
   <node name="Fin5" x="-587" y="998" width="132" height="36"/>
+  <node name="nActivo" x="565" y="236" width="132" height="36">
+    <edge>
+      <label x="-5" y="48"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-62" h1="-82" w2="-56" h2="122"/>
+    </edge>
+  </node>
 </root-container>

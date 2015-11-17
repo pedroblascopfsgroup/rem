@@ -519,6 +519,23 @@ public class DocumentoPCOController {
 		model.put("documento_duplicado", documento_duplicado);
 		return VALIDACION_DOCUMENTO_UNICO;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping	
+	public String validacionDuplicadoDocumentoEditado(WebRequest request, ModelMap model) {
+		
+		DocumentoPCO documentoPCO = documentoPCOApi.getDocumentoPCOById(Long.valueOf(request.getParameter("id")));
+		
+		boolean documento_duplicado = documentoPCOApi.validarDocumentoUnico(
+				"{\"" + documentoPCO.getUnidadGestion().getCodigo() + "\"}", 
+				documentoPCO.getTipoDocumento().getCodigo(), 
+				request.getParameter("protocolo"), 
+				request.getParameter("notario"));
+		
+		model.put("documento_duplicado", documento_duplicado);
+		
+		return VALIDACION_DOCUMENTO_UNICO;
+	}
 
 	/**
 	 Salvar la creacion de solicitudes

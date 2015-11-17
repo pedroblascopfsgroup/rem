@@ -36,19 +36,31 @@
 	panel.getValue = function() {}
 
 	panel.setValue = function(){
-        var data = entidad.get("data");
+		
+	    var data = entidad.get("data");
+        
+        Ext.Ajax.request({
+			url: page.resolveUrl('expedientejudicial/isExpedienteEditable')
+			,params: {idProcedimiento:data.id}
+			,method: 'POST'
+			,success: function (result, request)
+			{
+				var r = Ext.util.JSON.decode(result.responseText);
+				data.esExpedienteEditable = r.isEditable;
 
-		<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_DOCUMENTOS">
-			refrescarDocumentosGrid();
-		</sec:authorize>
-
-		<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_LIQUIDACIONES">
-			refrescarLiquidacionesGrid();
-		</sec:authorize>
-
-		<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_BUROFAXES">
-			refrescarBurofaxGrid();
-		</sec:authorize>
+				<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_DOCUMENTOS">
+					refrescarDocumentosGrid();
+				</sec:authorize>
+		
+				<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_LIQUIDACIONES">
+					refrescarLiquidacionesGrid();
+				</sec:authorize>
+		
+				<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_BUROFAXES">
+					refrescarBurofaxGrid();
+				</sec:authorize>
+			}
+		});
 	}
 
  	panel.setVisibleTab = function(data) {

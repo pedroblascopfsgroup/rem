@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -117,6 +118,13 @@ public class MEJDecisionProcedimientoManager extends
 	@Autowired
 	private IntegracionBpmService integracionBpmService;
     
+	@Autowired(required=false)
+	@Qualifier(AccionTomaDecision.ACCION_TRAS_PARALIZAR)
+	private List<AccionTomaDecision> accionesAdicionalesTrasParalizar;
+	
+	@Autowired(required=false)
+	@Qualifier(AccionTomaDecision.ACCION_TRAS_FINALIZAR)
+	private List<AccionTomaDecision> accionesAdicionalesTrasFinalizar;
     
 	@BusinessOperation(overrides = ExternaBusinessOperation.BO_DEC_PRC_MGR_RECHAZAR_PROPUESTA)
 	@Transactional(readOnly = false)
@@ -691,6 +699,8 @@ public class MEJDecisionProcedimientoManager extends
 
                     cancelarSubastaActiva(p);
 
+                    ejecutarAccionesAdicionales(dp, p, this.accionesAdicionalesTrasFinalizar);
+                    
                 } catch (Exception e) {
                     logger.error("Error al finalizar el procedimiento " + p.getId(), e);
                 }
@@ -709,6 +719,8 @@ public class MEJDecisionProcedimientoManager extends
 
 				// Paralizamos el BPM
 				integracionBpmService.paralizarBPM(p, dp.getFechaParalizacion());
+				
+                ejecutarAccionesAdicionales(dp, p, this.accionesAdicionalesTrasParalizar);
 			}
 		}
 		
@@ -997,5 +1009,14 @@ public class MEJDecisionProcedimientoManager extends
 		return datosConsulta;
 	}		
 	
+
+	private void ejecutarAccionesAdicionales(DecisionProcedimiento dp, Procedimiento prc, List<AccionTomaDecision> acciones) {
+		if (acciones==null) {
+			return;
+		}
+		for (AccionTomaDecision accion : acciones) {
+			accion.ejecutar(dp, prc);
+		}
+	}
 	
 }

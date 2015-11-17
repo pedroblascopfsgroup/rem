@@ -39,7 +39,7 @@
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler:function(){
-				if (validateForm()) {		    
+				if (validateForm()) {
 			    	handlerGuardar();
 				}
 	     }
@@ -53,8 +53,26 @@
 					handlerGuardar();
 				}
 			});	
-		}else{
-			return true;
+		}
+		else{
+			Ext.Ajax.request({
+				url : page.resolveUrl('documentopco/validacionDuplicadoDocumentoEditado'), 
+				params : getParametros() ,
+				method: 'POST',
+				success: function ( result, request ) {
+					var resultado = Ext.decode(result.responseText);
+					if(resultado.documento_duplicado){
+						Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', '<s:message code="precontencioso.grid.documento.incluirDocumento.documentoDuplicado" text="**Ya existe un documento del mismo tipo, siendo el mismo protocolo y notario en la unidad de gestión seleccionada." />', function(btn){
+							if (btn == 'yes'){
+			   					handlerGuardar();
+			   				}
+						});
+					}
+					else {
+						handlerGuardar();
+					}
+				}
+			});
 		}
 	}	
 

@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.controller;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -1542,7 +1543,7 @@ public class EditBienController {
 		}
 
 		if (!Checks.esNulo(request.getParameter("importeAdjudicacion"))) {
-			adjudicacion.setImporteAdjudicacion(Float.parseFloat(request
+			adjudicacion.setImporteAdjudicacion(new BigDecimal(request
 					.getParameter("importeAdjudicacion")));
 		} else {
 			adjudicacion.setImporteAdjudicacion(null);

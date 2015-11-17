@@ -68,7 +68,10 @@
 		text: '<s:message code="menu.clientes.listado.filtro.exportar.xls" text="**Exportar a Excel" />',
 		iconCls: 'icon_exportar_csv',
 		handler: function() {
-			
+			var flow = '/pfs/expedientejudicial/exportarExcelElementos';
+			var params = getParametros();
+			params.tipoSalida = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO.SALIDA_XLS" />';
+		    app.openBrowserWindow(flow, params);
 		}
 	});
 

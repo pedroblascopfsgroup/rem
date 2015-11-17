@@ -77,6 +77,8 @@ public class EXTSubtipoTarea extends SubtipoTarea {
     public static final String CODIGO_PRECONTENCIOSO_TAREA_GESTORIA = "PCO_GEST";
     public static final String CODIGO_PRECONTENCIOSO_TAREA_GESTOR = "PCO_PREDOC";
     public static final String CODIGO_PRECONTENCIOSO_TAREA_LETRADO = "PCO_LET";
+    public static final String CODIGO_PRECONTENCIOSO_TAREA_GESTOR_LIQUIDACIONES = "PCO_CM_GL";
+    public static final String CODIGO_PRECONTENCIOSO_TAREA_GESTOR_DOCUMENTOS = "PCO_CM_GD";
 
     @ManyToOne(fetch = FetchType.LAZY)
     @Where(clause = Auditoria.UNDELETED_RESTICTION)

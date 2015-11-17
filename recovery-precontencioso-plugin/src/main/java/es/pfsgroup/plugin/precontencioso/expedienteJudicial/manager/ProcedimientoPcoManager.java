@@ -570,11 +570,21 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			genericDao.save(ProcedimientoPCO.class, procedimientoPco);
 
 			try {
-				if (documentos.size()>0) {
-					gestorTareasManager.crearTareaEspecial(idProc,PrecontenciosoBPMConstants.PCO_SolicitarDoc);
+				if (documentos.size()>0) {					
+					if (esLitigio) {
+						if (!gestorTareasManager.existeTarea(procedimiento, PrecontenciosoBPMConstants.PCO_SolicitarDoc)) {
+							gestorTareasManager.crearTareaEspecial(idProc,PrecontenciosoBPMConstants.PCO_SolicitarDoc);
+						}
+					} else {
+						if (!gestorTareasManager.existeTarea(procedimiento, PrecontenciosoBPMConstants.PCO_AdjuntarDoc)) {
+							gestorTareasManager.crearTareaEspecial(idProc,PrecontenciosoBPMConstants.PCO_AdjuntarDoc);
+						}
+					}
 				}
 				if (liquidaciones.size()>0) {
-					gestorTareasManager.crearTareaEspecial(idProc,PrecontenciosoBPMConstants.PCO_GenerarLiq);
+					if (!gestorTareasManager.existeTarea(procedimiento, PrecontenciosoBPMConstants.PCO_GenerarLiq)) {
+						gestorTareasManager.crearTareaEspecial(idProc,PrecontenciosoBPMConstants.PCO_GenerarLiq);
+					}
 				}
 			} catch (Exception e) {
 				System.out.println("Error al intentar crear tarea especial: " + e.getMessage());

@@ -473,7 +473,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		}
 
 		if (!StringUtils.emtpyString(filtro.getLiqDiasGestion())) {
-			where.add(Restrictions.ge("liquidacion.diasGestion", Integer.valueOf(filtro.getLiqDiasGestion())));
+			where.add(Restrictions.ge("liquidacion.diasEnGestion", Integer.valueOf(filtro.getLiqDiasGestion())));
 		}
 
 		where.addAll(floatRangeFilter("liquidacion.total", filtro.getLiqTotalDesde(), filtro.getLiqTotalHasta()));

@@ -30,15 +30,13 @@ public interface EXTPersonaDao extends AbstractDao<EXTPersona, Long> {
 	
 	/**
      * obtenerCantidadDeVencidosUsuario.
-     * @param clientes DTO de bï¿½squeda
-     * @param conCarterizacion flag que indica si se quiere utilizar la opciï¿½n de carterizaciï¿½n
+     * @param clientes DTO de búsqueda
+     * @param conCarterizacion flag que indica si se quiere utilizar la opción de carterización
      * @param usuarioLogado usuario logado acutal, falla si este es NULL
      * @return cantidad
      */
     Long obtenerCantidadDeVencidosUsuario(DtoBuscarClientes clientes, boolean conCarterizacion, Usuario usuarioLogado);
 
 	List<Persona> findClientesProveedorSolvenciaExcel(EXTDtoBuscarClientes dto, GestorDespacho gestor);
-	
-	Integer obtenerCantidadContratosPersona(Persona persona);
 
 }

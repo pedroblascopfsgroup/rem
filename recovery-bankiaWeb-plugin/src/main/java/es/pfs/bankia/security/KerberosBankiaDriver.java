@@ -12,7 +12,6 @@ import es.capgemini.pfs.security.KerberosDriver;
 import es.cm.arq.sd.seguridad.Asignacion;
 import es.cm.arq.sd.seguridad.GestionSSA;
 import es.cm.arq.sd.seguridad.SSAException;
-import es.pfsgroup.commons.utils.Checks;
 
 /**
  * 
@@ -37,36 +36,18 @@ public class KerberosBankiaDriver implements KerberosDriver {
 			//Asignacion[] asignaciones = ssa.funcionesUsuario(username, TIPO_FUNCION_CLASICA, TIPO_APLICACION_PFS);
                         //Hubo un fallo en producción con LDAP por el uso de esta versión de "funcionesUsuario" con 3 params
                         //Bankia nos comunica que debemos hacer la llamada así BKREC-1026
-                        Asignacion[] asignaciones = ssa.funcionesUsuario(username, TIPO_FUNCION_CLASICA, TIPO_APLICACION_PFS);
-                      
+                        Asignacion[] asignaciones = ssa.funcionesUsuario(username, null, TIPO_APLICACION_PFS);
                         
-                        System.out.println("**+** LDAP funcionesUsuario Lista Asignaciones -------------------------------------");
 			for (Asignacion asignacion : asignaciones) {
-                            System.out.println("Agrega funcion de asignacion a la <Lista> String listaAutorizaciones");
 				listaAutorizaciones.add(asignacion.getFuncion());
-
-                            if (asignaciones == null || asignaciones.length==0) { 
-                                    logger.error("obtenerListaAutorizaciones: lista de asignaciones vac�a");
-                                    System.out.println("asignaciones esta vacio");
-                            } else {
-                                    if (asignaciones.length <= 100) {
-                                            logger.info(asignaciones);
-                                    }
-                                    if (Checks.esNulo(asignacion)){
-                                        System.out.println("asignacion es completamente NULO");
-                                    }else{
-                                        System.out.println("Usuario....: "+ (Checks.esNulo(asignacion.getUsuario()) ? "NULO": asignacion.getUsuario()) );
-                                        System.out.println("Codigo.....: "+ (Checks.esNulo(asignacion.getCodigo())? "NULO": asignacion.getCodigo()) );
-                                        System.out.println("Funcion....: "+ (Checks.esNulo(asignacion.getFuncion())? "NULO": asignacion.getFuncion()) );
-                                        System.out.println("Subsistema.: "+ (Checks.esNulo(asignacion.getSubsistema())? "": asignacion.getSubsistema()) );
-                                        System.out.println("TipoAuth...: "+ (Checks.esNulo(asignacion.getTipoAutorizacion())? "NULO": asignacion.getTipoAutorizacion()) );
-                                        System.out.println("usosFunc...: " + (Checks.esNulo(asignacion.getUsosFuncion())? "NULO": asignacion.getUsosFuncion()) );
-                                        System.out.println("auditUsu...: "+ (Checks.esNulo(asignacion.getAuditarUsuario())? "NULO": asignacion.getAuditarUsuario()) );
-                                    }
-
-                            }
 			}
-                        System.out.println("**+** LDAP funcionesUsuario FIN BUCLE -------------------------------------");
+			if (asignaciones == null || asignaciones.length==0) { 
+				logger.error("obtenerListaAutorizaciones: lista de asignaciones vac�a");
+			} else {
+				if (asignaciones.length <= 100) {
+					logger.info(asignaciones);
+				}
+			}
 //			Centro[] centros = ssa.centrosUsuario(username);
 //			String codigoCentro = "";
 //			for (Centro centro : centros) {

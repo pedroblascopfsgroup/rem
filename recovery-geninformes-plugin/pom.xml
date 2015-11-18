@@ -168,16 +168,11 @@
 		  <artifactId>fr.opensagres.xdocreport.template.freemarker</artifactId>
 		  <version>1.0.4</version>
 		</dependency>
-		<dependency>
-			<groupId>org.docx4j</groupId>
-			<artifactId>docx4j</artifactId>
-			<version>3.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.docx4j</groupId>
-			<artifactId>docx4j-ImportXHTML</artifactId>
-			<version>3.0.0</version>
-		</dependency>
+	    <dependency>
+	      <groupId>fr.opensagres.xdocreport</groupId>
+	      <artifactId>fr.opensagres.xdocreport.converter.docx.xwpf</artifactId>
+	      <version>1.0.5</version>
+	    </dependency>
 	</dependencies>
 
 	<build>

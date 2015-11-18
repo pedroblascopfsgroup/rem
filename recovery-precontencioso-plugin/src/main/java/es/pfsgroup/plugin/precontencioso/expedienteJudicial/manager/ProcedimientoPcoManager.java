@@ -36,6 +36,7 @@ import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
+import es.capgemini.pfs.multigestor.api.GestorAdicionalAsuntoApi;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.dao.TareaExternaDao;
@@ -44,6 +45,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.dao.NivelDao;
 import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.commons.utils.Checks;
@@ -80,6 +82,7 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDEstadoLiquidacionPC
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
+import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
@@ -96,6 +99,11 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	private static final String SUPERVISOR = "SUP_PCO";
 	private static final String DIRLIT_PCO = "DULI";
 	private static final String PREDOC = "PREDOC";
+	private static final String CM_GE_PCO = "CM_GE_PCO";
+	private static final String CM_GD_PCO = "CM_GD_PCO";
+	private static final String CM_GL_PCO = "CM_GL_PCO";
+	private static final String SUP_PCO = "SUP_PCO";
+	private static final String GESTORIA_PREDOC = "GESTORIA_PREDOC";
 
 	@Resource
 	private Properties appProperties;
@@ -146,6 +154,12 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	
 	@Autowired
 	private GestorTareasManager gestorTareasManager;
+	
+	@Autowired
+	private GestorAdicionalAsuntoApi gestorAdicionalAsuntomanager;
+	
+	@Autowired
+	private EXTGrupoUsuariosApi grupoUsuarios;
 	
 	@BusinessOperation(BO_PCO_COMPROBAR_FINALIZAR_PREPARACION_EXPEDIENTE)
 	@Override
@@ -584,11 +598,21 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			genericDao.save(ProcedimientoPCO.class, procedimientoPco);
 
 			try {
-				if (documentos.size()>0) {
-					gestorTareasManager.crearTareaEspecial(idProc,PrecontenciosoBPMConstants.PCO_SolicitarDoc);
+				if (documentos.size()>0) {					
+					if (esLitigio) {
+						if (!gestorTareasManager.existeTarea(procedimiento, PrecontenciosoBPMConstants.PCO_SolicitarDoc)) {
+							gestorTareasManager.crearTareaEspecial(idProc,PrecontenciosoBPMConstants.PCO_SolicitarDoc);
+						}
+					} else {
+						if (!gestorTareasManager.existeTarea(procedimiento, PrecontenciosoBPMConstants.PCO_AdjuntarDoc)) {
+							gestorTareasManager.crearTareaEspecial(idProc,PrecontenciosoBPMConstants.PCO_AdjuntarDoc);
+						}
+					}
 				}
 				if (liquidaciones.size()>0) {
-					gestorTareasManager.crearTareaEspecial(idProc,PrecontenciosoBPMConstants.PCO_GenerarLiq);
+					if (!gestorTareasManager.existeTarea(procedimiento, PrecontenciosoBPMConstants.PCO_GenerarLiq)) {
+						gestorTareasManager.crearTareaEspecial(idProc,PrecontenciosoBPMConstants.PCO_GenerarLiq);
+					}
 				}
 			} catch (Exception e) {
 				System.out.println("Error al intentar crear tarea especial: " + e.getMessage());
@@ -949,5 +973,56 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		texto = texto.replace("Ú", "\u00da");
 		
 		return texto;
+	}
+
+
+	@Override
+	public boolean isExpedienteEditable(Long idProcedimiento) {
+
+//		Se comprueba si el usuario conectado o un grupo al que pertenece está asignado al asunto como preparador del expediente judicial
+		Usuario usuario = usuarioManager.getUsuarioLogado();
+		Procedimiento procedimiento = procedimientoManager.getProcedimiento(idProcedimiento);
+		List<Long> idsGrupo = grupoUsuarios.buscaIdsGrupos(usuario);
+		
+		for(Usuario usuarioGestor : gestorAdicionalAsuntomanager.findGestoresByAsunto(procedimiento.getAsunto().getId(), PREDOC)) {
+			if(usuario.getUsername().equals(usuarioGestor.getUsername()) || idsGrupo.contains(usuarioGestor.getId())) {
+				return true;
+			}
+		}
+		
+		// En el caso de la entidad Cajamar los preparadores son Gestor de estudio, Gestor de Documentación y Gestor de Liquidación		
+		for(Usuario usuarioGestor : gestorAdicionalAsuntomanager.findGestoresByAsunto(procedimiento.getAsunto().getId(), CM_GE_PCO)) {
+			if(usuario.getUsername().equals(usuarioGestor.getUsername()) || idsGrupo.contains(usuarioGestor.getId())) {
+				return true;
+			}
+		}
+		
+		for(Usuario usuarioGestor : gestorAdicionalAsuntomanager.findGestoresByAsunto(procedimiento.getAsunto().getId(), CM_GD_PCO)) {
+			if(usuario.getUsername().equals(usuarioGestor.getUsername()) || idsGrupo.contains(usuarioGestor.getId())) {
+				return true;
+			}
+		}
+		
+		for(Usuario usuarioGestor : gestorAdicionalAsuntomanager.findGestoresByAsunto(procedimiento.getAsunto().getId(), CM_GL_PCO)) {
+			if(usuario.getUsername().equals(usuarioGestor.getUsername()) || idsGrupo.contains(usuarioGestor.getId())) {
+				return true;
+			}
+		}
+		
+// 		Se comprueba si el usuario conectado o un grupo al que pertenece está asignado al asunto como supervisor del expediente judicial
+		for(Usuario usuarioGestor : gestorAdicionalAsuntomanager.findGestoresByAsunto(procedimiento.getAsunto().getId(), SUP_PCO)) {
+			if(usuario.getUsername().equals(usuarioGestor.getUsername()) || idsGrupo.contains(usuarioGestor.getId())) {
+				return true;
+			}
+		}
+
+// 		Se comprueba si el usuario conectado o un grupo al que pertenece está asignado al asunto como GESTORIA del expediente judicial
+		for(Usuario usuarioGestor : gestorAdicionalAsuntomanager.findGestoresByAsunto(procedimiento.getAsunto().getId(), GESTORIA_PREDOC)) {
+			if(usuario.getUsername().equals(usuarioGestor.getUsername()) || idsGrupo.contains(usuarioGestor.getId())) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

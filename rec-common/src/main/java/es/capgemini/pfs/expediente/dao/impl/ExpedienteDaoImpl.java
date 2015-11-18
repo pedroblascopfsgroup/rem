@@ -1449,7 +1449,12 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         * _param_origen:plugin1;plugin1param1:valor1;plugin1param2:valor2;%param%origen:plugin2;plugin2param1:valor1;plugin2param2:valor2;
         * 
         * */
-		
+        //Si se incluyen filtros de expedientes, el filtro adicional ya no es el primero
+        Boolean esAdicionalPrimerFiltro = !isBusquedaExpedientes(dtoExpediente);
+        String entityId = "";
+        String joinEntityId = "";
+        String filtroAnt = "";
+        String filtroActual = "";
         if(paramsDinamicos != null && filtrosBusquedaDinamica != null){
                 String[] paramsVector = paramsDinamicos.split("_param_");
                 if(paramsVector != null && paramsVector.length>0){
@@ -1462,31 +1467,48 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
                                             //Desvincular filtros de pestañas Recobro, Incidencia, Acuerdo,
                                             //de la busqueda principal con expedientes,
                                             //si no se busca por ningún parámetro que requiera Expediente
-                                            //Desvincular la busqueda de expedientes optimiza bastante
-                                            if (isBusquedaExpedientes(dtoExpediente)) {
-                                                hql.append(" and EXISTS ( ");
-                                                hql.append(filtro.obtenerFiltroRecobro(paramDinamico));
+                                            //Desvincular la busqueda de expedientes para optimizar 
+                                            filtroActual = filtro.getOrigenFiltros();
 
-                                                if (filtro.getOrigenFiltros().equals("recobro")){
-                                                    hql.append(" and exp.id = cre.expediente.id ");
-                                                }                                                        
-                                                if (filtro.getOrigenFiltros().equals("incidencia")){
-                                                    hql.append(" and exp.id = ine.expediente.id ");
-                                                }
-                                                if (filtro.getOrigenFiltros().equals("acuerdo")){
-                                                    hql.append(" and exp.id = acu.expediente.id ");
-                                                }
-
-                                                hql.append(" ) ");
-                                            }else{
-                                                //Eliminamos vinculación con Expediente y por tanto todos sus filtros anteriores
+                                            //Si el filtro actual adicional es el primero de los filtros a aplicar (o es el único)
+                                            //se construye el comienzo de la HQL sin relaciones a Expedientes
+                                            if (esAdicionalPrimerFiltro){
+                                                //Eliminar la vinculación con Expedientes es comenzar de nuevo la construccion HQL con el 1er filtro adicional
                                                 hql = new StringBuilder();
                                                 hql.append(filtro.obtenerFiltroRecobro(paramDinamico));
-                                                //Sin vinculación, solo se hace la subconsulta a otras Entidades
+                                            } else {
+                                                //Si son filtros adicionales o hay vinculacion de Expedientes, los adicionales se relacionan con los anteriores
+                                                //por el filtro actual a relacionar
+                                                if (filtroActual.equals("recobro")){ joinEntityId = "cre.expediente.id"; }
+                                                if (filtroActual.equals("incidencia")){ joinEntityId = "ine.expediente.id"; }
+                                                if (filtroActual.equals("acuerdo")){ joinEntityId = "acu.expediente.id"; }
 
+                                                if (isBusquedaExpedientes(dtoExpediente)) {
+                                                    //Si había vinculación con Expedientes las relaciones con cualquier filtro adicional se hacen por exp.id
+                                                    entityId = "exp.id";
+                                                }else{
+                                                    if (filtroAnt.equals("recobro")){ entityId = "cre.expediente.id"; }
+                                                    if (filtroAnt.equals("incidencia")){ entityId = "ine.expediente.id"; }
+                                                    if (filtroAnt.equals("acuerdo")){ entityId = "acu.expediente.id"; } 
+                                                }
+
+                                                //Vinculación de filtros adicionales
+                                                hql.append(" and EXISTS ( ");
+                                                hql.append(filtro.obtenerFiltroRecobro(paramDinamico));
+                                                hql.append(" and ");
+                                                hql.append(entityId);
+                                                hql.append(" = ");
+                                                hql.append(joinEntityId);
+                                                hql.append(" ) ");
                                             }
-                                            //Fin Desvinculación de Expedientes
+
+                                            //Actualización de variables de control para bucles > 1 filtros adicionales
+                                            filtroAnt = filtroActual;
+                                            esAdicionalPrimerFiltro = false;
+
+                                            //Fin Optimizacion de Busqueda Expedientes separada de Recobro si es posible
                                         }
+
                                 }
                         }
                 }

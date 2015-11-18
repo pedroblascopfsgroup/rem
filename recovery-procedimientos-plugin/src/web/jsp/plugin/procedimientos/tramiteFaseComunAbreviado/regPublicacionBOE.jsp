@@ -161,7 +161,7 @@ var Juzgado = Ext.data.Record.create([
 	 {name:'codigo'}
 	,{name:'descripcion'}
 ]);
-debugger;
+
 var juzgadosStore = page.getStore({
 	flow: 'bpm/buscarJuzgados'
 	,reader: new Ext.data.JsonReader({root : 'juzgados'} , Juzgado)

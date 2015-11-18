@@ -19,10 +19,14 @@ public class DatosGeneralesLiqVO {
 	private Date DGC_FEFOEZ;
 	private String DGC_NOMFED1;
 	private BigDecimal DGC_IMDEUD;
-	private String DGC_NMPRTO;
+	private String DGC_NMPRTM;
 	private String DGC_COIBTQ;
 
 	SimpleDateFormat fechaLargaFormat = new SimpleDateFormat(FormatUtils.DD_DE_MES_DE_YYYY, MessageUtils.DEFAULT_LOCALE);
+
+	/*
+	 * FORMAT ATRIBUTES
+	 */
 
 	public String IMCCNS() {
 		return NumberFormat.getCurrencyInstance(new Locale("es", "ES")).format(DGC_IMCCNS);
@@ -44,8 +48,8 @@ public class DatosGeneralesLiqVO {
 		return DGC_NOMFED1 == null ? "[NO DISPONIBLE]" : DGC_NOMFED1;
 	}
 
-	public String NMPROT() {
-		return DGC_NMPRTO == null ? "[NO DISPONIBLE]" : DGC_NMPRTO;
+	public String NMPRTM() {
+		return DGC_NMPRTM == null ? "[NO DISPONIBLE]" : DGC_NMPRTM;
 	}
 
 	public String IDPRIG() {
@@ -69,5 +73,25 @@ public class DatosGeneralesLiqVO {
 		}
 
 		return "NO DISPONIBLE";
+	}
+
+	/*
+	 * GETTERS WITHOUT FORMAT MANIPULATION
+	 */
+
+	public Date getDGC_FEFOEZ() {
+		return DGC_FEFOEZ;
+	}
+
+	public BigDecimal getDGC_IMCCNS() {
+		return DGC_IMCCNS;
+	}
+
+	public BigDecimal getDGC_IMCPAM() {
+		return DGC_IMCPAM;
+	}
+
+	public Date getDGC_FEVACM() {
+		return DGC_FEVACM;
 	}
 }

@@ -26,6 +26,7 @@ public interface ProcedimientoPcoApi {
 	public static final String BO_PCO_EXPEDIENTE_UPDATE = "plugin.precontencioso.update";
 	public static final String BO_PCO_INICIALIZAR = "plugin.precontencioso.inicializarPco";
 	public static final String BO_PCO_CREAR_PROCEDIMIENTO_PCO = "plugin.precontencioso.crearProcedimientoPco";
+	public static final String BO_PCO_EXPEDIENTE_COMPROBAR_EDICION_EXPEDIENTE = "plugin.precontencioso.isExpedienteEditable";
 	/**
 	 * Obtiene el historico de estados de un procedimientoPCO mediante un id procedimiento.
 	 * 
@@ -125,4 +126,11 @@ public interface ProcedimientoPcoApi {
 	FileItem generarExcelExportacionElementos(
 			FiltroBusquedaProcedimientoPcoDTO filter);
 	
+	/**
+	 * Comprueba si el usuario conectado está asignado al asunto como preparador del expediente judicial, como supervisor del expediente judicial, 
+	 * o pertenece a un grupo asignado como estos dos tipos de gestores
+	 * @param idProcedimiento
+	 * @return
+	 */
+	public boolean isExpedienteEditable(Long idProcedimiento);	
 }

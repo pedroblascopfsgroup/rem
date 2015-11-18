@@ -976,6 +976,7 @@ public class AsuntosManager {
         //Si no existe el parametro zip por extensiones en PEN_PARAM_ENTIDAD, retorna siempre FALSE
         //Si el parametro es la palabra "disable", retorna siempre FALSE y no comprime nunca
         String extParam = getParamZipExtensiones().toLowerCase();
+        lastFileExt = lastFileExt.toLowerCase();
         if (extParam.isEmpty() || extParam.equals("disable")){
             return false;
         } else {
@@ -1053,6 +1054,7 @@ public class AsuntosManager {
         fo.setFile(zipFile);
         fo.setFileName(fi.getFileName().concat(".zip"));
         fo.setLength(zipFile.length());
+        fo.setContentType("application/zip");
 
         return fo;
         

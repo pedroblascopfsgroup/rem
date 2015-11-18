@@ -24,6 +24,7 @@ public class DDEstadoLiquidacionPCO implements Dictionary, Auditable {
 	public static final String CONFIRMADA = "CON";
 	public static final String CALCULADA = "CAL";
 	public static final String INCIDENTADA = "INC";
+	public static final String VISADA = "VIS";
 
 	private static final long serialVersionUID = 9071990312229316324L;
 

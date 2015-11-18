@@ -52,7 +52,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
     -- **/
     EXECUTE IMMEDIATE 
         'INSERT
-          INTO PEN_PARAM_ENTIDAD
+          INTO '||V_ESQUEMA||'.PEN_PARAM_ENTIDAD
             (
               PEN_ID,
               PEN_PARAM,
@@ -96,7 +96,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
     EXECUTE IMMEDIATE 
         'INSERT
-          INTO PEN_PARAM_ENTIDAD
+          INTO '||V_ESQUEMA||'.PEN_PARAM_ENTIDAD
             (
               PEN_ID,
               PEN_PARAM,

@@ -900,6 +900,15 @@
 					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "IFISCAL");
 				}
 				
+				def isTipoAsuntoConcursal = {
+	            	def asunto = procedimientoManager.getProcedimiento(idProcedimiento).getAsunto();
+					if (asunto != null && asunto.getTipoAsunto() != null && asunto.getTipoAsunto().getCodigo().equals("02")){ 
+						return true;
+					}else {
+						return false;
+					}
+				}
+				
   			 ]]>
   			</value>
   		</list>

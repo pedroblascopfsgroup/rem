@@ -48,7 +48,6 @@ import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
-import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.utils.JBPMProcessManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -122,9 +121,8 @@ public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProce
 	
 	@Autowired
 	private DecisionProcedimientoManager decisionProcedimientoManager;
-	
-	@Autowired
-	private UsuarioManager usuarioManager;
+
+
 	
 	@BusinessOperation("procedimiento.buttons")
 	public List<DynamicElement> getTabs(long idProcedimiento) {

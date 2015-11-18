@@ -103,6 +103,31 @@ var btnConfirmar = new Ext.Button({
 	}
 });
 
+var btnVisar = new Ext.Button({
+	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.visar" text="**Visar" />',
+	iconCls: 'icon_contratos_pase',
+	cls: 'x-btn-text-icon',
+	handler: function() {
+		Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', '<s:message code="plugin.precontencioso.grid.liquidacion.visar.confirmacion" text="**¿Est&aacute; seguro de dar por visada la liquidaci&oacute;n seleccionada?" />', 
+			function(btn){
+	  			if (btn == 'yes'){
+					Ext.Ajax.request({
+						url: page.resolveUrl('liquidacion/visar'),
+						params: {idLiquidacion: idLiquidacionSeleccionada()},
+						method: 'POST',
+						success: function ( result, request ) {
+							refrescarLiquidacionesGrid();
+						},
+						failure: function ( result, request ) {
+							debugger;
+						}
+					});
+	  			}
+			}
+		);
+	}
+});
+
 var btnDescartar = new Ext.Button({
 	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.descartar" text="**Descartar" />',
 	iconCls: 'icon_menos',
@@ -209,6 +234,7 @@ var gridLiquidaciones = app.crearGrid(storeLiquidaciones, cmLiquidacion, {
 		btnSolicitar, 
 		btnEditarValores, 
 		btnConfirmar, 
+		btnVisar,
 		btnDescartar, 
 		new Ext.Toolbar.Fill(),
 		btnGenerar,
@@ -232,10 +258,11 @@ var actualizarBotonesLiquidacion = function() {
 	// Se comprueba que el procedimiento se encuentre en un estado que permita editar las liquidaciones
 	if (data != null) {
 		var estadoActualCodigoProcedimiento = data.precontencioso.estadoActualCodigo;
-		if (estadoActualCodigoProcedimiento != 'PR'  && estadoActualCodigoProcedimiento != 'SU' && estadoActualCodigoProcedimiento != 'SC') {
+		if (!data.esExpedienteEditable || (estadoActualCodigoProcedimiento != 'PR' && estadoActualCodigoProcedimiento != 'SU' && estadoActualCodigoProcedimiento != 'SC')) {
 			btnSolicitar.setDisabled(true);
 			btnEditarValores.setDisabled(true);
 			btnConfirmar.setDisabled(true);
+			btnVisar.setDisabled(true);
 			btnDescartar.setDisabled(true);
 			btnGenerar.setDisabled(true);
 			return;
@@ -255,6 +282,7 @@ var actualizarBotonesLiquidacion = function() {
 			btnSolicitar.setDisabled(false);
 			btnEditarValores.setDisabled(btnSolicitar.isVisible());
 			btnConfirmar.setDisabled(true);
+			btnVisar.setDisabled(true);
 			btnDescartar.setDisabled(true);
 			btnGenerar.setDisabled(true);
 			break;
@@ -263,6 +291,7 @@ var actualizarBotonesLiquidacion = function() {
 			btnSolicitar.setDisabled(true);
 			btnEditarValores.setDisabled(true);
 			btnConfirmar.setDisabled(true);
+			btnVisar.setDisabled(true);
 			btnDescartar.setDisabled(false);
 			btnGenerar.setDisabled(true);
 			break;
@@ -271,6 +300,7 @@ var actualizarBotonesLiquidacion = function() {
 			btnSolicitar.setDisabled(false);
 			btnEditarValores.setDisabled(btnSolicitar.isVisible());
 			btnConfirmar.setDisabled(true);
+			btnVisar.setDisabled(true);
 			btnDescartar.setDisabled(true);
 			btnGenerar.setDisabled(true);
 			break;
@@ -279,6 +309,16 @@ var actualizarBotonesLiquidacion = function() {
 			btnSolicitar.setDisabled(true);
 			btnEditarValores.setDisabled(true);
 			btnConfirmar.setDisabled(true);
+			btnVisar.setDisabled(false);
+			btnDescartar.setDisabled(false);
+			btnGenerar.setDisabled(false);
+			break;
+			
+		case 'VIS':
+			btnSolicitar.setDisabled(true);
+			btnEditarValores.setDisabled(true);
+			btnConfirmar.setDisabled(true);
+			btnVisar.setDisabled(true);
 			btnDescartar.setDisabled(false);
 			btnGenerar.setDisabled(false);
 			break;
@@ -287,6 +327,7 @@ var actualizarBotonesLiquidacion = function() {
 			btnSolicitar.setDisabled(true);
 			btnEditarValores.setDisabled(false);
 			btnConfirmar.setDisabled(false);
+			btnVisar.setDisabled(true);
 			btnDescartar.setDisabled(false);
 			btnGenerar.setDisabled(true);
 			break;
@@ -295,6 +336,7 @@ var actualizarBotonesLiquidacion = function() {
 			btnSolicitar.setDisabled(true);
 			btnEditarValores.setDisabled(true);
 			btnConfirmar.setDisabled(true);
+			btnVisar.setDisabled(true);
 			btnDescartar.setDisabled(false);
 			btnGenerar.setDisabled(true);
 			break;
@@ -303,6 +345,7 @@ var actualizarBotonesLiquidacion = function() {
 			btnSolicitar.setDisabled(true);
 			btnEditarValores.setDisabled(true);
 			btnConfirmar.setDisabled(true);
+			btnVisar.setDisabled(true);
 			btnDescartar.setDisabled(true);
 			btnGenerar.setDisabled(true);
 	}
@@ -338,6 +381,10 @@ var ocultarBtnSolicitar = function(){
 			}
 		}
 	});
+}
+
+if('${appProperties.precontenciosoVisadoActivo}' != 'true') {
+	btnVisar.hide();
 }
 
 <%-- Acciones a tomar cuando la entidad tiene configurado que no soporta solicitar las liquidaciones --%>

@@ -29,7 +29,7 @@ DECLARE
 
     V_TEXT1 VARCHAR2(2400 CHAR); /* Vble. auxiliar*/
     
-    V_ESQUEMA_MIN VARCHAR2(25 CHAR):= '#ESQUEMA_MINI#'; /* Configuracion Esquema minirec*/
+    V_ESQUEMA_MIN VARCHAR2(25 CHAR):= '#ESQUEMA_MINIREC#'; /* Configuracion Esquema minirec*/
     V_ESQUEMA_DWH VARCHAR2(25 CHAR):= '#ESQUEMA_DWH#'; /* Configuracion Esquema recovery_bankia_dwh*/
     V_ESQUEMA_STG VARCHAR2(25 CHAR):= '#ESQUEMA_STG#'; /* Configuracion Esquema recovery_bankia_datastage*/
 	
@@ -40,7 +40,7 @@ BEGIN
 
     DBMS_OUTPUT.PUT_LINE('[START] DROP TABLE tabla SIT_SITUACION_PETICION_LIQ');
 
-    select count(1) into V_NUM_TABLAS from USER_TABLES where table_name = 'SIT_SITUACION_PETICION_LIQ';
+    select count(1) into V_NUM_TABLAS from ALL_TABLES where table_name = 'SIT_SITUACION_PETICION_LIQ';
     if V_NUM_TABLAS > 0 then
         EXECUTE IMMEDIATE ' DROP TABLE '|| V_ESQUEMA ||'.SIT_SITUACION_PETICION_LIQ CASCADE CONSTRAINTS';
             DBMS_OUTPUT.PUT_LINE('DROP TABLE '|| V_ESQUEMA ||'.SIT_SITUACION_PETICION_LIQ... Tabla borrada OK');
@@ -70,9 +70,7 @@ BEGIN
 		VERSION                   	INTEGER DEFAULT 0  NOT NULL,
 		USUARIOBORRAR             	VARCHAR2(50)         ,
 		FECHABORRAR               	TIMESTAMP(6)         ,
-		BORRADO                  	NUMBER(1) DEFAULT 0  NOT NULL		
-	    --CONSTRAINT PK_SIT_PCO_LIQ_ID    PRIMARY KEY (SIT_PCO_LIQ_ID),
-		--CONSTRAINT SIT_UNIQUE_LIQ_EXTERN_ID UNIQUE (SIT_XCOEMP,SIT_COPSER,SIT_IDPRIG,SIT_IDCOEC,SIT_FEVACM,SIT_FEPEAU,SIT_CLLIQ1)				
+		BORRADO                  	NUMBER(1) DEFAULT 0  NOT NULL			    		
         ) ' ;    	
 		
 

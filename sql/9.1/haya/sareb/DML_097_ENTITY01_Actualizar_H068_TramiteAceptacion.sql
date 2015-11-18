@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Nacho Arcos
---## FECHA_CREACION=20151117
+--## FECHA_CREACION=20151118
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.12-hy-rc01
 --## INCIDENCIA_LINK=HR-1530
@@ -29,6 +29,14 @@ BEGIN
     V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
 			  ' SET DD_STA_ID = (SELECT DD_STA_ID FROM '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO = ''PCO_PREDOC'')' ||
 			  ' WHERE TAP_CODIGO = ''H068_SubsanarErrDocumentacion''';
+    DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando el gestor de la tarea H068_SubsanarErrDocumentacion');
+    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('[INFO] Gestor de la tarea actualizado.');
+    
+    V_MSQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS' ||
+			  ' SET TFI_VALOR_INICIAL = ''(tieneProcedimientoPadre() && valoresBPMPadre[''''H067_seleccionarProcedimiento''''] != null) ? valoresBPMPadre[''''H067_seleccionarProcedimiento''''][''''comboProcedimiento''''] : '''''''' '' ' ||
+			  ' WHERE TFI_NOMBRE = ''tipoPropuestoEntidad'' AND TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H068_registrarProcedimiento'' )';
     DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando el gestor de la tarea H068_SubsanarErrDocumentacion');
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;

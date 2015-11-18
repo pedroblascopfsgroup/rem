@@ -375,7 +375,7 @@ public class AdjuntoManager implements AdjuntoApi{
 	public String uploadPersona(WebFileItem uploadForm) {
         FileItem fileItem = uploadForm.getFileItem();
 
-        //En caso de que el fichero esté vacio, no subimos nada
+        //En caso de que el fichero estï¿½ vacio, no subimos nada
         if (fileItem == null || fileItem.getLength() <= 0) { return null; }
 
         Integer max = getLimiteFichero(Parametrizacion.LIMITE_FICHERO_PERSONA);
@@ -398,7 +398,7 @@ public class AdjuntoManager implements AdjuntoApi{
 	public String uploadExpediente(WebFileItem uploadForm) {
         FileItem fileItem = uploadForm.getFileItem();
 
-        //En caso de que el fichero está vacio, no subimos nada
+        //En caso de que el fichero estï¿½ vacio, no subimos nada
         if (fileItem == null || fileItem.getLength() <= 0) { return null; }
 
         Integer max = getLimiteFichero(Parametrizacion.LIMITE_FICHERO_EXPEDIENTE);
@@ -422,7 +422,7 @@ public class AdjuntoManager implements AdjuntoApi{
 	public String uploadContrato(WebFileItem uploadForm) {
         FileItem fileItem = uploadForm.getFileItem();
 
-        //En caso de que el fichero esté vacio, no subimos nada
+        //En caso de que el fichero estï¿½ vacio, no subimos nada
         if (fileItem == null || fileItem.getLength() <= 0) { return null; }
 
         Integer max = getLimiteFichero(Parametrizacion.LIMITE_FICHERO_CONTRATO);
@@ -712,29 +712,29 @@ public class AdjuntoManager implements AdjuntoApi{
 	
 	@Override
 	@Transactional(readOnly = false)
-	public FileItem bajarAdjuntoAsunto(Long asuntoId, Long adjuntoId) {
+	public FileItem bajarAdjuntoAsunto(Long asuntoId, String adjuntoId) {
         Asunto asunto = (Asunto) executor.execute(ExternaBusinessOperation.BO_ASU_MGR_GET, asuntoId); //get(asuntoId);
-        return asunto.getAdjunto(adjuntoId).getAdjunto().getFileItem();
+        return asunto.getAdjunto(Long.parseLong(adjuntoId)).getAdjunto().getFileItem();
 	}
 	
 	
 	@Override
 	@Transactional(readOnly = false)
-	public FileItem bajarAdjuntoPersona(Long adjuntoId) {
-		return adjuntoPersonaDao.get(adjuntoId).getAdjunto().getFileItem();
+	public FileItem bajarAdjuntoPersona(String adjuntoId) {
+		return adjuntoPersonaDao.get(Long.valueOf(adjuntoId)).getAdjunto().getFileItem();
 	}
 	
 	
 	@Override
 	@Transactional(readOnly = false)
-	public FileItem bajarAdjuntoExpediente(Long adjuntoId) {
-		return adjuntoExpedienteDao.get(adjuntoId).getAdjunto().getFileItem();
+	public FileItem bajarAdjuntoExpediente(String adjuntoId) {
+		return adjuntoExpedienteDao.get(Long.parseLong(adjuntoId)).getAdjunto().getFileItem();
 	}
 	
 	@Override
 	@Transactional(readOnly = false)
-	public FileItem bajarAdjuntoContrato(Long adjuntoId) {
-		return adjuntoContratoDao.get(adjuntoId).getAdjunto().getFileItem();
+	public FileItem bajarAdjuntoContrato(String adjuntoId) {
+		return adjuntoContratoDao.get(Long.parseLong(adjuntoId)).getAdjunto().getFileItem();
 	}
 	
 	private boolean tieneFuncion(Usuario usuario, String codigo) {
@@ -844,7 +844,7 @@ public class AdjuntoManager implements AdjuntoApi{
                     ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE, limite);
             return Integer.valueOf(param.getValor());
         } catch (Exception e) {
-            logger.warn("No esta parametrizado el límite máximo del fichero en bytes para asuntos, se toma un valor por defecto (2Mb)");
+            logger.warn("No esta parametrizado el lï¿½mite mï¿½ximo del fichero en bytes para asuntos, se toma un valor por defecto (2Mb)");
             return new Integer(2 * 1024 * 1024);
         }
     }

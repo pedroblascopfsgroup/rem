@@ -169,7 +169,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	}
 	
 	@Override
-	public FileItem bajarAdjuntoAsunto(Long asuntoId, Long adjuntoId) {
+	public FileItem bajarAdjuntoAsunto(Long asuntoId, String adjuntoId) {
 		if(esEntidadCajamar()){
 			return AdjuntoAssembler.recuperacionDocumento(adjuntoId);	
 		}else{
@@ -178,7 +178,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	}
 	
 	@Override
-	public FileItem bajarAdjuntoExpediente(Long adjuntoId) {
+	public FileItem bajarAdjuntoExpediente(String adjuntoId) {
 		if(esEntidadCajamar()){
 			return AdjuntoAssembler.recuperacionDocumento(adjuntoId);	
 		}else{
@@ -187,7 +187,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	}
 
 	@Override
-	public FileItem bajarAdjuntoContrato(Long adjuntoId) {
+	public FileItem bajarAdjuntoContrato(String adjuntoId) {
 		if(esEntidadCajamar()){
 			return AdjuntoAssembler.recuperacionDocumento(adjuntoId);	
 		}else{
@@ -196,7 +196,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	}
 
 	@Override
-	public FileItem bajarAdjuntoPersona(Long adjuntoId) {
+	public FileItem bajarAdjuntoPersona(String adjuntoId) {
 		if(esEntidadCajamar()){
 			return AdjuntoAssembler.recuperacionDocumento(adjuntoId);
 		}else{

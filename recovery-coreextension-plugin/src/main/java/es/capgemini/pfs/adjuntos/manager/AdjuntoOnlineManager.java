@@ -54,7 +54,7 @@ public class AdjuntoOnlineManager implements AdjuntoOnlineApi{
 	@Override
 	@BusinessOperation(BO_ADJ_BAJAR_ADJUNTO_ASUNTO)
 	@Transactional(readOnly = false)
-	public FileItem bajarAdjuntoAsunto(Long asuntoId, Long adjuntoId) {
+	public FileItem bajarAdjuntoAsunto(Long asuntoId, String adjuntoId) {
 		return adjuntoApi.bajarAdjuntoAsunto(asuntoId, adjuntoId);
 	}
 	
@@ -62,7 +62,7 @@ public class AdjuntoOnlineManager implements AdjuntoOnlineApi{
 	@Override
 	@BusinessOperation(BO_ADJ_BAJAR_ADJUNTO_PERSONA)
 	@Transactional(readOnly = false)
-	public FileItem bajarAdjuntoPersona(Long adjuntoId) {
+	public FileItem bajarAdjuntoPersona(String adjuntoId) {
 		return adjuntoApi.bajarAdjuntoPersona(adjuntoId);
 	}
 	
@@ -70,7 +70,7 @@ public class AdjuntoOnlineManager implements AdjuntoOnlineApi{
 	@Override
 	@BusinessOperation(BO_ADJ_BAJAR_ADJUNTO_EXPEDIENTE)
 	@Transactional(readOnly = false)
-	public FileItem bajarAdjuntoExpediente(Long adjuntoId) {
+	public FileItem bajarAdjuntoExpediente(String adjuntoId) {
 		return adjuntoApi.bajarAdjuntoExpediente(adjuntoId);
 	}
 	
@@ -78,7 +78,7 @@ public class AdjuntoOnlineManager implements AdjuntoOnlineApi{
 	@Override
 	@BusinessOperation(BO_ADJ_BAJAR_ADJUNTO_CONTRATO)
 	@Transactional(readOnly = false)
-	public FileItem bajarAdjuntoContrato(Long adjuntoId) {
+	public FileItem bajarAdjuntoContrato(String adjuntoId) {
 		return adjuntoApi.bajarAdjuntoContrato(adjuntoId);
 	}
 

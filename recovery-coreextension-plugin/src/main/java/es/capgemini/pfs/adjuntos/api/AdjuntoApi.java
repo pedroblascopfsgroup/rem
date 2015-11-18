@@ -40,7 +40,7 @@ public interface AdjuntoApi {
 	public String uploadContrato(WebFileItem uploadForm);
 	
 	@Transactional(readOnly = false)
-	public FileItem bajarAdjuntoAsunto(Long asuntoId, Long adjuntoId);
+	public FileItem bajarAdjuntoAsunto(Long asuntoId, String adjuntoId);
 	
 	/*PROCEDIMIENTO*/
 	@Transactional(readOnly = false)
@@ -57,20 +57,20 @@ public interface AdjuntoApi {
 	public List<ExtAdjuntoGenericoDto> getAdjuntosContratoExp(Long id);
 	
 	@Transactional(readOnly = false)
-	public FileItem bajarAdjuntoExpediente(Long adjuntoId);
+	public FileItem bajarAdjuntoExpediente(String adjuntoId);
 	
 	/*CONTRATO*/
 	@Transactional(readOnly = false)
 	public List<? extends AdjuntoDto> getAdjuntosCntConBorrado(Long id);
 	
 	@Transactional(readOnly = false)
-	public FileItem bajarAdjuntoContrato(Long adjuntoId);
+	public FileItem bajarAdjuntoContrato(String adjuntoId);
 	
 	/*CLIENTE*/
 	@Transactional(readOnly = false)
 	public List<? extends AdjuntoDto> getAdjuntosPersonaConBorrado(Long id);
 	
 	@Transactional(readOnly = false)
-	public FileItem bajarAdjuntoPersona(Long adjuntoId);
+	public FileItem bajarAdjuntoPersona(String adjuntoId);
 
 }

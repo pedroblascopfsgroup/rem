@@ -328,6 +328,7 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 
 		for (RecibosLiqVO recibo : recibosLiq) {
 			i++;
+
 			BigDecimal tipoInteresActual = recibo.getRCB_CDINTS();
 
 			// Primera iteracion no tiene un tipo definido
@@ -339,14 +340,15 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 			if (tipoInteresAgrupado.equals(tipoInteresActual)) {
 				sumIntereses = sumIntereses.add(recibo.getRCB_IMPRTV());
 			} else {
-
-				// nuevo concepto basado en la sumatoria de los intereses anteriores
-				saldo = calculateSaldo(saldo, sumIntereses, null);
-				conceptos.add(new ConceptoLiqVO(recibo.getRCB_FEVCTR(), "Intereses al " + tipoInteresAgrupado + " %", sumIntereses, null, saldo));
-
-				sumIntereses = BigDecimal.ZERO;
-				sumIntereses = sumIntereses.add(recibo.getRCB_IMPRTV());
-				tipoInteresAgrupado = tipoInteresActual;
+				if (!BigDecimal.ZERO.equals(recibo.getRCB_CDINTS())) {
+					// nuevo concepto basado en la sumatoria de los intereses anteriores
+					saldo = calculateSaldo(saldo, sumIntereses, null);
+					conceptos.add(new ConceptoLiqVO(recibo.getRCB_FEVCTR(), "Intereses al " + tipoInteresAgrupado + " %", sumIntereses, null, saldo));
+	
+					sumIntereses = BigDecimal.ZERO;
+					sumIntereses = sumIntereses.add(recibo.getRCB_IMPRTV());
+					tipoInteresAgrupado = tipoInteresActual;
+				}
 			}
 
 			// En caso de que sea el ultimo registro de la lista se añade un nuevo concepto
@@ -362,6 +364,7 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 		i = 0;
 		for (RecibosLiqVO recibo : recibosLiq) {
 			i++;
+		
 			BigDecimal tipoInteresActual = recibo.getRCB_CDINTM();
 
 			// Primera iteracion no tiene un tipo definido
@@ -373,14 +376,15 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 			if (tipoInteresAgrupado.equals(tipoInteresActual)) {
 				sumIntereses = sumIntereses.add(recibo.getRCB_IMINDR());
 			} else {
-
-				// nuevo concepto basado en la sumatoria de los intereses anteriores
-				saldo = calculateSaldo(saldo, sumIntereses, null);
-				conceptos.add(new ConceptoLiqVO(datosGeneralesLiq.getDGC_FEVACM(), "Intereses de demora al " + tipoInteresAgrupado + " %", sumIntereses, null, saldo));
-
-				sumIntereses = BigDecimal.ZERO;
-				sumIntereses = sumIntereses.add(recibo.getRCB_IMINDR());
-				tipoInteresAgrupado = tipoInteresActual;
+				if (!BigDecimal.ZERO.equals(recibo.getRCB_CDINTM())) {
+					// nuevo concepto basado en la sumatoria de los intereses anteriores
+					saldo = calculateSaldo(saldo, sumIntereses, null);
+					conceptos.add(new ConceptoLiqVO(datosGeneralesLiq.getDGC_FEVACM(), "Intereses de demora al " + tipoInteresAgrupado + " %", sumIntereses, null, saldo));
+	
+					sumIntereses = BigDecimal.ZERO;
+					sumIntereses = sumIntereses.add(recibo.getRCB_IMINDR());
+					tipoInteresAgrupado = tipoInteresActual;
+				}
 			}
 
 			// En caso de que sea el ultimo registro de la lista se añade un nuevo concepto

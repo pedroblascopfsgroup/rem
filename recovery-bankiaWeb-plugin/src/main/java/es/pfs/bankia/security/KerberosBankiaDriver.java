@@ -62,11 +62,6 @@ public class KerberosBankiaDriver implements KerberosDriver {
                                         System.out.println("TipoAuth...: "+ (Checks.esNulo(asignacion.getTipoAutorizacion())? "NULO": asignacion.getTipoAutorizacion()) );
                                         System.out.println("usosFunc...: " + (Checks.esNulo(asignacion.getUsosFuncion())? "NULO": asignacion.getUsosFuncion()) );
                                         System.out.println("auditUsu...: "+ (Checks.esNulo(asignacion.getAuditarUsuario())? "NULO": asignacion.getAuditarUsuario()) );
-                                        System.out.println("Restricciones--------------- ");
-                                        System.out.println(Checks.esNulo(asignacion.getRestricciones())? "NULO": asignacion.getRestricciones().toString() );
-                                        System.out.println("Limitacion------------------ ");
-                                        System.out.println(Checks.esNulo(asignacion.getLimitaciones())? "NULO": asignacion.getLimitaciones().toString() );
-                                        System.out.println("-----------------------------------------------------------");
                                     }
 
                             }

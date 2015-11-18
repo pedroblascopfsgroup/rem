@@ -206,7 +206,7 @@ public class AdjuntoAssembler {
 					} else if (Checks.esNulo(o2)) {
 						return 1;
 					} else {
-						return o2.getFechaSubida().compareTo(o1.getFechaSubida());
+						return o2.getAuditoria().getFechaCrear().compareTo(o1.getAuditoria().getFechaCrear());
 					}
 				}
 			};
@@ -235,7 +235,7 @@ public class AdjuntoAssembler {
 						adjAsu.setContentType(adjDto.getContentType());
 						adjAsu.setLength(Long.parseLong(adjDto.getLength()));
 						adjAsu.setDescripcion(adjDto.getDescripcion());
-						adjAsu.getAuditoria().setFechaCrear(adjDto.getFechaSubida());
+						adjAsu.getAuditoria().setFechaCrear(adjDto.getAuditoria().getFechaCrear());
 						adjAsu.setTipoFichero(genericDao.get(DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", adjDto.getTipo())));
 						adjAsu.setProcedimiento(genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", adjDto.getNumActuacion())));
 						

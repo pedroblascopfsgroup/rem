@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.recovery.gestordocumental.dto.AdjuntoGridDto;
 
 public class AdjuntoGridAssembler {
@@ -25,7 +26,8 @@ public class AdjuntoGridAssembler {
 			dto.setLength("");
 			dto.setTipo(olDto.getTipoDoc());
 			try {
-				dto.setFechaSubida(frmt.parse(olDto.getAltaVersion()));
+				dto.setAuditoria(new Auditoria());
+				dto.getAuditoria().setFechaCrear(frmt.parse(olDto.getAltaVersion()));
 			} catch (ParseException e) {
 			}
 			//TODO cual es el num Actuacion???

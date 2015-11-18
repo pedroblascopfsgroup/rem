@@ -1,6 +1,6 @@
 package es.pfsgroup.recovery.gestordocumental.dto;
 
-import java.util.Date;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 
 public class AdjuntoGridDto {
 
@@ -10,11 +10,11 @@ public class AdjuntoGridDto {
 	private String descripcion;
 	private String length;
 	private String tipo;
-	private Date fechaSubida;
 	private Long numActuacion;
 	private String descripcionEntidad;
 	private String refCentera;
 	private String ficheroBase64;
+	private Auditoria auditoria;
 	
 	public Long getId() {
 		return id;
@@ -64,14 +64,6 @@ public class AdjuntoGridDto {
 		this.tipo = tipo;
 	}
 
-	public Date getFechaSubida() {
-		return fechaSubida;
-	}
-
-	public void setFechaSubida(Date fechaSubida) {
-		this.fechaSubida = fechaSubida;
-	}
-
 	public Long getNumActuacion() {
 		return numActuacion;
 	}
@@ -102,6 +94,14 @@ public class AdjuntoGridDto {
 
 	public void setFicheroBase64(String ficheroBase64) {
 		this.ficheroBase64 = ficheroBase64;
+	}
+	
+	public Auditoria getAuditoria() {
+		return auditoria;
+	}
+	
+	public void setAuditoria(Auditoria auditoria) {
+		this.auditoria = auditoria;
 	}
 
 }

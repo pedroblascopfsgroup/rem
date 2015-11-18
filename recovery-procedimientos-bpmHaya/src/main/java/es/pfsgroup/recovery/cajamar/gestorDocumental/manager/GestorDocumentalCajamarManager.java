@@ -108,11 +108,11 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_RECUPERACION_DOCUMENTO)
 	@Transactional(readOnly = false)
-	public AdjuntoGridDto recuperacionDocumento(Long idRefCentera) {
+	public AdjuntoGridDto recuperacionDocumento(String idRefCentera) {
 		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
 		GestorDocumentalInputDto input = new GestorDocumentalInputDto();
 		input.setOperacion(ConstantesGestorDocumental.CONSULTA_DOCUMENTO_OPERACION);
-		input.setLocalizador(idRefCentera.toString());
+		input.setLocalizador(idRefCentera);
 		outputDto = gestorDocumentalWSApi.ejecutar(input);
 
 		return AdjuntoGridAssembler.outputDtoToAdjuntoGridDto(outputDto).get(0);

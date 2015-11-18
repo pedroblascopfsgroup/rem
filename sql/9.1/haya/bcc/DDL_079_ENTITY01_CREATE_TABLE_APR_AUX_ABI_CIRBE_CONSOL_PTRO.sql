@@ -1,0 +1,93 @@
+--/*
+--##########################################
+--## AUTOR=JAVIER DIAZ
+--## FECHA_CREACION=20151013
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=CMREC-861
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Creación de tabla APR_AUX_ABI_CIRBE_CONSOL_PTRO
+--##                   
+--##                               , esquema #ESQUEMA#. Con estructura correcta
+--## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+
+
+DECLARE
+
+ V_ESQUEMA VARCHAR2(25 CHAR):=   '#ESQUEMA#'; 			-- Configuracion Esquema
+ V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; 		-- Configuracion Esquema Master 
+ TABLA1 VARCHAR(30) :='APR_AUX_ABI_CIRBE_CONSOL_PTRO'; 
+ err_num NUMBER;
+ err_msg VARCHAR2(2048); 
+ V_MSQL1 VARCHAR2(8500 CHAR);
+ V_EXISTE NUMBER (1):=null;
+
+
+BEGIN 
+
+--Validamos si la tabla existe antes de crearla
+  SELECT COUNT(*) INTO V_EXISTE
+  FROM ALL_TABLES
+  WHERE TABLE_NAME = ''||TABLA1||'';
+
+ 
+  IF V_EXISTE = 1 THEN   
+     EXECUTE IMMEDIATE ('DROP TABLE '||V_ESQUEMA||'.'||TABLA1 );
+     DBMS_OUTPUT.PUT_LINE(''||TABLA1||' BORRADA');
+  END IF;   
+          
+
+
+  V_MSQL1 := 'CREATE TABLE '||V_ESQUEMA||'.'||TABLA1||'  
+     (	"FECHA_EXTRACCION" DATE, 
+	"FECHA_DATO" DATE, 
+	"CODIGO_ENTIDAD" NUMBER(4,0), 
+	"CODIGO_RIESGO" VARCHAR2(1 BYTE), 
+	"CODIGO_PRODUCTO_CIRBE" VARCHAR2(1 BYTE), 
+	"CODIGO_DIVISA_CIRBE" VARCHAR2(1 BYTE), 
+	"CODIGO_VENCIMIENTO_CIRBE" VARCHAR2(1 BYTE), 
+	"CODIGO_GARANTIA_CIRBE" VARCHAR2(1 BYTE), 
+	"CODIGO_SITUACION_IR_CIRBE" VARCHAR2(1 BYTE), 
+	"FECHA_ACTUALIZACION" DATE, 
+	"CODIGO_PROPIETARIO" NUMBER(6,0), 
+	"CODIGO_CLIENTE" NUMBER(17,0), 
+	"IMPORTE_DISPUESTO_CIRBE" NUMBER(14,2), 
+	"IMPORTE_DISPONIBLE_CIRBE" NUMBER(14,2), 
+	"CODIGO_ISO_PAIS" VARCHAR2(2 BYTE), 
+	"NUMERO_PARTICIPANTES" NUMBER(4,0)
+   ) SEGMENT CREATION DEFERRED 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 
+ NOCOMPRESS LOGGING
+';
+          
+
+     EXECUTE IMMEDIATE V_MSQL1;
+     DBMS_OUTPUT.PUT_LINE(''||TABLA1||' CREADA');
+
+  
+
+
+
+EXCEPTION
+WHEN OTHERS THEN  
+  err_num := SQLCODE;
+  err_msg := SQLERRM;
+
+  DBMS_OUTPUT.put_line('Error:'||TO_CHAR(err_num));
+  DBMS_OUTPUT.put_line(err_msg);
+  
+  ROLLBACK;
+  RAISE;
+END;
+/
+EXIT;   
+

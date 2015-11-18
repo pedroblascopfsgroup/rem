@@ -21,6 +21,7 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
 import es.capgemini.pfs.diccionarios.comparator.DictionaryComparatorFactory;
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.direccion.api.DireccionApi;
 import es.capgemini.pfs.direccion.dto.DireccionAltaDto;
 import es.capgemini.pfs.direccion.model.DDProvincia;
@@ -535,10 +536,14 @@ public class BurofaxController {
 	private String descargarBurofax(WebRequest request, ModelMap model,@RequestParam(value = "idEnvio", required = true) Long idEnvio){
 		
     	BurofaxEnvioIntegracionPCO burofaxEnvio=burofaxManager.getBurofaxEnvioIntegracionByIdEnvio(idEnvio);
-		if(!Checks.esNulo(burofaxEnvio) && !Checks.esNulo(burofaxEnvio.getArchivoBurofax())){
-			burofaxEnvio.getArchivoBurofax().setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-			burofaxEnvio.getArchivoBurofax().setFileName("BUROFAX-"+burofaxEnvio.getCliente().replace(",","").trim()+".docx");
-			model.put("fileItem", burofaxEnvio.getArchivoBurofax());
+		if(!Checks.esNulo(burofaxEnvio) && !Checks.esNulo(burofaxEnvio.getContenido())){
+			EnvioBurofaxPCO envioBurofax = burofaxManager.getEnvioBurofaxById(idEnvio);
+			if(!Checks.esNulo(envioBurofax)){
+				FileItem fileitem = burofaxManager.generarDocumentoBurofax(envioBurofax);
+				fileitem.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+				fileitem.setFileName("BUROFAX-"+burofaxEnvio.getCliente().replace(",","").trim()+".docx");
+				model.put("fileItem", fileitem);
+			}
 		}
 
 		return JSP_DOWNLOAD_FILE;

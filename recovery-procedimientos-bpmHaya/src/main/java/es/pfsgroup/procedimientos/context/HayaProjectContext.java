@@ -9,5 +9,7 @@ public interface HayaProjectContext {
 	public List<String> getTareasInicioLitigios();
 
 	public String getTareaAceptacionLitigios();
+	
+	public String getTareaInicioConcurso();
 
 }

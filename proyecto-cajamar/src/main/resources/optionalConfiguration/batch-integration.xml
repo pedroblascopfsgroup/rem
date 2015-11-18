@@ -180,14 +180,7 @@
 					<constructor-arg index="1" ref="diccionarioCodigosConsumer"/>
 					<constructor-arg index="2" value="${integracion.tareas.sta}"/>
 					<property name="description" value="Gestión de una tarea"/>
-					<property name="procedimientoConsumer">
-						<bean class="es.pfsgroup.recovery.integration.bpm.consumer.ProcedimientoConsumer">
-							<constructor-arg>
-								<bean class="es.pfsgroup.recovery.integration.AllowAllRule"/>
-							</constructor-arg>
-							<property name="description" value="Actualización de un procedimiento, lo crea si no existe"/>
-						</bean>
-					</property>
+					<property name="procedimientoConsumer" ref="procedimientoConsumerInterno"/>
 				</bean>
 
 				<!-- NOTIFICACIONES: ACUERDOS ... 
@@ -285,9 +278,50 @@
 					<property name="description" value="Gestión de tarea notificaciones"/>
 				</bean>
 				
+				<!-- Activar un BPM paralizado-->
+				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.ActivarBPMConsumer">
+					<constructor-arg index="0">
+						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
+							<property name="tipo" value="DO-ACTIVAR-BPM"/>
+						</bean>
+					</constructor-arg>
+					<property name="description" value="Activa un BPM paralizado"/>
+				</bean>
+
+				<!-- Finalizar un asunto-->
+				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.FinalizarAsuntoConsumer">
+					<constructor-arg index="0">
+						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
+							<property name="tipo" value="DO-FIN-ASUNTO"/>
+						</bean>
+					</constructor-arg>
+					<property name="description" value="Finalzia un Asunto de forma remota"/>
+				</bean>
+
+				<!-- Decisión de procedimiento -->
+				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.DecisionProcedimientoConsumer">
+					<constructor-arg index="0">
+						<bean class="es.pfsgroup.recovery.integration.bpm.DecisionProcedimientoPayloadRegexRule">
+							<property name="tipo" value="DATOS-DECISION-PROCEDIMIENTO" />
+							<property name="codigoTiposProcedimientoDerivados" value="H016|H018|H020|H001|H022|H024|H026|H028|H005|HC100|H030|HC101|H006|H064|H032|H007|H034|H036|H038|H040|H066|H042|H04|HC102|H046|H011|P400|H048|H015|H050|HC103|H008|HC104|H002|H004|H052|H065|H054|H058|H062|HC105|HC106" />
+							<property name="paralizar" value="true" />
+							<property name="finalizar" value="true" />
+						</bean>
+					</constructor-arg>
+					<constructor-arg index="1" value="SOLO_CREAR"/>
+					<property name="description" value="Crea una toma de decisión mediante un procedimiento"/>
+					<property name="procedimientoConsumer" ref="procedimientoConsumerInterno"/>
+				</bean>
 
 			</list>
 		</constructor-arg>
+	</bean>
+	
+	<bean id="procedimientoConsumerInterno" class="es.pfsgroup.recovery.integration.bpm.consumer.ProcedimientoConsumer">
+		<constructor-arg>
+			<bean class="es.pfsgroup.recovery.integration.AllowAllRule"/>
+		</constructor-arg>
+		<property name="description" value="Actualización de un procedimiento, lo crea si no existe"/>
 	</bean>
 
 	<!-- TRADUCTOR DE CODIGOS PROCEDIMIENTOS, TAREAS, DD -->

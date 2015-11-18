@@ -72,9 +72,9 @@ public class BurofaxEnvioIntegracionPCO implements Serializable, Auditable {
 	@Column(name = "PCO_BUR_CONTENIDO")
 	private String contenido;
 	
-	@Column(name = "PCO_BUR_FICHERO")
-	@Type(type = "es.capgemini.devon.hibernate.dao.BlobStreamType")
-	private FileItem archivoBurofax;
+	//@Column(name = "PCO_BUR_FICHERO")
+	//@Type(type = "es.capgemini.devon.hibernate.dao.BlobStreamType")
+	//private FileItem archivoBurofax;
 	
 	@Column(name = "PCO_BUR_CERTIFICADO")
 	private Boolean certificado ;
@@ -209,14 +209,6 @@ public class BurofaxEnvioIntegracionPCO implements Serializable, Auditable {
 
 	public void setCertificado(Boolean certificado) {
 		this.certificado = certificado;
-	}
-
-	public FileItem getArchivoBurofax() {
-		return archivoBurofax;
-	}
-
-	public void setArchivoBurofax(FileItem archivoBurofax) {
-		this.archivoBurofax = archivoBurofax;
 	}
 
 	public String getContenido() {

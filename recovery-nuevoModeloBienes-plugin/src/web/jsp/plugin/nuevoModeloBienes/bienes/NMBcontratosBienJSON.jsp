@@ -11,15 +11,23 @@
 			<json:property name="idContrato" value="${cb.contrato.id}"/>
 			<json:property name="importeGarantizado" value="${cb.importeGarantizado}"/>
 			<json:property name="importeGarantizadoAprov" value="${cb.importeGarantizadoAprov}"/>
-			<json:property name="codRelacion" value="${cb.tipo.codigo}"/>
-			<json:property name="relacion" value="${cb.tipo.descripcion}"/>
-			<json:property name="estado" value="${cb.estado.descripcion}"/>
+			<c:if test="${cb.tipo != null}">
+				<json:property name="codRelacion" value="${cb.tipo.codigo}"/>
+				<json:property name="relacion" value="${cb.tipo.descripcion}"/>
+			</c:if>
+			<c:if test="${cb.estado != null}">
+				<json:property name="estado" value="${cb.estado.descripcion}"/>
+			</c:if>
 			<json:property name="codigoContrato" value="${cb.contrato.codigoContrato}"/>
-			<json:property name="tipoProducto" value="${cb.contrato.tipoProducto.descripcion}"/>
-			<json:property name="diasIrregular" value="${cb.contrato.diasIrregular}"/>
-			<json:property name="riesgo" value="${cb.contrato.lastMovimiento.riesgo}"/>
+			<c:if test = "${cb.contrato.tipoProducto != null}">
+				<json:property name="tipoProducto" value="${cb.contrato.tipoProducto.descripcion}"/>
+			</c:if>
+			<c:if test="${cb.contrato.lastMovimiento != null}">
+				<json:property name="diasIrregular" value="${cb.contrato.diasIrregular}"/>
+				<json:property name="riesgo" value="${cb.contrato.lastMovimiento.riesgo}"/>
+				<json:property name="saldoVencido" value="${cb.contrato.lastMovimiento.posVivaVencidaAbsoluta}"/>
+			</c:if>
 			<json:property name="titular" value="${cb.contrato.primerTitular.apellidoNombre}"/>
-			<json:property name="saldoVencido" value="${cb.contrato.lastMovimiento.posVivaVencidaAbsoluta}"/>
 			<json:property name="estadoFinanciero" value="${cb.contrato.estadoFinanciero.descripcion}"/>
 			<c:if test="${cb.contrato.expedienteContratoActivo != null && cb.contrato.expedienteContratoActivo.sinActuacion == null && !cb.contrato.expedienteContratoActivo.auditoria.borrado}">
 				<json:property name="situacion">

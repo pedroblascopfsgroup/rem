@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.manager;
+package es.pfsgroup.listadoPreProyectado.manager;
 
 import java.util.List;
 
@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.users.UsuarioManager;
-import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.api.ListadoPreProyectadoApi;
-import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.api.VListadoPreProyectadoCntDao;
-import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.api.VListadoPreProyectadoExpDao;
-import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.dto.ListadoPreProyectadoDTO;
-import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.model.VListadoPreProyectadoCnt;
+import es.pfsgroup.listadoPreProyectado.api.ListadoPreProyectadoApi;
+import es.pfsgroup.listadoPreProyectado.api.VListadoPreProyectadoCntDao;
+import es.pfsgroup.listadoPreProyectado.api.VListadoPreProyectadoExpDao;
+import es.pfsgroup.listadoPreProyectado.dto.ListadoPreProyectadoDTO;
+import es.pfsgroup.listadoPreProyectado.model.VListadoPreProyectadoCnt;
 
 @Component
 public class ListadoPreProyectadoManager implements ListadoPreProyectadoApi {

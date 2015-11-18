@@ -5,7 +5,7 @@
 --## ARTEFACTO=web
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=PRODUCTO-461
---## PRODUCTO=SI
+--## PRODUCTO=NO
 --## Finalidad: DDL Creación de la tabla DD_RIO_RIESGO_OPERACIONAL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE

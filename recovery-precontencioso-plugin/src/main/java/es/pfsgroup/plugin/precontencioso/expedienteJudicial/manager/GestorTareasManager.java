@@ -123,6 +123,9 @@ public class GestorTareasManager implements GestorTareasApi {
 					accion.setTipoAccion(linea.getCodigoAccion());
 					accion.setTipoTarea(linea.getCodigoTarea());
 					listaAcciones.add(accion);
+					logger.debug("[evaluarTareasProcedimiento]: " + linea.getCodigoAccion() + "/" + linea.getCodigoTarea() + ": SI");					
+				} else {
+					logger.debug("[evaluarTareasProcedimiento]: " + linea.getCodigoAccion() + "/" + linea.getCodigoTarea() + ": NO");					
 				}
 			}
 		}
@@ -205,14 +208,19 @@ public class GestorTareasManager implements GestorTareasApi {
         if (juzgado != null) idTipoJuzgado = juzgado.getId();
         if (plaza != null) idTipoPlaza = plaza.getId();
 
+        if (logger.isDebugEnabled()) {
+            logger.debug("Antes de crear la tarea " + codigoTarea + ", de subtipo " + subtipoTarea);
+        }
+
         Long plazoTarea = getPlazoTarea(idTipoPlaza, idTareaProcedimiento, idTipoJuzgado, idProc);
         Long idTarea = tareaExternaManager.crearTareaExterna(subtipoTarea, plazoTarea, nombreTarea, idProc, idTareaProcedimiento,
                 getTokenId(procedimiento.getProcessBPM()));
 
         if (logger.isDebugEnabled()) {
-            logger.debug(TXT_CREAMOS_LA_TAREA + codigoTarea + ", " + idTarea);
+            logger.debug(TXT_CREAMOS_LA_TAREA + codigoTarea + ", " + idTarea + ", de subtipo " + subtipoTarea);
+        } else {
+        	System.out.println("[crearTareaEspecial]: " + TXT_CREAMOS_LA_TAREA + codigoTarea + ", " + idTarea + ", de subtipo " + subtipoTarea);
         }
-
 
         return true;
 	}

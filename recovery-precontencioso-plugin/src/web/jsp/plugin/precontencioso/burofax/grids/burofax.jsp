@@ -707,9 +707,10 @@
 	var refrescarBurofaxGrid = function() {
 		burofaxStore.webflow({idProcedimiento: data.precontencioso.id});
 		idProcedimiento=data.precontencioso.id;
+		debugger;
+		gridBurofax.getSelectionModel().clearSelections();
 		actualizarBotonesBurofax();
 		
-
 	}
 	
 	var actualizarBotonesBurofax = function() {

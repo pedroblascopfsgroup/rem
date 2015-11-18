@@ -54,7 +54,7 @@ public class MEJContratoManager extends
 	private GenericABMDao genericDao;
 	
 	@Autowired
-	@Qualifier("adjuntoManagerImpl")
+	@Qualifier("adjuntoManagerHayaImpl")
 	private AdjuntoApi adjuntosApi;
 		
 	

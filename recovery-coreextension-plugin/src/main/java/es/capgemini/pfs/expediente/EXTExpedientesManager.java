@@ -96,7 +96,7 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 	private ExpedienteDao expedienteDao;
 	
 	@Autowired
-	@Qualifier("adjuntoManagerImpl")
+	@Qualifier("adjuntoManagerHayaImpl")
 	private AdjuntoApi adjuntosApi;
 
 	@Override

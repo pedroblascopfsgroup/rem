@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.Executor;
-import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.MessageUtils;
@@ -62,7 +61,7 @@ import es.pfsgroup.recovery.api.ProcedimientoApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
-@Component("adjuntoManagerImplComun")
+@Component("adjuntoManagerImpl")
 public class AdjuntoManager implements AdjuntoApi{
 
 	private final Log logger = LogFactory.getLog(getClass());
@@ -312,7 +311,6 @@ public class AdjuntoManager implements AdjuntoApi{
 	
 	
 	@Override
-	@BusinessOperation(BO_ADJ_UPLOAD_ASUNTO)
 	@Transactional(readOnly = false)
 	public String upload(WebFileItem uploadForm) {
 
@@ -373,7 +371,6 @@ public class AdjuntoManager implements AdjuntoApi{
 	
 
 	@Override
-	@BusinessOperation(BO_ADJ_UPLOAD_PERSONA_ASUNTO)
 	@Transactional(readOnly = false)
 	public String uploadPersona(WebFileItem uploadForm) {
         FileItem fileItem = uploadForm.getFileItem();
@@ -397,7 +394,6 @@ public class AdjuntoManager implements AdjuntoApi{
 	
 	
 	@Override
-	@BusinessOperation(BO_ADJ_UPLOAD_EXPEDIENTE_ASUNTO)
 	@Transactional(readOnly = false)
 	public String uploadExpediente(WebFileItem uploadForm) {
         FileItem fileItem = uploadForm.getFileItem();
@@ -422,7 +418,6 @@ public class AdjuntoManager implements AdjuntoApi{
 	
 	
 	@Override
-	@BusinessOperation(BO_ADJ_UPLOAD_CONTRATO_ASUNTO)
 	@Transactional(readOnly = false)
 	public String uploadContrato(WebFileItem uploadForm) {
         FileItem fileItem = uploadForm.getFileItem();
@@ -716,7 +711,6 @@ public class AdjuntoManager implements AdjuntoApi{
 	}
 	
 	@Override
-	@BusinessOperation(BO_ADJ_BAJAR_ADJUNTO_ASUNTO)
 	@Transactional(readOnly = false)
 	public FileItem bajarAdjuntoAsunto(Long asuntoId, Long adjuntoId) {
         Asunto asunto = (Asunto) executor.execute(ExternaBusinessOperation.BO_ASU_MGR_GET, asuntoId); //get(asuntoId);
@@ -725,7 +719,6 @@ public class AdjuntoManager implements AdjuntoApi{
 	
 	
 	@Override
-	@BusinessOperation(BO_ADJ_BAJAR_ADJUNTO_PERSONA)
 	@Transactional(readOnly = false)
 	public FileItem bajarAdjuntoPersona(Long adjuntoId) {
 		return adjuntoPersonaDao.get(adjuntoId).getAdjunto().getFileItem();
@@ -733,14 +726,12 @@ public class AdjuntoManager implements AdjuntoApi{
 	
 	
 	@Override
-	@BusinessOperation(BO_ADJ_BAJAR_ADJUNTO_EXPEDIENTE)
 	@Transactional(readOnly = false)
 	public FileItem bajarAdjuntoExpediente(Long adjuntoId) {
 		return adjuntoExpedienteDao.get(adjuntoId).getAdjunto().getFileItem();
 	}
 	
 	@Override
-	@BusinessOperation(BO_ADJ_BAJAR_ADJUNTO_CONTRATO)
 	@Transactional(readOnly = false)
 	public FileItem bajarAdjuntoContrato(Long adjuntoId) {
 		return adjuntoContratoDao.get(adjuntoId).getAdjunto().getFileItem();

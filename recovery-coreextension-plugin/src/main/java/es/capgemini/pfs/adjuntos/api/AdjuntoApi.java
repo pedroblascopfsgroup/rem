@@ -12,19 +12,6 @@ import es.capgemini.pfs.core.api.asunto.EXTAdjuntoDto;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 
 public interface AdjuntoApi {
-	
-
-	public static final String BO_ADJ_UPLOAD_ASUNTO = "adjuntosManager.upload";
-	public static final String BO_ADJ_UPLOAD_PERSONA_ASUNTO = "adjuntosManager.uploadPersona";
-	public static final String BO_ADJ_UPLOAD_EXPEDIENTE_ASUNTO = "adjuntosManager.uploadExpediente";
-	public static final String BO_ADJ_UPLOAD_CONTRATO_ASUNTO = "adjuntosManager.uploadContrato";
-	public static final String BO_ADJ_BAJAR_ADJUNTO_ASUNTO = "adjuntosManager.bajarAdjuntoAsunto";
-	public static final String BO_ADJ_BAJAR_ADJUNTO_PERSONA = "adjuntosManager.bajarAdjuntoPersona";
-	public static final String BO_ADJ_BAJAR_ADJUNTO_EXPEDIENTE = "adjuntosManager.bajarAdjuntoExpediente";
-	public static final String BO_ADJ_BAJAR_ADJUNTO_CONTRATO = "adjuntosManager.bajarAdjuntoContrato";
-	
-	
-	
 
 	
 	/*ASUNTO*/
@@ -40,23 +27,18 @@ public interface AdjuntoApi {
 	@Transactional(readOnly=false)
 	public List<ExtAdjuntoGenericoDto> getAdjuntosExpedienteAsu(Long id);
 	
-	@BusinessOperationDefinition(BO_ADJ_UPLOAD_ASUNTO)
 	@Transactional(readOnly = false)
     public String upload(WebFileItem uploadForm);
 	
-	@BusinessOperationDefinition(BO_ADJ_UPLOAD_PERSONA_ASUNTO)
 	@Transactional(readOnly = false)
     public String uploadPersona(WebFileItem uploadForm);
 	
-	@BusinessOperationDefinition(BO_ADJ_UPLOAD_EXPEDIENTE_ASUNTO)
 	@Transactional(readOnly = false)
 	public String uploadExpediente(WebFileItem uploadForm);
 	
-	@BusinessOperationDefinition(BO_ADJ_UPLOAD_CONTRATO_ASUNTO)
 	@Transactional(readOnly = false)
 	public String uploadContrato(WebFileItem uploadForm);
 	
-	@BusinessOperationDefinition(BO_ADJ_BAJAR_ADJUNTO_ASUNTO)
 	@Transactional(readOnly = false)
 	public FileItem bajarAdjuntoAsunto(Long asuntoId, Long adjuntoId);
 	
@@ -74,7 +56,6 @@ public interface AdjuntoApi {
 	@Transactional(readOnly = false)
 	public List<ExtAdjuntoGenericoDto> getAdjuntosContratoExp(Long id);
 	
-	@BusinessOperationDefinition(BO_ADJ_BAJAR_ADJUNTO_EXPEDIENTE)
 	@Transactional(readOnly = false)
 	public FileItem bajarAdjuntoExpediente(Long adjuntoId);
 	
@@ -82,7 +63,6 @@ public interface AdjuntoApi {
 	@Transactional(readOnly = false)
 	public List<? extends AdjuntoDto> getAdjuntosCntConBorrado(Long id);
 	
-	@BusinessOperationDefinition(BO_ADJ_BAJAR_ADJUNTO_CONTRATO)
 	@Transactional(readOnly = false)
 	public FileItem bajarAdjuntoContrato(Long adjuntoId);
 	
@@ -90,7 +70,6 @@ public interface AdjuntoApi {
 	@Transactional(readOnly = false)
 	public List<? extends AdjuntoDto> getAdjuntosPersonaConBorrado(Long id);
 	
-	@BusinessOperationDefinition(BO_ADJ_BAJAR_ADJUNTO_PERSONA)
 	@Transactional(readOnly = false)
 	public FileItem bajarAdjuntoPersona(Long adjuntoId);
 

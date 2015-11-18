@@ -58,7 +58,7 @@ public class GestorDocumentalOutputAssembler {
 		dto.setIdDocumento(output.getIDDOCUMENTO());
 		dto.setCodError(output.getCODERROR());
 		dto.setTxtError(output.getTXTERROR());
-		
+		dto.setLbListadoDocumentos(new ArrayList<GestorDocumentalOutputListDto>());
 		List<GestorDocumentalOutputListDto> listDto = GestorDocumentalOutputListAssembler.outputListToDtoList(output.getLBLISTADODOCUMENTOS().getElement());
 		for(GestorDocumentalOutputListDto dtoAss : listDto){
 			dto.getLbListadoDocumentos().add(dtoAss);

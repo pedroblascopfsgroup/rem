@@ -35,7 +35,6 @@ public class GestorDocumentalWS extends BaseWS implements GestorDocumentalWSApi 
 		OUTPUT output = servicePort.sMGESTIONDOCUMENTAL(input);
 
 		GestorDocumentalOutputDto out = GestorDocumentalOutputAssembler.outputToDto(output);
-		GestorDocumentalInputAssembler.dtoToInput(inputDto);
 		return out;
 	}
 

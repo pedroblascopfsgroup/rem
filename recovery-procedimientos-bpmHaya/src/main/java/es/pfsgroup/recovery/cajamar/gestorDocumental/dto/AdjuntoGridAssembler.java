@@ -14,7 +14,7 @@ public class AdjuntoGridAssembler {
 		if (outputDto == null) {
 			return null;
 		}
-		SimpleDateFormat frmt = new SimpleDateFormat("DDMMYYYY");
+		SimpleDateFormat frmt = new SimpleDateFormat("ddMMyyyy");
 		List<AdjuntoGridDto> list = new ArrayList<AdjuntoGridDto>();
 		for(GestorDocumentalOutputListDto olDto : outputDto.getLbListadoDocumentos()) {
 			AdjuntoGridDto dto = new AdjuntoGridDto();

@@ -1,11 +1,11 @@
-package es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.api;
+package es.pfsgroup.listadoPreProyectado.api;
 
 import java.util.List;
 
 import es.capgemini.devon.pagination.Page;
-import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.dto.ListadoPreProyectadoDTO;
-import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.model.VListadoPreProyectadoCnt;
-import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.model.VListadoPreProyectadoExp;
+import es.pfsgroup.listadoPreProyectado.dto.ListadoPreProyectadoDTO;
+import es.pfsgroup.listadoPreProyectado.model.VListadoPreProyectadoCnt;
+import es.pfsgroup.listadoPreProyectado.model.VListadoPreProyectadoExp;
 
 public interface ListadoPreProyectadoApi {
 	

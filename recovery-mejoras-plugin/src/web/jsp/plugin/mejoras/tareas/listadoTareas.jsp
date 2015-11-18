@@ -502,6 +502,8 @@
 	};
 	
 	var groupRenderer=function(val){
+		if(val==-1)
+			return '<s:message code="main.arbol_tareas.groups.sinvencimiento" text="**Sin vencimiento" />';
 		if(val==0)
 			return '<s:message code="main.arbol_tareas.groups.vencidas" text="**Vencidas / Incumplidas " />';
 		if(val==1)
@@ -1127,20 +1129,13 @@
 			case app.subtipoTarea.CODIGO_RECOPILAR_DOCUMENTACION_PROCEDIMIENTO:
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'docRequerida');
 			break;
-			case app.subtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_GESTOR:
-			case app.subtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_SUPERVISOR:
-			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_PROCEDIMIENTO:
-			case app.subtipoTarea.CODIGO_TAREA_GESTOR_CONFECCION_EXPTE:
-			case app.subtipoTarea.CODIGO_TAREA_SUPERVISOR_CONFECCION_EXPTE:
-			case 'TCGA':
-			case 'TCRC':
-			case '100':
-			case '101':			
-			case '105':
+			
 			case app.subtipoTarea.CODIGO_PRECONTENCIOSO_SUPERVISOR:
 			case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTORIA:
 		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR:
 		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_LETRADO:
+		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR_LIQUIDACIONES:
+		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR_DOCUMENTOS:
 		    
 		    		Ext.Ajax.request({
 						url: page.resolveUrl('expedientejudicial/getEsTareaPrecontenciosoEspecial')
@@ -1165,9 +1160,18 @@
 					});
 		
 			break;
-			
-			
-			
+
+			case app.subtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_GESTOR:
+			case app.subtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_SUPERVISOR:
+			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_PROCEDIMIENTO:
+			case app.subtipoTarea.CODIGO_TAREA_GESTOR_CONFECCION_EXPTE:
+			case app.subtipoTarea.CODIGO_TAREA_SUPERVISOR_CONFECCION_EXPTE:
+			case 'TCGA':
+			case 'TCRC':
+			case '100':
+			case '101':			
+			case '105':
+
 			case '102':
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
 				break;			

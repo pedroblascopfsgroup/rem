@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -68,8 +69,11 @@ public class DDEstadoItinerario implements Dictionary, Auditable {
 
     @Column(name = "DD_EST_DESCRIPCION_LARGA")
     private String descripcionLarga;
+    
+    @Column(name = "DD_EST_ORDEN")
+    private String orden;
 
-    @ManyToOne
+	@ManyToOne
     @JoinColumn(name = "DD_EIN_ID")
     private DDTipoEntidad tipoEntidad;
 
@@ -207,6 +211,14 @@ public class DDEstadoItinerario implements Dictionary, Auditable {
     public void setEstados(Set<Estado> estados) {
         this.estados = estados;
     }
+    
+    public String getOrden() {
+		return orden;
+	}
+
+	public void setOrden(String orden) {
+		this.orden = orden;
+	}
 
     /**
      * Retorna el código de estado siguiente al actual, "---" si es el �ltimo.

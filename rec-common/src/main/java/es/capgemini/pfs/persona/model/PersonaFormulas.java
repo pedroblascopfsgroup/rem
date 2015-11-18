@@ -11,7 +11,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
-@Table(name = "PER_PERSONAS_FORMULAS", schema = "${entity.schema}")
+@Table(name = "V_PER_PERSONAS_FORMULAS", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class PersonaFormulas implements Serializable {
 

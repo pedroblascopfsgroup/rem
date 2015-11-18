@@ -18,6 +18,7 @@ public class ITIEstadoDaoImpl extends AbstractEntityDao<Estado, Long> implements
 	public List<Estado> getEstadosItienario(Long id) {
 		HQLBuilder hb = new HQLBuilder("from Estado est");
 		hb.addFiltroIgualQue(hb, "est.itinerario.id", id);
+		hb.orderBy("est.estadoItinerario.orden", "asc");
 		
 		return HibernateQueryUtils.list(this, hb);
 	}

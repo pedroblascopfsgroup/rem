@@ -191,7 +191,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		String param = "";
 		if (DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE.equals(tipoEntidad)) {
 			param = Parametrizacion.LIMITE_FICHERO_EXPEDIENTE_GESTOR_DOCUMENTAL;
-		} else if (DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE.equals(tipoEntidad)) {
+		} else if (DDTipoEntidad.CODIGO_ENTIDAD_PERSONA.equals(tipoEntidad)) {
 			param = Parametrizacion.LIMITE_FICHERO_PERSONA_GESTOR_DOCUMENTAL;
 		} else if (DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO.equals(tipoEntidad)) {
 			param = Parametrizacion.LIMITE_FICHERO_CONTRATO_GESTOR_DOCUMENTAL;
@@ -213,7 +213,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			Expediente expediente = expedienteDao.get(idEntidad);
 			expediente.addAdjunto(uploadForm.getFileItem());
 			expedienteDao.save(expediente);
-		} else if (DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE.equals(tipoEntidad)) {
+		} else if (DDTipoEntidad.CODIGO_ENTIDAD_PERSONA.equals(tipoEntidad)) {
 			Persona persona = personaDao.get(idEntidad);
 			persona.addAdjunto(uploadForm.getFileItem());
 			personaDao.save(persona);

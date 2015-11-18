@@ -12,6 +12,7 @@ import es.capgemini.pfs.security.KerberosDriver;
 import es.cm.arq.sd.seguridad.Asignacion;
 import es.cm.arq.sd.seguridad.GestionSSA;
 import es.cm.arq.sd.seguridad.SSAException;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * 
@@ -51,20 +52,22 @@ public class KerberosBankiaDriver implements KerberosDriver {
                                     if (asignaciones.length <= 100) {
                                             logger.info(asignaciones);
                                     }
-                                    System.out.println("Usuario....: "+ asignacion.getUsuario());
-                                    System.out.println("Codigo.....: "+ asignacion.getCodigo());
-                                    System.out.println("Funcion....: "+ asignacion.getFuncion());
-                                    System.out.println("Subsistema.: "+ asignacion.getSubsistema());
-                                    System.out.println("TipoAuth...: "+ asignacion.getTipoAutorizacion());
-                                    System.out.println("existeRest.: "+(asignacion.tieneRestricciones()? "SI":"NO"));
-                                    System.out.println("existeLimi.: "+(asignacion.tieneLimitaciones()? "SI":"NO"));
-                                    System.out.println("usosFunc...: " + asignacion.getUsosFuncion());
-                                    System.out.println("auditUsu...: "+ asignacion.getAuditarUsuario());
-                                    System.out.println("Restricciones--------------- ");
-                                    System.out.println(asignacion.getRestricciones().toString());
-                                    System.out.println("Limitacion------------------ ");
-                                    System.out.println(asignacion.getLimitaciones().toString());
-                                    System.out.println("-----------------------------------------------------------");
+                                    if (Checks.esNulo(asignacion)){
+                                        System.out.println("asignacion es completamente NULO");
+                                    }else{
+                                        System.out.println("Usuario....: "+ (Checks.esNulo(asignacion.getUsuario()) ? "NULO": asignacion.getUsuario()) );
+                                        System.out.println("Codigo.....: "+ (Checks.esNulo(asignacion.getCodigo())? "NULO": asignacion.getCodigo()) );
+                                        System.out.println("Funcion....: "+ (Checks.esNulo(asignacion.getFuncion())? "NULO": asignacion.getFuncion()) );
+                                        System.out.println("Subsistema.: "+ (Checks.esNulo(asignacion.getSubsistema())? "": asignacion.getSubsistema()) );
+                                        System.out.println("TipoAuth...: "+ (Checks.esNulo(asignacion.getTipoAutorizacion())? "NULO": asignacion.getTipoAutorizacion()) );
+                                        System.out.println("usosFunc...: " + (Checks.esNulo(asignacion.getUsosFuncion())? "NULO": asignacion.getUsosFuncion()) );
+                                        System.out.println("auditUsu...: "+ (Checks.esNulo(asignacion.getAuditarUsuario())? "NULO": asignacion.getAuditarUsuario()) );
+                                        System.out.println("Restricciones--------------- ");
+                                        System.out.println(Checks.esNulo(asignacion.getRestricciones())? "NULO": asignacion.getRestricciones().toString() );
+                                        System.out.println("Limitacion------------------ ");
+                                        System.out.println(Checks.esNulo(asignacion.getLimitaciones())? "NULO": asignacion.getLimitaciones().toString() );
+                                        System.out.println("-----------------------------------------------------------");
+                                    }
 
                             }
 			}

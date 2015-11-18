@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.precontencioso;
 
+import java.util.List;
+
 
 /**
  * API con las operaciones de negocio para el coreextension.
@@ -22,5 +24,11 @@ public interface PrecontenciosoProjectContext {
 	 * @return
 	 */
 	public boolean isGenerarArchivoBurofax();
+	
+	/**
+	 * Devuelve la lista de variables que se utilizan en el envío de burofaxes
+	 * @return List<String>
+	 */
+	public List<String> getVariablesBurofax();
 
 }

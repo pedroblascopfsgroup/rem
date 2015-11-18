@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Direccion;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
 import es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi;
 import es.pfsgroup.plugin.precontencioso.burofax.dto.BurofaxDTO;
 import es.pfsgroup.plugin.precontencioso.burofax.manager.BurofaxManager;
@@ -74,6 +76,9 @@ public class BurofaxController {
 	
 	@Autowired
 	private Executor executor;
+	
+	@Autowired
+	private PrecontenciosoProjectContext precontenciosoContext;
 	
 	/**
 	 * Carga el grid de Burofaxes
@@ -291,6 +296,9 @@ public class BurofaxController {
 			if(variable.contains("<") || variable.contains("</")){
 				throw new Exception("La definición de las variables es incorrecta. Compruebe el estilo de las variables");
 			}
+			else if(!precontenciosoContext.getVariablesBurofax().contains(StringUtils.substring(variable, variable.indexOf("{") + +1, variable.lastIndexOf("}")))) {
+				throw new Exception("¡Atenci&oacute;n! se han encontrado variables err&oacute;neas en el texto");
+			}
 			
 			contenidoBurofaxAux=contenidoBurofaxAux.substring(finalVariable+1);
 		}
@@ -306,8 +314,7 @@ public class BurofaxController {
 		
 		return DEFAULT;
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	private String getAltaDireccion(WebRequest request, ModelMap model,Long idProcedimiento,Long idCliente){
@@ -321,8 +328,7 @@ public class BurofaxController {
 		model.put("idProcedimiento", idProcedimiento);
 		
 		return JSP_ALTA_DIRECCION;
-	}
-	
+	}	
 	
 	/**
 	 * Guarda los datos de la dirección

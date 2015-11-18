@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.dto;
+package es.pfsgroup.listadoPreProyectado.dto;
 
 import java.math.BigDecimal;
 import java.util.List;

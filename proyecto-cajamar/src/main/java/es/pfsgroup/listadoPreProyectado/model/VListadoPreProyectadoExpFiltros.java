@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.model;
+package es.pfsgroup.listadoPreProyectado.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

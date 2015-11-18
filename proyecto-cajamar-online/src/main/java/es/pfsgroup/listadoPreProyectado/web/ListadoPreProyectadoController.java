@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.web;
+package es.pfsgroup.listadoPreProyectado.web;
 
 import java.io.File;
 import java.text.ParseException;
@@ -26,20 +26,19 @@ import es.capgemini.pfs.vencidos.model.DDTramosDiasVencidos;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.listadoPreProyectado.api.ListadoPreProyectadoApi;
+import es.pfsgroup.listadoPreProyectado.dto.ListadoPreProyectadoDTO;
+import es.pfsgroup.listadoPreProyectado.model.VListadoPreProyectadoCnt;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
-import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.api.ListadoPreProyectadoApi;
-import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.dto.ListadoPreProyectadoDTO;
-import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.model.VListadoPreProyectadoCnt;
-import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.model.VListadoPreProyectadoExp;
 
 @Controller
 public class ListadoPreProyectadoController {
 
-	static final String LISTADO_PREPROYECTADO = "plugin/expediente/listadoPreProyectado/listadoPreProyectado";
-	static final String LISTADO_PREPROYECTADO_EXP_JSON = "plugin/expediente/listadoPreProyectado/listadoPreProyectadoExpJSON";
-	static final String LISTADO_PREPROYECTADO_CNT_JSON = "plugin/expediente/listadoPreProyectado/listadoPreProyectadoCntJSON";
-	static final String LISTADO_PREPROYECTADO_JSP_DOWNLOAD_FILE="plugin/expediente/listadoPreProyectado/download";
+	static final String LISTADO_PREPROYECTADO = "plugin/cajamar/listadoPreProyectado/listadoPreProyectado";
+	static final String LISTADO_PREPROYECTADO_EXP_JSON = "plugin/cajamar/listadoPreProyectado/listadoPreProyectadoExpJSON";
+	static final String LISTADO_PREPROYECTADO_CNT_JSON = "plugin/cajamar/listadoPreProyectado/listadoPreProyectadoCntJSON";
+	static final String LISTADO_PREPROYECTADO_JSP_DOWNLOAD_FILE="plugin/cajamar/listadoPreProyectado/download";
 	
 	@Autowired
 	ListadoPreProyectadoApi listadoPreProyectado;

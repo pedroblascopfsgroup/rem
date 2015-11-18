@@ -30,7 +30,7 @@
 		,triggerAction:'all'
 		,editable: false
 		,emptyText:'---'
-		,fieldLabel:'<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales.estadoGestion" text="**Estado gestión"/>'
+		,fieldLabel:'<s:message code="plugin.cajamar.listadoPreProyectado.datosGenerales.estadoGestion" text="**Estado gestión"/>'
 	});
 	
 	//Combo Tipo persona
@@ -50,14 +50,14 @@
 		,style:'margin:0px'
 		,triggerAction:'all'
 		,editable: false
-		,fieldLabel:'<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales.tipoPersona" text="**Tipo Persona"/>'
+		,fieldLabel:'<s:message code="plugin.cajamar.listadoPreProyectado.datosGenerales.tipoPersona" text="**Tipo Persona"/>'
 	});
 	
 	// Field riesgo total
-	var mmRiesgoTotal = app.creaMinMaxMoneda('<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales.riesgoTotal" text="**Riesgo Total" />', 'riesgo',{width : 80, labelWidth:105});
+	var mmRiesgoTotal = app.creaMinMaxMoneda('<s:message code="plugin.cajamar.listadoPreProyectado.datosGenerales.riesgoTotal" text="**Riesgo Total" />', 'riesgo',{width : 80, labelWidth:105});
 	
 	// Field deuda irregular
-	var mmDeudaIrregular = app.creaMinMaxMoneda('<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales.deudaIrregular" text="**Deuda Irregular" />', 'deuda',{width : 80, labelWidth:105});
+	var mmDeudaIrregular = app.creaMinMaxMoneda('<s:message code="plugin.cajamar.listadoPreProyectado.datosGenerales.deudaIrregular" text="**Deuda Irregular" />', 'deuda',{width : 80, labelWidth:105});
 	mmDeudaIrregular.min.setMinValue(0.01);
 	
 	//Combo Agrupar por
@@ -79,7 +79,7 @@
 		,triggerAction:'all'
 		,editable: false
 		,value:optionsAgruparPorStore.getAt(0).get('codigo')
-		,fieldLabel:'<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales.agruparPor" text="**Agrupar por"/>'
+		,fieldLabel:'<s:message code="plugin.cajamar.listadoPreProyectado.datosGenerales.agruparPor" text="**Agrupar por"/>'
 	});
 	
 	
@@ -88,12 +88,12 @@
 	
 	//Doble sel tramo
 	var dobleSelTramo = app.creaDblSelect(tramos
-                              ,'<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales.tramo" text="**Tramo" />'
+                              ,'<s:message code="plugin.cajamar.listadoPreProyectado.datosGenerales.tramo" text="**Tramo" />'
                               ,{<app:test id="dobleSelTramo" />});
                               
     //Doble sel propuesta
 	var dobleSelPropuesta = app.creaDblSelect(propuestas
-                              ,'<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales.propuesta" text="**Propuesta" />'
+                              ,'<s:message code="plugin.cajamar.listadoPreProyectado.datosGenerales.propuesta" text="**Propuesta" />'
                               ,{
                						width:250
            						},{<app:test id="dobleSelPropuesta" />} );	
@@ -103,7 +103,7 @@
 
 // codigo expediente
 	var txtCodExpediente = new Ext.form.NumberField({
-		fieldLabel:'<s:message code="plugin.mejoras.listadoPreProyectado.expediente.codExpediente" text="**Codigo Expediente" />'
+		fieldLabel:'<s:message code="plugin.cajamar.listadoPreProyectado.expediente.codExpediente" text="**Codigo Expediente" />'
 		,enableKeyEvents: true
 		,allowDecimals: false
 		,allowNegative: false
@@ -117,7 +117,7 @@
 	
  	var nivelesExp = <app:dict value="${nivelesExp}" blankElement="true" blankElementValue="" blankElementText="---" />; 
 	
-	var comboJerarquia = app.creaCombo({triggerAction: 'all', data:nivelesExp, value:nivelesExp.diccionario[0].codigo, name: 'nivelesExp',fieldLabel:'<s:message code="plugin.mejoras.listadoPreProyectado.expediente.jerarquia" text="**Jerarquía"/>' })
+	var comboJerarquia = app.creaCombo({triggerAction: 'all', data:nivelesExp, value:nivelesExp.diccionario[0].codigo, name: 'nivelesExp',fieldLabel:'<s:message code="plugin.cajamar.listadoPreProyectado.expediente.jerarquia" text="**Jerarquía"/>' })
 	
 	
 	
@@ -159,7 +159,7 @@
 	});
 	
 	var dobleSelCentro = app.creaDblSelect(centro
-                              ,'<s:message code="plugin.mejoras.listadoPreProyectado.expediente.centros" text="**Centro" />'
+                              ,'<s:message code="plugin.cajamar.listadoPreProyectado.expediente.centros" text="**Centro" />'
                               ,{store:optionsCentrosStore, /*funcionReset:recargarComboCentrosExp,*/ width:160});	
 	
 	
@@ -176,7 +176,7 @@
            	                              
 	//Doble sel fase
 	var dobleSelFase = app.creaDblSelect(fases
-                              ,'<s:message code="plugin.mejoras.listadoPreProyectado.expediente.fase" text="**Fase" />'
+                              ,'<s:message code="plugin.cajamar.listadoPreProyectado.expediente.fase" text="**Fase" />'
 						,{
                				width:200
            					},{<app:test id="dobleSelFase" />});	
@@ -186,7 +186,7 @@
 	// codigo contrato
 	//var txtCodContrato = new Ext.form.NumberField({
 	var txtCodContrato = new Ext.form.TextField({
-		fieldLabel:'<s:message code="plugin.mejoras.listadoPreProyectado.contrato.codContrato" text="**Codigo Contrato" />'
+		fieldLabel:'<s:message code="plugin.cajamar.listadoPreProyectado.contrato.codContrato" text="**Codigo Contrato" />'
 		,enableKeyEvents: true
 		//,allowDecimals: false
 		//,allowNegative: false
@@ -198,7 +198,7 @@
 		
 	// Field fecha prevista regularizacion
 	<pfsforms:datefield name="filtroFechaDesde"
-		labelKey="plugin.mejoras.listadoPreProyectado.contrato.fechaPrevista" 
+		labelKey="plugin.cajamar.listadoPreProyectado.contrato.fechaPrevista" 
 		label="**Fecha prevista refularizacion" width="140"/>
 		
 	filtroFechaDesde.id='filtroFechaDesdeRecobroListaCarteras';		
@@ -233,7 +233,7 @@
 	
 	var jerarquia = <app:dict value="${niveles}" blankElement="true" blankElementValue="" blankElementText="---" />; 
 	
-	var comboJerarquiaContrato = app.creaCombo({triggerAction: 'all', data:jerarquia, value:jerarquia.diccionario[0].codigo, name: 'jerarquia',fieldLabel:'<s:message code="plugin.mejoras.listadoPreProyectado.contrato.jerarquia" text="**Jerarquía"/>' })
+	var comboJerarquiaContrato = app.creaCombo({triggerAction: 'all', data:jerarquia, value:jerarquia.diccionario[0].codigo, name: 'jerarquia',fieldLabel:'<s:message code="plugin.cajamar.listadoPreProyectado.contrato.jerarquia" text="**Jerarquía"/>' })
 	
 	var centros = <app:dict value="${zonas}" />;
 	
@@ -270,7 +270,7 @@
 	});
 	
 	var dobleSelCentroContrato = app.creaDblSelect(centros
-                              ,'<s:message code="plugin.mejoras.listadoPreProyectado.contrato.centros" text="**Centro" />'
+                              ,'<s:message code="plugin.cajamar.listadoPreProyectado.contrato.centros" text="**Centro" />'
                               ,{store:optionsCentrosContratoStore, /*funcionReset:recargarComboCentros,*/ width:160});	
     
     
@@ -284,7 +284,7 @@
 	
 	 //filtro Datos Generales
 	var filtrosTabDatosGenerales = new Ext.Panel({
-		title:'<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales" text="**Datos del expediente" />'
+		title:'<s:message code="plugin.cajamar.listadoPreProyectado.datosGenerales" text="**Datos del expediente" />'
 		,autoHeight:true
 		,bodyStyle:'padding: 10px'
 		,layout:'table'
@@ -306,7 +306,7 @@
 	
 	//filtro Expediente
 	var filtrosTabExpediente = new Ext.Panel({
-		title:'<s:message code="plugin.mejoras.listadoPreProyectado.expediente" text="**Expediente" />'
+		title:'<s:message code="plugin.cajamar.listadoPreProyectado.expediente" text="**Expediente" />'
 		,autoHeight:true
 		,bodyStyle:'padding: 10px'
 		,layout:'table'
@@ -329,7 +329,7 @@
 	//Filtro Contrato
 
 	var filtrosTabContrato = new Ext.Panel({
-		title:'<s:message code="plugin.mejoras.listadoPreProyectado.contrato" text="**Contrato" />'
+		title:'<s:message code="plugin.cajamar.listadoPreProyectado.contrato" text="**Contrato" />'
 		,autoWidth:true
 		,autoHeight:true
 		,bodyStyle:'padding: 10px'

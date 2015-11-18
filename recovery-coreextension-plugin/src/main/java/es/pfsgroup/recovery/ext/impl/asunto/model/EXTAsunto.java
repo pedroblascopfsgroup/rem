@@ -193,10 +193,10 @@ public class EXTAsunto extends Asunto {
 
 	public GestorDespacho getGestor() {
 		GestorDespacho gd = getGestorPorTipo();
-		if (gd == null) {
-			logger.warn("EL ASUNTO " + this.getId()
-					+ " NO TIENE GESTOR ASOCIADO");
-		}
+//		if (gd == null) {
+//			logger.warn("EL ASUNTO " + this.getId()
+//					+ " NO TIENE GESTOR ASOCIADO");
+//		}
 		return gd;
 
 		// return super.getGestor();
@@ -224,10 +224,10 @@ public class EXTAsunto extends Asunto {
 
 	private GestorDespacho getGestorPorTipo() {
 		GestorDespacho gd = getSupervisorPorTipo();
-		if (gd == null) {
-			logger.warn("EL ASUNTO " + this.getId()
-					+ " NO TIENE SUPERVISOR ASOCIADO");
-		}
+//		if (gd == null) {
+//			logger.warn("EL ASUNTO " + this.getId()
+//					+ " NO TIENE SUPERVISOR ASOCIADO");
+//		}
 
 		return gd;
 	}

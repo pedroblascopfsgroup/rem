@@ -17,6 +17,11 @@
 	<bean p:entity="tabs.asunto.fast" p:name="historicoAsunto" p:order="2100"
 		p:fileName="/WEB-INF/jsp/plugin/mejoras/asuntos/tabs/tabHistoricoAsunto.jsp"
 		p:priority="2" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	<bean p:entity="tabs.contrato.fast" p:name="otrosDatos" p:order="1000"
+		p:fileName="/WEB-INF/jsp/plugin/cajamar/riesgoOperacional/otrosDatos.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="TAB_CONTRATO_OTROS"/>
 	
     <bean p:entity="menu" 
     	p:name="busquedas/preProyectado" p:order="150" 

@@ -22,8 +22,34 @@
 		<property name="generarArchivoBurofax">
 			<value>false</value>
 		</property>
+		
+		<property name="variablesBurofax">
+			<list>
+				<value>bienesEnt</value>
+				<value>TITULAR_ORDEN_MENOR_CONTRATO</value>
+				<value>NUM_CUENTA_ANTERIOR</value>
+				<value>TOTAL_LIQUIDACION</value>
+				<value>FECHA_CIERRE_LIQUIDACION</value>
+				<value>MOV_FECHA_POS_VIVA_VENCIDA</value>
+				<value>CODIGO_DE_CONTRATO_DE_17_DIGITOS</value>
+				<value>totalLiq</value>
+				<value>fechaLiquidacion</value>
+				<value>entidadOrigen</value>
+				<value>tipoIntervencion</value>
+				<value>fechaPosicionVencida</value>
+				<value>numeroContrato</value>
+				<value>origenContrato</value>
+				<value>domicilio</value>
+				<value>nombreFichero</value>
+				<value>apellido2</value>
+				<value>apellido1</value>
+				<value>nombre</value>
+			</list>
+		</property>
+		
 	</bean>  
 	
-		<!-- Implementaciones por defecto-->
+	<!-- Implementaciones por defecto-->
 	<bean id="precontenciosoProjectContext" parent="precontenciosoProjectContextDefault"/>
+	
 </beans>	

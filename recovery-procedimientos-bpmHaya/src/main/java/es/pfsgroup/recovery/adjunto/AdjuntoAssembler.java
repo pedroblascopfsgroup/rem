@@ -28,7 +28,7 @@ public class AdjuntoAssembler {
 	private static GenericABMDao genericDao;
 	
 
-	public static List<ExtAdjuntoGenericoDto> ListAdjuntoGridDtoTOListExtAdjuntoGenericoDto(List<AdjuntoGridDto> listDto){
+	public static List<ExtAdjuntoGenericoDto> listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(List<AdjuntoGridDto> listDto){
 		   
 		List<ExtAdjuntoGenericoDto> adjuntosMapeados = new ArrayList<ExtAdjuntoGenericoDto>();
 
@@ -87,7 +87,7 @@ public class AdjuntoAssembler {
 		
 	}
 	
-	public static List<ExtAdjuntoGenericoDto> ListContratoToListExtAdjuntoGenericoDto(List<Contrato> contratos){
+	public static List<ExtAdjuntoGenericoDto> listContratoToListExtAdjuntoGenericoDto(List<Contrato> contratos){
 		
 		List<ExtAdjuntoGenericoDto> adjuntosMapeados = new ArrayList<ExtAdjuntoGenericoDto>();
 		
@@ -121,7 +121,7 @@ public class AdjuntoAssembler {
 	}
 	
 	
-	public static List<ExtAdjuntoGenericoDto> ListPersonaToListExtAdjuntoGenericoDto(List<Persona> personas){
+	public static List<ExtAdjuntoGenericoDto> listPersonaToListExtAdjuntoGenericoDto(List<Persona> personas){
 		
 		List<ExtAdjuntoGenericoDto> adjuntosMapeados = new ArrayList<ExtAdjuntoGenericoDto>();
 		
@@ -155,7 +155,7 @@ public class AdjuntoAssembler {
 	}
 	
 	
-	public static List<ExtAdjuntoGenericoDto> ListExpedientesToListExtAdjuntoGenericoDto(List<Expediente> expedientes){
+	public static List<ExtAdjuntoGenericoDto> listExpedientesToListExtAdjuntoGenericoDto(List<Expediente> expedientes){
 		
 		List<ExtAdjuntoGenericoDto> adjuntosMapeados = new ArrayList<ExtAdjuntoGenericoDto>();
 		
@@ -189,7 +189,7 @@ public class AdjuntoAssembler {
 	}
 
 
-	public static List<AdjuntoDto> ListAdjuntoGridDtoTOListAdjuntoDto(List<AdjuntoGridDto> listDto, final Boolean borrarOtrosUsu){
+	public static List<AdjuntoDto> listAdjuntoGridDtoTOListAdjuntoDto(List<AdjuntoGridDto> listDto, final Boolean borrarOtrosUsu){
 		
 		
 		List<AdjuntoDto> adjuntosMapeados = new ArrayList<AdjuntoDto>();

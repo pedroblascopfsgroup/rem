@@ -229,7 +229,16 @@
 			<artifactId>pfs-rec-core</artifactId>
 			<type>jar</type>
 		</dependency>
-
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-precontencioso-plugin</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 		<!-- Dependencias para test -->
 		<dependency>
 			<groupId>junit</groupId>

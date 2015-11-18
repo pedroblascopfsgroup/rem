@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.precontencioso;
 
+import java.util.List;
+
 public class PrecontenciosoProjectContextImpl implements PrecontenciosoProjectContext {
 	
 	public static final String RECOVERY_HAYA = "HAYA";
@@ -9,6 +11,7 @@ public class PrecontenciosoProjectContextImpl implements PrecontenciosoProjectCo
 	private String codigoFaseComun;
 	private String recovery;
 	private boolean generarArchivoBurofax;
+	private List<String> variablesBurofax;
 
 	@Override
 	public String getCodigoFaseComun() {
@@ -34,6 +37,15 @@ public class PrecontenciosoProjectContextImpl implements PrecontenciosoProjectCo
 
 	public void setRecovery(String recovery) {
 		this.recovery = recovery;
+	}
+
+	@Override
+	public List<String> getVariablesBurofax() {
+		return variablesBurofax;
+	}
+
+	public void setVariablesBurofax(List<String> variablesBurofax) {
+		this.variablesBurofax = variablesBurofax;
 	}
 	
 }

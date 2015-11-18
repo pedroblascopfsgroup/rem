@@ -22,10 +22,12 @@ public interface HayaProjectContext {
 	
 	public String getCodigoTareaDemandaOrdinario();
 	
-	public String  getFechaDemandaHipotecario();
+	public String getFechaDemandaHipotecario();
 	
-	public String  getFechaDemandaMonitorio();
+	public String getFechaDemandaMonitorio();
 	
-	public String  getFechaDemandaOrdinario();
+	public String getFechaDemandaOrdinario();
+
+	public String getTareaInicioConcurso();
 
 }

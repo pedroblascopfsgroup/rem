@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -140,6 +141,14 @@ public class MEJDecisionProcedimientoManager extends
 	@Autowired
 	ProcedimientoDerivadoDao procedimientoDerivadoDao; 
 
+	@Autowired(required=false)
+	@Qualifier(AccionTomaDecision.ACCION_TRAS_PARALIZAR)
+	private List<AccionTomaDecision> accionesAdicionalesTrasParalizar;
+	
+	@Autowired(required=false)
+	@Qualifier(AccionTomaDecision.ACCION_TRAS_FINALIZAR)
+	private List<AccionTomaDecision> accionesAdicionalesTrasFinalizar;
+    
 	@BusinessOperation(overrides = ExternaBusinessOperation.BO_DEC_PRC_MGR_RECHAZAR_PROPUESTA)
 	@Transactional(readOnly = false)
 	@Override
@@ -745,7 +754,7 @@ public class MEJDecisionProcedimientoManager extends
 		// Verificar si se da por finalizado el procedimiento origen
 		if (configuradorPropuesta.isFinalizarProcedimiento() && decision.getCausaDecisionFinalizar() != null && decision.getFinalizada()) {
 			logger.info("Finalizando origen ...");
-			finalizarProcedimiento(procedimiento);
+			finalizarProcedimiento(procedimiento, decision);
 	    }
 			
 		if (configuradorPropuesta.isParalizarProcedimiento() && decision.getCausaDecisionParalizar() != null  && decision.getParalizada()) {
@@ -756,7 +765,7 @@ public class MEJDecisionProcedimientoManager extends
 				jbpmUtil.aplazarProcesosBPM(idProcessBPM, decision.getFechaParalizacion());
 			}
 			
-			paralizarProcedimiento(procedimiento);
+			paralizarProcedimiento(procedimiento, decision);
 		}
 		
 		if(configuradorPropuesta.isAceptarDecision()) {
@@ -815,16 +824,17 @@ public class MEJDecisionProcedimientoManager extends
 		executor.execute(ExternaBusinessOperation.BO_ASU_MGR_ACTUALIZA_ESTADO_ASUNTO, procedimiento.getAsunto().getId());
 	}
 
-	public void paralizarProcedimiento(Procedimiento procedimiento) {
+	public void paralizarProcedimiento(Procedimiento procedimiento, DecisionProcedimiento dp) {
 		// PARALIZADO: Paralizar* durante el periodo especificado en la
 		// decisión el procedimiento origen.
 		MEJProcedimiento mejProcedimiento = MEJProcedimiento.instanceOf(procedimiento); 
 		mejProcedimiento.setEstaParalizado(true);
 		mejProcedimiento.setFechaUltimaParalizacion(new Date());
-		genericDao.save(MEJProcedimiento.class, mejProcedimiento);		
+		genericDao.save(MEJProcedimiento.class, mejProcedimiento);
+		this.ejecutarAccionesAdicionales(dp, procedimiento, this.accionesAdicionalesTrasParalizar);
 	}
 
-	public void finalizarProcedimiento(Procedimiento procedimiento) {
+	public void finalizarProcedimiento(Procedimiento procedimiento, DecisionProcedimiento dp) {
 		try {
 			DDEstadoProcedimiento estadoFin = (DDEstadoProcedimiento)diccionarioApi
 					.dameValorDiccionarioByCod(DDEstadoProcedimiento.class, DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO); 
@@ -843,6 +853,8 @@ public class MEJDecisionProcedimientoManager extends
 					}
 				}
 			}
+			
+			this.ejecutarAccionesAdicionales(dp, procedimiento, this.accionesAdicionalesTrasFinalizar);
 
         } catch (Exception e) {
             logger.error(String.format("Error al finalizar el procedimiento %d", procedimiento.getId()), e);
@@ -1073,6 +1085,15 @@ public class MEJDecisionProcedimientoManager extends
 				
 				dtoProcedimientoDerivado.setGuid(procedimientoDerivado.getGuid());
 			}
+		}
+	}
+	
+	private void ejecutarAccionesAdicionales(DecisionProcedimiento dp, Procedimiento prc, List<AccionTomaDecision> acciones) {
+		if (acciones==null) {
+			return;
+		}
+		for (AccionTomaDecision accion : acciones) {
+			accion.ejecutar(dp, prc);
 		}
 	}
 	

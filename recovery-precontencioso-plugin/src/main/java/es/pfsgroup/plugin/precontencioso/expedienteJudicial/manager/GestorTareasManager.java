@@ -36,8 +36,6 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCO
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.GestorTareasAccionPCODto;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.GestorTareasLineaConfigPCO;
-import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.HistoricoEstadoProcedimientoPCO;
-import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.recovery.api.PlazoTareaExternaPlazaApi;
 import es.pfsgroup.recovery.api.TareaNotificacionApi;
 import es.pfsgroup.recovery.api.TareaProcedimientoApi;
@@ -293,24 +291,6 @@ public class GestorTareasManager implements GestorTareasApi {
 
 	}
 	
-	private String obtenerEstadoProcPco(long idProcedimiento) {
-
-		String estadoActual = "";
-		
-		//ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
-		ProcedimientoPCO procedimientoPco = genericDao.get(ProcedimientoPCO.class, 
-				genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProcedimiento));
-		
-		if (!Checks.esNulo(procedimientoPco)) {
-			HistoricoEstadoProcedimientoPCO historico = procedimientoPco.getEstadoActualByHistorico();
-			if (!Checks.esNulo(historico) && !Checks.esNulo(historico.getEstadoPreparacion())) {
-				estadoActual = historico.getEstadoPreparacion().getCodigo();
-			}
-		}
-		return estadoActual;
-
-	}
-
 	@Override
 	public boolean getEsTareaPrecontenciosoEspecial(Long tareaId) {
 
@@ -335,6 +315,7 @@ public class GestorTareasManager implements GestorTareasApi {
 			}
 			
 		}
+
 		return resultado;
 		
 	}

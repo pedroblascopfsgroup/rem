@@ -131,6 +131,7 @@
 						<value>822</value>
 						<value>823</value>
 						<value>824</value>
+						<value>PCO_DPREDOC</value>
 						
 						<!-- HRE-BCC -->
 						<value>DGCONGE</value>
@@ -392,6 +393,9 @@
 		</property>
 		<property name="tareaAceptacionLitigios">
 			<value>H068</value>
+		</property>
+		<property name="tareaInicioConcurso">
+			<value>H009</value>
 		</property>
 	</bean>  
 	

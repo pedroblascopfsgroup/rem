@@ -502,7 +502,6 @@
 	};
 	
 	var groupRenderer=function(val){
-		debugger;
 		if(val==-1)
 			return '<s:message code="main.arbol_tareas.groups.sinvencimiento" text="**Sin vencimiento" />';
 		if(val==0)

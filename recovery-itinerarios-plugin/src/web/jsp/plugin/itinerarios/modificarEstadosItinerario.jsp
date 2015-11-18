@@ -22,14 +22,22 @@
 		
 	</pfs:defineRecordType>
 	
+	var estados = Ext.data.Record.create([
+		{name:'id',sortType:Ext.data.SortTypes.asInt}
+		,'estadoItinerario'
+		,'gestorPerfil'
+		,'supervisor'
+		,'plazo'
+	]);
+	
 	var estadosDS = page.getStore({
 		eventName : 'getData'
 		,flow : 'plugin/itinerarios/plugin.itienerarios.modificarEstadosItinerario' 
 		,reader: new Ext.data.JsonReader({
     		root : 'estadosItinerario'
-   	 	}, EstadosItiRT)
+   	 	}, estados)
 	});
-	
+
 	estadosDS.webflow();
 	
 	<%-- 	--%>

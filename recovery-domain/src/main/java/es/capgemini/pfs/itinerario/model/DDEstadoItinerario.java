@@ -68,6 +68,9 @@ public class DDEstadoItinerario implements Dictionary, Auditable {
 
     @Column(name = "DD_EST_DESCRIPCION_LARGA")
     private String descripcionLarga;
+    
+    @Column(name = "DD_EST_ORDEN")
+    private String orden;
 
     @ManyToOne
     @JoinColumn(name = "DD_EIN_ID")

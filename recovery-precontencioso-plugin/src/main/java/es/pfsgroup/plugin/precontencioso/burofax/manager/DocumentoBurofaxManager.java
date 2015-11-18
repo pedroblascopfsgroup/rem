@@ -371,7 +371,12 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		String aNombreDe = "";
 		String listaBienes = "";
 		
-		if(!Checks.esNulo(burofax.getContrato().getContratoAnterior())){
+		Contrato contrato = null;
+		try {
+			contrato = burofax.getContrato();
+		} catch (NullPointerException npe) {}
+			
+		if(!Checks.esNulo(contrato) && !Checks.esNulo(contrato.getContratoAnterior()) && !contrato.getContratoAnterior().equals("0")){
 			conCuentaAnterior = "ANTERIORMENTE IDENTIFICADO CON EL NUM. ${NUM_CUENTA_ANTERIOR}";
 		}
 		
@@ -390,7 +395,7 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		List<Bien> bienes = procedimientoManager.getBienesDeUnProcedimiento(burofax.getProcedimientoPCO().getProcedimiento().getId());
 		if(burofax.getTipoIntervencion().getCodigo().equals(DDTipoIntervencion.CODIGO_TITULAR_REGISTRAL) && bienes.size()>0){			
 			listaBienes += "<br />";
-			listaBienes += "[#list bienesEnt as bienEntidad]";
+			//listaBienes += "[#list bienesEnt as bienEntidad]";
 			listaBienes += "<br />";
 			for(Bien bien : bienes){
 				NMBBienEntidad nmbe = genericDao.get(NMBBien.class, genericDao.createFilter(FilterType.EQUALS, "id", bien.getId())).getBienEntidad();
@@ -398,7 +403,8 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 				listaBienes += "FINCA REGISTRAL NÚMERO ";
 				
 				if(!Checks.esNulo(nmbe) && !Checks.esNulo(nmbe.getNumFinca())){
-					listaBienes += "${bienEntidad.numFinca} ";
+					//listaBienes += "${bienEntidad.numFinca} ";
+					listaBienes += nmbe.getNumFinca() + " ";
 				}else{
 					listaBienes += "[ERROR - No existe valor] ";
 				}
@@ -406,7 +412,8 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 				listaBienes		+= "DEL REGISTRO DE LA PROPIEDAD NÚMERO ";
 				
 				if(!Checks.esNulo(nmbe) && !Checks.esNulo(nmbe.getNumRegistro())){
-					listaBienes += "${bienEntidad.numRegistro} ";
+					//listaBienes += "${bienEntidad.numRegistro} ";
+					listaBienes += " " + nmbe.getNumRegistro();
 				}else{
 					listaBienes += "[ERROR - No existe valor] ";
 				}
@@ -414,14 +421,15 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 				listaBienes += "DE ";
 				
 				if(!Checks.esNulo(nmbe) && !Checks.esNulo(nmbe.getPoblacion())){
-					listaBienes += "${bienEntidad.poblacion} ";
+					//listaBienes += "${bienEntidad.poblacion} ";
+					listaBienes += " " + nmbe.getPoblacion();
 				}else{
 					listaBienes += "[ERROR - No existe valor] ";
 				}
 				
 				listaBienes += "<br />";		
 			}
-			listaBienes += "[/#list]";
+			//listaBienes += "[/#list]";
 		}
 		
 		textoBuro = textoBuro.replace("#CON_CUENTA_ANTERIOR#", conCuentaAnterior);

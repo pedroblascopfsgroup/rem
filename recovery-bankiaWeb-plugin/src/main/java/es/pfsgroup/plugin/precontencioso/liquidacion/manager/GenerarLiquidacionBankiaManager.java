@@ -19,10 +19,12 @@ import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
+import es.capgemini.pfs.contrato.model.DDTipoIntervencion;
 import es.capgemini.pfs.parametrizacion.dao.ParametrizacionDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.GenerarLiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dao.DatosLiquidacionDao;
@@ -134,7 +136,11 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 
 		// Bienes
 		List<BienLiqVO> bienes = new ArrayList<BienLiqVO>(); 
-
+		
+		StringBuffer bienesConcatenados = new StringBuffer();
+		int size = liquidacion.getContrato().getBienes().size();
+		int i=0;
+		
 		for (Bien bien : liquidacion.getContrato().getBienes()) {
 			NMBBien nmbBien = (NMBBien) bien;
 
@@ -145,6 +151,7 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 			String numFinca = "";
 			if (infoRegistral != null && infoRegistral.getNumFinca() != null) {
 				numFinca = infoRegistral.getNumFinca();	
+				bienesConcatenados.append("FINCA " + numFinca + " ");
 			}
 
 			String nombreVia = "";
@@ -154,23 +161,31 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 
 			String numeroDomicilio = "";
 			if (localizacion != null && localizacion.getNumeroDomicilio() != null) {
-				numeroDomicilio = localizacion.getNumeroDomicilio();
+				numeroDomicilio = localizacion.getNumeroDomicilio();				
 			}
 
 			// Direccion
-			String direccion = nombreVia + numeroDomicilio;
+			String direccion = nombreVia + " " + numeroDomicilio + " ";
+			bienesConcatenados.append(direccion);
 
 			// Localidad
 			String localidad = "";
 			if (localizacion != null && localizacion.getLocalidad() != null && localizacion.getLocalidad().getDescripcion() != null) {
 				localidad = localizacion.getLocalidad().getDescripcion();
+				bienesConcatenados.append(localidad);
 			}
+			
+			i++;
+			if(i == size-1) bienesConcatenados.append(" y ");
+			else if(i<size) bienesConcatenados.append(", ");			
+			
 
 			BienLiqVO bienVo = new BienLiqVO(numFinca, direccion, localidad);
 			bienes.add(bienVo);
 		}
 
 		datosLiquidacion.put("BIENES", bienes);
+		datosLiquidacion.put("BIENES_CONCATENADOS", bienesConcatenados.toString());
 
 		if (!liquidacion.getContrato().getTitulares().isEmpty()) {
 			Persona titualPrincipal = liquidacion.getContrato().getTitulares().get(0);

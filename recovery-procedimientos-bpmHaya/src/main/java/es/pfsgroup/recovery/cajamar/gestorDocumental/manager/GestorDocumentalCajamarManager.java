@@ -190,15 +190,15 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	private String getParametroLimite(String tipoEntidad) {
 		String param = "";
 		if (DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE.equals(tipoEntidad)) {
-			param = Parametrizacion.LIMITE_FICHERO_EXPEDIENTE;
+			param = Parametrizacion.LIMITE_FICHERO_EXPEDIENTE_GESTOR_DOCUMENTAL;
 		} else if (DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE.equals(tipoEntidad)) {
-			param = Parametrizacion.LIMITE_FICHERO_PERSONA;
+			param = Parametrizacion.LIMITE_FICHERO_PERSONA_GESTOR_DOCUMENTAL;
 		} else if (DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO.equals(tipoEntidad)) {
-			param = Parametrizacion.LIMITE_FICHERO_CONTRATO;
+			param = Parametrizacion.LIMITE_FICHERO_CONTRATO_GESTOR_DOCUMENTAL;
 		} else if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidad)
 				|| DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO
 						.equals(tipoEntidad)) {
-			param = Parametrizacion.LIMITE_FICHERO_ASUNTO;
+			param = Parametrizacion.LIMITE_FICHERO_ASUNTO_GESTOR_DOCUMENTAL;
 		}
 		return param;
 	}

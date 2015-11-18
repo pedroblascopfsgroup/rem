@@ -8,6 +8,7 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.adjuntos.api.AdjuntoApi;
+import es.capgemini.pfs.adjuntos.manager.AdjuntoManager;
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDto;
 import es.capgemini.pfs.core.api.asunto.AdjuntoDto;
 import es.capgemini.pfs.core.api.asunto.EXTAdjuntoDto;
@@ -41,7 +42,7 @@ public class AdjuntoCajamarManager implements AdjuntoApi {
 	}
 
 	@Override
-	@BusinessOperation(overrides = BO_ADJ_UPLOAD_PERSONA_ASUNTO)
+	@BusinessOperation(overrides = AdjuntoManager.BO_ADJ_UPLOAD_PERSONA_ASUNTO)
 	public String upload(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
 			return AdjuntoAssembler.altaDocumento(Long.parseLong(uploadForm.getParameter("id")), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, null, uploadForm);
@@ -51,7 +52,7 @@ public class AdjuntoCajamarManager implements AdjuntoApi {
 	}
 
 	@Override
-	@BusinessOperation(overrides = BO_ADJ_UPLOAD_PERSONA_ASUNTO)
+	@BusinessOperation(overrides = AdjuntoManager.BO_ADJ_UPLOAD_PERSONA_ASUNTO)
 	public String uploadPersona(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
 			return AdjuntoAssembler.altaDocumento(Long.parseLong(uploadForm.getParameter("id")),DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, null, uploadForm);
@@ -61,7 +62,7 @@ public class AdjuntoCajamarManager implements AdjuntoApi {
 	}
 
 	@Override
-	@BusinessOperation(overrides = BO_ADJ_UPLOAD_EXPEDIENTE_ASUNTO)
+	@BusinessOperation(overrides = AdjuntoManager.BO_ADJ_UPLOAD_EXPEDIENTE_ASUNTO)
 	public String uploadExpediente(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
 			return AdjuntoAssembler.altaDocumento(Long.parseLong(uploadForm.getParameter("id")),DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null, uploadForm);
@@ -71,7 +72,7 @@ public class AdjuntoCajamarManager implements AdjuntoApi {
 	}
 
 	@Override
-	@BusinessOperation(overrides = BO_ADJ_UPLOAD_CONTRATO_ASUNTO)
+	@BusinessOperation(overrides = AdjuntoManager.BO_ADJ_UPLOAD_CONTRATO_ASUNTO)
 	public String uploadContrato(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
 			return AdjuntoAssembler.altaDocumento(Long.parseLong(uploadForm.getParameter("id")),DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, null, uploadForm);
@@ -111,25 +112,25 @@ public class AdjuntoCajamarManager implements AdjuntoApi {
 	}
 	
 	@Override
-	@BusinessOperation(overrides = BO_ADJ_BAJAR_ADJUNTO_ASUNTO)
+	@BusinessOperation(overrides = AdjuntoManager.BO_ADJ_BAJAR_ADJUNTO_ASUNTO)
 	public FileItem bajarAdjuntoAsunto(Long asuntoId, Long adjuntoId) {
 		return AdjuntoAssembler.recuperacionDocumento(adjuntoId);
 	}
 	
 	@Override
-	@BusinessOperation(overrides = BO_ADJ_BAJAR_ADJUNTO_EXPEDIENTE)
+	@BusinessOperation(overrides = AdjuntoManager.BO_ADJ_BAJAR_ADJUNTO_EXPEDIENTE)
 	public FileItem bajarAdjuntoExpediente(Long adjuntoId) {
 		return AdjuntoAssembler.recuperacionDocumento(adjuntoId);
 	}
 
 	@Override
-	@BusinessOperation(overrides = BO_ADJ_BAJAR_ADJUNTO_CONTRATO)
+	@BusinessOperation(overrides = AdjuntoManager.BO_ADJ_BAJAR_ADJUNTO_CONTRATO)
 	public FileItem bajarAdjuntoContrato(Long adjuntoId) {
 		return AdjuntoAssembler.recuperacionDocumento(adjuntoId);
 	}
 
 	@Override
-	@BusinessOperation(overrides = BO_ADJ_BAJAR_ADJUNTO_PERSONA)
+	@BusinessOperation(overrides = AdjuntoManager.BO_ADJ_BAJAR_ADJUNTO_PERSONA)
 	public FileItem bajarAdjuntoPersona(Long adjuntoId) {
 		return AdjuntoAssembler.recuperacionDocumento(adjuntoId);
 	}

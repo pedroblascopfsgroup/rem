@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,6 +76,13 @@ public class TerminoOperacionesManager implements TerminoOperacionesApi {
         if(!Checks.esNulo(terminoOperacionesDto.getDescripcionAcuerdo())){terminoOperaciones.setDescripcionAcuerdo(terminoOperacionesDto.getDescripcionAcuerdo());}
         if(!Checks.esNulo(terminoOperacionesDto.getVersion())){terminoOperaciones.setVersion(terminoOperacionesDto.getVersion());}
         if(!Checks.esNulo(terminoOperacionesDto.getAuditoria())){terminoOperaciones.setAuditoria(terminoOperacionesDto.getAuditoria());}
+        if(!Checks.esNulo(terminoOperacionesDto.getNumContratoDescuento())){terminoOperaciones.setNumContratoDescuento(terminoOperacionesDto.getNumContratoDescuento());}
+        if(!Checks.esNulo(terminoOperacionesDto.getFechaSolucionPrevista())){
+        	terminoOperaciones.setFechaSolucionPrevista(df.parse(terminoOperacionesDto.getFechaSolucionPrevista()));
+        }
+        if(!Checks.esNulo(terminoOperacionesDto.getNumeroContratoPtmoPromotor())){terminoOperaciones.setNumeroContratoPtmoPromotor(terminoOperacionesDto.getNumeroContratoPtmoPromotor());}
+        if(!Checks.esNulo(terminoOperacionesDto.getCodigoPersonaAfectada())){terminoOperaciones.setCodigoPersonaAfectada(terminoOperacionesDto.getCodigoPersonaAfectada());}
+        
         
         return terminoOperaciones;
 	}
@@ -474,7 +482,30 @@ public class TerminoOperacionesManager implements TerminoOperacionesApi {
 			map.put("valor",terminoOperaciones.getDescripcionAcuerdo());
     	}
     	
-
+    	if(nombreCampo.equals("numContratoDescuento")){
+    		map.put("nombre", "numContratoDescuento");
+    		map.put("valor", terminoOperaciones.getNumContratoDescuento());
+    	}
+    	
+		if(nombreCampo.equals("fechaSolucionPrevista")){
+			map.put("nombre","fechaSolucionPrevista");
+    		if (terminoOperaciones.getFechaSolucionPrevista()==null){
+    			map.put("valor", null);
+    		}
+    		else {
+    			map.put("valor",df.format(terminoOperaciones.getFechaSolucionPrevista()));
+    		}
+		}
+		
+		if(nombreCampo.equals("numeroContratoPtmoPromotor")){
+			map.put("nombre", "numeroContratoPtmoPromotor");
+    		map.put("valor", terminoOperaciones.getNumeroContratoPtmoPromotor());
+		}
+		
+		if(nombreCampo.equals("codigoPersonaAfectada")){
+			map.put("nombre", "codigoPersonaAfectada");
+    		map.put("valor", terminoOperaciones.getCodigoPersonaAfectada());
+		}
     	
     	return map;
     }

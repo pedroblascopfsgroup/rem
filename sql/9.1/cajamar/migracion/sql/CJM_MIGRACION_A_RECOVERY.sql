@@ -12,6 +12,14 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 Se incluyen procedimientos de tipo concursos.
+--##        0.3 Se adapta a SYS_GUID para las tablas PRC_PROCEDIMIENTOS
+--##                                                 ASU_ASUNTOS
+--##                                                 PRB_PRC_BIE
+--##                                                 CEX_CONTRATOS_EXPEDIENTES
+--##                                                 TAR_TAREAS_NOTIFICACIONES
+--##                                                 RCR_RECURSOS_PROCEDIMIENTOS
+--##                                                 SUB_SUBASTAS
+--##                                                 LOS_LOTE_SUBASTAS
 --##########################################
 --*/
 
@@ -1016,7 +1024,7 @@ BEGIN
                            , PER.PER_ID 
              FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_DEMANDADOS PRD 
                 LEFT JOIN '||V_ESQUEMA||'.PER_PERSONAS PER 
-                    ON ( PRD.CODIGO_ENTIDAD||PRD.CODIGO_PERSONA = PER.PER_COD_CLIENTE_ENTIDAD)';
+                    ON ( PRD.CODIGO_PERSONA = PER.PER_COD_CLIENTE_ENTIDAD)';
     EXECUTE IMMEDIATE v_sql;
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' MIG_TMP_PER_ID Creada. '||SQL%ROWCOUNT||' Filas.');
     
@@ -1054,7 +1062,7 @@ BEGIN
                               )
                        SELECT '||V_ESQUEMA||'.S_CLI_CLIENTES.NEXTVAL as CLI_ID 
                                 , PER_ID
-                                , ARQ_ID --> GMN: ARQUETIPO asignado por defecto (el  mínimo ya que vale cualquiera BORRADO = 1)
+                                , ARQ_ID --> GMN: ARQUETIPO asignado por defecto 
                                 , 1 as DD_EST_ID
                                 , PER_FECHA_EXTRACCION as CLI_FECHA_EST_ID
                                 , null as CLI_PROCESS_BPM
@@ -1079,7 +1087,7 @@ BEGIN
                                              , ARQ.ARQ_ID
                                FROM '||V_ESQUEMA||'.MIG_TMP_PER_ID TPI
                                   , '||V_ESQUEMA||'.PER_PERSONAS PER
-                                  , (SELECT MIN(ARQ_ID) AS ARQ_ID FROM ARQ_ARQUETIPOS) ARQ
+                                  , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Resto''  AND BORRADO = 0) ARQ
                                WHERE TPI.PER_ID IS NOT NULL
                                  AND TPI.PER_ID = PER.PER_ID
                               )'
@@ -1197,7 +1205,7 @@ BEGIN
     	  SELECT CD_CONCURSO CD_PROCEDIMIENTO, NULL CD_EXPEDIENTE_NUSE , NULL NUMERO_EXP_NUSE FROM '||V_ESQUEMA||'.MIG_CONCURSOS_CABECERA
     	) PRC
     	, (SELECT DISTINCT CD_PROCEDIMIENTO FROM MIG_MAESTRA_HITOS) MAE
-        , (SELECT MIN(ARQ_ID) AS ARQ_ID FROM CM01.ARQ_ARQUETIPOS) ARQ             	
+        , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Resto''  AND BORRADO = 0) ARQ             	
      WHERE MAE.CD_PROCEDIMIENTO = PRC.CD_PROCEDIMIENTO');
 
     -- 23.316 filas insertadas. <-- 1 CD_PROCEDIMIENTO = 1 EXPEDIENTE. Las mismas que el count distinct cd_procedimiento de mig_maestra_hitos

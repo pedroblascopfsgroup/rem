@@ -15,7 +15,6 @@ import es.capgemini.pfs.adjuntos.api.AdjuntoApi;
 import es.capgemini.pfs.adjuntos.manager.AdjuntoManager;
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDto;
 import es.capgemini.pfs.asunto.model.Asunto;
-import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.asunto.AdjuntoDto;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
@@ -36,8 +35,6 @@ import es.pfsgroup.gestorDocumental.api.GestorDocumentalApi;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.recovery.adjunto.AdjuntoAssembler;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
-import es.pfsgroup.recovery.ext.impl.expediente.model.EXTExpediente;
-import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 import es.pfsgroup.recovery.gestordocumental.dto.AdjuntoGridDto;
 
 @Component("adjuntoManagerHayaImpl")
@@ -128,11 +125,9 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	
 			if(!Checks.esNulo(asunto.getExpediente())){
 				
-				EXTExpediente expediente = genericDao.get(EXTExpediente.class, genericDao.createFilter(FilterType.EQUALS, "id", asunto.getExpediente().getId()));
-				
-				List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(expediente.getGuid(), DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null);
+				List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(asunto.getExpediente().getGuid(), DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null);
 				if(Checks.esNulo(listDto) || Checks.estaVacio(listDto)){
-					adjuntos.add(adjuntoAssembler.expedienteToExtAdjuntoGenericoDto(expediente));
+					adjuntos.add(adjuntoAssembler.expedienteToExtAdjuntoGenericoDto(asunto.getExpediente()));
 				}else{
 					adjuntos.addAll(adjuntoAssembler.listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(listDto));
 				}
@@ -217,7 +212,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	public List<? extends AdjuntoDto> getAdjuntosConBorradoExp(Long id) {
 		if(esEntidadCajamar()){
 			
-			EXTExpediente expediente = genericDao.get(EXTExpediente.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
+			Expediente expediente = genericDao.get(Expediente.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
 			
 			final List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(expediente.getGuid(), DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null);
 			final Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();

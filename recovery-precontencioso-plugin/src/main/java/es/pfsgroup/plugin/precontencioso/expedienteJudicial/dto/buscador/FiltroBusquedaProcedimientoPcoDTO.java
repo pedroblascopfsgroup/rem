@@ -86,7 +86,6 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 	private String liqDiasGestion;
 
 	// Burofax
-	private String burNotificado;
 	private String burResultadoEnvio;
 	private String burFechaSolicitudDesde;
 	private String burFechaSolicitudHasta;
@@ -184,8 +183,7 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 	 */
 	public Boolean filtroBurofaxInformado() {
 		Boolean filtroBurofaxInformado = Boolean.valueOf(
-			!StringUtils.emtpyString(getBurNotificado())
-			|| !StringUtils.emtpyString(getBurResultadoEnvio())
+			!StringUtils.emtpyString(getBurResultadoEnvio())
 			|| !StringUtils.emtpyString(getBurFechaSolicitudDesde())
 			|| !StringUtils.emtpyString(getBurFechaSolicitudHasta())
 			|| !StringUtils.emtpyString(getBurFechaAcuseDesde())
@@ -522,12 +520,6 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 	}
 	public void setLiqDiasGestion(String liqDiasGestion) {
 		this.liqDiasGestion = liqDiasGestion;
-	}
-	public String getBurNotificado() {
-		return burNotificado;
-	}
-	public void setBurNotificado(String burNotificado) {
-		this.burNotificado = burNotificado;
 	}
 	public String getBurResultadoEnvio() {
 		return burResultadoEnvio;

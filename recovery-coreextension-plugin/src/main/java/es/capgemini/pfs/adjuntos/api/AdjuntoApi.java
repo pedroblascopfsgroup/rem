@@ -9,7 +9,6 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDto;
 import es.capgemini.pfs.core.api.asunto.AdjuntoDto;
 import es.capgemini.pfs.core.api.asunto.EXTAdjuntoDto;
-import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 
 public interface AdjuntoApi {
 

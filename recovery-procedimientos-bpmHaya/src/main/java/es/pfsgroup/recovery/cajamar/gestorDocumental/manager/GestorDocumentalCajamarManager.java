@@ -109,11 +109,11 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_LISTADO_DOCUMENTO)
 	@Transactional(readOnly = false)
-	public List<AdjuntoGridDto> listadoDocumentos(Long idEntidad, String tipoEntidadGrid, String tipoDocumento) {
+	public List<AdjuntoGridDto> listadoDocumentos(String claveAsociacion, String tipoEntidadGrid, String tipoDocumento) {
 
 		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
 		GestorDocumentalInputDto inputDto = rellenaInputDto(
-				idEntidad.toString(), LISTADO_GESTOR_DOC, tipoDocumento,
+				claveAsociacion, LISTADO_GESTOR_DOC, tipoDocumento,
 				tipoEntidadGrid, null);
 		outputDto = gestorDocumentalWSApi.ejecutar(inputDto);
 		return AdjuntoGridAssembler.outputDtoToAdjuntoGridDto(outputDto);
@@ -236,7 +236,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 				persona.addAdjunto(uploadForm.getFileItem());
 				personaDao.save(persona);
 			}
-			claveRel = persona.getDocId();
+			claveRel = persona.getCodClienteEntidad().toString();
 		} else if (DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO.equals(tipoEntidad)) {
 			Contrato contrato = contratoDao.get(idEntidad);
 			if(uploadForm != null) {

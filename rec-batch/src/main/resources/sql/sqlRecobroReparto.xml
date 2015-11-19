@@ -123,7 +123,7 @@
                 DBMS_OUTPUT.PUT_LINE('VRE total de la cartera: '||TO_CHAR(V_VRE_CART));
 
                 -- Vaciamos la tabla temporal
-                EXECUTE IMMEDIATE 'TRUNCATE TABLE TMP_ARA_SUBCARTERA_REPARTO_AUX';
+                OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_ARA_SUBCARTERA_REPARTO_AUX');
 
                   -- Insertamos en la tabla temporal las subcarteras
                 EXECUTE IMMEDIATE
@@ -340,7 +340,8 @@
                 DBMS_OUTPUT.PUT_LINE('VRE total de la subcartera: '||TO_CHAR(V_VRE_SCA));
 
                 -- Vaciamos la tabla temporal de la configuracion de las agencias
-                EXECUTE IMMEDIATE 'TRUNCATE TABLE TMP_ARA_AGENCIA_REPARTO_AUX';
+                OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_ARA_AGENCIA_REPARTO_AUX');
+
 
                   -- Insertamos en la tabla temporal las agencias de reparto estático
              EXECUTE IMMEDIATE

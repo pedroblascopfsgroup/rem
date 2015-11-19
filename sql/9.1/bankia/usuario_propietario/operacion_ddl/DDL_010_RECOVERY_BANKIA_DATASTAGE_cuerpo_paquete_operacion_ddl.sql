@@ -3,53 +3,54 @@ create or replace package body OPERACION_DDL as
 -- Autor: Diego Pérez, PFS Group
 -- Fecha creacion: Agosto 2015
 -- Responsable ultima modificacion:
--- Fecha ?ltima modificaci?n: 
--- Motivos del cambio: 
+-- Fecha ?ltima modificaci?n:
+-- Motivos del cambio:
 -- Cliente: Recovery BI Bankia
 --
 -- Descripcion: Cabecera Paquete de Operaciones DDL
 -- ===============================================================================================
 /*
-    execute immediate '    
+    execute immediate '
           CREATE TABLE LOG_OPERACION_DLL
-          ( FILA_ID Number not null,
-            FECHA TIMESTAMP not null,
-            NUM_SID number not null,
-            TIPO VARCHAR2(100),
-            OPERACION VARCHAR2(100),
-            ESQUEMA VARCHAR2(100),
-            OBJETO VARCHAR2(100),
-            PARAMETROS VARCHAR2(254),
-            ESTADO VARCHAR(254)
-           )'; 
+          ( FILA_ID NUMBER NOT NULL ENABLE,
+			FECHA_INICIO TIMESTAMP (6) NOT NULL ENABLE,
+			FECHA_FIN TIMESTAMP (6) NOT NULL ENABLE,
+			NUM_SID NUMBER NOT NULL ENABLE,
+			TIPO VARCHAR2(100 BYTE),
+			OPERACION VARCHAR2(100 BYTE),
+			ESQUEMA VARCHAR2(100 BYTE),
+			OBJETO VARCHAR2(100 BYTE),
+			PARAMETROS VARCHAR2(254 BYTE),
+			ESTADO VARCHAR2(254 BYTE)
+           )';
     commit;
-    
-    execute immediate '   
+
+    execute immediate '
           CREATE SEQUENCE INCR_LOG_OPERACION_DLL
             MINVALUE 1
-            INCREMENT BY 1 
+            INCREMENT BY 1
             START WITH 1
-            nomaxvalue';    
-    commit;  
+            nomaxvalue';
+    commit;
 */
 
   --** Procedimiento para insercion en log
   PROCEDURE  INSERTAR_LOG_OPERACION_DLL (TIPO IN VARCHAR2, OPERACION IN VARCHAR2, ESQUEMA IN VARCHAR2, OBJETO IN VARCHAR2, PARAMETROS IN VARCHAR2, ESTADO IN VARCHAR2, INICIO IN TIMESTAMP) AS
-  
-    V_SID NUMBER;    
+
+    V_SID NUMBER;
     V_PARAMETROS varchar2(250);
     --V_ESQUEMA VARCHAR2(250);
-    
+
   BEGIN
     --select sys_context('USERENV','CURRENT_USER') into V_ESQUEMA from dual;
     select sys_context('USERENV','SID') INTO V_SID from dual;
-    
+
     V_PARAMETROS := substr(PARAMETROS, 1, 250);
-    
+
     insert into LOG_OPERACION_DLL (FILA_ID, FECHA_INICIO, FECHA_FIN, NUM_SID, TIPO, OPERACION, ESQUEMA, OBJETO, PARAMETROS, ESTADO)
     values (INCR_LOG_OPERACION_DLL.nextval, INICIO, systimestamp,  V_SID, substr(TIPO, 1, 100), substr(OPERACION, 1, 100), substr(ESQUEMA, 1, 100), substr(OBJETO, 1, 100), V_PARAMETROS, substr(ESTADO, 1, 250));
     --values (INCR_LOG_OPERACION_DLL.nextval, INICIO, systimestamp,  V_SID, substr(TIPO, 1, 100), substr(OPERACION, 1, 100), substr(ESQUEMA, 1, 100), substr(OBJETO, 1, 100), substr(PARAMETROS, 1, 250), substr(ESTADO, 1, 250));
-    commit;   
+    commit;
   END;
 
 
@@ -69,7 +70,7 @@ create or replace package body OPERACION_DDL as
     v_esquema  := trim(UPPER(esquema));
 
     select sys_context('USERENV','CURRENT_USER') into v_esquema from dual;
-    
+
     Select nvl(count(*),0) into v_count
       From all_objects
      Where owner = v_esquema
@@ -119,64 +120,92 @@ create or replace package body OPERACION_DDL as
     V_PARAMETROS VARCHAR2(16000);
     V_TIPO VARCHAR2(50);
     V_FECHA TIMESTAMP := systimestamp;
-    
-  begin    
+
+  begin
     V_TIPO := 'TABLE';
-    V_OPERACION := upper(operacion);    
+    V_OPERACION := upper(operacion);
     V_NOMBRE := upper(nombre);
     V_PARAMETROS := upper(parametros);
 
-    
+
     select sys_context('USERENV','CURRENT_USER') into V_ESQUEMA from dual;
 
-    if V_OPERACION in ('DROP', 'TRUNCATE', 'ALTER', 'ANALYZE') then
-      If OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE)  Then 
-          OPERACION_DDL.ejecuta_str(''|| V_OPERACION || ' ' || V_TIPO || ' ' || V_ESQUEMA || '.' || V_NOMBRE || ' ' || V_PARAMETROS||'');
-          execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
-      Else 
+    if V_OPERACION in ('DROP') then
+      If OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE)  Then
+          --**PFS - Función para drop de tablas, no se utiliza durante las cargas sólo en instalación
+		  OPERACION_DDL.ejecuta_str(''|| V_OPERACION || ' ' || V_TIPO || ' ' || V_ESQUEMA || '.' || V_NOMBRE || ' ' || V_PARAMETROS||'');
+		  --**Bankia - DROP_TEMP_TABLES función bankia para dropear tablas temporales
+		  --OPERACION_DDL.ejecuta_str('BEGIN DROP_TEMP_TABLES ('''||V_ESQUEMA||''', '''||V_NOMBRE||'''); END;');
+          execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;
+      Else
         raise OBJECTNOTEXISTS;
       End If;
     end if;
 
+    if V_OPERACION in ('TRUNCATE') then
+      If OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE)  Then
+	      --**PFS - Función para truncar tablas
+          --OPERACION_DDL.ejecuta_str(''|| V_OPERACION || ' ' || V_TIPO || ' ' || V_ESQUEMA || '.' || V_NOMBRE || ' ' || V_PARAMETROS||'');
+		  --**Bankia - TRUNCATE_TABLE función bankia para truncar tablas, se necesita avisar a DBA Bankia de las tablas a truncar
+          OPERACION_DDL.ejecuta_str('BEGIN TRUNCATE_TABLE('''||V_ESQUEMA||''', '''||V_NOMBRE||'''); END;');
+          execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;
+      Else
+        raise OBJECTNOTEXISTS;
+      End If;
+    end if;
+
+	/*
+    if V_OPERACION in ('ALTER', 'ANALYZE') then
+      If OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE)  Then
+          OPERACION_DDL.ejecuta_str(''|| V_OPERACION || ' ' || V_TIPO || ' ' || V_ESQUEMA || '.' || V_NOMBRE || ' ' || V_PARAMETROS||'');
+          execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;
+      Else
+        raise OBJECTNOTEXISTS;
+      End If;
+    end if;
+	*/
 
     if V_OPERACION in ('CREATE') then
-        If not OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE) Then 
+        If not OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE) Then
+		  --**PFS - Función para crear tablas, no se utiliza durante las cargas sólo en instalación
           OPERACION_DDL.ejecuta_str(''|| V_OPERACION || ' ' || V_TIPO || ' ' || V_ESQUEMA || '.' || V_NOMBRE || ' (' || V_PARAMETROS || ')');
-          execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
-        Else 
+		  --**Bankia - CREA_TEMP_TABLES función bankia para crear tablas temporales
+          --OPERACION_DDL.ejecuta_str('BEGIN CREA_TEMP_TABLES('''||V_ESQUEMA||''', '''||V_NOMBRE ||' '||V_PARAMETROS||'''); END;');
+          execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;
+        Else
           Raise OBJECTEXISTS;
         End If;
     end if;
-
+/*
     if V_OPERACION in ('CREATE_AS') then
-        If not OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE) Then 
+        If not OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE) Then
           OPERACION_DDL.ejecuta_str('CREATE '|| V_TIPO || ' ' || V_ESQUEMA || '.' || V_NOMBRE || ' ' || V_PARAMETROS || '');
-          execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
-        Else 
+          execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;
+        Else
           Raise OBJECTEXISTS;
         End If;
     end if;
-
+*/
   EXCEPTION
     WHEN OBJECTEXISTS then
       O_ERROR_STATUS := 'La tabla ya existe';
-      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;      
+      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;
       --ROLLBACK;
-    WHEN OBJECTNOTEXISTS then      
+    WHEN OBJECTNOTEXISTS then
       O_ERROR_STATUS := 'La tabla no existe';
-      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;      
+      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;
       --ROLLBACK;
     WHEN INSERT_NULL then
       O_ERROR_STATUS := 'Has intentado insertar un valor nulo';
-      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;      
+      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;
       --ROLLBACK;
     WHEN PARAMETERS_NUMBER then
       O_ERROR_STATUS := 'Número de parámetros incorrecto';
-      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;      
+      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;
       --ROLLBACK;
     WHEN OTHERS then
       O_ERROR_STATUS := 'Se ha producido un error en el proceso: '||SQLCODE||' -> '||SQLERRM;
-      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || SQLERRM;      
+      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || SQLERRM;
       --ROLLBACK;
   end DDL_Table;
 
@@ -196,20 +225,20 @@ create or replace package body OPERACION_DDL as
     V_PARAMETROS VARCHAR2(16000);
     V_TIPO VARCHAR2(50);
     V_FECHA TIMESTAMP := systimestamp;
-    
-  begin    
+
+  begin
     V_TIPO := 'PROCEDURE';
-    V_OPERACION := upper(operacion);    
+    V_OPERACION := upper(operacion);
     V_NOMBRE := upper(nombre);
     V_PARAMETROS := upper(parametros);
 
     select sys_context('USERENV','CURRENT_USER') into V_ESQUEMA from dual;
-    
+
     if V_OPERACION in ('ALTER') then
-      If OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE)  Then 
+      If OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE)  Then
           OPERACION_DDL.ejecuta_str(''|| V_OPERACION || ' ' || V_TIPO || ' ' || V_ESQUEMA || '.' || V_NOMBRE || ' ' || V_PARAMETROS||'');
-          execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
-      Else 
+          execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;
+      Else
         raise OBJECTNOTEXISTS;
       End If;
     end if;
@@ -217,19 +246,19 @@ create or replace package body OPERACION_DDL as
   EXCEPTION
     WHEN OBJECTEXISTS then
       O_ERROR_STATUS := 'El procedure ya existe';
-      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;      
+      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;
       --ROLLBACK;
-    WHEN OBJECTNOTEXISTS then      
+    WHEN OBJECTNOTEXISTS then
       O_ERROR_STATUS := 'El procedure no existe';
-      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;      
+      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;
       --ROLLBACK;
     WHEN PARAMETERS_NUMBER then
       O_ERROR_STATUS := 'Número de parámetros incorrecto';
-      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;      
+      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;
       --ROLLBACK;
     WHEN OTHERS then
       O_ERROR_STATUS := 'Se ha producido un error en el proceso: '||SQLCODE||' -> '||SQLERRM;
-      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || SQLERRM;      
+      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || SQLERRM;
       --ROLLBACK;
   end DDL_Procedure;
 
@@ -242,7 +271,7 @@ create or replace package body OPERACION_DDL as
                       , nombre     IN VARCHAR2
                       , parametros IN VARCHAR2 DEFAULT NULL
                       , desactivar IN VARCHAR2 DEFAULT 'S'
-                      , tipo_index IN VARCHAR2 DEFAULT NULL                      
+                      , tipo_index IN VARCHAR2 DEFAULT NULL
                       , O_ERROR_STATUS OUT VARCHAR2)
   is
 
@@ -254,8 +283,8 @@ create or replace package body OPERACION_DDL as
     V_TIPO_INDEX VARCHAR(30); --BITMAP, UNIQUE,...
     V_TIPO VARCHAR2(50);
     V_FECHA TIMESTAMP := systimestamp;
-    
-  begin  
+
+  begin
     V_TIPO := 'INDEX';
     V_OPERACION := upper(operacion);
     V_NOMBRE := upper(nombre);
@@ -263,16 +292,22 @@ create or replace package body OPERACION_DDL as
     V_DESACTIVAR := upper(nvl(desactivar, 'S'));
     V_TIPO_INDEX := upper(tipo_index);
 
-    select sys_context('USERENV','CURRENT_USER') into V_ESQUEMA from dual;  
-    
+    select sys_context('USERENV','CURRENT_USER') into V_ESQUEMA from dual;
+
     if V_OPERACION = 'DROP' then
       If OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE) Then
-          If V_DESACTIVAR = 'S' then 
-            OPERACION_DDL.ejecuta_str('ALTER INDEX ' || V_ESQUEMA || '.' || V_NOMBRE || ' UNUSABLE');
-            execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
-          else 
-            OPERACION_DDL.ejecuta_str('DROP INDEX ' || V_ESQUEMA || '.' || V_NOMBRE||'');
-            execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
+          If V_DESACTIVAR = 'S' then
+		    --**PFS - Función para desactivar indices
+            --OPERACION_DDL.ejecuta_str('ALTER INDEX ' || V_ESQUEMA || '.' || V_NOMBRE || ' UNUSABLE');
+            --**Bankia - ALTER_INDEX función bankia para desactivar indices
+			OPERACION_DDL.ejecuta_str('BEGIN ALTER_INDEX('''||v_esquema||''', '''||v_nombre||''', ''UNUSABLE''); END;');
+			execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;
+          else
+		    --**PFS - Función para drop de indices
+            --OPERACION_DDL.ejecuta_str('DROP INDEX ' || V_ESQUEMA || '.' || V_NOMBRE||'');
+            --**Bankia - CREA_DROP_INDEX función bankia para drop indices
+			OPERACION_DDL.ejecuta_str('BEGIN CREA_DROP_INDEX('''||V_ESQUEMA||''', '''||V_NOMBRE||''', null, ''DROP''); END;');
+			execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;
           End if;
       End if;
       --Si no existe no tratamos la excepción... se continúa
@@ -280,46 +315,53 @@ create or replace package body OPERACION_DDL as
 
     If V_OPERACION = 'CREATE' then
       If not OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE) Then
-          OPERACION_DDL.ejecuta_str('CREATE '|| V_TIPO_INDEX ||' INDEX ' || V_ESQUEMA || '.' || V_NOMBRE || ' on ' || V_ESQUEMA || '.' || V_PARAMETROS ||'');
-          execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
-      Else 
-          If V_DESACTIVAR = 'S' then 
-            OPERACION_DDL.ejecuta_str('ALTER INDEX ' || V_ESQUEMA || '.' || V_NOMBRE || ' REBUILD PARALLEL');
-            execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
-          else 
-            Raise OBJECTEXISTS;          
-          End if;    
+          --**PFS - Función para crear indices
+		  --OPERACION_DDL.ejecuta_str('CREATE '|| V_TIPO_INDEX ||' INDEX ' || V_ESQUEMA || '.' || V_NOMBRE || ' on ' || V_ESQUEMA || '.' || V_PARAMETROS ||'');
+          --**Bankia - CREA_DROP_INDEX función bankia para crear indices
+		  OPERACION_DDL.ejecuta_str('BEGIN CREA_DROP_INDEX('''||v_esquema||''', '''||v_nombre||''', '''||v_parametros||''', ''CREA''); END;');
+		  execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;
+      Else
+          If V_DESACTIVAR = 'S' then
+            --**PFS - Función para rebuild indices
+			--OPERACION_DDL.ejecuta_str('ALTER INDEX ' || V_ESQUEMA || '.' || V_NOMBRE || ' REBUILD PARALLEL');
+			--**Bankia - ALTER_INDEX función bankia para rebuild indices
+			OPERACION_DDL.ejecuta_str('BEGIN ALTER_INDEX('''||v_esquema||''', '''||v_nombre||''', ''REBUILD''); END;');
+            execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;
+          else
+            Raise OBJECTEXISTS;
+          End if;
       End if;
-    End if;    
+    End if;
 
     If V_OPERACION = 'CREATE_AS' then
       If not OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE) Then
+	      --**PFS - Función para crear indices, no se utiliza durante las cargas sólo en instalación
           OPERACION_DDL.ejecuta_str('CREATE INDEX ' || V_PARAMETROS ||'');
-          execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
+          execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;
       End if;
-    End if;    
+    End if;
 
 
   EXCEPTION
     WHEN OBJECTEXISTS then
       O_ERROR_STATUS := 'EL índice ya existe';
-      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;      
+      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;
       --ROLLBACK;
     WHEN OBJECTNOTEXISTS then
       O_ERROR_STATUS := 'El índice no existe';
-      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;            
+      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;
       --ROLLBACK;
     WHEN INSERT_NULL then
       O_ERROR_STATUS := 'Has intentado insertar un valor nulo';
-      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;      
+      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;
       --ROLLBACK;
     WHEN PARAMETERS_NUMBER then
       O_ERROR_STATUS := 'Número de parámetros incorrecto';
-      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;      
+      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;
       --ROLLBACK;
     WHEN OTHERS then
       O_ERROR_STATUS := 'Se ha producido un error en el proceso: '||SQLCODE||' -> '||SQLERRM;
-      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || SQLERRM, V_FECHA;      
+      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || SQLERRM, V_FECHA;
       --ROLLBACK;
   end DDL_Index;
 
@@ -328,7 +370,7 @@ create or replace package body OPERACION_DDL as
   -- =============================
   --  Operaciones sobre secuencias
   -- =============================
-  procedure DDL_SEQUENCE ( operacion  IN VARCHAR2                         
+  procedure DDL_SEQUENCE ( operacion  IN VARCHAR2
                        , nombre     IN VARCHAR2
                        , minvalue   IN NUMBER
                        , increment  IN NUMBER
@@ -346,33 +388,33 @@ create or replace package body OPERACION_DDL as
     V_PARAMETROS VARCHAR2(16000);
     V_TIPO VARCHAR2(50);
     V_FECHA TIMESTAMP := systimestamp;
-    
-  begin    
+
+  begin
     V_TIPO := 'SEQUENCE';
-    V_OPERACION := upper(operacion);    
+    V_OPERACION := upper(operacion);
     V_NOMBRE := upper(nombre);
     V_MINVALUE := nvl(minvalue, 1);
     V_INCREMENT := nvl(increment, 1);
-    V_START_WITH := nvl(start_with, 1);    
+    V_START_WITH := nvl(start_with, 1);
     V_PARAMETROS := upper(parametros);
-    
+
     select sys_context('USERENV','CURRENT_USER') into V_ESQUEMA from dual;
 
     if V_OPERACION in ('DROP') then
-      If OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE)  Then 
+      If OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE)  Then
           OPERACION_DDL.ejecuta_str(''|| V_OPERACION || ' ' || V_TIPO || ' ' || V_ESQUEMA || '.' || V_NOMBRE || ' ' || V_PARAMETROS||'');
-          execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
-      Else 
+          execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;
+      Else
         raise OBJECTNOTEXISTS;
       End If;
     end if;
 
 
     if V_OPERACION in ('CREATE') then
-        If not OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE) Then 
+        If not OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE) Then
           OPERACION_DDL.ejecuta_str(''|| V_OPERACION || ' ' || V_TIPO || ' ' || V_ESQUEMA || '.' || V_NOMBRE || ' MINVALUE ' || TO_CHAR(V_MINVALUE) || ' INCREMENT BY ' || TO_CHAR(V_INCREMENT) || ' START WITH ' || TO_CHAR(V_START_WITH) || ' ' || V_PARAMETROS || '');
-          execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
-        Else 
+          execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;
+        Else
           Raise OBJECTEXISTS;
         End If;
     end if;
@@ -380,23 +422,23 @@ create or replace package body OPERACION_DDL as
   EXCEPTION
     WHEN OBJECTEXISTS then
       O_ERROR_STATUS := 'La tabla ya existe';
-      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;      
+      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;
       --ROLLBACK;
-    WHEN OBJECTNOTEXISTS then      
+    WHEN OBJECTNOTEXISTS then
       O_ERROR_STATUS := 'La tabla no existe';
-      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;      
+      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;
       --ROLLBACK;
     WHEN INSERT_NULL then
       O_ERROR_STATUS := 'Has intentado insertar un valor nulo';
-      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;      
+      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;
       --ROLLBACK;
     WHEN PARAMETERS_NUMBER then
       O_ERROR_STATUS := 'Número de parámetros incorrecto';
-      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;      
+      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || O_ERROR_STATUS, V_FECHA;
       --ROLLBACK;
     WHEN OTHERS then
       O_ERROR_STATUS := 'Se ha producido un error en el proceso: '||SQLCODE||' -> '||SQLERRM;
-      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || SQLERRM;      
+      execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'ERROR: ' || SQLERRM;
       --ROLLBACK;
   end DDL_SEQUENCE;
 
@@ -410,7 +452,7 @@ create or replace package body OPERACION_DDL as
                                   , consulta      IN VARCHAR2  DEFAULT NULL --SENTENCIA
                                   , refresh_b     IN CHAR DEFAULT NULL
                                   , primary_key_b IN CHAR DEFAULT NULL
-                                  , logging_b     IN CHAR DEFAULT NULL 
+                                  , logging_b     IN CHAR DEFAULT NULL
                                   , O_ERROR_STATUS OUT VARCHAR2
                                   )
   is
@@ -432,8 +474,8 @@ create or replace package body OPERACION_DDL as
     v_nombre     := UPPER(nombre);
     v_sentencia  := consulta;
 
-    select sys_context('USERENV','CURRENT_USER') into v_esquema from dual;  
-    
+    select sys_context('USERENV','CURRENT_USER') into v_esquema from dual;
+
     If primary_key_b = 'S' Then v_primary_key := 'WITH PRIMARY KEY';
      Elsif primary_key_b = 'N' Then v_primary_key :=  'WITH ROWID';
     End If;

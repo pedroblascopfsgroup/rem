@@ -1,16 +1,18 @@
 --/*
 --##########################################
 --## AUTOR=David González
---## FECHA_CREACION=20151020
+--## FECHA_CREACION=20151027
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=0.2
+--## VERSION_ARTEFACTO=0.3
 --## INCIDENCIA_LINK=BKREC-1114
 --## PRODUCTO=NO
 --## 
 --## Finalidad: 
 --## INSTRUCCIONES:  
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        	0.1 Versión inicial
+--##		0.2 Adaptacion a plantilla
+--##		
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -30,7 +32,7 @@ create or replace PROCEDURE CNV_MTO_DESPACHOS AS
     
     
 BEGIN
-/* v0.2 */
+/* v0.3 */
     
     
     /*

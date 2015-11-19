@@ -152,6 +152,8 @@
               )
               -- Sacar todos los datos
               select * from datos;
+              
+              OPERACION_DDL.DDL_TABLE('STATS','H_DETALLE_SIMULACION');
 
             END;
         ]]>

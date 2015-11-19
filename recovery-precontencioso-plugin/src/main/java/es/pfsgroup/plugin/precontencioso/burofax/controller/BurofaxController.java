@@ -1,10 +1,13 @@
 package es.pfsgroup.plugin.precontencioso.burofax.controller;
 
+import java.text.Collator;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
+import es.capgemini.pfs.diccionarios.Dictionary;
+import es.capgemini.pfs.diccionarios.DictionaryManager;
+import es.capgemini.pfs.diccionarios.comparator.DictionaryComparatorFactory;
 import es.capgemini.pfs.direccion.api.DireccionApi;
 import es.capgemini.pfs.direccion.dto.DireccionAltaDto;
 import es.capgemini.pfs.direccion.model.DDProvincia;
@@ -22,14 +28,17 @@ import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Direccion;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
 import es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi;
 import es.pfsgroup.plugin.precontencioso.burofax.dto.BurofaxDTO;
 import es.pfsgroup.plugin.precontencioso.burofax.manager.BurofaxManager;
+import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxEnvioIntegracionPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxPCO;
-import es.pfsgroup.plugin.precontencioso.burofax.model.DDEstadoBurofaxPCO;
+import es.pfsgroup.plugin.precontencioso.burofax.model.DDResultadoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDTipoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 
 @Controller
 public class BurofaxController {
@@ -52,6 +61,8 @@ public class BurofaxController {
 	
 	private static final String DEFAULT = "default";
 	
+	public static final String JSP_DOWNLOAD_FILE = "plugin/geninformes/download";
+	
 	protected final Log logger = LogFactory.getLog(getClass());
 	
 	@Autowired
@@ -60,12 +71,14 @@ public class BurofaxController {
 	@Autowired
 	private BurofaxManager burofaxManager;
 	
-	private List<BurofaxDTO> listadoBurofax=null;
-	
-	boolean cambioEstado=false;
+	@Autowired
+	private DictionaryManager dictionaryManager;	
 	
 	@Autowired
 	private Executor executor;
+	
+	@Autowired
+	private PrecontenciosoProjectContext precontenciosoContext;
 	
 	/**
 	 * Carga el grid de Burofaxes
@@ -76,7 +89,7 @@ public class BurofaxController {
 	@RequestMapping
 	public String getListaBurofax(ModelMap model,Long idProcedimiento) {
 		
-			listadoBurofax=new ArrayList<BurofaxDTO>();
+		    List<BurofaxDTO> listadoBurofax=new ArrayList<BurofaxDTO>();
 			List<BurofaxPCO> listaBurofax=burofaxManager.getListaBurofaxPCO(idProcedimiento);
 			
 			
@@ -269,7 +282,26 @@ public class BurofaxController {
 	}
 	
 	@RequestMapping
-	private String editarBurofax(WebRequest request, ModelMap map,String contenidoBurofax){
+	private String editarBurofax(WebRequest request, ModelMap map,String contenidoBurofax) throws Exception{
+
+		//Comprobamos que las variables no han sido modificadas al editar su estilo con el HTMLEditor. Las variables son indivisibles 
+		String contenidoBurofaxAux=contenidoBurofax;
+		
+		while(contenidoBurofaxAux.length()>0 && contenidoBurofaxAux.indexOf("$") != -1){
+			int inicioVariable=contenidoBurofaxAux.indexOf("$");
+			int finalVariable=contenidoBurofaxAux.indexOf("}");
+			
+			String variable=contenidoBurofaxAux.substring(inicioVariable,finalVariable+1);
+			
+			if(variable.contains("<") || variable.contains("</")){
+				throw new Exception("La definición de las variables es incorrecta. Compruebe el estilo de las variables");
+			}
+			else if(!precontenciosoContext.getVariablesBurofax().contains(StringUtils.substring(variable, variable.indexOf("{") + +1, variable.lastIndexOf("}")))) {
+				throw new Exception("¡Atenci&oacute;n! se han encontrado variables err&oacute;neas en el texto");
+			}
+			
+			contenidoBurofaxAux=contenidoBurofaxAux.substring(finalVariable+1);
+		}
 		
 		String[] arrayIdEnvios=request.getParameter("arrayIdEnvios").split(",");
 		Long idEnvio = 1L;
@@ -282,23 +314,21 @@ public class BurofaxController {
 		
 		return DEFAULT;
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	private String getAltaDireccion(WebRequest request, ModelMap model,Long idProcedimiento,Long idCliente){
 		
-		List<DDProvincia> provincias = (List<DDProvincia>) executor.execute("dictionaryManager.getList", "DDProvincia");
+		List<Dictionary> provincias = dictionaryManager.getList("DDProvincia", DictionaryComparatorFactory.getInstance().create(DictionaryComparatorFactory.COMPARATOR_BY_DESCRIPCION));
 		model.put("provincias", provincias);
+
 		List<DDTipoVia> tiposVia = (List<DDTipoVia>) proxyFactory.proxy(DireccionApi.class).getListTiposVia();
 		model.put("tiposVia", tiposVia);
 		model.put("idCliente", idCliente);
 		model.put("idProcedimiento", idProcedimiento);
-		//model.put("idContrato", idContrato);
 		
 		return JSP_ALTA_DIRECCION;
-	}
-	
+	}	
 	
 	/**
 	 * Guarda los datos de la dirección
@@ -451,7 +481,9 @@ public class BurofaxController {
     	}
     	
 		burofaxManager.guardarEnvioBurofax(certificado,listaEnvioBurofaxPCO);
-		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(listaEnvioBurofaxPCO.get(0).getBurofax().getProcedimientoPCO().getProcedimiento().getId());			
+		if(!Checks.estaVacio(listaEnvioBurofaxPCO)){
+			proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(listaEnvioBurofaxPCO.get(0).getBurofax().getProcedimientoPCO().getProcedimiento().getId());
+		}
     		
     	return DEFAULT;
     }
@@ -469,9 +501,9 @@ public class BurofaxController {
     	
     	String arrayIdEnvios=request.getParameter("arrayIdEnvios");
     	
-    	List<DDEstadoBurofaxPCO> listaEstadoBurofax=burofaxManager.getEstadosBurofax();
+    	List<DDResultadoBurofaxPCO> listaResultadoBurofax = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDResultadoBurofaxPCO.class);
     	
-    	model.put("estadosBurofax", listaEstadoBurofax);
+    	model.put("resultadosBurofax", listaResultadoBurofax);
     	model.put("arrayIdEnvios", arrayIdEnvios);
     	
     	return JSP_AGREGAR_NOTIFICACION;
@@ -479,7 +511,7 @@ public class BurofaxController {
     }
     
     @RequestMapping
-    public String configuraInformacionEnvio(WebRequest request, ModelMap model,Long idEstadoBurofax,String fechaEnvio,String fechaAcuse){
+    public String configuraInformacionEnvio(WebRequest request, ModelMap model,Long idResultadoBurofax,String fechaEnvio,String fechaAcuse){
     	
     	String[] arrayIdEnvios=request.getParameter("arrayIdEnvios").replace("[","").replace("]","").replace("&quot;", "").split(",");
     	
@@ -490,14 +522,45 @@ public class BurofaxController {
 	    	fecAcuse = webDateFormat.parse(fechaAcuse);
 	    	fecEnvio = webDateFormat.parse(fechaEnvio);
     	}catch(Exception e){
-    		logger.error(e);
+    		logger.error("configuraInformacionEnvio: " + e);
     	}
-    	burofaxManager.guardaInformacionEnvio(arrayIdEnvios, idEstadoBurofax, fecEnvio, fecAcuse);
+    	burofaxManager.guardaInformacionEnvio(arrayIdEnvios, idResultadoBurofax, fecEnvio, fecAcuse);
     
 		EnvioBurofaxPCO envio = proxyFactory.proxy(BurofaxApi.class).getEnvioBurofaxById(Long.valueOf(arrayIdEnvios[0]));			
 		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(envio.getBurofax().getProcedimientoPCO().getProcedimiento().getId());
     	    	
     	return DEFAULT;
     }
+    
+    @SuppressWarnings("unchecked")
+	@RequestMapping
+	private String descargarBurofax(WebRequest request, ModelMap model,@RequestParam(value = "idEnvio", required = true) Long idEnvio){
+		
+    	BurofaxEnvioIntegracionPCO burofaxEnvio=burofaxManager.getBurofaxEnvioIntegracionByIdEnvio(idEnvio);
+		if(!Checks.esNulo(burofaxEnvio) && !Checks.esNulo(burofaxEnvio.getArchivoBurofax())){
+			burofaxEnvio.getArchivoBurofax().setContentType("application/pdf");
+			burofaxEnvio.getArchivoBurofax().setFileName(burofaxEnvio.getNombreFichero());
+			model.put("fileItem", burofaxEnvio.getArchivoBurofax());
+		}
 
+		return JSP_DOWNLOAD_FILE;
+		
+	}
+
+}
+
+class ProvinciasComparator implements Comparator<DDProvincia> 
+{
+	private Collator collator;
+	 
+	public ProvinciasComparator(Collator c) 
+	{
+		this.collator = c;
+	}
+
+	@Override
+	public int compare(DDProvincia o1, DDProvincia o2) 
+	{
+		return collator.compare(o1.getDescripcion(), o2.getDescripcion());
+	}
 }

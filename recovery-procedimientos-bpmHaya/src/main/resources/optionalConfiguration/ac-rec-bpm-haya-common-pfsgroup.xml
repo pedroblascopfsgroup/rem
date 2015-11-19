@@ -684,6 +684,24 @@
 						{return false}
 				}
 				
+				def asuntoConcursalConGestorExpJudicial = {
+	            	def extAsuntoManager = ctx.getBean("EXTAsuntoManager");
+	            	def asunto = procedimientoManager.getProcedimiento(idProcedimiento).getAsunto();
+					if (asunto != null && asunto.getTipoAsunto() != null && asunto.getTipoAsunto().getCodigo().equals("02")) 
+						return extAsuntoManager.esTipoGestorAsignado(asunto.getId(), "PREDOC");
+					else
+						{return true}
+				}
+				
+				def asuntoConcursalConSupExpJudicial = {
+	            	def extAsuntoManager = ctx.getBean("EXTAsuntoManager");
+	            	def asunto = procedimientoManager.getProcedimiento(idProcedimiento).getAsunto();
+					if (asunto != null && asunto.getTipoAsunto() != null && asunto.getTipoAsunto().getCodigo().equals("02")) 
+						return extAsuntoManager.esTipoGestorAsignado(asunto.getId(), "SUP_PCO");
+					else
+						{return true}
+				}
+				
 				def comprobarExisteDocumentoESADJ = { 
 					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "ESADJ");

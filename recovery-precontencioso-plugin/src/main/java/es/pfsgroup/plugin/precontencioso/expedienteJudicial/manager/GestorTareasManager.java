@@ -1,11 +1,14 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.manager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
@@ -26,14 +29,13 @@ import es.capgemini.pfs.utils.JBPMProcessManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.GestorTareasDao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.GestorTareasAccionPCODto;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.GestorTareasLineaConfigPCO;
-import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.HistoricoEstadoProcedimientoPCO;
-import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.recovery.api.PlazoTareaExternaPlazaApi;
 import es.pfsgroup.recovery.api.TareaNotificacionApi;
 import es.pfsgroup.recovery.api.TareaProcedimientoApi;
@@ -49,6 +51,9 @@ public class GestorTareasManager implements GestorTareasApi {
 	private static final String TXT_ERR_PLAZO_3 = "], tipoTarea [";
 	private static final String TXT_ERR_PLAZO_4 = "].";
     private static final String BPM_ERROR_SCRIPT = "bpm.error.script";
+    private static final List<String> CODIGOS_TAREAS_ESPECIALES_PRECONTENCIOSO = Arrays.asList("PCO_SolicitarDoc", "PCO_RegResultadoExped", "PCO_RecepcionExped", 
+    		"PCO_RegResultadoDoc", "PCO_RegEnvioDoc", "PCO_RecepcionDoc", "PCO_AdjuntarDoc", "PCO_GenerarLiq", "PCO_ConfirmarLiq", "PCO_EnviarBurofax",
+    		"PCO_AcuseReciboBurofax","PCO_RegResultadoDocG");
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -69,12 +74,12 @@ public class GestorTareasManager implements GestorTareasApi {
 
 	@Autowired
 	private ProcedimientoPCODao procedimientoPcoDao;
-	
+
     private static List<GestorTareasLineaConfigPCO> lineasConfig = null;
     
     @BusinessOperation(BO_PCO_GESTOR_TAREAS_RECALCULAR)
 	@Override
-	@Transactional(readOnly = false)
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	public void recalcularTareasPreparacionDocumental(Long idProc) {
 		
     	if (lineasConfig==null) {
@@ -111,13 +116,21 @@ public class GestorTareasManager implements GestorTareasApi {
 			Long idProc, List<GestorTareasLineaConfigPCO> lineasConfig) {
 
 		List<GestorTareasAccionPCODto> listaAcciones = new ArrayList<GestorTareasAccionPCODto>();
-		for (GestorTareasLineaConfigPCO linea : lineasConfig) {
-			if (gestorTareasDao.evaluaCondicion(idProc, linea.getCondicionHQL())) {
-				GestorTareasAccionPCODto accion = new GestorTareasAccionPCODto();
-				accion.setTipoAccion(linea.getCodigoAccion());
-				accion.setTipoTarea(linea.getCodigoTarea());
-				listaAcciones.add(accion);
+		try{
+			for (GestorTareasLineaConfigPCO linea : lineasConfig) {
+				if (gestorTareasDao.evaluaCondicion(idProc, linea.getCondicionHQL())) {
+					GestorTareasAccionPCODto accion = new GestorTareasAccionPCODto();
+					accion.setTipoAccion(linea.getCodigoAccion());
+					accion.setTipoTarea(linea.getCodigoTarea());
+					listaAcciones.add(accion);
+					logger.debug("[evaluarTareasProcedimiento]: " + linea.getCodigoAccion() + "/" + linea.getCodigoTarea() + ": SI");					
+				} else {
+					logger.debug("[evaluarTareasProcedimiento]: " + linea.getCodigoAccion() + "/" + linea.getCodigoTarea() + ": NO");					
+				}
 			}
+		}
+		catch(Exception e){
+			logger.error("evaluarTareasProcedimiento: " + e);
 		}
 		return listaAcciones;
 		
@@ -163,7 +176,7 @@ public class GestorTareasManager implements GestorTareasApi {
 	@Transactional(readOnly = false)
 	public boolean crearTareaEspecial(Long idProc, String codigoTarea) {
 
-        Procedimiento procedimiento = proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(idProc);
+    	Procedimiento procedimiento = proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(idProc);
 
         //Buscamos la tarea perteneciente a ese procedimiento con el código tarea y el idTipoProcedimiento y extraemos su ID tarea
         Long idTipoProcedimiento = procedimiento.getTipoProcedimiento().getId();
@@ -175,7 +188,8 @@ public class GestorTareasManager implements GestorTareasApi {
 
         //Creamos una nueva tarea extendida con el idProcedimiento y el idTipoTarea y el timer asociado
         //Por defecto la tarea será para un gestor
-        String subtipoTarea = EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR;
+        //String subtipoTarea = EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR;
+        String subtipoTarea = obtenerSubtipoTarea(codigoTarea);
 
         //Si está marcada como supervisor se cambia el subtipo tarea
         if (tareaProcedimiento.getSupervisor()) {
@@ -194,19 +208,34 @@ public class GestorTareasManager implements GestorTareasApi {
         if (juzgado != null) idTipoJuzgado = juzgado.getId();
         if (plaza != null) idTipoPlaza = plaza.getId();
 
+        if (logger.isDebugEnabled()) {
+            logger.debug("Antes de crear la tarea " + codigoTarea + ", de subtipo " + subtipoTarea);
+        }
+
         Long plazoTarea = getPlazoTarea(idTipoPlaza, idTareaProcedimiento, idTipoJuzgado, idProc);
         Long idTarea = tareaExternaManager.crearTareaExterna(subtipoTarea, plazoTarea, nombreTarea, idProc, idTareaProcedimiento,
                 getTokenId(procedimiento.getProcessBPM()));
 
         if (logger.isDebugEnabled()) {
-            logger.debug(TXT_CREAMOS_LA_TAREA + codigoTarea + ", " + idTarea);
+            logger.debug(TXT_CREAMOS_LA_TAREA + codigoTarea + ", " + idTarea + ", de subtipo " + subtipoTarea);
+        } else {
+        	System.out.println("[crearTareaEspecial]: " + TXT_CREAMOS_LA_TAREA + codigoTarea + ", " + idTarea + ", de subtipo " + subtipoTarea);
         }
 
         return true;
 	}
 
 
-    private Long getTokenId(Long idProcessBPM) {
+    private String obtenerSubtipoTarea(String codigoTarea) {
+		
+    	String subtipo = gestorTareasDao.obtenerSubtipoTarea(codigoTarea); 
+    	if (subtipo == null) {
+    		subtipo = EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR;
+    	}
+		return subtipo;
+	}
+
+	private Long getTokenId(Long idProcessBPM) {
 		return gestorTareasDao.getTokenId(idProcessBPM);
 	}
 
@@ -230,7 +259,7 @@ public class GestorTareasManager implements GestorTareasApi {
             String result = processUtils.evaluaScript(idProcedimiento, null, idTipoTarea, null, script).toString();
             plazo = Long.parseLong(result.toString());
         } catch (Exception e) {
-            logger.error(TXT_ERR_PLAZO_1 + script + TXT_ERR_PLAZO_2 + idProcedimiento + TXT_ERR_PLAZO_3
+            logger.error("getPlazoTarea: " + TXT_ERR_PLAZO_1 + script + TXT_ERR_PLAZO_2 + idProcedimiento + TXT_ERR_PLAZO_3
                     + idTipoTarea + TXT_ERR_PLAZO_4, e);
             throw new UserException(BPM_ERROR_SCRIPT);
         }
@@ -276,19 +305,30 @@ public class GestorTareasManager implements GestorTareasApi {
 
 	}
 	
-	private String obtenerEstadoProcPco(long idProcedimiento) {
+	@Override
+	public boolean getEsTareaPrecontenciosoEspecial(Long tareaId) {
 
-		String estadoActual = "";
+		TareaExterna tareaExterna = genericDao.get(TareaExterna.class, genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", tareaId));
 		
-		ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
-		
-		if (!Checks.esNulo(procedimientoPco)) {
-			HistoricoEstadoProcedimientoPCO historico = procedimientoPco.getEstadoActualByHistorico();
-			if (!Checks.esNulo(historico) && !Checks.esNulo(historico.getEstadoPreparacion())) {
-				estadoActual = historico.getEstadoPreparacion().getCodigo();
-			}
+		if (Checks.esNulo(tareaExterna)) {
+			return false;
+		} else {
+			boolean esEspecial = CODIGOS_TAREAS_ESPECIALES_PRECONTENCIOSO.contains(tareaExterna.getTareaProcedimiento().getCodigo()) ? true : false;
+	
+			return esEspecial;
 		}
-		return estadoActual;
-
+	}
+	
+	public boolean existeTarea(Procedimiento proc, String codigoTarea) {
+		
+		boolean resultado = false;
+		List<TareaExterna> listaTareas = tareaExternaManager.getActivasByIdProcedimiento(proc.getId());
+		for (TareaExterna tareaExterna : listaTareas) {
+			if (codigoTarea.equals(tareaExterna.getTareaProcedimiento().getCodigo())) {
+				resultado = true;
+			}
+			
+		}
+		return resultado;
 	}
 }

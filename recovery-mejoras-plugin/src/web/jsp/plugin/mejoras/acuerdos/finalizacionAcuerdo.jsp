@@ -12,17 +12,18 @@
 <fwk:page>
 
 	<pfsforms:textfield name="tipoAcuerdo" labelKey="mejoras.plugin.acuerdos.tipoAcuerdo" 
-		label="**Tipo de acuerdo" value="${acuerdo.tipoAcuerdo.descripcion}" readOnly="true" />
+		label="**Tipo de acuerdo" value="${acuerdo.tipoAcuerdo.descripcion}" readOnly="true" width="150"/>
 		
 	<pfsforms:textfield name="oculto" labelKey="" 
 		label="" value="" readOnly="true" />
 		
-	var fechaPropuesta = app.creaLabel('<s:message code="mejoras.plugin.acuerdos.fechaVencimiento" text="**Fecha vencimiento" />', "<fwk:date value='${acuerdo.fechaPropuesta}' />");
+	var fechaPropuesta = app.creaLabel('<s:message code="mejoras.plugin.acuerdos.fechaVencimiento" text="**Fecha vencimiento" />', "<fwk:date value='${acuerdo.fechaPropuesta}' />",{labelStyle:'font-weight:bolder;width:150px'});
 	
 
 	
 	var fechaPago = new Ext.ux.form.XDateField({
 			fieldLabel:'<s:message code="mejoras.plugin.acuerdos.fechaCumplimiento" text="**Fecha Cumplimiento" />'
+			,labelStyle:'font-weight:bolder;width:150px'
 			,name:'fechaPago'
 			,style:'margin:0px'
 		});
@@ -31,7 +32,7 @@
 		id:'observaciones'
 		,name:'observaciones'
 		,readOnly:false
-		,width: 400
+		,width: 600
 		,height: 150
 		,enableColors: true
        	,enableAlignments: true
@@ -40,26 +41,34 @@
        	,enableFormat:true
        	,enableLinks:true
        	,enableLists:true
-       	,enableSourceEdit:true		
-		,html:''});	
+       	,enableSourceEdit:true	
+       	,hideLabel: true	
+		,html:''
+        });	
 		
-	var observacionesCont = new Ext.form.FieldSet({
-		title:'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.bienes.informe" text="**Observaciones"/>'
-		,layout:'form'
-		,autoHeight:true
-		,autoWidth: true
-		,border:true
-		,viewConfig : { columns : 1 }
-		,defaults :  {xtype : 'fieldset', autoHeight : true, border : false }
-		,items : [
-			{items:[observaciones]}
-		]
-	});	
-		
-	<pfsforms:check name="cumplido"
-		labelKey="plugin.mejoras.acuerdos.cumplido" label="**Cumplido"
-		value=""/>
+<!-- 	var observacionesCont = new Ext.form.FieldSet({ -->
+<%-- 		title:'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.bienes.informe" text="**Observaciones"/>' --%>
+<!-- 		,layout:'form' -->
+<!-- 		,autoHeight:true -->
+<!-- 		,autoWidth: true -->
+<!-- 		,border:true -->
+<!-- 		,defaults :  {xtype : 'fieldset', autoHeight : true, border : false } -->
+<!-- 		,items : [observaciones] -->
+<!-- 	});	 -->
+	
 
+	
+	var lblObservaciones = app.creaLabel('<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.bienes.informe" text="**Observaciones"/>', "",{labelStyle:'font-weight:bolder;width:150px'});
+		
+<%-- 	<pfsforms:check name="cumplido" --%>
+<%-- 		labelKey="plugin.mejoras.acuerdos.cumplido" label="**Cumplido" labelWidth="150" --%>
+<%-- 		value=""/> --%>
+
+		var cumplido = new Ext.form.Checkbox({
+			fieldLabel:'<s:message code="plugin.mejoras.acuerdos.cumplido" text="**Cumplido" />'
+			,labelStyle:'font-weight:bolder;width:150'
+			,name:'cumplido'
+		});
 			
 	<pfs:defineParameters name="parametros" paramId="${acuerdo.id}" 
 		fechaPago_date="fechaPago"
@@ -68,10 +77,11 @@
 		/>		
 	
 	<pfs:editForm saveOrUpdateFlow="plugin/mejoras/acuerdos/plugin.mejoras.acuerdos.finalizarAcuerdo"
-			leftColumFields="tipoAcuerdo, cumplido"
-			rightColumFields="fechaPropuesta,fechaPago,oculto"
-			centerColumFieldsDown="observacionesCont"
-			parameters="parametros" 
-			/>
+ 			leftColumFields="tipoAcuerdo, cumplido"  
+  			rightColumFields="fechaPropuesta,fechaPago,oculto"  
+  			centerColumFieldsDown="lblObservaciones,observaciones"  
+			parameters="parametros"   
+  			/>  
+
 
 </fwk:page>

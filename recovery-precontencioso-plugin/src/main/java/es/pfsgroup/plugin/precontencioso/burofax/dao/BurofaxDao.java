@@ -13,5 +13,7 @@ public interface BurofaxDao extends AbstractDao<BurofaxPCO, Long> {
 	Collection<? extends Persona> getPersonas(String query);
 	
 	Collection<? extends Persona> getPersonasConContrato(String query);
+	
+	Long obtenerSecuenciaFicheroDocBurofax();
 
 }

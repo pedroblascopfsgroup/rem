@@ -18,4 +18,33 @@
 		p:fileName="/WEB-INF/jsp/plugin/mejoras/asuntos/tabs/tabHistoricoAsunto.jsp"
 		p:priority="2" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
 		
+	<bean id="precontenciosoProjectContextBANKIA" parent="precontenciosoProjectContextDefault">
+		<property name="codigoFaseComun">
+			<value>P412</value>
+		</property>
+		<property name="recovery">
+			<value>BANKIA</value>
+		</property>
+		<property name="generarArchivoBurofax">
+			<value>true</value>
+		</property>
+	</bean>
+	
+	<bean id="coreProjectContextBANKIA" parent="coreProjectContextDefault">
+		<property name="categoriasSubTareas">
+			<map>
+				<entry key="TOMA_DE_DECISION">
+					<set>
+						<value>46</value>
+						<value>TD_SUP_PCO</value>
+						<value>TD_PREDOC</value>
+					</set>
+				</entry>	
+			</map>
+		</property>
+	</bean>
+	
+	<alias name="precontenciosoProjectContextBANKIA" alias="precontenciosoProjectContext"/>
+	<alias name="coreProjectContextBANKIA" alias="coreProjectContext"/>
+	
 </beans>

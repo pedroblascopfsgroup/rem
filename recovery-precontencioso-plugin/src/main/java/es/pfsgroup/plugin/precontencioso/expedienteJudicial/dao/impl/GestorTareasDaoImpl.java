@@ -17,7 +17,7 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.GestorTareasDao;
 public class GestorTareasDaoImpl extends AbstractEntityDao<Serializable, Long>
 		implements GestorTareasDao {
 
-	private static final String CONSULTA_BPMPROCESS = " select t from TareaExterna t where t.tareaPadre.procedimiento.processBPM = ? and t.auditoria.borrado = false ";
+	private static final String CONSULTA_BPMPROCESS = " select t from TareaExterna t where t.tareaPadre.procedimiento.processBPM = ? ";
 
 	@Override
 	public Long getTokenId(Long idProcessBPM) {
@@ -42,10 +42,25 @@ public class GestorTareasDaoImpl extends AbstractEntityDao<Serializable, Long>
 					.setParameters(args, argsTypes).uniqueResult();
 			resultado = (cuenta.intValue() > 0);
 		} catch (EmptyResultDataAccessException e) {
+			logger.error("evaluaCondicion: " + e);
 			e.printStackTrace();
 		}
 		
 		return resultado;
 	}
 
+	@Override
+	public String obtenerSubtipoTarea(String codigoTarea) {
+		
+		String resultado = "";
+		try {
+			resultado = (String) getSession().createSQLQuery("SELECT DD_STA_CODIGO FROM ${master.schema}.dd_sta_subtipo_tarea_base STA " + 
+					"INNER JOIN tap_tarea_procedimiento TAP ON TAP.DD_STA_ID=STA.DD_STA_ID WHERE TAP_CODIGO='" + codigoTarea + "'").uniqueResult();
+		} catch (EmptyResultDataAccessException e) {
+			e.printStackTrace();
+		}
+		
+		return resultado;
+
+	}
 }

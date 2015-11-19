@@ -23,7 +23,6 @@ var bottomBar = [];
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){
-			debugger;
 			if(tipoProblema.getValue() == cambioProcedimiento) {
 				if(procedimientoPropuesto.getValue() == procedimientoIniciar.getValue()) {
 					Ext.Msg.alert('sTATUS', 'Si tipo de problema es Cambio de procedimiento, no pueden coincidir procedimiento propuesto por la entidad y procedimiento a iniciar.');
@@ -47,29 +46,8 @@ var bottomBar = [];
 	{
 		bottomBar.push(btnGuardar);
 	}
-	muestraBotonGuardar = 0;
 </c:if>
 
-if (muestraBotonGuardar==1){
-	var btnGuardar = new Ext.Button({
-		text : '<s:message code="app.guardar" text="**Guardar" />'
-		,iconCls : 'icon_ok'
-		,handler : function(){
-			//page.fireEvent(app.event.DONE);
-			page.submit({
-				eventName : 'ok'
-				,formPanel : panelEdicion
-				,success : function(){ page.fireEvent(app.event.DONE); }
-				,error : function(response,config){}
-			});
-		}
-	});
-	
-	//Si tiene m�s items que el propio label de descripci�n se crea el bot�n guardar
-	if (items.length > 1)	{
-		bottomBar.push(btnGuardar);
-	}
-}
 
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/botonCancelar.jsp" %>
 
@@ -96,16 +74,40 @@ docCompleta.on('select', function() {
 		fechaRecep.allowBlank = false;
 		docCompleta.allowBlank = false;
 		fechaEnvio.allowBlank = false;
+		fechaEnvio.setDisabled(false);
 		tipoProblema.allowBlank = false;
+		tipoProblema.setDisabled(false);
 		procedimientoPropuesto.allowBlank = false;
-		procedimientoIniciar.allowBlank = false;
+		procedimientoIniciar.allowBlank = true;
+		procedimientoIniciar.setDisabled(true);
+		procedimientoIniciar.setValue(procedimientoPropuesto.getValue());
 	}else{
 		fechaRecep.allowBlank = false;
 		docCompleta.allowBlank = false;
 		fechaEnvio.allowBlank = true;
+		fechaEnvio.setDisabled(true);
+		fechaEnvio.setValue('');
 		tipoProblema.allowBlank = true;
+		tipoProblema.setDisabled(true);
+		tipoProblema.setValue('');
 		procedimientoPropuesto.allowBlank = false;
 		procedimientoIniciar.allowBlank = false;
+		if(tipoProblema.getValue() == cambioProcedimiento) {
+			procedimientoIniciar.setDisabled(false);
+		} else {
+			procedimientoIniciar.setDisabled(true);
+			procedimientoIniciar.setValue(procedimientoPropuesto.getValue());
+		}
+	}
+});
+
+tipoProblema.on('select', function() {
+	procedimientoIniciar.allowBlank = false;
+	if(tipoProblema.getValue() == cambioProcedimiento) {
+		procedimientoIniciar.setDisabled(false);
+	}else{
+		procedimientoIniciar.setDisabled(true);
+		procedimientoIniciar.setValue(procedimientoPropuesto.getValue());
 	}
 });
 

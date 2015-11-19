@@ -209,6 +209,14 @@
 		<json:property name="zonaTerritorial" value="${zonaTerritorial.descripcion}" />
 		
 		<json:property name="cnae" value="${persona.descripcionCnae}" />
+		<json:property name="accionFSR">
+			<c:if test="${accionFSR}">
+				<s:message code="mensajes.si"/>
+			</c:if>
+			<c:if test="${!accionFSR}">
+				<s:message code="mensajes.no"/>
+			</c:if>
+		</json:property>
 	    
 	</json:object>
 	<json:object name="solvencia">

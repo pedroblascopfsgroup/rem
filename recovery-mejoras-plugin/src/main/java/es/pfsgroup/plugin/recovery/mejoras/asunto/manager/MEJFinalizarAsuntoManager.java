@@ -15,10 +15,8 @@ import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.decisionProcedimiento.model.DDCausaDecision;
 import es.capgemini.pfs.decisionProcedimiento.model.DDCausaDecisionFinalizar;
 import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
-import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.procedimiento.dao.EXTProcedimientoDao;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.registro.ModificacionAsuntoListener;
@@ -32,6 +30,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
 import es.pfsgroup.plugin.recovery.mejoras.asunto.api.MEJFinalizarAsuntoApi;
 import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJFinalizarAsuntoDto;
+import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.MEJDecisionProcedimientoManager;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
@@ -61,6 +60,9 @@ public class MEJFinalizarAsuntoManager implements MEJFinalizarAsuntoApi {
 	
 	@Autowired
 	private ModificacionAsuntoListener mejModAsuntoREG;
+	
+	@Autowired
+	private MEJDecisionProcedimientoManager mejDecisionProcedimientoManager;
 
 	@Override
 	@BusinessOperation(MEJ_FINALIZAR_ASUNTO)
@@ -96,6 +98,7 @@ public class MEJFinalizarAsuntoManager implements MEJFinalizarAsuntoApi {
 			
 			//dtoDecisionProcedimiento.setCausaDecision(getCodigoCausaDecisionByDescripcion(dto.getMotivoFinalizacion()));
 			dtoDecisionProcedimiento.setCausaDecisionFinalizar(getCodigoCausaDecisionByDescripcion(dto.getMotivoFinalizacion()));
+			dtoDecisionProcedimiento.setCausaDecisionParalizar("");
 			
 			dtoDecisionProcedimiento.setStrEstadoDecision("02");
 
@@ -106,12 +109,11 @@ public class MEJFinalizarAsuntoManager implements MEJFinalizarAsuntoApi {
 			dtoDecisionProcedimiento
 					.setDecisionProcedimiento(decisionProcedimiento);
 			try {
-				executor.execute(
-						ExternaBusinessOperation.BO_DEC_PRC_MGR_ACEPTAR_PROPUESTA,
-						dtoDecisionProcedimiento);
+			
+				mejDecisionProcedimientoManager.aceptarPropuesta(dtoDecisionProcedimiento);
 
 				// Cambiamos el estado del procedimiento a cerrado
-				proc.setEstadoProcedimiento(ep);
+				//proc.setEstadoProcedimiento(ep);
 				genericDao.save(Procedimiento.class, proc);
 			} catch (Exception e) {
 				e.printStackTrace();

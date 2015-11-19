@@ -19,7 +19,7 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDTipoActorPCO implements Dictionary, Auditable {
 
 	public static final String PREPARADOR = "PREDOC";
-	public static final String GESTORIA = "GEST";
+	public static final String GESTORIA = "GESTORIA_PREDOC";
 	public static final String NOTARIA = "NOTARI";
 	
 	private static final long serialVersionUID = 3136933085857841623L;

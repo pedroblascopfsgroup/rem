@@ -80,5 +80,12 @@ public interface LiquidacionApi {
     
     @BusinessOperationDefinition(LIQUIDACION_PRECONTENCIOSO_BY_ID)
     LiquidacionPCO getLiquidacionPCOById(Long id);
-    
+
+    /**
+     * Modifica el estado de la liquidación a visada y guarda la fecha de visado de la liquidación
+     * 
+     * @param liquidacionDto
+     */
+	void visar(LiquidacionDTO liquidacionDto);
+
 }

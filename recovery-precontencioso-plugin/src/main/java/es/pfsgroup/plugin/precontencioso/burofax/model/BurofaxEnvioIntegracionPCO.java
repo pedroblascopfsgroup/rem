@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.precontencioso.burofax.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -12,10 +13,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import java.util.Date;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
 
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 
@@ -70,8 +72,18 @@ public class BurofaxEnvioIntegracionPCO implements Serializable, Auditable {
 	@Column(name = "PCO_BUR_CONTENIDO")
 	private String contenido;
 	
+	@Column(name = "PCO_BUR_FICHERO")
+	@Type(type = "es.capgemini.devon.hibernate.dao.BlobStreamType")
+	private FileItem archivoBurofax;
+	
 	@Column(name = "PCO_BUR_CERTIFICADO")
 	private Boolean certificado ;
+
+	@Column(name = "ID_ASUNTO_RCV")
+	private Long idAsunto;
+	
+	@Column(name = "PCO_BUR_FICHERO_DOC")
+	private String nombreFichero;
 	
 	@Version
 	private Integer version;
@@ -183,14 +195,6 @@ public class BurofaxEnvioIntegracionPCO implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 
-	public String getContenido() {
-		return contenido;
-	}
-
-	public void setContenido(String contenido) {
-		this.contenido = contenido;
-	}
-
 	public String getDireccion() {
 		return direccion;
 	}
@@ -206,9 +210,38 @@ public class BurofaxEnvioIntegracionPCO implements Serializable, Auditable {
 	public void setCertificado(Boolean certificado) {
 		this.certificado = certificado;
 	}
-	
-	
 
+	public FileItem getArchivoBurofax() {
+		return archivoBurofax;
+	}
+
+	public void setArchivoBurofax(FileItem archivoBurofax) {
+		this.archivoBurofax = archivoBurofax;
+	}
+
+	public String getContenido() {
+		return contenido;
+	}
+
+	public void setContenido(String contenido) {
+		this.contenido = contenido;
+	}
+
+	public Long getIdAsunto() {
+		return idAsunto;
+	}
+	
+	public void setIdAsunto(Long idAsunto) {
+		this.idAsunto = idAsunto;
+	}
+
+	public String getNombreFichero() {
+		return nombreFichero;
+	}
+
+	public void setNombreFichero(String nombreFichero) {
+		this.nombreFichero = nombreFichero;
+	}
 	
 }
 

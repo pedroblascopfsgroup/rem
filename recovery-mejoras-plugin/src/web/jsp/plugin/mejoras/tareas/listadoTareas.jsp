@@ -1127,6 +1127,38 @@
 			case app.subtipoTarea.CODIGO_RECOPILAR_DOCUMENTACION_PROCEDIMIENTO:
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'docRequerida');
 			break;
+			
+			case app.subtipoTarea.CODIGO_PRECONTENCIOSO_SUPERVISOR:
+			case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTORIA:
+		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR:
+		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_LETRADO:
+		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR_LIQUIDACIONES:
+		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR_DOCUMENTOS:
+		    
+		    		Ext.Ajax.request({
+						url: page.resolveUrl('expedientejudicial/getEsTareaPrecontenciosoEspecial')
+						,method: 'POST'
+						,params:{
+									idTarea : rec.get('id')
+								}
+						,success: function (result, request){
+													
+							var isEspecial = Ext.util.JSON.decode(result.responseText);
+							
+							if(isEspecial.okko){
+								app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'precontencioso');
+							}else{
+								app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
+							}
+						
+						}
+						,error: function(){
+			
+						}       				
+					});
+		
+			break;
+
 			case app.subtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_GESTOR:
 			case app.subtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_SUPERVISOR:
 			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_PROCEDIMIENTO:
@@ -1137,16 +1169,7 @@
 			case '100':
 			case '101':			
 			case '105':
-			case app.subtipoTarea.CODIGO_PRECONTENCIOSO_SUPERVISOR:
-			case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTORIA:
-		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR:
-		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_LETRADO:
-		
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-			break;
-			
-			
-			
+
 			case '102':
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
 				break;			

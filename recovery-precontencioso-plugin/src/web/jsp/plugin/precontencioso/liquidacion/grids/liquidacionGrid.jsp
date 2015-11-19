@@ -45,6 +45,24 @@ var abrirPantallaSolicitar = function() {
 	});
 }
 
+var abrirPantallaPlantillasLiquidacion = function() {
+	var w = app.openWindow({
+		flow: 'liquidacion/abrirPlantillasLiquidacion',
+		params: {idLiquidacion:idLiquidacionSeleccionada()},
+		autoWidth: true,
+		closable: true,
+		title: '<s:message code="plugin.precontencioso.liquidaciones.generar.seleccionar.plantillas" text="**Seleccionar plantilla a generar" />'
+	});
+
+	w.on(app.event.DONE, function() {
+		w.close();
+	});
+
+	w.on(app.event.CANCEL, function() {
+		w.close();
+	});
+}
+
 var btnEditarValores = new Ext.Button({
 	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.editar" text="**Editar valores" />',
 	iconCls: 'icon_edit',
@@ -85,6 +103,31 @@ var btnConfirmar = new Ext.Button({
 	}
 });
 
+var btnVisar = new Ext.Button({
+	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.visar" text="**Visar" />',
+	iconCls: 'icon_contratos_pase',
+	cls: 'x-btn-text-icon',
+	handler: function() {
+		Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', '<s:message code="plugin.precontencioso.grid.liquidacion.visar.confirmacion" text="**¿Est&aacute; seguro de dar por visada la liquidaci&oacute;n seleccionada?" />', 
+			function(btn){
+	  			if (btn == 'yes'){
+					Ext.Ajax.request({
+						url: page.resolveUrl('liquidacion/visar'),
+						params: {idLiquidacion: idLiquidacionSeleccionada()},
+						method: 'POST',
+						success: function ( result, request ) {
+							refrescarLiquidacionesGrid();
+						},
+						failure: function ( result, request ) {
+							debugger;
+						}
+					});
+	  			}
+			}
+		);
+	}
+});
+
 var btnDescartar = new Ext.Button({
 	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.descartar" text="**Descartar" />',
 	iconCls: 'icon_menos',
@@ -103,15 +146,17 @@ var btnDescartar = new Ext.Button({
 
 var btnGenerar = new Ext.Button({
 	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.generar" text="**Generar" />',
+	hidden: true,
 	iconCls: 'icon_pdf',
 	cls: 'x-btn-text-icon',
 	handler: function() {
-			var flow='/pfs/liquidacion/generarDocumentoLiquidacion';
-			var params={idLiquidacion:idLiquidacionSeleccionada()};
-			app.openBrowserWindow(flow,params);
-			page.fireEvent(app.event.DONE);
+			abrirPantallaPlantillasLiquidacion();
 	}		
-});	
+});
+
+<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_LIQ_BTN_GENERAR">
+	btnGenerar.hidden = false;
+</sec:authorize>
 
 <%-- Grid --%>
 
@@ -184,7 +229,16 @@ var botonRefresh = new Ext.Button({
 
 var gridLiquidaciones = app.crearGrid(storeLiquidaciones, cmLiquidacion, {
 	title: '<s:message code="plugin.precontencioso.grid.liquidacion.titulo" text="**Liquidaciones" />',
-	bbar: [btnSolicitar, btnEditarValores, btnConfirmar, btnDescartar, new Ext.Toolbar.Fill(), btnGenerar,botonRefresh],
+	bbar: [
+		btnSolicitar, 
+		btnEditarValores, 
+		btnConfirmar, 
+		btnVisar,
+		btnDescartar, 
+		new Ext.Toolbar.Fill(),
+		btnGenerar,
+		botonRefresh
+	],
 	height: 250,
 	autoWidth: true,
 	style:'padding-top: inherit',
@@ -202,10 +256,11 @@ var actualizarBotonesLiquidacion = function() {
 	// Se comprueba que el procedimiento se encuentre en un estado que permita editar las liquidaciones
 	if (data != null) {
 		var estadoActualCodigoProcedimiento = data.precontencioso.estadoActualCodigo;
-		if (estadoActualCodigoProcedimiento != 'PR'  && estadoActualCodigoProcedimiento != 'SU' && estadoActualCodigoProcedimiento != 'SC') {
+		if (!data.esExpedienteEditable || (estadoActualCodigoProcedimiento != 'PR' && estadoActualCodigoProcedimiento != 'SU' && estadoActualCodigoProcedimiento != 'SC')) {
 			btnSolicitar.setDisabled(true);
 			btnEditarValores.setDisabled(true);
 			btnConfirmar.setDisabled(true);
+			btnVisar.setDisabled(true);
 			btnDescartar.setDisabled(true);
 			btnGenerar.setDisabled(true);
 			return;
@@ -222,9 +277,10 @@ var actualizarBotonesLiquidacion = function() {
 	switch(estadoCodigo) {
 
 		case 'PEN':
-			btnSolicitar.setDisabled(true);
-			btnEditarValores.setDisabled(false);
+			btnSolicitar.setDisabled(false);
+			btnEditarValores.setDisabled(btnSolicitar.isVisible());
 			btnConfirmar.setDisabled(true);
+			btnVisar.setDisabled(true);
 			btnDescartar.setDisabled(true);
 			btnGenerar.setDisabled(true);
 			break;
@@ -232,15 +288,17 @@ var actualizarBotonesLiquidacion = function() {
 		case 'SOL':
 			btnSolicitar.setDisabled(true);
 			btnEditarValores.setDisabled(true);
-			btnConfirmar.setDisabled(false);
+			btnConfirmar.setDisabled(true);
+			btnVisar.setDisabled(true);
 			btnDescartar.setDisabled(false);
 			btnGenerar.setDisabled(true);
 			break;
 
 		case 'DES':
 			btnSolicitar.setDisabled(false);
-			btnEditarValores.setDisabled(false);
+			btnEditarValores.setDisabled(btnSolicitar.isVisible());
 			btnConfirmar.setDisabled(true);
+			btnVisar.setDisabled(true);
 			btnDescartar.setDisabled(true);
 			btnGenerar.setDisabled(true);
 			break;
@@ -249,14 +307,34 @@ var actualizarBotonesLiquidacion = function() {
 			btnSolicitar.setDisabled(true);
 			btnEditarValores.setDisabled(true);
 			btnConfirmar.setDisabled(true);
+			btnVisar.setDisabled(false);
+			btnDescartar.setDisabled(false);
+			btnGenerar.setDisabled(false);
+			break;
+			
+		case 'VIS':
+			btnSolicitar.setDisabled(true);
+			btnEditarValores.setDisabled(true);
+			btnConfirmar.setDisabled(true);
+			btnVisar.setDisabled(true);
 			btnDescartar.setDisabled(false);
 			btnGenerar.setDisabled(false);
 			break;
 
 		case 'CAL':
-			btnSolicitar.setDisabled(false);
+			btnSolicitar.setDisabled(true);
 			btnEditarValores.setDisabled(false);
 			btnConfirmar.setDisabled(false);
+			btnVisar.setDisabled(true);
+			btnDescartar.setDisabled(false);
+			btnGenerar.setDisabled(true);
+			break;
+
+		case 'INC':
+			btnSolicitar.setDisabled(true);
+			btnEditarValores.setDisabled(true);
+			btnConfirmar.setDisabled(true);
+			btnVisar.setDisabled(true);
 			btnDescartar.setDisabled(false);
 			btnGenerar.setDisabled(true);
 			break;
@@ -265,10 +343,11 @@ var actualizarBotonesLiquidacion = function() {
 			btnSolicitar.setDisabled(true);
 			btnEditarValores.setDisabled(true);
 			btnConfirmar.setDisabled(true);
+			btnVisar.setDisabled(true);
 			btnDescartar.setDisabled(true);
 			btnGenerar.setDisabled(true);
 	}
-
+	
 	btnConfirmar.setDisabled(btnConfirmar.disabled || !comprobarDatosCalculoRellenos());
 
 }
@@ -302,21 +381,24 @@ var ocultarBtnSolicitar = function(){
 	});
 }
 
+if('${appProperties.precontenciosoVisadoActivo}' != 'true') {
+	btnVisar.hide();
+}
+
 <%-- Acciones a tomar cuando la entidad tiene configurado que no soporta solicitar las liquidaciones --%>
 ocultarBtnSolicitar();
 
 var comprobarDatosCalculoRellenos = function() {
 	var liquidacion = gridLiquidaciones.getSelectionModel().getSelected();
 
-	return (liquidacion
-			&& liquidacion.get('capitalVencido') != ""
-			&& liquidacion.get('capitalNoVencido') != ""
-			&& liquidacion.get('interesesOrdinarios') != ""
-			&& liquidacion.get('interesesDemora') != ""
-			&& liquidacion.get('gastos') != ""
-			&& liquidacion.get('comisiones') != ""
-			&& liquidacion.get('impuestos') != ""
-			&& liquidacion.get('total') != "" );
+	return !(liquidacion.get('capitalVencido') === ""
+			|| liquidacion.get('capitalNoVencido') === ""
+			|| liquidacion.get('interesesOrdinarios') === ""
+			|| liquidacion.get('interesesDemora') === ""
+			|| liquidacion.get('gastos') === ""
+			|| liquidacion.get('comisiones') === ""
+			|| liquidacion.get('impuestos') === ""
+			|| liquidacion.get('total') === "" );
 }
 
 

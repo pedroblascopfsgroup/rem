@@ -1361,6 +1361,23 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>2.0.5</version>
 		</dependency>
+		<!-- Dependencia para poblar de valores las variables de un documento docx -->
+		<dependency>
+		  <groupId>fr.opensagres.xdocreport</groupId>
+		  <artifactId>fr.opensagres.xdocreport.document.docx</artifactId>
+		  <version>1.0.4</version>
+		</dependency>
+		<dependency>
+		  <groupId>fr.opensagres.xdocreport</groupId>
+		  <artifactId>fr.opensagres.xdocreport.template.freemarker</artifactId>
+		  <version>1.0.4</version>
+		</dependency>
+		<!-- Dependencia para crear generar un PDF a partir de un DOCX -->
+	    <dependency>
+	      <groupId>fr.opensagres.xdocreport</groupId>
+	      <artifactId>fr.opensagres.xdocreport.converter.docx.xwpf</artifactId>
+	      <version>1.0.5</version>
+	    </dependency>
 		<!-- JasperReports Dependency -->
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>

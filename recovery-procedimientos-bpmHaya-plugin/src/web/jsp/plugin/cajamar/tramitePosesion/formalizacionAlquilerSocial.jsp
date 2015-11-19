@@ -65,8 +65,6 @@ comboAlquilerFormalizado.on('select', function(){
 	comboPosibleFormalizacion.setValue('');
 	fechaFormalizacion.setValue('');
 	
-	debugger;
-	
 	if(comboAlquilerFormalizado.getValue() == '01') {//si
 		comboPosibleFormalizacion.setDisabled(true);
 		comboPosibleFormalizacion.allowBlank = true;

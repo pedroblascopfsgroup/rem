@@ -1051,7 +1051,15 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 		
 		List<String> tiposProcedimientos = new ArrayList<String>();
 		tiposProcedimientos.add(tipoProcedimiento);
-		return this.getBienesAsuntoTiposPocedimientos(idAsunto, tiposProcedimientos, conTareasActivas);
+		
+		List<DtoNMBBienAdjudicacion> bienes = this.getBienesAsuntoTiposPocedimientos(idAsunto, tiposProcedimientos, conTareasActivas);
+		List<DtoNMBBienAdjudicacion> bienesResultantes = new ArrayList<DtoNMBBienAdjudicacion>();
+		for(DtoNMBBienAdjudicacion dto : bienes){
+			if(dto.getTareaActiva()){
+				bienesResultantes.add(dto);
+			}
+		}
+		return bienesResultantes;
 	}
 
 	@Override
@@ -1074,30 +1082,26 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 		
 		if (!Checks.estaVacio(idProcedimientos)) {
 			List<ProcedimientoBien> prcBienes = proxyFactory.proxy(ProcedimientoApi.class).getBienesDeProcedimientos(idProcedimientos);		
-//			if (conTareasActivas) {
-				List<? extends TareaExterna> tarea = getTareasProcedimiento(idProcedimientos,soloDeUsuario);			
+			List<? extends TareaExterna> tarea = getTareasProcedimiento(idProcedimientos,soloDeUsuario);
+			
+			for (ProcedimientoBien procedimientoBien : prcBienes) {
+				DtoNMBBienAdjudicacion dto = new DtoNMBBienAdjudicacion();
+				dto.setBien(proxyFactory.proxy(BienApi.class).getInstanceOf(procedimientoBien.getBien()));
+				dto.setTareaActiva(false);
+				dto.setProcedimientoBien(procedimientoBien);
 				
-				for (ProcedimientoBien procedimientoBien : prcBienes) {				
-					for (TareaExterna tareaExterna : tarea) {
-						if (procedimientoBien.getProcedimiento().equals(tareaExterna.getTareaPadre().getProcedimiento())) {
-							DtoNMBBienAdjudicacion dto = new DtoNMBBienAdjudicacion();
-							dto.setBien(proxyFactory.proxy(BienApi.class).getInstanceOf(procedimientoBien.getBien()));
-							dto.setTareaNotificacion(tareaExterna.getTareaPadre());
-							resultado.put(procedimientoBien.getProcedimiento().getId(), dto);
-							break;
-						}									
-					}
-				}			
-	
-//			} else {
-//				
-//				for (ProcedimientoBien procedimientoBien : prcBienes) {	
-//					DtoNMBBienAdjudicacion dto = new DtoNMBBienAdjudicacion();
-//					dto.setBien(proxyFactory.proxy(BienApi.class).getInstanceOf(procedimientoBien.getBien()));
-//					dto.setTareaNotificacion(null);
-//					resultado.put(procedimientoBien.getBien().getId(), dto);
-//				}
-//			}
+				for (TareaExterna tareaExterna : tarea) {
+					if (procedimientoBien.getProcedimiento().equals(tareaExterna.getTareaPadre().getProcedimiento())) {
+						dto.setTareaNotificacion(tareaExterna.getTareaPadre());
+						dto.setDescripcionTarea(tareaExterna.getTareaPadre().getDescripcionTarea());
+						dto.setTareaActiva(true);
+						
+						break;
+					}									
+				}
+				
+				resultado.put(procedimientoBien.getProcedimiento().getId(), dto);
+			}		
 		}
 		
 		return new ArrayList<DtoNMBBienAdjudicacion>(resultado.values());

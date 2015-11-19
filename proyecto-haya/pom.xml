@@ -40,6 +40,10 @@
 			<artifactId>recovery-domain</artifactId>
 			<type>jar</type>
 		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-precontencioso-plugin</artifactId>
+		</dependency>
 		<!-- ESTE SÍ QUE HACE FALTA PARA LOS HANDLERS -->
 		<dependency>
 			<groupId>org.springframework.batch</groupId>

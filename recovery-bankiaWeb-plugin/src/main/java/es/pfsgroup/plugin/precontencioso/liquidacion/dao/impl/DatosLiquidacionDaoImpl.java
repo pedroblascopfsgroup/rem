@@ -62,7 +62,7 @@ public class DatosLiquidacionDaoImpl implements DatosLiquidacionDao {
 		Query query = session.createSQLQuery(plainQueryDatosGeneralesLiq())
 			.addScalar("DGC_PCO_LIQ_ID", Hibernate.LONG)
 			.addScalar("DGC_IDPRIG", Hibernate.STRING)
-			.addScalar("DGC_NMPRTM", Hibernate.STRING)
+			.addScalar("DGC_NMPRTO", Hibernate.STRING)
 			.addScalar("DGC_FEVACM", Hibernate.DATE)
 			.addScalar("DGC_IMCCNS", Hibernate.BIG_DECIMAL)
 			.addScalar("DGC_IMCPAM", Hibernate.BIG_DECIMAL)

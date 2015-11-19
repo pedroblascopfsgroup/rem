@@ -144,8 +144,22 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 			// Numero finca
 			String numFinca = "";
 			if (infoRegistral != null && infoRegistral.getNumFinca() != null) {
-				numFinca = infoRegistral.getNumFinca();	
-				bienesConcatenados.append("FINCA " + numFinca + " ");
+				numFinca = " FINCA " + infoRegistral.getNumFinca();	
+				bienesConcatenados.append(numFinca);
+			}
+
+			// Numero Registro
+			String numRegistro = "";
+			if (infoRegistral != null && infoRegistral.getNumRegistro() != null) {
+				numRegistro = " NUM.R " + infoRegistral.getNumRegistro();
+				bienesConcatenados.append(numRegistro);
+			}
+
+			// Localizacion registro
+			String locRegistro = "";
+			if (infoRegistral != null && infoRegistral.getLocalidad() != null && infoRegistral.getLocalidad().getDescripcion() != null) {
+				locRegistro = " LOC.R " + infoRegistral.getLocalidad().getDescripcion();
+				bienesConcatenados.append(locRegistro);
 			}
 
 			String nombreVia = "";
@@ -174,7 +188,7 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 			else if(i<size) bienesConcatenados.append(", ");			
 			
 
-			BienLiqVO bienVo = new BienLiqVO(numFinca, direccion, localidad);
+			BienLiqVO bienVo = new BienLiqVO(numFinca + numRegistro + locRegistro, direccion, localidad);
 			bienes.add(bienVo);
 		}
 

@@ -19,7 +19,7 @@ public class DatosGeneralesLiqVO {
 	private Date DGC_FEFOEZ;
 	private String DGC_NOMFED1;
 	private BigDecimal DGC_IMDEUD;
-	private String DGC_NMPRTM;
+	private String DGC_NMPRTO;
 	private String DGC_COIBTQ;
 
 	SimpleDateFormat fechaLargaFormat = new SimpleDateFormat(FormatUtils.DD_DE_MES_DE_YYYY, MessageUtils.DEFAULT_LOCALE);
@@ -48,8 +48,8 @@ public class DatosGeneralesLiqVO {
 		return DGC_NOMFED1 == null ? "[NO DISPONIBLE]" : DGC_NOMFED1;
 	}
 
-	public String NMPRTM() {
-		return DGC_NMPRTM == null ? "[NO DISPONIBLE]" : DGC_NMPRTM;
+	public String NMPRTO() {
+		return DGC_NMPRTO == null ? "[NO DISPONIBLE]" : DGC_NMPRTO;
 	}
 
 	public String IDPRIG() {

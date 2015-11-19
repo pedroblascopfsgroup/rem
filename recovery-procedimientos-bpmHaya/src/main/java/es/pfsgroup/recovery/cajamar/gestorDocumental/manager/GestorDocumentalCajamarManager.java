@@ -20,22 +20,26 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.asunto.dao.AsuntoDao;
-import es.capgemini.pfs.asunto.model.Asunto;
+import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.dao.ContratoDao;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.expediente.dao.ExpedienteDao;
-import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.persona.dao.PersonaDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.pfsgroup.gestorDocumental.api.GestorDocumentalApi;
+import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.AdjuntoGridAssembler;
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.ConstantesGestorDocumental;
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalInputDto;
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalOutputDto;
 import es.pfsgroup.recovery.cajamar.serviciosonline.GestorDocumentalWSApi;
+import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
+import es.pfsgroup.recovery.ext.impl.expediente.EXTExpedienteManager;
+import es.pfsgroup.recovery.ext.impl.expediente.model.EXTExpediente;
+import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 import es.pfsgroup.recovery.gestordocumental.dto.AdjuntoGridDto;
 
 @Component
@@ -63,7 +67,16 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	private AsuntoDao asuntoDao;
 
 	@Autowired
+	private ProcedimientoDao procedimientoDao;
+	
+	@Autowired
 	private GestorDocumentalWSApi gestorDocumentalWSApi;
+	
+	@Autowired
+	private EXTExpedienteManager extExpedienteManager;
+	
+	@Autowired
+	private EXTProcedimientoManager extProcedimientoManager;
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_ALTA_DOCUMENTO)
 	@Transactional(readOnly = false)
@@ -85,10 +98,10 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 					MessageUtils.DEFAULT_LOCALE);
 		}
 
-		guardarRecuperarDatoEntidad(idEntidad, tipoEntidadGrid, uploadForm);
+		String claveRel = guardarRecuperarDatoEntidad(idEntidad, tipoEntidadGrid, uploadForm);
 
 		outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(
-				idEntidad.toString(), ALTA_GESTOR_DOC, tipoDocumento,
+				claveRel, ALTA_GESTOR_DOC, tipoDocumento,
 				tipoEntidadGrid, uploadForm));
 
 		return outputDto.getTxtError();
@@ -150,7 +163,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		String ficheroBase64 = "";
 		try {
 			// write the inputStream to a FileOutputStream
-			outputStream = new FileOutputStream(new File(""));
+			outputStream = new FileOutputStream(new File("adjunto"));
 
 			int read = 0;
 			byte[] bytes = new byte[1024];
@@ -207,27 +220,46 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		return ConstantesGestorDocumental.tipoAsociacionPorEntidad.get(codEntidad);
 	}
 
-	private void guardarRecuperarDatoEntidad(Long idEntidad,
+	private String guardarRecuperarDatoEntidad(Long idEntidad,
 			String tipoEntidad, WebFileItem uploadForm) {
+		String claveRel = "";
 		if (DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE.equals(tipoEntidad)) {
-			Expediente expediente = expedienteDao.get(idEntidad);
-			expediente.addAdjunto(uploadForm.getFileItem());
-			expedienteDao.save(expediente);
+			EXTExpediente expediente = EXTExpediente.instanceOf(expedienteDao.get(idEntidad));
+			if(uploadForm != null) {
+				expediente.addAdjunto(uploadForm.getFileItem());
+				expedienteDao.save(expediente);				
+			}
+			claveRel = extExpedienteManager.prepareGuid(expediente).getGuid();
 		} else if (DDTipoEntidad.CODIGO_ENTIDAD_PERSONA.equals(tipoEntidad)) {
 			Persona persona = personaDao.get(idEntidad);
-			persona.addAdjunto(uploadForm.getFileItem());
-			personaDao.save(persona);
+			if(uploadForm != null) {
+				persona.addAdjunto(uploadForm.getFileItem());
+				personaDao.save(persona);
+			}
+			claveRel = persona.getDocId();
 		} else if (DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO.equals(tipoEntidad)) {
 			Contrato contrato = contratoDao.get(idEntidad);
-			contrato.addAdjunto(uploadForm.getFileItem());
-			contratoDao.save(contrato);
-		} else if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidad)
-				|| DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO
-						.equals(tipoEntidad)) {
-			Asunto asunto = asuntoDao.get(idEntidad);
-			asunto.addAdjunto(uploadForm.getFileItem());
-			asuntoDao.save(asunto);
+			if(uploadForm != null) {
+				contrato.addAdjunto(uploadForm.getFileItem());
+				contratoDao.save(contrato);
+			}
+			claveRel = contrato.getNroContrato();
+		} else if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidad)) {
+			EXTAsunto asunto = EXTAsunto.instanceOf(asuntoDao.get(idEntidad));
+			if(uploadForm != null) {
+				asunto.addAdjunto(uploadForm.getFileItem());
+				asuntoDao.save(asunto);
+			}
+			claveRel = asunto.getGuid();
+		} else if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidad)) {
+			MEJProcedimiento prc = MEJProcedimiento.instanceOf(procedimientoDao.get(idEntidad));
+			if(uploadForm != null) {
+				prc.getAsunto().addAdjunto(uploadForm.getFileItem());
+				procedimientoDao.save(prc);
+			}
+			claveRel = extProcedimientoManager.prepareGuid(prc).getGuid();
 		}
+		return claveRel;
 	}
 
 }

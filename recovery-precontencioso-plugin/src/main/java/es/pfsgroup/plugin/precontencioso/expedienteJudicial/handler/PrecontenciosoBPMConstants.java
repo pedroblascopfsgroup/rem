@@ -21,6 +21,7 @@ public class PrecontenciosoBPMConstants {
 	public static final String PCO_RegResultadoDocG = "PCO_RegResultadoDocG";
 	public static final String PCO_SolicitarDoc = "PCO_SolicitarDoc";
 	public static final String PCO_GenerarLiq = "PCO_GenerarLiq";
+	public static final String PCO_AdjuntarDoc= "PCO_AdjuntarDoc";
 	
 	//Particulares de HAYA
 	public static final String PCO_DecTipoProcAutomatica = "PCO_DecTipoProcAutomatica";
@@ -29,6 +30,7 @@ public class PrecontenciosoBPMConstants {
 	public static final String PCO_RevisarSubsanacionCONC = "PCO_RevisarSubsanacionCONC";
 	public static final String PCO_ResolverIncidenciaExpCONC = "PCO_ResolverIncidenciaExpCONC";
 	public static final String PCO_Campo_ProcPropuesto = "procPropuesto";
+	public static final String PCO_CerrarWorkflow = "PCO_CerrarWorkflow";
 
 	public static final String PCO_PRETURNADO = "PT";
 	public static final String PCO_PREPARACION = "PR";

@@ -37,7 +37,7 @@
 			pagingBar.show();
 	}});
 	
-	var btnLimpiar = app.crearBotonResetCampos([fieldCodigo,fieldNombreExpedienteJudicial,dateFieldInicioPreparacionDesde,dateFieldInicioPreparacionHasta,
+	var camposLimpiar = [fieldCodigo,fieldNombreExpedienteJudicial,dateFieldInicioPreparacionDesde,dateFieldInicioPreparacionHasta,
 				dateFieldPreparadoDesde,dateFieldPreparadoHasta,dateFieldEnviadoLetradoDesde,dateFieldEnviadoLetradoHasta,dateFieldFinalizadoDesde,
 				dateFieldFinalizadoHasta,dateFieldUltimaSubsanacionDesde,dateFieldUltimaSubsanacionHasta,dateFieldCanceladoDesde,dateFieldCanceladoHasta,
 				dateFieldParalizacionDesde,dateFieldParalizacionHasta,comboTipoProcPropuesto,comboTipoPreparacion,filtroEstadoPreparacion,comboTiposGestor,
@@ -47,8 +47,27 @@
 				dateFieldEnvioDocHasta,dateFieldRecepcionDocDesde,dateFieldRecepcionDocHasta,comboAdjuntoDoc,comboSolicitudPreviaDoc,fieldDiasGestionDoc,
 				comboTiposGestorDoc,comboDespachosDoc,comboGestorDoc,comboEstadoLiquidacion,dateFieldSolicitudLiqDesde,dateFieldSolicitudLiqHasta,dateFieldRecepcionLiqDesde,
 				dateFieldRecepcionLiqHasta,dateFieldConfirmacionLiqDesde,dateFieldConfirmacionLiqHasta,dateFieldCierreLiqDesde,dateFieldCierreLiqHasta,
-				fieldTotalLiqDesde,fieldTotalLiqHasta,fieldDiasGestionLiq,comboNotificado,comboResultadoBurofax,dateFieldSolicitudBurDesde,dateFieldSolicitudBurHasta,
-				dateFieldEnvioBurDesde,dateFieldEnvioBurHasta,dateFieldAcuseBurDesde,dateFieldAcuseBurHasta]);
+				fieldTotalLiqDesde,fieldTotalLiqHasta,fieldDiasGestionLiq,comboResultadoBurofax,dateFieldSolicitudBurDesde,dateFieldSolicitudBurHasta,
+				dateFieldEnvioBurDesde,dateFieldEnvioBurHasta,dateFieldAcuseBurDesde,dateFieldAcuseBurHasta];
+	
+	var camposStoreLimpiar = [optionsZonasStore, optionsGestoresStore, optionsGestoresStoreDoc];
+
+	var limpiarCamposStore = function(){	
+	 	for (var i = 0; i < camposStoreLimpiar.length ; i++) {	 			
+	 		camposStoreLimpiar[i].removeAll();
+   	 	}
+	}
+		
+	var cfgBtnLimpiar = {
+		text:'<s:message code="app.botones.limpiar" text="**Limpiar" />'
+		,iconCls:'icon_limpiar'
+		,handler : function(){
+				app.resetCampos(camposLimpiar);
+				limpiarCamposStore();
+		}
+	};
+	
+	var btnLimpiar = new Ext.Button(cfgBtnLimpiar);
 
 	var btnExportar = new Ext.Button({
 		text: '<s:message code="menu.clientes.listado.filtro.exportar.xls" text="**Exportar a Excel" />',

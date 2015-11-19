@@ -48,7 +48,7 @@ public class DatosGeneralesLiqVO {
 		return DGC_NOMFED1 == null ? "[NO DISPONIBLE]" : DGC_NOMFED1;
 	}
 
-	public String NMPROT() {
+	public String NMPRTO() {
 		return DGC_NMPRTO == null ? "[NO DISPONIBLE]" : DGC_NMPRTO;
 	}
 

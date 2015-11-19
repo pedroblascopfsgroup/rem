@@ -46,9 +46,7 @@
 				}
 		}});
 		
-	var btnLimpiarEle = app.crearBotonResetCampos([
-		comboTipoBusqueda, fieldCodigoEle, fieldNombreExpedienteJudicialEle, 
-		dateFieldInicioPreparacionDesdeEle, dateFieldInicioPreparacionHastaEle,
+	var camposLimpiar = [comboTipoBusqueda, fieldCodigoEle, fieldNombreExpedienteJudicialEle,dateFieldInicioPreparacionDesdeEle, dateFieldInicioPreparacionHastaEle,
 		dateFieldPreparadoDesdeEle, dateFieldPreparadoHastaEle, dateFieldEnviadoLetradoDesdeEle, dateFieldEnviadoLetradoHastaEle,
 		dateFieldFinalizadoDesdeEle, dateFieldFinalizadoHastaEle, dateFieldUltimaSubsanacionDesdeEle, dateFieldUltimaSubsanacionHastaEle,
 		dateFieldCanceladoDesdeEle, dateFieldCanceladoHastaEle, dateFieldParalizacionDesdeEle, dateFieldParalizacionHastaEle,
@@ -58,11 +56,30 @@
 		fieldNombreEle, fieldApellidosEle, comboTipoDocumento, comboEstadoDocumento, comboRespuestaSolicitud, 
 		dateFieldSolicitudDocDesdeEle, dateFieldSolicitudDocHastaEle, dateFieldResultadoDocDesdeEle, dateFieldResultadoDocHastaEle,
 		dateFieldEnvioDocDesdeEle, dateFieldEnvioDocHastaEle, dateFieldRecepcionDocDesdeEle, dateFieldRecepcionDocHastaEle, 
-		comboAdjuntoDocEle, comboSolicitudPreviaDocEle, fieldDiasGestionDocEle, 
-		comboTiposGestorEleDoc, comboDespachosEleDoc, comboGestorEleDoc, comboEstadoLiquidacion, dateFieldSolicitudLiqDesdeEle, dateFieldSolicitudLiqHastaEle, 
-		dateFieldRecepcionLiqDesdeEle, dateFieldRecepcionLiqHastaEle, dateFieldConfirmacionLiqDesdeEle, dateFieldConfirmacionLiqHastaEle,
-		dateFieldCierreLiqDesdeEle, dateFieldCierreLiqHastaEle, fieldTotalLiqDesdeEle, fieldTotalLiqHastaEle, fieldDiasGestionLiqEle, comboNotificadoEle, comboResultadoBurofax, dateFieldSolicitudBurDesdeEle, dateFieldSolicitudBurHastaEle,
-		dateFieldEnvioBurDesdeEle, dateFieldEnvioBurHastaEle, dateFieldAcuseBurDesdeEle, dateFieldAcuseBurHastaEle]);
+		comboAdjuntoDocEle, comboSolicitudPreviaDocEle, fieldDiasGestionDocEle, comboTiposGestorEleDoc, comboDespachosEleDoc, comboGestorEleDoc, 
+		comboEstadoLiquidacion, dateFieldSolicitudLiqDesdeEle, dateFieldSolicitudLiqHastaEle, dateFieldRecepcionLiqDesdeEle, dateFieldRecepcionLiqHastaEle, 
+		dateFieldConfirmacionLiqDesdeEle, dateFieldConfirmacionLiqHastaEle, dateFieldCierreLiqDesdeEle, dateFieldCierreLiqHastaEle, fieldTotalLiqDesdeEle, 
+		fieldTotalLiqHastaEle, fieldDiasGestionLiqEle, comboResultadoBurofax, dateFieldSolicitudBurDesdeEle, dateFieldSolicitudBurHastaEle,
+		dateFieldEnvioBurDesdeEle, dateFieldEnvioBurHastaEle, dateFieldAcuseBurDesdeEle, dateFieldAcuseBurHastaEle];
+
+	var camposStoreLimpiar = [optionsZonasStore, optionsGestoresStore, optionsGestoresStoreDoc];
+
+	var limpiarCamposStore = function(){	
+	 	for (var i = 0; i < camposStoreLimpiar.length ; i++) {	 			
+	 		camposStoreLimpiar[i].removeAll();
+   	 	}
+	}
+	
+	var cfgBtnLimpiar = {
+		text:'<s:message code="app.botones.limpiar" text="**Limpiar" />'
+		,iconCls:'icon_limpiar'
+		,handler : function(){
+				app.resetCampos(camposLimpiar);
+				limpiarCamposStore();
+		}
+	};
+	
+	var btnLimpiarEle = new Ext.Button(cfgBtnLimpiar);
 
 	var btnExportar = new Ext.Button({
 		text: '<s:message code="menu.clientes.listado.filtro.exportar.xls" text="**Exportar a Excel" />',

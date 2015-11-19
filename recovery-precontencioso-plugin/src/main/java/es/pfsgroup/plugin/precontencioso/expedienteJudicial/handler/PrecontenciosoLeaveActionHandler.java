@@ -151,6 +151,16 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 			if(DDSiNo.NO.equals(exp_correcto)) {
 				executor.execute("plugin.precontencioso.cambiarEstadoExpediete", prc.getId(), PrecontenciosoBPMConstants.PCO_PREPARACION);
 			}
+		} else if (PrecontenciosoBPMConstants.PCO_RevisarExpDigCONC.equals(tex.getTareaProcedimiento().getCodigo())) {
+			String docCompleta = DDSiNo.NO;
+			for(EXTTareaExternaValor valor : listado) {
+				if("docCompleta".equals(valor.getNombre())){
+					docCompleta = valor.getValor();
+				}
+			}
+			if (DDSiNo.SI.equals(docCompleta)) {
+				executor.execute("plugin.precontencioso.cambiarEstadoExpediete", prc.getId(), PrecontenciosoBPMConstants.PCO_FINALIZADO);
+			}
 		}	
 	}
 

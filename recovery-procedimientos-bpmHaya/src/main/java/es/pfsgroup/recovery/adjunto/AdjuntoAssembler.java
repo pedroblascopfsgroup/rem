@@ -6,10 +6,12 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDto;
 import es.capgemini.pfs.asunto.model.AdjuntoAsunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.asunto.AdjuntoDto;
 import es.capgemini.pfs.core.api.asunto.EXTAdjuntoDto;
@@ -22,14 +24,15 @@ import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 import es.pfsgroup.recovery.gestordocumental.dto.AdjuntoGridDto;
 
+@Component
 public class AdjuntoAssembler {
 	
 	
 	@Autowired
-	private static GenericABMDao genericDao;
+	private  GenericABMDao genericDao;
 	
 
-	public static  List<EXTAdjuntoDto> listAdjuntoGridDtoToEXTAdjuntoDto(List<AdjuntoGridDto> listDto, final Boolean borrarOtrosUsu){
+	public  List<EXTAdjuntoDto> listAdjuntoGridDtoToEXTAdjuntoDto(List<AdjuntoGridDto> listDto, final Boolean borrarOtrosUsu){
 		   
 		List<EXTAdjuntoDto> adjuntosMapeados = new ArrayList<EXTAdjuntoDto>();
 
@@ -70,11 +73,18 @@ public class AdjuntoAssembler {
 						adjAsu.setId(adjDto.getId());
 						adjAsu.setNombre(adjDto.getNombre());
 						adjAsu.setContentType(adjDto.getContentType());
-						adjAsu.setLength(Long.parseLong(adjDto.getLength()));
+						if(!Checks.esNulo(adjDto.getLength())) {
+							adjAsu.setLength(Long.parseLong(adjDto.getLength()));							
+						}
 						adjAsu.setDescripcion(adjDto.getDescripcion());
+						adjAsu.setAuditoria(new Auditoria());
 						adjAsu.getAuditoria().setFechaCrear(adjDto.getAuditoria().getFechaCrear());
-						adjAsu.setTipoFichero(genericDao.get(DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", adjDto.getTipo())));
-						adjAsu.setProcedimiento(genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", adjDto.getNumActuacion())));
+						if(!Checks.esNulo(adjDto.getTipo())){
+							adjAsu.setTipoFichero(genericDao.get(DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", adjDto.getTipo())));
+						}
+						if(!Checks.esNulo(adjDto.getNumActuacion())){
+							adjAsu.setProcedimiento(genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", adjDto.getNumActuacion())));
+						}
 						
 						return adjAsu;
 					}
@@ -100,7 +110,7 @@ public class AdjuntoAssembler {
 	
 
 	
-	public static List<ExtAdjuntoGenericoDto> listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(List<AdjuntoGridDto> listDto){
+	public List<ExtAdjuntoGenericoDto> listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(List<AdjuntoGridDto> listDto){
 		   
 		List<ExtAdjuntoGenericoDto> adjuntosMapeados = new ArrayList<ExtAdjuntoGenericoDto>();
 
@@ -116,7 +126,7 @@ public class AdjuntoAssembler {
 					} else if (Checks.esNulo(o2)) {
 						return 1;
 					} else {
-						return o2.getDescripcionEntidad().compareTo(o1.getDescripcionEntidad());
+						return o2.getAuditoria().getFechaCrear().compareTo(o1.getAuditoria().getFechaCrear());
 					}
 				}
 			};
@@ -159,109 +169,94 @@ public class AdjuntoAssembler {
 		
 	}
 	
-	public static List<ExtAdjuntoGenericoDto> listContratoToListExtAdjuntoGenericoDto(List<Contrato> contratos){
+	public ExtAdjuntoGenericoDto contratoToExtAdjuntoGenericoDto(final Contrato contrato){
 		
-		List<ExtAdjuntoGenericoDto> adjuntosMapeados = new ArrayList<ExtAdjuntoGenericoDto>();
+		ExtAdjuntoGenericoDto dto = new ExtAdjuntoGenericoDto() {
+
+			@Override
+			public Long getId() {
+				return contrato.getId();
+			}
+
+			@Override
+			public String getDescripcion() {
+				return contrato.getDescripcion();
+			}
+
+			@Override
+			public List getAdjuntosAsList() {
+				return null;
+			}
+
+			@Override
+			public List getAdjuntos() {
+				return null;
+			}
+		};
 		
-		for(final Contrato cnt : contratos){
-			ExtAdjuntoGenericoDto dto = new ExtAdjuntoGenericoDto() {
-
-				@Override
-				public Long getId() {
-					return cnt.getId(); ///ENTIDAD.getId();
-				}
-
-				@Override
-				public String getDescripcion() {
-					return cnt.getDescripcion();//return asunto.getExpediente().getDescripcion(); ENTIDAD.getDescripcion();
-				}
-
-				@Override
-				public List getAdjuntosAsList() {
-					return null;
-				}
-
-				@Override
-				public List getAdjuntos() {
-					return null;
-				}
-			};
-			adjuntosMapeados.add(dto);
-		}
-		
-		return adjuntosMapeados;
+		return dto;
 	}
 	
 	
-	public static List<ExtAdjuntoGenericoDto> listPersonaToListExtAdjuntoGenericoDto(List<Persona> personas){
+	public ExtAdjuntoGenericoDto personaToExtAdjuntoGenericoDto(final Persona persona){
 		
-		List<ExtAdjuntoGenericoDto> adjuntosMapeados = new ArrayList<ExtAdjuntoGenericoDto>();
+		ExtAdjuntoGenericoDto dto = new ExtAdjuntoGenericoDto() {
+
+			@Override
+			public Long getId() {
+				return persona.getId();
+			}
+
+			@Override
+			public String getDescripcion() {
+				return persona.getDescripcion();
+			}
+
+			@Override
+			public List getAdjuntosAsList() {
+				return null;
+			}
+
+			@Override
+			public List getAdjuntos() {
+				return null;
+			}
+		};
 		
-		for(final Persona prs : personas){
-			ExtAdjuntoGenericoDto dto = new ExtAdjuntoGenericoDto() {
-
-				@Override
-				public Long getId() {
-					return prs.getId(); ///ENTIDAD.getId();
-				}
-
-				@Override
-				public String getDescripcion() {
-					return prs.getDescripcion();//return asunto.getExpediente().getDescripcion(); ENTIDAD.getDescripcion();
-				}
-
-				@Override
-				public List getAdjuntosAsList() {
-					return null;
-				}
-
-				@Override
-				public List getAdjuntos() {
-					return null;
-				}
-			};
-			adjuntosMapeados.add(dto);
-		}
-		
-		return adjuntosMapeados;
+		return dto;
 	}
 	
 	
-	public static List<ExtAdjuntoGenericoDto> listExpedientesToListExtAdjuntoGenericoDto(List<Expediente> expedientes){
+	public ExtAdjuntoGenericoDto expedienteToExtAdjuntoGenericoDto(final Expediente expediente){
 		
-		List<ExtAdjuntoGenericoDto> adjuntosMapeados = new ArrayList<ExtAdjuntoGenericoDto>();
+		ExtAdjuntoGenericoDto dto = new ExtAdjuntoGenericoDto() {
+
+			@Override
+			public Long getId() {
+				return expediente.getId(); 
+			}
+
+			@Override
+			public String getDescripcion() {
+				return expediente.getDescripcion();
+			}
+
+			@Override
+			public List getAdjuntosAsList() {
+				return null;
+			}
+
+			@Override
+			public List getAdjuntos() {
+				return null;
+			}
+		};
 		
-		for(final Expediente exp : expedientes){
-			ExtAdjuntoGenericoDto dto = new ExtAdjuntoGenericoDto() {
-
-				@Override
-				public Long getId() {
-					return exp.getId(); ///ENTIDAD.getId();
-				}
-
-				@Override
-				public String getDescripcion() {
-					return exp.getDescripcion();//return asunto.getExpediente().getDescripcion(); ENTIDAD.getDescripcion();
-				}
-
-				@Override
-				public List getAdjuntosAsList() {
-					return null;
-				}
-
-				@Override
-				public List getAdjuntos() {
-					return null;
-				}
-			};
-			adjuntosMapeados.add(dto);
-		}
-		
-		return adjuntosMapeados;
+		return dto;
 	}
 
 
-	public static List<AdjuntoDto> listAdjuntoGridDtoTOListAdjuntoDto(List<AdjuntoGridDto> listDto, final Boolean borrarOtrosUsu){
+	public List<AdjuntoDto> listAdjuntoGridDtoTOListAdjuntoDto(List<AdjuntoGridDto> listDto, final Boolean borrarOtrosUsu){
 		
 		
 		List<AdjuntoDto> adjuntosMapeados = new ArrayList<AdjuntoDto>();
@@ -307,6 +302,7 @@ public class AdjuntoAssembler {
 						adjAsu.setContentType(adjDto.getContentType());
 						adjAsu.setLength(Long.parseLong(adjDto.getLength()));
 						adjAsu.setDescripcion(adjDto.getDescripcion());
+						adjAsu.setAuditoria(new Auditoria());
 						adjAsu.getAuditoria().setFechaCrear(adjDto.getAuditoria().getFechaCrear());
 						adjAsu.setTipoFichero(genericDao.get(DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", adjDto.getTipo())));
 						adjAsu.setProcedimiento(genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", adjDto.getNumActuacion())));

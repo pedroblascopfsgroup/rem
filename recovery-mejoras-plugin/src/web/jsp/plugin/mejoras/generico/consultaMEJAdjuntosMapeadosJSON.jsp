@@ -9,38 +9,19 @@
 	<json:array name="adjuntos" items="${dtos}" var="dto">
 		<json:object>
 			<json:property name="id" value="${dto.adjunto.id}" />
-			<json:property name="nombre" value="aaaa" />
-			<json:property name="contentType" value=".docx" />
-			<json:property name="length" value="23" />
-			<json:property name="descripcion" value="Descripcion"/>
+			<json:property name="nombre" value="${dto.adjunto.nombre}" />
+			<json:property name="contentType" value="${dto.adjunto.contentType}" />
+			<json:property name="length" value="${dto.adjunto.length}" />
+			<json:property name="descripcion" value="${dto.adjunto.descripcion}"/>
 			<json:property name="fechaCrear">
-				<fmt:formatDate value="12/03/2015" pattern="dd/MM/yyyy" />
+				<fmt:formatDate value="${dto.adjunto.auditoria.fechaCrear}" pattern="dd/MM/yyyy" />
 			</json:property>
-			<json:property name="puedeBorrar" value="1" />
+			<json:property name="puedeBorrar" value="${dto.puedeBorrar}" />
 			
 			<c:if test="${dto.adjunto.tipoFichero != null}">
-				<json:property name="tipoFichero" value="eee" />
+				<json:property name="tipoFichero" value="${dto.adjunto.tipoFichero.descripcion}" />
 			</c:if>
-			<json:property name="prcId" value="111" />
-		
-		
-		
-<%-- 			<json:property name="id" value="${dto.adjunto.id}" /> --%>
-<%-- 			<json:property name="nombre" value="${dto.adjunto.nombre}" /> --%>
-<%-- 			<json:property name="contentType" value="${dto.adjunto.contentType}" /> --%>
-<%-- 			<json:property name="length" value="${dto.adjunto.length}" /> --%>
-<%-- 			<json:property name="descripcion" value="${dto.adjunto.descripcion}"/> --%>
-<%-- 			<json:property name="fechaCrear"> --%>
-<%-- 				<fmt:formatDate value="${dto.adjunto.auditoria.fechaCrear}" pattern="dd/MM/yyyy" /> --%>
-<%-- 			</json:property> --%>
-<%-- 			<json:property name="puedeBorrar" value="${dto.puedeBorrar}" /> --%>
-			
-<%-- 			<c:if test="${dto.adjunto.tipoFichero != null}"> --%>
-<%-- 				<json:property name="tipoFichero" value="${dto.adjunto.tipoFichero.descripcion}" /> --%>
-<%-- 			</c:if> --%>
-<%-- 			<json:property name="prcId" value="${dto.adjunto.procedimiento.id}" /> --%>
-			
-				
+			<json:property name="prcId" value="${dto.adjunto.procedimiento.id}" />
 		</json:object>
 	</json:array>
 </fwk:json>

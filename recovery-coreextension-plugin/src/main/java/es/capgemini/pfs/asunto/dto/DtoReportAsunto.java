@@ -86,7 +86,7 @@ public class DtoReportAsunto {
 			if (contratos.size()>0) {
 				Contrato contrato = contratos.get(0);
 				
-				if (DDTiposAsunto.LITIGIO.equals(asunto.getTipoAsunto().getCodigo()) && contrato.getGarantia1() != null) {
+				if (DDTiposAsunto.LITIGIO.equals(asunto.getTipoAsunto().getCodigo())) {
 					garantia = contrato.getGarantia1().getDescripcion();
 				}
 			}

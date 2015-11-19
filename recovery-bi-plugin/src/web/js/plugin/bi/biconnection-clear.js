@@ -9,7 +9,7 @@
      `Y88P'  Y8888P   `Y88P'
     
     
-    Tener en cuenta que al ofuscar, el segundo valor del array debe ser ${bi.url}
+    Tener en cuenta que al ofuscar, las posiciones 2 y 27 de array deben ser ${bi.url} y ${bi.auth} respectivamente
     
     
 */

@@ -17,7 +17,7 @@
 			<json:property name="docId" value="${dto.persona.docId}" />
 			<json:property name="telefono1" value="${dto.persona.telefono1}" />
 			<json:property name="direccion" value="${dto.persona.direcciones[0].domicilio} ${dto.persona.direcciones[0].localidad.descripcion}" />
-			<json:property name="segmento" value="${dto.persona.segmentoEntidad.descripcion}" />
+			<json:property name="segmento" value="${dto.persona.segmento.descripcion}" />
 			<json:property name="situacion" value="${dto.persona.situacion}" />
 			<json:property name="numContratos" value="${dto.persona.numContratos}" />
 			<json:property name="deudaIrregular" value="${dto.persona.deudaIrregular}"/>

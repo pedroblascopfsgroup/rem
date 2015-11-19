@@ -10,25 +10,34 @@
 
 <fwk:page>
 
-	var riesgoOperacional = <app:dict value="${riesgoOperacional}" blankElement="true" blankElementValue=""/>;
+	var labelStyle='font-weight:bolder;width:150px';
+
+	var ddriesgoOperacional = <app:dict value="${ddriesgoOperacional}" blankElement="true" blankElementValue=""/>;
 
 	var optionsRiesgoOperacionalStore = new Ext.data.JsonStore({
 		fields: ['codigo', 'descripcion']
 		,root: 'diccionario'
-		,data: riesgoOperacional
+		,data: ddriesgoOperacional
+	});
+
+	var label =  new Ext.form.Label({
+			text:'<s:message code="contrato.consulta.tabOtrosDatos.riesgoOperacional" text="**Riesgo Operacional" />'
+	,style:labelStyle
 	});
 
 	var comboRiesgoOperacional = new Ext.form.ComboBox({
 		store: optionsRiesgoOperacionalStore
-		,displayField: 'descripcion'
-		,valueField: 'codigo'
-		,mode: 'local'
-		,style: 'margin:0px'
-		,width:170
+		,displayField:'descripcion'
+		,valueField:'codigo'
+		,mode:'local'
+		,style:'margin:0px'
+		,width:200
 		,triggerAction:'all'
 		,editable: false
-		,fieldLabel:'<s:message code="contrato.consulta.tabOtrosDatos.riesgoOperacional" text="**Riesgo Operacional"/>'
+		,fieldLabel: '<s:message code="contrato.consulta.tabOtrosDatos.riesgoOperacional" text="**Riesgo Operacional" />'
 	});
+	
+	
 	
 	var validarForm = function(){
 		if(comboRiesgoOperacional.getValue == ''){
@@ -39,6 +48,13 @@
 	
 	};
 	
+	var getPArametros  = function(){
+		var param = new Object();
+		//param.idContrato=
+		param.codRiesgoOperacional = comboRiesgoOperacional.getValue();
+		
+	};
+	
 	var btnGuardar = new Ext.Button({
 		text: '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls: 'icon_ok'
@@ -46,8 +62,8 @@
 			if(validarForm()){
 
 				page.webflow({
-					flow: ''
-					,params: parms
+					flow: 'riesgooperacional/ActualizarRiesgoOperacional'
+					,params: getParametros()
 					,success: function(){
 						page.fireEvent(app.event.DONE);
 					}			
@@ -64,8 +80,9 @@
 		,handler : function(){ page.fireEvent(app.event.CANCEL); }
 	});
 
-	var panelEdicion = new Ext.Panel({
+	var panelEdicion = new Ext.form.FormPanel({
 		autoHeight: true
+		,autoWidth: true
 		,bodyStyle: 'padding:5px;cellspacing:20px;'
 		,border: false
 		,items: [comboRiesgoOperacional]

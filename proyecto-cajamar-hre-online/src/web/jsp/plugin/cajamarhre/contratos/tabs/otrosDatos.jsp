@@ -59,8 +59,12 @@
  		,width: 75
  		,handler: function (){
  			var w = app.openWindow({
- 				flow: ''
+ 				flow: 'riesgooperacional/ObtenerRiesgoOperacionalContrato'
+ 				,closable: true
  				,width:500
+ 				,heigth:500
+ 				,y: 250
+ 				,x:400
  				,title : '<s:message code="contrato.consulta.tabOtrosDatos.popUpTitle" text="**Editar riesgo operacional"/>'
  			})
  			w.on(app.event.DONE, function(){
@@ -109,6 +113,7 @@
   		var data=entidad.get("data");
   		var d=data.otrosDatos;
   
+  		debugger;
   		entidad.setLabel('contratoNivel2', d.contratoPadreNivel2);  
   		entidad.setLabel('odCharExtra7', d.charextra7);
   		entidad.setLabel('odCharExtra9', d.charextra9);
@@ -122,9 +127,9 @@
   		entidad.setLabel('odNumExtra4', d.numextra4);
   		entidad.setLabel('odNumExtra5', d.numextra5);
   		
-  		//entidad.setLabel('riesgoOperacional', '');
-  		//entidad.setLabel('tipoVencido', '');
-  		//entidad.setLabel('tramoPrevio', '');
+  		entidad.setLabel('riesgoOperacional', '');
+  		entidad.setLabel('tipoVencido', '');
+  		entidad.setLabel('tramoPrevio', '');
  	}
   
   	return panel;

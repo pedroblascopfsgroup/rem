@@ -96,7 +96,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_LISTADO_DOCUMENTO)
 	@Transactional(readOnly = false)
-	public List<AdjuntoGridDto> listadoDocumentos(Long idEntidad,String tipoEntidad, String tipoEntidadGrid, String tipoDocumento) {
+	public List<AdjuntoGridDto> listadoDocumentos(Long idEntidad, String tipoEntidadGrid, String tipoDocumento) {
 
 		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
 		GestorDocumentalInputDto inputDto = rellenaInputDto(

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=GONZALO ESTELLES
---## FECHA_CREACION=20150802
+--## AUTOR=Alberto b
+--## FECHA_CREACION=20151119
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.3-hcj
---## INCIDENCIA_LINK=VARIAS
+--## VERSION_ARTEFACTO=9.1.0-cj-rc17
+--## INCIDENCIA_LINK= CMREC-1161
 --## PRODUCTO=NO
 --##
 --## Finalidad: Resolución de varias incidencias de Litigios
@@ -22,6 +22,7 @@ DECLARE
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    V_NUM_TABLAS2 NUMBER(16); -- Vble. para validar la existencia de una tabla.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
@@ -32,6 +33,7 @@ DECLARE
     
 BEGIN	
 
+	
 	V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.FUN_PEF WHERE PEF_ID = (SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = ''GEST_INTERNO'')';
 
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
@@ -39,11 +41,21 @@ BEGIN
     IF V_NUM_TABLAS > 0 THEN	  
 		DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.FUN_PEF ...no se modificará nada.');
 	ELSE
-		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.FUN_PEF (FP_ID,PEF_ID,FUN_ID,USUARIOCREAR,FECHACREAR) SELECT '||V_ESQUEMA_M||'.S_FUN_FUNCIONES.NEXTVAL, (SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = ''GEST_INTERNO''),FUN_ID, ''CMREC-1161'',SYSDATE FROM (SELECT FUN.FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES FUN WHERE FUN.FUN_DESCRIPCION IN (''TAB_ANALISISCONTRATOS''))';
+		V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = ''GEST_INTERNO''';
+		
+		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS2;
+		
+		IF V_NUM_TABLAS2 = 0 THEN
+		
+			DBMS_OUTPUT.PUT_LINE('No existe el perfil solicitado GEST_INTERNO');
+		ELSE
+		
+			V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.FUN_PEF (FP_ID,PEF_ID,FUN_ID,USUARIOCREAR,FECHACREAR) SELECT '||V_ESQUEMA_M||'.S_FUN_FUNCIONES.NEXTVAL, (SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = ''GEST_INTERNO''),FUN_ID, ''CMREC-1161'',SYSDATE FROM (SELECT FUN.FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES FUN WHERE FUN.FUN_DESCRIPCION IN (''TAB_ANALISISCONTRATOS''))';
 
-        EXECUTE IMMEDIATE V_MSQL;
-        DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'.FUN_PEF...  insertado');
-        
+        	EXECUTE IMMEDIATE V_MSQL;
+        	DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'.FUN_PEF...  insertado');
+		
+		END IF;
     END IF;	
     
     

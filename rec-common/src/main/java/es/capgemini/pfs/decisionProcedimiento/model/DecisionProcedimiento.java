@@ -8,6 +8,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -77,8 +78,14 @@ public class DecisionProcedimiento implements Serializable, Auditable {
     
     @OneToOne
     @JoinColumn(name = "DD_DPA_ID")
-    private DDCausaDecisionParalizar causaDecisionParalizar; 
+    private DDCausaDecisionParalizar causaDecisionParalizar;
     
+    @Column(name = "DPR_ENTIDAD")
+    private String entidad;
+    
+    @Column(name="SYS_GUID")
+	private String guid;
+
     public DDCausaDecisionFinalizar getCausaDecisionFinalizar() {
 		return causaDecisionFinalizar;
 	}
@@ -107,7 +114,7 @@ public class DecisionProcedimiento implements Serializable, Auditable {
     @Column(name = "DPR_COMENTARIOS")
     private String comentarios;
 
-    @OneToMany(mappedBy = "decisionProcedimiento", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "decisionProcedimiento", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     @JoinColumn(name = "DPR_ID")
     @LazyCollection(LazyCollectionOption.FALSE)
@@ -307,4 +314,38 @@ public class DecisionProcedimiento implements Serializable, Auditable {
         return tareaAsociada;
     }
 
+	/**
+	 * @return the entidad
+	 */
+	public String getEntidad() {
+		return entidad;
+	}
+
+	/**
+	 * @param entidad the entidad to set
+	 */
+	public void setEntidad(String entidad) {
+		this.entidad = entidad;
+	}
+	
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
+	
+	public ProcedimientoDerivado getProcedimientoDerivadoById(Long id) {
+		if (this.procedimientosDerivados==null) {
+			return null;
+		}
+		for (ProcedimientoDerivado pd : this.procedimientosDerivados) {
+			if (pd.getId()!=null && pd.getId().equals(id)) {
+				return pd;
+			}
+		}
+		return null;
+	}
+	
 }

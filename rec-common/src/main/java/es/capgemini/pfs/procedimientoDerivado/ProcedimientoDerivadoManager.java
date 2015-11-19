@@ -50,4 +50,14 @@ public class ProcedimientoDerivadoManager {
     public void createOrUpdate(DtoProcedimientoDerivado dtoProcedimientoDerivado) {
         //TODO :implementar metodo
     }
+    
+    /**
+     * Devuelve un ProcedimientoDerivado a partir del identificador único GUID
+     * 
+     * @param guid
+     * @return
+     */
+	public ProcedimientoDerivado getProcedimientoDerivadoByGuid(String guid) {
+		return procedimientoDerivadoDao.getByGuid(guid);
+	}
 }

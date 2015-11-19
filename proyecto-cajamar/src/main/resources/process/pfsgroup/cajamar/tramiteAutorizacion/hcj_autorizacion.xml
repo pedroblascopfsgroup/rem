@@ -35,7 +35,7 @@
 	<node name="HCJ003_AutorizacionDecision">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>genericUserDecisionActionHandler</targetBean>
+			<targetBean>tramiteAceptacionUserDecisionActionHandler</targetBean>
 		</action>	
 		<transition to="Fin" name="Fin"></transition>
 	</node>

@@ -329,6 +329,7 @@ public class GestorTareasManager implements GestorTareasApi {
 			}
 			
 		}
+
 		return resultado;
 	}
 }

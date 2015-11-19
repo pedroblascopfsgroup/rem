@@ -54,8 +54,13 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 
 	@Override
 	public List<? extends EXTAdjuntoDto> getAdjuntosConBorrado(Long id) {
-		//return (List<? extends EXTAdjuntoDto>) listadoDocumentos(id, DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, null);
-		return null;
+		if(esEntidadCajamar()){
+			final Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+			final Boolean borrarOtrosUsu = tieneFuncion(usuario, "BORRAR_ADJ_OTROS_USU");
+			return AdjuntoAssembler.listAdjuntoGridDtoToEXTAdjuntoDto(gestorDocumentalApi.listadoDocumentos(id, DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, null), borrarOtrosUsu);
+		}else{
+			return super.getAdjuntosConBorrado(id);
+		}
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDto;
+import es.capgemini.pfs.asunto.model.AdjuntoAsunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.asunto.AdjuntoDto;
@@ -28,6 +29,77 @@ public class AdjuntoAssembler {
 	private static GenericABMDao genericDao;
 	
 
+	public static  List<EXTAdjuntoDto> listAdjuntoGridDtoToEXTAdjuntoDto(List<AdjuntoGridDto> listDto, final Boolean borrarOtrosUsu){
+		   
+		List<EXTAdjuntoDto> adjuntosMapeados = new ArrayList<EXTAdjuntoDto>();
+
+		if (!Checks.estaVacio(listDto)) {
+			
+			Comparator<AdjuntoGridDto> comparador = new Comparator<AdjuntoGridDto>() {
+				@Override
+				public int compare(AdjuntoGridDto o1, AdjuntoGridDto o2) {
+					if (Checks.esNulo(o1) && Checks.esNulo(o2)) {
+						return 0;
+					} else if (Checks.esNulo(o1)) {
+						return -1;
+					} else if (Checks.esNulo(o2)) {
+						return 1;
+					} else {
+						return o2.getAuditoria().getFechaCrear().compareTo(o1.getAuditoria().getFechaCrear());
+					}
+				}
+			};
+			
+			Collections.sort(listDto, comparador);
+
+			for(final AdjuntoGridDto adjDto : listDto){
+				EXTAdjuntoDto dto = new EXTAdjuntoDto() {
+					@Override
+					public Boolean getPuedeBorrar() {
+						if (borrarOtrosUsu /*|| aa.getAuditoria().getUsuarioCrear().equals(usuario.getUsername())*/) {
+							return true;
+						} else {
+							return false;
+						}
+					}
+
+					@Override
+					public AdjuntoAsunto getAdjunto() {
+						
+						EXTAdjuntoAsunto adjAsu = new EXTAdjuntoAsunto();
+						adjAsu.setId(adjDto.getId());
+						adjAsu.setNombre(adjDto.getNombre());
+						adjAsu.setContentType(adjDto.getContentType());
+						adjAsu.setLength(Long.parseLong(adjDto.getLength()));
+						adjAsu.setDescripcion(adjDto.getDescripcion());
+						adjAsu.getAuditoria().setFechaCrear(adjDto.getAuditoria().getFechaCrear());
+						adjAsu.setTipoFichero(genericDao.get(DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", adjDto.getTipo())));
+						adjAsu.setProcedimiento(genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", adjDto.getNumActuacion())));
+						
+						return adjAsu;
+					}
+
+					@Override
+					public String getTipoDocumento() {
+						return adjDto.getContentType();
+					}
+
+					@Override
+					public Long prcId() {
+						return adjDto.getNumActuacion();
+					}
+				};
+				adjuntosMapeados.add(dto);
+			}
+
+		}
+
+		return adjuntosMapeados;
+		
+	}
+	
+
+	
 	public static List<ExtAdjuntoGenericoDto> listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(List<AdjuntoGridDto> listDto){
 		   
 		List<ExtAdjuntoGenericoDto> adjuntosMapeados = new ArrayList<ExtAdjuntoGenericoDto>();

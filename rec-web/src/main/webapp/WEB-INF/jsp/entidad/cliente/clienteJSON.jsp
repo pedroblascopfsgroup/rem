@@ -86,8 +86,8 @@
 		<json:property name="numExpedientesActivos" value="${persona.numExpedientesActivos}" />
 		<json:property name="numAsuntosActivos" value="${persona.numAsuntosActivosPorPrc}" />
 		<json:property name="ratingExterno" value="${persona.ratingExterno}" />
-		<json:property name="segmento" value="${persona.segmento}" />
-		<json:property name="segmentoEntidad" value="${persona.segmentoEntidad.descripcion}" />		
+		<json:property name="segmento" value="${persona.segmentoEntidad.descripcion}" />
+		<json:property name="segmentoEntidad" value="${persona.segmento}" />		
 		<json:property name="nivel" value="${persona.tipoPersonaNivel.descripcion}"/>
 		<json:property name="politicaEntidad" value="${persona.politicaEntidad.descripcion}" />
 		<json:property name="riesgoDirecto" value="${persona.riesgoDirecto}" />

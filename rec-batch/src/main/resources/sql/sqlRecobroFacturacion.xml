@@ -25,6 +25,7 @@
   <entry key="facturacion.recobroDetalleFacturaTemporal.procesaProceso">
     <![CDATA[
         BEGIN
+            RERA_CALCULO_RAS_RANKING();
             PROCESA_PROCESO_FACT();
         END;
     ]]>

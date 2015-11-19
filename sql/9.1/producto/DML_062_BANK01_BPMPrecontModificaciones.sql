@@ -58,7 +58,7 @@ BEGIN
 	    DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... INSERT DEL CAMPO TFI_TAREAS_FORM_ITEMS PCO_SubsanarIncidenciaExp tipo_problema');
 	    V_SQL := 'INSERT INTO '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS ' || 
 	      '(TFI_ID, TAP_ID, TFI_ORDEN, TFI_TIPO, TFI_NOMBRE, TFI_LABEL, TFI_ERROR_VALIDACION, TFI_VALIDACION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' || 
-	      'VALUES (s_tfi_tareas_form_items.nextval, (select tap_id from tap_tarea_procedimiento where tap_codigo=''PCO_SubsanarIncidenciaExp''), ' || 
+	      'VALUES (' || V_ESQUEMA || '.s_tfi_tareas_form_items.nextval, (select tap_id from tap_tarea_procedimiento where tap_codigo=''PCO_SubsanarIncidenciaExp''), ' || 
 	      '2, ''combo'', ''tipo_problema'', ''Tipo de problema en expediente'', ''tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'', ''valor != null && valor != '''' ? true : false'', 0, ''DD'', sysdate, 0)';
 	    EXECUTE IMMEDIATE V_SQL;
 	    DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'... DELETE DEL CAMPO TFI_TIPO,  TFI_BUSINESS_OPERATIONDE TFI_TAREAS_FORM_ITEMS');
@@ -73,7 +73,7 @@ BEGIN
 	    DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... INSERT DEL CAMPO TFI_TAREAS_FORM_ITEMS PCO_SubsanarIncidenciaExp fecha_exp_sub');
 	    V_SQL := 'INSERT INTO '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS ' || 
 	      '(TFI_ID, TAP_ID, TFI_ORDEN, TFI_TIPO, TFI_NOMBRE, TFI_LABEL, TFI_ERROR_VALIDACION, TFI_VALIDACION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' || 
-	      'VALUES (s_tfi_tareas_form_items.nextval, (select tap_id from tap_tarea_procedimiento where tap_codigo=''PCO_SubsanarIncidenciaExp''), ' || 
+	      'VALUES (' || V_ESQUEMA || '.s_tfi_tareas_form_items.nextval, (select tap_id from tap_tarea_procedimiento where tap_codigo=''PCO_SubsanarIncidenciaExp''), ' || 
 	      '	3, ''date'', ''fecha_exp_sub'', ''Fecha expediente subsanado'', ''tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'', ''valor != null && valor != '''' ? true : false'', 0, ''DD'', sysdate, 0)';
 	    EXECUTE IMMEDIATE V_SQL;
 	    DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'... DELETE DEL CAMPO TFI_TIPO,  TFI_BUSINESS_OPERATIONDE TFI_TAREAS_FORM_ITEMS');

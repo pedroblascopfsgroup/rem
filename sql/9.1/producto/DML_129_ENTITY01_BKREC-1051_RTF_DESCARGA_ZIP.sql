@@ -65,7 +65,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
             )
             VALUES
             (
-              S_PEN_PARAM_ENTIDAD.nextval,
+              ' || V_ESQUEMA || '.S_PEN_PARAM_ENTIDAD.nextval,
               ''adjuntosDescargaZipExtensiones'',
               ''*.rtf *.docx'',
               ''Encapsula en ZIP las descargas de adjuntos, segun extension del adjunto.'',
@@ -109,7 +109,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
             )
             VALUES
             (
-              S_PEN_PARAM_ENTIDAD.nextval,
+              ' || V_ESQUEMA || '.S_PEN_PARAM_ENTIDAD.nextval,
               ''adjuntosDescargaZipNivelCompresion'',
               ''0'',
               ''Nivel de compresion ZIP para las descargas encapsuladas. Valor [0-9]'',

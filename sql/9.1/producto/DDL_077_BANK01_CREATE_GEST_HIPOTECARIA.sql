@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=RAFAEL ARACIL LOPEZ
+--## AUTOR=RAFAEL ARACIL LOPEZ  
 --## FECHA_CREACION=20151110
 --## ARTEFACTO=load_ficheros_fsr
 --## VERSION_ARTEFACTO=9.1.17-bk

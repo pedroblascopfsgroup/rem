@@ -29,6 +29,7 @@
 	<pfs:editForm saveOrUpdateFlow="pfsadmin/usuarios/ADMguardarGrupo"
 		leftColumFields="username"
 		rightColumFields="grupo"
-		parameters="parametros" />
+		parameters="parametros" 
+		onSuccessMode="tabGenericoConMsgGuardando" />
 
 </fwk:page>

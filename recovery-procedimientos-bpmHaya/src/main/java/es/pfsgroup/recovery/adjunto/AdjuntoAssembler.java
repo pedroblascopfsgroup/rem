@@ -110,7 +110,7 @@ public class AdjuntoAssembler {
 	
 
 	
-	public List<ExtAdjuntoGenericoDto> listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(List<AdjuntoGridDto> listDto){
+	public List<ExtAdjuntoGenericoDto> listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(List<AdjuntoGridDto> listDto, Long idEntidad, String descEntidad){
 		   
 		List<ExtAdjuntoGenericoDto> adjuntosMapeados = new ArrayList<ExtAdjuntoGenericoDto>();
 
@@ -134,39 +134,49 @@ public class AdjuntoAssembler {
 			Collections.sort(listDto, comparador);
 
 			for(final AdjuntoGridDto adjDto : listDto){
-				ExtAdjuntoGenericoDto dto = new ExtAdjuntoGenericoDto() {
+				
+				ExtAdjuntoGenericoDto dto = createExtAdjuntoGenericoDtoFromAdjuntoGridDto(adjDto, descEntidad, idEntidad);
 
-					@Override
-					public Long getId() {
-						return adjDto.getId(); ///ENTIDAD.getId();
-					}
-
-					@Override
-					public String getDescripcion() {
-						return adjDto.getDescripcionEntidad();//return asunto.getExpediente().getDescripcion(); ENTIDAD.getDescripcion();
-					}
-
-					@Override
-					public List getAdjuntosAsList() {
-						List<AdjuntoGridDto> l = new ArrayList<AdjuntoGridDto>();
-						l.add(adjDto);
-						return l;
-					}
-
-					@Override
-					public List getAdjuntos() {
-						List<AdjuntoGridDto> l = new ArrayList<AdjuntoGridDto>();
-						l.add(adjDto);
-						return l;
-					}
-				};
 				adjuntosMapeados.add(dto);
+				
+				////solo descripcion para la primera fila
+				descEntidad = null;
 			}
 
 		}
 
 		return adjuntosMapeados;
 		
+	}
+	
+	private ExtAdjuntoGenericoDto createExtAdjuntoGenericoDtoFromAdjuntoGridDto(final AdjuntoGridDto adjDto, final String descriocionEntidad, final Long identidad){
+		ExtAdjuntoGenericoDto dto = new ExtAdjuntoGenericoDto() {
+
+			@Override
+			public Long getId() {
+				return identidad;
+			}
+
+			@Override
+			public String getDescripcion() {
+				return descriocionEntidad;
+			}
+
+			@Override
+			public List getAdjuntosAsList() {
+				List<AdjuntoGridDto> l = new ArrayList<AdjuntoGridDto>();
+				l.add(adjDto);
+				return l;
+			}
+
+			@Override
+			public List getAdjuntos() {
+				List<AdjuntoGridDto> l = new ArrayList<AdjuntoGridDto>();
+				l.add(adjDto);
+				return l;
+			}
+		};
+		return dto;
 	}
 	
 	public ExtAdjuntoGenericoDto contratoToExtAdjuntoGenericoDto(final Contrato contrato){
@@ -180,7 +190,7 @@ public class AdjuntoAssembler {
 
 			@Override
 			public String getDescripcion() {
-				return contrato.getDescripcion();
+				return contrato.getNroContrato();
 			}
 
 			@Override
@@ -209,7 +219,7 @@ public class AdjuntoAssembler {
 
 			@Override
 			public String getDescripcion() {
-				return persona.getDescripcion();
+				return persona.getApellidoNombre();
 			}
 
 			@Override

@@ -82,7 +82,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 				if(Checks.esNulo(listDto) || Checks.estaVacio(listDto)){
 					adjuntos.add(adjuntoAssembler.contratoToExtAdjuntoGenericoDto(contrato));
 				}else{
-					adjuntos.addAll(adjuntoAssembler.listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(listDto));
+					adjuntos.addAll(adjuntoAssembler.listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(listDto, contrato.getId(), contrato.getNroContrato()));
 				}
 			}			
 			
@@ -105,7 +105,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 				if(Checks.esNulo(listDto) || Checks.estaVacio(listDto)){
 					adjuntos.add(adjuntoAssembler.personaToExtAdjuntoGenericoDto(persona));
 				}else{
-					adjuntos.addAll(adjuntoAssembler.listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(listDto));
+					adjuntos.addAll(adjuntoAssembler.listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(listDto, persona.getId(), persona.getApellidoNombre()));
 				}
 			}				
 			
@@ -123,13 +123,15 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 			List<ExtAdjuntoGenericoDto> adjuntos = new ArrayList<ExtAdjuntoGenericoDto>();
 			Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(id);
 	
-			if(!Checks.esNulo(asunto.getExpediente())){
+			if(!Checks.esNulo(asunto.getExpediente()) && !Checks.esNulo(asunto.getExpediente().getId())){
 				
-				List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(asunto.getExpediente().getGuid(), DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null);
+				Expediente expediente = genericDao.get(Expediente.class, genericDao.createFilter(FilterType.EQUALS, "id", asunto.getExpediente().getId()));
+				
+				List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(expediente.getGuid(), DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null);
 				if(Checks.esNulo(listDto) || Checks.estaVacio(listDto)){
-					adjuntos.add(adjuntoAssembler.expedienteToExtAdjuntoGenericoDto(asunto.getExpediente()));
+					adjuntos.add(adjuntoAssembler.expedienteToExtAdjuntoGenericoDto(expediente));
 				}else{
-					adjuntos.addAll(adjuntoAssembler.listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(listDto));
+					adjuntos.addAll(adjuntoAssembler.listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(listDto, expediente.getId(), expediente.getDescripcion()));
 				}
 			}
 			
@@ -235,7 +237,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 				if(Checks.esNulo(listDto) || Checks.estaVacio(listDto)){
 					adjuntos.add(adjuntoAssembler.personaToExtAdjuntoGenericoDto(persona));
 				}else{
-					adjuntos.addAll(adjuntoAssembler.listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(listDto));
+					adjuntos.addAll(adjuntoAssembler.listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(listDto, persona.getId(), persona.getApellidoNombre()));
 				}
 			}
 			
@@ -257,7 +259,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 				if(Checks.esNulo(listDto) || Checks.estaVacio(listDto)){
 					adjuntos.add(adjuntoAssembler.contratoToExtAdjuntoGenericoDto(contrato));
 				}else{
-					adjuntos.addAll(adjuntoAssembler.listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(listDto));
+					adjuntos.addAll(adjuntoAssembler.listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(listDto, contrato.getId(), contrato.getNroContrato()));
 				}
 			}		
 			

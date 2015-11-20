@@ -72,6 +72,8 @@ public class APPConstants {
 	public static final String CNT_PROP_FORMAT_SUBST_INI = "contrato.codigo.subStringIni";
 	public static final String CNT_PROP_FORMAT_SUBST_FIN = "contrato.codigo.subStringFin";
 
+	public static final String CNT_PROP_CONTRATO_SIN_ENTIDAD = "contrato.codigoSinEntidad";
+	
 	public static final String CNT_IAC_ESTADO_CONTRATO_ENTIDAD = "DD_ECE_CODIGO";
 	
 	//BANKIA

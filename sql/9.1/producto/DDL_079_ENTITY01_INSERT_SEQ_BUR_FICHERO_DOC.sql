@@ -5,7 +5,7 @@
 --## ARTEFACTO=web
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=BKREC-1325
---## PRODUCTO=NO
+--## PRODUCTO=SI
 --## Finalidad: DDL Creación de la secuencia BUR_FICHERO_DOC
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE

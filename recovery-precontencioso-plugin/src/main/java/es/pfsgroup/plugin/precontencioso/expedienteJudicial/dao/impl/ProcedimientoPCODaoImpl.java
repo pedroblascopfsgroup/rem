@@ -301,7 +301,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		where.add(Restrictions.eq("gaaTipoGestor.id", Long.valueOf(filtro.getProTipoGestor())));
 		where.add(Restrictions.eq("gaaDespachoExterno.id", Long.valueOf(filtro.getProDespacho())));
-		where.add(Restrictions.eq("gaaUsuario.id", getListLongFromStringCsv(filtro.getProGestor())));
+		where.add(Restrictions.in("gaaUsuario.id", getListLongFromStringCsv(filtro.getProGestor())));
 
 		return where;
 	}
@@ -475,7 +475,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		}
 
 		if (!StringUtils.emtpyString(filtro.getLiqDiasGestion())) {
-			where.add(Restrictions.ge("liquidacion.diasGestion", Integer.valueOf(filtro.getLiqDiasGestion())));
+			where.add(Restrictions.ge("liquidacion.diasEnGestion", Integer.valueOf(filtro.getLiqDiasGestion())));
 		}
 
 		where.addAll(floatRangeFilter("liquidacion.total", filtro.getLiqTotalDesde(), filtro.getLiqTotalHasta()));

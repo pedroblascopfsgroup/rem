@@ -17,6 +17,7 @@ public final class ComunBusinessOperation {
      ****************************************************************************/
 
     public static final String BO_DICTIONARY_GET_LIST = "dictionaryManager.getList";
+    public static final String BO_DICTIONARY_GET_LIST_ORDERED = "dictionaryManager.getListOrdered";
     public static final String BO_DICTIONARY_GET_BY_CODE = "dictionaryManager.getByCode";
     public static final String BO_DICTIONARY_GET_BY_CODE_CLASSNAME = "dictionaryManager.getByCodeClassName";
 

@@ -62,6 +62,9 @@ public class LiquidacionPCO implements Serializable, Auditable {
 	@Column(name = "PCO_LIQ_FECHA_CONFIRMACION")
 	private Date fechaConfirmacion;
 
+	@Column(name = "PCO_LIQ_FECHA_VISADO")
+	private Date fechaVisado;
+
 	@Column(name = "PCO_LIQ_FECHA_CIERRE")
 	private Date fechaCierre;
 
@@ -205,6 +208,20 @@ public class LiquidacionPCO implements Serializable, Auditable {
 
 	public void setFechaConfirmacion(Date fechaConfirmacion) {
 		this.fechaConfirmacion = fechaConfirmacion;
+	}
+
+	/**
+	 * @return the fechaVisado
+	 */
+	public Date getFechaVisado() {
+		return fechaVisado;
+	}
+
+	/**
+	 * @param fechaVisado the fechaVisado to set
+	 */
+	public void setFechaVisado(Date fechaVisado) {
+		this.fechaVisado = fechaVisado;
 	}
 
 	public Date getFechaCierre() {

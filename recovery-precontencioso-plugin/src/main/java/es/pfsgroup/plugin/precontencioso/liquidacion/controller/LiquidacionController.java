@@ -60,7 +60,11 @@ public class LiquidacionController {
 
 	@Autowired(required = false)
 	private GenerarLiquidacionApi generarLiquidacionApi;
+	
+	@Autowired
+	private GestorTareasApi gestorTareasManager;
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getLiquidacionesPorProcedimientoId(@RequestParam(value = "idProcedimientoPCO", required = true) Long idProcedimientoPCO, ModelMap model) {
 
@@ -70,6 +74,7 @@ public class LiquidacionController {
 		return JSON_LIQUIDACIONES;
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getOcultarBotonSolicitar(ModelMap model) {
 		Parametrizacion visibleBtnSolicitar = proxyFactory.proxy(ParametrizacionApi.class).buscarParametroPorNombre(Parametrizacion.VISIBLE_BOTON_SOLICITAR_LIQUIDACION);
@@ -77,6 +82,7 @@ public class LiquidacionController {
 		return JSON_OCULTAR_BOTON_SOLICITAR;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String abrirEditarLiquidacion(@RequestParam(value = "idLiquidacion", required = true) Long id, ModelMap model) {
 
@@ -91,6 +97,7 @@ public class LiquidacionController {
 		return JSP_EDITAR_LIQUIDACION;
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String abrirSolicitarLiquidacion(@RequestParam(value = "idLiquidacion", required = true) Long id, ModelMap model) {
 
@@ -197,6 +204,18 @@ public class LiquidacionController {
 		
 		return DEFAULT;
 	}
+	
+	@RequestMapping
+	public String visar(@RequestParam(value = "idLiquidacion", required = true) Long id, ModelMap model) {
+		LiquidacionDTO liquidacionDto = new LiquidacionDTO();
+		liquidacionDto.setId(id);
+		liquidacionApi.visar(liquidacionDto);
+		
+		LiquidacionPCO liquidacion = liquidacionApi.getLiquidacionPCOById(liquidacionDto.getId());
+		gestorTareasManager.recalcularTareasPreparacionDocumental(liquidacion.getProcedimientoPCO().getProcedimiento().getId());
+		
+		return DEFAULT;
+	}
 
 	@RequestMapping
 	public String descartar(@RequestParam(value = "idLiquidacion", required = true) Long id, ModelMap model) {
@@ -211,6 +230,7 @@ public class LiquidacionController {
 		return DEFAULT;
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String generar(@RequestParam(value = "idLiquidacion", required = true) Long idLiquidacion, Long idPlantilla, ModelMap model) {
 
@@ -225,6 +245,7 @@ public class LiquidacionController {
 		return JSP_DOWNLOAD_FILE;
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getPlantillasLiquidacion(ModelMap model) {
 
@@ -238,6 +259,7 @@ public class LiquidacionController {
 		return JSON_PLANTILLAS;
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String abrirPlantillasLiquidacion(@RequestParam(value = "idLiquidacion", required = true) Long id, ModelMap model) {
 		List<DDTipoLiquidacionPCO> plantillas = null;
@@ -250,5 +272,4 @@ public class LiquidacionController {
 		model.put("idLiquidacionSeleccionada", id);
 		return JSP_PLANTILLAS_LIQUIDACION;
 	}
-
 }

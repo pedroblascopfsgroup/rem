@@ -491,7 +491,6 @@ var formBusquedaContratos=function(){
 			,beforeCollapse:function(){
 				contratosGrid2.setHeight(435);
 				contratosGrid2.expand(true);
-				panelFiltros.getTopToolbar().setDisabled(true);
 			}
 		}
 	});

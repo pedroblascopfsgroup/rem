@@ -457,7 +457,7 @@ public class BurofaxManager implements BurofaxApi {
 				envioBurofax.setResultadoBurofax(resultado);
 				envioBurofax.setFechaSolicitud(new Date());
 				if(Checks.esNulo(envioBurofax.getResultadoBurofax()) || (!Checks.esNulo(envioBurofax.getResultadoBurofax()) && !envioBurofax.getResultadoBurofax().getCodigo().equals(DDResultadoBurofaxPCO.ESTADO_PREPARADO))){
-					envioBurofax.setContenidoBurofax(replaceVariablesGeneracionBurofax(envioBurofax.getBurofax().getId(), envioBurofax.getTipoBurofax().getPlantilla()));
+					envioBurofax.setContenidoBurofax(replaceVariablesGeneracionBurofax(envioBurofax.getBurofax().getId(), envioBurofax.getContenidoBurofax()));
 				}
 				
 				genericDao.save(EnvioBurofaxPCO.class, envioBurofax);
@@ -478,69 +478,60 @@ public class BurofaxManager implements BurofaxApi {
 				}
 				envioIntegracion.setTipoBurofax(envioBurofax.getTipoBurofax().getDescripcion());
 				envioIntegracion.setFechaSolicitud(new Date());
-				envioIntegracion.setFechaEnvio(new Date());
-				envioIntegracion.setFechaAcuse(new Date());
 				envioIntegracion.setCertificado(certificado);
 				
 		
-				
-				if(precontenciosoContext.isGenerarArchivoBurofax()){
-					FileItem archivoBurofax=generarDocumentoBurofax(envioBurofax);
-					envioIntegracion.setArchivoBurofax(archivoBurofax);
-					
-					InputStream inputStream = archivoBurofax.getInputStream();
-					FileOutputStream outputStream = null;
-					String directorio = parametrizacionDao.buscarParametroPorNombre(DIRECTORIO_PDF_BUROFAX_PCO).getValor();
+				if (precontenciosoContext.isGenerarArchivoBurofax()) {
+					//envioIntegracion.setArchivoBurofax(archivoBurofax);
+					if ("BANKIA".equals(precontenciosoContext.getRecovery())) {
+						FileItem archivoBurofax = generarDocumentoBurofax(envioBurofax);
+						InputStream inputStream = archivoBurofax.getInputStream();
+						FileOutputStream outputStream = null;
+						String directorio = parametrizacionDao.buscarParametroPorNombre(DIRECTORIO_PDF_BUROFAX_PCO).getValor();
 
-					try {
-						String nombreFichero = obtenerNombreFichero();
-						envioIntegracion.setNombreFichero(nombreFichero);
-						envioIntegracion.setIdAsunto(envioBurofax.getBurofax().getProcedimientoPCO().getProcedimiento().getAsunto().getId());
-						// write the inputStream to a FileOutputStream
-						outputStream = new FileOutputStream(new File(directorio+"/"+nombreFichero));
+						try {
+							String nombreFichero = obtenerNombreFichero();
+							envioIntegracion.setNombreFichero(nombreFichero);
+							envioIntegracion.setIdAsunto(envioBurofax.getBurofax().getProcedimientoPCO().getProcedimiento().getAsunto().getId());
+							// write the inputStream to a FileOutputStream
+							outputStream = new FileOutputStream(new File(directorio + "/" + nombreFichero));
 
-						int read = 0;
-						byte[] bytes = new byte[1024];
+							int read = 0;
+							byte[] bytes = new byte[1024];
 
-						while ((read = inputStream.read(bytes)) != -1) {
-							outputStream.write(bytes, 0, read);
-						}
-
-						
-
-					} catch (IOException e) {
-						e.printStackTrace();
-					} finally {
-						if (inputStream != null) {
-							try {
-								inputStream.close();
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-						}
-						if (outputStream != null) {
-							try {
-								// outputStream.flush();
-								outputStream.close();
-							} catch (IOException e) {
-								e.printStackTrace();
+							while ((read = inputStream.read(bytes)) != -1) {
+								outputStream.write(bytes, 0, read);
 							}
 
+						} catch (IOException e) {
+							e.printStackTrace();
+						} finally {
+							if (inputStream != null) {
+								try {
+									inputStream.close();
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+							}
+							if (outputStream != null) {
+								try {
+									// outputStream.flush();
+									outputStream.close();
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+							}
 						}
 					}
-					
+				} else {
+					//envioIntegracion.setArchivoBurofax(new FileItem(File.createTempFile("TMP", ".log")));
+				}
 
-				}
-				else{
-					envioIntegracion.setArchivoBurofax(new FileItem(File.createTempFile("TMP", ".log")));
-				}
-				
 				envioIntegracion.setContenido(envioBurofax.getContenidoBurofax());
 
 				genericDao.save(BurofaxEnvioIntegracionPCO.class, envioIntegracion);
 			}
-		
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error(e);
 		}
 		
@@ -552,7 +543,7 @@ public class BurofaxManager implements BurofaxApi {
 	}
 	
 	
-	private FileItem generarDocumentoBurofax(EnvioBurofaxPCO envioBurofax){
+	public FileItem generarDocumentoBurofax(EnvioBurofaxPCO envioBurofax){
 		
 		FileItem archivoBurofax=null;
 		
@@ -571,21 +562,31 @@ public class BurofaxManager implements BurofaxApi {
 				apellido2=envioBurofax.getBurofax().getDemandado().getApellido2();
 			}
 			String domicilio=envioBurofax.getDireccion().toString();
-			
-			InputStream is=informesManager.createDocxFileFromHtmlText(
-					"<table width='60%' style='font-size:12px'>"
-					+ "<tr>"
-					+ "<td width='40' style='border:1px solid black'>BANKIA S.A<br />PASEO DE LA CASTELLANA, 189<br />28046 Madrid</td>"
-					+ "<td width='20' style='border-style: hidden'></td>"
-					+ "<td width='40' style='border:1px solid black'>"+nombre.concat(" "+apellido1).concat(" "+apellido2)+"<br />"+domicilio+"</td>"
-					+ "</tr>"
-					+ "</table><br />"
-					+ "<table width='60%' style='font-size:12px'>"
-					+ "<tr>"
-					+ "<td style='border:1px solid black'>"+envioBurofax.getContenidoBurofax()+"</td>"
-					+ "</tr>"
-					+ "</table>",
-					envioBurofax.getBurofax().getDemandado().getApellidoNombre());
+			InputStream is = null;
+			if("BANKIA".equals(precontenciosoContext.getRecovery())){
+				is=informesManager.createDocxFileFromHtmlText(
+						"<table width='60%' style='font-size:12px'>"
+						+ "<tr>"
+						+ "<td width='40' style='border:1px solid black'>BANKIA S.A<br />PASEO DE LA CASTELLANA, 189<br />28046 Madrid</td>"
+						+ "<td width='20' style='border-style: hidden'></td>"
+						+ "<td width='40' style='border:1px solid black'>"+nombre.concat(" "+apellido1).concat(" "+apellido2)+"<br />"+domicilio+"</td>"
+						+ "</tr>"
+						+ "</table><br />"
+						+ "<table width='60%' style='font-size:12px'>"
+						+ "<tr>"
+						+ "<td style='border:1px solid black'>"+envioBurofax.getContenidoBurofax()+"</td>"
+						+ "</tr>"
+						+ "</table>",
+						envioBurofax.getBurofax().getDemandado().getApellidoNombre());
+			} else {
+				is=informesManager.createDocxFileFromHtmlText(					
+						"<table width='60%' style='font-size:12px'>"
+						+ "<tr>"
+						+ "<td style='border:1px solid black'>"+envioBurofax.getContenidoBurofax()+"</td>"
+						+ "</tr>"
+						+ "</table>",
+						envioBurofax.getBurofax().getDemandado().getApellidoNombre());
+			}
 			
 	
 			String nombreFichero=envioBurofax.getBurofax().getDemandado().getApellidoNombre();
@@ -605,7 +606,8 @@ public class BurofaxManager implements BurofaxApi {
 			else{
 				mapaVariables.put("numeroContrato","[ERROR - No existe valor]");
 			}
-			if(!Checks.esNulo(envioBurofax.getBurofax().getContrato()) && !Checks.esNulo(envioBurofax.getBurofax().getContrato().getFirstMovimiento())){
+			if(!Checks.esNulo(envioBurofax.getBurofax().getContrato()) && !Checks.esNulo(envioBurofax.getBurofax().getContrato().getFirstMovimiento())
+					&& !Checks.esNulo(envioBurofax.getBurofax().getContrato().getFirstMovimiento().getFechaPosVencida())){
 				SimpleDateFormat fechaFormat = new SimpleDateFormat(FormatUtils.DD_DE_MES_DE_YYYY,MessageUtils.DEFAULT_LOCALE);
 				mapaVariables.put("fechaPosicionVencida",fechaFormat.format(envioBurofax.getBurofax().getContrato().getFirstMovimiento().getFechaPosVencida()));
 			}

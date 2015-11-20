@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.devon.exception.FrameworkException;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.contrato.dao.ContratoDao;
 import es.capgemini.pfs.contrato.model.Contrato;
@@ -192,7 +193,6 @@ public class LiquidacionManager implements LiquidacionApi {
 	 *            DtoExclusionContratoExpediente
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	@BusinessOperation(PRECONTENCIOSO_BO_PRC_INCLUIR_LIQUIDACION_AL_PROCEDIMIENTO)
 	@Transactional(readOnly = false)
     public void incluirLiquidacionAlProcedimiento(InclusionLiquidacionProcedimientoDTO dto){
@@ -238,4 +238,20 @@ public class LiquidacionManager implements LiquidacionApi {
 		return liquidacionDao.get(idLiquidacion);
 	}
 
+	@Override
+	@Transactional(readOnly = false)
+    public void visar(LiquidacionDTO liquidacionDto) 
+	{
+		try {
+			DDEstadoLiquidacionPCO estadoVisada = (DDEstadoLiquidacionPCO) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDEstadoLiquidacionPCO.class, DDEstadoLiquidacionPCO.VISADA);
+			LiquidacionPCO liquidacion = liquidacionDao.get(liquidacionDto.getId());
+			liquidacion.setEstadoLiquidacion(estadoVisada);
+			liquidacion.setFechaVisado(new Date());
+			liquidacionDao.saveOrUpdate(liquidacion);
+		}
+		catch(Exception e) {
+			logger.error("Error en el método visar: " + e.getMessage());
+			throw new FrameworkException("Ocurrió un error inesperado durante la operación. Por favor, vuelva a intentarlo más tarde.");
+		}
+	}
 }

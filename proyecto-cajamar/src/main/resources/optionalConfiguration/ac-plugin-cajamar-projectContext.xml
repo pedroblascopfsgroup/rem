@@ -10,7 +10,7 @@
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
 	default-autowire="byName">
 	
-	<bean id="nmbCommonProjectContextHAYA" parent="nmbCommonProjectContextDefault">
+	<bean id="nmbCommonProjectContextCAJAMAR" parent="nmbCommonProjectContextDefault">
 		<property name="tiposProcedimientosAdjudicados">
 			<list>
 				<value>H005</value>
@@ -79,7 +79,7 @@
 		
 	</bean>
 
-	<bean id="coreProjectContextHAYA" parent="coreProjectContextDefault">
+	<bean id="coreProjectContextCAJAMAR" parent="coreProjectContextDefault">
 		<property name="categoriasSubTareas">
 			<map>
 				<entry key="TOMA_DE_DECISION">
@@ -169,7 +169,7 @@
 		</property>
 	</bean>
 	
-	<bean id="procedimientosProjectContextHaya" parent="procedimientosProjectContextDefault">
+	<bean id="procedimientosProjectContextCAJAMAR" parent="procedimientosProjectContextDefault">
 		<property name="limiteDeudaGlobal" value="1000000"/>
 		<property name="limiteDeudaBien" value="15000"/>
 		<property name="tipoSubastaSareb" value="H002"/>
@@ -226,8 +226,7 @@
 		</property>
 	</bean>	
 
-	<alias name="nmbCommonProjectContextHAYA" alias="nmbCommonProjectContext"/>
-	<alias name="procedimientosProjectContextHaya" alias="procedimientosProjectContext"/>		
-	<alias name="coreProjectContextHAYA" alias="coreProjectContext"/>
-	
+	<alias name="nmbCommonProjectContextCAJAMAR" alias="nmbCommonProjectContext"/>
+	<alias name="procedimientosProjectContextCAJAMAR" alias="procedimientosProjectContext"/>		
+	<alias name="coreProjectContextCAJAMAR" alias="coreProjectContext"/>
 </beans>	

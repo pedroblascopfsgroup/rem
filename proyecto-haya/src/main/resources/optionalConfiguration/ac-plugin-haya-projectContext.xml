@@ -401,6 +401,8 @@
 		</property>
 	</bean>
 
+	<alias name="adjuntoManagerHayaImpl" alias="adjuntoManagerImpl"/>
+
 	<alias name="nmbCommonProjectContextHAYA" alias="nmbCommonProjectContext"/>
 	<alias name="procedimientosProjectContextHaya" alias="procedimientosProjectContext"/>		
 	<alias name="coreProjectContextHAYA" alias="coreProjectContext"/>

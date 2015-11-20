@@ -67,7 +67,6 @@ public class EXTPersonaManager extends BusinessOperationOverrider<PersonaApi> im
 	private GenericABMDao genericDao;
 	
 	@Autowired
-	@Qualifier("adjuntoManagerHayaImpl")
 	private AdjuntoApi adjuntosApi; 
 	
 	private final Log logger = LogFactory.getLog(getClass());

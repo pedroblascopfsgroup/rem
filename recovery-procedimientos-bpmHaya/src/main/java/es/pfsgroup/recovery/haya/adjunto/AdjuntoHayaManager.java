@@ -9,6 +9,7 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.adjuntos.api.AdjuntoApi;
@@ -37,7 +38,7 @@ import es.pfsgroup.recovery.adjunto.AdjuntoAssembler;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.gestordocumental.dto.AdjuntoGridDto;
 
-@Component("adjuntoManagerHayaImpl")
+@Service("adjuntoManagerHayaImpl")
 public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	
 	@Autowired

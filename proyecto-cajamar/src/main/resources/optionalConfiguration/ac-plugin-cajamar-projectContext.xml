@@ -225,4 +225,6 @@
 	<alias name="procedimientosProjectContextHaya" alias="procedimientosProjectContext"/>		
 	<alias name="coreProjectContextHAYA" alias="coreProjectContext"/>
 	
+	<alias name="adjuntoManagerHayaImpl" alias="adjuntoManagerImpl"/>
+	
 </beans>	

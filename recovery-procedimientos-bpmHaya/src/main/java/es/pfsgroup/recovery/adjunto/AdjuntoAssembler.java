@@ -316,8 +316,12 @@ public class AdjuntoAssembler {
 						adjAsu.setDescripcion(adjDto.getDescripcion());
 						adjAsu.setAuditoria(new Auditoria());
 						adjAsu.getAuditoria().setFechaCrear(adjDto.getAuditoria().getFechaCrear());
-						adjAsu.setTipoFichero(genericDao.get(DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", adjDto.getTipo())));
-						adjAsu.setProcedimiento(genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", adjDto.getNumActuacion())));
+						if(!Checks.esNulo(adjDto.getTipo())){
+							adjAsu.setTipoFichero(genericDao.get(DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", adjDto.getTipo())));	
+						}
+						if(!Checks.esNulo(adjDto.getNumActuacion())){
+							adjAsu.setProcedimiento(genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", adjDto.getNumActuacion())));	
+						}
 						
 						return adjAsu;
 					}

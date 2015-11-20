@@ -14,6 +14,7 @@ import org.springframework.context.support.AbstractMessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
@@ -61,7 +62,7 @@ import es.pfsgroup.recovery.api.ProcedimientoApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
-@Component("adjuntoManagerImpl")
+@Service("adjuntoManagerImpl")
 public class AdjuntoManager implements AdjuntoApi{
 
 	private final Log logger = LogFactory.getLog(getClass());

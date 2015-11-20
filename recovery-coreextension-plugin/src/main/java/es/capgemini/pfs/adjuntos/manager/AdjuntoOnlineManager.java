@@ -15,7 +15,6 @@ import es.capgemini.pfs.adjuntos.api.AdjuntoOnlineApi;
 public class AdjuntoOnlineManager implements AdjuntoOnlineApi{
 
 	@Autowired
-	@Qualifier("adjuntoManagerHayaImpl")
 	private AdjuntoApi adjuntoApi;
 	
 	

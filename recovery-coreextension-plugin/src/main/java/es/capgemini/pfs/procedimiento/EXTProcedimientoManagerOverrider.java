@@ -51,7 +51,6 @@ public class EXTProcedimientoManagerOverrider extends
 	private List<ModificarProcedimientoListener> listeners;
 	
 	@Autowired
-	@Qualifier("adjuntoManagerHayaImpl")
 	private AdjuntoApi adjuntosApi;
 
 	/**

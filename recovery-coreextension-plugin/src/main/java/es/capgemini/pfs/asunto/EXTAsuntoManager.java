@@ -172,7 +172,6 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
     private EXTZonaDao extZonaDao;
 	
 	@Autowired
-	@Qualifier("adjuntoManagerHayaImpl")
 	private AdjuntoApi adjuntosApi;
 	
 	@Override

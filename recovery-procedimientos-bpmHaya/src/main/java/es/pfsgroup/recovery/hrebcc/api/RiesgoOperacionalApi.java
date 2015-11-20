@@ -7,4 +7,5 @@ public interface RiesgoOperacionalApi {
 
 	public void ActualizarRiesgoOperacional(ActualizarRiesgoOperacionalDto dto);
 	public DDRiesgoOperacional ObtenerRiesgoOperacionalContrato(Long cntId);
+	public Boolean comprobarRiesgoProcedimiento(Long idProcedimiento);
 }

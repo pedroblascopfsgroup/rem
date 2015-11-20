@@ -1,10 +1,15 @@
 package es.pfsgroup.recovery.hrebcc.manager;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import sun.reflect.generics.visitor.Reifier;
+import es.capgemini.pfs.asunto.ProcedimientoManager;
+import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.contrato.dao.EXTContratoDao;
+import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.EXTContrato;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -27,6 +32,9 @@ public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 	
 	@Autowired
 	GenericABMDao genericDao;
+	
+	@Autowired
+	ProcedimientoManager procedimientoManager;
 	
 	@Override
 	public void ActualizarRiesgoOperacional(ActualizarRiesgoOperacionalDto dto) {
@@ -69,6 +77,28 @@ public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 			if (!Checks.esNulo(cntRiesgo)) {
 				//Si tiene un riesgo se devuelve
 				resultado = cntRiesgo.getRiesgoOperacional();
+			}
+		}
+		
+		return resultado;
+	}
+	
+	/**
+	 * Comprobamos que todos los contratos del asunto del procedimiento tienen un riesgo operacional asociado
+	 */
+	@Override
+	public Boolean comprobarRiesgoProcedimiento(Long idProcedimiento) {
+		Boolean resultado = true;
+		
+		Procedimiento prc = procedimientoManager.getProcedimiento(idProcedimiento);
+		if (Checks.esNulo(prc)) {
+			resultado = false;
+		} else {
+			Set<Contrato> contratos = prc.getAsunto().getContratos();
+			for (Contrato contrato : contratos) {
+				if (Checks.esNulo(this.ObtenerRiesgoOperacionalContrato(contrato.getId()))) {
+					resultado = false;
+				}
 			}
 		}
 		

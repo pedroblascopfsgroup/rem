@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.hrebcc.api.RiesgoOperacionalApi;
 import es.pfsgroup.recovery.hrebcc.dto.ActualizarRiesgoOperacionalDto;

@@ -375,8 +375,6 @@ var actualizarBotonesDocumentos = function(){
 		habilitarDeshabilitarButtons(true, true, true, true, true, true, true);
 		incluirDocButton.setDisabled(false);
 		
-		debugger;
-	
 	    <%--Se comprueba que el procedimiento se encuentre en un estado que permita editar lOs documentos --%>
 		if (data != null) {
 			var estadoActualCodigoProcedimiento = data.precontencioso.estadoActualCodigo;
@@ -422,7 +420,16 @@ var actualizarBotonesDocumentos = function(){
 						<%-- Si el documento está DESCARTADO --%>
 						if(gridDocumentos.getSelectionModel().getSelected().get('codigoEstadoDocumento') == 'DE'
 							&& gridDocumentos.getSelectionModel().getSelected().get('esDocumento') == true){
-			      			habilitarDeshabilitarButtons(false, true, true, false, true, false, false);  
+							
+							<%-- Si no tiene solicitud se permite excluir --%>
+							if (gridDocumentos.getSelectionModel().getSelected().get('tieneSolicitud') == false){
+								habilitarDeshabilitarButtons(false, false, true, false, true, false, false); 
+							}
+							<%-- Si tiene solicitud no se permite excluir --%>
+							else {
+								habilitarDeshabilitarButtons(false, true, true, false, true, false, false);
+							}
+								  
 			      			return; 
 						}
 						else {		

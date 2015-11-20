@@ -9,14 +9,19 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.asunto.model.DDTipoActuacion;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.recovery.ext.api.adjunto.AdjuntoAsuntoApi;
+import es.pfsgroup.recovery.ext.api.tipoAdjuntoEntidad.dao.DDTipoAdjuntoEntidadDao;
 import es.pfsgroup.recovery.ext.api.tipoFicheroAdjunto.dao.DDTipoFicheroAdjuntoDao;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
+import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjuntoEntidad.DDTipoAdjuntoEntidad;
 
 @Component
 public class AdjuntoAsuntoManager implements AdjuntoAsuntoApi {
 
 	@Autowired
 	private DDTipoFicheroAdjuntoDao tipoFicheroAdjuntoDao;
+	
+	@Autowired
+	private DDTipoAdjuntoEntidadDao tipoAdjuntoEntidadDao;
 	
 	@Override
 	@BusinessOperation(BO_GET_LISTA_DD_TIPO_FICHERO_ADJUNTOS)
@@ -25,6 +30,12 @@ public class AdjuntoAsuntoManager implements AdjuntoAsuntoApi {
 			return tipoFicheroAdjuntoDao.getListaPorTipoDeActuacion(listaActuaciones);
 		}else
 			return tipoFicheroAdjuntoDao.getList();
+	}
+	
+	@Override
+	@BusinessOperation(BO_GET_LISTA_DD_TIPO_ADJUNTO_ENTIDAD)
+	public List<DDTipoAdjuntoEntidad> getListTipoAdjuntoEntidad(String tipoEntidad){
+		return tipoAdjuntoEntidadDao.obtenerTiposAdjuntosPorEntidad(tipoEntidad);
 	}
 
 }

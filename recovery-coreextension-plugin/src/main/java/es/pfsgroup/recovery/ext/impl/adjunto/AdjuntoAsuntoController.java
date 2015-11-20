@@ -16,6 +16,7 @@ import es.pfsgroup.recovery.api.AsuntoApi;
 import es.pfsgroup.recovery.api.ProcedimientoApi;
 import es.pfsgroup.recovery.ext.api.adjunto.AdjuntoAsuntoApi;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
+import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjuntoEntidad.DDTipoAdjuntoEntidad;
 
 @Controller
 public class AdjuntoAsuntoController {
@@ -50,5 +51,12 @@ public class AdjuntoAsuntoController {
 		
 		map.put("lista", lista);
 		return "plugin/coreextension/asunto/ddTipoFicherosAdjuntosJSON";
+	}
+	
+	@RequestMapping
+	public String getTiposDeDocumentoAdjuntoProcedimiento(ModelMap map, String tipoEntidad){
+		List<DDTipoAdjuntoEntidad> lista = proxyFactory.proxy(AdjuntoAsuntoApi.class).getListTipoAdjuntoEntidad(tipoEntidad);
+		map.put("lista", lista);
+		return "plugin/coreextension/asunto/ddTipoDocAdjuntosJSON";
 	}
 }

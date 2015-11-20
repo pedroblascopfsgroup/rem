@@ -18,7 +18,10 @@ public class DDTipoAdjuntoEntidadDaoImpl extends
 	public List<DDTipoAdjuntoEntidad> obtenerTiposAdjuntosPorEntidad(String codigoEntidad) {
 
 		StringBuffer hql = new StringBuffer();
-		hql.append(" select tf from DDTipoAdjuntoEntidad where tae.auditoria.borrado = false and tae.tiposEntidad.codigo in (:codigoTipoEntidad)");
+		hql.append(" select tae from DDTipoAdjuntoEntidad tae "
+				+ " join tae.tiposEntidad te "
+				+ " where tae.auditoria.borrado = false "
+				+ " and te.codigo =:codigoTipoEntidad ");
 		hql.append(" order by tae.descripcion asc");
 		return getSession().createQuery(hql.toString()).setParameter("codigoTipoEntidad", codigoEntidad).list();
 

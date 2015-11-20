@@ -57,7 +57,7 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 	private static final String TOTAL_LIQUIDACION = "TOTAL_LIQUIDACION";
 	private static final String FECHA_CIERRE_LIQUIDACION = "FECHA_CIERRE_LIQUIDACION";
 	private static final String MOV_FECHA_POS_VIVA_VENCIDA = "MOV_FECHA_POS_VIVA_VENCIDA";
-	private static final String CODIGO_DE_CONTRATO_DE_17_DIGITOS = "CODIGO_DE_CONTRATO_DE_17_DIGITOS";
+	private static final String CODIGO_DE_CONTRATO = "CODIGO_DE_CONTRATO";
 	private static final String TOTAL_LIQ = "totalLiq";
 	private static final String FECHA_LIQUIDACION = "fechaLiquidacion";
 	private static final String ENTIDAD_ORIGEN = "entidadOrigen";
@@ -193,24 +193,27 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		
 		///Variables especificas BANKIA
 		if (!Checks.esNulo(contrato)) {
-			if(!Checks.esNulo(contrato.getNroContratoFormat())){
-				mapaVariables.put(CODIGO_DE_CONTRATO_DE_17_DIGITOS, contrato.getNroContratoFormat());
+			if(!Checks.esNulo(contrato.getDescripcion())){
+				mapaVariables.put(CODIGO_DE_CONTRATO, contrato.getDescripcion());
 			} else{
-				mapaVariables.put(CODIGO_DE_CONTRATO_DE_17_DIGITOS,ERROR_NO_EXISTE_VALOR);
+				mapaVariables.put(CODIGO_DE_CONTRATO,ERROR_NO_EXISTE_VALOR);
 			}
 		} else {
-			mapaVariables.put(CODIGO_DE_CONTRATO_DE_17_DIGITOS,ERROR_NO_EXISTE_VALOR);
+			mapaVariables.put(CODIGO_DE_CONTRATO,ERROR_NO_EXISTE_VALOR);
 		}
 		
 		try {
 			if (!Checks.esNulo(contrato)) {
-				if(!Checks.esNulo(contrato.getMovimientos())){
-					List<Movimiento> movimientos = contrato.getMovimientos(); 
-					if(movimientos.size()>0 && !Checks.esNulo(movimientos.get(movimientos.size() - 1).getFechaPosVencida())){
-						mapaVariables.put(MOV_FECHA_POS_VIVA_VENCIDA, fechaFormat.format(movimientos.get(movimientos.size() - 1).getFechaPosVencida()));	
-					} else {
-						mapaVariables.put(MOV_FECHA_POS_VIVA_VENCIDA,ERROR_NO_EXISTE_VALOR);
+				if(!Checks.esNulo(contrato.getMovimientos()) && !Checks.estaVacio(contrato.getMovimientos())){
+					List<Movimiento> movimientos = contrato.getMovimientos();
+					String valFechaPosVencida = ERROR_NO_EXISTE_VALOR;
+					for (int i=movimientos.size() - 1; i>=0; i--){
+						if (!Checks.esNulo(movimientos.get(i).getFechaPosVencida())) {
+							valFechaPosVencida = fechaFormat.format(movimientos.get(i).getFechaPosVencida());	
+							break;
+						}
 					}
+					mapaVariables.put(MOV_FECHA_POS_VIVA_VENCIDA, valFechaPosVencida);	
 				} else {
 					mapaVariables.put(MOV_FECHA_POS_VIVA_VENCIDA,ERROR_NO_EXISTE_VALOR);
 				}

@@ -25,6 +25,7 @@ import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.dao.ContratoDao;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.expediente.dao.ExpedienteDao;
+import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.persona.dao.PersonaDao;
 import es.capgemini.pfs.persona.model.Persona;
@@ -38,7 +39,6 @@ import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalOutputD
 import es.pfsgroup.recovery.cajamar.serviciosonline.GestorDocumentalWSApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.expediente.EXTExpedienteManager;
-import es.pfsgroup.recovery.ext.impl.expediente.model.EXTExpediente;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 import es.pfsgroup.recovery.gestordocumental.dto.AdjuntoGridDto;
 
@@ -224,7 +224,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			String tipoEntidad, WebFileItem uploadForm) {
 		String claveRel = "";
 		if (DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE.equals(tipoEntidad)) {
-			EXTExpediente expediente = EXTExpediente.instanceOf(expedienteDao.get(idEntidad));
+			Expediente expediente = expedienteDao.get(idEntidad);
 			if(uploadForm != null) {
 				expediente.addAdjunto(uploadForm.getFileItem());
 				expedienteDao.save(expediente);				

@@ -35,7 +35,6 @@ import es.pfsgroup.recovery.ext.api.multigestor.EXTGestorInfo;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTMultigestorApi;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
 import es.pfsgroup.recovery.ext.impl.expediente.dao.EXTExpedienteDao;
-import es.pfsgroup.recovery.ext.impl.expediente.model.EXTExpediente;
 import es.pfsgroup.recovery.ext.impl.perfil.model.EXTPerfil;
 import es.pfsgroup.recovery.integration.Guid;
 
@@ -349,18 +348,17 @@ public class EXTExpedienteManager extends BaseExpedienteManager implements EXTEx
         }
 	}
 	
-	public EXTExpediente prepareGuid(Expediente expediente) {
-		EXTExpediente extExp = EXTExpediente.instanceOf(expediente);
+	public Expediente prepareGuid(Expediente expediente) {
 		boolean modificados = false;
-		if (Checks.esNulo(extExp.getGuid())) {
+		if (Checks.esNulo(expediente.getGuid())) {
 			//logger.debug(String.format("[INTEGRACION] Asignando nuevo GUID para procedimiento %d", procedimiento.getId()));
-			extExp.setGuid(Guid.getNewInstance().toString());
+			expediente.setGuid(Guid.getNewInstance().toString());
 			modificados = true;
 		}
 		// En caso de haber cambiado algo se guarda el estado
 		if (modificados) {
-			extExpedienteDao.saveOrUpdate(extExp);
+			extExpedienteDao.saveOrUpdate(expediente);
 		}
-		return extExp;
+		return expediente;
 	}
 }

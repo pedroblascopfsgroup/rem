@@ -38,7 +38,7 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... ACTUALIZACION DEL CAMPO TFI_TAREAS_FORM_ITEMS PCO_ValidarCambioProc tipo_proc_letrado');
     	
 		V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_VALOR_INICIAL = ''valores[''''PCO_RegistrarTomaDec''''][''''proc_a_iniciar'''']'' WHERE  TFI_NOMBRE = ''tipo_proc_letrado'' AND TAP_ID =  ' || 
-      		'(SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''PCO_ValidarCambioProc'')';
+      		'(SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''PCO_ValidarCambioProc'')';
     	EXECUTE IMMEDIATE V_SQL;
 
     END IF;

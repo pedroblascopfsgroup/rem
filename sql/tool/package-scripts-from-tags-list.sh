@@ -20,6 +20,8 @@ function print_banner() {
     echo ""
     echo "        EMPAQUETO LOS SCRIPTS DE BD DESDE UN LISTADO DE TAGS DETERMINADO"
     echo ""
+    echo " ¡¡ CUIDADO !! Hago RESET por lo que perderás los ficheros bajo control de versiones que hayas modificado"
+    echo ""
     echo "******************************************************************************************"
 }
 
@@ -64,6 +66,7 @@ while read tagname; do
         tagnametmp=$tagname
     else
         echo "Descargando repo en tag "$tagname" para crear empaquetado desde tag "$tagnametmp
+        git reset --hard HEAD
         git checkout $tagname 
         ./sql/tool/package-scripts-from-tag.sh $tagnametmp $2
         mkdir ./package-tags/$count
@@ -86,7 +89,6 @@ while read tagname; do
         tagnametmp=$tagname
     fi
     count=$((count + 1))
-    echo $count
 done < $1
 chmod a+x ./package-tags/*.sh
 chmod a+x ./package-tags/**/**/*.sh

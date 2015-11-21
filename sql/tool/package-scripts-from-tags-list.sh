@@ -70,6 +70,7 @@ while read tagname; do
         if [ -e ./sql/tool/tmp/package/DDL/DDL-scripts.zip ];then
             cp -r ./sql/tool/tmp/package/DDL ./package-tags/$count/
             rm ./package-tags/$count/DDL/*.zip
+            echo "if [ \$? != 0 ];then exit 1; fi" >> ./package-tags/run-scripts-package.sh
             echo "cd \$DIR_ORIG" >> ./package-tags/run-scripts-package.sh
             echo "cd ./$count/DDL/" >> ./package-tags/run-scripts-package.sh
             echo "./DDL-scripts.sh \$1 \$2" >> ./package-tags/run-scripts-package.sh
@@ -77,6 +78,7 @@ while read tagname; do
         if [ -e ./sql/tool/tmp/package/DML/DML-scripts.zip ];then
             cp -r ./sql/tool/tmp/package/DML ./package-tags/$count/
             rm ./package-tags/$count/DML/*.zip
+            echo "if [ \$? != 0 ];then  exit 1; fi" >> ./package-tags/run-scripts-package.sh
             echo "cd \$DIR_ORIG" >> ./package-tags/run-scripts-package.sh
             echo "cd ./$count/DML/" >> ./package-tags/run-scripts-package.sh
             echo "./DML-scripts.sh \$1 \$2" >> ./package-tags/run-scripts-package.sh

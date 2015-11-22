@@ -209,7 +209,8 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
 
     while read -r line
     do
-        $BASEDIR/run-single-script.sh $line $CUSTOMER_IN_UPPERCASE -p
+        NEW_LINE=`echo $line | cut -d' ' -f1`
+        $BASEDIR/run-single-script.sh $NEW_LINE pass $CUSTOMER_IN_UPPERCASE -p
         if [[ "$?" != 0 ]]; then
             echo "ERROR"
             exit 1
@@ -225,12 +226,16 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
         IFS=',' read -a entidades <<< "$MULTIENTIDAD"
         for index in "${!entidades[@]}"
         do
-            passtring="$passtring ""entity0$((index+1))_pass@sid"
+            passtring="$passtring ""entity0$((index+1))_pass@host:port/sid"
         done        
     else
-        passtring="entity01_pass@sid"
+        passtring="entity01_pass@host:port/sid"
     fi
-    sed -e s/#ENTITY#/"${passtring}"/g $BASEDIR/scripts/DxL-scripts.sh > $BASEDIR/tmp/package/DDL/DDL-scripts.sh
+    if [ $2 == 'BANKIA' ]; then
+        cp $BASEDIR/scripts/DxL-scripts-BK.sh $BASEDIR/tmp/package/DDL/DDL-scripts.sh
+    else
+        sed -e s/#ENTITY#/"${passtring}"/g $BASEDIR/scripts/DxL-scripts.sh > $BASEDIR/tmp/package/DDL/DDL-scripts.sh
+    fi
     cp $BASEDIR/scripts/DxL-scripts-one-user.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh
     if [ $CUSTOMER_IN_UPPERCASE == 'CAJAMAR' ] ; then
         echo "export NLS_LANG=AMERICAN.AL32UTF8" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null

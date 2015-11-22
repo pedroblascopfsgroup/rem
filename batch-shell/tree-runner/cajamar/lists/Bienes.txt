@@ -1,0 +1,4 @@
+apr_wait_assets.sh
+apr_load_assets.sh
+apr_validacion_pcr.sh BIENES
+apr_main_assets.sh

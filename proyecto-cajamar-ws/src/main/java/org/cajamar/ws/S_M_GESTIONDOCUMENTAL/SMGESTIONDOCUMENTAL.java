@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.1
  * 
  */
-@WebServiceClient(name = "S_M_GESTIONDOCUMENTAL", targetNamespace = "http://cajamar.org/webservice", wsdlLocation = "https://multidesa.larural.es:515/RECOVERY/services/S_M_GESTIONDOCUMENTAL?wsdl")
+@WebServiceClient(name = "S_M_GESTIONDOCUMENTAL", targetNamespace = "http://cajamar.org/webservice", wsdlLocation = "http://localhost:8445/soap?wsdl")
 public class SMGESTIONDOCUMENTAL
     extends Service
 {
@@ -30,7 +30,7 @@ public class SMGESTIONDOCUMENTAL
         try {
             URL baseUrl;
             baseUrl = org.cajamar.ws.S_M_GESTIONDOCUMENTAL.SMGESTIONDOCUMENTAL.class.getResource(".");
-            url = new URL(baseUrl, "https://multidesa.larural.es:515/RECOVERY/services/S_M_GESTIONDOCUMENTAL?wsdl");
+            url = new URL(baseUrl, "http://localhost:8445/soap?wsdl");
         } catch (MalformedURLException e) {
             logger.warning("Failed to create URL for the wsdl Location: 'https://multidesa.larural.es:515/RECOVERY/services/S_M_GESTIONDOCUMENTAL?wsdl', retrying as a local file");
             logger.warning(e.getMessage());

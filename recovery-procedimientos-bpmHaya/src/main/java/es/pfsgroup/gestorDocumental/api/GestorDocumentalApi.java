@@ -32,6 +32,6 @@ public interface GestorDocumentalApi {
 	 * idRefCentera id del documento que queremos descargar
 	 */
 	@BusinessOperationDefinition(BO_GESTOR_DOCUMENTAL_RECUPERACION_DOCUMENTO)
-	AdjuntoGridDto recuperacionDocumento(String idRefCentera);
+	String recuperacionDocumento(String idRefCentera);
 
 }

@@ -15,7 +15,6 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,6 +58,7 @@ import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastasServicioTasacionDelegateApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.adjudicacion.dto.DtoNMBBienAdjudicacion;
@@ -1305,4 +1305,58 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 		List<DDTipoVia> list = (ArrayList<DDTipoVia>) genericDao.getList(DDTipoVia.class, f);
 		return list;
 	}
+	
+	@Override
+	@BusinessOperation(GET_NUMEROS_ACTIVOS_BIENES)
+	public Map<String, String> getNumerosActivosBienes(final String[] arrBienes) {
+		if (arrBienes == null) {
+			return new HashMap<String, String>();
+		}
+
+		final String errValidacion = "ERROR_VALIDACION";
+		final String errSolicitud = "ERROR_SOLICITUD";
+
+		final Map<String, String> mapResults = new HashMap<String, String>();
+		for (int i = 0; i < arrBienes.length; i++) {
+			final String idBienStr = arrBienes[i];
+			final Long idBien = Long.parseLong(idBienStr);
+			NMBBien bien = nmbBienDao.get(idBien);
+			if (bien.getNumeroActivo() == null || bien.getNumeroActivo().equals("0")) {
+				if (validarProvLocFinBien(bien)) {
+					final String respuesta = proxyFactory.proxy(SubastasServicioTasacionDelegateApi.class).solicitarNumeroActivoConRespuesta(idBien);
+					if (!respuesta.equals("1")) {
+						//La respuesta del servicio no es correcta.
+						mapResults.put(idBienStr, errSolicitud);
+					}
+				} else {
+					//Faltan datos para solicitar el número de activo.
+					mapResults.put(idBienStr, errValidacion);
+				}
+			}
+		}
+		return mapResults;
+	}
+	
+	private boolean validarProvLocFinBien(final NMBBien bien) {
+		if (Checks.esNulo(bien.getAdicional()) || Checks.esNulo(bien.getAdicional().getTipoInmueble()) || Checks.esNulo(bien.getAdicional().getTipoInmueble().getCodigo())) {
+			return false;
+		}
+		if (Checks.esNulo(bien.getDatosRegistralesActivo()) || Checks.esNulo(bien.getDatosRegistralesActivo().getNumFinca())) {
+			return false;
+		}
+		if (Checks.esNulo(bien.getLocalizacionActual())) {
+			return false;
+		}
+		if (Checks.esNulo(bien.getLocalizacionActual().getLocalidad()) || Checks.esNulo(bien.getLocalizacionActual().getLocalidad().getDescripcion())) {
+			return false;
+		}
+		if (Checks.esNulo(bien.getLocalizacionActual().getProvincia()) || Checks.esNulo(bien.getLocalizacionActual().getProvincia().getDescripcion())) {
+			return false;
+		}
+		if (Checks.esNulo(bien.getDatosRegistralesActivo()) || Checks.esNulo(bien.getDatosRegistralesActivo().getNumRegistro())) {
+			return false;
+		}
+		return true;
+	}
+	
 }

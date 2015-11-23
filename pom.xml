@@ -517,7 +517,6 @@
 	</build>
 	<!-- Maven 2.2.1 does not support isolates project dependencies :( -->
 	<modules>
-		<module>recovery-bi-plugin</module>
 		<module>pfs-commons-java</module>
 		<module>rec-encrypt</module>
 		<module>batch-monitor</module>
@@ -567,6 +566,7 @@
 				<module>recovery-bankiaWeb-plugin</module>
 				<module>recovery-iplus-plugin</module>
 				<module>recovery-integracionuvem-plugin</module>
+		        <module>recovery-bi-plugin</module>
 
 				<module>rec-web</module>
 				<module>rec-batch</module>
@@ -585,6 +585,7 @@
 				<module>proyecto-cajamar-ws</module>
 				<module>proyecto-haya</module>
 				<module>recovery-procedimientos-bpmHaya-plugin</module>
+		        <module>recovery-bi-plugin</module>
 
 				<module>rec-web</module>
 				<module>rec-batch</module>

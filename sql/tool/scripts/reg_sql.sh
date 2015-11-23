@@ -123,6 +123,8 @@ fi
 executionPass=""
 if [[ $ESQUEMA_EJECUCION =~ MASTER$ ]]; then
     executionPass="\$1"
+elif [[ $ESQUEMA_EJECUCION == 'MINIREC' ]]; then
+    executionPass="\$3"
 else
     executionPass="\$$((${ESQUEMA_EJECUCION: -1} + 1))"
 fi

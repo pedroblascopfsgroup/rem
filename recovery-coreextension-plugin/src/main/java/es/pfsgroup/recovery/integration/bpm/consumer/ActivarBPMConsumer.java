@@ -7,6 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 import es.pfsgroup.recovery.integration.ConsumerAction;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
@@ -46,18 +47,19 @@ public class ActivarBPMConsumer extends ConsumerAction<DataContainerPayload>  {
 
 		logger.info(String.format("[INTEGRACION] PRC[%s] Activando procedimiento...", prcUUID));
 		Procedimiento prc = extProcedimientoManager.getProcedimientoByGuid(prcUUID);
-		if (prc==null) {
+		if (prc==null || !(prc instanceof MEJProcedimiento)) {
 			String logMsg = String.format("[INTEGRACION] PRC[%s] Procedimiento no encontrado!!!!, no se puede desparalizar!!", prcUUID);
 			logger.error(logMsg);
 			throw new IntegrationDataException(logMsg);
 			
 		}
-		if (extProcedimientoManager.isDespararizable(prc.getId())) {
+		MEJProcedimiento mejPrc = MEJProcedimiento.instanceOf(prc);  
+		if (!extProcedimientoManager.isDespararizable(prc.getId())) {
 			String logMsg = String.format("[INTEGRACION] PRC[%s] Procedimiento no es desparalizable!!!!, no se puede desparalizar!!", prcUUID);
 			logger.error(logMsg);
 			throw new IntegrationDataException(logMsg);
 		}
-		extProcedimientoManager.desparalizarProcedimientoIntegracion(prc.getId(), false);
+		extProcedimientoManager.desparalizarProcedimiento(prc.getId(), false);
 		logger.info(String.format("[INTEGRACION] PRC[%s] Procedimiento activado!!", prcUUID));
 	}
 	

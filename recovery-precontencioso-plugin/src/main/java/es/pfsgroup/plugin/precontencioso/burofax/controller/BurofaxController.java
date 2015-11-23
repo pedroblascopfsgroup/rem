@@ -1,10 +1,13 @@
 package es.pfsgroup.plugin.precontencioso.burofax.controller;
 
+import java.text.Collator;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,9 @@ import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.pfs.diccionarios.Dictionary;
+import es.capgemini.pfs.diccionarios.DictionaryManager;
+import es.capgemini.pfs.diccionarios.comparator.DictionaryComparatorFactory;
 import es.capgemini.pfs.direccion.api.DireccionApi;
 import es.capgemini.pfs.direccion.dto.DireccionAltaDto;
 import es.capgemini.pfs.direccion.model.DDProvincia;
@@ -23,6 +29,7 @@ import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Direccion;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
 import es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi;
 import es.pfsgroup.plugin.precontencioso.burofax.dto.BurofaxDTO;
 import es.pfsgroup.plugin.precontencioso.burofax.manager.BurofaxManager;
@@ -66,7 +73,13 @@ public class BurofaxController {
 	private BurofaxManager burofaxManager;
 	
 	@Autowired
+	private DictionaryManager dictionaryManager;	
+	
+	@Autowired
 	private Executor executor;
+	
+	@Autowired
+	private PrecontenciosoProjectContext precontenciosoContext;
 	
 	/**
 	 * Carga el grid de Burofaxes
@@ -284,6 +297,9 @@ public class BurofaxController {
 			if(variable.contains("<") || variable.contains("</")){
 				throw new Exception("La definición de las variables es incorrecta. Compruebe el estilo de las variables");
 			}
+			else if(!precontenciosoContext.getVariablesBurofax().contains(StringUtils.substring(variable, variable.indexOf("{") + +1, variable.lastIndexOf("}")))) {
+				throw new Exception("¡Atenci&oacute;n! se han encontrado variables err&oacute;neas en el texto");
+			}
 			
 			contenidoBurofaxAux=contenidoBurofaxAux.substring(finalVariable+1);
 		}
@@ -299,23 +315,21 @@ public class BurofaxController {
 		
 		return DEFAULT;
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	private String getAltaDireccion(WebRequest request, ModelMap model,Long idProcedimiento,Long idCliente){
 		
-		List<DDProvincia> provincias = (List<DDProvincia>) executor.execute("dictionaryManager.getList", "DDProvincia");
+		List<Dictionary> provincias = dictionaryManager.getList("DDProvincia", DictionaryComparatorFactory.getInstance().create(DictionaryComparatorFactory.COMPARATOR_BY_DESCRIPCION));
 		model.put("provincias", provincias);
+
 		List<DDTipoVia> tiposVia = (List<DDTipoVia>) proxyFactory.proxy(DireccionApi.class).getListTiposVia();
 		model.put("tiposVia", tiposVia);
 		model.put("idCliente", idCliente);
 		model.put("idProcedimiento", idProcedimiento);
-		//model.put("idContrato", idContrato);
 		
 		return JSP_ALTA_DIRECCION;
-	}
-	
+	}	
 	
 	/**
 	 * Guarda los datos de la dirección
@@ -517,7 +531,8 @@ public class BurofaxController {
     	return DEFAULT;
     }
     
-    @RequestMapping
+    @SuppressWarnings("unchecked")
+	@RequestMapping
 	private String descargarBurofax(WebRequest request, ModelMap model,@RequestParam(value = "idEnvio", required = true) Long idEnvio){
 		
     	BurofaxEnvioIntegracionPCO burofaxEnvio=burofaxManager.getBurofaxEnvioIntegracionByIdEnvio(idEnvio);
@@ -535,4 +550,20 @@ public class BurofaxController {
 		
 	}
 
+}
+
+class ProvinciasComparator implements Comparator<DDProvincia> 
+{
+	private Collator collator;
+	 
+	public ProvinciasComparator(Collator c) 
+	{
+		this.collator = c;
+	}
+
+	@Override
+	public int compare(DDProvincia o1, DDProvincia o2) 
+	{
+		return collator.compare(o1.getDescripcion(), o2.getDescripcion());
+	}
 }

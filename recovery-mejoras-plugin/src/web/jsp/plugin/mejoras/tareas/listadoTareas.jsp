@@ -1127,10 +1127,13 @@
 			case app.subtipoTarea.CODIGO_RECOPILAR_DOCUMENTACION_PROCEDIMIENTO:
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'docRequerida');
 			break;
+			
 			case app.subtipoTarea.CODIGO_PRECONTENCIOSO_SUPERVISOR:
 			case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTORIA:
 		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR:
 		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_LETRADO:
+		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR_LIQUIDACIONES:
+		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR_DOCUMENTOS:
 		    
 		    		Ext.Ajax.request({
 						url: page.resolveUrl('expedientejudicial/getEsTareaPrecontenciosoEspecial')
@@ -1166,6 +1169,7 @@
 			case '100':
 			case '101':			
 			case '105':
+
 			case '102':
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
 				break;			

@@ -97,7 +97,7 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	
 	private static final String LETRADO = "GEXT";
 	private static final String SUPERVISOR = "SUP_PCO";
-	private static final String DIRLIT_PCO = "DULI";
+	private static final String DIRLIT_PCO = "DLISUB";
 	private static final String PREDOC = "PREDOC";
 	private static final String CM_GE_PCO = "CM_GE_PCO";
 	private static final String CM_GD_PCO = "CM_GD_PCO";
@@ -597,11 +597,21 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			genericDao.save(ProcedimientoPCO.class, procedimientoPco);
 
 			try {
-				if (documentos.size()>0) {
-					gestorTareasManager.crearTareaEspecial(idProc,PrecontenciosoBPMConstants.PCO_SolicitarDoc);
+				if (documentos.size()>0) {					
+					if (esLitigio) {
+						if (!gestorTareasManager.existeTarea(procedimiento, PrecontenciosoBPMConstants.PCO_SolicitarDoc)) {
+							gestorTareasManager.crearTareaEspecial(idProc,PrecontenciosoBPMConstants.PCO_SolicitarDoc);
+						}
+					} else {
+						if (!gestorTareasManager.existeTarea(procedimiento, PrecontenciosoBPMConstants.PCO_AdjuntarDoc)) {
+							gestorTareasManager.crearTareaEspecial(idProc,PrecontenciosoBPMConstants.PCO_AdjuntarDoc);
+						}
+					}
 				}
 				if (liquidaciones.size()>0) {
-					gestorTareasManager.crearTareaEspecial(idProc,PrecontenciosoBPMConstants.PCO_GenerarLiq);
+					if (!gestorTareasManager.existeTarea(procedimiento, PrecontenciosoBPMConstants.PCO_GenerarLiq)) {
+						gestorTareasManager.crearTareaEspecial(idProc,PrecontenciosoBPMConstants.PCO_GenerarLiq);
+					}
 				}
 			} catch (Exception e) {
 				System.out.println("Error al intentar crear tarea especial: " + e.getMessage());

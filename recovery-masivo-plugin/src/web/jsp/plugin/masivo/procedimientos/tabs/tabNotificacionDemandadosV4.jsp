@@ -164,7 +164,7 @@ var recordDetalle = Ext.data.Record.create([
 	{name: 'fechaRequerimiento'},
 	{name: 'resultadoRequerimiento'},
 	{name: 'fechaHorarioNocturno'},
-	{name: 'resultadoHorarioNocturno'},
+	{name: 'resultadoHorarioNocturno'}
 ]);
 
 var recordDetalleStore = page.getStore({

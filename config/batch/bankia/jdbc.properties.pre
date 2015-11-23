@@ -1,0 +1,4 @@
+url=jdbc:oracle:thin:BANKMASTER_T_TX/2xo6EHj90H13A6vE1w7osdKW3c6Bdslv16673022@//RACPFS-DESA-SCAN\:1576/pfsreco_pre
+username=BANKMASTER_T_TX
+password=2xo6EHj90H13A6vE1w7osdKW3c6Bdslv16673022
+dsm.prot.cnts=SI

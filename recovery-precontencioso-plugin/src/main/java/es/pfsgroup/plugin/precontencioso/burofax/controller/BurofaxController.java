@@ -290,17 +290,22 @@ public class BurofaxController {
 		//Comprobamos que las variables no han sido modificadas al editar su estilo con el HTMLEditor. Las variables son indivisibles 
 		String contenidoBurofaxAux=contenidoBurofax;
 		
-		while(contenidoBurofaxAux.length()>0 && contenidoBurofaxAux.indexOf("$") != -1){
+		while(contenidoBurofaxAux.length()>0 && contenidoBurofaxAux.indexOf("${") != -1){
 			int inicioVariable=contenidoBurofaxAux.indexOf("$");
 			int finalVariable=contenidoBurofaxAux.indexOf("}");
 			
-			String variable=contenidoBurofaxAux.substring(inicioVariable,finalVariable+1);
-			
-			if(variable.contains("<") || variable.contains("</")){
-				throw new Exception("La definición de las variables es incorrecta. Compruebe el estilo de las variables");
+			if(finalVariable != -1) {
+				String variable=contenidoBurofaxAux.substring(inicioVariable,finalVariable+1);
+				
+				if(variable.contains("<") || variable.contains("</")){
+					throw new Exception("La definición de las variables es incorrecta. Compruebe el estilo de las variables");
+				}
+				else if(!precontenciosoContext.getVariablesBurofax().contains(StringUtils.substring(variable, variable.indexOf("{") + +1, variable.lastIndexOf("}")))) {
+					throw new Exception("¡Atenci&oacute;n! se han encontrado variables err&oacute;neas en el texto");
+				}
 			}
-			else if(!precontenciosoContext.getVariablesBurofax().contains(StringUtils.substring(variable, variable.indexOf("{") + +1, variable.lastIndexOf("}")))) {
-				throw new Exception("¡Atenci&oacute;n! se han encontrado variables err&oacute;neas en el texto");
+			else {
+				finalVariable = inicioVariable + 1;
 			}
 			
 			contenidoBurofaxAux=contenidoBurofaxAux.substring(finalVariable+1);

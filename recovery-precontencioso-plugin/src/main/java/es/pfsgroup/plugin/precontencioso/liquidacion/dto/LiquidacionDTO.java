@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.liquidacion.dto;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import es.capgemini.devon.dto.WebDto;
@@ -17,23 +18,23 @@ public class LiquidacionDTO extends WebDto {
 	private Date fechaRecepcion;
 	private Date fechaConfirmacion;
 	private Date fechaCierre;
-	private Float capitalVencido;
-	private Float capitalNoVencido;
-	private Float interesesDemora;
-	private Float interesesOrdinarios;
-	private Float total;
-	private Float capitalVencidoOriginal;
-	private Float capitalNoVencidoOriginal;
-	private Float interesesDemoraOriginal;
-	private Float interesesOrdinariosOriginal;
-	private Float totalOriginal;
+	private BigDecimal capitalVencido;
+	private BigDecimal capitalNoVencido;
+	private BigDecimal interesesDemora;
+	private BigDecimal interesesOrdinarios;
+	private BigDecimal total;
+	private BigDecimal capitalVencidoOriginal;
+	private BigDecimal capitalNoVencidoOriginal;
+	private BigDecimal interesesDemoraOriginal;
+	private BigDecimal interesesOrdinariosOriginal;
+	private BigDecimal totalOriginal;
 	private String sysGuid;
-	private Float comisiones;
-	private Float gastos;
-	private Float impuestos;
-	private Float comisionesOriginal;
-	private Float gastosOriginal;
-	private Float impuestosOriginal;
+	private BigDecimal comisiones;
+	private BigDecimal gastos;
+	private BigDecimal impuestos;
+	private BigDecimal comisionesOriginal;
+	private BigDecimal gastosOriginal;
+	private BigDecimal impuestosOriginal;
 
 	// Estado
 	private String estadoCod;
@@ -105,64 +106,64 @@ public class LiquidacionDTO extends WebDto {
 	public void setFechaCierre(Date fechaCierre) {
 		this.fechaCierre = fechaCierre;
 	}
-	public Float getCapitalVencido() {
+	public BigDecimal getCapitalVencido() {
 		return capitalVencido;
 	}
-	public void setCapitalVencido(Float capitalVencido) {
+	public void setCapitalVencido(BigDecimal capitalVencido) {
 		this.capitalVencido = capitalVencido;
 	}
-	public Float getCapitalNoVencido() {
+	public BigDecimal getCapitalNoVencido() {
 		return capitalNoVencido;
 	}
-	public void setCapitalNoVencido(Float capitalNoVencido) {
+	public void setCapitalNoVencido(BigDecimal capitalNoVencido) {
 		this.capitalNoVencido = capitalNoVencido;
 	}
-	public Float getInteresesDemora() {
+	public BigDecimal getInteresesDemora() {
 		return interesesDemora;
 	}
-	public void setInteresesDemora(Float interesesDemora) {
+	public void setInteresesDemora(BigDecimal interesesDemora) {
 		this.interesesDemora = interesesDemora;
 	}
-	public Float getInteresesOrdinarios() {
+	public BigDecimal getInteresesOrdinarios() {
 		return interesesOrdinarios;
 	}
-	public void setInteresesOrdinarios(Float interesesOrdinarios) {
+	public void setInteresesOrdinarios(BigDecimal interesesOrdinarios) {
 		this.interesesOrdinarios = interesesOrdinarios;
 	}
-	public Float getTotal() {
+	public BigDecimal getTotal() {
 		return total;
 	}
-	public void setTotal(Float total) {
+	public void setTotal(BigDecimal total) {
 		this.total = total;
 	}
-	public Float getCapitalVencidoOriginal() {
+	public BigDecimal getCapitalVencidoOriginal() {
 		return capitalVencidoOriginal;
 	}
-	public void setCapitalVencidoOriginal(Float capitalVencidoOriginal) {
+	public void setCapitalVencidoOriginal(BigDecimal capitalVencidoOriginal) {
 		this.capitalVencidoOriginal = capitalVencidoOriginal;
 	}
-	public Float getCapitalNoVencidoOriginal() {
+	public BigDecimal getCapitalNoVencidoOriginal() {
 		return capitalNoVencidoOriginal;
 	}
-	public void setCapitalNoVencidoOriginal(Float capitalNoVencidoOriginal) {
+	public void setCapitalNoVencidoOriginal(BigDecimal capitalNoVencidoOriginal) {
 		this.capitalNoVencidoOriginal = capitalNoVencidoOriginal;
 	}
-	public Float getInteresesDemoraOriginal() {
+	public BigDecimal getInteresesDemoraOriginal() {
 		return interesesDemoraOriginal;
 	}
-	public void setInteresesDemoraOriginal(Float interesesDemoraOriginal) {
+	public void setInteresesDemoraOriginal(BigDecimal interesesDemoraOriginal) {
 		this.interesesDemoraOriginal = interesesDemoraOriginal;
 	}
-	public Float getInteresesOrdinariosOriginal() {
+	public BigDecimal getInteresesOrdinariosOriginal() {
 		return interesesOrdinariosOriginal;
 	}
-	public void setInteresesOrdinariosOriginal(Float interesesOrdinariosOriginal) {
+	public void setInteresesOrdinariosOriginal(BigDecimal interesesOrdinariosOriginal) {
 		this.interesesOrdinariosOriginal = interesesOrdinariosOriginal;
 	}
-	public Float getTotalOriginal() {
+	public BigDecimal getTotalOriginal() {
 		return totalOriginal;
 	}
-	public void setTotalOriginal(Float totalOriginal) {
+	public void setTotalOriginal(BigDecimal totalOriginal) {
 		this.totalOriginal = totalOriginal;
 	}
 	public String getSysGuid() {
@@ -207,40 +208,40 @@ public class LiquidacionDTO extends WebDto {
 	public void setApoderadoDespachoId(Long apoderadoDespachoId) {
 		this.apoderadoDespachoId = apoderadoDespachoId;
 	}
-	public Float getComisiones() {
+	public BigDecimal getComisiones() {
 		return comisiones;
 	}
-	public void setComisiones(Float comisiones) {
+	public void setComisiones(BigDecimal comisiones) {
 		this.comisiones = comisiones;
 	}
-	public Float getGastos() {
+	public BigDecimal getGastos() {
 		return gastos;
 	}
-	public void setGastos(Float gastos) {
+	public void setGastos(BigDecimal gastos) {
 		this.gastos = gastos;
 	}
-	public Float getImpuestos() {
+	public BigDecimal getImpuestos() {
 		return impuestos;
 	}
-	public void setImpuestos(Float impuestos) {
+	public void setImpuestos(BigDecimal impuestos) {
 		this.impuestos = impuestos;
 	}
-	public Float getComisionesOriginal() {
+	public BigDecimal getComisionesOriginal() {
 		return comisionesOriginal;
 	}
-	public void setComisionesOriginal(Float comisionesOriginal) {
+	public void setComisionesOriginal(BigDecimal comisionesOriginal) {
 		this.comisionesOriginal = comisionesOriginal;
 	}
-	public Float getGastosOriginal() {
+	public BigDecimal getGastosOriginal() {
 		return gastosOriginal;
 	}
-	public void setGastosOriginal(Float gastosOriginal) {
+	public void setGastosOriginal(BigDecimal gastosOriginal) {
 		this.gastosOriginal = gastosOriginal;
 	}
-	public Float getImpuestosOriginal() {
+	public BigDecimal getImpuestosOriginal() {
 		return impuestosOriginal;
 	}
-	public void setImpuestosOriginal(Float impuestosOriginal) {
+	public void setImpuestosOriginal(BigDecimal impuestosOriginal) {
 		this.impuestosOriginal = impuestosOriginal;
 	}
 	

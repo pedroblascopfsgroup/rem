@@ -29,53 +29,34 @@
 			,iconCls : 'icon_mas'
 			,cls: 'x-btn-text-icon'
 			,disabled:true
-			
 	});
 	
-	
-	btnAddRelacion.on('click',function(){		
-		bienContratosStore.add(new bienContrato({idContrato:dataIdContrato,codigoContrato: numContrato.getValue(),relacion:tipoRelacion.lastSelectionText,codRelacion:tipoRelacion.getValue(),tipoProducto:tipoProducto.getValue()}));
-	
+	btnAddRelacion.on('click',function(){
+		var rec = grid.getSelectionModel().getSelected();
+		if(rec) {
+			var idContrato = rec.get("id");
+			var codContrato = rec.get("codigoContrato");
+			var tipoProducto = rec.get("tipoProducto");				
+			bienContratosStore.add(new bienContrato({idContrato:idContrato,codigoContrato: codContrato,relacion:tipoRelacion.lastSelectionText,codRelacion:tipoRelacion.getValue(),tipoProducto:tipoProducto}));
+		}
 	});
 	
-	var btnBuscarContrato = new Ext.Button({
-			text : '<s:message code="app.buscar" text="**Buscar" />'
-			,iconCls : 'icon_busqueda_asuntos'
-			,cls: 'x-btn-text-icon'
-			
-	});
-	
-	btnBuscarContrato.on('click', function(){         
-		Ext.Ajax.request({
-						url : page.resolveUrl('subasta/buscaContratoByCodigo'), 
-						params : {nroContrato:nroContrato.getValue()},
-						method: 'POST',
-						success: function ( result, request) {
-							
-							var jsonData = Ext.util.JSON.decode(result.responseText);
-							dataIdContrato=jsonData.contrato.idContrato;
-                            dataNumContrato=jsonData.contrato.numContrato;
-                            dataGarantia=jsonData.contrato.garantia;
-                            dataGarantiaApp=jsonData.contrato.garantiaApp;
-                            dataTipoProducto=jsonData.contrato.tipoProducto;
-                            
-                            numContrato.setVisible(true);
-                            numContrato.setValue(dataNumContrato);
-                            
-                            tipoProducto.setVisible(true);
-                            tipoProducto.setValue(dataTipoProducto);
-                            
-                            tipoRelacion.setDisabled(false);	
-                            
-                            
-						},
-					    failure: function(form, action) {
-					       Ext.Msg.alert('Error', '<s:message code="rec-web.direccion.validacion.camposObligatoriosOOOO" text="**El número de contrato introducido no existe" />');
-		
-						}
-		
-		});
-	
+	var getParametros=function(){
+		var p = {};
+		p.codigoContrato=nroContrato.getValue();
+		return p;
+	}
+
+	var btnBuscarContrato=app.crearBotonBuscar({
+		handler : function(){
+			var params= getParametros();
+       		params.start=0;
+       		params.limit=10;
+			contratosStore.webflow(params);
+			pagingBar.show();
+			grid.setHeight(150);
+			grid.expand(true);
+		}
 	});
 	
 	var codigoTipoRelacion= new Ext.form.TextField({
@@ -120,48 +101,109 @@
 	  if(tipoRelacion.getValue()!= ''){
 	   btnAddRelacion.setDisabled(false);
 	  }
-	});      	
- 	
- 	
+	});
+		
+	var contrato = Ext.data.Record.create([
+		{name: 'id'},
+		{name: 'codigoContrato'},
+		{name: 'tipoProducto'},
+    	{name: 'tipoProductoComercial'},
+    	{name: 'primerTitular'},
+    	{name: 'estadoContrato'},
+    	{name: 'estadoContratoEntidad'},
+    	{name: 'fechaEstadoContrato'}
+	]);
+	
+	var contratosCm=new Ext.grid.ColumnModel([
+			{header : '<s:message code="menu.contratos.listado.lista.id" text="**id contrato" />', dataIndex : 'id' ,hidden: false,sortable:true},
+			{header : '<s:message code="menu.contratos.listado.lista.codigoContrato" text="**Código contrato" />', dataIndex : 'codigoContrato' ,sortable:true},
+			{header : '<s:message code="menu.contratos.listado.lista.tipoProducto" text="**tipoProducto" />', dataIndex : 'tipoProducto' ,sortable:true},
+			{header : '<s:message code="menu.contratos.listado.lista.tipoProductoComercial" text="**tipoProductoComercial" />', dataIndex : 'tipoProductoComercial' ,sortable:true},
+			{header : '<s:message code="menu.contratos.listado.lista.primerTitular" text="**primerTitular" />', dataIndex : 'primerTitular' ,sortable:true},
+			{header : '<s:message code="menu.contratos.listado.lista.estadoContrato" text="**estadoContrato" />', dataIndex : 'estadoContrato' ,sortable:true},
+			{header : '<s:message code="menu.contratos.listado.lista.estadoContratoEntidad" text="**estadoContratoEntidad" />', dataIndex : 'estadoContratoEntidad' ,sortable:true},
+			{header : '<s:message code="menu.contratos.listado.lista.fechaEstadoContrato" text="**fechaEstadoContrato" />', dataIndex : 'fechaEstadoContrato' ,sortable:true}
+	]);	
+	
+	var contratosStore = page.getStore({
+		 limit : 10
+		,remoteSort : true
+		,loading : false
+		,flow:'editbien/getContratosPaginados'
+		,reader: new Ext.data.JsonReader({
+	    	root : 'contratos'
+	    	,totalProperty : 'total'
+	    }, contrato)
+	});
+	
+	var pagingBar=fwk.ux.getPaging(contratosStore);
+	pagingBar.hide();
+	
+	var cfg={
+		title: '<s:message code="menu.contratos.listado.lista.title" text="**contratos" arguments="0"/>'
+		,style:'padding: 10px;'
+		,cls:'cursor_pointer'
+		,iconCls : 'icon_contrato'
+		,collapsible : true
+		,collapsed: false
+		,titleCollapse : true
+		,resizable:true
+		,dontResizeHeight:true
+		,height:170
+		,bbar : [pagingBar]
+	};
+	
+	var grid = app.crearGrid(contratosStore,contratosCm,cfg);
+	
+	grid.on('rowclick', function(grid, rowIndex, e) {
+   		var rec = grid.getStore().getAt(rowIndex);
+		if(rec) {
+			tipoRelacion.setDisabled(false);
+		} else {
+			tipoRelacion.setDisabled(true);
+		}
+   });
+ 	 	
 	var panelAddRelacion = new Ext.Panel({
 		title:'<s:message code="menu.contratos.listado.filtro.filtrodeContratos" text="**Filtro de Contrato" />'
-		,defaults : {cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
-		,border : true
-		,height : 120
-        ,layout : 'table'
-        ,autoWidth : true
-		//,width:panelWidth
+		,defaults : {layout:'form',border: true,bodyStyle:'padding-top:10px'}
+		,autoHeight: true
+		,autoWidth : true
 		,bbar : [btnAddRelacion]
 		,tbar : [btnBuscarContrato]
 		,items : [
-			{   layout:'table'
-				,layoutConfig:{columns:3}
-				,border:false
-				,defaults : {xtype : 'fieldset', height:300, border : false ,cellCls : 'vtop', bodyStyle : 'padding-left:1px'}
-				,items:[{items: [nroContrato,tipoRelacion ]}
-						,{items: [numContrato]}
-						,{items: [tipoProducto]}
-						
-				]
+			{
+				bodyStyle: 'padding-left:5px; padding-top:5px'
+				,border: false
+				,items: [nroContrato]
 			},
-			{ xtype : 'errorList', id:'errL' }			
+			{
+				bodyStyle:'padding-left:5px;padding-right:5px;padding-bottom:5px;cellspacing:10px'
+				,border:false
+				,defaults : {xtype:'panel' ,cellCls : 'vtop'}
+				,items : [grid]
+			 },
+			{ 
+				xtype : 'errorList'
+				,id:'errL' 
+			}
 		]
-	});	
-	
-	
+	});
+		
 	<%--Panel relaciones con contratos --%>
 	var btnEditarRelacion = new Ext.Button({
 			text : '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabRelaciones.btnEditarRelacionContrato" text="**Editar Relación" />'
 			,iconCls : 'icon_mas'
 			,cls: 'x-btn-text-icon'
-			
 	});
 	
 	btnEditarRelacion.on('click',function(){
 		 var rec = gridContratos.getSelectionModel().getSelected();
 	     if (!rec) return;
-	     var idContrato=rec.get("idContrato");
-	     var codTipoContratoBien = rec.get("codRelacion");  	            
+	     var idContrato = rec.get("idContrato");
+	     var codTipoContratoBien = rec.get("codRelacion");
+	     var codigoContrato = rec.get("codigoContrato");
+		 var tipoProducto = rec.get("tipoProducto");	       	            
 				
 		 var w = app.openWindow({
 			flow : 'editbien/editarRelacionBienContratoMultiple'
@@ -176,27 +218,22 @@
 				w.close();
 				
 			    bienContratosStore.remove(gridContratos.getSelectionModel().getSelected());
-			    bienContratosStore.add(new bienContrato({idContrato:dataIdContrato,codigoContrato: numContrato.getValue(),relacion:tipoRelacionDescripcion.getValue(),codRelacion:codigoTipoRelacion.getValue(),tipoProducto:tipoProducto.getValue()}));
+			    bienContratosStore.add(new bienContrato({idContrato:idContrato,codigoContrato: codigoContrato,relacion:tipoRelacionDescripcion.getValue(),codRelacion:codigoTipoRelacion.getValue(),tipoProducto:tipoProducto}));
 			     
 			});
 			w.on(app.event.CANCEL, function(){ w.close(); });
 	
 	});
 	
-
 	
 	var btnBorrarRelacion = new Ext.Button({
 			text : '<s:message code="app.borrar" text="**Borrar" />'
 			,iconCls : 'icon_cancel'
-			,cls: 'x-btn-text-icon'
-			
+			,cls: 'x-btn-text-icon'			
 	});
 	
 	btnBorrarRelacion.on('click',function(){
-		
 		bienContratosStore.remove(gridContratos.getSelectionModel().getSelected());
-		
-		
 	});
 	
 	var bienContrato = Ext.data.Record.create([
@@ -226,14 +263,12 @@
         	root: 'contratosBien'
        	}, bienContrato)
    	});
-    
-   	//bienContratosStore.webflow({idBien:3});
    	
    	var BienContratosCM  = new Ext.grid.ColumnModel([
          {header: '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabRelaciones.idContratoBien" text="**idContratoBien"/>',width:52, sortable: true, dataIndex: 'idContratoBien', hidden: true}
         ,{header: '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabRelaciones.idBien" text="**idBien"/>', sortable: true, dataIndex: 'idBien', hidden: true}
         ,{header: '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabRelaciones.idContrato" text="**idContrato"/>', sortable: true, dataIndex: 'idContrato', hidden: true}
-        ,{header: '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabRelaciones.numContrato" text="**Num. contrato"/>', sortable: true, dataIndex: 'codigoContrato'}
+        ,{header: '<s:message code="menu.contratos.listado.lista.codigoContrato" text="**Código contrato" />', sortable: true, dataIndex: 'codigoContrato'}
         ,{header: '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabRelaciones.codRelacion" text="**cod relacion"/>', sortable: true, dataIndex: 'codRelacion', hidden: true}
         ,{header: '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabRelaciones.relacion" text="**relacion"/>', sortable: true, dataIndex: 'relacion'}
         ,{header: '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabRelaciones.importeGarantizado" text="**importeGarantizado"/>', align:'right', renderer: app.format.moneyRenderer, sortable: true, dataIndex: 'importeGarantizado'}
@@ -253,12 +288,10 @@
 		,resizable:true
 		,dontResizeHeight:true
 		,width:800
-		,height:200
+		,height:170
         ,bbar : [btnEditarRelacion,btnBorrarRelacion]
        
     });
-	
-	<%-- --%>			
 	
 	var btnGuardar = new Ext.Button({
        text:  '<s:message code="app.guardar" text="**Guardar" />'
@@ -267,41 +300,40 @@
     
     btnGuardar.on('click',function(){
 		
-		var nroContratoTipoBienContrato=new Array();
+		var idContratoTipoBienContrato = new Array();
 		
 		for(i=0;i < bienContratosStore.data.length;i++){
-			nroContratoTipoBienContrato.push(bienContratosStore.data.items[i].data.codigoContrato+','+bienContratosStore.data.items[i].data.codRelacion);
+			idContratoTipoBienContrato.push(bienContratosStore.data.items[i].data.idContrato+','+bienContratosStore.data.items[i].data.codRelacion);
 		}
 		
 		Ext.Ajax.request({
-						url : page.resolveUrl('subasta/guardarRelacionesContratoBienes'), 
-						params : {nroContratoTipoBienContrato:nroContratoTipoBienContrato,idBienes:idBienes},
+						url : page.resolveUrl('subasta/guardarRelacionesContratosBienes'), 
+						params : {idContratoTipoBienContrato:idContratoTipoBienContrato,idBienes:idBienes},
 						method: 'POST',
-						success: function ( result, request ) {
+						success: function(result,request){
+							if(result.msgError=='1'){
 							page.fireEvent(app.event.DONE);
+							}else{
+							Ext.Msg.show({
+								title:'Advertencia',
+								msg: result.msgError,
+								buttons: Ext.Msg.OK,
+								icon:Ext.MessageBox.WARNING});
+							}
 						},
-					    failure: function(form, action) {
-					    	
-						}
-		
-		});	
-		
-		
-		
+						failure: function(form, action) {
+					    }
+		});
 	});
-    
-
+	
 	var btnCancelar= new Ext.Button({
 		text : '<s:message code="app.cancelar" text="**Cancelar" />'
 		,iconCls : 'icon_cancel'
 		,handler : function(){
-						page.fireEvent(app.event.CANCEL);  	
-					}
-	}); 	
- 	
- 	
-	
- 
+						page.fireEvent(app.event.CANCEL);
+				}
+	});
+
  	var panelContenedor = new Ext.form.FormPanel({
          defaults : {layout:'form',border: false,bodyStyle:'padding-top:10px'} 
 		 ,items : [
@@ -333,7 +365,6 @@
 			btnGuardar, btnCancelar
 		]
 	});	
-
 
 	page.add(panelContenedor);
 	

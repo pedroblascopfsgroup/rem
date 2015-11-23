@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.precontencioso.liquidacion.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -69,34 +70,34 @@ public class LiquidacionPCO implements Serializable, Auditable {
 	private Date fechaCierre;
 
 	@Column(name = "PCO_LIQ_CAPITAL_VENCIDO")
-	private Float capitalVencido;
+	private BigDecimal capitalVencido;
 
 	@Column(name = "PCO_LIQ_CAPITAL_NO_VENCIDO")
-	private Float capitalNoVencido;
+	private BigDecimal capitalNoVencido;
 
 	@Column(name = "PCO_LIQ_INTERESES_DEMORA")
-	private Float interesesDemora;
+	private BigDecimal interesesDemora;
 
 	@Column(name = "PCO_LIQ_INTERESES_ORDINARIOS")
-	private Float interesesOrdinarios;
+	private BigDecimal interesesOrdinarios;
 
 	@Column(name = "PCO_LIQ_TOTAL")
-	private Float total;
+	private BigDecimal total;
 
 	@Column(name = "PCO_LIQ_ORI_CAPITAL_VENCIDO")
-	private Float capitalVencidoOriginal;
+	private BigDecimal capitalVencidoOriginal;
 
 	@Column(name = "PCO_LIQ_ORI_CAPITAL_NO_VENCIDO")
-	private Float capitalNoVencidoOriginal;
+	private BigDecimal capitalNoVencidoOriginal;
 
 	@Column(name = "PCO_LIQ_ORI_INTE_DEMORA")
-	private Float interesesDemoraOriginal;
+	private BigDecimal interesesDemoraOriginal;
 
 	@Column(name = "PCO_LIQ_ORI_INTE_ORDINARIOS")
-	private Float interesesOrdinariosOriginal;
+	private BigDecimal interesesOrdinariosOriginal;
 
 	@Column(name = "PCO_LIQ_ORI_TOTAL")
-	private Float totalOriginal;
+	private BigDecimal totalOriginal;
 
 	@ManyToOne
 	@JoinColumn(name = "USD_ID")
@@ -109,22 +110,22 @@ public class LiquidacionPCO implements Serializable, Auditable {
 	private GestorDespacho solicitante;
 	
 	@Column(name = "PCO_LIQ_COMISIONES")
-	private Float comisiones;
+	private BigDecimal comisiones;
 	
 	@Column(name = "PCO_LIQ_GASTOS")
-	private Float gastos;
+	private BigDecimal gastos;
 	
 	@Column(name = "PCO_LIQ_IMPUESTOS")
-	private Float impuestos;
+	private BigDecimal impuestos;
 	
 	@Column(name = "PCO_LIQ_ORI_COMISIONES")
-	private Float comisionesOriginal;
+	private BigDecimal comisionesOriginal;
 	
 	@Column(name = "PCO_LIQ_ORI_GASTOS")
-	private Float gastosOriginal;
+	private BigDecimal gastosOriginal;
 	
 	@Column(name = "PCO_LIQ_ORI_IMPUESTOS")
-	private Float impuestosOriginal;
+	private BigDecimal impuestosOriginal;
 
 	@Column(name = "SYS_GUID")
 	private String sysGuid;
@@ -232,83 +233,83 @@ public class LiquidacionPCO implements Serializable, Auditable {
 		this.fechaCierre = fechaCierre;
 	}
 
-	public Float getCapitalVencido() {
+	public BigDecimal getCapitalVencido() {
 		return capitalVencido;
 	}
 
-	public void setCapitalVencido(Float capitalVencido) {
+	public void setCapitalVencido(BigDecimal capitalVencido) {
 		this.capitalVencido = capitalVencido;
 	}
 
-	public Float getCapitalNoVencido() {
+	public BigDecimal getCapitalNoVencido() {
 		return capitalNoVencido;
 	}
 
-	public void setCapitalNoVencido(Float capitalNoVencido) {
+	public void setCapitalNoVencido(BigDecimal capitalNoVencido) {
 		this.capitalNoVencido = capitalNoVencido;
 	}
 
-	public Float getInteresesDemora() {
+	public BigDecimal getInteresesDemora() {
 		return interesesDemora;
 	}
 
-	public void setInteresesDemora(Float interesesDemora) {
+	public void setInteresesDemora(BigDecimal interesesDemora) {
 		this.interesesDemora = interesesDemora;
 	}
 
-	public Float getInteresesOrdinarios() {
+	public BigDecimal getInteresesOrdinarios() {
 		return interesesOrdinarios;
 	}
 
-	public void setInteresesOrdinarios(Float interesesOrdinarios) {
+	public void setInteresesOrdinarios(BigDecimal interesesOrdinarios) {
 		this.interesesOrdinarios = interesesOrdinarios;
 	}
 
-	public Float getTotal() {
+	public BigDecimal getTotal() {
 		return total;
 	}
 
-	public void setTotal(Float total) {
+	public void setTotal(BigDecimal total) {
 		this.total = total;
 	}
 
-	public Float getCapitalVencidoOriginal() {
+	public BigDecimal getCapitalVencidoOriginal() {
 		return capitalVencidoOriginal;
 	}
 
-	public void setCapitalVencidoOriginal(Float capitalVencidoOriginal) {
+	public void setCapitalVencidoOriginal(BigDecimal capitalVencidoOriginal) {
 		this.capitalVencidoOriginal = capitalVencidoOriginal;
 	}
 
-	public Float getCapitalNoVencidoOriginal() {
+	public BigDecimal getCapitalNoVencidoOriginal() {
 		return capitalNoVencidoOriginal;
 	}
 
-	public void setCapitalNoVencidoOriginal(Float capitalNoVencidoOriginal) {
+	public void setCapitalNoVencidoOriginal(BigDecimal capitalNoVencidoOriginal) {
 		this.capitalNoVencidoOriginal = capitalNoVencidoOriginal;
 	}
 
-	public Float getInteresesDemoraOriginal() {
+	public BigDecimal getInteresesDemoraOriginal() {
 		return interesesDemoraOriginal;
 	}
 
-	public void setInteresesDemoraOriginal(Float interesesDemoraOriginal) {
+	public void setInteresesDemoraOriginal(BigDecimal interesesDemoraOriginal) {
 		this.interesesDemoraOriginal = interesesDemoraOriginal;
 	}
 
-	public Float getInteresesOrdinariosOriginal() {
+	public BigDecimal getInteresesOrdinariosOriginal() {
 		return interesesOrdinariosOriginal;
 	}
 
-	public void setInteresesOrdinariosOriginal(Float interesesOrdinariosOriginal) {
+	public void setInteresesOrdinariosOriginal(BigDecimal interesesOrdinariosOriginal) {
 		this.interesesOrdinariosOriginal = interesesOrdinariosOriginal;
 	}
 
-	public Float getTotalOriginal() {
+	public BigDecimal getTotalOriginal() {
 		return totalOriginal;
 	}
 
-	public void setTotalOriginal(Float totalOriginal) {
+	public void setTotalOriginal(BigDecimal totalOriginal) {
 		this.totalOriginal = totalOriginal;
 	}
 
@@ -344,51 +345,51 @@ public class LiquidacionPCO implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 
-	public Float getComisiones() {
+	public BigDecimal getComisiones() {
 		return comisiones;
 	}
 
-	public void setComisiones(Float comisiones) {
+	public void setComisiones(BigDecimal comisiones) {
 		this.comisiones = comisiones;
 	}
 
-	public Float getGastos() {
+	public BigDecimal getGastos() {
 		return gastos;
 	}
 
-	public void setGastos(Float gastos) {
+	public void setGastos(BigDecimal gastos) {
 		this.gastos = gastos;
 	}
 
-	public Float getImpuestos() {
+	public BigDecimal getImpuestos() {
 		return impuestos;
 	}
 
-	public void setImpuestos(Float impuestos) {
+	public void setImpuestos(BigDecimal impuestos) {
 		this.impuestos = impuestos;
 	}
 
-	public Float getComisionesOriginal() {
+	public BigDecimal getComisionesOriginal() {
 		return comisionesOriginal;
 	}
 
-	public void setComisionesOriginal(Float comisionesOriginal) {
+	public void setComisionesOriginal(BigDecimal comisionesOriginal) {
 		this.comisionesOriginal = comisionesOriginal;
 	}
 
-	public Float getGastosOriginal() {
+	public BigDecimal getGastosOriginal() {
 		return gastosOriginal;
 	}
 
-	public void setGastosOriginal(Float gastosOriginal) {
+	public void setGastosOriginal(BigDecimal gastosOriginal) {
 		this.gastosOriginal = gastosOriginal;
 	}
 
-	public Float getImpuestosOriginal() {
+	public BigDecimal getImpuestosOriginal() {
 		return impuestosOriginal;
 	}
 
-	public void setImpuestosOriginal(Float impuestosOriginal) {
+	public void setImpuestosOriginal(BigDecimal impuestosOriginal) {
 		this.impuestosOriginal = impuestosOriginal;
 	}
 

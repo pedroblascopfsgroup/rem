@@ -7,6 +7,7 @@ public class HayaProjectContextImpl implements HayaProjectContext {
 	private List<String> tareasInicioConcursal;
 	private List<String> tareasInicioLitigios;
 	private String tareaAceptacionLitigios;
+	private String tareaInicioConcurso;
 	
 	/* (non-Javadoc)
 	 * @see es.pfsgroup.procedimientos.context.HayaProjectContext#getTareasInicioConcursal()
@@ -42,6 +43,15 @@ public class HayaProjectContextImpl implements HayaProjectContext {
 	
 	public void setTareaAceptacionLitigios(String tareaAceptacionLitigios) {
 		this.tareaAceptacionLitigios = tareaAceptacionLitigios;
+	}
+
+	@Override
+	public String getTareaInicioConcurso() {
+		return this.tareaInicioConcurso;
+	}
+	
+	public void setTareaInicioConcurso(String tareaInicioConcurso) {
+		this.tareaInicioConcurso = tareaInicioConcurso;
 	}
 	
 	

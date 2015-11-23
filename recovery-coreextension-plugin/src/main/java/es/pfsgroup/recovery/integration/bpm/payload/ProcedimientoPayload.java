@@ -42,6 +42,10 @@ public class ProcedimientoPayload {
 	private static final String RELACION_CONTRATOS_EXPEDIENTES = String.format("%s.cex", KEY_PROCEDIMIENTO);
 	private static final String CAMPO_TIPO_ACTUACION = String.format("%s.tipoActuacion", KEY_PROCEDIMIENTO);
 
+	private static final String CAMPO_ESTA_PARALIZADO = String.format("%s.estaParalizado", KEY_PROCEDIMIENTO);
+	private static final String CAMPO_ESTA_FECHA_ULT_PARALIZACION = String.format("%s.fechaUltParalizacion", KEY_PROCEDIMIENTO);
+	private static final String CAMPO_PLAZO_PARALIZACION = String.format("%s.plazoParalizacion", KEY_PROCEDIMIENTO);
+
 	private final DataContainerPayload data;
 	public DataContainerPayload getData() {
 		return data;
@@ -102,6 +106,10 @@ public class ProcedimientoPayload {
 		setFechaRecopilacion(procedimiento.getFechaRecopilacion());
 		setObservacionesRecopilacion(procedimiento.getObservacionesRecopilacion());
 
+		setEstaParalizado(procedimiento.isEstaParalizado());
+		setFechaUltParalizacion(procedimiento.getFechaUltimaParalizacion());
+		setPlazoParalizacion(procedimiento.getPlazoParalizacion());
+		
 		// PERSONAS relacionadas con el procedimiento codClienteEntidad
 		List<Persona> personas = procedimiento.getPersonasAfectadas();
 		for(Persona per : personas) {
@@ -343,6 +351,30 @@ public class ProcedimientoPayload {
 
 	public String getTareaOrigenDelBPM() {
 		return data.getExtraInfo(JBPM_TAR_GUID_ORIGEN);
+	}
+
+	public Boolean getEstaParalizado() {
+		return data.getFlag(CAMPO_ESTA_PARALIZADO);
+	}
+
+	public void setEstaParalizado(Boolean paralizado) {
+		data.addFlag(CAMPO_ESTA_PARALIZADO, paralizado);
+	}
+
+	public Date getFechaUltParalizacion() {
+		return data.getFecha(CAMPO_ESTA_FECHA_ULT_PARALIZACION);
+	}
+
+	public void setFechaUltParalizacion(Date valor) {
+		data.addFecha(CAMPO_ESTA_FECHA_ULT_PARALIZACION, valor);
+	}
+	
+	public Long getPlazoParalizacion() {
+		return data.getValLong(CAMPO_PLAZO_PARALIZACION);
+	}
+
+	public void setPlazoParalizacion(Long valor) {
+		data.addNumber(CAMPO_PLAZO_PARALIZACION, valor);
 	}
 	
 }

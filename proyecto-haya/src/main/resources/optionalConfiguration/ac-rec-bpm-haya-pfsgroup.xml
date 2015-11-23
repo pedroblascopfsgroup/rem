@@ -11,6 +11,7 @@
 	<!-- Beans,handlers,Managers ... --> 
  	<bean id="aceptacionHayaEnterActionHandler" class="es.pfsgroup.procedimientos.aceptacion.AceptacionHayaEnterActionHandler"></bean>
  	<bean id="asignacionHayaEnterActionHandler" class="es.pfsgroup.procedimientos.asignacion.AsignacionHayaEnterActionHandler"></bean>
+ 	<bean id="asignacionHayaDecidirTipoAsuntoHandler" class="es.pfsgroup.procedimientos.asignacion.AsignacionHayaDecidirTipoAsuntoHandler"></bean>
 		    
 	<!-- BPM activos -->
 	<!-- Cambios Rober -->
@@ -77,7 +78,18 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteAceptacionLitigios/haya_tramiteAceDecLitigios.xml" p:version="-1"/>
 	
 	<!-- Groovy's -->
-  
+  	<bean id="jbpmUtilCajamarLitigios" class="es.pfsgroup.recovery.haya.utils.JBPMProcessHayaManager" >
+  	<property name="contextScripts">
+  		<list>
+  			<value><![CDATA[ 
+  				 def tieneProcedimientoPadre = {
+					return (tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre()!=null);
+				}
+  			 ]]>
+  			</value>
+  		</list>
+  	</property>
+  </bean> 
   <!-- Diccionarios -->
 
 </beans>

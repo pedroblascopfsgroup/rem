@@ -37,38 +37,17 @@ public class KerberosBankiaDriver implements KerberosDriver {
                         //Hubo un fallo en producción con LDAP por el uso de esta versión de "funcionesUsuario" con 3 params
                         //Bankia nos comunica que debemos hacer la llamada así BKREC-1026
                         Asignacion[] asignaciones = ssa.funcionesUsuario(username, null, TIPO_APLICACION_PFS);
-                      
                         
-                        System.out.println("**+** LDAP funcionesUsuario Lista Asignaciones -------------------------------------");
 			for (Asignacion asignacion : asignaciones) {
-                            System.out.println("Agrega funcion de asignacion a la <Lista> String listaAutorizaciones");
 				listaAutorizaciones.add(asignacion.getFuncion());
-
-                            if (asignaciones == null || asignaciones.length==0) { 
-                                    logger.error("obtenerListaAutorizaciones: lista de asignaciones vac�a");
-                                    System.out.println("asignaciones esta vacio");
-                            } else {
-                                    if (asignaciones.length <= 100) {
-                                            logger.info(asignaciones);
-                                    }
-                                    System.out.println("Usuario....: "+ asignacion.getUsuario());
-                                    System.out.println("Codigo.....: "+ asignacion.getCodigo());
-                                    System.out.println("Funcion....: "+ asignacion.getFuncion());
-                                    System.out.println("Subsistema.: "+ asignacion.getSubsistema());
-                                    System.out.println("TipoAuth...: "+ asignacion.getTipoAutorizacion());
-                                    System.out.println("existeRest.: "+(asignacion.tieneRestricciones()? "SI":"NO"));
-                                    System.out.println("existeLimi.: "+(asignacion.tieneLimitaciones()? "SI":"NO"));
-                                    System.out.println("usosFunc...: " + asignacion.getUsosFuncion());
-                                    System.out.println("auditUsu...: "+ asignacion.getAuditarUsuario());
-                                    System.out.println("Restricciones--------------- ");
-                                    System.out.println(asignacion.getRestricciones().toString());
-                                    System.out.println("Limitacion------------------ ");
-                                    System.out.println(asignacion.getLimitaciones().toString());
-                                    System.out.println("-----------------------------------------------------------");
-
-                            }
 			}
-                        System.out.println("**+** LDAP funcionesUsuario FIN BUCLE -------------------------------------");
+			if (asignaciones == null || asignaciones.length==0) { 
+				logger.error("obtenerListaAutorizaciones: lista de asignaciones vac�a");
+			} else {
+				if (asignaciones.length <= 100) {
+					logger.info(asignaciones);
+				}
+			}
 //			Centro[] centros = ssa.centrosUsuario(username);
 //			String codigoCentro = "";
 //			for (Centro centro : centros) {

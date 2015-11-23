@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
 import es.capgemini.pfs.diccionarios.comparator.DictionaryComparatorFactory;
@@ -537,10 +538,20 @@ public class BurofaxController {
 	private String descargarBurofax(WebRequest request, ModelMap model,@RequestParam(value = "idEnvio", required = true) Long idEnvio){
 		
     	BurofaxEnvioIntegracionPCO burofaxEnvio=burofaxManager.getBurofaxEnvioIntegracionByIdEnvio(idEnvio);
-		if(!Checks.esNulo(burofaxEnvio) && !Checks.esNulo(burofaxEnvio.getArchivoBurofax())){
-			burofaxEnvio.getArchivoBurofax().setContentType("application/pdf");
-			burofaxEnvio.getArchivoBurofax().setFileName(burofaxEnvio.getNombreFichero());
-			model.put("fileItem", burofaxEnvio.getArchivoBurofax());
+
+		if(!Checks.esNulo(burofaxEnvio) && !Checks.esNulo(burofaxEnvio.getContenido())){
+			EnvioBurofaxPCO envioBurofax = burofaxManager.getEnvioBurofaxById(idEnvio);
+			if(!Checks.esNulo(envioBurofax)){
+				FileItem fileitem = burofaxManager.generarDocumentoBurofax(envioBurofax);
+				fileitem.setContentType("application/pdf");
+				if(!Checks.esNulo(burofaxEnvio.getNombreFichero())){
+					fileitem.setFileName(burofaxEnvio.getNombreFichero());
+				}
+				else{
+					fileitem.setFileName("BUROFAX-"+burofaxEnvio.getCliente().replace(",","").trim()+".pdf");
+				}
+				model.put("fileItem", fileitem);
+			}
 		}
 
 		return JSP_DOWNLOAD_FILE;

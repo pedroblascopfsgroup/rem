@@ -2,12 +2,9 @@ package es.pfsgroup.plugin.recovery.mejoras.procedimiento;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,11 +30,10 @@ import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.asunto.model.ProcedimientoContratoExpediente;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
-import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.web.DynamicElementApi;
+import es.capgemini.pfs.decisionProcedimiento.DecisionProcedimientoManager;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.expediente.model.DDAmbitoExpediente;
@@ -51,36 +47,30 @@ import es.capgemini.pfs.persona.dao.EXTPersonaDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
-import es.capgemini.pfs.recurso.model.Recurso;
-import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.utils.JBPMProcessManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.recovery.mejoras.MEJConstantes;
 import es.pfsgroup.plugin.recovery.mejoras.PluginMejorasBOConstants;
 import es.pfsgroup.plugin.recovery.mejoras.asunto.dao.MEJProcedimientoContratoExpedienteDao;
-import es.pfsgroup.plugin.recovery.mejoras.asunto.dao.impl.MEJProcedimientoContratoExpedienteDaoImpl;
-import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.AccionTomaDecision;
 import es.pfsgroup.plugin.recovery.mejoras.expediente.MEJExpedienteFacade;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.dto.MEJDtoBloquearProcedimientos;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.dto.MEJDtoInclusionExclusionContratoProcedimiento;
-import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJConfiguracionDerivacionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.Dao.MEJRecursoDao;
+import es.pfsgroup.recovery.api.ExpedienteApi;
+import es.pfsgroup.recovery.api.ProcedimientoApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoDto;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
-import es.pfsgroup.recovery.api.ExpedienteApi;
-import es.pfsgroup.recovery.api.ProcedimientoApi;
 
 @Component
 public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProcedimientoApi> implements MEJProcedimientoApi {
@@ -129,8 +119,10 @@ public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProce
 	@Autowired
 	private EXTProcedimientoManager extProcedimientoManager;
 	
-	@Autowired(required=false)
-	private List<AccionDesparalizarProcedimiento> accionesAdicionalTrasDesparalizar;
+	@Autowired
+	private DecisionProcedimientoManager decisionProcedimientoManager;
+
+
 	
 	@BusinessOperation("procedimiento.buttons")
 	public List<DynamicElement> getTabs(long idProcedimiento) {
@@ -230,82 +222,6 @@ public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProce
 
 	public void setProcedimientoDao(ProcedimientoDao procedimientoDao) {
 		this.procedimientoDao = procedimientoDao;
-	}
-
-	@Override
-	@BusinessOperation(MEJ_BO_PRC_SE_PUEDE_DESPARALIZAR)
-	public boolean isDespararizable(Long idProcedimiento) {
-		MEJProcedimiento prc = genericDao.get(MEJProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", idProcedimiento),
-				genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-
-		if (prc != null && prc.isEstaParalizado())
-			return true;
-
-		return false;
-	}
-
-	@Override
-	@BusinessOperation(MEJ_BO_PRC_DESPARALIZAR)
-	@Transactional(readOnly = false)
-	public void desparalizarProcedimiento(Long idProcedimiento) {
-		MEJProcedimiento prc = genericDao.get(MEJProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", idProcedimiento),
-				genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-		if (prc != null) {
-			Map<String, Object> variables = new HashMap<String, Object>();
-
-			if (!Checks.esNulo(prc.getPlazoParalizacion())) {
-				// FIXME Poner la constante PLAZO_TAREAS_DEFAULT en alg�n sitio
-				variables.put("PLAZO_TAREA_DEFAULT", prc.getPlazoParalizacion());
-			}
-			
-			// Antes de desparalizar las tareas hay que comprobar que no haya recursos pendientes
-			boolean recSinFinalizar = false;
-			List<Recurso> listRecProc = recursoDao.getRecursosPorProcedimiento(idProcedimiento);
-			
-			if (listRecProc != null){
-				for (Recurso rec : listRecProc) {
-					if(Checks.esNulo(rec.getResultadoResolucion())){
-						recSinFinalizar = true;
-					}
-				}
-			}
-			
-			if (!recSinFinalizar){
-				jbpmUtil.addVariablesToProcess(prc.getProcessBPM(), variables);
-				jbpmUtil.activarProcesosBPM(prc.getProcessBPM());
-			}
-			
-			GregorianCalendar fechaParalizacion = new GregorianCalendar();
-			fechaParalizacion.setTime(prc.getFechaUltimaParalizacion());
-
-			prc.setEstaParalizado(false);
-			prc.setFechaUltimaParalizacion(null);
-			prc.setPlazoParalizacion(null);
-
-			genericDao.save(MEJProcedimiento.class, prc);
-			
-			
-			// ACCIONES TRAS DESPARALIZAR
-			if (this.accionesAdicionalTrasDesparalizar!=null) {
-				for (AccionDesparalizarProcedimiento accion : this.accionesAdicionalTrasDesparalizar) {
-					accion.ejecutar(prc);
-				}
-			}
-			// FIN ACCIONES DESPARALIZAR
-			
-		}
-
-	}
-
-	private int restarFechas(GregorianCalendar fecha1, GregorianCalendar fecha2) {
-		long milis1 = fecha1.getTimeInMillis();
-		long milis2 = fecha2.getTimeInMillis();
-		// calcular la diferencia en milisengundos
-		long diff = milis2 - milis1;
-		// calcular la diferencia en dias
-		long diffDays = diff / (24 * 60 * 60 * 1000);
-		return Long.valueOf(diffDays).intValue();
-
 	}
 
 	@BusinessOperation(overrides = ExternaBusinessOperation.BO_PRC_MGR_SALVAR_PROCEDIMIMENTO)
@@ -584,7 +500,6 @@ public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProce
 	 * @param dto
 	 *            DtoExclusionContratoExpediente
 	 */
-	@SuppressWarnings("unchecked")
 	@BusinessOperation(MEJ_BO_PRC_EXCLUIR_CONTRATOS_AL_PROCEDIMIENTO)
 	@Transactional(readOnly = false)
 	@Override
@@ -615,8 +530,7 @@ public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProce
      * Crea un nuevo procedimiento de tipo bloqueado.
      * @param dto UNNIMDtoInclusionExclusionContratoProcedimiento
      */
-    @SuppressWarnings({ "unchecked", "null" })
-	@BusinessOperation(MEJ_BO_PRC_ADJUNTAR_CONTRATOS_AL_PROCEDIMIENTO)
+    @BusinessOperation(MEJ_BO_PRC_ADJUNTAR_CONTRATOS_AL_PROCEDIMIENTO)
 	@Transactional(readOnly = false)
 	@Override
     public void adjuntarContratosAlProcedimiento(MEJDtoBloquearProcedimientos dto) {

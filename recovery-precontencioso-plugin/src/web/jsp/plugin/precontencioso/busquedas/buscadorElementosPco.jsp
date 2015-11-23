@@ -46,7 +46,7 @@
 				}
 		}});
 		
-	var camposLimpiar = [comboTipoBusqueda, fieldCodigoEle, fieldNombreExpedienteJudicialEle,dateFieldInicioPreparacionDesdeEle, dateFieldInicioPreparacionHastaEle,
+	var camposLimpiar = [fieldCodigoEle, fieldNombreExpedienteJudicialEle,dateFieldInicioPreparacionDesdeEle, dateFieldInicioPreparacionHastaEle,
 		dateFieldPreparadoDesdeEle, dateFieldPreparadoHastaEle, dateFieldEnviadoLetradoDesdeEle, dateFieldEnviadoLetradoHastaEle,
 		dateFieldFinalizadoDesdeEle, dateFieldFinalizadoHastaEle, dateFieldUltimaSubsanacionDesdeEle, dateFieldUltimaSubsanacionHastaEle,
 		dateFieldCanceladoDesdeEle, dateFieldCanceladoHastaEle, dateFieldParalizacionDesdeEle, dateFieldParalizacionHastaEle,
@@ -59,7 +59,7 @@
 		comboAdjuntoDocEle, comboSolicitudPreviaDocEle, fieldDiasGestionDocEle, comboTiposGestorEleDoc, comboDespachosEleDoc, comboGestorEleDoc, 
 		comboEstadoLiquidacion, dateFieldSolicitudLiqDesdeEle, dateFieldSolicitudLiqHastaEle, dateFieldRecepcionLiqDesdeEle, dateFieldRecepcionLiqHastaEle, 
 		dateFieldConfirmacionLiqDesdeEle, dateFieldConfirmacionLiqHastaEle, dateFieldCierreLiqDesdeEle, dateFieldCierreLiqHastaEle, fieldTotalLiqDesdeEle, 
-		fieldTotalLiqHastaEle, fieldDiasGestionLiqEle, comboNotificadoEle, comboResultadoBurofax, dateFieldSolicitudBurDesdeEle, dateFieldSolicitudBurHastaEle,
+		fieldTotalLiqHastaEle, fieldDiasGestionLiqEle, comboResultadoBurofax, dateFieldSolicitudBurDesdeEle, dateFieldSolicitudBurHastaEle,
 		dateFieldEnvioBurDesdeEle, dateFieldEnvioBurHastaEle, dateFieldAcuseBurDesdeEle, dateFieldAcuseBurHastaEle];
 
 	var camposStoreLimpiar = [optionsZonasStore, optionsGestoresStore, optionsGestoresStoreDoc];

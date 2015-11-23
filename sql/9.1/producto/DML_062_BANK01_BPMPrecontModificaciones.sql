@@ -38,14 +38,14 @@ BEGIN
 
     DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... ACTUALIZACION DEL CAMPO TFI_TAREAS_FORM_ITEMS PCO_RegistrarTomaDec nueva_preparacion');
     V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_VALOR_INICIAL=''valores[''''PCO_RegistrarTomaDec''''][''''correcto'''']'' WHERE  TAP_ID IN  ' || 
-      '(SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO IN (''PCO_RegistrarTomaDec'')) AND TFI_NOMBRE = ''nueva_preparacion''';
+      '(SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO IN (''PCO_RegistrarTomaDec'')) AND TFI_NOMBRE = ''nueva_preparacion''';
     DBMS_OUTPUT.PUT_LINE(V_SQL);
       EXECUTE IMMEDIATE V_SQL;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'... ACTUALIZACION DE TABLA TFI_TAREAS_FORM_ITEMS ' );
 
     DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... DELETE DEL CAMPO TFI_TAREAS_FORM_ITEMS PCO_SubsanarIncidenciaExp fecha_envio');
     V_SQL := 'DELETE FROM '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS WHERE  TAP_ID IN  ' || 
-      '(SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO IN (''PCO_SubsanarIncidenciaExp'')) AND TFI_NOMBRE = ''fecha_envio''';
+      '(SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO IN (''PCO_SubsanarIncidenciaExp'')) AND TFI_NOMBRE = ''fecha_envio''';
     EXECUTE IMMEDIATE V_SQL;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'... DELETE  DE TABLA TFI_TAREAS_FORM_ITEMS ');
 
@@ -58,7 +58,7 @@ BEGIN
 	    DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... INSERT DEL CAMPO TFI_TAREAS_FORM_ITEMS PCO_SubsanarIncidenciaExp tipo_problema');
 	    V_SQL := 'INSERT INTO '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS ' || 
 	      '(TFI_ID, TAP_ID, TFI_ORDEN, TFI_TIPO, TFI_NOMBRE, TFI_LABEL, TFI_ERROR_VALIDACION, TFI_VALIDACION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' || 
-	      'VALUES (s_tfi_tareas_form_items.nextval, (select tap_id from tap_tarea_procedimiento where tap_codigo=''PCO_SubsanarIncidenciaExp''), ' || 
+	      'VALUES (' || V_ESQUEMA || '.s_tfi_tareas_form_items.nextval, (select tap_id from '||V_ESQUEMA||'.tap_tarea_procedimiento where tap_codigo=''PCO_SubsanarIncidenciaExp''), ' || 
 	      '2, ''combo'', ''tipo_problema'', ''Tipo de problema en expediente'', ''tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'', ''valor != null && valor != '''' ? true : false'', 0, ''DD'', sysdate, 0)';
 	    EXECUTE IMMEDIATE V_SQL;
 	    DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'... DELETE DEL CAMPO TFI_TIPO,  TFI_BUSINESS_OPERATIONDE TFI_TAREAS_FORM_ITEMS');
@@ -73,7 +73,7 @@ BEGIN
 	    DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... INSERT DEL CAMPO TFI_TAREAS_FORM_ITEMS PCO_SubsanarIncidenciaExp fecha_exp_sub');
 	    V_SQL := 'INSERT INTO '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS ' || 
 	      '(TFI_ID, TAP_ID, TFI_ORDEN, TFI_TIPO, TFI_NOMBRE, TFI_LABEL, TFI_ERROR_VALIDACION, TFI_VALIDACION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' || 
-	      'VALUES (s_tfi_tareas_form_items.nextval, (select tap_id from tap_tarea_procedimiento where tap_codigo=''PCO_SubsanarIncidenciaExp''), ' || 
+	      'VALUES (' || V_ESQUEMA || '.s_tfi_tareas_form_items.nextval, (select tap_id from '||V_ESQUEMA||'.tap_tarea_procedimiento where tap_codigo=''PCO_SubsanarIncidenciaExp''), ' || 
 	      '	3, ''date'', ''fecha_exp_sub'', ''Fecha expediente subsanado'', ''tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'', ''valor != null && valor != '''' ? true : false'', 0, ''DD'', sysdate, 0)';
 	    EXECUTE IMMEDIATE V_SQL;
 	    DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'... DELETE DEL CAMPO TFI_TIPO,  TFI_BUSINESS_OPERATIONDE TFI_TAREAS_FORM_ITEMS');
@@ -81,7 +81,7 @@ BEGIN
 
     DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... ACTUALIZACION DEL CAMPO TFI_TAREAS_FORM_ITEMS PCO_SubsanarIncidenciaExp observaciones');
     V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_ORDEN=''4'' WHERE  TAP_ID IN  ' || 
-      '(SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO IN (''PCO_SubsanarIncidenciaExp'')) AND TFI_NOMBRE = ''observaciones''';
+      '(SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO IN (''PCO_SubsanarIncidenciaExp'')) AND TFI_NOMBRE = ''observaciones''';
     EXECUTE IMMEDIATE V_SQL;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'... ACTUALIZACION DE TABLA TFI_TAREAS_FORM_ITEMS ' );
 
@@ -105,31 +105,31 @@ BEGIN
 
     DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... ACTUALIZACION DEL CAMPO TFI_TAREAS_FORM_ITEMS PCO_SubsanarIncidenciaExp tipo_problema');
     V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_VALOR_INICIAL=''valores[''''PCO_RegistrarTomaDec''''][''''tipo_problema'''']'' WHERE  TAP_ID IN  ' || 
-      '(SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO IN (''PCO_SubsanarIncidenciaExp'')) AND TFI_NOMBRE = ''tipo_problema''';
+      '(SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO IN (''PCO_SubsanarIncidenciaExp'')) AND TFI_NOMBRE = ''tipo_problema''';
     EXECUTE IMMEDIATE V_SQL;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'... ACTUALIZACION DE TABLA TFI_TAREAS_FORM_ITEMS ' );
     
     DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... ACTUALIZACION DEL CAMPO TFI_TAREAS_FORM_ITEMS PCO_SubsanarIncidenciaExp tipo_problema');
     V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_VALOR_INICIAL=''valores[''''PCO_RegistrarTomaDec''''][''''tipo_problema'''']'' WHERE  TAP_ID IN  ' || 
-      '(SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO IN (''PCO_SubsanarIncidenciaExp'')) AND TFI_NOMBRE = ''tipo_problema''';
+      '(SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO IN (''PCO_SubsanarIncidenciaExp'')) AND TFI_NOMBRE = ''tipo_problema''';
     EXECUTE IMMEDIATE V_SQL;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'... ACTUALIZACION DE TABLA TFI_TAREAS_FORM_ITEMS ' );
     
     DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... ACTUALIZACION DEL CAMPO TFI_TAREAS_FORM_ITEMS ValidarCambioProc');
     V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_ERROR_VALIDACION = '''', TFI_VALIDACION = '''' WHERE  TAP_ID IN  ' || 
-      '(SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO IN (''PCO_ValidarCambioProc'')) AND TFI_VALOR_INICIAL IS NOT NULL';
+      '(SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO IN (''PCO_ValidarCambioProc'')) AND TFI_VALOR_INICIAL IS NOT NULL';
     EXECUTE IMMEDIATE V_SQL;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'... ACTUALIZACION DE TABLA TFI_TAREAS_FORM_ITEMS ' );
     
     DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... ACTUALIZACION DEL CAMPO TFI_TAREAS_FORM_ITEMS ValidarCambioProc cambio_aceptado');
     V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_ORDEN = ''4'' WHERE  TAP_ID IN  ' || 
-      '(SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO IN (''PCO_ValidarCambioProc'')) AND TFI_NOMBRE = ''cambio_aceptado''';
+      '(SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO IN (''PCO_ValidarCambioProc'')) AND TFI_NOMBRE = ''cambio_aceptado''';
     EXECUTE IMMEDIATE V_SQL;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'... ACTUALIZACION DE TABLA TFI_TAREAS_FORM_ITEMS ' );
     
     DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... ACTUALIZACION DEL CAMPO TFI_TAREAS_FORM_ITEMS ValidarCambioProc nueva_preparacion');
     V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_ORDEN = ''3'' WHERE  TAP_ID IN  ' || 
-      '(SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO IN (''PCO_ValidarCambioProc'')) AND TFI_NOMBRE = ''nueva_preparacion''';
+      '(SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO IN (''PCO_ValidarCambioProc'')) AND TFI_NOMBRE = ''nueva_preparacion''';
     EXECUTE IMMEDIATE V_SQL;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'... ACTUALIZACION DE TABLA TFI_TAREAS_FORM_ITEMS ' );
     
@@ -140,13 +140,13 @@ BEGIN
 
     DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... ACTUALIZACION DEL CAMPO TFI_TAREAS_FORM_ITEMS PCO_ValidarCambioProc tipo_proc_entidad');
     V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_VALOR_INICIAL = ''dameProcedimientoPropuesto()'' WHERE  TAP_ID IN  ' || 
-      '(SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO IN (''PCO_ValidarCambioProc'')) AND TFI_NOMBRE = ''tipo_proc_entidad''';
+      '(SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO IN (''PCO_ValidarCambioProc'')) AND TFI_NOMBRE = ''tipo_proc_entidad''';
     EXECUTE IMMEDIATE V_SQL;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'... ACTUALIZACION DE TABLA TFI_TAREAS_FORM_ITEMS ' );
     
     DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... ACTUALIZACION DEL CAMPO TFI_TAREAS_FORM_ITEMS PCO_ValidarCambioProc tipo_proc_letrado');
     V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_VALOR_INICIAL = ''valores[''''PCO_RegistrarTomaDec''''][''''proc_propuesto'''']'' WHERE  TAP_ID IN  ' || 
-      '(SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO IN (''PCO_ValidarCambioProc'')) AND TFI_NOMBRE = ''tipo_proc_letrado''';
+      '(SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO IN (''PCO_ValidarCambioProc'')) AND TFI_NOMBRE = ''tipo_proc_letrado''';
     EXECUTE IMMEDIATE V_SQL;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'... ACTUALIZACION DE TABLA TFI_TAREAS_FORM_ITEMS ' );
        
@@ -188,7 +188,7 @@ BEGIN
     
     DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... ACTUALIZACION DEL CAMPO TFI_TAREAS_FORM_ITEMS PCO_RegistrarAceptacion titulo');
     V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_LABEL=''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">A través de esta pantalla deberá indicar si acepta el Asunto asignado por la entidad o no.</p><p style="margin-bottom: 10px">En el campo "Conflicto de intereses" deberá consignar la existencia de conflicto o no, que le impida aceptar la dirección de la acción a instar, en caso de que haya conflicto de intereses no se le permitirá la aceptación del Asunto.</p><p style="margin-bottom: 10px">En el campo "Aceptación del asunto " deberá indicar si acepta o no el asunto, si ha marcado con anterioridad que existe conflicto de intereses, deberá marcar, en todo caso, la no aceptación del asunto.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla la siguiente tarea será "Revisar expediente" en caso de que haya aceptado el asunto, en caso de no haber aceptado el asunto se creará una tarea al supervisor para que tenga en cuenta su respuesta a la vez que reasigna el asunto a otro letrado.</p><p style="margin-bottom: 10px">En el campo observaciones consignar cualquier aspecto relevante que le interese que quede reflejado en este punto del procedimiento.</p></div>'' WHERE  TAP_ID IN  ' || 
-      '(SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO IN (''PCO_RegistrarAceptacion'')) AND TFI_NOMBRE = ''titulo''';
+      '(SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO IN (''PCO_RegistrarAceptacion'')) AND TFI_NOMBRE = ''titulo''';
     DBMS_OUTPUT.PUT_LINE(V_SQL);
       EXECUTE IMMEDIATE V_SQL;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'... ACTUALIZACION DE TABLA TFI_TAREAS_FORM_ITEMS ' );

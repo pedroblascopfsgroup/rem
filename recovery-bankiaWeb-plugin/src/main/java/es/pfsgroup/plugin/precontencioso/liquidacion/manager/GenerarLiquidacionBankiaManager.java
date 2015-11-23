@@ -6,12 +6,10 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
@@ -19,12 +17,9 @@ import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
-import es.capgemini.pfs.contrato.model.DDTipoIntervencion;
 import es.capgemini.pfs.parametrizacion.dao.ParametrizacionDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.users.domain.Usuario;
-import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.GenerarLiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dao.DatosLiquidacionDao;
@@ -39,7 +34,6 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBInformacionRegistralBienInfo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBLocalizacionesBienInfo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistralBien;
 import es.pfsgroup.recovery.geninformes.api.GENINFInformesApi;
 
 @Service
@@ -150,8 +144,22 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 			// Numero finca
 			String numFinca = "";
 			if (infoRegistral != null && infoRegistral.getNumFinca() != null) {
-				numFinca = infoRegistral.getNumFinca();	
-				bienesConcatenados.append("FINCA " + numFinca + " ");
+				numFinca = " FINCA " + infoRegistral.getNumFinca();	
+				bienesConcatenados.append(numFinca);
+			}
+
+			// Numero Registro
+			String numRegistro = "";
+			if (infoRegistral != null && infoRegistral.getNumRegistro() != null) {
+				numRegistro = " NUM.R " + infoRegistral.getNumRegistro();
+				bienesConcatenados.append(numRegistro);
+			}
+
+			// Localizacion registro
+			String locRegistro = "";
+			if (infoRegistral != null && infoRegistral.getLocalidad() != null && infoRegistral.getLocalidad().getDescripcion() != null) {
+				locRegistro = " LOC.R " + infoRegistral.getLocalidad().getDescripcion();
+				bienesConcatenados.append(locRegistro);
 			}
 
 			String nombreVia = "";
@@ -180,7 +188,7 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 			else if(i<size) bienesConcatenados.append(", ");			
 			
 
-			BienLiqVO bienVo = new BienLiqVO(numFinca, direccion, localidad);
+			BienLiqVO bienVo = new BienLiqVO(numFinca + numRegistro + locRegistro, direccion, localidad);
 			bienes.add(bienVo);
 		}
 
@@ -328,6 +336,7 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 
 		for (RecibosLiqVO recibo : recibosLiq) {
 			i++;
+
 			BigDecimal tipoInteresActual = recibo.getRCB_CDINTS();
 
 			// Primera iteracion no tiene un tipo definido
@@ -339,14 +348,15 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 			if (tipoInteresAgrupado.equals(tipoInteresActual)) {
 				sumIntereses = sumIntereses.add(recibo.getRCB_IMPRTV());
 			} else {
-
-				// nuevo concepto basado en la sumatoria de los intereses anteriores
-				saldo = calculateSaldo(saldo, sumIntereses, null);
-				conceptos.add(new ConceptoLiqVO(recibo.getRCB_FEVCTR(), "Intereses al " + tipoInteresAgrupado + " %", sumIntereses, null, saldo));
-
-				sumIntereses = BigDecimal.ZERO;
-				sumIntereses = sumIntereses.add(recibo.getRCB_IMPRTV());
-				tipoInteresAgrupado = tipoInteresActual;
+				if (!BigDecimal.ZERO.equals(recibo.getRCB_CDINTS())) {
+					// nuevo concepto basado en la sumatoria de los intereses anteriores
+					saldo = calculateSaldo(saldo, sumIntereses, null);
+					conceptos.add(new ConceptoLiqVO(recibo.getRCB_FEVCTR(), "Intereses al " + tipoInteresAgrupado + " %", sumIntereses, null, saldo));
+	
+					sumIntereses = BigDecimal.ZERO;
+					sumIntereses = sumIntereses.add(recibo.getRCB_IMPRTV());
+					tipoInteresAgrupado = tipoInteresActual;
+				}
 			}
 
 			// En caso de que sea el ultimo registro de la lista se añade un nuevo concepto
@@ -362,6 +372,7 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 		i = 0;
 		for (RecibosLiqVO recibo : recibosLiq) {
 			i++;
+		
 			BigDecimal tipoInteresActual = recibo.getRCB_CDINTM();
 
 			// Primera iteracion no tiene un tipo definido
@@ -373,14 +384,15 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 			if (tipoInteresAgrupado.equals(tipoInteresActual)) {
 				sumIntereses = sumIntereses.add(recibo.getRCB_IMINDR());
 			} else {
-
-				// nuevo concepto basado en la sumatoria de los intereses anteriores
-				saldo = calculateSaldo(saldo, sumIntereses, null);
-				conceptos.add(new ConceptoLiqVO(datosGeneralesLiq.getDGC_FEVACM(), "Intereses de demora al " + tipoInteresAgrupado + " %", sumIntereses, null, saldo));
-
-				sumIntereses = BigDecimal.ZERO;
-				sumIntereses = sumIntereses.add(recibo.getRCB_IMINDR());
-				tipoInteresAgrupado = tipoInteresActual;
+				if (!BigDecimal.ZERO.equals(recibo.getRCB_CDINTM())) {
+					// nuevo concepto basado en la sumatoria de los intereses anteriores
+					saldo = calculateSaldo(saldo, sumIntereses, null);
+					conceptos.add(new ConceptoLiqVO(datosGeneralesLiq.getDGC_FEVACM(), "Intereses de demora al " + tipoInteresAgrupado + " %", sumIntereses, null, saldo));
+	
+					sumIntereses = BigDecimal.ZERO;
+					sumIntereses = sumIntereses.add(recibo.getRCB_IMINDR());
+					tipoInteresAgrupado = tipoInteresActual;
+				}
 			}
 
 			// En caso de que sea el ultimo registro de la lista se añade un nuevo concepto

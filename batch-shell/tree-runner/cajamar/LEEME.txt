@@ -46,4 +46,8 @@
  
  Todos los logs de salida se ubican en el directorio log.
 
+ Para ejecutar una rama en concreto: 
+ 
+     ./scripts/run-parallel.sh <nombre-rama>.txt
+
 .....................................................................................

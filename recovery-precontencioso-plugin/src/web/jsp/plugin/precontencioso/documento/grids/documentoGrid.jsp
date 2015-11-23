@@ -679,22 +679,27 @@ var gridDocumentos = new Ext.grid.GridPanel({
 		title: '<s:message code="precontencioso.grid.documento.titulo" text="**Documentos" />'	
 		,columns: cmDocumento
 		,store: storeDocumentos
-		,height: 170
 		,loadMask: true
         ,sm: myCboxSelModel2
         ,clicksToEdit: 1
-        ,viewConfig: {forceFit:true}
         ,plugins: [columMemoryPlugin]
 		,collapsible: true
 		,height: 250
 		,autoWidth: true	
-		,resizable:true	
 		,collapsed : false
 		,titleCollapse : false
-		,autoHeight: false
 		,monitorResize: true
 		,bbar : [ incluirDocButton, excluirDocButton, descartarDocButton, editarDocButton, separadorButtons, anularSolicitudesButton, solicitarDocButton, informarDocButton, botonRefresh]
-}); 
+		,doLayout: function() {
+			if(this.isVisible()){
+				var margin = 10;
+				var parentSize = app.contenido.getSize(true);
+				var width = (parentSize.width) - (2*margin);
+				this.setWidth(width);
+				Ext.grid.GridPanel.prototype.doLayout.call(this);
+			}
+		}
+});
 
 gridDocumentos.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {
 		var rec = gridDocumentos.getStore().getAt(rowIndex);

@@ -314,8 +314,15 @@
 		,bbar : [ botonesTabla,btnAddPersona,btnEnviar, btnNuevaDir, btnEditar, btnPreparar,btnCancelar, btnNotificar,btnDescargarBurofax , new Ext.Toolbar.Fill(), botonRefresh ]
 		,autoWidth: true
 		,collapsible: true
-		
-		
+		,doLayout: function() {
+			if(this.isVisible()){
+				var margin = 10;
+				var parentSize = app.contenido.getSize(true);
+				var width = (parentSize.width) - (2*margin);
+				this.setWidth(width);
+				Ext.grid.GridPanel.prototype.doLayout.call(this);
+			}
+		}		
 	});
 	
 

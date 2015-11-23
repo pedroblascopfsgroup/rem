@@ -24,6 +24,7 @@ public class AdjuntoGridAssembler {
 			dto.setContentType(olDto.getNombreTipoDoc());
 			dto.setDescripcion(olDto.getDescripcion());
 			dto.setLength("");
+			dto.setFicheroBase64(outputDto.getFicheroBase64());
 			dto.setTipo(olDto.getTipoDoc());
 			try {
 				dto.setAuditoria(new Auditoria());

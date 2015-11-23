@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.files.FileItem;
@@ -369,11 +368,11 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	public FileItem recuperacionDocumento(String id){
 		
 		if(!Checks.esNulo(id)){
-			AdjuntoGridDto djDto = gestorDocumentalApi.recuperacionDocumento(id);
+			String adjunto = gestorDocumentalApi.recuperacionDocumento(id);
 			File file = new File("tmp");
 			FileItem fileItem = null;
 			try {
-				FileUtils.writeStringToFile(file, djDto.getFicheroBase64());
+				FileUtils.writeStringToFile(file, adjunto);
 				fileItem = new FileItem(file);
 				file.delete();
 				

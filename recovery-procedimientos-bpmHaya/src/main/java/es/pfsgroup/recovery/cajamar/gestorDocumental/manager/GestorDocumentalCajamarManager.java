@@ -30,6 +30,9 @@ import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.persona.dao.PersonaDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.gestorDocumental.api.GestorDocumentalApi;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.AdjuntoGridAssembler;
@@ -37,9 +40,11 @@ import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.ConstantesGestorDocumen
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalInputDto;
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalOutputDto;
 import es.pfsgroup.recovery.cajamar.serviciosonline.GestorDocumentalWSApi;
+import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.expediente.EXTExpedienteManager;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
+import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 import es.pfsgroup.recovery.gestordocumental.dto.AdjuntoGridDto;
 
 @Component
@@ -77,6 +82,9 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	
 	@Autowired
 	private EXTProcedimientoManager extProcedimientoManager;
+	
+	@Autowired
+	private GenericABMDao genericdDao;
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_ALTA_DOCUMENTO)
 	@Transactional(readOnly = false)
@@ -121,14 +129,14 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_RECUPERACION_DOCUMENTO)
 	@Transactional(readOnly = false)
-	public AdjuntoGridDto recuperacionDocumento(String idRefCentera) {
+	public String recuperacionDocumento(String idRefCentera) {
 		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
 		GestorDocumentalInputDto input = new GestorDocumentalInputDto();
 		input.setOperacion(ConstantesGestorDocumental.CONSULTA_DOCUMENTO_OPERACION);
 		input.setLocalizador(idRefCentera);
 		outputDto = gestorDocumentalWSApi.ejecutar(input);
 
-		return AdjuntoGridAssembler.outputDtoToAdjuntoGridDto(outputDto).get(0);
+		return outputDto.getFicheroBase64();
 
 	}
 
@@ -247,16 +255,30 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		} else if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidad)) {
 			EXTAsunto asunto = EXTAsunto.instanceOf(asuntoDao.get(idEntidad));
 			if(uploadForm != null) {
-				asunto.addAdjunto(uploadForm.getFileItem());
+				EXTAdjuntoAsunto adjuntoAsunto = new EXTAdjuntoAsunto(uploadForm.getFileItem());
+				String comboTipoFichero = uploadForm.getParameter("comboTipoFichero");
+				if (!Checks.esNulo(comboTipoFichero) && !comboTipoFichero.equals("")) {
+					DDTipoFicheroAdjunto tipoFicheroAdjunto = genericdDao.get(DDTipoFicheroAdjunto.class, genericdDao.createFilter(FilterType.EQUALS, "codigo", comboTipoFichero));
+					adjuntoAsunto.setTipoFichero(tipoFicheroAdjunto);
+				}
+				adjuntoAsunto.setAsunto(asunto);
+				asunto.getAdjuntos().add(adjuntoAsunto);
 				asuntoDao.save(asunto);
 			}
 			claveRel = asunto.getGuid();
 		} else if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidad)) {
 			MEJProcedimiento prc = MEJProcedimiento.instanceOf(procedimientoDao.get(idEntidad));
 			if(uploadForm != null) {
-				prc.getAsunto().addAdjunto(uploadForm.getFileItem());
+				EXTAdjuntoAsunto adjuntoAsunto = new EXTAdjuntoAsunto(uploadForm.getFileItem());
+				String comboTipoFichero = uploadForm.getParameter("comboTipoFichero");
+				if (!Checks.esNulo(comboTipoFichero) && !comboTipoFichero.equals("")) {
+					DDTipoFicheroAdjunto tipoFicheroAdjunto = genericdDao.get(DDTipoFicheroAdjunto.class, genericdDao.createFilter(FilterType.EQUALS, "codigo", comboTipoFichero));
+					adjuntoAsunto.setTipoFichero(tipoFicheroAdjunto);
+				}
+				adjuntoAsunto.setProcedimiento(prc);
+				prc.getAsunto().getAdjuntos().add(adjuntoAsunto);
 				procedimientoDao.save(prc);
-			}
+			}	
 			claveRel = extProcedimientoManager.prepareGuid(prc).getGuid();
 		}
 		return claveRel;

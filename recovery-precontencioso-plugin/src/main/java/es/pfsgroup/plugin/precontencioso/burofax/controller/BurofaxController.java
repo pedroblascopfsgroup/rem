@@ -29,6 +29,8 @@ import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Direccion;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
 import es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi;
 import es.pfsgroup.plugin.precontencioso.burofax.dto.BurofaxDTO;
@@ -372,6 +374,37 @@ public class BurofaxController {
 		model.put("idProcedimiento", idProcedimiento);
 		
 		return JSP_ALTA_PERSONA;
+	}
+
+	@RequestMapping
+	private String cancelarEnEstPrep(WebRequest request, ModelMap model,Long idEnvio, Long idCliente){
+		
+		burofaxManager.cancelarEnEstPrep(idEnvio, idCliente);
+		return DEFAULT;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	private String saberOrigen(WebRequest request, ModelMap map,Long idDireccion){
+		
+		boolean result = burofaxManager.saberOrigen(idDireccion);
+		map.put("esManual", result);
+		return "plugin/precontencioso/burofax/json/esManualJSON";
+		//return DEFAULT;
+	}
+	
+	@RequestMapping
+	private String borrarDirecManual(WebRequest request, ModelMap model,Long idDireccion){
+		
+		burofaxManager.borrarDireccionManualBurofax(idDireccion);
+		return DEFAULT;
+	}
+	
+	@RequestMapping
+	private String descartarPersonaEnvio(WebRequest request, ModelMap model,Long idBurofax){
+		
+		burofaxManager.descartarPersona(idBurofax);
+		return DEFAULT;
 	}
 	
 	

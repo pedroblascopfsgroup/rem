@@ -177,7 +177,7 @@
     </entry>
     <entry key="alertas.analize">
       <![CDATA[
-        ANALYZE TABLE ale_alertas ${sql.analyze}
+        BEGIN OPERACION_DDL.DDL_TABLE('STATS','ALE_ALERTAS'); END;
          ]]>
     </entry>
     

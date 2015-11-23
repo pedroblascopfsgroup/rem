@@ -1,42 +1,56 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-	<!-- PASO 1 - TRUNCADO TABLAS TEMPORALES -->
-	<entry key="recobro.borrado.tmp_rec_exp_desnormalizado.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_EXP_DESNORMALIZADO
-		]]>
-	</entry>
-	<entry key="recobro.borrado.tmp_rec_exp_marcado_ra.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_EXP_MARCADO_RA
-		]]>
-	</entry>
-	
-	<!-- PASO 2 - Obtenemos los expedientes marcados para rearquetipar por sus propios BPMs -->
-	<entry key="recobro.insert.tmp_rec_exp_marcado_ra.Oracle9iDialect">
-		<![CDATA[
-			INSERT INTO TMP_REC_EXP_MARCADO_RA
-			SELECT DISTINCT EXP.EXP_ID, EXP.RCF_AGE_ID, EXP.ARQ_ID
-			FROM BATCH_DATOS_EXP EXP			 
-			WHERE EXP.DD_EEX_CODIGO = ${ddEstadoExpedientes.Activo.codigo}
-				AND EXP.DD_TPE_CODIGO = ${ddTipoExpediente.Recobro.codigo}
-			  AND EXP.EXP_MARCADO_BPM = 1
-		]]>  
-	</entry>
-	
-	<!-- PASO 3 - Juntamos de forma desnormalizada los expedientes con sus personas, contratos, arquetipos y agencia actual -->
-	<entry key="recobro.insert.tmp_rec_exp_desnormalizado.Oracle9iDialect">
-		<![CDATA[
-			INSERT INTO TMP_REC_EXP_DESNORMALIZADO
-			SELECT DISTINCT EXPDS.EXP_ID, PEX.PER_ID, CPE.CNT_ID, EXPDS.ARQ_ID, REC.RCF_AGE_ID, REC.RCF_SCA_ID
-			FROM (SELECT EXP_ID, ARQ_ID
-			      FROM TMP_REC_EXP_EXTINCION_RA
-			      UNION
-			      SELECT EXP_ID, ARQ_ID
-			      FROM TMP_REC_EXP_MARCADO_RA) EXPDS
-			  JOIN BATCH_DATOS_EXP REC ON EXPDS.EXP_ID = REC.EXP_ID    
-			  LEFT JOIN BATCH_DATOS_PER_EXP PEX ON EXPDS.EXP_ID = PEX.EXP_ID
-			  LEFT JOIN BATCH_DATOS_CNT_PER CPE ON PEX.PER_ID = CPE.PER_ID
-		]]>  	
-	</entry>
+    <!-- PASO 1 - TRUNCADO TABLAS TEMPORALES -->
+    <entry key="recobro.borrado.tmp_rec_exp_desnormalizado.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_DESNORMALIZADO'); END;
+        ]]>
+    </entry>
+    <entry key="recobro.borrado.tmp_rec_exp_marcado_ra.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_MARCADO_RA'); END;
+        ]]>
+    </entry>
+
+    <!-- PASO 2 - Obtenemos los expedientes marcados para rearquetipar por sus propios BPMs -->
+    <entry key="recobro.insert.tmp_rec_exp_marcado_ra.Oracle10gDialect">
+        <![CDATA[
+
+           BEGIN
+          
+            INSERT INTO TMP_REC_EXP_MARCADO_RA
+            SELECT DISTINCT EXP.EXP_ID, EXP.RCF_AGE_ID, EXP.ARQ_ID
+            FROM BATCH_DATOS_EXP EXP
+            WHERE EXP.DD_EEX_CODIGO = ${ddEstadoExpedientes.Activo.codigo}
+                AND EXP.DD_TPE_CODIGO = ${ddTipoExpediente.Recobro.codigo}
+              AND EXP.EXP_MARCADO_BPM = 1;
+            OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_EXP_MARCADO_RA');
+     
+            COMMIT;
+           END;
+        ]]>
+    </entry>
+
+    <!-- PASO 3 - Juntamos de forma desnormalizada los expedientes con sus personas, contratos, arquetipos y agencia actual -->
+    <entry key="recobro.insert.tmp_rec_exp_desnormalizado.Oracle10gDialect">
+        <![CDATA[
+     
+           BEGIN
+
+            INSERT INTO TMP_REC_EXP_DESNORMALIZADO
+            SELECT DISTINCT EXPDS.EXP_ID, PEX.PER_ID, CPE.CNT_ID, EXPDS.ARQ_ID, REC.RCF_AGE_ID, REC.RCF_SCA_ID
+            FROM (SELECT EXP_ID, ARQ_ID
+                  FROM TMP_REC_EXP_EXTINCION_RA
+                  UNION
+                  SELECT EXP_ID, ARQ_ID
+                  FROM TMP_REC_EXP_MARCADO_RA) EXPDS
+              JOIN BATCH_DATOS_EXP REC ON EXPDS.EXP_ID = REC.EXP_ID
+              LEFT JOIN BATCH_DATOS_PER_EXP PEX ON EXPDS.EXP_ID = PEX.EXP_ID
+              LEFT JOIN BATCH_DATOS_CNT_PER CPE ON PEX.PER_ID = CPE.PER_ID;
+
+            OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_EXP_DESNORMALIZADO');
+
+           END;
+        ]]>
+    </entry>
 </properties>

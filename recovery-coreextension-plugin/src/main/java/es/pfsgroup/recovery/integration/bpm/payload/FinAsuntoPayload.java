@@ -8,7 +8,7 @@ import es.pfsgroup.recovery.integration.DataContainerPayload;
 
 public class FinAsuntoPayload {
 	
-	private final static String KEY = "@asu";
+	private final static String KEY = "@fasu";
 
 	private static final String CAMPO_MOTIVO = String.format("%s.motivo", KEY);
 	private static final String CAMPO_OBSERVACIONES = String.format("%s.observaciones", KEY);

@@ -97,7 +97,7 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	
 	private static final String LETRADO = "GEXT";
 	private static final String SUPERVISOR = "SUP_PCO";
-	private static final String DIRLIT_PCO = "DULI";
+	private static final String DIRLIT_PCO = "DLISUB";
 	private static final String PREDOC = "PREDOC";
 	private static final String CM_GE_PCO = "CM_GE_PCO";
 	private static final String CM_GD_PCO = "CM_GD_PCO";

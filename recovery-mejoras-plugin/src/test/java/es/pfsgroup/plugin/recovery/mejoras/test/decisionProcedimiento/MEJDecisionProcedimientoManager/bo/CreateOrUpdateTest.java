@@ -80,8 +80,8 @@ public class CreateOrUpdateTest extends AbstractMEJDecisionProcedimientoManagerT
         dtoDecisionProcedimiento.setComentarios(comentarios);
         dtoDecisionProcedimiento.setFechaParalizacion(fechaParalizacion);
                 
-        //FIXME
-        DecisionProcedimiento current=null;// = manager.createOrUpdate(dtoDecisionProcedimiento);
+        DecisionProcedimiento current = new DecisionProcedimiento();
+        manager.createOrUpdate(current, dtoDecisionProcedimiento);
        
         verifica().seHaGuardadoLaDecision(current);
         

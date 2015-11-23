@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=José Luis Gauxachs
---## FECHA_CREACION=20151113
+--## FECHA_CREACION=20151117
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.11-hy-rc01
 --## INCIDENCIA_LINK=PRODUCTO-383

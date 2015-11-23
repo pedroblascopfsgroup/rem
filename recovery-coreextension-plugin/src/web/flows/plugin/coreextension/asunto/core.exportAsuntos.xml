@@ -7,7 +7,7 @@
     <end-state id="xls" view="reportXLS/plugin/coreextension/asunto/listaAsuntos">
       <on-entry>
          <evaluate expression="binder.bindAndValidate(flowRequestContext, dto)" />
-         <evaluate expression="executor.execute('es.pfsgroup.recovery.ext.api.asunto.findAsuntosPaginatedDinamicoCount', dto,params)" result="flowScope.asuntos" />
+         <evaluate expression="executor.execute('es.pfsgroup.recovery.ext.api.asunto.findAsuntosPaginatedDinamicoCount', dto,params)" result="flowScope.lista" />
       </on-entry>
     </end-state>
 

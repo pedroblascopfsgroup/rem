@@ -30,7 +30,7 @@ public class DocumentoAssembler {
 	 */
 	public static SolicitudDocumentoPCODto docAndSolEntityToSolicitudDto(DocumentoPCO documento,
 			SolicitudDocumentoPCO solicitud, String ugIdDto, String descripcionUG, boolean esDocumento, 
-			boolean tieneSolicitud, DDSiNo siNo, DDSiNoNoAplica siNoAplica, int idIdentificativo) {
+			boolean tieneSolicitud, DDSiNo siNo, DDSiNoNoAplica siNoAplica, Long idIdentificativo) {
 		SolicitudDocumentoPCODto solicitudDto = new SolicitudDocumentoPCODto();
 				
 		solicitudDto.setIdIdentificativo(idIdentificativo + "");

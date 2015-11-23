@@ -218,7 +218,7 @@ public class ExpedienteJudicialController {
 
 		model.put("procedimientosPco", procedimientosPcoGrid);
 
-		Integer totalCount = procedimientoPcoApi.countBusquedaPorFiltro(filter);
+		Integer totalCount = procedimientoPcoApi.countBusquedaProcedimientosPorFiltro(filter);
 		model.put("totalCount", totalCount);
 
 		return JSON_BUSQUEDA_PROCEDIMIENTO;
@@ -240,7 +240,7 @@ public class ExpedienteJudicialController {
 
 		model.put("procedimientosPco", elementosGrid);
 
-		Integer totalCount = procedimientoPcoApi.countBusquedaPorFiltro(filter);
+		Integer totalCount = procedimientoPcoApi.countBusquedaElementosPorFiltro(filter);
 		model.put("totalCount", totalCount);
 
 		return JSON_BUSQUEDA_PROCEDIMIENTO;
@@ -355,7 +355,7 @@ public class ExpedienteJudicialController {
 
 		model.put("expedientes", procedimientosPcoGrid);
 
-		Integer totalCount = procedimientoPcoApi.countBusquedaPorFiltro(filter);
+		Integer totalCount = procedimientoPcoApi.countBusquedaProcedimientosPorFiltro(filter);
 		model.put("totalCount", totalCount);
 
 		return "reportXLS/plugin/precontencioso/expedientes/listaExpedientes";

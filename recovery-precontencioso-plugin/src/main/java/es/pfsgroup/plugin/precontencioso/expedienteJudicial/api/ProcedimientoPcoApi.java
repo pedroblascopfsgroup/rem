@@ -27,6 +27,21 @@ public interface ProcedimientoPcoApi {
 	public static final String BO_PCO_INICIALIZAR = "plugin.precontencioso.inicializarPco";
 	public static final String BO_PCO_CREAR_PROCEDIMIENTO_PCO = "plugin.precontencioso.crearProcedimientoPco";
 	public static final String BO_PCO_EXPEDIENTE_COMPROBAR_EDICION_EXPEDIENTE = "plugin.precontencioso.isExpedienteEditable";
+	
+	/**
+	 * Devuelve el numero de resultados que va a devolver la consulta con el filtro enviado por parametro
+	 * @param filtro
+	 * @return numero de resultados
+	 */
+	Integer countBusquedaProcedimientosPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
+
+	/**
+	 * Devuelve el numero de resultados que va a devolver la consulta con el filtro enviado por parametro
+	 * @param filtro
+	 * @return numero de resultados
+	 */
+	Integer countBusquedaElementosPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
+	
 	/**
 	 * Obtiene el historico de estados de un procedimientoPCO mediante un id procedimiento.
 	 * 
@@ -56,13 +71,6 @@ public interface ProcedimientoPcoApi {
 	 */
 	@BusinessOperationDefinition(BO_PCO_DEVOLVER_PREPARACION_POR_PRC_ID)
 	void devolverPreparacionPorProcedimientoId(Long idProcedimiento);
-
-	/**
-	 * Devuelve el numero de resultados que va a devolver la consulta con el filtro enviado por parametro
-	 * @param filtro
-	 * @return numero de resultados
-	 */
-	Integer countBusquedaPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
 
 	/**
 	 * Busqueda de ProcedimientoPcoGridDTO que cumplan el filtro enviado por parametro

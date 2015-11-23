@@ -290,7 +290,7 @@ public class BurofaxController {
 		//Comprobamos que las variables no han sido modificadas al editar su estilo con el HTMLEditor. Las variables son indivisibles 
 		String contenidoBurofaxAux=contenidoBurofax;
 		
-		while(contenidoBurofaxAux.length()>0 && contenidoBurofaxAux.indexOf("$") != -1){
+		while(contenidoBurofaxAux.length()>0 && contenidoBurofaxAux.indexOf("${") != -1){
 			int inicioVariable=contenidoBurofaxAux.indexOf("$");
 			int finalVariable=contenidoBurofaxAux.indexOf("}");
 			

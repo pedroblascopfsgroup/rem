@@ -1414,6 +1414,11 @@
 			<scope>provided</scope>
 		</dependency>
 		<!-- Fin provided -->
+        <dependency>
+            <groupId>es.pfsgroup.plugin</groupId>
+            <artifactId>recovery-bi-plugin</artifactId>
+            <scope>compile</scope>
+        </dependency>
 	</dependencies>
 	<build>
 		<finalName>pfs-${project.version}</finalName>
@@ -1976,11 +1981,6 @@
 						</exclusion>
 					</exclusions>
 				</dependency>
-                <dependency>
-                    <groupId>es.pfsgroup.plugin</groupId>
-                    <artifactId>recovery-bi-plugin</artifactId>
-                    <scope>compile</scope>
-                </dependency>
 			</dependencies>
 			<build>
 				<resources>

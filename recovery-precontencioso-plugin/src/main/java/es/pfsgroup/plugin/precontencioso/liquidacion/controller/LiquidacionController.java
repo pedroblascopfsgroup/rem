@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.liquidacion.controller;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -140,15 +141,15 @@ public class LiquidacionController {
 	public String editar(WebRequest request, ModelMap model) throws ParseException {
 
 		Long id = Long.valueOf(request.getParameter("id"));
-		Float capitalVencido = Float.valueOf(request.getParameter("capitalVencido"));
-		Float capitalNoVencido = Float.valueOf(request.getParameter("capitalNoVencido"));
-		Float interesesOrdinarios = Float.valueOf(request.getParameter("interesesOrdinarios"));
-		Float interesesDemora = Float.valueOf(request.getParameter("interesesDemora"));
-		Float total = Float.valueOf(request.getParameter("total"));
+		BigDecimal capitalVencido = new BigDecimal(request.getParameter("capitalVencido"));
+		BigDecimal capitalNoVencido = new BigDecimal(request.getParameter("capitalNoVencido"));
+		BigDecimal interesesOrdinarios = new BigDecimal(request.getParameter("interesesOrdinarios"));
+		BigDecimal interesesDemora = new BigDecimal(request.getParameter("interesesDemora"));
+		BigDecimal total = new BigDecimal(request.getParameter("total"));
 		String apoderadoNombre = request.getParameter("apoderadoNombre");
-		Float comisiones = Float.valueOf(request.getParameter("comisiones"));
-		Float gastos = Float.valueOf(request.getParameter("gastos"));
-		Float impuestos = Float.valueOf(request.getParameter("impuestos"));
+		BigDecimal comisiones = new BigDecimal(request.getParameter("comisiones"));
+		BigDecimal gastos = new BigDecimal(request.getParameter("gastos"));
+		BigDecimal impuestos = new BigDecimal(request.getParameter("impuestos"));
 
 		Date fechaCierre = null;
 		if (request.getParameter("fechaCierre") != null) {

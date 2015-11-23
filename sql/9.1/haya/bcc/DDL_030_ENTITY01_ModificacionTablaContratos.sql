@@ -10,7 +10,6 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
---##        0.2 GMN: Modificación para que no añada los campos si existen
 --##########################################
 --*/
 
@@ -26,7 +25,6 @@ DECLARE
  err_msg VARCHAR2(2048); 
  V_MSQL VARCHAR2(2500 CHAR);
  V_MSQL2 VARCHAR2(2500 CHAR); 
- V_EXISTE NUMBER (1);
 
 
 BEGIN 
@@ -40,24 +38,7 @@ BEGIN
               , CONTRATO_PADRE_NIVEL_2 NUMBER(22)
             )';
 
-
-  --Validamos si existen los campos antes de crearlos
-  SELECT COUNT(*) INTO V_EXISTE  
-  FROM ALL_TAB_COLUMNS 
-  WHERE TABLE_NAME = ''||TABLA||''
-    AND OWNER      = ''||V_ESQUEMA||''
-    AND COLUMN_NAME = 'SALDO_PASIVO_OTROS';
-            
- IF V_EXISTE = 0 THEN   
-       EXECUTE IMMEDIATE V_MSQL;
-       DBMS_OUTPUT.PUT_LINE(''||TABLA||' Modificada');
-  ELSE   
-       DBMS_OUTPUT.PUT_LINE('Los campos ya existen en la tabla '||TABLA);  
-  END IF;     
-         
-            
-            
-V_MSQL2 := 'ALTER TABLE '||V_ESQUEMA||'.'||TABLA||'  MODIFY
+  V_MSQL2 := 'ALTER TABLE '||V_ESQUEMA||'.'||TABLA||'  MODIFY
              (     
                   CNT_CUOTA_IMPORTE	     NUMBER(15,2)
                 , CNT_DISPUESTO              NUMBER(15,2)
@@ -70,8 +51,7 @@ V_MSQL2 := 'ALTER TABLE '||V_ESQUEMA||'.'||TABLA||'  MODIFY
                 , CNT_COD_OFICINA	     NUMBER(12)
               )';
      
-
-	 
+	 EXECUTE IMMEDIATE V_MSQL;
 	 EXECUTE IMMEDIATE V_MSQL2;	 
 
 DBMS_OUTPUT.PUT_LINE(''||TABLA||' Modificada');

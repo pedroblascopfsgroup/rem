@@ -172,8 +172,9 @@
                 </list-property>
             </structure>
             <property name="dataSource">Data Source</property>
-            <method name="open"><![CDATA[asuIt = asuntos.getResults().iterator();]]></method>
+            <method name="open"><![CDATA[asuIt = lista.iterator();]]></method>
             <method name="fetch"><![CDATA[if (!asuIt.hasNext()) return false;
+             
 var asu = asuIt.next();
 var cnt = "";
 
@@ -194,8 +195,10 @@ if (asu.getContratos() != null) {
 		row["contratos"]=contratosIt.next().getCodigoContrato();
 		while (contratosIt.hasNext()){
 			contrato = contratosIt.next();
-			if (contrato.getId()==asu.getExpediente().getContratoPase().getId()) 
-				cnt = contrato.getCodigoContrato();
+			if (asu.getExpediente().getContratoPase() != null) {
+				if (contrato.getId()==asu.getExpediente().getContratoPase().getId()) 
+					cnt = contrato.getCodigoContrato();
+				}
 		}
 		if (cnt != ""){
 			row["contratos"]=cnt;

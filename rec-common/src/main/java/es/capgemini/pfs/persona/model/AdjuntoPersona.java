@@ -24,6 +24,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.tipoFicheroAdjuntoEntidad.DDTipoAdjuntoEntidad;
 
 /**
  * Clase que representa a un fichero.
@@ -61,8 +62,12 @@ public class AdjuntoPersona implements Serializable, Auditable {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "ADJ_ID")
     private Adjunto adjunto;
+    
+    @ManyToOne
+    @JoinColumn(name = "DD_TAE_ID")
+    private DDTipoAdjuntoEntidad tipoAdjuntoEntidad;
 
-    @Version
+	@Version
     private Integer version;
 
     @Embedded
@@ -86,6 +91,19 @@ public class AdjuntoPersona implements Serializable, Auditable {
         this.setLength(fileItem.getLength());
     }
 
+    /**
+     * Constructor.
+     * @param fileItem FileItem
+     * @param DDTipoAdjuntoEntidad
+     */
+    public AdjuntoPersona(FileItem fileItem, DDTipoAdjuntoEntidad tipoAdjunto) {
+        Adjunto adjunto = new Adjunto(fileItem);
+        this.setAdjunto(adjunto);
+        this.setContentType(fileItem.getContentType());
+        this.setNombre(fileItem.getFileName());
+        this.setLength(fileItem.getLength());
+        this.setTipoAdjuntoEntidad(tipoAdjunto);
+    }
     /**
      * @return the adjunto
      */
@@ -215,5 +233,13 @@ public class AdjuntoPersona implements Serializable, Auditable {
     public void setPersona(Persona persona) {
         this.persona = persona;
     }
+    
+    public DDTipoAdjuntoEntidad getTipoAdjuntoEntidad() {
+		return tipoAdjuntoEntidad;
+	}
+
+	public void setTipoAdjuntoEntidad(DDTipoAdjuntoEntidad tipoAdjuntoEntidad) {
+		this.tipoAdjuntoEntidad = tipoAdjuntoEntidad;
+	}
 
 }

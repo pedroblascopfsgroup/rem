@@ -7,12 +7,12 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.asunto.model.DDTipoActuacion;
+import es.capgemini.pfs.tipoFicheroAdjuntoEntidad.DDTipoAdjuntoEntidad;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.recovery.ext.api.adjunto.AdjuntoAsuntoApi;
 import es.pfsgroup.recovery.ext.api.tipoAdjuntoEntidad.dao.DDTipoAdjuntoEntidadDao;
 import es.pfsgroup.recovery.ext.api.tipoFicheroAdjunto.dao.DDTipoFicheroAdjuntoDao;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
-import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjuntoEntidad.DDTipoAdjuntoEntidad;
 
 @Component
 public class AdjuntoAsuntoManager implements AdjuntoAsuntoApi {

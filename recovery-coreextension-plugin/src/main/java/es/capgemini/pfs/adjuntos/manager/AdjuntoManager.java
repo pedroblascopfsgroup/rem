@@ -50,6 +50,7 @@ import es.capgemini.pfs.persona.dao.AdjuntoPersonaDao;
 import es.capgemini.pfs.persona.dao.PersonaDao;
 import es.capgemini.pfs.persona.model.AdjuntoPersona;
 import es.capgemini.pfs.persona.model.Persona;
+import es.capgemini.pfs.tipoFicheroAdjuntoEntidad.DDTipoAdjuntoEntidad;
 import es.capgemini.pfs.users.domain.Funcion;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -387,8 +388,17 @@ public class AdjuntoManager implements AdjuntoApi{
         }
 
         Persona persona = personaDao.get(Long.parseLong(uploadForm.getParameter("id")));
-        persona.addAdjunto(fileItem);
-        personaDao.save(persona);
+		AdjuntoPersona adjPers;
+		
+		if(!Checks.esNulo(uploadForm.getParameter("comboTipoDoc")) && !uploadForm.getParameter("comboTipoDoc").equals("")){
+			DDTipoAdjuntoEntidad tpoAdjEnt = genericDao.get(DDTipoAdjuntoEntidad.class, genericDao.createFilter(FilterType.EQUALS, "codigo", uploadForm.getParameter("comboTipoDoc")));
+			adjPers = new AdjuntoPersona(uploadForm.getFileItem(),tpoAdjEnt);
+		}else{
+			adjPers = new AdjuntoPersona(uploadForm.getFileItem());
+		}
+		
+		adjPers.setPersona(persona);
+		Auditoria.save(adjPers);
 
         return null;
 	}
@@ -410,9 +420,17 @@ public class AdjuntoManager implements AdjuntoApi{
         }
 
         Expediente expediente = expedienteDao.get(Long.parseLong(uploadForm.getParameter("id")));
-        //        Hibernate.initialize(expediente.getAdjuntos());
-        expediente.addAdjunto(fileItem);
-        expedienteDao.save(expediente);
+		AdjuntoExpediente adjuntoexp;
+		
+		if(!Checks.esNulo(uploadForm.getParameter("comboTipoDoc")) && !uploadForm.getParameter("comboTipoDoc").equals("")){
+			DDTipoAdjuntoEntidad tpoAdjEnt = genericDao.get(DDTipoAdjuntoEntidad.class, genericDao.createFilter(FilterType.EQUALS, "codigo", uploadForm.getParameter("comboTipoDoc")));
+			adjuntoexp = new AdjuntoExpediente(uploadForm.getFileItem(), tpoAdjEnt);
+		}else{
+			adjuntoexp = new AdjuntoExpediente(uploadForm.getFileItem());
+		}
+		 
+		adjuntoexp.setExpediente(expediente);
+		Auditoria.save(adjuntoexp);
         
         return null;
 	}
@@ -434,8 +452,17 @@ public class AdjuntoManager implements AdjuntoApi{
         }
 
         Contrato contrato = contratoDao.get(Long.parseLong(uploadForm.getParameter("id")));
-        contrato.addAdjunto(fileItem);
-        contratoDao.save(contrato);
+		AdjuntoContrato adjCnt;
+		
+		if(!Checks.esNulo(uploadForm.getParameter("comboTipoDoc")) && !uploadForm.getParameter("comboTipoDoc").equals("")){
+			DDTipoAdjuntoEntidad tpoAdjEnt = genericDao.get(DDTipoAdjuntoEntidad.class, genericDao.createFilter(FilterType.EQUALS, "codigo", uploadForm.getParameter("comboTipoDoc")));
+			adjCnt = new AdjuntoContrato(uploadForm.getFileItem(),tpoAdjEnt);
+		}else{
+			adjCnt = new AdjuntoContrato(uploadForm.getFileItem());
+		}
+		
+		adjCnt.setContrato(contrato);
+		Auditoria.save(adjCnt);
 
         return null;
 	}

@@ -9,6 +9,7 @@ import java.util.List;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.AbstractMessageSource;
 import org.springframework.stereotype.Component;
@@ -21,15 +22,28 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.asunto.dao.AsuntoDao;
 import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
+import es.capgemini.pfs.contrato.dao.AdjuntoContratoDao;
 import es.capgemini.pfs.contrato.dao.ContratoDao;
+import es.capgemini.pfs.contrato.model.AdjuntoContrato;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.core.api.asunto.AsuntoApi;
+import es.capgemini.pfs.expediente.dao.AdjuntoExpedienteDao;
 import es.capgemini.pfs.expediente.dao.ExpedienteDao;
+import es.capgemini.pfs.expediente.model.AdjuntoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
+import es.capgemini.pfs.persona.dao.AdjuntoPersonaDao;
 import es.capgemini.pfs.persona.dao.PersonaDao;
+import es.capgemini.pfs.persona.model.AdjuntoPersona;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
+import es.capgemini.pfs.tipoFicheroAdjuntoEntidad.DDTipoAdjuntoEntidad;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.gestorDocumental.api.GestorDocumentalApi;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.AdjuntoGridAssembler;
@@ -37,9 +51,11 @@ import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.ConstantesGestorDocumen
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalInputDto;
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalOutputDto;
 import es.pfsgroup.recovery.cajamar.serviciosonline.GestorDocumentalWSApi;
+import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.expediente.EXTExpedienteManager;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
+import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 import es.pfsgroup.recovery.gestordocumental.dto.AdjuntoGridDto;
 
 @Component
@@ -77,6 +93,22 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	
 	@Autowired
 	private EXTProcedimientoManager extProcedimientoManager;
+	
+	@Autowired
+	private GenericABMDao genericDao;
+	
+	@Autowired
+	private AdjuntoPersonaDao adjuntoPersonaDao;
+	
+	@Autowired
+	private AdjuntoExpedienteDao adjuntoExpedienteDao;
+	
+	@Autowired
+	private AdjuntoContratoDao adjuntoContratoDao;
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
+	
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_ALTA_DOCUMENTO)
 	@Transactional(readOnly = false)
@@ -98,7 +130,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 					MessageUtils.DEFAULT_LOCALE);
 		}
 
-		String claveRel = guardarRecuperarDatoEntidad(idEntidad, tipoEntidadGrid, uploadForm);
+		String claveRel = guardarRecuperarDatoEntidad(idEntidad, tipoEntidadGrid, uploadForm, tipoDocumento);
 
 		outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(
 				claveRel, ALTA_GESTOR_DOC, tipoDocumento,
@@ -220,42 +252,91 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		return ConstantesGestorDocumental.tipoAsociacionPorEntidad.get(codEntidad);
 	}
 
-	private String guardarRecuperarDatoEntidad(Long idEntidad,
-			String tipoEntidad, WebFileItem uploadForm) {
+	private String guardarRecuperarDatoEntidad(Long idEntidad, String tipoEntidad, WebFileItem uploadForm, String tipoDocumento) {
 		String claveRel = "";
 		if (DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE.equals(tipoEntidad)) {
 			Expediente expediente = expedienteDao.get(idEntidad);
 			if(uploadForm != null) {
-				expediente.addAdjunto(uploadForm.getFileItem());
-				expedienteDao.save(expediente);				
+				
+				AdjuntoExpediente adjuntoexp;
+				
+				if(!Checks.esNulo(tipoDocumento) && !tipoDocumento.equals("")){
+					DDTipoAdjuntoEntidad tpoAdjEnt = genericDao.get(DDTipoAdjuntoEntidad.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoDocumento));
+					adjuntoexp = new AdjuntoExpediente(uploadForm.getFileItem(), tpoAdjEnt);
+				}else{
+					adjuntoexp = new AdjuntoExpediente(uploadForm.getFileItem());
+				}
+				 
+				adjuntoexp.setExpediente(expediente);
+				adjuntoExpedienteDao.save(adjuntoexp);
 			}
 			claveRel = extExpedienteManager.prepareGuid(expediente).getGuid();
 		} else if (DDTipoEntidad.CODIGO_ENTIDAD_PERSONA.equals(tipoEntidad)) {
 			Persona persona = personaDao.get(idEntidad);
 			if(uploadForm != null) {
-				persona.addAdjunto(uploadForm.getFileItem());
-				personaDao.save(persona);
+				
+				AdjuntoPersona adjPers;
+				
+				if(!Checks.esNulo(tipoDocumento) && !tipoDocumento.equals("")){
+					DDTipoAdjuntoEntidad tpoAdjEnt = genericDao.get(DDTipoAdjuntoEntidad.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoDocumento));
+					adjPers = new AdjuntoPersona(uploadForm.getFileItem(),tpoAdjEnt);
+				}else{
+					adjPers = new AdjuntoPersona(uploadForm.getFileItem());
+				}
+				
+				adjPers.setPersona(persona);
+				adjuntoPersonaDao.save(adjPers);
 			}
 			claveRel = persona.getCodClienteEntidad().toString();
 		} else if (DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO.equals(tipoEntidad)) {
 			Contrato contrato = contratoDao.get(idEntidad);
 			if(uploadForm != null) {
-				contrato.addAdjunto(uploadForm.getFileItem());
-				contratoDao.save(contrato);
+				
+				AdjuntoContrato adjCnt;
+				
+				if(!Checks.esNulo(tipoDocumento) && !tipoDocumento.equals("")){
+					DDTipoAdjuntoEntidad tpoAdjEnt = genericDao.get(DDTipoAdjuntoEntidad.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoDocumento));
+					adjCnt = new AdjuntoContrato(uploadForm.getFileItem(),tpoAdjEnt);
+				}else{
+					adjCnt = new AdjuntoContrato(uploadForm.getFileItem());
+				}
+				
+				adjCnt.setContrato(contrato);
+				adjuntoContratoDao.save(adjCnt);
 			}
 			claveRel = contrato.getNroContrato();
 		} else if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidad)) {
 			EXTAsunto asunto = EXTAsunto.instanceOf(asuntoDao.get(idEntidad));
 			if(uploadForm != null) {
-				asunto.addAdjunto(uploadForm.getFileItem());
-				asuntoDao.save(asunto);
+				
+		        EXTAdjuntoAsunto adjuntoAsunto = new EXTAdjuntoAsunto(uploadForm.getFileItem());
+		        
+		        if (!Checks.esNulo(tipoDocumento) && !tipoDocumento.equals("")) {
+					DDTipoFicheroAdjunto tipoFicheroAdjunto = genericDao.get(DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoDocumento));
+					adjuntoAsunto.setTipoFichero(tipoFicheroAdjunto);
+				}
+				
+		        adjuntoAsunto.setAsunto(asunto);
+		        Auditoria.save(adjuntoAsunto);
+		        asunto.getAdjuntos().add(adjuntoAsunto);
+		        proxyFactory.proxy(AsuntoApi.class).saveOrUpdateAsunto(asunto);
 			}
 			claveRel = asunto.getGuid();
 		} else if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidad)) {
 			MEJProcedimiento prc = MEJProcedimiento.instanceOf(procedimientoDao.get(idEntidad));
 			if(uploadForm != null) {
-				prc.getAsunto().addAdjunto(uploadForm.getFileItem());
-				procedimientoDao.save(prc);
+		        EXTAdjuntoAsunto adjuntoAsunto = new EXTAdjuntoAsunto(uploadForm.getFileItem());
+		        
+		        if (!Checks.esNulo(tipoDocumento) && !tipoDocumento.equals("")) {
+					DDTipoFicheroAdjunto tipoFicheroAdjunto = genericDao.get(DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoDocumento));
+					adjuntoAsunto.setTipoFichero(tipoFicheroAdjunto);
+				}
+				
+		        adjuntoAsunto.setAsunto(prc.getAsunto());
+		        adjuntoAsunto.setProcedimiento(prc);
+		        Auditoria.save(adjuntoAsunto);
+		        prc.getAsunto().getAdjuntos().add(adjuntoAsunto);
+		        proxyFactory.proxy(AsuntoApi.class).saveOrUpdateAsunto(prc.getAsunto());
 			}
 			claveRel = extProcedimientoManager.prepareGuid(prc).getGuid();
 		}

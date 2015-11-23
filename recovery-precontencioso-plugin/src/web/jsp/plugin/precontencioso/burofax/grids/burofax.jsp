@@ -345,8 +345,15 @@
 		,bbar : [ botonesTabla,btnAddPersona,btnEnviar, btnNuevaDir, btnEditar, btnPreparar,btnCancelar, btnNotificar,btnDescargarBurofax, btnBorrarDirOrigenManual, btnDescartarPersEnvio,  separadorButtons, btnCancelarEnEstPrep, botonRefresh ]
 		,autoWidth: true
 		,collapsible: true
-		
-		
+		,doLayout: function() {
+			if(this.isVisible()){
+				var margin = 10;
+				var parentSize = app.contenido.getSize(true);
+				var width = (parentSize.width) - (2*margin);
+				this.setWidth(width);
+				Ext.grid.GridPanel.prototype.doLayout.call(this);
+			}
+		}		
 	});
 	
 

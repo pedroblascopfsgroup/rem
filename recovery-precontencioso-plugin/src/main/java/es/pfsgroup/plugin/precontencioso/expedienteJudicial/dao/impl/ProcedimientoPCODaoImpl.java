@@ -48,7 +48,16 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 	}
 
 	@Override
-	public Integer countBusquedaPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
+	public Integer countBusquedaProcedimientosPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
+		Criteria query = queryBusquedaPorFiltro(filtro);
+
+		query.setProjection(Projections.countDistinct("procedimiento.id"));
+
+		return (Integer) query.uniqueResult();
+	}
+
+	@Override
+	public Integer countBusquedaElementosPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
 		Criteria query = queryBusquedaPorFiltro(filtro);
 		query.setProjection(Projections.rowCount());
 		

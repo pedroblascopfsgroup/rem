@@ -8,7 +8,7 @@
 	</parent>
 
 	<groupId>es.pfsgroup.plugin</groupId>
-	<artifactId>proyecto-bankia</artifactId>
+	<artifactId>proyecto-bankia-online</artifactId>
 
 	<dependencies>
     	<dependency>

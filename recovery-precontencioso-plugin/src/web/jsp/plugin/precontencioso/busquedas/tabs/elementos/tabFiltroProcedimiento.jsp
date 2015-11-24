@@ -470,6 +470,18 @@ var comboJerarquiaEle = app.creaCombo({
 	fieldLabel : '<s:message code="menu.clientes.listado.filtro.jerarquia" text="**Jerarquia" />'
 });
 
+<%-- Total importe (Desde / Hasta) --%>
+
+<pfsforms:numberfield name="fieldImporteDesde" labelKey="plugin.precontencioso.tab.expjudicial.importe.desde" label="** Importe desde" 
+	value="" 
+	obligatory="false" 
+	allowDecimals="true" />
+
+<pfsforms:numberfield name="fieldImporteHasta" labelKey="plugin.precontencioso.tab.expjudicial.importe.hasta" label="** Importe hasta"
+	value=""
+	obligatory="false" 
+	allowDecimals="true" />
+
 //Campo Zonas, double select 
 var creaDblSelectZonas = function(label, config){
 
@@ -578,7 +590,7 @@ var filtrosTabDatosProcedimiento = new Ext.Panel({
 	layoutConfig: {columns: 2},
 	items: [{
 		layout: 'form',
-		items: [comboTipoBusqueda, fieldCodigoEle, fieldNombreExpedienteJudicialEle, fieldDiasGestionEle, comboTipoProcPropuestoEle, comboTipoPreparacionEle, comboDisponibleDocumentosEle, comboDisponibleLiquidacionesEle, comboDisponibleBurofaxesEle, comboJerarquiaEle, comboZonasEle]
+		items: [comboTipoBusqueda, fieldCodigoEle, fieldNombreExpedienteJudicialEle, fieldDiasGestionEle, comboTipoProcPropuestoEle, comboTipoPreparacionEle, comboDisponibleDocumentosEle, comboDisponibleLiquidacionesEle, comboDisponibleBurofaxesEle, comboJerarquiaEle, comboZonasEle, fieldImporteDesde, fieldImporteHasta]
 	}, {
 		layout: 'form',
 		items: [panelFechaInicioPreparacion, panelFechaPreparado, panelFechaEnviadoLetrado, panelFechaFinalizado, panelFechaUltimaSubsanacion, panelFechaCancelado, comboTiposGestorEle, comboDespachosEle, comboGestorEle, filtroEstadoPreparacion]
@@ -624,7 +636,9 @@ var getParametrosFiltroProcedimiento = function() {
 	out.proDisponibleLiquidaciones = comboDisponibleLiquidacionesEle.getValue();
 	out.proDisponibleBurofaxes = comboDisponibleBurofaxesEle.getValue();
 	out.proDiasGestion = fieldDiasGestionEle.getValue();
-
+	out.importeDesde = fieldImporteDesde.getValue();
+	out.importeHasta = fieldImporteHasta.getValue();
+	
 	return out;
 }
 
@@ -636,5 +650,5 @@ var limpiaPestanaProcedimiento = function() {
 	dateFieldCanceladoDesdeEle, dateFieldCanceladoHastaEle, dateFieldParalizacionDesdeEle, dateFieldParalizacionHastaEle,
 	comboTipoProcPropuestoEle, comboTipoPreparacionEle, filtroEstadoPreparacion, comboTiposGestorEle,
 	comboDespachosEle, comboGestorEle, comboJerarquiaEle, comboZonasEle, comboDisponibleDocumentosEle, comboDisponibleLiquidacionesEle,
-	comboDisponibleBurofaxesEle, fieldDiasGestionEle]);
+	comboDisponibleBurofaxesEle, fieldDiasGestionEle, fieldImporteDesde, fieldImporteHasta]);
 }

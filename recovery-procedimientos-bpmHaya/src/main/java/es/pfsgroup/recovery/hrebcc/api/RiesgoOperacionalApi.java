@@ -1,23 +1,26 @@
 package es.pfsgroup.recovery.hrebcc.api;
 
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.recovery.hrebcc.dto.ActualizarRiesgoOperacionalDto;
 import es.pfsgroup.recovery.hrebcc.model.DDRiesgoOperacional;
-import es.pfsgroup.recovery.hrebcc.model.Vencidos;
 
 public interface RiesgoOperacionalApi {
 
-	
-		
 	public void actualizarRiesgoOperacional(ActualizarRiesgoOperacionalDto dto);
 	
 	@BusinessOperationDefinition(PrimariaBusinessOperation.BO_CNT_MGR_GET_RIESGO)
-	public DDRiesgoOperacional obtenerRiesgoOperacionalContrato(Long cntId);
+	public HashMap<String, Object> obtenerRiesgoOperacionalContratoHash(Long cntId) throws IllegalAccessException, InvocationTargetException;
 	
+	public DDRiesgoOperacional obtenerRiesgoOperacionalContrato(Long cntId);
+
 	@BusinessOperationDefinition(PrimariaBusinessOperation.BO_CNT_MGR_GET_VENCIDOS)
-	public Vencidos obtenerVencidosByCntId(Long cntId);
+	public HashMap<String, Object> obtenerVencidosByCntIdHash(Long cntId) throws IllegalAccessException, InvocationTargetException;
+	
 	
 	public Boolean comprobarRiesgoProcedimiento(Long idProcedimiento);
 }

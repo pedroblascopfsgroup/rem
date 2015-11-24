@@ -1,7 +1,10 @@
 package es.pfsgroup.recovery.hrebcc.manager;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.Set;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,6 +75,24 @@ public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 	
 	@Override
 	@BusinessOperation(overrides = PrimariaBusinessOperation.BO_CNT_MGR_GET_RIESGO)
+	public HashMap<String, Object> obtenerRiesgoOperacionalContratoHash(Long cntId) throws IllegalAccessException, InvocationTargetException {
+		HashMap<String, Object> h = null;
+		
+		DDRiesgoOperacional riesgo = this.obtenerRiesgoOperacionalContrato(cntId);
+		
+		if (!Checks.esNulo(riesgo)) {
+			h = new HashMap<String, Object>();
+
+			h.put("id", riesgo.getId());
+			h.put("codigo", riesgo.getCodigo());
+			h.put("descripcion", riesgo.getDescripcion());
+			h.put("descripcionLarga", riesgo.getDescripcionLarga());
+			h.put("auditoria", riesgo.getAuditoria());
+		}
+		
+		return h;
+	}
+	
 	public DDRiesgoOperacional obtenerRiesgoOperacionalContrato(Long cntId) {
 		DDRiesgoOperacional resultado = null;
 		
@@ -89,16 +110,11 @@ public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 		return resultado;
 	}
 	
-
-
-
-
-
-
-
 	@Override
 	@BusinessOperation(overrides = PrimariaBusinessOperation.BO_CNT_MGR_GET_VENCIDOS)
-	public Vencidos obtenerVencidosByCntId(Long cntId){
+	public HashMap<String, Object> obtenerVencidosByCntIdHash(Long cntId) throws IllegalAccessException, InvocationTargetException{
+		HashMap<String, Object> h = null;
+		
 		Vencidos resulVencidos = null;
 		
 		if(!Checks.esNulo(cntId)){
@@ -109,7 +125,20 @@ public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 			}
 		}
 		
-		return resulVencidos;
+		if (!Checks.esNulo(resulVencidos)) {
+			h = new HashMap<String, Object>();
+			
+			h.put("id", resulVencidos.getId());
+			h.put("cndId", resulVencidos.getCntId());
+			h.put("tipoVencido", resulVencidos.getTipoVencido());
+			h.put("tipoVencidoAnterior", resulVencidos.getTipoVencidoAnterior());
+			h.put("auditoria", resulVencidos.getAuditoria());
+			
+		}
+		
+		return h;
+	}
+	
 	/**
 	 * Comprobamos que todos los contratos del asunto del procedimiento tienen un riesgo operacional asociado
 	 */
@@ -123,7 +152,7 @@ public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 		} else {
 			Set<Contrato> contratos = prc.getAsunto().getContratos();
 			for (Contrato contrato : contratos) {
-				if (Checks.esNulo(this.ObtenerRiesgoOperacionalContrato(contrato.getId()))) {
+				if (Checks.esNulo(this.obtenerRiesgoOperacionalContrato(contrato.getId()))) {
 					resultado = false;
 				}
 			}

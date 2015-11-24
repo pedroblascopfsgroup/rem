@@ -42,6 +42,7 @@ import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.recovery.adjunto.AdjuntoAssembler;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.gestordocumental.dto.AdjuntoGridDto;
+import es.pfsgroup.tipoFicheroAdjunto.MapeoTipoFicheroAdjunto;
 
 @Service("adjuntoManagerHayaImpl")
 public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
@@ -152,10 +153,21 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	public String upload(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
 			if(esEntidadCajamar()){
+				
+				String codigoTipoAdjunto = null;
+				
+				///Obtenemos el codigo mapeado
+				if(!Checks.esNulo(uploadForm.getParameter("comboTipoFichero"))){
+					MapeoTipoFicheroAdjunto mapeo = genericDao.get(MapeoTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "tipoFichero.codigo", uploadForm.getParameter("comboTipoFichero")));
+					if(!Checks.esNulo(mapeo)){
+						codigoTipoAdjunto = mapeo.getTipoFicheroExterno();
+					}
+				}
+				
 				if (!Checks.esNulo(uploadForm.getParameter("prcId"))) {
-					return altaDocumento(Long.parseLong(uploadForm.getParameter("prcId")), DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO, uploadForm.getParameter("comboTipoFichero"), uploadForm);
+					return altaDocumento(Long.parseLong(uploadForm.getParameter("prcId")), DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO, codigoTipoAdjunto, uploadForm);
 				}else{
-					return altaDocumento(Long.parseLong(uploadForm.getParameter("id")), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, uploadForm.getParameter("comboTipoFichero"), uploadForm);	
+					return altaDocumento(Long.parseLong(uploadForm.getParameter("id")), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, codigoTipoAdjunto, uploadForm);	
 				}
 			}else{
 				return super.upload(uploadForm);

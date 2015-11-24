@@ -1,11 +1,17 @@
 package es.pfsgroup.recovery.haya.adjunto;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.FileNameMap;
+import java.net.URLConnection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
@@ -146,7 +152,11 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	public String upload(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
 			if(esEntidadCajamar()){
-				return altaDocumento(Long.parseLong(uploadForm.getParameter("id")), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, null, uploadForm);
+				if (!Checks.esNulo(uploadForm.getParameter("prcId"))) {
+					return altaDocumento(Long.parseLong(uploadForm.getParameter("prcId")), DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO, uploadForm.getParameter("comboTipoFichero"), uploadForm);
+				}else{
+					return altaDocumento(Long.parseLong(uploadForm.getParameter("id")), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, uploadForm.getParameter("comboTipoFichero"), uploadForm);	
+				}
 			}else{
 				return super.upload(uploadForm);
 			}
@@ -159,7 +169,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	public String uploadPersona(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
 			if(esEntidadCajamar()){
-				return altaDocumento(Long.parseLong(uploadForm.getParameter("id")),DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, null, uploadForm);	
+				return altaDocumento(Long.parseLong(uploadForm.getParameter("id")),DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, uploadForm.getParameter("comboTipoDoc"), uploadForm);	
 			}else{
 				return super.uploadPersona(uploadForm);
 			}
@@ -172,7 +182,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	public String uploadExpediente(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
 			if(esEntidadCajamar()){
-				return altaDocumento(Long.parseLong(uploadForm.getParameter("id")),DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null, uploadForm);	
+				return altaDocumento(Long.parseLong(uploadForm.getParameter("id")),DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, uploadForm.getParameter("comboTipoDoc"), uploadForm);	
 			}else{
 				return super.uploadExpediente(uploadForm);
 			}
@@ -185,7 +195,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	public String uploadContrato(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
 			if(esEntidadCajamar()){
-				return altaDocumento(Long.parseLong(uploadForm.getParameter("id")),DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, null, uploadForm);	
+				return altaDocumento(Long.parseLong(uploadForm.getParameter("id")),DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, uploadForm.getParameter("comboTipoDoc"), uploadForm);	
 			}else{
 				return super.uploadContrato(uploadForm);
 			}
@@ -368,23 +378,60 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	public FileItem recuperacionDocumento(String id){
 		
 		if(!Checks.esNulo(id)){
-			String adjunto = gestorDocumentalApi.recuperacionDocumento(id);
-			File file = new File("tmp");
-			FileItem fileItem = null;
+			AdjuntoGridDto adjunto = gestorDocumentalApi.recuperacionDocumento(id);
 			try {
-				FileUtils.writeStringToFile(file, adjunto);
-				fileItem = new FileItem(file);
-				file.delete();
-				
-			} catch (IOException e) {
+				return generaFileItem(adjunto.getNombre(), adjunto.getFicheroBase64(), adjunto.getExtFichero());
+			} catch (Throwable e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			return fileItem;
 			
 		}else{
 			return null;
 		}
+		return null;
 		
+	}
+	
+	private FileItem generaFileItem(String nombreFichero, String contenido, String extension) throws Throwable {
+		File fileSalidaTemporal = null;
+		FileItem resultado = null;
+		
+		String decodificado = base64Fichero(contenido);
+		InputStream stream = new ByteArrayInputStream(decodificado.getBytes());
+
+		fileSalidaTemporal = File.createTempFile(nombreFichero, "."+extension);
+		fileSalidaTemporal.deleteOnExit();
+		
+		resultado = new FileItem();
+		resultado.setFileName(nombreFichero + (new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + "."+extension);
+		resultado.setContentType(getMimeType(extension));
+		resultado.setFile(fileSalidaTemporal);
+        OutputStream outputStream = resultado.getOutputStream(); // Last step is to get FileItem's output stream, and write your inputStream in it. This is the way to write to your FileItem. 
+
+        int read = 0;
+        byte[] bytes = new byte[1024];
+        while ((read = stream.read(bytes)) != -1) {
+            outputStream.write(bytes, 0, read);
+        }
+
+        // Don't forget to release all the resources when you're done with them, or you may encounter memory/resource leaks.
+        stream.close();
+        outputStream.flush(); // This actually causes the bytes to be written.
+        outputStream.close();
+
+		return resultado;
+	}
+	
+	public String getMimeType(String fileName) {
+	    // 1. first use java's built-in utils
+	    FileNameMap mimeTypes = URLConnection.getFileNameMap();
+	    return mimeTypes.getContentTypeFor("."+fileName);
+	}
+	
+	private String base64Fichero(String base64) {
+		byte[] byteArray = Base64.decodeBase64(base64.getBytes());
+		String decodedString = new String(byteArray);
+		return decodedString;
 	}
 }

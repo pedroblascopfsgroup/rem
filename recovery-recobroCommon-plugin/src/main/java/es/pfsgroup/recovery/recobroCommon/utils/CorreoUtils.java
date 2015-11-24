@@ -76,12 +76,12 @@ public class CorreoUtils {
 
 			// Propiedades de la conexión
 			Properties props = getPropiedades();
-			System.out.println("[CorreoUtils.enviarCorreo] props=" + props.toString());
+			//System.out.println("[CorreoUtils.enviarCorreo] props=" + props.toString());
 			
 			// Preparamos la sesion
 			Session session = Session.getDefaultInstance(props);
 			session.setDebugOut(System.out);
-			session.setDebug(true);
+			session.setDebug(false);
 			
 			// Construimos el mensaje
 			MimeMessage message = new MimeMessage(session);
@@ -99,7 +99,7 @@ public class CorreoUtils {
 			message.setSubject(subject);
 			message.setText(body, "UTF-8");
 
-			System.out.println("[CorreoUtils.enviarCorreo] mensaje=" + to + "," + from + "," + subject);
+			//System.out.println("[CorreoUtils.enviarCorreo] mensaje=" + to + "," + from + "," + subject);
 
 			// Lo enviamos.
 			Transport t = session.getTransport(TRANSPORT_SMTP);
@@ -111,12 +111,13 @@ public class CorreoUtils {
 			try {
 				fromPwPropTrat = fromPwProp.replaceAll("\\\\", "");
 			} catch (Exception ee) {
-				System.out.println("[CorreoUtils.enviarCorreo] ee=" + ee.getMessage());
+				ee.printStackTrace();
+				//System.out.println("[CorreoUtils.enviarCorreo] ee=" + ee.getMessage());
 			}
 			String fromPw = Encriptador.desencriptarPw(fromPwPropTrat);
-			System.out.println("[CorreoUtils.enviarCorreo] usuario=" + usuarioSmtp + "." + fromPwProp + "." + fromPwPropTrat + "." + fromPw);
+			//System.out.println("[CorreoUtils.enviarCorreo] usuario=" + usuarioSmtp + "." + fromPwProp + "." + fromPwPropTrat + "." + fromPw);
 			t.connect(usuarioSmtp, fromPw);
-			System.out.println("[CorreoUtils.enviarCorreo] Autenticado");
+			//System.out.println("[CorreoUtils.enviarCorreo] Autenticado");
 			t.sendMessage(message, message.getAllRecipients());
 			
 			// Cierre.
@@ -124,7 +125,7 @@ public class CorreoUtils {
 		}
 
 		catch (Exception e) {
-			System.out.println("\n" + e.getMessage() + "\n");
+			//System.out.println("\n" + e.getMessage() + "\n");
 			e.printStackTrace();
 			throw new Exception(e);
 		}
@@ -217,13 +218,15 @@ public class CorreoUtils {
 			input = new FileInputStream("/" + devonHome + "/" + nombreProps);
 			prop.load(input);
 		} catch (IOException ex) {
-			System.out.println("[CorreoUtils.cargarProperties]: " + ex.getMessage() + " /" + devonHome + "/" + nombreProps);
+			//System.out.println("[CorreoUtils.cargarProperties]: " + ex.getMessage() + " /" + devonHome + "/" + nombreProps);
+			ex.printStackTrace();
 		} finally {
 			if (input != null) {
 				try {
 					input.close();
 				} catch (IOException e) {
-					System.out.println("[CorreoUtils.cargarProperties]: " + e.getMessage());
+					e.printStackTrace();
+					//System.out.println("[CorreoUtils.cargarProperties]: " + e.getMessage());
 				}
 			}
 		}

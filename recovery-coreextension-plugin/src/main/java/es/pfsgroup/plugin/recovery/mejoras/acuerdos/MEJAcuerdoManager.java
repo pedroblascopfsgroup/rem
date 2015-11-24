@@ -663,17 +663,17 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
         
         
 		if(letradoAsunto!=null){
-			String observacionesLetrado = "Tras la aprobaci髇 por parte de "+gestorDespachoDecisor.getUsuario().getNombre()+" el acuerdo ha pasado a estado vigente. Deber韆 analizar si es necesario paralizar o finalizar alg鷑 tr醡ite pendiente del acreditado.";
-			crearNotificacion(acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, observacionesLetrado, letradoAsunto.getId(), true, EXTSubtipoTarea.CODIGO_NOTIFICACION_ACUERDOS, null,"Aprobaci髇 del acuerdo por el decisor");
+			String observacionesLetrado = "Tras la aprobaci贸n por parte de "+gestorDespachoDecisor.getUsuario().getNombre()+" el acuerdo ha pasado a estado vigente. Deber铆a analizar si es necesario paralizar o finalizar alg煤n tr谩mite pendiente del acreditado.";
+			crearNotificacion(acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, observacionesLetrado, letradoAsunto.getId(), true, EXTSubtipoTarea.CODIGO_NOTIFICACION_ACUERDOS, null,"Aprobaci贸n del acuerdo por el decisor");
 		}
 		
-		String observaciones = "Tras la aprobaci髇 por parte de "+gestorDespachoDecisor.getUsuario().getNombre()+" el acuerdo ha pasado a estado vigente.";
+		String observaciones = "Tras la aprobaci贸n por parte de "+gestorDespachoDecisor.getUsuario().getNombre()+" el acuerdo ha pasado a estado vigente.";
 		if(gestorDespachoValidador != null){
-			crearNotificacion(acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, observaciones, gestorDespachoValidador.getUsuario().getId(), true, EXTSubtipoTarea.CODIGO_NOTIFICACION_ACUERDOS, null,"Aprobaci髇 del acuerdo por el decisor");
+			crearNotificacion(acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, observaciones, gestorDespachoValidador.getUsuario().getId(), true, EXTSubtipoTarea.CODIGO_NOTIFICACION_ACUERDOS, null,"Aprobaci贸n del acuerdo por el decisor");
 		}
 		
 		if(gestorDespachoProponente != null && !(usuarioLogadoEsDelTipoDespacho(gestorDespachoProponente.getDespachoExterno().getTipoDespacho()) && usuarioLogadoEsDelTipoDespacho(gestorDespachoValidador.getDespachoExterno().getTipoDespacho()))){
-			crearNotificacion(acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, observaciones, gestorDespachoProponente.getUsuario().getId(), true, EXTSubtipoTarea.CODIGO_NOTIFICACION_ACUERDOS, null,"Aprobaci髇 del acuerdo por el decisor");
+			crearNotificacion(acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, observaciones, gestorDespachoProponente.getUsuario().getId(), true, EXTSubtipoTarea.CODIGO_NOTIFICACION_ACUERDOS, null,"Aprobaci贸n del acuerdo por el decisor");
 		}
     	
         
@@ -720,7 +720,7 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
     	Map<String, DDTipoDespachoExterno> config = null;
     	
     	
-    	if(acuerdo.getGestorDespacho().getDespachoExterno().getTipoDespacho() !=null){
+    	if(acuerdo.getGestorDespacho() !=null && acuerdo.getGestorDespacho().getDespachoExterno() !=null && acuerdo.getGestorDespacho().getDespachoExterno().getTipoDespacho() !=null){
     		DDTipoDespachoExterno tipoDespachoProponente = acuerdo.getGestorDespacho().getDespachoExterno().getTipoDespacho();
     		config =  getTiposDespachoAcuerdoAsunto(tipoDespachoProponente.getId());
     	}
@@ -780,8 +780,8 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
         if(cumplido){
         	estado = DDEstadoAcuerdo.ACUERDO_CUMPLIDO;
         	String observacionesPropDeci = userProponente.getNombre()+" ha dado por cumplido el acuerdo";
-        	String observacionesLet = userProponente.getNombre()+" ha dado por cumplido el acuerdo. Deber韆 analizar si es necesario finalizar alg鷑 tr醡ite pendiente del acreditado";
-        	String observacionesLetDacionCompraventa = "Ha finalizado el t閞mino de Daci髇 / Compra venta, del acuerdo. Por favor compruebe si corresponde iniciar el tr醡ite 'Tr醡ite de mandamiento de cancelaci髇 de cargas'";
+        	String observacionesLet = userProponente.getNombre()+" ha dado por cumplido el acuerdo. Deber铆a analizar si es necesario finalizar alg煤n tr谩mite pendiente del acreditado";
+        	String observacionesLetDacionCompraventa = "Ha finalizado el t茅rmino de Daci贸n / Compra venta, del acuerdo. Por favor compruebe si corresponde iniciar el tr谩mite 'Tr谩mite de mandamiento de cancelaci贸n de cargas'";
         	try {
 				crearNotificacion(acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, observacionesPropDeci, userValidador.getId(), true, EXTSubtipoTarea.CODIGO_NOTIFICACION_ACUERDOS, null,"Cumplimiento del acuerdo por el proponente");
 				crearNotificacion(acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, observacionesPropDeci, userDecisor.getId(), true, EXTSubtipoTarea.CODIGO_NOTIFICACION_ACUERDOS, null,"Cumplimiento del acuerdo por el proponente");
@@ -798,7 +798,7 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
         }else{
         	estado = DDEstadoAcuerdo.ACUERDO_INCUMPLIDO;
         	String observacionesPropDeci = userProponente.getNombre()+" ha dado por incumplido el acuerdo. Observaciones: "+observaciones;
-        	String observacionesLet = userProponente.getNombre()+" ha dado por incumplido el acuerdo. Deber韆 analizar si es necesario desparalizar alg鷑 tr醡ite pendiente del acreditado o iniciar un nuevo tr醡ite";
+        	String observacionesLet = userProponente.getNombre()+" ha dado por incumplido el acuerdo. Deber铆a analizar si es necesario desparalizar alg煤n tr谩mite pendiente del acreditado o iniciar un nuevo tr谩mite";
 			try {
 				crearNotificacion(acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, observacionesPropDeci, userValidador.getId(), true, EXTSubtipoTarea.CODIGO_NOTIFICACION_ACUERDOS, null,"Incumplimiento del acuerdo por el proponente");
 				crearNotificacion(acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, observacionesPropDeci, userDecisor.getId(), true, EXTSubtipoTarea.CODIGO_NOTIFICACION_ACUERDOS, null,"Incumplimiento del acuerdo por el proponente");
@@ -835,7 +835,7 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
     }
     
     /**
-     * Pasa un Acuerdo en estado En Conformaci髇 a Propuesto.
+     * Pasa un Acuerdo en estado En Conformaci贸n a Propuesto.
      * @param idAcuerdo el id del acuerdo
      * @throws EXTCrearTareaException 
      */
@@ -861,7 +861,7 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 			
 	    	Calendar calendar = new GregorianCalendar();
 	    	calendar.add(Calendar.DAY_OF_MONTH, 15);
-	    	Long idJBPM = crearTarea(acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, "Aceptaci髇 del acuerdo "+acuerdo.getId(), gestorDespachoValidador.getUsuario().getId(), true, SubtipoTarea.CODIGO_ACEPTACION_ACUERDO, calendar.getTime());
+	    	Long idJBPM = crearTarea(acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, "Aceptaci贸n del acuerdo "+acuerdo.getId(), gestorDespachoValidador.getUsuario().getId(), true, SubtipoTarea.CODIGO_ACEPTACION_ACUERDO, calendar.getTime());
 	        acuerdo.setIdJBPM(idJBPM);	
 	        acuerdoDao.save(acuerdo);
 	        EXTSubtipoTarea subtipotarea = genericDao.get(EXTSubtipoTarea.class, genericDao.createFilter(FilterType.EQUALS, "codigoSubtarea", SubtipoTarea.CODIGO_ACEPTACION_ACUERDO));
@@ -908,7 +908,7 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 			
 	    	Calendar calendar = new GregorianCalendar();
 	    	calendar.add(Calendar.DAY_OF_MONTH, 15);
-	    	Long idJBPM = crearTarea(acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, "Revisi髇 del acuerdo aceptado "+acuerdo.getId(), gestorDespachoDecisor.getUsuario().getId(), true, SubtipoTarea.CODIGO_REVISION_ACUERDO_ACEPTADO, calendar.getTime());
+	    	Long idJBPM = crearTarea(acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, "Revisi贸n del acuerdo aceptado "+acuerdo.getId(), gestorDespachoDecisor.getUsuario().getId(), true, SubtipoTarea.CODIGO_REVISION_ACUERDO_ACEPTADO, calendar.getTime());
 	        acuerdo.setIdJBPM(idJBPM);
 	        acuerdoDao.save(acuerdo);
 	        EXTSubtipoTarea subtipotarea = genericDao.get(EXTSubtipoTarea.class, genericDao.createFilter(FilterType.EQUALS, "codigoSubtarea", SubtipoTarea.CODIGO_REVISION_ACUERDO_ACEPTADO));
@@ -924,7 +924,7 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
     
     
     /**
-     * Pasa un Acuerdo en estado En Conformaci锟絥 a Cancelado.
+     * Pasa un Acuerdo en estado En Conformaci贸n a Cancelado.
      * @param idAcuerdo el id del acuerdo
      */
     @BusinessOperation(BO_ACUERDO_MGR_CANCELAR_ACUERDO)

@@ -20,7 +20,7 @@
 			<value>BANKIA</value>
 		</property>
 		<property name="generarArchivoBurofax">
-			<value>true</value>
+			<value>false</value>
 		</property>
 		
 		<property name="variablesBurofax">

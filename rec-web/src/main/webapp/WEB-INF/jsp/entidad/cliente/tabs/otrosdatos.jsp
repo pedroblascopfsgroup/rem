@@ -105,6 +105,7 @@
    var zonaPersona =     label('zonaPersona','<s:message code="menu.clientes.consultacliente.datosTab.zonaPersona" text="**Zona Persona" />');
    var zonaTerritorial = label('zonaTerritorial','<s:message code="menu.clientes.consultacliente.datosTab.zonaTerritorial" text="**Zona Territorial" />');
      
+   var accionFSR = label('accionFSR','<s:message code="menu.clientes.consultacliente.datosTab.accionFSR" text="**Acción de FSR" />');
    
   	
    colectivoSingular.autoHeight=true;
@@ -127,7 +128,7 @@
 
 
 	var OtrosFieldSet = fieldSet( '<s:message code="menu.clientes.consultacliente.menu.Otros" text="**Otros"/>'
-			, [ {items:[servicioNominaPension,colectivoSingular,politicaEntidad,prePolitica,tieneIngresosDomiciliados,ultimaActuacion]}, {items:[puntuacionAlerta,grupoCliente,ultimaOperacionConcedida,areaGestion,perfilGestor]} ] );
+			, [ {items:[servicioNominaPension,colectivoSingular,politicaEntidad,prePolitica,tieneIngresosDomiciliados,ultimaActuacion]}, {items:[puntuacionAlerta,grupoCliente,ultimaOperacionConcedida,areaGestion,perfilGestor,accionFSR]} ] );
 
    panel.add(datosPersonalesFieldSet);
    panel.add(datosGestionFieldSet);
@@ -199,7 +200,7 @@
 		entidad.setLabel('ultimaOperacionConcedida', d.ultimaOperacionConcedida);
 		entidad.setLabel('zonaPersona', d.zonaPersona);
 		entidad.setLabel('zonaTerritorial',d.zonaTerritorial);
-		
+		entidad.setLabel('accionFSR',d.accionFSR);
 		
 					
 		var esVisible = [

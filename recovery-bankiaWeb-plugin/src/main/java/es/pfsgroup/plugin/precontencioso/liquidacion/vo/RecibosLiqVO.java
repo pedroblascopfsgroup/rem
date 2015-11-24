@@ -25,7 +25,13 @@ public class RecibosLiqVO {
 	private final SimpleDateFormat formatoFechaCorta = new SimpleDateFormat("dd/MM/yyyy", MessageUtils.DEFAULT_LOCALE);
 
 	public String IDRECV() {
-		return RCB_IDRECV;
+
+		// Para los registros 00999 se pinta vacio
+		if ("00999".equals(RCB_IDRECV)) {
+			return "";
+		}
+
+		return RCB_IDRECV == null ? "[NO DISPONIBLE]" : RCB_IDRECV;
 	}
 
 	public String FEVCTR() {
@@ -96,5 +102,9 @@ public class RecibosLiqVO {
 
 	public BigDecimal getRCB_IMDEUD() {
 		return RCB_IMDEUD;
+	}
+
+	public Date getRCB_FEVCTR() {
+		return RCB_FEVCTR;
 	}
 }

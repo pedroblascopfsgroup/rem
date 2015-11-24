@@ -85,7 +85,7 @@ public class OracleModelQueryBuilder {
 
     private StringBuilder createBasicQuery(final Integer entity, final String jobName) {
         StringBuilder builder = new StringBuilder();
-        builder.append("select entidad, nombre_job, comienza, finaliza, estado, codigo_salida from ${master.schema}.v_status_batch where nombre_job like '");
+        builder.append("select entidad, nombre_job, comienza, finaliza, estado, codigo_salida from v_status_batch where nombre_job like '");
         builder.append(jobName).append("%'");
         builder.append(" and entidad = ").append(entity);
         return builder;

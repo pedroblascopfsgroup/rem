@@ -107,10 +107,6 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
-	
-	@Autowired
-	private GenericABMDao genericdDao;
-
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_ALTA_DOCUMENTO)
 	@Transactional(readOnly = false)
@@ -206,9 +202,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			}
 
 			outputStream.close();
-			
-			byte[] bytessss = "Esto es una prueba de ver como funciona correctamente la codificacion".getBytes();
-			byte[] encoded = Base64.encodeBase64(bytessss);
+			byte[] encoded = Base64.encodeBase64(bytes);
 			ficheroBase64 = new String(encoded);
 		} catch (Exception e) {
 			logger.error("Se ha producido un error al convertir el fichero en base64");
@@ -311,7 +305,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			claveRel = contrato.getNroContrato();
 		} else if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidad)) {
 			EXTAsunto asunto = EXTAsunto.instanceOf(asuntoDao.get(idEntidad));
-			if(uploadForm != null) {	
+			if(uploadForm != null) {				
 		        EXTAdjuntoAsunto adjuntoAsunto = new EXTAdjuntoAsunto(uploadForm.getFileItem());
 		        
 		        if (!Checks.esNulo(tipoDocumento) && !tipoDocumento.equals("")) {

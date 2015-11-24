@@ -31,7 +31,7 @@ BEGIN
 
     COMMIT;
 
-    DBMS_OUTPUT.PUT_LINE('[FIN] '|| #ESQUEMA# ||'.dd_tfa_fichero_adjunto... Borrado lógico finalizado');
+    DBMS_OUTPUT.PUT_LINE('[FIN] #ESQUEMA#.dd_tfa_fichero_adjunto... Borrado lógico finalizado');
 
 EXCEPTION
      WHEN OTHERS THEN

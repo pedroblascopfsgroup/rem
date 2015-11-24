@@ -1127,7 +1127,7 @@
 			case app.subtipoTarea.CODIGO_RECOPILAR_DOCUMENTACION_PROCEDIMIENTO:
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'docRequerida');
 			break;
-			
+
 			case app.subtipoTarea.CODIGO_PRECONTENCIOSO_SUPERVISOR:
 			case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTORIA:
 		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR:

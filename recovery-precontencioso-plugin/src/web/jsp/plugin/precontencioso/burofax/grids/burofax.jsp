@@ -8,8 +8,6 @@
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 
-
-
 	var limit=50;
 	
 	var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
@@ -185,6 +183,28 @@
 <!-- 			,hidden:true -->
 	});		
 	
+	// nuevos botones
+	
+	var btnBorrarDirOrigenManual = new Ext.Button({
+			text : '<s:message code="plugin.precontencioso.grid.burofax.borrarOrigenManual" text="**Borrar Dir. Manual" />'
+			,iconCls : 'icon_menos'
+			,cls: 'x-btn-text-icon'
+<!-- 			,hidden:true -->
+	});	
+	var btnDescartarPersEnvio = new Ext.Button({
+			text : '<s:message code="plugin.precontencioso.grid.burofax.descartar" text="**Descartar persona" />'
+			,iconCls : 'icon_cancel'
+			,cls: 'x-btn-text-icon'
+<!-- 			,hidden:true -->
+	});
+	
+	var btnCancelarEnEstPrep = 	new Ext.Button({
+			text : '<s:message code="plugin.precontencioso.grid.burofax.anular" text="**Anular Burofax" />'
+			,iconCls : 'icon_menos'
+			,cls: 'x-btn-text-icon'
+<!-- 			,hidden:true -->
+	});
+	
 	Ext.namespace('Ext.ux.plugins');
 	
 	Ext.ux.plugins.CheckBoxMemory = Ext.extend(Object,{
@@ -212,76 +232,39 @@
       		btnEnviar.disabled=true;
       		btnNotificar.disabled=true;
       		btnDescargarBurofax.disabled=true;
-      		
+      		btnBorrarDirOrigenManual.disabled=true;
+      		btnDescartarPersEnvio.disabled=true;
+      		btnCancelarEnEstPrep.disabled=true;
       		//this.store.sort('idCliente','DESC');
 	        //this.store.setDefaultSort('idCliente', 'DESC');
       		
    		},
 
-   		onSelect: function(sm, idx, rec){
+   		onSelect: function(sm, idx, rec)
+   		{
       		this.items[this.getId(rec)] = true;
       		if (this.idArray.indexOf(rec.get(this.idProperty)) < 0){
       			this.idArray.push(rec.get(this.idProperty));
       		}
       		
       		if(actualizarBotonesBurofax()){
-	      		btnPreparar.setDisabled(false);
-	      		<%-- Si el envio esta en estado preparado, habilitamos el boton editar --%>
-				if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Preparado'){
-					btnEditar.setDisabled(false);
+      		
+      			if(myCboxSelModel.getCount() == 1) {
+		      		validarBotonesSeleccionUnica();
+
 				}
-				else{
-					btnEditar.setDisabled(true);
-				}
-				
-				
-				<%-- Comprobamos que se ha seleccionado un cliente --%>
-				if(gridBurofax.getSelectionModel().getSelected().get('idCliente') != ''){
-					btnNuevaDir.setDisabled(false);
-				}
-				
-				<%--Si el resultado del envio es enviado y todavia no ha sido enviado habilitamos el boton de notificar --%>
-				if(gridBurofax.getSelectionModel().getSelected().get('idEnvio') != '' && gridBurofax.getSelectionModel().getSelected().get('fechaAcuse') == ''){
-					btnNotificar.setDisabled(false);
-				}
-				
-				<%-- Como se puede enviar sin estar preparado habilitamos el boton enviar--%>
-				btnEnviar.setDisabled(false);
-				
-				<%-- Si el Resultado es notificado habilitamos el boton de añadir notificacion --%>
-				if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Enviado'){
-					btnNotificar.setDisabled(false);
-				}
-				else{
-					btnNotificar.setDisabled(true);
-				}
-				<%-- Si hay un envio seleccionado y su estado es ENVIADO habilitamos el boton de descargar burofax --%>
-				if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Enviado' && myCboxSelModel.getCount() == 1){
-					btnDescargarBurofax.setDisabled(false);
-				}
-				else{
-					btnDescargarBurofax.setDisabled(true);
-				}
-				
-				
-				<%--Si ya se ha producido el envio y se ha añadido informacion de envio se desabilitan todos los botones menos añadir persona ,añadir direccion y descargarBurofax --%>
-				if(gridBurofax.getSelectionModel().getSelected().get('fechaAcuse') != ''){
-					//btnAddPersona.setDisabled(true);
-					btnEnviar.setDisabled(true);
-					//btnNuevaDir.setDisabled(true);
-					btnEditar.setDisabled(true);
-					btnPreparar.setDisabled(true);
-					btnCancelar.setDisabled(true);
-					btnNotificar.setDisabled(true);
-					
-				}
+				else {
+					comprobarEstadoBotones();
+				}	
 			}
 			
-			
-			
+		  <%--comprobamos si es de origen manual --%>
+		  var idDireccion = gridBurofax.getSelectionModel().getSelected().get('idDireccion');
+		  var esManual = comprobarEsManual(idDireccion);
    		},
 
-   		onDeselect: function(sm, idx, rec){
+   		onDeselect: function(sm, idx, rec)
+   		{
       		delete this.items[this.getId(rec)];
       		var i = this.idArray.indexOf(rec.get(this.idProperty));
       		if (i >= 0){
@@ -295,6 +278,19 @@
       			btnEnviar.setDisabled(true);
       			btnNotificar.setDisabled(true);
       			btnDescargarBurofax.setDisabled(true);
+      			btnBorrarDirOrigenManual.setDisabled(true);
+      			btnDescartarPersEnvio.setDisabled(true);
+      			btnCancelarEnEstPrep.setDisabled(true);
+      		}
+      		else {
+      			if(actualizarBotonesBurofax()){
+      				if(myCboxSelModel.getCount() == 1) {
+      					validarBotonesSeleccionUnica();			      		
+					}
+					else {
+	      				comprobarEstadoBotones();
+	      			}
+	      		}
       		}
    		},
 
@@ -330,6 +326,8 @@
 		}
 	});
 	
+	var separadorButtons = new Ext.Toolbar.Fill();	
+	
 	var gridBurofax = new Ext.grid.GridPanel({
 		title: '<s:message code="plugin.precontencioso.grid.burofax.titulo" text="**Burofaxes" />'	
 		,columns: columnArray
@@ -344,11 +342,18 @@
        	,style:'padding-top:10px'
 		,cls:'cursor_pointer'
 		,iconCls : 'icon_asuntos'
-		,bbar : [ botonesTabla,btnAddPersona,btnEnviar, btnNuevaDir, btnEditar, btnPreparar,btnCancelar, btnNotificar,btnDescargarBurofax , new Ext.Toolbar.Fill(), botonRefresh ]
+		,bbar : [ botonesTabla,btnAddPersona,btnEnviar, btnNuevaDir, btnEditar, btnPreparar,btnCancelar, btnNotificar,btnDescargarBurofax, btnBorrarDirOrigenManual, btnDescartarPersEnvio,  separadorButtons, btnCancelarEnEstPrep, botonRefresh ]
 		,autoWidth: true
 		,collapsible: true
-		
-		
+		,doLayout: function() {
+			if(this.isVisible()){
+				var margin = 10;
+				var parentSize = app.contenido.getSize(true);
+				var width = (parentSize.width) - (2*margin);
+				this.setWidth(width);
+				Ext.grid.GridPanel.prototype.doLayout.call(this);
+			}
+		}		
 	});
 	
 
@@ -526,46 +531,257 @@
 	
 	});
 	
+	btnCancelarEnEstPrep.on('click', function(){
+	 var arrayIdClientes=new Array();
+			 
+		rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
+			
+		for (var i=0; i < rowsSelected.length; i++){
+		  arrayIdClientes.push(rowsSelected[i].get('idCliente'));
+		}
+	uniqueArray = arrayIdClientes.filter(function(item, pos) {
+		    return arrayIdClientes.indexOf(item) == pos;
+		});
+		if(uniqueArray.length==1){
+		Ext.Msg.confirm(
+			'<s:message code="plugin.precontencioso.grid.burofax.cancelarBurofax.EstadoPreparado" text="**Cancelar burofax" />', 
+			'<s:message code="plugin.precontencioso.grid.burofax.cancelarBurofax.EstadoPreparado.Mensaje"
+ 				text="**Va a cancelar el burofax ¿Está usted seguro?" />', 
+			function(btn) {
+				if (btn == 'yes') {
+				var idEnvio=gridBurofax.getSelectionModel().getSelected().get('idEnvio');
+				var idCliente=gridBurofax.getSelectionModel().getSelected().get('idCliente');
+					Ext.Ajax.request({
+							url: page.resolveUrl('burofax/cancelarEnEstPrep'),
+							params: {idEnvio:idEnvio, idCliente:idCliente},
+							method: 'POST',
+							success: function (result, request) {
+								Ext.Msg.show({
+									title: fwk.constant.alert,
+									msg: '<s:message code="plugin.precontencioso.grid.burofax.cancelarBurofax.correcto"
+									text="**El burofax se ha cancelado correctamente" />',
+									buttons: Ext.Msg.OK
+								});
+								refrescarBurofaxGrid();
+							},
+							error: function() {
+								mask.hide();
+								Ext.MessageBox.show({
+							    	title: fwk.constant.alert,
+									msg: '<s:message code="plugin.precontencioso.button.finalizarPreparacion.error.exception" text="**Se ha producido un error. Consulte con soporte" />',
+									width: 300,
+									buttons: Ext.MessageBox.OK
+								});
+							} 
+					});
+				}else{
+					Ext.Msg.show({
+									title: fwk.constant.alert,
+									msg: '<s:message code="plugin.precontencioso.grid.burofax.cancelarBurofax.NoCorrecto"
+									text="**El burofax no se ha cancelado" />',
+									buttons: Ext.Msg.OK
+								});
+				}
+			});
+		}else{
+			Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.variosClientes" text="**Varios clientes seleccionados" />'
+                 ,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.variosClientes" text="**Debe seleccionar un unico cliente" />');
+		}
+	});
+	
+	
+	btnDescartarPersEnvio.on('click', function(){
+	 var arrayIdClientes=new Array();
+			 
+		rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
+			
+		for (var i=0; i < rowsSelected.length; i++){
+		  arrayIdClientes.push(rowsSelected[i].get('idCliente'));
+		}
+	uniqueArray = arrayIdClientes.filter(function(item, pos) {
+		    return arrayIdClientes.indexOf(item) == pos;
+		});
+		if(uniqueArray.length==1){
+		Ext.Msg.confirm(
+			'<s:message code="plugin.precontencioso.grid.burofax.descartarPersona" text="**Descartar Persona" />', 
+			'<s:message code="plugin.precontencioso.grid.burofax.descartarPersona.mensaje"
+ 				text="**Va a descartar esta persona para el envío ¿Está usted seguro?" />', 
+			function(btn) {
+				if (btn == 'yes') {
+				var idBurofax=gridBurofax.getSelectionModel().getSelected().get('idBurofax');
+					Ext.Ajax.request({
+							url: page.resolveUrl('burofax/descartarPersonaEnvio'),
+							params: {idBurofax:idBurofax},
+							method: 'POST',
+							success: function (result, request) {
+								Ext.Msg.show({
+									title: fwk.constant.alert,
+									msg: '<s:message code="plugin.precontencioso.grid.burofax.descartarPersonaEnvio.correcto"
+									text="**Se ha descartado correctamente" />',
+									buttons: Ext.Msg.OK
+								});
+								refrescarBurofaxGrid();
+							},
+							error: function() {
+								mask.hide();
+								Ext.MessageBox.show({
+							    	title: fwk.constant.alert,
+									msg: '<s:message code="plugin.precontencioso.button.finalizarPreparacion.error.exception" text="**Se ha producido un error. Consulte con soporte" />',
+									width: 300,
+									buttons: Ext.MessageBox.OK
+								});
+							} 
+					});
+				}else{
+					Ext.Msg.show({
+									title: fwk.constant.alert,
+									msg: '<s:message code="plugin.precontencioso.grid.burofax.descartarPersona.NoCorrecto"
+									text="**La persona no se ha descartado" />',
+									buttons: Ext.Msg.OK
+								});
+				}
+			});
+		}else{
+			Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.variosClientes" text="**Varios clientes seleccionados" />'
+                 ,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.variosClientes" text="**Debe seleccionar un unico cliente" />');
+		}
+	});
+	
+	btnBorrarDirOrigenManual.on('click', function(){
+		var arrayIdClientes=new Array();
+			 
+		rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
+			
+		for (var i=0; i < rowsSelected.length; i++){
+		  arrayIdClientes.push(rowsSelected[i].get('idDireccion'));
+		}
+		uniqueArray = arrayIdClientes.filter(function(item, pos) {
+		    return arrayIdClientes.indexOf(item) == pos;
+		});
+		if(uniqueArray.length==1){
+			Ext.Msg.confirm(
+			'<s:message code="plugin.precontencioso.grid.burofax.borrarDireccion" text="**Borrar dirección" />', 
+			'<s:message code="plugin.precontencioso.grid.burofax.borrarDireccion.mensaje"
+ 				text="**Va a borrar la dirección de esta persona ¿Está usted seguro?" />', 
+			function(btn) {
+				if (btn == 'yes') {
+					var idDireccion=gridBurofax.getSelectionModel().getSelected().get('idDireccion');
+					Ext.Ajax.request({
+							url: page.resolveUrl('burofax/borrarDirecManual'),
+							params: {idDireccion:idDireccion},
+							method: 'POST',
+							success: function (result, request) {
+								Ext.Msg.show({
+									title: fwk.constant.alert,
+									msg: '<s:message code="plugin.precontencioso.grid.burofax.borrarDireccion.correcto"
+									text="**Se ha borrado correctamente" />',
+									buttons: Ext.Msg.OK
+								});
+								refrescarBurofaxGrid();
+							},
+							error: function() {
+								mask.hide();
+								Ext.MessageBox.show({
+							    	title: fwk.constant.alert,
+									msg: '<s:message code="plugin.precontencioso.button.finalizarPreparacion.error.exception" text="**Se ha producido un error. Consulte con soporte" />',
+									width: 300,
+									buttons: Ext.MessageBox.OK
+								});
+							} 
+					});
+				}else{
+					Ext.Msg.show({
+									title: fwk.constant.alert,
+									msg: '<s:message code="plugin.precontencioso.grid.burofax.borrarDireccion.NoCorrecto"
+									text="**La dirección no se ha eliminado" />',
+									buttons: Ext.Msg.OK
+					});
+				}
+			});
+		}else{
+			Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.variasDirecciones" text="**Varias direcciones seleccionadas" />'
+                ,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.variasDirecciones" text="**Debe seleccionar una única dirección" />');
+        };
+	});
+	
 	
 	btnEnviar.on('click', function(){
-
-			var rowsSelected=new Array(); 
-			var arrayResultado=new Array();
-			var arrayIdEnvios=new Array();
-			var arrayIdBurofax=new Array();
-			var arrayIdDirecciones=new Array();
-			var tipoBurofax=gridBurofax.getSelectionModel().getSelected().get('tipoBurofax');
-			
-				 
-			rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
-				
-			for (var i=0; i < rowsSelected.length; i++){
-			  arrayResultado.push(rowsSelected[i].get('resultado'));
-			  arrayIdEnvios.push(rowsSelected[i].get('idEnvio'));
-			  arrayIdBurofax.push(rowsSelected[i].get('idBurofax'));
-	  		  
-	  		  if(rowsSelected[i].get('idDireccion') != ''){
-	  		  	arrayIdDirecciones.push(rowsSelected[i].get('idDireccion'));
-	  		  }
-	  		 
-			}
+	
+		var rowsSelected=new Array(); 
+		var arrayResultado=new Array();
+		var arrayIdEnvios=new Array();
+		var arrayIdBurofax=new Array();
+		var arrayIdDirecciones=new Array();
+		var tipoBurofax=gridBurofax.getSelectionModel().getSelected().get('tipoBurofax');
 		
-			<%--Comprobamos que hay direcciones seleccionadas en TODAS las selecciones --%>
-     		if(myCboxSelModel.getCount() > 0 && arrayIdDirecciones.length == myCboxSelModel.getCount()){	
-				//Parametros para configurar el tipo de burofax
-				var arrayIdDirecciones = Ext.encode(arrayIdDirecciones);
-		 		var arrayIdBurofax = Ext.encode(arrayIdBurofax);
-				var arrayIdEnvios =	Ext.encode(arrayIdEnvios);
+			 
+		rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
+			
+		for (var i=0; i < rowsSelected.length; i++){
+		  arrayResultado.push(rowsSelected[i].get('resultado'));
+		  arrayIdEnvios.push(rowsSelected[i].get('idEnvio'));
+		  arrayIdBurofax.push(rowsSelected[i].get('idBurofax'));
+  		  
+  		  if(rowsSelected[i].get('idDireccion') != ''){
+  		  	arrayIdDirecciones.push(rowsSelected[i].get('idDireccion'));
+  		  }
+  		 
+		}
+	
+		<%--Comprobamos que hay direcciones seleccionadas en TODAS las selecciones --%>
+    		if(myCboxSelModel.getCount() > 0 && arrayIdDirecciones.length == myCboxSelModel.getCount()){	
+			//Parametros para configurar el tipo de burofax
+			var arrayIdDirecciones = Ext.encode(arrayIdDirecciones);
+	 		var arrayIdBurofax = Ext.encode(arrayIdBurofax);
+			var arrayIdEnvios =	Ext.encode(arrayIdEnvios);
+			
+			//Comprobamos que los resultados son iguales
+			uniqueArray = arrayResultado.filter(function(item, pos) {
+			    return arrayResultado.indexOf(item) == pos;
+			});
+			
+			if(uniqueArray.length==1){
+			  //Como los resultados son iguales , comprobamos si el estado es NO preparado
+			  if(uniqueArray[0]==''){
+			    //Comprobamos que el tipo de burofax configurado por defecto es el mismo para todos
+			    var arrayTipoBurofax=new Array();
+			    
+			    for (var i=0; i < rowsSelected.length; i++){
+			  		arrayTipoBurofax.push(rowsSelected[i].get('tipo'));
+			 
+				}
 				
-				//Comprobamos que los resultados son iguales
-				uniqueArray = arrayResultado.filter(function(item, pos) {
-				    return arrayResultado.indexOf(item) == pos;
+				uniqueArrayTipoBurofax = arrayTipoBurofax.filter(function(item, pos) {
+			    	return arrayTipoBurofax.indexOf(item) == pos;
 				});
 				
-				if(uniqueArray.length==1){
-				  //Como los resultados son iguales , comprobamos si el estado es NO preparado
-				  if(uniqueArray[0]==''){
-				    //Comprobamos que el tipo de burofax configurado por defecto es el mismo para todos
+				if(uniqueArrayTipoBurofax.length == 1){
+				 //Abrimos ventana
+				 var w = app.openWindow({
+						  flow : 'burofax/getEnvioBurofax'
+						  ,width:320
+						  ,autoWidth:true
+						  ,closable:true
+						  ,title : '<s:message code="plugin.precontencioso.grid.burofax.envio" text="**Envio Burofaxes" />'
+						  ,params:{codigoTipoBurofax:uniqueArrayTipoBurofax[0],arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax,arrayIdEnvios:arrayIdEnvios,comboEditable:true}
+						  		  
+						});
+						w.on(app.event.DONE,function(){
+								w.close();
+								refrescarBurofaxGrid();
+						});
+						w.on(app.event.CANCEL, function(){w.close();});
+					}
+				  else{
+					//Mensaje de error
+						Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.tipoDistinto" text="**Envios con tipos de burofax distinto" />'
+	                 ,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.burofaxDistintoDefecto" text="**Debe seleccionar envios con el mismo tipo de burofax configurado por defecto" />');
+				  }	
+				 
+				}
+				 
+				 else if(uniqueArray[0]=='Preparado'){
+				  	//Comprobamos que el tipo de burofax  es el mismo para todos
 				    var arrayTipoBurofax=new Array();
 				    
 				    for (var i=0; i < rowsSelected.length; i++){
@@ -580,82 +796,40 @@
 					if(uniqueArrayTipoBurofax.length == 1){
 					 //Abrimos ventana
 					 var w = app.openWindow({
-							  flow : 'burofax/getEnvioBurofax'
-							  ,width:320
-							  ,autoWidth:true
-							  ,closable:true
-							  ,title : '<s:message code="plugin.precontencioso.grid.burofax.envio" text="**Envio Burofaxes" />'
-							  ,params:{codigoTipoBurofax:uniqueArrayTipoBurofax[0],arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax,arrayIdEnvios:arrayIdEnvios,comboEditable:true}
-							  		  
-							});
-							w.on(app.event.DONE,function(){
-									w.close();
-									refrescarBurofaxGrid();
-							});
-							w.on(app.event.CANCEL, function(){w.close();});
-						}
-					  else{
-						//Mensaje de error
-							Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.tipoDistinto" text="**Envios con tipos de burofax distinto" />'
-		                 ,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.burofaxDistintoDefecto" text="**Debe seleccionar envios con el mismo tipo de burofax configurado por defecto" />');
-					  }	
-					 
-					}
-					 
-					 else if(uniqueArray[0]=='Preparado'){
-					  	//Comprobamos que el tipo de burofax  es el mismo para todos
-					    var arrayTipoBurofax=new Array();
-					    
-					    for (var i=0; i < rowsSelected.length; i++){
-					  		arrayTipoBurofax.push(rowsSelected[i].get('tipo'));
-					 
-						}
+						  flow : 'burofax/getEnvioBurofax'
+						  ,width:320
+						  ,autoWidth:true
+						  ,closable:true
+						  ,title : '<s:message code="plugin.precontencioso.grid.burofax.envio" text="**Envio Burofaxes" />'
+						 ,params:{codigoTipoBurofax:uniqueArrayTipoBurofax[0],arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax,arrayIdEnvios:arrayIdEnvios,comboEditable:false}
 						
-						uniqueArrayTipoBurofax = arrayTipoBurofax.filter(function(item, pos) {
-					    	return arrayTipoBurofax.indexOf(item) == pos;
 						});
-						
-						if(uniqueArrayTipoBurofax.length == 1){
-						 //Abrimos ventana
-						 var w = app.openWindow({
-							  flow : 'burofax/getEnvioBurofax'
-							  ,width:320
-							  ,autoWidth:true
-							  ,closable:true
-							  ,title : '<s:message code="plugin.precontencioso.grid.burofax.envio" text="**Envio Burofaxes" />'
-							 ,params:{codigoTipoBurofax:uniqueArrayTipoBurofax[0],arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax,arrayIdEnvios:arrayIdEnvios,comboEditable:false}
-							
-							});
-							w.on(app.event.DONE,function(){
-									w.close();
-									refrescarBurofaxGrid();
-							});
-							w.on(app.event.CANCEL, function(){w.close();});
-						}
-						else{
-							//Mensaje de error
-							Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.tipoDistinto" text="**Envios con tipos de burofax distinto" />'
-		                 		,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.tipoDistinto" text="**Debe seleccionar envios con el mismo tipo de burofax" />');
-						}
-					    
-					  }
-					
-				    
-				  
-				  }
-				  else{
-					Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.resultadoDistinto" text="**Envios con resultado distinto" />'
-		                 		,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.resultadoDistinto" text="**Debe seleccionar envios con el mismo resultado" />');
+						w.on(app.event.DONE,function(){
+								w.close();
+								refrescarBurofaxGrid();
+						});
+						w.on(app.event.CANCEL, function(){w.close();});
 					}
-			}
-			else{
-				 Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.noDirecciones" text="**No hay direcciones seleccionadas" />'
-                 ,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.noDirecciones" text="**Todas las selecciones deben tener una dirección asociada" />');
-			}
+					else{
+						//Mensaje de error
+						Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.tipoDistinto" text="**Envios con tipos de burofax distinto" />'
+	                 		,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.tipoDistinto" text="**Debe seleccionar envios con el mismo tipo de burofax" />');
+					}
+				    
+				  }
+				
+			    
 			  
-			 
-	
-	
+			  }
+			  else{
+				Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.resultadoDistinto" text="**Envios con resultado distinto" />'
+	                 		,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.resultadoDistinto" text="**Debe seleccionar envios con el mismo resultado" />');
+				}
+		}
+		else{
+			 Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.noDirecciones" text="**No hay direcciones seleccionadas" />'
+                ,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.noDirecciones" text="**Todas las selecciones deben tener una dirección asociada" />');
+		}
 	});
 	
 	
@@ -728,4 +902,343 @@
 		}
 		return true;
 
+	}
+	
+	var comprobarEstadoBotones = function() {
+	
+		if(!btnEnviar.disabled && !validarBotonEnviarHabilitado()) {
+			btnEnviar.setDisabled(true);
+		}
+		
+		if(!btnNuevaDir.disabled && !validarBotonNuevaDirHabilitado()) {
+			btnNuevaDir.setDisabled(true);
+		}		
+		
+		if(!btnEditar.disabled && !validarBotonEditarHabilitado()) {
+			btnEditar.setDisabled(true);
+		}	
+		
+		if(!btnPreparar.disabled && !validarBotonPrepararHabilitado()) {
+			btnPreparar.setDisabled(true);
+		}	
+	}
+	
+	var validarBotonEnviarHabilitado = function() {
+		
+		var rowsSelected=new Array(); 
+		var arrayResultado=new Array();
+		var arrayIdEnvios=new Array();
+		var arrayIdBurofax=new Array();
+		var arrayIdDirecciones=new Array();
+		var tipoBurofax=gridBurofax.getSelectionModel().getSelected().get('tipoBurofax');
+				 
+		rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
+				
+		for (var i=0; i < rowsSelected.length; i++){
+			arrayResultado.push(rowsSelected[i].get('resultado'));
+			arrayIdEnvios.push(rowsSelected[i].get('idEnvio'));
+			arrayIdBurofax.push(rowsSelected[i].get('idBurofax'));
+			 		  
+			if(rowsSelected[i].get('idDireccion') != ''){
+				arrayIdDirecciones.push(rowsSelected[i].get('idDireccion'));
+			}
+		}
+		
+		<%--Comprobamos que hay direcciones seleccionadas en TODAS las selecciones --%>
+		if(myCboxSelModel.getCount() > 0 && arrayIdDirecciones.length == myCboxSelModel.getCount()){	
+			//Parametros para configurar el tipo de burofax
+			var arrayIdDirecciones = Ext.encode(arrayIdDirecciones);
+			var arrayIdBurofax = Ext.encode(arrayIdBurofax);
+			var arrayIdEnvios =	Ext.encode(arrayIdEnvios);
+			
+			//Comprobamos que los resultados son iguales
+			uniqueArray = arrayResultado.filter(function(item, pos) {
+				return arrayResultado.indexOf(item) == pos;
+			});
+			
+			if(uniqueArray.length==1){
+				//Como los resultados son iguales , comprobamos si el estado es NO preparado
+				if(uniqueArray[0]==''){
+					//Comprobamos que el tipo de burofax configurado por defecto es el mismo para todos
+					var arrayTipoBurofax=new Array();
+					    
+					for (var i=0; i < rowsSelected.length; i++){
+						arrayTipoBurofax.push(rowsSelected[i].get('tipo'));
+					}
+						
+					uniqueArrayTipoBurofax = arrayTipoBurofax.filter(function(item, pos) {
+						return arrayTipoBurofax.indexOf(item) == pos;
+					});
+						
+					if(uniqueArrayTipoBurofax.length == 1){
+						return true;
+					}
+					else{
+						return false
+					}	
+				}
+				else if(uniqueArray[0]=='Preparado'){
+					//Comprobamos que el tipo de burofax  es el mismo para todos
+					var arrayTipoBurofax=new Array();
+					    
+					for (var i=0; i < rowsSelected.length; i++){
+						arrayTipoBurofax.push(rowsSelected[i].get('tipo'));
+					}
+						
+					uniqueArrayTipoBurofax = arrayTipoBurofax.filter(function(item, pos) {
+						return arrayTipoBurofax.indexOf(item) == pos;
+					});
+						
+					if(uniqueArrayTipoBurofax.length == 1){
+						return true;
+					}
+					else{
+						return false;
+					}
+				}
+			}
+			else{
+				return false;
+			}
+		}
+		else{
+			return false;
+		}
+				
+		return true;	
+	}
+	
+	var validarBotonesSeleccionUnica = function() {
+		btnPreparar.setDisabled(false);
+		<%-- Si la dirección ha sido borrada y no tiene una asignada se desactiva el botón preparar --%>
+		<%-- if(gridBurofax.getSelectionModel().getSelected().get('direccion') == ''){
+			btnPreparar.setDisabled(true);
+		}--%>
+     		<%-- Si el envio esta en estado preparado, habilitamos el boton editar --%>
+		if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Preparado'){
+			btnEditar.setDisabled(false);
+		}
+		else{
+			btnEditar.setDisabled(true);
+		}
+		
+		
+		<%-- Comprobamos que se ha seleccionado un cliente --%>
+		if(gridBurofax.getSelectionModel().getSelected().get('idCliente') != ''){
+			btnNuevaDir.setDisabled(false);
+		}
+		
+		<%--Si el resultado del envio es enviado y todavia no ha sido enviado habilitamos el boton de notificar --%>
+		if(gridBurofax.getSelectionModel().getSelected().get('idEnvio') != '' && gridBurofax.getSelectionModel().getSelected().get('fechaAcuse') == ''){
+			btnNotificar.setDisabled(false);
+		}
+		
+		<%-- Como se puede enviar sin estar preparado habilitamos el boton enviar--%>
+		btnEnviar.setDisabled(false);
+		
+		<%-- Si el Resultado es notificado habilitamos el boton de añadir notificacion --%>
+		if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Enviado'){
+			btnNotificar.setDisabled(false);
+		}
+		else{
+			btnNotificar.setDisabled(true);
+		}
+		<%-- Si hay un envio seleccionado y su estado es ENVIADO habilitamos el boton de descargar burofax --%>
+		if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Enviado' && myCboxSelModel.getCount() == 1){
+			btnDescargarBurofax.setDisabled(false);
+		}
+		else{
+			btnDescargarBurofax.setDisabled(true);
+		}
+								
+		<%--Si ya se ha producido el envio y se ha añadido informacion de envio se desabilitan todos los botones menos añadir persona ,añadir direccion y descargarBurofax --%>
+		if(gridBurofax.getSelectionModel().getSelected().get('fechaAcuse') != ''){
+			//btnAddPersona.setDisabled(true);
+			btnEnviar.setDisabled(true);
+			//btnNuevaDir.setDisabled(true);
+			btnEditar.setDisabled(true);
+			btnPreparar.setDisabled(true);
+			btnCancelar.setDisabled(true);
+			btnNotificar.setDisabled(true);
+			
+		}
+		else {
+			if(!btnEnviar.disabled && !validarBotonEnviarHabilitado()) {
+				btnEnviar.setDisabled(true);
+			}
+			
+			if(!btnNuevaDir.disabled && !validarBotonNuevaDirHabilitado()) {
+				btnNuevaDir.setDisabled(true);
+			}
+			
+			if(!btnEditar.disabled && !validarBotonEditarHabilitado()) {
+				btnEditar.setDisabled(true);
+			}
+			
+			if(!btnPreparar.disabled && !validarBotonPrepararHabilitado()) {
+				btnPreparar.setDisabled(true);
+			}
+		}
+		var tmp = gridBurofax.getSelectionModel().getSelected().get('idCliente');
+		<%-- Si el Resultado NO es enviado y el estado NO es descartado habilitamos el boton de descartar persona y el idBurofax es distinto de vacio(nos aseguramos que está marcada una persona)--%>
+		if(gridBurofax.getSelectionModel().getSelected().get('resultado') != 'Enviado' && gridBurofax.getSelectionModel().getSelected().get('estado') != 'Descartada' && tmp != ""){
+			btnDescartarPersEnvio.setDisabled(false);
+		}
+		
+		<%-- si la persona esta en estado "Descartada" no se le puede enviar --%>
+		var idBurofaxComparar = gridBurofax.getSelectionModel().getSelected().get('idBurofax');
+		var idDireccionComparar = gridBurofax.getSelectionModel().getSelected().get('idDireccion');
+
+		for (var i = 0; i < gridBurofax.getStore().data.length; i++) { <%-- lo que hacemos en este bucle es recorrer todo el grid, y ver si --%>
+	    	var element = Ext.get(gridBurofax.getView().getRow(i));	   <%-- hay algun burofax con el mismo id que el seleccionado y que su --%>
+	   		var record = gridBurofax.getStore().getAt(i);			   <%-- estado sea "Descartada". Si es asi, desactivamos el boton enviar --%>
+	   		var tmpBurofax = record.data.idBurofax;
+	   		var tmpDireccion = record.data.idDireccion;
+	   		if(tmpBurofax == idBurofaxComparar || tmpDireccion == idDireccionComparar){
+	   			var estadoComparar = record.data.estado;
+	   			if(estadoComparar == 'Descartada'){
+	   				btnEnviar.setDisabled(true);
+	   				break;
+	   			}
+	   		}
+		}
+		
+				
+		if(gridBurofax.getSelectionModel().getSelected().get('estado') == 'Descartada'){
+			btnEnviar.setDisabled(true);
+		}
+		<%-- Si no tiene direccion asignada, no se habilita 
+		if(gridBurofax.getSelectionModel().getSelected().get('idDireccion') != ""){
+			btnBorrarDirOrigenManual.setDisabled(false);
+		}else{
+			btnBorrarDirOrigenManual.setDisabled(true);
+		}--%>
+		<%--Si el burafax se encuentra en Preparado, mientras no se envíe podremos cancelarlo --%>
+		if((gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Preparado' ||  gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Solicitado') && myCboxSelModel.getCount() == 1){
+			btnCancelarEnEstPrep.setDisabled(false);
+		}
+	}
+	
+	var comprobarEsManual = function(idDireccion){
+		debugger;
+			Ext.Ajax.request({
+				url: page.resolveUrl('burofax/saberOrigen')
+				,params: {idDireccion:idDireccion}
+				,method: 'POST'
+				,success: function (result, request)
+				{
+					var r = Ext.util.JSON.decode(result.responseText);
+					var solucion = r.esManual;
+				 	if(solucion){
+						<%--Si ya se ha enviado el burofax, tampoco deja borrar la dirección --%>
+						if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Solicitado' || gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Enviado' ){
+							btnBorrarDirOrigenManual.setDisabled(true);
+						}else{
+							btnBorrarDirOrigenManual.setDisabled(false);	
+							var idClienteComparar = gridBurofax.getSelectionModel().getSelected().get('idCliente');
+							for (var i = 0; i < gridBurofax.getStore().data.length; i++) {
+						    	var element = Ext.get(gridBurofax.getView().getRow(i));
+						   		var record = gridBurofax.getStore().getAt(i);
+						   		var tmpDireccion = record.data.idDireccion;
+						   		if(tmpDireccion == idDireccion && (idClienteComparar == null || idClienteComparar == '')){
+						   			btnBorrarDirOrigenManual.setDisabled(true);
+						   		}
+							}
+						}
+		  			}else{
+						btnBorrarDirOrigenManual.setDisabled(true);
+		  			}
+				}
+			});
+	}
+	
+	var validarBotonNuevaDirHabilitado = function() {
+		var arrayIdClientes=new Array();
+			 
+		rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
+			
+		for (var i=0; i < rowsSelected.length; i++){
+		  arrayIdClientes.push(rowsSelected[i].get('idCliente'));
+		}
+		
+		uniqueArray = arrayIdClientes.filter(function(item, pos) {
+		    return arrayIdClientes.indexOf(item) == pos;
+		});
+		
+		if(uniqueArray.length==1){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
+	var validarBotonEditarHabilitado = function() {
+		var rowsSelected=new Array(); 
+		
+		var arrayIdTipoBurofax=new Array();
+		var arrayIdEnvios=new Array();
+		var arrayResultados=new Array();
+			 
+		rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
+			
+		for (var i=0; i < rowsSelected.length; i++){
+		  arrayIdEnvios.push(rowsSelected[i].get('idEnvio'));
+		  arrayIdTipoBurofax.push(rowsSelected[i].get('idTipoBurofax'));
+		  arrayResultados.push(rowsSelected[i].get('resultado'));
+		   
+		}
+		
+		<%-- Comprobamos que todas las filas seleccionadas estan en estado Preparado --%>
+		uniqueArrayResultados = arrayResultados.filter(function(item, pos) {
+		    return arrayResultados.indexOf(item) == pos;
+		});		
+		
+		if(uniqueArrayResultados.length == 1 && uniqueArrayResultados[0] == 'Preparado'){
+		
+			<%--Para saber si las filas seleccionadas tienen el mismo tipo de burofax, eliminamos los elementos duplicados del array
+				entonces si todas las filas seleccionadas tienen el mismo tipo de burofax el array tendrá un tamaño=1 --%>
+			uniqueArray = arrayIdTipoBurofax.filter(function(item, pos) {
+			    return arrayIdTipoBurofax.indexOf(item) == pos;
+			});
+			
+			var arrayIdEnvios = Ext.encode(arrayIdEnvios);
+			
+			
+		    <%--Comprobamos que el tamaño del array es 1 --%>
+		    if(uniqueArray.length==1){
+				return true;
+			}
+			else {
+			  	return false;
+			}
+		}
+		else {
+			 return false;
+		}
+	}
+	
+	var validarBotonPrepararHabilitado = function() {
+		var rowsSelected=new Array(); 
+		var arrayIdBurofax=new Array();
+		var arrayIdDirecciones=new Array();
+		var arrayIdEnvios=new Array();
+			 
+		rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
+			
+		for (var i=0; i < rowsSelected.length; i++){
+		  arrayIdBurofax.push(rowsSelected[i].get('idBurofax'));
+		  if(rowsSelected[i].get('idDireccion') != ''){
+		  	arrayIdDirecciones.push(rowsSelected[i].get('idDireccion'));
+		  }
+		  arrayIdEnvios.push(rowsSelected[i].get('idEnvio'));
+		}
+
+		<%--Comprobamos que hay direcciones seleccionadas en TODAS las selecciones --%>
+     	if(myCboxSelModel.getCount() > 0 && arrayIdDirecciones.length == myCboxSelModel.getCount()){
+     		return true;
+	  	}
+	  	else {
+	  		return false;
+	  	}
 	}

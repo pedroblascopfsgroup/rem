@@ -203,7 +203,7 @@ public abstract class EXTAbstractTareaNotificacionManager extends BusinessOperat
 		if (cantidadSeguimientoSistematico > 0) {
 			TareaNotificacion tareaGV = new TareaNotificacion();
 			tareaGV.setTarea("Gestion de Seguimiento Sistematico");
-			tareaGV.setDescripcionTarea("Clientes por gestionar: " + cantidadSeguimientoSistematico);
+			tareaGV.setDescripcionTarea("Clientes a gestionar Seguimiento Sistemático: " + cantidadSeguimientoSistematico);
 			tareaGV.setTipoEntidad((DDTipoEntidad) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDTipoEntidad.class, DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE));
 			tareaGV.setSubtipoTarea(subtipoTareaDao.buscarPorCodigo(SubtipoTarea.CODIGO_GESTION_SEGUIMIENTO_SISTEMATICO));
 			listaRetorno.add(tareaGV);
@@ -230,7 +230,7 @@ public abstract class EXTAbstractTareaNotificacionManager extends BusinessOperat
 		if (cantidadSeguimientoSintomatico > 0) {
 			TareaNotificacion tareaGV = new TareaNotificacion();
 			tareaGV.setTarea("Gestion de Seguimiento Sintomatico");
-			tareaGV.setDescripcionTarea("Clientes por gestionar: " + cantidadSeguimientoSintomatico);
+			tareaGV.setDescripcionTarea("Clientes a gestionar Seguimiento Sintomático: " + cantidadSeguimientoSintomatico);
 			tareaGV.setTipoEntidad((DDTipoEntidad) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDTipoEntidad.class, DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE));
 			tareaGV.setSubtipoTarea(subtipoTareaDao.buscarPorCodigo(SubtipoTarea.CODIGO_GESTION_SEGUIMIENTO_SINTOMATICO));
 			listaRetorno.add(tareaGV);
@@ -256,7 +256,7 @@ public abstract class EXTAbstractTareaNotificacionManager extends BusinessOperat
 		if (cantidadVencidos > 0) {
 			TareaNotificacion tareaGV = new TareaNotificacion();
 			tareaGV.setTarea("Gestion de Vencidos");
-			tareaGV.setDescripcionTarea("Clientes por gestionar: " + cantidadVencidos);
+			tareaGV.setDescripcionTarea("Clientes a gestionar vencidos: " + cantidadVencidos);
 			tareaGV.setTipoEntidad((DDTipoEntidad) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDTipoEntidad.class, DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE));
 			tareaGV.setSubtipoTarea(subtipoTareaDao.buscarPorCodigo(SubtipoTarea.CODIGO_GESTION_VENCIDOS));
 			listaRetorno.add(tareaGV);

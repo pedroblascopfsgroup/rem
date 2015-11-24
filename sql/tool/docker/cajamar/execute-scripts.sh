@@ -25,14 +25,16 @@ mkdir -p $(dirname $DOCKER_INNER_ERROR_LOG)
 echo "STARTING: $(date)" > $DOCKER_INNER_ERROR_LOG
 
 function log_script_output () {
-	if [[ $(ls *.log 2>/dev/null) ]]; then
-		for log in $(ls -ltr *.log | awk '{print $9}'); do 
-			echo "===============================" &>> $DOCKER_INNER_ERROR_LOG
-			echo "$log" &>> $DOCKER_INNER_ERROR_LOG
-			echo "===============================" &>> $DOCKER_INNER_ERROR_LOG
-			cat $log &>> $DOCKER_INNER_ERROR_LOG
-		done
-	fi
+	for d in $(find . -type d | sort); do
+		if [[ $(ls *.log 2>/dev/null) ]]; then
+			for log in $(ls -ltr *.log | awk '{print $9}'); do 
+				echo "===============================" &>> $DOCKER_INNER_ERROR_LOG
+				echo "$log" &>> $DOCKER_INNER_ERROR_LOG
+				echo "===============================" &>> $DOCKER_INNER_ERROR_LOG
+				cat $log &>> $DOCKER_INNER_ERROR_LOG
+			done
+		fi
+	done
 }
 
 ##
@@ -61,7 +63,7 @@ if [[ -d $PACKAGE_TAGS_DIR ]]; then
 	echo "<Docker [$CONTAINER_NAME] WARNING> Se van a ejecutar los scripts DxL por etapas."
 	run_scripts $PACKAGE_TAGS_DIR/run-scripts-package.sh
 elif [[ -d $PACKAGE_DIR ]]; then
-	run_scripts $PACKAGE_DIR/DDL/DDL-scripts.sh $PACKAGE_DIR/DDL/DML-scripts.sh
+	run_scripts $PACKAGE_DIR/DDL/DDL-scripts.sh $PACKAGE_DIR/DML/DML-scripts.sh
 else
 	echo "<Docker [$CONTAINER_NAME] ERROR> $PACKAGE_DIR no existe."
 	exit 1

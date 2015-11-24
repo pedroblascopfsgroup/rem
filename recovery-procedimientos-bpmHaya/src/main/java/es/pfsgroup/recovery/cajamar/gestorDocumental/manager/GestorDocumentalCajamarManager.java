@@ -202,7 +202,9 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			}
 
 			outputStream.close();
-			byte[] encoded = Base64.encodeBase64(bytes);
+			
+			byte[] bytessss = "Esto es una prueba de ver como funciona correctamente la codificacion".getBytes();
+			byte[] encoded = Base64.encodeBase64(bytessss);
 			ficheroBase64 = new String(encoded);
 		} catch (Exception e) {
 			logger.error("Se ha producido un error al convertir el fichero en base64");

@@ -478,6 +478,8 @@ public class BurofaxManager implements BurofaxApi {
 				}
 				envioIntegracion.setTipoBurofax(envioBurofax.getTipoBurofax().getDescripcion());
 				envioIntegracion.setFechaSolicitud(new Date());
+				envioIntegracion.setFechaEnvio(new Date());
+				envioIntegracion.setFechaAcuse(new Date());
 				envioIntegracion.setCertificado(certificado);
 				
 		

@@ -783,13 +783,44 @@
 		}
 	});	
 	
+	var btnSolicitarNumsActivos = new Ext.Button({
+		    text: '<s:message code="plugin.nuevoModeloBienes.fichaBien.btnSolicitarNumsActivos" text="**Solicitar Numeros de Activos" />'			
+		    ,iconCls : 'icon_refresh'
+			,cls: 'x-btn-text-icon'
+			,style:'margin-left:2px;padding-top:0px'	    
+	        ,height : 25
+	       	,disabled:true	       			    
+		    ,handler:function(){	    			    
+	     			page.webflow({
+		      		flow:'editbien/solicitarNumsActivosBienes'
+		      		,params:{idBien:bienesSeleccionados}		      		
+		      		,success: function(result,request){
+						if(result.msgError=='1'){
+							Ext.Msg.show({
+								title:'Operaci&oacute;n realizada',
+								msg: 'La solicitud de n&uacute;meros de activos se realiz&oacute; correctamente',
+								buttons: Ext.Msg.OK,
+								icon:Ext.MessageBox.INFO});
+						
+						}else{
+							Ext.Msg.show({
+								title:'Advertencia',
+								msg: result.msgError,
+								buttons: Ext.Msg.OK,
+								icon:Ext.MessageBox.WARNING});
+						}
+			    	}
+				});			
+	        }
+		});	
+	
 	
 	var btnAccionesSubasta = new Ext.Button({
       text    : '<s:message code="plugin.nuevoModeloBienes.subastas.gridLotes.btnAccionesSobreSubastas" text="**Acciones sobre subastas" />',
       style   : 'position:absolute;right:10px;top:5px',
       disabled : false,
       menu : {
-      	items: [btnDescargarPlantillaInstrucciones,btnSubirInstrucciones,btnAddRelacionContratoBien,btnBorrarRelacionContratoBien,btnAgregarBienCargas,btnEditarRevisionCargas
+      	items: [btnDescargarPlantillaInstrucciones,btnSubirInstrucciones,btnSolicitarNumsActivos,btnAddRelacionContratoBien,btnBorrarRelacionContratoBien,btnAgregarBienCargas,btnEditarRevisionCargas
 
       		]}
      })	
@@ -841,6 +872,35 @@
 		btnInstrucLotes.setDisabled(false);
 	});
 	
+	function updateStatusBtnSolicitarNumerosActivos(){
+		btnSolicitarNumsActivos.setDisabled(true);
+		
+		var bienesSinNumActivo = getBienesSinNumActivo();
+				
+		for(i = 0; i < bienesSeleccionados.length; i++){
+			var idSeleccionado = bienesSeleccionados[i];
+			for(j = 0; j < bienesSinNumActivo.length; j++){
+				var idSinNumActivo = bienesSinNumActivo[j];
+				if(idSeleccionado == idSinNumActivo){
+					btnSolicitarNumsActivos.setDisabled(false);
+				}
+			}
+		}
+	}
+	
+	function getBienesSinNumActivo(){
+		var bienesSinNumActivo = [];  
+		for(i=0; i < lotesStore.data.length; i++){
+			for(j = 0; j < lotesStore.data.items[i].data.bienes.length; j++){
+				var idBien = lotesStore.data.items[i].data.bienes[j].idBien;
+				var numActivo = lotesStore.data.items[i].data.bienes[j].numActivo;
+				if(numActivo == null || numActivo == "" || numActivo == "0"){
+					bienesSinNumActivo.push(idBien);
+				}
+			}				
+		}
+		return bienesSinNumActivo;	
+	}
 	
     function expandedRowLote(obj, record, body, rowIndex){ 
     	
@@ -897,6 +957,7 @@
 			            			bienesSeleccionados.push(record.get("idBien"));
 			            		}
 				            }
+				            updateStatusBtnSolicitarNumerosActivos();				           
 			            // Al deseleccionar un bien	lo quitamos del saco de bienes
 			            }, rowdeselect: function( sel, rowIndex, record ) {
 			            	if(!isAsuntoPropiedadBankia()) {   	
@@ -915,7 +976,7 @@
 								btnBorrarRelacionContratoBien.setDisabled(true);
 								btnAddRelacionContratoBien.setDisabled(true);
 			            	}  
-
+							updateStatusBtnSolicitarNumerosActivos();							
 			            }
 					}
 			});

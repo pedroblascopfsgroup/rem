@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
-import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
 import es.capgemini.pfs.diccionarios.comparator.DictionaryComparatorFactory;
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.direccion.api.DireccionApi;
 import es.capgemini.pfs.direccion.dto.DireccionAltaDto;
 import es.capgemini.pfs.direccion.model.DDProvincia;
@@ -482,7 +482,9 @@ public class BurofaxController {
     	}
     	
 		burofaxManager.guardarEnvioBurofax(certificado,listaEnvioBurofaxPCO);
-		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(listaEnvioBurofaxPCO.get(0).getBurofax().getProcedimientoPCO().getProcedimiento().getId());			
+		if(!Checks.estaVacio(listaEnvioBurofaxPCO)){
+			proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(listaEnvioBurofaxPCO.get(0).getBurofax().getProcedimientoPCO().getProcedimiento().getId());
+		}
     		
     	return DEFAULT;
     }
@@ -521,7 +523,7 @@ public class BurofaxController {
 	    	fecAcuse = webDateFormat.parse(fechaAcuse);
 	    	fecEnvio = webDateFormat.parse(fechaEnvio);
     	}catch(Exception e){
-    		logger.error(e);
+    		logger.error("configuraInformacionEnvio: " + e);
     	}
     	burofaxManager.guardaInformacionEnvio(arrayIdEnvios, idResultadoBurofax, fecEnvio, fecAcuse);
     
@@ -536,12 +538,18 @@ public class BurofaxController {
 	private String descargarBurofax(WebRequest request, ModelMap model,@RequestParam(value = "idEnvio", required = true) Long idEnvio){
 		
     	BurofaxEnvioIntegracionPCO burofaxEnvio=burofaxManager.getBurofaxEnvioIntegracionByIdEnvio(idEnvio);
+
 		if(!Checks.esNulo(burofaxEnvio) && !Checks.esNulo(burofaxEnvio.getContenido())){
 			EnvioBurofaxPCO envioBurofax = burofaxManager.getEnvioBurofaxById(idEnvio);
 			if(!Checks.esNulo(envioBurofax)){
 				FileItem fileitem = burofaxManager.generarDocumentoBurofax(envioBurofax);
-				fileitem.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-				fileitem.setFileName("BUROFAX-"+burofaxEnvio.getCliente().replace(",","").trim()+".docx");
+				fileitem.setContentType("application/pdf");
+				if(!Checks.esNulo(burofaxEnvio.getNombreFichero())){
+					fileitem.setFileName(burofaxEnvio.getNombreFichero());
+				}
+				else{
+					fileitem.setFileName("BUROFAX-"+burofaxEnvio.getCliente().replace(",","").trim()+".pdf");
+				}
 				model.put("fileItem", fileitem);
 			}
 		}

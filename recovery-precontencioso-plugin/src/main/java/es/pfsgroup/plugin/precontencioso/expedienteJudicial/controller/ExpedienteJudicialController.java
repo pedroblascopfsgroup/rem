@@ -339,6 +339,7 @@ public class ExpedienteJudicialController {
 		
 		List<ProcedimientoPcoGridDTO> procedimientosPcoGrid = procedimientoPcoApi.busquedaProcedimientosPcoPorFiltro(filter);
 
+		
 		model.put("expedientes", procedimientosPcoGrid);
 
 		Integer totalCount = procedimientoPcoApi.countBusquedaPorFiltro(filter);

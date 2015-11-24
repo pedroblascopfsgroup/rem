@@ -40,8 +40,6 @@ public class OracleJdbcFacade implements JDBCConnectionFacace{
      * @throws SQLException
      */
     public ResultSet connectAndExecute(final String query) throws SQLException {
-
-        query.replaceAll("${master.schema}", appProperties.getProperty("master.schema"));        
         
         final Connection conn = DriverManager.getConnection(url, appProperties);
         connections.add(conn);

@@ -4,8 +4,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,15 +19,21 @@ import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.parametrizacion.dao.ParametrizacionDao;
 import es.capgemini.pfs.persona.model.Persona;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.GenerarLiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dao.DatosLiquidacionDao;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDTipoLiquidacionPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.vo.BienLiqVO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.vo.ConceptoLiqVO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.vo.DatosGeneralesLiqVO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.vo.InteresesContratoLiqVO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.vo.RecibosLiqVO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBInformacionRegistralBienInfo;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBLocalizacionesBienInfo;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.recovery.geninformes.api.GENINFInformesApi;
 
 @Service
@@ -97,10 +106,12 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 		// calculated data
 		datosLiquidacion.putAll(obtenerDatosLiquidacionPco(liquidacion));
 		datosLiquidacion.putAll(generarCamposSumRecibos(recibosLiq));
+		datosLiquidacion.putAll(generarInteresesContrato(interesesContratoLiq));
+		datosLiquidacion.putAll(generarCamposConceptosFijos(datosGenerales.get(0), recibosLiq, interesesContratoLiq));
 
-		datosLiquidacion.put("FECHA_FIRMA", "[NO DISPONIBLE]");
-		datosLiquidacion.put("CIUDAD_FIRMA", "[NO DISPONIBLE]");
-		datosLiquidacion.put("INI_LQ07_CDINTS", "[NO DISPONIBLE]");
+		datosLiquidacion.put("NUM_CONTRATO", datosGenerales.get(0).IDPRIG());
+		datosLiquidacion.put("FECHA_FIRMA", datosGenerales.get(0).FEVACM());
+		datosLiquidacion.put("CIUDAD_FIRMA", "Madrid");
 
 		return datosLiquidacion;
 	}
@@ -113,14 +124,76 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 		}
 
 		// Contrato
-		datosLiquidacion.put("NOMBRES_TITULARES", liquidacion.getContrato().getNombresTitulares());
-		datosLiquidacion.put("NOMBRES_FIADORES", obtenerNombreFiadores(liquidacion));
-		datosLiquidacion.put("NUM_CONTRATO", liquidacion.getContrato().getNroContratoFormat());
-		datosLiquidacion.put("NOMBRE_APODERADO", liquidacion.getApoderado().getUsuario().getApellidoNombre());
+		datosLiquidacion.put("NOMBRES_TITULARES", obtenerNombresTitulares(liquidacion));
+		datosLiquidacion.put("NOMBRES_FIADORES", obtenerNombresFiadores(liquidacion));
+		datosLiquidacion.put("NOMBRE_APODERADO", obtenerNombreApoderado(liquidacion));
 
 		// Bienes
-		List<Bien> bienes = liquidacion.getContrato().getBienes();
+		List<BienLiqVO> bienes = new ArrayList<BienLiqVO>(); 
+		
+		StringBuffer bienesConcatenados = new StringBuffer();
+		int size = liquidacion.getContrato().getBienes().size();
+		int i=0;
+		
+		for (Bien bien : liquidacion.getContrato().getBienes()) {
+			NMBBien nmbBien = (NMBBien) bien;
+
+			NMBInformacionRegistralBienInfo infoRegistral = nmbBien.getDatosRegistralesActivo();
+			NMBLocalizacionesBienInfo localizacion = nmbBien.getLocalizacionActual();
+
+			// Numero finca
+			String numFinca = "";
+			if (infoRegistral != null && infoRegistral.getNumFinca() != null) {
+				numFinca = " FINCA " + infoRegistral.getNumFinca();	
+				bienesConcatenados.append(numFinca);
+			}
+
+			// Numero Registro
+			String numRegistro = "";
+			if (infoRegistral != null && infoRegistral.getNumRegistro() != null) {
+				numRegistro = " NUM.R " + infoRegistral.getNumRegistro();
+				bienesConcatenados.append(numRegistro);
+			}
+
+			// Localizacion registro
+			String locRegistro = "";
+			if (infoRegistral != null && infoRegistral.getLocalidad() != null && infoRegistral.getLocalidad().getDescripcion() != null) {
+				locRegistro = " LOC.R " + infoRegistral.getLocalidad().getDescripcion();
+				bienesConcatenados.append(locRegistro);
+			}
+
+			String nombreVia = "";
+			if (localizacion != null && localizacion.getNombreVia() != null) {
+				nombreVia = localizacion.getNombreVia();
+			}
+
+			String numeroDomicilio = "";
+			if (localizacion != null && localizacion.getNumeroDomicilio() != null) {
+				numeroDomicilio = localizacion.getNumeroDomicilio();				
+			}
+
+			// Direccion
+			String direccion = nombreVia + " " + numeroDomicilio + " ";
+			bienesConcatenados.append(direccion);
+
+			// Localidad
+			String localidad = "";
+			if (localizacion != null && localizacion.getLocalidad() != null && localizacion.getLocalidad().getDescripcion() != null) {
+				localidad = localizacion.getLocalidad().getDescripcion();
+				bienesConcatenados.append(localidad);
+			}
+			
+			i++;
+			if(i == size-1) bienesConcatenados.append(" y ");
+			else if(i<size) bienesConcatenados.append(", ");			
+			
+
+			BienLiqVO bienVo = new BienLiqVO(numFinca + numRegistro + locRegistro, direccion, localidad);
+			bienes.add(bienVo);
+		}
+
 		datosLiquidacion.put("BIENES", bienes);
+		datosLiquidacion.put("BIENES_CONCATENADOS", bienesConcatenados.toString());
 
 		if (!liquidacion.getContrato().getTitulares().isEmpty()) {
 			Persona titualPrincipal = liquidacion.getContrato().getTitulares().get(0);
@@ -132,16 +205,64 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 		return datosLiquidacion;
 	}
 
-	private String obtenerNombreFiadores(final LiquidacionPCO liquidacion) {
+	private String obtenerNombresFiadores(final LiquidacionPCO liquidacion) {
 		StringBuilder nombresFiadores = new StringBuilder("");
-		for (ContratoPersona cp : liquidacion.getContrato().getContratoPersona()) {
+		List<ContratoPersona> contratosPersona = liquidacion.getContrato().getContratoPersona();
+
+		int i = 0;
+		for (ContratoPersona cp : contratosPersona) {
+            i++;
             if (cp.isAvalista()) {
-            	nombresFiadores.append(" ").append(cp.getPersona().getNom50());
+            	nombresFiadores.append(cp.getPersona().getNom50());
+
+                // mientras no sea el ultimo registro se concatenan los nombres con y
+                if (contratosPersona.size() > i) {
+                	nombresFiadores.append(" y ");
+                }
             }
         }
 
 		return nombresFiadores.toString();
 	}
+
+	private String obtenerNombresTitulares(final LiquidacionPCO liquidacion) {
+		StringBuilder nombresTitulares = new StringBuilder("");
+		List<Persona> personasTitulares = liquidacion.getContrato().getTitulares();
+
+		int i = 0;
+		for (Persona p : personasTitulares) {
+            i++;
+            nombresTitulares.append(p.getNom50());
+
+            // mientras no sea el ultimo registro se concatenan los nombres con y
+            if (personasTitulares.size() > i) {
+            	nombresTitulares.append(" y ");
+            }
+        }
+
+		return nombresTitulares.toString();
+	}
+
+    private String obtenerNombreApoderado(final LiquidacionPCO liquidacion) {
+    	StringBuilder nombreApoderado = new StringBuilder("");
+
+    	if (liquidacion.getApoderado() == null) {
+    		nombreApoderado.append("[NO-DISPONIBLE]");
+    		return nombreApoderado.toString();
+    	}
+
+    	Usuario apoderado = liquidacion.getApoderado().getUsuario();
+
+    	if (apoderado.getNombre() != null) {
+        	nombreApoderado.append(apoderado.getNombre()).append(" ");
+        }
+
+        if (apoderado.getApellidos() != null) {
+        	nombreApoderado.append(apoderado.getApellidos());
+        }
+
+        return nombreApoderado.toString();
+    }
 
 	private HashMap<String, Object> generarCamposSumRecibos(List<RecibosLiqVO> recibosLiq) {
 		HashMap<String, Object> datosLiquidacion = new HashMap<String, Object>();
@@ -162,14 +283,142 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 			imdeud = imdeud.add(recibo.getRCB_IMDEUD());
 		}
 
-		datosLiquidacion.put("SUM_LQ04_IMCPRC", imcprc);
-		datosLiquidacion.put("SUM_LQ04_IMPRTV", imprtv);
-		datosLiquidacion.put("SUM_LQ04_IMCGTA", imcgta);
-		datosLiquidacion.put("SUM_LQ04_IMINDR", imindr);
-		datosLiquidacion.put("SUM_LQ04_IMBIM4", imbim4);
-		datosLiquidacion.put("SUM_LQ04_IMDEUD", imdeud);
+		datosLiquidacion.put("SUM_LQ04_IMCPRC", NumberFormat.getInstance(new Locale("es", "ES")).format(imcprc));
+		datosLiquidacion.put("SUM_LQ04_IMPRTV", NumberFormat.getInstance(new Locale("es", "ES")).format(imprtv));
+		datosLiquidacion.put("SUM_LQ04_IMCGTA", NumberFormat.getInstance(new Locale("es", "ES")).format(imcgta));
+		datosLiquidacion.put("SUM_LQ04_IMINDR", NumberFormat.getInstance(new Locale("es", "ES")).format(imindr));
+		datosLiquidacion.put("SUM_LQ04_IMBIM4", NumberFormat.getInstance(new Locale("es", "ES")).format(imbim4));
+		datosLiquidacion.put("SUM_LQ04_IMDEUD", NumberFormat.getInstance(new Locale("es", "ES")).format(imdeud));
 
 		return datosLiquidacion;
+	}
+
+	private HashMap<String, Object> generarInteresesContrato(List<InteresesContratoLiqVO> interesesContratoLiq) {
+		HashMap<String, Object> datosLiquidacion = new HashMap<String, Object>();
+
+		if (interesesContratoLiq.isEmpty()) {
+			datosLiquidacion.put("INI_LQ07_CDINTS", "[NO-DISPONIBLE]");
+			return datosLiquidacion;
+		}
+
+		datosLiquidacion.put("INI_LQ07_CDINTS", interesesContratoLiq.get(0).CDINTS());
+
+		return datosLiquidacion;
+	}
+
+	private HashMap<String, Object> generarCamposConceptosFijos(final DatosGeneralesLiqVO datosGeneralesLiq, final List<RecibosLiqVO> recibosLiq, final List<InteresesContratoLiqVO> interesesContratoLiq) {
+		List<ConceptoLiqVO> conceptos = new ArrayList<ConceptoLiqVO>();
+
+		if (recibosLiq.isEmpty()) {
+			return new HashMap<String, Object>();
+		}
+
+		// saldo variable calculado en cada concepto respecto al anterior
+		BigDecimal saldo = BigDecimal.ZERO;
+
+		// Capital Inicial
+		BigDecimal capitalInical = datosGeneralesLiq.getDGC_IMCCNS();
+		saldo = calculateSaldo(saldo, capitalInical, null);
+		conceptos.add(new ConceptoLiqVO(datosGeneralesLiq.getDGC_FEFOEZ(), "Capital inicial", capitalInical, null, saldo));
+
+		// Capital Amortizado
+		BigDecimal capitalAmortizado = datosGeneralesLiq.getDGC_IMCPAM();
+		saldo = calculateSaldo(saldo, null, capitalAmortizado);
+		conceptos.add(new ConceptoLiqVO(recibosLiq.get(0).getRCB_FEVCTR(), "Capital amortizado", null, capitalAmortizado, saldo));
+
+		// Comision
+		conceptos.add(new ConceptoLiqVO(datosGeneralesLiq.getDGC_FEVACM(), "Comisión", BigDecimal.ZERO, null, saldo));
+
+		// Intereses ordinarios
+		BigDecimal tipoInteresAgrupado = null;
+		BigDecimal sumIntereses = BigDecimal.ZERO;
+		int i = 0;
+
+		for (RecibosLiqVO recibo : recibosLiq) {
+			i++;
+
+			BigDecimal tipoInteresActual = recibo.getRCB_CDINTS();
+
+			// Primera iteracion no tiene un tipo definido
+			if (tipoInteresAgrupado == null) {
+				tipoInteresAgrupado = tipoInteresActual;
+			}
+
+			// agrupacion de intereses ordinarios del mismo tipo de interes
+			if (tipoInteresAgrupado.equals(tipoInteresActual)) {
+				sumIntereses = sumIntereses.add(recibo.getRCB_IMPRTV());
+			} else {
+				if (!BigDecimal.ZERO.equals(recibo.getRCB_CDINTS())) {
+					// nuevo concepto basado en la sumatoria de los intereses anteriores
+					saldo = calculateSaldo(saldo, sumIntereses, null);
+					conceptos.add(new ConceptoLiqVO(recibo.getRCB_FEVCTR(), "Intereses al " + tipoInteresAgrupado + " %", sumIntereses, null, saldo));
+	
+					sumIntereses = BigDecimal.ZERO;
+					sumIntereses = sumIntereses.add(recibo.getRCB_IMPRTV());
+					tipoInteresAgrupado = tipoInteresActual;
+				}
+			}
+
+			// En caso de que sea el ultimo registro de la lista se añade un nuevo concepto
+			if (i == recibosLiq.size()) {
+				saldo = calculateSaldo(saldo, sumIntereses, null);
+				conceptos.add(new ConceptoLiqVO(recibo.getRCB_FEVCTR(), "Intereses al " + tipoInteresAgrupado + " %", sumIntereses, null, saldo));
+			}
+		}
+
+		// Intereses de demora
+		tipoInteresAgrupado = null;
+		sumIntereses = BigDecimal.ZERO;
+		i = 0;
+		for (RecibosLiqVO recibo : recibosLiq) {
+			i++;
+		
+			BigDecimal tipoInteresActual = recibo.getRCB_CDINTM();
+
+			// Primera iteracion no tiene un tipo definido
+			if (tipoInteresAgrupado == null) {
+				tipoInteresAgrupado = tipoInteresActual;
+			}
+
+			// agrupacion de intereses demora del mismo tipo de interes
+			if (tipoInteresAgrupado.equals(tipoInteresActual)) {
+				sumIntereses = sumIntereses.add(recibo.getRCB_IMINDR());
+			} else {
+				if (!BigDecimal.ZERO.equals(recibo.getRCB_CDINTM())) {
+					// nuevo concepto basado en la sumatoria de los intereses anteriores
+					saldo = calculateSaldo(saldo, sumIntereses, null);
+					conceptos.add(new ConceptoLiqVO(datosGeneralesLiq.getDGC_FEVACM(), "Intereses de demora al " + tipoInteresAgrupado + " %", sumIntereses, null, saldo));
+	
+					sumIntereses = BigDecimal.ZERO;
+					sumIntereses = sumIntereses.add(recibo.getRCB_IMINDR());
+					tipoInteresAgrupado = tipoInteresActual;
+				}
+			}
+
+			// En caso de que sea el ultimo registro de la lista se añade un nuevo concepto
+			if (i == recibosLiq.size()) {
+				saldo = calculateSaldo(saldo, sumIntereses, null);
+				conceptos.add(new ConceptoLiqVO(datosGeneralesLiq.getDGC_FEVACM(), "Intereses de demora al " + tipoInteresAgrupado + " %", sumIntereses, null, saldo));
+			}
+		}
+
+		HashMap<String, Object> datosLiquidacion = new HashMap<String, Object>();
+		datosLiquidacion.put("CONCEPTOS", conceptos);
+		return datosLiquidacion;
+	}
+
+	// saldo = saldo + debe - haber
+	private BigDecimal calculateSaldo(BigDecimal saldo, final BigDecimal debe, final BigDecimal haber) {
+
+		if (debe != null) {
+			saldo = saldo.add(debe);		
+		}
+
+		if (haber != null) {
+			saldo = saldo.subtract(haber);
+		}
+
+		return saldo;
 	}
 
 	@Override

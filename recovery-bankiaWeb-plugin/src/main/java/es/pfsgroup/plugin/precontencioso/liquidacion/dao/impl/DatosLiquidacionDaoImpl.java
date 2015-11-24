@@ -105,6 +105,8 @@ public class DatosLiquidacionDaoImpl implements DatosLiquidacionDao {
 		plainQueryInteresesContratoLiq.append(" FROM INC_INTERESES_CONTRATO_LIQ ");
 		plainQueryInteresesContratoLiq.append(" WHERE BORRADO = 0 ");
 		plainQueryInteresesContratoLiq.append("  AND INC_PCO_LIQ_ID = :idLiquidacion ");
+		plainQueryInteresesContratoLiq.append("  AND INC_CDTIIN != 'D' ");
+		plainQueryInteresesContratoLiq.append("	ORDER BY INC_FEPTDE ASC ");
 
 		return plainQueryInteresesContratoLiq.toString();
 	}

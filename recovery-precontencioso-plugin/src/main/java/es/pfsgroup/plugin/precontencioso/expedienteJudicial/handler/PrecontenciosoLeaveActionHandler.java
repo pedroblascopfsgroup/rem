@@ -32,6 +32,9 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 	
 	private static final String TAREA_REGISTRAR_TOMA_DEC_COMBO_PROC_PROPUESTO = "proc_propuesto";
 	private static final String TAREA_REGISTRAR_TOMA_DEC_COMBO_PROC_INICIAR = "proc_a_iniciar";
+	private static final String PROYECTO_HAYA = "HAYA";
+	private static final String USU_MIGRACION_PCO = "MIGRAPCO";
+	
 
 	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -134,8 +137,13 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 		} else if (PrecontenciosoBPMConstants.PCO_SubsanarCambioProc.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
 		} else if (PrecontenciosoBPMConstants.PCO_AsignacionGestores.equals(tex.getTareaProcedimiento().getCodigo())) {
-			
-			executor.execute("plugin.precontencioso.inicializarPco", prc);
+			if(PROYECTO_HAYA.equalsIgnoreCase(precontenciosoContext.getRecovery())){
+				if(!(!Checks.esNulo(prc.getAuditoria()) && USU_MIGRACION_PCO.equals(prc.getAuditoria().getUsuarioCrear()))){
+					executor.execute("plugin.precontencioso.inicializarPco", prc);
+				}
+			} else {
+				executor.execute("plugin.precontencioso.inicializarPco", prc);
+			}
 			
 		} else if (PrecontenciosoBPMConstants.PCO_DecTipoProcAutomatica.equals(tex.getTareaProcedimiento().getCodigo())) {
 			

@@ -107,10 +107,6 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
-	
-	@Autowired
-	private GenericABMDao genericdDao;
-
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_ALTA_DOCUMENTO)
 	@Transactional(readOnly = false)
@@ -310,7 +306,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			claveRel = contrato.getNroContrato();
 		} else if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidad)) {
 			EXTAsunto asunto = EXTAsunto.instanceOf(asuntoDao.get(idEntidad));
-			if(uploadForm != null) {	
+			if(uploadForm != null) {				
 		        EXTAdjuntoAsunto adjuntoAsunto = new EXTAdjuntoAsunto(uploadForm.getFileItem());
 		        
 		        if (!Checks.esNulo(tipoDocumento) && !tipoDocumento.equals("")) {

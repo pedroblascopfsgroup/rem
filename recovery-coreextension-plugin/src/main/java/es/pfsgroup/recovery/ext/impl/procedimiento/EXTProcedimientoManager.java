@@ -439,11 +439,6 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 		prc.setPlazoParalizacion(null);
 
 		genericDao.save(MEJProcedimiento.class, prc);
-
-		// Integración para enviar el procedimiento, sólo para los originales
-		if (envioMsg) {
-			integracionBPMService.activarBPM(prc);
-		}
 		
 		if (this.accionesAdicionalTrasDesparalizar!=null) {
 			for (AccionDesparalizarProcedimiento accion : this.accionesAdicionalTrasDesparalizar) {
@@ -452,7 +447,9 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 		}
 		
 		// Integración para enviar el procedimiento, sólo para los originales 
-		integracionBPMService.activarBPM(prc);
+		if (envioMsg) {
+			integracionBPMService.activarBPM(prc);
+		}
 		
 	}
 	

@@ -7,6 +7,8 @@
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms" %>
 <fwk:page>
 
+	var codigoTipoAcuerdoDacion = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo.TIPO_DACION" />';
+
 	var labelStyle = 'width:185px;font-weight:bolder",width:375';
 	var labelStyleAjusteColumnas = 'width:185px;height:40px;font-weight:bolder",width:375';
 	//var labelStyleDescripcion = 'width:185x;height:60px;font-weight:bolder",width:700';
@@ -55,7 +57,7 @@
 	});
 	
 	comboTipoAcuerdo.on('select', function() {
-	    
+	
 	    creaCamposDynamics(this);
 	    
     });
@@ -112,6 +114,12 @@
 	
 		
 	var creaCamposDynamics = function (cmp) {
+		if (cmp.getValue()!='' && cmp.getStore().getById(cmp.getValue()).data['codigo']==codigoTipoAcuerdoDacion) {
+			bienesFieldSet.show();
+		} else {
+			bienesFieldSet.hide();
+		}
+	
        	Ext.Ajax.request({
 			url: page.resolveUrl('mejacuerdo/getCamposDinamicosTerminosPorTipoAcuerdo')
 			,method: 'POST'
@@ -599,6 +607,7 @@ if("${esPropuesta}" == "true"){
 		 	comboBienes
 		]		
 		,defaults :  {xtype : 'fieldset', autoHeight : true, border : false, width:600 }
+		,hidden: true
 	});	                                            	
 
    var panelAltaTermino=new Ext.Panel({

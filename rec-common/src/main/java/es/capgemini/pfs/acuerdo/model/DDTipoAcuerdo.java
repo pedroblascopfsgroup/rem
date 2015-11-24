@@ -33,6 +33,8 @@ public class DDTipoAcuerdo implements Dictionary, Auditable {
     public static final String CODIGO_PLAN_PAGO = "PLAN_PAGO";
     
     public static final String SIN_PROPUESTA = "-1";
+    
+    public static final String TIPO_DACION = "DA_CV";
 
     @Id
     @Column(name = "DD_TPA_ID")

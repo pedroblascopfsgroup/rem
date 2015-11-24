@@ -8,6 +8,8 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 
@@ -25,6 +27,7 @@ import es.pfsgroup.recovery.Encriptador;
  */
 public class DataSourceManager implements Initializable {
 
+	private static Log logger = LogFactory.getLog(EntityDataSource.class);
 
     public static final String JNDI_NAME_KEY = "jndiName";
     public static final String DRIVER_CLASS_NAME_KEY = "driverClassName";
@@ -104,6 +107,7 @@ public class DataSourceManager implements Initializable {
             }
             info += "]";
 
+        	logger.info(String.format("Inicializando DataSource entidad [%s]...", entidad.getDescripcion()));
             eventManager.fireEvent(EventManager.GENERIC_CHANNEL, "db processing [" + info + "]");
 
             InitializingDataSourceFactoryBean dataSourceFactory = new InitializingDataSourceFactoryBean();
@@ -141,18 +145,22 @@ public class DataSourceManager implements Initializable {
                     // Force initialize
                     dataSource = (DataSource) dataSourceFactory.getObject();
                 } catch (Exception e) {
+                	logger.error(String.format("Error de conexión de Base de Datos a la entidad [%s]!!!", entidad.getDescripcion()), e);
                     eventManager.fireEvent(EventManager.ERROR_CHANNEL, new FrameworkException(e, "No se ha podido crear el datasource " + info));
                 }
             }
             if (dataSource != null) {
+            	logger.info("DataSource inicializado correctamente!");
                 targetDataSources.put(entidad.getId(), dataSource);
             }
         }
 
         // Registrar datasources creados en el RoutingDatasource
+    	logger.info("Inicializando DataSource entidad [MASTER]...");
         entityDataSource.setDefaultTargetDataSource(masterDataSource);
         targetDataSources.put(MASTER_DATASOURCE_ID, masterDataSource);
         entityDataSource.registerTargetDataSources(targetDataSources);
+    	logger.info("DataSource inicializado correctamente!");
     }
 
     /**

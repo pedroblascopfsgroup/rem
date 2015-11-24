@@ -2,11 +2,14 @@ package es.pfsgroup.recovery.hrebcc.manager;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import sun.reflect.generics.visitor.Reifier;
+import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.contrato.dao.EXTContratoDao;
 import es.capgemini.pfs.contrato.model.EXTContrato;
+import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -14,7 +17,7 @@ import es.pfsgroup.recovery.hrebcc.api.RiesgoOperacionalApi;
 import es.pfsgroup.recovery.hrebcc.dto.ActualizarRiesgoOperacionalDto;
 import es.pfsgroup.recovery.hrebcc.model.CntRiesgoOperacional;
 import es.pfsgroup.recovery.hrebcc.model.DDRiesgoOperacional;
-import es.pfsgroup.recovery.integration.bpm.DiccionarioDeCodigos;
+import es.pfsgroup.recovery.hrebcc.model.Vencidos;
 
 @Service
 public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
@@ -29,7 +32,8 @@ public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 	GenericABMDao genericDao;
 	
 	@Override
-	public void ActualizarRiesgoOperacional(ActualizarRiesgoOperacionalDto dto) {
+	@Transactional
+	public void actualizarRiesgoOperacional(ActualizarRiesgoOperacionalDto dto) {
 		if (!Checks.esNulo(dto.getIdContrato()) && !Checks.esNulo(dto.getCodRiesgoOperacional())) {
 			//Obtenemos el contrato enviado
 			EXTContrato contrato = (EXTContrato)contratoDao.get(dto.getIdContrato());
@@ -58,7 +62,8 @@ public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 	}
 	
 	@Override
-	public DDRiesgoOperacional ObtenerRiesgoOperacionalContrato(Long cntId) {
+	@BusinessOperation(overrides = PrimariaBusinessOperation.BO_CNT_MGR_GET_RIESGO)
+	public DDRiesgoOperacional obtenerRiesgoOperacionalContrato(Long cntId) {
 		DDRiesgoOperacional resultado = null;
 		
 		if (!Checks.esNulo(cntId)) {
@@ -73,5 +78,21 @@ public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 		}
 		
 		return resultado;
+	}
+	
+	@Override
+	@BusinessOperation(overrides = PrimariaBusinessOperation.BO_CNT_MGR_GET_VENCIDOS)
+	public Vencidos obtenerVencidosByCntId(Long cntId){
+		Vencidos resulVencidos = null;
+		
+		if(!Checks.esNulo(cntId)){
+			Vencidos vencidos = genericDao.get(Vencidos.class, genericDao.createFilter(FilterType.EQUALS, "cntId", cntId));
+			
+			if(!Checks.esNulo(vencidos)){
+				resulVencidos = vencidos;
+			}
+		}
+		
+		return resulVencidos;
 	}
 }

@@ -230,4 +230,8 @@
 	<alias name="procedimientosProjectContextHaya" alias="procedimientosProjectContext"/>		
 	<alias name="coreProjectContextHAYA" alias="coreProjectContext"/>
 	
+	<bean id="nmbCommonProjectContextCajamar"
+		class="es.pfsgroup.procedimientos.context.HayaProjectContextImpl" abstract="true">
+	</bean>
+	
 </beans>	

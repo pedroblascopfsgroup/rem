@@ -124,8 +124,5 @@
 	<!-- Implementaciones por defecto-->
 	<bean id="nmbCommonProjectContext" parent="nmbCommonProjectContextDefault"/>
 	
-	<bean id="nmbCommonProjectContextCajamar"
-		class="es.pfsgroup.procedimientos.context.HayaProjectContextImpl" abstract="true">
-	</bean>
 	 
 </beans>	

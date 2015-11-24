@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.hrebcc.api.RiesgoOperacionalApi;
 import es.pfsgroup.recovery.hrebcc.dto.ActualizarRiesgoOperacionalDto;
@@ -25,21 +24,26 @@ public class RiesgoOperacionalController {
 	UtilDiccionarioApi utilDiccionario;
 	
 	@RequestMapping
-	public void ActualizarRiesgoOperacional(ActualizarRiesgoOperacionalDto dto) {
-		riesgoOperacionalManager.ActualizarRiesgoOperacional(dto);
+	public String actualizarRiesgoOperacional(ActualizarRiesgoOperacionalDto dto) {
+		riesgoOperacionalManager.actualizarRiesgoOperacional(dto);
+		
+		return "default";
+		
 	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping 
-	public String ObtenerRiesgoOperacionalContrato(Long cntId, ModelMap map) {
-		DDRiesgoOperacional riesgoOperacional = riesgoOperacionalManager.ObtenerRiesgoOperacionalContrato(cntId);
+	public String obtenerRiesgoOperacionalContrato(Long cntId, ModelMap map) {
+		DDRiesgoOperacional riesgoOperacional = riesgoOperacionalManager.obtenerRiesgoOperacionalContrato(cntId);
 		
 		ArrayList<DDRiesgoOperacional> ddRiesgoOperacional = (ArrayList<DDRiesgoOperacional>) utilDiccionario.dameValoresDiccionario(DDRiesgoOperacional.class);
 		
 		map.put("ddriesgoOperacional", ddRiesgoOperacional);
+		map.put("cntId", cntId);
+		
 		map.put("riesgoOperacional", riesgoOperacional);
 		
 		return JSP_EDITAR_RIESGO_OPERACIONAL;
 	}
-
+	
 }

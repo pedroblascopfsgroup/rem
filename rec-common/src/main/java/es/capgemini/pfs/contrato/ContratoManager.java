@@ -586,4 +586,13 @@ public class ContratoManager {
 		
 	}
 	
+	@BusinessOperation(PrimariaBusinessOperation.BO_CNT_MGR_GET_RIESGO)
+	public String obtenerRiesgoOperacionalContrato(Long cntId) {
+		return null;
+	}
+	
+	@BusinessOperation(PrimariaBusinessOperation.BO_CNT_MGR_GET_VENCIDOS)
+	public String obtenerVencidosByCntId(Long cntId){
+		return null;
+	}
 }

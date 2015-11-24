@@ -10,7 +10,7 @@
 
 <fwk:page>
 
-	var labelStyle='font-weight:bolder;width:150px';
+	var labelStyle='font-weight:bolder;width:140px';
 
 	var ddriesgoOperacional = <app:dict value="${ddriesgoOperacional}" blankElement="true" blankElementValue=""/>;
 
@@ -20,21 +20,22 @@
 		,data: ddriesgoOperacional
 	});
 
-	var label =  new Ext.form.Label({
-			text:'<s:message code="contrato.consulta.tabOtrosDatos.riesgoOperacional" text="**Riesgo Operacional" />'
-	,style:labelStyle
-	});
-
 	var comboRiesgoOperacional = new Ext.form.ComboBox({
-		store: optionsRiesgoOperacionalStore
+		name:'riesgo'
+		,store: optionsRiesgoOperacionalStore
 		,displayField:'descripcion'
 		,valueField:'codigo'
 		,mode:'local'
 		,style:'margin:0px'
-		,width:200
 		,triggerAction:'all'
+		,width:170
+		,listWidth: '500'
 		,editable: false
+		<c:if test="${riesgoOperacional !=null}" >
+			,value:${riesgoOperacional.codigo}
+		</c:if>
 		,fieldLabel: '<s:message code="contrato.consulta.tabOtrosDatos.riesgoOperacional" text="**Riesgo Operacional" />'
+		,labelStyle:labelStyle
 	});
 	
 	
@@ -48,10 +49,11 @@
 	
 	};
 	
-	var getPArametros  = function(){
+	var getParametros  = function(){
 		var param = new Object();
-		//param.idContrato=
 		param.codRiesgoOperacional = comboRiesgoOperacional.getValue();
+		
+		return param.codRiesgoOperacional;
 		
 	};
 	
@@ -62,8 +64,8 @@
 			if(validarForm()){
 
 				page.webflow({
-					flow: 'riesgooperacional/ActualizarRiesgoOperacional'
-					,params: getParametros()
+					flow: 'riesgooperacional/actualizarRiesgoOperacional'
+					,params : {idContrato:${cntId}, codRiesgoOperacional: getParametros()}
 					,success: function(){
 						page.fireEvent(app.event.DONE);
 					}			
@@ -79,13 +81,29 @@
 		,iconCls : 'icon_cancel'
 		,handler : function(){ page.fireEvent(app.event.CANCEL); }
 	});
+	
+	var datos = new Ext.form.FieldSet({
+		height:60
+		,width:365
+		,style:'padding:0px'
+  	   	,border:true
+		,layout : 'table'
+		,border : true
+		,layoutConfig:{
+			columns:1
+		}
+		,title:'<s:message code="contrato.consulta.tabOtrosDatos.datos" text="**Datos"/>'
+		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:350}
+	    ,items : [{items:[comboRiesgoOperacional]}]
+	});
 
 	var panelEdicion = new Ext.form.FormPanel({
-		autoHeight: true
+		height: 125
 		,autoWidth: true
 		,bodyStyle: 'padding:5px;cellspacing:20px;'
-		,border: false
-		,items: [comboRiesgoOperacional]
+		,border: true
+		,y: 50
+		,items: [datos]
 		,bbar:[btnGuardar, btnCancelar]
 	});
 	

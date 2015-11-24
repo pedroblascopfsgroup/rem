@@ -9,7 +9,7 @@
 <%@page pageEncoding="utf-8" contentType="text/html; charset=UTF-8" %>
 
 (function(page,entidad){
-
+	
  	var labelStyle = 'width:150px;font-weight:bolder;margin-bottom:5px",width:375';
 
  	function label(id,text){
@@ -53,22 +53,27 @@
  	tramoPrevio.autoHeight = true;
  	
  	
- 	 var btnModificarRiesgoOperacional = new Ext.Button({
+ 	var getParametros = function(){
+ 	 	return entidad.get("data").id;
+ 	};
+ 	
+    var btnModificarRiesgoOperacional = new Ext.Button({
  		text: '<s:message code = "contrato.consulta.tabOtrosDatos.modifRiesgoOper" text="**Modificar riesgo operacional"/>'
  		,iconCls: 'icon_edit'
  		,width: 75
  		,handler: function (){
  			var w = app.openWindow({
- 				flow: 'riesgooperacional/ObtenerRiesgoOperacionalContrato'
+ 				flow: 'riesgooperacional/obtenerRiesgoOperacionalContrato'
  				,closable: true
- 				,width:500
- 				,heigth:500
+ 				,width:400
  				,y: 250
  				,x:400
+ 				,params : {cntId:getParametros()}
  				,title : '<s:message code="contrato.consulta.tabOtrosDatos.popUpTitle" text="**Editar riesgo operacional"/>'
  			})
  			w.on(app.event.DONE, function(){
  				w.close();
+ 				entidad.refrescar();
  			});
  			
  			w.on(app.event.CANCEL, function(){
@@ -79,14 +84,14 @@
    
 	var otrosDatosFieldSet = new Ext.form.FieldSet({
 		autoHeight:true
-		,width:770
+		,width:800
 		,style:'padding:0px'
 		,border:true
 		,layout : 'table'
 		,border : true
 		,layoutConfig:{columns:2}
 		,title:''
-		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375, style:'padding:10px; margin:10px'}
+		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:400, style:'padding:10px; margin:10px'}
 		,items : [{items:[contratoNivel2, odCharExtra9, odFlagExtra4, odDateExtra3, odDateExtra5, odNumExtra4,riesgoOperacional,tipoVencido]}
 				, {items:[odCharExtra7, odCharExtra10, odDateExtra2, odDateExtra4, odDateExtra6, odNumExtra5,tramoPrevio]}]
 	});
@@ -105,7 +110,7 @@
 		,items:[otrosDatosFieldSet <sec:authorize ifAllGranted="TAB_CONTRATO_OTROS">,btnModificarRiesgoOperacional</sec:authorize>]
 		,nombreTab : 'otrosDatos'
 	});
-  
+	
 	panel.getValue = function() {
 	}
 
@@ -113,7 +118,7 @@
   		var data=entidad.get("data");
   		var d=data.otrosDatos;
   
-  		debugger;
+  		
   		entidad.setLabel('contratoNivel2', d.contratoPadreNivel2);  
   		entidad.setLabel('odCharExtra7', d.charextra7);
   		entidad.setLabel('odCharExtra9', d.charextra9);
@@ -127,10 +132,10 @@
   		entidad.setLabel('odNumExtra4', d.numextra4);
   		entidad.setLabel('odNumExtra5', d.numextra5);
   		
-  		entidad.setLabel('riesgoOperacional', '');
-  		entidad.setLabel('tipoVencido', '');
-  		entidad.setLabel('tramoPrevio', '');
+  		entidad.setLabel('riesgoOperacional', d.descripcionRiesgo);
+  		entidad.setLabel('tipoVencido', d.tipoVencido);
+  		entidad.setLabel('tramoPrevio', d.tramoPrevio);
  	}
-  
+ 	
   	return panel;
 })

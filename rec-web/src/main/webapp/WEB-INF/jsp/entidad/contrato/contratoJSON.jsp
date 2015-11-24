@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <fwk:json>
   <json:property name="id" value="${contrato.id}" />
@@ -184,6 +185,13 @@
     	<json:property name="dateextra6" value="${contrato.dateextra6}" />
     	<json:property name="numextra4" value="${contrato.numextra4}" />
     	<json:property name="numextra5" value="${contrato.numextra5}" />
+    	<sec:authorize ifAllGranted="TAB_CONTRATO_OTROS">
+    		<json:property name="descripcionRiesgo" value="${riesgo.descripcion}"/>
+    		<json:property name="tipoVencido" value="${vencido.tipoVencido.descripcion}"/>
+    		<c:if test="${!vencido.tipoVencidoAnterior.descripcion}">
+    			<json:property name="tramoPrevio" value="${vencido.tipoVencidoAnterior.descripcion}"/>
+    		</c:if>
+    	</sec:authorize>
 	</json:object>
   
 </fwk:json>

@@ -14,6 +14,7 @@ public class AdjuntoGridDto {
 	private String descripcionEntidad;
 	private String refCentera;
 	private String ficheroBase64;
+	private String extFichero;
 	private Auditoria auditoria;
 	
 	public Long getId() {
@@ -94,6 +95,14 @@ public class AdjuntoGridDto {
 
 	public void setFicheroBase64(String ficheroBase64) {
 		this.ficheroBase64 = ficheroBase64;
+	}
+	
+	public String getExtFichero() {
+		return extFichero;
+	}
+	
+	public void setExtFichero(String extFichero) {
+		this.extFichero = extFichero;
 	}
 	
 	public Auditoria getAuditoria() {

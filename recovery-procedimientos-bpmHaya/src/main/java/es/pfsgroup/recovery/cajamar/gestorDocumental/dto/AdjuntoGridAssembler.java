@@ -35,6 +35,7 @@ public class AdjuntoGridAssembler {
 			dto.setNumActuacion(null);
 			dto.setRefCentera(olDto.getRefCentera());
 			dto.setDescripcionEntidad(olDto.getClaveRelacion());
+			dto.setExtFichero(olDto.getExtFichero());
 			list.add(dto);
 		}
 

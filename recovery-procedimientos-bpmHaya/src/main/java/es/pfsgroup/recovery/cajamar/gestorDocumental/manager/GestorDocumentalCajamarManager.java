@@ -155,14 +155,13 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_RECUPERACION_DOCUMENTO)
 	@Transactional(readOnly = false)
-	public String recuperacionDocumento(String idRefCentera) {
+	public AdjuntoGridDto recuperacionDocumento(String idRefCentera) {
 		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
 		GestorDocumentalInputDto input = new GestorDocumentalInputDto();
 		input.setOperacion(ConstantesGestorDocumental.CONSULTA_DOCUMENTO_OPERACION);
 		input.setLocalizador(idRefCentera);
 		outputDto = gestorDocumentalWSApi.ejecutar(input);
-
-		return outputDto.getFicheroBase64();
+		return AdjuntoGridAssembler.outputDtoToAdjuntoGridDto(outputDto).get(0);
 
 	}
 
@@ -215,6 +214,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		return ficheroBase64;
 
 	}
+	
 
 	/**
 	 * Recupera el límite de tamaño de un fichero.

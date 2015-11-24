@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.DDTipoActuacion;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.tipoFicheroAdjuntoEntidad.DDTipoAdjuntoEntidad;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.recovery.api.AsuntoApi;
 import es.pfsgroup.recovery.api.ProcedimientoApi;
 import es.pfsgroup.recovery.ext.api.adjunto.AdjuntoAsuntoApi;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
-import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjuntoEntidad.DDTipoAdjuntoEntidad;
 
 @Controller
 public class AdjuntoAsuntoController {

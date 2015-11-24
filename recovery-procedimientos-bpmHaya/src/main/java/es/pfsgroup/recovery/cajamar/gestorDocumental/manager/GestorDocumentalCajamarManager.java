@@ -38,6 +38,7 @@ import es.capgemini.pfs.persona.dao.PersonaDao;
 import es.capgemini.pfs.persona.model.AdjuntoPersona;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
+import es.capgemini.pfs.tipoFicheroAdjuntoEntidad.DDTipoAdjuntoEntidad;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -54,7 +55,6 @@ import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.expediente.EXTExpedienteManager;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
-import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjuntoEntidad.DDTipoAdjuntoEntidad;
 import es.pfsgroup.recovery.gestordocumental.dto.AdjuntoGridDto;
 
 @Component
@@ -305,8 +305,8 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			claveRel = contrato.getNroContrato();
 		} else if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidad)) {
 			EXTAsunto asunto = EXTAsunto.instanceOf(asuntoDao.get(idEntidad));
-			if(uploadForm != null) {
-				EXTAdjuntoAsunto adjuntoAsunto = new EXTAdjuntoAsunto(uploadForm.getFileItem());
+			if(uploadForm != null) {				
+		        EXTAdjuntoAsunto adjuntoAsunto = new EXTAdjuntoAsunto(uploadForm.getFileItem());
 		        
 		        if (!Checks.esNulo(tipoDocumento) && !tipoDocumento.equals("")) {
 					DDTipoFicheroAdjunto tipoFicheroAdjunto = genericDao.get(DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoDocumento));
@@ -322,7 +322,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		} else if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidad)) {
 			MEJProcedimiento prc = MEJProcedimiento.instanceOf(procedimientoDao.get(idEntidad));
 			if(uploadForm != null) {
-				EXTAdjuntoAsunto adjuntoAsunto = new EXTAdjuntoAsunto(uploadForm.getFileItem());
+		        EXTAdjuntoAsunto adjuntoAsunto = new EXTAdjuntoAsunto(uploadForm.getFileItem());
 		        
 		        if (!Checks.esNulo(tipoDocumento) && !tipoDocumento.equals("")) {
 					DDTipoFicheroAdjunto tipoFicheroAdjunto = genericDao.get(DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoDocumento));
@@ -334,7 +334,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		        Auditoria.save(adjuntoAsunto);
 		        prc.getAsunto().getAdjuntos().add(adjuntoAsunto);
 		        proxyFactory.proxy(AsuntoApi.class).saveOrUpdateAsunto(prc.getAsunto());
-			}	
+			}
 			claveRel = extProcedimientoManager.prepareGuid(prc).getGuid();
 		}
 		return claveRel;

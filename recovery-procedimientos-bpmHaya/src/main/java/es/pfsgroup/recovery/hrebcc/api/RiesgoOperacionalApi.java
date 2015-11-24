@@ -19,4 +19,5 @@ public interface RiesgoOperacionalApi {
 	@BusinessOperationDefinition(PrimariaBusinessOperation.BO_CNT_MGR_GET_VENCIDOS)
 	public Vencidos obtenerVencidosByCntId(Long cntId);
 	
+	public Boolean comprobarRiesgoProcedimiento(Long idProcedimiento);
 }

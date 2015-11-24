@@ -1,11 +1,17 @@
 package es.pfsgroup.recovery.hrebcc.manager;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import sun.reflect.generics.visitor.Reifier;
+import es.capgemini.pfs.asunto.ProcedimientoManager;
+import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.contrato.dao.EXTContratoDao;
+import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.EXTContrato;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.pfsgroup.commons.utils.Checks;
@@ -30,6 +36,9 @@ public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 	
 	@Autowired
 	GenericABMDao genericDao;
+	
+	@Autowired
+	ProcedimientoManager procedimientoManager;
 	
 	@Override
 	@Transactional
@@ -80,6 +89,13 @@ public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 		return resultado;
 	}
 	
+
+
+
+
+
+
+
 	@Override
 	@BusinessOperation(overrides = PrimariaBusinessOperation.BO_CNT_MGR_GET_VENCIDOS)
 	public Vencidos obtenerVencidosByCntId(Long cntId){
@@ -94,5 +110,25 @@ public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 		}
 		
 		return resulVencidos;
+	/**
+	 * Comprobamos que todos los contratos del asunto del procedimiento tienen un riesgo operacional asociado
+	 */
+	@Override
+	public Boolean comprobarRiesgoProcedimiento(Long idProcedimiento) {
+		Boolean resultado = true;
+		
+		Procedimiento prc = procedimientoManager.getProcedimiento(idProcedimiento);
+		if (Checks.esNulo(prc)) {
+			resultado = false;
+		} else {
+			Set<Contrato> contratos = prc.getAsunto().getContratos();
+			for (Contrato contrato : contratos) {
+				if (Checks.esNulo(this.ObtenerRiesgoOperacionalContrato(contrato.getId()))) {
+					resultado = false;
+				}
+			}
+		}
+		
+		return resultado;
 	}
 }

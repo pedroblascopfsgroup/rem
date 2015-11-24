@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.asunto.ProcedimientoManager;
 import es.capgemini.pfs.asunto.model.Procedimiento;
@@ -396,11 +397,19 @@ public class BurofaxManager implements BurofaxApi {
 	@Transactional(readOnly = false)
 	public void cancelarEnEstPrep(Long idEnvio, Long idCliente){
 		try{
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idEnvio);
-			EnvioBurofaxPCO envio=(EnvioBurofaxPCO) genericDao.get(EnvioBurofaxPCO.class,filtro);
-			Long idDireccion = envio.getDireccion().getId();
 			genericDao.deleteById(EnvioBurofaxPCO.class, idEnvio);
-		}catch(Exception e){
+			
+			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "envioId", idEnvio);
+			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			for(BurofaxEnvioIntegracionPCO envioIntegracionPCO : genericDao.getList(BurofaxEnvioIntegracionPCO.class, filtro1, filtro2)) {
+				envioIntegracionPCO.getAuditoria().setBorrado(true);
+				envioIntegracionPCO.getAuditoria().setFechaBorrar(new Date());
+				envioIntegracionPCO.getAuditoria().setUsuarioBorrar(SecurityUtils.getCurrentUser().getUsername());
+				
+				genericDao.save(BurofaxEnvioIntegracionPCO.class, envioIntegracionPCO);
+			}
+		}
+		catch(Exception e){
 			logger.error(e);
 		}
 	}
@@ -544,7 +553,6 @@ public class BurofaxManager implements BurofaxApi {
 				envioIntegracion.setTipoBurofax(envioBurofax.getTipoBurofax().getDescripcion());
 				envioIntegracion.setFechaSolicitud(new Date());
 				envioIntegracion.setCertificado(certificado);
-				
 		
 				if (precontenciosoContext.isGenerarArchivoBurofax()) {
 					//envioIntegracion.setArchivoBurofax(archivoBurofax);

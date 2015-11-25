@@ -91,6 +91,11 @@
 				 return procedimientoPcoManager.dameFechaUltimoEnvioExp(idProcedimiento);
 			}
 			
+			def compruebaRiesgoOperacional = {
+				def riesgoOperacionalManager = ctx.getBean("riesgoOperacionalManager");
+				return riesgoOperacionalManager.comprobarRiesgoProcedimiento(idProcedimiento);
+			}
+			
 			]]></value>
   		</list>
   	</property>

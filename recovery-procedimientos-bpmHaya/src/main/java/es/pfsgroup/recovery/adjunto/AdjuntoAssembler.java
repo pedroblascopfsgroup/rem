@@ -59,11 +59,12 @@ public class AdjuntoAssembler {
 				EXTAdjuntoDto dto = new EXTAdjuntoDto() {
 					@Override
 					public Boolean getPuedeBorrar() {
-						if (borrarOtrosUsu /*|| aa.getAuditoria().getUsuarioCrear().equals(usuario.getUsername())*/) {
+						/*if (borrarOtrosUsu || aa.getAuditoria().getUsuarioCrear().equals(usuario.getUsername())) {
 							return true;
 						} else {
 							return false;
-						}
+						}*/
+						return false;
 					}
 
 					@Override
@@ -296,11 +297,12 @@ public class AdjuntoAssembler {
 					
 					@Override
 					public Boolean getPuedeBorrar() {
-						if (borrarOtrosUsu /*|| adjAsun.getAuditoria().getUsuarioCrear().equals(usuario.getUsername())*/) {
+						/*if (borrarOtrosUsu || adjAsun.getAuditoria().getUsuarioCrear().equals(usuario.getUsername())) {
 							return true;
 						} else {
 							return false;
-						}
+						}*/
+						return false;
 					}
 					
 					@Override

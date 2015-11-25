@@ -59,7 +59,6 @@
 			recargarAdjuntos();
 		}
 	});
-	<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>borrar.setVisible(false);</sec:authorize>
 	
 	var comprobarAdjuntosRecord = Ext.data.Record.create([
 		 {name:'mensaje'}
@@ -243,6 +242,11 @@
 			editarDescripcionAdjuntoPersona.enable();
 		}
 	});
+	
+	<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>
+		borrar.setVisible(false);
+		editarDescripcionAdjuntoPersona.setVisible(false);
+	</sec:authorize>
 	
 	panel.add(grid);
 	entidad.cacheStore(grid.getStore());

@@ -10,7 +10,7 @@
 
 <pfslayout:tabpage titleKey="plugin.itinerarios.reglasElevacion.titulo" title="**Reglas de elevacion" 
 	items="panelCE,panelRE,panelDC,panelFP" >
-	
+	debugger;
 	var refrescoCompletarActivar = ${ceSiNo};
 	var refrescoRevisarActivar = ${reSiNo};
 	
@@ -66,7 +66,7 @@
 		parameters="itinerarioParams"
 		autoload="true"/>
 	 
-	Ext.util.CSS.createStyleSheet(".icon_elevacion { background-image: url('../img/plugin/itinerarios/rocket-fly.png');}");
+	//Ext.util.CSS.createStyleSheet(".icon_elevacion { background-image: url('../img/plugin/itinerarios/rocket-fly.png');}");
 	
 	<%-- <pfsforms:check labelKey="plugin.itinerarios.estados.automatico" label="**Automático" 
 		name="ceAutomatico" value="${ceSiNo}" readOnly="true"/> --%>

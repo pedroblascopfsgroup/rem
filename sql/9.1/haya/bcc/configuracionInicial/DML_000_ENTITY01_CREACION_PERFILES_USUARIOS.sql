@@ -491,4 +491,25 @@ INSERT INTO hayamaster.GRU_GRUPOS_USUARIOS gru (gru.GRU_ID,gru.USU_ID_USUARIO,gr
 INSERT INTO hayamaster.GRU_GRUPOS_USUARIOS gru (gru.GRU_ID,gru.USU_ID_USUARIO,gru.USU_ID_GRUPO,gru.USUARIOCREAR,gru.FECHACREAR) VALUES (hayamaster.s_GRU_GRUPOS_USUARIOS.nextval,(select usu.usu_id from hayamaster.usu_usuarios usu where usu.usu_username = 'val.supervisor'), (SELECT usugrupo.usu_id FROM HAYA02.usd_usuarios_despachos usdgrupo INNER JOIN hayamaster.usu_usuarios usugrupo ON usugrupo.usu_id = usdgrupo.usu_id AND usugrupo.usu_grupo = 1 WHERE usugrupo.usu_username ='GRUPO-Supervisor expedientes judiciales' AND usugrupo.borrado = 0 ) , 'JSV', sysdate );
 INSERT INTO hayamaster.GRU_GRUPOS_USUARIOS gru (gru.GRU_ID,gru.USU_ID_USUARIO,gru.USU_ID_GRUPO,gru.USUARIOCREAR,gru.FECHACREAR) VALUES (hayamaster.s_GRU_GRUPOS_USUARIOS.nextval,(select usu.usu_id from hayamaster.usu_usuarios usu where usu.usu_username = 'val.GestoriaPredoc'), (SELECT usugrupo.usu_id FROM HAYA02.usd_usuarios_despachos usdgrupo INNER JOIN hayamaster.usu_usuarios usugrupo ON usugrupo.usu_id = usdgrupo.usu_id AND usugrupo.usu_grupo = 1 WHERE usugrupo.usu_username ='GRUPO-Gestoría Preparación Documental 1' AND usugrupo.borrado = 0 ) , 'JSV', sysdate );
 
-commit;
+--commit;
+
+--25/11/2015
+--Usuarios nuevos
+insert into hayamaster.usu_usuarios (usu_id, entidad_id, usu_username, usu_password, usu_nombre,usu_apellido1,usu_apellido2,usu_mail, usuariocrear,fechacrear, usu_externo, usu_grupo)  values  ( hayamaster.s_usu_usuarios.nextval, (select ID from HAYAMASTER.ENTIDAD where DESCRIPCION = 'CAJAMAR'),'val.GCTRGE','1234','Gestor control gestión HRE','','','' , 'JSV', sysdate, 0,0);
+insert into hayamaster.usu_usuarios (usu_id, entidad_id, usu_username, usu_password, usu_nombre,usu_apellido1,usu_apellido2,usu_mail, usuariocrear,fechacrear, usu_externo, usu_grupo)  values  ( hayamaster.s_usu_usuarios.nextval, (select ID from HAYAMASTER.ENTIDAD where DESCRIPCION = 'CAJAMAR'),'val.SCTRGE','1234','Supervisor control gestión HRE','','','' , 'JSV', sysdate, 0,0);
+--commit;
+--Zona usuarios
+insert into HAYA02.zon_pef_usu zpu (zpu.zpu_id, zpu.zon_id,  zpu.usu_id,zpu.pef_id, zpu.usuariocrear, zpu.fechacrear)values ( HAYA02.s_zon_pef_usu.nextval, (select max(zon_id) from HAYA02.zon_zonificacion where zon_cod ='01'),(SELECT usu_id FROM hayamaster.usu_usuarios WHERE usu_username = 'val.GCTRGE'),(SELECT pef_id FROM HAYA02.pef_perfiles WHERE pef_codigo = 'HAYAGESTEXT'),'JSV', sysdate); 
+insert into HAYA02.zon_pef_usu zpu (zpu.zpu_id, zpu.zon_id,  zpu.usu_id,zpu.pef_id, zpu.usuariocrear, zpu.fechacrear)values ( HAYA02.s_zon_pef_usu.nextval, (select max(zon_id) from HAYA02.zon_zonificacion where zon_cod ='01'),(SELECT usu_id FROM hayamaster.usu_usuarios WHERE usu_username = 'val.SCTRGE'),(SELECT pef_id FROM HAYA02.pef_perfiles WHERE pef_codigo = 'HAYASUPVISOR'),'JSV', sysdate); 
+
+--commit;
+--asignamos a despacho
+insert into HAYA02.usd_usuarios_despachos usd (usd_id, usu_id, des_id, usd_gestor_defecto, usd_supervisor, usuariocrear, fechacrear) values (HAYA02.s_usd_usuarios_despachos.nextval,(select usu.usu_id from hayamaster.usu_usuarios usu where usu.usu_username = 'val.GCTRGE'), (select des.des_id from HAYA02.des_despacho_externo des where des.borrado = 0 and des.DES_DESPACHO = 'Despacho Gestor control gestión HRE'),0,0 , 'JSV', sysdate );
+insert into HAYA02.usd_usuarios_despachos usd (usd_id, usu_id, des_id, usd_gestor_defecto, usd_supervisor, usuariocrear, fechacrear) values (HAYA02.s_usd_usuarios_despachos.nextval,(select usu.usu_id from hayamaster.usu_usuarios usu where usu.usu_username = 'val.SCTRGE'), (select des.des_id from HAYA02.des_despacho_externo des where des.borrado = 0 and des.DES_DESPACHO = 'Despacho Supervisor control gestión HRE'),0,0 , 'JSV', sysdate );
+
+--commit;
+--asignamos a grupo
+INSERT INTO hayamaster.GRU_GRUPOS_USUARIOS gru (gru.GRU_ID,gru.USU_ID_USUARIO,gru.USU_ID_GRUPO,gru.USUARIOCREAR,gru.FECHACREAR) VALUES (hayamaster.s_GRU_GRUPOS_USUARIOS.nextval,(select usu.usu_id from hayamaster.usu_usuarios usu where usu.usu_username = 'val.GCTRGE'), (SELECT usugrupo.usu_id FROM HAYA02.usd_usuarios_despachos usdgrupo INNER JOIN hayamaster.usu_usuarios usugrupo ON usugrupo.usu_id = usdgrupo.usu_id AND usugrupo.usu_grupo = 1 WHERE usugrupo.usu_username ='GRUPO-Despacho Gestor control gestión HRE' AND usugrupo.borrado = 0 ) , 'JSV', sysdate );
+INSERT INTO hayamaster.GRU_GRUPOS_USUARIOS gru (gru.GRU_ID,gru.USU_ID_USUARIO,gru.USU_ID_GRUPO,gru.USUARIOCREAR,gru.FECHACREAR) VALUES (hayamaster.s_GRU_GRUPOS_USUARIOS.nextval,(select usu.usu_id from hayamaster.usu_usuarios usu where usu.usu_username = 'val.SCTRGE'), (SELECT usugrupo.usu_id FROM HAYA02.usd_usuarios_despachos usdgrupo INNER JOIN hayamaster.usu_usuarios usugrupo ON usugrupo.usu_id = usdgrupo.usu_id AND usugrupo.usu_grupo = 1 WHERE usugrupo.usu_username ='GRUPO-Despacho Supervisor control gestión HRE' AND usugrupo.borrado = 0 ) , 'JSV', sysdate );
+
+

@@ -37,7 +37,7 @@ function log_script_output () {
 				cat $log &>> $DOCKER_INNER_ERROR_LOG
 			done
 		fi
-		cd $d_dir
+		cd $c_dir
 	done
 }
 

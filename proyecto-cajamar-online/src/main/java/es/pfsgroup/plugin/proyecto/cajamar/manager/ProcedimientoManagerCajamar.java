@@ -1,4 +1,4 @@
-package es.pfsgroup.recovery.cajamar.manager;
+package es.pfsgroup.plugin.proyecto.cajamar.manager;
 
 import java.util.List;
 

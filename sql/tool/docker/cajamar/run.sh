@@ -206,7 +206,7 @@ function package_sql () {
 		fi
 		cp -R $SQL_PACKAGE_DIR $ws_package_dir
 		chmod -R go+w $ws_package_dir/*
-		for sh in $(find $ws_package_dir -name *.sh); do
+		for sh in $(find $ws_package_dir -name '*.sh'); do
 			chmod ugo+x $sh
 		done
 
@@ -266,7 +266,7 @@ function run_container () {
 		package_sql $STARTING_TAG $CLIENTE
 		VAR_SCRIPTS_DONE=yes
 	fi
-	echo -n "[INFO]: $CONTAINER_NAME: Generando el contenedor a partir de la imágen [$IMAGE_NAME]: "
+	echo -n "[INFO]: $CONTAINER_NAME: Generando el contenedor a partir de la imagen [$IMAGE_NAME]: "
 	docker run -d -p=22 -p 1521:1521 \
 				-v /etc/localtime:/etc/localtime:ro \
 				-v $WORKSPACE_DIR:/setup $errorlog_volume \
@@ -389,8 +389,8 @@ if [[ "x$DOCKER_PS" == "x" ]]; then
 	# Si el contenedor no existe
 	OPTION_REMOVE=yes
 	check_dump
-	echo "[INFO]: El contenedor está parado. Se va a generar desde cero a partir de la imágen."
-	echo "[INFO]: Si la imágen $IMAGE_NAME no existe en el repositorio Docker local puede que tarde un poco en descargarse."
+	echo "[INFO]: El contenedor está parado. Se va a generar desde cero a partir de la imagen."
+	echo "[INFO]: Si la imagen $IMAGE_NAME no existe en el repositorio Docker local puede que tarde un poco en descargarse."
 	run_container
 	if [[ $? -eq 0 ]]; then
 		do_install

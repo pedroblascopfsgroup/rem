@@ -1,35 +1,25 @@
+/*
+    
+    
+     .d88b.     d88b  .d88b.  
+    .8P  Y8.    `8P' .8P  Y8. 
+    88    88     88  88    88 
+    88    88     88  88    88 
+    `8b  d8' db. 88  `8b  d8' 
+     `Y88P'  Y8888P   `Y88P'
+    
+    
+    Tener en cuenta que al ofuscar, las posiciones 2 y 27 de array deben ser ${bi.url} y ${bi.auth} respectivamente
+    
+    
+*/
 var count=0;
 
 function centeredWindowStyle() {
-//        var width = 0.9 * screen.width;
-//        var height = 0.9 * screen.height;
-//        var leftSize = (screen.width - width)/2;
-//        var topSize = (screen.height - height)/2;
-//        return 'width='.concat(width,',height=',height,',top=',topSize,',left=',leftSize,',titlebar=no,location=no,menubar=no,toolbar=no,scrollbars=yes');
     return 'titlebar=no,location=no,menubar=no,toolbar=no,scrollbars=yes';
 }
 
 function openRecBI() {
-	
-	// TODO: Probar cuando est� en el mismo dominio
-	/*var win = new Ext.Window({  
-	        id: 'windowBI',  
-	        title: 'Recovery BI',  
-	        width: 1000,  
-	        height: 600,  
-	        layout: 'fit',  
-	        autoLoad : {  
-	            url : '../js/plugin/bi/rec-bi.html',  
-	            scripts: true  
-	        }  
-	});  
-	win.show();*/
-
-	// Desconexi�n previa (no es compatible con IE9)
-	/*var xmlhttp=new XMLHttpRequest();
-        xmlhttp.open("GET","/pfs/recovery-bi/servlet/mstrWeb?evt=3019&src=mstrWeb.3019",false);
-        xmlhttp.send();*/
-
         if (count != 0) {
                 window.open('/pfs/recovery-bi/servlet/mstrWeb', '', centeredWindowStyle());
                 return;
@@ -39,25 +29,6 @@ function openRecBI() {
 }
 
 function openRecBIHaya() {
-	
-	// TODO: Probar cuando est� en el mismo dominio
-	/*var win = new Ext.Window({  
-	        id: 'windowBI',  
-	        title: 'Recovery BI',  
-	        width: 1000,  
-	        height: 600,  
-	        layout: 'fit',  
-	        autoLoad : {  
-	            url : '../js/plugin/bi/rec-bi.html',  
-	            scripts: true  
-	        }  
-	});  
-	win.show();*/
-
-	// Desconexi�n previa (no es compatible con IE9)
-	/*var xmlhttp=new XMLHttpRequest();
-        xmlhttp.open("GET","/pfs/recovery-bi/servlet/mstrWeb?evt=3019&src=mstrWeb.3019",false);
-        xmlhttp.send();*/
 
         if (count != 0) {
                 window.open('/pfs/recovery-bi/servlet/mstrWeb', '', centeredWindowStyle());
@@ -66,7 +37,6 @@ function openRecBIHaya() {
         count++;
         window.open('../js/plugin/bi/rec-biHaya.html', '', centeredWindowStyle());
 }
-
 
 function createForm(url) {
 	var form = document.createElement('form');
@@ -90,7 +60,6 @@ function createHiddenAuthForm(url, user, pass) {
 	return form;
 }
 
-
 function getParamFromURL(param) {
 	var query = window.location.search.substring(1);
 	var vars = query.split("&");
@@ -100,7 +69,6 @@ function getParamFromURL(param) {
 	}
 	return "";
 }
-
 
 function login2RecBI() {
 	var form = createHiddenAuthForm('../../../recovery-bi/servlet/mstrWeb', 'PfYf7lC9kAUY', 'o8gkPlBGLe1yeIOYpPvi');
@@ -113,4 +81,3 @@ function login2RecBIHaya() {
  	document.body.appendChild(form);
  	form.submit();
 } 
-

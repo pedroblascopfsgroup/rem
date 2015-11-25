@@ -13,6 +13,7 @@ public class CamposTerminoTipoAcuerdoDto extends WebDto{
     private Long id;
 	private DDTipoAcuerdo tipoAcuerdo;	
     private String nombreCampo;
+    private String campoGeneracionCampo;
     private Integer version;
     private Auditoria auditoria;
     
@@ -50,5 +51,11 @@ public class CamposTerminoTipoAcuerdoDto extends WebDto{
 	}
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+	public String getCampoGeneracionCampo() {
+		return campoGeneracionCampo;
+	}
+	public void setCampoGeneracionCampo(String campoGeneracionCampo) {
+		this.campoGeneracionCampo = campoGeneracionCampo;
 	}
 }

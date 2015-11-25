@@ -315,6 +315,7 @@
 					,items:[
 						terminosExpTab
 					]
+					,style:'padding-right:10px;margin-top: 20px;'
 					,autoHeight:true
 					,autoWidth : true
 					,border: true

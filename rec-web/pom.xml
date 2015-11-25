@@ -1594,6 +1594,11 @@
 				</dependency>
 				<!-- Fin versión de AspectJ -->
 				<dependency>
+            		<groupId>es.pfsgroup.plugin</groupId>
+            		<artifactId>recovery-bi-plugin</artifactId>
+            		<scope>compile</scope>
+        		</dependency>
+				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-bankiaWeb-plugin</artifactId>
 					<exclusions>
@@ -1803,6 +1808,11 @@
 					<scope>compile</scope>
 				</dependency>
 				<!-- Fin versión de AspectJ -->
+				<dependency>
+            		<groupId>es.pfsgroup.plugin</groupId>
+            		<artifactId>recovery-bi-plugin</artifactId>
+            		<scope>compile</scope>
+        		</dependency>
 			</dependencies>
 			<build>
 				<resources>
@@ -1858,6 +1868,11 @@
 					<scope>compile</scope>
 				</dependency>
 				<!-- Fin versión de AspectJ -->
+				<dependency>
+            		<groupId>es.pfsgroup.plugin</groupId>
+            		<artifactId>recovery-bi-plugin</artifactId>
+            		<scope>compile</scope>
+        		</dependency>
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-integracionuvem-plugin</artifactId>
@@ -1976,11 +1991,6 @@
 						</exclusion>
 					</exclusions>
 				</dependency>
-                <dependency>
-                    <groupId>es.pfsgroup.plugin</groupId>
-                    <artifactId>recovery-bi-plugin</artifactId>
-                    <scope>compile</scope>
-                </dependency>
 			</dependencies>
 			<build>
 				<resources>
@@ -2059,6 +2069,11 @@
 					<scope>compile</scope>
 				</dependency>
 				<!-- Fin versión de AspectJ -->
+				<dependency>
+            		<groupId>es.pfsgroup.plugin</groupId>
+            		<artifactId>recovery-bi-plugin</artifactId>
+            		<scope>compile</scope>
+        		</dependency>
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-procedimientos-bpmHaya</artifactId>
@@ -2231,6 +2246,11 @@
 		<profile>
 			<id>cajamar</id>
 			<dependencies>
+				<dependency>
+            		<groupId>es.pfsgroup.plugin</groupId>
+            		<artifactId>recovery-bi-plugin</artifactId>
+            		<scope>compile</scope>
+        		</dependency>
 				<!--  PARA JMS **************** -->
 				<dependency>
 					<groupId>org.springframework.integration</groupId>

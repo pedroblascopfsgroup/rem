@@ -308,7 +308,7 @@ editorDef.productoEditor=Ext.extend( editorDef.simpleEditor,{
                    {name: 'id'},
                    {name: 'producto'},
                    {name: 'incluir', type: 'bool'},
-                   {name: 'excluir', type: 'bool'},
+                   {name: 'excluir', type: 'bool'}
                 ]
             });
 
@@ -501,7 +501,7 @@ editorDef.centrosEditor=Ext.extend( editorDef.simpleEditor,{
                    {name: 'id'},
                    {name: 'producto'},
                    {name: 'incluir', type: 'bool'},
-                   {name: 'excluir', type: 'bool'},
+                   {name: 'excluir', type: 'bool'}
                 ]
             });
 

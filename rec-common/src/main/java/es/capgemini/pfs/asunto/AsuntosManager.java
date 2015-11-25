@@ -918,11 +918,15 @@ public class AsuntosManager {
      * @param adjuntoId adjunto
      * @return file
      */
+    
+    /*
     @BusinessOperation(ExternaBusinessOperation.BO_ASU_MGR_BAJAR_ADJUNTO)
     public FileItem bajarAdjunto(Long asuntoId, Long adjuntoId) {
         Asunto asunto = (Asunto) executor.execute(ExternaBusinessOperation.BO_ASU_MGR_GET, asuntoId); //get(asuntoId);
         return asunto.getAdjunto(adjuntoId).getAdjunto().getFileItem();
     }
+    Se traslada esta funcionalidad a AdjuntosApi
+    */
 
     /**
      * delete un adjunto.

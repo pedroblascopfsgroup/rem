@@ -22,8 +22,6 @@
 				<json:property name="tipoFichero" value="${dto.adjunto.tipoFichero.descripcion}" />
 			</c:if>
 			<json:property name="prcId" value="${dto.adjunto.procedimiento.id}" />
-			
-				
 		</json:object>
 	</json:array>
 </fwk:json>

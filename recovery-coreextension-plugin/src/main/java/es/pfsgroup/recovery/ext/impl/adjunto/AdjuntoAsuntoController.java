@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.DDTipoActuacion;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.tipoFicheroAdjuntoEntidad.DDTipoAdjuntoEntidad;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.recovery.api.AsuntoApi;
 import es.pfsgroup.recovery.api.ProcedimientoApi;
@@ -50,5 +51,12 @@ public class AdjuntoAsuntoController {
 		
 		map.put("lista", lista);
 		return "plugin/coreextension/asunto/ddTipoFicherosAdjuntosJSON";
+	}
+	
+	@RequestMapping
+	public String getTiposDeDocumentoAdjuntoProcedimiento(ModelMap map, String tipoEntidad){
+		List<DDTipoAdjuntoEntidad> lista = proxyFactory.proxy(AdjuntoAsuntoApi.class).getListTipoAdjuntoEntidad(tipoEntidad);
+		map.put("lista", lista);
+		return "plugin/coreextension/asunto/ddTipoDocAdjuntosJSON";
 	}
 }

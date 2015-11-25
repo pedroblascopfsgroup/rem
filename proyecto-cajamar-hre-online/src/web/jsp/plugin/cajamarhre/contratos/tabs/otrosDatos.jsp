@@ -108,7 +108,7 @@
 		,autoHeight : true
 		,autoWidth : true
 		,defaults : {xtype : 'fieldset', autoHeight : true, border :true ,cellCls : 'vtop'}
-		,items:[otrosDatosFieldSet <sec:authorize ifAllGranted="TAB_CONTRATO_OTROS">,btnModificarRiesgoOperacional</sec:authorize>]
+		,items:[otrosDatosFieldSet <sec:authorize ifAllGranted="MODIFICAR_RIESGO_OPERACIONAL">,btnModificarRiesgoOperacional</sec:authorize>]
 		,nombreTab : 'otrosDatos'
 	});
 	

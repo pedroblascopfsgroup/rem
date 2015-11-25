@@ -82,6 +82,7 @@ import es.pfsgroup.recovery.ext.impl.acuerdo.model.ACDAcuerdoDerivaciones;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTDtoGenerarTareaIdividualizadaImpl;
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 @Component
 public class MEJAcuerdoManager implements MEJAcuerdoApi {
@@ -148,6 +149,9 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 	@Autowired
 	private TareaNotificacionDao tareaNotificacionDao;
 	
+	@Autowired
+	IntegracionBpmService integracionBpmService;
+		
 	/**
 	 * Pasa un acuerdo a estado Rechazado.
 	 * 
@@ -181,8 +185,6 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 //			observaciones.append(" Motivo rechazo: " + motivo);
 //		executor.execute(ComunBusinessOperation.BO_TAREA_MGR_CREAR_NOTIFICACION, acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, SubtipoTarea.CODIGO_ACUERDO_RECHAZADO,
 //				observaciones.toString());
-		
-		Usuario userLogado = usuarioManager.getUsuarioLogado();
 		
 		GestorDespacho gesDesProp = getUsuarioDestinatarioTarea(acuerdo, "proponente");
 		GestorDespacho gesDesVal = getUsuarioDestinatarioTarea(acuerdo, "validador");
@@ -480,9 +482,10 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
     @BusinessOperation(BO_ACUERDO_MGR_SAVE_TERMINO_ACUERDO)
     @Transactional(readOnly = false)
     public TerminoAcuerdo saveTerminoAcuerdo(TerminoAcuerdo ta) {
-    	//return genericDao.save(TerminoAcuerdo.class, ta);
-    	terminoAcuerdoDao.saveOrUpdate(ta);
-    	
+
+    	terminoAcuerdoDao.saveOrUpdate(ta);    	
+    	integracionBpmService.enviarDatos(ta);
+
     	return ta;
 
     }	
@@ -575,7 +578,9 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
     @Transactional(readOnly = false)
     public void deleteTerminoAcuerdo(TerminoAcuerdo ta) {
     	genericDao.deleteById(TerminoAcuerdo.class, ta.getId());
-    }	
+    	
+		integracionBpmService.enviarDatos(ta);
+	}	
     
 	/**
      * @param to TerminoOperaciones

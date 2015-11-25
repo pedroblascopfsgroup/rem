@@ -433,61 +433,6 @@
 	        }
 		});
 		
-		
-		var validarProvLocFinBien = function() {
-
-                        //Se valida por existencia de codigoTipoInmueble porque es dato obligatorio en el diccionario y no puede ser null en un tipo de inmueble
-			if(codigoTipoInmueble=='' || numFinca.getValue()=='' || localidad.getValue() == '' || provincia.getValue() == '' || numRegistro.getValue() == '' || numRegistro.getValue() == 0){
-				Ext.MessageBox.show({
-		           title: 'Campos obligatorios',
-		           msg: '<s:message code="plugin.nuevoModeloBienes.fichaBien.btnSolNumActivoCamposObligatorios" text="**Los campos provincia, localidad, n&oacute;mero de finca y n&oacute;mero de registro son obligatorios para solicitar el n&oacute;mero de activo" />',
-		           width:300,
-		           buttons: Ext.MessageBox.OK
-		        });
-		        return false;
-			}
-			return true;			
-		}
-                
-		var btnSolicitarNumActivo = new Ext.Button({
-		    text: '<s:message code="plugin.nuevoModeloBienes.fichaBien.btnSolicitarNumActivo" text="**Solicitar Numero de Activo" />'
-			<app:test id="btnSolicitarNumActivo" addComa="true" />
-		    ,iconCls : 'icon_refresh'
-			,cls: 'x-btn-text-icon'
-			,style:'margin-left:2px;padding-top:0px'
-		    ,handler:function(){
-		    	if(validarProvLocFinBien()){
-		    		if (false) {
-						Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="acuerdos.conclusiones.observaciones.error"/>');
-					} else {				
-			      		page.webflow({
-			      			flow:'editbien/solicitarNumActivo'
-			      			,params:{id:${NMBbien.id}}
-			      			,success: function(result,request){
-			      			   if(result.msgError=='1'){
-			      			   		Ext.Msg.show({
-									title:'Operaci&oacute;n realizada',
-									msg: '<s:message code="plugin.nuevoModeloBienes.uvem.numeroActivo.ok"/>',
-									buttons: Ext.Msg.OK,
-									icon:Ext.MessageBox.INFO});
-			      			   		app.abreBienTab(${NMBbien.id}, '${NMBbien.id}' + '${NMBbien.tipoBien.descripcion}', bienTabPanel.getActiveTab().initialConfig.nombreTab);
-			      			   	}
-			      			   	else{
-			      			   	
-				      			   	Ext.Msg.show({
-									title:'Advertencia',
-									msg: 'No se ha podido obtener el n\u00BA de activo. \n' + result.msgError,
-									buttons: Ext.Msg.OK,
-									icon:Ext.MessageBox.WARNING});
-				      			   	
-			      			   	}
-			            	}
-			      		});
-					}
-				}
-	        }
-		});
-		
 		//flag que indica si se puede solicitar la tasaci&oacute;n
 		var solicitarTas = ${solicitarTasacion};
 		
@@ -643,13 +588,9 @@
 			panel.getBottomToolbar().addButton([btnEditar]);
 		</sec:authorize>
 		<sec:authorize ifAllGranted="ACC_MAN_SERVICIOS_UVEM">
-			<c:if test="${empty NMBbien.numeroActivo or NMBbien.numeroActivo==0}">
-					panel.getBottomToolbar().addButton([btnSolicitarNumActivo]);
-			</c:if>
 			<c:choose>
     			<c:when test="${usuario.entidad.id eq appProperties.idEntidadCajamar}">
 			        panel.getBottomToolbar().addButton([btnSolicitarTasacionHCJ]);
-			        btnSolicitarNumActivo.hide();
 			    </c:when>    
     			<c:otherwise>
         			//panel.getBottomToolbar().addButton([btnSolicitarTasacion]);
@@ -658,7 +599,6 @@
 		</sec:authorize>
 		<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
 			panel.getBottomToolbar().addButton([btnSolicitarTasacionHCJ]);
-			btnSolicitarNumActivo.hide();
 		</sec:authorize>
 	
 	

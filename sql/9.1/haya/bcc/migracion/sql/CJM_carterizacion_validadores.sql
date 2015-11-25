@@ -65,6 +65,8 @@ V_GAA T_ARRAY_GAA := T_ARRAY_GAA(
        , T_GAA('val.SGESDOC','SGESDOC','Despacho Supervisor de gestión documentario')
        , T_GAA('val.SPGL','SPGL','Despacho Supervisor HRE gestión llaves')
        , T_GAA('val.SUCONGEN2','SUCONGEN2','Despacho Supervisor contencioso gestión nivel 2')
+       , T_GAA('val.GCTRGE','GCTRGE','Despacho Gestor control gestión HRE')
+       , T_GAA('val.SCTRGE','SCTRGE','Despacho Supervisor control gestión HRE')                 
  );
    
    V_TMP_GAA T_GAA;

@@ -148,7 +148,6 @@
 			recargarAdjuntos();
 		}
 	});
-	<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>borrar.setVisible(false);</sec:authorize>
 
 	var tipoDocRecord = Ext.data.Record.create([
 		 {name:'codigo'}
@@ -705,6 +704,14 @@
 			editarDescripcionAdjuntoContrato.enable();
 		}
 	});
+	
+	<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>
+		borrar.setVisible(false);
+		editarDescripcionAdjuntoAsunto.setVisible(false);
+		editarDescripcionAdjuntoExpediente.setVisible(false);
+		editarDescripcionAdjuntoPersona.setVisible(false);
+		editarDescripcionAdjuntoContrato.setVisible(false);
+	</sec:authorize>
 
 	function addPanel2Panel(grid){
 		panel.add (new Ext.Panel({

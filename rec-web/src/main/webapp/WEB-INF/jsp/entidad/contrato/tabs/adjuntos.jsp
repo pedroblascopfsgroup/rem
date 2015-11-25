@@ -85,7 +85,6 @@
 			recargarAdjuntos();
 		}
 	});
-	<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>borrar.setVisible(false);</sec:authorize>
 	
 	var tipoDocRecord = Ext.data.Record.create([
 		 {name:'codigo'}
@@ -236,6 +235,12 @@
 			editarDescripcionAdjuntoContrato.enable();
 		}
 	});	
+	
+	<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>
+		borrar.setVisible(false);
+		editarDescripcionAdjuntoContrato.setVisible(false);
+	</sec:authorize>
+	
 	panel.add(grid);
 	panel.getValue = function(){
 	}

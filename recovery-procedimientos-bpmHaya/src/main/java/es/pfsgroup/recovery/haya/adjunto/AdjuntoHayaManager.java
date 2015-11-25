@@ -2,6 +2,8 @@ package es.pfsgroup.recovery.haya.adjunto;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.FileNameMap;
@@ -406,6 +408,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	}
 	
 	private FileItem generaFileItem(String nombreFichero, String contenido, String extension) throws Throwable {
+		
 		File fileSalidaTemporal = null;
 		FileItem resultado = null;
 		InputStream stream =  new ByteArrayInputStream(Base64.decodeBase64(contenido.getBytes()));
@@ -427,6 +430,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 
 		outputStream.close();
 		return resultado;
+		
 	}
 	
 	public String getMimeType(String fileName) {

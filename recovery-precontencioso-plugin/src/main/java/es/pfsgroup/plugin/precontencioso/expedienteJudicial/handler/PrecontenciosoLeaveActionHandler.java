@@ -161,7 +161,7 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 			if (DDSiNo.SI.equals(docCompleta)) {
 				executor.execute("plugin.precontencioso.cambiarEstadoExpediete", prc.getId(), PrecontenciosoBPMConstants.PCO_FINALIZADO);
 			}
-		}	
+		}
 	}
 
 	public List<EXTTareaExternaValor> obtenerValoresTareaByTexId(Long texId) {

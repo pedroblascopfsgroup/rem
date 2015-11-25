@@ -229,4 +229,5 @@
 	<alias name="nmbCommonProjectContextCAJAMAR" alias="nmbCommonProjectContext"/>
 	<alias name="procedimientosProjectContextCAJAMAR" alias="procedimientosProjectContext"/>		
 	<alias name="coreProjectContextCAJAMAR" alias="coreProjectContext"/>
+	<alias name="adjuntoManagerHayaImpl" alias="adjuntoManagerImpl"/>
 </beans>	

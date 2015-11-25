@@ -51,9 +51,6 @@ public class CamposTerminoTipoAcuerdo implements Serializable, Auditable{
 	@Column(name = "CMP_NOMBRE_CAMPO")
     private String nombreCampo;
 	
-	@Column(name = "CODIGO_GENERACION_CAMPO")
-	private String codigoGeneracionCampo;
-    
 	@Version
     private Integer version;
 
@@ -100,13 +97,4 @@ public class CamposTerminoTipoAcuerdo implements Serializable, Auditable{
 	public void setVersion(Integer version) {
 		this.version = version;
 	}
-    
-	public String getCodigoGeneracionCampo() {
-		return codigoGeneracionCampo;
-	}
-
-	public void setCodigoGeneracionCampo(String codigoGeneracionCampo) {
-		this.codigoGeneracionCampo = codigoGeneracionCampo;
-	}
-
 }

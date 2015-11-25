@@ -11,7 +11,7 @@
 <pfslayout:tabpage titleKey="plugin.itinerarios.tabComitesItinerario.titulo" title="**Comités compatibles" 
 	items="gridComitesItinerario" >
 
-	Ext.util.CSS.createStyleSheet(".icon_comites { background-image: url('../img/plugin/itinerarios/user-business.png');}");
+	//Ext.util.CSS.createStyleSheet(".icon_comites { background-image: url('../img/plugin/itinerarios/user-business.png');}");
 		
 	<pfs:defineRecordType name="ComitesItiRT">
 		<pfs:defineTextColumn name="id"/>
@@ -52,7 +52,7 @@
 		titleKey="plugin.itinerarios.comites.titulo" 
 		title="**Comités compatibles con el itinerario" 
 		collapsible="false" 
-		 iconCls="icon_comites"/>
+		 iconCls=".icon_comites"/>
 	
 	
 </pfslayout:tabpage>

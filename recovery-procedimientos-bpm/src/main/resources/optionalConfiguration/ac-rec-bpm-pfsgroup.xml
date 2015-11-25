@@ -1301,6 +1301,11 @@
                 def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoDelegateManager");
                 return subastaProcedimientoManager.validacionesContratosConfirmarTestimonioPOST(idProcedimiento);
             }
+            
+            def validacionesAdjudicacionEntregaTituloPRE = {
+            	def adjudicacionManager = ctx.getBean("adjudicacionManager");
+            	return adjudicacionManager.validacionesAdjudicacionEntregaTituloPRE(idProcedimiento);
+            }
 
             
   			 ]]></value>

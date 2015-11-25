@@ -6,6 +6,8 @@
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="pfs" tagdir="/WEB-INF/tags/pfs" %>
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
 
 (function(page,entidad){
 
@@ -218,7 +220,7 @@
 		,style:'padding: 10px;'
 		,autoHeight : true
 		,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
-		,bbar : [btAddConvenio, btEditConvenio, btRemoveConvenio]
+		<sec:authorize ifNotGranted="SOLO_CONSULTA">,bbar : [btAddConvenio, btEditConvenio, btRemoveConvenio]</sec:authorize>
 	};
 	
 	var conveniosGrid = app.crearGrid(conveniosDS,convenioCM,grid_cfg);

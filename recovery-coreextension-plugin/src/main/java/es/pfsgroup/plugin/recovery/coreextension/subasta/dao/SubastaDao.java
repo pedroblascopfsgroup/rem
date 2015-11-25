@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.AcuerdoCierreDeudaDto;
@@ -32,5 +33,7 @@ public interface SubastaDao extends AbstractDao<Subasta, Long>{
 	void eliminarBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda acuerdoCierreDeuda);
         void eliminarBatchCDDResultadoNuse(BatchCDDResultadoNuse acuerdoCierreDeudaNuse);
 	BatchAcuerdoCierreDeuda findBatchAcuerdoCierreDeuda(AcuerdoCierreDeudaDto acuerdo);
+	
+	Contrato getContratoByNroContrato(String nroContrato);
 
 }

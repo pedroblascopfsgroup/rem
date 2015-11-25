@@ -83,11 +83,11 @@ public class CambiosGestoresController {
 	}
 
 	/**
-	 * Mediante esta petición se anotan los cambios solicitados en una Tabla
+	 * Mediante esta peticiï¿½n se anotan los cambios solicitados en una Tabla
 	 * para su posterior proceso Batch
 	 * 
 	 * @param dto
-	 *            Petición para el cambio masivo de Gestores
+	 *            Peticiï¿½n para el cambio masivo de Gestores
 	 * @param request
 	 * @return
 	 */

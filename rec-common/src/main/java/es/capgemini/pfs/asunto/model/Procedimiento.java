@@ -49,6 +49,7 @@ import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
  *
  */
 @Entity
+@org.hibernate.annotations.Entity(dynamicUpdate=true)
 @Table(name = "PRC_PROCEDIMIENTOS", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 //@Inheritance(strategy = InheritanceType.JOINED)
@@ -304,7 +305,9 @@ public class Procedimiento implements Serializable, Auditable, Comparable<Proced
         Double result = 0.0;
 
         for (ExpedienteContrato ec : getExpedienteContratos()) {
-            result += ec.getContrato().getLastMovimiento().getPosVivaNoVencida();
+        	if(ec.getContrato() != null && ec.getContrato().getLastMovimiento()!= null && ec.getContrato().getLastMovimiento().getPosVivaNoVencida() != null){
+        		result += ec.getContrato().getLastMovimiento().getPosVivaNoVencida();
+        	}
         }
 
         return result;
@@ -317,7 +320,9 @@ public class Procedimiento implements Serializable, Auditable, Comparable<Proced
         Double result = 0.0;
 
         for (ExpedienteContrato ec : getExpedienteContratos()) {
-            result += ec.getContrato().getLastMovimiento().getPosVivaVencida();
+        	if(ec.getContrato() != null && ec.getContrato().getLastMovimiento()!= null && ec.getContrato().getLastMovimiento().getPosVivaVencida() != null){
+        		result += ec.getContrato().getLastMovimiento().getPosVivaVencida();
+        	}
         }
 
         return result;
@@ -455,7 +460,6 @@ public class Procedimiento implements Serializable, Auditable, Comparable<Proced
                 pce.setProcedimiento(this);
                 list.add(pce);
             }
-
             procedimientosContratosExpedientes = list;
         }
     }

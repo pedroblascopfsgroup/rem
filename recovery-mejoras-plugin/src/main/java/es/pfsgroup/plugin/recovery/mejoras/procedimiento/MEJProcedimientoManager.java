@@ -2,12 +2,9 @@ package es.pfsgroup.plugin.recovery.mejoras.procedimiento;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,6 +19,7 @@ import es.capgemini.devon.web.DynamicElement;
 import es.capgemini.devon.web.DynamicElementManager;
 import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.dao.EstadoProcedimientoDao;
+import es.capgemini.pfs.asunto.dao.ProcedimientoContratoExpedienteDao;
 import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
 import es.capgemini.pfs.asunto.dao.TipoProcedimientoDao;
 import es.capgemini.pfs.asunto.dto.ProcedimientoDto;
@@ -32,11 +30,10 @@ import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.asunto.model.ProcedimientoContratoExpediente;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
-import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.web.DynamicElementApi;
+import es.capgemini.pfs.decisionProcedimiento.DecisionProcedimientoManager;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.expediente.model.DDAmbitoExpediente;
@@ -50,33 +47,30 @@ import es.capgemini.pfs.persona.dao.EXTPersonaDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
-import es.capgemini.pfs.recurso.model.Recurso;
-import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.utils.JBPMProcessManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.recovery.mejoras.MEJConstantes;
 import es.pfsgroup.plugin.recovery.mejoras.PluginMejorasBOConstants;
 import es.pfsgroup.plugin.recovery.mejoras.asunto.dao.MEJProcedimientoContratoExpedienteDao;
-import es.pfsgroup.plugin.recovery.mejoras.asunto.dao.impl.MEJProcedimientoContratoExpedienteDaoImpl;
 import es.pfsgroup.plugin.recovery.mejoras.expediente.MEJExpedienteFacade;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.dto.MEJDtoBloquearProcedimientos;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.dto.MEJDtoInclusionExclusionContratoProcedimiento;
-import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJConfiguracionDerivacionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.Dao.MEJRecursoDao;
-import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.api.ExpedienteApi;
 import es.pfsgroup.recovery.api.ProcedimientoApi;
+import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
+import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoDto;
+import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 
 @Component
 public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProcedimientoApi> implements MEJProcedimientoApi {
@@ -114,11 +108,22 @@ public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProce
 	private MEJProcedimientoContratoExpedienteDao mejProcedimientoContratoExpedienteDao;
 
 	@Autowired
+	private ProcedimientoContratoExpedienteDao procedimientoContratoExpedienteDao;
+	
+	@Autowired
 	private EXTPersonaDao personaDao;
 
 	@Autowired
 	private EstadoProcedimientoDao estadoProcedimientoDao;
 
+	@Autowired
+	private EXTProcedimientoManager extProcedimientoManager;
+	
+	@Autowired
+	private DecisionProcedimientoManager decisionProcedimientoManager;
+
+
+	
 	@BusinessOperation("procedimiento.buttons")
 	public List<DynamicElement> getTabs(long idProcedimiento) {
 		return tabManager.getDynamicElements("procedimiento.buttons", idProcedimiento);
@@ -203,42 +208,6 @@ public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProce
 		return tabManager.getDynamicElements("tabs.procedimiento.fast", null);
 	}
 
-	@Override
-	@BusinessOperation(MEJ_BO_PRC_ES_GESTOR_CEX)
-	public Boolean esGestorCEX(Long idProcedimiento, String codUg) {
-		if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equalsIgnoreCase(codUg)) {
-			Long idAsunto = procedimientoDao.get(idProcedimiento).getAsunto().getId();
-			EXTAsunto asunto = genericDao.get(EXTAsunto.class, genericDao.createFilter(FilterType.EQUALS, "id", idAsunto));
-
-			Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
-			if (asunto.getGestorCEXP() != null && asunto.getGestorCEXP().getUsuario() != null)
-				return asunto.getGestorCEXP().getUsuario().getId().equals(usuario.getId());
-			else
-				return false;
-
-		} else
-			return false;
-
-	}
-
-	@Override
-	@BusinessOperation(MEJ_BO_PRC_ES_SUPERVISOR_CEX)
-	public Boolean esSupervisorCEX(Long idProcedimiento, String codUg) {
-		if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equalsIgnoreCase(codUg)) {
-			Long idAsunto = procedimientoDao.get(idProcedimiento).getAsunto().getId();
-			EXTAsunto asunto = genericDao.get(EXTAsunto.class, genericDao.createFilter(FilterType.EQUALS, "id", idAsunto));
-
-			Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
-			if (asunto.getSupervisorCEXP() != null && asunto.getSupervisorCEXP().getUsuario() != null)
-				return asunto.getSupervisorCEXP().getUsuario().getId().equals(usuario.getId());
-			else
-				return false;
-
-		} else
-			return false;
-
-	}
-
 	public GenericABMDao getGenericDao() {
 		return genericDao;
 	}
@@ -253,74 +222,6 @@ public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProce
 
 	public void setProcedimientoDao(ProcedimientoDao procedimientoDao) {
 		this.procedimientoDao = procedimientoDao;
-	}
-
-	@Override
-	@BusinessOperation(MEJ_BO_PRC_SE_PUEDE_DESPARALIZAR)
-	public boolean isDespararizable(Long idProcedimiento) {
-		MEJProcedimiento prc = genericDao.get(MEJProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", idProcedimiento),
-				genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-
-		if (prc != null && prc.isEstaParalizado())
-			return true;
-
-		return false;
-	}
-
-	@Override
-	@BusinessOperation(MEJ_BO_PRC_DESPARALIZAR)
-	@Transactional(readOnly = false)
-	public void desparalizarProcedimiento(Long idProcedimiento) {
-		MEJProcedimiento prc = genericDao.get(MEJProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", idProcedimiento),
-				genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-		if (prc != null) {
-			Map<String, Object> variables = new HashMap<String, Object>();
-
-			if (!Checks.esNulo(prc.getPlazoParalizacion())) {
-				// FIXME Poner la constante PLAZO_TAREAS_DEFAULT en alg�n sitio
-				variables.put("PLAZO_TAREA_DEFAULT", prc.getPlazoParalizacion());
-			}
-			
-			// Antes de desparalizar las tareas hay que comprobar que no haya recursos pendientes
-			boolean recSinFinalizar = false;
-			List<Recurso> listRecProc = recursoDao.getRecursosPorProcedimiento(idProcedimiento);
-			
-			if (listRecProc != null){
-				for (Recurso rec : listRecProc) {
-					if(Checks.esNulo(rec.getResultadoResolucion())){
-						recSinFinalizar = true;
-					}
-				}
-			}
-			
-			if (!recSinFinalizar){
-				jbpmUtil.addVariablesToProcess(prc.getProcessBPM(), variables);
-				jbpmUtil.activarProcesosBPM(prc.getProcessBPM());
-			}
-			
-			GregorianCalendar fechaParalizacion = new GregorianCalendar();
-			fechaParalizacion.setTime(prc.getFechaUltimaParalizacion());
-
-			prc.setEstaParalizado(false);
-			prc.setFechaUltimaParalizacion(null);
-			prc.setPlazoParalizacion(null);
-
-			genericDao.save(MEJProcedimiento.class, prc);
-			
-			
-		}
-
-	}
-
-	private int restarFechas(GregorianCalendar fecha1, GregorianCalendar fecha2) {
-		long milis1 = fecha1.getTimeInMillis();
-		long milis2 = fecha2.getTimeInMillis();
-		// calcular la diferencia en milisengundos
-		long diff = milis2 - milis1;
-		// calcular la diferencia en dias
-		long diffDays = diff / (24 * 60 * 60 * 1000);
-		return Long.valueOf(diffDays).intValue();
-
 	}
 
 	@BusinessOperation(overrides = ExternaBusinessOperation.BO_PRC_MGR_SALVAR_PROCEDIMIMENTO)
@@ -428,97 +329,36 @@ public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProce
 
 	@BusinessOperation(overrides = ComunBusinessOperation.BO_JBPM_MGR_CREA_PROCEDIMIENTO_HIJO)
 	public Procedimiento creaProcedimientoHijo(TipoProcedimiento tipoProcedimiento, Procedimiento procPadre) {
-		MEJProcedimiento procHijo = new MEJProcedimiento();
+		EXTProcedimientoDto procDto = new EXTProcedimientoDto(); 
+		procDto.setAsunto(procPadre.getAsunto());
+		procDto.setProcedimientoPadre(procPadre);
+		procDto.setTipoProcedimiento(tipoProcedimiento);
+		procDto.setDecidido(procPadre.getDecidido());
+		// procDto.setContrato(procPadre.getContrato());
+		procDto.setDecidido(procPadre.getDecidido());
+		procDto.setExpedienteContratos(procPadre.getExpedienteContratos());
+		procDto.setFechaRecopilacion(procPadre.getFechaRecopilacion());
+		procDto.setTipoProcedimiento(tipoProcedimiento);
+		procDto.setProcedimientoPadre(procPadre);
+		procDto.setPersonas(procPadre.getPersonasAfectadas());
 		
-		Filter filtroProcOr = genericDao.createFilter(FilterType.EQUALS, "tipoProcedimientoOrigen", procPadre.getTipoProcedimiento().getCodigo());
-		Filter filtroProcDest = genericDao.createFilter(FilterType.EQUALS, "tipoProcedimientoDestino", tipoProcedimiento.getCodigo());
-		MEJConfiguracionDerivacionProcedimiento configuracion=genericDao.get(MEJConfiguracionDerivacionProcedimiento.class, filtroProcOr, filtroProcDest);
-
-		procHijo.setAsunto(procPadre.getAsunto());
-		// procHijo.setContrato(procPadre.getContrato());
-		procHijo.setDecidido(procPadre.getDecidido());
-		procHijo.setExpedienteContratos(procPadre.getExpedienteContratos());
-		procHijo.setFechaRecopilacion(procPadre.getFechaRecopilacion());
-		procHijo.setTipoProcedimiento(tipoProcedimiento);
-		procHijo.setProcedimientoPadre(procPadre);
-
-		List<Persona> personas = new ArrayList<Persona>();
-		for (Persona per : procPadre.getPersonasAfectadas()) {
-			Persona p = personaDao.get(per.getId());
-			personas.add(p);
-		}
-		procHijo.setPersonasAfectadas(personas);
-
 		DDEstadoProcedimiento estadoProcedimiento = estadoProcedimientoDao.buscarPorCodigo(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_DERIVADO);
-		procHijo.setEstadoProcedimiento(estadoProcedimiento);
-		
-		if (Checks.esNulo(configuracion)){
-			procHijo.setJuzgado(procPadre.getJuzgado());
-			procHijo.setCodigoProcedimientoEnJuzgado(procPadre.getCodigoProcedimientoEnJuzgado());
-			procHijo.setObservacionesRecopilacion(procPadre.getObservacionesRecopilacion());
-			procHijo.setPlazoRecuperacion(procPadre.getPlazoRecuperacion());
-			procHijo.setTipoActuacion(tipoProcedimiento.getTipoActuacion());
-			procHijo.setPorcentajeRecuperacion(procPadre.getPorcentajeRecuperacion());
-			procHijo.setSaldoOriginalNoVencido(procPadre.getSaldoOriginalNoVencido());
-			procHijo.setSaldoOriginalVencido(procPadre.getSaldoOriginalVencido());
-			procHijo.setSaldoRecuperacion(procPadre.getSaldoRecuperacion());
-			procHijo.setTipoReclamacion(procPadre.getTipoReclamacion());
-		} else {
-			if (configuracion.getJuzgado()){
-				procHijo.setJuzgado(procPadre.getJuzgado());
-			}
-			if (configuracion.getCodigoProcedimientoEnJuzgado()){
-				procHijo.setCodigoProcedimientoEnJuzgado(procPadre.getCodigoProcedimientoEnJuzgado());
-			}
-			if (configuracion.getObservacionesRecopilacion()){
-				procHijo.setObservacionesRecopilacion(procPadre.getObservacionesRecopilacion());
-			}
-			if (configuracion.getPlazoRecuperacion()){
-				procHijo.setPlazoRecuperacion(procPadre.getPlazoRecuperacion());
-			} 
-			if (configuracion.getTipoActuacion()){
-				procHijo.setTipoActuacion(tipoProcedimiento.getTipoActuacion());
-			}
-			if (configuracion.getPorcentajeRecuperacion() ){
-				procHijo.setPorcentajeRecuperacion(procPadre.getPorcentajeRecuperacion());
-			}
-			if (configuracion.getSaldoOriginalNoVencido()){
-				procHijo.setSaldoOriginalNoVencido(procPadre.getSaldoOriginalNoVencido());
-			}
-			if (configuracion.getSaldoOriginalVencido()){
-				procHijo.setSaldoOriginalVencido(procPadre.getSaldoOriginalVencido());
-			}
-			if (configuracion.getSaldoRecuperacion() ){
-				procHijo.setSaldoRecuperacion(procPadre.getSaldoRecuperacion());
-			}
-			if (configuracion.getTipoReclamacion()){
-				procHijo.setTipoReclamacion(procPadre.getTipoReclamacion());
-			}
-		}
-		
-		if (!Checks.estaVacio(procPadre.getBienes())) {
-            // Agrego los bienes al procedimiento
-            List<ProcedimientoBien> procedimientosBien = new ArrayList<ProcedimientoBien>();
-            
-            // Si es automático no se comprueba el flag unicoBien, se copian todos.
-//	        if ((tipoProcedimiento.getIsUnicoBien() && procPadre.getBienes().size()==1) ||
-//	        		(!tipoProcedimiento.getIsUnicoBien())) {
-		        for (ProcedimientoBien procBien : procPadre.getBienes()) {
-		        	
-		        	ProcedimientoBien procBienCopiado = new ProcedimientoBien();
-		        	procBienCopiado.setBien(procBien.getBien());
-		        	procBienCopiado.setSolvenciaGarantia(procBien.getSolvenciaGarantia());
-		        	procBienCopiado.setProcedimiento(procHijo);
-		        	genericDao.save(ProcedimientoBien.class, procBienCopiado);
-		        	procedimientosBien.add(procBienCopiado);
-		        }
-//	        }
-	        procHijo.setBienes(procedimientosBien);
-        }
+		procDto.setEstadoProcedimiento(estadoProcedimiento);
 
-		Long idProcedimiento = procedimientoDao.save(procHijo);// procedimientoManager.saveProcedimiento(procHijo);
-
-		return procedimientoDao.get(idProcedimiento);// procedimientoManager.getProcedimiento(idProcedimiento);
+		procDto.setJuzgado(procPadre.getJuzgado());
+		procDto.setCodigoProcedimientoEnJuzgado(procPadre.getCodigoProcedimientoEnJuzgado());
+		procDto.setObservacionesRecopilacion(procPadre.getObservacionesRecopilacion());
+		procDto.setPlazoRecuperacion(procPadre.getPlazoRecuperacion());
+		procDto.setPorcentajeRecuperacion(procPadre.getPorcentajeRecuperacion());
+		procDto.setSaldoOriginalNoVencido(procPadre.getSaldoOriginalNoVencido());
+		procDto.setSaldoOriginalVencido(procPadre.getSaldoOriginalVencido());
+		procDto.setSaldoRecuperacion(procPadre.getSaldoRecuperacion());
+		procDto.setTipoReclamacion(procPadre.getTipoReclamacion());
+		
+		procDto.setBienes(procPadre.getBienes());
+		
+		Procedimiento prc = extProcedimientoManager.guardaProcedimiento(procDto);
+		return prc;
 	}
 
 	@BusinessOperation(overrides = ComunBusinessOperation.BO_JBPM_MGR_LANZAR_BPM_ASOC_PROC)
@@ -547,9 +387,9 @@ public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProce
 	@BusinessOperation(overrides = "procedimientoManager.saveOrUpdateProcedimiento")
 	@Transactional
 	public void saveOrUpdateProcedimiento(Procedimiento p) {
-
+		List<ProcedimientoContratoExpediente> procContratosExpedientes = p.getProcedimientosContratosExpedientes();
 		procedimientoDao.saveOrUpdate(p);
-		mejProcedimientoContratoExpedienteDao.actualizaCEXProcedimiento(p.getProcedimientosContratosExpedientes(), p.getId());
+		procedimientoContratoExpedienteDao.actualizaCEXProcedimiento(procContratosExpedientes, p.getId());
 		try {
 			cambiarGestorSupervisorTramiteSubasta(p);
 		} catch (Exception e) {
@@ -660,7 +500,6 @@ public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProce
 	 * @param dto
 	 *            DtoExclusionContratoExpediente
 	 */
-	@SuppressWarnings("unchecked")
 	@BusinessOperation(MEJ_BO_PRC_EXCLUIR_CONTRATOS_AL_PROCEDIMIENTO)
 	@Transactional(readOnly = false)
 	@Override
@@ -691,8 +530,7 @@ public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProce
      * Crea un nuevo procedimiento de tipo bloqueado.
      * @param dto UNNIMDtoInclusionExclusionContratoProcedimiento
      */
-    @SuppressWarnings({ "unchecked", "null" })
-	@BusinessOperation(MEJ_BO_PRC_ADJUNTAR_CONTRATOS_AL_PROCEDIMIENTO)
+    @BusinessOperation(MEJ_BO_PRC_ADJUNTAR_CONTRATOS_AL_PROCEDIMIENTO)
 	@Transactional(readOnly = false)
 	@Override
     public void adjuntarContratosAlProcedimiento(MEJDtoBloquearProcedimientos dto) {

@@ -3,10 +3,12 @@ package es.capgemini.pfs.tareaNotificacion.model;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.Formula;
@@ -16,6 +18,7 @@ import org.hibernate.proxy.HibernateProxy;
 import es.capgemini.pfs.PluginCoreextensionConstantes;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.cliente.model.Cliente;
 import es.capgemini.pfs.contrato.model.Contrato;
@@ -30,7 +33,9 @@ import es.capgemini.pfs.tareaNotificacion.VencimientoTarea;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
+import es.pfsgroup.recovery.integration.Guid;
 
 @Entity
 public class EXTTareaNotificacion extends TareaNotificacion {
@@ -79,6 +84,28 @@ public class EXTTareaNotificacion extends TareaNotificacion {
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	@JoinColumn(name = "PER_ID")
 	private Persona persona;
+
+	@Column(name="SYS_GUID")
+	private String guid;
+
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
+	
+	/*@Embedded
+	private Guid guid;
+	
+	public Guid getGuid() {
+		return guid;
+	}
+
+	public void setGuid(Guid guid) {
+		this.guid = guid;
+	}*/
 
 	private static final String _SELECT_ENTIDAD_ASUNTO = " "
 			+ " select NVL(per.per_riesgo, 0)"
@@ -160,10 +187,10 @@ public class EXTTareaNotificacion extends TareaNotificacion {
 			+ SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC
 			+ "', '"
 			+ SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_PROCEDIMIENTO
-			+ "') then 'Prórroga'"
+			+ "') then 'Prï¿½rroga'"
 			+ "     WHEN stb.dd_sta_codigo in ('"
 			+ SubtipoTarea.CODIGO_SOLICITUD_CANCELACION_EXPEDIENTE_DE_SUPERVISOR
-			+ "') then 'Cancelación Expediente'"
+			+ "') then 'Cancelaciï¿½n Expediente'"
 			+ "     WHEN stb.dd_sta_codigo in ('"
 			+ SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL
 			+ "') then 'Expediente Manual'"
@@ -185,7 +212,7 @@ public class EXTTareaNotificacion extends TareaNotificacion {
 			+ SubtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_RESPONDIDA_DE_SUPERVISOR
 			+
 
-			"') then 'Comunicación'"
+			"') then 'Comunicaciï¿½n'"
 			+ "   ELSE ''"
 			+ "   END"
 			+ " from TAR_TAREAS_NOTIFICACIONES tn, ${master.schema}.dd_sta_subtipo_tarea_base stb"
@@ -246,7 +273,7 @@ public class EXTTareaNotificacion extends TareaNotificacion {
     }	
 	
 	/**
-     * Volumen de Riesgo Vencido de la entidad de información asociada a la tarea (cliente, expediente, asunto o procedimiento).
+     * Volumen de Riesgo Vencido de la entidad de informaciï¿½n asociada a la tarea (cliente, expediente, asunto o procedimiento).
      * @return el volumen de riesgo vencido
      */
 	@Override
@@ -434,7 +461,7 @@ public class EXTTareaNotificacion extends TareaNotificacion {
 	}
 
 	/**
-	 * Función auxiliar utilizada para poder sobreescribir
+	 * Funciï¿½n auxiliar utilizada para poder sobreescribir
 	 * calcularSupervisorExpedienteAux
 	 * 
 	 * */
@@ -471,10 +498,10 @@ public class EXTTareaNotificacion extends TareaNotificacion {
 	}
 
 	/***
-	 * Función que sustituye a calcularSupervisorExpediente de la clase padre
-	 * Debido a que la anterior tenía un bug, y cuando buscaba de un array cogía
-	 * siempre el primer valor, aunque podía darse el caso de que estuviera
-	 * vacío el array.
+	 * Funciï¿½n que sustituye a calcularSupervisorExpediente de la clase padre
+	 * Debido a que la anterior tenï¿½a un bug, y cuando buscaba de un array cogï¿½a
+	 * siempre el primer valor, aunque podï¿½a darse el caso de que estuviera
+	 * vacï¿½o el array.
 	 * 
 	 * */
 
@@ -496,7 +523,7 @@ public class EXTTareaNotificacion extends TareaNotificacion {
 		if (Checks.esNulo(s)) {
 			return s;
 		} else {
-			return s.replaceAll("'", "´");
+			return s.replaceAll("'", "ï¿½");
 		}
 	}
 
@@ -697,7 +724,7 @@ public class EXTTareaNotificacion extends TareaNotificacion {
 	}
 
 	public String getTipoSolicitudSQL() {
-		// TODO Cuando se habilite el telecobro añadir las tareas pertinentes
+		// TODO Cuando se habilite el telecobro aï¿½adir las tareas pertinentes
 		// TODO i18n
 
 		return tipoSolicitudSQL;
@@ -815,7 +842,7 @@ public class EXTTareaNotificacion extends TareaNotificacion {
 	}
 
 	/**
-	 * Este método nos devuelve el código del tipo de entidad controlando que no
+	 * Este mï¿½todo nos devuelve el cï¿½digo del tipo de entidad controlando que no
 	 * se nos produzca un NullPointerException
 	 * 
 	 * @return
@@ -827,11 +854,11 @@ public class EXTTareaNotificacion extends TareaNotificacion {
 	}
 
 	/**
-	 * Este método nos devuelve el ApellidoNombre del supervisor de un asunto
+	 * Este mï¿½todo nos devuelve el ApellidoNombre del supervisor de un asunto
 	 * controlando que no se nos produzca un NullPointerException
 	 * 
 	 * @param asunto
-	 * @return Devuelve una cadena vacía "" si no puede encontrar el
+	 * @return Devuelve una cadena vacï¿½a "" si no puede encontrar el
 	 *         apellidonombre del supervisor
 	 */
 	private String getApellidoNombreSupervisor(Asunto asunto) {
@@ -846,7 +873,7 @@ public class EXTTareaNotificacion extends TareaNotificacion {
 	}
 
 	/**
-	 * Este método nos devuelve el id del supervisor de un asunto controlando
+	 * Este mï¿½todo nos devuelve el id del supervisor de un asunto controlando
 	 * que no se nos produzca un NullPointerException
 	 * 
 	 * @param asunto
@@ -863,7 +890,7 @@ public class EXTTareaNotificacion extends TareaNotificacion {
 	}
 
 	/**
-	 * Este método nos devuelve el id del gestor de un asunto controlando que no
+	 * Este mï¿½todo nos devuelve el id del gestor de un asunto controlando que no
 	 * se nos produzca un NullPointerException
 	 * 
 	 * @param asunto
@@ -882,7 +909,7 @@ public class EXTTareaNotificacion extends TareaNotificacion {
 	/**
 	 * devuelve el supervisor.
 	 * 
-	 * Este método sustituye al método de la clase padre que es susceptible de
+	 * Este mï¿½todo sustituye al mï¿½todo de la clase padre que es susceptible de
 	 * dar un NullPointerException
 	 * 
 	 * @return supervisor
@@ -920,7 +947,7 @@ public class EXTTareaNotificacion extends TareaNotificacion {
 	/**
 	 * devuelve el gestor.
 	 * 
-	 * Este método sustituye al método de la clase padre que es susceptible de
+	 * Este mï¿½todo sustituye al mï¿½todo de la clase padre que es susceptible de
 	 * dar un NullPointerException
 	 * 
 	 * @return gestor
@@ -956,8 +983,8 @@ public class EXTTareaNotificacion extends TareaNotificacion {
 	}
 
 	/**
-	 * Nos devuelve el código del estado del itinerario del expediente
-	 * controlando que en ningún momento se produzca un NullPointerException
+	 * Nos devuelve el cï¿½digo del estado del itinerario del expediente
+	 * controlando que en ningï¿½n momento se produzca un NullPointerException
 	 * 
 	 * @return
 	 */
@@ -966,7 +993,7 @@ public class EXTTareaNotificacion extends TareaNotificacion {
 	}
 
 	/**
-	 * Nos devuelve el código del estado del itinerario de un cliente procurando
+	 * Nos devuelve el cï¿½digo del estado del itinerario de un cliente procurando
 	 * no dar un NullPointerException
 	 * 
 	 * @param expediente
@@ -981,7 +1008,7 @@ public class EXTTareaNotificacion extends TareaNotificacion {
 	}
 
 	/**
-	 * Nos devuelve el código del estado del itinerario de un expediente
+	 * Nos devuelve el cï¿½digo del estado del itinerario de un expediente
 	 * procurando no dar un NullPointerException
 	 * 
 	 * @param expediente
@@ -1003,4 +1030,17 @@ public class EXTTareaNotificacion extends TareaNotificacion {
 		return persona;
 	}
 
+	@Transient
+	public static EXTTareaNotificacion instanceOf(TareaNotificacion tareaNotificacion) {
+		EXTTareaNotificacion extTareaNotif = null;
+		if (tareaNotificacion==null) return null;
+	    if (tareaNotificacion instanceof HibernateProxy) {
+	    	extTareaNotif = (EXTTareaNotificacion) ((HibernateProxy) tareaNotificacion).getHibernateLazyInitializer()
+	                .getImplementation();
+	    } else if (tareaNotificacion instanceof EXTTareaNotificacion){
+	    	extTareaNotif = (EXTTareaNotificacion) tareaNotificacion;
+		}
+		return extTareaNotif;
+	}
+	
 }

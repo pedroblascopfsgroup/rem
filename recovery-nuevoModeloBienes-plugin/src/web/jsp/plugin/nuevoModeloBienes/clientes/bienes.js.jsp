@@ -104,7 +104,7 @@
 		inscripcion_valor = '${NMBbien.datosRegistralesActivo.inscripcion}';
 		numFinca_valor = '${NMBbien.datosRegistralesActivo.numFinca}';
 		numRegistro_valor = '${NMBbien.datosRegistralesActivo.numRegistro}';
-		municipoLibro_valor = '${NMBbien.datosRegistralesActivo.municipoLibro}';
+		municipoLibro_valor = '<s:message javaScriptEscape="true" text="${NMBbien.datosRegistralesActivo.municipoLibro}" />';
 		municipioRegistro_valor = '${NMBbien.datosRegistralesActivo.localidad.codigo}';
 		provinciaRegistro_valor = '${NMBbien.datosRegistralesActivo.provincia.codigo}';
 		codigoRegistro_valor = '${NMBbien.datosRegistralesActivo.codigoRegistro}';

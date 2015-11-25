@@ -1,16 +1,22 @@
 package es.pfsgroup.plugin.recovery.coreextension.api;
 
-import java.util.Map;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-
-import org.springframework.stereotype.Component;
 
 
 public class CoreProjectContextImpl implements CoreProjectContext {
 	
 	private Map<String, Set<String>> categoriasSubTareas;
 	private List<String> tiposPrcAdjudicados;
+	private Set<String> tiposGestorGestoria;
+	private Set<String> tiposGestorProcurador;
+	private Set<String> entidadesDesparalizacion;
+	
+	public CoreProjectContextImpl() {
+		entidadesDesparalizacion = new HashSet<String>();
+	}
 
 	@Override
 	public Map<String, Set<String>> getCategoriasSubTareas() {
@@ -33,4 +39,40 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 		this.tiposPrcAdjudicados = tiposPrcAdjudicados;
 	}
 	
+	/**
+	 * Devuelve los tipos de gestor que son gestoria
+	 */
+	@Override
+	public Set<String> getTiposGestorGestoria() {
+		return tiposGestorGestoria;
+	}
+
+	public void setTiposGestorGestoria(Set<String> tiposGestorGestoria) {
+		this.tiposGestorGestoria = tiposGestorGestoria;
+	}
+
+	public List<String> getTiposPrcAdjudicados() {
+		return tiposPrcAdjudicados;
+	}
+
+	public void setTiposPrcAdjudicados(List<String> tiposPrcAdjudicados) {
+		this.tiposPrcAdjudicados = tiposPrcAdjudicados;
+	}
+
+	public Set<String> getTiposGestorProcurador() {
+		return tiposGestorProcurador;
+	}
+
+	public void setTiposGestorProcurador(Set<String> tiposGestorProcurador) {
+		this.tiposGestorProcurador = tiposGestorProcurador;
+	}
+
+	@Override
+	public Set<String> getEntidadesDesparalizacion() {
+		return entidadesDesparalizacion;
+	}
+
+	public void setEntidadesDesparalizacion(Set<String> entidadesDesparalizacion) {
+		this.entidadesDesparalizacion = entidadesDesparalizacion;
+	}	
 }

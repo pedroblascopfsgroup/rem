@@ -30,6 +30,7 @@
 	<pfs:editForm saveOrUpdateFlow="pfsadmin/despachosExternos/ADMasignarSupervisorDespacho"
 		leftColumFields="username"
 		rightColumFields="despachoExterno"
-		parameters="parametros" />
+		parameters="parametros" 
+		onSuccessMode="tabGenericoConMsgGuardando" />
 
 </fwk:page>

@@ -248,6 +248,7 @@
 		btnEditarInfoCierre.setDisabled(false);
 	   	btnGenerarInformeCierre.setDisabled(false);
 	   	btnEnviarCierre.setDisabled(false);
+	   	btnDescargarPlantillaInstrucciones.setDisabled(false);
 		
 		bienesSeleccionados = [];
 
@@ -554,10 +555,281 @@
 		});
 	}
 	
+	<%-- Modificaciones Operaciones masivas --%>
+	var btnAddRelacionContratoBien = new Ext.Button({
+			text : '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabRelaciones.btnNuevaRelacionContratoBien" text="**Añadir Relación Contrato Bien" />'
+			,iconCls : 'icon_mas'
+			,cls: 'x-btn-text-icon'
+			,disabled:true
+			
+	});
+	
+	btnAddRelacionContratoBien.on('click', function(){		
+			var w = app.openWindow({
+				  flow : 'subasta/getRelacionContratoBien'
+				  ,width:1150
+				  ,autoWidth:true
+				  ,closable:true
+				  ,title : '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabRelaciones.btnNuevaRelacionContratoBien" text="**Añadir Relación Contrato Bien" />'
+				  ,params:{idBienes:bienesSeleccionados}
+				
+				});
+				w.on(app.event.DONE,function(){
+						w.close();
+						
+						
+				});
+				w.on(app.event.CANCEL, function(){w.close();});
+			
+	
+	});
+	
+	var btnBorrarRelacionContratoBien = new Ext.Button({
+			text : '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabRelaciones.btnEliminarRelacionContratoBien" text="**Eliminar Relación Contrato Bien" />'
+			,iconCls : 'icon_cancel'
+			,cls: 'x-btn-text-icon'
+			,disabled:true
+			
+	});
+	
+	btnBorrarRelacionContratoBien.on('click', function(){
+		var w = app.openWindow({
+				  flow : 'subasta/getBorrarRelacionContratoBien'
+				  ,width:1150
+				  ,autoWidth:true
+				  ,closable:true
+				  ,title : '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabRelaciones.btnEliminarRelacionContratoBien" text="**Eliminar Relación Contrato Bien" />'
+				  ,params:{idBienes:bienesSeleccionados}
+				
+				});
+				w.on(app.event.DONE,function(){
+						w.close();
+						
+						
+				});
+				w.on(app.event.CANCEL, function(){w.close();});	
+	
+	});
+	
+	var btnAgregarBienCargas = new Ext.Button({
+			text : '<s:message code="plugin.nuevoModeloBienes.cargas.agregar" text="**Nueva Carga" />'
+			,iconCls : 'icon_edit'
+			,cls: 'x-btn-text-icon'
+			,disabled:true
+			
+	});
+	
+	btnAgregarBienCargas.on('click', function(){
+		var w = app.openWindow({
+				  flow : 'subasta/getAgregarBienCargas'
+				  ,width:800
+				  ,autoWidth:true
+				  ,closable:true
+				  ,title : '<s:message code="plugin.nuevoModeloBienes.cargas.agregar" text="**Nueva carga" />'
+				  ,params:{idBienes:bienesSeleccionados}
+				
+				});
+				w.on(app.event.DONE,function(){
+						w.close();
+						
+						
+				});
+				w.on(app.event.CANCEL, function(){w.close();});	
+	
+	});	
+	
+	
+	var btnEditarRevisionCargas = new Ext.Button({
+			text : '<s:message code="plugin.nuevoModeloBienes.subastas.gridLotes.btnRegistrarNoExistenciaCargas" text="**Registrar No existencia de cargas" />'
+			,iconCls : 'icon_edit'
+			,cls: 'x-btn-text-icon'
+			,disabled:true
+			
+	});
+	
+	btnEditarRevisionCargas.on('click', function(){
+		var w = app.openWindow({
+				  flow : 'subasta/getEditarRevisionCargas'
+				  ,width:430
+				  ,autoWidth:true
+				  ,closable:true
+				  ,title : '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabAdjudicacion.titleEditarRevisionCargas" text="**Editar revisión de cargas" />'
+				  ,params:{idBienes:bienesSeleccionados}
+				
+				});
+				w.on(app.event.DONE,function(){
+						w.close();
+						
+						
+				});
+				w.on(app.event.CANCEL, function(){w.close();});	
+	
+	});
+	
+	<%-- 
+	var btnDescargarPlantillaInstrucciones = new Ext.Button({
+	       text : '<s:message code="plugin.masivo.procesadoTareas.descargarExcel" text="**Descargar Excel" />' + '&nbsp;'
+	       ,iconCls:'icon_exportar_csv'
+	       ,height : 25
+	       ,handler:function(){
+				var flow='/pfs/msvprocesadotareasarchivo/descargarExcel';
+            	var params = {idTipoOperacion:1};
+            	app.openBrowserWindow(flow,params);	       
+	     	}
+	});
+	--%>
+	
+	var btnDescargarPlantillaInstrucciones = new Ext.Button({
+	       text : '<s:message code="plugin.masivo.procesadoTareas.descargarExcel" text="**Descargar Excel" />' + '&nbsp;'
+	       ,iconCls:'icon_exportar_csv'
+	       ,height : 25
+	       ,disabled:true
+	       ,handler:function(){
+	       		var numAutos=storeSubastas.data.items[0].data.numAutos;
+	       		var fechaSubasta=storeSubastas.data.items[0].data.fechaSenyalamiento;
+	       		var numLotes=[];
+	       		for(i=0;i<lotesStore.data.length;i++){
+					numLotes.push(lotesStore.data.items[i].data.idLote);	
+				}
+				
+				var flow='/pfs/subasta/descargarPlantillaInstrucciones';
+            	var params = {numAutos:numAutos,fechaSubasta:fechaSubasta,numLotes:numLotes};
+            	app.openBrowserWindow(flow,params);	       
+	     	}
+	});
+	
+	
+	var btnSubirInstrucciones = new Ext.Button({
+	       text : '<s:message code="plugin.nuevoModeloBienes.instruccionesMasivas" text="**Subida masiva de instrucciones" />' + '&nbsp;'
+	       ,iconCls:'icon_exportar_csv'
+	       ,height : 25
+	})
+	
+	btnSubirInstrucciones.on('click', function(){
+      if (gridSubastas.getSelectionModel().getCount()>0){
+		var upload = new Ext.FormPanel({
+		        fileUpload: true
+		        ,height: 55
+		        ,autoWidth: true
+		        ,bodyStyle: 'padding: 10px 10px 0 10px;'
+		        ,defaults: {
+		            allowBlank: false
+		            ,msgTarget: 'side'
+					,height:45
+		        }
+		        ,items: [{
+			            xtype: 'fileuploadfield'
+			            ,emptyText: '<s:message code="fichero.upload.fileLabel.error" text="**Debe seleccionar un fichero" />'
+			            ,fieldLabel: '<s:message code="fichero.upload.fileLabel" text="**Fichero" />'
+			            ,name: 'path'
+			            ,path:'root'
+			            ,buttonText: ''
+			            ,buttonCfg: {
+			                iconCls: 'icon_mas'
+			            }
+			            ,bodyStyle: 'width:50px;'
+		        },{xtype: 'hidden', name:'id', value:0}]
+		        ,buttons: [{
+		            text: 'Subir',
+		            handler: function(){
+		            	//var idSubasta=storeSubastas.data.items[0].data.id;
+						var idSubasta = gridSubastas.getSelectionModel().getSelected().get('id');
+		            	var params = {idSubasta:idSubasta};            	
+		                if(upload.getForm().isValid()){
+			                upload.getForm().submit({
+			                    url:'/${appProperties.appName}/subastas/uploadInstruccionesSubastas.htm'
+			                    ,waitMsg: '<s:message code="plugin.nuevoModeloBienes.instruccionesMasivas.procesando" text="**Procesando la información..." />'
+			                    ,params:params
+			                    ,success: function(upload, o){	
+			                    	var resultado = o.result.resultado;
+			                    	if (resultado != "ok") {
+			                    		Ext.Msg.alert('<s:message code="plugin.nuevoModeloBienes.instruccionesMasivas" text="*** Subida masiva de instrucciones" />',
+			                    			'<s:message code="plugin.nuevoModeloBienes.instruccionesMasivas.error" text="** Se ha producido algun error al procesar el fichero de Instrucciones" /><br/><br/>' + resultado);
+			                    	} else {
+			                    		Ext.Msg.alert('<s:message code="plugin.nuevoModeloBienes.instruccionesMasivas" text="*** Subida masiva de instrucciones" />',
+			                    			'<s:message code="plugin.nuevoModeloBienes.instruccionesMasivas.ok" text="*** Se ha procesado correctamente la información." />');
+			                    	}
+			                    	win.close();
+			                    	recargarSubastas();
+			                    }
+			                });
+		                }
+		            }
+		        },{
+		            text: 'Cancelar',
+		            handler: function(){
+		                win.close();
+		            }
+		        }]
+		    });
+
+			var win =new Ext.Window({
+			         width:400
+					,minWidth:400
+			        ,height:125
+					,minHeight:125
+			        ,layout:'fit'
+			        ,border:false
+			        ,closable:true
+			        ,title:'<s:message code="adjuntos.nuevo" text="**Agregar fichero" />'
+					,iconCls:'icon-upload'
+					,items:[upload]
+					,modal : true
+			});
+			win.show();
+		} else {
+			Ext.Msg.alert('<s:message code="plugin.nuevoModeloBienes.instruccionesMasivas" text="*** Subida masiva de instrucciones" />',
+	        	'<s:message code="plugin.nuevoModeloBienes.instruccionesMasivas.debeSeleccionarSubasta" text="** Debe seleccionar una subasta" />');		
+		}
+	});	
+	
+	var btnSolicitarNumsActivos = new Ext.Button({
+		    text: '<s:message code="plugin.nuevoModeloBienes.fichaBien.btnSolicitarNumsActivos" text="**Solicitar Numeros de Activos" />'			
+		    ,iconCls : 'icon_refresh'
+			,cls: 'x-btn-text-icon'
+			,style:'margin-left:2px;padding-top:0px'	    
+	        ,height : 25
+	       	,disabled:true	       			    
+		    ,handler:function(){	    			    
+	     			page.webflow({
+		      		flow:'editbien/solicitarNumsActivosBienes'
+		      		,params:{idBien:bienesSeleccionados}		      		
+		      		,success: function(result,request){
+						if(result.msgError=='1'){
+							Ext.Msg.show({
+								title:'Operaci&oacute;n realizada',
+								msg: 'La solicitud de n&uacute;meros de activos se realiz&oacute; correctamente',
+								buttons: Ext.Msg.OK,
+								icon:Ext.MessageBox.INFO});
+						
+						}else{
+							Ext.Msg.show({
+								title:'Advertencia',
+								msg: result.msgError,
+								buttons: Ext.Msg.OK,
+								icon:Ext.MessageBox.WARNING});
+						}
+			    	}
+				});			
+	        }
+		});	
+	
+	
+	var btnAccionesSubasta = new Ext.Button({
+      text    : '<s:message code="plugin.nuevoModeloBienes.subastas.gridLotes.btnAccionesSobreSubastas" text="**Acciones sobre subastas" />',
+      style   : 'position:absolute;right:10px;top:5px',
+      disabled : false,
+      menu : {
+      	items: [btnDescargarPlantillaInstrucciones,btnSubirInstrucciones,btnSolicitarNumsActivos,btnAddRelacionContratoBien,btnBorrarRelacionContratoBien,btnAgregarBienCargas,btnEditarRevisionCargas
+
+      		]}
+     })	
+	<%-- --%>
+	
 
     var lotesCM = new Ext.grid.ColumnModel([
     		expanderLote,
-    		{header: 'id',dataIndex:'idLote',hidden:'true', renderer : coloredRender,css: colorFondo},
+    		{header: 'Id. Lote',width:55, dataIndex:'idLote',renderer : coloredRender,css: colorFondo},
 			{header: '<s:message code="plugin.nuevoModeloBienes.subastas.gridLotes.lote" text="**Lote"/>', width: 60, dataIndex : 'numLote', renderer : coloredRender,css: colorFondo},
 	        {header: '<s:message code="plugin.nuevoModeloBienes.subastas.gridLotes.pujaSinPostores" text="**Puja sin postores"/>', width: 180,  dataIndex: 'pujaSin', renderer : moneyColoredRender,align:'right',css: colorFondo },
 		    {header: '<s:message code="plugin.nuevoModeloBienes.subastas.gridLotes.pujaConPostoresDesde" text="**Puja con postores desde"/>', width: 120,  dataIndex: 'pujaConDesde',renderer : moneyColoredRender,align:'right',css: colorFondo},
@@ -583,7 +855,10 @@
 			,enableNoGroups:true
 			,selectedRowClass : 'x-grid-row-selected'	
 		})
-		,bbar:[ btnExpandAll, btnCollapseAll, btnAgregarBien, btnExcluirBien, btnInstrucLotes <sec:authorize ifAllGranted="ENVIO_CIERRE_DEUDA">, btnGenerarInformeCierre , btnEnviarCierre</sec:authorize>]
+		,bbar:[ btnExpandAll, btnCollapseAll 
+				<sec:authorize ifNotGranted = "SOLO_CONSULTA">,btnAgregarBien, btnExcluirBien, btnInstrucLotes</sec:authorize>
+				<sec:authorize ifAllGranted="ENVIO_CIERRE_DEUDA">,btnGenerarInformeCierre, btnEnviarCierre</sec:authorize>
+				<sec:authorize ifNotGranted = "SOLO_CONSULTA">,btnAccionesSubasta</sec:authorize>]
 	};
 		
 	var gridLotes = app.crearGrid(lotesStore,lotesCM,cfg);
@@ -593,6 +868,35 @@
 		btnInstrucLotes.setDisabled(false);
 	});
 	
+	function updateStatusBtnSolicitarNumerosActivos(){
+		btnSolicitarNumsActivos.setDisabled(true);
+		
+		var bienesSinNumActivo = getBienesSinNumActivo();
+				
+		for(i = 0; i < bienesSeleccionados.length; i++){
+			var idSeleccionado = bienesSeleccionados[i];
+			for(j = 0; j < bienesSinNumActivo.length; j++){
+				var idSinNumActivo = bienesSinNumActivo[j];
+				if(idSeleccionado == idSinNumActivo){
+					btnSolicitarNumsActivos.setDisabled(false);
+				}
+			}
+		}
+	}
+	
+	function getBienesSinNumActivo(){
+		var bienesSinNumActivo = [];  
+		for(i=0; i < lotesStore.data.length; i++){
+			for(j = 0; j < lotesStore.data.items[i].data.bienes.length; j++){
+				var idBien = lotesStore.data.items[i].data.bienes[j].idBien;
+				var numActivo = lotesStore.data.items[i].data.bienes[j].numActivo;
+				if(numActivo == null || numActivo == "" || numActivo == "0"){
+					bienesSinNumActivo.push(idBien);
+				}
+			}				
+		}
+		return bienesSinNumActivo;	
+	}
 	
     function expandedRowLote(obj, record, body, rowIndex){ 
     	
@@ -636,7 +940,12 @@
        	        	
        	        		// Al seleccionar un bien, sino estamos en Sareb lo añadimos al saco de bienes, comprobando que no esté ya.			
 			            rowselect: function( sel, rowIndex, record ) {
-
+							//Habilitamos operaciones masivas
+							btnEditarRevisionCargas.setDisabled(false);
+							btnAgregarBienCargas.setDisabled(false);
+							btnBorrarRelacionContratoBien.setDisabled(false);
+							btnAddRelacionContratoBien.setDisabled(false);
+							
 			            	if(!isAsuntoPropiedadBankia()) {
 				            	var idBien = record.get("idBien");
 			            		var pos = bienesSeleccionados.indexOf(idBien);
@@ -644,8 +953,9 @@
 			            			bienesSeleccionados.push(record.get("idBien"));
 			            		}
 				            }
+				            updateStatusBtnSolicitarNumerosActivos();				           
 			            // Al deseleccionar un bien	lo quitamos del saco de bienes
-			            }, rowdeselect: function( sel, rowIndex, record ) {  
+			            }, rowdeselect: function( sel, rowIndex, record ) {
 			            	if(!isAsuntoPropiedadBankia()) {   	
 				            	var idBien = record.get("idBien");
 			            		var pos = bienesSeleccionados.indexOf(idBien);
@@ -653,7 +963,16 @@
 			            			bienesSeleccionados.splice(pos,1);
 			            		}	            		
 			            	}
-
+			            	
+			            	//Si no hay bienes seleccionados desabilitamos operaciones masivas
+			            	
+			            	if(bienesSeleccionados.length == 0){
+								btnEditarRevisionCargas.setDisabled(true);
+								btnAgregarBienCargas.setDisabled(true);
+								btnBorrarRelacionContratoBien.setDisabled(true);
+								btnAddRelacionContratoBien.setDisabled(true);
+			            	}  
+							updateStatusBtnSolicitarNumerosActivos();							
 			            }
 					}
 			});

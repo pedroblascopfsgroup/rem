@@ -23,7 +23,7 @@
 	};
 	
 	var incidenciasRecord = Ext.data.Record.create([
-		 {name:'idIncidencia'},
+		 {name:'idIncidencia'}
 		,{name:'fechaCrear'}
         ,{name:'persona'}
         ,{name:'contrato'}

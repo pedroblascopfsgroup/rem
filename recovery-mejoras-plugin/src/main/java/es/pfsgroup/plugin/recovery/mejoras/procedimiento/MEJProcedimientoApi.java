@@ -16,10 +16,6 @@ public interface MEJProcedimientoApi {
 
 	public static final String MEJ_MGR_PROCEDIMIENTO_BUTTONS_RIGHT = "plugin.mejoras.web.procedimientos.buttons.right";
 	public static final String MEJ_MGR_PROCEDIMIENTO_BUTTONS_LEFT = "plugin.mejoras.web.procedimientos.buttons.left";
-	public static final String MEJ_BO_PRC_ES_GESTOR_CEX = "es.pfsgroup.recovery.mejoras.api.procedimiento.esGestorCex";
-	public static final String MEJ_BO_PRC_ES_SUPERVISOR_CEX = "es.pfsgroup.recovery.mejoras.api.procedimiento.esSupervisorCex";
-	public static final String MEJ_BO_PRC_SE_PUEDE_DESPARALIZAR = "es.pfsgroup.recovery.mejoras.procedimiento.api.isDesparalizable";
-	public static final String MEJ_BO_PRC_DESPARALIZAR = "es.pfsgroup.recovery.mejoras.procedimiento.api.desparalizar";
 	public static final String MEJ_BO_PRC_ES_TRAMITE_SUBASTA_BY_PRC_ID = "es.pfsgroup.recovery.mejoras.procedimiento.api.esTramiteSubastaByPrcId";
 	
 	/**
@@ -55,18 +51,6 @@ public interface MEJProcedimientoApi {
 	@BusinessOperationDefinition(PluginMejorasBOConstants.MEJ_MGR_PROCEDIMIENTO_TABS_FAST)
     List<DynamicElement> getTabsProcedimientoFast();
 	
-	@BusinessOperationDefinition(MEJ_BO_PRC_ES_GESTOR_CEX)
-    public Boolean esGestorCEX(Long idProcedimiento,String codUg);
-    
-    @BusinessOperationDefinition(MEJ_BO_PRC_ES_SUPERVISOR_CEX)
-    public Boolean esSupervisorCEX(Long idProcedimiento,String codUg);
-    
-    @BusinessOperationDefinition(MEJ_BO_PRC_SE_PUEDE_DESPARALIZAR)
-	public boolean isDespararizable(Long idProcedimiento);
-    
-    @BusinessOperationDefinition(MEJ_BO_PRC_DESPARALIZAR)
-	public void desparalizarProcedimiento(Long idProcedimiento);
-
     /**
      * PBO: las siguientes constantes y declaraciones de métodos son por la desconexión UNNIM
      */

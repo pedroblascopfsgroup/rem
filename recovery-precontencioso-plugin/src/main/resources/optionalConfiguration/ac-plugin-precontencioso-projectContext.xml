@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+	
+	<!-- Tareas tipo decision -->
+	<bean id="precontenciosoProjectContextDefault" 
+		class="es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContextImpl" abstract="true">
+		<property name="codigoFaseComun">
+			<value>H009</value>
+		</property>
+		<property name="recovery">
+			<value>BANKIA</value>
+		</property>
+		<property name="generarArchivoBurofax">
+			<value>false</value>
+		</property>
+		
+		<property name="variablesBurofax">
+			<list>
+				<value>bienesEnt</value>
+				<value>TITULAR_ORDEN_MENOR_CONTRATO</value>
+				<value>NUM_CUENTA_ANTERIOR</value>
+				<value>TOTAL_LIQUIDACION</value>
+				<value>FECHA_CIERRE_LIQUIDACION</value>
+				<value>MOV_FECHA_POS_VIVA_VENCIDA</value>
+				<value>CODIGO_DE_CONTRATO_DE_17_DIGITOS</value>
+				<value>totalLiq</value>
+				<value>fechaLiquidacion</value>
+				<value>entidadOrigen</value>
+				<value>tipoIntervencion</value>
+				<value>fechaPosicionVencida</value>
+				<value>numeroContrato</value>
+				<value>origenContrato</value>
+				<value>domicilio</value>
+				<value>nombreFichero</value>
+				<value>apellido2</value>
+				<value>apellido1</value>
+				<value>nombre</value>
+			</list>
+		</property>
+		
+	</bean>  
+	
+	<!-- Implementaciones por defecto-->
+	<bean id="precontenciosoProjectContext" parent="precontenciosoProjectContextDefault"/>
+	
+</beans>	

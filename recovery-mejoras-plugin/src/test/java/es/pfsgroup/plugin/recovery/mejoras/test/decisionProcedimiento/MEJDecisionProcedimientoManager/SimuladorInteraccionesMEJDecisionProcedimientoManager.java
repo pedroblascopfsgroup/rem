@@ -41,7 +41,7 @@ import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 /**
  * Simulador de interacciones para MEJDecisionProcedimientoManager.
  * <p>
- * Esta clase contiene un método por cada interacción del manager con otros
+ * Esta clase contiene un mï¿½todo por cada interacciï¿½n del manager con otros
  * objetos
  * </p>
  * 
@@ -84,7 +84,7 @@ public class SimuladorInteraccionesMEJDecisionProcedimientoManager {
     }
 
     /**
-     * Simula la interacción para devolver el usuario logado
+     * Simula la interacciï¿½n para devolver el usuario logado
      * 
      * @param idUsuario
      * @return Devuelve el mock del usuario que se simula devolver
@@ -98,7 +98,7 @@ public class SimuladorInteraccionesMEJDecisionProcedimientoManager {
     }
 
     /**
-     * Simula la interacción para saber si el usuario logado es supervisor del
+     * Simula la interacciï¿½n para saber si el usuario logado es supervisor del
      * procedimiento
      * 
      * @param idProcedimiento
@@ -116,7 +116,7 @@ public class SimuladorInteraccionesMEJDecisionProcedimientoManager {
     }
 
     /**
-     * Simula la interaccion para obtener si tien la función finalizar asunto
+     * Simula la interaccion para obtener si tien la funciï¿½n finalizar asunto
      * 
      * @param b
      *            Resultado de la consulta
@@ -127,7 +127,7 @@ public class SimuladorInteraccionesMEJDecisionProcedimientoManager {
     }
 
     /**
-     * Simula la interacción para obtener un Procedimiento y un Procedimiento
+     * Simula la interacciï¿½n para obtener un Procedimiento y un Procedimiento
      * 
      * @param idProcedimiento
      * @param idAsunto
@@ -158,8 +158,8 @@ public class SimuladorInteraccionesMEJDecisionProcedimientoManager {
     }
 
     /**
-     * Simula que se devuelven peticiones de derivación de procedimientos
-     * asociadas a la decisión.
+     * Simula que se devuelven peticiones de derivaciï¿½n de procedimientos
+     * asociadas a la decisiï¿½n.
      * 
      * @param idsPrcDerivar
      */
@@ -180,13 +180,13 @@ public class SimuladorInteraccionesMEJDecisionProcedimientoManager {
     }
 
     /**
-     * Simula la interacción para obtener el objeto DecisionProcedimiento
+     * Simula la interacciï¿½n para obtener el objeto DecisionProcedimiento
      * 
      * @param idDecision
-     *            ID de la decisión que queremos crear
+     *            ID de la decisiï¿½n que queremos crear
      * @param procedimiento
-     *            La decisión debe contener un objeto MEJProcedimiento, pasarlo
-     *            aquí.
+     *            La decisiï¿½n debe contener un objeto MEJProcedimiento, pasarlo
+     *            aquï¿½.
      * @param idTareaAsociada
      * @param idProcessBPM
      * @return
@@ -238,7 +238,7 @@ public class SimuladorInteraccionesMEJDecisionProcedimientoManager {
      *            Id del procedimiento
      * 
      * @param subtipo
-     *            Código del subtipo de la tarea.
+     *            Cï¿½digo del subtipo de la tarea.
      * @param cantidad
      *            Cantidad de tareas a genenrar
      * @return Devuelve la lista que simula devolver.
@@ -270,7 +270,7 @@ public class SimuladorInteraccionesMEJDecisionProcedimientoManager {
     }
 
     /**
-     * Simula que se obtiene un estado de decisión.
+     * Simula que se obtiene un estado de decisiï¿½n.
      * 
      * @param estadoDecision
      */
@@ -283,7 +283,7 @@ public class SimuladorInteraccionesMEJDecisionProcedimientoManager {
     }
 
     /**
-     * Simula que se obtiene una causa de decisión.
+     * Simula que se obtiene una causa de decisiï¿½n.
      * @param causaDecision
      */
     /*
@@ -311,7 +311,7 @@ public class SimuladorInteraccionesMEJDecisionProcedimientoManager {
      }    
     
     /**
-     * Devuelve la configuración para un procedimiento en concreto
+     * Devuelve la configuraciï¿½n para un procedimiento en concreto
      */
     
 //    public void seObtieneConfiguracionDerivacion(){

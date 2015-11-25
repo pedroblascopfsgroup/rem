@@ -55,10 +55,11 @@ ENV PROJECT Bankia
 ENV RECOVERY_CFG_TAG intebankia.IBD13
 
 # Versión de Recovery que desplegaremos
-ENV RECOVERY_VERSION 9.1.16-bk-rc01
+ENV RECOVERY_VERSION pfs-9.1.17-bk-rc01
 
 # URL de descarga para el WAR de Recovery
-ENV WEB_ZIP_URL http://192.168.0.16:8081/nexus/content/repositories/releases/BANKIA/recovery/web/pfs/$RECOVERY_VERSION/pfs-$RECOVERY_VERSION.war
+ENV WEB_ZIP_URL http://192.168.0.16:8086/jenkins/job/RECWEB-DeployGIT-unificado/105/artifact/ficheros_generados/pfs-9.1.17-bk-rc01.war
+# ENV WEB_ZIP_URL http://192.168.0.16:8081/nexus/content/repositories/releases/BANKIA/recovery/web/pfs/$RECOVERY_VERSION/pfs-$RECOVERY_VERSION.war
 
 # 
 # Configuración de la conexión a BBDD
@@ -74,11 +75,11 @@ ENV WEB_DBSID ibd013
 
 # Datos de acceso para Recovery
 ENV WEB_MASTER_SCHEMA BANKMASTER
-ENV WEB_MASTERUSER BANKMASTER_TX
+ENV WEB_MASTERUSER BANKMASTER
 ENV WEB_MASTERENCPASSWD j0b3d2CHe3I=04045316
 ENV WEB_MASTEPLAINPASSWD admin
 
-ENV WEB_ENTITY1USER BANK01_TX
+ENV WEB_ENTITY1USER BANK01
 ENV WEB_ENTITY1ENCPASSWD j0b3d2CHe3I=04045316
 ENV WEB_ENTITY1LAINPASSWD admin
 

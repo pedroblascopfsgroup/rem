@@ -15,6 +15,7 @@ import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.process.TareaBPMConstants;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.procedimientos.recoveryapi.JBPMProcessApi;
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 public class PROSolicitarTareaActionHandler extends JbpmActionHandler implements TareaBPMConstants{
 
@@ -25,6 +26,9 @@ public class PROSolicitarTareaActionHandler extends JbpmActionHandler implements
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 
+	@Autowired
+	private IntegracionBpmService integracionBPMService;
+	
 	public void run(ExecutionContext executionContext) throws Exception {
 		if (logger.isDebugEnabled()) {
             logger.debug("EJECUTANDO SolicitarTareaActionHandler");
@@ -52,6 +56,9 @@ public class PROSolicitarTareaActionHandler extends JbpmActionHandler implements
         proxyFactory.proxy(TareaNotificacionApi.class).saveOrUpdate(tarea);
         executionContext.setVariable(ID_TAREA, idTarea);
 
+        // Envía la notificación para que sea informada
+        integracionBPMService.notificaTarea(tarea);
+        
         executionContext.getProcessInstance().signal(TRANSITION_TAREA_SOLICITADA);
 		
 	}
@@ -64,7 +71,7 @@ public class PROSolicitarTareaActionHandler extends JbpmActionHandler implements
 
 	@Override
 	public void run() throws Exception {
-		String message = "INVOCACION INCORRECTA: deber�a haberse ejecutado run(ExecutionContext)";
+		String message = "INVOCACION INCORRECTA: deber�a haberse ejecutado run(ExecutionContext)";
 		logger.fatal(message);
 		throw new IllegalAccessError(message);
 	}

@@ -25,8 +25,13 @@
         p:permission="INITIAL_TAB_BUS_EXP"/>
         
     <bean p:entity="plugin.mejoras.mainpage.dynamicelements.openInitTabFuncition" p:name="default"  p:order="1"   
+        p:fileName="/WEB-INF/jsp/plugin/mejoras/main/openBusquedaExpedientesRecobroFn.jsp" 
+        p:priority="3" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+        p:permission="MENU-LIST-EXP-RECOBRO-ALL-USERS"/>
+        
+    <bean p:entity="plugin.mejoras.mainpage.dynamicelements.openInitTabFuncition" p:name="default"  p:order="1"   
         p:fileName="/WEB-INF/jsp/plugin/mejoras/main/openNothingFn.jsp" 
-        p:permission="INITIAL_TAB_NOTHING" p:priority="3"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+        p:permission="INITIAL_TAB_NOTHING" p:priority="4"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
 
 	<bean p:entity="tabs.asunto.fast" p:name="adjuntosAsunto"  p:order="1100" 	
 		p:fileName="/WEB-INF/jsp/plugin/mejoras/asuntos/tabs/adjuntos.jsp" 
@@ -80,7 +85,8 @@
 	<bean p:entity="tabs.expediente.fast" p:name="contratosExpediente"
 		p:order="300"
 		p:fileName="/WEB-INF/jsp/plugin/mejoras/expedientes/tabs/tabContratos.jsp"
-		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="ROLE_PUEDE_VER_TAB_EXP_CONTRATOS" />
 
 	<!-- tabs del procedimiento -->
 	<bean p:entity="tabs.procedimiento" p:name="adjuntosProcedimiento"

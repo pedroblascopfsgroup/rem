@@ -157,6 +157,22 @@
 			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>
+		<!-- Dependencias para la sustitucion de variables en un escrito -->
+		<dependency>
+		  <groupId>fr.opensagres.xdocreport</groupId>
+		  <artifactId>fr.opensagres.xdocreport.document.docx</artifactId>
+		  <version>1.0.4</version>
+		</dependency>
+		<dependency>
+		  <groupId>fr.opensagres.xdocreport</groupId>
+		  <artifactId>fr.opensagres.xdocreport.template.freemarker</artifactId>
+		  <version>1.0.4</version>
+		</dependency>
+	    <dependency>
+	      <groupId>fr.opensagres.xdocreport</groupId>
+	      <artifactId>fr.opensagres.xdocreport.converter.docx.xwpf</artifactId>
+	      <version>1.0.5</version>
+	    </dependency>
 	</dependencies>
 
 	<build>

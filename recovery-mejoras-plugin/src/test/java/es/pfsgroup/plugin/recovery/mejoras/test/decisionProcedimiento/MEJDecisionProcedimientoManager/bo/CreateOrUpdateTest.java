@@ -15,7 +15,7 @@ import es.pfsgroup.plugin.recovery.mejoras.test.decisionProcedimiento.MEJDecisio
 import es.pfsgroup.plugin.recovery.mejoras.test.decisionProcedimiento.MEJDecisionProcedimientoManager.MEJDtoDecisionProcedimientoTestFactory;
 
 /**
- * Suite de pruebas para el método CreateOrUpdate.
+ * Suite de pruebas para el mï¿½todo CreateOrUpdate.
  * 
  * @author bruno
  * 
@@ -80,26 +80,27 @@ public class CreateOrUpdateTest extends AbstractMEJDecisionProcedimientoManagerT
         dtoDecisionProcedimiento.setComentarios(comentarios);
         dtoDecisionProcedimiento.setFechaParalizacion(fechaParalizacion);
                 
-        DecisionProcedimiento current = manager.createOrUpdate(dtoDecisionProcedimiento);
+        DecisionProcedimiento current = new DecisionProcedimiento();
+        manager.createOrUpdate(current, dtoDecisionProcedimiento);
        
         verifica().seHaGuardadoLaDecision(current);
         
-        //assertNotNull("La decisión no tiene causa", current.getCausaDecision());
-        //assertEquals("La causa de la decisión no es la esperada", causaDecision, current.getCausaDecision().getCodigo());
-        assertNotNull("La decisión de finalización no tiene causa", current.getCausaDecisionFinalizar());
-        assertEquals("La causa de finalización la decisión no es la esperada", causaDecisionFinalizar, current.getCausaDecisionFinalizar().getCodigo());
-        assertNotNull("La decisión de paralización no tiene causa", current.getCausaDecisionParalizar());
-        assertEquals("La causa de la decisión de paralización no es la esperada", causaDecisionParalizar, current.getCausaDecisionParalizar().getCodigo());
+        //assertNotNull("La decisiï¿½n no tiene causa", current.getCausaDecision());
+        //assertEquals("La causa de la decisiï¿½n no es la esperada", causaDecision, current.getCausaDecision().getCodigo());
+        assertNotNull("La decisiï¿½n de finalizaciï¿½n no tiene causa", current.getCausaDecisionFinalizar());
+        assertEquals("La causa de finalizaciï¿½n la decisiï¿½n no es la esperada", causaDecisionFinalizar, current.getCausaDecisionFinalizar().getCodigo());
+        assertNotNull("La decisiï¿½n de paralizaciï¿½n no tiene causa", current.getCausaDecisionParalizar());
+        assertEquals("La causa de la decisiï¿½n de paralizaciï¿½n no es la esperada", causaDecisionParalizar, current.getCausaDecisionParalizar().getCodigo());
         
         
-        assertNotNull("La decisión no tiene estado", current.getEstadoDecision());
-        assertEquals("El código del estado de la decisión no es correcto", estadoDecision, current.getEstadoDecision().getCodigo());
+        assertNotNull("La decisiï¿½n no tiene estado", current.getEstadoDecision());
+        assertEquals("El cï¿½digo del estado de la decisiï¿½n no es correcto", estadoDecision, current.getEstadoDecision().getCodigo());
         
-        assertFalse("La decisión no debería estar finalizada", current.getFinalizada());
-        assertFalse("La decisión no debería estar paralizada", current.getParalizada());
+        assertFalse("La decisiï¿½n no deberï¿½a estar finalizada", current.getFinalizada());
+        assertFalse("La decisiï¿½n no deberï¿½a estar paralizada", current.getParalizada());
         
-        assertEquals("Los comentarios de la decisión no coinciden", comentarios, current.getComentarios());
-        assertEquals("La fecha de paralización no coincide", fechaParalizacion, current.getFechaParalizacion());
+        assertEquals("Los comentarios de la decisiï¿½n no coinciden", comentarios, current.getComentarios());
+        assertEquals("La fecha de paralizaciï¿½n no coincide", fechaParalizacion, current.getFechaParalizacion());
     }
 
 }

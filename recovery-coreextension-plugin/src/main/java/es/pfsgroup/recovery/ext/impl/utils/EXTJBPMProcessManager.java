@@ -8,10 +8,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.jbpm.JbpmContext;
-import org.jbpm.graph.def.Node;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.graph.exe.Token;
-import org.jbpm.graph.node.Fork;
 import org.jbpm.job.Timer;
 import org.jbpm.scheduler.SchedulerService;
 import org.jbpm.svc.Service;
@@ -31,11 +29,11 @@ import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.procesosJudiciales.EXTTareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bpm.ExtendedProcessManager;
 import es.pfsgroup.recovery.ext.api.utils.EXTJBPMProcessApi;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 import org.apache.commons.lang.StringUtils;
+
 @Component
 public class EXTJBPMProcessManager extends EXTBaseJBPMProcessManager implements
 		EXTJBPMProcessApi {
@@ -89,7 +87,7 @@ public class EXTJBPMProcessManager extends EXTBaseJBPMProcessManager implements
     }
 
 	/**
-	 * Obtiene los nodos actuales del proceso. Este método es útil en los casos
+	 * Obtiene los nodos actuales del proceso. Este mï¿½todo es ï¿½til en los casos
 	 * que se ha llegado a un Fork
 	 * 
 	 * @param idProcess
@@ -99,18 +97,18 @@ public class EXTJBPMProcessManager extends EXTBaseJBPMProcessManager implements
 	@SuppressWarnings("unchecked")
 	@BusinessOperation(EXT_JBPMAPI_GET_CURRENT_NODES)
 	@Override
-	// FIXME: faltan los tests de este método.
+	// FIXME: faltan los tests de este mï¿½todo.
 	public List<String> getCurrentNodes(final Long idProcess) {
 		return (List<String>) processManager.execute(new JbpmCallback() {
 			@Override
 			public Object doInJbpm(JbpmContext context) {
-				// Obtener la última instancia conocida
+				// Obtener la ï¿½ltima instancia conocida
 				ProcessInstance processInstance = context.getGraphSession()
 						.getProcessInstance(idProcess);
 				if (processInstance == null)
 					return null;
 				
-				// Asegurarse que está donde corresponde
+				// Asegurarse que estï¿½ donde corresponde
 				Token rootToken = processInstance.getRootToken();
 				return getNodeNames(rootToken);
 			}

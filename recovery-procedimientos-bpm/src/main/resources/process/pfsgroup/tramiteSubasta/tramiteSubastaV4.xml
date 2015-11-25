@@ -404,7 +404,6 @@
 		</event>	
 		<transition to="P401_ConfirmarRecepcionMtoPago" name="avanzaBPM"></transition>
 		<transition to="P401_SolicitarMtoPago" name="activarAlerta"></transition>
-		<transition to="P401_RegistrarActaSubasta" name="vueltaAtras"></transition>
 		<transition to="Fin3" name="Fin"></transition>
 	</state>
 
@@ -427,7 +426,6 @@
 		</event>	
 		<transition to="Fin3" name="avanzaBPM"></transition>
 		<transition to="P401_ContabilizarCierreDeuda" name="activarAlerta"></transition>
-		<transition to="P401_RegistrarActaSubasta" name="vueltaAtras"></transition>
 		<transition to="Fin3" name="Fin"></transition>
 	</state>
 

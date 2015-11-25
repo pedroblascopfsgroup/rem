@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.controller;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -182,6 +184,21 @@ public class EditBienController {
 		map.put("idContrato", idContrato);
 		return "plugin/nuevoModeloBienes/bienes/NMBrelacionBienContrato";
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String editarRelacionBienContratoMultiple(
+			@RequestParam(value = "codTipoContratoBien", required = false) String codTipoContratoBien,
+			ModelMap map) {
+		
+		List<NMBDDTipoBienContrato> tipoContratoBien = (List<NMBDDTipoBienContrato>) executor
+				.execute("dictionaryManager.getList", "NMBDDTipoBienContrato");
+		map.put("DDContratoBien", tipoContratoBien);
+		map.put("codTipoContratoBien", codTipoContratoBien);
+
+		return "plugin/nuevoModeloBienes/bienes/NMEditarRelacionBienContratoMultiple";
+	}
+	
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -968,7 +985,8 @@ public class EditBienController {
 	public String generarInformePropCancelacionCargas(
 			@RequestParam(value = "id", required = true) Long idBien,
 			ModelMap model) {
-		String plantilla = "reportPropuestaCancelacionCargas.jrxml";
+		
+		String plantilla = nmbProjectContext.getPlantillaReportPropuestaCancelacionCargas();
 
 		// Obtener datos para rellenar el informe
 		NMBBien bien = (NMBBien) proxyFactory.proxy(BienApi.class).get(idBien);
@@ -1526,7 +1544,7 @@ public class EditBienController {
 		}
 
 		if (!Checks.esNulo(request.getParameter("importeAdjudicacion"))) {
-			adjudicacion.setImporteAdjudicacion(Float.parseFloat(request
+			adjudicacion.setImporteAdjudicacion(new BigDecimal(request
 					.getParameter("importeAdjudicacion")));
 		} else {
 			adjudicacion.setImporteAdjudicacion(null);
@@ -4079,6 +4097,65 @@ public class EditBienController {
 				.solicitarNumeroActivoConRespuesta(idBien);
 		model.put("msgError", respuesta);
 		return JSON_RESPUESTA_SERVICIO;
+	}
+
+	/**
+	 * Recupera los n�meros de activos de los bienes.
+	 * 
+	 * @param idBien
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String solicitarNumsActivosBienes(WebRequest request, @RequestParam(value = "idBien", required = false) String idsBien, ModelMap model) {
+		String[] arrBien = null;
+		try {
+			arrBien = idsBien.split(",");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		Map<String, String> mapResults = proxyFactory.proxy(BienApi.class).getNumerosActivosBienes(arrBien);
+
+		String respuesta = fomatearRespuestaSolicitarNumsActivosBienes(mapResults);
+		
+		model.put("msgError", respuesta);
+		return JSON_RESPUESTA_SERVICIO;
+	}
+
+	private String fomatearRespuestaSolicitarNumsActivosBienes(final Map<String, String> mapResults) {
+		if (mapResults.isEmpty()) {
+			return "1";
+		}
+		
+		final String errValidacion = "ERROR_VALIDACION";
+		final StringBuilder sbErrorValidacion = new StringBuilder();
+		final StringBuilder sbErrorSolicitud = new StringBuilder();
+		for (Entry<String, String> result : mapResults.entrySet()) {
+			if (errValidacion.equals(result.getValue())) {
+				sbErrorValidacion.append(result.getKey());
+				sbErrorValidacion.append(",");
+			} else {
+				sbErrorSolicitud.append(result.getKey());
+				sbErrorSolicitud.append(",");
+			}
+		}
+		
+		final StringBuilder sbRespuesta = new StringBuilder();
+		if(sbErrorValidacion.length() > 0){
+			sbRespuesta.append("Los campos tipo de inmueble, provincia, localidad, n�mero de finca y n�mero de registro son obligatorios para solicitar el n�mero de activo de los siguientes bienes: ");
+			sbErrorValidacion.setLength(sbErrorValidacion.length() -1);
+			sbErrorValidacion.append(". \n");
+			sbRespuesta.append(sbErrorValidacion);
+		}			
+		
+		if(sbErrorSolicitud.length() > 0){
+			sbRespuesta.append("No se pudo obtener el n�mero de activo de los siguientes bienes: ");
+			sbErrorSolicitud.setLength(sbErrorSolicitud.length() -1);
+			sbErrorSolicitud.append(". \n");
+			sbRespuesta.append(sbErrorSolicitud);			
+		}
+
+		return sbRespuesta.toString();
 	}
 
 	/**

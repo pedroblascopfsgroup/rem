@@ -25,6 +25,9 @@
 		<pfs:defineTextColumn name="idCredito"/>
 		<pfs:defineTextColumn name="estado"/>
 		<pfs:defineTextColumn name="producto"/>
+<sec:authorize ifAllGranted="PERSONALIZACION-BCC">		
+		<pfs:defineTextColumn name="fechaVencimiento"/>
+</sec:authorize>		
 	</pfs:defineRecordType>
 	
 	var faseComunDS = page.getStore({
@@ -50,6 +53,9 @@
 		<pfs:defineHeader dataIndex="tipoDefinitivo" caption="**Final" captionKey="asunto.concurso.tabFaseComun.tipoApresentar" sortable="false"  />
 		<pfs:defineHeader dataIndex="principalDefinitivo" caption="**Principal final" captionKey="asunto.concurso.tabFaseComun.principalApresentar" sortable="false" align="right" width="100" />
 		<pfs:defineHeader dataIndex="estado" caption="**Estado" captionKey="asunto.concurso.tabFaseComun.estado" sortable="false"  />
+<sec:authorize ifAllGranted="PERSONALIZACION-BCC">		
+		<pfs:defineHeader dataIndex="fechaVencimiento" caption="**Fecha de vencimiento" captionKey="asunto.concurso.tabFaseComun.fechaVencimiento" sortable="false"  />
+</sec:authorize>		
 	</pfs:defineColumnModel>
 	
 	<pfs:button name="btAddCredito" caption="**Agregar"  captioneKey="asunto.concurso.tabFaseComun.btnAgregar" iconCls="icon_mas">
@@ -258,9 +264,18 @@
 		}
 	</pfs:button>
 
-	<pfs:grid name="grid" dataStore="faseComunDS" columnModel="faseComunCM" title="**Fase comÃºn" 
+	<pfs:grid name="grid" dataStore="faseComunDS" columnModel="faseComunCM" title="**Fase común" 
 		collapsible="false" titleKey="asunto.concurso.tabFaseComun.title" autoexpand="true"
 		bbar="btAddCredito,btEditCreditoGestor, btEditCreditoSupervisor, btEditCreditoDefinitivo,btnEditarTodos, btRemoveCredito" />
+
+	<sec:authorize ifAllGranted="SOLO_CONSULTA">
+		btAddCredito.hide();
+		btEditCreditoGestor.hide();
+		btEditCreditoSupervisor.hide();
+		btEditCreditoDefinitivo.hide();
+		btnEditarTodos.hide();
+		btRemoveCredito.hide();
+	</sec:authorize>
 
 	grid.on('rowclick', function(grid, rowIndex, e) {
 		btEditCredito.setDisabled(true);

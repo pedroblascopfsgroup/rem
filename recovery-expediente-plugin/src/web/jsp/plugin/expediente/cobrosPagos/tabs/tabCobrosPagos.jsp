@@ -22,7 +22,7 @@
 	};
 	
 	var cobrosPagosRecord = Ext.data.Record.create([
-		 {name:'id'},
+		 {name:'id'}
 		,{name:'fechaMovimiento'}
         ,{name:'tipoCobroPago'}
         ,{name:'origenCobro'}

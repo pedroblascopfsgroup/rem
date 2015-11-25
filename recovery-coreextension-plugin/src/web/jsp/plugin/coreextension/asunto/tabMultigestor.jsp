@@ -25,6 +25,11 @@
 		 procuradorAdicional = true;
 		</sec:authorize>
 	</sec:authorize>
+	<sec:authorize ifAllGranted="ASU_MULTIGESTOR_SUPERVISOR">
+		porUsuario = false;
+		adicional = false;
+		procuradorAdicional = false;
+	</sec:authorize>
 	
 	var ugCodigo = '3';
 	var gestor = Ext.data.Record.create([
@@ -263,9 +268,14 @@
 					}
 					,success:function(result, request){
 						var resultado = Ext.decode(result.responseText);
+						var tienePermisoCambioProcuradorConProvision = false;
 						
-						if((resultado.okko == 'KO') ||
-							((resultado.okko == 'OK') && (comboTipoGestor.getRawValue().toUpperCase() != 'PROCURADOR'))){
+						<sec:authorize ifAllGranted="ROLE_PUEDE_CAMBIAR_PROCURADORES_CON_PROVISION">
+						tienePermisoCambioProcuradorConProvision = true;
+						</sec:authorize>
+						
+						if((resultado.okko == 'KO') || (tienePermisoCambioProcuradorConProvision) ||
+							((resultado.okko == 'OK') && (comboTipoGestor.getRawValue().toUpperCase() != 'PROCURADOR' ))){
 							insertarFunction();
 							resetCombos();
 						}else{

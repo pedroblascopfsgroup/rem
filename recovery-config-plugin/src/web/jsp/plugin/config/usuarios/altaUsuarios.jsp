@@ -19,7 +19,7 @@
 	var username = new Ext.form.TextField({
 		fieldLabel:'<s:message code="plugin.config.usuarios.field.username" text="**Username" />'
 		,value:'${usuario.username}'
-		,maxLength:10
+		,maxLength:50
 		,width :175
 		,allowBlank: false	
 	});
@@ -116,11 +116,12 @@
 		despachoExterno="despachoExterno"
 		/>
 
+
 	<pfs:editForm saveOrUpdateFlow="plugin/config/usuarios/ADMguardarUsuario"
 			leftColumFields="username,password,nombre,apellido1,apellido2"
 			rightColumFields="usuarioGrupo,email,usuarioExterno,tipoDespacho,despachoExterno"
-			parameters="parametros" 
-			onSuccessMode="tab"
+			parameters="parametros"
+			onSuccessMode="tabConMsgGuardando"
 			tab_flow="plugin/config/usuarios/ADMconsultarUsuario"
 			tab_iconCls="icon_usuario"
 			tab_paramName="id"

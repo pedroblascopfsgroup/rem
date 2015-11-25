@@ -21,16 +21,12 @@
 <%@ attribute name="tab_type" required="false" type="java.lang.String"%>
 
 
-
-
-
-
-
 <c:choose>
 	<c:when test="${onSuccessMode == 'tab'}">
 		var ${name}_handler =  function() {
 			var p = ${parameters}();
 			p.event = "guardar";
+			
 			Ext.Ajax.request({
 				url : page.resolveUrl('${saveOrUpdateFlow}'), 
 				params : p,
@@ -51,6 +47,58 @@
 			});
 		};
 	</c:when>
+	
+	<%--  	/* BKREC-1349
+			* Alternativa al handler de arriba, la diferencia reside en que en el siguiente handler, mostrar un mensaje de  
+		 	* 'Guardando...' cuando esta procesando la operación de guardar, oscureciendo la pantalla. 
+		 	* De esta forma el user puede ver que al pulsar el botón Guardar, esta realizando cálculos, y debe esperar. 
+		 	*/ --%> 
+	<c:when test="${onSuccessMode == 'tabConMsgGuardando'}">
+		var ${name}_handler =  function() {
+			var p = ${parameters}();
+			p.event = "guardar";
+			new Ext.LoadMask(panelEdicion.body, {msg:'<s:message code="fwk.ui.form.guardando" text="**Guardando.."/>'}).show();
+			
+			Ext.Ajax.request({
+				url : page.resolveUrl('${saveOrUpdateFlow}'), 
+				params : p,
+				method: 'POST',
+				success: function ( result, request ) {
+					var result = Ext.util.JSON.decode(result.responseText);
+					var param = {${tab_paramName}:result.${tab_paramValue}};
+					//Ext.MessageBox.alert('Success', 'parametros= ' + param);
+					app.openTab(${tab_titleData}.getValue()
+						,'${tab_flow}'
+						,param
+						,{id:'${tab_type}'+result.${tab_paramValue}<c:if test="${tab_iconCls != null}">,iconCls:'${tab_iconCls}'</c:if>});
+					page.fireEvent(app.event.DONE);
+				}
+
+			});
+		};
+	</c:when>
+	
+	<%--	/** BKREC-1349
+			* Alternativa al handler de ABAJO, se ha creado por lo mismo que el de arriba, solo que para este caso es un handler más
+			* simple y genérico. 
+			* Es decir, para las etiquetas <pfs:editForm ...> que no tengan el parametro onSuccessMode, le añadimos el parametro
+			* con el valor tabGenericoConMsgGuardando, para que les salga el mensaje de Guardando... mientras se resuelve la petición.
+			*/ --%> 
+	<c:when test="${onSuccessMode == 'tabGenericoConMsgGuardando'}">
+		var ${name}_handler =  function() {
+		new Ext.LoadMask(panelEdicion.body, {msg:'<s:message code="fwk.ui.form.guardando" text="**Guardando.."/>'}).show();
+		
+						page.webflow({
+							flow: '${saveOrUpdateFlow}'
+							,params: ${parameters}
+							,success : ${name}_onsuccess
+						});
+		};
+		var ${name}_onsuccess = function(){ 
+			page.fireEvent(app.event.DONE); 
+		};
+	</c:when>
+	
 	<c:otherwise>
 	
 		var ${name}_handler =  function() {

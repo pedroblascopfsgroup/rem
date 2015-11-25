@@ -2,7 +2,6 @@ package es.pfsgroup.recovery.haya.adjunto;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.FileNameMap;

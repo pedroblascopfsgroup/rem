@@ -2231,6 +2231,11 @@
 					<artifactId>spring-ldap-core</artifactId>
 					<version>1.3.0.RELEASE</version>
 				</dependency>
+				<dependency>
+            		<groupId>es.pfsgroup.plugin</groupId>
+            		<artifactId>recovery-bi-plugin</artifactId>
+            		<scope>compile</scope>
+        		</dependency>
 			</dependencies>
 			<build>
 				<resources>
@@ -2246,11 +2251,6 @@
 		<profile>
 			<id>cajamar</id>
 			<dependencies>
-				<dependency>
-            		<groupId>es.pfsgroup.plugin</groupId>
-            		<artifactId>recovery-bi-plugin</artifactId>
-            		<scope>compile</scope>
-        		</dependency>
 				<!--  PARA JMS **************** -->
 				<dependency>
 					<groupId>org.springframework.integration</groupId>

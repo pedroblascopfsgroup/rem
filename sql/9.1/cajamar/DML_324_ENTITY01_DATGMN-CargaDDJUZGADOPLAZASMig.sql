@@ -1581,8 +1581,8 @@ BEGIN
                         ||V_TMP_JUZ(3)||q'[',']'
                         ||V_PLA_ID||q'[',]'
                         ||V_TMP_JUZ(4)||q'[,']'
-                        ||V_TMP_JUZ(5)||q'[',']' 
-                        ||V_TMP_JUZ(6)||q'[',]' 
+                        ||V_TMP_JUZ(5)||q'[',TO_DATE(']'
+                        ||V_TMP_JUZ(6)||q'[','DD/MM/YY'),]'
                         ||V_TMP_JUZ(7)||q'[)]' 
                         ;
     

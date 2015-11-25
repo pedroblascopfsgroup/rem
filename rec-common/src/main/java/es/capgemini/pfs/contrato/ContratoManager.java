@@ -1,5 +1,6 @@
 package es.capgemini.pfs.contrato;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -586,4 +587,15 @@ public class ContratoManager {
 		
 	}
 	
+	@BusinessOperation(PrimariaBusinessOperation.BO_CNT_MGR_GET_RIESGO)
+	public HashMap<String, Object> obtenerRiesgoOperacionalContrato(Long cntId) throws IllegalAccessException, InvocationTargetException {
+		// Esta funcion esta sobreescrita en el plugin recovery-procedimiento-bmpHaya
+		return null;
+	}
+	
+	@BusinessOperation(PrimariaBusinessOperation.BO_CNT_MGR_GET_VENCIDOS)
+	public HashMap<String, Object> obtenerVencidosByCntId(Long cntId) throws IllegalAccessException, InvocationTargetException {
+		// Esta funcion esta sobreescrita en el plugin recovery-procedimiento-bmpHaya		
+		return null;
+	}
 }

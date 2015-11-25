@@ -2,6 +2,7 @@ package es.pfsgroup.recovery.haya.adjunto;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.FileNameMap;
@@ -42,6 +43,7 @@ import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.recovery.adjunto.AdjuntoAssembler;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.gestordocumental.dto.AdjuntoGridDto;
+import es.pfsgroup.tipoFicheroAdjunto.MapeoTipoFicheroAdjunto;
 
 @Service("adjuntoManagerHayaImpl")
 public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
@@ -152,10 +154,21 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	public String upload(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
 			if(esEntidadCajamar()){
+				
+				String codigoTipoAdjunto = null;
+				
+				///Obtenemos el codigo mapeado
+				if(!Checks.esNulo(uploadForm.getParameter("comboTipoFichero"))){
+					MapeoTipoFicheroAdjunto mapeo = genericDao.get(MapeoTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "tipoFichero.codigo", uploadForm.getParameter("comboTipoFichero")));
+					if(!Checks.esNulo(mapeo)){
+						codigoTipoAdjunto = mapeo.getTipoFicheroExterno();
+					}
+				}
+				
 				if (!Checks.esNulo(uploadForm.getParameter("prcId"))) {
-					return altaDocumento(Long.parseLong(uploadForm.getParameter("prcId")), DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO, uploadForm.getParameter("comboTipoFichero"), uploadForm);
+					return altaDocumento(Long.parseLong(uploadForm.getParameter("prcId")), DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO, codigoTipoAdjunto, uploadForm);
 				}else{
-					return altaDocumento(Long.parseLong(uploadForm.getParameter("id")), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, uploadForm.getParameter("comboTipoFichero"), uploadForm);	
+					return altaDocumento(Long.parseLong(uploadForm.getParameter("id")), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, codigoTipoAdjunto, uploadForm);	
 				}
 			}else{
 				return super.upload(uploadForm);
@@ -397,9 +410,6 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 		File fileSalidaTemporal = null;
 		FileItem resultado = null;
 		
-		String decodificado = base64Fichero(contenido);
-		InputStream stream = new ByteArrayInputStream(decodificado.getBytes());
-
 		fileSalidaTemporal = File.createTempFile(nombreFichero, "."+extension);
 		fileSalidaTemporal.deleteOnExit();
 		
@@ -407,16 +417,8 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 		resultado.setFileName(nombreFichero + (new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + "."+extension);
 		resultado.setContentType(getMimeType(extension));
 		resultado.setFile(fileSalidaTemporal);
-        OutputStream outputStream = resultado.getOutputStream(); // Last step is to get FileItem's output stream, and write your inputStream in it. This is the way to write to your FileItem. 
-
-        int read = 0;
-        byte[] bytes = new byte[1024];
-        while ((read = stream.read(bytes)) != -1) {
-            outputStream.write(bytes, 0, read);
-        }
-
-        // Don't forget to release all the resources when you're done with them, or you may encounter memory/resource leaks.
-        stream.close();
+        OutputStream outputStream = resultado.getOutputStream(); // Last step is to get FileItem's output stream, and write your inputStream in it. This is the way to write to your FileItem.
+        outputStream.write(Base64.decodeBase64(contenido.getBytes()));
         outputStream.flush(); // This actually causes the bytes to be written.
         outputStream.close();
 
@@ -429,9 +431,4 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	    return mimeTypes.getContentTypeFor("."+fileName);
 	}
 	
-	private String base64Fichero(String base64) {
-		byte[] byteArray = Base64.decodeBase64(base64.getBytes());
-		String decodedString = new String(byteArray);
-		return decodedString;
-	}
 }

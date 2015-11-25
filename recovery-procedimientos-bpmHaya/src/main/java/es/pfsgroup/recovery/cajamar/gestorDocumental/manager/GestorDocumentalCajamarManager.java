@@ -1,7 +1,9 @@
 package es.pfsgroup.recovery.cajamar.gestorDocumental.manager;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
@@ -202,6 +204,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			}
 
 			outputStream.close();
+			
 			byte[] encoded = Base64.encodeBase64(bytes);
 			ficheroBase64 = new String(encoded);
 		} catch (Exception e) {

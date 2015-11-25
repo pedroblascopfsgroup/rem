@@ -204,6 +204,11 @@
 		combo.mode='remote';
 	});
 	
+	<%-- BKREC-1041 Al cargar los usuarios de un despacho, muestra en su combo el valor por defecto del listado --%>
+	optionsUsuarioStore.on('load',function(ds,records,o){
+		comboTipoUsuario.setValue(records[0].data.id);
+	});
+
 	comboTipoGestor.on('select', function(){
 		comboTipoUsuario.reset();
 		comboTipoDespacho.reset();

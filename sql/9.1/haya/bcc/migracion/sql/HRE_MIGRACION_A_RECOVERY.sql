@@ -2546,7 +2546,7 @@ BEGIN
     
     
     
-    -- Actualizamos el dd_stda_id de tareas para LITIGIOS DD_TAS_ID = 2
+    -- Actualizamos el dd_stda_id de tareas para LITIGIOS DD_TAS_ID = 1
 
  EXECUTE IMMEDIATE ('
     MERGE INTO '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES tar
@@ -2563,6 +2563,8 @@ BEGIN
     WHEN MATCHED THEN UPDATE SET tar.dd_sta_id = tmp.dd_sta_id,
          tar.usuariomodificar = tar.dd_sta_id, tar.fechamodificar = sysdate'
                   );
+    
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MM:SS')||'  TAR_TAREAS_NOTIFICACIONES actualizada. '||SQL%ROWCOUNT||' Filas.');    
     
    COMMIT;
 
@@ -2636,7 +2638,7 @@ BEGIN
     COMMIT;
 */    
     
-    
+  /*  
     -- Procuradores procedimientos  
     ------------------------------
     EXECUTE IMMEDIATE('insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
@@ -2666,7 +2668,7 @@ BEGIN
      
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO cargada. Procuradores. '||SQL%ROWCOUNT||' Filas.');
     COMMIT;
-
+*/
     /*
        
     --Procurador en los concursos:
@@ -2773,7 +2775,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAH_GESTOR_ADICIONAL_HISTORICO cargada. Letrados de los Litigios. '||SQL%ROWCOUNT||' Filas.');
     COMMIT;
         */
-    
+/*    
     -- Procuradores
     --------------------------
     EXECUTE IMMEDIATE('insert into '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gah (gah.GAH_ID, gah.GAH_ASU_ID, gah.GAH_GESTOR_ID, gah.GAH_FECHA_DESDE, gah.GAH_TIPO_GESTOR_ID, usuariocrear, fechacrear)
@@ -2803,7 +2805,7 @@ BEGIN
     
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAH_GESTOR_ADICIONAL_HISTORICO cargada. Procuradores. '||SQL%ROWCOUNT||' Filas.');
     COMMIT;
-    
+    */
 /*
     --letrado en los concursos:
     --------------------------

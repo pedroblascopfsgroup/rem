@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -190,21 +191,10 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
 	private String ficheroBase64(WebFileItem uploadForm) {
 		InputStream inputStream = uploadForm.getFileItem().getInputStream();
-		FileOutputStream outputStream = null;
 		String ficheroBase64 = "";
 		try {
-			// write the inputStream to a FileOutputStream
-			outputStream = new FileOutputStream(new File("adjunto"));
 
-			int read = 0;
-			byte[] bytes = new byte[1024];
-
-			while ((read = inputStream.read(bytes)) != -1) {
-				outputStream.write(bytes, 0, read);
-			}
-
-			outputStream.close();
-			
+			byte[] bytes = IOUtils.toByteArray(inputStream);
 			byte[] encoded = Base64.encodeBase64(bytes);
 			ficheroBase64 = new String(encoded);
 		} catch (Exception e) {

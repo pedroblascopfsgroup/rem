@@ -2,7 +2,7 @@ package es.pfsgroup.recovery.haya.adjunto;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.FileNameMap;
@@ -409,6 +409,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	private FileItem generaFileItem(String nombreFichero, String contenido, String extension) throws Throwable {
 		File fileSalidaTemporal = null;
 		FileItem resultado = null;
+		InputStream stream =  new ByteArrayInputStream(Base64.decodeBase64(contenido.getBytes()));
 		
 		fileSalidaTemporal = File.createTempFile(nombreFichero, "."+extension);
 		fileSalidaTemporal.deleteOnExit();
@@ -418,10 +419,14 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 		resultado.setContentType(getMimeType(extension));
 		resultado.setFile(fileSalidaTemporal);
         OutputStream outputStream = resultado.getOutputStream(); // Last step is to get FileItem's output stream, and write your inputStream in it. This is the way to write to your FileItem.
-        outputStream.write(Base64.decodeBase64(contenido.getBytes()));
-        outputStream.flush(); // This actually causes the bytes to be written.
-        outputStream.close();
+        int read = 0;
+		byte[] bytes = new byte[1024];
 
+		while ((read = stream.read(bytes)) != -1) {
+			outputStream.write(bytes, 0, read);
+		}
+
+		outputStream.close();
 		return resultado;
 	}
 	

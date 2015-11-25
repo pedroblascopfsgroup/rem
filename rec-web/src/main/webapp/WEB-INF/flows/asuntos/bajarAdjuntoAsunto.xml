@@ -3,11 +3,11 @@
     xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
 	<input name="asuntoId" required="true" type="java.lang.Long"/>
-	<input name="id" required="true" type="java.lang.Long"/>
+	<input name="id" required="true" type="java.lang.String"/>
 	    
     <end-state id="listado" view="file" >
 		<on-entry>
-			<evaluate expression="executor.execute('asuntosManager.bajarAdjunto', asuntoId, id)" result="flowScope.fileItem"/>
+			<evaluate expression="executor.execute('adjuntosManager.bajarAdjuntoAsunto', asuntoId, id)" result="flowScope.fileItem"/>
 		</on-entry>
 	</end-state>
     

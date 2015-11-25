@@ -168,6 +168,21 @@
 					,height:45
 		        }
 		        ,items: [{
+		       	 	xtype:'combo'
+						,name:'comboTipoFichero'
+						<app:test id="tipoProcedimientoCombo" addComa="true" />
+						,hiddenName:'comboTipoFichero'
+						,store:tipoFicheroStore
+						,displayField:'descripcion'
+						,valueField:'codigo'
+						,mode: 'local'
+						,emptyText:'----'
+						,width:250
+						,resizable:true
+						,triggerAction: 'all'
+						,allowBlank:true
+						,fieldLabel : '<s:message code="asuntos.adjuntos.tipoDocumento" text="**Tipo fichero" />'}
+					,{
 			            xtype: 'fileuploadfield'
 			            ,emptyText: '<s:message code="fichero.upload.fileLabel.error" text="**Debe seleccionar un fichero" />'
 			            ,fieldLabel: '<s:message code="fichero.upload.fileLabel" text="**Fichero" />'
@@ -220,6 +235,7 @@
 
 
 	subirAdjuntoPersona.on('click', function(){
+		tipoDocStore.webflow({tipoEntidad:'<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_PERSONA" />'});
 		var upload = new Ext.FormPanel({
 		        fileUpload: true
 		        ,height: 55
@@ -282,6 +298,7 @@
 	});
 
 	subirAdjuntoExpediente.on('click', function(){
+		tipoDocStore.webflow({tipoEntidad:'<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE" />'});
 		var upload = new Ext.FormPanel({
 		        fileUpload: true
 		        ,height: 55
@@ -344,6 +361,7 @@
 	});
 
 	subirAdjuntoContrato.on('click', function(){
+		tipoDocStore.webflow({tipoEntidad:'<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO" />'});
 		var upload = new Ext.FormPanel({
 		        fileUpload: true
 		        ,height: 55

@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.actitudAptitudActuacion.model.ActitudAptitudActuacion;
+import es.capgemini.pfs.adjuntos.api.AdjuntoApi;
 import es.capgemini.pfs.arquetipo.model.Arquetipo;
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDto;
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDtoImpl;
@@ -92,83 +94,20 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 	
 	@Autowired
 	private ExpedienteDao expedienteDao;
+	
+	@Autowired
+	private AdjuntoApi adjuntosApi;
 
 	@Override
 	@BusinessOperation(BO_CORE_EXPEDIENTE_ADJUNTOSCONTRATOS_EXP)
 	public List<ExtAdjuntoGenericoDto> getAdjuntosContratoExp(Long id) {
-		List<Contrato> contratos =(List<Contrato>) executor.execute("expedienteManager.findContratosRiesgoExpediente",id);
-		List<ExtAdjuntoGenericoDto> adjuntosMapeado=new ArrayList<ExtAdjuntoGenericoDto>();
-		
-		Comparator<AdjuntoContrato> comparador = new Comparator<AdjuntoContrato>() {
-			@Override
-			public int compare(AdjuntoContrato o1, AdjuntoContrato o2) {
-				if(Checks.esNulo(o1)&& Checks.esNulo(o2)){
-					return 0;
-				}
-				else if (Checks.esNulo(o1)) {
-					return -1;
-				}
-				else if (Checks.esNulo(o2)) {
-					return 1;				
-				}
-				else{
-					return o2.getAuditoria().getFechaCrear().compareTo(
-						o1.getAuditoria().getFechaCrear());
-				}	
-			}
-		};
-		
-		for(Contrato c : contratos){
-			List<AdjuntoContrato> adjuntos = c.getAdjuntosAsList();
-			Collections.sort(adjuntos, comparador);
-			ExtAdjuntoGenericoDtoImpl dto = new ExtAdjuntoGenericoDtoImpl();
-			dto.setId(c.getId());
-			dto.setDescripcion(c.getDescripcion());
-			dto.setAdjuntosAsList(adjuntos);
-			dto.setAdjuntos(adjuntos);
-			adjuntosMapeado.add(dto);
-		}
-		return adjuntosMapeado;
-		
+		return adjuntosApi.getAdjuntosContratoExp(id);
 	}
 
 	@Override
 	@BusinessOperation(BO_CORE_EXPEDIENTE_ADJUNTOSPERSONA_EXP)
 	public List<ExtAdjuntoGenericoDto> getAdjuntosPersonasExp(Long id) {
-		List<Persona> personas =(List<Persona>) executor.execute("expedienteManager.findPersonasByExpedienteId",id);
-		List<ExtAdjuntoGenericoDto> adjuntosMapeado=new ArrayList<ExtAdjuntoGenericoDto>();
-		
-		Comparator<AdjuntoPersona> comparador = new Comparator<AdjuntoPersona>() {
-			@Override
-			public int compare(AdjuntoPersona o1, AdjuntoPersona o2) {
-				if(Checks.esNulo(o1)&& Checks.esNulo(o2)){
-					return 0;
-				}
-				else if (Checks.esNulo(o1)) {
-					return -1;
-				}
-				else if (Checks.esNulo(o2)) {
-					return 1;				
-				}
-				else{
-					return o2.getAuditoria().getFechaCrear().compareTo(
-						o1.getAuditoria().getFechaCrear());
-				}	
-			}
-		};
-		
-		for(Persona p : personas){
-			List<AdjuntoPersona> adjuntos = p.getAdjuntosAsList();
-			Collections.sort(adjuntos, comparador);
-			ExtAdjuntoGenericoDtoImpl dto =new ExtAdjuntoGenericoDtoImpl();
-			dto.setId(p.getId());
-			dto.setDescripcion(p.getDescripcion());
-			dto.setAdjuntosAsList(adjuntos);
-			dto.setAdjuntos(adjuntos);
-			adjuntosMapeado.add(dto);
-		}
-		return adjuntosMapeado;
-		
+		return adjuntosApi.getAdjuntosPersonasExp(id);
 	}
 	
 	/**
@@ -276,74 +215,9 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 	@Override
 	@BusinessOperation(BO_CORE_EXPEDIENTE_ADJUNTOSMAPEADOS)
 	public List<? extends AdjuntoDto> getAdjuntosConBorradoExp(Long id) {
-		List<AdjuntoDto> adjuntosConBorrado = new ArrayList<AdjuntoDto>();
-
-		final Usuario usuario = proxyFactory.proxy(UsuarioApi.class)
-				.getUsuarioLogado();
-
-		final Boolean borrarOtrosUsu = tieneFuncion(usuario,
-				"BORRAR_ADJ_OTROS_USU");
-		
-		Expediente exp = getExpediente(id);
-		List<AdjuntoExpediente> adjuntos= new ArrayList<AdjuntoExpediente>();
-		if (!Checks.esNulo(exp)){
-			adjuntos = exp.getAdjuntosAsList();
-		}
-		Comparator<AdjuntoExpediente> comparador = new Comparator<AdjuntoExpediente>() {
-			@Override
-			public int compare(AdjuntoExpediente o1, AdjuntoExpediente o2) {
-				if(Checks.esNulo(o1)&& Checks.esNulo(o2)){
-					return 0;
-				}
-				else if (Checks.esNulo(o1)) {
-					return -1;
-				}
-				else if (Checks.esNulo(o2)) {
-					return 1;				
-				}
-				else{
-					return o2.getAuditoria().getFechaCrear().compareTo(
-						o1.getAuditoria().getFechaCrear());
-				}	
-			}
-		};
-		Collections.sort(adjuntos, comparador);
-		for (final AdjuntoExpediente adj : adjuntos){
-			AdjuntoDto dto = new AdjuntoDto() {
-				
-				@Override
-				public Boolean getPuedeBorrar() {
-					if (borrarOtrosUsu
-							|| adj.getAuditoria().getUsuarioCrear().equals(
-									usuario.getUsername())) {
-						return true;
-					} else {
-						return false;
-					}
-				}
-				
-				@Override
-				public Object getAdjunto() {
-					return adj;
-				}
-			};
-			adjuntosConBorrado.add(dto);
-		}
-		return adjuntosConBorrado;
+		return adjuntosApi.getAdjuntosConBorradoExp(id);
 	}
 	
-	private boolean tieneFuncion(Usuario usuario, String codigo) {
-		List<Perfil> perfiles = usuario.getPerfiles();
-		for (Perfil per : perfiles) {
-			for (Funcion fun : per.getFunciones()) {
-				if (fun.getDescripcion().equals(codigo)) {
-					return true;
-				}
-			}
-		}
-
-		return false;
-	}
 
 	/**
 	 * Valida que el contrato no exista en un expediente activo, bloqueado o

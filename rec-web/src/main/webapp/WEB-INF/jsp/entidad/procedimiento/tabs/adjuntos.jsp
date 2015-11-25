@@ -188,9 +188,21 @@
 	       
 	});
 	
-
+	var tipoDocRecord = Ext.data.Record.create([
+		 {name:'codigo'}
+		,{name:'descripcion'}
+		
+	]);
+	
+	var tipoDocStore =	page.getStore({
+	       flow: 'adjuntoasunto/getTiposDeDocumentoAdjuntoProcedimiento'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'diccionario'
+	    }, tipoDocRecord)
+	});
 
 	subir.on('click', function(){
+		tipoDocStore.webflow({tipoEntidad:'<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO" />'});	
 	    var upload = new Ext.FormPanel({
 		        fileUpload: true
 		        ,height: 100
@@ -268,6 +280,7 @@
 
 
 	subirAdjuntoPersona.on('click', function(){
+		tipoDocStore.webflow({tipoEntidad:'<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_PERSONA" />'});
 		var upload = new Ext.FormPanel({
 		        fileUpload: true
 		        ,height: 55
@@ -330,6 +343,7 @@
 	});
 
 	subirAdjuntoExpediente.on('click', function(){
+		tipoDocStore.webflow({tipoEntidad:'<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE" />'});
 		var upload = new Ext.FormPanel({
 		        fileUpload: true
 		        ,height: 55
@@ -392,6 +406,7 @@
 	});
 
 	subirAdjuntoContrato.on('click', function(){
+		tipoDocStore.webflow({tipoEntidad:'<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO" />'});
 		var upload = new Ext.FormPanel({
 		        fileUpload: true
 		        ,height: 55

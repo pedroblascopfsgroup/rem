@@ -127,8 +127,23 @@
 			recargarAdjuntos();
 		}
 	});
+	<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>borrar.setVisible(false);</sec:authorize>
 
+	var tipoDocRecord = Ext.data.Record.create([
+		 {name:'codigo'}
+		,{name:'descripcion'}
+		
+	]);
+	
+	var tipoDocStore =	page.getStore({
+	       flow: 'adjuntoasunto/getTiposDeDocumentoAdjuntoProcedimiento'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'diccionario'
+	    }, tipoDocRecord)
+	});
+	
 	subir.on('click', function(){
+		tipoDocStore.webflow({tipoEntidad:'<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE" />'});
 		var upload = new Ext.FormPanel({
 		        fileUpload: true
 		        ,height: 55
@@ -140,6 +155,20 @@
 					,height:45
 		        }
 		        ,items: [{
+		       	 	xtype:'combo'
+						,name:'comboTipoDoc'
+						<app:test id="tipoDocCombo" addComa="true" />
+						,hiddenName:'comboTipoDoc'
+						,store:tipoDocStore
+						,displayField:'descripcion'
+						,valueField:'codigo'
+						,mode: 'remote'
+						,emptyText:'----'
+						,width:250
+						,resizable:true
+						,triggerAction: 'all'
+						,fieldLabel : 'Tipo documento'}
+					,{
 			            xtype: 'fileuploadfield'
 			            ,emptyText: '<s:message code="fichero.upload.fileLabel.error" text="**Debe seleccionar un fichero" />'
 			            ,fieldLabel: '<s:message code="fichero.upload.fileLabel" text="**Fichero" />'
@@ -193,6 +222,7 @@
 
 
 	subirAdjuntoPersona.on('click', function(){
+		tipoDocStore.webflow({tipoEntidad:'<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_PERSONA" />'});
 		var upload = new Ext.FormPanel({
 		        fileUpload: true
 		        ,height: 55
@@ -204,6 +234,20 @@
 					,height:45
 		        }
 		        ,items: [{
+		        	xtype:'combo'
+						,name:'comboTipoDoc'
+						<app:test id="tipoDocCombo" addComa="true" />
+						,hiddenName:'comboTipoDoc'
+						,store:tipoDocStore
+						,displayField:'descripcion'
+						,valueField:'codigo'
+						,mode: 'remote'
+						,emptyText:'----'
+						,width:250
+						,resizable:true
+						,triggerAction: 'all'
+						,fieldLabel : 'Tipo documento'}
+					,{
 			            xtype: 'fileuploadfield'
 			            ,emptyText: '<s:message code="fichero.upload.fileLabel.error" text="**Debe seleccionar un fichero" />'
 			            ,fieldLabel: '<s:message code="fichero.upload.fileLabel" text="**Fichero" />'
@@ -255,6 +299,7 @@
 	});
 
 	subirAdjuntoContrato.on('click', function(){
+		tipoDocStore.webflow({tipoEntidad:'<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO" />'});
 		var upload = new Ext.FormPanel({
 		        fileUpload: true
 		        ,height: 55
@@ -266,6 +311,20 @@
 					,height:45
 		        }
 		        ,items: [{
+		        	xtype:'combo'
+						,name:'comboTipoDoc'
+						<app:test id="tipoDocCombo" addComa="true" />
+						,hiddenName:'comboTipoDoc'
+						,store:tipoDocStore
+						,displayField:'descripcion'
+						,valueField:'codigo'
+						,mode: 'remote'
+						,emptyText:'----'
+						,width:250
+						,resizable:true
+						,triggerAction: 'all'
+						,fieldLabel : 'Tipo documento'}
+					,{
 			            xtype: 'fileuploadfield'
 			            ,emptyText: '<s:message code="fichero.upload.fileLabel.error" text="**Debe seleccionar un fichero" />'
 			            ,fieldLabel: '<s:message code="fichero.upload.fileLabel" text="**Fichero" />'
@@ -360,7 +419,7 @@
                                          flow: 'plugin/mejoras/asuntos/plugin.mejoras.asuntos.editarDescripAdjExpediente'
                                          ,closable: true
                                          ,width : 700
-                                         ,title : '<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionExpediente" text="**Editar descripción del adjunto del expediente" />'
+                                         ,title : '<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionExpediente" text="**Editar descripciï¿½n del adjunto del expediente" />'
                                          ,params: parametros
                         });
            	 		w.on(app.event.DONE, function(){
@@ -373,7 +432,7 @@
 					});
 			
 			}else{
-				Ext.Msg.alert('<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionExpediente" text="**Editar descripción del adjunto del expediente" />','<s:message code="plugin.mejoras.asunto.adjuntos.noValor" text="**Debe seleccionar un valor de la lista" />');
+				Ext.Msg.alert('<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionExpediente" text="**Editar descripciï¿½n del adjunto del expediente" />','<s:message code="plugin.mejoras.asunto.adjuntos.noValor" text="**Debe seleccionar un valor de la lista" />');
 			}
 		}
 		}	
@@ -410,7 +469,7 @@
                                          flow: 'plugin/mejoras/asuntos/plugin.mejoras.asuntos.editarDescripAdjPersona'
                                          ,closable: true
                                          ,width : 700
-                                         ,title : '<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionPersona" text="**Editar descripción del adjunto de la persona" />'
+                                         ,title : '<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionPersona" text="**Editar descripciï¿½n del adjunto de la persona" />'
                                          ,params: parametros
                         });
            	 		w.on(app.event.DONE, function(){
@@ -423,7 +482,7 @@
 					});
 			
 			}else{
-				Ext.Msg.alert('<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionPersona" text="**Editar descripción del adjunto del expediente" />','<s:message code="plugin.mejoras.asunto.adjuntos.noValor" text="**Debe seleccionar un valor de la lista" />');
+				Ext.Msg.alert('<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionPersona" text="**Editar descripciï¿½n del adjunto del expediente" />','<s:message code="plugin.mejoras.asunto.adjuntos.noValor" text="**Debe seleccionar un valor de la lista" />');
 			}
 		}	
 		}
@@ -459,7 +518,7 @@
                                          flow: 'plugin/mejoras/asuntos/plugin.mejoras.asuntos.editarDescripAdjContrato'
                                          ,closable: true
                                          ,width : 700
-                                         ,title : '<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionContrato" text="**Editar descripción del adjunto del contrato" />'
+                                         ,title : '<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionContrato" text="**Editar descripciï¿½n del adjunto del contrato" />'
                                          ,params: parametros
                         });
            	 		w.on(app.event.DONE, function(){
@@ -472,7 +531,7 @@
 					});
 			
 			}else{
-				Ext.Msg.alert('<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionContrato" text="**Editar descripción del adjunto del expediente" />','<s:message code="plugin.mejoras.asunto.adjuntos.noValor" text="**Debe seleccionar un valor de la lista" />');
+				Ext.Msg.alert('<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionContrato" text="**Editar descripciï¿½n del adjunto del expediente" />','<s:message code="plugin.mejoras.asunto.adjuntos.noValor" text="**Debe seleccionar un valor de la lista" />');
 			}
 		}	
 		}

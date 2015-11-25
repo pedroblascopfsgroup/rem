@@ -2,10 +2,10 @@
 --##########################################
 --## AUTOR=Alberto Soler
 --## FECHA_CREACION=20151123
---## ARTEFACTO=
---## VERSION_ARTEFACTO
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=PRODUCTO-345 Todas las incidencias y mejoras del precontencioso PRODUCTO
---## PRODUCTO
+--## PRODUCTO=NO
 --## Finalidad: Resolución incidencias
 --## INSTRUCCIONES
 --## VERSIONES:

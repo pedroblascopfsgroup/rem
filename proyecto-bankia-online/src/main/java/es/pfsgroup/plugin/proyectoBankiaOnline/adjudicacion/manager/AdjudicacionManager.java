@@ -30,28 +30,33 @@ public class AdjudicacionManager implements AdjudicacionApi{
 		// Buscamos primero el bien asociado al procedimiento
 		ProcedimientoBien prcBien = genericDao.get(ProcedimientoBien.class, genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProcedimiento), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 
+		//Preformato para mensajes de validación en tareas
+		String formatoMensajeIn = "<div align=\"justify\" style=\"font-size: 8pt; font-family: Arial; margin-bottom: 10px;\">";
+		String formatoMensajeOut = "</div>";
+		String mensajeError = "";
+		
 		if (!Checks.esNulo(prcBien)) 
 		{
-			//Preformato para mensajes de validación en tareas
-			String formatoMensajeIn = "<div align=\"justify\" style=\"font-size: 8pt; font-family: Arial; margin-bottom: 10px;\">";
-			String formatoMensajeOut = "</div>";
-			
 			Bien bien = prcBien.getBien();
 			NMBBien b = genericDao.get(NMBBien.class, genericDao.createFilter(FilterType.EQUALS, "id", bien.getId()));
-
+			
 			if (b instanceof NMBBien) {				
+
 				if(Checks.esNulo(((NMBBien) b).getTributacion())){
-					return formatoMensajeIn+"Debe completar el Tipo de impuesto compra de los bienes"+formatoMensajeOut;
+					mensajeError = mensajeError+"Debe completar el Tipo de impuesto compra de los bienes. ";
 				}
 				if(Checks.esNulo(((NMBBien) b).getPorcentajeImpuestoCompra())){
-					return formatoMensajeIn+"Debe completar el Porcentaje de impuesto de compra del bien"+formatoMensajeOut;
+					mensajeError = mensajeError+"Debe completar el Porcentaje de impuesto de compra del bien. ";
 				}
 				if(Checks.esNulo(((NMBBien) b).getImpuestoCompra())){
-					return formatoMensajeIn+"Debe completar el Cod TP impuesto compra del bien"+formatoMensajeOut;
+					mensajeError = mensajeError+"Debe completar el Cod TP impuesto compra del bien.";
 				}
 			}
 		}
 		
-		return null;
+		if(mensajeError.length() > 1)
+			return formatoMensajeIn+mensajeError+formatoMensajeOut;
+		else
+			return null;
 	}
 }

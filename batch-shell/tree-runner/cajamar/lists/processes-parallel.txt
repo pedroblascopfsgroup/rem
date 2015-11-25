@@ -1,4 +1,6 @@
 GCL
+ExtrasContratos
+ExtrasPersonas
 Direcciones
 Telefonos
 Cobros

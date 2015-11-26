@@ -3,17 +3,17 @@
 <!-- Queries para las validaciones -->
     <entry key="ale-01.entityValidator">
       <![CDATA[
-          SELECT tmp_ale_cod_alerta AS ERROR_FIELD, (tmp_ale_cod_entidad || tmp_ale_cod_cliente_entidad) AS ENTITY_CODE      
+          SELECT tmp_ale_cod_alerta AS ERROR_FIELD, (tmp_ale_cod_entidad || tmp_ale_cod_cliente_entidad) AS ENTITY_CODE
           FROM tmp_ale_alertas WHERE tmp_ale_cod_entidad <> ?
       ]]>
     </entry>
-    <entry key="ale-02.loadDateValidator.Oracle9iDialect">
+    <entry key="ale-02.loadDateValidator.Oracle10gDialect">
       <![CDATA[
-             SELECT tmp_ale_cod_alerta AS ERROR_FIELD, (tmp_ale_cod_entidad || tmp_ale_cod_cliente_entidad) AS ENTITY_CODE    
+             SELECT tmp_ale_cod_alerta AS ERROR_FIELD, (tmp_ale_cod_entidad || tmp_ale_cod_cliente_entidad) AS ENTITY_CODE
               FROM tmp_ale_alertas where TMP_ALE_FECHA_EXTRACCION <> to_date(?,'YYYYMMDD')
          ]]>
     </entry>
-   
+
    <entry key="ale-03.grupoDiferente">
       <![CDATA[
             SELECT tmp_ale_cod_alerta as ERROR_FIELD, (TMP_ALE_COD_ENTIDAD || TMP_ALE_COD_CLIENTE_ENTIDAD) as ENTITY_CODE
@@ -21,11 +21,11 @@
             WHERE tmp_ale_cod_grupo_carga <> ?
          ]]>
     </entry>
-   
+
     <entry key="ale-04.codigoCliente">
         <![CDATA[
-            SELECT (''||tp.TMP_ALE_COD_ENTIDAD) as ERROR_FIELD, (tp.TMP_ALE_COD_ENTIDAD || tp.TMP_ALE_COD_CLIENTE_ENTIDAD) as ENTITY_CODE 
-            FROM TMP_ALE_ALERTAS tp 
+            SELECT (''||tp.TMP_ALE_COD_ENTIDAD) as ERROR_FIELD, (tp.TMP_ALE_COD_ENTIDAD || tp.TMP_ALE_COD_CLIENTE_ENTIDAD) as ENTITY_CODE
+            FROM TMP_ALE_ALERTAS tp
             WHERE (tp.TMP_ALE_COD_ENTIDAD, tp.TMP_ALE_COD_CLIENTE_ENTIDAD) not in (SELECT PER_COD_ENTIDAD, PER_COD_CLIENTE_ENTIDAD FROM PER_PERSONAS)
         ]]>
     </entry>
@@ -37,21 +37,21 @@
             WHERE tmp_ale_cod_grupo_carga not in (select grc_codigo from GRC_GRUPO_CARGA)
         ]]>
     </entry>
-    
+
     <entry key="ale-06.codigoAlerta">
         <![CDATA[
             SELECT tmp_ale_cod_alerta AS ERROR_FIELD,(tmp_ale_cod_entidad || tmp_ale_cod_cliente_entidad) AS ENTITY_CODE
             FROM tmp_ale_alertas
             WHERE tmp_ale_cod_alerta not in (select tal_codigo from TAL_TIPO_ALERTA)
         ]]>
-    </entry>    
+    </entry>
     <entry key="ale-07.codigoGravedad">
         <![CDATA[
             SELECT tmp_ale_cod_gravedad AS ERROR_FIELD,(tmp_ale_cod_entidad || tmp_ale_cod_cliente_entidad) AS ENTITY_CODE
             FROM tmp_ale_alertas
             WHERE tmp_ale_cod_gravedad not in (select ngr_codigo from ngr_nivel_gravedad)
         ]]>
-    </entry>    
+    </entry>
 
     <entry key="ale-08.existenAlertasPosteriores">
         <![CDATA[
@@ -61,7 +61,7 @@
          WHERE tmp.tmp_ale_fecha_extraccion <= F.FRC_FECHA_EXTRACCION
          and f.DD_TFI_ID = (select DD_TFI_ID from ${master.schema}.DD_TFI_TIPO_FICHERO WHERE DD_TFI_CODIGO = 'ALE')
         ]]>
-    </entry>   
+    </entry>
 
     <entry key="ale-09.entradasDuplicadas">
         <![CDATA[
@@ -72,51 +72,51 @@
             HAVING COUNT (*) > 1
         ]]>
     </entry>
-    
+
     <entry key="ale-11.alertaDeGrupoDiferente">
       <![CDATA[
             SELECT tmp_ale_cod_alerta as ERROR_FIELD, (TMP_ALE_COD_ENTIDAD || TMP_ALE_COD_CLIENTE_ENTIDAD) as ENTITY_CODE
             FROM tmp_ale_alertas
             WHERE tmp_ale_cod_alerta NOT IN (
-                SELECT tal_codigo FROM tal_tipo_alerta t, gal_grupo_alerta g 
+                SELECT tal_codigo FROM tal_tipo_alerta t, gal_grupo_alerta g
                 WHERE t.gal_id = g.gal_id AND g.gal_codigo = ? )
          ]]>
-    </entry>  
-    
-    <entry key="ale-12.contratoValidator">
-    	 <![CDATA[
-			SELECT TMP_COD_CONTRATO as ERROR_FIELD, TMP_ALE_COD_CLIENTE_ENTIDAD as ENTITY_CODE
-			FROM TMP_ALE_ALERTAS
-			WHERE TMP_COD_CONTRATO is not null and not exists ( select * 
-							   from cnt_contratos cnt,
-							        cpe_contratos_personas cpe, 
-							        per_personas per
-							   where cnt.cnt_contrato = TMP_COD_CONTRATO
-							   and cnt.cnt_id = cpe.cnt_id
-							   and cpe.per_id = per.per_id
-							   and per.PER_COD_CLIENTE_ENTIDAD = TMP_ALE_COD_CLIENTE_ENTIDAD)   
+    </entry>
 
-    	 ]]>
+    <entry key="ale-12.contratoValidator">
+         <![CDATA[
+            SELECT TMP_COD_CONTRATO as ERROR_FIELD, TMP_ALE_COD_CLIENTE_ENTIDAD as ENTITY_CODE
+            FROM TMP_ALE_ALERTAS
+            WHERE TMP_COD_CONTRATO is not null and not exists ( select *
+                               from cnt_contratos cnt,
+                                    cpe_contratos_personas cpe,
+                                    per_personas per
+                               where cnt.cnt_contrato = TMP_COD_CONTRATO
+                               and cnt.cnt_id = cpe.cnt_id
+                               and cpe.per_id = per.per_id
+                               and per.PER_COD_CLIENTE_ENTIDAD = TMP_ALE_COD_CLIENTE_ENTIDAD)
+
+         ]]>
     </entry>
-    
+
     <entry key="ale-13.oficinaContrato">
-    	 <![CDATA[
-    	 	SELECT TMP_COD_CENTRO_CNT as ERROR_FIELD, tmp_ale_cod_alerta as ENTITY_CODE
-    	 	FROM TMP_ALE_ALERTAS
-    	 	WHERE TMP_COD_CENTRO_CNT is not null and NOT EXISTS (
-    	 		select * from ofi_oficinas where ofi_codigo = TMP_COD_CENTRO_CNT
-    	 	) 
-    	  ]]>
+         <![CDATA[
+            SELECT TMP_COD_CENTRO_CNT as ERROR_FIELD, tmp_ale_cod_alerta as ENTITY_CODE
+            FROM TMP_ALE_ALERTAS
+            WHERE TMP_COD_CENTRO_CNT is not null and NOT EXISTS (
+                select * from ofi_oficinas where ofi_codigo = TMP_COD_CENTRO_CNT
+            )
+          ]]>
     </entry>
-    
+
     <entry key="ale-14.oficinaAlerta">
-    	 <![CDATA[
-    	 	SELECT TMP_COD_CENTRO_ALE as ERROR_FIELD, tmp_ale_cod_alerta as ENTITY_CODE
-    	 	FROM TMP_ALE_ALERTAS
-    	 	WHERE NOT EXISTS (
-    	 		select * from ofi_oficinas where ofi_codigo = TMP_COD_CENTRO_ALE
-    	 	) 
-    	  ]]>
+         <![CDATA[
+            SELECT TMP_COD_CENTRO_ALE as ERROR_FIELD, tmp_ale_cod_alerta as ENTITY_CODE
+            FROM TMP_ALE_ALERTAS
+            WHERE NOT EXISTS (
+                select * from ofi_oficinas where ofi_codigo = TMP_COD_CENTRO_ALE
+            )
+          ]]>
     </entry>
 
     <!-- Queries para el pasaje -->
@@ -135,41 +135,41 @@
            SET ale_activo = 0
           ]]>
    </entry>
-   <entry key="alertas.insert.Oracle9iDialect">
+   <entry key="alertas.insert.Oracle10gDialect">
     <![CDATA[
             INSERT INTO ale_alertas(
-                ale_id, 
+                ale_id,
                 per_id,
-                tal_id, 
-                ngr_id, 
-                ale_fecha_extraccion, 
-                ale_fecha_carga, 
+                tal_id,
+                ngr_id,
+                ale_fecha_extraccion,
+                ale_fecha_carga,
                 ale_fichero_carga,
                 cnt_id,
                 ofi_id_cnt,
-                ofi_id_ale, 
+                ofi_id_ale,
                 ale_activo,
                 usuariocrear,
                 fechacrear)
             SELECT
-                s_ale_alertas.nextVal as ale_id, 
+                s_ale_alertas.nextVal as ale_id,
                 (select per_id from per_personas WHERE tmp_ale_cod_entidad = per_cod_entidad and tmp_ale_cod_cliente_entidad = per_cod_cliente_entidad) as per_id,
                 (select tal_id from tal_tipo_alerta where tmp_ale_cod_alerta = tal_codigo) as tal_id,
                 (select ngr_id from ngr_nivel_gravedad where tmp_ale_cod_gravedad = ngr_codigo) as ngr_id,
                 tmp_ale_fecha_extraccion,
-                tmp_ale_fecha_carga, 
+                tmp_ale_fecha_carga,
                 tmp_ale_fichero_carga,
                  (select cnt.cnt_id
-							   from cnt_contratos cnt,
-							        cpe_contratos_personas cpe, 
-							        per_personas per
-							   where cnt.cnt_contrato = TMP_COD_CONTRATO
-							   and cnt.cnt_id = cpe.cnt_id
-							   and cpe.per_id = per.per_id
-							   and per.PER_COD_CLIENTE_ENTIDAD = TMP_ALE_COD_CLIENTE_ENTIDAD),
-				(select OFI_ID from ofi_oficinas where ofi_codigo = TMP_COD_CENTRO_CNT),
-				(select OFI_ID from ofi_oficinas where ofi_codigo = TMP_COD_CENTRO_ALE),
-	            1,
+                               from cnt_contratos cnt,
+                                    cpe_contratos_personas cpe,
+                                    per_personas per
+                               where cnt.cnt_contrato = TMP_COD_CONTRATO
+                               and cnt.cnt_id = cpe.cnt_id
+                               and cpe.per_id = per.per_id
+                               and per.PER_COD_CLIENTE_ENTIDAD = TMP_ALE_COD_CLIENTE_ENTIDAD),
+                (select OFI_ID from ofi_oficinas where ofi_codigo = TMP_COD_CENTRO_CNT),
+                (select OFI_ID from ofi_oficinas where ofi_codigo = TMP_COD_CENTRO_ALE),
+                1,
                 usuariocrear,
                 sysdate
             FROM tmp_ale_alertas
@@ -177,81 +177,81 @@
     </entry>
     <entry key="alertas.analize">
       <![CDATA[
-        ANALYZE TABLE ale_alertas ${sql.analyze}
+        BEGIN OPERACION_DDL.DDL_TABLE('STATS','ALE_ALERTAS'); END;
          ]]>
     </entry>
-    
+
     <!-- Procesar alertas -->
     <entry key="ale-31.existeRango">
       <![CDATA[
-        SELECT COUNT (*) FROM pen_param_entidad WHERE pen_param = 'scoring.rangoIntervalo' 
+        SELECT COUNT (*) FROM pen_param_entidad WHERE pen_param = 'scoring.rangoIntervalo'
          ]]>
     </entry>
-    
+
     <entry key="ale-32.metricaValidas">
       <![CDATA[
         SELECT tpe.dd_tpe_descripcion||' - '||sce.dd_sce_descripcion AS ENTITY_CODE,
                tal_descripcion||' - '||ngr_descripcion AS ERROR_FIELD
         FROM tal_tipo_alerta, ngr_nivel_gravedad, ${master.schema}.DD_TPE_TIPO_PERSONA tpe, DD_SCE_SEGTO_CLI_ENTIDAD sce
-        WHERE 
+        WHERE
         -- Busca lo que no cubre las metricas por default
         (tpe.dd_tpe_id, tal_id, ngr_id) NOT IN (
               SELECT tpe.dd_tpe_id ,tal_id, ngr_id
                 FROM mtr_metricas mtr,
                      mtt_metricas_tipo mtt,
                     mtg_metricas_tipo_gravedad mtg
-                WHERE mtr.mtr_id = mtt.mtr_id 
-                  AND mtt.mtt_id = mtg.mtt_id 
-                  AND MTR.DD_TPE_ID = TPE.DD_TPE_ID 
+                WHERE mtr.mtr_id = mtt.mtr_id
+                  AND mtt.mtt_id = mtg.mtt_id
+                  AND MTR.DD_TPE_ID = TPE.DD_TPE_ID
                   AND MTR.DD_SCE_ID IS NULL
-                  AND mtg.mtg_peso IS NOT NULL) 
-             -- Y no esta dentro de lo que no cubren las metricas por segmento     
-            AND (sce.dd_sce_id, tal_id, ngr_id) NOT IN (            
+                  AND mtg.mtg_peso IS NOT NULL)
+             -- Y no esta dentro de lo que no cubren las metricas por segmento
+            AND (sce.dd_sce_id, tal_id, ngr_id) NOT IN (
             SELECT sce.dd_sce_id,tal_id, ngr_id
             FROM mtr_metricas mtr,
                  mtt_metricas_tipo mtt,
                  mtg_metricas_tipo_gravedad mtg
-           WHERE mtr.mtr_id = mtt.mtr_id 
-                 AND mtt.mtt_id = mtg.mtt_id 
-                 and MTR.DD_SCE_ID = sce.dd_sce_id 
-                 and mtg.mtg_peso is not null)     
+           WHERE mtr.mtr_id = mtt.mtr_id
+                 AND mtt.mtt_id = mtg.mtt_id
+                 and MTR.DD_SCE_ID = sce.dd_sce_id
+                 and mtg.mtg_peso is not null)
          ]]>
     </entry>
-    
+
     <entry key="scoring.desactivarTotales">
     <![CDATA[
         update PTO_PUNTUACION_TOTAL set pto_activo = 0
     ]]>
     </entry>
-    
-    <entry key="scoring.crearRegistrosEnTablasTotales.Oracle9iDialect">
+
+    <entry key="scoring.crearRegistrosEnTablasTotales.Oracle10gDialect">
     <![CDATA[
-    INSERT ALL 
+    INSERT ALL
     INTO pto_puntuacion_total (
-                pto_id, 
-                per_id, 
+                pto_id,
+                per_id,
                 pto_rango_intervalo,
                 pto_activo,
-                pto_fecha_procesado, 
+                pto_fecha_procesado,
                 pto_vrc,
-                usuariocrear, 
+                usuariocrear,
                 FECHACREAR)
-       VALUES (s_pto_puntuacion_total.NEXTVAL, 
-               persona, 
+       VALUES (s_pto_puntuacion_total.NEXTVAL,
+               persona,
                (SELECT PEN_VALOR FROM PEN_PARAM_ENTIDAD WHERE PEN_PARAM='scoring.rangoIntervalo'),
-               1,  
+               1,
                SYSDATE,
                (SELECT PER_RIESGO FROM PER_PERSONAS WHERE PER_ID = persona),
-               'test', 
+               'test',
                sysdate)
     SELECT DISTINCT per_id AS persona
                FROM ale_alertas a
                WHERE ale_activo = 1
-    ]]>                
+    ]]>
     </entry>
-    <entry key="scoring.crearRegistrosEnTablasParciales.Oracle9iDialect">
+    <entry key="scoring.crearRegistrosEnTablasParciales.Oracle10gDialect">
     <![CDATA[
-        INSERT ALL 
+        INSERT ALL
             INTO PPA_puntuacion_PARCIAL (
                     PPA_ID,
                     PER_ID,
@@ -266,12 +266,12 @@
                     PPA_FECHA_PROCESADO,
                     USUARIOCREAR,
                     FECHACREAR)
-            VALUES (        
+            VALUES (
                     S_PPA_puntuacion_PARCIAL.nextVal,
                     persona,
                     PTO_ID,
                     tipoAlerta,
-                    ale_id, 
+                    ale_id,
                     preocupacion,
                     peso,
                     preocupacion * peso,
@@ -280,15 +280,15 @@
                     sysdate,
                     'BATCH_USER',
                     sysdate)
-            SELECT   metrica.per_id as persona, 
-                     metrica.tal_id as tipoAlerta, 
+            SELECT   metrica.per_id as persona,
+                     metrica.tal_id as tipoAlerta,
                      metrica.ale_id as ale_id,
-                     metrica.mtt_preocupacion as preocupacion, 
-                     metrica.mtg_peso as peso, 
+                     metrica.mtt_preocupacion as preocupacion,
+                     metrica.mtg_peso as peso,
                      metrica.ALE_FECHA_EXTRACCION as FECHA_EXTRACCION,
                      metrica.mtr_fecha_activacion as fecha_activacion,
                      pto_id
-                     FROM 
+                     FROM
                          pto_puntuacion_total pto,
                          (SELECT   p.per_id, m.mtr_id, mtt.tal_id, mtg.ngr_id, mtg.mtg_peso,mtt.mtt_preocupacion, m.mtr_fecha_activacion, a.ale_fecha_extraccion, a.ale_id
                             FROM mtr_metricas m,
@@ -303,7 +303,7 @@
                              AND a.per_id = p.per_id
                              AND a.tal_id = mtt.tal_id
                              AND a.ngr_id = mtg.ngr_id
-                             and a.ale_activo = 1                      
+                             and a.ale_activo = 1
                              AND (m.dd_sce_id IS NULL AND m.dd_tpe_id = p.dd_tpe_id)
                              AND (mtt.tal_id, mtg.ngr_id) NOT IN (
                                     SELECT mtt.tal_id, mtg.ngr_id
@@ -329,14 +329,14 @@
                             and a.ale_activo = 1
                             AND a.per_id = p.per_id
                             AND a.tal_id = mtt.tal_id
-                            AND a.ngr_id = mtg.ngr_id                          
+                            AND a.ngr_id = mtg.ngr_id
                             AND m.dd_sce_id = p.dd_sce_id)) metrica
-                   WHERE PTO.PTO_ACTIVO = 1 
+                   WHERE PTO.PTO_ACTIVO = 1
                      AND pto.per_id = metrica.per_id
                      order by ale_id
-        ]]>             
+        ]]>
      </entry>
-         
+
      <entry key="scoring.calcularPuntuacionTotal">
      <![CDATA[
          UPDATE pto_puntuacion_total t
@@ -345,9 +345,9 @@
                                     WHERE p.pto_id = t.pto_id
                                  GROUP BY t.pto_id)
          WHERE t.pto_activo = 1
-        ]]>         
+        ]]>
      </entry>
-     
+
      <entry key="scoring.calcularRating">
      <![CDATA[
         UPDATE pto_puntuacion_total t
@@ -360,10 +360,10 @@
                                    ORDER BY pto_puntuacion DESC)) p
                     WHERE t.pto_id = p.pto_id)
          WHERE pto_activo = 1
-        ]]>         
+        ]]>
      </entry>
-     
-     <entry key="scoring.calcularRango.Oracle9iDialect">
+
+     <entry key="scoring.calcularRango.Oracle10gDialect">
      <![CDATA[
         -- Mucho cuidado con esta query
         -- 25 = ASCII ('Z') - ASCII ('A')  -- Cantidad de letras
@@ -372,11 +372,11 @@
         UPDATE pto_puntuacion_total t
            SET t.pto_intervalo =
                   (SELECT CASE
-                              WHEN (CEIL (t.pto_rating / rangointervalo) <= 26)          
-                                 THEN CHR (CEIL (t.pto_rating / rangointervalo) + 64)             
+                              WHEN (CEIL (t.pto_rating / rangointervalo) <= 26)
+                                 THEN CHR (CEIL (t.pto_rating / rangointervalo) + 64)
                               ELSE (
                               -- Divido por 26.001 para evitar caracteres raros en los limites
-                                 CHR (FLOOR ((t.pto_rating / rangointervalo) / 26.001) + 64)             
+                                 CHR (FLOOR ((t.pto_rating / rangointervalo) / 26.001) + 64)
                                   || CHR (  CEIL (t.pto_rating / rangointervalo)
                                             - (FLOOR (t.pto_rating / rangointervalo / 26.001)* 26)
                                             + 64
@@ -388,12 +388,12 @@
                                FROM pto_puntuacion_total
                               WHERE pto_activo = 1
                            GROUP BY pto_rango_intervalo))
-             ]]>         
+             ]]>
      </entry>
      <entry key="insertIncidenciaAlerta">
-     	<![CDATA[
-     		INSERT INTO INC_INCIDENCIAS_BATCH (INC_ID, INC_DESCRIPCION,INC_SEVERIDAD, VERSION, USUARIOCREAR,FECHACREAR,BORRADO ) 
-   			values (S_INC_INCIDENCIAS_BATCH.nextVal,?,?,0,'CRON',SYSDATE,0)
-   		]]>	 
+        <![CDATA[
+            INSERT INTO INC_INCIDENCIAS_BATCH (INC_ID, INC_DESCRIPCION,INC_SEVERIDAD, VERSION, USUARIOCREAR,FECHACREAR,BORRADO )
+            values (S_INC_INCIDENCIAS_BATCH.nextVal,?,?,0,'CRON',SYSDATE,0)
+        ]]>
      </entry>
 </properties>

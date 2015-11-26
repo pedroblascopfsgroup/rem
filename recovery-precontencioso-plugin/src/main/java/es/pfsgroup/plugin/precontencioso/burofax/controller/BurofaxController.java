@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
 import es.capgemini.pfs.diccionarios.comparator.DictionaryComparatorFactory;
-import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.direccion.api.DireccionApi;
 import es.capgemini.pfs.direccion.dto.DireccionAltaDto;
 import es.capgemini.pfs.direccion.model.DDProvincia;
@@ -29,6 +29,8 @@ import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Direccion;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
 import es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi;
 import es.pfsgroup.plugin.precontencioso.burofax.dto.BurofaxDTO;
@@ -288,17 +290,22 @@ public class BurofaxController {
 		//Comprobamos que las variables no han sido modificadas al editar su estilo con el HTMLEditor. Las variables son indivisibles 
 		String contenidoBurofaxAux=contenidoBurofax;
 		
-		while(contenidoBurofaxAux.length()>0 && contenidoBurofaxAux.indexOf("$") != -1){
+		while(contenidoBurofaxAux.length()>0 && contenidoBurofaxAux.indexOf("${") != -1){
 			int inicioVariable=contenidoBurofaxAux.indexOf("$");
 			int finalVariable=contenidoBurofaxAux.indexOf("}");
 			
-			String variable=contenidoBurofaxAux.substring(inicioVariable,finalVariable+1);
-			
-			if(variable.contains("<") || variable.contains("</")){
-				throw new Exception("La definición de las variables es incorrecta. Compruebe el estilo de las variables");
+			if(finalVariable != -1) {
+				String variable=contenidoBurofaxAux.substring(inicioVariable,finalVariable+1);
+				
+				if(variable.contains("<") || variable.contains("</")){
+					throw new Exception("La definición de las variables es incorrecta. Compruebe el estilo de las variables");
+				}
+				else if(!precontenciosoContext.getVariablesBurofax().contains(StringUtils.substring(variable, variable.indexOf("{") + +1, variable.lastIndexOf("}")))) {
+					throw new Exception("¡Atenci&oacute;n! se han encontrado variables err&oacute;neas en el texto");
+				}
 			}
-			else if(!precontenciosoContext.getVariablesBurofax().contains(StringUtils.substring(variable, variable.indexOf("{") + +1, variable.lastIndexOf("}")))) {
-				throw new Exception("¡Atenci&oacute;n! se han encontrado variables err&oacute;neas en el texto");
+			else {
+				finalVariable = inicioVariable + 1;
 			}
 			
 			contenidoBurofaxAux=contenidoBurofaxAux.substring(finalVariable+1);
@@ -372,6 +379,37 @@ public class BurofaxController {
 		model.put("idProcedimiento", idProcedimiento);
 		
 		return JSP_ALTA_PERSONA;
+	}
+
+	@RequestMapping
+	private String cancelarEnEstPrep(WebRequest request, ModelMap model,Long idEnvio, Long idCliente){
+		
+		burofaxManager.cancelarEnEstPrep(idEnvio, idCliente);
+		return DEFAULT;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	private String saberOrigen(WebRequest request, ModelMap map,Long idDireccion){
+		
+		boolean result = burofaxManager.saberOrigen(idDireccion);
+		map.put("esManual", result);
+		return "plugin/precontencioso/burofax/json/esManualJSON";
+		//return DEFAULT;
+	}
+	
+	@RequestMapping
+	private String borrarDirecManual(WebRequest request, ModelMap model,Long idDireccion){
+		
+		burofaxManager.borrarDireccionManualBurofax(idDireccion);
+		return DEFAULT;
+	}
+	
+	@RequestMapping
+	private String descartarPersonaEnvio(WebRequest request, ModelMap model,Long idBurofax){
+		
+		burofaxManager.descartarPersona(idBurofax);
+		return DEFAULT;
 	}
 	
 	

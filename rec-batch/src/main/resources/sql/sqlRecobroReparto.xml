@@ -1,130 +1,146 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-	<!-- Paso 1 - Truncado de las tablas temporales -->
-	<!-- Truncado de la tabla TMP_REC_EXP_REPARTO_CAR -->
-	<entry key="recobro.borrado.tmp_rec_exp_reparto_car.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_EXP_REPARTO_CAR
-		]]>
-	</entry>
-	<!-- Truncado de la tabla TMP_REC_EXP_REPARTO_CAR_VRE -->
-	<entry key="recobro.borrado.tmp_rec_exp_reparto_car_vre.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_EXP_REPARTO_CAR_VRE
-		]]>
-	</entry>
-	<!-- Truncado de la tabla TMP_REC_EXP_REPARTO_SUB -->
-	<entry key="recobro.borrado.tmp_rec_exp_reparto_sub.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_EXP_REPARTO_SUB
-		]]>
-	</entry>
-	<!-- Truncado de la tabla TMP_REC_EXP_REPARTO_AGENCIAS -->
-	<entry key="recobro.borrado.tmp_rec_exp_reparto_agencias.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_EXP_REPARTO_AGENCIAS
-		]]>
-	</entry>
-	
-	<!-- Paso 2 - Juntar los expedientes de TMP_REC_EXP_ASIG_CARTERA y BATCH_DATOS_SALIDA en TMP_REC_EXP_REPARTO_CAR -->
-	<entry key="recobro.insert.tmp_rec_exp_reparto_car.Oracle9iDialect">
-		<![CDATA[
-			INSERT INTO TMP_REC_EXP_REPARTO_CAR (EXP_ID, CAR_ID)
-			SELECT EXP_ID, ARQ_ID_NEW FROM TMP_REC_EXP_ASIG_CARTERA
-			UNION
-			SELECT EXP_ID, ARQ_ID FROM BATCH_DATOS_SALIDA
-		]]>
-	</entry>
-	
-	<!-- Paso 3 - Calcular el VRE de los expedientes para reparto  -->
-	<entry key="recobro.insert.tmp_rec_exp_reparto_car_vre.Oracle9iDialect">
-		<![CDATA[
-		INSERT INTO TMP_REC_EXP_REPARTO_CAR_VRE  (EXP_ID, CAR_ID, VRE)
-			SELECT TMP.EXP_ID, TMP.CAR_ID, SUM(NVL(CNT.CNT_RIESGO, 0)) VRE
-				FROM TMP_REC_EXP_REPARTO_CAR TMP
-  					JOIN BATCH_DATOS_CNT_EXP CEX ON TMP.EXP_ID = CEX.EXP_ID
-  					JOIN BATCH_DATOS_CNT CNT ON CEX.CNT_ID = CNT.CNT_ID
-				GROUP BY TMP.EXP_ID, TMP.CAR_ID
-     			UNION
-    			SELECT N.EXP_ID, N.ARQ_ID, SUM(NVL(CNT.CNT_RIESGO, 0)) VRE
-    			FROM BATCH_DATOS_SALIDA N
-	      			JOIN BATCH_DATOS_CNT CNT ON N.CNT_ID = CNT.CNT_ID
-    			GROUP BY N.EXP_ID, N.ARQ_ID
-		]]>
-	</entry>
-	
-	<!-- Paso 4 - Reparto de los expedientes en subcarteras -->
-	<entry key="recobro.reparto_expedientes_subcarteras.Oracle9iDialect">
-		<![CDATA[
-      		-- SET SERVEROUTPUT ON;
-			DECLARE
-			  -- Definicion de variables
-			  V_CAR_ID    NUMBER;
-			  V_VRE_CART  NUMBER(16,2);
-			  V_EXP_ID    NUMBER;
-			  V_VRE       NUMBER(16,2);
-			
-			  V_SCA_ID    NUMBER;
-			  V_MAX_VRE   NUMBER(16,2);
-			  V_ACT_VRE   NUMBER(16,2);
-			  
-			  V_ASIG      NUMBER(1);
-			  V_REVI      NUMBER;
-			  
-			  V_TMP_SCA_ID NUMBER;
-			  
-			  V_N_SUBCARTERAS NUMBER;
-			
-			  -- Definicion de cursores
-			  -- Carteras de los expedientes a repartir
-			  CURSOR C_CARTERAS IS
-			    SELECT DISTINCT CAR_ID
-			    FROM TMP_REC_EXP_REPARTO_CAR_VRE
-			    ORDER BY CAR_ID;
-			
-			  -- Expedientes de la cartera
-			  CURSOR C_EXP_CART IS
-			    SELECT EXP_ID, VRE
-			    FROM TMP_REC_EXP_REPARTO_CAR_VRE
-			    WHERE CAR_ID = V_CAR_ID;
-			    
-			    -- ORDER BY VRE DESC, EXP_ID;
-			    
-			  -- Subcarteras
-			  C_SUBCARTERAS SYS_REFCURSOR;
-			
-			BEGIN
-			  OPEN C_CARTERAS;
-			  
-			    -- POR CADA CARTERA, REALIZAMOS EL REPARTO
-			  LOOP
-			    FETCH C_CARTERAS INTO V_CAR_ID;
-			    EXIT WHEN C_CARTERAS%NOTFOUND;
-          
-			    DBMS_OUTPUT.PUT_LINE('Comienza el reparto a subcarteras de la cartera ID: '||V_CAR_ID);
-			    -- Obtenemos el VRE total de la cartera
-			    SELECT SUM(VRE) INTO V_VRE_CART FROM TMP_REC_EXP_REPARTO_CAR_VRE WHERE CAR_ID = V_CAR_ID;
-			    DBMS_OUTPUT.PUT_LINE('VRE total de la cartera: '||TO_CHAR(V_VRE_CART));
+    <!-- Paso 1 - Truncado de las tablas temporales -->
+    <!-- Truncado de la tabla TMP_REC_EXP_REPARTO_CAR -->
+    <entry key="recobro.borrado.tmp_rec_exp_reparto_car.Oracle10gDialect">
+        <![CDATA[
+        BEGIN
+            OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_REPARTO_CAR');
+        END;
+        ]]>
+    </entry>
+    <!-- Truncado de la tabla TMP_REC_EXP_REPARTO_CAR_VRE -->
+    <entry key="recobro.borrado.tmp_rec_exp_reparto_car_vre.Oracle10gDialect">
+        <![CDATA[
+        BEGIN
+            OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_REPARTO_CAR_VRE');
+        END;
+        ]]>
+    </entry>
+    <!-- Truncado de la tabla TMP_REC_EXP_REPARTO_SUB -->
+    <entry key="recobro.borrado.tmp_rec_exp_reparto_sub.Oracle10gDialect">
+        <![CDATA[
+        BEGIN
+            OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_REPARTO_SUB');
+        END;
+        ]]>
+    </entry>
+    <!-- Truncado de la tabla TMP_REC_EXP_REPARTO_AGENCIAS -->
+    <entry key="recobro.borrado.tmp_rec_exp_reparto_agencias.Oracle10gDialect">
+        <![CDATA[
+        BEGIN
+            OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_REPARTO_AGENCIAS');
+        END;
+        ]]>
+    </entry>
 
-				-- Vaciamos la tabla temporal			    
-			    EXECUTE IMMEDIATE 'TRUNCATE TABLE TMP_ARA_SUBCARTERA_REPARTO_AUX';
-			      
-			      -- Insertamos en la tabla temporal las subcarteras
-			    EXECUTE IMMEDIATE 
-			      'INSERT INTO TMP_ARA_SUBCARTERA_REPARTO_AUX
-			      SELECT RCF_SCA_ID, ('||REPLACE(V_VRE_CART,',','.')||' * RCF_SCA_PARTICION)/100 MAX_VRE, 0 ACT_VRE
-			      FROM BATCH_RCF_ENTRADA
-			      WHERE RCF_CAR_ID = '||V_CAR_ID||'
-			        AND RCF_DD_EES_CODIGO = '${ddEstadoEsquemas.Liberado.codigo}'
-			        AND RCF_CAR_BORRADO = ${borrado.no.id}
-			        AND RCF_SCA_BORRADO = ${borrado.no.id}
-			      ORDER BY RCF_SCA_PARTICION DESC, RCF_SCA_ID';
-			      
-		  EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM TMP_ARA_SUBCARTERA_REPARTO_AUX' INTO V_N_SUBCARTERAS;
-		  
-		  -- Puede ser que la cartera no tenga subcarteas, si es así no  hacemos nada.
-		  IF (V_N_SUBCARTERAS <= 0) THEN CONTINUE; END IF;
-		  
+    <!-- Paso 2 - Juntar los expedientes de TMP_REC_EXP_ASIG_CARTERA y BATCH_DATOS_SALIDA en TMP_REC_EXP_REPARTO_CAR -->
+    <entry key="recobro.insert.tmp_rec_exp_reparto_car.Oracle10gDialect">
+        <![CDATA[
+           BEGIN
+            INSERT INTO TMP_REC_EXP_REPARTO_CAR (EXP_ID, CAR_ID)
+            SELECT EXP_ID, ARQ_ID_NEW FROM TMP_REC_EXP_ASIG_CARTERA
+            UNION
+            SELECT EXP_ID, ARQ_ID FROM BATCH_DATOS_SALIDA;
+
+            OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_EXP_REPARTO_CAR');
+           END;
+        ]]>
+    </entry>
+
+    <!-- Paso 3 - Calcular el VRE de los expedientes para reparto  -->
+    <entry key="recobro.insert.tmp_rec_exp_reparto_car_vre.Oracle10gDialect">
+        <![CDATA[
+           BEGIN
+           INSERT INTO TMP_REC_EXP_REPARTO_CAR_VRE  (EXP_ID, CAR_ID, VRE)
+            SELECT TMP.EXP_ID, TMP.CAR_ID, SUM(NVL(CNT.CNT_RIESGO, 0)) VRE
+                FROM TMP_REC_EXP_REPARTO_CAR TMP
+                    JOIN BATCH_DATOS_CNT_EXP CEX ON TMP.EXP_ID = CEX.EXP_ID
+                    JOIN BATCH_DATOS_CNT CNT ON CEX.CNT_ID = CNT.CNT_ID
+                GROUP BY TMP.EXP_ID, TMP.CAR_ID
+                UNION
+                SELECT N.EXP_ID, N.ARQ_ID, SUM(NVL(CNT.CNT_RIESGO, 0)) VRE
+                FROM BATCH_DATOS_SALIDA N
+                    JOIN BATCH_DATOS_CNT CNT ON N.CNT_ID = CNT.CNT_ID
+                GROUP BY N.EXP_ID, N.ARQ_ID;
+
+            OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_EXP_REPARTO_CAR_VRE');
+           END;
+        ]]>
+    </entry>
+
+    <!-- Paso 4 - Reparto de los expedientes en subcarteras -->
+    <entry key="recobro.reparto_expedientes_subcarteras.Oracle10gDialect">
+        <![CDATA[
+            -- SET SERVEROUTPUT ON;
+            DECLARE
+              -- Definicion de variables
+              V_CAR_ID    NUMBER;
+              V_VRE_CART  NUMBER(16,2);
+              V_EXP_ID    NUMBER;
+              V_VRE       NUMBER(16,2);
+
+              V_SCA_ID    NUMBER;
+              V_MAX_VRE   NUMBER(16,2);
+              V_ACT_VRE   NUMBER(16,2);
+
+              V_ASIG      NUMBER(1);
+              V_REVI      NUMBER;
+
+              V_TMP_SCA_ID NUMBER;
+
+              V_N_SUBCARTERAS NUMBER;
+
+              -- Definicion de cursores
+              -- Carteras de los expedientes a repartir
+              CURSOR C_CARTERAS IS
+                SELECT DISTINCT CAR_ID
+                FROM TMP_REC_EXP_REPARTO_CAR_VRE
+                ORDER BY CAR_ID;
+
+              -- Expedientes de la cartera
+              CURSOR C_EXP_CART IS
+                SELECT EXP_ID, VRE
+                FROM TMP_REC_EXP_REPARTO_CAR_VRE
+                WHERE CAR_ID = V_CAR_ID;
+
+                -- ORDER BY VRE DESC, EXP_ID;
+
+              -- Subcarteras
+              C_SUBCARTERAS SYS_REFCURSOR;
+
+            BEGIN
+              OPEN C_CARTERAS;
+
+                -- POR CADA CARTERA, REALIZAMOS EL REPARTO
+              LOOP
+                FETCH C_CARTERAS INTO V_CAR_ID;
+                EXIT WHEN C_CARTERAS%NOTFOUND;
+
+                DBMS_OUTPUT.PUT_LINE('Comienza el reparto a subcarteras de la cartera ID: '||V_CAR_ID);
+                -- Obtenemos el VRE total de la cartera
+                SELECT SUM(VRE) INTO V_VRE_CART FROM TMP_REC_EXP_REPARTO_CAR_VRE WHERE CAR_ID = V_CAR_ID;
+                DBMS_OUTPUT.PUT_LINE('VRE total de la cartera: '||TO_CHAR(V_VRE_CART));
+
+                -- Vaciamos la tabla temporal
+                OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_ARA_SUBCARTERA_REPARTO_AUX');
+
+                  -- Insertamos en la tabla temporal las subcarteras
+                EXECUTE IMMEDIATE
+                  'INSERT INTO TMP_ARA_SUBCARTERA_REPARTO_AUX
+                  SELECT RCF_SCA_ID, ('||REPLACE(V_VRE_CART,',','.')||' * RCF_SCA_PARTICION)/100 MAX_VRE, 0 ACT_VRE
+                  FROM BATCH_RCF_ENTRADA
+                  WHERE RCF_CAR_ID = '||V_CAR_ID||'
+                    AND RCF_DD_EES_CODIGO = '${ddEstadoEsquemas.Liberado.codigo}'
+                    AND RCF_CAR_BORRADO = ${borrado.no.id}
+                    AND RCF_SCA_BORRADO = ${borrado.no.id}
+                  ORDER BY RCF_SCA_PARTICION DESC, RCF_SCA_ID';
+
+          EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM TMP_ARA_SUBCARTERA_REPARTO_AUX' INTO V_N_SUBCARTERAS;
+
+          -- Puede ser que la cartera no tenga subcarteas, si es así no  hacemos nada.
+          IF (V_N_SUBCARTERAS <= 0) THEN CONTINUE; END IF;
+
           -- Si solo existe una subcartera para la cartera
           IF (V_N_SUBCARTERAS = 1) THEN
             -- Asignamos todos lo expedientes a esta subcartera
@@ -134,24 +150,24 @@
                                   FROM TMP_REC_EXP_REPARTO_CAR_VRE
                                 WHERE CAR_ID = '||V_CAR_ID;
           ELSE
-		    OPEN C_SUBCARTERAS FOR 'SELECT SCA_ID, MAX_VRE, ACT_VRE FROM TMP_ARA_SUBCARTERA_REPARTO_AUX ORDER BY MAX_VRE DESC, SCA_ID';
-		    FETCH C_SUBCARTERAS INTO V_SCA_ID, V_MAX_VRE, V_ACT_VRE; --AREGLO SALTA 1, DESPUES DE ASIGNAR UNO QUE NO CABÍA
-          
+            OPEN C_SUBCARTERAS FOR 'SELECT SCA_ID, MAX_VRE, ACT_VRE FROM TMP_ARA_SUBCARTERA_REPARTO_AUX ORDER BY MAX_VRE DESC, SCA_ID';
+            FETCH C_SUBCARTERAS INTO V_SCA_ID, V_MAX_VRE, V_ACT_VRE; --AREGLO SALTA 1, DESPUES DE ASIGNAR UNO QUE NO CABÍA
+
             -- ENTRAMOS EN EL BUCLE DE REPARTO
-  
-            
+
+
             OPEN C_EXP_CART;
             V_ASIG := 1;
             -- POR CADA EXPEDIENTE
-            LOOP 
+            LOOP
               IF (V_ASIG = 1) THEN
                 FETCH C_EXP_CART INTO V_EXP_ID, V_VRE;
               END IF;
               EXIT WHEN C_EXP_CART%NOTFOUND;
-              
+
                 V_ASIG := 0;
                 V_REVI := 0;
-                
+
                 LOOP
                   IF (C_SUBCARTERAS%NOTFOUND) THEN
                     CLOSE C_SUBCARTERAS;
@@ -169,25 +185,25 @@
                   END IF; -- IF CABE EL VRE DEL EXPEDIENTE EN LA SUBCARTERA
                   SYS.DBMS_OUTPUT.PUT_LINE('');
                   V_REVI := V_REVI + 1;
-                  
+
                   V_TMP_SCA_ID := V_SCA_ID; --Nos guardamos la ultima subcartera que hemos comprobado
-                  FETCH C_SUBCARTERAS INTO V_SCA_ID, V_MAX_VRE, V_ACT_VRE; --ARREGLO SALTA 1, DESPUES DE ASIGNAR UNO QUE NO CABÍA          
+                  FETCH C_SUBCARTERAS INTO V_SCA_ID, V_MAX_VRE, V_ACT_VRE; --ARREGLO SALTA 1, DESPUES DE ASIGNAR UNO QUE NO CABÍA
                   EXIT WHEN V_ASIG = 1 OR V_REVI >= C_SUBCARTERAS%ROWCOUNT;
                 END LOOP; -- END LOOP SUBCARTERAS
-                
+
                 --Si no ha cabido en ninguna subcartera
                 IF (V_REVI >= C_SUBCARTERAS%ROWCOUNT AND V_ASIG = 0) THEN
                   --Se lo asignamos a la primera subcartera que este más lejos de su máximo y tenga el mayor porcentaje de reparto
                   EXECUTE IMMEDIATE 'SELECT SCA_ID FROM (
-                                      SELECT SCA_ID, ROW_NUMBER() OVER (ORDER BY (MAX_VRE - ACT_VRE) DESC, MAX_VRE DESC, SCA_ID) ORDEN FROM TMP_ARA_SUBCARTERA_REPARTO_AUX) 
+                                      SELECT SCA_ID, ROW_NUMBER() OVER (ORDER BY (MAX_VRE - ACT_VRE) DESC, MAX_VRE DESC, SCA_ID) ORDEN FROM TMP_ARA_SUBCARTERA_REPARTO_AUX)
                                     WHERE ORDEN = 1' INTO V_SCA_ID;
-                
+
                   DBMS_OUTPUT.PUT_LINE('El expediente: '||V_EXP_ID||' con VRE: '||V_VRE||' no cabia en ninguna subcartera, y se lo asignamos a la subcartera: '||V_SCA_ID);
                   EXECUTE IMMEDIATE 'INSERT INTO TMP_REC_EXP_REPARTO_SUB  (EXP_ID, CAR_ID, RCF_SCA_ID, VRE)
                                     VALUES ('||V_EXP_ID||','||V_CAR_ID||','||V_SCA_ID||','||REPLACE(V_VRE,',','.')||')';
                   EXECUTE IMMEDIATE 'UPDATE TMP_ARA_SUBCARTERA_REPARTO_AUX SET ACT_VRE = ACT_VRE + '||REPLACE(V_VRE,',','.')||' WHERE SCA_ID='||V_SCA_ID;
                   V_ASIG := 1;
-                  
+
                   -- Para que la tabla temporal de subcarteras reflejen este nuevo cambio, hay que reabrir el cursor, y avanzarlo hasta la posición que estaba
                   CLOSE C_SUBCARTERAS;
                   OPEN C_SUBCARTERAS FOR 'SELECT SCA_ID, MAX_VRE, ACT_VRE FROM TMP_ARA_SUBCARTERA_REPARTO_AUX ORDER BY MAX_VRE DESC, SCA_ID';
@@ -201,308 +217,311 @@
               CLOSE C_EXP_CART;
               CLOSE C_SUBCARTERAS;
             END IF; -- END IF -- Si solo existe una subcartera para la cartera
-			    
-			  END LOOP; --LOOP CURSOR CARTERAS
-			  
-			  CLOSE C_CARTERAS;
-			
-			  COMMIT;
-			  DBMS_OUTPUT.PUT_LINE('Reparto finalizado');
-			
-			EXCEPTION
-			  WHEN OTHERS THEN
-			    DBMS_OUTPUT.PUT_LINE('ERROR: '||TO_CHAR(SQLCODE));
-			    DBMS_OUTPUT.PUT_LINE(SQLERRM);
-			    
-			    ROLLBACK;
-			    RAISE;
-			END;
-		]]>
-	</entry>
-	
-	<!-- Paso 5 - Validar que se han repartido todos los expedientes en subcarteras  -->
-	<entry key="recobro.validate.tmp_rec_exp_reparto_sub.Oracle9iDialect">
-		<![CDATA[
-			DECLARE
-			  V_NUM_EXP_REPARTO NUMBER;
-			  V_NUM_EXP_REPARTIDOS NUMBER;
-			BEGIN
-			  EXECUTE IMMEDIATE 'SELECT COUNT(*) FROM TMP_REC_EXP_REPARTO_CAR_VRE' INTO V_NUM_EXP_REPARTO;
-			  EXECUTE IMMEDIATE 'SELECT COUNT(*) FROM TMP_REC_EXP_REPARTO_SUB' INTO V_NUM_EXP_REPARTIDOS;
-			  
-			  IF (V_NUM_EXP_REPARTO <> V_NUM_EXP_REPARTIDOS) THEN
-			    RAISE_APPLICATION_ERROR(-20001, 'Numero de expedientes a repartir diferente del número de expedientes repartidos');
-			  END IF;
-			END;
-		]]>
-	</entry>
-	
-	<!-- Paso 6 - Validar que no existe un expediente repartido sin subcarpeta asignada -->
-	<entry key="recobro.validate.tmp_rec_exp_reparto_sub_rcf_sca_id.Oracle9iDialect">
-		<![CDATA[
-			DECLARE
-			  V_NUM_NO_REPARTIDOS NUMBER;
-			BEGIN
-			  EXECUTE IMMEDIATE 'SELECT COUNT(*) FROM TMP_REC_EXP_REPARTO_SUB WHERE RCF_SCA_ID IS NULL' INTO V_NUM_NO_REPARTIDOS;
-			  
-			  IF (V_NUM_NO_REPARTIDOS > 0) THEN
-			    RAISE_APPLICATION_ERROR(-20002, 'Existe un expediente repartido a ninguna subcartera');
-			  END IF;
-			END;		
-		]]>
-	</entry>
-	
-	<!-- Paso 7 - Copiamos los expedientes de rotación en la tabla de consolidación del reparto -->
-	<entry key="recobro.insert.tmp_rec_exp_reparto_sub.Oracle9iDialect">
-		<![CDATA[
-			INSERT INTO TMP_REC_EXP_REPARTO_SUB
-			  (EXP_ID, CAR_ID, RCF_SCA_ID, RCF_AGE_ID_OLD, VRE)
-			SELECT ROT.EXP_ID, ROT.ARQ_ID_NEW, ROT.RCF_SCA_ID, ROT.RCF_AGE_ID,SUM(NVL(CNT.CNT_RIESGO,0)) 
-			FROM TMP_REC_EXP_ROTACION ROT
-			  	INNER JOIN BATCH_DATOS_CNT_EXP CEX ON ROT.EXP_ID = CEX.EXP_ID
-        		INNER JOIN BATCH_DATOS_CNT CNT ON CEX.CNT_ID = CNT.CNT_ID
-      		GROUP BY ROT.EXP_ID, ROT.ARQ_ID_NEW, ROT.RCF_SCA_ID, ROT.RCF_AGE_ID	
-		]]>
-	</entry>
-	
-	<!-- Paso 8 - Reparto de las subcarteras en agencias -->
-	<entry key="recobro.reparto_subcarteras_agencias.Oracle9iDialect">
-		<![CDATA[
-	      	-- SET SERVEROUTPUT ON;
-			DECLARE
-			  -- Definicion de variables
-			  V_SCA_ID    NUMBER;
-			  V_VRE_SCA   NUMBER(16,2);
-			  V_EXP_ID    NUMBER;
-			  V_VRE       NUMBER(16,2);
-	       	  V_AGE_OLD   NUMBER;
-	       	  V_CAR_ID    NUMBER;
-			
-			  V_AGE_ID    NUMBER;
-			  V_MAX_VRE   NUMBER(16,2);
-			  V_ACT_VRE   NUMBER(16,2);
-	
-			  
-			  V_ASIG      NUMBER(1);
-			  V_REVI      NUMBER;
-			  
-			  V_TMP_AGE_ID NUMBER;
-	       
-	       	  V_N_AGENCIAS NUMBER;
-	       
-	       	  V_TMP_SQL     VARCHAR2(2000);
-			
-			  -- Definicion de cursores
-			  -- Subcarteras de los expedientes a repartir
-			  CURSOR C_SUBCARTERAS IS
-			    SELECT DISTINCT RCF_SCA_ID
-			    FROM TMP_REC_EXP_REPARTO_SUB
-			    ORDER BY RCF_SCA_ID;
-			
-			  -- Expedientes de la subcartera
-			  CURSOR C_EXP_SCART IS
-	         		SELECT EXP_ID, CAR_ID, VRE, RCF_AGE_ID_OLD
-			    FROM TMP_REC_EXP_REPARTO_SUB
-			    WHERE RCF_SCA_ID = V_SCA_ID
-			    ORDER BY VRE DESC, EXP_ID;
-			    
-			  -- Agencias
-			  C_AGENCIAS SYS_REFCURSOR;
-			
-			BEGIN
-			  OPEN C_SUBCARTERAS;
-			  
-			    -- POR CADA SUBCARTERA, REALIZAMOS EL REPARTO
-			  LOOP
-			    FETCH C_SUBCARTERAS INTO V_SCA_ID;
-			    EXIT WHEN C_SUBCARTERAS%NOTFOUND;
-	         
-			    DBMS_OUTPUT.PUT_LINE('Comienza el reparto a agencias de la subcartera ID: '||V_SCA_ID);
-			    -- Obtenemos el VRE total de la subcartera
-			    SELECT SUM(VRE) INTO V_VRE_SCA FROM TMP_REC_EXP_REPARTO_SUB WHERE RCF_SCA_ID = V_SCA_ID;
-			    DBMS_OUTPUT.PUT_LINE('VRE total de la subcartera: '||TO_CHAR(V_VRE_SCA));
-			    
-				-- Vaciamos la tabla temporal de la configuracion de las agencias
-			    EXECUTE IMMEDIATE 'TRUNCATE TABLE TMP_ARA_AGENCIA_REPARTO_AUX';
-			      
-			      -- Insertamos en la tabla temporal las agencias de reparto estático
-	         EXECUTE IMMEDIATE
-	           'INSERT INTO TMP_ARA_AGENCIA_REPARTO_AUX
-	           SELECT RCF_AGE_ID,
-	             ('||REPLACE(V_VRE_SCA,',','.')||' * PORCENTAJE)/100 MAX_VRE, 0 ACT_VRE
-	           FROM
-	             (SELECT RCF_AGE_ID, RCF_SUA_COEFICIENTE AS PORCENTAJE
-	             FROM BATCH_RCF_ENTRADA
-	             WHERE RCF_SCA_ID = '||V_SCA_ID||'
-	               AND RCF_DD_TPR_CODIGO = '${ddTipoReparto.Estatico.codigo}'
-	               AND RCF_DD_EES_CODIGO = '${ddEstadoEsquemas.Liberado.codigo}'
-	               AND RCF_SCA_BORRADO = 0
-	               AND RCF_AGE_BORRADO = 0)
-	           ORDER BY PORCENTAJE DESC, RCF_AGE_ID'; 
-	           
-			      -- Insertamos en la tabla temporal las agencias de reparto dinámico
-	         EXECUTE IMMEDIATE
-	           'INSERT INTO TMP_ARA_AGENCIA_REPARTO_AUX
-	           SELECT RCF_AGE_ID,
-	             ('||REPLACE(V_VRE_SCA,',','.')||' * PORCENTAJE)/100 MAX_VRE, 0 ACT_VRE
-	           FROM
-	             (SELECT RCF_AGE_ID, (SELECT RAS_PORCENTAJE FROM RAS_RANKING_SUBCARTERA WHERE RCF_SCA_ID = '||V_SCA_ID||' AND RCF_AGE_ID = BATCH_RCF_ENTRADA.RCF_AGE_ID) AS PORCENTAJE
-	             FROM BATCH_RCF_ENTRADA
-	             WHERE RCF_SCA_ID = '||V_SCA_ID||'
-	               AND RCF_DD_TPR_CODIGO = '${ddTipoReparto.Dinamico.codigo}'              
-	               AND RCF_DD_EES_CODIGO = '${ddEstadoEsquemas.Liberado.codigo}'
-	               AND RCF_SCA_BORRADO = 0
-	               AND RCF_AGE_BORRADO = 0)
-	           ORDER BY PORCENTAJE DESC, RCF_AGE_ID';            
-	           
-	         EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM TMP_ARA_AGENCIA_REPARTO_AUX' INTO V_N_AGENCIAS;
-	         DBMS_OUTPUT.PUT_LINE('Agencias para la SubCartera: '||V_SCA_ID||' = '|| V_N_AGENCIAS);
-	         
-	         -- Si solo existe una agencia para la subcartera
-	         IF (V_N_AGENCIAS = 1) THEN
-	           EXECUTE IMMEDIATE 'SELECT AGE_ID FROM TMP_ARA_AGENCIA_REPARTO_AUX' INTO V_AGE_ID;
-	           DBMS_OUTPUT.PUT_LINE('Solo existe 1 agencia, AGE_ID: '||V_AGE_ID);
-	           -- Asignamos todos lo expedientes a esta agencia
-	           EXECUTE IMMEDIATE 'INSERT INTO TMP_REC_EXP_REPARTO_AGENCIAS (EXP_ID, CAR_ID, RCF_SCA_ID, RCF_AGE_ID, VRE)
-	                              SELECT EXP_ID, CAR_ID, RCF_SCA_ID, '||V_AGE_ID||', VRE
-	                              FROM TMP_REC_EXP_REPARTO_SUB
-	                              WHERE RCF_SCA_ID = '||V_SCA_ID;
-	         ELSE
-	           OPEN C_AGENCIAS FOR 'SELECT AGE_ID, MAX_VRE, ACT_VRE FROM TMP_ARA_AGENCIA_REPARTO_AUX ORDER BY MAX_VRE DESC, AGE_ID';
-	           FETCH C_AGENCIAS INTO V_AGE_ID, V_MAX_VRE, V_ACT_VRE;
-	         
-	           DBMS_OUTPUT.PUT_LINE('Existen varias agencias');
-	           -- ENTRAMOS EN EL BUCLE DE REPARTO
-	 
-	           
-	           OPEN C_EXP_SCART;
-	           V_ASIG := 1;
-	           -- POR CADA EXPEDIENTE
-	           LOOP 
-	             IF (V_ASIG = 1) THEN
-	               FETCH C_EXP_SCART INTO V_EXP_ID, V_CAR_ID, V_VRE, V_AGE_OLD;
-	             END IF;
-	             EXIT WHEN C_EXP_SCART%NOTFOUND;
-	             
-	               V_ASIG := 0;
-	               V_REVI := 0;
-	                               
-	               LOOP
-	                 IF (C_AGENCIAS%NOTFOUND) THEN
-	                   CLOSE C_AGENCIAS;
-	                   OPEN C_AGENCIAS FOR 'SELECT AGE_ID, MAX_VRE, ACT_VRE FROM TMP_ARA_AGENCIA_REPARTO_AUX ORDER BY MAX_VRE DESC, AGE_ID';
-	                   FETCH C_AGENCIAS INTO V_AGE_ID, V_MAX_VRE, V_ACT_VRE;
-	                 END IF;
-	                 
-	                 DBMS_OUTPUT.PUT('Comprobando EXP_ID: '||V_EXP_ID||' con VRE: '||V_VRE||' si entra en la AGE_ID: '||V_AGE_ID||' (MAX:'||V_MAX_VRE||',ACT:'||V_ACT_VRE||',DISP:'||(V_MAX_VRE-V_ACT_VRE)||')');
-	                 IF ((V_VRE + V_ACT_VRE) <= V_MAX_VRE) THEN
-	                   -- El VRE del expediente cabe en la subcartera
-	                   -- Comprobamos si es de rotación que no coincida en la misma agencia
-	                   IF (V_AGE_OLD IS NULL OR V_AGE_OLD <> V_AGE_ID) THEN
-	                     EXECUTE IMMEDIATE 'UPDATE TMP_ARA_AGENCIA_REPARTO_AUX SET ACT_VRE = ACT_VRE + '||REPLACE(V_VRE,',','.')||' WHERE AGE_ID='||V_AGE_ID;
-	                     EXECUTE IMMEDIATE 'INSERT INTO TMP_REC_EXP_REPARTO_AGENCIAS (EXP_ID, CAR_ID, RCF_SCA_ID, RCF_AGE_ID, VRE)
-	                                         VALUES ('||V_EXP_ID||','||V_CAR_ID||','||V_SCA_ID||','||V_AGE_ID||','||REPLACE(V_VRE,',','.')||')';
-	                     V_ASIG := 1;
-	                     DBMS_OUTPUT.PUT(' -> Asignado');
-	                   ELSE
-	                     DBMS_OUTPUT.PUT(' -> NO asignado por ser de Rotación y coincidir AGE_OLD_ID: '||V_AGE_OLD||' con AGE_ID: '||V_AGE_ID);
-	                   END IF;-- IF V_AGE_OLD IS NOT NULL OR V_AGE_OLD <> V_AGE_ID
-	                 END IF; -- IF CABE EL VRE DEL EXPEDIENTE EN LA SUBCARTERA
-	                 SYS.DBMS_OUTPUT.PUT_LINE('');
-	                 V_REVI := V_REVI + 1;
-	                 
-	                 V_TMP_AGE_ID := V_AGE_ID; --Nos guardamos la ultima agencia que hemos comprobado
-	                 FETCH C_AGENCIAS INTO V_AGE_ID, V_MAX_VRE, V_ACT_VRE;
-	                 EXIT WHEN V_ASIG = 1 OR V_REVI >= V_N_AGENCIAS;
-	               END LOOP; -- END LOOP AGENCIAS
-	               
-	               --Si no ha cabido en ninguna agencia
-	               IF (V_REVI >= V_N_AGENCIAS AND V_ASIG = 0) THEN
-	                 --Se lo asignamos a la primera agencia que este más lejos de su máximo y tenga el mayor porcentaje de reparto
-	                 V_TMP_SQL := 'SELECT AGE_ID FROM (
-	                                     SELECT AGE_ID, ROW_NUMBER() OVER (ORDER BY (MAX_VRE - ACT_VRE) DESC, MAX_VRE DESC, AGE_ID) ORDEN FROM TMP_ARA_AGENCIA_REPARTO_AUX ';
-	                 IF (V_AGE_OLD IS NOT NULL) THEN
-	                   V_TMP_SQL := V_TMP_SQL || 'WHERE AGE_ID <> '||V_AGE_OLD;
-	                 END IF;
-	                 V_TMP_SQL := V_TMP_SQL||' ) WHERE ORDEN = 1';
-	                 EXECUTE IMMEDIATE V_TMP_SQL INTO V_AGE_ID;
-	               
-	                 DBMS_OUTPUT.PUT_LINE('El expediente: '||V_EXP_ID||' con VRE: '||V_VRE||' no cabia en ninguna agencia, y se lo asignamos a la agencia: '||V_AGE_ID);
-	                 EXECUTE IMMEDIATE 'INSERT INTO TMP_REC_EXP_REPARTO_AGENCIAS (EXP_ID, CAR_ID, RCF_SCA_ID, RCF_AGE_ID, VRE)
-	                                    VALUES ('||V_EXP_ID||','||V_CAR_ID||','||V_SCA_ID||','||V_AGE_ID||','||REPLACE(V_VRE,',','.')||')';
-	                 EXECUTE IMMEDIATE 'UPDATE TMP_ARA_AGENCIA_REPARTO_AUX SET ACT_VRE = ACT_VRE + '||REPLACE(V_VRE,',','.')||' WHERE AGE_ID='||V_AGE_ID;
-	                 V_ASIG := 1;
-	                 
-	                 -- Para que la tabla temporal de agencias refleje este nuevo cambio, hay que reabrir el cursor, y avanzarlo hasta la posición que estaba
-	                 CLOSE C_AGENCIAS;
-	                 OPEN C_AGENCIAS FOR 'SELECT AGE_ID, MAX_VRE, ACT_VRE FROM TMP_ARA_AGENCIA_REPARTO_AUX ORDER BY MAX_VRE DESC, AGE_ID';
-	                 LOOP
-	                   FETCH C_AGENCIAS INTO V_AGE_ID, V_MAX_VRE, V_ACT_VRE;                  
-	                   EXIT WHEN V_AGE_ID = V_TMP_AGE_ID OR C_AGENCIAS%NOTFOUND;
-	                 END LOOP; -- Avanzamos el cursor hasta la posición en la que estabamos antes de realizar el cambio
-	                 FETCH C_AGENCIAS INTO V_AGE_ID, V_MAX_VRE, V_ACT_VRE; -- Y uno más
-	               END IF;
-	             END LOOP; -- END LOOP EXPEDIENTES
-	             CLOSE C_EXP_SCART;
-	             CLOSE C_AGENCIAS;
-	           END IF; -- END IF -- Si solo existe una agencia para la subcartera
-			    
-			  END LOOP; --LOOP CURSOR SUBCARTERAS
-			  
-			  CLOSE C_SUBCARTERAS;
-			
-			  COMMIT;
-			  DBMS_OUTPUT.PUT_LINE('Reparto finalizado');
-			
-			EXCEPTION
-			  WHEN OTHERS THEN
-			    DBMS_OUTPUT.PUT_LINE('ERROR: '||TO_CHAR(SQLCODE));
-			    DBMS_OUTPUT.PUT_LINE(SQLERRM);
-			    
-			    ROLLBACK;
-			    RAISE;
-			END;		
-		]]>
-	</entry>
-	
-	<!-- Paso 9 - Validar que se han repartido todos los expedientes en agencias -->
-	<entry key="recobro.validate.tmp_rec_exp_reparto_agencias.Oracle9iDialect">
-		<![CDATA[
-			DECLARE
-			  V_NUM_EXP_REPARTO NUMBER;
-			  V_NUM_EXP_REPARTIDOS NUMBER;
-			BEGIN
-			  EXECUTE IMMEDIATE 'SELECT COUNT(*) FROM TMP_REC_EXP_REPARTO_SUB' INTO V_NUM_EXP_REPARTO;
-			  EXECUTE IMMEDIATE 'SELECT COUNT(*) FROM TMP_REC_EXP_REPARTO_AGENCIAS' INTO V_NUM_EXP_REPARTIDOS;
-			  
-			  IF (V_NUM_EXP_REPARTO <> V_NUM_EXP_REPARTIDOS) THEN
-			    RAISE_APPLICATION_ERROR(-20001, 'Numero de expedientes a repartir diferente del número de expedientes repartidos');
-			  END IF;
-			END;
-		]]>
-	</entry>
-	<!-- Paso 10 - Validar que no existe un expediente repartido sin subcarpeta asignada ni agencia asignada -->
-	<entry key="recobro.validate.tmp_rec_exp_reparto_agencias_rcf_sca_age_id.Oracle9iDialect">
-		<![CDATA[
-			DECLARE
-			  V_NUM_NO_REPARTIDOS NUMBER;
-			BEGIN
-			  EXECUTE IMMEDIATE 'SELECT COUNT(*) FROM TMP_REC_EXP_REPARTO_AGENCIAS WHERE RCF_SCA_ID IS NULL OR RCF_AGE_ID IS NULL' INTO V_NUM_NO_REPARTIDOS;
-			  
-			  IF (V_NUM_NO_REPARTIDOS > 0) THEN
-			    RAISE_APPLICATION_ERROR(-20002, 'Existe un expediente repartido sin subcartera o agencia asignada');
-			  END IF;
-			END;		
-		]]>
-	</entry>
-	<!-- Sql para el Dao del Historial de reparto -->
-	<entry key="recobro.reparto.historial.DetalleFacturaTemporal.getMinFechaCntAgeSubQuery">
-		<![CDATA[
-			select min(FECHA_HIST)
-			from H_TMP_REC_EXP_AGE_CNT_EXC
-			where CNT_ID = ?
-			and RCF_SCA_ID = ?
-			and RCF_AGE_ID = ?		
-		]]>
-	</entry>
+
+              END LOOP; --LOOP CURSOR CARTERAS
+
+              CLOSE C_CARTERAS;
+
+              COMMIT;
+              OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_EXP_REPARTO_SUB');
+              DBMS_OUTPUT.PUT_LINE('Reparto finalizado');
+
+            EXCEPTION
+              WHEN OTHERS THEN
+                DBMS_OUTPUT.PUT_LINE('ERROR: '||TO_CHAR(SQLCODE));
+                DBMS_OUTPUT.PUT_LINE(SQLERRM);
+
+                ROLLBACK;
+                RAISE;
+            END;
+        ]]>
+    </entry>
+
+    <!-- Paso 5 - Validar que se han repartido todos los expedientes en subcarteras  -->
+    <entry key="recobro.validate.tmp_rec_exp_reparto_sub.Oracle10gDialect">
+        <![CDATA[
+            DECLARE
+              V_NUM_EXP_REPARTO NUMBER;
+              V_NUM_EXP_REPARTIDOS NUMBER;
+            BEGIN
+              EXECUTE IMMEDIATE 'SELECT COUNT(*) FROM TMP_REC_EXP_REPARTO_CAR_VRE' INTO V_NUM_EXP_REPARTO;
+              EXECUTE IMMEDIATE 'SELECT COUNT(*) FROM TMP_REC_EXP_REPARTO_SUB' INTO V_NUM_EXP_REPARTIDOS;
+
+              IF (V_NUM_EXP_REPARTO <> V_NUM_EXP_REPARTIDOS) THEN
+                RAISE_APPLICATION_ERROR(-20001, 'Numero de expedientes a repartir diferente del número de expedientes repartidos');
+              END IF;
+            END;
+        ]]>
+    </entry>
+
+    <!-- Paso 6 - Validar que no existe un expediente repartido sin subcarpeta asignada -->
+    <entry key="recobro.validate.tmp_rec_exp_reparto_sub_rcf_sca_id.Oracle10gDialect">
+        <![CDATA[
+            DECLARE
+              V_NUM_NO_REPARTIDOS NUMBER;
+            BEGIN
+              EXECUTE IMMEDIATE 'SELECT COUNT(*) FROM TMP_REC_EXP_REPARTO_SUB WHERE RCF_SCA_ID IS NULL' INTO V_NUM_NO_REPARTIDOS;
+
+              IF (V_NUM_NO_REPARTIDOS > 0) THEN
+                RAISE_APPLICATION_ERROR(-20002, 'Existe un expediente repartido a ninguna subcartera');
+              END IF;
+            END;
+        ]]>
+    </entry>
+
+    <!-- Paso 7 - Copiamos los expedientes de rotación en la tabla de consolidación del reparto -->
+    <entry key="recobro.insert.tmp_rec_exp_reparto_sub.Oracle10gDialect">
+        <![CDATA[
+            INSERT INTO TMP_REC_EXP_REPARTO_SUB
+              (EXP_ID, CAR_ID, RCF_SCA_ID, RCF_AGE_ID_OLD, VRE)
+            SELECT ROT.EXP_ID, ROT.ARQ_ID_NEW, ROT.RCF_SCA_ID, ROT.RCF_AGE_ID,SUM(NVL(CNT.CNT_RIESGO,0))
+            FROM TMP_REC_EXP_ROTACION ROT
+                INNER JOIN BATCH_DATOS_CNT_EXP CEX ON ROT.EXP_ID = CEX.EXP_ID
+                INNER JOIN BATCH_DATOS_CNT CNT ON CEX.CNT_ID = CNT.CNT_ID
+            GROUP BY ROT.EXP_ID, ROT.ARQ_ID_NEW, ROT.RCF_SCA_ID, ROT.RCF_AGE_ID
+        ]]>
+    </entry>
+
+    <!-- Paso 8 - Reparto de las subcarteras en agencias -->
+    <entry key="recobro.reparto_subcarteras_agencias.Oracle10gDialect">
+        <![CDATA[
+            -- SET SERVEROUTPUT ON;
+            DECLARE
+              -- Definicion de variables
+              V_SCA_ID    NUMBER;
+              V_VRE_SCA   NUMBER(16,2);
+              V_EXP_ID    NUMBER;
+              V_VRE       NUMBER(16,2);
+              V_AGE_OLD   NUMBER;
+              V_CAR_ID    NUMBER;
+
+              V_AGE_ID    NUMBER;
+              V_MAX_VRE   NUMBER(16,2);
+              V_ACT_VRE   NUMBER(16,2);
+
+
+              V_ASIG      NUMBER(1);
+              V_REVI      NUMBER;
+
+              V_TMP_AGE_ID NUMBER;
+
+              V_N_AGENCIAS NUMBER;
+
+              V_TMP_SQL     VARCHAR2(2000);
+
+              -- Definicion de cursores
+              -- Subcarteras de los expedientes a repartir
+              CURSOR C_SUBCARTERAS IS
+                SELECT DISTINCT RCF_SCA_ID
+                FROM TMP_REC_EXP_REPARTO_SUB
+                ORDER BY RCF_SCA_ID;
+
+              -- Expedientes de la subcartera
+              CURSOR C_EXP_SCART IS
+                    SELECT EXP_ID, CAR_ID, VRE, RCF_AGE_ID_OLD
+                FROM TMP_REC_EXP_REPARTO_SUB
+                WHERE RCF_SCA_ID = V_SCA_ID
+                ORDER BY VRE DESC, EXP_ID;
+
+              -- Agencias
+              C_AGENCIAS SYS_REFCURSOR;
+
+            BEGIN
+              OPEN C_SUBCARTERAS;
+
+                -- POR CADA SUBCARTERA, REALIZAMOS EL REPARTO
+              LOOP
+                FETCH C_SUBCARTERAS INTO V_SCA_ID;
+                EXIT WHEN C_SUBCARTERAS%NOTFOUND;
+
+                DBMS_OUTPUT.PUT_LINE('Comienza el reparto a agencias de la subcartera ID: '||V_SCA_ID);
+                -- Obtenemos el VRE total de la subcartera
+                SELECT SUM(VRE) INTO V_VRE_SCA FROM TMP_REC_EXP_REPARTO_SUB WHERE RCF_SCA_ID = V_SCA_ID;
+                DBMS_OUTPUT.PUT_LINE('VRE total de la subcartera: '||TO_CHAR(V_VRE_SCA));
+
+                -- Vaciamos la tabla temporal de la configuracion de las agencias
+                OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_ARA_AGENCIA_REPARTO_AUX');
+
+
+                  -- Insertamos en la tabla temporal las agencias de reparto estático
+             EXECUTE IMMEDIATE
+               'INSERT INTO TMP_ARA_AGENCIA_REPARTO_AUX
+               SELECT RCF_AGE_ID,
+                 ('||REPLACE(V_VRE_SCA,',','.')||' * PORCENTAJE)/100 MAX_VRE, 0 ACT_VRE
+               FROM
+                 (SELECT RCF_AGE_ID, RCF_SUA_COEFICIENTE AS PORCENTAJE
+                 FROM BATCH_RCF_ENTRADA
+                 WHERE RCF_SCA_ID = '||V_SCA_ID||'
+                   AND RCF_DD_TPR_CODIGO = '${ddTipoReparto.Estatico.codigo}'
+                   AND RCF_DD_EES_CODIGO = '${ddEstadoEsquemas.Liberado.codigo}'
+                   AND RCF_SCA_BORRADO = 0
+                   AND RCF_AGE_BORRADO = 0)
+               ORDER BY PORCENTAJE DESC, RCF_AGE_ID';
+
+                  -- Insertamos en la tabla temporal las agencias de reparto dinámico
+             EXECUTE IMMEDIATE
+               'INSERT INTO TMP_ARA_AGENCIA_REPARTO_AUX
+               SELECT RCF_AGE_ID,
+                 ('||REPLACE(V_VRE_SCA,',','.')||' * PORCENTAJE)/100 MAX_VRE, 0 ACT_VRE
+               FROM
+                 (SELECT RCF_AGE_ID, (SELECT RAS_PORCENTAJE FROM RAS_RANKING_SUBCARTERA WHERE RCF_SCA_ID = '||V_SCA_ID||' AND RCF_AGE_ID = BATCH_RCF_ENTRADA.RCF_AGE_ID) AS PORCENTAJE
+                 FROM BATCH_RCF_ENTRADA
+                 WHERE RCF_SCA_ID = '||V_SCA_ID||'
+                   AND RCF_DD_TPR_CODIGO = '${ddTipoReparto.Dinamico.codigo}'
+                   AND RCF_DD_EES_CODIGO = '${ddEstadoEsquemas.Liberado.codigo}'
+                   AND RCF_SCA_BORRADO = 0
+                   AND RCF_AGE_BORRADO = 0)
+               ORDER BY PORCENTAJE DESC, RCF_AGE_ID';
+
+             EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM TMP_ARA_AGENCIA_REPARTO_AUX' INTO V_N_AGENCIAS;
+             DBMS_OUTPUT.PUT_LINE('Agencias para la SubCartera: '||V_SCA_ID||' = '|| V_N_AGENCIAS);
+
+             -- Si solo existe una agencia para la subcartera
+             IF (V_N_AGENCIAS = 1) THEN
+               EXECUTE IMMEDIATE 'SELECT AGE_ID FROM TMP_ARA_AGENCIA_REPARTO_AUX' INTO V_AGE_ID;
+               DBMS_OUTPUT.PUT_LINE('Solo existe 1 agencia, AGE_ID: '||V_AGE_ID);
+               -- Asignamos todos lo expedientes a esta agencia
+               EXECUTE IMMEDIATE 'INSERT INTO TMP_REC_EXP_REPARTO_AGENCIAS (EXP_ID, CAR_ID, RCF_SCA_ID, RCF_AGE_ID, VRE)
+                                  SELECT EXP_ID, CAR_ID, RCF_SCA_ID, '||V_AGE_ID||', VRE
+                                  FROM TMP_REC_EXP_REPARTO_SUB
+                                  WHERE RCF_SCA_ID = '||V_SCA_ID;
+             ELSE
+               OPEN C_AGENCIAS FOR 'SELECT AGE_ID, MAX_VRE, ACT_VRE FROM TMP_ARA_AGENCIA_REPARTO_AUX ORDER BY MAX_VRE DESC, AGE_ID';
+               FETCH C_AGENCIAS INTO V_AGE_ID, V_MAX_VRE, V_ACT_VRE;
+
+               DBMS_OUTPUT.PUT_LINE('Existen varias agencias');
+               -- ENTRAMOS EN EL BUCLE DE REPARTO
+
+
+               OPEN C_EXP_SCART;
+               V_ASIG := 1;
+               -- POR CADA EXPEDIENTE
+               LOOP
+                 IF (V_ASIG = 1) THEN
+                   FETCH C_EXP_SCART INTO V_EXP_ID, V_CAR_ID, V_VRE, V_AGE_OLD;
+                 END IF;
+                 EXIT WHEN C_EXP_SCART%NOTFOUND;
+
+                   V_ASIG := 0;
+                   V_REVI := 0;
+
+                   LOOP
+                     IF (C_AGENCIAS%NOTFOUND) THEN
+                       CLOSE C_AGENCIAS;
+                       OPEN C_AGENCIAS FOR 'SELECT AGE_ID, MAX_VRE, ACT_VRE FROM TMP_ARA_AGENCIA_REPARTO_AUX ORDER BY MAX_VRE DESC, AGE_ID';
+                       FETCH C_AGENCIAS INTO V_AGE_ID, V_MAX_VRE, V_ACT_VRE;
+                     END IF;
+
+                     DBMS_OUTPUT.PUT('Comprobando EXP_ID: '||V_EXP_ID||' con VRE: '||V_VRE||' si entra en la AGE_ID: '||V_AGE_ID||' (MAX:'||V_MAX_VRE||',ACT:'||V_ACT_VRE||',DISP:'||(V_MAX_VRE-V_ACT_VRE)||')');
+                     IF ((V_VRE + V_ACT_VRE) <= V_MAX_VRE) THEN
+                       -- El VRE del expediente cabe en la subcartera
+                       -- Comprobamos si es de rotación que no coincida en la misma agencia
+                       IF (V_AGE_OLD IS NULL OR V_AGE_OLD <> V_AGE_ID) THEN
+                         EXECUTE IMMEDIATE 'UPDATE TMP_ARA_AGENCIA_REPARTO_AUX SET ACT_VRE = ACT_VRE + '||REPLACE(V_VRE,',','.')||' WHERE AGE_ID='||V_AGE_ID;
+                         EXECUTE IMMEDIATE 'INSERT INTO TMP_REC_EXP_REPARTO_AGENCIAS (EXP_ID, CAR_ID, RCF_SCA_ID, RCF_AGE_ID, VRE)
+                                             VALUES ('||V_EXP_ID||','||V_CAR_ID||','||V_SCA_ID||','||V_AGE_ID||','||REPLACE(V_VRE,',','.')||')';
+                         V_ASIG := 1;
+                         DBMS_OUTPUT.PUT(' -> Asignado');
+                       ELSE
+                         DBMS_OUTPUT.PUT(' -> NO asignado por ser de Rotación y coincidir AGE_OLD_ID: '||V_AGE_OLD||' con AGE_ID: '||V_AGE_ID);
+                       END IF;-- IF V_AGE_OLD IS NOT NULL OR V_AGE_OLD <> V_AGE_ID
+                     END IF; -- IF CABE EL VRE DEL EXPEDIENTE EN LA SUBCARTERA
+                     SYS.DBMS_OUTPUT.PUT_LINE('');
+                     V_REVI := V_REVI + 1;
+
+                     V_TMP_AGE_ID := V_AGE_ID; --Nos guardamos la ultima agencia que hemos comprobado
+                     FETCH C_AGENCIAS INTO V_AGE_ID, V_MAX_VRE, V_ACT_VRE;
+                     EXIT WHEN V_ASIG = 1 OR V_REVI >= V_N_AGENCIAS;
+                   END LOOP; -- END LOOP AGENCIAS
+
+                   --Si no ha cabido en ninguna agencia
+                   IF (V_REVI >= V_N_AGENCIAS AND V_ASIG = 0) THEN
+                     --Se lo asignamos a la primera agencia que este más lejos de su máximo y tenga el mayor porcentaje de reparto
+                     V_TMP_SQL := 'SELECT AGE_ID FROM (
+                                         SELECT AGE_ID, ROW_NUMBER() OVER (ORDER BY (MAX_VRE - ACT_VRE) DESC, MAX_VRE DESC, AGE_ID) ORDEN FROM TMP_ARA_AGENCIA_REPARTO_AUX ';
+                     IF (V_AGE_OLD IS NOT NULL) THEN
+                       V_TMP_SQL := V_TMP_SQL || 'WHERE AGE_ID <> '||V_AGE_OLD;
+                     END IF;
+                     V_TMP_SQL := V_TMP_SQL||' ) WHERE ORDEN = 1';
+                     EXECUTE IMMEDIATE V_TMP_SQL INTO V_AGE_ID;
+
+                     DBMS_OUTPUT.PUT_LINE('El expediente: '||V_EXP_ID||' con VRE: '||V_VRE||' no cabia en ninguna agencia, y se lo asignamos a la agencia: '||V_AGE_ID);
+                     EXECUTE IMMEDIATE 'INSERT INTO TMP_REC_EXP_REPARTO_AGENCIAS (EXP_ID, CAR_ID, RCF_SCA_ID, RCF_AGE_ID, VRE)
+                                        VALUES ('||V_EXP_ID||','||V_CAR_ID||','||V_SCA_ID||','||V_AGE_ID||','||REPLACE(V_VRE,',','.')||')';
+                     EXECUTE IMMEDIATE 'UPDATE TMP_ARA_AGENCIA_REPARTO_AUX SET ACT_VRE = ACT_VRE + '||REPLACE(V_VRE,',','.')||' WHERE AGE_ID='||V_AGE_ID;
+                     V_ASIG := 1;
+
+                     -- Para que la tabla temporal de agencias refleje este nuevo cambio, hay que reabrir el cursor, y avanzarlo hasta la posición que estaba
+                     CLOSE C_AGENCIAS;
+                     OPEN C_AGENCIAS FOR 'SELECT AGE_ID, MAX_VRE, ACT_VRE FROM TMP_ARA_AGENCIA_REPARTO_AUX ORDER BY MAX_VRE DESC, AGE_ID';
+                     LOOP
+                       FETCH C_AGENCIAS INTO V_AGE_ID, V_MAX_VRE, V_ACT_VRE;
+                       EXIT WHEN V_AGE_ID = V_TMP_AGE_ID OR C_AGENCIAS%NOTFOUND;
+                     END LOOP; -- Avanzamos el cursor hasta la posición en la que estabamos antes de realizar el cambio
+                     FETCH C_AGENCIAS INTO V_AGE_ID, V_MAX_VRE, V_ACT_VRE; -- Y uno más
+                   END IF;
+                 END LOOP; -- END LOOP EXPEDIENTES
+                 CLOSE C_EXP_SCART;
+                 CLOSE C_AGENCIAS;
+               END IF; -- END IF -- Si solo existe una agencia para la subcartera
+
+              END LOOP; --LOOP CURSOR SUBCARTERAS
+
+              CLOSE C_SUBCARTERAS;
+
+              COMMIT;
+              OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_EXP_REPARTO_AGENCIAS');
+              DBMS_OUTPUT.PUT_LINE('Reparto finalizado');
+
+            EXCEPTION
+              WHEN OTHERS THEN
+                DBMS_OUTPUT.PUT_LINE('ERROR: '||TO_CHAR(SQLCODE));
+                DBMS_OUTPUT.PUT_LINE(SQLERRM);
+
+                ROLLBACK;
+                RAISE;
+            END;
+        ]]>
+    </entry>
+
+    <!-- Paso 9 - Validar que se han repartido todos los expedientes en agencias -->
+    <entry key="recobro.validate.tmp_rec_exp_reparto_agencias.Oracle10gDialect">
+        <![CDATA[
+            DECLARE
+              V_NUM_EXP_REPARTO NUMBER;
+              V_NUM_EXP_REPARTIDOS NUMBER;
+            BEGIN
+              EXECUTE IMMEDIATE 'SELECT COUNT(*) FROM TMP_REC_EXP_REPARTO_SUB' INTO V_NUM_EXP_REPARTO;
+              EXECUTE IMMEDIATE 'SELECT COUNT(*) FROM TMP_REC_EXP_REPARTO_AGENCIAS' INTO V_NUM_EXP_REPARTIDOS;
+
+              IF (V_NUM_EXP_REPARTO <> V_NUM_EXP_REPARTIDOS) THEN
+                RAISE_APPLICATION_ERROR(-20001, 'Numero de expedientes a repartir diferente del número de expedientes repartidos');
+              END IF;
+            END;
+        ]]>
+    </entry>
+    <!-- Paso 10 - Validar que no existe un expediente repartido sin subcarpeta asignada ni agencia asignada -->
+    <entry key="recobro.validate.tmp_rec_exp_reparto_agencias_rcf_sca_age_id.Oracle10gDialect">
+        <![CDATA[
+            DECLARE
+              V_NUM_NO_REPARTIDOS NUMBER;
+            BEGIN
+              EXECUTE IMMEDIATE 'SELECT COUNT(*) FROM TMP_REC_EXP_REPARTO_AGENCIAS WHERE RCF_SCA_ID IS NULL OR RCF_AGE_ID IS NULL' INTO V_NUM_NO_REPARTIDOS;
+
+              IF (V_NUM_NO_REPARTIDOS > 0) THEN
+                RAISE_APPLICATION_ERROR(-20002, 'Existe un expediente repartido sin subcartera o agencia asignada');
+              END IF;
+            END;
+        ]]>
+    </entry>
+    <!-- Sql para el Dao del Historial de reparto -->
+    <entry key="recobro.reparto.historial.DetalleFacturaTemporal.getMinFechaCntAgeSubQuery">
+        <![CDATA[
+            select min(FECHA_HIST)
+            from H_TMP_REC_EXP_AGE_CNT_EXC
+            where CNT_ID = ?
+            and RCF_SCA_ID = ?
+            and RCF_AGE_ID = ?
+        ]]>
+    </entry>
 </properties>

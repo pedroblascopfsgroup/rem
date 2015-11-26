@@ -26,6 +26,7 @@ import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Where;
 
+import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -251,6 +252,29 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 			"       AND TPO.dd_tpo_codigo = 'PCO' " +
 			"       AND PRC.prc_id = PRC_ID)  ")
 	private Boolean aceptadoLetrado;
+	
+	@Formula(value = 
+	"("
+	+ "		SELECT NVL(SUM(mov.mov_pos_viva_no_vencida + mov.mov_deuda_irregular), 0) "
+	+ "		FROM prc_procedimientos prc, "
+	+ "		  cex_contratos_expediente cex, "
+	+ "		  prc_cex pce, "
+	+ "		  mov_movimientos mov, "
+	+ "		  ${master.schema}.dd_epr_estado_procedimiento epr "
+	+ "		WHERE prc.prc_id             = PRC_ID "
+	+ "		AND cex.cex_id               = pce.cex_id "
+	+ "		AND pce.prc_id               = prc.prc_id "
+	+ "		AND mov.cnt_id               = cex.cnt_id "
+	+ "		AND prc.dd_epr_id            = epr.dd_epr_id "
+	+ "		AND epr.dd_epr_codigo       IN ('" + DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_ACEPTADO + "', '" + DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO + "', '" + DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_DERIVADO + "') "
+	+ "		AND mov.mov_fecha_extraccion = "
+	+ "		  (SELECT MAX(m2.mov_fecha_extraccion) "
+	+ "		  FROM mov_movimientos m2 "
+	+ "		  WHERE m2.cnt_id = mov.cnt_id "
+	+ "		  ) "
+	+ ")")
+	@OrderBy(clause = "1 ASC")
+	private Float importe;
 
 	/**
 	 * Devuelve el <DDEstadoPreparacionPCO> en el que se encuentra el procedimiento

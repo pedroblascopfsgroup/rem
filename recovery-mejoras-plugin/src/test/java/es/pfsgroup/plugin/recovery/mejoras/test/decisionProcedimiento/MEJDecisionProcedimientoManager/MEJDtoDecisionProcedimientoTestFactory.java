@@ -99,8 +99,7 @@ public class MEJDtoDecisionProcedimientoTestFactory {
                 dtopd.setId(derivadosId[i]);
                 derivados.add(dtopd);
             }
-            //FIXME
-            //dto.setProcedimientosDerivados(derivados.toArray(new DtoProcedimientoDerivado[] {}));
+            dto.setProcedimientosDerivados(new ArrayList<DtoProcedimientoDerivado>());
         }
 
         return dto;

@@ -85,7 +85,6 @@
 	var importe = new Ext.form.NumberField({
 		name:'importe'
 		,fieldLabel:'<s:message code="acuerdos.importepago" text="**Importe" />'
-		,
 	})
 	var dictPeriodicidad = {diccionario:[{codigo:'1',descripcion:'Descr1'},{codigo:'2',descripcion:'Descr2'}]};
 	

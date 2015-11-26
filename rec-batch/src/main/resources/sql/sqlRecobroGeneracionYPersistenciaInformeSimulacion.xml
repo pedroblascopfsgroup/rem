@@ -1,167 +1,162 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 
-	<entry key="recobro.simulacion.borrado.batch_rcf_entrada_final.Oracle9iDialect">
-		<![CDATA[
-			DECLARE
-			    table_count number(3);
-			    query_body varchar (30048);
-			BEGIN
-			 	select count(1) into table_count from all_mviews WHERE mview_name='BATCH_RCF_ENTRADA';
-				if table_count = 1 then
-			 		query_body := 'DROP MATERIALIZED VIEW BATCH_RCF_ENTRADA';  EXECUTE IMMEDIATE query_body;
-				end if;		
-			END;			
-		]]>
-	</entry>   
+    <entry key="recobro.simulacion.borrado.batch_rcf_entrada_final.Oracle10gDialect">
+        <![CDATA[
+            BEGIN
+                OPERACION_DDL.DDL_TABLE('TRUNCATE','BATCH_RCF_ENTRADA');
+            END;
+        ]]>
+    </entry>
 
-	<entry key="recobro.simulacion.creacion.batch_rcf_entrada_final.Oracle9iDialect">
-		<![CDATA[
-				CREATE MATERIALIZED VIEW BATCH_RCF_ENTRADA 
-				BUILD IMMEDIATE
-				REFRESH FORCE ON DEMAND
-				WITH PRIMARY KEY
-				AS
-				SELECT 
-				    ESQ.RCF_ESQ_ID AS RCF_ESQ_ID,
-				    ESQ.RCF_ESQ_PLAZO AS RCF_ESQ_PLAZO,
-				    ESQ.RCF_ESQ_FECHA_LIB AS RCF_ESQ_FECHA_LIB,
-				    ESQ.BORRADO AS RCF_ESQ_BORRADO,
-				    EES.RCF_DD_EES_ID AS RCF_DD_EES_ID,
-				    EES.RCF_DD_EES_CODIGO AS RCF_DD_EES_CODIGO,
-				    EES.BORRADO AS RCF_DD_EES_BORRADO,
-				    MTR.RCF_DD_MTR_ID AS RCF_DD_MTR_ID,
-				    MTR.RCF_DD_MTR_CODIGO AS RCF_DD_MTR_CODIGO,
-				    MTR.BORRADO AS RCF_DD_MTR_BORRADO,
-				    CAR.RCF_CAR_ID AS RCF_CAR_ID,
-				    CAR.RCF_CAR_NOMBRE AS RCF_CAR_NOMBRE,
-				    CAR.BORRADO AS RCF_CAR_BORRADO,
-				    CAST (null AS NUMBER(16)) AS RCF_DD_ECA_ID, --ECA.RCF_DD_ECA_ID ,
-				    CAST (null AS NUMBER(16)) AS RCF_DD_ECA_CODIGO, --ECA.RCF_DD_ECA_CODIGO ,
-				    CAST (null AS NUMBER(16)) AS RCF_DD_ECA_BORRADO, --ECA.BORRADO ,
-				    RUL.RD_ID AS RD_ID,
-				    RUL.RD_NAME AS RD_NAME,
-				    RUL.RD_DEFINITION AS RD_DEFINITION,
-				    RUL.BORRADO AS RD_BORRADO,
-				    AGE.RCF_AGE_ID AS RCF_AGE_ID,
-				    AGE.RCF_AGE_NOMBRE AS RCF_AGE_NOMBRE,
-				    AGE.RCF_AGE_CODIGO AS RCF_AGE_CODIGO,
-				    AGE.BORRADO AS RCF_AGE_BORRADO,
-				    ESC.RCF_ESC_ID AS RCF_ESC_ID,
-				    ESC.RCF_ESC_PRIORIDAD AS RCF_ESC_PRIORIDAD,
-				    ESC.BORRADO AS RCF_ESC_BORRADO,
-				    TCE.DD_TCE_ID AS RCF_DD_TCE_ID,        
-				    TCE.DD_TCE_CODIGO AS RCF_DD_TCE_CODIGO,
-				    TCE.BORRADO AS RCF_DD_TCE_BORRADO,
-				    TGC.DD_TGC_ID AS RCF_DD_TGC_ID,        
-				    TGC.DD_TGC_CODIGO AS RCF_DD_TGC_CODIGO,
-				    TGC.BORRADO AS RCF_DD_TGC_BORRADO,
-				    AER.DD_AER_ID AS RCF_DD_AER_ID,        
-				    AER.DD_AER_CODIGO AS RCF_DD_AER_CODIGO,
-				    AER.BORRADO AS RCF_DD_AER_BORRADO,
-				    SCA.RCF_SCA_ID AS RCF_SCA_ID,
-				    SCA.RCF_SCA_NOMBRE AS RCF_SCA_NOMBRE,
-				    SCA.RCF_SCA_PARTICION AS RCF_SCA_PARTICION,
-				    SCA.BORRADO AS RCF_SCA_BORRADO,
-				    TPR.RCF_DD_TPR_ID AS RCF_DD_TPR_ID,        
-				    TPR.RCF_DD_TPR_CODIGO AS RCF_DD_TPR_CODIGO,
-				    TPR.BORRADO AS RCF_DD_TPR_BORRADO,
-				    ITV.RCF_ITV_ID AS RCF_ITV_ID,        
-				    ITV.RCF_ITV_NOMBRE AS RCF_ITV_NOMBRE,
-				    ITV.RCF_ITV_FECHA_ALTA AS RCF_ITV_FECHA_ALTA,
-				    ITV.RCF_ITV_PLAZO_MAX AS RCF_ITV_PLAZO_MAX,
-				    ITV.RCF_ITV_NO_GEST AS RCF_ITV_NO_GEST,
-				    ITV.BORRADO AS RCF_ITV_BORRADO,
-				    MFA.RCF_MFA_ID AS RCF_MFA_ID,        
-				    MFA.RCF_MFA_NOMBRE AS RCF_MFA_NOMBRE,
-				    MFA.BORRADO AS RCF_MFA_BORRADO,
-				    POA.RCF_POA_ID AS RCF_POA_ID,        
-				    POA.RCF_POA_CODIGO AS RCF_POA_CODIGO,
-				    POA.BORRADO AS RCF_POA_BORRADO,
-				    MOR.RCF_MOR_ID AS RCF_MOR_ID,
-				    MOR.RCF_MOR_NOMBRE AS RCF_MOR_NOMBRE,
-				    MOR.BORRADO AS RCF_MOR_BORRADO,
-				    SUA.RCF_SUA_ID AS RCF_SUA_ID,
-				    SUA.RCF_SUA_COEFICIENTE AS RCF_SUA_COEFICIENTE,
-				    SUA.BORRADO AS RCF_SUA_BORRADO,
-				    SUR.RCF_SUR_ID AS RCF_SUR_ID,
-				    SUR.RCF_SUR_POSICION AS RCF_SUR_POSICION,
-				    SUR.RCF_SUR_PORCENTAJE AS RCF_SUR_PORCENTAJE,
-				    SUR.BORRADO AS RCF_SUR_BORRADO
-				  FROM RCF_ESQ_ESQUEMA ESQ  
-				    JOIN RCF_DD_MTR_MODELO_TRANSICION MTR ON ESQ.RCF_DD_MTR_ID = MTR.RCF_DD_MTR_ID
-				    JOIN RCF_DD_EES_ESTADO_ESQUEMA EES ON ESQ.RCF_DD_EES_ID = EES.RCF_DD_EES_ID    
-				    JOIN RCF_ESC_ESQUEMA_CARTERAS ESC ON ESQ.RCF_ESQ_ID = ESC.RCF_ESQ_ID AND ESC.BORRADO = 0
-				    LEFT JOIN RCF_DD_TGC_TIPO_GESTION_CART TGC ON ESC.DD_TGC_ID = TGC.DD_TGC_ID
-				    JOIN RCF_DD_TCE_TIPO_CARTERA_ESQ TCE ON ESC.DD_TCE_ID = TCE.DD_TCE_ID
-				    LEFT JOIN RCF_DD_AER_AMBITO_EXP_REC AER ON ESC.DD_AER_ID = AER.DD_AER_ID
-				    JOIN RCF_CAR_CARTERA CAR ON ESC.RCF_CAR_ID = CAR.RCF_CAR_ID
-				    --JOIN RCF_DD_ECA_ESTADO_CARTERA ECA ON CAR.RCF_DD_ECA_ID = ECA.RCF_DD_ECA_ID
-				    JOIN RULE_DEFINITION RUL ON CAR.RD_ID = RUL.RD_ID
-				    LEFT JOIN RCF_SCA_SUBCARTERA SCA ON ESC.RCF_ESC_ID = SCA.RCF_ESC_ID  AND SCA.BORRADO = 0
-				    LEFT JOIN RCF_DD_TPR_TIPO_REPARTO_SUBC TPR ON SCA.RCF_DD_TPR_ID = TPR.RCF_DD_TPR_ID AND TPR.BORRADO = 0
-				    LEFT JOIN RCF_ITV_ITI_METAS_VOLANTES ITV ON SCA.RCF_ITV_ID = ITV.RCF_ITV_ID AND ITV.BORRADO = 0
-				    LEFT JOIN RCF_MFA_MODELOS_FACTURACION MFA ON SCA.RCF_MFA_ID = MFA.RCF_MFA_ID AND MFA.BORRADO = 0
-				    LEFT JOIN RCF_SUA_SUBCARTERA_AGENCIAS SUA ON SCA.RCF_SCA_ID = SUA.RCF_SCA_ID AND SUA.BORRADO = 0
-				    LEFT JOIN RCF_AGE_AGENCIAS AGE ON SUA.RCF_AGE_ID  = AGE.RCF_AGE_ID AND AGE.BORRADO = 0
-				    LEFT JOIN RCF_SUR_SUBCARTERA_RANKING SUR ON SCA.RCF_SCA_ID = SUR.RCF_SUR_ID AND SUR.BORRADO = 0    
-				    LEFT JOIN RCF_POA_POLITICA_ACUERDOS POA ON SCA.RCF_POA_ID = POA.RCF_POA_ID AND POA.BORRADO = 0
-				    LEFT JOIN RCF_MOR_MODELO_RANKING MOR ON SCA.RCF_MOR_ID = MOR.RCF_MOR_ID
-				  WHERE EES.RCF_DD_EES_CODIGO IN (${ddEstadoEsquemas.PendienteSimular.codigo}, ${ddEstadoEsquemas.Liberado.codigo})
-		]]>
-	</entry>      
-	
-	<entry key="recobro.simulacion.carga.detalle_simulacion.Oracle9iDialect">
-		<![CDATA[
-			DECLARE
-			    -- Vble. para validar la existencia de las Tablas.
-			    table_count number(3);
-			    -- Esquema hijo
-			    schema_name varchar(50);   
-			    -- Querys
-			    query_body varchar (30048);
-			    V_FECHA_HIST TIMESTAMP(6) := SYSDATE;
-			BEGIN
-			    schema_name := 'BANK01';	
-			    
-			  INSERT INTO H_DETALLE_SIMULACION 
-			  WITH reparto as (
-			    -- Primero esto para saber que personas y contratos tenemos repartidos
-			    select /*+ MATERIALIZE */ cnt_id, per_id, exp_id, rcf_sca_id, rcf_age_id, ges_id
-			    from bank01.tmp_rec_exp_age_cnt_exc
-			    -- Filtrar por subcartera
-			    --where rcf_sca_id = 142
-			  ),CONTRATOS AS (
-			    select /*+ MATERIALIZE */ cnt_id, cnt_contrato from bank01.cnt_contratos where cnt_id in (select cnt_id from reparto)
-			  ), M1 AS ( -- Ordenamos los movimientos dentro de un contrato por fecha de extraccion para averiguar cual es el más reciente
-			    select /*+ MATERIALIZE */ cnt_id, mov_pos_viva_vencida, mov_pos_viva_no_vencida, mov_deuda_irregular, row_number() over (partition by cnt_id order by mov_fecha_extraccion desc) ord
-			    from bank01.mov_movimientos
-			    where cnt_id in (select cnt_id from reparto)
-			  ), MOVIMIENTOS as (
-			    -- Solo el ultimo registro por contrato
-			    select /*+ MATERIALIZE */cnt_id, mov_pos_viva_vencida, mov_pos_viva_no_vencida, mov_deuda_irregular from m1
-			    where ord = 1
-			  ), PERSONAS AS (
-			    select per_id, per_cod_cliente_entidad from bank01.per_personas where per_id in (select per_id from reparto)
-			  ), datos as (
-			    select /*+ MATERIALIZE */ TO_TIMESTAMP(V_FECHA_HIST) AS FECHA_HIST, sca.RCF_SCA_ID AS RCF_SCA_ID,
-			      sca.rcf_sca_nombre AS RCF_SCA_NOMBRE, age.rcf_age_id AS RCF_AGE_ID, age.rcf_age_nombre AS RCF_AGE_NOMBRE, 
-			      tmp.exp_id AS EXP_ID, per.per_id AS PER_ID, per.per_cod_cliente_entidad AS PER_COD_CLIENTE_ENTIDAD, 
-			      cnt.cnt_id AS CNT_ID, cnt.cnt_contrato AS CNT_CONTRATO, mov.mov_deuda_irregular AS RIESGO_IRREGULAR,
-			      mov.mov_deuda_irregular + mov.mov_pos_viva_no_vencida AS RIESGO_VIVO, tmp.ges_id GESTION_COMPARTIDA
-			    from reparto tmp
-			    join bank01.rcf_sca_subcartera sca on sca.rcf_sca_id = tmp.rcf_sca_id
-			    join bank01.rcf_age_agencias age on age.rcf_age_id = tmp.RCF_AGE_ID
-			    join personas per on per.per_id = tmp.per_id
-			    join contratos cnt on cnt.cnt_id = tmp.cnt_id
-			    join movimientos mov on mov.cnt_id = cnt.cnt_id
-			  )
-			  -- Sacar todos los datos
-			  select * from datos;
+    <entry key="recobro.simulacion.creacion.batch_rcf_entrada_final.Oracle10gDialect">
+        <![CDATA[
+            Begin
 
-			END;	
-		]]>
-	</entry>   	
-      
+              INSERT INTO BATCH_RCF_ENTRADA
+                 SELECT ESQ.RCF_ESQ_ID AS RCF_ESQ_ID,
+                        ESQ.RCF_ESQ_PLAZO AS RCF_ESQ_PLAZO,
+                        ESQ.RCF_ESQ_FECHA_LIB AS RCF_ESQ_FECHA_LIB,
+                        ESQ.BORRADO AS RCF_ESQ_BORRADO,
+                        EES.RCF_DD_EES_ID AS RCF_DD_EES_ID,
+                        EES.RCF_DD_EES_CODIGO AS RCF_DD_EES_CODIGO,
+                        EES.BORRADO AS RCF_DD_EES_BORRADO,
+                        MTR.RCF_DD_MTR_ID AS RCF_DD_MTR_ID,
+                        MTR.RCF_DD_MTR_CODIGO AS RCF_DD_MTR_CODIGO,
+                        MTR.BORRADO AS RCF_DD_MTR_BORRADO,
+                        CAR.RCF_CAR_ID AS RCF_CAR_ID,
+                        CAR.RCF_CAR_NOMBRE AS RCF_CAR_NOMBRE,
+                        CAR.BORRADO AS RCF_CAR_BORRADO,
+                        CAST (null AS NUMBER(16)) AS RCF_DD_ECA_ID, --ECA.RCF_DD_ECA_ID ,
+                        CAST (null AS NUMBER(16)) AS RCF_DD_ECA_CODIGO, --ECA.RCF_DD_ECA_CODIGO ,
+                        CAST (null AS NUMBER(16)) AS RCF_DD_ECA_BORRADO, --ECA.BORRADO ,
+                        RUL.RD_ID AS RD_ID,
+                        RUL.RD_NAME AS RD_NAME,
+                        RUL.RD_DEFINITION AS RD_DEFINITION,
+                        RUL.BORRADO AS RD_BORRADO,
+                        AGE.RCF_AGE_ID AS RCF_AGE_ID,
+                        AGE.RCF_AGE_NOMBRE AS RCF_AGE_NOMBRE,
+                        AGE.RCF_AGE_CODIGO AS RCF_AGE_CODIGO,
+                        AGE.BORRADO AS RCF_AGE_BORRADO,
+                        ESC.RCF_ESC_ID AS RCF_ESC_ID,
+                        ESC.RCF_ESC_PRIORIDAD AS RCF_ESC_PRIORIDAD,
+                        ESC.BORRADO AS RCF_ESC_BORRADO,
+                        TCE.DD_TCE_ID AS RCF_DD_TCE_ID,
+                        TCE.DD_TCE_CODIGO AS RCF_DD_TCE_CODIGO,
+                        TCE.BORRADO AS RCF_DD_TCE_BORRADO,
+                        TGC.DD_TGC_ID AS RCF_DD_TGC_ID,
+                        TGC.DD_TGC_CODIGO AS RCF_DD_TGC_CODIGO,
+                        TGC.BORRADO AS RCF_DD_TGC_BORRADO,
+                        AER.DD_AER_ID AS RCF_DD_AER_ID,
+                        AER.DD_AER_CODIGO AS RCF_DD_AER_CODIGO,
+                        AER.BORRADO AS RCF_DD_AER_BORRADO,
+                        SCA.RCF_SCA_ID AS RCF_SCA_ID,
+                        SCA.RCF_SCA_NOMBRE AS RCF_SCA_NOMBRE,
+                        SCA.RCF_SCA_PARTICION AS RCF_SCA_PARTICION,
+                        SCA.BORRADO AS RCF_SCA_BORRADO,
+                        TPR.RCF_DD_TPR_ID AS RCF_DD_TPR_ID,
+                        TPR.RCF_DD_TPR_CODIGO AS RCF_DD_TPR_CODIGO,
+                        TPR.BORRADO AS RCF_DD_TPR_BORRADO,
+                        ITV.RCF_ITV_ID AS RCF_ITV_ID,
+                        ITV.RCF_ITV_NOMBRE AS RCF_ITV_NOMBRE,
+                        ITV.RCF_ITV_FECHA_ALTA AS RCF_ITV_FECHA_ALTA,
+                        ITV.RCF_ITV_PLAZO_MAX AS RCF_ITV_PLAZO_MAX,
+                        ITV.RCF_ITV_NO_GEST AS RCF_ITV_NO_GEST,
+                        ITV.BORRADO AS RCF_ITV_BORRADO,
+                        MFA.RCF_MFA_ID AS RCF_MFA_ID,
+                        MFA.RCF_MFA_NOMBRE AS RCF_MFA_NOMBRE,
+                        MFA.BORRADO AS RCF_MFA_BORRADO,
+                        POA.RCF_POA_ID AS RCF_POA_ID,
+                        POA.RCF_POA_CODIGO AS RCF_POA_CODIGO,
+                        POA.BORRADO AS RCF_POA_BORRADO,
+                        MOR.RCF_MOR_ID AS RCF_MOR_ID,
+                        MOR.RCF_MOR_NOMBRE AS RCF_MOR_NOMBRE,
+                        MOR.BORRADO AS RCF_MOR_BORRADO,
+                        SUA.RCF_SUA_ID AS RCF_SUA_ID,
+                        SUA.RCF_SUA_COEFICIENTE AS RCF_SUA_COEFICIENTE,
+                        SUA.BORRADO AS RCF_SUA_BORRADO,
+                        SUR.RCF_SUR_ID AS RCF_SUR_ID,
+                        SUR.RCF_SUR_POSICION AS RCF_SUR_POSICION,
+                        SUR.RCF_SUR_PORCENTAJE AS RCF_SUR_PORCENTAJE,
+                        SUR.BORRADO AS RCF_SUR_BORRADO
+                      FROM RCF_ESQ_ESQUEMA ESQ
+                        JOIN RCF_DD_MTR_MODELO_TRANSICION MTR ON ESQ.RCF_DD_MTR_ID = MTR.RCF_DD_MTR_ID
+                        JOIN RCF_DD_EES_ESTADO_ESQUEMA EES ON ESQ.RCF_DD_EES_ID = EES.RCF_DD_EES_ID
+                        JOIN RCF_ESC_ESQUEMA_CARTERAS ESC ON ESQ.RCF_ESQ_ID = ESC.RCF_ESQ_ID AND ESC.BORRADO = 0
+                        LEFT JOIN RCF_DD_TGC_TIPO_GESTION_CART TGC ON ESC.DD_TGC_ID = TGC.DD_TGC_ID
+                        JOIN RCF_DD_TCE_TIPO_CARTERA_ESQ TCE ON ESC.DD_TCE_ID = TCE.DD_TCE_ID
+                        LEFT JOIN RCF_DD_AER_AMBITO_EXP_REC AER ON ESC.DD_AER_ID = AER.DD_AER_ID
+                        JOIN RCF_CAR_CARTERA CAR ON ESC.RCF_CAR_ID = CAR.RCF_CAR_ID
+                        --JOIN RCF_DD_ECA_ESTADO_CARTERA ECA ON CAR.RCF_DD_ECA_ID = ECA.RCF_DD_ECA_ID
+                        JOIN RULE_DEFINITION RUL ON CAR.RD_ID = RUL.RD_ID
+                        LEFT JOIN RCF_SCA_SUBCARTERA SCA ON ESC.RCF_ESC_ID = SCA.RCF_ESC_ID  AND SCA.BORRADO = 0
+                        LEFT JOIN RCF_DD_TPR_TIPO_REPARTO_SUBC TPR ON SCA.RCF_DD_TPR_ID = TPR.RCF_DD_TPR_ID AND TPR.BORRADO = 0
+                        LEFT JOIN RCF_ITV_ITI_METAS_VOLANTES ITV ON SCA.RCF_ITV_ID = ITV.RCF_ITV_ID AND ITV.BORRADO = 0
+                        LEFT JOIN RCF_MFA_MODELOS_FACTURACION MFA ON SCA.RCF_MFA_ID = MFA.RCF_MFA_ID AND MFA.BORRADO = 0
+                        LEFT JOIN RCF_SUA_SUBCARTERA_AGENCIAS SUA ON SCA.RCF_SCA_ID = SUA.RCF_SCA_ID AND SUA.BORRADO = 0
+                        LEFT JOIN RCF_AGE_AGENCIAS AGE ON SUA.RCF_AGE_ID  = AGE.RCF_AGE_ID AND AGE.BORRADO = 0
+                        LEFT JOIN RCF_SUR_SUBCARTERA_RANKING SUR ON SCA.RCF_SCA_ID = SUR.RCF_SUR_ID AND SUR.BORRADO = 0
+                        LEFT JOIN RCF_POA_POLITICA_ACUERDOS POA ON SCA.RCF_POA_ID = POA.RCF_POA_ID AND POA.BORRADO = 0
+                        LEFT JOIN RCF_MOR_MODELO_RANKING MOR ON SCA.RCF_MOR_ID = MOR.RCF_MOR_ID
+                      WHERE EES.RCF_DD_EES_CODIGO IN (${ddEstadoEsquemas.PendienteSimular.codigo}, ${ddEstadoEsquemas.Liberado.codigo});
+
+              COMMIT;
+
+              OPERACION_DDL.DDL_TABLE('STATS','BATCH_RCF_ENTRADA');
+
+            End;
+        ]]>
+    </entry>
+
+    <entry key="recobro.simulacion.carga.detalle_simulacion.Oracle10gDialect">
+        <![CDATA[
+            DECLARE
+                -- Vble. para validar la existencia de las Tablas.
+                table_count number(3);
+                -- Querys
+                query_body varchar (30048);
+                V_FECHA_HIST TIMESTAMP(6) := SYSDATE;
+            BEGIN
+
+              INSERT INTO H_DETALLE_SIMULACION
+              WITH reparto as (
+                -- Primero esto para saber que personas y contratos tenemos repartidos
+                select /*+ MATERIALIZE */ cnt_id, per_id, exp_id, rcf_sca_id, rcf_age_id, ges_id
+                from tmp_rec_exp_age_cnt_exc
+                -- Filtrar por subcartera
+                --where rcf_sca_id = 142
+              ),CONTRATOS AS (
+                select /*+ MATERIALIZE */ cnt_id, cnt_contrato from cnt_contratos where cnt_id in (select cnt_id from reparto)
+              ), M1 AS ( -- Ordenamos los movimientos dentro de un contrato por fecha de extraccion para averiguar cual es el más reciente
+                select /*+ MATERIALIZE */ cnt_id, mov_pos_viva_vencida, mov_pos_viva_no_vencida, mov_deuda_irregular, row_number() over (partition by cnt_id order by mov_fecha_extraccion desc) ord
+                from mov_movimientos
+                where cnt_id in (select cnt_id from reparto)
+              ), MOVIMIENTOS as (
+                -- Solo el ultimo registro por contrato
+                select /*+ MATERIALIZE */cnt_id, mov_pos_viva_vencida, mov_pos_viva_no_vencida, mov_deuda_irregular from m1
+                where ord = 1
+              ), PERSONAS AS (
+                select per_id, per_cod_cliente_entidad from per_personas where per_id in (select per_id from reparto)
+              ), datos as (
+                select /*+ MATERIALIZE */ TO_TIMESTAMP(V_FECHA_HIST) AS FECHA_HIST, sca.RCF_SCA_ID AS RCF_SCA_ID,
+                  sca.rcf_sca_nombre AS RCF_SCA_NOMBRE, age.rcf_age_id AS RCF_AGE_ID, age.rcf_age_nombre AS RCF_AGE_NOMBRE,
+                  tmp.exp_id AS EXP_ID, per.per_id AS PER_ID, per.per_cod_cliente_entidad AS PER_COD_CLIENTE_ENTIDAD,
+                  cnt.cnt_id AS CNT_ID, cnt.cnt_contrato AS CNT_CONTRATO, mov.mov_deuda_irregular AS RIESGO_IRREGULAR,
+                  mov.mov_deuda_irregular + mov.mov_pos_viva_no_vencida AS RIESGO_VIVO, tmp.ges_id GESTION_COMPARTIDA
+                from reparto tmp
+                join rcf_sca_subcartera sca on sca.rcf_sca_id = tmp.rcf_sca_id
+                join rcf_age_agencias age on age.rcf_age_id = tmp.RCF_AGE_ID
+                join personas per on per.per_id = tmp.per_id
+                join contratos cnt on cnt.cnt_id = tmp.cnt_id
+                join movimientos mov on mov.cnt_id = cnt.cnt_id
+              )
+              -- Sacar todos los datos
+              select * from datos;
+              
+              OPERACION_DDL.DDL_TABLE('STATS','H_DETALLE_SIMULACION');
+
+            END;
+        ]]>
+    </entry>
+
  </properties>
- 

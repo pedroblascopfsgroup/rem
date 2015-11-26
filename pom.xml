@@ -377,7 +377,7 @@
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
-				<artifactId>recovery-bankiaWeb-plugin</artifactId>
+				<artifactId>proyecto-bankia-online</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<!-- HAYA LIBRARIES -->
@@ -511,7 +511,6 @@
 	</build>
 	<!-- Maven 2.2.1 does not support isolates project dependencies :( -->
 	<modules>
-		<module>recovery-bi-plugin</module>
 		<module>pfs-commons-java</module>
 		<module>rec-encrypt</module>
 		<module>batch-monitor</module>
@@ -555,9 +554,10 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<modules>
-				<module>recovery-bankiaWeb-plugin</module>
+				<module>proyecto-bankia-online</module>
 				<module>recovery-iplus-plugin</module>
 				<module>recovery-integracionuvem-plugin</module>
+		        <module>recovery-bi-plugin</module>
 
 				<module>rec-web</module>
 				<module>rec-batch</module>
@@ -575,6 +575,7 @@
 				<module>proyecto-cajamar-ws</module>
 				<module>proyecto-haya</module>
 				<module>recovery-procedimientos-bpmHaya-plugin</module>
+		        <module>recovery-bi-plugin</module>
 
 				<module>rec-web</module>
 				<module>rec-batch</module>

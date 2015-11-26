@@ -54,7 +54,7 @@ var offset=0;
 </c:if>
 var cb_ocupado = items[1 + offset];
 var dt_fecha = items[2 + offset];
-var dt_fecha = items[3 + offset];
+var cb_entregaVolPos = items[3 + offset];
 var cb_ffpp = items[4 + offset];
 var cb_lanzamiento = items[5 + offset];
 var dt_fechaSolLanz = items[6 + offset];
@@ -65,18 +65,31 @@ cb_ocupado.on('select', function(){
 	cb_ffpp.setValue('');
 	cb_lanzamiento.setValue('');
 	dt_fechaSolLanz.setValue('');
+	cb_entregaVolPos.setValue('');
 	
 	if(cb_ocupado.getValue() == '01') {//si
 		dt_fecha.setDisabled(true);
+		dt_fecha.allowBlank = true;
 		cb_ffpp.setDisabled(true);
+		cb_ffpp.allowBlank = true;
 		cb_lanzamiento.setDisabled(true);
+		cb_lanzamiento.allowBlank = true;
 		dt_fechaSolLanz.setDisabled(true);
+		dt_fechaSolLanz.allowBlank = true;
+		cb_entregaVolPos.setDisabled(true);
+		cb_entregaVolPos.allowBlank = true;
 	}
 	else if(cb_ocupado.getValue() == '02') {//no
 		dt_fecha.setDisabled(false);
+		dt_fecha.allowBlank = false;
 		cb_ffpp.setDisabled(false);
+		cb_ffpp.allowBlank = false;
 		cb_lanzamiento.setDisabled(false);
+		cb_lanzamiento.allowBlank = false;
 		dt_fechaSolLanz.setDisabled(false);
+		dt_fechaSolLanz.allowBlank = false;
+		cb_entregaVolPos.setDisabled(false);
+		cb_entregaVolPos.allowBlank = false;
 	}
 });
 
@@ -85,9 +98,11 @@ cb_lanzamiento.on('select', function(){
 	dt_fechaSolLanz.setValue('');
 	if(cb_lanzamiento.getValue() == '01') {//si
 		dt_fechaSolLanz.setDisabled(false);
+		dt_fechaSolLanz.allowBlank = false;
 	}
 	else if(cb_ocupado.getValue() == '02') {//no
 		dt_fechaSolLanz.setDisabled(true);
+		dt_fechaSolLanz.allowBlank = true;
 	}
 });
 

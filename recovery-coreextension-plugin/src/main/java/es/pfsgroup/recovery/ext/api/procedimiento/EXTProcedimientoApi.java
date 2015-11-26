@@ -14,9 +14,6 @@ public interface EXTProcedimientoApi {
 	public static final String MEJ_BO_PRC_ES_GESTOR_CEX = "es.pfsgroup.recovery.mejoras.api.procedimiento.esGestorCex";
 	public static final String MEJ_BO_PRC_ES_SUPERVISOR_CEX = "es.pfsgroup.recovery.mejoras.api.procedimiento.esSupervisorCex";
 
-	public static final String MEJ_BO_PRC_SE_PUEDE_DESPARALIZAR = "es.pfsgroup.recovery.mejoras.procedimiento.api.isDesparalizable";
-	public static final String MEJ_BO_PRC_DESPARALIZAR = "es.pfsgroup.recovery.mejoras.procedimiento.api.desparalizar";
-	
 	/**
 	 * Busca procedimientos que contengan un determinado contrato
 	 * 
@@ -36,18 +33,21 @@ public interface EXTProcedimientoApi {
 	Boolean isPersonaEnProcedimiento(Long procedimiento, Long persona);
 
 	@BusinessOperationDefinition(BO_PRC_MGR_GET_INSTANCE_OF)
-	public MEJProcedimiento getInstanceOf(Procedimiento procedimiento);
+	MEJProcedimiento getInstanceOf(Procedimiento procedimiento);
 	
 	@BusinessOperationDefinition(MEJ_BO_PRC_ES_GESTOR_CEX)
-    public Boolean esGestorCEX(Long idProcedimiento,String codUg);
+    Boolean esGestorCEX(Long idProcedimiento,String codUg);
     
     @BusinessOperationDefinition(MEJ_BO_PRC_ES_SUPERVISOR_CEX)
-    public Boolean esSupervisorCEX(Long idProcedimiento,String codUg);
+    Boolean esSupervisorCEX(Long idProcedimiento,String codUg);
 
-    @BusinessOperationDefinition(MEJ_BO_PRC_SE_PUEDE_DESPARALIZAR)
-	public boolean isDespararizable(Long idProcedimiento);
-    
-    @BusinessOperationDefinition(MEJ_BO_PRC_DESPARALIZAR)
-	public void desparalizarProcedimiento(Long idProcedimiento);
+	boolean isDespararizable(Long idProcedimiento);
+
+	boolean isDespararizablePorEntidad(Long idProcedimiento);
+	
+	void desparalizarProcedimiento(Long idProcedimiento);
+	void desparalizarProcedimiento(Long idProcedimiento, boolean envioMsg);
+
+	MEJProcedimiento get(Long id);
 
 }

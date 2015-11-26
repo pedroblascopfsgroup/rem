@@ -1482,7 +1482,7 @@ BEGIN
                left join '||V_ESQUEMA||'.mig_procedimientos_demandados pdem 
                       on pdem.CD_PROCEDIMIENTO = pcab.CD_PROCEDIMIENTO
                left join '||V_ESQUEMA||'.per_personas per 
-                      on per.per_cod_cliente_entidad = pdem.CODIGO_ENTIDAD||pdem.CODIGO_PERSONA
+                      on per.per_cod_cliente_entidad = pdem.CODIGO_PERSONA
              GROUP BY PCAB.CD_PROCEDIMIENTO, PCAB.ENTIDAD_PROPIETARIA, PCAB.GESTION_PLATAFORMA
 --          UNION
 --          SELECT CD_CONCURSO AS CD_PROCEDIMIENTO

@@ -343,9 +343,8 @@ public class EXTAsunto extends Asunto {
 	}
 
 	public Double getImporteEstimado() {
-		//return importeEstimado;
 		Procedimiento ultimoProc = this.getUltimoProcedimientoConTareas();
-		return ultimoProc.getSaldoRecuperacion().doubleValue();
+		return (ultimoProc!=null) ? ultimoProc.getSaldoRecuperacion().doubleValue() : -1;
 	}
 
 	/**

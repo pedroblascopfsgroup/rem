@@ -8,6 +8,7 @@
 <fwk:page>
 
 	var codigoTipoAcuerdoDacion = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo.TIPO_DACION" />';
+	var codigoSubtipoEstandar = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDSubTipoAcuerdo.SUBTIPO_ESTANDAR" />';
 
 	var labelStyle = 'width:185px;font-weight:bolder",width:375';
 	var labelStyleAjusteColumnas = 'width:185px;height:40px;font-weight:bolder",width:375';
@@ -57,7 +58,6 @@
 	});
 	
 	comboTipoAcuerdo.on('select', function() {
-	
 	    creaCamposDynamics(this);
 	    
     });
@@ -188,7 +188,8 @@
 		store:optionsSubtiposAcuerdosStore
 		,displayField:'descripcion'
 		,valueField:'id'
-		,mode: 'remote'
+		,autoSelect: true
+		,mode: 'local'
 		,resizable: true
 		,forceSelection: true
 		,disabled: false
@@ -703,6 +704,17 @@ if("${esPropuesta}" == "true"){
 	       	comboBienes.setDisabled(false);
 	       	informeLetrado.setDisabled(false);
 	       	
+		} else {
+			//Valor por defecto para SubTipoAcuerdo
+	       	comboSubTipoAcuerdo.store.load();
+	    	comboSubTipoAcuerdo.store.on('load', function(){ 
+	    		debugger;
+	        	
+				var index = comboSubTipoAcuerdo.store.findBy(function (record) {
+   					return record.data.codigo == codigoSubtipoEstandar;
+				});
+				comboSubTipoAcuerdo.setValue(comboSubTipoAcuerdo.store.getAt(index).id);	        	
+	       	});			
 		}
 	});
 		

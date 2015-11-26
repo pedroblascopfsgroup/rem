@@ -2458,6 +2458,7 @@ BEGIN
     EXECUTE IMMEDIATE('analyze table '||V_ESQUEMA||'.BIE_BIEN compute statistics FOR ALL INDEXES'); 
 
 
+/*
     EXECUTE IMMEDIATE ('INSERT INTO  '||V_ESQUEMA||'.LOB_LOTE_BIEN
                             (  
                                 LOS_ID
@@ -2473,6 +2474,30 @@ BEGIN
                                 , '||V_ESQUEMA||'.BIE_BIEN BIE
                             WHERE SLB.CD_LOTE = LOS.CD_LOTE  
                               AND SLB.CD_BIEN = BIE.BIE_CODIGO_INTERNO'
+                       );
+    */
+--Se utiliza otro cruce ya que el cd_bien no cruza con el de BIE_BIEN
+    EXECUTE IMMEDIATE ('INSERT INTO  '||V_ESQUEMA||'.LOB_LOTE_BIEN
+                            (  
+                                LOS_ID
+                              , BIE_ID
+                              , VERSION 
+                            ) 
+                            SELECT DISTINCT 
+                                     LOS.LOS_ID
+                                   , E.BIE_ID
+                                   , LOS.VERSION 
+                            FROM  '||V_ESQUEMA||'.LOS_LOTE_SUBASTA LOS,
+								  '||V_ESQUEMA||'.MIG_PROCS_SUBASTAS_LOTES A,
+								  '||V_ESQUEMA||'.MIG_PROCS_SUBASTAS_LOTES_BIEN B,
+								  '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_SUBASTAS C,
+								  '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_BIENES D,
+								  '||V_ESQUEMA||'.BIE_BIEN E
+                            WHERE A.CD_LOTE = LOS.CD_LOTE
+                              AND C.CD_SUBASTA = A.CD_SUBASTA
+							  AND B.CD_LOTE = A.CD_LOTE
+							  AND C.CD_PROCEDIMIENTO = D.CD_PROCEDIMIENTO
+							  AND D.CD_BIEN = E.BIE_CODIGO_INTERNO'
                        );
 
     

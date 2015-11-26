@@ -941,6 +941,10 @@ DBMS_OUTPUT.PUT_LINE(substr(V_SQL, 1, 60) || '...' || sql%rowcount);
 
 */
 
+V_SQL := q'[update &esquema .asu_asuntos set dd_ges_id=(select dd_ges_id from  &esquema .dd_ges_gestion_asunto where dd_ges_codigo='CAJAMAR') WHERE usuariocrear='CARGA_PCO']';
+EXECUTE IMMEDIATE V_SQL; 
+DBMS_OUTPUT.PUT_LINE(substr(V_SQL, 1, 60) || '...' || sql%rowcount);
+
   DBMS_OUTPUT.PUT_LINE('***************************');
   DBMS_OUTPUT.PUT_LINE('OBJETOS DE PRECONTENCIOSO  ');
   DBMS_OUTPUT.PUT_LINE('***************************');

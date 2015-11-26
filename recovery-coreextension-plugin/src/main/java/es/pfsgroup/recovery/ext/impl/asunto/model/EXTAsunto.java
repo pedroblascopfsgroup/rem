@@ -344,7 +344,7 @@ public class EXTAsunto extends Asunto {
 
 	public Double getImporteEstimado() {
 		Procedimiento ultimoProc = this.getUltimoProcedimientoConTareas();
-		return (ultimoProc!=null) ? ultimoProc.getSaldoRecuperacion().doubleValue() : -1;
+		return (ultimoProc!=null) ? ultimoProc.getSaldoRecuperacion().doubleValue() : null;
 	}
 
 	/**
@@ -403,7 +403,8 @@ public class EXTAsunto extends Asunto {
 		for (Procedimiento procedimiento : lista) {
 			//Si tiene alguna tarea notificación no finalizada
 			for (TareaNotificacion tarea : procedimiento.getTareas()) {
-				if (!tarea.getTareaFinalizada() && !Checks.esNulo(tarea.getTareaExterna())) {
+				if ((Checks.esNulo(tarea.getTareaFinalizada()) || !tarea.getTareaFinalizada()) 
+						&& !Checks.esNulo(tarea.getTareaExterna())) {
 					//Si tiene tarea_procedimiento
 					if (!Checks.esNulo(tarea.getTareaExterna().getTareaProcedimiento())) {
 						//Entonces evaluamos su prc_id, para ver si es mayor que el anterior que tenemos o no tenemos anterior

@@ -353,13 +353,16 @@ public class ADMUsuarioManager {
 					gestorDespachoDao.deleteById(g.getId());
 				}
 			}
-			GestorDespacho gd = new GestorDespacho();
-			gd.setDespachoExterno(despachoExternoDao.get(dto
-					.getDespachoExterno()));
-			gd.setUsuario(usuarioDao.get(u.getId()));
-			gd.setGestorPorDefecto(Boolean.FALSE);
-			gd.setSupervisor(Boolean.FALSE);
-			gestorDespachoDao.saveOrUpdate(gd);
+			if(!Checks.esNulo(dto.getDespachoExterno()))
+			{
+				GestorDespacho gd = new GestorDespacho();
+				gd.setDespachoExterno(despachoExternoDao.get(dto
+						.getDespachoExterno()));
+				gd.setUsuario(usuarioDao.get(u.getId()));
+				gd.setGestorPorDefecto(Boolean.FALSE);
+				gd.setSupervisor(Boolean.FALSE);
+				gestorDespachoDao.saveOrUpdate(gd);
+			}
 		} else {
 			if(u.getUsuarioExterno()){
 				checkAsuntosUsuario(dto.getId());

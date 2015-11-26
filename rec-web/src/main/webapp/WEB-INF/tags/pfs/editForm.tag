@@ -57,24 +57,32 @@
 		var ${name}_handler =  function() {
 			var p = ${parameters}();
 			p.event = "guardar";
-			new Ext.LoadMask(panelEdicion.body, {msg:'<s:message code="fwk.ui.form.guardando" text="**Guardando.."/>'}).show();
 			
-			Ext.Ajax.request({
-				url : page.resolveUrl('${saveOrUpdateFlow}'), 
-				params : p,
-				method: 'POST',
-				success: function ( result, request ) {
-					var result = Ext.util.JSON.decode(result.responseText);
-					var param = {${tab_paramName}:result.${tab_paramValue}};
-					//Ext.MessageBox.alert('Success', 'parametros= ' + param);
-					app.openTab(${tab_titleData}.getValue()
-						,'${tab_flow}'
-						,param
-						,{id:'${tab_type}'+result.${tab_paramValue}<c:if test="${tab_iconCls != null}">,iconCls:'${tab_iconCls}'</c:if>});
-					page.fireEvent(app.event.DONE);
-				}
-
-			});
+			<%-- BKREC-1492 - Este if sirve para controlar si algun campo recibido es erroneo, y asi que no deje guardar el proceso
+				En caso de que no existe el parametro 'permiteGuardar' no pasará nada, y seguirá su cauce natural. --%>
+			if(p.permiteGuardar == null || p.permiteGuardar) {
+				new Ext.LoadMask(panelEdicion.body, {msg:'<s:message code="fwk.ui.form.guardando" text="**Guardando.."/>'}).show();
+				
+				Ext.Ajax.request({
+					url : page.resolveUrl('${saveOrUpdateFlow}'), 
+					params : p,
+					method: 'POST',
+					success: function ( result, request ) {
+						var result = Ext.util.JSON.decode(result.responseText);
+						var param = {${tab_paramName}:result.${tab_paramValue}};
+						//Ext.MessageBox.alert('Success', 'parametros= ' + param);
+						app.openTab(${tab_titleData}.getValue()
+							,'${tab_flow}'
+							,param
+							,{id:'${tab_type}'+result.${tab_paramValue}<c:if test="${tab_iconCls != null}">,iconCls:'${tab_iconCls}'</c:if>});
+						page.fireEvent(app.event.DONE);
+					}
+	
+				});
+			}
+			else{
+				Ext.Msg.alert('Error', '<s:message code="rec-web.direccion.validacion.camposObligatorios" text="**Debe rellenar los campos obligatorios." />');				
+			}
 		};
 	</c:when>
 	

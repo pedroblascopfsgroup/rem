@@ -138,9 +138,15 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 		} else if (PrecontenciosoBPMConstants.PCO_DecTipoProcAutomatica.equals(tex.getTareaProcedimiento().getCodigo())) {
 	
 		} else if (PrecontenciosoBPMConstants.PCO_RevisarExpedientePreparar.equals(tex.getTareaProcedimiento().getCodigo())) {
-			executor.execute("plugin.precontencioso.inicializarPco", prc);
+			if(!PrecontenciosoProjectContextImpl.RECOVERY_HAYA.equals(precontenciosoContext.getRecovery()) && 
+					!PrecontenciosoProjectContextImpl.RECOVERY_CAJAMAR.equals(precontenciosoContext.getRecovery()) ){
+				executor.execute("plugin.precontencioso.inicializarPco", prc);
+			}
 		} else if (PrecontenciosoBPMConstants.PCO_AsignarGestorLiquidacion.equals(tex.getTareaProcedimiento().getCodigo())) {
-			
+			if(PrecontenciosoProjectContextImpl.RECOVERY_HAYA.equals(precontenciosoContext.getRecovery()) || 
+					PrecontenciosoProjectContextImpl.RECOVERY_CAJAMAR.equals(precontenciosoContext.getRecovery()) ){
+				executor.execute("plugin.precontencioso.inicializarPco", prc);
+			}			
 		} else if (PrecontenciosoBPMConstants.PCO_RevisarExpedienteAsignarLetrado.equals(tex.getTareaProcedimiento().getCodigo())) {
 			String exp_correcto = "";
 			for(EXTTareaExternaValor valor : listado) {

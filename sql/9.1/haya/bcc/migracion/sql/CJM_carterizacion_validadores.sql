@@ -107,7 +107,7 @@ BEGIN
    V_SQL1:= 'insert into '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gah (gah.GAH_ID, gah.GAH_ASU_ID, gah.GAH_GESTOR_ID, gah.GAH_FECHA_DESDE, gah.GAH_TIPO_GESTOR_ID, usuariocrear, fechacrear)
             select '||V_ESQUEMA||'.s_GAH_GESTOR_ADIC_HISTORICO.nextval, aux.asu_id,
                    (select usd_id from '||V_ESQUEMA||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_MASTER||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = '''||V_TMP_GAA(1)||''') usd_id,
-                   sysdate, (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = '''||V_TMP_GAA(2)||'''), ''SAG'', sysdate
+                   sysdate, (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = '''||V_TMP_GAA(2)||'''), '''||USUARIO||''', sysdate
             from
              (select asu.asu_id
               from '||V_ESQUEMA||'.asu_asuntos asu

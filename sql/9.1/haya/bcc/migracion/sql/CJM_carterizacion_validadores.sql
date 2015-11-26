@@ -11,7 +11,8 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial (Carlos Gil)
---##        0.2 GMN Adaptación script a lanzador
+--##        0.2 20151103 GMN: Adaptación script a lanzador
+--##        0.3 20151126 Sergio Alarcon: cambio usuarios validacion 
 --##########################################
 --*/
 
@@ -53,14 +54,14 @@ V_GAA T_ARRAY_GAA := T_ARRAY_GAA(
        , T_GAA('val.GCONPR','GCONPR','Despacho Gestor contencioso procesal')       
        , T_GAA('val.GGESDOC','GGESDOC','Despacho Gestor de gestión documentario')      
        , T_GAA('val.GESTILL','CJ-GESTLLA','Despacho Gestor HRE gestión llaves')
-       , T_GAA('val.LETRADO','CJ-LETR','Despacho Letrado')
+       , T_GAA('val.LETRADO','GEXT','Despacho Letrado')
        , T_GAA('val.SAREO','CJ-SAREO','Despacho Supervisor admisión')
        , T_GAA('val.SAEST','SAEST','Despacho Supervisor análisis estudio')
        , T_GAA('val.SFIS','CJ-SFIS','Despacho Supervisor Asesoría Fiscal')
        , T_GAA('val.SAJUR','SAJUR','Despacho Supervisor Asesoría jurídica')
        , T_GAA('val.SCON','CJ-SCON','Despacho Supervisor contabilidad')
        , T_GAA('val.SUCONT','SUCONT','Despacho Supervisor contencioso')
-       , T_GAA('val.SUCONGE','SUCONGE','Despacho Supervisor contencioso gestión')
+       , T_GAA('val.SUCONGE','SUP','Despacho Supervisor contencioso gestión')
        , T_GAA('val.SUCONPR','SUCONPR','Despacho Supervisor contencioso procesal')       
        , T_GAA('val.SGESDOC','SGESDOC','Despacho Supervisor de gestión documentario')
        , T_GAA('val.SPGL','SPGL','Despacho Supervisor HRE gestión llaves')
@@ -146,9 +147,9 @@ BEGIN
                  rank() over (partition by asu.asu_id order by usd.usu_id) as ranking
           from '||V_ESQUEMA||'.asu_asuntos asu                                                                inner join 
                '||V_ESQUEMA||'.mig_procedimientos_cabecera migp on migp.cd_procedimiento = asu.asu_id_externo inner join
-               '||V_ESQUEMA||'.des_despacho_externo        des  on des.des_despacho = migp.cd_procurador        inner join 
+               '||V_ESQUEMA||'.des_despacho_externo        des  on des.des_despacho = ''Despacho Procuradores''        inner join 
                '||V_ESQUEMA||'.usd_usuarios_despachos      usd  on usd.des_id = des.des_id                    inner join
-               '||V_ESQUEMA_MASTER||'.usu_usuarios         usu  on usu.usu_id = usd.usu_id and usu.USU_EXTERNO = 1
+               '||V_ESQUEMA_MASTER||'.usu_usuarios         usu  on usu.usu_id = usd.usu_id and usu.USU_EXTERNO = 1 AND usu_username = ''val.PROCU_''||migp.CD_PROCURADOR||''''
          where not exists (select 1 from '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO gaa where gaa.asu_id = asu.asu_id and gaa.dd_tge_id = (select dd_tge_id 
                                                                                                                                             from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor 
                                                                                                                                             where dd_tge_codigo=''PROC'')
@@ -178,9 +179,9 @@ BEGIN
                  rank() over (partition by asu.asu_id order by usd.usu_id) as ranking
           from '||V_ESQUEMA||'.asu_asuntos asu                                                                inner join 
                '||V_ESQUEMA||'.mig_procedimientos_cabecera migp on migp.cd_procedimiento = asu.asu_id_externo inner join
-               '||V_ESQUEMA||'.des_despacho_externo        des on des.des_despacho = migp.cd_procurador         inner join 
+               '||V_ESQUEMA||'.des_despacho_externo        des on des.des_despacho = ''Despacho Procuradores''   inner join 
                '||V_ESQUEMA||'.usd_usuarios_despachos      usd on usd.des_id = des.des_id                     inner join
-               '||V_ESQUEMA_MASTER||'.usu_usuarios         usu on usu.usu_id = usd.usu_id and usu.USU_EXTERNO = 1 
+               '||V_ESQUEMA_MASTER||'.usu_usuarios         usu on usu.usu_id = usd.usu_id and usu.USU_EXTERNO = 1 AND usu_username = ''val.PROCU_''||migp.CD_PROCURADOR||''''
           where not exists (select 1 from '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gaa where gaa.gah_asu_id = asu.asu_id and GAH_TIPO_GESTOR_ID = (select dd_tge_id 
                                                                                                                                                          from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor 
                                                                                                                                                          where dd_tge_codigo=''PROC''))

@@ -21,8 +21,8 @@ SET SERVEROUTPUT ON;
 
 DECLARE
 
- V_ESQUEMA VARCHAR2(25 CHAR):= 'HAYA02'; 			-- Configuracion Esquema
- V_ESQUEMA_M VARCHAR2(25 CHAR):= 'HAYAMASTER'; 		-- Configuracion Esquema Master
+ V_ESQUEMA VARCHAR2(25 CHAR):= 'CM01'; 			-- Configuracion Esquema
+ V_ESQUEMA_M VARCHAR2(25 CHAR):= 'CMMASTER'; 		-- Configuracion Esquema Master
  TABLA VARCHAR(30) :='TMP_ALTA_BPM_INSTANCES';
  err_num NUMBER;
  err_msg VARCHAR2(2048 CHAR); 

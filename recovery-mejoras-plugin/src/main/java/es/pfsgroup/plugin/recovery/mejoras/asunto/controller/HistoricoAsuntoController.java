@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.mejoras.asunto.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,6 +15,10 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
+
+
+
+
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
@@ -118,6 +123,7 @@ public class HistoricoAsuntoController {
 			List<Evento> eventos = proxyFactory.proxy(EventoApi.class).getEventosAsunto(id);
 
 			List<MEJHistoricoAsuntoViewDto> historico = juntaYOrdena(tareas, eventos);
+			List<MEJHistoricoAsuntoViewDto> historicos = new ArrayList<MEJHistoricoAsuntoViewDto>();
 
 			PageSql page = new PageSql();
 
@@ -131,13 +137,24 @@ public class HistoricoAsuntoController {
 				toIndex = 25;
 			}
 
-			if (historico.size() >= start + limit) {
-				historico = historico.subList(start, start + limit);
+			for(MEJHistoricoAsuntoViewDto mhaw : historico){
+				mhaw.setAgenda(false);
+				if(mhaw.getGroup().equals("D")){
+					SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+					
+					mhaw.setFechaIni(sdf.format(mhaw.getFechaInicio()));
+					mhaw.setAgenda(true);
+				}
+				
+				historicos.add(mhaw);
+			}
+			if (historicos.size() >= start + limit) {
+				historicos = historicos.subList(start, start + limit);
 			} else
-				historico = historico.subList(start, historico.size());
+				historicos = historicos.subList(start, historico.size());
 
 			page.setTotalCount(size);
-			page.setResults(historico);
+			page.setResults(historicos);
 
 			map.put("tareas", page);
 		} catch (Exception e) {

@@ -1507,7 +1507,11 @@ BEGIN
           '||V_ESQUEMA||'.DD_PAS_PROPIEDAD_ASUNTO PAS
     WHERE EXP.CD_PROCEDIMIENTO = HIT.CD_PROCEDIMIENTO
     AND EXP.CD_PROCEDIMIENTO = CAB.CD_PROCEDIMIENTO
-    AND decode(CAB.GESTION_PLATAFORMA,''N'',''CAJAMAR'',''S'',''CAJAMAR'') = GES.DD_GES_CODIGO                       
+    AND CASE WHEN CAB.DD_TAS_ID = 1 THEN 
+                 decode(CAB.GESTION_PLATAFORMA,''N'',''HAYA'',''S'',''HAYA'') 
+             ELSE
+                 decode(CAB.GESTION_PLATAFORMA,''N'',''CAJAMAR'',''S'',''CAJAMAR'')              
+         END = GES.DD_GES_CODIGO                       
     AND decode(CAB.ENTIDAD_PROPIETARIA,''0240'',''CAJAMAR'',''05074'',''SAREB'') = PAS.DD_PAS_CODIGO');  
     
 -- 23.316 Asuntos cargados.

@@ -1,11 +1,13 @@
---/*************************************************
---*                                                *
---*      SCRIPT BORRADO MIGRACION FASE II     v.10 *
---*      --------------------------------          *
---*     Borrado de BPMs y tablas maestras.         *
---*                                                *
---*     v10.1 Se incluye borrado de precontencioso *
---*************************************************/
+--/************************************************                     *
+--*                                                                     *
+--*      SCRIPT BORRADO MIGRACION FASE II     v.10                      *
+--*      --------------------------------                               *
+--*     Borrado de BPMs y tablas maestras.                              *
+--*                                                                     *
+--*     v10.1 Se incluye borrado de precontencioso                      *
+--*     v10.2 Se borran todos los procedimientos que                    *
+--*           cuelguen de asuntos sin tener en cuenta el usuariocrear   *
+--**********************************************************************/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 SET TIMING ON;
@@ -165,7 +167,12 @@ BEGIN
       END IF;
 
      EXECUTE IMMEDIATE 'CREATE TABLE '||V_ESQUEMA||'.TABLA_TMP_PRC AS ( 
-        SELECT DISTINCT PRC.PRC_ID , PRC_PROCESS_BPM FROM  '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC Where PRC.usuariocrear IN( '''||USUARIO||''' ,'''||USUARIO2||'''))';
+                                         SELECT DISTINCT PRC.PRC_ID , PRC.PRC_PROCESS_BPM 
+                                           FROM  '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC 
+                                              ,  '||V_ESQUEMA||'.TABLA_TMP_ASU ASU
+                                         Where  PRC.ASU_ID =  ASU.ASU_ID
+                                         --PRC.usuariocrear IN( '''||USUARIO||''' ,'''||USUARIO2||''')                                    
+                                      )';
      --
      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.TABLA_TMP_PRC... Tabla creada. '||SQL%ROWCOUNT||' Filas.');
      EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.TABLA_TMP_PRC ADD CONSTRAINT PK_TABLA_TMP_PRC PRIMARY KEY(PRC_ID)';
@@ -502,9 +509,9 @@ BEGIN
            PRO_KEYS_STATUS(V_ESQUEMA, 'SUB_SUBASTA', 'ENABLE');
       END IF;
       --
--- PARTE PRECONTENCIOSO --> NO APLICA EN HAYA
+-- PARTE PRECONTENCIOSO 
 
-/*
+
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.PCO_BUR_ENVIO... Comprobando si existen registros para el usuario MIGRAHAYA02');
       EXISTE := 0;
       V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.PCO_BUR_ENVIO PBUR WHERE EXISTS (SELECT (1) 
@@ -621,7 +628,7 @@ BEGIN
            PRO_KEYS_STATUS(V_ESQUEMA, 'PCO_PRC_PROCEDIMIENTOS', 'ENABLE');
       END IF;
 
-*/
+
 
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.PRC_PER... Comprobando si existen registros para el usuario MIGRAHAYA02');
       EXISTE := 0;

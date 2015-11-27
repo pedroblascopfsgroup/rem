@@ -14,7 +14,8 @@
 --##                  0.2 Se incluyen procedimientos de tipo concursos.
 --##       20151118 - 0.3 Adaptación a migracion HRE. NO migramos concursos.
 --##                                                 LOS_LOTE_SUBASTAS
---##       10151123 - 0.4 Se cruza con la tabla de BIE_BIENES para cargar LOB_LOTE_BIEN y PRB_PRC_BIE
+--##       210151123 - 0.4 Se cruza con la tabla de BIE_BIENES para cargar LOB_LOTE_BIEN y PRB_PRC_BIE
+--##       210151127 - 0.5 Ponemos propiedad CAJAMAR - Gestion HAYA
 --##########################################
 --*/
 
@@ -1500,7 +1501,7 @@ BEGIN
           '||V_ESQUEMA||'.DD_PAS_PROPIEDAD_ASUNTO PAS
     WHERE EXP.CD_PROCEDIMIENTO = HIT.CD_PROCEDIMIENTO
     AND EXP.CD_PROCEDIMIENTO = CAB.CD_PROCEDIMIENTO
-    AND decode(CAB.GESTION_PLATAFORMA,''N'',''CAJAMAR'',''S'',''CAJAMAR'') = GES.DD_GES_CODIGO                       
+    AND decode(CAB.GESTION_PLATAFORMA,''N'',''HAYA'',''S'',''HAYA'') = GES.DD_GES_CODIGO                       
     AND decode(CAB.ENTIDAD_PROPIETARIA,''0240'',''CAJAMAR'',''05074'',''SAREB'') = PAS.DD_PAS_CODIGO');  
     
 -- 23.316 Asuntos cargados.

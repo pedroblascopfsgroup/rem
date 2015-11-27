@@ -9,9 +9,10 @@
 --## Finalidad: Enganchar el motor de BPMs a los Litigios.
 --## INSTRUCCIONES:  
 --## VERSIONES:
---##        0.1 Versión inicial
---##        0.2 Ajustes para Cajamar y Concursales.
---##        0.3 Ajustes para HAYA y litigiod.
+--##            0.1 Versión inicial
+--##            0.2 Ajustes para Cajamar y Concursales.
+--##            0.3 Ajustes para HAYA y litigiod.
+--##   20151127 0.4 Actualizacion fechas vencimiento en tar_tareas_notificaciones
 --##########################################
 --*/
 
@@ -352,6 +353,29 @@ BEGIN
 
 --select * from prc_procedimientos where prc_id=1000000000066843
 --select * from HAYAMASTER.Jbpm_Variableinstance where processinstance_=164046426
+
+--Actualizamos fechas vencimiento en tar_tareas_notificaciones
+
+UPDATE HAYA02.tar_tareas_notificaciones
+   SET tar_fecha_venc = SYSDATE + (DBMS_RANDOM.VALUE (1, 5))
+ WHERE fechacrear > SYSDATE - 1
+   AND tar_fecha_venc IS NULL
+   AND prc_id IS NOT NULL
+   AND tar_tarea_finalizada = 0
+   AND tar_tar_id IS NULL
+   AND USUARIOCREAR = 'MIGRAHAYA02';
+
+   COMMIT ;
+
+
+
+UPDATE HAYA02.tar_tareas_notificaciones
+   SET tar_fecha_venc_real = tar_fecha_venc
+ WHERE tar_fecha_venc IS NOT NULL AND tar_fecha_venc_real IS NULL
+ AND USUARIOCREAR = 'MIGRAHAYA02';
+
+ COMMIT ;
+
 
 
 EXCEPTION

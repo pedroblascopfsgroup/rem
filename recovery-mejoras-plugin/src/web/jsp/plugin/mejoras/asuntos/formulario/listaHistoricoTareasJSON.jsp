@@ -27,9 +27,15 @@
 			<json:property name="numeroProcedimiento" value="${tp.numeroProcedimiento}" />
 			<json:property name="numeroAutos" value="${tp.numeroAutos}" />
 			<json:property name="importe" value="${tp.importe}" />
-			<json:property name="fechaInicio">
-				<fwk:date value="${tp.fechaInicio}" />
-			</json:property>
+			<c:if test="${!tp.agenda}">
+				<json:property name="fechaInicio">
+					<fwk:date value="${tp.fechaInicio}" />
+				</json:property>
+			</c:if>
+			<c:if test="${tp.agenda}">
+				<json:property name="fechaInicio" value="${tp.fechaIni}" />
+			</c:if>
+			
 			<json:property name="fechaVencimiento">
 				<fwk:date value="${tp.fechaVencimiento}" />
 			</json:property>

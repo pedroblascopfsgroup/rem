@@ -164,7 +164,7 @@
 		</property>
 		<property name="entidadesDesparalizacion">
 			<set>
-				<value>2039</value>
+				<value>0240</value>
 			</set>
 		</property>
 	</bean>

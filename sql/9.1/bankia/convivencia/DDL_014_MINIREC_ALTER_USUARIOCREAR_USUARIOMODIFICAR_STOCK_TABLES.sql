@@ -16,7 +16,7 @@ SET DEFINE OFF;
 
 DECLARE
 
-    V_MSQL VARCHAR2(32000 CHAR); /* Sentencia a ejecutar    */
+    V_MSQL VARCHAR2(32000 CHAR);   /* Sentencia a ejecutar    */
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; /*  Configuracion Esquema */
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; /*  Configuracion Esquema */
     V_TS_INDEX VARCHAR2(25 CHAR):= '#TABLESPACE_INDEX#';/* Configuracion Indice*/
@@ -34,7 +34,7 @@ DECLARE
 BEGIN
 
 
-    DBMS_OUTPUT.PUT_LINE('[START] Modificamos la tabla MINIREC_PCO_CNT_PROC_VIVOS');	
+    DBMS_OUTPUT.PUT_LINE('[START] Modificamos la tabla  MINIREC_PCO_CNT_PROC_VIVOS para ampliar campos USUARIOCREAR y USUARIOMODIFICAR');	
 
     SELECT COUNT(1) INTO V_NUM_TABLAS FROM ALL_TAB_COLUMNS WHERE UPPER(table_name) = 'MINIREC_PCO_CNT_PROC_VIVOS' and UPPER(column_name) = 'USUARIOCREAR';
 	

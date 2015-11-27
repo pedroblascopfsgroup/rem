@@ -66,10 +66,6 @@ BEGIN
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.TMP_CICLOS_AUX_ALL... Tabla creada');
     
-    --** Comprobamos si existe el índice  
-    V_SQL := 'CREATE UNIQUE INDEX IDX_TMP_CICLOS_AUX_ALL_EXP ON TMP_CICLOS_AUX_ALL (EXP_ID)';
-    EXECUTE IMMEDIATE v_sql;
-    
 EXCEPTION
   WHEN OTHERS THEN
     ERR_NUM := SQLCODE;

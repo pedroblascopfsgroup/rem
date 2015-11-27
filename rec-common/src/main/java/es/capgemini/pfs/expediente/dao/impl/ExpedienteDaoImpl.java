@@ -1479,7 +1479,6 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
                 }
         }
         
-        //TODO: Habilitar comprobacion "si es usuario externo"
         //VISIBILIDAD USUARIOS EXTERNOS
         // ********* PARA USUARIOS EXTERNOS LIMITAMOS LA VISIBILIDAD A AQUELLOS USUARIOS 
         // ********* QUE SON GESTORES DE RECOBRO , SOLO VERÁN LOS EXPEDIENTES QUE ACTUALMENTE PERTENCEN A SU AGENCIA

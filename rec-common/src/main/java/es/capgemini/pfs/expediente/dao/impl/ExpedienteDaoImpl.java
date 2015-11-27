@@ -1482,37 +1482,35 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         //VISIBILIDAD USUARIOS EXTERNOS
         // ********* PARA USUARIOS EXTERNOS LIMITAMOS LA VISIBILIDAD A AQUELLOS USUARIOS 
         // ********* QUE SON GESTORES DE RECOBRO , SOLO VERÁN LOS EXPEDIENTES QUE ACTUALMENTE PERTENCEN A SU AGENCIA
-
-        //ASOCIADOS A USUARIO
-        //GESTORES DE RECOBRO EXPEDIENTE
-        hql.append(" and EXISTS ( ");
-            hql.append(generaFiltroExpedientesGestorUsuarioOptimizado(usuarioLogueado));
-            if (isBusquedaExpedientes(dtoExpediente)) {
-                //Si había vinculación con Expedientes las relaciones con cualquier filtro adicional se hacen por exp.id
-                hql.append(" and exp.id = gae.expediente.id ");
-            }else{
-                if (filtroPrimero.equals("recobro")){ hql.append(" and cre.expediente.id = gae.expediente.id "); }
-                if (filtroPrimero.equals("incidencia")){ hql.append(" and ine.expediente.id = gae.expediente.id "); }
-                if (filtroPrimero.equals("acuerdo")){ hql.append(" and acu.expediente.id = gae.expediente.id "); } 
-            }
-        hql.append(" ) ");
-                
-       
-        //GRUPOS
         if (usuarioLogueado.getUsuarioExterno() ){
-        	 //GESTORES DE RECOBRO EXPEDIENTE
-	        hql.append(" and EXISTS ( ");
-                    hql.append(generaFiltroExpedientesGestorGrupoOptimizado(usuarioLogueado));
-                    if (isBusquedaExpedientes(dtoExpediente)) {
-                        //Si había vinculación con Expedientes las relaciones con cualquier filtro adicional se hacen por exp.id
-                        hql.append(" and exp.id = gae.expediente.id ");
-                    }else{
-                        if (filtroPrimero.equals("recobro")){ hql.append(" and cre.expediente.id = gae.expediente.id "); }
-                        if (filtroPrimero.equals("incidencia")){ hql.append(" and ine.expediente.id = gae.expediente.id "); }
-                        if (filtroPrimero.equals("acuerdo")){ hql.append(" and acu.expediente.id = gae.expediente.id "); } 
-                    }
-	        hql.append(" ) ");
+            //EXPEDIENTES ASOCIADOS AL USUARIO o AL GRUPO DE ESE USUARIO
+            //GESTORES DE RECOBRO EXPEDIENTE
+            hql.append(" and EXISTS ( ");
+               hql.append(generaFiltroExpedientesGestorGrupoOptimizado(usuarioLogueado));
+               if (isBusquedaExpedientes(dtoExpediente)) {
+                   //Si había vinculación con Expedientes las relaciones con cualquier filtro adicional se hacen por exp.id
+                   hql.append(" and exp.id = gae.expediente.id ");
+               }else{
+                   if (filtroPrimero.equals("recobro")){ hql.append(" and cre.expediente.id = gae.expediente.id "); }
+                   if (filtroPrimero.equals("incidencia")){ hql.append(" and ine.expediente.id = gae.expediente.id "); }
+                   if (filtroPrimero.equals("acuerdo")){ hql.append(" and acu.expediente.id = gae.expediente.id "); } 
+               }
+            hql.append(" ) ");
                 
+        } else {
+            //EXPEDIENTES ASOCIADOS SOLO AL USUARIO
+            //GESTORES DE RECOBRO EXPEDIENTE
+            hql.append(" and EXISTS ( ");
+                hql.append(generaFiltroExpedientesGestorUsuarioOptimizado(usuarioLogueado));
+                if (isBusquedaExpedientes(dtoExpediente)) {
+                    //Si había vinculación con Expedientes las relaciones con cualquier filtro adicional se hacen por exp.id
+                    hql.append(" and exp.id = gae.expediente.id ");
+                }else{
+                    if (filtroPrimero.equals("recobro")){ hql.append(" and cre.expediente.id = gae.expediente.id "); }
+                    if (filtroPrimero.equals("incidencia")){ hql.append(" and ine.expediente.id = gae.expediente.id "); }
+                    if (filtroPrimero.equals("acuerdo")){ hql.append(" and acu.expediente.id = gae.expediente.id "); } 
+                }
+            hql.append(" ) ");
         }
         
         return paginationManager.getHibernatePage(getHibernateTemplate(), hql.toString(), dtoExpediente, paramsMap);
@@ -1592,9 +1590,10 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
             StringBuffer hql = new StringBuffer();
                hql.append(" select 1 from GestorExpediente gae");// join GestorDespacho usd  on gaa.gestor.id = usd.id join Usuario usu on usd.usuario.id = usu.id");
                hql.append(" where gae.tipoGestor.codigo = '").append(EXTDDTipoGestor.CODIGO_TIPO_GESTOR_AGENCIA_RECOBRO).append("' ");
-               hql.append(" and gae.usuario.id in (");
+               hql.append(" and (gae.usuario.id = "+ usuarioLogueado.getId());
+               hql.append("  or gae.usuario.id in (");
                hql.append(" select grupo.usuario.id from EXTGrupoUsuarios grupo where grupo.usuario.id = " + usuarioLogueado.getId());
-               hql.append(") ");
+               hql.append(")) ");
                return hql.toString();
 	}
 

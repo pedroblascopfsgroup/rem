@@ -37,7 +37,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE(V_SQL);
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
-    IF V_NUM_TABLAS > 4 THEN	  
+    IF V_NUM_TABLAS = 4 THEN	  
 		DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.FUN_PEF ...no se modificará nada.');
 	ELSE
 

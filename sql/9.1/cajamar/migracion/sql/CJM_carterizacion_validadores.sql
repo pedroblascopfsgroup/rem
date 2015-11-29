@@ -812,7 +812,9 @@ from
  
  commit;
  
- 
+
+
+  
    -- Procuradores procedimientos  
     ------------------------------
     EXECUTE IMMEDIATE('insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
@@ -830,9 +832,9 @@ from
                  rank() over (partition by asu.asu_id order by usd.usu_id) as ranking
           from '||V_ESQUEMA||'.asu_asuntos asu                                                                inner join 
                '||V_ESQUEMA||'.mig_procedimientos_cabecera migp on migp.cd_procedimiento = asu.asu_id_externo inner join
-               '||V_ESQUEMA||'.des_despacho_externo        des  on des.des_despacho = migp.cd_procurador        inner join 
+               '||V_ESQUEMA||'.des_despacho_externo        des  on des.des_despacho = ''Despacho Procuradores''        inner join 
                '||V_ESQUEMA||'.usd_usuarios_despachos      usd  on usd.des_id = des.des_id                    inner join
-               '||V_ESQUEMA_MASTER||'.usu_usuarios         usu  on usu.usu_id = usd.usu_id and usu.USU_EXTERNO = 1
+               '||V_ESQUEMA_MASTER||'.usu_usuarios         usu  on usu.usu_id = usd.usu_id and usu.USU_EXTERNO = 1 AND usu_username = ''val.PROCU_''||migp.CD_PROCURADOR||''''
          where not exists (select 1 from '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO gaa where gaa.asu_id = asu.asu_id and gaa.dd_tge_id = (select dd_tge_id 
                                                                                                                                             from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor 
                                                                                                                                             where dd_tge_codigo=''PROC'')
@@ -862,14 +864,16 @@ from
                  rank() over (partition by asu.asu_id order by usd.usu_id) as ranking
           from '||V_ESQUEMA||'.asu_asuntos asu                                                                inner join 
                '||V_ESQUEMA||'.mig_procedimientos_cabecera migp on migp.cd_procedimiento = asu.asu_id_externo inner join
-               '||V_ESQUEMA||'.des_despacho_externo        des on des.des_despacho = migp.cd_procurador         inner join 
+               '||V_ESQUEMA||'.des_despacho_externo        des on des.des_despacho = ''Despacho Procuradores''   inner join 
                '||V_ESQUEMA||'.usd_usuarios_despachos      usd on usd.des_id = des.des_id                     inner join
-               '||V_ESQUEMA_MASTER||'.usu_usuarios         usu on usu.usu_id = usd.usu_id and usu.USU_EXTERNO = 1 
+               '||V_ESQUEMA_MASTER||'.usu_usuarios         usu on usu.usu_id = usd.usu_id and usu.USU_EXTERNO = 1 AND usu_username = ''val.PROCU_''||migp.CD_PROCURADOR||''''
           where not exists (select 1 from '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gaa where gaa.gah_asu_id = asu.asu_id and GAH_TIPO_GESTOR_ID = (select dd_tge_id 
                                                                                                                                                          from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor 
                                                                                                                                                          where dd_tge_codigo=''PROC''))
       ) auxi where auxi.ranking = 1
      ) aux');    
+     
+     
     
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAH_GESTOR_ADICIONAL_HISTORICO cargada. Procuradores. '||SQL%ROWCOUNT||' Filas.');
     COMMIT;

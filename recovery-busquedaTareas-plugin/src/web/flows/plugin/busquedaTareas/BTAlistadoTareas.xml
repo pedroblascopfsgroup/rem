@@ -44,7 +44,7 @@
 			<evaluate expression="requestParameters.icon" result="flowScope.icon" />
 			<evaluate expression="executor.execute('plugin.busquedaTareas.BTABusquedaTareaManager.getTiposUnnidadGestion')" result="flowScope.ugs"/>
 			<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
-			<evaluate expression="executor.execute('ADMPerfilManager.buscaPerfiles')" result="flowScope.perfiles" />
+			<evaluate expression="executor.execute('ADMPerfilManager.buscaPerfilesNoBorrados')" result="flowScope.perfiles" />
 			<evaluate expression="executor.execute('despachoExternoManager.getDespachosExternos')" result="flowScope.despachos" />
 	    	<evaluate expression="executor.execute('plugin.busquedaTareas.web.buttons.left')" result="flowScope.buttonsLeft"/>
 			<evaluate expression="executor.execute('plugin.busquedaTareas.web.buttons.right')" result="flowScope.buttonsRight"/>
@@ -60,7 +60,7 @@
 			<evaluate expression="requestParameters.icon" result="flowScope.icon" />
 			<evaluate expression="executor.execute('plugin.busquedaTareas.BTABusquedaTareaManager.getTiposUnnidadGestion')" result="flowScope.ugs"/>
 			<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
-			<evaluate expression="executor.execute('ADMPerfilManager.buscaPerfiles')" result="flowScope.perfiles" />
+			<evaluate expression="executor.execute('ADMPerfilManager.buscaPerfilesNoBorrados')" result="flowScope.perfiles" />
 			<evaluate expression="executor.execute('despachoExternoManager.getDespachosExternos')" result="flowScope.despachos" />
 	    	<evaluate expression="executor.execute('plugin.busquedaTareas.web.buttons.left')" result="flowScope.buttonsLeft"/>
 			<evaluate expression="executor.execute('plugin.busquedaTareas.web.buttons.right')" result="flowScope.buttonsRight"/>

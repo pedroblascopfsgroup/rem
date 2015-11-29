@@ -154,6 +154,7 @@ app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR = '<fwk:const value="es.capg
 app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_LETRADO = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_LETRADO" />';
 app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR_LIQUIDACIONES = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR_LIQUIDACIONES" />';
 app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR_DOCUMENTOS = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR_DOCUMENTOS" />';
+app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR_ESTUDIO = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR_ESTUDIO" />';
 
 app.categoriaSubTipoTarea={};
 app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_TOMA_DECISION = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION" />';

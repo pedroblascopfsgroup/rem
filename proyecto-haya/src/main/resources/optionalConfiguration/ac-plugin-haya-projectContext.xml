@@ -189,6 +189,7 @@
 						<value>TGGESDOC</value>
 						<value>CJ-104</value>
 						<value>CJ-814</value>
+						<value>GEXT</value>
 						<value>CJ-812</value>
 						<value>TSAEST</value>
 						<value>CJ-810</value>
@@ -363,6 +364,11 @@
 						<property name="listaTabs">
 							<list>
 								<value>pestanaPrincipal</value>
+								<value>pestanaValoraciones</value>
+								<value>pestanaDatosRegistrales</value>
+								<value>pestanaLocalizacion</value>
+								<value>pestanaCuentaBancaria</value>
+								<value>pestanaProductosBanco</value>
 								<value>pestanaOtros</value>
 								<value>pestanaObservaciones</value>
 							</list>

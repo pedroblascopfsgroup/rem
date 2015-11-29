@@ -13,6 +13,13 @@ echo "#####    INICIO CJM_instancia_BPMs_concursal.sql"
 echo "########################################################"  
 echo "Inicio CJM_instancia_BPMs_concursal.sql"
 
+$ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"CJM_crea_TMP_BPMs_concursal.sql  
+
+if [ $? != 0 ] ; then 
+   echo -e "\n\n======>>> "Error en @"$sql_dir"CJM_crea_TMP_BPMs_concursal.sql
+   exit 1
+fi
+
 $ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"CJM_instancia_BPMs_concursal.sql  
 
 if [ $? != 0 ] ; then 

@@ -87,7 +87,7 @@
 			<list>
 				<bean class="es.pfsgroup.recovery.integration.TypePayloadHeadersRegexRule">
 					<property name="entidad" value="${integracion.producer.filtro.entidad}" />	<!-- DEJAMOS PASAR MENSAJES DE LA ENTIDAD CAJAMAR -->
-					<property name="tipo" value="BPM-TAREA-.+|BPM-FIN|TAREA-NOTIF|DATOS-RECURSO|DATOS-SUBASTA|DATOS-DECISION-PROCEDIMIENTO|DATOS-ACUERDO.+|DO-ACTIVAR-BPM|DO-FIN-ASUNTO|TIPO_DATOS_RIESGO_OPERACIONAL" />
+					<property name="tipo" value="BPM-TAREA-.+|BPM-FIN|TAREA-NOTIF|DATOS-RECURSO|DATOS-SUBASTA|DATOS-DECISION-PROCEDIMIENTO|DATOS-ACUERDO.+|DO-ACTIVAR-BPM|DO-FIN-ASUNTO|DATOS_RIESGO_OPERACIONAL" />
 				</bean>
 				<bean class="es.pfsgroup.recovery.integration.DenyAllRule" />
 			</list>

@@ -676,12 +676,10 @@ function(entidad,page){
 		var solicitudYPermisos = (solicitud == null || solicitud=='') && (permisosGestor ||  permisosSupervisor);
 		
 		var subMenusVisibles = 0;
-		debugger;
 		
 		var permiteElevar = false;
 		var permiteDevolver = false;
 		function elevarDevolver(){
-		debugger;
 		var estados = entidad.getData('estados');
 			if(d.codigoEstado == 'CE'){
 				for(var i = 0; i < estados.length; i++){

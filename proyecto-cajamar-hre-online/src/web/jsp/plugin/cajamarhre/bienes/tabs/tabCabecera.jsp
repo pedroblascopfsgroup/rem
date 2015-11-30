@@ -8,7 +8,6 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 (function(){
-	
 	var labelStyle = 'width:185px;font-weight:bolder",width:375';
 	var labelStyleAjusteColumnas = 'width:185px;height:40px;font-weight:bolder",width:375';
 	var labelStyleDescripcion = 'width:185px;height:60px;font-weight:bolder",width:375';
@@ -27,7 +26,7 @@
 	//var participacion		= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.participacion" text="**% Propiedad"/>','${NMBbien.participacion}',{labelStyle:labelStyle});
 
 	var situacionPosesoria  = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.situacionPosesoria" text="**situacionPosesoria"/>','${NMBbien.situacionPosesoria.descripcion}', {labelStyle:labelStyle});
-	var viviendaHabitual    = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.viviendaHabitual" text="**viviendaHabitual"/>','${NMBbien.viviendaHabitual==null ? '--':NMBbien.viviendaHabitual == '1' ? 'Sí' : 'No'}', {labelStyle:labelStyle});
+	var viviendaHabitual    = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.viviendaHabitual" text="**viviendaHabitual"/>',null, {labelStyle:labelStyle, rawvalue:'${NMBbien.viviendaHabitual==null ? '--':NMBbien.viviendaHabitual == '1' ? 'S&iacute;' : 'No'}'});
 	var tipoSubasta		    = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.tipoSubasta" text="**Tipo Subasta"/>',app.format.moneyRenderer('${NMBbien.tipoSubasta}'),{labelStyle:labelStyle});
 	var numeroActivo        = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.numeroActivo" text="**numeroActivo"/>','${NMBbien.numeroActivo}', {labelStyle:labelStyle});
 	var licenciaPrimeraOcupacion = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.licenciaPrimeraOcupacion" text="**licenciaPrimeraOcupacion"/>','${NMBbien.licenciaPrimeraOcupacion}', {labelStyle:labelStyle});

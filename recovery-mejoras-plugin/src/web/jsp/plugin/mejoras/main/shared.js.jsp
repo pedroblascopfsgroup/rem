@@ -320,7 +320,7 @@ app.creaLabel = function(label, value, config){
 		cfg.id=config.id;
 	}
 	
-	fwk.js.copyProperties(cfg, config, ['labelWidth','labelStyle']);
+	fwk.js.copyProperties(cfg, config, ['labelWidth','labelStyle', 'rawvalue']);
 
 	var staticTextField =  new Ext.ux.form.StaticTextField(cfg);
 	return staticTextField;

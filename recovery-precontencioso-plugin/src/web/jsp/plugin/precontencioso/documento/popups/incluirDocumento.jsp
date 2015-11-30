@@ -48,12 +48,15 @@ var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
 	
 	var handlerGuardar = function() {
 		var p = getParametros();
+		var mask=new Ext.LoadMask(panel.body, {msg:'<s:message code="fwk.ui.form.cargando" text="**Guardando..."/>'});
+		mask.show();
     	Ext.Ajax.request({
 				url : page.resolveUrl('documentopco/saveIncluirDocumentos'), 
 				params : p ,
 				method: 'POST',
 				success: function ( result, request ) {
 					page.fireEvent(app.event.DONE);
+					mask.hide();
 				}
 		});
 	}

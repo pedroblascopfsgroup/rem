@@ -74,6 +74,8 @@ storeDocumentos.on(
 
 var myRenderer =  'background-color:lavender;';
 
+var myMask = new Ext.LoadMask(Ext.getBody(), {msg:"Cargando..."});
+
 var cmDocumento = [
  	myCboxSelModel2,
 	{header : '<s:message code="precontencioso.grid.documento.unidadGestion" text="**Unidad de Gestión" />', dataIndex : 'contrato'},
@@ -121,7 +123,6 @@ var incluirDocButton = new Ext.Button({
 		}				
 	});
 	
-
 var excluirDocButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.excluirDocumentos" text="**Excluir Documentos" />'
 		,iconCls : 'icon_menos'
@@ -136,6 +137,7 @@ var excluirDocButton = new Ext.Button({
 			else {		
 					Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', '<s:message code="precontencioso.grid.documento.excluirDocumento.confirmacion" text="**Va a exlcuir documentos y las solicitudes asociadas ¿Desea continuar?" />', function(btn){
 	    				if (btn == 'yes'){
+	    					myMask.show();
 							Ext.Ajax.request({
 									url : page.resolveUrl('documentopco/excluirDocumentos'), 
 									params : p,									<%-- {idDocumento:idDocumento} , --%>
@@ -143,6 +145,7 @@ var excluirDocButton = new Ext.Button({
 									success: function ( result, request ) {
 										refrescarDocumentosGrid();
 										gridDocumentos.getSelectionModel().clearSelections();
+										myMask.hide();
 									}
 							});
 	    				}
@@ -180,12 +183,14 @@ var descartarDocButton = new Ext.Button({
 			else {
 				Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', '<s:message code="precontencioso.grid.documento.descartarDocumento.confirmacion" text="**Va a descartar documentos ¿Desea continuar?" />', function(btn){
 	   				if (btn == 'yes'){
+	   					myMask.show();
 						Ext.Ajax.request({
 							url : page.resolveUrl('documentopco/descartarDocumentos'), 
 							params: p, 			<%--{idDocumento:idDocumento} , --%>
 							method: 'POST',
 							success: function ( result, request ) {
 								refrescarDocumentosGrid();
+								myMask.hide();
 							}
 						});
 					}

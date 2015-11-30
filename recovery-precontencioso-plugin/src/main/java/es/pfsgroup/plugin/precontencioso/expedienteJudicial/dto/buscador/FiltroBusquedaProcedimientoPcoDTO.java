@@ -43,6 +43,8 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 	private String proGestor;
 	private String proJerarquiaContable;
 	private String proCentroContable;
+	private String importeDesde;
+	private String importeHasta;
 	
 
 	// Contrato - Persona
@@ -624,6 +626,22 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 	}
 	public void setDocGestor(String docGestor) {
 		this.docGestor = docGestor;
+	}
+
+	public String getImporteDesde() {
+		return importeDesde;
+	}
+
+	public void setImporteDesde(String importeDesde) {
+		this.importeDesde = importeDesde;
+	}
+
+	public String getImporteHasta() {
+		return importeHasta;
+	}
+
+	public void setImporteHasta(String importeHasta) {
+		this.importeHasta = importeHasta;
 	}
 	
 }

@@ -295,10 +295,6 @@ public class GestorTareasManager implements GestorTareasApi {
 	public boolean getEsTareaPrecontenciosoEspecial(Long tareaId) {
 
 		TareaExterna tareaExterna = genericDao.get(TareaExterna.class, genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", tareaId));
-	
-		if(tareaExterna == null){
-			return false;
-		}
 		
 		if (Checks.esNulo(tareaExterna)) {
 			return false;
@@ -319,6 +315,7 @@ public class GestorTareasManager implements GestorTareasApi {
 			}
 			
 		}
+
 		return resultado;
 		
 	}

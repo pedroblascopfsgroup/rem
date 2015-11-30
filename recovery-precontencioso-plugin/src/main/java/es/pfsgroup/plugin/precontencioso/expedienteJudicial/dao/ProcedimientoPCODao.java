@@ -13,13 +13,6 @@ public interface ProcedimientoPCODao extends AbstractDao<ProcedimientoPCO, Long>
 	ProcedimientoPCO getProcedimientoPcoPorIdProcedimiento(Long idProcedimiento);
 
 	/**
-	 * Devuelve el numero de resultados que va a devolver la consulta con el filtro enviado por parametro
-	 * @param filtro
-	 * @return numero de resultados
-	 */
-	Integer countBusquedaPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
-
-	/**
 	 * Busqueda de procedimientosPco que cumplan el filtro enviado por parametro
 	 * @param filtro
 	 * @return Listado de ProcedimientosPCO que cumplen dicho filtro.
@@ -53,6 +46,20 @@ public interface ProcedimientoPCODao extends AbstractDao<ProcedimientoPCO, Long>
 	 * @return Listado de códigos de tipo de gestor que cumplen dicho filtro.
 	 */
 	List<String> getTiposGestoresAsunto(Long idAsunto);
+
+	/**
+	 * Devuelve el numero de resultados que va a devolver la consulta con el filtro enviado por parametro
+	 * @param filtro
+	 * @return numero de resultados
+	 */
+	Integer countBusquedaProcedimientosPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
+
+	/**
+	 * Devuelve el numero de resultados que va a devolver la consulta con el filtro enviado por parametro
+	 * @param filtro
+	 * @return numero de resultados
+	 */
+	Integer countBusquedaElementosPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
 
 }
 

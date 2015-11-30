@@ -333,9 +333,13 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	}
 
 	@Override
-	public Integer countBusquedaPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
-		Integer count = procedimientoPcoDao.countBusquedaPorFiltro(filtro);
-		return count;
+	public Integer countBusquedaProcedimientosPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
+		return procedimientoPcoDao.countBusquedaProcedimientosPorFiltro(filtro);
+	}
+
+	@Override
+	public Integer countBusquedaElementosPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
+		return procedimientoPcoDao.countBusquedaElementosPorFiltro(filtro);
 	}
 
 	@Override

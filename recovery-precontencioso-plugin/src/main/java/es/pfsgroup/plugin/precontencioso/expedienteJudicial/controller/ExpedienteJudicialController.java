@@ -17,17 +17,22 @@ import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.contrato.model.DDTipoProductoEntidad;
 import es.capgemini.pfs.core.api.plazaJuzgado.PlazaJuzgadoApi;
 import es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi;
+import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
+import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
+import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDResultadoBurofaxPCO;
+import es.pfsgroup.plugin.precontencioso.documento.api.DocumentoPCOApi;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDResultadoSolicitudPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
@@ -71,6 +76,15 @@ public class ExpedienteJudicialController {
 	
 	@Autowired
 	private TipoProcedimientoDao tipoProcedimientoDao;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
+
+	@Autowired
+	private GestorDespachoDao gestorDespachoDao;
+	
+	@Autowired
+	private DocumentoPCOApi documentoPCOManager;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -204,7 +218,7 @@ public class ExpedienteJudicialController {
 
 		model.put("procedimientosPco", procedimientosPcoGrid);
 
-		Integer totalCount = procedimientoPcoApi.countBusquedaPorFiltro(filter);
+		Integer totalCount = procedimientoPcoApi.countBusquedaProcedimientosPorFiltro(filter);
 		model.put("totalCount", totalCount);
 
 		return JSON_BUSQUEDA_PROCEDIMIENTO;
@@ -226,7 +240,7 @@ public class ExpedienteJudicialController {
 
 		model.put("procedimientosPco", elementosGrid);
 
-		Integer totalCount = procedimientoPcoApi.countBusquedaPorFiltro(filter);
+		Integer totalCount = procedimientoPcoApi.countBusquedaElementosPorFiltro(filter);
 		model.put("totalCount", totalCount);
 
 		return JSON_BUSQUEDA_PROCEDIMIENTO;
@@ -341,7 +355,7 @@ public class ExpedienteJudicialController {
 
 		model.put("expedientes", procedimientosPcoGrid);
 
-		Integer totalCount = procedimientoPcoApi.countBusquedaPorFiltro(filter);
+		Integer totalCount = procedimientoPcoApi.countBusquedaProcedimientosPorFiltro(filter);
 		model.put("totalCount", totalCount);
 
 		return "reportXLS/plugin/precontencioso/expedientes/listaExpedientes";
@@ -367,5 +381,17 @@ public class ExpedienteJudicialController {
 		
 		map.put("isEditable", res);
 		return "plugin/precontencioso/acciones/json/expedienteEditableJSON";
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String isGestoria(Long idProcedimiento, ModelMap map){
+	
+		Usuario userLogged = usuarioManager.getUsuarioLogado(); 
+		List<GestorDespacho> listaGestorDespacho = documentoPCOManager.getGestorDespachoByUsuIdAndTipoDespacho(userLogged.getId(), DDTipoDespachoExterno.CODIGO_GESTORIA_PCO);
+		
+		map.put("esGestoria", !listaGestorDespacho.isEmpty());
+
+		return "plugin/precontencioso/acciones/json/esGestoriaJSON";
 	}
 }

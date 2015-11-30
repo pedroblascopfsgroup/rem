@@ -540,10 +540,10 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		documento.setTomo(docDto.getTomo());
 		documento.setPlaza(docDto.getPlaza());
 		try {
-			documento.setFechaEscritura(webDateFormat.parse(docDto.getFechaEscritura()));
+			if(!Checks.esNulo(docDto.getFechaEscritura()))
+				documento.setFechaEscritura(webDateFormat.parse(docDto.getFechaEscritura()));
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("saveCrearDocumento fecha: " + e);
 		}	
 		
 		DDTipoFicheroAdjunto tipoDocumento = genericDao.get(
@@ -571,7 +571,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		try {
 			genericDao.save(DocumentoPCO.class, documento);
 		} catch (Exception e) {
-			System.out.println("Error: "+e);
+			logger.error("saveCrearDocumento: "+ e);
 		}
 	}
 	

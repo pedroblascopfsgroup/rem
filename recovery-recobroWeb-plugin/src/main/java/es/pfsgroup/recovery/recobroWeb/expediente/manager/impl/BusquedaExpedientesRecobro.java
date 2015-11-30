@@ -114,7 +114,8 @@ public class BusquedaExpedientesRecobro implements BusquedaExpedienteFiltroDinam
 //		filtro.append(" SELECT distinct expRec.id FROM Expediente expRec ");		
 //		filtro.append(" WHERE expRec.id in( SELECT distinct cre.expediente.id FROM CicloRecobroExpediente cre WHERE 1=1 ");
 		filtro.append(" SELECT cre.expediente as exp FROM CicloRecobroExpediente cre WHERE 1=1 ");                
-		if (!Checks.esNulo(dto.getEsquema())){			
+		filtro.append(" AND cre.fechaBaja IS NULL");
+                if (!Checks.esNulo(dto.getEsquema())){			
 			filtro.append(" AND cre.esquema.id = " + dto.getEsquema() );			
 		}
 		if (!Checks.esNulo(dto.getCartera())){

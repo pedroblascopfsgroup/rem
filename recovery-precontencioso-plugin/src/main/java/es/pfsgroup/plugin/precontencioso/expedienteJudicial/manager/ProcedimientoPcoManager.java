@@ -103,6 +103,7 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	private static final String CM_GD_PCO = "CM_GD_PCO";
 	private static final String CM_GL_PCO = "CM_GL_PCO";
 	private static final String SUP_PCO = "SUP_PCO";
+	private static final String GESTORIA_PREDOC = "GESTORIA_PREDOC";
 
 	@Resource
 	private Properties appProperties;
@@ -978,6 +979,7 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		return texto;
 	}
 
+
 	@Override
 	public boolean isExpedienteEditable(Long idProcedimiento) {
 
@@ -1017,7 +1019,14 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 				return true;
 			}
 		}
-		
+
+// 		Se comprueba si el usuario conectado o un grupo al que pertenece está asignado al asunto como GESTORIA del expediente judicial
+		for(Usuario usuarioGestor : gestorAdicionalAsuntomanager.findGestoresByAsunto(procedimiento.getAsunto().getId(), GESTORIA_PREDOC)) {
+			if(usuario.getUsername().equals(usuarioGestor.getUsername()) || idsGrupo.contains(usuarioGestor.getId())) {
+				return true;
+			}
+		}
+
 		return false;
 	}
 }

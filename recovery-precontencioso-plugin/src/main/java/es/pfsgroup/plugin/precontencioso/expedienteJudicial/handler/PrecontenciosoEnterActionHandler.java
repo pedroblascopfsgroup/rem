@@ -94,16 +94,16 @@ public class PrecontenciosoEnterActionHandler extends PROGenericEnterActionHandl
 		} else if (PrecontenciosoBPMConstants.PCO_RevisarExpediente.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
 		} else if (PrecontenciosoBPMConstants.PCO_PrepararExpediente.equals(tex.getTareaProcedimiento().getCodigo())) {
-			
+			if (prc.getProcessBPM() == null) {
+				prc.setProcessBPM(executionContext.getProcessInstance().getId());
+			}
 			if(!PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(precontenciosoContext.getRecovery())){
 				//Si es CONCURSO invocar inicializacion
-				if (DDTiposAsunto.CONCURSAL.equals(prc.getAsunto().getTipoAsunto().getCodigo())) {
-					if (prc.getProcessBPM() == null) {
-						prc.setProcessBPM(executionContext.getProcessInstance().getId());
-					}
+				if (DDTiposAsunto.CONCURSAL.equals(prc.getAsunto().getTipoAsunto().getCodigo())) {					
 					executor.execute("plugin.precontencioso.inicializarPco", prc);
 				}
 			}
+			
 			executor.execute("es.pfsgroup.plugin.precontencioso.expedienteJudicial.recalcularTareasPreparacionDocumental", prc.getId());
 			
 		} else if (PrecontenciosoBPMConstants.PCO_PostTurnado.equals(tex.getTareaProcedimiento().getCodigo())) {

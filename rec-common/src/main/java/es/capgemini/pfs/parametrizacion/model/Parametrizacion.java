@@ -49,9 +49,11 @@ public class Parametrizacion implements Serializable, Auditable {
     public static final String LIMITE_EXPORT_EXCEL_BUSCADOR_SUBASTAS = "limiteExportExcelBuscadorSubastas";
     public static final String LIMITE_EXPORT_EXCEL_BIENES_SUBASTA_CDD = "limiteExportExcelBienesSubastaCDD";
     public static final String ANOTACIONES_EMAIL_FROM = "AnotacionesEmailFrom";
-	public static final Object ANOTACIONES_MAIL_SMTP_USER = "AnotacionesMailSmtpUser";
-	public static final Object ANOTACIONES_PWD_CORREO = "AnotacionesPwdCorreo";
+    public static final Object ANOTACIONES_MAIL_SMTP_USER = "AnotacionesMailSmtpUser";
+    public static final Object ANOTACIONES_PWD_CORREO = "AnotacionesPwdCorreo";
     public static final String VISIBLE_BOTON_SOLICITAR_LIQUIDACION = "visibleBtnSolicitarLiquidacion";
+    public static final String ADJUNTOS_DESCARGA_ZIP_EXTENSIONES = "adjuntosDescargaZipExtensiones";
+    public static final String ADJUNTOS_DESCARGA_ZIP_NIVEL_COMPRESION = "adjuntosDescargaZipNivelCompresion";
 
     @Id
     @Column(name = "PEN_ID")

@@ -119,7 +119,7 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 	 */
 
 	@Formula(value = 
-		" (SELECT dd_pco_prc_estado_preparacion.dd_pco_pep_descripcion" +
+		" (SELECT MIN(dd_pco_prc_estado_preparacion.dd_pco_pep_descripcion)" +
 		" FROM   pco_prc_hep_histor_est_prep " +
 		"       INNER JOIN pco_prc_procedimientos " +
 		"               ON pco_prc_procedimientos.pco_prc_id = pco_prc_hep_histor_est_prep.pco_prc_id " +
@@ -133,7 +133,7 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 	private String estadoActual;
 
 	@Formula(value = 
-		" (SELECT pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_incio" +
+		" (SELECT min(pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_incio)" +
 		" FROM   pco_prc_hep_histor_est_prep " +
 		"       INNER JOIN pco_prc_procedimientos " +
 		"               ON pco_prc_procedimientos.pco_prc_id = pco_prc_hep_histor_est_prep.pco_prc_id " +
@@ -186,7 +186,7 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 	private Boolean todosBurofaxes;
 
 	@Formula(value =
-		" (SELECT TRUNC(SYSDATE) - TRUNC(pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_incio) " +
+		" (SELECT TRUNC(SYSDATE) - TRUNC(MIN(pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_incio)) " +
 		" FROM   pco_prc_procedimientos " +
 		"        INNER JOIN pco_prc_hep_histor_est_prep " +
 		"                ON pco_prc_procedimientos.pco_prc_id = pco_prc_hep_histor_est_prep.pco_prc_id " +

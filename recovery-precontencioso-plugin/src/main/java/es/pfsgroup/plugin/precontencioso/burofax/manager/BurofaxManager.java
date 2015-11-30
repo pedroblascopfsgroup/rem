@@ -1,8 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.burofax.manager;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -47,6 +45,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
 import es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi;
+import es.pfsgroup.plugin.precontencioso.burofax.api.DocumentoBurofaxApi;
 import es.pfsgroup.plugin.precontencioso.burofax.dao.BurofaxDao;
 import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxEnvioIntegracionPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxPCO;
@@ -96,6 +95,9 @@ public class BurofaxManager implements BurofaxApi {
 	
 	@Autowired
 	ParametrizacionDao parametrizacionDao;
+	
+	@Autowired
+	DocumentoBurofaxApi docBurManager;
 	
 	private final Log logger = LogFactory.getLog(getClass());
 	private final String DIRECTORIO_PDF_BUROFAX_PCO = "directorioPdfBurofaxPCO";
@@ -150,7 +152,7 @@ public class BurofaxManager implements BurofaxApi {
 			}
 
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getTipoBurofaxPorDefecto: " + e);
 		}
 		
 		if(!Checks.esNulo(procedimientoBurofaxTipoPCO)){
@@ -173,7 +175,7 @@ public class BurofaxManager implements BurofaxApi {
 			
 			contrato=genericDao.get(Contrato.class,filtro1);
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getContrato: " + e);
 		}
 		
 		return contrato;
@@ -190,7 +192,7 @@ public class BurofaxManager implements BurofaxApi {
 			boolean noBorrado = false;
 			listaBurofax=(List<BurofaxPCO>) genericDao.getList(BurofaxPCO.class,filtro1); //original
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getListaBurofaxPCO: " + e);
 		}
 		return listaBurofax;
 	}
@@ -205,60 +207,10 @@ public class BurofaxManager implements BurofaxApi {
 			idDireccion = proxyFactory.proxy(DireccionApi.class).guardarDireccionRetornaId(dto);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			logger.error(e);
+			logger.error("guardaDireccion: " + e);
 		}
 		return idDireccion;
 	}
-	
-	//No se está utilizando
-	/*
-	@Override
-	@Transactional(readOnly = false)
-	@BusinessOperation(GUARDA_DIRECCION_BUROFAX)
-	public boolean guardaDireccionBurofax(Long idPersona,Long idDireccion,Long idProcedimiento,Long idContrato){
-		
-		try{
-			
-			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(1));
-			BurofaxPCO burofaxPCO=(BurofaxPCO) genericDao.get(BurofaxPCO.class,filtro1);
-			
-			filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idPersona);
-			Persona demandado=(Persona) genericDao.get(Persona.class,filtro1);
-			
-			filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoBurofaxPCO.NO_NOTIFICADO);
-			DDEstadoBurofaxPCO estadoBurofax=(DDEstadoBurofaxPCO) genericDao.get(DDEstadoBurofaxPCO.class,filtro1);
-			
-			filtro1 = genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProcedimiento);
-			ProcedimientoPCO procedimientoPCO=(ProcedimientoPCO) genericDao.get(ProcedimientoPCO.class,filtro1);
-			
-			filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idDireccion);
-			Direccion direccion=(Direccion) genericDao.get(Direccion.class,filtro1);
-			
-			//BurofaxPCO burofaxPCO=new BurofaxPCO();
-			burofaxPCO.setDemandado(demandado);
-			burofaxPCO.setEstadoBurofax(estadoBurofax);
-			burofaxPCO.setProcedimientoPCO(procedimientoPCO);
-			
-			
-			EnvioBurofaxPCO envioBurofax=new EnvioBurofaxPCO();
-			envioBurofax.setBurofax(burofaxPCO);
-			envioBurofax.setDireccion(direccion);
-			envioBurofax.setTipoBurofax(getTipoBurofaxPorDefecto(idProcedimiento, idContrato));
-			envioBurofax.setAuditoria(Auditoria.getNewInstance());
-			
-			List<EnvioBurofaxPCO> listaEnvio=new ArrayList<EnvioBurofaxPCO>();
-			listaEnvio.add(envioBurofax);
-			burofaxPCO.setEnviosBurofax(listaEnvio);
-			
-			
-			//genericDao.saveOrUpdate(BurofaxPCO.class, burofaxPCO);
-			burofaxDao.saveOrUpdate(burofaxPCO);
-		
-		}catch(Exception e){
-			logger.error(e);
-		}
-		return true;
-	}*/
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -269,8 +221,7 @@ public class BurofaxManager implements BurofaxApi {
 			dicionarioBurofax = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDTipoBurofaxPCO.class);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-			logger.error(e);
+			logger.error("getTiposBurofaxex: " + e);
 		}
 		
 		return dicionarioBurofax;
@@ -283,58 +234,63 @@ public class BurofaxManager implements BurofaxApi {
 	public List<EnvioBurofaxPCO> configurarTipoBurofax(Long idTipoBurofax,String[] arrayIdDirecciones,String[] arrayIdBurofax,String[] arrayIdEnvios){
 			
 		List<EnvioBurofaxPCO> listaEnvioBurofax=new ArrayList<EnvioBurofaxPCO>(); 
-		
+		Filter borrado = genericDao.createFilter(FilterType.EQUALS, "borrado", false);
+						
 		try{
 			
 			for(int i=0;i<arrayIdDirecciones.length;i++){
-			
-				Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoBurofaxPCO.NO_NOTIFICADO);
-				DDEstadoBurofaxPCO estadoBurofaxPCO=(DDEstadoBurofaxPCO) genericDao.get(DDEstadoBurofaxPCO.class,filtro1);
+				System.out.println("configurarTipoBurofax: " + i);
+				System.out.println("configurarTipoBurofax: " + arrayIdBurofax[i]);
+				System.out.println("configurarTipoBurofax: " + arrayIdDirecciones[i]);
 				
-				Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoBurofaxPCO.ESTADO_PREPARADO);
-				DDResultadoBurofaxPCO resultadoBurofaxPCO=(DDResultadoBurofaxPCO) genericDao.get(DDResultadoBurofaxPCO.class,filtro2);
+				if(!Checks.esNulo(arrayIdDirecciones[i])){
 				
-				Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "id", idTipoBurofax);
-				DDTipoBurofaxPCO tipoBurofax=(DDTipoBurofaxPCO) genericDao.get(DDTipoBurofaxPCO.class,filtro3);
-				
-				Filter filtro4 = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(arrayIdBurofax[i]));
-				BurofaxPCO burofax=(BurofaxPCO) genericDao.get(BurofaxPCO.class,filtro4);
-				
-				Filter filtro5 = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(arrayIdDirecciones[i]));
-				Direccion direccion=(Direccion) genericDao.get(Direccion.class,filtro5);
-				
-				burofax.setEstadoBurofax(estadoBurofaxPCO);
-				
-				EnvioBurofaxPCO envio=null;
-				//Si id Envio Existe actualizamos el envio
-				if(!Checks.esNulo(arrayIdEnvios) && !arrayIdEnvios[i].equals("-1")){
-					Filter filtro6 = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(arrayIdEnvios[i]));
-					envio=(EnvioBurofaxPCO) genericDao.get(EnvioBurofaxPCO.class,filtro6);
+					Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoBurofaxPCO.NO_NOTIFICADO);
+					DDEstadoBurofaxPCO estadoBurofaxPCO=(DDEstadoBurofaxPCO) genericDao.get(DDEstadoBurofaxPCO.class,filtro1, borrado);
 					
-				}
-				
-				//Si idEnvio=-1 Creamos un nuevo envio
-				else{
-					envio=new EnvioBurofaxPCO();	
+					Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoBurofaxPCO.ESTADO_PREPARADO);
+					DDResultadoBurofaxPCO resultadoBurofaxPCO=(DDResultadoBurofaxPCO) genericDao.get(DDResultadoBurofaxPCO.class,filtro2, borrado);
 					
-				}
-				//Comun
-				envio.setBurofax(burofax);
-				envio.setDireccion(direccion);
-				envio.setTipoBurofax(tipoBurofax);	
-				//envio.setContenidoBurofax(tipoBurofax.getPlantilla());
-				envio.setContenidoBurofax(replaceVariablesGeneracionBurofax(burofax.getId(),tipoBurofax.getPlantilla()));
-				envio.setResultadoBurofax(resultadoBurofaxPCO);
-				
-				//Guardamos nuevo envio
-				genericDao.save(EnvioBurofaxPCO.class,envio);
-				listaEnvioBurofax.add(envio);
-			}	
-			
-			
+					Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "id", idTipoBurofax);
+					DDTipoBurofaxPCO tipoBurofax=(DDTipoBurofaxPCO) genericDao.get(DDTipoBurofaxPCO.class,filtro3, borrado);
+					
+					Filter filtro4 = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(arrayIdBurofax[i]));
+					BurofaxPCO burofax=(BurofaxPCO) genericDao.get(BurofaxPCO.class,filtro4, borrado);
+					
+					Filter filtro5 = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(arrayIdDirecciones[i]));
+					Direccion direccion=(Direccion) genericDao.get(Direccion.class,filtro5, borrado);
+					
+					burofax.setEstadoBurofax(estadoBurofaxPCO);
+					
+					EnvioBurofaxPCO envio=null;
+					//Si id Envio Existe actualizamos el envio
+					if(!Checks.esNulo(arrayIdEnvios) && !arrayIdEnvios[i].equals("-1")){
+						Filter filtro6 = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(arrayIdEnvios[i]));
+						envio=(EnvioBurofaxPCO) genericDao.get(EnvioBurofaxPCO.class,filtro6, borrado);
+						
+					}
+					
+					//Si idEnvio=-1 Creamos un nuevo envio
+					else{
+						envio=new EnvioBurofaxPCO();	
+						
+					}
+					//Comun
+					envio.setBurofax(burofax);
+					envio.setDireccion(direccion);
+					envio.setTipoBurofax(tipoBurofax);	
+					//envio.setContenidoBurofax(tipoBurofax.getPlantilla());
+					envio.setContenidoBurofax(docBurManager.replaceVariablesGeneracionBurofax(burofax.getId(),tipoBurofax.getPlantilla()));
+					envio.setResultadoBurofax(resultadoBurofaxPCO);
+					
+					//Guardamos nuevo envio
+					genericDao.save(EnvioBurofaxPCO.class,envio);
+					listaEnvioBurofax.add(envio);
+				}	
+			}
 			
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("configurarTipoBurofax: " + e);
 		}
 		
 		return listaEnvioBurofax;
@@ -354,7 +310,7 @@ public class BurofaxManager implements BurofaxApi {
 			contenido= envioBurofax.getContenidoBurofax();
 			
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("obtenerContenidoBurofax: " + e);
 		}
 		
 		return contenido;
@@ -372,7 +328,7 @@ public class BurofaxManager implements BurofaxApi {
 			
 			genericDao.save(EnvioBurofaxPCO.class,envioBurofax);
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("configurarContenidoBurofax: " + e);
 		}
 	}
 	
@@ -387,7 +343,7 @@ public class BurofaxManager implements BurofaxApi {
 			persona=(Persona) genericDao.get(Persona.class,filtro1);
 			
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getPersonaById: "+ e);
 		}
 		
 		return persona;
@@ -493,7 +449,7 @@ public class BurofaxManager implements BurofaxApi {
 			
 			
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("guardaPersonaCreandoBurofax: " + e);
 		}
 	}
 	
@@ -528,12 +484,21 @@ public class BurofaxManager implements BurofaxApi {
 			
 			for(EnvioBurofaxPCO envioBurofax : listaEnvioBurofaxPCO){
 				
+				String contenidoParseadoIntermedio = "";
+				
 				envioBurofax.setResultadoBurofax(resultado);
 				envioBurofax.setFechaSolicitud(new Date());
 				if(Checks.esNulo(envioBurofax.getResultadoBurofax()) || (!Checks.esNulo(envioBurofax.getResultadoBurofax()) && !envioBurofax.getResultadoBurofax().getCodigo().equals(DDResultadoBurofaxPCO.ESTADO_PREPARADO))){
-					envioBurofax.setContenidoBurofax(replaceVariablesGeneracionBurofax(envioBurofax.getBurofax().getId(), envioBurofax.getContenidoBurofax()));
+					contenidoParseadoIntermedio = docBurManager.replaceVariablesGeneracionBurofax(envioBurofax.getBurofax().getId(), envioBurofax.getContenidoBurofax());
 				}
+				else {
+					contenidoParseadoIntermedio = envioBurofax.getContenidoBurofax();
+				}
+				HashMap<String, Object> mapeoVariables = docBurManager.obtenerMapeoVariables(envioBurofax);
 				
+				String contenidoParseadoFinal = docBurManager.parseoFinalBurofax(contenidoParseadoIntermedio, mapeoVariables);
+				
+				envioBurofax.setContenidoBurofax(contenidoParseadoFinal);
 				genericDao.save(EnvioBurofaxPCO.class, envioBurofax);
 				
 				BurofaxEnvioIntegracionPCO envioIntegracion=new BurofaxEnvioIntegracionPCO();
@@ -546,8 +511,7 @@ public class BurofaxManager implements BurofaxApi {
 				envioIntegracion.setDireccion(envioBurofax.getDireccion().getDomicilio());
 				if(!Checks.esNulo(envioBurofax.getBurofax().getContrato())){
 					envioIntegracion.setContrato(envioBurofax.getBurofax().getContrato().getNroContrato());
-				}
-				else{
+				} else {
 					envioIntegracion.setContrato(null);
 				}
 				envioIntegracion.setTipoBurofax(envioBurofax.getTipoBurofax().getDescripcion());
@@ -555,59 +519,41 @@ public class BurofaxManager implements BurofaxApi {
 				envioIntegracion.setFechaEnvio(new Date());
 				envioIntegracion.setFechaAcuse(new Date());
 				envioIntegracion.setCertificado(certificado);
+				
+				envioIntegracion.setContenido(contenidoParseadoFinal);
 		
 				if (precontenciosoContext.isGenerarArchivoBurofax()) {
-					//envioIntegracion.setArchivoBurofax(archivoBurofax);
-					if ("BANKIA".equals(precontenciosoContext.getRecovery())) {
-						FileItem archivoBurofax = generarDocumentoBurofax(envioBurofax);
-						InputStream inputStream = archivoBurofax.getInputStream();
-						FileOutputStream outputStream = null;
-						String directorio = parametrizacionDao.buscarParametroPorNombre(DIRECTORIO_PDF_BUROFAX_PCO).getValor();
-
-						try {
-							String nombreFichero = obtenerNombreFichero();
-							envioIntegracion.setNombreFichero(nombreFichero);
-							envioIntegracion.setIdAsunto(envioBurofax.getBurofax().getProcedimientoPCO().getProcedimiento().getAsunto().getId());
-							// write the inputStream to a FileOutputStream
-							outputStream = new FileOutputStream(new File(directorio + "/" + nombreFichero));
-
-							int read = 0;
-							byte[] bytes = new byte[1024];
-
-							while ((read = inputStream.read(bytes)) != -1) {
-								outputStream.write(bytes, 0, read);
-							}
-
-						} catch (IOException e) {
-							e.printStackTrace();
-						} finally {
-							if (inputStream != null) {
-								try {
-									inputStream.close();
-								} catch (IOException e) {
-									e.printStackTrace();
-								}
-							}
-							if (outputStream != null) {
-								try {
-									// outputStream.flush();
-									outputStream.close();
-								} catch (IOException e) {
-									e.printStackTrace();
-								}
-							}
-						}
-					}
+					//Obtener cabecera 
+					String cabecera = docBurManager.obtenerCabecera(mapeoVariables);
+					// Obtener plantilla
+					InputStream plantillaBurofax = docBurManager.obtenerPlantillaBurofax();
+					// Obtener nombre de fichero
+					String nombreFichero = obtenerNombreFichero();
+					//Generar documento a partir de la plantilla y de los campos HTML cabecera y contenido
+					FileItem archivoBurofax = docBurManager.generarDocumentoBurofax(plantillaBurofax, nombreFichero, cabecera, contenidoParseadoFinal);
+					// Transformar el archivo docx en PDF
+					String directorio = parametrizacionDao.buscarParametroPorNombre(DIRECTORIO_PDF_BUROFAX_PCO).getValor();
+					String nombreFicheroPdf = docBurManager.obtenerNombreFicheroPdf(nombreFichero);
+					File archivoBurofaxPDF = docBurManager.convertirAPdf(archivoBurofax, directorio + File.separator + nombreFicheroPdf);
+					FileItem fi = new FileItem();
+					fi.setFile(archivoBurofaxPDF);
+					fi.setFileName(nombreFicheroPdf);
+					fi.setContentType("application/pdf");
+					fi.setLength(archivoBurofaxPDF.length());
+					
+					//envioIntegracion.setArchivoBurofax(fi);
+					envioIntegracion.setNombreFichero(nombreFicheroPdf);
+					envioIntegracion.setIdAsunto(envioBurofax.getBurofax().getProcedimientoPCO().getProcedimiento().getAsunto().getId());
+					
 				} else {
 					//envioIntegracion.setArchivoBurofax(new FileItem(File.createTempFile("TMP", ".log")));
+					envioIntegracion.setContenido(envioBurofax.getContenidoBurofax());
 				}
-
-				envioIntegracion.setContenido(envioBurofax.getContenidoBurofax());
 
 				genericDao.save(BurofaxEnvioIntegracionPCO.class, envioIntegracion);
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("guardarEnvioBurofax: " + e);
 		}
 		
 	}
@@ -617,6 +563,7 @@ public class BurofaxManager implements BurofaxApi {
 		return FICHERO_DOCUMENTO_RANKIA+String.format("%011d", secuencia)+".docx";
 	}
 	
+
 	
 	public FileItem generarDocumentoBurofax(EnvioBurofaxPCO envioBurofax){
 		
@@ -639,7 +586,7 @@ public class BurofaxManager implements BurofaxApi {
 			String domicilio=envioBurofax.getDireccion().toString();
 			InputStream is = null;
 			if("BANKIA".equals(precontenciosoContext.getRecovery())){
-				is=informesManager.createDocxFileFromHtmlText(
+				is=informesManager.createPdfFileFromHtmlText(
 						"<table width='60%' style='font-size:12px'>"
 						+ "<tr>"
 						+ "<td width='40' style='border:1px solid black'>BANKIA S.A<br />PASEO DE LA CASTELLANA, 189<br />28046 Madrid</td>"
@@ -654,7 +601,7 @@ public class BurofaxManager implements BurofaxApi {
 						+ "</table>",
 						envioBurofax.getBurofax().getDemandado().getApellidoNombre());
 			} else {
-				is=informesManager.createDocxFileFromHtmlText(					
+				is=informesManager.createPdfFileFromHtmlText(					
 						"<table width='60%' style='font-size:12px'>"
 						+ "<tr>"
 						+ "<td style='border:1px solid black'>"+envioBurofax.getContenidoBurofax()+"</td>"
@@ -818,7 +765,7 @@ public class BurofaxManager implements BurofaxApi {
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idEnvio);
 			envioBurofax=(EnvioBurofaxPCO) genericDao.get(EnvioBurofaxPCO.class,filtro1);
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getTipoBurofaxByIdEnvio: " + e);
 		}
 		
 		return envioBurofax.getTipoBurofax();
@@ -833,7 +780,7 @@ public class BurofaxManager implements BurofaxApi {
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
 			tipoBurofax=(DDTipoBurofaxPCO) genericDao.get(DDTipoBurofaxPCO.class,filtro1);
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getTipoBurofaxByCodigo: " + e);
 		}
 	
 		return tipoBurofax;
@@ -848,7 +795,7 @@ public class BurofaxManager implements BurofaxApi {
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idEnvio);
 			envioBurofax=(EnvioBurofaxPCO) genericDao.get(EnvioBurofaxPCO.class,filtro1);
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getEnvioBurofaxById: " + e);
 		}
 	
 		return envioBurofax;
@@ -863,9 +810,7 @@ public class BurofaxManager implements BurofaxApi {
 		try {
 			dicionarioEstadoBurofax = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDEstadoBurofaxPCO.class);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			logger.error(e);
+			logger.error("getEstadosBurofax: "+ e);
 		}
 		
 		return dicionarioEstadoBurofax;
@@ -898,7 +843,7 @@ public class BurofaxManager implements BurofaxApi {
 				genericDao.save(EnvioBurofaxPCO.class,envio);
 			}
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("guardaInformacionEnvio: " + e);
 		}
 		
 		
@@ -915,7 +860,7 @@ public class BurofaxManager implements BurofaxApi {
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", id);
 			resultadoBurofax=(DDResultadoBurofaxPCO) genericDao.get(DDResultadoBurofaxPCO.class,filtro1);
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getResultadoBurofaxPCOById: " + e);
 		}
 		
 		return resultadoBurofax;
@@ -932,7 +877,7 @@ public class BurofaxManager implements BurofaxApi {
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idEstado);
 			estadoBurofax=(DDEstadoBurofaxPCO) genericDao.get(DDEstadoBurofaxPCO.class,filtro1);
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getEstadoBurofaxById: " + e);
 		}
 		
 		return estadoBurofax;
@@ -949,80 +894,10 @@ public class BurofaxManager implements BurofaxApi {
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "envioId", idEnvio);
 			burofaxEnvio=(BurofaxEnvioIntegracionPCO) genericDao.get(BurofaxEnvioIntegracionPCO.class,filtro1);
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getBurofaxEnvioIntegracionByIdEnvio: " + e);
 		}
 		
 		return burofaxEnvio;
 	}
 		
-	private String replaceVariablesGeneracionBurofax(Long idPcoBurofax, String textoBuro){
-		
-		BurofaxPCO burofax=(BurofaxPCO) genericDao.get(BurofaxPCO.class,genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(idPcoBurofax)));
-		
-		String conCuentaAnterior = "";
-		String tipoIntervencion = "";
-		String aNombreDe = "";
-		String listaBienes = "";
-		
-		if(burofax.getContrato().getNroContrato()!=null){
-			conCuentaAnterior = "ANTERIORMENTE IDENTIFICADO CON EL NUM. ${NUM_CUENTA_ANTERIOR}";
-		}
-		
-		if(burofax.getTipoIntervencion().getCodigo().equals(DDTipoIntervencion.CODIGO_TITULAR_REGISTRAL)){
-			tipoIntervencion="TITULAR REGISTRAL";
-		}else if(burofax.getTipoIntervencion().getTitular()){
-			tipoIntervencion="TITULAR";
-		}else{
-			tipoIntervencion="FIADOR";
-		}
-		
-		if(burofax.getTipoIntervencion().getAvalista()){
-			aNombreDe = "A NOMBRE DE ${TITULAR_ORDEN_MENOR_CONTRATO} <br />";
-		}
-		
-		List<Bien> bienes = procedimientoManager.getBienesDeUnProcedimiento(burofax.getProcedimientoPCO().getProcedimiento().getId());
-		if(burofax.getTipoIntervencion().getCodigo().equals(DDTipoIntervencion.CODIGO_TITULAR_REGISTRAL) && bienes.size()>0){			
-			listaBienes += "<br />";
-			listaBienes += "[#list bienesEnt as bienEntidad]";
-			listaBienes += "<br />";
-			for(Bien bien : bienes){
-				NMBBienEntidad nmbe = genericDao.get(NMBBien.class, genericDao.createFilter(FilterType.EQUALS, "id", bien.getId())).getBienEntidad();
-				
-				listaBienes += "FINCA REGISTRAL NÚMERO ";
-				
-				if(!Checks.esNulo(nmbe) && !Checks.esNulo(nmbe.getNumFinca())){
-					listaBienes += "${bienEntidad.numFinca} ";
-				}else{
-					listaBienes += "[ERROR - No existe valor] ";
-				}
-				
-				listaBienes		+= "DEL REGISTRO DE LA PROPIEDAD NÚMERO ";
-				
-				if(!Checks.esNulo(nmbe) && !Checks.esNulo(nmbe.getNumRegistro())){
-					listaBienes += "${bienEntidad.numRegistro} ";
-				}else{
-					listaBienes += "[ERROR - No existe valor] ";
-				}
-				
-				listaBienes += "DE ";
-				
-				if(!Checks.esNulo(nmbe) && !Checks.esNulo(nmbe.getPoblacion())){
-					listaBienes += "${bienEntidad.poblacion} ";
-				}else{
-					listaBienes += "[ERROR - No existe valor] ";
-				}
-				
-				listaBienes += "<br />";		
-			}
-			listaBienes += "[/#list]";
-		}
-		
-		textoBuro = textoBuro.replace("#CON_CUENTA_ANTERIOR#", conCuentaAnterior);
-		textoBuro = textoBuro.replace("#TIPO_INTERVENCIO#", tipoIntervencion);
-		textoBuro = textoBuro.replace("#A_NOMBRE_DE#", aNombreDe);
-		textoBuro = textoBuro.replace("#LISTA_BIENES#", listaBienes);
-				
-		
-		return textoBuro;
-	}
 }

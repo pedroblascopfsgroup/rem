@@ -10,6 +10,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Repository;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
+import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
@@ -444,6 +446,10 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		if (!StringUtils.emtpyString(filtro.getDocAdjunto())) {
 			where.add(Restrictions.eq("documento.adjuntado", "01".equals(filtro.getDocAdjunto())));
+		}
+
+		if (!StringUtils.emtpyString(filtro.getDocSolicitudPrevia())) {
+			where.add(Restrictions.eq("documento.solicitudPrevia", "01".equals(filtro.getDocSolicitudPrevia())));
 		}
 
 		if (filtro.filtroSolicitudInformado() || esBusquedaPorDocumento) {

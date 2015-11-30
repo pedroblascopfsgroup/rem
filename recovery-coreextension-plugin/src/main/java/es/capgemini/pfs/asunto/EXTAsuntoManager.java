@@ -496,14 +496,17 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			}
 			adjuntosAsunto.addAll(creaObjetosEXTAsuntos(setAdjuntos, usuario, borrarOtrosUsu));
 		}
-		Set<EXTAdjuntoDto> adjuntosRecovery = creaObjetosEXTAsuntos(asunto.getAdjuntos(), usuario, borrarOtrosUsu);
-		Set<EXTAdjuntoDto> adjuntosRecovery2 = null;
-		if (iplus != null && iplus.instalado()) {
-			adjuntosRecovery2 = iplus.eliminarRepetidos(adjuntosRecovery, adjuntosAsunto);
-		} else {
-			adjuntosRecovery2 = adjuntosRecovery;
+		else{
+			adjuntosAsunto.addAll(creaObjetosEXTAsuntos(asunto.getAdjuntos(), usuario, borrarOtrosUsu));
 		}
-		adjuntosAsunto.addAll(adjuntosRecovery2);
+//		Set<EXTAdjuntoDto> adjuntosRecovery = creaObjetosEXTAsuntos(asunto.getAdjuntos(), usuario, borrarOtrosUsu);
+//		Set<EXTAdjuntoDto> adjuntosRecovery2 = null;
+//		if (iplus != null && iplus.instalado()) {
+//			adjuntosRecovery2 = iplus.eliminarRepetidos(adjuntosRecovery, adjuntosAsunto);
+//		} else {
+//			adjuntosRecovery2 = adjuntosRecovery;
+//		}
+//		adjuntosAsunto.addAll(adjuntosRecovery2);
 		
 		return ordenaListado(adjuntosAsunto);
 

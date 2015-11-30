@@ -27,7 +27,7 @@
 
 	<c:if test="${modeloFacturacion.tipoCorrector.codigo == 'MEO'}">
 		<pfsforms:textfield name="objetivoDeRecobro" labelKey="plugin.recobroConfig.modeloFacturacion.corrector.objetivoDeRecobro" 
-			label="**Objetivo de recobro" value="${modeloFacturacion.objetivoRecobro}" readOnly="true"  />
+			label="**Objetivo de eficacia" value="${modeloFacturacion.objetivoRecobro}%" readOnly="true"  />
 		objetivoDeRecobro.labelStyle = 'font-weight:bold; width:110px;'
 	</c:if>
 	
@@ -108,7 +108,7 @@
 			sortable="true" firstHeader="true" hidden="true"/>
 		
 		<pfs:defineHeader dataIndex="posicion"
-			captionKey="plugin.recobroConfig.modeloFacturacion.corrector.cabeceraPosicionRanking" caption="**Posicion"
+			captionKey="plugin.recobroConfig.modeloFacturacion.corrector.cabeceraPosicionRanking" caption="**Tramo de mejora"
 			sortable="true" />
 		
 		<pfs:defineHeader dataIndex="coeficiente"

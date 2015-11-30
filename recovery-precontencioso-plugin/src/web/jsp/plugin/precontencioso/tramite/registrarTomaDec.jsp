@@ -46,29 +46,8 @@ var bottomBar = [];
 	{
 		bottomBar.push(btnGuardar);
 	}
-	muestraBotonGuardar = 0;
 </c:if>
 
-if (muestraBotonGuardar==1){
-	var btnGuardar = new Ext.Button({
-		text : '<s:message code="app.guardar" text="**Guardar" />'
-		,iconCls : 'icon_ok'
-		,handler : function(){
-			//page.fireEvent(app.event.DONE);
-			page.submit({
-				eventName : 'ok'
-				,formPanel : panelEdicion
-				,success : function(){ page.fireEvent(app.event.DONE); }
-				,error : function(response,config){}
-			});
-		}
-	});
-	
-	//Si tiene m�s items que el propio label de descripci�n se crea el bot�n guardar
-	if (items.length > 1)	{
-		bottomBar.push(btnGuardar);
-	}
-}
 
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/botonCancelar.jsp" %>
 
@@ -101,7 +80,7 @@ docCompleta.on('select', function() {
 		procedimientoPropuesto.allowBlank = false;
 		procedimientoIniciar.allowBlank = true;
 		procedimientoIniciar.setDisabled(true);
-		procedimientoIniciar.setValue('');
+		procedimientoIniciar.setValue(procedimientoPropuesto.getValue());
 	}else{
 		fechaRecep.allowBlank = false;
 		docCompleta.allowBlank = false;
@@ -113,18 +92,22 @@ docCompleta.on('select', function() {
 		tipoProblema.setValue('');
 		procedimientoPropuesto.allowBlank = false;
 		procedimientoIniciar.allowBlank = false;
-		procedimientoIniciar.setDisabled(false);
+		if(tipoProblema.getValue() == cambioProcedimiento) {
+			procedimientoIniciar.setDisabled(false);
+		} else {
+			procedimientoIniciar.setDisabled(true);
+			procedimientoIniciar.setValue(procedimientoPropuesto.getValue());
+		}
 	}
 });
 
 tipoProblema.on('select', function() {
+	procedimientoIniciar.allowBlank = false;
 	if(tipoProblema.getValue() == cambioProcedimiento) {
-		procedimientoIniciar.allowBlank = false;
 		procedimientoIniciar.setDisabled(false);
 	}else{
-		procedimientoIniciar.allowBlank = true;
 		procedimientoIniciar.setDisabled(true);
-		procedimientoIniciar.setValue('');
+		procedimientoIniciar.setValue(procedimientoPropuesto.getValue());
 	}
 });
 

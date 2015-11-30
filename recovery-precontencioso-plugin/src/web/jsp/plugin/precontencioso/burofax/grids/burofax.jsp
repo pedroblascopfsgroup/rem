@@ -247,8 +247,7 @@
       			this.idArray.push(rec.get(this.idProperty));
       		}
       		
-      		if(actualizarBotonesBurofax()){
-      		
+      		if(actualizarBotonesBurofax()){      		
       			if(myCboxSelModel.getCount() == 1) {
 		      		validarBotonesSeleccionUnica();
 
@@ -877,9 +876,10 @@
 	var refrescarBurofaxGrid = function() {
 		burofaxStore.webflow({idProcedimiento: data.precontencioso.id});
 		idProcedimiento=data.precontencioso.id;
+		debugger;
+		gridBurofax.getSelectionModel().clearSelections();
 		actualizarBotonesBurofax();
 		
-
 	}
 	
 	var actualizarBotonesBurofax = function() {
@@ -903,6 +903,7 @@
 		return true;
 
 	}
+
 	
 	var comprobarEstadoBotones = function() {
 	

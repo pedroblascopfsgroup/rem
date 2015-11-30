@@ -43,13 +43,15 @@
 	});
 	
 	comboTiposGestor.on('select', function(){
-		
+	
 		comboDespachos.reset();
 		optionsDespachoStore.webflow({'idTipoGestor': comboTiposGestor.getValue(), 'incluirBorrados': true}); 
+		
 		comboGestor.reset();
-		comboDespachos.setDisabled(false);
+		comboGestor.setValue('');
+		optionsGestoresStore.removeAll();
 		
-		
+		comboDespachos.setDisabled(false);		
 	});
 	 
 	

@@ -30,12 +30,12 @@
 	<!-- ************* 
 		 GateWay para eventos de Convenios.
 		 No integrados en esta fase.
-		 *************	 
-	integration:gateway 
+		 ************* -->	 
+	<integration:gateway 
 		id="notificarEventosHayaBpmGW" 
 		default-request-channel="integra.salida.peticion" 
 		service-interface="es.pfsgroup.recovery.haya.integration.bpm.NotificarEventosBPMGateway"/>
-	-->
+	
 		
 	<!-- ************* 
 		 Cadena de transformación transforma el objeto de entrada (Entity de Recovery) en un DataContanier normalizado.
@@ -94,7 +94,7 @@
 		<constructor-arg>
 			<list>
 				<bean class="es.pfsgroup.recovery.integration.TypePayloadHeadersRegexRule">
-					<property name="tipo" value="BPM-FIN|DATOS-DECISION-PROCEDIMIENTO|DO-ACTIVAR-BPM|DO-FIN-ASUNTO" />
+					<property name="tipo" value="BPM-FIN|DATOS-DECISION-PROCEDIMIENTO|DO-ACTIVAR-BPM|DO-FIN-ASUNTO|DATOS_RIESGO_OPERACIONAL" />
 				</bean>
 				<bean class="es.pfsgroup.recovery.integration.DenyAllRule" />
 			</list>

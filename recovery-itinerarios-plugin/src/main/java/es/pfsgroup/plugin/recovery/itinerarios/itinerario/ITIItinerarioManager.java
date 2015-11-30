@@ -60,7 +60,7 @@ public class ITIItinerarioManager {
 		Itinerario itinerario;
 		if (dto.getId()==null){
 			throw new IllegalArgumentException(
-				"Para crear un nuevo itinerario se tendrá que hacer como copia de uno ya existente");
+				"Para crear un nuevo itinerario se tendrï¿½ que hacer como copia de uno ya existente");
 		}
 		else{
 			itinerario = itinerarioDao.get(dto.getId());
@@ -70,9 +70,9 @@ public class ITIItinerarioManager {
 			if(dto.getAmbitoExpediente()!= null){
 				itinerario.setAmbitoExpediente(ambitoExpedienteDao.get(dto.getAmbitoExpediente()));
 			}
-			else{
-				itinerario.setAmbitoExpediente(null);
-			}
+//			else{
+//				itinerario.setAmbitoExpediente(null);
+//			}
 			
 			if(dto.getPrePolitica()!=null){
 				itinerario.setPrePolitica(genericDao.get(DDTipoPolitica.class, genericDao.createFilter(FilterType.EQUALS, "id",dto.getPrePolitica())));
@@ -89,7 +89,7 @@ public class ITIItinerarioManager {
 	
 	/**
 	 * @param id del itinerario que se desea eliminar
-	 * elimana el itinerario cuyo id coincide con el que se le pasa como parámetro
+	 * elimana el itinerario cuyo id coincide con el que se le pasa como parï¿½metro
 	 * 
 	 */
 	@Transactional(readOnly=false)
@@ -113,7 +113,7 @@ public class ITIItinerarioManager {
 	
 	/**
 	 * @param id
-	 * Devuelve el objeto de tipo Itinerario cuyo id coincide con el que se le pasa como parámetro
+	 * Devuelve el objeto de tipo Itinerario cuyo id coincide con el que se le pasa como parï¿½metro
 	 */
 	@BusinessOperation(PluginItinerariosBusinessOperations.ITI_MGR_GET)
 	public Itinerario getItinerario(Long id){
@@ -123,8 +123,8 @@ public class ITIItinerarioManager {
 	
 	/**
 	 * @param id
-	 * Crea una copia del itinerario cuyo id coincide con el que se le pasa como parámetro
-	 * Creará una copia tanto de sus datos como de lo sus estados
+	 * Crea una copia del itinerario cuyo id coincide con el que se le pasa como parï¿½metro
+	 * Crearï¿½ una copia tanto de sus datos como de lo sus estados
 	 */
 	@Transactional(readOnly=false)
 	@BusinessOperation(PluginItinerariosBusinessOperations.ITI_MGR_COPIA)
@@ -135,7 +135,7 @@ public class ITIItinerarioManager {
 		copia.setNombre(original.getNombre()+"_copia");
 		copia.setAmbitoExpediente(original.getAmbitoExpediente());
 		copia.setdDtipoItinerario(original.getdDtipoItinerario());
-		// PRODUCTO-65: cuando creamos la copia del itinerario, añadimos que se copie también la prepolítica
+		// PRODUCTO-65: cuando creamos la copia del itinerario, aï¿½adimos que se copie tambiï¿½n la prepolï¿½tica
 		copia.setPrePolitica(original.getPrePolitica());
 		itinerarioDao.save(copia);
 		

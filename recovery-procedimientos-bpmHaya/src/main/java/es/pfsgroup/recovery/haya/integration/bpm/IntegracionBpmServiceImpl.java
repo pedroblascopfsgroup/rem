@@ -13,6 +13,7 @@ import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.utils.DbIdContextHolder;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.concursal.convenio.model.Convenio;
+import es.pfsgroup.recovery.hrebcc.dto.ActualizarRiesgoOperacionalDto;
 
 @Service("IntegracionBpmServiceImplHaya")
 public class IntegracionBpmServiceImpl implements IntegracionBpmService {
@@ -53,6 +54,24 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
 			});
     	} else {
     		notificacionGateway.enviar(convenio, TIPO_CAB_CONVENIO, DbIdContextHolder.getDbId());
+    	}
+	}
+	
+	@Override
+	public void enviarDatos(final ActualizarRiesgoOperacionalDto riesgoOperacional) {
+    	if (!isActive() || notificacionGateway==null) {
+			return;
+		}
+    	if (isTransactional()) {
+	    	TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+	    		@Override
+	    		public void beforeCommit(boolean readOnly) {
+	    			super.beforeCommit(readOnly);
+	    			notificacionGateway.enviar(riesgoOperacional, TIPO_DATOS_RIESGO_OPERACIONAL, DbIdContextHolder.getDbId());
+	    		}
+			});
+    	} else {
+    		notificacionGateway.enviar(riesgoOperacional, TIPO_DATOS_RIESGO_OPERACIONAL, DbIdContextHolder.getDbId());
     	}
 	}	
 }

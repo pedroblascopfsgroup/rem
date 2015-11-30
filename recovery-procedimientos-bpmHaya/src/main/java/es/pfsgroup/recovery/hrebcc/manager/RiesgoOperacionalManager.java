@@ -4,13 +4,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
-import sun.reflect.generics.visitor.Reifier;
 import es.capgemini.pfs.asunto.ProcedimientoManager;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.contrato.dao.EXTContratoDao;
@@ -18,10 +16,10 @@ import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.EXTContrato;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.recovery.haya.integration.bpm.IntegracionBpmService;
 import es.pfsgroup.recovery.hrebcc.api.RiesgoOperacionalApi;
 import es.pfsgroup.recovery.hrebcc.dto.ActualizarRiesgoOperacionalDto;
 import es.pfsgroup.recovery.hrebcc.model.CntRiesgoOperacional;
@@ -42,6 +40,9 @@ public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 	
 	@Autowired
 	ProcedimientoManager procedimientoManager;
+	
+	@Autowired
+	private IntegracionBpmService bpmIntegracionService;
 	
 	@Override
 	@Transactional
@@ -69,6 +70,10 @@ public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 				cntRiesgo.setRiesgoOperacional(riesgoOperacional);
 				
 				genericDao.save(CntRiesgoOperacional.class, cntRiesgo);
+				
+				if(dto.isEnviarDatos()) {
+					bpmIntegracionService.enviarDatos(dto);
+				}
 			}
 		}
 	}

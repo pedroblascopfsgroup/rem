@@ -26,7 +26,7 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
-    V_COD_PROCEDIMIENTO VARCHAR (20 CHAR) := 'H003';
+    V_COD_PROCEDIMIENTO VARCHAR (20 CHAR) := 'H004';
     
     VAR_TABLENAME VARCHAR2(50 CHAR); -- Nombre de la tabla a crear
     VAR_SEQUENCENAME VARCHAR2(50 CHAR); -- Nombre de la tabla a crear
@@ -36,8 +36,8 @@ DECLARE
     TYPE T_TIPO_TFI IS TABLE OF VARCHAR2(5000);
     TYPE T_ARRAY_TFI IS TABLE OF T_TIPO_TFI;
     V_TIPO_TFI T_ARRAY_TFI := T_ARRAY_TFI(
-		T_TIPO_TFI('H003_SenyalamientoSubasta','5','currency','costasLetrado','Costas del letrado','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
-		T_TIPO_TFI('H003_SenyalamientoSubasta','6','currency','costasProcurador','Costas del procurador','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD')
+		T_TIPO_TFI('H004_SenyalamientoSubasta','5','currency','costasLetrado','Costas del letrado','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+		T_TIPO_TFI('H004_SenyalamientoSubasta','6','currency','costasProcurador','Costas del procurador','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD')
 		
 		); 
     V_TMP_TIPO_TFI T_TIPO_TFI;
@@ -52,10 +52,10 @@ BEGIN
 	/* ------------------- --------------------------------- */
 	 V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
 			  ' SET TAP_SCRIPT_VALIDACION_JBPM = ''(((valores[''''H003_SenyalamientoSubasta''''][''''principal'''']).toDouble() * 5 / 100) >= ((valores[''''H003_SenyalamientoSubasta''''][''''costasLetrado'''']).toDouble())) ? null :  ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;"><p>&iexcl;Atenci&oacute;n! Las costas del letrado no pueden superar el 5% del principal.</p></div>'''' '' ' ||
-			  ' WHERE TAP_CODIGO = ''H003_SenyalamientoSubasta''';
+			  ' WHERE TAP_CODIGO = ''H004_SenyalamientoSubasta''';
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
-    DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H003_SenyalamientoSubasta actualizada.');
+    DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H004_SenyalamientoSubasta actualizada.');
     
  
     
@@ -65,10 +65,10 @@ BEGIN
     
     V_MSQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS' ||
 			  ' SET TFI_ORDEN = 7' ||
-			  ' WHERE TFI_NOMBRE = ''observaciones'' AND TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H003_SenyalamientoSubasta'')';
+			  ' WHERE TFI_NOMBRE = ''observaciones'' AND TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H004_SenyalamientoSubasta'')';
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
-    DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H003_SenyalamientoSubasta actualizada.');
+    DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H004_SenyalamientoSubasta actualizada.');
     
 	
 	

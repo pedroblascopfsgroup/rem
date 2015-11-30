@@ -11,7 +11,6 @@
 
 
 <fwk:page>
-	debugger;
 	Ext.util.CSS.createStyleSheet("button.icon_copiar { background-image: url('../img/plugin/itinerarios/copia.png');}");
 
 	var codigoSeguimientoSistematico = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDTipoItinerario.ITINERARIO_SEGUIMIENTO_SISTEMATICO"/>';

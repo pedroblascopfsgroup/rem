@@ -100,7 +100,6 @@
 	
 	
 	var recargarAmbitoExpediente = function(){
-		debugger;
 		ambitoExpediente.store.removeAll();
 		ambitoExpediente.clearValue();
 		if (dDtipoItinerario.getValue()!=null && dDtipoItinerario.getValue()!=''){

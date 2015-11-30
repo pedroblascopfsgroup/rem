@@ -12,6 +12,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +68,11 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	
 	@Autowired
 	private AdjuntoAssembler adjuntoAssembler;
+	
+    @Resource
+    Properties appProperties;
+    
+    private final static String GESTOR_DOCUMENTAL_WS_ACTIVADO = "gestor.documental.cajamar.ws.activado"; 
 
 	@Override
 	public List<? extends EXTAdjuntoDto> getAdjuntosConBorrado(Long id) {
@@ -364,7 +372,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	private boolean esEntidadCajamar(){
 		
 		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		if(ENTIDAD_CAJAMAR.equals(usuario.getEntidad().getDescripcion())){
+		if(ENTIDAD_CAJAMAR.equals(usuario.getEntidad().getDescripcion()) && Boolean.parseBoolean(appProperties.getProperty(GESTOR_DOCUMENTAL_WS_ACTIVADO))){
 			return true;
 		}else{
 			return false;	

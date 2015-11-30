@@ -2,18 +2,27 @@ package es.pfsgroup.recovery.haya.integration.bpm;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.core.Message;
-import org.springframework.integration.message.MessageBuilder;
 
+import es.capgemini.devon.exception.FrameworkException;
+import es.capgemini.pfs.contrato.ContratoManager;
+import es.capgemini.pfs.contrato.model.Contrato;
 import es.pfsgroup.concursal.convenio.ConvenioManager;
 import es.pfsgroup.concursal.convenio.model.Convenio;
+import es.pfsgroup.recovery.hrebcc.dto.ActualizarRiesgoOperacionalDto;
+import es.pfsgroup.recovery.hrebcc.manager.RiesgoOperacionalManager;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
-import es.pfsgroup.recovery.integration.TypePayload;
 import es.pfsgroup.recovery.integration.bpm.DiccionarioDeCodigos;
 
 public class EntityToPayloadTransformer extends es.pfsgroup.recovery.integration.bpm.EntityToPayloadTransformer {
 
     @Autowired
 	private ConvenioManager convenioManager;
+    
+    @Autowired
+	private RiesgoOperacionalManager riesgoOperacionalManager;
+    
+    @Autowired
+	private ContratoManager contratoManager;
 	
 	public EntityToPayloadTransformer(DiccionarioDeCodigos diccionarioCodigos) {
 		super(diccionarioCodigos);
@@ -30,12 +39,26 @@ public class EntityToPayloadTransformer extends es.pfsgroup.recovery.integration
 
 		String grpId = convenioPayload.getAsunto().getGuid();
 		Message<DataContainerPayload> newMessage = createMessage(message,  data, grpId);
-/*		Message<DataContainerPayload> newMessage = MessageBuilder
-				.withPayload(data)
-				.copyHeaders(message.getHeaders())
-				.setHeaderIfAbsent(TypePayload.HEADER_MSG_DESC, convenioPayload.getAsunto().getGuid())
-				.build();
-		*/
+
 		return newMessage;
+	}
+	
+	public Message<DataContainerPayload> transformRIO(Message<ActualizarRiesgoOperacionalDto> message) {
+		
+		ActualizarRiesgoOperacionalDto riesgoOperacionalDto = message.getPayload();
+		Contrato contrato = contratoManager.get(riesgoOperacionalDto.getIdContrato());
+		
+		if(contrato != null) {
+			DataContainerPayload data = getNewPayload(message);
+			RiesgoOperacionalPayload riesgoOperacionalPayload = new RiesgoOperacionalPayload(data);
+			riesgoOperacionalPayload.build(riesgoOperacionalDto, contrato.getNroContrato());
+			
+			Message<DataContainerPayload> newMessage = createMessage(message,  data, "CNT-" + contrato.getNroContrato());
+	
+			return newMessage;
+		}
+		else {
+			throw new FrameworkException("Error en el método transformRIO: no se ha encontrado el contrato con ID " + riesgoOperacionalDto.getIdContrato());
+		}
 	}
 }

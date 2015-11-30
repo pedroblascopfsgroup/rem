@@ -1265,7 +1265,26 @@ BEGIN
            DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.ANA_ANALIS_ACUERDO... Se han eliminado '||EXISTE||' registros');
            COMMIT;
            PRO_KEYS_STATUS(V_ESQUEMA, 'ANA_ANALIS_ACUERDO', 'ENABLE');
-      END IF; 
+      END IF;
+      
+      EXISTE := 0;
+      V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.ACU_OPERACIONES_TERMINOS WHERE TEA_ID IN (
+                                                    SELECT TEA_ID 
+                                                    FROM '||V_ESQUEMA||'.TEA_TERMINOS_ACUERDO TEA
+                                                      JOIN '||V_ESQUEMA||'.ACU_ACUERDO_PROCEDIMIENTOS ACU ON TEA.ACU_ID = ACU.ACU_ID
+                                                      JOIN '||V_ESQUEMA||'.TABLA_TMP_ASU TMP ON ACU.ASU_ID = TMP.ASU_ID)';
+      EXECUTE IMMEDIATE V_SQL INTO EXISTE;
+      IF (EXISTE>0) THEN
+           PRO_KEYS_STATUS(V_ESQUEMA, 'ACU_OPERACIONES_TERMINOS', 'DISABLE');
+           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.ACU_OPERACIONES_TERMINOS WHERE TEA_ID IN (
+                                                    SELECT TEA_ID 
+                                                    FROM '||V_ESQUEMA||'.TEA_TERMINOS_ACUERDO TEA
+                                                      JOIN '||V_ESQUEMA||'.ACU_ACUERDO_PROCEDIMIENTOS ACU ON TEA.ACU_ID = ACU.ACU_ID
+                                                      JOIN '||V_ESQUEMA||'.TABLA_TMP_ASU TMP ON ACU.ASU_ID = TMP.ASU_ID)';
+           DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.ACU_OPERACIONES_TERMINOS... Se han eliminado '||EXISTE||' registros');
+           COMMIT;
+           PRO_KEYS_STATUS(V_ESQUEMA, 'ACU_OPERACIONES_TERMINOS', 'ENABLE');
+      END IF;
 
       -- BIE_TEA
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.BIE_TEA... Comprobando si existen registros para el usuario MIGRACM01');
@@ -1523,6 +1542,19 @@ BEGIN
            DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.PEX_PERSONAS_EXPEDIENTE... Se han eliminado '||EXISTE||' registros');
            COMMIT;
            PRO_KEYS_STATUS(V_ESQUEMA, 'PEX_PERSONAS_EXPEDIENTE', 'ENABLE');
+      END IF; 
+      
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.SCX_SOL_CANCELAC_EXP... Comprobando si existen registros para el usuario MIGRACM01');
+      EXISTE := 0;
+      V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.SCX_SOL_CANCELAC_EXP WHERE EXP_ID IN ( SELECT EXP_ID FROM '||V_ESQUEMA||'.TABLA_TMP_EXP )';
+      EXECUTE IMMEDIATE V_SQL INTO EXISTE;
+      IF (EXISTE>0) THEN
+           PRO_KEYS_STATUS(V_ESQUEMA, 'SCX_SOL_CANCELAC_EXP', 'DISABLE');
+           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.SCX_SOL_CANCELAC_EXP 
+           WHERE EXP_ID IN ( SELECT EXP_ID FROM '||V_ESQUEMA||'.TABLA_TMP_EXP )';
+           DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.SCX_SOL_CANCELAC_EXP... Se han eliminado '||EXISTE||' registros');
+           COMMIT;
+           PRO_KEYS_STATUS(V_ESQUEMA, 'SCX_SOL_CANCELAC_EXP', 'ENABLE');
       END IF; 
 
 --    /********************

@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -333,7 +334,7 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 		BigDecimal tipoInteresAgrupado = null;
 		BigDecimal sumIntereses = BigDecimal.ZERO;
 		int i = 0;
-
+		Date fechaAuxIntOrd = new Date();
 		for (RecibosLiqVO recibo : recibosLiq) {
 			i++;
 
@@ -347,11 +348,12 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 			// agrupacion de intereses ordinarios del mismo tipo de interes
 			if (tipoInteresAgrupado.equals(tipoInteresActual)) {
 				sumIntereses = sumIntereses.add(recibo.getRCB_IMPRTV());
+				fechaAuxIntOrd = recibo.getRCB_FEVCTR();
 			} else {
 				if (!BigDecimal.ZERO.equals(recibo.getRCB_CDINTS())) {
 					// nuevo concepto basado en la sumatoria de los intereses anteriores
 					saldo = calculateSaldo(saldo, sumIntereses, null);
-					conceptos.add(new ConceptoLiqVO(recibo.getRCB_FEVCTR(), "Intereses al " + tipoInteresAgrupado + " %", sumIntereses, null, saldo));
+					conceptos.add(new ConceptoLiqVO(fechaAuxIntOrd, "Intereses al " + formateaImporteDecimal(tipoInteresAgrupado) + " %", sumIntereses, null, saldo));
 	
 					sumIntereses = BigDecimal.ZERO;
 					sumIntereses = sumIntereses.add(recibo.getRCB_IMPRTV());
@@ -362,7 +364,7 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 			// En caso de que sea el ultimo registro de la lista se añade un nuevo concepto
 			if (i == recibosLiq.size()) {
 				saldo = calculateSaldo(saldo, sumIntereses, null);
-				conceptos.add(new ConceptoLiqVO(recibo.getRCB_FEVCTR(), "Intereses al " + tipoInteresAgrupado + " %", sumIntereses, null, saldo));
+				conceptos.add(new ConceptoLiqVO(recibo.getRCB_FEVCTR(), "Intereses al " + formateaImporteDecimal(tipoInteresAgrupado) + " %", sumIntereses, null, saldo));
 			}
 		}
 
@@ -387,7 +389,7 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 				if (!BigDecimal.ZERO.equals(recibo.getRCB_CDINTM())) {
 					// nuevo concepto basado en la sumatoria de los intereses anteriores
 					saldo = calculateSaldo(saldo, sumIntereses, null);
-					conceptos.add(new ConceptoLiqVO(datosGeneralesLiq.getDGC_FEVACM(), "Intereses de demora al " + tipoInteresAgrupado + " %", sumIntereses, null, saldo));
+					conceptos.add(new ConceptoLiqVO(datosGeneralesLiq.getDGC_FEVACM(), "Intereses de demora al " + formateaImporteDecimal(tipoInteresAgrupado) + " %", sumIntereses, null, saldo));
 	
 					sumIntereses = BigDecimal.ZERO;
 					sumIntereses = sumIntereses.add(recibo.getRCB_IMINDR());
@@ -398,13 +400,17 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 			// En caso de que sea el ultimo registro de la lista se añade un nuevo concepto
 			if (i == recibosLiq.size()) {
 				saldo = calculateSaldo(saldo, sumIntereses, null);
-				conceptos.add(new ConceptoLiqVO(datosGeneralesLiq.getDGC_FEVACM(), "Intereses de demora al " + tipoInteresAgrupado + " %", sumIntereses, null, saldo));
+				conceptos.add(new ConceptoLiqVO(datosGeneralesLiq.getDGC_FEVACM(), "Intereses de demora al " + formateaImporteDecimal(tipoInteresAgrupado) + " %", sumIntereses, null, saldo));
 			}
 		}
 
 		HashMap<String, Object> datosLiquidacion = new HashMap<String, Object>();
 		datosLiquidacion.put("CONCEPTOS", conceptos);
 		return datosLiquidacion;
+	}
+
+	private String formateaImporteDecimal(BigDecimal importe) {
+		return importe.toString().replace(".", ",");
 	}
 
 	// saldo = saldo + debe - haber

@@ -69,13 +69,33 @@
 		valueField="id"
 		displayField="despacho" 
 		autoload="${despacho!= null?'true':'false'}" obligatory="true"/>
+	
+	<%-- Campo oculto para controlar que si se elige un 'Tipo Despacho' no se pueda dejar
+	 el campo 'Despacho' vacío --%>
+	var permiteGuardar = new Ext.form.TextField({
+                hidden: true
+                ,value: true
+        });	
 
 	tipoDespacho.on('select',function(){
-		despachoExterno.setDisabled(false);
-		despachoExterno.reload(true);
+		if(tipoDespacho.getValue() == ""){
+			despachoExterno.setValue('');
+			despachoExterno.setDisabled(true);
+			permiteGuardar.setValue(true);
+        }
+        else
+        {
+        	despachoExterno.setDisabled(false);
+			despachoExterno.reload(true);
+			permiteGuardar.setValue(false);
+        }
 	});
 		
-	
+	despachoExterno.on('select',function(){
+        if(tipoDespacho.getValue() != ""){
+            permiteGuardar.setValue(true);
+        }
+	});
 	
 	if (usuarioExterno.checked == true){
 			tipoDespacho.setDisabled(false);
@@ -114,6 +134,7 @@
 		usuarioExterno="usuarioExterno"
 		usuarioGrupo="usuarioGrupo"
 		despachoExterno="despachoExterno"
+		permiteGuardar="permiteGuardar"
 		/>
 
 

@@ -47,6 +47,7 @@ var botonFinalizarAsunto =  new Ext.Button({
 			,handler:function(){
 				
 				if(data.toolbar['puedeFinalizarAsunto'] == true){
+					
 						var w = app.openWindow({
 							flow : 'plugin.mejoras.asuntos.finalizarAsunto'
 							,title : 'Finalizar asunto'
@@ -291,6 +292,8 @@ var botonFinalizarAsunto =  new Ext.Button({
 		
 		var condition = '';
 		for (i=0; i < buttonsL_asunto.length; i++){
+			
+		
 			if (buttonsL_asunto[i].condition!=null && buttonsL_asunto[i].condition!=''){
 				condition = eval(buttonsL_asunto[i].condition);
 				esVisible.push([buttonsL_asunto[i], condition]);
@@ -316,6 +319,12 @@ var botonFinalizarAsunto =  new Ext.Button({
 			entidad.refrescar();
 		}
 	});
+	
+	<%-- BKREC-1537 Como ya se va a adjuntar un botonFinalizar, eliminamos el que viene en buttosL_asunto ya que hacen lo mismo --%>
+	for (i=0; i < buttonsL_asunto.length; i++){
+		if(buttonsL_asunto[i].getText().localeCompare("Finalizar asunto") == 0)
+			buttonsL_asunto.remove(buttonsL_asunto[i]);
+	}
 	
 	toolbar.add(botonFinalizarAsunto);
 	toolbar.add(buttonsL_asunto);

@@ -244,7 +244,11 @@
 		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.datosPrincipales.titulo" text="**Datos Principales"/>'
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
 	    ,items : [{items:[mensajeSolvenciaNoEncontrada, origen, codigoInterno ,codBien <sec:authorize ifAllGranted="PERSONALIZACION-HY">, garantiaBien </sec:authorize>, tipoBien, solvenciaNoEncontrada, obraEnCurso, dueDilligence, situacionPosesoria,viviendaHabitual,usoPromotorMayorDosAnyos,tipoSubasta]},
-				  {items:[numeroActivo,licenciaPrimeraOcupacion,primeraTransmision,transmitentePromotor,contratoAlquiler,arrendadoSinOpcCompra,Descripcion]}
+				  {items:[
+				  <%-- No aplica para cajamar
+				  numeroActivo,
+				  --%>
+				  licenciaPrimeraOcupacion,primeraTransmision,transmitentePromotor,contratoAlquiler,arrendadoSinOpcCompra,Descripcion]}
 				 ]
 	});
 	

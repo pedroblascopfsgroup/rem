@@ -11,7 +11,7 @@ public class ActualizarRiesgoOperacionalDto extends WebDto {
 	
 	private Long idContrato;
 	private String codRiesgoOperacional;
-	
+	private boolean enviarDatos = true;
 	
 	public Long getIdContrato() {
 		return idContrato;
@@ -26,6 +26,11 @@ public class ActualizarRiesgoOperacionalDto extends WebDto {
 		this.codRiesgoOperacional = codRiesgoOperacional;
 	}
 	
+	public boolean isEnviarDatos() {
+		return enviarDatos;
+	}
 	
-
+	public void setEnviarDatos(boolean enviarDatos) {
+		this.enviarDatos = enviarDatos;
+	}
 }

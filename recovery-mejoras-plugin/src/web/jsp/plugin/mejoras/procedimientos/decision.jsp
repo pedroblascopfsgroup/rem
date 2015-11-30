@@ -25,7 +25,7 @@
 			|| '${decisionProcedimiento.estadoDecision.codigo}' == '<fwk:const value="es.capgemini.pfs.decisionProcedimiento.model.DDEstadoDecision.ESTADO_RECHAZADO" />' || (${isConsulta != null} && ${isConsulta}))
 			modoConsulta=true;
 	</c:if>
-	<c:if test="${decisionProcedimiento!=null and empty decisionProcedimiento.procedimiento.processBPM}" >
+	<c:if test="${decisionProcedimiento!=null and empty decisionProcedimiento.procedimiento.processBPM and not empty decisionProcedimiento.procedimiento.guid}" >
 	procedimientoRemoto = true;
 	</c:if>
 	

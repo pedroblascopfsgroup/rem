@@ -96,7 +96,11 @@ var formBusquedaBienes=function(){
 					,items: [txtCodPostal, comboTipoBien, txtValorHasta, txtTotalCargasHasta /*, txtValor, txtTotalCargas*/, txtTasacionHasta, txtTipoSubastaHasta]
 				},{
 					layout:'form'
-					,items: [txtNumActivo, txtNumRegistro, txtReferenciaCatastral, txtSubtipoBien, txtNumFinca]
+					,items: [
+					<sec:authorize ifNotGranted="PERSONALIZACION-BCC">
+					txtNumActivo,
+					</sec:authorize> 
+					txtNumRegistro, txtReferenciaCatastral, txtSubtipoBien, txtNumFinca]
 				}]
 	});
 
@@ -309,7 +313,9 @@ var formBusquedaBienes=function(){
 	var bienesCm = new Ext.grid.ColumnModel([
 	    {header : '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.numFinca" text="**N&uacute;mero finca"/>', dataIndex : 'numFinca' }
 	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.refCatastral" text="**R. Catastral"/>', width: 200, sortable: false, dataIndex: 'refCatastral'}
-		,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.numActivo" text="**Nï¿½ activo"/>', sortable: false, dataIndex: 'numActivo'}
+	    <sec:authorize ifNotGranted="PERSONALIZACION-BCC">
+		,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.numActivo" text="**Nº activo"/>', sortable: false, dataIndex: 'numActivo'}
+		</sec:authorize>
 	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.tipo" text="**Tipo"/>', width: 200, sortable: false, dataIndex: 'tipo'}
 	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.descripcion" text="**Descipciï¿½n"/>', width: 200, sortable: true, dataIndex: 'descripcionBien'}
 	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.poblacion" text="**Poblaciï¿½n"/>', width: 200, sortable: false, dataIndex: 'poblacion'}

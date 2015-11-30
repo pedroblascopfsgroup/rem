@@ -428,8 +428,6 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	@BusinessOperation(BO_PCO_CAMBIAR_ESTADO_EXPEDIENTE)
 	public void cambiarEstadoExpediente(Long idProcedimiento, String codigoEstado) {
 		
-		Date fechaCambio = new Date();
-		
 		//ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
 		ProcedimientoPCO procedimientoPco = genericDao.get(ProcedimientoPCO.class, 
 				genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProcedimiento));
@@ -437,18 +435,32 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		
 		if (!Checks.esNulo(procedimientoPco)) {
 			HistoricoEstadoProcedimientoPCO historico = procedimientoPco.getEstadoActualByHistorico();
-			if (!Checks.esNulo(historico)) {
-				historico.setFechaFin(fechaCambio);
-				genericDao.update(HistoricoEstadoProcedimientoPCO.class, historico);
+			boolean existeHistorico = !Checks.esNulo(historico);
+			boolean cambioEstado = existeHistorico && !codigoEstado.equals(historico.getEstadoPreparacion().getCodigo());
+			Date fechaCambio = new Date();			
+			if (cambioEstado) {
+				cerrarEstadoAnterior(fechaCambio, historico);					
+				crearNuevoEstado(codigoEstado, fechaCambio, procedimientoPco);
+			} else if (!existeHistorico) {
+				crearNuevoEstado(codigoEstado, fechaCambio, procedimientoPco);				
 			}
-	
-			HistoricoEstadoProcedimientoPCO historicoNuevoRegistro = new HistoricoEstadoProcedimientoPCO();
-			historicoNuevoRegistro.setProcedimientoPCO(procedimientoPco);
-			DDEstadoPreparacionPCO nuevoEstado = (DDEstadoPreparacionPCO) diccionarioApi.dameValorDiccionarioByCod(DDEstadoPreparacionPCO.class, codigoEstado);
-			historicoNuevoRegistro.setEstadoPreparacion(nuevoEstado);
-			historicoNuevoRegistro.setFechaInicio(fechaCambio);
-			genericDao.save(HistoricoEstadoProcedimientoPCO.class, historicoNuevoRegistro);
 		}
+	}
+
+	private void cerrarEstadoAnterior(Date fechaCambio,
+			HistoricoEstadoProcedimientoPCO historico) {
+		historico.setFechaFin(fechaCambio);
+		genericDao.update(HistoricoEstadoProcedimientoPCO.class, historico);
+	}
+
+	private void crearNuevoEstado(String codigoEstado, Date fechaCambio,
+			ProcedimientoPCO procedimientoPco) {
+		HistoricoEstadoProcedimientoPCO historicoNuevoRegistro = new HistoricoEstadoProcedimientoPCO();
+		historicoNuevoRegistro.setProcedimientoPCO(procedimientoPco);
+		DDEstadoPreparacionPCO nuevoEstado = (DDEstadoPreparacionPCO) diccionarioApi.dameValorDiccionarioByCod(DDEstadoPreparacionPCO.class, codigoEstado);
+		historicoNuevoRegistro.setEstadoPreparacion(nuevoEstado);
+		historicoNuevoRegistro.setFechaInicio(fechaCambio);
+		genericDao.save(HistoricoEstadoProcedimientoPCO.class, historicoNuevoRegistro);
 	}
 	
 	public String dameProcedimientoPropuesto(Long idProcedimiento) {

@@ -676,7 +676,53 @@ function(entidad,page){
 		var solicitudYPermisos = (solicitud == null || solicitud=='') && (permisosGestor ||  permisosSupervisor);
 		
 		var subMenusVisibles = 0;
-
+		
+		var permiteElevar = false;
+		var permiteDevolver = false;
+		function elevarDevolver(){
+		var estados = entidad.getData('estados');
+			if(d.codigoEstado == 'CE'){
+				for(var i = 0; i < estados.length; i++){
+					if(estados[i].codigo == 'RE'){
+						permiteElevar = true;
+					}
+				}	
+			}
+			
+			if(d.codigoEstado == 'RE'){
+				for(var i = 0; i < estados.length; i++){
+					if(estados[i].codigo == 'DC'){
+						permiteElevar = true;
+					}
+										
+					if(estados[i].codigo == 'CE')
+					{
+						permiteDevolver = true;
+					}
+				}	
+			}
+			
+			if(d.codigoEstado == 'DC'){
+				for(var i = 0; i < estados.length; i++){
+					if(estados[i].codigo == 'FP'){
+						permiteElevar = true;
+					}
+					
+					if(estados[i].codigo == 'RE'){
+						permiteDevolver = true;
+					}
+				}	
+			}
+			
+			if(d.codigoEstado == 'FP'){
+				for(var i = 0; i < estados.length; i++){
+					if(estados[i].codigo == 'DC'){
+						permiteDevolver = true;
+					}
+				}	
+			}
+		}
+		
 		function showHide(action, elements___){
 			for(var i=1;i<arguments.length;i++){
 				if (action){
@@ -691,18 +737,27 @@ function(entidad,page){
 		//inicialmente ocultamos todos
 		showHide(false, 'expediente-accion0-elevarRevision', 'expediente-accion1-elevarComite',  'expediente-accion2-devolverRevision',  'expediente-accion3-devolverComite',  'expediente-accion4-solicitarCancelacion',  'expediente-accion5-verCancelacion',  'expediente-accion6-cancelacionExpediente', 'expediente-accion7-formulacionPropuesta', 'expediente-accion8-devolverComite');
 		if ( solicitudYPermisos){
+			elevarDevolver();
 			switch(d.codigoEstado){
 				case 'CE' : 
-					showHide(estadoExpediente == EXP_ACTIVO, 'expediente-accion0-elevarRevision');
+					if(permiteElevar){
+						showHide(estadoExpediente == EXP_ACTIVO, 'expediente-accion0-elevarRevision');
+					}
 					break;
 				case 'RE' :
-					showHide(estadoExpediente ==  EXP_ACTIVO ,'expediente-accion1-elevarComite','expediente-accion3-devolverComite');
+					if(permiteElevar && permiteDevolver){
+						showHide(estadoExpediente ==  EXP_ACTIVO ,'expediente-accion1-elevarComite','expediente-accion3-devolverComite');
+					}
 					break;
 				case 'DC' : 
-					showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion7-formulacionPropuesta','expediente-accion2-devolverRevision');
+					if(permiteElevar && permiteDevolver){
+						showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion7-formulacionPropuesta','expediente-accion2-devolverRevision');
+					}
 					break;
 				case 'FP' :
-					showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion8-devolverComite');
+					if(permiteDevolver){
+						showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion8-devolverComite');
+					}
 					break;
 				default : 
 					showHide(estadoExpediente == EXP_CONGELADO, 'expediente-accion2-devolverRevision' );

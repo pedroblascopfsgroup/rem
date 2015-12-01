@@ -198,20 +198,11 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		
 		boolean finalizar = true;
 		HistoricoEstadoProcedimientoPCO historico = procedimientoPco.getEstadoActualByHistorico();
-		if (!DDEstadoPreparacionPCO.PREPARADO.equals(historico.getEstadoPreparacion().getCodigo())) {				
-			historico.setFechaFin(new Date());
-			genericDao.update(HistoricoEstadoProcedimientoPCO.class, historico);
-			
-			HistoricoEstadoProcedimientoPCO historicoNuevoRegistro = new HistoricoEstadoProcedimientoPCO();
-			historicoNuevoRegistro.setProcedimientoPCO(procedimientoPco);
-			DDEstadoPreparacionPCO estadoPreparado = (DDEstadoPreparacionPCO)diccionarioApi.dameValorDiccionarioByCod(DDEstadoPreparacionPCO.class, 
-					DDEstadoPreparacionPCO.PREPARADO);
-			historicoNuevoRegistro.setEstadoPreparacion(estadoPreparado);
-			historicoNuevoRegistro.setFechaInicio(new Date());
-			genericDao.save(HistoricoEstadoProcedimientoPCO.class, historicoNuevoRegistro);
-		} else {
+		if (DDEstadoPreparacionPCO.PREPARADO.equals(historico.getEstadoPreparacion().getCodigo())) {
 			finalizar = false;
-		}	
+		}
+		cambiarEstadoExpediente(idProcedimiento, DDEstadoPreparacionPCO.PREPARADO);
+
 		if (finalizar) {
 			avanzarTareaPrepararExpediente(procedimientoPco);
 		}
@@ -252,20 +243,23 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			throw new BusinessOperationException("Estado incorrecto");
 		}
 
-		// Actualizar fecha fin estado actual
-		HistoricoEstadoProcedimientoPCO historico = procedimientoPco.getEstadoActualByHistorico();
-		historico.setFechaFin(new Date());
-		genericDao.update(HistoricoEstadoProcedimientoPCO.class, historico);
-
-		// Nuevo registro en historico con el nuevo estado
-		DDEstadoPreparacionPCO estadoPreparacion = (DDEstadoPreparacionPCO) diccionarioApi.dameValorDiccionarioByCod(DDEstadoPreparacionPCO.class, DDEstadoPreparacionPCO.PREPARACION);
-
-		HistoricoEstadoProcedimientoPCO historicoNuevoRegistro = new HistoricoEstadoProcedimientoPCO();
-		historicoNuevoRegistro.setProcedimientoPCO(procedimientoPco);
-		historicoNuevoRegistro.setEstadoPreparacion(estadoPreparacion);
-		historicoNuevoRegistro.setFechaInicio(new Date());
-		genericDao.save(HistoricoEstadoProcedimientoPCO.class, historicoNuevoRegistro);	
 		
+//		// Actualizar fecha fin estado actual
+//		HistoricoEstadoProcedimientoPCO historico = procedimientoPco.getEstadoActualByHistorico();
+//		historico.setFechaFin(new Date());
+//		genericDao.update(HistoricoEstadoProcedimientoPCO.class, historico);
+//
+//		// Nuevo registro en historico con el nuevo estado
+//		DDEstadoPreparacionPCO estadoPreparacion = (DDEstadoPreparacionPCO) diccionarioApi.dameValorDiccionarioByCod(DDEstadoPreparacionPCO.class, DDEstadoPreparacionPCO.PREPARACION);
+//
+//		HistoricoEstadoProcedimientoPCO historicoNuevoRegistro = new HistoricoEstadoProcedimientoPCO();
+//		historicoNuevoRegistro.setProcedimientoPCO(procedimientoPco);
+//		historicoNuevoRegistro.setEstadoPreparacion(estadoPreparacion);
+//		historicoNuevoRegistro.setFechaInicio(new Date());
+//		genericDao.save(HistoricoEstadoProcedimientoPCO.class, historicoNuevoRegistro);	
+
+		cambiarEstadoExpediente(idProcedimiento, DDEstadoPreparacionPCO.PREPARACION);
+
 		//Cancelar tarea actual
 //		cancelarTareaActual(procedimientoPco);
 		

@@ -1568,7 +1568,7 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
             StringBuffer hql = new StringBuffer();
                hql.append(" select 1 from GestorExpediente gae");
                hql.append(" where gae.auditoria.borrado = false ");
-               hql.append(" gae.tipoGestor.codigo = '").append(EXTDDTipoGestor.CODIGO_TIPO_GESTOR_AGENCIA_RECOBRO).append("' ");
+               hql.append(" and gae.tipoGestor.codigo = '").append(EXTDDTipoGestor.CODIGO_TIPO_GESTOR_AGENCIA_RECOBRO).append("' ");
                hql.append(" and (gae.usuario.id = "+ usuarioLogueado.getId());
                hql.append("  or gae.usuario.id in (");
                hql.append(" select egu.grupo.id from EXTGrupoUsuarios egu where egu.usuario.id = " + usuarioLogueado.getId());

@@ -123,6 +123,10 @@
 		}
 	});
 	
+	btnGuardar.on('click',function(){
+        this.setDisabled(true);
+        btnCancelar.setDisabled(true);
+	});
 
 	<pfs:defineParameters name="parametros" paramId="${usuario.id}" 
 		username="username"

@@ -334,7 +334,7 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 		BigDecimal tipoInteresAgrupado = null;
 		BigDecimal sumIntereses = BigDecimal.ZERO;
 		int i = 0;
-		Date fechaAuxIntOrd = new Date();
+		Date fechaAuxIntOrd = null;
 		for (RecibosLiqVO recibo : recibosLiq) {
 			i++;
 
@@ -358,6 +358,7 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 					sumIntereses = BigDecimal.ZERO;
 					sumIntereses = sumIntereses.add(recibo.getRCB_IMPRTV());
 					tipoInteresAgrupado = tipoInteresActual;
+					fechaAuxIntOrd = recibo.getRCB_FEVCTR();
 				}
 			}
 

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=ALBERTO CAMPOS
---## FECHA_CREACION=20151110
+--## AUTOR=OSCAR
+--## FECHA_CREACION=20151201
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.17-bk
---## INCIDENCIA_LINK=BKREC-1051
+--## VERSION_ARTEFACTO=9.1.18-bk
+--## INCIDENCIA_LINK=BKREC-1519
 --## PRODUCTO=SI
 --## Finalidad: DDL
 --##           
@@ -31,24 +31,22 @@ DECLARE
 
 BEGIN
 	    
-    DBMS_OUTPUT.PUT_LINE('******** PEN_PARAM_ENTIDAD - Añadir campo PEN_USOS *******');
+    DBMS_OUTPUT.PUT_LINE('******** PEN_PARAM_ENTIDAD - Ampliar campo VALUE *******');
     
     
-    V_SQL := 'SELECT COUNT(1) FROM all_tab_columns WHERE TABLE_NAME = '''||V_TABLA||''' and owner = '''||V_ESQUEMA||''' and column_name = ''PEN_USOS''';
+    V_SQL := 'SELECT COUNT(1) FROM all_tab_columns WHERE TABLE_NAME = '''||V_TABLA||''' and owner = '''||V_ESQUEMA||''' and column_name = ''PEN_VALOR''';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     -- Si existe el campo lo indicamos sino lo creamos
     IF V_NUM_TABLAS = 1 THEN
-        DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA||'... El campo ya existe en la tabla');
+        V_MSQL := 'ALTER TABLE ' || V_ESQUEMA || '.PEN_PARAM_ENTIDAD MODIFY(PEN_VALOR VARCHAR2(200 CHAR))';
+        EXECUTE IMMEDIATE V_MSQL; 
+    	DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA||'... El campo ya ha sido ampliado en la tabla');
     ELSE
-        V_MSQL := 'alter table '||V_ESQUEMA||'.'||V_TABLA||' add(PEN_USOS VARCHAR2(4000))';        
+        V_MSQL := 'alter table '||V_ESQUEMA||'.'||V_TABLA||' add(PEN_VALOR VARCHAR2(200))';        
         DBMS_OUTPUT.PUT_LINE(V_MSQL);
         EXECUTE IMMEDIATE V_MSQL; 
 
-        V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.PEN_PARAM_ENTIDAD.PEN_USOS IS ''Documentacion de uso del parametro. Syntaxis de valores.'' ';
-        DBMS_OUTPUT.PUT_LINE(V_MSQL);
-        EXECUTE IMMEDIATE V_MSQL; 
-
-        DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA||'... Añadido el campo PEN_USOS');
+        DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA||'... Añadido el campo PEN_VALOR');
     END IF;
     
 	

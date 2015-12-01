@@ -42,19 +42,19 @@ public class AdjudicacionManager implements AdjudicacionApi{
 			if (b instanceof NMBBien) {				
 
 				if(Checks.esNulo(((NMBBien) b).getTributacion())){
-					mensajeError = mensajeError+"Debe completar el Tipo de impuesto compra de los bienes. ";
+					mensajeError = formatoMensajeIn+mensajeError+"Debe completar el Tipo de impuesto compra de los bienes."+formatoMensajeOut;
 				}
 				if(Checks.esNulo(((NMBBien) b).getPorcentajeImpuestoCompra())){
-					mensajeError = mensajeError+"Debe completar el Porcentaje de impuesto de compra del bien. ";
+					mensajeError = formatoMensajeIn+mensajeError+"Debe completar el Porcentaje de impuesto de compra del bien."+formatoMensajeOut;
 				}
 				if(Checks.esNulo(((NMBBien) b).getImpuestoCompra())){
-					mensajeError = mensajeError+"Debe completar el Cod TP impuesto compra del bien.";
+					mensajeError = formatoMensajeIn+mensajeError+"Debe completar el Cod TP impuesto compra del bien."+formatoMensajeOut;
 				}
 			}
 		}
 		
 		if(mensajeError.length() > 1)
-			return formatoMensajeIn+mensajeError+formatoMensajeOut;
+			return mensajeError;
 		else
 			return null;
 	}

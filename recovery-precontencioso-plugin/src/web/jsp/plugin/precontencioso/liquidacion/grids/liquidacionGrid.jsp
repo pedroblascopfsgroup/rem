@@ -119,7 +119,6 @@ var btnVisar = new Ext.Button({
 							refrescarLiquidacionesGrid();
 						},
 						failure: function ( result, request ) {
-							debugger;
 						}
 					});
 	  			}

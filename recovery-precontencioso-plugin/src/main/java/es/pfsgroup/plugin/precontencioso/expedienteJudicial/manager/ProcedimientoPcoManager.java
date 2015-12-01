@@ -469,7 +469,7 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			ProcedimientoPCO procedimientoPco = genericDao.get(ProcedimientoPCO.class, 
 					genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProcedimiento));
 			if (procedimientoPco != null) {
-				return procedimientoPco.getTipoProcPropuesto().getCodigo();
+				return procedimientoPco.getTipoProcPropuesto().getDescripcion();
 			} else {
 				return "";
 			}

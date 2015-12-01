@@ -1,0 +1,6 @@
+url=jdbc:oracle:thin:bankmaster/380KFGkweFJUntrW4jvkug==81274692@//RACPFS-DESA-SCAN:1576/pfsreco_pre
+username=bankmaster
+password=380KFGkweFJUntrW4jvkug==81274692
+dsm.prot.cnts=SI
+
+

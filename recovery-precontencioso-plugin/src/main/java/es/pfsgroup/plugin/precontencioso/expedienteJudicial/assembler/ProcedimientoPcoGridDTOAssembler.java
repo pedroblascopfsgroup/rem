@@ -53,6 +53,7 @@ public class ProcedimientoPcoGridDTOAssembler {
 			procedimientoGridDto.setTodosDocumentos(Boolean.valueOf(ObjectUtils.toString(procedimiento.get("todosDocumentos"))));
 			procedimientoGridDto.setTodasLiquidaciones(Boolean.valueOf(ObjectUtils.toString(procedimiento.get("todasLiquidaciones"))));
 			procedimientoGridDto.setTodosBurofaxes(Boolean.valueOf(ObjectUtils.toString(procedimiento.get("todosBurofaxes"))));
+			procedimientoGridDto.setImporte((Float)(procedimiento.get("importe")));
 
 			out.add(procedimientoGridDto);
 		}
@@ -164,6 +165,7 @@ public class ProcedimientoPcoGridDTOAssembler {
 		prcPcoGridDto.setCodigo(ObjectUtils.toString(row.get("codigo")));
 		prcPcoGridDto.setNombreExpediente(ObjectUtils.toString(row.get("nombreExpJudicial")));
 		prcPcoGridDto.setEstadoExpediente(ObjectUtils.toString(row.get("estadoActualProcedimiento")));
+		prcPcoGridDto.setImporte((Float)row.get("importe"));
 		prcPcoGridDto.setFechaEstado((Date) row.get("fechaEstadoProcedimiento"));
 		prcPcoGridDto.setTipoProcPropuesto(ObjectUtils.toString(row.get("tipoProcPropuesto")));
 		prcPcoGridDto.setTipoPreparacion(ObjectUtils.toString(row.get("tipoPreparacion")));

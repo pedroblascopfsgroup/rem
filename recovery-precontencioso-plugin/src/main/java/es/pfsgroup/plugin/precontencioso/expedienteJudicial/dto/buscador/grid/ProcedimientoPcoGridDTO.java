@@ -25,10 +25,11 @@ public class ProcedimientoPcoGridDTO extends WebDto {
 	private Boolean todosDocumentos;
 	private Boolean todasLiquidaciones;
 	private Boolean todosBurofaxes;
+	private Float importe;
 	private DocumentoGridDTO documento;
 	private LiquidacionGridDTO liquidacion;
 	private BurofaxGridDTO burofax;
-
+	
 	public ProcedimientoPcoGridDTO() {
 		documento = new DocumentoGridDTO();
 		liquidacion = new LiquidacionGridDTO();
@@ -154,5 +155,19 @@ public class ProcedimientoPcoGridDTO extends WebDto {
 	}
 	public void setNombreProcedimiento(String nombreProcedimiento) {
 		this.nombreProcedimiento = nombreProcedimiento;
+	}
+
+	/**
+	 * @return the importe
+	 */
+	public Float getImporte() {
+		return importe;
+	}
+
+	/**
+	 * @param importe the importe to set
+	 */
+	public void setImporte(Float importe) {
+		this.importe = importe;
 	}
 }

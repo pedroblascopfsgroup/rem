@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.asunto.ProcedimientoManager;
 import es.capgemini.pfs.asunto.model.Procedimiento;
@@ -181,19 +183,18 @@ public class BurofaxManager implements BurofaxApi {
 	
 	@Override
 	@BusinessOperation(OBTENER_LISTA_BUROFAX)
+	@Transactional(readOnly = false)
 	public List<BurofaxPCO> getListaBurofaxPCO(Long idProcedimiento){
 		List<BurofaxPCO> listaBurofax=null;
 		
 		try{
-			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "procedimientoPCO.id", idProcedimiento);
-			
-			listaBurofax=(List<BurofaxPCO>) genericDao.getList(BurofaxPCO.class,filtro1);
+			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "procedimientoPCO.id", idProcedimiento); //original
+			boolean noBorrado = false;
+			listaBurofax=(List<BurofaxPCO>) genericDao.getList(BurofaxPCO.class,filtro1); //original
 		}catch(Exception e){
 			logger.error("getListaBurofaxPCO: " + e);
 		}
-		
 		return listaBurofax;
-		
 	}
 	
 	@Override
@@ -323,6 +324,7 @@ public class BurofaxManager implements BurofaxApi {
 		try{
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idEnvio);
 			EnvioBurofaxPCO envioBurofax=(EnvioBurofaxPCO) genericDao.get(EnvioBurofaxPCO.class,filtro1);
+			contenido = contenido.replace("<br>", "<br/>");
 			envioBurofax.setContenidoBurofax(contenido);
 			
 			genericDao.save(EnvioBurofaxPCO.class,envioBurofax);
@@ -346,6 +348,79 @@ public class BurofaxManager implements BurofaxApi {
 		}
 		
 		return persona;
+	}
+	
+	@BusinessOperation(CANCELAR_EST_PREPARADO)
+	@Transactional(readOnly = false)
+	public void cancelarEnEstPrep(Long idEnvio, Long idCliente){
+		try{
+			genericDao.deleteById(EnvioBurofaxPCO.class, idEnvio);
+			
+			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "envioId", idEnvio);
+			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			for(BurofaxEnvioIntegracionPCO envioIntegracionPCO : genericDao.getList(BurofaxEnvioIntegracionPCO.class, filtro1, filtro2)) {
+				envioIntegracionPCO.getAuditoria().setBorrado(true);
+				envioIntegracionPCO.getAuditoria().setFechaBorrar(new Date());
+				envioIntegracionPCO.getAuditoria().setUsuarioBorrar(SecurityUtils.getCurrentUser().getUsername());
+				
+				genericDao.save(BurofaxEnvioIntegracionPCO.class, envioIntegracionPCO);
+			}
+		}
+		catch(Exception e){
+			logger.error(e);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@BusinessOperation(DESCARTAR_PERSONA_ENVIO)
+	@Transactional(readOnly = false)
+	public void descartarPersona(Long idBurofax){
+		List<BurofaxPCO> listaBurofax=null;
+		Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoBurofaxPCO.DESCARTADA);
+		DDEstadoBurofaxPCO estadoBurofax=(DDEstadoBurofaxPCO) genericDao.get(DDEstadoBurofaxPCO.class,filtro1);
+		try{
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idBurofax);
+			listaBurofax=(List<BurofaxPCO>) genericDao.getList(BurofaxPCO.class,filtro);
+			Iterator<BurofaxPCO> it=listaBurofax.iterator();
+			BurofaxPCO burofax = new BurofaxPCO();
+			int total = listaBurofax.size();
+			for(int i=0; i<total; i++){
+				burofax=listaBurofax.get(i);
+				burofax.setEstadoBurofax(estadoBurofax);
+				burofaxDao.save(burofax);
+			}
+		}catch(Exception e){
+			logger.error(e);
+		}
+	}
+	
+	public boolean saberOrigen(Long idDireccion){
+		boolean variable = false;
+		try{
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idDireccion);
+			Direccion direccion = (Direccion)  genericDao.get(Direccion.class, filtro);
+			if(direccion.getOrigen().equalsIgnoreCase("Manual")){
+				variable = true;
+			}
+		}catch(Exception e){
+			logger.error(e);
+		}
+		return variable;
+	}
+	@BusinessOperation(BORRAR_DIRECCION_MANUAL_BUROFAX)
+	@Transactional(readOnly = false)
+	public void borrarDireccionManualBurofax(Long idDireccion){
+		try{
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idDireccion);
+			Direccion direccion = (Direccion)  genericDao.get(Direccion.class, filtro);
+			if(direccion.getOrigen().equalsIgnoreCase("Manual")){//si es manual hay que borrarla
+				genericDao.deleteById(Direccion.class, idDireccion);
+			}
+			
+		}catch(Exception e){
+			logger.error(e);
+		}
 	}
 	
 	@BusinessOperation(GUARDA_PERSONA)
@@ -412,14 +487,14 @@ public class BurofaxManager implements BurofaxApi {
 				
 				String contenidoParseadoIntermedio = "";
 				
-				envioBurofax.setResultadoBurofax(resultado);
-				envioBurofax.setFechaSolicitud(new Date());
-				if(Checks.esNulo(envioBurofax.getResultadoBurofax()) || (!Checks.esNulo(envioBurofax.getResultadoBurofax()) && !envioBurofax.getResultadoBurofax().getCodigo().equals(DDResultadoBurofaxPCO.ESTADO_PREPARADO))){
-					contenidoParseadoIntermedio = docBurManager.replaceVariablesGeneracionBurofax(envioBurofax.getBurofax().getId(), envioBurofax.getContenidoBurofax());
-				}
-				else {
+				if(Checks.esNulo(envioBurofax.getResultadoBurofax()) || 
+						(!Checks.esNulo(envioBurofax.getResultadoBurofax()) && !envioBurofax.getResultadoBurofax().getCodigo().equals(DDResultadoBurofaxPCO.ESTADO_PREPARADO))){
+					contenidoParseadoIntermedio = docBurManager.replaceVariablesGeneracionBurofax(envioBurofax.getBurofax().getId(), envioBurofax.getTipoBurofax().getPlantilla());
+				} else {
 					contenidoParseadoIntermedio = envioBurofax.getContenidoBurofax();
 				}
+				envioBurofax.setResultadoBurofax(resultado);
+				envioBurofax.setFechaSolicitud(new Date());
 				HashMap<String, Object> mapeoVariables = docBurManager.obtenerMapeoVariables(envioBurofax);
 				
 				String contenidoParseadoFinal = docBurManager.parseoFinalBurofax(contenidoParseadoIntermedio, mapeoVariables);

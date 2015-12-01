@@ -37,7 +37,7 @@ BEGIN
     IF V_NUM_TABLAS > 0 THEN
 		DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... ACTUALIZACION DEL CAMPO TFI_TAREAS_FORM_ITEMS PCO_RegistrarTomaDec proc_a_iniciar');
     	V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_ERROR_VALIDACION = '''', TFI_VALIDACION = '''' WHERE  TFI_NOMBRE = ''proc_a_iniciar'' AND TAP_ID =  ' || 
-      		'(SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''PCO_RegistrarTomaDec'')';
+      		'(SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''PCO_RegistrarTomaDec'')';
     	EXECUTE IMMEDIATE V_SQL;
 
     	V_SQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''PCO_RegistrarTomaDec''''][''''correcto''''] == DDSiNo.SI ? ''''ok'''' : (valores[''''PCO_RegistrarTomaDec''''][''''tipo_problema''''] == ''''CPR'''' ? ''''cambio_proc'''' : ''''requiere_subsanar'''')''

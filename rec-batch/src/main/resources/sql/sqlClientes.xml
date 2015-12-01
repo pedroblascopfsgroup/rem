@@ -27,19 +27,19 @@
 
   <entry key="clientes.buscarArquetipo">
     <![CDATA[
-      SELECT ARQ_ID FROM CLI_CLIENTES WHERE CLI_ID = ? 
+      SELECT ARQ_ID FROM CLI_CLIENTES WHERE CLI_ID = ?
     ]]>
   </entry>
 
   <entry key="clientes.buscarContratoPrincipal">
     <![CDATA[
-      SELECT CNT_ID FROM CCL_CONTRATOS_CLIENTE WHERE BORRADO=0 AND CCL_PASE = 1 AND CLI_ID = ? 
+      SELECT CNT_ID FROM CCL_CONTRATOS_CLIENTE WHERE BORRADO=0 AND CCL_PASE = 1 AND CLI_ID = ?
     ]]>
   </entry>
 
   <entry key="clientes.buscarContratosActivos">
     <![CDATA[
-      SELECT CNT_ID FROM CCL_CONTRATOS_CLIENTE WHERE BORRADO = 0 AND CLI_ID = ? 
+      SELECT CNT_ID FROM CCL_CONTRATOS_CLIENTE WHERE BORRADO = 0 AND CLI_ID = ?
     ]]>
   </entry>
 
@@ -58,8 +58,8 @@
 
 
   <entry key="clientes.buscarContratosOrdenadoFechaPosVencida">
-    <![CDATA[    
-      SELECT m.cnt_id FROM ccl_contratos_cliente ccl, mov_movimientos m 
+    <![CDATA[
+      SELECT m.cnt_id FROM ccl_contratos_cliente ccl, mov_movimientos m
       WHERE ccl.borrado = 0 AND ccl.cli_id = ?
       AND ccl.cnt_id = m.cnt_id
       GROUP BY m.cnt_id, m.mov_fecha_pos_vencida
@@ -69,14 +69,14 @@
 
   <entry key="clientes.buscarClientesActivos">
     <![CDATA[
-      SELECT cli.CLI_ID 
+      SELECT cli.CLI_ID
       FROM CLI_CLIENTES cli, ${master.schema}.DD_ECL_ESTADO_CLIENTE ecl
       WHERE cli.BORRADO = 0
       AND cli.DD_ECL_ID = ecl.DD_ECL_ID
       AND ecl.DD_ECL_CODIGO = ?
     ]]>
   </entry>
-  
+
   <entry key="clientes.buscarPersonaCliente">
     <![CDATA[
       SELECT per_id FROM cli_clientes WHERE cli_id = ? AND BORRADO = 0
@@ -86,8 +86,8 @@
   <entry key="clientes.desactivar">
     <![CDATA[
       UPDATE CLI_CLIENTES SET BORRADO=1, USUARIOBORRAR='${procesoRevisionJobClientesUser}', FECHABORRAR=${sql.function.now},
-        DD_ECL_ID =(select DD_ECL_ID from ${master.schema}.DD_ECL_ESTADO_CLIENTE WHERE DD_ECL_CODIGO = ?) 
-	  WHERE CLI_ID = ?
+        DD_ECL_ID =(select DD_ECL_ID from ${master.schema}.DD_ECL_ESTADO_CLIENTE WHERE DD_ECL_CODIGO = ?)
+      WHERE CLI_ID = ?
     ]]>
   </entry>
 
@@ -105,20 +105,20 @@
 
   <entry key="clientes.buscarClientesConTareasPendiente">
     <![CDATA[
-	  select est.est_id estadoId, ${master.schema}.dd_est.dd_est_descripcion_larga descripcionLargaEstado, cli.cli_id clienteId
-	   from  cli_clientes cli,
-	         est_estados est,
-	         arq_arquetipos arq,
-	         usu_usuarios usu,
-	         pef_perfiles pef,
-	         zon_pef_usu pef_usu,
-	         ${master.schema}.dd_est_estados_itinerarios dd_est
-	   where cli.arq_id = arq.arq_id and arq.iti_id = est.iti_id and cli.dd_est_id = est.dd_est_id and cli.dd_est_id = ${master.schema}.dd_est.dd_est_id
-	         and ${master.schema}.dd_est.dd_est_codigo = 'GV' or ${master.schema}.dd_est.dd_est_codigo = 'DC'
-	         and usu.usu_username = ? and pef_usu.usu_id = usu.usu_id and est.pef_id_gestor = pef_usu.pef_id      -- Filtra solo tareas con el perfil del usuario
-	                                                                                                              -- Falta filtrar por zona del usuario
-	             and cli.borrado = 0 and est.borrado = 0 and arq.borrado = 0 and ${master.schema}.dd_est.borrado = 0 and pef_usu.borrado = 0
-	order by cli.dd_est_id
+      select est.est_id estadoId, ${master.schema}.dd_est.dd_est_descripcion_larga descripcionLargaEstado, cli.cli_id clienteId
+       from  cli_clientes cli,
+             est_estados est,
+             arq_arquetipos arq,
+             usu_usuarios usu,
+             pef_perfiles pef,
+             zon_pef_usu pef_usu,
+             ${master.schema}.dd_est_estados_itinerarios dd_est
+       where cli.arq_id = arq.arq_id and arq.iti_id = est.iti_id and cli.dd_est_id = est.dd_est_id and cli.dd_est_id = ${master.schema}.dd_est.dd_est_id
+             and ${master.schema}.dd_est.dd_est_codigo = 'GV' or ${master.schema}.dd_est.dd_est_codigo = 'DC'
+             and usu.usu_username = ? and pef_usu.usu_id = usu.usu_id and est.pef_id_gestor = pef_usu.pef_id      -- Filtra solo tareas con el perfil del usuario
+                                                                                                                  -- Falta filtrar por zona del usuario
+                 and cli.borrado = 0 and est.borrado = 0 and arq.borrado = 0 and ${master.schema}.dd_est.borrado = 0 and pef_usu.borrado = 0
+    order by cli.dd_est_id
     ]]>
   </entry>
 
@@ -127,22 +127,22 @@
       SELECT PER_ID FROM CLI_CLIENTES WHERE CLI_ID = ?
     ]]>
   </entry>
-  
+
   <entry key="clientes.insertarNuevosContratosVencidos.MySQLDialect">
     <![CDATA[
-      INSERT INTO ccl_contratos_cliente (CNT_ID, CLI_ID, CCL_PASE, USUARIOCREAR, FECHACREAR)      
+      INSERT INTO ccl_contratos_cliente (CNT_ID, CLI_ID, CCL_PASE, USUARIOCREAR, FECHACREAR)
       SELECT cpe.cnt_id, cli_id, 0,  '${procesoRevisionJobClientesUser}', CURRENT_DATE()
       FROM cli_clientes cli, cpe_contratos_personas cpe, mov_movimientos mov,dd_tpe_tipo_prod_entidad tipo, cnt_contratos cnt
           WHERE cli.cli_id =  ?
           AND cpe.per_id = cli.per_id
           AND cpe.cnt_id = mov.cnt_id
-          AND cpe.cnt_id = cnt.cnt_id        
+          AND cpe.cnt_id = cnt.cnt_id
           AND cli.borrado = 0 AND cpe.borrado = 0 AND mov.borrado = 0
           /* Que el contrato este vencido */
           AND cnt.dd_tpe_id = tipo.dd_tpe_id
           AND mov.mov_fecha_extraccion = CNT.CNT_FECHA_EXTRACCION
           AND (mov.mov_pos_viva_vencida > 0 AND tipo.dd_tpe_activo = 1 OR mov.mov_pos_viva_vencida < 0 AND tipo.dd_tpe_activo = 0)
-          AND mov.mov_fecha_pos_vencida IS NOT NULL          
+          AND mov.mov_fecha_pos_vencida IS NOT NULL
           /* Que el contrato no esté en algún procedimiento 'en curso' */
           AND cpe.cnt_id NOT IN (
               SELECT DISTINCT cex.cnt_id FROM CEX_CONTRATOS_EXPEDIENTE cex, PRC_CEX pce, PRC_PROCEDIMIENTOS prc, ${master.schema}.DD_EPR_ESTADO_PROCEDIMIENTO epr
@@ -154,21 +154,21 @@
           )
           /* Que el contrato no esté algún expediente 'en curso' */
           AND cpe.cnt_id NOT IN (
-              SELECT DISTINCT cex.cnt_id FROM cex_contratos_expediente cex, ${master.schema}.dd_eex_estado_expediente eex, exp_expedientes exp 
-              WHERE exp.exp_id = cex.exp_id 
-              and cex.borrado = 0 
+              SELECT DISTINCT cex.cnt_id FROM cex_contratos_expediente cex, ${master.schema}.dd_eex_estado_expediente eex, exp_expedientes exp
+              WHERE exp.exp_id = cex.exp_id
+              and cex.borrado = 0
               and eex.dd_eex_id = exp.dd_eex_id
               and eex.dd_eex_codigo IN (?, ?, ?)
-          )           
+          )
           /* Que ese mismo contrato no pertenezca ya al cliente */
           AND cpe.cnt_id NOT IN (
-              SELECT cnt_id FROM ccl_contratos_cliente 
+              SELECT cnt_id FROM ccl_contratos_cliente
               WHERE cli_id = ? AND borrado = 0
           )
     ]]>
   </entry>
-  
-  <entry key="clientes.insertarNuevosContratosVencidos.Oracle9iDialect">
+
+  <entry key="clientes.insertarNuevosContratosVencidos.Oracle10gDialect">
     <![CDATA[
       INSERT INTO ccl_contratos_cliente (CCL_ID, CNT_ID, CLI_ID, CCL_PASE, USUARIOCREAR, FECHACREAR)
       SELECT s_ccl_contratos_cliente.nextVal, cpe.cnt_id, cli_id, 0,  '${procesoRevisionJobClientesUser}', sysdate
@@ -176,13 +176,13 @@
           WHERE cli.cli_id =  ?
           AND cpe.per_id = cli.per_id
           AND cpe.cnt_id = mov.cnt_id
-          AND cpe.cnt_id = cnt.cnt_id        
+          AND cpe.cnt_id = cnt.cnt_id
           AND cli.borrado = 0 AND cpe.borrado = 0 AND mov.borrado = 0
           /* Que el contrato este vencido */
           AND cnt.dd_tpe_id = tipo.dd_tpe_id
           AND mov.mov_fecha_extraccion = CNT.CNT_FECHA_EXTRACCION
           AND (mov.mov_pos_viva_vencida > 0 AND tipo.dd_tpe_activo = 1 OR mov.mov_pos_viva_vencida < 0 AND tipo.dd_tpe_activo = 0)
-          AND mov.mov_fecha_pos_vencida IS NOT NULL          
+          AND mov.mov_fecha_pos_vencida IS NOT NULL
           /* Que el contrato no esté en algún procedimiento 'en curso' */
           AND cpe.cnt_id NOT IN (
               SELECT DISTINCT cex.cnt_id FROM CEX_CONTRATOS_EXPEDIENTE cex, PRC_CEX pce, PRC_PROCEDIMIENTOS prc, ${master.schema}.DD_EPR_ESTADO_PROCEDIMIENTO epr
@@ -194,29 +194,29 @@
           )
           /* Que el contrato no esté algún expediente 'en curso' */
           AND cpe.cnt_id NOT IN (
-              SELECT DISTINCT cex.cnt_id FROM cex_contratos_expediente cex, ${master.schema}.dd_eex_estado_expediente eex, exp_expedientes exp 
-              WHERE exp.exp_id = cex.exp_id 
-              and cex.borrado = 0 
+              SELECT DISTINCT cex.cnt_id FROM cex_contratos_expediente cex, ${master.schema}.dd_eex_estado_expediente eex, exp_expedientes exp
+              WHERE exp.exp_id = cex.exp_id
+              and cex.borrado = 0
               and eex.dd_eex_id = exp.dd_eex_id
               and eex.dd_eex_codigo IN (?, ?, ?)
-          )           
+          )
           /* Que ese mismo contrato no pertenezca ya al cliente */
           AND cpe.cnt_id NOT IN (
-              SELECT cnt_id FROM ccl_contratos_cliente 
+              SELECT cnt_id FROM ccl_contratos_cliente
               WHERE cli_id = ? AND borrado = 0
           )
     ]]>
   </entry>
-  
-  
-  <entry key="clientes.insertarNuevosContratos.Oracle9iDialect">
+
+
+  <entry key="clientes.insertarNuevosContratos.Oracle10gDialect">
     <![CDATA[
       INSERT INTO ccl_contratos_cliente (CCL_ID, CNT_ID, CLI_ID, CCL_PASE, USUARIOCREAR, FECHACREAR)
       SELECT s_ccl_contratos_cliente.nextVal, cpe.cnt_id, cli_id, 0,  '${procesoRevisionJobClientesUser}', sysdate
       FROM cli_clientes cli, cpe_contratos_personas cpe, cnt_contratos cnt
           WHERE cli.cli_id =  ?
           AND cpe.per_id = cli.per_id
-          AND cpe.cnt_id = cnt.cnt_id        
+          AND cpe.cnt_id = cnt.cnt_id
           AND cli.borrado = 0 AND cpe.borrado = 0 AND cnt.borrado = 0
           /* Que el contrato no esté en algún procedimiento 'en curso' */
           AND cnt.cnt_id NOT IN (
@@ -229,19 +229,19 @@
           )
           /* Que el contrato no esté algún expediente 'en curso' */
           AND cnt.cnt_id NOT IN (
-              SELECT DISTINCT cex.cnt_id FROM cex_contratos_expediente cex, ${master.schema}.dd_eex_estado_expediente eex, exp_expedientes exp 
-              WHERE exp.exp_id = cex.exp_id 
-              and cex.borrado = 0 
+              SELECT DISTINCT cex.cnt_id FROM cex_contratos_expediente cex, ${master.schema}.dd_eex_estado_expediente eex, exp_expedientes exp
+              WHERE exp.exp_id = cex.exp_id
+              and cex.borrado = 0
               and eex.dd_eex_id = exp.dd_eex_id
               and eex.dd_eex_codigo IN (?, ?, ?)
-          )           
+          )
           /* Que ese mismo contrato no pertenezca ya al cliente */
           AND cnt.cnt_id NOT IN (
-              SELECT cnt_id FROM ccl_contratos_cliente 
+              SELECT cnt_id FROM ccl_contratos_cliente
               WHERE cli_id = ? AND borrado = 0
-          )
+          );
     ]]>
   </entry>
-   
-  
+
+
 </properties>

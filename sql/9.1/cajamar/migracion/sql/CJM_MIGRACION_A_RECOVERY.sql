@@ -2535,7 +2535,7 @@ FROM (
                               , BIE_ID
                               , VERSION 
                             ) 
-                            SELECT DISTINCT 
+                            SELECT /*+ ordered */ DISTINCT 
                                      LOS.LOS_ID
                                    , E.BIE_ID
                                    , LOS.VERSION 

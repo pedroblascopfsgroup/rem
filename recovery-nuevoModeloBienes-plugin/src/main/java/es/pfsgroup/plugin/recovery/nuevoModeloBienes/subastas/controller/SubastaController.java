@@ -646,6 +646,7 @@ public class SubastaController {
 				fila.add("VIVIENDA HABITUAL;Blue;Text");
 				fila.add("RESULTADO ADJUDICACIÓN;Blue;Text");
 				fila.add("IMPORTE ADJUDICACIÓN;Blue;Text");
+				fila.add("LOCALIDAD;Blue;Text");
 				//Si la subasta es de Bankia no mostramos la columna Fecha Testimonio
 				if(!"P401".equals(informe.getSubasta().getProcedimiento().getTipoProcedimiento().getCodigo())){
 					fila.add("F. TESTIMONIO ADJ SAREB;Blue;Text");
@@ -727,6 +728,14 @@ public class SubastaController {
 					} else {
 						fila.add("******;Red;Text");
 					}
+					
+					if(!Checks.esNulo(infoBienes.getLocalidad()) && !infoBienes.getLocalidad().equals("")){
+						String localidad =infoBienes.getLocalidad();
+						fila.add(localidad.concat(";White;Text"));
+					} else {
+						fila.add("******;Red;Text");
+					}
+					
 					//Si la subasta es de Bankia no mostramos la columna Fecha Testimonio
 					if(!"P401".equals(informe.getSubasta().getProcedimiento().getTipoProcedimiento().getCodigo())){
 						if(!Checks.esNulo(infoBienes.getFechaTestimonioAdjudicacionSareb())){

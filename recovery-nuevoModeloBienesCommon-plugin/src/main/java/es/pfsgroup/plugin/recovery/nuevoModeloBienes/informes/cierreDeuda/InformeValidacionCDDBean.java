@@ -260,19 +260,19 @@ public class InformeValidacionCDDBean {
 			if (Checks.esNulo(infobien.getValorJudicial())) {
 				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Valor judicial; ");
 			}
-//			if(!Checks.esNulo(nmbBien.getLocalizacionActual())) {
-//				if(!Checks.esNulo(nmbBien.getLocalizacionActual().getProvincia())) {
-//					infobien.setProvincia(nmbBien.getLocalizacionActual().getProvincia().getDescripcion());									
-//				}
-//				if(!Checks.esNulo(nmbBien.getLocalizacionActual().getLocalidad())) {
-//					infobien.setLocalidad(nmbBien.getLocalizacionActual().getLocalidad().getDescripcion());
-//				}
-//				if(!Checks.esNulo(nmbBien.getLocalizacionActual().getUnidadPoblacional())) {
-//					infobien.setUnidadPoblacional(nmbBien.getLocalizacionActual().getUnidadPoblacional().getDescripcion());
-//				}
-//				infobien.setCodigoPostal(nmbBien.getLocalizacionActual().getCodPostal());
-//				infobien.setDireccion(nmbBien.getLocalizacionActual().getDireccion());
-//			}
+			if (!Checks.esNulo(nmbBien.getLocalizacionActual())) {
+				if (!Checks.esNulo(nmbBien.getLocalizacionActual().getProvincia())) {
+					infobien.setProvincia(nmbBien.getLocalizacionActual().getProvincia().getDescripcion());
+				}
+				if (!Checks.esNulo(nmbBien.getLocalizacionActual().getLocalidad())) {
+					infobien.setLocalidad(nmbBien.getLocalizacionActual().getLocalidad().getDescripcion());
+				}
+				if (!Checks.esNulo(nmbBien.getLocalizacionActual().getUnidadPoblacional())) {
+					infobien.setUnidadPoblacional(nmbBien.getLocalizacionActual().getUnidadPoblacional().getDescripcion());
+				}
+				infobien.setCodigoPostal(nmbBien.getLocalizacionActual().getCodPostal());
+				infobien.setDireccion(nmbBien.getLocalizacionActual().getDireccion());
+			}
 //			
 //			infobien.setDatosLocalizacion(rellenaDatosLocalizacion(infobien));
 //			
@@ -312,7 +312,7 @@ public class InformeValidacionCDDBean {
 				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Importe adjudicacion; ");
 			}
 
-                        // Esta validación no debe hacerse si el CDD proviene de un Subasta Bankia. En el resto de T. subasta del resto de clientes, si debe hacerse.
+                        // Esta validaciï¿½n no debe hacerse si el CDD proviene de un Subasta Bankia. En el resto de T. subasta del resto de clientes, si debe hacerse.
 			if(!nmbProjectContext.getCodigoSubastaBankia().equals(loteSubasta.getSubasta().getProcedimiento().getTipoProcedimiento().getCodigo())) {
 				infobien.setFechaTestimonioAdjudicacionSareb(getFechaTestimonioAdjudicacionSareb(nmbBien));
 				if (Checks.esNulo(infobien.getFechaTestimonioAdjudicacionSareb())) {

@@ -324,6 +324,7 @@ public class BurofaxManager implements BurofaxApi {
 		try{
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idEnvio);
 			EnvioBurofaxPCO envioBurofax=(EnvioBurofaxPCO) genericDao.get(EnvioBurofaxPCO.class,filtro1);
+			contenido = contenido.replace("<br>", "<br/>");
 			envioBurofax.setContenidoBurofax(contenido);
 			
 			genericDao.save(EnvioBurofaxPCO.class,envioBurofax);
@@ -486,14 +487,14 @@ public class BurofaxManager implements BurofaxApi {
 				
 				String contenidoParseadoIntermedio = "";
 				
-				envioBurofax.setResultadoBurofax(resultado);
-				envioBurofax.setFechaSolicitud(new Date());
-				if(Checks.esNulo(envioBurofax.getResultadoBurofax()) || (!Checks.esNulo(envioBurofax.getResultadoBurofax()) && !envioBurofax.getResultadoBurofax().getCodigo().equals(DDResultadoBurofaxPCO.ESTADO_PREPARADO))){
-					contenidoParseadoIntermedio = docBurManager.replaceVariablesGeneracionBurofax(envioBurofax.getBurofax().getId(), envioBurofax.getContenidoBurofax());
-				}
-				else {
+				if(Checks.esNulo(envioBurofax.getResultadoBurofax()) || 
+						(!Checks.esNulo(envioBurofax.getResultadoBurofax()) && !envioBurofax.getResultadoBurofax().getCodigo().equals(DDResultadoBurofaxPCO.ESTADO_PREPARADO))){
+					contenidoParseadoIntermedio = docBurManager.replaceVariablesGeneracionBurofax(envioBurofax.getBurofax().getId(), envioBurofax.getTipoBurofax().getPlantilla());
+				} else {
 					contenidoParseadoIntermedio = envioBurofax.getContenidoBurofax();
 				}
+				envioBurofax.setResultadoBurofax(resultado);
+				envioBurofax.setFechaSolicitud(new Date());
 				HashMap<String, Object> mapeoVariables = docBurManager.obtenerMapeoVariables(envioBurofax);
 				
 				String contenidoParseadoFinal = docBurManager.parseoFinalBurofax(contenidoParseadoIntermedio, mapeoVariables);

@@ -1583,7 +1583,7 @@
 				<!-- Fin versión de AspectJ -->
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
-					<artifactId>recovery-bankiaWeb-plugin</artifactId>
+					<artifactId>proyecto-bankia-online</artifactId>
 					<exclusions>
 						<exclusion>
 							<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
@@ -1991,7 +1991,7 @@
 									<filtering>true</filtering>
 								</resource>
 							</webResources>
-							<packagingExcludes>WEB-INF/lib/xml-apis*.jar</packagingExcludes>
+							<packagingExcludes>WEB-INF/lib/xml-apis-UNKNOWN.jar</packagingExcludes>
 						</configuration>
 					</plugin>
 				</plugins>

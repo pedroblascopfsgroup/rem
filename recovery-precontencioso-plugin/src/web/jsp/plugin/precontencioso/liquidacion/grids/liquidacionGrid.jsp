@@ -92,11 +92,13 @@ var btnConfirmar = new Ext.Button({
 	iconCls: 'x-tbar-page-next',
 	cls: 'x-btn-text-icon',
 	handler: function() {
+		myMask.show();
 		Ext.Ajax.request({
 			url: page.resolveUrl('liquidacion/confirmar'),
 			params: {idLiquidacion: idLiquidacionSeleccionada()},
 			method: 'POST',
 			success: function ( result, request ) {
+				myMask.hide();
 				refrescarLiquidacionesGrid();
 			}
 		});
@@ -132,11 +134,13 @@ var btnDescartar = new Ext.Button({
 	iconCls: 'icon_menos',
 	cls: 'x-btn-text-icon',
 	handler: function() {
+		myMask.show();
 		Ext.Ajax.request({
 			url: page.resolveUrl('liquidacion/descartar'),
 			params: {idLiquidacion: idLiquidacionSeleccionada()},
 			method: 'POST',
 			success: function ( result, request ) {
+				myMask.hide();
 				refrescarLiquidacionesGrid();
 			}
 		});
@@ -158,6 +162,7 @@ var btnGenerar = new Ext.Button({
 </sec:authorize>
 
 <%-- Grid --%>
+var myMask = new Ext.LoadMask(Ext.getBody(), {msg:"Cargando..."});
 
 var liquidacionesRecord = Ext.data.Record.create([
 	{name: 'id'},

@@ -297,7 +297,17 @@
 					</constructor-arg>
 					<property name="description" value="Finalzia un Asunto de forma remota"/>
 				</bean>
-
+				
+				<!-- Riesgo Operacional-->
+				<bean class="es.pfsgroup.recovery.haya.integration.bpm.consumer.RiesgoOperacionalConsumer">
+					<constructor-arg index="0">
+						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
+							<property name="tipo" value="DATOS_RIESGO_OPERACIONAL"/>
+						</bean>
+					</constructor-arg>
+					<property name="description" value="Carga los datos del riesgo operacional"/>
+				</bean>
+				
 				<!-- Decisión de procedimiento -->
 				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.DecisionProcedimientoConsumer">
 					<constructor-arg index="0">

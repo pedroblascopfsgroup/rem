@@ -85,10 +85,8 @@ var fechaEnvio = items[3];
 var tipoProblema = items[4];
 var procedimientoPropuesto = items[5];
 var procedimientoIniciar = items[6];
-var rehacerDoc = items[7];
 
 procedimientoPropuesto.setDisabled(true);
-rehacerDoc.hide();
 
 docCompleta.on('select', function() {
 	if(docCompleta.getValue() == resultadoDocCompletaNO) {

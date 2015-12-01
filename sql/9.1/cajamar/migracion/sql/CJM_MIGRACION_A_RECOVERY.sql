@@ -2494,7 +2494,7 @@ FROM (
     v_sql:= 'select count(*) from all_indexes where index_name=''IDX_MIG_1'' and table_name=''MIG_PROCS_SUBASTAS_LOTES_BIEN'' and table_owner = ''' || V_ESQUEMA || '''';
     EXECUTE IMMEDIATE v_sql INTO existe;
     IF (existe=0) THEN
-       EXECUTE IMMEDIATE('CREATE INDEX IDX_MIG_1 ON '||V_ESQUEMA||'.MIG_PROCS_SUBASTAS_LOTES_BIEN(CD_LOTE,CD_BIEN) ');
+       EXECUTE IMMEDIATE('CREATE INDEX IDX_MIG_1 ON '||V_ESQUEMA||'.MIG_PROCS_SUBASTAS_LOTES_BIEN (CD_LOTE,CD_BIEN) ');
     END IF;
     
     EXECUTE IMMEDIATE('Analyze table '||V_ESQUEMA||'.MIG_PROCS_SUBASTAS_LOTES_BIEN compute statistics FOR ALL INDEXES');
@@ -2509,6 +2509,16 @@ FROM (
     END IF;
     
     EXECUTE IMMEDIATE('analyze table '||V_ESQUEMA||'.BIE_BIEN compute statistics FOR ALL INDEXES'); 
+
+    -- MIG_PROCEDIMIENTOS_BIENES
+    existe := 0;
+    v_sql:= 'select count(*) from all_indexes where index_name=''IDX_MIG_PRC_BIE_X'' and table_name=''MIG_PROCEDIMIENTOS_BIENES'' and table_owner = ''' || V_ESQUEMA || '''';
+    EXECUTE IMMEDIATE v_sql INTO existe;
+    IF (existe=0) THEN
+       EXECUTE IMMEDIATE('CREATE INDEX IDX_MIG_PRC_BIE_X ON '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_BIENES (CD_PROCEDIMIENTO, CD_BIEN) ');
+    END IF;
+    
+    EXECUTE IMMEDIATE('Analyze table '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_BIENES compute statistics FOR ALL INDEXES');
 
 /*
     EXECUTE IMMEDIATE ('INSERT INTO  '||V_ESQUEMA||'.LOB_LOTE_BIEN
@@ -2564,6 +2574,7 @@ FROM (
     -- PRB_PCR_BIE
     ----------------
 
+
     EXECUTE IMMEDIATE ('
     INSERT INTO '||V_ESQUEMA||'.PRB_PRC_BIE
             (
@@ -2578,7 +2589,7 @@ FROM (
             SELECT '||V_ESQUEMA||'.S_PRB_PRC_BIE.NEXTVAL AS PRB_ID,
                    PRC_ID,
                    BIE_ID,
-                   1 AS DD_SGB_ID, --SOLVENCIA
+                   1 AS DD_SGB_ID, -- SOLVENCIA
                    '''||USUARIO||''' AS USUARIOCREAR,
                    TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'') AS FECHACREAR,
                    SYS_GUID() as SYS_GUID
@@ -2586,30 +2597,18 @@ FROM (
                    SELECT DISTINCT A.PRC_ID, B.BIE_ID
                    FROM '||V_ESQUEMA||'.MIG_MAESTRA_HITOS A
                       , '||V_ESQUEMA||'.BIE_BIEN B
-                   WHERE A.CD_BIEN IS NOT NULL --tRAMITES DE aDJUDICACION PARA ARRIBA
+                   WHERE A.CD_BIEN IS NOT NULL -- tRAMITES DE aDJUDICACION PARA ARRIBA
                      AND A.CD_BIEN = B.BIE_CODIGO_INTERNO
                  UNION
-                   SELECT DISTINCT D.PRC_ID, B.BIE_ID --SUBASTAS
+                   SELECT DISTINCT D.PRC_ID, B.BIE_ID 
                    FROM '||V_ESQUEMA||'.BIE_BIEN B
                       , '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_BIENES C
                       , '||V_ESQUEMA||'.MIG_MAESTRA_HITOS D
                       , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS E
-                   WHERE D.CD_BIEN IS NULL
-                     AND D.DD_TPO_CODIGO = ''H002''
+                   WHERE D.CD_BIEN IS NULL                     
                      AND D.PRC_ID = E.PRC_ID
                      AND D.CD_PROCEDIMIENTO = C.CD_PROCEDIMIENTO
                      AND C.CD_BIEN = B.BIE_CODIGO_INTERNO
-                 UNION
-                    SELECT DISTINCT D.PRC_ID, B.BIE_ID --RESTO
-                    FROM '||V_ESQUEMA||'.BIE_BIEN B
-                       , '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_BIENES C
-                       , '||V_ESQUEMA||'.MIG_MAESTRA_HITOS D
-                       , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS E
-                    WHERE D.CD_BIEN IS NULL
-                      AND D.PRC_ID = E.PRC_ID
-                      AND D.DD_TPO_CODIGO <> ''H002''
-                      AND D.CD_PROCEDIMIENTO = C.CD_PROCEDIMIENTO
-                      AND C.CD_BIEN = B.BIE_CODIGO_INTERNO
                     ORDER BY 1,2)'
                  );
     

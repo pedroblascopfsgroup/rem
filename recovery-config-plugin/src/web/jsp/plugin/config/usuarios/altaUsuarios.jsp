@@ -123,10 +123,6 @@
 		}
 	});
 	
-	btnGuardar.on('click',function(){
-        this.setDisabled(true);
-        btnCancelar.setDisabled(true);
-	});
 
 	<pfs:defineParameters name="parametros" paramId="${usuario.id}" 
 		username="username"
@@ -153,5 +149,11 @@
 			tab_paramValue="usuario.id"
 			tab_titleData="username"
 			tab_type="Usuario"/>
+			
+	
+	btnGuardar.on('click',function(){
+        this.setDisabled(true);
+        btnCancelar.setDisabled(true);
+	});
 
 </fwk:page>

@@ -12,9 +12,9 @@ public class ConstantesGestorDocumental {
 	public final static String GESTOR_DOCUMENTAL_ORIGEN = "2";
 	public final static String GESTOR_DOCUMENTAL_TIPO_ASOCIACION_CONTRATO = "MCTA";
 	public final static String GESTOR_DOCUMENTAL_TIPO_ASOCIACION_ASUNTO = "ASUN";
-	public final static String GESTOR_DOCUMENTAL_TIPO_ASOCIACION_EXPEDIENTE = "EXPE";
+	public final static String GESTOR_DOCUMENTAL_TIPO_ASOCIACION_EXPEDIENTE = "EXTE";
 	public final static String GESTOR_DOCUMENTAL_TIPO_ASOCIACION_PERSONA = "PERS";
-	public final static String GESTOR_DOCUMENTAL_TIPO_ASOCIACION_PROCEDIMIENTO = "PROC";	
+	public final static String GESTOR_DOCUMENTAL_TIPO_ASOCIACION_PROCEDIMIENTO = "ACTU";	
 
 	// Relaciona los tipos de entidad recovery con los tipos de asociacion de cajamar
 	public final static HashMap<String, String> tipoAsociacionPorEntidad;

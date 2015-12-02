@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="cj_seguimientoCumplimientoAcuerdo" xmlns="urn:jbpm.org:jpdl-3.2">
+
+	<start-state name="Inicio">
+		<transition to="CJ002_RegistrarAcuerdoAprobado" name="inicioTramite"></transition>
+	</start-state>
+
+	<state name="CJ002_RegistrarAcuerdoAprobado">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ002_RegistrarAcuerdoAprobado" name="activarAlerta"></transition>
+		<transition to="CJ002_RegistrarCumplimiento" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="CJ002_RegistrarCumplimiento">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ002_RegistrarCumplimiento" name="activarAlerta"></transition>
+		<transition to="CJ002_RegistrarCumplimientoDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="CJ002_RegistrarCumplimientoDecision" expression="#{CJ002_RegistrarCumplimientoDecision}">
+		<transition to="CJ002_TareaEspera" name="cumplimientoSinFin"></transition>
+		<transition to="CJ002_NotificarDeudor" name="incumplimiento"></transition>
+		<transition to="CJ002_ValidarFinSeguimiento" name="cumplimientoYFin"></transition>
+		<transition to="CJ002_ComunicacionMediador" name="tresMesesIncumplimiento"></transition>
+	</decision>
+	
+	<node name="CJ002_TareaEspera">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>siguientePagoHandler
+			</targetBean>
+		</action>
+		<transition to="CJ002_RegistrarCumplimiento" name="avanzaBPM"></transition>
+	</node>
+
+	<state name="CJ002_NotificarDeudor">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ002_NotificarDeudor" name="activarAlerta"></transition>
+		<transition to="CJ002_RegistrarCumplimiento" name="vueltaAtras"></transition>
+		<transition to="CJ002_ConfirmarResultadoNotificacion" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="CJ002_ConfirmarResultadoNotificacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ002_ConfirmarResultadoNotificacion" name="activarAlerta"></transition>
+		<transition to="CJ002_NotificarDeudor" name="vueltaAtras"></transition>
+		<transition to="CJ002_ConfirmarResultadoNotificacionDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="CJ002_ConfirmarResultadoNotificacionDecision" expression="#{CJ002_ConfirmarResultadoNotificacionDecision}">
+		<transition to="CJ002_RegistrarCumplimiento" name="continuar"></transition>
+		<transition to="CJ002_ComunicacionMediador" name="noContinuar"></transition>
+	</decision>
+
+	<state name="CJ002_ComunicacionMediador">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ002_ComunicacionMediador" name="activarAlerta"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="CJ002_ValidarFinSeguimiento">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ002_ValidarFinSeguimiento" name="activarAlerta"></transition>
+		<transition to="CJ002_RegistrarCumplimiento" name="vueltaAtras"></transition>
+		<transition to="CJ002_ValidarFinSeguimientoDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="CJ002_ValidarFinSeguimientoDecision" expression="#{CJ002_ValidarFinSeguimientoDecision}">
+		<transition to="Fin" name="si"></transition>
+		<transition to="CJ002_RegistrarCumplimiento" name="no"></transition>
+	</decision>
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+</process-definition>

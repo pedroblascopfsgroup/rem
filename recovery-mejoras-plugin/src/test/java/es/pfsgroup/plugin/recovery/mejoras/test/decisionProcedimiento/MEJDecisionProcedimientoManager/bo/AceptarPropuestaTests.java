@@ -11,6 +11,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 //import sun.awt.motif.MComponentPeer;
 
+
+
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.utils.ApplicationContextUtil;
@@ -27,7 +29,7 @@ import es.pfsgroup.plugin.recovery.mejoras.test.decisionProcedimiento.MEJDecisio
 import es.pfsgroup.plugin.recovery.mejoras.test.decisionProcedimiento.MEJDecisionProcedimientoManager.MEJDtoDecisionProcedimientoTestFactory;
 
 /**
- * Suite de pruebas de la operación de negocio de aceptación de propuesta
+ * Suite de pruebas de la operaciï¿½n de negocio de aceptaciï¿½n de propuesta
  * 
  * @author bruno
  * 
@@ -61,7 +63,7 @@ public class AceptarPropuestaTests extends AbstractMEJDecisionProcedimientoManag
         idTareaAsociada = random.nextLong();
         numPrcDerivar = random.nextInt(100);
         idsPrcDerivar = initArray(numPrcDerivar);
-        // Simulación de interacciones
+        // Simulaciï¿½n de interacciones
         Usuario mockUsuario = simularInteracciones().obtenerUsuarioLogado(idUsuario);
         simularInteracciones().obtenerSiEsSupervisor(idProcedimiento, false);
         simularInteracciones().obtenerTieneFuncionFinalizarAsunto(false, mockUsuario);
@@ -91,7 +93,7 @@ public class AceptarPropuestaTests extends AbstractMEJDecisionProcedimientoManag
     }
 
     /**
-     * Prueba del caso general de aceptación de la prórroga
+     * Prueba del caso general de aceptaciï¿½n de la prï¿½rroga
      */
     @Test
     public void aceptarProrrogaTest() {
@@ -102,7 +104,7 @@ public class AceptarPropuestaTests extends AbstractMEJDecisionProcedimientoManag
     }
 
     /**
-     * Comprueba el caso en el que la propuesta incluya la derivación en otros
+     * Comprueba el caso en el que la propuesta incluya la derivaciï¿½n en otros
      * procedimientos.
      */
     @Test
@@ -114,10 +116,10 @@ public class AceptarPropuestaTests extends AbstractMEJDecisionProcedimientoManag
     }
 
     /**
-     * Este test comprueba el caso en el que se quiere aceptar una prórroga de
+     * Este test comprueba el caso en el que se quiere aceptar una prï¿½rroga de
      * un procedimiento cancelado
      * <p>
-     * No se permite aceptar una prórroga de un procedimiento cancelado
+     * No se permite aceptar una prï¿½rroga de un procedimiento cancelado
      * </p>
      */
     @Test(expected = UserException.class)
@@ -129,10 +131,10 @@ public class AceptarPropuestaTests extends AbstractMEJDecisionProcedimientoManag
     }
 
     /**
-     * Este test comprueba el caso en el que se quiere aceptar una prórroga de
+     * Este test comprueba el caso en el que se quiere aceptar una prï¿½rroga de
      * un procedimiento cancelado
      * <p>
-     * No se permite aceptar una prórroga de un procedimiento cancelado
+     * No se permite aceptar una prï¿½rroga de un procedimiento cancelado
      * </p>
      */
     @Test(expected = UserException.class)
@@ -146,7 +148,7 @@ public class AceptarPropuestaTests extends AbstractMEJDecisionProcedimientoManag
     /**
      * Testea el caso en el que el gestor quiere finalizar el origen.
      * <p>
-     * No se le permite, ya que sólo el supervisor lo puede hacer
+     * No se le permite, ya que sï¿½lo el supervisor lo puede hacer
      * </p>
      */
     @Test(expected = BusinessOperationException.class)
@@ -159,7 +161,7 @@ public class AceptarPropuestaTests extends AbstractMEJDecisionProcedimientoManag
     /**
      * Testea el caso en el que el gestor quiere finalizar el origen.
      * <p>
-     * No se le permite, ya que sólo el supervisor lo puede hacer
+     * No se le permite, ya que sï¿½lo el supervisor lo puede hacer
      * </p>
      */
     @Test(expected = BusinessOperationException.class)
@@ -172,14 +174,14 @@ public class AceptarPropuestaTests extends AbstractMEJDecisionProcedimientoManag
 
     /**
      * Comprueba el caso en el que el estado de la propuesta es PROPUESTA. En
-     * este caso se debe enviar una notificación al gestor.
+     * este caso se debe enviar una notificaciï¿½n al gestor.
      */
     public void testPropuesta_propuesta() {
         // TODO Implementar este test
     }
 
     /**
-     * Comprueba el caso en el que la propuesta sea de finalización del
+     * Comprueba el caso en el que la propuesta sea de finalizaciï¿½n del
      * procedimiento. En este caso se deben finalizar las tareas pendientes del
      * procedimiento.
      */
@@ -188,7 +190,7 @@ public class AceptarPropuestaTests extends AbstractMEJDecisionProcedimientoManag
     }
 
     /**
-     * Comprueba el caso en el que la propuesta sea de finalización del
+     * Comprueba el caso en el que la propuesta sea de finalizaciï¿½n del
      * procedimiento. En este caso se deben aplazar todas las tareas.
      */
     public void testPropuesta_paralizarProcedimiento() {
@@ -202,7 +204,7 @@ public class AceptarPropuestaTests extends AbstractMEJDecisionProcedimientoManag
         verifica().seHaFinalizadoTomaDecision(listaTareas);
         verifica().seHaCambiadoEstadoAsunto(idAsunto);
         
-        //FIXME Primero se guarda la decisión y después se actualiza, no tiene sentido
+        //FIXME Primero se guarda la decisiï¿½n y despuï¿½s se actualiza, no tiene sentido
         //verifica().seHaGuardadoLaDecision(idDecisionProcedimiento, null, null);
         verifica().seHaGuardadoLaDecision(idDecisionProcedimiento, null, null, null);
         verifica().seHaActualizadoLaDecision(idDecisionProcedimiento, null);

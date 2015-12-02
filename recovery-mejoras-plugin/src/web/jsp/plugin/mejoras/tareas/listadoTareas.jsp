@@ -293,13 +293,13 @@
 							 app.openBrowserWindow('/pfs/tareanotificacion/exportacionTareasPaginaDescarga',parametros);  
 							}else{
 								Ext.MessageBox.hide();
-								Ext.Msg.alert('<s:message code="plugin.mejoras.error" text="**Error" />', '<s:message code="plugin.mejoras.tareas.exportarExcel.limiteSuperado1" text="**Se ha establecido un límite máximo de " />'+ limit + ' '+
-									'<s:message code="plugin.mejoras.tareas.exportarExcel.limiteSuperado2" text="**Tareas a Exportar. Por favor utilice los filtros para limitar el número de resultados." />');
+								Ext.Msg.alert('<s:message code="plugin.mejoras.error" text="**Error" />', '<s:message code="plugin.mejoras.tareas.exportarExcel.limiteSuperado1" text="**Se ha establecido un lï¿½mite mï¿½ximo de " />'+ limit + ' '+
+									'<s:message code="plugin.mejoras.tareas.exportarExcel.limiteSuperado2" text="**Tareas a Exportar. Por favor utilice los filtros para limitar el nï¿½mero de resultados." />');
 							}							    			
 						},
 						failure: function (result) {
 							Ext.MessageBox.hide();
-							Ext.Msg.alert('<s:message code="plugin.ugas.ws.error" text="**Error" />', '<s:message code="plugin.ugas.asuntos.exportarExcel.errorExportando" text="**Se ha producido un error durante el proceso de validación de la exportación a excel." />');
+							Ext.Msg.alert('<s:message code="plugin.ugas.ws.error" text="**Error" />', '<s:message code="plugin.ugas.asuntos.exportarExcel.errorExportando" text="**Se ha producido un error durante el proceso de validaciï¿½n de la exportaciï¿½n a excel." />');
 					    }
 					});
        					
@@ -951,6 +951,7 @@
 			codigoSubtipoTarea = app.subtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_RESPONDIDA_DE_SUPERVISOR;
 		}
 
+
 		switch (codigoSubtipoTarea){
 			case app.subtipoTarea.CODIGO_COMPLETAR_EXPEDIENTE:
 			case app.subtipoTarea.CODIGO_REVISAR_EXPEDIENE:
@@ -1126,6 +1127,37 @@
 			case app.subtipoTarea.CODIGO_RECOPILAR_DOCUMENTACION_PROCEDIMIENTO:
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'docRequerida');
 			break;
+			case app.subtipoTarea.CODIGO_PRECONTENCIOSO_SUPERVISOR:
+			case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTORIA:
+		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR:
+		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_LETRADO:
+		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR_LIQUIDACIONES:
+		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR_DOCUMENTOS:
+		    
+		    		Ext.Ajax.request({
+						url: page.resolveUrl('expedientejudicial/getEsTareaPrecontenciosoEspecial')
+						,method: 'POST'
+						,params:{
+									idTarea : rec.get('id')
+								}
+						,success: function (result, request){
+													
+							var isEspecial = Ext.util.JSON.decode(result.responseText);
+							
+							if(isEspecial.okko){
+								app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'precontencioso');
+							}else{
+								app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
+							}
+						
+						}
+						,error: function(){
+			
+						}       				
+					});
+		
+			break;
+
 			case app.subtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_GESTOR:
 			case app.subtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_SUPERVISOR:
 			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_PROCEDIMIENTO:
@@ -1136,11 +1168,6 @@
 			case '100':
 			case '101':			
 			case '105':
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-			break;
-			
-			
-			
 			case '102':
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
 				break;			
@@ -1149,81 +1176,8 @@
 				break;			
 			case '104':
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;															
-			case '800': /*Tarea del Letrado*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;
-			case '801':/*Tarea del Supervisor UCO*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;
-			case '802':/*Tarea del Gestor UCO*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;
-			case '803':/*Tarea del Gestor subastas*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;
-			case '804':/*Tarea del Supervisor subastas*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;
-			case '805':/*Tarea del Gestor deuda*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;
-			case '806':/*Tarea del Supervisor gestión deuda*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;
-			case '807':/*Tarea del Gestor soporte deuda*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;
-			case '808':/*Tarea del Supervisor soporte deuda*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;
-			case '809':/*Tarea del Usuario contabilidad*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;
-			case '810':/*Tarea del Supervisor contabilidad*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;
-			case '811':/*Tarea del Usuario fiscal*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;
-			case '812':/*Tarea del Supervisor fiscal*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;
-			case '813':/*Tarea del Gestor admisión REO*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;
-			case '814':/*Tarea del Supervisor admisión REO*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;
-			case '815':/*Tarea del Director UCO*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;
-			case '816':/*Tarea del Gestor ULI*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;
-			case '817':/*Tarea del Supervisor ULI*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;
-			case '818':/*Tarea del Director ULI*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;
-			case '1001':/*Gestor gestoria adjudicacion*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;	
-			case '1011':/*Gestor gestoria saneamiento*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;	
-		    case '1021':/*Supervisor gestoria adjudicacion*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;	
-			case '1031':/*Supervisor gestoria saneamiento*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;
-			case '1041':/*Gestor gestoria llaves*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;										
-	
-			
+				break;			
+
 			case app.subtipoTarea.CODIGO_ACTUALIZAR_ESTADO_RECURSO_GESTOR:
 			case app.subtipoTarea.CODIGO_ACTUALIZAR_ESTADO_RECURSO_SUPERVISOR: 
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'recursos');
@@ -1384,15 +1338,27 @@
                 });
                 w.on(app.event.CANCEL, function(){ w.close(); });
 		break;
+		
+		case app.subtipoTarea.CODIGO_ACEPTACION_ACUERDO:
+		case app.subtipoTarea.CODIGO_REVISION_ACUERDO_ACEPTADO:
+		case app.subtipoTarea.CODIGO_ACUERDO_GESTIONES_CIERRE:
+		case app.subtipoTarea.CODIGO_CUMPLIMIENTO_ACUERDO:
+				app.abreAsuntoTab(rec.get('idEntidad'), rec.get('descripcion'),'acuerdos');
+		break;
+		
 			// Por default abre una notificacion standard
 			default:
 				//Seleccionarmos por tipo de Categoria Tarea
 				switch(categoriaTarea) {
+				
 					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_TOMA_DECISION:
 						app.openTab(rec.get('descripcion'), 'procedimientos/consultaProcedimiento', {id:rec.get('idEntidad'),tarea:rec.get('id'),fechaVenc:rec.get('fechaVenc'),nombreTab:'decision'} , {id:'procedimiento'+rec.get('idEntidad'),iconCls:'icon_procedimiento'});
 						//app.addFavorite(rec.get('idEntidad'), rec.get('descripcion'), app.constants.FAV_TIPO_PROCEDIMIENTO);
 						break;
-						
+					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_TAREA_PROCEDIMIENTO:
+						app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
+						break;
+
 					default:
 				
 					var w = app.openWindow({

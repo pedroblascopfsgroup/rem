@@ -4,17 +4,9 @@ import es.capgemini.pfs.expediente.dto.DtoInclusionExclusionContratoExpediente;
 
 public class PluginMejorasBOConstants {
 	
-	public static final String BO_TRE_MGR_GET_BY_CODIGO = "plugin.mejoras.tipoReclamacionManager.getByCodigo";
-	
-	public static final String BO_TPO_MGR_GET_BY_CODIGO = "plugin.mejoras.tipoProcedimientoManager.getByCodigo";
-	
-	public static final String BO_TAC_MGR_GET_BY_CODIGO = "plugin.mejoras.tipoActuacionManager.getByCodigo";
-	
-	public static final String BO_DEC_PCR_ACTUALIZAR_PROCEDIMIENTO = "decisionProcedimientoManager.actualizarProcedimiento";
-	
-	public static final String BO_DEC_PCR_ELIMINAR_PROCEDIMIENTO = "decisionProcedimientoManager.borrarProcedimiento";
-	
 	public static final String MEJ_BO_GUARDAR_FICHA_ACEPTACION = "MEJAsuntosManager.guardarFichaAceptacion";
+
+	public static final String MEJ_BO_PUEDE_FINALIZAR_ASUNTO = "MEJAsuntosManager.puedeFinalizarAsunto";
 
 	public static final String MEJ_MGR_CLIENTES_TABS_FAST = "tabs.cliente.fast";
 	
@@ -92,11 +84,6 @@ public class PluginMejorasBOConstants {
 	 */
 	public static final String MEJ_BO_PAGINA_GESTOR="MEJGestorDespachoManager.getPaginaGestor";
 	
-	/**
-	 * reanuda las tareas que estaban paralizadas del procedimiento
-	 * @param id del procedimiento
-	 */
-	public static final String MEJ_BO_DECISIONPROCEDIMIENTO_REANUDAR="plugin.mejoras.decisionProcedimiento.reanudarProcedimiento";
 	
 	/**
 	 * devuelve true si el procedimiento est� paralizado
@@ -209,6 +196,4 @@ public class PluginMejorasBOConstants {
 
 	public static final String BO_CNT_MGR_SUPERAR_LIMITE_EXPORT_CLIENTES = "plugin.mejoras.superaLimiteExport";
 
-
-	public static final String MEJ_BO_DECISIONPROCEDIMIENTO_LISTA="plugin.mejoras.decisionProcedimiento.getListDecisionProcedimiento";
 }

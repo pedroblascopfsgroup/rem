@@ -14,6 +14,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
  * Clase que representa la entidad DD_PLA_PLAZAS.
@@ -23,7 +24,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 @Entity
 @Table(name = "DD_PLA_PLAZAS", schema = "${entity.schema}")
 @Cache(usage=CacheConcurrencyStrategy.READ_ONLY)
-public class TipoPlaza implements Serializable, Auditable {
+public class TipoPlaza implements Serializable, Auditable, Dictionary {
 
     private static final long serialVersionUID = -8961132998182577279L;
 

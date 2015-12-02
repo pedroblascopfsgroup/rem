@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jms="http://www.springframework.org/schema/integration/jms"
+	xmlns:integration="http://www.springframework.org/schema/integration"
+	xmlns:file="http://www.springframework.org/schema/integration/file"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/integration
+			http://www.springframework.org/schema/integration/spring-integration-1.0.xsd
+			http://www.springframework.org/schema/integration/file
+			http://www.springframework.org/schema/integration/file/spring-integration-file-1.0.xsd">
+
+	<!-- CONFIGURACION DE LA SALIDA -->
+	<bean id="jsonAsuntoPayloadTransformer" class="es.pfsgroup.recovery.integration.JsonDataContainerPayloadTransformer">
+		<constructor-arg index="0">
+			<bean class="es.pfsgroup.recovery.integration.JSONTranslator" />
+		</constructor-arg>
+	</bean>
+	<bean id="salidaIntegracionAdapter" class="es.pfsgroup.recovery.integration.file.FileIntegrationAdapter">
+		<constructor-arg value="${integracion.output}/${integracion.producer.cola}"/>
+	</bean>
+
+	<!-- ******** Flow BPM ******* -->
+	<integration:gateway 
+		id="notificarEventosBpmGW" 
+		default-request-channel="integra.salida.peticion" 
+		service-interface="es.pfsgroup.recovery.integration.bpm.NotificarEventosBPMGateway"/>
+
+	<!-- ************* 
+		 GateWay para eventos de Convenios.
+		 No integrados en esta fase.
+		 *************	 
+	integration:gateway 
+		id="notificarEventosHayaBpmGW" 
+		default-request-channel="integra.salida.peticion" 
+		service-interface="es.pfsgroup.recovery.haya.integration.bpm.NotificarEventosBPMGateway"/>
+	-->
+		
+	<!-- ************* 
+		 Cadena de transformación transforma el objeto de entrada (Entity de Recovery) en un DataContanier normalizado.
+		 Filtro por propiedades de DataContanierRegEx
+		 El orden de las salidas es importante
+		 *************	 --> 
+	<integration:chain input-channel="integra.salida.peticion" output-channel="integra.salida.canonical">
+		<integration:filter method="accept" ref="filtroPorCabeceras" />
+		<integration:transformer>
+			<bean class="es.pfsgroup.recovery.haya.integration.bpm.EntityToPayloadTransformer">
+				<constructor-arg ref="diccionarioCodigosProducer"/>
+			</bean>
+		</integration:transformer>
+		<!-- integration:filter method="accept" ref="filtroPorContenido" / -->
+	</integration:chain>
+
+	<!-- ************* 
+		 Salida TRAMO 1
+		 	- Router para descartar los errores   (pendiente!!!!)
+		 	- Transforma la salida en JSON
+		 	- guarda en DISCO
+		 *************	 --> 
+	<integration:channel id="integra.salida.fichero.out"/>
+	<integration:chain input-channel="integra.salida.canonical" output-channel="integra.salida.fichero.out">
+		<integration:transformer ref="jsonAsuntoPayloadTransformer" method="serialize" />					<!-- CONVIERTE EN FORMATO JSON -->
+		<integration:transformer ref="salidaIntegracionAdapter" method="transformMsg2file"/>				<!-- CONVIERTE EN FORMATO FICHERO CON METADATA -->
+	</integration:chain>
+	<file:outbound-channel-adapter
+			channel="integra.salida.fichero.out" 
+			directory="${integracion.output}/${integracion.producer.cola}" />
+
+
+	<!-- ************* 
+		 Guardado en Base de datos
+		 ************* 	 --> 
+		 <!-- 
+	<integration:outbound-channel-adapter channel="integra.salida.json" ref="jdbcAdapter" method="createNew">
+	</integration:outbound-channel-adapter>	
+	<bean id="jdbcAdapter" class="es.pfsgroup.recovery.integration.jdbc.JdbcAdapter">
+		<constructor-arg value="${integracion.producer.cola}"/>
+		<property name="numMaxMensajes" value="100"/>
+	</bean>
+ -->
+
+	<!-- ***************** -->
+	<!-- REGLAS DE SALIDA -->
+	<!-- ***************** -->
+	<bean id="filtroPorCabeceras" class="es.pfsgroup.recovery.integration.RuleMessageSelector">
+		<constructor-arg>
+			<list>
+				<bean class="es.pfsgroup.recovery.integration.TypePayloadHeadersRegexRule">
+					<property name="entidad" value="${integracion.producer.filtro.entidad}" />	<!-- DEJAMOS PASAR MENSAJES DE LA ENTIDAD CAJAMAR -->
+					<property name="tipo" value="BPM-TAREA-.+|BPM-FIN|TAREA-NOTIF|DATOS-RECURSO|DATOS-SUBASTA|DATOS-DECISION-PROCEDIMIENTO|DATOS-ACUERDO.+|DO-ACTIVAR-BPM|DO-FIN-ASUNTO" />
+				</bean>
+				<bean class="es.pfsgroup.recovery.integration.DenyAllRule" />
+			</list>
+		</constructor-arg>
+	</bean>
+	<!-- bean id="filtroPorContenido" class="es.pfsgroup.recovery.integration.RuleMessageSelector">
+		<constructor-arg>
+			<list>
+				<bean class="es.pfsgroup.recovery.integration.bpm.TareaExternaPayloadRegexRule">
+					<property name="entidad" value="${integracion.producer.filtro.entidad}" />	
+					<property name="tipo" value="BPM-TAREA-.+|DATOS-RECURSO|DATOS-SUBASTA|DATOS-ACUERDO.+|TAREA-NOTIF" />
+				</bean>
+				<bean class="es.pfsgroup.recovery.integration.DenyAllRule" />
+			</list>
+		</constructor-arg>
+	</bean -->
+
+	<!-- TRADUCTOR DE CODIGOS PROCEDIMIENTOS, TAREAS, DD -->
+	<bean id ="diccionarioCodigosProducer" class="es.pfsgroup.recovery.integration.bpm.DiccionarioDeCodigos">
+		<constructor-arg>
+			<map>
+				<entry key="procedimientos">
+					<map>
+					<!-- 
+						<entry key="P416" value="CJ416" />
+					 -->
+					</map>
+				</entry>
+				<entry key="tareas">
+					<map>
+					<!-- 
+						<entry key="P413_SenyalamientoSubastas" value="P412_SenyalamientoSubastas" />
+					 -->
+					</map>
+				</entry>
+				<entry key="DD">
+					<map>
+					<!-- 
+						<entry key="DDSiNo.01" value="01" />
+					 -->
+					</map>
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+	
+</beans>

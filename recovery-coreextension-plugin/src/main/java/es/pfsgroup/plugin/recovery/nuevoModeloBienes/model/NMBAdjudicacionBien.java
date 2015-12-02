@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -204,7 +205,7 @@ public class NMBAdjudicacionBien implements Serializable, Auditable{
 	private Date fechaCancelacion;
 	
     @Column(name = "BIE_ADJ_IMPORTE_ADJUDICACION")
-    private Float importeAdjudicacion;
+    private BigDecimal importeAdjudicacion;
     
     @Column(name = "BIE_ADJ_CESION_REMATE")
     private Boolean cesionRemate;
@@ -660,11 +661,11 @@ public class NMBAdjudicacionBien implements Serializable, Auditable{
 		this.fechaCancelacion = fechaCancelacion;
 	}
 
-	public Float getImporteAdjudicacion() {
+	public BigDecimal getImporteAdjudicacion() {
 		return importeAdjudicacion;
 	}
 
-	public void setImporteAdjudicacion(Float importeAdjudicacion) {
+	public void setImporteAdjudicacion(BigDecimal importeAdjudicacion) {
 		this.importeAdjudicacion = importeAdjudicacion;
 	}
 

@@ -264,5 +264,9 @@ public class EXTContratoManager implements EXTContratoApi {
 		}
 		return zonas;
 	}
-	
+
+	public Contrato getContraoByNroContrato(String nroContrato) {
+		Filter fContrato = genericDao.createFilter(FilterType.EQUALS, "nroContrato", nroContrato);
+		return genericDao.get(Contrato.class, fContrato);
+	}
 }

@@ -26,6 +26,7 @@ DECLARE
     V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_TS_INDEX VARCHAR2(25 CHAR):= '#TABLESPACE_INDEX#'; -- Configuracion Esquemas
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.  
     V_NUM_SEQ NUMBER(16); -- Vble. para validar la existencia de una secuencia  
@@ -89,7 +90,7 @@ EXECUTE IMMEDIATE 'CREATE TABLE '||V_ESQUEMA||'.DD_RVN_RES_VALIDACION_NUSE
 EXECUTE IMMEDIATE 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.PK_DD_RVN_RES_VALIDACION_NUSE ON '||V_ESQUEMA||'.DD_RVN_RES_VALIDACION_NUSE
 (DD_RVN_ID)
 LOGGING
-TABLESPACE '||V_ESQUEMA||'
+TABLESPACE '||V_TS_INDEX||'
 PCTFREE    10
 INITRANS   2
 MAXTRANS   255
@@ -109,7 +110,7 @@ EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.DD_RVN_RES_VALIDACION_NUSE ADD (
  PRIMARY KEY
  (DD_RVN_ID)
     USING INDEX 
-    TABLESPACE '||V_ESQUEMA||'
+    TABLESPACE '||V_TS_INDEX||'
     PCTFREE    10
     INITRANS   2
     MAXTRANS   255

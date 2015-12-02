@@ -243,6 +243,13 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         return (List<Expediente>) p.getResults();
     }
     
+    @SuppressWarnings("unchecked")
+    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_EXPEDIENTES_RECOBRO_PARA_EXCEL_DINAMICO)
+    public List<Expediente> findExpedientesRecobroParaExcelDinamico(DtoBuscarExpedientes dto, String params) {
+        Page p = this.findExpedientesPaginatedDinamico(dto, params, 2000, true);
+        return (List<Expediente>) p.getResults();
+    }
+    
     /**
      * Busca expedientes para un contrato determinado.
      *

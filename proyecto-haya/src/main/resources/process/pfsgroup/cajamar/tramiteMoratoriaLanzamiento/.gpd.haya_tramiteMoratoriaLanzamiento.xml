@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="hcj_tramiteMoratoriaLanzamiento" width="1487" height="1566">
+  <node name="Inicio" x="153" y="12" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H011_RegistrarSolicitudMoratoria" x="70" y="94" width="300" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="670" h1="-7" w2="-221" h2="-614"/>
+    </edge>
+  </node>
+  <node name="H011_RegistrarAdmisionYEmplazamiento" x="63" y="217" width="313" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-193" h1="-37" w2="-164" h2="87"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H011_RegistrarInformeMoratoria" x="92" y="346" width="255" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-184" h1="-48" w2="-166" h2="62"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H011_RevisarInformeLetradoMoratoria" x="69" y="479" width="302" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-210" h1="-96" w2="-187" h2="78"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H011_LecturaInstruccionesMoratoria" x="80" y="878" width="278" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-220" h1="-155" w2="-235" h2="112"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H011_LecturaInstruccionesMoratoriaDecision" x="248" y="1066" width="376" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-61" y="8"/>
+    </edge>
+  </node>
+  <node name="H011_CelebracionVista" x="62" y="1280" width="175" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="12" y="-324"/>
+      <bendpoint w1="-140" h1="-1" w2="-1095" h2="328"/>
+      <bendpoint w1="-147" h1="264" w2="-1102" h2="593"/>
+      <bendpoint w1="1009" h1="264" w2="54" h2="593"/>
+    </edge>
+    <edge>
+      <label x="-72" y="23"/>
+      <bendpoint w1="-49" h1="-281" w2="-128" h2="120"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H011_RegistrarResolucion" x="303" y="1328" width="218" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="471" h1="21" w2="-221" h2="398"/>
+    </edge>
+    <edge>
+      <label x="-75" y="-105"/>
+      <bendpoint w1="-94" h1="-98" w2="25" h2="351"/>
+      <bendpoint w1="-271" h1="-286" w2="-109" h2="163"/>
+    </edge>
+    <edge>
+      <label x="-63" y="-11"/>
+    </edge>
+  </node>
+  <node name="H011_PresentarConformidadMoratoria" x="579" y="1269" width="268" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="99" h1="-141" w2="-292" h2="177"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-49" h1="-270" w2="430" h2="118"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H011_SolicitarInstrucciones" x="452" y="1484" width="198" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="445" h1="-48" w2="-108" h2="485"/>
+    </edge>
+    <edge>
+      <label x="3" y="-118"/>
+      <bendpoint w1="1" h1="44" w2="140" h2="200"/>
+      <bendpoint w1="-527" h1="43" w2="-388" h2="199"/>
+      <bendpoint w1="-525" h1="-158" w2="-386" h2="-2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H011_InstruccionesDecision" x="934" y="1487" width="203" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="estamosADosMeses" x="83" y="1485" width="175" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H011_RegistrarResolucionDecision" x="197" y="1413" width="238" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-95" y="-19"/>
+      <bendpoint w1="641" h1="8" w2="-147" h2="470"/>
+    </edge>
+  </node>
+  <node name="Fin" x="1038" y="951" width="132" height="36"/>
+  <node name="H011_AutorizarPropuesta" x="104" y="612" width="230" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H011_AutorizarPropuestaDecision" x="81" y="746" width="274" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+</root-container>

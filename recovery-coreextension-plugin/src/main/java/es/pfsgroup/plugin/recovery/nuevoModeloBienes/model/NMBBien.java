@@ -2,9 +2,7 @@ package es.pfsgroup.plugin.recovery.nuevoModeloBienes.model;
 
 import java.math.BigInteger;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -22,7 +20,6 @@ import org.hibernate.Hibernate;
 import org.hibernate.annotations.Where;
 import org.hibernate.proxy.HibernateProxy;
 
-import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
@@ -30,7 +27,6 @@ import es.capgemini.pfs.embargoProcedimiento.model.EmbargoProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBBienInfo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBInformacionRegistralBienInfo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBLocalizacionesBienInfo;
@@ -89,7 +85,7 @@ public class NMBBien extends Bien implements NMBBienInfo{
     @JoinColumn(name = "BIE_ID")
     private NMBBienEntidad bienEntidad;
     
-    @OneToMany
+    @OneToMany(mappedBy = "bien", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "BIE_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)    
     private List<NMBBienCargas> bienCargas;
@@ -935,6 +931,19 @@ public class NMBBien extends Bien implements NMBBienInfo{
 		this.sarebId = sarebId;
 	}
 
+	public static NMBBien instanceOf(Bien bien) {
+		NMBBien nmbBien = null;
+		if (bien==null) return null;
+		//Hibernate.initialize(bien);
+	    if (bien instanceof HibernateProxy) {
+	        nmbBien = (NMBBien) ((HibernateProxy) bien).getHibernateLazyInitializer()
+	                .getImplementation();
+	    } else if (bien instanceof NMBBien){
+			nmbBien = (NMBBien)bien;
+		}
+		return nmbBien;
+	}
+	
 	public DDTipoImposicion getTipoImposicionCompra() {
 		return tipoImposicionCompra;
 	}

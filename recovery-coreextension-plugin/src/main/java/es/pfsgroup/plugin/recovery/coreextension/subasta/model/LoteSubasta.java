@@ -23,16 +23,9 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Formula;
 
-import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.asunto.model.ProcedimientoContratoExpediente;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
-import es.capgemini.pfs.contrato.model.Contrato;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBValoracionesBienInfo;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienCargas;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 
 /**
  * Clase que representa la entidad Subasta.
@@ -136,6 +129,17 @@ public class LoteSubasta implements Serializable, Auditable {
 	@Version
 	private Integer version;
 
+	@Column(name="SYS_GUID")
+	private String guid;
+	
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
+	
 	public Long getId() {
 		return id;
 	}

@@ -1081,7 +1081,6 @@
 	</pfs:searchPage>
 	
 	btnBuscar.on('click', function(grid, rowIndex, e) {
-		debugger;
 		if(getParametros_validarForm()){
 			filtroForm.getTopToolbar().setDisabled(true);
 		}

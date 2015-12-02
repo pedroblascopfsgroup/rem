@@ -13,6 +13,7 @@
     		<evaluate expression="executor.execute('NMBbienManager.getTabs', id)" result="flowScope.tabsBien"/>
     		<evaluate expression="executor.execute('NMBbienManager.getButtons', id)" result="flowScope.buttonsBien" />
     		<evaluate expression="executor.execute('es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.permiteSolicitarTasacion', id)" result="flowScope.solicitarTasacion" />
+    		<evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')" result="flowScope.usuario" />
     	</on-entry>
     </end-state>
 </flow>

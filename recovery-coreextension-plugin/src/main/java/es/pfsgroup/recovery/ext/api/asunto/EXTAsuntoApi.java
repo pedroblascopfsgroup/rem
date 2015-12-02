@@ -1,18 +1,21 @@
 package es.pfsgroup.recovery.ext.api.asunto;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
+import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJFinalizarAsuntoDto;
 import es.pfsgroup.recovery.ext.impl.asunto.dto.EXTDtoBusquedaAsunto;
 
-public interface EXTAsuntoApi {
+public interface EXTAsuntoApi  {
 
 	public static final String EXT_MGR_ASUNTO_GET_GESTORES = "es.pfsgroup.recovery.ext.api.asunto.getGestoresAsuto";
 	public static final String EXT_MGR_ASUNTO_GET_USUARIOS_RELACIONADOS = "es.pfsgroup.recovery.ext.api.asunto.getUsuariosAsociados";
@@ -30,7 +33,6 @@ public interface EXTAsuntoApi {
     public static final String EXT_BO_MSG_ERROR_ENVIO_CDD_NUSE = "asuntosManager.getMsgErrorEnvioCDDNuse";
     public static final String EXT_BO_MSG_ERROR_ENVIO_CDD_ASUNTO = "asuntosManager.getMsgErrorEnvioCDDCabecera";
 
-	
 	@BusinessOperationDefinition(EXT_MGR_ASUNTO_GET_GESTORES)
 	public List<GestorDespacho> getGestoresAsunto(Long idAsunto);
 	
@@ -108,4 +110,27 @@ public interface EXTAsuntoApi {
     */
 	@BusinessOperationDefinition(EXT_BO_MSG_ERROR_ENVIO_CDD_ASUNTO)
 	public String getMsgErrorEnvioCDDCabecera(Long idAsunto);
+	
+	/**
+	 * Finaliza un asunto.
+	 * 
+	 * @param dto dto con los datos necesarios para finalizar en asunto. {@link MEJFinalizarAsuntoDto}
+	 */
+	void finalizarAsunto(MEJFinalizarAsuntoDto dto);
+	
+	
+	/**
+	 * Finaliza un asunto.
+	 * 
+	 * @param dto dto con los datos necesarios para finalizar en asunto. {@link MEJFinalizarAsuntoDto}
+	 * @param sincronizar Indica si debe sincronizar información.
+	 * 
+	 */
+	void finalizarAsunto(MEJFinalizarAsuntoDto dto, boolean sincronizar);
+	
+	/* (non-Javadoc)
+	 * @see es.pfsgroup.plugin.recovery.coreextension.api.AsuntoCoreApi#paralizaAsunto(es.capgemini.pfs.asunto.model.Asunto, java.util.Date)
+	 */
+	void paralizaAsunto(Asunto asunto, Date fechaParalizacion);
+	
 }

@@ -40,7 +40,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
 	V_SQL := 'SELECT 
                 (SELECT COUNT(*) FROM '||V_ESQUEMA_M||'.fun_funciones fun1 WHERE fun1.fun_descripcion IN (''MENU-LIST-EXP-ALL-USERS'',''MENU-LIST-EXP-RECOBRO-ALL-USERS''))
                 +
-                (SELECT COUNT(*) FROM '||V_ESQUEMA||'.pef_perfiles pef1 WHERE pef1.pef_codigo IN (''FPFSRADMIN'',''FPFSRINT'',''FPFSREXT'')) AS SUMA
+                (SELECT COUNT(*) FROM '||V_ESQUEMA||'.pef_perfiles pef1 WHERE pef1.pef_codigo IN (''FPFSRADMIN'',''FPFSRINT'',''FPFSREXT'',''FPFSRSOPORT'',''FPFSRUSUREC'')) AS SUMA
                 FROM DUAL';
     EXECUTE IMMEDIATE V_SQL INTO CUENTA;
 	
@@ -50,13 +50,28 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
 	---- * Eliminar permisos actuales sobre ver MENU > EXPEDIENTES 
     -- * y sobre ver MENU > EXPEDIENTES RECOBRO
 	-- **/   
-	IF CUENTA < 5 THEN
+	IF CUENTA < 7 THEN
 
       DBMS_OUTPUT.PUT_LINE('[ERROR] No se ha podido realizar la operación de dar permisos para visualizar MENU > EXPEDIENTES');
-      DBMS_OUTPUT.PUT_LINE('[ERROR] CAUSA: Revise la existencia de las funciones: ''MENU-LIST-EXP-ALL-USERS'',  ''MENU-LIST-EXP-RECOBRO-ALL-USERS'' y los codigos de perfiles: ''FPFSRADMIN'',''FPFSRINT'',''FPFSREXT'' ');
+      DBMS_OUTPUT.PUT_LINE('[ERROR] CAUSA: Revise la existencia de las funciones: ''MENU-LIST-EXP-ALL-USERS'',  ''MENU-LIST-EXP-RECOBRO-ALL-USERS'' y los codigos de perfiles: ''FPFSRADMIN'',''FPFSRINT'',''FPFSREXT'',''FPFSRSOPORT'',''FPFSRUSUREC'' ');
   
   ELSE
 	
+
+    EXECUTE IMMEDIATE 
+        'DELETE '||V_ESQUEMA||'.fun_pef fp
+            WHERE fp.fp_id IN
+              (SELECT fp1.fp_id
+              FROM '||V_ESQUEMA||'.fun_pef fp1
+              INNER JOIN '||V_ESQUEMA_M||'.fun_funciones fun1
+              ON fp1.fun_id = fun1.fun_id
+              INNER JOIN '||V_ESQUEMA||'.pef_perfiles pef1
+              ON fp1.pef_id = pef1.pef_id
+              WHERE
+                fun1.fun_descripcion = ''MENU-LIST-EXP''
+              )';
+    DBMS_OUTPUT.PUT_LINE('[INFO] Permisos sobre MENU > EXPEDIENTES eliminados.');
+
     EXECUTE IMMEDIATE 
         'DELETE '||V_ESQUEMA||'.fun_pef fp
             WHERE fp.fp_id IN
@@ -68,9 +83,8 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
               ON fp1.pef_id = pef1.pef_id
               WHERE
                 fun1.fun_descripcion = ''MENU-LIST-EXP-ALL-USERS''
-                AND pef1.pef_codigo IN (''FPFSRADMIN'',''FPFSRINT'',''FPFSREXT'')
               )';
-	  DBMS_OUTPUT.PUT_LINE('[INFO] Permisos sobre MENU > EXPEDIENTES eliminados.');
+	  DBMS_OUTPUT.PUT_LINE('[INFO] Permisos sobre MENU > EXPEDIENTES Dinamico, eliminados.');
 
       EXECUTE IMMEDIATE 
         'DELETE '||V_ESQUEMA||'.fun_pef fp
@@ -83,12 +97,43 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
               ON fp1.pef_id = pef1.pef_id
               WHERE
                 fun1.fun_descripcion = ''MENU-LIST-EXP-RECOBRO-ALL-USERS''
-                AND pef1.pef_codigo IN (''FPFSRADMIN'',''FPFSRINT'',''FPFSREXT'')
               )';
       DBMS_OUTPUT.PUT_LINE('[INFO] Permisos sobre MENU > EXPEDIENTES RECOBRO eliminados.');
 
+
+
     --/**
-    -- * Se crean los permisos para visualizar MENU > EXPEDIENTES
+    -- * Se restauran los permisos para visualizar MENU > EXPEDIENTES
+    -- **/
+    EXECUTE IMMEDIATE 
+        'INSERT
+            INTO '||V_ESQUEMA||'.fun_pef
+              (
+                fun_id,
+                pef_id,
+                fp_id,
+                version,
+                usuariocrear,
+                fechacrear
+              )
+            SELECT
+              (SELECT fun1.fun_id
+              FROM '||V_ESQUEMA_M||'.fun_funciones fun1
+              WHERE fun1.fun_descripcion = ''MENU-LIST-EXP''
+              ) AS fun_id ,
+              pef.pef_id ,
+              ' || V_ESQUEMA || '.S_FUN_PEF.nextval AS FP_ID ,
+              ''0''               AS VERSION ,
+              ''BKREC-943''       AS USUARIOCREAR ,
+              sysdate           AS FECHACREAR
+            FROM pef_perfiles pef
+            WHERE pef.pef_codigo IN (''FPFSRADMIN'',''FPFSRINT'',''FPFSREXT'',''FPFSRSOPORT'',''FPFSRUSUREC'')';
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] Permisos sobre MENU > EXPEDIENTES Dinamico, creados.');
+
+
+    --/**
+    -- * Se restauran los permisos para visualizar MENU > EXPEDIENTES Dinamico
     -- **/
     EXECUTE IMMEDIATE 
         'INSERT
@@ -107,14 +152,14 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
               WHERE fun1.fun_descripcion = ''MENU-LIST-EXP-ALL-USERS''
               ) AS fun_id ,
               pef.pef_id ,
-              S_FUN_PEF.nextval AS FP_ID ,
+              ' || V_ESQUEMA || '.S_FUN_PEF.nextval AS FP_ID ,
               ''0''               AS VERSION ,
               ''BKREC-943''       AS USUARIOCREAR ,
               sysdate           AS FECHACREAR
             FROM pef_perfiles pef
-            WHERE pef.pef_codigo IN (''FPFSRADMIN'',''FPFSRINT'',''FPFSREXT'')';
+            WHERE pef.pef_codigo IN (''FPFSRADMIN'',''FPFSRINT'',''FPFSREXT'',''FPFSRSOPORT'',''FPFSRUSUREC'')';
 
-    DBMS_OUTPUT.PUT_LINE('[INFO] Permisos sobre MENU > EXPEDIENTES, creados.');
+    DBMS_OUTPUT.PUT_LINE('[INFO] Permisos sobre MENU > EXPEDIENTES Dinamico, creados.');
 
   END IF;
 

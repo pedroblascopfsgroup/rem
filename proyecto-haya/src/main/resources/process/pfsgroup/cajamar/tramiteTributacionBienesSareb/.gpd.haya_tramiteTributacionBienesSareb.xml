@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="hcj_tramiteTributacionBienesSareb" width="1013" height="877">
+  <node name="Inicio" x="284" y="41" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H054_ValidaBienesTributacion" x="229" y="155" width="247" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="285" h1="2" w2="-59" h2="-174"/>
+    </edge>
+  </node>
+  <node name="H054_ValidaBienesTributacionDecision" x="224" y="253" width="266" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="218" h1="0" w2="-121" h2="-177"/>
+    </edge>
+  </node>
+  <node name="H054_EmisionInformeFiscal" x="228" y="371" width="255" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-273" h1="0" w2="-1" h2="-180"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-217" h1="-110" w2="-214" h2="106"/>
+    </edge>
+  </node>
+  <node name="H054_EmisionInformeFiscalDecision" x="226" y="469" width="263" height="36">
+    <edge>
+      <label x="-47" y="-63"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-120" y="3"/>
+      <bendpoint w1="278" h1="1" w2="-61" h2="40"/>
+    </edge>
+  </node>
+  <node name="H054_fork1" x="387" y="582" width="252" height="24">
+    <edge>
+      <label x="7" y="-28"/>
+    </edge>
+    <edge>
+      <label x="-38" y="-30"/>
+    </edge>
+  </node>
+  <node name="H054_ConfirmarComEmpresario" x="97" y="687" width="248" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-9" y="-66"/>
+      <bendpoint w1="-174" h1="0" w2="-36" h2="136"/>
+    </edge>
+  </node>
+  <node name="H054_PresentarEscritoJuzgado" x="396" y="688" width="241" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="185" h1="-1" w2="5" h2="257"/>
+    </edge>
+    <edge>
+      <label x="-46" y="-6"/>
+      <bendpoint w1="300" h1="12" w2="120" h2="270"/>
+      <bendpoint w1="303" h1="-267" w2="123" h2="-9"/>
+    </edge>
+  </node>
+  <node name="Fin" x="630" y="430" width="132" height="36"/>
+  <node name="Fin2" x="17" y="551" width="132" height="36"/>
+</root-container>

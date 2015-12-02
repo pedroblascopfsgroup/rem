@@ -137,7 +137,7 @@ bottomBar.push(btnCancelar);
 			{header: '<s:message code="plugin.masivo.confirmarReqPrevioTodosDemandados.nombre" text="**Nombre" />', dataIndex: 'nombre'},
 			{header: '<s:message code="plugin.masivo.confirmarReqPrevioTodosDemandados.ultimaFechaReqPago" text="**Ultima fecha requerimiento" />', dataIndex: 'ultimaFechaReqPago'},
 			{header: '<s:message code="plugin.masivo.confirmarReqPrevioTodosDemandados.direccion" text="**Dirección" />', dataIndex:'direccionReqPago', editor: direccionReqPago_edit},
-			{header: '<s:message code="plugin.masivo.confirmarReqPrevioTodosDemandados.fechaReqPago" text="**Fecha requerimiento pago" />', dataIndex: 'fechaReqPago',editor: fechaReqPago_edit},
+			{header: '<s:message code="plugin.masivo.confirmarReqPrevioTodosDemandados.fechaReqPago" text="**Fecha requerimiento pago" />', dataIndex: 'fechaReqPago',editor: fechaReqPago_edit}
 			]
 	});
 	

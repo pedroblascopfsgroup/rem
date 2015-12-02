@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="" name="hcj_tramiteSaneamientoCargas">
+
+	<start-state name="Inicio">
+		<transition to="H008_RevisarEstadoCargas" name="iniciarProceso"></transition>
+	</start-state>
+
+
+	<state name="H008_RevisarEstadoCargas">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="H008_RevisarEstadoCargasDecision" name="avanzaBPM"></transition>
+		<transition to="H008_RevisarEstadoCargas" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<decision name="H008_RevisarEstadoCargasDecision" expression="#{H008_RevisarEstadoCargasDecision}">
+		<transition to="H008_RegistrarPresentacionInscripcion" name="soloRegistrales"></transition>
+		<transition to="H008_SaneamientoDecision" name="noCargas"></transition>
+		<transition to="H008_PropuestaCancelacionCargas" name="conEconomicas"></transition>
+	</decision>
+
+	<state name="H008_RegistrarPresentacionInscripcion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>adjudicacionHayaLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="H008_RegInsCancelacionCargasReg" name="avanzaBPM"></transition>
+		<transition to="H008_RegistrarPresentacionInscripcion" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H008_RevisarEstadoCargas" name="vueltaAtras"></transition>
+	</state>
+
+	<state name="H008_PropuestaCancelacionCargas">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="H008_PropuestaCancelacionCargasDecision" name="avanzaBPM"></transition>
+		<transition to="H008_PropuestaCancelacionCargas" name="activarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+		<transition to="H008_RevisarEstadoCargas" name="vueltaAtras"></transition>
+	</state>
+
+	<state name="H008_RegInsCancelacionCargasReg"> 
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="H008_RegistrarPresentacionInscripcion" name="vueltaAtras"></transition>
+		<transition to="H008_RegInsCancelacionCargasReg" name="activarAlerta"></transition>
+		<transition to="H008_RegInsCancelacionCargasRegDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="H008_RevisarPropuestaCancelacionCargas">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="H008_RevisarPropuestaCancelacionCargas" name="activarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+		<transition to="H008_ObtenerAprobPropuesta" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="H008_LiquidarCargas">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="H008_RegInsCancelacionCargasEconomicas" name="avanzaBPM"></transition>
+		<transition to="H008_LiquidarCargas" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="H008_RegInsCancelacionCargasEconomicas">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>adjudicacionHayaLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="H008_RegInsCancelacionCargasEconomicasDecision" name="avanzaBPM"></transition>
+		<transition to="H008_RegInsCancelacionCargasEconomicas" name="activarAlerta"></transition>
+		<transition to="H008_LiquidarCargas" name="vueltaAtras"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<decision name="H008_RegInsCancelacionCargasEconomicasDecision" expression="#{H008_RegInsCancelacionCargasEconomicasDecision}">
+		<transition to="H008_RegistrarPresentacionInscripcionEco" name="conRegistrales"></transition>
+		<transition to="H008_SaneamientoDecision" name="soloEconomicas"></transition>
+		<transition to="Fin2" name="fin"></transition>
+	</decision>
+
+	<state name="H008_RegistrarPresentacionInscripcionEco">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>adjudicacionHayaLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="H008_RegInsCancelacionCargasRegEco" name="avanzaBPM"></transition>
+		<transition to="H008_RegInsCancelacionCargasEconomicas" name="vueltaAtras"></transition>
+		<transition to="H008_RegistrarPresentacionInscripcionEco" name="activarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+	</state>
+
+	<state name="H008_RegInsCancelacionCargasRegEco"> 
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="H008_RegistrarPresentacionInscripcionEco" name="vueltaAtras"></transition>
+		<transition to="H008_RegInsCancelacionCargasRegEco" name="activarAlerta"></transition>
+		<transition to="H008_RegInsCancelacionCargasRegEcoDecision" name="avanzaBPM"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+	</state>
+
+	<node name="H008_SaneamientoDecision">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>genericUserDecisionActionHandler
+			</targetBean>
+		</action>	
+		<transition to="Fin" name="Fin"></transition>
+	</node>
+
+	<decision name="H008_RegInsCancelacionCargasRegDecision" expression="#{H008_RegInsCancelacionCargasRegDecision}">
+		<transition to="H008_SaneamientoDecision" name="Decidir"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</decision>
+
+	<decision name="H008_PropuestaCancelacionCargasDecision" expression="#{H008_PropuestaCancelacionCargasDecision}">
+		<transition to="H008_LiquidarCargas" name="sinAprobacion"></transition>
+		<transition to="H008_RevisarPropuestaCancelacionCargas" name="reqAprobacion"></transition>
+	</decision>
+
+	<state name="H008_ObtenerAprobPropuesta">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="H008_PropuestaCancelacionCargas" name="vueltaAtras"></transition>
+		<transition to="H008_ObtenerAprobPropuesta" name="activarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+		<transition to="H008_ObtenerAprobPropuestaDecision" name="avanzaBPM"></transition>
+	</state>
+
+	<decision name="H008_RegInsCancelacionCargasRegEcoDecision" expression="#{H008_RegInsCancelacionCargasRegEcoDecision}">
+		<transition to="H008_SaneamientoDecision" name="Decidir"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+	</decision>
+
+	<decision name="H008_ObtenerAprobPropuestaDecision" expression="#{H008_ObtenerAprobPropuestaDecision}">
+		<transition to="H008_LiquidarCargas" name="aceptado"></transition>
+		<transition to="Fin2" name="denegado"></transition>
+	</decision>
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+	<end-state name="Fin2">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+	
+	
+</process-definition>

@@ -40,7 +40,7 @@
  			root : 'clientes'
 			,totalProperty : 'total'
 			,id : 'id'
-			},['id', ,'docId','descripcion']
+			},['id','docId','descripcion']
 		) 
 	});
 	

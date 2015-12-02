@@ -8,6 +8,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -17,7 +20,9 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.pagination.PaginationParams;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoBuscarTareaNotificacion;
+import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
+import es.capgemini.pfs.users.dao.UsuarioDao;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
@@ -28,6 +33,7 @@ import es.pfsgroup.recovery.ext.factory.dao.HQLBuilderReutilizable;
 import es.pfsgroup.recovery.ext.factory.dao.HQLQueryCallback;
 import es.pfsgroup.recovery.ext.factory.dao.dto.DtoResultadoBusquedaTareasBuzones;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.VTARBusquedaOptimizadaTareasDao;
+import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.model.VTARTareaVsUsuario;
 
 @Repository("VTARBusquedaOptimizadaTareasDao")
 public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<TareaNotificacion, Long> implements VTARBusquedaOptimizadaTareasDao {
@@ -37,6 +43,9 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 
 	@Autowired
 	private EXTGrupoUsuariosDao grupoUsuarioDao;
+
+    @Autowired
+    private UsuarioDao usuarioDao;
 
     @Override
     public Long obtenerCantidadDeTareasPendientes(final DtoBuscarTareaNotificacion dto, final boolean conCarterizacion, final Usuario usuarioLogado) {
@@ -246,9 +255,14 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
     private Date parseaFecha(final String fecha, final String formato) {
         final SimpleDateFormat sdf = new SimpleDateFormat(formato);
         try {
-            return sdf.parse(fecha);
+        	if(!Checks.esNulo(fecha)){
+        		return sdf.parse(fecha);
+        	}else{
+        		return null;
+        	}
         } catch (ParseException e) {
             logger.error("No se ha podido parsear la fecha '" + fecha + "' al formato '" + formato + "'");
+            logger.error(e.getMessage(), e);
             return null;
         }
     }
@@ -261,4 +275,24 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
         return "vtar." + parametro;
 
     }
+
+    @Override
+    public Usuario obtenerResponsableTarea(Long idTarea) {
+       //Criteria criteria = this.getSession().createCriteria(VTARTareaVsUsuario.class, "vTarUsu");
+       //criteria.add(Restrictions.eq("vTarUsu.id", idTarea));
+       //criteria.add(Restrictions.isNotEmpty("vTarUsu.usuarioPendiente"));
+       //List<VTARTareaVsUsuario> list = criteria.setMaxResults(1).list();
+       
+	   	Query q = this.getSession().createQuery("from VTARTareaVsUsuario t where t.id = :id and t.usuarioPendiente != null");
+        q.setParameter( "id", idTarea);
+        List<VTARTareaVsUsuario> list = q.setMaxResults(1).list();
+
+        Usuario usuario = null;
+       if (list.size()>0) {
+           usuario = usuarioDao.get(list.get(0).getUsuarioPendiente());
+       }
+       
+       return usuario;
+       }
+
 }

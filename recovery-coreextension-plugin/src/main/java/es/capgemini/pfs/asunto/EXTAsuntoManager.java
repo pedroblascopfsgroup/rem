@@ -12,7 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
@@ -40,6 +39,7 @@ import es.capgemini.pfs.asunto.dto.DtoProcedimiento;
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDto;
 import es.capgemini.pfs.asunto.model.AdjuntoAsunto;
 import es.capgemini.pfs.asunto.model.Asunto;
+import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.asunto.model.HistoricoCambiosAsunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
@@ -56,8 +56,9 @@ import es.capgemini.pfs.core.api.asunto.HistoricoAsuntoInfo;
 import es.capgemini.pfs.core.api.asunto.HistoricoAsuntoInfoImpl;
 import es.capgemini.pfs.core.api.registro.HistoricoProcedimientoApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.decisionProcedimiento.DecisionProcedimientoManager;
+import es.capgemini.pfs.decisionProcedimiento.model.DDCausaDecisionFinalizar;
 import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
-import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
@@ -70,7 +71,6 @@ import es.capgemini.pfs.iplus.IPLUSUtils;
 import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoDao;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
-import es.capgemini.pfs.multigestor.model.EXTTipoGestorPropiedad;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.persona.model.AdjuntoPersona;
 import es.capgemini.pfs.persona.model.Persona;
@@ -83,16 +83,15 @@ import es.capgemini.pfs.registro.model.HistoricoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
-import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Funcion;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.util.HistoricoProcedimientoComparatorV4;
+import es.capgemini.pfs.utils.JBPMProcessManager;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -101,7 +100,10 @@ import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
-import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJFinalizarAsuntoDto;
+import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.MEJDecisionProcedimientoManager;
+import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
 import es.pfsgroup.recovery.api.ProcedimientoApi;
@@ -120,9 +122,7 @@ import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 import es.pfsgroup.recovery.ext.impl.zona.dao.EXTZonaDao;
-import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
-import es.capgemini.pfs.multigestor.model.EXTTipoGestorPropiedad;
-
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 @Component
 public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> implements es.pfsgroup.recovery.api.AsuntoApi, AsuntoApi, EXTAsuntoApi {
@@ -130,10 +130,16 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
-	private EXTAsuntoDao asuntoDao;
+	private UtilDiccionarioApi diccionarioApi;
 
 	@Autowired
+	private GenericABMDao genericDao;
+	
+	@Autowired
 	private Executor executor;
+
+	@Autowired
+	private EXTAsuntoDao asuntoDao;
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -169,6 +175,18 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	
 	@Autowired
     private EXTZonaDao extZonaDao;
+
+	@Autowired
+	private JBPMProcessManager jbpmUtil;
+	
+	@Autowired
+	private IntegracionBpmService integrationService;
+	
+	@Autowired
+	private MEJDecisionProcedimientoManager mejDecisionProcedimientoManager;
+
+	@Autowired
+	private DecisionProcedimientoManager decisionProcedimientoManager;
 	
 	@Override
 	public String managerName() {
@@ -477,14 +495,17 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			}
 			adjuntosAsunto.addAll(creaObjetosEXTAsuntos(setAdjuntos, usuario, borrarOtrosUsu));
 		}
-		Set<EXTAdjuntoDto> adjuntosRecovery = creaObjetosEXTAsuntos(asunto.getAdjuntos(), usuario, borrarOtrosUsu);
-		Set<EXTAdjuntoDto> adjuntosRecovery2 = null;
-		if (iplus != null && iplus.instalado()) {
-			adjuntosRecovery2 = iplus.eliminarRepetidos(adjuntosRecovery, adjuntosAsunto);
-		} else {
-			adjuntosRecovery2 = adjuntosRecovery;
+		else{
+			adjuntosAsunto.addAll(creaObjetosEXTAsuntos(asunto.getAdjuntos(), usuario, borrarOtrosUsu));
 		}
-		adjuntosAsunto.addAll(adjuntosRecovery2);
+//		Set<EXTAdjuntoDto> adjuntosRecovery = creaObjetosEXTAsuntos(asunto.getAdjuntos(), usuario, borrarOtrosUsu);
+//		Set<EXTAdjuntoDto> adjuntosRecovery2 = null;
+//		if (iplus != null && iplus.instalado()) {
+//			adjuntosRecovery2 = iplus.eliminarRepetidos(adjuntosRecovery, adjuntosAsunto);
+//		} else {
+//			adjuntosRecovery2 = adjuntosRecovery;
+//		}
+//		adjuntosAsunto.addAll(adjuntosRecovery2);
 		
 		return ordenaListado(adjuntosAsunto);
 
@@ -1535,8 +1556,10 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		
 		dto.setCodigoZonas(getCodigosDeZona(dto));
 		dto.setTiposProcedimiento(getTiposProcedimiento(dto));
-		if (usuarioLogado.getUsuarioExterno())
-			dto.setIdsUsuariosGrupos(extGrupoUsuariosDao.getIdsUsuariosGrupoUsuario(usuarioLogado));
+		if (usuarioLogado.getUsuarioExterno()) {
+			List<Long> idGrpsUsuario = extGrupoUsuariosDao.buscaGruposUsuario(usuarioLogado);
+			dto.setIdsUsuariosGrupos(idGrpsUsuario);
+		}
 		
 		return asuntoDao.buscarAsuntosPaginatedDinamico(usuarioLogado, dto, params);
 	}
@@ -1839,8 +1862,11 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		
 		dto.setCodigoZonas(getCodigosDeZona(dto));
 		dto.setTiposProcedimiento(getTiposProcedimiento(dto));
-		if (usuarioLogado.getUsuarioExterno())
-			dto.setIdsUsuariosGrupos(extGrupoUsuariosDao.getIdsUsuariosGrupoUsuario(usuarioLogado));
+		
+		if (usuarioLogado.getUsuarioExterno()) {
+			List<Long> idsGruposUsuario = extGrupoUsuariosDao.buscaGruposUsuario(usuarioLogado);
+			dto.setIdsUsuariosGrupos(idsGruposUsuario);
+		}
 		
 		Parametrizacion param = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
                 Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_ASUNTOS);		
@@ -1870,7 +1896,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			return esUsuarioGestorDecision(id);
 			
 		} catch (Exception e) {
-			logger.fatal("No se ha podido comprobar si el usuario puede ver el botón de tomar una decisión en el asunto: "+id);
+			logger.error("No se ha podido comprobar si el usuario puede ver el botón de tomar una decisión en el asunto: "+id, e);
 			return false;
 			//throw new BusinessOperationException(e);
 		}
@@ -1899,11 +1925,10 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		for (String st : staC) {
 			
 			EXTSubtipoTarea extSubtipoTarea = genericdDao.get(EXTSubtipoTarea.class, genericdDao.createFilter(FilterType.EQUALS, "codigoSubtarea", st));
-			listaCodigosGestor.add(extSubtipoTarea.getTipoGestor().getCodigo());
-			
+			if (extSubtipoTarea!=null) {
+				listaCodigosGestor.add(extSubtipoTarea.getTipoGestor().getCodigo());
+			}
 		}
-		
-		
 		
 		boolean gestor = false;
 
@@ -1917,8 +1942,6 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		}*/
 
 		return gestor;
-		
-		
 	}
 
 	@Override
@@ -1949,6 +1972,19 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		
 	}
 	
+
+	public EXTAsunto getAsuntoByGuid(String guid) {
+		Filter filter = genericdDao.createFilter(FilterType.EQUALS, "guid", guid);
+		EXTAsunto extAsunto = genericdDao.get(EXTAsunto.class, filter);
+		return extAsunto;
+	}
+
+	public EXTAsunto getAsuntoById(Long id) {
+		Filter filter = genericdDao.createFilter(FilterType.EQUALS, "id", id);
+		EXTAsunto extAsunto = genericdDao.get(EXTAsunto.class, filter);
+		return extAsunto;
+	}
+
 	@BusinessOperation(EXT_BO_ES_TIPO_GESTOR_ASIGNADO)
 	public Boolean esTipoGestorAsignado(Long idAsunto, String codigoTipoGestor){
 		List<EXTGestorAdicionalAsunto> gestores = getGestoresAdicionalesAsunto(idAsunto);
@@ -1992,7 +2028,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		
 	}
 	
-        @Override
+    @Override
 	@BusinessOperation(EXT_BO_MSG_ERROR_ENVIO_CDD_ASUNTO)
 	public String getMsgErrorEnvioCDDCabecera(Long idAsunto) {
 	
@@ -2003,4 +2039,149 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
             }
 
 	}
+        
+	@Override
+	@Transactional(readOnly = false)
+	public void finalizarAsunto(MEJFinalizarAsuntoDto dto) {
+		this.finalizarAsunto(dto, true);
+	}
+        
+	@Override
+	@Transactional(readOnly = false)
+	public void finalizarAsunto(MEJFinalizarAsuntoDto dto, boolean sincronizar) {
+
+		Asunto asunto = asuntoDao.get(dto.getIdAsunto());
+		
+		Provisiones prov = genericDao.get(Provisiones.class, genericDao.createFilter(FilterType.EQUALS, "asunto.id", asunto.getId()), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+
+		// Buscamos el estado procedimiento cerrado para asignarselo después al
+		// procedimiento
+		DDEstadoProcedimiento ep = (DDEstadoProcedimiento)diccionarioApi.dameValorDiccionarioByCod(DDEstadoProcedimiento.class, DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO);
+		boolean error = false;
+		for (Procedimiento proc : asunto.getProcedimientos()) {
+			
+			if(proc.getEstadoProcedimiento().getCodigo().equals(ep.getCodigo())) {
+				continue;
+			}
+
+			MEJDtoDecisionProcedimiento dtoDecisionProcedimiento = new MEJDtoDecisionProcedimiento();
+
+			dtoDecisionProcedimiento.setIdProcedimiento(proc.getId());
+			dtoDecisionProcedimiento.setFinalizar(true);
+			dtoDecisionProcedimiento.setParalizar(false);
+			dtoDecisionProcedimiento.setFechaParalizacion(dto
+					.getFechaFinalizacion());
+			dtoDecisionProcedimiento.setComentarios(dto.getObservaciones());
+			
+			//dtoDecisionProcedimiento.setCausaDecision(getCodigoCausaDecisionByDescripcion(dto.getMotivoFinalizacion()));
+			dtoDecisionProcedimiento.setCausaDecisionFinalizar(getCodigoCausaDecisionByDescripcion(dto.getMotivoFinalizacion()));
+			
+			dtoDecisionProcedimiento.setStrEstadoDecision("02");
+
+			
+			DecisionProcedimiento decisionProcedimiento = decisionProcedimientoManager.getInstance(proc.getId());
+
+			dtoDecisionProcedimiento
+					.setDecisionProcedimiento(decisionProcedimiento);
+			try {
+				mejDecisionProcedimientoManager.aceptarPropuesta(dtoDecisionProcedimiento);
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.error("Ha habido un error al cerrar los procedimientos. "
+						+ e);
+				error = true;
+			}
+		}
+
+		// Cuando haya finalizado todos los procedimientos, ahora ya se puede
+		// cambiar el estado del asunto
+		// Comprobamos que no haya habido ningún error
+		if (!error) {
+			//Estado Asunto por defecto = "Cerrado"
+			DDEstadoAsunto estado = (DDEstadoAsunto)diccionarioApi.dameValorDiccionarioByCod(DDEstadoAsunto.class, DDEstadoAsunto.ESTADO_ASUNTO_CERRADO);
+			
+			//Se evalúa si existen provisiones -> Se establece estado = "Gestion finalizada"
+			if ( prov != null && (Checks.esNulo(prov.getFechaBaja() )) ){
+				estado = (DDEstadoAsunto)diccionarioApi.dameValorDiccionarioByCod(DDEstadoAsunto.class, DDEstadoAsunto.ESTADO_ASUNTO_GESTION_FINALIZADA);
+			}
+
+			asunto.setEstadoAsunto(estado);
+			try {
+				asuntoDao.save(asunto);
+
+				// Ahora vamos a eliminar todas las tareas asociadas al asunto
+				Long idAsunto = asunto.getId();
+
+				// Primero borramos las tareas externas del asunto
+				Set<TareaNotificacion> listadoN = asunto.getTareas();
+				for (TareaNotificacion tn : listadoN) {
+					if (!Checks.esNulo(tn.getTareaExterna()))
+						genericDao.deleteById(TareaExterna.class, tn
+								.getTareaExterna().getId());
+				}
+
+				// Borramos todas las notificaciones del asunto
+				List<TareaNotificacion> listadoNotificaciones = genericDao
+						.getList(TareaNotificacion.class, genericDao
+								.createFilter(FilterType.EQUALS, "asunto.id",
+										idAsunto));
+				for (TareaNotificacion tn : listadoNotificaciones) {
+					genericDao.deleteById(TareaNotificacion.class, tn.getId());
+				}
+
+				if (sincronizar) {
+					integrationService.finalizarAsunto(dto);
+				}
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.error(e);
+			}
+		} else {
+			logger.error("El asunto no se ha cerrado correctamente.");
+		}
+
+	}
+	
+	/* (non-Javadoc)
+	 * @see es.pfsgroup.plugin.recovery.mejoras.asunto.api.MEJFinalizarAsuntoApi#paralizaAsunto(es.capgemini.pfs.asunto.model.Asunto, java.util.Date)
+	 */
+	@Override
+	@Transactional(readOnly = false)
+	public void paralizaAsunto(Asunto asunto, Date fechaParalizacion) {
+		List<Procedimiento> procedimientos = asunto.getProcedimientos();
+		for (Procedimiento procedimiento : procedimientos) {
+			if ((!DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(procedimiento.getEstadoProcedimiento().getCodigo())) &&
+				(!DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(procedimiento.getEstadoProcedimiento().getCodigo()))) {
+				
+				MEJProcedimiento mejPrc = genericDao.get(MEJProcedimiento.class, 
+						genericDao.createFilter(FilterType.EQUALS, "id", procedimiento.getId()));			
+				
+				Long idProcessBPM = mejPrc.getProcessBPM();
+				if (!Checks.esNulo(idProcessBPM))
+					jbpmUtil.aplazarProcesosBPM(idProcessBPM, fechaParalizacion);
+                mejPrc.setEstaParalizado(true);
+                mejPrc.setFechaUltimaParalizacion(fechaParalizacion);
+                genericDao.save(MEJProcedimiento.class, mejPrc);
+			}
+		}
+	}	
+	
+	/**
+	 * M�todo que devuelve el c�digo de causa decisi�n a partir de la descripci�n de la causa
+	 * @param descripcion
+	 * @return codigo
+	 */
+	private String getCodigoCausaDecisionByDescripcion(String descripcion){
+		if(!Checks.esNulo(descripcion)){
+			
+			//DDCausaDecision causa = genericDao.get(DDCausaDecision.class, genericDao.createFilter(FilterType.EQUALS, "descripcion", descripcion));
+			DDCausaDecisionFinalizar causa = genericDao.get(DDCausaDecisionFinalizar.class, genericDao.createFilter(FilterType.EQUALS, "descripcion", descripcion));
+			if(!Checks.esNulo(causa))
+				return causa.getCodigo();
+			return "";
+		}
+		return null;
+	}
+
 }

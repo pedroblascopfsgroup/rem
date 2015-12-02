@@ -1,11 +1,8 @@
 package es.pfsgroup.procedimientos.adjudicacion;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Set;
 
-import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
@@ -33,7 +30,8 @@ import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 public class AdjudicacionHayaProcedimientoManager {
 
 	private static final String BO_ADJUDICACION_VALIDAR_ADJUNTO_SAREB = "es.pfsgroup.recovery.adjudicacion.validarAdjuntoSareb";
-	private static final String BO_ADJUDICACION_OBTENER_TIPO_CARGA = "es.pfsgroup.recovery.adjudicacion.obtenerTipoCarga";
+
+	private static final String TIPO_CARGA_ANTERIOR_HIPOTECA = "ANT";
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -44,12 +42,8 @@ public class AdjudicacionHayaProcedimientoManager {
 	@Autowired
 	private ProcessManager processManager;
 	
-	private ExecutionContext ec;
-	
 	@Autowired
 	private GenericABMDao genericDao;
-
-	private DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
 
  	
@@ -204,4 +198,34 @@ public class AdjudicacionHayaProcedimientoManager {
 		return false;
 	}
 
+	public Boolean existenCargasPreviasActivas(Long prcId) {
+		@SuppressWarnings("unchecked")
+		List<Bien> listaBienes = (List<Bien>) executor.execute(ExternaBusinessOperation.BO_PRC_MGR_GET_BIENES_DE_UN_PROCEDIMIENTO, prcId);
+		Boolean verificadasCargas = false;
+		if (listaBienes != null && listaBienes.size() > 0) {
+			for (Bien bien : listaBienes) {
+				if (bien instanceof NMBBien) {
+					NMBBien nmbBien = (NMBBien) bien;
+					List<NMBBienCargas> cargas = nmbBien.getBienCargas();
+					for (NMBBienCargas carga : cargas) {
+						if (!carga.getTipoCarga().getCodigo().equals(TIPO_CARGA_ANTERIOR_HIPOTECA)) {
+							continue;
+						}
+						if ( (carga.getSituacionCarga()!=null && carga.getSituacionCarga().getCodigo().equals(DDSituacionCarga.ACEPTADA))
+							||
+							 (carga.getSituacionCargaEconomica()!=null && carga.getSituacionCargaEconomica().getCodigo().equals(DDSituacionCarga.ACEPTADA))
+							) {
+							verificadasCargas=true;
+							break;
+						}
+					}
+				}
+				if (verificadasCargas) {
+					break;
+				}
+			}
+		}
+		return verificadasCargas;
+	}
+	
 }

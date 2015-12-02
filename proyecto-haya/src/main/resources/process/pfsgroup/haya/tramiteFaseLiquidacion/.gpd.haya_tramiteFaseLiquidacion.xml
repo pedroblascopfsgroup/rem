@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="haya_tramiteFaseLiquidacion" width="1214" height="1333">
+  <node name="Inicio" x="30" y="23" width="132" height="36">
+    <edge>
+      <label x="-82" y="-35"/>
+    </edge>
+  </node>
+  <node name="H033_aperturaFase" x="230" y="22" width="165" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-13" y="-18"/>
+      <bendpoint w1="288" h1="-1" w2="2" h2="-203"/>
+    </edge>
+    <edge>
+      <label x="28" y="-23"/>
+      <bendpoint w1="-107" h1="0" w2="-107" h2="0"/>
+      <bendpoint w1="-107" h1="-23" w2="-107" h2="-23"/>
+    </edge>
+  </node>
+  <node name="H033_InformeLiquidacion" x="226" y="104" width="173" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="32" y="-6"/>
+      <bendpoint w1="-210" h1="-51" w2="-210" h2="31"/>
+    </edge>
+    <edge>
+      <label x="-13" y="-18"/>
+      <bendpoint w1="266" h1="0" w2="-20" h2="-133"/>
+    </edge>
+    <edge>
+      <label x="-74" y="-7"/>
+      <bendpoint w1="-111" h1="0" w2="-111" h2="0"/>
+      <bendpoint w1="-110" h1="-13" w2="-110" h2="-13"/>
+    </edge>
+  </node>
+  <node name="H033_decidirPresentarObs" x="191" y="184" width="245" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="35" y="-8"/>
+      <bendpoint w1="-213" h1="-42" w2="-213" h2="22"/>
+    </edge>
+    <edge>
+      <label x="-12" y="-17"/>
+      <bendpoint w1="248" h1="-3" w2="-38" h2="-72"/>
+    </edge>
+    <edge>
+      <label x="-76" y="-12"/>
+      <bendpoint w1="-147" h1="0" w2="-147" h2="0"/>
+      <bendpoint w1="-147" h1="-21" w2="-147" h2="-21"/>
+    </edge>
+  </node>
+  <node name="H033_decidirPresentarObsDecision" x="195" y="268" width="244" height="36">
+    <edge>
+      <label x="13" y="-24"/>
+    </edge>
+    <edge>
+      <label x="147" y="-156"/>
+      <bendpoint w1="-295" h1="0" w2="-298" h2="-364"/>
+      <bendpoint w1="-294" h1="320" w2="-293" h2="2"/>
+    </edge>
+  </node>
+  <node name="H033_BPMTramiteElevarPropSarebLitigios" x="472" y="365" width="297" height="36">
+    <edge>
+      <label x="-76" y="-21"/>
+      <bendpoint w1="229" h1="7" w2="-140" h2="-40"/>
+    </edge>
+    <edge>
+      <label x="-27" y="-4"/>
+      <bendpoint w1="-102" h1="38" w2="-86" h2="-52"/>
+    </edge>
+    <edge>
+      <label x="-8" y="-16"/>
+      <bendpoint w1="145" h1="51" w2="-224" h2="4"/>
+    </edge>
+  </node>
+  <node name="H033_presentarObs" x="223" y="488" width="182" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-15" y="107"/>
+      <bendpoint w1="-239" h1="-81" w2="-237" h2="277"/>
+      <bendpoint w1="-238" h1="-308" w2="-236" h2="50"/>
+    </edge>
+    <edge>
+      <label x="8" y="-12"/>
+      <bendpoint w1="547" h1="0" w2="-128" h2="76"/>
+    </edge>
+    <edge>
+      <label x="-48" y="17"/>
+      <bendpoint w1="-116" h1="0" w2="-116" h2="0"/>
+      <bendpoint w1="-116" h1="-22" w2="-116" h2="-22"/>
+    </edge>
+  </node>
+  <node name="H033_regResolucionAprovacion" x="213" y="586" width="206" height="36">
+    <edge>
+      <label x="-46" y="-24"/>
+      <bendpoint w1="554" h1="-1" w2="-119" h2="173"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="3" y="-16"/>
+    </edge>
+  </node>
+  <node name="H033_regInformeTrimestral1" x="219" y="717" width="196" height="36">
+    <edge>
+      <label x="3" y="-16"/>
+    </edge>
+    <edge>
+      <label x="-21" y="-11"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H033_regInformeTrimestral2" x="225" y="851" width="196" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="26" y="-8"/>
+      <bendpoint w1="-263" h1="-72" w2="-257" h2="62"/>
+    </edge>
+    <edge>
+      <label x="-47" y="-31"/>
+      <bendpoint w1="-123" h1="0" w2="-123" h2="0"/>
+      <bendpoint w1="-123" h1="-22" w2="-123" h2="-22"/>
+    </edge>
+    <edge>
+      <label x="-22" y="-8"/>
+    </edge>
+  </node>
+  <node name="H033_regInformeTrimestral2Decision" x="207" y="940" width="236" height="36">
+    <edge>
+      <label x="-26" y="-20"/>
+    </edge>
+    <edge>
+      <label x="25" y="16"/>
+      <bendpoint w1="-181" h1="3" w2="-180" h2="64"/>
+      <bendpoint w1="-183" h1="-71" w2="-181" h2="18"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H033_LiquidacionDecision" x="14" y="1043" width="210" height="36">
+    <edge>
+      <label x="-1030" y="-188"/>
+      <bendpoint w1="-59" h1="269" w2="-804" h2="460"/>
+      <bendpoint w1="975" h1="271" w2="230" h2="462"/>
+      <bendpoint w1="980" h1="-200" w2="235" h2="-9"/>
+    </edge>
+  </node>
+  <node name="H033_separacionAdministradores" x="211" y="1150" width="235" height="36">
+    <edge>
+      <label x="-4" y="-14"/>
+    </edge>
+    <edge>
+      <label x="3" y="-12"/>
+      <bendpoint w1="399" h1="-172" w2="-137" h2="126"/>
+    </edge>
+    <edge>
+      <label x="-68" y="-12"/>
+      <bendpoint w1="85" h1="20" w2="85" h2="20"/>
+    </edge>
+  </node>
+  <node name="H033_presentarSeparacion" x="516" y="1151" width="179" height="36">
+    <edge>
+      <label x="-41" y="3"/>
+    </edge>
+    <edge>
+      <label x="-33" y="2"/>
+      <bendpoint w1="-85" h1="-59" w2="136" h2="-60"/>
+    </edge>
+    <edge>
+      <label x="-33" y="16"/>
+      <bendpoint w1="194" h1="-124" w2="-65" h2="175"/>
+    </edge>
+    <edge>
+      <label x="10" y="-1"/>
+    </edge>
+  </node>
+  <node name="H033_registrarResolucion" x="787" y="1152" width="173" height="36">
+    <edge>
+      <label x="-28" y="95"/>
+      <bendpoint w1="131" h1="-2" w2="140" h2="298"/>
+      <bendpoint w1="119" h1="-300" w2="128" h2="0"/>
+    </edge>
+    <edge>
+      <label x="-9" y="-6"/>
+    </edge>
+    <edge>
+      <label x="3" y="-1"/>
+    </edge>
+  </node>
+  <node name="H033_separacionAdministradoresDecision" x="318" y="1284" width="274" height="36">
+    <edge>
+      <label x="-23" y="27"/>
+    </edge>
+    <edge>
+      <label x="161" y="-20"/>
+      <bendpoint w1="-341" h1="-4" w2="-5" h2="237"/>
+    </edge>
+  </node>
+  <node name="fork2" x="237" y="374" width="148" height="24">
+    <edge>
+      <label x="-40" y="-15"/>
+    </edge>
+    <edge>
+      <label x="4" y="-38"/>
+    </edge>
+  </node>
+  <node name="H033_ObsDecision" x="520" y="455" width="168" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="798" y="852" width="132" height="36"/>
+  <node name="Fin2" x="923" y="412" width="132" height="36"/>
+  <node name="fork1" x="451" y="662" width="105" height="24">
+    <edge>
+      <label x="-41" y="-19"/>
+    </edge>
+    <edge>
+      <label x="-19" y="-23"/>
+    </edge>
+  </node>
+  <node name="H033_BPMTramiteSubastaConcursal" x="710" y="683" width="253" height="36">
+    <edge>
+      <label x="-49" y="31"/>
+      <bendpoint w1="152" h1="-93" w2="-1" h2="178"/>
+    </edge>
+  </node>
+</root-container>

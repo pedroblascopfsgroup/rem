@@ -156,7 +156,7 @@
 						 , propio
 					 ]
 					 ,bbar : [
-						btnGuardar, btnCancelar
+						<sec:authorize ifNotGranted="SOLO_CONSULTA">btnGuardar, </sec:authorize> btnCancelar
 					 ]
 				  } 
 			  ]

@@ -1,0 +1,197 @@
+# CONFIGURACION ONLINE #########################################################################
+# Configuracion devon.properties utilizada por la aplicacion web.
+# - En este nuevo servidor de integracion, batch y online tienen devon.properties separados
+# - Esta version de devon.properties esta migrada del anterior en el que solo habia un unico
+# devon para ambos entornos: batch, online. Por tanto es necesario hacer limpieza de la 
+# configuracion cruzada.
+# - Revisa la supuesta configuracion BATCH de este archivo (abajo) y traslada a este apartado
+# (CONFIGURACION ONLINE), aquellas propiedades que sepas seguro son configuracion ONLINE 
+# (o compartidas entre Batch y Online)
+################################################################################################
+master.dialect9i=Oracle9iDialect
+master.dialect=Oracle10gDialect
+master.dsname=jdbc/bankmaster_${master.dialect9i}
+master.jdbc.username=bankmaster
+master.schema=bankmaster
+
+birt.home=/home/iap013/birt/ReportEngine
+birt.logDirectory=/home/iap013/log/birt
+birt.logLevel=WARNING
+#Start me Up, Start me up
+birt.loadOnStartup=TRUE
+
+# El batch arranca el jmx en el puerto 2199. El script startBatch.sh reescribe el devon.properties y setea un DEVON_HOME alternativo.
+jmx.port=2193
+jmx.address=service:jmx:rmi://localhost/jndi/rmi://localhost:{jmx.port}/server
+
+
+jsDebug=false
+
+jbpm.startJobExecutor=false
+
+#mailManager.host=localhost
+agendaMultifuncion.mail.from = recovery@bankia.es
+
+# Instalacion de nuevas versiones
+#recovery.war=/home/iap013/pfs-rec-web.war
+#tomcat.home=/var/tomcat/iap013
+#versions.local.repo=/shared/maven
+#batch.home=/home/iap013/batch
+#sql.user.PFSMASTER=linmaster/admin
+#sql.user.SYSTEM=system/admin
+#sql.user.PFS01=lin001/admin
+#sql.user.PFS02=pfs02/admin
+
+
+# Master cache
+master.use_query_cache=false
+master.use_second_level_cache=false
+#master.cache.provider_class=org.hibernate.cache.EhCacheProvider
+master.cache.provider_class=org.terracotta.hibernate.TerracottaHibernateCacheProvider
+
+# Entity cache
+entity.use_query_cache=false
+entity.use_second_level_cache=false
+#entity.cache.provider_class=org.hibernate.cache.EhCacheProvider
+entity.cache.provider_class=org.terracotta.hibernate.TerracottaHibernateCacheProvider
+
+# JasperReports (GestorInformes)
+jasper.ruta.plantillas=/var/tomcat/iap013/webapps/pfs/plantillas/plugin/masivo
+jasper.ruta.informes=/var/tomcat/iap013/webapps/pfs/plantillas/plugin/masivo
+
+
+files.temporaryPath=/home/iap013/pfs/temporaryFiles
+
+#Limite de TAMANYO MAXIMO DE LOS ADJUNTOS QUE SE PUEDEN ENVIAR
+agendaMultifuncion.mail.tamanyoMaximoAdjustos = 12000000
+
+#Ruta de la carpeta temporal donde dejar los documentos a imprimir
+ruta.imprimir.docs=/home/iap013/imprimeDocs
+
+# Configuracion Recovery-Kerberos
+autorizacion.kerberos.driver=es.capgemini.pfs.security.KerberosStubDriver
+#autorizacion.kerberos.driver=es.pfs.bankia.security.KerberosBankiaDriver
+autorizacion.kerberos.perfil.acceso=FPFSRACCESO
+autorizacion.kerberos.perfiles=FPFSRSOPORT,FPFSRADMIN,FPFSREXT,FPFSRINT
+
+#Limite en exportacion de tareas
+exportar.excel.limite.tareas = 2000
+exportar.excel.limite.tareas.simultaneos = 5
+exportar.excel.limite.ruta.ruta = /tmp/listaTareas
+
+
+exportar.excel.limite.busqueda.tareas = 2000
+exportar.excel.limite.busqueda.tareas.ruta = /tmp/listaTareas
+exportar.excel.limite.busqueda.tareas.simultaneos = 5
+exportar.filetype.buscadorSubastas = CSV
+
+# EMAIL
+agendaMultifuncion.mail.usuario=oscar.dorado@pfsgroup.es
+agendaMultifuncion.mail.pwd=Pintor32
+agendaMultifuncion.mail.from=oscar.dorado@pfsgroup.es
+agendaMultifuncion.mail.server=smtp.gmail.com
+agendaMultifuncion.mail.port=587
+
+# FIN configuracion ONLINE #####################################################################
+
+
+
+# SUPUESTA CONFIGURACION BATCH #################################################################
+# - Como este devon es el de online, es necesario eliminar de este devon.properites todas las 
+# propiedades que sean particulares del batch (y no compartidas con online)
+# - Si reconoces que una propiedad de las de aqui abajo corresponde al online, colocala en la parte
+# superior (en el apartado de configuracion online).
+# ---------------REVISAR-TRASLADAR-ELIMINAR--------------------
+################################################################################################
+master.jdbc.username=bankmaster
+master.jdbc.password=admin
+
+Oracle9iDialect.jdbc.url=jdbc:oracle:thin:BANKMASTER/j0b3d2CHe3I=09611250@//ibd01:1523/ibd013
+Oracle9iDialect.conn.url1=jdbc:oracle:thin:BANK01/j0b3d2CHe3I=09611250@//ibd01:1523/ibd013
+
+batch.pathToSqlLoader=/opt/sw/oracle/product/11.2.0/client_1/bin/sqlldr
+
+#Oracle9iDialect.jdbc.url=jdbc:oracle:thin:LINMASTER/admin@//intebd:1521/intelindorff
+#Oracle9iDialect.conn.url1=jdbc:oracle:thin:LIN001/admin@//intebd:1521/intelindorff
+#Oracle9iDialect.conn.url2=jdbc:oracle:thin:PFS02/admin@//localhost:1521/orcl
+#Oracle9iDialect.conn.url3=jdbc:oracle:thin:PFS03/admin@//localhost:1521/orcl
+#Oracle9iDialect.conn.url4=jdbc:oracle:thin:PFS04/admin@//localhost:1521/orcl
+
+
+#batch.pathToSqlLoader=/opt/app/oracle/product/10.2.0/db_1/bin/sqlldr
+#batch.pathToSqlLoader=/var/tomcat/versiones/util/sqlldrConverter
+
+
+batch.files.home=/home/iap013/tmp/pfs
+
+batch.connectionInfo=bank01/admin@ibd01:1523/ibd013
+
+batch.unzip.zipFileName1=pfs-rec-common.jar
+batch.unzip.pathToExtract1=/home/iap013/batch
+batch.unzip.filesToExtract1=^(sql/.*)$
+
+batch.unzip.zipFileName2=pfs-rec-batch.jar
+batch.unzip.pathToExtract2=/home/iap013/batch
+batch.unzip.filesToExtract2=^(sql/.*)|(es/capgemini/pfs/batch/load/pcr/.*\.ctl)$
+
+batch.linAcuerdos.in=linAcuerdos
+batch.linAcuerdos.semaphore=ACUERDOS${batch.files.semaphore.suffix}
+batch.linAcuerdos.period=30000
+
+batch.linCobros.in=linCobros
+batch.linCobros.semaphore=COBROS${batch.files.semaphore.suffix}
+batch.linCobros.period=30000
+
+# Integracion recovery-pentaho
+pentaho.usersPath=/home/iap013/pentaho-users.xml
+pentaho.setCookieUrl=/pfs/setCookie.jsp
+pentaho.cookieUrl=/Login?
+pentaho.cookieName=JSESSIONID
+pentaho.context=/pfsbip
+pentaho.repositoryUrl=/SolutionRepositoryService?component=getSolutionRepositoryDoc
+pentaho.trustStore=/usr/java/jdk1.6.0_18/jre/lib/security/cacerts
+pentaho.trustStorePassword=changeit
+pentaho.host=intebip.pfsgroup.es
+pentaho.port=8087
+pentaho.protocol=http
+pentaho.defaultPentahoPassword=pzona
+pentaho.defaultPentahoUser=pfsvalencia
+
+cargadocs.hora.inicio=08:00:00
+cargadocs.hora.fin=20:30:00
+cargadocs.intervalo=1
+cargadocs.directorio=/tmp/pruebaCargaDocumentacion/
+
+batch.linAltaAsuntos.in=linAltaAsuntos
+batch.linAltaAsuntos.semaphore=ALTA_ASUNTOS${batch.files.semaphore.suffix}
+batch.linAltaAsuntos.period=5000
+
+#SECURITY
+security.validezTimeStamp = 1800000
+security.rutaClavePublica = /home/iap013/RSAKeys/public.key
+security.rutaClavePrivada = /home/iap013/RSAKeys/private.key
+
+# Número de días a procesar, por defecto, el procesamiento será semanal
+proceso.impulsos.numero.dias = 7
+# Ruta tamporal donde se dejarán los escritos con procurador 
+proceso.impulsos.ruta_con_proc = /tmp/impulsos/con_proc
+# Ruta tamporal donde se dejarán los escritos sin procurador 
+proceso.impulsos.ruta_sin_proc = /tmp/impulsos/sin_proc
+# Ruta tamporal donde se dejarán los ficheros de rechazos 
+proceso.impulsos.ruta_rechazos = /tmp/impulsos/rechazos
+
+# Número máximde inputs que se pueden procesar por botón
+procesarInputs.num.maximo.inputs=100
+
+# A partir de primera entrega
+
+# Configuración de servicios remotos
+remote.services.serverName=localhost
+remote.services.port=7001
+modeloFacturacion.tramos.numMaxTramosFacturacion=4
+#contrato.codigoFormato=5,5,17,15
+
+contrato.codigo.subStringIni=10
+contrato.codigo.subStringFin=27
+
+

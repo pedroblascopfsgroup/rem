@@ -22,10 +22,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
 import es.capgemini.devon.beans.Service;
+import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.hibernate.pagination.PageHibernate;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
@@ -76,12 +78,16 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
+import es.pfsgroup.plugin.recovery.masivo.model.ExcelFileBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContext;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBValoracionesBienInfo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.dao.NMBBienDao;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.DatosActaComiteBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastabankia.InformeSubastaLetradoBean;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBContratoBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.recoveryapi.ProcedimientoApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.SubastaApi;
@@ -89,6 +95,8 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.BienSubastaDTO
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.EditarInformacionCierreDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.GuardarInstruccionesDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.LoteSubastaMasivaDTO;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.masivas.SubastaInstMasivasValidacionDto;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.masivas.SubastanInstMasivasUtils;
 import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimiento;
 import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimientoApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.DDPropiedadAsunto;
@@ -130,6 +138,9 @@ public class SubastaManager implements SubastaApi {
 
 	@Resource
     private MessageService messageService;	
+
+	@Autowired
+	private SubastanInstMasivasUtils masivasUtils;
 	
 	@Override
 	public List<Subasta> getSubastasAsunto(Long idAsunto) {
@@ -1397,6 +1408,126 @@ public class SubastaManager implements SubastaApi {
 			Order orderDescripcion = new Order(OrderType.ASC, "descripcion");
 			return (ArrayList<DDResultadoValidacionNuse>) genericDao.getListOrdered(DDResultadoValidacionNuse.class, orderDescripcion, fBorrado);
 		}
+		
+		@Override
+		@BusinessOperation(BO_NMB_SUBASTA_OBTENER_CONTRATO)
+		public Contrato getContratoByNroContrato(String nroContrato){
+			return subastaDao.getContratoByNroContrato(nroContrato);
+		}
+		
+		@BusinessOperation(BO_NMB_SUBASTA_OBTENER_RELACION_BIENES_CONTRATOS)
+		@Override
+		public List<NMBContratoBien> getRelacionesContratosBienes(Long[] idBienes) {
+			List<NMBContratoBien> listNMBContratoBien = new ArrayList<NMBContratoBien>();
+			
+			for(int i=0;i<idBienes.length;i++){
+				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "bien.id", idBienes[i]);
+				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+				Filter f3 = genericDao.createFilter(FilterType.EQUALS, "contrato.auditoria.borrado", false);
+				listNMBContratoBien.addAll(genericDao.getList(NMBContratoBien.class, f1, f2, f3));
+			}	
+			return listNMBContratoBien;
+		}
+		
+		@BusinessOperation(BO_OBTENER_SITUACION_CARGA)
+		@Override
+	    public DDSituacionCarga getSituacionCarga(String codigo){
+			DDSituacionCarga situacionCarga=null;
+			try{
+				situacionCarga=genericDao.get(DDSituacionCarga.class, genericDao
+					.createFilter(FilterType.EQUALS, "codigo",codigo));
+			}catch(Exception e){
+				logger.error(e);
+			}
+			return situacionCarga;
+		}
+		
+		@BusinessOperation(BO_OBTENER_SITUACION_CARGA_ECONOMICA)
+		@Override
+	    public DDSituacionCarga getSituacionCargaEconomica(String codigo){
+	    	DDSituacionCarga situacionCargaEconomica=null;
+	    	try{
+	    		situacionCargaEconomica = genericDao.get(DDSituacionCarga.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo",codigo));
+	    	}catch(Exception e){
+	    		logger.error(e);
+	    	}
+	    	return situacionCargaEconomica;
+	    }
+	    
+		@BusinessOperation(BO_OBTENER_TIPO_CARGA)
+		@Override
+	    public DDTipoCarga getTipoCarga(String tipoCarga){
+	    	DDTipoCarga tipoCargaRes=null;
+	    	try{
+	    		tipoCargaRes = genericDao.get(DDTipoCarga.class, genericDao
+						.createFilter(FilterType.EQUALS, "codigo",tipoCarga));
+	    	}catch(Exception e){
+	    		logger.error(e);
+	    	}
+	    	return tipoCargaRes;
+	    }
+		
+		
+		/**
+	     * upload.
+	     * @param uploadForm upload
+	     * @return String
+	     */
+		@Override
+	    @BusinessOperation(BO_SUBIR_PLANTILLA_INSTRUCCIONES)
+	    @Transactional(readOnly = false)
+	    public String upload(WebFileItem uploadForm) {
 
+			try {
+				if (uploadForm != null) {
+
+					ExcelFileBean efb = new ExcelFileBean();
+					
+					FileItem fileItem = uploadForm.getFileItem();
+					efb.setFileItem(fileItem);
+
+					//Comprobar tipo de fichero
+					if (!masivasUtils.tipoFicheroCorrecto(efb.getFileItem().getContentType())){
+						String mensajeError = masivasUtils.obtenerMensajeErrorTipoIncorrecto();
+						logger.error(mensajeError);
+						throw new BusinessOperationException(mensajeError);
+					}
+					
+					//Comprobaciones sintácticas
+					HojaExcel exc = masivasUtils.obtenerExcel(fileItem);
+					
+					SubastaInstMasivasValidacionDto dto = masivasUtils.validarFormatoFichero(exc);
+					if (dto.getFicheroTieneErrores()) {
+						String mensajeError = masivasUtils.transformarListaAString(dto.getListaErrores());
+						logger.error(mensajeError);
+						throw new BusinessOperationException(mensajeError);
+					}
+					
+					//Recuperar los valores de cada uno de los lotes en una lista de Dtos para hacer las validaciones y la operación
+					exc.setFile(fileItem.getFile());
+					exc.setRuta(fileItem.getFile().getAbsolutePath());
+					List<SubastaInstMasivasLoteDto> listaLotes = masivasUtils.recuperarLotes(exc);
+
+					//Comprobaciones de negocio (hay que recibir el id de subasta)
+					Long idSubasta = Long.parseLong(uploadForm.getParameter("idSubasta"));
+					List<String> listaErroresNegocio = masivasUtils.validacionesNegocio(idSubasta, listaLotes);
+					if (listaErroresNegocio.size() > 0) {
+						String mensajeError = masivasUtils.transformarListaAString(listaErroresNegocio);
+						logger.error(mensajeError);
+						throw new BusinessOperationException(mensajeError);
+					}
+					
+					//Recorrer filas y lanzar función de negocio para cada fila (guardarInstruccionesLoteSubasta)
+					for (SubastaInstMasivasLoteDto lote : listaLotes) {
+						GuardarInstruccionesDto dtoLoteSubasta = masivasUtils.obtenerDtoGuardaInstruccionesLoteSubasta(lote);
+						guardaInstruccionesLoteSubasta(dtoLoteSubasta);
+					}
+				}
+			}catch (Exception e) {
+				return e.getMessage();
+			}
+			return "ok";
+	    }
 
 }

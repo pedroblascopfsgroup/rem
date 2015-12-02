@@ -8,6 +8,7 @@ import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.bo.Executor;
+import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
@@ -32,6 +33,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
 import es.pfsgroup.procedimientos.model.DDTipoRespuestaElevacionSareb;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 //public class SubastaV4HayaEjecucionNotarialLeaveActionHandler extends SubastaV4LeaveActionHandler {
 public class SubastaV4HayaEjecucionNotarialLeaveActionHandler extends PROGenericLeaveActionHandler {	
@@ -53,14 +55,28 @@ public class SubastaV4HayaEjecucionNotarialLeaveActionHandler extends PROGeneric
 	@Autowired
 	private JBPMProcessManager jbpmUtil;
 
+    @Autowired
+    private IntegracionBpmService bpmIntegracionService;
+	
 	private ExecutionContext executionContext;
-
+	
 	@Override
 	protected void process(Object delegateTransitionClass, Object delegateSpecificClass, ExecutionContext executionContext) {
 
 		super.process(delegateTransitionClass, delegateSpecificClass, executionContext);
 		this.executionContext = executionContext;
 
+		String transition = executionContext.getTransition().getName();
+		Boolean transicionTemporal = (
+				transition.equals(BPMContants.TRANSICION_PRORROGA) || 
+				transition.equals(BPMContants.TRANSICION_FIN) || 
+				transition.equals(BPMContants.TRANSICION_APLAZAR_TAREAS) || 
+				transition.equals(BPMContants.TRANSICION_PARALIZAR_TAREAS) || 
+				transition.equals(BPMContants.TRANSICION_ACTIVAR_TAREAS));
+		if (transicionTemporal) {
+			return;
+		}
+		
 		avanzamosEstadoSubasta();
 	}
 
@@ -164,12 +180,14 @@ private void avanzamosEstadoSubasta() {
 		}
 
 		genericDao.save(Subasta.class, sub);		
+		bpmIntegracionService.enviarDatos(sub);
+
 	}
 	
 	private void cambiaEstadoSubasta(Subasta sub, String estado) {
 		if (!Checks.esNulo(sub.getEstadoSubasta().getCodigo()) && 
 				(DDEstadoSubasta.CEL.compareTo(sub.getEstadoSubasta().getCodigo()) != 0 
-				|| DDEstadoSubasta.SUS.compareTo(sub.getEstadoSubasta().getCodigo()) != 0)) {
+				&& DDEstadoSubasta.SUS.compareTo(sub.getEstadoSubasta().getCodigo()) != 0)) {
 			DDEstadoSubasta esu = genericDao.get(DDEstadoSubasta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estado), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 			sub.setEstadoSubasta(esu);
 		}

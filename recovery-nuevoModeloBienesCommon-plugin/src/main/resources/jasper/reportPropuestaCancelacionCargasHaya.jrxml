@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reportPropuestaCancelacionCargas" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="74623807-0504-43f3-9d03-ede53d924baa">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="45"/>
+	<subDataset name="DSCargas" uuid="b4c59c9c-c433-4f35-93de-5b6adee3716a">
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="tipoCarga" class="java.lang.String"/>
+		<field name="acreedor" class="java.lang.String"/>
+		<field name="importe" class="java.lang.Float"/>
+	</subDataset>
+	<subDataset name="DSProcedimientos" uuid="578c030a-dac6-43ae-a98f-fa6fe15e8602">
+		<field name="asunto" class="java.lang.String"/>
+		<field name="autos" class="java.lang.String"/>
+		<field name="juzgado" class="java.lang.String"/>
+		<field name="plaza" class="java.lang.String"/>
+	</subDataset>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="nActivo" class="java.lang.String"/>
+	<field name="fichaInmovilizado" class="java.lang.String"/>
+	<field name="descripcion" class="java.lang.String"/>
+	<field name="numFinca" class="java.lang.String"/>
+	<field name="numRegistro" class="java.lang.String"/>
+	<field name="municipio" class="java.lang.String"/>
+	<field name="importeTasacion" class="java.lang.Float"/>
+	<field name="importeAdjudicacion" class="java.math.BigDecimal"/>
+	<field name="observaciones" class="java.lang.String"/>
+	<field name="resumen" class="java.lang.String"/>
+	<field name="propuesta" class="java.lang.String"/>
+	<field name="cargas" class="java.util.List"/>
+	<field name="procedimientos" class="java.util.List"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="60" splitType="Stretch">
+			<image scaleImage="FillFrame">
+				<reportElement uuid="a8a0e83e-6d90-4ed6-83bd-78759b736709" x="247" y="0" width="61" height="19"/>
+				<imageExpression><![CDATA["jasper/img/logoHaya.gif"]]></imageExpression>
+			</image>
+			<line>
+				<reportElement uuid="a1619854-6e08-4e68-8c23-44a380e5ea7c" isPrintRepeatedValues="false" x="0" y="54" width="555" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="16baa85a-0a52-42d4-9479-a47949e3de20" x="65" y="25" width="424" height="30"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PROPUESTA CANCELACIÓN CARGAS CONTENIDO ECONÓMICO SOBRE ACTIVOS ADJUDICADOS]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="7c3c5731-141f-450c-be7a-9f714cbdd57c" x="0" y="17" width="45" height="12"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATOS:]]></text>
+			</staticText>
+			<textField pattern="dd &apos;de&apos; MMMMM &apos;de&apos; yyyy">
+				<reportElement uuid="417b0172-8e02-478f-a76a-3e8b3da194fb" x="0" y="0" width="100" height="12"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="48" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="d3ba9290-7d27-473a-8e78-43b0bc0495ea" x="0" y="0" width="126" height="12"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[1.- PROCEDIMIENTO]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement uuid="edae489e-247f-4009-b5c8-e37645658038" key="table 1" x="0" y="17" width="500" height="24"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="DSProcedimientos" uuid="e85eebba-d43f-4da2-a3a7-bacd089fc4bf">
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{procedimientos})]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="530" uuid="a71ace38-a193-49f2-b01d-bcf2929c2592">
+						<jr:detailCell height="38" rowSpan="1">
+							<textField>
+								<reportElement uuid="d4b9b522-1099-4739-8b38-419816ff960c" x="0" y="0" width="530" height="10"/>
+								<textElement>
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA["- ASUNTO " + ($F{asunto}!= null ? $F{asunto} : "" )]]></textFieldExpression>
+							</textField>
+							<textField>
+								<reportElement uuid="81795775-f8f1-42d5-89c8-b101b39e5c8b" x="0" y="20" width="530" height="10"/>
+								<textElement>
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA["- PLAZA " + ($F{plaza} != null ? $F{plaza} : "" ) + " - " + ($F{juzgado} != null ? $F{juzgado} : "" )]]></textFieldExpression>
+							</textField>
+							<textField>
+								<reportElement uuid="a09f066b-03b9-4023-bf20-85960c1deaf6" x="0" y="10" width="530" height="10"/>
+								<textElement>
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA["- AUTOS " + ($F{autos} != null ? $F{autos} : "" )]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+		<band height="89">
+			<staticText>
+				<reportElement uuid="28049f49-55fa-4967-a15e-b6f33660ac7d" x="0" y="0" width="75" height="12"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[2.- ACTIVO]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="e6fd72a4-022e-4fdb-b1d7-4b5bb53fe024" x="75" y="0" width="100" height="12"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nActivo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="91e5b9b4-8629-4198-8d11-00b7f7da5e35" x="13" y="17" width="113" height="12"/>
+				<textElement markup="none">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[- Ficha inmovilizado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="36602cac-ff39-4844-8b4a-99e771d81eac" x="13" y="29" width="113" height="12"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[- Descripción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2e1e476b-09d8-47fa-b86e-2ec462c9f5a7" x="13" y="41" width="52" height="12"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[- Finca]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="ce7f79a9-ea00-4fbc-bff7-6587da66b7f8" x="126" y="17" width="429" height="12"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fichaInmovilizado}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="7fe1114b-6953-4a04-9d0d-c312ad7a91ca" x="126" y="29" width="429" height="12"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="b1cbd2c1-6565-4c2e-b345-c5727ee42370" x="65" y="41" width="80" height="12"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numFinca}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="62dcdf42-6868-4f1f-b480-8b1f5808d2dc" x="145" y="41" width="148" height="12"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[Registro de la propiedad nº]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="6678314b-202e-4f7c-a067-3780e1dccc7b" x="293" y="41" width="82" height="12"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numRegistro}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="a7d1ba6d-074a-4a79-972a-5e0fc9d5a9fe" x="375" y="41" width="17" height="12"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[de]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c3f6f824-381e-4c3e-be1f-516d7ea3ec8c" x="392" y="41" width="163" height="12"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{municipio}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="1d6fdfaf-bfd1-41fe-867a-4ecb6c4ffb71" x="13" y="53" width="172" height="12"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[- VALOR TASACIÓN ACTUALIZADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5bc80f61-730e-4cef-bf3c-0909ad76ce3c" x="13" y="65" width="172" height="12"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[- IMPORTE ADJUDICACIÓN SUBASTA]]></text>
+			</staticText>
+			<textField pattern="#,##0.00 ¤ " isBlankWhenNull="true">
+				<reportElement uuid="89cf6417-930c-46b9-9fbf-9752a9a99213" x="185" y="53" width="87" height="12"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{importeTasacion}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 ¤" isBlankWhenNull="true">
+				<reportElement uuid="0c6a6393-d4c6-4ace-ab6c-14989fc82751" x="185" y="65" width="87" height="12"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{importeAdjudicacion}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="61">
+			<staticText>
+				<reportElement uuid="01327795-9585-4406-a31c-34735052a408" x="0" y="0" width="201" height="12"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[3.- CARGAS PREVIAS A CANCELAR]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement uuid="6d286dee-472e-4c3a-b49e-11b873aa771e" key="table 1" x="0" y="19" width="555" height="32"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="DSCargas" uuid="7b350de1-1e23-4d35-9249-659b4d01c847">
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{cargas})]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="111" uuid="dfa13f92-ea21-44cc-bdf1-842835127e03">
+						<jr:tableHeader height="15" rowSpan="1">
+							<staticText>
+								<reportElement uuid="d3cd2651-b075-4698-b5c0-2ab418c8f1eb" x="0" y="0" width="111" height="14"/>
+								<textElement>
+									<font size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[TIPO DE CARGA]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:detailCell height="13" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement uuid="dcb77168-6cf7-4dfe-a860-a0cf815ba266" x="0" y="0" width="111" height="12"/>
+								<textElement>
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{tipoCarga}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="134" uuid="c9106a14-dbff-435a-a452-21ba12bbbc29">
+						<jr:tableHeader height="15" rowSpan="1">
+							<staticText>
+								<reportElement uuid="fca699c0-45b7-40e3-9bed-cc48f58cecbb" x="0" y="0" width="134" height="14"/>
+								<textElement>
+									<font size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[ACREEDOR]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:detailCell height="13" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement uuid="e99d433a-95d0-4102-bad0-79a68714759d" x="0" y="0" width="134" height="12"/>
+								<textElement>
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{acreedor}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="107" uuid="90a72b3b-952c-4bfd-b7c2-a8ac96f98b44">
+						<jr:tableHeader height="15" rowSpan="1">
+							<staticText>
+								<reportElement uuid="01e8bb81-4128-4f1a-843c-c0e159324759" x="0" y="0" width="107" height="14"/>
+								<textElement>
+									<font size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[IMPORTE]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:detailCell height="13" rowSpan="1">
+							<textField pattern="#,##0.00 ¤ " isBlankWhenNull="true">
+								<reportElement uuid="9aea9818-45d3-420e-9218-1697957b6e08" x="0" y="0" width="107" height="13"/>
+								<textElement textAlignment="Right">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{importe}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+		<band height="153">
+			<staticText>
+				<reportElement uuid="695ab239-52d6-41d4-b4cc-6d3672ecfce9" x="0" y="0" width="185" height="12"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[4.- OBSERVACIONES]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="a2b4972a-7836-4958-a110-2359b53bae6e" x="0" y="12" width="555" height="33"/>
+				<textElement>
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{observaciones}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="ff08b3cc-3443-4294-a0ad-e40dd3e2eaed" x="0" y="45" width="555" height="12"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="false"/>
+				</textElement>
+				<text><![CDATA[A.- INDICACIÓN SI EN EL INFORME DE SUBASTA SE CONTEMPLABA/N LA/S CARGA/S A CANCELAR:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="d80eae5b-d670-4d09-ad1e-97c2f9bc8ed9" x="0" y="107" width="555" height="33"/>
+				<textElement>
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{resumen}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="38f3e412-3799-4bbc-b711-e6d7c3e6c569" x="0" y="95" width="555" height="12"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="false"/>
+				</textElement>
+				<text><![CDATA[B.- RESUMEN: ]]></text>
+			</staticText>
+		</band>
+		<band height="55">
+			<staticText>
+				<reportElement uuid="b4a5280d-b0f7-4550-8b4e-8b9e314dfb0b" x="0" y="1" width="185" height="12"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[5.- PROPUESTA]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="b8bd784d-5842-4087-90e3-533bddce33f7" x="0" y="13" width="555" height="33"/>
+				<textElement>
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{propuesta}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

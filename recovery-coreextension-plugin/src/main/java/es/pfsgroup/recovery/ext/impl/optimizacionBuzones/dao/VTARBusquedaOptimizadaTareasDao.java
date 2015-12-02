@@ -46,4 +46,12 @@ public interface VTARBusquedaOptimizadaTareasDao extends AbstractDao<TareaNotifi
      */
     Integer buscarTareasPendienteCount(DtoBuscarTareaNotificacion dto, boolean conCarterizacion, Usuario usuarioLogado, Class<? extends DtoResultadoBusquedaTareasBuzones> modelClass);
 
+    /**
+     * Devuelve el usuario responsable de una tarea.
+     * 
+     * @param idTarea id de la tarea
+     * @return Devuelve null si no encuentra tarea o responsable.
+     */
+    Usuario obtenerResponsableTarea(Long idTarea);
+
 }

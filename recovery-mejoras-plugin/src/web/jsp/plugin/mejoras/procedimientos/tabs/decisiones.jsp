@@ -87,7 +87,7 @@
 				,isConsulta : false
 			};
 			var w = app.openWindow({
-				flow : 'procedimientos/decisionProcedimiento'
+				flow : 'decisionprocedimiento/ventanaDecision'
 				,width : 870
 				,title : '<s:message code="procedimiento.listadoDecisiones.alta" text="**Alta DecisionProcedimiento" />'
 				,params : parametros
@@ -115,7 +115,7 @@
 					id : id
 			};
 			var w = app.openWindow({
-				flow : 'procedimientos/decisionProcedimiento'
+				flow : 'decisionprocedimiento/ventanaDecision'
 				,width : 870
 				,title : '<s:message code="procedimiento.listadoDecisiones.editar" text="**Editar Decision" />'
 				,params : parametros
@@ -219,7 +219,9 @@
 		title:'<s:message code="procedimiento.listadoDecisiones.titulo" text="**DecisionProcedimiento" />'
 		,height : 400
 		,style:'padding-right:10px'
+		<sec:authorize ifNotGranted="SOLO_CONSULTA">
 		,bbar:buttonBar
+		</sec:authorize>
 	});
  
 	decisionProcedimientoGrid.on('rowclick', function(grid, rowIndex, e){
@@ -234,7 +236,7 @@
 		if(!id)
 			return;
 		var w = app.openWindow({
-            flow : 'procedimientos/decisionProcedimiento'
+            flow : 'decisionprocedimiento/ventanaDecision'
 			,width:870
 			,title : '<s:message code="procedimiento.listadoDecisiones.editar" text="**Editar Decision" />'
             ,params : {idProcedimiento:panel.getProcedimientoId(),id:id, isConsulta:false}

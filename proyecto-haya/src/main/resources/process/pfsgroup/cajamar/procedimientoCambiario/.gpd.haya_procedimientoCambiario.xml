@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="hcj_procedimientoCambiario" width="1266" height="879">
+  <node name="Inicio" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="-66" y="-14"/>
+    </edge>
+  </node>
+  <node name="H016_interposicionDemandaMasBienes" x="282" y="-1" width="275" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-34" y="7"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H016_confAdmiDecretoEmbargo" x="393" y="100" width="342" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-76" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H016_confAdmiDecretoEmbargoDecision" x="414" y="189" width="288" height="36">
+    <edge>
+      <label x="-47" y="-12"/>
+    </edge>
+    <edge>
+      <label x="-451" y="-627"/>
+      <bendpoint w1="633" h1="3" w2="389" h2="-506"/>
+      <bendpoint w1="633" h1="605" w2="389" h2="96"/>
+      <bendpoint w1="242" h1="610" w2="-2" h2="101"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H016_BPMVigilanciaCaducidadEmbargos" x="861" y="393" width="303" height="36">
+    <edge>
+      <label x="-186" y="-125"/>
+    </edge>
+  </node>
+  <node name="fork1" x="765" y="258" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-36" y="6"/>
+    </edge>
+  </node>
+  <node name="H016_confNotifRequerimientoPago" x="384" y="289" width="303" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H016_confNotifRequerimientoPagoDecision" x="391" y="375" width="286" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H016_BPMTramiteNotificacion" x="78" y="432" width="204" height="36">
+    <edge>
+      <label x="-92" y="10"/>
+    </edge>
+  </node>
+  <node name="H016_registrarDemandaOposicion" x="420" y="460" width="311" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="320" h1="3" w2="-148" h2="-217"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="159" h1="-97" w2="199" h2="74"/>
+    </edge>
+  </node>
+  <node name="H016_registrarDemandaOposicionDecision" x="387" y="539" width="291" height="36">
+    <edge>
+      <label x="-22" y="6"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H016_registrarJuicioComparecencia" x="107" y="631" width="264" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-190" h1="1" w2="-121" h2="516"/>
+      <bendpoint w1="-193" h1="-517" w2="-124" h2="-2"/>
+    </edge>
+    <edge>
+      <label x="-31" y="17"/>
+      <bendpoint w1="4" h1="-114" w2="-332" h2="57"/>
+    </edge>
+  </node>
+  <node name="H016_registrarAutoEjecucion" x="728" y="582" width="222" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-99" h1="-83" w2="165" h2="39"/>
+    </edge>
+  </node>
+  <node name="H016_registrarResolucion" x="120" y="738" width="227" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-224" h1="-3" w2="-161" h2="619"/>
+      <bendpoint w1="-223" h1="-628" w2="-160" h2="-6"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-113" h1="-48" w2="-129" h2="58"/>
+    </edge>
+  </node>
+  <node name="H016_resolucionFirme" x="411" y="793" width="178" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-72" h1="-88" w2="195" h2="-33"/>
+    </edge>
+  </node>
+  <node name="H016_CambiarioDecision" x="692" y="698" width="198" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork2" x="946" y="84" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H016_BPMProvisionFondos" x="1005" y="143" width="203" height="36">
+    <edge>
+      <label x="-86" y="-254"/>
+      <bendpoint w1="112" h1="1" w2="105" h2="-557"/>
+      <bendpoint w1="101" h1="557" w2="94" h2="-1"/>
+    </edge>
+    <edge>
+      <label x="-58" y="-165"/>
+      <bendpoint w1="79" h1="266" w2="72" h2="-303"/>
+    </edge>
+    <edge>
+      <label x="6" y="-8"/>
+    </edge>
+  </node>
+  <node name="H016_interposicionDemandaMasBienesDecision" x="668" y="0" width="358" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-53" y="-9"/>
+    </edge>
+  </node>
+  <node name="Fin" x="1047" y="712" width="132" height="36"/>
+  <node name="Fin1" x="104" y="116" width="132" height="36"/>
+</root-container>

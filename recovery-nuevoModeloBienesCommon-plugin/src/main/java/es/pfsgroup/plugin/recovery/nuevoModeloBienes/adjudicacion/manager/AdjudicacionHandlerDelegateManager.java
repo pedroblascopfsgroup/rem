@@ -36,6 +36,7 @@ import es.pfsgroup.plugin.recovery.coreextension.adjudicacion.dto.DtoCrearAnotac
 import es.pfsgroup.plugin.recovery.coreextension.adjudicacion.dto.DtoCrearAnotacionUsuario;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.EditBienApi;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContext;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionTitulo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
@@ -71,6 +72,8 @@ public class AdjudicacionHandlerDelegateManager implements
 	@Autowired
 	private GenericABMDao genericDao;
 
+        protected NMBProjectContext nmbProjectContext;
+        
 	@Override
 	@BusinessOperation(overrides = BO_ADJUDICACION_HANDLER_INSERT_CARGA_FECHA_PRESENTACION)
 	public void insertarFechaPresentacionCarga(Long prcId,
@@ -445,20 +448,31 @@ public class AdjudicacionHandlerDelegateManager implements
 	@Override
 	@BusinessOperation(overrides = BO_ADJUDICACION_HANDLER_INSERT_CARGA_FECHA_RES_MORAT)
 	public void insertarFechaResMorat(Long prcId, Date fecha) {
-		setDatoBien(prcId, fecha,
-				"P418_RegistrarSolicitudMoratoria.fechaResMorat");
+            
+                //"XXX_RegistrarSolicitudMoratoria.fechaResMorat");                
+                setDatoBien(prcId, fecha,
+                    nmbProjectContext.getCodigoRegistrarSolicitudMoratoria() + 
+                    "." + nmbProjectContext.getFechaFinMoratoriaRegistrarResolucion());
 	}
 
 	@Override
 	@BusinessOperation(overrides = BO_ADJUDICACION_HANDLER_INSERT_CARGA_FECHA_SOL_MORAT)
 	public void insertarFechaSolMorat(Long prcId, Date fecha) {
-		setDatoBien(prcId, fecha, "P418_RegistrarResolucion.fechaSolMorat");
+
+                //XXX_RegistrarResolucion.fechaSolMorat                
+                setDatoBien(prcId, fecha, 
+                    nmbProjectContext.getCodigoRegistrarResolucionMoratoria() + 
+                    "." + nmbProjectContext.getFechaSolicitudRegistrarSolicitudMoratoria());
 	}
 
 	@Override
 	@BusinessOperation(overrides = BO_ADJUDICACION_HANDLER_INSERT_CARGA_RESULTADO_MORAT)
 	public void insertarResultadoMorat(Long prcId, String dato) {
-		setDatoBien(prcId, dato, "P418_RegistrarResolucion.ResultadoMorat");
+
+		//XXX_RegistrarResolucion.ResultadoMorat
+		setDatoBien(prcId, dato, 
+                    nmbProjectContext.getCodigoRegistrarResolucionMoratoria() + 
+                    "." + nmbProjectContext.getResultadoMoratoria());
 	}
 
 	private void setDatoBien(Long prcId, Object dato, String nomCampo) {
@@ -471,12 +485,16 @@ public class AdjudicacionHandlerDelegateManager implements
 			for (Bien bien : listaBienes) {
 				if (bien instanceof NMBBien) {
 					NMBBien nmbBien = (NMBBien) bien;
-					if ("P418_RegistrarSolicitudMoratoria.fechaResMorat"
-							.equals(nomCampo)
-							|| ("P418_RegistrarResolucion.fechaSolMorat"
-									.equals(nomCampo))
-							|| ("P418_RegistrarResolucion.ResultadoMorat"
-									.equals(nomCampo))) {
+
+//					if ("XXX_RegistrarSolicitudMoratoria.fechaResMorat"
+//              				|| ("XXX_RegistrarResolucion.fechaSolMorat"
+//						|| ("XXX_RegistrarResolucion.ResultadoMorat"
+					if ((nmbProjectContext.getCodigoRegistrarSolicitudMoratoria() + 
+                                                "." + nmbProjectContext.getFechaFinMoratoriaRegistrarResolucion()).equals(nomCampo)
+                                            || ((nmbProjectContext.getCodigoRegistrarResolucionMoratoria() + 
+                                                "." + nmbProjectContext.getFechaSolicitudRegistrarSolicitudMoratoria()).equals(nomCampo))
+                                            || ((nmbProjectContext.getCodigoRegistrarResolucionMoratoria() + 
+                                                "." + nmbProjectContext.getResultadoMoratoria()).equals(nomCampo))) {
 
 						NMBAdjudicacionBien adjudicacion = ((NMBBien) bien)
 								.getAdjudicacion();
@@ -486,19 +504,22 @@ public class AdjudicacionHandlerDelegateManager implements
 							adjudicacion.setBien(nmbBien);
 						}
 
-						if ("P418_RegistrarSolicitudMoratoria.fechaResMorat"
-								.equals(nomCampo)) {
+						//if ("XXX_RegistrarSolicitudMoratoria.fechaResMorat"
+						if ((nmbProjectContext.getCodigoRegistrarSolicitudMoratoria() + 
+                                                    "." + nmbProjectContext.getFechaFinMoratoriaRegistrarResolucion()).equals(nomCampo)) {
 							Date fecha = (Date) dato;
 							adjudicacion.setFechaResolucionMoratoria(fecha);
 
 						}
-						if ("P418_RegistrarResolucion.fechaSolMorat"
-								.equals(nomCampo)) {
+						//if ("XXX_RegistrarResolucion.fechaSolMorat"
+						if ((nmbProjectContext.getCodigoRegistrarResolucionMoratoria() + 
+                                                    "." + nmbProjectContext.getFechaSolicitudRegistrarSolicitudMoratoria()).equals(nomCampo)) {
 							Date fecha = (Date) dato;
 							adjudicacion.setFechaSolicitudMoratoria(fecha);
 						}
-						if ("P418_RegistrarResolucion.ResultadoMorat"
-								.equals(nomCampo)) {
+						//if ("XXX_RegistrarResolucion.ResultadoMorat"
+						if ((nmbProjectContext.getCodigoRegistrarResolucionMoratoria() + 
+                                                    "." + nmbProjectContext.getResultadoMoratoria()).equals(nomCampo)) {
 							String codResultado = (String) dato;
 							DDFavorable resultado = (DDFavorable) proxyFactory
 									.proxy(UtilDiccionarioApi.class)

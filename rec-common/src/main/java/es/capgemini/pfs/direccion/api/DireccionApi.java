@@ -15,6 +15,8 @@ public interface DireccionApi {
 	public static final String GET_LIST_TIPOS_VIA = "es.capgemini.pfs.direccion.api.DireccionApi.getListTiposVia";
 	public static final String GET_LIST_PERSONAS = "es.capgemini.pfs.direccion.api.DireccionApi.getPersonas";
 	public static final String GUARDAR_DIRECCION = "es.capgemini.pfs.direccion.api.DireccionApi.guardarDireccion";
+	public static final String GUARDAR_DIRECCION_RETORNA_ID = "es.capgemini.pfs.direccion.api.DireccionApi.guardarDireccionRetornaId";
+
 
 	@BusinessOperationDefinition(GET_LIST_LOCALIDADES)
 	public List<Localidad> getListLocalidades(Long idProvincia);
@@ -37,5 +39,12 @@ public interface DireccionApi {
 	 */
 	@BusinessOperationDefinition(GUARDAR_DIRECCION)
 	public String guardarDireccion(DireccionAltaDto dto);
+	
+	/**
+	 * Guarda una nueva direcci�n introducida de forma manual en Recovery
+	 * @return Long id de la nueva direccion
+	 */
+	@BusinessOperationDefinition(GUARDAR_DIRECCION_RETORNA_ID)
+	public Long guardarDireccionRetornaId(DireccionAltaDto dto) throws Exception;
 
 }

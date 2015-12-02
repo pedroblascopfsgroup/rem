@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="hcj_tramiteEmbargoSalarios" xmlns="urn:jbpm.org:jpdl-3.2">
+
+    <start-state name="Inicio">
+		<transition to="H038_SolicitarNotificacion" name="iniciarProceso"></transition>
+	</start-state>
+
+   <state name="H038_SolicitarNotificacion">
+      <event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericEnterActionHandler</targetBean>
+         </action>
+      </event>
+      <event type="node-leave">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericLeaveActionHandler</targetBean>
+         </action>
+      </event>
+      <transition to="H038_ConfirmarRequerimientoResultado" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H038_SolicitarNotificacion" name="activarAlerta"></transition>
+   </state>
+
+   <state name="H038_ConfirmarRetenciones">
+      <event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericEnterActionHandler</targetBean>
+         </action>
+      </event>
+      <event type="node-leave">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericLeaveActionHandler</targetBean>
+         </action>
+      </event>
+      <transition to="ConfirmarRetencionesDecision" name="avanzaBPM"></transition>
+      <transition to="Fin" name="Fin"></transition>
+		<transition to="H038_ConfirmarRetenciones" name="activarAlerta"></transition>
+   </state>
+
+   <decision name="ConfirmarRetencionesDecision" expression="#{H038_ConfirmarRetencionesDecision}">
+      <transition to="Espera" name="CorrectoCobros"></transition>
+      <transition to="H038_GestionarProblemas" name="IncorrectoCobros"></transition>
+	  <transition to="H038_SalariosDecision" name="CorrectoFin"></transition>
+   </decision>
+
+
+   <state name="H038_GestionarProblemas">
+      <event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericEnterActionHandler</targetBean>
+         </action>
+      </event>
+      <event type="node-leave">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericLeaveActionHandler</targetBean>
+         </action>
+      </event>
+      <transition to="GestionarProblemasDecision" name="avanzaBPM"></transition>
+      <transition to="Fin" name="Fin"></transition>
+		<transition to="H038_GestionarProblemas" name="activarAlerta"></transition>
+		<transition to="H038_ConfirmarRetenciones" name="vueltaAtras"></transition>
+   </state>
+
+
+   <decision name="GestionarProblemasDecision" expression="#{H038_GestionarProblemasDecision}">
+      <transition to="H038_ConfirmarRetenciones" name="Correcto"></transition>
+      <transition to="H038_ActualizarDatos" name="Incorrecto"></transition>
+   </decision>
+
+   <state name="H038_ActualizarDatos">
+      <event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericEnterActionHandler</targetBean>
+         </action>
+      </event>
+      <event type="node-leave">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericLeaveActionHandler</targetBean>
+         </action>
+      </event>
+      <transition to="H038_SalariosDecision" name="avanzaBPM"></transition>
+      <transition to="Fin" name="Fin"></transition>
+		<transition to="H038_ActualizarDatos" name="activarAlerta"></transition>
+   </state>
+
+   <node name="H038_SalariosDecision">
+      <action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+         <targetBean>genericUserDecisionActionHandler</targetBean>
+      </action>
+      <transition to="Fin" name="Fin"></transition>
+	</node>
+
+	<state name="Espera">
+		<event type="node-enter">
+			<action class="es.pfsgroup.procedimientos.GenericTimerDelayActionHandler" config-type="field">
+				<name>Timer espera - embargo salarios</name>
+				<duration>2 months</duration>
+				<transicion>avanzaBPM</transicion>
+			</action>
+		</event>
+		<transition to="H038_ConfirmarRetenciones" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="H038_ConfirmarRequerimientoResultado">
+		<event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericEnterActionHandler</targetBean>
+         </action>
+      	</event>
+     	<event type="node-leave">
+        	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericLeaveActionHandler</targetBean>
+         	</action>
+      	</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="ConfirmarRequerimientoResultadoDecision" name="avanzaBPM"></transition>
+		<transition to="H038_ConfirmarRequerimientoResultado" name="activarAlerta"></transition>
+		<transition to="H038_SolicitarNotificacion" name="vueltaAtras"></transition>
+	</state>
+	
+	<decision name="ConfirmarRequerimientoResultadoDecision" expression="#{H038_ConfirmarRequerimientoResultadoDecision}">
+		<transition to="H038_SalariosDecision" name="ConfirmadoNo"></transition>
+		<transition to="Espera" name="ConfirmadoSi"></transition>
+		<transition to="H038_ConfirmarRetenciones" name="ConfirmadoPositivo"></transition>
+	</decision>
+
+
+   <end-state name="Fin">
+      <event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>endProcessActionHandler</targetBean>
+         </action>
+      </event>             
+   </end-state>
+
+</process-definition>

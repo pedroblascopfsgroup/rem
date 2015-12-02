@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 
@@ -20,4 +21,13 @@ public interface GestorAdicionalAsuntoApi {
 	@Transactional
 	public List<Usuario> findGestoresByAsunto(Long idAsunto, String tipoGestor);
 
+	/**
+	 * Busca un gestor adicional por los ids
+	 * @param idTipoGestor
+	 * @param idAsunto
+	 * @param idUsuario
+	 * @param idTipoDespacho
+	 * @return
+	 */
+	public EXTGestorAdicionalAsunto findGaaByIds(Long idTipoGestor, Long idAsunto, Long idUsuario, Long idTipoDespacho);
 }

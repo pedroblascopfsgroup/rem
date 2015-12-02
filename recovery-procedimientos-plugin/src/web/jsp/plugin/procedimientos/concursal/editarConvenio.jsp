@@ -8,6 +8,8 @@
 <%@ taglib prefix="pfslayout" tagdir="/WEB-INF/tags/pfs/layout" %>
 <%@ taglib prefix="pfs" tagdir="/WEB-INF/tags/pfs" %>
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
 
 <fwk:page>
 
@@ -151,7 +153,7 @@
 						 , propio
 					 ]
 					 ,bbar : [
-						btnGuardar, btnCancelar
+						<sec:authorize ifNotGranted="SOLO_CONSULTA">btnGuardar,</sec:authorize> btnCancelar
 					 ]
 				  } 
 			  ]

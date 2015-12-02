@@ -40,7 +40,7 @@ import es.pfsgroup.plugin.recovery.masivo.utils.impl.MSVExcelValidatorFactoryImp
 import es.pfsgroup.plugin.recovery.masivo.utils.impl.MSVHojaExcel;
 
 /**
- * Clase manager encargada de la gestión de las plantillas excel de la pantalla
+ * Clase manager encargada de la gestiï¿½n de las plantillas excel de la pantalla
  * de alta masiva
  * 
  * @author manuel
@@ -107,7 +107,7 @@ public class ExcelManager implements ExcelManagerApi {
 		if (lista.size() > 0)
 			return this.generaExcelVacia(lista.get(0).getId());
 		else
-			throw new BusinessOperationException("No se encuentra la plantilla para lo operación elegida.");
+			throw new BusinessOperationException("No se encuentra la plantilla para lo operaciï¿½n elegida.");
 	}
 
 	@Override
@@ -144,14 +144,14 @@ public class ExcelManager implements ExcelManagerApi {
 
 		try {
 			MSVDtoValidacion dtoValidacionFormato = excelValidator.validarFormatoFichero(excelFileDto);
-			// Bruno 20/02/2013: Si el resultado de la validación no devuelve
+			// Bruno 20/02/2013: Si el resultado de la validaciï¿½n no devuelve
 			// nada
 			// no se guardan errores
 			if (dtoValidacionFormato != null) {
 				if (dtoValidacionFormato.getFicheroTieneErrores()) {
 					documento.setErroresFichero(dtoValidacionFormato.getExcelErroresFormato());
 				} else {
-					// Bruno 21/2/2013 Si no hubiera errores de validación
+					// Bruno 21/2/2013 Si no hubiera errores de validaciï¿½n
 					// copiamos
 					// la misma excel, ya que peta si dejamos este campo a NULL
 					documento.setErroresFichero(uploadForm.getFileItem());
@@ -240,7 +240,7 @@ public class ExcelManager implements ExcelManagerApi {
 //	private void cambiaEstadoProceso(MSVDtoValidacion dtoValidacionFormato, MSVDtoFileItem dto) throws Exception {
 //		MSVProcesoMasivo proceso = dameProcesoMasivo(dto);
 //		if (Checks.esNulo(proceso)) {
-//			throw new BusinessOperationException("No hemos encontrado ningún proceso que se corresponda con ese id");
+//			throw new BusinessOperationException("No hemos encontrado ningï¿½n proceso que se corresponda con ese id");
 //		}
 //		MSVDtoAltaProceso dtoAltaProceso = new MSVDtoAltaProceso();
 //		if (dtoValidacionFormato.getFicheroTieneErrores()) {
@@ -263,7 +263,7 @@ public class ExcelManager implements ExcelManagerApi {
 			}
 		}
 		if (Checks.esNulo(proceso)) {
-			throw new BusinessOperationException("No hemos encontrado ningún proceso que se corresponda con ese id");
+			throw new BusinessOperationException("No hemos encontrado ningï¿½n proceso que se corresponda con ese id");
 		}
 
 		documento.setProcesoMasivo(proceso);
@@ -276,7 +276,7 @@ public class ExcelManager implements ExcelManagerApi {
 
 	private MSVProcesoMasivo dameProcesoMasivo(MSVDtoFileItem dto) {
 		if (Checks.esNulo(dto.getIdProceso())) {
-			throw new BusinessOperationException("No se puede subir un fichero que no está asociado a un proceso");
+			throw new BusinessOperationException("No se puede subir un fichero que no estï¿½ asociado a un proceso");
 		}
 		return procesoDao.get(dto.getIdProceso());
 	}

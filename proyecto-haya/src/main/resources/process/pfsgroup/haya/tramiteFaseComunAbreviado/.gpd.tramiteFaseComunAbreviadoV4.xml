@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="haya_tramiteFaseComunAbreviadoV4" width="1253" height="1903">
+  <node name="Inicio" x="250" y="-238" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H009_RegistrarPublicacionBOE" x="195" y="-153" width="254" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-305" h1="0" w2="-66" h2="-749"/>
+      <bendpoint w1="-306" h1="566" w2="-67" h2="-183"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-152" h1="0" w2="-152" h2="0"/>
+      <bendpoint w1="-152" h1="-21" w2="-152" h2="-21"/>
+    </edge>
+    <edge>
+      <label x="-46" y="-18"/>
+    </edge>
+  </node>
+  <node name="H009_BPMTramiteAceptacionConcurso" x="190" y="-52" width="263" height="36">
+    <edge>
+      <label x="-89" y="-18"/>
+    </edge>
+  </node>
+  <node name="H009_RegistrarInsinuacionCreditos" x="185" y="56" width="311" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-295" h1="-1" w2="-38" h2="-541"/>
+      <bendpoint w1="-296" h1="354" w2="-39" h2="-186"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H009_RegistrarInformeAdmonConcursal" x="188" y="813" width="312" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="380" h1="0" w2="381" h2="-173"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H009_PresentarEscritoInsinuacion" x="197" y="382" width="287" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-225" h1="5" w2="32" h2="-209"/>
+    </edge>
+    <edge>
+      <label x="-6" y="-15"/>
+    </edge>
+  </node>
+  <node name="H009_RevisarResultadoInfAdmon" x="183" y="933" width="321" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="499" h1="-1" w2="35" h2="-89"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-117" h1="-57" w2="-153" h2="63"/>
+    </edge>
+  </node>
+  <node name="H009_RevisarResultadoInfAdmonDecision" x="206" y="1103" width="287" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-8" y="-16"/>
+    </edge>
+  </node>
+  <node name="H009_ValidarAlegaciones" x="668" y="1104" width="285" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-32" y="-28"/>
+      <bendpoint w1="194" h1="1" w2="-206" h2="367"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H009_ValidarAlegacionesDecision" x="674" y="1214" width="270" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-228" h1="2" w2="126" h2="-138"/>
+    </edge>
+  </node>
+  <node name="H009_RegistrarResolucionFaseComun" x="209" y="1378" width="232" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-241" h1="2" w2="1" h2="784"/>
+    </edge>
+  </node>
+  <node name="H009_RegistrarResolucionFaseComunDecision" x="164" y="1488" width="321" height="36">
+    <edge>
+      <label x="-39" y="-46"/>
+    </edge>
+    <edge>
+      <label x="-47" y="-47"/>
+    </edge>
+  </node>
+  <node name="H009_BPMTramiteFaseLiquidacion" x="378" y="1626" width="291" height="36">
+    <edge>
+      <label x="-533" y="450"/>
+      <bendpoint w1="699" h1="0" w2="159" h2="1070"/>
+      <bendpoint w1="699" h1="-934" w2="159" h2="136"/>
+    </edge>
+  </node>
+  <node name="H009_BPMTramiteFaseConvenioV4" x="85" y="1627" width="228" height="36">
+    <edge>
+      <label x="-17" y="399"/>
+      <bendpoint w1="-160" h1="1" w2="-44" h2="1032"/>
+      <bendpoint w1="-157" h1="-916" w2="-41" h2="115"/>
+    </edge>
+  </node>
+  <node name="H009_ActualizarEstadoCreditos" x="537" y="1512" width="271" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="507" h1="2" w2="130" h2="958"/>
+      <bendpoint w1="510" h1="-797" w2="133" h2="159"/>
+    </edge>
+    <edge>
+      <label x="-44" y="-14"/>
+    </edge>
+  </node>
+  <node name="H009_RegistrarProyectoInventario" x="216" y="472" width="255" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="12" y="-9"/>
+      <bendpoint w1="-142" h1="-42" w2="-140" h2="47"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H009_RegistrarProyectoInventarioDecision" x="192" y="574" width="302" height="36">
+    <edge>
+      <label x="-34" y="-31"/>
+    </edge>
+    <edge>
+      <label x="-59" y="-136"/>
+      <bendpoint w1="-1" h1="165" w2="-2" h2="-74"/>
+    </edge>
+  </node>
+  <node name="H009_PresentarRectificacion" x="432" y="699" width="294" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="7" y="141"/>
+      <bendpoint w1="-5" h1="-227" w2="231" h2="0"/>
+    </edge>
+    <edge>
+      <label x="-6" y="-18"/>
+    </edge>
+  </node>
+  <node name="H009_RevisarInsinuacionCreditos" x="190" y="152" width="301" height="36">
+    <edge>
+      <label x="16" y="-7"/>
+      <bendpoint w1="-152" h1="-48" w2="-131" h2="48"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-244" h1="5" w2="13" h2="-439"/>
+    </edge>
+  </node>
+  <node name="H009_BPMTramiteDemandaIncidental" x="538" y="1432" width="270" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H009_BPMhaya_tramiteElevacionPropSarebLitigiosA" x="561" y="52" width="383" height="36">
+    <edge>
+      <label x="-113" y="-71"/>
+    </edge>
+    <edge>
+      <label x="-174" y="-238"/>
+      <bendpoint w1="458" h1="3" w2="147" h2="-501"/>
+      <bendpoint w1="459" h1="501" w2="148" h2="-3"/>
+    </edge>
+    <edge>
+      <label x="-32" y="-8"/>
+      <bendpoint w1="135" h1="255" w2="-176" h2="-249"/>
+    </edge>
+  </node>
+  <node name="forkTrasAceptacion" x="685" y="-45" width="136" height="24">
+    <edge>
+      <label x="-18" y="-11"/>
+    </edge>
+    <edge>
+      <label x="-33" y="-7"/>
+    </edge>
+  </node>
+  <node name="H009_ElevacionDecision" x="990" y="334" width="170" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="ForkElevarSareb" x="737" y="1321" width="147" height="24">
+    <edge>
+      <label x="-29" y="24"/>
+    </edge>
+    <edge>
+      <label x="-40" y="22"/>
+    </edge>
+  </node>
+  <node name="H009_BPMhaya_tramiteElevacionPropSarebLitigiosB" x="815" y="1432" width="353" height="36">
+    <edge>
+      <label x="-109" y="317"/>
+      <bendpoint w1="125" h1="-108" w2="67" h2="696"/>
+      <bendpoint w1="127" h1="-637" w2="69" h2="167"/>
+    </edge>
+    <edge>
+      <label x="-26" y="-30"/>
+    </edge>
+    <edge>
+      <label x="-56" y="277"/>
+      <bendpoint w1="153" h1="-51" w2="81" h2="825"/>
+      <bendpoint w1="159" h1="-658" w2="87" h2="218"/>
+    </edge>
+  </node>
+  <node name="H009_ContactarDeudor" x="665" y="384" width="200" height="36">
+    <edge>
+      <label x="-77" y="-6"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="ForkContactarDeudor" x="215" y="268" width="252" height="24">
+    <edge>
+      <label x="-58" y="-17"/>
+    </edge>
+    <edge>
+      <label x="2" y="-8"/>
+    </edge>
+  </node>
+  <node name="H009_SarebDecision" x="941" y="1277" width="155" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork1" x="659" y="-168" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H009_BPMPrecontencioso" x="898" y="-102" width="287" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="192" h1="101" w2="170" h2="-557"/>
+      <bendpoint w1="183" h1="669" w2="161" h2="11"/>
+    </edge>
+  </node>
+  <node name="Fin" x="1012" y="556" width="103" height="36"/>
+  <node name="Fin2" x="17" y="596" width="132" height="36"/>
+</root-container>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="cj_conclusion" width="1109" height="620">
+  <node name="Inicio" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H039_registrarCausaConclusion" x="268" y="4" width="276" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="438" h1="3" w2="427" h2="-518"/>
+      <bendpoint w1="424" h1="516" w2="413" h2="-5"/>
+    </edge>
+  </node>
+  <node name="H039_registrarInformeAdmConcursal" x="253" y="92" width="304" height="36">
+    <edge>
+      <label x="100" y="35"/>
+      <bendpoint w1="-233" h1="-75" w2="-234" h2="13"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="419" h1="7" w2="407" h2="-426"/>
+      <bendpoint w1="416" h1="420" w2="404" h2="-13"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H039_registrarConclusionConcurso" x="239" y="198" width="336" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="400" h1="-2" w2="400" h2="-329"/>
+      <bendpoint w1="396" h1="308" w2="396" h2="-19"/>
+    </edge>
+    <edge>
+      <label x="134" y="59"/>
+      <bendpoint w1="-256" h1="-105" w2="-234" h2="2"/>
+    </edge>
+  </node>
+  <node name="H039_registrarConclusionConcursoDecision" x="257" y="295" width="304" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="67" y="-127"/>
+      <bendpoint w1="-282" h1="0" w2="-281" h2="-231"/>
+      <bendpoint w1="-284" h1="235" w2="-283" h2="4"/>
+    </edge>
+  </node>
+  <node name="H039_ConclusionDecision" x="307" y="405" width="207" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="342" y="526" width="132" height="36"/>
+</root-container>

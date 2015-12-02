@@ -533,7 +533,7 @@
 	
 	
 	 var panelFiltros =  new Ext.FormPanel({
-          title : '<s:message code="expedientes.listado.filtros" text="**Filtro de Expedientes" />'
+          title : '<s:message code="expedientes.listado.filtros.recobro" text="**Búsqueda de expedientes de recobro" />'
 		  ,defaults : {xtype:'panel' ,cellCls : 'vtop'}
           ,tbar : [buttonsL,'->', buttonsR, app.crearBotonAyuda()]
 		  ,bodyStyle:'cellspacing:10px;'

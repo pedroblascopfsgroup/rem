@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="cj_seguimientoCumplimientoConvenio" width="1439" height="1032">
+  <node name="Inicio" x="482" y="7" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H041_registrarConvenio" x="447" y="104" width="202" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="196" h1="1" w2="175" h2="-901"/>
+      <bendpoint w1="181" h1="494" w2="160" h2="-408"/>
+    </edge>
+  </node>
+  <node name="H041_registrarCumplimiento" x="407" y="309" width="279" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="176" h1="1" w2="153" h2="-696"/>
+      <bendpoint w1="166" h1="290" w2="143" h2="-407"/>
+    </edge>
+  </node>
+  <node name="H041_registrarCumplimientoDecision" x="391" y="539" width="308" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-52" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-3" h1="106" w2="-524" h2="-242"/>
+    </edge>
+  </node>
+  <node name="H041_validarFinSeguimiento" x="144" y="691" width="201" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="280" h1="-2" w2="-45" h2="-317"/>
+    </edge>
+  </node>
+  <node name="H041_validarFinSeguimientoDecision" x="104" y="805" width="284" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-23" y="222"/>
+      <bendpoint w1="122" h1="-39" w2="-178" h2="457"/>
+      <bendpoint w1="122" h1="-492" w2="-178" h2="4"/>
+    </edge>
+  </node>
+  <node name="H041_espera" x="-77" y="423" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork1" x="421" y="205" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-51" y="-9"/>
+    </edge>
+  </node>
+  <node name="H041_RegistroPrestamoConvenio" x="790" y="199" width="278" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-144" h1="418" w2="216" h2="-389"/>
+    </edge>
+  </node>
+  <node name="fork2" x="420" y="440" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H041_NotificarDeudor" x="966" y="539" width="203" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-282" h1="165" w2="216" h2="-302"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H041_ConfirmarResultadoNotificacion" x="928" y="668" width="279" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H041_ConfirmarResultadoNotificacionDecision" x="916" y="791" width="302" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H041_BPMDeclaracionIncumplimiento" x="908" y="887" width="317" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H041_BPMFaseLiquidacion" x="954" y="994" width="225" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H041_ObtenerInformeSemestral" x="-123" y="544" width="227" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-147" h1="4" w2="-726" h2="-458"/>
+      <bendpoint w1="-148" h1="469" w2="-727" h2="7"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H041_ObtenerInformeSemestralDecision" x="-140" y="653" width="265" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="0" h1="348" w2="-577" h2="-5"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-177" h1="4" w2="-186" h2="239"/>
+      <bendpoint w1="-176" h1="-235" w2="-185" h2="0"/>
+    </edge>
+  </node>
+  <node name="H041_EsperaSiguientePago" x="128" y="543" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="442" y="993" width="132" height="36"/>
+</root-container>

@@ -7,12 +7,16 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
+
+import org.hibernate.proxy.HibernateProxy;
 
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 
 //FIXME Mover esta clase de paquete, a uno de coreextension
 @Entity
+@org.hibernate.annotations.Entity(dynamicUpdate=true)
 public class MEJProcedimiento extends Procedimiento {
 
 	/**
@@ -33,6 +37,28 @@ public class MEJProcedimiento extends Procedimiento {
 	@Column(name="PRC_PLAZO_PARALIZ_MILS")
 	private Long plazoParalizacion;
 
+	@Column(name="SYS_GUID")
+	private String guid;
+
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
+
+	/*@Embedded
+	private Guid guid;
+	
+	public Guid getGuid() {
+		return guid;
+	}
+
+	public void setGuid(Guid guid) {
+		this.guid = guid;
+	}*/
+	
 	public void setEstaParalizado(boolean estaParalizado) {
 		this.estaParalizado = estaParalizado;
 	}
@@ -75,4 +101,18 @@ public class MEJProcedimiento extends Procedimiento {
 	public void setPlazoParalizacion(Long plazoParalizacion) {
 		this.plazoParalizacion = plazoParalizacion;
 	}
+
+	@Transient
+	public static MEJProcedimiento instanceOf(Procedimiento procedimiento) {
+		MEJProcedimiento mejProcedimiento = null;
+		if (procedimiento==null) return null;
+	    if (procedimiento instanceof HibernateProxy) {
+	        mejProcedimiento = (MEJProcedimiento) ((HibernateProxy) procedimiento).getHibernateLazyInitializer()
+	                .getImplementation();
+	    } else if (procedimiento instanceof MEJProcedimiento){
+	    	mejProcedimiento = (MEJProcedimiento) procedimiento;
+		}
+		return mejProcedimiento;
+	}
+	
 }

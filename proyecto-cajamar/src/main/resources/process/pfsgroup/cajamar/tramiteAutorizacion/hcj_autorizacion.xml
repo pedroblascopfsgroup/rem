@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="hcj_autorizacion" xmlns="urn:jbpm.org:jpdl-3.2">
+
+	<start-state name="Inicio">
+		<transition to="HCJ003_AutorizarPeticionPropuesta" name="avanzaBPM"></transition>
+	</start-state>
+
+	<state name="HCJ003_AutorizarPeticionPropuesta">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="HCJ003_AutorizarPeticionPropuesta" name="activarAlerta"></transition>
+		<transition to="HCJ003_AutorizarPeticionPropuestaDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<decision name="HCJ003_AutorizarPeticionPropuestaDecision" expression="#{HCJ003_AutorizarPeticionPropuestaDecision}">
+		<transition to="Fin" name="aceptado"></transition>
+		<transition to="HCJ003_AutorizacionDecision" name="denegado"></transition>
+	</decision>
+
+	<node name="HCJ003_AutorizacionDecision">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>tramiteAceptacionUserDecisionActionHandler</targetBean>
+		</action>	
+		<transition to="Fin" name="Fin"></transition>
+	</node>
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+</process-definition>

@@ -17,6 +17,7 @@ public interface BPMContants {
     String PROCEDIMIENTO_TAREA_EXTERNA = "procedimientoTareaExterna";
     String TRANSICION_ALERTA_TIMER = "activarAlerta";
 
+    String TRANSICION_FIN = "Fin";
     String TRANSICION_PARALIZAR_TAREAS = "paralizarTareas";
     String TRANSICION_APLAZAR_TAREAS = "aplazarTareas";
     String FECHA_APLAZAMIENTO_TAREAS = "fechaAplazamientoTareas";

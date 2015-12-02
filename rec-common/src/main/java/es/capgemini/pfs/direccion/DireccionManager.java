@@ -66,7 +66,26 @@ public class DireccionManager implements DireccionApi {
 	@BusinessOperation(GUARDAR_DIRECCION)
 	@Transactional(readOnly = false)
 	public String guardarDireccion(DireccionAltaDto dto) {
+		boolean hayError=false;
 		
+		try{
+			guardarDireccionRetornaId(dto);
+		}catch(Exception e){
+			hayError=true;
+			e.printStackTrace();
+		}
+		
+		if (hayError) {
+			return RESULTADO_KO;
+		} else {
+			return RESULTADO_OK;
+		}
+	}
+
+	@Override
+	@BusinessOperation(GUARDAR_DIRECCION_RETORNA_ID)
+	@Transactional(readOnly = false)
+	public Long guardarDireccionRetornaId(DireccionAltaDto dto) throws Exception {
 		Direccion dir = new Direccion();
 		if (!Checks.esNulo(dto.getProvincia())) {
 			DDProvincia provincia = genericDao.get(
@@ -112,38 +131,26 @@ public class DireccionManager implements DireccionApi {
 		
 		dir.setOrigen(dto.getOrigen());
 		
-		boolean hayError = false;
-		
 		Long idDireccion = direccionDao.getNextIdDireccion();
 		dir.setId(idDireccion);
 				
 		String codDireccion = direccionDao.getNextCodDireccionManual().toString();
 		dir.setCodDireccion(codDireccion);
-		try {
-			direccionDao.saveOrUpdate(dir);
-		} catch (Exception e) {
-			hayError = true;
-			e.printStackTrace();
-		}
+		
+		direccionDao.saveOrUpdate(dir);
+		
 		
 		for (Long idPersona : dto.getSetIdPersonas()) {
 			DireccionPersona dirPers = new DireccionPersona();
 			DireccionPersonaId dirPersId = new DireccionPersonaId(idDireccion, idPersona);
 			dirPers.setId(dirPersId);
-			try {
-				direccionPersonaDao.saveOrUpdate(dirPers);
-			} catch (Exception e) {
-				hayError = true;
-				e.printStackTrace();
-			}
-		}
 		
-		if (hayError) {
-			return RESULTADO_KO;
-		} else {
-			return RESULTADO_OK;
+			direccionPersonaDao.saveOrUpdate(dirPers);
 		}
+		return idDireccion;
 	}
+	
+	
 
 
 }

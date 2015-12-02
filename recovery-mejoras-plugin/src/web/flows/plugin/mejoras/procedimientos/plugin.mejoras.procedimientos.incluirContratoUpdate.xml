@@ -3,11 +3,14 @@
     xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
 	<var name="dto" class="es.pfsgroup.plugin.recovery.mejoras.procedimiento.dto.MEJDtoInclusionExclusionContratoProcedimiento" />
-
+	<var name="dtoLiqui" class="es.pfsgroup.plugin.precontencioso.liquidacion.dto.InclusionLiquidacionProcedimientoDTO" />
+	
     <end-state id="update" view="default">
     	<on-entry>
     		<evaluate expression="binder.bindAndValidate(flowRequestContext,dto)" />
+    		<evaluate expression="binder.bindAndValidate(flowRequestContext,dtoLiqui)" />
     		<evaluate expression="executor.execute('es.pfsgroup.recovery.mejoras.procedimiento.api.incluirContratosAlProcedimiento', dto)" />
+    		<evaluate expression="executor.execute('es.pfsgroup.recovery.precontencioso.liquidacion.api.incluirLiquidacionAlProcedimiento', dtoLiqui)" />
     	</on-entry>
 	</end-state>
 

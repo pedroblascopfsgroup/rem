@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoComite
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 public class SubastaV4LeaveActionHandler extends PROGenericLeaveActionHandler {
 
@@ -52,6 +53,9 @@ public class SubastaV4LeaveActionHandler extends PROGenericLeaveActionHandler {
     @Autowired
     private SubastaCalculoManager subastaCalculoManager;
 	
+    @Autowired
+    private IntegracionBpmService bpmIntegracionService;
+    
 	private ExecutionContext executionContext;
 
 	private final String SALIDA_ETIQUETA = "DecisionRama_%d";
@@ -69,29 +73,31 @@ public class SubastaV4LeaveActionHandler extends PROGenericLeaveActionHandler {
 		super.process(delegateTransitionClass, delegateSpecificClass, executionContext);
 		this.executionContext = executionContext;
 
-		Boolean tareaTemporal = (executionContext.getTransition().getName().equals(BPMContants.TRANSICION_APLAZAR_TAREAS) 
-				|| executionContext.getTransition().getName().equals(BPMContants.TRANSICION_PARALIZAR_TAREAS)
-				|| executionContext.getTransition().getName().equals(BPMContants.TRANSICION_ACTIVAR_TAREAS)
-				|| executionContext.getTransition().getName().equals(BPMContants.TRANSICION_PRORROGA));
-		
-		//Solo si el handle ha sido invocado por el guardado de la tarea, dentro del flujo BPM, realiza las acciones determinadas
-		//Si ha sido invocado por una acci�n de paralizar la tarea o por una acci�n autoprorroga, no realiza las acciones determinadas
-		if (!tareaTemporal) {
-			Procedimiento procedimiento = getProcedimiento(executionContext);
-			TareaExterna tareaExterna = getTareaExterna(executionContext);
-
-			if (tareaExterna!=null &&
-					tareaExterna.getTareaProcedimiento() != null && 
-					(
-					TAP_SOLICITUD_SUBASTA.equals(tareaExterna.getTareaProcedimiento().getCodigo()) ||
-					TAP_SOLICITUD_SUBASTA_SAREB.equals(tareaExterna.getTareaProcedimiento().getCodigo()) || 
-					TAP_SENYALAMIENTO_SUBASTA.equals(tareaExterna.getTareaProcedimiento().getCodigo()) ||
-					TAP_SENYALAMIENTO_SUBASTA_SAREB.equals(tareaExterna.getTareaProcedimiento().getCodigo())
-					)) {
-				subastaCalculoManager.actualizarTipoSubasta(procedimiento);	
-			}
-			avanzamosEstadoSubasta();
+		String transition = executionContext.getTransition().getName();
+		Boolean transicionTemporal = (
+				transition.equals(BPMContants.TRANSICION_PRORROGA) || 
+				transition.equals(BPMContants.TRANSICION_FIN) || 
+				transition.equals(BPMContants.TRANSICION_APLAZAR_TAREAS) || 
+				transition.equals(BPMContants.TRANSICION_PARALIZAR_TAREAS) || 
+				transition.equals(BPMContants.TRANSICION_ACTIVAR_TAREAS));
+		if (transicionTemporal) {
+			return;
 		}
+		
+		Procedimiento procedimiento = getProcedimiento(executionContext);
+		TareaExterna tareaExterna = getTareaExterna(executionContext);
+
+		if (tareaExterna!=null &&
+				tareaExterna.getTareaProcedimiento() != null && 
+				(
+				TAP_SOLICITUD_SUBASTA.equals(tareaExterna.getTareaProcedimiento().getCodigo()) ||
+				TAP_SOLICITUD_SUBASTA_SAREB.equals(tareaExterna.getTareaProcedimiento().getCodigo()) || 
+				TAP_SENYALAMIENTO_SUBASTA.equals(tareaExterna.getTareaProcedimiento().getCodigo()) ||
+				TAP_SENYALAMIENTO_SUBASTA_SAREB.equals(tareaExterna.getTareaProcedimiento().getCodigo())
+				)) {
+			subastaCalculoManager.actualizarTipoSubasta(procedimiento);	
+		}
+		avanzamosEstadoSubasta();
 			
 	}
 
@@ -198,10 +204,10 @@ public class SubastaV4LeaveActionHandler extends PROGenericLeaveActionHandler {
 		}
 
 		genericDao.save(Subasta.class, sub);
+		bpmIntegracionService.enviarDatos(sub);
 	}
 
 	private void cambiaEstadoSubasta(Subasta sub, String estado) {
-
 		if (!Checks.esNulo(sub.getEstadoSubasta().getCodigo()) && DDEstadoSubasta.CEL.compareTo(sub.getEstadoSubasta().getCodigo()) != 0) {
 			DDEstadoSubasta esu = genericDao.get(DDEstadoSubasta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estado), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 			sub.setEstadoSubasta(esu);

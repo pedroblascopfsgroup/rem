@@ -192,17 +192,21 @@ public class AdjudicacionHayaLeaveActionHandler extends
 				.getNode().getName())) {
 			for (TareaExternaValor tev : listado) {
 				try {
-					if ("fechaInscripcion".equals(tev.getNombre())) {
+					if ("fechaInscripcion".equals(tev.getNombre()) && tev.getValor()!=null) {
 						Date fecha = formatter.parse(tev.getValor());
 						executor.execute(
 								AdjudicacionHandlerDelegateApi.BO_ADJUDICACION_HANDLER_INSERT_FECHA_INSCRIPCION_TITULO,
 								prc.getId(), fecha);
-					} else if ("fechaEnvioDecretoAdicion".equals(tev
-							.getNombre())) {
+					} else if ("fechaEnvioDecretoAdicion".equals(tev.getNombre()) && tev.getValor()!=null) {
 						Date fecha = formatter.parse(tev.getValor());
 						executor.execute(
 								AdjudicacionHandlerDelegateApi.BO_ADJUDICACION_HANDLER_INSERT_FECHA_ENVIO_DECRETO_ADICION,
 								prc.getId(), fecha);
+					} else if ("comboSituacionTitulo".equals(tev
+							.getNombre())) {						
+						executor.execute(
+								AdjudicacionHandlerDelegateApi.BO_ADJUDICACION_HANDLER_INSERT_SITUACION_TITULO,
+								prc.getId(), tev.getValor());
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

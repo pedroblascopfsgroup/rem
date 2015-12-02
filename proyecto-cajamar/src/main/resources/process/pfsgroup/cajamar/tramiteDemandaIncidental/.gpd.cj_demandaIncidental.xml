@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="cj_demandaIncidental" width="1208" height="664">
+  <node name="Inicio" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="-53" y="-13"/>
+    </edge>
+  </node>
+  <node name="H023_interposicionDemanda" x="307" y="1" width="242" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="723" h1="7" w2="188" h2="-521"/>
+      <bendpoint w1="723" h1="526" w2="188" h2="-2"/>
+    </edge>
+  </node>
+  <node name="H023_confirmarAdmisionDemanda" x="284" y="87" width="291" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-114" h1="-44" w2="-113" h2="42"/>
+    </edge>
+    <edge>
+      <label x="-6" y="16"/>
+      <bendpoint w1="709" h1="5" w2="175" h2="-437"/>
+      <bendpoint w1="704" h1="430" w2="170" h2="-12"/>
+    </edge>
+  </node>
+  <node name="H023_confirmarOposicion" x="8" y="226" width="259" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="67" y="-21"/>
+      <bendpoint w1="-169" h1="7" w2="-995" h2="-296"/>
+      <bendpoint w1="-165" h1="414" w2="-991" h2="111"/>
+      <bendpoint w1="828" h1="418" w2="2" h2="115"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-5" h1="-134" w2="-297" h2="5"/>
+    </edge>
+  </node>
+  <node name="H023_registrarVista" x="320" y="589" width="311" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H023_registrarResolucion" x="536" y="470" width="203" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-113" h1="-233" w2="387" h2="11"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H023_resolucionFirme" x="679" y="339" width="204" height="36">
+    <edge>
+      <label x="-80" y="-14"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-25" y="40"/>
+      <bendpoint w1="-145" h1="-3" w2="-1" h2="-134"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H023_confirmarAdmisionDemandaDecision" x="301" y="165" width="284" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H023_confirmarOposicionDecision" x="88" y="309" width="255" height="36">
+    <edge>
+      <label x="-12" y="3"/>
+      <bendpoint w1="272" h1="8" w2="-150" h2="-153"/>
+    </edge>
+    <edge>
+      <label x="-33" y="-12"/>
+    </edge>
+    <edge>
+      <label x="-76" y="-13"/>
+      <bendpoint w1="261" h1="93" w2="1" h2="-187"/>
+    </edge>
+  </node>
+  <node name="H023_DemandaDecision" x="875" y="163" width="201" height="36">
+    <edge>
+      <label x="-7" y="-7"/>
+      <bendpoint w1="137" h1="0" w2="149" h2="-366"/>
+      <bendpoint w1="132" h1="336" w2="144" h2="-30"/>
+    </edge>
+  </node>
+  <node name="H023_admisionOposicionYSenalamientoVista" x="5" y="399" width="343" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-39" y="-17"/>
+      <bendpoint w1="-83" h1="-18" w2="-44" h2="155"/>
+      <bendpoint w1="-160" h1="-74" w2="-121" h2="99"/>
+    </edge>
+  </node>
+  <node name="H023_admisionOposicionYSenalamientoVistaDecision" x="10" y="485" width="346" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="897" y="529" width="132" height="36"/>
+</root-container>

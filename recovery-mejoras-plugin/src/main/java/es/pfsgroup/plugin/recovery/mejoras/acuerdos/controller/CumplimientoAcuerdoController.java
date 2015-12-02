@@ -23,7 +23,7 @@ public class CumplimientoAcuerdoController {
 	private ApiProxyFactory proxyFactory;
 	
 	@RequestMapping
-	public String listaCumplimiento(@RequestParam(value ="id", required = true) final Long idAcuerdo, ModelMap map){
+	public String listaCumplimiento(@RequestParam(value ="idAcuerdo", required = true) final Long idAcuerdo, ModelMap map){
 		
 		MEJTrazaDto dto = new MEJTrazaDto() {
 			@Override

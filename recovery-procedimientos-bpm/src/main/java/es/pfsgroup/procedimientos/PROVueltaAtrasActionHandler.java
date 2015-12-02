@@ -1,7 +1,6 @@
 package es.pfsgroup.procedimientos;
 
 import org.jbpm.graph.exe.ExecutionContext;
-import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -18,18 +17,18 @@ public class PROVueltaAtrasActionHandler extends PROBaseActionHandler implements
     private static final long serialVersionUID = 1L;
 
     /**
-     * Override del método onEnter. Se ejecuta al entrar al nodo
+     * Override del mï¿½todo onEnter. Se ejecuta al entrar al nodo
      */
     @Override
     public void onEnter(ExecutionContext executionContext) {
     }
 
     /**
-     * Override del método onLeave. Se ejecuta al salir del nodo
+     * Override del mï¿½todo onLeave. Se ejecuta al salir del nodo
      */
     @Override
     public void onLeave(ExecutionContext executionContext) {
-        //Desactivamos las fechas de activación de tareas
+        //Desactivamos las fechas de activaciï¿½n de tareas
     	executionContext.getContextInstance().deleteVariable(BPMContants.FECHA_ACTIVACION_TAREAS);
 
         //Marcamos como cancelada la tarea externa
@@ -46,6 +45,7 @@ public class PROVueltaAtrasActionHandler extends PROBaseActionHandler implements
             if (prorroga != null) {
             	proxyFactory.proxy(TareaNotificacionApi.class).borrarNotificacionTarea(prorroga.getTarea().getId());
             }
+            
         }
     }
 }

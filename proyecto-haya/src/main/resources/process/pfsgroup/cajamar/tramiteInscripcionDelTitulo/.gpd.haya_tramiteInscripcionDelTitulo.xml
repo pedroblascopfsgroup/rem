@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="hcj_tramiteInscripcionDelTitulo" width="861" height="997">
+  <node name="Inicio" x="-1" y="1" width="132" height="36">
+    <edge>
+      <label x="-38" y="4"/>
+    </edge>
+  </node>
+  <node name="H066_obtenerMinuta" x="269" y="-1" width="182" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-265" h1="61" w2="-1" h2="-120"/>
+    </edge>
+  </node>
+  <node name="H066_validarMinuta" x="279" y="108" width="176" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-140" h1="-54" w2="-107" h2="56"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-242" h1="-1" w2="29" h2="-73"/>
+    </edge>
+  </node>
+  <node name="H066_registrarRecepcionEscritura" x="259" y="274" width="232" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-199" h1="-105" w2="-193" h2="38"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="48" y="-10"/>
+      <bendpoint w1="-236" h1="-52" w2="43" h2="-31"/>
+    </edge>
+  </node>
+  <node name="H066_registrarEntregaTitulo" x="265" y="371" width="238" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-129" h1="-52" w2="-120" h2="45"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-241" h1="-72" w2="73" h2="82"/>
+    </edge>
+  </node>
+  <node name="H066_validarMinutaDecision" x="272" y="173" width="206" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="175" h1="0" w2="190" h2="174"/>
+      <bendpoint w1="171" h1="-176" w2="186" h2="-2"/>
+    </edge>
+  </node>
+  <node name="fork1" x="262" y="452" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-271" h1="-1" w2="-3" h2="-60"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H066_BPMTramitePosesion" x="25" y="505" width="190" height="36">
+    <edge>
+      <label x="-57" y="16"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-113" h1="-89" w2="-63" h2="199"/>
+    </edge>
+  </node>
+  <node name="H066_registrarPresentacionHacienda" x="265" y="519" width="255" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-8" y="-103"/>
+      <bendpoint w1="455" h1="-2" w2="434" h2="-441"/>
+      <bendpoint w1="455" h1="435" w2="434" h2="-4"/>
+    </edge>
+  </node>
+  <node name="H066_registrarPresentacionRegistro" x="269" y="604" width="254" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-12" y="-80"/>
+      <bendpoint w1="433" h1="1" w2="416" h2="-353"/>
+      <bendpoint w1="433" h1="344" w2="416" h2="-10"/>
+    </edge>
+    <edge>
+      <label x="19" y="-10"/>
+      <bendpoint w1="-168" h1="-43" w2="-164" h2="42"/>
+    </edge>
+  </node>
+  <node name="H066_registrarInscripcionTitulo" x="283" y="695" width="224" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-7" y="-7"/>
+      <bendpoint w1="408" h1="6" w2="390" h2="-257"/>
+      <bendpoint w1="409" h1="242" w2="391" h2="-21"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-152" h1="-38" w2="-153" h2="53"/>
+    </edge>
+  </node>
+  <node name="H066_BPMTramiteSubsanacionEscritura" x="43" y="877" width="250" height="36">
+    <edge>
+      <label x="-126" y="132"/>
+      <bendpoint w1="-1" h1="-275" w2="-229" h2="-2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H066_BPMTramiteSaneamientoCargas" x="512" y="875" width="261" height="36">
+    <edge>
+      <label x="-64" y="-14"/>
+    </edge>
+    <edge>
+      <label x="-11" y="0"/>
+      <bendpoint w1="146" h1="1" w2="375" h2="-82"/>
+      <bendpoint w1="147" h1="50" w2="376" h2="-33"/>
+    </edge>
+  </node>
+  <node name="H066_registrarInscripcionTituloDecision" x="266" y="780" width="262" height="36">
+    <edge>
+      <label x="-50" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="4" y="217" width="132" height="36"/>
+  <node name="Fin2" x="347" y="958" width="132" height="36"/>
+</root-container>

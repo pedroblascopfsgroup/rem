@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="haya_tramitePresentacionPropConvenio" width="1000" height="1143">
+  <node name="Inicio" x="15" y="29" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="170" h1="-1" w2="-1" h2="-48"/>
+    </edge>
+  </node>
+  <node name="H037_registrarConvenioPropio" x="-31" y="215" width="223" height="36">
+    <edge>
+      <label x="-68" y="-7"/>
+    </edge>
+    <edge>
+      <label x="-50" y="8"/>
+    </edge>
+    <edge>
+      <label x="-48" y="-25"/>
+      <bendpoint w1="0" h1="-107" w2="-121" h2="34"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-219" h1="1" w2="-396" h2="-492"/>
+      <bendpoint w1="-218" h1="577" w2="-395" h2="35"/>
+    </edge>
+  </node>
+  <node name="H037_presentarPropuesta" x="134" y="323" width="228" height="36">
+    <edge>
+      <label x="-66" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-1" y="23"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="380" h1="-2" w2="384" h2="-386"/>
+      <bendpoint w1="353" h1="344" w2="357" h2="-40"/>
+    </edge>
+  </node>
+  <node name="H037_registrarAdmision" x="124" y="405" width="258" height="36">
+    <edge>
+      <label x="-21" y="-33"/>
+      <bendpoint w1="-167" h1="-44" w2="-163" h2="38"/>
+    </edge>
+    <edge>
+      <label x="-4" y="4"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="136" h1="-1" w2="137" h2="-105"/>
+      <bendpoint w1="583" h1="-5" w2="592" h2="-307"/>
+      <bendpoint w1="572" h1="282" w2="581" h2="-20"/>
+    </edge>
+    <edge>
+      <label x="-62" y="-6"/>
+    </edge>
+  </node>
+  <node name="H037_determinarConfeccionDeConvenio" x="125" y="76" width="254" height="36">
+    <edge>
+      <label x="-69" y="-6"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="372" h1="0" w2="375" h2="-435"/>
+      <bendpoint w1="469" h1="489" w2="477" h2="-142"/>
+      <bendpoint w1="473" h1="627" w2="468" h2="-5"/>
+    </edge>
+    <edge>
+      <label x="10" y="6"/>
+    </edge>
+  </node>
+  <node name="H037_determinarConfeccionDeConvenioDecision" x="98" y="138" width="310" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H037_registrarConvenioPropioGestor" x="306" y="216" width="253" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-1" h1="-120" w2="179" h2="20"/>
+    </edge>
+    <edge>
+      <label x="15" y="10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="312" h1="-6" w2="500" h2="-497"/>
+      <bendpoint w1="308" h1="449" w2="496" h2="-42"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H037_registrarAdmisionDecision" x="127" y="484" width="255" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-27" y="-41"/>
+    </edge>
+  </node>
+  <node name="H037_registrarPresentacionSubsanacion" x="-59" y="556" width="272" height="36">
+    <edge>
+      <label x="-61" y="-7"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-16" h1="-101" w2="-192" h2="50"/>
+    </edge>
+    <edge>
+      <label x="-3" y="5"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-189" h1="28" w2="-369" h2="-124"/>
+      <bendpoint w1="-195" h1="225" w2="-375" h2="24"/>
+    </edge>
+  </node>
+  <node name="H037_registrarResultado" x="-8" y="625" width="179" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-149" h1="-34" w2="-145" h2="35"/>
+    </edge>
+    <edge>
+      <label x="-104" y="6"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-155" h1="3" w2="-334" h2="-233"/>
+      <bendpoint w1="-158" h1="215" w2="-337" h2="-21"/>
+    </edge>
+  </node>
+  <node name="H037_registrarInformeAdmConcursal" x="301" y="554" width="234" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="52" h1="-99" w2="217" h2="50"/>
+    </edge>
+    <edge>
+      <label x="-58" y="-8"/>
+    </edge>
+    <edge>
+      <label x="-5" y="5"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="288" h1="-1" w2="449" h2="-155"/>
+      <bendpoint w1="263" h1="164" w2="424" h2="10"/>
+    </edge>
+  </node>
+  <node name="H037_registrarAdhesiones" x="322" y="623" width="195" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="165" h1="-35" w2="166" h2="34"/>
+    </edge>
+    <edge>
+      <label x="-3" y="5"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="169" h1="-3" w2="328" h2="-241"/>
+      <bendpoint w1="103" h1="216" w2="262" h2="-22"/>
+    </edge>
+  </node>
+  <node name="H037_registrarResultadoDecision" x="-19" y="704" width="211" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H037_ConvenioDecision" x="153" y="773" width="207" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="194" y="861" width="132" height="36"/>
+</root-container>

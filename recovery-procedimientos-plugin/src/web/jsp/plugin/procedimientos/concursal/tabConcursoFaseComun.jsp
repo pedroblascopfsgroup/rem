@@ -23,6 +23,9 @@
 		<pfs:defineTextColumn name="idCredito"/>
 		<pfs:defineTextColumn name="estado"/>
 		<pfs:defineTextColumn name="producto"/>
+<sec:authorize ifAllGranted="PERSONALIZACION-BC">		
+		<pfs:defineTextColumn name="fechaVencimiento"/>
+</sec:authorize>		
 	</pfs:defineRecordType>
 	
 	<pfs:hidden name="idAsunto" value="${asunto.id}"/>
@@ -42,6 +45,9 @@
 		<pfs:defineHeader dataIndex="tipoDefinitivo" caption="**Definitivo" captionKey="asunto.concurso.tabFaseComun.tipoDefinitivo" sortable="false"  />
 		<pfs:defineHeader dataIndex="principalDefinitivo" caption="**Principal definitivo" captionKey="asunto.concurso.tabFaseComun.principalDefinitivo" sortable="false" align="right" width="100" />
 		<pfs:defineHeader dataIndex="estado" caption="**Estado" captionKey="asunto.concurso.tabFaseComun.estado" sortable="false"  />
+<sec:authorize ifAllGranted="PERSONALIZACION-BCC">		
+		<pfs:defineHeader dataIndex="fechaVencimiento" caption="**Fecha de vencimiento" captionKey="asunto.concurso.tabFaseComun.fechaVencimiento" sortable="false"  />
+</sec:authorize>		
 	</pfs:defineColumnModel>
 	
 	<pfs:button name="btAddCredito" caption="**Agregar"  captioneKey="app.agregar" iconCls="icon_mas">

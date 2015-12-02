@@ -1,9 +1,13 @@
 package es.pfsgroup.recovery.geninformes;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.StringReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,10 +35,17 @@ import net.sf.jasperreports.engine.JRParameter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.poi.xwpf.converter.pdf.PdfConverter;
+import org.apache.poi.xwpf.converter.pdf.PdfOptions;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.lowagie.text.Document;
+import com.lowagie.text.html.simpleparser.HTMLWorker;
+import com.lowagie.text.pdf.PdfWriter;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
@@ -66,9 +77,18 @@ import es.pfsgroup.recovery.geninformes.model.GENINFCorreoPendiente;
 import es.pfsgroup.recovery.geninformes.model.GENINFInforme;
 import es.pfsgroup.recovery.geninformes.model.GENINFInformeConfig;
 import es.pfsgroup.recovery.geninformes.model.GENINFParrafo;
+import fr.opensagres.xdocreport.core.document.SyntaxKind;
+import fr.opensagres.xdocreport.document.IXDocReport;
+import fr.opensagres.xdocreport.document.docx.preprocessor.dom.DOMFontsPreprocessor;
+import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
+import fr.opensagres.xdocreport.template.IContext;
+import fr.opensagres.xdocreport.template.TemplateEngineKind;
+import fr.opensagres.xdocreport.template.formatter.FieldsMetadata;
 
 @Service
 public class GENINFInformesManager implements GENINFInformesApi {
+
+	private static final String CONTENIDO = "contenido";
 
 	/** Logger available to subclasses */
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -254,7 +274,7 @@ public class GENINFInformesManager implements GENINFInformesApi {
 						adjuntarInforme(tipoEntidad, entidad, fileItem, nombreEscrito , tipoFichero, hayErrores); 
 
 					} catch (Exception e) {
-						e.printStackTrace();
+						logger.error("adjuntarDocumentacionAdicional: " + e);
 					}
 
     			}
@@ -639,7 +659,7 @@ public class GENINFInformesManager implements GENINFInformesApi {
 					
 				}
 			} catch (Exception e) {
-				logger.error("Error al generar el informe: " + dto.getTipoEscrito() + "\nCausa: " + e.getMessage());
+				logger.error("generarEscritoEditable: Error al generar el informe: " + dto.getTipoEscrito() + "\nCausa: " + e.getMessage());
 			}
 
 		}
@@ -845,6 +865,201 @@ public class GENINFInformesManager implements GENINFInformesApi {
 		}
 
 		return fi;
-	}	
+	}
+	
+	
+	/**
+	 * Metodo para sustituir las variables de un fichero docx por su valor
+	 * @param envioBurofax
+	 * @param escrito
+	 * @param is
+	 * @return
+	 * @throws Throwable
+	 */
+	@Override
+	@BusinessOperation(MSV_GENERAR_ESCRITO_VARIABLES)
+	public FileItem generarEscritoConVariables(HashMap<String, Object> mapaVariables, String escrito,InputStream is) throws Throwable {
+		File fileSalidaTemporal = null;
+		FileItem resultado = null;
+		OutputStream out = null;
+		
+		try{
+			// Comprobamos que exista la plantilla
+			if (escrito==null || escrito.equals("")) {
+				throw new IllegalStateException("Nombre de fichero de plantilla vacï¿½o");
+			}
+						
+			if (is == null) {
+				throw new IllegalStateException("No existe el fichero de plantilla " + escrito);
+			}			
+			
+			// Inicializamos el motor de generación de los escritos
+			IXDocReport report = XDocReportRegistry.getRegistry().loadReport(is, TemplateEngineKind.Freemarker);		
+			IContext context = report.createContext();
+			
+			// Metemos los valores de las variables !! MUY IMPORTANTE: Si hay definidas variables y no se pueblan a continuación , NO FUNCIONA
+			for(Map.Entry<String, Object> entry : mapaVariables.entrySet()){
+				context.put(entry.getKey(),entry.getValue());	
+				
+			}
+			context.put(DOMFontsPreprocessor.FONT_SIZE_KEY, "8");
+			// Preparamos el fichero temporal
+			fileSalidaTemporal = File.createTempFile("escrito", ".docx");
+			
+			fileSalidaTemporal.deleteOnExit();
+			if (fileSalidaTemporal.exists()) {
+				// Generamos el escrito
+				out = new FileOutputStream(fileSalidaTemporal);
+				report.process(context, out);
+			}
+			
+			resultado = new FileItem();
+			resultado.setFileName(escrito + (new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + ".docx");
+			resultado.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+			resultado.setFile(fileSalidaTemporal);
+			
+		}catch(Throwable e){
+			throw e;
+		}finally{
+			if(!Checks.esNulo(out)){
+				out.close();
+			}
+			if(!Checks.esNulo(is)){
+				is.close();
+			}
+		}
+		return resultado;
+	}
+	
+	
+	/**
+	 * Creamos .pdf temporal y convertimos las etiquetas HTML a formato pdf
+	 * @param envioBurofax
+	 * @return
+	 * @throws Exception
+	 */
+	@Override
+	@BusinessOperation(MSV_GENERAR_ESCRITO_PDF_FROM_HTML)
+	public InputStream createPdfFileFromHtmlText(String htmlText,String nombreFichero) throws Exception{
+		
+		
+		File archivo = File.createTempFile(nombreFichero, ".pdf");
+		
+		try {
+		    
+			String k = "<html><body>"+htmlText+"</body></html>";
+		      
+		    OutputStream file = new FileOutputStream(archivo);
+		    Document document = new Document();
+		    PdfWriter.getInstance(document, file);
+		    document.open();
+		    HTMLWorker htmlWorker = new HTMLWorker(document);
+		    htmlWorker.parse(new StringReader(k));
+		    document.close();
+		    
+		    file.close();
+			
+
+			
+		} catch (Exception e) {
+			logger.error("createPdfFileFromHtmlText: " + e);
+		}
+		
+	    InputStream is=new FileInputStream(archivo);
+		return is;
+		
+//		try {
+//		    String k = "<html><body> This is my Project </body></html>";
+//		    OutputStream file = new FileOutputStream(new File("C:\\Test.pdf"));
+//		    Document document = new Document();
+//		    PdfWriter writer = PdfWriter.getInstance(document, file);
+//		    document.open();
+//		    InputStream is = new ByteArrayInputStream(k.getBytes());
+//		    XMLWorkerHelper.getInstance().parseXHtml(writer, document, is);
+//		    document.close();
+//		    file.close();
+//		} catch (Exception e) {
+//		    e.printStackTrace();
+//		}
+		
+	}
+
+
+	public FileItem generarEscritoConContenidoHTML(String cabecera,
+			String contenidoParseadoFinal, String nombreFichero,
+			InputStream plantillaBurofax)  throws Throwable {
+
+		File fileSalidaTemporal = null;
+		FileItem resultado = null;
+		OutputStream out = null;
+		
+		try{
+			// Comprobamos que exista la plantilla
+			if (nombreFichero==null || nombreFichero.equals("")) {
+				throw new IllegalStateException("Nombre de fichero de plantilla vacio");
+			}
+						
+			if (plantillaBurofax == null) {
+				throw new IllegalStateException("No existe el fichero de plantilla " + nombreFichero);
+			}			
+			
+			// Inicializamos el motor de generación de los escritos
+			IXDocReport report = XDocReportRegistry.getRegistry().loadReport(plantillaBurofax, TemplateEngineKind.Freemarker);		
+			IContext context = report.createContext();
+
+
+            // Creamos campo de metadata para manejar el formateo del contenido 
+            FieldsMetadata metadataCuerpo = report.createFieldsMetadata();
+            metadataCuerpo.addFieldAsTextStyling(CONTENIDO, SyntaxKind.Html);
     
+            // Incluir el contenido de la cabecera
+            context.put(CONTENIDO,cabecera + contenidoParseadoFinal);
+			
+			// Preparamos el fichero temporal
+			fileSalidaTemporal = File.createTempFile("escrito", ".docx");
+			
+			fileSalidaTemporal.deleteOnExit();
+			if (fileSalidaTemporal.exists()) {
+				// Generamos el escrito
+				out = new FileOutputStream(fileSalidaTemporal);
+				report.process(context, out);
+			}
+			
+			resultado = new FileItem();
+			resultado.setFileName(nombreFichero + (new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + ".docx");
+			resultado.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+			resultado.setFile(fileSalidaTemporal);
+			
+		}catch(Throwable e){
+			throw e;
+		}finally{
+			if(!Checks.esNulo(out)){
+				out.close();
+			}
+			if(!Checks.esNulo(plantillaBurofax)){
+				plantillaBurofax.close();
+			}
+		}
+		return resultado;
+
+	}
+
+	public File convertirAPdf(FileItem archivoBurofax, String nombreFicheroPdfSalida) {
+
+		File respuesta = null;
+		OutputStream out = null;
+		try {
+			XWPFDocument document = new XWPFDocument(archivoBurofax.getInputStream());
+			respuesta = new File(nombreFicheroPdfSalida);
+			out = new FileOutputStream(respuesta);
+			PdfOptions options = null; // PdfOptions.create().fontEncoding("windows-1250");
+			PdfConverter.getInstance().convert(document, out, options);
+			out.flush();
+		} catch (Throwable e) {
+			logger.error("convertirAPdf: " + e);
+		}
+		return respuesta;
+
+	}
+
 }

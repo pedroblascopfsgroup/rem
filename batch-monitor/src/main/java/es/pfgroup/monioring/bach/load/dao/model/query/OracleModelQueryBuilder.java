@@ -5,7 +5,7 @@ import java.util.Date;
 
 /**
  * Objeto que ayuda a construir las consultas sobre el modelo en base a
- * par谩metros.
+ * par醡etros.
  * 
  * @author bruno
  * 
@@ -29,8 +29,8 @@ public class OracleModelQueryBuilder {
     }
 
     /**
-     * Crea la consulta para devolver las tuplas de un determinado job. Adem谩s
-     * filtra por la fecha y hora de la 煤ltima ejecuci贸n, ordenadas por ID
+     * Crea la consulta para devolver las tuplas de un determinado job. Adem醩
+     * filtra por la fecha y hora de la 鷏tima ejecuci髇, ordenadas por ID
      * descendientemente.
      * 
      * @param entity
@@ -48,7 +48,7 @@ public class OracleModelQueryBuilder {
 
     /**
      * Crea la consulta para devolver las tuplas de un determinado job que
-     * tengan un determinado c贸digo de salida, ordenadas por ID
+     * tengan un determinado c骴igo de salida, ordenadas por ID
      * descendientemente.
      * 
      * @param entity
@@ -65,8 +65,8 @@ public class OracleModelQueryBuilder {
 
     /**
      * Crea la consulta para devolver las tuplas de un determinado job que
-     * tengan un determinado c贸digo de salida. Adem谩s filtra por la fecha y hora
-     * de la 煤ltima ejecuci贸n, ordenadas por ID descendientemente.
+     * tengan un determinado c骴igo de salida. Adem醩 filtra por la fecha y hora
+     * de la 鷏tima ejecuci髇, ordenadas por ID descendientemente.
      * 
      * @param entity
      * @param jobName

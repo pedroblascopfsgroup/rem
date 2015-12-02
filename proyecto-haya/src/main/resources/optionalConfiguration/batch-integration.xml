@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jms="http://www.springframework.org/schema/integration/jms"
+	xmlns:integration="http://www.springframework.org/schema/integration"
+	xmlns:file="http://www.springframework.org/schema/integration/file"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/integration
+			http://www.springframework.org/schema/integration/spring-integration-1.0.xsd
+			http://www.springframework.org/schema/integration/jms
+			http://www.springframework.org/schema/integration/jms/spring-integration-jms-1.0.xsd
+			http://www.springframework.org/schema/integration/file
+			http://www.springframework.org/schema/integration/file/spring-integration-file-1.0.xsd">
+
+	<import resource="classpath:optionalConfiguration/ac-integration-producer.xml" />
+	
+	<!-- CONFIGURACION GENERICA E/S -->
+	<bean id="connectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+		<property name="targetConnectionFactory">
+			<bean class="org.apache.activemq.ActiveMQConnectionFactory">
+				<property name="brokerURL" value="${activemq.broker.url}"/>		
+			</bean>
+		</property>
+		<property name="sessionCacheSize" value="10"/>
+		<property name="cacheProducers" value="false"/>
+		<property name="cacheConsumers" value="false"/>
+	</bean>
+	<bean id="integracionProducerQueue" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="${integracion.producer.cola}"/>
+	</bean>
+	<bean id="integracionConsumerQueue" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="${integracion.consumer.cola}"/>
+	</bean>
+	<bean id="entradaIntegracionAdapter" class="es.pfsgroup.recovery.integration.file.FileIntegrationAdapter">
+		<constructor-arg value="${integracion.input}/${integracion.consumer.cola}"/>
+	</bean>
+
+
+	<!-- CONFIGURACION DE LA SALIDA DE MENSAJES -->
+	<integration:channel id="integra.salida.fichero.in"/>
+	<integration:channel id="integra.salida.error"/>
+	<integration:publish-subscribe-channel id="integra.salida.salida"/>
+	<file:inbound-channel-adapter
+			auto-startup="${integracion.activa}"
+			filename-pattern=".+.msg"
+			channel="integra.salida.fichero.in" 
+			directory="${integracion.output}/${integracion.producer.cola}" >
+		<integration:poller>
+			<integration:interval-trigger 
+				interval="${integracion.producer.poller}" 
+				time-unit="MILLISECONDS" />
+		</integration:poller>
+	</file:inbound-channel-adapter>
+	<integration:chain input-channel="integra.salida.fichero.in" output-channel="integra.salida.salida">
+		<integration:header-enricher error-channel="integra.salida.error" />
+		<file:file-to-string-transformer delete-files="false" charset="UTF-8"/>
+		<integration:transformer ref="salidaIntegracionAdapter" method="transformFile2msg" />  				<!-- CONVIERTE EN FORMATO FICHERO CON METADATA -->
+ 		<integration:service-activator ref="salidaIntegracionAdapter" method="checkExistErrorFolder" />		<!-- ROUTER PARA MENSAJES CON ERROR -->
+	</integration:chain>
+
+<!--
+	<integration:channel id="integra.salida.error"/>
+	<integration:publish-subscribe-channel id="integra.salida.salida"/>
+	<integration:chain input-channel="integra.salida.canonical" output-channel="integra.salida.salida">
+		<integration:header-enricher error-channel="integra.salida.error" />
+		<integration:transformer ref="jsonAsuntoPayloadTransformer" method="serialize" />					CONVIERTE EN FORMATO JSON 
+	</integration:chain>
+-->	
+
+	<!-- ************* 
+		 Salida TRAMO 2
+		 Transforma la salida por JMS y tratamiento de errores.
+		 *************	 --> 
+	<jms:outbound-channel-adapter 
+		id="jmsout"
+		channel="integra.salida.salida"
+		order="1"
+		destination="integracionProducerQueue" />
+	<integration:outbound-channel-adapter 
+		channel="integra.salida.salida" 
+		order="2" 
+		ref="salidaIntegracionAdapter" 
+		method="writeLogMsgStr" />
+	<integration:outbound-channel-adapter 
+		channel="integra.salida.error" 
+		ref="salidaIntegracionAdapter" 
+		method="writeErrorMsg" />
+
+
+
+	<!-- CONFIGURACION DE LA ENTRADA DE MENSAJES -->
+
+	<!-- ************* 
+	 Canales de entrada (JSM y escucha de directorio)
+	 ************* 	 -->
+	<jms:inbound-channel-adapter id="entradaDeCajamarJMS"
+						auto-startup="${integracion.activa}"
+						destination="integracionConsumerQueue"
+						channel="integra.entrada.jms"
+						extract-payload="true">
+	     <integration:poller>
+	         <integration:interval-trigger 
+	         	interval="1" 
+	         	time-unit="SECONDS"/>
+	     </integration:poller>
+	 </jms:inbound-channel-adapter>
+	<!--  TRANSFORMA MENSAJE JMS EN FORMATO TXT PARA GUARDAR EN FICHERO-->
+	<integration:transformer
+		input-channel="integra.entrada.jms"
+		output-channel="entradaCajamarJMSFichero" 
+		ref="entradaIntegracionAdapter"
+		method="transformMsg2file"/>
+	<file:outbound-channel-adapter
+			id="entradaCajamarJMSFichero"
+			directory="${integracion.input}/${integracion.consumer.cola}"/>
+
+	<file:inbound-channel-adapter
+		id="entradaDeCajamarFichero"
+		auto-startup="${integracion.activa}"
+		directory="${integracion.input}/${integracion.consumer.cola}"
+		filename-pattern=".+.msg">
+		<integration:poller id="poller">
+			<integration:interval-trigger 
+				interval="${integracion.consumer.poller}"
+				time-unit="MILLISECONDS" />
+		</integration:poller>
+	</file:inbound-channel-adapter>
+	<integration:chain input-channel="entradaDeCajamarFichero" output-channel="integra.entrada.ok">
+		<integration:header-enricher error-channel="integra.entrada.error" />
+		<file:file-to-string-transformer delete-files="false" charset="UTF-8"/>
+		<integration:transformer ref="entradaIntegracionAdapter" method="transformFile2msg" />				<!-- CONVIERTE EN FORMATO TXT DE FICHERO EN FORMATO MENSAJE DE TXT -->
+ 		<integration:service-activator ref="entradaIntegracionAdapter" method="checkExistErrorFolder" />	<!-- ROUTER PARA MENSAJES CON ERROR -->
+		<integration:transformer ref="jsonAsuntoPayloadTransformer" method="deserialize"/>				<!-- DESERIALIZA TEXTO DEL MENSAJE EN FORMATO JSON A FORMATO CANONICAL -->
+		<integration:service-activator method="dispatchMessage">										<!-- PROCESA EL MENSAJE SEGUN LAS REGLAS -->
+			<bean class="es.pfsgroup.recovery.integration.ConsumerActionService">
+				<constructor-arg index="0" ref="bpmConsumerActionMgr" />
+				<constructor-arg index="1" value="${entidad.id}"/>
+				<constructor-arg index="2">
+				    <bean class="org.springframework.security.providers.preauth.PreAuthenticatedAuthenticationProvider">
+				        <property name="preAuthenticatedUserDetailsService">
+				            <bean class="es.pfsgroup.recovery.integration.AuthenticationPayloadService" >
+				            	<property name="userNameprefix" value="EXT-"/>
+				            </bean>
+				        </property>
+				    </bean>
+				</constructor-arg>
+			</bean>
+		</integration:service-activator>
+	</integration:chain>
+
+	<!-- ESCRITURA A DISCO -->
+	<integration:channel id="integra.entrada.ok"/>
+	<integration:channel id="integra.entrada.error"/>
+	<integration:outbound-channel-adapter 
+		channel="integra.entrada.ok" 
+		ref="entradaIntegracionAdapter" 
+		method="moveFileCompleted" />
+	<integration:outbound-channel-adapter 
+		channel="integra.entrada.error" 
+		ref="entradaIntegracionAdapter" 
+		method="moveFileWithErrors" />
+
+
+	<!-- ***************** -->
+	<!-- REGLAS DE ENTRADA -->
+	<!-- ***************** -->
+	<bean id="bpmConsumerActionMgr" class="es.pfsgroup.recovery.integration.ConsumerActionManager">
+		<constructor-arg>
+			<list>
+			
+				<!-- Transicionar tarea -->
+				<!-- RESPUESTA DE CAJAMAR A BPMs que esperan respuesta, cuando finalizan transicionan la tarea -->
+				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.TransicionarTareaBPM">
+					<constructor-arg index="0">
+						<list>
+							<bean class="es.pfsgroup.recovery.integration.bpm.TareaExternaPayloadRegexRule">
+								<property name="tipo" value="BPM-FIN"/>
+								<property name="codigoProcedimiento" value="HCJ001|HCJ002|HCJ003"/> <!--  IVA/IGIC -->
+							</bean>
+						</list>
+					</constructor-arg>
+					<property name="description" value="Recepción de señal de Fin de BPM o fin tarea de FIn para ciertas"/>
+					<property name="forzarTransicion" value="avanzaBPM"/>
+				</bean>
+
+				<!-- Activar un BPM paralizado-->
+				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.ActivarBPMConsumer">
+					<constructor-arg index="0">
+						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
+							<property name="tipo" value="DO-ACTIVAR-BPM"/>
+						</bean>
+					</constructor-arg>
+					<property name="description" value="Activa un BPM paralizado"/>
+				</bean>
+				
+				<!-- Finalizar un asunto-->
+				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.FinalizarAsuntoConsumer">
+					<constructor-arg index="0">
+						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
+							<property name="tipo" value="DO-FIN-ASUNTO"/>
+						</bean>
+					</constructor-arg>
+					<property name="description" value="Finalzia un Asunto de forma remota"/>
+				</bean>
+
+				<!-- Decisión de procedimiento -->
+				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.DecisionProcedimientoConsumer">
+					<constructor-arg index="0">
+						<bean class="es.pfsgroup.recovery.integration.bpm.DecisionProcedimientoPayloadRegexRule">
+							<property name="tipo" value="DATOS-DECISION-PROCEDIMIENTO" />
+							<property name="codigoTiposProcedimientoDerivados" value="H016|H018|H020|H001|H022|H024|H026|H028|H005|HC100|H030|HC101|H006|H064|H032|H007|H034|H036|H038|H040|H066|H042|H04|HC102|H046|H011|P400|H048|H015|H050|HC103|H008|HC104|H002|H004|H052|H065|H054|H058|H062|HC105|HC106" />
+							<property name="paralizar" value="true" />
+							<property name="finalizar" value="true" />
+						</bean>
+					</constructor-arg>
+					<constructor-arg index="1" value="CREAR_Y_DERIVAR"/>
+					<property name="description" value="Crea una toma de decisión mediante un procedimiento"/>
+					<!-- property name="modoFuncionamiento" value="ACEPTAR_DECISION"/ -->
+				</bean>
+				
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<!-- TRADUCTOR DE CODIGOS PROCEDIMIENTOS, TAREAS, DD -->
+	<bean id ="diccionarioCodigosConsumer" class="es.pfsgroup.recovery.integration.bpm.DiccionarioDeCodigos">
+		<constructor-arg>
+			<map>
+				<entry key="procedimientos">
+					<map>
+					</map>
+				</entry>
+				<entry key="tareas">
+					<map>
+					</map>
+				</entry>
+				<entry key="DD">
+					<map>
+					</map>
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+
+</beans>

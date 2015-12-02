@@ -12,6 +12,7 @@ import es.capgemini.pfs.core.api.acuerdo.AcuerdoApi;
 import es.capgemini.pfs.core.api.acuerdo.CumplimientoAcuerdoDto;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
+import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoApi;
 
 @Controller 
 public class EditAcuerdoController {
@@ -36,7 +37,8 @@ public class EditAcuerdoController {
 			proxyFactory.proxy(AcuerdoApi.class).cerrarAcuerdo(dto.getId());
 		}
 		if (!dto.getFinalizar()){
-			proxyFactory.proxy(AcuerdoApi.class).continuarAcuerdo(dto.getId());
+//			proxyFactory.proxy(AcuerdoApi.class).continuarAcuerdo(dto.getId());
+			proxyFactory.proxy(MEJAcuerdoApi.class).continuarAcuerdo(dto.getId());
 		}
 		proxyFactory.proxy(AcuerdoApi.class).registraCumplimientoAcuerdo(dto);
 		return "default";

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+
+	<bean p:entity="entidad.procedimiento.buttons.left.fast" p:name="accionesPrecontencioso"
+		p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/precontencioso/button/btnAccionesPrecontencioso.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"	
+		p:permission="ACCIONES_PRECONTENCIOSO" />
+
+	<bean p:entity="tabs.procedimiento.fast" p:name="cabeceraProcedimiento"  p:order="100" 
+		p:fileName="/WEB-INF/jsp/plugin/precontencioso/tabs/cabecera.jsp" 
+		p:priority="1"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="TAB_PRECONTENCIOSO" />
+
+	<bean p:entity="tabs.procedimiento.fast" p:name="Precontencioso"  p:order="1000" 
+		p:fileName="/WEB-INF/jsp/plugin/precontencioso/tabs/tabPrecontencioso.jsp" p:priority="0"  
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="TAB_PRECONTENCIOSO" />
+
+	<bean p:entity="menu" p:name="busquedas/busquedaPrecontencioso" p:order="1500"
+		p:fileName="/WEB-INF/jsp/plugin/precontencioso/busquedas/menuBusquedaExpPrecontencioso.jsp"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="BUSQUEDA_PRECONTENCIOSO" />
+
+	<bean p:entity="menu" p:name="busquedas/busquedaElementosPco" p:order="1600"
+		p:fileName="/WEB-INF/jsp/plugin/precontencioso/busquedas/menuBusquedaElementosPco.jsp"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="BUSQUEDA_PRECONTENCIOSO" />
+
+</beans>

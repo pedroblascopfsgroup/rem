@@ -27,6 +27,7 @@
                 <evaluate expression="executor.execute('es.pfsgroup.recovery.ext.api.asunto.esTitulizada',id)" result="flowScope.titulizada" />
                 <evaluate expression="executor.execute('es.pfsgroup.recovery.ext.api.asunto.getFondo',id)" result="flowScope.fondo" />
                 <evaluate expression="executor.execute('asuntosManager.getMsgErrorEnvioCDDCabecera',id)" result="flowScope.msgErrorEnvioCDD" />
+                <evaluate expression="executor.execute('MEJAsuntosManager.puedeFinalizarAsunto',id)" result="flowScope.puedeFinalizarAsunto" />                
 	    </on-entry>
     </end-state> 	
     

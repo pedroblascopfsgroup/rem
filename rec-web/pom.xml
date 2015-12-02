@@ -457,6 +457,17 @@
 			<artifactId>pfs-rec-core</artifactId>
 			<type>jar</type>
 		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-precontencioso-plugin</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
 		<!-- Fin plugins de Recovery -->
 		<!-- Inicio paquetes de Cap Gemini -->
 		<dependency>
@@ -514,12 +525,6 @@
 			<artifactId>recovery-diccionarios-plugin</artifactId>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>es.pfsgroup.plugin</groupId>
-			<artifactId>recovery-bi-plugin</artifactId>
-			<scope>compile</scope>
-		</dependency>
-
 		<!-- Fin paquetes de Cap Gemini -->
 		<!-- Inicio de Devon -->
 		<dependency>
@@ -1350,6 +1355,23 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>2.0.5</version>
 		</dependency>
+		<!-- Dependencia para poblar de valores las variables de un documento docx -->
+		<dependency>
+		  <groupId>fr.opensagres.xdocreport</groupId>
+		  <artifactId>fr.opensagres.xdocreport.document.docx</artifactId>
+		  <version>1.0.4</version>
+		</dependency>
+		<dependency>
+		  <groupId>fr.opensagres.xdocreport</groupId>
+		  <artifactId>fr.opensagres.xdocreport.template.freemarker</artifactId>
+		  <version>1.0.4</version>
+		</dependency>
+		<!-- Dependencia para crear generar un PDF a partir de un DOCX -->
+	    <dependency>
+	      <groupId>fr.opensagres.xdocreport</groupId>
+	      <artifactId>fr.opensagres.xdocreport.converter.docx.xwpf</artifactId>
+	      <version>1.0.5</version>
+	    </dependency>
 		<!-- JasperReports Dependency -->
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
@@ -1372,10 +1394,14 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
-			<version>2.3</version>
 			<scope>provided</scope>
 		</dependency>
 		<!-- Fin provided -->
+        <dependency>
+            <groupId>es.pfsgroup.plugin</groupId>
+            <artifactId>recovery-bi-plugin</artifactId>
+            <scope>compile</scope>
+        </dependency>
 	</dependencies>
 	<build>
 		<finalName>pfs-${project.version}</finalName>
@@ -1557,7 +1583,7 @@
 				<!-- Fin versión de AspectJ -->
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
-					<artifactId>recovery-bankiaWeb-plugin</artifactId>
+					<artifactId>proyecto-bankia-online</artifactId>
 					<exclusions>
 						<exclusion>
 							<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
@@ -1965,7 +1991,7 @@
 									<filtering>true</filtering>
 								</resource>
 							</webResources>
-							<packagingExcludes>WEB-INF/lib/xml-apis*.jar</packagingExcludes>
+							<packagingExcludes>WEB-INF/lib/xml-apis-UNKNOWN.jar</packagingExcludes>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -1974,6 +2000,34 @@
 		<profile>
 			<id>haya</id>
 			<dependencies>
+				<!--  PARA JMS **************** -->
+				<dependency>
+					<groupId>org.springframework.integration</groupId>
+					<artifactId>org.springframework.integration.jms</artifactId>
+					<version>1.0.3.RELEASE</version>
+					<exclusions>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>javax.jms</groupId>
+					<artifactId>com.springsource.javax.jms</artifactId>
+					<version>1.1.0</version>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.activemq</groupId>
+					<artifactId>com.springsource.org.apache.activemq</artifactId>
+					<version>5.2.0</version>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>com.springsource.javax.management.j2ee</artifactId>
+					<version>1.0.1</version>
+				</dependency>
+				<!--  PARA JMS **************** -->
 				<!-- Versión de AspectJ -->
 				<dependency>
 					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
@@ -2002,7 +2056,36 @@
 						</exclusion>
 					</exclusions>
 				</dependency>
-
+				<!-- PASAR A DELIVERY UNICAMENTE -->
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>proyecto-cajamar-ws</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>es.pfsgroup</groupId>
+							<artifactId>recovery-domain</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<!-- FIN PASAR A DELIVERY UNICAMENTE -->
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>proyecto-haya</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>es.pfsgroup</groupId>
+							<artifactId>recovery-domain</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-procedimientos-bpmHaya-plugin</artifactId>
@@ -2083,6 +2166,7 @@
                                 <resource>
                                     <directory>src/custom/haya/webapp/</directory>
                                     <includes>
+                                        <include>login.jsp</include>
                                         <include>img/cliente_logo.gif</include>
                                     </includes>
                                     <filtering>true</filtering>
@@ -2096,20 +2180,6 @@
 		<profile>
 			<id>haya-delivery</id>
 			<dependencies>
-				<!-- Versión de AspectJ -->
-				<dependency>
-					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
-					<artifactId>com.springsource.org.aspectj.runtime</artifactId>
-					<version>UNKNOWN</version>
-					<scope>compile</scope>
-				</dependency>
-				<dependency>
-					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
-					<artifactId>com.springsource.org.aspectj.weaver</artifactId>
-					<version>UNKNOWN</version>
-					<scope>compile</scope>
-				</dependency>
-				<!-- Fin versión de AspectJ -->
 				<dependency>
 					<groupId>org.springframework.ldap</groupId>
 					<artifactId>spring-ldap-core</artifactId>
@@ -2130,6 +2200,91 @@
 		<profile>
 			<id>cajamar</id>
 			<dependencies>
+				<!--  PARA JMS **************** -->
+				<dependency>
+					<groupId>org.springframework.integration</groupId>
+					<artifactId>org.springframework.integration.jms</artifactId>
+					<version>1.0.3.RELEASE</version>
+					<exclusions>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>javax.jms</groupId>
+					<artifactId>com.springsource.javax.jms</artifactId>
+					<version>1.1.0</version>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.activemq</groupId>
+					<artifactId>com.springsource.org.apache.activemq</artifactId>
+					<version>5.2.0</version>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>com.springsource.javax.management.j2ee</artifactId>
+					<version>1.0.1</version>
+				</dependency>
+				<!--  PARA JMS **************** -->
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>recovery-procedimientos-bpmHaya</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>es.pfsgroup</groupId>
+							<artifactId>recovery-domain</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>proyecto-cajamar-ws</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>es.pfsgroup</groupId>
+							<artifactId>recovery-domain</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>proyecto-cajamar</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>es.pfsgroup</groupId>
+							<artifactId>recovery-domain</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>proyecto-cajamar-online</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>es.pfsgroup</groupId>
+							<artifactId>recovery-domain</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+
 				<!-- Versión de AspectJ -->
 				<dependency>
     				<groupId>org.aspectj</groupId>
@@ -2144,14 +2299,6 @@
 				<!-- Fin versión de AspectJ -->
 			</dependencies>
 			<build>
-				<resources>
-					<resource>
-						<directory>src/main/resources</directory>
-					</resource>
-					<resource>
-						<directory>src/custom/cajamar/resources</directory>
-					</resource>
-				</resources>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -2171,6 +2318,19 @@
                         </configuration>
                     </plugin>
                 </plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>cajamar-delivery</id>
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+					</resource>
+					<resource>
+						<directory>src/custom/cajamar/resources</directory>
+					</resource>
+				</resources>
 			</build>
 		</profile>
 	</profiles>

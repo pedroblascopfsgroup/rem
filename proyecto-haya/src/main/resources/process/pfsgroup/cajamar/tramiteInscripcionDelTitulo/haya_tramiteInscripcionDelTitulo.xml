@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="" name="hcj_tramiteInscripcionDelTitulo">
+
+	<start-state name="Inicio">
+		<transition to="H066_obtenerMinuta" name="iniciarProceso"></transition>
+	</start-state>
+
+
+	<state name="H066_obtenerMinuta">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="H066_validarMinuta" name="avanzaBPM"></transition>
+		<transition to="H066_obtenerMinuta" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="H066_validarMinuta">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="H066_obtenerMinuta" name="vueltaAtras"></transition>		
+		<transition to="H066_validarMinuta" name="activarAlerta"></transition>
+		<transition to="H066_validarMinutaDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+	
+	<state name="H066_registrarRecepcionEscritura">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="H066_validarMinuta" name="vueltaAtras"></transition>		
+		<transition to="H066_registrarRecepcionEscritura" name="activarAlerta"></transition>
+		<transition to="H066_registrarEntregaTitulo" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+	
+	<state name="H066_registrarEntregaTitulo">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="H066_registrarRecepcionEscritura" name="vueltaAtras"></transition>		
+		<transition to="H066_registrarEntregaTitulo" name="activarAlerta"></transition>
+		<transition to="fork1" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<decision name="H066_validarMinutaDecision" expression="#{H066_validarMinutaDecision}">
+		<transition to="H066_registrarRecepcionEscritura" name="SI"></transition>
+		<transition to="H066_obtenerMinuta" name="NO"></transition>
+	</decision>
+
+	<fork name="fork1">
+		<transition to="H066_BPMTramitePosesion" name="tposesion"></transition>
+		<transition to="H066_registrarPresentacionHacienda" name="presentarHacienda"></transition>
+	</fork>
+
+	<state name="H066_BPMTramitePosesion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="hcj_tramiteDePosesionV4"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="H066_registrarPresentacionHacienda">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="H066_registrarPresentacionHacienda" name="activarAlerta"></transition>
+		<transition to="H066_registrarPresentacionRegistro" name="avanzaBPM"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+	</state>
+
+	<state name="H066_registrarPresentacionRegistro">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="H066_registrarInscripcionTitulo" name="avanzaBPM"></transition>
+		<transition to="H066_registrarPresentacionRegistro" name="activarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+		<transition to="H066_registrarPresentacionHacienda" name="vueltaAtras"></transition>
+	</state>
+
+	<state name="H066_registrarInscripcionTitulo">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="H066_registrarInscripcionTituloDecision" name="avanzaBPM"></transition>
+		<transition to="H066_registrarInscripcionTitulo" name="activarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+		<transition to="H066_registrarPresentacionRegistro" name="vueltaAtras"></transition>
+	</state>
+
+	<state name="H066_BPMTramiteSubsanacionEscritura">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="H066_registrarPresentacionRegistro" name="hcj_tramiteSubsanacionEscritura"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+	</state>
+
+	<state name="H066_BPMTramiteSaneamientoCargas">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin2" name="hcj_tramiteSaneamientoCargas"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+	</state>
+
+	<decision name="H066_registrarInscripcionTituloDecision" expression="#{H066_registrarInscripcionTituloDecision}">
+	
+		<transition to="H066_BPMTramiteSubsanacionEscritura" name="SUBSANACION"></transition>
+		<transition to="H066_BPMTramiteSaneamientoCargas" name="INSCRITO"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+	</decision>
+
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+	<end-state name="Fin2">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+	
+	
+	
+</process-definition>

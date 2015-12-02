@@ -10,8 +10,11 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.stereotype.Component;
 
+import es.capgemini.devon.beans.Service;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.asunto.model.ProcedimientoContratoExpediente;
@@ -28,6 +31,7 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContext;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastabankia.BienesBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastabankia.CaracteristicasOperacionesBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastabankia.ContratosBean;
@@ -46,21 +50,22 @@ public class InformeSubastaSarebBean extends InformeSubastaCommon {
 
 	private static final String INTERVINIENTE_TITULAR = "TITULAR";
 	private static final String INTERVINIENTE_FIADOR = "FIADOR";
-
-	private static final String TAREA_SENYALAMIENTO_SUBASTA = "P409_SenyalamientoSubasta";
-	private static final String TAREA_INTERPOSICION_DEMANDA_HIPOTECARIO = "P01_DemandaCertificacionCargas";
-	private static final String TAREA_INTERPOSICION_DEMANDA_MONITORIO = "P02_InterposicionDemanda";
-	private static final String TAREA_INTERPOSICION_DEMANDA_ORDINARIO = "P03_InterposicionDemanda";
-	private static final String VALOR_HONORARIOS = "costasLetrado";
-	private static final String VALOR_DERECHOS_SUPLIDOS = "costasProcurador";
-	private static final String VALOR_FECHA_DEMANDA = "fechaSolicitud";
-	private static final String VALOR_FECHA_DEMANDA_ORDINARIO = "fecha";
+	
+	
+	//private static final String TAREA_SENYALAMIENTO_SUBASTA = "P409_SenyalamientoSubasta";
+	//private static final String TAREA_INTERPOSICION_DEMANDA_HIPOTECARIO = "P01_DemandaCertificacionCargas";
+	//private static final String TAREA_INTERPOSICION_DEMANDA_MONITORIO = "P02_InterposicionDemanda";
+	//private static final String TAREA_INTERPOSICION_DEMANDA_ORDINARIO = "P03_InterposicionDemanda";
+	//private static final String VALOR_HONORARIOS = "costasLetrado";
+	//private static final String VALOR_DERECHOS_SUPLIDOS = "costasProcurador";
+	//private static final String VALOR_FECHA_DEMANDA = "fechaSolicitud";
+	//private static final String VALOR_FECHA_DEMANDA_ORDINARIO = "fecha";
 //	private static final String VALOR_INTERESES_SENYALAMIENTO = "intereses";
 //	private static final String VALOR_COSTASPROC_SENYALAMIENTO = "costasProcurador";
 
-	private static final String PRC_HIPOTECARIO = "P01";
-	private static final String PRC_MONITORIO = "P02";
-	private static final String PRC_ORDINARIO = "P03";
+	//private static final String PRC_HIPOTECARIO = "P01";
+	//private static final String PRC_MONITORIO = "P02";
+	//private static final String PRC_ORDINARIO = "P03";
 
 	public ApiProxyFactory getProxyFactory() {
 		return proxyFactory;
@@ -76,6 +81,14 @@ public class InformeSubastaSarebBean extends InformeSubastaCommon {
 
 	public void setSubastaApi(SubastaApi subastaApi) {
 		this.subastaApi = subastaApi;
+	}	
+	
+	public NMBProjectContext getNmbCommonProjectContext() {
+		return nmbCommonProjectContext;
+	}
+	
+	public void setNmbCommonProjectContext(NMBProjectContext nmbCommonProjectContext) {
+		this.nmbCommonProjectContext = nmbCommonProjectContext;
 	}
 
 	Long idAsunto;
@@ -183,7 +196,7 @@ public class InformeSubastaSarebBean extends InformeSubastaCommon {
 			List<LotesBean> lotes = new ArrayList<LotesBean>();
 			List<BienesBean> bienes = new ArrayList<BienesBean>();
 			// TODO - buscar por codigo, sino las ñ nos van a matar
-			HistoricoProcedimiento tareaSenyalamientoSubasta = this.getNodo(procedimientoSubasta, TAREA_SENYALAMIENTO_SUBASTA);
+			HistoricoProcedimiento tareaSenyalamientoSubasta = this.getNodo(procedimientoSubasta, nmbCommonProjectContext.getCodigosTareasSenyalamiento());
 //			List<OperacionesConexionadasBean> operacionesConexionadas = new ArrayList<OperacionesConexionadasBean>();
 
 			List<ProcedimientoContratoExpediente> expedientesContratos = procedimientoSubasta.getProcedimientosContratosExpedientes();
@@ -241,16 +254,16 @@ public class InformeSubastaSarebBean extends InformeSubastaCommon {
 					if (!Checks.esNulo(procedimientoSubasta.getProcedimientoPadre()) && !Checks.esNulo(procedimientoSubasta.getProcedimientoPadre().getTipoProcedimiento())) {
 						String tipoPrcPadre = procedimientoSubasta.getProcedimientoPadre().getTipoProcedimiento().getCodigo();
 						Date fechaNodo = null;
-						if (PRC_HIPOTECARIO.equals(tipoPrcPadre)) {
-							fechaNodo = this.dameFecha(getValorNodoPrc(procedimientoSubasta.getProcedimientoPadre(), TAREA_INTERPOSICION_DEMANDA_HIPOTECARIO, VALOR_FECHA_DEMANDA));
+						if (nmbCommonProjectContext.getCodigoHipotecario().equals(tipoPrcPadre)) {
+							fechaNodo = this.dameFecha(getValorNodoPrc(procedimientoSubasta.getProcedimientoPadre(), nmbCommonProjectContext.getCodigoTareaDemandaHipotecario(), nmbCommonProjectContext.getFechaDemandaHipotecario()));
 							fechaDemanda = Checks.esNulo(fechaNodo) ? null : formatter.format(fechaNodo);
 						}
-						if (PRC_MONITORIO.equals(tipoPrcPadre)) {
-							fechaNodo = this.dameFecha(getValorNodoPrc(procedimientoSubasta.getProcedimientoPadre(), TAREA_INTERPOSICION_DEMANDA_MONITORIO, VALOR_FECHA_DEMANDA));
+						if (nmbCommonProjectContext.getCodigoMonitorio().equals(tipoPrcPadre)) {
+							fechaNodo = this.dameFecha(getValorNodoPrc(procedimientoSubasta.getProcedimientoPadre(), nmbCommonProjectContext.getCodigoTareaDemandaMonitorio(), nmbCommonProjectContext.getFechaDemandaMonitorio()));
 							fechaDemanda = Checks.esNulo(fechaNodo) ? null : formatter.format(fechaNodo);
 						}
-						if (PRC_ORDINARIO.equals(tipoPrcPadre)) {
-							fechaNodo = this.dameFecha(getValorNodoPrc(procedimientoSubasta.getProcedimientoPadre(), TAREA_INTERPOSICION_DEMANDA_ORDINARIO, VALOR_FECHA_DEMANDA_ORDINARIO));
+						if (nmbCommonProjectContext.getCodigoMonitorio().equals(tipoPrcPadre)) {
+							fechaNodo = this.dameFecha(getValorNodoPrc(procedimientoSubasta.getProcedimientoPadre(), nmbCommonProjectContext.getCodigoTareaDemandaOrdinario(), nmbCommonProjectContext.getFechaDemandaOrdinario()));
 							fechaDemanda = Checks.esNulo(fechaNodo) ? null : formatter.format(fechaNodo);
 						}
 						co.setFechaDemanda(fechaDemanda);
@@ -404,7 +417,7 @@ public class InformeSubastaSarebBean extends InformeSubastaCommon {
 				System.out.println("[WARN] - El valor para principal: " + strPrincipal + " no es un float");
 			}
 
-			String valorNodo = getValorNodoPrc(tareaSenyalamientoSubasta, VALOR_HONORARIOS);
+			String valorNodo = getValorNodoPrc(tareaSenyalamientoSubasta, nmbCommonProjectContext.getValorHonorarios());
 			
 			try {
 				stub.setHonorarios(!Checks.esNulo(valorNodo) ? Float.valueOf(valorNodo.replaceAll(",",".")) : 0F);
@@ -412,7 +425,7 @@ public class InformeSubastaSarebBean extends InformeSubastaCommon {
 				System.out.println("[WARN] - El valor para honorarios: " + valorNodo + " no es un float");
 			}
 			
-			valorNodo = getValorNodoPrc(tareaSenyalamientoSubasta, VALOR_DERECHOS_SUPLIDOS);
+			valorNodo = getValorNodoPrc(tareaSenyalamientoSubasta, nmbCommonProjectContext.getValorDerechosSuplidos());
 			try {
 				stub.setDerechosSuplidos(!Checks.esNulo(valorNodo) ? Float.valueOf(valorNodo.replaceAll(",",".")) : 0F);
 			} catch (NumberFormatException e) {				
@@ -507,8 +520,12 @@ public class InformeSubastaSarebBean extends InformeSubastaCommon {
 								lb.setFinca(Checks.esNulo(nmbBienLote.getDatosRegistralesActivo()) ? null : nmbBienLote.getDatosRegistralesActivo().getNumFinca());
 								// contrato
 								// Mayor
-								lb.setDeudaJudicial(null);
+								
+								lb.setDeudaJudicial(l.getDeudaJudicial());
 								Float tipoSubasta = nmbBienLote.getTipoSubasta();
+								if(Checks.esNulo(tipoSubasta)){
+									tipoSubasta = l.getInsValorSubasta();
+								}
 								lb.setTipoSubasta(tipoSubasta);
 								lb.setTipoSubasta50(Checks.esNulo(tipoSubasta) ? null : tipoSubasta * 0.50F);
 								lb.setTipoSubasta60(Checks.esNulo(tipoSubasta) ? null : tipoSubasta * 0.60F);

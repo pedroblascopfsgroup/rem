@@ -16,16 +16,16 @@ import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.procesosJudiciales.EXTTareaExternaManager;
+import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.utils.JBPMProcessManager;
 import es.capgemini.pfs.web.genericForm.GenericForm;
-import es.capgemini.pfs.web.genericForm.GenericFormItem;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.api.dto.DtoExportarDetalleDictarInstruccionesHistorico;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.api.manager.ExportarHistoricoOperacionesManagerApi;
 
 /**
- * Manager de exportación de las operaciones del historico de los procedimientos
+ * Manager de exportaciï¿½n de las operaciones del historico de los procedimientos
  * @author Guillem
  *
  */
@@ -150,7 +150,7 @@ public class ExportarHistoricoOperacionesManager extends AbstractEntityDao<Gener
                 result = (String) jbpmManager.evaluaScript(idProcedimiento, idTareaExterna, tareaExterna.getTareaProcedimiento().getId(), null,
                         script);
             } catch (Exception e) {
-                throw new UserException("Error en el script de decisión [" + script + "] para la tarea: " + idTareaExterna + " del procedimiento: "
+                throw new UserException("Error en el script de decisiï¿½n [" + script + "] para la tarea: " + idTareaExterna + " del procedimiento: "
                         + idProcedimiento);
             }
             return result;

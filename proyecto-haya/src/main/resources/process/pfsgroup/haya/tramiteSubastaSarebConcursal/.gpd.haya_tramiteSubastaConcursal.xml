@@ -1,0 +1,597 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="haya_tramiteSubastaConcursal" width="3188" height="1998">
+  <node name="Inicio" x="-248" y="17" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H003_SenyalamientoSubasta" x="-450" y="444" width="239" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="1079" h1="-173" w2="-543" h2="252"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H003_AdjuntarInformeSubasta" x="784" y="291" width="226" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="196" h1="-23" w2="-177" h2="68"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H003_ValidarInformeDeSubastaYPrepararCuadroDePujas" x="1170" y="169" width="372" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-267" h1="39" w2="106" h2="-52"/>
+    </edge>
+  </node>
+  <node name="H003_SolicitarDueDiligence" x="1979" y="163" width="214" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H003_RegistrarResultadoDueDiligence" x="1847" y="38" width="272" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-223" h1="51" w2="-69" h2="-73"/>
+    </edge>
+  </node>
+  <node name="fork1" x="255" y="406" width="252" height="24">
+    <edge>
+      <label x="-85" y="-29"/>
+      <bendpoint w1="140" h1="238" w2="-421" h2="-53"/>
+    </edge>
+    <edge>
+      <label x="-60" y="99"/>
+    </edge>
+    <edge>
+      <label x="-105" y="-3"/>
+    </edge>
+    <edge>
+      <label x="-8" y="-3"/>
+    </edge>
+  </node>
+  <node name="H003_SuspenderSubasta" x="1840" y="604" width="178" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H003_ValidarInformeDeSubastaYPrepararCuadroDePujasDecision" x="1110" y="298" width="415" height="36">
+    <edge>
+      <label x="-74" y="-4"/>
+    </edge>
+    <edge>
+      <label x="-44" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-33" y="-18"/>
+    </edge>
+  </node>
+  <node name="H003_BPMTramiteTributacion" x="-2" y="24" width="238" height="36">
+    <edge>
+      <label x="-157" y="-16"/>
+    </edge>
+  </node>
+  <node name="H003_ContactarConDeudorYPrepararInformeSubastaFisc" x="18" y="114" width="393" height="36">
+    <edge>
+      <label x="-60" y="3"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="292" h1="-60" w2="-785" h2="35"/>
+    </edge>
+  </node>
+  <node name="H003_CumplimentarParteEconomica" x="724" y="600" width="271" height="36">
+    <edge>
+      <label x="-254" y="27"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="290" h1="-77" w2="-360" h2="28"/>
+    </edge>
+  </node>
+  <node name="H003_PrepararPropuestaSubasta" x="824" y="691" width="237" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H003_ValidarPropuesta" x="1164" y="692" width="168" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-138" h1="44" w2="168" h2="45"/>
+    </edge>
+  </node>
+  <node name="H003_ValidarPropuestaDecision" x="1477" y="691" width="230" height="36">
+    <edge>
+      <label x="-16" y="-3"/>
+    </edge>
+    <edge>
+      <label x="-48" y="-8"/>
+    </edge>
+    <edge>
+      <label x="-90" y="13"/>
+    </edge>
+    <edge>
+      <label x="-89" y="15"/>
+      <bendpoint w1="92" h1="236" w2="11" h2="-123"/>
+    </edge>
+    <edge>
+      <label x="276" y="36"/>
+      <bendpoint w1="-514" h1="-75" w2="136" h2="-75"/>
+    </edge>
+  </node>
+  <node name="H003_ElevarPropuestaASareb" x="1778" y="766" width="294" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="126" y="-17"/>
+      <bendpoint w1="-420" h1="4" w2="257" h2="78"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-110" y="-359"/>
+      <bendpoint w1="266" h1="3" w2="951" h2="-370"/>
+      <bendpoint w1="266" h1="245" w2="951" h2="-128"/>
+      <bendpoint w1="272" h1="486" w2="957" h2="113"/>
+      <bendpoint w1="-687" h1="495" w2="-2" h2="122"/>
+    </edge>
+  </node>
+  <node name="H003_ElevarPropuestaAComite" x="1016" y="852" width="235" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="122" h1="-42" w2="-212" h2="-46"/>
+    </edge>
+    <edge>
+      <label x="-53" y="-33"/>
+    </edge>
+  </node>
+  <node name="H003_LecturaAceptacionInstrucciones" x="1520" y="1050" width="306" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H003_CelebracionSubasta" x="-36" y="552" width="221" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-492" h1="50" w2="202" h2="-191"/>
+    </edge>
+  </node>
+  <node name="H003_BPMTramiteCesionRemate" x="639" y="1084" width="253" height="36">
+    <edge>
+      <label x="-170" y="-3"/>
+    </edge>
+  </node>
+  <node name="H003_BPMTramiteAdjudicacion" x="-256" y="1290" width="312" height="36">
+    <edge>
+      <label x="-118" y="23"/>
+    </edge>
+  </node>
+  <node name="H003_SolicitarMandamientoPago" x="549" y="1211" width="347" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H003_ConfirmarRecepcionMandamientoDePago" x="553" y="1345" width="333" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-84" h1="-66" w2="-121" h2="69"/>
+    </edge>
+  </node>
+  <node name="H003_SolicitarServicioIndices" x="551" y="1513" width="322" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-88" h1="-99" w2="-95" h2="69"/>
+    </edge>
+  </node>
+  <node name="H003_SolicitarServicioIndicesDecision" x="492" y="1674" width="328" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H003_ElevarPropuestaASarebIndices" x="588" y="1797" width="246" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="236" h1="-138" w2="235" h2="146"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H003_ConcursalDecision" x="643" y="1893" width="179" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H003_ElevarPropuestaAComiteDecision" x="795" y="952" width="290" height="36">
+    <edge>
+      <label x="-220" y="-31"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="540" h1="5" w2="-449" h2="353"/>
+    </edge>
+  </node>
+  <node name="H003_RegistrarRespuestaSareb" x="1817" y="936" width="236" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-138" h1="-84" w2="-128" h2="86"/>
+    </edge>
+    <edge>
+      <label x="-67" y="-297"/>
+      <bendpoint w1="197" h1="-3" w2="892" h2="-206"/>
+      <bendpoint w1="193" h1="297" w2="888" h2="94"/>
+      <bendpoint w1="-693" h1="309" w2="2" h2="106"/>
+    </edge>
+  </node>
+  <node name="H003_RegistrarRespuestaSarebDecision" x="1806" y="1153" width="271" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-245" h1="-43" w2="-17" h2="62"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="283" h1="-324" w2="295" h2="225"/>
+    </edge>
+  </node>
+  <node name="H003_RegistrarRespuestaSarebIndices" x="1040" y="1798" width="252" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-30" h1="-83" w2="207" h2="-7"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="6" h1="181" w2="1027" h2="307"/>
+      <bendpoint w1="-1027" h1="164" w2="-6" h2="290"/>
+    </edge>
+  </node>
+  <node name="forkCelebracion" x="143" y="956" width="252" height="24">
+    <edge>
+      <label x="46" y="-61"/>
+    </edge>
+    <edge>
+      <label x="-5" y="-7"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-36" y="-56"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="D" x="-9" y="1180" width="132" height="36">
+    <edge>
+      <label x="15" y="-26"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="C" x="467" y="976" width="132" height="36">
+    <edge>
+      <label x="-10" y="-11"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="F" x="407" y="1089" width="132" height="36">
+    <edge>
+      <label x="-9" y="-6"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="G" x="358" y="1187" width="132" height="36">
+    <edge>
+      <label x="-60" y="-152"/>
+      <bendpoint w1="104" h1="272" w2="-231" h2="-49"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H003_ActualizarTasacion" x="106" y="280" width="226" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="568" h1="-85" w2="-504" h2="176"/>
+    </edge>
+    <edge>
+      <label x="-30" y="-4"/>
+      <bendpoint w1="-206" h1="54" w2="173" h2="47"/>
+    </edge>
+  </node>
+  <node name="H003_BPMTramiteConsignacion" x="2098" y="393" width="214" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="3" h1="73" w2="658" h2="-85"/>
+    </edge>
+  </node>
+  <node name="fork2" x="1650" y="272" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-38" y="-18"/>
+      <bendpoint w1="-260" h1="240" w2="420" h2="54"/>
+    </edge>
+  </node>
+  <node name="fork3" x="1705" y="399" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-506" h1="80" w2="229" h2="21"/>
+    </edge>
+  </node>
+  <node name="H003_RegistrarResolucionSolicitudSuspension" x="2293" y="657" width="326" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="0" h1="-125" w2="906" h2="-19"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-176" h1="-81" w2="163" h2="-18"/>
+    </edge>
+    <edge>
+      <label x="-112" y="-21"/>
+      <bendpoint w1="59" h1="-153" w2="965" h2="-47"/>
+    </edge>
+  </node>
+  <node name="H003_BPMTramiteInscripcionDelTitulo" x="-371" y="869" width="251" height="36">
+    <edge>
+      <label x="-61" y="-6"/>
+    </edge>
+  </node>
+  <node name="H" x="-72" y="954" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H003_SuspenderDecision" x="-338" y="782" width="258" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-172" h1="29" w2="140" h2="-187"/>
+    </edge>
+  </node>
+  <node name="A" x="-4" y="802" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-364" h1="-173" w2="219" h2="-369"/>
+    </edge>
+  </node>
+  <node name="iniciar" x="-248" y="114" width="132" height="36">
+    <edge>
+      <label x="-80" y="-11"/>
+    </edge>
+  </node>
+  <node name="fork4" x="-257" y="198" width="157" height="24">
+    <edge>
+      <label x="-6" y="-47"/>
+    </edge>
+    <edge>
+      <label x="-112" y="-4"/>
+    </edge>
+    <edge>
+      <label x="-58" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-40" y="166"/>
+      <bendpoint w1="-158" h1="-2" w2="-6" h2="-254"/>
+    </edge>
+  </node>
+  <node name="H003_SolicitarTasacion" x="-269" y="287" width="218" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H003_InformarTipoPropuesta" x="982" y="452" width="228" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork5" x="1315" y="422" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-33" y="-25"/>
+      <bendpoint w1="313" h1="83" w2="-451" h2="106"/>
+    </edge>
+  </node>
+  <node name="H003_ElevarAComite" x="1380" y="856" width="174" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="79" y="1672" width="132" height="36"/>
+  <node name="Fin2" x="1225" y="19" width="132" height="36"/>
+  <node name="Fin3" x="1484" y="551" width="132" height="36"/>
+  <node name="Fin4" x="1174" y="1139" width="132" height="36"/>
+  <node name="Fin5" x="-567" y="967" width="132" height="36"/>
+  <node name="nActivo" x="-536" y="536" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+</root-container>

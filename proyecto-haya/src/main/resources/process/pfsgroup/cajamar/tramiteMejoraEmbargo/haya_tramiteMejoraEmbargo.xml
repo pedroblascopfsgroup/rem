@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="" name="hcj_tramiteMejoraEmbargo">
+
+	<start-state name="Inicio">
+		<transition to="H046_solicitudMejoraEmbargo" name="iniciarProceso"></transition>
+	</start-state>
+
+
+	<state name="H046_solicitudMejoraEmbargo">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="H046_solicitudMejoraEmbargo" name="activarAlerta"></transition>
+		<transition to="H046_confirmarDecretoEmbargo" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="H046_confirmarDecretoEmbargo">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="H046_confirmarDecretoEmbargo" name="activarAlerta"></transition>
+		<transition to="H046_confirmarDecretoEmbargoDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H046_solicitudMejoraEmbargo" name="vueltaAtras"></transition>
+	</state>
+
+	<node name="H046_MejoraDecision">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>genericUserDecisionActionHandler
+			</targetBean>
+		</action>
+		<transition to="Fin" name="Fin"></transition>
+	</node>
+
+	<decision name="H046_confirmarDecretoEmbargoDecision" expression="#{H046_confirmarDecretoEmbargoDecision}">
+		<transition to="H046_registrarAnotacionRegistro" name="SI"></transition>
+		<transition to="H046_MejoraDecision" name="NO"></transition>
+	</decision>
+
+	<state name="H046_registrarAnotacionRegistro">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="H046_registrarAnotacionRegistroDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H046_registrarAnotacionRegistro" name="activarAlerta"></transition>
+		<transition to="H046_confirmarDecretoEmbargo" name="vueltaAtras"></transition>
+	</state>
+
+	<decision name="H046_registrarAnotacionRegistroDecision" expression="#{H046_registrarAnotacionRegistroDecision}">
+		<transition to="H046_MejoraDecision" name="NO"></transition>
+		<transition to="H046_espera" name="SI"></transition>
+	</decision>
+
+	<node name="H046_espera">
+		 <event type="node-enter">
+			<action class="es.pfsgroup.procedimientos.GenericTimerDelayActionHandler" config-type="field">
+				<name>Timer de espera 42 meses</name>
+				<duration>42 months</duration>
+				<transicion>avanzaBPM</transicion>
+			</action>
+		</event>
+		<transition to="H046_registrarAnotacionRegistroDecision" name="avanzaBPM"></transition>
+	</node>
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+</process-definition>

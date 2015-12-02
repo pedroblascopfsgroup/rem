@@ -362,5 +362,28 @@ public class TareaExternaManager {
     public void borrar(TareaExterna tareaExterna) {
         executor.execute(ComunBusinessOperation.BO_TAREA_MGR_DELETE, tareaExterna.getTareaPadre());
         tareaExternaDao.delete(tareaExterna);
+        
+// LLamada al executor.        
     }
+    
+    public Date dameFechaFinTareaProcedimientoPadre(Long idProcedimiento, String codigoTarea) {
+		
+		Procedimiento procedimiento = (Procedimiento) executor.execute(ExternaBusinessOperation.BO_PRC_MGR_GET_PROCEDIMIMENTO, idProcedimiento);
+		if (procedimiento.getProcedimientoPadre()==null) {
+			return null;
+		}
+		List<TareaExterna> tareas = this.obtenerTareasPorProcedimiento(procedimiento.getProcedimientoPadre().getId());
+		if (tareas != null) {
+			for (TareaExterna tarea : tareas) {
+				if(tarea != null) {
+					String codigo = tarea.getTareaProcedimiento().getCodigo();
+					if(codigo.equals(codigoTarea)) {
+						return tarea.getTareaPadre().getFechaFin();
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
 }

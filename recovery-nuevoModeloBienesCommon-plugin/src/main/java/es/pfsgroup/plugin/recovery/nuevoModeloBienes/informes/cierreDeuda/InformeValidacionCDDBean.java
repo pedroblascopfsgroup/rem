@@ -188,7 +188,7 @@ public class InformeValidacionCDDBean {
 		List<Long> bienes = new ArrayList<Long>();
 		StringBuilder sb = new StringBuilder();
 		NMBBien nmbBien = null;
-		
+                
 		Parametrizacion parametroLimite = (Parametrizacion) proxyFactory.proxy(SubastaApi.class).parametrizarLimite(Parametrizacion.LIMITE_EXPORT_EXCEL_BIENES_SUBASTA_CDD);
 		Integer limite = Integer.parseInt(parametroLimite.getValor());
 		
@@ -311,7 +311,9 @@ public class InformeValidacionCDDBean {
 			if (Checks.esNulo(infobien.getImporteAdjudicacion())) {
 				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Importe adjudicacion; ");
 			}
-			if(!"P401".equals(loteSubasta.getSubasta().getProcedimiento().getTipoProcedimiento().getCodigo())) {
+
+                        // Esta validación no debe hacerse si el CDD proviene de un Subasta Bankia. En el resto de T. subasta del resto de clientes, si debe hacerse.
+			if(!nmbProjectContext.getCodigoSubastaBankia().equals(loteSubasta.getSubasta().getProcedimiento().getTipoProcedimiento().getCodigo())) {
 				infobien.setFechaTestimonioAdjudicacionSareb(getFechaTestimonioAdjudicacionSareb(nmbBien));
 				if (Checks.esNulo(infobien.getFechaTestimonioAdjudicacionSareb())) {
 					sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Fecha testimonio adjudicacion sareb; ");

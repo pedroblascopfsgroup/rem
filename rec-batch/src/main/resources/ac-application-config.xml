@@ -27,6 +27,7 @@
     -->
     <import resource="classpath*:optionalConfiguration/ac-rec-bpm-*.xml" />
     <import resource="classpath*:optionalConfiguration/ac-*-projectContext.xml" />
+    <import resource="classpath*:optionalConfiguration/batch-*.xml" />
     
     <!-- From rec-common -->
     <import resource="classpath:ac-rec-common-data-access.xml"/>

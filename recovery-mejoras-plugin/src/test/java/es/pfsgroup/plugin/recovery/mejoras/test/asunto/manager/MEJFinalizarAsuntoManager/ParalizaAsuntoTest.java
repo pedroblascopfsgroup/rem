@@ -157,7 +157,7 @@ public class ParalizaAsuntoTest  extends AbstractMEJFinalizarAsuntoManagerTests{
 
 	/**
 	 * Obtenemos una lista de procedimientos.
-	 * @param cantidad número de procedimientos a devolver.
+	 * @param cantidad nï¿½mero de procedimientos a devolver.
 	 */
 	private void simulaListaProcedimientos(int cantidad, String estadoProcedimiento) {
 		when(procedimiento.getEstadoProcedimiento()).thenReturn(ddEstadoProcedimiento);
@@ -172,7 +172,7 @@ public class ParalizaAsuntoTest  extends AbstractMEJFinalizarAsuntoManagerTests{
 	
 	/**
 	 * Obtenemos una lista de procedimientos.
-	 * @param cantidad número de procedimientos a devolver.
+	 * @param cantidad nï¿½mero de procedimientos a devolver.
 	 */
 	private void simulaMejProcedimiento(Long idProcessBPM) {
 		
@@ -183,7 +183,7 @@ public class ParalizaAsuntoTest  extends AbstractMEJFinalizarAsuntoManagerTests{
 	
 	/**
 	 * Comprobamos que se guardan los procedimientos.
-	 * @param veces veces que se lanza el método guardar procedimiento.
+	 * @param veces veces que se lanza el mï¿½todo guardar procedimiento.
 	 */
 	private void verificaComportamientoProcedimientos(int veces) {
 		

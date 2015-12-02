@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -58,6 +59,9 @@ public class ActuacionesAExplorarAcuerdo implements Serializable,Auditable,Compa
 	@Embedded
 	private Auditoria auditoria;
 
+	@Column(name = "SYS_GUID")
+	private String guid;
+	
 	/**
 	 * Se implementa este método para poder ordenar un List de esta clase
 	 * para la lista de acuerdos a explorar, donde debe aparecer ordenada por el
@@ -165,4 +169,13 @@ public class ActuacionesAExplorarAcuerdo implements Serializable,Auditable,Compa
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+	
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
+	
 }

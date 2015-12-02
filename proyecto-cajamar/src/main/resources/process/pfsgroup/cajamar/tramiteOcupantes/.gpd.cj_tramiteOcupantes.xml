@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="cj_tramiteOcupantes" width="1108" height="1192">
+  <node name="inicio" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ048_TrasladoDocuDeteccionOcupantes" x="386" y="4" width="314" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-563" h1="69" w2="-42" h2="-745"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ048_TrasladoDocuDeteccionOcupantesDecision" x="377" y="103" width="330" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ048_SolicitudRequerimientoDocOcupantes" x="-2" y="173" width="305" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-180" h1="4" w2="-52" h2="-641"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ048_RegistrarRecepcionDoc" x="16" y="293" width="269" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-107" h1="-66" w2="-107" h2="54"/>
+    </edge>
+  </node>
+  <node name="CJ048_ObtenerAprobacionAlquiler" x="402" y="299" width="274" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-393" h1="143" w2="124" h2="-376"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ048_ObtenerAprobacionAlquilerDecision" x="396" y="407" width="287" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-42" y="-99"/>
+    </edge>
+    <edge>
+      <label x="-113" y="-103"/>
+    </edge>
+  </node>
+  <node name="CJ048_PresentarEscritoAlegaciones" x="132" y="523" width="238" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="28" h1="-87" w2="-260" h2="137"/>
+    </edge>
+  </node>
+  <node name="CJ048_ConfirmarVista" x="399" y="619" width="290" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-238" h1="-5" w2="55" h2="91"/>
+    </edge>
+  </node>
+  <node name="CJ048_ConfirmarVistaDecision" x="404" y="728" width="288" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ048_RegistrarCelebracionVista" x="778" y="829" width="284" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="2" h1="339" w2="397" h2="47"/>
+      <bendpoint w1="-918" h1="336" w2="-20" h2="347"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ048_RegistrarResolucion" x="297" y="829" width="245" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ048_ResolucionFirme" x="420" y="926" width="259" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ048_ResolucionFirmeDecision" x="434" y="1022" width="280" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="80" h1="69" w2="-192" h2="-23"/>
+    </edge>
+  </node>
+  <node name="CJ048_ResolucionDecision" x="22" y="1121" width="229" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="-44" y="818" width="132" height="36"/>
+  <node name="FinPosesion" x="780" y="1114" width="132" height="36"/>
+</root-container>

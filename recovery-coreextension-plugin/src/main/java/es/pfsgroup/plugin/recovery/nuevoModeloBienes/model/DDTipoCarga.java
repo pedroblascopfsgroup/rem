@@ -5,10 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -17,7 +14,6 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.DDTipoInmuebleInfo;
 
 @Entity
 @Table(name = "DD_TPC_TIPO_CARGA", schema = "${entity.schema}")
@@ -26,7 +22,10 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.DDTipoInmuebleInf
 public class DDTipoCarga implements  Serializable, Auditable {
 
 	private static final long serialVersionUID = -4497097910086775262L;
-
+	
+	public static final String ANTERIORES_HIPOTECA = "ANT";
+	public static final String POSTERIORES_HIPOTECA = "POS";
+	
 	@Id
     @Column(name = "DD_TPC_ID")
     private Long id;

@@ -54,6 +54,9 @@ public class ProcedimientoDerivado implements Auditable, Serializable {
 	@Cascade({org.hibernate.annotations.CascadeType.ALL})
 	private Procedimiento procedimiento;
 
+    @Column(name="SYS_GUID")
+	private String guid;
+	
 	@Version
 	private Long version;
 
@@ -100,6 +103,20 @@ public class ProcedimientoDerivado implements Auditable, Serializable {
 	 */
 	public void setProcedimiento(Procedimiento procedimiento) {
 		this.procedimiento = procedimiento;
+	}
+
+	/**
+	 * @return the guid
+	 */
+	public String getGuid() {
+		return guid;
+	}
+
+	/**
+	 * @param guid the guid to set
+	 */
+	public void setGuid(String guid) {
+		this.guid = guid;
 	}
 
 	/**

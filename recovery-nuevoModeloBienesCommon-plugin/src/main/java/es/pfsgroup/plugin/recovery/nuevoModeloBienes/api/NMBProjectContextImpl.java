@@ -41,8 +41,31 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 	private Map<String, String> mapaSubastas;
 	private List<String> codigosSubastaValidacion;
 	private List<String> codigosSubastas;
+        private String codigoSubastaBankia;
 	private String comboPostoresCelebracionSubasta;
+	//Valores para generar informe de subasta
+	private String valorHonorarios;
+	private String valorDerechosSuplidos;
+	private String fechaDemandaHipotecario;
+	private String fechaDemandaMonitorio;
+	private String fechaDemandaOrdinario;
+	private List<String> codigosTareasSenyalamiento;
+	private String codigoTareaDemandaHipotecario;
+	private String codigoTareaDemandaMonitorio;
+	private String codigoTareaDemandaOrdinario;
+	private String codigoHipotecario;
 	
+	private String codigoMonitorio;
+	private String codigoOrdinario;
+
+	private String codigoRegistrarSolicitudMoratoria;
+	private String fechaSolicitudRegistrarSolicitudMoratoria;
+	private String codigoRegistrarResolucionMoratoria;
+	private String fechaFinMoratoriaRegistrarResolucion;
+	private String resultadoMoratoria;
+	
+	private String plantillaReportPropuestaCancelacionCargas;
+
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
 	
@@ -214,6 +237,16 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 	public void setCodigosSubastas(List<String> codigosSubastas){
 		this.codigosSubastas = codigosSubastas ;
 	}
+        
+
+        @Override
+        public String getCodigoSubastaBankia() {
+            return codigoSubastaBankia;
+        }
+
+        public void setCodigoSubastaBankia(String codigoSubastaBankia) {
+            this.codigoSubastaBankia = codigoSubastaBankia;
+        }
 	
 	@Override
 	public String getComboPostoresCelebracionSubasta() {
@@ -232,4 +265,169 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 	public void setMapaSubastas(Map<String, String> mapaSubastas) {
 		this.mapaSubastas = mapaSubastas;
 	}
+	
+	@Override
+	public String getValorHonorarios() {
+		return valorHonorarios;
+	}
+
+	public void setValorHonorarios(String valorHonorarios) {
+		this.valorHonorarios = valorHonorarios;
+	}
+	
+	@Override
+	public String getValorDerechosSuplidos() {
+		return valorDerechosSuplidos;
+	}
+
+	public void setValorDerechosSuplidos(String valorDerechosSuplidos) {
+		this.valorDerechosSuplidos = valorDerechosSuplidos;
+	}
+	
+	@Override
+	public String getFechaDemandaHipotecario() {
+		return fechaDemandaHipotecario;
+	}
+
+	public void setFechaDemandaHipotecario(String fechaDemandaHipotecario) {
+		this.fechaDemandaHipotecario = fechaDemandaHipotecario;
+	}
+	
+	@Override
+	public String getFechaDemandaMonitorio() {
+		return fechaDemandaMonitorio;
+	}
+
+	public void setFechaDemandaMonitorio(String fechaDemandaMonitorio) {
+		this.fechaDemandaMonitorio = fechaDemandaMonitorio;
+	}
+
+	@Override
+	public String getFechaDemandaOrdinario() {
+		return fechaDemandaOrdinario;
+	}
+
+	public void setFechaDemandaOrdinario(String fechaDemandaOrdinario) {
+		this.fechaDemandaOrdinario = fechaDemandaOrdinario;
+	}
+	
+	@Override
+	public List<String> getCodigosTareasSenyalamiento() {
+		return codigosTareasSenyalamiento;
+	}
+
+	public void setCodigosTareasSenyalamiento(
+			List<String> codigosTareasSenyalamiento) {
+		this.codigosTareasSenyalamiento = codigosTareasSenyalamiento;
+	}
+	
+	@Override
+	public String getCodigoTareaDemandaHipotecario() {
+		return codigoTareaDemandaHipotecario;
+	}
+
+	public void setCodigoTareaDemandaHipotecario(
+			String codigoTareaDemandaHipotecario) {
+		this.codigoTareaDemandaHipotecario = codigoTareaDemandaHipotecario;
+	}
+	
+	@Override
+	public String getCodigoTareaDemandaMonitorio() {
+		return codigoTareaDemandaMonitorio;
+	}
+
+	public void setCodigoTareaDemandaMonitorio(String codigoTareaDemandaMonitorio) {
+		this.codigoTareaDemandaMonitorio = codigoTareaDemandaMonitorio;
+	}
+	
+	@Override
+	public String getCodigoTareaDemandaOrdinario() {
+		return codigoTareaDemandaOrdinario;
+	}
+
+	public void setCodigoTareaDemandaOrdinario(String codigoTareaDemandaOrdinario) {
+		this.codigoTareaDemandaOrdinario = codigoTareaDemandaOrdinario;
+	}
+	
+	@Override
+	public String getCodigoHipotecario() {
+		return codigoHipotecario;
+	}
+
+	public void setCodigoHipotecario(String codigoHipotecario) {
+		this.codigoHipotecario = codigoHipotecario;
+	}
+	
+	@Override
+	public String getCodigoMonitorio() {
+		return codigoMonitorio;
+	}
+
+	public void setCodigoMonitorio(String codigoMonitorio) {
+		this.codigoMonitorio = codigoMonitorio;
+	}
+	
+	@Override
+	public String getCodigoOrdinario() {
+		return codigoOrdinario;
+	}
+
+	public void setCodigoOrdinario(String codigoOrdinario) {
+		this.codigoOrdinario = codigoOrdinario;
+	}
+	
+	@Override
+	public String getCodigoRegistrarSolicitudMoratoria() {
+		return codigoRegistrarSolicitudMoratoria;
+	}
+
+	public void setCodigoRegistrarSolicitudMoratoria(String codigoRegistrarSolicitudMoratoria) {
+		this.codigoRegistrarSolicitudMoratoria = codigoRegistrarSolicitudMoratoria;
+	}
+
+	@Override
+	public String getFechaSolicitudRegistrarSolicitudMoratoria() {
+		return fechaSolicitudRegistrarSolicitudMoratoria;
+	}
+
+	public void setFechaSolicitudRegistrarSolicitudMoratoria(String fechaSolicitudRegistrarSolicitudMoratoria) {
+		this.fechaSolicitudRegistrarSolicitudMoratoria = fechaSolicitudRegistrarSolicitudMoratoria;
+	}
+
+	@Override
+	public String getCodigoRegistrarResolucionMoratoria() {
+		return codigoRegistrarResolucionMoratoria;
+	}
+
+	public void setCodigoRegistrarResolucionMoratoria(String codigoRegistrarResolucionMoratoria) {
+		this.codigoRegistrarResolucionMoratoria = codigoRegistrarResolucionMoratoria;
+	}
+	
+	@Override
+	public String getFechaFinMoratoriaRegistrarResolucion() {
+		return fechaFinMoratoriaRegistrarResolucion;
+	}
+
+	public void setFechaFinMoratoriaRegistrarResolucion(String fechaFinMoratoriaRegistrarResolucion) {
+		this.fechaFinMoratoriaRegistrarResolucion = fechaFinMoratoriaRegistrarResolucion;
+	}
+
+	@Override
+	public String getResultadoMoratoria() {
+		return resultadoMoratoria;
+	}
+
+	public void setResultadoMoratoria(String resultadoMoratoria) {
+		this.resultadoMoratoria = resultadoMoratoria;
+	}
+
+	public String getPlantillaReportPropuestaCancelacionCargas() {
+		return plantillaReportPropuestaCancelacionCargas;
+	}
+
+	public void setPlantillaReportPropuestaCancelacionCargas(String plantillaReportPropuestaCancelacionCargas) {
+		this.plantillaReportPropuestaCancelacionCargas = plantillaReportPropuestaCancelacionCargas;
+	}
+	
+	
 }

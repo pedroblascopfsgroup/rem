@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="cj_tramiteCesionRemate" width="1332" height="1061">
+  <node name="Inicio" x="509" y="45" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ106_AperturaPlazo" x="474" y="122" width="208" height="36">
+    <edge>
+      <label x="12" y="-13"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="150" h1="0" w2="-124" h2="-373"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ106_AperturaPlazoDecision" x="486" y="222" width="238" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-224" h1="-32" w2="218" h2="-47"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ106_NoCesionRemateDecision" x="112" y="318" width="238" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ106_ResenyarFechaComparecencia" x="469" y="343" width="265" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="225" h1="-124" w2="-295" h2="-78"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-57" y="-9"/>
+      <bendpoint w1="-173" h1="-73" w2="-155" h2="87"/>
+    </edge>
+  </node>
+  <node name="CJ106_RealizacionCesionRemate" x="390" y="607" width="242" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ106_BPMTramiteAdjudicacion" x="765" y="923" width="250" height="36">
+    <edge>
+      <label x="-12" y="-13"/>
+      <bendpoint w1="16" h1="-63" w2="60" h2="377"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-39" h1="-145" w2="-1" h2="283"/>
+    </edge>
+  </node>
+  <node name="CJ106_RealizacionCesionRemateDecision" x="389" y="728" width="284" height="36">
+    <edge>
+      <label x="-20" y="2"/>
+      <bendpoint w1="31" h1="34" w2="-91" h2="-155"/>
+    </edge>
+    <edge>
+      <label x="-50" y="-2"/>
+      <bendpoint w1="-36" h1="40" w2="112" h2="-124"/>
+    </edge>
+  </node>
+  <node name="fork1" x="556" y="819" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="30" h1="41" w2="-233" h2="-8"/>
+    </edge>
+    <edge>
+      <label x="-33" y="-6"/>
+      <bendpoint w1="-96" h1="46" w2="196" h2="26"/>
+    </edge>
+  </node>
+  <node name="CJ106_ConfirmarContabilidad" x="374" y="1018" width="202" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="107" h1="-43" w2="95" h2="41"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="715" h1="-17" w2="338" h2="506"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="739" h1="2" w2="362" h2="525"/>
+    </edge>
+  </node>
+  <node name="CJ106_ResenyarFechaComparecenciaDecision" x="964" y="297" width="315" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-203" h1="20" w2="216" h2="-429"/>
+    </edge>
+    <edge>
+      <label x="-19" y="-1"/>
+      <bendpoint w1="-10" h1="37" w2="-56" h2="-81"/>
+    </edge>
+  </node>
+  <node name="CJ106_ConfirmarDocCompleta" x="1075" y="415" width="185" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="61" h1="54" w2="42" h2="-64"/>
+    </edge>
+  </node>
+  <node name="CJ106_SolicitudAutYPago" x="1094" y="533" width="185" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-46" h1="-58" w2="-27" h2="60"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="64" h1="43" w2="56" h2="-44"/>
+    </edge>
+  </node>
+  <node name="CJ106_ConfirmarTransferencia" x="1101" y="620" width="186" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-53" h1="-41" w2="-45" h2="46"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="40" h1="41" w2="24" h2="-69"/>
+    </edge>
+  </node>
+  <node name="CJ106_RegistrarRecepcionPago" x="1085" y="748" width="223" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-41" h1="-51" w2="-25" h2="59"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-132" h1="-43" w2="553" h2="98"/>
+    </edge>
+  </node>
+  <node name="CJ106_RevisarInfoContable" x="391" y="934" width="193" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="658" h1="33" w2="292" h2="489"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="existenCargas" x="406" y="846" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="15" h1="34" w2="1" h2="-71"/>
+    </edge>
+    <edge>
+      <label x="-5" y="-8"/>
+    </edge>
+  </node>
+  <node name="CJ106_BPMTramiteSaneamientoCargas" x="74" y="858" width="256" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-3" h1="79" w2="-287" h2="-14"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="67" h1="-336" w2="-583" h2="27"/>
+    </edge>
+  </node>
+  <node name="Fin" x="786" y="495" width="132" height="36"/>
+</root-container>

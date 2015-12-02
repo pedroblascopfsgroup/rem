@@ -87,7 +87,9 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.EXTModelClassFactory;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.VTARBusquedaOptimizadaTareasDao;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.impl.ResultadoBusquedaTareasBuzonesDto;
 import es.pfsgroup.recovery.ext.impl.tareas.ExportarTareasBean;
-import groovy.swing.factory.ModelFactory;
+import es.pfsgroup.recovery.integration.Guid;
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
+
 @Component
 public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionManager implements TareaNotificacionApi {
 
@@ -125,6 +127,9 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
     @Autowired
     private EXTModelClassFactory modelClassFactory;
 
+	@Autowired
+	private IntegracionBpmService integracionBPMService;
+    
     @Override
     @BusinessOperation(overrides = ComunBusinessOperation.BO_TAREA_MGR_GET)
     @Transactional
@@ -192,8 +197,10 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
 
         // Si se acepta la prorroga
         // se deja traza del evento
+        Long idTareaAComunicar = null;
         if (("on".equals(dto.getAceptada())) || ("true".equals(dto.getAceptada()))) {
             TareaNotificacion tareaAsociada = prorroga.getTareaAsociada();
+            idTareaAComunicar = tareaAsociada.getId();
             tareaAsociada.setAlerta(false);
             Map<String, Object> map = new HashMap<String, Object>();
             map.put(AceptarProrrogaListener.CLAVE_ID_TAREA_NOTIFICACION, tareaAsociada.getId());
@@ -216,6 +223,7 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                     l.fireEvent(map);
                 }
             }
+            
             // Si acepto la prorroga, se cambia la fecha fin de la tarea
             // asociada
             if (DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE.equals(tipoEntidad.getCodigo())) {
@@ -243,7 +251,13 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
         } else {
             // Si se rechaza la prorroga
             // Se rechaza y se notifica
-            this.crearNotificacion(dto.getIdEntidadInformacion(), tipoEntidad.getCodigo(), subtipoTarea, dto.getDescripcionCausa());
+        	idTareaAComunicar = this.crearNotificacion(dto.getIdEntidadInformacion(), tipoEntidad.getCodigo(), subtipoTarea, dto.getDescripcionCausa());
+        }
+
+        // Comunicación de la tarea creada a mensajería.
+        if (!Checks.esNulo(idTareaAComunicar)) {
+	        TareaNotificacion tarea = this.get(idTareaAComunicar);
+	    	integracionBPMService.notificaTarea(tarea);
         }
 
     }
@@ -700,8 +714,8 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
         }
         // Seteo la entidad en el campo que corresponda
         decodificarEntidadInformacion(idEntidad, codigoTipoEntidad, notificacionTarea);
-        return genericDao.save(EXTTareaNotificacion.class, notificacionTarea).getId();
-
+        EXTTareaNotificacion tarea = genericDao.save(EXTTareaNotificacion.class, notificacionTarea);
+        return tarea.getId();
     }
 
     private void decodificarEntidadInformacion(Long idEntidad, String codigoTipoEntidad, TareaNotificacion tareaNotificacion) {
@@ -1081,7 +1095,8 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_RE)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_CIERRA_SESION)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_EXPEDIENTE_DECISION_TOMADA)
-                                || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_GESTOR_PROPUESTA_SUBASTA)) {
+                                || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_GESTOR_PROPUESTA_SUBASTA)
+                                || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(EXTSubtipoTarea.CODIGO_NOTIFICACION_ACUERDOS)) {
                             param.put("fuerzaChkLeida", "true");
                         }
                     }
@@ -1293,5 +1308,22 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
         // saveOrUpdate(tarea);
     }
 
+	public EXTTareaNotificacion getTareaNoficiacionByGuid(String guid) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "guid", guid);
+		EXTTareaNotificacion tareaNotif = genericDao.get(EXTTareaNotificacion.class, filtro);
+		return tareaNotif;
+	}
+
+	
+	@Transactional(readOnly=false)
+	public EXTTareaNotificacion prepareGuid(TareaNotificacion tareaNotif) {
+		EXTTareaNotificacion extTareaNotif = EXTTareaNotificacion.instanceOf(tareaNotif); 
+		if (tareaNotif == null) return null;
+		if (Checks.esNulo(extTareaNotif.getGuid())) {
+			extTareaNotif.setGuid(Guid.getNewInstance().toString());
+			genericDao.save(EXTTareaNotificacion.class, extTareaNotif);
+		}
+		return extTareaNotif;
+	}
 	
 }

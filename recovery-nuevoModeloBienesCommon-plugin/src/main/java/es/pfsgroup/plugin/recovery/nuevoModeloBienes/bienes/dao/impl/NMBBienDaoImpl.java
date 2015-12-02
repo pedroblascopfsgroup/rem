@@ -84,7 +84,7 @@ public class NMBBienDaoImpl extends AbstractEntityDao<NMBBien, Long> implements 
         }
  
         if (!Checks.esNulo(dto.getPoblacion())){
-            hql.append(" AND UPPER(loc.poblacion) LIKE '%".concat(dto.getPoblacion().toUpperCase()).concat("%')"));
+            hql.append(" AND UPPER(loc.poblacion) LIKE '%".concat(dto.getPoblacion().toUpperCase()).concat("%'"));
         }
         	
         if (!Checks.esNulo(dto.getCodPostal())){
@@ -130,6 +130,9 @@ public class NMBBienDaoImpl extends AbstractEntityDao<NMBBien, Long> implements 
         	hql.append(" AND UPPER(bieper.persona.docId) = '".concat(dto.getNifCliente().toUpperCase()).concat("'"));
         }
         
+        if (usuLogado.getUsuarioExterno()) {
+        	hql.append(hqlFiltroEsGestorAsunto(usuLogado));
+        }
         
         //Nuevos filtros datos del bien
 
@@ -160,20 +163,16 @@ public class NMBBienDaoImpl extends AbstractEntityDao<NMBBien, Long> implements 
         
         //filtros pestaña localizacion        
         if (!Checks.esNulo(dto.getDireccion())){
-            hql.append(" AND UPPER(loc.direccion) LIKE '%".concat(dto.getDireccion().toUpperCase()).concat("%')"));
+            hql.append(" AND UPPER(loc.direccion) LIKE '%".concat(dto.getDireccion().toUpperCase()).concat("%'"));
         }  
         if (!Checks.esNulo(dto.getProvincia())){
-            hql.append(" AND UPPER(loc.provincia.descripcion) LIKE '%".concat(dto.getProvincia().toUpperCase()).concat("%')"));
+            hql.append(" AND UPPER(loc.provincia.descripcion) LIKE '%".concat(dto.getProvincia().toUpperCase()).concat("%'"));
         }  
         if (!Checks.esNulo(dto.getLocalidad())) {
-            hql.append(" AND UPPER(loc.poblacion) LIKE '%".concat(dto.getLocalidad().toUpperCase()).concat("%')"));
+            hql.append(" AND UPPER(loc.poblacion) LIKE '%".concat(dto.getLocalidad().toUpperCase()).concat("%'"));
         }        	
         if (!Checks.esNulo(dto.getCodigoPostal())){
         	hql.append(" AND loc.codPostal = '".concat(dto.getCodigoPostal()).concat("'"));
-        }
-        
-        if (usuLogado.getUsuarioExterno()) {
-        	hql.append(hqlFiltroEsGestorAsunto(usuLogado));
         }
         
         if(!Checks.esNulo(dto.getNumFinca())) {
@@ -225,11 +224,11 @@ public class NMBBienDaoImpl extends AbstractEntityDao<NMBBien, Long> implements 
 	}
 	
 	private String hqlFiltroEsGestorAsunto(Usuario usuLogado) {
-		String monogestor = " (asu.id in (select a.id from Asunto a where a.gestor.usuario.id = "
-				+ usuLogado.getId() + "))";
-		//String multigestor = " (asu.id in (select gaa.asunto.id from EXTGestorAdicionalAsunto gaa where gaa.gestor.usuario.id = "+ +usuLogado.getId() + "))";
 		
-		String multigestor = filtroGestorGrupo(extGrupoUsuariosDao.getIdsUsuariosGrupoUsuario(usuLogado));
+		String monogestor = "(asu.id in (select gaa.asunto.id from EXTGestorAdicionalAsunto gaa where gaa.gestor.usuario.id = "+usuLogado.getId() + ")) ";
+				
+		List<Long> idsGrpUsuario = extGrupoUsuariosDao.buscaGruposUsuario(usuLogado);
+		String multigestor = filtroGestorGrupo(idsGrpUsuario);
 		if(!Checks.esNulo(multigestor)){
 			return " and (" + monogestor + " or " + multigestor + ")";
 		}

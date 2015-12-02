@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.pfs.asunto.ProcedimientoManager;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
@@ -25,6 +26,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDEstadoSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDTipoSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
@@ -40,6 +42,15 @@ public class SubastaProcedimientoManager implements SubastaProcedimientoApi {
 	@Autowired
 	private GenericABMDao genericDao;	
 
+	@Autowired
+	private UtilDiccionarioApi diccionarioApi;
+	
+	@Autowired
+	ProcedimientoManager procedimientoManager;
+	
+	public LoteSubasta getLoteSubasta(Long idLote) {
+		return genericDao.get(LoteSubasta.class, genericDao.createFilter(FilterType.EQUALS, "id", idLote), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+	}
 
 	@Override
 	@Transactional(readOnly = false)
@@ -361,41 +372,7 @@ public class SubastaProcedimientoManager implements SubastaProcedimientoApi {
 				comboComite =  val.getValor();
 			}
 		}	
-		
-		//C - H
-
-		Boolean cesionRemateRequierePreparacion = false;
-		Boolean cesionRemateNoRequierePreparacion = false;
-		Boolean todosBienesCesionRemate = true;
-		List<Bien> listadoBienes = getBienesSubastaByPrcId(prc.getId());
-		for(Bien b : listadoBienes){
-			if(b instanceof NMBBien){
-				NMBBien bien = (NMBBien) b;
-				if(!Checks.esNulo(bien.getAdjudicacion().getCesionRemate()) && bien.getAdjudicacion().getCesionRemate() && "01".equals(comboComite)){
-					cesionRemateRequierePreparacion = true;
-				}
-				if(!Checks.esNulo(bien.getAdjudicacion().getCesionRemate()) && bien.getAdjudicacion().getCesionRemate() && "02".equals(comboComite)){
-					cesionRemateNoRequierePreparacion = true;
-				}
-				if(!Checks.esNulo(bien.getAdjudicacion().getEntidadAdjudicataria())){
-					if(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo().compareTo(DDEntidadAdjudicataria.ENTIDAD) == 0){
-						bienAdjuEntidad = true;
-					}
-					else{
-						bienAdjuTerceroFondo = true;
-					}
-				}
-				if(todosBienesCesionRemate && !Checks.esNulo(bien.getAdjudicacion().getCesionRemate()) && bien.getAdjudicacion().getCesionRemate()){
-					todosBienesCesionRemate = true;
-				}
-				else{
-					todosBienesCesionRemate = false;
-				}
-			}
-		}
-		
-		//Cesion de remate
-		
+			
 		
 		/////////////////
 		if("02".equals(celebrada)){		
@@ -410,6 +387,40 @@ public class SubastaProcedimientoManager implements SubastaProcedimientoApi {
 				return resultado;
 			}
 		} else{
+			
+			//C - H
+
+			Boolean cesionRemateRequierePreparacion = false;
+			Boolean cesionRemateNoRequierePreparacion = false;
+			Boolean todosBienesCesionRemate = true;
+			List<Bien> listadoBienes = getBienesSubastaByPrcId(prc.getId());
+			for(Bien b : listadoBienes){
+				if(b instanceof NMBBien){
+					NMBBien bien = (NMBBien) b;
+					if(!Checks.esNulo(bien.getAdjudicacion()) && !Checks.esNulo(bien.getAdjudicacion().getCesionRemate()) && bien.getAdjudicacion().getCesionRemate() && "01".equals(comboComite)){
+						cesionRemateRequierePreparacion = true;
+					}
+					if(!Checks.esNulo(bien.getAdjudicacion()) && !Checks.esNulo(bien.getAdjudicacion().getCesionRemate()) && bien.getAdjudicacion().getCesionRemate() && "02".equals(comboComite)){
+						cesionRemateNoRequierePreparacion = true;
+					}
+					if(!Checks.esNulo(bien.getAdjudicacion()) && !Checks.esNulo(bien.getAdjudicacion().getEntidadAdjudicataria())){
+						if(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo().compareTo(DDEntidadAdjudicataria.ENTIDAD) == 0){
+							bienAdjuEntidad = true;
+						}
+						else{
+							bienAdjuTerceroFondo = true;
+						}
+					}
+					if(todosBienesCesionRemate && !Checks.esNulo(bien.getAdjudicacion()) && !Checks.esNulo(bien.getAdjudicacion().getCesionRemate()) && bien.getAdjudicacion().getCesionRemate()){
+						todosBienesCesionRemate = true;
+					}
+					else{
+						todosBienesCesionRemate = false;
+					}
+				}
+			}
+			
+			//Cesion de remate
 			
 			//C - Preparar cesión remate
 			//D - Cesión de remate
@@ -447,7 +458,7 @@ public class SubastaProcedimientoManager implements SubastaProcedimientoApi {
 		return resultado;
 	}
 	
-	private List<Bien> getBienesSubastaByPrcId(Long prcId){
+	public List<Bien> getBienesSubastaByPrcId(Long prcId){
 		// Buscamos primero la subasta asociada al prc
 		Subasta sub = genericDao.get(Subasta.class, genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", prcId), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 		
@@ -577,4 +588,27 @@ public class SubastaProcedimientoManager implements SubastaProcedimientoApi {
 		return true;
 	}
 	
+	/**
+	 * Funcion que valida si entre los bienes de una subasta adjudicados a terceros
+	 * existe alguno que no sea vivienda habitual.
+	 */
+	@Override
+	@BusinessOperation(BO_SUBASTA_NO_VIVIENDA_HABITUAL_TERCEROS)
+	public boolean isNotViviendaHabitualAdjTerceros(Long prcId){
+		
+		List<Bien> listadoBienes = getBienesSubastaByPrcId(prcId);
+		for(Bien bien: listadoBienes) {
+			
+			NMBBien nmbBien = (NMBBien) bien;
+			if(!Checks.esNulo(nmbBien.getAdjudicacion()) && 
+					!Checks.esNulo(nmbBien.getAdjudicacion().getEntidadAdjudicataria()) &&
+					DDEntidadAdjudicataria.TERCEROS.equals(nmbBien.getAdjudicacion().getEntidadAdjudicataria().getCodigo())){
+				if (!("1".equals(nmbBien.getViviendaHabitual()))) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 }

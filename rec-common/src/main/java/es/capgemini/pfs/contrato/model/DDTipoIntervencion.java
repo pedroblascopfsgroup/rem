@@ -28,6 +28,7 @@ public class DDTipoIntervencion implements Dictionary, Auditable {
     public static final String CODIGO_AVALISTA = "03";
     public static final String CODIGO_AVALISTA_NO_SOLIDARIO = "04";
     public static final String CODIGO_AVALISTA_SUBSIDIARIO = "19";*/
+    public static final String CODIGO_TITULAR_REGISTRAL = "205";
 
     @Id
     @Column(name = "DD_TIN_ID")

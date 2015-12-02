@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="hcj_tramiteIntereses" width="1113" height="952">
+  <node name="Inicio" x="12" y="11" width="132" height="36">
+    <edge>
+      <label x="-60" y="-8"/>
+    </edge>
+  </node>
+  <node name="H042_ElaborarLiquidacion" x="259" y="14" width="200" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="479" h1="-36" w2="-26" h2="-304"/>
+    </edge>
+  </node>
+  <node name="H042_RegistrarResolucion" x="246" y="248" width="227" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-18" y="-31"/>
+      <bendpoint w1="-127" h1="-42" w2="-125" h2="35"/>
+    </edge>
+  </node>
+  <node name="H042_ConfirmarNotificacion" x="242" y="357" width="233" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-41" y="-4"/>
+      <bendpoint w1="-113" h1="-42" w2="-118" h2="37"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="ConfirmarNotificacionDecision" x="238" y="467" width="247" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-10" y="-14"/>
+    </edge>
+  </node>
+  <node name="H042_BPMTramiteNotificacion" x="571" y="462" width="201" height="36">
+    <edge>
+      <label x="-158" y="-19"/>
+      <bendpoint w1="-4" h1="75" w2="288" h2="0"/>
+    </edge>
+  </node>
+  <node name="H042_RegistrarImpugnacion" x="276" y="537" width="206" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-22" y="-32"/>
+      <bendpoint w1="-245" h1="-65" w2="-262" h2="81"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="444" h1="81" w2="-65" h2="214"/>
+    </edge>
+  </node>
+  <node name="RegistrarImpugnacionDecision" x="280" y="609" width="208" height="36">
+    <edge>
+      <label x="-8" y="-15"/>
+    </edge>
+    <edge>
+      <label x="30" y="-179"/>
+      <bendpoint w1="-13" h1="189" w2="141" h2="-71"/>
+      <bendpoint w1="-15" h1="220" w2="139" h2="-40"/>
+    </edge>
+  </node>
+  <node name="H042_InteresesDecision" x="457" y="862" width="206" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="301" h1="-7" w2="-8" h2="275"/>
+    </edge>
+  </node>
+  <node name="H042_RegistrarVista" x="147" y="680" width="164" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="6" y="-26"/>
+      <bendpoint w1="0" h1="-68" w2="-207" h2="2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="421" h1="2" w2="-379" h2="352"/>
+    </edge>
+  </node>
+  <node name="H042_RegistrarResolucionVista" x="133" y="773" width="211" height="36">
+    <edge>
+      <label x="-33" y="-17"/>
+    </edge>
+    <edge>
+      <label x="-54" y="-26"/>
+      <bendpoint w1="-107" h1="-6" w2="-98" h2="87"/>
+      <bendpoint w1="-155" h1="-75" w2="-156" h2="20"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="806" h1="-18" w2="144" h2="415"/>
+    </edge>
+  </node>
+  <node name="H042_ResolucionFirme" x="109" y="869" width="243" height="36">
+    <edge>
+      <label x="-48" y="-18"/>
+    </edge>
+    <edge>
+      <label x="14" y="-44"/>
+      <bendpoint w1="-202" h1="-38" w2="-210" h2="58"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="204" h1="31" w2="-595" h2="570"/>
+      <bendpoint w1="270" h1="44" w2="-529" h2="583"/>
+      <bendpoint w1="542" h1="-1" w2="-257" h2="538"/>
+    </edge>
+  </node>
+  <node name="Fin" x="963" y="330" width="132" height="36"/>
+  <node name="H042_SolicitarLiquidacion" x="253" y="132" width="213" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-188" h1="-58" w2="-188" h2="60"/>
+    </edge>
+  </node>
+</root-container>

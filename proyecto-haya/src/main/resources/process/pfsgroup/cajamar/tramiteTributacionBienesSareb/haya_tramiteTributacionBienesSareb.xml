@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="" name="hcj_tramiteTributacionBienesSareb">
+
+	<start-state name="Inicio">
+		<transition to="H054_ValidaBienesTributacion" name="avanzaBPM"></transition>
+	</start-state>
+
+
+	<state name="H054_ValidaBienesTributacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="H054_ValidaBienesTributacion" name="activarAlerta"></transition>
+		<transition to="H054_ValidaBienesTributacionDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<decision name="H054_ValidaBienesTributacionDecision" expression="#{H054_ValidaBienesTributacionDecision}">
+		<transition to="H054_EmisionInformeFiscal" name="NO"></transition>
+		<transition to="Fin" name="SI"></transition>
+	</decision>
+
+	<state name="H054_EmisionInformeFiscal">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="H054_EmisionInformeFiscal" name="activarAlerta"></transition>
+		<transition to="H054_EmisionInformeFiscalDecision" name="avanzaBPM"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+		<transition to="H054_ValidaBienesTributacion" name="vueltaAtras"></transition>
+	</state>
+
+	<decision name="H054_EmisionInformeFiscalDecision" expression="#{H054_EmisionInformeFiscalDecision}">
+		<transition to="H054_ConfirmarComEmpresario" name="NoDeducible"></transition>
+		<transition to="H054_fork1" name="Deducible"></transition>
+		<transition to="Fin" name="ITP_IGIC"></transition>
+	</decision>
+
+	<fork name="H054_fork1">
+		<transition to="H054_PresentarEscritoJuzgado" name="Presentar_escrito"></transition>
+		<transition to="H054_ConfirmarComEmpresario" name="Confirmar_comunicacion"></transition>
+	</fork>
+
+	<state name="H054_ConfirmarComEmpresario">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="H054_ConfirmarComEmpresario" name="activarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+		<transition to="Fin2" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="H054_PresentarEscritoJuzgado">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="H054_PresentarEscritoJuzgado" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</state>
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+	<end-state name="Fin2">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+
+</process-definition>

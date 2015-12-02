@@ -13,6 +13,7 @@
     <input name="definitivoTipoCredito" type="java.lang.Long"/>
     <input name="definitivoPrincipal" type="java.lang.Float"/>
     <input name="estadoCredito" type="java.lang.Long"/>
+    <input name="fechaVencimiento" type="java.lang.String"/>
     
     <decision-state id="decision">
 		<if test="(banderaEntrada != '1')" then="formulario" else="guardar"/>

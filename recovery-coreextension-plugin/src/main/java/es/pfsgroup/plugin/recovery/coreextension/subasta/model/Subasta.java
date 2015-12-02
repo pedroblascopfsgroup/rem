@@ -136,6 +136,17 @@ public class Subasta implements Serializable, Auditable {
 
 	@Version
 	private Integer version;
+
+	@Column(name="SYS_GUID")
+	private String guid;
+	
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
 	
 	//Atributo que nos dice si alguno de los bienes de la subasta est� embargado
     @Formula(value = " ( select case when ( select count(ls.sub_id) "

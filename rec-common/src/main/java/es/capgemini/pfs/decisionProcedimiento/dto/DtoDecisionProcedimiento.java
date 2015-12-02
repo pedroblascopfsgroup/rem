@@ -1,7 +1,10 @@
 package es.capgemini.pfs.decisionProcedimiento.dto;
 
+import java.util.List;
+
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
+import org.springframework.util.AutoPopulatingList;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.validation.ErrorMessageUtils;
@@ -19,12 +22,11 @@ public class DtoDecisionProcedimiento extends WebDto {
      * serialVersionUID.
      */
     private static final long serialVersionUID = -390516773716052924L;
-    private static final int N = 10;
     private DecisionProcedimiento decisionProcedimiento;
     private Long idProcedimiento;
     private String causaDecision;
     private String strEstadoDecision;
-    private DtoProcedimientoDerivado[] procedimientosDerivados;
+    private List<DtoProcedimientoDerivado> procedimientosDerivados;
     private Boolean finalizar;
     private Boolean paralizar;
 
@@ -32,12 +34,7 @@ public class DtoDecisionProcedimiento extends WebDto {
      * constructor.
      */
     public DtoDecisionProcedimiento() {
-        // inicializa array de procedimientos derivados
-        procedimientosDerivados = new DtoProcedimientoDerivado[N];
-        for (int i = 0; i < N; i++) {
-            procedimientosDerivados[i] = new DtoProcedimientoDerivado();
-        }
-
+        procedimientosDerivados = new AutoPopulatingList(DtoProcedimientoDerivado.class);
         paralizar = false;
         finalizar = false;
     }
@@ -137,7 +134,7 @@ public class DtoDecisionProcedimiento extends WebDto {
     /**
      * @return the procedimientosDerivados
      */
-    public DtoProcedimientoDerivado[] getProcedimientosDerivados() {
+    public List<DtoProcedimientoDerivado> getProcedimientosDerivados() {
         return procedimientosDerivados;
     }
 
@@ -145,7 +142,7 @@ public class DtoDecisionProcedimiento extends WebDto {
      * @param procedimientosDerivados
      *            the procedimientosDerivados to set
      */
-    public void setProcedimientosDerivados(DtoProcedimientoDerivado[] procedimientosDerivados) {
+    public void setProcedimientosDerivados(List<DtoProcedimientoDerivado> procedimientosDerivados) {
         this.procedimientosDerivados = procedimientosDerivados;
     }
 

@@ -122,9 +122,9 @@
 	var localidad_valor = '';
 	var unidadPoblacional_valor = '';
 	<c:if test="${NMBbien.localizacionActual!=null}">
-		provincia_valor = '${NMBbien.localizacionActual.provincia.descripcion}';
-		localidad_valor = '${NMBbien.localizacionActual.localidad.descripcion}';
-		unidadPoblacional_valor = '${NMBbien.localizacionActual.unidadPoblacional.descripcion}';
+		provincia_valor = '<s:message javaScriptEscape="true" text="${NMBbien.localizacionActual.provincia.descripcion}" />';
+		localidad_valor = '<s:message javaScriptEscape="true" text="${NMBbien.localizacionActual.localidad.descripcion}" />';
+		unidadPoblacional_valor = '<s:message javaScriptEscape="true" text="${NMBbien.localizacionActual.unidadPoblacional.descripcion}" />';
 	</c:if>
 	var poblacion			= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.poblacion" text="**Población"/>', '<s:message javaScriptEscape="true" text="${NMBbien.localizacionActual.poblacion}" />',{labelStyle:labelStyle});
 	var codPostal			= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.codPostal" text="**Cod. Postal"/>','${NMBbien.localizacionActual.codPostal}',{labelStyle:labelStyle});

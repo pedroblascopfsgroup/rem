@@ -104,9 +104,27 @@ var crearActuacionesAExplorar=function(){
 	   });
    </c:if>
 
-   var actuacionesAExplorarGrid = app.crearGrid(actuacionesStore,cmActuacionesAExplorar,{
-         title : '&nbsp;'
+<!--    var actuacionesAExplorarGrid = app.crearGrid(actuacionesStore,cmActuacionesAExplorar,{ -->
+<!--          title : '&nbsp;' -->
+<%--          <app:test id="actuacionesGrid" addComa="true" /> --%>
+<!--          ,style:'padding-right:10px' -->
+<!--          ,autoHeight : true -->
+<!-- 		 ,border:true -->
+<!-- 		 ,margin:90 -->
+<!--          ,cls:'cursor_pointer' -->
+<!--          ,sm: new Ext.grid.RowSelectionModel({singleSelect:true}) -->
+<!--          ,bbar : [ -->
+<%-- 	        <c:if test="${puedeEditar}"> --%>
+<!-- 	        	btnEditActuacionAExplorar -->
+<%-- 	        </c:if> --%>
+<!-- 	     ] -->
+<!--    });  -->
+   
+   var actuacionesAExplorarGrid = new Ext.grid.GridPanel({
+            title : '&nbsp;'
          <app:test id="actuacionesGrid" addComa="true" />
+         ,store:actuacionesStore
+		 ,cm:cmActuacionesAExplorar 
          ,style:'padding-right:10px'
          ,autoHeight : true
 		 ,border:true
@@ -118,7 +136,7 @@ var crearActuacionesAExplorar=function(){
 	        	btnEditActuacionAExplorar
 	        </c:if>
 	     ]
-   }); 
+   });
 
    actuacionesAExplorarGrid.on('rowclick', function(grid, rowIndex, e) {
    		var rec = grid.getStore().getAt(rowIndex);

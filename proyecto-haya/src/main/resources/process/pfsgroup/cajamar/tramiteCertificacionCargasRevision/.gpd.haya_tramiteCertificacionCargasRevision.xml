@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="hcj_tramiteCertificacionCargasRevision" width="1486" height="877">
+  <node name="Inicio" x="435" y="6" width="150" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H030_SolicitarInformacionCargasAnt" x="383" y="265" width="261" height="36">
+    <edge>
+      <label x="-3" y="4"/>
+    </edge>
+    <edge>
+      <label x="-67" y="-4"/>
+    </edge>
+    <edge>
+      <label x="-42" y="-24"/>
+      <bendpoint w1="255" h1="2" w2="180" h2="-454"/>
+    </edge>
+  </node>
+  <node name="H030_SolicitudCertificacion" x="402" y="74" width="221" height="36">
+    <edge>
+      <label x="-76" y="8"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-36" y="7"/>
+      <bendpoint w1="383" h1="-3" w2="0" h2="-201"/>
+    </edge>
+  </node>
+  <node name="H030_RegistrarCertificacion" x="410" y="151" width="208" height="36">
+    <edge>
+      <label x="-49" y="-3"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="317" h1="-1" w2="-64" h2="-122"/>
+    </edge>
+    <edge>
+      <label x="31" y="-10"/>
+      <bendpoint w1="-217" h1="-35" w2="-215" h2="42"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H030_SolicitarInformacionCargasAntDecision" x="370" y="357" width="286" height="36">
+    <edge>
+      <label x="-24" y="-24"/>
+      <bendpoint w1="552" h1="51" w2="107" h2="-200"/>
+      <bendpoint w1="555" h1="254" w2="110" h2="3"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H030_RegistrarInformacionCargasAnt" x="378" y="431" width="264" height="36">
+    <edge>
+      <label x="-6" y="6"/>
+    </edge>
+    <edge>
+      <label x="-69" y="-11"/>
+    </edge>
+    <edge>
+      <label x="-29" y="-20"/>
+      <bendpoint w1="381" h1="-2" w2="-1" h2="164"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="204" h1="-50" w2="201" h2="116"/>
+      <bendpoint w1="204" h1="-111" w2="201" h2="55"/>
+    </edge>
+  </node>
+  <node name="H030_CertificacionDecision" x="861" y="608" width="194" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="0" h1="114" w2="337" h2="-1"/>
+    </edge>
+  </node>
+  <node name="H030_RegistrarInformacionCargasAntDecision" x="361" y="525" width="296" height="36">
+    <edge>
+      <label x="-35" y="-19"/>
+    </edge>
+    <edge>
+      <label x="9" y="-13"/>
+    </edge>
+  </node>
+  <node name="H030_RequerirInfoFalta" x="426" y="605" width="167" height="36">
+    <edge>
+      <label x="-45" y="-3"/>
+    </edge>
+    <edge>
+      <label x="65" y="91"/>
+      <bendpoint w1="-243" h1="0" w2="-246" h2="174"/>
+      <bendpoint w1="-243" h1="-175" w2="-246" h2="-3"/>
+    </edge>
+    <edge>
+      <label x="5" y="-12"/>
+    </edge>
+    <edge>
+      <label x="3" y="1"/>
+      <bendpoint w1="-231" h1="-49" w2="-232" h2="125"/>
+      <bendpoint w1="-231" h1="-114" w2="-232" h2="60"/>
+    </edge>
+  </node>
+  <node name="H030_ActualizarDatosTerceria" x="735" y="526" width="204" height="36">
+    <edge>
+      <label x="-98" y="3"/>
+    </edge>
+    <edge>
+      <label x="7" y="4"/>
+      <bendpoint w1="113" h1="-2" w2="-1" h2="-103"/>
+    </edge>
+    <edge>
+      <label x="-22" y="-47"/>
+      <bendpoint w1="1" h1="118" w2="180" h2="0"/>
+    </edge>
+  </node>
+  <node name="Fin2" x="947" y="266" width="132" height="36"/>
+  <node name="Fin" x="441" y="749" width="132" height="36"/>
+</root-container>

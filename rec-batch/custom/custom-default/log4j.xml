@@ -55,6 +55,12 @@
         <appender-ref ref="file" />
         <appender-ref ref="email" />
     </logger>
+    <logger name="es.pfsgroup" additivity="false">
+        <level value="info"/> 
+        <appender-ref ref="console" />
+        <appender-ref ref="file" />
+        <appender-ref ref="email" />
+    </logger>
     
     <!-- Spring -->
     <logger name="org.springframework.aop.framework.Cglib2AopProxy" additivity="false">

@@ -62,6 +62,63 @@
 				<value>P401</value>
 			</list>
 		</property>
+                
+		<property name="codigoSubastaBankia">
+				<value>P401</value>
+		</property>
+		
+		<property name="valorHonorarios">
+				<value>costasLetrado</value>
+		</property>
+		
+		<property name="valorDerechosSuplidos">
+				<value>costasProcurador</value>
+		</property>
+		
+		<property name="fechaDemandaHipotecario">
+				<value>fechaSolicitud</value>
+		</property>
+		
+		<property name="fechaDemandaMonitorio">
+				<value>fechaSolicitud</value>
+		</property>
+		
+		<property name="fechaDemandaOrdinario">
+				<value>fecha</value>
+		</property>
+		
+		<property name="codigoTareaDemandaHipotecario">
+				<value>P01_DemandaCertificacionCargas</value>
+		</property>
+		
+		<property name="codigoTareaDemandaMonitorio">
+				<value>P02_InterposicionDemanda</value>
+		</property>
+		
+		<property name="codigoTareaDemandaOrdinario">
+				<value>P03_InterposicionDemanda</value>
+		</property>
+		
+		<property name="codigoHipotecario">
+				<value>P01</value>
+		</property>
+		
+		<property name="codigoMonitorio">
+				<value>P02</value>
+		</property>
+		
+		<property name="codigoOrdinario">
+				<value>P03</value>
+		</property>
+		
+		<property name="codigosTareasSenyalamiento">
+			<list>
+				<value>P409_SenyalamientoSubasta</value>
+			</list>
+		</property>
+		<property name = "plantillaReportPropuestaCancelacionCargas">
+			<value>reportPropuestaCancelacionCargas.jrxml</value>
+		</property>
 	</bean>	
 	
 	<!-- Implementaciones por defecto-->

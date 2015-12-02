@@ -10,7 +10,9 @@ public class TerminoAcuerdoDto extends WebDto{
 	private Long idAcuerdo;
 	
 	private Long idTipoAcuerdo;
-			
+	
+	private Long idSubTipoAcuerdo;
+
 	private Long idTipoProducto;
 	
 	private String modoDesembolso;
@@ -45,6 +47,14 @@ public class TerminoAcuerdoDto extends WebDto{
 
 	public Long getIdTipoAcuerdo() {
 		return idTipoAcuerdo;
+	}
+	
+	public Long getIdSubTipoAcuerdo() {
+		return idSubTipoAcuerdo;
+	}
+
+	public void setIdSubTipoAcuerdo(Long idSubTipoAcuerdo) {
+		this.idSubTipoAcuerdo = idSubTipoAcuerdo;
 	}
 
 	public void setIdTipoAcuerdo(Long idTipoAcuerdo) {

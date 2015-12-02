@@ -31,12 +31,14 @@ import es.capgemini.pfs.expediente.model.AdjuntoExpediente;
 import es.capgemini.pfs.persona.model.AdjuntoPersona;
 import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
+import es.capgemini.pfs.users.FuncionManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.mejoras.PluginMejorasBOConstants;
+import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.MEJDecisionProcedimientoManager;
 import es.pfsgroup.plugin.recovery.mejoras.devolucionAsunto.dao.MEJAsuntoDao;
 import es.pfsgroup.plugin.recovery.mejoras.devolucionAsunto.dao.MEJFichaAceptacionDao;
 import es.pfsgroup.plugin.recovery.mejoras.devolucionAsunto.dao.MEJObservacionAceptacionDao;
@@ -69,12 +71,15 @@ public class MEJAsuntosManager {
 
 	@Resource
 	private MessageService messageService;
+	
+	@Autowired
+	private FuncionManager funcionManager;
 
 	/**
 	 * 
 	 * @param id
 	 *            del objeto AdjuntoExpediente
-	 * @return el objeto AdjuntoExpediente cuyo id coincide con el par醡etro que
+	 * @return el objeto AdjuntoExpediente cuyo id coincide con el par谩metro que
 	 *         se le pasa
 	 * 
 	 */
@@ -89,8 +94,8 @@ public class MEJAsuntosManager {
 	 * 
 	 * @param id
 	 *            del objeto AdjuntoContrato
-	 * @return el objeto AdjuntoContrato cuyo id coincide con el par醡etro que
-	 *         se le pasa como par醡etro
+	 * @return el objeto AdjuntoContrato cuyo id coincide con el par谩metro que
+	 *         se le pasa como par谩metro
 	 */
 	@BusinessOperation(PluginMejorasBOConstants.MEJ_BO_GET_ADJUNTO_CONTRATO)
 	public AdjuntoContrato getAdjuntoContratoById(Long id) {
@@ -142,7 +147,7 @@ public class MEJAsuntosManager {
 	/**
 	 * 
 	 * @param dto
-	 *            de edici髇 de adjuntos guarda lo la descripci髇 en el adjunto
+	 *            de edici贸n de adjuntos guarda lo la descripci贸n en el adjunto
 	 *            del expediente
 	 */
 	@BusinessOperation(PluginMejorasBOConstants.MEJ_BO_GUARDA_ADJUNTO_CONTRATO)
@@ -162,7 +167,7 @@ public class MEJAsuntosManager {
 	/**
 	 * 
 	 * @param dto
-	 *            de edici髇 de adjuntos guarda lo la descripci髇 en el adjunto
+	 *            de edici贸n de adjuntos guarda lo la descripci贸n en el adjunto
 	 *            de la persona
 	 */
 	@BusinessOperation(PluginMejorasBOConstants.MEJ_BO_GUARDA_ADJUNTO_PERSONA)
@@ -182,7 +187,7 @@ public class MEJAsuntosManager {
 	/**
 	 * 
 	 * @param dto
-	 *            de edici髇 de adjuntos de expedientes guarda lo la descripci髇
+	 *            de edici贸n de adjuntos de expedientes guarda lo la descripci贸n
 	 *            en el adjunto del expediente
 	 */
 	@BusinessOperation(PluginMejorasBOConstants.MEJ_BO_GUARDA_ADJUNTO_EXPEDIENTE)
@@ -299,7 +304,7 @@ public class MEJAsuntosManager {
 								SubtipoTarea.CODIGO_ACEPTAR_ASUNTO_SUPERVISOR);
 				tarea.setSubtipoTarea(subtipoTarea);
 				tarea.setDescripcionTarea(tarea.getDescripcionTarea().replace(
-						"Aceptaci髇", "Devoluci髇"));
+						"Aceptaci贸n", "Devoluci贸n"));
 				executor.execute(
 						ComunBusinessOperation.BO_TAREA_MGR_SAVE_OR_UPDATE,
 						tarea);
@@ -311,7 +316,7 @@ public class MEJAsuntosManager {
 								SubtipoTarea.CODIGO_ACEPTAR_ASUNTO_GESTOR);
 				tarea.setSubtipoTarea(subtipoTarea);
 				tarea.setDescripcionTarea(tarea.getDescripcionTarea().replace(
-						"Devoluci髇", "Aceptaci髇"));
+						"Devoluci贸n", "Aceptaci贸n"));
 				executor.execute(
 						ComunBusinessOperation.BO_TAREA_MGR_SAVE_OR_UPDATE,
 						tarea);
@@ -417,6 +422,14 @@ public class MEJAsuntosManager {
 	@BusinessOperation(PluginMejorasBOConstants.MEJ_MGR_ASUNTO_TABS_FAST)
 	public List<DynamicElement> getTabsFast() {
 		return tabManager.getDynamicElements("tabs.asunto.fast", null);
+	}
+	
+	//TODO - Falta terminar de implementar
+	@BusinessOperation(PluginMejorasBOConstants.MEJ_BO_PUEDE_FINALIZAR_ASUNTO)
+	public boolean puedoFinalizarAsunto(Long idAsunto) {
+		Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
+		boolean tieneFuncionFinalizar = funcionManager.tieneFuncion(usuario, MEJDecisionProcedimientoManager.FUNCION_FINALIZAR_ASUNTOS);
+		return tieneFuncionFinalizar;
 	}
 
 }

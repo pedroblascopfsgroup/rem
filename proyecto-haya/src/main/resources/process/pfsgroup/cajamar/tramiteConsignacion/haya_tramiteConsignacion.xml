@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition  xmlns=""  name="hcj_tramiteConsignacion">
+
+
+	<start-state name="Inicio">
+		<transition to="H064_solicitarAutorizacionConsignacionSareb" name="IniciarProceso"></transition>
+	</start-state>
+
+
+	<state name="H064_solicitarAutorizacionConsignacionSareb">
+		<event type="node-enter">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H064_solicitarAutorizacionConsignacionSareb" name="activarAlerta"></transition>
+		<transition to="H064_resultadoSolicitudConsignacion" name="avanzaBPM"></transition>
+		
+	</state>
+
+	<state name="H064_resultadoSolicitudConsignacion">
+		<event type="node-enter">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H064_resultadoSolicitudConsignacion" name="activarAlerta"></transition>
+		<transition to="H064_resultadoSolicitudConsignacionDecision" name="avanzaBPM"></transition>
+		<transition to="H064_solicitarAutorizacionConsignacionSareb" name="vueltaAtras"></transition>
+	</state>
+
+	<state name="H064_confirmarRealizacionConsignacion">
+		<event type="node-enter">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H064_confirmarRealizacionConsignacion" name="activarAlerta"></transition>
+		<transition to="H064_presentacionJuzgado" name="avanzaBPM"></transition>
+		<transition to="H064_resultadoSolicitudConsignacion" name="vueltaAtras"></transition>
+	</state>
+
+	<state name="H064_presentacionJuzgado">
+		<event type="node-enter">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H064_presentacionJuzgado" name="activarAlerta"></transition>
+		<transition to="H064_confirmarRealizacionConsignacion" name="vueltaAtras"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</state>
+
+	<decision name="H064_resultadoSolicitudConsignacionDecision" expression="#{H064_resultadoSolicitudConsignacionDecision}">
+		<transition to="H064_confirmarRealizacionConsignacion"
+			name="aceptado">
+		</transition>
+		<transition to="Fin" name="denegado"></transition>
+	</decision>
+
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+
+</process-definition>

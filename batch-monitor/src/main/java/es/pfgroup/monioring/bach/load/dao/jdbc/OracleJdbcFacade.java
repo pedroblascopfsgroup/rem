@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 /**
- * Fachada con las operaciones mÃ¡s comunes para conectar por JDBC a Oracle.
+ * Fachada con las operaciones m�s comunes para conectar por JDBC a Oracle.
  * 
  * @author bruno
  * 

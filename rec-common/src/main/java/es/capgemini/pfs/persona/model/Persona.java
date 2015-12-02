@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -30,15 +29,17 @@ import javax.persistence.Version;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.LazyToOne;
+import org.hibernate.annotations.LazyToOneOption;
 import org.hibernate.annotations.Where;
+import org.hibernate.bytecode.javassist.FieldHandled;
+import org.hibernate.bytecode.javassist.FieldHandler;
 import org.springframework.context.support.AbstractMessageSource;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.antecedente.model.Antecedente;
 import es.capgemini.pfs.antecedenteinterno.model.AntecedenteInterno;
-import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
@@ -50,8 +51,6 @@ import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.contrato.model.DDEstadoFinanciero;
 import es.capgemini.pfs.contrato.model.DDTipoProducto;
 import es.capgemini.pfs.direccion.model.Direccion;
-import es.capgemini.pfs.expediente.model.DDEstadoExpediente;
-import es.capgemini.pfs.expediente.model.DDTipoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.grupoCliente.model.PersonaGrupo;
@@ -82,10 +81,13 @@ import es.pfsgroup.recovery.ext.impl.visibilidad.model.EXTVisibilidad;
 @Entity
 @Table(name = "PER_PERSONAS", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Persona implements Serializable, Auditable, Describible {
+public class Persona implements Serializable, Auditable, Describible, FieldHandled {
 
 	private static final long serialVersionUID = -8396558940802574504L;
 	public static final String PERSONA_ID_KEY = "personaId";
+
+	@Transient
+	private FieldHandler fieldHandler;
 
 	@Id
 	@Column(name = "PER_ID")
@@ -148,14 +150,6 @@ public class Persona implements Serializable, Auditable, Describible {
 
 	@Column(name = "PER_FECHA_CREACION")
 	private Date fechaCreacion;
-
-	// @OneToOne(fetch = FetchType.LAZY)
-	// @JoinColumn(name = "PER_ECV",referencedColumnName="DD_ECV_ID")
-	// @Column(name = "PER_ECV")
-	@Formula(value = "(select est.dd_ecv_descripcion from per_personas c, DD_ECV_ESTADO_CICLO_VIDA est "
-			+ " WHERE trim(c.per_ecv) = trim(est.dd_ecv_codigo) and c.borrado = 0 "
-			+ " and c.per_id = PER_ID)")
-	private String estadoCicloVida;
 
 	@Column(name = "PER_ECV")
 	private String ecv;
@@ -273,7 +267,7 @@ public class Persona implements Serializable, Auditable, Describible {
 	@JoinColumn(name = "DD_TIPO_TELEFONO_4")
 	private DDTipoTelefono tipoTelefono4;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "DD_TIPO_TELEFONO_5")
 	private DDTipoTelefono tipoTelefono5;
 
@@ -385,43 +379,6 @@ public class Persona implements Serializable, Auditable, Describible {
 	@Column(name = "PER_FINCA_REV_SOLVENCIA")
 	private boolean noTieneFincabilidad;
 
-	@Formula(value = "(select FLOOR(SYSDATE-MIN(MOV.MOV_FECHA_POS_VENCIDA)) FROM CPE_CONTRATOS_PERSONAS CPE, CNT_CONTRATOS CNT, MOV_MOVIMIENTOS MOV "
-			+ " WHERE CPE.CNT_ID = CNT.CNT_ID AND CNT.CNT_ID = MOV.CNT_ID AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION "
-			+ " and cpe.dd_tin_id in (select tipo.dd_tin_id from dd_tin_tipo_intervencion tipo where tipo.dd_tin_titular = 1) "
-			+ " AND CPE.PER_ID = PER_ID)")
-	private Integer diasVencidoRiegoDirecto;
-
-	@Formula(value = "(select FLOOR(SYSDATE-MIN(MOV.MOV_FECHA_POS_VENCIDA)) FROM CPE_CONTRATOS_PERSONAS CPE, CNT_CONTRATOS CNT, MOV_MOVIMIENTOS MOV "
-			+ " WHERE CPE.CNT_ID = CNT.CNT_ID AND CNT.CNT_ID = MOV.CNT_ID AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION "
-			+ " and cpe.dd_tin_id in (select tipo.dd_tin_id from dd_tin_tipo_intervencion tipo where tipo.dd_tin_titular = 0) "
-			+ " AND CPE.PER_ID = PER_ID)")
-	private Integer diasVencidoRiegoIndirecto;
-
-	@Formula(value = "(select sum(MOV.mov_pos_viva_vencida + MOV.mov_pos_viva_no_vencida)"
-			+ " FROM CPE_CONTRATOS_PERSONAS CPE, CNT_CONTRATOS CNT, MOV_MOVIMIENTOS MOV"
-			+ " WHERE CPE.CNT_ID = CNT.CNT_ID AND CNT.CNT_ID = MOV.CNT_ID AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION"
-			+ " and cpe.per_id = PER_ID)")
-	private Float riesgoTot;
-
-	@Formula(value = "(select sum(MOV.mov_pos_viva_vencida + MOV.mov_pos_viva_no_vencida)"
-			+ " FROM CPE_CONTRATOS_PERSONAS CPE, CNT_CONTRATOS CNT, MOV_MOVIMIENTOS MOV"
-			+ " WHERE CPE.CNT_ID = CNT.CNT_ID AND CNT.CNT_ID = MOV.CNT_ID AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION"
-			+ " and cpe.dd_tin_id in (select tipo.dd_tin_id from dd_tin_tipo_intervencion tipo where tipo.dd_tin_titular = 1)"
-			+ " and cpe.per_id = PER_ID)")
-	private Float riesgoTotalDirecto;
-
-	@Formula(value = "(select sum(MOV.mov_pos_viva_vencida + MOV.mov_pos_viva_no_vencida)"
-			+ " FROM CPE_CONTRATOS_PERSONAS CPE, CNT_CONTRATOS CNT, MOV_MOVIMIENTOS MOV"
-			+ " WHERE CPE.CNT_ID = CNT.CNT_ID AND CNT.CNT_ID = MOV.CNT_ID AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION"
-			+ " and cpe.dd_tin_id in (select tipo.dd_tin_id from dd_tin_tipo_intervencion tipo where tipo.dd_tin_titular = 0)"
-			+ " and cpe.per_id = PER_ID)")
-	private Float riesgoTotalIndirecto;
-
-	@Formula(value = "(select est.dd_est_descripcion from cli_clientes c,${master.schema}.DD_EST_ESTADOS_ITINERARIOS est "
-			+ " WHERE c.dd_est_id = est.dd_est_id and c.borrado = 0 "
-			+ " and c.per_id = PER_ID)")
-	private String situacionCliente;
-
 	@Transient
 	private static final long DAY_MILISECONDS = 1000 * 60 * 60 * 24;
 
@@ -470,147 +427,6 @@ public class Persona implements Serializable, Auditable, Describible {
 
 	@Column(name = "PER_NUM_CONTRATOS")
 	private Integer numContratos;
-
-	// ************************************** //
-	// *** F�RMULAS *** //
-	// ************************************** //
-
-	@Formula(value = "(select FLOOR(SYSDATE-MIN(MOV.MOV_FECHA_POS_VENCIDA)) FROM CPE_CONTRATOS_PERSONAS CPE, CNT_CONTRATOS CNT, MOV_MOVIMIENTOS MOV "
-			+ " WHERE CPE.CNT_ID = CNT.CNT_ID AND CNT.CNT_ID = MOV.CNT_ID AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION "
-			+ " AND CPE.PER_ID = PER_ID)")
-	private Integer diasVencido;
-
-	@Formula(value = "(select count(distinct exp.exp_id) from EXP_EXPEDIENTES exp "
-			+ " JOIN PEX_PERSONAS_EXPEDIENTE pex ON pex.exp_id = exp.exp_id "
-			+ " JOIN ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE dd_eex ON exp.dd_eex_id = dd_eex.dd_eex_id "
-			+ " WHERE pex.borrado = 0 and exp.borrado = 0 and dd_eex.dd_eex_codigo in ('"
-			+ DDEstadoExpediente.ESTADO_EXPEDIENTE_ACTIVO
-			+ "','"
-			+ DDEstadoExpediente.ESTADO_EXPEDIENTE_BLOQUEADO
-			+ "','"
-			+ DDEstadoExpediente.ESTADO_EXPEDIENTE_CONGELADO
-			+ "') and pex.per_id = PER_ID)")
-	private Integer numExpedientesActivos;
-
-	@Formula(value = "(SELECT COUNT (DISTINCT asu.asu_id) FROM ASU_ASUNTOS asu JOIN PRC_PROCEDIMIENTOS prc ON prc.asu_id = asu.asu_id "
-			+ " JOIN PRC_CEX pc ON pc.prc_id = prc.prc_id JOIN CEX_CONTRATOS_EXPEDIENTE cex ON pc.cex_id = cex.cex_id "
-			+ " JOIN CNT_CONTRATOS cnt ON cex.cnt_id = cnt.cnt_id JOIN CPE_CONTRATOS_PERSONAS cpe ON cpe.cnt_id = cnt.cnt_id "
-			+ " JOIN ${master.schema}.dd_eas_estado_asuntos dd_eas ON asu.dd_eas_id = dd_eas.dd_eas_id "
-			+ " WHERE asu.borrado = 0 and prc.borrado = 0 and dd_eas.dd_eas_codigo in ('"
-			+ DDEstadoAsunto.ESTADO_ASUNTO_ACEPTADO
-			+ "','"
-			+ DDEstadoAsunto.ESTADO_ASUNTO_CONFIRMADO
-			+ "','"
-			+ DDEstadoAsunto.ESTADO_ASUNTO_PROPUESTO
-			+ "') and cpe.per_id = PER_ID)")
-	private Integer numAsuntosActivos;
-	
-	@Formula(value = "(SELECT COUNT (DISTINCT asu.asu_id) FROM ASU_ASUNTOS asu JOIN PRC_PROCEDIMIENTOS prc ON prc.asu_id = asu.asu_id "
-			+ " JOIN PRC_PER PRCPER ON PRC.PRC_ID = PRCPER.PRC_ID "
-			+ " WHERE asu.borrado = 0 and prc.borrado = 0 and PRCPER.PER_ID = PER_ID)")
-	private Integer numAsuntosActivosPorPrc;
-
-	/**
-	 * Situaci�n de gesti�n: Cliente (todos los que no son ni expediente, ni
-	 * asunto), expediente, asunto.
-	 */
-	// FIXME Corregir esto se est� hardcodeando texto no internacionalizado en
-	// esta f�rmula como resultado.
-	public static final String FORMULA_SITUACION = "(SELECT COALESCE ((SELECT CASE WHEN COUNT (DISTINCT asu.asu_id) > 0 "
-			+ " THEN 'En Asunto' ELSE NULL END FROM ASU_ASUNTOS asu JOIN PRC_PROCEDIMIENTOS prc ON prc.asu_id = asu.asu_id "
-			+ " JOIN PRC_CEX pc ON pc.prc_id = prc.prc_id JOIN CEX_CONTRATOS_EXPEDIENTE cex ON pc.cex_id = cex.cex_id "
-			+ " JOIN CNT_CONTRATOS cnt ON cex.cnt_id = cnt.cnt_id JOIN CPE_CONTRATOS_PERSONAS cpe ON cpe.cnt_id = cnt.cnt_id "
-			+ " JOIN ${master.schema}.dd_eas_estado_asuntos dd_eas ON asu.dd_eas_id = dd_eas.dd_eas_id "
-			+ " WHERE asu.borrado = 0 and prc.borrado = 0 and dd_eas.dd_eas_codigo IN ('"
-			+ DDEstadoAsunto.ESTADO_ASUNTO_ACEPTADO
-			+ "','"
-			+ DDEstadoAsunto.ESTADO_ASUNTO_CONFIRMADO
-			+ "','"
-			+ DDEstadoAsunto.ESTADO_ASUNTO_PROPUESTO
-			+ "') and cpe.per_id = PER_ID), "
-			+ " (SELECT CASE WHEN COUNT (EXP.exp_id) > 0 THEN 'Expediente interno' ELSE NULL END "
-			+ " from EXP_EXPEDIENTES exp "
-			+ " JOIN PEX_PERSONAS_EXPEDIENTE pex ON pex.exp_id = exp.exp_id "
-			+ "JOIN DD_TPX_TIPO_EXPEDIENTE tpx on TPX.DD_TPX_ID=EXP.DD_TPX_ID and TPX.DD_TPX_CODIGO='"
-			+ DDTipoExpediente.TIPO_EXPEDIENTE_INTERNO
-			+ "'"
-			+ " JOIN ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE dd_eex ON exp.dd_eex_id = dd_eex.dd_eex_id "
-			+ " WHERE pex.borrado = 0 and exp.borrado = 0 "
-			+ " and dd_eex.dd_eex_codigo in ('"
-			+ DDEstadoExpediente.ESTADO_EXPEDIENTE_ACTIVO
-			+ "','"
-			+ DDEstadoExpediente.ESTADO_EXPEDIENTE_BLOQUEADO
-			+ "','"
-			+ DDEstadoExpediente.ESTADO_EXPEDIENTE_CONGELADO
-			+ "')  "
-			+ " and pex.per_id = PER_ID), "
-			+ "(SELECT CASE WHEN COUNT (EXP.exp_id) > 0 "
-			+ "THEN 'Expediente de recobro' ELSE NULL END "
-			+ "from EXP_EXPEDIENTES exp "
-			+ "JOIN PEX_PERSONAS_EXPEDIENTE pex ON pex.exp_id = exp.exp_id "
-			+ "JOIN DD_TPX_TIPO_EXPEDIENTE tpx on TPX.DD_TPX_ID=EXP.DD_TPX_ID and TPX.DD_TPX_CODIGO='"
-			+ DDTipoExpediente.TIPO_EXPEDIENTE_RECOBRO
-			+ "'"
-			+ "JOIN ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE dd_eex ON exp.dd_eex_id = dd_eex.dd_eex_id "
-			+ "WHERE pex.borrado = 0 and exp.borrado = 0 "
-			+ "and dd_eex.dd_eex_codigo in  ('"
-			+ DDEstadoExpediente.ESTADO_EXPEDIENTE_ACTIVO
-			+ "','"
-			+ DDEstadoExpediente.ESTADO_EXPEDIENTE_BLOQUEADO
-			+ "','"
-			+ DDEstadoExpediente.ESTADO_EXPEDIENTE_CONGELADO
-			+ "')  "
-			+ "and pex.per_id = PER_ID), "
-			+ " (SELECT est.dd_est_descripcion "
-			+ " FROM ${master.schema}.dd_est_estados_itinerarios est "
-			+ " WHERE est.dd_est_id = COALESCE (cli.dd_est_id, NULL)), 'Normal') "
-			+ " FROM cpe_contratos_personas cpe "
-			+ " LEFT JOIN cli_clientes cli ON cpe.per_id = cli.per_id AND cli.borrado = 0 WHERE cpe.per_id = PER_ID AND ROWNUM = 1)";
-
-	@Formula(value = FORMULA_SITUACION)
-	private String situacion;
-
-	public static final String FORMULA_RELACION_EXPEDIENTE = "(SELECT COALESCE("
-			+ "(SELECT CASE "
-			+ " WHEN COUNT (*) > 0"
-			+ "     THEN 'Titular CP'"
-			+ "  ELSE NULL "
-			+ " END "
-			+ " FROM EXP_EXPEDIENTES exp, CEX_CONTRATOS_EXPEDIENTE cex, CPE_CONTRATOS_PERSONAS cpe, DD_TIN_TIPO_INTERVENCION tin, ${master.schema}.dd_eex_estado_expediente dd_eex "
-			+ " where exp.exp_id = cex.exp_id and cex.cnt_id = cpe.cnt_id and cpe.dd_tin_id = tin.dd_tin_id and exp.dd_eex_id = dd_eex.dd_eex_id  and cpe.per_id = per.per_id "
-			+ "  and cex.borrado = 0 and cpe.borrado = 0 and exp.borrado = 0  and dd_eex.dd_eex_codigo in ('1', '2', '4')  and cex.cex_pase = 1 and tin.dd_tin_titular = 1 "
-			+ " ), "
-			+ " (SELECT CASE "
-			+ " WHEN COUNT (*) > 0 "
-			+ "    THEN 'Titular OC'"
-			+ "  ELSE NULL "
-			+ " END "
-			+ " FROM EXP_EXPEDIENTES exp, CEX_CONTRATOS_EXPEDIENTE cex, CPE_CONTRATOS_PERSONAS cpe, DD_TIN_TIPO_INTERVENCION tin, ${master.schema}.dd_eex_estado_expediente dd_eex "
-			+ " where exp.exp_id = cex.exp_id and cex.cnt_id = cpe.cnt_id and cpe.dd_tin_id = tin.dd_tin_id and exp.dd_eex_id = dd_eex.dd_eex_id  and cpe.per_id = per.per_id "
-			+ "   and cex.borrado = 0 and cpe.borrado = 0 and exp.borrado = 0  and dd_eex.dd_eex_codigo in ('1', '2', '4')  and cex.cex_pase = 0 and tin.dd_tin_titular = 1 "
-			+ " ), "
-			+ " (SELECT CASE"
-			+ "  WHEN COUNT (*) > 0 "
-			+ "     THEN 'Avalista' "
-			+ "  ELSE NULL "
-			+ " END "
-			+ " FROM EXP_EXPEDIENTES exp, CEX_CONTRATOS_EXPEDIENTE cex, CPE_CONTRATOS_PERSONAS cpe, DD_TIN_TIPO_INTERVENCION tin, ${master.schema}.dd_eex_estado_expediente dd_eex "
-			+ " where exp.exp_id = cex.exp_id and cex.cnt_id = cpe.cnt_id and cpe.dd_tin_id = tin.dd_tin_id and exp.dd_eex_id = dd_eex.dd_eex_id  and cpe.per_id = per.per_id "
-			+ "    and cex.borrado = 0 and cpe.borrado = 0 and exp.borrado = 0  and dd_eex.dd_eex_codigo in ('1', '2', '4') and tin.dd_tin_avalista = 1 "
-			+ " ), '') "
-			+ " FROM PER_PERSONAS per "
-			+ " WHERE per.per_id = PER_ID AND ROWNUM = 1)";
-	/**
-	 * Grado de relaci�n con el expediente (s�lo para los que est�n en
-	 * expedientes): Titular CP. Titular OC, Avalista
-	 */
-	@Formula(value = FORMULA_RELACION_EXPEDIENTE)
-	@Basic(fetch = FetchType.LAZY)
-	private String relacionExpediente;
-
-	// ******************************************************
-	// **********AMPLIACIÓN INTERFAZ PER_PERSONAS 29-04-2014
-	// ******************************************************
 
 	@Column(name = "PER_FECHA_DATO")
 	private Date fechaDato;
@@ -688,56 +504,21 @@ public class Persona implements Serializable, Auditable, Describible {
 	@JoinTable(name = "TEL_PER", joinColumns = { @JoinColumn(name = "PER_ID", unique = true) }, inverseJoinColumns = { @JoinColumn(name = "TEL_ID") })
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<Telefono> telefonos;
-
-	@Formula("(select icc.icc_value from EXT_ICC_INFO_EXTRA_CLI icc where icc.per_id = per_id "
-			+ "  and icc.dd_ifx_id = ("
-			+ "select ifx.dd_ifx_id from EXT_DD_IFX_INFO_EXTRA_CLI ifx where ifx.dd_ifx_codigo = '"
-			+ DDTipoInfoCliente.TIPO_INFO_ADICIONAL_CLIENTE_NOMINA_PENSION
-			+ "'))")
-	private String servicioNominaPension;
-
-	@Formula("(select icc.icc_value from EXT_ICC_INFO_EXTRA_CLI icc where icc.per_id = per_id "
-			+ "  and icc.dd_ifx_id = ("
-			+ "select ifx.dd_ifx_id from EXT_DD_IFX_INFO_EXTRA_CLI ifx where ifx.dd_ifx_codigo = '"
-			+ DDTipoInfoCliente.TIPO_INFO_ADICIONAL_CLIENTE_ULTIMA_ACTUACION
-			+ "'))")
-	private String ultimaActuacion;
-
 	
-	// Vienen aprovisionados en estos campos
-	@Formula("(select icc.icc_value from EXT_ICC_INFO_EXTRA_CLI icc where icc.per_id = per_id "
-			+ "  and icc.dd_ifx_id = ("
-			+ "select ifx.dd_ifx_id from EXT_DD_IFX_INFO_EXTRA_CLI ifx where ifx.dd_ifx_codigo = '"
-			+ DDTipoInfoCliente.NUM_EXTRA1
-			+ "'))")
-	private String dispuestoNoVencido;
-
-	@Formula("(select icc.icc_value from EXT_ICC_INFO_EXTRA_CLI icc where icc.per_id = per_id "
-			+ "  and icc.dd_ifx_id = ("
-			+ "select ifx.dd_ifx_id from EXT_DD_IFX_INFO_EXTRA_CLI ifx where ifx.dd_ifx_codigo = '"
-			+ DDTipoInfoCliente.NUM_EXTRA2
-			+ "'))")
-	private String dispuestoVencido;
-
-	// ***************************************
-	// *******HASTA AQUI 29-04-2014
-	// **************************************
+	@OneToOne(fetch = FetchType.LAZY, optional=true)
+	@JoinColumn(name = "PER_ID", updatable= false)
+	@LazyToOne(LazyToOneOption.PROXY)
+	private PersonaFormulas formulas;
 	
-	@Formula("(select tcn.dd_tcn_descripcion from EXT_ICC_INFO_EXTRA_CLI icc, ${master.schema}.DD_TCN_TIPO_CNAE tcn"
-			+ "  where icc.per_id = per_id "
-			+ "  and icc.icc_value = tcn.dd_tcn_codigo"
-			+ "  and icc.dd_ifx_id = ("
-			+ "select ifx.dd_ifx_id from EXT_DD_IFX_INFO_EXTRA_CLI ifx where ifx.dd_ifx_codigo = '"
-			+ DDTipoInfoCliente.CHAR_EXTRA1
-			+ "'))")
-	private String descripcionCnae;
-	
+
 	
 
 	/**
 	 * @return the id
 	 */
 	public Long getId() {
+//		if(fieldHandler!=null)
+//        return (Long)fieldHandler.readObject(this, "id", id);
 		return id;
 	}
 
@@ -746,6 +527,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the id to set
 	 */
 	public void setId(Long id) {
+//		if(fieldHandler!=null)
+//	        fieldHandler.writeObject(this, "id", this.id, id);
 		this.id = id;
 	}
 
@@ -753,6 +536,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the segmento
 	 */
 	public DDSegmento getSegmento() {
+		if(fieldHandler!=null)
+	        return (DDSegmento)fieldHandler.readObject(this, "segmento", segmento);
 		return segmento;
 	}
 
@@ -761,6 +546,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the segmento to set
 	 */
 	public void setSegmento(DDSegmento segmento) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "segmento", this.segmento, segmento);
 		this.segmento = segmento;
 	}
 
@@ -768,6 +555,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the antecedente
 	 */
 	public Antecedente getAntecedente() {
+		if(fieldHandler!=null)
+	        return (Antecedente)fieldHandler.readObject(this, "antecedente", antecedente);
 		return antecedente;
 	}
 
@@ -776,6 +565,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the antecedente to set
 	 */
 	public void setAntecedente(Antecedente antecedente) {
+		 if(fieldHandler!=null)
+		        fieldHandler.writeObject(this, "antecedente", this.antecedente, antecedente);
 		this.antecedente = antecedente;
 	}
 
@@ -785,6 +576,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return List de Cliente
 	 */
 	public List<Cliente> getClientes() {
+		if(fieldHandler!=null)
+	        return (List<Cliente>)fieldHandler.readObject(this, "clientes", clientes);
 		return clientes;
 	}
 
@@ -793,6 +586,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the clientes to set
 	 */
 	public void setClientes(List<Cliente> clientes) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "clientes", this.clientes, clientes);
 		this.clientes = clientes;
 	}
 
@@ -935,6 +730,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the direcciones
 	 */
 	public List<Direccion> getDirecciones() {
+		if(fieldHandler!=null)
+	        return (List<Direccion>)fieldHandler.readObject(this, "direcciones", direcciones);
 		return direcciones;
 	}
 
@@ -943,6 +740,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the direcciones to set
 	 */
 	public void setDirecciones(List<Direccion> direcciones) {
+		 if(fieldHandler!=null)
+		        fieldHandler.writeObject(this, "direcciones", this.direcciones, direcciones);
 		this.direcciones = direcciones;
 	}
 
@@ -950,6 +749,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the bienes
 	 */
 	public List<Bien> getBienes() {
+		if(fieldHandler!=null)
+	        return (List<Bien>)fieldHandler.readObject(this, "bienes", bienes);
 		return bienes;
 	}
 
@@ -1000,6 +801,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the bienes to set
 	 */
 	public void setBienes(List<Bien> bienes) {
+		 if(fieldHandler!=null)
+		        fieldHandler.writeObject(this, "bienes", this.bienes, bienes);
 		this.bienes = bienes;
 	}
 
@@ -1037,6 +840,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the ingresos
 	 */
 	public List<Ingreso> getIngresos() {
+		if(fieldHandler!=null)
+	        return (List<Ingreso> )fieldHandler.readObject(this, "ingresos", ingresos);
 		return ingresos;
 	}
 
@@ -1045,6 +850,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the ingresos to set
 	 */
 	public void setIngresos(List<Ingreso> ingresos) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "ingresos", this.ingresos, ingresos);
 		this.ingresos = ingresos;
 	}
 
@@ -1082,16 +889,7 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return situacion
 	 */
 	public String getSituacion() {
-		/*
-		 * if (getClienteActivo() != null) { return
-		 * this.getClienteActivo().getEstadoItinerario().getDescripcion(); }
-		 * return "REGULAR";
-		 */
-		/*
-		 * if (getNumAsuntosActivos()>0){ return "ASUNTO"; } if
-		 * (getNumExpedientesActivos()>0){ return "EXPEDIENTADO"; }
-		 */
-		return situacion;
+		return this.getFormulas() == null ? null :this.getFormulas() == null ? null :this.getFormulas().getSituacion();
 	}
 
 	/**
@@ -1159,8 +957,9 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *         vencidos
 	 */
 	public Float getTotalPosicionAntiguaContratos() {
+		List<ContratoPersona> listaCp = this.getContratosPersona();
 		float deuda = 0;
-		for (ContratoPersona contratoPersona : contratosPersona) {
+		for (ContratoPersona contratoPersona : listaCp) {
 			Contrato contrato = contratoPersona.getContrato();
 			if (contrato.isVencido()) {
 				deuda += contrato.getLastMovimiento().getPosVivaVencida();
@@ -1175,8 +974,9 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return cantidad
 	 */
 	public int getCantContratos() {
-		if (contratosPersona != null) {
-			return contratosPersona.size();
+		List<ContratoPersona> listaCp = this.getContratosPersona();
+		if (listaCp != null) {
+			return listaCp.size();
 		}
 		return 0;
 	}
@@ -1200,6 +1000,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the tipoPersona
 	 */
 	public DDTipoPersona getTipoPersona() {
+		if(fieldHandler!=null)
+	        return (DDTipoPersona)fieldHandler.readObject(this, "tipoPersona", tipoPersona);
 		return tipoPersona;
 	}
 
@@ -1208,6 +1010,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the tipoPersona to set
 	 */
 	public void setTipoPersona(DDTipoPersona tipoPersona) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "tipoPersona", this.tipoPersona, tipoPersona);
 		this.tipoPersona = tipoPersona;
 	}
 
@@ -1215,6 +1019,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the tipoDocumento
 	 */
 	public DDTipoDocumento getTipoDocumento() {
+		if(fieldHandler!=null)
+	        return (DDTipoDocumento)fieldHandler.readObject(this, "tipoDocumento", tipoDocumento);
 		return tipoDocumento;
 	}
 
@@ -1223,6 +1029,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the tipoDocumento to set
 	 */
 	public void setTipoDocumento(DDTipoDocumento tipoDocumento) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "tipoDocumento", this.tipoDocumento, tipoDocumento);
 		this.tipoDocumento = tipoDocumento;
 	}
 
@@ -1230,6 +1038,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the contratosPersona
 	 */
 	public List<ContratoPersona> getContratosPersona() {
+		if(fieldHandler!=null)
+	        return (List<ContratoPersona>)fieldHandler.readObject(this, "contratosPersona", contratosPersona);
 		return contratosPersona;
 	}
 
@@ -1238,6 +1048,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the contratosPersona to set
 	 */
 	public void setContratosPersona(List<ContratoPersona> contratosPersona) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "contratosPersona", this.contratosPersona, contratosPersona);
 		this.contratosPersona = contratosPersona;
 	}
 
@@ -1315,6 +1127,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the segmentoEntidad
 	 */
 	public DDSegmentoEntidad getSegmentoEntidad() {
+		if(fieldHandler!=null)
+	        return (DDSegmentoEntidad)fieldHandler.readObject(this, "segmentoEntidad", segmentoEntidad);
 		return segmentoEntidad;
 	}
 
@@ -1323,6 +1137,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the segmentoEntidad to set
 	 */
 	public void setSegmentoEntidad(DDSegmentoEntidad segmentoEntidad) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "segmentoEntidad", this.segmentoEntidad, segmentoEntidad);
 		this.segmentoEntidad = segmentoEntidad;
 	}
 
@@ -1377,8 +1193,9 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return contratos List
 	 */
 	public List<Contrato> getContratosVencidos() {
+		List<ContratoPersona> listCp = this.getContratosPersona();
 		List<Contrato> contratos = new ArrayList<Contrato>();
-		for (ContratoPersona cp : contratosPersona) {
+		for (ContratoPersona cp : listCp) {
 			if (cp.isTitular()) {
 				contratos.add(cp.getContrato());
 			}
@@ -1393,8 +1210,9 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return contratos List
 	 */
 	public List<Contrato> getContratosNoVencidos() {
+		List<ContratoPersona> listCp = this.getContratosPersona();
 		List<Contrato> contratos = new ArrayList<Contrato>();
-		for (ContratoPersona cp : contratosPersona) {
+		for (ContratoPersona cp : listCp) {
 			if (cp.isTitular()) {
 				contratos.add(cp.getContrato());
 			}
@@ -1409,8 +1227,9 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return contratos List
 	 */
 	public List<Contrato> getContratos() {
+		List<ContratoPersona> listCp = this.getContratosPersona();
 		List<Contrato> contratos = new ArrayList<Contrato>();
-		for (ContratoPersona cp : contratosPersona) {
+		for (ContratoPersona cp : listCp) {
 			contratos.add(cp.getContrato());
 		}
 		return contratos;
@@ -1422,8 +1241,9 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return contratos List
 	 */
 	public List<Contrato> getContratosTitular() {
+		List<ContratoPersona> listCp = this.getContratosPersona();
 		List<Contrato> contratos = new ArrayList<Contrato>();
-		for (ContratoPersona cp : contratosPersona) {
+		for (ContratoPersona cp : listCp) {
 			if (cp.isTitular()) {
 				contratos.add(cp.getContrato());
 			}
@@ -1438,8 +1258,9 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return contratos
 	 */
 	public List<Contrato> getContratosRiesgoDirectoActivo() {
+		List<ContratoPersona> listCp = this.getContratosPersona();
 		List<Contrato> contratos = new ArrayList<Contrato>();
-		for (ContratoPersona cp : contratosPersona) {
+		for (ContratoPersona cp : listCp) {
 			if (cp.isTitular()) {
 				if (cp.getContrato().getLastMovimiento().getRiesgo() > 0) {
 					contratos.add(cp.getContrato());
@@ -1456,8 +1277,9 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return monto
 	 */
 	public Float getMontoTotalRiesgosDirectos() {
+		List<ContratoPersona> listCp = this.getContratosPersona();
 		Float monto = 0F;
-		for (ContratoPersona cp : contratosPersona) {
+		for (ContratoPersona cp : listCp) {
 			if (cp.isTitular()) {
 				if (cp.getContrato().getLastMovimiento().getRiesgo() > 0) {
 					monto += Math.abs(cp.getContrato().getLastMovimiento()
@@ -1474,8 +1296,9 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return contratos
 	 */
 	public List<Contrato> getContratosRiesgoDirectoPasivo() {
+		List<ContratoPersona> listCp = this.getContratosPersona();
 		List<Contrato> contratos = new ArrayList<Contrato>();
-		for (ContratoPersona cp : contratosPersona) {
+		for (ContratoPersona cp : listCp) {
 			if (cp.isTitular()) {
 				if (cp.getContrato().getLastMovimiento().getRiesgo() == 0) {
 					contratos.add(cp.getContrato());
@@ -1525,9 +1348,10 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return contratos List
 	 */
 	public List<Contrato> getContratosRiesgosIndirectos() {
+		List<ContratoPersona> listCp = this.getContratosPersona();
 		List<Contrato> contratos = new ArrayList<Contrato>();
 		if (!Checks.estaVacio(contratos)) {
-			for (ContratoPersona cp : contratosPersona) {
+			for (ContratoPersona cp : listCp) {
 				if (!cp.isTitular()) {
 					if (cp.getContrato().getLastMovimiento().getRiesgo() > 0) {
 						contratos.add(cp.getContrato());
@@ -1540,8 +1364,7 @@ public class Persona implements Serializable, Auditable, Describible {
 	}
 
 	/**
-	 * obtiene el monto total de riesgos ila
-	 * irectos.
+	 * obtiene el monto total de riesgos ila irectos.
 	 * 
 	 * @return monto
 	 */
@@ -1563,8 +1386,9 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return contratos List
 	 */
 	public List<Contrato> getContratosNoTitular() {
+		List<ContratoPersona> listCp = this.getContratosPersona();
 		List<Contrato> contratos = new ArrayList<Contrato>();
-		for (ContratoPersona cp : contratosPersona) {
+		for (ContratoPersona cp : listCp) {
 			if (cp.isTitular()) {
 				contratos.add(cp.getContrato());
 			}
@@ -1654,12 +1478,13 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the clienteActivo
 	 */
 	public Cliente getClienteActivo() {
-		if (clientes == null || clientes.size() == 0) {
+		List<Cliente> listaClientes = this.getClientes();
+		if (listaClientes == null || listaClientes.size() == 0) {
 			return null;
 		}
-		for (int j=clientes.size()-1; j>=0; j--) {
-			if (!clientes.get(j).getAuditoria().isBorrado()) {
-				return clientes.get(j);
+		for (int j = listaClientes.size() - 1; j >= 0; j--) {
+			if (!listaClientes.get(j).getAuditoria().isBorrado()) {
+				return listaClientes.get(j);
 			}
 		}
 		return null;
@@ -1671,7 +1496,7 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return
 	 */
 	public Politica getPoliticaVigente() {
-		for (CicloMarcadoPolitica cmp : ciclosMarcadoPolitica) {
+		for (CicloMarcadoPolitica cmp : this.getCiclosMarcadoPolitica()) {
 			Politica p = cmp.getUltimaPolitica();
 			if (p != null && p.getEsVigente())
 				return p;
@@ -1685,10 +1510,12 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the clienteActivo to set
 	 */
 	public void setClienteActivo(Cliente clienteActivo) {
-		if (clientes == null) {
-			clientes = new ArrayList<Cliente>();
+		List<Cliente> listaClientes = this.getClientes();
+		if (listaClientes == null) {
+			listaClientes = new ArrayList<Cliente>();
 		}
-		this.clientes.add(clienteActivo);
+		listaClientes.add(clienteActivo);
+		this.setClientes(listaClientes);
 	}
 
 	/**
@@ -1826,25 +1653,25 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the numExpedientesActivos
 	 */
 	public Integer getNumExpedientesActivos() {
-		return numExpedientesActivos;
+		return this.getFormulas() == null ? null :this.getFormulas().getNumExpedientesActivos();
 	}
 
 	/**
 	 * @return the numAsuntosActivos
 	 */
 	public Integer getNumAsuntosActivos() {
-		return numAsuntosActivos;
+		return this.getFormulas() == null ? null :this.getFormulas().getNumAsuntosActivos();
 	}
-	
+
 	public Integer getNumAsuntosActivosPorPrc() {
-		return numAsuntosActivosPorPrc;
-	}	
+		return this.getFormulas() == null ? null :this.getFormulas().getNumAsuntosActivosPorPrc();
+	}
 
 	/**
 	 * @return the diasVencido
 	 */
 	public Integer getDiasVencido() {
-		return diasVencido;
+		return this.getFormulas() == null ? null :this.getFormulas().getDiasVencido();
 	}
 
 	/**
@@ -1896,6 +1723,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the adjuntos
 	 */
 	public Set<AdjuntoPersona> getAdjuntos() {
+		if(fieldHandler!=null)
+	        return (Set<AdjuntoPersona>)fieldHandler.readObject(this, "adjuntos", adjuntos);
 		return adjuntos;
 	}
 
@@ -1904,6 +1733,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the adjuntos to set
 	 */
 	public void setAdjuntos(Set<AdjuntoPersona> adjuntos) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "adjuntos", this.adjuntos, adjuntos);
 		this.adjuntos = adjuntos;
 	}
 
@@ -1914,7 +1745,7 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return List AdjuntoPersona
 	 */
 	public List<AdjuntoPersona> getAdjuntosAsList() {
-		return new ArrayList<AdjuntoPersona>(adjuntos);
+		return new ArrayList<AdjuntoPersona>(getAdjuntos());
 	}
 
 	/**
@@ -1928,6 +1759,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the cirbe
 	 */
 	public List<Cirbe> getCirbe() {
+		if(fieldHandler!=null)
+	        return (List<Cirbe>)fieldHandler.readObject(this, "cirbe", cirbe);
 		return cirbe;
 	}
 
@@ -1936,6 +1769,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the cirbe to set
 	 */
 	public void setCirbe(List<Cirbe> cirbe) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "cirbe", this.cirbe, cirbe);
 		this.cirbe = cirbe;
 	}
 
@@ -1947,17 +1782,22 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * persona esté en varios grupos
 	 */
 	public PersonaGrupo getGrupo() {
-		if (grupo == null && (grupos != null) && (grupos.size() > 0)) {
-			grupo = grupos.get(0);
+		List<PersonaGrupo> listGrupos = this.getGrupos();
+		if (grupo == null && (listGrupos != null) && (listGrupos.size() > 0)) {
+			grupo = listGrupos.get(0);
 		}
 		return grupo;
 	}
 
 	public List<PersonaGrupo> getGrupos() {
+		if(fieldHandler!=null)
+	        return (List<PersonaGrupo>)fieldHandler.readObject(this, "grupos", grupos);
 		return grupos;
 	}
 
 	public void setGrupos(List<PersonaGrupo> grupos) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "grupos", this.grupos, grupos);
 		this.grupos = grupos;
 	}
 
@@ -2052,6 +1892,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the oficinaGestora to set
 	 */
 	public void setOficinaGestora(Oficina oficinaGestora) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "oficinaGestora", this.oficinaGestora, oficinaGestora);
 		this.oficinaGestora = oficinaGestora;
 	}
 
@@ -2059,6 +1901,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the oficinaGestora
 	 */
 	public Oficina getOficinaGestora() {
+		if(fieldHandler!=null)
+			return (Oficina)fieldHandler.readObject(this, "oficinaGestora", oficinaGestora);
 		return oficinaGestora;
 	}
 
@@ -2112,6 +1956,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the usuarioGestor to set
 	 */
 	public void setUsuarioGestor(Usuario usuarioGestor) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "usuarioGestor", this.usuarioGestor, usuarioGestor);
 		this.usuarioGestor = usuarioGestor;
 	}
 
@@ -2119,6 +1965,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the usuarioGestor
 	 */
 	public Usuario getUsuarioGestor() {
+		if(fieldHandler!=null)
+	        return (Usuario)fieldHandler.readObject(this, "usuarioGestor", usuarioGestor);
 		return usuarioGestor;
 	}
 
@@ -2127,6 +1975,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the perfilGestor to set
 	 */
 	public void setPerfilGestor(Perfil perfilGestor) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "perfilGestor", this.perfilGestor, perfilGestor);
 		this.perfilGestor = perfilGestor;
 	}
 
@@ -2134,6 +1984,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the perfilGestor
 	 */
 	public Perfil getPerfilGestor() {
+		if(fieldHandler!=null)
+	        return (Perfil)fieldHandler.readObject(this, "perfilGestor", perfilGestor);
 		return perfilGestor;
 	}
 
@@ -2142,6 +1994,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the centroGestor to set
 	 */
 	public void setCentroGestor(DDZona centroGestor) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "centroGestor", this.centroGestor, centroGestor);
 		this.centroGestor = centroGestor;
 	}
 
@@ -2149,6 +2003,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the centroGestor
 	 */
 	public DDZona getCentroGestor() {
+		if(fieldHandler!=null)
+	        return (DDZona)fieldHandler.readObject(this, "centroGestor", centroGestor);
 		return centroGestor;
 	}
 
@@ -2172,7 +2028,7 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return PuntuacionTotal
 	 */
 	public PuntuacionTotal getPuntuacionTotalActiva() {
-		for (PuntuacionTotal pt : this.puntuacionTotal) {
+		for (PuntuacionTotal pt : this.getPuntuacionTotal()) {
 			if (pt.isActivo()) {
 				return pt;
 			}
@@ -2343,6 +2199,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the nacionalidad
 	 */
 	public DDPais getNacionalidad() {
+		if(fieldHandler!=null)
+	        return (DDPais)fieldHandler.readObject(this, "nacionalidad", nacionalidad);
 		return nacionalidad;
 	}
 
@@ -2351,6 +2209,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the nacionalidad to set
 	 */
 	public void setNacionalidad(DDPais nacionalidad) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "nacionalidad", this.nacionalidad, nacionalidad);
 		this.nacionalidad = nacionalidad;
 	}
 
@@ -2358,6 +2218,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the paisNacimiento
 	 */
 	public DDPais getPaisNacimiento() {
+		if(fieldHandler!=null)
+	        return (DDPais)fieldHandler.readObject(this, "paisNacimiento", paisNacimiento);
 		return paisNacimiento;
 	}
 
@@ -2366,6 +2228,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the paisNacimiento to set
 	 */
 	public void setPaisNacimiento(DDPais paisNacimiento) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "paisNacimiento", this.paisNacimiento, paisNacimiento);
 		this.paisNacimiento = paisNacimiento;
 	}
 
@@ -2373,6 +2237,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the sexo
 	 */
 	public DDSexo getSexo() {
+		if(fieldHandler!=null)
+	        return (DDSexo)fieldHandler.readObject(this, "sexo", sexo);
 		return sexo;
 	}
 
@@ -2381,6 +2247,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the sexo to set
 	 */
 	public void setSexo(DDSexo sexo) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "sexo", this.sexo, sexo);
 		this.sexo = sexo;
 	}
 
@@ -2388,6 +2256,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the tipoTelefono1
 	 */
 	public DDTipoTelefono getTipoTelefono1() {
+		if(fieldHandler!=null)
+	        return (DDTipoTelefono)fieldHandler.readObject(this, "tipoTelefono1", tipoTelefono1);
 		return tipoTelefono1;
 	}
 
@@ -2396,6 +2266,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the tipoTelefono1 to set
 	 */
 	public void setTipoTelefono1(DDTipoTelefono tipoTelefono1) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "tipoTelefono1", this.tipoTelefono1, tipoTelefono1);
 		this.tipoTelefono1 = tipoTelefono1;
 	}
 
@@ -2403,6 +2275,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the tipoTelefono2
 	 */
 	public DDTipoTelefono getTipoTelefono2() {
+		if(fieldHandler!=null)
+	        return (DDTipoTelefono)fieldHandler.readObject(this, "tipoTelefono2", tipoTelefono2);
 		return tipoTelefono2;
 	}
 
@@ -2411,6 +2285,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the tipoTelefono2 to set
 	 */
 	public void setTipoTelefono2(DDTipoTelefono tipoTelefono2) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "tipoTelefono2", this.tipoTelefono2, tipoTelefono2);
 		this.tipoTelefono2 = tipoTelefono2;
 	}
 
@@ -2418,6 +2294,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the tipoTelefono3
 	 */
 	public DDTipoTelefono getTipoTelefono3() {
+		if(fieldHandler!=null)
+	        return (DDTipoTelefono)fieldHandler.readObject(this, "tipoTelefono3", tipoTelefono3);
 		return tipoTelefono3;
 	}
 
@@ -2426,6 +2304,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the tipoTelefono3 to set
 	 */
 	public void setTipoTelefono3(DDTipoTelefono tipoTelefono3) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "tipoTelefono3", this.tipoTelefono3, tipoTelefono3);
 		this.tipoTelefono3 = tipoTelefono3;
 	}
 
@@ -2433,6 +2313,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the tipoTelefono4
 	 */
 	public DDTipoTelefono getTipoTelefono4() {
+		if(fieldHandler!=null)
+	        return (DDTipoTelefono)fieldHandler.readObject(this, "tipoTelefono4", tipoTelefono4);
 		return tipoTelefono4;
 	}
 
@@ -2441,6 +2323,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the tipoTelefono4 to set
 	 */
 	public void setTipoTelefono4(DDTipoTelefono tipoTelefono4) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "tipoTelefono4", this.tipoTelefono4, tipoTelefono4);
 		this.tipoTelefono4 = tipoTelefono4;
 	}
 
@@ -2448,6 +2332,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the tipoTelefono5
 	 */
 	public DDTipoTelefono getTipoTelefono5() {
+		if(fieldHandler!=null)
+	        return (DDTipoTelefono)fieldHandler.readObject(this, "tipoTelefono5", tipoTelefono5);
 		return tipoTelefono5;
 	}
 
@@ -2456,6 +2342,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the tipoTelefono5 to set
 	 */
 	public void setTipoTelefono5(DDTipoTelefono tipoTelefono5) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "tipoTelefono5", this.tipoTelefono5, tipoTelefono5);
 		this.tipoTelefono5 = tipoTelefono5;
 	}
 
@@ -2463,6 +2351,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the tipoTelefono6
 	 */
 	public DDTipoTelefono getTipoTelefono6() {
+		if(fieldHandler!=null)
+	        return (DDTipoTelefono)fieldHandler.readObject(this, "tipoTelefono6", tipoTelefono6);
 		return tipoTelefono6;
 	}
 
@@ -2471,6 +2361,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the tipoTelefono6 to set
 	 */
 	public void setTipoTelefono6(DDTipoTelefono tipoTelefono6) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "tipoTelefono6", this.tipoTelefono6, tipoTelefono6);
 		this.tipoTelefono6 = tipoTelefono6;
 	}
 
@@ -2478,6 +2370,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the politicaEntidad
 	 */
 	public DDPolitica getPoliticaEntidad() {
+		if(fieldHandler!=null)
+	        return (DDPolitica)fieldHandler.readObject(this, "politicaEntidad", politicaEntidad);
 		return politicaEntidad;
 	}
 
@@ -2486,6 +2380,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the politicaEntidad to set
 	 */
 	public void setPoliticaEntidad(DDPolitica politicaEntidad) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "politicaEntidad", this.politicaEntidad, politicaEntidad);
 		this.politicaEntidad = politicaEntidad;
 	}
 
@@ -2493,6 +2389,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the grupoGestor
 	 */
 	public DDGrupoGestor getGrupoGestor() {
+		if(fieldHandler!=null)
+	        return (DDGrupoGestor)fieldHandler.readObject(this, "grupoGestor", grupoGestor);
 		return grupoGestor;
 	}
 
@@ -2501,6 +2399,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the grupoGestor to set
 	 */
 	public void setGrupoGestor(DDGrupoGestor grupoGestor) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "grupoGestor", this.grupoGestor, grupoGestor);
 		this.grupoGestor = grupoGestor;
 	}
 
@@ -2508,6 +2408,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the ratingExterno
 	 */
 	public DDRatingExterno getRatingExterno() {
+		if(fieldHandler!=null)
+	        return (DDRatingExterno)fieldHandler.readObject(this, "ratingExterno", ratingExterno);
 		return ratingExterno;
 	}
 
@@ -2516,6 +2418,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the ratingExterno to set
 	 */
 	public void setRatingExterno(DDRatingExterno ratingExterno) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "ratingExterno", this.ratingExterno, ratingExterno);
 		this.ratingExterno = ratingExterno;
 	}
 
@@ -2523,6 +2427,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the ratingAuxiliar
 	 */
 	public DDRatingAuxiliar getRatingAuxiliar() {
+		if(fieldHandler!=null)
+	        return (DDRatingAuxiliar)fieldHandler.readObject(this, "ratingAuxiliar", ratingAuxiliar);
 		return ratingAuxiliar;
 	}
 
@@ -2531,6 +2437,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the ratingAuxiliar to set
 	 */
 	public void setRatingAuxiliar(DDRatingAuxiliar ratingAuxiliar) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "ratingAuxiliar", this.ratingAuxiliar, ratingAuxiliar);
 		this.ratingAuxiliar = ratingAuxiliar;
 	}
 
@@ -2538,6 +2446,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the extra3
 	 */
 	public DDPersonaExtra3 getExtra3() {
+		if(fieldHandler!=null)
+	        return (DDPersonaExtra3)fieldHandler.readObject(this, "extra3", extra3);
 		return extra3;
 	}
 
@@ -2546,6 +2456,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the extra3 to set
 	 */
 	public void setExtra3(DDPersonaExtra3 extra3) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "extra3", this.extra3, extra3);
 		this.extra3 = extra3;
 	}
 
@@ -2553,6 +2465,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the extra4
 	 */
 	public DDPersonaExtra4 getExtra4() {
+		if(fieldHandler!=null)
+	        return (DDPersonaExtra4)fieldHandler.readObject(this, "extra4", extra4);
 		return extra4;
 	}
 
@@ -2561,6 +2475,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the extra4 to set
 	 */
 	public void setExtra4(DDPersonaExtra4 extra4) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "extra4", this.extra4, extra4);
 		this.extra4 = extra4;
 	}
 
@@ -2629,6 +2545,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the situacionFinanciera
 	 */
 	public DDEstadoFinanciero getSituacionFinanciera() {
+		if(fieldHandler!=null)
+	        return (DDEstadoFinanciero)fieldHandler.readObject(this, "situacionFinanciera", situacionFinanciera);
 		return situacionFinanciera;
 	}
 
@@ -2637,6 +2555,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the situacionFinanciera to set
 	 */
 	public void setSituacionFinanciera(DDEstadoFinanciero situacionFinanciera) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "situacionFinanciera", this.situacionFinanciera, situacionFinanciera);
 		this.situacionFinanciera = situacionFinanciera;
 	}
 
@@ -2644,15 +2564,7 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the relacionExpediente
 	 */
 	public String getRelacionExpediente() {
-		return relacionExpediente;
-	}
-
-	/**
-	 * @param relacionExpediente
-	 *            the relacionExpediente to set
-	 */
-	public void setRelacionExpediente(String relacionExpediente) {
-		this.relacionExpediente = relacionExpediente;
+		return this.getFormulas() == null ? null :this.getFormulas().getRelacionExpediente();
 	}
 
 	/**
@@ -2671,50 +2583,13 @@ public class Persona implements Serializable, Auditable, Describible {
 		this.numContratos = numContratos;
 	}
 
-	/**
-	 * @param diasVencido
-	 *            the diasVencido to set
-	 */
-	public void setDiasVencido(Integer diasVencido) {
-		this.diasVencido = diasVencido;
-	}
-
-	/**
-	 * @param numExpedientesActivos
-	 *            the numExpedientesActivos to set
-	 */
-	public void setNumExpedientesActivos(Integer numExpedientesActivos) {
-		this.numExpedientesActivos = numExpedientesActivos;
-	}
-
-	/**
-	 * @param numAsuntosActivos
-	 *            the numAsuntosActivos to set
-	 */
-	public void setNumAsuntosActivos(Integer numAsuntosActivos) {
-		this.numAsuntosActivos = numAsuntosActivos;
-	}
-	
-	/**
-	 * @param numAsuntosActivosPorPrc
-	 *            the numAsuntosActivosPorPrc to set
-	 */
-	public void setNumAsuntosActivosPorPrc(Integer numAsuntosActivosPorPrc) {
-		this.numAsuntosActivosPorPrc = numAsuntosActivosPorPrc;
-	}
-
-	/**
-	 * @param situacion
-	 *            the situacion to set
-	 */
-	public void setSituacion(String situacion) {
-		this.situacion = situacion;
-	}
 
 	/**
 	 * @return the puntuacionTotal
 	 */
 	public List<PuntuacionTotal> getPuntuacionTotal() {
+		if(fieldHandler!=null)
+	        return (List<PuntuacionTotal>)fieldHandler.readObject(this, "puntuacionTotal", puntuacionTotal);
 		return puntuacionTotal;
 	}
 
@@ -2723,6 +2598,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the puntuacionTotal to set
 	 */
 	public void setPuntuacionTotal(List<PuntuacionTotal> puntuacionTotal) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "puntuacionTotal", this.puntuacionTotal, puntuacionTotal);
 		this.puntuacionTotal = puntuacionTotal;
 	}
 
@@ -2746,6 +2623,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 *            the prepolitica to set
 	 */
 	public void setPrepolitica(DDTipoPolitica prepolitica) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "prepolitica", this.prepolitica, prepolitica);
 		this.prepolitica = prepolitica;
 	}
 
@@ -2753,6 +2632,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the prepolitica
 	 */
 	public DDTipoPolitica getPrepolitica() {
+		if(fieldHandler!=null)
+	        return (DDTipoPolitica)fieldHandler.readObject(this, "prepolitica", prepolitica);
 		return prepolitica;
 	}
 
@@ -2863,6 +2744,8 @@ public class Persona implements Serializable, Auditable, Describible {
 	 * @return the ciclosMarcadoPolitica
 	 */
 	public List<CicloMarcadoPolitica> getCiclosMarcadoPolitica() {
+		if(fieldHandler!=null)
+	        return (List<CicloMarcadoPolitica>)fieldHandler.readObject(this, "ciclosMarcadoPolitica", ciclosMarcadoPolitica);
 		return ciclosMarcadoPolitica;
 	}
 
@@ -2872,14 +2755,20 @@ public class Persona implements Serializable, Auditable, Describible {
 	 */
 	public void setCiclosMarcadoPolitica(
 			List<CicloMarcadoPolitica> ciclosMarcadoPolitica) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "ciclosMarcadoPolitica", this.ciclosMarcadoPolitica, ciclosMarcadoPolitica);
 		this.ciclosMarcadoPolitica = ciclosMarcadoPolitica;
 	}
 
 	public void setVisibilidad(EXTVisibilidad visibilidad) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "visibilidad", this.visibilidad, visibilidad);
 		this.visibilidad = visibilidad;
 	}
 
 	public EXTVisibilidad getVisibilidad() {
+		if(fieldHandler!=null)
+	        return (EXTVisibilidad)fieldHandler.readObject(this, "visibilidad", visibilidad);
 		return visibilidad;
 	}
 
@@ -2900,52 +2789,29 @@ public class Persona implements Serializable, Auditable, Describible {
 		return observacionesRevisionSolvencia;
 	}
 
-	public void setDiasVencidoRiegoDirecto(Integer diasVencidoRiegoDirecto) {
-		this.diasVencidoRiegoDirecto = diasVencidoRiegoDirecto;
-	}
-
 	public Integer getDiasVencidoRiegoDirecto() {
-		return diasVencidoRiegoDirecto;
+		return this.getFormulas() == null ? null :this.getFormulas().getDiasVencidoRiegoDirecto();
 	}
 
-	public void setDiasVencidoRiegoIndirecto(Integer diasVencidoRiegoIndirecto) {
-		this.diasVencidoRiegoIndirecto = diasVencidoRiegoIndirecto;
-	}
 
 	public Integer getDiasVencidoRiegoIndirecto() {
-		return diasVencidoRiegoIndirecto;
-	}
-
-	public void setRiesgoTot(Float riesgoTot) {
-		this.riesgoTot = riesgoTot;
+		return this.getFormulas() == null ? null :this.getFormulas().getDiasVencidoRiegoIndirecto();
 	}
 
 	public Float getRiesgoTot() {
-		return riesgoTot;
-	}
-
-	public void setRiesgoTotalDirecto(Float riesgoTotalDirecto) {
-		this.riesgoTotalDirecto = riesgoTotalDirecto;
+		return this.getFormulas() == null ? null :this.getFormulas().getRiesgoTot();
 	}
 
 	public Float getRiesgoTotalDirecto() {
-		return riesgoTotalDirecto;
-	}
-
-	public void setRiesgoTotalIndirecto(Float riesgoTotalIndirecto) {
-		this.riesgoTotalIndirecto = riesgoTotalIndirecto;
+		return this.getFormulas() == null ? null :this.getFormulas().getRiesgoTotalDirecto();
 	}
 
 	public Float getRiesgoTotalIndirecto() {
-		return riesgoTotalIndirecto;
-	}
-
-	public void setSituacionCliente(String situacionCliente) {
-		this.situacionCliente = situacionCliente;
+		return this.getFormulas() == null ? null :this.getFormulas().getRiesgoTotalIndirecto();
 	}
 
 	public String getSituacionCliente() {
-		return situacionCliente;
+		return this.getFormulas() == null ? null :this.getFormulas().getSituacionCliente();
 	}
 
 	public boolean getNoTieneFincabilidad() {
@@ -2965,10 +2831,14 @@ public class Persona implements Serializable, Auditable, Describible {
 	}
 
 	public DDPropietario getPropietario() {
+		if(fieldHandler!=null)
+	        return (DDPropietario)fieldHandler.readObject(this, "propietario", propietario);
 		return propietario;
 	}
 
 	public void setPropietario(DDPropietario propietario) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "propietario", this.propietario, propietario);
 		this.propietario = propietario;
 	}
 
@@ -2981,10 +2851,14 @@ public class Persona implements Serializable, Auditable, Describible {
 	}
 
 	public DDOrigenTelefono getOrigenTelefono() {
+		if(fieldHandler!=null)
+	        return (DDOrigenTelefono)fieldHandler.readObject(this, "origenTelefono", origenTelefono);
 		return origenTelefono;
 	}
 
 	public void setOrigenTelefono(DDOrigenTelefono origenTelefono) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "origenTelefono", this.origenTelefono, origenTelefono);
 		this.origenTelefono = origenTelefono;
 	}
 
@@ -3021,10 +2895,14 @@ public class Persona implements Serializable, Auditable, Describible {
 	}
 
 	public DDTipoPersonaNivel getTipoPersonaNivel() {
+		if(fieldHandler!=null)
+	        return (DDTipoPersonaNivel)fieldHandler.readObject(this, "tipoPersonaNivel", tipoPersonaNivel);
 		return tipoPersonaNivel;
 	}
 
 	public void setTipoPersonaNivel(DDTipoPersonaNivel tipoPersonaNivel) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "tipoPersonaNivel", this.tipoPersonaNivel, tipoPersonaNivel);
 		this.tipoPersonaNivel = tipoPersonaNivel;
 	}
 
@@ -3043,7 +2921,7 @@ public class Persona implements Serializable, Auditable, Describible {
 	public void setRiesgoDispuesto(Float riesgoDispuesto) {
 		this.riesgoDispuesto = riesgoDispuesto;
 	}
-	
+
 	public Float getRiesgoDirectoNoVencido() {
 		return (this.riesgoDispuesto != null && this.riesgoDirectoVencido != null) ? this.riesgoDispuesto
 				- this.riesgoDirectoVencido
@@ -3075,10 +2953,14 @@ public class Persona implements Serializable, Auditable, Describible {
 	}
 
 	public DDColectivoSingular getColectivoSingular() {
+		if(fieldHandler!=null)
+	        return (DDColectivoSingular)fieldHandler.readObject(this, "colectivoSingular", colectivoSingular);
 		return colectivoSingular;
 	}
 
 	public void setColectivoSingular(DDColectivoSingular colectivoSingular) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "colectivoSingular", this.colectivoSingular, colectivoSingular);
 		this.colectivoSingular = colectivoSingular;
 	}
 
@@ -3107,75 +2989,83 @@ public class Persona implements Serializable, Auditable, Describible {
 	}
 
 	public DDTipoGestorEntidad getTipoGestorEntidad() {
+		if(fieldHandler!=null)
+	        return (DDTipoGestorEntidad)fieldHandler.readObject(this, "tipoGestorEntidad", tipoGestorEntidad);
 		return tipoGestorEntidad;
 	}
 
 	public void setTipoGestorEntidad(DDTipoGestorEntidad tipoGestorEntidad) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "tipoGestorEntidad", this.tipoGestorEntidad, tipoGestorEntidad);
 		this.tipoGestorEntidad = tipoGestorEntidad;
 	}
 
 	public DDAreaGestion getAreaGestion() {
+		if(fieldHandler!=null)
+	        return (DDAreaGestion)fieldHandler.readObject(this, "areaGestion", areaGestion);
 		return areaGestion;
 	}
 
 	public void setAreaGestion(DDAreaGestion areaGestion) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "areaGestion", this.areaGestion, areaGestion);
 		this.areaGestion = areaGestion;
 	}
 
 	public List<Telefono> getTelefonos() {
+		if(fieldHandler!=null)
+	        return (List<Telefono>)fieldHandler.readObject(this, "telefonos", telefonos);
 		return telefonos;
 	}
 
 	public void setTelefonos(List<Telefono> telefonos) {
+		if(fieldHandler!=null)
+	        fieldHandler.writeObject(this, "telefonos", this.telefonos, telefonos);
 		this.telefonos = telefonos;
 	}
 
 	public String getServicioNominaPension() {
-		return servicioNominaPension;
-	}
-
-	public void setServicioNominaPension(String servicioNominaPension) {
-		this.servicioNominaPension = servicioNominaPension;
+		return this.getFormulas() == null ? null :this.getFormulas().getServicioNominaPension();
 	}
 
 	public String getUltimaActuacion() {
-		return ultimaActuacion;
+		return this.getFormulas() == null ? null :this.getFormulas().getUltimaActuacion();
 	}
 
-	public void setUltimaActuacion(String ultimaActuacion) {
-		this.ultimaActuacion = ultimaActuacion;
-	}
-	
 	public String getDispuestoNoVencido() {
-		return Checks.esNulo(dispuestoNoVencido) ? null : dispuestoNoVencido.replaceAll(",", ".");
-	}
+		return this.getFormulas() == null ? null : Checks.esNulo(this.getFormulas().getDispuestoNoVencido()) ? null : this.getFormulas().getDispuestoNoVencido().replaceAll(",", ".");
 
-	public void setDispuestoNoVencido(String dispuestoNoVencido) {
-		this.dispuestoNoVencido = dispuestoNoVencido;
 	}
 
 	public String getDispuestoVencido() {
-		return (Checks.esNulo(dispuestoVencido)) ? null : dispuestoVencido.replaceAll(",", ".");
-	}
+		return this.getFormulas() == null ? null : Checks.esNulo(this.getFormulas().getDispuestoVencido()) ? null : this.getFormulas().getDispuestoVencido().replaceAll(",", ".");
 
-	public void setDispuestoVencido(String dispuestoVencido) {
-		this.dispuestoVencido = dispuestoVencido;
 	}
 
 	public String getEstadoCicloVida() {
-		return estadoCicloVida;
+		return this.getFormulas() == null ? null :this.getFormulas().getEstadoCicloVida();
 	}
 
-	public void setEstadoCicloVida(String estadoCicloVida) {
-		this.estadoCicloVida = estadoCicloVida;
+
+	public String getDescripcionCnae() {
+		return this.getFormulas() == null ? null :this.getFormulas().getDescripcionCnae();
+	}
+
+	@Override
+	public void setFieldHandler(FieldHandler handler) {
+		this.fieldHandler = handler;
+
+	}
+
+	@Override
+	public FieldHandler getFieldHandler() {
+		return this.fieldHandler;
 	}
 	
-	public String getDescripcionCnae() {
-		return descripcionCnae;
-	}
-
-	public void setDescripcionCnae(String descripcionCnae) {
-		this.descripcionCnae = descripcionCnae;
+	public PersonaFormulas getFormulas() {
+		if(fieldHandler!=null)
+	        return (PersonaFormulas)fieldHandler.readObject(this, "formulas", formulas);
+		return formulas;
 	}
 
 }

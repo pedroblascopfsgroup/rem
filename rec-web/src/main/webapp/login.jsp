@@ -61,7 +61,7 @@ var olvidoPass = function(){
            flow:'public/recuperarPassword.htm'
    	    ,params: {username:usuario.getValue()} 
            ,success: function(data, config) {
-               Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />',data.respuesta.respuesta);
+               Ext.Msg.alert('<s:message code="app.informacion" text="**InformaciÃ³n" />',data.respuesta.respuesta);
        }});
 }
 
@@ -99,9 +99,9 @@ var webflow = function(config){
         if (config && config.userConfig){
             var f = data.success? config.userConfig.success : config.userConfig.error;
             if (f && typeof(f)=="function"){
-                //Nota: aquí no sé si pasar config, o config.userConfig que al fin y al cabo es lo
+                //Nota: aquÃ­ no sÃ© si pasar config, o config.userConfig que al fin y al cabo es lo
                 //que ha utilizado el usuario para hacer la llamada
-                //XXX: this aquí no es window!!!, debería ser
+                //XXX: this aquÃ­ no es window!!!, deberÃ­a ser
                 f.call(config.scope || this,data,config.userConfig);
             }
         }
@@ -121,7 +121,7 @@ var webflow = function(config){
     Ext.Ajax.request( p );
 };
 
-//si detectamos el framework, es que esta página está siendo cargada donde no debe.
+//si detectamos el framework, es que esta pÃ¡gina estÃ¡ siendo cargada donde no debe.
 if (top['app']){
 	top.app.loginRedirect();
 }
@@ -133,9 +133,9 @@ else{
 		});
 
 
-		//vamos a crear una clase botón con la función de envío que queremos. Y de
-		// aquí crearemos el text de usuario y el de password.
-		//lo hacemos así tan sólo para probar esta forma de crear controles
+		//vamos a crear una clase botÃ³n con la funciÃ³n de envÃ­o que queremos. Y de
+		// aquÃ­ crearemos el text de usuario y el de password.
+		//lo hacemos asÃ­ tan sÃ³lo para probar esta forma de crear controles
 		var loginField = Ext.extend(Ext.form.TextField, {
 			initComponent : function(){
 				Ext.apply(this,{
@@ -165,7 +165,7 @@ else{
 			}
 			else if (password.getRawValue() == '')
 			{
-				 mensaje = '<s:message code="login.error.password" text="**Falta introducir una contraseña para el usuario" />';
+				 mensaje = '<s:message code="login.error.password" text="**Falta introducir una contraseÃ±a para el usuario" />';
 			}
 
 
@@ -198,7 +198,7 @@ else{
 
 
 		var labelOlvidoPass = new Ext.form.Label({
-			html : '<s:message code="login.olvido_password" text="**Se te olvido?" /> <a href="#" onmousedown="olvidoPass();">Pulse aquí</a>'
+			html : '<s:message code="login.olvido_password" text="**Se te olvido?" /> <a href="#" onmousedown="olvidoPass();">Pulse aquÃ­</a>'
 			,style:'padding:0px;margin-top:0px;margin-bottom:0px;margin-left:150px;'			         
 		}); 
 
@@ -214,13 +214,13 @@ else{
 		});
 
         var recuperar = new Ext.Button({
-            text : '¿Olvid&oacute; su password?'
+            text : 'Â¿Olvid&oacute; su password?'
             ,handler : function(target, e){
             	webflow({
                     flow:'public/recuperarPassword.htm'
             	    ,params: {username:usuario.getValue()} 
                     ,success: function(data, config) {
-                        Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />',data.respuesta.respuesta);
+                        Ext.Msg.alert('<s:message code="app.informacion" text="**InformaciÃ³n" />',data.respuesta.respuesta);
                 }});
             }
         });        
@@ -266,7 +266,7 @@ else{
 
 		loginWindow.on("show", function(){
 			<c:if test="${SPRING_SECURITY_LAST_EXCEPTION.class.name == 'org.springframework.security.BadCredentialsException'}">
-			mensaje = '<s:message code="login.error.user_password" text="**Usuario o contraseña incorrecta" />';
+			mensaje = '<s:message code="login.error.user_password" text="**Usuario o contraseÃ±a incorrecta" />';
  	 		Ext.Msg.alert('Error',mensaje);
 			</c:if>
 			

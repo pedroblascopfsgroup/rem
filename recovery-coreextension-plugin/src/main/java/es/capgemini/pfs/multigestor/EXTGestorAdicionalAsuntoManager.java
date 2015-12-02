@@ -7,10 +7,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.multigestor.api.GestorAdicionalAsuntoApi;
 import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoDao;
+import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 
 @Component
 public class EXTGestorAdicionalAsuntoManager implements
@@ -22,6 +28,9 @@ public class EXTGestorAdicionalAsuntoManager implements
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 
+	@Autowired
+	private GenericABMDao genericDao;
+
 	@Override
 	@BusinessOperation(BO_EXT_GESTOR_ADICIONAL_FIND_GESTORES_BY_ASUNTO)
 	@Transactional
@@ -30,6 +39,25 @@ public class EXTGestorAdicionalAsuntoManager implements
 		return adicionalAsuntoDao.findGestoresByAsunto(idAsunto,
 				tipoGestor);
 
+	}
+
+	@Override
+	public EXTGestorAdicionalAsunto findGaaByIds(Long idTipoGestor, Long idAsunto, Long idUsuario, Long idTipoDespacho) {
+
+		if (Checks.esNulo(idAsunto) || Checks.esNulo(idUsuario) || Checks.esNulo(idTipoDespacho) || Checks.esNulo(idTipoGestor)) {
+			return null;
+		}
+
+		GestorDespacho gestor = genericDao.get(GestorDespacho.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", idUsuario),
+		genericDao.createFilter(FilterType.EQUALS, "despachoExterno.id", idTipoDespacho),
+		genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+
+		Filter filtroAsunto = genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto);
+		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "tipoGestor.id", idTipoGestor);
+		Filter filtroGestorDespacho = genericDao.createFilter(FilterType.EQUALS, "gestor.id", gestor.getId());
+		EXTGestorAdicionalAsunto gaa = genericDao.get(EXTGestorAdicionalAsunto.class, filtroAsunto, filtroTipoGestor, filtroGestorDespacho);
+
+		return gaa;
 	}
 
 }

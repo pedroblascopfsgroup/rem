@@ -255,7 +255,8 @@ app.reloadFav=function(){
 app.creaLabel = function(label, value, config){
 	var config = config || {};
 	var cfg = {
-			fieldLabel : label || ''
+			autoHeight: true
+			,fieldLabel : label || ''
 			,value : value
 			,labelStyle : config.labelStyle || 'font-weight:bolder'
 			//esto reduce el margen entre las labels 4px que introduce .x-form-item

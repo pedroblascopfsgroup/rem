@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.controller;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +17,8 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.plazaJuzgado.BuscaPlazaPaginadoDtoInfo;
 import es.capgemini.pfs.core.api.plazaJuzgado.PlazaJuzgadoApi;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
@@ -38,16 +41,29 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcelInformeSubasta;
+import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcelMasivoSubastas;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.EditBienApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContext;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.NMBBienManager;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.InformeActaComiteBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastaSareb.InformeSubastaSarebBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastabankia.InformeSubastaBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastabankia.InformeSubastaLetradoBean;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoCarga;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdicionalBien;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienCargas;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBContratoBien;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBDDTipoBienContrato;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.recoveryapi.BienApi;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.relacionesContratoBien.dto.BusquedaContratoDTO;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.SubastaApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.BienSubastaDTO;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.EditarInformacionCierreDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.GuardarInstruccionesDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.LotesSubastaDto;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.manager.SubastaManager;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.manager.SubastaManager.ValorNodoTarea;
 import es.pfsgroup.recovery.geninformes.GENINFVisorInformeController;
 import es.pfsgroup.recovery.geninformes.api.GENINFInformesApi;
@@ -66,11 +82,23 @@ public class SubastaController {
 	private static final String EDITAR_INFORMACION_CIERRE = "plugin/nuevoModeloBienes/subastas/editarInformacionCierre";
 	private static final String DICCIONARIO_JSON = "plugin/nuevoModeloBienes/subastas/diccionarioJSON";
 	
+	
+	private static final String ADD_RELACION_CONTRATO_BIEN = "plugin/nuevoModeloBienes/subastas/addRelacionContratoBien";
+	private static final String BORRAR_RELACION_CONTRATO_BIEN = "plugin/nuevoModeloBienes/subastas/borrarRelacionContratoBien";
+	private static final String BUSQUEDA_CONTRATO_JSON = "plugin/nuevoModeloBienes/subastas/busquedaContratoJSON";
+	private static final String ADD_BIEN_CARGAS = "plugin/nuevoModeloBienes/bienes/AgregarBienCargasMultiple";
+	private static final String ADD_REVISION_CARGAS = "plugin/nuevoModeloBienes/subastas/editarRevisionCargasMultiple";
+	
+
+	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
 	@Autowired
 	private SubastaApi subastaApi;
+	
+	@Autowired
+	private SubastaManager subastaManager;
 	
 	@Autowired
 	private NMBProjectContext nmbProjectContext;
@@ -80,6 +108,9 @@ public class SubastaController {
 	
 	@Autowired
     private Executor executor;	
+	
+	@Autowired
+	private NMBBienManager nmbBienManager;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -239,6 +270,7 @@ public class SubastaController {
 			informe.setIdSubasta(idSubasta);
 			informe.setProxyFactory(proxyFactory);
 			informe.setSubastaApi(subastaApi);
+			informe.setNmbCommonProjectContext(nmbProjectContext);
 			List<Object> array = informe.create();
 			Map<String, Object> mapaValores = null;
 			FileItem resultado = proxyFactory.proxy(GENINFInformesApi.class)
@@ -764,5 +796,386 @@ public class SubastaController {
 		model.put("data", list);
 		return DICCIONARIO_JSON;
 	}
+	
+	/*
+	 * Modificaciones operaciones masivas subasta
+	 */
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getRelacionContratoBien(WebRequest request, ModelMap model,@RequestParam(value = "idBienes", required = true) Long[] idBienes){
+		
+		List<NMBDDTipoBienContrato> diccionarioRelaciones = (List<NMBDDTipoBienContrato>) executor.execute("dictionaryManager.getList", "NMBDDTipoBienContrato");
+		model.put("diccionarioRelaciones", diccionarioRelaciones);
+		
+		model.put("idBienes",idBienes);
+		
+		return ADD_RELACION_CONTRATO_BIEN;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String buscaContratoByCodigo(ModelMap model,String nroContrato){
+		
+		BusquedaContratoDTO dto=new BusquedaContratoDTO();
+		Contrato contrato=subastaManager.getContratoByNroContrato(nroContrato);
+		
+		
+		if(!Checks.esNulo(contrato)){
+			dto.setIdContrato(contrato.getId().toString());
+			dto.setNumContrato(contrato.getNroContrato());
+			dto.setTipoProducto(contrato.getTipoProducto().getDescripcion());
+			model.put("contrato", dto);
+			
+			return BUSQUEDA_CONTRATO_JSON;
+		}
+		else{
+			return "KO";
+		}
+	}
+	
+	@RequestMapping
+	public String guardarRelacionesContratoBienes(ModelMap model,String[] nroContratoTipoBienContrato,@RequestParam(value = "idBienes", required = true) Long[] idBienes){
+		
+		for(int i=0;i<nroContratoTipoBienContrato.length;i++){
+			if(!nroContratoTipoBienContrato[i].equals("")){
+				String nroContrato=nroContratoTipoBienContrato[i].split(",")[0];
+				String codTipoBienContrato=nroContratoTipoBienContrato[i].split(",")[1];
+				Contrato contrato=subastaManager.getContratoByNroContrato(nroContrato);
+				if(!Checks.esNulo(contrato)){
+					for(int c=0;c<idBienes.length;c++){
+						nmbBienManager.saveBienContrato(contrato.getId(),idBienes[c],codTipoBienContrato);
+					}
+				}
+			}
+		}
+		
+		return DEFAULT;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getBorrarRelacionContratoBien(WebRequest request, ModelMap model,@RequestParam(value = "idBienes", required = true) Long[] idBienes){
+		
+		model.put("idBienes",idBienes);
+		
+		return BORRAR_RELACION_CONTRATO_BIEN;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getContratos(WebRequest request, ModelMap model,@RequestParam(value = "idBienes", required = true) Long[] idBienes) {
+		List<NMBContratoBien> listNMBContratoBien=subastaManager.getRelacionesContratosBienes(idBienes);
+		model.put("contratosBienes", listNMBContratoBien);
+		return "plugin/nuevoModeloBienes/bienes/NMBcontratosBienJSON";
+			
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getAgregarBienCargas(WebRequest request, ModelMap model,@RequestParam(value = "idBienes", required = true) Long[] idBienes){
+		
+		List<DDSituacionCarga> situacionCarga = (List<DDSituacionCarga>) executor
+				.execute("dictionaryManager.getList", "DDSituacionCarga");
+		
+
+		List<DDSituacionCarga> situacionCargaEconomica = (List<DDSituacionCarga>) executor
+				.execute("dictionaryManager.getList", "DDSituacionCarga");
+		
+		List<DDTipoCarga> listTipoCarga = (List<DDTipoCarga>) executor
+				.execute("dictionaryManager.getList", "DDTipoCarga");
+	
+		List<DDTipoCarga> tiposCarga = new ArrayList<DDTipoCarga>();
+		for(DDTipoCarga tipoCarga : listTipoCarga) {
+			if(DDTipoCarga.ANTERIORES_HIPOTECA.equals(tipoCarga.getCodigo()) || DDTipoCarga.POSTERIORES_HIPOTECA.equals(tipoCarga.getCodigo())){
+				tiposCarga.add(tipoCarga);
+			}
+		}
+		
+		model.put("idBienes", idBienes);
+		model.put("situacionCarga", situacionCarga);
+		model.put("situacionCargaEconomica", situacionCargaEconomica);
+		model.put("tipoCarga", tiposCarga);
+		
+		
+		return ADD_BIEN_CARGAS;
+	}
+	
+	
+	@RequestMapping
+	public String saveCargaMultiple(WebRequest request, ModelMap map,@RequestParam(value = "idBienes", required = true) Long[] idBienes) {
+		
+		for(int i=0;i<idBienes.length;i++){
+			saveCarga(request,idBienes[i]);
+		}
+		return DEFAULT;
+	}
+	
+	/**
+	 * Metodo para generar el excel con las instrucciones de subasta
+	 * @param request
+	 * @param model
+	 * @param numAutos
+	 * @param fechaSubasta
+	 * @param numLotes
+	 * @return
+	 */
+	@RequestMapping
+	public String descargarPlantillaInstrucciones(WebRequest request,ModelMap model,@RequestParam(value = "numAutos", required = true) String numAutos,@RequestParam(value = "fechaSubasta", required = true) String fechaSubasta,
+			@RequestParam(value = "numLotes", required = true) String numLotes) {
+			
+			String[] idNumLotes=numLotes.split(",");
+		
+			List<String> cabeceras = new ArrayList<String>();
+			cabeceras.add("Num. Autos");
+			cabeceras.add("Fecha subasta");
+			cabeceras.add("Lote");
+			cabeceras.add("Puja sin postores");
+			cabeceras.add("Puja con postores DESDE");
+			cabeceras.add("Puja con postores HASTA");
+			cabeceras.add("Tipo subasta");
+			cabeceras.add("Deuda judicial");
+			cabeceras.add("Instrucciones");
+		    
+			
+			List<List<String>> listaValores = new ArrayList<List<String>>();
+			
+			for (int i=0;i<idNumLotes.length;i++) {
+
+					List<String> filaValores = new ArrayList<String>();
+			
+					filaValores.add(numAutos);
+					filaValores.add(fechaSubasta);
+					filaValores.add(idNumLotes[i]);
+					filaValores.add("");
+					filaValores.add("");
+					filaValores.add("");
+					filaValores.add("");
+					filaValores.add("");
+					filaValores.add("");
+
+					listaValores.add(filaValores);
+				
+			}
+			
+			HojaExcelMasivoSubastas hojaExcel = new HojaExcelMasivoSubastas();
+			hojaExcel.crearNuevoExcel("plantilla_instrucciones.xls", cabeceras, listaValores);
+			
+			FileItem excelFileItem = new FileItem(hojaExcel.getFile());
+	        excelFileItem.setFileName("plantilla_instrucciones.xls");
+	        excelFileItem.setContentType(HojaExcel.TIPO_EXCEL);
+	        excelFileItem.setLength(hojaExcel.getFile().length());
+		    
+	        model.put("fileItem",excelFileItem);
+			return GENINFVisorInformeController.JSP_DOWNLOAD_FILE;
+	}
+	
+	@RequestMapping
+	public String validarFicheroInstrucciones(WebRequest request,Long idTipoOperacion,String nombreFichero){
+		
+		return DEFAULT;
+	}
+
+	/**
+	 * Salvar la carga de un bien
+	 * 
+	 * @param request
+	 * @return
+	 */
+
+	private String saveCarga(WebRequest request,Long idBien) {
+
+		NMBBienCargas carga;
+		if (!Checks.esNulo(request.getParameter("idCarga"))) {
+			carga = (NMBBienCargas) proxyFactory.proxy(EditBienApi.class)
+					.getCarga(Long.parseLong(request.getParameter("idCarga")));
+		} else {
+			carga = new NMBBienCargas();
+		}
+
+		NMBBien bien = null;
+		if (!Checks.esNulo(idBien)) {
+			bien = (NMBBien) proxyFactory.proxy(BienApi.class).get(
+					idBien);
+			carga.setBien(bien);
+		}
+
+		if (!Checks.esNulo(request.getParameter("fechaPresentacion"))) {
+			try {
+				carga.setFechaPresentacion(DateFormat.toDate(request
+						.getParameter("fechaPresentacion")));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		} else {
+			carga.setFechaPresentacion(null);
+		}
+
+		if (!Checks.esNulo(request.getParameter("fechaInscripcion"))) {
+			try {
+				carga.setFechaInscripcion(DateFormat.toDate(request
+						.getParameter("fechaInscripcion")));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		} else {
+			carga.setFechaInscripcion(null);
+		}
+
+		if (!Checks.esNulo(request.getParameter("fechaCancelacion"))) {
+			try {
+				carga.setFechaCancelacion(DateFormat.toDate(request
+						.getParameter("fechaCancelacion")));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		} else {
+			carga.setFechaCancelacion(null);
+		}
+
+		if (!Checks.esNulo(request.getParameter("registral"))) {
+			carga.setRegistral(Boolean.parseBoolean(request
+					.getParameter("registral")));
+		} else {
+			carga.setRegistral(null);
+		}
+
+		if (!Checks.esNulo(request.getParameter("economica"))) {
+			carga.setEconomica(Boolean.parseBoolean(request
+					.getParameter("economica")));
+		} else {
+			carga.setEconomica(false);
+		}
+
+		if (!Checks.esNulo(request.getParameter("letra"))) {
+			carga.setLetra(request.getParameter("letra"));
+		} else {
+			carga.setLetra(null);
+		}
+
+		if (!Checks.esNulo(request.getParameter("titular"))) {
+			carga.setTitular(request.getParameter("titular"));
+		} else {
+			carga.setTitular(null);
+		}
+
+		if (!Checks.esNulo(request.getParameter("importeRegistral"))) {
+			carga.setImporteRegistral(Float.parseFloat(request
+					.getParameter("importeRegistral")));
+		} else {
+			carga.setImporteRegistral(null);
+		}
+
+		if (!Checks.esNulo(request.getParameter("importeEconomico"))) {
+			carga.setImporteEconomico(Float.parseFloat(request
+					.getParameter("importeEconomico")));
+		} else {
+			carga.setImporteEconomico(null);
+		}
+
+		DDSituacionCarga situacionCarga;
+		DDSituacionCarga situacionCargaEconomica;
+
+		if (!Checks.esNulo(request.getParameter("situacionCarga")))
+			situacionCarga=subastaManager.getSituacionCarga(request.getParameter("situacionCarga"));
+		else {
+			situacionCarga = null;
+		}
+		carga.setSituacionCarga(situacionCarga);
+
+		if (!Checks.esNulo(request.getParameter("situacionCargaEconomica")))
+			situacionCargaEconomica=subastaManager.getSituacionCargaEconomica(request.getParameter("situacionCargaEconomica"));
+		else {
+			situacionCargaEconomica = null;
+		}
+		carga.setSituacionCargaEconomica(situacionCargaEconomica);
+
+		DDTipoCarga tipoCarga;
+		if (!Checks.esNulo(request.getParameter("tipoCarga")))
+			tipoCarga=subastaManager.getTipoCarga(request.getParameter("tipoCarga"));
+		else {
+			tipoCarga = null;
+		}
+		carga.setTipoCarga(tipoCarga);
+
+		Auditoria auditoria = Auditoria.getNewInstance();
+		carga.setAuditoria(auditoria);
+
+		proxyFactory.proxy(EditBienApi.class).guardarCarga(carga);
+
+		return DEFAULT;
+
+	}
+	
+	@RequestMapping
+	public String getEditarRevisionCargas(WebRequest request, ModelMap model,@RequestParam(value = "idBienes", required = true) Long[] idBienes){
+		
+		model.put("idBienes", idBienes);
+		
+		return ADD_REVISION_CARGAS;
+	}
+	
+	@RequestMapping
+	public String saveRevisionCargasMultiple(WebRequest request, ModelMap map,@RequestParam(value = "idBienes", required = true) Long[] idBienes) {
+		
+		for(int i=0;i<idBienes.length;i++){
+			saveRevisionCargas(request,idBienes[i]);
+		}
+		return DEFAULT;
+	}
+	
+	private String saveRevisionCargas(WebRequest request,Long idBien) {
+		NMBAdicionalBien adicional = new NMBAdicionalBien();
+		NMBBien bien = null;
+		if (!Checks.esNulo(idBien)) {
+			bien = (NMBBien) proxyFactory.proxy(BienApi.class).get(idBien);
+
+			if (bien.getAdicional() != null) {
+				adicional = bien.getAdicional();
+				Auditoria auditoria = adicional.getAuditoria();
+				auditoria.setFechaModificar(new Date());
+				adicional.setAuditoria(auditoria);
+			} else {
+				Auditoria auditoria = Auditoria.getNewInstance();
+				adicional.setAuditoria(auditoria);
+			}
+		} else {
+			adicional.setBien(null);
+		}
+
+		if (!Checks.esNulo(request.getParameter("fechaRevision"))) {
+			try {
+				adicional.setFechaRevision(DateFormat.toDate(request
+						.getParameter("fechaRevision")));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		} else {
+			adicional.setFechaRevision(null);
+		}
+
+		if (!Checks.esNulo(request.getParameter("sinCargas"))) {
+			adicional.setSinCargas(Boolean.parseBoolean(request
+					.getParameter("sinCargas")));
+		} else {
+			adicional.setSinCargas(null);
+		}
+
+		if (!Checks.esNulo(request.getParameter("observaciones"))) {
+			adicional.setObservaciones(request.getParameter("observaciones"));
+		} else {
+			adicional.setObservaciones(null);
+		}
+
+		bien.setAdicional(adicional);
+		adicional.setBien(bien);
+
+		proxyFactory.proxy(EditBienApi.class).guardarRevisionCargas(adicional);
+
+		return DEFAULT;
+
+	}
+	
+	
 	
 }

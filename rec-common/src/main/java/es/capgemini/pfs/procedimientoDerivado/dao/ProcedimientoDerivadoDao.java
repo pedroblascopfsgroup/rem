@@ -9,4 +9,6 @@ import es.capgemini.pfs.procedimientoDerivado.model.ProcedimientoDerivado;
  * @author: Lisandro Medrano
  */
 public interface ProcedimientoDerivadoDao extends AbstractDao<ProcedimientoDerivado, Long> {
+	
+	public ProcedimientoDerivado getByGuid(String guid);
 }

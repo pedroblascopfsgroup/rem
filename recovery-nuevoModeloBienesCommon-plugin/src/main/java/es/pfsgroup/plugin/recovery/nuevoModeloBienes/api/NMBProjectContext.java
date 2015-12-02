@@ -75,8 +75,56 @@ public interface NMBProjectContext {
 	 */
 	List<String> getCodigosSubastas();
 
+	/**
+	 * Devuelve el código de Subasta Sareb
+	 * 
+	 * @return Códgio Subasta Sareb
+	 */        
+        String getCodigoSubastaBankia();
+        
 	String getComboPostoresCelebracionSubasta();
 
 	Map<String, String> getMapaSubastas();
+
+	String getValorHonorarios();
+
+	String getValorDerechosSuplidos();
+
+	String getFechaDemandaHipotecario();
+
+	String getFechaDemandaOrdinario();
+
+	List<String> getCodigosTareasSenyalamiento();
+
+	String getCodigoTareaDemandaHipotecario();
+
+	String getCodigoTareaDemandaMonitorio();
+
+	String getCodigoTareaDemandaOrdinario();
+
+	String getCodigoHipotecario();
+
+	String getCodigoMonitorio();
+
+	String getCodigoOrdinario();
+
+	String getFechaDemandaMonitorio();
+
+	String getCodigoRegistrarSolicitudMoratoria();
+
+	String getFechaSolicitudRegistrarSolicitudMoratoria();
+	
+	String getCodigoRegistrarResolucionMoratoria();
+
+	String getFechaFinMoratoriaRegistrarResolucion();
+
+	String getResultadoMoratoria();
+	
+	/**
+	 * Devuelve el nombre del jrxml del informe de propuesta de cancelaciÃ³n de cargas.
+	 * 
+	 * @return plantillaReportPropuestaCancelacionCargas
+	 */
+	String getPlantillaReportPropuestaCancelacionCargas();
 	
 }

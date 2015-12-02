@@ -40,6 +40,7 @@ public interface BienApi {
 	public static String GET_LIST_PAISES = "NMBbienManager.getListPaises";
 	public static String GET_LIST_TIPOS_VIA = "NMBbienManager.getListTiposVia";
 	public static String GET_BIEN_BY_ID = "NMBbienManager.getBienById";
+	public static String GET_NUMEROS_ACTIVOS_BIENES = "NMBbienManager.getNumerosActivosBienes";
 	
 	/**
      * Recupera el Bien indicado.
@@ -188,5 +189,8 @@ public interface BienApi {
 
 	@BusinessOperationDefinition(GET_BIEN_BY_ID)
 	public Bien getBienById(Long id);
+	
+	@BusinessOperationDefinition(GET_NUMEROS_ACTIVOS_BIENES)
+	public Map<String, String> getNumerosActivosBienes(final String[] arrBien);
 
 }

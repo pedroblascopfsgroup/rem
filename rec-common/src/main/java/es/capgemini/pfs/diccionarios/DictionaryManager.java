@@ -1,5 +1,6 @@
 package es.capgemini.pfs.diccionarios;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
+import es.capgemini.pfs.diccionarios.comparator.IDictionaryComparator;
 
 /**
  * Manager que maneja los procesos jbpm judiciales de manera genérica.
@@ -28,6 +30,18 @@ public class DictionaryManager {
     @BusinessOperation(ComunBusinessOperation.BO_DICTIONARY_GET_LIST)
     public List<Dictionary> getList(String domainClass) {
         return dictionaryDao.getList(domainClass);
+    }
+    
+    @BusinessOperation(ComunBusinessOperation.BO_DICTIONARY_GET_LIST_ORDERED)
+    public List<Dictionary> getList(String domainClass, IDictionaryComparator comparator) {
+        
+    	List<Dictionary> dictionaries = dictionaryDao.getList(domainClass);
+    	
+    	if(comparator != null) {
+    		Collections.sort(dictionaries, comparator);
+    	}
+    	
+    	return dictionaries;
     }
 
     /**

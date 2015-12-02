@@ -41,9 +41,14 @@
  					</json:property> 
 					<json:property name="principalDefinitivo">
  						<pfsformat:money value="${cre.principalDefinitivo}"/>
- 					</json:property>  
+ 					</json:property>
  					<json:property name="estado"
 						value="${cre.estadoCredito.descripcion}" />
+<sec:authorize ifAllGranted="PERSONALIZACION-BCC"> 					 
+ 					<json:property name="fechaVencimiento">
+ 						<pfsformat:normalize value="${cre.fechaVencimiento}"/>
+ 					</json:property> 
+</sec:authorize>					
 				</json:object>
 			</c:forEach>
 		</c:forEach>

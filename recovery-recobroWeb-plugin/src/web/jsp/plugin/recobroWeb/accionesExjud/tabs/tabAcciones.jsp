@@ -25,7 +25,7 @@
 	};
 	
 	var accionesRecord = Ext.data.Record.create([
-		 {name:'id'},
+		 {name:'id'}
 		,{name:'idAccion'}
 		,{name:'fechaGestion'}
         ,{name:'agencia'}

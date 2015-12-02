@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <end-state id="start" view="plugin/masivo/file/uploadFileResultJSON" >
+        <on-entry>
+            <evaluate expression="executor.execute('fileUploadUtils.extractHttpServletRequest', externalContext)" result="flowScope.hsr"/>
+            <evaluate expression="executor.execute('fileUpload.fileUpload', hsr)" result="flowScope.uploadForm"/>
+            <evaluate expression="executor.execute('plugin.nuevoModeloBienes.subastas.manager.SubastaManager.upload', uploadForm)" result="flowScope.resultado"/>
+            <evaluate expression="externalContext.getSessionMap().put('resultado', resultado)"/>     
+        </on-entry>
+    </end-state>    
+    
+</flow>

@@ -9,17 +9,13 @@
     <input name="idProcedimiento" type="java.lang.Long"/>
     <input name="readOnly" type="java.lang.Boolean"/>
 
-
 	<decision-state id="newOrEdit">
-
-		<if test="id!=null" then="buscar" else="formulario"/>
+		<if test="id!=null" then="buscar" else="buscar"/>
 	</decision-state>
 
-
-	<action-state id="buscar">
-			<!--<evaluate expression="executor.execute('bienManager.get', id)" result="flowScope.bien"/>-->
-			<transition to="formulario" />
-	</action-state>
+	<decision-state id="buscar">
+		<if test="readOnly!=null and readOnly" then="formularioReadOnly" else="formulario"/>
+	</decision-state>
 
     <view-state id="formulario" view="${view}" model="dtoGenericForm">
     	<on-entry>
@@ -35,6 +31,22 @@
 			<set name="flowScope.view" value="'default'"/>
 		</on-render>
 		<transition on="ok" to="ok"/>
+		<transition on="cancel" to="close" bind="false"/>
+    </view-state>
+
+    <view-state id="formularioReadOnly" view="${view}" model="dtoGenericForm">
+    	<on-entry>
+			<evaluate expression="executor.execute('genericFormManager.getReadOnly',idTareaExterna)" result="flowScope.form" />
+            <evaluate expression="executor.execute('genericFormManager.getValoresTareas',idProcedimiento)" result="flowScope.valores" />
+    		<set name="dtoGenericForm.form" value="form" />
+    		<set name="flowScope.view" value="form.view" />
+
+    	</on-entry>
+    	<on-render>
+			<!-- a partir de la segunda vez, la respuesta ya debe ser json  por tanto
+			cambiaremos el nombre de la vista a 'default' -->
+			<set name="flowScope.view" value="'default'"/>
+		</on-render>
 		<transition on="cancel" to="close" bind="false"/>
     </view-state>
 

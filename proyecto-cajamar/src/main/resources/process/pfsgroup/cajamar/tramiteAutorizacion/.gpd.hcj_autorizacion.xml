@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="hcj_autorizacion" width="1072" height="517">
+  <node name="Inicio" x="364" y="18" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HCJ003_AutorizarPeticionPropuesta" x="299" y="129" width="262" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-316" h1="-3" w2="-318" h2="-233"/>
+      <bendpoint w1="-319" h1="230" w2="-321" h2="0"/>
+    </edge>
+  </node>
+  <node name="HCJ003_AutorizarPeticionPropuestaDecision" x="282" y="226" width="295" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HCJ003_AutorizacionDecision" x="746" y="227" width="245" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="366" y="359" width="132" height="36"/>
+</root-container>

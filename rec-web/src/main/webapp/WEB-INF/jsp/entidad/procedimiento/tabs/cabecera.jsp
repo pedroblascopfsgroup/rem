@@ -14,7 +14,7 @@
 	var labelStyle2='font-weight:bolder;width:100px';
   
 	function label(id,text){
-		return app.creaLabel(text,"",  {id:'entidad-procedimiento-'+id, labelStyle:labelStyle2});
+		return  app.creaLabel(text,"",  {id:'entidad-procedimiento-'+id, labelStyle:labelStyle2});		
 	}
 
 	function fieldset(title, items){

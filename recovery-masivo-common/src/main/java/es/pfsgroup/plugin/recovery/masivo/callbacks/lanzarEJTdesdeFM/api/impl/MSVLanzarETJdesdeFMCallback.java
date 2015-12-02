@@ -157,7 +157,7 @@ public class MSVLanzarETJdesdeFMCallback extends
 	@BusinessOperation(MSV_LANZAR_ETJ_DESDE_FM_CALLBACK_ONERROR)
 	public void onError(Long tokenProceso, RecoveryBPMfwkInputDto input,
 			String errorMessage) {
-		// Obtenemos el map concurrente y le añadimos el error donde el index de
+		// Obtenemos el map concurrente y le aï¿½adimos el error donde el index de
 		// la lista es la columna del excel
 		List<String> listaErrores = mapaErrores.get(tokenProceso);
 		Integer numFila = new Integer(Integer.parseInt((String) input.getDatos().get(MSVProcesoManager.COLUMNA_NUMERO_FILA)));
@@ -165,7 +165,7 @@ public class MSVLanzarETJdesdeFMCallback extends
 		if (!Checks.esNulo(listaErrores)) {
 			if (!Checks.esNulo(numFila)) {		
 				if (numFila >= listaErrores.size()) {
-					throw new BusinessOperationException("La fila seleccionada es mayor que el número de filas del excel");
+					throw new BusinessOperationException("La fila seleccionada es mayor que el nï¿½mero de filas del excel");
 				}
 				mapaErrores.get(tokenProceso).set(numFila, errorMessage);
 			} else {
@@ -196,7 +196,7 @@ public class MSVLanzarETJdesdeFMCallback extends
 		try {
 			numFilas = hojaExcel.getNumeroFilas();
 		} catch (Exception e) {
-			throw new BusinessOperationException("No se puede obtener el número de filas del fichero");
+			throw new BusinessOperationException("No se puede obtener el nï¿½mero de filas del fichero");
 		}
 		// Creamos el mapa de errores con un list concurrente
 		List<String> list = Collections.synchronizedList(new LinkedList<String>());
@@ -332,7 +332,7 @@ public class MSVLanzarETJdesdeFMCallback extends
 	}
 
 	/**
-	 * Devuelve si el list contine alguna posición no nula
+	 * Devuelve si el list contine alguna posiciï¿½n no nula
 	 * @param list
 	 * @return
 	 */
@@ -346,7 +346,7 @@ public class MSVLanzarETJdesdeFMCallback extends
 	}
 	
 	/**
-	 * Métodos creado para los tests
+	 * Mï¿½todos creado para los tests
 	 * 
 	 * @return
 	 */

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="cj_resolucionInteres" width="1016" height="887">
+  <node name="Inicio" x="490" y="40" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H029_registrarResolucion" x="443" y="165" width="226" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-260" h1="-3" w2="-265" h2="-239"/>
+      <bendpoint w1="-258" h1="234" w2="-263" h2="-2"/>
+    </edge>
+  </node>
+  <node name="H029_ResolucionDecision" x="433" y="278" width="245" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="490" y="400" width="132" height="36"/>
+</root-container>

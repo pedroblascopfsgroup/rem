@@ -393,6 +393,31 @@ public class PROBaseActionHandler implements ActionHandler {
         }
         return tex_id;
     }
+    
+    protected TareaExterna getTareaExternaByName(String name, ExecutionContext executionContext) {
+        Long idTarea = getIdTareaExternaByName(name, executionContext);
+        if (idTarea != null) {
+            return proxyFactory.proxy(TareaExternaApi.class).get(idTarea);
+        }
+        return null;
+
+    }
+
+    private Long getIdTareaExternaByName(String name, ExecutionContext executionContext) {
+        final Long idToken = executionContext.getToken().getId();
+
+        // Esto permite tener asociación robusta para cada tarea en el contexto JBPM.
+        // Manteniendo sólo el ID de tarea no funciona bien cuando una misma tarea la replicamos N veces en un contexto.
+        // Ahora se almacenerá esa correspondencia de la siguiente forma: idTAREA_token = idtareaexterna
+        // Se mantiene compatibilidad hacia atrás
+        String shortTokenName = String.format("id%s", name);
+        String uniqueTokenName = String.format("id%s.%d", name, idToken);
+        Long tex_id = (Long)executionContext.getVariable(uniqueTokenName);
+        if (tex_id == null) {
+        	tex_id = (Long)executionContext.getVariable(shortTokenName);
+        }
+        return tex_id;
+    }
 
     /**
      * Muestra la informaci�n del nodo en el que se encuentra.

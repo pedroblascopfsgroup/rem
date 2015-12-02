@@ -23,6 +23,9 @@ public class TareaExternaValorDaoImpl extends AbstractEntityDao<TareaExternaValo
     @Override
     @SuppressWarnings("unchecked")
     public List<TareaExternaValor> getByTareaExterna(Long idTareaExterna) {
+    	if (idTareaExterna == null){
+    		throw new IllegalArgumentException("'idTareaExterna' no puede ser NULL");
+    	}
         String hql = "from TareaExternaValor where tareaExterna.id= ?";
 
         List<TareaExternaValor> list = getHibernateTemplate().find(hql, new Object[] { idTareaExterna });

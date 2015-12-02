@@ -2,7 +2,8 @@ package es.capgemini.pfs.core.api.acuerdo;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.pfs.acuerdo.dto.DtoActuacionesAExplorar;
+import es.capgemini.pfs.acuerdo.dto.DtoActuacionesRealizadasAcuerdo;
 import es.capgemini.pfs.acuerdo.dto.DtoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
@@ -58,8 +59,18 @@ public interface AcuerdoApi {
     @BusinessOperationDefinition(BO_CORE_ACUERDO_GUARDAR_CUMPLIMIENTO)
     public void registraCumplimientoAcuerdo(CumplimientoAcuerdoDto dto);
     
-	@BusinessOperation(ExternaBusinessOperation.BO_ACUERDO_MGR_FINALIZAR_ACUERDO)
-	@Transactional(readOnly = false)
+    @BusinessOperationDefinition(ExternaBusinessOperation.BO_ACUERDO_MGR_FINALIZAR_ACUERDO)
 	public void finalizarAcuerdo(Long idAcuerdo);
 
+	@BusinessOperationDefinition(ExternaBusinessOperation.BO_ACUERDO_MGR_PROPONER_ACUERDO)
+    void proponerAcuerdo(Long idAcuerdo);
+    
+	@BusinessOperationDefinition(ExternaBusinessOperation.BO_ACUERDO_MGR_CANCELAR_ACUERDO)
+    void cancelarAcuerdo(Long idAcuerdo);
+	
+	@BusinessOperationDefinition(ExternaBusinessOperation.BO_ACUERDO_MGR_SAVE_ACTUACIONES_REALIZADAS_ACUERDO)
+	void saveActuacionesRealizadasAcuerdo(DtoActuacionesRealizadasAcuerdo actuacionesRealizadasAcuerdo);
+	
+	@BusinessOperationDefinition(ExternaBusinessOperation.BO_ACUERDO_MGR_SAVE_ACTUACIONES_A_EXPLORAR_ACUERDO)
+	void saveActuacionAExplorarAcuerdo(DtoActuacionesAExplorar dto);	
 }

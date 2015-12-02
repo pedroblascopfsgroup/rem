@@ -20,7 +20,7 @@ import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJRegistroApi;
 import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJInfoRegistro;
 
 /**
- * Manager de exportación de las anotaciones y correos del histórico de asuntos
+ * Manager de exportaciï¿½n de las anotaciones y correos del histï¿½rico de asuntos
  * @author Guillem
  *
  */

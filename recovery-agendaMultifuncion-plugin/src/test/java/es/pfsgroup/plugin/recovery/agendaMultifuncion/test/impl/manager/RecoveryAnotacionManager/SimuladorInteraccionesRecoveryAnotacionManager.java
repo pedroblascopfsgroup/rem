@@ -24,7 +24,7 @@ public class SimuladorInteraccionesRecoveryAnotacionManager {
 
     private ApiProxyFactory mockProxyFactory;
 
-    // Apis dinámicas
+    // Apis dinï¿½micas
     private UsuarioApi mockUsuariosManager;
 
     private MEJRegistroApi mockRegistroManager;

@@ -8,7 +8,7 @@ var creaElemento = function(nombre,index,type,label,value,values){
 	var name='values['+(index)+']';
 	switch(type) {
 		case 'textarea' :
-			return app.crearTextArea(label, value, isDisable, null, name, {width:'440px'} );
+			return app.crearTextArea(label, value, isDisable, value, name, {width:'440px'} );
 			break;
 		case 'text' :
 			return app.creaText(name, label, value, {disabled:isDisable});

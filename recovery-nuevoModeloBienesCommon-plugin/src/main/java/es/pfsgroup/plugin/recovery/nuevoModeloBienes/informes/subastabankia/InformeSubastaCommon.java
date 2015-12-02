@@ -21,6 +21,7 @@ import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContext;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBContratoBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.SubastaApi;
@@ -35,13 +36,16 @@ public class InformeSubastaCommon {
 	@Autowired
 	protected SubastaApi subastaApi;
 	
+	@Autowired
+	protected NMBProjectContext nmbCommonProjectContext;
+	
+	
 	private static final String COD_BANCA_MINORISTA = "0376";
 	private static final String COD_BANCA_MAYORISTA = "0440";
 	private static final Integer COD_OFICINA_MINORISTA = 213;
 	private static final Integer COD_OFICINA_MAYORISTA = 625;
 	
-			
-	
+
 	protected HistoricoProcedimiento getNodo(Procedimiento procedimiento, String nombreNodo) {
 		System.out.println("[INFO] -  - Metodo getNodo - ");
 		HistoricoProcedimiento hPrc = null;
@@ -64,6 +68,24 @@ public class InformeSubastaCommon {
 			}
 		}
 		System.out.println("[INFO] -  - Metodo getNodo Finalizado OK - ");
+		return hPrc;
+	}
+	
+	protected HistoricoProcedimiento getNodo(Procedimiento procedimiento, List<String> nombreNodos) {
+		HistoricoProcedimiento hPrc = null;
+		if ((!Checks.esNulo(procedimiento)) && (!Checks.estaVacio(nombreNodos))) {
+			List<EXTHistoricoProcedimiento> listadoTareasProc = proxyFactory.proxy(EXTHistoricoProcedimientoApi.class).getListByProcedimientoEXT(procedimiento.getId());			
+			if (!Checks.esNulo(listadoTareasProc)) {
+				for (EXTHistoricoProcedimiento hp : listadoTareasProc) {
+					// Filtramos por el código de la tarea donde están los campos que
+					// necesitamos y nos quedamos con el último
+					if (!Checks.esNulo(hp.getCodigoTarea()) &&  nombreNodos.contains(hp.getCodigoTarea())) {
+						hPrc = hp;
+						break;
+					}
+				}
+			}
+		}
 		return hPrc;
 	}
 

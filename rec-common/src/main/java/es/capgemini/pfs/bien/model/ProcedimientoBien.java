@@ -64,8 +64,19 @@ public class ProcedimientoBien implements Serializable, Auditable {
     @Version
     private Integer version;
 
+    @Column(name = "SYS_GUID")
+    private String guid;
+    
     @Embedded
     private Auditoria auditoria;
+
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
 
 	public Long getId() {
 		return id;

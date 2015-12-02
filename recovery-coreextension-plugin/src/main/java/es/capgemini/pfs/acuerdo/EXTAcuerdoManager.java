@@ -12,11 +12,20 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.pfs.acuerdo.dao.ActuacionesAExplorarAcuerdoDao;
+import es.capgemini.pfs.acuerdo.dao.ActuacionesRealizadasAcuerdoDao;
 import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
+import es.capgemini.pfs.acuerdo.dto.DtoActuacionesAExplorar;
+import es.capgemini.pfs.acuerdo.dto.DtoActuacionesRealizadasAcuerdo;
 import es.capgemini.pfs.acuerdo.dto.DtoAcuerdo;
+import es.capgemini.pfs.acuerdo.model.ActuacionesAExplorarAcuerdo;
+import es.capgemini.pfs.acuerdo.model.ActuacionesRealizadasAcuerdo;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDPeriodicidadAcuerdo;
+import es.capgemini.pfs.acuerdo.model.DDSubtipoSolucionAmistosaAcuerdo;
+import es.capgemini.pfs.acuerdo.model.DDValoracionActuacionAmistosa;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.core.api.acuerdo.AcuerdoApi;
@@ -37,6 +46,7 @@ import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 @Component
 public class EXTAcuerdoManager extends BusinessOperationOverrider<AcuerdoApi>
@@ -57,6 +67,15 @@ public class EXTAcuerdoManager extends BusinessOperationOverrider<AcuerdoApi>
 	@Autowired(required = false)
 	private List<CumplimientoAcuerdoListener> listeners;
 
+	@Autowired
+	private IntegracionBpmService bpmIntegracionService;
+	
+    @Autowired
+    private ActuacionesRealizadasAcuerdoDao actuacionesRealizadasAcuerdoDao;
+
+    @Autowired
+    private ActuacionesAExplorarAcuerdoDao actuacionesAExplorarAcuerdoDao;
+    
 	@Override
 	public String managerName() {
 		return "acuerdoManager";
@@ -119,6 +138,8 @@ public class EXTAcuerdoManager extends BusinessOperationOverrider<AcuerdoApi>
 
 		acuerdoDao.saveOrUpdate(acuerdo);
 
+		bpmIntegracionService.notificaCambioEstado(acuerdo);
+		
 		EventFactory.onMethodStop(this.getClass());
 	}
 	
@@ -136,6 +157,9 @@ public class EXTAcuerdoManager extends BusinessOperationOverrider<AcuerdoApi>
 	    acuerdo.setEstadoAcuerdo(estadoAcuerdoFinalizado);
 	    acuerdo.setFechaEstado(new Date());
 	    acuerdoDao.save(acuerdo);
+	    
+	    bpmIntegracionService.notificaCambioEstado(acuerdo);
+	    
 	    //Cancelo las tareas del supervisor
 	    cancelarTareasAcuerdoPropuesto(acuerdo);
 	    cancelarTareasCerrarAcuerdo(acuerdo);
@@ -164,7 +188,7 @@ public class EXTAcuerdoManager extends BusinessOperationOverrider<AcuerdoApi>
 		}
 		DDEstadoAcuerdo estadoAcuerdoVigente = (DDEstadoAcuerdo) executor
 				.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
-						DDEstadoAcuerdo.class, DDEstadoAcuerdo.ACUERDO_VIGENTE);
+						DDEstadoAcuerdo.class, DDEstadoAcuerdo.ACUERDO_ACEPTADO);
 
 		acuerdo.setEstadoAcuerdo(estadoAcuerdoVigente);
 		acuerdo.setFechaEstado(new Date());
@@ -186,6 +210,8 @@ public class EXTAcuerdoManager extends BusinessOperationOverrider<AcuerdoApi>
 		}		
 			
 		acuerdoDao.save(acuerdo);
+
+    	bpmIntegracionService.notificaCambioEstado(acuerdo);
 
 		EventFactory.onMethodStop(this.getClass());
 	}
@@ -244,22 +270,25 @@ public class EXTAcuerdoManager extends BusinessOperationOverrider<AcuerdoApi>
 	private String buscaCodigoPorPeriodo(
 			DDPeriodicidadAcuerdo periodicidadAcuerdo) {
 		String codigo = PlazoTareasDefault.CODIGO_CIERRE_ACUERDO;
-		String periodo = periodicidadAcuerdo.getCodigo();
-		if (periodo.equals("01")) {
-			codigo = CODIGO_CIERRE_ACUERDO_ANUAL;
-		} else if (periodo.equals("02")) {
-			codigo = CODIGO_CIERRE_ACUERDO_MENSUAL;
-		} else if (periodo.equals("03")) {
-			codigo = CODIGO_CIERRE_ACUERDO_SEMESTRAL;
-		} else if (periodo.equals("04")) {
-			codigo = CODIGO_CIERRE_ACUERDO_TRIMESTRAL;
-		} else if (periodo.equals("05")) {
-			codigo = CODIGO_CIERRE_ACUERDO_BIMESTRAL;
-		} else if (periodo.equals("06")) {
-			codigo = CODIGO_CIERRE_ACUERDO_SEMANAL;
-		} else if (periodo.equals("07")) {
-			codigo = CODIGO_CIERRE_ACUERDO_UNICO;
+		if(!Checks.esNulo(periodicidadAcuerdo)){
+			String periodo = periodicidadAcuerdo.getCodigo();
+			if (periodo.equals("01")) {
+				codigo = CODIGO_CIERRE_ACUERDO_ANUAL;
+			} else if (periodo.equals("02")) {
+				codigo = CODIGO_CIERRE_ACUERDO_MENSUAL;
+			} else if (periodo.equals("03")) {
+				codigo = CODIGO_CIERRE_ACUERDO_SEMESTRAL;
+			} else if (periodo.equals("04")) {
+				codigo = CODIGO_CIERRE_ACUERDO_TRIMESTRAL;
+			} else if (periodo.equals("05")) {
+				codigo = CODIGO_CIERRE_ACUERDO_BIMESTRAL;
+			} else if (periodo.equals("06")) {
+				codigo = CODIGO_CIERRE_ACUERDO_SEMANAL;
+			} else if (periodo.equals("07")) {
+				codigo = CODIGO_CIERRE_ACUERDO_UNICO;
+			}
 		}
+
 		return codigo;
 	}
 
@@ -312,4 +341,89 @@ public class EXTAcuerdoManager extends BusinessOperationOverrider<AcuerdoApi>
 
 	}
 
+    /**
+     * Pasa un Acuerdo en estado En Conformaci�n a Propuesto.
+     * @param idAcuerdo el id del acuerdo
+     */
+	@Override
+    @BusinessOperation(overrides = ExternaBusinessOperation.BO_ACUERDO_MGR_PROPONER_ACUERDO)
+    @Transactional(readOnly = false)
+    public void proponerAcuerdo(Long idAcuerdo) {
+    	parent().proponerAcuerdo(idAcuerdo);
+        
+    	// Genera un mensaje de propuesta de acuerdo
+		Acuerdo acuerdo = (Acuerdo)executor.execute(ExternaBusinessOperation.BO_ACUERDO_MGR_GET_ACUERDO_BY_ID, idAcuerdo);
+    	bpmIntegracionService.notificaCambioEstado(acuerdo);
+    }
+
+    /**
+     * Pasa un Acuerdo en estado En Conformaci�n a Propuesto.
+     * @param idAcuerdo el id del acuerdo
+     */
+	@Override
+    @BusinessOperation(overrides = ExternaBusinessOperation.BO_ACUERDO_MGR_CANCELAR_ACUERDO)
+    @Transactional(readOnly = false)
+    public void cancelarAcuerdo(Long idAcuerdo) {
+    	parent().cancelarAcuerdo(idAcuerdo);
+        
+    	// Genera un mensaje de propuesta de acuerdo
+		Acuerdo acuerdo = (Acuerdo)executor.execute(ExternaBusinessOperation.BO_ACUERDO_MGR_GET_ACUERDO_BY_ID, idAcuerdo);
+    	bpmIntegracionService.notificaCambioEstado(acuerdo);
+    	
+    }
+	
+	@Override
+    @BusinessOperation(ExternaBusinessOperation.BO_ACUERDO_MGR_SAVE_ACTUACIONES_REALIZADAS_ACUERDO)
+    @Transactional
+    public void saveActuacionesRealizadasAcuerdo(DtoActuacionesRealizadasAcuerdo actuacionesRealizadasAcuerdo) {
+        Acuerdo acuerdo = acuerdoDao.get(actuacionesRealizadasAcuerdo.getIdAcuerdo());
+        ActuacionesRealizadasAcuerdo actuaciones;
+        if (actuacionesRealizadasAcuerdo.getActuaciones().getId() != null) {
+            actuaciones = actuacionesRealizadasAcuerdoDao.get(actuacionesRealizadasAcuerdo.getActuaciones().getId());
+        } else {
+            actuaciones = new ActuacionesRealizadasAcuerdo();
+            actuaciones.setAuditoria(Auditoria.getNewInstance());
+        }
+        actuaciones.setAcuerdo(acuerdo);
+        actuaciones.setDdResultadoAcuerdoActuacion(actuacionesRealizadasAcuerdo.getActuaciones().getDdResultadoAcuerdoActuacion());
+        actuaciones.setDdTipoActuacionAcuerdo(actuacionesRealizadasAcuerdo.getActuaciones().getDdTipoActuacionAcuerdo());
+        actuaciones.setTipoAyudaActuacion(actuacionesRealizadasAcuerdo.getActuaciones().getTipoAyudaActuacion());
+        actuaciones.setFechaActuacion(actuacionesRealizadasAcuerdo.getActuaciones().getFechaActuacion());
+        actuaciones.setObservaciones(actuacionesRealizadasAcuerdo.getActuaciones().getObservaciones());
+        actuacionesRealizadasAcuerdoDao.saveOrUpdate(actuaciones);
+        
+        bpmIntegracionService.enviarDatos(actuaciones);
+    }
+
+    /**
+     * Guarda o actualiza la actuacion a explorar modificada o nueva.
+     * @param dto DtoActuacionesAExplorar
+     */
+	@Override
+    @BusinessOperation(ExternaBusinessOperation.BO_ACUERDO_MGR_SAVE_ACTUACIONES_A_EXPLORAR_ACUERDO)
+    @Transactional(readOnly = false)
+    public void saveActuacionAExplorarAcuerdo(DtoActuacionesAExplorar dto) {
+
+        ActuacionesAExplorarAcuerdo actuacion;
+        if (dto.getIdActuacion() != null) {
+            actuacion = actuacionesAExplorarAcuerdoDao.get(dto.getIdActuacion());
+        } else {
+            actuacion = new ActuacionesAExplorarAcuerdo();
+            actuacion.setGuid(dto.getGuid());
+            actuacion.setAuditoria(Auditoria.getNewInstance());
+            actuacion.setAcuerdo(acuerdoDao.get(dto.getIdAcuerdo()));
+        }
+        DDSubtipoSolucionAmistosaAcuerdo subtipoSolucionAmistosa = (DDSubtipoSolucionAmistosaAcuerdo) executor.execute(
+                ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDSubtipoSolucionAmistosaAcuerdo.class, dto.getDdSubtipoSolucionAmistosaAcuerdo());
+        actuacion.setDdSubtipoSolucionAmistosaAcuerdo(subtipoSolucionAmistosa);
+
+        DDValoracionActuacionAmistosa valoracionActuacionAmistosa = (DDValoracionActuacionAmistosa) executor.execute(
+                ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDValoracionActuacionAmistosa.class, dto.getDdValoracionActuacionAmistosa());
+        actuacion.setDdValoracionActuacionAmistosa(valoracionActuacionAmistosa);
+        actuacion.setObservaciones(dto.getObservaciones());
+        actuacionesAExplorarAcuerdoDao.save(actuacion);
+        
+        bpmIntegracionService.enviarDatos(actuacion);
+    }    
+	
 }

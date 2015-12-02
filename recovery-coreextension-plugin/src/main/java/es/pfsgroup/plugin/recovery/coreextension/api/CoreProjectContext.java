@@ -12,6 +12,7 @@ import java.util.Set;
 public interface CoreProjectContext {
 	
 	public static final String CATEGORIA_SUBTAREA_TOMA_DECISION = "TOMA_DE_DECISION";	
+	public static final String CATEGORIA_SUBTAREA_ABRIR_TAREA_PROCEDIMIENTO = "ABRIR_TAREA_PROCEDIMIENTO";
 	
 	/**
 	 * Devuelve los codigos (DD_STA_CODIGO) agrupadas por categorias (DECISION, ....)
@@ -20,4 +21,10 @@ public interface CoreProjectContext {
 	public Map<String, Set<String>> getCategoriasSubTareas();	
 
 	List<String> getTiposProcedimientosAdjudicados();
+	
+	Set<String> getTiposGestorGestoria();
+	
+	Set<String> getTiposGestorProcurador();
+	
+	Set<String> getEntidadesDesparalizacion();
 }

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="hcj_tramiteSubsanacionEscritura" width="1013" height="877">
+  <node name="Inicio" x="148" y="4" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H065_registrarPresentacionEscrituraSub" x="48" y="118" width="328" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="265" h1="4" w2="250" h2="-262"/>
+      <bendpoint w1="264" h1="273" w2="249" h2="7"/>
+    </edge>
+  </node>
+  <node name="H065_entregarNuevaEscrituraPub" x="61" y="245" width="322" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-152" h1="-57" w2="-142" h2="70"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="208" h1="-1" w2="203" h2="-140"/>
+      <bendpoint w1="208" h1="141" w2="203" h2="2"/>
+    </edge>
+  </node>
+  <node name="Fin" x="161" y="384" width="132" height="36"/>
+</root-container>

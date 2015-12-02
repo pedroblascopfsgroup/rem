@@ -14,6 +14,7 @@ public class DtoActuacionesAExplorar extends WebDto {
     private String ddSubtipoSolucionAmistosaAcuerdo;
     private String ddValoracionActuacionAmistosa;
     private String observaciones;
+    private String guid;
 
     /**
      * @return the idActuacion
@@ -75,4 +76,10 @@ public class DtoActuacionesAExplorar extends WebDto {
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
     }
+	public String getGuid() {
+		return guid;
+	}
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
 }

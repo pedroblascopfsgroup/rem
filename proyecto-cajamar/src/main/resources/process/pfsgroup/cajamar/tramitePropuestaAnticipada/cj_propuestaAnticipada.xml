@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="cj_propuestaAnticipada" xmlns="urn:jbpm.org:jpdl-3.2">
+
+	<start-state name="Inicio">
+		<transition to="H031_registrarPropAnticipadaConvenio"></transition>
+	</start-state>
+
+
+	<state name="H031_registrarPropAnticipadaConvenio">
+      	<event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericEnterActionHandler</targetBean>
+         </action>
+      	</event>
+      	<event type="node-leave">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericLeaveActionHandler</targetBean>
+         </action>
+      	</event>
+      	<transition to="H031_registrarPropAnticipadaConvenio" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H031_PrepararInforme" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="H031_PrepararInforme">
+		<event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericEnterActionHandler</targetBean>
+         </action>
+      	</event>
+      	<event type="node-leave">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericLeaveActionHandler</targetBean>
+         </action>
+      	</event>
+      	
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H031_PrepararInforme" name="activarAlerta"></transition>
+		<transition to="H031_registrarPropAnticipadaConvenio" name="vueltaAtras"></transition>
+		<transition to="H031_PrepararInformeDecision" name="avanzaBPM"></transition>
+	</state>
+
+	<decision name="H031_PrepararInformeDecision" expression="#{H031_PrepararInformeDecision}">
+		<transition to="H031_ElevarAComite" name="No"></transition>
+		<transition to="H031_admisionTramiteConvenio" name="Si"></transition>
+	</decision>
+
+	<state name="H031_ElevarAComite">
+		<event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericEnterActionHandler</targetBean>
+         </action>
+      	</event>
+      	<event type="node-leave">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericLeaveActionHandler</targetBean>
+         </action>
+      	</event>
+      	
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H031_ElevarAComite" name="activarAlerta"></transition>
+		<transition to="H031_PrepararInforme" name="vueltaAtras"></transition>
+		<transition to="H031_RegistrarRespuestaComite" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="H031_RegistrarRespuestaComite">
+		<event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericEnterActionHandler</targetBean>
+         </action>
+      	</event>
+      	<event type="node-leave">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericLeaveActionHandler</targetBean>
+         </action>
+      	</event>
+      	
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H031_RegistrarRespuestaComite" name="activarAlerta"></transition>
+		<transition to="H031_ElevarAComite" name="vueltaAtras"></transition>
+		<transition to="H031_admisionTramiteConvenio" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="H031_admisionTramiteConvenio">
+      	<event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericEnterActionHandler</targetBean>
+         </action>
+      	</event>
+      	<event type="node-leave">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericLeaveActionHandler</targetBean>
+         </action>
+      	</event>
+      	
+      	<transition to="H031_admisionTramiteConvenio" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H031_admisionTramiteConvenioDecision" name="avanzaBPM"></transition>
+	</state>
+
+	<decision name="H031_admisionTramiteConvenioDecision" expression="#{H031_admisionTramiteConvenioDecision}">
+		<transition to="H031_ConvenioDecision" name="NO"></transition>
+		<transition to="H031_EscritoEvaluacion" name="SI"></transition>
+	</decision>
+
+	<node name="H031_ConvenioDecision">
+		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+        	<targetBean>genericUserDecisionActionHandler</targetBean>
+      	</action>
+      	<transition to="Fin" name="Fin"></transition>
+	</node>
+	
+	<state name="H031_EscritoEvaluacion">
+		<event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericEnterActionHandler</targetBean>
+         </action>
+      	</event>
+      	<event type="node-leave">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericLeaveActionHandler</targetBean>
+         </action>
+      	</event>
+      	
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H031_EscritoEvaluacion" name="activarAlerta"></transition>
+		<transition to="H031_admisionTramiteConvenio" name="vueltaAtras"></transition>
+		<transition to="H031_ResolucionJudicial" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="H031_ResolucionJudicial">
+		<event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericEnterActionHandler</targetBean>
+         </action>
+      	</event>
+      	<event type="node-leave">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericLeaveActionHandler</targetBean>
+         </action>
+      	</event>
+      	
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H031_ResolucionJudicial" name="activarAlerta"></transition>
+		<transition to="H031_EscritoEvaluacion" name="vueltaAtras"></transition>
+		<transition to="H031_ResolucionJudicialDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="H031_ResolucionJudicialDecision" expression="#{H031_ResolucionJudicialDecision}">
+		<transition to="H031_ConvenioDecision" name="Desfavorable"></transition>
+		<transition to="H031_ContabilizarConvenio" name="Favorable"></transition>
+	</decision>
+	
+	<state name="H031_ContabilizarConvenio">
+		<event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericEnterActionHandler</targetBean>
+         </action>
+      	</event>
+      	<event type="node-leave">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericLeaveActionHandler</targetBean>
+         </action>
+      	</event>
+		
+		<transition to="H031_ContabilizarConvenio" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H031_ResolucionJudicial" name="vueltaAtras"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</state>	
+
+	<end-state name="Fin">      
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler</targetBean>
+			</action>
+		</event> 
+    </end-state>
+
+
+</process-definition>

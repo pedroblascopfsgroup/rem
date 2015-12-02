@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="haya_tramiteValoracionBienesMuebles" width="852" height="562">
+  <node name="Inicio" x="329" y="21" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H060_SolicitarJustiprecio" x="329" y="118" width="132" height="36">
+    <edge>
+      <label x="-3" y="9"/>
+    </edge>
+    <edge>
+      <label x="-74" y="-20"/>
+    </edge>
+    <edge>
+      <label x="-66" y="9"/>
+      <bendpoint w1="308" h1="0" w2="308" h2="-260"/>
+    </edge>
+  </node>
+  <node name="H060_RegistrarJustiprecio" x="327" y="213" width="135" height="36">
+    <edge>
+      <label x="-83" y="7"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="46" y="10"/>
+      <bendpoint w1="-232" h1="-1" w2="-233" h2="-166"/>
+    </edge>
+    <edge>
+      <label x="0" y="-36"/>
+      <bendpoint w1="-168" h1="-53" w2="-169" h2="42"/>
+    </edge>
+  </node>
+  <node name="H060_MueblesDecision" x="311" y="289" width="178" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="329" y="378" width="132" height="36"/>
+</root-container>

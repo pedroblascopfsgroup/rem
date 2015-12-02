@@ -10,24 +10,25 @@ import org.springframework.binding.message.MessageContext;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.scripting.ScriptingUtils;
+import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 
 public class DtoGenericForm extends WebDto {
 
     private static final String OK_VALUE = "true";
     private static final long serialVersionUID = 1L;
 
-    /** El objeto que contiene la definición del formulario. Nos servirá para poder hacer referencia a él dentro del script de validación de los
+    /** El objeto que contiene la definiciï¿½n del formulario. Nos servirï¿½ para poder hacer referencia a ï¿½l dentro del script de validaciï¿½n de los
      * elementos del formulario.
      * 
      * Este objeto se debe inyectar desde el webflow
      */
     private GenericForm form;
 
-    /** Array de valores que vendrá desde el formulario generado dinámicamente
+    /** Array de valores que vendrï¿½ desde el formulario generado dinï¿½micamente
      */
     private String[] values; // =new String[100];
 
-    /** Ejecuta la validación de uno de los elementos del formulario
+    /** Ejecuta la validaciï¿½n de uno de los elementos del formulario
      * @param item
      * @return
      */
@@ -41,7 +42,7 @@ public class DtoGenericForm extends WebDto {
 
     }
 
-    /** Este método se ejecuta al intenar salir del estado "formulario" del flow de pantallas genéricas
+    /** Este mï¿½todo se ejecuta al intenar salir del estado "formulario" del flow de pantallas genï¿½ricas
      * @param messageContext
      */
     public void validateFormulario(MessageContext messageContext) {

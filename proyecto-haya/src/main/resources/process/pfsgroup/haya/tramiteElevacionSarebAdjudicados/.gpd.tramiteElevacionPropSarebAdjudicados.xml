@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="haya_tramiteElevacionPropSarebAdjudicados" width="1270" height="714">
+  <node name="Inicio" x="252" y="29" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H010_ElevarPropuestaSareb" x="206" y="149" width="225" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-77" y="-13"/>
+      <bendpoint w1="237" h1="0" w2="237" h2="0"/>
+      <bendpoint w1="206" h1="37" w2="206" h2="37"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-221" h1="2" w2="-217" h2="-245"/>
+      <bendpoint w1="-219" h1="219" w2="-224" h2="-4"/>
+    </edge>
+  </node>
+  <node name="H010_RespuestaSareb" x="212" y="255" width="193" height="36">
+    <edge>
+      <label x="-16" y="-24"/>
+    </edge>
+    <edge>
+      <label x="-76" y="-10"/>
+      <bendpoint w1="226" h1="-4" w2="226" h2="-4"/>
+      <bendpoint w1="195" h1="36" w2="195" h2="36"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-52" h1="59" w2="-67" h2="-58"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-78" h1="-52" w2="-88" h2="54"/>
+    </edge>
+  </node>
+  <node name="Fin" x="234" y="385" width="143" height="36"/>
+</root-container>

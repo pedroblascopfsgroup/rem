@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="" name="haya_tramiteElevacionPropSarebAdjudicados">
+
+	<start-state name="Inicio">
+		<transition to="H010_ElevarPropuestaSareb" name="iniciarProceso"></transition>
+	</start-state>
+
+
+	<state name="H010_ElevarPropuestaSareb">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="H010_RespuestaSareb" name="avanzaBPM"></transition>
+		<transition to="H010_ElevarPropuestaSareb" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="H010_RespuestaSareb">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"  config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>	
+		<transition to="Fin" name="avanzaBPM"></transition>
+		<transition to="H010_RespuestaSareb" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H010_ElevarPropuestaSareb" name="vueltaAtras"></transition>
+	</state>
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>sarebEndActionHandler</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+</process-definition>

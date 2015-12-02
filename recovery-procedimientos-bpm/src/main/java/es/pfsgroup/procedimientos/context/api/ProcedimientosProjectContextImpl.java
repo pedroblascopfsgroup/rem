@@ -2,6 +2,7 @@ package es.pfsgroup.procedimientos.context.api;
 
 
 import java.util.List;
+import java.util.Set;
 
 public class ProcedimientosProjectContextImpl implements ProcedimientosProjectContext {
 
@@ -14,6 +15,7 @@ public class ProcedimientosProjectContextImpl implements ProcedimientosProjectCo
 	private List<String> camposCostas;
 	private List<String> camposSuspensionSubasta;
 	private String codigoCargaAnterior;
+	private Set<String> procedimientosPestanyaFaseComun;
 	
 	@Override
 	public float getLimiteDeudaGlobal() {
@@ -95,6 +97,15 @@ public class ProcedimientosProjectContextImpl implements ProcedimientosProjectCo
 	
 	public void setCodigoCargaAnterior(String codigoCargaAnterior) {
 		this.codigoCargaAnterior = codigoCargaAnterior;
+	}
+
+	@Override
+	public Set<String> getProcedimientosPestanyaFaseComun() {
+		return procedimientosPestanyaFaseComun;
+	}
+
+	public void setProcedimientosPestanyaFaseComun(Set<String> procedimientosPestanyaFaseComun) {
+		this.procedimientosPestanyaFaseComun = procedimientosPestanyaFaseComun;
 	}
 
 }

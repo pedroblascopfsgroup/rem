@@ -35,19 +35,16 @@
 				<c:forEach items="${rec.personasAfectadas}" var="pa">
 					<c:if test="${pa.id!=rec.personasAfectadas[0].id}">
 						<json:object>
-							<json:property name="demandados" escapeXml="false">
-								<c:if test="${!rec.activo}">${pa.apellidoNombre}</c:if>								
-							</json:property>
+							<json:property name="demandados" value="${pa.apellidoNombre}"/>
+								
 							<json:property name="descripcionProcedimiento">
 			 	 				<s:message text="${procedimiento.asunto.nombre}" javaScriptEscape="true" />-<s:message text="${rec.tipoProcedimiento.descripcion}" javaScriptEscape="true" />
 			 	 			</json:property>							
 							<json:property name="saldoARecuperar" value="" />
 							<json:property name="pVencido" value="" />
 							<json:property name="pNoVencido" value="" />
-							<json:property name="capital" escapeXml="false">
-								<c:if test="${!rec.activo}">
+							<json:property name="capital" escapeXml="false">							
 									<pfsformat:money value="0.00"/>
-								</c:if>
 						</json:property>
 					 </json:object>
 					</c:if>

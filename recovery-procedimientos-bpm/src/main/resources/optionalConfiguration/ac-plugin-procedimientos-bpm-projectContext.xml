@@ -46,6 +46,21 @@
 				<value>comboSuspension</value>
 			</list>
 		</property>
+		<property name="procedimientosPestanyaFaseComun">
+			<set>
+				<value>P412</value> <!-- fase comun abreviadoV4 -->
+				<value>P56</value>	<!-- fase comun abreviado -->
+				<value>P24</value> <!-- fase comun ordinario -->
+				<value>P29</value> <!-- fase convenio -->
+				<value>P55</value> <!-- P. solicitud de concurso necesario -->
+				<value>P28</value> <!-- T. Registrar resolución de interés -->
+				<value>P64</value> <!-- T. seguimiento cumplimiento de convenio -->
+				<value>P62</value> <!-- T. conclusión de concurso -->
+				<value>P61</value> <!-- T. de aceptación y decisión -->
+				<value>P27</value> <!-- T. de solicitud de actuaciones o pronunciamientos -->
+				<value>P31</value> <!-- fase liquidacion -->
+			</set>
+		</property>
 	</bean>	
 	
 	<!-- Implementaciones por defecto-->

@@ -166,7 +166,7 @@
 						flow: 'plugin/mejoras/asuntos/plugin.mejoras.asuntos.editarDescripAdjContrato'
 						,closable: true
 						,width : 700
-						,title : '<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionContrato" text="**Editar descripción del adjunto del contrato" />'
+						,title : '<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionContrato" text="**Editar descripciï¿½n del adjunto del contrato" />'
 						,params: parametros
 					});
 					w.on(app.event.DONE, function(){
@@ -177,7 +177,7 @@
 						 w.close(); 
 					});
 				}else{
-					Ext.Msg.alert('<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionContrato" text="**Editar descripción del adjunto del expediente" />','<s:message code="plugin.mejoras.asunto.adjuntos.noValor" text="**Debe seleccionar un valor de la lista" />');
+					Ext.Msg.alert('<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionContrato" text="**Editar descripciï¿½n del adjunto del expediente" />','<s:message code="plugin.mejoras.asunto.adjuntos.noValor" text="**Debe seleccionar un valor de la lista" />');
 				}	
 			}	
 		}
@@ -185,7 +185,7 @@
 	editarDescripcionAdjuntoContrato.disable();
 	var grid = app.crearGrid(store, cm, {
 		title : '<s:message code="adjuntos.grid" text="**Ficheros adjuntos" />'
-		,bbar : [subir, borrar, editarDescripcionAdjuntoContrato]
+		,bbar : [<sec:authorize ifNotGranted="SOLO_CONSULTA">subir, borrar, editarDescripcionAdjuntoContrato</sec:authorize>]
 		,height: 448
 		,width : 600
 		,collapsible:true

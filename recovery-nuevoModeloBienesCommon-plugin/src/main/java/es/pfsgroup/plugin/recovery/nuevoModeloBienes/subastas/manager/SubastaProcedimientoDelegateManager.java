@@ -537,7 +537,7 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 									if(Checks.esNulo(((NMBBien) b).getAdjudicacion().getImporteAdjudicacion())){
 										return "Debe completar el importe de adjudicaci&oacute;n";
 									}
-									else if(((NMBBien) b).getAdjudicacion().getImporteAdjudicacion() == 0){
+									else if(((NMBBien) b).getAdjudicacion().getImporteAdjudicacion().equals(0)){
 										return "El importe de adjudicaci&oacute;n debe ser mayor que cero";
 									}
 									if(DDEntidadAdjudicataria.ENTIDAD.equals((((NMBBien) b).getAdjudicacion().getEntidadAdjudicataria().getCodigo()))){
@@ -625,7 +625,7 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 				if(Checks.esNulo(b.getAdjudicacion().getImporteAdjudicacion())){
 					return "Debe completar el importe de adjudicaci&oacute;n";
 				}
-				else if(b.getAdjudicacion().getImporteAdjudicacion() == 0){
+				else if(b.getAdjudicacion().getImporteAdjudicacion().equals(0)){
 					return "El importe de adjudicaci&oacute;n debe ser mayor que cero";
 				}
 				if(Checks.esNulo(b.getAdjudicacion().getEntidadAdjudicataria())){

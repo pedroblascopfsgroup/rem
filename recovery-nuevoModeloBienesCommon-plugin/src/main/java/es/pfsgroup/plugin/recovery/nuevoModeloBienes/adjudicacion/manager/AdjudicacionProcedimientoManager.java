@@ -5,7 +5,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -18,7 +17,6 @@ import es.capgemini.pfs.asunto.model.AdjuntoAsunto;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
-import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
@@ -34,16 +32,12 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.adjudicacion.api.AdjudicacionProcedimientoDelegateApi;
-import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContext;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContextImpl;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDDocAdjudicacion;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdicionalBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienCargas;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.recoveryapi.BienApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
@@ -211,6 +205,39 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 			}
 		}
 		return false;
+	}
+	
+	public Boolean comprobarCargasBienesProcedimiento(Long prcId) {
+
+		boolean res = true;
+		@SuppressWarnings("unchecked")
+		List<Bien> listaBienes = (List<Bien>) executor.execute(ExternaBusinessOperation.BO_PRC_MGR_GET_BIENES_DE_UN_PROCEDIMIENTO, prcId);
+		if (listaBienes != null && listaBienes.size() > 0) {
+			for (Bien bien : listaBienes) {
+				if (bien instanceof NMBBien) {
+					NMBBien nmbBien = (NMBBien) bien;
+					List<NMBBienCargas> cargas = nmbBien.getBienCargas();
+					// no hay cargas
+					if (cargas == null || (cargas != null && cargas.size() == 0)) {
+						NMBAdicionalBien adicionalBien = ((NMBBien) bien).getAdicional();
+						// y se ha revisado
+						if (adicionalBien.getSinCargas() == null || !adicionalBien.getSinCargas()) {
+							res = false;
+							break;
+						}
+					} else {
+						// hay cargas
+						for (NMBBienCargas carga : cargas) {
+							if (!(carga.getRegistral() && carga.getSituacionCarga() != null) && !(carga.isEconomica() && carga.getSituacionCargaEconomica() != null)) {
+								res = false;
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		return res;
 	}
 
 	@Override

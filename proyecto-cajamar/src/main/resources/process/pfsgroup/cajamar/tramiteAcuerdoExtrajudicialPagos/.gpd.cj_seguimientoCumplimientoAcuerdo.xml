@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="cj_seguimientoCumplimientoAcuerdo" width="1280" height="1004">
+  <node name="Inicio" x="424" y="43" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ002_RegistrarAcuerdoAprobado" x="348" y="167" width="285" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-289" h1="3" w2="-297" h2="-794"/>
+      <bendpoint w1="-291" h1="818" w2="-299" h2="21"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ002_RegistrarCumplimiento" x="380" y="322" width="223" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-265" h1="0" w2="-266" h2="-387"/>
+      <bendpoint w1="-264" h1="650" w2="-271" h2="8"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ002_RegistrarCumplimientoDecision" x="354" y="441" width="273" height="36">
+    <edge>
+      <label x="-46" y="-7"/>
+      <bendpoint w1="-117" h1="-44" w2="-118" h2="75"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-76" y="-7"/>
+    </edge>
+    <edge>
+      <label x="-229" y="-178"/>
+    </edge>
+  </node>
+  <node name="CJ002_NotificarDeudor" x="868" y="445" width="196" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="288" h1="-7" w2="756" h2="-526"/>
+      <bendpoint w1="290" h1="525" w2="758" h2="6"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ002_ConfirmarResultadoNotificacion" x="835" y="578" width="262" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="260" h1="2" w2="728" h2="-384"/>
+      <bendpoint w1="260" h1="385" w2="728" h2="-1"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="161" h1="-85" w2="161" h2="48"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ002_ConfirmarResultadoNotificacionDecision" x="811" y="701" width="312" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ002_ComunicacionMediador" x="823" y="850" width="290" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-230" h1="88" w2="240" h2="-26"/>
+    </edge>
+  </node>
+  <node name="CJ002_ValidarFinSeguimiento" x="357" y="573" width="265" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-229" h1="0" w2="-238" h2="-391"/>
+      <bendpoint w1="-231" h1="392" w2="-240" h2="1"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="123" y="118"/>
+      <bendpoint w1="-235" h1="-157" w2="-237" h2="94"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ002_ValidarFinSeguimientoDecision" x="362" y="666" width="258" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-196" h1="0" w2="-185" h2="345"/>
+      <bendpoint w1="-193" h1="-332" w2="-182" h2="13"/>
+    </edge>
+  </node>
+  <node name="Fin" x="426" y="963" width="132" height="36"/>
+</root-container>

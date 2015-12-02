@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="hcj_tramiteMejoraEmbargo" width="1487" height="878">
+  <node name="Inicio" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="-45" y="-14"/>
+    </edge>
+  </node>
+  <node name="H046_solicitudMejoraEmbargo" x="283" y="4" width="254" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H046_confirmarDecretoEmbargo" x="266" y="127" width="265" height="45">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="10" h1="23" w2="10" h2="23"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-109" h1="-64" w2="-121" h2="63"/>
+    </edge>
+  </node>
+  <node name="H046_MejoraDecision" x="344" y="447" width="164" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="408" h1="-12" w2="16" h2="224"/>
+    </edge>
+  </node>
+  <node name="H046_confirmarDecretoEmbargoDecision" x="25" y="213" width="289" height="36">
+    <edge>
+      <label x="4" y="-19"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-138" h1="201" w2="-499" h2="1"/>
+    </edge>
+  </node>
+  <node name="H046_registrarAnotacionRegistro" x="386" y="226" width="250" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-5" y="8"/>
+    </edge>
+  </node>
+  <node name="H046_registrarAnotacionRegistroDecision" x="374" y="310" width="281" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H046_espera" x="613" y="407" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="7" h1="-61" w2="172" h2="36"/>
+    </edge>
+  </node>
+  <node name="Fin" x="736" y="211" width="132" height="36"/>
+</root-container>

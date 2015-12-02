@@ -269,24 +269,16 @@ var createTareasProcedimientoTab=function(){
 		if (vueltaAtras == true)
 			btnVueltaAtras.setDisabled(false);
 		else
-			btnVueltaAtras.setDisabled(true);
-
-	
-		//Si es un gestor o (es supervisor y se trata de una tarea de supervisor) activamos el botón de editar
-		if (!esSupervisor || (esSupervisor && rec.get('subtipoTarea') == app.subtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_SUPERVISOR))
-			btnEditar.enable();
-		else
-			btnEditar.setDisabled(true);
+			btnVueltaAtras.setDisabled(true);	
+		
+			btnEditar.enable();		
 	});
 
 	<c:if test="${esGestor || esSupervisor}">
 	    //Solo puede acceder a la tarea si es gestor o supervisor de ella 
 		tareasGrid.on('rowdblclick',function(grid, rowIndex, e){
-			var rec = grid.getStore().getAt(rowIndex);
-	
-			//Si es un gestor o (es supervisor y se trata de una tarea de supervisor) puede editar la tarea
-			if (!esSupervisor || (esSupervisor && rec.get('subtipoTarea') == app.subtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_SUPERVISOR))
-				funcionEditaTareaExterna();
+			var rec = grid.getStore().getAt(rowIndex);	
+			funcionEditaTareaExterna();
 		});
 	</c:if>
 

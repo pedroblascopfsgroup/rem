@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
@@ -76,6 +77,18 @@ public class DespachoExterno implements Serializable, Auditable {
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private DDZona zona;
 
+    @Column(name = "ETC_CON_CODIGO_IMPORTE")
+    private String turnadoCodigoImporteConcursal;
+    
+    @Column(name = "ETC_CON_CODIGO_CALIDAD")
+    private String turnadoCodigoCalidadConcursal;
+    
+    @Column(name = "ETC_LIT_CODIGO_IMPORTE")
+    private String turnadoCodigoImporteLitigios;
+    
+    @Column(name = "ETC_LIT_CODIGO_CALIDAD")
+    private String turnadoCodigoCalidadLitigios;
+    
     @Version
     private Integer version;
 
@@ -268,4 +281,36 @@ public class DespachoExterno implements Serializable, Auditable {
         this.zona = zona;
     }
 
+	public String getTurnadoCodigoImporteConcursal() {
+		return turnadoCodigoImporteConcursal;
+	}
+
+	public void setTurnadoCodigoImporteConcursal(String turnadoCodigoImporteConcursal) {
+		this.turnadoCodigoImporteConcursal = turnadoCodigoImporteConcursal;
+	}
+
+	public String getTurnadoCodigoCalidadConcursal() {
+		return turnadoCodigoCalidadConcursal;
+	}
+
+	public void setTurnadoCodigoCalidadConcursal(String turnadoCodigoCalidadConcursal) {
+		this.turnadoCodigoCalidadConcursal = turnadoCodigoCalidadConcursal;
+	}
+
+	public String getTurnadoCodigoImporteLitigios() {
+		return turnadoCodigoImporteLitigios;
+	}
+
+	public void setTurnadoCodigoImporteLitigios(String turnadoCodigoImporteLitigios) {
+		this.turnadoCodigoImporteLitigios = turnadoCodigoImporteLitigios;
+	}
+
+	public String getTurnadoCodigoCalidadLitigios() {
+		return turnadoCodigoCalidadLitigios;
+	}
+
+	public void setTurnadoCodigoCalidadLitigios(String turnadoCodigoCalidadLitigios) {
+		this.turnadoCodigoCalidadLitigios = turnadoCodigoCalidadLitigios;
+	}
+    
 }

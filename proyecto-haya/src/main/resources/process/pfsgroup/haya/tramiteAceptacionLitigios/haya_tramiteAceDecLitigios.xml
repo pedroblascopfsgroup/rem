@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="haya_tramiteAceDecLitigios"
+	xmlns="urn:jbpm.org:jpdl-3.2">
+
+	<start-state name="Inicio">
+		<transition to="H068_registrarAceptacion" name="iniciarProceso"></transition>
+	</start-state>
+
+	<state name="H068_registrarAceptacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="H068_registrarAceptacion" name="activarAlerta"></transition>
+		<transition to="H068_registrarAceptacionDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+	
+	<decision name="H068_registrarAceptacionDecision" expression="#{H068_registrarAceptacionDecision}">
+		<transition to="H068_validarNoAceptacion" name="noAceptacion"></transition>
+		<transition to="H068_registrarProcedimiento" name="aceptacion"></transition>
+	</decision>
+	
+	<state name="H068_registrarProcedimiento">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="H068_registrarProcedimiento" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H068_registrarProcedimientoDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="H068_validarNoAceptacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="H068_registrarAceptacion" name="vueltaAtras"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H068_validarNoAceptacion" name="activarAlerta"></transition>
+		<transition to="H068_registrarAceptacion" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="H068_validarCambioProcedimiento">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="H068_validarCambioProcedimientoDecision" name="avanzaBPM"></transition>
+		<transition to="H068_validarCambioProcedimiento" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H068_registrarProcedimiento" name="vueltaAtras"></transition>
+	</state>
+
+	<decision name="H068_validarCambioProcedimientoDecision" expression="#{H068_validarCambioProcedimientoDecision}">
+		<transition to="H068_registrarProcedimiento" name="No"></transition>
+		<transition to="node1" name="Si"></transition>
+	</decision>
+
+	<decision name="H068_registrarProcedimientoDecision" expression="#{H068_registrarProcedimientoDecision}">
+		<transition to="H068_validarCambioProcedimiento" name="cambioDocumento"></transition>
+		<transition to="H068_SubsanarErrDocumentacion" name="requiereSubsanacion"></transition>
+		<transition to="node1" name="lanzar"></transition>
+	</decision>
+
+	<state name="H068_SubsanarErrDocumentacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="H068_SubsanarErrDocumentacion" name="activarAlerta"></transition>
+		<transition to="H068_registrarProcedimiento" name="avanzaBPM"></transition>
+		<transition to="H068_registrarProcedimiento" name="vueltaAtras"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<node name="node1">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>aceptacionHayaEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</node>
+	
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+</process-definition>

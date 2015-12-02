@@ -529,7 +529,7 @@
 	var gridHeight = 150;
 	var grid = app.crearGrid(store, cm, {
 		title : '<s:message code="asuntos.adjuntos.grid" text="**Ficheros adjuntos" />'
-		,bbar : [subir, borrar,editarDescripcionAdjuntoAsunto]
+		,bbar : [<sec:authorize ifNotGranted="SOLO_CONSULTA">subir, borrar,editarDescripcionAdjuntoAsunto</sec:authorize>]
 		,height: 180
 		,collapsible:true
 		,autoWidth: true
@@ -579,7 +579,7 @@
 	
 	var gridPersonas = app.crearGrid(storePersonas, cmPersonas, {
 		title : '<s:message code="asuntos.adjuntos.grid.personas" text="**Ficheros adjuntos Personas" />'
-		,bbar : [subirAdjuntoPersona,editarDescripcionAdjuntoPersona]
+		,bbar : [<sec:authorize ifNotGranted="SOLO_CONSULTA">subirAdjuntoPersona,editarDescripcionAdjuntoPersona</sec:authorize>]
 		,height: gridHeight
 		,autoWidth: true
 		,collapsible:true
@@ -629,7 +629,7 @@
 	
 	var gridExpedientes = app.crearGrid(storeExpedientes, cmExpedientes, {
 		title : '<s:message code="asuntos.adjuntos.grid.expediente" text="**Ficheros adjuntos del Expediente" />'
-		,bbar : [subirAdjuntoExpediente,editarDescripcionAdjuntoExpediente]
+		,bbar : [<sec:authorize ifNotGranted="SOLO_CONSULTA">subirAdjuntoExpediente,editarDescripcionAdjuntoExpediente</sec:authorize>]
 		,height: gridHeight
 		,autoWidth: true
 		,collapsible:true
@@ -679,7 +679,7 @@
 	
 	var gridContratos = app.crearGrid(storeContratos, cmContratos, {
 		title : '<s:message code="asuntos.adjuntos.grid.contratos" text="**Ficheros adjuntos Contratos" />'
-		,bbar : [subirAdjuntoContrato,editarDescripcionAdjuntoContrato]
+		,bbar : [<sec:authorize ifNotGranted="SOLO_CONSULTA">subirAdjuntoContrato,editarDescripcionAdjuntoContrato</sec:authorize>]
 		,height: gridHeight
 		,autoWidth: true
 		,collapsible:true

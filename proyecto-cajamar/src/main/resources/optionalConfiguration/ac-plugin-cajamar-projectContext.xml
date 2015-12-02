@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+	
+	<bean id="nmbCommonProjectContextHAYA" parent="nmbCommonProjectContextDefault">
+		<property name="tiposProcedimientosAdjudicados">
+			<list>
+				<value>H005</value>
+				<value>H008</value>
+				<value>H015</value>
+				<value>H040</value>
+			</list>
+		</property>
+		<property name="mapaTiposPrc">
+			<map>
+				<entry key="ADJUDICACION" value="H005"/>
+				<entry key="SANEAMIENTO" value="H008"/>
+				<entry key="POSESION" value="H015"/>
+				<entry key="GESTION-LLAVES" value="H040"/>
+			</map>
+		</property>
+		<property name="tareasCierreDeuda"> 
+			<map>
+				<entry key="ConfirmarTestimonio" value="H005_ConfirmarTestimonio"/>
+			</map>
+		</property>
+		<property name="comboPostoresCelebracionSubasta">
+				<value>comboPostores</value>
+		</property>
+		<property name="mapaSubastas">
+			<map>
+				<entry key="SAREB" value="H002"/>
+			</map>
+		</property>
+	</bean>
+
+	<bean id="coreProjectContextHAYA" parent="coreProjectContextDefault">
+		<property name="categoriasSubTareas">
+			<map>
+				<entry key="TOMA_DE_DECISION">
+					<set>
+						<value>46</value>
+						<!-- HRE -->
+						<value>819</value>
+						<value>820</value>
+						<value>821</value>
+						<value>822</value>
+						<value>823</value>
+						<value>824</value>
+						
+						<!-- Cajamar -->
+						<value>DGERREC</value>
+						<value>DGESCON</value>
+						<value>DGESINC</value>
+						<value>DGESHRE</value>
+						<value>DGESHREIN</value>
+						<value>DGESCHRE</value>
+					</set>
+				</entry>
+				<entry key="ABRIR_TAREA_PROCEDIMIENTO">
+					<set>
+						<!-- HRE -->
+						<value>800</value>
+						<value>801</value>
+						<value>802</value>
+						<value>803</value>
+						<value>804</value>
+						<value>805</value>
+						<value>806</value>
+						<value>807</value>
+						<value>808</value>
+						<value>809</value>
+						<value>810</value>
+						<value>811</value>
+						<value>812</value>
+						<value>813</value>
+						<value>814</value>
+						<value>815</value>
+						<value>816</value>
+						<value>817</value>
+						<value>818</value>
+						<value>1001</value>
+						<value>1011</value>
+						<value>1021</value>
+						<value>1031</value>
+						<value>1041</value>
+						
+						<!-- CAJAMAR -->
+						<value>TGESCHRE</value>
+						<value>TSUCHRE</value>
+						<value>TDIRREC</value>
+						<value>TGESCON</value>
+						<value>TGESINC</value>
+						<value>TGERREC</value>
+						<value>TGEANREC</value>
+						<value>TGESHRE</value>
+						<value>TGADMCON</value>
+						<value>TGESOF</value>
+						<value>TSUCON</value>
+						<value>TSUINC</value>
+						<value>TSUANREC</value>
+						<value>TSUHRE</value>
+						<value>TSUADMCON</value>
+						<value>TDIRCON</value>
+						<value>TDIRHRE</value>
+						<value>TGESHREIN</value>
+						
+					</set>
+				</entry>
+			</map>
+		</property>
+		<property name="tiposProcedimientosAdjudicados">
+			<list>
+				<value>H005</value>
+				<value>H008</value>
+				<value>H015</value>
+				<value>H040</value>
+			</list>
+		</property>
+		<property name="entidadesDesparalizacion">
+			<set>
+				<value>2039</value>
+			</set>
+		</property>
+	</bean>
+	
+	<bean id="procedimientosProjectContextHaya" parent="procedimientosProjectContextDefault">
+		<property name="limiteDeudaGlobal" value="1000000"/>
+		<property name="limiteDeudaBien" value="15000"/>
+		<property name="tipoSubastaSareb" value="H002"/>
+		<property name="codigoCargaAnterior" value="ANT"/>
+		<property name="tiposSubasta">
+			<list>
+				<value>H002</value>
+				<value>H003</value>
+				<value>H004</value>
+				<value>H036</value>
+			</list>
+		</property>
+		<property name="tareasCelebracionSubasta">
+			<list>
+				<value>H002_CelebracionSubasta</value>
+				<value>H003_CelebracionSubasta</value>
+				<value>H004_CelebracionSubasta</value>
+				<value>H036_CelebracionSubasta</value>
+			</list>
+		</property>
+		<property name="tareasSenyalamientoSubastas">
+			<list>
+				<value>H002_SenyalamientoSubasta</value>
+				<value>H003_SenyalamientoSubasta</value>
+				<value>H004_SenyalamientoSubasta</value>
+			</list>
+		</property>
+		<property name="camposCostas">
+			<list>
+				<value>costasLetrado</value>
+				<value>costasProcurador</value>
+				<value>intereses</value>
+			</list>
+		</property>
+		<property name="camposSuspensionSubasta">
+			<list>
+				<value>comboSuspension</value>
+			</list>
+		</property>
+		<property name="procedimientosPestanyaFaseComun">
+			<set>
+				<value>H009</value> <!-- fase comun abreviadoV4  -->
+				<value>H024</value> <!-- fase comun ordinario  -->
+				<value>H017</value> <!-- fase convenio  -->
+				<value>H021</value> <!-- P. solicitud de concurso necesario  -->
+				<value>H029</value> <!-- T. Registrar resolución de interés  -->
+				<value>H041</value> <!-- T. seguimiento cumplimiento de convenio  -->
+				<value>H039</value> <!-- T. conclusión de concurso  -->
+				<value>P420</value> <!-- T. de aceptación y decisión Concursal  -->
+				<value>P404</value> <!-- T. de aceptación y decisión Litigios  -->
+				<value>H019</value> <!-- T. de solicitud de actuaciones o pronunciamientos -->
+				<value>H033</value> <!-- fase liquidacion  -->
+			</set>
+		</property>
+	</bean>
+
+	<alias name="nmbCommonProjectContextHAYA" alias="nmbCommonProjectContext"/>
+	<alias name="procedimientosProjectContextHaya" alias="procedimientosProjectContext"/>		
+	<alias name="coreProjectContextHAYA" alias="coreProjectContext"/>
+</beans>	

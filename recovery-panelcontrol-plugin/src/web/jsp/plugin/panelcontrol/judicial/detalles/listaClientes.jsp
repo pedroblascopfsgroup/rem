@@ -77,7 +77,7 @@ var thousandSeparator = function add_thousands_separator(input) {
     ['2','ACADEMIA INTERNACIONAL','','','','EMPRESA (Unnim)','9.346.50','0','3.685','3','2577','Normal','NORMAL'],
     ['3','FABRICAS REVENAQUEA S.A.','','','','EMPRESA (Unnim)','854.454,4','4.545.367','5.548.490,20','9','1355','Normal','NORMAL'],
     ['4','INDUOVO S.L','','','','EMPRESA (Unnim)','356.561,56','4.557.367','6.222,0','11','1110','Normal','NORMAL'],
-    ['5','GARCIA CADENA S.A.','','','','EMPRESA (Unnim)','343.561,56','5.513.367','3.788.490,20','19','1462','Normal','NORMAL'],
+    ['5','GARCIA CADENA S.A.','','','','EMPRESA (Unnim)','343.561,56','5.513.367','3.788.490,20','19','1462','Normal','NORMAL']
 ];
 	var clienteStore = new Ext.data.ArrayStore({
 		id:'clienteStore'

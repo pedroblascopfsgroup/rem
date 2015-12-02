@@ -45,7 +45,6 @@ import es.capgemini.pfs.dsm.dao.EntidadDao;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.cm.arq.tda.tiposdedatosbase.CantidadDecimal15;
 import es.cm.arq.tda.tiposdedatosbase.Fecha;
 import es.cm.arq.tda.tiposdedatosbase.ImporteMonetario;
@@ -256,6 +255,8 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 					//cogemos el ultimo procedimiento
 					procedimiento = genericDao.get(MEJProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", procedimientos.get(procedimientos.size()-1).getProcedimiento().getId()));
 					System.out.println("Procedimiento obtenido.");	
+				}else{
+					return "El bien debe estar asociado a un procedimiento";
 				}
 			}			
 			
@@ -498,11 +499,26 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			long identificadorProcedimiento = (asunto.getCodigoExterno() != null) ? Long.parseLong(asunto.getCodigoExterno()) : 0;
 			servicioGMP5JD20.setIdentificadorProcedimientoSedasidpsew(identificadorProcedimiento);
 			System.out.println(" ***REQUERIDO*** IDBISW"); // 	"NUMERICO_9" longitud="10"	 Identificador del bien
-			int identificadorBien = bien.getCodigoInterno() != null ? Integer.parseInt(bien.getCodigoInterno()) : bien.getId().intValue() ;
+			int identificadorBien = 0;
+			String idenInterno = bien.getCodigoInterno();
+			if(!Checks.esNulo(idenInterno)){
+				if(idenInterno.length() < 11){
+					identificadorBien = Integer.parseInt(idenInterno);
+				}else{
+					identificadorBien = Integer.parseInt(idenInterno.substring(idenInterno.length()-10, idenInterno.length()-1));
+				}
+			}else{
+				identificadorBien = bien.getId().intValue();
+			}
+			//int identificadorBien = bien.getCodigoInterno() != null ? Integer.parseInt(bien.getCodigoInterno()) : bien.getId().intValue() ;
+			
 			servicioGMP5JD20.setIdentificadorBienEnSedasidbisw(identificadorBien);
 			//campo cd_expediente_nuse del expediente, metemos el asu_id
 			System.out.println(" ***REQUERIDO*** IDEXSW"); // 	"NUMERICO_9" longitud="10"	 Identificador del expediente	
 			int identificadorExpediente = asunto.getId().intValue();
+			if(asunto.getId().compareTo(new Long(Integer.MAX_VALUE)) > 0){
+				identificadorExpediente = new Integer(asunto.getCodigoExterno()).intValue();
+			}
 			servicioGMP5JD20.setIdentificadorExpedienteEnSedasidexsw(identificadorExpediente);
 			System.out.println(" ***REQUERIDO*** NOCURA"); // 	longitud="40"	 Nombre del Procurador	
 			String nombreProcurador = null;
@@ -724,7 +740,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 				System.out.println("SUBSYSTEM: " + wi.getSubsystem());
 				System.out.println("URL: " + wi.getUrl());
 				return wi.getMessage();
-			}
+			} 
 			e.printStackTrace();
 			return "-1";
 		}

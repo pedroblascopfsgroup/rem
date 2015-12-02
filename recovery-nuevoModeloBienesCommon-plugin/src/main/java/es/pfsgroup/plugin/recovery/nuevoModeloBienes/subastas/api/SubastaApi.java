@@ -5,15 +5,18 @@ import java.util.Map;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.web.DynamicElement;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
+import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.registro.model.HistoricoProcedimiento;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.InformeValidacionCDDDto;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.AcuerdoCierreDeudaDto;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarLotesSubastas;
@@ -25,7 +28,10 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.DatosActaComiteBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastabankia.InformeSubastaLetradoBean;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBContratoBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.BienSubastaDTO;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.EditarInformacionCierreDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.GuardarInstruccionesDto;
@@ -69,6 +75,14 @@ public interface SubastaApi {
 	public static final String BO_NMB_GET_LIST_ERROR_PREVI_CDD_DATA = "plugin.nuevoModeloBienes.subastas.manager.SubastasManager.getListErrorPreviCDDData";
 	public static final String BO_NMB_GET_LIST_ERROR_POST_CDD_DATA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.getListErrorPostCDDData";
 	public static final String BO_NMB_SUBASTA_GENERAR_ENVIO_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.generarEnvioCierreDeuda";
+	public static final String BO_NMB_SUBASTA_OBTENER_CONTRATO = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.getContratoByNroContrato";
+	public static final String BO_NMB_SUBASTA_OBTENER_RELACION_BIENES_CONTRATOS = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.getRelacionesContratosBienes";
+	public static final String BO_OBTENER_SITUACION_CARGA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.getSituacionCarga";
+	public static final String BO_OBTENER_SITUACION_CARGA_ECONOMICA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.getSituacionCargaEconomica";
+	public static final String BO_OBTENER_TIPO_CARGA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.getTipoCarga";
+	public static final String BO_SUBIR_PLANTILLA_INSTRUCCIONES = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.upload";
+	
+	
 	
 	
 	/**
@@ -240,5 +254,24 @@ public interface SubastaApi {
 	
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_GENERAR_ENVIO_CIERRE_DEUDA)
 	InformeValidacionCDDDto generarEnvioCierreDeuda(Subasta subasta, Long idBien, String origen);
+	
+	@BusinessOperationDefinition(BO_NMB_SUBASTA_OBTENER_CONTRATO)
+	Contrato getContratoByNroContrato(String nroContrato);
+	
+	@BusinessOperationDefinition(BO_NMB_SUBASTA_OBTENER_RELACION_BIENES_CONTRATOS)
+	List<NMBContratoBien> getRelacionesContratosBienes(Long[] idBienes);
+	
+	@BusinessOperationDefinition(BO_OBTENER_SITUACION_CARGA)
+	DDSituacionCarga getSituacionCarga(String codigo);
+	
+	@BusinessOperationDefinition(BO_OBTENER_SITUACION_CARGA_ECONOMICA)
+	DDSituacionCarga getSituacionCargaEconomica(String codigo);
+	
+	@BusinessOperationDefinition(BO_OBTENER_TIPO_CARGA)
+	DDTipoCarga getTipoCarga(String tipoCarga);
+	
+	@BusinessOperationDefinition(BO_SUBIR_PLANTILLA_INSTRUCCIONES)
+	String upload(WebFileItem uploadForm);
+	
 
 }

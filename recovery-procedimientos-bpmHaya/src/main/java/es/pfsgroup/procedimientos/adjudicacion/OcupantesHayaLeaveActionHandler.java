@@ -1,6 +1,9 @@
 package es.pfsgroup.procedimientos.adjudicacion;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.jbpm.graph.exe.ExecutionContext;
@@ -8,19 +11,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.multigestor.api.GestorAdicionalAsuntoApi;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.adjudicacion.api.AdjudicacionHandlerDelegateApi;
 import es.pfsgroup.plugin.recovery.coreextension.adjudicacion.dto.DtoCrearAnotacion;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBInformacionRegistralBienInfo;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdjudicacionBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
+import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 
 public class OcupantesHayaLeaveActionHandler extends
 		PROGenericLeaveActionHandler {
@@ -39,6 +51,8 @@ public class OcupantesHayaLeaveActionHandler extends
 
 	@Autowired
 	private Executor executor;
+	
+	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
 	@Override
 	protected void process(Object delegateTransitionClass,
@@ -54,7 +68,11 @@ public class OcupantesHayaLeaveActionHandler extends
 			ExecutionContext executionContext) {
 
 		Procedimiento prc = getProcedimiento(executionContext);
-
+		TareaExterna tex = getTareaExterna(executionContext);
+		List<EXTTareaExternaValor> listado = ((SubastaProcedimientoApi) proxyFactory
+				.proxy(SubastaProcedimientoApi.class))
+				.obtenerValoresTareaByTexId(tex.getId());
+		
 		if ("H048_ResolucionFirme".equals(executionContext.getNode().getName())) {
 			List<Usuario> lUsuario = proxyFactory.proxy(
 					GestorAdicionalAsuntoApi.class).findGestoresByAsunto(
@@ -88,6 +106,73 @@ public class OcupantesHayaLeaveActionHandler extends
 						.createAnotacion(crearAnotacion);
 			}
 		}
+		else if ("H048_TrasladoDocuDeteccionOcupantes".equals(executionContext.getNode().getName())) {
+			
+			for (TareaExternaValor tev : listado) {
+				try {
+					if ("comboInquilino".equals(tev.getNombre())) {
+						guardaInfoBienes("comboInquilino", tev.getValor(), prc);
+					}
+					if ("fechaContrato".equals(tev.getNombre())) {
+						guardaInfoBienes("fechaContrato", tev.getValor(), prc);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	private void guardaInfoBienes(String campo, String valor, Procedimiento prc) {
+		
+		if("comboInquilino".equals(campo) || "fechaContrato".equals(campo)){
+			//Comprobamos los bienes
+			List<Bien> listadoBienes = getBienesSubastaByPrcId(prc.getId());
+			for(Bien b : listadoBienes){
+				if(b instanceof NMBBien){
+					NMBBien bien = (NMBBien) b;
+					if(!Checks.esNulo(((NMBBien) b).getAdjudicacion())){
+						NMBAdjudicacionBien adju = ((NMBBien) b).getAdjudicacion();
+						
+						if("comboInquilino".equals(campo)){						
+							adju.setExisteInquilino("01".equals(valor));
+						}
+						if("fechaContrato".equals(campo)){						
+							try {
+								Date fecha = formatter.parse(valor);
+								adju.setFechaContratoArrendamiento(fecha);
+							} catch (ParseException e) {
+								e.printStackTrace();
+							}							
+						}
+						
+						genericDao.save(NMBAdjudicacionBien.class, adju);
+					}
+				}
+			}
+		}
+		
+	}
+	
+	private List<Bien> getBienesSubastaByPrcId(Long prcId){
+		// Buscamos primero la subasta asociada al prc
+		Subasta sub = genericDao.get(Subasta.class, genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", prcId), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+		
+		List<Bien> bienes = new ArrayList<Bien>();
+		
+		if (!Checks.esNulo(sub)) {
+
+			// buscamos los lotes de la subasta
+			List<LoteSubasta> listadoLotes = sub.getLotesSubasta();
+			
+			if (!Checks.estaVacio(listadoLotes)) {
+				for(int i=0; i<listadoLotes.size(); i++){		
+					bienes.addAll(listadoLotes.get(i).getBienes());
+				}
+			}
+		}
+		
+		return bienes;
 	}
 
 	private NMBInformacionRegistralBienInfo getDatosRegistralesActivo(

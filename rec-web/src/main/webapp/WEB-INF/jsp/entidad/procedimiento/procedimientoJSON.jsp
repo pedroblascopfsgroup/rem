@@ -17,6 +17,8 @@
   <json:property name="puedeCrearRecurso" value="${puedeCrearRecurso}" />
   <json:property name="derivacionAceptada" value="${procedimiento.derivacionAceptada}" />
   <json:property name="nombreProcedimiento" value="${procedimiento.nombreProcedimiento}" />
+  <json:property name="hayPrecontencioso" value="${precontencioso.id != null}" />
+  <json:property name="estadoPrecontencioso" value="${precontencioso.estadoActualCodigo}" />
   <json:object name="toolbar">
 	  <json:property name="fechaCreacionFormateada" value="${procedimiento.asunto.fechaCreacionFormateada}" />
 	  <json:property name="estadoItinerario" value="${procedimiento.asunto.estadoItinerario.descripcion}" />
@@ -87,5 +89,17 @@
   <json:object name="contratoPrincipal">
     <json:property name="codigoContrato" value="${contratoPrincipal.codigoContrato}" escapeXml="false"/>
   </json:object>
-  
+  <json:object name="precontencioso">
+  	<json:property name="id" value="${precontencioso.id}" />
+  	<json:property name="estadoActual" value="${precontencioso.estadoActual}" />
+  	<json:property name="estadoActualCodigo" value="${precontencioso.estadoActualCodigo}" />
+	<json:property name="tipoPreparacionDesc" value="${precontencioso.tipoPreparacionDesc}" />
+	<json:property name="tipoProcPropuestoDesc" value="${precontencioso.tipoProcPropuestoDesc}" />
+	<json:property name="tipoProcIniciadoDesc" value="${precontencioso.tipoProcIniciadoDesc}" />
+	<json:property name="preturnado" value="${precontencioso.preturnado}" />
+	<json:property name="nombreExpJudicial" value="${precontencioso.nombreExpJudicial}" />
+	<json:property name="numExpInterno" value="${precontencioso.numExpInterno}" />
+	<json:property name="numExpExterno" value="${precontencioso.numExpExterno}" />
+	<json:property name="cntPrincipal" value="${precontencioso.cntPrincipal}" />
+  </json:object>
 </fwk:json>

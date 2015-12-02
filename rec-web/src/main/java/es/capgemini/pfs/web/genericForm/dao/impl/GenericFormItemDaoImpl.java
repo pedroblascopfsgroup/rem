@@ -8,7 +8,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
-import es.capgemini.pfs.web.genericForm.GenericFormItem;
+import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.capgemini.pfs.web.genericForm.dao.GenericFormItemDao;
 
 @Repository("GenericFormItemDaoImpl")

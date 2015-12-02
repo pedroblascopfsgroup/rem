@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context" 
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+    default-autowire="byName">
+
+	<!-- Beans,handlers,Managers ... --> 
+	<bean id="adjudicacionLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.AdjudicacionLeaveActionHandler" />
+	<bean id="cajamarCesionRemateLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.CesionRemateCajamarLeaveActionHandler" />
+	<bean id="bccPosesionLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.PosesionBccLeaveActionHandler" />
+	<bean id="leaveDemandadoIncidenteRegistrarResolucion" class="es.pfsgroup.procedimientos.handlers.LeaveDemandadoIncidenteRegistrarResolucion" />
+	<bean id="subastaCajamarEnterActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaCajamarEnterActionHandler" />
+	<bean id="subastaConcursalCjLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaConcursalCjLeaveActionHandler" />
+	<bean id="siguientePagoHandler" class="es.pfsgroup.procedimientos.seguimientoCumplimientoAcuerdo.SiguientePagoHandler"></bean>
+	<bean id="creditosContingentesLeaveActionHandler" class="es.pfsgroup.procedimientos.creditosContingentes.CreditosContingentesLeaveActionHandler"></bean>
+	<bean id="ocupantesEndActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.OcupantesEndActionHandler"></bean>
+	<bean id="ocupantesLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.OcupantesLeaveActionHandler"></bean>
+	<bean id="genericLeaveActionHandler" class="es.pfsgroup.procedimientos.PROGenericLeaveActionHandler">
+		<property name="configuracionEmails">
+			<bean class="es.pfsgroup.plugin.recovery.configuracionEmails.ConfiguracionEmailsManager"></bean>
+		</property>
+	</bean>	
+	<bean id="tramiteAceptacionUserDecisionActionHandler" class="es.pfsgroup.procedimientos.handlers.TramiteAceptacionUserDecisionActionHandler"></bean>
+ 	    
+	<!-- BPM activos -->
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDeclaracionIVAIGIC/hcj_declaracionIVAIGIC.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteElevacionCajamar/hcj_elevacionCajamar.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteAutorizacion/hcj_autorizacion.xml" p:version="-1"/>
+	
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteFaseLiquidacion/cj_faseLiquidacion.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteConclusion/cj_conclusion.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoSolicitudConcursal/cj_solicitudConcursal.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCalificacion/cj_calificacion.xml" p:version="-1"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteFaseConvenio/cj_faseConvenio.xml" p:version="-1"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteFaseComun/cj_faseComun.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDemandaIncidental/cj_demandaIncidental.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDeclaracionIncumplimiento/cj_declaracionIncumplimiento.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDemandadoEnIncidente/cj_demandadoEnIncidente.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteReaperturaConcurso/cj_reaperturaConcurso.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteHomologacionAcuerdo/cj_homologacionAcuerdo.xml" p:version="-1"/>	
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteVentaDirecta/cj_ventaDirecta.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramitePropuestaAnticipada/cj_propuestaAnticipada.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSeguimientoCumplimientoAcuerdo/cj_seguimientoCumplimientoAcuerdo.xml" p:version="-1"/>	
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteAcuerdoExtrajudicialPagos/cj_acuerdoExtrajudicialPagos.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteResolucionInteres/cj_resolucionInteres.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSubastaConcursal/cj_tramiteSubastaConcursal.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCreditosContingentes/cj_creditosContingentes.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSeguimientoCumplimientoConvenio/cj_seguimientoCumplimientoConvenio.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCostas/cj_tramiteCostas.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCertificadoLibertadArrendamiento/cj_certificadoLibertadArrendamiento.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteOcupantes/cj_tramiteOcupantes.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoProvisionFondos/cj_provisionFondos.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteMoratoriaLanzamiento/cj_tramiteMoratoriaLanzamiento.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDeGestionDeLlaves/cj_tramiteDeGestionDeLlaves.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDePosesion/cj_tramiteDePosesion.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSubsanacionEmbargo/cj_tramiteSubsanacionEmbargo.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteAdjudicacion/cj_tramiteAdjudicacion.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCesionRemate/cj_tramiteCesionRemate.xml" p:version="-1"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSaneamientoCargas/cj_tramiteSaneamientoCargas.xml" p:version="-1"/>
+					
+	<!-- Groovy's -->
+	<bean id="jbpmUtilCajamarConcursos" class="es.pfsgroup.recovery.haya.utils.JBPMProcessHayaManager" >
+  	<property name="contextScripts">
+  		<list>
+  			<value><![CDATA[ 	
+				def comprobarExisteDocumentoPLALIQ = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "PLALIQ");
+	            }
+	            
+	            def comprobarExisteDocumentoAAPLIQ = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "AAPLIQ");
+	            }
+	            
+	            def comprobarExisteDocumentoINFRENCUE = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INFRENCUE");
+	            }
+	            
+	            def comprobarExisteDocumentoAUTCONCON = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "AUTCONCON");
+	            }
+	            
+	            def comprobarExisteDocumentoINFPRO = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INFPRO");
+	            }
+	            
+	            def comprobarExisteDocumentoRESJUD = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "RESJUD");
+	            }
+	            
+	            def comprobarExisteDocumentoINFADMCON = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INFADMCON");
+	            }
+	            
+	            def existeConvenioAprobadoJunta = {
+					def convenioManager = ctx.getBean("convenioManager");
+               		for (convenio in convenioManager.listaConveniosPorProcedimiento(idProcedimiento)) {
+	                  	if (convenio.getEstadoConvenio().getCodigo() == '3') {
+	                  		return true;
+	                  	}
+               		};
+               
+					return false;
+				}
+				
+				def existeConvenioNoAdmitido = {
+					def convenioManager = ctx.getBean("convenioManager");
+					for (convenio in convenioManager.listaConveniosPorProcedimiento(idProcedimiento)) {
+						if (convenio.getEstadoConvenio().getCodigo() == '4') {
+							return true;
+						}
+					};
+					return false;
+				}
+				
+				def comprobarExisteDocumentoACTJUNACR = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "ACTJUNACR");
+	            }
+	            
+	            def comprobarExisteDocumentoRESADE = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "RESADE");
+	            }
+	            
+	            def comprobarExisteDocumentoBOE = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "BOE");
+	            }
+	            
+	            def comprobarExisteDocumentoRESJUZ = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "RESJUZ");
+	            }
+	            
+	            def comprobarExisteDocumentoINTDEM = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INTDEM");
+	            }
+	            
+	            def comprobarExisteDocumentoINFCANOPE = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INFCANOPE");
+	            }
+	            
+	            def comprobarExisteDocumentoOFEVEN = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "OFEVEN");
+	            }
+	            
+	            def comprobarExisteDocumentoINFSOBVEN = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INFSOBVEN");
+	            }
+	            
+	            def comprobarExisteDocumentoAUTO = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "AUTO");
+	            }
+	            
+	            def existeConvenioAnticipadoAsunto = {
+               		def cuentaAnticipado = 0;
+               		def convenioManager = ctx.getBean("convenioManager");
+               		for (convenio in convenioManager.listaConveniosPorAsunto(idProcedimiento)) {
+	                  	if (convenio.getTipoConvenio().getCodigo() == '1') {
+	                  		cuentaAnticipado = cuentaAnticipado + 1
+	                  	  	if (cuentaAnticipado>1) {
+	                  	  		return false;
+	                  	  	}
+	                  	  	
+	                  	  	if (convenio.getDescripcionAnticipado() == null) {
+	                  	  		return false;
+	                  	  	}
+	                  	}
+               		};
+               		
+               		if (cuentaAnticipado<1) {
+               			return false;
+               		} 
+               		else {
+               			return true;
+               		}
+            	}
+            	
+            	def existeConvenioAnticipadoAdmitidoAsunto = {
+               		def convenioManager = ctx.getBean("convenioManager");
+               		for (convenio in convenioManager.listaConveniosPorAsunto(idProcedimiento)) {
+                  		if ((convenio.getTipoConvenio().getCodigo() == '1') && (convenio.getEstadoConvenio().getCodigo() == '2')) {
+                  	 		return true;
+                  		}
+               		};
+               		
+               		return false;
+            	}
+            	
+            	def existeConvenioAnticipadoNoAdmitidoAsunto = {
+               		def convenioManager = ctx.getBean("convenioManager");
+               		for (convenio in convenioManager.listaConveniosPorAsunto(idProcedimiento)) {
+                  		if ((convenio.getTipoConvenio().getCodigo() == '1') && (convenio.getEstadoConvenio().getCodigo() == '4')) {
+                  	 		return true;
+                  		}
+               		};
+               		
+               		return false;
+            	}
+            	
+            	def existeConvenioAnticipadoAdmitidoTrasAprobacionAsunto = {
+					def convenioManager = ctx.getBean("convenioManager");
+					for (convenio in convenioManager.listaConveniosPorAsunto(idProcedimiento)) {
+                		if ((convenio.getTipoConvenio().getCodigo() == '1') && (convenio.getEstadoConvenio().getCodigo() == '5')) {
+	                  		return true;
+    	              	}
+        	       	};
+        	       	
+            	   	return false;
+				}	
+            	
+            	def existeConvenioAnticipadoNoAdmitidoTrasAprobacionAsunto = {
+					def convenioManager = ctx.getBean("convenioManager");
+					for (convenio in convenioManager.listaConveniosPorAsunto(idProcedimiento)) {
+                		if ((convenio.getTipoConvenio().getCodigo() == '1') && (convenio.getEstadoConvenio().getCodigo() == '6')) {
+                  			return true;
+                  		}
+               		};
+               		
+               		return false;
+				}
+
+				def comprobarExisteDocumentoPROPLAPAG = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "PROPLAPAG");
+	            }
+	            
+	            def comprobarExisteDocumentoINFCON = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INFCON");
+	            }
+
+				def comprobarExisteDocumentoCERFIO = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CERFIO");
+	            }
+	            
+	            def comprobarExisteDocumentoLICPRIO = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "LICPRIO");
+	            }
+	            
+	            def comprobarExisteDocumentoCERDEU = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CERDEU");
+	            }
+	            
+	            def dameFechaPago = {
+	            	def jbpmProcessManager = ctx.getBean("jbpmUtil");
+	            	def procedimiento = procedimientoManager.getProcedimiento(idProcedimiento);
+	            	
+	            	return jbpmProcessManager.getVariablesToProcess(procedimiento.getProcessBPM(), "fechaSiguientePago");
+	            }
+	            
+	            def plazoCumplido = {
+				
+					def bpmManager = ctx.getBean("BPMManager");
+					def fecha = dameFechaPago();
+					if(fecha == null) {
+						if(valores['CJ002_RegistrarCumplimiento'] != null) {
+							fecha = valores['CJ002_RegistrarCumplimiento']['fechaPago'];
+						}
+						else {
+							fecha = valores['H041_registrarCumplimiento']['fechaPago'];
+						}
+					}
+					
+					return bpmManager.compruebaPlazoCumplido(fecha, 90);
+	            }
+				
+				def dameSiguienteFechaVencimiento = {
+				
+					def jbpmProcessManager = ctx.getBean("jbpmUtil");
+	            	def procedimiento = procedimientoManager.getProcedimiento(idProcedimiento);
+	            	def fecha = null;
+	            	if(procedimiento.getProcessBPM() != null) {
+	            		fecha = jbpmProcessManager.getVariablesToProcess(procedimiento.getProcessBPM(), "fechaSiguienteVencimiento");
+	            	}
+	            	
+            		if(fecha == null) {
+	            		def bpmManager = ctx.getBean("BPMManager");
+						fecha = bpmManager.dameFechaSiguienteVencimientoCreditoContingente(null, idProcedimiento);
+	            	}
+		            
+	            	return fecha;
+				}
+				
+				def existeSiguienteFechaVencimiento = {
+					def jbpmProcessManager = ctx.getBean("jbpmUtil");
+	            	def procedimiento = procedimientoManager.getProcedimiento(idProcedimiento);
+	            	
+					def fecha = jbpmProcessManager.getVariablesToProcess(procedimiento.getProcessBPM(), "fechaSiguienteVencimiento");
+					
+					if(fecha == null) {
+						return false;
+					}
+					else {
+						return true;
+					}
+				}
+				
+				def existenCreditosContingentesReconocidos = {
+					def bpmManager = ctx.getBean("BPMManager");
+					return bpmManager.existenCreditosContingentesReconocidos(idProcedimiento);
+				}
+				
+				def cuentaCreditosInsinuados = {
+               		def concursoManager = ctx.getBean("concursoManager");
+               		
+               		return String.valueOf(concursoManager.dameCreditosInsinuados(idProcedimiento).size());
+            	}
+            	
+	            def vieneDeTCesionRemateTAdjudicacion = {
+					return (tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre()!=null && 
+						(tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='CJ105' || 
+						tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='CJ106'));
+				}
+				
+  			 ]]>
+  			</value>
+  		</list>
+  	</property>
+  </bean> 
+  
+  <!-- Diccionarios -->
+     
+</beans>

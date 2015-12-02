@@ -3,8 +3,6 @@ package es.capgemini.pfs.procesosJudiciales.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
-import es.pfsgroup.commons.utils.hibernate.HeritableEntity;
-
 @Entity
 public class EXTTareaExterna extends TareaExterna implements EXTTareaExternaInfo{
 	

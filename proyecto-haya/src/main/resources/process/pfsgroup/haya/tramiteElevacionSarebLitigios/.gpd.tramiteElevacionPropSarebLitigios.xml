@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="haya_tramiteElevacionPropSarebLitigios" width="901" height="510">
+  <node name="Inicio" x="220" y="47" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H012_InformarSarebAlegaciones" x="174" y="111" width="239" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-154" h1="94" w2="-161" h2="-110"/>
+    </edge>
+  </node>
+  <node name="H012_RespuestaSareb" x="191" y="212" width="214" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="31" h1="48" w2="31" h2="-55"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-41" h1="51" w2="-41" h2="-52"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="104" h1="-54" w2="111" h2="47"/>
+    </edge>
+  </node>
+  <node name="Fin" x="224" y="315" width="132" height="36"/>
+</root-container>

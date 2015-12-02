@@ -21,6 +21,7 @@
 	    	<evaluate expression="executor.execute('recursoManager.puedeCrearRecurso',id)" result="flowScope.puedeCrearRecurso" />
 	    	<evaluate expression="executor.execute('consultaProcedimientoManager.getTabs',id)" result="flowScope.tabsProcedimiento" />
 			<evaluate expression="executor.execute('plugin.mejoras.procedimientoManager.procedimientoParalizado',id)" result="flowScope.paralizado" />
+			<evaluate expression="executor.execute('plugin.precontencioso.getPrecontenciosoPorProcedimientoId',id)" result="flowScope.precontencioso" />
 	    </on-entry>
     </end-state>     
 </flow>

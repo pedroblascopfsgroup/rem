@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context" 
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+    default-autowire="byName">
+
+	<!-- Beans,handlers,Managers ... --> 
+	<bean id="bccAdjudicacionLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.AdjudicacionBccLeaveActionHandler" />
+	<bean id="bccCesionRemateLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.CesionRemateBccLeaveActionHandler" />
+	<bean id="bccPosesionLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.PosesionBccLeaveActionHandler" />
+	<bean id="endElevacionCajamarActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.PROEndElevacionCajamarActionHandler" />
+	<bean id="subastaTercerosBccLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaTercerosBccLeaveActionHandler" />
+	<bean id="subastaV4HayaEjecucionNotarialEnterActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaV4HayaEjecucionNotarialEnterActionHandler"></bean>
+ 	<bean id="subastaV4HayaEjecucionNotarialLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaV4HayaEjecucionNotarialLeaveActionHandler"></bean>
+ 	<bean id="subastaComprobarProcedeSubastaSuspendidaHandler" class="es.pfsgroup.procedimientos.subasta.SubastaComprobarProcedeSubastaSuspendidaHandler"></bean>
+ 	 	    
+	<!-- BPM activos -->
+	<!-- Nacho -->
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSubasta/hcj_tramiteSubasta.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSubastaTerceros/hcj_tramiteSubastaTerceros.xml" p:version="-1"/>
+	
+	<!-- Gonzalo -->
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoProvisionFondos/hcj_provisionFondos.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoHipotecario/hcj_procedimientoHipotecario.xml" p:version="-1"/>	
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteAdjudicacion/hcj_tramiteAdjudicacion.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCesionRemate/hcj_tramiteCesionRemate.xml" p:version="-1"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSaneamientoCargas/hcj_tramiteSaneamientoCargas.xml" p:version="-1"/>
+	
+	<!-- Alberto -->
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoCambiario/haya_procedimientoCambiario.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoEjecucionTituloJudicial/procedimientoEjecucionTituloJudicial.xml" p:version="-1"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoEjecucionTituloNoJudicial/procedimientoEjecucionTituloNoJudicial.xml" p:version="-1"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoOrdinario/haya_procedimientoOrdinario.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoVerbal/haya_procedimientoVerbal.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteConsignacion/haya_tramiteConsignacion.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDeposito/haya_tramiteDeposito.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteIntereses/tramiteIntereses.xml" p:version="-1"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoVerbalDesdeMonitorio/haya_procedimientoVerbalDesdeMonitorio.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCertificacionCargasRevision/haya_tramiteCertificacionCargasRevision.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCostasVsEntidad/haya_tramiteCostasVsEntidad.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCostas/haya_tramiteCostas.xml" p:version="-1"/>	
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteEmbargoSalarios/haya_tramiteEmbargoSalarios.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDeGestionDeLlaves/haya_tramiteDeGestionDeLlaves.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteInscripcionDelTitulo/haya_tramiteInscripcionDelTitulo.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteInvestigacionJudicial/haya_tramiteInvestigacionJudicial.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteMejoraEmbargo/haya_tramiteMejoraEmbargo.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteMoratoriaLanzamiento/haya_tramiteMoratoriaLanzamiento.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramitePrecinto/haya_tramitePrecinto.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSubsanacionEmbargo/haya_tramiteSubsanacionEmbargo.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSubsanacionEscritura/haya_tramiteSubsanacionEscritura.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteTributacionBienesSareb/haya_tramiteTributacionBienesSareb.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteValoracionBienesInmuebles/tramiteValoracionBienesInmuebles.xml" p:version="-1"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCalculoDeudaAFecha/hcj_calculoDeudaAFecha.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteVigilanciaCaducidadEmbargos/haya_tramiteVigilanciaCaducidadEmbargos.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCertificadoLibertadArrendamiento/hcj_certificadoLibertadArrendamiento.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSolicitudSolvenciaPatrimonial/hcj_solicitudSolvenciaPatrimonial.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDePosesion/hcj_tramiteDePosesion.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteMandamientoCancelacionCargas/hcj_mandamientoCancelacionCargas.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteOcupantes/haya_tramiteOcupantes.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoMonitorio/haya_procedimientoMonitorio.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDeclaracionIVAIGIC/hcj_declaracionIVAIGIC.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteElevacionCajamar/hcj_elevacionCajamar.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteEjecucionNotarial/hcj_ejecucionNotarial.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramitePosesionInterina/hcj_posesionInterina.xml" p:version="-1"/>
+	
+	<!-- 
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubastaSareb/haya_tramiteSubastaSareb.xml" p:version="-1"/>				
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubastaSarebConcursal/haya_tramiteSubastaConcursal.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteElevacionSarebLitigios/tramiteElevacionPropSarebLitigios.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteElevacionSarebAdjudicados/tramiteElevacionPropSarebAdjudicados.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/procedimientoVerbalDesdeMonitorio/haya_procedimientoVerbalDesdeMonitorio.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteValoracionBienesMuebles/tramiteValoracionBienesMuebles.xml" p:version="-1"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramitePresentacionPropConvenio/tramitePresentacionPropConvenio.xml" p:version="-1"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSeguimientoConvenio/tramiteSeguimientoConvenio.xml" p:version="-1"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSolicitudActuacionesPronunciamientos/haya_tramiteSolicitudActuacionesPronunciamientos.xml" p:version="-1"/>
+	 -->
+	<!-- Groovy's -->
+	<bean id="jbpmUtilCajamarLitigios" class="es.pfsgroup.recovery.haya.utils.JBPMProcessHayaManager" >
+  	<property name="contextScripts">
+  		<list>
+  			<value><![CDATA[ 	
+
+				def comprobarComboComunicacionAdicionalNOTIFENT = {
+					if (valores['H005_notificacionDecretoAdjudicacionAEntidad']['comboSubsanacion']==DDSiNo.SI) {
+						return true;
+					}
+					if (valores['H005_notificacionDecretoAdjudicacionAEntidad']['comboAdicional']==null) {
+					 	return false;
+					 }
+					if (valores['H005_notificacionDecretoAdjudicacionAEntidad']['comboAdicional']==DDSiNo.SI && 
+						valores['H005_notificacionDecretoAdjudicacionAEntidad']['fechaLimite']==null) {
+						return false;
+					}
+					return true;
+				}
+				
+				def vieneDeTCesionRemateTAdjudicacion = {
+					return (tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre()!=null && 
+						(tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='H005' || 
+						tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='H006'));
+				}
+				
+	            def existenCargasPreviasActivas = {
+	            	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionHayaProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.existenCargasPreviasActivas(idProcedimiento);
+	            }
+
+				def comprobarExisteDocumentoHCSDM = {
+					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "HCSDM");
+				}
+				
+				def comprobarExisteDocumentoHEDIMP = {
+					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "HEDIMP");
+				}
+				
+				def comprobarExisteDocumentoHRESOL = {
+					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "HRESOL");
+				}
+
+				def comprobarExisteDocumentoINFLIQ = {
+					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INFLIQ");
+				}
+				
+				def comprobarExisteDocumentoEDC = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "EDC");
+	            }
+	            
+	            def comprobarExisteDocumentoEDTJ = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "EDTJ");
+	            }
+	            
+	            def comprobarExisteDocumentoEDCSDE = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "EDCSDE");
+	            }
+
+	            def comprobarExisteDocumentoCOMAD = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "COMAD");
+	            }
+	            
+	            def comprobarExisteDocumentoAAEEE = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "AAEEE");
+	            }
+	            
+	            def comprobarExisteDocumentoASP = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "ASP");
+	            }
+	            
+	            def comprobarExisteDocumentoPCCSC = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "PCCSC");
+	            }
+	            
+	            def comprobarExisteDocumentoDSPJ = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "DSPJ");
+	            }
+	            
+	            def comprobarExisteDocumentoSAP = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "SAP");
+	            }	            
+	            
+	            def comprobarExisteDocumentoPLALIQ = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "PLALIQ");
+	            }
+	            
+	            def comprobarExisteDocumentoAAPLIQ = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "AAPLIQ");
+	            }
+	            
+	            def comprobarExisteDocumentoINFRENCUE = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INFRENCUE");
+	            }
+	            
+	            def comprobarExisteDocumentoAUTCONCON = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "AUTCONCON");
+	            }
+	            
+	            def comprobarExisteDocumentoINFPRO = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INFPRO");
+	            }
+	            
+	            def comprobarExisteDocumentoRESJUD = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "RESJUD");
+	            }
+	            
+	            def comprobarExisteDocumentoINFADMCON = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INFADMCON");
+	            }
+	            
+	           def existeConvenioAprobadoJunta = {
+					def convenioManager = ctx.getBean("convenioManager");
+               		for (convenio in convenioManager.listaConveniosPorProcedimiento(idProcedimiento)) {
+	                  	if (convenio.getEstadoConvenio().getCodigo() == '3') {
+	                  		return true;
+	                  	}
+               		};
+               
+					return false;
+				}
+				
+				def existeConvenioNoAdmitido = {
+					def convenioManager = ctx.getBean("convenioManager");
+					for (convenio in convenioManager.listaConveniosPorProcedimiento(idProcedimiento)) {
+						if (convenio.getEstadoConvenio().getCodigo() == '4') {
+							return true;
+						}
+					};
+					return false;
+				}
+				
+				def comprobarExisteDocumentoACTJUNACR = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "ACTJUNACR");
+	            }
+	            
+				def esTodosViviendaHabitualAdjTerceros = {
+					def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoManager");
+					return !subastaProcedimientoManager.isNotViviendaHabitualAdjTerceros(idProcedimiento);
+				}
+				
+				def comprobarExisteDocumentoRESADE = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "RESADE");
+	            }
+	            
+	            def comprobarExisteDocumentoBOE = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "BOE");
+	            }
+	            
+	            def comprobarExisteDocumentoRESJUZ = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "RESJUZ");
+	            }
+	            
+	            def comprobarExisteDocumentoINTDEM = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INTDEM");
+	            }
+	            
+	            def comprobarExisteDocumentoINFCANOPE = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INFCANOPE");
+	            }
+	            
+	            def comprobarExisteDocumentoAUTDECCON = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "AUTDECCON");
+	            }
+	            
+	            def comprobarExisteDocumentoINSEXT = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INSEXT");
+	            }	            
+
+	            def comprobarCostasLetradoValidas = {
+	            	def principal = tareaExterna.getTareaPadre().getProcedimiento().getSaldoRecuperacion();
+	            	def costas = valores['H002_SenyalamientoSubasta']['costasLetrado'];
+	            	if((costas.toDouble() * 0.05 ) > principal.doubleValue()){
+	            		return false;
+	            	} else {
+	            		return true;
+	            	}
+	            }
+	            
+	            def comprobarExisteDocumentoINFSUBEXT = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INFSUBEXT");
+	            }
+	            
+	            def comprobarExisteDocumentoDECADM = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "DECADM");
+	            }
+
+	            def comprobarExisteDocumentoSOLCONS = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "SOLCONS");
+	            }
+
+	            def comprobarExisteDocumentoDTCCE = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "DTCCE");
+	            }
+	            
+	            def comprobarExisteDocumentoREVM = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "REVM");
+	            }
+
+	            def vieneDeTramiteHipotecario = {
+					return (tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre()!=null && 
+						(tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='H001'));
+				}
+
+				def comprobarCargasBienesProcedimiento = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarCargasBienesProcedimiento(idProcedimiento);
+				}
+				
+				def dameFechaFinTareaProcedimientoPadre = {
+	            	def tareaExternaManager = ctx.getBean("tareaExternaManager");
+					def fecha = tareaExternaManager.dameFechaFinTareaProcedimientoPadre(idProcedimiento, it);
+					if(fecha != null) {
+						return new java.text.SimpleDateFormat('yyyy-MM-dd').format(fecha);
+					}
+					return
+				}
+
+  			 ]]>
+  			</value>
+  		</list>
+  	</property>
+  </bean> 
+  
+  <!-- Diccionarios -->
+     
+</beans>

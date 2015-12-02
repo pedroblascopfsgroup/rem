@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -148,7 +149,7 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 		"       INNER JOIN pco_liq_liquidaciones ON pco_prc_procedimientos.pco_prc_id = pco_liq_liquidaciones.pco_prc_id " +
 		" WHERE  pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID " +
 		"		AND pco_liq_liquidaciones.borrado = 0 ) ")
-	private Float totalLiquidacion;
+	private BigDecimal totalLiquidacion;
 
 	@Formula(value = 
 		" (SELECT CASE WHEN Count(1) > 0 THEN 0 ELSE 1 END " +

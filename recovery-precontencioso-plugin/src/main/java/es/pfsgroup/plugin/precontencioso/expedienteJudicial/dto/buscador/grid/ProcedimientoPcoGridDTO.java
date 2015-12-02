@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import es.capgemini.devon.dto.WebDto;
@@ -19,7 +20,7 @@ public class ProcedimientoPcoGridDTO extends WebDto {
 	private String tipoPreparacion;
 	private Date fechaInicioPreparacion;
 	private Integer diasEnPreparacion;
-	private Float totalLiquidacion;
+	private BigDecimal totalLiquidacion;
 	private Date fechaEnvioLetrado;
 	private Boolean aceptadoLetrado;
 	private Boolean todosDocumentos;
@@ -90,10 +91,10 @@ public class ProcedimientoPcoGridDTO extends WebDto {
 	public void setDiasEnPreparacion(Integer diasEnPreparacion) {
 		this.diasEnPreparacion = diasEnPreparacion;
 	}
-	public Float getTotalLiquidacion() {
+	public BigDecimal getTotalLiquidacion() {
 		return totalLiquidacion;
 	}
-	public void setTotalLiquidacion(Float totalLiquidacion) {
+	public void setTotalLiquidacion(BigDecimal totalLiquidacion) {
 		this.totalLiquidacion = totalLiquidacion;
 	}
 	public Date getFechaEnvioLetrado() {

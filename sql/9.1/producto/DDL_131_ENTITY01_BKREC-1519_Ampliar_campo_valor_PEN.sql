@@ -31,26 +31,14 @@ DECLARE
 
 BEGIN
 	    
-    DBMS_OUTPUT.PUT_LINE('******** PEN_PARAM_ENTIDAD - Añadir campo PEN_USOS *******');
+    DBMS_OUTPUT.PUT_LINE('******** PEN_PARAM_ENTIDAD - Modificar campo PEN_VALOR *******');
     
     
-    V_SQL := 'SELECT COUNT(1) FROM all_tab_columns WHERE TABLE_NAME = '''||V_TABLA||''' and owner = '''||V_ESQUEMA||''' and column_name = ''PEN_USOS''';
-    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-    -- Si existe el campo lo indicamos sino lo creamos
-    IF V_NUM_TABLAS = 1 THEN
-        DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA||'... El campo ya existe en la tabla');
-    ELSE
-        V_MSQL := 'alter table '||V_ESQUEMA||'.'||V_TABLA||' add(PEN_USOS VARCHAR2(4000))';        
-        DBMS_OUTPUT.PUT_LINE(V_MSQL);
-        EXECUTE IMMEDIATE V_MSQL; 
-
-        V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.PEN_PARAM_ENTIDAD.PEN_USOS IS ''Documentacion de uso del parametro. Syntaxis de valores.'' ';
-        DBMS_OUTPUT.PUT_LINE(V_MSQL);
-        EXECUTE IMMEDIATE V_MSQL; 
-
-        DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA||'... Añadido el campo PEN_USOS');
-    END IF;
-    
+    V_MSQL := 'ALTER TABLE ' || V_ESQUEMA || '.'||V_TABLA||' MODIFY(PEN_VALOR VARCHAR2(200 CHAR));';        
+    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    EXECUTE IMMEDIATE V_MSQL; 
+    DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA||'... El campo ya ha sido modificado');
+        
 	
 	DBMS_OUTPUT.PUT_LINE('[INFO] Fin script.');
 

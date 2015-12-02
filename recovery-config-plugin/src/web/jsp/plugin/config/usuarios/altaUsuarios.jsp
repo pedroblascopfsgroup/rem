@@ -150,7 +150,7 @@
 			tab_titleData="username"
 			tab_type="Usuario"/>
 			
-	
+	<%-- Para deshabilitar los botones mientras se realiza el proceso de Guardado. --%>
 	btnGuardar.on('click',function(){
         this.setDisabled(true);
         btnCancelar.setDisabled(true);

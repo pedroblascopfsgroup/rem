@@ -75,5 +75,11 @@
 		leftColumFields="username,perfil,jerarquia,centros,password"
 		parameters="parametros" 
 		onSuccessMode="tabGenericoConMsgGuardando" />
+		
+	<%-- Para deshabilitar los botones mientras se realiza el proceso de Guardado. --%>
+	btnGuardar.on('click',function(){
+        this.setDisabled(true);
+        btnCancelar.setDisabled(true);
+	});
 
 </fwk:page>

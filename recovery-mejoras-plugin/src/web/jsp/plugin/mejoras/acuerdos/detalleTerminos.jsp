@@ -150,7 +150,8 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
 					Ext.Msg.alert('<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.warning" text="**Aviso" />', 
 	                    	       '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.warning.contratoNoSelec" text="**No ha seleccionado ningún contrato" />');
 				}
-				else {								
+				else {
+					var ambito = entidad.id;								
 	      	        var w = app.openWindow({
 			          flow : 'mejacuerdo/openAltaTermino'
 			          ,closable:allowClose
@@ -159,6 +160,7 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
 			          ,title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.agregar" text="**Agregar Termino" />'
 	     			  ,params:{
 <%-- 	      				  id:panel.getAsuntoId(), --%>
+						  ambito: ambito,
 	      				  contratosIncluidos: contratosIncluidos,
 	      				  idAcuerdo : idAcuerdo,
 	      				  esPropuesta : esPropuesta

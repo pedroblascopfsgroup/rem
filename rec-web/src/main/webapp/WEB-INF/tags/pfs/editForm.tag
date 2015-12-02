@@ -81,7 +81,9 @@
 				});
 			}
 			else{
-				Ext.Msg.alert('Error', '<s:message code="rec-web.direccion.validacion.camposObligatorios" text="**Debe rellenar los campos obligatorios." />');				
+				Ext.Msg.alert('Error', '<s:message code="rec-web.direccion.validacion.camposObligatorios" text="**Debe rellenar los campos obligatorios." />');
+				btnGuardar.setDisabled(false);
+       		 	btnCancelar.setDisabled(false);	
 			}
 		};
 	</c:when>

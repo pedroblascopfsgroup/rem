@@ -21,10 +21,29 @@
 		value="" 
 		dd="${despachos}" />
 
+	var permiteGuardar = new Ext.form.TextField({
+                hidden: true
+                ,value: false
+        });	
+    
+    var tipoTab = new Ext.form.TextField({
+                hidden: true
+                ,value: 'supervisardespacho'
+        });
+        
+    despachoExterno.on('select',function(){
+    	if(despachoExterno.getValue() == "")
+    		permiteGuardar.setValue(false);
+    	else
+    		permiteGuardar.setValue(true);
+    });
+    
 	<pfs:defineParameters name="parametros" paramId="${usuario.id}" 
 		idusuario ="idusuario"
 		despachoExterno="despachoExterno" 
 		usuarioExterno="usuarioExterno"
+		permiteGuardar="permiteGuardar"
+		tipoTab="tipoTab"
 		/>	
 
 	<pfs:editForm saveOrUpdateFlow="pfsadmin/despachosExternos/ADMasignarSupervisorDespacho"

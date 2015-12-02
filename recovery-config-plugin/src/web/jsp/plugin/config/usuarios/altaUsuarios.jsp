@@ -77,6 +77,11 @@
                 ,value: true
         });	
 
+	var tipoTab = new Ext.form.TextField({
+                hidden: true
+                ,value: 'altaUsuarios'
+        });
+
 	tipoDespacho.on('select',function(){
 		if(tipoDespacho.getValue() == ""){
 			despachoExterno.setValue('');
@@ -135,6 +140,7 @@
 		usuarioGrupo="usuarioGrupo"
 		despachoExterno="despachoExterno"
 		permiteGuardar="permiteGuardar"
+		tipoTab="tipoTab"
 		/>
 
 

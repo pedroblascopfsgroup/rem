@@ -10,43 +10,10 @@
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
 	default-autowire="byName">
 	
-	<!-- Tareas tipo decision -->
-	<bean id="coreProjectContextDefault" 
-		class="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContextImpl" abstract="true">
-		<property name="categoriasSubTareas">
-			<map>
-				<entry key="TOMA_DE_DECISION">
-					<set>
-						<value>46</value>
-					</set>
-				</entry>
-				<entry key="ABRIR_EXP">
-					<set>
-						<value>FZAR_PPUESTA</value>
-					</set>
-				</entry>
-			</map>
-		</property>
-		<property name="tiposProcedimientosAdjudicados">
-			<list>
-				<value>P413</value>
-				<value>P415</value>
-				<value>P416</value>
-				<value>P417</value>
-			</list>
-		</property>
-		<property name="tiposGestorGestoria">
-			<set>
-				<value>GEST</value>
-			</set>
-		</property>
-		<property name="tiposGestorProcurador">
-			<set>
-				<value>PROC</value>
-			</set>
-		</property>
-	</bean>  
+	<bean id="commonProjectContextDefault"
+		class="es.pfsgroup.recovery.common.api.CommonProjectContextImpl" abstract="true">
+	</bean>	
 	
-		<!-- Implementaciones por defecto-->
-	<bean id="coreProjectContext" parent="coreProjectContextDefault"/>
+	<!-- Implementaciones por defecto-->
+	<bean id="commonProjectContext" parent="commonProjectContextDefault"/>
 </beans>	

@@ -8,9 +8,6 @@
                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
     default-autowire="byName">
 
-	<!-- Lógica modificada (Services) -->
-	<alias name="procedimientoManagerCajamar" alias="procedimientoManager"/>
-
 	<!-- Beans,handlers,Managers ... --> 
 	<bean id="adjudicacionLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.AdjudicacionLeaveActionHandler" />
 	<bean id="cajamarCesionRemateLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.CesionRemateCajamarLeaveActionHandler" />

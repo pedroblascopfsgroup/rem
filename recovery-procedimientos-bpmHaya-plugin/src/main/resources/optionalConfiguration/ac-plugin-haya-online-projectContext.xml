@@ -10,7 +10,7 @@
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
 	default-autowire="byName">
 	
-	<bean id="mapaTabsPorTipoBienHaya"
+	<bean id="mapaTabsPorTipoBienHREBCC"
 		parent="mapaTabsPorTipoBienDefault">
 		<property name="mapaTabsTipoBien">
 			<map>
@@ -104,5 +104,5 @@
 		</property>
 	</bean>
 
-	<alias name="mapaTabsPorTipoBienHayaCajamar" alias="mapaTabsPorTipoBien"/>
+	<alias name="mapaTabsPorTipoBienHREBCC" alias="mapaTabsPorTipoBien"/>
 </beans>	

@@ -8,3 +8,13 @@ INSERT INTO HAYA02.des_despacho_externo des (des_id,des_despacho,dd_tde_id,zon_i
 delete
 from Fun_Pef 
 where fun_id in (select fun_id from HAYAMASTER.Fun_Funciones where fun_descripcion='ENVIO_CIERRE_DEUDA');
+
+--quitar botones de solvencia a usuarios que no pueden usarlos.
+DELETE FROM HAYA02.FUN_PEF 
+WHERE FUN_ID IN (select  fun.fun_id from HAYAMASTER.FUN_FUNCIONES fun  where fun.borrado = 0 and fun.FUN_DESCRIPCION = 'EDITAR_SOLVENCIA');
+INSERT INTO HAYA02.FUN_PEF (FP_ID,PEF_ID,FUN_ID,USUARIOCREAR,FECHACREAR) values
+(HAYA02.S_FUN_PEF.nextval,(select pef.pef_id from HAYA02.PEF_PERFILES pef where pef.borrado = 0 and pef.PEF_CODIGO = 'HAYAADMIN'),(select  fun.fun_id from HAYAMASTER.FUN_FUNCIONES fun  where fun.borrado = 0 and fun.FUN_DESCRIPCION = 'EDITAR_SOLVENCIA'),'JSV',sysdate);
+INSERT INTO HAYA02.FUN_PEF (FP_ID,PEF_ID,FUN_ID,USUARIOCREAR,FECHACREAR) values
+(HAYA02.S_FUN_PEF.nextval,(select pef.pef_id from HAYA02.PEF_PERFILES pef where pef.borrado = 0 and pef.PEF_CODIGO = 'HAYASUPVISOR'),(select  fun.fun_id from HAYAMASTER.FUN_FUNCIONES fun  where fun.borrado = 0 and fun.FUN_DESCRIPCION = 'EDITAR_SOLVENCIA'),'JSV',sysdate);
+INSERT INTO HAYA02.FUN_PEF (FP_ID,PEF_ID,FUN_ID,USUARIOCREAR,FECHACREAR) values
+(HAYA02.S_FUN_PEF.nextval,(select pef.pef_id from HAYA02.PEF_PERFILES pef where pef.borrado = 0 and pef.PEF_CODIGO = 'HAYAGEST'),(select  fun.fun_id from HAYAMASTER.FUN_FUNCIONES fun  where fun.borrado = 0 and fun.FUN_DESCRIPCION = 'EDITAR_SOLVENCIA'),'JSV',sysdate);

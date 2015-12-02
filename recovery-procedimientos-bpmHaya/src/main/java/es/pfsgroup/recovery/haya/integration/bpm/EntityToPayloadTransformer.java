@@ -9,7 +9,6 @@ import es.capgemini.pfs.contrato.model.Contrato;
 import es.pfsgroup.concursal.convenio.ConvenioManager;
 import es.pfsgroup.concursal.convenio.model.Convenio;
 import es.pfsgroup.recovery.hrebcc.dto.ActualizarRiesgoOperacionalDto;
-import es.pfsgroup.recovery.hrebcc.manager.RiesgoOperacionalManager;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
 import es.pfsgroup.recovery.integration.bpm.DiccionarioDeCodigos;
 
@@ -17,9 +16,6 @@ public class EntityToPayloadTransformer extends es.pfsgroup.recovery.integration
 
     @Autowired
 	private ConvenioManager convenioManager;
-    
-    @Autowired
-	private RiesgoOperacionalManager riesgoOperacionalManager;
     
     @Autowired
 	private ContratoManager contratoManager;

@@ -205,8 +205,12 @@
 	});
 	
 	<%-- BKREC-1041 Al cargar los usuarios de un despacho, muestra en su combo el valor por defecto del listado --%>
+	var primeraVez=true;
 	optionsUsuarioStore.on('load',function(ds,records,o){
-		comboTipoUsuario.setValue(records[0].data.id);
+		if(primeraVez){
+			comboTipoUsuario.setValue(records[0].data.id);
+			primeraVez=false;
+		}
 	});
 
 	comboTipoGestor.on('select', function(){
@@ -225,6 +229,7 @@
 		optionsUsuarioStore.webflow({'idTipoDespacho': comboTipoDespacho.getValue()}); 
 		comboTipoUsuario.reset();		
 		comboTipoUsuario.setDisabled(false);
+		primeraVez=true;
 	});	
 	
 	

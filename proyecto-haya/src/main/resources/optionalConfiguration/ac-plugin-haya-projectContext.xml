@@ -206,6 +206,11 @@
 
 					</set>
 				</entry>
+				<entry key="ABRIR_EXP">
+					<set>
+						<value>FZAR_PPUESTA</value>
+					</set>
+				</entry>
 			</map>
 		</property>
 		<property name="tiposProcedimientosAdjudicados">
@@ -285,99 +290,6 @@
 			</set>
 		</property>
 	</bean>	
-	<bean id="mapaTabsPorTipoBienHayaCajamar"
-		parent="mapaTabsPorTipoBienDefault">
-		<property name="mapaTabsTipoBien">
-			<map>
-				<entry key="01">
-					<bean
-						class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
-						<property name="listaTabs">
-							<list>
-								<value>pestanaPrincipal</value>
-								<value>pestanaValoraciones</value>
-								<value>pestanaDatosRegistrales</value>
-								<value>pestanaLocalizacion</value>
-								<value>pestanaOtros</value>
-								<value>pestanaObservaciones</value>
-							</list>
-						</property>
-					</bean>
-				</entry>
-				<entry key="02">
-					<bean
-						class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
-						<property name="listaTabs">
-							<list>
-								<value>pestanaPrincipal</value>
-								<value>pestanaLocalizacion</value>
-								<value>pestanaOtros</value>
-								<value>pestanaObservaciones</value>
-							</list>
-						</property>
-					</bean>
-				</entry>
-				<entry key="03">
-					<bean
-						class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
-						<property name="listaTabs">
-							<list>
-								<value>pestanaPrincipal</value>
-								<value>pestanaCuentaBancaria</value>
-								<value>pestanaOtros</value>
-								<value>pestanaObservaciones</value>
-							</list>
-						</property>
-					</bean>
-				</entry>
-				<entry key="04">
-					<bean
-						class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
-						<property name="listaTabs">
-							<list>
-								<value>pestanaPrincipal</value>
-								<value>pestanaLocalizacion</value>
-								<!-- <value>pestanaValoraciones</value> <value>pestanaVehiculo</value> 
-									<value>pestanaEmpresa</value> <value>pestanaIAE</value> <value>pestanaCuentaBancaria</value> -->
-								<value>pestanaOtros</value>
-								<value>pestanaObservaciones</value>
-							</list>
-						</property>
-					</bean>
-				</entry>
-				<entry key="05">
-					<bean id="tabsValoresDEFAULT"
-						class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
-						<property name="listaTabs">
-							<list>
-								<value>pestanaPrincipal</value>
-								<value>pestanaProductosBanco</value>
-								<value>pestanaOtros</value>
-								<value>pestanaObservaciones</value>
-							</list>
-						</property>
-					</bean>
-				</entry>
-				<entry key="DEFECTO">
-					<bean
-						class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
-						<property name="listaTabs">
-							<list>
-								<value>pestanaPrincipal</value>
-								<value>pestanaValoraciones</value>
-								<value>pestanaDatosRegistrales</value>
-								<value>pestanaLocalizacion</value>
-								<value>pestanaCuentaBancaria</value>
-								<value>pestanaProductosBanco</value>
-								<value>pestanaOtros</value>
-								<value>pestanaObservaciones</value>
-							</list>
-						</property>
-					</bean>
-				</entry>
-			</map>
-		</property>
-	</bean>
 	<bean id="hayaProjectContextDefault" 
 		class="es.pfsgroup.procedimientos.context.HayaProjectContextImpl" abstract="true">
 		<property name="tareasInicioConcursal">
@@ -417,6 +329,5 @@
 	<alias name="procedimientosProjectContextHaya" alias="procedimientosProjectContext"/>		
 	<alias name="coreProjectContextHAYA" alias="coreProjectContext"/>
 	<alias name="precontenciosoProjectContextHAYA" alias="precontenciosoProjectContext"/>
-	<alias name="mapaTabsPorTipoBienHayaCajamar" alias="mapaTabsPorTipoBien"/>
 	<bean id="hayaProjectContext" parent="hayaProjectContextDefault"/>
 </beans>	

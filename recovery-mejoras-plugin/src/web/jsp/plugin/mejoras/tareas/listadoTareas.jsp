@@ -933,6 +933,7 @@
 	
 	
 	tareasGrid.on('rowdblclick', function(grid, rowIndex, e) {
+		debugger;
 		//agregar funcionalidad....
 		var rec = grid.getStore().getAt(rowIndex);
 		
@@ -1361,6 +1362,10 @@
 					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_TAREA_PROCEDIMIENTO:
 						app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
 						break;
+					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_EXP:
+						app.abreExpediente(rec.get('idEntidad'), rec.get('descripcion'));
+						break;
+						
 
 					default:
 				

@@ -1832,11 +1832,8 @@
 			,layoutConfig:{columns:2}
 			,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px;width:350'}
 			,items:[ {items: [origenCarga, tipoNMB<c:if test="${operacion == 'editar'}">,solvenciaNoEncontradaNMB</c:if>,obraEnCurso<sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION">,dueDilligence</sec:authorize><c:if test="${idPersona!=null}">, NMBparticipacion</c:if>,situacionPosesoria,viviendaHabitual<sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION">,usoPromotorMayorDosAnyos</sec:authorize>,tipoSubasta ]}
-					,{items: [
-					<sec:authorize ifNotGranted="PERSONALIZACION-BCC">
-					numeroActivo,
-					</sec:authorize>
-					licenciaPrimeraOcupacion,primeraTransmision<sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION">,transmitentePromotor,contratoAlquiler,arrendadoSinOpcCompra</sec:authorize>,descripcionNMB]}
+					,{items: [					
+					<sec:authorize ifNotGranted="PERSONALIZACION-BCC">numeroActivo,</sec:authorize>licenciaPrimeraOcupacion,primeraTransmision,<sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION">transmitentePromotor,contratoAlquiler,arrendadoSinOpcCompra,</sec:authorize>descripcionNMB]}
 				   ]
 		});
 		

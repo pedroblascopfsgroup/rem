@@ -583,7 +583,7 @@
 		,{header: 'Id', dataIndex: 'expId',sortable:false, hidden: true}
 		,{header: '<s:message code="preproyectado.expedientes.idexpediente" text="**IDEXPEDIENTE" />',dataIndex: 'expId',sortable:true, css: cssExp}		
 		,{header: '<s:message code="preproyectado.expedientes.titular" text="**Titular" />',dataIndex: 'titular',sortable:true, css: cssExp}
-		,{header: '<s:message code="preproyectado.expedientes.niftitular" text="**NIF Titular" />',dataIndex: 'niftitular',sortable:true, css: cssExp}
+		,{header: '<s:message code="preproyectado.expedientes.niftitular" text="**NIF Titular" />',dataIndex: 'nifTitular',sortable:true, css: cssExp}
 		,{header: '<s:message code="preproyectado.expedientes.telef1" text="**Telf_1" />',dataIndex: 'telf1',sortable:true, css: cssExp}
 		,{header: '<s:message code="preproyectado.expedientes.fase" text="**Fase" />',dataIndex: 'fase',sortable:true, css: cssExp}
 		,{header: '<s:message code="preproyectado.expedientes.fechaVtoTarea" text="**Fecha vto tarea" />',dataIndex: 'fechaVtoTarea',sortable:true, css: cssExp}

@@ -79,7 +79,7 @@ public interface MEJAcuerdoApi {
     public List<ListadoTerminosAcuerdoDto> obtenerListadoTerminosAcuerdoByAcuId(Long idAcuerdo) ;   
     
 	@BusinessOperationDefinition(BO_ACUERDO_MGR_GET_LISTADO_TIPO_ACUERDO)
-	public List<DDTipoAcuerdo> getListTipoAcuerdo();   
+	public List<DDTipoAcuerdo> getListTipoAcuerdo(String ambito);   
 	
 	@BusinessOperationDefinition(BO_ACUERDO_MGR_GET_LISTADO_SUB_TIPO_ACUERDO)
 	public List<DDSubTipoAcuerdo> getListSubTipoAcuerdo(); 

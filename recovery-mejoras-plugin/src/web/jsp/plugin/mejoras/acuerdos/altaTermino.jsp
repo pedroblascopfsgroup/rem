@@ -24,6 +24,7 @@
 	var soloConsulta = '${soloConsulta}';
 	var idTipoAcuerdoPlanPago ='${idTipoAcuerdoPlanPago}';
 	var yaHayPlanPago = '${yaHayPlanPago}';
+	var ambito = '${ambito}';
 	
     var tipoAcu = Ext.data.Record.create([
 		 {name:'id'}
@@ -33,6 +34,7 @@
 	
 	var optionsAcuerdosStore = page.getStore({
 	       flow: 'mejacuerdo/getListTipoAcuerdosData'
+	       ,params:{entidad:"${ambito}"} 
 	       ,reader: new Ext.data.JsonReader({
 	    	 root : 'listadoAcuerdos'
 	    }, tipoAcu)	       
@@ -56,6 +58,8 @@
 		,labelStyle: 'width:150px'
 		,width: 150		
 	});
+	
+	optionsAcuerdosStore.webflow({entidad:"${ambito}"});
 	
 	comboTipoAcuerdo.on('select', function() {
 	    creaCamposDynamics(this);
@@ -708,7 +712,6 @@ if("${esPropuesta}" == "true"){
 			//Valor por defecto para SubTipoAcuerdo
 	       	comboSubTipoAcuerdo.store.load();
 	    	comboSubTipoAcuerdo.store.on('load', function(){ 
-	    		debugger;
 	        	
 				var index = comboSubTipoAcuerdo.store.findBy(function (record) {
    					return record.data.codigo == codigoSubtipoEstandar;

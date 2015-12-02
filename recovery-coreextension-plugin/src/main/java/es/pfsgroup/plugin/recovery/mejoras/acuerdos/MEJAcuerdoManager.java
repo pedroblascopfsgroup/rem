@@ -437,10 +437,19 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
      * @return
      */
 	@BusinessOperation(BO_ACUERDO_MGR_GET_LISTADO_TIPO_ACUERDO)
-	public List<DDTipoAcuerdo> getListTipoAcuerdo() {
+	public List<DDTipoAcuerdo> getListTipoAcuerdo(String entidad) {
 
 		Filter fBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		List<DDTipoAcuerdo> listado = (ArrayList<DDTipoAcuerdo>) genericDao.getList(DDTipoAcuerdo.class, fBorrado);
+		Filter fambito = null;
+		if(entidad.equals("asunto")){
+			fambito = genericDao.createFilter(FilterType.EQUALS, "tipoEntidad.codigo", DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO);
+		}else if(entidad.equals("expediente")){
+			fambito = genericDao.createFilter(FilterType.EQUALS, "tipoEntidad.codigo", DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE);
+		}
+		List<DDTipoAcuerdo> listado = (ArrayList<DDTipoAcuerdo>) genericDao.getList(DDTipoAcuerdo.class, fBorrado, fambito);
+		
+		
+		
 
 		return listado;
 	}   

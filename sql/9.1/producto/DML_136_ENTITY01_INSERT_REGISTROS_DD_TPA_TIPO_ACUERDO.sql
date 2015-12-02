@@ -3,7 +3,7 @@
 --## AUTOR=Alberto b
 --## FECHA_CREACION=20151201
 --## ARTEFACTO=web
---## VERSION_ARTEFACTO=9.1.0-cj-rc23
+--## VERSION_ARTEFACTO=9.1.0-cj-rc26
 --## INCIDENCIA_LINK=PRODUCTO-496
 --## PRODUCTO=SI
 --## Finalidad: Insercion registros tabla 

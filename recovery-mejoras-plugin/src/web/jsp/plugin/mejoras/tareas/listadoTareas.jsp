@@ -1135,6 +1135,7 @@
 		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_LETRADO:
 		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR_LIQUIDACIONES:
 		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR_DOCUMENTOS:
+		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR_ESTUDIO:
 		    
 		    		Ext.Ajax.request({
 						url: page.resolveUrl('expedientejudicial/getEsTareaPrecontenciosoEspecial')

@@ -50,7 +50,7 @@ public class CamposTerminoTipoAcuerdo implements Serializable, Auditable{
 
 	@Column(name = "CMP_NOMBRE_CAMPO")
     private String nombreCampo;
-    
+	
 	@Version
     private Integer version;
 
@@ -97,6 +97,4 @@ public class CamposTerminoTipoAcuerdo implements Serializable, Auditable{
 	public void setVersion(Integer version) {
 		this.version = version;
 	}
-    
-
 }

@@ -11,9 +11,9 @@ echo "INICIO DEL SCRIPT CARACTERIZACION DE VALIDADORES $0"
 echo "########################################################"  
 echo "#####    INICIO CJM_migracion_caracteriza_validadores.sql"  
 echo "########################################################"  
-echo "Inicio MIGRACION_A_RECOVERY_CM.sql"
+echo "Inicio CJM_migracion_caracteriza_validadores.sql"
 
-$ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"CJM_carterizacion_validadores.sql.sql  
+$ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"CJM_carterizacion_validadores.sql
 
 if [ $? != 0 ] ; then 
    echo -e "\n\n======>>> "Error en @"$sql_dir"CJM_carterizacion_validadores.sql

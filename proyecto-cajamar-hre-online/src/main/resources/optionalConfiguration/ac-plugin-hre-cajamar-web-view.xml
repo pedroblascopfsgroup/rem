@@ -25,4 +25,10 @@
 		p:fileName="/WEB-INF/jsp/plugin/cajamarhre/contratos/tabs/tabCabecera.jsp" 
 		p:priority="10"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />	
 		
+	<bean p:entity="tabs.contrato.fast" p:name="otrosDatos" p:order="1500" 
+	      p:fileName="/WEB-INF/jsp/plugin/cajamarhre/contratos/tabs/otrosDatos.jsp" 
+		  p:priority="0" class="es.pfsgroup.web.menu.ElementoDinamicoPorFuncionYOperador"
+		  p:permission="PERSONALIZACION-BCC,TAB_CONTRATO_OTROS"
+		  p:operador="OR"/>
+		
 </beans>

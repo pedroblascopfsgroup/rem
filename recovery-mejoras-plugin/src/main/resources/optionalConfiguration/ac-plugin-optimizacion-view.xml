@@ -34,10 +34,7 @@
 		p:fileName="/WEB-INF/jsp/entidad/contrato/tabs/adjuntos.jsp" 
 		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
 		
-	<bean p:entity="tabs.contrato.fast" p:name="otrosDatos" p:order="700" 
-		  p:fileName="/WEB-INF/jsp/entidad/contrato/tabs/otrosDatos.jsp" 
-		  p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
-		  p:permission="PERSONALIZACION-BCC"/>
+	
 		
 	<bean p:entity="tabs.contrato.fast" p:name="atipicosContrato"  p:order="111" 
 		p:fileName="/WEB-INF/jsp/entidad/contrato/tabs/tabAtipicos.jsp" 

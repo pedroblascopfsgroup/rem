@@ -8,6 +8,7 @@
 <fwk:page>
 
 	var codigoTipoAcuerdoDacion = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo.TIPO_DACION" />';
+	var codigoSubtipoEstandar = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDSubTipoAcuerdo.SUBTIPO_ESTANDAR" />';
 
 	var labelStyle = 'width:185px;font-weight:bolder",width:375';
 	var labelStyleAjusteColumnas = 'width:185px;height:40px;font-weight:bolder",width:375';
@@ -57,7 +58,6 @@
 	});
 	
 	comboTipoAcuerdo.on('select', function() {
-	
 	    creaCamposDynamics(this);
 	    
     });
@@ -188,7 +188,8 @@
 		store:optionsSubtiposAcuerdosStore
 		,displayField:'descripcion'
 		,valueField:'id'
-		,mode: 'remote'
+		,autoSelect: true
+		,mode: 'local'
 		,resizable: true
 		,forceSelection: true
 		,disabled: false
@@ -245,7 +246,7 @@ arrayCampos["fechaPago"]=new Ext.form.DateField({
 	, allowBlank : true
 	,autoWidth:true
 	 ,fieldLabel: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.fechaPago" text="**Fecha pago" />'
-});;
+});
 arrayCampos["nombreCesionario"]=app.creaText('nombreCesionario', '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.nombreCesionario" text="**Nombre cesionario" />' , '', {id:'nombreCesionario'});
 arrayCampos["relacionCesionarioTitular"]=app.creaText('relacionCesionarioTitular', '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.relacionCesionarioTitular" text="**Relacion cesionario / Titular" />' , '', {id:'relacionCesionarioTitular'});
 arrayCampos["solvenciaCesionario"]=app.creaNumber('solvenciaCesionario', '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.solvenciaCesionario" text="**Solvencia cesionario" />' , '', {id:'solvenciaCesionario'});
@@ -314,6 +315,18 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
        	,enableLists:true
        	,enableSourceEdit:true		
 		,html:''});
+		
+arrayCampos["numContratoDescuento"]=app.creaNumber('numContratoDescuento', '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.numContratoDescuento" text="**Nº contrato descuento" />' , '', {id:'numContratoDescuento'});
+arrayCampos["fechaSolucionPrevista"]=new Ext.form.DateField({
+	id:'fechaSolucionPrevista'
+	,name:'fechaSolucionPrevista'
+	,value : ''
+	, allowBlank : true
+	,autoWidth:true
+	 ,fieldLabel: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.fechaSolucionPrevista" text="**Fecha Sol. Prevista" />'
+});
+arrayCampos["numeroContratoPtmoPromotor"]=app.creaNumber('numeroContratoPtmoPromotor', '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.numeroContratoPtmoPromotor" text="**Nº Contrato ptmo. promotor" />' , '', {id:'numeroContratoPtmoPromotor'});
+arrayCampos["codigoPersonaAfectada"]=app.creaNumber('codigoPersonaAfectada', '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.codigoPersonaAfectada" text="**Cód. persona afectada" />' , '', {id:'codigoPersonaAfectada'});
 
 	
 <%-- 	var modoDesembolso = app.creaText('modoDesembolso', '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.modoDesembolso" text="**modoDesembolso" />' , '', {labelStyle:labelStyle}); --%>
@@ -691,6 +704,17 @@ if("${esPropuesta}" == "true"){
 	       	comboBienes.setDisabled(false);
 	       	informeLetrado.setDisabled(false);
 	       	
+		} else {
+			//Valor por defecto para SubTipoAcuerdo
+	       	comboSubTipoAcuerdo.store.load();
+	    	comboSubTipoAcuerdo.store.on('load', function(){ 
+	    		debugger;
+	        	
+				var index = comboSubTipoAcuerdo.store.findBy(function (record) {
+   					return record.data.codigo == codigoSubtipoEstandar;
+				});
+				comboSubTipoAcuerdo.setValue(comboSubTipoAcuerdo.store.getAt(index).id);	        	
+	       	});			
 		}
 	});
 		

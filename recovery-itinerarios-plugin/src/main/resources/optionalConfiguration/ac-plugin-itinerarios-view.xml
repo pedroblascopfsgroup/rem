@@ -15,5 +15,10 @@
 		p:fileName="/WEB-INF/jsp/plugin/itinerarios/menu/busquedaItinerarios-menu.jsp"
 		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="ROLE_CONFITI"
 		/>
+	
+	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.cssStyles"
+		p:name="cssItinerarios" p:order="1"
+		p:fileName="../js/plugin/itinerarios/css/itinerarios.css"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
 
 </beans>

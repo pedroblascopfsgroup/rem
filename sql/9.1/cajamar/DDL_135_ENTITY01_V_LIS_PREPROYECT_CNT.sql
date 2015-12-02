@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=JAVIER RUIZ
---## FECHA_CREACION=19-11-2015
+--## FECHA_CREACION=25-11-2015
 --## ARTEFACTO=web
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=PRODUCTO-340
 --## PRODUCTO=SI
 --## Finalidad: DDL Creación vista del listado de preproyectado agrupación por contratos quitando los que esten en expedientes de recobro
---##			Corrección: se extrae la zona del contrato a través de su oficina
+--##			Corrección: se extrae la zona del contrato a través de su oficina - arreglado fallo por el cual estaba enlazado por la oficina del expediente
 --##			Corrección: cálculo días vencidos
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
@@ -131,7 +131,7 @@ BEGIN
 			    LEFT JOIN '||V_ESQUEMA||'.PER_PERSONAS PER ON PER.PER_ID = CPE.PER_ID AND PER.BORRADO = 0
 			      LEFT JOIN '||V_ESQUEMA_M||'.DD_TPE_TIPO_PERSONA DDTPE ON DDTPE.DD_TPE_ID = PER.DD_TPE_ID AND DDTPE.BORRADO = 0
         	  LEFT JOIN '||V_ESQUEMA||'.OFI_OFICINAS OFICNT ON OFICNT.OFI_ID = CNT.OFI_ID AND OFI.BORRADO = 0
-          	    LEFT JOIN '||V_ESQUEMA||'.ZON_ZONIFICACION ZONCNT ON ZONCNT.OFI_ID = OFI.OFI_ID AND ZONCNT.BORRADO = 0
+          	    LEFT JOIN '||V_ESQUEMA||'.ZON_ZONIFICACION ZONCNT ON ZONCNT.OFI_ID = OFICNT.OFI_ID AND ZONCNT.BORRADO = 0
 			WHERE CNT.BORRADO = 0
 			ORDER BY CNT.CNT_CONTRATO';
 			

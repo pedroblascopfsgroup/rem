@@ -13,10 +13,12 @@
 # Regenerar en MODO 2: importar un DUMP aleatorio
 # ./run.sh -impdp=<fichero_dump_a_importar> [-oradata=<directorio datafiles>]
 
-
+## Configuración del cliente y Locales
 CLIENTE=CAJAMAR
+CUSTOM_NLS_LANG=SPANISH_SPAIN.AL32UTF8
+CUSTOM_LANG=es_ES.UTF-8
+
 CONTAINER_NAME=cajamar-bbdd
-CUSTOM_NLS_LANG=SPANISH_SPAIN.WE8MSWIN1252
 IMAGE_NAME=filemon/oracle_11g
 DOCKER_PS="$(docker ps -a | grep $CONTAINER_NAME)"
 SQL_PACKAGE_DIR=$(pwd)/../../../tool/tmp/package
@@ -215,6 +217,16 @@ function run_container () {
 		echo "[INFO]: Se ha creado el directorio requerido $ORADATA_HOST_DIR"
 		mkdir -p $ORADATA_HOST_DIR
 		chmod go+w $ORADATA_HOST_DIR
+	elif [[ ! -z "$(ls -l $ORADATA_HOST_DIR | grep -v .dbf | grep -v flash | grep -v redo | grep -v total)" ]]; then
+			echo "[ERROR] $ORADATA_HOST_DIR ya se está usando para otros propósitos."
+			echo "[ERROR] $ORADATA_HOST_DIR sólo puede conener archivos DBF y los subdirectorios flash y redo."
+			if [[ -z "$(which tree)" ]]; then
+				ls -l $ORADATA_HOST_DIR
+			else
+				$(which tree) $ORADATA_HOST_DIR
+			fi
+			exit 1
+
 	fi
 	touch $ORADATA_HOST_DIR/test
 	if [[ $? -eq 0 ]]; then
@@ -295,7 +307,7 @@ function show_install_info () {
 
 
 function do_install () {
-	$(pwd)/install.sh $CURRENT_DUMP_NAME $STARTING_TAG $CONTAINER_NAME $CUSTOM_NLS_LANG $OPTION_RANDOM_DUMP $OPTION_REMOVE $DOCKER_INNER_ERROR_LOG
+	$(pwd)/install.sh $CURRENT_DUMP_NAME $STARTING_TAG $CONTAINER_NAME $CUSTOM_NLS_LANG $CUSTOM_LANG $OPTION_RANDOM_DUMP $OPTION_REMOVE $DOCKER_INNER_ERROR_LOG
 }
 
 function restore_or_confirm_flahsback () {
@@ -401,6 +413,9 @@ else
 		echo "[INFO] Empaquetando y ejecutando scripts DDL y DML"
 		package_sql $STARTING_TAG $CLIENTE
 		$(pwd)/execute-scripts.sh $CONTAINER_NAME $DOCKER_INNER_ERROR_LOG
+        if [[ $? != 0 ]]; then
+            exit 1
+        fi
 	fi
 
 	if [[ "x$OPTION_RESTART" == "xyes" ]]; then

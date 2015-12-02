@@ -12,6 +12,14 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 Se incluyen procedimientos de tipo concursos.
+--##        0.3 Se adapta a SYS_GUID para las tablas PRC_PROCEDIMIENTOS
+--##                                                 ASU_ASUNTOS
+--##                                                 PRB_PRC_BIE
+--##                                                 CEX_CONTRATOS_EXPEDIENTES
+--##                                                 TAR_TAREAS_NOTIFICACIONES
+--##                                                 RCR_RECURSOS_PROCEDIMIENTOS
+--##                                                 SUB_SUBASTAS
+--##                                                 LOS_LOTE_SUBASTAS
 --##########################################
 --*/
 
@@ -1016,7 +1024,7 @@ BEGIN
                            , PER.PER_ID 
              FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_DEMANDADOS PRD 
                 LEFT JOIN '||V_ESQUEMA||'.PER_PERSONAS PER 
-                    ON ( PRD.CODIGO_ENTIDAD||PRD.CODIGO_PERSONA = PER.PER_COD_CLIENTE_ENTIDAD)';
+                    ON ( PRD.CODIGO_PERSONA = PER.PER_COD_CLIENTE_ENTIDAD)';
     EXECUTE IMMEDIATE v_sql;
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' MIG_TMP_PER_ID Creada. '||SQL%ROWCOUNT||' Filas.');
     
@@ -1054,7 +1062,7 @@ BEGIN
                               )
                        SELECT '||V_ESQUEMA||'.S_CLI_CLIENTES.NEXTVAL as CLI_ID 
                                 , PER_ID
-                                , ARQ_ID --> GMN: ARQUETIPO asignado por defecto (el  mínimo ya que vale cualquiera BORRADO = 1)
+                                , ARQ_ID --> GMN: ARQUETIPO asignado por defecto 
                                 , 1 as DD_EST_ID
                                 , PER_FECHA_EXTRACCION as CLI_FECHA_EST_ID
                                 , null as CLI_PROCESS_BPM
@@ -1079,7 +1087,7 @@ BEGIN
                                              , ARQ.ARQ_ID
                                FROM '||V_ESQUEMA||'.MIG_TMP_PER_ID TPI
                                   , '||V_ESQUEMA||'.PER_PERSONAS PER
-                                  , (SELECT MIN(ARQ_ID) AS ARQ_ID FROM ARQ_ARQUETIPOS) ARQ
+                                  , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Resto''  AND BORRADO = 0) ARQ
                                WHERE TPI.PER_ID IS NOT NULL
                                  AND TPI.PER_ID = PER.PER_ID
                               )'
@@ -1197,7 +1205,7 @@ BEGIN
     	  SELECT CD_CONCURSO CD_PROCEDIMIENTO, NULL CD_EXPEDIENTE_NUSE , NULL NUMERO_EXP_NUSE FROM '||V_ESQUEMA||'.MIG_CONCURSOS_CABECERA
     	) PRC
     	, (SELECT DISTINCT CD_PROCEDIMIENTO FROM MIG_MAESTRA_HITOS) MAE
-        , (SELECT MIN(ARQ_ID) AS ARQ_ID FROM CM01.ARQ_ARQUETIPOS) ARQ             	
+        , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Resto''  AND BORRADO = 0) ARQ             	
      WHERE MAE.CD_PROCEDIMIENTO = PRC.CD_PROCEDIMIENTO');
 
     -- 23.316 filas insertadas. <-- 1 CD_PROCEDIMIENTO = 1 EXPEDIENTE. Las mismas que el count distinct cd_procedimiento de mig_maestra_hitos
@@ -2037,7 +2045,7 @@ BEGIN
                          , TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'') AS FECHACREAR
                          , 0 AS BORRADO
                          , MINUTA_LETRADO AS SUB_COSTAS_LETRADO
-                         , MAX_CD_SUBASTA AS CD_SUBASTA_ORIG
+                         , MPS.CD_SUBASTA AS CD_SUBASTA_ORIG
                          , MPS.DEUDA_JUDICIAL
                    FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
                       , '||V_ESQUEMA||'.MIG_MAESTRA_HITOS MMH
@@ -2047,27 +2055,16 @@ BEGIN
                       , '||V_ESQUEMA||'.DD_REC_RESULTADO_COMITE rec
                       , '||V_ESQUEMA||'.DD_MSS_MOT_SUSP_SUBASTA mss 
                       , '||V_ESQUEMA||'.DD_MCS_MOT_CANCEL_SUBASTA mcs
-                     , (SELECT  MAX(CD_SUBASTA) MAX_CD_SUBASTA
-                              , MAX(fecha_celebracion_subasta) MAX_fec_cel_SUBASTA
-                              , MAX(subasta_celebrada) MAX_subasta_celebrada
-                              , MAX(FECHA_SENALAMIENTO_SUBASTA) as MAX_FECHA_SEN 
-                              , MAX(DEUDA_JUDICIAL) as MAX_DEUDA_JUDICIAL
-                          FROM MIG_PROCEDIMIENTOS_SUBASTAS GROUP BY CD_PROCEDIMIENTO ) Z                     
                    WHERE MMH.DD_TPO_CODIGO = ''H002''
                      AND PRC.PRC_ID           = MMH.PRC_ID  
                      AND MPS.CD_PROCEDIMIENTO = MMH.CD_PROCEDIMIENTO
-                     and MPS.CD_SUBASTA                 = Z.MAX_CD_SUBASTA            --Filtro correccion datos incorrectos origen         
-                     and MPS.FECHA_SENALAMIENTO_SUBASTA = Z.MAX_FECHA_SEN             --Filtro correccion datos incorrectos origen
-                     and MPS.fecha_celebracion_subasta  = Z.MAX_fec_cel_SUBASTA             --Filtro correccion datos incorrectos origen                     
-                     and MPS.subasta_celebrada          = Z.MAX_SUBASTA_CELEBRADA             --Filtro correccion datos incorrectos origen                     
-                     and MPS.deuda_judicial             = Z.MAX_DEUDA_JUDICIAL                --Filtro correccion datos incorrectos origen                                              
                      AND ASU.ASU_ID           = PRC.ASU_ID
         --Jaime Sanchez-Cuenca: 
                      AND Case When mps.SUSPENDIDA_POR <> 0 or trim(mps.MOTIVO_SUSPENSION) is not null
                                         Then ''SUS''
-                              When Z.MAX_SUBASTA_CELEBRADA=1
+                              When mps.SUBASTA_CELEBRADA=1
                                         Then ''CEL''
-                              WHEN Z.MAX_SUBASTA_CELEBRADA = 0 
+                              WHEN mps.SUBASTA_CELEBRADA = 0 
                                         THEN ''PIN''
                               When mps.MOTIVO_SUBASTA_CANCELADA <> 0
                                         Then ''CAN''

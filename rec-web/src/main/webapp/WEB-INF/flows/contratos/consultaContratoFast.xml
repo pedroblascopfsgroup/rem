@@ -15,6 +15,8 @@
     		<evaluate expression="executor.execute('consultaContratoManager.getTabs', id)" result="flowScope.tabsContrato"/>
 			<evaluate expression="executor.execute('plugin.mejoras.web.contratos.consulta.buttons.left')" result="flowScope.buttonsLeft"/>
 			<evaluate expression="executor.execute('plugin.mejoras.web.contratos.consulta.buttons.right')" result="flowScope.buttonsRight"/>
+			<evaluate expression="executor.execute('riesgoOperacionalManager.obtenerRiesgoOperacionalContrato', id)" result="flowScope.riesgo"/>
+			<evaluate expression="executor.execute('riesgoOperacionalManager.obtenerVencidosByCntId', id)" result="flowScope.vencido"/>
     	</on-entry>
     </end-state>
 </flow>

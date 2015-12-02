@@ -11,7 +11,7 @@
 
 <pfslayout:tabpage titleKey="plugin.itinerarios.tabReglasVigencia.titulo" title="**Reglas de Vigencia" 
 	items="panelCE,panelRE" >
-	
+	debugger;
 	var recargar = function (){
 		app.openTab('${itinerario.nombre}'
 					,'plugin.itinerarios.consultaItinerario'
@@ -20,7 +20,7 @@
 				)
 	};
 	
-	Ext.util.CSS.createStyleSheet(".icon_reglasVigencia { background-image: url('../img/plugin/itinerarios/metronome.png');}");
+	//Ext.util.CSS.createStyleSheet(".icon_reglasVigencia { background-image: url('../img/plugin/itinerarios/metronome.png');}");
 	<pfsforms:textfield name="reglaConsensoCE" 
 		labelKey="plugin.itinerarios.tabReglasVigencia.reglasConsenso"
 		label="**Regla de consenso" 

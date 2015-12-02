@@ -34,7 +34,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('******** PEN_PARAM_ENTIDAD - Modificar campo PEN_VALOR *******');
     
     
-    V_MSQL := 'ALTER TABLE ' || V_ESQUEMA || '.'||V_TABLA||' MODIFY(PEN_VALOR VARCHAR2(200 CHAR));';        
+    V_MSQL := 'ALTER TABLE ' || V_ESQUEMA || '.'||V_TABLA||' MODIFY(PEN_VALOR VARCHAR2(200 CHAR))';        
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL; 
     DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA||'... El campo ya ha sido modificado');

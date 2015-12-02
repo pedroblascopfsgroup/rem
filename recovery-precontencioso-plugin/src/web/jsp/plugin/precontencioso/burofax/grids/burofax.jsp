@@ -715,7 +715,6 @@
 	}
 	
 	var validarBotonEnviarHabilitado = function() {
-		
 		var rowsSelected=new Array(); 
 		var arrayResultado=new Array();
 		var arrayIdEnvios=new Array();
@@ -786,6 +785,9 @@
 					else{
 						return false;
 					}
+				}
+				else if(uniqueArray[0]=='Solicitado'){
+						return false;
 				}
 			}
 			else{

@@ -332,7 +332,7 @@ public abstract class EXTAbstractTareaNotificacionManager extends BusinessOperat
 	}
 	
 	/**
-	 * Rellena el campo Categoria Tarea, según las categorías definidas en ac-coreextension-bpm.xml
+	 * Rellena el campo Categoria Tarea, según las categorías definidas en ac-plugin-coreextension-projectContext.xml
 	 * @param lista
 	 */
 	protected void informarCategoriaTarea(final List lista) {

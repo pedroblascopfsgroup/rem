@@ -196,11 +196,11 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 		}
 
 		if(secuenciaGarantia != null) {
-			logger.info("NSEC: " + secuenciaGarantia);
+			logger.info("NSECUENCIA: " + secuenciaGarantia);
 			input.setNSECUENCIA(String.valueOf(secuenciaGarantia));
 		}
 		else {
-			logger.info("NSEC: ");
+			logger.info("NSECUENCIA: ");
 			input.setNSECUENCIA(String.valueOf(""));
 		}
 		
@@ -223,7 +223,7 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 			sPersona = nPersona.toString();
 		}
 		
-		logger.info("NPER: " + StringUtils.substring(sPersona, 0, 10));
+		logger.info("NPERSONA: " + StringUtils.substring(sPersona, 0, 10));
 		input.setNPERSONA(StringUtils.substring(sPersona, 0, 10));		
 		
 		String sCuenta = "";
@@ -234,7 +234,7 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 		logger.info("CTAC: " + sCuenta);
 		input.setCTAC(sCuenta);
 		
-		logger.info("FINA: " + FINALIDAD);
+		logger.info("FINALIDAD: " + FINALIDAD);
 		input.setFINALIDAD(FINALIDAD);
 
 		String codBien = "";
@@ -243,29 +243,29 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 		}
 		
 		if(codBien != null) {
-			logger.info("BIEN: " + codBien);
+			logger.info("TBIEN: " + codBien);
 			input.setTBIEN(codBien);
 		}
 		else {
-			logger.info("BIEN: ");
+			logger.info("TBIEN: ");
 			input.setTBIEN("");
 		}
 
-		logger.info("ESTA: ");
+		logger.info("ESTADOBIEN: ");
 		input.setESTADOBIEN("");
 
-		logger.info("OCUP: ");
+		logger.info("OCUPACIONBIEN: ");
 		input.setOCUPACIONBIEN("");
 
-		logger.info("SITU: ");
+		logger.info("SITUACIONBIEN: ");
 		input.setSITUACIONBIEN("");
 		
 		if(bien.getIdDireccion() != null) {
-			logger.info("CODC: " + bien.getIdDireccion());
+			logger.info("CODDIR: " + bien.getIdDireccion());
 			input.setCODDIR(bien.getIdDireccion());
 		}
 		else {
-			logger.info("CODC: ");
+			logger.info("CODDIR: ");
 			input.setCODDIR("");
 		}
 		
@@ -274,10 +274,10 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 			poblacion = bien.getLocalizacionActual().getPoblacion();
 		}
 		
-		logger.info("POBL: " + StringUtils.substring(poblacion, 0, 30));
+		logger.info("LOCALIDAD: " + StringUtils.substring(poblacion, 0, 30));
 		input.setLOCALIDAD(StringUtils.substring(poblacion, 0, 30));
 
-		logger.info("PROV: ");
+		logger.info("PROVINCIA: ");
 		input.setPROVINCIA("");
 
 		String codPostal = "";
@@ -285,7 +285,7 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 			codPostal = bien.getLocalizacionActual().getCodPostal();
 		}
 		
-		logger.info("CPOS: " + StringUtils.substring(codPostal, 0, 6));
+		logger.info("CODPOSTAL: " + StringUtils.substring(codPostal, 0, 6));
 		input.setCODPOSTAL(StringUtils.substring(codPostal, 0, 6));
 
 		String numFinca = "";
@@ -293,19 +293,19 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 			numFinca = bien.getLocalizacionActual().getNumeroDomicilio();
 		}
 				
-		logger.info("NFCA: " + StringUtils.substring(numFinca, 0, 10));
+		logger.info("NFINCAREG: " + StringUtils.substring(numFinca, 0, 10));
 		input.setNFINCAREG(StringUtils.substring(numFinca, 0, 10));
 
-		logger.info("FOLI: ");
+		logger.info("FOLIO: ");
 		input.setFOLIO("");
 
-		logger.info("LBRO: ");
+		logger.info("LIBRO: ");
 		input.setLIBRO("");
 
 		logger.info("TOMO: ");
 		input.setTOMO("");
 
-		logger.info("PERS: " + personaContacto);
+		logger.info("NOMBPERSCONT: " + personaContacto);
 		input.setNOMBPERSCONT(personaContacto);
 
 		String sTelefono = "";
@@ -318,19 +318,19 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 		logger.info("TLF2: ");
 		input.setTLF2("");
 				
-		logger.info("INSC: ");
+		logger.info("INSCRIP: ");
 		input.setINSCRIP("");
 		
-		logger.info("CAUT: ");
+		logger.info("COMAUT: ");
 		input.setCOMAUT("");
 
 		logger.info("INCO: " + INCO);
 		input.setINCO(INCO);
 		
-		logger.info("TENC: " + TENC);
+		logger.info("TIPOPER: " + TENC);
 		input.setTIPOPER(TENC);
 		
-		logger.info("IMPO: ");
+		logger.info("IMPORIESGVIV: ");
 		input.setIMPORIESGVIV("");
 				
 		String tinmu = "";
@@ -341,11 +341,20 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 		logger.info("TINMU: " + tinmu);
 		input.setTINMU(tinmu);
 		
-		logger.info("OBSE2: " + observaciones);
+		logger.info("OBSERV: " + observaciones);
 		input.setOBSERV(observaciones);			
 
-		logger.info("CKCA: " + CKCA);
+		logger.info("SOLICITANTE: " + CKCA);
 		input.setSOLICITANTE(CKCA);
+
+		logger.info("NRPROP: ");
+		input.setNRPROP("");
+
+		logger.info("TELFNCONTAS: ");
+		input.setTELFNCONTAS("");
+
+		logger.info("TENCRELA: ");
+		input.setTENCRELA("");
 	}
 
 	/**

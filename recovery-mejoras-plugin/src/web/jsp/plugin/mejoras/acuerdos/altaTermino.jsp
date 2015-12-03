@@ -8,6 +8,7 @@
 <fwk:page>
 
 	var codigoTipoAcuerdoDacion = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo.TIPO_DACION" />';
+	var codigoTipoAcuerdoDacionExp = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo.TIPO_DACION_EXP" />';
 	var codigoSubtipoEstandar = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDSubTipoAcuerdo.SUBTIPO_ESTANDAR" />';
 
 	var labelStyle = 'width:185px;font-weight:bolder",width:375';
@@ -24,6 +25,7 @@
 	var soloConsulta = '${soloConsulta}';
 	var idTipoAcuerdoPlanPago ='${idTipoAcuerdoPlanPago}';
 	var yaHayPlanPago = '${yaHayPlanPago}';
+	var ambito = '${ambito}';
 	
     var tipoAcu = Ext.data.Record.create([
 		 {name:'id'}
@@ -33,6 +35,7 @@
 	
 	var optionsAcuerdosStore = page.getStore({
 	       flow: 'mejacuerdo/getListTipoAcuerdosData'
+	       ,params:{entidad:"${ambito}"} 
 	       ,reader: new Ext.data.JsonReader({
 	    	 root : 'listadoAcuerdos'
 	    }, tipoAcu)	       
@@ -56,6 +59,8 @@
 		,labelStyle: 'width:150px'
 		,width: 150		
 	});
+	
+	optionsAcuerdosStore.webflow({entidad:"${ambito}"});
 	
 	comboTipoAcuerdo.on('select', function() {
 	    creaCamposDynamics(this);
@@ -114,7 +119,10 @@
 	
 		
 	var creaCamposDynamics = function (cmp) {
-		if (cmp.getValue()!='' && cmp.getStore().getById(cmp.getValue()).data['codigo']==codigoTipoAcuerdoDacion) {
+		debugger;
+			if (cmp.getValue()!='' && 
+				(cmp.getStore().getById(cmp.getValue()).data['codigo']==codigoTipoAcuerdoDacion ||
+				 cmp.getStore().getById(cmp.getValue()).data['codigo']==codigoTipoAcuerdoDacionExp) ){
 			bienesFieldSet.show();
 		} else {
 			bienesFieldSet.hide();
@@ -125,7 +133,7 @@
 			,method: 'POST'
 			,params:{idTipoAcuerdo:cmp.getValue()} 
 			,success: function (result, request){
-			
+						debugger;
 				var cmpLft = Ext.getCmp('dinamicElementsLeft');
 			   	if (cmpLft) {
 					cmpLft.el.remove();
@@ -156,8 +164,13 @@
 				    }
 				}
 
-				detalleFieldSet.setVisible( true );
-		    	detalleFieldSetContenedor.setVisible( true );
+				if (camposDynamics.camposTerminoAcuerdo.length>0) {
+					detalleFieldSet.setVisible( true );
+		    		detalleFieldSetContenedor.setVisible( true );
+		    	} else {
+					detalleFieldSet.setVisible( false );
+		    		detalleFieldSetContenedor.setVisible( false );		    	
+		    	}
 		    	
 		    	var dinamicElementsLeftSize = 400
 		    	
@@ -708,7 +721,6 @@ if("${esPropuesta}" == "true"){
 			//Valor por defecto para SubTipoAcuerdo
 	       	comboSubTipoAcuerdo.store.load();
 	    	comboSubTipoAcuerdo.store.on('load', function(){ 
-	    		debugger;
 	        	
 				var index = comboSubTipoAcuerdo.store.findBy(function (record) {
    					return record.data.codigo == codigoSubtipoEstandar;

@@ -22,6 +22,7 @@ import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
+import es.capgemini.pfs.acuerdo.dao.DDTipoAcuerdoDao;
 import es.capgemini.pfs.acuerdo.dto.DtoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.acuerdo.model.AcuerdoConfigAsuntoUsers;
@@ -50,6 +51,7 @@ import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.tareaNotificacion.dao.TareaNotificacionDao;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea;
+import es.capgemini.pfs.tareaNotificacion.model.DDEntidadAcuerdo;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
@@ -152,6 +154,9 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 	
 	@Autowired
 	IntegracionBpmService integracionBpmService;
+	
+	@Autowired
+	DDTipoAcuerdoDao tipoAcuerdoDao;
 		
 	/**
 	 * Pasa un acuerdo a estado Rechazado.
@@ -438,11 +443,20 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
      * @return
      */
 	@BusinessOperation(BO_ACUERDO_MGR_GET_LISTADO_TIPO_ACUERDO)
-	public List<DDTipoAcuerdo> getListTipoAcuerdo() {
+	public List<DDTipoAcuerdo> getListTipoAcuerdo(String entidad) {
 
-		Filter fBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		List<DDTipoAcuerdo> listado = (ArrayList<DDTipoAcuerdo>) genericDao.getList(DDTipoAcuerdo.class, fBorrado);
-
+		//Filter fBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		DDEntidadAcuerdo fambito = null;
+		DDEntidadAcuerdo fambitoAmbas = genericDao.get(DDEntidadAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEntidadAcuerdo.CODIGO_ENTIDAD_AMBAS));
+		
+		if(entidad.equals("asunto")){
+			fambito = genericDao.get(DDEntidadAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEntidadAcuerdo.CODIGO_ENTIDAD_ASUNTO));
+		}else if(entidad.equals("expediente")){
+			fambito = genericDao.get(DDEntidadAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEntidadAcuerdo.CODIGO_ENTIDAD_EXPEDIENTE));
+		}
+		//List<DDTipoAcuerdo> listado = (ArrayList<DDTipoAcuerdo>) genericDao.getList(DDTipoAcuerdo.class, fBorrado, fambito);
+		List<DDTipoAcuerdo> listado = tipoAcuerdoDao.buscarTipoAcuerdoPorFiltro(fambito.getId(), fambitoAmbas.getId());
+		
 		return listado;
 	}   
 	

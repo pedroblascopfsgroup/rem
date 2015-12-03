@@ -211,12 +211,13 @@ public class MEJAcuerdoController {
 	@RequestMapping
 	public String openAltaTermino(ModelMap map, 
 			@RequestParam(value = "idAcuerdo", required = true) Long idAcuerdo,
-			String contratosIncluidos, Boolean esPropuesta) {
+			String contratosIncluidos, Boolean esPropuesta, String ambito) {
 			
 
 		map.put("contratosIncluidos", contratosIncluidos);		
 		map.put("idAcuerdo", idAcuerdo);
 		map.put("esPropuesta", esPropuesta);
+		map.put("ambito", ambito);
 		
 		if(esPropuesta){
 			Acuerdo acuerdo = genericDao.get(Acuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", idAcuerdo));
@@ -322,8 +323,8 @@ public class MEJAcuerdoController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String getListTipoAcuerdosData(ModelMap model){
-		List<DDTipoAcuerdo> list = proxyFactory.proxy(MEJAcuerdoApi.class).getListTipoAcuerdo();
+	public String getListTipoAcuerdosData(ModelMap model, String entidad){
+		List<DDTipoAcuerdo> list = proxyFactory.proxy(MEJAcuerdoApi.class).getListTipoAcuerdo(entidad);
 		model.put("data", list);
 		return JSON_LIST_TIPO_ACUERDO;
 	}	

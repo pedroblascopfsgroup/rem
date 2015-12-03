@@ -48,6 +48,7 @@ import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.tareaNotificacion.dao.TareaNotificacionDao;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea;
 import es.capgemini.pfs.tareaNotificacion.model.DDEntidadAcuerdo;
@@ -791,7 +792,12 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
      */
     @BusinessOperation(BO_ACUERDO_MGR_FINALIZAR_ACUERDO)
     @Transactional(readOnly = false)
-    public void finalizarAcuerdo(Long id, String fechaPago, Boolean cumplido, String observaciones) {
+    public void finalizarAcuerdo(Long id, String fechaPago, String cumplidoSiNO, String observaciones) {
+    	
+    	boolean cumplido = false;
+		if(DDSiNo.SI.equals(cumplidoSiNO)){
+			cumplido = true;
+		}
         
         EXTAcuerdo acuerdo = genericDao.get(EXTAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
         

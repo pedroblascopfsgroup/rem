@@ -68,7 +68,7 @@
 		value="${despacho!=null?despacho.id:''}"
 		valueField="id"
 		displayField="despacho" 
-		autoload="${despacho!= null?'true':'false'}" obligatory="true"/>
+		autoload="${despacho!= null?'true':'false'}"/>
 	
 	<%-- Campo oculto para controlar que si se elige un 'Tipo Despacho' no se pueda dejar
 	 el campo 'Despacho' vacío --%>

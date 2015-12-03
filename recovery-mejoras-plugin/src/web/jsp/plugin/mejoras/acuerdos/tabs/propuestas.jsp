@@ -201,7 +201,7 @@
 			var w = app.openWindow({
 				flow : 'propuestas/abrirFinalizacion'
 				,closable:false
-				,width : 750
+				,width : 680
 				,title : '<s:message code="mejoras.plugin.acuerdos.finalizarAcuerdo" text="**Finalizar acuerdo" />'
 				,params : {idAcuerdo: acuerdoSeleccionado}
 			});
@@ -217,6 +217,28 @@
 				w.close();
 			});
 		}
+	});
+	
+	var btnCumplimientoAcuerdo = new Ext.Button({
+		text:  '<s:message code="plugin.mejoras.acuerdo.cumplimiento" text="**Cumplimiento acuerdo" />'
+		<app:test id="CumplimientoAcuerdoBtn" addComa="true" />
+		,iconCls : 'icon_edit'
+		,cls: 'x-btn-text-icon'
+<!-- 		,hidden:true -->
+		,handler:function(){
+      		var w = app.openWindow({
+		          flow : 'propuestas/openCumplimientoPropuesta'
+		          ,closable:false
+		          ,width : 580
+		          ,title : '<s:message code="mejoras.plugin.acuerdos.completaAcuerdo" text="**Cumplimiento acuerdo" />'
+		          ,params : {idPropuesta:acuerdoSeleccionado}
+		       });
+		       w.on(app.event.DONE, function(){
+		          	acuerdosStore.webflow({id:panel.getAsuntoId()});
+		          w.close();
+		       });
+		       w.on(app.event.CANCEL, function(){ w.close(); });
+     	}
 	});
 
 	
@@ -248,12 +270,14 @@
    			btnCancelarAcuerdo.disable();
    			btnRechazarAcuerdo.disable();
    			btnRegistrarFinalizacionAcuerdo.disable();
+<!--    			btnCumplimientoAcuerdo.disable(); -->
    }
    var habilitarBotones=function(){
    			btnProponerAcuerdo.enable();
    			btnCancelarAcuerdo.enable();
    			btnRechazarAcuerdo.enable();
    			btnRegistrarFinalizacionAcuerdo.enable();
+<!--    			btnCumplimientoAcuerdo.disable(); -->
    }
    
    var ocultarBotones=function(){
@@ -261,6 +285,7 @@
    			btnCancelarAcuerdo.hide();
    			btnRechazarAcuerdo.hide();
    			btnRegistrarFinalizacionAcuerdo.hide();
+<!--    			btnCumplimientoAcuerdo.disable(); -->
    }
    
 	
@@ -277,7 +302,8 @@
           	btnProponerAcuerdo,
           	btnCancelarAcuerdo,
      	   	btnRegistrarFinalizacionAcuerdo,
-          	btnRechazarAcuerdo
+          	btnRechazarAcuerdo,
+          	btnCumplimientoAcuerdo
 	      ]
 
 	}); 
@@ -353,8 +379,11 @@
 					btnRechazarAcuerdo.setVisible(true);
 				}
 				
+				var estadoVigente = false;
+				
 				if(panel.getFaseActualExpediente() == app.estItinerario.ESTADO_FORMALIZAR_PROPUESTA && panel.esGestorSupervisorActual() && codigoEstado == app.codigoAcuerdoVigente){
 					btnRegistrarFinalizacionAcuerdo.setVisible(true);
+					estadoVigente = true;
 				}
 
 				
@@ -365,9 +394,29 @@
 	    		acuerdosExpTabs.setActiveTab(terminosExpTab);
 	    		acuerdosExpTabs.setHeight('auto');
 	    		
-	    		panel.add(acuerdosExpTabs);
-				panel.doLayout();
-				panel.show();
+	    		var store = panelAnteriorExpTerminos.terminosAcuerdoGrid.getStore();
+	    		
+	    		btnCumplimientoAcuerdo.setVisible(false);
+	    		
+	    		store.on('load', function(){  
+					for (var i=0; i < store.data.length; i++) {
+						datos = store.getAt(i);
+						alert(datos.get('codigoTipoAcuerdo'));
+						if(datos.get('codigoTipoAcuerdo') == "PLAN_PAGO"){
+							if(Boolean(estadoVigente)){
+								btnCumplimientoAcuerdo.setVisible(true);
+							}
+							cumplimientoAcuerdo = recargarCumplimientoAcuerdo(idAcuerdo);
+							terminosTab.add(cumplimientoAcuerdo);
+							
+						}
+					}
+					
+		    		panel.add(acuerdosExpTabs);
+					panel.doLayout();
+					panel.show();
+					
+			   	});
 		
 	});
 

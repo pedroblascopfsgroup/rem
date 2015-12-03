@@ -780,4 +780,15 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		return documentoPCODao.get(idDocPCO);
 	}
 
+	@Override
+	public Boolean esTipoGestorConAcceso(EXTDDTipoGestor tipoGestor) {
+		List<DDTipoActorPCO> listActoresConAcceso = documentoPCODao.getTipoActoresConAcceso();
+		for (DDTipoActorPCO tipoActor : listActoresConAcceso) {
+			if (tipoActor.getCodigo().equals(tipoGestor.getCodigo())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 }

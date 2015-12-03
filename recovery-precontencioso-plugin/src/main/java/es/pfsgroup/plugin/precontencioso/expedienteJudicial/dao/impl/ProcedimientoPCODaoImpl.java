@@ -61,7 +61,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		ProjectionList select = Projections.projectionList();
 
 		// Distinct por procedimiento id
-		select.add(Projections.distinct(Projections.property("procedimiento.id").as("id")));
+		select.add(Projections.property("procedimiento.id").as("id"));
 		select.add(Projections.property("procedimientoPco.procedimiento").as("procedimiento"));
 		select.add(Projections.property("procedimiento.id").as("prcId"));
 		select.add(Projections.property("procedimiento.id").as("codigo"));

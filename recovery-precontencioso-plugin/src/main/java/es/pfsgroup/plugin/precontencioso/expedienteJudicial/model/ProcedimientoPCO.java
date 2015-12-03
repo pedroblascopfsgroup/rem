@@ -32,6 +32,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDEstadoBurofaxPCO;
+import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDEstadoLiquidacionPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
@@ -150,19 +151,23 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 	private Float totalLiquidacion;
 
 	@Formula(value = 
-			" (SELECT CASE "
-		  + "         WHEN EXISTS (SELECT 1 "
-		  + "                       FROM pco_doc_documentos "
-		  + "                      WHERE pco_prc_procedimientos.pco_prc_id = pco_doc_documentos.pco_prc_id AND pco_doc_documentos.borrado = 0 AND pco_doc_documentos.pco_doc_pdd_adjunto = 0) "
-		  + "           THEN 0 "
-		  + "        WHEN EXISTS (SELECT 1 "
-		  + "                       FROM pco_doc_documentos "
-		  + "                      WHERE pco_prc_procedimientos.pco_prc_id = pco_doc_documentos.pco_prc_id AND pco_doc_documentos.borrado = 0) "
-		  + "           THEN 1 "
-		  + "        ELSE 0 "
-		  + "     END "
-		  + " FROM pco_prc_procedimientos "
-		  + " WHERE pco_prc_procedimientos.pco_prc_id = pco_prc_id) ")
+		" (SELECT CASE " +
+		"          WHEN EXISTS (SELECT 1 " +
+		"                       FROM   pco_doc_documentos " +
+		"                              INNER JOIN dd_pco_doc_estado " +
+		"                                      ON dd_pco_doc_estado.dd_pco_ded_id = pco_doc_documentos.dd_pco_ded_id" +
+		"                       WHERE  pco_doc_documentos.pco_prc_id = pco_prc_procedimientos.pco_prc_id " +
+		"                              AND pco_doc_documentos.borrado = 0 " +
+		"                              AND pco_doc_documentos.pco_doc_pdd_adjunto = 0 " +
+		"                              AND dd_pco_doc_estado.dd_pco_ded_codigo != '" + DDEstadoDocumentoPCO.DESCARTADO + "') THEN 0 " +
+		"          WHEN EXISTS (SELECT 1 " +
+		"                       FROM   pco_doc_documentos " +
+		"                       WHERE  pco_doc_documentos.pco_prc_id = pco_prc_procedimientos.pco_prc_id " +
+		"                              AND pco_doc_documentos.borrado = 0) THEN 1 " +
+		"          ELSE 0 " +
+		"        END " +
+		" FROM   pco_prc_procedimientos " +
+		" WHERE  pco_prc_procedimientos.pco_prc_id = pco_prc_id) ")
 	private Boolean todosDocumentos;
 
 	@Formula(value = 

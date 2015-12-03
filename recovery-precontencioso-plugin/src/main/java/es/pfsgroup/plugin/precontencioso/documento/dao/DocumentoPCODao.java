@@ -5,6 +5,7 @@ import java.util.List;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.persona.model.Persona;
+import es.pfsgroup.plugin.precontencioso.documento.model.DDTipoActorPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienEntidad;
@@ -28,4 +29,11 @@ public interface DocumentoPCODao extends AbstractDao<DocumentoPCO, Long> {
 	
 	List<NMBBienEntidad> getBienesByIdsOrderByDesc(String ids);
 	
+	/**
+	 * Obtener los tipos de actores que tienen acceso a recovery
+	 * 
+	 * @return lista tiposGestores
+	 */
+	List<DDTipoActorPCO> getTipoActoresConAcceso();
+
 }

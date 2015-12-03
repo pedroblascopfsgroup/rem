@@ -180,4 +180,12 @@ public interface DocumentoPCOApi {
 	
 	@BusinessOperationDefinition(PCO_DOCUMENTO_BY_ID)
 	DocumentoPCO getDocumentoPCOById(Long idDocPCO);
+
+	/**
+	 * Comprueba si es un tipo de gestor con acceso a recovery mediante la tabla de actores del documentos (DDTipoActorPCO)
+	 * 
+	 * @param idTipoDespacho
+	 * @return
+	 */
+	Boolean esTipoGestorConAcceso(EXTDDTipoGestor tipoGestor);
 }

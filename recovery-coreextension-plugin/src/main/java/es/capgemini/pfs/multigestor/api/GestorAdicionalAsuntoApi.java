@@ -26,8 +26,8 @@ public interface GestorAdicionalAsuntoApi {
 	 * @param idTipoGestor
 	 * @param idAsunto
 	 * @param idUsuario
-	 * @param idTipoDespacho
+	 * @param idDespacho
 	 * @return
 	 */
-	public EXTGestorAdicionalAsunto findGaaByIds(Long idTipoGestor, Long idAsunto, Long idUsuario, Long idTipoDespacho);
+	public EXTGestorAdicionalAsunto findGaaByIds(Long idTipoGestor, Long idAsunto, Long idUsuario, Long idDespacho);
 }

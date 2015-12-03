@@ -61,7 +61,7 @@
 			
 			if(p.tipoTab !=null && p.tipoTab=="altaUsuarios")
 			{
-				if(p.permiteGuardar != null && p.despachoExterno == "")
+				if(p.permiteGuardar != null && ((p.despachoExterno == "" && p.tipoDespacho != "") || (p.despachoExterno != "" && p.tipoDespacho == "")) )
 					p.permiteGuardar = false;
 			}
 			<%-- BKREC-1492 - Este if sirve para controlar si algun campo recibido es erroneo, y asi que no deje guardar el proceso

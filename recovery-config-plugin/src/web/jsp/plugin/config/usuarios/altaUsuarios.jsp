@@ -139,6 +139,7 @@
 		usuarioExterno="usuarioExterno"
 		usuarioGrupo="usuarioGrupo"
 		despachoExterno="despachoExterno"
+		tipoDespacho="tipoDespacho"
 		permiteGuardar="permiteGuardar"
 		tipoTab="tipoTab"
 		/>

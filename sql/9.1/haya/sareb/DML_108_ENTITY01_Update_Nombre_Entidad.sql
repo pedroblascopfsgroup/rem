@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20151202
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.14-hy-rc01
---## INCIDENCIA_LINK=HR-
+--## INCIDENCIA_LINK=HR-1620
 --## PRODUCTO=NO
 --## Finalidad: DML para actualizar el nombre de la entidad
 --##           

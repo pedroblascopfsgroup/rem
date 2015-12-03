@@ -18,6 +18,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
 import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContextImpl;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ProcedimientoPcoApi;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
@@ -142,6 +143,8 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 			if(PROYECTO_HAYA.equalsIgnoreCase(precontenciosoContext.getRecovery())){
 				if(!(!Checks.esNulo(prc.getAuditoria()) && USU_MIGRACION_PCO.equals(prc.getAuditoria().getUsuarioCrear()))){
 					executor.execute("plugin.precontencioso.inicializarPco", prc);
+				}else{
+					executor.execute("plugin.precontencioso.cambiarEstadoExpediete", prc.getId(), DDEstadoPreparacionPCO.PREPARACION);
 				}
 			} else {
 				executor.execute("plugin.precontencioso.inicializarPco", prc);

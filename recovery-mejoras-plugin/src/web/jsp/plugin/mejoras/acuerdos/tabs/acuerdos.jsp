@@ -171,7 +171,7 @@
       		var w = app.openWindow({
 		          flow : 'editacuerdo/open'
 		          ,closable:false
-		          ,width : 750
+		          ,width : 580
 		          ,title : '<s:message code="mejoras.plugin.acuerdos.completaAcuerdo" text="**Cumplimiento acuerdo" />'
 		          ,params : {idAcuerdo:acuerdoSeleccionado}
 		       });
@@ -226,7 +226,7 @@
 						var w = app.openWindow({
 				       	   flow : 'mejacuerdo/openFinalizacionAcuerdo'
 				          ,closable:false
-				          ,width : 750
+				          ,width : 680
 				          ,title : '<s:message code="mejoras.plugin.acuerdos.finalizarAcuerdo" text="**Finalizar acuerdo" />'
 				          ,params : {idAcuerdo:acuerdoSeleccionado}
 				       	});

@@ -265,8 +265,12 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
     }
     
     private StringBuilder armaFiltrosBasicosString(final DtoBuscarTareaNotificacion dto, final Usuario u) {
-    	final StringBuilder hb = new StringBuilder("(");
+    	final StringBuilder hb = new StringBuilder();
     	
+    	//Ante todo que cumpla el tipo de tarea
+        // Filtro por tipo de tarea
+        //HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vtar.codigoTipoTarea", dto.getCodigoTipoTarea());
+        hb.append(" vtar.codigoTipoTarea = " + dto.getCodigoTipoTarea() + " AND (");
     	
     	List<Long> grupos = grupoUsuarioDao.buscaGruposUsuario(u);
     	grupos.add(u.getId()); // incluimos el usuario
@@ -293,10 +297,6 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
         	hb.append(" and ");
         hb.append("(vtar.tarea.tareaFinalizada is null or vtar.tarea.tareaFinalizada = 0)");
         hb.append(" and vtar.borrado = 0");
-
-        // Filtro por tipo de tarea
-        //HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vtar.codigoTipoTarea", dto.getCodigoTipoTarea());
-        hb.append(" and vtar.codigoTipoTarea = " + dto.getCodigoTipoTarea());
 
         // Alertas y espera
         if (dto.isEnEspera()) {

@@ -361,7 +361,7 @@
 					btnProponerAcuerdo.setVisible(true);
 				}
 
-				if(panel.esGestorSupervisorActual() || (idProponente == panel.getUsuarioLogado() && codigoEstado == app.codigoAcuerdoEnConformacion)){
+				if((panel.esGestorSupervisorActual() && codigoEstado != app.codigoAcuerdoRechazado && codigoEstado != app.codigoAcuerdoCancelado && codigoEstado != app.codigoAcuerdoFinalizado &&  codigoEstado != app.codigoAcuerdoIncumplido && codigoEstado != app.codigoAcuerdoCumplido) || (idProponente == panel.getUsuarioLogado() && codigoEstado == app.codigoAcuerdoEnConformacion)){
 					noPuedeModificar = false;
 				}
 				

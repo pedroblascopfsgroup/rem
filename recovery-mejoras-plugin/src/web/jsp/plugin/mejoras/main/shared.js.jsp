@@ -208,6 +208,8 @@ app.codigoAcuerdoRechazado = '<fwk:const value="es.capgemini.pfs.acuerdo.model.D
 app.codigoAcuerdoCancelado = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_CANCELADO" />';
 app.codigoAcuerdoFinalizado = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_FINALIZADO" />';
 app.codigoAcuerdoEnviado = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_ENVIADO" />';
+app.codigoAcuerdoIncumplido = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_INCUMPLIDO" />';
+app.codigoAcuerdoCumplido = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_CUMPLIDO" />';
 
 
 /**

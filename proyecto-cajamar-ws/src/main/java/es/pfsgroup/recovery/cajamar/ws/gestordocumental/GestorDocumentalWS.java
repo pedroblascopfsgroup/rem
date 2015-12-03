@@ -30,9 +30,25 @@ public class GestorDocumentalWS extends BaseWS implements GestorDocumentalWSApi 
 	public GestorDocumentalOutputDto ejecutar(GestorDocumentalInputDto inputDto) {
 		
 		INPUT input = GestorDocumentalInputAssembler.dtoToInput(inputDto); 
-
-		
 		logger.info("LLamando al WS...");
+
+		logger.info("Parametros de entrada...");
+		logger.info(String.format("CLAVEASOCIACION: %s", input.getCLAVEASOCIACION()));
+		logger.info(String.format("CLAVEASOCIACION2: %s", input.getCLAVEASOCIACION2()));
+		logger.info(String.format("CLAVEASOCIACION3: %s", input.getCLAVEASOCIACION3()));
+		logger.info(String.format("DESCRIPCION: %s", input.getDESCRIPCION()));
+		logger.info(String.format("EXTENSIONFICHERO: %s", input.getEXTENSIONFICHERO()));
+		logger.info(String.format("FECHAVIGENCIA: %s", input.getFECHAVIGENCIA()));
+		logger.info(String.format("FICHEROBASE64: %s", input.getFICHEROBASE64()));
+		logger.info(String.format("LOCALIZADOR: %s", input.getLOCALIZADOR()));
+		logger.info(String.format("OPERACION: %s", input.getOPERACION()));
+		logger.info(String.format("ORIGEN: %s", input.getORIGEN()));
+		logger.info(String.format("RUTA_FICHERO_REMOTO: %s", input.getRUTAFICHEROREMOTO()));
+		logger.info(String.format("TIPOASOCIACION: %s", input.getTIPOASOCIACION()));
+		logger.info(String.format("TIPOASOCIACION2: %s", input.getTIPOASOCIACION2()));
+		logger.info(String.format("TIPOASOCIACION3: %s", input.getTIPOASOCIACION3()));
+		logger.info(String.format("TIPODOCUMENTO: %s", input.getTIPODOCUMENTO()));
+		
 		SMGESTIONDOCUMENTAL service = new SMGESTIONDOCUMENTAL();
 		SMGESTIONDOCUMENTALType servicePort = service.getSMGESTIONDOCUMENTALPort();
 		OUTPUT output = servicePort.sMGESTIONDOCUMENTAL(input);

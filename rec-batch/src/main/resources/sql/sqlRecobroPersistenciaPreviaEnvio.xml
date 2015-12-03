@@ -1552,15 +1552,21 @@
     <entry key="recobro.insert.tmp_rec_reparto_dia_anterior.Oracle10gDialect">
         <![CDATA[
             declare
+
                 V_FECHA_HIST TIMESTAMP(9);
                 V_SQL VARCHAR(2000);
+
             begin
                 select max(FECHA_HIST) into V_FECHA_HIST from H_REC_FICHERO_CONTRATOS;
 
                 DBMS_OUTPUT.PUT_LINE(V_FECHA_HIST);
+
                 V_SQL := 'INSERT INTO TMP_REC_REPARTO_DIA_ANTERIOR
-                          SELECT DISTINCT CNT.CNT_ID, REC.RCF_AGE_ID
-                            FROM H_REC_FICHERO_CONTRATOS REC JOIN CNT_CONTRATOS CNT ON SUBSTR(REC.ID_ENVIO,9) = CNT.CNT_ID
+                            (CNT_ID, ID_ENVIO, RCF_AGE_ID)
+                          SELECT DISTINCT SUBSTR(REC.ID_ENVIO,9) AS CNT_ID
+                               , REC.ID_ENVIO
+                               , REC.RCF_AGE_ID
+                            FROM H_REC_FICHERO_CONTRATOS REC
                            WHERE REC.FECHA_HIST = :V_FECHA_HIST';
                 EXECUTE IMMEDIATE V_SQL USING V_FECHA_HIST;
 
@@ -1574,23 +1580,21 @@
     <!-- CRUZAMOS POR AGENCIA LA TABLA DEL REPARTO DEL DÍA ANTERIOR JUNTO CON LA TABLA DEL REPARTO DE HOY Y LO QUE FALTE SON LAS BAJAS -->
     <entry key="recobro.insert.tmp_rec_contratos_baja.Oracle10gDialect">
         <![CDATA[
-            declare
-                cursor agencias is select distinct RCF_AGE_ID from TMP_REC_REPARTO_DIA_ANTERIOR where RCF_AGE_ID is not null;
-            begin
-                for agencia in agencias
-                loop
-                    DBMS_OUTPUT.PUT_LINE(agencia.RCF_AGE_ID);
+           begin
 
-                    INSERT INTO TMP_REC_CONTRATOS_BAJA (CNT_ID, RCF_AGE_ID)
-                    SELECT REC.CNT_ID, agencia.RCF_AGE_ID
-                      FROM TMP_REC_REPARTO_DIA_ANTERIOR REC
-                     WHERE REC.RCF_AGE_ID = agencia.RCF_AGE_ID
-                       AND REC.CNT_ID NOT IN (SELECT TMP2.CNT_ID
-                                                FROM TMP_REC_EXP_AGE_CNT_EXC TMP2
-                                               WHERE TMP2.RCF_AGE_ID = agencia.RCF_AGE_ID);
+             INSERT INTO TMP_REC_CONTRATOS_BAJA
+               (CNT_ID, ID_ENVIO, RCF_AGE_ID)
+             SELECT ANT.CNT_ID
+                  , ANT.ID_ENVIO
+                  , ANT.RCF_AGE_ID
+               FROM TMP_REC_REPARTO_DIA_ANTERIOR  ANT
+                  , TMP_REC_EXP_AGE_CNT_EXC       ACT
+              WHERE ANT.CNT_ID = ACT.CNT_ID(+)
+                AND ANT.RCF_AGE_ID = ACT.RCF_AGE_ID(+)
+                AND ACT.CNT_ID IS NULL;
 
-                end loop;
-                OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_CONTRATOS_BAJA');
+              OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_CONTRATOS_BAJA');
+
             end;
         ]]>
     </entry>
@@ -1598,171 +1602,56 @@
     <!-- OBTENCIÓN DE CONTRATOS CON MOTIVO DE BAJA APROVISIONAMIENTO -->
     <entry key="recobro.insert.tmp_rec_contratos_baja_mot.baja_aprovisionamiento.Oracle10gDialect">
         <![CDATA[
-            declare
-                mob_id number;
-                mob_id_agencia number;
-            begin
-                SELECT DD_MOB_ID INTO mob_id FROM ${master.schema}.DD_MOB_MOTIVOS_BAJA WHERE DD_MOB_CODIGO = 'NR' AND BORRADO = 0;
-                SELECT DD_MOB_ID INTO mob_id_agencia FROM ${master.schema}.DD_MOB_MOTIVOS_BAJA WHERE DD_MOB_CODIGO = 'BA' AND BORRADO = 0;
-
-                INSERT INTO TMP_REC_CONTRATOS_BAJA_MOT
-                SELECT  TMP.CNT_ID, TMP.RCF_AGE_ID, mob_id_agencia AS DD_MOB_ID
-                FROM TMP_REC_REPARTO_DIA_ANTERIOR TMP
-                WHERE CNT_ID IN (
-                    SELECT CNT_ID FROM CRC_CICLO_RECOBRO_CNT WHERE TRUNC(CRC_FECHA_BAJA) = TRUNC(SYSDATE) AND DD_MOB_ID = mob_id
-                )
-                AND TMP.CNT_ID NOT IN (SELECT DISTINCT CNT_ID FROM TMP_REC_CONTRATOS_BAJA_MOT);
-
-                OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_CONTRATOS_BAJA_MOT');
-
-                EXCEPTION
-                WHEN NO_DATA_FOUND THEN
-                    dbms_output.put_line('No se han encontrado datos para el motivo de baja NR o BA');
-            end;
+        select 1 from dual
         ]]>
     </entry>
 
     <!-- OBTENCIÓN DE CONTRATOS CON MOTIVO DE FIN DE PLAZO -->
     <entry key="recobro.insert.tmp_rec_contratos_baja_mot.rotacion.Oracle10gDialect">
         <![CDATA[
-            declare
-                mob_id number;
-            begin
-                SELECT DD_MOB_ID INTO mob_id FROM ${master.schema}.DD_MOB_MOTIVOS_BAJA WHERE DD_MOB_CODIGO = 'FP' AND BORRADO = 0;
-                INSERT INTO TMP_REC_CONTRATOS_BAJA_MOT
-                SELECT REC.CNT_ID, REC.RCF_AGE_ID, mob_id AS DD_MOB_ID
-                FROM TMP_REC_EXP_ROTACION TMP
-                    INNER JOIN BATCH_DATOS_CNT_EXP CEX ON CEX.EXP_ID = TMP.EXP_ID
-                    INNER JOIN TMP_REC_CONTRATOS_BAJA REC ON REC.CNT_ID = CEX.CNT_ID
-                WHERE REC.CNT_ID NOT IN (SELECT DISTINCT CNT_ID FROM TMP_REC_CONTRATOS_BAJA_MOT);
-
-                EXCEPTION
-                WHEN NO_DATA_FOUND THEN
-                    dbms_output.put_line('No se han encontrado datos para el motivo de baja de rotación');
-            end;
+        select 1 from dual
         ]]>
     </entry>
 
     <!-- OBTENCIÓN DE CONTRATOS CON MOTIVO CONTRATO EXCEPTUADO -->
     <entry key="recobro.insert.tmp_rec_contratos_baja_mot.exceptuados.contratos.Oracle10gDialect">
         <![CDATA[
-            declare
-                mob_id number;
-            begin
-                SELECT DD_MOB_ID INTO mob_id FROM ${master.schema}.DD_MOB_MOTIVOS_BAJA WHERE DD_MOB_CODIGO = 'EXC' AND BORRADO = 0;
-
-                INSERT INTO TMP_REC_CONTRATOS_BAJA_MOT
-                SELECT REC.CNT_ID, REC.RCF_AGE_ID, mob_id AS DD_MOB_ID
-                FROM BATCH_DATOS_EXCEPTUADOS TMP
-                    INNER JOIN TMP_REC_CONTRATOS_BAJA REC ON REC.CNT_ID = TMP.CNT_ID
-                WHERE REC.CNT_ID NOT IN (SELECT DISTINCT CNT_ID FROM TMP_REC_CONTRATOS_BAJA_MOT);
-
-                EXCEPTION
-                WHEN NO_DATA_FOUND THEN
-                    dbms_output.put_line('No se han encontrado datos para el motivo de baja de contratos exceptuados');
-            end;
+        select 1 from dual
         ]]>
     </entry>
 
     <!-- OBTENCIÓN DE CONTRATOS CON MOTIVO PERSONA EXCEPTUADA -->
     <entry key="recobro.insert.tmp_rec_contratos_baja_mot.exceptuados.personas.Oracle10gDialect">
         <![CDATA[
-            declare
-                mob_id number;
-            begin
-                SELECT DD_MOB_ID INTO mob_id FROM ${master.schema}.DD_MOB_MOTIVOS_BAJA WHERE DD_MOB_CODIGO = 'EXP' AND BORRADO = 0;
-                INSERT INTO TMP_REC_CONTRATOS_BAJA_MOT
-                SELECT REC.CNT_ID, REC.RCF_AGE_ID, mob_id AS DD_MOB_ID
-                FROM BATCH_DATOS_EXCEPTUADOS TMP
-                    INNER JOIN CPE_CONTRATOS_PERSONAS CPE ON TMP.PER_ID = CPE.PER_ID AND CPE.BORRADO = 0
-                    INNER JOIN TMP_REC_CONTRATOS_BAJA REC ON REC.CNT_ID = CPE.CNT_ID
-                WHERE REC.CNT_ID NOT IN (SELECT DISTINCT CNT_ID FROM TMP_REC_CONTRATOS_BAJA_MOT);
-                EXCEPTION
-                WHEN NO_DATA_FOUND THEN
-                    dbms_output.put_line('No se han encontrado datos para el motivo de baja de personas exceptuadas');
-            end;
+        select 1 from dual
         ]]>
     </entry>
 
     <!-- OBTENCIÓN DE CONTRATOS CON MOTIVO DE FIN DE CAMPAÑA POR RUPTURA -->
     <entry key="recobro.insert.tmp_rec_contratos_baja_mot.ruptura.Oracle10gDialect">
         <![CDATA[
-            declare
-                mob_id number;
-            begin
-                SELECT DD_MOB_ID INTO mob_id FROM ${master.schema}.DD_MOB_MOTIVOS_BAJA WHERE DD_MOB_CODIGO = 'FDC' AND BORRADO = 0;
-                INSERT INTO TMP_REC_CONTRATOS_BAJA_MOT
-                SELECT REC.CNT_ID, REC.RCF_AGE_ID, mob_id AS DD_MOB_ID
-                FROM TMP_REC_EXP_EXTINCION_RU TMP
-                    INNER JOIN BATCH_DATOS_CNT_EXP CEX ON CEX.EXP_ID = TMP.EXP_ID
-                    INNER JOIN TMP_REC_CONTRATOS_BAJA REC ON REC.CNT_ID = CEX.CNT_ID
-                WHERE REC.CNT_ID NOT IN (SELECT DISTINCT CNT_ID FROM TMP_REC_CONTRATOS_BAJA_MOT);
-                EXCEPTION
-                WHEN NO_DATA_FOUND THEN
-                    dbms_output.put_line('No se han encontrado datos para el motivo de baja de ruptura');
-            end;
+        select 1 from dual
         ]]>
     </entry>
 
     <!-- OBTENCIÓN DE CONTRATOS CON MOTIVO DE FIN DE CAMPAÑA POR REARQUETIPACION -->
     <entry key="recobro.insert.tmp_rec_contratos_baja_mot.rearquetipacion.Oracle10gDialect">
         <![CDATA[
-            declare
-                mob_id number;
-            begin
-                SELECT DD_MOB_ID INTO mob_id FROM ${master.schema}.DD_MOB_MOTIVOS_BAJA WHERE DD_MOB_CODIGO = 'FDC' AND BORRADO = 0;
-                INSERT INTO TMP_REC_CONTRATOS_BAJA_MOT
-                SELECT REC.CNT_ID, REC.RCF_AGE_ID, mob_id AS DD_MOB_ID
-                FROM TMP_REC_EXP_EXTINCION_RA TMP
-                    INNER JOIN BATCH_DATOS_CNT_EXP CEX ON CEX.EXP_ID = TMP.EXP_ID
-                    INNER JOIN TMP_REC_CONTRATOS_BAJA REC ON REC.CNT_ID = CEX.CNT_ID
-                WHERE REC.CNT_ID NOT IN (SELECT DISTINCT CNT_ID FROM TMP_REC_CONTRATOS_BAJA_MOT);
-                EXCEPTION
-                WHEN NO_DATA_FOUND THEN
-                    dbms_output.put_line('No se han encontrado datos para el motivo de baja de rearquetipación');
-            end;
+        select 1 from dual
         ]]>
     </entry>
 
     <!-- OBTENCIÓN DE CONTRATOS CON MOTIVO DE REGULARIZACIÓN -->
     <entry key="recobro.insert.tmp_rec_contratos_baja_mot.regularizacion.Oracle10gDialect">
         <![CDATA[
-            declare
-                mob_id number;
-            begin
-                SELECT DD_MOB_ID INTO mob_id FROM ${master.schema}.DD_MOB_MOTIVOS_BAJA WHERE DD_MOB_CODIGO = 'REG' AND BORRADO = 0;
-                INSERT INTO TMP_REC_CONTRATOS_BAJA_MOT
-                SELECT REC.CNT_ID, REC.RCF_AGE_ID, mob_id AS DD_MOB_ID
-                FROM TMP_REC_EXP_SIN_RIESGOS TMP
-                    INNER JOIN BATCH_DATOS_CNT_EXP CEX ON CEX.EXP_ID = TMP.EXP_ID
-                    INNER JOIN TMP_REC_CONTRATOS_BAJA REC ON REC.CNT_ID = CEX.CNT_ID
-                WHERE REC.CNT_ID NOT IN (SELECT DISTINCT CNT_ID FROM TMP_REC_CONTRATOS_BAJA_MOT);
-                EXCEPTION
-                WHEN NO_DATA_FOUND THEN
-                    dbms_output.put_line('No se han encontrado datos para el motivo de baja de regularización');
-            end;
+        select 1 from dual
         ]]>
     </entry>
 
     <!-- OBTENCIÓN DEL RESTO DEL MOTIVO OTROS PARA EL RESTO DE CONTRATOS -->
     <entry key="recobro.insert.tmp_rec_contratos_baja_mot.otros.Oracle10gDialect">
         <![CDATA[
-            declare
-                mob_id number;
-            begin
-                SELECT DD_MOB_ID INTO mob_id FROM ${master.schema}.DD_MOB_MOTIVOS_BAJA WHERE DD_MOB_CODIGO = 'OTR' AND BORRADO = 0;
-
-                INSERT INTO TMP_REC_CONTRATOS_BAJA_MOT
-                SELECT REC.CNT_ID, REC.RCF_AGE_ID, mob_id AS DD_MOB_ID
-                FROM TMP_REC_CONTRATOS_BAJA REC
-                WHERE REC.CNT_ID NOT IN (SELECT DISTINCT CNT_ID FROM TMP_REC_CONTRATOS_BAJA_MOT);
-
-                OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_CONTRATOS_BAJA_MOT');
-
-                EXCEPTION
-                WHEN NO_DATA_FOUND THEN
-                    dbms_output.put_line('No se han encontrado datos para el motivo de baja de otros');
-            end;
+        select 1 from dual
         ]]>
     </entry>
 
@@ -2970,43 +2859,48 @@
     <!-- OJO!! FALTA RELLENAR EL RESTO DE CAMPOS DE LA TABLA REC_FICHERO_CONTRATOS_BAJAS -->
     <entry key="recobro.insert.rec_fichero_contratos_bajas.Oracle10gDialect">
         <![CDATA[
-        declare
         begin
+
+        INSERT INTO REC_FICHERO_CONTRATOS_BAJAS
+        SELECT DISTINCT TMP.RCF_AGE_ID, CRC.CRC_ID_ENVIO AS ID_ENVIO
+             , TRUNC(SYSDATE) AS FECHA_BAJA
+             , DECODE(MOB.DD_MOB_CODIGO
+                     ,'EXC' ,'EXC' --CNT EXCEPTUADO
+                     ,'EXP' ,'EXC' --PER EXCEPTUADA
+                     ,'AER' ,'FG'  --ASIGNACION ERRONEA
+                     ,'FDC' ,'FG'  --FIN DE CAMPAÑA
+                     ,'FP'  ,'FG'  --FIN PLAZO
+                     ,'FG'  ,'FG'  --FIN GESTION
+                     ,'FCRC','FG'  --FIN CRC
+                     ,'CAN' ,'REG' --CANCELADO
+                     ,'NR'  ,'REG' --NO RECIBIDO
+                     ,'BA'  ,'REG' --BAJA APROVISIONAMIENTO
+                     ,'REG' ,'REG' --REGULARIZADO
+                     ,'OTR' ,'REG' --OTROS
+                     ,'REG') AS MOTIVO_BAJA
+             , NULL FECHA_EXTRA1
+             , NULL FECHA_EXTRA2
+             , NULL FECHA_EXTRA3
+             , NULL FECHA_EXTRA4
+             , NULL FECHA_EXTRA5
+             , NULL NUMERO_EXTRA1
+             , NULL NUMERO_EXTRA2
+             , NULL NUMERO_EXTRA3
+             , NULL NUMERO_EXTRA4
+             , NULL NUMERO_EXTRA5
+             , NULL LCHAR_EXTRA1
+             , NULL LCHAR_EXTRA2
+             , NULL LCHAR_EXTRA3
+             , NULL LCHAR_EXTRA4
+             , NULL LCHAR_EXTRA5
+        FROM TMP_REC_CONTRATOS_BAJA  TMP
+             , CRC_CICLO_RECOBRO_CNT   CRC
+             , ${master.schema}.DD_MOB_MOTIVOS_BAJA MOB
+         WHERE TMP.ID_ENVIO  = CRC.CRC_ID_ENVIO
+           AND CRC.DD_MOB_ID = MOB.DD_MOB_ID(+);
+
         COMMIT;
-        INSERT /*+ APPEND PARALLEL(REC_FICHERO_CONTRATOS_BAJAS, 16) PQ_DISTRIBUTE(REC_FICHERO_CONTRATOS_BAJAS, NONE) */ INTO REC_FICHERO_CONTRATOS_BAJAS
-        WITH CRC AS (
-          SELECT CNT_ID, RCF_AGE_ID, CRC_ID_ENVIO FROM (
-            SELECT /*+ PARALLEL */ CRC.CRC_ID_ENVIO, CRC.CNT_ID, CRE.RCF_AGE_ID, ROW_NUMBER() OVER (PARTITION BY CRC.CNT_ID, CRE.RCF_AGE_ID ORDER BY CRC_FECHA_ALTA DESC) N
-            FROM CRC_CICLO_RECOBRO_CNT CRC
-                JOIN CRE_CICLO_RECOBRO_EXP CRE ON CRC.CRE_ID = CRE.CRE_ID
-            WHERE EXISTS (SELECT 1 FROM TMP_REC_CONTRATOS_BAJA_MOT B WHERE B.CNT_ID = CRC.CNT_ID AND B.RCF_AGE_ID = CRE.RCF_AGE_ID)
-                AND CRC.CRC_ID_ENVIO IS NOT NULL
-            ) WHERE N = 1
-        )
-        SELECT DISTINCT
-          TMP.RCF_AGE_ID
-            , CRC.CRC_ID_ENVIO ID_ENVIO
-            , TRUNC(SYSDATE) FECHA_BAJA
-            , MOB.DD_MOB_CODIGO MOTIVO_BAJA
-          , NULL FECHA_EXTRA1
-          , NULL FECHA_EXTRA2
-            , NULL FECHA_EXTRA3
-            , NULL FECHA_EXTRA4
-            , NULL FECHA_EXTRA5
-            , NULL NUMERO_EXTRA1
-            , NULL NUMERO_EXTRA2
-          , NULL NUMERO_EXTRA3
-          , NULL NUMERO_EXTRA4
-          , NULL NUMERO_EXTRA5
-            , NULL LCHAR_EXTRA1
-            , NULL LCHAR_EXTRA2
-            , NULL LCHAR_EXTRA3
-            , NULL LCHAR_EXTRA4
-            , NULL LCHAR_EXTRA5
-        FROM TMP_REC_CONTRATOS_BAJA_MOT TMP
-          JOIN ${master.schema}.DD_MOB_MOTIVOS_BAJA MOB ON TMP.DD_MOB_ID = MOB.DD_MOB_ID
-        JOIN CRC ON TMP.CNT_ID = CRC.CNT_ID AND TMP.RCF_AGE_ID = CRC.RCF_AGE_ID;
-        COMMIT;
+
         end;
         ]]>
     </entry>

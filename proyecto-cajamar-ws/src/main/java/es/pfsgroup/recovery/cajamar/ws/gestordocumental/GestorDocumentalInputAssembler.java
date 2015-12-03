@@ -58,9 +58,9 @@ public class GestorDocumentalInputAssembler {
 	    input.setLOCALIZADOR(inputDto.getLocalizador());
 	    input.setOPERACION(inputDto.getOperacion());
 		input.setORIGEN(inputDto.getOrigen());
-		input.setRUTAFICHEROREMOTO(input.getRUTAFICHEROREMOTO());
+		input.setRUTAFICHEROREMOTO(inputDto.getRutaFicheroRemoto());
 		input.setTIPOASOCIACION(inputDto.getTipoAsociacion());
-		input.setTIPOASOCIACION2(input.getTIPOASOCIACION2());
+		input.setTIPOASOCIACION2(inputDto.getTipoAsociacion2());
 		input.setTIPOASOCIACION3(inputDto.getTipoAsociacion3());
 		input.setTIPODOCUMENTO(inputDto.getTipoDocumento());
 	    

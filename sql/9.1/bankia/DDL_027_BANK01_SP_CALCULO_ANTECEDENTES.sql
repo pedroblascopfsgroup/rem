@@ -1,6 +1,6 @@
---/*
+ï»¿--/*
 --##########################################
---## AUTOR=Rubén Rovira
+--## AUTOR=Ruben Rovira
 --## FECHA_CREACION=20151202
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.1.18-bk
@@ -8,15 +8,15 @@
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Calculo de reincidencias a nivel de persona y contrato.
---##            - PER: Contando ciclos de recobro y obviando los que tienen alta y baja en el mismo día.
+--##            - PER: Contando ciclos de recobro y obviando los que tienen alta y baja en el mismo dia.
 --##                   Inicializa el contador a 0 para nuevos id_per.
 --##            - CNT: Aumenta el contador en 1 si el cnt se aprovisiona como irregular en fecha de proceso
---##                   y no constaba así el día anterior. 
+--##                   y no constaba asi el dia anterior. 
 --##                   Inicializa a 1 si es nuevo irregular.
---## INSTRUCCIONES: Ejecución diaria. 
+--## INSTRUCCIONES: Ejecucion diaria. 
 --##                Debe inicializarse desde la fecha que queramos mediante el procedure: CALCULO_DIARIO_REINCID_CNT
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Version inicial
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -35,7 +35,7 @@ create or replace PROCEDURE CALCULO_ANTECEDENTES AUTHID CURRENT_USER AS
 
 BEGIN
 
-    DBMS_OUTPUT.PUT_LINE('[INFO] '||to_char(sysdate,'HH24:MI:SS')||' - Inicio de Actualización de Antecentes.');
+    DBMS_OUTPUT.PUT_LINE('[INFO] '||to_char(sysdate,'HH24:MI:SS')||' - Inicio de Actualizacion de Antecentes.');
 
     -- Limpiamos temporal
     v_msql := 'DELETE FROM '||v_esquema||'.TMP_ANTECEDENTES_PER';
@@ -142,7 +142,7 @@ EXCEPTION
   WHEN OTHERS THEN
     ERR_NUM := SQLCODE;
     ERR_MSG := SQLERRM;
-    DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+    DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(ERR_NUM));
     DBMS_OUTPUT.put_line(ERR_MSG);
     DBMS_OUTPUT.put_line(v_msql);
     ROLLBACK;

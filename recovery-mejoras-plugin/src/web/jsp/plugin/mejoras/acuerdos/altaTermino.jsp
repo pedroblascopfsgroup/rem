@@ -7,8 +7,13 @@
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms" %>
 <fwk:page>
 
-	var codigoTipoAcuerdoDacion = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo.TIPO_DACION" />';
-	var codigoTipoAcuerdoDacionExp = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo.TIPO_DACION_EXP" />';
+	var codigoTipoDacionCompra = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo.TIPO_DACION_COMPRA" />';
+	var codigoTipoDacionEnPago = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo.TIPO_DACION_EN_PAGO" />';
+	var codigoTipoDacionParaPago = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo.TIPO_DACION_PARA_PAGO" />';
+	var codigoTipoDacionCompraVenta = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo.TIPO_DACION_COMPRA_VENTA" />';
+	var codigoTipoDacionCompraVentaDacion = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo.TIPO_DACION_COMPRA_VENTA_DACION" />';
+	
+	
 	var codigoSubtipoEstandar = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDSubTipoAcuerdo.SUBTIPO_ESTANDAR" />';
 
 	var labelStyle = 'width:185px;font-weight:bolder",width:375';
@@ -119,10 +124,12 @@
 	
 		
 	var creaCamposDynamics = function (cmp) {
-		debugger;
 			if (cmp.getValue()!='' && 
-				(cmp.getStore().getById(cmp.getValue()).data['codigo']==codigoTipoAcuerdoDacion ||
-				 cmp.getStore().getById(cmp.getValue()).data['codigo']==codigoTipoAcuerdoDacionExp) ){
+				(cmp.getStore().getById(cmp.getValue()).data['codigo']==codigoTipoDacionCompra ||
+				 cmp.getStore().getById(cmp.getValue()).data['codigo']==codigoTipoDacionEnPago ||
+				 cmp.getStore().getById(cmp.getValue()).data['codigo']==codigoTipoDacionParaPago ||
+				 cmp.getStore().getById(cmp.getValue()).data['codigo']==codigoTipoDacionCompraVenta ||
+				 cmp.getStore().getById(cmp.getValue()).data['codigo']==codigoTipoDacionCompraVentaDacion) ){
 			bienesFieldSet.show();
 		} else {
 			bienesFieldSet.hide();

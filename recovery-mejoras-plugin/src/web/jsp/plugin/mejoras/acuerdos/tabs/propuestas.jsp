@@ -401,7 +401,6 @@
 	    		store.on('load', function(){  
 					for (var i=0; i < store.data.length; i++) {
 						datos = store.getAt(i);
-						alert(datos.get('codigoTipoAcuerdo'));
 						if(datos.get('codigoTipoAcuerdo') == "PLAN_PAGO"){
 							if(Boolean(estadoVigente)){
 								btnCumplimientoAcuerdo.setVisible(true);

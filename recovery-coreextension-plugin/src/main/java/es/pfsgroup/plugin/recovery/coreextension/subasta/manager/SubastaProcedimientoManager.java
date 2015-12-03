@@ -372,41 +372,7 @@ public class SubastaProcedimientoManager implements SubastaProcedimientoApi {
 				comboComite =  val.getValor();
 			}
 		}	
-		
-		//C - H
-
-		Boolean cesionRemateRequierePreparacion = false;
-		Boolean cesionRemateNoRequierePreparacion = false;
-		Boolean todosBienesCesionRemate = true;
-		List<Bien> listadoBienes = getBienesSubastaByPrcId(prc.getId());
-		for(Bien b : listadoBienes){
-			if(b instanceof NMBBien){
-				NMBBien bien = (NMBBien) b;
-				if(!Checks.esNulo(bien.getAdjudicacion().getCesionRemate()) && bien.getAdjudicacion().getCesionRemate() && "01".equals(comboComite)){
-					cesionRemateRequierePreparacion = true;
-				}
-				if(!Checks.esNulo(bien.getAdjudicacion().getCesionRemate()) && bien.getAdjudicacion().getCesionRemate() && "02".equals(comboComite)){
-					cesionRemateNoRequierePreparacion = true;
-				}
-				if(!Checks.esNulo(bien.getAdjudicacion().getEntidadAdjudicataria())){
-					if(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo().compareTo(DDEntidadAdjudicataria.ENTIDAD) == 0){
-						bienAdjuEntidad = true;
-					}
-					else{
-						bienAdjuTerceroFondo = true;
-					}
-				}
-				if(todosBienesCesionRemate && !Checks.esNulo(bien.getAdjudicacion().getCesionRemate()) && bien.getAdjudicacion().getCesionRemate()){
-					todosBienesCesionRemate = true;
-				}
-				else{
-					todosBienesCesionRemate = false;
-				}
-			}
-		}
-		
-		//Cesion de remate
-		
+			
 		
 		/////////////////
 		if("02".equals(celebrada)){		
@@ -421,6 +387,40 @@ public class SubastaProcedimientoManager implements SubastaProcedimientoApi {
 				return resultado;
 			}
 		} else{
+			
+			//C - H
+
+			Boolean cesionRemateRequierePreparacion = false;
+			Boolean cesionRemateNoRequierePreparacion = false;
+			Boolean todosBienesCesionRemate = true;
+			List<Bien> listadoBienes = getBienesSubastaByPrcId(prc.getId());
+			for(Bien b : listadoBienes){
+				if(b instanceof NMBBien){
+					NMBBien bien = (NMBBien) b;
+					if(!Checks.esNulo(bien.getAdjudicacion()) && !Checks.esNulo(bien.getAdjudicacion().getCesionRemate()) && bien.getAdjudicacion().getCesionRemate() && "01".equals(comboComite)){
+						cesionRemateRequierePreparacion = true;
+					}
+					if(!Checks.esNulo(bien.getAdjudicacion()) && !Checks.esNulo(bien.getAdjudicacion().getCesionRemate()) && bien.getAdjudicacion().getCesionRemate() && "02".equals(comboComite)){
+						cesionRemateNoRequierePreparacion = true;
+					}
+					if(!Checks.esNulo(bien.getAdjudicacion()) && !Checks.esNulo(bien.getAdjudicacion().getEntidadAdjudicataria())){
+						if(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo().compareTo(DDEntidadAdjudicataria.ENTIDAD) == 0){
+							bienAdjuEntidad = true;
+						}
+						else{
+							bienAdjuTerceroFondo = true;
+						}
+					}
+					if(todosBienesCesionRemate && !Checks.esNulo(bien.getAdjudicacion()) && !Checks.esNulo(bien.getAdjudicacion().getCesionRemate()) && bien.getAdjudicacion().getCesionRemate()){
+						todosBienesCesionRemate = true;
+					}
+					else{
+						todosBienesCesionRemate = false;
+					}
+				}
+			}
+			
+			//Cesion de remate
 			
 			//C - Preparar cesión remate
 			//D - Cesión de remate

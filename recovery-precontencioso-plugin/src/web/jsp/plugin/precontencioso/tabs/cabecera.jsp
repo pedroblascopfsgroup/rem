@@ -339,6 +339,7 @@
 			procedimientoJuzgado.label.update('<s:message code="plugin.precontencioso.cabecera.nAuto" text="**Número de Auto"/>');
 
 			comprobarExpedienteEditable();
+			comprobarUsuarioGestoria();
 
 		} else {
 			panelProcedimientoPrecontencioso.hide();
@@ -376,6 +377,20 @@
 					Ext.Element.get('prc-btnAccionesPrecontencioso-padre').show();
 				}
 				</sec:authorize>
+			}
+		});
+	}
+	
+	var comprobarUsuarioGestoria = function(){
+	
+		Ext.Ajax.request({
+			url: page.resolveUrl('expedientejudicial/isGestoria')
+			,params: {idProcedimiento:data.id}
+			,method: 'POST'
+			,success: function (result, request)
+			{
+				var r = Ext.util.JSON.decode(result.responseText);
+				data.esGestoria = r.esGestoria;
 			}
 		});
 	}

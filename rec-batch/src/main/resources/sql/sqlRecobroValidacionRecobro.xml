@@ -1,13 +1,13 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-	<entry key="esquemas-01.unicoEsquemaLiberadoValidator.Oracle9iDialect">
-		<![CDATA[
+    <entry key="esquemas-01.unicoEsquemaLiberadoValidator.Oracle10gDialect">
+        <![CDATA[
         SELECT 'NO EXISTE UN ÚNICO ESQUEMA CON ESTADO LIBERADO' AS ERROR_FIELD,
-        	ESQ.RCF_ESQ_ID AS ENTITY_CODE         
-       	 	FROM RCF_ESQ_ESQUEMA ESQ
-       	 	JOIN RCF_DD_EES_ESTADO_ESQUEMA EST ON ESQ.RCF_DD_EES_ID = EST.RCF_DD_EES_ID
-        	WHERE EST.RCF_DD_EES_CODIGO = ${ddEstadoEsquemas.Liberado.codigo} AND
-        	ESQ.BORRADO = ${borrado.no.id}
-		]]>
-	</entry>    	
+            ESQ.RCF_ESQ_ID AS ENTITY_CODE
+            FROM RCF_ESQ_ESQUEMA ESQ
+            JOIN RCF_DD_EES_ESTADO_ESQUEMA EST ON ESQ.RCF_DD_EES_ID = EST.RCF_DD_EES_ID
+            WHERE EST.RCF_DD_EES_CODIGO = ${ddEstadoEsquemas.Liberado.codigo} AND
+            ESQ.BORRADO = ${borrado.no.id}
+        ]]>
+    </entry>
  </properties>

@@ -20,7 +20,7 @@
 	tipoDeCorrector.setValue('${modeloFacturacion.tipoCorrector.codigo}');	
 		
 	<pfs:numberfield name="objetivoRecobro" labelKey="plugin.recobroConfig.modeloFacturacion.corrector.objetivoDeRecobro" 
-		label="**Objetivo de recobro" value="${modeloFacturacion.objetivoRecobro}" obligatory="true"/>
+		label="**Objetivo de eficacia" value="${modeloFacturacion.objetivoRecobro}" obligatory="true" allowDecimals="true"/>
 	
 	objetivoRecobro.setMaxValue(100);
 	

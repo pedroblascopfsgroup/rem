@@ -4142,14 +4142,14 @@ public class EditBienController {
 		
 		final StringBuilder sbRespuesta = new StringBuilder();
 		if(sbErrorValidacion.length() > 0){
-			sbRespuesta.append("Los campos tipo de inmueble, provincia, localidad, n�mero de finca y n�mero de registro son obligatorios para solicitar el n�mero de activo de los siguientes bienes: ");
+			sbRespuesta.append("Los campos tipo de inmueble, provincia, localidad, n\u00FAmero de finca y n\u00FAmero de registro son obligatorios para solicitar el n\u00FAmero de activo de los siguientes bienes: ");
 			sbErrorValidacion.setLength(sbErrorValidacion.length() -1);
 			sbErrorValidacion.append(". \n");
 			sbRespuesta.append(sbErrorValidacion);
 		}			
 		
 		if(sbErrorSolicitud.length() > 0){
-			sbRespuesta.append("No se pudo obtener el n�mero de activo de los siguientes bienes: ");
+			sbRespuesta.append("No se pudo obtener el n\u00FAmero de activo de los siguientes bienes: ");
 			sbErrorSolicitud.setLength(sbErrorSolicitud.length() -1);
 			sbErrorSolicitud.append(". \n");
 			sbRespuesta.append(sbErrorSolicitud);			

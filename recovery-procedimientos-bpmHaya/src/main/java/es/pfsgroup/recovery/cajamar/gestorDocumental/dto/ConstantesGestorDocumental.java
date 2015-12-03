@@ -23,7 +23,7 @@ public class ConstantesGestorDocumental {
     {
         tipoAsociacionPorEntidad = new HashMap<String, String>();
         tipoAsociacionPorEntidad.put(DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, GESTOR_DOCUMENTAL_TIPO_ASOCIACION_EXPEDIENTE);
-        tipoAsociacionPorEntidad.put(DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE, GESTOR_DOCUMENTAL_TIPO_ASOCIACION_PERSONA);
+        tipoAsociacionPorEntidad.put(DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, GESTOR_DOCUMENTAL_TIPO_ASOCIACION_PERSONA);
         tipoAsociacionPorEntidad.put(DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, GESTOR_DOCUMENTAL_TIPO_ASOCIACION_CONTRATO);
         tipoAsociacionPorEntidad.put(DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, GESTOR_DOCUMENTAL_TIPO_ASOCIACION_ASUNTO);
         tipoAsociacionPorEntidad.put(DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO, GESTOR_DOCUMENTAL_TIPO_ASOCIACION_PROCEDIMIENTO);

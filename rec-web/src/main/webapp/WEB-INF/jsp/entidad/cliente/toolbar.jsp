@@ -86,6 +86,7 @@ function(entidad,page){
 				,editable: false
 				,forceSelection:true
 				,itemId: 'cmbArqRecuId'
+				,listWidth: '500'
 	});
 	cmbArq.on('select', function() { btnNext.setDisabled(false); });              
               

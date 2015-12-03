@@ -140,14 +140,13 @@
 			,method: 'POST'
 			,params:{idTipoAcuerdo:cmp.getValue()} 
 			,success: function (result, request){
-						debugger;
 				var cmpLft = Ext.getCmp('dinamicElementsLeft');
-			   	if (cmpLft) {
+			   	if (cmpLft && cmpLft.el) {
 					cmpLft.el.remove();
 			   	}
 			   	
 			  	var cmpRgt = Ext.getCmp('dinamicElementsRight');
-			   	if (cmpRgt) {
+			   	if (cmpRgt && cmpRgt.el) {
 					cmpRgt.el.remove();
 			   	}
 				

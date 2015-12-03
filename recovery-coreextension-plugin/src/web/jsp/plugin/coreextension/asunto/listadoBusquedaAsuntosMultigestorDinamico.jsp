@@ -100,7 +100,6 @@
 				}
 				parametros['params'] = paramAux;
 						
-				debugger;
 						
 				//var flow='asuntos/exportAsuntos';
 		        var flow='plugin/coreextension/asunto/core.exportAsuntos';
@@ -108,7 +107,6 @@
 		               
 		        parametros.tipoSalida='<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.SALIDA_XLS" />';
 		        
-		        debugger;
 				
 				Ext.Ajax.request({
 	            	url: page.resolveUrl('extasunto/exportacionAsuntosCount')
@@ -141,7 +139,6 @@
 	                	tipoSalida: parametros.tipoSalida
 	                }
 	                ,success: function (result, request){
-	                	debugger;
 	                    var r = Ext.util.JSON.decode(result.responseText);
 	                    
 	                    if(r.success) {       
@@ -150,7 +147,6 @@
 						}   
 					}
 					,failure: function (result, request){
-	                	debugger;
 	                }
 				});
             } else {

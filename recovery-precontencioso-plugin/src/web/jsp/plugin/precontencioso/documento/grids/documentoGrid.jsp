@@ -98,6 +98,7 @@ var cmDocumento = [
 var validacion=false;
 var incluirDocButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.incluirDocumento" text="**Incluir Documento" />'
+		,id: 'incluirDocButton'
 		,iconCls : 'icon_mas'
 		,disabled : false
 		,cls: 'x-btn-text-icon'
@@ -125,6 +126,7 @@ var incluirDocButton = new Ext.Button({
 	
 var excluirDocButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.excluirDocumentos" text="**Excluir Documentos" />'
+		,id: 'excluirDocButton'
 		,iconCls : 'icon_menos'
 		,disabled : true
 		,cls: 'x-btn-text-icon'
@@ -171,6 +173,7 @@ var getParametrosExcluirDescartarSolicitarDocs = function() {
 	
 var descartarDocButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.descartarDocumentos" text="**Descartar Documentos" />'
+		,id: 'descartarDocButton'
 		,iconCls : 'icon_cancel'
 		,disabled : true
 		,cls: 'x-btn-text-icon'
@@ -202,6 +205,7 @@ var descartarDocButton = new Ext.Button({
 var validacionEditar=false;	
 var solicitarDocButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.crearSolicitudes" text="**Crear Solicitudes" />'
+		,id: 'solicitarDocButton'
 		,iconCls : 'icon_mas'
 		,disabled : true
 		,cls: 'x-btn-text-icon'
@@ -255,6 +259,7 @@ var getParametrosAnularSolicitudes = function() {
 
 var anularSolicitudesButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.anularSolicitudes" text="**Anular Solicitudes" />'
+		,id: 'anularSolicitudesButton'
 		,iconCls : 'icon_menos'
 		,disabled : true
 		,cls: 'x-btn-text-icon'
@@ -299,6 +304,7 @@ var anularSolicitudesButton = new Ext.Button({
 var validacionEstado=false;
 var informarDocButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.informarDocumento" text="**Informar Documento" />'
+		,id: 'informarDocButton'
 		,iconCls : 'icon_edit'
 		,disabled : true
 		,cls: 'x-btn-text-icon'
@@ -336,6 +342,7 @@ var informarDocButton = new Ext.Button({
 var validacionEditar=false;	
 var editarDocButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.editarDocumento" text="**Editar Documento" />'
+		,id: 'editarDocButton'
 		,iconCls : 'icon_edit'
 		,disabled : true
 		,cls: 'x-btn-text-icon'
@@ -659,6 +666,7 @@ Ext.namespace('Ext.ux.plugins');
 
 	var botonRefresh = new Ext.Button({
 			text : 'Refresh'
+			,id: 'botonRefreshDoc'
 			,iconCls : 'icon_refresh'
 			,handler:function(){
 				refrescarDocumentosGrid();
@@ -696,4 +704,17 @@ gridDocumentos.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {
 
 var refrescarDocumentosGrid = function() {
 	storeDocumentos.webflow({idProcedimientoPCO: data.id});
+}
+
+var ponerVisibilidadBotonesDoc = function(visibles, invisibles) {
+	for (var i=0; i < visibles.length; i++){
+		if (typeof(Ext.getCmp(visibles[i].boton)) != 'undefined') {
+			Ext.getCmp(visibles[i].boton).setVisible(true);
+		}
+	}
+	for (var i=0; i < invisibles.length; i++){
+		if (typeof(Ext.getCmp(visibles[i].boton)) != 'undefined') {
+			Ext.getCmp(invisibles[i].boton).setVisible(false);
+		}
+	}
 }

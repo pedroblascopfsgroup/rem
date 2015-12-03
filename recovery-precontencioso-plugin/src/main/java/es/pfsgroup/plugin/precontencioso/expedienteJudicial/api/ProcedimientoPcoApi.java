@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.api;
 
 import java.util.List;
+import java.util.Map;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.asunto.model.Procedimiento;
@@ -27,6 +28,7 @@ public interface ProcedimientoPcoApi {
 	public static final String BO_PCO_INICIALIZAR = "plugin.precontencioso.inicializarPco";
 	public static final String BO_PCO_CREAR_PROCEDIMIENTO_PCO = "plugin.precontencioso.crearProcedimientoPco";
 	public static final String BO_PCO_EXPEDIENTE_COMPROBAR_EDICION_EXPEDIENTE = "plugin.precontencioso.isExpedienteEditable";
+	public static final String BO_PCO_EXPEDIENTE_VISIBILIDAD_BOTONES_PCO = "plugin.precontencioso.getVisibilidadBotonesPrecontencioso";
 	/**
 	 * Obtiene el historico de estados de un procedimientoPCO mediante un id procedimiento.
 	 * 
@@ -133,4 +135,8 @@ public interface ProcedimientoPcoApi {
 	 * @return
 	 */
 	public boolean isExpedienteEditable(Long idProcedimiento);	
+
+	@BusinessOperationDefinition(BO_PCO_EXPEDIENTE_VISIBILIDAD_BOTONES_PCO)
+	public List<String> getVisibilidadBotonesDocumentosPrecontencioso(String seccion, boolean visible);
+	
 }

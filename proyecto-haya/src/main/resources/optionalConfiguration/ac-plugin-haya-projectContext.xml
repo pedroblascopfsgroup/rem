@@ -316,6 +316,90 @@
 		<property name="recovery">
 			<value>HAYA</value>
 		</property>
+		<property name="visibilidadBotones">
+			<map>
+				<entry key="defecto">
+					<map>
+						<entry key="botonesDocumentos">
+							<map>
+								<entry key="incluirDocButton" value="1" />
+								<entry key="excluirDocButton" value="1" />
+								<entry key="descartarDocButton" value="1" />
+								<entry key="editarDocButton" value="1" />
+								<entry key="anularSolicitudesButton" value="1" />
+								<entry key="solicitarDocButton" value="1" />
+								<entry key="informarDocButton" value="1" />
+								<entry key="botonRefreshDoc" value="1" />
+							</map>
+						</entry>
+						<entry key="botonesLiquidaciones">
+							<map>
+								<entry key="btnSolicitar" value="1" />
+								<entry key="btnEditarValores" value="1" />
+								<entry key="btnConfirmar" value="1" />
+								<entry key="btnVisar" value="0" />
+								<entry key="btnDescartar" value="1" />
+								<entry key="btnGenerar" value="1" />
+								<entry key="botonRefreshLiq" value="1" />
+							</map>
+						</entry>
+						<entry key="botonesBurofaxes">
+							<map>
+								<entry key="btnAddPersona" value="1" />
+								<entry key="btnEnviar" value="1" />
+								<entry key="btnNuevaDir" value="1" />
+								<entry key="btnEditar" value="1" />
+								<entry key="btnPreparar" value="1" />
+								<entry key="btnCancelar" value="1" />
+								<entry key="btnNotificar" value="0" />
+								<entry key="btnDescargarBurofax" value="1" />
+								<entry key="botonRefreshBur" value="1" />
+							</map>
+						</entry>
+					</map>
+				</entry>
+				<entry key="HAYA">
+					<map>
+						<entry key="botonesDocumentos">
+							<map>
+								<entry key="incluirDocButton" value="1" />
+								<entry key="excluirDocButton" value="1" />
+								<entry key="descartarDocButton" value="1" />
+								<entry key="editarDocButton" value="1" />
+								<entry key="anularSolicitudesButton" value="1" />
+								<entry key="solicitarDocButton" value="1" />
+								<entry key="informarDocButton" value="1" />
+								<entry key="botonRefreshDoc" value="1" />
+							</map>
+						</entry>
+						<entry key="botonesLiquidaciones">
+							<map>
+								<entry key="btnSolicitar" value="0" />
+								<entry key="btnEditarValores" value="1" />
+								<entry key="btnConfirmar" value="1" />
+								<entry key="btnVisar" value="1" />
+								<entry key="btnDescartar" value="1" />
+								<entry key="btnGenerar" value="0" />
+								<entry key="botonRefreshLiq" value="1" />
+							</map>
+						</entry>
+						<entry key="botonesBurofaxes">
+							<map>
+								<entry key="btnAddPersona" value="1" />
+								<entry key="btnEnviar" value="1" />
+								<entry key="btnNuevaDir" value="1" />
+								<entry key="btnEditar" value="1" />
+								<entry key="btnPreparar" value="1" />
+								<entry key="btnCancelar" value="1" />
+								<entry key="btnNotificar" value="1" />
+								<entry key="btnDescargarBurofax" value="1" />
+								<entry key="botonRefreshBur" value="1" />
+							</map>
+						</entry>
+					</map>
+				</entry>
+			</map>
+		</property>
 	</bean>
 
 	<alias name="nmbCommonProjectContextHAYA" alias="nmbCommonProjectContext"/>

@@ -19,7 +19,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
-import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
+import es.capgemini.pfs.tareaNotificacion.model.DDEntidadAcuerdo;
 
 /**
  * Entidad Tipo Acuerdo.
@@ -39,7 +39,7 @@ public class DDTipoAcuerdo implements Dictionary, Auditable {
     public static final String SIN_PROPUESTA = "-1";
     
     public static final String TIPO_DACION = "DA_CV";
-    public static final String TIPO_DACION_EXP = "EXP_01";
+    public static final String TIPO_DACION_EXP = "01";
 
     @Id
     @Column(name = "DD_TPA_ID")
@@ -56,9 +56,9 @@ public class DDTipoAcuerdo implements Dictionary, Auditable {
     @Column(name = "DD_TPA_DESCRIPCION_LARGA")
     private String descripcionLarga;
     
-    @OneToOne(targetEntity = DDTipoEntidad.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_EIN_ID")
-    private DDTipoEntidad tipoEntidad;
+    @OneToOne(targetEntity = DDEntidadAcuerdo.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ENT_ACU_ID")
+    private DDEntidadAcuerdo tipoEntidad;
 
     @Embedded
     private Auditoria auditoria;
@@ -156,11 +156,11 @@ public class DDTipoAcuerdo implements Dictionary, Auditable {
         this.version = version;
     }
 
-	public DDTipoEntidad getTipoEntidad() {
+	public DDEntidadAcuerdo getTipoEntidad() {
 		return tipoEntidad;
 	}
 
-	public void setTipoEntidad(DDTipoEntidad tipoEntidad) {
+	public void setTipoEntidad(DDEntidadAcuerdo tipoEntidad) {
 		this.tipoEntidad = tipoEntidad;
 	}
     

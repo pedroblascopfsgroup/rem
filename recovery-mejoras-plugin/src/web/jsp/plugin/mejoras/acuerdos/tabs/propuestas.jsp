@@ -406,7 +406,7 @@
 								btnCumplimientoAcuerdo.setVisible(true);
 							}
 							cumplimientoAcuerdo = recargarCumplimientoAcuerdo(idAcuerdo);
-							terminosTab.add(cumplimientoAcuerdo);
+							terminosExpTab.add(cumplimientoAcuerdo);
 							
 						}
 					}
@@ -429,6 +429,12 @@
 		return panTerminosExp;
 		
 	};	
+	
+	var recargarCumplimientoAcuerdo = function(idAcuerdo){
+		<%@ include file="/WEB-INF/jsp/plugin/mejoras/acuerdos/listadoCumplimientoAcuerdo.jsp" %>	
+		var cumplimiento = crearCumplimiento(idAcuerdo);
+		return cumplimiento;
+	};
 	
 	
 	panel.getValue = function(){

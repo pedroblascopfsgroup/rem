@@ -361,7 +361,7 @@
 					btnProponerAcuerdo.setVisible(true);
 				}
 
-				if(panel.esGestorSupervisorActual() || (idProponente == panel.getUsuarioLogado() && codigoEstado == app.codigoAcuerdoEnConformacion)){
+				if((panel.esGestorSupervisorActual() && codigoEstado != app.codigoAcuerdoRechazado && codigoEstado != app.codigoAcuerdoCancelado && codigoEstado != app.codigoAcuerdoFinalizado &&  codigoEstado != app.codigoAcuerdoIncumplido && codigoEstado != app.codigoAcuerdoCumplido) || (idProponente == panel.getUsuarioLogado() && codigoEstado == app.codigoAcuerdoEnConformacion)){
 					noPuedeModificar = false;
 				}
 				
@@ -406,7 +406,7 @@
 								btnCumplimientoAcuerdo.setVisible(true);
 							}
 							cumplimientoAcuerdo = recargarCumplimientoAcuerdo(idAcuerdo);
-							terminosTab.add(cumplimientoAcuerdo);
+							terminosExpTab.add(cumplimientoAcuerdo);
 							
 						}
 					}
@@ -429,6 +429,12 @@
 		return panTerminosExp;
 		
 	};	
+	
+	var recargarCumplimientoAcuerdo = function(idAcuerdo){
+		<%@ include file="/WEB-INF/jsp/plugin/mejoras/acuerdos/listadoCumplimientoAcuerdo.jsp" %>	
+		var cumplimiento = crearCumplimiento(idAcuerdo);
+		return cumplimiento;
+	};
 	
 	
 	panel.getValue = function(){

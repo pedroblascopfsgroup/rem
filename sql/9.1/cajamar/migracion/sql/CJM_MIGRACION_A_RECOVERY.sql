@@ -2505,7 +2505,7 @@ FROM (
     v_sql:= 'select count(*) from all_indexes where index_name=''IDX_BIE_CODIGO_EXTERNO'' and table_name=''BIE_BIEN'' and table_owner = ''' || V_ESQUEMA || '''';
     EXECUTE IMMEDIATE v_sql INTO existe;
     IF (existe=0) THEN
-       EXECUTE IMMEDIATE('CREATE INDEX IDX_BIE_CODIGO_EXTERNO ON '||V_ESQUEMA||'.BIE_BIEN(BIE_CODIGO_EXTERNO) ');
+       EXECUTE IMMEDIATE('CREATE INDEX IDX_BIE_CODIGO_EXTERNO ON '||V_ESQUEMA||'.BIE_BIEN (BIE_CODIGO_EXTERNO) ');
     END IF;
     
     EXECUTE IMMEDIATE('analyze table '||V_ESQUEMA||'.BIE_BIEN compute statistics FOR ALL INDEXES'); 
@@ -2574,6 +2574,14 @@ FROM (
     -- PRB_PCR_BIE
     ----------------
 
+    EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.BIE_BIEN COMPUTE STATISTICS');
+	DBMS_OUTPUT.PUT_LINE('[WARN-ACC] - '||to_char(sysdate,'HH24:MI:SS')||'  BIE_BIEN Analizada');
+    EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.MIG_MAESTRA_HITOS COMPUTE STATISTICS');
+	DBMS_OUTPUT.PUT_LINE('[WARN-ACC] - '||to_char(sysdate,'HH24:MI:SS')||'  MIG_MAESTRA_HITOS Analizada');	
+    EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_BIENES COMPUTE STATISTICS');
+	DBMS_OUTPUT.PUT_LINE('[WARN-ACC] - '||to_char(sysdate,'HH24:MI:SS')||'  MIG_PROCEDIMIENTOS_BIENES Analizada');		
+    EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS COMPUTE STATISTICS');
+	DBMS_OUTPUT.PUT_LINE('[WARN-ACC] - '||to_char(sysdate,'HH24:MI:SS')||'  PRC_PROCEDIMIENTOS Analizada');		
 
     EXECUTE IMMEDIATE ('
     INSERT INTO '||V_ESQUEMA||'.PRB_PRC_BIE
@@ -2589,7 +2597,7 @@ FROM (
             SELECT '||V_ESQUEMA||'.S_PRB_PRC_BIE.NEXTVAL AS PRB_ID,
                    PRC_ID,
                    BIE_ID,
-                   1 AS DD_SGB_ID, -- SOLVENCIA
+                   1 AS DD_SGB_ID, 
                    '''||USUARIO||''' AS USUARIOCREAR,
                    TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'') AS FECHACREAR,
                    SYS_GUID() as SYS_GUID
@@ -2597,7 +2605,7 @@ FROM (
                    SELECT DISTINCT A.PRC_ID, B.BIE_ID
                    FROM '||V_ESQUEMA||'.MIG_MAESTRA_HITOS A
                       , '||V_ESQUEMA||'.BIE_BIEN B
-                   WHERE A.CD_BIEN IS NOT NULL -- tRAMITES DE aDJUDICACION PARA ARRIBA
+                   WHERE A.CD_BIEN IS NOT NULL 
                      AND A.CD_BIEN = B.BIE_CODIGO_INTERNO
                  UNION
                    SELECT DISTINCT D.PRC_ID, B.BIE_ID 

@@ -38,8 +38,11 @@ public class DDTipoAcuerdo implements Dictionary, Auditable {
     
     public static final String SIN_PROPUESTA = "-1";
     
-    public static final String TIPO_DACION = "DA_CV";
-    public static final String TIPO_DACION_EXP = "01";
+    public static final String TIPO_DACION_COMPRA = "DA_CV";
+    public static final String TIPO_DACION_EN_PAGO = "01";
+    public static final String TIPO_DACION_PARA_PAGO = "03";
+    public static final String TIPO_DACION_COMPRA_VENTA = "10";
+    public static final String TIPO_DACION_COMPRA_VENTA_DACION = "COMPVENDACION";
 
     @Id
     @Column(name = "DD_TPA_ID")

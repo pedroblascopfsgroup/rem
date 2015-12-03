@@ -25,6 +25,7 @@ import es.capgemini.pfs.contrato.model.DDTipoProducto;
 import es.capgemini.pfs.core.api.acuerdo.AcuerdoApi;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.termino.TerminoOperacionesManager;
 import es.capgemini.pfs.termino.dto.ListadoTerminosAcuerdoDto;
 import es.capgemini.pfs.termino.dto.TerminoAcuerdoDto;
@@ -210,12 +211,13 @@ public class MEJAcuerdoController {
 	@RequestMapping
 	public String openAltaTermino(ModelMap map, 
 			@RequestParam(value = "idAcuerdo", required = true) Long idAcuerdo,
-			String contratosIncluidos, Boolean esPropuesta) {
+			String contratosIncluidos, Boolean esPropuesta, String ambito) {
 			
 
 		map.put("contratosIncluidos", contratosIncluidos);		
 		map.put("idAcuerdo", idAcuerdo);
 		map.put("esPropuesta", esPropuesta);
+		map.put("ambito", ambito);
 		
 		if(esPropuesta){
 			Acuerdo acuerdo = genericDao.get(Acuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", idAcuerdo));
@@ -307,6 +309,9 @@ public class MEJAcuerdoController {
 		Acuerdo acuerdo = proxyFactory.proxy(AcuerdoApi.class).getAcuerdoById(id);
 		map.put("acuerdo",acuerdo);
 		
+		List<DDSiNo> ddsino = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDSiNo.class);
+		map.put("ddSiNo", ddsino);
+		
 		return JSP_FINALIZACION_ACUERDO;
 	}
 	
@@ -318,8 +323,8 @@ public class MEJAcuerdoController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String getListTipoAcuerdosData(ModelMap model){
-		List<DDTipoAcuerdo> list = proxyFactory.proxy(MEJAcuerdoApi.class).getListTipoAcuerdo();
+	public String getListTipoAcuerdosData(ModelMap model, String entidad){
+		List<DDTipoAcuerdo> list = proxyFactory.proxy(MEJAcuerdoApi.class).getListTipoAcuerdo(entidad);
 		model.put("data", list);
 		return JSON_LIST_TIPO_ACUERDO;
 	}	

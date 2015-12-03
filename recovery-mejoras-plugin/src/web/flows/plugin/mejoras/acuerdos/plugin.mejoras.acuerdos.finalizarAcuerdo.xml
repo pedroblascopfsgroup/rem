@@ -4,7 +4,7 @@
 
 	<input name="id" type="java.lang.Long" />
     <input name="fechaPago" type="java.lang.String" />
-    <input name="cumplido" type="java.lang.Boolean" />
+    <input name="cumplido" type="java.lang.String" />
     <input name="observaciones" type="java.lang.String" />
     
     <end-state id="finalizarAcuerdo" view="default">

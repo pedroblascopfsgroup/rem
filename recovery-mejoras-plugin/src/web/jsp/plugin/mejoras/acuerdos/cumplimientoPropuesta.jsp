@@ -84,7 +84,7 @@
 								cumplido.setValue(false);
 							}
 							page.webflow({
-								flow: 'editacuerdo/guardaCumplimientoAcuerdo'
+								flow: 'propuestas/guardaCumplimientoAcuerdo'
 								,params: parametros
 								,success : function(){ 
 												page.fireEvent(app.event.DONE); 

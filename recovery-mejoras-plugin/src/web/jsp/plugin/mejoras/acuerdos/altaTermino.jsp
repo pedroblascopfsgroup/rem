@@ -140,14 +140,14 @@
 			,method: 'POST'
 			,params:{idTipoAcuerdo:cmp.getValue()} 
 			,success: function (result, request){
-						debugger;
+				debugger;
 				var cmpLft = Ext.getCmp('dinamicElementsLeft');
-			   	if (cmpLft) {
+			   	if (cmpLft && cmpLft.el) {
 					cmpLft.el.remove();
 			   	}
 			   	
 			  	var cmpRgt = Ext.getCmp('dinamicElementsRight');
-			   	if (cmpRgt) {
+			   	if (cmpRgt && cmpRgt.el) {
 					cmpRgt.el.remove();
 			   	}
 				
@@ -171,6 +171,7 @@
 				    }
 				}
 
+				debugger;
 				if (camposDynamics.camposTerminoAcuerdo.length>0) {
 					detalleFieldSet.setVisible( true );
 		    		detalleFieldSetContenedor.setVisible( true );

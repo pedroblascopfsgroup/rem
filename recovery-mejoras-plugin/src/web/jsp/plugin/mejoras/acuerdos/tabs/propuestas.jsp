@@ -224,7 +224,7 @@
 		<app:test id="CumplimientoAcuerdoBtn" addComa="true" />
 		,iconCls : 'icon_edit'
 		,cls: 'x-btn-text-icon'
-<!-- 		,hidden:true -->
+		,hidden:true
 		,handler:function(){
       		var w = app.openWindow({
 		          flow : 'propuestas/openCumplimientoPropuesta'
@@ -270,14 +270,14 @@
    			btnCancelarAcuerdo.disable();
    			btnRechazarAcuerdo.disable();
    			btnRegistrarFinalizacionAcuerdo.disable();
-<!--    			btnCumplimientoAcuerdo.disable(); -->
+   			btnCumplimientoAcuerdo.disable();
    }
    var habilitarBotones=function(){
    			btnProponerAcuerdo.enable();
    			btnCancelarAcuerdo.enable();
    			btnRechazarAcuerdo.enable();
    			btnRegistrarFinalizacionAcuerdo.enable();
-<!--    			btnCumplimientoAcuerdo.disable(); -->
+   			btnCumplimientoAcuerdo.disable();
    }
    
    var ocultarBotones=function(){
@@ -285,7 +285,7 @@
    			btnCancelarAcuerdo.hide();
    			btnRechazarAcuerdo.hide();
    			btnRegistrarFinalizacionAcuerdo.hide();
-<!--    			btnCumplimientoAcuerdo.disable(); -->
+   			btnCumplimientoAcuerdo.disable();
    }
    
 	
@@ -361,7 +361,7 @@
 					btnProponerAcuerdo.setVisible(true);
 				}
 
-				if(panel.esGestorSupervisorActual() || (idProponente == panel.getUsuarioLogado() && codigoEstado == app.codigoAcuerdoEnConformacion)){
+				if((panel.esGestorSupervisorActual() && codigoEstado != app.codigoAcuerdoRechazado && codigoEstado != app.codigoAcuerdoCancelado && codigoEstado != app.codigoAcuerdoFinalizado &&  codigoEstado != app.codigoAcuerdoIncumplido && codigoEstado != app.codigoAcuerdoCumplido) || (idProponente == panel.getUsuarioLogado() && codigoEstado == app.codigoAcuerdoEnConformacion)){
 					noPuedeModificar = false;
 				}
 				
@@ -401,13 +401,12 @@
 	    		store.on('load', function(){  
 					for (var i=0; i < store.data.length; i++) {
 						datos = store.getAt(i);
-						alert(datos.get('codigoTipoAcuerdo'));
 						if(datos.get('codigoTipoAcuerdo') == "PLAN_PAGO"){
 							if(Boolean(estadoVigente)){
 								btnCumplimientoAcuerdo.setVisible(true);
 							}
 							cumplimientoAcuerdo = recargarCumplimientoAcuerdo(idAcuerdo);
-							terminosTab.add(cumplimientoAcuerdo);
+							terminosExpTab.add(cumplimientoAcuerdo);
 							
 						}
 					}
@@ -430,6 +429,12 @@
 		return panTerminosExp;
 		
 	};	
+	
+	var recargarCumplimientoAcuerdo = function(idAcuerdo){
+		<%@ include file="/WEB-INF/jsp/plugin/mejoras/acuerdos/listadoCumplimientoAcuerdo.jsp" %>	
+		var cumplimiento = crearCumplimiento(idAcuerdo);
+		return cumplimiento;
+	};
 	
 	
 	panel.getValue = function(){

@@ -1,5 +1,5 @@
 --/*
---##########################################
+--#########################################
 --## AUTOR=DAVID GONZÁLEZ
 --## FECHA_CREACION=20151101
 --## ARTEFACTO=batch
@@ -12,7 +12,7 @@
 --## VERSIONES:
 --##
 --##        0.1 Versión inicial
---##########################################
+--#########################################
 --*/
 
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE

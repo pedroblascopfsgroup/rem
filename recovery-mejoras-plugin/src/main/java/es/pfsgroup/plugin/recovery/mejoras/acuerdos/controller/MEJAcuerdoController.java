@@ -255,7 +255,7 @@ public class MEJAcuerdoController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String openDetalleTermino(ModelMap map, @RequestParam(value = "id", required = true) Long id, 
+	public String openDetalleTermino(ModelMap map, @RequestParam(value = "ambito", required = true) String ambito ,@RequestParam(value = "id", required = true) Long id, 
 							@RequestParam(value = "idAcuerdo", required = true) Long idAcuerdo,
 							@RequestParam(value = "soloConsulta", required = true) String soloConsulta) {
 		
@@ -268,6 +268,7 @@ public class MEJAcuerdoController {
 		map.put("operacionesPorTipo", terminoOperacionesManager.getOperacionesPorTipoAcuerdo(termino.getOperaciones()));
 		
 		map.put("idAcuerdo", idAcuerdo);
+		map.put("ambito", ambito);
 		
 		map.put("soloConsulta", soloConsulta);
 		

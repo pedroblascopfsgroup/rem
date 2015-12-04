@@ -78,7 +78,7 @@
 		,handler : function() {
 		
 						if(cumplidoSelect.getValue() != ''){
-							if(cumplidoSelect.getValue == '01'){
+							if(cumplidoSelect.getValue() == '01'){
 								cumplido.setValue(true);
 							}else{
 								cumplido.setValue(false);

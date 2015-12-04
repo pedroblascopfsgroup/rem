@@ -102,7 +102,7 @@ BEGIN
                         ||V_TMP_EIC(4)||q'[,']'
                         ||V_TMP_EIC(5)||q'[',]' 
                         ||V_TMP_EIC(6)||q'[,]' 
-                        ||V_TMP_EIC(7)||q'[)] 
+                        ||V_TMP_EIC(7)||q'[)]' 
                         ;
        
       EXECUTE IMMEDIATE V_MSQL1;

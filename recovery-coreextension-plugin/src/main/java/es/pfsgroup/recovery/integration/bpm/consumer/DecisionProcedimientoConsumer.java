@@ -14,6 +14,8 @@ import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procedimientoDerivado.ProcedimientoDerivadoManager;
 import es.capgemini.pfs.procedimientoDerivado.dto.DtoProcedimientoDerivado;
 import es.capgemini.pfs.procedimientoDerivado.model.ProcedimientoDerivado;
+import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
+import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.ConfiguradorPropuesta;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.MEJDecisionProcedimientoManager;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
@@ -49,6 +51,9 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 	
 	@Autowired
 	private PersonaManager personaManager;
+	
+	@Autowired
+	private TipoProcedimientoManager tipoProcedimientoManager;
 
 	private ProcedimientoConsumer procedimientoConsumer;
 
@@ -210,7 +215,15 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 					}
 				}
 				
-				dtoProcedimientoDerivado.setTipoActuacion(procedimientoDerivadoPayload.getTipoActuacion());
+				String tipoActuacion = "";
+				if(procedimientoDerivadoPayload.getTipoProcedimiento() != null && !"".equals(procedimientoDerivadoPayload.getTipoProcedimiento())) {
+					TipoProcedimiento tipoProcedimiento = tipoProcedimientoManager.getByCodigo(procedimientoDerivadoPayload.getTipoProcedimiento());
+					if(tipoProcedimiento != null && tipoProcedimiento.getTipoActuacion() != null) {
+						tipoActuacion = tipoProcedimiento.getTipoActuacion().getCodigo();
+					}
+				}
+				
+				dtoProcedimientoDerivado.setTipoActuacion(tipoActuacion);
 				dtoProcedimientoDerivado.setTipoReclamacion(procedimientoDerivadoPayload.getTipoReclamacion());
 				dtoProcedimientoDerivado.setTipoProcedimiento(procedimientoDerivadoPayload.getTipoProcedimiento());
 				dtoProcedimientoDerivado.setPorcentajeRecuperacion(procedimientoDerivadoPayload.getPorcentajeRecuperacion());

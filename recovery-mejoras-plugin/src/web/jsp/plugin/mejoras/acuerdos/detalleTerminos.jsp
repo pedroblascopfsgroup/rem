@@ -219,6 +219,7 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
 		hidden : noPuedeModificar,
 		handler: function(){
 			if (typeof idTerminoSeleccionado != 'undefined'){
+				var ambito = entidad.id;
 	     	   	var w = app.openWindow({
 		          flow : 'mejacuerdo/openDetalleTermino'
 		          ,closable:false
@@ -226,6 +227,7 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
 		          ,autoHeight: true
 		          ,title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.editar" text="**Editar Termino" />'
 	    			  ,params:{
+	    			  	  ambito: ambito,
 	     				  id:idTerminoSeleccionado,
 <%-- 	     				  idAsunto:panel.getAsuntoId(), --%>
 	     				  idAcuerdo : idAcuerdo,
@@ -388,7 +390,7 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
 	terminosAcuerdoGrid.on('rowdblclick', function(grid, rowIndex, e){
 		var rec = grid.getStore().getAt(rowIndex);
 		idTerminoSeleccionado = rec.get('id');
-
+			var ambito = entidad.id;
      	   	var w = app.openWindow({
 	          flow : 'mejacuerdo/openDetalleTermino'
 	          ,closable:false
@@ -396,6 +398,7 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
 	          ,autoHeight: true
 	          ,title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.ver" text="**Ver Termino" />'
     			  ,params:{
+    			  	  ambito: ambito,
      				  id:idTerminoSeleccionado,
 <%--      				  idAsunto:panel.getAsuntoId(), --%>
 					  idAcuerdo : idAcuerdo,

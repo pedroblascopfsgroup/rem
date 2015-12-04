@@ -356,6 +356,11 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
   			+ APPConstants.NUM_EXTRA4 + "'))")
   	private String indicadorNominaPension;
   	
+  	@Formula("(select est.dd_eic_descripcion from ext_iac_info_add_contrato iac, dd_eic_estado_interno_entidad est where iac.cnt_id = cnt_id "
+  			+ "and iac.iac_value = est.dd_eic_codigo and iac.dd_ifc_id = (select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.CHAR_EXTRA10 + "'))")
+  	private String estadoEntidad;
+  	
   	/**@Formula("select acn.acn_num_reinciden from acn_anteced_contratos acn where acn.cnt_id = cnt_id")
   	private Integer contadorReincidencias;*/
   	
@@ -2043,4 +2048,11 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
 	public String getIndicadorNominaPension() {
 		return indicadorNominaPension;
 	}
+
+	@Basic(fetch=FetchType.LAZY)
+	public String getEstadoEntidad() {
+		return estadoEntidad;
+	}
+
+	
 }

@@ -887,11 +887,11 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 		
 		acuerdoDao.save(acuerdo);
 		
-		if(usuarioLogadoEsDelTipoDespacho(gestorDespachoDecisor.getDespachoExterno().getTipoDespacho())){
+		if(!Checks.esNulo(gestorDespachoDecisor) && !Checks.esNulo(gestorDespachoValidador) && !Checks.esNulo(gestorDespachoProponente) && usuarioLogadoEsDelTipoDespacho(gestorDespachoDecisor.getDespachoExterno().getTipoDespacho())){
 			vigenteAcuerdo(acuerdo.getId());
-		}else if(usuarioLogadoEsDelTipoDespacho(gestorDespachoValidador.getDespachoExterno().getTipoDespacho())){
+		}else if(!Checks.esNulo(gestorDespachoDecisor) && !Checks.esNulo(gestorDespachoValidador) && !Checks.esNulo(gestorDespachoProponente) && usuarioLogadoEsDelTipoDespacho(gestorDespachoValidador.getDespachoExterno().getTipoDespacho())){
 			aceptarAcuerdo(acuerdo.getId());
-		}else if(usuarioLogadoEsDelTipoDespacho(gestorDespachoProponente.getDespachoExterno().getTipoDespacho())){
+		}else if(!Checks.esNulo(gestorDespachoProponente) && !Checks.esNulo(gestorDespachoValidador) && usuarioLogadoEsDelTipoDespacho(gestorDespachoProponente.getDespachoExterno().getTipoDespacho())){
 			
 	    	Calendar calendar = new GregorianCalendar();
 	    	calendar.add(Calendar.DAY_OF_MONTH, 15);
@@ -906,6 +906,8 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 			}
 
 		}
+		
+
     
     }
     

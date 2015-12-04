@@ -40,7 +40,6 @@ DECLARE
  V_ESQUEMA VARCHAR2(25 CHAR):=   '#ESQUEMA#'; 			-- Configuracion Esquema
  V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; 		-- Configuracion Esquema Master 
  TABLADD1 VARCHAR(30) :='DD_EIC_ESTADO_INTERNO_ENTIDAD';
- SECUENCIA VARCHAR(30) := 'DD_EIC_EDO_INTERNO_CAJAMAR' ;
  SECUENCIA2 VARCHAR(30) := 'DD_EIC_EDO_INTERNO_ENTIDAD' ;
 err_num NUMBER;
  err_msg VARCHAR2(2048); 
@@ -76,26 +75,24 @@ err_num NUMBER;
 	
 
 
+
 BEGIN 
 
 
- 
- EXECUTE IMMEDIATE('TRUNCATE TABLE '||V_ESQUEMA|| '.'||TABLADD1||'');   
-  DBMS_OUTPUT.PUT_LINE('Limpieza de datos '||TABLADD1||' ');
+ EXECUTE IMMEDIATE('TRUNCATE TABLE '||V_ESQUEMA|| '.'||TABLADD1);   
+  DBMS_OUTPUT.PUT_LINE('Limpieza de datos '||TABLADD1);
   
   
 
  
 
- 
- 
+  
  FOR I IN V_EIC.FIRST .. V_EIC.LAST
  LOOP
    V_TMP_EIC := V_EIC(I);
    V_EXISTE:=0; 
    DBMS_OUTPUT.PUT_LINE('Creando '||TABLADD1||': '||V_TMP_EIC(1));   
-   
-  
+     
         V_MSQL1 := 'INSERT INTO ' ||V_ESQUEMA|| '.'||TABLADD1||' 
                     (DD_EIC_ID, DD_EIC_CODIGO, DD_EIC_DESCRIPCION, DD_EIC_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
                    VALUES (   S_'||SECUENCIA2||'.NEXTVAL,'''
@@ -105,7 +102,7 @@ BEGIN
                         ||V_TMP_EIC(4)||q'[,']'
                         ||V_TMP_EIC(5)||q'[',]' 
                         ||V_TMP_EIC(6)||q'[,]' 
-                        ||V_TMP_EIC(7)||q'[)] 
+                        ||V_TMP_EIC(7)||q'[)]' 
                         ;
        
       EXECUTE IMMEDIATE V_MSQL1;

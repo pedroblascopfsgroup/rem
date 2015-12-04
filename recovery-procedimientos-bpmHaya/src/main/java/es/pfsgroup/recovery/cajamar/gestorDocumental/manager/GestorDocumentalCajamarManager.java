@@ -173,8 +173,6 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			inputDto.setTipoDocumento(tipoDocumento);
 			inputDto.setFicheroBase64(ficheroBase64(uploadForm));
 			inputDto.setClaveAsociacion(claveAsociacion);
-			// TODO Cual es la fecha de vigencia???
-			inputDto.setFechaVigencia(new Date());
 		} else if (LISTADO_GESTOR_DOC.equals(tipoGestion)) {
 			inputDto.setOperacion(ConstantesGestorDocumental.LISTADO_DOCUMENTO_OPERACION);
 			if(Checks.esNulo(tipoDocumento)) {
@@ -184,7 +182,6 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			}
 			inputDto.setClaveAsociacion(claveAsociacion);
 			inputDto.setTipoAsociacion(getTipoAsociacion(tipoEntidadGrid));
-			inputDto.setFechaVigencia(new Date());
 		}
 
 		return inputDto;

@@ -6,35 +6,35 @@ public class GestorDocumentalInputDto {
 
 	// (Clave principal del documento, por ejemplo el número de persona, cuenta,
 	// etc...)(Campo informativo)
-	private String claveAsociacion="";
+	private String claveAsociacion;
 	// (Clave principal del documento, por ejemplo el número de persona, cuenta,
 	// etc...)(Campo informativo)
-	private String claveAsociacion2="";
+	private String claveAsociacion2;
 	// (Clave principal del documento, por ejemplo el número de persona, cuenta,
 	// etc...)(Campo informativo)
-	private String claveAsociacion3="";
+	private String claveAsociacion3;
 
-	private String descripcion="";
+	private String descripcion;
 	// Extensión del fichero (Este campo es necesario para la descarga
 	// individual)
-	private String extensionFichero="";
+	private String extensionFichero;
 	// Fecha de vigencia o caducidad del documento (Campo informativo)
 	private Date fechaVigencia;
-	private String ficheroBase64="";
-	private String localizador="";
+	private String ficheroBase64;
+	private String localizador;
 	// El servicio dispone de todas las opciones A - Alta, M - Modificación, C -
 	// Descarga documento y L - Consulta listado.
-	private String operacion="";
-	private String origen="";
-	private String rutaFicheroRemoto="";
+	private String operacion;
+	private String origen;
+	private String rutaFicheroRemoto;
 	// Tipo asociación (Maestro de la clave principal por ejemplo PERS,
 	// MCTA...)(Campo informativo)
-	private String tipoAsociacion="";
-	private String tipoAsociacion2="";
-	private String tipoAsociacion3="";
+	private String tipoAsociacion;
+	private String tipoAsociacion2;
+	private String tipoAsociacion3;
 	// Tipo de documento (código de 5 dígitos, por ejemplo 00002 que corresponde
 	// a DNI) (Campo informativo)
-	private String tipoDocumento="";
+	private String tipoDocumento;
 	// Id de la entidad de recovery
 	private Long idEntidad;
 

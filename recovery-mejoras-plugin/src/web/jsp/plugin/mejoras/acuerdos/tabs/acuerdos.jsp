@@ -282,6 +282,7 @@
 			           		 	btnIncumplirAcuerdo.hide();
 			           		}
 			           		,error: function(){
+
 							}	
 				      	});
 						habilitarBotones();

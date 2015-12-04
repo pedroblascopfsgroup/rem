@@ -215,7 +215,7 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 					}
 				}
 				
-				String tipoActuacion = procedimientoDerivadoPayload.getTipoActuacion();
+				String tipoActuacion = "";
 				if(procedimientoDerivadoPayload.getTipoProcedimiento() != null && !"".equals(procedimientoDerivadoPayload.getTipoProcedimiento())) {
 					TipoProcedimiento tipoProcedimiento = tipoProcedimientoManager.getByCodigo(procedimientoDerivadoPayload.getTipoProcedimiento());
 					if(tipoProcedimiento != null && tipoProcedimiento.getTipoActuacion() != null) {

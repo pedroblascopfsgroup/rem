@@ -184,11 +184,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			}
 		} else if (LISTADO_GESTOR_DOC.equals(tipoGestion)) {
 			inputDto.setOperacion(ConstantesGestorDocumental.LISTADO_DOCUMENTO_OPERACION);
-			if(Checks.esNulo(tipoDocumento)) {
-				inputDto.setTipoDocumento("");
-			}else{
-				inputDto.setTipoDocumento(tipoDocumento);
-			}
+			inputDto.setTipoDocumento(tipoDocumento);
 			inputDto.setClaveAsociacion(claveAsociacion);
 			inputDto.setTipoAsociacion(getTipoAsociacion(tipoEntidadGrid));
 		}

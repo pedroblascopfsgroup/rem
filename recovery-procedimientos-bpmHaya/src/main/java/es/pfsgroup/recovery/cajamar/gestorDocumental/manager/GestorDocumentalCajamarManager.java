@@ -1,7 +1,8 @@
 package es.pfsgroup.recovery.cajamar.gestorDocumental.manager;
 
 import java.io.InputStream;
-import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
@@ -173,6 +174,14 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			inputDto.setTipoDocumento(tipoDocumento);
 			inputDto.setFicheroBase64(ficheroBase64(uploadForm));
 			inputDto.setClaveAsociacion(claveAsociacion);
+			if(!Checks.esNulo(uploadForm.getParameter("fechaCaducidad"))) {
+				SimpleDateFormat frmt = new SimpleDateFormat("ddMMyyyy");
+				try {
+					inputDto.setFechaVigencia(frmt.parse(uploadForm.getParameter("fechaCaducidad")));
+				} catch (ParseException e) {
+					logger.error("Se ha producido un error al formatear la fecha de vigencia");
+				}	
+			}
 		} else if (LISTADO_GESTOR_DOC.equals(tipoGestion)) {
 			inputDto.setOperacion(ConstantesGestorDocumental.LISTADO_DOCUMENTO_OPERACION);
 			if(Checks.esNulo(tipoDocumento)) {

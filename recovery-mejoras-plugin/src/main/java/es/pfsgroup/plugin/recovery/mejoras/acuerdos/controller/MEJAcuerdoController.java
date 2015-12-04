@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
+import es.capgemini.pfs.acuerdo.model.AcuerdoConfigAsuntoUsers;
 import es.capgemini.pfs.acuerdo.model.DDMotivoRechazoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDSubTipoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
@@ -66,6 +67,7 @@ public class MEJAcuerdoController {
 	static final String JSON_LISTADO_DERIVACIONES = "plugin/mejoras/acuerdos/listadoDerivacionesAcuerdoJSON";	
 	static final String JSP_EDITAR_TERMINO_ESTADO_GESTION = "plugin/mejoras/acuerdos/edicionEstadoGestionTermino";
 	static final String JSP_RECHAZAR_ACUERDO = "plugin/mejoras/acuerdos/rechazarAcuerdo";
+	static final String OK_KO_RESPUESTA_JSON = "plugin/coreextension/OkRespuestaJSON";
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -721,5 +723,50 @@ public class MEJAcuerdoController {
 		
 		return JSP_RECHAZAR_ACUERDO;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String tieneConfiguracionProponerAcuerdo(ModelMap map) {
+		
+		Usuario user = usuarioManager.getUsuarioLogado();
+		
+    	GestorDespacho gestorDespacho = null;
+    	Order order = new Order(OrderType.ASC, "id");
+    	List<GestorDespacho> usuariosDespacho =  genericDao.getListOrdered(GestorDespacho.class,order, genericDao.createFilter(FilterType.EQUALS, "usuario.id", user.getId()));
+    	
+    	if(usuariosDespacho.size()==1){
+			
+    		gestorDespacho = usuariosDespacho.get(0);
+			
+		}else if(usuariosDespacho.size()>1){
+			
+			gestorDespacho = usuariosDespacho.get(0);
+			
+			for(GestorDespacho gesDes : usuariosDespacho){
+				if(gesDes.getGestorPorDefecto()){
+					gestorDespacho = gesDes;
+					break;
+				}
+			}
+			
+		}
+    	
+    	List<AcuerdoConfigAsuntoUsers> configs = null;
+    	
+    	if(!Checks.esNulo(gestorDespacho)){
+    		configs = genericDao.getList(AcuerdoConfigAsuntoUsers.class, genericDao.createFilter(FilterType.EQUALS, "proponente.id", gestorDespacho.getDespachoExterno().getTipoDespacho().getId() ));	
+        	if(configs != null && configs.size() > 0){
+        		map.put("okko",true);
+        	}else{
+        		map.put("okko",false);	
+        	}
+    	}else{
+    		map.put("okko",false);
+    	}   	
+    	
+		
+		return OK_KO_RESPUESTA_JSON;
+	}
+	
 
 }

@@ -73,6 +73,10 @@ while read tagname; do
         if [ -e ./sql/tool/tmp/package/DDL/DDL-scripts.zip ];then
             cp -r ./sql/tool/tmp/package/DDL ./package-tags/$count/
             rm ./package-tags/$count/DDL/*.zip
+            for script in `find ./package-tags/$count/DDL/ -name *PREPROYECT_CNT*3.1*`;
+            do 
+                sed -e 's/SET DEFINE OFF;/SET DEFINE OFF;\nalter session set "_pred_move_around"=FALSE;\n/g' -i $script
+            done
             echo "if [ \$? != 0 ];then exit 1; fi" >> ./package-tags/run-scripts-package.sh
             echo "cd \$DIR_ORIG" >> ./package-tags/run-scripts-package.sh
             echo "cd ./$count/DDL/" >> ./package-tags/run-scripts-package.sh
@@ -92,3 +96,7 @@ while read tagname; do
 done < $1
 chmod a+x ./package-tags/*.sh
 chmod a+x ./package-tags/**/**/*.sh
+echo "----------------------------------------------"
+echo "  TERMINADO: "
+echo "     Consulta el directorio ./package-tags/"
+echo "----------------------------------------------"

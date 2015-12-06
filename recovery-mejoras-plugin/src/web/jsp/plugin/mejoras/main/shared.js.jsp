@@ -159,6 +159,7 @@ app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR_ESTUDIO = '<fwk:const value=
 app.categoriaSubTipoTarea={};
 app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_TOMA_DECISION = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION" />';
 app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_TAREA_PROCEDIMIENTO = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_ABRIR_TAREA_PROCEDIMIENTO" />';
+app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_EXP = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_ABRIR_EXP" />';
 
 app.tipoDestinatario={};
 app.tipoDestinatario.CODIGO_DESTINATARIO_GESTOR = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion.CODIGO_DESTINATARIO_GESTOR" />';
@@ -207,6 +208,8 @@ app.codigoAcuerdoRechazado = '<fwk:const value="es.capgemini.pfs.acuerdo.model.D
 app.codigoAcuerdoCancelado = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_CANCELADO" />';
 app.codigoAcuerdoFinalizado = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_FINALIZADO" />';
 app.codigoAcuerdoEnviado = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_ENVIADO" />';
+app.codigoAcuerdoIncumplido = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_INCUMPLIDO" />';
+app.codigoAcuerdoCumplido = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_CUMPLIDO" />';
 
 
 /**
@@ -320,7 +323,7 @@ app.creaLabel = function(label, value, config){
 		cfg.id=config.id;
 	}
 	
-	fwk.js.copyProperties(cfg, config, ['labelWidth','labelStyle']);
+	fwk.js.copyProperties(cfg, config, ['labelWidth','labelStyle', 'rawvalue']);
 
 	var staticTextField =  new Ext.ux.form.StaticTextField(cfg);
 	return staticTextField;

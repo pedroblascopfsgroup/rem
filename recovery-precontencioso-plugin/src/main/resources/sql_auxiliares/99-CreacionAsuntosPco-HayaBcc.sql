@@ -136,7 +136,7 @@ WHERE lin.creado='N') tabla
   V_SQL := q'[INSERT INTO &esquema .cli_clientes (cli_id, per_id, arq_id, dd_est_id, dd_ecl_id, cli_fecha_est_id,
              VERSION, usuariocrear, fechacrear, borrado, cli_fecha_creacion,
              cli_telecobro, ofi_id)
-   (SELECT apc.cli_id, apc.per_id, 402 AS arq_id,
+   (SELECT apc.cli_id, apc.per_id, 421 AS arq_id,
            1 AS dd_est_id, 3 AS dd_ecl_id, SYSDATE, 0 AS VERSION,
            'CARGA_PCO' AS usuariocrear, SYSDATE AS fechacrear, 1 AS borrado,
            SYSDATE AS cli_fecha_creacion, 0 AS cli_telecobro, apc.ofi_id
@@ -159,7 +159,7 @@ WHERE lin.creado='N') tabla
   V_SQL := q'[INSERT INTO &esquema .exp_expedientes (exp_id, dd_est_id, exp_fecha_est_id, ofi_id, arq_id, VERSION,
              usuariocrear, fechacrear, borrado, dd_eex_id, exp_descripcion)
    (SELECT apc.exp_id, 5 AS dd_est_id, SYSDATE AS exp_fecha_est_id,
-           apc.ofi_id AS ofi_id, 402 AS arq_id,
+           apc.ofi_id AS ofi_id, 421 AS arq_id,
            0 AS VERSION, 'CARGA_PCO' AS usuariocrear, SYSDATE AS fechacrear,
            0 AS borrado, 4 AS dd_eex_id,
            apc.n_caso || '-'
@@ -209,7 +209,7 @@ WHERE lin.creado='N') tabla
            (SELECT n_lote
               FROM &esquema .lin_asuntos_nuevos
              WHERE n_caso = apc.n_caso AND creado = 'N') AS lote, (select dd_tas_id from &master .dd_tas_tipos_asunto where dd_tas_codigo = apc.DD_TAS_CODIGO) AS DD_TAS_ID,
-             (select DD_PAS_ID from &esquema .dd_pas_propiedad_asunto where dd_pas_codigo = 'SAREB') AS DD_PAS_ID
+             (select DD_PAS_ID from &esquema .dd_pas_propiedad_asunto where dd_pas_codigo = 'CAJAMAR') AS DD_PAS_ID
       FROM &esquema .lin_asuntos_para_crear apc)
   ]';
 --  DBMS_OUTPUT.PUT_LINE(V_SQL);
@@ -826,7 +826,7 @@ DBMS_OUTPUT.PUT_LINE(substr(V_SQL, 1, 60) || '...' || sql%rowcount);
 V_SQL := q'[INSERT INTO &esquema .PCO_PRC_PROCEDIMIENTOS (PCO_PRC_ID, PRC_ID, PCO_PRC_TIPO_PRC_PROP, PCO_PRC_TIPO_PRC_INICIADO, PCO_PRC_PRETURNADO, 
     PCO_PRC_NUM_EXP_EXT, PCO_PRC_NOM_EXP_JUD, PCO_PRC_CNT_PRINCIPAL, PCO_PRC_NUM_EXP_INT, DD_PCO_PTP_ID, 
     USUARIOCREAR, FECHACREAR)
-SELECT &esquema .S_PCO_PRC_PROCEDIMIENTOS.NEXTVAL, PRC.PRC_ID, (SELECT DD_TPO_ID FROM &esquema .DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = 'P420'), null, 1, 
+SELECT &esquema .S_PCO_PRC_PROCEDIMIENTOS.NEXTVAL, PRC.PRC_ID, (SELECT DD_TPO_ID FROM &esquema .DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = 'H001'), null, 1, 
     lin.n_caso, prc.prc_cod_proc_en_juzgado, null, null, TPR.DD_PCO_PTP_ID,
     'CARGA_PCO', SYSDATE
   FROM &esquema .PRC_PROCEDIMIENTOS prc 
@@ -941,7 +941,7 @@ DBMS_OUTPUT.PUT_LINE(substr(V_SQL, 1, 60) || '...' || sql%rowcount);
 
 */
 
-V_SQL := q'[update &esquema .asu_asuntos set dd_ges_id=(select dd_ges_id from  &esquema .dd_ges_gestion_asunto where dd_ges_codigo='CAJAMAR') WHERE usuariocrear='CARGA_PCO']';
+V_SQL := q'[update &esquema .asu_asuntos set dd_ges_id=(select dd_ges_id from  &esquema .dd_ges_gestion_asunto where dd_ges_codigo='HRE') WHERE usuariocrear='CARGA_PCO']';
 EXECUTE IMMEDIATE V_SQL; 
 DBMS_OUTPUT.PUT_LINE(substr(V_SQL, 1, 60) || '...' || sql%rowcount);
 

@@ -35,6 +35,7 @@ import es.capgemini.pfs.itinerario.model.ReglasVigenciaPolitica;
 import es.capgemini.pfs.persona.dao.PersonaDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.politica.dao.CicloMarcadoPoliticaDao;
+import es.capgemini.pfs.politica.dao.DDTipoPoliticaDao;
 import es.capgemini.pfs.politica.dao.PoliticaDao;
 import es.capgemini.pfs.politica.dto.DtoPolitica;
 import es.capgemini.pfs.politica.model.AnalisisPersonaPolitica;
@@ -71,6 +72,9 @@ public class PoliticaManager {
 
     @Autowired
     private PoliticaDao politicaDao;
+    
+    @Autowired
+    private DDTipoPoliticaDao ddTipoPoliticaDao;
 
     @Autowired
     private CicloMarcadoPoliticaDao cicloMarcadoPoliticaDao;
@@ -455,19 +459,31 @@ public class PoliticaManager {
             
             
             DDTipoPolitica tipoPolitica = null;
-            Arquetipo arquetipo = null;
             
-            //Si el expediente es automático se obtiene el arquetipo de la persona, de la tabla ARR
-            if (!expediente.isManual()) {
-            	arquetipo = (Arquetipo) executor.execute(ConfiguracionBusinessOperation.BO_ARQ_MGR_GET_RECUPERACION_BY_PERSONA, persona.getId());
-            } else {
-            	//Si no el arquetipo se preselecciona en la creación del expedietne manual
-            	arquetipo = expediente.getArquetipo();
-            }
+            //Si el cliente tiene una politica de la entidad, se aplica esta
+            if (persona.getPoliticaEntidad()!=null) {
+            	//Hay que obtener la traducción a las politicas de recovery,
+            	//Si hay mas de una posible, nos quedamos con la primera 
             	
+            	tipoPolitica = ddTipoPoliticaDao.buscarTipoPoliticaAsociadaAEntidad(persona.getPoliticaEntidad().getCodigo());        	
+            }
             
-            if( arquetipo!=null && arquetipo.getItinerario()!=null){
-            	tipoPolitica = arquetipo.getItinerario().getPrePolitica();
+            //Si no se ha conseguido un tipo de politica
+            if (tipoPolitica == null) {
+	            Arquetipo arquetipo = null;
+	            
+	            //Si el expediente es automático se obtiene el arquetipo de la persona, de la tabla ARR
+	            if (!expediente.isManual()) {
+	            	arquetipo = (Arquetipo) executor.execute(ConfiguracionBusinessOperation.BO_ARQ_MGR_GET_RECUPERACION_BY_PERSONA, persona.getId());
+	            } else {
+	            	//Si no el arquetipo se preselecciona en la creación del expedietne manual
+	            	arquetipo = expediente.getArquetipo();
+	            }
+	            	
+	            
+	            if( arquetipo!=null && arquetipo.getItinerario()!=null){
+	            	tipoPolitica = arquetipo.getItinerario().getPrePolitica();
+	            }
             }
             
             if (tipoPolitica!=null) {

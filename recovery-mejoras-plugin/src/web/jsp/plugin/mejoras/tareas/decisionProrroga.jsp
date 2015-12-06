@@ -224,7 +224,7 @@
 		]
 		,bbar : [
 			<c:if test="${isConsulta}">
-				btnAceptar
+				btnCancelar
 			</c:if>
 			<c:if test="${!isConsulta}">
 				btnGuardar, btnCancelar

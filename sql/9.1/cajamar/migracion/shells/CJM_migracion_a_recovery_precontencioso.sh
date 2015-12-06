@@ -10,11 +10,20 @@ echo "INICIO DEL SCRIPT MIGRACION_A_RECOVERY_PRECONTENCIOSO $0"
 echo "########################################################"  
 echo "#####    INICIO MIGRACION_A_RECOVERY_PRECONTENCIOSO.sql"  
 echo "########################################################"  
+
 echo "Migración en curso...."
 
 $ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"CJM_MIGRACION_A_RECOVERY_PRECONTENCIOSO.sql  
 if [ $? != 0 ] ; then
    echo -e "\n\n======>>> "Error en @"$sql_dir"CJM_MIGRACION_A_RECOVERY_PRECONTENCIOSO.sql
+   exit 1
+fi
+
+echo "Gestores Precontencioso en curso...."
+
+$ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"CJM_Gestores_PREContencioso.sql
+if [ $? != 0 ] ; then
+   echo -e "\n\n======>>> "Error en @"$sql_dir"CJM_Gestores_PREContencioso.sql
    exit 1
 fi
 

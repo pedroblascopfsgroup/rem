@@ -46,8 +46,12 @@
  
  Todos los logs de salida se ubican en el directorio log.
 
+ Para ejecutar el árbol completo: 
+ 
+     nohup ./run-tree.sh > log/run-tree.log 2> log/run-tree.error &
+
  Para ejecutar una rama en concreto: 
  
-     ./scripts/run-parallel.sh <nombre-rama>.txt
+     nohup ./scripts/run-parallel.sh <nombre-rama>.txt > log/rama.log 2> log/rama.error &
 
 .....................................................................................

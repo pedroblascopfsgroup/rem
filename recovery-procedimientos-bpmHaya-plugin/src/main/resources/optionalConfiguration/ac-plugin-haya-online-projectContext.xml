@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+	
+	<bean id="mapaTabsPorTipoBienHREBCC"
+		parent="mapaTabsPorTipoBienDefault">
+		<property name="mapaTabsTipoBien">
+			<map>
+				<entry key="01">
+					<bean
+						class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
+						<property name="listaTabs">
+							<list>
+								<value>pestanaPrincipal</value>
+								<value>pestanaValoraciones</value>
+								<value>pestanaDatosRegistrales</value>
+								<value>pestanaLocalizacion</value>
+								<value>pestanaOtros</value>
+								<value>pestanaObservaciones</value>
+							</list>
+						</property>
+					</bean>
+				</entry>
+				<entry key="02">
+					<bean
+						class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
+						<property name="listaTabs">
+							<list>
+								<value>pestanaPrincipal</value>
+								<value>pestanaLocalizacion</value>
+								<value>pestanaOtros</value>
+								<value>pestanaObservaciones</value>
+							</list>
+						</property>
+					</bean>
+				</entry>
+				<entry key="03">
+					<bean
+						class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
+						<property name="listaTabs">
+							<list>
+								<value>pestanaPrincipal</value>
+								<value>pestanaCuentaBancaria</value>
+								<value>pestanaOtros</value>
+								<value>pestanaObservaciones</value>
+							</list>
+						</property>
+					</bean>
+				</entry>
+				<entry key="04">
+					<bean
+						class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
+						<property name="listaTabs">
+							<list>
+								<value>pestanaPrincipal</value>
+								<value>pestanaLocalizacion</value>
+								<!-- <value>pestanaValoraciones</value> <value>pestanaVehiculo</value> 
+									<value>pestanaEmpresa</value> <value>pestanaIAE</value> <value>pestanaCuentaBancaria</value> -->
+								<value>pestanaOtros</value>
+								<value>pestanaObservaciones</value>
+							</list>
+						</property>
+					</bean>
+				</entry>
+				<entry key="05">
+					<bean id="tabsValoresDEFAULT"
+						class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
+						<property name="listaTabs">
+							<list>
+								<value>pestanaPrincipal</value>
+								<value>pestanaProductosBanco</value>
+								<value>pestanaOtros</value>
+								<value>pestanaObservaciones</value>
+							</list>
+						</property>
+					</bean>
+				</entry>
+				<entry key="DEFECTO">
+					<bean
+						class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
+						<property name="listaTabs">
+							<list>
+								<value>pestanaPrincipal</value>
+								<value>pestanaValoraciones</value>
+								<value>pestanaDatosRegistrales</value>
+								<value>pestanaLocalizacion</value>
+								<value>pestanaCuentaBancaria</value>
+								<value>pestanaProductosBanco</value>
+								<value>pestanaOtros</value>
+								<value>pestanaObservaciones</value>
+							</list>
+						</property>
+					</bean>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+	<alias name="mapaTabsPorTipoBienHREBCC" alias="mapaTabsPorTipoBien"/>
+</beans>	

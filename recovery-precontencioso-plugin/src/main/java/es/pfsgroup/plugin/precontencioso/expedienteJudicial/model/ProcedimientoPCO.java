@@ -117,7 +117,7 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 	 */
 
 	@Formula(value = 
-		" (SELECT dd_pco_prc_estado_preparacion.dd_pco_pep_descripcion" +
+		" (SELECT MIN(dd_pco_prc_estado_preparacion.dd_pco_pep_descripcion)" +
 		" FROM   pco_prc_hep_histor_est_prep " +
 		"       INNER JOIN pco_prc_procedimientos " +
 		"               ON pco_prc_procedimientos.pco_prc_id = pco_prc_hep_histor_est_prep.pco_prc_id " +
@@ -131,7 +131,7 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 	private String estadoActual;
 
 	@Formula(value = 
-		" (SELECT pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_incio" +
+		" (SELECT min(pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_incio)" +
 		" FROM   pco_prc_hep_histor_est_prep " +
 		"       INNER JOIN pco_prc_procedimientos " +
 		"               ON pco_prc_procedimientos.pco_prc_id = pco_prc_hep_histor_est_prep.pco_prc_id " +
@@ -150,37 +150,67 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 	private Float totalLiquidacion;
 
 	@Formula(value = 
-		" (SELECT CASE WHEN Count(1) > 0 THEN 0 ELSE 1 END " +
-		" FROM   pco_prc_procedimientos " +
-		"        INNER JOIN pco_doc_documentos " +
-		"                ON pco_prc_procedimientos.pco_prc_id = pco_doc_documentos.pco_prc_id " +
-		" WHERE  pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID " +
-		"        AND pco_doc_documentos.borrado = 0 " +
-		"        AND pco_doc_documentos.pco_doc_pdd_adjunto = 0) ")
+			" (SELECT CASE "
+		  + "         WHEN EXISTS (SELECT 1 "
+		  + "                       FROM pco_doc_documentos "
+		  + "                      WHERE pco_prc_procedimientos.pco_prc_id = pco_doc_documentos.pco_prc_id AND pco_doc_documentos.borrado = 0 AND pco_doc_documentos.pco_doc_pdd_adjunto = 0) "
+		  + "           THEN 0 "
+		  + "        WHEN EXISTS (SELECT 1 "
+		  + "                       FROM pco_doc_documentos "
+		  + "                      WHERE pco_prc_procedimientos.pco_prc_id = pco_doc_documentos.pco_prc_id AND pco_doc_documentos.borrado = 0) "
+		  + "           THEN 1 "
+		  + "        ELSE 0 "
+		  + "     END "
+		  + " FROM pco_prc_procedimientos "
+		  + " WHERE pco_prc_procedimientos.pco_prc_id = pco_prc_id) ")
 	private Boolean todosDocumentos;
 
 	@Formula(value = 
-		" (SELECT CASE WHEN Count(1) > 0 THEN 0 ELSE 1 END " +
-		" FROM   pco_liq_liquidaciones " +
-		"        INNER JOIN pco_prc_procedimientos " +
-		"                ON pco_prc_procedimientos.pco_prc_id = pco_liq_liquidaciones.pco_prc_id " +
-		"        INNER JOIN dd_pco_liq_estado " +
-		"                ON dd_pco_liq_estado.dd_pco_liq_id = pco_liq_liquidaciones.dd_pco_liq_id " +
-		" WHERE  pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID " +
-		"        AND pco_liq_liquidaciones.borrado = 0 " +
-		"        AND dd_pco_liq_estado.dd_pco_liq_codigo != '" + DDEstadoLiquidacionPCO.CONFIRMADA + "' )")
+		" (SELECT CASE "
+		+ "           WHEN EXISTS ( "
+		+ "			                  SELECT 1 "
+		+ "         FROM pco_liq_liquidaciones INNER JOIN dd_pco_liq_estado ON dd_pco_liq_estado.dd_pco_liq_id = pco_liq_liquidaciones.dd_pco_liq_id "
+		+ "        WHERE pco_prc_procedimientos.pco_prc_id = pco_liq_liquidaciones.pco_prc_id "
+		+ "          AND pco_liq_liquidaciones.borrado = 0 "
+		+ "          AND dd_pco_liq_estado.dd_pco_liq_codigo != '" + DDEstadoLiquidacionPCO.CONFIRMADA + "') "
+		+ "   THEN 0 "
+		+ " WHEN EXISTS ( "
+		+ "       SELECT 1 "
+		+ "         FROM pco_liq_liquidaciones INNER JOIN dd_pco_liq_estado ON dd_pco_liq_estado.dd_pco_liq_id = pco_liq_liquidaciones.dd_pco_liq_id "
+		+ "        WHERE pco_prc_procedimientos.pco_prc_id = pco_liq_liquidaciones.pco_prc_id "
+		+ "          AND pco_liq_liquidaciones.borrado = 0 "
+		+ "          AND dd_pco_liq_estado.dd_pco_liq_codigo = '" + DDEstadoLiquidacionPCO.CONFIRMADA + "') "
+		+ "   THEN 1 "
+		+ " ELSE 0 "
+		+ " END "
+		+ " FROM pco_prc_procedimientos "
+		+ " WHERE pco_prc_procedimientos.pco_prc_id = pco_prc_id) ")
 	private Boolean todasLiquidaciones;
 
 	@Formula(value = 
-		" (SELECT CASE WHEN Count(1) > 0 THEN 0 ELSE 1 END " +
-		" FROM   pco_prc_procedimientos " +
-		"        INNER JOIN pco_bur_burofax " +
-		"                ON pco_prc_procedimientos.pco_prc_id = pco_bur_burofax.pco_prc_id " +
-		"        INNER JOIN dd_pco_bfe_estado " +
-		"                ON dd_pco_bfe_estado.dd_pco_bfe_id = pco_bur_burofax.dd_pco_bfe_id " +
-		" WHERE  dd_pco_bfe_estado.dd_pco_bfe_codigo != '" + DDEstadoBurofaxPCO.NOTIFICADO + "' " +
-		"        AND pco_bur_burofax.borrado = 0 " +
-		"        AND pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID )")
+		" 			(SELECT" +
+		" 					  CASE" +
+		" 					    WHEN EXISTS" +
+		" 					      (SELECT 1" +
+		" 					      FROM pco_bur_burofax INNER JOIN dd_pco_bfe_estado ON dd_pco_bfe_estado.dd_pco_bfe_id      = pco_bur_burofax.dd_pco_bfe_id " +
+		" 					      WHERE pco_prc_procedimientos.pco_prc_id  = pco_bur_burofax.pco_prc_id" +
+		" 					      AND dd_pco_bfe_estado.dd_pco_bfe_codigo != '" + DDEstadoBurofaxPCO.NOTIFICADO + "'" +
+		" 					      AND pco_bur_burofax.borrado              = 0" +
+		" 					      )" +
+		" 					    THEN 0" +
+		" 					    WHEN EXISTS" +
+		" 					      (SELECT 1" +
+		" 					      FROM pco_bur_burofax INNER JOIN dd_pco_bfe_estado ON dd_pco_bfe_estado.dd_pco_bfe_id     = pco_bur_burofax.dd_pco_bfe_id " +
+		" 					      WHERE pco_prc_procedimientos.pco_prc_id = pco_bur_burofax.pco_prc_id" +
+		" 					      AND dd_pco_bfe_estado.dd_pco_bfe_codigo = '" + DDEstadoBurofaxPCO.NOTIFICADO + "'" +
+		" 					      AND pco_bur_burofax.borrado             = 0" +
+		" 					      )" +
+		" 					    THEN 1" +
+		" 					    ELSE 0" +
+		" 					  END" +
+		" 					FROM pco_prc_procedimientos" +
+		" 					WHERE pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID" +
+		" 					)")
 	private Boolean todosBurofaxes;
 
 	@Formula(value =

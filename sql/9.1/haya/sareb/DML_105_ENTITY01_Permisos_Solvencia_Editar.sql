@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=HR-1601
 --## PRODUCTO=NO
 --## Finalidad: DML para eliminar los perfiles con el permiso SOLVENCIA_EDITAR, crear un nuevo perfil y asignarle a los 
---## 			usuarios del grupo "Gestores de Admisión" ese permiso.
+--## 			usuarios de los grupos "Gestores de Admisión" y f "Gestor de subasta litigios" ese permiso.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -87,7 +87,7 @@ BEGIN
 		V_SQL := 'SELECT ZON_ID FROM '||V_ESQUEMA||'.ZON_ZONIFICACION WHERE ZON_COD = ''01'' AND ZON_NUM_CENTRO = 00000850000';
 		EXECUTE IMMEDIATE V_SQL INTO ZON_ID;
 		
-		V_SQL := 'SELECT USU_ID_USUARIO FROM '||V_ESQUEMA_M||'.GRU_GRUPOS_USUARIOS WHERE USU_ID_GRUPO IN(SELECT USU_ID FROM '|| V_ESQUEMA_M ||'.USU_USUARIOS where USU_USERNAME = ''GADMIN'')';
+		V_SQL := 'SELECT USU_ID_USUARIO FROM '||V_ESQUEMA_M||'.GRU_GRUPOS_USUARIOS WHERE USU_ID_GRUPO IN(SELECT USU_ID FROM '|| V_ESQUEMA_M ||'.USU_USUARIOS WHERE USU_USERNAME IN (''GADMIN'', ''GSUBLI''))';
 		DBMS_OUTPUT.PUT_LINE(V_SQL);
 		EXECUTE IMMEDIATE V_SQL BULK COLLECT INTO A_USUARIOS; 
 		FOR I IN A_USUARIOS.FIRST .. A_USUARIOS.LAST

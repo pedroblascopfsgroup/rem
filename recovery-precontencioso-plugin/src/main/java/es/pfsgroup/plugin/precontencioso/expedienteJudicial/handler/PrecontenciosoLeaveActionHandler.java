@@ -144,13 +144,25 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 				executor.execute("plugin.precontencioso.inicializarPco", prc);
 			} else {
 				String agencia_externa = "";
+				String prcPropuesto = "";
 				for(EXTTareaExternaValor valor : listado) {
 					if(TAREA_REVISAR_EXPEDIENTE_PREPARAR_COMBO_AGENCIA_EXTERNA.equals(valor.getNombre())){
 						agencia_externa = valor.getValor();
 					}
+					if(TAREA_REGISTRAR_TOMA_DEC_COMBO_PROC_INICIAR.equals(valor.getNombre())){
+						prcPropuesto = valor.getValor();
+					}
 				}
 				if (DDSiNo.SI.equals(agencia_externa)) {
 					executor.execute("plugin.precontencioso.cambiarEstadoExpediete", prc.getId(), PrecontenciosoBPMConstants.PCO_FINALIZADO);					
+				}
+				if(PrecontenciosoProjectContextImpl.RECOVERY_CAJAMAR.equals(precontenciosoContext.getRecovery())) {
+					ProcedimientoPCO pco = proxyFactory.proxy(ProcedimientoPcoApi.class).getPCOByProcedimientoId(prc.getId());
+					if(!Checks.esNulo(prcPropuesto)) {
+						TipoProcedimiento tipoProcProp = (TipoProcedimiento)diccionarioApi.dameValorDiccionarioByCod(TipoProcedimiento.class, prcPropuesto);
+						pco.setTipoProcPropuesto(tipoProcProp);
+					}
+					proxyFactory.proxy(ProcedimientoPcoApi.class).update(pco);
 				}
 			}
 		} else if (PrecontenciosoBPMConstants.PCO_AsignarGestorLiquidacion.equals(tex.getTareaProcedimiento().getCodigo())) {

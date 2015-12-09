@@ -63,8 +63,8 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
    
    var terminosAcuerdoCM = new Ext.grid.ColumnModel([
   	  {dataIndex: 'id', hidden:true, fixed:true }
-      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.tipoAcuerdo" text="**Tipo Acuerdo" />', dataIndex : 'tipoAcuerdo',width: 35}
-      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.subtipoAcuerdo" text="**Subtipo Acuerdo" />', dataIndex : 'subTipoAcuerdo',width: 35}
+      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.tipoTermino" text="**Tipo Termino" />', dataIndex : 'tipoAcuerdo',width: 35}
+      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.subtipoTermino" text="**Subtipo Termino" />', dataIndex : 'subTipoAcuerdo',width: 35}
 <%--       ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.importe" text="**Importe" />', dataIndex : 'importe',width: 65} --%>
 <%--       ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.comisiones" text="**Comisiones" />', dataIndex : 'comisiones',width: 100} --%>
 	  ,{dataIndex: 'idContrato', hidden:true, fixed:true }      

@@ -475,16 +475,16 @@ var actualizarBotonesDocumentos = function(){
 					});	
 					
 					<%-- SI DOCUMENTOS ELEGIDOS DE DISTINTO ESTADO -> AVISO DE LA IMPOSIBILIDAD DE HACER NADA --%>
-		<!-- 			if (uniqueArray.length > 1){ -->
-		<!-- 				habilitarDeshabilitarButtons(true, true, true, true, true, true, true); -->
+		<%-- 			if (uniqueArray.length > 1){ --%>
+		<%-- 				habilitarDeshabilitarButtons(true, true, true, true, true, true, true); --%>
 		<%-- 				Ext.MessageBox.alert('<s:message code="precontencioso.grid.documento.estadoDocumentosDistintos.titulo" text="**Estados de documento distintos" />' --%>
 		<%--                  ,'<s:message code="precontencioso.grid.documento.estadoDocumentosDistintos.aviso" text="**Debe seleccionar documentos con el mismo estado" />'); --%>
-		<!--                 return; -->
-		<!-- 			} -->
+		<%--                 return; --%>
+		<%-- 			} --%>
 								
 					<%-- **** ESTADO PENDIENTE DE SOLICITAR --%>
 					<%-- Vemos si tenemos solo un resultado y es PS (PENDIENTE SOLICITAR --%>
-		<!-- 			if (uniqueArray.length == 1 && uniqueArray[0] == 'PS'){ -->
+		<%-- 			if (uniqueArray.length == 1 && uniqueArray[0] == 'PS'){ --%>
 						uniqueArray2 = arrayEsDocumento.filter(function(item, pos) {
 			    			return arrayEsDocumento.indexOf(item) == pos;
 						});
@@ -532,10 +532,10 @@ var actualizarBotonesDocumentos = function(){
 								return;
 							}		      					      																	
 						}												
-		<!-- 			} -->
+		<%-- 			} --%>
 					<%-- **** ESTADO SOLICITADO --%>
 					<%-- Vemos si tenemos solo un resultado y es SO (SOLICITADO) --%>
-		<!-- 			if (uniqueArray.length == 1 && uniqueArray[0] == 'SO'){ -->
+		<%-- 			if (uniqueArray.length == 1 && uniqueArray[0] == 'SO'){ --%>
 						uniqueArray2 = arrayEsDocumento.filter(function(item, pos) {
 			    			return arrayEsDocumento.indexOf(item) == pos;
 						});
@@ -569,10 +569,10 @@ var actualizarBotonesDocumentos = function(){
 								return;
 							}		      					      																	
 						}				
-		<!-- 			} -->
+		<%-- 			} --%>
 					<%-- **** ESTADO DESCARTADO --%>
 					<%-- Vemos si tenemos solo un resultado y es DE (DESCARTADO) --%>
-		<!-- 			if (uniqueArray.length == 1 && uniqueArray[0] == 'DE'){ -->
+		<%-- 			if (uniqueArray.length == 1 && uniqueArray[0] == 'DE'){ --%>
 						uniqueArray2 = arrayEsDocumento.filter(function(item, pos) {
 			    			return arrayEsDocumento.indexOf(item) == pos;
 						});
@@ -582,7 +582,7 @@ var actualizarBotonesDocumentos = function(){
 							habilitarDeshabilitarButtons(false, true, true, true, true, false, true);
 							return;
 						}
-		<!-- 			} -->
+		<%-- 			} --%>
 								
 				}
 			}

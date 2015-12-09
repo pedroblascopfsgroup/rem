@@ -18,9 +18,6 @@
 			<json:property name="telefono1" value="${dto.persona.telefono1}" />
 			<json:property name="direccion" value="${dto.persona.direcciones[0].domicilio} ${dto.persona.direcciones[0].localidad.descripcion}" />
 			<json:property name="segmento" value="${dto.persona.segmento.descripcion}" />
-			<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
-				<json:property name="segmento" value="${dto.persona.segmentoEntidad.descripcion}" />
-			</sec:authorize>
 			<json:property name="situacion" value="${dto.persona.situacion}" />
 			<json:property name="numContratos" value="${dto.persona.numContratos}" />
 			<json:property name="deudaIrregular" value="${dto.persona.deudaIrregular}"/>

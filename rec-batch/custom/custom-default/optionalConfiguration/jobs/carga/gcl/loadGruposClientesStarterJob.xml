@@ -36,8 +36,10 @@
                      <property name="dataSource" ref="entityDataSource" />
                      <property name="afterScript">
                         <value>
-                                UPDATE TMP_GCL_GRUPOS_CLIENTES SET tmp_gcl_fichero_carga = '${inFile}';
-                                ANALYZE TABLE TMP_GCL_GRUPOS_CLIENTES ${sql.analyze};
+                                BEGIN
+                                 UPDATE TMP_GCL_GRUPOS_CLIENTES SET tmp_gcl_fichero_carga = '${inFile}';
+                                 OPERACION_DDL.DDL_TABLE('STATS','TMP_GCL_GRUPOS_CLIENTES');
+                                END;
                         </value>
                      </property>                      
 				     <!-- Parámetros Fijos del DataLoader que vienen en los JobParameters -->
@@ -65,8 +67,10 @@
                      <property name="dataSource" ref="entityDataSource" />
                      <property name="afterScript">
                         <value>
+                                BEGIN
                                 UPDATE TMP_PER_GCL SET TMP_PER_GCL_FICHERO_CARGA = '${inFile}';
-                                ANALYZE TABLE TMP_PER_GCL ${sql.analyze};
+                                OPERACION_DDL.DDL_TABLE('STATS','TMP_PER_GCL');
+                                END;
                         </value>
                      </property>                      
 				     <!-- Parámetros Fijos del DataLoader que vienen en los JobParameters -->

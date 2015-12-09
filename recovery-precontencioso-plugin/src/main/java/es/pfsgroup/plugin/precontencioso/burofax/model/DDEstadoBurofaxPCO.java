@@ -22,6 +22,7 @@ public class DDEstadoBurofaxPCO implements Dictionary, Auditable {
 	
 	public static final String NOTIFICADO = "OK";
 	public static final String NO_NOTIFICADO = "KO";
+	public static final String DESCARTADA = "DESC";
 
 	@Id
 	@Column(name = "DD_PCO_BFE_ID")

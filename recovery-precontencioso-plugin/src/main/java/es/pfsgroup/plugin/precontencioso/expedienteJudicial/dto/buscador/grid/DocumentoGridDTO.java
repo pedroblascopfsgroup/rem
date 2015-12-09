@@ -15,7 +15,7 @@ public class DocumentoGridDTO extends WebDto {
 	private Date fechaEnvio;
 	private Date fechaRecepcion;
 	private Boolean adjunto;
-
+	
 	public String getEstado() {
 		return estado;
 	}

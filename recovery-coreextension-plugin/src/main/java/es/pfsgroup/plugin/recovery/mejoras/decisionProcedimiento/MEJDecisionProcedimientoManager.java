@@ -664,8 +664,9 @@ public class MEJDecisionProcedimientoManager extends
 		}
 		
 		ConfiguradorPropuesta configuradorPropuesta = new ConfiguradorPropuesta();
-		Procedimiento procedimiento = prcManager.getProcedimiento(dtoDecisionProcedimiento.getIdProcedimiento());
-		if(procedimiento.getProcessBPM() == null) {
+		Procedimiento p = prcManager.getProcedimiento(dtoDecisionProcedimiento.getIdProcedimiento());
+		MEJProcedimiento procedimiento = MEJProcedimiento.instanceOf(p);
+		if(procedimiento.getProcessBPM() == null && procedimiento.getGuid() != null) {
 			configuradorPropuesta.setConfiguracion(ConfiguradorPropuesta.SOLO_ENVIAR);
 			dtoDecisionProcedimiento.setStrEstadoDecision(DDEstadoDecision.ESTADO_EN_CONFORMACION);
 		}

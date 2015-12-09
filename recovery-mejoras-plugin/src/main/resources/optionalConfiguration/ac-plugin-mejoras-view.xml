@@ -85,7 +85,8 @@
 	<bean p:entity="tabs.expediente.fast" p:name="contratosExpediente"
 		p:order="300"
 		p:fileName="/WEB-INF/jsp/plugin/mejoras/expedientes/tabs/tabContratos.jsp"
-		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="ROLE_PUEDE_VER_TAB_EXP_CONTRATOS" />
 
 	<!-- tabs del procedimiento -->
 	<bean p:entity="tabs.procedimiento" p:name="adjuntosProcedimiento"

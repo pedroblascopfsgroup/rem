@@ -144,8 +144,102 @@ var formBusquedaBienes=function(){
 		tabFiltrosLocalizacion=true;
 	});
 		
-<%-- *************TABPANEL QUE CONTIENE TODAS LAS PESTAï¿½AS********************************   --%>
+<%-- ******************* MODIFICACION BOTON BUSCAR PARA QUE SE DESACTIVEN BUSQUEDAS EN PARALELO ******************** --%>		
+	var validarForm=function(){
+		if(txtIdBien.getValue() != ''){
+			return true;
+		}
+		if(txtPoblacion.getValue() != ''){
+			return true;
+		}
+		if(txtCodPostal.getValue() != ''){
+			return true;
+		}
+		if(comboTipoBien.getValue() != ''){
+			return true;
+		}
+		if(txtValorDesde.getValue() != ''){
+			return true;
+		}
+		if(txtTotalCargasDesde.getValue() != ''){
+			return true;
+		}
+		if(txtValorHasta.getValue() != ''){
+			return true;
+		}
+		if(txtTotalCargasHasta.getValue() != ''){
+			return true;
+		}
+		if(txtNumContrato.getValue() != ''){
+			return true;
+		}
+		if(txtPrimerTitularNIF.getValue() != ''){
+			return true;
+		}
+		if(txtCodCliente.getValue() != ''){
+			return true;
+		}
+		if(txtNifCliente.getValue() != ''){
+			return true;
+		}
+		if(txtNumActivo.getValue() != ''){
+			return true;
+		}
+		if(txtNumRegistro.getValue() != ''){
+			return true;
+		}
+		if(txtReferenciaCatastral.getValue() != ''){
+			return true;
+		}
+		if(txtSubtipoBien.getValue() != ''){
+			return true;
+		}
+		if(txtTasacionDesde.getValue() != ''){
+			return true;
+		}
+		if(txtTasacionHasta.getValue() != ''){
+			return true;
+		}
+		if(txtTipoSubastaDesde.getValue() != ''){
+			return true;
+		}
+		if(txtTipoSubastaHasta.getValue() != ''){
+			return true;
+		}
+		if(txtNumFinca.getValue() != ''){
+			return true;
+		}
+		if(txtDireccion.getValue() != ''){
+			return true;
+		}
+		if(txtProvincia.getValue() != ''){
+			return true;
+		}
+		if(txtLocalidad.getValue() != ''){
+			return true;
+		}
+		if(txtCodigoPostal.getValue() != ''){
+			return true;
+		}
+	};
 	
+	var buscarFunc=function(){
+		if(validarForm()){
+			var isBusqueda=true;
+			panelFiltros.collapse(true);
+			pagingBar.show();
+			bienesStore.webflow(getParametros());
+			panelFiltros.getTopToolbar().setDisabled(true);	
+		}else{
+			Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','Introduzca parámetros de búsqueda');
+		}
+	};
+    
+    buttonsL[0] = app.crearBotonBuscar({
+		handler : buscarFunc
+	});	
+		
+<%-- *************TABPANEL QUE CONTIENE TODAS LAS PESTAï¿½AS********************************   --%>	
 	var filtroTabPanel=new Ext.TabPanel({
 		items:[filtrosTabDatosBien, filtrosTabRelacionesBien, filtrosTabLocalizacionBien]
 		,id:'idTabFiltrosBien'
@@ -416,6 +510,10 @@ var formBusquedaBienes=function(){
     };
 	    	
 	bienesGrid.addListener('rowdblclick', bienesGridListener);
+	
+	bienesStore.on('load',function(){
+           panelFiltros.getTopToolbar().setDisabled(false);
+    });
 	
 	var mainPanel = new Ext.Panel({
 		items : [

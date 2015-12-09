@@ -89,65 +89,28 @@ public class AdjudicadosController {
 					dto.setHabitual(nmbBien.getViviendaHabitual());
 				}
 				
-				if (!Checks.esNulo(dtoBien.getTareaNotificacion())
-						&& dtoBien.getTareaNotificacion().getProcedimiento().getTipoProcedimiento().getCodigo()
+				if (dtoBien.getProcedimientoBien().getProcedimiento().getTipoProcedimiento().getCodigo()
 								.compareTo(tipoPrcNombre.get(NMBProjectContextImpl.CONST_TIPO_PROCEDIMIENTO_ADJUDICACION)) == 0) {
-					dto.setAdjudicacionOK(dtoBien.getTareaNotificacion().getTareaFinalizada());
-					dto.setTareaActivaAdjudicacion(dtoBien.getTareaNotificacion().getDescripcionTarea());
+					dto.setAdjudicacionOK(!dtoBien.getTareaActiva());
+					if(dtoBien.getTareaActiva()) dto.setTareaActivaAdjudicacion(dtoBien.getDescripcionTarea());
 				}
 				
-				if (!Checks.esNulo(dtoBien.getTareaNotificacion())
-						&& dtoBien.getTareaNotificacion().getProcedimiento().getTipoProcedimiento().getCodigo()
+				if (dtoBien.getProcedimientoBien().getProcedimiento().getTipoProcedimiento().getCodigo()
 								.compareTo(tipoPrcNombre.get(NMBProjectContextImpl.CONST_TIPO_PROCEDIMIENTO_SANEAMIENTO)) == 0) {
-					dto.setSaneamientoOK(dtoBien.getTareaNotificacion().getTareaFinalizada());
-					dto.setTareaActivaSaneamiento(dtoBien.getTareaNotificacion().getDescripcionTarea());
+					dto.setSaneamientoOK(!dtoBien.getTareaActiva());
+					if(dtoBien.getTareaActiva()) dto.setTareaActivaSaneamiento(dtoBien.getDescripcionTarea());
 				}
-				if (!Checks.esNulo(dtoBien.getTareaNotificacion())
-						&& dtoBien.getTareaNotificacion().getProcedimiento().getTipoProcedimiento().getCodigo()
+				if (dtoBien.getProcedimientoBien().getProcedimiento().getTipoProcedimiento().getCodigo()
 								.compareTo(tipoPrcNombre.get(NMBProjectContextImpl.CONST_TIPO_PROCEDIMIENTO_POSESION)) == 0) {
-					dto.setPosesionOK(dtoBien.getTareaNotificacion().getTareaFinalizada());
-					dto.setTareaActivaPosesion(dtoBien.getTareaNotificacion().getDescripcionTarea());
+					dto.setPosesionOK(!dtoBien.getTareaActiva());
+					if(dtoBien.getTareaActiva()) dto.setTareaActivaPosesion(dtoBien.getDescripcionTarea());
 				}
-				if (!Checks.esNulo(dtoBien.getTareaNotificacion())
-						&& dtoBien.getTareaNotificacion().getProcedimiento().getTipoProcedimiento().getCodigo()
+				if (dtoBien.getProcedimientoBien().getProcedimiento().getTipoProcedimiento().getCodigo()
 								.compareTo(tipoPrcNombre.get(NMBProjectContextImpl.CONST_TIPO_PROCEDIMIENTO_GESTION_LLAVES)) == 0) {
-					dto.setLlavesOK(dtoBien.getTareaNotificacion().getTareaFinalizada());
-					dto.setTareaActivaLlaves(dtoBien.getTareaNotificacion().getDescripcionTarea());
+					dto.setLlavesOK(!dtoBien.getTareaActiva());
+					if(dtoBien.getTareaActiva()) dto.setTareaActivaLlaves(dtoBien.getDescripcionTarea());
 				}
 				
-//				Map<String, TareaNotificacion> valoresTramites = proxyFactory.proxy(BienApi.class).getTareasBienAsunto(idAsunto, nmbBien, tipoPrcNombre, false);
-//
-//				TareaNotificacion tarea = valoresTramites.get(NMBProjectContextImpl.CONST_TIPO_PROCEDIMIENTO_ADJUDICACION);
-//				if (!Checks.esNulo(tarea)) {
-//					dto.setAdjudicacionOK((tarea.getTareaFinalizada()));
-//					dto.setTareaActivaAdjudicacion(tarea.getDescripcionTarea());
-//				} else {
-//					dto.setAdjudicacionOK(false);
-//				}
-//
-//				tarea = valoresTramites.get(NMBProjectContextImpl.CONST_TIPO_PROCEDIMIENTO_SANEAMIENTO);
-//				if (!Checks.esNulo(tarea)) {
-//					dto.setSaneamientoOK((tarea.getTareaFinalizada()));
-//					dto.setTareaActivaSaneamiento(tarea.getDescripcionTarea());
-//				} else {
-//					dto.setSaneamientoOK(false);
-//				}
-//
-//				tarea = valoresTramites.get(NMBProjectContextImpl.CONST_TIPO_PROCEDIMIENTO_POSESION);
-//				if (!Checks.esNulo(tarea)) {
-//					dto.setPosesionOK((tarea.getTareaFinalizada()));
-//					dto.setTareaActivaPosesion(tarea.getDescripcionTarea());
-//				} else {
-//					dto.setPosesionOK(false);
-//				}
-//
-//				tarea = valoresTramites.get(NMBProjectContextImpl.CONST_TIPO_PROCEDIMIENTO_GESTION_LLAVES);
-//				if (!Checks.esNulo(tarea)) {
-//					dto.setLlavesOK((tarea.getTareaFinalizada()));
-//					dto.setTareaActivaLlaves(tarea.getDescripcionTarea());
-//				} else {
-//					dto.setLlavesOK(false);
-//				}
 
 				bienesDTO.put(dto.getId(), dto);
 			}

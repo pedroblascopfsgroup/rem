@@ -120,7 +120,7 @@ public final class InternaBusinessOperation {
     public static final String BO_EXP_MGR_FIND_EXPEDIENTES_PAGINATED_DINAMICO = "expedienteManager.findExpedientesPaginatedDinamico";
     public static final String BO_EXP_MGR_FIND_EXPEDIENTES_RECOBRO_PAGINATED_DINAMICO = "expedienteManager.findExpedientesRecobroPaginatedDinamico";
     public static final String BO_EXP_MGR_FIND_EXPEDIENTES_PARA_EXCEL_DINAMICO = "expedienteManager.findExpedientesParaExcelDinamico";
-   
+    public static final String BO_EXP_MGR_FIND_EXPEDIENTES_RECOBRO_PARA_EXCEL_DINAMICO = "expedienteManager.findExpedientesRecobroParaExcelDinamico";
     /*****************************************************************************
      ** PoliticaManager.
      ****************************************************************************/

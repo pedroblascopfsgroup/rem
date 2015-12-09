@@ -37,7 +37,7 @@ public class EXTGestoresDaoImpl extends AbstractEntityDao<Usuario, Long> impleme
 		HQLBuilder.addFiltroIgualQue(hb, "gd.despachoExterno.id", idTipoDespacho);
 		
 		if(!incluirBorrados) {
-			HQLBuilder.addFiltroIgualQue(hb, "gd.usuario.auditoria.borrado", false);
+			HQLBuilder.addFiltroIgualQue(hb, "gd.auditoria.borrado", false);
 		}
 		
 		return HibernateQueryUtils.list(this, hb);
@@ -57,7 +57,7 @@ public class EXTGestoresDaoImpl extends AbstractEntityDao<Usuario, Long> impleme
 		StringBuilder sqlUsuarios = new StringBuilder();
 		sqlUsuarios.append("select gd.usuario from GestorDespacho gd ");
 		sqlUsuarios.append("where gd.despachoExterno.id = :idTipoDespacho ");
-		sqlUsuarios.append(" and gd.usuario.auditoria.borrado = false ");
+		sqlUsuarios.append(" and gd.auditoria.borrado = false ");
 		if (StringUtils.hasText(usuarioDto.getQuery())){
 			String[] palabras = usuarioDto.getQuery().split(" ");
 			for (String palabra : palabras) {
@@ -83,7 +83,7 @@ public class EXTGestoresDaoImpl extends AbstractEntityDao<Usuario, Long> impleme
 		StringBuilder sqlUsuarios = new StringBuilder();
 		sqlUsuarios.append("select count(gd.id) from GestorDespacho gd ");
 		sqlUsuarios.append("where gd.despachoExterno.id = :idTipoDespacho ");
-		sqlUsuarios.append(" and gd.usuario.auditoria.borrado = false ");
+		sqlUsuarios.append(" and gd.auditoria.borrado = false ");
 		if (StringUtils.hasText(usuarioDto.getQuery())){
 			String[] palabras = usuarioDto.getQuery().split(" ");
 			for (String palabra : palabras) {

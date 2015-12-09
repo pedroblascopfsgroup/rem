@@ -1,33 +1,33 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
-<properties>	
-  	<entry key="expedientes.expedientesActivos">
-	  	<![CDATA[
-      SELECT e.exp_id, cex.cnt_id, cex.cex_pase, e.EXP_PROCESS_BPM, e.exp_manual       
+<properties>
+    <entry key="expedientes.expedientesActivos">
+        <![CDATA[
+      SELECT e.exp_id, cex.cnt_id, cex.cex_pase, e.EXP_PROCESS_BPM, e.exp_manual
       FROM exp_expedientes e
           JOIN ${master.schema}.dd_eex_estado_expediente eex ON e.dd_eex_id = eex.dd_eex_id AND eex.dd_eex_codigo in (?,?,?)
           JOIN cex_contratos_expediente cex ON cex.exp_id = e.exp_id
           JOIN CNT_CONTRATOS cnt ON cex.cnt_id = cnt.cnt_id
           JOIN ${master.schema}.dd_esc_estado_cnt esc ON cnt.dd_esc_id = esc.dd_esc_id
-          JOIN MOV_MOVIMIENTOS mov ON mov.cnt_id = cnt.cnt_id and 
-               (mov.mov_fecha_extraccion = cnt.cnt_fecha_extraccion 
+          JOIN MOV_MOVIMIENTOS mov ON mov.cnt_id = cnt.cnt_id and
+               (mov.mov_fecha_extraccion = cnt.cnt_fecha_extraccion
                OR ? = (SELECT esc.dd_esc_codigo FROM ${master.schema}.dd_esc_estado_cnt esc WHERE cnt.dd_esc_id = esc.dd_esc_id))
           JOIN dd_tpe_tipo_prod_entidad t ON cnt.dd_tpe_id = t.dd_tpe_id
-      WHERE e.borrado = 0      
+      WHERE e.borrado = 0
       ORDER BY e.exp_id
-	   ]]>
-  	</entry>
-  	<entry key="expedientes.liberarContrato">
-  		<![CDATA[
-  			update cex_contratos_expediente 
-            set borrado = 1 
+       ]]>
+    </entry>
+    <entry key="expedientes.liberarContrato">
+        <![CDATA[
+            update cex_contratos_expediente
+            set borrado = 1
             where cnt_id = ? and exp_id = ? and borrado = 0
-  		]]>
-  	</entry>	
-  	<entry key="expedientes.cancelarExpediente">
-  		<![CDATA[
-  			update exp_expedientes 
-            set DD_EEX_ID = (select DD_EEX_ID from ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE where DD_EEX_CODIGO = ?), 
-            exp_process_bpm = null 
+        ]]>
+    </entry>
+    <entry key="expedientes.cancelarExpediente">
+        <![CDATA[
+            update exp_expedientes
+            set DD_EEX_ID = (select DD_EEX_ID from ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE where DD_EEX_CODIGO = ?),
+            exp_process_bpm = null
             where exp_id = ? and borrado = 0
   		]]>
   	</entry>

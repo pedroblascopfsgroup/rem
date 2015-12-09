@@ -377,7 +377,7 @@
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
-				<artifactId>recovery-bankiaWeb-plugin</artifactId>
+				<artifactId>proyecto-bankia-online</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<!-- HAYA-CAJAMAR COMUNES -->
@@ -563,7 +563,7 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<modules>
-				<module>recovery-bankiaWeb-plugin</module>
+				<module>proyecto-bankia-online</module>
 				<module>recovery-iplus-plugin</module>
 				<module>recovery-integracionuvem-plugin</module>
 		        <module>recovery-bi-plugin</module>

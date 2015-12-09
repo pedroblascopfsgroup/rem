@@ -130,6 +130,12 @@ public class DocumentoPCO implements Serializable, Auditable {
 	@Embedded
 	private Auditoria auditoria;
 
+	@Formula(value = 
+		" (SELECT CASE WHEN Count(1) > 1 THEN 1 ELSE 0 END " +
+		" FROM   pco_doc_solicitudes " +
+		" WHERE  pco_doc_solicitudes.pco_doc_pdd_id = PCO_DOC_PDD_ID) ")
+	private Boolean solicitudPrevia;
+
 	/*
 	 * GETTERS & SETTERS
 	 */

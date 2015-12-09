@@ -256,10 +256,20 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         return (List<Expediente>) p.getResults();
     }
     
-	/**
-	 * {@inheritDoc}
-	 */
-	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_EXPEDIENTES_CONTRATO_POR_ID)
+    @SuppressWarnings("unchecked")
+    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_EXPEDIENTES_RECOBRO_PARA_EXCEL_DINAMICO)
+    public List<Expediente> findExpedientesRecobroParaExcelDinamico(DtoBuscarExpedientes dto, String params) {
+        Page p = this.findExpedientesPaginatedDinamico(dto, params, 2000, true);
+        return (List<Expediente>) p.getResults();
+    }
+    
+    /**
+     * Busca expedientes para un contrato determinado.
+     *
+     * @param idExpediente El id del expediente
+     * @return List
+     */
+    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_EXPEDIENTES_CONTRATO_POR_ID)
     public List<ExpedienteContrato> findExpedientesContratoPorId(Long idExpediente) {
         return expedienteDao.findContratosExpediente(idExpediente);
     }

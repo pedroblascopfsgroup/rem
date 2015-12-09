@@ -2,8 +2,6 @@ package es.pfsgroup.recovery.haya.adjunto;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.FileNameMap;
@@ -18,14 +16,17 @@ import javax.annotation.Resource;
 
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.adjuntos.api.AdjuntoApi;
 import es.capgemini.pfs.adjuntos.manager.AdjuntoManager;
+import es.capgemini.pfs.asunto.EXTAsuntoManager;
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDto;
 import es.capgemini.pfs.asunto.model.Asunto;
+import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.asunto.AdjuntoDto;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
@@ -46,6 +47,7 @@ import es.pfsgroup.gestorDocumental.api.GestorDocumentalApi;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.recovery.adjunto.AdjuntoAssembler;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
+import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 import es.pfsgroup.recovery.gestordocumental.dto.AdjuntoGridDto;
 import es.pfsgroup.tipoFicheroAdjunto.MapeoTipoFicheroAdjunto;
 
@@ -69,15 +71,26 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	@Autowired
 	private AdjuntoAssembler adjuntoAssembler;
 	
+	@Autowired
+	private EXTProcedimientoManager extProcedimientoManager;
+	
+	@Autowired
+	private EXTAsuntoManager extAsuntoManager;
+	
     @Resource
     Properties appProperties;
     
     private final static String GESTOR_DOCUMENTAL_WS_ACTIVADO = "gestor.documental.cajamar.ws.activado"; 
 
 	@Override
+	@Transactional(readOnly = false)
 	public List<? extends EXTAdjuntoDto> getAdjuntosConBorrado(Long id) {
 		if(esEntidadCajamar()){
-			EXTAsunto asunto = genericDao.get(EXTAsunto.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
+			
+			Asunto asun = genericDao.get(Asunto.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
+			
+			EXTAsunto asunto = extAsuntoManager.prepareGuid(asun);
+			
 			final Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 			final Boolean borrarOtrosUsu = tieneFuncion(usuario, "BORRAR_ADJ_OTROS_USU");
 			return adjuntoAssembler.listAdjuntoGridDtoToEXTAdjuntoDto(gestorDocumentalApi.listadoDocumentos(asunto.getGuid() , DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, null), borrarOtrosUsu);
@@ -227,10 +240,12 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public List<? extends AdjuntoDto> getAdjuntosConBorradoByPrcId(Long prcId) {
 		if(esEntidadCajamar()){
 			
-			MEJProcedimiento procedimiento = genericDao.get(MEJProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", prcId));
+			Procedimiento prc = genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", prcId));
+			MEJProcedimiento procedimiento = extProcedimientoManager.prepareGuid(prc);
 			
 			final List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(procedimiento.getGuid(), DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO, null);
 			final Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();

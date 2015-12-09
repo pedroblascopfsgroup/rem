@@ -138,6 +138,17 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
 		return outputDto.getTxtError();
 	}
+	
+	private String getFileExtension(FileItem file) { 
+		if (file == null) { return null; } 
+		String name = file.getFileName(); 
+		int extIndex = name.lastIndexOf("."); 
+		if (extIndex == -1) { 
+			return ""; 
+		} else { 
+			return name.substring(extIndex + 1); 
+		} 
+	} 
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_LISTADO_DOCUMENTO)
 	@Transactional(readOnly = false)
@@ -204,8 +215,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		GestorDocumentalInputDto inputDto = new GestorDocumentalInputDto();
 		if (ALTA_GESTOR_DOC.equals(tipoGestion)) {
 			inputDto.setOperacion(ConstantesGestorDocumental.ALTA_DOCUMENTO_OPERACION);
-			inputDto.setExtensionFichero(uploadForm.getFileItem()
-					.getContentType());
+			inputDto.setExtensionFichero(getFileExtension(uploadForm.getFileItem()));
 			inputDto.setOrigen(ConstantesGestorDocumental.GESTOR_DOCUMENTAL_ORIGEN);
 			inputDto.setTipoAsociacion(getTipoAsociacion(tipoEntidadGrid));
 			inputDto.setTipoDocumento(tipoDocumento);

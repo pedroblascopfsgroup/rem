@@ -76,7 +76,6 @@ var esProveedorSolvencia = false;
 	var nif =       label('nif','docType');
 	var segmento =  label('segmento','<s:message code="menu.clientes.consultacliente.datosTab.segmento" text="**Segmento"/>');
 	var segmentoEntidad =  label('segmentoEntidad','<s:message code="menu.clientes.consultacliente.datosTab.segmentoEntidad" text="**Segmento Entidad"/>');
-	debugger;
 	<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
 	var segmento =  label('segmentoEntidad','<s:message code="menu.clientes.consultacliente.datosTab.segmento" text="**Segmento"/>');
 	var segmentoEntidad =  label('segmento','<s:message code="menu.clientes.consultacliente.datosTab.segmentoEntidad" text="**Segmento Entidad"/>');

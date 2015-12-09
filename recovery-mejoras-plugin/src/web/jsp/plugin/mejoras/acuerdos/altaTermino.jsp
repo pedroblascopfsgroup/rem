@@ -60,7 +60,7 @@
 		,editable: false
 		,emptyText:'Seleccionar'
 		,triggerAction: 'all'
-		,fieldLabel: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.flujo.tipoAcuerdo" text="**Tipo acuerdo" />'
+		,fieldLabel: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.flujo.tipoTermino" text="**Tipo termino" />'
 		,labelStyle: 'width:150px'
 		,width: 150		
 	});
@@ -140,14 +140,13 @@
 			,method: 'POST'
 			,params:{idTipoAcuerdo:cmp.getValue()} 
 			,success: function (result, request){
-						debugger;
 				var cmpLft = Ext.getCmp('dinamicElementsLeft');
-			   	if (cmpLft) {
+			   	if (cmpLft && cmpLft.el) {
 					cmpLft.el.remove();
 			   	}
 			   	
 			  	var cmpRgt = Ext.getCmp('dinamicElementsRight');
-			   	if (cmpRgt) {
+			   	if (cmpRgt && cmpRgt.el) {
 					cmpRgt.el.remove();
 			   	}
 				
@@ -216,7 +215,7 @@
 		,editable: false
 		,emptyText:'Seleccionar'
 		,triggerAction: 'all'
-		,fieldLabel: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.flujo.subtipoAcuerdo" text="**Sub tipo acuerdo" />'
+		,fieldLabel: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.flujo.subtipoTermino" text="**Sub tipo termino" />'
 		,labelStyle: 'width:150px'
 		,width: 150				
 	});

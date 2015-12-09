@@ -11,7 +11,8 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial (Carlos Gil)
---##        0.2 GMN Adaptación script a lanzador
+--##        0.2          GMN Adaptación script a lanzador
+--##        0.3 20151209 GMN Se reasignan gestores GESCHRE, SUCHRE y DIRREC solo a litigios
 --##########################################
 --*/
 
@@ -81,7 +82,7 @@ from
 
 EXECUTE IMMEDIATE V_SQL; 
 
--- Gestor control de gestión HRE
+-- Gestor control de gestión HRE  solo para litigios
 
 V_SQL:= 'insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
 select '||V_ESQUEMA||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id,
@@ -96,7 +97,7 @@ from
                     from '||V_ESQUEMA||'.asu_asuntos asuu inner join
                          '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
                          '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id
-                    where asuu.DD_TAS_ID = 2)
+                    where asuu.DD_TAS_ID = 1)
  ) aux';
 
  EXECUTE IMMEDIATE V_SQL; 
@@ -114,12 +115,12 @@ from
                     from '||V_ESQUEMA||'.asu_asuntos asuu inner join
                          '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
                          '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id
-                    where asuu.DD_TAS_ID = 2)
+                    where asuu.DD_TAS_ID = 1)
 ) aux';
   
 EXECUTE IMMEDIATE V_SQL; 
 
--- Supervisor control gestión HRE
+-- Supervisor control gestión HRE  solo para litigios
 
 V_SQL:= 'insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
 select '||V_ESQUEMA||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id,
@@ -134,7 +135,7 @@ from
                     from '||V_ESQUEMA||'.asu_asuntos asuu inner join
                          '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
                          '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id
-                    where asuu.DD_TAS_ID = 2)
+                    where asuu.DD_TAS_ID = 1)
  ) aux';
 
 EXECUTE IMMEDIATE V_SQL; 
@@ -152,12 +153,12 @@ from
                     from '||V_ESQUEMA||'.asu_asuntos asuu inner join
                          '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
                          '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id
-                    where asuu.DD_TAS_ID = 2)
+                    where asuu.DD_TAS_ID = 1)
 ) aux';
 
 EXECUTE IMMEDIATE V_SQL; 
 
--- Dirección recuperaciones
+-- Dirección recuperaciones HRE solo para litigios
 
 V_SQL:= 'insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
 select '||V_ESQUEMA||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id,
@@ -172,7 +173,7 @@ from
                     from '||V_ESQUEMA||'.asu_asuntos asuu inner join
                          '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
                          '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id
-                    where asuu.DD_TAS_ID = 2)
+                    where asuu.DD_TAS_ID = 1)
  ) aux';
 
  
@@ -191,7 +192,7 @@ from
                     from '||V_ESQUEMA||'.asu_asuntos asuu inner join
                          '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
                          '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id
-                    where asuu.DD_TAS_ID = 2)
+                    where asuu.DD_TAS_ID = 1)
 ) aux';
  
 EXECUTE IMMEDIATE V_SQL; 

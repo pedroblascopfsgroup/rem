@@ -19,7 +19,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.AbstractMessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,8 +48,6 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
-import es.capgemini.pfs.contrato.model.AdjuntoContrato;
-import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.asunto.AdjuntoDto;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.asunto.EXTAdjuntoDto;
@@ -64,17 +61,14 @@ import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
-import es.capgemini.pfs.expediente.model.AdjuntoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.interna.InternaBusinessOperation;
-import es.capgemini.pfs.iplus.IPLUSAdjuntoAuxDto;
 import es.capgemini.pfs.iplus.IPLUSUtils;
 import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoDao;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
-import es.capgemini.pfs.persona.model.AdjuntoPersona;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procedimiento.dao.EXTProcedimientoDao;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -99,9 +93,9 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
-import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJFinalizarAsuntoDto;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.MEJDecisionProcedimientoManager;
@@ -124,6 +118,7 @@ import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 import es.pfsgroup.recovery.ext.impl.zona.dao.EXTZonaDao;
+import es.pfsgroup.recovery.integration.Guid;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 @Component
@@ -1988,6 +1983,19 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			return "";
 		}
 		return null;
+	}
+	
+	public EXTAsunto prepareGuid(Asunto asunto) {
+		
+		EXTAsunto extAsu =  EXTAsunto.instanceOf(asunto);
+		
+		if (Checks.esNulo(extAsu.getGuid())) {
+			//logger.debug(String.format("[INTEGRACION] Asignando nuevo GUID para procedimiento %d", procedimiento.getId()));
+			extAsu.setGuid(Guid.getNewInstance().toString());
+			asuntoDao.save(extAsu);
+		}
+		
+		return extAsu;
 	}
 
 }

@@ -49,6 +49,7 @@ import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.AdjuntoGridAssembler;
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.ConstantesGestorDocumental;
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalInputDto;
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalOutputDto;
+import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalOutputListDto;
 import es.pfsgroup.recovery.cajamar.serviciosonline.GestorDocumentalWSApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
@@ -56,6 +57,7 @@ import es.pfsgroup.recovery.ext.impl.expediente.EXTExpedienteManager;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 import es.pfsgroup.recovery.gestordocumental.dto.AdjuntoGridDto;
+import es.pfsgroup.tipoFicheroAdjunto.MapeoTipoFicheroAdjunto;
 
 @Component
 public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
@@ -146,6 +148,41 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 				claveAsociacion, LISTADO_GESTOR_DOC, tipoDocumento,
 				tipoEntidadGrid, null);
 		outputDto = gestorDocumentalWSApi.ejecutar(inputDto);
+		
+		if(DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidadGrid) || DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidadGrid)){
+			
+			for(GestorDocumentalOutputListDto olDto : outputDto.getLbListadoDocumentos()) {
+				
+				List<MapeoTipoFicheroAdjunto> mapeo = genericDao.getList(MapeoTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "tipoFicheroExterno", olDto.getTipoDoc()));
+				if(!Checks.esNulo(mapeo) && mapeo.size()>0){
+					
+					if(mapeo.size() == 1){
+						olDto.setTipoDoc(mapeo.get(0).getTipoFichero().getCodigo());
+					}else{
+						if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidadGrid)) {
+							
+							EXTAsunto extAsun = genericDao.get(EXTAsunto.class, genericDao.createFilter(FilterType.EQUALS, "guid", claveAsociacion));
+							List<EXTAdjuntoAsunto> adjsAsun = genericDao.getList(EXTAdjuntoAsunto.class, genericDao.createFilter(FilterType.EQUALS, "asunto.id", extAsun.getId()));
+							if(!Checks.esNulo(adjsAsun) && adjsAsun.size() > 0){
+								olDto.setTipoDoc(adjsAsun.get(0).getTipoFichero().getCodigo());
+							}
+							
+						} else if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidadGrid)) {
+							
+							MEJProcedimiento procedimiento = genericDao.get(MEJProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "guid", claveAsociacion));
+							List<EXTAdjuntoAsunto> adjsAsun = genericDao.getList(EXTAdjuntoAsunto.class, genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", procedimiento.getId()));
+							if(!Checks.esNulo(adjsAsun) && adjsAsun.size() > 0){
+								olDto.setTipoDoc(adjsAsun.get(0).getTipoFichero().getCodigo());
+							}
+							
+						}
+					}
+					
+				}
+				
+			}	
+		}
+		
 		return AdjuntoGridAssembler.outputDtoToAdjuntoGridDto(outputDto);
 	}
 

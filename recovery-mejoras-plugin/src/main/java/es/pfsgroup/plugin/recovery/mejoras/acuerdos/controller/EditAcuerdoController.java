@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.recovery.mejoras.acuerdos.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -10,8 +12,10 @@ import org.springframework.web.context.request.WebRequest;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.core.api.acuerdo.AcuerdoApi;
 import es.capgemini.pfs.core.api.acuerdo.CumplimientoAcuerdoDto;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoApi;
 
 @Controller 
@@ -20,11 +24,15 @@ public class EditAcuerdoController {
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String open(@RequestParam(value = "idAcuerdo", required = true) Long id, ModelMap map) {
 				
 		Acuerdo acuerdo = proxyFactory.proxy(AcuerdoApi.class).getAcuerdoById(id);
 		map.put("acuerdo",acuerdo);
+		
+		List<DDSiNo> ddsino = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDSiNo.class);
+		map.put("ddSiNo", ddsino);
 		
 		return "plugin/mejoras/acuerdos/cumplimientoAcuerdo";
 	}

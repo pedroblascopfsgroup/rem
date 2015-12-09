@@ -215,7 +215,6 @@
 			,cls: 'x-btn-text-icon'
 			,style:'margin-left:2px;padding-top:0px'
          	,handler:function(){
-         		//debugger;
          		var w = app.openWindow({
 					flow : 'serviciosonlinecajamar/consultaDeSaldos'
 					//,width:1400

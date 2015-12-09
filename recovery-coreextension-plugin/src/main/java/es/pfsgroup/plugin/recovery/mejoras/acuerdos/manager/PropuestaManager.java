@@ -4,7 +4,9 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,7 +20,6 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
-import es.capgemini.pfs.acuerdo.dao.DDEstadoAcuerdoDao;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDMotivoRechazoAcuerdo;
@@ -27,13 +28,16 @@ import es.capgemini.pfs.acuerdo.model.DDValoracionActuacionAmistosa;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.core.api.acuerdo.CumplimientoAcuerdoDto;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
+import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
 import es.capgemini.pfs.expediente.dao.ExpedienteDao;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.expediente.model.ExpedientePersona;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
+import es.capgemini.pfs.registro.CumplimientoAcuerdoListener;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
@@ -49,8 +53,6 @@ import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.api.PropuestaApi;
 import es.pfsgroup.recovery.api.ExpedienteApi;
-import es.pfsgroup.recovery.ext.api.tareas.EXTCrearTareaException;
-import es.pfsgroup.recovery.ext.api.tareas.EXTTareasApi;
 import es.pfsgroup.recovery.ext.impl.acuerdo.dao.EXTActuacionesAExplorarExpedienteDao;
 import es.pfsgroup.recovery.ext.impl.acuerdo.dao.EXTActuacionesRealizadasExpedienteDao;
 import es.pfsgroup.recovery.ext.impl.acuerdo.dto.DTOActuacionesExplorarExpediente;
@@ -58,7 +60,6 @@ import es.pfsgroup.recovery.ext.impl.acuerdo.dto.DTOActuacionesRealizadasExpedie
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTActuacionesAExplorarExpediente;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTActuacionesRealizadasExpediente;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
-import es.pfsgroup.recovery.ext.impl.tareas.EXTDtoGenerarTareaIdividualizadaImpl;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 @Service
@@ -95,6 +96,9 @@ public class PropuestaManager implements PropuestaApi {
 	
 	@Autowired
 	private EXTActuacionesRealizadasExpedienteDao extActuacionesRealizadasExpedienteDao;
+	
+	@Autowired(required = false)
+	private List<CumplimientoAcuerdoListener> listeners;
 	
 
 	@BusinessOperation(BO_PROPUESTA_GET_LISTADO_PROPUESTAS)
@@ -449,5 +453,47 @@ public class PropuestaManager implements PropuestaApi {
 			this.crearEventoPropuesta(propuesta.getExpediente().getId(), descripcion);
 		}
 		
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void cerrarPropuesta(Long id) {
+		EventFactory.onMethodStart(this.getClass());
+
+		Acuerdo acuerdo = acuerdoDao.get(id);
+
+		acuerdo.setFechaCierre(new Date());
+		DDEstadoAcuerdo estadoAcuerdoFinalizado = (DDEstadoAcuerdo) executor
+				.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
+						DDEstadoAcuerdo.class,
+						DDEstadoAcuerdo.ACUERDO_FINALIZADO);
+		acuerdo.setEstadoAcuerdo(estadoAcuerdoFinalizado);
+
+		acuerdoDao.saveOrUpdate(acuerdo);
+
+		bpmIntegracionService.notificaCambioEstado(acuerdo);
+		
+		EventFactory.onMethodStop(this.getClass());
+	}
+	
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void registraCumplimientoPropuesta(CumplimientoAcuerdoDto dto) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put(CumplimientoAcuerdoListener.ID_ACUERDO, dto.getId());
+		map.put(CumplimientoAcuerdoListener.CLAVE_FINALIZADO, dto
+				.getFinalizar());
+		map.put(CumplimientoAcuerdoListener.CLAVE_CUMPLIDO, dto.getCumplido());
+		map.put(CumplimientoAcuerdoListener.CLAVE_FECHA_CUMPLIMIENTO, dto
+				.getFechaPago());
+		map.put(CumplimientoAcuerdoListener.CLAVE_CANTIDAD_PAGADA, dto
+				.getImportePagado());
+
+		if (listeners != null) {
+			for (CumplimientoAcuerdoListener l : listeners) {
+				l.fireEvent(map);
+			}
+		}
 	}
 }

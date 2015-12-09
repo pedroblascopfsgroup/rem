@@ -31,7 +31,6 @@
  	var odNumExtra5 = label('odNumExtra5','<s:message code="contrato.consulta.tabOtrosDatos.numExtra5" text="**Importe Retenciones"/>');
  	
  	//otros
- 	debugger;
  	var riesgoOperacional = label('riesgoOperacional','<s:message code="contrato.consulta.tabOtrosDatos.riesgoOperacional" text="**Riesgo Operacional"/>');
  	var tipoVencido = label('tipoVencido','<s:message code="contrato.consulta.tabOtrosDatos.tipoVencido" text="**Tipo Vencido"/>');
  	var tramoPrevio = label('tramoPrevio','<s:message code="contrato.consulta.tabOtrosDatos.tramoPrevio" text="**Tramo Previo"/>');

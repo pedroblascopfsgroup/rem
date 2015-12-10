@@ -9,6 +9,7 @@ import java.util.Map;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.registro.model.HistoricoProcedimiento;
 import es.pfsgroup.commons.utils.Checks;
@@ -228,14 +229,18 @@ public class InformeValidacionCDDBean {
 			}else{
 				infobien.setNumRegistro(nmbBien.getDatosRegistralesActivo().getNumRegistro());
 				infobien.setNumFinca(nmbBien.getDatosRegistralesActivo().getNumFinca());
+				if (!Checks.esNulo(nmbBien.getDatosRegistralesActivo().getLocalidad())) {
+					final Localidad localidad = nmbBien.getDatosRegistralesActivo().getLocalidad();
+					infobien.setLocalidadDatosRegistrales(localidad.getDescripcion());
+					if(!Checks.esNulo(localidad.getProvincia())){
+						infobien.setProvinciaDatosRegistrales(localidad.getProvincia().getDescripcion());
+					}
+				}
 			}
 			if (Checks.esNulo(infobien.getNumRegistro())) {
 				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Numero registro; ");
 			}
 			infobien.setReferenciaCatastral(nmbBien.getReferenciaCatastral());
-//			if (Checks.esNulo(infobien.getReferenciaCatastral())) {
-//				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Referencia catastral; ");
-//			}
 			if (Checks.esNulo(infobien.getNumFinca())) {
 				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Numero finca; ");
 			}
@@ -261,6 +266,9 @@ public class InformeValidacionCDDBean {
 				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Valor judicial; ");
 			}
 			if (!Checks.esNulo(nmbBien.getLocalizacionActual())) {
+				if (!Checks.esNulo(nmbBien.getLocalizacionActual().getPais())) {
+					infobien.setPais(nmbBien.getLocalizacionActual().getPais().getDescripcion());
+				}				
 				if (!Checks.esNulo(nmbBien.getLocalizacionActual().getProvincia())) {
 					infobien.setProvincia(nmbBien.getLocalizacionActual().getProvincia().getDescripcion());
 				}
@@ -273,24 +281,7 @@ public class InformeValidacionCDDBean {
 				infobien.setCodigoPostal(nmbBien.getLocalizacionActual().getCodPostal());
 				infobien.setDireccion(nmbBien.getLocalizacionActual().getDireccion());
 			}
-//			
-//			infobien.setDatosLocalizacion(rellenaDatosLocalizacion(infobien));
-//			
-//			if (Checks.esNulo(infobien.getProvincia())) {
-//				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Provincia; ");
-//			}
-//			if (Checks.esNulo(infobien.getLocalidad())) {
-//				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Localidad; ");
-//			}
-//			if (Checks.esNulo(infobien.getUnidadPoblacional())) {
-//				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Unidad Poblacional; ");
-//			}
-//			if (Checks.esNulo(infobien.getDireccion())) {
-//				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Dirección; ");
-//			}
-//			if (Checks.esNulo(infobien.getCodigoPostal())) {
-//				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Codigo Postal; ");
-//			}	
+
 			infobien.setViviendaHabitual("1".equals(nmbBien.getViviendaHabitual()) ? "SI" : ("2".equals(nmbBien.getViviendaHabitual()) ? "NO" : ""));
 			if (Checks.esNulo(infobien.getViviendaHabitual())) {
 				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Vivienda habitual; ");
@@ -310,6 +301,12 @@ public class InformeValidacionCDDBean {
 			}
 			if (Checks.esNulo(infobien.getImporteAdjudicacion())) {
 				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Importe adjudicacion; ");
+			}
+			
+			if (!Checks.esNulo(nmbBien.getAdicional())) {
+				if(!Checks.esNulo(nmbBien.getAdicional().getTipoInmueble())){
+					infobien.setTipoInmueble(nmbBien.getAdicional().getTipoInmueble().getDescripcion());
+				}				
 			}
 
                         // Esta validaci�n no debe hacerse si el CDD proviene de un Subasta Bankia. En el resto de T. subasta del resto de clientes, si debe hacerse.

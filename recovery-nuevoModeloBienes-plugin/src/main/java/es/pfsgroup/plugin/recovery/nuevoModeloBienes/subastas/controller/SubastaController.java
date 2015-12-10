@@ -654,16 +654,23 @@ public class SubastaController {
 				fila.add(" ; ;Text");
 				fila.add("Nº FINCA;Blue;Text");
 				fila.add("Nº ACTIVO;Blue;Text");
-//				fila.add("REFERENCIA CATASTRAL;Blue;Text");
+				fila.add("PAÍS;Blue;Text");
+				fila.add("PROVINCIA;Blue;Text");
+				fila.add("LOCALIDAD;Blue;Text");
+				fila.add("CÓDIGO POSTAL;Blue;Text");
+				fila.add("NOMBRE VÍA;Blue;Text");
 				fila.add("DESCRIPCIÓN;Blue;Text");
+				fila.add("PROVINCIA REGISTRO;Blue;Text");
+				fila.add("LOCALIDAD REGISTRO;Blue;Text");
 				fila.add("Nº REGISTRO;Blue;Text");
 				fila.add("VALOR TASACIÓN;Blue;Text");
 				fila.add("FECHA TASACIÓN;Blue;Text");
 				fila.add("VALOR JUDICIAL;Blue;Text");
+				fila.add("TIPO INMUEBLE;Blue;Text");
 				fila.add("VIVIENDA HABITUAL;Blue;Text");
 				fila.add("RESULTADO ADJUDICACIÓN;Blue;Text");
 				fila.add("IMPORTE ADJUDICACIÓN;Blue;Text");
-				fila.add("LOCALIDAD;Blue;Text");
+				
 				//Si la subasta es de Bankia no mostramos la columna Fecha Testimonio
 				if(!"P401".equals(informe.getSubasta().getProcedimiento().getTipoProcedimiento().getCodigo())){
 					fila.add("F. TESTIMONIO ADJ SAREB;Blue;Text");
@@ -686,16 +693,57 @@ public class SubastaController {
 						fila.add("******;Red;Text");
 					}
 					
-//					if(!Checks.esNulo(infoBienes.getReferenciaCatastral())){
-//						fila.add(infoBienes.getReferenciaCatastral().concat(";White;Text"));
-//					}
-//					else
-//					{
-//						fila.add("******;Red;Text");
-//					}
+					if (!Checks.esNulo(infoBienes.getPais()) && !infoBienes.getPais().equals("")) {
+						String pais = infoBienes.getPais();
+						fila.add(pais.concat(";White;Text"));
+					} else {
+						fila.add("******;Red;Text");
+					}
 					
+					if (!Checks.esNulo(infoBienes.getProvincia()) && !infoBienes.getProvincia().equals("")) {
+						String provincia = infoBienes.getProvincia();
+						fila.add(provincia.concat(";White;Text"));
+					} else {
+						fila.add("******;Red;Text");
+					}
+					
+					if (!Checks.esNulo(infoBienes.getLocalidad()) && !infoBienes.getLocalidad().equals("")) {
+						String localidad = infoBienes.getLocalidad();
+						fila.add(localidad.concat(";White;Text"));
+					} else {
+						fila.add("******;Red;Text");
+					}
+					
+					if (!Checks.esNulo(infoBienes.getCodigoPostal()) && !infoBienes.getCodigoPostal().equals("")) {
+						String cp = infoBienes.getCodigoPostal();
+						fila.add(cp.concat(";White;Text"));
+					} else {
+						fila.add("******;Red;Text");
+					}
+					
+					if (!Checks.esNulo(infoBienes.getDireccion()) && !infoBienes.getDireccion().equals("")) {
+						String direccion = infoBienes.getDireccion();
+						fila.add(direccion.concat(";White;Text"));
+					} else {
+						fila.add("******;Red;Text");
+					}
+										
 					if(!Checks.esNulo(infoBienes.getDescripcion())){
 						fila.add(infoBienes.getDescripcion().concat(";White;Text"));
+					} else {
+						fila.add("******;Red;Text");
+					}
+					
+					if (!Checks.esNulo(infoBienes.getProvinciaDatosRegistrales()) && !infoBienes.getProvinciaDatosRegistrales().equals("")) {
+						String provinciaDatosRegistrales = infoBienes.getProvinciaDatosRegistrales();
+						fila.add(provinciaDatosRegistrales.concat(";White;Text"));
+					} else {
+						fila.add("******;Red;Text");
+					}
+
+					if (!Checks.esNulo(infoBienes.getLocalidadDatosRegistrales()) && !infoBienes.getLocalidadDatosRegistrales().equals("")) {
+						String localidadDatosRegistrales = infoBienes.getLocalidadDatosRegistrales();
+						fila.add(localidadDatosRegistrales.concat(";White;Text"));
 					} else {
 						fila.add("******;Red;Text");
 					}
@@ -726,7 +774,12 @@ public class SubastaController {
 						fila.add("******;Red;Text");
 					}
 					
-					
+					if(!Checks.esNulo(infoBienes.getTipoInmueble())){
+						fila.add(infoBienes.getTipoInmueble().concat(";White;Text"));
+					} else {
+						fila.add("******;Red;Text");
+					}
+										
 					if(!Checks.esNulo(infoBienes.getViviendaHabitual())){
 						fila.add(infoBienes.getViviendaHabitual().concat(";White;Text"));
 					} else {
@@ -745,14 +798,7 @@ public class SubastaController {
 					} else {
 						fila.add("******;Red;Text");
 					}
-					
-					if(!Checks.esNulo(infoBienes.getLocalidad()) && !infoBienes.getLocalidad().equals("")){
-						String localidad =infoBienes.getLocalidad();
-						fila.add(localidad.concat(";White;Text"));
-					} else {
-						fila.add("******;Red;Text");
-					}
-					
+															
 					//Si la subasta es de Bankia no mostramos la columna Fecha Testimonio
 					if(!"P401".equals(informe.getSubasta().getProcedimiento().getTipoProcedimiento().getCodigo())){
 						if(!Checks.esNulo(infoBienes.getFechaTestimonioAdjudicacionSareb())){

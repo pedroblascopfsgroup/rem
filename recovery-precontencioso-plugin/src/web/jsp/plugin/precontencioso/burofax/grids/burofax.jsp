@@ -1245,3 +1245,9 @@
 	  		return false;
 	  	}
 	}
+	
+	<sec:authentication var="user" property="principal" />
+	<c:if test="${user.entidad.descripcion eq 'CAJAMAR'}">
+   		btnNotificar.setVisible(true);
+	</c:if>
+

@@ -518,7 +518,7 @@
 	<!-- Maven 2.2.1 does not support isolates project dependencies :( -->
 	<modules>
 
-		<module>devon-framework</module>
+<!--		<module>devon-framework</module>-->
 		<module>pfs-commons-java</module>
 		<module>rec-encrypt</module>
 		<module>batch-monitor</module>

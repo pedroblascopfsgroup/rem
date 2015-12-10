@@ -226,10 +226,10 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
         IFS=',' read -a entidades <<< "$MULTIENTIDAD"
         for index in "${!entidades[@]}"
         do
-            passtring="$passtring ""entity0$((index+1))_pass@host:port/sid"
+            passtring="$passtring ""entity0$((index+1))_pass@host:port\/sid"
         done        
     else
-        passtring="entity01_pass@host:port/sid"
+        passtring="entity01_pass@host:port\/sid"
     fi
     if [ $2 == 'BANKIA' ]; then
         cp $BASEDIR/scripts/DxL-scripts-BK.sh $BASEDIR/tmp/package/DDL/DDL-scripts.sh

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:beans="http://www.springframework.org/schema/beans" 
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.2.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+    
+    <http auto-config="false" entry-point-ref="authenticationProcessingFilterEntryPoint">
+        <intercept-url pattern="${security.loginpage}" filters="none" />
+        <intercept-url pattern="/js/**" filters="none" />
+        <intercept-url pattern="/img/**" filters="none" />
+        <intercept-url pattern="/css/**" filters="none" />
+        <intercept-url pattern="/public/**" filters="none" />
+        <intercept-url pattern="/admin/**" access="ROLE_ADMIN" />
+        <intercept-url pattern="/services/**" access="ROLE_ANONYMOUS" />
+        <intercept-url pattern="/**" access="ROLE_USER" />
+        <logout/>
+        <anonymous/>
+    </http>
+    
+    <!-- Enable @Secured annotations -->    
+    <global-method-security secured-annotations="enabled" jsr250-annotations="enabled"/>
+    
+    <!-- Provide an alias for the authenticationManager -->
+    <authentication-manager alias="authenticationManager"/>
+    
+    <!-- Allow custom WebAuthenticationDetailsSource -->
+    <beans:bean id="authenticationProcessingFilterEntryPoint" class="org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntryPoint">
+        <beans:property name="loginFormUrl" value="${security.loginpage}"/>
+        <beans:property name="forceHttps" value="false" />
+    </beans:bean>
+    
+    <beans:bean id="authenticationProcessingFilter" class="org.springframework.security.ui.webapp.AuthenticationProcessingFilter">
+        <custom-filter position="AUTHENTICATION_PROCESSING_FILTER" />
+        <beans:property name="authenticationManager" ref="authenticationManager"/>
+        <beans:property name="defaultTargetUrl" value="${security.defaultTargetUrl}"/>
+        <beans:property name="authenticationFailureUrl" value="${security.authenticationFailureUrl}"/>
+        <beans:property name="alwaysUseDefaultTargetUrl" value="${security.alwaysUseDefaultTargetUrl}"/>
+        <beans:property name="authenticationDetailsSource" ref="webAuthenticationDetailsSource"/>
+    </beans:bean>
+    
+    <beans:bean id="fwk.sec.authenticationProvider" class="es.capgemini.devon.security.DevonAuthenticationProvider" abstract="true"/>
+    
+    <beans:bean id="authenticationProvider" parent="fwk.sec.authenticationProvider">
+        <custom-authentication-provider />
+        <beans:property name="userDetailsService" ref="userService"/>
+    </beans:bean>
+    
+    <!-- Default WebAuthenticationDetailsSource -->
+    <beans:bean id="webAuthenticationDetailsSource" class="org.springframework.security.ui.WebAuthenticationDetailsSource"/>
+
+    <!-- Allow custom userService -->
+    <authentication-provider user-service-ref="userService">
+        <!-- 
+            <password-encoder hash="sha"/>
+        -->
+        <!-- 
+        <jdbc-user-service data-source-ref="masterDataSource"
+            users-by-username-query="SELECT u.username, u.password, u.enabled FROM Usuario u where u.username=?"
+            authorities-by-username-query="SELECT a.username, a.authority FROM Authority a WHERE a.username=?" />
+         -->
+    </authentication-provider>
+    
+    <!-- Provide a default userService -->
+    <user-service id="userService">
+        <user name="admin" password="admin" authorities="ROLE_ANONYMOUS, ROLE_USER, ROLE_ADMIN" />
+        <user name="demo" password="demo" authorities="ROLE_ANONYMOUS, ROLE_USER" />
+    </user-service>
+    
+    <!-- JDBC users detail -->
+    <beans:bean id="fwk.sec.JDBCUsersDetailService" class="es.capgemini.devon.security.JDBCUsersDetailService" abstract="true" />
+    
+</beans:beans>

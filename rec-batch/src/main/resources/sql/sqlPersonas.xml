@@ -23,20 +23,20 @@
                     where 1=1
                         AND cmp.per_id = p.per_id
                         AND esp.dd_esp_codigo = ?
-            )            
+            )
             /* O, si hay un salto suficientemente grande de nivel de arquetipo como indica el arquetipo actual*/
-            OR 
+            OR
             (
               CASE WHEN arq_per.dd_tsn_id is null THEN 1
               ELSE CASE WHEN arq_cal.arq_nivel <> arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ?) THEN 1
                  ELSE CASE WHEN arq_cal.arq_nivel > arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ?) THEN 1
-                     ELSE CASE WHEN arq_cal.arq_nivel < arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ?) THEN 1 
+                     ELSE CASE WHEN arq_cal.arq_nivel < arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ?) THEN 1
                          ELSE 0 END END END END
             ) = 1
           )
           /* Que la persona no esté atrapada en ningún expediente */
           AND NOT EXISTS (
-            SELECT pex.per_id 
+            SELECT pex.per_id
                 FROM pex_personas_expediente pex
                     JOIN exp_expedientes exp ON pex.exp_id = exp.exp_id
                     JOIN ${master.schema}.dd_eex_estado_expediente eex ON exp.dd_eex_id = eex.dd_eex_id
@@ -46,14 +46,14 @@
           )
           /* Que la persona no tenga un cliente creado */
           AND NOT EXISTS (
-            SELECT c.per_id 
+            SELECT c.per_id
                 FROM CLI_CLIENTES c
                 WHERE c.borrado = 0
                     AND c.per_id = p.per_id
           )
           /* Que la persona tenga algún contrato que esté libre */
           AND EXISTS (
-            SELECT c.cnt_id 
+            SELECT c.cnt_id
               FROM cnt_contratos c
                 JOIN cpe_contratos_personas cpe ON cpe.cnt_id = c.cnt_id
                 JOIN dd_tin_tipo_intervencion tin ON cpe.DD_TIN_ID = tin.DD_TIN_ID
@@ -61,7 +61,7 @@
             WHERE cpe.per_id = p.per_id
               /* Que sea titular del contrato */
               AND tin.DD_TIN_TITULAR = 1
-              /* Que el contrato no esté ni borrado ni cancelado */ 
+              /* Que el contrato no esté ni borrado ni cancelado */
               AND c.borrado = 0 AND e.dd_esc_codigo <> ?
               /* Que el contrato no esté en algún procedimiento 'en curso' */
               AND c.cnt_id NOT IN (
@@ -73,26 +73,26 @@
                   and dd_epr_codigo IN (?, ?, ?, ?, ?)
               /* Que el contrato no esté algún expediente de recuperacion 'en curso' */
               UNION
-                  SELECT DISTINCT cex.cnt_id 
-                  FROM cex_contratos_expediente cex, 
-                  ${master.schema}.dd_eex_estado_expediente eex, 
+                  SELECT DISTINCT cex.cnt_id
+                  FROM cex_contratos_expediente cex,
+                  ${master.schema}.dd_eex_estado_expediente eex,
                   exp_expedientes exp
                   JOIN ARQ_ARQUETIPOS arq ON exp.arq_id = arq.arq_id
-                     JOIN iti_itinerarios iti ON arq.iti_id = iti.iti_id 
-                     JOIN ${master.schema}.dd_tit_tipo_itinerarios tit ON iti.dd_tit_id = tit.dd_tit_id 
-                  WHERE exp.exp_id = cex.exp_id 
+                     JOIN iti_itinerarios iti ON arq.iti_id = iti.iti_id
+                     JOIN ${master.schema}.dd_tit_tipo_itinerarios tit ON iti.dd_tit_id = tit.dd_tit_id
+                  WHERE exp.exp_id = cex.exp_id
                   AND tit.dd_tit_codigo = ?
-                  and cex.borrado = 0 
+                  and cex.borrado = 0
                   and eex.dd_eex_id = exp.dd_eex_id
                   and eex.dd_eex_codigo IN (?, ?, ?)
               /* Que el contrato no esté en algún cliente 'en curso' */
               UNION
-                  SELECT DISTINCT cnt_id FROM ccl_contratos_cliente 
+                  SELECT DISTINCT cnt_id FROM ccl_contratos_cliente
                   WHERE borrado = 0
              UNION
-             	  SELECT -1 FROM dual	     
+                  SELECT -1 FROM dual
               )
-           )        
+           )
     ]]>
   </entry>
 
@@ -100,7 +100,7 @@
 
   <entry key="personas.buscarArquetipoCalculadoQuery">
     <![CDATA[
-      SELECT ARQ_ID_CALCULADO FROM PER_PERSONAS WHERE PER_ID = ? 
+      SELECT ARQ_ID_CALCULADO FROM PER_PERSONAS WHERE PER_ID = ?
     ]]>
   </entry>
 
@@ -110,15 +110,15 @@
     <![CDATA[
       UPDATE PER_PERSONAS p
       --PER_RIESGO_TOTAL
-      SET PER_RIESGO_TOTAL = 
-      ( 
+      SET PER_RIESGO_TOTAL =
+      (
           select per_riesgo + per_riesgo_ind
           from PER_PERSONAS per
           where per.per_id = p.per_id
       ),
       --PER_TOTAL_SALDO
-      PER_TOTAL_SALDO = 
-      ( 
+      PER_TOTAL_SALDO =
+      (
           select SUM(MOV_POS_VIVA_NO_VENCIDA+MOV_DEUDA_IRREGULAR)
           from CPE_CONTRATOS_PERSONAS cpe
               JOIN CNT_CONTRATOS cnt ON cpe.cnt_id = cnt.cnt_id
@@ -128,7 +128,7 @@
             AND esc.dd_esc_codigo <> ?
       ),
       PER_FECHA_VENCIDA_TOTAL = (
-          select MIN(MOV.MOV_FECHA_POS_VENCIDA) 
+          select MIN(MOV.MOV_FECHA_POS_VENCIDA)
           from CPE_CONTRATOS_PERSONAS cpe
               JOIN CNT_CONTRATOS cnt ON cpe.cnt_id = cnt.cnt_id
               JOIN ${master.schema}.dd_esc_estado_cnt esc ON cnt.dd_esc_id = esc.dd_esc_id
@@ -138,44 +138,44 @@
           AND esc.dd_esc_codigo <> ?
       ),
       PER_FECHA_VENCIDA_DIRECTA = (
-          select MIN(MOV.MOV_FECHA_POS_VENCIDA) 
-          from CPE_CONTRATOS_PERSONAS cpe 
+          select MIN(MOV.MOV_FECHA_POS_VENCIDA)
+          from CPE_CONTRATOS_PERSONAS cpe
               JOIN CNT_CONTRATOS cnt ON cpe.cnt_id = cnt.cnt_id
               JOIN ${master.schema}.dd_esc_estado_cnt esc ON cnt.dd_esc_id = esc.dd_esc_id
               JOIN MOV_MOVIMIENTOS mov ON mov.cnt_id = cnt.cnt_id and mov.mov_fecha_extraccion = cnt.cnt_fecha_extraccion
               JOIN DD_TIN_TIPO_INTERVENCION tin ON cpe.dd_tin_id = tin.dd_tin_id
           WHERE CPE.CNT_ID = CNT.CNT_ID AND CNT.CNT_ID = MOV.CNT_ID AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION
-          AND CPE.PER_ID = p.per_id AND cpe.DD_TIN_ID = tin.DD_TIN_ID 
+          AND CPE.PER_ID = p.per_id AND cpe.DD_TIN_ID = tin.DD_TIN_ID
           and dd_tin_titular = 1
           AND esc.dd_esc_codigo <> ?
       ),
       PER_FECHA_VENCIDA_INDIRECTA = (
-          select MIN(MOV.MOV_FECHA_POS_VENCIDA) 
-          from CPE_CONTRATOS_PERSONAS cpe 
+          select MIN(MOV.MOV_FECHA_POS_VENCIDA)
+          from CPE_CONTRATOS_PERSONAS cpe
               JOIN CNT_CONTRATOS cnt ON cpe.cnt_id = cnt.cnt_id
               JOIN ${master.schema}.dd_esc_estado_cnt esc ON cnt.dd_esc_id = esc.dd_esc_id
               JOIN MOV_MOVIMIENTOS mov ON mov.cnt_id = cnt.cnt_id and mov.mov_fecha_extraccion = cnt.cnt_fecha_extraccion
               JOIN DD_TIN_TIPO_INTERVENCION tin ON cpe.dd_tin_id = tin.dd_tin_id
           WHERE CPE.CNT_ID = CNT.CNT_ID AND CNT.CNT_ID = MOV.CNT_ID AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION
-          AND CPE.PER_ID = p.per_id AND cpe.DD_TIN_ID = tin.DD_TIN_ID 
+          AND CPE.PER_ID = p.per_id AND cpe.DD_TIN_ID = tin.DD_TIN_ID
           and dd_tin_titular = 0
           AND esc.dd_esc_codigo <> ?
       ),
       --PER_DEUDA_IRREGULAR
-      PER_DEUDA_IRREGULAR = 
+      PER_DEUDA_IRREGULAR =
       (
           select SUM(MOV_DEUDA_IRREGULAR)
-          from CPE_CONTRATOS_PERSONAS cpe 
+          from CPE_CONTRATOS_PERSONAS cpe
               JOIN CNT_CONTRATOS cnt ON cpe.cnt_id = cnt.cnt_id
               JOIN ${master.schema}.dd_esc_estado_cnt esc ON cnt.dd_esc_id = esc.dd_esc_id
               JOIN MOV_MOVIMIENTOS mov ON mov.cnt_id = cnt.cnt_id and mov.mov_fecha_extraccion = cnt.cnt_fecha_extraccion
           where cpe.per_id = p.per_id
             AND esc.dd_esc_codigo <> ?
       ),
-      PER_DEUDA_IRREGULAR_DIR = 
+      PER_DEUDA_IRREGULAR_DIR =
       (
           select SUM(MOV_DEUDA_IRREGULAR)
-          from CPE_CONTRATOS_PERSONAS cpe 
+          from CPE_CONTRATOS_PERSONAS cpe
               JOIN CNT_CONTRATOS cnt ON cpe.cnt_id = cnt.cnt_id
               JOIN ${master.schema}.dd_esc_estado_cnt esc ON cnt.dd_esc_id = esc.dd_esc_id
               JOIN MOV_MOVIMIENTOS mov ON mov.cnt_id = cnt.cnt_id and mov.mov_fecha_extraccion = cnt.cnt_fecha_extraccion
@@ -184,10 +184,10 @@
             AND esc.dd_esc_codigo <> ?
             AND dd_tin_titular = 1
       ),
-      PER_DEUDA_IRREGULAR_IND = 
+      PER_DEUDA_IRREGULAR_IND =
       (
           select SUM(MOV_DEUDA_IRREGULAR)
-          from CPE_CONTRATOS_PERSONAS cpe 
+          from CPE_CONTRATOS_PERSONAS cpe
               JOIN CNT_CONTRATOS cnt ON cpe.cnt_id = cnt.cnt_id
               JOIN ${master.schema}.dd_esc_estado_cnt esc ON cnt.dd_esc_id = esc.dd_esc_id
               JOIN MOV_MOVIMIENTOS mov ON mov.cnt_id = cnt.cnt_id and mov.mov_fecha_extraccion = cnt.cnt_fecha_extraccion
@@ -195,14 +195,14 @@
           where cpe.per_id = p.per_id
             AND esc.dd_esc_codigo <> ?
             AND dd_tin_titular = 0
-      ),           
+      ),
       --DD_EFC_ID (Fallido, Dudoso, Irregular, Normal)
       DD_EFC_ID = coalesce(
-         ( 
+         (
               select dd_efc_id from DD_EFC_ESTADO_FINAN_CNT
-                where dd_efc_prioridad = (    
+                where dd_efc_prioridad = (
                     select max(dd_efc_prioridad)
-                    from CPE_CONTRATOS_PERSONAS cpe              
+                    from CPE_CONTRATOS_PERSONAS cpe
                         JOIN CNT_CONTRATOS cnt ON cpe.cnt_id = cnt.cnt_id
                         JOIN ${master.schema}.dd_esc_estado_cnt esc ON cnt.dd_esc_id = esc.dd_esc_id
                         JOIN DD_EFC_ESTADO_FINAN_CNT efc ON efc.dd_efc_id = cnt.dd_efc_id
@@ -212,11 +212,11 @@
                   AND tin.dd_tin_titular = 1
                 )
           ),
-          (select dd_efc_id from DD_EFC_ESTADO_FINAN_CNT where dd_efc_codigo = 0)  
+          (select dd_efc_id from DD_EFC_ESTADO_FINAN_CNT where dd_efc_codigo = 0)
       ),
       --PER_NUM_CONTRATOS
-      PER_NUM_CONTRATOS = 
-      ( 
+      PER_NUM_CONTRATOS =
+      (
           select count(*)
           from CPE_CONTRATOS_PERSONAS cpe
               JOIN CNT_CONTRATOS cnt ON cpe.cnt_id = cnt.cnt_id
@@ -226,7 +226,7 @@
       ),
       --PER_RIESGO_DIR_DANYADO
       PER_RIESGO_DIR_DANYADO =
-      ( 
+      (
           SELECT sum(mov.mov_riesgo)
            FROM CPE_CONTRATOS_PERSONAS cpe
               JOIN CNT_CONTRATOS cnt ON cpe.cnt_id = cnt.cnt_id
@@ -240,7 +240,7 @@
       ),
       --PER_RIESGO_DIR_VENCIDO
       PER_RIESGO_DIR_VENCIDO =
-      ( 
+      (
           SELECT sum(mov.mov_deuda_irregular)
            FROM CPE_CONTRATOS_PERSONAS cpe
               JOIN CNT_CONTRATOS cnt ON cpe.cnt_id = cnt.cnt_id
@@ -253,8 +253,8 @@
                AND esc.dd_esc_codigo <> ?
       ),
       --PER_ULTIMA_OPERACION
-      PER_ULTIMA_OPERACION = 
-      ( 
+      PER_ULTIMA_OPERACION =
+      (
           SELECT MAX(cnt.cnt_fecha_constitucion)
            FROM CPE_CONTRATOS_PERSONAS cpe
               JOIN CNT_CONTRATOS cnt ON cpe.cnt_id = cnt.cnt_id
@@ -271,52 +271,52 @@
   <entry key="grupos.precalculoFormulasQuery">
     <![CDATA[
       UPDATE GCL_GRUPOS_CLIENTES g
-      SET GCL_RIESGO_DIR =  
+      SET GCL_RIESGO_DIR =
       (
           SELECT SUM(mov.mov_riesgo)
-          FROM CNT_CONTRATOS cnt 
+          FROM CNT_CONTRATOS cnt
           JOIN ${master.schema}.dd_esc_estado_cnt esc ON cnt.dd_esc_id = esc.dd_esc_id
-          JOIN MOV_MOVIMIENTOS mov ON cnt.cnt_id = mov.cnt_id AND cnt.cnt_fecha_extraccion = mov.mov_fecha_extraccion 
+          JOIN MOV_MOVIMIENTOS mov ON cnt.cnt_id = mov.cnt_id AND cnt.cnt_fecha_extraccion = mov.mov_fecha_extraccion
           JOIN
           (
               SELECT distinct cpe.cnt_id, gcl.gcl_id
-              FROM PER_GCL gcl 
-                  JOIN CPE_CONTRATOS_PERSONAS cpe ON gcl.per_id = cpe.per_id                  
-                  JOIN DD_TIN_TIPO_INTERVENCION tin ON cpe.dd_tin_id = tin.dd_tin_id 
+              FROM PER_GCL gcl
+                  JOIN CPE_CONTRATOS_PERSONAS cpe ON gcl.per_id = cpe.per_id
+                  JOIN DD_TIN_TIPO_INTERVENCION tin ON cpe.dd_tin_id = tin.dd_tin_id
               WHERE dd_tin_titular = 1
-          ) t ON t.cnt_id = cnt.cnt_id 
+          ) t ON t.cnt_id = cnt.cnt_id
           WHERE t.gcl_id = g.gcl_id
             AND esc.dd_esc_codigo <> ?
       ),
-      GCL_RIESGO_DIR_VENCIDO =  
+      GCL_RIESGO_DIR_VENCIDO =
       (
           SELECT SUM(mov.mov_deuda_irregular)
-          FROM CNT_CONTRATOS cnt 
+          FROM CNT_CONTRATOS cnt
           JOIN ${master.schema}.dd_esc_estado_cnt esc ON cnt.dd_esc_id = esc.dd_esc_id
-          JOIN MOV_MOVIMIENTOS mov ON cnt.cnt_id = mov.cnt_id AND cnt.cnt_fecha_extraccion = mov.mov_fecha_extraccion 
+          JOIN MOV_MOVIMIENTOS mov ON cnt.cnt_id = mov.cnt_id AND cnt.cnt_fecha_extraccion = mov.mov_fecha_extraccion
           JOIN
           (
               SELECT distinct cpe.cnt_id, gcl.gcl_id
-              FROM PER_GCL gcl 
+              FROM PER_GCL gcl
                   JOIN CPE_CONTRATOS_PERSONAS cpe ON gcl.per_id = cpe.per_id
-                  JOIN DD_TIN_TIPO_INTERVENCION tin ON cpe.dd_tin_id = tin.dd_tin_id 
+                  JOIN DD_TIN_TIPO_INTERVENCION tin ON cpe.dd_tin_id = tin.dd_tin_id
               WHERE dd_tin_titular = 1
-          ) t ON t.cnt_id = cnt.cnt_id 
+          ) t ON t.cnt_id = cnt.cnt_id
           WHERE t.gcl_id = g.gcl_id
             AND esc.dd_esc_codigo <> ?
       ),
-      GCL_RIESGO_DIR_DANYADO = 
+      GCL_RIESGO_DIR_DANYADO =
       (
           SELECT SUM(mov.mov_deuda_irregular+mov_dispuesto)
-          FROM CNT_CONTRATOS cnt 
+          FROM CNT_CONTRATOS cnt
           JOIN ${master.schema}.dd_esc_estado_cnt esc ON cnt.dd_esc_id = esc.dd_esc_id
-          JOIN MOV_MOVIMIENTOS mov ON cnt.cnt_id = mov.cnt_id AND cnt.cnt_fecha_extraccion = mov.mov_fecha_extraccion 
+          JOIN MOV_MOVIMIENTOS mov ON cnt.cnt_id = mov.cnt_id AND cnt.cnt_fecha_extraccion = mov.mov_fecha_extraccion
           JOIN
           (
               SELECT distinct cpe.cnt_id, gcl.gcl_id
-              FROM PER_GCL gcl 
+              FROM PER_GCL gcl
                   JOIN CPE_CONTRATOS_PERSONAS cpe ON gcl.per_id = cpe.per_id
-                  JOIN DD_TIN_TIPO_INTERVENCION tin ON cpe.dd_tin_id = tin.dd_tin_id 
+                  JOIN DD_TIN_TIPO_INTERVENCION tin ON cpe.dd_tin_id = tin.dd_tin_id
               WHERE dd_tin_titular = 1
           ) t ON t.cnt_id = cnt.cnt_id
           WHERE mov.mov_deuda_irregular > 0
@@ -325,37 +325,37 @@
       )
     ]]>
   </entry>
-  
-  
+
+
   <entry key="personas.historificarPrepoliticasQuery">
     <![CDATA[
       insert into H_PRP_PREPOLITICA_PERSONA(prp_id, per_id, tpl_id, prp_fecha_inicio, prp_fecha_fin, version, usuariocrear, fechacrear, borrado)
-      select S_H_PRP_PREPOLITICA_PERSONA.nextval, p.per_id, p.tpl_id, 
+      select S_H_PRP_PREPOLITICA_PERSONA.nextval, p.per_id, p.tpl_id,
               (select MAX(prp_fecha_fin) FROM H_PRP_PREPOLITICA_PERSONA where per_id = p.per_id)
-              , current_date, 0, 'HIST_PRP', current_date, 0 
+              , current_date, 0, 'HIST_PRP', current_date, 0
       FROM PER_PERSONAS p
       WHERE tpl_id is not null
     ]]>
   </entry>
-  
+
   <entry key="personas.updateArquetiposPorCalculados">
     <![CDATA[
       UPDATE PER_PERSONAS SET ARQ_ID = ARQ_ID_CALCULADO
       WHERE ARQ_ID_CALCULADO IS NOT NULL
     ]]>
   </entry>
-  
+
   <entry key="personas.buscarPersonasActivas">
     <![CDATA[
-      SELECT per.PER_ID 
+      SELECT per.PER_ID
       FROM PER_PERSONAS per
-      WHERE per.BORRADO = 0      
+      WHERE per.BORRADO = 0
     ]]>
-  </entry>  
-  
+  </entry>
+
   <entry key="personas.buscarContratosActivos">
     <![CDATA[
-      SELECT CNT_ID FROM CPE_CONTRATOS_PERSONAS WHERE BORRADO = 0 AND PER_ID = ? 
+      SELECT CNT_ID FROM CPE_CONTRATOS_PERSONAS WHERE BORRADO = 0 AND PER_ID = ?
     ]]>
   </entry>  
   

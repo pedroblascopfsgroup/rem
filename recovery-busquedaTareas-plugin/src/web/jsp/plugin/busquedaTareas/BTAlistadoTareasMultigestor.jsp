@@ -176,7 +176,7 @@
 				tareasStore.webflow(parametros); 
 				
 				parametrosTab = new Array();            
-                
+                flitrosPlegables.getTopToolbar().setDisabled(true);
             } else {
                 Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="expedientes.listado.criterios"/>');
             }
@@ -551,6 +551,7 @@
 		tareasGrid.setTitle('<s:message code="plugin.busquedaTareas.tituloResltado" text="**Tareas" arguments="'+tareasStore.getTotalCount()+'"/>');
 		btnMarcarTodas.menu.items.get('mnuTodos').setText('<s:message code="plugin.busquedaTareas.botonMarcarTodas" text="**Marcar todos" arguments="'+tareasStore.getTotalCount()+'"/>');
 		flitrosPlegables.collapse(true);
+		flitrosPlegables.getTopToolbar().setDisabled(false);
 		scopeMarcar = 0;
        	seleccionado = false;
        	cambiarBotonMarcar(seleccionado,scopeMarcar);

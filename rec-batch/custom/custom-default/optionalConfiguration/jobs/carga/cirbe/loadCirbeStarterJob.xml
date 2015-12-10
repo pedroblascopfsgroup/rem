@@ -29,8 +29,10 @@
                      <property name="dataSource" ref="entityDataSource" />
                      <property name="afterScript">
                         <value>
-                                UPDATE tmp_cir_cirbe SET tmp_cir_fichero_carga = '${inFile}';
-                                ANALYZE TABLE tmp_cir_cirbe ${sql.analyze};
+                           BEGIN
+                            UPDATE tmp_cir_cirbe SET tmp_cir_fichero_carga = '${inFile}';
+                            OPERACION_DDL.DDL_TABLE('STATS','tmp_cir_cirbe');
+                           END;
                         </value>
                      </property>                      
 				     <!-- Parámetros Fijos del DataLoader que vienen en los JobParameters -->

@@ -1,128 +1,141 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-	<!-- PASO 1 - TRUNCADO TABLAS TEMPORALES -->
-	<entry key="recobro.borrado.tmp_rec_exp_activos.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_EXP_ACTIVOS
-		]]>
-	</entry>
-	<entry key="recobro.borrado.tmp_rec_exp_extincion.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_EXP_EXTINCION
-		]]>
-	</entry>
-	<entry key="recobro.borrado.tmp_rec_exp_extincion_ru.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_EXP_EXTINCION_RU
-		]]>
-	</entry>
-	<entry key="recobro.borrado.tmp_rec_exp_extincion_ra.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_EXP_EXTINCION_RA
-		]]>
-	</entry>
-	
-	<!-- PASO 2 - OBTENCION EXPEDIENTES ACTIVOS DE RECOBRO -->
-	<entry key="recobro.insert.tmp_rec_exp_activos.Oracle9iDialect">
-		<![CDATA[
-			INSERT INTO TMP_REC_EXP_ACTIVOS
-			SELECT DISTINCT EXPE.EXP_ID, EXPE.ARQ_ID, EXPE.RCF_ESQ_ID, EXPE.RCF_AGE_ID
-			FROM BATCH_DATOS_EXP EXPE
-			WHERE EXPE.DD_EEX_CODIGO = ${ddEstadoExpedientes.Activo.codigo}
-			AND EXPE.DD_TPE_CODIGO = ${ddTipoExpediente.Recobro.codigo}
-			AND EXPE.EXP_BORRADO = ${borrado.no.id}
-			AND (EXPE.EXP_MANUAL IS NULL OR EXPE.EXP_MANUAL = ${manual.no.id})
-		]]>
-	</entry>
-	
-	<!-- PASO 3 - SE COMPRUEBA QUE LA FECHA DE EXTINCIÓN DEL ESQUEMA LIBERADO SEA HOY O ANTERIOR: EN CASO DE QUE SEA ASÍ,
-				  SE OBTIENEN TODOS LOS EXPEDIENTES ACTIVOS DE RECOBRO DE ESQUEMAS EN EXTINCIÓN -->
-	<entry key="recobro.insert.tmp_rec_exp_extincion.Oracle9iDialect">
-		<!-- REVISAR -->
-		<![CDATA[
-			declare
-				v_result NUMBER;
-		    	v_sql VARCHAR2(2000 CHAR);
-		    	v_codigo_extincion VARCHAR2(5 CHAR);
-			begin
-				SELECT CASE WHEN (TRUNC(ESQ.RCF_ESQ_FECHA_LIB) + ESQ.RCF_ESQ_PLAZO <= TRUNC(SYSDATE)) THEN 1 ELSE 0 END	INTO v_result
-		    	FROM BATCH_RCF_ENTRADA ESQ WHERE ESQ.RCF_DD_EES_CODIGO = ${ddEstadoEsquemas.Liberado.codigo} 
-		    	AND ESQ.RCF_ESQ_BORRADO = ${borrado.no.id} AND ROWNUM = 1;
-				IF(v_result = 1)
-		    	THEN
-		    	v_codigo_extincion:= ${ddEstadoEsquemas.Inactivo.codigo};
-				v_sql:='
-		     		INSERT INTO TMP_REC_EXP_EXTINCION
-		      		SELECT DISTINCT EXP_ACT.EXP_ID, EXP_ACT.ARQ_ID, EXP_ACT.RCF_ESQ_ID, EXP_ACT.RCF_AGE_ID
-					FROM TMP_REC_EXP_ACTIVOS EXP_ACT
-						INNER JOIN BATCH_RCF_ENTRADA ESQ ON EXP_ACT.RCF_ESQ_ID = ESQ.RCF_ESQ_ID
-					WHERE ESQ.RCF_DD_EES_CODIGO = :v_codigo_extincion
-				';
-				execute immediate v_sql using v_codigo_extincion;
-		    COMMIT;
-				END IF;
-				EXCEPTION 
-				WHEN NO_DATA_FOUND THEN 
-					dbms_output.put_line('No se expedientes a extinguir');		
-		    end;		
-		]]>
-	</entry>
-	
-	<!-- PASO 4.1 - SE COMPRUEBA QUE EL MODO DE EXTINCIÓN DEL ESQUEMA LIBERADO SEA RU (RUPTURA): EN CASO DE QUE SEA ASÍ,
-					OBTENEMOS TODOS LOS EXPEDIENTES PREPARADOS PARA EXTINCIÓN Y LOS ENVIAMOS A RUPTURA -->
-	<entry key="recobro.insert.tmp_rec_exp_extincion_ru.Oracle9iDialect">
-		<!-- REVISAR -->
-		<![CDATA[
-		    declare
-				v_result NUMBER;
-		    	v_sql VARCHAR2(2000 CHAR);
-			begin
-				SELECT CASE WHEN (ESQ.RCF_DD_MTR_CODIGO = ${ddModeloTransicion.Ruptura.codigo}) THEN 1 ELSE 0 END INTO v_result
-		    	FROM BATCH_RCF_ENTRADA ESQ WHERE ESQ.RCF_DD_EES_CODIGO = ${ddEstadoEsquemas.Liberado.codigo} 
-		    	AND ESQ.RCF_ESQ_BORRADO = ${borrado.no.id} AND ROWNUM = 1;
-				IF(v_result = 1)
-		    	THEN
-				v_sql:='
-					INSERT INTO TMP_REC_EXP_EXTINCION_RU
-					SELECT DISTINCT EXP_EXT.EXP_ID 
-					FROM TMP_REC_EXP_EXTINCION EXP_EXT
-				';
-				execute immediate v_sql;
-		    	COMMIT;
-				END IF;
-				EXCEPTION 
-				WHEN NO_DATA_FOUND THEN 
-					dbms_output.put_line('No se expedientes para ruptura');		
-		    end;	
-		]]>
-	</entry>
+    <!-- PASO 1 - TRUNCADO TABLAS TEMPORALES -->
+    <entry key="recobro.borrado.tmp_rec_exp_activos.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_ACTIVOS'); END;
+        ]]>
+    </entry>
+    <entry key="recobro.borrado.tmp_rec_exp_extincion.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_EXTINCION'); END;
+        ]]>
+    </entry>
+    <entry key="recobro.borrado.tmp_rec_exp_extincion_ru.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_EXTINCION_RU'); END;
+        ]]>
+    </entry>
+    <entry key="recobro.borrado.tmp_rec_exp_extincion_ra.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_EXTINCION_RA'); END;
+        ]]>
+    </entry>
 
-	<!-- PASO 4.2 - SE COMPRUEBA QUE EL MODO DE EXTINCIÓN DEL ESQUEMA LIBERADO SEA RA (REARQUETIPACIÓN): EN CASO DE QUE SEA ASÍ,
-					OBTENEMOS TODOS LOS EXPEDIENTES PREPARADOS PARA EXTINCIÓN Y LOS ENVIAMOS A REARQUETIPACIÓN -->
-	<entry key="recobro.insert.tmp_rec_exp_extincion_ra.Oracle9iDialect">
-		<!-- REVISAR -->
-		<![CDATA[
-		    declare
-				v_result NUMBER;
-		    	v_sql VARCHAR2(2000 CHAR);
-			begin
-				SELECT CASE WHEN (ESQ.RCF_DD_MTR_CODIGO = ${ddModeloTransicion.Rearquetipado.codigo}) THEN 1 ELSE 0 END	INTO v_result
-		    	FROM BATCH_RCF_ENTRADA ESQ WHERE ESQ.RCF_DD_EES_CODIGO = ${ddEstadoEsquemas.Liberado.codigo}
-		    	AND ESQ.RCF_ESQ_BORRADO = ${borrado.no.id} AND ROWNUM = 1;
-				IF(v_result = 1)
-		    	THEN
-				v_sql:='
-					INSERT INTO TMP_REC_EXP_EXTINCION_RA
-					SELECT DISTINCT EXP_EXT.EXP_ID , EXP_EXT.RCF_AGE_ID, EXP_EXT.ARQ_ID
-					FROM TMP_REC_EXP_EXTINCION EXP_EXT
-				';
-				execute immediate v_sql;
-		    	COMMIT;
-				END IF;
-				EXCEPTION 
-				WHEN NO_DATA_FOUND THEN 
-					dbms_output.put_line('No se expedientes para rearquetipación');		
-		    end;		
-		]]> 	
-	</entry>
+    <!-- PASO 2 - OBTENCION EXPEDIENTES ACTIVOS DE RECOBRO -->
+    <entry key="recobro.insert.tmp_rec_exp_activos.Oracle10gDialect">
+        <![CDATA[
+           
+            BEGIN
+           
+				INSERT INTO TMP_REC_EXP_ACTIVOS
+				SELECT DISTINCT EXPE.EXP_ID, EXPE.ARQ_ID, EXPE.RCF_ESQ_ID, EXPE.RCF_AGE_ID
+				FROM BATCH_DATOS_EXP EXPE
+				WHERE EXPE.DD_EEX_CODIGO = ${ddEstadoExpedientes.Activo.codigo}
+				AND EXPE.DD_TPE_CODIGO = ${ddTipoExpediente.Recobro.codigo}
+				AND EXPE.EXP_BORRADO = ${borrado.no.id}
+				AND (EXPE.EXP_MANUAL IS NULL OR EXPE.EXP_MANUAL = ${manual.no.id});
+            
+            OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_EXP_ACTIVOS'); --estimate
+            END;
+        ]]>
+    </entry>
+
+    <!-- PASO 3 - SE COMPRUEBA QUE LA FECHA DE EXTINCIÓN DEL ESQUEMA LIBERADO SEA HOY O ANTERIOR: EN CASO DE QUE SEA ASÍ,
+                  SE OBTIENEN TODOS LOS EXPEDIENTES ACTIVOS DE RECOBRO DE ESQUEMAS EN EXTINCIÓN -->
+    <entry key="recobro.insert.tmp_rec_exp_extincion.Oracle10gDialect">
+        <!-- REVISAR -->
+        <![CDATA[
+            declare
+                v_result NUMBER;
+                v_sql VARCHAR2(2000 CHAR);
+                v_codigo_extincion VARCHAR2(5 CHAR);
+            begin
+                SELECT CASE WHEN (TRUNC(ESQ.RCF_ESQ_FECHA_LIB) + ESQ.RCF_ESQ_PLAZO <= TRUNC(SYSDATE)) THEN 1 ELSE 0 END INTO v_result
+                FROM BATCH_RCF_ENTRADA ESQ WHERE ESQ.RCF_DD_EES_CODIGO = ${ddEstadoEsquemas.Liberado.codigo}
+                AND ESQ.RCF_ESQ_BORRADO = ${borrado.no.id} AND ROWNUM = 1;
+                IF(v_result = 1)
+                THEN
+                v_codigo_extincion:= ${ddEstadoEsquemas.Inactivo.codigo};
+                v_sql:='
+                    INSERT INTO TMP_REC_EXP_EXTINCION
+                    SELECT DISTINCT EXP_ACT.EXP_ID, EXP_ACT.ARQ_ID, EXP_ACT.RCF_ESQ_ID, EXP_ACT.RCF_AGE_ID
+                    FROM TMP_REC_EXP_ACTIVOS EXP_ACT
+                        INNER JOIN BATCH_RCF_ENTRADA ESQ ON EXP_ACT.RCF_ESQ_ID = ESQ.RCF_ESQ_ID
+                    WHERE ESQ.RCF_DD_EES_CODIGO = :v_codigo_extincion
+                ';
+                execute immediate v_sql using v_codigo_extincion;
+
+                commit;
+                OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_EXP_EXTINCION'); --estimate
+                END IF;
+                EXCEPTION
+                WHEN NO_DATA_FOUND THEN
+                    dbms_output.put_line('No se expedientes a extinguir');
+            end;
+        ]]>
+    </entry>
+
+    <!-- PASO 4.1 - SE COMPRUEBA QUE EL MODO DE EXTINCIÓN DEL ESQUEMA LIBERADO SEA RU (RUPTURA): EN CASO DE QUE SEA ASÍ,
+                    OBTENEMOS TODOS LOS EXPEDIENTES PREPARADOS PARA EXTINCIÓN Y LOS ENVIAMOS A RUPTURA -->
+    <entry key="recobro.insert.tmp_rec_exp_extincion_ru.Oracle10gDialect">
+        <!-- REVISAR -->
+        <![CDATA[
+            declare
+                v_result NUMBER;
+                v_sql VARCHAR2(2000 CHAR);
+            begin
+                SELECT CASE WHEN (ESQ.RCF_DD_MTR_CODIGO = ${ddModeloTransicion.Ruptura.codigo}) THEN 1 ELSE 0 END INTO v_result
+                FROM BATCH_RCF_ENTRADA ESQ WHERE ESQ.RCF_DD_EES_CODIGO = ${ddEstadoEsquemas.Liberado.codigo}
+                AND ESQ.RCF_ESQ_BORRADO = ${borrado.no.id} AND ROWNUM = 1;
+                IF(v_result = 1)
+                THEN
+                v_sql:='
+                    INSERT INTO TMP_REC_EXP_EXTINCION_RU
+                    SELECT DISTINCT EXP_EXT.EXP_ID
+                    FROM TMP_REC_EXP_EXTINCION EXP_EXT
+                ';
+                execute immediate v_sql;
+
+
+                COMMIT;
+                OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_EXP_EXTINCION_RU'); --estimate
+                END IF;
+                EXCEPTION
+                WHEN NO_DATA_FOUND THEN
+                    dbms_output.put_line('No se expedientes para ruptura');
+            end;
+        ]]>
+    </entry>
+
+    <!-- PASO 4.2 - SE COMPRUEBA QUE EL MODO DE EXTINCIÓN DEL ESQUEMA LIBERADO SEA RA (REARQUETIPACIÓN): EN CASO DE QUE SEA ASÍ,
+                    OBTENEMOS TODOS LOS EXPEDIENTES PREPARADOS PARA EXTINCIÓN Y LOS ENVIAMOS A REARQUETIPACIÓN -->
+    <entry key="recobro.insert.tmp_rec_exp_extincion_ra.Oracle10gDialect">
+        <!-- REVISAR -->
+        <![CDATA[
+            declare
+                v_result NUMBER;
+                v_sql VARCHAR2(2000 CHAR);
+            begin
+                SELECT CASE WHEN (ESQ.RCF_DD_MTR_CODIGO = ${ddModeloTransicion.Rearquetipado.codigo}) THEN 1 ELSE 0 END INTO v_result
+                FROM BATCH_RCF_ENTRADA ESQ WHERE ESQ.RCF_DD_EES_CODIGO = ${ddEstadoEsquemas.Liberado.codigo}
+                AND ESQ.RCF_ESQ_BORRADO = ${borrado.no.id} AND ROWNUM = 1;
+                IF(v_result = 1)
+                THEN
+                v_sql:='
+                    INSERT INTO TMP_REC_EXP_EXTINCION_RA
+                    SELECT DISTINCT EXP_EXT.EXP_ID , EXP_EXT.RCF_AGE_ID, EXP_EXT.ARQ_ID
+                    FROM TMP_REC_EXP_EXTINCION EXP_EXT
+                ';
+                execute immediate v_sql;
+
+                COMMIT;
+                OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_EXP_EXTINCION_RA'); --estimate
+                END IF;
+                EXCEPTION
+                WHEN NO_DATA_FOUND THEN
+                    dbms_output.put_line('No se expedientes para rearquetipación');
+            end;
+        ]]>
+    </entry>
 </properties>

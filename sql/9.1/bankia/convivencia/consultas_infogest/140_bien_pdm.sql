@@ -18,7 +18,7 @@ SELECT /*+ MATERIALIZE */ PRC_id, ASU_ID, DD_TPO_ID, BIE_ID, tap_codigo, tap_des
              , BANK01.DD_TPO_TIPO_PROCEDIMIENTO   TPO
          WHERE PRC.ASU_ID = TAR.ASU_ID
            AND PRC.PRC_ID = PRB2.PRC_ID
-           AND TRD.DD_TPO_CODIGO in ('P401','P409','P413','P416','P417','P418','P419')
+           AND TRD.DD_TPO_CODIGO in ('P401','P409','P413','P416','P417','P418','P419','P09')
            AND TRD.DD_TPO_CODIGO = TPO.DD_TPO_CODIGO
            AND PRC.DD_TPO_ID = TAP.DD_TPO_ID
            AND TAP.DD_TPO_ID = TPO.DD_TPO_ID
@@ -143,3 +143,70 @@ GROUP BY
    , BIE.BIE_CODIGO_EXTERNO;
    
 COMMIT;
+
+
+
+
+
+
+merge into minirec.RCV_GEST_BIEN_PDM a
+using (
+WITH ULTIMA_TAREA AS 
+(
+SELECT /*+ MATERIALIZE */ PRC_id, ASU_ID, DD_TPO_ID, BIE_ID, tap_codigo, tap_descripcion, tar_fecha_fin, cod_hito_nal
+   FROM (SELECT DISTINCT PRC.PRC_ID, PRC.DD_TPO_ID , TAR.ASU_ID , PRB2.BIE_ID, TAR.TAR_ID
+             , tap.tap_codigo, tap.tap_descripcion, tar.tar_fecha_fin
+             , trd.cod_hito_nal
+             , ROW_NUMBER() OVER (PARTITION BY TAR.asu_id, PRB2.BIE_ID ORDER BY PRB2.BIE_ID, TAR.TAR_ID DESC) ORDEN
+          FROM bank01.PRB_PRC_BIE                 PRB2
+             , bank01.PRC_PROCEDIMIENTOS          PRC
+             , bank01.TAR_TAREAS_NOTIFICACIONES   TAR
+             , bank01.TEX_TAREA_EXTERNA           TEX
+             , bank01.TAP_TAREA_PROCEDIMIENTO     TAP
+             , bank01.AUX_THR_TRADUC_HITOS_RECNAL TRD
+             , bank01.DD_TPO_TIPO_PROCEDIMIENTO   TPO
+         WHERE PRC.ASU_ID = TAR.ASU_ID
+           AND PRC.PRC_ID = PRB2.PRC_ID
+           AND TRD.DD_TPO_CODIGO in ('P401','P409','P413','P416','P417','P418','P419','P09')
+           AND TRD.DD_TPO_CODIGO = TPO.DD_TPO_CODIGO
+           AND PRC.DD_TPO_ID = TAP.DD_TPO_ID
+           AND TAP.DD_TPO_ID = TPO.DD_TPO_ID
+           AND TAP.TAP_CODIGO = TRD.TAP_CODIGO
+           AND TAR.TAR_ID = TEX.TAR_ID
+           AND TEX.TAP_ID = TAP.TAP_ID
+           AND NOT (TAR.BORRADO=0 AND NVL(TAR.TAR_TAREA_FINALIZADA,0)=0)
+       ) WHERE ORDEN = 1
+),
+
+FECHAS_ACTA_SUBASTA AS
+(
+SELECT A.PRC_ID, TO_DATE(D.TEV_VALOR,'YYYY-MM-DD') AS FECHA_REGISTRO_ACTA
+FROM bank01.PRC_PROCEDIMIENTOS A, bank01.TAR_TAREAS_NOTIFICACIONES B, bank01.TEX_TAREA_EXTERNA C, bank01.TEV_TAREA_EXTERNA_VALOR D,
+     bank01.TAP_TAREA_PROCEDIMIENTO E
+WHERE A.PRC_ID = B.PRC_ID
+AND B.TAR_ID = C.TAR_ID
+AND C.TEX_ID = D.TEX_ID
+AND C.TAP_ID = E.TAP_ID
+AND E.DD_TPO_ID = A.DD_TPO_ID
+AND E.TAP_CODIGO IN ('P401_RegistrarActaSubasta','P409_RegistrarActaSubasta') 
+AND D.TEV_NOMBRE = ('fecha')
+)
+select distinct DECODE(ESU.DD_ESU_CODIGO,'CEL','S','N')      as SUBASTA_CELEBRADA, sub.PRC_ID, sub.asu_id, lob.bie_id,tap_descripcion, tar_fecha_fin, cod_hito_nal, (fech.FECHA_REGISTRO_ACTA)                       as FEC_RECEPCION_ACTA
+from BANK01.SUB_SUBASTA sub 
+inner join BANK01.DD_ESU_ESTADO_SUBASTA esu on sub.DD_ESU_ID = esu.DD_ESU_ID
+inner join BANK01.LOS_LOTE_SUBASTA los on sub.SUB_ID = los.SUB_ID
+inner join BANK01.LOB_LOTE_BIEN lob on los.LOS_ID = lob.LOS_ID
+inner join minirec.RCV_GEST_BIEN_PDM rcv on lob.BIE_ID=rcv.ID_BIEN_RCV
+inner join ultima_tarea tarea on tarea.prc_id=sub.prc_id
+inner join fechas_acta_subasta fech on TARea.PRC_ID = fech.PRC_ID
+where  (lob.bie_id,fech.FECHA_REGISTRO_ACTA) in (select lob.bie_id,fech.FECHA_REGISTRO_ACTA from BANK01.SUB_SUBASTA sub 
+inner join BANK01.DD_ESU_ESTADO_SUBASTA esu on sub.DD_ESU_ID = esu.DD_ESU_ID
+inner join BANK01.LOS_LOTE_SUBASTA los on sub.SUB_ID = los.SUB_ID
+inner join BANK01.LOB_LOTE_BIEN lob on los.LOS_ID = lob.LOS_ID
+inner join minirec.RCV_GEST_BIEN_PDM rcv on lob.BIE_ID=rcv.ID_BIEN_RCV
+inner join ultima_tarea tarea on tarea.prc_id=sub.prc_id
+inner join fechas_acta_subasta fech on TARea.PRC_ID = fech.PRC_ID group by lob.bie_id,fech.FECHA_REGISTRO_ACTA having count(*)=1)) b
+on ( a.id_asunto_rcv=b.asu_id and a.id_bien_rcv=b.bie_id) 
+when matched then update set a.SUBASTA_CELEBRADA=b.SUBASTA_CELEBRADA;
+
+commit;

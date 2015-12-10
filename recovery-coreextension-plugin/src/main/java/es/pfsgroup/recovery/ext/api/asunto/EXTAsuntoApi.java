@@ -71,7 +71,7 @@ public interface EXTAsuntoApi  {
 	List<Procedimiento> obtenerActuacionesAsuntoOptimizado(Long asuId);
 
 	@BusinessOperationDefinition(EXT_BO_ASU_MGR_FIND_ASUNTOS_PAGINATED_DINAMICO_COUNT)
-	public Page findAsuntosPaginatedDinamicoCount(EXTDtoBusquedaAsunto dto, String params);
+	public List<Asunto> findAsuntosPaginatedDinamicoCount(EXTDtoBusquedaAsunto dto, String params);
 	
 	/**
      * Indica si el Usuario Logado es el gestor de decision del asunto.

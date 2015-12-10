@@ -1,0 +1,81 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.6.5
+Created-By: R27.5.0-110-94909-1.6.0_03-20080204-1558-windows-ia32 (BEA
+  Systems, Inc.)
+Built-By: ncornagl
+Build-Jdk: jdk16
+Implementation-Vendor: Capgemini
+Implementation-Implementation-Title: devon-web
+Implementation-Version: 1.1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Devon Web
+Bundle-Vendor: Capgemini
+Bundle-Version: 1.1.0
+Bundle-SymbolicName: es.capgemini.devon.web
+Export-Package: devon.resources.web;version="1.1.0",devon.resources.we
+ b.properties;version="1.1.0",devon.resources.web.flows;version="1.1.0
+ ",devon.resources.web.flows.console;version="1.1.0",devon.resources.w
+ eb.flows.usuarios;version="1.1.0",es.capgemini.devon.bo;version="1.1.
+ 0"; uses:="es.capgemini.devon.exception,  es.capgemini.devon.web,  ja
+ vax.annotation,  org.springframework.core,  org.springframework.ui,  
+ org.springframework.util,  org.springframework.web.bind,  org.springf
+ ramework.web.bind.support,  org.springframework.web.context.request",
+ es.capgemini.devon.console.plugins;version="1.1.0"; uses:="es.capgemi
+ ni.devon.console,  org.springframework.jmx.export.annotation,  org.sp
+ ringframework.stereotype",es.capgemini.devon.console.web;version="1.1
+ .0"; uses:="javax.annotation,  javax.servlet,  javax.servlet.http,  o
+ rg.springframework.beans.factory.annotation,  org.springframework.con
+ text,  org.springframework.security.userdetails,  org.springframework
+ .stereotype,  org.springframework.ui,  org.springframework.web.bind.a
+ nnotation",es.capgemini.devon.fileupload;version="1.1.0"; uses:="es.c
+ apgemini.devon.bo.annotations,  es.capgemini.devon.events,  es.capgem
+ ini.devon.exception,  es.capgemini.devon.files,  org.apache.commons.f
+ ileupload,  org.springframework.beans.factory.annotation,  org.spring
+ framework.stereotype,  org.springframework.webflow.context",es.capgem
+ ini.devon.report;version="1.1.0";uses:="javax.annotation,org.eclipse.
+ birt.report.engine.api,org.springframework.stereotype",es.capgemini.d
+ evon.view;version="1.1.0"; uses:="es.capgemini.devon.bo,  es.capgemin
+ i.devon.events,  javax.annotation,  javax.servlet.http,  org.springfr
+ amework.beans.factory.annotation,  org.springframework.stereotype,  o
+ rg.springframework.web.servlet.view,  org.springframework.webflow.eng
+ ine,  org.springframework.webflow.engine.support,  org.springframewor
+ k.webflow.execution",es.capgemini.devon.web;version="1.1.0"; uses:="e
+ s.capgemini.devon.validation,  javax.servlet,  javax.servlet.http,  o
+ rg.springframework.beans,  org.springframework.beans.factory.annotati
+ on,  org.springframework.stereotype,  org.springframework.validation,
+   org.springframework.web.servlet,  org.springframework.webflow.execu
+ tion",es.capgemini.devon.web.profiling;version="1.1.0"; uses:="es.cap
+ gemini.devon.profiling,  org.aspectj.lang,  org.aspectj.lang.annotati
+ on,  org.springframework.jmx.export.annotation,  org.springframework.
+ stereotype",es.capgemini.devon.web.validation;version="1.1.0"; uses:=
+ "org.aspectj.lang,  org.aspectj.lang.annotation,  org.springframework
+ .beans.factory.annotation,  org.springframework.stereotype"
+Import-Package: com.thoughtworks.xstream;version="1.3.1",javax.annotat
+ ion;version="1.0.0",javax.servlet;version="2.4.0",javax.servlet.http;
+ version="2.4.0",org.apache.commons.collections;version="3.2.0",org.ap
+ ache.commons.lang;version="2.1.0",org.apache.commons.lang.builder;ver
+ sion="2.1",org.apache.commons.logging;version="1.1.1",org.aspectj.lan
+ g;version="1.6.0",org.aspectj.lang.annotation;version="1.6.0"
+Require-Bundle: es.capgemini.devon.core;bundle-version="1.1.0";visibil
+ ity:=reexport,org.eclipse.birt.core;bundle-version="2.3.0";resolution
+ :=optional;visibility:=reexport,org.springframework.beans;bundle-vers
+ ion="2.5.6.SEC01";visibility:=reexport,org.springframework.binding;bu
+ ndle-version="2.0.3.RELEASE";visibility:=reexport,org.springframework
+ .context;bundle-version="2.5.6.SEC01";visibility:=reexport,org.spring
+ framework.core;bundle-version="2.5.6.SEC01";visibility:=reexport,org.
+ springframework.security.taglibs;bundle-version="2.0.0.A";visibility:
+ =reexport,org.springframework.web;bundle-version="2.5.6.SEC01";visibi
+ lity:=reexport,org.springframework.web.servlet;bundle-version="2.5.6.
+ SEC01";visibility:=reexport,org.springframework.webflow;bundle-versio
+ n="2.0.3.RELEASE";visibility:=reexport,org.springframework.js;bundle-
+ version="2.0.3.RELEASE";visibility:=reexport,com.springsource.com.tho
+ ughtworks.xstream;bundle-version="1.3.1";visibility:=reexport,com.spr
+ ingsource.javax.servlet.jsp.jstl;bundle-version="1.1.2";visibility:=r
+ eexport,com.springsource.org.apache.taglibs.standard;bundle-version="
+ 1.1.2";visibility:=reexport,com.springsource.org.apache.commons.fileu
+ pload;bundle-version="1.2.0";visibility:=reexport,com.springsource.or
+ g.jboss.el;bundle-version="2.0.0.GA";visibility:=reexport,com.springs
+ ource.org.tuckey.web.filters.urlrewrite;bundle-version="3.1.0";visibi
+ lity:=reexport,atg.taglib.json;bundle-version="0.4.1";visibility:=ree
+ xport
+

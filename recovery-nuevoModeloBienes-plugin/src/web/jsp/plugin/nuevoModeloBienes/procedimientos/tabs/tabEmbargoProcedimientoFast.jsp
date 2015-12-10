@@ -100,7 +100,9 @@
 		,{name:"idInstrucciones"}
 		,{name:"letra"}
 		,{name:"observaciones"}
-		,{name:"numeroActivo"}
+		<sec:authorize ifNotGranted="PERSONALIZACION-BCC">
+           	,{name:"numeroActivo"}
+        </sec:authorize>
 		,{name:"referenciaCatastral"}
 		,{name:"numFinca"}		
 	]);
@@ -119,7 +121,9 @@
 		{header : '<s:message code="procedimiento.embargos.grid.codigo" text="**Codigo"/>', hidden:true, dataIndex : 'codigo' }
 		,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.numeroFinca" text="**N&uacute;mero finca"/>', sortable: true, dataIndex : 'numFinca' }
 		,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.referenciaCatastral" text="**Referencia catastral"/>', sortable: true, dataIndex : 'referenciaCatastral' }
-		,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.numeroActivo" text="**Número activo"/>', sortable: true, dataIndex : 'numeroActivo' }
+		<sec:authorize ifNotGranted="PERSONALIZACION-BCC">
+			,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.numeroActivo" text="**Número activo"/>', sortable: true, dataIndex : 'numeroActivo' }
+        </sec:authorize>
 		,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.origen" text="**Carga"/>', width: 67, sortable: true, dataIndex : 'origen' }
 		,{header : '<s:message code="procedimiento.embargos.grid.descripcion" text="**Descripcion"/>', sortable: true, dataIndex : 'descripcion' }
 		,{header : '<s:message code="procedimiento.embargos.grid.tipo" text="**Tipo"/>', sortable: true, dataIndex : 'tipo' }

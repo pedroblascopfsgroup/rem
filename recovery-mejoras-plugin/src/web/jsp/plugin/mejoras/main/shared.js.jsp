@@ -377,7 +377,7 @@ app.creaProcedimientoText = function(name, label, value, config){
 	cfg.style=cfg.style?cfg.style+';margin:0px':'margin:0px';	
 	cfg.maxLength=10
 	cfg.validator = function(v) {
-      		return /[0-9]{5}\/[0-9]{4}$/.test(v)? true : '<s:message code="genericForm.validacionProcedimiento" text="**Debe introducir 			un n�mero con formato xxxxx/xxxx" />';
+      		return /^$|[0-9]{5}\/[0-9]{4}$/.test(v)? true : '<s:message code="genericForm.validacionProcedimiento" text="**Debe introducir 			un n�mero con formato xxxxx/xxxx" />';
     }	
 	return new Ext.form.TextField(cfg);
 };

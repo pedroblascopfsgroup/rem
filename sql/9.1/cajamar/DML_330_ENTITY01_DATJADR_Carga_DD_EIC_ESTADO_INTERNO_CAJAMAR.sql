@@ -81,10 +81,6 @@ BEGIN
  
  EXECUTE IMMEDIATE('TRUNCATE TABLE '||V_ESQUEMA|| '.'||TABLADD1);   
   DBMS_OUTPUT.PUT_LINE('Limpieza de datos '||TABLADD1);
-  
-  
-
- 
 
  
  

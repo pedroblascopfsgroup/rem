@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+    default-autowire="byName">
+    
+    <context:component-scan base-package="es.capgemini.pfs" use-default-filters="false">
+        <context:include-filter type="regex" expression="^es\.capgemini\.pfs\.dsm\..*$"/>
+    </context:component-scan>
+
+    <context:component-scan base-package="es.capgemini.devon" use-default-filters="false">
+        <context:include-filter type="regex" expression="^es\.capgemini\.devon\.stubs\..*$"/>
+        <context:include-filter type="regex" expression="^es\.capgemini\.devon\.pagination\..*$"/>
+        <context:include-filter type="regex" expression="^es\.capgemini\.devon\.message\..*$"/>
+    </context:component-scan>
+
+    <!--
+        Configurer that replaces ${...} placeholders with values from a properties file 
+        & properties accesor to be injected in the services 
+    -->
+    <bean id="batch.appProperties" abstract="true" class="es.capgemini.devon.utils.RecursivePropertiesFactoryBean"
+          p:ignoreUnresolvablePlaceholders="true" p:order="10" lazy-init="false" p:ignoreResourceNotFound="true"
+          p:systemPropertiesModeName="SYSTEM_PROPERTIES_MODE_OVERRIDE" p:localOverride="true">
+        <property name="locations">
+            <list>
+                <value>classpath:default.properties</value>
+                <value>classpath:properties/*.properties</value>
+                <value>classpath:app.properties</value>
+                <value>classpath:jdbc.properties</value>
+                <value>classpath:app.test.properties</value>
+                <value>classpath:jdbc.test.properties</value>
+                <value>file:/${DEVON_HOME}/devon.properties</value>
+            </list>
+        </property>      
+    </bean>
+
+    <bean id="appProperties" parent="batch.appProperties"/>
+    
+    <!-- SQL Scripts -->
+    <bean id="main.sqlScipts" abstract="true" class="org.springframework.beans.factory.config.PropertiesFactoryBean" lazy-init="false">
+        <property name="locations">
+            <list>
+                <value>classpath:sql/sql*.xml</value>
+            </list>
+        </property>      
+        <property name="localOverride" value="true" />
+        <property name="ignoreResourceNotFound" value="true" />
+    </bean>
+    
+    <bean id="sqlScripts" parent="main.sqlScipts"/>
+    
+    <bean id="sql" abstract="true" class="es.capgemini.devon.utils.SQLScriptFactoryBean"/>
+        
+    <util:list id="master.additionalMappings"/>
+        
+    <!-- Imports -->
+    <import resource="classpath:ac-devon-test-data-access.xml" />
+    <import resource="classpath:ac-rec-common-data-access.xml" /> <!-- FIXME Quitar de aquí! -->
+    <import resource="classpath:ac-devon-scheduling.xml" />
+   
+    <!-- Sobreescribir el Entity Datasource para no utilizar jndi -->
+    <bean name="entityDataSourceManager" class="es.capgemini.pfs.dsm.DataSourceManager" lazy-init="false" init-method="initialize">
+        <property name="flagTable" value="${entity.flagtable}" />
+        <property name="initScripts" value="${entity.initScripts}"/>
+        <property name="destroyScripts" value="${entity.destroyScripts}" />
+        <property name="allwaysInitialize" value="${entity.allwaysInitialize}" />
+        <property name="preferJNDI" value="false"/>        
+    </bean>
+    
+    <!-- Sobreescribir el Master Datasource para no utilizar jndi -->
+    <bean id="master.internalDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"
+                p:driverClassName="${master.jdbc.driverClassName}" p:url="${master.jdbc.url}"
+                p:username="${master.jdbc.username}" p:password="${master.jdbc.password}" />
+    <bean id="master.internalDataSourceInfo" class="java.lang.String">
+        <constructor-arg value="Master DataSource in [${master.jdbc.url}] with user [${master.jdbc.username}]"/>
+    </bean>
+    
+    <!-- Importa la configuracion para spring integration -->
+    <import resource="classpath:ac-devon-integration.xml" />
+    
+
+</beans>

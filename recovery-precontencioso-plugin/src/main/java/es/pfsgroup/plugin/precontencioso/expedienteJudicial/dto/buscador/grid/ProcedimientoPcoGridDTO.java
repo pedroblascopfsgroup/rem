@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import es.capgemini.devon.dto.WebDto;
@@ -19,16 +20,17 @@ public class ProcedimientoPcoGridDTO extends WebDto {
 	private String tipoPreparacion;
 	private Date fechaInicioPreparacion;
 	private Integer diasEnPreparacion;
-	private Float totalLiquidacion;
+	private BigDecimal totalLiquidacion;
 	private Date fechaEnvioLetrado;
 	private Boolean aceptadoLetrado;
 	private Boolean todosDocumentos;
 	private Boolean todasLiquidaciones;
 	private Boolean todosBurofaxes;
+	private Float importe;
 	private DocumentoGridDTO documento;
 	private LiquidacionGridDTO liquidacion;
 	private BurofaxGridDTO burofax;
-
+	
 	public ProcedimientoPcoGridDTO() {
 		documento = new DocumentoGridDTO();
 		liquidacion = new LiquidacionGridDTO();
@@ -89,10 +91,10 @@ public class ProcedimientoPcoGridDTO extends WebDto {
 	public void setDiasEnPreparacion(Integer diasEnPreparacion) {
 		this.diasEnPreparacion = diasEnPreparacion;
 	}
-	public Float getTotalLiquidacion() {
+	public BigDecimal getTotalLiquidacion() {
 		return totalLiquidacion;
 	}
-	public void setTotalLiquidacion(Float totalLiquidacion) {
+	public void setTotalLiquidacion(BigDecimal totalLiquidacion) {
 		this.totalLiquidacion = totalLiquidacion;
 	}
 	public Date getFechaEnvioLetrado() {
@@ -154,5 +156,19 @@ public class ProcedimientoPcoGridDTO extends WebDto {
 	}
 	public void setNombreProcedimiento(String nombreProcedimiento) {
 		this.nombreProcedimiento = nombreProcedimiento;
+	}
+
+	/**
+	 * @return the importe
+	 */
+	public Float getImporte() {
+		return importe;
+	}
+
+	/**
+	 * @param importe the importe to set
+	 */
+	public void setImporte(Float importe) {
+		this.importe = importe;
 	}
 }

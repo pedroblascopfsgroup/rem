@@ -22,7 +22,7 @@ import org.springframework.util.FileCopyUtils;
 import es.capgemini.devon.exception.FrameworkException;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class FileUtils {
 
@@ -141,7 +141,7 @@ public class FileUtils {
     }
 
     /**
-     * Reemplaza la extensiÛn de un fichero por otra
+     * Reemplaza la extensi√≥n de un fichero por otra
      * 
      * @param fileName
      * @param newExtension

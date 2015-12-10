@@ -2,7 +2,7 @@ package es.capgemini.devon.webflow.fileupload;
 
 import es.capgemini.devon.events.GenericEvent;
 
-/** Este evento notifica la finalización de una operación de upload
+/** Este evento notifica la finalizaciÃ³n de una operaciÃ³n de upload
  * @author amarinso
  *
  */

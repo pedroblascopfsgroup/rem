@@ -8,7 +8,7 @@ import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.devon.utils.PropertyPlaceholderUtils;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class HibernateSqlInterceptor extends EmptyInterceptor {
 

@@ -5,7 +5,7 @@ import java.util.List;
 public interface Page {
 
     /**
-     * no especificamos el tamaÒo de p·gina en la query
+     * no especificamos el tama√±o de p√°gina en la query
      */
     public final static int LIMIT_NOT_DEFINED = -1;
 

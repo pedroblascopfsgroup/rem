@@ -19,7 +19,7 @@ import es.capgemini.devon.exception.FrameworkException;
 
 /**
  * Clase de utilidad para los proceso BPM.
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class BPMUtils {
 

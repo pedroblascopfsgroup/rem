@@ -23,7 +23,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import es.capgemini.devon.utils.DatabaseUtils;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @ContextConfiguration(locations = { "classpath:ac-devon-test.xml" })
 public abstract class AbstractLauncherTests extends AbstractJUnit4SpringContextTests {

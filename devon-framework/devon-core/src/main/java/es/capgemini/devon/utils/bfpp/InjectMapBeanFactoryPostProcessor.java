@@ -11,7 +11,7 @@ import org.springframework.beans.factory.config.TypedStringValue;
 import org.springframework.beans.factory.support.ManagedMap;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class InjectMapBeanFactoryPostProcessor extends AbstractInjectionBeanFactoryPostProcessor {
 

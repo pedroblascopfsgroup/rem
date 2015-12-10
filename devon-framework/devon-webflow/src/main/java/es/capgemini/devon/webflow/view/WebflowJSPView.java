@@ -7,7 +7,7 @@ import org.springframework.webflow.engine.RequestControlContext;
 import es.capgemini.devon.view.JSPView;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @SuppressWarnings("unchecked")
 public class WebflowJSPView extends JSPView {

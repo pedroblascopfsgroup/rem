@@ -7,7 +7,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class InjectBeanBeanFactoryPostProcessor extends AbstractInjectionBeanFactoryPostProcessor {
 

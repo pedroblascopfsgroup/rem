@@ -7,7 +7,7 @@ import java.util.Properties;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class PropertyPlaceholderUtils extends PropertyPlaceholderConfigurer {
 

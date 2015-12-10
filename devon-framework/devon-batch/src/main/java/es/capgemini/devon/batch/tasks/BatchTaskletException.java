@@ -3,7 +3,7 @@ package es.capgemini.devon.batch.tasks;
 import es.capgemini.devon.batch.BatchException;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class BatchTaskletException extends BatchException {
 

@@ -12,7 +12,7 @@ import org.codehaus.groovy.control.CompilerConfiguration;
 import org.springframework.stereotype.Component;
 
 /**
- * @author Nicolás Cornaglia
+ * @author NicolÃ¡s Cornaglia
  */
 @Component
 public class GroovyEvaluator implements ScriptEvaluator{
@@ -20,7 +20,7 @@ public class GroovyEvaluator implements ScriptEvaluator{
     private Map<Integer, Script> cache = new HashMap<Integer, Script>();
 
     /**
-     * Evalúa una expresión groovy luego de cachear el script compilado
+     * EvalÃºa una expresiÃ³n groovy luego de cachear el script compilado
      *
      * @param expression
      * @param context
@@ -36,7 +36,7 @@ public class GroovyEvaluator implements ScriptEvaluator{
 
     /**
      * Cachea una script Groovy.
-     * La implementación del cache es mediante un {@link HashMap}, cuya key en ek hash del script.
+     * La implementaciÃ³n del cache es mediante un {@link HashMap}, cuya key en ek hash del script.
      *
      * @param expression
      * @return

@@ -9,7 +9,7 @@ import org.jbpm.job.Timer;
 import org.springmodules.workflow.jbpm31.JbpmCallback;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public interface ProcessManager {
 
@@ -28,7 +28,7 @@ public interface ProcessManager {
     public ProcessInstance newProcessInstance(String name);
 
     /**
-     * Crea una instancia de proceso por nombre, pas·ndole par·metros
+     * Crea una instancia de proceso por nombre, pas√°ndole par√°metros
      * 
      * @param name
      * @param variables

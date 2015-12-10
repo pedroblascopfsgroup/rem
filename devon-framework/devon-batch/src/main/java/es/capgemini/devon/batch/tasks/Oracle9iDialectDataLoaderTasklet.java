@@ -18,7 +18,7 @@ import es.capgemini.devon.batch.tasks.utils.EventBatchUtil;
 import es.capgemini.devon.utils.FileUtils;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class Oracle9iDialectDataLoaderTasklet extends DataLoaderTasklet {
 

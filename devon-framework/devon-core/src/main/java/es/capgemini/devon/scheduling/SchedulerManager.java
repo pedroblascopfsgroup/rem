@@ -19,7 +19,7 @@ import es.capgemini.devon.startup.Initializable;
 /**
  * Gestiona la agenda de tareas
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @Component
 public class SchedulerManager implements Initializable {

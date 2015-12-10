@@ -12,7 +12,7 @@ import org.junit.Test;
 /**
  * TODO Documentar
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class FileUtilsTest extends TestCase {
 

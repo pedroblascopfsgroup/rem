@@ -20,7 +20,7 @@ import es.capgemini.devon.validation.ValidationException;
  *   methodName(@Validatable DtoClassName dto, ...) {...}
  * </pre>
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @Aspect
 @Component("controllerValidator")

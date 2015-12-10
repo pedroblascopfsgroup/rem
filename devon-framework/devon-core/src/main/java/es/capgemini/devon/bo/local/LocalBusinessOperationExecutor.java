@@ -23,7 +23,7 @@ import es.capgemini.devon.utils.StringUtils;
 /**
  * TODO Documentar
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @Component
 public class LocalBusinessOperationExecutor implements BusinessOperationExecutor {

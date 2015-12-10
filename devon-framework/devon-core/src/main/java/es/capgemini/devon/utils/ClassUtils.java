@@ -16,7 +16,7 @@ public class ClassUtils {
      * Metodo encargado de verificar si una clase tiene un propiedad de un tipo determinada con 
      * una anotacion determinada
      * 
-     * @param toInspect clase sobre la que quiero realizar la inspección
+     * @param toInspect clase sobre la que quiero realizar la inspecciÃ³n
      * @param fieldType clase de la propiedad que estoy intentando determinar
      * @param annotation clase de la anotacion que estoy intentando determinar
      * @return true si la clase tiene una propiedade del tipo especificado con una anotacion del tipo especificado

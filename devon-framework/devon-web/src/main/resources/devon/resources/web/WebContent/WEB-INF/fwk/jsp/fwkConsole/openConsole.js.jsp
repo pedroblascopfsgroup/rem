@@ -13,7 +13,7 @@ var App= function(){
 	);
 
 
-	//panel donde aparecer·n las pantallas
+	//panel donde aparecer√°n las pantallas
 	this.contenido = new Ext.TabPanel({
 		id : 'contenido'
 		,region : 'center'
@@ -129,7 +129,7 @@ Ext.onReady(function() {
 
 	//control del enlace de logout
 	Ext.get("logout").on('click', function(){
-		Ext.Msg.confirm('<s:message code="app.confirmar" text="**confirmar" />', '<s:message code="main.logout.confirmar" text="**øSeguro que desea salir de la aplicaciÛn?" />', function(boton){
+		Ext.Msg.confirm('<s:message code="app.confirmar" text="**confirmar" />', '<s:message code="main.logout.confirmar" text="**¬øSeguro que desea salir de la aplicaci√≥n?" />', function(boton){
 			if (boton=="yes"){
 				window.location="/${appProperties.appName}/j_spring_security_logout";
 			}
@@ -142,7 +142,7 @@ app = new App();
 
 /**
 * abre un nuevo tab, o lo muestra si ya existe (le pasamos el id)
-* devolver· true/false si crea el tab nuevo o simplemente lo muestra
+* devolver√° true/false si crea el tab nuevo o simplemente lo muestra
 *
 */
 app.openTab = function(title, flow, params, config){
@@ -188,7 +188,7 @@ app.openTab = function(title, flow, params, config){
 };
 
 /*
- * eventos predefinidos de la aplicaciÛn, usar en vez de strings
+ * eventos predefinidos de la aplicaci√≥n, usar en vez de strings
  */
 app.event = {
 	CANCEL : 'cancel'
@@ -202,7 +202,7 @@ app.event = {
 
 
 /**
- * devuelve el nombre de la aplicaciÛn
+ * devuelve el nombre de la aplicaci√≥n
  */
 app.getAppName = function(){
 	return "${appProperties.appName}";
@@ -219,14 +219,14 @@ app.resolveFlow = function(flow){
 
 
 /**
- * Abre la pantalla para generar una comunicaciÛn
+ * Abre la pantalla para generar una comunicaci√≥n
  * @param {} tipo indica si es de cliente, expediente, etc
  * @param {} id identificador del registro sobre el que notificamos
  */
 app.creaBotonComunicacion = function(tipo, id,titulo, texto, func){
 
 	var btnComunicacion = new Ext.Button({
-		text : '<s:message code="menu.clientes.consultacliente.menu.comunicacion" text="**ComunicaciÛn" />'
+		text : '<s:message code="menu.clientes.consultacliente.menu.comunicacion" text="**Comunicaci√≥n" />'
 		,iconCls : 'icon_comunicacion'
 		,handler : function(){
 			Ext.Msg.prompt(titulo, texto, func,
@@ -289,7 +289,7 @@ app.creaBotonSolicitarProrroga = function(){
 			}]
 	});
 	var btnProrroga = new Ext.Button({
-		text : '<s:message code="app.botones.solicitarprorroga" text="**Solicitar PrÛrroga" />'
+		text : '<s:message code="app.botones.solicitarprorroga" text="**Solicitar Pr√≥rroga" />'
 		,iconCls : 'icon_prorroga'
 		,handler : function(){
 			winPro.show();
@@ -299,10 +299,10 @@ app.creaBotonSolicitarProrroga = function(){
 	return btnProrroga;
 };
 
-//lÛgica para manejar el men˙ superior
+//l√≥gica para manejar el men√∫ superior
 
 
-//esta pantalla estar· siempre disponible y se podr· refrescar mediante el evento 'inicial.reload'
+//esta pantalla estar√° siempre disponible y se podr√° refrescar mediante el evento 'inicial.reload'
 var pantallaInicial = new Ext.Panel({
 	title : '<s:message code="main.pantallaInicial.titulo" text="**Inicio" />'
 		,closable : false
@@ -378,15 +378,15 @@ app.abreClientePorCodigo=function(codigo,nombre){
 };
 
 /**
- * EnvÌa un formulario a un flow.
- * @config {String} flow El flow al que se enviar·, por ejemplo:
- * flow : 'admin/editUsuario'  sin el nombre de aplicaciÛn ni el .htm
- * @config {String} flow (optional) nombre del flow a ejecutar, por defecto el mismo que ha cargado la p·gina
+ * Env√≠a un formulario a un flow.
+ * @config {String} flow El flow al que se enviar√°, por ejemplo:
+ * flow : 'admin/editUsuario'  sin el nombre de aplicaci√≥n ni el .htm
+ * @config {String} flow (optional) nombre del flow a ejecutar, por defecto el mismo que ha cargado la p√°gina
  * @config {String} eventName (optional) nombre del envento a ejecutar en el flow
  * @config {FormPanel} formPanel el control formpanel que contiene el formulario a enviar.
- * @config {Function} success (optional) funciÛn que se llamar· cuando la respuesta llegue con success==true
- * @config {Function} error (optional) funciÛn que se llamar· cuando la respuesta llegue con success==false
- * @config {Function} failure (optional) funciÛn que se llamar· cuando tengamos un error en la respuesta
+ * @config {Function} success (optional) funci√≥n que se llamar√° cuando la respuesta llegue con success==true
+ * @config {Function} error (optional) funci√≥n que se llamar√° cuando la respuesta llegue con success==false
+ * @config {Function} failure (optional) funci√≥n que se llamar√° cuando tengamos un error en la respuesta
  * Es necesario para poder pintar los errores en el mismo si existe un errorList
  */
 fwk.Page.prototype.submit = function(config){

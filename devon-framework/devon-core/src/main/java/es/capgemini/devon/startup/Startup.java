@@ -17,7 +17,7 @@ import org.springframework.context.event.ContextStartedEvent;
 import es.capgemini.devon.events.EventManager;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class Startup implements ApplicationListener {
 

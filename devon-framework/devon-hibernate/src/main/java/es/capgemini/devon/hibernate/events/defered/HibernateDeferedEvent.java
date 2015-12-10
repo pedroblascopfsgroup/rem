@@ -16,7 +16,7 @@ import es.capgemini.devon.events.defered.DeferedEventState;
 /**
  * TODO Documentar
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @Entity
 @Table(name = "DeferedEvent")

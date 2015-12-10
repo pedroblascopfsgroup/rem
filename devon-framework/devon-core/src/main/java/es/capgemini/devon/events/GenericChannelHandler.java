@@ -7,7 +7,7 @@ import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.core.Message;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @MessageEndpoint
 public class GenericChannelHandler {
@@ -15,7 +15,7 @@ public class GenericChannelHandler {
     private final Log logger = LogFactory.getLog(getClass());
 
     /**
-     * Logear los mensajes genÈricos en el logger del Handler
+     * Logear los mensajes gen√©ricos en el logger del Handler
      * 
      * @param message
      */

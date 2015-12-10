@@ -3,7 +3,7 @@ package es.capgemini.devon.bo;
 /**
  * BUsiness Operations interface
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public interface BusinessOperationDefinition {
 

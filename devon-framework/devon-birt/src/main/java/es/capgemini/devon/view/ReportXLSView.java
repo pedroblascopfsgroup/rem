@@ -18,13 +18,13 @@ import org.eclipse.birt.report.engine.api.IRunAndRenderTask;
 import es.capgemini.devon.report.ReportContext;
 
 /**
- * Clase para la generaciÛn de reportes en formato XLS. 
+ * Clase para la generaci√≥n de reportes en formato XLS. 
  * El documento excel es para versiones de office mayores que 2003 puesto que utiliza el formato xml 
  * 
- * Este XLS tambiÈn puede ser un HTML y en este caso el Excel 2000 lo abre sin problemas
+ * Este XLS tambi√©n puede ser un HTML y en este caso el Excel 2000 lo abre sin problemas
  * 
- * Para cambiar el formato de salida entre xls y HTML podemos indicarlo usando el par·metro OUTPUT_FORMAT que
- * introduciremos en el flow asÌ:
+ * Para cambiar el formato de salida entre xls y HTML podemos indicarlo usando el par√°metro OUTPUT_FORMAT que
+ * introduciremos en el flow as√≠:
  * 
  *          <evaluate expression="'xls'" result="flowScope.OUTPUT_FORMAT"/>
  * 

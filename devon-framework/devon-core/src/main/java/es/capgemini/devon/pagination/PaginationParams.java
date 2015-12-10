@@ -7,7 +7,7 @@ package es.capgemini.devon.pagination;
 public interface PaginationParams {
 
     /**
-     * @return La dirección de la ordenación
+     * @return La direcciÃ³n de la ordenaciÃ³n
      */
     public String getDir();
 
@@ -21,7 +21,7 @@ public interface PaginationParams {
     public void setSort(String sort);
 
     /**
-     * @return Número máximo de resultados a obtener
+     * @return NÃºmero mÃ¡ximo de resultados a obtener
      */
     public int getLimit();
 

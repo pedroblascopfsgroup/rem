@@ -25,7 +25,7 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 /**
  * TODO Documentar
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @Service
 @ManagedResource("type=ProfileManager")

@@ -11,7 +11,7 @@ import org.springframework.batch.item.file.transform.LineAggregator;
  * Agregado de "stringFields" para marcar los campos que son de tipo String
  * 
  * @author tomas.slanina
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  * 
  */
 public class DelimitedLineAggregator implements LineAggregator {

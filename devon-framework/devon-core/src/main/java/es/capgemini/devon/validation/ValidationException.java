@@ -4,7 +4,7 @@ import java.util.List;
 
 import es.capgemini.devon.exception.FrameworkException;
 
-/** Excepción producida al realizar la validación. Contiene los mensajes de error
+/** ExcepciÃ³n producida al realizar la validaciÃ³n. Contiene los mensajes de error
  * que puede recuperar con getMessages
  * @author amarinso
  *
@@ -18,7 +18,7 @@ public class ValidationException extends FrameworkException {
     private List<ErrorMessage> messages;
 
     public ValidationException() {
-        super("**Excepción al validar");
+        super("**ExcepciÃ³n al validar");
     }
 
     public ValidationException(List<ErrorMessage> messages) {

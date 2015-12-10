@@ -5,7 +5,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @SuppressWarnings("unchecked")
 public abstract class StubAbstractHibernateDao<DomainObject extends Serializable, KeyType extends Serializable> {

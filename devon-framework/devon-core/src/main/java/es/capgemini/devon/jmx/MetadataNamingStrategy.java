@@ -10,7 +10,7 @@ import org.springframework.jmx.support.ObjectNameManager;
 import org.springframework.util.StringUtils;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class MetadataNamingStrategy extends org.springframework.jmx.export.naming.MetadataNamingStrategy {
 

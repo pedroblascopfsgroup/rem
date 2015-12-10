@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 /**
  * TODO Documentar
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @Documented
 @Inherited

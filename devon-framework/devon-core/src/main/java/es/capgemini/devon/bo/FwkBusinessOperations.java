@@ -6,7 +6,7 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
  * Clase de constantes para definir nombres de operaciones de negocio
  * 
  * @see BusinessOperation
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public final class FwkBusinessOperations {
 
@@ -38,7 +38,7 @@ public final class FwkBusinessOperations {
     public static final String FILEUPLOAD_GET_PROGRESS_INFO = "fileUpload.getProgressInfo";
 
     /**
-     * Esta clase no est· hecha para instanciarse, solo para contener constantes
+     * Esta clase no est√° hecha para instanciarse, solo para contener constantes
      */
     private FwkBusinessOperations() {
 

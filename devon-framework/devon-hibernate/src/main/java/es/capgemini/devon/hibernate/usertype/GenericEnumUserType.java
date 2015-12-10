@@ -16,7 +16,7 @@ import org.hibernate.usertype.UserType;
 /**
  * Generic Hibernate Enums user type
  * 
- * @author Nicol·s Cornaglia (from Hibernate forums)
+ * @author Nicol√°s Cornaglia (from Hibernate forums)
  */
 public class GenericEnumUserType implements UserType, ParameterizedType {
 

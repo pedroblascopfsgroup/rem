@@ -25,9 +25,9 @@ import org.springframework.binding.convert.service.DefaultConversionService;
 
 import es.capgemini.devon.utils.PropertyUtils;
 
-/** Servicio de conversiÛn de datos en el proceso de binding (datos de la request a objetos).
+/** Servicio de conversi√≥n de datos en el proceso de binding (datos de la request a objetos).
  * 
- * Depende del bean appProperties para configurar ciertos par·metros, como el formato de fecha
+ * Depende del bean appProperties para configurar ciertos par√°metros, como el formato de fecha
  * @author amarinso
  *
  */

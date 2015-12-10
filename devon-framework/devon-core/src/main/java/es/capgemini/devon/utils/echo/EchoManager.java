@@ -4,7 +4,7 @@ import es.capgemini.devon.bo.FwkBusinessOperations;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public interface EchoManager {
 

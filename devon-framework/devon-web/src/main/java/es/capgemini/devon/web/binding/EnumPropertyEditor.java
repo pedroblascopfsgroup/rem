@@ -11,7 +11,7 @@ import es.capgemini.devon.utils.enums.CodableEnumUtils;
  * 
  * @see CodableEnum
  *  
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class EnumPropertyEditor<EnumType extends CodableEnum> extends PropertyEditorSupport {
 

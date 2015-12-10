@@ -10,7 +10,7 @@ import org.springframework.context.support.MessageSourceSupport;
 import org.springframework.stereotype.Component;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @Component
 public class MessageUtils {

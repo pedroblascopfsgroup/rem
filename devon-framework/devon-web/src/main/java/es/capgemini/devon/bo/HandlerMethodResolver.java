@@ -11,7 +11,7 @@ import org.springframework.util.ReflectionUtils;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class HandlerMethodResolver {
 

@@ -16,7 +16,7 @@ import org.springframework.validation.Errors;
  * <p>Adapts a MessageContext object to the Spring Errors interface. Allows Spring Validators to record errors that are
  * managed by a backing MessageContext.</p>
  * 
- * <p>Para la validaciÛn de formularios que tienen objetos compuestos, necesitamos crear los  mensajes de error con el 
+ * <p>Para la validaci√≥n de formularios que tienen objetos compuestos, necesitamos crear los  mensajes de error con el 
  * nombre de la propiedad precediendo el nombre del campo, para que ExtJS pueda pintar los errores. Es decir:</p>
  * 
  * <p>el DTO a usar tenemos</p>
@@ -34,7 +34,7 @@ import org.springframework.validation.Errors;
  *      'usuario.apellido' : 'no puede ser perez' 
  * }</pre>
  * 
- * asÌ que introducimos el messageContext con un nuevo par·metro "prefix" que aÒadir· el nombre del campo a los errores
+ * as√≠ que introducimos el messageContext con un nuevo par√°metro "prefix" que a√±adir√° el nombre del campo a los errores
  * 
  * @see org.springframework.binding.message.MessageContextErrors
  * 

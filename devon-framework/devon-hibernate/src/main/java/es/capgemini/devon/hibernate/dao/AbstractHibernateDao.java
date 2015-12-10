@@ -10,7 +10,7 @@ import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @SuppressWarnings("unchecked")
 public abstract class AbstractHibernateDao<DomainObject extends Serializable, KeyType extends Serializable> extends HibernateDaoSupport {

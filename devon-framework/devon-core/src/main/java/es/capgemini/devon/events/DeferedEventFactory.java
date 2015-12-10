@@ -6,7 +6,7 @@ import java.util.Date;
 import es.capgemini.devon.events.defered.DeferedEvent;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public interface DeferedEventFactory {
 

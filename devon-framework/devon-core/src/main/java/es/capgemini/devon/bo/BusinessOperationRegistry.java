@@ -10,7 +10,7 @@ import es.capgemini.devon.registry.DefaultRegistry;
 import es.capgemini.devon.startup.Initializable;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @Service
 public class BusinessOperationRegistry extends DefaultRegistry<BusinessOperationDefinition> implements Initializable {

@@ -5,7 +5,7 @@ import org.springframework.scheduling.quartz.CronTriggerBean;
 /**
  * TODO Documentar
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class SchedulableTriggerBean extends CronTriggerBean implements Schedulable {
 

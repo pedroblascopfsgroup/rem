@@ -1,7 +1,7 @@
 package es.capgemini.devon.events.defered;
 
 /**
- * @author Nicolás Cornaglia
+ * @author NicolÃ¡s Cornaglia
  */
 public enum DeferedEventState {
 

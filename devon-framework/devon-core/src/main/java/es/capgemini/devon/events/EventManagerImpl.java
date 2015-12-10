@@ -36,10 +36,10 @@ import es.capgemini.devon.events.defered.DeferedEventState;
 import es.capgemini.devon.exception.FrameworkException;
 
 /**
- * Implementación de envío de mensajes a canales.
- * Canal de errores + canal de mensages genéricos.
+ * ImplementaciÃ³n de envÃ­o de mensajes a canales.
+ * Canal de errores + canal de mensages genÃ©ricos.
  *
- * @author Nicolás Cornaglia
+ * @author NicolÃ¡s Cornaglia
  */
 @Service("eventManager")
 public class EventManagerImpl implements EventManager, Serializable {

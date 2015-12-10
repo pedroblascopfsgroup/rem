@@ -7,7 +7,7 @@ import es.capgemini.devon.bo.BusinessOperationDefinition;
 /**
  * Business Operation implemented in this applicaction as a local bean.
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class LocalOperationDefinition implements BusinessOperationDefinition {
 

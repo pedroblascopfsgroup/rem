@@ -12,7 +12,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class RecursivePropertiesFactoryBean extends PropertyPlaceholderConfigurer implements FactoryBean {
 

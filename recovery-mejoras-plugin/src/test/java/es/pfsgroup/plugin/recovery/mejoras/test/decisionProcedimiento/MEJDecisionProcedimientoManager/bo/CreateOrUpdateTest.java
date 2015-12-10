@@ -79,6 +79,7 @@ public class CreateOrUpdateTest extends AbstractMEJDecisionProcedimientoManagerT
         
         dtoDecisionProcedimiento.setComentarios(comentarios);
         dtoDecisionProcedimiento.setFechaParalizacion(fechaParalizacion);
+                
         DecisionProcedimiento current = new DecisionProcedimiento();
         manager.createOrUpdate(current, dtoDecisionProcedimiento);
        

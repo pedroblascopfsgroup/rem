@@ -193,7 +193,12 @@ public class TurnadoDespachosController {
 
 	@RequestMapping
 	public String getEsquemaVigente(Model model) {
-		EsquemaTurnado esquema = turnadoDespachosManager.getEsquemaVigente();
+		EsquemaTurnado esquema = null;
+		try {
+			esquema = turnadoDespachosManager.getEsquemaVigente();
+		} catch (IllegalArgumentException iarExp) {
+			esquema = new EsquemaTurnado();
+		}
 		model.addAttribute(KEY_DATA, esquema);
 		return VIEW_LETRADO_ESQUEMA_TURNADO_GET;
 	}

@@ -1,111 +1,63 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-	<!-- PASO 1 - TRUNCADO TABLAS TEMPORALES -->
-	<entry key="recobro.borrado.tmp_rec_exp_rearquetipado.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_EXP_REARQUETIPADO
-		]]>
-	</entry>
-	<entry key="recobro.borrado.tmp_rec_exp_rotacion.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_EXP_ROTACION
-		]]>
-	</entry>
-	<entry key="recobro.borrado.tmp_rec_exp_desnormalizado_arq.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_EXP_DESNORMALIZADO_ARQ
-		]]>
-	</entry>
-	<entry key="recobro.borrado.tmp_rec_exp_asig_cartera.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_EXP_ASIG_CARTERA
-		]]>
-	</entry>
-	<entry key="recobro.recompile.tmp_rec_per_data_rule_engine.Oracle9iDialect">
-		<![CDATA[
-			ALTER VIEW TMP_REC_PER_DATA_RULE_ENGINE COMPILE
-		]]>
-	</entry>
-	<!-- Paso 2 - Cálculo del nuevo arquetipo -->
-	<entry key="recobro.insert.tmp_rec_exp_desnormalizado_arq.Oracle9iDialect">
-		<![CDATA[
-			insert into TMP_REC_EXP_DESNORMALIZADO_ARQ
-			select DISTINCT tmp.exp_id, tmp.per_id, tmp.RCF_AGE_ID, tmp.RCF_SCA_ID, tmp.arq_id, arp.arq_id
-			from TMP_REC_EXP_DESNORMALIZADO tmp
-			  join (select per_id, max(arq_date) arq_date from ARP_ARQ_RECOBRO_PERSONA group by per_id) md on tmp.per_id = md.per_id
-			  JOIN ARP_ARQ_RECOBRO_PERSONA ARP ON TMP.PER_ID = ARP.PER_ID AND MD.ARQ_DATE = ARP.ARQ_DATE
-			  INNER JOIN (SELECT DISTINCT RCF_CAR_ID, RCF_DD_TCE_CODIGO 
-			        FROM BATCH_RCF_ENTRADA 
-			        WHERE RCF_DD_EES_CODIGO = ${ddEstadoEsquemas.Liberado.codigo}) RCFE
-			          ON ARP.ARQ_ID = RCFE.RCF_CAR_ID  
-			WHERE RCFE.RCF_DD_TCE_CODIGO <> ${tipocartera.filtro}
-		]]>
-	</entry>
-	<!-- PASO 3 - Rearquetipar expedientes -->
-	<entry key="recobro.create.tmp_arq_recobro.Oracle9iDialect">
-		<![CDATA[
-			DECLARE
-			nCount NUMBER;   
-			BEGIN   			
-			    SELECT count(*) into nCount FROM all_mviews WHERE mview_name = 'TMP_ARQ_RECOBRO';
-			    IF(nCount > 0)
-				THEN
-			        EXECUTE IMMEDIATE 'DROP MATERIALIZED VIEW TMP_ARQ_RECOBRO';
-			    END IF;
-			    EXECUTE IMMEDIATE '
-			        CREATE MATERIALIZED VIEW TMP_ARQ_RECOBRO 
-			        BUILD IMMEDIATE
-			        REFRESH FORCE ON DEMAND
-			        WITH PRIMARY KEY AS
-					SELECT DISTINCT RCF_CAR_ID ARQ_ID, RCF_ESC_PRIORIDAD ARQ_PRIORIDAD, RCF_CAR_NOMBRE ARQ_NOMBRE
-					FROM BATCH_RCF_ENTRADA
-			        WHERE RCF_DD_EES_CODIGO = ''LBR''  ';
-			    	EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_ARQ_RECOBRO_1 ON TMP_ARQ_RECOBRO(ARQ_ID)';           
-			END;  		
-		]]>
-	</entry>
-	<entry key="recobro.insert.tmp_rec_exp_rearquetipado.Oracle9iDialect">
-		<![CDATA[
-			INSERT INTO TMP_REC_EXP_REARQUETIPADO (EXP_ID, ARQ_ID_OLD, ARQ_ID_NEW, RCF_AGE_ID, RCF_SCA_ID)
-			WITH ORDERED AS
-				(SELECT EXP_ID,  ARQ_ID_OLD, ARQ_ID_NEW, RCF_AGE_ID, RCF_SCA_ID,
-			 		ROW_NUMBER() OVER (PARTITION BY EXP_ID ORDER BY ARQ_PRIORIDAD) AS RN
-				FROM TMP_REC_EXP_DESNORMALIZADO_ARQ TMP
-					INNER JOIN TMP_ARQ_RECOBRO ARQ ON TMP.ARQ_ID_NEW = ARQ.ARQ_ID)
-			SELECT ORD.EXP_ID, ORD.ARQ_ID_OLD, ORD.ARQ_ID_NEW, ORD.RCF_AGE_ID, ORD.RCF_SCA_ID
-			FROM ORDERED ORD
-			WHERE RN = 1
-		]]>
-	</entry>
-	<entry key="recobro.drop.tmp_arq_recobro.Oracle9iDialect">
-		<![CDATA[
-			DECLARE
-			    table_count number(3);
-			    query_body varchar (30048);
-			BEGIN
-			 	select count(1) into table_count from all_mviews WHERE mview_name='TMP_ARQ_RECOBRO';
-				if table_count = 1 then
-			 		query_body := 'DROP MATERIALIZED VIEW TMP_ARQ_RECOBRO';  EXECUTE IMMEDIATE query_body;
-				end if;		
-			END;			
-		]]>
-	</entry>
-	<!-- Paso 4 - Marcar expedientes para rotación o para asignar a cartera -->
-	<entry key="recobro.insert.tmp_rec_exp_rotacion.Oracle9iDialect">
-		<![CDATA[
-	 		INSERT INTO TMP_REC_EXP_ROTACION
-			SELECT DISTINCT EXP_ID, RCF_AGE_ID, RCF_SCA_ID, ARQ_ID_NEW 
-			FROM TMP_REC_EXP_REARQUETIPADO RA
-			WHERE RA.ARQ_ID_OLD = RA.ARQ_ID_NEW
-				AND NOT RA.EXP_ID IN (SELECT EXP_ID FROM TMP_REC_EXP_EXTINCION_RA)
-		]]>
-	</entry>
-	<entry key="recobro.insert.tmp_rec_exp_asig_cartera.Oracle9iDialect">
-		<![CDATA[
-			INSERT INTO TMP_REC_EXP_ASIG_CARTERA
-			SELECT DISTINCT EXP_ID, ARQ_ID_NEW 
-			FROM TMP_REC_EXP_REARQUETIPADO RA
-			WHERE RA.ARQ_ID_OLD <> RA.ARQ_ID_NEW
-		]]>
-	</entry>
+    <!-- PASO 1 - TRUNCADO TABLAS TEMPORALES -->
+    <entry key="recobro.borrado.tmp_rec_exp_rearquetipado.Oracle10gDialect">
+        <![CDATA[
+            select 1 from dual
+        ]]>
+    </entry>
+    <entry key="recobro.borrado.tmp_rec_exp_rotacion.Oracle10gDialect">
+        <![CDATA[
+            select 1 from dual
+        ]]>
+    </entry>
+    <entry key="recobro.borrado.tmp_rec_exp_desnormalizado_arq.Oracle10gDialect">
+        <![CDATA[
+           select 1 from dual
+        ]]>
+    </entry>
+    <entry key="recobro.borrado.tmp_rec_exp_asig_cartera.Oracle10gDialect">
+        <![CDATA[
+            select 1 from dual
+        ]]>
+    </entry>
+    <entry key="recobro.recompile.tmp_rec_per_data_rule_engine.Oracle10gDialect">
+        <![CDATA[
+           select 1 from dual
+        ]]>
+    </entry>
+    <!-- Paso 2 - Calculo del nuevo arquetipo -->
+    <entry key="recobro.insert.tmp_rec_exp_desnormalizado_arq.Oracle10gDialect">
+        <![CDATA[
+         select 1 from dual
+        ]]>
+    </entry>
+    <!-- PASO 3 - Rearquetipar expedientes -->
+    <entry key="recobro.create.tmp_arq_recobro.Oracle10gDialect">
+        <![CDATA[
+           select 1 from dual
+        ]]>
+    </entry>
+    <entry key="recobro.insert.tmp_rec_exp_rearquetipado.Oracle10gDialect">
+        <![CDATA[
+          select 1 from dual
+        ]]>
+    </entry>
+
+    <entry key="recobro.drop.tmp_arq_recobro.Oracle10gDialect">
+        <![CDATA[
+	     select 1 from dual
+        ]]>
+    </entry>
+    <!-- Paso 4 - Marcar expedientes para rotacion o para asignar a cartera -->
+    <entry key="recobro.insert.tmp_rec_exp_rotacion.Oracle10gDialect">
+        <![CDATA[
+          select 1 from dual
+        ]]>
+    </entry>
+    <entry key="recobro.insert.tmp_rec_exp_asig_cartera.Oracle10gDialect">
+        <![CDATA[          
+          select 1 from dual
+        ]]>
+    </entry>
 </properties>

@@ -64,7 +64,7 @@ BEGIN
     ELSE
       V_MSQL := 'INSERT INTO ' || V_ESQUEMA || '.PEF_PERFILES' ||
                 ' (PEF_ID, PEF_DESCRIPCION_LARGA, PEF_DESCRIPCION, USUARIOCREAR, FECHACREAR, PEF_CODIGO, DTYPE) VALUES ' ||
-                ' (S_PEF_PERFILES.NextVal, ''Usuario precontencioso'', ''Usuario precontencioso'', ''DML'', SYSDATE, ''FULLPRECON'', ''EXTPerfil'')';
+                ' (' || V_ESQUEMA || '.S_PEF_PERFILES.NextVal, ''Usuario precontencioso'', ''Usuario precontencioso'', ''DML'', SYSDATE, ''FULLPRECON'', ''EXTPerfil'')';
 
       DBMS_OUTPUT.PUT_LINE('INSERTANDO: en PEF_PERFILES');
       EXECUTE IMMEDIATE V_MSQL;

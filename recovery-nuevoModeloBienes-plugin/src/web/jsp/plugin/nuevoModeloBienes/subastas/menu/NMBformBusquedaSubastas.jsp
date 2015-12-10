@@ -542,6 +542,70 @@ var formBusquedaSubastas=function(){
 		pestanyaAsunto=true;
 	});		
 		
+<%-- ************* COMPROBACION FILTROS BUSQUEDA Y DESACTIVAR BOTON PARA IMPRDIR BUSQUEDAS SIMULTÁNEAS *****************   --%>		
+	var buscarFunc = function() {
+           hayParametros=false;
+           
+			<%-- Comprueba si se ha añadido algun filtro en la PRIMERA pestaña (DATOS DE SUBASTA) --%>
+			if(txtNumAutos.getValue() != '' || txtFechaSolicitudDesde.getValue() != '' || txtFechaSolicitudHasta.getValue() != '' || 
+				txtFechaAnuncioDesde.getValue() != '' || txtFechaAnuncioHasta.getValue() != '' || txtFechaSenyalamientoDesde.getValue() != '' || 
+				txtFechaSenyalamientoHasta.getValue() != '' || comboTasacionCompletada.getValue() != '' || comboInfLetradoCompleto.getValue() != '' || 
+				comboInstruccionesCompletadas.getValue() != '' || comboSubastaRevisada.getValue() != '' || idmintotalCargasAnteriores.value != '' || 
+				idmaxtotalCargasAnteriores.value != '' || idmintotalImporteAdjudicado.value != '' || idmaxtotalImporteAdjudicado.value != '' || 
+				filtroEstadoDeGestion.getValue() != '' )
+			{
+				hayParametros = true;
+			}
+			
+			<%-- Comprueba si se ha añadido algun filtro en la SEGUNDA pestaña (CLIENTE) --%>
+	        if(comboTipoPersona.getValue() != '' || filtroCodCli.getValue() != '' || filtroNombre.getValue() != '' ||
+        		filtroApellidos.getValue() != '' || filtroNif.getValue() != '')
+        	{
+				hayParametros = true;
+			}
+			
+			<%-- Comprueba si se ha añadido algun filtro en la TERCERA pestaña (CONTRATO) --%>
+	        if((txtContrato.getValue()!= null && txtContrato.getValue() != '') || (txtCodRecibo.getValue() != null && txtCodRecibo.getValue() != '') || 
+	        	(txtCodEfecto.getValue() != null && txtCodEfecto.getValue() != '') || (txtCodDisposicion.getValue() != null && txtCodDisposicion.getValue() != '')
+        		 || (comboEstadoContrato.getStore() != null && comboEstadoContrato.getValue() != '') || 
+        		 (comboTiposProducto.getStore() != null && comboTiposProducto.getValue() != ''))
+        	{
+				hayParametros = true;
+			}
+			
+			<%-- Comprueba si se ha añadido algun filtro en la CUARTA pestaña (JERARQUÍA) --%>
+	        if((comboJerarquia.getValue() != null && comboJerarquia.getValue() != '' && comboZonas.getValue() != '') || 
+	        (comboJerarquiaAdministrativa.getValue() != null && comboJerarquiaAdministrativa.getValue() != '' && comboZonasAdm.getValue() != ''))
+	        {
+				hayParametros = true;
+			}
+           
+            <%-- Comprueba si se ha añadido algun filtro en la QUINTA pestaña (ASUNTO) --%>
+            if(comboPropiedades.getValue() != '' || comboGestion.getValue() != '')
+            {
+				hayParametros = true;
+			}
+           
+           if (hayParametros) {		
+               	panelFiltros.collapse(true);
+               	pagingBar.show();
+				subastasStore.webflow(getParametros()); 
+			
+				parametrosTab = new Array();            
+               	panelFiltros.getTopToolbar().setDisabled(true);
+           } 
+           else {
+               Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','Introduzca parámetros de búsqueda');
+           }
+	};
+	
+	<%-- Se sustituye el btnBuscar de ButtonsL para poder deshabilitarlo mientras se procesa una búsqueda --%>
+	buttonsL[0]=app.crearBotonBuscar({
+		handler : buscarFunc
+	});	
+		
+		
+		
 <%-- *************TABPANEL QUE CONTIENE TODAS LAS PESTAï¿½AS********************************   --%>
 	
 	var filtroTabPanel=new Ext.TabPanel({
@@ -895,6 +959,7 @@ var formBusquedaSubastas=function(){
 	subastasGrid.on('load', function(){
 		subastasGrid.setTitle('<s:message code="plugin.nuevoModeloBienes.busquedaSubastas.tituloGrid" text="Subastas" arguments="'+subastasStore.getTotalCount()+'"/>');
 		panelFiltros.collapse(true);
+		
 	});	
 	
 	var subastasGridListener = function(grid, rowIndex, e) {		
@@ -906,6 +971,9 @@ var formBusquedaSubastas=function(){
 	    	
 	subastasGrid.addListener('rowdblclick', subastasGridListener);
 	
+	subastasStore.on('load',function(){
+           panelFiltros.getTopToolbar().setDisabled(false);
+    });
 	
 	//PANEL PRINCIPAL ********************************************************************
 	var mainPanel = new Ext.Panel({

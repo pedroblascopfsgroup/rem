@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JAVIER DIAZ
---## FECHA_CREACION=20151204
+--## FECHA_CREACION=20151205
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=CMREC-866

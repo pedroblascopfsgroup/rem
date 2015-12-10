@@ -134,7 +134,7 @@ fwk.constant = {
 	,errorMsg : '<s:message code="fwk.constant.errorMsg" text="**Mensaje de error" />'
 	,loginRedirect : '<s:message code="fwk.constant.loginRedirect" text="**No tiene los permisos necesarios para continuar en la aplicación. Se redireccionará a la página de entrada." />'
 	,alert : '<s:message code="fwk.constant.alert" text="**Mensaje de alerta" />'
-	,fwkError : '<s:message code="fwk.constant.fwkError" text="**Advertencia: La operación se pudo realizar..." />'
+	,fwkError : '<s:message code="fwk.constant.fwkError" text="**Advertencia: La operación no se pudo realizar..." />'
 	,fwkUserError : '<s:message code="fwk.constant.fwkUserError" text="**Error en el servidor" />'
 	,confirmar : '<s:message code="fwk.constant.confirmar" text="**Mensaje de confirmacion" />'
 };

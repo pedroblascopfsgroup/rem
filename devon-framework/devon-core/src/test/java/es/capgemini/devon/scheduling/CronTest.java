@@ -15,7 +15,7 @@ import es.capgemini.devon.utils.TimeUtils;
 /**
  * TODO Documentar
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class CronTest {
 

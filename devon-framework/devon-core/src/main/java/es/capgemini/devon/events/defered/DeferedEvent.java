@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * TODO Documentar
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public interface DeferedEvent extends Serializable {
 

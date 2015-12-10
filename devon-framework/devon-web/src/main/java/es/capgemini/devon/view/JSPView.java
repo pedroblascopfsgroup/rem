@@ -22,7 +22,7 @@ import es.capgemini.devon.validation.Severity;
 import es.capgemini.devon.validation.ValidationException;
 
 /**
- * Con esta vista interceptamos la respuesta y aÒadimos datos al modelo para que
+ * Con esta vista interceptamos la respuesta y a√±adimos datos al modelo para que
  * se puedan usar en la JSP. 
  */
 @SuppressWarnings("unchecked")
@@ -60,7 +60,7 @@ public class JSPView extends JstlView {
     }
 
     /**
-     * aquÌ introducimos todas las variables necesarias en el modelo. Todas ir·n
+     * aqu√≠ introducimos todas las variables necesarias en el modelo. Todas ir√°n
      * bajo el nombre "fwk"
      * 
      * @param model
@@ -82,7 +82,7 @@ public class JSPView extends JstlView {
     }
 
     /** 
-     * El appProperties lo hemos inyectado en la JSPView a travÈs del map de atributos
+     * El appProperties lo hemos inyectado en la JSPView a trav√©s del map de atributos
      * @return
      */
     protected void introduceProperties(Map model) {
@@ -129,7 +129,7 @@ public class JSPView extends JstlView {
     }
 
     /** 
-     * El webEventsSubscriptor lo hemos inyectado en la JSPView a travÈs del map de atributos
+     * El webEventsSubscriptor lo hemos inyectado en la JSPView a trav√©s del map de atributos
      * @return
      */
     protected List<Event> getEvents() {
@@ -217,7 +217,7 @@ public class JSPView extends JstlView {
     }
 
     /**
-     * Indica que la respuesta es errÛnea
+     * Indica que la respuesta es err√≥nea
      * 
      * @param params
      */
@@ -227,7 +227,7 @@ public class JSPView extends JstlView {
 
     /**
      * Gestiona los errores que se encuentren en el messageContext. En caso de
-     * haber errores la respuesta que viaja llevar· success:false
+     * haber errores la respuesta que viaja llevar√° success:false
      * 
      * @param model
      * @param params
@@ -266,8 +266,8 @@ public class JSPView extends JstlView {
     }
 
     /**
-     * AÒade un nuevo mensaje a la lista de errores del framework que viajar·n a
-     * la pap·gina usar·n la clave FWK_EXCEPTIONS o FWK_USEREXCEPTIONS
+     * A√±ade un nuevo mensaje a la lista de errores del framework que viajar√°n a
+     * la pap√°gina usar√°n la clave FWK_EXCEPTIONS o FWK_USEREXCEPTIONS
      * 
      * @param model
      * @param message

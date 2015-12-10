@@ -4,7 +4,7 @@ import org.springframework.security.GrantedAuthority;
 import org.springframework.security.userdetails.User;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class SecurityUser extends User implements SecurityUserInfo{
 

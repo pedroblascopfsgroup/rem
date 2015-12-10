@@ -14,7 +14,7 @@ import org.springframework.ui.velocity.VelocityEngineUtils;
 /**
  * Wrapper sobre JavaMailSenderImpl de Spring
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  * @see JavaMailSenderImpl
  */
 public class MailManagerImpl extends JavaMailSenderImpl implements MailManager {

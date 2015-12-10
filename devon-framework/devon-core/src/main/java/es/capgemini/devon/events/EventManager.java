@@ -149,7 +149,7 @@ public interface EventManager {
     public abstract DeferedEvent createDeferedEvent(String queue, Serializable data, Long arrived, Date willProcess);
 
     /**
-     * Obtiene los eventos diferidos de base de datos y los envía a la cola correspondiente
+     * Obtiene los eventos diferidos de base de datos y los envÃ­a a la cola correspondiente
      * 
      * @param channelName
      * @param before

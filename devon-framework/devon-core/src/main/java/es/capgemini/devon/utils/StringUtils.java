@@ -3,7 +3,7 @@ package es.capgemini.devon.utils;
 import org.springframework.util.ObjectUtils;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class StringUtils {
 

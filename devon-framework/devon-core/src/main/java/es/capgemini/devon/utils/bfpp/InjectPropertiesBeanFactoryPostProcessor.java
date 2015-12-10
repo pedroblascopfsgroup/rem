@@ -10,7 +10,7 @@ import org.springframework.beans.factory.config.TypedStringValue;
 import org.springframework.beans.factory.support.ManagedProperties;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class InjectPropertiesBeanFactoryPostProcessor extends AbstractInjectionBeanFactoryPostProcessor {
 

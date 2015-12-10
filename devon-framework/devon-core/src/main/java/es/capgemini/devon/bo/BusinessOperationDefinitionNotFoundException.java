@@ -2,7 +2,7 @@ package es.capgemini.devon.bo;
 
 import es.capgemini.devon.exception.FrameworkException;
 
-/** Excepción a lanzar cuando no se encuentra la operación de negocio
+/** ExcepciÃ³n a lanzar cuando no se encuentra la operaciÃ³n de negocio
  * @author amarinso
  *
  */

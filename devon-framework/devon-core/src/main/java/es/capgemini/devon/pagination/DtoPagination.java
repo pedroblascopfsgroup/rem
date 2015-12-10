@@ -2,7 +2,7 @@ package es.capgemini.devon.pagination;
 
 import java.io.Serializable;
 
-/** clase base para los DTO que se usar·n como par·metros de paginaciÛn
+/** clase base para los DTO que se usar√°n como par√°metros de paginaci√≥n
  * @author amarinso
  *
  */

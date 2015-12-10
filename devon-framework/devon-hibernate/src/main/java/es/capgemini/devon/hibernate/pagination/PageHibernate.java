@@ -85,7 +85,7 @@ public class PageHibernate extends PageImpl implements HibernateCallback {
   
 
     /**
-     * Este método sirve para recuperar un SQL en String y sustituir los '?' por los nombres de los parametros originales para generar un PreparedStatement
+     * Este mÃ©todo sirve para recuperar un SQL en String y sustituir los '?' por los nombres de los parametros originales para generar un PreparedStatement
      * @param query
      * @param pt
      * @return
@@ -120,7 +120,7 @@ public class PageHibernate extends PageImpl implements HibernateCallback {
 
     protected String creaQuery() {
         if (this.getSort() == null || this.getQueryString().toUpperCase().indexOf("ORDER BY") > 0) {
-            //no tenemos paginación
+            //no tenemos paginaciÃ³n
             return this.getQueryString();
         }
         String order = this.getDir() != null ? this.getDir() : "ASC";

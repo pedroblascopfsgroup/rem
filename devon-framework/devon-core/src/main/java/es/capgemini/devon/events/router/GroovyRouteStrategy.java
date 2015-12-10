@@ -11,7 +11,7 @@ import es.capgemini.devon.exception.FrameworkException;
 import es.capgemini.devon.scripting.groovy.GroovyEvaluator;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class GroovyRouteStrategy implements RouteStrategy {
 

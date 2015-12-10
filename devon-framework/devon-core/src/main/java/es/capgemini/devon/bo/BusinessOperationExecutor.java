@@ -3,7 +3,7 @@ package es.capgemini.devon.bo;
 /**
  * TODO Documentar
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public interface BusinessOperationExecutor {
 

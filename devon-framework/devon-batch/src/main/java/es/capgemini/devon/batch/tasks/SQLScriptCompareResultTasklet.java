@@ -16,7 +16,7 @@ import es.capgemini.devon.batch.BatchException;
 import es.capgemini.devon.batch.ParameterBinder;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class SQLScriptCompareResultTasklet implements Tasklet, StepExecutionListener {
 

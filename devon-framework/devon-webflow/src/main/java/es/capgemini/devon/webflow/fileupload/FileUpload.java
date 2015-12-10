@@ -21,14 +21,14 @@ import es.capgemini.devon.files.WebFileItem;
 
 /** Este manager es el encargado de realizar la subida de ficheros
  * 
- * sÛlo se va a permitir una subida de ficheros por sesiÛn, 
+ * s√≥lo se va a permitir una subida de ficheros por sesi√≥n, 
  * @author amarinso
  *
  */
 @Service(value = FwkBusinessOperations.FILEUPLOAD_SERVICE + "_", overrides = FwkBusinessOperations.FILEUPLOAD_SERVICE)
 public class FileUpload {
 
-    /** el nombre del objeto en sesiÛn
+    /** el nombre del objeto en sesi√≥n
     * 
     */
     public static final String FILE_UPLOAD_LISTENER = "fileUploadListener";
@@ -61,10 +61,10 @@ public class FileUpload {
         ServletFileUpload upload = new ServletFileUpload(factory);
         ProgressInfo pl = new ProgressInfo();
 
-        //tamaÒo aproximado del fichero == tamaÒo de la request
+        //tama√±o aproximado del fichero == tama√±o de la request
         pl.setMaxSize(getRequest(context).getContentLength());
 
-        //subimos el listener a sesiÛn
+        //subimos el listener a sesi√≥n
         getSession(context).setAttribute(FILE_UPLOAD_LISTENER, pl);
         upload.setProgressListener(pl);
 
@@ -83,13 +83,13 @@ public class FileUpload {
 
                     uploadForm.putParameter(fit.getFieldName(), fit.getString());
 
-                    //aquÌ viene la info del tramaÒo m·ximo, se la pasamos al progress listener
+                    //aqu√≠ viene la info del trama√±o m√°ximo, se la pasamos al progress listener
                     if ("MAX_FILE_SIZE".equals(fit.getFieldName())) {
                         maxSize = Integer.parseInt(fit.getString());
                         pl.setMaxSize(maxSize);
                     }
 
-                    //aquÌ viene la info del identificador del upload, se la pasamos al progress listener
+                    //aqu√≠ viene la info del identificador del upload, se la pasamos al progress listener
                     if ("UPLOAD_IDENTIFIER".equals(fit.getFieldName())) {
                         String uploadIdentifier = fit.getString();
                         pl.setUploadIdentifier(uploadIdentifier);

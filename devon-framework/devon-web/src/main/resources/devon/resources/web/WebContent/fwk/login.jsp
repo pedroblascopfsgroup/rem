@@ -43,7 +43,7 @@
 
 //fwk_login_page_token
 
-//si detectamos el framework, es que esta p·gina est· siendo cargada donde no debe.
+//si detectamos el framework, es que esta p√°gina est√° siendo cargada donde no debe.
 if (top['app']){
 	top.app.loginRedirect();
 }

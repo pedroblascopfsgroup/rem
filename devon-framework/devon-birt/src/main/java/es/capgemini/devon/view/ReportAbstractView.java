@@ -107,7 +107,7 @@ public abstract class ReportAbstractView extends InternalResourceView {
      * @param request
      */
     private String getImgPath(HttpServletRequest request) {
-        //Primero tratamos de obtenerlo de la configuración
+        //Primero tratamos de obtenerlo de la configuraciÃ³n
         if (appProperties != null && appProperties.get("img_src") != null)
             return appProperties.get("img_src").toString();
         //Tratamos de obtenerlo de la ruta del srv

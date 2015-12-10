@@ -16,7 +16,7 @@ import es.capgemini.devon.profiling.AbstractJamonProfilerAspect;
 /**
  * Profiler de los DAOs
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @Component
 @Aspect
@@ -41,7 +41,7 @@ public class FlowCallbackServiceProfilingAspect extends AbstractJamonProfilerAsp
      */
     @Override
     public String getArgsAsString(ProceedingJoinPoint joinPoint) {
-        // FIXME: Obtener los par·metros de la request ( (HttpServletRequest) joinPoint.getArgs()[0] )
+        // FIXME: Obtener los par√°metros de la request ( (HttpServletRequest) joinPoint.getArgs()[0] )
         String result = "";
         HttpServletRequest request = (HttpServletRequest) joinPoint.getArgs()[0];
         Iterator iter = request.getParameterMap().entrySet().iterator();

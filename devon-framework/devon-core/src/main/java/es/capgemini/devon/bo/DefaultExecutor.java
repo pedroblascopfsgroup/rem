@@ -15,7 +15,7 @@ import es.capgemini.devon.exception.FrameworkException;
 /**
  * TODO Documentar
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class DefaultExecutor implements Executor {
 

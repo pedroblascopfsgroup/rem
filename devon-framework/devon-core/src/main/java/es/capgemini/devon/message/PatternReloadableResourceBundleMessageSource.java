@@ -16,7 +16,7 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternUtils;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class PatternReloadableResourceBundleMessageSource extends ReloadableResourceBundleMessageSource {
 

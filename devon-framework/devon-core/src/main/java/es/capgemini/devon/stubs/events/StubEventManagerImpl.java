@@ -24,7 +24,7 @@ import es.capgemini.devon.exception.FrameworkException;
 /**
  * Mock {@link EventManager}
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @Component("eventManager")
 public class StubEventManagerImpl implements EventManager {

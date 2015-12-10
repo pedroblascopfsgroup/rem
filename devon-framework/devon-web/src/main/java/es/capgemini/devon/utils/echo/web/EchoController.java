@@ -11,7 +11,7 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.FwkBusinessOperations;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @Controller
 public class EchoController {

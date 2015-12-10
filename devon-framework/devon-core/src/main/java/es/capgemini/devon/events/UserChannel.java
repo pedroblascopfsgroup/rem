@@ -17,9 +17,9 @@ import es.capgemini.devon.security.SecurityUtils;
 /**
  * Genera una cola de mensajes para este usuario.
  * 
- * FIXME Quitar la cola generada cuando el ususario pierda la sesiÛn. ver UserCounterListener
+ * FIXME Quitar la cola generada cuando el ususario pierda la sesi√≥n. ver UserCounterListener
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @Component
 @Scope("session")

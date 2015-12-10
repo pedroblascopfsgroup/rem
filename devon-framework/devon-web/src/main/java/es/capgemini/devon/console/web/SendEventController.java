@@ -18,7 +18,7 @@ import es.capgemini.devon.events.UserChannel;
 import es.capgemini.devon.events.WebEventsSubscriptor;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @Controller
 public class SendEventController {

@@ -11,7 +11,7 @@ package es.capgemini.devon.services.property;
  *       interface="es.capgemini.devon.services.property.PropertyService" /&gt;
  * </pre>
  *   
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public interface PropertyService {
 

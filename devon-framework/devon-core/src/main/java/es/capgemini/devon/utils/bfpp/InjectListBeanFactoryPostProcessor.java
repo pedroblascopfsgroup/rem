@@ -10,7 +10,7 @@ import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.ManagedList;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class InjectListBeanFactoryPostProcessor extends AbstractInjectionBeanFactoryPostProcessor {
 

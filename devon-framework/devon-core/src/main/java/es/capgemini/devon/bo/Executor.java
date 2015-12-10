@@ -10,7 +10,7 @@ public interface Executor {
      * @return
      * @throws Exception
      */
-    // Angel: utilizando argumentos variables falla al usar reflection, no encuentra el método
+    // Angel: utilizando argumentos variables falla al usar reflection, no encuentra el mÃ©todo
     //public abstract Object execute(String id, Object... arg) throws Exception;
     public abstract Object execute(String id) throws FrameworkException;
 

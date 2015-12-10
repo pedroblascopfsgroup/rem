@@ -15,15 +15,15 @@ import es.capgemini.devon.validation.ValidationException;
 /** 
  * @author amarinso
  *
- * <p>Este objeto nos ayuda con las validaciones de los campos mediante los mÈtodos</p>
+ * <p>Este objeto nos ayuda con las validaciones de los campos mediante los m√©todos</p>
  * <ul><li>addValidation</li>
  * <li>validate</li></ul>
  * 
- * Utiliza un objeto interno CompoundValidationObject para ir almacenando objetos que ser·n
- * validados con el mÈtodo validate. 
+ * Utiliza un objeto interno CompoundValidationObject para ir almacenando objetos que ser√°n
+ * validados con el m√©todo validate. 
  * 
- * No se puede ir validando objeto a objeto porque la validaciÛn lanza una excepciÛn, y si
- * falla la primera validaciÛn no se aÒadirÌan los mensajes de error del resto de validaciones
+ * No se puede ir validando objeto a objeto porque la validaci√≥n lanza una excepci√≥n, y si
+ * falla la primera validaci√≥n no se a√±adir√≠an los mensajes de error del resto de validaciones
  *  
  */
 public class WebDto extends AbstractDto {
@@ -42,8 +42,8 @@ public class WebDto extends AbstractDto {
 
     /*
      * Objeto compuesto que agrupa distintos objetos a validar junto con sus prefijos.
-     * Al final de la composiciÛn se realizar· un validate() sobre este objeto que ser· el que
-     * deber· lanzar una excepciÛn en caso de error.
+     * Al final de la composici√≥n se realizar√° un validate() sobre este objeto que ser√° el que
+     * deber√° lanzar una excepci√≥n en caso de error.
      */
     public class CompoundValidationObject {
         List<ObjectToValidate> objects = new ArrayList<ObjectToValidate>();
@@ -65,8 +65,8 @@ public class WebDto extends AbstractDto {
         }
 
         /**
-         * Una vez tenemos un objeto creado, podemos llamar al mÈtodo validate que ser· el encargado
-         * de realizar la validaciÛn y lanzar una excepciÛn con los errores que encontremos
+         * Una vez tenemos un objeto creado, podemos llamar al m√©todo validate que ser√° el encargado
+         * de realizar la validaci√≥n y lanzar una excepci√≥n con los errores que encontremos
          */
         public void validate() {
             List<Message> messages = new ArrayList<Message>();
@@ -77,7 +77,7 @@ public class WebDto extends AbstractDto {
             }
 
             //una vez obtenidos los mensajes ya nos hacemos cargo, y vaciamos el messageContext
-            //si no, la proxima ejecuciÛn seguir· lleno
+            //si no, la proxima ejecuci√≥n seguir√° lleno
             messageContext.clearMessages();
             if (messages.size() > 0) {
                 throw new ValidationException(ErrorMessageUtils.convertMessages(messages));

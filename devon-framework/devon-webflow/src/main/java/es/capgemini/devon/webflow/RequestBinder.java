@@ -39,7 +39,7 @@ public class RequestBinder {
     private Validator validator;
 
     /**
-     * Hace el bind de los parámetros de la request al objeto del binder
+     * Hace el bind de los parÃ¡metros de la request al objeto del binder
      * 
      * copiado de FormAction de webflow
      * 
@@ -84,9 +84,9 @@ public class RequestBinder {
             logger.debug("bind done");
         }
 
-        // vamos a validar con un método que se llame validateSTATE con
+        // vamos a validar con un mÃ©todo que se llame validateSTATE con
         // STATE==nombre del currentState.
-        // podemos realizar la validación automática tras la personalizada si
+        // podemos realizar la validaciÃ³n automÃ¡tica tras la personalizada si
         // devolvemos Boolean.TRUE
         String methodName = "validate" + StringUtils.capitalize(context.getCurrentState().getId());
 
@@ -95,7 +95,7 @@ public class RequestBinder {
         try {
             method = formObject.getClass().getMethod(methodName, new Class[] { MessageContext.class });
         } catch (NoSuchMethodException e) {
-            // pues vale, no hay método
+            // pues vale, no hay mÃ©todo
         }
 
         if (method != null) {
@@ -103,12 +103,12 @@ public class RequestBinder {
             cont = !Boolean.FALSE.equals(result);
         }
 
-        // vamos a llamar al sistema de validación por defecto del framework
+        // vamos a llamar al sistema de validaciÃ³n por defecto del framework
         if (method == null || cont) {
             MessageContextErrors errors = new MessageContextErrors(context.getMessageContext());
             validator.validate(formObject, errors);
 
-            //si hay errores, lanzamos una excepción
+            //si hay errores, lanzamos una excepciÃ³n
             org.springframework.binding.message.Message[] messages = context.getMessageContext().getAllMessages();
             if (messages != null && messages.length > 0) {
                 throw new ValidationException(ErrorMessageUtils.convertMessages(Arrays.asList(messages)));

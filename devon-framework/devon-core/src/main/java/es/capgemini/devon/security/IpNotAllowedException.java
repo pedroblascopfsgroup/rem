@@ -3,7 +3,7 @@ package es.capgemini.devon.security;
 import org.springframework.security.BadCredentialsException;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 
 public class IpNotAllowedException extends BadCredentialsException {

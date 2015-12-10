@@ -8,7 +8,7 @@ import org.springframework.dao.DataAccessException;
 /**
  * Interfaz DAO para los eventos diferidos
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public interface DeferedEventDao {
 

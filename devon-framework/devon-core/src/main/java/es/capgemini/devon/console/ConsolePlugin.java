@@ -1,7 +1,7 @@
 package es.capgemini.devon.console;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public interface ConsolePlugin {
 
@@ -13,7 +13,7 @@ public interface ConsolePlugin {
     public String getName();
 
     /**
-     * Devuelve la acciÛn a realizar, normalmente el nombre de un flow
+     * Devuelve la acci√≥n a realizar, normalmente el nombre de un flow
      * 
      * @return
      */

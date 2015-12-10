@@ -3,8 +3,8 @@ package es.capgemini.devon.pagination;
 import java.io.Serializable;
 
 /**
- * Clase base para utilizar la paginación y ordenación de tablas. Los DTO de
- * usuario pueden heredar para no tener que escribir los métodos de los
+ * Clase base para utilizar la paginaciÃ³n y ordenaciÃ³n de tablas. Los DTO de
+ * usuario pueden heredar para no tener que escribir los mÃ©todos de los
  * interfaces Pagination
  * 
  * @author amarinso

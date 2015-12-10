@@ -7,7 +7,7 @@ public class ExceptionUtils {
 
     /**
      * Devuelve verdadero para las excepciones que tienen como causa
-     * una excepci髇 de usuario
+     * una excepci贸n de usuario
      * 
      * @param exception
      * @return
@@ -16,7 +16,7 @@ public class ExceptionUtils {
         return getUserExceptionCause(exception) != null;
     }
 
-    /** Comprueba si una excepci髇 tiene como causa una excepci髇 del framework
+    /** Comprueba si una excepci贸n tiene como causa una excepci贸n del framework
      * @param exception
      * @return
      */
@@ -51,7 +51,7 @@ public class ExceptionUtils {
 
     }
 
-    /** Obtiene una excepci髇 tipo clazz en el stackTrace
+    /** Obtiene una excepci贸n tipo clazz en el stackTrace
      * @param exception
      * @param clazz
      * @return

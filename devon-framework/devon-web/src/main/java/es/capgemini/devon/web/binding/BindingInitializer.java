@@ -12,7 +12,7 @@ import org.springframework.web.context.request.WebRequest;
 /**
  * TODO Documentar
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class BindingInitializer implements WebBindingInitializer {
 

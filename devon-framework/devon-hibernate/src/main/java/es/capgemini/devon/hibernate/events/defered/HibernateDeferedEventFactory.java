@@ -9,7 +9,7 @@ import es.capgemini.devon.events.DeferedEventFactory;
 import es.capgemini.devon.events.defered.DeferedEvent;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @Component("deferedEventFactory")
 public class HibernateDeferedEventFactory implements DeferedEventFactory {

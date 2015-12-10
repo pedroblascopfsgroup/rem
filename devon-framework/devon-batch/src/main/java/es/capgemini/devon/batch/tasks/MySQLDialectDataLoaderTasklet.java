@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import es.capgemini.devon.batch.tasks.utils.EventBatchUtil;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class MySQLDialectDataLoaderTasklet extends DataLoaderTasklet {
 

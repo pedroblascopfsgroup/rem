@@ -20,7 +20,7 @@ import org.springmodules.workflow.jbpm31.JbpmTemplate;
 import es.capgemini.devon.utils.BPMUtils;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 //@Component("processManager")
 public class ProcessManagerImpl implements ProcessManager {

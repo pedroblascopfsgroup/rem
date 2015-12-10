@@ -7,7 +7,7 @@ import javax.annotation.Resource;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class SQLScriptFactoryBean implements FactoryBean {
 

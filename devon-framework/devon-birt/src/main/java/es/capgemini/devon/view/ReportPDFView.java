@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.birt.report.engine.api.HTMLRenderOption;
 
 /**
- * Clase para la generación de reportes en formato PDF
+ * Clase para la generaciÃ³n de reportes en formato PDF
  * 
  * @author lgiavedo
  */

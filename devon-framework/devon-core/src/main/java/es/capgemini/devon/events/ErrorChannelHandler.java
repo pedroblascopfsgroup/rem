@@ -7,7 +7,7 @@ import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.core.Message;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @MessageEndpoint
 public class ErrorChannelHandler {

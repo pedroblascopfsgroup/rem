@@ -15,7 +15,7 @@ import org.eclipse.birt.report.engine.api.IReportEngineFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * Clase encargada de iniciar el contexto de Birt para la generación del reportes.
+ * Clase encargada de iniciar el contexto de Birt para la generaciÃ³n del reportes.
  * Se basa en la propiedad birt.home para identificar la ruta de platform que se debe cargar
  * 
  * @author lgiavedo
@@ -36,7 +36,7 @@ public class ReportContext {
 
         if (appProperties.getProperty("birt.loadOnStartup") != null
                 && appProperties.getProperty("birt.loadOnStartup").trim().toUpperCase().equals("FALSE"))
-            logger.warn("BIRT - No se va ha iniciado la plataforma debido a parametros de configuración!");
+            logger.warn("BIRT - No se va ha iniciado la plataforma debido a parametros de configuraciÃ³n!");
         else {
             EngineConfig config = new EngineConfig();
 

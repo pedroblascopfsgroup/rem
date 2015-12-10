@@ -11,7 +11,7 @@ import es.capgemini.devon.exception.FrameworkException;
 /**
  * Clase de utilidades para el Batch.
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class BatchUtils {
 

@@ -14,7 +14,7 @@ import es.capgemini.devon.exception.ExceptionUtils;
 import es.capgemini.devon.scripting.ScriptEvaluator;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @Controller
 public class ShellController implements ConsolePlugin {

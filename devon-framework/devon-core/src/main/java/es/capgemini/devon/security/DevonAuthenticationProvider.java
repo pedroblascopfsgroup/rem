@@ -19,7 +19,7 @@ import org.springframework.security.userdetails.UserDetailsService;
 import org.springframework.util.Assert;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class DevonAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
@@ -32,7 +32,7 @@ public class DevonAuthenticationProvider extends AbstractUserDetailsAuthenticati
     private List<AuthenticationFilter> postAuthenticationFilters = new ArrayList<AuthenticationFilter>();
 
     /**
-     * Ejecuta los filtros com oparte adicional a la validaciÛn de usuario/contraseÒa
+     * Ejecuta los filtros com oparte adicional a la validaci√≥n de usuario/contrase√±a
      * 
      * @see org.springframework.security.providers.dao.DaoAuthenticationProvider#additionalAuthenticationChecks(org.springframework.security.userdetails.UserDetails, org.springframework.security.providers.UsernamePasswordAuthenticationToken)
      */
@@ -42,7 +42,7 @@ public class DevonAuthenticationProvider extends AbstractUserDetailsAuthenticati
 
         doPreAuthenticationChecks(userDetails, authentication);
 
-        // Checkear el usuario/contraseÒa por el mÈtodo normal
+        // Checkear el usuario/contrase√±a por el m√©todo normal
         doAuthenticationCheck(userDetails, authentication);
 
         doPostAuthenticationChecks(userDetails, authentication);

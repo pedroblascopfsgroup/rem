@@ -12,7 +12,7 @@ import org.springframework.integration.core.Message;
 import es.capgemini.devon.events.Event;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @MessageEndpoint
 public class GenericRouter {

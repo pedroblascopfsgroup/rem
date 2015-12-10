@@ -8,7 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import es.capgemini.devon.services.property.PropertyService;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class PropertyServiceImpl implements PropertyService {
 

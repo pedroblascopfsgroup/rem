@@ -33,7 +33,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.StringUtils;
 
 /**
- * @author Nicolás Cornaglia
+ * @author NicolÃ¡s Cornaglia
  */
 @Service
 public class DatabaseUtils {
@@ -63,7 +63,7 @@ public class DatabaseUtils {
     }
 
     /**
-     * Verifica la existencia de un indíde en una tabla en el datasource dado
+     * Verifica la existencia de un indÃ­de en una tabla en el datasource dado
      * 
      * @param dataSource
      * @param tableName
@@ -88,7 +88,7 @@ public class DatabaseUtils {
     }
 
     /**
-     * Ejecuta varios scripts con parámetros en el datasource dado
+     * Ejecuta varios scripts con parÃ¡metros en el datasource dado
      * 
      * @param dataSource
      * @param resourceScripts
@@ -103,7 +103,7 @@ public class DatabaseUtils {
     }
 
     /**
-     * Ejecuta un script con parámetros en el datasource dado
+     * Ejecuta un script con parÃ¡metros en el datasource dado
      * 
      * @param dataSource
      * @param scriptResource
@@ -128,7 +128,7 @@ public class DatabaseUtils {
     }
 
     /**
-     * Ejecuta un script con parámetros en el datasource dado
+     * Ejecuta un script con parÃ¡metros en el datasource dado
      * 
      * @param dataSource
      * @param scriptResource
@@ -157,7 +157,7 @@ public class DatabaseUtils {
     }
 
     /**
-     * Ejecuta un script con parámetros en el datasource dado
+     * Ejecuta un script con parÃ¡metros en el datasource dado
      * 
      * @param dataSource
      * @param script

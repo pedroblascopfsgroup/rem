@@ -11,7 +11,7 @@ import org.springframework.web.servlet.view.AbstractView;
 import com.thoughtworks.xstream.XStream;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class XStreamXmlView extends AbstractView {
 

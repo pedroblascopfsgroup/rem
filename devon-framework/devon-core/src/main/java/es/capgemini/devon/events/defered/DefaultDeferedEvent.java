@@ -5,7 +5,7 @@ import java.util.Date;
 
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class DefaultDeferedEvent implements DeferedEvent {
 

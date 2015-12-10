@@ -1,7 +1,7 @@
 package es.capgemini.devon.batch.events;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class BatchStartedEvent extends BatchEvent {
 

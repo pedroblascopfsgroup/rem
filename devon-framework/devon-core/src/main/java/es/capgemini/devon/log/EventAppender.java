@@ -11,7 +11,7 @@ import es.capgemini.devon.events.EventManager;
 import es.capgemini.devon.exception.FrameworkException;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class EventAppender extends WriterAppender {
 

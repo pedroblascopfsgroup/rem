@@ -1,10 +1,10 @@
 
 /**
  * Este control sirve para presentar errores del servidor en un formulario. Si
- * est· presente un control de este tipo en un panelForm y la respuesta de una
- * operaciÛn Ajax viene con fwkUserExceptions, se mostrar·n en este control.
+ * est√° presente un control de este tipo en un panelForm y la respuesta de una
+ * operaci√≥n Ajax viene con fwkUserExceptions, se mostrar√°n en este control.
  * 
- * El control se oculta cuando se realiza una validaciÛn, esto es al enviar de nuevo
+ * El control se oculta cuando se realiza una validaci√≥n, esto es al enviar de nuevo
  * el formulario.
  */
 fwk.ux.ErrorList = function(config){

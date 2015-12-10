@@ -19,7 +19,7 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 /**
  * Wrapper sobre JavaMailSenderImpl de Spring
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  * @see JavaMailSenderImpl
  */
 public interface MailManager {

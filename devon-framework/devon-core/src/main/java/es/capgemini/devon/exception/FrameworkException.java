@@ -6,7 +6,7 @@ import org.springframework.context.support.AbstractMessageSource;
 import es.capgemini.devon.utils.MessageUtils;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class FrameworkException extends RuntimeException {
 

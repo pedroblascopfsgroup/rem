@@ -3,10 +3,13 @@ package es.pfsgroup.recovery.integration.file;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,6 +27,8 @@ import org.springframework.integration.file.FileHeaders;
 import org.springframework.integration.message.ErrorMessage;
 import org.springframework.integration.message.MessageBuilder;
 import org.springframework.integration.message.MessageHandlingException;
+import org.springframework.util.Assert;
+import org.springframework.util.FileCopyUtils;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.recovery.integration.TypePayload;
@@ -36,6 +41,8 @@ public class FileIntegrationAdapter {
 	private static final String EXTRA_PATH_ERROR = "error";
 	private static final String EXTRA_PATH_LOG = "log";
 
+	private Charset charset = Charset.defaultCharset();
+
 	private final Set<String> validHeaders = new HashSet<String>();
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -45,6 +52,16 @@ public class FileIntegrationAdapter {
 		return folder;
 	}
 
+	/**
+	 * Set the charset name to use when writing a File from a String-based
+	 * Message payload.
+	 */
+	public void setCharset(String charset) {
+		Assert.notNull(charset, "charset must not be null");
+		Assert.isTrue(Charset.isSupported(charset), "Charset '" + charset + "' is not supported.");
+		this.charset = Charset.forName(charset);
+	}
+	
 	public FileIntegrationAdapter(File folder) throws IOException {
 		this.folder = folder;
 		if (!checkFolder()) {
@@ -105,20 +122,12 @@ public class FileIntegrationAdapter {
 	}
 	
 	private void writeFile(File file, String txt) {
-		FileWriter fw = null;
 		try {
-			fw = new FileWriter(file);
-			fw.write(txt);
-			fw.flush();
+			OutputStreamWriter writer = new OutputStreamWriter(
+					new FileOutputStream(file), this.charset);
+			FileCopyUtils.copy(txt, writer);
 		} catch (IOException ioe) {
 			logger.error(String.format("[INTEGRACION] No puedo escribir el fichero %s", file.getAbsolutePath()), ioe);
-		} finally {
-			if (fw!=null)
-				try {
-					fw.close();
-				} catch (IOException e) {
-					logger.error("[INTEGRACION] al escribir contenido de fichero", e);
-				}
 		}
 	}
 

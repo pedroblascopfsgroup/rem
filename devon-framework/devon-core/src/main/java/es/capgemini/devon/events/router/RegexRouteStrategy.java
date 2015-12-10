@@ -10,7 +10,7 @@ import es.capgemini.devon.events.Event;
 import es.capgemini.devon.exception.FrameworkException;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class RegexRouteStrategy implements RouteStrategy {
 

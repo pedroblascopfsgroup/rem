@@ -12,7 +12,7 @@ import es.capgemini.devon.files.FileManagerImpl;
 import es.capgemini.devon.utils.FileUtils;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class FileView extends AbstractView {
 

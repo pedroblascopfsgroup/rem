@@ -2,7 +2,7 @@ package es.capgemini.devon.batch;
 
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class BatchExitException extends BatchException {
 

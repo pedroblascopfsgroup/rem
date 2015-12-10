@@ -30,7 +30,7 @@ import es.capgemini.devon.utils.DatabaseUtils;
 import es.capgemini.devon.utils.ResourceUtils;
 
 /**
- * @author Modified: Nicol·s Cornaglia
+ * @author Modified: Nicol√°s Cornaglia
  */
 public class InitializingDataSourceFactoryBean extends AbstractFactoryBean {
 

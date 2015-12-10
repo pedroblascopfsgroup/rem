@@ -27,12 +27,12 @@ public class WebExecutor extends DefaultExecutor {
 
     /**
      * <p>
-     * Este mÈtodo ejecuta el binding y la validaciÛn del dto que se pasa al
-     * bean para ejecutarse desde los par·metros de la request.
+     * Este m√©todo ejecuta el binding y la validaci√≥n del dto que se pasa al
+     * bean para ejecutarse desde los par√°metros de la request.
      * </p>
      * 
      * <p>
-     * El mÈtodo que se ejecutar· en la validaciÛn ser·:
+     * El m√©todo que se ejecutar√° en la validaci√≥n ser√°:
      * </p>
      * 
      * <pre>
@@ -40,7 +40,7 @@ public class WebExecutor extends DefaultExecutor {
      * </pre>
      * <p>
      * Donde STATE es el nombre del estado en el que se ejecuta el binding. De
-     * esta forma, podemos llamar a distintos mÈtodos de validaciÛn en cada flow
+     * esta forma, podemos llamar a distintos m√©todos de validaci√≥n en cada flow
      * reutiliando el mismo dto
      * </p>
      * 

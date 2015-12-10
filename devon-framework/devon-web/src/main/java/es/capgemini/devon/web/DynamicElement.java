@@ -1,11 +1,11 @@
 package es.capgemini.devon.web;
 
 /**
- * Interfaz para elementos que se cargan din·micamente a la vista.
+ * Interfaz para elementos que se cargan din√°micamente a la vista.
  * 
  * Los elementos se clasifican en grupos que tienen el mismo getName(), por ejemplo "menu", "cliente.tabs"
  * 
- * Un plugin podr· sobreescribir un elemento existente con el mismo nombre si tiene mayor priority
+ * Un plugin podr√° sobreescribir un elemento existente con el mismo nombre si tiene mayor priority
  * 
  */
 public interface DynamicElement {

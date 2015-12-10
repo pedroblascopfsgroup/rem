@@ -187,7 +187,7 @@ public class LocalJbpmConfigurationFactoryBean implements InitializingBean, Disp
                 // 4. Start job executor
                 jbpmConfiguration.getJobExecutor().start();
             } else {
-                logger.warn("No se va a iniciar el JobExecutor debido a parametros de configuración.");
+                logger.warn("No se va a iniciar el JobExecutor debido a parametros de configuraciÃ³n.");
             }
 
         } finally {

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 /**
  * Profiler de los DAOs
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @Component
 @Aspect

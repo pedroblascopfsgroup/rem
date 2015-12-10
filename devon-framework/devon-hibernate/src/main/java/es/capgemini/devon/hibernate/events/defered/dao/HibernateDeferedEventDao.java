@@ -14,7 +14,7 @@ import es.capgemini.devon.events.defered.DeferedEventDao;
 import es.capgemini.devon.hibernate.dao.AbstractHibernateDao;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @Repository("DeferedEventDao")
 public class HibernateDeferedEventDao extends AbstractHibernateDao<DeferedEvent, Long> implements DeferedEventDao {

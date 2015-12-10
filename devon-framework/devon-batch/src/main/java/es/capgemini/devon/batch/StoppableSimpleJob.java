@@ -26,15 +26,15 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 /**
- * ImplementaciÛn de {@link Job} para detener el {@link Job} cuando un {@link Step} devuelve "terminateOnly=true".
- * Es una copia de {@link SimpleJob} con el agregado de las lÌneas:
+ * Implementaci√≥n de {@link Job} para detener el {@link Job} cuando un {@link Step} devuelve "terminateOnly=true".
+ * Es una copia de {@link SimpleJob} con el agregado de las l√≠neas:
  * <pre>
  * if (currentStepExecution.isTerminateOnly()) {
  *     break;
  * } 
  * </pre>
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class StoppableSimpleJob extends AbstractJob {
 

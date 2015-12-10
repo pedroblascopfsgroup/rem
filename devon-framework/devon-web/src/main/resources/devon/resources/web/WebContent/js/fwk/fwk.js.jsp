@@ -12,7 +12,7 @@ fwk.getContext = function(){
 	return '<c:url value="/"/>';
 };
 
-// funciones genÈricas js
+// funciones gen√©ricas js
 fwk.js = {};
 fwk.js.hasProperties = function(obj, props){
     var notFound=[];
@@ -26,7 +26,7 @@ fwk.js.hasProperties = function(obj, props){
 };
 
 /**
- * Asegura que existen las propiedades o lanza una excepciÛn
+ * Asegura que existen las propiedades o lanza una excepci√≥n
  */
 fwk.js.assertProperties = function(obj, props){
     var notFound=fwk.js.hasProperties(obj, props);
@@ -49,7 +49,7 @@ fwk.js.removeProperties = function(obj, props){
 
 /**
  * extrae propiedades de un objeto y las devuelve como resultado. Modifica el objeto original
- * eliminando las propiedades extraÌdas
+ * eliminando las propiedades extra√≠das
  */
 fwk.js.extractProperties = function(obj){
 	if (!obj) return {};
@@ -94,7 +94,7 @@ fwk.js.getProperties = function(obj) {
  *
  * -> b=={a:1,b:true,c:'defValue'}
  *
- * si no pasamos array de propiedades, se copiar·n todas las del objeto src
+ * si no pasamos array de propiedades, se copiar√°n todas las del objeto src
  */
 fwk.js.copyProperties = function(obj, srcObject, props){
 	srcObject=srcObject ||{};
@@ -120,7 +120,7 @@ fwk.js.copyProperties = function(obj, srcObject, props){
 };
 
 /**
- * Redirecciona a la p·gina de login
+ * Redirecciona a la p√°gina de login
  */
 fwk.loginRedirect = function(){
 	Ext.Msg.alert(fwk.constant.errorMsg, fwk.constant.loginRedirect);
@@ -132,15 +132,15 @@ fwk.constant = {
 	,paginationMsg : '<s:message code="fwk.constant.paginationMsg" text="**Mostrando {0} - {1} de {2}" />'
 	,emptyMsg : '<s:message code="fwk.constant.emptyMsg" text="**No hay datos" />'
 	,errorMsg : '<s:message code="fwk.constant.errorMsg" text="**Mensaje de error" />'
-	,loginRedirect : '<s:message code="fwk.constant.loginRedirect" text="**No tiene los permisos necesarios para continuar en la aplicaciÛn. Se redireccionar· a la p·gina de entrada." />'
+	,loginRedirect : '<s:message code="fwk.constant.loginRedirect" text="**No tiene los permisos necesarios para continuar en la aplicaci√≥n. Se redireccionar√° a la p√°gina de entrada." />'
 	,alert : '<s:message code="fwk.constant.alert" text="**Mensaje de alerta" />'
-	,fwkError : '<s:message code="fwk.constant.fwkError" text="**Advertencia: La operaciÛn no se pudo realizar..." />'
+	,fwkError : '<s:message code="fwk.constant.fwkError" text="**Advertencia: La operaci√≥n se pudo realizar..." />'
 	,fwkUserError : '<s:message code="fwk.constant.fwkUserError" text="**Error en el servidor" />'
 	,confirmar : '<s:message code="fwk.constant.confirmar" text="**Mensaje de confirmacion" />'
 };
 
 /**
- * crea el objeto que mantendr· los eventos del framework
+ * crea el objeto que mantendr√° los eventos del framework
  */
 fwk.Event = function(){
     this.addEvents( 'userError' ,'fwkError' ,'stats' );
@@ -174,7 +174,7 @@ fwk.toast = function(msg, title){
 };
 
 /**
- * registra un log de mensajes de log. Si estamos en debug (existe Ext.log) entonces saldr·n por la consola
+ * registra un log de mensajes de log. Si estamos en debug (existe Ext.log) entonces saldr√°n por la consola
  */
 fwk.log = function(msg){
 	fwk.log.history.push(msg);
@@ -262,7 +262,7 @@ fwk.ajax.debug = function(){
 
         panel.on('rowclick', function(grid, index, e){
             var record = this.getStore().getAt(index);
-            //lo guardamos para acceder f·cilmente
+            //lo guardamos para acceder f√°cilmente
             fwk.ajax.debug.record=record;
             textarea.setValue(record.get('response').responseText);
         });
@@ -320,7 +320,7 @@ fwk.dom.findParentContainer = function(id){
 };
 
 
-//aÒade un control a un componente tipo
+//a√±ade un control a un componente tipo
 fwk.dom.addToParentContainer = function(node, control){
     var panel=fwk.dom.findParentContainer(node);
     if (panel){
@@ -330,12 +330,12 @@ fwk.dom.addToParentContainer = function(node, control){
 };
 
 /**
- * Funciones a ejecutar sobre los par·metros que viajan en la response
+ * Funciones a ejecutar sobre los par√°metros que viajan en la response
  */
 fwk.handlers = {};
 
 /**
- * Muestra los errores en un label que se aÒade si no existe al panel
+ * Muestra los errores en un label que se a√±ade si no existe al panel
  * que realiza la llamada ajax
  *
  * @data es el objeto JSON de la respuesta (ya ha pasado por Ext.decode)
@@ -434,7 +434,7 @@ fwk.showNotHandledErrors = function(errors, options){
 };
 
 //capturamos todas las respuestas ajax
-//TODO: ver si se est· decodificando 2 veces por peticiÛn!!!!
+//TODO: ver si se est√° decodificando 2 veces por petici√≥n!!!!
 Ext.Ajax.on('requestcomplete', function(conn, response, options){
 	fwk.ajax.requestcomplete++;
 
@@ -456,7 +456,7 @@ Ext.Ajax.on('requestcomplete', function(conn, response, options){
 
         var params = decoded.fwk;
 
-        //para cada handler, le pasaremos la informaciÛn que quiere manejar y llamaremos a la funciÛn
+        //para cada handler, le pasaremos la informaci√≥n que quiere manejar y llamaremos a la funci√≥n
         for(handler in fwk.handlers){
         	if (params[handler]){
         		fwk.handlers[handler](params[handler], options, decoded);
@@ -532,7 +532,7 @@ fwk.debug.error = function(){
 };
 
 /**
- * AlmacÈn de errores
+ * Almac√©n de errores
  */
 fwk.debug.error.errors = [];
 
@@ -562,7 +562,7 @@ fwk.records.getFields = function(records, key){
 //----- Page ----------------------------------------------
 
 /**
- * Objeto pagina que expone la funcionalidad del framework a las p·ginas javascript
+ * Objeto pagina que expone la funcionalidad del framework a las p√°ginas javascript
  */
 fwk.Page = function(appName, uuid, flowExecutionKey, flowExecutionUrl){
 	/*private*/
@@ -612,7 +612,7 @@ fwk.Page = function(appName, uuid, flowExecutionKey, flowExecutionUrl){
 };
 
 /**
- * Actualiza el flowExecutionKey en el objeto que mantiene la p·gina.
+ * Actualiza el flowExecutionKey en el objeto que mantiene la p√°gina.
  */
 fwk.Page.prototype.updateKey = function(response){
     if (!response.fwk) response=Ext.decode(response.responseText);
@@ -623,17 +623,17 @@ fwk.Page.prototype.updateKey = function(response){
 };
 
 /**
- * Ejecuta las llamadas asignadas por el usuario despuÈs de haberla tratado en una
- * acciÛn de webflow. Deben haberse pasado dentro del config en la propiedad userConfig
+ * Ejecuta las llamadas asignadas por el usuario despu√©s de haberla tratado en una
+ * acci√≥n de webflow. Deben haberse pasado dentro del config en la propiedad userConfig
  */
 fwk.Page.prototype.executeCallbacks = function(config, data){
 	//fwk.debug.window("scope", scope, "config", config);
     if (config && config.userConfig){
         var f = data.success? config.userConfig.success : config.userConfig.error;
     	if (f && typeof(f)=="function"){
-    		//Nota: aquÌ no sÈ si pasar config, o config.userConfig que al fin y al cabo es lo
+    		//Nota: aqu√≠ no s√© si pasar config, o config.userConfig que al fin y al cabo es lo
     		//que ha utilizado el usuario para hacer la llamada
-    		//XXX: this aquÌ no es window!!!, deberÌa ser
+    		//XXX: this aqu√≠ no es window!!!, deber√≠a ser
         	f.call(config.scope || this,data,config.userConfig);
     	}
     }
@@ -641,7 +641,7 @@ fwk.Page.prototype.executeCallbacks = function(config, data){
 
 
 /**
- * AÒade un control al panel que representa la p·gina.
+ * A√±ade un control al panel que representa la p√°gina.
  */
 fwk.Page.prototype.add = function(controls){
 	if (!Ext.isArray(controls)) controls = [controls];
@@ -652,20 +652,20 @@ fwk.Page.prototype.add = function(controls){
 };
 
 /**
- * Lanza un evento al panel que contiene a la p·gina actual
+ * Lanza un evento al panel que contiene a la p√°gina actual
  */
 fwk.Page.prototype.fireEvent = function(eventName, args){
 	this.getParentPanel().fireEvent(eventName, args)
 }
 /**
- * Instala un manejador de eventos en el panel que contiene la p·gina
+ * Instala un manejador de eventos en el panel que contiene la p√°gina
  */
 fwk.Page.prototype.on = function(eventName, handler, scope, options){
     this.getParentPanel().on(eventName, handler, scope, options);
 };
 
 /**
- * AÒade los par·metros necesarios para la ejecuciÛn del webflow
+ * A√±ade los par√°metros necesarios para la ejecuci√≥n del webflow
  */
 fwk.Page.prototype.addParams = function(params, flow, eventName){
 	//fwk.log("addParams flow="+flow + " eventName="+eventName+ "this.flowUrl="+this.getFlowId()+" this.flowkey="+this.getFlowExecutionKey());
@@ -684,13 +684,13 @@ fwk.Page.prototype.addParams = function(params, flow, eventName){
 
 
 /**
- * crea un HttpProxy que obtiene la conexiÛn de la llamada a un webflow. Nos hace falta
- * la referencia al objeto page para poder actualizar el token de navegaciÛn del flow
+ * crea un HttpProxy que obtiene la conexi√≥n de la llamada a un webflow. Nos hace falta
+ * la referencia al objeto page para poder actualizar el token de navegaci√≥n del flow
  * @config {String} flow nombre del flow a ejecutar
- * @config {Page} page objeto de la p·gina actual
- * @config {Function} success (optional) funciÛn que se llamar· cuando la respuesta llegue con success==true
- * @config {Function} error (optional) funciÛn que se llamar· cuando la respuesta llegue con success==false
- * @config {Function} failure (optional) funciÛn que se llamar· cuando tengamos un error en la respuesta
+ * @config {Page} page objeto de la p√°gina actual
+ * @config {Function} success (optional) funci√≥n que se llamar√° cuando la respuesta llegue con success==true
+ * @config {Function} error (optional) funci√≥n que se llamar√° cuando la respuesta llegue con success==false
+ * @config {Function} failure (optional) funci√≥n que se llamar√° cuando tengamos un error en la respuesta
  */
 fwk.Page.prototype.getProxy = function(config){
 	var cfg = {
@@ -709,20 +709,20 @@ fwk.Page.prototype.getProxy = function(config){
 };
 
 /**
- * obtiene un objeto Store que se actualizar· haciendo llamadas a un flow y
- * mantendr· la navegaciÛn.
+ * obtiene un objeto Store que se actualizar√° haciendo llamadas a un flow y
+ * mantendr√° la navegaci√≥n.
  *
- * Se debe crear a partir del objeto page que tenemos referenciado en la p·gina
- * @config {Reader} reader El objeto que se usar· como reader en el Store
- * @config {String} flow el flow al que se realizar·n las peticiones ajax
- * @config {String} eventName el nombre del evento en el flujo que se enviar·
+ * Se debe crear a partir del objeto page que tenemos referenciado en la p√°gina
+ * @config {Reader} reader El objeto que se usar√° como reader en el Store
+ * @config {String} flow el flow al que se realizar√°n las peticiones ajax
+ * @config {String} eventName el nombre del evento en el flujo que se enviar√°
  */
 fwk.Page.prototype.getStore = function(config){
 	fwk.js.assertProperties(config, ['reader']);
 
 	var _page = this;
 
-	//si llamamos a otro flow, se crear· un nuevo objeto page.
+	//si llamamos a otro flow, se crear√° un nuevo objeto page.
 	if (config.flow && config.flow!=this.getFlowId()){
 		_page = new fwk.Page(this.getAppName(), '','',config.flow);
 	}
@@ -748,14 +748,14 @@ fwk.Page.prototype.getStore = function(config){
 	}
 
 	store.webflow = function(params, callback){
-		//si vienen estos par·metros, no pueden estar en el baseParams puesto que si no,
-		//reemplazarÌan a los params que usa la paginaciÛn
+		//si vienen estos par√°metros, no pueden estar en el baseParams puesto que si no,
+		//reemplazar√≠an a los params que usa la paginaci√≥n
 		var p = fwk.js.extractProperties(params,'start', 'limit');
 
 		var baseParams = params || {};
-		//actualizamos los par·metros base al nuevo token
+		//actualizamos los par√°metros base al nuevo token
 		this.page.addParams(baseParams, this.flow, this.eventName);
-		//XXX: cuidado! aquÌ estamos accediendo directamente a una propiedad del objeto Store de ExtJS.
+		//XXX: cuidado! aqu√≠ estamos accediendo directamente a una propiedad del objeto Store de ExtJS.
 		//No se puede hacer de otra forma por ahora
 		this.baseParams = baseParams;
 
@@ -775,7 +775,7 @@ fwk.Page.prototype.getStore = function(config){
 		};
 
 
-		//sÛlo asociamos si existe alg˙n par·metro. porque si no, no funciona bien la paginaciÛn de ExtJS
+		//s√≥lo asociamos si existe alg√∫n par√°metro. porque si no, no funciona bien la paginaci√≥n de ExtJS
 		if ( fwk.js.getProperties(p).length ){
 			cfg.params = p;
 		}else{
@@ -792,16 +792,16 @@ fwk.Page.prototype.getStore = function(config){
 };
 
 /**
- * usamos el objeto p·gina para resolver la url
+ * usamos el objeto p√°gina para resolver la url
  */
 fwk.Page.prototype.resolveUrl = function(flow){
 	return fwk.getContext() + (flow? flow : this.getFlowId()) +".htm";
 };
 
 /**
- * Este mÈtodo crear· una nueva p·gina si es necesario para mantener una conversaciÛn con
- * webflow distinta a la de la 'page' actual. Esto ocurre si la peticiÛn la realizamos a un
- * flow que tiene distinto id que el de la p·gina en la que estamos
+ * Este m√©todo crear√° una nueva p√°gina si es necesario para mantener una conversaci√≥n con
+ * webflow distinta a la de la 'page' actual. Esto ocurre si la petici√≥n la realizamos a un
+ * flow que tiene distinto id que el de la p√°gina en la que estamos
  */
 fwk.Page.prototype.getPageObject = function(config){
 	if (config.flow && config.flow!=this.getFlowId()){
@@ -811,19 +811,19 @@ fwk.Page.prototype.getPageObject = function(config){
 };
 
 /**
- * Realiza una peticiÛn ajax que devolver· una respuesta JSON que ser· pasada una funciÛn de callback que le proporcionemos
- * @flow String el nombre del flow al que realiza la peticiÛn
- * @page el objeto javascript que mantiene la informaciÛn de la p·gina actual. Se utiliza para mantener el flowExecutionKey
- * @success callback que se ejecutar· cuando el resultado sea ok
- * @params par·metros que se enviar·n a la peticiÛn del flow
+ * Realiza una petici√≥n ajax que devolver√° una respuesta JSON que ser√° pasada una funci√≥n de callback que le proporcionemos
+ * @flow String el nombre del flow al que realiza la petici√≥n
+ * @page el objeto javascript que mantiene la informaci√≥n de la p√°gina actual. Se utiliza para mantener el flowExecutionKey
+ * @success callback que se ejecutar√° cuando el resultado sea ok
+ * @params par√°metros que se enviar√°n a la petici√≥n del flow
  * @options opciones para la request ajax
- * @config {Function} success (optional) funciÛn que se llamar· cuando la respuesta llegue con success==true
- * @config {Function} error (optional) funciÛn que se llamar· cuando la respuesta llegue con success==false
- * @config {Function} failure (optional) funciÛn que se llamar· cuando tengamos un error en la respuesta
- * @config {Object} scope (optional) scope en el que se ejecutar·n los callback
- * recibir· los par·metros:
+ * @config {Function} success (optional) funci√≥n que se llamar√° cuando la respuesta llegue con success==true
+ * @config {Function} error (optional) funci√≥n que se llamar√° cuando la respuesta llegue con success==false
+ * @config {Function} failure (optional) funci√≥n que se llamar√° cuando tengamos un error en la respuesta
+ * @config {Object} scope (optional) scope en el que se ejecutar√°n los callback
+ * recibir√° los par√°metros:
  *   data : el objeto json ya decodificado
- *   config : la configuraciÛn original de la llamada
+ *   config : la configuraci√≥n original de la llamada
  */
 
 fwk.Page.prototype.webflow = function(config){
@@ -846,7 +846,7 @@ fwk.Page.prototype.webflow = function(config){
         var data = Ext.decode(response.responseText);
         //IMPORTANTE: en cada llamada debemos refrescar el flowExecutionKey
         config.page.updateKey(data);
-        //ejecutamos la funciÛn pasada como par·metro si tenemos error, o respuesta ok.
+        //ejecutamos la funci√≥n pasada como par√°metro si tenemos error, o respuesta ok.
         //pasamos los datos ya decodificados
         config.page.executeCallbacks(config, data);
 
@@ -865,15 +865,15 @@ fwk.Page.prototype.webflow = function(config){
 
 
 /**
- * EnvÌa un formulario a un flow.
- * @config {String} flow El flow al que se enviar·, por ejemplo:
- * flow : 'admin/editUsuario'  sin el nombre de aplicaciÛn ni el .htm
- * @config {String} flow (optional) nombre del flow a ejecutar, por defecto el mismo que ha cargado la p·gina
+ * Env√≠a un formulario a un flow.
+ * @config {String} flow El flow al que se enviar√°, por ejemplo:
+ * flow : 'admin/editUsuario'  sin el nombre de aplicaci√≥n ni el .htm
+ * @config {String} flow (optional) nombre del flow a ejecutar, por defecto el mismo que ha cargado la p√°gina
  * @config {String} eventName (optional) nombre del envento a ejecutar en el flow
  * @config {FormPanel} formPanel el control formpanel que contiene el formulario a enviar.
- * @config {Function} success (optional) funciÛn que se llamar· cuando la respuesta llegue con success==true
- * @config {Function} error (optional) funciÛn que se llamar· cuando la respuesta llegue con success==false
- * @config {Function} failure (optional) funciÛn que se llamar· cuando tengamos un error en la respuesta
+ * @config {Function} success (optional) funci√≥n que se llamar√° cuando la respuesta llegue con success==true
+ * @config {Function} error (optional) funci√≥n que se llamar√° cuando la respuesta llegue con success==false
+ * @config {Function} failure (optional) funci√≥n que se llamar√° cuando tengamos un error en la respuesta
  * Es necesario para poder pintar los errores en el mismo si existe un errorList
  */
 fwk.Page.prototype.submit = function(config){
@@ -918,11 +918,11 @@ fwk.Page.prototype.submit = function(config){
 
 
 /**
- * Crea el objeto necesario para una p·gina que se recarga vÌa Ajax. Este objeto se necesita para mantener el flujo de
- * navegaciÛn de webflow. TambiÈn contiene informaciÛn del panel que contiene a la p·gina y que puede usarse para
- * aÒadir contenido al mismo.<br/>
+ * Crea el objeto necesario para una p√°gina que se recarga v√≠a Ajax. Este objeto se necesita para mantener el flujo de
+ * navegaci√≥n de webflow. Tambi√©n contiene informaci√≥n del panel que contiene a la p√°gina y que puede usarse para
+ * a√±adir contenido al mismo.<br/>
  *
- * Llama a la funciÛn que define el cÛdigo de la p·gina y la envuelve en un try para evitar excepciones que lleguen al usuario
+ * Llama a la funci√≥n que define el c√≥digo de la p√°gina y la envuelve en un try para evitar excepciones que lleguen al usuario
  */
 fwk.onReady = function(appName, id, flowExecutionKey, flowExecutionUrl, initFunction){
 	var page = new fwk.Page(appName, id, flowExecutionKey, flowExecutionUrl);
@@ -939,8 +939,8 @@ fwk.onReady = function(appName, id, flowExecutionKey, flowExecutionUrl, initFunc
 
 fwk.ux = {};
 /**
- * Encapsula la creaciÛn de un objeto Ext.PagingToolbar con las opciones
- * por defecto m·s normales
+ * Encapsula la creaci√≥n de un objeto Ext.PagingToolbar con las opciones
+ * por defecto m√°s normales
  */
 fwk.ux.getPaging = function(store, config){
 	config = config || {};

@@ -13,7 +13,7 @@ import es.capgemini.devon.batch.tasks.utils.EventBatchUtil;
 import es.capgemini.devon.events.EventManager;
 
 /**
- * @author Nicolás Cornaglia
+ * @author NicolÃ¡s Cornaglia
  */
 public class FlatFileItemWriter extends org.springframework.batch.item.file.FlatFileItemWriter implements StepExecutionListener {
 
@@ -62,7 +62,7 @@ public class FlatFileItemWriter extends org.springframework.batch.item.file.Flat
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        // El "resource" ahora puede venir vacío en la configuración, no usar los assert del padre.
+        // El "resource" ahora puede venir vacÃ­o en la configuraciÃ³n, no usar los assert del padre.
     }
 
     public void setBindings(String bindings) {
@@ -79,7 +79,7 @@ public class FlatFileItemWriter extends org.springframework.batch.item.file.Flat
     }
 
     /**
-     * Inyección del {@link EventManager} para gestión de eventos
+     * InyecciÃ³n del {@link EventManager} para gestiÃ³n de eventos
      * 
      * @param eventManager 
      */

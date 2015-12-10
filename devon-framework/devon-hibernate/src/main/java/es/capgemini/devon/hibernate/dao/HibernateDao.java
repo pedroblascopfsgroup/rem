@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public interface HibernateDao<DomainObject extends Serializable, KeyType extends Serializable> {
 

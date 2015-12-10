@@ -10,7 +10,7 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
 /**
- * Clase encargada de manejar los errores que puedan producirce en la ejecución de JUnit en paralelo.
+ * Clase encargada de manejar los errores que puedan producirce en la ejecuciÃ³n de JUnit en paralelo.
  * 
  * @author lgiavedo
  *

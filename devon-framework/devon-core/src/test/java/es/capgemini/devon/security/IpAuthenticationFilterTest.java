@@ -75,14 +75,14 @@ public class IpAuthenticationFilterTest {
             try {
                 filter.check((UserDetails) loginData[0], (UsernamePasswordAuthenticationToken) loginData[1]);
             } catch (IpNotAllowedException e) {
-                fail("Debería dejar pasar al usuario [" + username + "] desde la ip [" + ip + "] con authorities [" + toString(authorities)
-                        + "] según los filtros [" + toString(filters) + "]");
+                fail("DeberÃ­a dejar pasar al usuario [" + username + "] desde la ip [" + ip + "] con authorities [" + toString(authorities)
+                        + "] segÃºn los filtros [" + toString(filters) + "]");
             }
         } else {
             try {
                 filter.check((UserDetails) loginData[0], (UsernamePasswordAuthenticationToken) loginData[1]);
-                fail("No debería dejar pasar al usuario [" + username + "] desde la ip [" + ip + "] con authorities [" + toString(authorities)
-                        + "] según los filtros [" + toString(filters) + "]");
+                fail("No deberÃ­a dejar pasar al usuario [" + username + "] desde la ip [" + ip + "] con authorities [" + toString(authorities)
+                        + "] segÃºn los filtros [" + toString(filters) + "]");
             } catch (IpNotAllowedException e) {
             }
         }

@@ -22,9 +22,9 @@ import es.capgemini.devon.registry.DefaultRegistry;
 import es.capgemini.devon.utils.AnnotationUtils;
 
 /**
- * Registro de operaciones de negocio locales (implementadas como beans, con la anotaciÛn @BusinessOperation
+ * Registro de operaciones de negocio locales (implementadas como beans, con la anotaci√≥n @BusinessOperation
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  * @See {@link BusinessOperation}
  */
 @Service

@@ -26,7 +26,7 @@ import es.capgemini.devon.utils.DatabaseUtils;
 import es.capgemini.devon.utils.ResourceUtils;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  * TODO: DOCUMENTAR!!! Agregar Javadoc a todos los metodos
  */
 public abstract class DataLoaderTasklet implements Tasklet, StepExecutionListener {
@@ -197,7 +197,7 @@ public abstract class DataLoaderTasklet implements Tasklet, StepExecutionListene
     }
 
     /**
-     * InyecciÛn del {@link EventManager} para gestiÛn de eventos
+     * Inyecci√≥n del {@link EventManager} para gesti√≥n de eventos
      * 
      * @param eventManager 
      */

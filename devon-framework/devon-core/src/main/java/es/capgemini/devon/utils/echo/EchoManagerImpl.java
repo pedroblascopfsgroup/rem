@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.beans.Service;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @Service("echoManager")
 public class EchoManagerImpl implements EchoManager {

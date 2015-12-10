@@ -20,7 +20,7 @@ import es.capgemini.devon.events.ErrorEvent;
 import es.capgemini.devon.events.EventManager;
 
 /**
- * @author Nicolás Cornaglia
+ * @author NicolÃ¡s Cornaglia
  */
 public class SQLScriptTasklet implements Tasklet, StepExecutionListener {
 
@@ -89,7 +89,7 @@ public class SQLScriptTasklet implements Tasklet, StepExecutionListener {
     }
     
     /**
-     * Inyección del {@link EventManager} para gestión de eventos
+     * InyecciÃ³n del {@link EventManager} para gestiÃ³n de eventos
      * 
      * @param eventManager 
      */

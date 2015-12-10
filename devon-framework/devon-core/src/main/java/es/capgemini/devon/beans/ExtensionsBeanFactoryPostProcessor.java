@@ -14,11 +14,11 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.exception.FrameworkException;
 
 /**
- * Elimina las definiciones de beans sobreescritas por una extensión y pone un alias al bean de la extensión.
- * Ej.: Si existe un bean @Service("salaManager") y una extensión tiene el bean @Service(overrides="salaManager"), 
+ * Elimina las definiciones de beans sobreescritas por una extensiÃ³n y pone un alias al bean de la extensiÃ³n.
+ * Ej.: Si existe un bean @Service("salaManager") y una extensiÃ³n tiene el bean @Service(overrides="salaManager"), 
  * se elimina el bean "salaManager" original y se agrega el alias "salaManager" al segundo bean
  * 
- * @author Nicolás Cornaglia
+ * @author NicolÃ¡s Cornaglia
  */
 @Component
 public class ExtensionsBeanFactoryPostProcessor implements BeanFactoryPostProcessor {

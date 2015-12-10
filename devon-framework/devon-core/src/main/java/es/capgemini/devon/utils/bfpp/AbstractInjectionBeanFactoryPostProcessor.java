@@ -13,7 +13,7 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public abstract class AbstractInjectionBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
 

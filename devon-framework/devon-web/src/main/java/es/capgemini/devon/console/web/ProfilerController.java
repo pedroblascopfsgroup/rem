@@ -13,7 +13,7 @@ import es.capgemini.devon.bo.FwkBusinessOperations;
 import es.capgemini.devon.console.ConsolePlugin;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @Controller
 public class ProfilerController implements ConsolePlugin {

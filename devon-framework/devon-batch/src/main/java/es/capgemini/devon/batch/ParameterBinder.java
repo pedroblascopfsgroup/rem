@@ -9,7 +9,7 @@ import org.springframework.beans.PropertyValues;
 import org.springframework.validation.DataBinder;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class ParameterBinder {
 

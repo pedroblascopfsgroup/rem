@@ -1,0 +1,15 @@
+GCL
+ExtrasContratos
+ExtrasPersonas
+Direcciones
+Telefonos
+Cobros
+Bienes
+Recibos
+Cirbe
+Efectos
+Ingresos
+Vencidos
+Disposiciones
+Atipicos
+Alertas

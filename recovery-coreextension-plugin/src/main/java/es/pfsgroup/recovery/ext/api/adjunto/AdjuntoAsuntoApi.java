@@ -19,6 +19,6 @@ public interface AdjuntoAsuntoApi {
 	
 	@BusinessOperationDefinition(BO_GET_LISTA_DD_TIPO_ADJUNTO_ENTIDAD)
 	public List<DDTipoAdjuntoEntidad> getListTipoAdjuntoEntidad(String tipoEntidad);
-	
-	
+
+	public boolean esFechaCaducidadVisible(String codigoFichero);	
 }

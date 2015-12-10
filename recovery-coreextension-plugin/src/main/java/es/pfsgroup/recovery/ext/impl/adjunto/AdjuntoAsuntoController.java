@@ -24,6 +24,10 @@ public class AdjuntoAsuntoController {
 	@Autowired
 	ApiProxyFactory proxyFactory;
 	
+	@Autowired
+	AdjuntoAsuntoApi adjuntoAsuntoManager;
+	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getTiposDeFicheroAdjuntoAsunto(ModelMap map,Long idAsunto){
 		
@@ -41,6 +45,7 @@ public class AdjuntoAsuntoController {
 		return "plugin/coreextension/asunto/ddTipoFicherosAdjuntosJSON";
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getTiposDeFicheroAdjuntoProcedimiento(ModelMap map,Long idProcedimiento){
 		Procedimiento p = proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(idProcedimiento);
@@ -53,10 +58,22 @@ public class AdjuntoAsuntoController {
 		return "plugin/coreextension/asunto/ddTipoFicherosAdjuntosJSON";
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getTiposDeDocumentoAdjuntoProcedimiento(ModelMap map, String tipoEntidad){
 		List<DDTipoAdjuntoEntidad> lista = proxyFactory.proxy(AdjuntoAsuntoApi.class).getListTipoAdjuntoEntidad(tipoEntidad);
 		map.put("lista", lista);
 		return "plugin/coreextension/asunto/ddTipoDocAdjuntosJSON";
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String isFechaCaducidadVisible(String codigoFichero, ModelMap map){
+	
+		boolean res = adjuntoAsuntoManager.esFechaCaducidadVisible(codigoFichero);		
+		
+		map.put("fechaCaducidadVisible", res);
+		return "plugin/coreextension/asunto/fechaCaducidadVisibleJSON";
+	} 
+	
 }

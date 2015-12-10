@@ -24,6 +24,7 @@ import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.recovery.coreextension.model.DDResultadoComiteConcursal;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDEstadoSubasta;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDMotivoSuspSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoComite;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDTipoSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
@@ -148,13 +149,19 @@ private void avanzamosEstadoSubasta() {
 
 			if (!Checks.esNulo(sub)) {
 
-				cambiaEstadoSubasta(sub, obtenerEstadoSiguiente(executionContext, "CelebracionSubasta", "celebrada"));
+				final String estadoSiguiente = obtenerEstadoSiguiente(executionContext, "CelebracionSubasta", "celebrada");
+				if (DDEstadoSubasta.SUS.equals(estadoSiguiente)) {
+					setMotivoSuspensionSubasta(sub);
+				}
+				cambiaEstadoSubasta(sub, estadoSiguiente);
+				
 			}
 		} else if (executionContext.getNode().getName().contains("SuspenderSubasta")) {
 
 			if (!Checks.esNulo(sub)) {
 
 				cambiaEstadoSubasta(sub, DDEstadoSubasta.SUS);
+				setMotivoSuspensionSubasta(sub);				
 			}
 
 			// Finalizamos el procedimiento padre
@@ -191,7 +198,17 @@ private void avanzamosEstadoSubasta() {
 			DDEstadoSubasta esu = genericDao.get(DDEstadoSubasta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estado), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 			sub.setEstadoSubasta(esu);
 		}
-	}	
+	}
+	
+	private void setMotivoSuspensionSubasta(final Subasta sub){
+		TareaExterna tex = getTareaExterna(executionContext);
+		List<TareaExternaValor> listadoValores = tex.getValores();
+		for(TareaExternaValor val : listadoValores){
+			if("comboMotivoSuspension".equals(val.getNombre())){
+				sub.setMotivoSuspension(genericDao.get(DDMotivoSuspSubasta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", val.getValor())));
+			}
+		}
+	}
 	
 	private String obtenerEstadoSiguiente(ExecutionContext executionContext, String tarea, String campo) {
 	

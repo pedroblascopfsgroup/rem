@@ -91,16 +91,10 @@
 				<version>${devon.version}</version>
 				<classifier>jdk16</classifier>
 			</dependency>
-			<!--<dependency>
+			<dependency>
 				<groupId>capgemini</groupId>
 				<artifactId>devon-web</artifactId>
 				<version>${devon.version}</version>
-				<classifier>jdk16</classifier>
-			</dependency> -->
-			<dependency>
-				<groupId>es.pfsgroup.devon</groupId>
-				<artifactId>devon-web</artifactId>
-				<version>${project.version}</version>
 				<classifier>jdk16</classifier>
 			</dependency>
 			<!-- RECOVERY -->

@@ -41,7 +41,7 @@
  var finalidadContrato = label('finalidadContrato', '<s:message code="contrato.consulta.tabcabecera.finalidadContrato" text="**finalidadContrato"/>');
  var finalidadAcuerdo = label('finalidadAcuerdo','<s:message code="contrato.consulta.tabcabecera.finalidadAcuerdo" text="**finalidadAcuerdo"/>');
  var segmentoCartera = label('segmentoCartera','<s:message code="contrato.consulta.tabcabecera.segmentoCartera" text="**Segmento cartera"/>');
- var fechaCreacion  = label('fechaCreacion','<s:message code="contrato.consulta.tabcabecera.fechaCreación" text="**fecha de Apertura"/>');
+ var fechaCreacion  = label('fechaCreacion','<s:message code="contrato.consulta.tabcabecera.fechaCreacion" text="**fecha de Apertura"/>');
 
  var entidadPropietaria  = label('entidadPropietaria','<s:message code="contrato.consulta.tabcabecera.entidadPropietaria" text="**Entidad"/>');
  var condEspec  = label('condEspec','<s:message code="contrato.consulta.tabcabecera.condEspec" text="**Id. Condiciones Especiales"/>');

@@ -78,7 +78,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteAceptacionLitigios/haya_tramiteAceDecLitigios.xml" p:version="-1"/>
 	
 	<!-- Groovy's -->
-  	<bean id="jbpmUtilCajamarLitigios" class="es.pfsgroup.recovery.haya.utils.JBPMProcessHayaManager" >
+  	<bean id="jbpmUtilHreSareb" class="es.pfsgroup.recovery.haya.utils.JBPMProcessHayaManager" >
   	<property name="contextScripts">
   		<list>
   			<value><![CDATA[ 

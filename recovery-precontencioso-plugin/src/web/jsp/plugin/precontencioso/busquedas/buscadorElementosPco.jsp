@@ -46,12 +46,12 @@
 				}
 		}});
 		
-	var camposLimpiar = [comboTipoBusqueda, fieldCodigoEle, fieldNombreExpedienteJudicialEle,dateFieldInicioPreparacionDesdeEle, dateFieldInicioPreparacionHastaEle,
+	var camposLimpiar = [fieldCodigoEle, fieldNombreExpedienteJudicialEle,dateFieldInicioPreparacionDesdeEle, dateFieldInicioPreparacionHastaEle,
 		dateFieldPreparadoDesdeEle, dateFieldPreparadoHastaEle, dateFieldEnviadoLetradoDesdeEle, dateFieldEnviadoLetradoHastaEle,
 		dateFieldFinalizadoDesdeEle, dateFieldFinalizadoHastaEle, dateFieldUltimaSubsanacionDesdeEle, dateFieldUltimaSubsanacionHastaEle,
 		dateFieldCanceladoDesdeEle, dateFieldCanceladoHastaEle, dateFieldParalizacionDesdeEle, dateFieldParalizacionHastaEle,
 		comboTipoProcPropuestoEle, comboTipoPreparacionEle, filtroEstadoPreparacion, comboTiposGestorEle,
-		comboDespachosEle, comboGestorEle, comboJerarquiaEle, comboZonasEle, comboDisponibleDocumentosEle, comboDisponibleLiquidacionesEle,
+		comboDespachosEle, comboGestorEle, comboJerarquiaEle, comboZonasEle, comboDisponibleDocumentosEle, comboDisponibleLiquidacionesEle, fieldImporteDesde, fieldImporteHasta,
 		comboDisponibleBurofaxesEle, fieldDiasGestionEle,fieldCodigoContratoEle, comboTiposProductoEle, fieldNifEle, 
 		fieldNombreEle, fieldApellidosEle, comboTipoDocumento, comboEstadoDocumento, comboRespuestaSolicitud, 
 		dateFieldSolicitudDocDesdeEle, dateFieldSolicitudDocHastaEle, dateFieldResultadoDocDesdeEle, dateFieldResultadoDocHastaEle,
@@ -59,7 +59,7 @@
 		comboAdjuntoDocEle, comboSolicitudPreviaDocEle, fieldDiasGestionDocEle, comboTiposGestorEleDoc, comboDespachosEleDoc, comboGestorEleDoc, 
 		comboEstadoLiquidacion, dateFieldSolicitudLiqDesdeEle, dateFieldSolicitudLiqHastaEle, dateFieldRecepcionLiqDesdeEle, dateFieldRecepcionLiqHastaEle, 
 		dateFieldConfirmacionLiqDesdeEle, dateFieldConfirmacionLiqHastaEle, dateFieldCierreLiqDesdeEle, dateFieldCierreLiqHastaEle, fieldTotalLiqDesdeEle, 
-		fieldTotalLiqHastaEle, fieldDiasGestionLiqEle, comboNotificadoEle, comboResultadoBurofax, dateFieldSolicitudBurDesdeEle, dateFieldSolicitudBurHastaEle,
+		fieldTotalLiqHastaEle, fieldDiasGestionLiqEle, comboResultadoBurofax, dateFieldSolicitudBurDesdeEle, dateFieldSolicitudBurHastaEle,
 		dateFieldEnvioBurDesdeEle, dateFieldEnvioBurHastaEle, dateFieldAcuseBurDesdeEle, dateFieldAcuseBurHastaEle];
 
 	var camposStoreLimpiar = [optionsZonasStore, optionsGestoresStore, optionsGestoresStoreDoc];

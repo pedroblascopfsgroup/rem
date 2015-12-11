@@ -1,183 +1,181 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-	<entry key="recobro.control.proceso.produccion.Oracle9iDialect">
-		<![CDATA[
-		UPDATE BATCH_RERA_CONTROL_PROC SET RERA_MODE = 'PROD',LAST_UPDATE = SYSDATE
-		]]>
-	</entry> 
-		
-		
-	<!-- COMPROBAMOS SI HAY ESQUEMAS PENDIENTES DE LIBERAR Y REALIZAMOS LOS CAMBOS CORRESPONDIENTES EN CASO AFIRMATIVO -->
-	<entry key="recobro.gestion.esquemas.Oracle9iDialect">
-		<![CDATA[
-			declare
-          		v_result NUMBER;
-          		v_id_esquema_liberado_actual NUMBER;
-		    	v_sql VARCHAR2(2000 CHAR);
-		    	v_codigo_extincion VARCHAR2(5 CHAR);
-          		v_codigo_liberado VARCHAR2(5 CHAR);
-          		v_codigo_pendiente_liberar VARCHAR2(5 CHAR);
-			begin
-		        SELECT ESQ.RCF_ESQ_ID INTO v_id_esquema_liberado_actual 
-		        FROM RCF_ESQ_ESQUEMA ESQ  
-		        JOIN RCF_DD_EES_ESTADO_ESQUEMA EES ON ESQ.RCF_DD_EES_ID = EES.RCF_DD_EES_ID
-		        WHERE EES.RCF_DD_EES_CODIGO = ${ddEstadoEsquemas.Liberado.codigo} AND ESQ.BORRADO = ${borrado.no.id} AND ROWNUM = 1;        
-		        SELECT CASE WHEN (COUNT(DISTINCT ESQ.RCF_ESQ_ID) = 1) THEN 1 ELSE 0 END	INTO v_result 
-		        FROM RCF_ESQ_ESQUEMA ESQ  
-		        JOIN RCF_DD_EES_ESTADO_ESQUEMA EES ON ESQ.RCF_DD_EES_ID = EES.RCF_DD_EES_ID
-		        WHERE EES.RCF_DD_EES_CODIGO = ${ddEstadoEsquemas.PendienteLiberar.codigo} AND ESQ.BORRADO = ${borrado.no.id} AND ROWNUM = 1;  
-				IF(v_result = 1)
-		    	THEN
-			    	v_codigo_extincion:= ${ddEstadoEsquemas.Inactivo.codigo};
-	       			v_codigo_liberado:= ${ddEstadoEsquemas.Liberado.codigo};
-	        		v_codigo_pendiente_liberar:= ${ddEstadoEsquemas.PendienteLiberar.codigo};
-					v_sql:='
-			     		UPDATE RCF_ESQ_ESQUEMA ESQ SET ESQ.RCF_DD_EES_ID = (SELECT EES1.RCF_DD_EES_ID 
-			            FROM RCF_DD_EES_ESTADO_ESQUEMA EES1 WHERE EES1.RCF_DD_EES_CODIGO = :v_codigo_extincion),
-			            ESQ.RCF_ESQ_ID_SIGUIENTE = (SELECT ESQ1.RCF_ESQ_ID FROM RCF_ESQ_ESQUEMA ESQ1 WHERE ESQ.RCF_DD_EES_ID = 
-			            (SELECT EES3.RCF_DD_EES_ID FROM RCF_DD_EES_ESTADO_ESQUEMA EES3 WHERE EES3.RCF_DD_EES_CODIGO = :v_codigo_pendiente_liberar))
-			            WHERE ESQ.RCF_DD_EES_ID = (SELECT EES2.RCF_DD_EES_ID FROM RCF_DD_EES_ESTADO_ESQUEMA EES2 
-			            WHERE EES2.RCF_DD_EES_CODIGO = :v_codigo_liberado) AND ESQ.BORRADO = 0
-					';
-					execute immediate v_sql using v_codigo_extincion, v_codigo_pendiente_liberar, v_codigo_liberado;
-			    	COMMIT;
-	        		v_sql:='
-			     		UPDATE RCF_ESQ_ESQUEMA ESQ SET ESQ.RCF_DD_EES_ID = (SELECT EES1.RCF_DD_EES_ID 
-			            FROM RCF_DD_EES_ESTADO_ESQUEMA EES1 WHERE EES1.RCF_DD_EES_CODIGO = :v_codigo_liberado),
-			            ESQ.RCF_ESQ_ID_ANTERIOR = :v_id_esquema_liberado_actual,
-			            ESQ.RCF_ESQ_FECHA_LIB = SYSDATE            
-			            WHERE ESQ.RCF_DD_EES_ID = (SELECT EES2.RCF_DD_EES_ID FROM RCF_DD_EES_ESTADO_ESQUEMA EES2 
-			            WHERE EES2.RCF_DD_EES_CODIGO = :v_codigo_pendiente_liberar) AND ESQ.BORRADO = 0
-					';
-					execute immediate v_sql using v_codigo_liberado, v_id_esquema_liberado_actual, v_codigo_pendiente_liberar;
-			    	COMMIT;        
-				END IF;
-		    end;		
-		]]>
-	</entry> 
-	<!-- VOLVEMOS A GENERAR LA VISTA DE BATCH_RCF_ENTRADA -->
-	<entry key="recobro.borrado.batch_rcf_entrada.Oracle9iDialect">
-		<![CDATA[
-			DECLARE
-			    table_count number(3);
-			    query_body varchar (30048);
-			BEGIN
-			 	select count(1) into table_count from all_mviews WHERE mview_name='BATCH_RCF_ENTRADA';
-				if table_count = 1 then
-			 		query_body := 'DROP MATERIALIZED VIEW BATCH_RCF_ENTRADA';  EXECUTE IMMEDIATE query_body;
-				end if;		
-			END;
-		]]>
-	</entry>      
-	
-	<entry key="recobro.creacion.batch_rcf_entrada.Oracle9iDialect">
-		<![CDATA[
-				CREATE MATERIALIZED VIEW BATCH_RCF_ENTRADA 
-				BUILD IMMEDIATE
-				REFRESH FORCE ON DEMAND
-				WITH PRIMARY KEY
-				AS
-				SELECT 
-				    ESQ.RCF_ESQ_ID AS RCF_ESQ_ID,
-				    ESQ.RCF_ESQ_PLAZO AS RCF_ESQ_PLAZO,
-				    ESQ.RCF_ESQ_FECHA_LIB AS RCF_ESQ_FECHA_LIB,
-				    ESQ.BORRADO AS RCF_ESQ_BORRADO,
-				    EES.RCF_DD_EES_ID AS RCF_DD_EES_ID,
-				    EES.RCF_DD_EES_CODIGO AS RCF_DD_EES_CODIGO,
-				    EES.BORRADO AS RCF_DD_EES_BORRADO,
-				    MTR.RCF_DD_MTR_ID AS RCF_DD_MTR_ID,
-				    MTR.RCF_DD_MTR_CODIGO AS RCF_DD_MTR_CODIGO,
-				    MTR.BORRADO AS RCF_DD_MTR_BORRADO,
-				    CAR.RCF_CAR_ID AS RCF_CAR_ID,
-				    CAR.RCF_CAR_NOMBRE AS RCF_CAR_NOMBRE,
-				    CAR.BORRADO AS RCF_CAR_BORRADO,
-				    CAST (null AS NUMBER(16)) AS RCF_DD_ECA_ID, --ECA.RCF_DD_ECA_ID ,
-				    CAST (null AS NUMBER(16)) AS RCF_DD_ECA_CODIGO, --ECA.RCF_DD_ECA_CODIGO ,
-				    CAST (null AS NUMBER(16)) AS RCF_DD_ECA_BORRADO, --ECA.BORRADO ,
-				    RUL.RD_ID AS RD_ID,
-				    RUL.RD_NAME AS RD_NAME,
-				    RUL.RD_DEFINITION AS RD_DEFINITION,
-				    RUL.BORRADO AS RD_BORRADO,
-				    AGE.RCF_AGE_ID AS RCF_AGE_ID,
-				    AGE.RCF_AGE_NOMBRE AS RCF_AGE_NOMBRE,
-				    AGE.RCF_AGE_CODIGO AS RCF_AGE_CODIGO,
-				    AGE.BORRADO AS RCF_AGE_BORRADO,
-				    ESC.RCF_ESC_ID AS RCF_ESC_ID,
-				    ESC.RCF_ESC_PRIORIDAD AS RCF_ESC_PRIORIDAD,
-				    ESC.BORRADO AS RCF_ESC_BORRADO,
-				    TCE.DD_TCE_ID AS RCF_DD_TCE_ID,        
-				    TCE.DD_TCE_CODIGO AS RCF_DD_TCE_CODIGO,
-				    TCE.BORRADO AS RCF_DD_TCE_BORRADO,
-				    TGC.DD_TGC_ID AS RCF_DD_TGC_ID,        
-				    TGC.DD_TGC_CODIGO AS RCF_DD_TGC_CODIGO,
-				    TGC.BORRADO AS RCF_DD_TGC_BORRADO,
-				    AER.DD_AER_ID AS RCF_DD_AER_ID,        
-				    AER.DD_AER_CODIGO AS RCF_DD_AER_CODIGO,
-				    AER.BORRADO AS RCF_DD_AER_BORRADO,
-				    SCA.RCF_SCA_ID AS RCF_SCA_ID,
-				    SCA.RCF_SCA_NOMBRE AS RCF_SCA_NOMBRE,
-				    SCA.RCF_SCA_PARTICION AS RCF_SCA_PARTICION,
-				    SCA.BORRADO AS RCF_SCA_BORRADO,
-				    TPR.RCF_DD_TPR_ID AS RCF_DD_TPR_ID,        
-				    TPR.RCF_DD_TPR_CODIGO AS RCF_DD_TPR_CODIGO,
-				    TPR.BORRADO AS RCF_DD_TPR_BORRADO,
-				    ITV.RCF_ITV_ID AS RCF_ITV_ID,        
-				    ITV.RCF_ITV_NOMBRE AS RCF_ITV_NOMBRE,
-				    ITV.RCF_ITV_FECHA_ALTA AS RCF_ITV_FECHA_ALTA,
-				    ITV.RCF_ITV_PLAZO_MAX AS RCF_ITV_PLAZO_MAX,
-				    ITV.RCF_ITV_NO_GEST AS RCF_ITV_NO_GEST,
-				    ITV.BORRADO AS RCF_ITV_BORRADO,
-				    MFA.RCF_MFA_ID AS RCF_MFA_ID,        
-				    MFA.RCF_MFA_NOMBRE AS RCF_MFA_NOMBRE,
-				    MFA.BORRADO AS RCF_MFA_BORRADO,
-				    POA.RCF_POA_ID AS RCF_POA_ID,        
-				    POA.RCF_POA_CODIGO AS RCF_POA_CODIGO,
-				    POA.BORRADO AS RCF_POA_BORRADO,
-				    MOR.RCF_MOR_ID AS RCF_MOR_ID,
-				    MOR.RCF_MOR_NOMBRE AS RCF_MOR_NOMBRE,
-				    MOR.BORRADO AS RCF_MOR_BORRADO,
-				    SUA.RCF_SUA_ID AS RCF_SUA_ID,
-				    SUA.RCF_SUA_COEFICIENTE AS RCF_SUA_COEFICIENTE,
-				    SUA.BORRADO AS RCF_SUA_BORRADO,
-				    SUR.RCF_SUR_ID AS RCF_SUR_ID,
-				    SUR.RCF_SUR_POSICION AS RCF_SUR_POSICION,
-				    SUR.RCF_SUR_PORCENTAJE AS RCF_SUR_PORCENTAJE,
-				    SUR.BORRADO AS RCF_SUR_BORRADO
-				  FROM RCF_ESQ_ESQUEMA ESQ  
-				    JOIN RCF_DD_MTR_MODELO_TRANSICION MTR ON ESQ.RCF_DD_MTR_ID = MTR.RCF_DD_MTR_ID
-				    JOIN RCF_DD_EES_ESTADO_ESQUEMA EES ON ESQ.RCF_DD_EES_ID = EES.RCF_DD_EES_ID    
-				    JOIN RCF_ESC_ESQUEMA_CARTERAS ESC ON ESQ.RCF_ESQ_ID = ESC.RCF_ESQ_ID AND ESC.BORRADO = 0
-				    LEFT JOIN RCF_DD_TGC_TIPO_GESTION_CART TGC ON ESC.DD_TGC_ID = TGC.DD_TGC_ID
-				    JOIN RCF_DD_TCE_TIPO_CARTERA_ESQ TCE ON ESC.DD_TCE_ID = TCE.DD_TCE_ID
-				    LEFT JOIN RCF_DD_AER_AMBITO_EXP_REC AER ON ESC.DD_AER_ID = AER.DD_AER_ID
-				    JOIN RCF_CAR_CARTERA CAR ON ESC.RCF_CAR_ID = CAR.RCF_CAR_ID
-				    --JOIN RCF_DD_ECA_ESTADO_CARTERA ECA ON CAR.RCF_DD_ECA_ID = ECA.RCF_DD_ECA_ID
-				    JOIN RULE_DEFINITION RUL ON CAR.RD_ID = RUL.RD_ID
-				    LEFT JOIN RCF_SCA_SUBCARTERA SCA ON ESC.RCF_ESC_ID = SCA.RCF_ESC_ID  AND SCA.BORRADO = 0
-				    LEFT JOIN RCF_DD_TPR_TIPO_REPARTO_SUBC TPR ON SCA.RCF_DD_TPR_ID = TPR.RCF_DD_TPR_ID AND TPR.BORRADO = 0
-				    LEFT JOIN RCF_ITV_ITI_METAS_VOLANTES ITV ON SCA.RCF_ITV_ID = ITV.RCF_ITV_ID AND ITV.BORRADO = 0
-				    LEFT JOIN RCF_MFA_MODELOS_FACTURACION MFA ON SCA.RCF_MFA_ID = MFA.RCF_MFA_ID AND MFA.BORRADO = 0
-				    LEFT JOIN RCF_SUA_SUBCARTERA_AGENCIAS SUA ON SCA.RCF_SCA_ID = SUA.RCF_SCA_ID AND SUA.BORRADO = 0
-				    LEFT JOIN RCF_AGE_AGENCIAS AGE ON SUA.RCF_AGE_ID  = AGE.RCF_AGE_ID AND AGE.BORRADO = 0
-				    LEFT JOIN RCF_SUR_SUBCARTERA_RANKING SUR ON SCA.RCF_SCA_ID = SUR.RCF_SUR_ID AND SUR.BORRADO = 0    
-				    LEFT JOIN RCF_POA_POLITICA_ACUERDOS POA ON SCA.RCF_POA_ID = POA.RCF_POA_ID AND POA.BORRADO = 0
-				    LEFT JOIN RCF_MOR_MODELO_RANKING MOR ON SCA.RCF_MOR_ID = MOR.RCF_MOR_ID
-				  WHERE EES.RCF_DD_EES_CODIGO IN (${ddEstadoEsquemas.Inactivo.codigo}, ${ddEstadoEsquemas.Liberado.codigo})
-		]]>
-	</entry>      
-	
-	<entry key="recobro.carga.data_rule_engine_cnt_niv.Oracle9iDialect">
-		<![CDATA[
-			DECLARE
-			    schema_name varchar(50);   
-			    query_body varchar (30048);
-			BEGIN
-			    schema_name := 'BANK01';	
-				EXECUTE IMMEDIATE 'TRUNCATE TABLE  DATA_RULE_ENGINE_CNT_NIV';
-				query_body :='INSERT /*+ APPEND PARALLEL(DATA_RULE_ENGINE_CNT_NIV, 16) PQ_DISTRIBUTE(DATA_RULE_ENGINE_CNT_NIV, NONE) */ INTO '||schema_name||'.DATA_RULE_ENGINE_CNT_NIV
-                    select cnt_id, 
+    <entry key="recobro.control.proceso.produccion.Oracle10gDialect">
+        <![CDATA[
+        UPDATE BATCH_RERA_CONTROL_PROC SET RERA_MODE = 'PROD',LAST_UPDATE = SYSDATE
+        ]]>
+    </entry>
+
+
+    <!-- COMPROBAMOS SI HAY ESQUEMAS PENDIENTES DE LIBERAR Y REALIZAMOS LOS CAMBOS CORRESPONDIENTES EN CASO AFIRMATIVO -->
+    <entry key="recobro.gestion.esquemas.Oracle10gDialect">
+        <![CDATA[
+            declare
+                v_result NUMBER;
+                v_id_esquema_liberado_actual NUMBER;
+                v_sql VARCHAR2(2000 CHAR);
+                v_codigo_extincion VARCHAR2(5 CHAR);
+                v_codigo_liberado VARCHAR2(5 CHAR);
+                v_codigo_pendiente_liberar VARCHAR2(5 CHAR);
+            begin
+                SELECT ESQ.RCF_ESQ_ID INTO v_id_esquema_liberado_actual
+                FROM RCF_ESQ_ESQUEMA ESQ
+                JOIN RCF_DD_EES_ESTADO_ESQUEMA EES ON ESQ.RCF_DD_EES_ID = EES.RCF_DD_EES_ID
+                WHERE EES.RCF_DD_EES_CODIGO = ${ddEstadoEsquemas.Liberado.codigo} AND ESQ.BORRADO = ${borrado.no.id} AND ROWNUM = 1;
+
+                SELECT CASE WHEN (COUNT(DISTINCT ESQ.RCF_ESQ_ID) = 1) THEN 1 ELSE 0 END INTO v_result
+                FROM RCF_ESQ_ESQUEMA ESQ
+                JOIN RCF_DD_EES_ESTADO_ESQUEMA EES ON ESQ.RCF_DD_EES_ID = EES.RCF_DD_EES_ID
+                WHERE EES.RCF_DD_EES_CODIGO = ${ddEstadoEsquemas.PendienteLiberar.codigo} AND ESQ.BORRADO = ${borrado.no.id} AND ROWNUM = 1;
+
+                IF(v_result = 1)
+                THEN
+                    v_codigo_extincion:= ${ddEstadoEsquemas.Inactivo.codigo};
+                    v_codigo_liberado:= ${ddEstadoEsquemas.Liberado.codigo};
+                    v_codigo_pendiente_liberar:= ${ddEstadoEsquemas.PendienteLiberar.codigo};
+                    v_sql:='
+                        UPDATE RCF_ESQ_ESQUEMA ESQ SET ESQ.RCF_DD_EES_ID = (SELECT EES1.RCF_DD_EES_ID
+                        FROM RCF_DD_EES_ESTADO_ESQUEMA EES1 WHERE EES1.RCF_DD_EES_CODIGO = :v_codigo_extincion),
+                        ESQ.RCF_ESQ_ID_SIGUIENTE = (SELECT ESQ1.RCF_ESQ_ID FROM RCF_ESQ_ESQUEMA ESQ1 WHERE ESQ.RCF_DD_EES_ID =
+                        (SELECT EES3.RCF_DD_EES_ID FROM RCF_DD_EES_ESTADO_ESQUEMA EES3 WHERE EES3.RCF_DD_EES_CODIGO = :v_codigo_pendiente_liberar))
+                        WHERE ESQ.RCF_DD_EES_ID = (SELECT EES2.RCF_DD_EES_ID FROM RCF_DD_EES_ESTADO_ESQUEMA EES2
+                        WHERE EES2.RCF_DD_EES_CODIGO = :v_codigo_liberado) AND ESQ.BORRADO = 0
+                    ';
+                    execute immediate v_sql using v_codigo_extincion, v_codigo_pendiente_liberar, v_codigo_liberado;
+
+                   
+                    COMMIT;
+                    v_sql:='
+                        UPDATE RCF_ESQ_ESQUEMA ESQ SET ESQ.RCF_DD_EES_ID = (SELECT EES1.RCF_DD_EES_ID
+                        FROM RCF_DD_EES_ESTADO_ESQUEMA EES1 WHERE EES1.RCF_DD_EES_CODIGO = :v_codigo_liberado),
+                        ESQ.RCF_ESQ_ID_ANTERIOR = :v_id_esquema_liberado_actual,
+                        ESQ.RCF_ESQ_FECHA_LIB = SYSDATE
+                        WHERE ESQ.RCF_DD_EES_ID = (SELECT EES2.RCF_DD_EES_ID FROM RCF_DD_EES_ESTADO_ESQUEMA EES2
+                        WHERE EES2.RCF_DD_EES_CODIGO = :v_codigo_pendiente_liberar) AND ESQ.BORRADO = 0
+                    ';
+                    execute immediate v_sql using v_codigo_liberado, v_id_esquema_liberado_actual, v_codigo_pendiente_liberar;
+
+                    COMMIT;
+                END IF;
+            end;
+        ]]>
+    </entry>
+    <!-- VOLVEMOS A GENERAR DATOS BATCH_RCF_ENTRADA -->
+    <entry key="recobro.borrado.batch_rcf_entrada.Oracle10gDialect">
+        <![CDATA[
+           BEGIN
+                OPERACION_DDL.DDL_TABLE('TRUNCATE','BATCH_RCF_ENTRADA');
+           END;
+        ]]>
+    </entry>
+    <entry key="recobro.creacion.batch_rcf_entrada.Oracle10gDialect">
+        <![CDATA[
+            Begin
+              INSERT /*+append*/ INTO BATCH_RCF_ENTRADA
+                 SELECT ESQ.RCF_ESQ_ID AS RCF_ESQ_ID,
+                        ESQ.RCF_ESQ_PLAZO AS RCF_ESQ_PLAZO,
+                        ESQ.RCF_ESQ_FECHA_LIB AS RCF_ESQ_FECHA_LIB,
+                        ESQ.BORRADO AS RCF_ESQ_BORRADO,
+                        EES.RCF_DD_EES_ID AS RCF_DD_EES_ID,
+                        EES.RCF_DD_EES_CODIGO AS RCF_DD_EES_CODIGO,
+                        EES.BORRADO AS RCF_DD_EES_BORRADO,
+                        MTR.RCF_DD_MTR_ID AS RCF_DD_MTR_ID,
+                        MTR.RCF_DD_MTR_CODIGO AS RCF_DD_MTR_CODIGO,
+                        MTR.BORRADO AS RCF_DD_MTR_BORRADO,
+                        CAR.RCF_CAR_ID AS RCF_CAR_ID,
+                        CAR.RCF_CAR_NOMBRE AS RCF_CAR_NOMBRE,
+                        CAR.BORRADO AS RCF_CAR_BORRADO,
+                        CAST (null AS NUMBER(16)) AS RCF_DD_ECA_ID,      --ECA.RCF_DD_ECA_ID ,
+                        CAST (null AS NUMBER(16)) AS RCF_DD_ECA_CODIGO,  --ECA.RCF_DD_ECA_CODIGO ,
+                        CAST (null AS NUMBER(16)) AS RCF_DD_ECA_BORRADO, --ECA.BORRADO ,
+                        RUL.RD_ID AS RD_ID,
+                        RUL.RD_NAME AS RD_NAME,
+                        RUL.RD_DEFINITION AS RD_DEFINITION,
+                        RUL.BORRADO AS RD_BORRADO,
+                        AGE.RCF_AGE_ID AS RCF_AGE_ID,
+                        AGE.RCF_AGE_NOMBRE AS RCF_AGE_NOMBRE,
+                        AGE.RCF_AGE_CODIGO AS RCF_AGE_CODIGO,
+                        AGE.BORRADO AS RCF_AGE_BORRADO,
+                        ESC.RCF_ESC_ID AS RCF_ESC_ID,
+                        ESC.RCF_ESC_PRIORIDAD AS RCF_ESC_PRIORIDAD,
+                        ESC.BORRADO AS RCF_ESC_BORRADO,
+                        TCE.DD_TCE_ID AS RCF_DD_TCE_ID,
+                        TCE.DD_TCE_CODIGO AS RCF_DD_TCE_CODIGO,
+                        TCE.BORRADO AS RCF_DD_TCE_BORRADO,
+                        TGC.DD_TGC_ID AS RCF_DD_TGC_ID,
+                        TGC.DD_TGC_CODIGO AS RCF_DD_TGC_CODIGO,
+                        TGC.BORRADO AS RCF_DD_TGC_BORRADO,
+                        AER.DD_AER_ID AS RCF_DD_AER_ID,
+                        AER.DD_AER_CODIGO AS RCF_DD_AER_CODIGO,
+                        AER.BORRADO AS RCF_DD_AER_BORRADO,
+                        SCA.RCF_SCA_ID AS RCF_SCA_ID,
+                        SCA.RCF_SCA_NOMBRE AS RCF_SCA_NOMBRE,
+                        SCA.RCF_SCA_PARTICION AS RCF_SCA_PARTICION,
+                        SCA.BORRADO AS RCF_SCA_BORRADO,
+                        TPR.RCF_DD_TPR_ID AS RCF_DD_TPR_ID,
+                        TPR.RCF_DD_TPR_CODIGO AS RCF_DD_TPR_CODIGO,
+                        TPR.BORRADO AS RCF_DD_TPR_BORRADO,
+                        ITV.RCF_ITV_ID AS RCF_ITV_ID,
+                        ITV.RCF_ITV_NOMBRE AS RCF_ITV_NOMBRE,
+                        ITV.RCF_ITV_FECHA_ALTA AS RCF_ITV_FECHA_ALTA,
+                        ITV.RCF_ITV_PLAZO_MAX AS RCF_ITV_PLAZO_MAX,
+                        ITV.RCF_ITV_NO_GEST AS RCF_ITV_NO_GEST,
+                        ITV.BORRADO AS RCF_ITV_BORRADO,
+                        MFA.RCF_MFA_ID AS RCF_MFA_ID,
+                        MFA.RCF_MFA_NOMBRE AS RCF_MFA_NOMBRE,
+                        MFA.BORRADO AS RCF_MFA_BORRADO,
+                        POA.RCF_POA_ID AS RCF_POA_ID,
+                        POA.RCF_POA_CODIGO AS RCF_POA_CODIGO,
+                        POA.BORRADO AS RCF_POA_BORRADO,
+                        MOR.RCF_MOR_ID AS RCF_MOR_ID,
+                        MOR.RCF_MOR_NOMBRE AS RCF_MOR_NOMBRE,
+                        MOR.BORRADO AS RCF_MOR_BORRADO,
+                        SUA.RCF_SUA_ID AS RCF_SUA_ID,
+                        SUA.RCF_SUA_COEFICIENTE AS RCF_SUA_COEFICIENTE,
+                        SUA.BORRADO AS RCF_SUA_BORRADO,
+                        SUR.RCF_SUR_ID AS RCF_SUR_ID,
+                        SUR.RCF_SUR_POSICION AS RCF_SUR_POSICION,
+                        SUR.RCF_SUR_PORCENTAJE AS RCF_SUR_PORCENTAJE,
+                        SUR.BORRADO AS RCF_SUR_BORRADO
+                   FROM RCF_ESQ_ESQUEMA ESQ
+                     JOIN RCF_DD_MTR_MODELO_TRANSICION MTR ON ESQ.RCF_DD_MTR_ID = MTR.RCF_DD_MTR_ID
+                     JOIN RCF_DD_EES_ESTADO_ESQUEMA EES ON ESQ.RCF_DD_EES_ID = EES.RCF_DD_EES_ID
+                     JOIN RCF_ESC_ESQUEMA_CARTERAS ESC ON ESQ.RCF_ESQ_ID = ESC.RCF_ESQ_ID AND ESC.BORRADO = 0
+                     LEFT JOIN RCF_DD_TGC_TIPO_GESTION_CART TGC ON ESC.DD_TGC_ID = TGC.DD_TGC_ID
+                     JOIN RCF_DD_TCE_TIPO_CARTERA_ESQ TCE ON ESC.DD_TCE_ID = TCE.DD_TCE_ID
+                     LEFT JOIN RCF_DD_AER_AMBITO_EXP_REC AER ON ESC.DD_AER_ID = AER.DD_AER_ID
+                     JOIN RCF_CAR_CARTERA CAR ON ESC.RCF_CAR_ID = CAR.RCF_CAR_ID
+                     --JOIN RCF_DD_ECA_ESTADO_CARTERA ECA ON CAR.RCF_DD_ECA_ID = ECA.RCF_DD_ECA_ID
+                     JOIN RULE_DEFINITION RUL ON CAR.RD_ID = RUL.RD_ID
+                     LEFT JOIN RCF_SCA_SUBCARTERA SCA ON ESC.RCF_ESC_ID = SCA.RCF_ESC_ID  AND SCA.BORRADO = 0
+                     LEFT JOIN RCF_DD_TPR_TIPO_REPARTO_SUBC TPR ON SCA.RCF_DD_TPR_ID = TPR.RCF_DD_TPR_ID AND TPR.BORRADO = 0
+                     LEFT JOIN RCF_ITV_ITI_METAS_VOLANTES ITV ON SCA.RCF_ITV_ID = ITV.RCF_ITV_ID AND ITV.BORRADO = 0
+                     LEFT JOIN RCF_MFA_MODELOS_FACTURACION MFA ON SCA.RCF_MFA_ID = MFA.RCF_MFA_ID AND MFA.BORRADO = 0
+                     LEFT JOIN RCF_SUA_SUBCARTERA_AGENCIAS SUA ON SCA.RCF_SCA_ID = SUA.RCF_SCA_ID AND SUA.BORRADO = 0
+                     LEFT JOIN RCF_AGE_AGENCIAS AGE ON SUA.RCF_AGE_ID  = AGE.RCF_AGE_ID AND AGE.BORRADO = 0
+                     LEFT JOIN RCF_SUR_SUBCARTERA_RANKING SUR ON SCA.RCF_SCA_ID = SUR.RCF_SUR_ID AND SUR.BORRADO = 0
+                     LEFT JOIN RCF_POA_POLITICA_ACUERDOS POA ON SCA.RCF_POA_ID = POA.RCF_POA_ID AND POA.BORRADO = 0
+                     LEFT JOIN RCF_MOR_MODELO_RANKING MOR ON SCA.RCF_MOR_ID = MOR.RCF_MOR_ID
+                    WHERE EES.RCF_DD_EES_CODIGO IN (${ddEstadoEsquemas.Inactivo.codigo}, ${ddEstadoEsquemas.Liberado.codigo}); 
+
+              COMMIT;
+
+              OPERACION_DDL.DDL_TABLE('STATS','BATCH_RCF_ENTRADA');
+            End;
+        ]]>
+    </entry>
+
+    <entry key="recobro.carga.data_rule_engine_cnt_niv.Oracle10gDialect">
+        <![CDATA[
+            DECLARE
+                query_body varchar (30048);
+            BEGIN
+                OPERACION_DDL.DDL_TABLE('TRUNCATE','DATA_RULE_ENGINE_CNT_NIV');
+
+                query_body :='INSERT /*+ APPEND PARALLEL(DATA_RULE_ENGINE_CNT_NIV, 16) PQ_DISTRIBUTE(DATA_RULE_ENGINE_CNT_NIV, NONE) */ INTO DATA_RULE_ENGINE_CNT_NIV
+                    select cnt_id,
                     zonN0.zon_id as zon_idN0, zonN0.zon_cod as zon_codN0, zonN0.zon_num_centro as zon_num_centroN0, zonN0.zon_descripcion as zon_descripcionN0, zonN0.zon_pid as zon_pidN0, nivN0.niv_id as niv_idN0, nivN0.niv_codigo as niv_codigoN0, nivN0.niv_descripcion as niv_descripcionN0,
-                    zonN1.zon_id as zon_idN1, zonN1.zon_cod as zon_codN1, zonN1.zon_num_centro as zon_num_centroN1, zonN1.zon_descripcion as zon_descripcionN1, zonN1.zon_pid as zon_pidN1, nivN1.niv_id as niv_idN1, nivN1.niv_codigo as niv_codigoN1, nivN1.niv_descripcion as niv_descripcionN1,    
+                    zonN1.zon_id as zon_idN1, zonN1.zon_cod as zon_codN1, zonN1.zon_num_centro as zon_num_centroN1, zonN1.zon_descripcion as zon_descripcionN1, zonN1.zon_pid as zon_pidN1, nivN1.niv_id as niv_idN1, nivN1.niv_codigo as niv_codigoN1, nivN1.niv_descripcion as niv_descripcionN1,
                     zonN2.zon_id as zon_idN2, zonN2.zon_cod as zon_codN2, zonN2.zon_num_centro as zon_num_centroN2, zonN2.zon_descripcion as zon_descripcionN2, zonN2.zon_pid as zon_pidN2, nivN2.niv_id as niv_idN2, nivN2.niv_codigo as niv_codigoN2, nivN2.niv_descripcion as niv_descripcionN2,
                     zonN3.zon_id as zon_idN3, zonN3.zon_cod as zon_codN3, zonN3.zon_num_centro as zon_num_centroN3, zonN3.zon_descripcion as zon_descripcionN3, zonN3.zon_pid as zon_pidN3, nivN3.niv_id as niv_idN3, nivN3.niv_codigo as niv_codigoN3, nivN3.niv_descripcion as niv_descripcionN3,
                     zonN4.zon_id as zon_idN4, zonN4.zon_cod as zon_codN4, zonN4.zon_num_centro as zon_num_centroN4, zonN4.zon_descripcion as zon_descripcionN4, zonN4.zon_pid as zon_pidN4, nivN4.niv_id as niv_idN4, nivN4.niv_codigo as niv_codigoN4, nivN4.niv_descripcion as niv_descripcionN4,
@@ -186,45 +184,47 @@
                     zonN7.zon_id as zon_idN7, zonN7.zon_cod as zon_codN7, zonN7.zon_num_centro as zon_num_centroN7, zonN7.zon_descripcion as zon_descripcionN7, zonN7.zon_pid as zon_pidN7, nivN7.niv_id as niv_idN7, nivN7.niv_codigo as niv_codigoN7, nivN7.niv_descripcion as niv_descripcionN7,
                     zonN8.zon_id as zon_idN8, zonN8.zon_cod as zon_codN8, zonN8.zon_num_centro as zon_num_centroN8, zonN8.zon_descripcion as zon_descripcionN8, zonN8.zon_pid as zon_pidN8, nivN8.niv_id as niv_idN8, nivN8.niv_codigo as niv_codigoN8, nivN8.niv_descripcion as niv_descripcionN8,
                     zonN9.zon_id as zon_idN9, zonN9.zon_cod as zon_codN9, zonN9.zon_num_centro as zon_num_centroN9, zonN9.zon_descripcion as zon_descripcionN9, zonN9.zon_pid as zon_pidN9, nivN9.niv_id as niv_idN9, nivN9.niv_codigo as niv_codigoN9, nivN9.niv_descripcion as niv_descripcionN9
-                    from '||schema_name||'.cnt_contratos cnt
-                    join '||schema_name||'.zon_zonificacion zonN0 on cnt.zon_id=zonN0.zon_id
-                    join '||schema_name||'. niv_nivel nivN0 on zonN0.niv_id=nivN0.niv_id
-                    join '||schema_name||'.zon_zonificacion zonN1 on zonN0.zon_pid=zonN1.zon_id
-                    join '||schema_name||'.niv_nivel nivN1 on zonN1.niv_id=nivN1.niv_id
-                    join '||schema_name||'.zon_zonificacion zonN2 on zonN1.zon_pid=zonN2.zon_id
-                    join '||schema_name||'.niv_nivel nivN2 on zonN2.niv_id=nivN2.niv_id
-                    join '||schema_name||'.zon_zonificacion zonN3 on zonN2.zon_pid=zonN3.zon_id
-                    join '||schema_name||'.niv_nivel nivN3 on zonN3.niv_id=nivN3.niv_id
-                    join '||schema_name||'.zon_zonificacion zonN4 on zonN3.zon_pid=zonN4.zon_id
-                    join '||schema_name||'.niv_nivel nivN4 on zonN4.niv_id=nivN4.niv_id
-                    join '||schema_name||'.zon_zonificacion zonN5 on zonN4.zon_pid=zonN5.zon_id
-                    join '||schema_name||'.niv_nivel nivN5 on zonN5.niv_id=nivN5.niv_id
-                    join '||schema_name||'.zon_zonificacion zonN6 on zonN5.zon_pid=zonN6.zon_id
-                    join '||schema_name||'.niv_nivel nivN6 on zonN6.niv_id=nivN6.niv_id
-                    join '||schema_name||'.zon_zonificacion zonN7 on zonN6.zon_pid=zonN7.zon_id
-                    join '||schema_name||'.niv_nivel nivN7 on zonN7.niv_id=nivN7.niv_id
-                    join '||schema_name||'.zon_zonificacion zonN8 on zonN7.zon_pid=zonN8.zon_id
-                    join '||schema_name||'.niv_nivel nivN8 on zonN8.niv_id=nivN8.niv_id
-                    join '||schema_name||'.zon_zonificacion zonN9 on zonN8.zon_pid=zonN9.zon_id
-                    join '||schema_name||'.niv_nivel nivN9 on zonN9.niv_id=nivN9.niv_id'; EXECUTE IMMEDIATE query_body;				
-				COMMIT;
-				EXECUTE IMMEDIATE 'ANALYZE TABLE DATA_RULE_ENGINE_CNT_NIV COMPUTE STATISTICS';						
-			END;
-		]]>
-	</entry> 
-	
-	<entry key="recobro.carga.data_rule_engine_per_niv.Oracle9iDialect">
-		<![CDATA[
-			DECLARE
-			    schema_name varchar(50);   
-			    query_body varchar (30048);
-			BEGIN
-			    schema_name := 'BANK01';	
-				EXECUTE IMMEDIATE 'TRUNCATE TABLE  DATA_RULE_ENGINE_PER_NIV';
-				query_body :='INSERT /*+ APPEND PARALLEL(DATA_RULE_ENGINE_PER_NIV, 16) PQ_DISTRIBUTE(DATA_RULE_ENGINE_PER_NIV, NONE) */ INTO '||schema_name||'.DATA_RULE_ENGINE_PER_NIV
-                    select per.per_id, 
+                    from cnt_contratos cnt
+                    join zon_zonificacion zonN0 on cnt.zon_id=zonN0.zon_id
+                    join niv_nivel nivN0 on zonN0.niv_id=nivN0.niv_id
+                    join zon_zonificacion zonN1 on zonN0.zon_pid=zonN1.zon_id
+                    join niv_nivel nivN1 on zonN1.niv_id=nivN1.niv_id
+                    join zon_zonificacion zonN2 on zonN1.zon_pid=zonN2.zon_id
+                    join niv_nivel nivN2 on zonN2.niv_id=nivN2.niv_id
+                    join zon_zonificacion zonN3 on zonN2.zon_pid=zonN3.zon_id
+                    join niv_nivel nivN3 on zonN3.niv_id=nivN3.niv_id
+                    join zon_zonificacion zonN4 on zonN3.zon_pid=zonN4.zon_id
+                    join niv_nivel nivN4 on zonN4.niv_id=nivN4.niv_id
+                    join zon_zonificacion zonN5 on zonN4.zon_pid=zonN5.zon_id
+                    join niv_nivel nivN5 on zonN5.niv_id=nivN5.niv_id
+                    join zon_zonificacion zonN6 on zonN5.zon_pid=zonN6.zon_id
+                    join niv_nivel nivN6 on zonN6.niv_id=nivN6.niv_id
+                    join zon_zonificacion zonN7 on zonN6.zon_pid=zonN7.zon_id
+                    join niv_nivel nivN7 on zonN7.niv_id=nivN7.niv_id
+                    join zon_zonificacion zonN8 on zonN7.zon_pid=zonN8.zon_id
+                    join niv_nivel nivN8 on zonN8.niv_id=nivN8.niv_id
+                    join zon_zonificacion zonN9 on zonN8.zon_pid=zonN9.zon_id
+                    join niv_nivel nivN9 on zonN9.niv_id=nivN9.niv_id';
+
+                EXECUTE IMMEDIATE query_body;
+
+                COMMIT;
+                OPERACION_DDL.DDL_TABLE('STATS','DATA_RULE_ENGINE_CNT_NIV');
+            END;
+        ]]>
+    </entry>
+
+    <entry key="recobro.carga.data_rule_engine_per_niv.Oracle10gDialect">
+        <![CDATA[
+            DECLARE
+                query_body varchar (30048);
+            BEGIN
+                OPERACION_DDL.DDL_TABLE('TRUNCATE','DATA_RULE_ENGINE_PER_NIV');
+
+                query_body :='INSERT /*+ APPEND PARALLEL(DATA_RULE_ENGINE_PER_NIV, 16) PQ_DISTRIBUTE(DATA_RULE_ENGINE_PER_NIV, NONE) */ INTO DATA_RULE_ENGINE_PER_NIV
+                    select per.per_id,
                     zonPN0.zon_id as zon_idPN0, zonPN0.zon_cod as zon_codPN0, zonPN0.zon_num_centro as zon_num_centroPN0, zonPN0.zon_descripcion as zon_descripcionPN0, zonPN0.zon_pid as zon_pidPN0, nivN0.niv_id as niv_idPN0, nivN0.niv_codigo as niv_codigoPN0, nivN0.niv_descripcion as niv_descripcionPN0,
-                    zonPN1.zon_id as zon_idPN1, zonPN1.zon_cod as zon_codPN1, zonPN1.zon_num_centro as zon_num_centroPN1, zonPN1.zon_descripcion as zon_descripcionPN1, zonPN1.zon_pid as zon_pidPN1, nivN1.niv_id as niv_idPN1, nivN1.niv_codigo as niv_codigoPN1, nivN1.niv_descripcion as niv_descripcionPN1,    
+                    zonPN1.zon_id as zon_idPN1, zonPN1.zon_cod as zon_codPN1, zonPN1.zon_num_centro as zon_num_centroPN1, zonPN1.zon_descripcion as zon_descripcionPN1, zonPN1.zon_pid as zon_pidPN1, nivN1.niv_id as niv_idPN1, nivN1.niv_codigo as niv_codigoPN1, nivN1.niv_descripcion as niv_descripcionPN1,
                     zonPN2.zon_id as zon_idPN2, zonPN2.zon_cod as zon_codPN2, zonPN2.zon_num_centro as zon_num_centroPN2, zonPN2.zon_descripcion as zon_descripcionPN2, zonPN2.zon_pid as zon_pidPN2, nivN2.niv_id as niv_idPN2, nivN2.niv_codigo as niv_codigoPN2, nivN2.niv_descripcion as niv_descripcionPN2,
                     zonPN3.zon_id as zon_idPN3, zonPN3.zon_cod as zon_codPN3, zonPN3.zon_num_centro as zon_num_centroPN3, zonPN3.zon_descripcion as zon_descripcionPN3, zonPN3.zon_pid as zon_pidPN3, nivN3.niv_id as niv_idPN3, nivN3.niv_codigo as niv_codigoPN3, nivN3.niv_descripcion as niv_descripcionPN3,
                     zonPN4.zon_id as zon_idPN4, zonPN4.zon_cod as zon_codPN4, zonPN4.zon_num_centro as zon_num_centroPN4, zonPN4.zon_descripcion as zon_descripcionPN4, zonPN4.zon_pid as zon_pidPN4, nivN4.niv_id as niv_idPN4, nivN4.niv_codigo as niv_codigoPN4, nivN4.niv_descripcion as niv_descripcionPN4,
@@ -233,495 +233,383 @@
                     zonPN7.zon_id as zon_idPN7, zonPN7.zon_cod as zon_codPN7, zonPN7.zon_num_centro as zon_num_centroPN7, zonPN7.zon_descripcion as zon_descripcionPN7, zonPN7.zon_pid as zon_pidPN7, nivN7.niv_id as niv_idPN7, nivN7.niv_codigo as niv_codigoPN7, nivN7.niv_descripcion as niv_descripcionPN7,
                     zonPN8.zon_id as zon_idPN8, zonPN8.zon_cod as zon_codPN8, zonPN8.zon_num_centro as zon_num_centroPN8, zonPN8.zon_descripcion as zon_descripcionPN8, zonPN8.zon_pid as zon_pidPN8, nivN8.niv_id as niv_idPN8, nivN8.niv_codigo as niv_codigoPN8, nivN8.niv_descripcion as niv_descripcionPN8,
                     zonPN9.zon_id as zon_idPN9, zonPN9.zon_cod as zon_codPN9, zonPN9.zon_num_centro as zon_num_centroPN9, zonPN9.zon_descripcion as zon_descripcionPN9, zonPN9.zon_pid as zon_pidPN9, nivN9.niv_id as niv_idPN9, nivN9.niv_codigo as niv_codigoPN9, nivN9.niv_descripcion as niv_descripcionPN9
-                    from '||schema_name||'.per_personas per
-                    join '||schema_name||'.zon_zonificacion zonPN0 on per.ofi_id=zonPN0.ofi_id
-                    join '||schema_name||'.niv_nivel nivN0 on zonPN0.niv_id=nivN0.niv_id
-                    join '||schema_name||'.zon_zonificacion zonPN1 on zonPN0.zon_pid=zonPN1.zon_id
-                    join '||schema_name||'.niv_nivel nivN1 on zonPN1.niv_id=nivN1.niv_id
-                    join '||schema_name||'.zon_zonificacion zonPN2 on zonPN1.zon_pid=zonPN2.zon_id
-                    join '||schema_name||'.niv_nivel nivN2 on zonPN2.niv_id=nivN2.niv_id
-                    join '||schema_name||'.zon_zonificacion zonPN3 on zonPN2.zon_pid=zonPN3.zon_id
-                    join '||schema_name||'.niv_nivel nivN3 on zonPN3.niv_id=nivN3.niv_id
-                    join '||schema_name||'.zon_zonificacion zonPN4 on zonPN3.zon_pid=zonPN4.zon_id
-                    join '||schema_name||'.niv_nivel nivN4 on zonPN4.niv_id=nivN4.niv_id
-                    join '||schema_name||'.zon_zonificacion zonPN5 on zonPN4.zon_pid=zonPN5.zon_id
-                    join '||schema_name||'.niv_nivel nivN5 on zonPN5.niv_id=nivN5.niv_id
-                    join '||schema_name||'.zon_zonificacion zonPN6 on zonPN5.zon_pid=zonPN6.zon_id
-                    join '||schema_name||'.niv_nivel nivN6 on zonPN6.niv_id=nivN6.niv_id
-                    join '||schema_name||'.zon_zonificacion zonPN7 on zonPN6.zon_pid=zonPN7.zon_id
-                    join '||schema_name||'.niv_nivel nivN7 on zonPN7.niv_id=nivN7.niv_id
-                    join '||schema_name||'.zon_zonificacion zonPN8 on zonPN7.zon_pid=zonPN8.zon_id
-                    join '||schema_name||'.niv_nivel nivN8 on zonPN8.niv_id=nivN8.niv_id
-                    join '||schema_name||'.zon_zonificacion zonPN9 on zonPN8.zon_pid=zonPN9.zon_id
-                    join '||schema_name||'.niv_nivel nivN9 on zonPN9.niv_id=nivN9.niv_id'; EXECUTE IMMEDIATE query_body;		
-				COMMIT;
-				EXECUTE IMMEDIATE 'ANALYZE TABLE DATA_RULE_ENGINE_PER_NIV COMPUTE STATISTICS';						
-			END;
-		]]>
-	</entry> 	 
-		
-	
-	<entry key="recobro.insert.data_rule_engine.Oracle9iDialect">
-		<![CDATA[
-			BEGIN
-  				REFRESH_DATA_RULE_ENGINE();
-			END;
-		]]>
-	</entry> 	
-	
-	<entry key="recobro.borrado.batch_datos_cnt_per.Oracle9iDialect">
-		<![CDATA[
-			DECLARE
-			    table_count number(3);
-			    query_body varchar (30048);
-			BEGIN
-			 	select count(1) into table_count from all_mviews WHERE mview_name='BATCH_DATOS_CNT_PER';
-				if table_count = 1 then
-			 		query_body := 'DROP MATERIALIZED VIEW BATCH_DATOS_CNT_PER';  EXECUTE IMMEDIATE query_body;
-				end if;		
-			END;
-		]]>
-	</entry> 
-	
-	<entry key="recobro.creacion.batch_datos_cnt_per.Oracle9iDialect">
-		<![CDATA[
-			CREATE MATERIALIZED VIEW 
-			batch_datos_cnt_per (cnt_id, per_id, cnt_per_tin, cnt_per_oin, cnt_per_arrastre)
-			BUILD IMMEDIATE
-			REFRESH FORCE ON DEMAND
-			WITH PRIMARY KEY
-			AS
-			SELECT cpe.cnt_id, cpe.per_id, tin.dd_tin_codigo AS cnt_per_tin, cpe.cpe_orden AS cnt_per_oin
-        		, tin.dd_tin_exp_recobro_sn as cnt_per_arrastre
-			FROM cpe_contratos_personas cpe 
-			JOIN dd_tin_tipo_intervencion tin ON cpe.dd_tin_id = tin.dd_tin_id
-			-- Se incluyen todos  los obligados de cada contrato
-			WHERE cpe.borrado = 0 AND (dd_tin_titular = 1 or dd_tin_avalista = 1)
-		]]>
-	</entry> 
-	
-	<entry key="recobro.borrado.batch_datos_cnt.Oracle9iDialect">
-		<![CDATA[
-			DECLARE
-			    table_count number(3);
-			    query_body varchar (30048);
-			BEGIN
-			 	select count(1) into table_count from all_mviews WHERE mview_name='BATCH_DATOS_CNT';
-				if table_count = 1 then
-			 		query_body := 'DROP MATERIALIZED VIEW BATCH_DATOS_CNT';  EXECUTE IMMEDIATE query_body;
-				end if;		
-			END;
-		]]>
-	</entry> 
-	
-	<entry key="recobro.creacion.batch_datos_cnt.Oracle9iDialect">
-		<![CDATA[
-			CREATE MATERIALIZED VIEW 
-			batch_datos_cnt (cnt_id, ofi_id, cnt_riesgo)
-			BUILD IMMEDIATE
-			REFRESH FORCE ON DEMAND
-			WITH PRIMARY KEY
-			AS
-			SELECT cnt.cnt_id, cnt.ofi_id, NVL (mov.mov_deuda_irregular, 0) AS cnt_riesgo
-			FROM cnt_contratos cnt JOIN bankmaster.dd_esc_estado_cnt esc
-			      ON cnt.dd_esc_id = esc.dd_esc_id
-			      JOIN mov_movimientos mov
-			      ON cnt.cnt_id = mov.cnt_id
-			    AND cnt.cnt_fecha_extraccion = mov.mov_fecha_extraccion
-			WHERE cnt.borrado = 0 AND esc.dd_esc_codigo = '0'
-		]]>
-	</entry> 	
-	
-	<entry key="recobro.borrado.batch_datos_per.Oracle9iDialect">
-		<![CDATA[
-			DECLARE
-			    table_count number(3);
-			    query_body varchar (30048);
-			BEGIN
-			 	select count(1) into table_count from all_mviews WHERE mview_name='BATCH_DATOS_PER';
-				if table_count = 1 then
-			 		query_body := 'DROP MATERIALIZED VIEW BATCH_DATOS_PER';  EXECUTE IMMEDIATE query_body;
-				end if;		
-			END;		
-		]]>
-	</entry> 
-	
-	<entry key="recobro.creacion.batch_datos_per.Oracle9iDialect">
-		<![CDATA[
-			CREATE MATERIALIZED VIEW 
-			batch_datos_per (per_id, per_nombre, per_apellido1, per_apellido2,
-				per_deuda_irregular, per_riesgo_directo, per_riesgo_indirecto)
-			BUILD IMMEDIATE
-			REFRESH FORCE ON DEMAND
-			WITH PRIMARY KEY	
-			AS
-			SELECT per_id, NVL (per_nombre, '') AS per_nombre,
-			  NVL (per_apellido1, '') AS per_apellido1,
-			  NVL (per_apellido2, '') AS per_apellido2,
-			  NVL (PER_DEUDA_IRREGULAR, 0) AS per_deuda_irregular,
-			  NVL (per_riesgo, 0) AS per_riesgo_directo,
-			  NVL (per_riesgo_ind, 0) AS per_riesgo_indirecto
-			FROM per_personas
-			WHERE borrado = 0
-		]]>
-	</entry> 		
+                    from per_personas per
+                    join zon_zonificacion zonPN0 on per.ofi_id=zonPN0.ofi_id
+                    join niv_nivel nivN0 on zonPN0.niv_id=nivN0.niv_id
+                    join zon_zonificacion zonPN1 on zonPN0.zon_pid=zonPN1.zon_id
+                    join niv_nivel nivN1 on zonPN1.niv_id=nivN1.niv_id
+                    join zon_zonificacion zonPN2 on zonPN1.zon_pid=zonPN2.zon_id
+                    join niv_nivel nivN2 on zonPN2.niv_id=nivN2.niv_id
+                    join zon_zonificacion zonPN3 on zonPN2.zon_pid=zonPN3.zon_id
+                    join niv_nivel nivN3 on zonPN3.niv_id=nivN3.niv_id
+                    join zon_zonificacion zonPN4 on zonPN3.zon_pid=zonPN4.zon_id
+                    join niv_nivel nivN4 on zonPN4.niv_id=nivN4.niv_id
+                    join zon_zonificacion zonPN5 on zonPN4.zon_pid=zonPN5.zon_id
+                    join niv_nivel nivN5 on zonPN5.niv_id=nivN5.niv_id
+                    join zon_zonificacion zonPN6 on zonPN5.zon_pid=zonPN6.zon_id
+                    join niv_nivel nivN6 on zonPN6.niv_id=nivN6.niv_id
+                    join zon_zonificacion zonPN7 on zonPN6.zon_pid=zonPN7.zon_id
+                    join niv_nivel nivN7 on zonPN7.niv_id=nivN7.niv_id
+                    join zon_zonificacion zonPN8 on zonPN7.zon_pid=zonPN8.zon_id
+                    join niv_nivel nivN8 on zonPN8.niv_id=nivN8.niv_id
+                    join zon_zonificacion zonPN9 on zonPN8.zon_pid=zonPN9.zon_id
+                    join niv_nivel nivN9 on zonPN9.niv_id=nivN9.niv_id';
+                EXECUTE IMMEDIATE query_body;
 
-	<entry key="recobro.borrado.batch_datos_cnt_exp.Oracle9iDialect">
-		<![CDATA[
-			DECLARE
-			    table_count number(3);
-			    query_body varchar (30048);
-			BEGIN
-			 	select count(1) into table_count from all_mviews WHERE mview_name='BATCH_DATOS_CNT_EXP';
-				if table_count = 1 then
-			 		query_body := 'DROP MATERIALIZED VIEW BATCH_DATOS_CNT_EXP';  EXECUTE IMMEDIATE query_body;
-				end if;		
-			END;		
-		]]>
-	</entry> 
-	
-	<entry key="recobro.creacion.batch_datos_cnt_exp.Oracle9iDialect">
-		<![CDATA[
-			CREATE MATERIALIZED VIEW  
-			batch_datos_cnt_exp (exp_id, cnt_id)
-			BUILD IMMEDIATE
-			REFRESH FORCE ON DEMAND
-			WITH PRIMARY KEY	
-			AS
-			SELECT cex.exp_id, cex.cnt_id
-			  FROM cex_contratos_expediente cex
-        		JOIN EXR_EXPEDIENTE_RECOBRO EXR ON CEX.EXP_ID = EXR.EXP_ID
-        		JOIN EXP_EXPEDIENTES EXP ON EXR.EXP_ID = EXP.EXP_ID
-        		JOIN BANKMASTER.DD_EEX_ESTADO_EXPEDIENTE EEX ON EXP.DD_EEX_ID = EEX.DD_EEX_ID
-			WHERE cex.borrado = 0 AND EEX.DD_EEX_CODIGO = '1' AND EXP.BORRADO = 0
-		]]>
-	</entry> 	
-	
-	<entry key="recobro.borrado.batch_datos_exp.Oracle9iDialect">
-		<![CDATA[
-			DECLARE
-			    table_count number(3);
-			    query_body varchar (30048);
-			BEGIN
-			 	select count(1) into table_count from all_mviews WHERE mview_name='BATCH_DATOS_EXP';
-				if table_count = 1 then
-			 		query_body := 'DROP MATERIALIZED VIEW BATCH_DATOS_EXP';  EXECUTE IMMEDIATE query_body;
-				end if;		
-			END;			
-		]]>
-	</entry> 
-	
-	<entry key="recobro.creacion.batch_datos_exp.Oracle9iDialect">
-		<![CDATA[
-			CREATE MATERIALIZED VIEW  
-			batch_datos_exp (exp_id, arq_id, exp_borrado, dd_tpe_codigo, dd_eex_codigo,
-				rcf_esq_id, rcf_age_id, rcf_sca_id,exp_marcado_bpm, exp_manual)
-			BUILD IMMEDIATE
-			REFRESH FORCE ON DEMAND
-			WITH PRIMARY KEY		
-			AS
-			SELECT EXP.exp_id, EXP.arq_id AS arq_id, 0 AS exp_borrado,
-			          'RECOBRO' AS dd_tpe_codigo, eex.dd_eex_codigo,
-			      cre.rcf_esq_id AS rcf_esq_id, cre.rcf_age_id AS rcf_age_id,
-			      cre.rcf_sca_id AS rcf_sca_id, -1 AS exp_marcado_bpm, EXP.exp_manual
-			FROM exp_expedientes EXP JOIN exr_expediente_recobro rec
-			      ON EXP.exp_id = rec.exp_id
-			      JOIN bankmaster.dd_eex_estado_expediente eex
-			      ON EXP.dd_eex_id = eex.dd_eex_id
-			      JOIN cre_ciclo_recobro_exp cre ON EXP.exp_id = cre.exp_id
-			WHERE EXP.borrado = 0 AND eex.dd_eex_codigo = '1' AND EXP.exp_manual = 0
-		]]>
-	</entry> 	
-
-	<entry key="recobro.borrado.batch_datos_cnt_info.Oracle9iDialect">
-		<![CDATA[
-			DECLARE
-			    table_count number(3);
-			    query_body varchar (30048);
-			BEGIN
-			 	select count(1) into table_count from all_mviews WHERE mview_name='BATCH_DATOS_CNT_INFO';
-				if table_count = 1 then
-			 		query_body := 'DROP MATERIALIZED VIEW BATCH_DATOS_CNT_INFO';  EXECUTE IMMEDIATE query_body;
-				end if;		
-			END;			
-		]]>
-	</entry> 
-	
-	<entry key="recobro.creacion.batch_datos_cnt_info.Oracle9iDialect">
-		<![CDATA[
-			CREATE MATERIALIZED VIEW  
-			batch_datos_cnt_info (cnt_id, codigo_propietario, tipo_producto, numero_contrato)
-			BUILD IMMEDIATE
-			REFRESH FORCE ON DEMAND
-			WITH PRIMARY KEY	
-			AS
-			SELECT DISTINCT cnt.cnt_id, pro.dd_pro_codigo codigo_propietario,
-			       tpe.dd_tpe_codigo tipo_producto,
-			       cnt.cnt_contrato numero_contrato
-			FROM batch_datos_cnt bdcnt JOIN cnt_contratos cnt
-			       ON bdcnt.cnt_id = cnt.cnt_id
-			       JOIN dd_pro_propietarios pro ON cnt.dd_pro_id = pro.dd_pro_id
-			       JOIN dd_tpe_tipo_prod_entidad tpe
-			       ON cnt.dd_tpe_id = tpe.dd_tpe_id
-		]]>
-	</entry> 	 
-	
-	<entry key="recobro.borrado.batch_datos_per_exp.Oracle9iDialect">
-		<![CDATA[
-			DECLARE
-			    table_count number(3);
-			    query_body varchar (30048);
-			BEGIN
-			 	select count(1) into table_count from all_mviews WHERE mview_name='BATCH_DATOS_PER_EXP';
-				if table_count = 1 then
-			 		query_body := 'DROP MATERIALIZED VIEW BATCH_DATOS_PER_EXP';  EXECUTE IMMEDIATE query_body;
-				end if;		
-			END;			
-		]]>
-	</entry> 
-	
-	<entry key="recobro.creacion.batch_datos_per_exp.Oracle9iDialect">
-		<![CDATA[
-			CREATE MATERIALIZED VIEW  
-			batch_datos_per_exp (exp_id, per_id)
-			BUILD IMMEDIATE
-			REFRESH FORCE ON DEMAND
-			WITH PRIMARY KEY	
-			AS
-			SELECT pex.exp_id, pex.per_id
-			   FROM pex_personas_expediente pex
-			   	JOIN EXR_EXPEDIENTE_RECOBRO EXR ON PEX.EXP_ID = EXR.EXP_ID
-        		JOIN EXP_EXPEDIENTES EXP ON EXR.EXP_ID = EXP.EXP_ID
-        		JOIN BANKMASTER.DD_EEX_ESTADO_EXPEDIENTE EEX ON EXP.DD_EEX_ID = EEX.DD_EEX_ID
-			WHERE pex.borrado = 0 AND EEX.DD_EEX_CODIGO = '1' AND EXP.BORRADO = 0
-		]]>
-	</entry>		
-	
-	<entry key="recobro.borrado.batch_datos_cli.Oracle9iDialect">
-		<![CDATA[
-			DECLARE
-			    table_count number(3);
-			    query_body varchar (30048);
-			BEGIN
-			 	select count(1) into table_count from all_mviews WHERE mview_name='BATCH_DATOS_CLI';
-				if table_count = 1 then
-			 		query_body := 'DROP MATERIALIZED VIEW BATCH_DATOS_CLI';  EXECUTE IMMEDIATE query_body;
-				end if;		
-			END;			
-		]]>
-	</entry> 
-	
-	<entry key="recobro.creacion.batch_datos_cli.Oracle9iDialect">
-		<![CDATA[
-		CREATE MATERIALIZED VIEW 
-		batch_datos_cli (cli_id, per_id)
-		BUILD IMMEDIATE
-		REFRESH FORCE ON DEMAND
-		WITH PRIMARY KEY	
-		AS
-	    SELECT cli.cli_id, cli.per_id
-	    FROM cli_clientes cli JOIN bankmaster.dd_ecl_estado_cliente ecl
-	          ON cli.dd_ecl_id = ecl.dd_ecl_id
-	    WHERE cli.borrado = 0 AND ecl.dd_ecl_codigo <> '2'
-		]]>
-	</entry> 			
-	
-	<entry key="recobro.borrado.batch_datos_exceptuados.Oracle9iDialect">
-		<![CDATA[
-			DECLARE
-			    table_count number(3);
-			    query_body varchar (30048);
-			BEGIN
-			 	select count(1) into table_count from all_mviews WHERE mview_name='BATCH_DATOS_EXCEPTUADOS';
-				if table_count = 1 then
-			 		query_body := 'DROP MATERIALIZED VIEW BATCH_DATOS_EXCEPTUADOS';  EXECUTE IMMEDIATE query_body;
-				end if;		
-			END;			
-		]]>
-	</entry> 
-	
-	<entry key="recobro.creacion.batch_datos_exceptuados.Oracle9iDialect">
-		<![CDATA[
-		CREATE MATERIALIZED VIEW 
-		batch_datos_exceptuados (per_id, cnt_id, dd_mob_id, dd_mob_codigo, dd_mob_borrado, exc_id)
-		BUILD IMMEDIATE
-		REFRESH FORCE ON DEMAND
-		WITH PRIMARY KEY	
-		AS
-	   	SELECT 
-	      CAST (NULL AS NUMBER (16)) AS per_id, 
-	      CAST (cnt.cnt_id AS NUMBER (16)) AS cnt_id, 
-	      CASE WHEN exc.dd_moe_id is null THEN 1 ELSE exc.dd_moe_id END AS dd_mob_id, 
-	      CASE WHEN moe.dd_moe_codigo is null THEN '01' ELSE moe.dd_moe_codigo END AS dd_mob_codigo,
-		  CASE WHEN moe.borrado is null THEN 0 ELSE moe.borrado END AS dd_mob_borrado, 
-	      exc.exc_id
-		FROM exc_exceptuacion exc 
-	      JOIN eco_exceptuacion_contrato cnt ON exc.exc_id = cnt.exc_id
-	      LEFT JOIN dd_moe_motivo_exceptuacion moe ON exc.dd_moe_id = moe.dd_moe_id
-	    WHERE exc.borrado = 0 AND TRUNC (exc.exc_fecha_hasta) > TRUNC (SYSDATE)
-	    UNION
-		SELECT 
-	      CAST (per.per_id AS NUMBER (16)) AS per_id,
-		  CAST (NULL AS NUMBER (16)) AS cnt_id, 
-	      CASE WHEN exc.dd_moe_id is null THEN 1 ELSE exc.dd_moe_id END AS dd_mob_id, 
-	      CASE WHEN moe.dd_moe_codigo is null THEN '01' ELSE moe.dd_moe_codigo END AS dd_mob_codigo,
-		  CASE WHEN moe.borrado is null THEN 0 ELSE moe.borrado END AS dd_mob_borrado, 
-		  exc.exc_id
-	    FROM exc_exceptuacion exc 
-	      JOIN epe_exceptuacion_persona per ON exc.exc_id = per.exc_id
-	      LEFT JOIN dd_moe_motivo_exceptuacion moe ON exc.dd_moe_id = moe.dd_moe_id          
-		WHERE exc.borrado = 0 AND TRUNC (exc_fecha_hasta) > TRUNC (SYSDATE)
-		]]>
-	</entry> 	
-	
-	<entry key="recobro.borrado.batch_datos_exp_manual.Oracle9iDialect">
-		<![CDATA[
-			DECLARE
-			    table_count number(3);
-			    query_body varchar (30048);
-			BEGIN
-			 	select count(1) into table_count from all_mviews WHERE mview_name='BATCH_DATOS_EXP_MANUAL';
-				if table_count = 1 then
-			 		query_body := 'DROP MATERIALIZED VIEW BATCH_DATOS_EXP_MANUAL';  EXECUTE IMMEDIATE query_body;
-				end if;		
-			END;		
-		]]>
-	</entry> 
-	
-	<entry key="recobro.creacion.batch_datos_exp_manual.Oracle9iDialect">
-		<![CDATA[
-		CREATE MATERIALIZED VIEW 
-		batch_datos_exp_manual (exp_id, arq_id, exp_borrado, dd_tpe_codigo,
-			dd_eex_codigo, rcf_esq_id, rcf_age_id, rcf_sca_id, exp_marcado_bpm, exp_manual)
-		BUILD IMMEDIATE
-		REFRESH FORCE ON DEMAND
-		WITH PRIMARY KEY	
-		AS
-		SELECT EXP.exp_id, esc.rcf_car_id AS arq_id, 0 AS exp_borrado,
-		          'RECOBRO' AS dd_tpe_codigo, eex.dd_eex_codigo,
-		      cre.rcf_esq_id AS rcf_esq_id, cre.rcf_age_id AS rcf_age_id,
-		      cre.rcf_sca_id AS rcf_sca_id,
-		      NVL (cre.cre_marcado_bpm, 0) AS exp_marcado_bpm, EXP.exp_manual
-		 FROM exp_expedientes EXP JOIN exr_expediente_recobro rec
-		      ON EXP.exp_id = rec.exp_id
-		      JOIN bankmaster.dd_eex_estado_expediente eex
-		      ON EXP.dd_eex_id = eex.dd_eex_id
-		      JOIN cre_ciclo_recobro_exp cre ON EXP.exp_id = cre.exp_id
-		      JOIN rcf_esc_esquema_carteras esc ON cre.rcf_esc_id = esc.rcf_esc_id
-		WHERE EXP.borrado = 0 AND eex.dd_eex_codigo = '1' AND EXP.exp_manual = 1
-		]]>
-	</entry> 		
-	
-	<entry key="recobro.borrado.batch_datos_gcl.Oracle9iDialect">
-		<![CDATA[
-			DECLARE
-			    table_count number(3);
-			    query_body varchar (30048);
-			BEGIN
-			 	select count(1) into table_count from all_mviews WHERE mview_name='BATCH_DATOS_GCL';
-				if table_count = 1 then
-			 		query_body := 'DROP MATERIALIZED VIEW BATCH_DATOS_GCL';  EXECUTE IMMEDIATE query_body;
-				end if;		
-			END;				
-		]]>
-	</entry> 
-	
-	<entry key="recobro.creacion.batch_datos_gcl.Oracle9iDialect">
-		<![CDATA[
-			CREATE MATERIALIZED VIEW 
-			batch_datos_gcl (gcl_id, per_id)
-			BUILD IMMEDIATE
-			REFRESH FORCE ON DEMAND
-			WITH PRIMARY KEY	
-			AS
-		    SELECT DISTINCT pgcl.gcl_id, pgcl.per_id
-		              FROM per_gcl pgcl JOIN gcl_grupos_clientes gcl
-		                   ON pgcl.gcl_id = gcl.gcl_id AND gcl.borrado = 0
-		                   JOIN batch_datos_per per ON pgcl.per_id = per.per_id
-		             WHERE pgcl.borrado = 0
-		]]>
-	</entry> 			
-	
-	<entry key="recobro.creacion.indices.vistas.Oracle9iDialect">
-		<![CDATA[
-            BEGIN
-            
-              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_EXCEPTUADOS_1 ON BATCH_DATOS_EXCEPTUADOS(PER_ID)';
-              
-              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_EXCEPTUADOS_2 ON BATCH_DATOS_EXCEPTUADOS(CNT_ID)';
-              
-              --** Actualizamos estadísticas
-              DBMS_STATS.gather_table_stats( ownname => 'BANK01', tabname => 'BATCH_DATOS_EXCEPTUADOS', estimate_percent => 20);
-              
-              
-              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_CNT_1 ON BATCH_DATOS_CNT(CNT_ID)';
-              
-              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_CNT_2 ON BATCH_DATOS_CNT(CNT_RIESGO)';
-              
-              --** Actualizamos estadísticas
-              DBMS_STATS.gather_table_stats( ownname => 'BANK01', tabname => 'BATCH_DATOS_CNT', estimate_percent => 20);
-                              
-              
-              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_CNT_INFO_1 ON BATCH_DATOS_CNT_INFO(CNT_ID)';            
-              
-              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_CNT_INFO_2 ON BATCH_DATOS_CNT_INFO(NUMERO_CONTRATO)';
-              
-              --** Actualizamos estadísticas
-              DBMS_STATS.gather_table_stats( ownname => 'BANK01', tabname => 'BATCH_DATOS_CNT_INFO', estimate_percent => 20);
-              
-              
-              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_CNT_EXP_1 ON BATCH_DATOS_CNT_EXP(EXP_ID)';
-              
-              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_CNT_EXP_2 ON BATCH_DATOS_CNT_EXP(CNT_ID)';
-
-              --** Actualizamos estadísticas
-              DBMS_STATS.gather_table_stats( ownname => 'BANK01', tabname => 'BATCH_DATOS_CNT_EXP', estimate_percent => 20);              
-              
-              
-              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_CNT_PER_1 ON BATCH_DATOS_CNT_PER(PER_ID)';
-              
-              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_CNT_PER_2 ON BATCH_DATOS_CNT_PER(CNT_ID)';
-              
-              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_CNT_PER_3 ON BATCH_DATOS_CNT_PER(CNT_PER_ARRASTRE)';
-              
-              --** Actualizamos estadísticas
-              DBMS_STATS.gather_table_stats( ownname => 'BANK01', tabname => 'BATCH_DATOS_CNT_PER', estimate_percent => 20);
-             
-            
-              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_PER_1 ON BATCH_DATOS_PER(PER_DEUDA_IRREGULAR)';
-              
-              --** Actualizamos estadísticas
-              DBMS_STATS.gather_table_stats( ownname => 'BANK01', tabname => 'BATCH_DATOS_PER', estimate_percent => 20);
-              
-              
-              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_PER_EXP_1 ON BATCH_DATOS_PER_EXP(EXP_ID)';
-              
-              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_PER_EXP_2 ON BATCH_DATOS_PER_EXP(PER_ID)';
-
-              --** Actualizamos estadísticas
-              DBMS_STATS.gather_table_stats( ownname => 'BANK01', tabname => 'BATCH_DATOS_PER_EXP', estimate_percent => 20);              
-                                 
-              
-              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_EXP_1 ON BATCH_DATOS_EXP(EXP_ID)';
-              
-              --** Actualizamos estadísticas
-              DBMS_STATS.gather_table_stats( ownname => 'BANK01', tabname => 'BATCH_DATOS_EXP', estimate_percent => 20);
-              
-              
-              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_EXP_MANUAL_1 ON BATCH_DATOS_EXP_MANUAL(EXP_ID)';
-              
-              --** Actualizamos estadísticas
-              DBMS_STATS.gather_table_stats( ownname => 'BANK01', tabname => 'BATCH_DATOS_EXP_MANUAL', estimate_percent => 20);
-              
-              EXECUTE IMMEDIATE 'CREATE INDEX INDX_BATCH_DATOS_GCL_1 ON BATCH_DATOS_GCL(GCL_ID)';
-              
-	      EXECUTE IMMEDIATE 'CREATE INDEX INDX_BATCH_DATOS_GCL_2 ON BATCH_DATOS_GCL(PER_ID)'; 
-	      
-	      --** Actualizamos estadísticas
-	      DBMS_STATS.gather_table_stats( ownname => 'BANK01', tabname => 'BATCH_DATOS_GCL', estimate_percent => 20);
-            
+                COMMIT;
+                OPERACION_DDL.DDL_TABLE('STATS','DATA_RULE_ENGINE_PER_NIV');
             END;
-		]]>
-	</entry> 
-	 
+        ]]>
+    </entry>
+
+
+    <entry key="recobro.insert.data_rule_engine.Oracle10gDialect">
+        <![CDATA[
+            BEGIN
+               REFRESH_DATA_RULE_ENGINE();
+            END;
+        ]]>
+    </entry>
+
+    <entry key="recobro.borrado.batch_datos_cnt_per.Oracle10gDialect">
+        <![CDATA[
+           BEGIN
+              OPERACION_DDL.DDL_TABLE ('TRUNCATE','BATCH_DATOS_CNT_PER');
+
+           END;
+        ]]>
+    </entry>
+
+    <entry key="recobro.creacion.batch_datos_cnt_per.Oracle10gDialect">
+        <![CDATA[
+            Begin
+              INSERT /*+append*/ INTO BATCH_DATOS_CNT_PER
+              (cnt_id, per_id, cnt_per_tin, cnt_per_oin, cnt_per_arrastre)
+              SELECT cpe.cnt_id, cpe.per_id, tin.dd_tin_codigo AS cnt_per_tin, cpe.cpe_orden AS cnt_per_oin
+                   , tin.dd_tin_exp_recobro_sn as cnt_per_arrastre
+                FROM bank01.cpe_contratos_personas cpe
+                JOIN bank01.dd_tin_tipo_intervencion tin ON cpe.dd_tin_id = tin.dd_tin_id
+                -- Se incluyen todos  los obligados de cada contrato
+               WHERE cpe.borrado = 0 AND NOT (dd_tin_titular <> 1 and dd_tin_avalista <> 1) ; 
+
+              COMMIT;
+              OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_CNT_PER');
+            End;
+        ]]>
+    </entry>
+
+    <entry key="recobro.borrado.batch_datos_cnt.Oracle10gDialect">
+        <![CDATA[
+            BEGIN
+                 OPERACION_DDL.DDL_TABLE ('TRUNCATE','BATCH_DATOS_CNT');
+            END;
+        ]]>
+    </entry>
+
+    <entry key="recobro.creacion.batch_datos_cnt.Oracle10gDialect">
+        <![CDATA[
+            Begin
+              INSERT /*+append*/ INTO BATCH_DATOS_CNT
+              (cnt_id, ofi_id, cnt_riesgo)
+              SELECT cnt.cnt_id
+                   , cnt.ofi_id
+                   , nvl(mov.mov_deuda_irregular, 0) AS cnt_riesgo
+                FROM cnt_contratos cnt
+                JOIN ${master.schema}.dd_esc_estado_cnt esc ON cnt.dd_esc_id = esc.dd_esc_id
+                  JOIN mov_movimientos mov ON cnt.cnt_id = mov.cnt_id AND cnt.cnt_fecha_extraccion = mov.mov_fecha_extraccion
+               WHERE cnt.borrado = 0 AND esc.dd_esc_codigo = '0'; 
+
+              
+              COMMIT;
+              OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_CNT');
+            End;
+        ]]>
+    </entry>
+
+    <entry key="recobro.borrado.batch_datos_per.Oracle10gDialect">
+        <![CDATA[
+            BEGIN
+                OPERACION_DDL.DDL_TABLE ('TRUNCATE','BATCH_DATOS_PER');
+            END;
+        ]]>
+    </entry>
+
+    <entry key="recobro.creacion.batch_datos_per.Oracle10gDialect">
+        <![CDATA[
+
+            Begin
+              INSERT /*+append*/ INTO BATCH_DATOS_PER
+              (per_id, per_nombre, per_apellido1, per_apellido2
+              ,per_deuda_irregular, per_riesgo_directo, per_riesgo_indirecto)
+              SELECT per_id
+                   , NVL (per_nombre, '') AS per_nombre
+                   , NVL (per_apellido1, '') AS per_apellido1
+                   , NVL (per_apellido2, '') AS per_apellido2
+                   , NVL (PER_DEUDA_IRREGULAR, 0) AS per_deuda_irregular
+                   , NVL (per_riesgo, 0) AS per_riesgo_directo
+                   , NVL (per_riesgo_ind, 0) AS per_riesgo_indirecto
+                FROM per_personas
+               WHERE borrado = 0;
+
+              
+              COMMIT;
+              OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_PER');
+            End;
+        ]]>
+    </entry>
+
+    <entry key="recobro.borrado.batch_datos_cnt_exp.Oracle10gDialect">
+        <![CDATA[
+            BEGIN
+                 OPERACION_DDL.DDL_TABLE ('TRUNCATE','BATCH_DATOS_CNT_EXP');
+            END;
+        ]]>
+    </entry>
+
+    <entry key="recobro.creacion.batch_datos_cnt_exp.Oracle10gDialect">
+        <![CDATA[
+
+            Begin
+              INSERT /*+append*/ INTO BATCH_DATOS_CNT_EXP
+                SELECT cex.exp_id, cex.cnt_id
+                  FROM cex_contratos_expediente cex
+                  JOIN EXR_EXPEDIENTE_RECOBRO EXR ON CEX.EXP_ID = EXR.EXP_ID
+                  JOIN EXP_EXPEDIENTES EXP ON EXR.EXP_ID = EXP.EXP_ID
+                  JOIN ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE EEX ON EXP.DD_EEX_ID = EEX.DD_EEX_ID
+                 WHERE cex.borrado = 0
+                   AND EEX.DD_EEX_CODIGO = '1'
+                   AND EXP.BORRADO = 0;
+ 
+             
+              COMMIT;
+              OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_CNT_EXP');
+            End;
+        ]]>
+    </entry>
+
+    <entry key="recobro.borrado.batch_datos_exp.Oracle10gDialect">
+        <![CDATA[
+           BEGIN
+                 OPERACION_DDL.DDL_TABLE ('TRUNCATE','BATCH_DATOS_EXP');
+           END;
+        ]]>
+    </entry>
+
+    <entry key="recobro.creacion.batch_datos_exp.Oracle10gDialect">
+        <![CDATA[
+            Begin
+              INSERT /*+append*/ INTO BATCH_DATOS_EXP
+              (exp_id, arq_id, exp_borrado, dd_tpe_codigo, dd_eex_codigo
+              ,rcf_esq_id, rcf_age_id, rcf_sca_id,exp_marcado_bpm, exp_manual)
+              SELECT exp.exp_id
+                   , exp.arq_id AS arq_id
+                   , 0 AS exp_borrado
+                   , 'RECOBRO' AS dd_tpe_codigo
+                   , eex.dd_eex_codigo
+                   , cre.rcf_esq_id AS rcf_esq_id
+                   , cre.rcf_age_id AS rcf_age_id
+                   , cre.rcf_sca_id AS rcf_sca_id
+                   , -1 AS exp_marcado_bpm
+                   , exp.exp_manual
+                FROM exp_expedientes exp
+                JOIN exr_expediente_recobro rec ON exp.exp_id = rec.exp_id
+                JOIN ${master.schema}.dd_eex_estado_expediente eex ON exp.dd_eex_id = eex.dd_eex_id
+                JOIN cre_ciclo_recobro_exp cre ON exp.exp_id = cre.exp_id
+               WHERE exp.borrado = 0
+                 AND eex.dd_eex_codigo = '1'
+                 AND exp.exp_manual = 0;
+
+              COMMIT;
+              OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_EXP');
+            End;
+        ]]>
+    </entry>
+
+    <entry key="recobro.borrado.batch_datos_cnt_info.Oracle10gDialect">
+        <![CDATA[
+            BEGIN
+                 OPERACION_DDL.DDL_TABLE ('TRUNCATE','BATCH_DATOS_CNT_INFO');
+            END;
+        ]]>
+    </entry>
+
+    <entry key="recobro.creacion.batch_datos_cnt_info.Oracle10gDialect">
+        <![CDATA[
+
+            Begin
+              INSERT /*+append*/ INTO BATCH_DATOS_CNT_INFO
+              (cnt_id, codigo_propietario, tipo_producto, numero_contrato)
+              SELECT DISTINCT cnt.cnt_id
+                   , pro.dd_pro_codigo codigo_propietario
+                   , tpe.dd_tpe_codigo tipo_producto
+                   , cnt.cnt_contrato numero_contrato
+                FROM batch_datos_cnt bdcnt
+                JOIN cnt_contratos cnt ON bdcnt.cnt_id = cnt.cnt_id
+                JOIN dd_pro_propietarios pro ON cnt.dd_pro_id = pro.dd_pro_id
+                JOIN dd_tpe_tipo_prod_entidad tpe ON cnt.dd_tpe_id = tpe.dd_tpe_id;
+
+              COMMIT;
+              OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_CNT_INFO');
+            End;
+        ]]>
+    </entry>
+
+    <entry key="recobro.borrado.batch_datos_per_exp.Oracle10gDialect">
+        <![CDATA[
+            BEGIN
+                 OPERACION_DDL.DDL_TABLE ('TRUNCATE','BATCH_DATOS_PER_EXP');
+            END;
+        ]]>
+    </entry>
+
+    <entry key="recobro.creacion.batch_datos_per_exp.Oracle10gDialect">
+        <![CDATA[
+            Begin
+              INSERT /*+append*/ INTO BATCH_DATOS_PER_EXP
+                SELECT pex.exp_id, pex.per_id
+                  FROM pex_personas_expediente pex
+                  JOIN EXR_EXPEDIENTE_RECOBRO EXR ON PEX.EXP_ID = EXR.EXP_ID
+                  JOIN EXP_EXPEDIENTES EXP ON EXR.EXP_ID = EXP.EXP_ID
+                  JOIN ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE EEX ON EXP.DD_EEX_ID = EEX.DD_EEX_ID
+                 WHERE pex.borrado = 0
+                   AND EEX.DD_EEX_CODIGO = '1' AND EXP.BORRADO = 0; 
+
+              COMMIT;
+              OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_PER_EXP');
+            End;
+        ]]>
+    </entry>
+
+    <entry key="recobro.borrado.batch_datos_cli.Oracle10gDialect">
+        <![CDATA[
+            BEGIN
+                 OPERACION_DDL.DDL_TABLE ('TRUNCATE','BATCH_DATOS_CLI');
+            END;
+        ]]>
+    </entry>
+
+    <entry key="recobro.creacion.batch_datos_cli.Oracle10gDialect">
+        <![CDATA[
+        Begin
+         INSERT /*+append*/ INTO BATCH_DATOS_CLI
+         (cli_id, per_id)
+         SELECT cli.cli_id, cli.per_id
+           FROM cli_clientes cli
+           JOIN ${master.schema}.dd_ecl_estado_cliente ecl ON cli.dd_ecl_id = ecl.dd_ecl_id
+          WHERE cli.borrado = 0
+            AND ecl.dd_ecl_codigo <> '2';
+
+         COMMIT;
+         OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_CLI');
+        End;
+        ]]>
+    </entry>
+
+    <entry key="recobro.borrado.batch_datos_exceptuados.Oracle10gDialect">
+        <![CDATA[
+            BEGIN
+              OPERACION_DDL.DDL_TABLE ('TRUNCATE','BATCH_DATOS_EXCEPTUADOS');
+            END;
+        ]]>
+    </entry>
+
+    <entry key="recobro.creacion.batch_datos_exceptuados.Oracle10gDialect">
+        <![CDATA[
+        Begin
+         INSERT /*+append*/ INTO BATCH_DATOS_EXCEPTUADOS
+         (per_id, cnt_id, dd_mob_id, dd_mob_codigo, dd_mob_borrado, exc_id)
+         SELECT
+          CAST (NULL AS NUMBER (16)) AS per_id,
+          CAST (cnt.cnt_id AS NUMBER (16)) AS cnt_id,
+          CASE WHEN exc.dd_moe_id is null THEN 1 ELSE exc.dd_moe_id END AS dd_mob_id,
+          CASE WHEN moe.dd_moe_codigo is null THEN '01' ELSE moe.dd_moe_codigo END AS dd_mob_codigo,
+          CASE WHEN moe.borrado is null THEN 0 ELSE moe.borrado END AS dd_mob_borrado,
+          exc.exc_id
+         FROM exc_exceptuacion exc
+          JOIN eco_exceptuacion_contrato cnt ON exc.exc_id = cnt.exc_id
+          LEFT JOIN dd_moe_motivo_exceptuacion moe ON exc.dd_moe_id = moe.dd_moe_id
+         WHERE exc.borrado = 0 AND TRUNC (exc.exc_fecha_hasta) > TRUNC (SYSDATE)
+         UNION
+         SELECT
+          CAST (per.per_id AS NUMBER (16)) AS per_id,
+          CAST (NULL AS NUMBER (16)) AS cnt_id,
+          CASE WHEN exc.dd_moe_id is null THEN 1 ELSE exc.dd_moe_id END AS dd_mob_id,
+          CASE WHEN moe.dd_moe_codigo is null THEN '01' ELSE moe.dd_moe_codigo END AS dd_mob_codigo,
+          CASE WHEN moe.borrado is null THEN 0 ELSE moe.borrado END AS dd_mob_borrado,
+          exc.exc_id
+         FROM exc_exceptuacion exc
+          JOIN epe_exceptuacion_persona per ON exc.exc_id = per.exc_id
+          LEFT JOIN dd_moe_motivo_exceptuacion moe ON exc.dd_moe_id = moe.dd_moe_id
+         WHERE exc.borrado = 0 AND TRUNC (exc_fecha_hasta) > TRUNC (SYSDATE); 
+
+         COMMIT;
+         OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_EXCEPTUADOS');
+        End;
+        ]]>
+    </entry>
+
+    <entry key="recobro.borrado.batch_datos_exp_manual.Oracle10gDialect">
+        <![CDATA[
+            BEGIN
+                 OPERACION_DDL.DDL_TABLE ('TRUNCATE','BATCH_DATOS_EXP_MANUAL');
+            END;
+        ]]>
+    </entry>
+
+    <entry key="recobro.creacion.batch_datos_exp_manual.Oracle10gDialect">
+        <![CDATA[
+        Begin
+         INSERT /*+append*/ INTO BATCH_DATOS_EXP_MANUAL
+         (exp_id, arq_id, exp_borrado, dd_tpe_codigo,dd_eex_codigo, rcf_esq_id
+         ,rcf_age_id, rcf_sca_id, exp_marcado_bpm, exp_manual)
+            SELECT exp.exp_id
+                 , esc.rcf_car_id AS arq_id
+                 , 0 AS exp_borrado
+                 , 'RECOBRO' AS dd_tpe_codigo, eex.dd_eex_codigo
+                 , cre.rcf_esq_id AS rcf_esq_id
+                 , cre.rcf_age_id AS rcf_age_id
+                 , cre.rcf_sca_id AS rcf_sca_id
+                 , NVL(cre.cre_marcado_bpm, 0) AS exp_marcado_bpm
+                 , exp.exp_manual
+              FROM exp_expedientes exp
+              JOIN exr_expediente_recobro rec ON exp.exp_id = rec.exp_id
+              JOIN ${master.schema}.dd_eex_estado_expediente eex ON exp.dd_eex_id = eex.dd_eex_id
+              JOIN cre_ciclo_recobro_exp cre ON exp.exp_id = cre.exp_id
+              JOIN rcf_esc_esquema_carteras esc ON cre.rcf_esc_id = esc.rcf_esc_id
+             WHERE exp.borrado = 0
+               AND eex.dd_eex_codigo = '1'
+               AND exp.exp_manual = 1; 
+       
+         COMMIT;
+         OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_EXP_MANUAL');
+        End;
+        ]]>
+    </entry>
+
+    <entry key="recobro.borrado.batch_datos_gcl.Oracle10gDialect">
+        <![CDATA[
+            BEGIN
+                 OPERACION_DDL.DDL_TABLE ('TRUNCATE','BATCH_DATOS_GCL');
+            END;
+        ]]>
+    </entry>
+
+    <entry key="recobro.creacion.batch_datos_gcl.Oracle10gDialect">
+        <![CDATA[
+         Begin
+           INSERT /*+append*/ INTO BATCH_DATOS_GCL
+           (gcl_id, per_id)
+           SELECT DISTINCT pgcl.gcl_id, pgcl.per_id
+             FROM per_gcl pgcl
+             JOIN gcl_grupos_clientes gcl ON pgcl.gcl_id = gcl.gcl_id
+             JOIN batch_datos_per per ON pgcl.per_id = per.per_id
+            WHERE pgcl.borrado = 0
+              AND gcl.borrado = 0;
+         
+           COMMIT;
+           OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_GCL');
+         End;
+        ]]>
+    </entry>
+
  </properties>

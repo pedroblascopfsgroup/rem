@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+    
+    
+    <bean id="reportContext" class="es.capgemini.devon.report.ReportContext" init-method="initBirtEngine"/>
+    
+    <bean id="reportPDFViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewNames" value="reportPDF*"/>
+        <property name="viewClass" value="es.capgemini.devon.view.ReportPDFView"/>
+        <property name="prefix" value="/reports/" />
+        <property name="suffix" value=".rptdesign" />
+        <property name="order" value="30"/> 
+    </bean>
+
+    <bean id="reportXLSViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewNames" value="reportXLS*"/>
+        <property name="viewClass" value="es.capgemini.devon.view.ReportXLSView"/>
+        <property name="prefix" value="/reports/" />
+        <property name="suffix" value=".rptdesign" />
+        <property name="order" value="30"/> 
+    </bean>
+    
+    <bean id="reportHTMLViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewNames" value="reportHTML*"/>
+        <property name="viewClass" value="es.capgemini.devon.view.ReportHTMLView"/>
+        <property name="prefix" value="/reports/" />
+        <property name="suffix" value=".rptdesign" />
+        <property name="order" value="31"/> 
+    </bean>
+    
+    <!-- Overwrite the webflow view resolvers to use the reports too. -->
+    <util:list id="webflow.viewResolvers">
+        <ref bean="xmlViewResolver"/>
+        <ref bean="fwkJspViewResolver"/>
+        <ref bean="reportPDFViewResolver"/>
+        <ref bean="reportXLSViewResolver"/>
+        <ref bean="reportHTMLViewResolver"/>
+        <ref bean="jspViewResolver"/> <!-- Must be the last one -->
+    </util:list>
+    
+</beans>

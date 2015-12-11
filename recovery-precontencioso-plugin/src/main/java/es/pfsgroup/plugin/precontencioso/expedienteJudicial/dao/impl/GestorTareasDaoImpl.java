@@ -42,6 +42,7 @@ public class GestorTareasDaoImpl extends AbstractEntityDao<Serializable, Long>
 					.setParameters(args, argsTypes).uniqueResult();
 			resultado = (cuenta.intValue() > 0);
 		} catch (EmptyResultDataAccessException e) {
+			logger.error("evaluaCondicion: " + e);
 			e.printStackTrace();
 		}
 		

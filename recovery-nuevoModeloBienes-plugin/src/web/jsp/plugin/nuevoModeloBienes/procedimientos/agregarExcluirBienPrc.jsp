@@ -70,7 +70,9 @@
 	    ,{header : '<s:message code="nuevoModeloBienes.agregarExcluirBien.grid.codigo" text="**C&oacute;digo" />', hidden:true, dataIndex : 'codigo'}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.numeroFinca" text="**N&uacute;mero finca" />', dataIndex : 'numFinca'}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.referenciaCatastral" text="**Referencia catastral"/>', dataIndex : 'referenciaCatastral' }
-		,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.numeroActivo" text="**Número activo"/>', dataIndex : 'numeroActivo' }
+		<sec:authorize ifNotGranted="PERSONALIZACION-BCC">
+			,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.numeroActivo" text="**Número activo"/>', dataIndex : 'numeroActivo' }
+        </sec:authorize>
       	,{header : '<s:message code="nuevoModeloBienes.agregarExcluirBien.grid.origen" text="**Origen" />', dataIndex : 'origen'}
     	,{header : '<s:message code="nuevoModeloBienes.agregarExcluirBien.grid.descripcion" text="**Descripcion" />', dataIndex : 'descripcion'}
       	,{header : '<s:message code="nuevoModeloBienes.agregarExcluirBien.grid.tipo" text="**Tipo" />', dataIndex : 'tipo'}
@@ -249,7 +251,11 @@
 			filtroNumActivo
 	];
 	var btnReset = app.crearBotonResetCampos(getParametros_reset);
-	
+	//añadido para que no aparezca numactivo en HRE-Cajamar
+	<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
+		filtroNumActivo.setVisible(false);
+    </sec:authorize>
+	//-------------------------------------------------
 	var filtroForm = new Ext.Panel({
 		title : '<s:message code="nuevoModeloBienes.agregarExcluirBien.filtro.titulo" text="**Buscar bien" />'
 		,autoHeight:true

@@ -216,6 +216,7 @@ BEGIN
 --    *BORRADO DE BMPs*
 --    **************************/
 
+/*
       EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''TABLA_BPM'''  INTO EXISTE;
 
       IF EXISTE > 0 THEN
@@ -292,7 +293,7 @@ BEGIN
       END IF;
 
      EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.TABLA_BPM PURGE ';
-
+*/
 
 
 --    /*************************
@@ -1253,6 +1254,15 @@ BEGIN
       END IF; 
      
 
+     -- ***************************************************************
+     -- BORRADO DE ACUERDOS (ORDEN DE BORRADO)
+	-- 1º delete from tea_cnt ....
+	-- 2º delete from cm01.bie_tea ...
+	-- 3º delete from cm01.acu_operaciones_terminos ...
+	-- 4º delete from cm01.tea_terminos_acuerdo ...
+	-- 5º delete from cm01.acu_acuerdo_procedimientos ...
+     -- *************************************************************** 
+
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.ANA_ANALIS_ACUERDO... Comprobando si existen registros para el usuario MIGRACM01');
       EXISTE := 0;
       V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.ANA_ANALIS_ACUERDO WHERE ACU_ID IN ( SELECT ACU_ID FROM '||V_ESQUEMA||'.ACU_ACUERDO_PROCEDIMIENTOS ACU
@@ -1267,47 +1277,7 @@ BEGIN
            PRO_KEYS_STATUS(V_ESQUEMA, 'ANA_ANALIS_ACUERDO', 'ENABLE');
       END IF;
       
-      EXISTE := 0;
-      V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.ACU_OPERACIONES_TERMINOS WHERE TEA_ID IN (
-                                                    SELECT TEA_ID 
-                                                    FROM '||V_ESQUEMA||'.TEA_TERMINOS_ACUERDO TEA
-                                                      JOIN '||V_ESQUEMA||'.ACU_ACUERDO_PROCEDIMIENTOS ACU ON TEA.ACU_ID = ACU.ACU_ID
-                                                      JOIN '||V_ESQUEMA||'.TABLA_TMP_ASU TMP ON ACU.ASU_ID = TMP.ASU_ID)';
-      EXECUTE IMMEDIATE V_SQL INTO EXISTE;
-      IF (EXISTE>0) THEN
-           PRO_KEYS_STATUS(V_ESQUEMA, 'ACU_OPERACIONES_TERMINOS', 'DISABLE');
-           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.ACU_OPERACIONES_TERMINOS WHERE TEA_ID IN (
-                                                    SELECT TEA_ID 
-                                                    FROM '||V_ESQUEMA||'.TEA_TERMINOS_ACUERDO TEA
-                                                      JOIN '||V_ESQUEMA||'.ACU_ACUERDO_PROCEDIMIENTOS ACU ON TEA.ACU_ID = ACU.ACU_ID
-                                                      JOIN '||V_ESQUEMA||'.TABLA_TMP_ASU TMP ON ACU.ASU_ID = TMP.ASU_ID)';
-           DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.ACU_OPERACIONES_TERMINOS... Se han eliminado '||EXISTE||' registros');
-           COMMIT;
-           PRO_KEYS_STATUS(V_ESQUEMA, 'ACU_OPERACIONES_TERMINOS', 'ENABLE');
-      END IF;
-
-      -- BIE_TEA
-      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.BIE_TEA... Comprobando si existen registros para el usuario MIGRACM01');
-      EXISTE := 0;
-      V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.BIE_TEA WHERE TEA_ID IN (
-                                                    SELECT TEA_ID 
-                                                    FROM '||V_ESQUEMA||'.TEA_TERMINOS_ACUERDO TEA
-                                                      JOIN '||V_ESQUEMA||'.ACU_ACUERDO_PROCEDIMIENTOS ACU ON TEA.ACU_ID = ACU.ACU_ID
-                                                      JOIN '||V_ESQUEMA||'.TABLA_TMP_ASU TMP ON ACU.ASU_ID = TMP.ASU_ID)';
-      EXECUTE IMMEDIATE V_SQL INTO EXISTE;
-      IF (EXISTE>0) THEN
-           PRO_KEYS_STATUS(V_ESQUEMA, 'BIE_TEA', 'DISABLE');
-           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.BIE_TEA WHERE TEA_ID IN (
-                                                    SELECT TEA_ID 
-                                                    FROM '||V_ESQUEMA||'.TEA_TERMINOS_ACUERDO TEA
-                                                      JOIN '||V_ESQUEMA||'.ACU_ACUERDO_PROCEDIMIENTOS ACU ON TEA.ACU_ID = ACU.ACU_ID
-                                                      JOIN '||V_ESQUEMA||'.TABLA_TMP_ASU TMP ON ACU.ASU_ID = TMP.ASU_ID)';
-           DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.BIE_TEA... Se han eliminado '||EXISTE||' registros');
-           COMMIT;
-           PRO_KEYS_STATUS(V_ESQUEMA, 'BIE_TEA', 'ENABLE');
-      END IF;
-      
-      -- TEA_CNT
+      -- 1º delete from tea_cnt ....
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.TEA_CNT... Comprobando si existen registros para el usuario MIGRACM01');
       EXISTE := 0;
       V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.TEA_CNT WHERE TEA_ID IN (
@@ -1328,7 +1298,52 @@ BEGIN
            PRO_KEYS_STATUS(V_ESQUEMA, 'TEA_CNT', 'ENABLE');
       END IF;
 
-      -- TEA_TERMINOS_ACUERDO
+      -- 2º delete from cm01.bie_tea ...
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.BIE_TEA... Comprobando si existen registros para el usuario MIGRACM01');
+      EXISTE := 0;
+      V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.BIE_TEA WHERE TEA_ID IN (
+                                                    SELECT TEA_ID 
+                                                    FROM '||V_ESQUEMA||'.TEA_TERMINOS_ACUERDO TEA
+                                                      JOIN '||V_ESQUEMA||'.ACU_ACUERDO_PROCEDIMIENTOS ACU ON TEA.ACU_ID = ACU.ACU_ID
+                                                      JOIN '||V_ESQUEMA||'.TABLA_TMP_ASU TMP ON ACU.ASU_ID = TMP.ASU_ID)';
+      EXECUTE IMMEDIATE V_SQL INTO EXISTE;
+      IF (EXISTE>0) THEN
+           PRO_KEYS_STATUS(V_ESQUEMA, 'BIE_TEA', 'DISABLE');
+           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.BIE_TEA WHERE TEA_ID IN (
+                                                    SELECT TEA_ID 
+                                                    FROM '||V_ESQUEMA||'.TEA_TERMINOS_ACUERDO TEA
+                                                      JOIN '||V_ESQUEMA||'.ACU_ACUERDO_PROCEDIMIENTOS ACU ON TEA.ACU_ID = ACU.ACU_ID
+                                                      JOIN '||V_ESQUEMA||'.TABLA_TMP_ASU TMP ON ACU.ASU_ID = TMP.ASU_ID)';
+           DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.BIE_TEA... Se han eliminado '||EXISTE||' registros');
+           COMMIT;
+           PRO_KEYS_STATUS(V_ESQUEMA, 'BIE_TEA', 'ENABLE');
+      END IF;
+
+      -- 3º delete from cm01.acu_operaciones_terminos ...
+
+      EXISTE := 0;
+      V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.ACU_OPERACIONES_TERMINOS WHERE TEA_ID IN (
+                                                    SELECT TEA_ID 
+                                                    FROM '||V_ESQUEMA||'.TEA_TERMINOS_ACUERDO TEA
+                                                      JOIN '||V_ESQUEMA||'.ACU_ACUERDO_PROCEDIMIENTOS ACU ON TEA.ACU_ID = ACU.ACU_ID
+                                                      JOIN '||V_ESQUEMA||'.TABLA_TMP_ASU TMP ON ACU.ASU_ID = TMP.ASU_ID)';
+      EXECUTE IMMEDIATE V_SQL INTO EXISTE;
+      IF (EXISTE>0) THEN
+           PRO_KEYS_STATUS(V_ESQUEMA, 'ACU_OPERACIONES_TERMINOS', 'DISABLE');
+           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.ACU_OPERACIONES_TERMINOS WHERE TEA_ID IN (
+                                                    SELECT TEA_ID 
+                                                    FROM '||V_ESQUEMA||'.TEA_TERMINOS_ACUERDO TEA
+                                                      JOIN '||V_ESQUEMA||'.ACU_ACUERDO_PROCEDIMIENTOS ACU ON TEA.ACU_ID = ACU.ACU_ID
+                                                      JOIN '||V_ESQUEMA||'.TABLA_TMP_ASU TMP ON ACU.ASU_ID = TMP.ASU_ID)';
+           DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.ACU_OPERACIONES_TERMINOS... Se han eliminado '||EXISTE||' registros');
+           COMMIT;
+           PRO_KEYS_STATUS(V_ESQUEMA, 'ACU_OPERACIONES_TERMINOS', 'ENABLE');
+      END IF;
+
+
+      
+
+      -- 4º delete from cm01.tea_terminos_acuerdo ...
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.TEA_TERMINOS_ACUERDO... Comprobando si existen registros para el usuario MIGRACM01');
       EXISTE := 0;
       V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.TEA_TERMINOS_ACUERDO WHERE ACU_ID IN ( SELECT ACU_ID FROM '||V_ESQUEMA||'.ACU_ACUERDO_PROCEDIMIENTOS ACU
@@ -1382,7 +1397,7 @@ BEGIN
            PRO_KEYS_STATUS(V_ESQUEMA, 'AEA_ACTUACIO_EXPLOR_ACUERDO', 'ENABLE');
       END IF;
 
-      -- ACU_ACUERDO_PROCEDIMIENTOS
+      -- 5º delete from cm01.acu_acuerdo_procedimientos ...
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.ACU_ACUERDO_PROCEDIMIENTOS... Comprobando si existen registros para el usuario MIGRACM01');
       EXISTE := 0;
       V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.ACU_ACUERDO_PROCEDIMIENTOS WHERE ASU_ID IN ( SELECT ASU_ID FROM '||V_ESQUEMA||'.TABLA_TMP_ASU )';

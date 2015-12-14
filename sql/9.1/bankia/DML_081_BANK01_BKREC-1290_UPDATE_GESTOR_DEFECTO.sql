@@ -38,14 +38,51 @@ BEGIN
 	 --/**
     -- * Modificación de USD_USUARIOS_DESPACHOS, donde dejaremos solamente un 1 USD_GESTOR_DEFECTO activo por DES_ID (despacho)
     -- */
-    execute immediate 'update '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS set USD_GESTOR_DEFECTO=0 where DES_ID=(select des_id from '||V_ESQUEMA||'.des_despacho_externo where des_despacho=''ACUERDO'' AND BORRADO = 0) and USU_ID=(select USU_ID from '||V_ESQUEMA_M||'.USU_USUARIOS where USU_USERNAME=''A172244'')';
-    execute immediate 'update '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS set USD_GESTOR_DEFECTO=0 where DES_ID=(select des_id from '||V_ESQUEMA||'.des_despacho_externo where des_despacho=''HAYA'' AND BORRADO = 0) and USU_ID=(select USU_ID from '||V_ESQUEMA_M||'.USU_USUARIOS where USU_USERNAME=''A127028'')';
-    execute immediate 'update '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS set USD_GESTOR_DEFECTO=0 where DES_ID=(select des_id from '||V_ESQUEMA||'.des_despacho_externo where des_despacho=''HAYA'' AND BORRADO = 0) and USU_ID=(select USU_ID from '||V_ESQUEMA_M||'.USU_USUARIOS where USU_USERNAME=''A112600'')';
-    execute immediate 'update '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS set USD_GESTOR_DEFECTO=0 where DES_ID=(select des_id from '||V_ESQUEMA||'.des_despacho_externo where des_despacho=''LUPICINIO RODRIGUEZ JIMENEZ'' AND BORRADO = 0) and USU_ID=(select USU_ID from '||V_ESQUEMA_M||'.USU_USUARIOS where USU_USERNAME=''A168771'')';
-
+    V_SQL := 'select count(*) from '||V_ESQUEMA_M||'.USU_USUARIOS where USU_USERNAME=''A172244''';
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+    IF V_NUM_TABLAS = 1 THEN  
+      V_SQL := 'select usu_id from '||V_ESQUEMA_M||'.USU_USUARIOS where USU_USERNAME=''A172244''';
+      EXECUTE IMMEDIATE V_SQL INTO V_NUM1;
+      execute immediate 'update '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS set USD_GESTOR_DEFECTO=0, usuariomodificar=''BKREC-1290'', fechamodificar=sysdate where DES_ID=(select des_id from '||V_ESQUEMA||'.des_despacho_externo where des_despacho=''ACUERDO'' AND BORRADO = 0 and des_id in (select des_id from usd_usuarios_despachos where usu_id='||V_NUM1||')) and USU_ID='||V_NUM1||'';
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('No existe el usuario o esta duplicado');
+        DBMS_OUTPUT.PUT_LINE('[INFO] No se ha podido modificar el registro para el usuario A168771');
+    END IF;
+    
+    V_SQL := 'select count(*) from '||V_ESQUEMA_M||'.USU_USUARIOS where USU_USERNAME=''A127028''';
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+    IF V_NUM_TABLAS = 1 THEN  
+      V_SQL := 'select usu_id from '||V_ESQUEMA_M||'.USU_USUARIOS where USU_USERNAME=''A127028''';
+      EXECUTE IMMEDIATE V_SQL INTO V_NUM1;
+      execute immediate 'update '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS set USD_GESTOR_DEFECTO=0, usuariomodificar=''BKREC-1290'', fechamodificar=sysdate where DES_ID=(select des_id from '||V_ESQUEMA||'.des_despacho_externo where des_despacho=''HAYA'' AND BORRADO = 0 and des_id in (select des_id from usd_usuarios_despachos where usu_id='||V_NUM1||')) and USU_ID='||V_NUM1||'';
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('No existe el usuario o esta duplicado');
+        DBMS_OUTPUT.PUT_LINE('[INFO] No se ha podido modificar el registro para el usuario A127028');
+    END IF;
+    
+    V_SQL := 'select count(*) from '||V_ESQUEMA_M||'.USU_USUARIOS where USU_USERNAME=''A112600''';
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+    DBMS_OUTPUT.PUT_LINE(V_NUM_TABLAS);
+    IF V_NUM_TABLAS = 1 THEN  
+      V_SQL := 'select usu_id from '||V_ESQUEMA_M||'.USU_USUARIOS where USU_USERNAME=''A112600''';
+      EXECUTE IMMEDIATE V_SQL INTO V_NUM1;
+      execute immediate 'update '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS set USD_GESTOR_DEFECTO=0, usuariomodificar=''BKREC-1290'', fechamodificar=sysdate where DES_ID=(select des_id from '||V_ESQUEMA||'.des_despacho_externo where des_despacho=''HAYA'' AND BORRADO = 0 and des_id in (select des_id from usd_usuarios_despachos where usu_id='||V_NUM1||')) and USU_ID='||V_NUM1||'';
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('No existe el usuario o esta duplicado');
+        DBMS_OUTPUT.PUT_LINE('[INFO] No se ha podido modificar el registro para el usuario A112600');
+    END IF;
+    
+    V_SQL := 'select count(*) from '||V_ESQUEMA_M||'.USU_USUARIOS where USU_USERNAME=''A168771''';
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+    IF V_NUM_TABLAS = 1 THEN
+      V_SQL := 'select usu_id from '||V_ESQUEMA_M||'.USU_USUARIOS where USU_USERNAME=''A168771''';
+      EXECUTE IMMEDIATE V_SQL INTO V_NUM1;
+      execute immediate 'update '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS set USD_GESTOR_DEFECTO=0, usuariomodificar=''BKREC-1290'', fechamodificar=sysdate where DES_ID=(select des_id from '||V_ESQUEMA||'.des_despacho_externo where des_despacho=''LUPICINIO RODRIGUEZ JIMENEZ'' AND BORRADO = 0 and des_id in (select des_id from usd_usuarios_despachos where usu_id='||V_NUM1||')) and USU_ID='||V_NUM1||'';
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('No existe el usuario o esta duplicado');
+        DBMS_OUTPUT.PUT_LINE('[INFO] No se ha podido modificar el registro para el usuario A168771');
+    END IF;
     COMMIT;
-
-	DBMS_OUTPUT.PUT_LINE('[FIN]');
 
 EXCEPTION
      WHEN OTHERS THEN

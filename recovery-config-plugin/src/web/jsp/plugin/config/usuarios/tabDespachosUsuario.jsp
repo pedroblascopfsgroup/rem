@@ -74,6 +74,7 @@
 		novalueMsg="**Debe seleccionar un despacho de la lista"  
 		novalueMsgKey="plugin.config.usuarios.consulta.despachos.message.novalue"
 		parameters="usuarioDespachoParams"
+		onSuccessMode="tabConMsgGuardando"
 		/>
 
 	
@@ -85,11 +86,14 @@
 				,{id:'DespachoExterno'+rec.get('id'), iconCls:'icon_despacho'});
 	};
 	
+	btBorrar.on('click',function(){
+        btBorrar.setDisabled(true);
+        btNuevo.setDisabled(true);
+	});
 	<pfs:grid name="gridDespachos" dataStore="storeDespachoUsuario"
 		columnModel="columnasDespachoUsuario" title="**Listado de despachos asociados al usuario"
 		titleKey="plugin.config.usuarios.consulta.despachos.contro.grid.title" collapsible="false" 
 		bbar="btNuevo,btBorrar" 
 		rowdblclick="opendespacho" />
-		
 	
 </pfslayout:tabpage>

@@ -890,14 +890,35 @@ BEGIN
       END IF;    
       
       ---TAR_TAREAS_NOTIFICACIONES
+      --- EJD:> Incluimos borrado de todo lo que sea Solicitudes de Prorrogas ya borradas.	
+/*  
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES... Que apunten a Solicitudes de Prorrogas borradas.');
+      EXISTE := 0;
+      V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES tar where tar.spr_id NOT in (SELECT spr.spr_ID FROM '||V_ESQUEMA||'.SPR_SOLICITUD_PRORROGA spr ) and tar.spr_id is not null';        
+                                                                                                                             
+      EXECUTE IMMEDIATE V_SQL INTO EXISTE;
+      IF (EXISTE>0) THEN
+           PRO_KEYS_STATUS(V_ESQUEMA, 'TAR_TAREAS_NOTIFICACIONES', 'DISABLE');
+           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.TAR_TAREAS_NOTIFICACIONES tar where tar.spr_id NOT in (SELECT spr.spr_ID FROM '||V_ESQUEMA||'.SPR_SOLICITUD_PRORROGA spr ) and tar.spr_id is not null';
+           DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES .. Se han eliminado con Solicitud de Prorroga '||EXISTE||' registros');
+           COMMIT;
+           PRO_KEYS_STATUS(V_ESQUEMA, 'TAR_TAREAS_NOTIFICACIONES', 'ENABLE');
+      END IF;
+*/
+
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES... Comprobando si existen registros para el usuario MIGRACM01');
       EXISTE := 0;
       V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES WHERE ASU_ID IN ( SELECT ASU_ID FROM '||V_ESQUEMA||'.TABLA_TMP_ASU)';                                                                                                                                      
       EXECUTE IMMEDIATE V_SQL INTO EXISTE;
       IF (EXISTE>0) THEN
            PRO_KEYS_STATUS(V_ESQUEMA, 'TAR_TAREAS_NOTIFICACIONES', 'DISABLE');
+
            EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.TAR_TAREAS_NOTIFICACIONES WHERE ASU_ID IN ( SELECT ASU_ID FROM '||V_ESQUEMA||'.TABLA_TMP_ASU )';
            DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES .. Se han eliminado '||EXISTE||' registros');
+
+           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.TAR_TAREAS_NOTIFICACIONES tar where tar.spr_id NOT in (SELECT spr.spr_ID FROM '||V_ESQUEMA||'.SPR_SOLICITUD_PRORROGA spr ) and tar.spr_id is not null';
+           DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES .. Se han eliminado con Solicitud de Prorroga '||EXISTE||' registros');
+
            COMMIT;
            PRO_KEYS_STATUS(V_ESQUEMA, 'TAR_TAREAS_NOTIFICACIONES', 'ENABLE');
       END IF;

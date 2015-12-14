@@ -220,7 +220,7 @@ public class SubastaConsumer extends ConsumerAction<DataContainerPayload> {
 		// Datos del recurso.
 		SubastaDto subastaDto = load(subastaPayload);
 		extSubastaManager.guardar(subastaDto);
-		logger.info(String.format("[INTEGRACION] SUB[%s] Subasta guardada!!", subGUID));
+		logger.debug(String.format("[INTEGRACION] SUB[%s] Subasta guardada!!", subGUID));
 	}
 
 }

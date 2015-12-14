@@ -73,7 +73,7 @@ public class TransicionarBPM extends ConsumerAction<DataContainerPayload> {
 	protected void doAction(DataContainerPayload payload) {
 		ProcedimientoPayload procedimiento = new ProcedimientoPayload(payload);
 		String guidPRC = getGuidProcedimiento(procedimiento); 
-		logger.debug(String.format("[INTEGRACION] PRC [%s] Inciando transición...", guidPRC));
+		logger.info(String.format("[INTEGRACION] PRC [%s] Inciando transición...", guidPRC));
 		// OJO! El procediento padre del nuevo BPM será el procedimiento desde el que se genera (no el padre de este!).
 		MEJProcedimiento prc = extProcedimientoManager.getProcedimientoByGuid(guidPRC);
 		if (prc==null) {

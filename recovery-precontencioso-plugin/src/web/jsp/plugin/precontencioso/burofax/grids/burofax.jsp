@@ -1040,7 +1040,7 @@
 		btnEnviar.setDisabled(false);
 		
 		<%-- Si el Resultado es notificado habilitamos el boton de añadir notificacion --%>
-		if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Enviado'){
+		if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Solicitado'){
 			btnNotificar.setDisabled(false);
 		}
 		else{

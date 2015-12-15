@@ -29,6 +29,8 @@ public class ListadoPreProyectadoDTO extends WebDto {
 	private BigDecimal minDeudaIrregular;
 	private BigDecimal maxDeudaIrregular;
 	private String codAgruparPor;
+	private Long minDiasVencidos;
+	private Long maxDiasVencidos;
 	private String tramos;
 	private String propuestas;
 	
@@ -101,6 +103,22 @@ public class ListadoPreProyectadoDTO extends WebDto {
 		this.codAgruparPor = codAgruparPor;
 	}
 	
+	public Long getMinDiasVencidos() {
+		return minDiasVencidos;
+	}
+
+	public void setMinDiasVencidos(Long minDiasVencidos) {
+		this.minDiasVencidos = minDiasVencidos;
+	}
+
+	public Long getMaxDiasVencidos() {
+		return maxDiasVencidos;
+	}
+
+	public void setMaxDiasVencidos(Long maxDiasVencidos) {
+		this.maxDiasVencidos = maxDiasVencidos;
+	}
+
 	public String getTramos() {
 		return tramos;
 	}

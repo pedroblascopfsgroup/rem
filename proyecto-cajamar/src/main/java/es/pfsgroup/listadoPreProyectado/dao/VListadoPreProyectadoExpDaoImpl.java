@@ -56,6 +56,14 @@ public class VListadoPreProyectadoExpDaoImpl extends AbstractEntityDao<VListadoP
 			sb.append(" and f.deudaIrregular <= " + dto.getMaxDeudaIrregular() + " ");
 		}
 		
+		if (!Checks.esNulo(dto.getMinDiasVencidos())) {
+			sb.append(" and f.diasVencidos >= " + dto.getMinDiasVencidos() + " ");
+		}
+		
+		if (!Checks.esNulo(dto.getMaxDiasVencidos())) {
+			sb.append(" and f.diasVencidos <= " + dto.getMaxDiasVencidos() + " ");
+		}
+		
 		if (!Checks.esNulo(dto.getTramos())) {
 			String[] tramos = dto.getTramos().split(",");
 			if (tramos.length>0) {

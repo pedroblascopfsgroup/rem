@@ -165,7 +165,7 @@ public class MetricaValidator {
                     continue;
                 }
 
-                if (nivel < 1 || nivel > 100) {
+                if (nivel.intValue() < 1 || nivel.intValue() > 100) {
                     return false;
                 }
             }

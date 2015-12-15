@@ -245,7 +245,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 			query.add(condicion);
 		}
 
-		query.addOrder(Order.asc("id")); // workaround
+		//query.addOrder(Order.asc("id")); // workaround
 
 		return query;
 	}

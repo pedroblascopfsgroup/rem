@@ -29,4 +29,11 @@ public interface ExpedientePersonaDao extends AbstractDao<ExpedientePersona, Lon
      * @return Listado de ExpedientePersona
      */
     List<ExpedientePersona> getListadoExpedientePersonaAmbito(Long idExpediente, DDAmbitoExpediente ambitoExpediente);
+    
+    /**
+     * Recupera los expedientePersona de cada cliente.
+     * @param idPersona
+     * @return Listado de String
+     */
+    List<ExpedientePersona> getListadoExpedientePersonaId(Long idPersona);
 }

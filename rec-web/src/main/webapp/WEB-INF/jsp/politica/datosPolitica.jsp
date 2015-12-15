@@ -6,8 +6,6 @@
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
 
 <fwk:page>
-
-
     var cTipoPolitica = app.creaCombo({
         data: <app:dict value="${tiposPolitica}" />
         ,name: 'codigoTipoPolitica'
@@ -17,7 +15,35 @@
         ,valueNotFoundText : '---'
         ,validator : function(value) {return (value!=this.valueNotFoundText); }
     });
+    
+    var expedientesRecord = Ext.data.Record.create([
+         {name:'codigo'}
+        ,{name:'descripcion'}
+    ]);
+    
+    var optionsExpedientesStore = page.getStore({
+           flow: 'politica/listadoExpedientesPol'
+           ,reader: new Ext.data.JsonReader({
+             root : 'expedientes'
+        }, expedientesRecord)
+           
+    });
 
+    var cExpedientes = app.creaCombo({
+        store: optionsExpedientesStore
+        ,name: 'idExpediente'
+        ,allowBlank: false
+        ,fieldLabel: '<s:message code="politica.expedientes" text="**Expedientes" />'
+        ,valueField: 'codigo'
+        ,value: '${dtoPolitica.politica.cicloMarcadoPolitica.expediente.descripcion}'
+    });
+    
+    var recargarComboExpedientes = function(store){
+        store.webflow({idPersona:${dtoPolitica.idPersona}});
+    };
+    
+    recargarComboExpedientes(optionsExpedientesStore);
+    
     var estadoField = new Ext.ux.form.StaticTextField({
         fieldLabel : '<s:message code="politica.estado" text="**Estado" />'
         ,value : '${dtoPolitica.politica.estadoPolitica.descripcion}'
@@ -165,7 +191,7 @@
 			}
 			,title:'<s:message code="politica.politica" text="**Politica"/>'
 			,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
-		    ,items : [{items:[cTipoPolitica,estadoField]},
+		    ,items : [{items:[cTipoPolitica,estadoField,cExpedientes]},
 					  {items:[motivoField,fechaField]}
 					 ]
 		});

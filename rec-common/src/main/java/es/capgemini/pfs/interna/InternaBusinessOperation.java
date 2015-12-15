@@ -137,6 +137,7 @@ public final class InternaBusinessOperation {
     public static final String BO_POL_MGR_BUSCAR_OBJETIVOS_POLITICA = "politicaManager.buscarObjetivosPolitica";
     public static final String BO_POL_MGR_GET_DTO_POLITICA = "politicaManager.getDtoPolitica";
     public static final String BO_POL_MGR_GET_TIPO_POLITICA_LIST = "politicaManager.getTipoPoliticaList";
+    public static final String BO_POL_MGR_GET_EXPEDIENTE_LIST = "politicaManager.getExpedientesPersona";
     public static final String BO_POL_MGR_GET_TIPO_POLITICA_PERSONA_LIST = "politicaManager.getTipoPoliticaPersonaList";
     public static final String BO_POL_MGR_GET_TIPO_MOTIVO = "politicaManager.getMotivoList";
     public static final String BO_POL_MGR_COMPRUEBA_PERMISOS_USUARIO = "politicaManager.compruebaPermisosUsuario";

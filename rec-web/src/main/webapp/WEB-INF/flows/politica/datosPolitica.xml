@@ -10,6 +10,7 @@
     <view-state id="formulario" view="politica/datosPolitica" model="dtoPolitica">
         <binder>
             <binding property="codigoTipoPolitica" />
+            <binding property="idExpediente" />
             <binding property="codigoGestorPerfil"/>
             <binding property="codigoGestorZona"/>
             <binding property="codigoSupervisorPerfil"/>

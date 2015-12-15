@@ -70,12 +70,46 @@ if (muestraBotonGuardar==1){
 	bottomBar.push(btnExportarPDF);
 </c:if>
 
+	var dsProcedimientos = new Ext.data.Store({
+			autoLoad:true,
+			proxy: new Ext.data.HttpProxy({
+				url: page.resolveUrl('expedientejudicial/getTiposProcedimientoAsignacionDeGestores')
+			}),
+			reader: new Ext.data.JsonReader({
+				root: 'listadoProcedimientos'
+				,totalProperty: 'total'
+			}, [
+				{name: 'codigo', mapping: 'codigo'},
+				{name: 'descripcion', mapping: 'descripcion'}
+			])
+		});
+	
+	for(i=0;i < items.length; i++){
+		if(items[i].nombre == "proc_iniciar"){
+			items[i] = new Ext.form.ComboBox({
+								name:items[i].name
+								,hiddenName:items[i].name
+								,disabled:items[i].disabled
+								,value:items[i].value
+								,data:items[i].values
+								,allowBlank : true
+								,store:dsProcedimientos
+								,displayField:'descripcion'
+								,valueField:'codigo'
+								,mode: 'local'
+								,emptyText:'----'
+								,triggerAction: 'all'
+								,fieldLabel : '<s:message code="plugin.precontencioso.asignar.gestor.procedimiento.propuesto" text="**Procedimiento propuesto" />'
+						});
+		}
+
 	var agenciaExternaSi = '<fwk:const value="es.capgemini.pfs.procesosJudiciales.model.DDSiNo.SI" />';
 	
 	var agenciaExt = items[2];
 	var procedimientoProp = items[3];
 	
 	agenciaExt.on('select', function() {
+		procedimientoProp.setValue('');
 		if(agenciaExt.getValue() == agenciaExternaSi) {
 			procedimientoProp.allowBlank = true;
 		}else{
@@ -83,38 +117,7 @@ if (muestraBotonGuardar==1){
 		}
 	});
 	
-	var dsProcedimientos = new Ext.data.Store({
-		autoLoad:true,
-		proxy: new Ext.data.HttpProxy({
-			url: page.resolveUrl('expedientejudicial/getTiposProcedimientoAsignacionDeGestores')
-		}),
-		reader: new Ext.data.JsonReader({
-			root: 'listadoProcedimientos'
-			,totalProperty: 'total'
-		}, [
-			{name: 'codigo', mapping: 'codigo'},
-			{name: 'descripcion', mapping: 'descripcion'}
-		])
-	});
-
-for(i=0;i < items.length; i++){
-	if(items[i].nombre == "proc_iniciar"){
-		items[i] = new Ext.form.ComboBox({
-							name:items[i].name
-							,hiddenName:items[i].name
-							,disabled:items[i].disabled
-							,value:items[i].value
-							,data:items[i].values
-							,allowBlank : false
-							,store:dsProcedimientos
-							,displayField:'descripcion'
-							,valueField:'codigo'
-							,mode: 'local'
-							,emptyText:'----'
-							,triggerAction: 'all'
-							,fieldLabel : '<s:message code="plugin.precontencioso.asignar.gestor.procedimiento.iniciar" text="**Procedimiento a iniciar" />'
-					});
-	}
+	
 }
 
 

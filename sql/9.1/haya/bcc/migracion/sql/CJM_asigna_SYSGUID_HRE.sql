@@ -11,6 +11,7 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        20151203 GMN  0.1 Versión inicial
+--##        20151216 GMN  0.2 Se pone TRIM a cruces por GUID_TAP_CODIGO
 --##########################################
 --*/
 
@@ -61,7 +62,7 @@ BEGIN
               , GUID_DD_TPO_CODIGO
               , GUID_BIE_CODIGO_INTERNO
               , GUID_CNT_CONTRATO
-              , GUID_TAP_CODIGO 
+              , TRIM(GUID_TAP_CODIGO) 
             FROM '||V_ESQUEMA||'.TMP_GUID_HRE';
 
     EXECUTE IMMEDIATE V_SQL;
@@ -389,7 +390,7 @@ BEGIN
                            AND tex.TAP_ID        = tap.TAP_ID
                            AND bcc.GUID_ASU_ID_EXTERNO = haya.ASU_ID_EXTERNO 
                            AND bcc.GUID_DD_TPO_CODIGO  = haya.DD_TPO_CODIGO
-                           AND bcc.GUID_TAP_CODIGO     = tap.TAP_CODIGO
+                           AND TRIM(bcc.GUID_TAP_CODIGO)     = TRIM(tap.TAP_CODIGO)
                            AND bcc.GUID_DES            = ''TAR_TAREAS_NOTIFICACIONES''
                            AND tarhre.USUARIOCREAR = ''MIGRAHAYA02'''
                            ;   

@@ -178,7 +178,7 @@ BEGIN
                              , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS prchre                             
                              , '||V_ESQUEMA||'.TMP_HAYA_PRC_SYSGUID haya
                          WHERE  prchre.PRC_ID             = haya.PRC_ID      
-                           AND NVL(tmp.GUID_BIE_CODIGO_INTERNO,''-123'') = NVL(haya.BIE_CODIGO_INTERNO,''-123'')
+--                           AND NVL(tmp.GUID_BIE_CODIGO_INTERNO,''-123'') = NVL(haya.BIE_CODIGO_INTERNO,''-123'')
                            AND tmp.GUID_ASU_ID_EXTERNO    = haya.ASU_ID_EXTERNO 
                            AND tmp.GUID_DD_TPO_CODIGO     = haya.DD_TPO_CODIGO
                            AND tmp.GUID_DES               = ''PRC_PROCEDIMIENTOS''
@@ -384,8 +384,8 @@ BEGIN
                              , '||V_ESQUEMA||'.TEX_TAREA_EXTERNA tex
                              , '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO tap  
                              , '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES tarhre
-                         WHERE NVL(bcc.GUID_BIE_CODIGO_INTERNO,''-123'') = NVL(haya.BIE_CODIGO_INTERNO,''-123'')                           
-                           AND tarhre.PRC_ID     = haya.PRC_ID  
+                         WHERE --NVL(bcc.GUID_BIE_CODIGO_INTERNO,''-123'') = NVL(haya.BIE_CODIGO_INTERNO,''-123'')                           
+                               tarhre.PRC_ID     = haya.PRC_ID  
                            AND tarhre.TAR_ID     = tex.TAR_ID
                            AND tex.TAP_ID        = tap.TAP_ID
                            AND bcc.GUID_ASU_ID_EXTERNO = haya.ASU_ID_EXTERNO 
@@ -481,7 +481,7 @@ BEGIN
                          WHERE 
                                subhre.ASU_ID     = haya.ASU_ID  
                            AND subhre.PRC_ID     = haya.PRC_ID  
-                           AND NVL(tmp.GUID_BIE_CODIGO_INTERNO,''-123'') = NVL(haya.BIE_CODIGO_INTERNO,''-123'')                                   
+--                           AND NVL(tmp.GUID_BIE_CODIGO_INTERNO,''-123'') = NVL(haya.BIE_CODIGO_INTERNO,''-123'')                                   
                            AND tmp.GUID_ASU_ID_EXTERNO = haya.ASU_ID_EXTERNO 
                            AND tmp.GUID_DD_TPO_CODIGO  = haya.DD_TPO_CODIGO
                            AND tmp.GUID_DES            = ''SUB_SUBASTA''

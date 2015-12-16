@@ -3,7 +3,6 @@ package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.controller;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,11 +16,17 @@ import org.springframework.web.context.request.WebRequest;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.asunto.EXTAsuntoManager;
+import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.contrato.model.DDEstadoContrato;
 import es.capgemini.pfs.core.api.plazaJuzgado.BuscaPlazaPaginadoDtoInfo;
 import es.capgemini.pfs.core.api.plazaJuzgado.PlazaJuzgadoApi;
+import es.capgemini.pfs.expediente.model.ExpedienteContrato;
+import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
@@ -66,6 +71,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.GuardarInstruc
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.LotesSubastaDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.manager.SubastaManager;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.manager.SubastaManager.ValorNodoTarea;
+import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.geninformes.GENINFVisorInformeController;
 import es.pfsgroup.recovery.geninformes.api.GENINFInformesApi;
 
@@ -114,6 +120,9 @@ public class SubastaController {
 	
 	@Autowired
 	private NMBBienManager nmbBienManager;
+	
+	@Autowired
+	private EXTAsuntoManager extAsuntoManager;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -313,9 +322,180 @@ public class SubastaController {
 
 		InformeValidacionCDDDto informe = proxyFactory.proxy(SubastaProcedimientoDelegateApi.class)
 				.generarInformeValidacionCDD(idSubasta, idsBien);
+		
 		return creaExcelValidacion(informe,model);
 	}
 	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String validarInformeCierreDeuda(@RequestParam(value = "idSubasta", required = true) Long idSubasta,
+			@RequestParam(value = "idBien", required = false) String idsBien, ModelMap model) {
+
+		final StringBuilder sb = new StringBuilder();
+		final Subasta subasta = subastaApi.getSubasta(idSubasta);
+		final Procedimiento procedimiento = subasta.getProcedimiento();
+		
+		if (!Checks.esNulo(procedimiento) && !procedimiento.getAuditoria().isBorrado()) {
+			sb.append(validarTipoProcedimiento(procedimiento));
+			sb.append(validarAsuntoExpediente(procedimiento));
+			sb.append(validarExpedienteContrato(procedimiento));
+			sb.append(validarPersonasAfectadasProcedimiento(procedimiento));						
+		} else {
+			// Que el procedimiento no esté borrado
+			sb.append("El procedimiento no existe o ha sido borrado.\n");			
+		}
+		
+		sb.append(validarPersonasBienes(subasta, idsBien));
+		
+		model.put("msgError", sb.toString());		
+		return JSON_RESPUESTA_SERVICIO;
+	}
+
+	private String validarPersonasBienes(final Subasta subasta, final String idsBien) {
+		// Que exista al menos una persona relacionada con cada bien y además tenga informado el campo tipo de documento
+		String[] arrIdsBien = null;
+		try {
+			arrIdsBien = idsBien.split(",");
+		} catch (final Exception e) {
+			//
+		}
+		
+		final StringBuilder sb = new StringBuilder();
+		if (arrIdsBien != null) {
+			if (!Checks.estaVacio(subasta.getLotesSubasta())) {
+				for (final LoteSubasta loteSubasta : subasta.getLotesSubasta()) {
+					final List<Bien> listBienes = loteSubasta.getBienes();
+					for (final Bien bien : listBienes) {
+						final NMBBien nmbBien = (NMBBien) bien;
+						for (final String strIdBien : arrIdsBien) {
+							final Long idBien = Long.parseLong(strIdBien);
+							if (nmbBien.getId().equals(idBien)) {
+								sb.append(validarBien(nmbBien));
+							}
+						}
+					}
+				}
+			}
+		} else {
+			if (!Checks.estaVacio(subasta.getLotesSubasta())) {
+				for (final LoteSubasta loteSubasta : subasta.getLotesSubasta()) {
+					final List<Bien> listBienes = loteSubasta.getBienes();
+					for (final Bien bien : listBienes) {
+						final NMBBien nmbBien = (NMBBien) bien;
+						sb.append(validarBien(nmbBien));
+					}
+				}
+			}			
+		}
+		
+		if(sb.length() > 0){
+			final String result = sb.toString();
+			return "Al menos una persona con tipo documento informado debe estar relacionada con los bienes con n\u00FAmero de activo: " + result.substring(0, result.length()-2);
+		}
+		return "";
+	}
+
+	private String validarBien(final NMBBien nmbBien) {
+		if (Checks.estaVacio(nmbBien.getPersonas())) {									
+			return nmbBien.getNumeroActivo() + ",";						
+		}else{
+			return validarPersonas(nmbBien);
+		}
+	}
+
+	private String validarPersonas(final NMBBien nmbBien) {
+		//Comprobar que alguna persona tenga el tipo documento informado.
+		Boolean existePersonaTipoDocumentoInformado = false;
+		for (final Persona persona : nmbBien.getPersonas()) {										
+			if (persona.getTipoDocumento() != null) {
+				existePersonaTipoDocumentoInformado = true;
+			}
+		}
+		if (!existePersonaTipoDocumentoInformado) {
+			// no existe persona con campo tipo documento informado
+			return nmbBien.getNumeroActivo() + ",";			
+		}
+		return "";
+	}
+
+	private String validarPersonasAfectadasProcedimiento(final Procedimiento procedimiento) {
+		if (!Checks.estaVacio(procedimiento.getPersonasAfectadas())) {
+			Boolean existePersonaTipoDocumentoInformado = false;
+			for (final Persona persona : procedimiento.getPersonasAfectadas()) {
+				// Que exista al menos una persona relacionada con el
+				// procedimiento y además tenga informado el campo tipo de
+				// documento
+				if (persona.getTipoDocumento() != null) {
+					existePersonaTipoDocumentoInformado = true;
+				}
+			}
+			if (!existePersonaTipoDocumentoInformado) {
+				// no existe persona con campo tipo documento informado
+				return "No existen personas con tipo de documento en el procedimiento. ";
+			}
+		} else {
+			// no existe persona con campo tipo documento informado
+			return "No existen personas con tipo de documento en el procedimiento. ";
+		}
+		return "";
+	}
+	
+	
+
+	private String validarExpedienteContrato(final Procedimiento procedimiento) {
+		if(!Checks.estaVacio(procedimiento.getExpedienteContratos())){
+			final List<ExpedienteContrato> listEc = procedimiento.getExpedienteContratos(); 
+			Boolean existenContratosActivos = false; 
+			for(final ExpedienteContrato ec: listEc){
+				// Que el contrato tenga informado el campo (ID_ACUERDO_CIERRE) y el estado del contrato sea activo.
+				final Contrato contrato = ec.getContrato();				
+				final DDEstadoContrato estadoContrato = contrato.getEstadoContrato();
+				final String codigoContrato = estadoContrato.getCodigo();				
+				//Contrato Activo: DD_ESC_CODIGO = 0 
+				if(DDEstadoContrato.ESTADO_CONTRATO_ACTIVO.equals(codigoContrato) && !contrato.getAuditoria().isBorrado()){
+					existenContratosActivos = true;
+				}					
+			}
+			if (!existenContratosActivos) {
+				// no existen contratos activos 
+				return "No existen contratos activos. ";
+				
+			}			
+		}else{
+			// no existen contratos activos 
+			return "No existen contratos activos. ";
+		}	
+		return "";
+	}
+
+	private String validarAsuntoExpediente(final Procedimiento procedimiento) {
+		if (procedimiento.getAsunto() == null || procedimiento.getAsunto().getAuditoria().isBorrado()) {
+			// Que el procedimiento esté relacionado con un asunto no borrado
+			return "El procedimiento no \u00BFest\u00E1 relacionado con ningún asunto. ";			
+		} else {
+			final Asunto asunto = procedimiento.getAsunto();
+			final EXTAsunto extAsunto = extAsuntoManager.getAsuntoById(asunto.getId());
+			if (extAsunto.getPropiedadAsunto() == null) {
+				// Que el asunto tenga informado el campo propiedad (DD_PAS_ID)
+				return "El asunto no tiene informado el campo propiedad. ";			
+			}
+			if (extAsunto.getExpediente() == null || extAsunto.getExpediente().getAuditoria().isBorrado()) {
+				// Que el asunto tenga un expediente relacionado y no borrado
+				return "El asunto no tiene un expediente relacionado. ";			
+			}
+		}
+		return "";
+	}
+
+	private String validarTipoProcedimiento(final Procedimiento procedimiento) {
+		if (procedimiento.getTipoProcedimiento() == null || procedimiento.getTipoProcedimiento().getAuditoria().isBorrado()) {
+			// Que el procedimiento tenga informado el campo tipo de procedimiento y éste no esté borrado (DD_TPO_ID)
+			return "El procedimiento no tiene tipo de procedimiento, o el tipo es incorrecto. ";			
+		}
+		return "";
+	}
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String enviarCierreDeuda(

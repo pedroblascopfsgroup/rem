@@ -24,8 +24,6 @@ import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
-import es.capgemini.pfs.expediente.dao.ExpedienteDao;
-import es.capgemini.pfs.expediente.dao.ExpedientePersonaDao;
 import es.capgemini.pfs.expediente.model.DDAmbitoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedientePersona;
@@ -89,12 +87,6 @@ public class PoliticaManager {
     
     @Autowired
     private PersonaDao personaDao;
-    
-    @Autowired
-    private ExpedientePersonaDao expedientePersonaDao;
-    
-    @Autowired
-    private ExpedienteDao expedienteDao;
 
     private final Log logger = LogFactory.getLog(getClass());
 
@@ -120,18 +112,12 @@ public class PoliticaManager {
         CicloMarcadoPolitica cicloMarcado = null;
         if (politica != null) {
             cicloMarcado = politica.getCicloMarcadoPolitica();
-            
         }
         if (cicloMarcado == null) {
             cicloMarcado = new CicloMarcadoPolitica();
             cicloMarcado.setExpediente(expediente);
             cicloMarcado.setPersona(persona);
             cicloMarcadoPoliticaDao.save(cicloMarcado);
-        }
-        
-        if(Checks.esNulo(cicloMarcado.getExpediente())){
-        	cicloMarcado.setExpediente(expediente);
-        	cicloMarcadoPoliticaDao.update(cicloMarcado);
         }
 
         //modificacion o alta
@@ -319,35 +305,6 @@ public class PoliticaManager {
     	} else {
     		return politicas;
     	}
-    }
-    
-    /**
-     * Recupera los expedientes de una persona
-     * @param idPersona
-     * @return
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_POL_MGR_GET_EXPEDIENTE_LIST)
-    public List<Expediente> getExpedientesPersona(Long idPersona){
-		
-    	if(idPersona == null){
-    		return null;
-    	}
-    	
-    	List<ExpedientePersona> listExpedientesPersona = expedientePersonaDao.getListadoExpedientePersonaId(idPersona);
-    	List<Expediente> listaExpedientes = new ArrayList<Expediente>();
-    	
-    	if(listExpedientesPersona != null && listExpedientesPersona.size() > 0){
-    		 for(ExpedientePersona expedientePersona : listExpedientesPersona){
-    			 if(expedientePersona.getExpediente() != null){
-    				 Expediente expediente = expedienteDao.get(expedientePersona.getExpediente().getId());
-    				 if(expediente != null){
-    					 listaExpedientes.add(expediente);
-    				 }
-    			 }
-    		 }
-    	}
-    		
-    	return listaExpedientes;
     }
     
     /**

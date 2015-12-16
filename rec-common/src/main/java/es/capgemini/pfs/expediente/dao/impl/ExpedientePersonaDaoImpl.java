@@ -79,17 +79,4 @@ public class ExpedientePersonaDaoImpl extends AbstractEntityDao<ExpedientePerson
 
         return getHibernateTemplate().find(hql.toString(), new Object[] { idExpediente });
     }
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ExpedientePersona> getListadoExpedientePersonaId(Long idPersona) {
-		StringBuilder hqlExpsPersona = new StringBuilder();
-		hqlExpsPersona.append(" select expp ");
-		hqlExpsPersona.append(" from ExpedientePersona expp ");
-		hqlExpsPersona.append(" where expp.auditoria.borrado = false and expp.persona.id = ? ");
-		
-		List<ExpedientePersona> listadoExpedientesPersona = getHibernateTemplate().find(hqlExpsPersona.toString(), new Object [] {idPersona});
-		
-		return listadoExpedientesPersona;
-	}
 }

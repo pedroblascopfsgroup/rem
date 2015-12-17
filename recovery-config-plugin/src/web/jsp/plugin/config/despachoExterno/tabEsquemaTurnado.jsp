@@ -2,8 +2,6 @@
 	titleKey="plugin.config.despachoExterno.turnado.tabEsquema.title"
 	title="**Turnado de despacho" items="panelSuperior">
 
-	var esquemaTurnadoVigente;
-		
 	<pfsforms:textfield
 		labelKey="plugin.config.despachoExterno.turnado.tabEsquema.litigios.tipoImporte"
 		label="**Tipo importe" name="turnadoLitigiosTipoImporte"
@@ -24,32 +22,6 @@
 		label="**Tipo calidad" name="turnadoConcursosTipoCalidad"
 		value="${despacho.turnadoCodigoCalidadConcursal}" readOnly="true" />		
 		
-	<c:if test="${not empty despacho.turnadoCodigoImporteLitigios or not empty despacho.turnadoCodigoImporteConcursal}">
-	page.webflow({
-		flow:'turnadodespachos/getEsquemaVigente'
-		,params: null
-		,success: function(data){
-			esquemaTurnadoVigente = true;
-			for(var i = 0; i < data.configuracion.length; i++) {
-				config = data.configuracion[i];
-				
-				if(config.tipo == 'LI' && config.codigo == turnadoLitigiosTipoImporte.value) {
-					turnadoLitigiosTipoImporte.value = config.descripcion;
-				}
-				else if(config.tipo == 'LC' && config.codigo == turnadoLitigiosTipoCalidad.value) {
-					turnadoLitigiosTipoCalidad.value = config.descripcion;
-				}
-				else if(config.tipo == 'CI' && config.codigo == turnadoConcursosTipoImporte.value) {
-					turnadoConcursosTipoImporte.value = config.descripcion;
-				}
-				else if(config.tipo == 'CC' && config.codigo == turnadoConcursosTipoCalidad.value) {
-					turnadoConcursosTipoCalidad.value = config.descripcion;
-				}
-			}
-    	}
-	});
-	</c:if>		
-
 	<c:set var="comunidades" value="" scope="page" />
 	<c:set var="provincias" value="" scope="page" />
 	<c:forEach var="ambito" items='${ambitoGreograficoDespacho}'
@@ -128,12 +100,14 @@
 		]
 	});
 
-	var labelError = new Ext.form.Label({style:'font-weight:bold'});
 	
 	<sec:authorize ifAllGranted="ROLE_ESQUEMA_TURNADO_EDITAR">
+	var labelError = new Ext.form.Label({style:'font-weight:bold'});
+	labelError.setText('<s:message code="plugin.config.esquematurnado.editar.sinEsquemaVigente" text="**no existe ningún esquema de turnado vigente."/>', false);
 	var btnEditarTurnadoLetrado = new Ext.Button({
 			text : '<s:message code="plugin.config.despachoExterno.turnado.tabEsquema.boton.editar" text="**Editar turnado" />'
 			,iconCls : 'icon_edit'
+			,disabled: true
 			,handler : function(){ 
 				var w = app.openWindow({
 					flow : 'turnadodespachos/ventanaEditarLetrado'
@@ -153,10 +127,43 @@
 				w.on(app.event.CANCEL, function(){ w.close(); });
 			}
 	});
-	labelError.setText('<s:message code="plugin.config.esquematurnado.editar.sinEsquemaVigente" text="**no existe ningún esquema de turnado vigente."/>', false);
-	btnEditarTurnadoLetrado.setDisabled(true);
 	</sec:authorize>
 
+	page.webflow({
+		flow:'turnadodespachos/getEsquemaVigente'
+		,params: null
+		,success: function(data){
+
+			<%-- No hay esquema de turnado, salimos  --%>
+			if (data.id==null || data.id=='') {
+				return;
+			}
+			
+			<sec:authorize ifAllGranted="ROLE_ESQUEMA_TURNADO_EDITAR">
+			btnEditarTurnadoLetrado.setDisabled(false);
+			labelError.setText('');
+			</sec:authorize>
+			
+			<c:if test="${not empty despacho.turnadoCodigoImporteLitigios or not empty despacho.turnadoCodigoImporteConcursal}">
+			for(var i = 0; i < data.configuracion.length; i++) {
+				config = data.configuracion[i];
+				
+				if(config.tipo == 'LI' && config.codigo == turnadoLitigiosTipoImporte.value) {
+					turnadoLitigiosTipoImporte.value = config.descripcion;
+				}
+				else if(config.tipo == 'LC' && config.codigo == turnadoLitigiosTipoCalidad.value) {
+					turnadoLitigiosTipoCalidad.value = config.descripcion;
+				}
+				else if(config.tipo == 'CI' && config.codigo == turnadoConcursosTipoImporte.value) {
+					turnadoConcursosTipoImporte.value = config.descripcion;
+				}
+				else if(config.tipo == 'CC' && config.codigo == turnadoConcursosTipoCalidad.value) {
+					turnadoConcursosTipoCalidad.value = config.descripcion;
+				}
+			}
+			</c:if>
+    	}
+	});
 	
 	var panelSuperior = new Ext.Panel({
 		title:'<s:message code="plugin.config.despachoExterno.turnado.ventana.panel.titulo" text="**Datos turnado"/>'

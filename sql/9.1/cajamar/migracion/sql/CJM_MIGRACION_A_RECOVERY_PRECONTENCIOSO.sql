@@ -2,7 +2,10 @@
 -- CREAR ASUNTOS PRECONTENCIOSO CAJAMAR (BCC)
 -- Creador: Jaime Sánchez-Cuenca, PFS Group
 -- Modificador: 
--- Fecha: 27/11/2015
+-- Fecha: 10/12/2015
+-- Modificacion: 
+--	EJD:> Incluimos filtro por "and cab.fecha_asignacion is null"
+--	EJD:> Incluimos control sobre indice IDX_USUAMOD_PEX
 /***************************************/
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -22,7 +25,7 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     
-    USUARIO varchar2(20) := 'MIGRACM01PCO';
+    USUARIO varchar2(20 CHAR) := 'MIGRACM01PCO';
 
 /*********************************************/
 /**       BORRAR LOS WORKFLOWS YA GENERADOS **/
@@ -116,6 +119,7 @@ BEGIN
 				from '||V_ESQUEMA||'.mig_expedientes_cabecera cab
 				inner join '||V_ESQUEMA||'.mig_expedientes_operaciones op on cab.cd_expediente = op.cd_expediente
 				where cab.fecha_baja is null and cab.MOTIVO_BAJA is null AND CAB.FECHA_ACEPTACION_LETRADO IS NULL
+				   and cab.fecha_asignacion is null
 				AND NOT EXISTS(SELECT 1 
 							   FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA C 
 							   WHERE C.CD_EXPEDIENTE_NUSE = CAB.CD_EXPEDIENTE)'; -- LOS QUE EVOLUCIONAN A PROCEDIMIENTOS NO SE MIGRAN COMO PRECONTENCIOSOS.
@@ -159,7 +163,7 @@ BEGIN
 				cli_telecobro, ofi_id, USUARIOMODIFICAR)
 			SELECT '||V_ESQUEMA||'.s_cli_clientes.NEXTVAL,
 				   apc.per_id, 
-				   (SELECT arq_id FROM '||V_ESQUEMA||'.arq_arquetipos WHERE ARQ_GESTION=1 AND BORRADO = 0 AND ITI_ID IN (SELECT ITI_ID FROM '||V_ESQUEMA||'.ITI_ITINERARIOS WHERE BORRADO=0 AND DD_TIT_ID=1) AND ROWNUM=1) AS arq_id,
+				   (SELECT arq_id FROM '||V_ESQUEMA||'.arq_arquetipos WHERE ARQ_NOMBRE = ''Migracion''  AND BORRADO = 1) AS arq_id,
 				   1 AS dd_est_id,
 				   3 AS dd_ecl_id,
 				   SYSDATE,
@@ -257,7 +261,7 @@ BEGIN
 					   5 AS dd_est_id,
 					   SYSDATE AS exp_fecha_est_id,
 					   apc.ofi_id AS ofi_id,
-					   (SELECT arq_id FROM '||V_ESQUEMA||'.arq_arquetipos WHERE ARQ_GESTION=1 AND BORRADO = 0 AND ITI_ID IN (SELECT ITI_ID FROM '||V_ESQUEMA||'.ITI_ITINERARIOS WHERE BORRADO=0 AND DD_TIT_ID=1) AND ROWNUM=1) AS arq_id,
+					   (SELECT arq_id FROM '||V_ESQUEMA||'.arq_arquetipos WHERE ARQ_NOMBRE = ''Migracion''  AND BORRADO = 1) AS arq_id,
 					   0 AS VERSION,
 					   '''||USUARIO||''' AS usuariocrear,
 					   SYSDATE AS fechacrear,
@@ -437,6 +441,13 @@ BEGIN
     EXECUTE IMMEDIATE V_SQL;
 
     -- PEX_PERSONAS_EXPEDIENTE
+    v_SQL := 'SELECT COUNT(1) FROM USER_INDEXES WHERE INDEX_NAME = ''IDX_USUARIOMODIFICAR''';
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+    IF V_NUM_TABLAS > 0 THEN
+	v_SQL := 'DROP INDEX IDX_USUARIOMODIFICAR';
+	EXECUTE IMMEDIATE V_SQL;
+    END IF;
+
     v_SQL := 'SELECT COUNT(1) FROM USER_INDEXES WHERE INDEX_NAME = ''IDX_USUAMOD_PEX''';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     IF V_NUM_TABLAS = 0 THEN

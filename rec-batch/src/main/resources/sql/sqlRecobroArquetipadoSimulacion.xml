@@ -1,342 +1,328 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-	<entry key="recobro.simulacion.idxdrop.jobArquetipado.Oracle9iDialect">
-		<![CDATA[
-DECLARE
-  A_TABLES DBMS_SQL.VARCHAR2_TABLE;
-  nCount NUMBER;
+    <entry key="recobro.simulacion.idxdrop.jobArquetipado.Oracle10gDialect">
+        <![CDATA[
+            DECLARE
+              A_TABLES DBMS_SQL.VARCHAR2_TABLE;
+              nCount NUMBER;
 
-BEGIN
-  --A_TABLES(1) := 'TMP_REC_CNT_LIBRES';
-  A_TABLES(1) := 'TMP_REC_CNT_LIBRES_ARQ_REC';
-  A_TABLES(A_TABLES.LAST + 1) := 'TMP_REC_NUEVOS_CLI';
-  A_TABLES(A_TABLES.LAST + 1) := 'TMP_REC_CNT_LIBRES_DES_ARQ';
-  A_TABLES(A_TABLES.LAST + 1) := 'TMP_REC_CNT_LIBRES_DES_ARQ_REC';
-  A_TABLES(A_TABLES.LAST + 1) := 'TMP_REC_CNT_LIBRES_DES_ARQ_ORD';
-  A_TABLES(A_TABLES.LAST + 1) := 'TMP_REC_CNT_LIBRES_ARQ_REC_PRI';
-  A_TABLES(A_TABLES.LAST + 1) := 'TMP_REC_CNT_LIBRES_PER_ARQ';
+            BEGIN
+            --A_TABLES(1) := 'TMP_REC_CNT_LIBRES';
+              A_TABLES(1) := 'TMP_REC_CNT_LIBRES_ARQ_REC';
+              A_TABLES(A_TABLES.LAST + 1) := 'TMP_REC_NUEVOS_CLI';
+              A_TABLES(A_TABLES.LAST + 1) := 'TMP_REC_CNT_LIBRES_DES_ARQ';
+              A_TABLES(A_TABLES.LAST + 1) := 'TMP_REC_CNT_LIBRES_DES_ARQ_REC';
+              A_TABLES(A_TABLES.LAST + 1) := 'TMP_REC_CNT_LIBRES_DES_ARQ_ORD';
+              A_TABLES(A_TABLES.LAST + 1) := 'TMP_REC_CNT_LIBRES_ARQ_REC_PRI';
+              A_TABLES(A_TABLES.LAST + 1) := 'TMP_REC_CNT_LIBRES_PER_ARQ';
 
-  FOR I IN A_TABLES.FIRST..A_TABLES.LAST LOOP
-    DBMS_OUTPUT.PUT_LINE('Limpiando índice de '||A_TABLES(I));
-    
-    FOR IDX IN (SELECT INDEX_NAME FROM USER_INDEXES  WHERE TABLE_NAME = A_TABLES(I)) LOOP
-      DBMS_OUTPUT.PUT_LINE('- Borrando índice '||IDX.INDEX_NAME);
-      EXECUTE IMMEDIATE 'DROP INDEX '||IDX.INDEX_NAME;
-    END LOOP;
-  END LOOP;
+              FOR I IN A_TABLES.FIRST..A_TABLES.LAST LOOP
+                DBMS_OUTPUT.PUT_LINE('Limpiando índice de '||A_TABLES(I));
 
-END;
-		]]>
-	</entry>
+                FOR IDX IN (SELECT INDEX_NAME FROM USER_INDEXES  WHERE TABLE_NAME = A_TABLES(I)) LOOP
+                  DBMS_OUTPUT.PUT_LINE('- Borrando índice '||IDX.INDEX_NAME);
+                  OPERACION_DDL.DDL_INDEX('DROP',IDX.INDEX_NAME); --unusable
+                END LOOP;
+              END LOOP;
 
-	<!-- PASO 1 - TRUNCADO TABLAS TEMPORALES -->
-	<!-- entry key="recobro.simulacion.borrado.tmp_rec_cnt_libres.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_CNT_LIBRES
-		]]>
-	</entry -->
-	<entry key="recobro.simulacion.borrado.tmp_rec_cnt_libres_arq_rec.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_CNT_LIBRES_ARQ_REC
-		]]>
-	</entry>
-	<entry key="recobro.simulacion.borrado.tmp_rec_nuevos_cli.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_NUEVOS_CLI
-		]]>
-	</entry>
-	<entry key="recobro.simulacion.borrado.tmp_rec_cnt_libres_des_arq.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_CNT_LIBRES_DES_ARQ
-		]]>
-	</entry>
-	<entry key="recobro.simulacion.borrado.tmp_rec_cnt_libres_des_arq_rec.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_CNT_LIBRES_DES_ARQ_REC
-		]]>
-	</entry>
-	<entry key="recobro.simulacion.borrado.tmp_rec_cnt_libres_des_arq_ord.Oracle9iDialect">
-		<![CDATA[		
-			TRUNCATE TABLE TMP_REC_CNT_LIBRES_DES_ARQ_ORD
-		]]>
-	</entry>
-	<entry key="recobro.simulacion.borrado.tmp_rec_cnt_libres_arq_rec_pri.Oracle9iDialect">
-		<![CDATA[		
-			TRUNCATE TABLE TMP_REC_CNT_LIBRES_ARQ_REC_PRI
-		]]>
-	</entry>
-	<entry key="recobro.simulacion.borrado.tmp_rec_cnt_libres_per_arq.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_CNT_LIBRES_PER_ARQ
-		]]>
-	</entry>
-	<entry key="recobro.simulacion.borrado.tmp_arp_arq_recobro_persona_si.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE ARP_ARQ_RECOBRO_PERSONA_SIM
-		]]>
-	</entry>
-	<!-- TODO Quitar estos si finalmente no hace falta
-	<entry key="recobro.simulacion.borrado.tmp_rec_data_rule_engine.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_DATA_RULE_ENGINE
-		]]>
-	</entry -->	
-	
-	<!-- PASO 2 - Obtenemos todos los contratos libres -->
-	<!--  -TODO Comentado esto porque estamos probando de sustituir esta tabala como una vista. Si lo activamso de nuevo hay que descomentar el drop de los índices al principio
-	<entry key="recobro.simulacion.insert.tmp_rec_cnt_libres.Oracle9iDialect">
-		<![CDATA[
-			INSERT INTO TMP_REC_CNT_LIBRES
-			SELECT DISTINCT CNT.CNT_ID, CPE.PER_ID 
-			FROM BATCH_DATOS_CNT CNT
-        		INNER JOIN BATCH_DATOS_CNT_PER CPE ON CNT.CNT_ID = CPE.CNT_ID
-			WHERE NOT CNT.CNT_ID IN (SELECT CNT_ID FROM BATCH_DATOS_CNT_EXP)
-		]]>
-	</entry>
-	
-	<entry key="recobro.simulacion.idxcreate.tmp_rec_cnt_libres.Oracle9iDialect">
-		<![CDATA[
-			BEGIN
-				EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_REC_CNT_LIBRES_1 ON TMP_REC_CNT_LIBRES (CNT_ID)';
-				EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_REC_CNT_LIBRES_2 ON TMP_REC_CNT_LIBRES (PER_ID)';
-  				EXECUTE IMMEDIATE 'ANALYZE TABLE TMP_REC_CNT_LIBRES COMPUTE STATISTICS';
-			END;
-		]]>
-	</entry>
-	-->
-	<!--  TODO Si finalmente no necesitamos este paso, quitarlo.
-	<entry key="recobro.simulacion.insert.tmp_rec_data_rule_egine.Oracle9iDialect">
-		<![CDATA[
-			INSERT INTO /*+ PARALLEL(TMP_REC_DATA_RULE_ENGINE, 16) PQ_DISTRIBUTE(TMP_REC_DATA_RULE_ENGINE,NONE) */ BANK01.TMP_REC_DATA_RULE_ENGINE
-			SELECT *
-			             FROM data_rule_engine
-			             WHERE per_id IN (SELECT per_id FROM tmp_rec_cnt_libres)
-		]]>
-	</entry>	
-	-->
-	
-	<!-- PASO 4 - Obtenemos las personas arquetipadas de los contratos libres, de la tabla salida del bean -->
-	<!-- Filtramos con la configuración, para obtener el único esquema liberado, y que el arquetipo
-	de la persona sea distinto a un tipo de filtrado -->
-	<entry key="recobro.simulacion.insert.tmp_rec_cnt_libres_per_arq.Oracle9iDialect">
-		<![CDATA[
-			BEGIN
-				INSERT /*+ APPEND PARALLEL(TMP_REC_CNT_LIBRES_PER_ARQ, 16) PQ_DISTRIBUTE(TMP_REC_CNT_LIBRES_PER_ARQ, NONE) */ INTO TMP_REC_CNT_LIBRES_PER_ARQ
-				WITH ARP AS (
-              		SELECT /*+ MATERIALIZE */  PER_ID, ARQ_ID, ARQ_DATE FROM ARP_ARQ_RECOBRO_PERSONA_SIM
-            	), 
-            	RCFE AS (SELECT DISTINCT RCF_CAR_ID, RCF_DD_TCE_CODIGO 
-		          FROM BATCH_RCF_ENTRADA 
-		          WHERE RCF_DD_EES_CODIGO = ${ddEstadoEsquemas.Liberado.codigo}),  
-		      	FECHA AS (SELECT PER_ID, MAX(ARQ_DATE) MAX_DATE
-		          FROM ARP  
-		          GROUP BY PER_ID, ARQ_DATE
-		       	),            
-		       	ARQ AS (SELECT ARP.PER_ID, ARP.ARQ_ID
-		          FROM ARP 
-		          INNER JOIN RCFE ON ARP.ARQ_ID = RCFE.RCF_CAR_ID
-		          INNER JOIN FECHA ON ARP.PER_ID = FECHA.PER_ID
-		          WHERE RCFE.RCF_DD_TCE_CODIGO <> ${tipocartera.filtro}
-		          AND ARP.ARQ_DATE = FECHA.MAX_DATE
-		       	)
-		       	SELECT DISTINCT TMP.PER_ID, ARQ.ARQ_ID
-					 FROM TMP_REC_CNT_LIBRES TMP
-		       	INNER JOIN ARQ ON TMP.PER_ID = ARQ.PER_ID;
-		       	COMMIT;
-		       	EXECUTE IMMEDIATE 'ANALYZE TABLE TMP_REC_CNT_LIBRES_PER_ARQ COMPUTE STATISTICS';
-		   	END;
-  		]]>	
-	</entry>
-	
-	<!-- PASO 5 - Cruzamos las tablas resultantes anteriores y guardamos las personas arquetipadas -->
-	<entry key="recobro.simulacion.insert.tmp_rec_cnt_libres_des_arq.Oracle9iDialect">
-		<![CDATA[
-			BEGIN
-				INSERT /*+ APPEND PARALLEL(TMP_REC_CNT_LIBRES_DES_ARQ, 16) PQ_DISTRIBUTE(TMP_REC_CNT_LIBRES_DES_ARQ, NONE) */ INTO TMP_REC_CNT_LIBRES_DES_ARQ  
-	  			SELECT DISTINCT CNT.CNT_ID, PER.PER_ID, PER.ARQ_ID
-	  			FROM TMP_REC_CNT_LIBRES CNT
-	    			INNER JOIN TMP_REC_CNT_LIBRES_PER_ARQ PER ON CNT.PER_ID = PER.PER_ID
-	  			WHERE NOT PER.ARQ_ID IS NULL;
-	  			COMMIT;
-	  			EXECUTE IMMEDIATE 'ANALYZE TABLE TMP_REC_CNT_LIBRES_DES_ARQ COMPUTE STATISTICS';
-	  		END;
-  		]]>
-  	</entry>
-  	
-	<!-- PASO 6 - Extraer de los contratos libres aquellos que no tienen asignados clientes -->
-	<entry key="recobro.simulacion.insert.tmp_rec_nuevos_cli.Oracle9iDialect">
-		<![CDATA[
-			BEGIN
-				INSERT /*+ APPEND PARALLEL(TMP_REC_NUEVOS_CLI, 16) PQ_DISTRIBUTE(TMP_REC_NUEVOS_CLI, NONE) */ INTO TMP_REC_NUEVOS_CLI
-				SELECT DISTINCT TMP.CNT_ID, TMP.PER_ID, TMP.ARQ_ID
-				FROM TMP_REC_CNT_LIBRES_DES_ARQ TMP
-					LEFT JOIN BATCH_DATOS_CLI CLI ON TMP.PER_ID = CLI.PER_ID
-				WHERE CLI.CLI_ID IS NULL;
-				COMMIT;
-	  			EXECUTE IMMEDIATE 'ANALYZE TABLE TMP_REC_NUEVOS_CLI COMPUTE STATISTICS';
-	  		END;
-		]]>
-	</entry>
-	
-	<!-- PASO 7 - Guardamos los contratos libres arquetipados junto con su riesgo -->
-	<entry key="recobro.simulacion.insert.tmp_rec_cnt_libres_des_arq_rec.Oracle9iDialect">
-		<![CDATA[
-			BEGIN
-				INSERT /*+ APPEND PARALLEL(TMP_REC_CNT_LIBRES_DES_ARQ_REC, 16) PQ_DISTRIBUTE(TMP_REC_CNT_LIBRES_DES_ARQ_REC, NONE) */ INTO TMP_REC_CNT_LIBRES_DES_ARQ_REC
-				SELECT DISTINCT TMP.CNT_ID, TMP.PER_ID, TMP.ARQ_ID, NVL(CNT_RIESGO,0)
-				FROM TMP_REC_CNT_LIBRES_DES_ARQ TMP
-					JOIN BATCH_DATOS_CNT CNT ON TMP.CNT_ID = CNT.CNT_ID;
-				COMMIT;
-	  		END;
-		]]>
-	</entry>
-	
-	<entry key="recobro.simulacion.idxcreate.tmp_rec_cnt_libres_des_arq_rec.Oracle9iDialect">
-		<![CDATA[
-			BEGIN
-				EXECUTE IMMEDIATE 'CREATE INDEX TMP_REC_CNT_LIB_DES_ARQ_REC_1 ON TMP_REC_CNT_LIBRES_DES_ARQ_REC (CNT_ID)';
-				EXECUTE IMMEDIATE 'CREATE INDEX TMP_REC_CNT_LIB_DES_ARQ_REC_2 ON TMP_REC_CNT_LIBRES_DES_ARQ_REC (PER_ID)';
-				EXECUTE IMMEDIATE 'CREATE INDEX TMP_REC_CNT_LIB_DES_ARQ_REC_3 ON TMP_REC_CNT_LIBRES_DES_ARQ_REC (ARQ_ID)';
-				EXECUTE IMMEDIATE 'CREATE INDEX TMP_REC_CNT_LIB_DES_ARQ_REC_4 ON TMP_REC_CNT_LIBRES_DES_ARQ_REC (MOV_RIESGO)';
-  				EXECUTE IMMEDIATE 'ANALYZE TABLE TMP_REC_CNT_LIBRES_DES_ARQ_REC COMPUTE STATISTICS';
-			END;
-		]]>
-	</entry>
-	
-	<!-- PASO 8 - Ordenamos los contratos libres por la prioridad del arquetipo y por el riesgo -->
-	<entry key="recobro.simulacion.create2.tmp_arq_recobro.Oracle9iDialect">
-		<![CDATA[
-			DECLARE
-			nCount NUMBER;   
-			BEGIN   			
-			    SELECT count(*) into nCount FROM all_mviews WHERE mview_name = 'TMP_ARQ_RECOBRO';
-			    IF(nCount > 0)
-				THEN
-			        EXECUTE IMMEDIATE 'DROP MATERIALIZED VIEW TMP_ARQ_RECOBRO';
-			    END IF;
-			    EXECUTE IMMEDIATE '
-			        CREATE MATERIALIZED VIEW TMP_ARQ_RECOBRO 
-			        BUILD IMMEDIATE
-			        REFRESH FORCE ON DEMAND
-			        WITH PRIMARY KEY AS
-			        SELECT DISTINCT RCF_CAR_ID ARQ_ID, RCF_ESC_PRIORIDAD ARQ_PRIORIDAD, RCF_CAR_NOMBRE ARQ_NOMBRE
-			        FROM BATCH_RCF_ENTRADA
-			        WHERE RCF_DD_EES_CODIGO = ''LBR''  ';
-			    EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_ARQ_RECOBRO_1 ON TMP_ARQ_RECOBRO(ARQ_ID)';           
-			END;   
-		]]>
-	</entry>
-	
-	<entry key="recobro.simulacion.insert.tmp_rec_cnt_libres_des_arq_ord.Oracle9iDialect">
-		<![CDATA[
-			BEGIN
-				INSERT /*+ APPEND PARALLEL(TMP_REC_CNT_LIBRES_DES_ARQ_ORD, 16) PQ_DISTRIBUTE(TMP_REC_CNT_LIBRES_DES_ARQ_ORD, NONE) */  INTO TMP_REC_CNT_LIBRES_DES_ARQ_ORD
-				SELECT TMP.CNT_ID, TMP.PER_ID, TMP.ARQ_ID, TMP.MOV_RIESGO
-				FROM TMP_REC_CNT_LIBRES_DES_ARQ_REC TMP
-				  INNER JOIN TMP_ARQ_RECOBRO ARQ ON TMP.ARQ_ID = ARQ.ARQ_ID
-				ORDER BY ARQ.ARQ_PRIORIDAD, TMP.MOV_RIESGO DESC;
-				COMMIT;
-	  			EXECUTE IMMEDIATE 'ANALYZE TABLE TMP_REC_CNT_LIBRES_DES_ARQ_ORD COMPUTE STATISTICS';
-	  		END;
-		]]>
-	</entry>
-	
-	<!-- PASO 9 - Escojemos el arquetipo prioritario de cada contrato -->
-	<entry key="recobro.simulacion.insert.tmp_rec_cnt_libres_arq_rec_pri.Oracle9iDialect">
-		<![CDATA[
-			BEGIN
-			COMMIT;
-			INSERT /*+ APPEND PARALLEL(TMP_REC_CNT_LIBRES_ARQ_REC_PRI, 16) PQ_DISTRIBUTE(TMP_REC_CNT_LIBRES_ARQ_REC_PRI, NONE) */ INTO TMP_REC_CNT_LIBRES_ARQ_REC_PRI
-						WITH datos_all AS
-						(SELECT /*+ MATERIALIZE */ T.CNT_ID, T.PER_ID, T.ARQ_ID, T.MOV_RIESGO, 
-						  	ROW_NUMBER() OVER (PARTITION BY T.CNT_ID ORDER BY A.ARQ_PRIORIDAD, T.PER_ID) AS FILA
-						  FROM TMP_REC_CNT_LIBRES_DES_ARQ_ORD T
-			        		JOIN TMP_ARQ_RECOBRO A ON T.ARQ_ID = A.ARQ_ID
-			        	)
-			        	, datos_filtered AS
-			        	(SELECT /*+ MATERIALIZE */ A.CNT_ID, A.PER_ID, A.ARQ_ID, A.MOV_RIESGO
-			        		FROM datos_all A
-			        		WHERE FILA = 1
-			        	)
-			        	, datos AS
-			        	(SELECT DISTINCT /*+ MATERIALIZE */ F.CNT_ID, F.PER_ID, F.ARQ_ID, F.MOV_RIESGO
-			        		FROM datos_filtered F
-			        	)
-			        	SELECT D.* FROM datos D;        
-			   COMMIT; 
-			   EXECUTE IMMEDIATE 'ANALYZE TABLE TMP_REC_CNT_LIBRES_ARQ_REC_PRI COMPUTE STATISTICS';      
-			END;    		
-		]]>	
-	</entry>
-	
-	<!-- PASO 10 - Borramos los contratos que no tengan personas -->
-	<entry key="recobro.simulacion.delete.tmp_rec_cnt_libres_arq_rec_pri.Oracle9iDialect">
-		<![CDATA[
-			DELETE FROM TMP_REC_CNT_LIBRES_ARQ_REC_PRI
-			WHERE PER_ID IS NULL
-		]]>	
-	</entry>
+            END;
+        ]]>
+    </entry>
 
-	<!-- PASO 11 - Volver a ordenar los contratos por arquetipo y riesgo -->
-	<entry key="recobro.simulacion.insert.tmp_rec_cnt_libres_arq_rec.Oracle9iDialect">
-		<![CDATA[
-			BEGIN  
-			COMMIT;        
-			INSERT /*+ APPEND PARALLEL(TMP_REC_CNT_LIBRES_ARQ_REC, 16) PQ_DISTRIBUTE(TMP_REC_CNT_LIBRES_ARQ_REC, NONE) */ INTO TMP_REC_CNT_LIBRES_ARQ_REC
-						WITH unordered AS
-						(SELECT DISTINCT /*+ MATERIALIZE */  TMP.CNT_ID, TMP.PER_ID, PRI.ARQ_ID, TMP.MOV_RIESGO, ARQ.ARQ_PRIORIDAD
-			      			FROM TMP_REC_CNT_LIBRES_DES_ARQ_ORD TMP
-						        INNER JOIN TMP_REC_CNT_LIBRES_ARQ_REC_PRI PRI ON TMP.CNT_ID = PRI.CNT_ID
-							  	INNER JOIN TMP_ARQ_RECOBRO ARQ ON PRI.ARQ_ID = ARQ.ARQ_ID 
-			            		INNER JOIN BATCH_RCF_ENTRADA RCF ON PRI.ARQ_ID = RCF.RCF_CAR_ID AND RCF.RCF_SCA_ID IS NOT NULL
-						), datos AS
-						(SELECT /*+ MATERIALIZE */ U.CNT_ID, U.PER_ID, U.ARQ_ID, U.MOV_RIESGO 
-							FROM unordered U ORDER BY U.ARQ_PRIORIDAD, U.MOV_RIESGO DESC
-						)
-						SELECT D.* FROM datos D;         
-			    COMMIT;  
-			END;   
-		]]>
-	</entry>
-	
-	<entry key="recobro.simulacion.idxcreate.tmp_rec_cnt_libres_arq_rec.Oracle9iDialect">
-		<![CDATA[
-			BEGIN
-				EXECUTE IMMEDIATE 'CREATE INDEX TMP_REC_CNT_LIB_ARQ_REC_1 ON TMP_REC_CNT_LIBRES_ARQ_REC (CNT_ID)';
-				EXECUTE IMMEDIATE 'CREATE INDEX TMP_REC_CNT_LIB_ARQ_REC_2 ON TMP_REC_CNT_LIBRES_ARQ_REC (PER_ID)';
-				EXECUTE IMMEDIATE 'CREATE INDEX TMP_REC_CNT_LIB_ARQ_REC_3 ON TMP_REC_CNT_LIBRES_ARQ_REC (ARQ_ID)';
-				EXECUTE IMMEDIATE 'CREATE INDEX TMP_REC_CNT_LIB_ARQ_REC_4 ON TMP_REC_CNT_LIBRES_ARQ_REC (MOV_RIESGO)';
-  				EXECUTE IMMEDIATE 'ANALYZE TABLE TMP_REC_CNT_LIBRES_ARQ_REC COMPUTE STATISTICS';
-			END;
-		]]>
-	</entry>
-	
-	<entry key="recobro.simulacion.drop2.tmp_arq_recobro.Oracle9iDialect">
-		<![CDATA[
-			DECLARE
-			    table_count number(3);
-			    query_body varchar (30048);
-			BEGIN
-			 	select count(1) into table_count from all_mviews WHERE mview_name='TMP_ARQ_RECOBRO';
-				if table_count = 1 then
-			 		query_body := 'DROP MATERIALIZED VIEW TMP_ARQ_RECOBRO';  EXECUTE IMMEDIATE query_body;
-				end if;		
-			END;	
-		]]>
-	</entry>
-	
-	<!-- PASO 4 - Insertar los nuevos clientes en CLI_CLIENTES -->
-	<!-- 
-	<entry key="recobro.insert.cli_clientes.Oracle9iDialect">
-		<![CDATA[
-			INSERT INTO CLI_CLIENTES
-			  (CLI_ID, PER_ID, ARQ_ID, DD_EST_ID, CLI_FECHA_EST_ID, USUARIOCREAR, FECHACREAR, 
-			    BORRADO, CLI_FECHA_CREACION )
-			SELECT S_CLI_CLIENTES.NEXTVAL AS CLI_ID, TMP.PER_ID, PER.ARQ_ID, 1 DD_EST_ID, SYSDATE CLI_FECHA_EST_ID, 'REC-BATCH' USUARIOCREAR, SYSDATE FECHACREAR, 
-      			${borrado.no.id} BORRADO, SYSDATE CLI_FECHA_CREACION
-			FROM TMP_REC_NUEVOS_CLI TMP
-				INNER JOIN PER_PERSONAS PER ON TMP.PER_ID = PER.PER_ID
-		]]>
-	</entry>
-	 -->			
+    <!-- PASO 1 - TRUNCADO TABLAS TEMPORALES -->
+    <!-- entry key="recobro.simulacion.borrado.tmp_rec_cnt_libres.Oracle10gDialect">
+        <![CDATA[
+            TRUNCATE TABLE TMP_REC_CNT_LIBRES
+        ]]>
+    </entry -->
+    <entry key="recobro.simulacion.borrado.tmp_rec_cnt_libres_arq_rec.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_CNT_LIBRES_ARQ_REC'); END;
+        ]]>
+    </entry>
+    <entry key="recobro.simulacion.borrado.tmp_rec_nuevos_cli.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_NUEVOS_CLI'); END;
+        ]]>
+    </entry>
+    <entry key="recobro.simulacion.borrado.tmp_rec_cnt_libres_des_arq.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_CNT_LIBRES_DES_ARQ'); END;
+        ]]>
+    </entry>
+    <entry key="recobro.simulacion.borrado.tmp_rec_cnt_libres_des_arq_rec.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_CNT_LIBRES_DES_ARQ_REC'); END;
+        ]]>
+    </entry>
+    <entry key="recobro.simulacion.borrado.tmp_rec_cnt_libres_des_arq_ord.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_CNT_LIBRES_DES_ARQ_ORD'); END;
+        ]]>
+    </entry>
+    <entry key="recobro.simulacion.borrado.tmp_rec_cnt_libres_arq_rec_pri.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_CNT_LIBRES_ARQ_REC_PRI'); END;
+        ]]>
+    </entry>
+    <entry key="recobro.simulacion.borrado.tmp_rec_cnt_libres_per_arq.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_CNT_LIBRES_PER_ARQ'); END;
+        ]]>
+    </entry>
+    <entry key="recobro.simulacion.borrado.tmp_arp_arq_recobro_persona_si.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','ARP_ARQ_RECOBRO_PERSONA_SIM'); END;
+        ]]>
+    </entry>
+    <!-- TODO Quitar estos si finalmente no hace falta
+    <entry key="recobro.simulacion.borrado.tmp_rec_data_rule_engine.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_DATA_RULE_ENGINE'); END;
+        ]]>
+    </entry -->
+
+    <!-- PASO 2 - Obtenemos todos los contratos libres -->
+    <!--  -TODO Comentado esto porque estamos probando de sustituir esta tabala como una vista. Si lo activamso de nuevo hay que descomentar el drop de los índices al principio
+    <entry key="recobro.simulacion.insert.tmp_rec_cnt_libres.Oracle10gDialect">
+        <![CDATA[
+            INSERT INTO TMP_REC_CNT_LIBRES
+            SELECT DISTINCT CNT.CNT_ID, CPE.PER_ID
+            FROM BATCH_DATOS_CNT CNT
+                INNER JOIN BATCH_DATOS_CNT_PER CPE ON CNT.CNT_ID = CPE.CNT_ID
+            WHERE NOT CNT.CNT_ID IN (SELECT CNT_ID FROM BATCH_DATOS_CNT_EXP)
+        ]]>
+    </entry>
+
+    <entry key="recobro.simulacion.idxcreate.tmp_rec_cnt_libres.Oracle10gDialect">
+        <![CDATA[
+            BEGIN
+                EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_REC_CNT_LIBRES_1 ON TMP_REC_CNT_LIBRES (CNT_ID)';
+                EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_REC_CNT_LIBRES_2 ON TMP_REC_CNT_LIBRES (PER_ID)';
+                EXECUTE IMMEDIATE 'ANALYZE TABLE TMP_REC_CNT_LIBRES COMPUTE STATISTICS';
+            END;
+        ]]>
+    </entry>
+    -->
+    <!--  TODO Si finalmente no necesitamos este paso, quitarlo.
+    <entry key="recobro.simulacion.insert.tmp_rec_data_rule_egine.Oracle10gDialect">
+        <![CDATA[
+            INSERT INTO /*+ PARALLEL(TMP_REC_DATA_RULE_ENGINE, 16) PQ_DISTRIBUTE(TMP_REC_DATA_RULE_ENGINE,NONE) */ TMP_REC_DATA_RULE_ENGINE
+            SELECT *
+                         FROM data_rule_engine
+                         WHERE per_id IN (SELECT per_id FROM tmp_rec_cnt_libres)
+        ]]>
+    </entry>
+    -->
+
+    <!-- PASO 4 - Obtenemos las personas arquetipadas de los contratos libres, de la tabla salida del bean -->
+    <!-- Filtramos con la configuración, para obtener el único esquema liberado, y que el arquetipo
+    de la persona sea distinto a un tipo de filtrado -->
+    <entry key="recobro.simulacion.insert.tmp_rec_cnt_libres_per_arq.Oracle10gDialect">
+        <![CDATA[
+            BEGIN
+                INSERT /*+ APPEND PARALLEL(TMP_REC_CNT_LIBRES_PER_ARQ, 16) PQ_DISTRIBUTE(TMP_REC_CNT_LIBRES_PER_ARQ, NONE) */ INTO TMP_REC_CNT_LIBRES_PER_ARQ
+                WITH ARP AS (
+                    SELECT /*+ MATERIALIZE */  PER_ID, ARQ_ID, ARQ_DATE FROM ARP_ARQ_RECOBRO_PERSONA_SIM
+                ),
+                RCFE AS (SELECT DISTINCT RCF_CAR_ID, RCF_DD_TCE_CODIGO
+                  FROM BATCH_RCF_ENTRADA
+                  WHERE RCF_DD_EES_CODIGO = ${ddEstadoEsquemas.Liberado.codigo}),
+                FECHA AS (SELECT PER_ID, MAX(ARQ_DATE) MAX_DATE
+                  FROM ARP
+                  GROUP BY PER_ID, ARQ_DATE
+                ),
+                ARQ AS (SELECT ARP.PER_ID, ARP.ARQ_ID
+                  FROM ARP
+                  INNER JOIN RCFE ON ARP.ARQ_ID = RCFE.RCF_CAR_ID
+                  INNER JOIN FECHA ON ARP.PER_ID = FECHA.PER_ID
+                  WHERE RCFE.RCF_DD_TCE_CODIGO <> ${tipocartera.filtro}
+                  AND ARP.ARQ_DATE = FECHA.MAX_DATE
+                )
+                SELECT DISTINCT TMP.PER_ID, ARQ.ARQ_ID
+                     FROM TMP_REC_CNT_LIBRES TMP
+                INNER JOIN ARQ ON TMP.PER_ID = ARQ.PER_ID;
+                COMMIT;
+                OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_CNT_LIBRES_PER_ARQ');
+            END;
+        ]]>
+    </entry>
+
+    <!-- PASO 5 - Cruzamos las tablas resultantes anteriores y guardamos las personas arquetipadas -->
+    <entry key="recobro.simulacion.insert.tmp_rec_cnt_libres_des_arq.Oracle10gDialect">
+        <![CDATA[
+            BEGIN
+                INSERT /*+ APPEND PARALLEL(TMP_REC_CNT_LIBRES_DES_ARQ, 16) PQ_DISTRIBUTE(TMP_REC_CNT_LIBRES_DES_ARQ, NONE) */ INTO TMP_REC_CNT_LIBRES_DES_ARQ
+                SELECT DISTINCT CNT.CNT_ID, PER.PER_ID, PER.ARQ_ID
+                FROM TMP_REC_CNT_LIBRES CNT
+                    INNER JOIN TMP_REC_CNT_LIBRES_PER_ARQ PER ON CNT.PER_ID = PER.PER_ID
+                WHERE NOT PER.ARQ_ID IS NULL;
+                COMMIT;
+                OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_CNT_LIBRES_DES_ARQ');
+            END;
+        ]]>
+    </entry>
+
+    <!-- PASO 6 - Extraer de los contratos libres aquellos que no tienen asignados clientes -->
+    <entry key="recobro.simulacion.insert.tmp_rec_nuevos_cli.Oracle10gDialect">
+        <![CDATA[
+            BEGIN
+                INSERT /*+ APPEND PARALLEL(TMP_REC_NUEVOS_CLI, 16) PQ_DISTRIBUTE(TMP_REC_NUEVOS_CLI, NONE) */ INTO TMP_REC_NUEVOS_CLI
+                SELECT DISTINCT TMP.CNT_ID, TMP.PER_ID, TMP.ARQ_ID
+                FROM TMP_REC_CNT_LIBRES_DES_ARQ TMP
+                    LEFT JOIN BATCH_DATOS_CLI CLI ON TMP.PER_ID = CLI.PER_ID
+                WHERE CLI.CLI_ID IS NULL;
+                COMMIT;
+                OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_NUEVOS_CLI');
+            END;
+        ]]>
+    </entry>
+
+    <!-- PASO 7 - Guardamos los contratos libres arquetipados junto con su riesgo -->
+    <entry key="recobro.simulacion.insert.tmp_rec_cnt_libres_des_arq_rec.Oracle10gDialect">
+        <![CDATA[
+            BEGIN
+                INSERT /*+ APPEND PARALLEL(TMP_REC_CNT_LIBRES_DES_ARQ_REC, 16) PQ_DISTRIBUTE(TMP_REC_CNT_LIBRES_DES_ARQ_REC, NONE) */ INTO TMP_REC_CNT_LIBRES_DES_ARQ_REC
+                SELECT DISTINCT TMP.CNT_ID, TMP.PER_ID, TMP.ARQ_ID, NVL(CNT_RIESGO,0)
+                FROM TMP_REC_CNT_LIBRES_DES_ARQ TMP
+                    JOIN BATCH_DATOS_CNT CNT ON TMP.CNT_ID = CNT.CNT_ID;
+                COMMIT;
+            END;
+        ]]>
+    </entry>
+
+    <entry key="recobro.simulacion.idxcreate.tmp_rec_cnt_libres_des_arq_rec.Oracle10gDialect">
+        <![CDATA[
+            BEGIN
+                OPERACION_DDL.DDL_INDEX('CREATE','TMP_REC_CNT_LIB_DES_ARQ_REC_1'); --rebuild
+                OPERACION_DDL.DDL_INDEX('CREATE','TMP_REC_CNT_LIB_DES_ARQ_REC_2'); --rebuild
+                OPERACION_DDL.DDL_INDEX('CREATE','TMP_REC_CNT_LIB_DES_ARQ_REC_3'); --rebuild
+                OPERACION_DDL.DDL_INDEX('CREATE','TMP_REC_CNT_LIB_DES_ARQ_REC_4'); --rebuild
+                OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_CNT_LIBRES_DES_ARQ_REC'); --estimate
+            END;
+        ]]>
+    </entry>
+
+    <!-- PASO 8 - Ordenamos los contratos libres por la prioridad del arquetipo y por el riesgo -->
+    <entry key="recobro.simulacion.create2.tmp_arq_recobro.Oracle10gDialect">
+        <![CDATA[
+            BEGIN
+                OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_ARQ_RECOBRO');
+                
+                INSERT INTO TMP_ARQ_RECOBRO
+                SELECT DISTINCT RCF_CAR_ID ARQ_ID, RCF_ESC_PRIORIDAD ARQ_PRIORIDAD, RCF_CAR_NOMBRE ARQ_NOMBRE
+                   FROM BATCH_RCF_ENTRADA
+                  WHERE RCF_DD_EES_CODIGO = 'LBR';                
+                  
+                OPERACION_DDL.DDL_TABLE('STATS','TMP_ARQ_RECOBRO');
+                END;
+        ]]>
+    </entry>
+
+    <entry key="recobro.simulacion.insert.tmp_rec_cnt_libres_des_arq_ord.Oracle10gDialect">
+        <![CDATA[
+            BEGIN
+                INSERT /*+ APPEND PARALLEL(TMP_REC_CNT_LIBRES_DES_ARQ_ORD, 16) PQ_DISTRIBUTE(TMP_REC_CNT_LIBRES_DES_ARQ_ORD, NONE) */  INTO TMP_REC_CNT_LIBRES_DES_ARQ_ORD
+                SELECT TMP.CNT_ID, TMP.PER_ID, TMP.ARQ_ID, TMP.MOV_RIESGO
+                FROM TMP_REC_CNT_LIBRES_DES_ARQ_REC TMP
+                  INNER JOIN TMP_ARQ_RECOBRO ARQ ON TMP.ARQ_ID = ARQ.ARQ_ID
+                ORDER BY ARQ.ARQ_PRIORIDAD, TMP.MOV_RIESGO DESC;
+                COMMIT;
+                OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_CNT_LIBRES_DES_ARQ_ORD'); --estimate
+            END;
+        ]]>
+    </entry>
+
+    <!-- PASO 9 - Escojemos el arquetipo prioritario de cada contrato -->
+    <entry key="recobro.simulacion.insert.tmp_rec_cnt_libres_arq_rec_pri.Oracle10gDialect">
+        <![CDATA[
+            BEGIN
+            COMMIT;
+            INSERT /*+ APPEND PARALLEL(TMP_REC_CNT_LIBRES_ARQ_REC_PRI, 16) PQ_DISTRIBUTE(TMP_REC_CNT_LIBRES_ARQ_REC_PRI, NONE) */ INTO TMP_REC_CNT_LIBRES_ARQ_REC_PRI
+                        WITH datos_all AS
+                        (SELECT /*+ MATERIALIZE */ T.CNT_ID, T.PER_ID, T.ARQ_ID, T.MOV_RIESGO,
+                            ROW_NUMBER() OVER (PARTITION BY T.CNT_ID ORDER BY A.ARQ_PRIORIDAD, T.PER_ID) AS FILA
+                          FROM TMP_REC_CNT_LIBRES_DES_ARQ_ORD T
+                            JOIN TMP_ARQ_RECOBRO A ON T.ARQ_ID = A.ARQ_ID
+                        )
+                        , datos_filtered AS
+                        (SELECT /*+ MATERIALIZE */ A.CNT_ID, A.PER_ID, A.ARQ_ID, A.MOV_RIESGO
+                            FROM datos_all A
+                            WHERE FILA = 1
+                        )
+                        , datos AS
+                        (SELECT DISTINCT /*+ MATERIALIZE */ F.CNT_ID, F.PER_ID, F.ARQ_ID, F.MOV_RIESGO
+                            FROM datos_filtered F
+                        )
+                        SELECT D.* FROM datos D;
+               COMMIT;
+               OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_CNT_LIBRES_ARQ_REC_PRI'); --estimate
+            END;
+        ]]>
+    </entry>
+
+    <!-- PASO 10 - Borramos los contratos que no tengan personas -->
+    <entry key="recobro.simulacion.delete.tmp_rec_cnt_libres_arq_rec_pri.Oracle10gDialect">
+        <![CDATA[
+            DELETE FROM TMP_REC_CNT_LIBRES_ARQ_REC_PRI
+            WHERE PER_ID IS NULL
+        ]]>
+    </entry>
+
+    <!-- PASO 11 - Volver a ordenar los contratos por arquetipo y riesgo -->
+    <entry key="recobro.simulacion.insert.tmp_rec_cnt_libres_arq_rec.Oracle10gDialect">
+        <![CDATA[
+            BEGIN
+            COMMIT;
+            INSERT /*+ APPEND PARALLEL(TMP_REC_CNT_LIBRES_ARQ_REC, 16) PQ_DISTRIBUTE(TMP_REC_CNT_LIBRES_ARQ_REC, NONE) */ INTO TMP_REC_CNT_LIBRES_ARQ_REC
+                        WITH unordered AS
+                        (SELECT DISTINCT /*+ MATERIALIZE */  TMP.CNT_ID, TMP.PER_ID, PRI.ARQ_ID, TMP.MOV_RIESGO, ARQ.ARQ_PRIORIDAD
+                            FROM TMP_REC_CNT_LIBRES_DES_ARQ_ORD TMP
+                                INNER JOIN TMP_REC_CNT_LIBRES_ARQ_REC_PRI PRI ON TMP.CNT_ID = PRI.CNT_ID
+                                INNER JOIN TMP_ARQ_RECOBRO ARQ ON PRI.ARQ_ID = ARQ.ARQ_ID
+                                INNER JOIN BATCH_RCF_ENTRADA RCF ON PRI.ARQ_ID = RCF.RCF_CAR_ID AND RCF.RCF_SCA_ID IS NOT NULL
+                        ), datos AS
+                        (SELECT /*+ MATERIALIZE */ U.CNT_ID, U.PER_ID, U.ARQ_ID, U.MOV_RIESGO
+                            FROM unordered U ORDER BY U.ARQ_PRIORIDAD, U.MOV_RIESGO DESC
+                        )
+                        SELECT D.* FROM datos D;
+                COMMIT;
+            END;
+        ]]>
+    </entry>
+
+    <entry key="recobro.simulacion.idxcreate.tmp_rec_cnt_libres_arq_rec.Oracle10gDialect">
+        <![CDATA[
+            BEGIN
+                OPERACION_DDL.DDL_INDEX('CREATE','TMP_REC_CNT_LIB_ARQ_REC_1'); --rebuild
+                OPERACION_DDL.DDL_INDEX('CREATE','TMP_REC_CNT_LIB_ARQ_REC_2'); --rebuild
+                OPERACION_DDL.DDL_INDEX('CREATE','TMP_REC_CNT_LIB_ARQ_REC_3'); --rebuild
+                OPERACION_DDL.DDL_INDEX('CREATE','TMP_REC_CNT_LIB_ARQ_REC_4'); --rebuild
+                OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_CNT_LIBRES_ARQ_REC'); --estimate
+            END;
+        ]]>
+    </entry>
+
+    <entry key="recobro.simulacion.drop2.tmp_arq_recobro.Oracle10gDialect">
+       <![CDATA[
+             BEGIN
+               OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_ARQ_RECOBRO');
+             END;
+         ]]>
+    </entry>
+
+    <!-- PASO 4 - Insertar los nuevos clientes en CLI_CLIENTES -->
+    <!--
+    <entry key="recobro.insert.cli_clientes.Oracle10gDialect">
+        <![CDATA[
+            INSERT INTO CLI_CLIENTES
+              (CLI_ID, PER_ID, ARQ_ID, DD_EST_ID, CLI_FECHA_EST_ID, USUARIOCREAR, FECHACREAR,
+                BORRADO, CLI_FECHA_CREACION )
+            SELECT S_CLI_CLIENTES.NEXTVAL AS CLI_ID, TMP.PER_ID, PER.ARQ_ID, 1 DD_EST_ID, SYSDATE CLI_FECHA_EST_ID, 'REC-BATCH' USUARIOCREAR, SYSDATE FECHACREAR,
+                ${borrado.no.id} BORRADO, SYSDATE CLI_FECHA_CREACION
+            FROM TMP_REC_NUEVOS_CLI TMP
+                INNER JOIN PER_PERSONAS PER ON TMP.PER_ID = PER.PER_ID
+        ]]>
+    </entry>
+     -->
 </properties>

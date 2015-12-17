@@ -107,14 +107,14 @@ public class CreacionExpedientesRecuperacionTasklet implements Tasklet, StepExec
 
         Cliente cli = clienteMgr.getWithContratos(idCliente);
         if (Checks.esNulo(cli)) {        	
-        	logger.error("Cliente " + idCliente + " se ha borrado previamente");
+        	logger.info("Cliente " + idCliente + " se ha borrado previamente");
         	return;
         }
         
         Date fechaExtraccion = (Date) cli.getPersona().getFechaExtraccion(); //executionContext.getVariable(FECHA_EXTRACCION);
         
         if (Checks.esNulo(cli.getContratoPrincipal())) {
-        	logger.error("El cliente " + idCliente + " no tiene contrato principal o ya está borrado");
+        	logger.info("El cliente " + idCliente + " no tiene contrato principal o ya está borrado");
         	return;
         }
         Long idContrato = cli.getContratoPrincipal().getId();

@@ -1378,17 +1378,12 @@
 		  <artifactId>fr.opensagres.xdocreport.template.freemarker</artifactId>
 		  <version>1.0.4</version>
 		</dependency>
-		<!-- Dependencia para crear un docx a partir de texto html -->
-		<dependency>
-			<groupId>org.docx4j</groupId>
-			<artifactId>docx4j</artifactId>
-			<version>3.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.docx4j</groupId>
-			<artifactId>docx4j-ImportXHTML</artifactId>
-			<version>3.0.0</version>
-		</dependency>
+		<!-- Dependencia para crear generar un PDF a partir de un DOCX -->
+	    <dependency>
+	      <groupId>fr.opensagres.xdocreport</groupId>
+	      <artifactId>fr.opensagres.xdocreport.converter.docx.xwpf</artifactId>
+	      <version>1.0.5</version>
+	    </dependency>
 		<!-- JasperReports Dependency -->
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
@@ -1600,7 +1595,7 @@
         		</dependency>
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
-					<artifactId>recovery-bankiaWeb-plugin</artifactId>
+					<artifactId>proyecto-bankia-online</artifactId>
 					<exclusions>
 						<exclusion>
 							<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
@@ -2018,7 +2013,7 @@
 									<filtering>true</filtering>
 								</resource>
 							</webResources>
-							<packagingExcludes>WEB-INF/lib/xml-apis*.jar</packagingExcludes>
+							<packagingExcludes>WEB-INF/lib/xml-apis-UNKNOWN.jar</packagingExcludes>
 						</configuration>
 					</plugin>
 				</plugins>

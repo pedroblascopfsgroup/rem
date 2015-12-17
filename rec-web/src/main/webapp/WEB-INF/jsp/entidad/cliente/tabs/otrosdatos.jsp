@@ -108,6 +108,7 @@
    var zonaPersona =     label('zonaPersona','<s:message code="menu.clientes.consultacliente.datosTab.zonaPersona" text="**Zona Persona" />');
    var zonaTerritorial = label('zonaTerritorial','<s:message code="menu.clientes.consultacliente.datosTab.zonaTerritorial" text="**Zona Territorial" />');
      
+   var accionFSR = label('accionFSR','<s:message code="menu.clientes.consultacliente.datosTab.accionFSR" text="**Acción de FSR" />');
    
   	
    colectivoSingular.autoHeight=true;
@@ -214,7 +215,7 @@
 		entidad.setLabel('ultimaOperacionConcedida', d.ultimaOperacionConcedida);
 		entidad.setLabel('zonaPersona', d.zonaPersona);
 		entidad.setLabel('zonaTerritorial',d.zonaTerritorial);
-		
+		entidad.setLabel('accionFSR',d.accionFSR);
 		
 					
 		var esVisible = [

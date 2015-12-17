@@ -23,6 +23,7 @@ DECLARE
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_MSQL VARCHAR2(4000 CHAR);
+    V_MSQL_1 VARCHAR2(4000 CHAR);
     V_SQL VARCHAR2(4000 CHAR); 	-- Vble. para consulta que valida la existencia de una tabla.  
     V_NUM_TABLAS NUMBER(16); 	-- Vble. para validar la existencia de una tabla.     
    	PEF_ID NUMBER(16);			-- Vble. auxiliar para almacenar id del perfil.

@@ -525,7 +525,7 @@ USING ( with personas_ofi_gestora as (
               MINIREC.RCV_GEST_PDM_LITIGIO pdm on cpe.cnt_id = pdm.id_cuenta_rcv inner join
               bank01.dd_tin_tipo_intervencion tin on tin.dd_tin_id = cpe.dd_tin_id and tin.DD_TIN_TITULAR = 1 left join 
               personas_ofi_gestora on personas_ofi_gestora.per_id = cpe.per_id inner join
-              bank01.ofi_oficinas oficr on oficr.ofi_codigo_oficina = personas_ofi_gestora.icc_value
+              bank01.ofi_oficinas oficr on to_char(oficr.ofi_codigo_oficina) = personas_ofi_gestora.icc_value
           ) orden 
           where rn = 1
     ) SRC

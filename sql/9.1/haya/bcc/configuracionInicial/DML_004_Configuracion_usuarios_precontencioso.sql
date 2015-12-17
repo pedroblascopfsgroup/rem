@@ -17,7 +17,7 @@ insert into HAYA02.TGP_TIPO_GESTOR_PROPIEDAD (TGP_ID,DD_TGE_ID,TGP_CLAVE,TGP_VAL
 -- revisar TGE
 
 update hayamaster.dd_tge_tipo_gestor set 
-       dd_tge_descripcion = 'CJ - Supervisor expediente judicial'
+       dd_tge_descripcion = 'Supervisor expediente judicial'
 where dd_tge_codigo = 'SUP_PCO';
 
 update hayamaster.dd_tge_tipo_gestor set 
@@ -37,19 +37,15 @@ update hayamaster.dd_tge_tipo_gestor set borrado = 0, fechaborrar = null, usuari
 where dd_tge_codigo = 'GESTORIA_PREDOC';
 
 update hayamaster.dd_tge_tipo_gestor set 
-       dd_tge_descripcion = 'CJ - Notaria'
+       dd_tge_descripcion = 'Notaria'
 where dd_tge_codigo = 'NOTARI';
 
 update hayamaster.dd_tge_tipo_gestor set 
-       dd_tge_descripcion = 'CJ - Archivo'
+       dd_tge_descripcion = 'Archivo'
 where dd_tge_codigo = 'ARCHIVO_PCO';
 
 update hayamaster.dd_tge_tipo_gestor set 
-       dd_tge_descripcion = 'CJ - Registro de la propiedad'
-where dd_tge_codigo = 'REGPROP_PCO';
-
-update hayamaster.dd_tge_tipo_gestor set 
-       dd_tge_descripcion = 'CJ - Registro de la propiedad'
+       dd_tge_descripcion = 'Registro de la propiedad'
 where dd_tge_codigo = 'REGPROP_PCO';
 
 insert into hayamaster.dd_tge_tipo_gestor (dd_tge_id, dd_tge_codigo, dd_tge_descripcion, dd_tge_descripcion_larga, usuariocrear, fechacrear) values(

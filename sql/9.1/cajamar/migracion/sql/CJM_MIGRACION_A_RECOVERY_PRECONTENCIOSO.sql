@@ -119,7 +119,7 @@ BEGIN
 				from '||V_ESQUEMA||'.mig_expedientes_cabecera cab
 				inner join '||V_ESQUEMA||'.mig_expedientes_operaciones op on cab.cd_expediente = op.cd_expediente
 				where cab.fecha_baja is null and cab.MOTIVO_BAJA is null AND CAB.FECHA_ACEPTACION_LETRADO IS NULL
-				   and cab.fecha_asignacion is null
+				   and cab.fecha_asignacion is not null
 				AND NOT EXISTS(SELECT 1 
 							   FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA C 
 							   WHERE C.CD_EXPEDIENTE_NUSE = CAB.CD_EXPEDIENTE)'; -- LOS QUE EVOLUCIONAN A PROCEDIMIENTOS NO SE MIGRAN COMO PRECONTENCIOSOS.

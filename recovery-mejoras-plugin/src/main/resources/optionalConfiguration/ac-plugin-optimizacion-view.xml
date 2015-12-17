@@ -129,9 +129,11 @@
 		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
 		p:permission="ROLE_COMITE"/>
 		
+		<!-- Se comenta este bean para que no muestre la pestaña eventos en los asuntos -->
+	<!-- 	
 	<bean p:entity="tabs.asunto.fast" p:name="historicoEventosAsuntos"  p:order="1000" 
 		p:fileName="/WEB-INF/jsp/entidad/asunto/tabs/eventos.jsp" 
-		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />  -->
 	
 	<bean p:entity="tabs.asunto.fast" p:name="adjuntosAsunto"  p:order="1100" 	
 		p:fileName="/WEB-INF/jsp/entidad/asunto/tabs/adjuntos.jsp" 

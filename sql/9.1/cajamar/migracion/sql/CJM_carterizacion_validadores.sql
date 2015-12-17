@@ -11,7 +11,7 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial (Carlos Gil)
---##        0.2          GMN Adaptación script a lanzador
+--##        0.2 GMN Adaptación script a lanzador
 --##        0.3 20151209 GMN Se reasignan gestores GESCHRE, SUCHRE y DIRREC solo a litigios
 --##########################################
 --*/
@@ -82,7 +82,7 @@ from
 
 EXECUTE IMMEDIATE V_SQL; 
 
--- Gestor control de gestión HRE  solo para litigios
+-- Gestor control de gestión HRE
 
 V_SQL:= 'insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
 select '||V_ESQUEMA||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id,
@@ -120,7 +120,7 @@ from
   
 EXECUTE IMMEDIATE V_SQL; 
 
--- Supervisor control gestión HRE  solo para litigios
+-- Supervisor control gestión HRE
 
 V_SQL:= 'insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
 select '||V_ESQUEMA||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id,
@@ -158,7 +158,7 @@ from
 
 EXECUTE IMMEDIATE V_SQL; 
 
--- Dirección recuperaciones HRE solo para litigios
+-- Dirección recuperaciones
 
 V_SQL:= 'insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
 select '||V_ESQUEMA||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id,

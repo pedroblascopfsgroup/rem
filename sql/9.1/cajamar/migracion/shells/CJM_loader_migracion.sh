@@ -52,6 +52,13 @@ if [ $? != 0 ] ; then
 #   exit 1
 fi
 
+echo "EXPEDIENTES-OBSERVACIONES-TROZOS"
+$ORACLE_HOME/bin/sqlldr control="$ctl_dir"expedientes_observaciones_trozosDataLoad.ctl log="$log_dir"EXPEDIENTES_OBSERVACIONES_TROZOS"$fecha".log bad="$bad_dir"EXPEDIENTES_OBSERVACIONES_TROZOS"$fecha".bad userid="$1" DIRECT=TRUE data="$dat_dir"OBSERVACIONES-TROZOS.dat
+if [ $? != 0 ] ; then 
+   echo -e "[ERROR] EXPEDIENTES-OBSERVACIONES-TROZOS"
+#   exit 1
+fi
+
 
 echo "PROCEDIMIENTOS-ACTORES"
 $ORACLE_HOME/bin/sqlldr control="$ctl_dir"procedimientos_actoresDataLoad.ctl log="$log_dir"PROCEDIMIENTOS-ACTORES_"$fecha".log bad="$bad_dir"PROCEDIMIENTOS-ACTORES_"$fecha".bad userid="$1" DIRECT=TRUE data="$dat_dir"PROCEDIMIENTOS-ACTORES.dat

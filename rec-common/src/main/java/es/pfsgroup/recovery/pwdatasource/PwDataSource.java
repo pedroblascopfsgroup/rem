@@ -9,10 +9,10 @@ import org.apache.commons.dbcp.BasicDataSource;
 import es.capgemini.pfs.DevonPropertiesConstants.DatabaseConfig;
 import es.pfsgroup.recovery.Encriptador;
 
-import es.pfsgroup.recovery.txdatasource.TransactionalDataSourceComponent;
+import es.pfsgroup.recovery.txdatasource.TransactionalBasicDataSourceWrapper;
 
 
-public class PwDataSource extends TransactionalDataSourceComponent {
+public class PwDataSource extends TransactionalBasicDataSourceWrapper {
 
 	@javax.annotation.Resource
 	private Properties appProperties;

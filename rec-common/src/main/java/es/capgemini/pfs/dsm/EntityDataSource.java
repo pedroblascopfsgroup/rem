@@ -12,7 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
-import es.pfsgroup.recovery.txdatasource.TransactionalDataSourceComponent;
+import es.pfsgroup.recovery.txdatasource.TransactionalBasicDataSourceWrapper;
 
 /**
  * TODO Documentar.
@@ -26,7 +26,7 @@ public class EntityDataSource extends AbstractRoutingDataSource {
 	@Resource
 	private Properties appProperties;
         
-        private TransactionalDataSourceComponent transactionalDataSourceComponent;
+        private TransactionalBasicDataSourceWrapper transactionalDataSourceComponent;
 
 	private Map<Long, String> mappingCache = new HashMap<Long, String>();
 
@@ -63,6 +63,7 @@ public class EntityDataSource extends AbstractRoutingDataSource {
 	public Connection getConnection() throws SQLException {
             // Sobreescribimos el método para añadirle la gestión de los usuarios
             // transaccionales
+            System.out.println("***&*** Ha llamado a EntityDataSource.getConnection() ");
             return transactionalDataSourceComponent.getConnection();
 	}
 
@@ -71,6 +72,7 @@ public class EntityDataSource extends AbstractRoutingDataSource {
 			throws SQLException {
             // Sobreescribimos el método para añadirle la gestión de los usuarios
             // transaccionales
+            System.out.println("***&*** Ha llamado a EntityDataSource.getConnection() ");
             return transactionalDataSourceComponent.getConnection(username, password);
 	}
 

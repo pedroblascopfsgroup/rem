@@ -28,12 +28,12 @@ import es.capgemini.pfs.security.model.UsuarioSecurity;
  * @author Bruno Anglés / JoseVi Jimenez
  */
 @Component
-public class TransactionalDataSourceComponent extends BasicDataSource{
+public class TransactionalBasicDataSourceWrapper extends BasicDataSource{
 
     @javax.annotation.Resource
     private Properties appProperties;
 
-    private static Log log = LogFactory.getLog(TransactionalDataSourceComponent.class);
+    private static Log log = LogFactory.getLog(TransactionalBasicDataSourceWrapper.class);
 
     private final Map<Long, String> mappingCache = new HashMap<Long, String>();
 
@@ -41,7 +41,7 @@ public class TransactionalDataSourceComponent extends BasicDataSource{
     public Connection getConnection() throws SQLException {
             // Sobreescribimos el método para añadirle la gestión de los usuarios
             // transaccionales
-            System.out.println("***&*** ha llamado a PwDataSource.getConnection() ");
+            System.out.println("***&*** ha llamado a TransactionalBasicDataSourceWrapper.getConnection() ");
             Connection cnx = super.getConnection();
 
             TransactionalUsersConnectionWrapper cnwrap = new TransactionalUsersConnectionWrapper(cnx);
@@ -65,7 +65,7 @@ public class TransactionalDataSourceComponent extends BasicDataSource{
                     throws SQLException {
             // Sobreescribimos el método para añadirle la gestión de los usuarios
             // transaccionales
-            System.out.println("***&*** ha llamado a PwDataSource.getConnection(username, password) ");
+            System.out.println("***&*** ha llamado a TransactionalBasicDataSourceWrapper.getConnection(username, password) ");
             Connection cnx = super.getConnection(username, password);
             TransactionalUsersConnectionWrapper cnwrap = new TransactionalUsersConnectionWrapper(cnx);
 

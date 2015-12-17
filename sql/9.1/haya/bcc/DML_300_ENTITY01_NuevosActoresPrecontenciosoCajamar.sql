@@ -39,7 +39,8 @@ DECLARE
       T_LINEA('CM_GL_PCO','Gestor de Liquidación'),
       T_LINEA('REGPROP_PCO', 'Registro de la propiedad'),
       T_LINEA('ARCHIVO_PCO', 'Archivo'),
-      T_LINEA('NOTARI', 'Notaria')
+      T_LINEA('NOTARI', 'Notaria'),
+      T_LINEA('OFICINA', 'Oficina')
     ); 
     V_TMP_TIPO_LINEA T_LINEA;
 

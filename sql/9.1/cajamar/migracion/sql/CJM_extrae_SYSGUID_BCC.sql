@@ -330,7 +330,191 @@ BEGIN
    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' Registros de LOS_LOTE_SUBASTA insertados. '||SQL%ROWCOUNT||' Filas.');
    COMMIT;   
 
+/********************************************
+/***  TABLAS EXCLUSIVAS DE PRECONTENCIOSO
+/********************************************/
+
+-- PCO_PRC_PROCEDIMIENTOS
+  
+  V_SQL:= null;
+  V_SQL:= 'INSERT INTO '||V_ESQUEMA||'.TMP_GUID_BCC
+       (   GUID_ID
+         , GUID_SYSGUID
+         , GUID_ASU_ID_EXTERNO
+         , GUID_DES
+         , GUID_DD_TPO_CODIGO
+         , GUID_BIE_CODIGO_INTERNO
+         , GUID_CNT_CONTRATO
+         , GUID_TAP_CODIGO
+       )
+       SELECT ppp.PCO_PRC_ID             AS GUID_ID
+            , ppp.SYS_GUID               AS GUID_SYSGUID
+            , asu.ASU_ID_EXTERNO         AS GUID_ASU_ID_EXTERNO
+            , ''PCO_PRC_PROCEDIMIENTOS'' AS GUID_DES     
+            , dd.DD_TPO_CODIGO           AS GUID_DD_TPO_CODIGO     
+            , null                       AS GUID_BIE_CODIGO_INTERNO
+            , null                       AS GUID_CNT_CONTRATO
+            , null                       AS GUID_TAP_CODIGO     
+       FROM '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS    ppp
+          , '||V_ESQUEMA||'.ASU_ASUNTOS               asu
+          , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS        prc
+          , '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO dd
+       WHERE ppp.PRC_ID    = prc.PRC_ID
+         AND prc.ASU_ID    = asu.ASU_ID 
+         AND prc.DD_TPO_ID = dd.DD_TPO_ID  
+         AND asu.DD_TAS_ID = 1
+         AND asu.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')';
+
+   EXECUTE IMMEDIATE V_SQL;  
+   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' Registros de PCO_PRC_PROCEDIMIENTOS insertados. '||SQL%ROWCOUNT||' Filas.');
+   COMMIT;
+
+
+-- PCO_PRC_HEP_HISTOR_EST_PREP
+  
+  V_SQL:= null;
+  V_SQL:= 'INSERT INTO '||V_ESQUEMA||'.TMP_GUID_BCC
+       (   GUID_ID
+         , GUID_SYSGUID
+         , GUID_ASU_ID_EXTERNO
+         , GUID_DES
+         , GUID_DD_TPO_CODIGO
+         , GUID_BIE_CODIGO_INTERNO
+         , GUID_CNT_CONTRATO
+         , GUID_TAP_CODIGO
+         , GUID_DD_PCO_PEP_CODIGO
+       )
+       SELECT hep.PCO_PRC_HEP_ID              AS GUID_ID
+            , hep.SYS_GUID                    AS GUID_SYSGUID
+            , asu.ASU_ID_EXTERNO              AS GUID_ASU_ID_EXTERNO
+            , ''PCO_PRC_HEP_HISTOR_EST_PREP'' AS GUID_DES     
+            , tpo.DD_TPO_CODIGO               AS GUID_DD_TPO_CODIGO     
+            , null                            AS GUID_BIE_CODIGO_INTERNO
+            , null                            AS GUID_CNT_CONTRATO
+            , null                            AS GUID_TAP_CODIGO
+            , pep.DD_PCO_PEP_CODIGO           AS GUID_DD_PCO_PEP_CODIGO
+       FROM '||V_ESQUEMA||'.PCO_PRC_HEP_HISTOR_EST_PREP   hep
+          , '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS        ppp
+          , '||V_ESQUEMA||'.ASU_ASUNTOS                   asu
+          , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS            prc
+          , '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO     tpo
+          , '||V_ESQUEMA||'.DD_PCO_PRC_ESTADO_PREPARACION pep
+       WHERE hep.PCO_PRC_ID    = ppp.PCO_PRC_ID
+         AND ppp.PRC_ID        = prc.PRC_ID
+         AND prc.ASU_ID        = asu.ASU_ID 
+         AND prc.DD_TPO_ID     = tpo.DD_TPO_ID
+         AND hep.DD_PCO_PEP_ID = pep.DD_PCO_PEP_ID 
+         AND asu.DD_TAS_ID  = 1
+         AND asu.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')';
+
+   EXECUTE IMMEDIATE V_SQL;  
+   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' Registros de PCO_PRC_HEP_HISTOR_EST_PREP insertados. '||SQL%ROWCOUNT||' Filas.');
+   COMMIT;
+
+-- PCO_DOC_DOCUMENTOS
+  
+  V_SQL:= null;
+  V_SQL:= 'INSERT INTO '||V_ESQUEMA||'.TMP_GUID_BCC
+       (   GUID_ID
+         , GUID_SYSGUID
+         , GUID_ASU_ID_EXTERNO
+         , GUID_DES
+         , GUID_DD_TPO_CODIGO
+         , GUID_BIE_CODIGO_INTERNO
+         , GUID_CNT_CONTRATO
+         , GUID_TAP_CODIGO
+         , GUID_DD_PCO_PEP_CODIGO
+         , GUID_DD_TFA_CODIGO
+         , GUID_PCO_DOC_PDD_DESC
+         , GUID_DD_PCO_DTD_CODIGO
+       )
+       SELECT doc.PCO_DOC_PDD_ID                          AS GUID_ID
+            , doc.SYS_GUID                                AS GUID_SYSGUID
+            , asu.ASU_ID_EXTERNO                          AS GUID_ASU_ID_EXTERNO
+            , ''PCO_DOC_DOCUMENTOS''                      AS GUID_DES     
+            , tpo.DD_TPO_CODIGO                           AS GUID_DD_TPO_CODIGO     
+            , null                                        AS GUID_BIE_CODIGO_INTERNO
+            , null                                        AS GUID_CNT_CONTRATO
+            , null                                        AS GUID_TAP_CODIGO
+            , null                                        AS GUID_DD_PCO_PEP_CODIGO
+            , tfa.DD_TFA_CODIGO                           AS GUID_DD_TFA_CODIGO
+            , decode(dug.DD_PCO_DTD_CODIGO
+                    ,''CO'', doc.PCO_DOC_PDD_UG_DESC
+                    ,''PE'', per.PER_COD_CLIENTE_ENTIDAD) AS GUID_PCO_DOC_PDD_DESC
+            , dug.DD_PCO_DTD_CODIGO                       AS GUID_DD_PCO_DTD_CODIGO
+       FROM '||V_ESQUEMA||'.PCO_DOC_DOCUMENTOS        doc
+          , '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS    ppp
+          , '||V_ESQUEMA||'.ASU_ASUNTOS               asu
+          , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS        prc
+          , '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO tpo
+          , '||V_ESQUEMA||'.DD_TFA_FICHERO_ADJUNTO    tfa
+          , '||V_ESQUEMA||'.DD_PCO_DOC_UNIDADGESTION  dug
+          , '||V_ESQUEMA||'.PER_PERSONAS              per
+       WHERE doc.PCO_PRC_ID = ppp.PCO_PRC_ID
+         AND ppp.PRC_ID     = prc.PRC_ID
+         AND prc.ASU_ID     = asu.ASU_ID 
+         AND prc.DD_TPO_ID  = tpo.DD_TPO_ID
+         AND doc.DD_TFA_ID  = tfa.DD_TFA_ID 
+         AND doc.DD_PCO_DTD_ID = dug.DD_PCO_DTD_ID
+         AND doc.PCO_DOC_PDD_UG_ID = per.PER_ID(+) --Asumo que van a estar todas las personas
+         AND asu.DD_TAS_ID  = 1
+         AND asu.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')';
+
+   EXECUTE IMMEDIATE V_SQL;  
+   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' Registros de PCO_DOC_DOCUMENTOS insertados. '||SQL%ROWCOUNT||' Filas.');
+   COMMIT;
+
+
+-- PCO_LIQ_LIQUIDACIONES
+  
+  V_SQL:= null;
+  V_SQL:= 'INSERT INTO '||V_ESQUEMA||'.TMP_GUID_BCC
+       (   GUID_ID
+         , GUID_SYSGUID
+         , GUID_ASU_ID_EXTERNO
+         , GUID_DES
+         , GUID_DD_TPO_CODIGO
+         , GUID_BIE_CODIGO_INTERNO
+         , GUID_CNT_CONTRATO
+         , GUID_TAP_CODIGO
+         , GUID_DD_PCO_PEP_CODIGO
+         , GUID_DD_TFA_CODIGO
+         , GUID_PCO_DOC_PDD_DESC
+         , GUID_DD_PCO_DTD_CODIGO
+       )
+       SELECT liq.PCO_LIQ_ID            AS GUID_ID
+            , liq.SYS_GUID              AS GUID_SYSGUID
+            , asu.ASU_ID_EXTERNO        AS GUID_ASU_ID_EXTERNO
+            , ''PCO_LIQ_LIQUIDACIONES'' AS GUID_DES     
+            , tpo.DD_TPO_CODIGO         AS GUID_DD_TPO_CODIGO     
+            , null                      AS GUID_BIE_CODIGO_INTERNO
+            , cnt.CNT_CONTRATO          AS GUID_CNT_CONTRATO
+            , null                      AS GUID_TAP_CODIGO
+            , null                      AS GUID_DD_PCO_PEP_CODIGO
+            , null                      AS GUID_DD_TFA_CODIGO
+            , null                      AS GUID_PCO_DOC_PDD_DESC
+            , null                      AS GUID_DD_PCO_DTD_CODIGO
+       FROM '||V_ESQUEMA||'.PCO_LIQ_LIQUIDACIONES     liq
+          , '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS    ppp
+          , '||V_ESQUEMA||'.ASU_ASUNTOS               asu
+          , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS        prc
+          , '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO tpo
+          , '||V_ESQUEMA||'.CNT_CONTRATOS             cnt
+       WHERE liq.PCO_PRC_ID = ppp.PCO_PRC_ID
+         AND ppp.PRC_ID     = prc.PRC_ID
+         AND prc.ASU_ID     = asu.ASU_ID 
+         AND prc.DD_TPO_ID  = tpo.DD_TPO_ID
+         AND liq.CNT_ID     = cnt.CNT_ID
+         AND asu.DD_TAS_ID  = 1
+         AND asu.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')';
+
+   EXECUTE IMMEDIATE V_SQL;  
+   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' Registros de PCO_LIQ_LIQUIDACIONES insertados. '||SQL%ROWCOUNT||' Filas.');
+   COMMIT;
    
+      
+-- ACTUALIZAMOS ESTADISTICAS
+      
    CM01.UTILES.ANALIZA_TABLA('CM01','TMP_GUID_BCC');   
    DBMS_OUTPUT.PUT_LINE(V_ESQUEMA||'.UTILES.ANALIZA_TABLA( '''||V_ESQUEMA||''',''TMP_GUID_BCC'' )');
 

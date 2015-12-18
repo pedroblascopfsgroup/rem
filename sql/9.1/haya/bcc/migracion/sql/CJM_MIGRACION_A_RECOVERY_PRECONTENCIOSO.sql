@@ -119,7 +119,7 @@ BEGIN
 				from '||V_ESQUEMA||'.mig_expedientes_cabecera cab
 				inner join '||V_ESQUEMA||'.mig_expedientes_operaciones op on cab.cd_expediente = op.cd_expediente
 				where cab.fecha_baja is null and cab.MOTIVO_BAJA is null AND CAB.FECHA_ACEPTACION_LETRADO IS NULL
-				   and cab.fecha_asignacion is null
+				   and cab.fecha_asignacion is not null
 				AND NOT EXISTS(SELECT 1 
 							   FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA C 
 							   WHERE C.CD_EXPEDIENTE_NUSE = CAB.CD_EXPEDIENTE)'; -- LOS QUE EVOLUCIONAN A PROCEDIMIENTOS NO SE MIGRAN COMO PRECONTENCIOSOS.
@@ -270,7 +270,7 @@ BEGIN
 					   apc.CNT_CONTRATO || '' | ''|| apc.per_nom50 AS exp_descripcion,
 					   apc.COD_RECOVERY as usuariomodificar,
 					   APC.COD_RECOVERY AS CD_EXPEDIENTE_NUSE,
-					   SYS_GUID() AS SYS_GUID
+					   null AS SYS_GUID
 				FROM 
 				(  
 				SELECT CNT_ID,CNT.COD_RECOVERY,OFI_ID,CNT_CONTRATO,PER_NOM50, RANKING
@@ -318,7 +318,7 @@ BEGIN
 						   0 AS borrado,
 						   9 AS dd_aex_id,
 						   COD_RECOVERY,
-						   SYS_GUID() AS SYS_GUID
+						   null AS SYS_GUID
 					  FROM (
 					  SELECT DISTINCT TMP.COD_RECOVERY, CNT.CNT_ID, exp.exp_id,
 							 rank() over (partition by TMP.COD_RECOVERY order by (MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA) DESC) RANKING
@@ -414,7 +414,7 @@ BEGIN
 					   COD_RECOVERY AS USUARIOMODIFICAR,
 					   COD_RECOVERY AS ASU_ID_EXTERNO,
 					   (select dd_ges_id from '||V_ESQUEMA||'.DD_GES_GESTION_ASUNTO where dd_ges_codigo = ''CAJAMAR'') AS DD_GES_ID,
-					   SYS_GUID() AS SYS_GUID
+					   null AS SYS_GUID
 				  FROM (
 						SELECT DISTINCT TMP.COD_RECOVERY, 
 										EXP.EXP_ID exp_id,
@@ -496,7 +496,7 @@ BEGIN
 						   3 AS dd_epr_id, -- ESTADO PROCEDIMIENTO = ACEPTADO
 						   ''MEJProcedimiento'' AS dtype,
 						   APC.COD_RECOVERY,
-						   SYS_GUID() AS SYS_GUID
+						   null AS SYS_GUID
 				FROM (
 					  SELECT DISTINCT TMP.COD_RECOVERY, ASU.ASU_ID, AUX_PER_ID_PASE.PRINCIPAL, AUX_PER_ID_PASE.VENCIDO , AUX_PER_ID_PASE.NO_VENCIDO
 					  FROM '||V_ESQUEMA||'.TMP_CREA_ASUNTOSPCO_NUEVOS TMP,
@@ -601,7 +601,7 @@ BEGIN
 
 
 	V_SQL := 'INSERT INTO '||V_ESQUEMA||'.pco_prc_procedimientos (PCO_PRC_ID,PRC_ID, PCO_PRC_NUM_EXP_EXT, PCO_PRC_NUM_EXP_INT, usuariocrear, fechacrear, SYS_GUID)
-				select '||V_ESQUEMA||'.s_pco_prc_procedimientos.nextval, prc_id, COD_WORKFLOW, COD_RECOVERY, '''||USUARIO||''', sysdate,SYS_GUID() AS SYS_GUID
+				select '||V_ESQUEMA||'.s_pco_prc_procedimientos.nextval, prc_id, COD_WORKFLOW, COD_RECOVERY, '''||USUARIO||''', sysdate,null AS SYS_GUID
 				from (select DISTINCT prc.prc_id, TMP.COD_WORKFLOW, TMP.COD_RECOVERY
 					  from '||V_ESQUEMA||'.asu_asuntos asu inner join 
 						   '||V_ESQUEMA||'.prc_procedimientos prc on prc.asu_id = asu.asu_id inner join 

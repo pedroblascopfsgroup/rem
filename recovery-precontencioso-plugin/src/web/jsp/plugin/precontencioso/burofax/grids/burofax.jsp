@@ -8,6 +8,15 @@
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 
+<%-- Renders --%>
+
+var pdfRender = function(value, meta, record) {
+
+	if (value) {
+		return '<img src="/pfs/css/page_white_acrobat.png" height="16" width="16" alt=""/>';
+	}
+};
+
 	var limit=50;
 	
 	var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
@@ -58,6 +67,11 @@
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.resultado" text="**Resultado"/>'
 			,dataIndex: 'resultado', sortable: true,autoWidth:true
+	<c:if test="${usuario.entidad.id eq appProperties.idEntidadHaya}">
+		}, {
+			header: '<s:message code="plugin.precontencioso.grid.burofax.acuseRecibo" text="**Acuse recibo"/>'
+			, dataIndex: 'acuseRecibo', sortable: false, autoWidth: true, id: 'colAcuseRecibo', renderer: pdfRender, align: 'center'
+	</c:if>
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoo" text="**IdDireccion"/>'
 			,dataIndex: 'idDireccion', sortable: false,autoWidth:true,hidden:true
@@ -81,8 +95,6 @@
 		}
 	];
 
-
-	
 	var Burofax = Ext.data.Record.create([
 		{name:'cliente'}
 	   ,{name:'tipoIntervencion'}
@@ -101,7 +113,7 @@
 	   ,{name: 'idBurofax'}
 	   ,{name: 'idEnvio'}
 	   ,{name: 'id'}
-		
+	   ,{name: 'acuseRecibo'}
 	]);
 	
 	var burofaxStore = page.getStore({
@@ -328,7 +340,14 @@
 		
 		
 	});
-	
+
+	gridBurofax.on('rowdblclick', function(grid, rowIndex, e) {
+		var rec = grid.getStore().getAt(rowIndex);
+
+		if(e.target.localName.indexOf('img') === 0 && rec.get('acuseRecibo')) {
+			window.open("/pfs/bajarAdjuntoAsunto.htm?asuntoId=" + entidad.get("data").cabecera.asuntoId + "&id=" + rec.get('acuseRecibo'));
+		}
+	});
 
    <%-- Eventos para los botones --%>
    

@@ -31,6 +31,7 @@
 				<fwk:date  value="${burofax.fechaAcuse}" />
 			</json:property>	
 			<json:property name="resultado" value="${burofax.resultado}"/>
+			<json:property name="acuseRecibo" value="${burofax.acuseRecibo}"/>
 		</json:object>
 	</json:array>
 </fwk:json>		

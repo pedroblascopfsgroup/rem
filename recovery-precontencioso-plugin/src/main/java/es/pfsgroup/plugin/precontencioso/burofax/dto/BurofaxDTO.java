@@ -26,6 +26,9 @@ public class BurofaxDTO extends WebDto{
 	private Date fechaEnvio;
 	private Date fechaAcuse;
 	private String resultado;
+
+	// id ADJ_ADJUNTOS
+	private Long acuseRecibo;
 	
 	
 	public String getCliente() {
@@ -133,6 +136,12 @@ public class BurofaxDTO extends WebDto{
 	}
 	public void setTipoDescripcion(String tipoDescripcion) {
 		this.tipoDescripcion = tipoDescripcion;
+	}
+	public Long getAcuseRecibo() {
+		return acuseRecibo;
+	}
+	public void setAcuseRecibo(Long acuseRecibo) {
+		this.acuseRecibo = acuseRecibo;
 	}
 
 	

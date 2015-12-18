@@ -28,6 +28,7 @@ import es.capgemini.pfs.core.api.plazaJuzgado.PlazaJuzgadoApi;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -117,6 +118,9 @@ public class SubastaController {
 	
 	@Autowired
     private Executor executor;	
+	
+	@Autowired
+	private UsuarioManager usuarioLogado;
 	
 	@Autowired
 	private NMBBienManager nmbBienManager;
@@ -274,7 +278,7 @@ public class SubastaController {
 			model.put("fileItem", resultado);
 			
 			return GENINFVisorInformeController.JSP_DOWNLOAD_FILE;
-		} else if(SubastaApi.CODIGO_TIPO_PROCEDIMIENTO_SUBASTA_SAREB.compareTo(procedimientos.getTipoProcedimiento().getCodigo()) == 0) {
+		} else if(!"CAJAMAR".equals(usuarioLogado.getUsuarioLogado().getEntidad().getDescripcion())) {
 			//sareb
 			plantilla = "reportInformeSubastaSareb.jrxml";
 			InformeSubastaSarebBean informe = new InformeSubastaSarebBean();

@@ -1515,6 +1515,7 @@ BEGIN
            PRO_KEYS_STATUS(V_ESQUEMA, 'ADA_ADJUNTOS_ASUNTOS', 'ENABLE');
       END IF;       
 
+     
 --    /********************
 --    *ORDEN DE BORRADO 4 *
 --    ********************/      
@@ -1524,7 +1525,8 @@ BEGIN
       EXECUTE IMMEDIATE V_SQL INTO EXISTE;
       IF (EXISTE>0) THEN
            PRO_KEYS_STATUS(V_ESQUEMA, 'ASU_ASUNTOS', 'DISABLE');
-           EXECUTE IMMEDIATE 'TRUNCATE TABLE '||V_ESQUEMA ||'.ASU_ASUNTOS ';
+--           EXECUTE IMMEDIATE 'TRUNCATE TABLE '||V_ESQUEMA ||'.ASU_ASUNTOS ';
+             EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.ASU_ASUNTOS WHERE ASU_ID IN ( SELECT ASU_ID FROM '||V_ESQUEMA||'.TABLA_TMP_ASU )';
            DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.ASU_ASUNTOS... Se han eliminado '||EXISTE||' registros');
            COMMIT;
            PRO_KEYS_STATUS(V_ESQUEMA, 'ASU_ASUNTOS', 'ENABLE');

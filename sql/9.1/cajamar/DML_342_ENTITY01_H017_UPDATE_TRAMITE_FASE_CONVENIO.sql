@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20151217
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.0-cj-rc34
---## INCIDENCIA_LINK=CMREC-1237
+--## INCIDENCIA_LINK=CMREC-1238
 --## PRODUCTO=NO
 --##
 --## Finalidad: Resolución de incidencias de concursos
@@ -25,11 +25,11 @@ DECLARE
     
 BEGIN	
 
-	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-1237');
-	V_TAREA:='H009_RevisarInsinuacionCreditos';
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-1238');
+	V_TAREA:='H017_RegistrarSentenciaFirme';
 	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET ' ||
-	' TAP_SCRIPT_VALIDACION_JBPM=''valores[''''H009_RevisarInsinuacionCreditos''''][''''comboRectificacion'''']==DDSiNo.SI && valores[''''H009_RevisarInsinuacionCreditos''''][''''numCreditos'''']==null ? ''''Debe indicar el n&uacute;mero de cr&eacute;ditos rectificados.'''' : valores[''''H009_RevisarInsinuacionCreditos''''][''''comboRectificacion'''']==DDSiNo.SI && valores[''''H009_RevisarInsinuacionCreditos''''][''''numCreditos'''']!=null && noExistenTantosCreditosInsinuados(valores[''''H009_RevisarInsinuacionCreditos''''][''''numCreditos'''']) ? ''''El n&uacute;mero de cr&eacute;ditos rectificados no puede ser mayor al n&uacute;mero de cr&eacute;ditos insinuados.'''' : null'' WHERE TAP_CODIGO='''||V_TAREA||'''';
-	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-1237');
+	' TAP_SCRIPT_VALIDACION_JBPM=''existenConveniosDefinidos() ? (valores[''''H017_RegistrarSentenciaFirme''''][''''comboAdmision''''] == DDSiNo.SI ? (ExistenConvenioAdmitidoTrasAprovacion() ? null : ''''Debe existir al menos un convenio asociado al asunto con el estado "Admitido tras aprobaci&oacute;n".'''') : (NoExisteConvenioNoAdmitidoTrasAprovacion() ? ''''Debe existir al menos un convenio asociado al asunto con el estado "No admitido tras aprobaci&oacute;n".'''' : null)) : ''''Debe registrar al menos un convenio desde la pesta&nacute;a "Convenios" del asunto.'''''' WHERE TAP_CODIGO='''||V_TAREA||'''';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-1238');
 	
 COMMIT;
  

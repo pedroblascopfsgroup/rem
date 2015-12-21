@@ -18,6 +18,8 @@ DECLARE
         V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= 'HAYAMASTER';
         USUARIO      VARCHAR2(50 CHAR):= 'MIGRAHAYA02';
         USUARIO2     VARCHAR2(50 CHAR):= 'MIGRAHAYA02PCO';
+        USUARIO3     VARCHAR2(50 CHAR):= 'ALTAASUNCM';
+        USUARIO4     VARCHAR2(50 CHAR):= 'SINCRO_CM_HAYA';              
         
         ERR_NUM      NUMBER(25);
         ERR_MSG      VARCHAR2(1024 CHAR);
@@ -102,7 +104,7 @@ IS
            v_sql:='SELECT count(*)
                      FROM '||v_clave(i).table_owner||'.'||v_clave(i).table_name||'
                     WHERE ('||v_clave(i).column_name_fk||') 
-                       IN (Select '||v_clave(i).column_name_pk||' From '||v_owner||'.'||v_table||' Where usuariocrear = '''||USUARIO||''')
+                       IN (Select '||v_clave(i).column_name_pk||' From '||v_owner||'.'||v_table||' Where usuariocrear IN ('''||USUARIO||''', '''||USUARIO2||''', '''||USUARIO3||''', '''||USUARIO4||'''))
                   ';
            EXECUTE IMMEDIATE v_sql INTO existe2;
            
@@ -145,7 +147,12 @@ BEGIN
 
      EXECUTE IMMEDIATE 'CREATE TABLE '||V_ESQUEMA||'.TABLA_TMP_ASU AS ( SELECT ASU_ID  FROM  '||V_ESQUEMA||'.ASU_ASUNTOS Where usuariocrear = '''||USUARIO||'''
                                                                         UNION
-                                                                        SELECT ASU_ID  FROM  '||V_ESQUEMA||'.ASU_ASUNTOS Where usuariocrear = '''||USUARIO2||''')';
+                                                                        SELECT ASU_ID  FROM  '||V_ESQUEMA||'.ASU_ASUNTOS Where usuariocrear = '''||USUARIO2||'''
+                                                                        UNION
+                                                                        SELECT ASU_ID  FROM  '||V_ESQUEMA||'.ASU_ASUNTOS Where usuariocrear = '''||USUARIO3||'''
+                                                                        UNION
+                                                                        SELECT ASU_ID  FROM  '||V_ESQUEMA||'.ASU_ASUNTOS Where usuariocrear = '''||USUARIO4||'''                                                                        
+                                                                        )';
      --
      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.TABLA_TMP_ASU... Tabla creada. '||SQL%ROWCOUNT||' Filas.');
 
@@ -198,9 +205,14 @@ BEGIN
       END IF;
 
      EXECUTE IMMEDIATE ('CREATE TABLE '||V_ESQUEMA||'.TABLA_TMP_BIE AS  
-        SELECT DISTINCT BIE.BIE_ID  FROM  '||V_ESQUEMA||'.BIE_BIEN BIE WHERE USUARIOCREAR = '''||USUARIO||'''
-        UNION
-        SELECT DISTINCT BIE.BIE_ID  FROM  '||V_ESQUEMA||'.BIE_BIEN BIE WHERE USUARIOCREAR = '''||USUARIO2||'''');
+                                    SELECT DISTINCT BIE.BIE_ID  FROM  '||V_ESQUEMA||'.BIE_BIEN BIE WHERE USUARIOCREAR = '''||USUARIO||'''
+                                    UNION
+                                    SELECT DISTINCT BIE.BIE_ID  FROM  '||V_ESQUEMA||'.BIE_BIEN BIE WHERE USUARIOCREAR = '''||USUARIO2||'''
+                                    UNION
+                                    SELECT DISTINCT BIE.BIE_ID  FROM  '||V_ESQUEMA||'.BIE_BIEN BIE WHERE USUARIOCREAR = '''||USUARIO2||'''
+                                    UNION
+                                    SELECT DISTINCT BIE.BIE_ID  FROM  '||V_ESQUEMA||'.BIE_BIEN BIE WHERE USUARIOCREAR = '''||USUARIO3||'''        
+                       ');
      --
      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.TABLA_TMP_BIE... Tabla creada. '||SQL%ROWCOUNT||' Filas.');
      EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.TABLA_TMP_BIE ADD CONSTRAINT PK_TABLA_TMP_BIE PRIMARY KEY(BIE_ID)';
@@ -1220,6 +1232,66 @@ BEGIN
            PRO_KEYS_STATUS(V_ESQUEMA, 'TAR_TAREAS_NOTIFICACIONES', 'ENABLE');
       END IF;
       
+           -- Por anotaciones
+              DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES... Comprobando si existen registros para anotaciones migradas');
+              EXISTE := 0;
+              V_SQL:= ' select count(*)
+                          from '||V_ESQUEMA ||'.MEJ_IRG_INFO_REGISTRO a
+                             , '||V_ESQUEMA ||'.MEJ_IRG_INFO_REGISTRO b
+                             , '||V_ESQUEMA ||'.TAR_TAREAS_NOTIFICACIONES c
+                         where a.IRG_CLAVE = ''ID_NOTIF''
+                           and b.IRG_CLAVE = ''ASUNTO_NOTIF''
+                           and b.IRG_VALOR = ''Anotacion migrada''
+                           and a.reg_id = b.reg_id
+                           and c.tar_id = to_number(a.irg_valor)';
+              EXECUTE IMMEDIATE V_SQL INTO EXISTE;
+              IF (EXISTE>0) THEN
+                   PRO_KEYS_STATUS(V_ESQUEMA, 'TAR_TAREAS_NOTIFICACIONES', 'DISABLE');
+                   EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.TAR_TAREAS_NOTIFICACIONES tar
+                                       WHERE exists ( SELECT 1
+                                                      FROM '||V_ESQUEMA||'.MEJ_IRG_INFO_REGISTRO a, MEJ_IRG_INFO_REGISTRO b
+                                                      WHERE a.IRG_CLAVE = ''ID_NOTIF''
+                                                      AND   b.IRG_CLAVE = ''ASUNTO_NOTIF''
+                                                      AND   b.IRG_VALOR = ''Anotacion migrada''
+                                                      AND   a.reg_id = b.reg_id
+                                                      AND tar.tar_id = to_number(a.IRG_VALOR)
+                                                    )';
+                   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES .. Se han eliminado '||EXISTE||' registros por anotaciones');
+                   COMMIT;
+                   PRO_KEYS_STATUS(V_ESQUEMA, 'TAR_TAREAS_NOTIFICACIONES', 'ENABLE');
+              END IF;
+
+
+      ---MEJ_IRG_INFO_REGISTRO
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.MEJ_IRG_INFO_REGISTRO... Comprobando si existen registros para el usuario MIGRACM01');
+      EXISTE := 0;
+      V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.MEJ_IRG_INFO_REGISTRO  WHERE USUARIOCREAR = '''||USUARIO||'''';
+      EXECUTE IMMEDIATE V_SQL INTO EXISTE;
+      IF (EXISTE>0) THEN
+           PRO_KEYS_STATUS(V_ESQUEMA, 'MEJ_IRG_INFO_REGISTRO', 'DISABLE');
+           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.MEJ_IRG_INFO_REGISTRO  WHERE USUARIOCREAR = '''||USUARIO||'''';
+           DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.MEJ_IRG_INFO_REGISTRO .. Se han eliminado '||EXISTE||' registros');
+           COMMIT;
+           PRO_KEYS_STATUS(V_ESQUEMA, 'MEJ_IRG_INFO_REGISTRO', 'ENABLE');
+      END IF;
+
+
+      ---MEJ_REG_REGISTRO
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.MEJ_REG_REGISTRO... Comprobando si existen registros para el usuario MIGRACM01');
+      EXISTE := 0;
+      V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.MEJ_REG_REGISTRO  WHERE USUARIOCREAR = '''||USUARIO||'''';
+      EXECUTE IMMEDIATE V_SQL INTO EXISTE;
+      IF (EXISTE>0) THEN
+           PRO_KEYS_STATUS(V_ESQUEMA, 'MEJ_REG_REGISTRO', 'DISABLE');
+           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.MEJ_REG_REGISTRO  WHERE USUARIOCREAR = '''||USUARIO||'''';
+           DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.MEJ_REG_REGISTRO .. Se han eliminado '||EXISTE||' registros');
+           COMMIT;
+           PRO_KEYS_STATUS(V_ESQUEMA, 'MEJ_REG_REGISTRO', 'ENABLE');
+      END IF;
+
+      
+      
+      
       -- SUB_SUBASTA
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.SUB_SUBASTA... Comprobando si existen registros para el usuario MIGRAHAYA02');
       EXISTE := 0;
@@ -1515,6 +1587,7 @@ BEGIN
            PRO_KEYS_STATUS(V_ESQUEMA, 'ADA_ADJUNTOS_ASUNTOS', 'ENABLE');
       END IF;       
 
+     
 --    /********************
 --    *ORDEN DE BORRADO 4 *
 --    ********************/      
@@ -1524,7 +1597,8 @@ BEGIN
       EXECUTE IMMEDIATE V_SQL INTO EXISTE;
       IF (EXISTE>0) THEN
            PRO_KEYS_STATUS(V_ESQUEMA, 'ASU_ASUNTOS', 'DISABLE');
-           EXECUTE IMMEDIATE 'TRUNCATE TABLE '||V_ESQUEMA ||'.ASU_ASUNTOS ';
+--           EXECUTE IMMEDIATE 'TRUNCATE TABLE '||V_ESQUEMA ||'.ASU_ASUNTOS ';
+             EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.ASU_ASUNTOS WHERE ASU_ID IN ( SELECT ASU_ID FROM '||V_ESQUEMA||'.TABLA_TMP_ASU )';
            DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.ASU_ASUNTOS... Se han eliminado '||EXISTE||' registros');
            COMMIT;
            PRO_KEYS_STATUS(V_ESQUEMA, 'ASU_ASUNTOS', 'ENABLE');

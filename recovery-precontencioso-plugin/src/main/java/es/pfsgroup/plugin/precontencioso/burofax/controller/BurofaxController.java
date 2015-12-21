@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -18,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
+import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
+import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
+import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
 import es.capgemini.pfs.diccionarios.comparator.DictionaryComparatorFactory;
@@ -27,6 +31,8 @@ import es.capgemini.pfs.direccion.dto.DireccionAltaDto;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Direccion;
+import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
@@ -38,6 +44,10 @@ import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDResultadoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDTipoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
+import es.pfsgroup.plugin.precontencioso.documento.api.DocumentoPCOApi;
+import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudDocumentoPCODto;
+import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
+import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 
@@ -64,6 +74,8 @@ public class BurofaxController {
 	
 	public static final String JSP_DOWNLOAD_FILE = "plugin/geninformes/download";
 	
+	public static final String JSON_LISTA_DOCUMENTOS = "plugin/precontencioso/documento/json/solicitudesDocumentoJSON";
+	
 	protected final Log logger = LogFactory.getLog(getClass());
 	
 	@Autowired
@@ -80,6 +92,15 @@ public class BurofaxController {
 	
 	@Autowired
 	private PrecontenciosoProjectContext precontenciosoContext;
+	
+	@Autowired
+	private DocumentoPCOApi documentoPCOApi;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
+	
+	@Autowired
+	private GestorDespachoDao gestorDespachoDao;
 	
 	/**
 	 * Carga el grid de Burofaxes
@@ -235,6 +256,15 @@ public class BurofaxController {
 		
 	}
 	
+	
+	public boolean esUsuarioTipoDespachoGestoria() {
+		Usuario userLogged = usuarioManager.getUsuarioLogado(); 
+
+		List<GestorDespacho> listaGestorDespacho = gestorDespachoDao.getGestorDespachoByUsuIdAndTipoDespacho(userLogged.getId(), DDTipoDespachoExterno.CODIGO_GESTORIA_PCO);
+
+		return !listaGestorDespacho.isEmpty();
+	}
+	
 	/**
 	 * Se realizan las acciones pertinentes para cambiar el estado de un envio a preparado cuando se seleccione un tipo de burofax
 	 * @param request
@@ -244,12 +274,12 @@ public class BurofaxController {
 	 * @return
 	 */
 	@RequestMapping
-	private String configurarTipoBurofax(WebRequest request, ModelMap map,Long idTipoBurofax,Long idDireccion,Long idBurofax){
+	private String configurarTipoBurofax(WebRequest request, ModelMap map,Long idTipoBurofax,Long idDireccion,Long idBurofax, Long idDocumento){
 
 		String[] arrayIdDirecciones=request.getParameter("arrayIdDirecciones").replace("[","").replace("]","").split(",");
 		String[] arrayIdBurofax=request.getParameter("arrayIdBurofax").replace("[","").replace("]","").split(",");
 
-		burofaxManager.configurarTipoBurofax(idTipoBurofax,arrayIdDirecciones,arrayIdBurofax,null);
+		burofaxManager.configurarTipoBurofax(idTipoBurofax,arrayIdDirecciones,arrayIdBurofax,null,idDocumento);
 		
 		return DEFAULT;
 	}
@@ -473,7 +503,7 @@ public class BurofaxController {
     	if(comboEditable){
 	    	String[] arrayIdDirecciones=request.getParameter("arrayIdDirecciones").replace("[","").replace("]","").replace("&quot;", "").split(",");
 	    	String[] arrayIdBurofax=request.getParameter("arrayIdBurofax").replace("[","").replace("]","").replace("&quot;", "").split(",");
-	    	listaEnvioBurofaxPCO=burofaxManager.configurarTipoBurofax(idTipoBurofax,arrayIdDirecciones,arrayIdBurofax,arrayIdEnvios);
+	    	listaEnvioBurofaxPCO=burofaxManager.configurarTipoBurofax(idTipoBurofax,arrayIdDirecciones,arrayIdBurofax,arrayIdEnvios,null);
     	}
     	else{
     		for(int i=0;i<arrayIdEnvios.length;i++){
@@ -549,6 +579,54 @@ public class BurofaxController {
 		return JSP_DOWNLOAD_FILE;
 		
 	}
+    
+	/**
+     * Metodo que devuelve los domunetos de un procedimeinto que no esten descartados.
+     * @param query
+     * @param model
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    @RequestMapping
+    public String getDocuemtosPCONoDescartados(Long idProcedimientoPCO, ModelMap model) {
+
+		List<DocumentoPCO> listDocumentos = documentoPCOApi.getDocumentosPorIdProcedimientoPCONoDescartados(idProcedimientoPCO);
+		List<DocumentoPCO> documentos = documentoPCOApi.getDocumentosOrdenadosByUnidadGestion(listDocumentos);
+		
+		List<SolicitudDocumentoPCODto> solicitudesDoc = new ArrayList<SolicitudDocumentoPCODto>();
+		
+		int idIdentificativo = 1;	
+		boolean esDocumento;	
+		boolean tieneSolicitud;
+		boolean isGestoria = esUsuarioTipoDespachoGestoria();
+		
+		for (DocumentoPCO doc : documentos) {
+			List<SolicitudDocumentoPCO> solicitudes = doc.getSolicitudes();
+			esDocumento = true;
+
+			// Si hay solicitudes
+			if (solicitudes != null && solicitudes.size() > 0) {
+				for (SolicitudDocumentoPCO sol : solicitudes) {
+					tieneSolicitud = true;
+					// se añade el registro, si no es una gestoria o si es una gestoria y es una solicitud asignada a ella
+					if (!isGestoria || (isGestoria && usuarioManager.getUsuarioLogado().getId().equals(sol.getActor().getUsuario().getId()))) {
+						SolicitudDocumentoPCODto solDto = documentoPCOApi.crearSolicitudDocumentoDto(doc, sol, esDocumento, tieneSolicitud, idIdentificativo);
+						if(!Checks.esNulo(solDto.getContrato()) && !Checks.esNulo(solDto.getTipoDocumento())){
+							solicitudesDoc.add(solDto);	
+						}
+					}
+
+					if (esDocumento) esDocumento = false;
+					idIdentificativo++;
+				}
+			}
+
+		}
+
+		model.put("solicitudesDocumento", solicitudesDoc);
+		
+        return JSON_LISTA_DOCUMENTOS;
+    }
 
 }
 

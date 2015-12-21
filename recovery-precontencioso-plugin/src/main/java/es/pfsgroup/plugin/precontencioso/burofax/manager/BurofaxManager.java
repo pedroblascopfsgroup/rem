@@ -53,6 +53,7 @@ import es.pfsgroup.plugin.precontencioso.burofax.model.DDResultadoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDTipoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.ProcedimientoBurofaxTipoPCO;
+import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dao.LiquidacionDao;
 import es.pfsgroup.plugin.precontencioso.liquidacion.manager.LiquidacionManager;
@@ -279,7 +280,7 @@ public class BurofaxManager implements BurofaxApi {
 	@Transactional(readOnly = false)
 	@BusinessOperation(CONFIGURA_TIPO_BUROFAX)
 	@Override
-	public List<EnvioBurofaxPCO> configurarTipoBurofax(Long idTipoBurofax,String[] arrayIdDirecciones,String[] arrayIdBurofax,String[] arrayIdEnvios){
+	public List<EnvioBurofaxPCO> configurarTipoBurofax(Long idTipoBurofax,String[] arrayIdDirecciones,String[] arrayIdBurofax,String[] arrayIdEnvios, Long idDocumento){
 			
 		List<EnvioBurofaxPCO> listaEnvioBurofax=new ArrayList<EnvioBurofaxPCO>(); 
 		
@@ -322,7 +323,7 @@ public class BurofaxManager implements BurofaxApi {
 				envio.setDireccion(direccion);
 				envio.setTipoBurofax(tipoBurofax);	
 				//envio.setContenidoBurofax(tipoBurofax.getPlantilla());
-				envio.setContenidoBurofax(replaceVariablesGeneracionBurofax(burofax.getId(),tipoBurofax.getPlantilla()));
+				envio.setContenidoBurofax(replaceVariablesGeneracionBurofax(burofax.getId(),tipoBurofax.getPlantilla(), idDocumento));
 				envio.setResultadoBurofax(resultadoBurofaxPCO);
 				
 				//Guardamos nuevo envio
@@ -457,7 +458,7 @@ public class BurofaxManager implements BurofaxApi {
 				envioBurofax.setResultadoBurofax(resultado);
 				envioBurofax.setFechaSolicitud(new Date());
 				if(Checks.esNulo(envioBurofax.getResultadoBurofax()) || (!Checks.esNulo(envioBurofax.getResultadoBurofax()) && !envioBurofax.getResultadoBurofax().getCodigo().equals(DDResultadoBurofaxPCO.ESTADO_PREPARADO))){
-					envioBurofax.setContenidoBurofax(replaceVariablesGeneracionBurofax(envioBurofax.getBurofax().getId(), envioBurofax.getContenidoBurofax()));
+					envioBurofax.setContenidoBurofax(replaceVariablesGeneracionBurofax(envioBurofax.getBurofax().getId(), envioBurofax.getContenidoBurofax(), null));
 				}
 				
 				genericDao.save(EnvioBurofaxPCO.class, envioBurofax);
@@ -882,7 +883,7 @@ public class BurofaxManager implements BurofaxApi {
 		return burofaxEnvio;
 	}
 		
-	private String replaceVariablesGeneracionBurofax(Long idPcoBurofax, String textoBuro){
+	private String replaceVariablesGeneracionBurofax(Long idPcoBurofax, String textoBuro, Long idDocumento){
 		
 		BurofaxPCO burofax=(BurofaxPCO) genericDao.get(BurofaxPCO.class,genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(idPcoBurofax)));
 		
@@ -948,6 +949,17 @@ public class BurofaxManager implements BurofaxApi {
 		textoBuro = textoBuro.replace("#TIPO_INTERVENCIO#", tipoIntervencion);
 		textoBuro = textoBuro.replace("#A_NOMBRE_DE#", aNombreDe);
 		textoBuro = textoBuro.replace("#LISTA_BIENES#", listaBienes);
+		
+		if(!Checks.esNulo(idDocumento)){
+			
+			DocumentoPCO documento = genericDao.get(DocumentoPCO.class, genericDao.createFilter(FilterType.EQUALS, "id", idDocumento));
+			SimpleDateFormat fechaFormat = new SimpleDateFormat(FormatUtils.DD_DE_MES_DE_YYYY,MessageUtils.DEFAULT_LOCALE);
+			
+			if(!Checks.esNulo(documento.getNotario())) textoBuro = textoBuro.replace("[Notario del Documento Vinculado]", documento.getNotario());
+			if(!Checks.esNulo(documento.getPlaza())) textoBuro = textoBuro.replace("[Localidad del Notario del Documento Vinculado]", documento.getPlaza());
+			if(!Checks.esNulo(documento.getProtocolo())) textoBuro = textoBuro.replace("[Protocolo del Documento Vinculado]", documento.getProtocolo());
+			if(!Checks.esNulo(documento.getFechaEscritura())) textoBuro = textoBuro.replace("[Día Fecha Escritura Documento Vinculado]", fechaFormat.format(documento.getFechaEscritura()));
+		}
 				
 		
 		return textoBuro;

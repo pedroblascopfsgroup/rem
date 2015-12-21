@@ -23,6 +23,8 @@ public interface DocumentoPCODao extends AbstractDao<DocumentoPCO, Long> {
 	 */
 	List<DocumentoPCO> getDocumentosPorIdProcedimientoPCO(Long idProcedimientoPCO);
 	
+	List<DocumentoPCO> getDocumentosPorIdProcedimientoPCONoDescartados(Long idProcedimientoPCO);
+	
 	List<Contrato> getContratosByIdsOrderByDesc(String ids);
 	
 	List<Persona> getPersonasByIdsOrderByDesc(String ids);

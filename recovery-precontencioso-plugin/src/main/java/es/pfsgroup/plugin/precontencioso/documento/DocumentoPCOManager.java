@@ -146,6 +146,20 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		
 	};
 	
+    /**
+	 * Obtiene los documentos de un procedimientoPCO No descartados
+	 * 
+	 * @param idProcPCO
+	 * @return
+	 */
+    @Override
+	public List<DocumentoPCO> getDocumentosPorIdProcedimientoPCONoDescartados(Long idProcedimientoPCO){
+    	List<DocumentoPCO> documentos = documentoPCODao.getDocumentosPorIdProcedimientoPCONoDescartados(idProcedimientoPCO);
+
+		return documentos;
+		
+	};
+	
 	@Override
 	public List<DocumentoPCO> getDocumentosOrdenadosByUnidadGestion(List<DocumentoPCO> listDocPco) {
 		List<DocumentoPCO> list = new ArrayList<DocumentoPCO>();

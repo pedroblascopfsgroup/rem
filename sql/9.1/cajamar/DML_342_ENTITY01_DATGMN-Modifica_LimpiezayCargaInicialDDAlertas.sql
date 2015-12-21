@@ -196,7 +196,6 @@ DECLARE
                             , T_TAL('090306','Ratio de solvencia >1% y < 1´25%','Ratio de solvencia >1% y < 1´25%')
                             , T_TAL('090307','Ratio de solvencia <= 1%','Ratio de solvencia <= 1%')
                             , T_TAL('090308','Fondos Propios Negativos','Fondos Propios Negativos')
-                            , T_TAL('090309','Fondos Propios Negativos','Fondos Propios Negativos090309')
                            );
                                                          
                                    
@@ -229,7 +228,7 @@ BEGIN
        V_TMP_GAL := V_GAL(I);
 
        -- Comprobamos si existe el codigo
-       V_MSQL := 'SELECT COUNT(1) FROM ' || V_ESQUEMA || '.GAL_GRUPO_ALERTA WHERE GAL_CODIGO ='  || V_TMP_GAL(1);
+       V_MSQL := 'SELECT COUNT(1) FROM ' || V_ESQUEMA || '.GAL_GRUPO_ALERTA WHERE GAL_CODIGO ='''  || V_TMP_GAL(1) || '''';
        EXECUTE IMMEDIATE V_MSQL INTO v_column_count;
 
 	-- Si no existe --> INSERT
@@ -308,7 +307,7 @@ END LOOP;
       --DBMS_OUTPUT.PUT_LINE('Obtenemos el id de GAL '|| V_GAL_ID);
     
       -- Comprobamos si existe el codigo
-       V_MSQL := 'SELECT COUNT(1) FROM ' || V_ESQUEMA || '.TAL_TIPO_ALERTA WHERE TAL_CODIGO ='  || V_TMP_TAL(1);
+       V_MSQL := 'SELECT COUNT(1) FROM ' || V_ESQUEMA || '.TAL_TIPO_ALERTA WHERE TAL_CODIGO ='''  || V_TMP_TAL(1) || '''';
        EXECUTE IMMEDIATE V_MSQL INTO v_column_count; 
        	-- Si no existe --> INSERT
        IF v_column_count = 0 THEN

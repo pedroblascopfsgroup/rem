@@ -70,6 +70,16 @@ fi
 echo "[OK] ""$sh_dir""CJM_migracion_a_recovery.sh ejecutado correctamente"        
 
 
+echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_migracion_anotaciones.sh"                      
+./"$sh_dir"CJM_migracion_anotaciones.sh "$1"   
+if [ $? != 0 ] ; then
+    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CJM_migracion_anotaciones.sh"
+    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
+    exit 1           
+fi
+echo "[OK] ""$sh_dir""CJM_migracion_anotaciones.sh ejecutado correctamente"  
+
+
 echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_migracion_caracteriza_validadores.sh"                               
 ./"$sh_dir"CJM_migracion_caracteriza_validadores.sh "$1"   
 if [ $? != 0 ] ; then 
@@ -110,7 +120,6 @@ if [ $? != 0 ] ; then
     exit 1           
 fi
 echo "[OK] ""$sh_dir""CJM_migracion_a_recovery_precontencioso.sh ejecutado correctamente"      
-
 
 
 echo "[INFO] Comienza ejecución de: ""$sh_dir""apr_main_observaciones_1.07.sh"                      

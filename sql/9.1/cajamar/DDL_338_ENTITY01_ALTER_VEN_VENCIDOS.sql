@@ -43,7 +43,7 @@ BEGIN
     IF V_NUM_TABLAS = 1 THEN 
     --**Guardamos en una tabla temporal los valores del campo ven_id
     V_MSQL := 'CREATE TABLE '||v_esquema||'.TMP_VEN_VENCIDOS_ARRASTRE AS
-              (SELECT ven.VEN_ID,VEN_ARRASTRE FROM '||v_esquema||'.VEN_VENCIDOS)';        
+              (SELECT VEN_ID,VEN_ARRASTRE FROM '||v_esquema||'.VEN_VENCIDOS)';        
     EXECUTE IMMEDIATE V_MSQL;
      DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.TMP_VEN_VENCIDOS_ARRASTRE tabla temporal creada');
      

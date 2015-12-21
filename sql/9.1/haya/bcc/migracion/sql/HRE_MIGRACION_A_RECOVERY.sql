@@ -16,6 +16,7 @@
 --##                                                 LOS_LOTE_SUBASTAS
 --##       210151123 - 0.4 Se cruza con la tabla de BIE_BIENES para cargar LOB_LOTE_BIEN y PRB_PRC_BIE
 --##       210151127 - 0.5 Ponemos propiedad CAJAMAR - Gestion HAYA
+--##       210151211 - 0.6 Seleccionamos arquetipo específico migración
 --##########################################
 --*/
 
@@ -1083,7 +1084,7 @@ BEGIN
                                              , ARQ.ARQ_ID
                                FROM '||V_ESQUEMA||'.MIG_TMP_PER_ID TPI
                                   , '||V_ESQUEMA||'.PER_PERSONAS PER
-                                  , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Resto''  AND BORRADO = 0) ARQ
+                                  , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Migracion''  AND BORRADO = 1) ARQ
                                WHERE TPI.PER_ID IS NOT NULL
                                  AND TPI.PER_ID = PER.PER_ID
                               )'
@@ -1201,7 +1202,7 @@ BEGIN
 --    	  SELECT CD_CONCURSO CD_PROCEDIMIENTO, NULL CD_EXPEDIENTE_NUSE , NULL NUMERO_EXP_NUSE FROM '||V_ESQUEMA||'.MIG_CONCURSOS_CABECERA
     	) PRC
     	, (SELECT DISTINCT CD_PROCEDIMIENTO FROM MIG_MAESTRA_HITOS) MAE
-        , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Resto''  AND BORRADO = 0) ARQ             	
+        , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Migracion''  AND BORRADO = 1) ARQ
      WHERE MAE.CD_PROCEDIMIENTO = PRC.CD_PROCEDIMIENTO');
 
     -- 23.316 filas insertadas. <-- 1 CD_PROCEDIMIENTO = 1 EXPEDIENTE. Las mismas que el count distinct cd_procedimiento de mig_maestra_hitos

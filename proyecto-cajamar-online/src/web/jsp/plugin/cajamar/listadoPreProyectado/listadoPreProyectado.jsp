@@ -12,7 +12,7 @@
 
 	//TAB DATOS GENERALES
 	
-	//Combo Estado GestiÃ³n
+	//Combo Estado Gestión
 	var estadosGestion = <app:dict value="${estadosGestion}" blankElement="true" blankElementValue=""/>;
 	var optionsEstadoGestionStore = new Ext.data.JsonStore({
 		fields: ['codigo', 'descripcion']
@@ -30,7 +30,7 @@
 		,triggerAction:'all'
 		,editable: false
 		,emptyText:'---'
-		,fieldLabel:'<s:message code="plugin.cajamar.listadoPreProyectado.datosGenerales.estadoGestion" text="**Estado gestiÃ³n"/>'
+		,fieldLabel:'<s:message code="plugin.cajamar.listadoPreProyectado.datosGenerales.estadoGestion" text="**Estado gestión"/>'
 	});
 	
 	//Combo Tipo persona
@@ -82,6 +82,7 @@
 		,fieldLabel:'<s:message code="plugin.cajamar.listadoPreProyectado.datosGenerales.agruparPor" text="**Agrupar por"/>'
 	});
 	
+	var mmDiasVencidos = app.creaMinMax('<s:message code="plugin.cajamar.listadoPreProyectado.datosGenerales.diasVencidos" text="**Días Vencidos" />', 'diasVencidos',{width : 80, labelWidth:105});		
 	
 	var tramos = <app:dict value="${tramo}" />;
 	var propuestas = <app:dict value="${propuesta}" />;
@@ -297,7 +298,7 @@
 				},
 				{
 					layout:'form'
-					,items: [dobleSelTramo,dobleSelPropuesta]
+					,items: [mmDiasVencidos.panel,dobleSelTramo,dobleSelPropuesta]
 				}]
 		
 	});
@@ -351,7 +352,7 @@
 		tabContrato=true;
 	});
 	
-	//filtro pestaÃ±as
+	//filtro pestañas
 	var filtroTabPanel= new Ext.TabPanel({
 		items:[filtrosTabDatosGenerales,filtrosTabExpediente,filtrosTabContrato]
 		,layoutOnTabChange:true
@@ -371,6 +372,8 @@
  			mmDeudaIrregular.min,
  			mmDeudaIrregular.max,
  			comboAgruparPor,
+ 			mmDiasVencidos.min,
+ 			mmDiasVencidos.max,
  			dobleSelTramo,
  			dobleSelPropuesta,
  			txtCodExpediente,
@@ -393,6 +396,9 @@
 		if (!app.validaValoresDblText(mmDeudaIrregular)){
 			return false;
 		}
+		if (!app.validaValoresDblText(mmDiasVencidos)){
+			return false;
+		}
 		return true;
 	}
 	
@@ -405,7 +411,16 @@
 		}
 		return true;
 	}
-
+	
+	var validaMinDiasVencidos = function() {
+		if (mmDiasVencidos.min.getValue()!=null
+			&& (!(mmDiasVencidos.min.getValue()===''))) {
+			if (new Number(mmDiasVencidos.min.getValue()) < 0) {
+				return false;
+			}
+		}
+		return true;
+	}
 	
 	var limit = 25;
 	
@@ -677,6 +692,13 @@
 			return true;		
 		}
 		
+		if(!(mmDiasVencidos.min.getValue() === '')){
+			return true;
+		}
+		if(!(mmDiasVencidos.max.getValue() === '')){
+			return true;
+		}
+		
 		if(dobleSelTramo.getValue() != ''){
 			return true;		
 		}
@@ -783,6 +805,8 @@
 		param.minDeudaIrregular=mmDeudaIrregular.min.getValue();
 		param.maxDeudaIrregular=mmDeudaIrregular.max.getValue();
 		param.codAgruparPor=comboAgruparPor.getValue();
+		param.minDiasVencidos=mmDiasVencidos.min.getValue();
+		param.maxDiasVencidos=mmDiasVencidos.max.getValue();
 		param.tramos=dobleSelTramo.getValue();
 		param.propuestas=dobleSelPropuesta.getValue();
 			
@@ -793,20 +817,24 @@
 		if(validarEmptyForm()){
 			if(validaMinMax()){
 				if (validaMinDeudaIrregular()) {
-					panelFiltros.collapse(true);
-					if (comboAgruparPor.getValue()=='CNT') {
-						expedientesGrid.collapse(true);
-						expedientesGrid.hide();
-						contratosGrid.show();
-						contratosGrid.expand(true);
-						preProCntsStore.webflow(getParametros());
-					}
-					if (comboAgruparPor.getValue()=='EXP') {
-						contratosGrid.collapse(true);
-						contratosGrid.hide();
-						expedientesGrid.show();
-						expedientesGrid.expand(true);
-						preProExpsStore.webflow(getParametros());
+					if (validaMinDiasVencidos()) {
+						panelFiltros.collapse(true);
+						if (comboAgruparPor.getValue()=='CNT') {
+							expedientesGrid.collapse(true);
+							expedientesGrid.hide();
+							contratosGrid.show();
+							contratosGrid.expand(true);
+							preProCntsStore.webflow(getParametros());
+						}
+						if (comboAgruparPor.getValue()=='EXP') {
+							contratosGrid.collapse(true);
+							contratosGrid.hide();
+							expedientesGrid.show();
+							expedientesGrid.expand(true);
+							preProExpsStore.webflow(getParametros());
+						}
+					} else {
+						Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="expedientes.listado.minDiasVencidos"/>');
 					}
 				} else {
 					Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="expedientes.listado.minDeudaIrregular"/>');

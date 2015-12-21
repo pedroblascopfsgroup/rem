@@ -18,6 +18,8 @@ DECLARE
         V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= 'HAYAMASTER';
         USUARIO      VARCHAR2(50 CHAR):= 'MIGRAHAYA02';
         USUARIO2     VARCHAR2(50 CHAR):= 'MIGRAHAYA02PCO';
+        USUARIO3     VARCHAR2(50 CHAR):= 'ALTAASUNCM';
+        USUARIO4     VARCHAR2(50 CHAR):= 'SINCRO_CM_HAYA';              
         
         ERR_NUM      NUMBER(25);
         ERR_MSG      VARCHAR2(1024 CHAR);
@@ -145,7 +147,12 @@ BEGIN
 
      EXECUTE IMMEDIATE 'CREATE TABLE '||V_ESQUEMA||'.TABLA_TMP_ASU AS ( SELECT ASU_ID  FROM  '||V_ESQUEMA||'.ASU_ASUNTOS Where usuariocrear = '''||USUARIO||'''
                                                                         UNION
-                                                                        SELECT ASU_ID  FROM  '||V_ESQUEMA||'.ASU_ASUNTOS Where usuariocrear = '''||USUARIO2||''')';
+                                                                        SELECT ASU_ID  FROM  '||V_ESQUEMA||'.ASU_ASUNTOS Where usuariocrear = '''||USUARIO2||'''
+                                                                        UNION
+                                                                        SELECT ASU_ID  FROM  '||V_ESQUEMA||'.ASU_ASUNTOS Where usuariocrear = '''||USUARIO3||'''
+                                                                        UNION
+                                                                        SELECT ASU_ID  FROM  '||V_ESQUEMA||'.ASU_ASUNTOS Where usuariocrear = '''||USUARIO4||'''                                                                        
+                                                                        )';
      --
      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.TABLA_TMP_ASU... Tabla creada. '||SQL%ROWCOUNT||' Filas.');
 
@@ -198,9 +205,14 @@ BEGIN
       END IF;
 
      EXECUTE IMMEDIATE ('CREATE TABLE '||V_ESQUEMA||'.TABLA_TMP_BIE AS  
-        SELECT DISTINCT BIE.BIE_ID  FROM  '||V_ESQUEMA||'.BIE_BIEN BIE WHERE USUARIOCREAR = '''||USUARIO||'''
-        UNION
-        SELECT DISTINCT BIE.BIE_ID  FROM  '||V_ESQUEMA||'.BIE_BIEN BIE WHERE USUARIOCREAR = '''||USUARIO2||'''');
+                                    SELECT DISTINCT BIE.BIE_ID  FROM  '||V_ESQUEMA||'.BIE_BIEN BIE WHERE USUARIOCREAR = '''||USUARIO||'''
+                                    UNION
+                                    SELECT DISTINCT BIE.BIE_ID  FROM  '||V_ESQUEMA||'.BIE_BIEN BIE WHERE USUARIOCREAR = '''||USUARIO2||'''
+                                    UNION
+                                    SELECT DISTINCT BIE.BIE_ID  FROM  '||V_ESQUEMA||'.BIE_BIEN BIE WHERE USUARIOCREAR = '''||USUARIO2||'''
+                                    UNION
+                                    SELECT DISTINCT BIE.BIE_ID  FROM  '||V_ESQUEMA||'.BIE_BIEN BIE WHERE USUARIOCREAR = '''||USUARIO3||'''        
+                       ');
      --
      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.TABLA_TMP_BIE... Tabla creada. '||SQL%ROWCOUNT||' Filas.');
      EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.TABLA_TMP_BIE ADD CONSTRAINT PK_TABLA_TMP_BIE PRIMARY KEY(BIE_ID)';

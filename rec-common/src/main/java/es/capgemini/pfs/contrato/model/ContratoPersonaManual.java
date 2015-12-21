@@ -5,17 +5,24 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Id;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Where;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.persona.model.PersonaManual;
 
+@Entity
+@Table(name="CPM_CONTRATOS_PERSONAS_MAN", schema="${entity.schema}")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class ContratoPersonaManual implements Serializable, Auditable {
 
 	private static final long serialVersionUID = 8785355961412808132L;

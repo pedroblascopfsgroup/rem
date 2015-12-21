@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        20151203 GMN  0.1 Versión inicial
 --##        20151216 GMN  0.2 Se pone TRIM a cruces por GUID_TAP_CODIGO
+--##        20151217 GMN  0.3 Se incluye asignación a EXP_EXPEDIENTES
 --##########################################
 --*/
 
@@ -28,6 +29,7 @@ DECLARE
         V_ESQUEMA    VARCHAR2(25 CHAR):= 'HAYA02';
         V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= 'HAYAMASTER';
         USUARIO      VARCHAR2(50 CHAR):= 'MIGRAHAYA02';
+        USUARIOPCO   VARCHAR2(50 CHAR):= 'MIGRAHAYA02PCO';            
         
         ERR_NUM      NUMBER(25);
         ERR_MSG      VARCHAR2(1024 CHAR);
@@ -55,6 +57,9 @@ BEGIN
               , GUID_BIE_CODIGO_INTERNO
               , GUID_CNT_CONTRATO
               , GUID_TAP_CODIGO 
+              , GUID_DD_PCO_PEP_CODIGO
+              , GUID_PCO_DOC_PDD_UG_DESC
+              , GUID_DD_TFA_CODIGO
               )
            SELECT DISTINCT GUID_SYSGUID
               , GUID_ASU_ID_EXTERNO
@@ -63,6 +68,9 @@ BEGIN
               , GUID_BIE_CODIGO_INTERNO
               , GUID_CNT_CONTRATO
               , TRIM(GUID_TAP_CODIGO) 
+              , TRIM(GUID_DD_PCO_PEP_CODIGO)
+              , GUID_PCO_DOC_PDD_UG_DESC
+              , TRIM(GUID_DD_TFA_CODIGO)
             FROM '||V_ESQUEMA||'.TMP_GUID_HRE';
 
     EXECUTE IMMEDIATE V_SQL;
@@ -73,10 +81,43 @@ BEGIN
     HAYA02.UTILES.ANALIZA_TABLA('HAYA02','TMP_GUID_HRE_2');   
     DBMS_OUTPUT.PUT_LINE(V_ESQUEMA||'.UTILES.ANALIZA_TABLA( '''||V_ESQUEMA||''',''TMP_GUID_HRE_2'' )');    
    
---select count(*), GUID_DES
---from TMP_GUID_HRE
---GROUP BY GUID_DES
---order by GUID_DES;
+
+--EXPEDIENTES   
+   
+     EXECUTE IMMEDIATE('TRUNCATE TABLE '||V_ESQUEMA||'.TMP_GUID_EXP_EXPED_HRE'); 
+    
+     V_SQL:= null;
+
+     V_SQL:= 'insert into '||V_ESQUEMA||'.TMP_GUID_EXP_EXPED_HRE (SYS_GUID, EXP_ID)
+                           SELECT tmp.GUID_SYSGUID, exp.EXP_ID  
+                                   FROM '||V_ESQUEMA||'.TMP_GUID_HRE_2 tmp
+                                      , '||V_ESQUEMA||'.EXP_EXPEDIENTES exp
+                                      , '||V_ESQUEMA||'.ASU_ASUNTOS asu
+                                   WHERE tmp.GUID_ASU_ID_EXTERNO = asu.ASU_ID_EXTERNO
+                                     AND exp.EXP_ID   = asu.EXP_ID
+                                     AND tmp.GUID_DES = ''EXP_EXPEDIENTES''
+                                     AND exp.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')';
+  
+     EXECUTE IMMEDIATE V_SQL;
+     COMMIT;
+     HAYA02.UTILES.ANALIZA_TABLA('HAYA02','TMP_GUID_EXP_EXPED_HRE');   
+
+     V_SQL:= 'UPDATE (SELECT exphre.SYS_GUID AS old_SYS_GUID,
+                           tmp.SYS_GUID    AS new_SYS_GUID
+                      FROM '||V_ESQUEMA||'.EXP_EXPEDIENTES exphre
+                      INNER JOIN '||V_ESQUEMA||'.TMP_GUID_EXP_EXPED_HRE tmp 
+                              ON exphre.EXP_ID = tmp.EXP_ID 
+                      WHERE exphre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')
+                     )
+                SET old_SYS_GUID = new_SYS_GUID';    
+     
+     
+     EXECUTE IMMEDIATE V_SQL;
+  
+     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' Registros de ASU_ASUNTOS actualizados. '||SQL%ROWCOUNT||' Filas.');
+     COMMIT;   
+
+--ASUNTOS   
 
      EXECUTE IMMEDIATE('TRUNCATE TABLE '||V_ESQUEMA||'.TMP_GUID_ASU_ASUNTOS_HRE'); 
     
@@ -134,8 +175,8 @@ BEGIN
                INNER JOIN '||V_ESQUEMA||'.BIE_BIEN BB ON BB.BIE_ID = PRB.BIE_ID
                )TT WHERE TT.RANKING = 1
             ) XX ON XX.PRC_ID = PRC.PRC_ID  
-         WHERE PRC.USUARIOCREAR = ''MIGRAHAYA02''
-           AND ASU.USUARIOCREAR = ''MIGRAHAYA02''';
+         WHERE PRC.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')
+           AND ASU.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')';
 
 --  V_SQL:= 'INSERT INTO TMP_GUID_PRB_PRC_BIE_CODIGO 
 --     (  PRB_ID , PRC_ID , BIE_ID , USUARIOCREAR , BIE_CODIGO_INTERNO
@@ -182,7 +223,7 @@ BEGIN
                            AND tmp.GUID_ASU_ID_EXTERNO    = haya.ASU_ID_EXTERNO 
                            AND tmp.GUID_DD_TPO_CODIGO     = haya.DD_TPO_CODIGO
                            AND tmp.GUID_DES               = ''PRC_PROCEDIMIENTOS''
-                           AND prchre.USUARIOCREAR = ''MIGRAHAYA02''';
+                           AND prchre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')';
 
      EXECUTE IMMEDIATE V_SQL;
      COMMIT;
@@ -194,7 +235,7 @@ BEGIN
                       FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS prchre
                       INNER JOIN '||V_ESQUEMA||'.TMP_GUID_PRC_PROCS_HRE tmp 
                               ON prchre.PRC_ID = tmp.PRC_ID 
-                      WHERE prchre.USUARIOCREAR = ''MIGRAHAYA02''
+                      WHERE prchre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')
                      )
                 SET old_SYS_GUID = new_SYS_GUID';    
      
@@ -317,7 +358,7 @@ BEGIN
                                  , '||V_ESQUEMA||'.PRB_PRC_BIE     prbhre
                     where biehre.BIE_ID       = prbhre.BIE_ID
                       and haya.PRC_ID         = prbhre.PRC_ID 
-                      and prbhre.usuariocrear = ''MIGRAHAYA02'' 
+                      and prbhre.usuariocrear IN ('''||USUARIO||''','''||USUARIOPCO||''') 
                       ) haya2
                      WHERE tmp.GUID_ASU_ID_EXTERNO     = haya2.ASU_ID_EXTERNO 
                        AND tmp.GUID_DD_TPO_CODIGO      = haya2.DD_TPO_CODIGO
@@ -337,7 +378,7 @@ BEGIN
                   FROM '||V_ESQUEMA||'.PRB_PRC_BIE prbhre
                   INNER JOIN '||V_ESQUEMA||'.TMP_GUID_PRB_HRE tmp 
                           ON prbhre.PRB_ID = tmp.PRB_ID 
-                  WHERE prbhre.USUARIOCREAR = ''MIGRAHAYA02''
+                  WHERE prbhre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')
                  )
             SET old_SYS_GUID = new_SYS_GUID';   
 
@@ -392,7 +433,7 @@ BEGIN
                            AND bcc.GUID_DD_TPO_CODIGO  = haya.DD_TPO_CODIGO
                            AND TRIM(bcc.GUID_TAP_CODIGO)     = TRIM(tap.TAP_CODIGO)
                            AND bcc.GUID_DES            = ''TAR_TAREAS_NOTIFICACIONES''
-                           AND tarhre.USUARIOCREAR = ''MIGRAHAYA02'''
+                           AND tarhre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')'
                            ;   
                                         
    
@@ -407,7 +448,7 @@ BEGIN
                     FROM '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES tarhre
                     INNER JOIN '||V_ESQUEMA||'.TMP_GUID_TAR_TAREAS_HRE tmp 
                             ON tarhre.TAR_ID = tmp.TAR_ID 
-                    WHERE tarhre.USUARIOCREAR = ''MIGRAHAYA02''
+                    WHERE tarhre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')
                    )
               SET old_SYS_GUID = new_SYS_GUID';
 
@@ -433,7 +474,7 @@ BEGIN
                                     AND cexhre.CNT_ID = cnt.CNT_ID
                                     AND asu.EXP_ID    = cexhre.EXP_ID
                                     AND tmp.GUID_DES  = ''CEX_CONTRATOS_EXPEDIENTE''
-                                    AND cexhre.USUARIOCREAR = ''MIGRAHAYA02''';                   
+                                    AND cexhre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')';                   
   
      EXECUTE IMMEDIATE V_SQL;
      COMMIT;
@@ -444,7 +485,7 @@ BEGIN
                       FROM '||V_ESQUEMA||'.CEX_CONTRATOS_EXPEDIENTE cexhre
                       INNER JOIN '||V_ESQUEMA||'.TMP_GUID_CEX_HRE tmp 
                             ON cexhre.CEX_ID = tmp.CEX_ID 
-                      WHERE cexhre.USUARIOCREAR = ''MIGRAHAYA02''
+                      WHERE cexhre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')
                    )
               SET old_SYS_GUID = new_SYS_GUID';     
 
@@ -485,7 +526,7 @@ BEGIN
                            AND tmp.GUID_ASU_ID_EXTERNO = haya.ASU_ID_EXTERNO 
                            AND tmp.GUID_DD_TPO_CODIGO  = haya.DD_TPO_CODIGO
                            AND tmp.GUID_DES            = ''SUB_SUBASTA''
-                           AND subhre.USUARIOCREAR = ''MIGRAHAYA02''';    
+                           AND subhre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')';    
                                 
      EXECUTE IMMEDIATE V_SQL;
      COMMIT;
@@ -496,7 +537,7 @@ BEGIN
                       FROM '||V_ESQUEMA||'.SUB_SUBASTA subhre
                       INNER JOIN '||V_ESQUEMA||'.TMP_GUID_SUB_HRE tmp 
                             ON subhre.SUB_ID = tmp.SUB_ID 
-                      WHERE subhre.USUARIOCREAR = ''MIGRAHAYA02''
+                      WHERE subhre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')
                    )
               SET old_SYS_GUID = new_SYS_GUID';        
       
@@ -542,7 +583,7 @@ BEGIN
                            AND loshre.SUB_ID     = subhre.SUB_ID
                            AND tmp.GUID_ASU_ID_EXTERNO = asuhre.ASU_ID_EXTERNO 
                            AND tmp.GUID_DES            = ''LOS_LOTE_SUBASTA''
-                           AND loshre.USUARIOCREAR = ''MIGRAHAYA02''';         
+                           AND loshre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')';         
 
 
      EXECUTE IMMEDIATE V_SQL;
@@ -554,7 +595,7 @@ BEGIN
                       FROM '||V_ESQUEMA||'.LOS_LOTE_SUBASTA loshre
                       INNER JOIN '||V_ESQUEMA||'.TMP_GUID_LOS_HRE tmp 
                             ON loshre.LOS_ID = tmp.LOS_ID 
-                      WHERE loshre.USUARIOCREAR = ''MIGRAHAYA02''
+                      WHERE loshre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')
                    )
               SET old_SYS_GUID = new_SYS_GUID';        
                          
@@ -582,8 +623,218 @@ BEGIN
 
    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' Fin carga');      
    
+/**********************************************/   
+/***** ASIGNA SYSGUID EXCLUSIVAS PRECONTENCIOSO   
+/**********************************************/
+
+-- PCO_PRC_PROCEDIMIENTOS
+  
+  EXECUTE IMMEDIATE('TRUNCATE TABLE '||V_ESQUEMA||'.TMP_GUID_PCO_PRC_HRE'); 
+
+  V_SQL:= null;
+
+  
+     V_SQL:= 'INSERT INTO '||V_ESQUEMA||'.TMP_GUID_PCO_PRC_HRE (SYS_GUID, PCO_PRC_ID)
+                        SELECT tmp.GUID_SYSGUID, prchre.PCO_PRC_ID  
+                          FROM '||V_ESQUEMA||'.TMP_GUID_HRE_2 tmp
+                             , '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS prchre                             
+                             , '||V_ESQUEMA||'.TMP_HAYA_PRC_SYSGUID haya
+                         WHERE  prchre.PRC_ID             = haya.PRC_ID      
+                           AND tmp.GUID_ASU_ID_EXTERNO    = haya.ASU_ID_EXTERNO 
+                           AND tmp.GUID_DD_TPO_CODIGO     = haya.DD_TPO_CODIGO
+                           AND tmp.GUID_DES               = ''PCO_PRC_PROCEDIMIENTOS''
+                           AND prchre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')';
+
+     EXECUTE IMMEDIATE V_SQL;
+     COMMIT;
+     HAYA02.UTILES.ANALIZA_TABLA('HAYA02','TMP_GUID_PRC_PROCS_HRE');   
+  
+   
+     V_SQL:= 'UPDATE (SELECT prchre.SYS_GUID AS old_SYS_GUID,
+                           tmp.SYS_GUID    AS new_SYS_GUID
+                      FROM '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS prchre
+                      INNER JOIN '||V_ESQUEMA||'.TMP_GUID_PCO_PRC_HRE tmp 
+                              ON prchre.PCO_PRC_ID = tmp.PCO_PRC_ID 
+                      WHERE prchre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')
+                     )
+                SET old_SYS_GUID = new_SYS_GUID';    
+     
+
+     EXECUTE IMMEDIATE V_SQL; 
+     
+  
+ 
+   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' Registros de PCO_PRC_PROCEDIMIENTOS actualizados. '||SQL%ROWCOUNT||' Filas.');
+   COMMIT;   
+   
+-- PCO_PRC_HEP_HISTOR_EST_PREP
+  
+  EXECUTE IMMEDIATE('TRUNCATE TABLE '||V_ESQUEMA||'.TMP_GUID_PCO_PRC_HEP_HRE'); 
+
+  V_SQL:= null;
+
+  
+     V_SQL:= 'INSERT INTO '||V_ESQUEMA||'.TMP_GUID_PCO_PRC_HEP_HRE (SYS_GUID, PCO_PRC_HEP_ID)
+                        SELECT tmp.GUID_SYSGUID, prchre.PCO_PRC_HEP_ID  
+                          FROM '||V_ESQUEMA||'.TMP_GUID_HRE_2 tmp
+                             , '||V_ESQUEMA||'.PCO_PRC_HEP_HISTOR_EST_PREP prchre                             
+                             , '||V_ESQUEMA||'.TMP_HAYA_PRC_SYSGUID haya
+                             , '||V_ESQUEMA||'.DD_PCO_PRC_ESTADO_PREPARACION dd
+                         WHERE  prchre.PCO_PRC_ID         = haya.PRC_ID      
+                           AND tmp.GUID_ASU_ID_EXTERNO    = haya.ASU_ID_EXTERNO 
+                           AND tmp.GUID_DD_TPO_CODIGO     = haya.DD_TPO_CODIGO
+                           AND tmp.GUID_DES               = ''PCO_PRC_HEP_HISTOR_EST_PREP''
+                           AND prchre.DD_PCO_PEP_ID       =  dd.DD_PCO_PEP_ID
+                           AND TRIM(tmp.GUID_DD_PCO_PEP_CODIGO)  = TRIM(dd.DD_PCO_PEP_CODIGO)
+                           AND prchre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')';
+
+     EXECUTE IMMEDIATE V_SQL;
+     COMMIT;
+
+     HAYA02.UTILES.ANALIZA_TABLA('HAYA02','TMP_GUID_PCO_PRC_HEP_HRE');   
+  
+   
+     V_SQL:= 'UPDATE (SELECT prchre.SYS_GUID AS old_SYS_GUID,
+                           tmp.SYS_GUID    AS new_SYS_GUID
+                      FROM '||V_ESQUEMA||'.PCO_PRC_HEP_HISTOR_EST_PREP prchre
+                      INNER JOIN '||V_ESQUEMA||'.TMP_GUID_PCO_PRC_HEP_HRE tmp 
+                              ON prchre.PCO_PRC_HEP_ID = tmp.PCO_PRC_HEP_ID 
+                      WHERE prchre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')
+                     )
+                SET old_SYS_GUID = new_SYS_GUID';    
+     
+
+     EXECUTE IMMEDIATE V_SQL; 
+     
+  
+ 
+   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' Registros de PCO_PRC_HEP_HISTOR_EST_PREP actualizados. '||SQL%ROWCOUNT||' Filas.');
+   COMMIT;   
+   
+   
+-- PCO_DOC_DOCUMENTOS
+  
+  EXECUTE IMMEDIATE('TRUNCATE TABLE '||V_ESQUEMA||'.TMP_GUID_PCO_DOC_HRE'); 
+
+ --DD_PCO_DTD_CODIGO = 'CO'
+  V_SQL:= null;
+
+  
+     V_SQL:= 'INSERT INTO '||V_ESQUEMA||'.TMP_GUID_PCO_DOC_HRE (SYS_GUID, PCO_DOC_ID)
+                        SELECT tmp.GUID_SYSGUID, prchre.PCO_DOC_PDD_ID  
+                          FROM '||V_ESQUEMA||'.TMP_GUID_HRE_2 tmp
+                             , '||V_ESQUEMA||'.PCO_DOC_DOCUMENTOS prchre                             
+                             , '||V_ESQUEMA||'.TMP_HAYA_PRC_SYSGUID haya
+                             , '||V_ESQUEMA||'.DD_TFA_FICHERO_ADJUNTO dd
+                             , '||V_ESQUEMA||'.DD_PCO_DOC_UNIDADGESTION ddu
+                         WHERE  prchre.PCO_PRC_ID         = haya.PRC_ID      
+                           AND tmp.GUID_ASU_ID_EXTERNO    = haya.ASU_ID_EXTERNO 
+                           AND tmp.GUID_DD_TPO_CODIGO     = haya.DD_TPO_CODIGO
+                           AND tmp.GUID_PCO_DOC_PDD_UG_DESC  = prchre.PCO_DOC_PDD_UG_DESC           
+                           AND prchre.DD_PCO_DTD_ID          = ddu.DD_PCO_DTD_ID
+                           AND ddu.DD_PCO_DTD_CODIGO   = ''CO''                           
+                           AND tmp.GUID_DD_PCO_DTD_CODIGO = ddu.DD_PCO_DTD_CODIGO  
+                           AND prchre.DD_TFA_ID              = dd.DD_TFA_ID
+                           AND TRIM(tmp.GUID_DD_TFA_CODIGO)  = TRIM(dd.DD_TFA_CODIGO)                           
+                           AND tmp.GUID_DES                  = ''PCO_DOC_DOCUMENTOS''
+                           AND prchre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')';
+
+     EXECUTE IMMEDIATE V_SQL;
+
+     
+ --DD_PCO_DTD_CODIGO = 'PE'
+  V_SQL:= null;
+
+  
+     V_SQL:= 'INSERT INTO '||V_ESQUEMA||'.TMP_GUID_PCO_DOC_HRE (SYS_GUID, PCO_DOC_ID)
+                        SELECT tmp.GUID_SYSGUID, prchre.PCO_DOC_PDD_ID 
+                          FROM '||V_ESQUEMA||'.TMP_GUID_HRE_2 tmp
+                             , '||V_ESQUEMA||'.PCO_DOC_DOCUMENTOS prchre                             
+                             , '||V_ESQUEMA||'.TMP_HAYA_PRC_SYSGUID haya
+                             , '||V_ESQUEMA||'.DD_TFA_FICHERO_ADJUNTO dd
+                             , '||V_ESQUEMA||'.DD_PCO_DOC_UNIDADGESTION ddu                             
+                             , '||V_ESQUEMA||'.PER_PERSONAS per
+                         WHERE  prchre.PCO_PRC_ID         = haya.PRC_ID      
+                           AND tmp.GUID_ASU_ID_EXTERNO    = haya.ASU_ID_EXTERNO 
+                           AND tmp.GUID_DD_TPO_CODIGO     = haya.DD_TPO_CODIGO
+                           AND tmp.GUID_PCO_DOC_PDD_UG_DESC  = per.PER_COD_CLIENTE_ENTIDAD
+                           AND prchre.PCO_DOC_PDD_UG_ID   = per.PER_ID
+                           AND tmp.GUID_DD_PCO_DTD_CODIGO = ddu.DD_PCO_DTD_CODIGO  
+                           AND prchre.DD_PCO_DTD_ID       = ddu.DD_PCO_DTD_ID
+                           AND ddu.DD_PCO_DTD_CODIGO      = ''PE''                           
+                           AND prchre.DD_TFA_ID              = dd.DD_TFA_ID
+                           AND TRIM(tmp.GUID_DD_TFA_CODIGO)  = TRIM(dd.DD_TFA_CODIGO)                           
+                           AND tmp.GUID_DES                  = ''PCO_DOC_DOCUMENTOS''
+                           AND prchre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')';
+
+     EXECUTE IMMEDIATE V_SQL;     
+     COMMIT;
+     HAYA02.UTILES.ANALIZA_TABLA('HAYA02','TMP_GUID_PCO_DOC_HRE');   
+  
+   
+     V_SQL:= 'UPDATE (SELECT prchre.SYS_GUID AS old_SYS_GUID,
+                           tmp.SYS_GUID    AS new_SYS_GUID
+                      FROM '||V_ESQUEMA||'.PCO_DOC_DOCUMENTOS prchre
+                      INNER JOIN '||V_ESQUEMA||'.TMP_GUID_PCO_DOC_HRE tmp 
+                              ON prchre.PCO_DOC_PDD_ID = tmp.PCO_DOC_ID 
+                      WHERE prchre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')
+                     )
+                SET old_SYS_GUID = new_SYS_GUID';    
+     
+
+     EXECUTE IMMEDIATE V_SQL; 
+     
+  
+ 
+   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' Registros de PCO_DOC_DOCUMENTOS actualizados. '||SQL%ROWCOUNT||' Filas.');
+   COMMIT;   
+   
+   
+-- PCO_LIQ_LIQUIDACIONES
+  
+  EXECUTE IMMEDIATE('TRUNCATE TABLE '||V_ESQUEMA||'.TMP_GUID_PCO_LIQ_HRE'); 
+
+  V_SQL:= null;
+
+  
+     V_SQL:= 'INSERT INTO '||V_ESQUEMA||'.TMP_GUID_PCO_LIQ_HRE (SYS_GUID, PCO_LIQ_ID)
+                        SELECT tmp.GUID_SYSGUID, prchre.PCO_LIQ_ID  
+                          FROM '||V_ESQUEMA||'.TMP_GUID_HRE_2 tmp
+                             , '||V_ESQUEMA||'.PCO_LIQ_LIQUIDACIONES prchre                             
+                             , '||V_ESQUEMA||'.TMP_HAYA_PRC_SYSGUID haya                             
+                             , '||V_ESQUEMA||'.CNT_CONTRATOS cnt
+                         WHERE  prchre.PCO_PRC_ID         = haya.PRC_ID      
+                           AND tmp.GUID_ASU_ID_EXTERNO    = haya.ASU_ID_EXTERNO 
+                           AND tmp.GUID_DD_TPO_CODIGO     = haya.DD_TPO_CODIGO
+                           AND tmp.GUID_CNT_CONTRATO      = cnt.CNT_CONTRATO
+                           AND tmp.GUID_DES               = ''PCO_LIQ_LIQUIDACIONES''
+                           AND prchre.CNT_ID              = cnt.CNT_ID
+                           AND prchre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')';
+
+     EXECUTE IMMEDIATE V_SQL;
+     COMMIT;
+     HAYA02.UTILES.ANALIZA_TABLA('HAYA02','TMP_GUID_PRC_PROCS_HRE');   
+  
+   
+     V_SQL:= 'UPDATE (SELECT prchre.SYS_GUID AS old_SYS_GUID,
+                           tmp.SYS_GUID    AS new_SYS_GUID
+                      FROM '||V_ESQUEMA||'.PCO_LIQ_LIQUIDACIONES prchre
+                      INNER JOIN '||V_ESQUEMA||'.TMP_GUID_PCO_LIQ_HRE tmp 
+                              ON prchre.PCO_LIQ_ID = tmp.PCO_LIQ_ID 
+                      WHERE prchre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')
+                     )
+                SET old_SYS_GUID = new_SYS_GUID';    
+     
+
+     EXECUTE IMMEDIATE V_SQL; 
+     
+  
+ 
+   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' Registros de PCO_LIQ_LIQUIDACIONES actualizados. '||SQL%ROWCOUNT||' Filas.');
+   COMMIT;      
+   
 --/***************************************
---*     FIN EXTRAE SYSGUID               *
+--*     FIN ASIGNA SYSGUID               *
 --***************************************/
 
 DBMS_OUTPUT.PUT_LINE( 'FIN DEL PROCESO');

@@ -1,4 +1,5 @@
 /*********** SCRIPT *****************/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 SET TIMING ON;
 DECLARE
@@ -24,10 +25,10 @@ DECLARE
 BEGIN
 
  ---------------------------------
- -- Migraci髇 de notificaciones --
+ -- Migraci贸n de notificaciones --
  ---------------------------------
 
-dbms_output.put_line('[INI] - '||to_char(sysdate,'HH24:MI:SS')||' Inicio del proceso de migraci髇 de anotaciones.');
+dbms_output.put_line('[INI] - '||to_char(sysdate,'HH24:MI:SS')||' Inicio del proceso de migraci贸n de anotaciones.');
 
     --** Asignamos valores de diccionario
     v_sql:= 'select dd_ein_id from '||v_esquema_master||'.dd_ein_entidad_informacion where dd_ein_codigo = ''9'''; --persona
@@ -39,7 +40,7 @@ dbms_output.put_line('[INI] - '||to_char(sysdate,'HH24:MI:SS')||' Inicio del pro
     v_sql:= 'select dd_trg_id from '||v_esquema||'.mej_dd_trg_tipo_registro where dd_trg_codigo = ''ANO_NOTIFICACION'''; --probar si no 'ANO_COMENTARIO'
     execute immediate v_sql into v_dd_trg_id;
     
-    v_sql:= 'select max(usu_id) from '||v_esquema_master||'.usu_usuarios'; -- Falta crear usuario de migraci髇
+    v_sql:= 'select max(usu_id) from '||v_esquema_master||'.usu_usuarios'; -- Falta crear usuario de migraci贸n
     execute immediate v_sql into v_usu_id;
     
     v_sql:= 'select (sysdate - to_date(''01/01/1970 00:00:00'', ''mm-dd-yyyy hh24:mi:ss'')) * 24 * 60 * 60 * 1000 from dual';
@@ -81,7 +82,7 @@ dbms_output.put_line('[INI] - '||to_char(sysdate,'HH24:MI:SS')||' Inicio del pro
 
     dbms_output.put_line('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||v_esquema||'.MIG_TMP_TAR_TAREAS_NOTIF Creada. Filas: '||v_count);
     dbms_stats.gather_table_stats (ownname => v_esquema, tabname => 'MIG_TMP_TAR_TAREAS_NOTIF', estimate_percent => 20);
-    dbms_output.put_line('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||v_esquema||'.MIG_TMP_TAR_TAREAS_NOTIF Estad韘ticas actualizadas');
+    dbms_output.put_line('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||v_esquema||'.MIG_TMP_TAR_TAREAS_NOTIF Estad铆sticas actualizadas');
 
 
 
@@ -174,13 +175,13 @@ dbms_output.put_line('[INI] - '||to_char(sysdate,'HH24:MI:SS')||' Inicio del pro
     execute immediate('drop table '||v_esquema||'.MIG_TMP_TAR_TAREAS_NOTIF');
     dbms_output.put_line('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||v_esquema||'.MIG_TMP_TAR_TAREAS_NOTIF eliminada');
 
-dbms_output.put_line('[FIN] - '||to_char(sysdate,'HH24:MI:SS')||' Fin del proceso de migraci髇 de anotaciones.');
+dbms_output.put_line('[FIN] - '||to_char(sysdate,'HH24:MI:SS')||' Fin del proceso de migraci贸n de anotaciones.');
 
 EXCEPTION
     WHEN OTHERS THEN
       ERR_NUM := SQLCODE;
       ERR_MSG := SQLERRM;
-      DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecuci髇:'||TO_CHAR(ERR_NUM));
+      DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecuci贸n:'||TO_CHAR(ERR_NUM));
       DBMS_OUTPUT.put_line(V_SQL);
       DBMS_OUTPUT.put_line('-----------------------------------------------------------');
       DBMS_OUTPUT.put_line(ERR_MSG);

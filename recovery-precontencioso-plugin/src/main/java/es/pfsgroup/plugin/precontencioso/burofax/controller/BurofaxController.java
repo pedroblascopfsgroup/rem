@@ -185,6 +185,7 @@ public class BurofaxController {
 				    					dto.setFechaSolicitud(envioBurofax.getFechaSolicitud());
 				    					dto.setFechaEnvio(envioBurofax.getFechaEnvio());
 				    					dto.setFechaAcuse(envioBurofax.getFechaAcuse());
+				    					dto.setAcuseRecibo(envioBurofax.getAcuseRecibo());
 				    					if(!Checks.esNulo(envioBurofax.getResultadoBurofax())){
 				    						dto.setResultado(envioBurofax.getResultadoBurofax().getDescripcion());
 				    					}

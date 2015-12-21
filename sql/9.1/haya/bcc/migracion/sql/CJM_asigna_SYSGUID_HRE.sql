@@ -114,7 +114,7 @@ BEGIN
      
      EXECUTE IMMEDIATE V_SQL;
   
-     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' Registros de ASU_ASUNTOS actualizados. '||SQL%ROWCOUNT||' Filas.');
+     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' Registros de EXP_EXPEDIENTES actualizados. '||SQL%ROWCOUNT||' Filas.');
      COMMIT;   
 
 --ASUNTOS   
@@ -129,7 +129,7 @@ BEGIN
                                       , '||V_ESQUEMA||'.ASU_ASUNTOS hre
                                    WHERE tmp.GUID_ASU_ID_EXTERNO = hre.ASU_ID_EXTERNO
                                      AND tmp.GUID_DES = ''ASU_ASUNTOS''
-                                     AND hre.USUARIOCREAR = ''MIGRAHAYA02''';
+                                     AND hre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')';
   
      EXECUTE IMMEDIATE V_SQL;
      COMMIT;
@@ -140,7 +140,7 @@ BEGIN
                       FROM '||V_ESQUEMA||'.ASU_ASUNTOS asuhre
                       INNER JOIN '||V_ESQUEMA||'.TMP_GUID_ASU_ASUNTOS_HRE tmp 
                               ON asuhre.ASU_ID = tmp.ASU_ID 
-                      WHERE asuhre.USUARIOCREAR = ''MIGRAHAYA02''
+                      WHERE asuhre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')
                      )
                 SET old_SYS_GUID = new_SYS_GUID';    
      
@@ -677,10 +677,12 @@ BEGIN
      V_SQL:= 'INSERT INTO '||V_ESQUEMA||'.TMP_GUID_PCO_PRC_HEP_HRE (SYS_GUID, PCO_PRC_HEP_ID)
                         SELECT tmp.GUID_SYSGUID, prchre.PCO_PRC_HEP_ID  
                           FROM '||V_ESQUEMA||'.TMP_GUID_HRE_2 tmp
-                             , '||V_ESQUEMA||'.PCO_PRC_HEP_HISTOR_EST_PREP prchre                             
+                             , '||V_ESQUEMA||'.PCO_PRC_HEP_HISTOR_EST_PREP prchre 
+                             , '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS prc
                              , '||V_ESQUEMA||'.TMP_HAYA_PRC_SYSGUID haya
                              , '||V_ESQUEMA||'.DD_PCO_PRC_ESTADO_PREPARACION dd
-                         WHERE  prchre.PCO_PRC_ID         = haya.PRC_ID      
+                         WHERE prchre.PCO_PRC_ID          = prc.PCO_PRC_ID     
+                           AND prc.PRC_ID                 = haya.PRC_ID       
                            AND tmp.GUID_ASU_ID_EXTERNO    = haya.ASU_ID_EXTERNO 
                            AND tmp.GUID_DD_TPO_CODIGO     = haya.DD_TPO_CODIGO
                            AND tmp.GUID_DES               = ''PCO_PRC_HEP_HISTOR_EST_PREP''
@@ -723,17 +725,18 @@ BEGIN
      V_SQL:= 'INSERT INTO '||V_ESQUEMA||'.TMP_GUID_PCO_DOC_HRE (SYS_GUID, PCO_DOC_ID)
                         SELECT tmp.GUID_SYSGUID, prchre.PCO_DOC_PDD_ID  
                           FROM '||V_ESQUEMA||'.TMP_GUID_HRE_2 tmp
-                             , '||V_ESQUEMA||'.PCO_DOC_DOCUMENTOS prchre                             
+                             , '||V_ESQUEMA||'.PCO_DOC_DOCUMENTOS prchre  
+                             , '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS prc
                              , '||V_ESQUEMA||'.TMP_HAYA_PRC_SYSGUID haya
                              , '||V_ESQUEMA||'.DD_TFA_FICHERO_ADJUNTO dd
                              , '||V_ESQUEMA||'.DD_PCO_DOC_UNIDADGESTION ddu
-                         WHERE  prchre.PCO_PRC_ID         = haya.PRC_ID      
+                         WHERE prchre.PCO_PRC_ID          = prc.PCO_PRC_ID     
+                           AND prc.PRC_ID                 = haya.PRC_ID     
                            AND tmp.GUID_ASU_ID_EXTERNO    = haya.ASU_ID_EXTERNO 
                            AND tmp.GUID_DD_TPO_CODIGO     = haya.DD_TPO_CODIGO
                            AND tmp.GUID_PCO_DOC_PDD_UG_DESC  = prchre.PCO_DOC_PDD_UG_DESC           
                            AND prchre.DD_PCO_DTD_ID          = ddu.DD_PCO_DTD_ID
                            AND ddu.DD_PCO_DTD_CODIGO   = ''CO''                           
-                           AND tmp.GUID_DD_PCO_DTD_CODIGO = ddu.DD_PCO_DTD_CODIGO  
                            AND prchre.DD_TFA_ID              = dd.DD_TFA_ID
                            AND TRIM(tmp.GUID_DD_TFA_CODIGO)  = TRIM(dd.DD_TFA_CODIGO)                           
                            AND tmp.GUID_DES                  = ''PCO_DOC_DOCUMENTOS''
@@ -749,17 +752,18 @@ BEGIN
      V_SQL:= 'INSERT INTO '||V_ESQUEMA||'.TMP_GUID_PCO_DOC_HRE (SYS_GUID, PCO_DOC_ID)
                         SELECT tmp.GUID_SYSGUID, prchre.PCO_DOC_PDD_ID 
                           FROM '||V_ESQUEMA||'.TMP_GUID_HRE_2 tmp
-                             , '||V_ESQUEMA||'.PCO_DOC_DOCUMENTOS prchre                             
+                             , '||V_ESQUEMA||'.PCO_DOC_DOCUMENTOS prchre      
+                             , '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS prc
                              , '||V_ESQUEMA||'.TMP_HAYA_PRC_SYSGUID haya
                              , '||V_ESQUEMA||'.DD_TFA_FICHERO_ADJUNTO dd
                              , '||V_ESQUEMA||'.DD_PCO_DOC_UNIDADGESTION ddu                             
                              , '||V_ESQUEMA||'.PER_PERSONAS per
-                         WHERE  prchre.PCO_PRC_ID         = haya.PRC_ID      
+                         WHERE prchre.PCO_PRC_ID          = prc.PCO_PRC_ID     
+                           AND prc.PRC_ID                 = haya.PRC_ID        
                            AND tmp.GUID_ASU_ID_EXTERNO    = haya.ASU_ID_EXTERNO 
                            AND tmp.GUID_DD_TPO_CODIGO     = haya.DD_TPO_CODIGO
                            AND tmp.GUID_PCO_DOC_PDD_UG_DESC  = per.PER_COD_CLIENTE_ENTIDAD
                            AND prchre.PCO_DOC_PDD_UG_ID   = per.PER_ID
-                           AND tmp.GUID_DD_PCO_DTD_CODIGO = ddu.DD_PCO_DTD_CODIGO  
                            AND prchre.DD_PCO_DTD_ID       = ddu.DD_PCO_DTD_ID
                            AND ddu.DD_PCO_DTD_CODIGO      = ''PE''                           
                            AND prchre.DD_TFA_ID              = dd.DD_TFA_ID
@@ -800,10 +804,12 @@ BEGIN
      V_SQL:= 'INSERT INTO '||V_ESQUEMA||'.TMP_GUID_PCO_LIQ_HRE (SYS_GUID, PCO_LIQ_ID)
                         SELECT tmp.GUID_SYSGUID, prchre.PCO_LIQ_ID  
                           FROM '||V_ESQUEMA||'.TMP_GUID_HRE_2 tmp
-                             , '||V_ESQUEMA||'.PCO_LIQ_LIQUIDACIONES prchre                             
+                             , '||V_ESQUEMA||'.PCO_LIQ_LIQUIDACIONES prchre     
+                             , '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS prc                             
                              , '||V_ESQUEMA||'.TMP_HAYA_PRC_SYSGUID haya                             
                              , '||V_ESQUEMA||'.CNT_CONTRATOS cnt
-                         WHERE  prchre.PCO_PRC_ID         = haya.PRC_ID      
+                         WHERE prchre.PCO_PRC_ID          = prc.PCO_PRC_ID     
+                           AND prc.PRC_ID                 = haya.PRC_ID              
                            AND tmp.GUID_ASU_ID_EXTERNO    = haya.ASU_ID_EXTERNO 
                            AND tmp.GUID_DD_TPO_CODIGO     = haya.DD_TPO_CODIGO
                            AND tmp.GUID_CNT_CONTRATO      = cnt.CNT_CONTRATO

@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCO
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCOFormula;
 import es.pfsgroup.recovery.ext.impl.utils.StringUtils;
 
 @Repository
@@ -221,7 +222,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 	 * @return 
 	 */
 	private Criteria queryBusquedaPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
-		Criteria query = getSession().createCriteria(ProcedimientoPCO.class, "procedimientoPco");
+		Criteria query = getSession().createCriteria(ProcedimientoPCOFormula.class, "procedimientoPco");
 
 		// From
 		query.createCriteria("procedimiento", "procedimiento");

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+
+		
+	<bean p:entity="menu" p:name="ayuda*" p:order="10300" 
+		  p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_generica.jsp" 
+		  p:priority="2" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		  	
+	<bean p:entity="plugin.mejoras.web.contratos.consulta.buttons.right" p:name="btnAyuda" p:order="2"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_contratos.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.mejoras.web.clientes.busqueda.buttons.right" p:name="btnAyuda" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_clientes.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.mejoras.web.expedientes.busqueda.buttons.right" p:name="btnAyuda" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_expedientes.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.mejoras.web.comites.celebracion.buttons.right" p:name="btnAyuda" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_actas_comite.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.mejoras.web.comites.actas.buttons.right" p:name="btnAyuda" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_celebracion_comite.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.comites.web.buttons.right" p:name="btnAyuda" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_configuracion_comite.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.config.web.despachoExterno.buttons.right" p:name="btnAyuda" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_configuracion_despachoExterno.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>	
+
+	<bean p:entity="plugin.config.web.perfiles.buttons.right" p:name="btnAyuda" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_configuracion_perfiles.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.config.web.funciones.buttons.right" p:name="btnAyuda" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_configuracion_funciones.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.config.web.usuarios.buttons.right" p:name="btnAyuda" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_configuracion_usuarios.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.diccionarios.web.diccionariosDatos.buttons.right" p:name="btnAyuda" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_configuracion_diccionarios.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.entidadConfig.web.buttons.right" p:name="btnAyuda" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_configuracion_entidad.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.instruccionesExterna.web.buttons.right" p:name="btnAyuda" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_instrucciones_externa.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.itinerarios.web.buttons.right" p:name="btnAyuda" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_configuracion_itinerarios.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.plazasJuzgados.web.buttons.right" p:name="btnAyuda" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_configuracion_plazasJuzgados.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.mejoras.web.metrica.buttons.right" p:name="btnAyuda" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_scoringAlertas.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.mejoras.web.public.buttons.right" p:name="btnAyuda" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_cambiarDatosUsuario.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.mejoras.web.procedimientos.buttons.right" p:name="btnAyuda" p:order="10"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_procedimiento.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.mejoras.web.asuntos.buttons.right" p:name="btnAyuda" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_buscaAsuntos.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.busquedaTareas.web.buttons.right" p:name="btnAyuda" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_buscaTareas.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+
+	 	<!--  
+	<bean p:entity="plugin.mejoras.web.clientes.consulta.buttons.right" p:name="btnAyuda" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_consultaClientes.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		 
+		 -->
+	<bean p:entity="plugin.mejoras.web.expediente.buttons.right" p:name="btnAyuda" p:order="2"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_consultaExpedientes.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.mejoras.web.tareas.buttons.tareasPendientes.right" p:name="btnAyuda" p:order="2"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_tareas_pendientes.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.mejoras.web.tareas.buttons.panelTareas.right" p:name="btnAyuda" p:order="2"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_panelTareas.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.mejoras.web.tareas.buttons.tareasEspera.right" p:name="btnAyuda" p:order="2"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_tareasEspera.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+	
+	<bean p:entity="plugin.mejoras.web.tareas.buttons.notificacion.right" p:name="btnAyuda" p:order="2"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_notificacion.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>	
+		
+	<bean p:entity="plugin.mejoras.web.tareas.buttons.alertas.right" p:name="btnAyuda" p:order="2"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_alertas.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.arquetipos.web.arquetipos.buttons.right" p:name="btnAyuda" p:order="2"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_arquetipos.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.arquetipos.web.modelosArquetipos.buttons.right" p:name="btnAyuda" p:order="2"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_modeloArquetipo.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.busquedaProcedimientos.web.buttons.right" p:name="btnAyuda" p:order="2"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_busquedaProcedimientos.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.mejoras.web.caducidadPass.buttons.right" p:name="btnAyuda" p:order="2"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_caducidadPassword.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.mejoras.web.asuntos.consultaAsunto.buttons.right" p:name="btnAyuda" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_consultaAsuntos.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.mejoras.web.analisis.mapaGlobal.buttons.right" p:name="btnAyuda" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_mapaGlobal.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>	
+		
+	<bean p:entity="plugin.mejoras.web.analisisExterna.buttons.right" p:name="btnAyuda" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_analisisExterna.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="plugin.mejoras.web.contratos.busqueda.buttons.right" p:name="btnAyuda" p:order="2"
+		p:fileName="/WEB-INF/jsp/plugin/ayuda/menu/boton_ayuda_buscaContratos.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>			
+	
+</beans>

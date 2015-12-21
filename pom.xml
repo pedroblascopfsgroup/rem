@@ -114,6 +114,11 @@
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>es.pfsgroup</groupId>
+				<artifactId>pfs-tesfwk</artifactId>
+				<version>1.0.1</version>
+			</dependency>
+			<dependency>
 				<groupId>pfs</groupId>
 				<artifactId>plugins</artifactId>
 				<version>1.4.0</version>
@@ -512,12 +517,17 @@
 	<!-- Maven 2.2.1 does not support isolates project dependencies :( -->
 	<modules>
 		<module>pfs-commons-java</module>
+		<module>pfs-testfwk</module>
+		<module>plugins</module>
 		<module>rec-encrypt</module>
 		<module>batch-monitor</module>
 		<module>batch-shell</module>
 		<module>rec-common</module>
+		<module>recovery-api-plugin</module>
+		<module>recovery-ayuda-plugin</module>
+		<module>recovery-burofax-plugin</module>
+		<module>recovery-diccionarios-plugin</module>
 		<module>recovery-domain</module>
-		<!--module>recovery-api-plugin</module-->
 		<module>recovery-coreextension-plugin</module>
 		<module>recovery-expediente-plugin</module>
 		<module>recovery-busquedaProcedimientos-plugin</module>
@@ -527,10 +537,13 @@
 		<module>recovery-geninformes-plugin</module>
 		<module>recovery-bpmframework-plugin</module>
 		<!--module>recovery-itinerarios-plugin</module-->
+		<module>recovery-liquidaciones-plugin</module>
 		<module>recovery-mejoras-plugin</module>
 		<module>recovery-calendario-plugin</module>
 		<module>recovery-nuevoModeloBienesCommon-plugin</module>
 		<module>recovery-nuevoModeloBienes-plugin</module>
+		<module>recovery-plazasJuzgados-plugin</module>
+		<module>recovery-plazosExterna-plugin</module>
 		<module>recovery-procedimientos-bpm</module>
 		<module>recovery-procedimientos-plugin</module>
 		<module>recovery-masivo-common</module>
@@ -545,6 +558,8 @@
 		<module>recovery-recobro-bpm</module>
 		<module>recovery-controlcalidad-plugin</module>
 		<module>recovery-precontencioso-plugin</module>
+		<module>recovery-sidhi-api</module>
+		<module>recovery-sidhiweb-plugin</module>
 	</modules>
 
 	<profiles>

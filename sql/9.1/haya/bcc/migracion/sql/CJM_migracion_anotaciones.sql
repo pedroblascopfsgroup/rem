@@ -11,9 +11,9 @@ DECLARE
  err_num           number(25);
  err_msg           varchar2(1024 char);
  
- v_esquema         varchar2(25 char):= 'CM01';
- v_esquema_master  varchar2(25 char):= 'CMMASTER';
- usuario           varchar2(50 char):= 'MIGRACM01';
+ v_esquema         varchar2(25 char):= 'HAYA02';
+ v_esquema_master  varchar2(25 char):= 'HAYAMASTER';
+ usuario           varchar2(50 char):= 'MIGRAHAYA02';
  
  v_dd_ein_id       number(16);
  v_dd_sta_id       number(16);

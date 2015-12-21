@@ -1232,6 +1232,66 @@ BEGIN
            PRO_KEYS_STATUS(V_ESQUEMA, 'TAR_TAREAS_NOTIFICACIONES', 'ENABLE');
       END IF;
       
+           -- Por anotaciones
+              DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES... Comprobando si existen registros para anotaciones migradas');
+              EXISTE := 0;
+              V_SQL:= ' select count(*)
+                          from '||V_ESQUEMA ||'.MEJ_IRG_INFO_REGISTRO a
+                             , '||V_ESQUEMA ||'.MEJ_IRG_INFO_REGISTRO b
+                             , '||V_ESQUEMA ||'.TAR_TAREAS_NOTIFICACIONES c
+                         where a.IRG_CLAVE = ''ID_NOTIF''
+                           and b.IRG_CLAVE = ''ASUNTO_NOTIF''
+                           and b.IRG_VALOR = ''Anotacion migrada''
+                           and a.reg_id = b.reg_id
+                           and c.tar_id = to_number(a.irg_valor)';
+              EXECUTE IMMEDIATE V_SQL INTO EXISTE;
+              IF (EXISTE>0) THEN
+                   PRO_KEYS_STATUS(V_ESQUEMA, 'TAR_TAREAS_NOTIFICACIONES', 'DISABLE');
+                   EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.TAR_TAREAS_NOTIFICACIONES tar
+                                       WHERE exists ( SELECT 1
+                                                      FROM '||V_ESQUEMA||'.MEJ_IRG_INFO_REGISTRO a, MEJ_IRG_INFO_REGISTRO b
+                                                      WHERE a.IRG_CLAVE = ''ID_NOTIF''
+                                                      AND   b.IRG_CLAVE = ''ASUNTO_NOTIF''
+                                                      AND   b.IRG_VALOR = ''Anotacion migrada''
+                                                      AND   a.reg_id = b.reg_id
+                                                      AND tar.tar_id = to_number(a.IRG_VALOR)
+                                                    )';
+                   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES .. Se han eliminado '||EXISTE||' registros por anotaciones');
+                   COMMIT;
+                   PRO_KEYS_STATUS(V_ESQUEMA, 'TAR_TAREAS_NOTIFICACIONES', 'ENABLE');
+              END IF;
+
+
+      ---MEJ_IRG_INFO_REGISTRO
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.MEJ_IRG_INFO_REGISTRO... Comprobando si existen registros para el usuario MIGRACM01');
+      EXISTE := 0;
+      V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.MEJ_IRG_INFO_REGISTRO  WHERE USUARIOCREAR = '''||USUARIO||'''';
+      EXECUTE IMMEDIATE V_SQL INTO EXISTE;
+      IF (EXISTE>0) THEN
+           PRO_KEYS_STATUS(V_ESQUEMA, 'MEJ_IRG_INFO_REGISTRO', 'DISABLE');
+           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.MEJ_IRG_INFO_REGISTRO  WHERE USUARIOCREAR = '''||USUARIO||'''';
+           DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.MEJ_IRG_INFO_REGISTRO .. Se han eliminado '||EXISTE||' registros');
+           COMMIT;
+           PRO_KEYS_STATUS(V_ESQUEMA, 'MEJ_IRG_INFO_REGISTRO', 'ENABLE');
+      END IF;
+
+
+      ---MEJ_REG_REGISTRO
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.MEJ_REG_REGISTRO... Comprobando si existen registros para el usuario MIGRACM01');
+      EXISTE := 0;
+      V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.MEJ_REG_REGISTRO  WHERE USUARIOCREAR = '''||USUARIO||'''';
+      EXECUTE IMMEDIATE V_SQL INTO EXISTE;
+      IF (EXISTE>0) THEN
+           PRO_KEYS_STATUS(V_ESQUEMA, 'MEJ_REG_REGISTRO', 'DISABLE');
+           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.MEJ_REG_REGISTRO  WHERE USUARIOCREAR = '''||USUARIO||'''';
+           DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.MEJ_REG_REGISTRO .. Se han eliminado '||EXISTE||' registros');
+           COMMIT;
+           PRO_KEYS_STATUS(V_ESQUEMA, 'MEJ_REG_REGISTRO', 'ENABLE');
+      END IF;
+
+      
+      
+      
       -- SUB_SUBASTA
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.SUB_SUBASTA... Comprobando si existen registros para el usuario MIGRAHAYA02');
       EXISTE := 0;

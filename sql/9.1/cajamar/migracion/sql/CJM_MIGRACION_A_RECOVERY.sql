@@ -23,6 +23,7 @@
 --## 20151124 0.4 Se cruza con la tabla de BIE_BIENES para cargar LOB_LOTE_BIEN y PRB_PRC_BIE
 --##              se quita el min PK de LOS_LOTE_SUBASTA
 --##              Se saca del script la caracterizacion de procuradores
+--## 20151217 0.5 Se adapta a SYS_GUID para la tabla de EXP_EXPEDIENTES
 --##########################################
 --*/
 
@@ -1172,6 +1173,7 @@ BEGIN
            , CD_EXPEDIENTE_NUSE
            , NUMERO_EXP_NUSE
            , CD_PROCEDIMIENTO
+           , SYS_GUID
            )        
     SELECT '||V_ESQUEMA||'.S_EXP_EXPEDIENTES.NEXTVAL as EXP_ID
            , null as AAA_ID
@@ -1197,6 +1199,7 @@ BEGIN
            , PRC.CD_EXPEDIENTE_NUSE
            , PRC.NUMERO_EXP_NUSE
            , PRC.CD_PROCEDIMIENTO
+           , SYS_GUID() as SYS_GUID               
       FROM 
       	(        
         SELECT CD_PROCEDIMIENTO, CD_EXPEDIENTE_NUSE , NUMERO_EXP_NUSE FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA            	

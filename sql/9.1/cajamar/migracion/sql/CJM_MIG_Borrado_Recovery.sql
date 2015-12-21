@@ -104,7 +104,7 @@ IS
            v_sql:='SELECT count(*)
                      FROM '||v_clave(i).table_owner||'.'||v_clave(i).table_name||'
                     WHERE ('||v_clave(i).column_name_fk||')
-                       IN (Select '||v_clave(i).column_name_pk||' From '||v_owner||'.'||v_table||' Where usuariocrear = '''||USUARIO||''')
+                       IN (Select '||v_clave(i).column_name_pk||' From '||v_owner||'.'||v_table||' Where usuariocrear IN ('''||USUARIO||''', '''||USUARIO2||''', '''||USUARIO3||''', '''||USUARIO4||'''))
                   ';
            EXECUTE IMMEDIATE v_sql INTO existe2;
 

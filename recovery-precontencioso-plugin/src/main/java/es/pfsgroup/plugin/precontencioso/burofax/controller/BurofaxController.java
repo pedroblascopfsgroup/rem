@@ -495,7 +495,7 @@ public class BurofaxController {
      * @return
      */
     @RequestMapping
-    public String guardarEnvioBurofax(WebRequest request, ModelMap model,Boolean certificado,Long idTipoBurofax,Boolean comboEditable){
+    public String guardarEnvioBurofax(WebRequest request, ModelMap model,Boolean certificado,Long idTipoBurofax,Boolean comboEditable, Long idDocumento){
     	
     	String[] arrayIdEnvios=request.getParameter("arrayIdEnvios").replace("[","").replace("]","").replace("&quot;", "").split(",");
     	
@@ -504,7 +504,7 @@ public class BurofaxController {
     	if(comboEditable){
 	    	String[] arrayIdDirecciones=request.getParameter("arrayIdDirecciones").replace("[","").replace("]","").replace("&quot;", "").split(",");
 	    	String[] arrayIdBurofax=request.getParameter("arrayIdBurofax").replace("[","").replace("]","").replace("&quot;", "").split(",");
-	    	listaEnvioBurofaxPCO=burofaxManager.configurarTipoBurofax(idTipoBurofax,arrayIdDirecciones,arrayIdBurofax,arrayIdEnvios,null);
+	    	listaEnvioBurofaxPCO=burofaxManager.configurarTipoBurofax(idTipoBurofax,arrayIdDirecciones,arrayIdBurofax,arrayIdEnvios,idDocumento);
     	}
     	else{
     		for(int i=0;i<arrayIdEnvios.length;i++){

@@ -56,6 +56,9 @@ var pdfRender = function(value, meta, record) {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.direccion" text="**Dirección"/>',
 			dataIndex: 'direccion', sortable: false,autoWidth:true
 		}, {
+			header: '<s:message code="plugin.precontencioso.grid.burofax.refExternaEnvio" text="**Referencia Externa Envío"/>',
+			dataIndex: 'refExternaEnvio', sortable: false, autoWidth: true
+		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.tipo" text="**Tipo"/>',
 			dataIndex: 'tipoDescripcion', sortable: false,autoWidth:true
 		}, {
@@ -103,6 +106,7 @@ var pdfRender = function(value, meta, record) {
 	   ,{name:'tipoIntervencion'}
 	   ,{name:'contrato'}
 	   ,{name:'estado'}
+	   ,{name:'refExternaEnvio'}
 	   ,{name:'direccion'}
 	   ,{name:'tipo'}
 	   ,{name:'tipoDescripcion'}

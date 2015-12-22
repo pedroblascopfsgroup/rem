@@ -61,6 +61,11 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
 
 --RULE_DEFINITION
+        V_MSQL := 'select '||V_ESQUEMA||'.S_RULE_DEFINITION.nextval from dual';
+        EXECUTE IMMEDIATE V_MSQL;
+        EXECUTE IMMEDIATE V_MSQL;
+        EXECUTE IMMEDIATE V_MSQL;
+        EXECUTE IMMEDIATE V_MSQL;
 
                 V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.RULE_DEFINITION (RD_ID,RD_NAME,RD_DEFINITION,RD_NAME_LONG,USUARIOCREAR,FECHACREAR,USUARIOMODIFICAR,FECHAMODIFICAR,USUARIOBORRAR,FECHABORRAR,BORRADO) VALUES ('||V_ESQUEMA||'.S_RULE_DEFINITION.nextval, ''Aprovisionamiento'',''<rule title="bloque 0" type="or">  <rule style="" values="[101]" ruleid="3" operator="equal" title="Tipo Persona FISICA">Tipo Persona FISICA  </rule>  <rule style="" values="[102]" ruleid="3" operator="equal" title="Tipo Persona JURIDICA">Tipo Persona JURIDICA  </rule> </rule>'',''Todos los clientes aprovisionados'',''PFS-CONF'',sysdate,null,null,null,null,0)';
 

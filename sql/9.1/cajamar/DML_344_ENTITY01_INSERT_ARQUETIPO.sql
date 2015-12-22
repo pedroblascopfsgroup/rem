@@ -10,11 +10,11 @@
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 VersiÃ³n inicial
 --##########################################
 --*/
 
---Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+--Para permitir la visualizaciÃ³n de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
@@ -42,11 +42,11 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
     IF V_NUM_TABLAS > 0 THEN      
-                DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.MOA_MODELOS_ARQ ...no se modificará nada.');
+                DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.MOA_MODELOS_ARQ ...no se modificarÃ¡ nada.');
         ELSE
         
 --MOA_MODELOS_ARQ        
-                V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.MOA_MODELOS_ARQ (MOA_ID,MOA_NOMBRE,MOA_DESCRIPCION,DD_ESM_ID,MOA_OBSERVACIONES,MOA_FECHA_INI_VIGENCIA,MOA_FECHA_FIN_VIGENCIA,USUARIOCREAR,FECHACREAR) VALUES ('||V_ESQUEMA||'.S_MOA_MODELOS_ARQ.nextval,''Modelo Aprovisionamiento'',''Modelo Aprovisionamiento'',(SELECT DD_ESM_ID FROM '||V_ESQUEMA||'.DD_ESM_ESTADOS_MODELO  WHERE DD_ESM_DESCRIPCION = ''HISTÓRICO''),null,sysdate,null,''PFS-CONF'', sysdate )';
+                V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.MOA_MODELOS_ARQ (MOA_ID,MOA_NOMBRE,MOA_DESCRIPCION,DD_ESM_ID,MOA_OBSERVACIONES,MOA_FECHA_INI_VIGENCIA,MOA_FECHA_FIN_VIGENCIA,USUARIOCREAR,FECHACREAR) VALUES ('||V_ESQUEMA||'.S_MOA_MODELOS_ARQ.nextval,''Modelo Aprovisionamiento'',''Modelo Aprovisionamiento'',(SELECT DD_ESM_ID FROM '||V_ESQUEMA||'.DD_ESM_ESTADOS_MODELO  WHERE DD_ESM_DESCRIPCION = ''HISTÃ“RICO''),null,sysdate,null,''PFS-CONF'', sysdate )';
 
         EXECUTE IMMEDIATE V_MSQL;
         DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'.MOA_MODELOS_ARQ... Datos del diccionario insertado');
@@ -149,7 +149,7 @@ EXCEPTION
           err_num := SQLCODE;
           err_msg := SQLERRM;
 
-          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecuciÃ³n:'||TO_CHAR(err_num));
           DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
           DBMS_OUTPUT.put_line(err_msg);
 

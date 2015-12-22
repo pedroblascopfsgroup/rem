@@ -136,6 +136,12 @@ public class BurofaxController {
 				
 				dto.setEstado(burofax.getEstadoBurofax().getDescripcion());
 				
+				if(burofax.isEsPersonaManual()){
+					dto.setEsPersonaManual("SI");
+				}else{
+					dto.setEsPersonaManual("NO");
+				}
+				
 				if(burofax.getDemandado().getDirecciones().size()>0){
 				    for(Direccion direccion : burofax.getDemandado().getDirecciones()){
 				    		if(!Checks.esNulo(burofax.getContrato())){

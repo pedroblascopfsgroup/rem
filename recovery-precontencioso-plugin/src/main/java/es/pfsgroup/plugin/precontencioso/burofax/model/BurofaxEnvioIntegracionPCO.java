@@ -37,7 +37,6 @@ public class BurofaxEnvioIntegracionPCO implements Serializable, Auditable {
 	
 	@Column(name = "PCO_BUR_ID")
 	private Long burofaxId;
-
 	
 	@Column(name = "PCO_BUR_ENVIO_ID")
 	private Long envioId;
@@ -48,6 +47,9 @@ public class BurofaxEnvioIntegracionPCO implements Serializable, Auditable {
 	@Column(name = "PCO_BUR_PER_ID")
 	private Long personaId;
 	
+	@Column(name = "PCO_BUR_PEM_ID")
+	private Long personaManualId;
+
 	@Column(name = "PCO_BUR_CLIENTE")
 	private String cliente;
 	
@@ -85,6 +87,9 @@ public class BurofaxEnvioIntegracionPCO implements Serializable, Auditable {
 	@Column(name = "PCO_BUR_FICHERO_DOC")
 	private String nombreFichero;
 	
+	@Column(name = "ES_PERSONA_MANUAL")
+	private boolean esPersonaManual;
+
 	@Version
 	private Integer version;
 
@@ -233,6 +238,22 @@ public class BurofaxEnvioIntegracionPCO implements Serializable, Auditable {
 
 	public void setNombreFichero(String nombreFichero) {
 		this.nombreFichero = nombreFichero;
+	}
+	
+	public Long getPersonaManualId() {
+		return personaManualId;
+	}
+
+	public void setPersonaManualId(Long personaManualId) {
+		this.personaManualId = personaManualId;
+	}
+	
+	public boolean isEsPersonaManual() {
+		return esPersonaManual;
+	}
+
+	public void setEsPersonaManual(boolean esPersonaManual) {
+		this.esPersonaManual = esPersonaManual;
 	}
 	
 }

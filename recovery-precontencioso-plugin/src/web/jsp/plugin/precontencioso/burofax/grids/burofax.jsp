@@ -40,6 +40,9 @@ var pdfRender = function(value, meta, record) {
 		,{
 			header: '<s:message code="plugin.precontencioso.grid.burofax.cliente" text="**Cliente"/>',
 			dataIndex: 'cliente', sortable: true,autoWidth:true
+		},{
+			header: '<s:message code="plugin.precontencioso.grid.burofax.registro.manual" text="**Registro Manual"/>',
+			dataIndex: 'esPersonaManual', sortable: true,autoWidth:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.tipoIntervencion" text="**Tipo Intervencion"/>',
 			dataIndex: 'tipoIntervencion', sortable: true,autoWidth:true
@@ -114,6 +117,7 @@ var pdfRender = function(value, meta, record) {
 	   ,{name: 'idEnvio'}
 	   ,{name: 'id'}
 	   ,{name: 'acuseRecibo'}
+	   ,{name: 'esPersonaManual'}
 	]);
 	
 	var burofaxStore = page.getStore({

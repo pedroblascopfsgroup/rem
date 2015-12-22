@@ -23,7 +23,7 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="P412_RegistrarPublicacionBOE" name="activarAlerta"></transition>
-		<transition to="tramiteRegistrarPublicacion" name="tramiteRegistrarPublicacion"></transition>
+		<transition to="fork1" name="avanzaBPM"></transition>
 	</state>
 	
 	<state name="P412_BPMTramiteAceptacionV4">
@@ -345,9 +345,9 @@
 		<transition to="P412_BPMTramiteAnalisisContratos" name="analisisContratos"></transition>
 	</fork>
 	
-	<fork name="tramiteRegistrarPublicacion">
-		<transition to="P412_BPMTramiteAceptacionV4" name="avanzaBPM"></transition>
-		<transition to="P412_BPMAceptacionConcursosPrecontencioso" name="aceptacionConcursosPrecontencioso"></transition>
+	<fork name="fork1">
+		<transition to="P412_BPMTramiteAceptacionV4" name="aceptacion"></transition>
+		<transition to="P412_BPMAceptacionConcursosPrecontencioso" name="precontencioso"></transition>
 	</fork>
 
 	<state name="P412_BPMAceptacionConcursosPrecontencioso">

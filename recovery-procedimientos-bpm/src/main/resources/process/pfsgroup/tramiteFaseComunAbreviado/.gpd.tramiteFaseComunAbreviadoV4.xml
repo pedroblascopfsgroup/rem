@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="tramiteFaseComunAbreviadoV4" width="1116" height="1724">
+<root-container name="tramiteFaseComunAbreviadoV4" width="1520" height="1724">
   <node name="Inicio" x="250" y="-238" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -223,9 +223,9 @@
       <label x="-33" y="-7"/>
     </edge>
   </node>
-  <node name="tramiteRegistrarPublicacion" x="553" y="-86" width="136" height="24">
+  <node name="fork1" x="622" y="-95" width="252" height="24">
     <edge>
-      <label x="-7" y="-1"/>
+      <label x="5" y="-10"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>

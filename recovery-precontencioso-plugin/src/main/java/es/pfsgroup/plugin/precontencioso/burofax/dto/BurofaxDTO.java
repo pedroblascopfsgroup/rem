@@ -19,6 +19,7 @@ public class BurofaxDTO extends WebDto{
 	private String tipoIntervencion;
 	private String contrato;
 	private String estado;
+	private String refExternaEnvio;
 	private String direccion;
 	private String tipo;
 	private String tipoDescripcion;
@@ -142,6 +143,12 @@ public class BurofaxDTO extends WebDto{
 	}
 	public void setAcuseRecibo(Long acuseRecibo) {
 		this.acuseRecibo = acuseRecibo;
+	}
+	public String getRefExternaEnvio() {
+		return refExternaEnvio;
+	}
+	public void setRefExternaEnvio(String refExternaEnvio) {
+		this.refExternaEnvio = refExternaEnvio;
 	}
 
 	

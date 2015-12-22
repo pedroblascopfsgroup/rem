@@ -485,7 +485,8 @@ public class BurofaxManager implements BurofaxApi {
 				
 		
 				if (precontenciosoContext.isGenerarArchivoBurofax()) {
-					//envioIntegracion.setArchivoBurofax(archivoBurofax);
+					String nombreFichero = null;
+
 					if ("BANKIA".equals(precontenciosoContext.getRecovery())) {
 						FileItem archivoBurofax = generarDocumentoBurofax(envioBurofax);
 						InputStream inputStream = archivoBurofax.getInputStream();
@@ -493,7 +494,7 @@ public class BurofaxManager implements BurofaxApi {
 						String directorio = parametrizacionDao.buscarParametroPorNombre(DIRECTORIO_PDF_BUROFAX_PCO).getValor();
 
 						try {
-							String nombreFichero = obtenerNombreFichero();
+							nombreFichero = obtenerNombreFichero();
 							envioIntegracion.setNombreFichero(nombreFichero);
 							envioIntegracion.setIdAsunto(envioBurofax.getBurofax().getProcedimientoPCO().getProcedimiento().getAsunto().getId());
 							// write the inputStream to a FileOutputStream
@@ -526,6 +527,9 @@ public class BurofaxManager implements BurofaxApi {
 							}
 						}
 					}
+
+					envioBurofax.setRefExternaEnvio(nombreFichero);
+					genericDao.save(EnvioBurofaxPCO.class, envioBurofax);
 				} else {
 					//envioIntegracion.setArchivoBurofax(new FileItem(File.createTempFile("TMP", ".log")));
 				}

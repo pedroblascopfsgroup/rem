@@ -71,6 +71,9 @@ public class EnvioBurofaxPCO implements Serializable, Auditable {
 	@Column(name = "PCO_BUR_ACUSE_RECIBO")
 	private Long acuseRecibo;
 
+	@Column(name = "PCO_BUR_REF_EXTERNA_ENVIO")
+	private String refExternaEnvio;
+
 	@Column(name = "SYS_GUID")
 	private String sysGuid;
 
@@ -149,7 +152,15 @@ public class EnvioBurofaxPCO implements Serializable, Auditable {
 	public void setAcuseRecibo(Long acuseRecibo) {
 		this.acuseRecibo = acuseRecibo;
 	}
-	
+
+	public String getRefExternaEnvio() {
+		return refExternaEnvio;
+	}
+
+	public void setRefExternaEnvio(String refExternaEnvio) {
+		this.refExternaEnvio = refExternaEnvio;
+	}
+
 	public String getSysGuid() {
 		return sysGuid;
 	}

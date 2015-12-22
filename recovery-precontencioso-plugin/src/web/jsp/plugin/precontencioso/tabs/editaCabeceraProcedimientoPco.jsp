@@ -7,6 +7,8 @@
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags"%>
 <%@ taglib prefix="pfs" tagdir="/WEB-INF/tags/pfs"%>
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
 
 <fwk:page>
 	<pfsforms:ddCombo name="tipoReclamacion" 
@@ -18,12 +20,17 @@
 		labelKey="plugin.mejoras.procedimiento.cabecera.saldorecuperar" 
 		label="**Principal" value="${procedimiento.saldoRecuperacion}"
 		/>
-	
+		
 	<pfs:currencyfield name="numExpExterno" obligatory="true"
-		labelKey="plugin.precontencioso.cabecera.nroexpedienteExt" 
+		labelKey="plugin.precontencioso.cabecera.nroexpedienteExt"
 		label="**Nro. expediente externo" value="${pcoDto.numExpExterno}"
 		/>
-
+		
+	<sec:authentication var="user" property="principal" />
+	<c:if test="${user.entidad.descripcion eq 'HAYA'}">
+   		numExpExterno.fieldLabel ='<s:message code="plugin.precontencioso.cabecera.wfprelitigio" text="**WF Prelitigio"/>';
+	</c:if>
+	
 	<pfsforms:numberfield name="estimacion" 
 		labelKey="plugin.mejoras.procedimiento.cabecera.recuperacion" 
 		label="**Estimación principal"  
@@ -34,9 +41,13 @@
 		label="**Plazo de recuperación" 
 		value="${procedimiento.plazoRecuperacion}" />
 	
+	
+	
  
 	var codPlaza = '';
 	var codJuzgado='';
+	
+	
 	
 	var decenaInicio = 0;
 	

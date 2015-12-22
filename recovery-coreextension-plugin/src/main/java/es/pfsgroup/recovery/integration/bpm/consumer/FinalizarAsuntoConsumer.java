@@ -65,7 +65,7 @@ public class FinalizarAsuntoConsumer extends ConsumerAction<DataContainerPayload
 		dto.setMotivoFinalizacion(asuPayload.getMotivo());
 		extAsuntoManager.finalizarAsunto(dto, false);
 		
-		logger.info(String.format("[INTEGRACION] ASU[%s] Asunto finalizado!!", asuUUID));
+		logger.debug(String.format("[INTEGRACION] ASU[%s] Asunto finalizado!!", asuUUID));
 	}
 	
 }

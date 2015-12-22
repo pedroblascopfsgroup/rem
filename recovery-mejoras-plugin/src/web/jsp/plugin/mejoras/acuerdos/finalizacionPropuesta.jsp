@@ -25,6 +25,7 @@
 			,width : 120
 			,style:'margin-left:0px'
 			,value : new Date()
+			,maxValue : new Date()
 		});
 		
 	var observaciones = new Ext.form.HtmlEditor({

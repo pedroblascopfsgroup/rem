@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JAVIER DIAZ
---## FECHA_CREACION=20151221
+--## FECHA_CREACION=20151222
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=CMREC-947
@@ -36,7 +36,7 @@ DECLARE
 
 -- VARIABLES
  V_ESQUEMA VARCHAR2(25 CHAR):=   '#ESQUEMA#';               -- Configuracion Esquema
- V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER';         -- Configuracion Esquema Master 
+ V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#';         -- Configuracion Esquema Master 
  TABLA VARCHAR(30) :='DD_EFC_ESTADO_FINAN_CNT';
  TABLA2 VARCHAR(30) :='CNT_CONTRATOS';  
  TABLA3 VARCHAR(30) :='PER_PERSONAS';  
@@ -170,7 +170,7 @@ COMMIT;
   -- SECUENCIA INSERT
         V_MSQL1 := 'INSERT INTO ' ||V_ESQUEMA|| '.'||TABLA||' 
                     ( DD_EFC_ID, DD_EFC_CODIGO, DD_EFC_DESCRIPCION, DD_EFC_DESCRIPCION_LARGA, DD_EFC_PRIORIDAD,VERSION, USUARIOCREAR, FECHACREAR, USUARIOMODIFICAR, FECHAMODIFICAR, USUARIOBORRAR, FECHABORRAR, BORRADO)
-                   VALUES (   S_'||TABLA||'.NEXTVAL,'''
+                   VALUES (   ' || V_ESQUEMA || '.S_'||TABLA||'.NEXTVAL,'''
                         ||V_TMP_EFC(1)||q'[',']'
                         ||V_TMP_EFC(2)||q'[',']'
                         ||V_TMP_EFC(3)||q'[',]'

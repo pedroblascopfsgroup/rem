@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JAVIER DIAZ
---## FECHA_CREACION=20151221
+--## FECHA_CREACION=20151222
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=CMREC-947
@@ -36,7 +36,7 @@ DECLARE
 
 -- VARIABLES
  V_ESQUEMA VARCHAR2(25 CHAR):=   '#ESQUEMA#';               -- Configuracion Esquema
- V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER';         -- Configuracion Esquema Master 
+ V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#';         -- Configuracion Esquema Master 
  TABLA VARCHAR(30) :='DD_TIN_TIPO_INTERVENCION';
  TABLA2 VARCHAR(30) :='CPE_CONTRATOS_PERSONAS';  
  err_num NUMBER;
@@ -169,7 +169,7 @@ COMMIT;
   -- SECUENCIA INSERT
         V_MSQL1 := 'INSERT INTO ' ||V_ESQUEMA|| '.'||TABLA||' 
                     ( DD_TIN_ID, DD_TIN_CODIGO, DD_TIN_DESCRIPCION, DD_TIN_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, USUARIOMODIFICAR, FECHAMODIFICAR, USUARIOBORRAR, FECHABORRAR, BORRADO, DD_TIN_TITULAR, DD_TIN_AVALISTA, DD_TIN_EXP_RECOBRO_SN)
-                   VALUES (   S_'||TABLA||'.NEXTVAL,'''
+                   VALUES (   '||V_ESQUEMA|| '.S_'||TABLA||'.NEXTVAL,'''
                         ||V_TMP_TIN(1)||q'[',']'
                         ||V_TMP_TIN(2)||q'[',']'
                         ||V_TMP_TIN(3)||q'[',]'

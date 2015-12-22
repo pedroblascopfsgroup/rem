@@ -171,14 +171,12 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 				if (DDSiNo.SI.equals(agencia_externa)) {
 					executor.execute("plugin.precontencioso.cambiarEstadoExpediete", prc.getId(), PrecontenciosoBPMConstants.PCO_FINALIZADO);					
 				}
-				if(PrecontenciosoProjectContextImpl.RECOVERY_CAJAMAR.equals(precontenciosoContext.getRecovery())) {
-					ProcedimientoPCO pco = proxyFactory.proxy(ProcedimientoPcoApi.class).getPCOByProcedimientoId(prc.getId());
-					if(!Checks.esNulo(prcPropuesto)) {
-						TipoProcedimiento tipoProcProp = (TipoProcedimiento)diccionarioApi.dameValorDiccionarioByCod(TipoProcedimiento.class, prcPropuesto);
-						pco.setTipoProcPropuesto(tipoProcProp);
-					}
-					proxyFactory.proxy(ProcedimientoPcoApi.class).update(pco);
+				ProcedimientoPCO pco = proxyFactory.proxy(ProcedimientoPcoApi.class).getPCOByProcedimientoId(prc.getId());
+				if(!Checks.esNulo(prcPropuesto)) {
+					TipoProcedimiento tipoProcProp = (TipoProcedimiento)diccionarioApi.dameValorDiccionarioByCod(TipoProcedimiento.class, prcPropuesto);
+					pco.setTipoProcPropuesto(tipoProcProp);
 				}
+				proxyFactory.proxy(ProcedimientoPcoApi.class).update(pco);
 			}
 		} else if (PrecontenciosoBPMConstants.PCO_AsignarGestorLiquidacion.equals(tex.getTareaProcedimiento().getCodigo())) {
 			if(PrecontenciosoProjectContextImpl.RECOVERY_HAYA.equals(precontenciosoContext.getRecovery()) || 

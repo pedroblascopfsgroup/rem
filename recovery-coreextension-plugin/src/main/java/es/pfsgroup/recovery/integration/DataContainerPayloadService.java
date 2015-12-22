@@ -84,13 +84,13 @@ public class DataContainerPayloadService<T extends DataContainerPayload> {
 		UsuarioSecurity user = loadUser(payload, entidad);
 		logger.debug("[INTEGRACION] Usuario configurado!!!");
 		
-		logger.info("[INTEGRACION] Authenticando usuario para mensajería...");
+		logger.debug("[INTEGRACION] Authenticando usuario para mensajería...");
 		SecurityContext securityContext = SecurityContextHolder.getContext();
 		PreAuthenticatedAuthenticationToken authToken = new PreAuthenticatedAuthenticationToken(payload.getUsername(), EMPTY_PASSWORD);
 		authToken.setDetails(user);
 		Authentication authentication = authprovider.authenticate(authToken);
 		securityContext.setAuthentication(authentication);
-		logger.info(String.format("[INTEGRACION] Usuario autenticado [%s]!", authToken.getName()));
+		logger.debug(String.format("[INTEGRACION] Usuario autenticado [%s]!", authToken.getName()));
 		
 		return securityContext;
 	}

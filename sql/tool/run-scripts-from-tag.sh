@@ -209,8 +209,12 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
 
     while read -r line
     do
-        NEW_LINE=`echo $line | cut -d' ' -f1`
-        $BASEDIR/run-single-script.sh $NEW_LINE pass $CUSTOMER_IN_UPPERCASE -p
+        NEW_LINE=$line
+        if [ "$MULTIENTIDAD" == "" ] ; then
+            NEW_LINE=`echo $line | cut -d' ' -f1`
+            NEW_LINE=$NEWLINE' pass'
+        fi
+        $BASEDIR/run-single-script.sh $NEW_LINE $CUSTOMER_IN_UPPERCASE -p
         if [[ "$?" != 0 ]]; then
             echo "ERROR"
             exit 1

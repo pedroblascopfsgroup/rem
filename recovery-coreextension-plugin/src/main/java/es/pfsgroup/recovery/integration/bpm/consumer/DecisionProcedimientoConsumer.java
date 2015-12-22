@@ -108,7 +108,7 @@ public class DecisionProcedimientoConsumer extends ConsumerAction<DataContainerP
 			String prcUUID = getGuidProcedimiento(decisionProcedimientoPayload);
 			
 			if (payload.getTipo().equals(IntegracionBpmService.TIPO_DATOS_DECISION_PROCEDIMIENTO)) {
-				logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] Guardando decisión procedimiento...", asuGUID, prcUUID));
+				logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] Creando Toma Decisión ...", asuGUID, prcUUID));
 				
 				MEJDtoDecisionProcedimiento dtoDecisionProcedimiento = load(decisionProcedimientoPayload);
 				MEJProcedimiento prc = getProcedimiento(decisionProcedimientoPayload); 

@@ -122,6 +122,10 @@
 	                	comboPropiedades: parametros.comboPropiedades,
 	                	comboSituacionCDD: parametros.comboSituacionCDD,
 	                	comboTipoAsunto: parametros.comboTipoAsunto,
+	                	comboDespachos: parametros.comboDespachos,
+	                	comboGestor: parametros.comboGestor,
+						comboTiposGestor: parametros.comboTiposGestor,
+						destinatarioEmail: parametros.destinatarioEmail,
 	                	fechaCreacionDesde: parametros.fechaCreacionDesde,
 	                	fechaCreacionHasta: parametros.fechaCreacionHasta,
 	                	fechaEntregaDesde: parametros.fechaEntregaDesde,
@@ -135,8 +139,12 @@
 	                	nombre: parametros.nombre,
 	                	numeroProcedimientoEnJuzgado: parametros.numeroProcedimientoEnJuzgado,
 	                	params: parametros.params,
+	                	soloAsuntosEnvioCorreo: parametros.soloAsuntosEnvioCorreo,
+	                	tipoAnotacion: parametros.tipoAnotacion,
 	                	tipoProcedimiento: parametros.tipoProcedimiento,
-	                	tipoSalida: parametros.tipoSalida
+	                	tipoSalida: parametros.tipoSalida,
+	                	usuarioOrigenTarea: parametros.usuarioOrigenTarea,
+	                	usuarioDestinoTarea: parametros.usuarioDestinoTarea             	
 	                }
 	                ,success: function (result, request){
 	                    var r = Ext.util.JSON.decode(result.responseText);

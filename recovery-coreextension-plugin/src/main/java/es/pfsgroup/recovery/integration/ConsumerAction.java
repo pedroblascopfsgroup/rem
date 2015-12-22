@@ -45,31 +45,4 @@ public abstract class ConsumerAction<T> extends RuleMessageFilter<T> implements 
 
 	protected abstract void doAction(T payload);
 
-	/**
-	 * Ejecuta la acción de este consumer manager.
-	 * Busca un método llamado "doAction" en esta clase que cuadre con el payload<T> que se gestiona la clase..
-	 * 
-	 * @param payload
-	 */
-	/*
-	private void invokeMethod(T payload) {
-		try {
-			Class<?>[] classes = {payload.getClass()};
-			Method m = ClassUtils.getMethodIfAvailable(this.getClass(), DO_ACTION_METHOD, classes);
-			if (m==null) {
-				logger.warn(String.format("No se ha encontrado método 'doAction' en la clase %s para consumir el mensaje", payload.getClass().getName()));
-				return;
-			}
-			m.invoke(payload);
-		} catch (IllegalAccessException iae) {
-			logger.error(iae);
-		} catch (IllegalArgumentException iarge) {
-			logger.error(iarge);
-		} catch (InvocationTargetException ite) {
-			logger.error(ite);
-		} catch (Exception e) {
-			logger.error(e);
-		}
-	}*/
-	
 }

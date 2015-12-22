@@ -71,7 +71,10 @@ import es.pfsgroup.recovery.integration.bpm.payload.TerminoAcuerdoPayload;
 
 public class EntityToPayloadTransformer {
 
-    private final Log logger = LogFactory.getLog(getClass());
+    private static final String LOG_MSG_TRANSFORM_START = "[INTEGRACION] Transformando %s...";
+    private static final String LOG_MSG_TRANSFORM_END = "[INTEGRACION] %s transformado. Guid: %s!!!";
+
+	private final Log logger = LogFactory.getLog(getClass());
 
     private static Map<String, String> mapaPersonas = new HashMap<String, String>();
     
@@ -221,8 +224,8 @@ public class EntityToPayloadTransformer {
 	}
 
 	public Message<DataContainerPayload> transformTAR(Message<TareaNotificacion> message) {
-		logger.info("[INTEGRACION] Transformando TareaNotificación...");
 		TareaNotificacion tar = message.getPayload();
+		logger.debug(String.format(LOG_MSG_TRANSFORM_START, tar.getClass().getName()));
 
 		// Persistencia de IDs de sincronización
 		setup4sync(tar);
@@ -232,7 +235,7 @@ public class EntityToPayloadTransformer {
 		TareaNotificacionPayload tareaPayload = new TareaNotificacionPayload(data, tar);
 		postProcessDataContainer(data);
 
-		logger.debug(String.format("[INTEGRACION] TareaNotificación Transformado %s!", tareaPayload.getGuid()));
+		logger.info(String.format(LOG_MSG_TRANSFORM_END, tar.getClass().getName(), tareaPayload.getGuid()));
 		
 		//translateValues(message);
 		String grpId = tareaPayload.getAsunto().getGuid();
@@ -246,8 +249,8 @@ public class EntityToPayloadTransformer {
 	}	
 	
 	public Message<DataContainerPayload> transformTEX(Message<TareaExterna> message) {
-		logger.info("[INTEGRACION] Transformando TareaExterna...");
 		TareaExterna tex = message.getPayload();
+		logger.debug(String.format(LOG_MSG_TRANSFORM_START, tex.getClass().getName()));
 
 		// Persistencia de IDs de sincronización
 		setup4sync(tex);
@@ -271,7 +274,7 @@ public class EntityToPayloadTransformer {
 		tareaPayload.translate(diccionarioCodigos);
 		postProcessDataContainer(data);
 		
-		logger.debug(String.format("[INTEGRACION] TareaExterna Transformado %s!", tareaPayload.getGuidTARTarea()));
+		logger.info(String.format(LOG_MSG_TRANSFORM_END, tex.getClass().getName(), tareaPayload.getGuidTARTarea()));
 		
 		//translateValues(message);
 		String grpId = tareaPayload.getProcedimiento().getAsunto().getGuid();
@@ -285,9 +288,10 @@ public class EntityToPayloadTransformer {
 	}	
 
 	public Message<DataContainerPayload> transformFINASU(Message<MEJFinalizarAsuntoDto> message) {
-		logger.info("[INTEGRACION] Finalizando asunto...");
+		
 		MEJFinalizarAsuntoDto dto = message.getPayload();
-
+		logger.debug(String.format(LOG_MSG_TRANSFORM_START, dto.getClass().getName()));
+		
 		// Persistencia de IDs de sincronización
 		Long idAsunto = dto.getIdAsunto();
 		Asunto asu = extAsuntoManager.get(idAsunto);
@@ -298,7 +302,7 @@ public class EntityToPayloadTransformer {
 
 		postProcessDataContainer(data);
 		
-		logger.debug(String.format("[INTEGRACION] Finalizando asunto %s!", finAsuPayload.getAsunto().getGuid()));
+		logger.info(String.format(LOG_MSG_TRANSFORM_END, dto.getClass().getName(), finAsuPayload.getAsunto().getGuid()));
 		
 		//translateValues(message);
 		String grpId = finAsuPayload.getAsunto().getGuid();
@@ -318,12 +322,15 @@ public class EntityToPayloadTransformer {
 	}
 	
 	public Message<DataContainerPayload> transformPRC(Message<Procedimiento> message) {
-		logger.info("[INTEGRACION] Transformando Procedimiento...");
-		Procedimiento procedimiento = message.getPayload();
 
+		Procedimiento procedimiento = message.getPayload();
+		logger.debug(String.format(LOG_MSG_TRANSFORM_START, procedimiento.getClass().getName()));
+
+		
 		ProcedimientoPayload procPayload = prepararProcedimiento(message, procedimiento);
 		DataContainerPayload data = procPayload.getData();
-		logger.debug(String.format("[INTEGRACION] Procedimiento Transformado %s!", procPayload.getGuid()));
+
+		logger.info(String.format(LOG_MSG_TRANSFORM_END, procedimiento.getClass().getName(), procPayload.getGuid()));
 		
 		//translateValues(message);
 		String grpId = procPayload.getAsunto().getGuid();
@@ -333,9 +340,10 @@ public class EntityToPayloadTransformer {
 
 	
 	public Message<DataContainerPayload> transformRecurso(Message<MEJRecurso> message) {
-		logger.info("[INTEGRACION] Transformando Recurso...");
-		MEJRecurso recurso = message.getPayload();
 
+		MEJRecurso recurso = message.getPayload();
+		logger.debug(String.format(LOG_MSG_TRANSFORM_START, recurso.getClass().getName()));
+		
 		// Persistencia de IDs de sincronización
 		extProcedimientoManager.prepareGuid(recurso.getProcedimiento());
 		
@@ -354,10 +362,10 @@ public class EntityToPayloadTransformer {
 			recursoPayload.setEsGestor(esGestor);
 			recursoPayload.setEsSupervisor(esSupervisor);
 		}
-		
+
 		recursoPayload.getProcedimiento().translate(diccionarioCodigos);
-		
-		logger.debug(String.format("[INTEGRACION] Recurso Transformado %s!", recursoPayload.getGuid()));
+
+		logger.info(String.format(LOG_MSG_TRANSFORM_END, recurso.getClass().getName(), recursoPayload.getGuid()));
 		
 		//translateValues(message);
 		String grpId = recursoPayload.getProcedimiento().getAsunto().getGuid();
@@ -372,16 +380,18 @@ public class EntityToPayloadTransformer {
 	}
 	
 	public Message<DataContainerPayload> transformSUB(Message<Subasta> message) {
-		logger.info("[INTEGRACION] Transformando Subasta...");
+
 		Subasta subasta = message.getPayload();
+		logger.debug(String.format(LOG_MSG_TRANSFORM_START, subasta.getClass().getName()));
+		
 		extSubastaManager.prepareGuid(subasta);
 		
 		DataContainerPayload data = getNewPayload(message);
 		SubastaPayload subastaPayload = new SubastaPayload(data, subasta);
 		postProcessDataContainer(data);
 
-		logger.debug(String.format("[INTEGRACION] Subasta Transformada %s!", subastaPayload.getGuid()));
-		
+		logger.info(String.format(LOG_MSG_TRANSFORM_END, subasta.getClass().getName(), subastaPayload.getGuid()));
+
 		String grpId = subastaPayload.getProcedimiento().getAsunto().getGuid();
 		Message<DataContainerPayload> newMessage = createMessage(message,  data, grpId);
 /*		Message<DataContainerPayload> newMessage = MessageBuilder
@@ -394,8 +404,10 @@ public class EntityToPayloadTransformer {
 	}
 	
 	public Message<DataContainerPayload> transformACU(Message<Acuerdo> message) {
-		logger.info("[INTEGRACION] Transformando Acuerdo...");
+
 		Acuerdo acuerdo = message.getPayload();
+		logger.debug(String.format(LOG_MSG_TRANSFORM_START, acuerdo.getClass().getName()));
+
 		//mejAcuerdoManager.prepareGuid(acuerdo);
 		
 		List<TerminoAcuerdo> listadoTerminos = mejAcuerdoManager.getTerminosAcuerdo(acuerdo.getId());
@@ -415,7 +427,8 @@ public class EntityToPayloadTransformer {
 			acuerdoPayload.setEsGestor(esGestor);
 			acuerdoPayload.setEsSupervisor(esSupervisor);
 		}
-		logger.debug(String.format("[INTEGRACION] Acuerdo Transformado %s!", acuerdoPayload.getGuid()));
+
+		logger.info(String.format(LOG_MSG_TRANSFORM_END, acuerdo.getClass().getName(), acuerdoPayload.getGuid()));
 
 		Message<DataContainerPayload> newMessage = createMessage(message,  data, acuerdoPayload.getAsunto().getGuid());
 /*		Message<DataContainerPayload> newMessage = MessageBuilder
@@ -429,15 +442,17 @@ public class EntityToPayloadTransformer {
 	}
 
 	public Message<DataContainerPayload> transformActuacionesRealizadas(Message<ActuacionesRealizadasAcuerdo> message) {
-		logger.info("[INTEGRACION] Transformando ActuacionesRealizadasAcuerdo...");
+
 		ActuacionesRealizadasAcuerdo actRealizada = message.getPayload();
+		logger.debug(String.format(LOG_MSG_TRANSFORM_START, actRealizada.getClass().getName()));
+		
 		acuerdoManager.prepareGuid(actRealizada);
 		
 		DataContainerPayload data = getNewPayload(message);
 		ActuacionesRealizadasPayload acuerdoPayload = new ActuacionesRealizadasPayload(data, actRealizada);
 		postProcessDataContainer(data);
 
-		logger.debug(String.format("[INTEGRACION] ActuacionesRealizadasAcuerdo Transformado %s!", acuerdoPayload.getGuid()));
+		logger.info(String.format(LOG_MSG_TRANSFORM_END, actRealizada.getClass().getName(), acuerdoPayload.getGuid()));
 
 		Message<DataContainerPayload> newMessage = createMessage(message,  data, acuerdoPayload.getAcuerdo().getAsunto().getGuid());
 /*		Message<DataContainerPayload> newMessage = MessageBuilder
@@ -450,15 +465,17 @@ public class EntityToPayloadTransformer {
 	}
 	
 	public Message<DataContainerPayload> transformActuacionesAExplorar(Message<ActuacionesAExplorarAcuerdo> message) {
-		logger.info("[INTEGRACION] Transformando ActuacionesAExplorarAcuerdo...");
+
 		ActuacionesAExplorarAcuerdo actAExplorar = message.getPayload();
+		logger.debug(String.format(LOG_MSG_TRANSFORM_START, actAExplorar.getClass().getName()));
+
 		acuerdoManager.prepareGuid(actAExplorar);
 		
 		DataContainerPayload data = getNewPayload(message);
 		ActuacionesAExplorarPayload acuerdoPayload = new ActuacionesAExplorarPayload(data, actAExplorar);
 		postProcessDataContainer(data);
 
-		logger.debug(String.format("[INTEGRACION] ActuacionesAExplorarAcuerdo Transformado %s!", acuerdoPayload.getGuid()));
+		logger.info(String.format(LOG_MSG_TRANSFORM_END, actAExplorar.getClass().getName(), acuerdoPayload.getGuid()));
 
 		Message<DataContainerPayload> newMessage = createMessage(message,  data, acuerdoPayload.getAcuerdo().getAsunto().getGuid());
 /*		Message<DataContainerPayload> newMessage = MessageBuilder
@@ -471,8 +488,9 @@ public class EntityToPayloadTransformer {
 	}
 	
 	public Message<DataContainerPayload> transformAcuerdoTermino(Message<TerminoAcuerdo> message) {
-		logger.info("[INTEGRACION] Transformando Término Acuerdo...");
+
 		TerminoAcuerdo termino = message.getPayload();
+		logger.debug(String.format(LOG_MSG_TRANSFORM_START, termino.getClass().getName()));
 		//mejAcuerdoManager.prepareGuid(termino);
 		
 		DataContainerPayload data = getNewPayload(message);
@@ -487,7 +505,8 @@ public class EntityToPayloadTransformer {
 			.buildTerminoBien(listadoTerminoBienes);
 		postProcessDataContainer(data);
 
-		logger.debug(String.format("[INTEGRACION] TerminoAcuerdo Transformado %s!", payload.getGuid()));
+
+		logger.info(String.format(LOG_MSG_TRANSFORM_END, termino.getClass().getName(), payload.getGuid()));
 
 		Message<DataContainerPayload> newMessage = createMessage(message,  data, payload.getAcuerdo().getAsunto().getGuid());
 		/*Message<DataContainerPayload> newMessage = MessageBuilder
@@ -500,8 +519,10 @@ public class EntityToPayloadTransformer {
 	}
 	
 	public Message<DataContainerPayload> transformDecisionProcedimiento(Message<MEJDtoDecisionProcedimiento> message) {
-		logger.info("[INTEGRACION] Transformando DecisionProcedimiento...");
+		
 		MEJDtoDecisionProcedimiento dtoDecisionProcedimiento = message.getPayload();
+		logger.debug(String.format(LOG_MSG_TRANSFORM_START, dtoDecisionProcedimiento.getClass().getName()));
+		
 		mejDecisionProcedimientoManager.prepareGuid(dtoDecisionProcedimiento);
 		
 		DataContainerPayload data = getNewPayload(message);
@@ -544,9 +565,10 @@ public class EntityToPayloadTransformer {
 		
 		postProcessDataContainer(data);
 
-		logger.debug(String.format("[INTEGRACION] DecisionProcedimiento Transformado %s!", payload.getGuid()));
-
-		Message<DataContainerPayload> newMessage = createMessage(message,  data, payload.getProcedimiento().getAsunto().getGuid());
+		logger.info(String.format(LOG_MSG_TRANSFORM_END, dtoDecisionProcedimiento.getClass().getName(), payload.getGuid()));
+		
+		String grpId = payload.getProcedimiento().getAsunto().getGuid();
+		Message<DataContainerPayload> newMessage = createMessage(message,  data, grpId);
 		
 		return newMessage;
 	}	

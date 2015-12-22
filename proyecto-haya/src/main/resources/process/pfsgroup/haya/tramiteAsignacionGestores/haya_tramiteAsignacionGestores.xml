@@ -13,13 +13,8 @@
 			</targetBean>
 		</action>
 		<transition to="H067_seleccionarProcedimiento" name="litigio"></transition>
-		<transition to="forkConcurso" name="concurso"></transition>
+		<transition to="H067_SeleccionarProcedimientoAsignarGestor" name="concurso"></transition>
 	</node>
-
-	<fork name="forkConcurso">
-		<transition to="H067_AsignarGestorExpediente" name="asignarGestor"></transition>
-		<transition to="H067_seleccionarProcedimiento" name="seleccionarProcedimiento"></transition>
-	</fork>
 
 	<state name="H067_seleccionarProcedimiento">
 		<event type="node-enter">
@@ -39,16 +34,11 @@
 			</action>
 		</event>			
 		<transition to="H067_seleccionarProcedimiento" name="activarAlerta"></transition>
-		<transition to="H067_seleccionarProcedimientoDecision" name="avanzaBPM"></transition>
+		<transition to="H067_transicionProcedimiento" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state>
 
-	<decision name="H067_seleccionarProcedimientoDecision" expression="#{H067_seleccionarProcedimientoDecision}">
-		<transition to="H067_transicionProcedimiento" name="litigio"></transition>
-		<transition to="joinTransicion" name="concurso"></transition>		
-	</decision>
-
-	<state name="H067_AsignarGestorExpediente">
+	<state name="H067_SeleccionarProcedimientoAsignarGestor">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
@@ -65,14 +55,10 @@
 				</targetBean>
 			</action>
 		</event>			
-		<transition to="H067_AsignarGestorExpediente" name="activarAlerta"></transition>
-		<transition to="joinTransicion" name="avanzaBPM"></transition>
+		<transition to="H067_SeleccionarProcedimientoAsignarGestor" name="activarAlerta"></transition>
 		<transition to="Fin" name="Fin"></transition>
-	</state>
-
-	<join name="joinTransicion">
 		<transition to="H067_transicionProcedimiento" name="avanzaBPM"></transition>
-	</join>
+	</state>
 
 	<node name="H067_transicionProcedimiento">
 		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">

@@ -78,9 +78,9 @@ BEGIN
 	  DBMS_OUTPUT.PUT('[INFO] Tabla '||V_TABLA||': CREADA...');	     	 
 		EXECUTE IMMEDIATE 'CREATE TABLE '||V_ESQUEMA_M||'.'||V_TABLA||'
 		(
-		  UE_ID				INTEGER		NUMBER(16)			NOT NULL,
-		  USU_ID				        NUMBER(16)          NOT NULL,
-		  ENTIDAD_ID	            	NUMBER(16)          NOT NULL,
+		  UE_ID				NUMBER(16)			NOT NULL,
+		  USU_ID			NUMBER(16)          NOT NULL,
+		  ENTIDAD_ID	    NUMBER(16)          NOT NULL,
 		  VERSION           INTEGER                     DEFAULT 0                     NOT NULL,
 		  USUARIOCREAR      VARCHAR2(10 CHAR)           NOT NULL,
 		  FECHACREAR        TIMESTAMP(6)                NOT NULL,
@@ -95,13 +95,38 @@ BEGIN
 	
 	  DBMS_OUTPUT.PUT('[INFO] PK '||V_TABLA||' (UE_ID): CREADA...');
 	EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA_M||'.'||V_TABLA||' ADD (
-	  CONSTRAINT PK_'||V_TABLA||' PRIMARY KEY
-	 (UE_ID))';
+	  CONSTRAINT PK_'||V_TABLA||' PRIMARY KEY (UE_ID))';
 	  DBMS_OUTPUT.PUT_LINE('OK');
 	  
-	-- ejecutamos grants --
 	  
-	DBMS_OUTPUT.PUT_LINE('[INFO] Proceso ejecutado CORRECTAMENTE. Tabla y referencias creadas.');
+	  -- ********** USU_ENTIDADES - FKs
+    V_SQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE TABLE_NAME = '||V_TABLA||' and owner = '''||V_ESQUEMA_M||''' and CONSTRAINT_NAME = ''FK_ENT_USU_ID''';
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+    -- Si existe la PK
+    IF V_NUM_TABLAS = 1 THEN
+    	DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA_M || '.'||V_TABLA||' ... FK ya existe');
+    ELSE
+	    V_MSQL := 'ALTER TABLE '||V_ESQUEMA_M||'.'||V_TABLA||'  ADD (CONSTRAINT FK_ENT_USU_ID FOREIGN KEY (USU_ID)
+				 REFERENCES ' || V_ESQUEMA_M || '.USU_USUARIOS (USU_ID))';
+			
+		EXECUTE IMMEDIATE V_MSQL;     
+		DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA_M || '.'||V_TABLA||' ... FK Creada');
+	END IF;
+	
+	
+	V_SQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE TABLE_NAME = '||V_TABLA||' and owner = '''||V_ESQUEMA_M||''' and CONSTRAINT_NAME = ''FK_ENT_ENT_ID''';
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+    -- Si existe la PK
+    IF V_NUM_TABLAS = 1 THEN
+    	DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA_M || '.'||V_TABLA||' ... FK ya existe');
+    ELSE
+	    V_MSQL := 'ALTER TABLE '||V_ESQUEMA_M||'.'||V_TABLA||'  ADD (CONSTRAINT FK_ENT_ENT_ID FOREIGN KEY (ENTIDAD_ID)
+				 REFERENCES ' || V_ESQUEMA_M || '.ENTIDAD (ID))';
+			
+		EXECUTE IMMEDIATE V_MSQL;     
+		DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA_M || '.'||V_TABLA||' ... FK Creada');
+	END IF;
+	  
 	
 COMMIT;
 

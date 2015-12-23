@@ -44,6 +44,22 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
     IF V_NUM_TABLAS > 0 THEN      
                 DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.MOA_MODELOS_ARQ ...no se modificará nada.');
         ELSE
+
+--CORRECCION DE SECUENCIAS
+        V_MSQL := 'SELECT MAX(RD_ID) +1 FROM '||V_ESQUEMA||'.RULE_DEFINITION ';
+        EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+        V_MSQL := 'DROP SEQUENCE '||V_ESQUEMA||'.S_RULE_DEFINITION ';
+        EXECUTE IMMEDIATE V_MSQL;
+ 	V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_RULE_DEFINITION 
+ 	INCREMENT BY 1 
+ 	START WITH '||V_NUM_TABLAS||' 
+ 	MINVALUE 1 
+ 	MAXVALUE 999999999999999999999999999 
+ 	NOCACHE  
+ 	NOCYCLE ';
+
+        EXECUTE IMMEDIATE V_MSQL;
+
         
 --MOA_MODELOS_ARQ        
                 V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.MOA_MODELOS_ARQ (MOA_ID,MOA_NOMBRE,MOA_DESCRIPCION,DD_ESM_ID,MOA_OBSERVACIONES,MOA_FECHA_INI_VIGENCIA,MOA_FECHA_FIN_VIGENCIA,USUARIOCREAR,FECHACREAR) VALUES ('||V_ESQUEMA||'.S_MOA_MODELOS_ARQ.nextval,''Modelo Aprovisionamiento'',''Modelo Aprovisionamiento'',(SELECT DD_ESM_ID FROM '||V_ESQUEMA||'.DD_ESM_ESTADOS_MODELO  WHERE DD_ESM_DESCRIPCION = ''HISTÓRICO''),null,sysdate,null,''PFS-CONF'', sysdate )';
@@ -59,15 +75,8 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
         DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'.ITI_ITINERARIOS... Datos del diccionario insertado');
         
 
-
 --RULE_DEFINITION
-        V_MSQL := 'select '||V_ESQUEMA||'.S_RULE_DEFINITION.nextval from dual';
-        EXECUTE IMMEDIATE V_MSQL;
-        EXECUTE IMMEDIATE V_MSQL;
-        EXECUTE IMMEDIATE V_MSQL;
-        EXECUTE IMMEDIATE V_MSQL;
-
-                V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.RULE_DEFINITION (RD_ID,RD_NAME,RD_DEFINITION,RD_NAME_LONG,USUARIOCREAR,FECHACREAR,USUARIOMODIFICAR,FECHAMODIFICAR,USUARIOBORRAR,FECHABORRAR,BORRADO) VALUES ('||V_ESQUEMA||'.S_RULE_DEFINITION.nextval, ''Aprovisionamiento'',''<rule title="bloque 0" type="or">  <rule style="" values="[101]" ruleid="3" operator="equal" title="Tipo Persona FISICA">Tipo Persona FISICA  </rule>  <rule style="" values="[102]" ruleid="3" operator="equal" title="Tipo Persona JURIDICA">Tipo Persona JURIDICA  </rule> </rule>'',''Todos los clientes aprovisionados'',''PFS-CONF'',sysdate,null,null,null,null,0)';
+        V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.RULE_DEFINITION (RD_ID,RD_NAME,RD_DEFINITION,RD_NAME_LONG,USUARIOCREAR,FECHACREAR,USUARIOMODIFICAR,FECHAMODIFICAR,USUARIOBORRAR,FECHABORRAR,BORRADO) VALUES ('||V_ESQUEMA||'.S_RULE_DEFINITION.nextval, ''Aprovisionamiento'',''<rule title="bloque 0" type="or">  <rule style="" values="[101]" ruleid="3" operator="equal" title="Tipo Persona FISICA">Tipo Persona FISICA  </rule>  <rule style="" values="[102]" ruleid="3" operator="equal" title="Tipo Persona JURIDICA">Tipo Persona JURIDICA  </rule> </rule>'',''Todos los clientes aprovisionados'',''PFS-CONF'',sysdate,null,null,null,null,0)';
 
         EXECUTE IMMEDIATE V_MSQL;
         DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'.RULE_DEFINITION... Datos del diccionario insertado');

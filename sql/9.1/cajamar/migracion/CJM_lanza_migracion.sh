@@ -8,6 +8,15 @@ export NLS_LANG=SPANISH_SPAIN.AL32UTF8
 
 echo "[INFO] Se ha establecido la variable de entorno NLS_LANG=SPANISH_SPAIN.AL32UTF8"
 
+echo "[INFO] Creamos el soft link al ETL apr_main_observaciones.sh"
+
+if [ -f  ./shells/apr_main_observaciones.sh ] ; then 
+  echo "El link a ../shells/apr_main_observaciones.sh ya existe" 
+else
+  ln -s ../../shells/apr_main_observaciones.sh ./shells/apr_main_observaciones.sh
+  echo "Link a ../../shells/apr_main_observaciones.sh creado correctamente"
+fi
+
 sh_dir="shells/"
 
 echo "[INFO] INICIO EJECUCION MIGRACION  $0" `date` 
@@ -122,14 +131,14 @@ fi
 echo "[OK] ""$sh_dir""CJM_migracion_a_recovery_precontencioso.sh ejecutado correctamente"      
 
 
-echo "[INFO] Comienza ejecución de: ""$sh_dir""apr_main_observaciones_1.07.sh"                      
-./"$sh_dir"apr_main_observaciones_1.07.sh 
+echo "[INFO] Comienza ejecución de: ""$sh_dir""apr_main_observaciones.sh"                      
+./"$sh_dir"apr_main_observaciones.sh 
 if [ $? != 0 ] ; then
-    echo -e "\n\n======>>> [ERROR] en "$sh_dir"apr_main_observaciones_1.07.sh"
+    echo -e "\n\n======>>> [ERROR] en "$sh_dir"apr_main_observaciones.sh"
     echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
     exit 1           
 fi
-echo "[OK] ""$sh_dir""apr_main_observaciones_1.07.sh ejecutado correctamente"      
+echo "[OK] ""$sh_dir""apr_main_observaciones.sh ejecutado correctamente"      
 
 echo "[INFO] FIN CJM_lanza_migracion.sh. Revise el fichero de log" `date` 
 exit 0

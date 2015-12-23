@@ -35,6 +35,8 @@ var burofaxesPcoRecord = Ext.data.Record.create([
 	{name: 'burFechaSolicitud'},
 	{name: 'burFechaEnvio'},
 	{name: 'burFechaAcuse'},
+	{name: 'burRegManual'},
+	{name: 'burRefExternaEnvio'},
 	{name: 'burResultado'}
 ]);
 
@@ -63,6 +65,8 @@ var burofaxPcoCm = new Ext.grid.ColumnModel([
 	{dataIndex: 'burFechaSolicitud', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.fecha.solicitud" text="**Fecha solicitud"/>', sortable: false},
 	{dataIndex: 'burFechaEnvio', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.fecha.envio" text="**Fecha envio"/>', sortable: false},
 	{dataIndex: 'burFechaAcuse', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.fecha.acuse" text="**Fecha acuse"/>', sortable: false},
+	{dataIndex: 'burRefExternaEnvio', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.refExternaEnvio" text="**Ref. Externa envío"/>', sortable: false},
+	{dataIndex: 'burRegManual', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.regManual" text="**Reg. Manual"/>', renderer: OK_KO_Render, align:'center', sortable: false},
 	{dataIndex: 'burResultado', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.resultado" text="**Resultado"/>', renderer: OK_KO_Render, align:'center', sortable: false}
 ]);
 

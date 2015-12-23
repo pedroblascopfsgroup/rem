@@ -54,6 +54,10 @@
 	]);
 
 	var nExpedienteExterno = label('nExpedienteExterno', '<s:message code="plugin.precontencioso.cabecera.nroexpedienteExt" text="**Nro. expediente externo:"/>');
+	<sec:authentication var="user" property="principal" />
+	<c:if test="${user.entidad.descripcion eq 'HAYA'}">
+   		nExpedienteExterno = label('nExpedienteExterno', '<s:message code="plugin.precontencioso.cabecera.wfprelitigio" text="**WF Prelitigio:"/>');
+	</c:if>
 	var estadoProcedimiento = label('estadoProcedimiento', '<s:message code="plugin.precontencioso.cabecera.estadoExpediente" text="**Estado del expediente"/>');
 	var procedimientoPropuesto = label('procedimientoPropuesto', '<s:message code="plugin.precontencioso.cabecera.procedimientoPropuesto" text="**Procedimiento propuesto"/>');
 	var procedimientoIniciado = label('procedimientoIniciado', '<s:message code="plugin.precontencioso.cabecera.procedimientoAiniciar" text="**Procedimiento a iniciar"/>');

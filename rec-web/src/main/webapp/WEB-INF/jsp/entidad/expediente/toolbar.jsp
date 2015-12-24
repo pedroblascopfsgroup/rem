@@ -1,4 +1,5 @@
 ﻿<%@page pageEncoding="utf-8" contentType="text/html; charset=UTF-8" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 function(entidad,page){
 
@@ -250,7 +251,6 @@ function(entidad,page){
 		});
 	};
 	
-	
 	var menuAcciones = 
 		{
 			text : '<s:message code="expedientes.menu.acciones" text="**Acciones" />'
@@ -279,6 +279,14 @@ function(entidad,page){
 						cambioEstado(tipoAccion.ELEVAR_FORMALIZAR_PROPUESTA)
 					}
 				},
+				{
+					text:'<s:message code="expedientes.menu.elevarAceptarPropuesta" text="**Elevar a Aceptar Propuesta" />'
+					,id : 'expediente-accion9-aceptarPropuesta'
+					,iconCls : 'icon_elevar_revision'
+					,handler:function(){
+						cambioEstado(tipoAccion.ELEVAR_FORMALIZAR_PROPUESTA)
+					}
+				},				
 				{
 					text:'<s:message code="expedientes.menu.devolverrevision" text="**Devolver a Revisin" />'
 					,id : 'expediente-accion2-devolverRevision'
@@ -649,9 +657,10 @@ function(entidad,page){
 	}
 	
 	toolbar.getValue = function(){};
-  
+  	
+  	
 	toolbar.setValue = function(){
-
+		
 		var data = entidad.get("data");
 		var d = data.toolbar;
 		
@@ -679,6 +688,8 @@ function(entidad,page){
 		
 		var permiteElevar = false;
 		var permiteDevolver = false;
+		var mostrarRec = false;
+		
 		function elevarDevolver(){
 		var estados = entidad.getData('estados');
 			if(d.codigoEstado == 'CE'){
@@ -706,6 +717,13 @@ function(entidad,page){
 				for(var i = 0; i < estados.length; i++){
 					if(estados[i].codigo == 'FP'){
 						permiteElevar = true;
+						<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
+						if(d.esRecuperacion){
+							mostrarRec = true;
+						}else{
+							mostrarRec = false;
+						}
+						</sec:authorize>
 					}
 					
 					if(estados[i].codigo == 'RE'){
@@ -733,9 +751,9 @@ function(entidad,page){
 				}
 			}
 		}
-
+		
 		//inicialmente ocultamos todos
-		showHide(false, 'expediente-accion0-elevarRevision', 'expediente-accion1-elevarComite',  'expediente-accion2-devolverRevision',  'expediente-accion3-devolverComite',  'expediente-accion4-solicitarCancelacion',  'expediente-accion5-verCancelacion',  'expediente-accion6-cancelacionExpediente', 'expediente-accion7-formulacionPropuesta', 'expediente-accion8-devolverComite');
+		showHide(false, 'expediente-accion0-elevarRevision', 'expediente-accion1-elevarComite',  'expediente-accion2-devolverRevision',  'expediente-accion3-devolverComite',  'expediente-accion4-solicitarCancelacion',  'expediente-accion5-verCancelacion',  'expediente-accion6-cancelacionExpediente', 'expediente-accion7-formulacionPropuesta', 'expediente-accion8-devolverComite', 'expediente-accion9-aceptarPropuesta');
 		if ( solicitudYPermisos){
 			elevarDevolver();
 			switch(d.codigoEstado){
@@ -751,7 +769,16 @@ function(entidad,page){
 					break;
 				case 'DC' : 
 					if(permiteElevar && permiteDevolver){
-						showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion7-formulacionPropuesta','expediente-accion2-devolverRevision');
+						<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
+						if(mostrarRec){
+							showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion7-formulacionPropuesta','expediente-accion2-devolverRevision');
+						}else{
+							showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion9-aceptarPropuesta','expediente-accion2-devolverRevision');
+						}
+						</sec:authorize>
+						<sec:authorize ifNotGranted="PERSONALIZACION-BCC">
+							showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion7-formulacionPropuesta','expediente-accion2-devolverRevision');
+						</sec:authorize>
 					}
 					break;
 				case 'FP' :

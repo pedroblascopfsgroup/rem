@@ -49,6 +49,7 @@ import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudDocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 
 @Controller
@@ -62,19 +63,23 @@ public class BurofaxController {
 	
 	private static final String JSP_ALTA_PERSONA  ="plugin/precontencioso/burofax/jsp/altaPersonaPCO";
 	
+	private static final String JSP_ALTA_PERSONA_MANUAL  ="plugin/precontencioso/burofax/jsp/altaPersonaManualPCO";
+	
 	private static final String JSP_EDITAR_BUROFAX  ="plugin/precontencioso/burofax/jsp/editarBurofax";
 	
 	private static final String JSP_ENVIAR_BUROFAX  ="plugin/precontencioso/burofax/jsp/enviarBurofax";
 	
 	private static final String JSP_AGREGAR_NOTIFICACION  ="plugin/precontencioso/burofax/jsp/pantallaNotificacion";
 	
-	public static final String JSON_LISTA_PERSONAS = "direcciones/listaPersonasJSON";
+	public static final String JSON_LISTA_PERSONAS = "plugin/precontencioso/burofax/json/listaPersonasJSON";
 	
 	private static final String DEFAULT = "default";
 	
 	public static final String JSP_DOWNLOAD_FILE = "plugin/geninformes/download";
 	
 	public static final String JSON_LISTA_DOCUMENTOS = "plugin/precontencioso/documento/json/solicitudesDocumentoJSON";
+	
+	public static final String JSON_LISTA_CONTRATOS_PROCEDIMIENTOS = "plugin/precontencioso/burofax/json/listadoContratosProcedimientoJSON";
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 	
@@ -101,6 +106,9 @@ public class BurofaxController {
 	
 	@Autowired
 	private GestorDespachoDao gestorDespachoDao;
+	
+	@Autowired
+	private ProcedimientoPCODao procedimientoPCODao;
 	
 	/**
 	 * Carga el grid de Burofaxes
@@ -412,6 +420,15 @@ public class BurofaxController {
 		return JSP_ALTA_PERSONA;
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	private String getAltaPersonaManual(WebRequest request, ModelMap model,Long idProcedimiento){
+		
+		model.put("idProcedimiento", idProcedimiento);
+		
+		return JSP_ALTA_PERSONA_MANUAL;
+	}
+	
 	
 	@RequestMapping
 	private String guardaPersona(WebRequest request, ModelMap model,Long idProcedimiento,@RequestParam(value = "arrayIdPersonas", required = true) Long[] arrayIdPersonas){
@@ -635,6 +652,20 @@ public class BurofaxController {
 		
         return JSON_LISTA_DOCUMENTOS;
     }
+    
+	/**
+	 * Carga el grid de Burofaxes
+	 * @param model
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getRelacionContratos(ModelMap model,Long idProcedimiento) {
+		
+		model.put("procedimiento", procedimientoPCODao.get(idProcedimiento).getProcedimiento());
+		
+		return JSON_LISTA_CONTRATOS_PROCEDIMIENTOS;
+	}
 
 }
 

@@ -8,6 +8,8 @@
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 
+<sec:authentication var="user" property="principal" />
+
 <%-- Renders --%>
 
 var pdfRender = function(value, meta, record) {
@@ -510,26 +512,50 @@ var pdfRender = function(value, meta, record) {
 	});	
 	
 	
-	btnAddPersona.on('click', function(){
-			var w = app.openWindow({
-				  flow : 'burofax/getAltaPersona'
-				  ,width:820
-				  ,autoWidth:true
-				  ,closable:true
-				  ,title : '<s:message code="plugin.precontencioso.grid.burofax.agregar.persona" text="**Añadir Notificado" />'
-				  ,params:{idProcedimiento:idProcedimiento}
-				
-				});
-				w.on(app.event.DONE,function(){
-						w.close();
-						refrescarBurofaxGrid();
-						
-						
-				});
-				w.on(app.event.CANCEL, function(){w.close();});
-			
+	<c:choose>
+	    <c:when test="${user.entidad.descripcion eq 'CAJAMAR' || user.entidad.descripcion eq 'HAYA'}">
+	    	btnAddPersona.on('click', function(){
+				var w = app.openWindow({
+					  flow : 'burofax/getAltaPersonaManual'
+					  ,width:820
+					  ,autoWidth:true
+					  ,closable:true
+					  ,title : '<s:message code="plugin.precontencioso.grid.burofax.agregar.persona" text="**Añadir Notificado" />'
+					  ,params:{idProcedimiento:idProcedimiento}
+					
+					});
+					w.on(app.event.DONE,function(){
+							w.close();
+							refrescarBurofaxGrid();
+							
+							
+					});
+					w.on(app.event.CANCEL, function(){w.close();});
+			});
+	    </c:when>
+	    <c:otherwise>
+	        btnAddPersona.on('click', function(){
+				var w = app.openWindow({
+					  flow : 'burofax/getAltaPersona'
+					  ,width:820
+					  ,autoWidth:true
+					  ,closable:true
+					  ,title : '<s:message code="plugin.precontencioso.grid.burofax.agregar.persona" text="**Añadir Notificado" />'
+					  ,params:{idProcedimiento:idProcedimiento}
+					
+					});
+					w.on(app.event.DONE,function(){
+							w.close();
+							refrescarBurofaxGrid();
+							
+							
+					});
+					w.on(app.event.CANCEL, function(){w.close();});
+			});
+	    </c:otherwise>
+	</c:choose>
 	
-	});
+
 	
 	
 	btnEnviar.on('click', function(){

@@ -1,4 +1,4 @@
--- actualizar la configuraci�n para utilizar los TGE SUP y GEXT
+-- actualizar la configuración para utilizar los TGE SUP y GEXT
 
 -- GEXT
 
@@ -44,8 +44,8 @@ insert into HAYA02.zon_pef_usu zpu (zpu.zpu_id, zpu.zon_id,  zpu.usu_id,zpu.pef_
 
 -- actualizar algunos TGE
 
-update hayamaster.dd_tge_tipo_gestor set dd_tge_descripcion = 'CJ - Supervisor Asesor�a jur�dica', dd_tge_descripcion_larga = 'CJ - Supervisor Asesor�a jur�dica' where dd_tge_codigo = 'SAJUR';
+update hayamaster.dd_tge_tipo_gestor set dd_tge_descripcion = 'CJ - Supervisor Asesoría jurídica', dd_tge_descripcion_larga = 'CJ - Supervisor Asesoría jurídica' where dd_tge_codigo = 'SAJUR';
 
-update hayamaster.dd_tge_tipo_gestor set dd_tge_descripcion = 'CJ - Supervisor HRE gesti�n llaves', dd_tge_descripcion_larga = 'CJ - Supervisor HRE gesti�n llaves', borrado = 0, usuarioborrar = null, fechaborrar = null where dd_tge_codigo = 'SPGL';
+update hayamaster.dd_tge_tipo_gestor set dd_tge_descripcion = 'CJ - Supervisor HRE gestión llaves', dd_tge_descripcion_larga = 'CJ - Supervisor HRE gestión llaves', borrado = 0, usuarioborrar = null, fechaborrar = null where dd_tge_codigo = 'SPGL';
 
 update hayamaster.dd_tge_tipo_gestor set borrado = 1, usuarioborrar = 'SAG', fechaborrar = sysdate where dd_tge_codigo in ('CJ-GESEXT','CJ-SUEXT');

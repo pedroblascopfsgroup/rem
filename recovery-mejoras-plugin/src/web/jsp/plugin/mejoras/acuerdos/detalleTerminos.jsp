@@ -1,12 +1,17 @@
 <%@page pageEncoding="iso-8859-1" contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
-<%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="pfsformat" tagdir="/WEB-INF/tags/pfs/format" %>
 
 var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEstadoGestion){
+   var ambito = entidad.id;
+   
+   
+   
    var panelTerminos=new Ext.Panel({
 		layout:'form'
 		,border : false
@@ -62,9 +67,10 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
    ]);
    
    var terminosAcuerdoCM = new Ext.grid.ColumnModel([
-  	  {dataIndex: 'id', hidden:true, fixed:true }
-      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.tipoTermino" text="**Tipo Termino" />', dataIndex : 'tipoAcuerdo',width: 35}
-      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.subtipoTermino" text="**Subtipo Termino" />', dataIndex : 'subTipoAcuerdo',width: 35}
+  	  {dataIndex: 'id', hidden:true, fixed:true }  	  
+      
+      ,{header : (ambito=='asunto') ? '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.tipoTerminoAcuerdo" text="**Tipo Termino" />' : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.tipoTermino" text="**Tipo solución" />' , dataIndex : 'tipoAcuerdo',width: 35}
+      ,{header : (ambito=='asunto') ? '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.subtipoTerminoAcuerdo" text="**Subtipo Termino" />' : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.subtipoTermino" text="**Subtipo Solucion" />', dataIndex : 'subTipoAcuerdo',width: 35}      
 <%--       ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.importe" text="**Importe" />', dataIndex : 'importe',width: 65} --%>
 <%--       ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.comisiones" text="**Comisiones" />', dataIndex : 'comisiones',width: 100} --%>
 	  ,{dataIndex: 'idContrato', hidden:true, fixed:true }      
@@ -138,7 +144,7 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
  
 
    var btnAltaTermino = new Ext.Button({
-       text:  '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.agregar" text="**Agregar termino" />'
+       	text:  (ambito!='asunto') ? '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.agregar" text="**Agregar Solucion" />':'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.agregarAcuerdo" text="**Agregar Acuerdo" />'
        ,iconCls : 'icon_mas'
        ,cls: 'x-btn-text-icon'
        ,hidden : noPuedeModificar
@@ -148,16 +154,16 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
 				var idAcuerdo = acuerdoSeleccionado;			
 				if (contratosIncluidos.length == 0 ) {			
 					Ext.Msg.alert('<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.warning" text="**Aviso" />', 
-	                    	       '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.warning.contratoNoSelec" text="**No ha seleccionado ningÃºn contrato" />');
+	                    	       '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.warning.contratoNoSelec" text="**No ha seleccionado ningun contrato" />');
 				}
 				else {
-					var ambito = entidad.id;								
+					//var ambito = entidad.id;								
 	      	        var w = app.openWindow({
 			          flow : 'mejacuerdo/openAltaTermino'
 			          ,closable:allowClose
 			          ,width: 900
 			          ,autoHeight: true
-			          ,title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.agregar" text="**Agregar Termino" />'
+			          	,title : (ambito!='asunto') ? '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.agregar" text="**Agregar Solucion" />':'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.agregarAcuerdo" text="**Agregar Acuerdo" />'
 	     			  ,params:{
 <%-- 	      				  id:panel.getAsuntoId(), --%>
 						  ambito: ambito,
@@ -179,7 +185,7 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
    });  
    
    var btnBorrarTermino = new Ext.Button({
-		text: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.borrar" text="**Borrar Termino" />',
+		 text: (ambito!='asunto') ? '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.borrar" text="**Borrar Solucion" />':'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.borrarAcuerdo" text="**Borrar Termino" />',
 		iconCls: 'icon_menos',
 		hidden : noPuedeModificar,
 		handler: function(){
@@ -214,19 +220,19 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
 	
 	
 	var btnVerTermino = new Ext.Button({
-		text: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.editar" text="**Editar Termino" />',
+		text: (ambito!='asunto') ? '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.editar" text="**Editar Solucion" />':'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.editarAcuerdo" text="**Editar Termino" />',
 		iconCls: 'icon_edit',
 		hidden : noPuedeModificar,
 		handler: function(){
 			if (typeof idTerminoSeleccionado != 'undefined'){
-				var ambito = entidad.id;
+				//var ambito = entidad.id;
 	     	   	var w = app.openWindow({
 		          flow : 'mejacuerdo/openDetalleTermino'
 		          ,closable:false
 		          ,width: 900
 		          ,autoHeight: true
-		          ,title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.editar" text="**Editar Termino" />'
-	    			  ,params:{
+	              ,title : (ambito!='asunto') ? '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.editar" text="**Editar Solucion" />':'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.editarAcuerdo" text="**Editar Termino" />'
+        		   ,params:{
 	    			  	  ambito: ambito,
 	     				  id:idTerminoSeleccionado,
 <%-- 	     				  idAsunto:panel.getAsuntoId(), --%>
@@ -328,7 +334,7 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
    --%>
    
    var terminosAcuerdoGrid = app.crearGrid(terminosAcuerdoStore,terminosAcuerdoCM,{
-         title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.titulo" text="**Terminos/Acuerdo" />'
+         title : (ambito!='asunto') ? '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.titulo" text="**Solucion/Propuestas" />':'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.tituloAcuerdo" text="**Terminos/Acuerdo" />'
          ,style:'padding : 5px'
          ,autoHeight : true
          ,autoWidth:true
@@ -357,14 +363,14 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
 	terminosAcuerdoGrid.on('rowdblclick', function(grid, rowIndex, e){
 		var rec = grid.getStore().getAt(rowIndex);
 		idTerminoSeleccionado = rec.get('id');
-			var ambito = entidad.id;
+			//var ambito = entidad.id;
      	   	var w = app.openWindow({
 	          flow : 'mejacuerdo/openDetalleTermino'
 	          ,closable:false
 	          ,width: 900
 	          ,autoHeight: true
-	          ,title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.ver" text="**Ver Termino" />'
-    			  ,params:{
+	          ,title : (ambito!='asunto') ? '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.ver" text="**Ver Solucion" />':'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.verAcuerdo" text="**Ver Termino" />'
+    		  ,params:{
     			  	  ambito: ambito,
      				  id:idTerminoSeleccionado,
 <%--      				  idAsunto:panel.getAsuntoId(), --%>
@@ -384,7 +390,6 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
 		
 	});
 	
-   
    panelTerminos.add(terminosAcuerdoGrid);
    panelTerminos.terminosAcuerdoGrid=terminosAcuerdoGrid;
    

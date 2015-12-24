@@ -327,7 +327,7 @@
 	<bean id="commonProjectContextHaya" parent="commonProjectContextDefault">
 		<property name="formatoNroContrato">
 			<map>
-				<entry key="BANKIA">
+				<entry key="HAYA">
 					<map>
 						<entry key="contrato.codigoFormato" value="5,5,17,15" />
 					</map>	

@@ -1,4 +1,3 @@
-
 -- actualizar la configuraci�n para utilizar los TGE SUP y GEXT
 
 -- GEXT
@@ -35,6 +34,8 @@ values
 (s_TGP_TIPO_GESTOR_PROPIEDAD.nextval, (select dd_tge_id from hayamaster.DD_TGE_TIPO_GESTOR where dd_tge_codigo = 'SUP'),
  'DES_VALIDOS', (select tde.dd_tde_codigo from hayamaster.dd_tde_tipo_despacho tde where tde.dd_tde_codigo = 'D-SUCONGE'),
  'SAG', sysdate);
+ 
+UPDATE TAP_TAREA_PROCEDIMIENTO tap SET tap.DD_TSUP_ID = (select dd_tge_id from hayamaster.DD_TGE_TIPO_GESTOR where dd_tge_codigo = 'SUP'), usuariomodificar = 'SAG', fechamodificar = sysdate WHERE tap.DD_TSUP_ID = (select dd_tge_id from hayamaster.DD_TGE_TIPO_GESTOR where dd_tge_codigo = 'SUCONGE'); 
  
 -- insertar usuario administrador
 insert into hayamaster.usu_usuarios (usu_id, entidad_id, usu_username, usu_password, usu_nombre,usu_apellido1,usu_apellido2,usu_mail, usuariocrear,fechacrear, usu_externo, usu_grupo)  values  ( hayamaster.s_usu_usuarios.nextval, (select ID from HAYAMASTER.ENTIDAD where DESCRIPCION = 'CAJAMAR'),'HAYACAJAMAR','1234','HAYACAJAMAR','','','' , 'JSV', sysdate, 0,0);

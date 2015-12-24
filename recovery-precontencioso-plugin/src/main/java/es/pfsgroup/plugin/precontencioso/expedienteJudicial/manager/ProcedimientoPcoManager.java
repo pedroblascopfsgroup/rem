@@ -14,6 +14,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.logging.Log;
@@ -38,6 +39,7 @@ import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.multigestor.api.GestorAdicionalAsuntoApi;
+import es.capgemini.pfs.parametrizacion.dao.ParametrizacionDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.dao.TareaExternaDao;
@@ -165,6 +167,9 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	
 	@Autowired
 	private EXTGrupoUsuariosApi grupoUsuarios;
+	
+	@Autowired
+    private ParametrizacionDao parametrizacionDao;
 	
 	@BusinessOperation(BO_PCO_COMPROBAR_FINALIZAR_PREPARACION_EXPEDIENTE)
 	@Override
@@ -1188,4 +1193,16 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		return resultado;
 	}
 
+	public String getEstadoLimiteImporteConcurso(Long idProcedimiento)
+	{
+		String valorDecision;
+		Procedimiento procedimiento = procedimientoManager.getProcedimiento(idProcedimiento);
+		BigDecimal limite = new BigDecimal(parametrizacionDao.buscarParametroPorNombre("limiteImporteConcurso").getValor());
+		if(limite.compareTo(procedimiento.getSaldoRecuperacion()) >0)
+			valorDecision="menor";
+		else
+			valorDecision="mayor";
+		
+		return valorDecision;
+	}
 }

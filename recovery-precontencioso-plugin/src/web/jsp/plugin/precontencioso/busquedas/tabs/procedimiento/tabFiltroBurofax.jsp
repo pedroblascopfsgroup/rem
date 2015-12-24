@@ -95,6 +95,25 @@ var panelFechaAcuseBur = new Ext.Panel({
 	]
 });
 
+<%-- Reg Manual --%>
+
+<pfsforms:ddCombo name="comboRegManual" propertyCodigo="codigo" propertyDescripcion="descripcion"
+labelKey="plugin.precontencioso.tab.burofax.regManual" 
+label="** Reg. Manual" value="" dd="${ddSiNo}" />
+
+<%-- Ref Externa Envio --%>
+
+var fieldrefExternaEnvio = new Ext.form.TextField({
+	name: 'refExternaEnvio',
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.burofax.refExternaEnvio" text="** Ref Externa Envio" />'
+});
+
+<%-- Acuse de recibo --%>
+
+<pfsforms:ddCombo name="comboAcuseRecibo" propertyCodigo="codigo" propertyDescripcion="descripcion"
+labelKey="plugin.precontencioso.tab.burofax.acuseRecibo" 
+label="** Acuse de recibo" value="" dd="${ddSiNo}" />
+
 <%-- Resultado último envío a cliente --%>
 
 var diccResultadoBurofax = <app:dict value="${resultadoBurofax}" />;
@@ -121,7 +140,7 @@ var filtrosTabBurofax = new Ext.Panel({
 	layoutConfig: {columns: 2},
 	items: [{
 		layout: 'form',
-		items: [comboNotificado, comboResultadoBurofax]
+		items: [fieldrefExternaEnvio, comboNotificado, comboAcuseRecibo, comboRegManual, comboResultadoBurofax]
 	}, {
 		layout: 'form',
 		items: [panelFechaSolicitudBur, panelFechaEnvioBur, panelFechaAcuseBur]
@@ -145,6 +164,9 @@ var getParametrosFiltroBurofax = function() {
 	out.burFechaAcuseHasta = dateFieldEnvioBurHasta.getValue();
 	out.burFechaEnvioDesde = dateFieldAcuseBurDesde.getValue();
 	out.burFechaEnvioHasta = dateFieldAcuseBurHasta.getValue();
+	out.burRefExternaEnvio = fieldrefExternaEnvio.getValue();
+	out.burRegManual = comboRegManual.getValue();
+	out.burAcuseRecibo = comboAcuseRecibo.getValue();
 
 	return out;
 }

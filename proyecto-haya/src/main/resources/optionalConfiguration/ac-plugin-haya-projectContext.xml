@@ -324,7 +324,7 @@
 		</property>
 	</bean>
 	
-	<bean id="commonProjectContextHaya" parent="commonProjectContextDefault">
+	<!--  <bean id="commonProjectContextHaya" parent="commonProjectContextDefault">
 		<property name="formatoNroContrato">
 			<map>
 				<entry key="HAYA">
@@ -334,7 +334,7 @@
 				</entry>
 			</map>
 		</property>
-	</bean>
+	</bean>-->
 
 	<alias name="commonProjectContextHaya" alias="commonProjectContext"/>
 	<alias name="nmbCommonProjectContextHAYA" alias="nmbCommonProjectContext"/>

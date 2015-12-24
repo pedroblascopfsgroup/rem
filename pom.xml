@@ -68,6 +68,12 @@
 		<dependencies>
 			<!-- DEVON -->
 			<dependency>
+				<groupId>es.pfsgroup.devon</groupId>
+				<artifactId>devon-web</artifactId>
+			<!--	<version>${devon.version.web}</version> -->
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>capgemini</groupId>
 				<artifactId>devon-core</artifactId>
 				<version>${devon.version}</version>
@@ -587,7 +593,8 @@
 				<module>proyecto-cajamar-ws</module>
 				<module>proyecto-haya</module>
 				<module>recovery-procedimientos-bpmHaya-plugin</module>
-		        <module>recovery-bi-plugin</module>
+		        	<module>recovery-bi-plugin</module>
+				
 
 				<module>rec-web</module>
 				<module>rec-batch</module>

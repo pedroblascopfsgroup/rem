@@ -107,6 +107,7 @@
     	<list merge="true">    
     		<value>es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDTipoProblemaDocPco</value>
     		<value>es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDMotivoAsignacionLetrado</value>
+    		<value>es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDTipoGestionRevisarExpJudicial</value>
     	</list>
     </property>
    </bean>

@@ -2,18 +2,34 @@ package es.capgemini.pfs.asunto;
 
 import java.util.List;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import es.capgemini.devon.bo.Executor;
+import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
 import es.pfsgroup.recovery.ext.api.asunto.EXTAsuntoApi;
 import es.pfsgroup.recovery.ext.impl.asunto.dto.EXTDtoBusquedaAsunto;
+import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 
 @Controller
 public class EXTAsuntoController {
@@ -22,9 +38,15 @@ public class EXTAsuntoController {
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
-	
+
+	@Autowired
+	private EXTAsuntoApi extAsuntoApi;
+
 	@Autowired
     private Executor executor;	
+	
+	@Resource
+	private Properties appProperties;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -38,9 +60,7 @@ public class EXTAsuntoController {
 		
         return "plugin/coreextension/exportacionGenericoCountJSON";
     }
-	
 
-	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
     public String getMsgErrorEnvioCDDCabecera(Long idAsunto, ModelMap model) {		
@@ -61,4 +81,72 @@ public class EXTAsuntoController {
 		return GESTORES_ADICIONALES_ASUNTO_JSON;
 	}
 
+	@RequestMapping
+	public String exportarExcelAsuntos(EXTDtoBusquedaAsunto filter, String params, ModelMap model) {
+		Page resultadoPaginado = extAsuntoApi.findAsuntosPaginatedDinamicoCount(filter, params);
+		List<EXTAsunto> asuntos = (List<EXTAsunto>) resultadoPaginado.getResults();
+
+		FileItem excel = generarExcelAsuntos(asuntos);
+
+		model.put("fileItem", excel);
+		return "plugin/coreextension/asunto/download";
+	}
+
+	private FileItem generarExcelAsuntos(List<EXTAsunto> asuntos) {
+		List<List<String>> datos = getDataToExport(asuntos);
+
+		String nombreFichero = (new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + "-listaAsuntos.xls";
+		String rutaCompletaFichero = !Checks.esNulo(appProperties.getProperty("files.temporaryPath")) ? appProperties.getProperty("files.temporaryPath") : "";
+
+		rutaCompletaFichero += File.separator.equals(rutaCompletaFichero.substring(rutaCompletaFichero.length()-1)) || rutaCompletaFichero.length() == 0 ? nombreFichero : File.separator+nombreFichero; 
+
+		//Creo el fichero excel
+		HojaExcel hojaExcel = new HojaExcel();
+		hojaExcel.crearNuevoExcel(rutaCompletaFichero, getHeader(), datos);
+
+		FileItem excelFileItem = new FileItem(hojaExcel.getFile());
+		excelFileItem.setFileName(rutaCompletaFichero);
+		excelFileItem.setContentType(HojaExcel.TIPO_EXCEL);
+		excelFileItem.setLength(hojaExcel.getFile().length());
+
+		return excelFileItem;
+	}
+
+	private List<List<String>> getDataToExport(List<EXTAsunto> asuntos) {
+		List<List<String>> datos = new ArrayList<List<String>>();
+
+		for (EXTAsunto asunto : asuntos) {
+			List<String> filaExportar = new ArrayList<String>();
+
+			filaExportar.add(ObjectUtils.toString(asunto.getId())); // codigo
+			filaExportar.add(asunto.getNombre()); // nombre
+			filaExportar.add(ObjectUtils.toString(asunto.getAuditoria().getFechaCrear())); // fechaCrear
+			filaExportar.add(asunto.getCodigoDecodificado()); // estado
+			filaExportar.add(asunto.getGestorNombreApellidosSQL()); // gestor
+			filaExportar.add(asunto.getDespachoSQL()); // despacho
+			filaExportar.add(asunto.getSupervisorNombreApellidosSQL() != null ? asunto.getSupervisorNombreApellidosSQL() : ""); // supervisor
+			filaExportar.add(ObjectUtils.toString(asunto.getSaldoTotalPorContratosSQL())); // saldoTotal
+			filaExportar.add(ObjectUtils.toString(asunto.getImporteEstimado())); // importeEstimado
+
+			datos.add(filaExportar);
+		}
+		return datos;
+	}
+
+	private ArrayList<String> getHeader(){
+		ArrayList<String> cabeceras = new ArrayList<String>();
+
+		//Cabecera de las columnas
+		cabeceras.add("Codigo");
+		cabeceras.add("Nombre");
+		cabeceras.add("Fecha creacion");
+		cabeceras.add("Estado");
+		cabeceras.add("Gestor");
+		cabeceras.add("Despacho");
+		cabeceras.add("Supervisor");
+		cabeceras.add("Saldo total");
+		cabeceras.add("importe estimado");
+
+		return cabeceras;
+	}
 }

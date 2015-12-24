@@ -92,76 +92,34 @@
             }
             
             if (hayParametros) {
-            
-            	var y = 0;
+			
+				var y = 0;
 				var paramAux;
 				for(var i in parametrosTab){
-					paramAux = paramAux+'_param_'+parametrosTab[i];	
+						paramAux = paramAux+'_param_'+parametrosTab[i];	
 				}
 				parametros['params'] = paramAux;
-						
-						
-				//var flow='asuntos/exportAsuntos';
-		        var flow='plugin/coreextension/asunto/core.exportAsuntos';
-		        var params=parametros;
-		               
-		        parametros.tipoSalida='<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.SALIDA_XLS" />';
-		        
 				
-				Ext.Ajax.request({
-	            	url: page.resolveUrl('extasunto/exportacionAsuntosCount')
-	                ,method: 'POST'
-	                ,params: {
-	                	anyoProcedimientoEnJuzgado: parametros.anyoProcedimientoEnJuzgado,
-	                	codigoAsunto: parametros.codigoAsunto,
-	                	codigoZona: parametros.codigoZona,
-	                	comboErrorPostCDD: parametros.comboErrorPostCDD,
-	                	comboErrorPreviCDD: parametros.comboErrorPreviCDD,
-	                	comboEstados: parametros.comboEstados,
-	                	comboGestion: parametros.comboGestion,
-	                	comboPropiedades: parametros.comboPropiedades,
-	                	comboSituacionCDD: parametros.comboSituacionCDD,
-	                	comboTipoAsunto: parametros.comboTipoAsunto,
-	                	comboDespachos: parametros.comboDespachos,
-	                	comboGestor: parametros.comboGestor,
-						comboTiposGestor: parametros.comboTiposGestor,
-						destinatarioEmail: parametros.destinatarioEmail,
-	                	fechaCreacionDesde: parametros.fechaCreacionDesde,
-	                	fechaCreacionHasta: parametros.fechaCreacionHasta,
-	                	fechaEntregaDesde: parametros.fechaEntregaDesde,
-	                	fechaEntregaHasta: parametros.fechaEntregaHasta,
-	                	filtroContrato: parametros.filtroContrato,
-	                	jerarquia: parametros.jerarquia,
-	                	maxImporteEstimado: parametros.maxImporteEstimado,
-	                	maxSaldoTotalContratos: parametros.maxSaldoTotalContratos,
-	                	minImporteEstimado: parametros.minImporteEstimado,
-	                	minSaldoTotalContratos: parametros.minSaldoTotalContratos,
-	                	nombre: parametros.nombre,
-	                	numeroProcedimientoEnJuzgado: parametros.numeroProcedimientoEnJuzgado,
-	                	params: parametros.params,
-	                	soloAsuntosEnvioCorreo: parametros.soloAsuntosEnvioCorreo,
-	                	tipoAnotacion: parametros.tipoAnotacion,
-	                	tipoProcedimiento: parametros.tipoProcedimiento,
-	                	tipoSalida: parametros.tipoSalida,
-	                	usuarioOrigenTarea: parametros.usuarioOrigenTarea,
-	                	usuarioDestinoTarea: parametros.usuarioDestinoTarea             	
-	                }
-	                ,success: function (result, request){
-	                    var r = Ext.util.JSON.decode(result.responseText);
-	                    
-	                    if(r.success) {       
-		                    app.openBrowserWindow(flow,parametros);
-					        parametrosTab = new Array();
-						}   
-					}
-					,failure: function (result, request){
-	                }
-				});
+				//var flow='asuntos/exportAsuntos';
+                //var flow='plugin/coreextension/asunto/core.exportAsuntos';
+                var flow = '/pfs/extasunto/exportarExcelAsuntos';
+             
+                var params=parametros;
+               
+                parametros.tipoSalida='<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.SALIDA_XLS" />';
+
+                app.openBrowserWindow(flow,parametros);
+                    
+                
+				parametrosTab = new Array();            
+                
             } else {
                 Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="expedientes.listado.criterios"/>');
             }
         }
-    });   
+    });
+    
+    
     
     var btnBuscar=app.crearBotonBuscar({
         handler : function() {

@@ -211,6 +211,54 @@ var pdfRender = function(value, meta, record) {
 <%-- 			,hidden:true --%>
 	});		
 	
+	var btnEditarVerDireccion = new Ext.Button({
+			text : '<s:message code="plugin.precontencioso.grid.burofax.boton.editarVerDireccion" text="**Editar dirección" />'
+			,id : 'btnEditarVerDireccion'
+			,iconCls : 'icon_edit'
+			,cls: 'x-btn-text-icon'
+	});
+	
+	<%-- boton editar/ver direccion --%>
+
+btnEditarVerDireccion.on('click', function(){
+	   
+	    var arrayIdClientes=new Array();
+			 
+		rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
+		for (var i=0; i < rowsSelected.length; i++){
+		  arrayIdClientes.push(rowsSelected[i].get('idCliente'));
+		}
+		uniqueArray = arrayIdClientes.filter(function(item, pos) {
+		    return arrayIdClientes.indexOf(item) == pos;
+		});
+		if(arrayIdClientes.length==1){
+		 
+			var idCliente = gridBurofax.getSelectionModel().getSelected().get('idCliente');
+			var idDireccion = gridBurofax.getSelectionModel().getSelected().get('idDireccion');
+			
+			var w = app.openWindow({
+				  flow : 'burofax/editarVerDireccion'
+				  ,width:920
+				  ,autoWidth:true
+				  ,closable:true
+				  <%--,title : '<s:message code="plugin.precontencioso.grid.burofax.editar.direccion" text="**Dirección" />'--%>
+				  ,params:{idCliente:idCliente,idProcedimiento:idProcedimiento, idDireccion:idDireccion}
+				
+				});
+				w.on(app.event.DONE,function(){
+						w.close();
+						refrescarBurofaxGrid();
+						
+				});
+				w.on(app.event.CANCEL, function(){w.close();});
+		 }
+		 else{
+		 	 Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.variosClientes" text="**Varios clientes seleccionados" />'
+                 ,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.variosClientes" text="**Debe seleccionar un unico cliente" />');
+		 }		
+	
+	});	
+	
 	Ext.namespace('Ext.ux.plugins');
 	
 	Ext.ux.plugins.CheckBoxMemory = Ext.extend(Object,{
@@ -238,6 +286,7 @@ var pdfRender = function(value, meta, record) {
       		btnEnviar.disabled=true;
       		btnNotificar.disabled=true;
       		btnDescargarBurofax.disabled=true;
+      		btnEditarVerDireccion.disabled=true;
       		
       		//this.store.sort('idCliente','DESC');
 	        //this.store.setDefaultSort('idCliente', 'DESC');
@@ -252,7 +301,6 @@ var pdfRender = function(value, meta, record) {
       		}
       		
       		if(actualizarBotonesBurofax()){
-      		
       			if(myCboxSelModel.getCount() == 1) {
 		      		validarBotonesSeleccionUnica();
 				}
@@ -280,6 +328,7 @@ var pdfRender = function(value, meta, record) {
       			btnEnviar.setDisabled(true);
       			btnNotificar.setDisabled(true);
       			btnDescargarBurofax.setDisabled(true);
+      			btnEditarVerDireccion.setDisabled(true);
       		}
       		else {
       			if(actualizarBotonesBurofax()){
@@ -341,7 +390,7 @@ var pdfRender = function(value, meta, record) {
 		,cls:'cursor_pointer'
 		,iconCls : 'icon_asuntos'
 		<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_BUR_BTN">
-			,bbar : [ botonesTabla,btnAddPersona,btnEnviar, btnNuevaDir, btnEditar, btnPreparar,btnCancelar, btnNotificar,btnDescargarBurofax , new Ext.Toolbar.Fill(), botonRefresh ]
+			,bbar : [ botonesTabla,btnAddPersona,btnEnviar, btnNuevaDir, btnEditarVerDireccion, btnEditar, btnPreparar,btnCancelar, btnNotificar,btnDescargarBurofax , new Ext.Toolbar.Fill(), botonRefresh ]
 		</sec:authorize>
 		,autoWidth: true
 		,collapsible: true
@@ -703,11 +752,37 @@ var pdfRender = function(value, meta, record) {
 	var refrescarBurofaxGrid = function() {
 		burofaxStore.webflow({idProcedimiento: data.precontencioso.id});
 		idProcedimiento=data.precontencioso.id;
+		mostrarBotonDependiente(idProcedimiento);
 		actualizarBotonesBurofax();
 		
 
 	}
 	
+	<%--creamos un flag para que siempre prevalezcan los permisos por gestor --%>
+	<%--por defecto a false(se muestra), si está a true, se desactiva --%>
+	var flagGestor=false;
+	var mostrarBotonDependiente = function(idProcedimiento){
+		Ext.Ajax.request({
+				url: page.resolveUrl('burofax/mostrarBotonDependiente')
+				,params: {idProcedimiento:idProcedimiento}
+				,method: 'POST'
+				,success: function (result, request)
+				{
+					var r = Ext.util.JSON.decode(result.responseText);
+					var solucion = r.mostrarBoton;
+				 	if(solucion){
+						<%--Si es true, deberemos habilitar el botón --%>
+						if(myCboxSelModel.getCount() > 0){
+							btnEditarVerDireccion.setDisabled(false);	
+						}
+		  			}else{
+		  				flagGestor=true;
+						btnEditarVerDireccion.setDisabled(true);
+		  			}
+				}
+		});
+	}
+
 	var actualizarBotonesBurofax = function() {
 	// Se comprueba que el procedimiento se encuentre en un estado que permita editar los burofaxes
 	
@@ -722,6 +797,7 @@ var pdfRender = function(value, meta, record) {
 				btnCancelar.setDisabled(true);
 				btnNotificar.setDisabled(true);
 				btnDescargarBurofax.setDisabled(true);
+				btnEditarVerDireccion.setDisabled(true);
 				return false;
 			}
 
@@ -850,8 +926,19 @@ var pdfRender = function(value, meta, record) {
 		<%-- Comprobamos que se ha seleccionado un cliente --%>
 		if(gridBurofax.getSelectionModel().getSelected().get('idCliente') != ''){
 			btnNuevaDir.setDisabled(false);
+			if(!flagGestor){
+				btnEditarVerDireccion.setDisabled(false);
+			}
 		}
 		
+		<%-- Comprobamos que el burofax tiene una dirección para poder editar, si no, no se habilita la edición de dirección --%>
+		if(gridBurofax.getSelectionModel().getSelected().get('idDireccion') != ''){
+			if(!flagGestor){
+				btnEditarVerDireccion.setDisabled(false);
+			}
+		}else{
+			btnEditarVerDireccion.setDisabled(true);
+		}
 		<%--Si el resultado del envio es enviado y todavia no ha sido enviado habilitamos el boton de notificar --%>
 		if(gridBurofax.getSelectionModel().getSelected().get('idEnvio') != '' && gridBurofax.getSelectionModel().getSelected().get('fechaAcuse') == ''){
 			btnNotificar.setDisabled(false);
@@ -884,6 +971,7 @@ var pdfRender = function(value, meta, record) {
 			btnPreparar.setDisabled(true);
 			btnCancelar.setDisabled(true);
 			btnNotificar.setDisabled(true);
+			btnEditarVerDireccion.setDisabled(true);
 			
 		}
 		else {

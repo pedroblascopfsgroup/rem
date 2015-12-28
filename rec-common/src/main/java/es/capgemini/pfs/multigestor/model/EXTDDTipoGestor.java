@@ -23,33 +23,36 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
+import es.pfsgroup.recovery.common.api.CommonProjectContext;
 
 @Entity
 @Table(name = "DD_TGE_TIPO_GESTOR", schema = "${master.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class EXTDDTipoGestor implements Dictionary, Auditable{
 	
-	public static final String DESCONOCIDO = "DESCONOCIDO";
-	public static final String CODIGO_TIPO_GESTOR_SUPERVISOR = "SUP";
-	public static final String CODIGO_TIPO_GESTOR_EXTERNO = "GEXT";
-	public static final String CODIGO_TIPO_GESTOR_PROCURADOR = "PROC";
-	public static final String CODIGO_TIPO_GESTOR_CONF_EXP = "GECEXP";
-	public static final String CODIGO_TIPO_GESTOR_SUPERVISOR_CONF_EXP = "SUPCEXP";
-	public static final String CODIGO_TIPO_GESTOR_ADMINISTRATIVO= "GADM";
-	public static final String CODIGO_TIPO_GESTOR_EMPRESAS_CARACTERIZADAS= "GESEMP";
-	public static final String CODIGO_TIPO_SUPERVISOR_EMPRESAS_CARACTERIZADAS= "SUPEMP";
-	public static final String CODIGO_TIPO_GESTOR_PROMOTORES_CARACTERIZADAS= "GESPRO";
-	public static final String CODIGO_TIPO_SUPERVISOR_PROMOTORES_CARACTERIZADAS= "SUPPRO";
-	public static final String CODIGO_TIPO_GESTOR_AGENCIA_RECOBRO="GAGER";
-	public static final String CODIGO_TIPO_SUPERVISOR_AGENCIA_RECOBRO="SAGER";
-	public static final String CODIGO_TIPO_GESTOR_PROPONENTE_ACUERDO="PROPACU";
-	public static final String CODIGO_TIPO_LETRADO = "LETR";
-
+	public static String DESCONOCIDO = "DESCONOCIDO";
+	public static String CODIGO_TIPO_GESTOR_SUPERVISOR = "SUP";
+	public static String CODIGO_TIPO_GESTOR_EXTERNO = "GEXT";;
+	public static String CODIGO_TIPO_GESTOR_PROCURADOR = "PROC";
+	public static String CODIGO_TIPO_GESTOR_CONF_EXP = "GECEXP";
+	public static String CODIGO_TIPO_GESTOR_SUPERVISOR_CONF_EXP = "SUPCEXP";
+	public static String CODIGO_TIPO_GESTOR_ADMINISTRATIVO= "GADM";
+	public static String CODIGO_TIPO_GESTOR_EMPRESAS_CARACTERIZADAS= "GESEMP";
+	public static String CODIGO_TIPO_SUPERVISOR_EMPRESAS_CARACTERIZADAS= "SUPEMP";
+	public static String CODIGO_TIPO_GESTOR_PROMOTORES_CARACTERIZADAS= "GESPRO";
+	public static String CODIGO_TIPO_SUPERVISOR_PROMOTORES_CARACTERIZADAS= "SUPPRO";
+	public static String CODIGO_TIPO_GESTOR_AGENCIA_RECOBRO="GAGER";
+	public static String CODIGO_TIPO_SUPERVISOR_AGENCIA_RECOBRO="SAGER";
+	public static String CODIGO_TIPO_GESTOR_PROPONENTE_ACUERDO="PROPACU";
+	public static String CODIGO_TIPO_LETRADO = "LETR";
+	
+	private static CommonProjectContext projectContext;
+	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 5144231969419560830L;
-
+	
 	@Id
     @Column(name = "DD_TGE_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "EXTDDTipoGestorGenerator")
@@ -193,7 +196,32 @@ public class EXTDDTipoGestor implements Dictionary, Auditable{
 	public int hashCode() {
 		return (EXTDDTipoGestor.class.getName() + id.toString()).hashCode();
 	}
-    
-    
-    
+
+	public static void setProjectContext(final CommonProjectContext commonProjectContext) 
+	{
+		projectContext = commonProjectContext;
+		inicializaConstantes();
+	}
+
+	private static void inicializaConstantes() {
+		
+		if(projectContext != null) {
+			DESCONOCIDO = projectContext.getTipoGestor("DESCONOCIDO");
+			CODIGO_TIPO_GESTOR_EXTERNO = projectContext.getTipoGestor("CODIGO_TIPO_GESTOR_EXTERNO");
+			CODIGO_TIPO_GESTOR_SUPERVISOR = projectContext.getTipoGestor("CODIGO_TIPO_GESTOR_SUPERVISOR");
+			CODIGO_TIPO_GESTOR_PROCURADOR = projectContext.getTipoGestor("CODIGO_TIPO_GESTOR_PROCURADOR");
+			CODIGO_TIPO_GESTOR_CONF_EXP = projectContext.getTipoGestor("CODIGO_TIPO_GESTOR_CONF_EXP");
+			CODIGO_TIPO_GESTOR_SUPERVISOR_CONF_EXP = projectContext.getTipoGestor("CODIGO_TIPO_GESTOR_SUPERVISOR_CONF_EXP");
+			CODIGO_TIPO_GESTOR_ADMINISTRATIVO = projectContext.getTipoGestor("CODIGO_TIPO_GESTOR_ADMINISTRATIVO");
+			CODIGO_TIPO_GESTOR_EMPRESAS_CARACTERIZADAS = projectContext.getTipoGestor("CODIGO_TIPO_GESTOR_EMPRESAS_CARACTERIZADAS");
+			CODIGO_TIPO_SUPERVISOR_EMPRESAS_CARACTERIZADAS = projectContext.getTipoGestor("CODIGO_TIPO_SUPERVISOR_EMPRESAS_CARACTERIZADAS");
+			CODIGO_TIPO_GESTOR_PROMOTORES_CARACTERIZADAS = projectContext.getTipoGestor("CODIGO_TIPO_GESTOR_PROMOTORES_CARACTERIZADAS");
+			CODIGO_TIPO_SUPERVISOR_PROMOTORES_CARACTERIZADAS = projectContext.getTipoGestor("CODIGO_TIPO_SUPERVISOR_PROMOTORES_CARACTERIZADAS");
+			CODIGO_TIPO_GESTOR_AGENCIA_RECOBRO = projectContext.getTipoGestor("CODIGO_TIPO_GESTOR_AGENCIA_RECOBRO");
+			CODIGO_TIPO_SUPERVISOR_AGENCIA_RECOBRO = projectContext.getTipoGestor("CODIGO_TIPO_SUPERVISOR_AGENCIA_RECOBRO");
+			CODIGO_TIPO_GESTOR_PROPONENTE_ACUERDO = projectContext.getTipoGestor("CODIGO_TIPO_GESTOR_PROPONENTE_ACUERDO");
+			CODIGO_TIPO_LETRADO = projectContext.getTipoGestor("CODIGO_TIPO_LETRADO");
+			
+		}			
+	}
 }

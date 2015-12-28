@@ -34,6 +34,7 @@ import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+
 import es.pfsgroup.commons.utils.Checks;
 
 @Entity
@@ -80,17 +81,15 @@ public class EXTAsunto extends Asunto {
 			+ " and prc.PRC_PRC_ID is null and prc.dd_epr_id not in ( '"
 			+ PluginCoreextensionConstantes.ESTADO_PROCEDIMIENTO_REORGANIZADO
 			+ "')" + " group by prc.asu_id" + ")")*/
-	/*
-	@Formula("(SELECT PRO.PRC_SALDO_RECUPERACION FROM " +
-			"(SELECT PRC.PRC_ID, PRC.ASU_ID, PRC.PRC_SALDO_RECUPERACION,  ROW_NUMBER() OVER (PARTITION BY PRC.ASU_ID ORDER BY PRC.PRC_ID DESC) ROWNUMBER " +
-			"FROM PRC_PROCEDIMIENTOS PRC " + 
-			"INNER JOIN TAR_TAREAS_NOTIFICACIONES TAR ON TAR.PRC_ID = PRC.PRC_ID AND TAR.TAR_TAREA_FINALIZADA IS NULL AND TAR.BORRADO = 0 " + 
-	        "INNER JOIN TEX_TAREA_EXTERNA TEX ON TEX.TAR_ID = TEX.TAR_ID AND TEX.BORRADO = 0 " + 
-	        "INNER JOIN TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = TEX.TAP_ID AND TAR.BORRADO = 0 " + 
-	        "WHERE PRC.BORRADO = 0 AND PRC.ASU_ID = ASU_ID) PRO " +
-	        "WHERE PRO.ROWNUMBER = 1)")
-	*/
-	//private Double importeEstimado;
+	
+	@Formula("(select prc.prc_saldo_recuperacion " +
+		  "     from prc_procedimientos prc " +
+		  "     where prc.prc_id in  " +
+		  "     (select   max (p1.prc_id) " +
+		  "          from prc_procedimientos p1" +
+		  "         where p1.asu_id = ASU_ID and p1.borrado = 0 " +
+		  "      ))")	
+	private Double importeEstimado;
 
 	/*
 	@Formula("(" + _GESTOR_DESPACHO_GEXT + ")")
@@ -312,13 +311,8 @@ public class EXTAsunto extends Asunto {
 		}
 	}
 
-	public void setImporteEstimado(Double importeEstimado) {
-		//this.importeEstimado = importeEstimado;
-	}
-
 	public Double getImporteEstimado() {
-		Procedimiento ultimoProc = this.getUltimoProcedimientoConTareas();
-		return (ultimoProc!=null) ? ultimoProc.getSaldoRecuperacion().doubleValue() : null;
+		return this.importeEstimado;
 	}
 
 	/**
@@ -363,41 +357,6 @@ public class EXTAsunto extends Asunto {
 		return ultimoProc;
 	}
 	
-	
-	/**
-	 * Recupera el último procedimiento del asunto (basado en el ID), considera
-	 * el ID más alto como el último.
-	 * 
-	 * @param asu
-	 * @return
-	 */
-	public Procedimiento getUltimoProcedimientoConTareas() {
-		Procedimiento ultimoProc = null;
-		List<Procedimiento> lista = this.getProcedimientos();
-		for (Procedimiento procedimiento : lista) {
-			//Si tiene alguna tarea notificación no finalizada
-			for (TareaNotificacion tarea : procedimiento.getTareas()) {
-				if ((Checks.esNulo(tarea.getTareaFinalizada()) || !tarea.getTareaFinalizada()) 
-						&& !Checks.esNulo(tarea.getTareaExterna())) {
-					//Si tiene tarea_procedimiento
-					if (!Checks.esNulo(tarea.getTareaExterna().getTareaProcedimiento())) {
-						//Entonces evaluamos su prc_id, para ver si es mayor que el anterior que tenemos o no tenemos anterior
-						if (ultimoProc == null) {
-							ultimoProc = procedimiento;
-						} else {
-							if (procedimiento.getId() > ultimoProc.getId()) {
-								ultimoProc = procedimiento;
-							}
-						}
-						break; //A la que tenga minimo una tarea notificacion no finalizada con tarea externa y tarea procedimiento, ya pasamos a validar el siguiente procedimiento
-					}
-				}
-			}
-		}
-
-		return ultimoProc;
-	}	
-
 	@Transient
 	public static EXTAsunto instanceOf(Asunto asunto) {
 		EXTAsunto extAsunto = null;

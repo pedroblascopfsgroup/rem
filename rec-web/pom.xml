@@ -570,9 +570,14 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<groupId>es.pfsgroup.recovery.devon.v1</groupId>
+			<artifactId>devon-web</artifactId>
+			<version>${devon.version.web}</version>
+			<scope>compile</scope>
+		</dependency>
+		<!--<dependency>
 			<groupId>es.pfsgroup.devon</groupId>
 			<artifactId>devon-web</artifactId>
-		<!--	<version>${devon.version.web}</version> -->
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -580,7 +585,7 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>es.pfsgroup.recovery.devon.v1</groupId>
 			<artifactId>devon-webflow</artifactId>

@@ -13,12 +13,18 @@
 
 	var cerrarDecision = function(yesNo) {
 		if(yesNo=='yes') {
+		    var mask=new Ext.LoadMask(panel.body, {msg:'<s:message code="fwk.ui.form.cargando" text="**Cargando.."/>'});
+			mask.show();
 			page.webflow({
 	     		flow: 'politica/cerrarDecisionPolitica'
 				,params: {idExpediente:getIdExpediente()}
 	     		,success: function(){
+	     		    mask.hide();
 	           		Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="cerrarDecisionPolitica.cerrado" text="**Se ha cerrado la decisión correctamente." />');
 					entidad.refrescar();
+	           	}
+	           	,error: function(){
+	           		mask.hide();
 	           	}
 		    });
 		}
@@ -39,7 +45,10 @@
       	,iconCls : 'icon_comite_cerrar'  
       	,border:false
 		,handler:cerrarHandler
+		,disabled:false
 	});
+	
+	
 	   
     var Personas = Ext.data.Record.create([    
 		{name : "idPersona"}
@@ -166,6 +175,17 @@
 			[btnCerrar, estaCongelado]
 		];
 		entidad.setVisible(esVisible);
+		
+		var codigoEstadoDecidido = '<fwk:const value="es.capgemini.pfs.expediente.model.DDEstadoExpediente.ESTADO_EXPEDIENTE_DECIDIDO" />';
+		// Si está decidido el expediente deshabilitamos el botón 
+		if ( entidad.get("data").toolbar.estadoExpediente == codigoEstadoDecidido ){
+			btnCerrar.setDisabled(true);
+		}
+		else{
+			btnCerrar.setDisabled(false);
+		}
+		
+		
 	}
 	
 	panel.setVisibleTab = function(data){

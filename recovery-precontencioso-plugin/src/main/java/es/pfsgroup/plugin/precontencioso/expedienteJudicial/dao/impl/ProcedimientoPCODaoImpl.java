@@ -4,9 +4,12 @@ import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Criterion;
@@ -22,8 +25,11 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.recovery.ext.impl.utils.StringUtils;
 
@@ -72,7 +78,8 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		ProjectionList select = Projections.projectionList();
 
 		// Distinct por procedimiento id
-		select.add(Projections.distinct(Projections.property("procedimientoPco.id").as("id")));
+
+		select.add(Projections.property("id").as("id"));
 		select.add(Projections.property("procedimientoPco.procedimiento").as("procedimiento"));
 		select.add(Projections.property("procedimiento.id").as("prcId"));
 		select.add(Projections.property("procedimiento.id").as("codigo"));
@@ -83,7 +90,6 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		select.add(Projections.property("tipoProcPropuesto.descripcion").as("tipoProcPropuesto"));
 		select.add(Projections.property("tipoPreparacion.descripcion").as("tipoPreparacion"));
 		select.add(Projections.property("procedimientoPco.fechaInicioPreparacion").as("fechaInicioPreparacion"));
-		//select.add(Projections.property("procedimientoPco.diasEnPreparacion").as("diasEnPreparacion"));
 		select.add(Projections.property("procedimientoPco.totalLiquidacion").as("totalLiquidacion"));
 		select.add(Projections.property("procedimientoPco.fechaEnvioLetrado").as("fechaEnvioLetrado"));
 		select.add(Projections.property("procedimientoPco.aceptadoLetrado").as("aceptadoLetrado"));
@@ -91,6 +97,9 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		select.add(Projections.property("procedimientoPco.todasLiquidaciones").as("todasLiquidaciones"));
 		select.add(Projections.property("procedimientoPco.todosBurofaxes").as("todosBurofaxes"));
 		select.add(Projections.property("procedimientoPco.importe").as("importe"));
+		select.add(Projections.property("procedimientoPco.fechaFinalizado").as("fechaFinalizado"));
+		select.add(Projections.property("procedimientoPco.fechaCancelado").as("fechaCancelado"));
+
 
 		Criteria query = queryBusquedaPorFiltro(filtro);
 		query.setProjection(select);
@@ -99,7 +108,31 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		
 		query.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
 
-		return query.list();
+		// Rellenar datos post-Query
+		List<HashMap<String, Object>> list = completarDatosCalculados(query);
+
+		return list;
+	}
+
+	/**
+	 * Obtener datos calulados del grid de expedientes judiciales.
+	 * @param query
+	 * @return
+	 */
+	private List<HashMap<String, Object>> completarDatosCalculados(Criteria query) {
+		List<HashMap<String, Object>> list = query.list();
+
+		for (HashMap<String, Object> hashMap : list) {
+			Long idProcedimientoPco = Long.valueOf(ObjectUtils.toString(hashMap.get("id")));
+			Date fechaCancelado = (Date) hashMap.get("fechaCancelado");
+			Date fechaFinalizado = (Date) hashMap.get("fechaFinalizado");
+
+			Integer diasEnPreparacion = obtenerDiasEnPreparacion(idProcedimientoPco, fechaCancelado, fechaFinalizado);
+
+			hashMap.put("diasEnPreparacion", diasEnPreparacion);
+		}
+
+		return list;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -247,7 +280,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 			}
 		}
 
-		query.addOrder(Order.asc("id")); // workaround
+		//query.addOrder(Order.asc("id")); // workaround
 
 		return query;
 	}
@@ -625,5 +658,74 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		return resultado;
 		
+	}
+
+	@Override
+	public List<TareaExterna> getTareasPrecedentes(Long idProcedimiento,List<TareaProcedimiento> precedentes,String order) {
+		
+		Criteria query = getSession().createCriteria(TareaExterna.class);
+
+		query.createCriteria("tareaProcedimiento", "tareaProcedimiento");
+		query.createCriteria("tareaPadre", "tareaPadre");
+		query.createCriteria("auditoria", "auditoria");
+		
+		query.add(Restrictions.eq("tareaPadre.procedimiento.id", idProcedimiento));
+		query.add(Restrictions.in("tareaProcedimiento", precedentes));
+		
+		query.add(Restrictions.eq("auditoria.borrado", false));
+		
+		
+		if(order.toUpperCase().equals("ASC")){
+			query.addOrder(Order.asc("id"));
+		}else{
+			query.addOrder(Order.desc("id"));
+		}
+		
+		return query.list();
+	}
+
+	/**
+	 * Funcional: Días trascurrido desde En estudio hasta Finalizado o Cancelado en caso de haber llegado, si no se ha llegado todavía, hasta fecha actual
+	 * 
+	 * @param idProcedimientoPco
+	 * @param fechaCancelado
+	 * @param fechaFinalizado
+	 * @return
+	 */
+	private Integer obtenerDiasEnPreparacion(Long idProcedimientoPco, Date fechaCancelado, Date fechaFinalizado) {
+
+		// Obtener Fecha inicio estado en Estudio
+		Criteria query = getSession().createCriteria(ProcedimientoPCO.class);
+
+		query.setProjection(Projections.property("estadosPreparacionProc.fechaInicio"));
+
+		query.createAlias("estadosPreparacionProc", "estadosPreparacionProc");
+		query.createAlias("estadosPreparacionProc.estadoPreparacion", "estadoPreparacion");
+
+		query.add(Restrictions.eq("id", idProcedimientoPco));
+		query.add(Restrictions.eq("estadoPreparacion.codigo", DDEstadoPreparacionPCO.EN_ESTUDIO));
+
+		query.addOrder(Order.desc("estadosPreparacionProc.fechaInicio"));
+
+		List<Date> fechasEnEstadoEstudio = query.list();
+
+		if (fechasEnEstadoEstudio.isEmpty()) {
+			return null;
+		}
+
+		Date fechaEstudioMasAntigua = fechasEnEstadoEstudio.get(0);
+
+		Long diferenciaEnDias = null;
+
+		if (fechaFinalizado != null) {
+			diferenciaEnDias = fechaFinalizado.getTime() - fechaEstudioMasAntigua.getTime();
+		} else if (fechaCancelado != null) {
+			diferenciaEnDias = fechaCancelado.getTime() - fechaEstudioMasAntigua.getTime();
+		} else {
+			diferenciaEnDias = Calendar.getInstance().getTimeInMillis() - fechaEstudioMasAntigua.getTime();
+		}
+
+		diferenciaEnDias = diferenciaEnDias  / (24 * 60 * 60 * 1000);
+		return Integer.valueOf(diferenciaEnDias.toString());
 	}
 }

@@ -57,7 +57,9 @@ public final class InternaBusinessOperation {
     public static final String BO_EXP_MGR_CREAR_DATOS_PARA_DECISION_COMITE_AUTO = "expedienteManager.crearDatosParaDecisionComiteAutomatica";
     public static final String BO_EXP_MGR_CREAR_EXPEDIENTE_AUTO = "expedienteManager.crearExpedienteAutomatico";
     public static final String BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL = "expedienteManager.crearExpedienteManual";
+    public static final String BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL_ARQ = "expedienteManager.crearExpedienteManualArq";
     public static final String BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL_SEGUIMIENTO = "expedienteManager.crearExpedienteManualSeg";
+    public static final String BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL_SEGUIMIENTO_ARQ = "expedienteManager.crearExpedienteManualSegArq";
     public static final String BO_EXP_MGR_DELETE_ADJUNTO = "expedienteManager.deleteAdjunto";
     public static final String BO_EXP_MGR_DESCONGELAR_EXPEDIENTE = "expedienteManager.desCongelarExpediente";
     public static final String BO_EXP_MGR_DEVOLVER_EXPEDIENTE_A_COMPLETAR = "expedienteManager.devolverExpedienteACompletar";
@@ -107,18 +109,25 @@ public final class InternaBusinessOperation {
     public static final String BO_EXP_MGR_FIND_EXPEDIENTES_PARA_EXCEL = "expedienteManager.findExpedientesParaExcel";
     public static final String BO_EXP_MGR_GET_REGLAS_ELEVACION_EXPEDIENTE = "expedienteManager.getReglasElevacionExpediente";
     public static final String BO_EXP_MGR_GET_ENTIDADES_REGLA_ELEVACON_EXPEDIENTE = "expedienteManager.getEntidadReglaElevacionExpediente";
+    public static final String BO_EXP_MGR_IS_RECOBRO = "expedienteManager.isRecobro";
     public static final String BO_EXP_MGR_GET_PERSONAS_MARCADO_OBLIGATORIO = "expedienteManager.getPersonasMarcadoObligatorio";
     public static final String BO_EXP_MGR_GET_PERSONAS_MARCADO_OPCIONAL = "expedienteManager.getPersonasMarcadoOpcional";
     public static final String BO_EXP_MGR_GET_PERSONAS_POLITICAS_DEL_EXPEDIENTE = "expedienteManager.getPersonasPoliticasDelExpediente";
+	public static final String BO_EXP_MGR_TIENE_EXPEDIENTE_SEGUIMIENTO = "expedienteManager.tieneExpedienteSeguimiento";
+	public static final String BO_EXP_MGR_TIENE_EXPEDIENTE_RECUPERACION = "expedienteManager.tieneExpedienteRecuperacion";
+	public static final String BO_EXP_MGR_ELEVAR_EXPEDIENTE_A_FORMALIZAR_PROPUESTA = "expedienteManager.elevarExpedienteAFormalizarPropuesta";
+    public static final String BO_EXP_MGR_DEVOLVER_EXPEDIENTE_A_DECISION_COMITE = "expedienteManager.devolverExpedienteADecisionComite";
     public static final String BO_EXP_MGR_FIND_EXPEDIENTES_PAGINATED_DINAMICO = "expedienteManager.findExpedientesPaginatedDinamico";
     public static final String BO_EXP_MGR_FIND_EXPEDIENTES_RECOBRO_PAGINATED_DINAMICO = "expedienteManager.findExpedientesRecobroPaginatedDinamico";
     public static final String BO_EXP_MGR_FIND_EXPEDIENTES_PARA_EXCEL_DINAMICO = "expedienteManager.findExpedientesParaExcelDinamico";
     public static final String BO_EXP_MGR_FIND_EXPEDIENTES_RECOBRO_PARA_EXCEL_DINAMICO = "expedienteManager.findExpedientesRecobroParaExcelDinamico";
+
     /*****************************************************************************
      ** PoliticaManager.
      ****************************************************************************/
     public static final String BO_POL_MGR_BUSCAR_POLITICAS_PARA_PERSONA = "politicaManager.buscarPoliticasParaPersona";
     public static final String BO_POL_MGR_GET = "politicaManager.get";
+    public static final String BO_POL_MGR_GET_POL_BY_CMP = "politicaManager.getByCmp";
     public static final String BO_POL_MGR_INICIALIZAR_POLITICAS_EXPEDIENTE = "politicaManager.inicializaPoliticasExpediente";
     public static final String BO_POL_MGR_MARCAR_POLITICAS_VIGENTES = "politicaManager.marcaPoliticasVigentes";
     public static final String BO_POL_MGR_GET_POLITICA_PROPUESTA_EXPEDIENTE_PERSONA_ESTADO_ITINERARIO = "politicaManager.getPoliticaPropuestaExpedientePersonaEstadoItinerario";
@@ -129,6 +138,8 @@ public final class InternaBusinessOperation {
     public static final String BO_POL_MGR_BUSCAR_OBJETIVOS_POLITICA = "politicaManager.buscarObjetivosPolitica";
     public static final String BO_POL_MGR_GET_DTO_POLITICA = "politicaManager.getDtoPolitica";
     public static final String BO_POL_MGR_GET_TIPO_POLITICA_LIST = "politicaManager.getTipoPoliticaList";
+    public static final String BO_POL_MGR_GET_TIPO_POLITICA_PERSONA_LIST = "politicaManager.getTipoPoliticaPersonaList";
+    public static final String BO_POL_MGR_GET_TIPO_MOTIVO = "politicaManager.getMotivoList";
     public static final String BO_POL_MGR_COMPRUEBA_PERMISOS_USUARIO = "politicaManager.compruebaPermisosUsuario";
     public static final String BO_POL_MGR_CERRAR_DECISION_POLITICA = "politicaManager.cerrarDecisionPolitica";
     public static final String BO_POL_MGR_GET_NUM_POLITICAS_GENERADAS = "politicaManager.getNumPoliticasGeneradas";
@@ -136,6 +147,7 @@ public final class InternaBusinessOperation {
     public static final String BO_POL_MGR_CANCELAR_POLITICA = "politicaManager.cancelarPolitica";
     public static final String BO_POL_MGR_DESHACER_ULTIMAS_POLITICAS = "politicaManager.deshacerUltimasPoliticas";
     public static final String BO_POL_MGR_BUSCAR_POLITICAS_PARA_PERSONA_EXP = "politicaManager.buscarPoliticasParaPersonaExpediente";
+    public static final String BO_POL_MGR_GET_TIPOS_POLITICA = "politicaManager.getTiposPolitica";
 
     /*****************************************************************************
      ** ObjetivoManager.
@@ -177,6 +189,7 @@ public final class InternaBusinessOperation {
     public static final String BO_ANALISIS_POL_MGR_GET_ANALISIS_POLITICA = "analisisPoliticaManager.getAnalisisPolitica";
     public static final String BO_ANALISIS_POL_MGR_GET_ANALISIS_POLITICA_BY_ID = "analisisPoliticaManager.getAnalisisPoliticaById";
     public static final String BO_ANALISIS_POL_MGR_GET_ANALISIS_POLITICA_HISTORICO = "analisisPoliticaManager.getAnalisisPoliticaHistorico";
+    public static final String BO_ANALISIS_POL_MGR_GET_ANALISIS_POLITICA_HISTORICO_BY_CMP = "analisisPoliticaManager.getAnalisisPoliticaHistoricoByCmp";
     public static final String BO_ANALISIS_POL_MGR_GET_TIPOS_GESTIONES = "analisisPoliticaManager.getTiposGestiones";
     public static final String BO_ANALISIS_POL_MGR_GUARDAR_COMENTARIO_ANALISIS = "analisisPoliticaManager.guardarComentarioAnalisis";
     public static final String BO_ANALISIS_POL_MGR_IS_ANALISIS_POLITICA_COMPLETO = "analisisPoliticaManager.isAnalisisPoliticaCompleto";

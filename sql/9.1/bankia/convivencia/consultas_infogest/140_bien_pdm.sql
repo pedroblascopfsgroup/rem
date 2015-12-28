@@ -140,7 +140,8 @@ GROUP BY
    , GUI.ID_ASUNTO_RCV
    , GUI.ID_PROCEDI_RCV
    , BIE.BIE_ID
-   , BIE.BIE_CODIGO_EXTERNO;
+   , BIE.BIE_CODIGO_EXTERNO
+   , SUB.SUB_ID;
    
 COMMIT;
 
@@ -149,12 +150,12 @@ COMMIT;
 
 
 
-merge into minirec.RCV_GEST_BIEN_PDM a
-using (
-WITH ULTIMA_TAREA AS 
-(
-SELECT /*+ MATERIALIZE */ PRC_id, ASU_ID, DD_TPO_ID, BIE_ID, tap_codigo, tap_descripcion, tar_fecha_fin, cod_hito_nal
-   FROM (SELECT DISTINCT PRC.PRC_ID, PRC.DD_TPO_ID , TAR.ASU_ID , PRB2.BIE_ID, TAR.TAR_ID
+--merge into minirec.RCV_GEST_BIEN_PDM a
+--using (
+--WITH ULTIMA_TAREA AS 
+--(
+--SELECT /*+ MATERIALIZE */ PRC_id, ASU_ID, DD_TPO_ID, BIE_ID, tap_codigo, tap_descripcion, tar_fecha_fin, cod_hito_nal
+/*   FROM (SELECT DISTINCT PRC.PRC_ID, PRC.DD_TPO_ID , TAR.ASU_ID , PRB2.BIE_ID, TAR.TAR_ID
              , tap.tap_codigo, tap.tap_descripcion, tar.tar_fecha_fin
              , trd.cod_hito_nal
              , ROW_NUMBER() OVER (PARTITION BY TAR.asu_id, PRB2.BIE_ID ORDER BY PRB2.BIE_ID, TAR.TAR_ID DESC) ORDEN
@@ -208,5 +209,6 @@ inner join ultima_tarea tarea on tarea.prc_id=sub.prc_id
 inner join fechas_acta_subasta fech on TARea.PRC_ID = fech.PRC_ID group by lob.bie_id,fech.FECHA_REGISTRO_ACTA having count(*)=1)) b
 on ( a.id_asunto_rcv=b.asu_id and a.id_bien_rcv=b.bie_id) 
 when matched then update set a.SUBASTA_CELEBRADA=b.SUBASTA_CELEBRADA;
+*/
 
 commit;

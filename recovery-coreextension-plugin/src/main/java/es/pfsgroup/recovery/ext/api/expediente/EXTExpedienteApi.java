@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.interna.InternaBusinessOperation;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -43,4 +44,44 @@ public interface EXTExpedienteApi extends ExpedienteApi{
 	 * */
 	@BusinessOperationDefinition(EXT_EXP_MGR_ES_SUPERVISOR_CARACTERIZADO)
 	public boolean esSupervisorCaracterizado(Long idExpediente);
+
+	/**
+	 * Eleva un expediente a revision, previa revisión del estado de sus propuestas
+	 * @param idExpediente id del expediente
+	 * @param isSupervisor isSupervisor
+	 */
+	@BusinessOperationDefinition(InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_A_REVISION)	
+	void elevarExpedienteARevision(Long idExpediente, Boolean isSupervisor);
+
+	/**
+	 * Eleva un expediente a DECISION comite, previa revisión del estado de sus propuestas
+	 * @param idExpediente id del expediente
+	 * @param isSupervisor boolean
+	 */
+	@BusinessOperationDefinition(InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_A_DECISION_COMITE)
+	void elevarExpedienteADecisionComite(Long idExpediente, Boolean isSupervisor);
+
+	/**
+	 * Devuelve un expediente a revision.
+	 * @param idExpediente id del expediente
+	 * @param respuesta String
+	 */
+	@BusinessOperationDefinition(InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_A_REVISION)
+	void devolverExpedienteARevision(Long idExpediente, String respuesta);
+
+	/**
+	 * Eleva un expediente a formalizar propuesta.
+	 * @param idExpediente id del expediente
+	 * @param isSupervisor isSupervisor
+	 */	
+	@BusinessOperationDefinition(InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_A_FORMALIZAR_PROPUESTA)
+	void elevarExpedienteAFormalizarPropuesta(Long idExpediente, Boolean isSupervisor);
+	
+	/**
+	 * Devuelve un expediente a decisión comité.
+	 * @param idExpediente id del expediente
+	 * @param respuesta String
+	 */
+	@BusinessOperationDefinition(InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_A_DECISION_COMITE)
+	public void devolverExpedienteADecisionComite(Long idExpediente, String respuesta);
 }

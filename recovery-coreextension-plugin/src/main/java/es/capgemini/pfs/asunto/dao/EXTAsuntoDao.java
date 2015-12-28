@@ -23,6 +23,9 @@ public interface EXTAsuntoDao extends AbstractDao<Asunto, Long>{
 	Long crearAsunto(GestorDespacho gestorDespacho, GestorDespacho supervisor, GestorDespacho procurador, String nombreAsunto, Expediente expediente,
             String observaciones);
 	
+	Long crearAsuntoConEstado(GestorDespacho gestorDespacho, GestorDespacho supervisor, GestorDespacho procurador,
+			String nombreAsunto, Expediente expediente, String observaciones, String codigoEstadoAsunto);
+	
 	 /**
      * Modifica un Asunto.
      * @param idAsunto el id del asunto a modificar

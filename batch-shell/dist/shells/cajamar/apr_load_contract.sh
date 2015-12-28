@@ -1,7 +1,7 @@
 #!/bin/bash
 # Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
  
-DIR_BASE_ETL=/aplicaciones/recovecb/programas/etl
+DIR_BASE_ETL=/recovery/batch-server/programas/etl
 
 export NLS_LANG=SPANISH_SPAIN.WE8ISO8859P1
 

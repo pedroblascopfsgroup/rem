@@ -18,7 +18,6 @@ import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.acuerdo.model.DDMotivoRechazoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDSubTipoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
-import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
@@ -26,7 +25,6 @@ import es.capgemini.pfs.contrato.model.DDTipoProducto;
 import es.capgemini.pfs.core.api.acuerdo.AcuerdoApi;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
-import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.termino.TerminoOperacionesManager;
 import es.capgemini.pfs.termino.dto.ListadoTerminosAcuerdoDto;
 import es.capgemini.pfs.termino.dto.TerminoAcuerdoDto;
@@ -41,17 +39,14 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoApi;
-import es.pfsgroup.plugin.recovery.mejoras.api.revisionProcedimientos.RevisionProcedimientoApi;
-import es.pfsgroup.plugin.recovery.mejoras.revisionProcedimiento.dto.RevisionProcedimientoDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBContratoBien;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.ACDAcuerdoDerivaciones;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
-import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 @Controller
 public class MEJAcuerdoController {
@@ -70,9 +65,6 @@ public class MEJAcuerdoController {
 	static final String JSON_LISTADO_DERIVACIONES = "plugin/mejoras/acuerdos/listadoDerivacionesAcuerdoJSON";	
 	static final String JSP_EDITAR_TERMINO_ESTADO_GESTION = "plugin/mejoras/acuerdos/edicionEstadoGestionTermino";
 	static final String JSP_RECHAZAR_ACUERDO = "plugin/mejoras/acuerdos/rechazarAcuerdo";
-	
-	@Autowired
-	IntegracionBpmService integracionBpmService;
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -105,6 +97,7 @@ public class MEJAcuerdoController {
      * Obtiene la lista de Contratos asociados aun asunto.
      * @param idAsunto el id del asunto
      */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
     public String obtenerListadoContratosAcuerdoByAsuId(ModelMap model, Long idAsunto) {
 		List<Contrato> listadoContratosAsuntos = proxyFactory.proxy(MEJAcuerdoApi.class).obtenerListadoContratosAcuerdoByAsuId(idAsunto);
@@ -117,6 +110,7 @@ public class MEJAcuerdoController {
      * Obtiene la lista de Terminos de una acuerdo
      * @param idAcuerdo el id del acuerdo
      */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
     public String obtenerListadoTerminosAcuerdoByAcuId(ModelMap model, Long idAcuerdo) {
 		List<ListadoTerminosAcuerdoDto> listadoTerminosAcuerdo = proxyFactory.proxy(MEJAcuerdoApi.class).obtenerListadoTerminosAcuerdoByAcuId(idAcuerdo);
@@ -130,6 +124,7 @@ public class MEJAcuerdoController {
      * Obtiene la lista de Derivaciones de los terminos de una acuerdo
      * @param idAcuerdo el id del acuerdo
      */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
     public String obtenerListadoValidacionTramiteCorrespondienteDerivaciones(ModelMap model, Long idAcuerdo) {
 		
@@ -147,6 +142,7 @@ public class MEJAcuerdoController {
      * Obtiene la configuracion de los usuarios en el acuerdo - asunto
      * @param idAcuerdo el id del acuerdo
      */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
     public String getConfigUsersAcuerdoAsunto(ModelMap model, Long idTipoDespachoProponente, Long idAsunto) {
 
@@ -213,19 +209,20 @@ public class MEJAcuerdoController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String openAltaTermino(ModelMap map, 
-			@RequestParam(value = "id", required = true) Long id,
-			String contratosIncluidos, 
-			Long idAcuerdo) {
+			@RequestParam(value = "idAcuerdo", required = true) Long idAcuerdo,
+			String contratosIncluidos, Boolean esPropuesta) {
 			
-		TerminoAcuerdo termino = proxyFactory.proxy(MEJAcuerdoApi.class).getTerminoAcuerdo(id);
-			
-		map.put("termino", termino);
-		
-		Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(id);
-			
-		map.put("asunto", asunto);
+
 		map.put("contratosIncluidos", contratosIncluidos);		
 		map.put("idAcuerdo", idAcuerdo);
+		map.put("esPropuesta", esPropuesta);
+		
+		if(esPropuesta){
+			Acuerdo acuerdo = genericDao.get(Acuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", idAcuerdo));
+			if(!Checks.esNulo(acuerdo)){
+				map.put("idExpediente", acuerdo.getExpediente().getId());	
+			}
+		}
 		
 		// Obtenemos el tipo de acuerdo para PLAN_PAGO
 		DDTipoAcuerdo tipoAcuerdoPlanPago = genericDao.get(DDTipoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAcuerdo.CODIGO_PLAN_PAGO));
@@ -257,7 +254,6 @@ public class MEJAcuerdoController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String openDetalleTermino(ModelMap map, @RequestParam(value = "id", required = true) Long id, 
-							@RequestParam(value = "idAsunto", required = true) Long idAsunto,
 							@RequestParam(value = "idAcuerdo", required = true) Long idAcuerdo,
 							@RequestParam(value = "soloConsulta", required = true) String soloConsulta) {
 		
@@ -268,9 +264,6 @@ public class MEJAcuerdoController {
 		map.put("termino", termino);
 		
 		map.put("operacionesPorTipo", terminoOperacionesManager.getOperacionesPorTipoAcuerdo(termino.getOperaciones()));
-		
-		Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(idAsunto);
-		map.put("asunto", asunto);
 		
 		map.put("idAcuerdo", idAcuerdo);
 		
@@ -323,6 +316,7 @@ public class MEJAcuerdoController {
 	 * @param model
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getListTipoAcuerdosData(ModelMap model){
 		List<DDTipoAcuerdo> list = proxyFactory.proxy(MEJAcuerdoApi.class).getListTipoAcuerdo();
@@ -336,6 +330,7 @@ public class MEJAcuerdoController {
 	 * @param model
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getCamposDinamicosTerminosPorTipoAcuerdo(ModelMap model, Long idTipoAcuerdo){
 		
@@ -350,6 +345,7 @@ public class MEJAcuerdoController {
 	 * @param model
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getListSubTiposAcuerdosData(ModelMap model){
 		List<DDSubTipoAcuerdo> list = proxyFactory.proxy(MEJAcuerdoApi.class).getListSubTipoAcuerdo();
@@ -363,6 +359,7 @@ public class MEJAcuerdoController {
 	 * @param model
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getListTipoProductosData(ModelMap model){
 		List<DDTipoProducto> list = proxyFactory.proxy(MEJAcuerdoApi.class).getListTipoProducto();
@@ -377,7 +374,6 @@ public class MEJAcuerdoController {
 	 * @return
 	 * @throws ParseException 
 	 */
-	@SuppressWarnings("unchecked")	
 	@RequestMapping
 	public String crearTerminoAcuerdo(TerminoOperacionesDto termOpDto, WebRequest request, ModelMap model) throws ParseException{
 		
@@ -402,9 +398,10 @@ public class MEJAcuerdoController {
 			DDSubTipoAcuerdo subtipoAcuerdo = genericDao.get(DDSubTipoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", taDTO.getIdSubTipoAcuerdo()));
 			ta.setSubtipoAcuerdo(subtipoAcuerdo);	
 		}
-		
-		DDTipoProducto tipoProducto = genericDao.get(DDTipoProducto.class, genericDao.createFilter(FilterType.EQUALS, "id", taDTO.getIdTipoProducto()));
-		ta.setTipoProducto(tipoProducto);
+		if (!Checks.esNulo(taDTO.getIdTipoProducto())) {
+			DDTipoProducto tipoProducto = genericDao.get(DDTipoProducto.class, genericDao.createFilter(FilterType.EQUALS, "id", taDTO.getIdTipoProducto()));
+			ta.setTipoProducto(tipoProducto);
+		}
 		ta.setModoDesembolso(taDTO.getModoDesembolso());
 		ta.setFormalizacion(taDTO.getFormalizacion());
 		ta.setImporte(taDTO.getImporte());
@@ -440,8 +437,6 @@ public class MEJAcuerdoController {
 			crearBienesTermino(taSaved, bienesIncluidos);
 		}
 
-		integracionBpmService.enviarDatos(taSaved);
-		
 		return "default";
 	}	
 	
@@ -523,6 +518,7 @@ public class MEJAcuerdoController {
      * 
      * @param idAcuerdo el id del acuerdo
      */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping
     public String obtenerListadoBienesAcuerdoByAsuId(ModelMap model, Long idAsunto) {
 		List<Bien> listadoBienesAcuerdoRep = proxyFactory.proxy(AsuntoApi.class).getBienesDeUnAsunto(idAsunto);
@@ -554,6 +550,7 @@ public class MEJAcuerdoController {
      * @param contratosIncluidos Lista contratos incluidos en el termino cuando es un alta
      * 
      */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping
     public String obtenerListadoBienesContratosAcuerdo(ModelMap model, Long idTermino, String contratosIncluidos) {
 		
@@ -564,8 +561,6 @@ public class MEJAcuerdoController {
 		// Si lo estamos dando de alta 
 		if (idTermino == null){
 			StringTokenizer tokens = new StringTokenizer(contratosIncluidos, ",");
-			Contrato cnt; 
-			TerminoContrato tcnt;
 			while (tokens.hasMoreTokens()){
 				listaContratosId.add(new Long(tokens.nextToken()));
 			}
@@ -614,7 +609,6 @@ public class MEJAcuerdoController {
 	 * @param model
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")	
 	@RequestMapping
 	public String eliminarTerminoAcuerdo(WebRequest request, ModelMap model){			
 		String idTerminoAcuerdo = request.getParameter("idTerminoAcuerdo");
@@ -627,12 +621,9 @@ public class MEJAcuerdoController {
 		
 		TerminoAcuerdo ta = genericDao.get(TerminoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(idTerminoAcuerdo)));
 		
-		proxyFactory.proxy(MEJAcuerdoApi.class).deleteTerminoAcuerdo(ta);	
+		proxyFactory.proxy(MEJAcuerdoApi.class).deleteTerminoAcuerdo(ta);
 		
-		integracionBpmService.enviarDatos(ta);
-		
-		return "default";
-		
+		return "default";		
 	}
 	
 	

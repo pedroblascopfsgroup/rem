@@ -453,6 +453,18 @@
 			</exclusions>
 		</dependency>
 		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-arquetipos-plugin</artifactId>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
 			<groupId>es.pfs</groupId>
 			<artifactId>pfs-rec-core</artifactId>
 			<type>jar</type>
@@ -2056,6 +2068,20 @@
 						</exclusion>
 					</exclusions>
 				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>proyecto-cajamar-hre-online</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>es.pfsgroup</groupId>
+							<artifactId>recovery-domain</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
 				<!-- PASAR A DELIVERY UNICAMENTE -->
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
@@ -2244,6 +2270,21 @@
 				</dependency>
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>proyecto-cajamar-hre-online</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>es.pfsgroup</groupId>
+							<artifactId>recovery-domain</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<!-- PONER EN DELIVERY !!! -->
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>proyecto-cajamar-ws</artifactId>
 					<exclusions>
 						<exclusion>
@@ -2256,6 +2297,7 @@
 						</exclusion>
 					</exclusions>
 				</dependency>
+				<!-- FIN PONER EN DELIVERY !!! -->
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>proyecto-cajamar</artifactId>
@@ -2310,7 +2352,7 @@
                                     <directory>src/custom/cajamar/webapp/</directory>
                                     <includes>
                                         <include>login.jsp</include>
-                                        <include>img/cliente_logo.gif</include>
+                                        <include>img/cliente_logo.png</include>
                                     </includes>
                                     <filtering>true</filtering>
                                 </resource>

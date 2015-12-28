@@ -16,7 +16,6 @@ import javax.persistence.Transient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Hibernate;
 import org.hibernate.annotations.Where;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -25,13 +24,11 @@ import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.embargoProcedimiento.model.EmbargoProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
-import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBBienInfo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBInformacionRegistralBienInfo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBLocalizacionesBienInfo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBValoracionesBienInfo;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoTributacion;
 
 @Entity
 //@Table(name = "BIE_BIEN", schema = "${entity.schema}")
@@ -204,6 +201,18 @@ public class NMBBien extends Bien implements NMBBienInfo{
 	@ManyToOne
     @JoinColumn(name = "DD_IPR_ID")
 	private DDSiNo inversionPorRenuncia;
+	
+	@Transient
+	@Column(name = "NUM_DOMICILIO")
+	private String numDomicilio;
+	
+	@Transient
+	@Column(name = "CHAR_EXTRA2")
+	private String idDireccion;
+	
+	@Transient
+	@Column(name = "CHAR_EXTRA3")
+	private String destinoUso;
 	
 //	@Transient
 //	private Boolean adjudicacionOK;
@@ -975,5 +984,46 @@ public class NMBBien extends Bien implements NMBBienInfo{
 	public void setInversionPorRenuncia(DDSiNo inversionPorRenuncia) {
 		this.inversionPorRenuncia = inversionPorRenuncia;
 	}
-	
+
+	/**
+	 * @return the destinoUso
+	 */
+	public String getDestinoUso() {
+		return destinoUso;
+	}
+
+	/**
+	 * @param destinoUso the destinoUso to set
+	 */
+	public void setDestinoUso(String destinoUso) {
+		this.destinoUso = destinoUso;
+	}
+
+	/**
+	 * @return the numDomicilio
+	 */
+	public String getNumDomicilio() {
+		return numDomicilio;
+	}
+
+	/**
+	 * @param numDomicilio the numDomicilio to set
+	 */
+	public void setNumDomicilio(String numDomicilio) {
+		this.numDomicilio = numDomicilio;
+	}
+
+	/**
+	 * @return the idDireccion
+	 */
+	public String getIdDireccion() {
+		return idDireccion;
+	}
+
+	/**
+	 * @param idDireccion the idDireccion to set
+	 */
+	public void setIdDireccion(String idDireccion) {
+		this.idDireccion = idDireccion;
+	}	
 }

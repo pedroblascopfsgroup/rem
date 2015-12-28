@@ -397,10 +397,45 @@
 	
 	editarDescripcionAdjuntoAsunto.disable();
 	
+	var editarDescripcionAdjuntoExpediente = new  Ext.Button({
+		text:'<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcion" text="**Editar descripcion"/>'
+		,iconCls : 'icon_edit'
+		,handler : function() {
+			if (grid.getSelectionModel().getCount()>0){
+				if (grid.getSelectionModel().getSelected().get('id')!=''){
+    			var idAdjunto = grid.getSelectionModel().getSelected().get('id');
+    			var parametros = {
+								idAdjunto : idAdjunto
+					};
+    			var w= app.openWindow({
+                                         flow: 'plugin/mejoras/asuntos/plugin.mejoras.asuntos.editarDescripAdjExpediente'
+                                         ,closable: true
+                                         ,width : 700
+                                         ,title : '<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionExpediente" text="**Editar descripción del adjunto del expediente" />'
+                                         ,params: parametros
+                        });
+           	 		w.on(app.event.DONE, function(){
+								w.close();
+								recargarAdjuntos() ;
+								
+					});
+					w.on(app.event.CANCEL, function(){
+								 w.close(); 
+					});
+			
+			}else{
+				Ext.Msg.alert('<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionExpediente" text="**Editar descripción del adjunto del expediente" />','<s:message code="plugin.mejoras.asunto.adjuntos.noValor" text="**Debe seleccionar un valor de la lista" />');
+			}
+		}
+		}	
+		
+	});
+	editarDescripcionAdjuntoExpediente.disable();
+	
 	var gridHeight = 150;
 	var grid = app.crearGrid(store, cm, {
 		title : '<s:message code="asuntos.adjuntos.grid" text="**Ficheros adjuntos" />'
-		,bbar : [subir, borrar,editarDescripcionAdjuntoAsunto]
+		,bbar : [subir, borrar,editarDescripcionAdjuntoExpediente]
 		,height: 180
 		,collapsible:true
 		,autoWidth: true
@@ -520,10 +555,10 @@
 		var id = rec.get('id');
 		var puedeBorrar = rec.get('puedeBorrar');
 		if(id==null || id=='') {
-			editarDescripcionAdjuntoAsunto.disable();
+			editarDescripcionAdjuntoExpediente.disable();
 			
 		} else {
-			editarDescripcionAdjuntoAsunto.enable();
+			editarDescripcionAdjuntoExpediente.enable();
 		}
 		if (puedeBorrar){
 			borrar.enable();
@@ -534,7 +569,8 @@
 	
 	grid.on('rowdblclick', function(grid, rowIndex, e){
 		var rec = grid.getStore().getAt(rowIndex);
-		window.open("/pfs/bajarAdjuntoAsunto.htm?asuntoId="+panel.getExpedienteId()+"&id="+rec.get('id'));
+		window.open("/pfs/bajarAdjuntoExpediente.htm?&id="+rec.get('id'));
+		//window.open("/pfs/bajarAdjuntoAsunto.htm?asuntoId="+panel.getExpedienteId()+"&id="+rec.get('id'));
 	});
 
 	gridPersonas.on('rowdblclick', function(grid, rowIndex, e){

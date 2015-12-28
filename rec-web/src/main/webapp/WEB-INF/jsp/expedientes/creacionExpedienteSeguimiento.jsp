@@ -44,7 +44,7 @@
             return;
         }
         page.webflow({
-            flow: 'expedientes/creacionManualExpediente_3'
+            flow: 'expedientes/creacionManualExpediente_3_GV'
             ,params: {
                     idExpediente:'${expediente.id}'
                     ,idPersona:'${idPersona}'
@@ -52,6 +52,7 @@
                     ,observaciones:observaciones.getValue()
                     ,idPropuesta:'${propuesta.id}' || -1
                     ,isSupervisor:isSupervisor
+                    ,idArquetipo:${idArquetipo}
                 }
             ,success: function(){
                 page.fireEvent(app.event.DONE);

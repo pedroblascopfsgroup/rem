@@ -82,7 +82,7 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         if (riesgo!=null)
         {
         	hql.append(" and m.riesgo > ?" );
-        	return getHibernateTemplate().find(hql.toString(), new Object[] { idExpediente, riesgo });
+        	return getHibernateTemplate().find(hql.toString(), new Object[] { idExpediente, new Float(riesgo.toString()) });
         }
 
         return getHibernateTemplate().find(hql.toString(), new Object[] { idExpediente });
@@ -443,25 +443,32 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
     /**
       * {@inheritDoc}
       */
-    @SuppressWarnings("unchecked")
+    
     @Override
     public Expediente buscarExpedientesParaContrato(Long idContrato) {
-        StringBuilder hql = new StringBuilder();
+    	
+    	StringBuilder hql = new StringBuilder();
 
         hql.append(" select e from Expediente e, ExpedienteContrato cex ");
         hql.append(" where e.auditoria.borrado = false and cex.auditoria.borrado = false and e.id = cex.expediente.id ");
         hql.append(" and cex.contrato.id = ? ");
         hql.append(" and e.estadoExpediente.codigo in ( ?, ?, ?) ");
+        // Filtramos los expedientes de recobro
+        hql.append(" and (not exists (select exr.id from ExpedienteRecobro exr where e.id = exr.id)) ");
 
         List<Expediente> expedientes = getHibernateTemplate().find(
                 hql.toString(),
                 new Object[] { idContrato, DDEstadoExpediente.ESTADO_EXPEDIENTE_ACTIVO, DDEstadoExpediente.ESTADO_EXPEDIENTE_CONGELADO,
                         DDEstadoExpediente.ESTADO_EXPEDIENTE_BLOQUEADO });
-        if (expedientes.size() > 1) { throw new BusinessOperationException("expediente.contrato.invalido.masDeUnExpediente", idContrato); }
+        
+       	if (expedientes.size() > 1) {
+       		logger.error("expediente.contrato.invalido.masDeUnExpediente: " + idContrato);
+       		throw new BusinessOperationException("expediente.contrato.invalido.masDeUnExpediente", idContrato); }        
         if (expedientes.size() == 1) { return expedientes.get(0); }
         return null;
     }
-
+    
+    
     /**
      * {@inheritDoc}
      */
@@ -474,7 +481,9 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         hql.append(" and pex.persona.id = ? ");
         hql.append(" and e.estadoExpediente.codigo in ( ?, ?, ?) ");
         hql.append(" and e.arquetipo.itinerario.dDtipoItinerario.codigo IN (?, ?) ");
-
+        // Filtramos los expedientes de recobro
+        hql.append(" and (not exists (select exr.id from ExpedienteRecobro exr where e.id = exr.id)) ");
+        
         List<Expediente> expedientes = getHibernateTemplate().find(
                 hql.toString(),
                 new Object[] { idPersona, DDEstadoExpediente.ESTADO_EXPEDIENTE_ACTIVO, DDEstadoExpediente.ESTADO_EXPEDIENTE_CONGELADO,
@@ -1498,6 +1507,25 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
             hql.append(" ) ");
                 
         } 
+		/*
+		 * BKREC-1588
+		 * Si es usuario interno, debe aplicar igualmente el fitro de NO BUSCAR
+		 * entre expedientes que hayan pasado por una agencia anterior
+		 */
+        else{
+        	 hql.append(" and EXISTS ( ");
+        	 hql.append(" select 1 from GestorExpediente gae");
+             hql.append(" where gae.auditoria.borrado = false ");
+             if (isBusquedaExpedientes(dtoExpediente)) {
+                 //Si había vinculación con Expedientes las relaciones con cualquier filtro adicional se hacen por exp.id
+                 hql.append(" and exp.id = gae.expediente.id ");
+             }else{
+                 if (filtroPrimero.equals("recobro")){ hql.append(" and cre.expediente.id = gae.expediente.id "); }
+                 if (filtroPrimero.equals("incidencia")){ hql.append(" and ine.expediente.id = gae.expediente.id "); }
+                 if (filtroPrimero.equals("acuerdo")){ hql.append(" and acu.expediente.id = gae.expediente.id "); } 
+             }
+             hql.append(" ) ");
+        }
         
         return paginationManager.getHibernatePage(getHibernateTemplate(), hql.toString(), dtoExpediente, paramsMap);
 	}
@@ -1588,16 +1616,6 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         private String generaFiltroExpedientesPorGestor(Usuario usuLogado){
                StringBuffer hql = new StringBuffer();
                hql.append(" select exp.id from Expediente exp , EXTGestorEntidad ge ");
-               hql.append(" where exp.id = ge.unidadGestionId and ge.tipoEntidad.codigo = '").append(DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE).append("' ");
-               hql.append(" and ge.gestor.id in (");
-               hql.append(obtenerListaUsuariosDelGrupo(usuLogado.getId()));
-               hql.append(")");
-               return hql.toString();
-        }
-
-        private String generaFiltroExpedientesPorGestorRecobro(Usuario usuLogado){
-               StringBuffer hql = new StringBuffer();
-               hql.append(" select 1 from  EXTGestorEntidad ge ");
                hql.append(" where exp.id = ge.unidadGestionId and ge.tipoEntidad.codigo = '").append(DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE).append("' ");
                hql.append(" and ge.gestor.id in (");
                hql.append(obtenerListaUsuariosDelGrupo(usuLogado.getId()));

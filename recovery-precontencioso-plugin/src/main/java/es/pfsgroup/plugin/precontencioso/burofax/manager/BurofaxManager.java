@@ -1,16 +1,12 @@
 package es.pfsgroup.plugin.precontencioso.burofax.manager;
 
 import java.io.File;
-import java.io.InputStream;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,23 +17,16 @@ import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.security.SecurityUtils;
-import es.capgemini.devon.utils.MessageUtils;
-import es.capgemini.pfs.asunto.ProcedimientoManager;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.asunto.model.ProcedimientoContratoExpediente;
-import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
-import es.capgemini.pfs.contrato.model.DDTipoIntervencion;
 import es.capgemini.pfs.contrato.model.DDTipoProductoEntidad;
 import es.capgemini.pfs.direccion.api.DireccionApi;
 import es.capgemini.pfs.direccion.dto.DireccionAltaDto;
 import es.capgemini.pfs.direccion.model.Direccion;
-import es.capgemini.pfs.movimiento.model.Movimiento;
 import es.capgemini.pfs.parametrizacion.dao.ParametrizacionDao;
 import es.capgemini.pfs.persona.model.Persona;
-import es.capgemini.pfs.users.UsuarioManager;
-import es.capgemini.pfs.utils.FormatUtils;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -55,25 +44,13 @@ import es.pfsgroup.plugin.precontencioso.burofax.model.DDTipoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.ProcedimientoBurofaxTipoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
-import es.pfsgroup.plugin.precontencioso.liquidacion.dao.LiquidacionDao;
-import es.pfsgroup.plugin.precontencioso.liquidacion.manager.LiquidacionManager;
-import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienEntidad;
-import es.pfsgroup.recovery.geninformes.GENINFInformesManager;
 
 @Service
 public class BurofaxManager implements BurofaxApi {
 
 	@Autowired
 	private BurofaxDao burofaxDao;
-	
-	@Autowired
-	private LiquidacionManager liquidacionManager;
-	
-	@Autowired
-	private UsuarioManager usuarioManager;
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -82,16 +59,7 @@ public class BurofaxManager implements BurofaxApi {
 	private GenericABMDao genericDao;
 	
 	@Autowired
-	private GENINFInformesManager informesManager;
-	
-	@Autowired
 	PrecontenciosoProjectContext precontenciosoContext;
-	
-	@Autowired
-	ProcedimientoManager procedimientoManager;
-	
-	@Autowired
-	LiquidacionDao liquidacionDao; 
 	
 	@Autowired
 	ParametrizacionDao parametrizacionDao;
@@ -189,7 +157,7 @@ public class BurofaxManager implements BurofaxApi {
 		
 		try{
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "procedimientoPCO.id", idProcedimiento); //original
-			boolean noBorrado = false;
+			
 			listaBurofax=(List<BurofaxPCO>) genericDao.getList(BurofaxPCO.class,filtro1); //original
 		}catch(Exception e){
 			logger.error("getListaBurofaxPCO: " + e);
@@ -371,7 +339,7 @@ public class BurofaxManager implements BurofaxApi {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("unused")
 	@BusinessOperation(DESCARTAR_PERSONA_ENVIO)
 	@Transactional(readOnly = false)
 	public void descartarPersona(Long idBurofax){
@@ -524,30 +492,17 @@ public class BurofaxManager implements BurofaxApi {
 				envioIntegracion.setContenido(contenidoParseadoFinal);
 		
 				if (precontenciosoContext.isGenerarArchivoBurofax()) {
-					//Obtener cabecera 
-					String cabecera = docBurManager.obtenerCabecera(mapeoVariables);
-					// Obtener plantilla
-					InputStream plantillaBurofax = docBurManager.obtenerPlantillaBurofax();
+					
 					// Obtener nombre de fichero
 					String nombreFichero = obtenerNombreFichero();
 					//Generar documento a partir de la plantilla y de los campos HTML cabecera y contenido
-					FileItem archivoBurofax = docBurManager.generarDocumentoBurofax(plantillaBurofax, nombreFichero, cabecera, contenidoParseadoFinal);
-					// Transformar el archivo docx en PDF
-					String directorio = parametrizacionDao.buscarParametroPorNombre(DIRECTORIO_PDF_BUROFAX_PCO).getValor();
-					String nombreFicheroPdf = docBurManager.obtenerNombreFicheroPdf(nombreFichero);
-					File archivoBurofaxPDF = docBurManager.convertirAPdf(archivoBurofax, directorio + File.separator + nombreFicheroPdf);
-					FileItem fi = new FileItem();
-					fi.setFile(archivoBurofaxPDF);
-					fi.setFileName(nombreFicheroPdf);
-					fi.setContentType("application/pdf");
-					fi.setLength(archivoBurofaxPDF.length());
+										
+					String nombreFicheroPdf = generarBurofaxPDF(envioBurofax, nombreFichero).getFileName();
 					
-					//envioIntegracion.setArchivoBurofax(fi);
 					envioIntegracion.setNombreFichero(nombreFicheroPdf);
 					envioIntegracion.setIdAsunto(envioBurofax.getBurofax().getProcedimientoPCO().getProcedimiento().getAsunto().getId());
 					
 				} else {
-					//envioIntegracion.setArchivoBurofax(new FileItem(File.createTempFile("TMP", ".log")));
 					envioIntegracion.setContenido(envioBurofax.getContenidoBurofax());
 				}
 
@@ -558,15 +513,34 @@ public class BurofaxManager implements BurofaxApi {
 		}
 		
 	}
+
+	@Override
+	@BusinessOperation(GENERAR_BUROFAX_PDF)
+	public FileItem generarBurofaxPDF(EnvioBurofaxPCO envioBurofax, String nombreFichero) {
+		FileItem archivoBurofax = docBurManager.generarDocumentoBurofax(docBurManager.obtenerPlantillaBurofax(), nombreFichero, docBurManager.obtenerCabecera(envioBurofax, precontenciosoContext.getRecovery()), envioBurofax.getContenidoBurofax());
+		// Transformar el archivo docx en PDF
+		String directorio = parametrizacionDao.buscarParametroPorNombre(DIRECTORIO_PDF_BUROFAX_PCO).getValor();
+		String nombreFicheroPdf = docBurManager.obtenerNombreFicheroPdf(nombreFichero);
+		File archivoBurofaxPDF = docBurManager.convertirAPdf(archivoBurofax, directorio + File.separator + nombreFicheroPdf);
+		FileItem fi = new FileItem();
+		fi.setFile(archivoBurofaxPDF);
+		fi.setFileName(nombreFicheroPdf);
+		fi.setContentType("application/pdf");
+		fi.setLength(archivoBurofaxPDF.length());
+		return fi;
+	}
+
 	
 	private String obtenerNombreFichero() {
 		Long secuencia = burofaxDao.obtenerSecuenciaFicheroDocBurofax();
 		return FICHERO_DOCUMENTO_RANKIA+String.format("%011d", secuencia)+".docx";
 	}
 	
-
-	
-	public FileItem generarDocumentoBurofax(EnvioBurofaxPCO envioBurofax){
+	/*
+	 * Método obsoleto
+	 */
+	@Deprecated	
+	/*public FileItem generarDocumentoBurofax(EnvioBurofaxPCO envioBurofax){
 		
 		FileItem archivoBurofax=null;
 		
@@ -755,7 +729,7 @@ public class BurofaxManager implements BurofaxApi {
 			e.printStackTrace();
 		}
 		return archivoBurofax;
-	}
+	}*/
 	
 	
 	@Override

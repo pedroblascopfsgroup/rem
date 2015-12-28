@@ -7,11 +7,13 @@ import es.capgemini.pfs.contrato.dto.DtoBuscarContrato;
 import es.capgemini.pfs.core.api.asunto.AdjuntoDto;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.recovery.mejoras.contrato.dto.MEJBusquedaContratosDto;
+import es.pfsgroup.recovery.ext.impl.contrato.model.AtipicoContrato;
 
 public interface MEJContratoApi {
 	
 	public static final String MEJ_MGR_CONTRATO_ADJUNTOSMAPEADOS = "plugin.mejoras.contrato.getAdjuntosContrato";
 	public static final String BO_CNT_MGR_BUSCAR_CONTRATOS_EXPEDIENTE_SIN_ASIGNAR = "plugin.mejoras.contrato.buscarContratosExpedienteSinAsignar";
+	public static final String MEJ_BUSCAR_ATIPICOS_CONTRATO = "plugin.mejoras.contrato.getAtipicosContrato";
 	
 	
 	
@@ -37,5 +39,7 @@ public interface MEJContratoApi {
     @BusinessOperationDefinition(MEJ_CNT_BUSCAR_CONTRATO_SINASIGNAR)
 	public Page buscaContratosSinAsignar(Long idAsunto, MEJBusquedaContratosDto dto);
 
-
+    @BusinessOperationDefinition(MEJ_BUSCAR_ATIPICOS_CONTRATO)
+	public List<AtipicoContrato> getAtipicosContrato(Long idContrato);
+    
 }

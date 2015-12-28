@@ -76,6 +76,12 @@ var esProveedorSolvencia = false;
 	var nif =       label('nif','docType');
 	var segmento =  label('segmento','<s:message code="menu.clientes.consultacliente.datosTab.segmento" text="**Segmento"/>');
 	var segmentoEntidad =  label('segmentoEntidad','<s:message code="menu.clientes.consultacliente.datosTab.segmentoEntidad" text="**Segmento Entidad"/>');
+	debugger;
+	<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
+	var segmento =  label('segmentoEntidad','<s:message code="menu.clientes.consultacliente.datosTab.segmento" text="**Segmento"/>');
+	var segmentoEntidad =  label('segmento','<s:message code="menu.clientes.consultacliente.datosTab.segmentoEntidad" text="**Segmento Entidad"/>');
+	</sec:authorize>
+	
 	var nivel =  label('nivel','<s:message code="menu.clientes.consultacliente.datosTab.nivel" text="**Nivel"/>');
 	//var politicaEntidad =  label('politicaEntidad','<s:message code="menu.clientes.consultacliente.datosTab.politicaEntidad" text="**Política entidad"/>');
 	var situacion = label('situacion','<s:message code="menu.clientes.consultacliente.datosTab.situacion" text="**Situacion"/>');
@@ -171,7 +177,7 @@ var esProveedorSolvencia = false;
 		,{header: 'Tipo', width: 120, sortable: true, dataIndex: 'tipoTelefono'}
 		,{header: 'Motivo', width: 120, sortable: true, dataIndex: 'motivoTelefono'}
 		,{header: 'Estado', width: 120, sortable: true, dataIndex: 'estadoTelefono'}
-		<!-- ,{header: 'consentimiento', width: 120, sortable: true, dataIndex: 'consentimiento'}-->
+		<%-- ,{header: 'consentimiento', width: 120, sortable: true, dataIndex: 'consentimiento'}--%>
 		,{header: 'prioridad', width: 120, sortable: true, dataIndex: 'prioridad'}
 	]);
 	

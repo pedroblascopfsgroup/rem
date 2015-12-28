@@ -123,6 +123,7 @@ import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 import es.pfsgroup.recovery.ext.impl.zona.dao.EXTZonaDao;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
+import es.capgemini.devon.hibernate.pagination.PageHibernate;
 
 @Component
 public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> implements es.pfsgroup.recovery.api.AsuntoApi, AsuntoApi, EXTAsuntoApi {
@@ -933,7 +934,9 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		return modeloMultiGestor;
 	}
 
-	private List<EXTGestorAdicionalAsunto> getGestoresAdicionalesAsunto(Long idAsunto) {
+	@BusinessOperation(EXT_MGR_ASUNTO_GET_GESTORES_ADICIONALES_ASUNTO)
+	@Override
+	public List<EXTGestorAdicionalAsunto> getGestoresAdicionalesAsunto(Long idAsunto) {
 		Filter filtroAsunto = genericdDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto);
 		return genericdDao.getList(EXTGestorAdicionalAsunto.class, filtroAsunto);
 	}
@@ -1130,7 +1133,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		if (Checks.esNulo(dtoAsunto.getIdAsunto())) // CREAR EXTASUNTO
 		{
 			exp = (Expediente) executor.execute(InternaBusinessOperation.BO_EXP_MGR_GET_EXPEDIENTE, dtoAsunto.getIdExpediente());
-			id = asuntoDao.crearAsunto(gd, sup, procurador, dtoAsunto.getNombreAsunto(), exp, dtoAsunto.getObservaciones());
+			id = asuntoDao.crearAsuntoConEstado(gd, sup, procurador, dtoAsunto.getNombreAsunto(), exp, dtoAsunto.getObservaciones(),dtoAsunto.getCodigoEstadoAsunto());
 			dtoAsunto.setIdAsunto(id);
 		} else // MODIFICAR EXTASUNTO
 		{
@@ -1138,15 +1141,48 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		}
 
 		if (modeloMultiGestor()) {
-			cambiarGestorAsuntoGenerico(dtoAsunto, EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO);
-			cambiarGestorAsuntoGenerico(dtoAsunto, EXTDDTipoGestor.CODIGO_TIPO_GESTOR_CONF_EXP);
-			cambiarSupervisorGenerico(dtoAsunto, false, EXTDDTipoGestor.CODIGO_TIPO_GESTOR_SUPERVISOR);
-			cambiarSupervisorGenerico(dtoAsunto, false, EXTDDTipoGestor.CODIGO_TIPO_GESTOR_SUPERVISOR_CONF_EXP);
-			cambiarProcuradorMultiGEstor(dtoAsunto);
+			if ( (dtoAsunto instanceof EXTDtoAsunto) &&
+					(((EXTDtoAsunto)dtoAsunto).getListaMapGestoresId().size()>0)	) {
+				actualizarGestoresAdicionales((EXTDtoAsunto)dtoAsunto);
+			} else {
+				cambiarGestorAsuntoGenerico(dtoAsunto, EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO);
+				cambiarGestorAsuntoGenerico(dtoAsunto, EXTDDTipoGestor.CODIGO_TIPO_GESTOR_CONF_EXP);
+				cambiarSupervisorGenerico(dtoAsunto, false, EXTDDTipoGestor.CODIGO_TIPO_GESTOR_SUPERVISOR);
+				cambiarSupervisorGenerico(dtoAsunto, false, EXTDDTipoGestor.CODIGO_TIPO_GESTOR_SUPERVISOR_CONF_EXP);
+				cambiarProcuradorMultiGEstor(dtoAsunto);
+			}
 		}
 
 		logger.debug("CREADO ASUNTO CON ID " + id);
 		return id;
+	}
+	
+	@Transactional(readOnly = false)
+	private void actualizarGestoresAdicionales(EXTDtoAsunto dtoAsunto) {
+		//Primero hay que borrar todos los gestores del asunto y luego los volvemos a insertar los que se han enviado
+		List<EXTGestorAdicionalAsunto> gaaActuales = gestorAdicionalAsuntoDao.findGestorAdicionalesByAsunto(dtoAsunto.getIdAsunto());
+		for (EXTGestorAdicionalAsunto gaa : gaaActuales) {
+			gestorAdicionalAsuntoDao.delete(gaa);	
+		}
+		
+		Asunto asu = proxyFactory.proxy(AsuntoApi.class).get(dtoAsunto.getIdAsunto());
+		
+		//Ahora insertamos los enviados
+		for (Map<String,Long> gestorAdicional : dtoAsunto.getListaMapGestoresId()) {
+			EXTGestorAdicionalAsunto gaa = new EXTGestorAdicionalAsunto();
+			gaa.setAsunto(asu);
+			
+			EXTDDTipoGestor tipoGestor = genericdDao.get(EXTDDTipoGestor.class, genericdDao.createFilter(FilterType.EQUALS, "id", gestorAdicional.get("tipoGestor")));
+			gaa.setTipoGestor(tipoGestor);
+			
+			GestorDespacho gestor = genericdDao.get(GestorDespacho.class, genericdDao.createFilter(FilterType.EQUALS, "usuario.id", gestorAdicional.get("usuarioId"))
+																		, genericdDao.createFilter(FilterType.EQUALS, "despachoExterno.id", gestorAdicional.get("tipoDespacho")));
+			gaa.setGestor(gestor);
+			gestorAdicionalAsuntoDao.save(gaa);
+		}
+		
+		
+		
 	}
 
 	@Transactional(readOnly = false)
@@ -1709,7 +1745,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		List<Procedimiento> procedimientos = asunto.getProcedimientos();
 		for (Procedimiento p : procedimientos){
 			MEJProcedimiento mejp = proxyFactory.proxy(EXTProcedimientoApi.class).getInstanceOf(p);
-			if (!mejp.isEstaParalizado()) {
+			if (!Checks.esNulo(mejp) && !mejp.isEstaParalizado()) {				
 				if(tiposProcedimientos.contains(p.getTipoProcedimiento().getCodigo())) {
 					return true;
 				}
@@ -1854,7 +1890,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 //
 //		return asuntoDao.buscarAsuntosPaginatedDinamicoCount(usuarioLogado, dto, params);
 //	}
-	
+	/*
 	@Override
 	@BusinessOperation(EXTAsuntoApi.EXT_BO_ASU_MGR_FIND_ASUNTOS_PAGINATED_DINAMICO_COUNT)
 	public Page findAsuntosPaginatedDinamicoCount(EXTDtoBusquedaAsunto dto, String params) {
@@ -1881,6 +1917,36 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		}
 		
 		return results;
+	}
+	*/
+	@Override
+	@BusinessOperation(EXTAsuntoApi.EXT_BO_ASU_MGR_FIND_ASUNTOS_PAGINATED_DINAMICO_COUNT)
+	public List<Asunto> findAsuntosPaginatedDinamicoCount(EXTDtoBusquedaAsunto dto, String params) {
+		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		
+		dto.setCodigoZonas(getCodigosDeZona(dto));
+		dto.setTiposProcedimiento(getTiposProcedimiento(dto));
+		
+		if (usuarioLogado.getUsuarioExterno()) {
+			List<Long> idsGruposUsuario = extGrupoUsuariosDao.buscaGruposUsuario(usuarioLogado);
+			dto.setIdsUsuariosGrupos(idsGruposUsuario);
+		}
+		
+		Parametrizacion param = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+                Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_ASUNTOS);		
+		
+		Integer limite = Integer.parseInt(param.getValor());
+		List<Asunto> listaRetorno = new ArrayList<Asunto>();
+		dto.setLimit(limite+1);
+		PageHibernate page = (PageHibernate) asuntoDao.buscarAsuntosPaginatedDinamico(usuarioLogado, dto, params);
+	
+
+		if(page.getTotalCount()>limite){
+			throw new UserException(messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado1") +limite+" "+ messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado2"));
+		}
+		listaRetorno.addAll((List<Asunto>) page.getResults());
+		page.setResults(listaRetorno);
+		return (List<Asunto>) page.getResults();
 	}
 	
 	/**

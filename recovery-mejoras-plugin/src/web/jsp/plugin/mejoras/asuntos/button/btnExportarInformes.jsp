@@ -7,7 +7,7 @@ new Ext.Button({
       text    : 'Exportar informes',
       menu : {
       	items: [
-<%--		OCULTAMOS LA FICHA GLOBAL DE FORMA TEMPORAL 
+<%--		OCULTAMOS LA FICHA GLOBAL DE FORMA TEMPORAL --%>
 			
       		 {text:'<s:message code="plugin.mejoras.asuntos.btnExportarFichaGlobalConcurso" text="**Exportar ficha concurso" />'
 			  ,id: 'btn-exportar-informes-asunto-fg-concurso'      		 
@@ -29,7 +29,7 @@ new Ext.Button({
 			  }
 			 }				
       		,
- --%>
+ 
       		<sec:authorize ifAllGranted="EXPORTAR_FICHAGLOBAL">
       		{text:'<s:message code="plugin.mejoras.asuntos.btnExportarFichaGlobal" text="**Exportar ficha global" />'
       		  ,iconCls:'icon_pdf'

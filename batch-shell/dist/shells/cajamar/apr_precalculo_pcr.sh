@@ -1,7 +1,7 @@
 #!/bin/bash
 # Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
  
-DIR_BASE_ETL=/aplicaciones/recovecb/programas/etl
+DIR_BASE_ETL=/recovery/batch-server/programas/etl
 
 filename=$(basename $0)
 nameETL="${filename%.*}"
@@ -27,4 +27,5 @@ else
     echo "$(basename $0) Error en $filename: no se ha encontrado  $MAINSH"
     exit 1
 fi
+
 

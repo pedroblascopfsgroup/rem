@@ -400,7 +400,7 @@ public class EntityToPayloadTransformer {
 		
 		List<TerminoAcuerdo> listadoTerminos = mejAcuerdoManager.getTerminosAcuerdo(acuerdo.getId());
 		for (TerminoAcuerdo terminoAcuerdo : listadoTerminos) {
-		//	mejAcuerdoManager.prepareGuid(terminoAcuerdo);
+			//mejAcuerdoManager.prepareGuid(terminoAcuerdo);
 		}
 			
 		DataContainerPayload data = getNewPayload(message);

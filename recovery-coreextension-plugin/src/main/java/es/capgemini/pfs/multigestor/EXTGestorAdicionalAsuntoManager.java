@@ -42,20 +42,24 @@ public class EXTGestorAdicionalAsuntoManager implements
 	}
 
 	@Override
-	public EXTGestorAdicionalAsunto findGaaByIds(Long idTipoGestor, Long idAsunto, Long idUsuario, Long idTipoDespacho) {
+	public EXTGestorAdicionalAsunto findGaaByIds(Long idTipoGestor, Long idAsunto, Long idUsuario, Long idDespacho) {
 
-		if (Checks.esNulo(idAsunto) || Checks.esNulo(idUsuario) || Checks.esNulo(idTipoDespacho) || Checks.esNulo(idTipoGestor)) {
+		if (Checks.esNulo(idAsunto) || Checks.esNulo(idUsuario) || Checks.esNulo(idDespacho) || Checks.esNulo(idTipoGestor)) {
 			return null;
 		}
 
-		GestorDespacho gestor = genericDao.get(GestorDespacho.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", idUsuario),
-		genericDao.createFilter(FilterType.EQUALS, "despachoExterno.id", idTipoDespacho),
+		List<GestorDespacho> gestores = genericDao.getList(GestorDespacho.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", idUsuario),
+		genericDao.createFilter(FilterType.EQUALS, "despachoExterno.id", idDespacho),
 		genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 
-		Filter filtroAsunto = genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto);
-		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "tipoGestor.id", idTipoGestor);
-		Filter filtroGestorDespacho = genericDao.createFilter(FilterType.EQUALS, "gestor.id", gestor.getId());
-		EXTGestorAdicionalAsunto gaa = genericDao.get(EXTGestorAdicionalAsunto.class, filtroAsunto, filtroTipoGestor, filtroGestorDespacho);
+		EXTGestorAdicionalAsunto gaa = null;
+
+		if (!gestores.isEmpty()) {
+			Filter filtroAsunto = genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto);
+			Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "tipoGestor.id", idTipoGestor);
+			Filter filtroGestorDespacho = genericDao.createFilter(FilterType.EQUALS, "gestor.id", gestores.get(0).getId());
+			gaa = genericDao.get(EXTGestorAdicionalAsunto.class, filtroAsunto, filtroTipoGestor, filtroGestorDespacho);
+		}
 
 		return gaa;
 	}

@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.controller;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -81,14 +82,14 @@ public class SubastaController {
 	private static final String LOTES_SUBASTA_BUSCADOR_JSON = "plugin/nuevoModeloBienes/subastas/resultadoLotesSubastaJSON"; 
 	private static final String EDITAR_INFORMACION_CIERRE = "plugin/nuevoModeloBienes/subastas/editarInformacionCierre";
 	private static final String DICCIONARIO_JSON = "plugin/nuevoModeloBienes/subastas/diccionarioJSON";
-	
+	private static final String JSON_RESPUESTA_SERVICIO = "plugin/nuevoModeloBienes/adjudicacion/generico/respuestaJSON";
 	
 	private static final String ADD_RELACION_CONTRATO_BIEN = "plugin/nuevoModeloBienes/subastas/addRelacionContratoBien";
 	private static final String BORRAR_RELACION_CONTRATO_BIEN = "plugin/nuevoModeloBienes/subastas/borrarRelacionContratoBien";
 	private static final String BUSQUEDA_CONTRATO_JSON = "plugin/nuevoModeloBienes/subastas/busquedaContratoJSON";
 	private static final String ADD_BIEN_CARGAS = "plugin/nuevoModeloBienes/bienes/AgregarBienCargasMultiple";
 	private static final String ADD_REVISION_CARGAS = "plugin/nuevoModeloBienes/subastas/editarRevisionCargasMultiple";
-	
+	private static final String ENVIO_CIERRE_OK = "plugin/nuevoModeloBienes/subastas/envioCierreDeudaOk";
 
 	
 	@Autowired
@@ -262,7 +263,7 @@ public class SubastaController {
 			model.put("fileItem", resultado);
 			
 			return GENINFVisorInformeController.JSP_DOWNLOAD_FILE;
-		} else {
+		} else if(SubastaApi.CODIGO_TIPO_PROCEDIMIENTO_SUBASTA_SAREB.compareTo(procedimientos.getTipoProcedimiento().getCodigo()) == 0) {
 			//sareb
 			plantilla = "reportInformeSubastaSareb.jrxml";
 			InformeSubastaSarebBean informe = new InformeSubastaSarebBean();
@@ -280,6 +281,23 @@ public class SubastaController {
 			
 			return GENINFVisorInformeController.JSP_DOWNLOAD_FILE;			
 			
+		}else{
+			//cajamar
+			plantilla = "reportInformeSubastaCajamar.jrxml";
+			InformeSubastaSarebBean informe = new InformeSubastaSarebBean();
+			informe.setIdAsunto(idAsunto);
+			informe.setIdSubasta(idSubasta);
+			informe.setProxyFactory(proxyFactory);
+			informe.setSubastaApi(subastaApi);
+			informe.setNmbCommonProjectContext(nmbProjectContext);
+			List<Object> array = informe.create();
+			Map<String, Object> mapaValores = null;
+			FileItem resultado = proxyFactory.proxy(GENINFInformesApi.class)
+			.generarInforme(plantilla, mapaValores, array);
+			
+			model.put("fileItem", resultado);
+			
+			return GENINFVisorInformeController.JSP_DOWNLOAD_FILE;	
 		}
 					
 	}
@@ -333,7 +351,7 @@ public class SubastaController {
 				resultadoGlobalOK = false;					
 			}
 		}
-		
+
 		// Si alguna validación es KO, generamos el excel		
 		if(!resultadoGlobalOK) {
 
@@ -341,7 +359,7 @@ public class SubastaController {
 			
 		} else {	
 			
-			return DEFAULT;
+			return ENVIO_CIERRE_OK;
 		}
 	}
 
@@ -834,24 +852,59 @@ public class SubastaController {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String guardarRelacionesContratoBienes(ModelMap model,String[] nroContratoTipoBienContrato,@RequestParam(value = "idBienes", required = true) Long[] idBienes){
+	public String guardarRelacionesContratosBienes(ModelMap model,String[] idContratoTipoBienContrato,@RequestParam(value = "idBienes", required = true) Long[] idBienes){
+		final List<Long> listErrores = new ArrayList<Long>();
 		
-		for(int i=0;i<nroContratoTipoBienContrato.length;i++){
-			if(!nroContratoTipoBienContrato[i].equals("")){
-				String nroContrato=nroContratoTipoBienContrato[i].split(",")[0];
-				String codTipoBienContrato=nroContratoTipoBienContrato[i].split(",")[1];
-				Contrato contrato=subastaManager.getContratoByNroContrato(nroContrato);
-				if(!Checks.esNulo(contrato)){
-					for(int c=0;c<idBienes.length;c++){
-						nmbBienManager.saveBienContrato(contrato.getId(),idBienes[c],codTipoBienContrato);
-					}
+		for (int i = 0; i < idContratoTipoBienContrato.length; i++) {
+			if (!idContratoTipoBienContrato[i].equals("")) {
+				String idContratoString = idContratoTipoBienContrato[i].split(",")[0];
+				String codTipoBienContrato = idContratoTipoBienContrato[i].split(",")[1];
+				if (!Checks.esNulo(idContratoString)) {
+					final Long idContrato = Long.parseLong(idContratoString);
+					updateListErrores(listErrores,guardarRelacionesContratoBienes(idContrato, codTipoBienContrato, idBienes));
 				}
 			}
 		}
 		
-		return DEFAULT;
+		if (listErrores.isEmpty()) {
+			model.put("msgError", "1");
+		} else {
+			final StringBuilder sb = new StringBuilder();
+			sb.append("No se ha podido guardar la relación con los siguientes bienes: ");
+			for(final Long idBien: listErrores){
+				sb.append(idBien);
+				sb.append(", ");				
+			}
+			final String respuesta = sb.toString();
+			model.put("msgError", respuesta.substring(0, respuesta.length()-2));
+		}
+		return JSON_RESPUESTA_SERVICIO;
 	}
+	
+	private List<Long> guardarRelacionesContratoBienes(final Long idContrato, final String codTipoBienContrato, final Long[] idBienes) {
+		final List<Long> listErrores = new ArrayList<Long>();
+		for (int c = 0; c < idBienes.length; c++) {
+			try {
+				nmbBienManager.saveBienContrato(idContrato, idBienes[c], codTipoBienContrato);
+			} catch (final Exception e) {
+				if (!listErrores.contains(idBienes[c])) {
+					listErrores.add(idBienes[c]);
+				}
+			}
+		}
+		return listErrores;
+	}
+	
+	private void updateListErrores(final List<Long> listaCompleta, final List<Long> listaContrato) {
+		for (final Long idBien : listaContrato) {
+			if (!listaCompleta.contains(idBien)) {
+				listaCompleta.add(idBien);
+			}
+		}
+	}
+	
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping

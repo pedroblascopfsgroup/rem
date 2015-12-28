@@ -10,7 +10,7 @@
 		<json:object>
 			<json:property name="id" value="${campo.id}" />
 	        <json:property name="tipoAcuerdo" value="${campo.tipoAcuerdo}" />   
-	        <json:property name="nombreCampo" value="${campo.nombreCampo}" />                
+	        <json:property name="nombreCampo" value="${campo.nombreCampo}" /> 
 		</json:object>
 	</json:array>
 </fwk:json>

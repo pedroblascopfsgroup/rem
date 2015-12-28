@@ -105,7 +105,8 @@ public class MEJEventoDaoImpl extends AbstractEntityDao<TareaNotificacion, Long>
                 SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC, SubtipoTarea.CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_DC,
                 EXTSubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_SEG ,
                 SubtipoTarea.CODIGO_TAREA_EXP_RECOBRO_MARCADO, SubtipoTarea.CODIGO_TAREA_EXP_RECOBRO_META_VOLANTE_KO, 
-                SubtipoTarea.CODIGO_TAREA_EXP_RECOBRO_META_VOLANTE_OK};
+                SubtipoTarea.CODIGO_TAREA_EXP_RECOBRO_META_VOLANTE_OK, SubtipoTarea.CODIGO_EVENTO_PROPUESTA,
+                SubtipoTarea.CODIGO_FORMALIZAR_PROPUESTA};
 
         crit.createCriteria("subtipoTarea").add(Restrictions.in("codigoSubtarea", subtipos));
         crit.add(Restrictions.eq("expediente.id", idExpediente));

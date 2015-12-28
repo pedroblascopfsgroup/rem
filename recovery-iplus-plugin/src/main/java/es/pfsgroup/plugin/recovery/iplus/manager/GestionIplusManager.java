@@ -1,20 +1,14 @@
 package es.pfsgroup.plugin.recovery.iplus.manager;
 
-import java.io.File;
-import java.util.Timer;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.jamonapi.utils.Logger;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.asunto.model.AdjuntoAsunto;
 import es.capgemini.pfs.asunto.model.Asunto;
-import es.capgemini.pfs.externa.ExternaBusinessOperation;
-import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
+import es.capgemini.pfs.utils.ZipUtils;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -61,7 +55,6 @@ public class GestionIplusManager implements GestionIplusApi {
 	}
 
 	@Override
-	@SuppressWarnings("unused")
 	@BusinessOperation(PLUGIN_IPLUS_BAJAR_ADJUNTO_BO)
 	public FileItem bajarAdjunto(Long idAsunto, String nombre, String descripcion) {
 		
@@ -85,8 +78,12 @@ public class GestionIplusManager implements GestionIplusApi {
 		//FASE-1166 Intento de diagnostico error solo produccion (eliminar siguientes lineas al resolver link)
 		System.out.println("[GestionIplusManager.bajarAdjunto] fi (FileItem) (2): " + fi.toString() + ", Filename: " + fi.getFileName() + ", ContentType: "+fi.getContentType()+ ", Descripcion: " + descripcion);
 		System.out.println("[GestionIplusManager.bajarAdjunto] fi (FileItem) (3), File: " + fi.getFile().toString() + ", FileLength: " + fi.getLength());
-
-		return fi;
+		
+		if (ZipUtils.esDescargaZip(fi.getFileName())) {
+            return ZipUtils.zipFileItem(fi);
+        } else {
+            return fi;
+        }
 	}
 
 	private String obtenerIdAsuntoExterno(Long id) {

@@ -20,6 +20,7 @@
 	
 	var idPersona = '${idPersona}';
 	var isGestor = '${isGestor}';
+	var idArquetipo = '${idArquetipo}';
 	//si viene proponer en false, es como si fuera supervisor -> puede activar el expediente directamente sin proponerlo
 	var isSupervisor = '${isSupervisor || !proponer }';
 	
@@ -118,7 +119,7 @@
 		if(currentPanel==1){
 			panel1.remove();
 			panel2.load({
-				url:app.resolveFlow('expedientes/creacionManualExpediente_2')
+				url:app.resolveFlow('expedientes/creacionManualExpediente_2_GV')
 				,scripts:true
 				,method:'POST'
 				,params:{
@@ -127,6 +128,7 @@
 					,idExpediente:idExpediente
 					,isGestor:isGestor
 					,isSupervisor:isSupervisor
+					,idArquetipo:idArquetipo
 				 }
 			});
 			//panel2.hide();

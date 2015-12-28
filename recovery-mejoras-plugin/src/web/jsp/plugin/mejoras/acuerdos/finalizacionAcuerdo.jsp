@@ -46,15 +46,15 @@
 		,html:''
         });	
 		
-<!-- 	var observacionesCont = new Ext.form.FieldSet({ -->
+<%-- 	var observacionesCont = new Ext.form.FieldSet({ --%>
 <%-- 		title:'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.bienes.informe" text="**Observaciones"/>' --%>
-<!-- 		,layout:'form' -->
-<!-- 		,autoHeight:true -->
-<!-- 		,autoWidth: true -->
-<!-- 		,border:true -->
-<!-- 		,defaults :  {xtype : 'fieldset', autoHeight : true, border : false } -->
-<!-- 		,items : [observaciones] -->
-<!-- 	});	 -->
+<%-- 		,layout:'form' --%>
+<%-- 		,autoHeight:true --%>
+<%-- 		,autoWidth: true --%>
+<%-- 		,border:true --%>
+<%-- 		,defaults :  {xtype : 'fieldset', autoHeight : true, border : false } --%>
+<%-- 		,items : [observaciones] --%>
+<%-- 	});	 --%>
 	
 
 	

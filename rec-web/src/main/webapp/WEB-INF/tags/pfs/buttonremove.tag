@@ -11,6 +11,7 @@
 <%@ attribute name="novalueMsgKey" required="true" type="java.lang.String"%>
 <%@ attribute name="novalueMsg" required="true" type="java.lang.String"%>
 <%@ attribute name="parameters" required="false" type="java.lang.String"%>
+<%@ attribute name="onSuccess" required="false" type="java.lang.String"%>
 
 <%@ attribute name="onSuccessMode" required="false" type="java.lang.String"%>
 
@@ -33,12 +34,9 @@
     					page.webflow({
 							flow: '${flow}'
 							,params: parms
-							,success : function(){ 
-								${datagrid}.store.webflow(parms); 
-								new Ext.LoadMask(${datagrid}.body, {msg:'<s:message code="fwk.ui.form.cargando" text="**Cargando"/>'}).hide();
-								${name}.setDisabled(false);
-								${datagrid}.getBottomToolbar().items.items[0].setDisabled(false);
-								
+							,success : function(){
+								${datagrid}.store.webflow(parms);
+								<c:if test="${onSuccess != null}">${onSuccess}();</c:if>							
 							}
 						});
 						

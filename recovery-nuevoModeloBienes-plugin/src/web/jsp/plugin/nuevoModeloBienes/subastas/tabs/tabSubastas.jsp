@@ -510,20 +510,9 @@
 			}   				
 			 
 			app.openBrowserWindow(flow,params);
-		    page.fireEvent(app.event.DONE);
-		    
-		    var idSubasta = gridSubastas.getSelectionModel().getSelected().get('id');
-		    var flow='/pfs/subasta/enviarCierreDeuda';
-		    var params;
-		    
-		    if(Ext.isEmpty(bienesSeleccionados) || bienesSeleccionados.length == 0){
-        		params = {idSubasta:idSubasta};				
-			} else {
-				params = {idSubasta:idSubasta, idBien:bienesSeleccionados};
-			}   				
+	
 		}
 	});
-	
 	
 	
 	var reiniciarKOCDD =  function() {
@@ -855,8 +844,7 @@
 			,enableNoGroups:true
 			,selectedRowClass : 'x-grid-row-selected'	
 		})
-
-		,bbar:[ btnExpandAll, btnCollapseAll
+		,bbar:[ btnExpandAll, btnCollapseAll 
 				<sec:authorize ifNotGranted = "SOLO_CONSULTA">, btnAgregarBien, btnExcluirBien, btnInstrucLotes</sec:authorize>
 				<sec:authorize ifAllGranted="ENVIO_CIERRE_DEUDA">, btnGenerarInformeCierre , btnEnviarCierre</sec:authorize>
 				<sec:authorize ifNotGranted = "SOLO_CONSULTA">

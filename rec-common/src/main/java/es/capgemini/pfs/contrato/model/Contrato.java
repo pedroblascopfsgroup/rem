@@ -559,11 +559,17 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      */
     public String getCodigoContratoENTITY() {
         if (codigoContrato == null) {
-            String codEntidad = rellenaConCeros(4, codigoEntidad.toString());
-            String codOficina = rellenaConCeros(4, codigoOficina.toString());
-            String contrato = rellenaConCeros(10, nroContrato.toString());
+        	String contrato = rellenaConCeros(10, nroContrato.toString());
+        	
+        	String contratoSinEntidad = appProperties.getProperty(APPConstants.CNT_PROP_CONTRATO_SIN_ENTIDAD);        	
+        	if (Checks.esNulo(contratoSinEntidad)) {
+	            String codEntidad = rellenaConCeros(4, codigoEntidad.toString());
+	            String codOficina = rellenaConCeros(4, codigoOficina.toString());	            
 
-            return codEntidad + " " + codOficina + " " + contrato;
+	            return codEntidad + " " + codOficina + " " + contrato;
+        	} else {
+        		return contrato;
+        	}
         }
         return codigoContrato;
     }

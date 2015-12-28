@@ -7,6 +7,9 @@
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms" %>
 <fwk:page>
 
+	var codigoTipoAcuerdoDacion = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo.TIPO_DACION" />';
+	var codigoSubtipoEstandar = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDSubTipoAcuerdo.SUBTIPO_ESTANDAR" />';
+
 	var labelStyle = 'width:185px;font-weight:bolder",width:375';
 	var labelStyleAjusteColumnas = 'width:185px;height:40px;font-weight:bolder",width:375';
 	//var labelStyleDescripcion = 'width:185x;height:60px;font-weight:bolder",width:700';
@@ -15,7 +18,7 @@
 	var arrayCampos = new Array();
 	
 	var config = {width: 250, labelStyle:"width:150px;font-weight:bolder"};
-	var idAsunto = '${asunto.id}';
+<%-- 	var idAsunto = '${asunto.id}'; --%>
 	var idTermino = '${termino.id}';
 	var contratosIncluidos = '${contratosIncluidos}';
 	var soloConsulta = '${soloConsulta}';
@@ -55,63 +58,68 @@
 	});
 	
 	comboTipoAcuerdo.on('select', function() {
-	    
 	    creaCamposDynamics(this);
 	    
     });
     
-<!--     var creaCamposDynamics = function (cmp) { -->
+<%--     var creaCamposDynamics = function (cmp) { --%>
     	
-<!--     	var cmpLft = Ext.getCmp('dinamicElementsLeft'); -->
-<!-- 	   	if (cmpLft) { -->
-<!-- 	     	detalleFieldSet.remove(cmpLft, true); -->
-<!-- 	   	} -->
+<%--     	var cmpLft = Ext.getCmp('dinamicElementsLeft'); --%>
+<%-- 	   	if (cmpLft) { --%>
+<%-- 	     	detalleFieldSet.remove(cmpLft, true); --%>
+<%-- 	   	} --%>
 	   	
-<!-- 	  	var cmpRgt = Ext.getCmp('dinamicElementsRight'); -->
-<!-- 	   	if (cmpRgt) { -->
-<!-- 	     	detalleFieldSet.remove(cmpRgt, true);  -->
-<!-- 	   	} -->
+<%-- 	  	var cmpRgt = Ext.getCmp('dinamicElementsRight'); --%>
+<%-- 	   	if (cmpRgt) { --%>
+<%-- 	     	detalleFieldSet.remove(cmpRgt, true);  --%>
+<%-- 	   	} --%>
 	   	
-<!-- 	   	var v = cmp.getValue(); -->
-<!--     	var r = cmp.findRecord(cmp.valueField || cmp.displayField, v); -->
+<%-- 	   	var v = cmp.getValue(); --%>
+<%--     	var r = cmp.findRecord(cmp.valueField || cmp.displayField, v); --%>
     
-<!-- 	    var campos = arrayCampos[r.data.codigo]; -->
+<%-- 	    var campos = arrayCampos[r.data.codigo]; --%>
 	    
-<!-- 	    if(typeof(campos) != "undefined"){ -->
+<%-- 	    if(typeof(campos) != "undefined"){ --%>
 	    
-<!-- 	        var dinamicElementsLeft = []; -->
-<!-- 	    	var dinamicElementsRight = []; -->
+<%-- 	        var dinamicElementsLeft = []; --%>
+<%-- 	    	var dinamicElementsRight = []; --%>
 	    	
-<!-- 	    	for(var i=0;i < campos.length;i++){ -->
+<%-- 	    	for(var i=0;i < campos.length;i++){ --%>
 	    		
-<!-- 	    		var campo=campos[i]; -->
+<%-- 	    		var campo=campos[i]; --%>
 	    		
-<!-- 	    		if (i%2 == 0) -->
-<!-- 	    			dinamicElementsLeft.push(campo); -->
-<!-- 	    		else -->
-<!-- 	    			dinamicElementsRight.push(campo); -->
-<!-- 	    	} -->
+<%-- 	    		if (i%2 == 0) --%>
+<%-- 	    			dinamicElementsLeft.push(campo); --%>
+<%-- 	    		else --%>
+<%-- 	    			dinamicElementsRight.push(campo); --%>
+<%-- 	    	} --%>
 	    	
-<!-- 	    	detalleFieldSet.setVisible( true ); -->
-<!-- 	    	detalleFieldSetContenedor.setVisible( true ); -->
+<%-- 	    	detalleFieldSet.setVisible( true ); --%>
+<%-- 	    	detalleFieldSetContenedor.setVisible( true ); --%>
 	    	
-<!-- 	    	var dinamicElementsLeftSize = 400 -->
+<%-- 	    	var dinamicElementsLeftSize = 400 --%>
 	    	
-<!-- 	    	if(dinamicElementsRight.length < 1){ -->
-<!-- 	    		dinamicElementsLeftSize = 800 -->
-<!-- 	    	} -->
+<%-- 	    	if(dinamicElementsRight.length < 1){ --%>
+<%-- 	    		dinamicElementsLeftSize = 800 --%>
+<%-- 	    	} --%>
 			
-<!-- 			var dinamicElementsLeft2 = {id:'dinamicElementsLeft', width:dinamicElementsLeftSize,items:dinamicElementsLeft}; -->
-<!-- 	    	var dinamicElementsRight2 = {id:'dinamicElementsRight', width:400,items:dinamicElementsRight}; -->
+<%-- 			var dinamicElementsLeft2 = {id:'dinamicElementsLeft', width:dinamicElementsLeftSize,items:dinamicElementsLeft}; --%>
+<%-- 	    	var dinamicElementsRight2 = {id:'dinamicElementsRight', width:400,items:dinamicElementsRight}; --%>
 
-<!-- 			detalleFieldSet.add([dinamicElementsLeft2,dinamicElementsRight2]); -->
-<!-- 			detalleFieldSet.doLayout(); -->
+<%-- 			detalleFieldSet.add([dinamicElementsLeft2,dinamicElementsRight2]); --%>
+<%-- 			detalleFieldSet.doLayout(); --%>
 			
-<!-- 	    } -->
-<!-- 	}; -->
+<%-- 	    } --%>
+<%-- 	}; --%>
 	
 		
 	var creaCamposDynamics = function (cmp) {
+		if (cmp.getValue()!='' && cmp.getStore().getById(cmp.getValue()).data['codigo']==codigoTipoAcuerdoDacion) {
+			bienesFieldSet.show();
+		} else {
+			bienesFieldSet.hide();
+		}
+	
        	Ext.Ajax.request({
 			url: page.resolveUrl('mejacuerdo/getCamposDinamicosTerminosPorTipoAcuerdo')
 			,method: 'POST'
@@ -180,7 +188,8 @@
 		store:optionsSubtiposAcuerdosStore
 		,displayField:'descripcion'
 		,valueField:'id'
-		,mode: 'remote'
+		,autoSelect: true
+		,mode: 'local'
 		,resizable: true
 		,forceSelection: true
 		,disabled: false
@@ -237,7 +246,7 @@ arrayCampos["fechaPago"]=new Ext.form.DateField({
 	, allowBlank : true
 	,autoWidth:true
 	 ,fieldLabel: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.fechaPago" text="**Fecha pago" />'
-});;
+});
 arrayCampos["nombreCesionario"]=app.creaText('nombreCesionario', '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.nombreCesionario" text="**Nombre cesionario" />' , '', {id:'nombreCesionario'});
 arrayCampos["relacionCesionarioTitular"]=app.creaText('relacionCesionarioTitular', '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.relacionCesionarioTitular" text="**Relacion cesionario / Titular" />' , '', {id:'relacionCesionarioTitular'});
 arrayCampos["solvenciaCesionario"]=app.creaNumber('solvenciaCesionario', '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.solvenciaCesionario" text="**Solvencia cesionario" />' , '', {id:'solvenciaCesionario'});
@@ -306,6 +315,18 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
        	,enableLists:true
        	,enableSourceEdit:true		
 		,html:''});
+		
+arrayCampos["numContratoDescuento"]=app.creaNumber('numContratoDescuento', '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.numContratoDescuento" text="**Nº contrato descuento" />' , '', {id:'numContratoDescuento'});
+arrayCampos["fechaSolucionPrevista"]=new Ext.form.DateField({
+	id:'fechaSolucionPrevista'
+	,name:'fechaSolucionPrevista'
+	,value : ''
+	, allowBlank : true
+	,autoWidth:true
+	 ,fieldLabel: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.fechaSolucionPrevista" text="**Fecha Sol. Prevista" />'
+});
+arrayCampos["numeroContratoPtmoPromotor"]=app.creaNumber('numeroContratoPtmoPromotor', '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.numeroContratoPtmoPromotor" text="**Nº Contrato ptmo. promotor" />' , '', {id:'numeroContratoPtmoPromotor'});
+arrayCampos["codigoPersonaAfectada"]=app.creaNumber('codigoPersonaAfectada', '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.codigoPersonaAfectada" text="**Cód. persona afectada" />' , '', {id:'codigoPersonaAfectada'});
 
 	
 <%-- 	var modoDesembolso = app.creaText('modoDesembolso', '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.modoDesembolso" text="**modoDesembolso" />' , '', {labelStyle:labelStyle}); --%>
@@ -338,14 +359,14 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 		,{name:'descripcion'}
 	]);
 	
-	var optionsTipoProductoStore = page.getStore({
+	<%-- var optionsTipoProductoStore = page.getStore({
 	       flow: 'mejacuerdo/getListTipoProductosData'
 	       ,reader: new Ext.data.JsonReader({
 	    	 root : 'listadoProductos'
 	    }, tipoPro)	       
-	});	
+	});	--%>
 	
-	var comboTipoProducto = new Ext.form.ComboBox({
+	<%--var comboTipoProducto = new Ext.form.ComboBox({
 		store:optionsTipoProductoStore
         ,displayField:'descripcion'
         ,allowBlank:false
@@ -360,7 +381,7 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 		,fieldLabel: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.producto" text="**Producto" />'
 		,labelStyle: 'width:150px'
 		,width: 170					
-	});
+	});--%>
 	
 	
 	var flujoFieldSet = new Ext.FormPanel({
@@ -375,7 +396,7 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
 		,items : [
 		 	{items:[comboTipoAcuerdo,comboSubTipoAcuerdo],width:450}
-		 	,{items:[comboTipoProducto],width:450}
+		 	<%-- ,{items:[comboTipoProducto],width:450}--%>
 		]
 	});	
 	
@@ -385,29 +406,29 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 		,items: [flujoFieldSet]
 	});	
 	
-<!-- 	var detalleFieldSet = new Ext.form.FieldSet({ -->
+<%-- 	var detalleFieldSet = new Ext.form.FieldSet({ --%>
 <%-- 		title:'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.titulo" text="**Detalle operaciones"/>' --%>
-<!-- 		,autoHeight: true -->
-<!-- 		,autoWidth: true -->
-<!-- 		,border:true -->
-<!-- 		,style:'padding:0px' -->
-<!-- 		,layout:'table' -->
-<!-- 		,layoutConfig:{columns:3}	 -->
-<!-- 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375} -->
-<!-- 		,items : [ -->
+<%-- 		,autoHeight: true --%>
+<%-- 		,autoWidth: true --%>
+<%-- 		,border:true --%>
+<%-- 		,style:'padding:0px' --%>
+<%-- 		,layout:'table' --%>
+<%-- 		,layoutConfig:{columns:3}	 --%>
+<%-- 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375} --%>
+<%-- 		,items : [ --%>
 				
-<!-- 				{ -->
-<!-- 					layout:'form' -->
-<!-- 					,items: [comboTipoProducto,importe,periodicidad,interes] -->
-<!-- 				},{ -->
-<!-- 					layout:'form' -->
-<!-- 					,items: [modoDesembolso,comisiones,periodoFijo,periodoVariable] -->
-<!-- 				},{ -->
-<!-- 					layout:'form' -->
-<!-- 					,items: [formalizacion,periodoCarencia,sistemaAmortizacion] -->
-<!-- 				} -->
-<!-- 			] -->
-<!-- 	});	 -->
+<%-- 				{ --%>
+<%-- 					layout:'form' --%>
+<%-- 					,items: [comboTipoProducto,importe,periodicidad,interes] --%>
+<%-- 				},{ --%>
+<%-- 					layout:'form' --%>
+<%-- 					,items: [modoDesembolso,comisiones,periodoFijo,periodoVariable] --%>
+<%-- 				},{ --%>
+<%-- 					layout:'form' --%>
+<%-- 					,items: [formalizacion,periodoCarencia,sistemaAmortizacion] --%>
+<%-- 				} --%>
+<%-- 			] --%>
+<%-- 	});	 --%>
 
 	var detalleFieldSet = new Ext.FormPanel({
 		id:'dynamicForm'
@@ -475,46 +496,46 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 	       		Ext.apply(params, {idAcuerdo : '${idAcuerdo}' });
 	       		Ext.apply(params, {idTipoAcuerdo : comboTipoAcuerdo.getValue()});
 	       		Ext.apply(params, {idSubTipoAcuerdo : comboSubTipoAcuerdo.getValue()});
-	       		Ext.apply(params, {idTipoProducto : comboTipoProducto.getValue()});
+	       		<%--Ext.apply(params, {idTipoProducto : comboTipoProducto.getValue()});--%>
 	       		Ext.apply(params, {informeLetrado : informeLetrado.getValue()});
 	       		Ext.apply(params, {contratosIncluidos : '${contratosIncluidos}'});
 	       		Ext.apply(params, {bienesIncluidos : comboBienes.getValue()});     		
 	       		Ext.apply(params, {idTermino : idTermino });     		
-	<!--        		Ext.apply(params, {modoDesembolso : modoDesembolso.getValue()}); -->
-	<!--        		Ext.apply(params, {formalizacion : formalizacion.getValue()}); -->
-	<!--        		Ext.apply(params, {importe : importe.getValue()}); -->
-	<!--        		Ext.apply(params, {comisiones : comisiones.getValue()}); -->
-	<!--        		Ext.apply(params, {periodoCarencia : periodoCarencia.getValue()}); -->
-	<!--        		Ext.apply(params, {periodicidad : periodicidad.getValue()}); -->
-	<!--        		Ext.apply(params, {periodoFijo : periodoFijo.getValue()}); -->
-	<!--        		Ext.apply(params, {sistemaAmortizacion : sistemaAmortizacion.getValue()}); -->
-	<!--        		Ext.apply(params, {interes : interes.getValue()}); -->
-	<!--        		Ext.apply(params, {periodoVariable : periodoVariable.getValue()}); -->
-	<!--        		Ext.apply(params, {informeLetrado : informeLetrado.getValue()}); -->
+	<%--        		Ext.apply(params, {modoDesembolso : modoDesembolso.getValue()}); --%>
+	<%--        		Ext.apply(params, {formalizacion : formalizacion.getValue()}); --%>
+	<%--        		Ext.apply(params, {importe : importe.getValue()}); --%>
+	<%--        		Ext.apply(params, {comisiones : comisiones.getValue()}); --%>
+	<%--        		Ext.apply(params, {periodoCarencia : periodoCarencia.getValue()}); --%>
+	<%--        		Ext.apply(params, {periodicidad : periodicidad.getValue()}); --%>
+	<%--        		Ext.apply(params, {periodoFijo : periodoFijo.getValue()}); --%>
+	<%--        		Ext.apply(params, {sistemaAmortizacion : sistemaAmortizacion.getValue()}); --%>
+	<%--        		Ext.apply(params, {interes : interes.getValue()}); --%>
+	<%--        		Ext.apply(params, {periodoVariable : periodoVariable.getValue()}); --%>
+	<%--        		Ext.apply(params, {informeLetrado : informeLetrado.getValue()}); --%>
 	<%--        		Ext.apply(params, {contratosIncluidos : '${contratosIncluidos}'}); --%>
-	<!--        		Ext.apply(params, {bienesIncluidos : comboBienes.getValue()}); -->
+	<%--        		Ext.apply(params, {bienesIncluidos : comboBienes.getValue()}); --%>
 	       		
 	       		Ext.Ajax.request({
 					url: page.resolveUrl('mejacuerdo/crearTerminoAcuerdo')
 					,method: 'POST'
-	<!-- 				,params:{ -->
+	<%-- 				,params:{ --%>
 	<%-- 						idAcuerdo : '${idAcuerdo}'  --%>
-	<!-- 						,idTipoAcuerdo : comboTipoAcuerdo.getValue() -->
-	<!-- 						,idTipoProducto : comboTipoProducto.getValue()  -->
-	<!-- 						,modoDesembolso : modoDesembolso.getValue() -->
-	<!-- 						,formalizacion : formalizacion.getValue() -->
-	<!-- 						,importe : importe.getValue() -->
-	<!-- 						,comisiones : comisiones.getValue() -->
-	<!-- 						,periodoCarencia : periodoCarencia.getValue() -->
-	<!-- 						,periodicidad : periodicidad.getValue() -->
-	<!-- 						,periodoFijo : periodoFijo.getValue()	 -->
-	<!-- 						,sistemaAmortizacion : sistemaAmortizacion.getValue()	 -->
-	<!-- 						,interes : interes.getValue()	 -->
-	<!-- 						,periodoVariable : periodoVariable.getValue() -->
-	<!-- 						,informeLetrado : informeLetrado.getValue() -->
+	<%-- 						,idTipoAcuerdo : comboTipoAcuerdo.getValue() --%>
+	<%-- 						,idTipoProducto : comboTipoProducto.getValue()  --%>
+	<%-- 						,modoDesembolso : modoDesembolso.getValue() --%>
+	<%-- 						,formalizacion : formalizacion.getValue() --%>
+	<%-- 						,importe : importe.getValue() --%>
+	<%-- 						,comisiones : comisiones.getValue() --%>
+	<%-- 						,periodoCarencia : periodoCarencia.getValue() --%>
+	<%-- 						,periodicidad : periodicidad.getValue() --%>
+	<%-- 						,periodoFijo : periodoFijo.getValue()	 --%>
+	<%-- 						,sistemaAmortizacion : sistemaAmortizacion.getValue()	 --%>
+	<%-- 						,interes : interes.getValue()	 --%>
+	<%-- 						,periodoVariable : periodoVariable.getValue() --%>
+	<%-- 						,informeLetrado : informeLetrado.getValue() --%>
 	<%-- 						,contratosIncluidos : '${contratosIncluidos}' --%>
-	<!-- 						,bienesIncluidos : comboBienes.getValue() -->
-	<!--       				} -->
+	<%-- 						,bienesIncluidos : comboBienes.getValue() --%>
+	<%--       				} --%>
 					,params:params 
 					,success: function (result, request){
 						 Ext.MessageBox.show({
@@ -558,6 +579,19 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 	bienesStore.webflow({idAsunto:idAsunto});
 --%>
 
+if("${esPropuesta}" == "true"){
+		
+	var bienesStore = page.getStore({
+		eventName : 'listado'
+		,flow:'propuestas/obtenerListadoBienesPropuesta'
+		,reader: new Ext.data.JsonReader({
+	        root: 'bienes'
+		}, bienesRecord)
+	});	
+			
+	bienesStore.webflow({idExpediente:"${idExpediente}", contratosIncluidos:contratosIncluidos});
+}else{
+	
 	var bienesStore = page.getStore({
 		eventName : 'listado'
 		,flow:'mejacuerdo/obtenerListadoBienesContratosAcuerdo'
@@ -566,7 +600,8 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 		}, bienesRecord)
 	});	
 			
-	bienesStore.webflow({idTermino:idTermino, contratosIncluidos:contratosIncluidos});			
+	bienesStore.webflow({idTermino:idTermino, contratosIncluidos:contratosIncluidos});
+}			
 				
 	config.store = bienesStore;	
 	
@@ -585,6 +620,7 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 		 	comboBienes
 		]		
 		,defaults :  {xtype : 'fieldset', autoHeight : true, border : false, width:600 }
+		,hidden: true
 	});	                                            	
 
    var panelAltaTermino=new Ext.Panel({
@@ -614,7 +650,7 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 	
 	Ext.onReady(function () {
 		
-		<!-- Modo Visualizacion -->
+		<%-- Modo Visualizacion --%>
 		if("${termino}"!=null && "${termino}"!=''){
 			
 			
@@ -642,12 +678,12 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 		       	});
 	       	}
 	       	
-	       	if("${termino.tipoProducto.id}"!=null && "${termino.tipoProducto.id}"!=''){
+	       	<%--if("${termino.tipoProducto.id}"!=null && "${termino.tipoProducto.id}"!=''){
 	       		comboTipoProducto.store.load();
 		    	comboTipoProducto.store.on('load', function(){  
 		        	comboTipoProducto.setValue(${termino.tipoProducto.id});
 		       	});
-	       	}
+	       	}--%>
 	       	
 	       	if("${termino.bienes}"!=null && "${termino.bienes}"!=''){
 	       		bienesStore.on('load', function(){  
@@ -664,10 +700,21 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 	       	
 	       	comboTipoAcuerdo.setDisabled(false);
 	       	comboSubTipoAcuerdo.setDisabled(false);
-	       	comboTipoProducto.setDisabled(false);
+	       	<%--comboTipoProducto.setDisabled(false);--%>
 	       	comboBienes.setDisabled(false);
 	       	informeLetrado.setDisabled(false);
 	       	
+		} else {
+			//Valor por defecto para SubTipoAcuerdo
+	       	comboSubTipoAcuerdo.store.load();
+	    	comboSubTipoAcuerdo.store.on('load', function(){ 
+	    		debugger;
+	        	
+				var index = comboSubTipoAcuerdo.store.findBy(function (record) {
+   					return record.data.codigo == codigoSubtipoEstandar;
+				});
+				comboSubTipoAcuerdo.setValue(comboSubTipoAcuerdo.store.getAt(index).id);	        	
+	       	});			
 		}
 	});
 		

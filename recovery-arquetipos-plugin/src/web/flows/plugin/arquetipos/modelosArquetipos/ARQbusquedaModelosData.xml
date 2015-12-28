@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+   	<var name="dtoBusquedaModelo" class="es.pfsgroup.plugin.recovery.arquetipos.modelos.dto.ARQDtoBusquedaModelo"/>
+	<input name="fechaFinVigencia" type="java.lang.String"/>
+	<input name="fechaInicioVigencia" type="java.lang.String"/>
+    
+    <!--a partir de este momento sólo enviamos ajax -->
+    <end-state id="listado" view="plugin/arquetipos/modelosArquetipos/listadoModelosJSON" >
+		<on-entry>
+			<evaluate expression="dtoBusquedaModelo.setFechaFinVigencia(fechaFinVigencia)" />
+			<evaluate expression="dtoBusquedaModelo.setFechaInicioVigencia(fechaInicioVigencia)" />
+			<evaluate expression="binder.bindAndValidate(flowRequestContext,dtoBusquedaModelo)" />
+			<evaluate expression="executor.execute('plugin.arquetipos.modelos.findModelos', dtoBusquedaModelo)" result="flowScope.pagina"/>
+		</on-entry>
+	</end-state>
+    
+</flow>

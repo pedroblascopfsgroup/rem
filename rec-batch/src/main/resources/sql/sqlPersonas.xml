@@ -357,6 +357,7 @@
     <![CDATA[
       SELECT CNT_ID FROM CPE_CONTRATOS_PERSONAS WHERE BORRADO = 0 AND PER_ID = ?
     ]]>
+
   </entry>
 
 </properties>

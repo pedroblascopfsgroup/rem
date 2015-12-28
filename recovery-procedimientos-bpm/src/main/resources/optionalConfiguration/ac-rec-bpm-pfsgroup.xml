@@ -59,10 +59,8 @@
 	</bean> 
 	<bean id="crearExpedienteActionHandler" class="es.pfsgroup.procedimientos.PROCrearExpedienteActionHandler">
 	</bean>
-	<!--
-	<bean id="decisionComiteAutomaticaActionHandler" class="es.pfsgroup.procedimientos.PRODecisionComiteAutomaticaActionHandler" scope="prototype">
-	</bean>
-	-->
+	<bean id="decisionComiteAutomaticaActionHandler" class="es.pfsgroup.procedimientos.PRODecisionComiteAutomaticaActionHandler">
+	</bean>	
 	<bean id="desicionComiteActionHandler" class="es.pfsgroup.procedimientos.PRODesicionComiteActionHandler">
 	</bean>
 	<bean id="devolverCompletarActionHandler" class="es.pfsgroup.procedimientos.PRODevolverCompletarActionHandler">
@@ -129,6 +127,15 @@
 	<bean id="solicitarTasacionHandler" class="es.pfsgroup.procedimientos.subasta.SolicitarTasacionHandler"></bean>
 	<bean id="generarPropuestaNUSEHandler" class="es.pfsgroup.procedimientos.subasta.GenerarPropuestaNUSEHandler"></bean>
 	<bean id="generarPropuestaNUSEHandlerAdj" class="es.pfsgroup.procedimientos.adjudicacion.GenerarPropuestaNUSEHandler"></bean>
+
+	<bean id="enviarAFormalizarActionHandler" class="es.pfsgroup.procedimientos.PROEnviarAFormalizarActionHandler">
+	</bean>
+	<bean id="formalizarPropuestaActionHandler" class="es.pfsgroup.procedimientos.PROFormalizarPropuestaActionHandler">
+	</bean>
+	<bean id="devolverADecisionActionHandler" class="es.pfsgroup.procedimientos.PRODevolverADecisionActionHandler">
+	</bean>
+	<bean id="expedienteDecididoFPActionHandler" class="es.pfsgroup.procedimientos.PROExpedienteDecididoFPActionHandler">
+	</bean>
 
 
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteEjecucionNotarial/tramiteEjecucionNotariaV4.xml" p:version="-1"/>

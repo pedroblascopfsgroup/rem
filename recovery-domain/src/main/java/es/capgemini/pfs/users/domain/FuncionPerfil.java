@@ -16,6 +16,7 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -23,6 +24,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 @Entity
 @Table(name = "FUN_PEF", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class FuncionPerfil implements Serializable, Auditable {
 
     /**

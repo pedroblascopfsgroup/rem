@@ -2,10 +2,10 @@ package es.capgemini.pfs.persona.model;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -65,8 +65,6 @@ import es.capgemini.pfs.scoring.model.PuntuacionTotal;
 import es.capgemini.pfs.segmento.model.DDSegmento;
 import es.capgemini.pfs.segmento.model.DDSegmentoEntidad;
 import es.capgemini.pfs.telefonos.model.Telefono;
-import es.capgemini.pfs.users.domain.Funcion;
-import es.capgemini.pfs.users.domain.FuncionPerfil;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.utils.Describible;
@@ -479,6 +477,9 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	@Column(name = "PER_EMPLEADO")
 	private Boolean esEmpleado;
 
+	@Column(name = "PER_SITUACION_CONCURSAL")
+	private String situacionConcursal;
+	
 	@OneToOne(fetch = FetchType.LAZY)
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	@JoinColumn(name = "DD_COS_ID")
@@ -505,15 +506,13 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 
 	@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn(name = "PER_ID")
-	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<PersonasTelefono> personasTelefono;
 	
 	@OneToOne(fetch = FetchType.LAZY, optional=true)
 	@JoinColumn(name = "PER_ID", updatable= false)
 	@LazyToOne(LazyToOneOption.PROXY)
 	private PersonaFormulas formulas;
-	
-
 	
 
 	/**
@@ -764,6 +763,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	 */
 	public Float getTotalBienes() {
 		Float totalBien = 0F;
+
 		for (Bien b : getBienes()) {
 			if (b.getValorActual() != null && b.getParticipacion() != null) {
 				totalBien += b.getValorActual().floatValue()
@@ -892,7 +892,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	 * @return situacion
 	 */
 	public String getSituacion() {
-		return this.getFormulas() == null ? null :this.getFormulas() == null ? null :this.getFormulas().getSituacion();
+		return this.getFormulas() == null ? null : this.getFormulas().getSituacion();
 	}
 
 	/**
@@ -3014,30 +3014,24 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	        fieldHandler.writeObject(this, "areaGestion", this.areaGestion, areaGestion);
 		this.areaGestion = areaGestion;
 	}
-	
-	public List<PersonasTelefono> getPersonasTelefono() {
-		return personasTelefono;
-	}
-
-	public void setPersonasTelefono(List<PersonasTelefono> personasTelefono) {
-		this.personasTelefono = personasTelefono;
-	}
 
 	/**
-     * @return telefonos
-     */
-    public List<Telefono> getTelefonos() {
-    	List<Telefono> telefonos = new ArrayList<Telefono>();
+	 * @return telefonos
+	 */
+	public List<Telefono> getTelefonos() {
+		List<Telefono> telefonos = new ArrayList<Telefono>();
 
-        for (PersonasTelefono pt : personasTelefono) {
-        	//FIXME Esto es un parche, ya que el borrado de teléfono no está actuando
-            if(!pt.getTelefono().getAuditoria().isBorrado()){
-            	telefonos.add(pt.getTelefono());
-            }
-        }
+		for (PersonasTelefono pt : personasTelefono) {
+			// FIXME Esto es un parche, ya que el borrado de teléfono no está
+			// actuando
+			if (!pt.getTelefono().getAuditoria().isBorrado()) {
+				telefonos.add(pt.getTelefono());
+			}
+		}
 
-        return telefonos;
-    }
+		return telefonos;
+	}
+	
 
 	public String getServicioNominaPension() {
 		return this.getFormulas() == null ? null :this.getFormulas().getServicioNominaPension();
@@ -3054,7 +3048,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 
 	public String getDispuestoVencido() {
 		return this.getFormulas() == null ? null : Checks.esNulo(this.getFormulas().getDispuestoVencido()) ? null : this.getFormulas().getDispuestoVencido().replaceAll(",", ".");
-
+		
 	}
 
 	public String getEstadoCicloVida() {
@@ -3066,6 +3060,22 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 		return this.getFormulas() == null ? null :this.getFormulas().getDescripcionCnae();
 	}
 
+	public String getSituacionConcursal() {
+		return situacionConcursal;
+	}
+
+	public void setSituacionConcursal(String situacionConcursal) {
+		this.situacionConcursal = situacionConcursal;
+	}
+
+	public String getFechaSituacionConcursal() {
+		return this.getFormulas() == null ? null :this.getFormulas().getFechaSituacionConcursal();
+	}
+	
+	public Boolean getClienteReestructurado() {
+		return this.getFormulas() == null ? null :this.getFormulas().getClienteReestructurado();
+	}
+	
 	@Override
 	public void setFieldHandler(FieldHandler handler) {
 		this.fieldHandler = handler;
@@ -3081,6 +3091,14 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 		if(fieldHandler!=null)
 	        return (PersonaFormulas)fieldHandler.readObject(this, "formulas", formulas);
 		return formulas;
+	}
+	
+	public List<PersonasTelefono> getPersonasTelefono() {
+		return personasTelefono;
+	}
+
+	public void setPersonasTelefono(List<PersonasTelefono> personasTelefono) {
+		this.personasTelefono = personasTelefono;
 	}
 
 }

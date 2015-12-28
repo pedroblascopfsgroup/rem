@@ -1,7 +1,6 @@
 #!/bin/bash
 # Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
  
-ENTIDAD=3058
 DIR_INPUT=/recovery/transferencia/aprov_troncal/
 MAX_WAITING_MINUTES=10
 ficheros=USUARIOS,ZONPEFUSU
@@ -55,3 +54,4 @@ else
    echo "$(basename $0) Ficheros encontrados"
    exit 0
 fi
+

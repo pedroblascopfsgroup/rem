@@ -21,6 +21,7 @@ import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.cliente.dto.DtoBuscarClientes;
 import es.capgemini.pfs.cliente.model.Cliente;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.contrato.model.DDEstadoContrato;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.expediente.model.DDEstadoExpediente;
@@ -877,4 +878,5 @@ public class PersonaDaoImpl extends AbstractEntityDao<Persona, Long> implements 
         getHibernateTemplate().refresh(persona);
         return persona.getClienteActivo();
     }
+
 }

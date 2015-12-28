@@ -196,6 +196,7 @@ public class ObjetivoManager {
 
         if (tipoObjetivo.getAutomatico()) {
             if (valor == null) { throw new BusinessOperationException("editar.objetivo.error.objAutomatico.limiteNulo"); }
+            if (tipoOperador == null) { throw new BusinessOperationException("editar.objetivo.error.objAutomatico.operadorNulo"); }
             // Si la tendencia de la política del objetivo es 'restrictiva', el operador debe ser 'menor o igual'
             if (DDTendencia.TEN_DESCENDENTE.equals(codigoTendenciaPolitica)) {
                 if (!tipoOperador.getCodigo().equals(DDTipoOperador.ESTADO_MENOR)) {

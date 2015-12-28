@@ -293,21 +293,22 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 	}
 
 	@Override
-	public String obtenerCabecera(HashMap<String, Object> mapeoVariables) {
+	public String obtenerCabecera(EnvioBurofaxPCO envioBurofax, String contexto) {
 
-		String cabecera = "<table style='font-size:12px'>"
-				+ "<tr>"
-				+ "<td width='45%' style='border:1px solid black'>BANKIA S.A<br />PASEO DE LA CASTELLANA, 189<br />28046 Madrid</td>"
-				+ "<td width='10%' style='border-style: hidden'></td>"
-				+ "<td width='45%' style='border:1px solid black'>" 
-				+ mapeoVariables.get(NOMBRE) 
-				+ " "+ mapeoVariables.get(APELLIDO1) 
-				+ " "+ mapeoVariables.get(APELLIDO1) 
-				+ "<br/>"+ mapeoVariables.get(DOMICILIO) 
-				+ "</td>"
-				+ "</tr>"
-				+ "</table><br />";
-		
+		String cabecera = "";
+
+		if ("BANKIA".equals(contexto)) {
+			cabecera = "<table width='60%' style='font-size:12px'>"
+					+ "<tr>"
+					+ "<td width='40' style='border:1px solid black'>BANKIA S.A<br />PASEO DE LA CASTELLANA, 189<br />28046 Madrid</td>"
+					+ "<td width='20' style='border-style: hidden'></td>"
+					+ "<td width='40' style='border:1px solid black'>"
+					+ envioBurofax.getBurofax().getDemandado().getNombre().concat(" " + envioBurofax.getBurofax().getDemandado().getApellido1())
+							.concat(" " + envioBurofax.getBurofax().getDemandado().getApellido2()) + "<br />" + envioBurofax.getDireccion().toString() + "</td>" + "</tr>" + "</table><br />";
+					//+ "<table width='60%' style='font-size:12px'>" + "<tr>" + "<td style='border:1px solid black'>" + envioBurofax.getContenidoBurofax() + "</td>" + "</tr>" + "</table>";
+		} else {
+			//cabecera = "<table width='60%' style='font-size:12px'>" + "<tr>" + "<td style='border:1px solid black'>" + envioBurofax.getContenidoBurofax() + "</td>" + "</tr>" + "</table>";
+		}
 		return cabecera;
 	}
 

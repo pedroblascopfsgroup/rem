@@ -254,7 +254,7 @@
 	   ,title:'<s:message code="contrato.consulta.tabcabecera.otrosDatos" text="**Otros Datos"/>'
 	   ,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375, style:'padding:10px; margin:10px'}
 		  ,items : [{items:[domiciExt,domiciExtFecha,fechaIniEpiIrregular,gestionEspecial,remunEsp
-		  ,numextra1,numextra2,numextra3
+		  ,numextra1,numextra3
 		  ,dateextra1
 		  ,flagextra1,flagextra2,flagextra3,indicador]},
 		   {items:[domiciExtTotal,contratoAnt,motivoRenum,riesgo

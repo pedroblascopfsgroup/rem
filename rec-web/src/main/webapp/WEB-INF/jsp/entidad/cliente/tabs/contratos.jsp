@@ -265,7 +265,8 @@
 		}
 		grid.setTitle(texto);
 		
-		var total = store.getTotalCount();
+		var total = countContratos(store);
+		
 		var rec = store.getAt(store.getRange().length-1);
 		
 		if (total == null || rec == null) return;
@@ -297,6 +298,20 @@
 	    texto += '&nbsp;]';
 		grid.setTitle(texto);
 	};
+	
+	function countContratos(store){
+		var data = store.data;
+		var items = data.items;
+		var nContratos = 0;	
+		for(var i=0;i < items.length;i++){
+        	var item = items[i];
+            var idContrato = item.json["id"];
+            if(idContrato != null && idContrato != ""){
+            	nContratos++;
+            }                 
+        }
+        return nContratos;
+	}
 
 	panel.getValue = function(){ 
 		return { 

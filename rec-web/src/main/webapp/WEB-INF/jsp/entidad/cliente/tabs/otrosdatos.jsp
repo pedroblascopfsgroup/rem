@@ -99,8 +99,8 @@
    var fijo6		=         label('fijo6','<s:message code="menu.clientes.consultacliente.datosTab.telefono6" text="**Fijo6" />');
    
    var colectivoSingular =   label('colectivoSingular','<s:message code="menu.clientes.consultacliente.datosTab.colectivoSingular" text="**Colectivo singular"/>');
-   var politicaEntidad =  label('politicaEntidad','<s:message code="menu.clientes.consultacliente.datosTab.politicaEntidad" text="**Política entidad"/>');
-   var prePolitica	=            label('prePolitica','<s:message code="menu.clientes.consultacliente.datosTab.prePolitica" text="**prePolitica" />');
+   var politicaEntidad =  label('politicaEntidad','<s:message code="menu.clientes.consultacliente.datosTab.prePolitica" text="**Política entidad"/>');
+   var prePolitica	=            label('prePolitica','<s:message code="menu.clientes.consultacliente.datosTab.politica" text="**prePolitica" />');
    var puntuacionAlerta=         label('puntuacionAlerta','<s:message code="menu.clientes.consultacliente.datosTab.puntuacionAlerta" text="**puntuacionAlerta" />');
    var grupoCliente =            label('grupoCliente','<s:message code="menu.clientes.consultacliente.datosTab.grupoCliente" text="**grupoCliente" />');
    var ultimaOperacionConcedida= label('ultimaOperacionConcedida','<s:message code="menu.clientes.consultacliente.datosTab.ultimaOperacionConcedida" text="**ultima Operacion Concedida" />');

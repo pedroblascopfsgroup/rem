@@ -26,6 +26,7 @@ DECLARE
     V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA2 VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.  
     V_NUM_SEQ NUMBER(16); -- Vble. para validar la existencia de una secuencia.  
@@ -100,7 +101,7 @@ BEGIN
 	  
 	  
 	  -- ********** USU_ENTIDADES - FKs
-    V_SQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE TABLE_NAME = '||V_TABLA||' and owner = '''||V_ESQUEMA_M||''' and CONSTRAINT_NAME = ''FK_ENT_USU_ID''';
+    V_SQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE TABLE_NAME = '''||V_TABLA||''' and owner = '''||V_ESQUEMA_M||''' and CONSTRAINT_NAME = ''FK_ENT_USU_ID''';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     -- Si existe la PK
     IF V_NUM_TABLAS = 1 THEN
@@ -114,7 +115,7 @@ BEGIN
 	END IF;
 	
 	
-	V_SQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE TABLE_NAME = '||V_TABLA||' and owner = '''||V_ESQUEMA_M||''' and CONSTRAINT_NAME = ''FK_ENT_ENT_ID''';
+	V_SQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE TABLE_NAME = '''||V_TABLA||''' and owner = '''||V_ESQUEMA_M||''' and CONSTRAINT_NAME = ''FK_ENT_ENT_ID''';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     -- Si existe la PK
     IF V_NUM_TABLAS = 1 THEN
@@ -127,6 +128,15 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA_M || '.'||V_TABLA||' ... FK Creada');
 	END IF;
 	  
+	-- ejecutamos grants --
+    V_MSQL := 'GRANT ALL ON '||V_ESQUEMA_M||'.USU_ENTIDADES TO '||V_ESQUEMA; 			
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Grant ejecutado correctamente.');
+	
+	-- ejecutamos grants --
+    V_MSQL := 'GRANT ALL ON '||V_ESQUEMA_M||'.USU_ENTIDADES TO '||V_ESQUEMA2; 			
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Grant ejecutado correctamente.');
 	
 COMMIT;
 

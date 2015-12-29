@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
 
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -28,6 +29,8 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
+import es.capgemini.pfs.dsm.dao.EntidadDao;
+import es.capgemini.pfs.dsm.model.Entidad;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.oficina.model.Oficina;
 import es.capgemini.pfs.security.model.UsuarioSecurity;
@@ -39,6 +42,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.users.dto.DtoBuscarUsuarios;
 import es.capgemini.pfs.users.dto.DtoUsuario;
 import es.capgemini.pfs.zona.model.DDZona;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * TODO Documentar.
@@ -62,6 +66,9 @@ public class UsuarioManager {
     private MailManager mailManager;
     @Resource
     private MessageService messageService;
+    @Autowired
+    private EntidadDao entidadDao;
+    
     
 
     /**
@@ -264,7 +271,39 @@ public class UsuarioManager {
         Usuario loggedUser = null;
         
         if( RequestContextHolder.getRequestAttributes()!=null && RequestContextHolder.getRequestAttributes().getAttribute(USER_SESSION_KEY,RequestAttributes.SCOPE_SESSION)!=null){
-            return (Usuario)RequestContextHolder.getRequestAttributes().getAttribute(USER_SESSION_KEY,RequestAttributes.SCOPE_SESSION);
+        	return (Usuario)RequestContextHolder.getRequestAttributes().getAttribute(USER_SESSION_KEY,RequestAttributes.SCOPE_SESSION);
+        }
+        
+        if (SecurityUtils.getCurrentUser() == null && defaultUserId != null) {
+            loggedUser = get(defaultUserId);
+        } else {
+            loggedUser = get(((UsuarioSecurity) SecurityUtils.getCurrentUser()).getId());
+        }
+        
+        loggedUser.initialize();
+        
+        if( RequestContextHolder.getRequestAttributes()!=null)
+            RequestContextHolder.getRequestAttributes().setAttribute(USER_SESSION_KEY,loggedUser,RequestAttributes.SCOPE_SESSION);
+        EventFactory.onMethodStop(this.getClass());
+        return loggedUser;
+    }
+    
+    /**
+     * Recupera el usuario logeado. Y si no hay el usuario por defecto.
+     * @return usuario
+     */
+    @BusinessOperation(ConfiguracionBusinessOperation.BO_USUARIO_MGR_CAMBIAR_ENTIDAD_USU_LOGADO)
+    @Transactional
+    public Usuario cambiarEntidadUsuarioLogado(String codEntidadSeleccionada) {
+    	EventFactory.onMethodStart(this.getClass());
+        Usuario loggedUser = null;
+        Entidad enti = entidadDao.findByDescripcion(codEntidadSeleccionada);
+        
+        if( RequestContextHolder.getRequestAttributes()!=null && RequestContextHolder.getRequestAttributes().getAttribute(USER_SESSION_KEY,RequestAttributes.SCOPE_SESSION)!=null){
+        	loggedUser = (Usuario)RequestContextHolder.getRequestAttributes().getAttribute(USER_SESSION_KEY,RequestAttributes.SCOPE_SESSION);
+            DbIdContextHolder.setDbId(enti.getId());
+            loggedUser.setEntidad(enti);
+            usuarioDao.update(loggedUser);    
         }
         
         if (SecurityUtils.getCurrentUser() == null && defaultUserId != null) {

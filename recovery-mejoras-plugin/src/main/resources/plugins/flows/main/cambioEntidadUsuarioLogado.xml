@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <!-- esto es para el autologin 
+    <var name="dto" class="es.capgemini.pfs.autologin.DtoAutologin"/>
+    <input name="action" type="java.lang.String" />
+    
+	<decision-state id="ifautologin">
+    <if test="action!=null &amp;&amp;action!=''" then="autologinParams" else="main"/>
+    </decision-state>
+    
+    <action-state id="autologinParams">
+    	    <evaluate expression="binder.bindAndValidate(flowRequestContext,dto)" />
+    	    <transition to="main" />
+    </action-state>
+    -->
+    
+    <input name="comboEntidad" type="java.lang.String" />
+    
+    <end-state id="main" view="plugin/mejoras/main/main" >
+    	<on-entry>
+    		<evaluate expression="executor.execute('usuarioManager.cambiarEntidadUsuarioLogado', comboEntidad)" result="flowScope.usuario"/>
+    		<evaluate expression="usuario.entidad.configValue('theme')" result="flowScope.theme"/>
+    		<evaluate expression="usuario.entidad.configValue('logo')" result="flowScope.logo"/>
+    		<evaluate expression="executor.execute('contratoManager.getUltimaFechaCarga')" result="flowScope.ultimaFechaCarga"/>
+    		<evaluate expression="executor.execute('menuManager.getMenuDefinition','menu')" result="flowScope.menu"/>
+    		<evaluate expression="executor.execute('accordionManager.getAccordionExtrasDefinition','accordion')" result="flowScope.accordionExtras"/>
+    		<evaluate expression="executor.execute('plugin.mejoras.mainpage.dynamicelements.getJsLibraries')" result="flowScope.jsLibraries"/>
+    		<evaluate expression="executor.execute('plugin.mejoras.mainpage.dynamicelements.getCssStyles')" result="flowScope.cssStyles"/>
+    		<evaluate expression="executor.execute('plugin.mejoras.mainpage.dynamicelements.openInitTabFuncition')" result="flowScope.initialTabDE"/>
+    	</on-entry>
+    </end-state>
+    
+</flow>

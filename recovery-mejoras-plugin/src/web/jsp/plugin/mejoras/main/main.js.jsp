@@ -288,6 +288,25 @@ Ext.onReady(function() {
 			}
 		});
 	});
+	
+	Ext.get("comboEntidad").on('click', function(){
+		Ext.Msg.confirm('<s:message code="app.confirmar" text="**confirmar" />', '<s:message text="**¿Seguro cambiar de entidad?" />', function(boton){
+			if (boton=="yes"){
+				var valueComboEntidadSeleccionada = comboEntidad.value;
+				Ext.Ajax.request({
+					url: app.resolveFlow('main/cambioEntidadUsuarioLogado')
+					,params: {comboEntidad:valueComboEntidadSeleccionada}
+					,method: 'POST'
+					,success : function(){
+						app.reloadFav();
+						app.recargaTree();
+					}
+					,failure: function(){}
+					})
+			}
+		});
+	});
+		
 });
 
 app = new App();

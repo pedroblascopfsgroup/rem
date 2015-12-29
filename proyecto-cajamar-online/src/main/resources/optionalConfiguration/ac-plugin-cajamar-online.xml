@@ -151,6 +151,7 @@
 								<entry key="btnNotificar" value="0" />
 								<entry key="btnDescargarBurofax" value="1" />
 								<entry key="botonRefreshBur" value="1" />
+								<entry key="btnEditarVerDireccion" value="1" />
 							</map>
 						</entry>
 					</map>
@@ -191,6 +192,7 @@
 								<entry key="btnNotificar" value="1" />
 								<entry key="btnDescargarBurofax" value="0" />
 								<entry key="botonRefreshBur" value="1" />
+								<entry key="btnEditarVerDireccion" value="1" />
 							</map>
 						</entry>
 					</map>

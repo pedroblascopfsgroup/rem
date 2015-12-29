@@ -27,6 +27,7 @@ public class BurofaxDTO extends WebDto{
 	private Date fechaEnvio;
 	private Date fechaAcuse;
 	private String resultado;
+	private String esPersonaManual;
 
 	// id ADJ_ADJUNTOS
 	private Long acuseRecibo;
@@ -151,6 +152,11 @@ public class BurofaxDTO extends WebDto{
 		this.refExternaEnvio = refExternaEnvio;
 	}
 
-	
+	public String getEsPersonaManual() {
+		return esPersonaManual;
+	}
+	public void setEsPersonaManual(String esPersonaManual) {
+		this.esPersonaManual = esPersonaManual;
+	}
 
 }

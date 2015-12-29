@@ -1188,4 +1188,24 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		return resultado;
 	}
 
+	public boolean mostrarSegunCodigos(Long idProcedimiento, List<String> codigosTiposGestores) {
+
+//		Se comprueba si el usuario conectado o un grupo al que pertenece está asignado al asunto 
+		Usuario usuario = usuarioManager.getUsuarioLogado();
+		Procedimiento procedimiento = procedimientoManager.getProcedimiento(idProcedimiento);
+		List<Long> idsGrupo = grupoUsuarios.buscaIdsGrupos(usuario);
+		int tamanyoListaCodigos = codigosTiposGestores.size();
+		int i=0;
+		String codigoGestor;
+		for(i=0; i<tamanyoListaCodigos; i++){
+			codigoGestor = codigosTiposGestores.get(i);
+			for(Usuario usuarioGestor : gestorAdicionalAsuntomanager.findGestoresByAsunto(procedimiento.getAsunto().getId(), codigoGestor)) {
+				if(usuario.getUsername().equals(usuarioGestor.getUsername()) || idsGrupo.contains(usuarioGestor.getId())) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
 }

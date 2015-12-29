@@ -18,6 +18,8 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
 import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContextImpl;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ProcedimientoPcoApi;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDTipoGestionRevisarExpJudicial;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
@@ -25,14 +27,21 @@ import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 import es.pfsgroup.recovery.ext.turnadodespachos.AplicarTurnadoException;
 
 public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandler {
+	private static final String BO_PLUGIN_PRECONTENCIOSO_CAMBIAR_ESTADO_EXPEDIETE = "plugin.precontencioso.cambiarEstadoExpediete";
+
+	private static final String BO_PLUGIN_PRECONTENCIOSO_INICIALIZAR_PCO = "plugin.precontencioso.inicializarPco";
+
+	private static final String TAREA_REVISAR_EXPDIG_DOC_COMPLETA = "docCompleta";
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -5583230911255732281L;
 	
 	private static final String TAREA_REGISTRAR_TOMA_DEC_COMBO_PROC_INICIAR = "proc_a_iniciar";
-	private static final String TAREA_REVISAR_EXPEDIENTE_PREPARAR_COMBO_AGENCIA_EXTERNA = "agencia_externa";
+	private static final String TAREA_REVISAR_EXPEDIENTE_PREPARAR_COMBO_GESTION = "gestion";
 	private static final String TAREA_REVISAR_EXPEDIENTE_ASIGNAR_LETRADO = "expediente_correcto";
+	private static final String TAREA_REVISAR_EXPEDIENTE_PREPARAR_PROC_INICIAR = "proc_iniciar";
 
 	@Autowired
 	GenericABMDao genericDao;
@@ -91,7 +100,7 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 
 		} else if (PrecontenciosoBPMConstants.PCO_RevisarExpediente.equals(tex.getTareaProcedimiento().getCodigo())) {
 			if(PrecontenciosoProjectContextImpl.RECOVERY_HAYA.equals(precontenciosoContext.getRecovery())){
-				executor.execute("plugin.precontencioso.inicializarPco", prc);
+				executor.execute(BO_PLUGIN_PRECONTENCIOSO_INICIALIZAR_PCO, prc);
 			}
 		} else if (PrecontenciosoBPMConstants.PCO_PrepararExpediente.equals(tex.getTareaProcedimiento().getCodigo())) {
 
@@ -106,22 +115,10 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 			
 		} else if (PrecontenciosoBPMConstants.PCO_EnviarExpedienteLetrado.equals(tex.getTareaProcedimiento().getCodigo())) {
 				
-			executor.execute("plugin.precontencioso.cambiarEstadoExpediete", prc.getId(), PrecontenciosoBPMConstants.PCO_ENVIADO);
+			executor.execute(BO_PLUGIN_PRECONTENCIOSO_CAMBIAR_ESTADO_EXPEDIETE, prc.getId(), PrecontenciosoBPMConstants.PCO_ENVIADO);
 
 		} else if (PrecontenciosoBPMConstants.PCO_RegistrarTomaDec.equals(tex.getTareaProcedimiento().getCodigo())) {
-			String procIniciar = "";
-			for(EXTTareaExternaValor valor : listado) {
-				if(TAREA_REGISTRAR_TOMA_DEC_COMBO_PROC_INICIAR.equals(valor.getNombre())){
-					procIniciar = valor.getValor();
-				}
-			}
-			ProcedimientoPCO pco = proxyFactory.proxy(ProcedimientoPcoApi.class).getPCOByProcedimientoId(prc.getId());
-			if(!Checks.esNulo(procIniciar)) {
-				TipoProcedimiento tipoProcInic = (TipoProcedimiento)diccionarioApi.dameValorDiccionarioByCod(TipoProcedimiento.class, procIniciar);
-				pco.setTipoProcIniciado(tipoProcInic);
-			}
-			proxyFactory.proxy(ProcedimientoPcoApi.class).update(pco);
-			
+			actualizarProcIniciar(prc, listado, TAREA_REGISTRAR_TOMA_DEC_COMBO_PROC_INICIAR);			
 		} else if (PrecontenciosoBPMConstants.PCO_RevisarSubsanacion.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
 		} else if (PrecontenciosoBPMConstants.PCO_IniciarProcJudicial.equals(tex.getTareaProcedimiento().getCodigo())) {
@@ -134,51 +131,45 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 			
 		} else if (PrecontenciosoBPMConstants.PCO_AsignacionGestores.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
-			executor.execute("plugin.precontencioso.inicializarPco", prc);
+			executor.execute(BO_PLUGIN_PRECONTENCIOSO_INICIALIZAR_PCO, prc);
 			
 		} else if (PrecontenciosoBPMConstants.PCO_DecTipoProcAutomatica.equals(tex.getTareaProcedimiento().getCodigo())) {
 	
 		} else if (PrecontenciosoBPMConstants.PCO_RevisarExpedientePreparar.equals(tex.getTareaProcedimiento().getCodigo())) {
-			if(!PrecontenciosoProjectContextImpl.RECOVERY_HAYA.equals(precontenciosoContext.getRecovery()) && 
-					!PrecontenciosoProjectContextImpl.RECOVERY_CAJAMAR.equals(precontenciosoContext.getRecovery()) ){
-				executor.execute("plugin.precontencioso.inicializarPco", prc);
+
+			String gestion = obtenerValorVariable(listado, TAREA_REVISAR_EXPEDIENTE_PREPARAR_COMBO_GESTION, "");
+			if (!DDTipoGestionRevisarExpJudicial.JUDICIALIZAR.equals(gestion)) {
+				executor.execute(BO_PLUGIN_PRECONTENCIOSO_CAMBIAR_ESTADO_EXPEDIETE, prc.getId(), DDEstadoPreparacionPCO.FINALIZADO);
 			} else {
-				String agencia_externa = "";
-				for(EXTTareaExternaValor valor : listado) {
-					if(TAREA_REVISAR_EXPEDIENTE_PREPARAR_COMBO_AGENCIA_EXTERNA.equals(valor.getNombre())){
-						agencia_externa = valor.getValor();
-					}
-				}
-				if (DDSiNo.SI.equals(agencia_externa)) {
-					executor.execute("plugin.precontencioso.cambiarEstadoExpediete", prc.getId(), PrecontenciosoBPMConstants.PCO_FINALIZADO);					
-				}
+				actualizarProcIniciar(prc, listado, TAREA_REVISAR_EXPEDIENTE_PREPARAR_PROC_INICIAR);			
 			}
 		} else if (PrecontenciosoBPMConstants.PCO_AsignarGestorLiquidacion.equals(tex.getTareaProcedimiento().getCodigo())) {
 			if(PrecontenciosoProjectContextImpl.RECOVERY_HAYA.equals(precontenciosoContext.getRecovery()) || 
 					PrecontenciosoProjectContextImpl.RECOVERY_CAJAMAR.equals(precontenciosoContext.getRecovery()) ){
-				executor.execute("plugin.precontencioso.inicializarPco", prc);
+				executor.execute(BO_PLUGIN_PRECONTENCIOSO_INICIALIZAR_PCO, prc);
 			}			
 		} else if (PrecontenciosoBPMConstants.PCO_RevisarExpedienteAsignarLetrado.equals(tex.getTareaProcedimiento().getCodigo())) {
-			String exp_correcto = "";
-			for(EXTTareaExternaValor valor : listado) {
-				if(TAREA_REVISAR_EXPEDIENTE_ASIGNAR_LETRADO.equals(valor.getNombre())){
-					exp_correcto = valor.getValor();
-				}
-			}
+			String exp_correcto = obtenerValorVariable(listado, TAREA_REVISAR_EXPEDIENTE_ASIGNAR_LETRADO, "");
 			if(DDSiNo.NO.equals(exp_correcto)) {
-				executor.execute("plugin.precontencioso.cambiarEstadoExpediete", prc.getId(), PrecontenciosoBPMConstants.PCO_PREPARACION);
+				executor.execute(BO_PLUGIN_PRECONTENCIOSO_CAMBIAR_ESTADO_EXPEDIETE, prc.getId(), PrecontenciosoBPMConstants.PCO_PREPARACION);
 			}
 		} else if (PrecontenciosoBPMConstants.PCO_RevisarExpDigCONC.equals(tex.getTareaProcedimiento().getCodigo())) {
-			String docCompleta = DDSiNo.NO;
-			for(EXTTareaExternaValor valor : listado) {
-				if("docCompleta".equals(valor.getNombre())){
-					docCompleta = valor.getValor();
-				}
-			}
+			String docCompleta = obtenerValorVariable(listado, TAREA_REVISAR_EXPDIG_DOC_COMPLETA, DDSiNo.NO);
 			if (DDSiNo.SI.equals(docCompleta)) {
-				executor.execute("plugin.precontencioso.cambiarEstadoExpediete", prc.getId(), PrecontenciosoBPMConstants.PCO_FINALIZADO);
+				executor.execute(BO_PLUGIN_PRECONTENCIOSO_CAMBIAR_ESTADO_EXPEDIETE, prc.getId(), PrecontenciosoBPMConstants.PCO_FINALIZADO);
 			}
 		}	
+	}
+
+	private void actualizarProcIniciar(Procedimiento prc,
+			List<EXTTareaExternaValor> listado, String nombreVariableProcIniciar) {
+		String procIniciar = obtenerValorVariable(listado,nombreVariableProcIniciar, "");
+		ProcedimientoPCO pco = proxyFactory.proxy(ProcedimientoPcoApi.class).getPCOByProcedimientoId(prc.getId());
+		if(!Checks.esNulo(procIniciar)) {
+			TipoProcedimiento tipoProcInic = (TipoProcedimiento)diccionarioApi.dameValorDiccionarioByCod(TipoProcedimiento.class, procIniciar);
+			pco.setTipoProcIniciado(tipoProcInic);
+		}
+		proxyFactory.proxy(ProcedimientoPcoApi.class).update(pco);
 	}
 
 	public List<EXTTareaExternaValor> obtenerValoresTareaByTexId(Long texId) {
@@ -186,5 +177,17 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 				.createFilter(FilterType.EQUALS, "tareaExterna.id", texId),
 				genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 	}
+
+	private String obtenerValorVariable(List<EXTTareaExternaValor> listado, String nombreVariable, String valorDefecto) {
+		String valorVariable = valorDefecto;
+		for(EXTTareaExternaValor valor : listado) {
+			if(nombreVariable.equals(valor.getNombre())){
+				valorVariable = valor.getValor();
+				break;
+			}
+		}
+		return valorVariable;
+	}
+
 
 }

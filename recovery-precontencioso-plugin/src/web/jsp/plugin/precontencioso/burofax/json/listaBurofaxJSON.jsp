@@ -33,6 +33,7 @@
 			</json:property>	
 			<json:property name="resultado" value="${burofax.resultado}"/>
 			<json:property name="acuseRecibo" value="${burofax.acuseRecibo}"/>
+			<json:property name="esPersonaManual" value="${burofax.esPersonaManual}"/>
 		</json:object>
 	</json:array>
 </fwk:json>		

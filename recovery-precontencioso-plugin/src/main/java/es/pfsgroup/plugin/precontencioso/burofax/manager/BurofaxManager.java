@@ -54,6 +54,7 @@ import es.pfsgroup.plugin.precontencioso.burofax.model.DDTipoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.ProcedimientoBurofaxTipoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ProcedimientoPcoApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dao.LiquidacionDao;
 import es.pfsgroup.plugin.precontencioso.liquidacion.manager.LiquidacionManager;
@@ -91,10 +92,16 @@ public class BurofaxManager implements BurofaxApi {
 	ProcedimientoManager procedimientoManager;
 	
 	@Autowired
+	ProcedimientoPcoApi procedimientoPcoApi;
+	
+	@Autowired
 	LiquidacionDao liquidacionDao; 
 	
 	@Autowired
 	ParametrizacionDao parametrizacionDao;
+	
+	@Autowired
+	private DireccionApi direccionApi;
 	
 	private final Log logger = LogFactory.getLog(getClass());
 	private final String DIRECTORIO_PDF_BUROFAX_PCO = "directorioPdfBurofaxPCO";
@@ -149,7 +156,7 @@ public class BurofaxManager implements BurofaxApi {
 			}
 
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getTipoBurofaxPorDefecto: " + e);
 		}
 		
 		if(!Checks.esNulo(procedimientoBurofaxTipoPCO)){
@@ -172,7 +179,7 @@ public class BurofaxManager implements BurofaxApi {
 			
 			contrato=genericDao.get(Contrato.class,filtro1);
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getContrato: " + e);
 		}
 		
 		return contrato;
@@ -188,7 +195,7 @@ public class BurofaxManager implements BurofaxApi {
 			
 			listaBurofax=(List<BurofaxPCO>) genericDao.getList(BurofaxPCO.class,filtro1);
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getListaBurofaxPCO: " + e);
 		}
 		
 		return listaBurofax;
@@ -205,7 +212,7 @@ public class BurofaxManager implements BurofaxApi {
 			idDireccion = proxyFactory.proxy(DireccionApi.class).guardarDireccionRetornaId(dto);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			logger.error(e);
+			logger.error("guardaDireccion: " + e);
 		}
 		return idDireccion;
 	}
@@ -270,7 +277,7 @@ public class BurofaxManager implements BurofaxApi {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			logger.error(e);
+			logger.error("getTiposBurofaxex: " + e);
 		}
 		
 		return dicionarioBurofax;
@@ -334,7 +341,7 @@ public class BurofaxManager implements BurofaxApi {
 			
 			
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("configurarTipoBurofax: " + e);
 		}
 		
 		return listaEnvioBurofax;
@@ -354,7 +361,7 @@ public class BurofaxManager implements BurofaxApi {
 			contenido= envioBurofax.getContenidoBurofax();
 			
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("obtenerContenidoBurofax: " + e);
 		}
 		
 		return contenido;
@@ -372,7 +379,7 @@ public class BurofaxManager implements BurofaxApi {
 			
 			genericDao.save(EnvioBurofaxPCO.class,envioBurofax);
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("configurarContenidoBurofax: " + e);
 		}
 	}
 	
@@ -387,7 +394,7 @@ public class BurofaxManager implements BurofaxApi {
 			persona=(Persona) genericDao.get(Persona.class,filtro1);
 			
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getPersonaById: " + e);
 		}
 		
 		return persona;
@@ -420,7 +427,7 @@ public class BurofaxManager implements BurofaxApi {
 			
 			
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("guardaPersonaCreandoBurofax: " + e);
 		}
 	}
 	
@@ -539,7 +546,7 @@ public class BurofaxManager implements BurofaxApi {
 				genericDao.save(BurofaxEnvioIntegracionPCO.class, envioIntegracion);
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("guardarEnvioBurofax: " + e);
 		}
 		
 	}
@@ -750,7 +757,7 @@ public class BurofaxManager implements BurofaxApi {
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idEnvio);
 			envioBurofax=(EnvioBurofaxPCO) genericDao.get(EnvioBurofaxPCO.class,filtro1);
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getTipoBurofaxByIdEnvio: " + e);
 		}
 		
 		return envioBurofax.getTipoBurofax();
@@ -765,7 +772,7 @@ public class BurofaxManager implements BurofaxApi {
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
 			tipoBurofax=(DDTipoBurofaxPCO) genericDao.get(DDTipoBurofaxPCO.class,filtro1);
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getTipoBurofaxByCodigo: " + e);
 		}
 	
 		return tipoBurofax;
@@ -780,7 +787,7 @@ public class BurofaxManager implements BurofaxApi {
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idEnvio);
 			envioBurofax=(EnvioBurofaxPCO) genericDao.get(EnvioBurofaxPCO.class,filtro1);
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getEnvioBurofaxById: " + e);
 		}
 	
 		return envioBurofax;
@@ -797,7 +804,7 @@ public class BurofaxManager implements BurofaxApi {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			logger.error(e);
+			logger.error("getEstadosBurofax: " + e);
 		}
 		
 		return dicionarioEstadoBurofax;
@@ -830,7 +837,7 @@ public class BurofaxManager implements BurofaxApi {
 				genericDao.save(EnvioBurofaxPCO.class,envio);
 			}
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("guardaInformacionEnvio: " + e);
 		}
 		
 		
@@ -847,7 +854,7 @@ public class BurofaxManager implements BurofaxApi {
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", id);
 			resultadoBurofax=(DDResultadoBurofaxPCO) genericDao.get(DDResultadoBurofaxPCO.class,filtro1);
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getResultadoBurofaxPCOById: " + e);
 		}
 		
 		return resultadoBurofax;
@@ -864,7 +871,7 @@ public class BurofaxManager implements BurofaxApi {
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idEstado);
 			estadoBurofax=(DDEstadoBurofaxPCO) genericDao.get(DDEstadoBurofaxPCO.class,filtro1);
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getEstadoBurofaxById: " + e);
 		}
 		
 		return estadoBurofax;
@@ -881,7 +888,7 @@ public class BurofaxManager implements BurofaxApi {
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "envioId", idEnvio);
 			burofaxEnvio=(BurofaxEnvioIntegracionPCO) genericDao.get(BurofaxEnvioIntegracionPCO.class,filtro1);
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("getBurofaxEnvioIntegracionByIdEnvio: " + e);
 		}
 		
 		return burofaxEnvio;
@@ -967,5 +974,41 @@ public class BurofaxManager implements BurofaxApi {
 				
 		
 		return textoBuro;
+	}
+
+	//funcion duplicada para saber origen, cuando se haga merge bueno, eliminar
+	public boolean saberOrigen(Long idDireccion){
+		boolean variable = false;
+		try{
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idDireccion);
+			Direccion direccion = (Direccion)  genericDao.get(Direccion.class, filtro);
+			if(direccion.getOrigen().equalsIgnoreCase("Manual")){
+				variable = true;
+			}
+		}catch(Exception e){
+			logger.error("saberOrigen: " + e);
+		}
+		return variable;
+	}
+
+	@Override
+	public void actualizaDireccion(DireccionAltaDto dto, Long idDireccion){
+		direccionApi.actualizarDireccion(dto, idDireccion);
+	}
+
+	public Direccion getDireccion(Long idDireccion) {
+		Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idDireccion);
+		Direccion direccion=genericDao.get(Direccion.class,filtro1);
+		return direccion;
+	}
+
+	public boolean resultadoMostrarBoton(Long idProcedimiento, List<String> codigosTiposGestores) {
+		Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idProcedimiento);
+    	ProcedimientoPCO procedimientoPco=(ProcedimientoPCO) genericDao.get(ProcedimientoPCO.class,filtro1);
+    	Procedimiento procedimiento=procedimientoPco.getProcedimiento();
+    	Long idProcedimientoEnvio = procedimiento.getId();
+    	
+		boolean mostrarBoton = procedimientoPcoApi.mostrarSegunCodigos(idProcedimientoEnvio, codigosTiposGestores);
+		return mostrarBoton;
 	}
 }

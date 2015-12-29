@@ -221,6 +221,8 @@ public interface BurofaxApi {
 	
 	@BusinessOperationDefinition(OBTENER_BUROFAX_ENVIO_INTE)
 	BurofaxEnvioIntegracionPCO getBurofaxEnvioIntegracionByIdEnvio(Long idEnvio);
+
+	void actualizaDireccion(DireccionAltaDto dto, Long idDireccion);
 	
 	
 	

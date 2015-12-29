@@ -47,4 +47,10 @@ public interface DireccionApi {
 	@BusinessOperationDefinition(GUARDAR_DIRECCION_RETORNA_ID)
 	public Long guardarDireccionRetornaId(DireccionAltaDto dto) throws Exception;
 
+	/**
+	 * Guarda una direcci�n actualiada introducida de forma manua en Recovery
+	 * 
+	 */
+	public void actualizarDireccion(DireccionAltaDto dto, Long idDireccion);
+
 }

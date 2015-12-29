@@ -115,12 +115,22 @@ public class EXTAsuntoController {
 	private List<List<String>> getDataToExport(List<EXTAsunto> asuntos) {
 		List<List<String>> datos = new ArrayList<List<String>>();
 
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:MM");
+
 		for (EXTAsunto asunto : asuntos) {
 			List<String> filaExportar = new ArrayList<String>();
 
 			filaExportar.add(ObjectUtils.toString(asunto.getId())); // codigo
 			filaExportar.add(asunto.getNombre()); // nombre
-			filaExportar.add(ObjectUtils.toString(asunto.getAuditoria().getFechaCrear())); // fechaCrear
+
+			Date fechaCrear =  null;
+			if (asunto.getAuditoria() != null) {
+				fechaCrear = asunto.getAuditoria().getFechaCrear();
+			}
+
+			String fechaCrearFormateada = fechaCrear != null ? dateFormat.format(asunto.getAuditoria().getFechaCrear()) : "";
+
+			filaExportar.add(fechaCrearFormateada); // fechaCrear
 			filaExportar.add(asunto.getCodigoDecodificado()); // estado
 			filaExportar.add(asunto.getGestorNombreApellidosSQL()); // gestor
 			filaExportar.add(asunto.getDespachoSQL()); // despacho
@@ -137,9 +147,9 @@ public class EXTAsuntoController {
 		ArrayList<String> cabeceras = new ArrayList<String>();
 
 		//Cabecera de las columnas
-		cabeceras.add("Codigo");
+		cabeceras.add("C\u00f3digo");
 		cabeceras.add("Nombre");
-		cabeceras.add("Fecha creacion");
+		cabeceras.add("Fecha creaci\u00f3n");
 		cabeceras.add("Estado");
 		cabeceras.add("Gestor");
 		cabeceras.add("Despacho");

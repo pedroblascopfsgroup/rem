@@ -17,14 +17,14 @@ set feedback on
 DECLARE
 
     V_SQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
-    V_ESQUEMA VARCHAR2(25 CHAR):= 'CM01'; -- Configuracion Esquemas
-    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= 'CMMASTER'; -- Configuracion Esquemas
+    V_ESQUEMA VARCHAR2(25 CHAR):= 'HAYA02'; -- Configuracion Esquemas
+    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= 'HAYAMASTER'; -- Configuracion Esquemas
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
-    USUARIO_C varchar2(20 CHAR) := 'MIGRACM01PCO';    
-    USUARIO_M varchar2(20 CHAR) := 'PARAMIGRACM01PCO';
+    USUARIO_C varchar2(20 CHAR) := 'MIGRAHAYA02PCO';    
+    USUARIO_M varchar2(20 CHAR) := 'PARAMIGRAHAYA02PCO';
 
 /********************************************************/
 /**       Se paralizan los procedimientos y tareas    **/

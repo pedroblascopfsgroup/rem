@@ -157,7 +157,10 @@ dbms_output.put_line('[INI] - '||to_char(sysdate,'HH24:MI:SS')||' Inicio del pro
                            ,''DESTINATARIO_NOTIF'', null
                            ,''EMISOR_NOTIF'', '||v_usu_id||'
                            ) as irg_valor
-                   , tmp.tar_descripcion as irg_valor_clob
+                   , decode(sub.irg_clave
+                           ,''DESCRIPCION_NOTIF'', tmp.tar_descripcion
+                           , null
+                           ) as irg_valor_clob
                    , ''0'' as version
                    , '''||usuario||''' as usuariocrear
                    , sysdate as fechacrear

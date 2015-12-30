@@ -502,6 +502,21 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		return resultado;		
 	}
 	
+	public String dameDecisionPrepararExpediente(Long idProc) {
+		String resultado = POSTURNADO;
+		try {		
+			ProcedimientoPCO procedimientoPco = genericDao.get(ProcedimientoPCO.class, 
+					genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProc));
+			String tipoAsunto = procedimientoPco.getProcedimiento().getAsunto().getTipoAsunto().getCodigo();
+			if (DDTiposAsunto.CONCURSAL.equals(tipoAsunto)){
+				resultado = CONCURSO;
+			}else if(procedimientoPco.getPreturnado()) {
+				resultado = PRETURNADO;
+			}		
+		} catch (Exception e) {}
+		return resultado;
+	}
+	
 	
 	/**
 	 * Devuelve el tipo de asunto al que está asignado el procedimiento (litigio, concurso) para usarlo como transición del BPM

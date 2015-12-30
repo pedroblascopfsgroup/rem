@@ -1,99 +1,100 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="precontenciosobankia" width="1081" height="586">
+<root-container name="precontenciosobankia" width="1486" height="888">
   <node name="Inicio" x="21" y="16" width="132" height="36">
     <edge>
       <label x="-35" y="-18"/>
     </edge>
   </node>
-  <node name="PCO_PreTurnadoDecision" x="440" y="13" width="132" height="36">
+  <node name="PCO_PreTurnadoDecision" x="929" y="20" width="223" height="36">
+    <edge>
+      <label x="-85" y="-5"/>
+    </edge>
+    <edge>
+      <label x="-101" y="113"/>
+      <bendpoint w1="-326" h1="18" w2="143" h2="-253"/>
+      <bendpoint w1="-549" h1="26" w2="-80" h2="-245"/>
+      <bendpoint w1="-658" h1="27" w2="-129" h2="-163"/>
+      <bendpoint w1="-658" h1="188" w2="-129" h2="-2"/>
+    </edge>
+  </node>
+  <node name="PCO_RegistrarAceptacion" x="437" y="82" width="179" height="36">
+    <edge>
+      <label x="-44" y="1"/>
+    </edge>
+  </node>
+  <node name="PCO_RegistrarAceptacionDecision" x="789" y="126" width="240" height="36">
+    <edge>
+      <label x="-49" y="-14"/>
+    </edge>
+    <edge>
+      <label x="-68" y="-17"/>
+      <bendpoint w1="-153" h1="43" w2="176" h2="-17"/>
+    </edge>
+  </node>
+  <node name="PCO_RevisarNoAceptacion" x="1173" y="125" width="205" height="36">
+    <edge>
+      <label x="-209" y="-21"/>
+      <bendpoint w1="-139" h1="-32" w2="575" h2="-28"/>
+    </edge>
+  </node>
+  <node name="PCO_RevisarExpediente" x="428" y="163" width="176" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
-    <edge>
-      <label x="6" y="-89"/>
-      <bendpoint w1="-307" h1="41" w2="-104" h2="-159"/>
-      <bendpoint w1="-309" h1="191" w2="-106" h2="-9"/>
-    </edge>
   </node>
-  <node name="PCO_RegistrarAceptacion" x="217" y="85" width="179" height="36">
-    <edge>
-      <label x="-30" y="1"/>
-    </edge>
-  </node>
-  <node name="PCO_RegistrarAceptacionDecision" x="465" y="85" width="207" height="36">
-    <edge>
-      <label x="-42" y="5"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-      <bendpoint w1="-1" h1="70" w2="262" h2="-2"/>
-    </edge>
-  </node>
-  <node name="PCO_RevisarNoAceptacion" x="756" y="84" width="176" height="36">
-    <edge>
-      <label x="161" y="-15"/>
-      <bendpoint w1="-61" h1="40" w2="477" h2="39"/>
-      <bendpoint w1="-501" h1="40" w2="37" h2="39"/>
-    </edge>
-  </node>
-  <node name="PCO_RevisarExpediente" x="217" y="157" width="176" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="PCO_PrepararExpediente" x="216" y="213" width="174" height="36">
+  <node name="PCO_PrepararExpediente" x="384" y="262" width="174" height="36">
     <edge>
       <label x="-31" y="-15"/>
     </edge>
   </node>
-  <node name="PCO_SolicitarDoc" x="10" y="60" width="165" height="30"/>
-  <node name="PCO_PrepararExpedienteDecision" x="451" y="215" width="214" height="36">
+  <node name="PCO_SolicitarDoc" x="8" y="72" width="175" height="35"/>
+  <node name="PCO_PrepararExpedienteDecision" x="423" y="416" width="214" height="36">
     <edge>
       <label x="-31" y="-18"/>
     </edge>
     <edge>
-      <label x="38" y="-64"/>
-      <bendpoint w1="-361" h1="40" w2="-114" h2="-96"/>
-      <bendpoint w1="-359" h1="136" w2="-112" h2="0"/>
+      <label x="-83" y="-9"/>
+    </edge>
+    <edge>
+      <label x="-30" y="-16"/>
+      <bendpoint w1="118" h1="-207" w2="-153" h2="3"/>
     </edge>
   </node>
-  <node name="PCO_RegistrarAceptacionPost" x="215" y="285" width="192" height="36">
+  <node name="PCO_RegistrarAceptacionPost" x="716" y="492" width="222" height="36">
     <edge>
       <label x="-35" y="2"/>
     </edge>
   </node>
-  <node name="PCO_RegistrarAceptacionPostDecision" x="477" y="285" width="227" height="36">
+  <node name="PCO_RegistrarAceptacionPostDecision" x="1039" y="541" width="264" height="36">
     <edge>
-      <label x="-43" y="-14"/>
+      <label x="-50" y="7"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
       <bendpoint w1="1" h1="65" w2="280" h2="-1"/>
     </edge>
   </node>
-  <node name="PCO_RevisarNoAceptacionPost" x="791" y="286" width="204" height="36">
+  <node name="PCO_RevisarNoAceptacionPost" x="1050" y="426" width="231" height="36">
     <edge>
-      <label x="199" y="-4"/>
+      <label x="-47" y="-17"/>
       <bendpoint w1="-143" h1="28" w2="439" h2="29"/>
-      <bendpoint w1="-499" h1="27" w2="83" h2="28"/>
+      <bendpoint w1="-317" h1="30" w2="118" h2="-32"/>
     </edge>
   </node>
-  <node name="PCO_EnviarExpedienteLetrado" x="216" y="351" width="190" height="36">
+  <node name="PCO_EnviarExpedienteLetrado" x="423" y="510" width="224" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="PCO_RegistrarTomaDec" x="220" y="411" width="184" height="36">
+  <node name="PCO_RegistrarTomaDec" x="443" y="594" width="184" height="36">
     <edge>
       <label x="-33" y="4"/>
     </edge>
   </node>
-  <node name="PCO_RegistrarTomaDecDecision" x="475" y="412" width="238" height="36">
+  <node name="PCO_RegistrarTomaDecDecision" x="723" y="595" width="238" height="36">
     <edge>
-      <label x="-45" y="-15"/>
-      <bendpoint w1="-181" h1="35" w2="104" h2="-31"/>
-      <bendpoint w1="-286" h1="35" w2="-1" h2="-31"/>
+      <label x="-134" y="9"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -102,48 +103,47 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="PCO_RevisarSubsanacion" x="219" y="471" width="179" height="36">
+  <node name="PCO_RevisarSubsanacion" x="452" y="693" width="179" height="36">
     <edge>
-      <label x="5" y="-10"/>
+      <label x="3" y="7"/>
     </edge>
   </node>
-  <node name="PCO_IniciarProcJudicial" x="832" y="411" width="161" height="36">
+  <node name="PCO_IniciarProcJudicial" x="1118" y="660" width="172" height="36">
     <edge>
       <label x="-5" y="-14"/>
     </edge>
   </node>
-  <node name="PCO_RevisarSubsanacionDecision" x="201" y="528" width="218" height="36">
+  <node name="PCO_RevisarSubsanacionDecision" x="418" y="779" width="245" height="36">
     <edge>
-      <label x="8" y="39"/>
-      <bendpoint w1="-295" h1="2" w2="-297" h2="119"/>
-      <bendpoint w1="-294" h1="-114" w2="-296" h2="3"/>
+      <label x="-61" y="2"/>
+      <bendpoint w1="-109" h1="-31" w2="-104" h2="154"/>
+      <bendpoint w1="-111" h1="-118" w2="-106" h2="67"/>
     </edge>
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-30" y="-19"/>
     </edge>
   </node>
-  <node name="PCO_SubsanarIncidenciaExp" x="33" y="473" width="169" height="36">
+  <node name="PCO_SubsanarIncidenciaExp" x="135" y="782" width="169" height="36">
     <edge>
-      <label x="4" y="4"/>
+      <label x="-109" y="22"/>
       <bendpoint w1="1" h1="-44" w2="-193" h2="78"/>
+      <bendpoint w1="168" h1="-235" w2="-148" h2="37"/>
     </edge>
   </node>
-  <node name="PCO_ValidarCambioProc" x="472" y="474" width="154" height="36">
+  <node name="PCO_ValidarCambioProc" x="755" y="670" width="174" height="36">
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-52" y="7"/>
     </edge>
   </node>
-  <node name="PCO_SubsanarCambioProc" x="663" y="473" width="165" height="36">
+  <node name="PCO_SubsanarCambioProc" x="918" y="727" width="195" height="36">
     <edge>
-      <label x="5" y="-10"/>
-      <bendpoint w1="-1" h1="-99" w2="434" h2="24"/>
+      <label x="-146" y="-31"/>
+      <bendpoint w1="-2" h1="-163" w2="478" h2="54"/>
     </edge>
   </node>
-  <node name="PCO_ValidarCambioProcDecision" x="453" y="530" width="192" height="36">
+  <node name="PCO_ValidarCambioProcDecision" x="732" y="802" width="226" height="36">
     <edge>
-      <label x="5" y="-10"/>
-      <bendpoint w1="-116" h1="-22" w2="121" h2="97"/>
-      <bendpoint w1="-115" h1="-92" w2="122" h2="27"/>
+      <label x="25" y="7"/>
     </edge>
     <edge>
       <label x="-4" y="-5"/>
@@ -153,25 +153,57 @@
       <bendpoint w1="308" h1="0" w2="-55" h2="119"/>
     </edge>
   </node>
-  <node name="PCO_RegResultadoExped" x="10" y="90" width="165" height="30"/>
-  <node name="PCO_RecepcionExped" x="10" y="120" width="165" height="30"/>
-  <node name="PCO_RegResultadoDoc" x="10" y="150" width="165" height="30"/>
-  <node name="PCO_RegEnvioDoc" x="10" y="180" width="165" height="30"/>
-  <node name="PCO_RecepcionDoc" x="10" y="210" width="165" height="30"/>
-  <node name="PCO_AdjuntarDoc" x="10" y="240" width="165" height="30"/>
-  <node name="PCO_GenerarLiq" x="10" y="270" width="165" height="30"/>
-  <node name="PCO_ConfirmarLiq" x="10" y="300" width="165" height="30"/>
-  <node name="PCO_EnviarBurofax" x="10" y="330" width="165" height="30"/>
-  <node name="PCO_AcuseReciboBurofax" x="10" y="360" width="165" height="30"/>
-  <node name="Fin" x="905" y="526" width="132" height="36"/>
-  <node name="PCO_PreTurnado" x="224" y="12" width="132" height="36">
+  <node name="PCO_RegResultadoExped" x="8" y="108" width="188" height="38"/>
+  <node name="PCO_RecepcionExped" x="9" y="147" width="177" height="40"/>
+  <node name="PCO_RegResultadoDoc" x="9" y="189" width="180" height="35"/>
+  <node name="PCO_RegEnvioDoc" x="9" y="226" width="178" height="35"/>
+  <node name="PCO_RecepcionDoc" x="10" y="262" width="175" height="34"/>
+  <node name="PCO_AdjuntarDoc" x="11" y="297" width="176" height="37"/>
+  <node name="PCO_GenerarLiq" x="11" y="335" width="175" height="36"/>
+  <node name="PCO_ConfirmarLiq" x="9" y="373" width="207" height="39"/>
+  <node name="PCO_EnviarBurofax" x="10" y="414" width="206" height="36"/>
+  <node name="PCO_AcuseReciboBurofax" x="9" y="451" width="208" height="36"/>
+  <node name="PCO_PreTurnado" x="437" y="20" width="159" height="36">
+    <edge>
+      <label x="-52" y="-16"/>
+    </edge>
+  </node>
+  <node name="PCO_PostTurnado" x="755" y="412" width="132" height="36">
+    <edge>
+      <label x="-77" y="-13"/>
+    </edge>
+  </node>
+  <node name="PCO_RevisarExpDigCONC" x="693" y="206" width="216" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="PCO_PostTurnado" x="785" y="208" width="132" height="36">
+  <node name="PCO_RevisarExpDigCONCDecision" x="1195" y="209" width="236" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-19" y="-216"/>
+      <bendpoint w1="55" h1="517" w2="74" h2="-57"/>
+    </edge>
+  </node>
+  <node name="PCO_RevisarSubsanacionCONC" x="1076" y="277" width="222" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
+  <node name="PCO_RevisarSubsanacionCONCDecision" x="983" y="356" width="265" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-30" y="3"/>
+    </edge>
+  </node>
+  <node name="PCO_ResolverIncidenciaExpCONC" x="649" y="320" width="244" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="1228" y="783" width="132" height="36"/>
 </root-container>

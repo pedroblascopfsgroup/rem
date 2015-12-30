@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="tramiteFaseComunAbreviadoV4" width="1520" height="1724">
+<root-container name="tramiteFaseComunAbreviadoV4" width="1486" height="1724">
   <node name="Inicio" x="250" y="-238" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -231,7 +231,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P412_BPMAceptacionConcursosPrecontencioso" x="715" y="-36" width="310" height="36">
+  <node name="P412_BPMPreparacionDocumentalPrecontencioso" x="715" y="-36" width="310" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

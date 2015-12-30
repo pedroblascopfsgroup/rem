@@ -35,7 +35,7 @@ DECLARE
     TYPE T_TIPO_TAP IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
-      T_TIPO_TAP('P412','P412_BPMAceptacionConcursosPrecontencioso',null,null,null,null,'P421','0','Tramite de Aceptación de concursos de precontencioso','0','dd','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null)
+      T_TIPO_TAP('P412','P412_BPMPreparacionDocumentalPrecontencioso',null,null,null,null,'PCO','0','Trámite de Preparación documental del precontencioso','0','dd','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null)
     ); 
     V_TMP_TIPO_TAP T_TIPO_TAP;
 
@@ -43,7 +43,7 @@ DECLARE
     TYPE T_TIPO_PLAZAS IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_PLAZAS IS TABLE OF T_TIPO_PLAZAS;
     V_TIPO_PLAZAS T_ARRAY_PLAZAS := T_ARRAY_PLAZAS(
-       T_TIPO_PLAZAS(null,null,'P412_BPMAceptacionConcursosPrecontencioso','300*24*60*60*1000L','0','0','DD')
+       T_TIPO_PLAZAS(null,null,'P412_BPMPreparacionDocumentalPrecontencioso','300*24*60*60*1000L','0','0','DD')
     ); 
     V_TMP_TIPO_PLAZAS T_TIPO_PLAZAS;
     
@@ -52,7 +52,7 @@ DECLARE
     TYPE T_TIPO_TFI IS TABLE OF VARCHAR2(5000);
     TYPE T_ARRAY_TFI IS TABLE OF T_TIPO_TFI;
     V_TIPO_TFI T_ARRAY_TFI := T_ARRAY_TFI(
-       T_TIPO_TFI('P412_BPMAceptacionConcursosPrecontencioso','0','label','titulo','Trámite de Aceptación de concursos desde el precontencioso',null,null,null,null,'0','DD')
+       T_TIPO_TFI('P412_BPMPreparacionDocumentalPrecontencioso','0','label','titulo','Trámite de Preparación documental del precontencioso',null,null,null,null,'0','DD')
            ); 
     V_TMP_TIPO_TFI T_TIPO_TFI;
     
@@ -147,6 +147,16 @@ BEGIN
       END LOOP;
     COMMIT;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'.' || VAR_TABLENAME || '... Campos');
+    
+    V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''P412_BPMTramiteAceptacionV4'' ';
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+    IF V_NUM_TABLAS > 0 THEN
+		DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... ACTUALIZACION DEL CAMPO DD_TPO_ID_BPM P412_BPMTramiteAceptacionV4');    	
+		V_SQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET DD_TPO_ID_BPM = (SELECT DD_TPO_ID FROM DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = ''P421'') WHERE  TAP_CODIGO = ''P412_BPMTramiteAceptacionV4'' ';
+    	EXECUTE IMMEDIATE V_SQL;
+    	DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'... ACTUALIZACION DEL CAMPO DD_TPO_ID_BPM P412_BPMTramiteAceptacionV4');
+    END IF;
+    
 
 COMMIT;
  

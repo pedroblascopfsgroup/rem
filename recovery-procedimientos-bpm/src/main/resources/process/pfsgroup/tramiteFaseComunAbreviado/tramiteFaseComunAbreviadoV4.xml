@@ -347,10 +347,10 @@
 	
 	<fork name="fork1">
 		<transition to="P412_BPMTramiteAceptacionV4" name="aceptacion"></transition>
-		<transition to="P412_BPMAceptacionConcursosPrecontencioso" name="precontencioso"></transition>
+		<transition to="P412_BPMPreparacionDocumentalPrecontencioso" name="precontencioso"></transition>
 	</fork>
 
-	<state name="P412_BPMAceptacionConcursosPrecontencioso">
+	<state name="P412_BPMPreparacionDocumentalPrecontencioso">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"

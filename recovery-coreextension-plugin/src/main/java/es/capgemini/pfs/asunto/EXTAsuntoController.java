@@ -1,12 +1,12 @@
 package es.capgemini.pfs.asunto;
 
 import java.util.List;
-
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
 import javax.annotation.Resource;
@@ -24,6 +24,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
+import es.capgemini.pfs.utils.FormatUtils;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
@@ -115,7 +116,7 @@ public class EXTAsuntoController {
 	private List<List<String>> getDataToExport(List<EXTAsunto> asuntos) {
 		List<List<String>> datos = new ArrayList<List<String>>();
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:MM");
+		SimpleDateFormat dateFormat = new SimpleDateFormat(FormatUtils.DDMMYYYY);
 
 		for (EXTAsunto asunto : asuntos) {
 			List<String> filaExportar = new ArrayList<String>();
@@ -135,8 +136,14 @@ public class EXTAsuntoController {
 			filaExportar.add(asunto.getGestorNombreApellidosSQL()); // gestor
 			filaExportar.add(asunto.getDespachoSQL()); // despacho
 			filaExportar.add(asunto.getSupervisorNombreApellidosSQL() != null ? asunto.getSupervisorNombreApellidosSQL() : ""); // supervisor
-			filaExportar.add(ObjectUtils.toString(asunto.getSaldoTotalPorContratosSQL())); // saldoTotal
-			filaExportar.add(ObjectUtils.toString(asunto.getImporteEstimado())); // importeEstimado
+
+			// Formateo con , separador de decimales
+			String saldoTotalPorContratos = asunto.getSaldoTotalPorContratosSQL() != null ? String.format(Locale.GERMANY, "%.2f", asunto.getSaldoTotalPorContratosSQL()) : "";
+			filaExportar.add(saldoTotalPorContratos); // saldoTotal
+
+			// Formateo con , separador de decimales
+			String importeEstimado = asunto.getImporteEstimado() != null ? String.format(Locale.GERMANY, "%.2f", asunto.getImporteEstimado()) : "";
+			filaExportar.add(importeEstimado); // importeEstimado
 
 			datos.add(filaExportar);
 		}

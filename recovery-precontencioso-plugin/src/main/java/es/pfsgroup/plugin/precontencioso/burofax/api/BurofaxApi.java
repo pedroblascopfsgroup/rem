@@ -8,8 +8,10 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.direccion.dto.DireccionAltaDto;
+import es.capgemini.pfs.persona.dto.DtoPersonaManual;
 import es.capgemini.pfs.persona.model.Persona;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
+import es.pfsgroup.plugin.precontencioso.burofax.dto.ContratosPCODto;
 import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxEnvioIntegracionPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDEstadoBurofaxPCO;
@@ -159,7 +161,8 @@ public interface BurofaxApi {
 	 * @return
 	 */
 	@BusinessOperationDefinition(OBTENER_PERSONAS_CON_CONTRATO)
-	Collection<? extends Persona> getPersonasConContrato(String query);
+	Collection<DtoPersonaManual> getPersonasConContrato(String query);
+	Collection<DtoPersonaManual> getPersonasConContrato(String query, boolean addManuales);
 	
 	
 	/**
@@ -221,7 +224,6 @@ public interface BurofaxApi {
 	
 	@BusinessOperationDefinition(OBTENER_BUROFAX_ENVIO_INTE)
 	BurofaxEnvioIntegracionPCO getBurofaxEnvioIntegracionByIdEnvio(Long idEnvio);
-	
-	
-	
+
+	List<ContratosPCODto> getContratosProcPersona(Long idProcedimientoPCO, Long idPersona, Boolean manual);
 }

@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.precontencioso.burofax.controller;
 import java.text.Collator;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +32,8 @@ import es.capgemini.pfs.direccion.dto.DireccionAltaDto;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Direccion;
+import es.capgemini.pfs.persona.dto.DtoPersonaManual;
+import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -79,7 +82,7 @@ public class BurofaxController {
 	
 	public static final String JSON_LISTA_DOCUMENTOS = "plugin/precontencioso/documento/json/solicitudesDocumentoJSON";
 	
-	public static final String JSON_LISTA_CONTRATOS_PROCEDIMIENTOS = "plugin/precontencioso/burofax/json/listadoContratosProcedimientoJSON";
+	public static final String JSON_LISTA_CONTRATOS_PROCEDIMIENTOS = "plugin/precontencioso/burofax/json/listadoContratosProcedimientoIntevJSON";
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 	
@@ -444,7 +447,7 @@ public class BurofaxController {
 	
 
 	/**
-     * Metodo que devuelve las personas para mostrarlos en el desplegable din�mico del campo asunto.
+     * Metodo que devuelve las personas para mostrarlos en el desplegable din�mico del campo Persona.
      * @param query
      * @param model
      * @return
@@ -453,7 +456,26 @@ public class BurofaxController {
     @RequestMapping
     public String getPersonasInstant(String query, ModelMap model) {
     	
-        model.put("data",burofaxManager.getPersonasConContrato(query));
+        model.put("data", burofaxManager.getPersonasConContrato(query));
+        return JSON_LISTA_PERSONAS;
+    }
+    
+    @SuppressWarnings("unchecked")
+    @RequestMapping
+    public String getPersonasInstantConManuales(String query, ModelMap model) {
+    	
+    	Collection<DtoPersonaManual> personas = burofaxManager.getPersonasConContrato(query,true);
+    	
+    	DtoPersonaManual nueva = new DtoPersonaManual();
+    	nueva.setManual(true);
+    	Persona persona = new Persona();
+    	persona.setId(null);
+    	persona.setNom50("Nueva Persona");
+    	nueva.setPersona(persona);
+    	
+    	personas.add(nueva);
+    	
+        model.put("data", personas);
         return JSON_LISTA_PERSONAS;
     }
     
@@ -660,9 +682,10 @@ public class BurofaxController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String getRelacionContratos(ModelMap model,Long idProcedimiento) {
+	public String getRelacionContratos(ModelMap model,Long idProcedimiento, Long idPersona, Boolean manual) {
 		
-		model.put("procedimiento", procedimientoPCODao.get(idProcedimiento).getProcedimiento());
+		//model.put("procedimiento", procedimientoPCODao.get(idProcedimiento).getProcedimiento());
+		model.put("procedimiento", burofaxManager.getContratosProcPersona(idProcedimiento, idPersona, manual));
 		
 		return JSON_LISTA_CONTRATOS_PROCEDIMIENTOS;
 	}

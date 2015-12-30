@@ -50,6 +50,9 @@ public class PersonaManual implements Serializable, Auditable {
 	@Column(name="PEM_APELLIDO2")
 	private String apellido2;
 	
+	@Column(name="PEM_NOM50")
+	private String nom50;
+	
 	@Embedded
 	private Auditoria auditoria;
 	
@@ -63,6 +66,15 @@ public class PersonaManual implements Serializable, Auditable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public List<ContratoPersonaManual> getContratosPersonaManual() {
+		return contratosPersonaManual;
+	}
+
+	public void setContratosPersonaManual(
+			List<ContratoPersonaManual> contratosPersonaManual) {
+		this.contratosPersonaManual = contratosPersonaManual;
 	}
 
 	public String getDocId() {
@@ -95,6 +107,14 @@ public class PersonaManual implements Serializable, Auditable {
 
 	public void setApellido2(String apellido2) {
 		this.apellido2 = apellido2;
+	}
+
+	public String getNom50() {
+		return nom50;
+	}
+
+	public void setNom50(String nom50) {
+		this.nom50 = nom50;
 	}
 
 	@Override

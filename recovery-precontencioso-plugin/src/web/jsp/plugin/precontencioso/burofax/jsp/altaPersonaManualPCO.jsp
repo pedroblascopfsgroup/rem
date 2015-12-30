@@ -151,12 +151,12 @@
 
     //Store del combo de personas
     var personasComboStore = page.getStore({
-        flow:'burofax/getPersonasInstant'
+        flow:'burofax/getPersonasInstantConManuales'
         ,remoteSort:false
         ,autoLoad: false
         ,reader : new Ext.data.JsonReader({
             root:'data'            
-            ,fields:['idPersona','dniPersona','nombrePersona','personaCompleto','nombre','apellido1','apellido2']
+            ,fields:['idPersona','dniPersona','nombrePersona','personaCompleto','nombre','apellido1','apellido2','manual']
         })
     });    
     
@@ -180,7 +180,7 @@
         ,itemSelector: 'div.search-item'
         ,loadingText: '<s:message code="app.buscando" text="**Buscando..."/>'
         ,onSelect: function(record) {
-        	if(record.data.idPersona == null){
+        	if(record.data.idPersona == null || record.data.idPersona == ''){
 	        	Ext.MessageBox.confirm("<s:message code="plugin.precontencioso.grid.burofax.aniadirNotificado.clienteNoEncontrado" text="**Cliente no encontrado" />", "<s:message code="plugin.precontencioso.grid.burofax.aniadirNotificado.deseaDarAlta" text="**No encontrado en Recovery.¿Desea dar de alta a esta persona como notificado?" />", function(resp){
 					if (resp=='no'){
 						return;
@@ -190,10 +190,13 @@
 						idPersona.reset();
 						dniPersona.reset();
 						nombrePersona.reset();
-						btnIncluir.setDisabled(true);
+						//btnIncluir.setDisabled(true);
 						persona.setValue('Nueva Persona');
-						persona.focus();
-					 	return;
+
+						debugger;
+						relacionContratosStore.webflow({idProcedimiento: data.precontencioso.id, manual: false});
+						dniPersona.focus();
+					 	//return;
 					}
 				});
         	}else{
@@ -205,18 +208,21 @@
 	        	apellido2Persona.setValue(record.data.apellido2);
 	        	persona.setValue(record.data.personaCompleto);
 				persona.collapse();
-				btnIncluir.setDisabled(false);
+				//btnIncluir.setDisabled(false);
 				persona.focus();
+				
+				debugger;
+				relacionContratosStore.webflow({idProcedimiento: data.precontencioso.id, idPersona: record.data.idPersona, manual: record.data.manual});
         	}
          }
     });
     
-    persona.store.on( 'load', function( store, records, options ) {
+    /*persona.store.on( 'load', function( store, records, options ) {
     	if(records.length == 0){
 			personasComboStore.add(new personasComboStore.recordType({idPersona: null,nombrePersona: 'Nueva persona',personaCompleto:'Nueva persona'}, 0));
     	}
     	
-	} );
+	} );*/
 
 	/* Grupo de controles de manejo de la lista de personas */	
 	var recordPersona = Ext.data.Record.create([
@@ -302,7 +308,7 @@
 	});
 	
 	
-	relacionContratosStore.webflow({idProcedimiento: data.precontencioso.id});
+	//relacionContratosStore.webflow({idProcedimiento: data.precontencioso.id});
 
 	var panelEdicionPersonas = new Ext.form.FormPanel({
 		autoHeight: true,

@@ -35,6 +35,7 @@ import es.capgemini.pfs.direccion.dto.DireccionAltaDto;
 import es.capgemini.pfs.direccion.model.Direccion;
 import es.capgemini.pfs.movimiento.model.Movimiento;
 import es.capgemini.pfs.parametrizacion.dao.ParametrizacionDao;
+import es.capgemini.pfs.persona.dto.DtoPersonaManual;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.utils.FormatUtils;
@@ -46,6 +47,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
 import es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi;
 import es.pfsgroup.plugin.precontencioso.burofax.dao.BurofaxDao;
+import es.pfsgroup.plugin.precontencioso.burofax.dto.ContratosPCODto;
 import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxEnvioIntegracionPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDEstadoBurofaxPCO;
@@ -193,6 +195,11 @@ public class BurofaxManager implements BurofaxApi {
 		
 		return listaBurofax;
 		
+	}
+	
+	@Override
+	public List<ContratosPCODto> getContratosProcPersona(Long idProcedimientoPCO, Long idPersona, Boolean manual) {
+		return burofaxDao.getContratosProcPersona(idProcedimientoPCO, idPersona, manual);
 	}
 	
 	@Override
@@ -439,9 +446,14 @@ public class BurofaxManager implements BurofaxApi {
 	
 	@Override
 	@BusinessOperation(OBTENER_PERSONAS_CON_CONTRATO)
-	public Collection<? extends Persona> getPersonasConContrato(String query){
+	public Collection<DtoPersonaManual> getPersonasConContrato(String query){
 		return burofaxDao.getPersonasConContrato(query);
 	}
+	
+	@Override
+	public Collection<DtoPersonaManual> getPersonasConContrato(String query, boolean addManuales){
+		return burofaxDao.getPersonasConContrato(query, addManuales);
+	}	
 	
 	@Override
 	@Transactional(readOnly = false)

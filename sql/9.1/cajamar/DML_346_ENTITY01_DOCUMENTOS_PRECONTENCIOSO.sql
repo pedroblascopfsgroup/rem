@@ -4,8 +4,8 @@
 --## FECHA_CREACION=20151228
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.3
---## INCIDENCIA_LINK=
---## PRODUCTO=
+--## INCIDENCIA_LINK=-
+--## PRODUCTO=NO
 --## Finalidad: DML Insertar documentos precontencioso
 --##           
 --## INSTRUCCIONES: Configurar los documentos necesarios para precontencioso

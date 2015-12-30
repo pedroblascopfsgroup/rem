@@ -73,10 +73,10 @@ var conflicto_intereses = items[2];
 var aceptacion = items[3];
 var ObservacionesLetrado = items[4];
 
-principal.setReadOnly(true);
-conflicto_intereses.setReadOnly(true);
-aceptacion.setReadOnly(true);
-ObservacionesLetrado.setReadOnly(true);
+principal.setDisabled(true);
+conflicto_intereses.setDisabled(true);
+aceptacion.setDisabled(true);
+ObservacionesLetrado.setDisabled(true);
 
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/panelEdicion.jsp" %>
 

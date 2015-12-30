@@ -24,6 +24,7 @@
 --##              se quita el min PK de LOS_LOTE_SUBASTA
 --##              Se saca del script la caracterizacion de procuradores
 --## 20151217 0.5 Se adapta a SYS_GUID para la tabla de EXP_EXPEDIENTES
+--## 20151229 0.6 Se modifica Nombre Asunto a la cadena: contrato+NIF/CIF+NombreApellidos
 --##########################################
 --*/
 
@@ -1484,7 +1485,7 @@ BEGIN
            , SYS_GUID() as SYS_GUID           
     FROM (SELECT DISTINCT CD_PROCEDIMIENTO FROM '||V_ESQUEMA||'.MIG_MAESTRA_HITOS ) HIT, 
          (SELECT PCAB.CD_PROCEDIMIENTO
-               ,  substr(max (pcab.cd_procedimiento || '' | '' || per_doc_id || '' '' || per_nom50),1,50) AS NOMBRE_ASUNTO
+               ,  substr(max (cnt.cnt_contrato || '' | '' || per_doc_id || '' '' || per_nom50),1,50) AS NOMBRE_ASUNTO
                ,  (SELECT DD_TAS_ID FROM '||V_ESQUEMA_MASTER||'.DD_TAS_TIPOS_ASUNTO WHERE DD_TAS_DESCRIPCION_LARGA = ''Litigio'') AS DD_TAS_ID
                ,  PCAB.ENTIDAD_PROPIETARIA
                ,  PCAB.GESTION_PLATAFORMA
@@ -1493,16 +1494,24 @@ BEGIN
                       on pdem.CD_PROCEDIMIENTO = pcab.CD_PROCEDIMIENTO
                left join '||V_ESQUEMA||'.per_personas per 
                       on per.per_cod_cliente_entidad = pdem.CODIGO_PERSONA
+               left join '||V_ESQUEMA||'.cpe_contratos_personas cpe
+                      on per.per_id = cpe.per_id
+               left join '||V_ESQUEMA||'.cnt_contratos cnt
+                      on cpe.cnt_id = cnt.cnt_id                                  
              GROUP BY PCAB.CD_PROCEDIMIENTO, PCAB.ENTIDAD_PROPIETARIA, PCAB.GESTION_PLATAFORMA
           UNION
           SELECT CD_CONCURSO AS CD_PROCEDIMIENTO
-               , substr(max(cd_concurso || '' | '' || nif || '' '' || per_nom50),1,50) AS NOMBRE_ASUNTO
+               , substr(max(cnt.cnt_contrato || '' | '' || nif || '' '' || per_nom50),1,50) AS NOMBRE_ASUNTO
                , (SELECT DD_TAS_ID FROM '||V_ESQUEMA_MASTER||'.DD_TAS_TIPOS_ASUNTO WHERE DD_TAS_DESCRIPCION_LARGA = ''Concursal'') AS DD_TAS_ID
                , ENTIDAD_PROPIETARIA
                , GESTION_PLATAFORMA
             from '||V_ESQUEMA||'.mig_concursos_cabecera 
                left join  '||V_ESQUEMA||'.per_personas per 
                       on per.per_doc_id = nif
+               left join '||V_ESQUEMA||'.cpe_contratos_personas cpe
+                      on per.per_id = cpe.per_id
+               left join '||V_ESQUEMA||'.cnt_contratos cnt
+                      on cpe.cnt_id = cnt.cnt_id                              
              GROUP BY CD_CONCURSO,ENTIDAD_PROPIETARIA, GESTION_PLATAFORMA
           ) CAB,        
           '||V_ESQUEMA||'.EXP_EXPEDIENTES EXP,

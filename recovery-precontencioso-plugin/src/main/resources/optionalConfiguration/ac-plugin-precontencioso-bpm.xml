@@ -96,6 +96,15 @@
 				return riesgoOperacionalManager.comprobarRiesgoProcedimiento(idProcedimiento);
 			}
 			
+			def getEstadoLimiteImporteConcurso = {
+				 def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
+				 return procedimientoPcoManager.getEstadoLimiteImporteConcurso(idProcedimiento);
+			}
+
+			def comprobarExistenciaGestor = {
+				 def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
+				 return procedimientoPcoManager.comprobarExistenciaGestor(idProcedimiento);
+			}
 			]]></value>
   		</list>
   	</property>

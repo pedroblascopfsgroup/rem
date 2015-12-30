@@ -1205,4 +1205,29 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		
 		return valorDecision;
 	}
+	
+	/**
+	 *		SOLO PARA BANKIA
+	 * Comprueba que el asunto correspondiente al procedimiento tenga los siguientes gestores asignados:
+	 * 	Letrado
+	 * @param idProcedimiento
+	 * @return
+	 */
+	@Override
+	public boolean comprobarExistenciaGestor(Long idProcedimiento) {
+
+		Boolean resultado = false;
+		try {
+			Procedimiento proc = procedimientoManager.getProcedimiento(idProcedimiento);
+			Long idAsunto = proc.getAsunto().getId();
+			List<String> listaTiposGestores = procedimientoPcoDao.getTiposGestoresAsunto(idAsunto);
+			if (listaTiposGestores.contains(LETRADO)) {
+				resultado = true;
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return resultado;
+	}
+	
 }

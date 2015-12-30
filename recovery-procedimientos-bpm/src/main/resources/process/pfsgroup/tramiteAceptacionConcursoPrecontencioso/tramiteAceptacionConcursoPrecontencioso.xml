@@ -3,7 +3,7 @@
 <process-definition  xmlns="urn:jbpm.org:jpdl-3.2"  name="tramiteAceptacionConcursoPrecontencioso">
 
 	<start-state name="Inicio">
-		<transition to="P421_NodoEsperaController" name="avanzaBPM"></transition>
+		<transition to="P421_DecImporteConcursoAutomatica" name="avanzaBPM"></transition>
 	</start-state>
 	
 	<node name="P421_DecImporteConcursoAutomatica">
@@ -64,7 +64,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>precontenciosoLeaveActionHandler
+				<targetBean>precontenciosoEnterActionHandler
 				</targetBean>
 			</action>
 		</event>
@@ -83,8 +83,8 @@
 	
 	<decision name="P421_RegistrarAceptacionConcursoDecision" expression="#{P421_RegistrarAceptacionConcursoDecision}">
 		<transition to="Fin" name="SI"></transition>
-		<transition to="P421_RevisarTurnadoLetradoConcurso" name="menor5"></transition>
-		<transition to="P421_AsignarLetradoConcurso" name="mayor5"></transition>		
+		<transition to="P421_RevisarTurnadoLetradoConcurso" name="menor"></transition>
+		<transition to="P421_AsignarLetradoConcurso" name="mayor"></transition>		
 	</decision>
 	
 	<end-state name="Fin">

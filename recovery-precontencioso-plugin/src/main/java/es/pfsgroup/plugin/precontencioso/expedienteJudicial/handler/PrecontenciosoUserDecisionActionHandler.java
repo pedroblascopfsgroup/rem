@@ -80,6 +80,9 @@ public class PrecontenciosoUserDecisionActionHandler extends PROBaseActionHandle
 			else
 				valorDecision="mayor";
 			executionContext.setVariable(PrecontenciosoBPMConstants.P421_DecImporteConcursoAutomatica + "Decision",valorDecision);
+		}else if (PrecontenciosoBPMConstants.P421_Turnado.equals(getNombreNodo(executionContext))
+				&& PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(precontenciosoContext.getRecovery())) {
+			turnadoDespachosManager.turnar(prc.getAsunto().getId(), usuarioManager.getUsuarioLogado().getUsername(), EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO);
 		}
 		// Avanzamos BPM
 		executionContext.getToken().signal();

@@ -68,6 +68,8 @@ public class PrecontenciosoUserDecisionActionHandler extends PROBaseActionHandle
 	        //executionContext.getToken().signal();
 		} else if (PrecontenciosoBPMConstants.PCO_PreTurnado.equals(getNombreNodo(executionContext)) 
 				&& PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(precontenciosoContext.getRecovery())) {
+			String valorDecision = pcoManager.dameTipoTurnado(prc.getId());
+			executionContext.setVariable(PrecontenciosoBPMConstants.PCO_PreTurnado + "Decision",valorDecision);
 			executor.execute("plugin.precontencioso.inicializarPco", prc);
 			if(!DDTiposAsunto.CONCURSAL.equals(prc.getAsunto().getTipoAsunto().getCodigo())) {
 				turnadoDespachosManager.turnar(prc.getAsunto().getId(), usuarioManager.getUsuarioLogado().getUsername(), EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO);				

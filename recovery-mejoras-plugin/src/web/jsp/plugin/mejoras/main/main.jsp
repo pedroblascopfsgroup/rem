@@ -129,12 +129,9 @@ if ((view != null) && (id != null)){
   	<div id="north" style="background:url('/${appProperties.appName}/img/logo.png') no-repeat 50% 0">
 		<img src="/${appProperties.appName}/img/<c:out value="${logo}"/>" />
 		<div id="userInfo"><s:message code="main.userInfo.usuario" text="**Usuario : "/> ${usuario.username} 
-		(<a id="logout" href="#"><s:message code="main.logout" text="**desconectar"/></a> / <a id="logoutClose" href="#"><s:message code="main.logout.close" text="**desconectar y cerrar"/></a>)
-		</div>
-		<div id="entidades">
 		<c:if test="${usuario.usuEntidad != null}">
 			<c:if test="${fn:length(usuario.usuEntidad)>0}">
-				<select id="comboEntidad" size="20">
+				<select id="comboEntidad" >
 					<option value='${usuario.entidad.descripcion}'selected>${usuario.entidad.descripcion}</option>
 						<c:forEach items='${usuario.usuEntidad}' var='item'>
 							<c:if test="${usuario.entidad.descripcion != item.entidad.descripcion}">
@@ -144,6 +141,7 @@ if ((view != null) && (id != null)){
 				</select> 
 			</c:if>
 		</c:if>
+		(<a id="logout" href="#"><s:message code="main.logout" text="**desconectar"/></a> / <a id="logoutClose" href="#"><s:message code="main.logout.close" text="**desconectar y cerrar"/></a>)
 		</div>
 		<div id="fechaCarga"><s:message code="main.fechaCarga" text="**&Uacute;ltima fecha de carga : "/><fwk:date value="${ultimaFechaCarga}"/></div>
     	<div id="toolbar"></div>

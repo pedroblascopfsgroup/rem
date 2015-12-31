@@ -289,7 +289,7 @@ Ext.onReady(function() {
 		});
 	});
 	
-	Ext.get("comboEntidad").on('click', function(){
+	Ext.get("comboEntidad").on('change', function(){
 		Ext.Msg.confirm('<s:message code="app.confirmar" text="**confirmar" />', '<s:message text="**¿Seguro cambiar de entidad?" />', function(boton){
 			if (boton=="yes"){
 				var valueComboEntidadSeleccionada = comboEntidad.value;

@@ -156,8 +156,8 @@ if [[ $PACKAGE == 0 ]]; then
     exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${nombreSinExt}-${PASO2} $NOMBRE_SCRIPT $FECHA_CREACION $ESQUEMA_EJECUCION > /dev/null
     export RESULTADO=$?
 else
-    echo "exit | sqlplus -s -l $ESQUEMA_REGISTRO/\$2 @./scripts/${nombreSinExt}-${PASO2} $NOMBRE_SCRIPT $FECHA_CREACION $ESQUEMA_EJECUCION" >> ${executionFile}.sh 
-    echo "exit | sqlplus -s -l \$1 @./scripts/${nombreSinExt}-${PASO2} $NOMBRE_SCRIPT $FECHA_CREACION $ESQUEMA_EJECUCION" >> ${executionFile}-one-user.sh
+    echo "exit | sqlplus -s -l $ESQUEMA_REGISTRO/\$2 @./scripts/${nombreSinExt}-${PASO2} $NOMBRE_SCRIPT $FECHA_CREACION $ESQUEMA_EJECUCION > /dev/null" >> ${executionFile}.sh 
+    echo "exit | sqlplus -s -l \$1 @./scripts/${nombreSinExt}-${PASO2} $NOMBRE_SCRIPT $FECHA_CREACION $ESQUEMA_EJECUCION > /dev/null" >> ${executionFile}-one-user.sh
     echo 'export RESULTADO=$?' | tee -a ${executionFile}.sh ${executionFile}-one-user.sh > /dev/null
 fi
 if [[ $PACKAGE == 0 ]]; then
@@ -186,7 +186,7 @@ if [[ $PACKAGE == 0 ]]; then
     echo "##### SCRIPT ${NOMBRE_SCRIPT} ${FECHA_CREACION} NO EJECUTADO PREVIAMENTE"  >> $BASEDIR/$nombreLog
 else
     echo 'if [ $RESULTADO == 33 ] ; then' | tee -a ${executionFile}.sh ${executionFile}-one-user.sh > /dev/null
-    echo "    echo \" OK : Fichero ya ejecutado $NOMBRE_SCRIPT\"" | tee -a ${executionFile}.sh ${executionFile}-one-user.sh > /dev/null
+    echo "    echo \" YE : Fichero ya ejecutado $NOMBRE_SCRIPT\"" | tee -a ${executionFile}.sh ${executionFile}-one-user.sh > /dev/null
     echo 'elif [ $RESULTADO != 0 ] ; then' | tee -a ${executionFile}.sh ${executionFile}-one-user.sh > /dev/null
     echo '    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."' | tee -a ${executionFile}.sh ${executionFile}-one-user.sh > /dev/null
     echo '    exit 1;' | tee -a ${executionFile}.sh ${executionFile}-one-user.sh > /dev/null

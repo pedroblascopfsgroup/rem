@@ -1266,11 +1266,11 @@ BEGIN
       ---MEJ_IRG_INFO_REGISTRO
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.MEJ_IRG_INFO_REGISTRO... Comprobando si existen registros para el usuario MIGRACM01');
       EXISTE := 0;
-      V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.MEJ_IRG_INFO_REGISTRO  WHERE USUARIOCREAR = '''||USUARIO||'''';
+      V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.MEJ_IRG_INFO_REGISTRO  WHERE USUARIOCREAR IN ( '''||USUARIO||''','''||USUARIO2||''','''||USUARIO3||''','''||USUARIO4||''')';
       EXECUTE IMMEDIATE V_SQL INTO EXISTE;
       IF (EXISTE>0) THEN
            PRO_KEYS_STATUS(V_ESQUEMA, 'MEJ_IRG_INFO_REGISTRO', 'DISABLE');
-           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.MEJ_IRG_INFO_REGISTRO  WHERE USUARIOCREAR = '''||USUARIO||'''';
+           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.MEJ_IRG_INFO_REGISTRO  WHERE USUARIOCREAR IN ( '''||USUARIO||''','''||USUARIO2||''','''||USUARIO3||''','''||USUARIO4||''')';
            DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.MEJ_IRG_INFO_REGISTRO .. Se han eliminado '||EXISTE||' registros');
            COMMIT;
            PRO_KEYS_STATUS(V_ESQUEMA, 'MEJ_IRG_INFO_REGISTRO', 'ENABLE');
@@ -1280,11 +1280,11 @@ BEGIN
       ---MEJ_REG_REGISTRO
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.MEJ_REG_REGISTRO... Comprobando si existen registros para el usuario MIGRACM01');
       EXISTE := 0;
-      V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.MEJ_REG_REGISTRO  WHERE USUARIOCREAR = '''||USUARIO||'''';
+      V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.MEJ_REG_REGISTRO  WHERE USUARIOCREAR  IN ( '''||USUARIO||''','''||USUARIO2||''','''||USUARIO3||''','''||USUARIO4||''')';
       EXECUTE IMMEDIATE V_SQL INTO EXISTE;
       IF (EXISTE>0) THEN
            PRO_KEYS_STATUS(V_ESQUEMA, 'MEJ_REG_REGISTRO', 'DISABLE');
-           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.MEJ_REG_REGISTRO  WHERE USUARIOCREAR = '''||USUARIO||'''';
+           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.MEJ_REG_REGISTRO  WHERE USUARIOCREAR  IN ( '''||USUARIO||''','''||USUARIO2||''','''||USUARIO3||''','''||USUARIO4||''')';
            DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.MEJ_REG_REGISTRO .. Se han eliminado '||EXISTE||' registros');
            COMMIT;
            PRO_KEYS_STATUS(V_ESQUEMA, 'MEJ_REG_REGISTRO', 'ENABLE');
@@ -1681,20 +1681,20 @@ BEGIN
 
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.CCL_CONTRATOS_CLIENTE... Comprobando si existen registros para el usuario MIGRACM01');
       EXISTE := 0;
-      V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.CCL_CONTRATOS_CLIENTE WHERE USUARIOCREAR = '''||USUARIO||'''';
+      V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.CCL_CONTRATOS_CLIENTE WHERE USUARIOCREAR  IN ( '''||USUARIO||''','''||USUARIO2||''','''||USUARIO3||''','''||USUARIO4||''')';
       EXECUTE IMMEDIATE V_SQL INTO EXISTE;
       IF (EXISTE>0) THEN
            PRO_KEYS_STATUS(V_ESQUEMA, 'CCL_CONTRATOS_CLIENTE', 'DISABLE');
-           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.CCL_CONTRATOS_CLIENTE WHERE USUARIOCREAR = '''||USUARIO||'''';
+           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.CCL_CONTRATOS_CLIENTE WHERE USUARIOCREAR  IN ( '''||USUARIO||''','''||USUARIO2||''','''||USUARIO3||''','''||USUARIO4||''')';
            DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.CCL_CONTRATOS_CLIENTE... Se han eliminado '||EXISTE||' registros');
            COMMIT;
            PRO_KEYS_STATUS(V_ESQUEMA, 'CCL_CONTRATOS_CLIENTE', 'ENABLE');
       END IF;
 
-
+/*
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.CCL_CONTRATOS_CLIENTE... Comprobando si existen registros para el usuario CONVIVE_F2');
       EXISTE := 0;
-      V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.CCL_CONTRATOS_CLIENTE WHERE USUARIOCREAR = '''||USUARIO2||'''';
+      V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.CCL_CONTRATOS_CLIENTE WHERE USUARIOCREAR  IN ( '''||USUARIO||''','''||USUARIO2||''','''||USUARIO3||''','''||USUARIO4||''')';
       EXECUTE IMMEDIATE V_SQL INTO EXISTE;
       IF (EXISTE>0) THEN
            PRO_KEYS_STATUS(V_ESQUEMA, 'CCL_CONTRATOS_CLIENTE', 'DISABLE');
@@ -1703,19 +1703,19 @@ BEGIN
            COMMIT;
            PRO_KEYS_STATUS(V_ESQUEMA, 'CCL_CONTRATOS_CLIENTE', 'ENABLE');
       END IF;
-
+*/
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.CLI_CLIENTES... Comprobando si existen registros para el usuario MIGRACM01');
       EXISTE := 0;
-      V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.CLI_CLIENTES WHERE USUARIOCREAR = '''||USUARIO||'''';
+      V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.CLI_CLIENTES WHERE USUARIOCREAR  IN ( '''||USUARIO||''','''||USUARIO2||''','''||USUARIO3||''','''||USUARIO4||''')';
       EXECUTE IMMEDIATE V_SQL INTO EXISTE;
       IF (EXISTE>0) THEN
            PRO_KEYS_STATUS(V_ESQUEMA, 'CLI_CLIENTES', 'DISABLE');
-           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.CLI_CLIENTES WHERE USUARIOCREAR = '''||USUARIO||'''';
+           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.CLI_CLIENTES WHERE USUARIOCREAR  IN ( '''||USUARIO||''','''||USUARIO2||''','''||USUARIO3||''','''||USUARIO4||''')';
            DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.CLI_CLIENTES...  Se han eliminado '||EXISTE||' registros');
            COMMIT;
            PRO_KEYS_STATUS(V_ESQUEMA, 'CLI_CLIENTES', 'ENABLE');
       END IF;
-
+/*
  DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.CLI_CLIENTES... Comprobando si existen registros para el usuario CONVIVE_F2');
       EXISTE := 0;
       V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.CLI_CLIENTES WHERE USUARIOCREAR = '''||USUARIO2||'''';
@@ -1727,7 +1727,7 @@ BEGIN
            COMMIT;
            PRO_KEYS_STATUS(V_ESQUEMA, 'CLI_CLIENTES', 'ENABLE');
       END IF;
-
+*/
 --***************************************/
 DBMS_OUTPUT.PUT_LINE( 'BORRADO DE TEMPORALES');
 --***************************************/

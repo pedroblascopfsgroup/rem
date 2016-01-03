@@ -138,7 +138,7 @@ fi
 echo "[OK] ""$sh_dir""CJM_migracion_a_recovery_precontencioso.sh ejecutado correctamente"      
 
 echo "[INFO] Comienza ejecución de: ""$sh_dir""apr_main_observaciones.sh"                      
-./"$sh_dir"apr_main_observaciones.sh 
+./"$sh_dir"apr_main_observaciones.sh "$1" 
 if [ $? != 0 ] ; then
     echo -e "\n\n======>>> [ERROR] en "$sh_dir"apr_main_observaciones.sh"
     echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
@@ -152,7 +152,7 @@ echo "[OK] ""$sh_dir""apr_main_observaciones.sh ejecutado correctamente"
 #####################################
 
 echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_1505_migracion_paraliza_procedimientos_precontencioso.sh"                      
-./"$sh_dir"CMREC_1505_migracion_paraliza_procedimientos_precontencioso.sh 
+./"$sh_dir"CMREC_1505_migracion_paraliza_procedimientos_precontencioso.sh "$1" 
 if [ $? != 0 ] ; then
     echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC_1505_migracion_paraliza_procedimientos_precontencioso.sh"
     echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"

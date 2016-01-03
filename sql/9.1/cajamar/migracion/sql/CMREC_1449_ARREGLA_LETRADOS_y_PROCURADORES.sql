@@ -378,7 +378,7 @@ COMMIT;
     select '||V_ESQUEMA||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval uk,
            aux.asu_id, 
            aux.usd_id,
-           (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo=''GEXT''), 
+           (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo=''GESCON''), 
            '''||V_USUARIO||''', 
            TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'')
     from 
@@ -395,7 +395,7 @@ COMMIT;
 AND usu_username = ''val.LETRADO_''||migp.CD_ACTOR||''''
          where not exists (select 1 from '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO gaa where gaa.asu_id = asu.asu_id and gaa.dd_tge_id = (select dd_tge_id 
                                                                                                                                             from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor 
-                                                                                                                                            where dd_tge_codigo=''GEXT'')
+                                                                                                                                            where dd_tge_codigo=''GESCON'')
                           )
       ) auxi where auxi.ranking = 1
      ) aux');
@@ -411,7 +411,7 @@ AND usu_username = ''val.LETRADO_''||migp.CD_ACTOR||''''
            aux.asu_id, 
            aux.usd_id,
            TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF''), 
-           (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo=''GEXT''), 
+           (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo=''GESCON''), 
            '''||V_USUARIO||''', 
            TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'')
     from 
@@ -427,7 +427,7 @@ AND usu_username = ''val.LETRADO_''||migp.CD_ACTOR||''''
                '||V_ESQUEMA_MASTER||'.usu_usuarios         usu on usu.usu_id = usd.usu_id and usu.USU_EXTERNO = 1 AND MIGP.TIPO_ACTOR = 1 AND usu_username = ''val.LETRADO_''||migp.CD_ACTOR||''''
           where not exists (select 1 from '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gaa where gaa.gah_asu_id = asu.asu_id and GAH_TIPO_GESTOR_ID = (select dd_tge_id 
                                                                                                                                                          from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor 
-                                                                                                                                                         where dd_tge_codigo=''GEXT''))
+                                                                                                                                                         where dd_tge_codigo=''GESCON''))
       ) auxi where auxi.ranking = 1
      ) aux');    
      

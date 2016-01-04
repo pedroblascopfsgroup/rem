@@ -1,5 +1,6 @@
 package es.capgemini.pfs.users;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -8,7 +9,6 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
 
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -29,8 +29,11 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
+import es.capgemini.pfs.dsm.EntityDataSource;
+import es.capgemini.pfs.dsm.dao.EntidadConfigDao;
 import es.capgemini.pfs.dsm.dao.EntidadDao;
 import es.capgemini.pfs.dsm.model.Entidad;
+import es.capgemini.pfs.dsm.model.EntidadConfig;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.oficina.model.Oficina;
 import es.capgemini.pfs.security.model.UsuarioSecurity;
@@ -42,7 +45,6 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.users.dto.DtoBuscarUsuarios;
 import es.capgemini.pfs.users.dto.DtoUsuario;
 import es.capgemini.pfs.zona.model.DDZona;
-import es.pfsgroup.commons.utils.Checks;
 
 /**
  * TODO Documentar.
@@ -68,6 +70,10 @@ public class UsuarioManager {
     private MessageService messageService;
     @Autowired
     private EntidadDao entidadDao;
+    @Autowired
+    private EntidadConfigDao entidadConfigDao;
+	@Autowired
+	private EntityDataSource entityDataSource;
     
     
 
@@ -298,6 +304,7 @@ public class UsuarioManager {
     	EventFactory.onMethodStart(this.getClass());
         Usuario loggedUser = null;
         Entidad enti = entidadDao.findByDescripcion(codEntidadSeleccionada);
+        EntidadConfig entidadConfig = entidadConfigDao.findByEntidad(enti.getId());
         
         if( RequestContextHolder.getRequestAttributes()!=null && RequestContextHolder.getRequestAttributes().getAttribute(USER_SESSION_KEY,RequestAttributes.SCOPE_SESSION)!=null){
         	loggedUser = (Usuario)RequestContextHolder.getRequestAttributes().getAttribute(USER_SESSION_KEY,RequestAttributes.SCOPE_SESSION);
@@ -305,6 +312,13 @@ public class UsuarioManager {
             loggedUser.setEntidad(enti);
             usuarioDao.update(loggedUser);    
         }
+        
+        try {
+			entityDataSource.getConnectionMultientidad(entidadConfig.getDataValue());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         
         if (SecurityUtils.getCurrentUser() == null && defaultUserId != null) {
             loggedUser = get(defaultUserId);

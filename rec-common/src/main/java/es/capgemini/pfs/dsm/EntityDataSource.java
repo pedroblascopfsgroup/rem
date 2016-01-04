@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.Resource;
-import javax.naming.ConfigurationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,7 +29,7 @@ public class EntityDataSource extends AbstractRoutingDataSource {
 
 	@Resource
 	private Properties appProperties;
-
+	
 	private Map<Long, String> mappingCache = new HashMap<Long, String>();
 
 	/**
@@ -102,6 +101,18 @@ public class EntityDataSource extends AbstractRoutingDataSource {
 		}
 	}
 
+	
+	public Connection getConnectionMultientidad(String schema) throws SQLException {
+		// Sobreescribimos el método para añadirle la gestión de los usuarios
+		// transaccionales
+		Connection cnx = super.getConnection();
+		TransactionalUsersConnectionWrapper cnwrap = new TransactionalUsersConnectionWrapper(cnx);
+		cambiaCurrentSchemaMultientidad(cnwrap, schema);
+		return cnx;
+	}
+
+	
+	
 	@Override
 	public Connection getConnection(String username, String password)
 			throws SQLException {
@@ -162,6 +173,15 @@ public class EntityDataSource extends AbstractRoutingDataSource {
 				}
 			}
 		}
+	}
+	
+	private void cambiaCurrentSchemaMultientidad(TransactionalUsersConnectionWrapper cnx, String schema) throws SQLException {
+		Statement st = cnx.createStatement();
+		String sql = "ALTER SESSION SET CURRENT_SCHEMA = "
+				+ schema;
+		cnx.setCurrentSchema(schema);
+		log.debug(sql);
+		st.execute(sql);
 	}
 
 	/**

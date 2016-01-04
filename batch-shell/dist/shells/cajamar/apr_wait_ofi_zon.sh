@@ -9,6 +9,8 @@ ficheros=OFICINAS,ZONAS
 
 DIR_DESTINO=/recovery/batch-server/control/etl/input/
 
+rm -rf $DIR_DESTINO
+
 mascara='_'$ENTIDAD'_'????????
 extensionSem=".sem"
 extensionZip=".zip"

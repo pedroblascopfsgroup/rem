@@ -36,7 +36,7 @@ CURRENT_DUMP_NAME=export_cajamar_19Oct2015.dmp
 STARTING_TAG=cj-dmp-19oct
 TAG_LISTS_FILE=$(pwd)/../../../../tags-list.txt
 PACKAGE_TAGS_DIR=$(pwd)/../../../../package-tags
-
+PREVIOUS_SCRIPTS_DIR=$(pwd)/../../../9.1/cajamar/00-createEnv4Test
 
 OPTION_REMOVE=no
 OPTION_IGNORE_DUMP=no
@@ -204,6 +204,15 @@ function package_sql () {
 		else
 			ws_package_dir=$WORKSPACE_DIR/package
 		fi
+
+        #Previous scripts after dump
+        cp $PREVIOUS_SCRIPTS_DIR/after_cj-dmp-19oct_previous_package.sh $ws_package_dir/
+        cp $PREVIOUS_SCRIPTS_DIR/DML_361_MASTER_DAT_JADR_ARREGLA_SECUENCIAS.sql $ws_package_dir/
+        cp $PREVIOUS_SCRIPTS_DIR/DML_360_ENTITY01_DAT_JADR_ARREGLA_SECUENCIAS.sql $ws_package_dir/
+        cp $PREVIOUS_SCRIPTS_DIR/DML_008_ENTITY_LIMPIEZA_TABLAS_RESIDUALES_ARQUETIPOS.sql $ws_package_dir/
+        cp $PREVIOUS_SCRIPTS_DIR/DML_009_MASTER_CARGA_TODAS_FUNCIONES.sql $ws_package_dir/
+        cp $PREVIOUS_SCRIPTS_DIR/DML_010_ENTITY_CARGA_TODOS_PERFILES.sql $ws_package_dir/
+
 		cp -R $SQL_PACKAGE_DIR $ws_package_dir
 		chmod -R go+w $ws_package_dir/*
 		for sh in $(find $ws_package_dir -name '*.sh'); do

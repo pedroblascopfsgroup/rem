@@ -205,6 +205,8 @@ function package_sql () {
 			ws_package_dir=$WORKSPACE_DIR/package
 		fi
 
+		cp -R $SQL_PACKAGE_DIR $ws_package_dir
+
         #Previous scripts after dump
         cp $PREVIOUS_SCRIPTS_DIR/after_cj-dmp-19oct_previous_package.sh $ws_package_dir/
         cp $PREVIOUS_SCRIPTS_DIR/DML_361_MASTER_DAT_JADR_ARREGLA_SECUENCIAS.sql $ws_package_dir/
@@ -213,7 +215,6 @@ function package_sql () {
         cp $PREVIOUS_SCRIPTS_DIR/DML_009_MASTER_CARGA_TODAS_FUNCIONES.sql $ws_package_dir/
         cp $PREVIOUS_SCRIPTS_DIR/DML_010_ENTITY_CARGA_TODOS_PERFILES.sql $ws_package_dir/
 
-		cp -R $SQL_PACKAGE_DIR $ws_package_dir
 		chmod -R go+w $ws_package_dir/*
 		for sh in $(find $ws_package_dir -name '*.sh'); do
 			chmod ugo+x $sh

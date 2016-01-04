@@ -1,8 +1,8 @@
 --/*
 --##########################################
 --## AUTOR=MIGUEL ANGEL SANCHEZ
---## FECHA_CREACION=12-12-2015
---## ARTEFACTO=BATCH
+--## FECHA_CREACION=12-11-2015
+--## ARTEFACTO=PCO_BUROFAX
 --## VERSION_ARTEFACTO=1.0
 --## INCIDENCIA_LINK=HR-1502
 --## PRODUCTO=SI
@@ -40,7 +40,7 @@ BEGIN
 -----------------------------------------------------------------------------------------------------------------------------------
 
 DBMS_OUTPUT.PUT_LINE('[INICIO] Crear tabla: '||V_ESQUEMA||'.AUX_STOCK_LITIGIOS_ASU...');
-V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_ESQUEMA||'.AUX_STOCK_LITIGIOS_ASU'' and owner = '''||V_ESQUEMA||'''';
+V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''AUX_STOCK_LITIGIOS_ASU'' and owner = '''||V_ESQUEMA||'''';
 EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 IF V_NUM_TABLAS = 0 THEN
     DBMS_OUTPUT.PUT_LINE('[INFO] Creando tabla');
@@ -55,7 +55,9 @@ IF V_NUM_TABLAS = 0 THEN
                 ESTADO_ASUNTO VARCHAR(20 CHAR),
                 SYS_GUID_EXP VARCHAR(32 CHAR),
                 SYS_GUID_PCO_PRC	VARCHAR2(36 CHAR),	 
-                SYS_GUID_PCO_PRC_HEP	VARCHAR2(36 CHAR)
+                SYS_GUID_PCO_PRC_HEP	VARCHAR2(36 CHAR),
+                EXP_ID NUMBER(16,0),
+                ASU_ID NUMBER(16,0)
               )';
     EXECUTE IMMEDIATE V_SQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Tabla '||V_ESQUEMA||'.AUX_STOCK_LITIGIOS_ASU creada.');    	
@@ -66,7 +68,7 @@ END IF;
 -----------------------------------------------------------------------------------------------------------------------------------
 
 DBMS_OUTPUT.PUT_LINE('[INICIO] Crear tabla: '||V_ESQUEMA||'.AUX_STOCK_LITIGIOS_BIEPRC...');
-V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_ESQUEMA||'.AUX_STOCK_LITIGIOS_BIEPRC'' and owner = '''||V_ESQUEMA||'''';
+V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''AUX_STOCK_LITIGIOS_BIEPRC'' and owner = '''||V_ESQUEMA||'''';
 EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 IF V_NUM_TABLAS = 0 THEN
     DBMS_OUTPUT.PUT_LINE('[INFO] Creando tabla');
@@ -85,7 +87,7 @@ END IF;
 -----------------------------------------------------------------------------------------------------------------------------------
 
 DBMS_OUTPUT.PUT_LINE('[INICIO] Crear tabla: '||V_ESQUEMA||'.AUX_STOCK_LITIGIOS_PRCPER...');
-V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_ESQUEMA||'.AUX_STOCK_LITIGIOS_PRCPER'' and owner = '''||V_ESQUEMA||'''';
+V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''AUX_STOCK_LITIGIOS_PRCPER'' and owner = '''||V_ESQUEMA||'''';
 EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 IF V_NUM_TABLAS = 0 THEN
     DBMS_OUTPUT.PUT_LINE('[INFO] Creando tabla');

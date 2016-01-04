@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.recovery.coreextension.model;
+package es.capgemini.pfs.persona.model;
 
 import java.io.Serializable;
 

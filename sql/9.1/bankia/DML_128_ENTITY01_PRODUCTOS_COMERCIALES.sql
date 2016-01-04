@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20151223
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=BKREC-1335
+--## INCIDENCIA_LINK=BKREC-1630
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Actualización diccionario de datos dd_ct1_catalogo_1

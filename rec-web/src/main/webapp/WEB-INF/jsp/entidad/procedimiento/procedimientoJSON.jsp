@@ -5,6 +5,8 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 
 <fwk:json>
+  <json:property name="tieneProcurador" value="${tieneProcurador}" />
+  <json:property name="activoDespachoIntegral" value="${activoDespachoIntegral}" />
   <json:property name="id" value="${procedimiento.id}" />
   <json:property name="nombreTab" value="${nombreTab}" />
   <json:property name="fechaVenc" value="${fechaVenc}" />
@@ -33,6 +35,7 @@
 	  <json:property name="gestor" value="${procedimiento.asunto.gestor.usuario.apellidoNombre}" />
 	  <json:property name="supervisor" value="${procedimiento.asunto.supervisor.usuario.apellidoNombre}" />
 	  <json:property name="procurador" value="${procedimiento.asunto.procurador.usuario.apellidoNombre}" />
+	  <json:property name="procuradorReal" value="${procuradorReal}" />
 	  <json:property name="fechaInicio">
 		<fwk:date value="${procedimiento.auditoria.fechaCrear}" />
 	  </json:property>

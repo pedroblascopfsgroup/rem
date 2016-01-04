@@ -349,11 +349,21 @@
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
 				<artifactId>recovery-precontencioso-plugin</artifactId>
+                                <version>${project.version}</version>
+                        </dependency>
+			<dependency>
+                                <groupId>es.pfsgroup.plugin</groupId>
+				<artifactId>recovery-procuradores-plugin</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
 				<artifactId>recovery-arquetipos-plugin</artifactId>
+				<version>${project.version}</version>
+                        </dependency>
+			<dependency>
+                                <groupId>es.pfsgroup.plugin</groupId>
+				<artifactId>recovery-procuradores-common</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -554,6 +564,8 @@
 		<module>recovery-comites-plugin</module>
 		<module>recovery-editor-plugin</module>
 		<module>recovery-arquetipos-plugin</module>
+		<module>recovery-procuradores-common</module>
+		<module>recovery-procuradores-plugin</module>
 	</modules>
 
 	<profiles>

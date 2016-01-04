@@ -1935,6 +1935,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	}		
 
 
+
 	
 	/**
 	 * esUsuarioGestorDecision
@@ -2217,3 +2218,4 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	}
 
 }
+

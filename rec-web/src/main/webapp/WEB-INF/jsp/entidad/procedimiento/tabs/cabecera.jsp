@@ -157,11 +157,17 @@
     });
   
   
+
   
 	var funcionEditaCabeceraProcedimiento=function(){
+	
+	  	var urlEditCabecera = 'editprocedimiento/open';
+		if(entidad.get("data").tieneProcurador){
+			urlEditCabecera = 'procedimientoprocurador/open';
+		}
 		var w = app.openWindow({
              text:'<s:message code="plugin.mejoras.asuntos.cabecera.editar" text="**Editar" />'
-			,flow: 'editprocedimiento/open'
+			,flow: urlEditCabecera
 			,width:850
 			,title: '<s:message code="plugin.mejoras.asuntos.cabecera.editar" text="**Editar" />'
 			,params:{
@@ -238,7 +244,11 @@
 		entidad.setLabel('despacho',d.despacho);
 		entidad.setLabel('gestor',d.gestor);
 		entidad.setLabel('supervisor',d.supervisor);
-		entidad.setLabel('procurador',d.procurador);
+		if(data.tieneProcurador){
+			entidad.setLabel('procurador',d.procuradorReal);
+		}else{
+			entidad.setLabel('procurador',d.procurador);
+		}
 		entidad.setLabel('fechaInicio',d.fechaInicio);
 		entidad.setLabel('procedimiento',d.procedimiento);
 		entidad.setLabel('procedimientoInterno',d.procedimientoInterno);

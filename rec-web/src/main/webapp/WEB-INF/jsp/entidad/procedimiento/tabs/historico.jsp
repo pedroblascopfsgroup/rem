@@ -10,11 +10,38 @@
 
 (function(page,entidad){
 	
+	var coloredRender = function (value, meta, record) {
+		return '<span style="color: #4169E1; font-weight: bold;">'+value+'</span>';
+	};
+	
+	var moneyColoredRender = function (value, meta, record) {
+		var valor = app.format.moneyRenderer(value, meta, record);
+		return coloredRender(valor, meta, record);
+	};
+	
+	var dateColoredRender = function (value, meta, record) {
+		var valor = app.format.dateRenderer(value, meta, record);
+		return coloredRender(valor, meta, record);
+	};
+	
 	var panel = new Ext.Panel({
 		title:'<s:message code="procedimiento.historico" text="**Historico"/>'
 		,autoHeight:true
 		,bodyStyle:'padding: 10px'
 		,nombreTab : 'historico'
+		,listeners: {
+            activate: function( self ) {
+                if(!entidad.get("data").tieneProcurador  || !entidad.get("data").activoDespachoIntegral){
+                	historicoTabPanel.hideTabStripItem(historicoResolucionesGrid);
+                	historicoTabPanel.hideTabStripItem(historicoProcedimientoGrid);
+                	historicoTabPanel.setActiveTab(historicoGrid);
+                	
+                }else{
+                	historicoTabPanel.hideTabStripItem(historicoGrid);
+                	historicoTabPanel.setActiveTab(historicoProcedimientoGrid);
+                }
+            }
+         }
 	});
 	
 	constantes={};
@@ -81,8 +108,13 @@
 
   //Las tareas que se deben implementar son: tareas externas del bpm, recursos, acuerdos, decisiones, prorrogas y comunicaciones
 	var funcionConsultar = function(){
-		var rec = historicoGrid.getSelectionModel().getSelected();
-
+		
+		if(!entidad.get("data").tieneProcurador  || !entidad.get("data").activoDespachoIntegral){
+			var rec = historicoGrid.getSelectionModel().getSelected();
+		}else{
+			var rec = historicoProcedimientoGrid.getSelectionModel().getSelected();
+		}
+		
 		if (rec == null) return;
 
 		var idEntidad = rec.get('idEntidad');
@@ -90,7 +122,7 @@
 
 		var titulo = rec.get('tarea');
 		var webflow = '';
-		var parametros = '';
+		var parametros = '';	
 		var width = 320;
 
 		//tareas del bpm
@@ -242,6 +274,7 @@
     ,{name : "fechaVencimiento"}
     ,{name  : "nombreUsuario"}
     ,{name  : "usuarioResponsable"}
+    ,{name : "historicoResoluciones"}
   ]);                
 
   var btnConsultar =new Ext.Button({
@@ -252,8 +285,17 @@
     ,handler:funcionConsultar
     ,disabled: false
   });
-                                                                                                                                                                       
-  var tareasProcStore = page.getStore({
+  
+    var btnConsultarProc =new Ext.Button({
+      text:'<s:message code="app.consultar" text="**Consultar" />'
+    <app:test id="btnConsultarTareahistorica" addComa="true" />
+         ,iconCls : 'icon_edit'
+    ,cls: 'x-btn-text-icon'
+    ,handler:funcionConsultar
+    ,disabled: false
+  });
+
+   var tareasProcStore = page.getStore({
     event:'listado'
     ,flow : 'procedimientos/historicoProcedimiento'
     ,storeId : 'historicoTareasProcStore'
@@ -261,10 +303,219 @@
       {root:'historicoProcedimiento'}
       , tarea
     )                                                                                                  
-  });                                                                                                                                                                  
+  });      
+  
   entidad.cacheStore(tareasProcStore);
+  var pagingResBar=fwk.ux.getPaging(tareasProcStore);                                                                                                      
 
-	var historicoCm = new Ext.grid.ColumnModel([
+
+   var tareasResProcStore = page.getStore({
+    event:'listado'
+    ,flow : 'msvhistoricotareas/getHistoricoPorTareas'
+    ,storeId : 'historicoTareasResProcStore'
+    ,limit:20
+    ,reader : new Ext.data.JsonReader(
+      {root:'historicoTareas'}
+      , tarea
+    )                                                                                                  
+  });      
+  
+  entidad.cacheStore(tareasResProcStore);
+  var pagingProcBar=fwk.ux.getPaging(tareasResProcStore);
+
+ var resolucion = Ext.data.Record.create([                                                                                                                              
+   	 {name : "idResolucion" }
+   	,{name : "juzgado" }
+   	,{name : "plaza" }
+   	,{name : "numAuto" }
+	,{name : "fechaCarga",type:'date', dateFormat:'d/m/Y'}
+	,{name : "idTipoResolucion"}
+	,{name : "tipo" }
+	,{name : "usuario" }
+	,{name : "observaciones" }
+  ]); 
+
+  var resolucionesProcStore = page.getStore({
+    event:'listado'
+    ,flow : 'msvhistoricotareas/getHistoricoPorResoluciones'
+    ,storeId : 'historicoResolucionesProcStore'
+    ,limit:20
+    ,reader : new Ext.data.JsonReader(
+      {root:'historicoResoluciones'}
+      , resolucion
+    )                                                                                                  
+  });            
+                                                                                                                                                        
+  entidad.cacheStore(resolucionesProcStore);
+  
+
+    var historicoResCM = new Ext.grid.ColumnModel([
+		{header: 'id', dataIndex : 'idResolucion', fixed:true, hidden:true, renderer: coloredRender}
+		,{header: 'id Tipo', dataIndex : 'idTipoResolucion', hidden:true, renderer: coloredRender}		
+		,{header : '<s:message code="plugin.masivo.procedimientos.historico.subgrid.resoluciones.juzgado" text="**Juzgado"/>', dataIndex : 'juzgado', width:275, renderer: coloredRender, hidden:true}
+		,{header : '<s:message code="plugin.masivo.procedimientos.historico.subgrid.resoluciones.plaza" text="**Plaza"/>', dataIndex : 'plaza', width:100, renderer: coloredRender, hidden:true}
+		,{header : '<s:message code="plugin.masivo.procedimientos.historico.subgrid.resoluciones.numAuto" text="**Num. auto"/>', dataIndex : 'numAuto', width:75, renderer: coloredRender}
+		,{header : '<s:message code="plugin.masivo.procedimientos.historico.subgrid.resoluciones.resolucion" text="**Tipo Resolución"/>', dataIndex : 'tipo', width:175, renderer: coloredRender}
+		,{header : '<s:message code="plugin.masivo.procedimientos.historico.subgrid.resoluciones.fechaCarga" text="**Fecha carga"/>', dataIndex : 'fechaCarga', renderer:dateColoredRender, width:75}
+		,{header : '<s:message code="plugin.masivo.procedimientos.historico.subgrid.resoluciones.observaciones" text="**Observaciones"/>', dataIndex : 'observaciones', width:450, renderer: coloredRender}
+		,{header : '<s:message code="plugin.masivo.procedimientos.historico.subgrid.resoluciones.usuario" text="**Usuario"/>', dataIndex : 'usuario', width:150, renderer: coloredRender}
+	]);
+  
+  	var expander = new Ext.ux.grid.RowExpander({
+	  	renderer: function(v,p,record){
+			if (record.data.historicoResoluciones!=undefined) {
+				if(record.data.historicoResoluciones.length>0)
+					return '<div class="x-grid3-row-expander"> </div>';
+				else
+					return ' ';
+			}
+		},
+    	tpl : new Ext.Template('<div id="myrow-{idEntidad}"></div>')
+	});
+		
+	function expandedRow(obj, record, body, rowIndex){
+	    var absId = record.get('idEntidad');
+	
+		var resoluciones = record.get('historicoResoluciones');
+		if (resoluciones.length) {
+			var dynamicStore = new Ext.data.JsonStore({
+				fields: ['idResolucion'
+						, 'juzgado'
+						, 'plaza'
+						, 'numAuto'
+						,{name : "fechaCarga",type:'date', dateFormat:'d/m/Y'}
+						, 'idTipoResolucion'
+						, 'tipo'
+						, 'usuario'
+						, 'observaciones'],
+				data: resoluciones
+			});
+			
+		    var row = "myrow-" + record.get("idEntidad");
+		    var id2 = "mygrid-" + record.get("idEntidad");  
+		
+			var data=entidad.get("data");
+			
+			if(data.tieneProcurador){
+				var gridX = new Ext.grid.GridPanel({
+			        store: dynamicStore,
+			        stripeRows: true,	        
+			        cm: historicoResCM,
+			        autoHeight: true,
+			        id: id2,
+			        hideHeaders : true,     
+			        style: {
+			            marginLeft: '19px'
+			        }                  
+			    });
+			}else{
+				var gridX = new Ext.grid.GridPanel({
+			        store: dynamicStore,
+			        stripeRows: true,	        
+			        cm: historicoResCM,
+			        autoHeight: true,
+			        id: id2                  
+			    });
+			}
+			      
+		
+		    gridX.render(row);
+		    gridX.getEl().swallowEvent([ 'mouseover', 'mousedown', 'click', 'dblclick' ]);
+		    
+		    gridX.on('rowdblclick', function(grid, rowIndex, e) {
+				var recStore = grid.getStore().getAt(rowIndex);
+				//var recStore = historicoResolucionesGrid.getSelectionModel().getSelected();
+				if (recStore == null) return;
+				
+				var tipo = recStore.get('tipo');
+				var idResolucion = recStore.get('idResolucion');
+				var idTipoResolucion = recStore.get('idTipoResolucion');
+
+				var w = app.openWindow({
+						flow : 'msvhistoricotareas/abreFormularioDinamico'
+						,title : tipo
+						,closable:true
+						,width:870
+						,y:1 
+						,params : {
+								idInput: idResolucion,
+								idTipoResolucion: idTipoResolucion
+						}
+					});
+					w.on(app.event.DONE, function(){
+						w.close();
+					});
+					w.on(app.event.CANCEL, function(){ w.close(); });
+			});
+		 }
+	};
+	
+	expander.on('expand', expandedRow);
+   
+   var funcionConsultarRes = function(){
+		var recStore = historicoResolucionesGrid.getSelectionModel().getSelected();
+		if (recStore == null) return;
+		
+		var idResolucion = recStore.get('idResolucion');
+		var tipo = recStore.get('tipo');
+		var idTipoResolucion = recStore.get('idTipoResolucion');
+    	
+		var w = app.openWindow({
+				flow : 'msvhistoricotareas/abreFormularioDinamico'
+				,title : tipo
+				,closable:true
+				,width:870
+				,y:1 
+				,params : {
+						idInput: idResolucion,
+						idTipoResolucion: idTipoResolucion
+				}
+			});
+			w.on(app.event.DONE, function(){
+				w.close();
+			});
+			w.on(app.event.CANCEL, function(){ w.close(); });
+	};
+	
+	var expandAll = function() {
+     	for (var i=0; i < tareasResProcStore.getCount(); i++) {
+	      expander.expandRow(i);		  
+	    }
+   	};
+    
+  	var collapseAll = function() {
+     	for (var i=0; i < tareasResProcStore.getCount(); i++) {
+	      expander.collapseRow(i);		  
+	    }
+   	};
+   
+   var btnConsultarRes =new Ext.Button({
+      text:'<s:message code="app.consultar" text="**Consultar" />'
+	    <app:test id="btnConsultarTareahistorica" addComa="true" />
+	         ,iconCls : 'icon_edit'
+	    ,cls: 'x-btn-text-icon'
+	    ,handler:funcionConsultarRes
+	    ,disabled: false
+  	});
+  
+  	var btnCollapseAll =new Ext.Button({
+  		tooltip:'<s:message code="plugin.masivo.procedimiento.historicoRes.collapseAll" text="**Contraer todo" />'
+        ,iconCls : 'icon_collapse'
+	    ,cls: 'x-btn-icon'
+	    ,handler:collapseAll
+	    ,disabled: false
+  	});
+  	
+  	var btnExpandAll =new Ext.Button({
+      	tooltip:'<s:message code="plugin.masivo.procedimiento.historicoRes.expandAll" text="**Expandir todo" />'	    
+	    ,iconCls : 'icon_expand'
+	    ,cls: 'x-btn-icon'
+	    ,handler:expandAll
+	    ,disabled: false
+  	});
+  	
+  	
+  	var historicoCm = new Ext.grid.ColumnModel([
 		{dataIndex : 'idEntidad', fixed:true, hidden:true}
 		,{dataIndex : 'tipoEntidad', fixed:true, hidden:true}
 		,{header : '<s:message code="procedimiento.historico.grid.tareas" text="**tarea"/>', dataIndex : 'tarea', width:275}
@@ -273,7 +524,31 @@
 		,{header : '<s:message code="procedimiento.historico.grid.fechaVencimiento" text="**fecha venc"/>', dataIndex : 'fechaVencimiento', width:65}
 		,{header : '<s:message code="plugin.mejoras.asunto.tabHistorico.destinatarioTarea" text="**destinatario"/>', dataIndex : 'usuarioResponsable', width:50}
 	]);
-  
+	
+	var historicoProc= new Ext.grid.ColumnModel([
+		expander
+		,{dataIndex : 'idEntidad', fixed:true, hidden:true}
+		,{dataIndex : 'tipoEntidad', fixed:true, hidden:true}
+		,{header : '<s:message code="procedimiento.historico.grid.tareas" text="**tarea"/>', dataIndex : 'tarea', width:275}
+		,{header : '<s:message code="procedimiento.historico.grid.fechaInicio" text="**fecha inicio"/>', dataIndex : 'fechaInicio', width:65}
+		,{header : '<s:message code="procedimiento.historico.grid.fechaFin" text="**fecha fin"/>', dataIndex : 'fechaFin', width:65}
+		,{header : '<s:message code="procedimiento.historico.grid.fechaVencimiento" text="**fecha venc"/>', dataIndex : 'fechaVencimiento', width:65}
+		,{header : '<s:message code="plugin.mejoras.asunto.tabHistorico.destinatarioTarea" text="**destinatario"/>', dataIndex : 'usuarioResponsable', width:50}
+	]);
+	
+    var historicoRes = new Ext.grid.ColumnModel([
+		{header: 'id',dataIndex : 'idResolucion', fixed:true, hidden:true}
+		,{header: 'id Tipo', dataIndex : 'idTipoResolucion', hidden:true}
+		,{header : '<s:message code="plugin.masivo.procedimientos.historico.subgrid.resoluciones.juzgado" text="**Juzgado"/>', dataIndex : 'juzgado', width:275,hidden:true}
+		,{header : '<s:message code="plugin.masivo.procedimientos.historico.subgrid.resoluciones.plaza" text="**Plaza"/>', dataIndex : 'plaza', width:100, hidden:true}
+		,{header : '<s:message code="plugin.masivo.procedimientos.historico.subgrid.resoluciones.numAuto" text="**Num. auto"/>', dataIndex : 'numAuto', width:75}
+		,{header : '<s:message code="plugin.masivo.procedimientos.historico.subgrid.resoluciones.resolucion" text="**Tipo Resolución"/>', dataIndex : 'tipo', width:175}
+		,{header : '<s:message code="plugin.masivo.procedimientos.historico.subgrid.resoluciones.fechaCarga" text="**Fecha carga"/>', dataIndex : 'fechaCarga', renderer:app.format.dateRenderer, width:75}
+		,{header : '<s:message code="plugin.masivo.procedimientos.historico.subgrid.resoluciones.observaciones" text="**Observaciones"/>', dataIndex : 'observaciones', width:275}
+		,{header : '<s:message code="plugin.mejoras.asunto.tabHistorico.destinatarioTarea" text="**destinatario"/>', dataIndex : 'usuarioResponsable', width:50}
+	]);
+
+    
     var historicoGrid = app.crearGrid(tareasProcStore,historicoCm,{
 		title:'<s:message code="procedimiento.historico.grid" text="**Historico del procedimiento" />'
 		,cls:'cursor_pointer'
@@ -282,8 +557,33 @@
 		,bbar:[btnConsultar] 
     });
 
+   	var historicoProcedimientoGrid = app.crearGrid(tareasResProcStore,historicoProc,{
+		title:'<s:message code="procedimiento.historico.grid" text="**Historico del procedimiento" />'
+		,cls:'cursor_pointer'
+		,width : 700
+		,height : 400
+		,plugins : expander
+		,bbar:[btnExpandAll, btnCollapseAll, pagingProcBar, btnConsultarProc]
+    });
+    
+   	var historicoResolucionesGrid = app.crearGrid(resolucionesProcStore,historicoRes,{
+		title:'<s:message code="plugin.masivo.procedimiento.historicoRes.grid" text="**Historico resoluciones" />'
+		,cls:'cursor_pointer'
+		,width : 700		
+		,height : 400
+		,bbar:[pagingResBar, btnConsultarRes] 
+    });
+    
 	historicoGrid.on('rowdblclick',function(grid, rowIndex, e){
 		funcionConsultar();
+	});
+	
+	historicoProcedimientoGrid.on('rowdblclick',function(grid, rowIndex, e){
+		funcionConsultar();
+	});
+	
+	historicoResolucionesGrid.on('rowdblclick', function(grid, rowIndex, e) {
+		funcionConsultarRes();
 	});
 
 
@@ -300,8 +600,31 @@
     }
   });
 
+  tareasResProcStore.on('load', function(store, records, options){
+    for (var i=0; i < records.length; i++){
+      var rec = records[i];
+      var tipoEntidad = rec.get('tipoEntidad');
+      var titulo = rec.get('tarea');  
+        
+      if(tipoEntidad == constantes.TIPO_ENTIDAD_TAREA_CANCELADA){
+        var nombreTarea = "<font color='red'>" + titulo + " (Cancelada)</font>";
+        rec.set('tarea', nombreTarea);
+      }
+      expander.expandRow(i);
+    }
+  });
 
-  panel.add(historicoGrid);
+
+  var historicoTabPanel = new Ext.TabPanel({
+	items:[
+		historicoGrid, historicoProcedimientoGrid, historicoResolucionesGrid
+	]
+	,border: true
+  });                                                                                                                                                                  
+
+  
+  panel.add(historicoTabPanel);
+  
   panel.getData = function(){
     return entidad.get("data").historico;
   }
@@ -312,6 +635,8 @@
   panel.setValue = function(){
 	var data = entidad.get("data");
 	entidad.cacheOrLoad(data, tareasProcStore, {idProcedimiento : data.id});
+	entidad.cacheOrLoad(data, tareasResProcStore, {idProcedimiento : data.id});
+	entidad.cacheOrLoad(data, resolucionesProcStore, {idProcedimiento : data.id});
   }
 
   panel.getProcedimientoId = function(){

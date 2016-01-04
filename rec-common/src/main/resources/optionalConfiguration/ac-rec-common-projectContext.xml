@@ -18,6 +18,10 @@
 		p:fileName="/WEB-INF/jsp/plugin/mejoras/asuntos/tabs/tabHistoricoAsunto.jsp"
 		p:priority="2" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
 		
+	<bean id="commonProjectContextDefault"
+		class="es.pfsgroup.recovery.common.api.CommonProjectContextImpl" abstract="true">
+	</bean>
+	
 	<bean id="precontenciosoProjectContextBANKIA" parent="precontenciosoProjectContextDefault">
 		<property name="codigoFaseComun">
 			<value>P412</value>
@@ -132,5 +136,6 @@
 	
 	<alias name="precontenciosoProjectContextBANKIA" alias="precontenciosoProjectContext"/>
 	<alias name="coreProjectContextBANKIA" alias="coreProjectContext"/>
+	<bean id="commonProjectContext" parent="commonProjectContextDefault"/>
         
 </beans>

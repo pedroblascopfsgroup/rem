@@ -27,6 +27,7 @@ import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
@@ -544,7 +545,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 			where.add(Restrictions.in("estadoLiquidacion.codigo", filtro.getLiqEstados().split(",")));
 		}
 
-		if (!StringUtils.emtpyString(filtro.getLiqDiasGestion())) {
+		if (!Checks.esNulo(filtro.getLiqDiasGestion())) {
 			where.add(Restrictions.ge("liquidacion.diasEnGestion", Integer.valueOf(filtro.getLiqDiasGestion())));
 		}
 

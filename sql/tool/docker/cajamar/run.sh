@@ -215,7 +215,7 @@ function package_sql () {
         cp $PREVIOUS_SCRIPTS_DIR/DML_009_MASTER_CARGA_TODAS_FUNCIONES.sql $ws_package_dir/
         cp $PREVIOUS_SCRIPTS_DIR/DML_010_ENTITY_CARGA_TODOS_PERFILES.sql $ws_package_dir/
 
-		chmod -R go+w $ws_package_dir/*
+		chmod -R go+w $ws_package_dir
 		for sh in $(find $ws_package_dir -name '*.sh'); do
 			chmod ugo+x $sh
 		done

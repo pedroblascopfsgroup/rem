@@ -30,7 +30,7 @@ DECLARE
 --##########################################
 --*/
 -- Configuracion Esquemas
-   V_ESQUEMA VARCHAR(25) := 'BANK01';
+   V_ESQUEMA VARCHAR(25) := '#ESQUEMA#';
  
    V_USUARIO VARCHAR2(10) := 'DML_128';
    			   

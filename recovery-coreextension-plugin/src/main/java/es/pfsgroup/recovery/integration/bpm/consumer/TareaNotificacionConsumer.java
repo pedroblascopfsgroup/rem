@@ -7,6 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.bo.Executor;
+import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.pfs.asunto.EXTAsuntoManager;
 import es.capgemini.pfs.asunto.ProcedimientoManager;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
@@ -54,7 +55,6 @@ public class TareaNotificacionConsumer extends ConsumerAction<DataContainerPaylo
 
 	protected final Log logger = LogFactory.getLog(getClass());
 	
-	private final DiccionarioDeCodigos diccionarioCodigos;
 	private final String staDefecto;
 	
 	@Autowired
@@ -92,14 +92,12 @@ public class TareaNotificacionConsumer extends ConsumerAction<DataContainerPaylo
 
 	public TareaNotificacionConsumer(Rule<DataContainerPayload> rule, DiccionarioDeCodigos diccionarioCodigos, String staDefecto) {
 		super(rule);
-		this.diccionarioCodigos = diccionarioCodigos; 
 		this.staDefecto = staDefecto;
 	}
 	
 	public TareaNotificacionConsumer(List<Rule<DataContainerPayload>> rules, DiccionarioDeCodigos diccionarioCodigos, String staDefecto) {
 		super(rules);
-		this.staDefecto = staDefecto;
-		this.diccionarioCodigos = diccionarioCodigos; 
+		this.staDefecto = staDefecto; 
 	}
 
 	private String getGuidTareaNotificacion(TareaNotificacionPayload tareaPayload) {
@@ -143,7 +141,7 @@ public class TareaNotificacionConsumer extends ConsumerAction<DataContainerPaylo
 		String tarUUID = getGuidTareaNotificacion(tareaPayload);
 
 		String logMsg = String.format("[INTEGRACION] TAR[%s] Comprobando la existencia de prórroga...", tarUUID);
-		logger.info(logMsg);
+		logger.debug(logMsg);
 		
 		if (!tareaPayload.contieneProrroga()) {
 			logMsg = String.format("[INTEGRACION] TAR[%s] No se ha encontrado información de prórroga", tarUUID);
@@ -152,7 +150,7 @@ public class TareaNotificacionConsumer extends ConsumerAction<DataContainerPaylo
 		}
 
 		logMsg = String.format("[INTEGRACION] TAR[%s] Creando prórroga...", tarUUID);
-		logger.info(logMsg);
+		logger.debug(logMsg);
 		
 		DtoSolicitarProrroga dtoProrroga = new DtoSolicitarProrroga();
 		
@@ -189,7 +187,7 @@ public class TareaNotificacionConsumer extends ConsumerAction<DataContainerPaylo
 		}
 		
 		logMsg = String.format("[INTEGRACION] TAR[%s] Prórroga creada!", tarUUID);
-		logger.info(logMsg);
+		logger.debug(logMsg);
 		
 	}
 
@@ -210,7 +208,7 @@ public class TareaNotificacionConsumer extends ConsumerAction<DataContainerPaylo
 		String guid = getGuidTareaNotificacion(tareaPayload);
 		EXTTareaNotificacion tarNotif = extTareaNotifificacionManager.getTareaNoficiacionByGuid(guid);
 		if (tarNotif==null) {
-			logger.info(String.format("[INTEGRACION] TAR[%s] Tarea no existe, se crea una nueva...", tarUID));
+			logger.debug(String.format("[INTEGRACION] TAR[%s] Tarea no existe, se crea una nueva...", tarUID));
 			String codigoTipoEntidad = tareaPayload.getTipoEntidad();
 			String guidEntidad = getGuidEntidad(tareaPayload);
 
@@ -260,13 +258,11 @@ public class TareaNotificacionConsumer extends ConsumerAction<DataContainerPaylo
 			
 			// Suplanta usuario pendiente de realizar la tarea (lo pone en el USAURIOBORRAR)
 			// para mostrarlo en el histórico
-			tarNotif.getAuditoria().setUsuarioBorrar(tareaPayload.getData().getUsername());
-			
+			tarNotif.getAuditoria().setUsuarioBorrar(SecurityUtils.getCurrentUser().getUsername());			
 		}
 		
-		logger.info(String.format("[INTEGRACION] TAR[%s] Guardando adicionales de Tarea Notificación...", tarUID));
+		logger.debug(String.format("[INTEGRACION] TAR[%s] Guardando adicionales de Tarea Notificación...", tarUID));
 		postCrearTarea(tareaPayload, tarNotif);
-		logger.info(String.format("[INTEGRACION] TAR[%s] Tarea Notificación guardada!!", tarUID));
-	}
-	
+		logger.debug(String.format("[INTEGRACION] TAR[%s] Tarea Notificación guardada!!", tarUID));
+	}	
 }

@@ -56,7 +56,6 @@
 		,iconCls : 'icon_mas'
 		,cls: 'x-btn-text-icon'
       ,handler:function() {
-      		debugger;
 			if(fechaCombo.getValue()===''){ 
 					Ext.Msg.show({
 					   title: fwk.constant.errorMsg

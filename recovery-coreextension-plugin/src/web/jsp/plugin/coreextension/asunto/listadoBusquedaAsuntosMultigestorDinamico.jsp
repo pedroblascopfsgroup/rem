@@ -100,7 +100,6 @@
 				}
 				parametros['params'] = paramAux;
 						
-				debugger;
 						
 				//var flow='asuntos/exportAsuntos';
 		        var flow='plugin/coreextension/asunto/core.exportAsuntos';
@@ -108,7 +107,6 @@
 		               
 		        parametros.tipoSalida='<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.SALIDA_XLS" />';
 		        
-		        debugger;
 				
 				Ext.Ajax.request({
 	            	url: page.resolveUrl('extasunto/exportacionAsuntosCount')
@@ -124,6 +122,10 @@
 	                	comboPropiedades: parametros.comboPropiedades,
 	                	comboSituacionCDD: parametros.comboSituacionCDD,
 	                	comboTipoAsunto: parametros.comboTipoAsunto,
+	                	comboDespachos: parametros.comboDespachos,
+	                	comboGestor: parametros.comboGestor,
+						comboTiposGestor: parametros.comboTiposGestor,
+						destinatarioEmail: parametros.destinatarioEmail,
 	                	fechaCreacionDesde: parametros.fechaCreacionDesde,
 	                	fechaCreacionHasta: parametros.fechaCreacionHasta,
 	                	fechaEntregaDesde: parametros.fechaEntregaDesde,
@@ -137,11 +139,14 @@
 	                	nombre: parametros.nombre,
 	                	numeroProcedimientoEnJuzgado: parametros.numeroProcedimientoEnJuzgado,
 	                	params: parametros.params,
+	                	soloAsuntosEnvioCorreo: parametros.soloAsuntosEnvioCorreo,
+	                	tipoAnotacion: parametros.tipoAnotacion,
 	                	tipoProcedimiento: parametros.tipoProcedimiento,
-	                	tipoSalida: parametros.tipoSalida
+	                	tipoSalida: parametros.tipoSalida,
+	                	usuarioOrigenTarea: parametros.usuarioOrigenTarea,
+	                	usuarioDestinoTarea: parametros.usuarioDestinoTarea             	
 	                }
 	                ,success: function (result, request){
-	                	debugger;
 	                    var r = Ext.util.JSON.decode(result.responseText);
 	                    
 	                    if(r.success) {       
@@ -150,7 +155,6 @@
 						}   
 					}
 					,failure: function (result, request){
-	                	debugger;
 	                }
 				});
             } else {

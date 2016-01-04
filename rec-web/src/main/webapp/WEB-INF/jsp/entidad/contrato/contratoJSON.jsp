@@ -177,6 +177,9 @@
     	<json:property name="charextra7" value="${contrato.charextra7}" />
     	<json:property name="charextra9" value="${contrato.charextra9}" />
     	<json:property name="charextra10" value="${contrato.charextra10}" />
+    	<sec:authorize ifAllGranted="TAB_CONTRATO_OTROS,PERSONALIZACION-BCC">
+    		<json:property name="charextra10" value="${contrato.estadoEntidad}" />
+    	</sec:authorize>
     	<json:property name="flagextra4" value="${contrato.flagextra4}" />
     	<json:property name="dateextra2" value="${contrato.dateextra2}" />
     	<json:property name="dateextra3" value="${contrato.dateextra3}" />

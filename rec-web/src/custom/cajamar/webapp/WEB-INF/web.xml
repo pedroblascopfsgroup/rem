@@ -166,9 +166,9 @@
         - how many user objects are stuffed into the session.  It also grabs
         - these users and exposes them in the servlet context.
     -->
-    <listener>
+    <!--listener>
         <listener-class>es.capgemini.devon.console.web.UserCounterListener</listener-class>
-    </listener>
+    </listener-->
  
  
     <!--

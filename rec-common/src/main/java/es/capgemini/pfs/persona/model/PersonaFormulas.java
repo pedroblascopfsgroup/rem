@@ -15,7 +15,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class PersonaFormulas implements Serializable {
 
-	private static final long serialVersionUID = -3335787426750719296L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4637547044292036246L;
 
 	@Id
 	@Column(name = "PER_ID")

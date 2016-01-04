@@ -14,13 +14,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Where;
 import org.hibernate.proxy.HibernateProxy;
 
-import es.capgemini.pfs.PluginCoreextensionConstantes;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.asunto.model.Procedimiento;
@@ -30,48 +30,15 @@ import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 
 @Entity
 public class EXTAsunto extends Asunto {
 
 	private static final long serialVersionUID = 2075119525614504409L;
-
-	private static final String _GESTOR_DESPACHO = " "
-			+ " select (trim(usu.usu_apellido1) || '-' || trim(usu.usu_apellido2) || '-' || trim(usu.usu_nombre))"
-			+ " from   asu_asuntos a, gaa_gestor_adicional_asunto gaa, "
-			+ "        usd_usuarios_despachos usd, ${master.schema}.usu_usuarios usu,"
-			+ "        ${master.schema}.dd_tge_tipo_gestor ddt"
-			+ " where  a.asu_id = gaa.asu_id  "
-			+ " and    gaa.usd_id = usd.usd_id"
-			+ " and    usd.usu_id = usu.usu_id"
-			+ " and    gaa.dd_tge_id = ddt.dd_tge_id"
-			+ " and    a.asu_id = ASU_ID";
-
-	private static final String _DESPACHO_EXTERNO = " "
-			+ " select distinct des.des_despacho"
-			+ " from   asu_asuntos a, gaa_gestor_adicional_asunto gaa, "
-			+ "        usd_usuarios_despachos usd, ${master.schema}.usu_usuarios usu,"
-			+ "        ${master.schema}.dd_tge_tipo_gestor ddt, des_despacho_externo des"
-			+ " where  a.asu_id = gaa.asu_id  "
-			+ " and    gaa.usd_id = usd.usd_id"
-			+ " and    usd.usu_id = usu.usu_id"
-			+ " and    gaa.dd_tge_id = ddt.dd_tge_id"
-			+ " and    usd.des_id = des.des_id"
-			+ " and    ddt.dd_tge_codigo = '"
-			+ EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO + "'"
-			+ " and    a.asu_id = ASU_ID";
-
-	private static final String _GESTOR_DESPACHO_GEXT = _GESTOR_DESPACHO
-			+ " and    ddt.dd_tge_codigo = '"
-			+ EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO + "'";
-
-	private static final String _GESTOR_DESPACHO_SUP = _GESTOR_DESPACHO
-			+ " and    ddt.dd_tge_codigo = '"
-			+ EXTDDTipoGestor.CODIGO_TIPO_GESTOR_SUPERVISOR + "'";
-
+	
 	@Transient
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -105,33 +72,6 @@ public class EXTAsunto extends Asunto {
 			+ "                         where m2.cnt_id = m.cnt_id )" + ")")
 	private Double saldoTotalPorContratosSQL;
 
-	/*@Formula("("
-			+ " select sum(abs(prc.prc_saldo_recuperacion)) from prc_procedimientos prc "
-			+ " where prc.asu_id = ASU_ID  and prc.borrado = 0 "
-			+ " and prc.PRC_PRC_ID is null and prc.dd_epr_id not in ( '"
-			+ PluginCoreextensionConstantes.ESTADO_PROCEDIMIENTO_REORGANIZADO
-			+ "')" + " group by prc.asu_id" + ")")*/
-	/*
-	@Formula("(SELECT PRO.PRC_SALDO_RECUPERACION FROM " +
-			"(SELECT PRC.PRC_ID, PRC.ASU_ID, PRC.PRC_SALDO_RECUPERACION,  ROW_NUMBER() OVER (PARTITION BY PRC.ASU_ID ORDER BY PRC.PRC_ID DESC) ROWNUMBER " +
-			"FROM PRC_PROCEDIMIENTOS PRC " + 
-			"INNER JOIN TAR_TAREAS_NOTIFICACIONES TAR ON TAR.PRC_ID = PRC.PRC_ID AND TAR.TAR_TAREA_FINALIZADA IS NULL AND TAR.BORRADO = 0 " + 
-	        "INNER JOIN TEX_TAREA_EXTERNA TEX ON TEX.TAR_ID = TEX.TAR_ID AND TEX.BORRADO = 0 " + 
-	        "INNER JOIN TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = TEX.TAP_ID AND TAR.BORRADO = 0 " + 
-	        "WHERE PRC.BORRADO = 0 AND PRC.ASU_ID = ASU_ID) PRO " +
-	        "WHERE PRO.ROWNUMBER = 1)")
-	*/
-	//private Double importeEstimado;
-
-	@Formula("(" + _GESTOR_DESPACHO_GEXT + ")")
-	private String gestorNombreApellidosSQL;
-
-	@Formula("(" + _GESTOR_DESPACHO_SUP + ")")
-	private String supervisorNombreApellidosSQL;
-
-	@Formula("(" + _DESPACHO_EXTERNO + ")")
-	private String despachoSQL;
-
 	@Column(name = "ASU_ID_EXTERNO")
 	private String codigoExterno;
 
@@ -153,8 +93,6 @@ public class EXTAsunto extends Asunto {
 	public void setGuid(String guid) {
 		this.guid = guid;
 	}
-
-	// private Boolean esMultigestor;
 
 	public String getCodigoExterno() {
 		return codigoExterno;
@@ -205,13 +143,7 @@ public class EXTAsunto extends Asunto {
 
 	public GestorDespacho getGestor() {
 		GestorDespacho gd = getGestorPorTipo();
-//		if (gd == null) {
-//			logger.warn("EL ASUNTO " + this.getId()
-//					+ " NO TIENE GESTOR ASOCIADO");
-//		}
 		return gd;
-
-		// return super.getGestor();
 	}
 
 	// JEM:
@@ -230,7 +162,7 @@ public class EXTAsunto extends Asunto {
 		if (super.getSupervisor() != null) {
 			return super.getSupervisor();
 		} else {
-			return this.getGestor("SUP");
+			return this.getGestor(EXTDDTipoGestor.CODIGO_TIPO_GESTOR_SUPERVISOR);
 		}
 	}
 
@@ -248,7 +180,7 @@ public class EXTAsunto extends Asunto {
 		if (super.getGestor() != null) {
 			return super.getGestor();
 		} else {
-			return this.getGestor("GEXT");
+			return this.getGestor(EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO);
 		}
 	}
 
@@ -292,49 +224,61 @@ public class EXTAsunto extends Asunto {
 
 	public String getGestorNombreApellidosSQL() {
 
-		String gest = gestorNombreApellidosSQL;
+		String gest = "";
+		
+		GestorDespacho gd = this.getGestor(EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO);
+		if(gd != null) {
+			Usuario usuario = gd.getUsuario();
+			
+			if(usuario != null) {
+				gest = StringUtils.trim(usuario.getApellido1()) + "-" + StringUtils.trim(usuario.getApellido2()) + "-" + StringUtils.trim(usuario.getNombre());
+			}
+		}
 
 		return gest;
 	}
 
 	public String getSupervisorNombreApellidosSQL() {
 
-		String sup = supervisorNombreApellidosSQL;
+		String sup = "";
+		
+		GestorDespacho gd = this.getGestor(EXTDDTipoGestor.CODIGO_TIPO_GESTOR_SUPERVISOR);
+		if(gd != null) {
+			Usuario usuario = gd.getUsuario();
+		
+			if(usuario != null) {
+				sup = StringUtils.trim(usuario.getApellido1()) + "-" + StringUtils.trim(usuario.getApellido2()) + "-" + StringUtils.trim(usuario.getNombre());
+			}
+		}
 
 		return sup;
 	}
 
 	public String getDespachoSQL() {
 
-		String desp = despachoSQL;
+		String desp = "";
+		GestorDespacho gd = this.getGestor(EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO);
+		
+		if(gd != null && gd.getDespachoExterno() != null) {
+			desp = gd.getDespachoExterno().getDespacho();
+		}
 
 		return desp;
 	}
-
-	/*
-	 * public void setGestoresAsunto(List<EXTGestorAdicionalAsunto>
-	 * gestoresAsunto) { this.gestoresAsunto = gestoresAsunto;
-	 * 
-	 * 
-	 * if(gestoresAsunto != null) { for (EXTGestorAdicionalAsunto gesA :
-	 * gestoresAsunto) { gesA.setAsunto(this); } }
-	 * 
-	 * }
-	 */
-
+	
 	public GestorDespacho getGestorCEXP() {
-		return this.getGestor("GECEXP");
+		return this.getGestor(EXTDDTipoGestor.CODIGO_TIPO_GESTOR_CONF_EXP);
 	}
 
 	public GestorDespacho getSupervisorCEXP() {
-		return this.getGestor("SUPCEXP");
+		return this.getGestor(EXTDDTipoGestor.CODIGO_TIPO_GESTOR_SUPERVISOR_CONF_EXP);
 	}
 
 	public GestorDespacho getProcurador() {
 		if (super.getProcurador() != null) {
 			return super.getProcurador();
 		} else {
-			return this.getGestor("PROC");
+			return this.getGestor(EXTDDTipoGestor.CODIGO_TIPO_GESTOR_PROCURADOR);
 		}
 	}
 

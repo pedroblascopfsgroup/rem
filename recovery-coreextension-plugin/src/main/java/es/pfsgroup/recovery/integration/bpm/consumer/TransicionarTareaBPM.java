@@ -98,7 +98,7 @@ public class TransicionarTareaBPM extends ConsumerAction<DataContainerPayload> {
 			logger.error(logMsg);
 			throw new IntegrationDataException(logMsg);
 		}
-		logger.info(String.format("[INTEGRACION] TEX [%d] transicionando a través de %s", tex.getId(), transicionPropuesta));
+		logger.debug(String.format("[INTEGRACION] TEX [%d] transicionando a través de %s", tex.getId(), transicionPropuesta));
 		saveFormValues(procedimiento.getData(), tex);
 
 		jbpmUtil.signalToken(tex.getTokenIdBpm(), transicionPropuesta);
@@ -109,7 +109,8 @@ public class TransicionarTareaBPM extends ConsumerAction<DataContainerPayload> {
 	protected void doAction(DataContainerPayload payload) {
 		ProcedimientoPayload procedimiento = new ProcedimientoPayload(payload);
 		String tarGUID = getGuidTareaATransicionar(procedimiento);
-		logger.debug(String.format("[INTEGRACION] TAR [%s] Inciando transición en tarea...", tarGUID));
+		logger.info(String.format("[INTEGRACION] TAR [%s] Inciando transición en tarea...", tarGUID));
+		
 		// OJO! El procediento padre del nuevo BPM será el procedimiento desde el que se genera (no el padre de este!).
 		EXTTareaNotificacion tarNotif = extTareaNotificacionManager.getTareaNoficiacionByGuid(tarGUID);
 		if (tarNotif==null || tarNotif.getTareaExterna()==null) {

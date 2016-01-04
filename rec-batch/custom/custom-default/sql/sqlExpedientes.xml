@@ -309,8 +309,10 @@ AND tmp.CNT_ID = C.CNT_ID
     **************************************/
     MERGE INTO TMP_EXP_A_CANCELAR TMP_EXP USING 
         (    
-          SELECT DISTINCT (EXP_ID)    
-            FROM TMP_MOV_REVISADOS_EXP TMP_MOV           
+          SELECT DISTINCT (TMP_MOV.EXP_ID)    
+            FROM TMP_MOV_REVISADOS_EXP TMP_MOV  
+            INNER JOIN EXP_EXPEDIENTES EXP ON TMP_MOV.EXP_ID = EXP.EXP_ID 
+            INNER JOIN dd_tpx_tipo_expediente TPX ON TPX.DD_TPX_ID = EXP.DD_TPX_ID AND TPX.DD_TPX_CODIGO = ${ddTipoExpediente.Recuperacion.codigo}         
           WHERE     
           (TMP_MOV.CANCELADO = 0 
           AND (

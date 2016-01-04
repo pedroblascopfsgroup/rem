@@ -197,9 +197,9 @@
 	</c:if>
 
 	<c:if test="${isConsulta}">
-		var btnAceptar = new Ext.Button({
-			text : '<s:message code="app.botones.aceptar" text="**Aceptar" />'
-			,iconCls : 'icon_ok'
+		var btnCerrar = new Ext.Button({
+			text : '<s:message code="app.botones.cancelar" text="**Cancelar" />'
+			,iconCls : 'icon_cancel'
 			,handler : function(){
 				page.submit({
 					eventName : 'ok'
@@ -224,7 +224,7 @@
 		]
 		,bbar : [
 			<c:if test="${isConsulta}">
-				btnAceptar
+				btnCerrar
 			</c:if>
 			<c:if test="${!isConsulta}">
 				btnGuardar, btnCancelar

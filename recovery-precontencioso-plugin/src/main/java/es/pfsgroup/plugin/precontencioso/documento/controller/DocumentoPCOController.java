@@ -90,6 +90,7 @@ public class DocumentoPCOController {
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getSolicitudesDocumentosPorProcedimientoId(@RequestParam(value = "idProcedimientoPCO", required = true) Long idProcedimientoPCO, ModelMap model) {
 	
@@ -101,7 +102,6 @@ public class DocumentoPCOController {
 		
 		List<DocumentoPCO> listDocumentos = documentoPCOApi.getDocumentosPorIdProcedimientoPCO(idProcedimientoPCO);
 		List<DocumentoPCO> documentos = documentoPCOApi.getDocumentosOrdenadosByUnidadGestion(listDocumentos);
-		int idIdentificativo = 1;
 
 		for (DocumentoPCO doc : documentos) {
 			List<SolicitudDocumentoPCO> solicitudes = doc.getSolicitudes();
@@ -114,16 +114,14 @@ public class DocumentoPCOController {
 					
 					// se añade el registro, si no es una gestoria o si es una gestoria y es una solicitud asignada a ella
 					if (!isGestoria || (isGestoria && usuarioManager.getUsuarioLogado().getId().equals(sol.getActor().getUsuario().getId()))) {
-						solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc, sol, esDocumento, tieneSolicitud, idIdentificativo));
+						solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc, sol, esDocumento, tieneSolicitud));
 					}
 
 					if (esDocumento) esDocumento = false;
-					idIdentificativo++;
 				}
 			} else if (!isGestoria) {
 				tieneSolicitud = false;
-				solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc, null, esDocumento, tieneSolicitud, idIdentificativo));
-				idIdentificativo++;
+				solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc, null, esDocumento, tieneSolicitud));
 			}
 		}
 
@@ -147,6 +145,7 @@ public class DocumentoPCOController {
 	 * @param model
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String agregarDocumentosUG(@RequestParam(value = "uniGestionIds", required = true) String uniGestionIds, @RequestParam(value = "idPrc", required = true) Long idPrc, ModelMap model) {
 
@@ -326,7 +325,6 @@ public class DocumentoPCOController {
 	 * @param model
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String excluirDocumentos(WebRequest request, ModelMap model) {
 		
@@ -357,7 +355,6 @@ public class DocumentoPCOController {
 	 * @param model
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String descartarDocumentos(WebRequest request, ModelMap model) {
 		
@@ -389,7 +386,6 @@ public class DocumentoPCOController {
 	 * @param model
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String anularSolicitudes(WebRequest request, ModelMap model) {
 
@@ -427,7 +423,6 @@ public class DocumentoPCOController {
 	 * @param model
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String editarDocumento(WebRequest webRequest,ModelMap model) {
 
@@ -522,6 +517,7 @@ public class DocumentoPCOController {
 		return DEFAULT;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping	
 	public String validacionDuplicadoDocumento(WebRequest request, ModelMap model) {
 		boolean documento_duplicado = documentoPCOApi.validarDocumentoUnico(
@@ -597,6 +593,7 @@ public class DocumentoPCOController {
 		return DEFAULT;
 	}
 
+	@SuppressWarnings("rawtypes")
 	private String obtenerCodigoDiccionario(Class claseDiccionario, String descripcion) {
 		
 		String respuesta = "";
@@ -604,19 +601,6 @@ public class DocumentoPCOController {
 			Dictionary diccionario = (Dictionary) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByDes(claseDiccionario, descripcion);
 			if (!Checks.esNulo(diccionario)) {
 				respuesta = diccionario.getCodigo();
-			}
-		}
-		return respuesta;
-
-	}
-
-	private Long obtenerIdDiccionario(Class claseDiccionario, String descripcion) {
-		
-		Long respuesta = null;
-		if (!Checks.esNulo(descripcion)) {
-			Dictionary diccionario = (Dictionary) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByDes(claseDiccionario, descripcion);
-			if (!Checks.esNulo(diccionario)) {
-				respuesta = diccionario.getId();
 			}
 		}
 		return respuesta;

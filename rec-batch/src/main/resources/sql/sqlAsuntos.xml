@@ -3,20 +3,20 @@
 
   <entry key="asuntos.queryBuscarContratosAsunto">
     <![CDATA[
-		SELECT asu.ASU_ID, cex.CNT_ID
-		  FROM asu_asuntos asu
-		  INNER JOIN prc_procedimientos prc ON asu.ASU_ID = prc.ASU_ID
+        SELECT asu.ASU_ID, cex.CNT_ID
+          FROM asu_asuntos asu
+          INNER JOIN prc_procedimientos prc ON asu.ASU_ID = prc.ASU_ID
           INNER JOIN ${master.schema}.DD_EPR_ESTADO_PROCEDIMIENTO epr ON prc.DD_EPR_ID = prc.DD_EPR_ID
-		  INNER JOIN prc_cex ON prc.prc_id = prc_cex.prc_id
-		  INNER JOIN cex_contratos_expediente cex ON cex.cex_id = prc_cex.cex_id
+          INNER JOIN prc_cex ON prc.prc_id = prc_cex.prc_id
+          INNER JOIN cex_contratos_expediente cex ON cex.cex_id = prc_cex.cex_id
           JOIN CNT_CONTRATOS cnt ON cex.cnt_id = cnt.cnt_id
           JOIN ${master.schema}.dd_esc_estado_cnt esc ON cnt.dd_esc_id = esc.dd_esc_id
-		  INNER JOIN ${master.schema}.DD_EAS_ESTADO_ASUNTOS eas ON asu.DD_EAS_ID = eas.DD_EAS_ID
-		WHERE prc.borrado = 0
-		  and asu.borrado = 0
-          and cex.borrado = 0
-		  and eas.DD_EAS_CODIGO IN (?, ?, ?)
-          and epr.DD_EPR_CODIGO IN (?, ?, ?)
+          INNER JOIN ${master.schema}.DD_EAS_ESTADO_ASUNTOS eas ON asu.DD_EAS_ID = eas.DD_EAS_ID
+        WHERE prc.borrado = 0
+          AND asu.borrado = 0
+          AND cex.borrado = 0
+          AND eas.DD_EAS_CODIGO IN (?, ?, ?)
+          AND epr.DD_EPR_CODIGO IN (?, ?, ?)
           AND esc.dd_esc_codigo <> ?
     ]]>
   </entry>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+	
+	<bean p:entity="tabs.procedimiento.fast" p:name="historicoProcedimiento"  p:order="900" 
+		p:fileName="/WEB-INF/jsp/entidad/procedimiento/tabs/historico.jsp" 
+		p:priority="2"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+	
+	<bean p:entity="tabs.asunto.fast" p:name="historicoAsunto" p:order="2100"
+		p:fileName="/WEB-INF/jsp/plugin/mejoras/asuntos/tabs/tabHistoricoAsunto.jsp"
+		p:priority="2" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	<bean id="precontenciosoProjectContextBANKIA" parent="precontenciosoProjectContextDefault">
+		<property name="codigoFaseComun">
+			<value>P412</value>
+		</property>
+		<property name="recovery">
+			<value>BANKIA</value>
+		</property>
+		<property name="generarArchivoBurofax">
+			<value>true</value>
+		</property>
+                
+		<property name="visibilidadBotones">
+			<map>
+				<entry key="defecto">
+					<map>
+						<entry key="botonesDocumentos">
+							<map>
+								<entry key="incluirDocButton" value="1" />
+								<entry key="excluirDocButton" value="1" />
+								<entry key="descartarDocButton" value="1" />
+								<entry key="editarDocButton" value="1" />
+								<entry key="anularSolicitudesButton" value="1" />
+								<entry key="solicitarDocButton" value="1" />
+								<entry key="informarDocButton" value="1" />
+								<entry key="botonRefreshDoc" value="1" />
+							</map>
+						</entry>
+						<entry key="botonesLiquidaciones">
+							<map>
+								<entry key="btnSolicitar" value="1" />
+								<entry key="btnEditarValores" value="1" />
+								<entry key="btnConfirmar" value="1" />
+								<entry key="btnVisar" value="0" />
+								<entry key="btnDescartar" value="1" />
+								<entry key="btnGenerar" value="1" />
+								<entry key="botonRefreshLiq" value="1" />
+							</map>
+						</entry>
+						<entry key="botonesBurofaxes">
+							<map>
+								<entry key="btnAddPersona" value="1" />
+								<entry key="btnEnviar" value="1" />
+								<entry key="btnNuevaDir" value="1" />
+								<entry key="btnEditar" value="1" />
+								<entry key="btnPreparar" value="1" />
+								<entry key="btnCancelar" value="1" />
+								<entry key="btnNotificar" value="1" />
+								<entry key="btnDescargarBurofax" value="1" />
+								<entry key="botonRefreshBur" value="1" />
+							</map>
+						</entry>
+					</map>
+				</entry>
+				<entry key="BANKIA">
+					<map>
+						<entry key="botonesDocumentos">
+							<map>
+								<entry key="incluirDocButton" value="1" />
+								<entry key="excluirDocButton" value="1" />
+								<entry key="descartarDocButton" value="1" />
+								<entry key="editarDocButton" value="1" />
+								<entry key="anularSolicitudesButton" value="1" />
+								<entry key="solicitarDocButton" value="1" />
+								<entry key="informarDocButton" value="1" />
+								<entry key="botonRefreshDoc" value="1" />
+							</map>
+						</entry>
+						<entry key="botonesLiquidaciones">
+							<map>
+								<entry key="btnSolicitar" value="0" />
+								<entry key="btnEditarValores" value="1" />
+								<entry key="btnConfirmar" value="1" />
+								<entry key="btnVisar" value="1" />
+								<entry key="btnDescartar" value="1" />
+								<entry key="btnGenerar" value="0" />
+								<entry key="botonRefreshLiq" value="1" />
+							</map>
+						</entry>
+						<entry key="botonesBurofaxes">
+							<map>
+								<entry key="btnAddPersona" value="1" />
+								<entry key="btnEnviar" value="1" />
+								<entry key="btnNuevaDir" value="1" />
+								<entry key="btnEditar" value="1" />
+								<entry key="btnPreparar" value="1" />
+								<entry key="btnCancelar" value="0" />
+								<entry key="btnNotificar" value="1" />
+								<entry key="btnDescargarBurofax" value="1" />
+								<entry key="botonRefreshBur" value="1" />
+							</map>
+						</entry>
+					</map>
+				</entry>
+			</map>
+		</property>
+                
+	</bean>
+	
+	<bean id="coreProjectContextBANKIA" parent="coreProjectContextDefault">
+		<property name="categoriasSubTareas">
+			<map>
+				<entry key="TOMA_DE_DECISION">
+					<set>
+						<value>46</value>
+						<value>TD_SUP_PCO</value>
+						<value>TD_PREDOC</value>
+					</set>
+				</entry>	
+			</map>
+		</property>
+	</bean>
+	
+	<alias name="precontenciosoProjectContextBANKIA" alias="precontenciosoProjectContext"/>
+	<alias name="coreProjectContextBANKIA" alias="coreProjectContext"/>
+        
+</beans>

@@ -2,6 +2,7 @@ package es.pfsgroup.recovery.hrebcc.manager;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.haya.integration.bpm.IntegracionBpmService;
+import es.pfsgroup.recovery.hrebcc.Dao.RiesgoOperacionalVencidosDao;
 import es.pfsgroup.recovery.hrebcc.api.RiesgoOperacionalApi;
 import es.pfsgroup.recovery.hrebcc.dto.ActualizarRiesgoOperacionalDto;
 import es.pfsgroup.recovery.hrebcc.model.CntRiesgoOperacional;
@@ -39,6 +41,9 @@ public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 	
 	@Autowired
 	GenericABMDao genericDao;
+	
+	@Autowired
+	RiesgoOperacionalVencidosDao riesgoOperacionalVencidosDao;
 	
 	@Autowired
 	ProcedimientoManager procedimientoManager;
@@ -125,10 +130,10 @@ public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 		Vencidos resulVencidos = null;
 		
 		if(!Checks.esNulo(cntId)){
-			Vencidos vencidos = genericDao.get(Vencidos.class, genericDao.createFilter(FilterType.EQUALS, "cntId", cntId));
+			List<Vencidos> vencidos = riesgoOperacionalVencidosDao.getListVencidos(cntId);
 			
-			if(!Checks.esNulo(vencidos)){
-				resulVencidos = vencidos;
+			if(!Checks.esNulo(vencidos) && vencidos.size() > 0){
+				resulVencidos = vencidos.get(0);
 			}
 		}
 		

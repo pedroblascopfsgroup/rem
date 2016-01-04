@@ -46,29 +46,8 @@ var bottomBar = [];
 	{
 		bottomBar.push(btnGuardar);
 	}
-	muestraBotonGuardar = 0;
 </c:if>
 
-if (muestraBotonGuardar==1){
-	var btnGuardar = new Ext.Button({
-		text : '<s:message code="app.guardar" text="**Guardar" />'
-		,iconCls : 'icon_ok'
-		,handler : function(){
-			//page.fireEvent(app.event.DONE);
-			page.submit({
-				eventName : 'ok'
-				,formPanel : panelEdicion
-				,success : function(){ page.fireEvent(app.event.DONE); }
-				,error : function(response,config){}
-			});
-		}
-	});
-	
-	//Si tiene m�s items que el propio label de descripci�n se crea el bot�n guardar
-	if (items.length > 1)	{
-		bottomBar.push(btnGuardar);
-	}
-}
 
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/botonCancelar.jsp" %>
 
@@ -88,6 +67,37 @@ var procedimientoIniciar = items[6];
 
 procedimientoPropuesto.setDisabled(true);
 
+var dsProcedimientos = new Ext.data.Store({
+			autoLoad:true,
+			proxy: new Ext.data.HttpProxy({
+				url: page.resolveUrl('expedientejudicial/getTiposProcedimientoAsignacionDeGestores')
+			}),
+			reader: new Ext.data.JsonReader({
+				root: 'listadoProcedimientos'
+				,totalProperty: 'total'
+			}, [
+				{name: 'codigo', mapping: 'codigo'},
+				{name: 'descripcion', mapping: 'descripcion'}
+			])
+		});
+	
+items[6] = new Ext.form.ComboBox({
+							name:procedimientoIniciar.name
+							,hiddenName:procedimientoIniciar.name
+							,disabled:procedimientoIniciar.disabled
+							,value:procedimientoIniciar.value
+							,allowBlank : true
+							,store:dsProcedimientos
+							,displayField:'descripcion'
+							,valueField:'codigo'
+							,mode: 'local'
+							,emptyText:''
+							,triggerAction: 'all'
+							,fieldLabel : '<s:message code="plugin.precontencioso.asignar.gestor.procedimiento.iniciar" text="**Procedimiento a iniciar" />'
+					});
+					
+procedimientoIniciar = items[6];					
+
 docCompleta.on('select', function() {
 	if(docCompleta.getValue() == resultadoDocCompletaNO) {
 		fechaRecep.allowBlank = false;
@@ -99,7 +109,7 @@ docCompleta.on('select', function() {
 		procedimientoPropuesto.allowBlank = false;
 		procedimientoIniciar.allowBlank = true;
 		procedimientoIniciar.setDisabled(true);
-		procedimientoIniciar.setValue('');
+		procedimientoIniciar.setValue(procedimientoPropuesto.getValue());
 	}else{
 		fechaRecep.allowBlank = false;
 		docCompleta.allowBlank = false;
@@ -111,18 +121,22 @@ docCompleta.on('select', function() {
 		tipoProblema.setValue('');
 		procedimientoPropuesto.allowBlank = false;
 		procedimientoIniciar.allowBlank = false;
-		procedimientoIniciar.setDisabled(false);
+		if(tipoProblema.getValue() == cambioProcedimiento) {
+			procedimientoIniciar.setDisabled(false);
+		} else {
+			procedimientoIniciar.setDisabled(true);
+			procedimientoIniciar.setValue(procedimientoPropuesto.getValue());
+		}
 	}
 });
 
 tipoProblema.on('select', function() {
+	procedimientoIniciar.allowBlank = false;
 	if(tipoProblema.getValue() == cambioProcedimiento) {
-		procedimientoIniciar.allowBlank = false;
 		procedimientoIniciar.setDisabled(false);
 	}else{
-		procedimientoIniciar.allowBlank = true;
 		procedimientoIniciar.setDisabled(true);
-		procedimientoIniciar.setValue('');
+		procedimientoIniciar.setValue(procedimientoPropuesto.getValue());
 	}
 });
 

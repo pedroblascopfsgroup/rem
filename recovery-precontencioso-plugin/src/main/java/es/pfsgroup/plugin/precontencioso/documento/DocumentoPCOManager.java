@@ -102,9 +102,6 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	
     private final Log logger = LogFactory.getLog(getClass());
     private static SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-    private static String ZERO_VALUE = "0";
-
-
 
     /**
      * Devolvemos todas las solicitudes de los documentos de un 
@@ -255,7 +252,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	 * @return
 	 */
 	public SolicitudDocumentoPCODto crearSolicitudDocumentoDto(DocumentoPCO documento, SolicitudDocumentoPCO solicitud, 
-																	boolean esDocumento, boolean tieneSolicitud, int idIdentificativo){
+																	boolean esDocumento, boolean tieneSolicitud){
 		SolicitudDocumentoPCODto solDto=null;
 		DDSiNo siNo;
 		String descripcionUG = null;
@@ -292,7 +289,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		}
 				
 		solDto = DocumentoAssembler.docAndSolEntityToSolicitudDto(documento, solicitud, ugIdDto, descripcionUG, 
-																	esDocumento, tieneSolicitud, siNo, siNoNoAplica, idIdentificativo);
+																	esDocumento, tieneSolicitud, siNo, siNoNoAplica, documento.getId());
 		
 		return solDto;
 	};
@@ -477,6 +474,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	 * Obtiene la lista de tipos de Documentos
 	 * 
 	 */
+	@SuppressWarnings("unchecked")
 	public List<DDTipoFicheroAdjunto> getTiposDocumento(){
 		List<DDTipoFicheroAdjunto> tiposDocumento = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionarioSinBorrado(DDTipoFicheroAdjunto.class);
 		
@@ -487,6 +485,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	 * Obtiene la lista de Unidades de Gestión
 	 * 
 	 */
+	@SuppressWarnings("unchecked")
 	public List<DDUnidadGestionPCO> getUnidadesGestion(){
 		List<DDUnidadGestionPCO> tiposUG = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionarioSinBorrado(DDUnidadGestionPCO.class);
 		
@@ -555,10 +554,10 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		documento.setTomo(docDto.getTomo());
 		documento.setPlaza(docDto.getPlaza());
 		try {
-			documento.setFechaEscritura(webDateFormat.parse(docDto.getFechaEscritura()));
+			if(!Checks.esNulo(docDto.getFechaEscritura()))
+				documento.setFechaEscritura(webDateFormat.parse(docDto.getFechaEscritura()));
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("saveCrearDocumento fecha: " + e);
 		}	
 		
 		DDTipoFicheroAdjunto tipoDocumento = genericDao.get(
@@ -586,7 +585,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		try {
 			genericDao.save(DocumentoPCO.class, documento);
 		} catch (Exception e) {
-			System.out.println("Error: "+e);
+			logger.error("saveCrearDocumento: "+ e);
 		}
 	}
 	
@@ -673,6 +672,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	 * @return Lista de documentos a mostrar en el doble combo
 	 * 
 	 */
+	@SuppressWarnings("rawtypes")
 	public List<DocumentosUGPCODto> getDocumentosUG(Long idProcedimiento,String codUG) {
 		List<DocumentosUGPCODto> documentosUG = new ArrayList<DocumentosUGPCODto>(); 
 		DocumentosUGPCODto docUG;
@@ -804,5 +804,11 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		}
 
 		return false;
+	}
+	
+	@Override
+	public List<GestorDespacho> getGestorDespachoByUsuIdAndTipoDespacho(Long usuId, String tipoDespachoExterno) 
+	{	
+		return gestorDespachoDao.getGestorDespachoByUsuIdAndTipoDespacho(usuId, tipoDespachoExterno);
 	}
 }

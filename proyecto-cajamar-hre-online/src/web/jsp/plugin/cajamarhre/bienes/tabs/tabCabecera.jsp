@@ -8,6 +8,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 (function(){
+
 	var labelStyle = 'width:185px;font-weight:bolder",width:375';
 	var labelStyleAjusteColumnas = 'width:185px;height:40px;font-weight:bolder",width:375';
 	var labelStyleDescripcion = 'width:185px;height:60px;font-weight:bolder",width:375';
@@ -593,21 +594,21 @@
 		<sec:authorize ifAllGranted="ACC_MAN_SERVICIOS_UVEM">
 			<c:choose>
     			<c:when test="${usuario.entidad.id eq appProperties.idEntidadCajamar}">
+    				<sec:authorize ifAllGranted="SOLVENCIA_EDITAR">
 			        panel.getBottomToolbar().addButton([btnSolicitarTasacionHCJ]);
+			        </sec:authorize>
 			    </c:when>    
-    			<c:otherwise>
-        			//panel.getBottomToolbar().addButton([btnSolicitarTasacion]);
-    			</c:otherwise>
 			</c:choose>			
 		</sec:authorize>
 		<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
+			<sec:authorize ifAllGranted="SOLVENCIA_EDITAR">
 			panel.getBottomToolbar().addButton([btnSolicitarTasacionHCJ]);
+			</sec:authorize>
 		</sec:authorize>
 	
 	
+<sec:authorize ifNotGranted="PERSONALIZACION-BCC">
 	Ext.getCmp('otrosDatos').hide();
-<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
-	Ext.getCmp('otrosDatos').show();
 </sec:authorize>
 	
 	return panel;

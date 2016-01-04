@@ -1,0 +1,4 @@
+url=jdbc:oracle:thin:BANKMASTER_TX/admin@//ibd01:1523/ibd013
+username=bankmaster_tx
+password=admin
+dsm.prot.cnts=SI

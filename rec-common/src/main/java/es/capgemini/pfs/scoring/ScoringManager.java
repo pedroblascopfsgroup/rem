@@ -33,6 +33,7 @@ import es.capgemini.pfs.scoring.dto.DtoSimulacion;
 import es.capgemini.pfs.scoring.model.PuntuacionParcial;
 import es.capgemini.pfs.scoring.model.PuntuacionTotal;
 import es.capgemini.pfs.utils.ObjetoResultado;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * Clase que realiza las tareas de calculo de scoring en el common.
@@ -157,7 +158,13 @@ public class ScoringManager {
      * @return true si debe procesar.
      */
     private boolean debeProcesarAlerta(PuntuacionParcial pp) {
-        Long time = pp.getAlerta().getTipoAlerta().getPlazoVisibilidad() + pp.getAlerta().getFechaExtraccion().getTime();
+    	Long time = 0L;
+    	if (Checks.esNulo(pp.getAlerta().getTipoAlerta().getPlazoVisibilidad())) {
+    		logger.error("scoringManager.debeProcesarAlerta - El plazo de la visibilidad del tipo de alerta no puede ser null");
+    		time = pp.getAlerta().getFechaExtraccion().getTime();
+    	} else {
+    		time = pp.getAlerta().getTipoAlerta().getPlazoVisibilidad() + pp.getAlerta().getFechaExtraccion().getTime();
+    	}
         return System.currentTimeMillis() < time;
     }
 
@@ -248,7 +255,12 @@ public class ScoringManager {
 
             //Y creo la celda de grupo
             cellTotalFecha.setName(tituloColumna);
-            cellTotalFecha.setValue(puntuacionTotal.getPuntuacion().toString());
+            if (Checks.esNulo(puntuacionTotal.getPuntuacion().toString())) {
+            	logger.error("scoringManager.mergePuntuacionesTotales - La puntuación total no puede ser null");
+            	cellTotalFecha.setValue("0");
+            } else {
+            	cellTotalFecha.setValue(puntuacionTotal.getPuntuacion().toString());
+            }
             rowTotal.addCell(cellTotalFecha);
         }
 
@@ -387,7 +399,9 @@ public class ScoringManager {
         for (Date fecha : fechasList) {
             //Traigo los datos para una de las fechas. 
             PuntuacionTotal puntuacionTotal = puntuacionTotalDao.buscarPorFechaYPersona(fecha, idPersona);
-            mergePuntuacionesTotales(puntuacionTotal, rows, fecha);
+            if (!Checks.esNulo(puntuacionTotal)) {
+            	mergePuntuacionesTotales(puntuacionTotal, rows, fecha);
+            }
         }
 
         return dto;

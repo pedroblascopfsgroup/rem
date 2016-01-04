@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.impl;
 
+import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
@@ -24,6 +26,7 @@ import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
+import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
@@ -33,6 +36,7 @@ import es.pfsgroup.recovery.ext.impl.utils.StringUtils;
 @Repository
 public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO, Long> implements ProcedimientoPCODao {
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public ProcedimientoPCO getProcedimientoPcoPorIdProcedimiento(Long idProcedimiento) {
 
@@ -52,20 +56,31 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 	}
 
 	@Override
-	public Integer countBusquedaPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
+	public Integer countBusquedaProcedimientosPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
 		Criteria query = queryBusquedaPorFiltro(filtro);
 
-		query.setProjection(Projections.rowCount());
+		query.setProjection(Projections.countDistinct("procedimiento.id"));
 
 		return (Integer) query.uniqueResult();
 	}
 
 	@Override
+	public Integer countBusquedaElementosPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
+		Criteria query = queryBusquedaPorFiltro(filtro);
+		query.setProjection(Projections.rowCount());
+		
+		return (Integer) query.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
 	public List<HashMap<String, Object>> busquedaProcedimientosPcoPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
 		ProjectionList select = Projections.projectionList();
 
 		// Distinct por procedimiento id
+
 		select.add(Projections.property("id").as("id"));
+		select.add(Projections.distinct(Projections.property("procedimientoPco.id").as("id")));
 		select.add(Projections.property("procedimientoPco.procedimiento").as("procedimiento"));
 		select.add(Projections.property("procedimiento.id").as("prcId"));
 		select.add(Projections.property("procedimiento.id").as("codigo"));
@@ -84,12 +99,13 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		select.add(Projections.property("procedimientoPco.todosBurofaxes").as("todosBurofaxes"));
 		select.add(Projections.property("procedimientoPco.fechaFinalizado").as("fechaFinalizado"));
 		select.add(Projections.property("procedimientoPco.fechaCancelado").as("fechaCancelado"));
+		select.add(Projections.property("procedimientoPco.importe").as("importe"));
 
 		Criteria query = queryBusquedaPorFiltro(filtro);
 		query.setProjection(select);
 
 		addPaginationToQuery(filtro, query);
-
+		
 		query.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
 
 		// Rellenar datos post-Query
@@ -119,12 +135,12 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		return list;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<HashMap<String, Object>> busquedaDocumentosPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
 		ProjectionList select = Projections.projectionList();
 
-		addDefaultProcedimientoProjection(select);
-
+		select.add(Projections.distinct(Projections.property("documento.id").as("id")));
 		select.add(Projections.property("estadoDocumento.descripcion").as("estado"));
 		select.add(Projections.property("resultadoSolicitud.descripcion").as("ultimaRespuesta"));
 		select.add(Projections.property("solicitud.actor").as("ultimoActor"));
@@ -132,6 +148,9 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		select.add(Projections.property("solicitud.fechaResultado").as("fechaResultado"));
 		select.add(Projections.property("solicitud.fechaEnvio").as("fechaEnvio"));
 		select.add(Projections.property("solicitud.fechaRecepcion").as("fechaRecepcion"));
+		select.add(Projections.property("solicitud.fechaSolicitud").as("fechaSolicitud"));
+		
+		addDefaultProcedimientoProjection(select);
 
 		Criteria query = queryBusquedaPorFiltro(filtro);
 		query.setProjection(select);
@@ -143,18 +162,20 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<HashMap<String, Object>> busquedaLiquidacionesPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
 		ProjectionList select = Projections.projectionList();
 
-		addDefaultProcedimientoProjection(select);
-
+		select.add(Projections.distinct(Projections.property("liquidacion.id").as("id")));
 		select.add(Projections.property("estadoLiquidacion.descripcion").as("estado"));
 		select.add(Projections.property("liqcontrato.nroContrato").as("contrato"));
 		select.add(Projections.property("liquidacion.fechaConfirmacion").as("fechaConfirmacion"));
 		select.add(Projections.property("liquidacion.fechaCierre").as("fechaCierre"));
 		select.add(Projections.property("liquidacion.fechaRecepcion").as("fechaRecepcion"));
 		select.add(Projections.property("liquidacion.total").as("total"));
+
+		addDefaultProcedimientoProjection(select);
 
 		Criteria query = queryBusquedaPorFiltro(filtro);
 		query.setProjection(select);
@@ -167,12 +188,12 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<HashMap<String, Object>> busquedaBurofaxPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
 		ProjectionList select = Projections.projectionList();
 
-		addDefaultProcedimientoProjection(select);
-
+		select.add(Projections.distinct(Projections.property("burofax.id").as("id")));
 		select.add(Projections.property("estadoBurofax.descripcion").as("estado"));
 		select.add(Projections.property("burofax.demandado").as("demandado"));
 		select.add(Projections.property("enviosBurofax.fechaSolicitud").as("fechaSolicitud"));
@@ -181,6 +202,8 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		select.add(Projections.property("enviosBurofax.refExternaEnvio").as("refExternaEnvio"));
 		select.add(Projections.property("burofax.esPersonaManual").as("esPersonaManual"));
 		select.add(Projections.property("resultadoBurofax.descripcion").as("resultado"));
+
+		addDefaultProcedimientoProjection(select);
 
 		Criteria query = queryBusquedaPorFiltro(filtro);
 		query.setProjection(select);
@@ -207,11 +230,13 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 	 * @param select
 	 */
 	private void addDefaultProcedimientoProjection(ProjectionList select) {
+		
 		select.add(Projections.property("procedimientoPco.procedimiento").as("procedimiento"));
 		select.add(Projections.property("procedimiento.id").as("prcId"));
 		select.add(Projections.property("procedimiento.id").as("codigo"));
 		select.add(Projections.property("procedimientoPco.nombreExpJudicial").as("nombreExpJudicial"));
 		select.add(Projections.property("procedimientoPco.estadoActual").as("estadoActualProcedimiento"));
+		select.add(Projections.property("procedimientoPco.importe").as("importe"));
 		select.add(Projections.property("procedimientoPco.fechaEstadoActual").as("fechaEstadoProcedimiento"));
 		select.add(Projections.property("tipoProcPropuesto.descripcion").as("tipoProcPropuesto"));
 		select.add(Projections.property("tipoPreparacion.descripcion").as("tipoPreparacion"));
@@ -245,6 +270,16 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		// Añadir filtros a la consulta
 		for (Criterion condicion : where) {
 			query.add(condicion);
+		}
+		
+		if(filtro.getSort() != null) {
+			try {
+				Method method = Order.class.getMethod(filtro.getDir().toLowerCase(), filtro.getSort().getClass());
+				query.addOrder((Order) method.invoke(null, filtro.getSort()));
+			}
+			catch(Exception e) {
+				logger.error("Error en el método queryBusquedaPorFiltro: " + e.getMessage());
+			}
 		}
 
 		//query.addOrder(Order.asc("id")); // workaround
@@ -307,6 +342,8 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		where.addAll(dateRangeFilter("procedimientoPco.fechaFinalizado", filtro.getProFechaFinalizadoDesde(), filtro.getProFechaFinalizadoHasta()));
 		where.addAll(dateRangeFilter("procedimientoPco.fechaUltimaSubsanacion", filtro.getProFechaUltimaSubsanacionDesde(), filtro.getProFechaUltimaSubsanacionHasta()));
 		where.addAll(dateRangeFilter("procedimientoPco.fechaCancelado", filtro.getProFechaCanceladoDesde(), filtro.getProFechaCanceladoHasta()));
+		
+		where.addAll(floatRangeFilter("procedimientoPco.importe", filtro.getImporteDesde(), filtro.getImporteHasta()));
 
 		return where;
 	}
@@ -444,6 +481,10 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		if (!StringUtils.emtpyString(filtro.getDocAdjunto())) {
 			where.add(Restrictions.eq("documento.adjuntado", "01".equals(filtro.getDocAdjunto())));
+		}
+
+		if (!StringUtils.emtpyString(filtro.getDocSolicitudPrevia())) {
+			where.add(Restrictions.eq("documento.solicitudPrevia", "01".equals(filtro.getDocSolicitudPrevia())));
 		}
 
 		if (filtro.filtroSolicitudInformado() || esBusquedaPorDocumento) {
@@ -619,6 +660,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		return idLongs;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<String> getTiposGestoresAsunto(Long idAsunto) {
 		
 		List<String> resultado = new ArrayList<String>();

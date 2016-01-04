@@ -3,10 +3,13 @@ package es.pfsgroup.recovery.integration.file;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,6 +27,8 @@ import org.springframework.integration.file.FileHeaders;
 import org.springframework.integration.message.ErrorMessage;
 import org.springframework.integration.message.MessageBuilder;
 import org.springframework.integration.message.MessageHandlingException;
+import org.springframework.util.Assert;
+import org.springframework.util.FileCopyUtils;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.recovery.integration.TypePayload;
@@ -36,6 +41,8 @@ public class FileIntegrationAdapter {
 	private static final String EXTRA_PATH_ERROR = "error";
 	private static final String EXTRA_PATH_LOG = "log";
 
+	private Charset charset = Charset.defaultCharset();
+
 	private final Set<String> validHeaders = new HashSet<String>();
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -45,6 +52,16 @@ public class FileIntegrationAdapter {
 		return folder;
 	}
 
+	/**
+	 * Set the charset name to use when writing a File from a String-based
+	 * Message payload.
+	 */
+	public void setCharset(String charset) {
+		Assert.notNull(charset, "charset must not be null");
+		Assert.isTrue(Charset.isSupported(charset), "Charset '" + charset + "' is not supported.");
+		this.charset = Charset.forName(charset);
+	}
+	
 	public FileIntegrationAdapter(File folder) throws IOException {
 		this.folder = folder;
 		if (!checkFolder()) {
@@ -76,7 +93,7 @@ public class FileIntegrationAdapter {
 	private String getHeaderLine(Message<String> message, String key) {
 		String value = "";
 		if (message.getHeaders().containsKey(key)) {
-			logger.info(String.format("[INTEGRACION] writing key: %s value:%s", key, message.getHeaders().get(key)));
+			logger.debug(String.format("[INTEGRACION] writing key: %s value:%s", key, message.getHeaders().get(key)));
 			value=String.format("%s:%s\n", key, message.getHeaders().get(key));
 		}
 		return value;
@@ -105,20 +122,12 @@ public class FileIntegrationAdapter {
 	}
 	
 	private void writeFile(File file, String txt) {
-		FileWriter fw = null;
 		try {
-			fw = new FileWriter(file);
-			fw.write(txt);
-			fw.flush();
+			OutputStreamWriter writer = new OutputStreamWriter(
+					new FileOutputStream(file), this.charset);
+			FileCopyUtils.copy(txt, writer);
 		} catch (IOException ioe) {
 			logger.error(String.format("[INTEGRACION] No puedo escribir el fichero %s", file.getAbsolutePath()), ioe);
-		} finally {
-			if (fw!=null)
-				try {
-					fw.close();
-				} catch (IOException e) {
-					logger.error("[INTEGRACION] al escribir contenido de fichero", e);
-				}
 		}
 	}
 
@@ -189,12 +198,13 @@ public class FileIntegrationAdapter {
     			.copyHeaders(message.getHeaders())
     			.copyHeaders(headers)
     			.build();
+		logger.debug(String.format("[INTEGRACION] Procesando mensaje GUID[%s] ...", newMessage.getHeaders().getId()));
 	    //message.getHeaders().put(FileHeaders.ORIGINAL_FILE, file);
 		return newMessage;
 	}
 
 	public void writeErrorMsg(ErrorMessage mensaje) {
-		logger.info("[INTEGRACION] ::Escritura en DIRECTORIO DE ERROR::");
+		logger.warn("[INTEGRACION] ::Escritura en DIRECTORIO DE ERROR::");
 		MessageHandlingException mensajeError = (MessageHandlingException) mensaje.getPayload();
 		
 		@SuppressWarnings("unchecked")
@@ -208,7 +218,7 @@ public class FileIntegrationAdapter {
 		}
 		
 		File finalFile = new File(folderDest, String.format("%s.msg", mensajeOriginal.getHeaders().getId()));
-		logger.info("[INTEGRACION] Mensaje con ERROR:");
+		logger.warn("[INTEGRACION] Mensaje con ERROR:");
 		String content = createTextFile(mensajeOriginal);
 		StringBuilder sb = new StringBuilder();
 		sb.append(content)
@@ -221,7 +231,7 @@ public class FileIntegrationAdapter {
 		sb.append("\n")
 			.append(mensajeError.getMessage()).append("\n")
 			.append(mensajeError.getStackTrace()).append("\n");
-		logger.info("[INTEGRACION] Fichero: " + finalFile.getAbsolutePath());
+		logger.warn("[INTEGRACION] Fichero: " + finalFile.getAbsolutePath());
 		writeFile(finalFile, sb.toString());
 			
 		// Elimina el mensaje original
@@ -232,7 +242,7 @@ public class FileIntegrationAdapter {
 	}
 
 	public void moveFileWithErrors(ErrorMessage mensaje) {
-		logger.info("[INTEGRACION] ::Movemos a DIRECTORIO DE ERROR::");
+		logger.warn("[INTEGRACION] ::Movemos a DIRECTORIO DE ERROR::");
 		
 		MessageHandlingException mensajeError = (MessageHandlingException) mensaje.getPayload();
 
@@ -248,8 +258,8 @@ public class FileIntegrationAdapter {
 		}
 
 		StringBuilder sb = new StringBuilder();
-		logger.info("[INTEGRACION] Mensaje con ERROR:");
-		logger.info(sb);
+		logger.warn("[INTEGRACION] Mensaje con ERROR:");
+		logger.warn(sb);
 		
 		sb.append(LINE_SEPARATOR);
 		if (mensajeError.getCause()!=null) {
@@ -272,13 +282,13 @@ public class FileIntegrationAdapter {
 		} catch (IOException e) {
 		    logger.error("[INTEGRACION] No se ha podido modificar el fichero para añadirle la excepción", e);
 		} finally  {
-			logger.info("[INTEGRACION] Fichero: " + destFile.getAbsolutePath());
+			logger.warn("[INTEGRACION] Fichero: " + destFile.getAbsolutePath());
 		}
 
 	}
 
 	public void moveFileCompleted(Message<?> mensaje) {
-		logger.info("[INTEGRACION] ::Movemos mensaje a directorio de LOG::");
+		logger.debug("[INTEGRACION] ::Movemos mensaje a directorio de LOG::");
 		if (!mensaje.getHeaders().containsKey(FileHeaders.ORIGINAL_FILE)) {
 			logger.error("[INTEGRACION] No se puede mover un fichero que no se ha leído previamente en la cadena.");
 			return;
@@ -295,12 +305,12 @@ public class FileIntegrationAdapter {
 		folderDest = new File(folderDest, EXTRA_PATH_LOG);
 		folderDest = new File(folderDest, dateFormat.format(msgDate));
 		moveFile(originalFile, folderDest);
-		logger.info("[INTEGRACION] Fichero: " + folderDest.getAbsolutePath());
+		logger.debug("[INTEGRACION] Fichero: " + folderDest.getAbsolutePath());
 		
 	}
 
 	public void writeLogMsgStr(Message<String> mensaje) {
-		logger.info("[INTEGRACION] ::Escritura en DIRECTORIO DE LOG_1::");
+		logger.debug("[INTEGRACION] ::Escritura en DIRECTORIO DE LOG_1::");
 		if (!checkFolder()) {
 			return;
 		}
@@ -316,9 +326,9 @@ public class FileIntegrationAdapter {
 		}
 
 		File finalFile = new File(folderDest, String.format("%s.msg", mensaje.getHeaders().getId()));
-		logger.info("[INTEGRACION] Mensaje:");
+		logger.debug("[INTEGRACION] Mensaje:");
 		String content = createTextFile(mensaje);
-		logger.info("[INTEGRACION] Fichero: " + finalFile.getAbsolutePath());
+		logger.debug("[INTEGRACION] Fichero: " + finalFile.getAbsolutePath());
 		writeFile(finalFile, content);
 		//}
 			
@@ -330,7 +340,7 @@ public class FileIntegrationAdapter {
 	}
 
 	public void writeMsgStr(Message<String> mensaje) {
-		logger.info("[INTEGRACION] ::Escritura en DIRECTORIO DE LOG_2::");
+		logger.debug("[INTEGRACION] ::Escritura en DIRECTORIO DE LOG_2::");
 		if (!checkFolder()) {
 			return;
 		}
@@ -341,9 +351,9 @@ public class FileIntegrationAdapter {
 		}
 		
 		File finalFile = new File(folderDest, String.format("%s.msg", mensaje.getHeaders().getId()));
-		logger.info("[INTEGRACION] Mensaje:");
+		logger.debug("[INTEGRACION] Mensaje:");
 		String content = createTextFile(mensaje);
-		logger.info("[INTEGRACION] Fichero: " + finalFile.getAbsolutePath());
+		logger.debug("[INTEGRACION] Fichero: " + finalFile.getAbsolutePath());
 		writeFile(finalFile, content);
 			
 		// Elimina el mensaje original

@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Cambios desde el refactor
+# - ARQ-438 Mejorar DB CI con nuevo script de Pitertul
+
+
 #
 # Formas de ejecutar la utilidad
 #
@@ -30,6 +34,8 @@ WORKSPACE_DIR=$(pwd)/.workspace
 # Estado de la BD
 CURRENT_DUMP_NAME=export_cajamar_19Oct2015.dmp
 STARTING_TAG=cj-dmp-19oct
+TAG_LISTS_FILE=$(pwd)/../../../../tags-list.txt
+PACKAGE_TAGS_DIR=$(pwd)/../../../../package-tags
 
 
 OPTION_REMOVE=no
@@ -144,11 +150,26 @@ else
 fi
 
 cd $(pwd)/$(dirname $0)
-
+##
+# $1 -> tag
+# $1 -> cliente
 function package_sql () {
 	if [[ "x$OPTION_RANDOM_DUMP" != "xyes" ]]; then
 		local current_dir=$(pwd)
+		local package_script=./sql/tool/package-scripts-from-tag.sh
+		local tag_or_list=$1
+		local cliente=$2
+		rm -Rf $WORKSPACE_DIR/package*
+		rm -Rf $SQL_PACKAGE_DIR
+		rm -Rf $PACKAGE_TAGS_DIR
 		cd ../../../..
+
+		if [[ -f $TAG_LISTS_FILE ]]; then
+			tag_or_list=$(basename $TAG_LISTS_FILE)
+			echo "[WARNING]: Piterdebug: $tag_or_list encontrado"
+			echo "[WARNING]: Piterdebug: Se va a realizar un empaquetado por etapas"
+			package_script=./sql/tool/package-scripts-from-tags-list.sh
+		fi
 		
 		if [[ "x$ORACLE_HOME" == "x" ]]; then
 			export ORACLE_HOME=empty
@@ -159,7 +180,7 @@ function package_sql () {
 			echo "<<<<<<<<<< PITERTUL DEBUG MODE ON >>>>>>>>>>>>>"
 			OLD_T=$TERM
 			export TERM=dumb
-			./sql/tool/package-scripts-from-tag.sh $1 $2
+			$package_script $tag_or_list $cliente
 			if [[ $? -eq 0 ]]; then
 				echo "<<<<<<<<<< PITERTUL DEBUG MODE OFF >>>>>>>>>>>>>"
 				TERM=$OLD_T
@@ -169,7 +190,7 @@ function package_sql () {
 			fi
 		else
 			echo -n "[INFO]: Pitertul - Empaquetando desde $(pwd): "
-			./sql/tool/package-scripts-from-tag.sh $1 $2 &>/dev/null
+			$package_script $tag_or_list $cliente &>/dev/null
 			if [[ $? -eq 0 ]]; then
 				echo "OK"
 			else
@@ -177,12 +198,17 @@ function package_sql () {
 				exit 1
 			fi
 		fi
-		ws_package_dir=$WORKSPACE_DIR/package
-		rm -Rf $ws_package_dir
+		if [[ -d $PACKAGE_TAGS_DIR ]]; then
+			ws_package_dir=$WORKSPACE_DIR/package-tags
+			SQL_PACKAGE_DIR=$PACKAGE_TAGS_DIR
+		else
+			ws_package_dir=$WORKSPACE_DIR/package
+		fi
 		cp -R $SQL_PACKAGE_DIR $ws_package_dir
 		chmod -R go+w $ws_package_dir/*
-		chmod +x $ws_package_dir/DDL/*.sh
-		chmod +x $ws_package_dir/DML/*.sh
+		for sh in $(find $ws_package_dir -name '*.sh'); do
+			chmod ugo+x $sh
+		done
 
 		cd $current_dir
 		
@@ -240,14 +266,13 @@ function run_container () {
 		package_sql $STARTING_TAG $CLIENTE
 		VAR_SCRIPTS_DONE=yes
 	fi
-	echo -n "[INFO]: $CONTAINER_NAME: Generando el contenedor a partir de la imágen [$IMAGE_NAME]: "
+	echo -n "[INFO]: $CONTAINER_NAME: Generando el contenedor a partir de la imagen [$IMAGE_NAME]: "
 	docker run -d -p=22 -p 1521:1521 \
 				-v /etc/localtime:/etc/localtime:ro \
 				-v $WORKSPACE_DIR:/setup $errorlog_volume \
 				-v $DUMP_DIRECTORY:/DUMP \
 				-v $ORADATA_HOST_DIR:/oradata \
 				-h $CONTAINER_NAME --name $CONTAINER_NAME $IMAGE_NAME
-
 }
 
 function remove_container () {
@@ -364,8 +389,8 @@ if [[ "x$DOCKER_PS" == "x" ]]; then
 	# Si el contenedor no existe
 	OPTION_REMOVE=yes
 	check_dump
-	echo "[INFO]: El contenedor está parado. Se va a generar desde cero a partir de la imágen."
-	echo "[INFO]: Si la imágen $IMAGE_NAME no existe en el repositorio Docker local puede que tarde un poco en descargarse."
+	echo "[INFO]: El contenedor está parado. Se va a generar desde cero a partir de la imagen."
+	echo "[INFO]: Si la imagen $IMAGE_NAME no existe en el repositorio Docker local puede que tarde un poco en descargarse."
 	run_container
 	if [[ $? -eq 0 ]]; then
 		do_install

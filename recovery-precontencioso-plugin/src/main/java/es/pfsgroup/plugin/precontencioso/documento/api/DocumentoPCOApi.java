@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.precontencioso.documento.api;
 
 import java.util.List;
 
+import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
@@ -57,7 +58,7 @@ public interface DocumentoPCOApi {
 	 * @return
 	 */
 	SolicitudDocumentoPCODto crearSolicitudDocumentoDto(DocumentoPCO documento, SolicitudDocumentoPCO solicitud, 
-															boolean esDocumento, boolean tieneSolicitud, int idIdentificativo);
+															boolean esDocumento, boolean tieneSolicitud);
 	
 	/**
 	 * Obtiene el DTO de un documentoPCO
@@ -196,4 +197,13 @@ public interface DocumentoPCOApi {
 	 * @return
 	 */
 	Boolean esTipoGestorConAcceso(EXTDDTipoGestor tipoGestor);
+	
+	/**
+	 * Recupera la lista de gestores por id de usuario y tipo de despacho
+	 * 
+	 * @param usuId
+	 * @param tipoDespachoExterno
+	 * @return List<GestorDespacho>
+	 */
+	public List<GestorDespacho> getGestorDespachoByUsuIdAndTipoDespacho(Long usuId, String tipoDespachoExterno);
 }

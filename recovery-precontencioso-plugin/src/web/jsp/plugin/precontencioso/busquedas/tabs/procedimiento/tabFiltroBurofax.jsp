@@ -5,12 +5,6 @@
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms" %>
 
-<%-- Notificado a todos los clientes: Si / No --%>
-
-<pfsforms:ddCombo name="comboNotificado" propertyCodigo="codigo" propertyDescripcion="descripcion"
-labelKey="plugin.precontencioso.tab.burofax.notificado" 
-label="** Notificado a todos los clientes" value="" dd="${ddSiNo}" />
-
 <%-- Fecha solicitud --%>
 
 var dateFieldSolicitudBurDesde = new Ext.ux.form.XDateField({
@@ -156,7 +150,6 @@ filtrosTabBurofax.on('activate',function(){
 var getParametrosFiltroBurofax = function() {
 	var out = {};
 
-	out.burNotificado = comboNotificado.getValue();
 	out.burResultadoEnvio = fliedResultadoBurofax.childNodes[1].value;
 	out.burFechaSolicitudDesde = dateFieldSolicitudBurDesde.getValue();
 	out.burFechaSolicitudHasta = dateFieldSolicitudBurHasta.getValue();

@@ -86,7 +86,7 @@
             {header: '<s:message code="contratos.cc" text="**Codigo" />', width: 160,  dataIndex: 'cc', id:'colCodigoContrato'},
             {header: '<s:message code="contratos.fechaDato" text="**Fecha dato" />', width: 160,  dataIndex: 'fechaDato', id:'colFechaDato'},
             {header: '<s:message code="contratos.tipo" text="**Tipo" />', width: 120,  dataIndex: 'tipo'},
-            {header: '<s:message code="contratos.condicionesEspeciales" text="**Disposicion" />', width: 120,  dataIndex: 'condEspec',renderer: app.format.moneyRenderer,align:'right'},
+            {header: '<s:message code="contratos.condicionesEspeciales" text="**Disponible" />', width: 120,  dataIndex: 'condEspec',renderer: app.format.moneyRenderer,align:'right'},
             {header: '<s:message code="contratos.saldoirr" text="**Saldo Irregular" />', width: 120, dataIndex: 'saldoIrregular',renderer: app.format.moneyRenderer,align:'right'},
             {header: '<s:message code="contratos.saldotot" text="**Saldo No Vencido" />', width: 120,  dataIndex: 'saldoNoVencido',renderer: app.format.moneyRenderer,align:'right'},
             {header: '<s:message code="contratos.diasirr" text="**Dias Irregular" />', width: 90,  dataIndex: 'diasIrregular'},
@@ -265,7 +265,8 @@
 		}
 		grid.setTitle(texto);
 		
-		var total = store.getTotalCount();
+		var total = countContratos(store);
+		
 		var rec = store.getAt(store.getRange().length-1);
 		
 		if (total == null || rec == null) return;
@@ -297,6 +298,20 @@
 	    texto += '&nbsp;]';
 		grid.setTitle(texto);
 	};
+	
+	function countContratos(store){
+		var data = store.data;
+		var items = data.items;
+		var nContratos = 0;	
+		for(var i=0;i < items.length;i++){
+        	var item = items[i];
+            var idContrato = item.json["id"];
+            if(idContrato != null && idContrato != ""){
+            	nContratos++;
+            }                 
+        }
+        return nContratos;
+	}
 
 	panel.getValue = function(){ 
 		return { 

@@ -37,6 +37,9 @@ public class VListadoPreProyectadoExpFiltros implements Serializable {
 	@Column(name="DEUDA_IRREGULAR_EXP")
 	private BigDecimal deudaIrregular;
 	
+	@Column(name="DIAS_VENCIDOS")
+	private Long diasVencidos;
+	
 	@Column(name="TRAMO_EXP")
 	private String tramoCod;
 	
@@ -110,6 +113,14 @@ public class VListadoPreProyectadoExpFiltros implements Serializable {
 
 	public void setTramoCod(String tramoCod) {
 		this.tramoCod = tramoCod;
+	}
+
+	public Long getDiasVencidos() {
+		return diasVencidos;
+	}
+
+	public void setDiasVencidos(Long diasVencidos) {
+		this.diasVencidos = diasVencidos;
 	}
 
 	public String getTipoPropuestaCod() {

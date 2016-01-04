@@ -332,6 +332,14 @@
 						tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='CJ106'));
 				}
 				
+				def noExistenTantosCreditosInsinuados = {
+					def concursoManager = ctx.getBean("concursoManager");
+					def nCreditosInsinuados = concursoManager.dameCreditosInsinuados(idProcedimiento).size();
+					def nCreditosRectificados = Integer.valueOf(it);
+					
+					return nCreditosRectificados > nCreditosInsinuados;					
+				}
+				
   			 ]]>
   			</value>
   		</list>

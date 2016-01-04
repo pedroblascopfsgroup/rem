@@ -14,16 +14,23 @@ public class InfoBienesCDD {
 	private String valorJudicial;
 	private String datosLocalizacion;
 	
+	private String pais;
 	private String provincia;
 	private String localidad; 
 	private String unidadPoblacional; 
 	private String codigoPostal;
 	private String direccion;
 	
+	
 	private String viviendaHabitual;
 	private String resultadoAdjudicacion;
 	private String importeAdjudicacion;
 	private String fechaTestimonioAdjudicacionSareb;
+	
+	private String localidadDatosRegistrales;
+	private String provinciaDatosRegistrales;
+	
+	private String tipoInmueble;
 
 	public Long getIdBien() {
 		return idBien;
@@ -137,7 +144,15 @@ public class InfoBienesCDD {
 			String fechaTestimonioAdjudicacionSareb) {
 		this.fechaTestimonioAdjudicacionSareb = fechaTestimonioAdjudicacionSareb;
 	}
+	
+	public String getPais() {
+		return pais;
+	}
 
+	public void setPais(String pais) {
+		this.pais = pais;
+	}
+		
 	public String getProvincia() {
 		return provincia;
 	}
@@ -178,4 +193,28 @@ public class InfoBienesCDD {
 		this.direccion = direccion;
 	}
 
+	public String getLocalidadDatosRegistrales() {
+		return localidadDatosRegistrales;
+	}
+
+	public void setLocalidadDatosRegistrales(String localidadDatosRegistrales) {
+		this.localidadDatosRegistrales = localidadDatosRegistrales;
+	}
+
+	public String getProvinciaDatosRegistrales() {
+		return provinciaDatosRegistrales;
+	}
+
+	public void setProvinciaDatosRegistrales(String provinciaDatosRegistrales) {
+		this.provinciaDatosRegistrales = provinciaDatosRegistrales;
+	}
+
+	public String getTipoInmueble() {
+		return tipoInmueble;
+	}
+
+	public void setTipoInmueble(String tipoInmueble) {
+		this.tipoInmueble = tipoInmueble;
+	}
+	
 }

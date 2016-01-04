@@ -42,19 +42,16 @@ public class MEJContratoDaoImpl extends AbstractEntityDao<Contrato, Long> implem
         case 0:
             //ver persona.getContratosRiesgoDirectoActivo
             hql.append(" and cp.tipoIntervencion.titular= true ");
-            hql.append(" and cp.contrato.tipoProductoEntidad.activo = true");
             hql.append(" and (m.riesgo + m.posVivaNoVencida + m.posVivaVencida + m.movIntRemuneratorios + m.movIntMoratorios + m.comisiones + m.gastos ) > 0 ");
             break;
         case 1:
             //ver persona.getContratosRiesgoDirectoPasivo
             hql.append(" and cp.tipoIntervencion.titular= true ");
-            hql.append(" and cp.contrato.tipoProductoEntidad.activo = false");
             hql.append(" and (m.riesgo + m.posVivaNoVencida + m.posVivaVencida + m.movIntRemuneratorios + m.movIntMoratorios + m.comisiones + m.gastos ) = 0 ");
             break;
         case 2:
             //ver persona.getContratosRiesgosIndirectos
             hql.append(" and cp.tipoIntervencion.titular = false");
-            hql.append(" and cp.contrato.tipoProductoEntidad.activo = true");
             hql.append(" and (m.riesgo + m.posVivaNoVencida + m.posVivaVencida + m.movIntRemuneratorios + m.movIntMoratorios + m.comisiones + m.gastos ) > 0 ");
             break;
         default:
@@ -68,7 +65,6 @@ public class MEJContratoDaoImpl extends AbstractEntityDao<Contrato, Long> implem
 	/**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public HashMap<String, Object> buscarTotalContratosCliente(DtoBuscarContrato dto) {
         StringBuffer hql = new StringBuffer();
         hql.append("select sum(abs(m.posVivaNoVencida)), sum(abs(m.posVivaVencida)), sum(abs(m.saldoPasivo)) from ");
@@ -81,19 +77,16 @@ public class MEJContratoDaoImpl extends AbstractEntityDao<Contrato, Long> implem
         case 0:
             //ver persona.getContratosRiesgoDirectoActivo
             hql.append(" and cp.tipoIntervencion.titular= true ");
-            hql.append(" and cp.contrato.tipoProductoEntidad.activo = true");
             hql.append(" and (m.riesgo + m.posVivaNoVencida + m.posVivaVencida + m.movIntRemuneratorios + m.movIntMoratorios + m.comisiones + m.gastos ) > 0 ");
             break;
         case 1:
             //ver persona.getContratosRiesgoDirectoPasivo
             hql.append(" and cp.tipoIntervencion.titular= true ");
-            hql.append(" and cp.contrato.tipoProductoEntidad.activo = false");
             hql.append(" and (m.riesgo + m.posVivaNoVencida + m.posVivaVencida + m.movIntRemuneratorios + m.movIntMoratorios + m.comisiones + m.gastos ) = 0 ");
             break;
         case 2:
             //ver persona.getContratosRiesgosIndirectos
             hql.append(" and cp.tipoIntervencion.titular = false");
-            hql.append(" and cp.contrato.tipoProductoEntidad.activo = true");
             hql.append(" and (m.riesgo + m.posVivaNoVencida + m.posVivaVencida + m.movIntRemuneratorios + m.movIntMoratorios + m.comisiones + m.gastos ) > 0 ");
             break;
         default:
@@ -101,7 +94,7 @@ public class MEJContratoDaoImpl extends AbstractEntityDao<Contrato, Long> implem
 
         }
 
-        List lista = getHibernateTemplate().find(hql.toString(), new Object[] { dto.getIdPersona() });
+        List<?> lista = getHibernateTemplate().find(hql.toString(), new Object[] { dto.getIdPersona() });
 
         Object[] r = (Object[]) lista.get(0);
         HashMap<String, Object> map = new HashMap<String, Object>();

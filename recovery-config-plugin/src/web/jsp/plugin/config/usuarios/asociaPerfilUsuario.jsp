@@ -69,11 +69,11 @@
 	<pfs:hidden name="idUsuario" value="${usuario.id}"/>
 	<pfs:defineParameters name="parametros" paramId="" 
 		idsZona="centros" idUsuario="idUsuario"  idPerfil="perfil"
-		password="password"
-		/>
+		password="password"	/>
 
 	<pfs:editForm saveOrUpdateFlow="plugin/config/usuarios/ADMguardarPerfilUsuario"
 		leftColumFields="username,perfil,jerarquia,centros,password"
-		parameters="parametros" />
+		parameters="parametros" 
+		onSuccessMode="tabGenericoConMsgGuardando" />
 
 </fwk:page>

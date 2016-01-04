@@ -181,13 +181,13 @@ var createDatosPoliticaPanel = function() {
                     ,height:20
                     ,style:'font-weight:bolder'
                     ,value:'<s:message code="politica.fecha" text="**Fecha" />'
-                }),
+                })<%--,
                 new Ext.ux.form.StaticTextField({
                     hideLabel:true
                     ,height:20
                     ,style:'font-weight:bolder'
                     ,value:'<s:message code="politica.politica" text="**Política" />'
-                })
+                }) --%>
                  ]
     });
 

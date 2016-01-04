@@ -56,6 +56,14 @@ public class VListadoPreProyectadoExpDaoImpl extends AbstractEntityDao<VListadoP
 			sb.append(" and f.deudaIrregular <= " + dto.getMaxDeudaIrregular() + " ");
 		}
 		
+		if (!Checks.esNulo(dto.getMinDiasVencidos())) {
+			sb.append(" and f.diasVencidos >= " + dto.getMinDiasVencidos() + " ");
+		}
+		
+		if (!Checks.esNulo(dto.getMaxDiasVencidos())) {
+			sb.append(" and f.diasVencidos <= " + dto.getMaxDiasVencidos() + " ");
+		}
+		
 		if (!Checks.esNulo(dto.getTramos())) {
 			String[] tramos = dto.getTramos().split(",");
 			if (tramos.length>0) {
@@ -101,7 +109,7 @@ public class VListadoPreProyectadoExpDaoImpl extends AbstractEntityDao<VListadoP
 				sb.append(" and (");
 				for (int i = 0; i < zonasExp.length; i++) {
 					String zonaExp = zonasExp[i];
-					sb.append(" f.zonExp = '" + zonaExp + "' ");
+					sb.append(" f.zonExp like '" + zonaExp + "%' ");
 					if (i<zonasExp.length-1) {
 						sb.append(" or ");
 					}

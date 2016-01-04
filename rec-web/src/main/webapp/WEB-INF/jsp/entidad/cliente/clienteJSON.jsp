@@ -204,6 +204,7 @@
 				<s:message code="mensajes.no"/>
 			</c:if>
 		</json:property>
+		<json:property name="sitConcursal" value="${persona.sitConcursal.descripcion}" />
 		<json:property name="fechaSituacionConcursal" value="${persona.fechaSituacionConcursal}"/>
 		<json:property name="clienteReestructurado">
 			<c:if test="${persona.clienteReestructurado}">

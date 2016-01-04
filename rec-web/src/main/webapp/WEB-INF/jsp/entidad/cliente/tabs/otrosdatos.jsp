@@ -197,7 +197,7 @@
 		//entidad.setLabel("fechaReferenciaRating", d.fechaReferenciaRating);
 		entidad.setLabel("servicioNominaPension", d.servicioNominaPension);
 		entidad.setLabel("ultimaActuacion", d.ultimaActuacion);
-		entidad.setLabel("situacionConcursal",d.situacionConcursal);
+		entidad.setLabel("situacionConcursal",d.sitConcursal);
 		entidad.setLabel('fechaSituacionConcursal',d.fechaSituacionConcursal);
 		entidad.setLabel('clienteReestructurado',d.clienteReestructurado);
 		entidad.setLabel("extra1", d.extra1);

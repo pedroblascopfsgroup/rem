@@ -16,6 +16,5 @@ apr_pcr_relation.sh
 apr_precalculo_pcr.sh
 apr_pcr_precal_per.sh
 apr_pcr_refresh_dde.sh
-apr_revision.sh
 apr_ana_man.sh
 apr_gen_pcr_ptro.sh

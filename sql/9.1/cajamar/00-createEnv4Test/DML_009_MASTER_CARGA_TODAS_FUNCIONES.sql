@@ -14,17 +14,6 @@
 --##########################################
 --*/
 
-/*SELECT 
-CONCAT(
-CONCAT(
-CONCAT(
-CONCAT('T_FUNCION(''', fun_descripcion_larga)
-, ''',''')
-, fun_descripcion)
-,'''),')
-FROM cmmaster.fun_funciones
-*/
-
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 SET DEFINE OFF;

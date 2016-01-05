@@ -14,24 +14,6 @@
 --##########################################
 --*/
 
-/*SELECT 
-CONCAT(
-CONCAT(
-CONCAT(
-CONCAT(
-CONCAT(
-CONCAT(
-CONCAT(
-CONCAT('T_FUNCION(''', pef_descripcion_larga)
-, ''',''')
-, pef_descripcion)
-,''',''')
-,pef_codigo)
-,''',''')
-,PEF_ES_CARTERIZADO)
-,'''),')
-FROM PEF_PERFILES WHERE BORRADO = 0;
-*/
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 

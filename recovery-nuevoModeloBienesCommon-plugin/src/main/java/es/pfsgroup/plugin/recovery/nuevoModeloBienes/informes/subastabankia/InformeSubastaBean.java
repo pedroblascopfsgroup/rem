@@ -280,10 +280,10 @@ public class InformeSubastaBean extends InformeSubastaCommon {
 			}
 			
 			// Datos de la cabecera
-			if (!Checks.esNulo(contratoGeneral)) {
+                        StringBuffer listaTitulares = new StringBuffer(" ");
+                        Persona titularPorPrimero = null;
+                        if (!Checks.esNulo(contratoGeneral)) {
 				
-				stub.setTitular(contratoGeneral.getNombresTitulares());
-
 				System.out.println("[INFO] - Obtengo los datos de oficina/zona/....");
 
 				// Oficina, zona y territorial del titular
@@ -303,7 +303,6 @@ public class InformeSubastaBean extends InformeSubastaCommon {
 			
 				List<ContratoPersona> contratoPersonas = (Checks.esNulo(contratoGeneral) ? null : contratoGeneral.getContratoPersonaOrdenado());
 	
-				Persona pTitular = null;
 				if (!Checks.esNulo(contratoPersonas)) {
 					System.out.println("[INFO] - Num Personas contrato: " + contratoPersonas.size());
 					for (ContratoPersona cp : contratoPersonas) {
@@ -312,11 +311,19 @@ public class InformeSubastaBean extends InformeSubastaCommon {
 						// El titular principal serÃ¡ el primero que encontremos, ya
 						// que ordenamos
 						// por orden de CPE
-						if (Checks.esNulo(pTitular)) {
-							pTitular = cp.getPersona();
-							System.out.println("[INFO] - Titular: " + pTitular.getApellidoNombre());
-						}
-	
+                                                // Se crea la variable titularPorPrimero por si acaso ninguna de las personas asociadas al contrato es titular
+                                                // en ese caso se toma el primero de la lista como titular (cuando se settea el titular en el stub)
+						if (Checks.esNulo(titularPorPrimero) && Checks.esNulo(listaTitulares.toString())) {
+							titularPorPrimero = cp.getPersona();
+							System.out.println("[INFO] - Primero de la lista: " + titularPorPrimero.getApellidoNombre());
+                                                }
+                                                
+                                                // listaTitulares es la cadena con los nombres de los titulares de un contrato
+                                                // Aprovechando el bucle, construimos en la cabecera, el campo de Titulares separados por ;
+                                                if (cp.isTitular()){
+                                                    listaTitulares.append(cp.getPersona().getApellidoNombre());
+                                                }
+                                                
 						IntervinientesBean interviniente = new IntervinientesBean();
 						interviniente.setIntervencion(cp.isTitular() ? INTERVINIENTE_TITULAR : INTERVINIENTE_FIADOR);
 						if (!Checks.esNulo(p)) {
@@ -337,6 +344,16 @@ public class InformeSubastaBean extends InformeSubastaCommon {
 				
 			}
 
+                        //En caso de que ninguno de la lista esté marcado como titular, se toma el primero como tal
+                        if (Checks.esNulo(listaTitulares)){
+                            stub.setTitular (titularPorPrimero.getApellidoNombre());
+                            System.out.println("[INFO] - Titular por primero de la lista: " + titularPorPrimero.getApellidoNombre());
+                        } else {
+                            // Lista de titulares del contrato, separados por ;
+                            stub.setTitular(listaTitulares.toString());
+                            System.out.println("[INFO] - Titulares: " + listaTitulares.toString());
+                        }
+                        
 			stub.setIntervinientes(intervinientes);
 			stub.setContratos(contratos);
 			stub.setCaracteristicasOperaciones(caracteristicasOperaciones);

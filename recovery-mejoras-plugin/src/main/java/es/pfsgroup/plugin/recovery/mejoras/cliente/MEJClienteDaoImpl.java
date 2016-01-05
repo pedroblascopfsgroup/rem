@@ -76,16 +76,8 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 			return id;
 		}
 
-		public void setId(Long id) {
-			this.id = id;
-		}
-
 		public int getTotalRows() {
 			return totalRows;
-		}
-
-		public void setTotalRows(int totalRows) {
-			this.totalRows = totalRows;
 		}
 	}
 
@@ -107,16 +99,13 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 
 		}
 
-		public boolean containsAnything() {
-			return Checks.esNulo(sb);
-		}
-
 		public String getFiltro() {
 			return sb.toString();
 		}
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Page findClientesPage(MEJBuscarClientesDto clientes,
 			Usuario usuarioLogueado, boolean conCarterizacion) {
@@ -152,6 +141,7 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 									(Integer) tuple[1]);
 						}
 
+						@SuppressWarnings("rawtypes")
 						@Override
 						public List transformList(List collection) {
 							return collection;
@@ -258,7 +248,7 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 	@Override
 	public List<Persona> findClientesExcel(MEJBuscarClientesDto clientes,
 			Usuario usuarioLogueado, boolean conCarterizacion) {
-		List<Persona> list = new ArrayList();
+		List<Persona> list = new ArrayList<Persona>();
 		// AlmacÃ©n de los parÃ¡metros que necesitarÃ¡ la query que recupera los
 		// id'S
 		final HashMap<String, Object> parameters = new HashMap<String, Object>();
@@ -573,7 +563,7 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 
 			if (EXTPersonaDao.BUSQUEDA_RIESGO_DIRECTO.equals(clientes
 					.getTipoRiesgo())) {
-				final String filtro = addSubselectNumExtra2(
+				final String filtro = addSubselectDispuestoVencido(
 						clientes.getMinSaldoVencido(),
 						clientes.getMaxSaldoVencido());
 				if (!Checks.esNulo(filtro)) {
@@ -610,84 +600,44 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 	 * @param maxValue
 	 * @return Devuelve NULL si no puede generar el filtro
 	 */
-	private String addSubselectNumExtra2(final String minValue,
+	private String addSubselectDispuestoVencido(final String minValue,
 			final String maxValue) {
 		final StringBuilder srtbuilder = new StringBuilder();
 
 		if (!StringUtils.isBlank(minValue) || !StringUtils.isBlank(maxValue)) {
-			srtbuilder.append("with extras as (");
-			srtbuilder
-					.append("  select /*+ MATERIALIZE */ icc.per_id, trim(icc.ICC_VALUE) ICC_VALUE from EXT_ICC_INFO_EXTRA_CLI icc");
-			srtbuilder.append("  where icc.dd_ifx_id = (");
-			srtbuilder
-					.append("        select ifx.dd_ifx_id from EXT_DD_IFX_INFO_EXTRA_CLI ifx where ifx.dd_ifx_codigo = 'num_extra2')");
-			srtbuilder.append("), converted as (");
-			srtbuilder
-					.append("  SELECT /*+ MATERIALIZE */ per_id, TO_NUMBER(REPLACE(icc_value,',','.'),'99999999999999999D999999','NLS_NUMERIC_CHARACTERS = ''.,''') value FROM extras");
-			srtbuilder.append(")");
-			srtbuilder
-					.append("select /*+ MATERIALIZE */ per_id from converted");
-			srtbuilder.append(" WHERE 1=1");
-			
+			srtbuilder.append("SELECT PER_ID FROM V_PER_PERSONAS_FORMULAS WHERE NVL(V_PER_PERSONAS_FORMULAS.DISPUESTO_VENCIDO, 0) BETWEEN ");
+						
 			if (!StringUtils.isBlank(minValue)) {
 				try {
 					Float valor = Float.parseFloat(minValue);
-					String filtroFinal = String.format(" AND (value IS NOT NULL and value>=%f)", valor);
+					String filtroFinal = String.format("%f", valor);
 					srtbuilder.append(filtroFinal);
 				} catch (NumberFormatException nfe) {}
 			}
+			else {
+				String filtroFinal = String.format("0");
+				srtbuilder.append(filtroFinal);
+			}
+			
+			srtbuilder.append(" AND ");
+			
 			if (!StringUtils.isBlank(maxValue)) {
 				try {
 					Float valor = Float.parseFloat(maxValue);
-					String filtroFinal = String.format(" AND (value IS NOT NULL and value<=%f)", valor);
+					String filtroFinal = String.format("%f", valor);
 					srtbuilder.append(filtroFinal);
 				} catch (NumberFormatException nfe) {}
 			}
+			else {
+				String filtroFinal = String.format("%f", Float.MAX_VALUE);
+				srtbuilder.append(filtroFinal);
+			}			
+			
 			return srtbuilder.toString();
-		} else {
+		} 
+		else {
 			return null;
 		}
-	}
-
-	/**
-	 * Este mÃ©todo construye un filtro para la bÃºsqueda del riesgo total
-	 * (Directo e Indirecto) usando campos calculados
-	 * 
-	 * @param clientes
-	 * @param fpb
-	 */
-	private void filtroRiesgoTotalNoAprovisionado(
-			MEJBuscarClientesDto clientes, FiltroPersonaBuilder fpb) {
-		String suma = "sum(MOV.mov_pos_viva_vencida + MOV.mov_pos_viva_no_vencida)";
-
-		String filtroRiesgo = "select cpe.per_id as id  "
-				+ "FROM CPE_CONTRATOS_PERSONAS CPE, CNT_CONTRATOS CNT, MOV_MOVIMIENTOS MOV "
-				+ "WHERE CPE.CNT_ID = CNT.CNT_ID AND CNT.CNT_ID = MOV.CNT_ID AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION ";
-
-		if (EXTPersonaDao.BUSQUEDA_RIESGO_DIRECTO.equals(clientes
-				.getTipoRiesgo()))
-			filtroRiesgo += " and cpe.dd_tin_id in (select tipo.dd_tin_id from dd_tin_tipo_intervencion tipo where tipo.dd_tin_titular = 1) ";
-
-		if (EXTPersonaDao.BUSQUEDA_RIESGO_INDIRECTO.equals(clientes
-				.getTipoRiesgo()))
-			filtroRiesgo += " and cpe.dd_tin_id in (select tipo.dd_tin_id from dd_tin_tipo_intervencion tipo where tipo.dd_tin_titular = 0) ";
-
-		filtroRiesgo += " having (";
-		boolean anyadeAnd = false;
-		if (clientes.getMinRiesgoTotal() != null) {
-			filtroRiesgo += suma + " > " + clientes.getMinRiesgoTotal();
-			anyadeAnd = true;
-		}
-		if (clientes.getMaxRiesgoTotal() != null) {
-			if (anyadeAnd)
-				filtroRiesgo += " and ";
-
-			filtroRiesgo += suma + " < " + clientes.getMaxRiesgoTotal();
-		}
-
-		filtroRiesgo += ") group by cpe.per_id";
-
-		fpb.addFiltro(filtroRiesgo);
 	}
 
 	/**
@@ -731,30 +681,22 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 		}
 		
 		StringBuilder filtro = new StringBuilder();
+		filtro.append("SELECT PER_ID FROM V_PER_PERSONAS_FORMULAS WHERE NVL(V_PER_PERSONAS_FORMULAS.DIAS_VENCIDO, 0) BETWEEN ");
 		
-		filtro.append("WITH TABLA_1 AS (")
-			.append("SELECT CPE.PER_ID, FLOOR(SYSDATE-MIN(MOV.MOV_FECHA_POS_VENCIDA)) AS VALOR")
-			.append(" FROM CPE_CONTRATOS_PERSONAS CPE");
-		String tipoRiesgo = (EXTPersonaDao.BUSQUEDA_RIESGO_DIRECTO.equals(clientes.getTipoRiesgo()))
-				? "1"
-				: (EXTPersonaDao.BUSQUEDA_RIESGO_INDIRECTO.equals(clientes.getTipoRiesgo()))
-					? "0"
-					: null;
-		if (!StringUtils.isBlank(tipoRiesgo)) {
-			filtro.append(" INNER JOIN dd_tin_tipo_intervencion tipo ON CPE.DD_TIN_ID=tipo.dd_tin_id AND tipo.dd_tin_titular=").append(tipoRiesgo);
-		}
-				
-		filtro.append(" INNER JOIN CNT_CONTRATOS CNT ON CPE.CNT_ID = CNT.CNT_ID ")
-			.append(" INNER JOIN MOV_MOVIMIENTOS MOV ON CNT.CNT_ID = MOV.CNT_ID")
-			.append(" AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION")
-			.append(" GROUP BY CPE.PER_ID")
-			.append(") SELECT PER_ID FROM TABLA_1 WHERE 1=1");
-			
 		if (!StringUtils.isBlank(fechaMinima)) {
-			filtro.append(" AND VALOR>=").append(fechaMinima);
+			filtro.append(fechaMinima);
 		}
+		else {
+			filtro.append("0");
+		}
+		
+		filtro.append(" AND ");
+		
 		if (!StringUtils.isBlank(fechaMaxima)) {
-			filtro.append(" AND VALOR<=").append(fechaMaxima);
+			filtro.append(fechaMaxima);
+		}
+		else {
+			filtro.append(Integer.MAX_VALUE);
 		}
 				
 		fpb.addFiltro(filtro.toString());
@@ -1042,70 +984,6 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 				+ "%' ");
 	}
 
-	private String generaFiltroPersonaPorJerarquia(
-			MEJBuscarClientesDto clientes, Usuario usuarioLogueado,
-			Map<String, Object> parameters) {
-		String filtroJerarquia = "";
-		int cantZonas = Checks.estaVacio(clientes.getCodigoZonas()) ? 0
-				: clientes.getCodigoZonas().size();
-		String zonas = null;
-		if (cantZonas > 0) {
-			zonas = " and ( ";
-			for (String codigoZ : clientes.getCodigoZonas()) {
-				if (pasoDeVariables()) {
-					zonas += " zon.zon_cod like :codigo_zona_" + codigoZ
-							+ " OR";
-					parameters.put("codigo_zona_" + codigoZ, codigoZ + "%");
-
-				} else {
-					zonas += " zon.zon_cod like '" + codigoZ + "% OR";
-				}
-
-			}
-			zonas = zonas.substring(0, zonas.length() - 2);
-
-			zonas += " ) ";
-		}
-
-		String jerarquia = null;
-		if (clientes.getJerarquia() != null
-				&& clientes.getJerarquia().length() > 0) {
-			jerarquia = " and zon.ZON_ID >= " + clientes.getJerarquia();
-			if (zonas != null)
-				jerarquia += zonas;
-		} else if (zonas != null) {
-			jerarquia = zonas;
-		}
-
-		if (jerarquia != null) {
-			// Si es primer titular del contrato de pase buscamos directamente
-			// en los clientes
-			if (clientes.getIsPrimerTitContratoPase() != null
-					&& clientes.getIsPrimerTitContratoPase().booleanValue()) {
-				if (pasoDeVariables()) {
-					filtroJerarquia = "SELECT cli.per_id FROM CLI_CLIENTES cli JOIN OFI_OFICINAS o ON cli.ofi_id = o.ofi_id JOIN ZON_ZONIFICACION zon ON zon.ofi_id = o.ofi_id WHERE cli.borrado = :no_borrado "
-							+ jerarquia;
-				} else {
-					filtroJerarquia = "SELECT cli.per_id FROM CLI_CLIENTES cli JOIN OFI_OFICINAS o ON cli.ofi_id = o.ofi_id JOIN ZON_ZONIFICACION zon ON zon.ofi_id = o.ofi_id WHERE cli.borrado = 0 "
-							+ jerarquia;
-				}
-			} else {
-				if (pasoDeVariables()) {
-					filtroJerarquia = "SELECT cp.per_id FROM CNT_CONTRATOS c, CPE_CONTRATOS_PERSONAS cp, ZON_ZONIFICACION zon "
-							+ " WHERE cp.borrado = :no_borrado and c.borrado = :no_borrado and cp.cnt_id = c.cnt_id AND c.ZON_ID = zon.ZON_ID "
-							+ jerarquia;
-				} else {
-
-					filtroJerarquia = "SELECT cp.per_id FROM CNT_CONTRATOS c, CPE_CONTRATOS_PERSONAS cp, ZON_ZONIFICACION zon "
-							+ " WHERE cp.borrado = 0 and c.borrado = 0 and cp.cnt_id = c.cnt_id AND c.ZON_ID = zon.ZON_ID "
-							+ jerarquia;
-				}
-			}
-
-		}
-		return filtroJerarquia;
-	}
-
 	private void filtroNombrePersona(MEJBuscarClientesDto clientes,
 			StringBuilder hql) {
 		String nombrePersona = clientes.getNombre().trim().toLowerCase();
@@ -1229,28 +1107,6 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 						.getIsPrimerTitContratoPase().booleanValue());
 	}
 
-	private String generaFiltroPersonaPorGestor(Usuario usuLogado,
-			Map<String, Object> parameters) {
-		StringBuffer hql = new StringBuffer();
-		hql.append(" select p.per_id from per_personas p , GE_GESTOR_ENTIDAD ge ");
-
-		if (pasoDeVariables()) {
-			hql.append(" where p.per_id = ge.ug_ID and ge.DD_EIN_ID = :codigo_entidad_cliente");
-			hql.append(" and ge.USU_ID = :usuario_logado");
-
-			parameters.put("usuario_logado", usuLogado.getId());
-			parameters.put("codigo_entidad_cliente",
-					DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE);
-
-		} else {
-			hql.append(" where p.per_id = ge.ug_ID and ge.DD_EIN_ID = '"
-					+ DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE + "'");
-			hql.append(" and ge.USU_ID = " + usuLogado.getId() + " ");
-		}
-
-		return hql.toString();
-	}
-	
 	/**
 	 * Construye la clausula orderBy en SQL en funciÃƒÂ³n del parÃƒÂ¡metro que le
 	 * pasa.
@@ -1507,41 +1363,6 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 			queryR.append("select count(*) ").append(query);
 		}
 		return queryR.toString();
-	}
-
-	/**
-	 * Genera la parte between para un filtro de tipo VALUE between MIN and MAX,
-	 * teniendo en cuenta si uno de ambos valores es nulo.
-	 * 
-	 * @param minValue
-	 *            MÃ­nimo valor a buscar
-	 * @param maxValue
-	 *            MÃ¡ximo valor a buscar
-	 * @return Devuelve NULL si no hay condiciÃ³n a aÃ±adir.
-	 */
-	private String addBetweenToFilter(final String minValue,
-			final String maxValue) {
-		final StringBuilder filtro = new StringBuilder();
-		if (!Checks.esNulo(maxValue)) {
-			if (!Checks.esNulo(minValue)) {
-				filtro.append(" between ");
-				filtro.append(minValue);
-				filtro.append(" and ");
-				filtro.append(maxValue);
-			} else {
-				filtro.append(" <= ");
-				filtro.append(maxValue);
-			}
-		} else {
-			if (!Checks.esNulo(minValue)) {
-				filtro.append(" >= ");
-				filtro.append(minValue);
-			} else {
-				// Indicamos que no hemos aÃ±aiddo nada
-				return null;
-			}
-		}
-		return filtro.toString();
 	}
 
 }

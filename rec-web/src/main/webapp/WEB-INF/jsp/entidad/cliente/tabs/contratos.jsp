@@ -78,9 +78,9 @@
 	tipoRiesgo.INDIRECTO = 'riesgoIndirecto';
 	tipoRiesgo.PASIVO = 'riesgoPasivo';
 		
-	contratoRiesgoDirecto.on('load', function(){muestraDatosTitulo(contratoRiesgoDirecto, riesgosDirectosGrid, false, tipoRiesgo.DIRECTO);});
-	contratoRiesgoIndirecto.on('load', function(){muestraDatosTitulo(contratoRiesgoIndirecto, riesgosIndGrid, false, tipoRiesgo.INDIRECTO);});
-	contratoRiesgoPasivo.on('load', function(){muestraDatosTitulo(contratoRiesgoPasivo, riesgosDirectosPasivosGrid, true, tipoRiesgo.PASIVO);});
+	contratoRiesgoDirecto.on('load', function(){muestraDatosTitulo(contratoRiesgoDirecto, riesgosDirectosGrid, false, tipoRiesgo.DIRECTO, data.numContratos);});
+	contratoRiesgoIndirecto.on('load', function(){muestraDatosTitulo(contratoRiesgoIndirecto, riesgosIndGrid, false, tipoRiesgo.INDIRECTO, contratoRiesgoIndirecto.getTotalCount());});
+	contratoRiesgoPasivo.on('load', function(){muestraDatosTitulo(contratoRiesgoPasivo, riesgosDirectosPasivosGrid, true, tipoRiesgo.PASIVO, contratoRiesgoPasivo.getTotalCount());});
 
     var contratosRDCm= new Ext.grid.ColumnModel([
             {header: '<s:message code="contratos.cc" text="**Codigo" />', width: 160,  dataIndex: 'cc', id:'colCodigoContrato'},
@@ -249,7 +249,7 @@
         });
 	}
 
-	function muestraDatosTitulo(store, grid, pasivo, tipo){
+	function muestraDatosTitulo(store, grid, pasivo, tipo, total){
 		var texto = '';
 		// inicializar titulos
 		switch(tipo){
@@ -264,9 +264,7 @@
 				break;
 		}
 		grid.setTitle(texto);
-		
-		var total = countContratos(store);
-		
+			
 		var rec = store.getAt(store.getRange().length-1);
 		
 		if (total == null || rec == null) return;
@@ -299,20 +297,6 @@
 		grid.setTitle(texto);
 	};
 	
-	function countContratos(store){
-		var data = store.data;
-		var items = data.items;
-		var nContratos = 0;	
-		for(var i=0;i < items.length;i++){
-        	var item = items[i];
-            var idContrato = item.json["id"];
-            if(idContrato != null && idContrato != ""){
-            	nContratos++;
-            }                 
-        }
-        return nContratos;
-	}
-
 	panel.getValue = function(){ 
 		return { 
 			titulo1 : riesgosDirectosGrid.title,

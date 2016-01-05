@@ -41,6 +41,7 @@ import es.capgemini.pfs.contrato.dto.BusquedaContratosDto;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.diccionarios.comparator.DictionaryComparatorFactory;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
@@ -981,6 +982,7 @@ public class EditBienController {
 		return saveEmbargo(request);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String generarInformePropCancelacionCargas(
 			@RequestParam(value = "id", required = true) Long idBien,
@@ -3381,7 +3383,6 @@ public class EditBienController {
 	private void saveAdjudicaciones(BienesAdjudicaciones bienesAdjudicaciones) {
 		NMBAdjudicacionBien adjudicacion = new NMBAdjudicacionBien();
 		NMBBien bien = null;
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
 		SimpleDateFormat formatText = new SimpleDateFormat("dd/MM/yyyy");
 		// 1901-05-23T00:00:00
 		for (BienAdjudicacion bienAdjudicacion : bienesAdjudicaciones
@@ -4177,6 +4178,9 @@ public class EditBienController {
 	public String getListLocalidades(ModelMap model, String codProvincia) {
 		List<Localidad> list = proxyFactory.proxy(BienApi.class)
 				.getListLocalidades(codProvincia);
+		
+		Collections.sort(list, DictionaryComparatorFactory.getInstance().create(DictionaryComparatorFactory.COMPARATOR_BY_DESCRIPCION));
+		
 		model.put("listLocalidades", list);
 		return JSON_LIST_LOCALIDADES;
 	}

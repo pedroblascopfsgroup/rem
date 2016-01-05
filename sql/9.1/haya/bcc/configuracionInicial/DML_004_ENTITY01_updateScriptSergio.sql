@@ -43,7 +43,4 @@ FROM BIE_BIEN BIE LEFT JOIN
 WHERE BIEE.BIE_ID IS NULL 
 ;
 
--- Se cambia el nombre del supervisor de expedientes judicales para que encaje mejor con los scripts de migración.
-update Usu_Usuarios set usu_username='val.supexpjud' where usu_username='val.supervisor';
-
 commit;

@@ -79,7 +79,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSolicitudActuacionesPronunciamientos/haya_tramiteSolicitudActuacionesPronunciamientos.xml" p:version="-1"/>
 	 -->
 	<!-- Groovy's -->
-	<bean id="jbpmUtilCajamarLitigios" class="es.pfsgroup.recovery.haya.utils.JBPMProcessHayaManager" >
+	<bean id="jbpmUtilHreCajamar" class="es.pfsgroup.recovery.haya.utils.JBPMProcessHayaManager" >
   	<property name="contextScripts">
   		<list>
   			<value><![CDATA[ 	
@@ -103,7 +103,7 @@
 						(tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='H005' || 
 						tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='H006'));
 				}
-				
+
 	            def existenCargasPreviasActivas = {
 	            	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionHayaProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.existenCargasPreviasActivas(idProcedimiento);
@@ -329,6 +329,20 @@
 					return
 				}
 
+				def validarHC103SolicitudFondos = {
+					if (tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre()!=null && 
+						tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='H005') {
+						return (
+							valores['HC103_SolicitarProvision']['numAuto'] != null &&
+							valores['HC103_SolicitarProvision']['importeAdj'] != null &&
+							valores['HC103_SolicitarProvision']['tipoImpLiquidar'] != null &&
+							valores['HC103_SolicitarProvision']['tipoImpTrPatr'] != null &&
+							valores['HC103_SolicitarProvision']['impTrPatr'] != null &&
+							valores['HC103_SolicitarProvision']['fechaFinLiqImp'] != null);
+					}
+					return true;
+				}
+				
   			 ]]>
   			</value>
   		</list>

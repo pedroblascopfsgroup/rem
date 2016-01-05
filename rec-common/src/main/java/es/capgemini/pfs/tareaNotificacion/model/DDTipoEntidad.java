@@ -25,13 +25,15 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDTipoEntidad implements Dictionary, Auditable {
 
     public static final String CODIGO_ENTIDAD_CLIENTE = "1";
-    public static final String CODIGO_ENTIDAD_EXPEDIENTE = "2";
-    public static final String CODIGO_ENTIDAD_ASUNTO = "3";
+   
     public static final String CODIGO_ENTIDAD_TAREA = "4";
+    public static final String CODIGO_ENTIDAD_ASUNTO = "3";
+    public static final String CODIGO_ENTIDAD_EXPEDIENTE = "2";
     public static final String CODIGO_ENTIDAD_PROCEDIMIENTO = "5";
     public static final String CODIGO_ENTIDAD_CONTRATO = "6";
     public static final String CODIGO_ENTIDAD_OBJETIVO = "7";
     public static final String CODIGO_ENTIDAD_NOTIFICACION = "10";
+    public static final String CODIGO_ENTIDAD_PERSONA = "9";
 
     /**
      * serial.

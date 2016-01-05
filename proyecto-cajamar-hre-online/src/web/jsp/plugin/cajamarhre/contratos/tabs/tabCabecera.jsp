@@ -157,7 +157,7 @@
 	//BANKIA ampliacion campos extra
 	
 	var numextra1    = label('numextra1','<s:message code="contrato.consulta.tabcabecera.numextra1" text="**NumExtra1"/>');
-	var numextra2    = label('numextra2','<s:message code="contrato.consulta.tabcabecera.numextra2" text="**NumExtra2"/>');
+	<%-- var numextra2    = label('numextra2','<s:message code="contrato.consulta.tabcabecera.numextra2" text="**NumExtra2"/>');--%>
 	var numextra3    = label('numextra3','<s:message code="contrato.consulta.tabcabecera.numextra3" text="**NumExtra3"/>');
 	
 	var dateextra1    = label('dateextra1','<s:message code="contrato.consulta.tabcabecera.dateextra1" text="**DateExtra1"/>');
@@ -282,7 +282,7 @@
 	   ,title:'<s:message code="contrato.consulta.tabcabecera.otrosDatos" text="**Otros Datos"/>'
 	   ,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375, style:'padding:10px; margin:10px'}
 		  ,items : [{items:[domiciExt,domiciExtFecha,fechaIniEpiIrregular,gestionEspecial,remunEsp
-		  ,numextra1,numextra2,numextra3
+		  ,numextra1<%-- ,numextra2--%>,numextra3
 		  ,dateextra1
 		  ,flagextra1,flagextra2,flagextra3,indicador]},
 		   {items:[domiciExtTotal,contratoAnt,motivoRenum,riesgo
@@ -402,7 +402,7 @@
   entidad.setLabel('extra6',d.extra6); 
   
   entidad.setLabel('numextra1',d.numextra1);
-  entidad.setLabel('numextra2',d.numextra2);
+  <%-- entidad.setLabel('numextra2',d.numextra2);--%>
   entidad.setLabel('numextra3',d.numextra3);
   entidad.setLabel('dateextra1',d.dateextra1);
   entidad.setLabel('charextra1',d.charextra1);

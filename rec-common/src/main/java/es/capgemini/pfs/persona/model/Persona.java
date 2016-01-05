@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -30,7 +29,6 @@ import javax.persistence.Version;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.LazyToOne;
 import org.hibernate.annotations.LazyToOneOption;
 import org.hibernate.annotations.Where;
@@ -42,7 +40,6 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.antecedente.model.Antecedente;
 import es.capgemini.pfs.antecedenteinterno.model.AntecedenteInterno;
-import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
@@ -54,8 +51,6 @@ import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.contrato.model.DDEstadoFinanciero;
 import es.capgemini.pfs.contrato.model.DDTipoProducto;
 import es.capgemini.pfs.direccion.model.Direccion;
-import es.capgemini.pfs.expediente.model.DDEstadoExpediente;
-import es.capgemini.pfs.expediente.model.DDTipoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.grupoCliente.model.PersonaGrupo;
@@ -518,6 +513,10 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	@LazyToOne(LazyToOneOption.PROXY)
 	private PersonaFormulas formulas;
 	
+	@OneToOne(fetch = FetchType.LAZY)
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	@JoinColumn(name = "DD_SIC_ID")
+	private DDSituacConcursal sitConcursal;
 
 	/**
 	 * @return the id
@@ -581,6 +580,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	 * 
 	 * @return List de Cliente
 	 */
+	@SuppressWarnings("unchecked")
 	public List<Cliente> getClientes() {
 		if(fieldHandler!=null)
 	        return (List<Cliente>)fieldHandler.readObject(this, "clientes", clientes);
@@ -735,6 +735,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	/**
 	 * @return the direcciones
 	 */
+	@SuppressWarnings("unchecked")
 	public List<Direccion> getDirecciones() {
 		if(fieldHandler!=null)
 	        return (List<Direccion>)fieldHandler.readObject(this, "direcciones", direcciones);
@@ -754,6 +755,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	/**
 	 * @return the bienes
 	 */
+	@SuppressWarnings("unchecked")
 	public List<Bien> getBienes() {
 		if(fieldHandler!=null)
 	        return (List<Bien>)fieldHandler.readObject(this, "bienes", bienes);
@@ -845,6 +847,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	/**
 	 * @return the ingresos
 	 */
+	@SuppressWarnings("unchecked")
 	public List<Ingreso> getIngresos() {
 		if(fieldHandler!=null)
 	        return (List<Ingreso> )fieldHandler.readObject(this, "ingresos", ingresos);
@@ -1043,6 +1046,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	/**
 	 * @return the contratosPersona
 	 */
+	@SuppressWarnings("unchecked")
 	public List<ContratoPersona> getContratosPersona() {
 		if(fieldHandler!=null)
 	        return (List<ContratoPersona>)fieldHandler.readObject(this, "contratosPersona", contratosPersona);
@@ -1728,6 +1732,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	/**
 	 * @return the adjuntos
 	 */
+	@SuppressWarnings("unchecked")
 	public Set<AdjuntoPersona> getAdjuntos() {
 		if(fieldHandler!=null)
 	        return (Set<AdjuntoPersona>)fieldHandler.readObject(this, "adjuntos", adjuntos);
@@ -1764,6 +1769,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	/**
 	 * @return the cirbe
 	 */
+	@SuppressWarnings("unchecked")
 	public List<Cirbe> getCirbe() {
 		if(fieldHandler!=null)
 	        return (List<Cirbe>)fieldHandler.readObject(this, "cirbe", cirbe);
@@ -1795,6 +1801,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 		return grupo;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<PersonaGrupo> getGrupos() {
 		if(fieldHandler!=null)
 	        return (List<PersonaGrupo>)fieldHandler.readObject(this, "grupos", grupos);
@@ -2593,6 +2600,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	/**
 	 * @return the puntuacionTotal
 	 */
+	@SuppressWarnings("unchecked")
 	public List<PuntuacionTotal> getPuntuacionTotal() {
 		if(fieldHandler!=null)
 	        return (List<PuntuacionTotal>)fieldHandler.readObject(this, "puntuacionTotal", puntuacionTotal);
@@ -2749,6 +2757,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	/**
 	 * @return the ciclosMarcadoPolitica
 	 */
+	@SuppressWarnings("unchecked")
 	public List<CicloMarcadoPolitica> getCiclosMarcadoPolitica() {
 		if(fieldHandler!=null)
 	        return (List<CicloMarcadoPolitica>)fieldHandler.readObject(this, "ciclosMarcadoPolitica", ciclosMarcadoPolitica);
@@ -3018,6 +3027,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 		this.areaGestion = areaGestion;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Telefono> getTelefonos() {
 		if(fieldHandler!=null)
 	        return (List<Telefono>)fieldHandler.readObject(this, "telefonos", telefonos);
@@ -3088,6 +3098,20 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 		if(fieldHandler!=null)
 	        return (PersonaFormulas)fieldHandler.readObject(this, "formulas", formulas);
 		return formulas;
+	}
+
+	/**
+	 * @return the sitConcursal
+	 */
+	public DDSituacConcursal getSitConcursal() {
+		return sitConcursal;
+	}
+
+	/**
+	 * @param sitConcursal the sitConcursal to set
+	 */
+	public void setSitConcursal(DDSituacConcursal sitConcursal) {
+		this.sitConcursal = sitConcursal;
 	}
 
 }

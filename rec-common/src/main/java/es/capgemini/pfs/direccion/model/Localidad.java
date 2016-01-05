@@ -12,13 +12,15 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import es.capgemini.pfs.diccionarios.Dictionary;
+
 /**
  * Diccionario de localidades.
  */
 @Entity
 @Table(name = "DD_LOC_LOCALIDAD", schema = "${master.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class Localidad implements Serializable {
+public class Localidad implements Serializable, Dictionary {
 
     private static final long serialVersionUID = 1L;
 

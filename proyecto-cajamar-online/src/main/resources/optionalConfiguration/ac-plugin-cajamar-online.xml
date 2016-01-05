@@ -94,6 +94,7 @@
 								<value>pestanaLocalizacion</value>
 								<value>pestanaCuentaBancaria</value>
 								<value>pestanaProductosBanco</value>
+								<value>pestanaOtros</value>
 								<value>pestanaObservaciones</value>
 							</list>
 						</property>

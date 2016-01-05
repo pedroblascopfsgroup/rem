@@ -24,6 +24,7 @@
 	<json:property name="tieneContratosParaCliente" value="${tieneContratos==true}" />
 	<json:property name="tieneContratosActivos" value="${tieneContratosActivos}" />
 	<json:property name="tieneContratosLibres" value="${tieneContratosLibres}" />
+	<json:property name="numContratos" value="${persona.numContratos}" />
 	<json:property name="idCliente" value="${persona.clienteActivo.id}" />
 	<json:property name="fechaCreacion" >
 		<fwk:date value="${persona.fechaCreacion}"/>

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -15,12 +16,19 @@ import org.springframework.web.context.request.WebRequest;
 
 import com.tc.aspectwerkz.transform.inlining.compiler.CompilationInfo.Model;
 
+import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.acuerdo.model.DDMotivoRechazoAcuerdo;
 import es.capgemini.pfs.core.api.acuerdo.AcuerdoApi;
+import es.capgemini.pfs.core.api.acuerdo.CumplimientoAcuerdoDto;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.users.UsuarioManager;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoApi;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.api.PropuestaApi;
 
 @Controller
@@ -36,6 +44,7 @@ public class PropuestasController {
 	private static final String LISTADO_PROPUESTAS_REALIZADAS_JSON =  "plugin/mejoras/acuerdos/propuestasRealizadasJSON";
 	private static final String LISTADO_PROPUESTAS_EXPLORAR_JSON =  "plugin/mejoras/acuerdos/propuestasExplorarJSON";
 	private static final String JSON_LISTADO_BIENES_PROPUESTA = "plugin/mejoras/acuerdos/listadoBienesAcuerdoJSON";
+	private static final String JSP_CUMPLIMIENTO_PROPUESTA = "plugin/mejoras/acuerdos/cumplimientoPropuesta";
 
 
 	@Autowired 
@@ -89,11 +98,15 @@ public class PropuestasController {
 		return JSP_RECHAZA_PROPUESTA;
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String abrirFinalizacion(@RequestParam(value = "idAcuerdo", required = true) Long id, ModelMap map) {
 		Acuerdo acuerdo = proxyFactory.proxy(AcuerdoApi.class).getAcuerdoById(id);
 		map.put("acuerdo",acuerdo);
-
+		
+		List<DDSiNo> ddsino = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDSiNo.class);
+		map.put("ddSiNo", ddsino);
+		
 		return JSP_FINALIZACION_PROPUESTA;
 	}
 
@@ -154,12 +167,21 @@ public class PropuestasController {
 
 	@RequestMapping
     public String finalizar(WebRequest request, ModelMap model) throws ParseException {
-		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-
+		
 		Long idPropuesta = Long.valueOf(request.getParameter("id"));
-		Date fechaPago = formatter.parse(request.getParameter("fechaPago"));
+		
+		Date fechaPago = new Date();
+		
+		if(!Checks.esNulo(request.getParameter("fechaPago"))){
+			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+			fechaPago = formatter.parse(request.getParameter("fechaPago"));	
+		}
+		
 		String observaciones = request.getParameter("observaciones");
-		Boolean cumplido = Boolean.valueOf(request.getParameter("cumplido"));
+		Boolean cumplido = false;
+		if(DDSiNo.SI.equals(request.getParameter("cumplido"))){
+			cumplido = true;
+		}
 
 		propuestaApi.finalizar(idPropuesta, fechaPago, cumplido, observaciones);
 
@@ -190,5 +212,34 @@ public class PropuestasController {
 		model.put("listadoBienesAcuerdo", propuestaApi.getBienesDelExpedienteParaLaPropuesta(idExpediente,idsContrato));
 		
 		return JSON_LISTADO_BIENES_PROPUESTA;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String openCumplimientoPropuesta(@RequestParam(value = "idPropuesta", required = true) Long id, ModelMap map) {
+				
+		Acuerdo acuerdo = proxyFactory.proxy(AcuerdoApi.class).getAcuerdoById(id);
+		map.put("acuerdo",acuerdo);
+		
+		List<DDSiNo> ddsino = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDSiNo.class);
+		map.put("ddSiNo", ddsino);
+		
+		return JSP_CUMPLIMIENTO_PROPUESTA;
+	}
+	
+	@RequestMapping
+	public String guardaCumplimientoAcuerdo(WebRequest request){
+		CumplimientoAcuerdoDto dto = creaDto (request);
+		
+		if (dto.getFinalizar()){
+			proxyFactory.proxy(PropuestaApi.class).cerrarPropuesta(dto.getId());
+		}
+
+		proxyFactory.proxy(PropuestaApi.class).registraCumplimientoPropuesta(dto);
+		return "default";
+	}
+
+	private CumplimientoAcuerdoDto creaDto(final WebRequest request) {
+		return DynamicDtoUtils.create(CumplimientoAcuerdoDto.class, request);
 	}
 }

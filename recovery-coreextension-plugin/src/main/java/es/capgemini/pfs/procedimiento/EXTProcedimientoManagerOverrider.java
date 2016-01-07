@@ -8,11 +8,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.pfs.adjuntos.api.AdjuntoApi;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
 import es.capgemini.pfs.asunto.model.Procedimiento;
@@ -47,6 +49,9 @@ public class EXTProcedimientoManagerOverrider extends
 
 	@Autowired(required = false)
 	private List<ModificarProcedimientoListener> listeners;
+	
+	@Autowired
+	private AdjuntoApi adjuntosApi;
 
 	/**
 	 * Devuelve un procedimiento a partir de su id.
@@ -243,7 +248,7 @@ public class EXTProcedimientoManagerOverrider extends
 	@Override
 	@BusinessOperation(BO_CORE_PROCEDIMIENTO_ADJUNTOSMAPEADOS)
 	public List<? extends AdjuntoDto> getAdjuntosConBorradoByPrcId(Long prcId) {
-		return proxyFactory.proxy(AsuntoApi.class).getAdjuntosConBorradoByPrcId(prcId);
+		return adjuntosApi.getAdjuntosConBorradoByPrcId(prcId);
 	}	
 	
 }

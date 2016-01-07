@@ -16,5 +16,11 @@ public class EntidadConfigDaoImpl extends AbstractMasterDao<EntidadConfig, Long>
     //    public EntidadConfig findByWorkingCode(String workingCode) throws DataAccessException {
     //        return (EntidadConfig) (getHibernateTemplate().find("from EntidadConfig ec where ec.workingCode = ?", workingCode)).iterator().next();
     //    }
+	
+	@Override
+    public EntidadConfig findByEntidad(Long idEntidad) {
+        return (EntidadConfig) (getHibernateTemplate().find(
+                "select c from EntidadConfig c where c.dataKey = 'schema' and c.entidadId = ?", idEntidad)).iterator().next();
+    }
 
 }

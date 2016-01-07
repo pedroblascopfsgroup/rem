@@ -48,35 +48,35 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "INPUT")
 public class INPUT {
 
-    @XmlElement(name = "CLAVEASOCIACION", required = true)
+    @XmlElement(name = "CLAVEASOCIACION")
     protected String claveasociacion;
-    @XmlElement(name = "CLAVEASOCIACION2", required = true)
+    @XmlElement(name = "CLAVEASOCIACION2")
     protected String claveasociacion2;
-    @XmlElement(name = "CLAVEASOCIACION3", required = true)
+    @XmlElement(name = "CLAVEASOCIACION3")
     protected String claveasociacion3;
-    @XmlElement(name = "DESCRIPCION", required = true)
+    @XmlElement(name = "DESCRIPCION")
     protected String descripcion;
-    @XmlElement(name = "EXTENSIONFICHERO", required = true)
+    @XmlElement(name = "EXTENSIONFICHERO")
     protected String extensionfichero;
-    @XmlElement(name = "FECHAVIGENCIA", required = true)
+    @XmlElement(name = "FECHAVIGENCIA")
     protected String fechavigencia;
-    @XmlElement(name = "FICHEROBASE64", required = true)
+    @XmlElement(name = "FICHEROBASE64")
     protected String ficherobase64;
-    @XmlElement(name = "LOCALIZADOR", required = true)
+    @XmlElement(name = "LOCALIZADOR")
     protected String localizador;
     @XmlElement(name = "OPERACION", required = true)
     protected String operacion;
-    @XmlElement(name = "ORIGEN", required = true)
+    @XmlElement(name = "ORIGEN")
     protected String origen;
-    @XmlElement(name = "RUTA_FICHERO_REMOTO", required = true)
+    @XmlElement(name = "RUTA_FICHERO_REMOTO")
     protected String rutaficheroremoto;
-    @XmlElement(name = "TIPOASOCIACION", required = true)
+    @XmlElement(name = "TIPOASOCIACION")
     protected String tipoasociacion;
-    @XmlElement(name = "TIPOASOCIACION2", required = true)
+    @XmlElement(name = "TIPOASOCIACION2")
     protected String tipoasociacion2;
-    @XmlElement(name = "TIPOASOCIACION3", required = true)
+    @XmlElement(name = "TIPOASOCIACION3")
     protected String tipoasociacion3;
-    @XmlElement(name = "TIPODOCUMENTO", required = true)
+    @XmlElement(name = "TIPODOCUMENTO")
     protected String tipodocumento;
 
     /**

@@ -158,7 +158,7 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 			if (DDSiNo.SI.equals(docCompleta)) {
 				executor.execute(BO_PLUGIN_PRECONTENCIOSO_CAMBIAR_ESTADO_EXPEDIETE, prc.getId(), PrecontenciosoBPMConstants.PCO_FINALIZADO);
 			}
-		}	
+		}
 	}
 
 	private void actualizarProcIniciar(Procedimiento prc,

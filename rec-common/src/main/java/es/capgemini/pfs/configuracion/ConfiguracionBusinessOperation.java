@@ -73,6 +73,8 @@ public final class ConfiguracionBusinessOperation {
      ** UsuarioMangaer.
      ****************************************************************************/
     public static final String BO_USUARIO_MGR_GET_USUARIO_LOGADO = "usuarioManager.getUsuarioLogado";
+    public static final String BO_USUARIO_MGR_CAMBIAR_ENTIDAD_USU_LOGADO = "usuarioManager.cambiarEntidadUsuarioLogado";
+    public static final String BO_USUARIO_MGR_CAMBIAR_ENTIDAD_BASE_DATOS = "usuarioManager.cambiarEntidadBaseDatos";
     public static final String BO_USUARIO_MGR_GET = "usuarioManager.get";
     public static final String BO_USUARIO_MGR_GET_USUARIOS_ZONA_PERFIL = "usuarioManager.getUsuariosZonaPerfil";
     public static final String BO_USUARIO_MGR_FIND_USERS_PAGE = "usuarioManager.findUsersPage";

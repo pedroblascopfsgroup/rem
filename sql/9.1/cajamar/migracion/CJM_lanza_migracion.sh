@@ -145,7 +145,7 @@ echo "[OK] ""$sh_dir""apr_main_observaciones.sh ejecutado correctamente"
 #####################################
 
 echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_1449_ARREGLA_LETRADOS_y_PROCURADORES.sh"                      
-./"$sh_dir"CMREC_1449_ARREGLA_LETRADOS_y_PROCURADORES.sh 
+./"$sh_dir"CMREC_1449_ARREGLA_LETRADOS_y_PROCURADORES.sh "$1"
 if [ $? != 0 ] ; then
     echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC_1449_ARREGLA_LETRADOS_y_PROCURADORES.sh"
     echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
@@ -155,13 +155,34 @@ echo "[OK] ""$sh_dir""CMREC_1449_ARREGLA_LETRADOS_y_PROCURADORES.sh ejecutado co
 
 
 echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_1505_migracion_paraliza_procedimientos_precontencioso.sh"                      
-./"$sh_dir"CMREC_1505_migracion_paraliza_procedimientos_precontencioso.sh 
+./"$sh_dir"CMREC_1505_migracion_paraliza_procedimientos_precontencioso.sh "$1"
 if [ $? != 0 ] ; then
     echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC_1505_migracion_paraliza_procedimientos_precontencioso.sh"
     echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
     exit 1           
 fi
 echo "[OK] ""$sh_dir""CMREC_1505_migracion_paraliza_procedimientos_precontencioso.sh ejecutado correctamente"   
+
+
+
+echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_1645_Asignacion_Gestores_PREContencioso.sh"                      
+./"$sh_dir"CMREC_1645_Asignacion_Gestores_PREContencioso.sh "$1" 
+if [ $? != 0 ] ; then
+    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC_1645_Asignacion_Gestores_PREContencioso.sh"
+    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
+    exit 1           
+fi
+echo "[OK] ""$sh_dir""CMREC_1645_Asignacion_Gestores_PREContencioso.sh ejecutado correctamente"   
+
+
+echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_1728_Situacion_cliente_Asunto.sh"                      
+./"$sh_dir"CMREC_1728_Situacion_cliente_Asunto.sh "$1" 
+if [ $? != 0 ] ; then
+    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC_1728_Situacion_cliente_Asunto.sh"
+    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
+    exit 1           
+fi
+echo "[OK] ""$sh_dir""CMREC_1728_Situacion_cliente_Asunto.sh ejecutado correctamente"   
 
 
 echo "[INFO] FIN CJM_lanza_migracion.sh. Revise el fichero de log" `date` 

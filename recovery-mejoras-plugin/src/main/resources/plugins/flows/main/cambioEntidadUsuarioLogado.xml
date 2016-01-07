@@ -21,6 +21,7 @@
     <end-state id="main" view="plugin/mejoras/main/main" >
     	<on-entry>
     		<evaluate expression="executor.execute('usuarioManager.cambiarEntidadUsuarioLogado', comboEntidad)" result="flowScope.usuario"/>
+    		<evaluate expression="executor.execute('usuarioManager.cambiarEntidadBaseDatos', comboEntidad)" result="flowScope.usuario"/>
     		<evaluate expression="usuario.entidad.configValue('theme')" result="flowScope.theme"/>
     		<evaluate expression="usuario.entidad.configValue('logo')" result="flowScope.logo"/>
     		<evaluate expression="executor.execute('contratoManager.getUltimaFechaCarga')" result="flowScope.ultimaFechaCarga"/>

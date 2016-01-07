@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import es.capgemini.pfs.dao.AbstractMasterDao;
 import es.capgemini.pfs.dsm.dao.EntidadDao;
 import es.capgemini.pfs.dsm.model.Entidad;
+import es.capgemini.pfs.users.domain.Usuario;
 
 /**
  * @author Nicolás Cornaglia
@@ -27,4 +28,9 @@ public class EntidadDaoImpl extends AbstractMasterDao<Entidad, Long> implements 
                 "select c from Entidad c where c.descripcion = ?", descripcion)).iterator().next();
     }
 
+    public Usuario getUsuario(Long idUsu) {
+        return (Usuario) (getHibernateTemplate().find(
+                "select c from Usuario c where c.id = ?", idUsu)).iterator().next();
+    }
+    
 }

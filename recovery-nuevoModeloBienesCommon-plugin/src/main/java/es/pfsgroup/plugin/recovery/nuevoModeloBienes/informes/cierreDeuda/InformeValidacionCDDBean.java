@@ -420,7 +420,7 @@ public class InformeValidacionCDDBean {
 				DDPropiedadAsunto.PROPIEDAD_BANKIA.equals(extAsunto.getPropiedadAsunto().getCodigo())) {
 			if (!validaProcedimientoContratos(subasta)) {
 				resultadoValidacion.add(DDResultadoValidacionCDD.VALIDACION_PRC_SIN_OPERACION_ACTIVA);
-				sb.append("El procedimiento no tienen ninguna operacion activa;"); // Alguna deberia ser
+				sb.append("El procedimiento no tienen ninguna operaci\u00F3n activa;"); // Alguna deberia ser
 			}			
 		}
 		
@@ -432,7 +432,7 @@ public class InformeValidacionCDDBean {
 				for (String descBien : booleanBienes.getListBienes()) {
 					sb.append("El bien ");
 					sb.append(descBien);
-					sb.append(" no tiene relaci�n con ning�n contrato;");
+					sb.append(" no tiene relaci\u00F3n con ning\u00FAn contrato;");
 				}
 			}			
 		}
@@ -457,7 +457,7 @@ public class InformeValidacionCDDBean {
 			for (String descBien : booleanBienes.getListBienes()) {
 				sb.append("El lote ");
 				sb.append(descBien);
-				sb.append(" no contiene ning�n bien;");
+				sb.append(" no contiene ning\u00FAn bien;");
 			}
 		}
 		
@@ -467,7 +467,7 @@ public class InformeValidacionCDDBean {
 			for (BienManyLotes bienLote : bienLotes.getBienLote()) {
 				sb.append("El Bien ");
 				sb.append(bienLote.getBien());
-				sb.append(" se encuentra en m�s de un lote (");
+				sb.append(" se encuentra en m\u00E1s de un lote (");
 				int contador = 1;
 				for (Long numLote : bienLote.getLotes()) {
 					sb.append(numLote);

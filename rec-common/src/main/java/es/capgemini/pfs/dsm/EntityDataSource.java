@@ -18,7 +18,6 @@ import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.DevonPropertiesConstants;
 import es.capgemini.pfs.security.model.UsuarioSecurity;
-import es.capgemini.pfs.users.domain.Usuario;
 
 /**
  * TODO Documentar.
@@ -58,11 +57,6 @@ public class EntityDataSource extends AbstractRoutingDataSource {
 				dbId = usuario.getEntidad().getId();
 			} else {
 				dbId = DataSourceManager.MASTER_DATASOURCE_ID;
-			}
-			
-			Usuario usu = dataSourceManager.getUsuarioMultiEntidad(usuario.getId());
-			if(!usu.getEntidad().getId().equals(usuario.getEntidad().getId())) {
-				dbId = usu.getEntidad().getId();
 			}
 		}
 

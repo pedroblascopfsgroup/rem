@@ -54,6 +54,10 @@ public class Parametrizacion implements Serializable, Auditable {
     public static final String VISIBLE_BOTON_SOLICITAR_LIQUIDACION = "visibleBtnSolicitarLiquidacion";
     public static final String ADJUNTOS_DESCARGA_ZIP_EXTENSIONES = "adjuntosDescargaZipExtensiones";
     public static final String ADJUNTOS_DESCARGA_ZIP_NIVEL_COMPRESION = "adjuntosDescargaZipNivelCompresion";
+    public static final String LIMITE_FICHERO_PERSONA_GESTOR_DOCUMENTAL = "fichero.persona.limite.gestorDoc";
+    public static final String LIMITE_FICHERO_CONTRATO_GESTOR_DOCUMENTAL = "fichero.contrato.limite.gestorDoc";
+    public static final String LIMITE_FICHERO_EXPEDIENTE_GESTOR_DOCUMENTAL = "fichero.expediente.limite.gestorDoc";
+    public static final String LIMITE_FICHERO_ASUNTO_GESTOR_DOCUMENTAL = "fichero.asunto.limite.gestorDoc";
 
     @Id
     @Column(name = "PEN_ID")

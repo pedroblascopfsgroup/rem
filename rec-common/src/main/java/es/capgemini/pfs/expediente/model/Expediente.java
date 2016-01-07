@@ -138,6 +138,9 @@ public class Expediente implements Serializable, Auditable, Describible {
 
     @Column(name = "EXP_DESCRIPCION")
     private String descripcionExpediente;
+    
+	@Column(name = "SYS_GUID")
+	private String guid;
 
     @Embedded
     private Auditoria auditoria;
@@ -1009,4 +1012,11 @@ public class Expediente implements Serializable, Auditable, Describible {
 		this.tipoExpediente = tipoExpediente;
 	}
 
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
 }

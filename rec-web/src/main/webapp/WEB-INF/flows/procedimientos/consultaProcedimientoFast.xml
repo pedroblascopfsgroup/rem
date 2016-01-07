@@ -10,8 +10,8 @@
 	<!-- renderiza el formulario -->
     <end-state id="consultaProcedimiento" view="entidad/procedimiento/procedimientoJSON" >
 	    <on-entry>
-	    	<evaluate expression="fechaVenc" result="flowScope.fechaVenc" />
-	    	<evaluate expression="tarea" result="flowScope.tarea" />
+<!-- 	    	<evaluate expression="fechaVenc" result="flowScope.fechaVenc" /> -->
+<!-- 	    	<evaluate expression="tarea" result="flowScope.tarea" /> -->
 	    	<evaluate expression="executor.execute('core.procedimiento.getContratoPrincipal',id)" result="flowScope.contratoPrincipal" />
 			<evaluate expression="executor.execute('procedimientoManager.getProcedimiento',id)" result="flowScope.procedimiento" />
 	    	<evaluate expression="executor.execute('procedimientoManager.esGestor',id)" result="flowScope.esGestor" />

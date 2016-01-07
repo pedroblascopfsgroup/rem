@@ -728,7 +728,7 @@ public class SubastaController {
 		cabeceras.add("DEUDA");
 		cabeceras.add("COSTAS LETRADO");
 		cabeceras.add("COSTAS PROCURADOR");
-		cabeceras.add("F. SEÑALAMIENTO");
+		cabeceras.add("F. SE\u00D1ALAMIENTO");
 		cabeceras.add("CON POSTORES");
 		
 		fila=new ArrayList<String>();
@@ -836,24 +836,24 @@ public class SubastaController {
 					
 				fila=new ArrayList<String>();
 				fila.add(" ; ;Text");
-				fila.add("Nº FINCA;Blue;Text");
-				fila.add("Nº ACTIVO;Blue;Text");
-				fila.add("PAÍS;Blue;Text");
+				fila.add("N\u00BA FINCA;Blue;Text");
+				fila.add("N\u00BA ACTIVO;Blue;Text");
+				fila.add("PA\u00CDS;Blue;Text");
 				fila.add("PROVINCIA;Blue;Text");
 				fila.add("LOCALIDAD;Blue;Text");
-				fila.add("CÓDIGO POSTAL;Blue;Text");
-				fila.add("NOMBRE VÍA;Blue;Text");
-				fila.add("DESCRIPCIÓN;Blue;Text");
+				fila.add("C\u00D3DIGO POSTAL;Blue;Text");
+				fila.add("NOMBRE V\uu00CDA;Blue;Text");
+				fila.add("DESCRIPCI\u00D3N;Blue;Text");
 				fila.add("PROVINCIA REGISTRO;Blue;Text");
 				fila.add("LOCALIDAD REGISTRO;Blue;Text");
-				fila.add("Nº REGISTRO;Blue;Text");
-				fila.add("VALOR TASACIÓN;Blue;Text");
-				fila.add("FECHA TASACIÓN;Blue;Text");
+				fila.add("N\u00BA REGISTRO;Blue;Text");
+				fila.add("VALOR TASACI\u00D3N;Blue;Text");
+				fila.add("FECHA TASACI\u00D3N;Blue;Text");
 				fila.add("VALOR JUDICIAL;Blue;Text");
 				fila.add("TIPO INMUEBLE;Blue;Text");
 				fila.add("VIVIENDA HABITUAL;Blue;Text");
-				fila.add("RESULTADO ADJUDICACIÓN;Blue;Text");
-				fila.add("IMPORTE ADJUDICACIÓN;Blue;Text");
+				fila.add("RESULTADO ADJUDICACI\u00D3N;Blue;Text");
+				fila.add("IMPORTE ADJUDICACI\u00D3N;Blue;Text");
 				
 				//Si la subasta es de Bankia no mostramos la columna Fecha Testimonio
 				if(!"P401".equals(informe.getSubasta().getProcedimiento().getTipoProcedimiento().getCodigo())){
@@ -1005,7 +1005,7 @@ public class SubastaController {
 		valores.add(fila);
 		
 		fila=new ArrayList<String>();
-		fila.add("MENSAJES VALIDACION;Blue;Text");
+		fila.add("MENSAJES VALIDACI\u00D3N;Blue;Text");
 		fila.add(" ;Blue;Text");
 		fila.add(" ;Blue;Text");
 		fila.add(" ;Blue;Text");

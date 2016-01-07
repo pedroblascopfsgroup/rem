@@ -289,23 +289,26 @@ Ext.onReady(function() {
 		});
 	});
 	
-	Ext.get("comboEntidad").on('change', function(){
-		Ext.Msg.confirm('<s:message code="app.confirmar" text="**confirmar" />', '<s:message text="**¿Seguro cambiar de entidad?" />', function(boton){
-			if (boton=="yes"){
-				var valueComboEntidadSeleccionada = comboEntidad.value;
-				Ext.Ajax.request({
-					url: app.resolveFlow('main/cambioEntidadUsuarioLogado')
-					,params: {comboEntidad:valueComboEntidadSeleccionada}
-					,method: 'POST'
-					,success : function(){
-						app.reloadFav();
-						app.recargaTree();
-					}
-					,failure: function(){}
-					})
-			}
+	if(Ext.get("comboEntidad") != null) {
+		Ext.get("comboEntidad").on('change', function(){
+			Ext.Msg.confirm('<s:message code="app.confirmar" text="**confirmar" />', '<s:message code="app.cambiar.entidad" text="**¿Seguro cambiar de entidad?" />', function(boton){
+				if (boton=="yes"){
+					var valueComboEntidadSeleccionada = comboEntidad.value;
+					Ext.Ajax.request({
+						url: app.resolveFlow('main/cambioEntidadUsuarioLogado')
+						,params: {comboEntidad:valueComboEntidadSeleccionada}
+						,method: 'POST'
+						,success : function(){
+							app.reloadFav();
+							app.recargaTree();
+							app.contenido.removeAll();
+						}
+						,failure: function(){}
+						})
+				}
+			});
 		});
-	});
+	}
 		
 });
 

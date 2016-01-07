@@ -28,4 +28,6 @@ public interface CoreProjectContext {
 	Set<String> getTiposGestorProcurador();
 	
 	Set<String> getEntidadesDesparalizacion();
+
+	public List<String> getCodigosDocumentosConFechaCaducidad();
 }

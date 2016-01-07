@@ -11,7 +11,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import es.capgemini.devon.security.SecurityUtils;
@@ -27,9 +26,6 @@ import es.capgemini.pfs.security.model.UsuarioSecurity;
 public class EntityDataSource extends AbstractRoutingDataSource {
 
 	private static Log log = LogFactory.getLog(EntityDataSource.class);
-
-	@Autowired
-	DataSourceManager dataSourceManager;
 	
 	@Resource
 	private Properties appProperties;

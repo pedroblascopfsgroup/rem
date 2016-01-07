@@ -300,18 +300,23 @@ public class UsuarioManager {
      */
     @BusinessOperation(ConfiguracionBusinessOperation.BO_USUARIO_MGR_CAMBIAR_ENTIDAD_USU_LOGADO)
     @Transactional
-    public Usuario cambiarEntidadUsuarioLogado(String codEntidadSeleccionada) {
+    public void cambiarEntidadUsuarioLogado(String codEntidadSeleccionada) {
+    	EventFactory.onMethodStart(this.getClass());
+        Usuario loggedUser = null;
+        Entidad enti = entidadDao.findByDescripcion(codEntidadSeleccionada);
+    	loggedUser = (Usuario)RequestContextHolder.getRequestAttributes().getAttribute(USER_SESSION_KEY,RequestAttributes.SCOPE_SESSION);
+        DbIdContextHolder.setDbId(enti.getId());
+        loggedUser.setEntidad(enti);
+        usuarioDao.update(loggedUser);    
+    }
+    
+    @BusinessOperation(ConfiguracionBusinessOperation.BO_USUARIO_MGR_CAMBIAR_ENTIDAD_BASE_DATOS)
+    @Transactional
+    public Usuario cambiarEntidadBaseDatos(String codEntidadSeleccionada) {
     	EventFactory.onMethodStart(this.getClass());
         Usuario loggedUser = null;
         Entidad enti = entidadDao.findByDescripcion(codEntidadSeleccionada);
         EntidadConfig entidadConfig = entidadConfigDao.findByEntidad(enti.getId());
-        
-        if( RequestContextHolder.getRequestAttributes()!=null && RequestContextHolder.getRequestAttributes().getAttribute(USER_SESSION_KEY,RequestAttributes.SCOPE_SESSION)!=null){
-        	loggedUser = (Usuario)RequestContextHolder.getRequestAttributes().getAttribute(USER_SESSION_KEY,RequestAttributes.SCOPE_SESSION);
-            DbIdContextHolder.setDbId(enti.getId());
-            loggedUser.setEntidad(enti);
-            usuarioDao.update(loggedUser);    
-        }
         
         try {
 			entityDataSource.getConnectionMultientidad(entidadConfig.getDataValue());

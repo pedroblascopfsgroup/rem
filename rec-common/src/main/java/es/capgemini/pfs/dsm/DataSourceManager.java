@@ -20,6 +20,7 @@ import es.capgemini.devon.startup.Initializable;
 import es.capgemini.pfs.DevonPropertiesConstants.DatabaseConfig;
 import es.capgemini.pfs.dsm.dao.EntidadDao;
 import es.capgemini.pfs.dsm.model.Entidad;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.recovery.Encriptador;
 
 /**
@@ -43,10 +44,10 @@ public class DataSourceManager implements Initializable {
 
     public static final Long NO_DATASOURCE_ID = 0L;
     public static final Long MASTER_DATASOURCE_ID = -1L;
-
+    
     @Autowired
     private EntidadDao entidadDao;
-
+    
     @javax.annotation.Resource
     private EventManager eventManager;
 
@@ -163,6 +164,10 @@ public class DataSourceManager implements Initializable {
     	logger.info("DataSource inicializado correctamente!");
     }
 
+    public Usuario getUsuarioMultiEntidad(Long id) {
+    	return entidadDao.getUsuario(id);
+    }
+    
     /**
      * @return the masterDataSource
      */

@@ -11,12 +11,14 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.DevonPropertiesConstants;
 import es.capgemini.pfs.security.model.UsuarioSecurity;
+import es.capgemini.pfs.users.domain.Usuario;
 
 /**
  * TODO Documentar.
@@ -27,6 +29,9 @@ public class EntityDataSource extends AbstractRoutingDataSource {
 
 	private static Log log = LogFactory.getLog(EntityDataSource.class);
 
+	@Autowired
+	DataSourceManager dataSourceManager;
+	
 	@Resource
 	private Properties appProperties;
 	
@@ -53,6 +58,11 @@ public class EntityDataSource extends AbstractRoutingDataSource {
 				dbId = usuario.getEntidad().getId();
 			} else {
 				dbId = DataSourceManager.MASTER_DATASOURCE_ID;
+			}
+			
+			Usuario usu = dataSourceManager.getUsuarioMultiEntidad(usuario.getId());
+			if(!usu.getEntidad().getId().equals(usuario.getEntidad().getId())) {
+				dbId = usu.getEntidad().getId();
 			}
 		}
 

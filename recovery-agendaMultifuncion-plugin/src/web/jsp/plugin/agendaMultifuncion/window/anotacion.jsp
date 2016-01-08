@@ -159,6 +159,7 @@
                 var data = {data:[{
                         id: record.id
                         ,nombre:record.data.nombre
+                        ,username: record.data.username
                         ,incorporar:0
                         ,fecha:null
                         ,email:0

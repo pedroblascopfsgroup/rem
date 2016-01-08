@@ -46,7 +46,7 @@ public class NMBBienDaoImpl extends AbstractEntityDao<NMBBien, Long> implements 
 	public Page buscarBienesPaginados(NMBDtoBuscarBienes dto, Usuario usuLogado) {
     	if (dto.getSort()!=null){
     		if (dto.getSort().equals("poblacion")){
-    			dto.setSort("loc.poblacion");    			
+    			dto.setSort("loc.localidad.descripcion");    			
     		}else if (dto.getSort().equals("refCatastral")) {
     			dto.setSort("infr.referenciaCatastralBien");
     		} else if (dto.getSort().equals("superficie")) {
@@ -84,7 +84,7 @@ public class NMBBienDaoImpl extends AbstractEntityDao<NMBBien, Long> implements 
         }
  
         if (!Checks.esNulo(dto.getPoblacion())){
-            hql.append(" AND UPPER(loc.poblacion) LIKE '%".concat(dto.getPoblacion().toUpperCase()).concat("%'"));
+            hql.append(" AND UPPER(loc.localidad.descripcion) LIKE '%".concat(dto.getPoblacion().toUpperCase()).concat("%'"));
         }
         	
         if (!Checks.esNulo(dto.getCodPostal())){
@@ -169,7 +169,7 @@ public class NMBBienDaoImpl extends AbstractEntityDao<NMBBien, Long> implements 
             hql.append(" AND UPPER(loc.provincia.descripcion) LIKE '%".concat(dto.getProvincia().toUpperCase()).concat("%'"));
         }  
         if (!Checks.esNulo(dto.getLocalidad())) {
-            hql.append(" AND UPPER(loc.poblacion) LIKE '%".concat(dto.getLocalidad().toUpperCase()).concat("%'"));
+            hql.append(" AND UPPER(loc.localidad.descripcion) LIKE '%".concat(dto.getLocalidad().toUpperCase()).concat("%'"));
         }        	
         if (!Checks.esNulo(dto.getCodigoPostal())){
         	hql.append(" AND loc.codPostal = '".concat(dto.getCodigoPostal()).concat("'"));
@@ -337,6 +337,7 @@ public class NMBBienDaoImpl extends AbstractEntityDao<NMBBien, Long> implements 
 		return listaBienes;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ProcedimientoBien> getBienesPorProcedimientos(List<Long> idsProcedimiento) {
     	Query q = getHibernateTemplate()
@@ -348,6 +349,7 @@ public class NMBBienDaoImpl extends AbstractEntityDao<NMBBien, Long> implements 
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<NMBBien> getBienesPorNumFincaActivo(String numFinca, String numActivo) {
 		List<NMBBien> listaBienes = new ArrayList<NMBBien>();
@@ -365,6 +367,7 @@ public class NMBBienDaoImpl extends AbstractEntityDao<NMBBien, Long> implements 
 		return listaBienes;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Bien> getSolvenciasDeUnProcedimiento(Long idProcedimiento){
 		List<Bien> listaBienes = new ArrayList<Bien>();

@@ -40,7 +40,7 @@ BEGIN
 -----------------------------------------------------------------------------------------------------------------------------------
 
 DBMS_OUTPUT.PUT_LINE('[INICIO] Crear tabla: '||V_ESQUEMA||'.AUX_STOCK_LITIGIOS_ASU...');
-V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_ESQUEMA||'.AUX_STOCK_LITIGIOS_ASU'' and owner = '''||V_ESQUEMA||'''';
+V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''AUX_STOCK_LITIGIOS_ASU'' and owner = '''||V_ESQUEMA||'''';
 EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 IF V_NUM_TABLAS = 0 THEN
     DBMS_OUTPUT.PUT_LINE('[INFO] Creando tabla');
@@ -66,7 +66,7 @@ END IF;
 -----------------------------------------------------------------------------------------------------------------------------------
 
 DBMS_OUTPUT.PUT_LINE('[INICIO] Crear tabla: '||V_ESQUEMA||'.AUX_STOCK_LITIGIOS_BIEPRC...');
-V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_ESQUEMA||'.AUX_STOCK_LITIGIOS_BIEPRC'' and owner = '''||V_ESQUEMA||'''';
+V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''AUX_STOCK_LITIGIOS_BIEPRC'' and owner = '''||V_ESQUEMA||'''';
 EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 IF V_NUM_TABLAS = 0 THEN
     DBMS_OUTPUT.PUT_LINE('[INFO] Creando tabla');
@@ -85,7 +85,7 @@ END IF;
 -----------------------------------------------------------------------------------------------------------------------------------
 
 DBMS_OUTPUT.PUT_LINE('[INICIO] Crear tabla: '||V_ESQUEMA||'.AUX_STOCK_LITIGIOS_PRCPER...');
-V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_ESQUEMA||'.AUX_STOCK_LITIGIOS_PRCPER'' and owner = '''||V_ESQUEMA||'''';
+V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''AUX_STOCK_LITIGIOS_PRCPER'' and owner = '''||V_ESQUEMA||'''';
 EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 IF V_NUM_TABLAS = 0 THEN
     DBMS_OUTPUT.PUT_LINE('[INFO] Creando tabla');

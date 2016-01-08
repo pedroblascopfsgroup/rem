@@ -1,16 +1,18 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.impl;
 
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
@@ -23,7 +25,6 @@ import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
-import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
@@ -411,8 +412,21 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		if (!StringUtils.emtpyString(filtro.getProCentroContable())) {
 			query.createAlias("contrato.oficinaContable", "oficinaContable");
 			query.createAlias("oficinaContable.zona", "oficinaContableZona");
-
-			where.add(Restrictions.in("oficinaContableZona.codigo", filtro.getProCentroContable().split(",")));
+			
+			Criterion criterion = null;
+			
+			List<String> lCodigosZona = Arrays.asList(filtro.getProCentroContable().split(","));
+			for(String codigoZona : lCodigosZona) {
+				
+				if(criterion == null) {
+					criterion = Restrictions.like("oficinaContableZona.codigo", codigoZona, MatchMode.START);
+				}
+				else {
+					criterion = Restrictions.or(criterion, Restrictions.like("oficinaContableZona.codigo", codigoZona, MatchMode.START));
+				}
+			}			
+			
+			where.add(criterion);
 		}
 
 		return where;
@@ -482,7 +496,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 				where.add(Restrictions.in("actorUsuario.id", getListLongFromStringCsv(filtro.getDocGestor())));
 			}
 
-			where.addAll(dateRangeFilter("solicitud.fechaSolicitud", filtro.getLiqFechaSolicitudDesde(), filtro.getDocFechaSolicitudHasta()));
+			where.addAll(dateRangeFilter("solicitud.fechaSolicitud", filtro.getDocFechaSolicitudDesde(), filtro.getDocFechaSolicitudHasta()));
 			where.addAll(dateRangeFilter("solicitud.fechaEnvio", filtro.getDocFechaEnvioDesde(), filtro.getDocFechaEnvioHasta()));
 			where.addAll(dateRangeFilter("solicitud.fechaResultado", filtro.getDocFechaResultadoDesde(), filtro.getDocFechaResultadoHasta()));
 			where.addAll(dateRangeFilter("solicitud.fechaRecepcion", filtro.getDocFechaRecepcionDesde(), filtro.getDocFechaRecepcionHasta()));
@@ -517,7 +531,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 			where.add(Restrictions.ge("liquidacion.diasEnGestion", Integer.valueOf(filtro.getLiqDiasGestion())));
 		}
 
-		where.addAll(floatRangeFilter("liquidacion.total", filtro.getLiqTotalDesde(), filtro.getLiqTotalHasta()));
+		where.addAll(bigDecimalRangeFilter("liquidacion.total", filtro.getLiqTotalDesde(), filtro.getLiqTotalHasta()));
 		where.addAll(dateRangeFilter("liquidacion.fechaSolicitud", filtro.getLiqFechaSolicitudDesde(), filtro.getLiqFechaSolicitudHasta()));
 		where.addAll(dateRangeFilter("liquidacion.fechaConfirmacion", filtro.getLiqFechaConfirmacionDesde(), filtro.getLiqFechaConfirmacionHasta()));
 		where.addAll(dateRangeFilter("liquidacion.fechaCierre", filtro.getLiqFechaCierreDesde(), filtro.getLiqFechaCierreHasta()));
@@ -598,6 +612,21 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		return where;
 	}
+	
+	private Collection<? extends Criterion> bigDecimalRangeFilter(
+			String field, String from, String to) {
+		List<Criterion> where = new ArrayList<Criterion>();
+
+		if (!StringUtils.emtpyString(from)) {
+			where.add(Restrictions.ge(field, new BigDecimal(from)));
+		}
+
+		if (!StringUtils.emtpyString(to)) {
+			where.add(Restrictions.le(field, new BigDecimal(to)));
+		}
+
+		return where;
+	}
 
 	private List<Long> getListLongFromStringCsv(String stringCsv) {
 		List<Long> idLongs = new ArrayList<Long>();
@@ -629,6 +658,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<TareaExterna> getTareasPrecedentes(Long idProcedimiento,List<TareaProcedimiento> precedentes,String order) {
 		

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <input name="personaId" required="true" type="java.lang.Long"/>
+    
+    <end-state id="confirmardatos" view="plugin/burofax/confirmardatos" >
+    	<on-entry>
+    		<evaluate expression="executor.execute('personaManager.get',personaId)" 
+				result="flowScope.persona" />	
+			<evaluate expression="executor.execute('plugin.burofax.bo.listTiposIntervencion')" result="flowScope.ddTiposIntervencion"/>
+			
+			<evaluate expression="persona.direcciones[0]" result="flowScope.direccion" />
+			<evaluate expression="executor.execute('plugin.burofax.bo.getPluginConfig')" result="flowScope.config"/>
+			<evaluate expression="config.getConfig('burofax.plazo').value" result="flowScope.plazoDefault" />
+			<evaluate expression="ddTiposIntervencion[0].descripcion" result="flowScope.tipoIntervencionDefault" />
+    	</on-entry>
+    </end-state>
+        
+</flow>

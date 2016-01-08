@@ -9,11 +9,6 @@
 	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
 	default-autowire="byName">
-	
-	<!-- Ficha bien -->
-	<bean p:entity="bien.tabs" p:name="tabCabeceraBien" p:order="10"
-		p:fileName="/WEB-INF/jsp/plugin/cajamarhre/bienes/tabs/tabCabecera.jsp"
-		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
 		
 	<!--Para botón contratos-->
 		

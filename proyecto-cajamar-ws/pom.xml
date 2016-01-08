@@ -13,7 +13,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
-			<artifactId>recovery-procedimientos-bpmHaya</artifactId>
+			<artifactId>proyecto-cajamar-hre-online</artifactId>
 		</dependency>
 	</dependencies>
 

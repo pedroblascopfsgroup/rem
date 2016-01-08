@@ -1312,17 +1312,16 @@
 			if(tipoNMB.getValue() == null || tipoNMB.getValue() == '' ){
 				return false;
 			}
-			var tabs  = [pestanaPrincipal,pestanaValoraciones,pestanaDatosRegistrales,pestanaEmpresa,pestanaIAE,pestanaVehiculo,pestanaProductosBanco,pestanaLocalizacion,pestanaObservaciones,pestanaCuentaBancaria];
-			
-			for(var i=0;i < tabs.length;i++) {
-				<%-- if (listaTabs[i].tipoBien == tipoNMB.getValue())  {
-					for(var x=0;x < listaTabs[i].tabs.length; x++) {--%>
-				if (!validaTab(tabs[i])) {
-					return false;
-				}
-					//}
-				//return true;
-			//	}				
+
+			for(var i=0;i < listaTabs.length;i++) {
+				 if (listaTabs[i].tipoBien == tipoNMB.getValue())  {
+					for(var x=0;x < listaTabs[i].tabs.length; x++) {
+						if (!validaTab(listaTabs[i].tabs[x])) {
+							return false;
+						}
+					}
+				return true;
+				}				
 			}
 			return true;
 			
@@ -2172,9 +2171,21 @@
 		this.tipoBien = tipoBien;
 		this.tabs = tabs;
 	}
-	
-	<c:forEach items="${tabs}" var="entry">
-		listaTabs[listaTabs.length] = new objTabs('${entry.key}',${entry.value.listaTabs});
+	   
+    <c:forEach items="${tabs}" var="entry">
+		var lista = [];
+		<%-- Es posible que algunas de las pesta�as existentes en la configuraci�n no est�n definidas en la jsp, por eso filtramos la lista. --%>
+		<c:forEach items = "${entry.value.listaTabs}" var="tab">
+			try{
+				if(${tab}){
+					lista[lista.length] = ${tab};
+				}
+			}catch(e){
+				<%-- Si la pesta�a no se ha creado, no se intenta a�adir. --%>		
+			}	
+		</c:forEach>
+		listaTabs[listaTabs.length] = new objTabs('${entry.key}',lista);
     </c:forEach>
+    
     muestraTabs('${NMBbien.tipoBien.codigo}' || 'DEFECTO');
 </fwk:page>

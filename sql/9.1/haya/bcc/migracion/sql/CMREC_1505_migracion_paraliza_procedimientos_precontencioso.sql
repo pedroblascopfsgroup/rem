@@ -35,24 +35,26 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE('[INICIO] CJM_migracion_paraliza_procedimientos_precontencioso.sql');  
 
 
--- PARALIZAMOS EL PROCEDIMIENTO
+-- PARALIZAMOS EL PROCEDIMIENTO                               
 
-   V_SQL:= 'UPDATE '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS SET USUARIOMODIFICAR = '''||USUARIO_M||'''
-                                             , FECHAMODIFICAR =  TO_TIMESTAMP(sysdate,''DD/MM/YYYY fmHH24fm:MI:SS.FF'')
-                                             , PRC_FECHA_PARALIZADO = TO_TIMESTAMP(sysdate,''DD/MM/YYYY fmHH24fm:MI:SS.FF'')
-                                             , PRC_PARALIZADO = 1 
-            WHERE PRC_ID IN (select PRC.PRC_ID
-                             from '||V_ESQUEMA||'.MIG_EXPEDIENTES_CABECERA cab
-                                , '||V_ESQUEMA||'.EXP_EXPEDIENTES EXP
-                                , '||V_ESQUEMA||'.ASU_ASUNTOS asu
-                                , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS prc
-                             where exp.CD_EXPEDIENTE_NUSE  = cab.cd_expediente
-                               and exp.exp_id              = asu.exp_id 
-                               and asu.asu_id              = prc.asu_id
-                               and cab.fecha_paralizacion is not null
-                               and cab.motivo_paralizacion = ''PARALIZADO''
-                               and exp.usuariocrear        = '''||USUARIO_C||''')';
-
+            V_SQL:= 'MERGE INTO '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS prc
+             USING (select PRC.PRC_ID, cab.fecha_paralizacion
+                                       from '||V_ESQUEMA||'.MIG_EXPEDIENTES_CABECERA cab
+                                          , '||V_ESQUEMA||'.EXP_EXPEDIENTES EXP
+                                          , '||V_ESQUEMA||'.ASU_ASUNTOS asu
+                                          , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS prc
+                                       where exp.CD_EXPEDIENTE_NUSE  = cab.cd_expediente
+                                         and exp.exp_id              = asu.exp_id 
+                                         and asu.asu_id              = prc.asu_id
+                                         and cab.fecha_paralizacion is not null
+                                         and cab.motivo_paralizacion = ''PARALIZADO''
+                                         and exp.usuariocrear        = '''||USUARIO_C||''') S
+             ON (prc.PRC_ID = S.PRC_ID)
+             WHEN MATCHED THEN UPDATE SET prc.USUARIOMODIFICAR =  '''||USUARIO_M||'''
+                                        , prc.FECHAMODIFICAR =  systimestamp
+                                        , prc.PRC_FECHA_PARALIZADO = S.fecha_paralizacion
+                                        , prc.PRC_PARALIZADO = 1' ;                                
+                                         
                    
      EXECUTE IMMEDIATE V_SQL;
 
@@ -61,7 +63,7 @@ BEGIN
 -- PARALIZAMOS LAS TAREAS
 
    V_SQL:= 'UPDATE '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES SET USUARIOMODIFICAR = '''||USUARIO_M||'''
-                                        , FECHAMODIFICAR = TO_TIMESTAMP(sysdate,''DD/MM/YYYY fmHH24fm:MI:SS.FF'')
+                                        , FECHAMODIFICAR = systimestamp
                                         , BORRADO = 1 
             WHERE TAR_CODIGO = 1
               AND PRC_ID IN (SELECT PRC_ID FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS WHERE USUARIOMODIFICAR = '''||USUARIO_M||''')';
@@ -73,7 +75,7 @@ BEGIN
 -- PARALIZAMOS LAS TAREAS_EXTERNAS
 
    V_SQL:= 'UPDATE '||V_ESQUEMA||'.TEX_TAREA_EXTERNA SET  USUARIOMODIFICAR = '''||USUARIO_M||'''
-                                             , FECHAMODIFICAR = TO_TIMESTAMP(sysdate,''DD/MM/YYYY fmHH24fm:MI:SS.FF'')
+                                             , FECHAMODIFICAR = systimestamp
                                              , TEX_DETENIDA = 1 
             WHERE TAR_ID IN (SELECT TAR_ID FROM '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES WHERE USUARIOMODIFICAR = '''||USUARIO_M||''')';
 
@@ -97,10 +99,10 @@ BEGIN
                 (select DD_DPA_ID from  '||V_ESQUEMA||'.DD_DPA_DECISION_PARALIZAR      where DD_DPA_CODIGO = ''RD'') as dd_dpa_id,    --> Causa de decisión PDTE RESOLUCIÓN OTRAS OPERACIONES
                 (select DD_EDE_ID from  '||V_ESQUEMA_MASTER||'.DD_EDE_ESTADOS_DECISION where DD_EDE_CODIGO = ''02'')   as dd_ede_id,  --> Estado ACEPTADO
                 NULL dpr_process_bpm, 
-                 TO_TIMESTAMP(sysdate + 700,''DD/MM/YYYY fmHH24fm:MI:SS.FF'') dpr_fecha_para, -- Fecha hasta la que paralizar
+                 systimestamp + 700 dpr_fecha_para, -- Fecha hasta la que paralizar
                 ''PDTE RESOLUCIÓN OTRAS OPERACIONES'',
                 '''||USUARIO_C||''', 
-                TO_TIMESTAMP(sysdate,''DD/MM/YYYY fmHH24fm:MI:SS.FF'')
+                systimestamp
             FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC 
                 WHERE USUARIOMODIFICAR = '''||USUARIO_M||'''';
 
@@ -125,7 +127,7 @@ BEGIN
                 DPR.PRC_ID as PRC_ID, 
                 DPR.DPR_ID as DPR_ID, 
                 '''||USUARIO_C||''' as USUARIOCREAR,
-                TO_TIMESTAMP(sysdate,''DD/MM/YYYY fmHH24fm:MI:SS.FF'') as FECHACREAR,
+                systimestamp as FECHACREAR,
                 0 as BORRADO                
             FROM '||V_ESQUEMA||'.DPR_DECISIONES_PROCEDIMIENTOS DPR
                 WHERE DPR.DPR_COMENTARIOS = ''PDTE RESOLUCIÓN OTRAS OPERACIONES''';
@@ -166,24 +168,26 @@ BEGIN
       DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '...' || sql%rowcount);
 
       
-/**************************************************/
-/*******   ACTUALIZAMOS FECHA FIN EN PARALIZADOS  */
-/**************************************************/
-      v_SQL:= 'UPDATE '||V_ESQUEMA||'.PCO_PRC_HEP_HISTOR_EST_PREP
-               SET PCO_PRC_HEP_FECHA_FIN =  TO_TIMESTAMP(sysdate,''DD/MM/YYYY fmHH24fm:MI:SS.FF'')
-               WHERE DD_PCO_PEP_ID <> (SELECT DD_PCO_PEP_ID FROM  '||V_ESQUEMA||'.DD_PCO_PRC_ESTADO_PREPARACION WHERE DD_PCO_PEP_CODIGO = ''PA'') 
-                 AND PCO_PRC_ID IN (SELECT PCO.PCO_PRC_ID
-                                     FROM '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS PCO
-                                        , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
-                                        , '||V_ESQUEMA||'.MIG_EXPEDIENTES_CABECERA EXP
-                                     WHERE PCO.PRC_ID = PRC.PRC_ID
-                                       AND PCO.PCO_PRC_NUM_EXP_EXT = EXP.CD_EXPEDIENTE
-                                       AND NOT EXISTS(SELECT 1
-                                               FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA CAB
-                                               WHERE CAB.CD_EXPEDIENTE_NUSE = EXP.CD_EXPEDIENTE)
-                                       AND EXP.FECHA_PARALIZACION IS NOT NULL
-                                       AND EXP.MOTIVO_PARALIZACION = ''PARALIZADO'')';
+/**********************************************************************/
+/*******   ACTUALIZAMOS FECHA FIN EN ESTADOS ANTERIORES A PARALIZADO  */
+/**********************************************************************/                                      
 
+      v_SQL:= 'MERGE INTO '||V_ESQUEMA||'.PCO_PRC_HEP_HISTOR_EST_PREP pco
+               USING (SELECT PCO.PCO_PRC_ID, PRC.PRC_FECHA_PARALIZADO
+                                                    FROM '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS PCO
+                                                       , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
+                                                       , '||V_ESQUEMA||'.MIG_EXPEDIENTES_CABECERA EXP
+                                                    WHERE PCO.PRC_ID = PRC.PRC_ID
+                                                      AND PCO.PCO_PRC_NUM_EXP_EXT = EXP.CD_EXPEDIENTE
+                                                      AND NOT EXISTS(SELECT 1
+                                                              FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA CAB
+                                                              WHERE CAB.CD_EXPEDIENTE_NUSE = EXP.CD_EXPEDIENTE)
+                                                      AND EXP.FECHA_PARALIZACION IS NOT NULL
+                                                      AND EXP.MOTIVO_PARALIZACION = ''PARALIZADO'') S
+                  ON (pco.PCO_PRC_ID = S.PCO_PRC_ID)                 
+                  WHEN MATCHED THEN UPDATE SET pco.PCO_PRC_HEP_FECHA_FIN = S.PRC_FECHA_PARALIZADO
+                  where pco.DD_PCO_PEP_ID <> (SELECT DD_PCO_PEP_ID FROM  '||V_ESQUEMA||'.DD_PCO_PRC_ESTADO_PREPARACION WHERE DD_PCO_PEP_CODIGO = ''PA'')' ;
+                                                                              
 
       EXECUTE IMMEDIATE V_SQL;
       

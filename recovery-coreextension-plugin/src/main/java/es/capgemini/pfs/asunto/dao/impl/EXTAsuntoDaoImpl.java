@@ -1057,9 +1057,6 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 
 		}
 
-		if (DtoBusquedaAsunto.SALIDA_XLS.equals(dto.getTipoSalida())) {
-			dto.setLimit(Integer.MAX_VALUE);
-		}
 		params.put("hql", hql);
 
 		return params;

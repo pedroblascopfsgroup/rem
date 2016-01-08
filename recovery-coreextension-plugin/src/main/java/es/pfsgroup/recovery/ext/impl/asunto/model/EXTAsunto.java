@@ -72,6 +72,31 @@ public class EXTAsunto extends Asunto {
 			+ "                         where m2.cnt_id = m.cnt_id )" + ")")
 	private Double saldoTotalPorContratosSQL;
 
+	/*@Formula("("
+			+ " select sum(abs(prc.prc_saldo_recuperacion)) from prc_procedimientos prc "
+			+ " where prc.asu_id = ASU_ID  and prc.borrado = 0 "
+			+ " and prc.PRC_PRC_ID is null and prc.dd_epr_id not in ( '"
+			+ PluginCoreextensionConstantes.ESTADO_PROCEDIMIENTO_REORGANIZADO
+			+ "')" + " group by prc.asu_id" + ")")*/
+	
+	@Formula("(select prc.prc_saldo_recuperacion " +
+		  "     from prc_procedimientos prc " +
+		  "     where prc.prc_id in  " +
+		  "     (select   max (p1.prc_id) " +
+		  "          from prc_procedimientos p1" +
+		  "         where p1.asu_id = ASU_ID and p1.borrado = 0 " +
+		  "      ))")	
+	private Double importeEstimado;
+
+	@Formula("(" + _GESTOR_DESPACHO_GEXT + ")")
+	private String gestorNombreApellidosSQL;
+
+	@Formula("(" + _GESTOR_DESPACHO_SUP + ")")
+	private String supervisorNombreApellidosSQL;
+
+	@Formula("(" + _DESPACHO_EXTERNO + ")")
+	private String despachoSQL;
+
 	@Column(name = "ASU_ID_EXTERNO")
 	private String codigoExterno;
 
@@ -282,13 +307,8 @@ public class EXTAsunto extends Asunto {
 		}
 	}
 
-	public void setImporteEstimado(Double importeEstimado) {
-		//this.importeEstimado = importeEstimado;
-	}
-
 	public Double getImporteEstimado() {
-		Procedimiento ultimoProc = this.getUltimoProcedimientoConTareas();
-		return (ultimoProc!=null) ? ultimoProc.getSaldoRecuperacion().doubleValue() : null;
+		return this.importeEstimado;
 	}
 
 	/**
@@ -333,41 +353,6 @@ public class EXTAsunto extends Asunto {
 		return ultimoProc;
 	}
 	
-	
-	/**
-	 * Recupera el último procedimiento del asunto (basado en el ID), considera
-	 * el ID más alto como el último.
-	 * 
-	 * @param asu
-	 * @return
-	 */
-	public Procedimiento getUltimoProcedimientoConTareas() {
-		Procedimiento ultimoProc = null;
-		List<Procedimiento> lista = this.getProcedimientos();
-		for (Procedimiento procedimiento : lista) {
-			//Si tiene alguna tarea notificación no finalizada
-			for (TareaNotificacion tarea : procedimiento.getTareas()) {
-				if ((Checks.esNulo(tarea.getTareaFinalizada()) || !tarea.getTareaFinalizada()) 
-						&& !Checks.esNulo(tarea.getTareaExterna())) {
-					//Si tiene tarea_procedimiento
-					if (!Checks.esNulo(tarea.getTareaExterna().getTareaProcedimiento())) {
-						//Entonces evaluamos su prc_id, para ver si es mayor que el anterior que tenemos o no tenemos anterior
-						if (ultimoProc == null) {
-							ultimoProc = procedimiento;
-						} else {
-							if (procedimiento.getId() > ultimoProc.getId()) {
-								ultimoProc = procedimiento;
-							}
-						}
-						break; //A la que tenga minimo una tarea notificacion no finalizada con tarea externa y tarea procedimiento, ya pasamos a validar el siguiente procedimiento
-					}
-				}
-			}
-		}
-
-		return ultimoProc;
-	}	
-
 	@Transient
 	public static EXTAsunto instanceOf(Asunto asunto) {
 		EXTAsunto extAsunto = null;

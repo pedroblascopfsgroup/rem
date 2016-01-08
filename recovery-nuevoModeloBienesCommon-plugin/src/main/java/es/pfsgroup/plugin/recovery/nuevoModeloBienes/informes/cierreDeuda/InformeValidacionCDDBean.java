@@ -432,7 +432,7 @@ public class InformeValidacionCDDBean {
 				for (String descBien : booleanBienes.getListBienes()) {
 					sb.append("El bien ");
 					sb.append(descBien);
-					sb.append(" no tiene relaci\u00F3n con nin\u00FAn contrato;");
+					sb.append(" no tiene relaci\u00F3n con ning\u00FAn contrato;");
 				}
 			}			
 		}
@@ -457,7 +457,7 @@ public class InformeValidacionCDDBean {
 			for (String descBien : booleanBienes.getListBienes()) {
 				sb.append("El lote ");
 				sb.append(descBien);
-				sb.append(" no contiene nin\u00FAn bien;");
+				sb.append(" no contiene ning\u00FAn bien;");
 			}
 		}
 		

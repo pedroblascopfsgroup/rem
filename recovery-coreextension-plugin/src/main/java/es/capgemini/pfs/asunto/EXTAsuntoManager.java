@@ -1656,7 +1656,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 //
 //		return asuntoDao.buscarAsuntosPaginatedDinamicoCount(usuarioLogado, dto, params);
 //	}
-	/*
+	
 	@Override
 	@BusinessOperation(EXTAsuntoApi.EXT_BO_ASU_MGR_FIND_ASUNTOS_PAGINATED_DINAMICO_COUNT)
 	public Page findAsuntosPaginatedDinamicoCount(EXTDtoBusquedaAsunto dto, String params) {
@@ -1684,8 +1684,8 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		
 		return results;
 	}
-	*/
-	@Override
+	
+/*	@Override
 	@BusinessOperation(EXTAsuntoApi.EXT_BO_ASU_MGR_FIND_ASUNTOS_PAGINATED_DINAMICO_COUNT)
 	public List<Asunto> findAsuntosPaginatedDinamicoCount(EXTDtoBusquedaAsunto dto, String params) {
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
@@ -1714,7 +1714,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		page.setResults(listaRetorno);
 		return (List<Asunto>) page.getResults();
 	}
-	
+	*/
 	/**
 	 * Indica si el Usuario Logado es el gestor de Decision del asunto.
 	 * 

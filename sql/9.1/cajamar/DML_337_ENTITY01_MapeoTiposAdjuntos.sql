@@ -212,21 +212,9 @@ BEGIN
 	    			DBMS_OUTPUT.PUT_LINE('[INFO] Campo TFA_CODIGO_EXTERNO '''||TRIM(V_TMP_FUNCION(2))||''' actualizado para DD_TFA_ID = '''||V_TFA_ID||'''.');
         	
         	ELSE
-        	
-<<<<<<< HEAD
-        		  V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.MTT_MAP_ADJRECOVERY_ADJCM';
-	        	  EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-	              IF V_NUM_TABLAS > 0 THEN
-	                
-	                V_SQL_NEXT_ID := 'SELECT MAX(MTT_ID)+1 FROM '||V_ESQUEMA||'.MTT_MAP_ADJRECOVERY_ADJCM';
-	                EXECUTE IMMEDIATE V_SQL_NEXT_ID INTO V_NEXT_ID;
-	              ELSE
-	                V_NEXT_ID := 1;
-	              END IF;
-=======
+
         			V_SQL_NEXT_ID := 'SELECT NVL(MAX(MTT_ID)+1, 1) FROM '||V_ESQUEMA||'.MTT_MAP_ADJRECOVERY_ADJCM';
         			EXECUTE IMMEDIATE V_SQL_NEXT_ID INTO V_NEXT_ID;
->>>>>>> 2d8a4d47008c7f9865f316ae30513b06303d0f66
         	  
         	  		V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.MTT_MAP_ADJRECOVERY_ADJCM (' ||
               		'MTT_ID, DD_TFA_ID, TFA_CODIGO_EXTERNO, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)' ||

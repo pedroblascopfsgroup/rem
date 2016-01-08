@@ -7,10 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.adjuntos.api.AdjuntoApi;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.contrato.dto.DtoBuscarContrato;
 import es.capgemini.pfs.contrato.model.AdjuntoContrato;
@@ -52,6 +54,9 @@ public class MEJContratoManager extends
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private AdjuntoApi adjuntosApi;
 		
 	
 	/**
@@ -98,77 +103,9 @@ public class MEJContratoManager extends
 	@Override
 	@BusinessOperation(MEJ_MGR_CONTRATO_ADJUNTOSMAPEADOS)
 	public List<? extends AdjuntoDto> getAdjuntosCntConBorrado(Long id) {
-		EventFactory.onMethodStart(this.getClass());
-		
-		List<AdjuntoDto> adjuntosConBorrado = new ArrayList<AdjuntoDto>();
-
-		final Usuario usuario = proxyFactory.proxy(UsuarioApi.class)
-				.getUsuarioLogado();
-
-		final Boolean borrarOtrosUsu = tieneFuncion(usuario,
-				"BORRAR_ADJ_OTROS_USU");
-
-		Contrato cnt = contratoDao.get(id);
-		ArrayList<AdjuntoContrato> adjuntosContrato = new ArrayList<AdjuntoContrato>();
-		adjuntosContrato.addAll(cnt.getAdjuntos());
-
-		Comparator<AdjuntoContrato> comparador = new Comparator<AdjuntoContrato>() {
-			@Override
-			public int compare(AdjuntoContrato o1, AdjuntoContrato o2) {
-				if(Checks.esNulo(o1)&& Checks.esNulo(o2)){
-					return 0;
-				}
-				else if (Checks.esNulo(o1)) {
-					return -1;
-				}
-				else if (Checks.esNulo(o2)) {
-					return 1;				
-				}
-				else{
-					return o2.getAuditoria().getFechaCrear().compareTo(
-						o1.getAuditoria().getFechaCrear());
-				}	
-			}
-		};
-		Collections.sort(adjuntosContrato, comparador);
-		for (final AdjuntoContrato aa : adjuntosContrato) {
-			AdjuntoDto dto = new AdjuntoDto() {
-				@Override
-				public Boolean getPuedeBorrar() {
-					if (borrarOtrosUsu
-							|| aa.getAuditoria().getUsuarioCrear().equals(
-									usuario.getUsername())) {
-						return true;
-					} else {
-						return false;
-					}
-				}
-
-				@Override
-				public Object getAdjunto() {
-					return aa;
-				}
-			};
-			adjuntosConBorrado.add(dto);
-		}
-		
-		EventFactory.onMethodStop(this.getClass());
-		return adjuntosConBorrado;
+		return adjuntosApi.getAdjuntosCntConBorrado(id);
 	}
 
-	
-	private boolean tieneFuncion(Usuario usuario, String codigo) {
-		List<Perfil> perfiles = usuario.getPerfiles();
-		for (Perfil per : perfiles) {
-			for (Funcion fun : per.getFunciones()) {
-				if (fun.getDescripcion().equals(codigo)) {
-					return true;
-				}
-			}
-		}
-
-		return false;
-	}
 	
 	@Override
 	@BusinessOperation(BO_CNT_MGR_BUSCAR_CONTRATOS_EXPEDIENTE_SIN_ASIGNAR)

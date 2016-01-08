@@ -39,6 +39,40 @@ public class EXTAsunto extends Asunto {
 
 	private static final long serialVersionUID = 2075119525614504409L;
 	
+	private static final String _GESTOR_DESPACHO = " "
+			+ " select (trim(usu.usu_apellido1) || '-' || trim(usu.usu_apellido2) || '-' || trim(usu.usu_nombre))"
+			+ " from   asu_asuntos a, gaa_gestor_adicional_asunto gaa, "
+			+ "        usd_usuarios_despachos usd, ${master.schema}.usu_usuarios usu,"
+			+ "        ${master.schema}.dd_tge_tipo_gestor ddt"
+			+ " where  a.asu_id = gaa.asu_id  "
+			+ " and    gaa.usd_id = usd.usd_id"
+			+ " and    usd.usu_id = usu.usu_id"
+			+ " and    gaa.dd_tge_id = ddt.dd_tge_id"
+			+ " and    a.asu_id = ASU_ID";
+
+	private static final String _DESPACHO_EXTERNO = " "
+			+ " select distinct des.des_despacho"
+			+ " from   asu_asuntos a, gaa_gestor_adicional_asunto gaa, "
+			+ "        usd_usuarios_despachos usd, ${master.schema}.usu_usuarios usu,"
+			+ "        ${master.schema}.dd_tge_tipo_gestor ddt, des_despacho_externo des"
+			+ " where  a.asu_id = gaa.asu_id  "
+			+ " and    gaa.usd_id = usd.usd_id"
+			+ " and    usd.usu_id = usu.usu_id"
+			+ " and    gaa.dd_tge_id = ddt.dd_tge_id"
+			+ " and    usd.des_id = des.des_id"
+			+ " and    ddt.dd_tge_codigo = '"
+			+ EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO + "'"
+			+ " and    a.asu_id = ASU_ID";
+
+	private static final String _GESTOR_DESPACHO_GEXT = _GESTOR_DESPACHO
+			+ " and    ddt.dd_tge_codigo = '"
+			+ EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO + "'";
+
+	private static final String _GESTOR_DESPACHO_SUP = _GESTOR_DESPACHO
+			+ " and    ddt.dd_tge_codigo = '"
+			+ EXTDDTipoGestor.CODIGO_TIPO_GESTOR_SUPERVISOR + "'";
+
+	
 	@Transient
 	private final Log logger = LogFactory.getLog(getClass());
 

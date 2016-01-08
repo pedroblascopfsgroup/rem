@@ -70,6 +70,7 @@ public class DatosLiquidacionDaoImpl implements DatosLiquidacionDao {
 			.addScalar("DGC_NOMFED1", Hibernate.STRING)
 			.addScalar("DGC_COIBTQ", Hibernate.STRING)
 			.addScalar("DGC_IMDEUD", Hibernate.BIG_DECIMAL)
+			.addScalar("DGC_IMVRE2", Hibernate.BIG_DECIMAL)
 			.setLong("idLiquidacion", idLiquidacion);
 
 		return query.setResultTransformer(Transformers.aliasToBean(DatosGeneralesLiqVO.class)).list();

@@ -315,17 +315,18 @@ public abstract class DatosPlantillaPrestamoAbstract {
 		datosLiquidacion.put("CONCEPTOS", conceptos);
 		return datosLiquidacion;
 	}
+	
 
 	// --------------------------
 	// Helpper Methods / private
 	// --------------------------
 
-	private String formateaImporteDecimal(BigDecimal importe) {
+	protected String formateaImporteDecimal(BigDecimal importe) {
 		return importe.toString().replace(".", ",");
 	}
 
 	// saldo = saldo + debe - haber
-	private BigDecimal calculateSaldo(BigDecimal saldo, final BigDecimal debe, final BigDecimal haber) {
+	protected BigDecimal calculateSaldo(BigDecimal saldo, final BigDecimal debe, final BigDecimal haber) {
 
 		if (debe != null) {
 			saldo = saldo.add(debe);		
@@ -341,17 +342,35 @@ public abstract class DatosPlantillaPrestamoAbstract {
 	private String obtenerNombresFiadores(final LiquidacionPCO liquidacion) {
 		StringBuilder nombresFiadores = new StringBuilder("");
 		List<ContratoPersona> contratosPersona = liquidacion.getContrato().getContratoPersona();
-
+		
+		int cuentaAvalista=0;
+		int cuentaTmp=0;
 		int i = 0;
+		for(ContratoPersona cp : contratosPersona) {
+			i++;
+			if (cp.isAvalista()) {
+				cuentaAvalista++;
+			}
+		}
+		
 		for (ContratoPersona cp : contratosPersona) {
             i++;
             if (cp.isAvalista()) {
+            	cuentaTmp++;
             	nombresFiadores.append(cp.getPersona().getNom50());
 
                 // mientras no sea el ultimo registro se concatenan los nombres con y
-                if (contratosPersona.size() > i) {
+                /*if (contratosPersona.size() > i) {
                 	nombresFiadores.append(" y ");
-                }
+                }*/
+            	//mientras no sea el último registro y exista más de un avalista concatenamos una y o una coma
+            	if(cuentaAvalista > 1 && cuentaTmp < cuentaAvalista){
+	            	if(cuentaTmp == (cuentaAvalista - 1)){
+	            		nombresFiadores.append("y ");
+	            	}else{
+	            		nombresFiadores.append(", ");
+	            	}
+            	}
             }
         }
 

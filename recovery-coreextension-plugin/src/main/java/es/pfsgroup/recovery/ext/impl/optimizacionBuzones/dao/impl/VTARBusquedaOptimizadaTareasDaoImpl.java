@@ -8,9 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -20,10 +18,9 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.pagination.PaginationParams;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoBuscarTareaNotificacion;
-import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
-import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.dao.UsuarioDao;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.Checks;
@@ -359,7 +356,7 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
             Calendar fechaDesdeParse = Calendar.getInstance();
             if (fechaDesde != null) {
                 fechaDesdeParse.setTime(fechaDesde);
-                if (dto.getFechaVencDesdeOperador().equals(">")) {
+                if (">".equals(dto.getFechaVencDesdeOperador())) {
                     fechaDesdeParse.add(Calendar.DAY_OF_MONTH, 1);
                 }
             }
@@ -368,19 +365,19 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
             Calendar fechaHastaParsed = Calendar.getInstance();
             if (fechaHasta != null) {
                 fechaHastaParsed.setTime(fechaHasta);
-                if (dto.getFechaVencimientoHastaOperador().equals("<")) {
+                if ("<".equals(dto.getFechaVencimientoHastaOperador())) {
                     fechaHastaParsed.add(Calendar.DAY_OF_MONTH, -1);
                     fechaHastaParsed.add(Calendar.HOUR_OF_DAY, 23);
                     fechaHastaParsed.add(Calendar.MINUTE, 59);
                     fechaHastaParsed.add(Calendar.SECOND, 59);
-                } else if (dto.getFechaVencimientoHastaOperador().equals("<=")) {
+                } else if ("<=".equals(dto.getFechaVencimientoHastaOperador())) {
                     fechaHastaParsed.add(Calendar.HOUR_OF_DAY, 23);
                     fechaHastaParsed.add(Calendar.MINUTE, 59);
                     fechaHastaParsed.add(Calendar.SECOND, 59);
                 }
             }
 
-            if ((fechaDesdeParse != null) && (fechaHastaParsed != null) && fechaDesdeParse.getTime().equals(fechaHastaParsed.getTime()) && dto.getFechaVencDesdeOperador().equals("=")) {
+            if ((fechaDesdeParse != null) && (fechaHastaParsed != null) && fechaDesdeParse.getTime().equals(fechaHastaParsed.getTime()) && "=".equals(dto.getFechaVencDesdeOperador())) {
                 fechaHastaParsed.add(Calendar.HOUR_OF_DAY, 23);
                 fechaHastaParsed.add(Calendar.MINUTE, 59);
                 fechaHastaParsed.add(Calendar.SECOND, 59);
@@ -397,7 +394,7 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
             if (!Checks.esNulo(dto.getFechaVencimientoHasta())) {
                 fechaHastaFinal = fechaHastaParsed.getTime();
             } else {
-                if (dto.getFechaVencDesdeOperador().equals("=") && fechaDesdeParse != null) {
+                if ("=".equals(dto.getFechaVencDesdeOperador()) && fechaDesdeParse != null) {
                     fechaHastaParsed = fechaDesdeParse;
                     fechaHastaParsed.add(Calendar.HOUR_OF_DAY, 23);
                     fechaHastaParsed.add(Calendar.MINUTE, 59);
@@ -441,7 +438,7 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 	            fechaDesdeParse = Calendar.getInstance();
 	            if (fechaDesde != null) {
 	                fechaDesdeParse.setTime(fechaDesde);
-	                if (dto.getFechaVencDesdeOperador().equals(">")) {
+	                if (">".equals(dto.getFechaVencDesdeOperador())) {
 	                    fechaDesdeParse.add(Calendar.DAY_OF_MONTH, 1);
 	                }
 	            }
@@ -452,12 +449,12 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 	            fechaHastaParsed = Calendar.getInstance();
 	            if (fechaHasta != null) {
 	                fechaHastaParsed.setTime(fechaHasta);
-	                if (dto.getFechaVencimientoHastaOperador().equals("<")) {
+	                if ("<".equals(dto.getFechaVencimientoHastaOperador())) {
 	                    fechaHastaParsed.add(Calendar.DAY_OF_MONTH, -1);
 	                    fechaHastaParsed.add(Calendar.HOUR_OF_DAY, 23);
 	                    fechaHastaParsed.add(Calendar.MINUTE, 59);
 	                    fechaHastaParsed.add(Calendar.SECOND, 59);
-	                } else if (dto.getFechaVencimientoHastaOperador().equals("<=")) {
+	                } else if ("<=".equals(dto.getFechaVencimientoHastaOperador())) {
 	                    fechaHastaParsed.add(Calendar.HOUR_OF_DAY, 23);
 	                    fechaHastaParsed.add(Calendar.MINUTE, 59);
 	                    fechaHastaParsed.add(Calendar.SECOND, 59);
@@ -465,7 +462,7 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 	            }
         	}
 
-            if ((fechaDesdeParse != null) && (fechaHastaParsed != null) && fechaDesdeParse.getTime().equals(fechaHastaParsed.getTime()) && dto.getFechaVencDesdeOperador().equals("=")) {
+            if ((fechaDesdeParse != null) && (fechaHastaParsed != null) && fechaDesdeParse.getTime().equals(fechaHastaParsed.getTime()) && "=".equals(dto.getFechaVencDesdeOperador())) {
                 fechaHastaParsed.add(Calendar.HOUR_OF_DAY, 23);
                 fechaHastaParsed.add(Calendar.MINUTE, 59);
                 fechaHastaParsed.add(Calendar.SECOND, 59);
@@ -482,7 +479,7 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
             if (!Checks.esNulo(dto.getFechaVencimientoHasta())) {
                 fechaHastaFinal = fechaHastaParsed.getTime();
             } else {
-                if (dto.getFechaVencDesdeOperador().equals("=") && fechaDesdeParse != null) {
+                if ("=".equals(dto.getFechaVencDesdeOperador()) && fechaDesdeParse != null) {
                     fechaHastaParsed = fechaDesdeParse;
                     fechaHastaParsed.add(Calendar.HOUR_OF_DAY, 23);
                     fechaHastaParsed.add(Calendar.MINUTE, 59);
@@ -494,8 +491,13 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
             }
 
             //HQLBuilder.addFiltroBetweenSiNotNull(hb, "vtar.fechaVenc", fechaDesdeFinal, fechaHastaFinal);
-            if (!Checks.esNulo(fechaDesdeFinal) && !Checks.esNulo(fechaHastaFinal))
+            if (!Checks.esNulo(fechaDesdeFinal) && !Checks.esNulo(fechaHastaFinal)){
             	hb.append(" vtar.fechaVenc BETWEEN TO_DATE('" +  formateaFecha.format(fechaDesdeFinal) + "','dd/MM/yyyy') and TO_DATE('" + formateaFecha.format(fechaHastaFinal) + "','dd/MM/yyyy')" );
+            }else if(!Checks.esNulo(fechaDesdeFinal)) {
+            	hb.append(" vtar.fechaVenc >= TO_DATE('" +  formateaFecha.format(fechaDesdeFinal) + "','dd/MM/yyyy')" );
+            }else if(!Checks.esNulo(fechaHastaFinal)) {
+            	hb.append(" vtar.fechaVenc <= TO_DATE('" +  formateaFecha.format(fechaHastaFinal) + "','dd/MM/yyyy')" );
+            }
 
         }
 

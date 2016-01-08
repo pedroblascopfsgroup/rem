@@ -29,6 +29,7 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDSubTipoAcuerdo implements Dictionary, Auditable {
 
     private static final long serialVersionUID = -5000987797957822994L;
+    public static final String SUBTIPO_ESTANDAR = "01";
 
     @Id
     @Column(name = "DD_SBT_ID")

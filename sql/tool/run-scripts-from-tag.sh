@@ -209,8 +209,12 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
 
     while read -r line
     do
-        NEW_LINE=`echo $line | cut -d' ' -f1`
-        $BASEDIR/run-single-script.sh $NEW_LINE pass $CUSTOMER_IN_UPPERCASE -p
+        NEW_LINE=$line
+        if [ "$MULTIENTIDAD" == "" ] ; then
+            NEW_LINE=`echo $line | cut -d' ' -f1`
+            NEW_LINE=$NEWLINE' pass'
+        fi
+        $BASEDIR/run-single-script.sh $NEW_LINE $CUSTOMER_IN_UPPERCASE -p
         if [[ "$?" != 0 ]]; then
             echo "ERROR"
             exit 1
@@ -226,10 +230,10 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
         IFS=',' read -a entidades <<< "$MULTIENTIDAD"
         for index in "${!entidades[@]}"
         do
-            passtring="$passtring ""entity0$((index+1))_pass@host:port/sid"
+            passtring="$passtring ""entity0$((index+1))_pass@host:port\/sid"
         done        
     else
-        passtring="entity01_pass@host:port/sid"
+        passtring="entity01_pass@host:port\/sid"
     fi
     if [ $2 == 'BANKIA' ]; then
         cp $BASEDIR/scripts/DxL-scripts-BK.sh $BASEDIR/tmp/package/DDL/DDL-scripts.sh

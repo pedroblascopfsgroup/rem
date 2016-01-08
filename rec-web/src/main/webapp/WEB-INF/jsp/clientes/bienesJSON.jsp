@@ -18,7 +18,7 @@
             <json:property name="fechaVerificacion">
                 <fwk:date value="${b.fechaVerificacion}" />
             </json:property>
-			<!-- detalles de la configuracion --> 
+			<%-- detalles de la configuracion --%> 
 			<json:property name="email" value="${b.tipoBien.configuracionMailTipoBien.destinatario}" />
 			<json:property name="idconfigmail" value="${b.tipoBien.configuracionMailTipoBien.id}" />
  		</json:object>

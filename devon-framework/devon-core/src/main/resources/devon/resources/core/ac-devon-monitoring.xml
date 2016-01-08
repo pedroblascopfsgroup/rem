@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:si="http://www.springframework.org/schema/integration"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+            http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd"
+    default-autowire="byName">
+
+	<!--
+		Instruct Spring to retrieve and apply @AspectJ aspects which are defined
+		as beans in this context (such as the CallMonitoringAspect below).
+	-->
+	<aop:aspectj-autoproxy/>
+    
+    <!-- 
+        Spring Security Authenticator
+    -->
+    <bean id="fwk.jmx.authenticator" class="es.capgemini.devon.jmx.SpringSecurityJMXAuthenticator" p:rolesAllowed="${jmx.rolesAllowed}" abstract="true"/>
+    <bean id="jmx.authenticator" parent="fwk.jmx.authenticator"/>
+
+    <!-- 
+        Local MBean Server 
+    -->
+    <bean id="fwk.jmx.mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean" p:locateExistingServerIfPossible="${jmx.locateExistingServerIfPossible}" abstract="true"/>
+    <bean id="jmx.mbeanServer" parent="fwk.jmx.mbeanServer" lazy-init="false" />
+    
+    <!-- 
+        Local MBeansServer Registry & Connector 
+    -->
+    <bean id="fwk.jmx.registry" class="org.springframework.remoting.rmi.RmiRegistryFactoryBean" p:port="${jmx.port}"/>
+    
+    <bean id="fwk.jmx.serverConnector" class="org.springframework.jmx.support.ConnectorServerFactoryBean" depends-on="fwk.jmx.registry" lazy-init="false" abstract="true">
+        <property name="objectName" value="${jmx.domain}:name=Connector"/>
+        <property name="serviceUrl" value="${jmx.serviceUrl}"/>
+        <property name="threaded" value="true"/>
+        <property name="daemon" value="true"/>
+        <property name="server" ref="jmx.mbeanServer"/>
+        <property name="environment">
+            <map>
+                <entry key="jmx.remote.authenticator" value-ref="jmx.authenticator"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="jmx.serverConnector" parent="fwk.jmx.serverConnector" />
+    
+    <!--
+        Exporter that exposes beans via JMX,
+        based on the @ManagedResource, @ManagedAttribute, and @ManagedOperation annotations.
+    -->
+    <bean id="exporter" class="es.capgemini.devon.jmx.AnnotationMBeanExporter" p:defaultDomain="${jmx.domain}" p:server-ref="jmx.mbeanServer"/>
+
+    <!-- 
+        Default logger Manager (exports JMX operations) 
+    -->
+    <bean id="log.manager" class="es.capgemini.devon.log.Log4JManager"/>
+
+</beans>

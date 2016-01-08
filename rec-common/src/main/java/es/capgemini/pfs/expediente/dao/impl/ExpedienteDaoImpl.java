@@ -82,7 +82,7 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         if (riesgo!=null)
         {
         	hql.append(" and m.riesgo > ?" );
-        	return getHibernateTemplate().find(hql.toString(), new Object[] { idExpediente, riesgo });
+        	return getHibernateTemplate().find(hql.toString(), new Object[] { idExpediente, new Float(riesgo.toString()) });
         }
 
         return getHibernateTemplate().find(hql.toString(), new Object[] { idExpediente });
@@ -443,25 +443,32 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
     /**
       * {@inheritDoc}
       */
-    @SuppressWarnings("unchecked")
+    
     @Override
     public Expediente buscarExpedientesParaContrato(Long idContrato) {
-        StringBuilder hql = new StringBuilder();
+    	
+    	StringBuilder hql = new StringBuilder();
 
         hql.append(" select e from Expediente e, ExpedienteContrato cex ");
         hql.append(" where e.auditoria.borrado = false and cex.auditoria.borrado = false and e.id = cex.expediente.id ");
         hql.append(" and cex.contrato.id = ? ");
         hql.append(" and e.estadoExpediente.codigo in ( ?, ?, ?) ");
+        // Filtramos los expedientes de recobro
+        hql.append(" and (not exists (select exr.id from ExpedienteRecobro exr where e.id = exr.id)) ");
 
         List<Expediente> expedientes = getHibernateTemplate().find(
                 hql.toString(),
                 new Object[] { idContrato, DDEstadoExpediente.ESTADO_EXPEDIENTE_ACTIVO, DDEstadoExpediente.ESTADO_EXPEDIENTE_CONGELADO,
                         DDEstadoExpediente.ESTADO_EXPEDIENTE_BLOQUEADO });
-        if (expedientes.size() > 1) { throw new BusinessOperationException("expediente.contrato.invalido.masDeUnExpediente", idContrato); }
+        
+       	if (expedientes.size() > 1) {
+       		logger.error("expediente.contrato.invalido.masDeUnExpediente: " + idContrato);
+       		throw new BusinessOperationException("expediente.contrato.invalido.masDeUnExpediente", idContrato); }        
         if (expedientes.size() == 1) { return expedientes.get(0); }
         return null;
     }
-
+    
+    
     /**
      * {@inheritDoc}
      */
@@ -474,7 +481,9 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         hql.append(" and pex.persona.id = ? ");
         hql.append(" and e.estadoExpediente.codigo in ( ?, ?, ?) ");
         hql.append(" and e.arquetipo.itinerario.dDtipoItinerario.codigo IN (?, ?) ");
-
+        // Filtramos los expedientes de recobro
+        hql.append(" and (not exists (select exr.id from ExpedienteRecobro exr where e.id = exr.id)) ");
+        
         List<Expediente> expedientes = getHibernateTemplate().find(
                 hql.toString(),
                 new Object[] { idPersona, DDEstadoExpediente.ESTADO_EXPEDIENTE_ACTIVO, DDEstadoExpediente.ESTADO_EXPEDIENTE_CONGELADO,

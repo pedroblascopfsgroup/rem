@@ -17,7 +17,7 @@
 			<value>H009</value>
 		</property>
 		<property name="recovery">
-			<value>BANKIA</value>
+			<value>CAJAMAR</value>
 		</property>
 		<property name="generarArchivoBurofax">
 			<value>false</value>

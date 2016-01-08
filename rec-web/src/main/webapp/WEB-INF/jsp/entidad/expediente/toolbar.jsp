@@ -37,6 +37,8 @@ function(entidad,page){
 	tipoAccion.SOLICITAR_CANCELACION			=4;
 	tipoAccion.VER_SOLICITUD_CANCELACION	    =5;
 	tipoAccion.CANCELACION_EXPEDIENTE			=6;
+	tipoAccion.ELEVAR_FORMALIZAR_PROPUESTA		=7;
+	tipoAccion.DEVOLVER_COMITE					=8;
 	
 	var cambioEstado=function(tipo){
 		var titulo;
@@ -87,6 +89,24 @@ function(entidad,page){
 			case tipoAccion.CANCELACION_EXPEDIENTE:
 				solicitarCancelacionExp(toolbar.getIdExpediente(),true);
 				return;	
+			
+			/*Accion elevar a formalizar propuestas*/
+			case tipoAccion.ELEVAR_FORMALIZAR_PROPUESTA:
+				maskAll();
+				elevarFP(toolbar.getIdExpediente(), toolbar.isSupervisor())
+				return;
+			
+			/*Accion devolver a comite*/
+			case tipoAccion.DEVOLVER_COMITE:
+			titulo='<s:message code="expedientes.menu.devolverComite" text="**Devolver a Decisión de Comité" />';
+				handler=function(btn, rta){
+					if (btn== 'ok'){
+						maskAll();
+						devolverExpedienteDC(toolbar.getIdExpediente(), rta);
+					}
+				};				
+				app.prompt(titulo, texto,handler);
+				return;
 		}
 	}
 
@@ -203,6 +223,33 @@ function(entidad,page){
 		});
 	};
 	
+	var elevarFP = function(params, isSupervisor){
+		page.webflow({
+				flow: 'expediente/elevarExpedienteFP'
+				,eventName: 'elevarExpediente'
+				,params:{id:params, isSupervisor:isSupervisor}
+				,success: function(){
+					Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="dc.elevadoAFormalizarPropuesta" text="**Elevado a Formalizar Propuesta" />', entidad.refrescar());
+				}
+				,error:function(){
+						unmaskAll();
+				}	 
+		});
+	};
+	
+	var devolverExpedienteDC = function(params, rta){
+		page.webflow({
+				flow:  'expediente/devolverExpedienteDC'
+				,eventName: 'devolverExpediente'
+				,params:{id:params, respuesta:rta}
+				,success: function(){
+					Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="dc.devueltoAComite" text="**Devuelto a Decisión Comité" />', entidad.refrescar());
+				},error:function(){
+					unmaskAll();
+				}	 
+		});
+	};
+	
 	
 	var menuAcciones = 
 		{
@@ -222,7 +269,17 @@ function(entidad,page){
 					,handler:function(){
 						cambioEstado(tipoAccion.ELEVAR_COMITE)
 					}
-				}, {
+				},
+				 //Botn elevar FP
+				{
+					text:'<s:message code="expedientes.menu.elevarFormulacionPropuesta" text="**Elevar a Formalizar Propuesta" />'
+					,id : 'expediente-accion7-formulacionPropuesta'
+					,iconCls : 'icon_elevar_revision'
+					,handler:function(){
+						cambioEstado(tipoAccion.ELEVAR_FORMALIZAR_PROPUESTA)
+					}
+				},
+				{
 					text:'<s:message code="expedientes.menu.devolverrevision" text="**Devolver a Revisin" />'
 					,id : 'expediente-accion2-devolverRevision'
 					,iconCls : 'icon_revisar_expediente'
@@ -262,6 +319,15 @@ function(entidad,page){
 					,iconCls : 'icon_cancelar_expediente'
 					,handler:function(){
 						cambioEstado(tipoAccion.CANCELACION_EXPEDIENTE)
+					}
+				},
+				
+				{
+					text:'<s:message code="expedientes.menu.devolverComite" text="**Devolver a Decisión Comité" />'
+					,id : 'expediente-accion8-devolverComite'
+					,iconCls : 'icon_revisar_expediente'
+					,handler:function(){
+						cambioEstado(tipoAccion.DEVOLVER_COMITE)
 					}
 				}
 			]
@@ -610,7 +676,53 @@ function(entidad,page){
 		var solicitudYPermisos = (solicitud == null || solicitud=='') && (permisosGestor ||  permisosSupervisor);
 		
 		var subMenusVisibles = 0;
-
+		
+		var permiteElevar = false;
+		var permiteDevolver = false;
+		function elevarDevolver(){
+		var estados = entidad.getData('estados');
+			if(d.codigoEstado == 'CE'){
+				for(var i = 0; i < estados.length; i++){
+					if(estados[i].codigo == 'RE'){
+						permiteElevar = true;
+					}
+				}	
+			}
+			
+			if(d.codigoEstado == 'RE'){
+				for(var i = 0; i < estados.length; i++){
+					if(estados[i].codigo == 'DC'){
+						permiteElevar = true;
+					}
+										
+					if(estados[i].codigo == 'CE')
+					{
+						permiteDevolver = true;
+					}
+				}	
+			}
+			
+			if(d.codigoEstado == 'DC'){
+				for(var i = 0; i < estados.length; i++){
+					if(estados[i].codigo == 'FP'){
+						permiteElevar = true;
+					}
+					
+					if(estados[i].codigo == 'RE'){
+						permiteDevolver = true;
+					}
+				}	
+			}
+			
+			if(d.codigoEstado == 'FP'){
+				for(var i = 0; i < estados.length; i++){
+					if(estados[i].codigo == 'DC'){
+						permiteDevolver = true;
+					}
+				}	
+			}
+		}
+		
 		function showHide(action, elements___){
 			for(var i=1;i<arguments.length;i++){
 				if (action){
@@ -623,14 +735,29 @@ function(entidad,page){
 		}
 
 		//inicialmente ocultamos todos
-		showHide(false, 'expediente-accion0-elevarRevision', 'expediente-accion1-elevarComite',  'expediente-accion2-devolverRevision',  'expediente-accion3-devolverComite',  'expediente-accion4-solicitarCancelacion',  'expediente-accion5-verCancelacion',  'expediente-accion6-cancelacionExpediente');
+		showHide(false, 'expediente-accion0-elevarRevision', 'expediente-accion1-elevarComite',  'expediente-accion2-devolverRevision',  'expediente-accion3-devolverComite',  'expediente-accion4-solicitarCancelacion',  'expediente-accion5-verCancelacion',  'expediente-accion6-cancelacionExpediente', 'expediente-accion7-formulacionPropuesta', 'expediente-accion8-devolverComite');
 		if ( solicitudYPermisos){
+			elevarDevolver();
 			switch(d.codigoEstado){
 				case 'CE' : 
-					showHide(estadoExpediente == EXP_ACTIVO, 'expediente-accion0-elevarRevision');
+					if(permiteElevar){
+						showHide(estadoExpediente == EXP_ACTIVO, 'expediente-accion0-elevarRevision');
+					}
 					break;
 				case 'RE' :
-					showHide(estadoExpediente ==  EXP_ACTIVO ,'expediente-accion1-elevarComite','expediente-accion3-devolverComite');
+					if(permiteElevar && permiteDevolver){
+						showHide(estadoExpediente ==  EXP_ACTIVO ,'expediente-accion1-elevarComite','expediente-accion3-devolverComite');
+					}
+					break;
+				case 'DC' : 
+					if(permiteElevar && permiteDevolver){
+						showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion7-formulacionPropuesta','expediente-accion2-devolverRevision');
+					}
+					break;
+				case 'FP' :
+					if(permiteDevolver){
+						showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion8-devolverComite');
+					}
 					break;
 				default : 
 					showHide(estadoExpediente == EXP_CONGELADO, 'expediente-accion2-devolverRevision' );

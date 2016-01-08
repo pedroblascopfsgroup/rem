@@ -41,6 +41,7 @@ import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.dao.TareaExternaDao;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
@@ -52,8 +53,10 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
 import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDEstadoBurofaxPCO;
@@ -97,7 +100,9 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	
 	private static final String LETRADO = "GEXT";
 	private static final String SUPERVISOR = "SUP_PCO";
-	private static final String DIRLIT_PCO = "DLISUB";
+	private static final String GESTOR_DOC = "CM_GD_PCO";
+	private static final String GESTOR_LIQ = "CM_GL_PCO";
+	private static final String DIRLIT_PCO = "DLISUB"; //"DULI"
 	private static final String PREDOC = "PREDOC";
 	private static final String CM_GE_PCO = "CM_GE_PCO";
 	private static final String CM_GD_PCO = "CM_GD_PCO";
@@ -194,20 +199,11 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		
 		boolean finalizar = true;
 		HistoricoEstadoProcedimientoPCO historico = procedimientoPco.getEstadoActualByHistorico();
-		if (!DDEstadoPreparacionPCO.PREPARADO.equals(historico.getEstadoPreparacion().getCodigo())) {				
-			historico.setFechaFin(new Date());
-			genericDao.update(HistoricoEstadoProcedimientoPCO.class, historico);
-			
-			HistoricoEstadoProcedimientoPCO historicoNuevoRegistro = new HistoricoEstadoProcedimientoPCO();
-			historicoNuevoRegistro.setProcedimientoPCO(procedimientoPco);
-			DDEstadoPreparacionPCO estadoPreparado = (DDEstadoPreparacionPCO)diccionarioApi.dameValorDiccionarioByCod(DDEstadoPreparacionPCO.class, 
-					DDEstadoPreparacionPCO.PREPARADO);
-			historicoNuevoRegistro.setEstadoPreparacion(estadoPreparado);
-			historicoNuevoRegistro.setFechaInicio(new Date());
-			genericDao.save(HistoricoEstadoProcedimientoPCO.class, historicoNuevoRegistro);
-		} else {
+		if (DDEstadoPreparacionPCO.PREPARADO.equals(historico.getEstadoPreparacion().getCodigo())) {
 			finalizar = false;
-		}	
+		}
+		cambiarEstadoExpediente(idProcedimiento, DDEstadoPreparacionPCO.PREPARADO);
+
 		if (finalizar) {
 			avanzarTareaPrepararExpediente(procedimientoPco);
 		}
@@ -248,20 +244,23 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			throw new BusinessOperationException("Estado incorrecto");
 		}
 
-		// Actualizar fecha fin estado actual
-		HistoricoEstadoProcedimientoPCO historico = procedimientoPco.getEstadoActualByHistorico();
-		historico.setFechaFin(new Date());
-		genericDao.update(HistoricoEstadoProcedimientoPCO.class, historico);
-
-		// Nuevo registro en historico con el nuevo estado
-		DDEstadoPreparacionPCO estadoPreparacion = (DDEstadoPreparacionPCO) diccionarioApi.dameValorDiccionarioByCod(DDEstadoPreparacionPCO.class, DDEstadoPreparacionPCO.PREPARACION);
-
-		HistoricoEstadoProcedimientoPCO historicoNuevoRegistro = new HistoricoEstadoProcedimientoPCO();
-		historicoNuevoRegistro.setProcedimientoPCO(procedimientoPco);
-		historicoNuevoRegistro.setEstadoPreparacion(estadoPreparacion);
-		historicoNuevoRegistro.setFechaInicio(new Date());
-		genericDao.save(HistoricoEstadoProcedimientoPCO.class, historicoNuevoRegistro);	
 		
+//		// Actualizar fecha fin estado actual
+//		HistoricoEstadoProcedimientoPCO historico = procedimientoPco.getEstadoActualByHistorico();
+//		historico.setFechaFin(new Date());
+//		genericDao.update(HistoricoEstadoProcedimientoPCO.class, historico);
+//
+//		// Nuevo registro en historico con el nuevo estado
+//		DDEstadoPreparacionPCO estadoPreparacion = (DDEstadoPreparacionPCO) diccionarioApi.dameValorDiccionarioByCod(DDEstadoPreparacionPCO.class, DDEstadoPreparacionPCO.PREPARACION);
+//
+//		HistoricoEstadoProcedimientoPCO historicoNuevoRegistro = new HistoricoEstadoProcedimientoPCO();
+//		historicoNuevoRegistro.setProcedimientoPCO(procedimientoPco);
+//		historicoNuevoRegistro.setEstadoPreparacion(estadoPreparacion);
+//		historicoNuevoRegistro.setFechaInicio(new Date());
+//		genericDao.save(HistoricoEstadoProcedimientoPCO.class, historicoNuevoRegistro);	
+
+		cambiarEstadoExpediente(idProcedimiento, DDEstadoPreparacionPCO.PREPARACION);
+
 		//Cancelar tarea actual
 //		cancelarTareaActual(procedimientoPco);
 		
@@ -428,8 +427,6 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	@BusinessOperation(BO_PCO_CAMBIAR_ESTADO_EXPEDIENTE)
 	public void cambiarEstadoExpediente(Long idProcedimiento, String codigoEstado) {
 		
-		Date fechaCambio = new Date();
-		
 		//ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
 		ProcedimientoPCO procedimientoPco = genericDao.get(ProcedimientoPCO.class, 
 				genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProcedimiento));
@@ -437,18 +434,32 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		
 		if (!Checks.esNulo(procedimientoPco)) {
 			HistoricoEstadoProcedimientoPCO historico = procedimientoPco.getEstadoActualByHistorico();
-			if (!Checks.esNulo(historico)) {
-				historico.setFechaFin(fechaCambio);
-				genericDao.update(HistoricoEstadoProcedimientoPCO.class, historico);
+			boolean existeHistorico = !Checks.esNulo(historico);
+			boolean cambioEstado = existeHistorico && !codigoEstado.equals(historico.getEstadoPreparacion().getCodigo());
+			Date fechaCambio = new Date();			
+			if (cambioEstado) {
+				cerrarEstadoAnterior(fechaCambio, historico);					
+				crearNuevoEstado(codigoEstado, fechaCambio, procedimientoPco);
+			} else if (!existeHistorico) {
+				crearNuevoEstado(codigoEstado, fechaCambio, procedimientoPco);				
 			}
-	
-			HistoricoEstadoProcedimientoPCO historicoNuevoRegistro = new HistoricoEstadoProcedimientoPCO();
-			historicoNuevoRegistro.setProcedimientoPCO(procedimientoPco);
-			DDEstadoPreparacionPCO nuevoEstado = (DDEstadoPreparacionPCO) diccionarioApi.dameValorDiccionarioByCod(DDEstadoPreparacionPCO.class, codigoEstado);
-			historicoNuevoRegistro.setEstadoPreparacion(nuevoEstado);
-			historicoNuevoRegistro.setFechaInicio(fechaCambio);
-			genericDao.save(HistoricoEstadoProcedimientoPCO.class, historicoNuevoRegistro);
 		}
+	}
+
+	private void cerrarEstadoAnterior(Date fechaCambio,
+			HistoricoEstadoProcedimientoPCO historico) {
+		historico.setFechaFin(fechaCambio);
+		genericDao.update(HistoricoEstadoProcedimientoPCO.class, historico);
+	}
+
+	private void crearNuevoEstado(String codigoEstado, Date fechaCambio,
+			ProcedimientoPCO procedimientoPco) {
+		HistoricoEstadoProcedimientoPCO historicoNuevoRegistro = new HistoricoEstadoProcedimientoPCO();
+		historicoNuevoRegistro.setProcedimientoPCO(procedimientoPco);
+		DDEstadoPreparacionPCO nuevoEstado = (DDEstadoPreparacionPCO) diccionarioApi.dameValorDiccionarioByCod(DDEstadoPreparacionPCO.class, codigoEstado);
+		historicoNuevoRegistro.setEstadoPreparacion(nuevoEstado);
+		historicoNuevoRegistro.setFechaInicio(fechaCambio);
+		genericDao.save(HistoricoEstadoProcedimientoPCO.class, historicoNuevoRegistro);
 	}
 	
 	public String dameProcedimientoPropuesto(Long idProcedimiento) {
@@ -457,7 +468,7 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			ProcedimientoPCO procedimientoPco = genericDao.get(ProcedimientoPCO.class, 
 					genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProcedimiento));
 			if (procedimientoPco != null) {
-				return procedimientoPco.getTipoProcPropuesto().getCodigo();
+				return procedimientoPco.getTipoProcPropuesto().getDescripcion();
 			} else {
 				return "";
 			}
@@ -515,19 +526,21 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	}
 	
 	/**
+	 *		SOLO PARA HAYA
 	 * Comprueba que el asunto correspondiente al procedimiento tenga los siguientes gestores asignados:
 	 * 	Letrado, Supervisor del asunto, Director unidad de litigio y Preparador documental.
 	 * @param idProcedimiento
 	 * @return
 	 */
 	public Boolean existenGestoresCorrectos(Long idProcedimiento) {
+		String predoc = "PREDOC";
 		Boolean resultado = false;
 		try {
 			Procedimiento proc = procedimientoManager.getProcedimiento(idProcedimiento);
 			Long idAsunto = proc.getAsunto().getId();
 			List<String> listaTiposGestores = procedimientoPcoDao.getTiposGestoresAsunto(idAsunto);
 			if (listaTiposGestores.contains(LETRADO) && listaTiposGestores.contains(SUPERVISOR) &&
-					listaTiposGestores.contains(DIRLIT_PCO) && listaTiposGestores.contains(PREDOC)) {
+					listaTiposGestores.contains(DIRLIT_PCO) && listaTiposGestores.contains(predoc)) {
 				resultado = true;
 			}
 		} catch (Exception e) {
@@ -665,6 +678,51 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		procedimientoPco.setEstadosPreparacionProc(estadosPreparacionProc);
 		genericDao.save(ProcedimientoPCO.class, procedimientoPco);
 		return procedimientoPco;
+	}
+	
+	public Boolean noExisteGestorDocumentacionAsignadoAsunto(Long idProcedimiento) {
+		Boolean resultado = true;
+		try {
+			Procedimiento proc = procedimientoManager.getProcedimiento(idProcedimiento);
+			Long idAsunto = proc.getAsunto().getId();
+			List<String> listaTiposGestores = procedimientoPcoDao.getTiposGestoresAsunto(idAsunto);
+			if (listaTiposGestores.contains(GESTOR_DOC)) {
+				resultado = false;
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return resultado;
+	}
+	
+	public Boolean comprobarExisteGestorLiquidacion(Long idProcedimiento) {
+		Boolean resultado = false;
+		try {
+			Procedimiento proc = procedimientoManager.getProcedimiento(idProcedimiento);
+			Long idAsunto = proc.getAsunto().getId();
+			List<String> listaTiposGestores = procedimientoPcoDao.getTiposGestoresAsunto(idAsunto);
+			if (listaTiposGestores.contains(GESTOR_LIQ)) {
+				resultado = true;
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return resultado;
+	}
+	
+	public Boolean comprobarExisteLetrado(Long idProcedimiento) {
+		Boolean resultado = false;
+		try {
+			Procedimiento proc = procedimientoManager.getProcedimiento(idProcedimiento);
+			Long idAsunto = proc.getAsunto().getId();
+			List<String> listaTiposGestores = procedimientoPcoDao.getTiposGestoresAsunto(idAsunto);
+			if (listaTiposGestores.contains(LETRADO)) {
+				resultado = true;
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return resultado;
 	}
 	
 	private List<DocumentoPCO> obtenerNuevosDocumentos(ProcedimientoPCO procedimientoPco, 
@@ -827,6 +885,104 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		return genericDao.getList(EXTTareaExternaValor.class, genericDao
 				.createFilter(FilterType.EQUALS, "tareaExterna.id", texId),
 				genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+	}
+	
+	
+	private List<SolicitudDocumentoPCO> getSolicitudPlazoTareas(Long idProc, boolean paraExpediente){
+		
+		List<SolicitudDocumentoPCO> solicitudes = null;
+		
+		try {
+			Order order = new Order(OrderType.ASC, "id");
+			solicitudes = genericDao.getListOrdered(SolicitudDocumentoPCO.class, order, genericDao.createFilter(FilterType.EQUALS, "documento.procedimientoPCO.procedimiento.id", idProc),genericDao.createFilter(FilterType.EQUALS,"tipoActor.tratamientoExpediente",paraExpediente),genericDao.createFilter(FilterType.EQUALS,"auditoria.borrado",false));
+
+		} catch (Exception e) {logger.error(e.getMessage());}
+		
+		return solicitudes;
+	}
+	
+	public Long dameFechaSolicitudExpediente(Long idProc) {
+		
+		List<SolicitudDocumentoPCO> solicitudes = getSolicitudPlazoTareas(idProc, true);
+		if(!Checks.esNulo(solicitudes)){
+			for(SolicitudDocumentoPCO solicitud : solicitudes){
+				if(!Checks.esNulo(solicitud.getFechaSolicitud())){
+					return solicitud.getFechaSolicitud().getTime() - System.currentTimeMillis();
+				}
+			}
+		}
+		return new Date().getTime() - System.currentTimeMillis();
+	}
+	
+	public Long dameFechaSolicitudDocumentos(Long idProc){
+		
+		List<SolicitudDocumentoPCO> solicitudes = getSolicitudPlazoTareas(idProc, false);
+		if(!Checks.esNulo(solicitudes)){
+			for(SolicitudDocumentoPCO solicitud : solicitudes){
+				if(!Checks.esNulo(solicitud.getFechaSolicitud())){
+					return solicitud.getFechaSolicitud().getTime() - System.currentTimeMillis();
+				}
+			}
+		}
+		return new Date().getTime() - System.currentTimeMillis();
+	}
+	
+	public Long dameFechaResultadoArchivo(Long idProc) {
+		
+		List<SolicitudDocumentoPCO> solicitudes = getSolicitudPlazoTareas(idProc, true);
+		if(!Checks.esNulo(solicitudes)){
+			for(SolicitudDocumentoPCO solicitud : solicitudes){
+				if(!Checks.esNulo(solicitud.getFechaResultado())){
+					return solicitud.getFechaResultado().getTime() - System.currentTimeMillis();
+				}
+			}
+		}
+		return new Date().getTime() - System.currentTimeMillis();
+	}
+	
+	public Long dameFechaEnvio(Long idProc) {
+		
+		List<SolicitudDocumentoPCO> solicitudes = getSolicitudPlazoTareas(idProc, false);
+		if(!Checks.esNulo(solicitudes)){
+			for(SolicitudDocumentoPCO solicitud : solicitudes){
+				if(!Checks.esNulo(solicitud.getFechaEnvio())){
+					return solicitud.getFechaEnvio().getTime() - System.currentTimeMillis();
+				}
+			}
+		}
+		return new Date().getTime() - System.currentTimeMillis();
+	}
+	
+	public Long dameFechaFinalizacionTareasPrecedentes(Long idProc) {
+		
+		try {
+			
+			List<TareaProcedimiento> precedentes = new ArrayList<TareaProcedimiento>();
+			precedentes.addAll(genericDao.getList(TareaProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", PrecontenciosoBPMConstants.PCO_RegistrarAceptacionPost)));
+			precedentes.addAll(genericDao.getList(TareaProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", PrecontenciosoBPMConstants.PCO_SubsanarIncidenciaExp)));
+			precedentes.addAll(genericDao.getList(TareaProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", PrecontenciosoBPMConstants.PCO_SubsanarCambioProc)));
+			
+			List<TareaExterna> tarsExt = procedimientoPcoDao.getTareasPrecedentes(idProc, precedentes, "DESC");
+			
+			if(tarsExt.size() > 0){
+				return tarsExt.get(0).getTareaPadre().getFechaFin().getTime() - System.currentTimeMillis();
+			}
+			
+		} catch (Exception e) {logger.error(e.getMessage());}
+		
+		return new Date().getTime() - System.currentTimeMillis();
+	}
+	
+	public Long dameFechaUltimoEnvioExp(Long idProc) {
+		List<SolicitudDocumentoPCO> solicitudes = getSolicitudPlazoTareas(idProc, true);
+		if(!Checks.esNulo(solicitudes)){
+			for(SolicitudDocumentoPCO solicitud : solicitudes){
+				if(!Checks.esNulo(solicitud.getFechaEnvio())){
+					return solicitud.getFechaEnvio().getTime() - System.currentTimeMillis();
+				}
+			}
+		}
+		return new Date().getTime() - System.currentTimeMillis();
 	}
 
 	@Override

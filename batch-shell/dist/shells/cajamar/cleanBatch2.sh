@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Inicio Update Timers
-DIR_BASE_ETL=/aplicaciones/recovecb/programas/etl
+DIR_BASE_ETL=/recovery/batch-server/programas/etl
 
 nameETL="rera_update_timers"
 #nameETL="rera_update_timers"
@@ -11,8 +11,8 @@ export DIR_CONFIG=$DIR_BASE_ETL/config/
 export CFG_FILE=config.ini
 export MAINSH="$nameETL"_run.sh
 
-cd "$DIR_ETL" &> null
-if [ $? = 1 ] ; then
+cd "$DIR_ETL" &> /dev/null
+if [ $? -ne 0 ] ; then
    echo "$(basename $0) Error en $filename: directorio inexistente $DIR_ETL"
    exit 1
 fi
@@ -30,9 +30,9 @@ fi
 # Fin Update Timers
 
 function set_diag(){
-        java -jar /aplicaciones/recovecb/shells/cmdline-jmxclient-0.10.3.jar jmx_admin:pfs_admin localhost:2099 devon:type=logger setLoggerLevel=es.capgemini.pfs.batch.common,$1
-        java -jar /aplicaciones/recovecb/shells/cmdline-jmxclient-0.10.3.jar jmx_admin:pfs_admin localhost:2099 devon:type=logger setLoggerLevel=es.capgemini.pfs.batch.revisar.arquetipos,$1
-        java -jar /aplicaciones/recovecb/shells/cmdline-jmxclient-0.10.3.jar jmx_admin:pfs_admin localhost:2099 devon:type=logger setLoggerLevel=es.capgemini.pfs.batch.revisar.arquetipos.engine,$1
+        java -jar /recovery/batch-server/shells/cmdline-jmxclient-0.10.3.jar jmx_admin:pfs_admin localhost:2099 devon:type=logger setLoggerLevel=es.capgemini.pfs.batch.common,$1
+        java -jar /recovery/batch-server/shells/cmdline-jmxclient-0.10.3.jar jmx_admin:pfs_admin localhost:2099 devon:type=logger setLoggerLevel=es.capgemini.pfs.batch.revisar.arquetipos,$1
+        java -jar /recovery/batch-server/shells/cmdline-jmxclient-0.10.3.jar jmx_admin:pfs_admin localhost:2099 devon:type=logger setLoggerLevel=es.capgemini.pfs.batch.revisar.arquetipos.engine,$1
 }
 
 reinicio=NO
@@ -62,9 +62,9 @@ reinicio=SI
 if [ "$reinicio" == "SI" ]
 then
       echo "*** Es necesario reiniciar el Batch"
-      /aplicaciones/recovecb/programas/stopBatch.sh
+      /recovery/batch-server/programas/stopBatch.sh
       echo "*** Batch detenido"
-      /aplicaciones/recovecb/programas/startBatch.sh
+      /recovery/batch-server/programas/startBatch.sh
       echo "*** Batch arrancado de nuevo"
       set_diag DEBUG
       echo "*** Establecido valor de diagnostico"

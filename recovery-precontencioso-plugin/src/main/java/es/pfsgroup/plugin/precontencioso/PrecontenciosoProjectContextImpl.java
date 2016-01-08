@@ -6,6 +6,7 @@ public class PrecontenciosoProjectContextImpl implements PrecontenciosoProjectCo
 	
 	public static final String RECOVERY_HAYA = "HAYA";
 	public static final String RECOVERY_BANKIA = "BANKIA";
+	public static final String RECOVERY_CAJAMAR = "CAJAMAR";
 	
 	private String codigoFaseComun;
 	private String recovery;

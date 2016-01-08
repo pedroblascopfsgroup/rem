@@ -94,10 +94,23 @@ public class PrecontenciosoEnterActionHandler extends PROGenericEnterActionHandl
 		} else if (PrecontenciosoBPMConstants.PCO_RevisarExpediente.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
 		} else if (PrecontenciosoBPMConstants.PCO_PrepararExpediente.equals(tex.getTareaProcedimiento().getCodigo())) {
+
+			
+			if(PrecontenciosoProjectContextImpl.RECOVERY_HAYA.equals(precontenciosoContext.getRecovery()) ||
+					PrecontenciosoProjectContextImpl.RECOVERY_CAJAMAR.equals(precontenciosoContext.getRecovery()) ){
+				//Si es CONCURSO invocar inicializacion
+				if (DDTiposAsunto.CONCURSAL.equals(prc.getAsunto().getTipoAsunto().getCodigo())) {
+					if (prc.getProcessBPM() == null) {
+						prc.setProcessBPM(executionContext.getProcessInstance().getId());
+					}
+					executor.execute("plugin.precontencioso.inicializarPco", prc);
+				}
+			}
 			if (prc.getProcessBPM() == null) {
 				prc.setProcessBPM(executionContext.getProcessInstance().getId());
 			}
 			if(!PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(precontenciosoContext.getRecovery())){
+
 				//Si es CONCURSO invocar inicializacion
 				if (DDTiposAsunto.CONCURSAL.equals(prc.getAsunto().getTipoAsunto().getCodigo())) {					
 					executor.execute("plugin.precontencioso.inicializarPco", prc);
@@ -116,7 +129,7 @@ public class PrecontenciosoEnterActionHandler extends PROGenericEnterActionHandl
 			}
 		} else if (PrecontenciosoBPMConstants.PCO_EnviarExpedienteLetrado.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
-			executor.execute("plugin.precontencioso.cambiarEstadoExpediete", prc.getId(), PrecontenciosoBPMConstants.PCO_PREPARADO);
+			//executor.execute("plugin.precontencioso.cambiarEstadoExpediete", prc.getId(), PrecontenciosoBPMConstants.PCO_PREPARADO);
 
 		} else if (PrecontenciosoBPMConstants.PCO_RegistrarTomaDec.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
@@ -153,6 +166,12 @@ public class PrecontenciosoEnterActionHandler extends PROGenericEnterActionHandl
 			
 			executor.execute("plugin.precontencioso.cambiarEstadoExpediete", prc.getId(), PrecontenciosoBPMConstants.PCO_PREPARACION);
 
+		} else if (PrecontenciosoBPMConstants.PCO_RevisarExpedientePreparar.equals(tex.getTareaProcedimiento().getCodigo())) {
+			
+		} else if (PrecontenciosoBPMConstants.PCO_AsignarGestorLiquidacion.equals(tex.getTareaProcedimiento().getCodigo())) {
+			
+		} else if (PrecontenciosoBPMConstants.PCO_RevisarExpedienteAsignarLetrado.equals(tex.getTareaProcedimiento().getCodigo())) {
+			
 		}
 		
 	}

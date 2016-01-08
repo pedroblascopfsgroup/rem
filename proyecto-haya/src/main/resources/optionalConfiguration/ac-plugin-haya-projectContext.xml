@@ -190,6 +190,7 @@
 						<value>TGGESDOC</value>
 						<value>CJ-104</value>
 						<value>CJ-814</value>
+						<value>GEXT</value>
 						<value>CJ-812</value>
 						<value>TSAEST</value>
 						<value>CJ-810</value>
@@ -204,6 +205,11 @@
 						<value>CJ-TGESEXT</value>
 						<value>CJ-TSUEXT</value>
 
+					</set>
+				</entry>
+				<entry key="ABRIR_EXP">
+					<set>
+						<value>FZAR_PPUESTA</value>
 					</set>
 				</entry>
 			</map>
@@ -285,7 +291,6 @@
 			</set>
 		</property>
 	</bean>	
-	
 	<bean id="hayaProjectContextDefault" 
 		class="es.pfsgroup.procedimientos.context.HayaProjectContextImpl" abstract="true">
 		<property name="tareasInicioConcursal">
@@ -318,7 +323,22 @@
 			<value>HAYA</value>
 		</property>
 	</bean>
+	
+	<bean id="commonProjectContextHaya" parent="commonProjectContextDefault">
+            <property name="formatoNroContrato">
+                    <map>
+                            <entry key="HAYA">
+                                    <map>
+                                            <!--<entry key="contrato.codigoFormato" value="5,5,17,15"/>-->
+                                            <entry key="contrato.codigo.subStringIni" value="10"/>
+                                            <entry key="contrato.codigo.subStringFin" value="27"/>
+                                    </map>
+                            </entry>
+                    </map>
+            </property>
+    </bean>
 
+	<alias name="commonProjectContextHaya" alias="commonProjectContext"/>
 	<alias name="nmbCommonProjectContextHAYA" alias="nmbCommonProjectContext"/>
 	<alias name="procedimientosProjectContextHaya" alias="procedimientosProjectContext"/>		
 	<alias name="coreProjectContextHAYA" alias="coreProjectContext"/>

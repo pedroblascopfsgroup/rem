@@ -3,9 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 text : '<s:message code="menu.comite" text="**Comit� de Recuperaciones" />'
 	,menu : [
-	      <%-- 
-	      // TODO: FASE4
-	      ESTO ES PARA FASE4
+		<sec:authorize ifAllGranted="ROLE_COMITE_MENU">
 	      { text : '<s:message code="menu.comite.celebracion" text="**Celebraci�n de Comit�" />'
 			 	,iconCls:'icon_comite_celebrar'
 			 	, handler : function(){
@@ -19,7 +17,12 @@ text : '<s:message code="menu.comite" text="**Comit� de Recuperaciones" />'
 						app.openTab("<s:message code="actas.listado.titulo" text="**Listado Actas"/>", "comites/listadoActas",  {evento : "listadoCerradoJSON"},{id:'listadoActas', iconCls:'icon_comite_actas'});
 				} 
 			 }
-			, --%>{
+			 	<sec:authorize ifAllGranted="MSV-INST-SUBASTA">
+			 ,
+			 	</sec:authorize>
+			 </sec:authorize>
+			<sec:authorize ifAllGranted="MSV-INST-SUBASTA">		
+			{
 				text : '<s:message code="subastas.instruccionesLoteSubasta.menu.gestMasivaInstrucciones.tituloMenu" text="**Propuesta de Instrucciones" />' 
 				,iconCls : 'icon_subasta'	
 				,handler : function(){
@@ -30,4 +33,5 @@ text : '<s:message code="menu.comite" text="**Comit� de Recuperaciones" />'
 					);
 				}
 			}
+			</sec:authorize>
 	        ]

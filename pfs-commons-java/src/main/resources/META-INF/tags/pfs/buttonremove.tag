@@ -11,6 +11,7 @@
 <%@ attribute name="novalueMsgKey" required="true" type="java.lang.String"%>
 <%@ attribute name="novalueMsg" required="true" type="java.lang.String"%>
 <%@ attribute name="parameters" required="false" type="java.lang.String"%>
+<%@ attribute name="onSuccess" required="false" type="java.lang.String"%>
 
 var ${name}= new Ext.Button({
 		text : '<s:message code="pfs.tags.buttonremove.borrar" text="**Borrar" />'
@@ -26,7 +27,8 @@ var ${name}= new Ext.Button({
 							flow: '${flow}'
 							,params: parms
 							,success : function(){ 
-								${datagrid}.store.webflow(parms); 
+								${datagrid}.store.webflow(parms);
+								<c:if test="${onSuccess != null}">${onSuccess}();</c:if>
 							}
 						});
     				}

@@ -3,6 +3,8 @@
     xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
 	<var name="dto" class="es.capgemini.pfs.tareaNotificacion.dto.DtoBuscarTareaNotificacion"/>
+	<input name="traerGestionVencidos" type="java.lang.String"/>
+	
 	
  	<action-state id="esBuzonOptimizado">
 		<evaluate expression="executor.execute('es.pfsgroup.recovery.ext.api.tareas.opciones.tieneOpcionBuzonOptimizado')" result="flowScope.buzonOptimizado" />
@@ -10,7 +12,7 @@
 	</action-state>
     
 	<decision-state id="decisionBuzonOptimizado">
-		<if test="buzonOptimizado" then="listadoOptimizado" else="listado"/>
+		<if test="!decisionBuzonOptimizado &amp;&amp; traerGestionVencidos=='true'" then="listado" else="listadoOptimizado"/>
 	</decision-state>
 	
 	<!-- renderiza el formulario -->

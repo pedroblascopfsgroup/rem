@@ -18,6 +18,7 @@
 	var comite =app.creaLabel('<s:message code="decisioncomite.consulta.comite" text="**Comite" />','');                           
 	var fecha  =app.creaLabel('<s:message code="decisioncomite.consulta.fecha" text="**Fecha" />','');
 	var plazorestante =app.creaLabel('<s:message code="decisioncomite.consulta.plazo" text="**Plazo Restante" />', '');
+	var  CODIGO_ASUNTO_EN_CONFORMACION = "<fwk:const value="es.capgemini.pfs.asunto.model.DDEstadoAsunto.ESTADO_ASUNTO_EN_CONFORMACION" />";
 
 	var fieldSetCabecera=new Ext.form.FieldSet({                                                                                                                    
 		title:'<s:message code="decisioncomite.consulta.fieldSetCabecera" text="**Cabecera" />'
@@ -387,7 +388,7 @@
 				{
 					flow:'asuntos/altaAsuntos', 
 					title : '<s:message code="decisionComite.asuntos" text="**Alta Asuntos" />',
-					params: {idExpediente:entidad.getData("id")},
+					params: {idExpediente:entidad.getData("id"), codigoEstadoAsunto: CODIGO_ASUNTO_EN_CONFORMACION},
 					width: 870
 				}
 			);
@@ -801,13 +802,15 @@
     var congelado = entidad.getData("decision.estaCongelado");
     var visible = [
       [btnActuacion, congelado ]
-				,[btnNuevo, congelado]
+		,[btnNuevo, congelado]
         ,[btnEditar, congelado]
         ,[btnBorrar, congelado]
         ,[btnAltaProcedimiento, congelado]
         ,[btnEditProcedimiento, congelado]
         ,[btnBorraProcedimiento, congelado]
+        <sec:authorize ifAllGranted="CERRAR_DECISION">
         ,[btnCerrarDecision, congelado]
+        </sec:authorize>
         ,[btnEditarObs, congelado]
     ]
 

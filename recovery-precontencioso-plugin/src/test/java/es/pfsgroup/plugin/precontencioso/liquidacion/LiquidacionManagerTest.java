@@ -15,7 +15,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dao.LiquidacionDao;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.manager.LiquidacionManager;
@@ -33,6 +36,9 @@ public class LiquidacionManagerTest {
 	private UtilDiccionarioApi mockUtilDiccionarioApi;
 
 	@Mock
+	private GestorTareasApi gestorTareasApi;
+	
+	@Mock
 	private LiquidacionDao liquidacionDao;
 
 	@InjectMocks
@@ -41,17 +47,18 @@ public class LiquidacionManagerTest {
 	/**
 	 * Generic Id Liquidacion used to test
 	 */
-	private static final Long ID_LIQUIDACION = RandomUtils.nextLong();
+	private static final Long ID_RANDOM = RandomUtils.nextLong();
 
 	@Test
 	public void testConfirmarLiquidacion() {
 		// Mock methods
+		when(mockProxyFactory.proxy(GestorTareasApi.class)).thenReturn(gestorTareasApi);
 		mockDameValorDiccionarioByCod(DDEstadoLiquidacionPCO.CONFIRMADA);
-		when(liquidacionDao.get(ID_LIQUIDACION)).thenReturn(new LiquidacionPCO());
+		when(liquidacionDao.get(ID_RANDOM)).thenReturn(newLiquidacionPcoToTest());
 
 		// Method to test
 		LiquidacionDTO liquidacionParaConfirmar = new LiquidacionDTO();
-		liquidacionParaConfirmar.setId(ID_LIQUIDACION);
+		liquidacionParaConfirmar.setId(ID_RANDOM);
 
 		liquidacionManager.confirmar(liquidacionParaConfirmar);
 
@@ -68,14 +75,15 @@ public class LiquidacionManagerTest {
 	@Test
 	public void testSolicitarLiquidacion() {
 		// Mock methods
+		when(mockProxyFactory.proxy(GestorTareasApi.class)).thenReturn(gestorTareasApi);
 		mockDameValorDiccionarioByCod(DDEstadoLiquidacionPCO.SOLICITADA);
-		when(liquidacionDao.get(ID_LIQUIDACION)).thenReturn(new LiquidacionPCO());
+		when(liquidacionDao.get(ID_RANDOM)).thenReturn(newLiquidacionPcoToTest());
 
 		// Method to test
 		Date fechaCierre = new Date();
 		LiquidacionDTO liquidacionParaSolicitar = new LiquidacionDTO();
 		liquidacionParaSolicitar.setFechaCierre(fechaCierre);
-		liquidacionParaSolicitar.setId(ID_LIQUIDACION);
+		liquidacionParaSolicitar.setId(ID_RANDOM);
 
 		liquidacionManager.solicitar(liquidacionParaSolicitar);
 
@@ -102,12 +110,13 @@ public class LiquidacionManagerTest {
 	@Test
 	public void testDescartarLiquidacion() {
 		// Mock methods
+		when(mockProxyFactory.proxy(GestorTareasApi.class)).thenReturn(gestorTareasApi);
 		mockDameValorDiccionarioByCod(DDEstadoLiquidacionPCO.DESCARTADA);
-		when(liquidacionDao.get(ID_LIQUIDACION)).thenReturn(new LiquidacionPCO());
+		when(liquidacionDao.get(ID_RANDOM)).thenReturn(newLiquidacionPcoToTest());
 
 		// Method to test
 		LiquidacionDTO liquidacionParaDescartar = new LiquidacionDTO();
-		liquidacionParaDescartar.setId(ID_LIQUIDACION);
+		liquidacionParaDescartar.setId(ID_RANDOM);
 		liquidacionManager.descartar(liquidacionParaDescartar);
 
 		// Capture the result
@@ -130,5 +139,17 @@ public class LiquidacionManagerTest {
 
 		when(mockProxyFactory.proxy(UtilDiccionarioApi.class)).thenReturn(mockUtilDiccionarioApi);
 		when(mockUtilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoLiquidacionPCO.class, codigoEstado)).thenReturn(estadoLiquidacionReturn);
+	}
+	
+	private LiquidacionPCO newLiquidacionPcoToTest() {
+		Procedimiento procedimiento = new Procedimiento();
+		procedimiento.setId(ID_RANDOM);
+
+		ProcedimientoPCO procedimientoPco = new ProcedimientoPCO();
+		procedimientoPco.setProcedimiento(procedimiento);
+
+		LiquidacionPCO liquidacion = new LiquidacionPCO();
+		liquidacion.setProcedimientoPCO(procedimientoPco);
+		return liquidacion;
 	}
 }

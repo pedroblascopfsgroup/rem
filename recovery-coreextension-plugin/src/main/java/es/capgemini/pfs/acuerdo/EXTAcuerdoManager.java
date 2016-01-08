@@ -121,7 +121,7 @@ public class EXTAcuerdoManager extends BusinessOperationOverrider<AcuerdoApi>
 		// Comprobar quien esta cerrando el acuerdo, supervisor o gestor, para crear la notificacion adecuada
 		Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
 		
-		if (acuerdo.getAsunto().getGestor().getUsuario().getId().equals(usuarioLogado.getId())) {
+		if (!Checks.esNulo(acuerdo.getAsunto().getGestor()) && acuerdo.getAsunto().getGestor().getUsuario().getId().equals(usuarioLogado.getId())) {
 			executor.execute(ComunBusinessOperation.BO_TAREA_MGR_CREAR_NOTIFICACION, acuerdo.getAsunto().getId(),
 				DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, EXTSubtipoTarea.CODIGO_ACUERDO_CERRADO_POR_GESTOR, null);
 		} else {

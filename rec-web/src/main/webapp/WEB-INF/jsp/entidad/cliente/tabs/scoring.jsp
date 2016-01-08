@@ -73,19 +73,23 @@
 					fechasString += fechaCombo.getValue();
 					panel.scoringGrid.store.load({params:{
 							idPersona:panel.getPersonaId()
-							,fechas:panel.getFechasString()
+							,fechas:fechasString
 					}});
-					fechaStore.webflow({idPersona:panel.getPersonaId(),fechas:fechasString});
+					fechaStore.webflow({idPersona:panel.getPersonaId(),fechas:panel.getFechasString()});
 				}
     	  }
 	  });
-
 
 	panel.scoringGrid = new Ext.ux.DynamicGridPanel({
 	    storeUrl: '../clientes/scoringData.htm'
 	    ,height: 300
 	    ,collapsible: true
 	});
+	
+	var leyenda = new Ext.form.Label({
+                text: "<s:message code="scoring.leyenda" text="***Las fechas son aproximaciones calculadas a partir de las alertas cargadas en el sistema." />"
+                ,style: "color:red;font-size:12px;"
+    });
 	
 	var panelFiltro = new Ext.form.FieldSet({
 		title: '<s:message code="scoring.filtro.fechas" text="**Fechas" />'
@@ -108,6 +112,7 @@
 
 	panel.add(panelFiltro);
 	panel.add(panel.scoringGrid);
+	panel.add(leyenda);
 
 	panel.getFechasString = function(){
 		var data = entidad.get("data");
@@ -123,7 +128,10 @@
 
 	panel.setValue = function(){
 		var data = entidad.get("data");
-		entidad.cacheStore(panel.scoringGrid.getStore());
+		panel.scoringGrid.getStore().removeAll();
+		panel.scoringGrid.colModel.setConfig([],false);
+		fechaCombo.clearValue();
+		//entidad.cacheStore(panel.scoringGrid.getStore());
 		//entidad.cacheOrLoad(data, panel.scoringGrid.getStore(), { idPersona : data.id } );
 		entidad.cacheOrLoad(data, fechaCombo.getStore(), { idPersona : data.id, fechas : data.scoring.fechasAlertas } );
 	}

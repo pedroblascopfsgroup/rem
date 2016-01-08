@@ -138,12 +138,13 @@
     
     
     <!-- Descomentar para Ver las SQL-->
-	<!--
-    <logger name="org.hibernate.SQL" additivity="false">
+
+    <!-- <logger name="org.hibernate.SQL" additivity="false">
         <level value="debug"/>
         <appender-ref ref="console" />
-    </logger>
- 	-->
+        <appender-ref ref="file" />
+    </logger> -->
+
      
      
     <!-- Descomentar para Ver las SQL que ejecuta la aplicacion, el Thread, la session y la transaccion en al que se ejecutan -->

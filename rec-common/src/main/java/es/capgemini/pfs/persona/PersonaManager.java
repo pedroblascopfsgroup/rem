@@ -1,8 +1,11 @@
 package es.capgemini.pfs.persona;
 
+import java.io.File;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -29,6 +32,7 @@ import es.capgemini.pfs.cliente.model.Cliente;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.ingreso.model.Ingreso;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
@@ -419,12 +423,45 @@ public class PersonaManager {
         }
 
         Persona persona = personaDao.get(Long.parseLong(uploadForm.getParameter("id")));
-        persona.addAdjunto(fileItem);
-        personaDao.save(persona);
+        
+		FileItem fiAdjunto = new FileItem();
+		fiAdjunto.setFile(fileItem.getFile());
+		fiAdjunto.setLength(fileItem.getLength());
+		fiAdjunto.setFileName(fileItem.getFileName());
+		fiAdjunto.setContentType(obtenerMimeTypeFichero(fiAdjunto.getFileName()));								
 
+		persona.addAdjunto(fiAdjunto);
+        personaDao.save(persona);
+				
         return null;
     }
 
+    
+    private String obtenerMimeTypeFichero(String nombreFichero) {
+		Map<String, String> mapaExtensiones = new HashMap<String, String>();
+		mapaExtensiones.put(".pdf", "application/pdf");
+		mapaExtensiones.put(".txt", "text/plain");
+		mapaExtensiones.put(".doc", "application/msword");
+		mapaExtensiones.put(".docx", "application/msword");
+		mapaExtensiones.put(".xls", "application/excel");
+		mapaExtensiones.put(".xlsx", "application/excel");
+		mapaExtensiones.put(".xml", "application/xml");
+		mapaExtensiones.put(".html", "text/html");
+		mapaExtensiones.put(".jpg", "image/jpeg");
+		mapaExtensiones.put(".gif", "image/gif");
+		mapaExtensiones.put(".png", "image/png");
+		
+		String defaultExtension = "application/octet-stream";
+		
+		for (String clave : mapaExtensiones.keySet()) {
+			if (nombreFichero.endsWith(clave)) {
+				return mapaExtensiones.get(clave); 
+			}
+		}
+		
+		return defaultExtension;
+	}
+    
     /**
      * Recupera el límite de tamaño de un fichero.
      * @return limite

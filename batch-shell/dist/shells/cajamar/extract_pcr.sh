@@ -1,8 +1,6 @@
 #!/bin/bash
 # Generado manualmente por PBO
  
-ENTIDAD=3058
-
 DIR_INPUT=/recovery/transferencia/aprov_troncal/
 export DIR_TXT=/recovery/batch-server/control/etl/input/
 
@@ -39,3 +37,4 @@ if [ -f "$ultFicheroZip" ] ; then
 else 
    exit 1
 fi
+

@@ -101,14 +101,13 @@
 				parametros['params'] = paramAux;
 				
 				//var flow='asuntos/exportAsuntos';
-                var flow='plugin/coreextension/asunto/core.exportAsuntos';
+                //var flow='plugin/coreextension/asunto/core.exportAsuntos';
+                var flow = '/pfs/extasunto/exportarExcelAsuntos';
              
                 var params=parametros;
                
                 parametros.tipoSalida='<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.SALIDA_XLS" />';
-                
-                
-                
+
                 app.openBrowserWindow(flow,parametros);
                     
                 

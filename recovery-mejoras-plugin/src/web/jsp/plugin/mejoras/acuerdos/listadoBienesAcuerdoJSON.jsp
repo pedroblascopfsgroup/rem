@@ -9,7 +9,10 @@
 	<json:array name="bienes" items="${listadoBienesAcuerdo}" var="bien">
 		<json:object>
 			<json:property name="codigo" value="${bien.id}" />
-	        <json:property name="descripcion" value="${bien.datosRegistralesActivo.numRegistro}_${bien.tipoBien.descripcion}" />                 
+	        <json:property name="descripcion" value="${bien.datosRegistralesActivo.numRegistro}_${bien.tipoBien.descripcion}" />
+	        <c:if test="${not empty bien.referenciaCatastral}"> 
+	        	<json:property name="descripcion" value="${bien.datosRegistralesActivo.numRegistro}_${bien.tipoBien.descripcion} / ${bien.referenciaCatastral}" />
+	         </c:if>       
 		</json:object>
 	</json:array>
 	

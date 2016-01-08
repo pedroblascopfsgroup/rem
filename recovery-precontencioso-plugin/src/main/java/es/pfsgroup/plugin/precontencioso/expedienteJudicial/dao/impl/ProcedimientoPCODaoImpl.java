@@ -21,6 +21,8 @@ import org.springframework.stereotype.Repository;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
@@ -625,5 +627,29 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		return resultado;
 		
+	}
+
+	@Override
+	public List<TareaExterna> getTareasPrecedentes(Long idProcedimiento,List<TareaProcedimiento> precedentes,String order) {
+		
+		Criteria query = getSession().createCriteria(TareaExterna.class);
+
+		query.createCriteria("tareaProcedimiento", "tareaProcedimiento");
+		query.createCriteria("tareaPadre", "tareaPadre");
+		query.createCriteria("auditoria", "auditoria");
+		
+		query.add(Restrictions.eq("tareaPadre.procedimiento.id", idProcedimiento));
+		query.add(Restrictions.in("tareaProcedimiento", precedentes));
+		
+		query.add(Restrictions.eq("auditoria.borrado", false));
+		
+		
+		if(order.toUpperCase().equals("ASC")){
+			query.addOrder(Order.asc("id"));
+		}else{
+			query.addOrder(Order.desc("id"));
+		}
+		
+		return query.list();
 	}
 }

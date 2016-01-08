@@ -18,6 +18,7 @@
 <%@ attribute name="readOnly" required="false" type="java.lang.Boolean"%>
 <%@ attribute name="labelWidth" required="false" type="java.lang.String"%>
 <%@ attribute name="searchOnEnter" required="false" type="java.lang.Boolean"%>
+<%@ attribute name="labelStyle" required="false" type="java.lang.String" %>
 
 <c:set var="_width" value="175" />
 <c:if test="${width != null}">
@@ -31,14 +32,14 @@ var ${name}_Store = new Ext.data.JsonStore({
 	});
 
 <c:if test="${readOnly}">
-var ${name}_labelStyle='font-weight:bolder<c:if test="${labelWidth != null}">;width:${labelWidth}</c:if>';
+var ${name}_labelStyle='font-weight:bolder<c:if test="${labelWidth != null}">;width:${labelWidth}</c:if><c:if test="${labelStyle != null}">;${labelStyle}</c:if>';
 var ${name}_idx = var ${name}_Store.find('${valueField}','${value}');
 var ${name}_value = var ${name}_Store.getAt(var ${name}_idx).get('${displayField}');
 var ${name} = app.creaLabel('<s:message code='${labelKey}' text='${label}' />',${name}_value,{labelStyle:${name}_labelStyle});
 </c:if>
 
 <c:if test="${!readOnly}">
-var ${name}_labelStyle='<c:if test="${labelWidth != null}">width:${labelWidth}</c:if>';
+var ${name}_labelStyle='<c:if test="${labelWidth != null}">width:${labelWidth}</c:if><c:if test="${labelStyle != null}">;${labelStyle}</c:if>';
 var ${name} = new Ext.form.ComboBox({
 				store:${name}_Store
 				,displayField:'${displayField}'

@@ -1,7 +1,11 @@
-Ôªøvar objetivosStore;
+var objetivosStore;
 var objetivosGrid;
 var btnRechazar;
 var btnNuevo;
+var btnModificar;
+var btnBorrar;
+var btnProponerCumplimiento;
+var btnJustificar;
 
 var createDatosObjetivosPanel = function() {
     btnNuevo = new Ext.Button({
@@ -24,7 +28,7 @@ var createDatosObjetivosPanel = function() {
 		   }
     });
 
-    var btnModificar = new Ext.Button({
+    btnModificar = new Ext.Button({
         text: '<s:message code="app.editar" text="**Modificar" />'
         ,iconCls: 'icon_edit'
 		,handler: function() {
@@ -35,7 +39,7 @@ var createDatosObjetivosPanel = function() {
 				if(!rec.get("estadoObjetivo")=='<fwk:const value="es.capgemini.pfs.politica.model.DDEstadoObjetivo.ESTADO_PROPUESTO" />') {
 						Ext.Msg.show({
 						   title: fwk.constant.alert
-						   ,msg: '<s:message code="editar.objetivo.error.objNoPropuesto.noEditable" text="**El objetivo no est√° en estado 'Propuesto' por lo que no se puede editar." />'
+						   ,msg: '<s:message code="editar.objetivo.error.objNoPropuesto.noEditable" text="**El objetivo no est· en estado 'Propuesto' por lo que no se puede editar." />'
 						   ,buttons: Ext.Msg.OK, animEl: 'elId'
 						});
 						return;
@@ -74,7 +78,7 @@ var createDatosObjetivosPanel = function() {
         });
     };
 
-	var btnBorrar = new Ext.Button({
+	btnBorrar = new Ext.Button({
         text : '<s:message code="app.borrar" text="**Borrar" />'
         ,iconCls : 'icon_menos'
         ,handler: function() {
@@ -92,7 +96,7 @@ var createDatosObjetivosPanel = function() {
         }
     });
 
-	var btnJustificar = new Ext.Button({
+	btnJustificar = new Ext.Button({
         text: '<s:message code="politica.objetivo.justificar" text="**Justificar" />'
         ,iconCls: 'icon_edit'
 		,handler: function() {
@@ -138,7 +142,7 @@ var createDatosObjetivosPanel = function() {
     var objetivo = Ext.data.Record.create([
          {name : 'id'}
         ,{name : 'idPolitica'}
-        ,{name : 'padreId'}
+        <%--,{name : 'padreId'}--%>
         ,{name : 'resumen'}
         ,{name : 'observacion'}
         ,{name : 'tipo'}
@@ -146,6 +150,7 @@ var createDatosObjetivosPanel = function() {
         ,{name : 'estadoObjetivo'}
         ,{name : 'estadoCumplimiento'}
         ,{name : 'justificacion'}
+        ,{name : 'fechaLimite'}
         ,{name : 'estadoObjetivo'}
         ,{name : 'estaPendiente'}
         ,{name : 'estaConfirmado'}
@@ -169,14 +174,16 @@ var createDatosObjetivosPanel = function() {
     });
 
     var objetivoCm  = new Ext.grid.ColumnModel([                                                                                                                         
-        {header : '<s:message code="politica.codigo" text="**C√≥digo" />',dataIndex : 'id', width:75}
-        ,{header : '<s:message code="politica.padre" text="**Padre" />', dataIndex : 'padreId', hidden:true, width:75}
+        {header : '<s:message code="politica.codigo" text="**CÛdigo" />',dataIndex : 'id', width:75}
+<%--        	,{header : '<s:message code="politica.padre" text="**Padre" />', dataIndex : 'padreId', hidden:true, width:75} --%>
         ,{header : '<s:message code="politica.objetivo" text="**Objetivo" />', dataIndex : 'resumen', width:250}
         ,{header : '<s:message code="politica.observaciones" text="**Observaciones" />', dataIndex : 'observacion', hidden:true, width:100}
         ,{header : '<s:message code="politica.tipo" text="**Tipo" />', dataIndex : 'tipo', width:150}
         ,{header : '<s:message code="politica.estadoObjetivo" text="**Estado Objetivo" />', dataIndex : 'estadoObjetivo', width:100}
         ,{header : '<s:message code="politica.estadoCumplimiento" text="**Estado cumplimiento" />', dataIndex : 'estadoCumplimiento', width:100}
+        ,{header : '<s:message code="politica.fechaLimite" text="**Fecha lÌmite" />',dataIndex: 'fechaLimite', width:100}
         ,{header : '<s:message code="politica.justificaciones" text="**Justificaciones" />', dataIndex : 'justificacion', hidden:true, width:100}
+        
     ]);    
     var toolbar = new Ext.Toolbar({
         items:[btnNuevo, btnModificar, btnBorrar, btnRechazar,btnProponerCumplimiento,btnJustificar]
@@ -213,7 +220,7 @@ var createDatosObjetivosPanel = function() {
 		btnJustificar.disable();
 		
 		
-		//Si est√° proponiendo pol√≠tica, se pueden activar los botones de modificaci√≥n
+		//Si est· proponiendo polÌtica, se pueden activar los botones de modificaciÛn
 		if ((estaPoliticaPropuesta && (esGestorExpediente || esSupervisorExpediente)) ||
 			(estaPoliticaPropuestaSuperusuario && isSuperusuario))
 		{
@@ -223,7 +230,7 @@ var createDatosObjetivosPanel = function() {
 		
 		}
 		
-		//Si la pol√≠tica ya est√° vigente, se puede modificar el cumplimiento o proponer
+		//Si la polÌtica ya est· vigente, se puede modificar el cumplimiento o proponer
 		else if (estaPoliticaVigente && (esGestorObjetivos || esSupervisorObjetivos))
 		{
 			if(estaPropuesto) btnModificar.enable();

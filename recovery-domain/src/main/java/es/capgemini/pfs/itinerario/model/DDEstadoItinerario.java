@@ -43,6 +43,7 @@ public class DDEstadoItinerario implements Dictionary, Auditable {
     public static final String ESTADO_COMPLETAR_EXPEDIENTE = "CE";
     public static final String ESTADO_REVISAR_EXPEDIENTE = "RE";
     public static final String ESTADO_DECISION_COMIT = "DC";
+    public static final String ESTADO_FORMALIZAR_PROPUESTA = "FP";
     public static final String ESTADO_ASUNTO = "AS";
     public static final String ESTADO_VIGILANCIA_METAS_VOLANTES = "VMV";
     public static final String ESTADO_CREACION_MANUAL_EXPEDIENTE_RECOBRO = "CMER";
@@ -67,6 +68,9 @@ public class DDEstadoItinerario implements Dictionary, Auditable {
 
     @Column(name = "DD_EST_DESCRIPCION_LARGA")
     private String descripcionLarga;
+    
+    @Column(name = "DD_EST_ORDEN")
+    private String orden;
 
     @ManyToOne
     @JoinColumn(name = "DD_EIN_ID")

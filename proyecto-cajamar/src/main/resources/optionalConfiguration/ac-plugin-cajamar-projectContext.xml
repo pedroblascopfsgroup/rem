@@ -10,7 +10,7 @@
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
 	default-autowire="byName">
 	
-	<bean id="nmbCommonProjectContextHAYA" parent="nmbCommonProjectContextDefault">
+	<bean id="nmbCommonProjectContextCAJAMAR" parent="nmbCommonProjectContextDefault">
 		<property name="tiposProcedimientosAdjudicados">
 			<list>
 				<value>H005</value>
@@ -40,9 +40,46 @@
 				<entry key="SAREB" value="H002"/>
 			</map>
 		</property>
+		
+		<property name="codigoHipotecario">
+				<value>H001</value>
+		</property>
+		
+		<property name="codigoMonitorio">
+				<value>H022</value>
+		</property>
+		
+		<property name="codigoOrdinario">
+				<value>H024</value>
+		</property>
+		
+		<property name="codigoTareaDemandaHipotecario">
+				<value>H001_DemandaCertificacionCargas</value>
+		</property>
+		
+		<property name="codigoTareaDemandaMonitorio">
+				<value>H022_InterposicionDemanda</value>
+		</property>
+		
+		<property name="codigoTareaDemandaOrdinario">
+				<value>H024_InterposicionDemanda</value>
+		</property>
+		
+		<property name="fechaDemandaHipotecario">
+				<value>fechaDemanda</value>
+		</property>
+		
+		<property name="fechaDemandaMonitorio">
+				<value>fechaDemanda</value>
+		</property>
+		
+		<property name="fechaDemandaOrdinario">
+				<value>fechaDemanda</value>
+		</property>
+		
 	</bean>
 
-	<bean id="coreProjectContextHAYA" parent="coreProjectContextDefault">
+	<bean id="coreProjectContextCAJAMAR" parent="coreProjectContextDefault">
 		<property name="categoriasSubTareas">
 			<map>
 				<entry key="TOMA_DE_DECISION">
@@ -115,6 +152,11 @@
 						
 					</set>
 				</entry>
+				<entry key="ABRIR_EXP">
+					<set>
+						<value>FZAR_PPUESTA</value>
+					</set>
+				</entry>
 			</map>
 		</property>
 		<property name="tiposProcedimientosAdjudicados">
@@ -127,12 +169,12 @@
 		</property>
 		<property name="entidadesDesparalizacion">
 			<set>
-				<value>2039</value>
+				<value>0240</value>
 			</set>
 		</property>
 	</bean>
 	
-	<bean id="procedimientosProjectContextHaya" parent="procedimientosProjectContextDefault">
+	<bean id="procedimientosProjectContextCAJAMAR" parent="procedimientosProjectContextDefault">
 		<property name="limiteDeudaGlobal" value="1000000"/>
 		<property name="limiteDeudaBien" value="15000"/>
 		<property name="tipoSubastaSareb" value="H002"/>
@@ -187,9 +229,9 @@
 				<value>H033</value> <!-- fase liquidacion  -->
 			</set>
 		</property>
-	</bean>
+	</bean>	
 
-	<alias name="nmbCommonProjectContextHAYA" alias="nmbCommonProjectContext"/>
-	<alias name="procedimientosProjectContextHaya" alias="procedimientosProjectContext"/>		
-	<alias name="coreProjectContextHAYA" alias="coreProjectContext"/>
+	<alias name="nmbCommonProjectContextCAJAMAR" alias="nmbCommonProjectContext"/>
+	<alias name="procedimientosProjectContextCAJAMAR" alias="procedimientosProjectContext"/>		
+	<alias name="coreProjectContextCAJAMAR" alias="coreProjectContext"/>
 </beans>	

@@ -21,5 +21,11 @@
 	<bean p:entity="tabs.asunto.fast" p:name="historicoAsunto" p:order="2100"
 		p:fileName="/WEB-INF/jsp/plugin/mejoras/asuntos/tabs/tabHistoricoAsunto.jsp"
 		p:priority="2" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+    <bean p:entity="menu" 
+    	p:name="busquedas/preProyectado" p:order="150" 
+    	p:fileName="/WEB-INF/jsp/plugin/cajamar/listadoPreProyectado/busqueda/preProyectado.jsp" 
+    	class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+    	p:permission="MENU-LIST-PROPRE"/>	
 	
 </beans>

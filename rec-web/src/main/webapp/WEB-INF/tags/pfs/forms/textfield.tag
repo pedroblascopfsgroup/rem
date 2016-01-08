@@ -13,6 +13,7 @@
 <%@ attribute name="width" required="false" type="java.lang.String"%>
 <%@ attribute name="readOnly" required="false" type="java.lang.Boolean"%>
 <%@ attribute name="labelWidth" required="false" type="java.lang.String"%>
+<%@ attribute name="maxLength" required="false" type="java.lang.String" %>
 
 <c:set var="_width" value="175" />
 
@@ -35,6 +36,9 @@ var ${name} = app.creaText("${name}","<s:message code="${labelKey}" text="${labe
 	width : ${_width}
 	<c:if test="${obligatory}">,allowBlank: false</c:if>
 	<c:if test="${readOnly}">,readOnly:${readOnly}</c:if>
+	<c:if test="${maxLength != null}">
+		,autoCreate: {tag: 'input', type: 'text', maxlength: '${maxLength}'}
+	</c:if>
 	<c:if test="${searchOnEnter}">,enableKeyEvents: true
 	,listeners : {
 			keypress : function(target,e){

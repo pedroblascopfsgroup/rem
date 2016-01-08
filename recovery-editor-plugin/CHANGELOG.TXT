@@ -1,0 +1,18 @@
+------------------------
+-RECOVERY-EDITOR-PLUGIN-
+------------------------
+
+===============
+1.0.0-rc-09
+---------------
+- Mas adaptaciones para IE y posibilidad de obtener el XML en el editor sin tener que reiniciar la ventana.
+
+===============
+1.0.0-rc-08
+---------------
+- Modificación de la obtención del XML generado para compatibilidad con IE.
+
+===============
+1.0.0-rc-07
+---------------
+- El envio de las reglas de la vista al controlador se realiza en Base64 para que no interfiera ningún filtro de seguridad

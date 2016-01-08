@@ -20,7 +20,6 @@ import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Where;
 import org.hibernate.proxy.HibernateProxy;
 
-import es.capgemini.pfs.PluginCoreextensionConstantes;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.asunto.model.Procedimiento;
@@ -103,12 +102,20 @@ public class EXTAsunto extends Asunto {
 			+ "                         where m2.cnt_id = m.cnt_id )" + ")")
 	private Double saldoTotalPorContratosSQL;
 
-	@Formula("("
+	/*@Formula("("
 			+ " select sum(abs(prc.prc_saldo_recuperacion)) from prc_procedimientos prc "
 			+ " where prc.asu_id = ASU_ID  and prc.borrado = 0 "
 			+ " and prc.PRC_PRC_ID is null and prc.dd_epr_id not in ( '"
 			+ PluginCoreextensionConstantes.ESTADO_PROCEDIMIENTO_REORGANIZADO
-			+ "')" + " group by prc.asu_id" + ")")
+			+ "')" + " group by prc.asu_id" + ")")*/
+	
+	@Formula("(select prc.prc_saldo_recuperacion " +
+		  "     from prc_procedimientos prc " +
+		  "     where prc.prc_id in  " +
+		  "     (select   max (p1.prc_id) " +
+		  "          from prc_procedimientos p1" +
+		  "         where p1.asu_id = ASU_ID and p1.borrado = 0 " +
+		  "      ))")	
 	private Double importeEstimado;
 
 	@Formula("(" + _GESTOR_DESPACHO_GEXT + ")")
@@ -193,10 +200,10 @@ public class EXTAsunto extends Asunto {
 
 	public GestorDespacho getGestor() {
 		GestorDespacho gd = getGestorPorTipo();
-		if (gd == null) {
-			logger.warn("EL ASUNTO " + this.getId()
-					+ " NO TIENE GESTOR ASOCIADO");
-		}
+//		if (gd == null) {
+//			logger.warn("EL ASUNTO " + this.getId()
+//					+ " NO TIENE GESTOR ASOCIADO");
+//		}
 		return gd;
 
 		// return super.getGestor();
@@ -224,10 +231,10 @@ public class EXTAsunto extends Asunto {
 
 	private GestorDespacho getGestorPorTipo() {
 		GestorDespacho gd = getSupervisorPorTipo();
-		if (gd == null) {
-			logger.warn("EL ASUNTO " + this.getId()
-					+ " NO TIENE SUPERVISOR ASOCIADO");
-		}
+//		if (gd == null) {
+//			logger.warn("EL ASUNTO " + this.getId()
+//					+ " NO TIENE SUPERVISOR ASOCIADO");
+//		}
 
 		return gd;
 	}
@@ -326,12 +333,8 @@ public class EXTAsunto extends Asunto {
 		}
 	}
 
-	public void setImporteEstimado(Double importeEstimado) {
-		this.importeEstimado = importeEstimado;
-	}
-
 	public Double getImporteEstimado() {
-		return importeEstimado;
+		return this.importeEstimado;
 	}
 
 	/**
@@ -375,7 +378,7 @@ public class EXTAsunto extends Asunto {
 		}
 		return ultimoProc;
 	}
-
+	
 	@Transient
 	public static EXTAsunto instanceOf(Asunto asunto) {
 		EXTAsunto extAsunto = null;

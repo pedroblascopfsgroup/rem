@@ -934,7 +934,9 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		return modeloMultiGestor;
 	}
 
-	private List<EXTGestorAdicionalAsunto> getGestoresAdicionalesAsunto(Long idAsunto) {
+	@BusinessOperation(EXT_MGR_ASUNTO_GET_GESTORES_ADICIONALES_ASUNTO)
+	@Override
+	public List<EXTGestorAdicionalAsunto> getGestoresAdicionalesAsunto(Long idAsunto) {
 		Filter filtroAsunto = genericdDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto);
 		return genericdDao.getList(EXTGestorAdicionalAsunto.class, filtroAsunto);
 	}
@@ -1131,7 +1133,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		if (Checks.esNulo(dtoAsunto.getIdAsunto())) // CREAR EXTASUNTO
 		{
 			exp = (Expediente) executor.execute(InternaBusinessOperation.BO_EXP_MGR_GET_EXPEDIENTE, dtoAsunto.getIdExpediente());
-			id = asuntoDao.crearAsunto(gd, sup, procurador, dtoAsunto.getNombreAsunto(), exp, dtoAsunto.getObservaciones());
+			id = asuntoDao.crearAsuntoConEstado(gd, sup, procurador, dtoAsunto.getNombreAsunto(), exp, dtoAsunto.getObservaciones(),dtoAsunto.getCodigoEstadoAsunto());
 			dtoAsunto.setIdAsunto(id);
 		} else // MODIFICAR EXTASUNTO
 		{
@@ -1139,15 +1141,48 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		}
 
 		if (modeloMultiGestor()) {
-			cambiarGestorAsuntoGenerico(dtoAsunto, EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO);
-			cambiarGestorAsuntoGenerico(dtoAsunto, EXTDDTipoGestor.CODIGO_TIPO_GESTOR_CONF_EXP);
-			cambiarSupervisorGenerico(dtoAsunto, false, EXTDDTipoGestor.CODIGO_TIPO_GESTOR_SUPERVISOR);
-			cambiarSupervisorGenerico(dtoAsunto, false, EXTDDTipoGestor.CODIGO_TIPO_GESTOR_SUPERVISOR_CONF_EXP);
-			cambiarProcuradorMultiGEstor(dtoAsunto);
+			if ( (dtoAsunto instanceof EXTDtoAsunto) &&
+					(((EXTDtoAsunto)dtoAsunto).getListaMapGestoresId().size()>0)	) {
+				actualizarGestoresAdicionales((EXTDtoAsunto)dtoAsunto);
+			} else {
+				cambiarGestorAsuntoGenerico(dtoAsunto, EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO);
+				cambiarGestorAsuntoGenerico(dtoAsunto, EXTDDTipoGestor.CODIGO_TIPO_GESTOR_CONF_EXP);
+				cambiarSupervisorGenerico(dtoAsunto, false, EXTDDTipoGestor.CODIGO_TIPO_GESTOR_SUPERVISOR);
+				cambiarSupervisorGenerico(dtoAsunto, false, EXTDDTipoGestor.CODIGO_TIPO_GESTOR_SUPERVISOR_CONF_EXP);
+				cambiarProcuradorMultiGEstor(dtoAsunto);
+			}
 		}
 
 		logger.debug("CREADO ASUNTO CON ID " + id);
 		return id;
+	}
+	
+	@Transactional(readOnly = false)
+	private void actualizarGestoresAdicionales(EXTDtoAsunto dtoAsunto) {
+		//Primero hay que borrar todos los gestores del asunto y luego los volvemos a insertar los que se han enviado
+		List<EXTGestorAdicionalAsunto> gaaActuales = gestorAdicionalAsuntoDao.findGestorAdicionalesByAsunto(dtoAsunto.getIdAsunto());
+		for (EXTGestorAdicionalAsunto gaa : gaaActuales) {
+			gestorAdicionalAsuntoDao.delete(gaa);	
+		}
+		
+		Asunto asu = proxyFactory.proxy(AsuntoApi.class).get(dtoAsunto.getIdAsunto());
+		
+		//Ahora insertamos los enviados
+		for (Map<String,Long> gestorAdicional : dtoAsunto.getListaMapGestoresId()) {
+			EXTGestorAdicionalAsunto gaa = new EXTGestorAdicionalAsunto();
+			gaa.setAsunto(asu);
+			
+			EXTDDTipoGestor tipoGestor = genericdDao.get(EXTDDTipoGestor.class, genericdDao.createFilter(FilterType.EQUALS, "id", gestorAdicional.get("tipoGestor")));
+			gaa.setTipoGestor(tipoGestor);
+			
+			GestorDespacho gestor = genericdDao.get(GestorDespacho.class, genericdDao.createFilter(FilterType.EQUALS, "usuario.id", gestorAdicional.get("usuarioId"))
+																		, genericdDao.createFilter(FilterType.EQUALS, "despachoExterno.id", gestorAdicional.get("tipoDespacho")));
+			gaa.setGestor(gestor);
+			gestorAdicionalAsuntoDao.save(gaa);
+		}
+		
+		
+		
 	}
 
 	@Transactional(readOnly = false)
@@ -1710,7 +1745,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		List<Procedimiento> procedimientos = asunto.getProcedimientos();
 		for (Procedimiento p : procedimientos){
 			MEJProcedimiento mejp = proxyFactory.proxy(EXTProcedimientoApi.class).getInstanceOf(p);
-			if (!mejp.isEstaParalizado()) {
+			if (!Checks.esNulo(mejp) && !mejp.isEstaParalizado()) {				
 				if(tiposProcedimientos.contains(p.getTipoProcedimiento().getCodigo())) {
 					return true;
 				}
@@ -1855,7 +1890,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 //
 //		return asuntoDao.buscarAsuntosPaginatedDinamicoCount(usuarioLogado, dto, params);
 //	}
-	/*
+	
 	@Override
 	@BusinessOperation(EXTAsuntoApi.EXT_BO_ASU_MGR_FIND_ASUNTOS_PAGINATED_DINAMICO_COUNT)
 	public Page findAsuntosPaginatedDinamicoCount(EXTDtoBusquedaAsunto dto, String params) {
@@ -1883,8 +1918,8 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		
 		return results;
 	}
-	*/
-	@Override
+	
+/*	@Override
 	@BusinessOperation(EXTAsuntoApi.EXT_BO_ASU_MGR_FIND_ASUNTOS_PAGINATED_DINAMICO_COUNT)
 	public List<Asunto> findAsuntosPaginatedDinamicoCount(EXTDtoBusquedaAsunto dto, String params) {
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
@@ -1913,7 +1948,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		page.setResults(listaRetorno);
 		return (List<Asunto>) page.getResults();
 	}
-	
+	*/
 	/**
 	 * Indica si el Usuario Logado es el gestor de Decision del asunto.
 	 * 

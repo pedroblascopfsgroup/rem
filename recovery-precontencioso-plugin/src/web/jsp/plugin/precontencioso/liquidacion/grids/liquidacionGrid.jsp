@@ -63,6 +63,9 @@ var abrirPantallaPlantillasLiquidacion = function() {
 	});
 }
 
+<sec:authentication var="user" property="principal" />
+
+
 var btnEditarValores = new Ext.Button({
 	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.editar" text="**Editar valores" />',
 	iconCls: 'icon_edit',
@@ -70,7 +73,14 @@ var btnEditarValores = new Ext.Button({
 	handler: function() {
 		var w = app.openWindow({
 			flow: 'liquidacion/abrirEditarLiquidacion',
-			width: 670,
+			width: 	<c:choose>
+					    <c:when test="${user.entidad.descripcion eq 'CAJAMAR'}">
+					       410
+					    </c:when>
+					    <c:otherwise>
+					        670
+					    </c:otherwise>
+					</c:choose>,
 			closable: true,
 			title: '<s:message code="plugin.precontencioso.grid.liquidacion.titulo.editarliq" text="**Editar Liquidacion" />',
 			params: {idLiquidacion: idLiquidacionSeleccionada()}
@@ -119,7 +129,6 @@ var btnVisar = new Ext.Button({
 							refrescarLiquidacionesGrid();
 						},
 						failure: function ( result, request ) {
-							debugger;
 						}
 					});
 	  			}
@@ -229,6 +238,7 @@ var botonRefresh = new Ext.Button({
 
 var gridLiquidaciones = app.crearGrid(storeLiquidaciones, cmLiquidacion, {
 	title: '<s:message code="plugin.precontencioso.grid.liquidacion.titulo" text="**Liquidaciones" />',
+	<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_LIQ_BTN">
 	bbar: [
 		btnSolicitar, 
 		btnEditarValores, 
@@ -239,6 +249,7 @@ var gridLiquidaciones = app.crearGrid(storeLiquidaciones, cmLiquidacion, {
 		btnGenerar,
 		botonRefresh
 	],
+	</sec:authorize>
 	height: 250,
 	autoWidth: true,
 	style:'padding-top: inherit',

@@ -1,5 +1,7 @@
 package es.capgemini.pfs.politica;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.pfs.arquetipo.model.Arquetipo;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
@@ -28,8 +32,10 @@ import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.itinerario.model.DDTipoReglaVigenciaPolitica;
 import es.capgemini.pfs.itinerario.model.Estado;
 import es.capgemini.pfs.itinerario.model.ReglasVigenciaPolitica;
+import es.capgemini.pfs.persona.dao.PersonaDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.politica.dao.CicloMarcadoPoliticaDao;
+import es.capgemini.pfs.politica.dao.DDTipoPoliticaDao;
 import es.capgemini.pfs.politica.dao.PoliticaDao;
 import es.capgemini.pfs.politica.dto.DtoPolitica;
 import es.capgemini.pfs.politica.model.AnalisisPersonaPolitica;
@@ -49,6 +55,9 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 
 /**
  * Clase con los métodos de negocio relativos a los Objetivos.
@@ -63,12 +72,21 @@ public class PoliticaManager {
 
     @Autowired
     private PoliticaDao politicaDao;
+    
+    @Autowired
+    private DDTipoPoliticaDao ddTipoPoliticaDao;
 
     @Autowired
     private CicloMarcadoPoliticaDao cicloMarcadoPoliticaDao;
 
     @Autowired
     private DictionaryManager dictionaryManager;
+    
+    @Autowired
+	private GenericABMDao genericDao;
+    
+    @Autowired
+    private PersonaDao personaDao;
 
     private final Log logger = LogFactory.getLog(getClass());
 
@@ -116,6 +134,10 @@ public class PoliticaManager {
 
         DDZona zonaSupervisor = (DDZona) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDZona.class, dto
                 .getCodigoSupervisorZona());
+        
+        DDMotivo motivo = (DDMotivo) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDMotivo.class, dto.getMotivo());
+        
+        Auditoria auditoria = new Auditoria();
 
         politica.setTipoPolitica(tipo);
         politica.setCicloMarcadoPolitica(cicloMarcado);
@@ -133,6 +155,23 @@ public class PoliticaManager {
         if (zonaSupervisor != null) {
             politica.setZonaSupervisor(zonaSupervisor);
         }
+        
+        if(motivo != null){
+        	politica.setMotivo(motivo);
+        }
+        
+        if(dto.getFecha() != null){
+        	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        	Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
+        	try {
+				auditoria.setFechaCrear(sdf.parse(dto.getFecha()));
+				auditoria.setUsuarioCrear(usuario.getNombre());
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+        	politica.setAuditoria(auditoria);
+        }
+        
         politica.setUsuarioCreacion((Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO));
 
         if (politica.getId() == null) {
@@ -238,6 +277,46 @@ public class PoliticaManager {
     @BusinessOperation(InternaBusinessOperation.BO_POL_MGR_GET_TIPO_POLITICA_LIST)
     public List<DDTipoPolitica> getTipoPoliticaList() {
         return (List<DDTipoPolitica>) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_LIST, DDTipoPolitica.class.getName());
+    }
+    
+    @BusinessOperation(InternaBusinessOperation.BO_POL_MGR_GET_TIPO_POLITICA_PERSONA_LIST)
+    public List<DDTipoPolitica> getTipoPoliticaPersonaList(Long idPersona) {
+    	//Si no podemos obtener la politica de la entidad para la persona
+    	//Devolvemos todos los tipos de politicas
+    	if (idPersona==null)
+    		return this.getTipoPoliticaList();
+    	
+    	Persona persona = personaDao.get(idPersona);
+    	if (persona==null)
+    		return this.getTipoPoliticaList();
+    	
+    	if (persona.getPoliticaEntidad()==null)
+    		return this.getTipoPoliticaList();
+    	
+    	//Si tenemos informado para la persona un tipo de politica de la entidad
+    	//devolvemos el diccionario filtrado por los tipos que le corresponden
+    	List<DDTipoPolitica> politicas = (List<DDTipoPolitica>)genericDao.getList(DDTipoPolitica.class,
+    				genericDao.createFilter(FilterType.EQUALS, "politicaEntidad.id", persona.getPoliticaEntidad().getId()),
+    				genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+    	
+    	//Si no hemos obtenido ninguna politica de la traducción, devolvemos todas
+    	if (Checks.estaVacio(politicas)) {
+    		return this.getTipoPoliticaList();
+    	} else {
+    		return politicas;
+    	}
+    }
+    
+    /**
+     * Recuperamos los motivos 
+     * @return
+     */
+    @BusinessOperation(InternaBusinessOperation.BO_POL_MGR_GET_TIPO_MOTIVO)
+    public List<DDMotivo> getMotivoList(){
+		
+    	List<DDMotivo> motivos = genericDao.getList(DDMotivo.class);
+    	
+		return motivos;
     }
 
     /**
@@ -362,7 +441,6 @@ public class PoliticaManager {
             DDEstadoItinerarioPolitica estadoItinerarioPolitica = (DDEstadoItinerarioPolitica) executor
                     .execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDEstadoItinerarioPolitica.class,
                             DDEstadoItinerarioPolitica.ESTADO_PREPOLITICA);
-            DDTipoPolitica politicaPersona = persona.getPrepolitica();
 
             Politica prepolitica = new Politica();
 
@@ -373,9 +451,45 @@ public class PoliticaManager {
             prepolitica.setEstadoItinerarioPolitica(estadoItinerarioPolitica);
             prepolitica.setCicloMarcadoPolitica(cicloMarcado);
 
+            /**DDTipoPolitica politicaPersona = persona.getPrepolitica();
             if (politicaPersona != null) {
                 prepolitica.setTipoPolitica(politicaPersona);
+            }**/
+            //Nueva forma de obtener el tipo de política
+            
+            
+            DDTipoPolitica tipoPolitica = null;
+            
+            //Si el cliente tiene una politica de la entidad, se aplica esta
+            if (persona.getPoliticaEntidad()!=null) {
+            	//Hay que obtener la traducción a las politicas de recovery,
+            	//Si hay mas de una posible, nos quedamos con la primera 
+            	
+            	tipoPolitica = ddTipoPoliticaDao.buscarTipoPoliticaAsociadaAEntidad(persona.getPoliticaEntidad().getCodigo());        	
             }
+            
+            //Si no se ha conseguido un tipo de politica
+            if (tipoPolitica == null) {
+	            Arquetipo arquetipo = null;
+	            
+	            //Si el expediente es automático se obtiene el arquetipo de la persona, de la tabla ARR
+	            if (!expediente.isManual()) {
+	            	arquetipo = (Arquetipo) executor.execute(ConfiguracionBusinessOperation.BO_ARQ_MGR_GET_RECUPERACION_BY_PERSONA, persona.getId());
+	            } else {
+	            	//Si no el arquetipo se preselecciona en la creación del expedietne manual
+	            	arquetipo = expediente.getArquetipo();
+	            }
+	            	
+	            
+	            if( arquetipo!=null && arquetipo.getItinerario()!=null){
+	            	tipoPolitica = arquetipo.getItinerario().getPrePolitica();
+	            }
+            }
+            
+            if (tipoPolitica!=null) {
+                prepolitica.setTipoPolitica(tipoPolitica);
+            }
+            
             politicaDao.save(prepolitica);
 
             // ********************************************************************** //
@@ -410,9 +524,9 @@ public class PoliticaManager {
                 politicaCE.setZonaGestor(zonaGestor);
                 politicaCE.setZonaSupervisor(zonaSupervisor);
             }
-
-            if (politicaPersona != null) {
-                politicaCE.setTipoPolitica(politicaPersona);
+            //Nueva forma de obtener el tipo de política para CE
+            if (tipoPolitica!=null) {
+                politicaCE.setTipoPolitica(tipoPolitica);
             }
 
             politicaDao.save(politicaCE);
@@ -430,7 +544,11 @@ public class PoliticaManager {
                     .execute(ConfiguracionBusinessOperation.BO_ZONA_MGR_EXISTE_PERFIL_ZONA, zonaBusqueda.getId(), idPerfil);
             if (existe) return zonaBusqueda;
 
-            zonaBusqueda = zonaBusqueda.getZonaPadre();
+            if (!Checks.esNulo(zonaBusqueda.getZonaPadre()) && zonaBusqueda == zonaBusqueda.getZonaPadre()) {
+            	zonaBusqueda = null;
+            } else {
+            	zonaBusqueda = zonaBusqueda.getZonaPadre();
+            }
         }
 
         throw new GenericRollbackException("No se encuentra correspondencia para zona-perfil: " + zonaExpediente.getId() + "-" + perfilOrigen.getId());
@@ -994,6 +1112,17 @@ public class PoliticaManager {
     public Politica get(Long id) {
         return politicaDao.get(id);
     }
+    
+    
+    /**
+     * @param id long
+     * @return Politica
+     */
+    @BusinessOperation(InternaBusinessOperation.BO_POL_MGR_GET_POL_BY_CMP)
+    public List<Politica> getByCmp(Long id) {
+        //return politicaDao.get(id) ;
+    	return politicaDao.buscarPoliticasPorCmp(id);
+    }
 
     /**
      * Cancela una política y mata sus BPMs
@@ -1073,16 +1202,17 @@ public class PoliticaManager {
 
         for (CicloMarcadoPolitica cmp : listadoCiclos) {
             List<Politica> listadoPoliticas = cmp.getPoliticas();
-
-            Politica politicaBorrar = listadoPoliticas.get(listadoPoliticas.size() - 1);
-            Politica politicaProponer = listadoPoliticas.get(listadoPoliticas.size() - 2);
-
-            DDEstadoPolitica estadoPropuesta = (DDEstadoPolitica) dictionaryManager.getByCode(DDEstadoPolitica.class,
-                    DDEstadoPolitica.ESTADO_PROPUESTA);
-            politicaProponer.setEstadoPolitica(estadoPropuesta);
-
-            politicaDao.delete(politicaBorrar);
-            politicaDao.update(politicaProponer);
+            if (listadoPoliticas.size()>1) {
+	            Politica politicaBorrar = listadoPoliticas.get(listadoPoliticas.size() - 1);
+	            Politica politicaProponer = listadoPoliticas.get(listadoPoliticas.size() - 2);
+	
+	            DDEstadoPolitica estadoPropuesta = (DDEstadoPolitica) dictionaryManager.getByCode(DDEstadoPolitica.class,
+	                    DDEstadoPolitica.ESTADO_PROPUESTA);
+	            politicaProponer.setEstadoPolitica(estadoPropuesta);
+	
+	            politicaDao.delete(politicaBorrar);
+	            politicaDao.update(politicaProponer);
+            }
         }
     }
 
@@ -1110,6 +1240,15 @@ public class PoliticaManager {
         //Marcamos la política como histórica
         politica.setEstadoPolitica((DDEstadoPolitica) dictionaryManager.getByCode(DDEstadoPolitica.class, DDEstadoPolitica.ESTADO_HISTORICA));
         politicaDao.save(politica);
+    }
+    
+    /**
+     * Devuelve los tipos de política no marcados como borrado
+     * @return List<DDTipoPolitica> Lista de tipos de política
+     */
+    @BusinessOperation(InternaBusinessOperation.BO_POL_MGR_GET_TIPOS_POLITICA)
+    public List<DDTipoPolitica> getTiposPolitica() {
+        return genericDao.getList(DDTipoPolitica.class, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
     }
 
 }

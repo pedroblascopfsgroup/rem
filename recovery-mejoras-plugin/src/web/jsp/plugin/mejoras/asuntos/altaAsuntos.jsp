@@ -1,6 +1,7 @@
 <%@page pageEncoding="iso-8859-1" contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
@@ -16,6 +17,101 @@
 	var cambioSupervisor=false;
 	var esGestor=false;
 	
+	<c:if test="${asuntoEditar!=null}" >
+		var idAsunto = ${asuntoEditar.id};
+	</c:if>
+	
+	var porUsuario = false;
+	var adicional = false;
+	var procuradorAdicional = false;
+	<sec:authorize ifAllGranted="ASU_GESTOR_SOLOPROPIAS">
+		porUsuario = true;
+		<sec:authorize ifAllGranted="ASU_GESTOR_SOLOPROPIAS_ADIC">
+		 adicional = true;
+		</sec:authorize>
+		<sec:authorize ifAllGranted="ASU_PROCURADOR_SOLOPROPIAS_ADIC">
+		 procuradorAdicional = true;
+		</sec:authorize>
+	</sec:authorize>
+	
+	var ugCodigo = '3';
+	var gestor = Ext.data.Record.create([
+		 {name:'id'}
+		,{name:'idGestor'}
+		,{name:'usuarioId'}
+		,{name:'usuario'}
+		,{name:'tipoGestorId'}
+		,{name:'tipoGestorDescripcion'}
+		,{name:'tipoDespachoId'}
+		,{name:'fechaDesde'}
+		,{name:'fechaHasta'}
+		,{name: 'tipoVia'}
+		,{name: 'domicilio'}
+		,{name: 'domicilioPlaza'}
+		,{name: 'telefono1'}
+		,{name: 'email'}
+		
+		
+    ]);
+    
+    var gestorStore = page.getStore({
+		event:'listado'
+		,storeId : 'idGestorStore'
+		,flow:'extasunto/getGestoresAdicionalesAsunto'
+		,reader : new Ext.data.JsonReader({root:'gestor',totalProperty : 'total'}, gestor)
+	});
+	
+	var coloredRender = function (value, meta, record) {
+		/*
+		if (meta.id==5 || meta.id==6) { //Columnas de fechas
+			var formateadorFecha = Ext.util.Format.dateRenderer('d/m/Y');
+			value = formateadorFecha(value);
+		}
+		
+		var fechaHasta = record.get('fechaHasta');
+		if (fechaHasta){
+			return '<span style="color: #CC6600; font-weight: bold;">'+value+'</span>';
+			//return value;
+		}
+		else {
+		*/
+			return '<span style="color: #4169E1; font-weight: bold;">'+value+'</span>';
+		/*
+		}
+		return value;
+		*/
+	};	
+	
+	var dateColoredRender = function (value, meta, record) {
+		<%--var valor = app.format.dateRenderer(value, meta, record); --%>
+		return coloredRender(value, meta, record);
+	};	
+		
+	var gestorCM  = new Ext.grid.ColumnModel([
+        {header: 'Id',sortable: false, dataIndex: 'id', hidden:'true'}
+        ,{header: 'IdGestor',sortable: false, dataIndex: 'idGestor', hidden:'true'}
+        ,{header: '<s:message code="plugin.coreextension.multigestor.descripcion" text="**Descripcion" />',sortable: false, dataIndex: 'tipoGestorDescripcion',width:100, renderer: coloredRender}
+        ,{header: '<s:message code="plugin.coreextension.multigestor.usuario" text="**Usuario" />',sortable: false, dataIndex: 'usuario',width:150, renderer: coloredRender}
+        ,{header: 'TipoGestorId', sortable: false, dataIndex: 'tipoGestorId', hidden:'true'}
+        ,{header: 'Desde',sortable: false, dataIndex: 'fechaDesde', hidden: 'true'}       
+		,{header: 'Hasta',sortable: false, dataIndex: 'fechaHasta', hidden: 'true'}
+		,{header: 'TipoVia',sortable: false, dataIndex: 'tipoVia', hidden: 'true'}
+		,{header: '<s:message code="plugin.coreextension.multigestor.domicilio" text="**Domicilio" />',sortable: false, dataIndex: 'domicilio',width:150, renderer: coloredRender}
+		,{header: '<s:message code="plugin.coreextension.multigestor.localidad" text="**Localidad" />',sortable: false, dataIndex: 'domicilioPlaza',width:100, renderer: coloredRender}
+		,{header: '<s:message code="plugin.coreextension.multigestor.telefono" text="**Teléfono" />',sortable: false, dataIndex: 'telefono1',width:50, renderer: coloredRender} 
+		,{header: 'eMail',sortable: false, dataIndex: 'email', hidden: 'true'}      
+    ]);
+
+    var recargar = function(){
+    	<c:if test="${asuntoEditar!=null}" >
+			gestorStore.webflow({idAsunto: idAsunto});
+		</c:if>
+	}	
+	
+	<c:if test="${asuntoEditar!=null}" >
+		recargar();
+	</c:if>
+	
 	<c:if test="${cambioGestor!=null}">
 		cambioGestor=true;
 	</c:if> 
@@ -23,10 +119,6 @@
 		cambioSupervisor=true;
 	</c:if> 
 	
-	
-	
-	// Emilio
-		
 	var listTiposGestorAsuntoUsuarioLogado = [
 	    <c:if test="${listTiposGestorAsuntoUsuarioLogado!=null}">	
 	    	<c:forEach items="${listTiposGestorAsuntoUsuarioLogado}" var="lista" varStatus="loop">
@@ -99,19 +191,29 @@
 		
 	/*Jerarquía*/
 	var zonas=<app:dict value="${zonas}" />;
-	var jerarquia = <app:dict value="${niveles}" blankElement="true" blankElementValue="" blankElementText="---" />;
 	
-	var comboJerarquia = app.creaCombo({
-		triggerAction: 'all'
-		,disabled:cambioGestor||cambioSupervisor
-		,labelStyle:labelStyle
-		,autoWidth:true
-		,style:style 
-		,data:jerarquia
-		,value:jerarquia.diccionario[0].codigo
-		,name : 'jerarquia'
-		,fieldLabel : '<s:message code="menu.clientes.listado.filtro.jerarquia" text="**Jerarquia" />'});
-	              
+	var listaJerarquia = <fwk:json>
+							<json:array name="jerarquia" items="${niveles}" var="s">
+								<json:object>
+									<json:property name="id" value="${s.id}" />
+									<json:property name="descripcion" value="${s.descripcion}" />
+								</json:object>
+							</json:array>
+						</fwk:json>;
+	
+	<pfsforms:combo name="comboJerarquia" 
+		dict="listaJerarquia" 
+		displayField="descripcion" 
+		root="jerarquia" 
+		labelKey="menu.clientes.listado.filtro.jerarquia"
+		label="**Jerarquia"
+		value="0" 
+		valueField="id"
+		labelStyle="font-weight:bolder;"
+		 />
+		
+	comboJerarquia.disabled=cambioGestor||cambioSupervisor;	
+
     var zonasRecord = Ext.data.Record.create([
 		 {name:'codigo'}
 		,{name:'descripcion'}
@@ -127,42 +229,20 @@
     
     
 	var comboZonas = app.creaDblSelect(zonas, '<s:message code="menu.clientes.listado.filtro.centro" text="**Centro" />',{store:optionsZonasStore, funcionReset:recargarComboZonas,disabled:cambioGestor||cambioSupervisor,labelStyle:labelStyle2});
-	/*Fin jerarquia*/
 
-	var recargarCombosGestoresProcuradores=function(){
-		if(comboZonas.getValue()!=''){
-			//recargar combo despachos externos
-			optionsDespachosStore.webflow({
-				zonas:comboZonas.getValue()
-				,tipoDespacho:'<fwk:const value="es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno.CODIGO_DESPACHO_EXTERNO" />'
-			});
-			//recargar combo despachos procuradores
-			optionsDespachosProcuradoresStore.webflow({
-				zonas:comboZonas.getValue()
-				,tipoDespacho:'<fwk:const value="es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno.CODIGO_DESPACHO_PROCURADOR" />'
-			});
-			//recargar combo despachos confección expedientes (DCEXP) Emilio
-			optionsDespachosCEXPStore.webflow({
-				zonas:comboZonas.getValue()
-				,tipoDespacho:'<fwk:const value="es.pfsgroup.plugin.recovery.mejoras.PluginMejorasCodigosConstants.CODIGO_DESPACHO_CONFECCION_EXPEDIENTE" />'
-			});
-			// Emilio Fin
-			comboDespachosExternos.clearValue();
-			comboDespachosProcuradores.clearValue();
-			comboGestores.clearValue();
-			comboSupervisores.clearValue();
-			comboProcuradores.clearValue();
-			
-			//confección expedientes Emilio
-			comboDespachosCEXP.clearValue();			
-			comboGestoresCEXP.clearValue();
-			comboSupervisoresCEXP.clearValue();			
-			//Emilio Fin
-		}	
-	}
 	comboZonas.on('change',function(){
-		
+		if (comboTipoGestor.getValue()!='' && comboZonas.getValue()!='') {
+			recargarDespachos();
+		} else {
+			if (comboZonas.getValue()=='') {
+				comboTipoDespacho.reset();
+				comboTipoUsuario.reset();
+				comboTipoDespacho.setDisabled(true);
+				comboTipoUsuario.setDisabled(true);
+			}
+		}
 	});
+	
 	var recargarComboZonas = function(){
 		if (comboJerarquia.getValue()!=null && comboJerarquia.getValue()!=''){
 			optionsZonasStore.webflow({id:comboJerarquia.getValue()});
@@ -180,481 +260,305 @@
 	
 	comboJerarquia.on('select',limpiarYRecargar);
 	
-	recargarComboZonas();	
+	recargarComboZonas();
 	
-	var despachosRecord = Ext.data.Record.create([
+	var tipoGestor = Ext.data.Record.create([
 		 {name:'id'}
-		,{name:'tipo'}
-		,{name:'codigo'}
-		,{name:'nombre'}
-	]);
-    
-    var optionsDespachosStore = page.getStore({
-	       flow: 'asuntos/buscarDespachosPorZona'
-	       ,reader: new Ext.data.JsonReader({
-	    	 root : 'despachos'
-	    }, despachosRecord)
-	       
-	});
-
-	// DOV - 14/12/2011 Los gestores NO pueden cambiar el despacho de un Asunto
-	var comboDespachosExternos = new Ext.form.ComboBox({
-				store:optionsDespachosStore
-				,displayField:'nombre'
-				,valueField:'codigo'
-				,mode: 'local'
-				,autoWidth:true
-				,resizable: true			
-				,triggerAction: 'all'
-				,emptyText:'---'
-				,labelStyle:labelStyle
-				,style:style
-				,fieldLabel : '<s:message code="asuntos.alta.despacho" text="**Despacho"/>'
-				<c:if test="${asuntoEditar!=null}" >
-					,value:'${asuntoEditar.gestor.despachoExterno.id}'
-				</c:if>
-				,disabled: !soyDeEsteTipoGestor("SUP") 				
-				<c:if test="${tienePerfilGestor==true}" >
-					,disabled:true
-				</c:if>
-				<app:test id="comboDespachosAA" addComa="true"/>
-	});	
-	comboDespachosExternos.on('focus',recargarCombosGestoresProcuradores);	
-	
-	var optionsDespachosProcuradoresStore = page.getStore({
-	       flow: 'asuntos/buscarDespachosPorZona'
-	       ,reader: new Ext.data.JsonReader({
-	    	 root : 'despachos'
-	    }, despachosRecord)
-	       
-	});
-	var comboDespachosProcuradores = new Ext.form.ComboBox({
-				store:optionsDespachosProcuradoresStore
-				,displayField:'nombre'
-				,valueField:'codigo'
-				,mode: 'local'
-				,editable: false	
-				,autoWidth:true
-				,resizable: true			
-				,triggerAction: 'all'
-				,labelStyle:labelStyle
-				,emptyText:'---'
-				,allowBlank:true
-				,disabled:cambioSupervisor
-				,style:style
-				,fieldLabel : '<s:message code="asuntos.alta.despacho" text="**Despacho"/>'
-				<c:if test="${asuntoEditar!=null}" >
-					,value:'${asuntoEditar.procurador.despachoExterno.id}'
-				</c:if>
-	});
-	
-	<c:if test="${appProperties.runInSelenium==false}">
-		// Si estamos corriendo tests selenium esta función debe ser global para que
-		// pueda ser llamada desde el JUnit 
-		var</c:if> recargarComboGestores = function(){
-		optionsGestoresStore.webflow({id:comboDespachosExternos.getValue()});
-		optionsSupervisoresStore.webflow({id:comboDespachosExternos.getValue()});
-		comboGestores.enable();
-		comboGestores.focus();
-		comboSupervisores.enable();
-	}
-	<%--
-	var recargarComboProcuradores = function(){
-		optionsProcuradoresStore.webflow({id:comboDespachosProcuradores.getValue()});
-		comboProcuradores.enable();
-		comboProcuradores.focus();
-	}--%>
-	
-	var recargarComboProcuradores = function(){
-		dsProcuradores.load({params:{id:comboDespachosProcuradores.getValue()}});
-		dsProcuradores.baseParams.id=comboDespachosProcuradores.getValue();
-		comboProcuradores.setValue();
-		comboProcuradores.enable();
-		comboProcuradores.focus();
-	}
-	
-	var bloquearComboGestores = function(){
-		comboGestores.disable();
-		comboGestores.reset();
-		comboSupervisores.disable();
-		comboSupervisores.reset();
-	}
-	
-	comboDespachosExternos.on('focus',bloquearComboGestores);
-	
-	comboDespachosExternos.on('select',recargarComboGestores);
-	
-	comboDespachosProcuradores.on('select',recargarComboProcuradores);
-	
-	<%--AÑADIR FUNCIONALIDAD DE COMBO PAGINADO CON BUSQUEDA PARA PROCURADORES --%>
-	var codProcurador = '';
-	var decenaInicio = 0;
-	
-	var dsProcuradores = new Ext.data.Store({
-		autoLoad:false,
-		baseParams: {limit:10, start:0, id:comboDespachosProcuradores.getValue(),tipoDespacho:'<fwk:const value="es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno.CODIGO_DESPACHO_PROCURADOR" />'},
-		proxy: new Ext.data.HttpProxy({
-			url: page.resolveUrl('plugin/mejoras/asuntos/plugin.mejoras.asuntos.buscaGestoresByDescripYDespacho')
-		}),
-		reader: new Ext.data.JsonReader({
-			root: 'gestores'
-			,totalProperty: 'total'
-		}, [
-			{name: 'codigo', mapping: 'codigo'},
-			{name: 'descripcion', mapping: 'descripcion'}
-		])
-	});
-	  
-	var comboProcuradores = new Ext.form.ComboBox ({
-		store:  dsProcuradores,
-		id: 'comboProcuradores',
-		allowBlank: true,
-		blankElementText: '--',
-		disabled: false,
-		labelStyle:labelStyle,
-		style:style,
-		displayField: 'descripcion', 	
-		valueField: 'codigo', 		
-		fieldLabel: '<s:message code="asuntos.alta.gestor" text="**Procurador" />',		
-		hiddenName:'${asuntoEditar.procurador.id}',
-		loadingText: 'Searching...',
-		width: 200,
-		resizable: true,
-		pageSize: 10,
-		triggerAction: 'all',
-		mode: 'remote'
-		,value:'${asuntoEditar.procurador.id}'
-	});	
-	comboProcuradores.setWidth(270);
-	
-	codProcurador='${asuntoEditar.procurador.id}';
-
-	Ext.onReady(function() {
-		decenaInicio = 0;
-		if (codProcurador!=''){
-			Ext.Ajax.request({
-					url: page.resolveUrl('plugin/mejoras/asuntos/plugin.mejoras.asuntos.buscaGestoresById')
-					,params: {codigo: codProcurador,id:comboDespachosProcuradores.getValue(),tipoDespacho:'<fwk:const value="es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno.CODIGO_DESPACHO_PROCURADOR" />'}
-					,method: 'POST'
-					,success: function (result, request){
-						var r = Ext.util.JSON.decode(result.responseText)
-						decenaInicio = (r.paginaParaGestor);
-						dsProcuradores.setBaseParam('start',decenaInicio);
-						comboProcuradores.store.reload();
-						dsProcuradores.on('load', function(){ 
-							comboProcuradores.setValue(codProcurador);
-							dsProcuradores.events['load'].clearListeners();
-						});
-					}				
-			});
-		}
-	});
-
-	var Gestor = Ext.data.Record.create([
-		 {name:'codigo'}
 		,{name:'descripcion'}
 	]);
 	
-	var optionsGestoresStore = page.getStore({
-	       flow: 'asuntos/buscarGestores'
+	var optionsGestorStore = page.getStore({
+	       flow: 'coreextension/getListTipoGestorAdicionalData'
 	       ,reader: new Ext.data.JsonReader({
-	    	 root : 'gestores'
-	    }, Gestor)
-	       
+	    	 root : 'listadoGestores'
+	    }, tipoGestor)	       
 	});
-	
-	var comboGestores = new Ext.form.ComboBox({
-				store:optionsGestoresStore
-				,displayField:'descripcion'
-				,valueField:'codigo'
-				,forceSelection:true 				
-				,mode: 'remote'
-				,autoWidth:true
-				,resizable: true			
-				,emptyText:'---'
-				,triggerAction: 'all'
-				,editable: false
-				,labelStyle:labelStyle
-				,style:style
-				,disabled: !cambioGestor || !soyDeEsteTipoGestor("GEXT") && !soyDeEsteTipoGestor("SUP")
-				,fieldLabel : '<s:message code="asuntos.alta.gestor" text="**Gestor"/>'
-				,name: 'comboGestores'
-				<app:test id="comboGestoresAA" addComa="true"/>
-				
-	});
-
-
-	var labelTipoGestor = new Ext.form.Label({
-		text:'[Externo]'
-		,style:'valgin:center'
-	});
-	
-	var optionsSupervisoresStore = page.getStore({
-	       flow: 'asuntos/buscarSupervisoresDespachos'
-	       ,reader: new Ext.data.JsonReader({
-	    	 root : 'gestores'
-	    }, Gestor)
-	       
-	});
-	
-	var comboSupervisores = new Ext.form.ComboBox({
-				store:optionsSupervisoresStore
-				,displayField:'descripcion'
-				,valueField:'codigo'
-				,forceSelection:true 				
-				,emptyText:'---'
-				,autoWidth:true
-				,resizable: true			
-				,mode: 'remote'
-				,triggerAction: 'all'
-				,editable: false
-				,labelStyle:labelStyle
-				,style:style
-				,disabled: !cambioSupervisor || !soyDeEsteTipoGestor("GEXT") && !soyDeEsteTipoGestor("SUP")
-				,fieldLabel : '<s:message code="asuntos.alta.supervisor" text="**Supervisor"/>'
-				,name: 'comboSupervisores'
-				<app:test id="comboSupervisoresAA" addComa="true"/>
-	});
-	
-	
-	<%-- Emilio	--%>		
-	
-	var optionsDespachosCEXPStore = page.getStore({
-	       flow: 'asuntos/buscarDespachosPorZona'
-	       ,reader: new Ext.data.JsonReader({
-	    	 root : 'despachos'
-	    }, despachosRecord)
-	       
-	});
-	
-	var comboDespachosCEXP = new Ext.form.ComboBox({
-				store:optionsDespachosCEXPStore
-				,displayField:'nombre'
-				,valueField:'codigo'
-				,mode: 'local'
-				,editable: false	
-				,autoWidth:true
-				,resizable: true			
-				,triggerAction: 'all'
-				,labelStyle:labelStyle
-				,emptyText:'---'
-				,allowBlank:true				
-				,style:style
-				,fieldLabel : '<s:message code="asuntos.alta.despacho" text="**Despacho"/>'
-				<c:if test="${asuntoEditar!=null}" >
-					,value:'${asuntoEditar.gestorCEXP.despachoExterno.id}'
-				</c:if>
-				,disabled: !soyDeEsteTipoGestor("SUPCEXP")
-				<c:if test="${tienePerfilGestor==true}" >
-					,disabled:true
-				</c:if>				
-	});
-	
-	
-	var optionsGestoresCEXPStore = page.getStore({
-	       flow: 'asuntos/buscarGestores'
-	       ,reader: new Ext.data.JsonReader({
-	    	 root : 'gestores'
-	    }, Gestor)
-	       
-	});
-	
-	var comboGestoresCEXP = new Ext.form.ComboBox({
-				store:optionsGestoresCEXPStore
-				,displayField:'descripcion'
-				,valueField:'codigo'
-				,forceSelection:true 
-				,disabled:true
-				,mode: 'remote'
-				,autoWidth:true
-				,resizable: true			
-				,emptyText:'---'
-				,triggerAction: 'all'
-				,editable: false
-				,labelStyle:labelStyle
-				,style:style	
-				,disabled:!cambioGestor	 || !soyDeEsteTipoGestor("GECEXP") && !soyDeEsteTipoGestor("SUPCEXP")		
-				,fieldLabel : '<s:message code="asuntos.alta.gestor" text="**Gestor"/>'
-				,name: 'comboGestoresCEXP'
-				<app:test id="comboGestoresCEXPAA" addComa="true"/>
-				
-	});
-		
-    var optionsSupervisoresCEXPStore = page.getStore({
-	       flow: 'asuntos/buscarSupervisoresDespachos'
-	       ,reader: new Ext.data.JsonReader({
-	    	 root : 'gestores'
-	    }, Gestor)
-	       
+	var tituloTipoGestor = new Ext.form.Label({
+   		text:'<s:message code="menu.clientes.filtrado.tipoGestor" text="**Tipo gestor: " />'
+		,style:'font-size:11'
+	}); 
+	var comboTipoGestor = new Ext.form.ComboBox({
+		store:optionsGestorStore
+		,displayField:'descripcion'
+		,valueField:'id'
+		//,disabled:true
+		,editable: false
+		,mode: 'remote'
+		,forceSelection: true
+		,emptyText:'Seleccionar'
+		,triggerAction: 'all'
+		,fieldLabel: '<s:message code="plugin.ugas.asuntos.cmbTipoGestor" text="**Tipo gestor" />'
 	});	
 	
-	var comboSupervisoresCEXP = new Ext.form.ComboBox({
-				store:optionsSupervisoresCEXPStore
-				,displayField:'descripcion'
-				,valueField:'codigo'
-				,forceSelection:true 
-				,disabled:true
-				,emptyText:'---'
-				,autoWidth:true
-				,resizable: true			
-				,mode: 'remote'
-				,triggerAction: 'all'
-				,editable: false
-				,labelStyle:labelStyle
-				,style:style	
-				,disabled:!cambioSupervisor || !soyDeEsteTipoGestor("GECEXP") && !soyDeEsteTipoGestor("SUPCEXP")			
-				,fieldLabel : '<s:message code="asuntos.alta.supervisor" text="**Supervisor"/>'
-				,name: 'comboSupervisoresCEXP'
-				<app:test id="comboSupervisoresCEXPAA" addComa="true"/>
+	var tipoDespacho = Ext.data.Record.create([
+		 {name:'cod'}
+		,{name:'descripcion'}
+		,{name:'domicilio'}
+		,{name:'localidad'}
+		,{name:'telefono'}
+	]);
+	
+	var optionsDespachoStore = page.getStore({
+	       //flow: 'coreextension/getListTipoDespachoData'
+	       flow: 'asuntos/buscarDespachosPorZonaTipoGestor'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'listadoDespachos'
+	    	 ,idProperty: 'cod'
+	    }, tipoDespacho)	       
+	});
+	var tituloDespacho = new Ext.form.Label({
+   		text:'<s:message code="menu.clientes.filtrado.despacho" text="**Despacho: " />'
+		,style:'font-size:11'
+	}); 	
+	var comboTipoDespacho = new Ext.form.ComboBox({
+		store:optionsDespachoStore
+		,displayField:'descripcion'
+		,valueField:'cod'
+		,mode: 'remote'
+		,disabled:true
+		,forceSelection: true
+		,editable: false
+		,emptyText:'Seleccionar'
+		,triggerAction: 'all'
+		,fieldLabel: '<s:message code="plugin.ugas.asuntos.cmbTipoDespacho" text="**Tipo despacho" />'
+	});	
+	
+	var tipoUsuario = Ext.data.Record.create([
+		 {name:'id'}
+		,{name:'username'}
+	]);
+	
+	var optionsUsuarioStore = page.getStore({
+	       flow: 'coreextension/getListUsuariosPaginatedData'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'listadoUsuarios'
+	    }, tipoUsuario)	       
+	});
+	var tituloUsuario = new Ext.form.Label({
+   		text:'<s:message code="menu.clientes.filtrado.usuario" text="**Usuario: " />'
+		,style:'font-size:11'
+	}); 	
+	var comboTipoUsuario = new Ext.form.ComboBox ({
+		store:  optionsUsuarioStore,
+		allowBlank: true,
+		blankElementText: '---',
+		emptyText:'---',
+		disabled:true,
+		displayField: 'username',
+		valueField: 'id',
+		fieldLabel: '<s:message code="plugin.ugas.asuntos.cmbUsuario" text="**Usuario" />',
+		loadingText: 'Buscando...',
+		labelStyle:'width:100px',
+		width: 250,
+		resizable: true,
+		pageSize: 10,
+		triggerAction: 'all',
+		mode: 'local'
 	});
 	
-	<c:if test="${appProperties.runInSelenium==false}">
-		// Si estamos corriendo tests selenium esta función debe ser global para que
-		// pueda ser llamada desde el JUnit 
-		var</c:if> recargarComboGestoresCEXP = function(){
-		optionsGestoresCEXPStore.webflow({id:comboDespachosCEXP.getValue()});
-		optionsSupervisoresCEXPStore.webflow({id:comboDespachosCEXP.getValue()});
-		comboGestoresCEXP.enable();
-		comboGestoresCEXP.focus();
-		comboSupervisoresCEXP.enable();
+	comboTipoUsuario.on('afterrender', function(combo) {
+		combo.mode='remote';
+	});
+	
+
+	var recargarDespachos = function() {
+		comboTipoUsuario.reset();
+		comboTipoDespacho.reset();
+		
+		if (comboZonas.getValue()!='') {
+			optionsDespachoStore.webflow({'idTipoGestor': comboTipoGestor.getValue(), 'zonas': comboZonas.getValue()}); 
+			comboTipoDespacho.setDisabled(false);
+		} else {
+			comboTipoDespacho.setDisabled(true);
+			Ext.Msg.show({
+				title:'Zonas',
+				msg: 'Debe seleccionar una zona para ver los correspondientes despachos.',
+				buttons: Ext.Msg.OK,
+				icon:Ext.MessageBox.WARNING});			
+		}
+		
+		comboTipoUsuario.setDisabled(true);
 	}
+
+	comboTipoGestor.on('select', function(){
+		recargarDespachos();		
+	});
+	
+	comboTipoDespacho.on('select', function(){
+
+		optionsUsuarioStore.webflow({'idTipoDespacho': comboTipoDespacho.getValue()}); 
+		comboTipoUsuario.reset();		
+		comboTipoUsuario.setDisabled(false);
+	});	
 	
 	
-	comboDespachosCEXP.on('select',recargarComboGestoresCEXP);
+	var validar = function(){
 	
-	var bloquearComboGestoresCEXP = function(){
-		comboGestoresCEXP.disable();
-		comboGestoresCEXP.reset();
-		comboSupervisoresCEXP.disable();
-		comboSupervisoresCEXP.reset();
-	}
+		if(comboTipoDespacho.getValue()==''){
+			return false;
+		}	
+		if(comboTipoGestor.getValue()==''){
+			return false;
+		}	
+		if(comboTipoUsuario.getValue()==''){
+			return false;
+		}
+		return true;
+	};
 	
-	<c:if test="${asuntoEditar!=null && (asuntoEditar.gestorCEXP!=null || asuntoEditar.gestor!=null)}" >
 	
-	    var setGestorCEXPValue = function(){	        	                
-			comboGestoresCEXP.setValue('${asuntoEditar.gestorCEXP.id}');			 
-			//comboGestoresCEXP.setDisabled(cambioSupervisor);			    
-			comboGestoresCEXP.setDisabled(cambioSupervisor || !soyDeEsteTipoGestor("GECEXP") && !soyDeEsteTipoGestor("SUPCEXP"));	
-			     
-			optionsGestoresCEXPStore.un('load',setGestorCEXPValue);
-		};
 	
-		var setSupervisorCEXPValue = function(){
-			comboSupervisoresCEXP.setValue('${asuntoEditar.supervisorCEXP.id}');
-		    		   
-		    comboSupervisoresCEXP.setDisabled( cambioGestor || !soyDeEsteTipoGestor("GECEXP") && !soyDeEsteTipoGestor("SUPCEXP"));
-		    		    
-	        /*
-	        if(cambioGestor)
-				comboSupervisoresCEXP.disable();
-			else
-				comboSupervisoresCEXP.enable();
-			*/			     			
+	var resetCombos = function(){
+		comboTipoDespacho.reset();
+		comboTipoUsuario.reset();
+		comboTipoGestor.reset();
+		
+		comboTipoDespacho.setDisabled(true);
+		comboTipoUsuario.setDisabled(true);
+		comboTipoGestor.setValue('');
+	}; 
+	
+	var insertar = new Ext.Button({
+		text:'<s:message code="app.agregar" text="**Agregar" />'
+		,iconCls : 'icon_mas'
+		,cls: 'x-btn-text-icon'
+		//,disabled:true
+		,handler:function(){
 			
-			optionsSupervisoresCEXPStore.un('load',setSupervisorCEXPValue);
-		};
-		
-		var setDespachoCEXPValue = function(){
-			comboDespachosCEXP.setValue('${asuntoEditar.gestorCEXP.despachoExterno.id}');
-			optionsDespachosCEXPStore.un('load',setDespachoCEXPValue);	
-		};
-		
-		optionsGestoresCEXPStore.on('load',setGestorCEXPValue);
-		optionsSupervisoresCEXPStore.on('load',setSupervisorCEXPValue);		
-		optionsDespachosCEXPStore.on('load',setDespachoCEXPValue);				
-		
-		<%-- Sergio: el supervisor judicial puede cambiar el gestor y supervisor CEX --%>
-		<c:if test="${asuntoEditar.gestorCEXP.despachoExterno.id!=null}" >
-			optionsGestoresCEXPStore.webflow({id:${asuntoEditar.gestorCEXP.despachoExterno.id}});	
-			optionsSupervisoresCEXPStore.webflow({id:${asuntoEditar.gestorCEXP.despachoExterno.id}});
-		</c:if>
-		<%-- Sergio --%>
+			if(validar()){
+				usuario = optionsUsuarioStore.getById(comboTipoUsuario.getValue());
+				insertarFunction(usuario.data);
+			}else{
+				Ext.Msg.show({
+					title:'Atención: Operación no válida',
+					msg: 'Tipo gestor, Despacho y Usuario son datos obligatorios.',
+					buttons: Ext.Msg.OK,
+					icon:Ext.MessageBox.WARNING});
+			}
+		}
+	});
 
-		//recargar combo despachos externos CEXP
-		optionsDespachosCEXPStore.webflow({
-			zonas:'${asuntoEditar.gestorCEXP.despachoExterno.zona.codigo}'
-			,tipoDespacho:'<fwk:const value="es.pfsgroup.plugin.recovery.mejoras.PluginMejorasCodigosConstants.CODIGO_DESPACHO_CONFECCION_EXPEDIENTE" />'
+	var indexGestor = function(idTipoGestor,idTipoDespacho,idUsuario) {
+		return match = gestorStore.findBy(function(record, id) {
+			if (record.get('tipoGestorId')==idTipoGestor
+				&& record.get('tipoDespachoId')==idTipoDespacho
+				&& record.get('usuarioId') == idUsuario)
+					return true;
 		});
+	}
 	
-	
-	</c:if>									         	
-	
-	<%-- Emilio	Fin --%>
-	
-	
-	<c:if test="${asuntoEditar!=null && asuntoEditar.gestor!=null}" >
-	
-		var setGestorValue = function(){		    	   
-			comboGestores.setValue('${asuntoEditar.gestor.id}');			
-		    //comboGestores.setDisabled(cambioSupervisor);
-		    comboGestores.setDisabled(cambioSupervisor || !soyDeEsteTipoGestor("GEXT") && !soyDeEsteTipoGestor("SUP"));
+	var tipoInsertado = function(idTipoGestor) {
+		if (gestorStore.find('tipoGestorId', idTipoGestor)==-1) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+
+	var insertarFunction = function(usuario){
+		//Comprobamos que no este ya insertado este tipo gestor
+		if (!tipoInsertado(comboTipoGestor.getValue())) {
+			//Comprobamos que el usuario no está ya en la grid
+			if (indexGestor(comboTipoGestor.getValue(), comboTipoDespacho.getValue(), usuario.id)==-1) {
+				//Insertamos los datos que tenemos en el record de la grid
+				var nuevoGestorRecord = new gestor();
+				nuevoGestorRecord.data.tipoGestorId = comboTipoGestor.getValue();
+				nuevoGestorRecord.data.tipoGestorDescripcion = comboTipoGestor.getRawValue(); 
+				nuevoGestorRecord.data.usuarioId = usuario.id;
+				nuevoGestorRecord.data.usuario = usuario.username;
+				//nuevoGestorRecord.data.fechaDesde = new Date();
 				
-			optionsGestoresStore.un('load',setGestorValue);						
+				var tipoDespachoRec = comboTipoDespacho.getStore().getById(comboTipoDespacho.getValue()).data;
+				
+				nuevoGestorRecord.data.tipoDespachoId = tipoDespachoRec.cod;
+				
+				nuevoGestorRecord.data.domicilio = tipoDespachoRec.domicilio;
+				nuevoGestorRecord.data.domicilioPlaza = tipoDespachoRec.localidad;
+				nuevoGestorRecord.data.telefono1 = tipoDespachoRec.telefono;
+				
+				gestorStore.add(nuevoGestorRecord);
+				
+			} else {
+				Ext.Msg.show({
+					title:'Atención: Operación no válida',
+					msg: 'Este usuario ya existe agregado como gestor',
+					buttons: Ext.Msg.OK,
+					icon:Ext.MessageBox.WARNING});
+			}
+		} else {
+			Ext.Msg.show({
+				title:'Atención: Operación no válida',
+				msg: 'Ya existe otro usuario con el mismo tipo de gestor',
+				buttons: Ext.Msg.OK,
+				icon:Ext.MessageBox.WARNING});		
 		}
+	}; 
 	
-		var setSupervisorValue = function(){		     
-			comboSupervisores.setValue('${asuntoEditar.supervisor.id}');
-						
-			comboSupervisores.setDisabled(cambioGestor || !soyDeEsteTipoGestor("GEXT") && !soyDeEsteTipoGestor("SUP"));
-			/*
-			if(cambioGestor)
-				comboSupervisores.disable();
-			else
-				comboSupervisores.enable();
-			*/				
-			   
-			optionsSupervisoresStore.un('load',setSupervisorValue);
-		}
-		var setProcuradorValue = function (){
-			//alert('setProcuradorValue');			 
-			comboProcuradores.setValue('${asuntoEditar.procurador.id}');
-			comboProcuradores.setDisabled(cambioSupervisor);
-			dsProcuradores.un('load',setProcuradorValue);
-		}
-		var setDespachoExternoValue = function(){
-			comboDespachosExternos.setValue('${asuntoEditar.gestor.despachoExterno.id}');
-			optionsDespachosStore.un('load',setDespachoExternoValue);	
-		}
-		var setDespachoProcuradorValue=function(){		    
-			comboDespachosProcuradores.setValue('${asuntoEditar.procurador.despachoExterno.id}');
-			comboDespachosProcuradores.setDisabled(cambioSupervisor);
-			optionsDespachosProcuradoresStore.un('load',setDespachoProcuradorValue);
-		}
-		optionsGestoresStore.on('load',setGestorValue);
-		optionsSupervisoresStore.on('load',setSupervisorValue);
-		optionsDespachosProcuradoresStore.on('load',setDespachoProcuradorValue);
-		
-		//dsProcuradores.on('load',setProcuradorValue);
-		
-		optionsDespachosStore.on('load',setDespachoExternoValue);
-		//recargar combo despachos externos
-		optionsDespachosStore.webflow({
-			zonas:'${asuntoEditar.gestor.despachoExterno.zona.codigo}'
-			,tipoDespacho:'<fwk:const value="es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno.CODIGO_DESPACHO_EXTERNO" />'
-		})
-		<c:if test="${asuntoEditar.procurador!=null}" >
-		//recargar combo despachos procuradores, si el asunto tiene procurador
-		optionsDespachosProcuradoresStore.webflow({
-			zonas:'${asuntoEditar.procurador.despachoExterno.zona.codigo}'
-			,tipoDespacho:'<fwk:const value="es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno.CODIGO_DESPACHO_PROCURADOR" />'
-		});
-		<%-- 
-		optionsProcuradoresStore.webflow({
-			id: '${asuntoEditar.procurador.despachoExterno.codigo}'
-		});--%>
-		</c:if>
-		optionsGestoresStore.webflow({id:${asuntoEditar.gestor.despachoExterno.id}});
-		optionsSupervisoresStore.webflow({id:${asuntoEditar.gestor.despachoExterno.id}});
-		
-	</c:if>
+	var findGestoresPanel = new Ext.Panel({
+		layout:'table'
+		,layoutConfig:{columns:2,tableAttrs:{style:'border-spacing:5px'}}
+		,autoHeight:true	
+		,title: '<s:message code="menu.clientes.filtrado.findGestores" text="**Modificar Gestores" />'
+		,collapsible: false
+		,items: [tituloTipoGestor,comboTipoGestor
+				,tituloDespacho,comboTipoDespacho
+				,tituloUsuario,comboTipoUsuario]
+		,bbar: [insertar]
+	});
 	
-
+	var borrar = new Ext.Button({
+		text : '<s:message code="app.borrar" text="**borrar" />'
+		,iconCls : 'icon_menos'
+		,cls: 'x-btn-text-icon'
+		,disabled:true
+		,handler:function(){
+				borrarFunction();
+				borrar.setDisabled(true);
+		}
+	}); 
+	
+	 var grid = new Ext.grid.GridPanel({
+		title:'<s:message code="plugin.coreextension.multigestor.gridGestores.titulo" text="**Lista gestores" />'
+        ,style : 'margin-bottom:10px;padding-right:10px'
+        ,iconCls : 'icon_bienes'
+       ,height: 200
+	   //,width:100
+	   ,autoWidth:false
+	   ,store: gestorStore
+	   ,cm:gestorCM
+	   ,loadMask: {msg: "Cargando...", msgCls: "x-mask-loading"}
+	   ,collapsible :false
+	   //,resizable:true
+	   ,viewConfig : {  forceFit : true}
+	   ,monitorResize: true
+	   	 <sec:authorize ifAllGranted="EDIT_GESTORES">
+	   ,bbar:[borrar] 
+		</sec:authorize>
+	   
+	});
+	
+	 grid.getSelectionModel().on('rowselect', function(sm, rowIndex, r) { 
+   		borrar.setDisabled(false);
+	  }); 
+	
+	 grid.getSelectionModel().on('rowdeselect', function(sm, rowIndex, r) { 
+   		borrar.setDisabled(true);
+	  }); 	
+	
+	var borrarFunction=function(){
+		var gestorSel = grid.getSelectionModel().getSelected();
+		if (gestorSel) {
+			grid.getStore().remove(gestorSel);
+		}
+	}; 	
 	
 	
 	var tituloobservaciones = new Ext.form.Label({
    		text:'<s:message code="clientes.umbral.observaciones" text="**Observaciones" />'
 		,style:'font-weight:bolder; font-size:11'
 	}); 
+	
 	var observaciones = new Ext.form.TextArea({
 		fieldLabel:'<s:message code="clientes.umbral.observaciones" text="**Observaciones" />'
 		,width:810
@@ -669,24 +573,26 @@
 		<app:test id="observaciones" addComa="true"/>	
 	});
 	
+	var getGestoresId = function() {
+		var resultado = '';
+		for (key=0;key < gestorStore.data.length;key++) {
+			var rec = gestorStore.data.items[key].data;
+			
+			resultado = resultado + '{tipoGestor:' + rec.tipoGestorId + ',tipoDespacho:' + rec.tipoDespachoId + ',usuarioId:' + rec.usuarioId + '};';
+		}
+		
+		return resultado;
+	}
+	
 	var btnGuardar = new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){
-		<%-- 
-			var mismoprocurador=comboProcuradores.getValue();
-			if('${asuntoEditar}'!=''){
-				if('${asuntoEditar.procurador.id}'==comboProcuradores.getValue()){
-					mismoprocurador=null;
-				}
-			}--%>
 			page.submit({
 				formPanel: panelAlta
 				,eventName : 'saveAsunto'
 				,params: {
-					idGestor:comboGestores.getValue() 
-					,idSupervisor:comboSupervisores.getValue()
-					,nombreAsunto:txtNombreAsunto.getValue()
+					nombreAsunto:txtNombreAsunto.getValue()
                     <c:if test="${idExpediente!=null}" >
 					   ,idExpediente:${idExpediente}
                     </c:if>     
@@ -694,12 +600,10 @@
 					<c:if test="${asuntoEditar!=null}" >
 						,idAsunto: ${asuntoEditar.id}
 					</c:if>
-					,idProcurador:comboProcuradores.getValue()
-					<%-- Emilio --%>
-					,idGestorConfeccionExpediente:comboGestoresCEXP.getValue() 
-					,idSupervisorConfeccionExpediente:comboSupervisoresCEXP.getValue()
-					,tipoDespacho: getStrTipoDespacho()
-					<%--  Emilio Fin --%>					
+ 					<c:if test="${codigoEstadoAsunto!=null}" >
+                    	,codigoEstadoAsunto: '${codigoEstadoAsunto}'
+                    </c:if>
+                    ,listaGestoresId: Ext.encode(getGestoresId())				
 				}
 				,success :  function(){ 
                   				page.fireEvent(app.event.DONE);
@@ -716,51 +620,6 @@
 					}
 	});
 
-	var panelDespachosGestores=new Ext.Panel({
-		layout:'table'
-		,layoutConfig:{columns:3}
-		,autoHeight:true
-		,border:false
-		,style:'padding-left:10px'
-		,cellCls:'vtop'
-		,width:900
-		,defaults:{xtype:'fieldset',height:120}		
-		,items:[
-			{
-				title:'<s:message code="asuntos.despachoExterno" text="**Despacho Externo" />'
-				,items:[comboDespachosExternos,comboGestores,comboSupervisores]
-			}
-			,{
-				border:false
-				,style:'width:5px'
-			},
-			{
-				title:'<s:message code="asuntos.despachoProcurador" text="**Despacho Procurador" />'
-				,items:[comboDespachosProcuradores,comboProcuradores]
-			}
-		]
-	});
-	
-	<%-- Emilio	--%>
-	var panelDespachosCEXP=new Ext.Panel({
-		layout:'table'
-		,layoutConfig:{columns:1}
-		,autoHeight:true
-		,border:false
-		,style:'padding-left:10px'
-		,cellCls:'vtop'
-		,width:900
-		,defaults:{xtype:'fieldset',height:120}		
-		,items:[
-			{
-				title:'<s:message code="plugin.mejoras.asuntos.despachoCEXP" text="**Despacho C. Expediente" />'
-				,items:[comboDespachosCEXP,comboGestoresCEXP,comboSupervisoresCEXP]
-			}			
-		]
-	});
-	<%-- Emilio	Fin --%>
-	
-	
 	var panelAlta = new Ext.form.FormPanel({
 		bodyStyle : 'padding-left:5px;padding-top:5px'
 		,layout:'anchor'
@@ -793,8 +652,12 @@
 							}
 						]
 					}
-					,panelDespachosGestores	
-					,panelDespachosCEXP	
+					,{
+						items:[findGestoresPanel]
+					}
+					,{
+						items:[grid]
+					}
 		 			,{
 						items:[observaciones]
 						,labelAlign:'top'
@@ -805,18 +668,6 @@
 		,bbar : [
 			btnGuardar, btnCancelar
 		]
-	});
-	//Cargo el combo de Despachos de procuraores si se hace un cambio de gestor
-	panelAlta.on('afterrender',function(){
-		if (cambioGestor) {
-			//recargar combo despachos procuradores
-			optionsDespachosProcuradoresStore.webflow({
-				zonas: '${asuntoEditar.comite.zona.codigo}',
-				tipoDespacho: '<fwk:const value="es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno.CODIGO_DESPACHO_PROCURADOR" />'
-			});
-			comboDespachosProcuradores.reset();
-			comboDespachosExternos.reset();
-		};
 	});
 
 	page.add(panelAlta);

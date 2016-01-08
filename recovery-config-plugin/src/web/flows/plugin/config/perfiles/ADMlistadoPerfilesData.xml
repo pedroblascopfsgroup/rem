@@ -9,7 +9,7 @@
     <end-state id="listado" view="plugin/config/perfiles/listadoPerfilesJSON" >
     	<secured attributes="ROLE_ADMIN" match="any" />
 		<on-entry>
-			<evaluate expression="executor.execute('ADMPerfilManager.buscaPerfiles')" result="flowScope.pagina"/>
+			<evaluate expression="executor.execute('ADMPerfilManager.buscaPerfilesNoBorrados')" result="flowScope.pagina"/>
 		</on-entry>
 	</end-state>
 	

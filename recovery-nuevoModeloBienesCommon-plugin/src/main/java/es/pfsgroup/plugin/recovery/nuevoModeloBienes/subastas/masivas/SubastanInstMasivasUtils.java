@@ -390,9 +390,9 @@ public class SubastanInstMasivasUtils {
 			mensaje.append(ms.getMessage(CODIGO_ERROR_LOTE_NO_ASIGNADO, new Object[] {lote.getIdLote()}, MessageUtils.DEFAULT_LOCALE)).append(SALTO_LINEA);
 		}
 		
-		if (!Checks.esNulo(subasta.getNumAutos()) && 
+		if (!Checks.esNulo(subasta.getProcedimiento()) && 
 				!Checks.esNulo(lote.getNumAutos()) && 
-				!subasta.getNumAutos().equals(lote.getNumAutos())) {
+				!lote.getNumAutos().equals(subasta.getProcedimiento().getCodigoProcedimientoEnJuzgado())) {
 			mensaje.append(ms.getMessage(CODIGO_ERROR_LOTE_NUMAUTOS, new Object[] {lote.getIdLote()}, MessageUtils.DEFAULT_LOCALE)).append(SALTO_LINEA);
 		}
 		

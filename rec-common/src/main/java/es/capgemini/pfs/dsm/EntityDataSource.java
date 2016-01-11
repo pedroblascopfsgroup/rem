@@ -26,6 +26,7 @@ public class EntityDataSource extends AbstractRoutingDataSource {
 	@Resource
 	private Properties appProperties;
         
+        @Autowired
         private TransactionalBasicDataSourceWrapper transactionalDataSourceComponent;
 
 	private Map<Long, String> mappingCache = new HashMap<Long, String>();

@@ -212,7 +212,7 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
         NEW_LINE=$line
         if [ "$MULTIENTIDAD" == "" ] ; then
             NEW_LINE=`echo $line | cut -d' ' -f1`
-            NEW_LINE=$NEWLINE' pass'
+            NEW_LINE=$NEW_LINE' pass'
         fi
         $BASEDIR/run-single-script.sh $NEW_LINE $CUSTOMER_IN_UPPERCASE -p
         if [[ "$?" != 0 ]]; then

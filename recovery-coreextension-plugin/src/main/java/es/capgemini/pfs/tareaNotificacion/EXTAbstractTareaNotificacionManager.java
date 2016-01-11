@@ -38,6 +38,7 @@ import es.pfsgroup.recovery.api.UsuarioApi;
 import es.pfsgroup.recovery.ext.api.persona.EXTPersonaApi;
 import es.pfsgroup.recovery.ext.api.tareas.EXTOpcionesBusquedaTareas;
 import es.pfsgroup.recovery.ext.api.tareas.EXTOpcionesBusquedaTareasApi;
+import es.pfsgroup.recovery.ext.factory.dao.dto.DtoResultadoBusquedaTareasBuzones;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.VTARBusquedaOptimizadaTareasDao;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.impl.ResultadoBusquedaTareasBuzonesDto;
 
@@ -76,7 +77,7 @@ public abstract class EXTAbstractTareaNotificacionManager extends BusinessOperat
 		return executor;
 	}
 
-	protected Page busquedaGenericaTareas(final DtoBuscarTareaNotificacion dto, final EXTOpcionesBusquedaTareas opcion, final Class<? extends ResultadoBusquedaTareasBuzonesDto> modelClass) {
+	protected Page busquedaGenericaTareas(final DtoBuscarTareaNotificacion dto, final EXTOpcionesBusquedaTareas opcion, final Class<? extends DtoResultadoBusquedaTareasBuzones> modelClass) {
 		EventFactory.onMethodStart(this.getClass());
 
 		Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
@@ -263,7 +264,7 @@ public abstract class EXTAbstractTareaNotificacionManager extends BusinessOperat
 		}
 	}
 
-	private PageHibernate obtenerTareasPendientes(final DtoBuscarTareaNotificacion dto, final EXTOpcionesBusquedaTareas opcion, final Class<? extends ResultadoBusquedaTareasBuzonesDto> modelClass) {
+	private PageHibernate obtenerTareasPendientes(final DtoBuscarTareaNotificacion dto, final EXTOpcionesBusquedaTareas opcion, final Class<? extends DtoResultadoBusquedaTareasBuzones> modelClass) {
 		boolean conCarterizacion = false;
 		Usuario u = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		if (opcion != null) {

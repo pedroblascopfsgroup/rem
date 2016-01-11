@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -48,6 +49,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.users.dto.DtoBuscarUsuarios;
 import es.capgemini.pfs.users.dto.DtoUsuario;
 import es.capgemini.pfs.zona.model.DDZona;
+import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 
 /**
  * TODO Documentar.
@@ -338,7 +340,7 @@ public class UsuarioManager {
             loggedUser = get(((UsuarioSecurity) SecurityUtils.getCurrentUser()).getId());
         }
         
-        loggedUser.initialize();
+        HibernateUtils.refresh(loggedUser);
         
         if( RequestContextHolder.getRequestAttributes()!=null)
             RequestContextHolder.getRequestAttributes().setAttribute(USER_SESSION_KEY,loggedUser,RequestAttributes.SCOPE_SESSION);

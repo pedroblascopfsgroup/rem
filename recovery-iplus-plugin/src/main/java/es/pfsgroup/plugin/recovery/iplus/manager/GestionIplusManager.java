@@ -29,6 +29,9 @@ public class GestionIplusManager implements GestionIplusApi {
 	
 	@Autowired
 	private GestionIplusFacade iplusFacade;
+        
+        @Autowired
+        private ZipUtils zipUtils;
 	
 	@Override
 	@BusinessOperation(PLUGIN_IPLUS_MAPEO_TIPODOC_NUMORDEN_BO)
@@ -79,8 +82,8 @@ public class GestionIplusManager implements GestionIplusApi {
 		System.out.println("[GestionIplusManager.bajarAdjunto] fi (FileItem) (2): " + fi.toString() + ", Filename: " + fi.getFileName() + ", ContentType: "+fi.getContentType()+ ", Descripcion: " + descripcion);
 		System.out.println("[GestionIplusManager.bajarAdjunto] fi (FileItem) (3), File: " + fi.getFile().toString() + ", FileLength: " + fi.getLength());
 		
-		if (ZipUtils.esDescargaZip(fi.getFileName())) {
-            return ZipUtils.zipFileItem(fi);
+		if (zipUtils.esDescargaZip(fi.getFileName())) {
+            return zipUtils.zipFileItem(fi);
         } else {
             return fi;
         }

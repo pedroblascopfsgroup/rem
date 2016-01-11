@@ -8,22 +8,24 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 
+@Component
 public class ZipUtils {
 	
-	@Autowired
-    private static Executor executor;
+    @Autowired
+    private  Executor executor;
 	
 	/**
      * Busca por nombre de archivo si su extension es una de las que hay que comprimir en ZIP durante la descarga
      * @return Boolean
      */
-    public static Boolean esDescargaZip(String fileName) {
+    public Boolean esDescargaZip(String fileName) {
      
         //Separa nombre y extension de archivo en un vector de String(). Ej nombre: archivo1.ext1.ext2.ext3
         String[] fileExts = fileName.split("\\.");
@@ -59,7 +61,7 @@ public class ZipUtils {
      * Recupera la cadena de extensiones de archivos adjuntos que deben comprimirse en ZIP durante la descarga
      * @return String
      */    
-    private static String getParamZipExtensiones() {
+    private String getParamZipExtensiones() {
         try {
             Parametrizacion param = (Parametrizacion) executor.execute(
                     ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE, Parametrizacion.ADJUNTOS_DESCARGA_ZIP_EXTENSIONES);
@@ -76,7 +78,7 @@ public class ZipUtils {
      * @author Josevi
      */   
 	
-	public static FileItem zipFileItem (FileItem fi) {
+	public FileItem zipFileItem (FileItem fi) {
 	    
         //Es importante reutilizar el nombre del archivo temporal del FileItem de entrada, mas ext. zip
         String zipFileName = fi.getFile().getName().concat(".zip");
@@ -132,7 +134,7 @@ public class ZipUtils {
      * Recupera de parametros el nivel de compresion de los archivos ZIP, entero [0-9]. Min=0, Max=9.
      * @return int
      */    
-    private static int getParamZipNivelCompresion() {
+    private int getParamZipNivelCompresion() {
         final int DEFAULT_LEVEL = 8;
         try {
             Parametrizacion param = (Parametrizacion) executor.execute(

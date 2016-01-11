@@ -106,6 +106,9 @@ public class AsuntosManager {
 
     @Autowired
     private SesionComiteDao sesionComiteDao;
+    
+    @Autowired
+    private ZipUtils zipUtils;
 
     /**
      * Actualiza el estado del asunto (abierto o cerrado) en función de sus procedimientos (abiertos o cerrados)
@@ -930,8 +933,8 @@ public class AsuntosManager {
 
         FileItem adjunto = asunto.getAdjunto(adjuntoId).getAdjunto().getFileItem();
         
-        if (ZipUtils.esDescargaZip(adjunto.getFileName())) {
-            return ZipUtils.zipFileItem(adjunto);
+        if (zipUtils.esDescargaZip(adjunto.getFileName())) {
+            return zipUtils.zipFileItem(adjunto);
         } else {
             return adjunto;
         }

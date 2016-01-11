@@ -86,7 +86,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	@Autowired
 	private ProcedimientoDao procedimientoDao;
 	
-	@Autowired
+	@Autowired(required=false)
 	private GestorDocumentalWSApi gestorDocumentalWSApi;
 	
 	@Autowired
@@ -113,7 +113,10 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_ALTA_DOCUMENTO)
 	@Transactional(readOnly = false)
 	public String altaDocumento(Long idEntidad, String tipoEntidadGrid, String tipoDocumento, WebFileItem uploadForm) {
-
+		if (Checks.esNulo(gestorDocumentalWSApi)) {
+			logger.warn("No encontrada implementación para el WS de gestión documental en Cajamar");
+			return null;
+		}
 		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
 		FileItem fileItem = uploadForm.getFileItem();
 
@@ -132,11 +135,13 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
 		String claveRel = guardarRecuperarDatoEntidad(idEntidad, tipoEntidadGrid, uploadForm, tipoDocumento);
 
+		
 		outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(
 				claveRel, ALTA_GESTOR_DOC, tipoDocumento,
 				tipoEntidadGrid, uploadForm));
 
 		return outputDto.getTxtError();
+		
 	}
 	
 	private String getFileExtension(FileItem file) { 
@@ -153,7 +158,10 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_LISTADO_DOCUMENTO)
 	@Transactional(readOnly = false)
 	public List<AdjuntoGridDto> listadoDocumentos(String claveAsociacion, String tipoEntidadGrid, String tipoDocumento) {
-
+		if (Checks.esNulo(gestorDocumentalWSApi)) {
+			logger.warn("No encontrada implementación para el WS de gestión documental en Cajamar");
+			return null;
+		}
 		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
 		GestorDocumentalInputDto inputDto = rellenaInputDto(
 				claveAsociacion, LISTADO_GESTOR_DOC, tipoDocumento,
@@ -200,6 +208,10 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_RECUPERACION_DOCUMENTO)
 	@Transactional(readOnly = false)
 	public AdjuntoGridDto recuperacionDocumento(String idRefCentera) {
+		if (Checks.esNulo(gestorDocumentalWSApi)) {
+			logger.warn("No encontrada implementación para el WS de gestión documental en Cajamar");
+			return null;
+		}
 		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
 		GestorDocumentalInputDto input = new GestorDocumentalInputDto();
 		input.setOperacion(ConstantesGestorDocumental.CONSULTA_DOCUMENTO_OPERACION);

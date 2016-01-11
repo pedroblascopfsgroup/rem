@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -62,10 +60,7 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
-	
-    @Autowired(required=false)
-    ServletContext servletContext;
-    
+
     @Autowired
     private transient RecoveryBPMfwkDatosProcedimientoApi datosProcedimientoManager;
     
@@ -178,8 +173,8 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 			dtoTipoResol.setDescripcionTipoResolucion(resolucion.getDescripcion());
 			dtoTipoResol.setCodigoTipoAccion(resolucion.getTipoAccion().getCodigo());
 			
-			// Si el procedimiento no tiene tareas activas no se incluye la autoprórroga.
-			// Si se han realizado el máximo de autoprórrogas no se incluye la autoprórroga.
+			// Si el procedimiento no tiene tareas activas no se incluye la autoprï¿½rroga.
+			// Si se han realizado el mï¿½ximo de autoprï¿½rrogas no se incluye la autoprï¿½rroga.
 //			if(resolucion.getCodigo().equals(PCDResolucionProcuradorManager.COD_RESOLUCION_AUTOPRORROGA) && idTarea != null)
 //			{
 //			    	EXTTareaExterna tarea = (EXTTareaExterna) proxyFactory.proxy(TareaExternaApi.class).get(idTarea);
@@ -210,7 +205,7 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 	@BusinessOperation(PCD_MSV_BO_OBTENER_RESOLUCIONES)
 	public Set<MSVTipoResolucionDto> obtenerTiposResoluciones(Long idProcedimiento, Long idTarea){
 		
-    	//Si no tiene tareas activas obtiene los tipos de resolución a partir del idProcedimiento
+    	//Si no tiene tareas activas obtiene los tipos de resoluciï¿½n a partir del idProcedimiento
     	Set<MSVTipoResolucionDto> setTiposResolucion = (Checks.esNulo(idTarea)) 
     			? apiProxyFactory.proxy(MSVResolucionInputApi.class).obtenerTiposResolucionesSinTarea(idProcedimiento)
     			: apiProxyFactory.proxy(MSVResolucionInputApi.class).obtenerTiposResolucionesTareas(idTarea);
@@ -219,7 +214,7 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 		MSVTipoResolucionDto tipoAutoprorroga = new MSVTipoResolucionDto();
 		tipoAutoprorroga.setCodigoTipoResolucion(COD_RESOLUCION_AUTOPRORROGA);
 		
-		//Si la tarea es nula o a llegado al máximo de las prórrogas, eliminamos la resolución.
+		//Si la tarea es nula o a llegado al mï¿½ximo de las prï¿½rrogas, eliminamos la resoluciï¿½n.
 		if(Checks.esNulo(idTarea)){
 			setTiposResolucion.remove(tipoAutoprorroga);
 		}else{
@@ -259,7 +254,7 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 		               result = (String) jbpmManager.evaluaScript(idProcedimiento, idTareaExterna, tareaExterna.getTareaProcedimiento().getId(), null,
 		                       script);
 		           } catch (Exception e) {
-		               throw new UserException("Error en el script de decisión [" + script + "] para la tarea: " + idTareaExterna + " del procedimiento: "
+		               throw new UserException("Error en el script de decisiï¿½n [" + script + "] para la tarea: " + idTareaExterna + " del procedimiento: "
 		                       + idProcedimiento);
 		           }
 		           return result;
@@ -282,7 +277,7 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 		               result = (String) jbpmManager.evaluaScript(idProcedimiento, idTareaExterna, tareaExterna.getTareaProcedimiento().getId(), null,
 		                       script);
 		           } catch (Exception e) {
-		               throw new UserException("Error en el script de decisión [" + script + "] para la tarea: " + idTareaExterna + " del procedimiento: "
+		               throw new UserException("Error en el script de decisiï¿½n [" + script + "] para la tarea: " + idTareaExterna + " del procedimiento: "
 		                       + idProcedimiento);
 		           }
 		           return result;

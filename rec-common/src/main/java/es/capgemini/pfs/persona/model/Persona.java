@@ -2,6 +2,7 @@ package es.capgemini.pfs.persona.model;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -774,6 +775,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	 */
 	public Float getTotalBienes() {
 		Float totalBien = 0F;
+
 		for (Bien b : getBienes()) {
 			if (b.getValorActual() != null && b.getParticipacion() != null) {
 				totalBien += b.getValorActual().floatValue()

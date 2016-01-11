@@ -385,11 +385,11 @@
 				autoCreate : {
 					tag: "input"
 					, type: "text"
-					,maxLength:"8"
+					,maxLength:"14"
 					, autocomplete: "off"
 				}
-				, maxLength:8
-				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener m�s de 8 d�gitos" arguments="8" />'
+				, maxLength:14
+				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener m�s de 14 d�gitos" arguments="14" />'
 				,labelStyle : labelStyle
 			}
 		);
@@ -1461,11 +1461,11 @@
 			autoCreate : {
 				tag: "input"
 				, type: "text"
-				,maxLength:"8"
+				,maxLength:"14"
 				, autocomplete: "off"
 			}
-			, maxLength:8
-			, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener m�s de 8 d�gitos" arguments="8" />'
+			, maxLength:14
+			, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener m�s de 14 d�gitos" arguments="14" />'
 		}
 	);
 	var cargas = app.creaNumber(

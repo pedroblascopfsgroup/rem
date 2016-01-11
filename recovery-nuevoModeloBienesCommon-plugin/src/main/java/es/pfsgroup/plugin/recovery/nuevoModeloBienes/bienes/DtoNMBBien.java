@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes;
 
+import java.math.BigDecimal;
 import es.capgemini.devon.dto.WebDto;
 
 public class DtoNMBBien extends WebDto {
@@ -12,7 +13,7 @@ public class DtoNMBBien extends WebDto {
     /* Datos principales */
     private Long id;
     private String tipoBien; 
-    private Float valorActual;
+    private BigDecimal valorActual;
     private Float importeCargas;
     private String descripcionBien;
     private String fechaVerificacion;
@@ -548,11 +549,11 @@ public class DtoNMBBien extends WebDto {
 		this.tipoBien = tipoBien;
 	}
 
-	public Float getValorActual() {
+	public BigDecimal getValorActual() {
 		return valorActual;
 	}
 
-	public void setValorActual(Float valorActual) {
+	public void setValorActual(BigDecimal valorActual) {
 		this.valorActual = valorActual;
 	}
 

@@ -24,6 +24,7 @@
 		
 	<c:set var="comunidades" value="" scope="page" />
 	<c:set var="provincias" value="" scope="page" />
+	<c:set var="provinciasCalidad" value="" scope="page" />
 	<c:forEach var="ambito" items='${ambitoGreograficoDespacho}'
 		varStatus="stat">
 		<c:if test="${not empty ambito.comunidad}">
@@ -36,6 +37,16 @@
 				value="${stat.first ? '' : provincias}${!stat.first and not empty provincias ? ' / ' : ' '}${ambito.provincia.descripcion}"
 				scope="page" />
 		</c:if>
+		<c:if test="${not empty ambito.porcentaje}">
+			<c:set var="provinciasCalidad"
+				value="${stat.first ? '' : provinciasCalidad}${!stat.first and not empty provinciasCalidad ? ' / ' : ' '}${ambito.porcentaje}${'%'}"
+				scope="page" />
+		</c:if>
+		 <c:if test="${empty ambito.porcentaje and empty ambito.comunidad}">
+           <c:set var="provinciasCalidad"
+                   value="${stat.first ? '' : provinciasCalidad}${!stat.first and not empty provinciasCalidad ? ' / ' : ' '}${0}${'%'}"
+                   scope="page" />
+         </c:if>
 	</c:forEach>
 	
 	<pfsforms:textfield
@@ -45,6 +56,11 @@
 	<pfsforms:textfield
 		labelKey="plugin.config.despachoExterno.turnado.tabEsquema.ambitoactuacion.provincias"
 		label="**Provincias" name="provinciasActuacion" value="${provincias}"
+		readOnly="true" />
+		
+	<pfsforms:textfield
+		labelKey="plugin.config.despachoExterno.turnado.tabEsquema.concursos.tipoCalidad"
+		label="**Tipo calidad" name="provinciasActuacionTipoCalidad" value="${provinciasCalidad}"
 		readOnly="true" />
 
 	var turnadoConcursosPanel = new Ext.Panel({
@@ -96,7 +112,7 @@
 		//,autoWidth:true
 		,style:'margin-right:20px;margin-left:10px'
 		,defaults : {xtype:'panel', border : false ,cellCls : 'vtop'}
-		,items:[{layout:'form',items:[comunidadesActuacion, provinciasActuacion]}
+		,items:[{layout:'form',items:[comunidadesActuacion, provinciasActuacion, provinciasActuacionTipoCalidad]}
 		]
 	});
 
@@ -127,6 +143,31 @@
 				w.on(app.event.CANCEL, function(){ w.close(); });
 			}
 	});
+	
+	var btnAsignarCalidadPronvincia = new Ext.Button({
+			text : '<s:message code="plugin.config.despachoExterno.turnado.tabEsquema.boton.editarCalidadProvincia" text="**Editar calidad provincia" />'
+			,iconCls : 'icon_edit'
+			,disabled: true
+			,handler : function(){ 
+				var w = app.openWindow({
+					flow : 'turnadodespachos/ventanaAsignarCalidadProvincia'
+					,width :  600
+					,closable: true
+					,title : '<s:message code="plugin.config.despachoExterno.turnado.ventana.tituloCalidadProvincia" text="**Edici&oacute;n calidad provincia" />'
+					,params : {id:${despacho.id}}
+				});
+				w.on(app.event.DONE, function(){
+					w.close();
+					app.openTab('${despacho.despacho}'
+						,'plugin/config/despachoExterno/ADMconsultarDespachoExterno'
+						,{id:${despacho.id}}
+						,{id:'DespachoExterno${despacho.id}'}
+					)
+				});
+				w.on(app.event.CANCEL, function(){ w.close(); });
+			}
+	});
+	
 	</sec:authorize>
 
 	page.webflow({
@@ -141,6 +182,7 @@
 			
 			<sec:authorize ifAllGranted="ROLE_ESQUEMA_TURNADO_EDITAR">
 			btnEditarTurnadoLetrado.setDisabled(false);
+			btnAsignarCalidadPronvincia.setDisabled(false);
 			labelError.setText('');
 			</sec:authorize>
 			
@@ -182,8 +224,8 @@
 			  ,{width:330,items:[ambitosActuacionPanel]}
 			  ]
 <sec:authorize ifAllGranted="ROLE_ESQUEMA_TURNADO_EDITAR">
-		, bbar : [btnEditarTurnadoLetrado,labelError]
+		, bbar : [btnEditarTurnadoLetrado,labelError,btnAsignarCalidadPronvincia]
 </sec:authorize>
 	});
-	
+
 </pfslayout:tabpage>

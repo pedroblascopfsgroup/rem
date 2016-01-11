@@ -86,7 +86,7 @@ public class ADMDespachoAmbitoActuacionDaoImpl extends
 		HQLBuilder b = new HQLBuilder("from DespachoAmbitoActuacion d");
 		b.appendWhere("d.auditoria." + Auditoria.UNDELETED_RESTICTION);
 		HQLBuilder.addFiltroIgualQue(b, "d.despacho.id", idDespacho);
-		HQLBuilder.addFiltroIgualQue(b, "d.comunidad.codigo", codigoProvincia);
+		HQLBuilder.addFiltroIgualQue(b, "d.provincia.codigo", codigoProvincia);
 		return HibernateQueryUtils.uniqueResult(this, b);
 	}    
 }

@@ -20,12 +20,14 @@ import org.springframework.binding.message.Message;
 import org.springframework.binding.message.Severity;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
@@ -34,6 +36,7 @@ import es.capgemini.devon.validation.ErrorMessage;
 import es.capgemini.devon.validation.ErrorMessageUtils;
 import es.capgemini.devon.validation.ValidationException;
 import es.capgemini.devon.web.fileupload.FileUpload;
+import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.DespachoAmbitoActuacion;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
@@ -41,7 +44,9 @@ import es.capgemini.pfs.direccion.model.DDComunidadAutonoma;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.config.despachoExterno.ADMDespachoExternoManager;
+import es.pfsgroup.plugin.recovery.config.despachoExterno.dao.ADMDespachoAmbitoActuacionDao;
 import es.pfsgroup.plugin.recovery.coreextension.utils.UtilDiccionarioManager;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcelInformeSubasta;
@@ -66,6 +71,7 @@ public class TurnadoDespachosController {
 	private static final String VIEW_ESQUEMA_TURNADO_LETRADO = "plugin/config/turnadodespachos/editarEsquemaLetrado";
 	private static final String JSP_DOWNLOAD_FILE = "plugin/geninformes/download";
 	private static final String OK_KO_RESPUESTA_JSON = "plugin/coreextension/OkRespuestaJSON";
+	private static final String VIEW_ASIGNAR_CALIDAD_PROVINCIA = "plugin/config/turnadodespachos/editarCalidadProvincia";
 	
 	private static final String VIEW_DEFAULT = "default";
 
@@ -96,6 +102,9 @@ public class TurnadoDespachosController {
     @Autowired
     private FileUpload fileUpload;
     
+    @Autowired
+	private ADMDespachoAmbitoActuacionDao despachoAmbitoActuacionDao;
+    
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String ventanaBusquedaEsquemas(ModelMap map) {
@@ -115,6 +124,8 @@ public class TurnadoDespachosController {
 		List<DespachoAmbitoActuacion> listaAmbitoActuacion = despachoExternoManager.getAmbitoGeograficoDespacho(idDespacho);
 		List<String> listaComunidadesDespacho = new LinkedList<String>();
 		List<String> listaProvinciasDespacho = new LinkedList<String>();
+		List<DDProvincia> listaProvinciasDespachoNombre = new LinkedList<DDProvincia>();
+		List<String> listaProvinciasPorcentaje = new LinkedList<String>();
 		
 		for(DespachoAmbitoActuacion ambitoActuacion : listaAmbitoActuacion) {
 			
@@ -124,11 +135,15 @@ public class TurnadoDespachosController {
 			
 			if(ambitoActuacion.getProvincia() != null) {
 				listaProvinciasDespacho.add(ambitoActuacion.getProvincia().getCodigo());
+				listaProvinciasDespachoNombre.add(ambitoActuacion.getProvincia());
+				listaProvinciasPorcentaje.add(ambitoActuacion.getPorcentaje());
 			}
 		}
 		
 		model.addAttribute("listaComunidadesDespacho", listaComunidadesDespacho);
 		model.addAttribute("listaProvinciasDespacho", listaProvinciasDespacho);
+		model.addAttribute("listaProvinciasDespachoNombre", listaProvinciasDespachoNombre);
+		model.addAttribute("listaProvinciasPorcentaje", listaProvinciasPorcentaje);
 		
 		List<EsquemaTurnadoConfig> listTipoImporteLitigio = new LinkedList<EsquemaTurnadoConfig>();
 		List<EsquemaTurnadoConfig> listTipoCalidadLitigio = new LinkedList<EsquemaTurnadoConfig>();
@@ -384,5 +399,58 @@ public class TurnadoDespachosController {
 		model.addAttribute("okko", resultado);
 		
 		return OK_KO_RESPUESTA_JSON;
-	}		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String ventanaAsignarCalidadProvincia(@RequestParam(required=false) Long id
+			, Model model) {
+		List<DespachoAmbitoActuacion> listaAmbitoActuacion = (id!=null) 
+				? despachoExternoManager.getAmbitoGeograficoDespacho(id)
+				: new ArrayList<DespachoAmbitoActuacion>();
+		
+		ArrayList<DespachoAmbitoActuacion> listaBorrarAmbito = new ArrayList<DespachoAmbitoActuacion>();
+		List<DDProvincia> listaProvinciasDespachoNombre = new LinkedList<DDProvincia>();
+		List<String> listaProvinciasPorcentaje = new LinkedList<String>();
+		for(DespachoAmbitoActuacion ambitoActuacion : listaAmbitoActuacion) {
+			if(ambitoActuacion.getProvincia() != null) {
+				listaProvinciasDespachoNombre.add(ambitoActuacion.getProvincia());
+				listaProvinciasPorcentaje.add(ambitoActuacion.getPorcentaje());
+			}
+			else {
+				listaBorrarAmbito.add(ambitoActuacion);
+			}
+		}
+		/*
+		 * Solo conservo objetos que contiene provincia en objetos de tipo DespachoAmbitoActuacion
+		 */
+		for(DespachoAmbitoActuacion borrarAmbito : listaBorrarAmbito) {
+			listaAmbitoActuacion.remove(borrarAmbito);
+		}
+
+		model.addAttribute("despachoId", id);
+		model.addAttribute("listaProvinciasDespachoNombre", listaProvinciasDespachoNombre);
+		model.addAttribute("listaProvinciasPorcentaje", listaProvinciasPorcentaje);
+		return VIEW_ASIGNAR_CALIDAD_PROVINCIA;
+	}
+	
+	
+	@RequestMapping
+	public String guardarCalidadProvincia(@RequestParam(value = "despacho", required = true) Long idDespacho,
+			@RequestParam(value = "codigoProvincia", required = true) String codProvincia,
+			@RequestParam(value = "calidadProvincia", required = true) String calidad,
+			Model model) 
+	{	
+		try {
+			DespachoAmbitoActuacion despachoAmbitoActuacion = despachoAmbitoActuacionDao.getByDespachoYProvincia(idDespacho, codProvincia);
+			despachoAmbitoActuacion.setPorcentaje(calidad);
+			despachoExternoManager.guardarAmbitoActuacion(despachoAmbitoActuacion);
+		}
+		catch(Exception e) {
+			logger.error("Error en el método guardarCalidadProvincia: " + e .getMessage());
+			throw new BusinessOperationException(e);
+		}
+		
+		return VIEW_DEFAULT;
+	}
 }

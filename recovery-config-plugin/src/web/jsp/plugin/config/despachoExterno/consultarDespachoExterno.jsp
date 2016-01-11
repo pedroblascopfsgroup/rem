@@ -38,14 +38,11 @@
 		<pfslayout:includetab name="tabEsquemaTurnado">
 			<%@ include file="tabEsquemaTurnado.jsp"%>
 		</pfslayout:includetab>
-	</c:if>
-	
-	<c:if test="${despacho.tipoDespacho.codigo=='2' || despacho.tipoDespacho.codigo=='DLETR'}">
 		<pfslayout:includetab name="tabProcuradores">
 			<%@ include file="tabProcuradoresDespachoExterno.jsp"%>
 		</pfslayout:includetab>	
 		<pfslayout:tabpanel name="tabsDespacho"
-			tabs="tabCabecera,tabGestores,tabSupervisores,tabProcuradores,tabEsquemaTurnado" />
+			tabs="tabCabecera,tabGestores,tabProcuradores,tabEsquemaTurnado" />
 	</c:if>	
 	
 	page.add(tabsDespacho);

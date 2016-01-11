@@ -494,8 +494,25 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
             }
 
             //HQLBuilder.addFiltroBetweenSiNotNull(hb, "vtar.fechaVenc", fechaDesdeFinal, fechaHastaFinal);
-            if (!Checks.esNulo(fechaDesdeFinal) && !Checks.esNulo(fechaHastaFinal))
+            if (!Checks.esNulo(fechaDesdeFinal) && !Checks.esNulo(fechaHastaFinal)){
             	hb.append(" vtar.fechaVenc BETWEEN TO_DATE('" +  formateaFecha.format(fechaDesdeFinal) + "','dd/MM/yyyy') and TO_DATE('" + formateaFecha.format(fechaHastaFinal) + "','dd/MM/yyyy')" );
+            }else if(!Checks.esNulo(fechaDesdeFinal) && Checks.esNulo(fechaHastaFinal)){
+            	if(dto.getFechaVencDesdeOperador().equals(">=")){
+            		hb.append(" vtar.fechaVenc >= TO_TIMESTAMP('"+formateaFecha.format(fechaDesdeFinal)+"','dd/MM/yyyy')");
+            	}else if (dto.getFechaVencDesdeOperador().equals("=")){
+            		hb.append(" vtar.fechaVenc = TO_TIMESTAMP('"+formateaFecha.format(fechaDesdeFinal)+"','dd/MM/yyyy')");
+            	}else if ((dto.getFechaVencDesdeOperador().equals(">"))){
+            		hb.append(" vtar.fechaVenc > TO_TIMESTAMP('"+formateaFecha.format(fechaDesdeFinal)+"','dd/MM/yyyy')");
+            	}
+            }else if(Checks.esNulo(fechaDesdeFinal) && !Checks.esNulo(fechaHastaFinal)){
+            	if (dto.getFechaVencimientoHastaOperador().equals("<=")){
+            		hb.append(" vtar.fechaVenc <= TO_TIMESTAMP('" + formateaFecha.format(fechaHastaFinal) + "','dd/MM/yyyy')");
+            	}else if (dto.getFechaVencimientoHastaOperador().equals("<")){
+            		hb.append(" vtar.fechaVenc < TO_TIMESTAMP('" + formateaFecha.format(fechaHastaFinal) + "','dd/MM/yyyy')");
+            	}else if (dto.getFechaVencimientoHastaOperador().equals("=")){
+            		hb.append(" vtar.fechaVenc = TO_TIMESTAMP('" + formateaFecha.format(fechaHastaFinal) + "','dd/MM/yyyy')");
+            	}
+            }
 
         }
 

@@ -86,6 +86,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.EXTModelClassFactory;
+import es.pfsgroup.recovery.ext.factory.dao.dto.DtoResultadoBusquedaTareasBuzones;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.VTARBusquedaOptimizadaTareasDao;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.impl.ResultadoBusquedaTareasBuzonesDto;
 import es.pfsgroup.recovery.ext.impl.tareas.ExportarTareasBean;
@@ -883,7 +884,7 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
             }
         }
 
-        final Class<? extends ResultadoBusquedaTareasBuzonesDto> modelClass = modelClassFactory.getModelFor(ComunBusinessOperation.BO_TAREA_MGR_BUSCAR_TAREAS_PENDIETE, ResultadoBusquedaTareasBuzonesDto.class);
+        final Class<? extends DtoResultadoBusquedaTareasBuzones> modelClass = modelClassFactory.getModelFor(ComunBusinessOperation.BO_TAREA_MGR_BUSCAR_TAREAS_PENDIETE, DtoResultadoBusquedaTareasBuzones.class);
         return busquedaGenericaTareas(dto, null, modelClass);
     }
 

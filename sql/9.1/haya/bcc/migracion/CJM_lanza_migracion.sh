@@ -120,7 +120,7 @@ echo "[OK] ""$sh_dir""CJM_instancia_BPMs_concursal.sh ejecutado correctamente"
 
 echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_migracion_volumetria_carga.sh"                      
 ./"$sh_dir"CJM_migracion_volumetria_carga.sh "$1" "$2" 
-if [ $? != 0 ] ; thenq
+if [ $? != 0 ] ; then
     echo -e "\n\n======>>> [ERROR] en "$sh_dir"CJM_migracion_volumetria_carga.sh"
     echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
     exit 1           

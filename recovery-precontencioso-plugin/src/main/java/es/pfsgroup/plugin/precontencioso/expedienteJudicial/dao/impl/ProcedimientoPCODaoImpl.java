@@ -541,7 +541,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		query.createAlias("procedimientoPco.liquidaciones", "liquidacion");
 		query.createAlias("liquidacion.estadoLiquidacion", "estadoLiquidacion", CriteriaSpecification.LEFT_JOIN);
 
-		if (!StringUtils.emtpyString(filtro.getLiqEstados())) {
+		if (!Checks.esNulo(filtro.getLiqEstados())) {
 			where.add(Restrictions.in("estadoLiquidacion.codigo", filtro.getLiqEstados().split(",")));
 		}
 

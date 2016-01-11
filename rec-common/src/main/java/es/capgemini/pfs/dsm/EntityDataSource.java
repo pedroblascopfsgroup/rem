@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import es.pfsgroup.recovery.txdatasource.TransactionalBasicDataSourceWrapper;
@@ -27,7 +28,7 @@ public class EntityDataSource extends AbstractRoutingDataSource {
 	private Properties appProperties;
         
         @Autowired
-        private TransactionalBasicDataSourceWrapper transactionalDataSourceComponent;
+        private TransactionalBasicDataSourceWrapper transactionalBasicDataSourceWrapper;
 
 	private Map<Long, String> mappingCache = new HashMap<Long, String>();
 
@@ -38,7 +39,7 @@ public class EntityDataSource extends AbstractRoutingDataSource {
 	 */
 	@Override
 	protected Object determineCurrentLookupKey() {
-            return transactionalDataSourceComponent.determineCurrentLookupKey();
+            return transactionalBasicDataSourceWrapper.determineCurrentLookupKey();
 	}
 
 	/**
@@ -64,8 +65,8 @@ public class EntityDataSource extends AbstractRoutingDataSource {
 	public Connection getConnection() throws SQLException {
             // Sobreescribimos el método para añadirle la gestión de los usuarios
             // transaccionales
-            System.out.println("***&*** Ha llamado a EntityDataSource.getConnection() ");
-            return transactionalDataSourceComponent.getConnection();
+            log.debug("***&*** Ha llamado a EntityDataSource.getConnection() ");
+            return transactionalBasicDataSourceWrapper.getConnection();
 	}
 
 	@Override
@@ -73,8 +74,8 @@ public class EntityDataSource extends AbstractRoutingDataSource {
 			throws SQLException {
             // Sobreescribimos el método para añadirle la gestión de los usuarios
             // transaccionales
-            System.out.println("***&*** Ha llamado a EntityDataSource.getConnection() ");
-            return transactionalDataSourceComponent.getConnection(username, password);
+            log.debug("***&*** Ha llamado a EntityDataSource.getConnection() ");
+            return transactionalBasicDataSourceWrapper.getConnection(username, password);
 	}
 
 }

@@ -8,9 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.annotation.Resource;
-import javax.naming.ConfigurationException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -41,7 +38,7 @@ public class TransactionalBasicDataSourceWrapper extends BasicDataSource{
     public Connection getConnection() throws SQLException {
             // Sobreescribimos el método para añadirle la gestión de los usuarios
             // transaccionales
-            System.out.println("***&*** ha llamado a TransactionalBasicDataSourceWrapper.getConnection() ");
+            log.debug("***&*** Ha llamado a TransactionalBasicDataSourceWrapper.getConnection() ");
             Connection cnx = super.getConnection();
 
             TransactionalUsersConnectionWrapper cnwrap = new TransactionalUsersConnectionWrapper(cnx);
@@ -51,11 +48,11 @@ public class TransactionalBasicDataSourceWrapper extends BasicDataSource{
 
             if (DevonPropertiesConstants.DatabaseConfig.USE_TRANSACTIONAL_USERS_VALUE_YES
                             .equals(transactionalUsers)) {
-                    System.out.println("***&*** Se detecta entorno TRANSACCIONAL, se ejecuta ALTER CURRENT SCHEMA ");
+                    log.debug("***&***  Se detecta entorno TRANSACCIONAL, se ejecuta ALTER CURRENT SCHEMA ");
                     cambiaCurrentSchema(cnwrap);
                     return cnwrap;
             } else {
-                    System.out.println("***&*** Se detecta entorno PROPIETARIO ");
+                    log.debug("***&*** Se detecta entorno PROPIETARIO ");
                     return cnx;
             }
     }
@@ -65,7 +62,7 @@ public class TransactionalBasicDataSourceWrapper extends BasicDataSource{
                     throws SQLException {
             // Sobreescribimos el método para añadirle la gestión de los usuarios
             // transaccionales
-            System.out.println("***&*** ha llamado a TransactionalBasicDataSourceWrapper.getConnection(username, password) ");
+            log.debug("***&*** ha llamado a TransactionalBasicDataSourceWrapper.getConnection(username, password) ");
             Connection cnx = super.getConnection(username, password);
             TransactionalUsersConnectionWrapper cnwrap = new TransactionalUsersConnectionWrapper(cnx);
 
@@ -75,7 +72,7 @@ public class TransactionalBasicDataSourceWrapper extends BasicDataSource{
             if (DevonPropertiesConstants.DatabaseConfig.USE_TRANSACTIONAL_USERS_VALUE_YES
                             .equals(transactionalUsers)) {
                     cambiaCurrentSchema(cnwrap);
-                    System.out.println("***&*** Se detecta entorno TRANSACCIONAL, se ejecuta ALTER CURRENT SCHEMA ");
+                    log.debug("***&*** Se detecta entorno TRANSACCIONAL, se ejecuta ALTER CURRENT SCHEMA ");
             }
             return cnx;
     }

@@ -1309,12 +1309,17 @@
 		}
 		var errores;
 		var validarFormNMB = function() {
-			if(tipoNMB.getValue() == null || tipoNMB.getValue() == '' ){
+			var tipoBien = tipoNMB.getValue();
+			
+			if(tipoBien == null || tipoBien == '' ){
 				return false;
-			}
-
+			}			
+			
+			var tipoBienValidar = getTipoBienValidar(tipoBien);
+			
 			for(var i=0;i < listaTabs.length;i++) {
-				 if (listaTabs[i].tipoBien == tipoNMB.getValue())  {
+				 if (listaTabs[i].tipoBien == tipoBienValidar)  {	 	
+				 	<!-- Comprobamos pestañas del tipo de bien correspondiente -->
 					for(var x=0;x < listaTabs[i].tabs.length; x++) {
 						if (!validaTab(listaTabs[i].tabs[x])) {
 							return false;
@@ -1323,9 +1328,18 @@
 				return true;
 				}				
 			}
-			return true;
-			
+			return true;			
 		}
+				
+		<!-- Obtiene el tipoBien cuyas pestañas se validarán, en caso de no encontrarse, se validarán las pestañas por defecto -->
+		var getTipoBienValidar = function(tipoBien){
+			for(var i=0;i < listaTabs.length;i++) {
+				 if (listaTabs[i].tipoBien == tipoBien)  {
+				 	return listaTabs[i].tipoBien;
+				 }	
+			}
+			return 'DEFECTO';
+		} 		
 		
 		var NMBparticipacion = app.creaInteger(
 			'bien.participacion'

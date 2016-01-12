@@ -619,4 +619,10 @@ public class ADMDespachoExternoManager {
 			throw new BusinessOperationException(e);
 		}
 	}
+	
+	@Transactional(readOnly = false)
+	public void guardarAmbitoActuacion(DespachoAmbitoActuacion despachoAmbitoActuacion)
+	{
+		despachoAmbitoActuacionDao.saveOrUpdate(despachoAmbitoActuacion);
+	}
 }

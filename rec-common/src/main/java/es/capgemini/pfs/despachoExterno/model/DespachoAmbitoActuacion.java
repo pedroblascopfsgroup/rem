@@ -62,6 +62,10 @@ public class DespachoAmbitoActuacion implements Serializable, Auditable {
 
     @Embedded
     private Auditoria auditoria;
+    
+    @Column(name = "DAA_PROV_CALIDAD_PORCENTAJE")
+    private String porcentaje;
+   
 
 	public Long getId() {
 		return id;
@@ -109,6 +113,14 @@ public class DespachoAmbitoActuacion implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+	
+	public String getPorcentaje() {
+		return porcentaje;
+	}
+
+	public void setPorcentaje(String porcentaje) {
+		this.porcentaje = porcentaje;
 	}
 
 }

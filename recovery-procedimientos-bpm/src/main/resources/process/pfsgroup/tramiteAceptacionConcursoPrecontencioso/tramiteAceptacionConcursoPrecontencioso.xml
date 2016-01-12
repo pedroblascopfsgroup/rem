@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition  xmlns="urn:jbpm.org:jpdl-3.2"  name="tramiteAceptacionConcursoPrecontencioso">
+
+	<start-state name="Inicio">
+		<transition to="P421_DecImporteConcursoAutomatica" name="avanzaBPM"></transition>
+	</start-state>
+	
+	<node name="P421_DecImporteConcursoAutomatica">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>precontenciosoDecisionActionHandler</targetBean>
+		</action>	
+		<transition to="P421_DecImporteConcursoAutomaticaDecision" name="avanzaBPM"/>
+	</node>
+	
+	<decision name="P421_DecImporteConcursoAutomaticaDecision" expression="#{P421_DecImporteConcursoAutomaticaDecision}">
+		<transition to="P421_AsignarLetradoConcurso" name="mayor"/>
+		<transition to="P421_Turnado" name="menor"/>
+	</decision>
+	
+	<state name="P421_AsignarLetradoConcurso">
+		<event type="node-enter">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="P421_AsignarLetradoConcurso" name="activarAlerta"></transition>
+		<transition to="P421_RegistrarAceptacionConcurso" name="avanzaBPM"/>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+	
+	<node name="P421_Turnado">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>precontenciosoDecisionActionHandler</targetBean>
+		</action>	
+		<transition to="P421_RevisarTurnadoLetradoConcurso" name="avanzaBPM"></transition>
+	</node>
+	
+	<state name="P421_RevisarTurnadoLetradoConcurso">	
+		<event type="node-enter">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="P421_RevisarTurnadoLetradoConcurso" name="activarAlerta"></transition>
+		<transition to="P421_RegistrarAceptacionConcurso" name="avanzaBPM"/>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+	
+	<state name="P421_RegistrarAceptacionConcurso">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>precontenciosoEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>precontenciosoLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P421_RegistrarAceptacionConcurso" name="activarAlerta"></transition>
+		<transition to="P421_RegistrarAceptacionConcursoDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+	
+	<decision name="P421_RegistrarAceptacionConcursoDecision" expression="#{P421_RegistrarAceptacionConcursoDecision}">
+		<transition to="Fin" name="SI"></transition>
+		<transition to="P421_RevisarTurnadoLetradoConcurso" name="menor"></transition>
+		<transition to="P421_AsignarLetradoConcurso" name="mayor"></transition>		
+	</decision>
+	
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>	
+	</end-state>
+
+</process-definition>

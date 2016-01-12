@@ -42,6 +42,14 @@ public interface DocumentoPCOApi {
 	List<DocumentoPCO> getDocumentosPorIdProcedimientoPCO(Long idProcPCO);
 	
 	/**
+	 * Obtiene los documentos de un procedimientoPCO no descartado
+	 * 
+	 * @param idProcPCO
+	 * @return
+	 */
+	List<DocumentoPCO> getDocumentosPorIdProcedimientoPCONoDescartados(Long idProcPCO);
+	
+	/**
 	 * Crea un DTO de la solicitud a partir del documento y de la solicitud
 	 * @param documento
 	 * @param solicitud
@@ -181,6 +189,7 @@ public interface DocumentoPCOApi {
 	
 	@BusinessOperationDefinition(PCO_DOCUMENTO_BY_ID)
 	DocumentoPCO getDocumentoPCOById(Long idDocPCO);
+
 	
 	/**
 	 * Recupera la lista de gestores por id de usuario y tipo de despacho
@@ -190,4 +199,12 @@ public interface DocumentoPCOApi {
 	 * @return List<GestorDespacho>
 	 */
 	public List<GestorDespacho> getGestorDespachoByUsuIdAndTipoDespacho(Long usuId, String tipoDespachoExterno);
+
+	/**
+	 * Comprueba si es un tipo de gestor con acceso a recovery mediante la tabla de actores del documentos (DDTipoActorPCO)
+	 * 
+	 * @param idTipoDespacho
+	 * @return
+	 */
+	Boolean esTipoGestorConAcceso(EXTDDTipoGestor tipoGestor);
 }

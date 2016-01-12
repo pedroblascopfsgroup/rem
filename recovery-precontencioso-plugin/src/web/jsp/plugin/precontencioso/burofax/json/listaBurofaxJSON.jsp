@@ -17,6 +17,7 @@
 			<json:property name="cliente" value="${burofax.cliente}"/>
 			<json:property name="contrato" value="${burofax.contrato}"/>
 			<json:property name="estado" value="${burofax.estado}"/>
+			<json:property name="refExternaEnvio" value="${burofax.refExternaEnvio}"/>
 			<json:property name="direccion" value="${burofax.direccion}"/>
 			<json:property name="tipo" value="${burofax.tipo}"/>
 			<json:property name="tipoDescripcion" value="${burofax.tipoDescripcion}"/>
@@ -31,6 +32,8 @@
 				<fwk:date  value="${burofax.fechaAcuse}" />
 			</json:property>	
 			<json:property name="resultado" value="${burofax.resultado}"/>
+			<json:property name="acuseRecibo" value="${burofax.acuseRecibo}"/>
+			<json:property name="esPersonaManual" value="${burofax.esPersonaManual}"/>
 		</json:object>
 	</json:array>
 </fwk:json>		

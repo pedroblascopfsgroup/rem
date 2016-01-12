@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.api;
 
 import java.util.List;
+import java.util.Map;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.asunto.model.Procedimiento;
@@ -27,6 +28,7 @@ public interface ProcedimientoPcoApi {
 	public static final String BO_PCO_INICIALIZAR = "plugin.precontencioso.inicializarPco";
 	public static final String BO_PCO_CREAR_PROCEDIMIENTO_PCO = "plugin.precontencioso.crearProcedimientoPco";
 	public static final String BO_PCO_EXPEDIENTE_COMPROBAR_EDICION_EXPEDIENTE = "plugin.precontencioso.isExpedienteEditable";
+	public static final String BO_PCO_EXPEDIENTE_VISIBILIDAD_BOTONES_PCO = "plugin.precontencioso.getVisibilidadBotonesPrecontencioso";
 	
 	/**
 	 * Devuelve el numero de resultados que va a devolver la consulta con el filtro enviado por parametro
@@ -141,4 +143,12 @@ public interface ProcedimientoPcoApi {
 	 * @return
 	 */
 	public boolean isExpedienteEditable(Long idProcedimiento);	
+
+	@BusinessOperationDefinition(BO_PCO_EXPEDIENTE_VISIBILIDAD_BOTONES_PCO)
+	public List<String> getVisibilidadBotonesDocumentosPrecontencioso(String seccion, boolean visible);
+
+	boolean mostrarSegunCodigos(Long idProcedimiento, List<String> codigosTiposGestores);
+	
+	public boolean comprobarExistenciaGestor(Long idProcedimiento);
+
 }

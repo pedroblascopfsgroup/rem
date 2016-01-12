@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="tramiteAceptacionConcursoPrecontencioso" width="1210" height="878">
+  <node name="Inicio" x="81" y="35" width="132" height="36">
+    <edge>
+      <label x="-71" y="-9"/>
+    </edge>
+  </node>
+  <node name="P421_DecImporteConcursoAutomatica" x="35" y="114" width="233" height="36">
+    <edge>
+      <label x="5" y="-7"/>
+    </edge>
+  </node>
+  <node name="P421_DecImporteConcursoAutomaticaDecision" x="15" y="200" width="264" height="36">
+    <edge>
+      <label x="-43" y="5"/>
+    </edge>
+    <edge>
+      <label x="1" y="-11"/>
+    </edge>
+  </node>
+  <node name="P421_AsignarLetradoConcurso" x="435" y="200" width="200" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-18" y="-22"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P421_Turnado" x="80" y="266" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P421_RevisarTurnadoLetradoConcurso" x="34" y="333" width="224" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P421_RegistrarAceptacionConcurso" x="29" y="435" width="241" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P421_RegistrarAceptacionConcursoDecision" x="24" y="524" width="254" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="32" y="-64"/>
+      <bendpoint w1="-141" h1="-47" w2="-136" h2="144"/>
+      <bendpoint w1="-141" h1="-135" w2="-136" h2="56"/>
+    </edge>
+    <edge>
+      <label x="14" y="-19"/>
+      <bendpoint w1="257" h1="-156" w2="-122" h2="168"/>
+    </edge>
+  </node>
+  <node name="Fin" x="460" y="529" width="132" height="36"/>
+</root-container>

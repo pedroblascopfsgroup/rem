@@ -581,7 +581,7 @@ Ext.onReady(function() {
     }
         
     /* recarga del árbol de tareas */
-    /*app.recargaTree = function(){
+    app.recargaTree = function(){
         var id=Ext.getCmp("tareas").el.child('.x-panel').id;
               Ext.getCmp("tareas").remove(id,true);
 
@@ -590,7 +590,7 @@ Ext.onReady(function() {
             ,scripts:true
         });
 
-    };*/
+    };
 
     var actualizarTareas = function(datos){
                 var tareas = Ext.decode(datos.countTareas);
@@ -623,10 +623,10 @@ Ext.onReady(function() {
                 countTareas=tareas;
             };
             
-     app.recargaTree = function(){
+     /*app.recargaTree = function(){
      	<%--FIXME BORRAR ESTA FUNCIÓN --%>
      	var a = 0;
-     };       
+     };*/       
 <%--
     app.recargaTree = function(){
         page.webflow({

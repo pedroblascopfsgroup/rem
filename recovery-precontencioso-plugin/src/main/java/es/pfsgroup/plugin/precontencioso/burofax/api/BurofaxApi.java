@@ -110,9 +110,10 @@ public interface BurofaxApi {
 	 * Configura el estado y el tipo de burofax de un envio
 	 * @param idEnvio
 	 * @param idTipoBurofax
+	 * @param idDocumento
 	 */
 	@BusinessOperationDefinition(CONFIGURA_TIPO_BUROFAX)
-	List<EnvioBurofaxPCO> configurarTipoBurofax(Long idTipoBurofax,String[] arrayIdDirecciones,String[] arrayIdBurofax,String[] arrayIdEnvios);
+	List<EnvioBurofaxPCO> configurarTipoBurofax(Long idTipoBurofax,String[] arrayIdDirecciones,String[] arrayIdBurofax,String[] arrayIdEnvios, Long idDocumento);
 	
 	/**
 	 * Devuelve el contenido del burofax dado su envio
@@ -223,6 +224,8 @@ public interface BurofaxApi {
 	
 	@BusinessOperationDefinition(OBTENER_BUROFAX_ENVIO_INTE)
 	BurofaxEnvioIntegracionPCO getBurofaxEnvioIntegracionByIdEnvio(Long idEnvio);
+
+	void actualizaDireccion(DireccionAltaDto dto, Long idDireccion);
 	
 	
 	

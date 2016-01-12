@@ -14,6 +14,8 @@ public class BurofaxGridDTO extends WebDto {
 	private Date fechaSolicitud;
 	private Date fechaEnvio;
 	private Date fechaAcuse;
+	private String refExternaEnvio;
+	private Boolean regManual;
 	private Boolean resultado;
 
 	public String getEstado() {
@@ -57,5 +59,17 @@ public class BurofaxGridDTO extends WebDto {
 	}
 	public void setResultado(Boolean resultado) {
 		this.resultado = resultado;
+	}
+	public String getRefExternaEnvio() {
+		return refExternaEnvio;
+	}
+	public void setRefExternaEnvio(String refExternaEnvio) {
+		this.refExternaEnvio = refExternaEnvio;
+	}
+	public Boolean getRegManual() {
+		return regManual;
+	}
+	public void setRegManual(Boolean regManual) {
+		this.regManual = regManual;
 	}
 }

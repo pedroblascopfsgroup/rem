@@ -74,6 +74,8 @@ storeDocumentos.on(
 
 var myRenderer =  'background-color:lavender;';
 
+var myMask = new Ext.LoadMask(Ext.getBody(), {msg:"Cargando..."});
+
 var cmDocumento = [
  	myCboxSelModel2,
 	{header : '<s:message code="precontencioso.grid.documento.unidadGestion" text="**Unidad de Gestión" />', dataIndex : 'contrato'},
@@ -96,6 +98,7 @@ var cmDocumento = [
 var validacion=false;
 var incluirDocButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.incluirDocumento" text="**Incluir Documento" />'
+		,id: 'incluirDocButton'
 		,iconCls : 'icon_mas'
 		,disabled : false
 		,cls: 'x-btn-text-icon'
@@ -121,9 +124,9 @@ var incluirDocButton = new Ext.Button({
 		}				
 	});
 	
-
 var excluirDocButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.excluirDocumentos" text="**Excluir Documentos" />'
+		,id: 'excluirDocButton'
 		,iconCls : 'icon_menos'
 		,disabled : true
 		,cls: 'x-btn-text-icon'
@@ -136,6 +139,7 @@ var excluirDocButton = new Ext.Button({
 			else {		
 					Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', '<s:message code="precontencioso.grid.documento.excluirDocumento.confirmacion" text="**Va a exlcuir documentos y las solicitudes asociadas ¿Desea continuar?" />', function(btn){
 	    				if (btn == 'yes'){
+	    					myMask.show();
 							Ext.Ajax.request({
 									url : page.resolveUrl('documentopco/excluirDocumentos'), 
 									params : p,									<%-- {idDocumento:idDocumento} , --%>
@@ -143,6 +147,7 @@ var excluirDocButton = new Ext.Button({
 									success: function ( result, request ) {
 										refrescarDocumentosGrid();
 										gridDocumentos.getSelectionModel().clearSelections();
+										myMask.hide();
 									}
 							});
 	    				}
@@ -168,6 +173,7 @@ var getParametrosExcluirDescartarSolicitarDocs = function() {
 	
 var descartarDocButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.descartarDocumentos" text="**Descartar Documentos" />'
+		,id: 'descartarDocButton'
 		,iconCls : 'icon_cancel'
 		,disabled : true
 		,cls: 'x-btn-text-icon'
@@ -180,12 +186,14 @@ var descartarDocButton = new Ext.Button({
 			else {
 				Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', '<s:message code="precontencioso.grid.documento.descartarDocumento.confirmacion" text="**Va a descartar documentos ¿Desea continuar?" />', function(btn){
 	   				if (btn == 'yes'){
+	   					myMask.show();
 						Ext.Ajax.request({
 							url : page.resolveUrl('documentopco/descartarDocumentos'), 
 							params: p, 			<%--{idDocumento:idDocumento} , --%>
 							method: 'POST',
 							success: function ( result, request ) {
 								refrescarDocumentosGrid();
+								myMask.hide();
 							}
 						});
 					}
@@ -197,6 +205,7 @@ var descartarDocButton = new Ext.Button({
 var validacionEditar=false;	
 var solicitarDocButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.crearSolicitudes" text="**Crear Solicitudes" />'
+		,id: 'solicitarDocButton'
 		,iconCls : 'icon_mas'
 		,disabled : true
 		,cls: 'x-btn-text-icon'
@@ -250,6 +259,7 @@ var getParametrosAnularSolicitudes = function() {
 
 var anularSolicitudesButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.anularSolicitudes" text="**Anular Solicitudes" />'
+		,id: 'anularSolicitudesButton'
 		,iconCls : 'icon_menos'
 		,disabled : true
 		,cls: 'x-btn-text-icon'
@@ -294,6 +304,7 @@ var anularSolicitudesButton = new Ext.Button({
 var validacionEstado=false;
 var informarDocButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.informarDocumento" text="**Informar Documento" />'
+		,id: 'informarDocButton'
 		,iconCls : 'icon_edit'
 		,disabled : true
 		,cls: 'x-btn-text-icon'
@@ -301,20 +312,33 @@ var informarDocButton = new Ext.Button({
 			rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
 			if (rowsSelected == '') {
 				Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.sinSolSeleccionada" text="**Debe seleccionar alguna solicitud de documento." />');
-			}
+			}<%--ya se puede informar más de una solicitud
 			else if (rowsSelected.length > 1){
 				Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.multipleSolSeleccionada" text="**No se puede seleccionar más de una solicitud de documento." />');
-			}
+			} --%>
 			else if(validacionEstado) {
 	        	Ext.Msg.show({title:'Aviso',msg: '<s:message code="precontencioso.grid.documento.informarDocumento.aviso" text="**No se puede Informar" />',buttons: Ext.Msg.OK});
         	} 
+        	else if(validacionMultiple()){
+        		Ext.Msg.show({title:'Aviso',msg: '<s:message code="precontencioso.grid.documento.informarDocumento.avisoMultiple" text="**Atención, ha seleccionado Solicitudes con distinta información y por tanto no es posible Informar por selección múltiple." />',buttons: Ext.Msg.OK});
+        	}
         	else {
+        		<%--creamos los arrays para mandar los id's --%>
+        		var rowsSelected=new Array();
+        		var arrayIdDocs=new Array();
+        		var arrayIdSolicitudes=new Array();
+        		rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 			
+				for (var i=0; i < rowsSelected.length; i++){
+					arrayIdDocs.push(rowsSelected[i].get('idDoc'));
+					arrayIdSolicitudes.push(rowsSelected[i].get('id'));
+				}
 		        var w = app.openWindow({
 						flow: 'documentopco/informarSolicitud'
 						,params: {idSolicitud:rowsSelected[0].get('id'), actor:rowsSelected[0].get('actor'), idDoc:rowsSelected[0].get('idDoc'), 
 									fechaResultado:rowsSelected[0].get('fechaResultado'),resultado:rowsSelected[0].get('resultado'),
 									fechaEnvio:rowsSelected[0].get('fechaEnvio'),fechaRecepcion:rowsSelected[0].get('fechaRecepcion'),
-									existeSolDisponible:existeSolDisponible(rowsSelected[0], gridDocumentos)
+									existeSolDisponible:existeSolDisponible(rowsSelected[0], gridDocumentos), arrayIdDocs:arrayIdDocs,
+									arrayIdSolicitudes:arrayIdSolicitudes
 								}
 						,title: '<s:message code="precontencioso.grid.documento.informarDocumento" text="**Informar Documento" />'
 						,width: 640
@@ -331,6 +355,7 @@ var informarDocButton = new Ext.Button({
 var validacionEditar=false;	
 var editarDocButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.editarDocumento" text="**Editar Documento" />'
+		,id: 'editarDocButton'
 		,iconCls : 'icon_edit'
 		,disabled : true
 		,cls: 'x-btn-text-icon'
@@ -358,7 +383,63 @@ var editarDocButton = new Ext.Button({
 					}
 			}
 	});	
-
+<%--FUNCION: Controlar que todos los campos de una selección multiple son iguales para informar o no --%>
+var validacionMultiple = function (){
+	var rowsSelected=new Array(); 
+	var arrayIdDocumentos=new Array();
+	var arrayEsDocumento=new Array();
+	var arrayTieneSolicitud=new Array();
+	var arrayCodigoEstadoDocumento=new Array();	
+	var arrayResultado=new Array();
+	
+	var arrayDescripcion=new Array();
+	var arrayTipoDocumento=new Array();
+	var arrayAdjunto=new Array();
+	var arrayEjecutivo=new Array();
+	var arrayTipoActor=new Array();
+	var arrayFechaResultado=new Array();
+	var arrayFechaEnvio=new Array();
+	var arrayFechaRecepcion=new Array();
+	var arrayComentario=new Array();
+	
+	rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 			
+	for (var i=0; i < rowsSelected.length; i++){
+		arrayEsDocumento.push(rowsSelected[i].get('esDocumento'));
+		arrayTieneSolicitud.push(rowsSelected[i].get('tieneSolicitud'));
+		arrayCodigoEstadoDocumento.push(rowsSelected[i].get('codigoEstadoDocumento'));				 
+		arrayResultado.push(rowsSelected[i].get('resultado'));
+		
+		arrayAdjunto.push(rowsSelected[i].get('adjunto'));
+		arrayEjecutivo.push(rowsSelected[i].get('ejecutivo'));
+		arrayFechaResultado.push(rowsSelected[i].get('fechaResultado'));
+		arrayFechaEnvio.push(rowsSelected[i].get('fechaEnvio'));
+		arrayFechaRecepcion.push(rowsSelected[i].get('fechaRecepcion'));
+		arrayComentario.push(rowsSelected[i].get('comentario'));
+		
+	}
+	
+	var dummy0 = arrayEsDocumento[0];
+	var dummy1 = arrayTieneSolicitud[0];
+	var dummy2 = arrayCodigoEstadoDocumento[0];
+	var dummy3 = arrayFechaResultado[0];
+	var dummy4 = arrayAdjunto[0];
+	var dummy5 = arrayEjecutivo[0];
+	var dummy6 = arrayResultado[0];
+	var dummy7 = arrayFechaEnvio[0];
+	var dummy8 = arrayFechaRecepcion[0];
+	var dummy9 = arrayComentario[0];
+	
+	
+	for(i=1; i < arrayEsDocumento.length; i++){
+		if(dummy0 != arrayEsDocumento[i] || dummy1 != arrayTieneSolicitud[i] || dummy2 != arrayCodigoEstadoDocumento[i] || dummy3 != arrayFechaResultado[i] 
+			|| dummy4 != arrayAdjunto[i] || dummy5 != arrayEjecutivo[i] || dummy6 != arrayResultado[i] || dummy7 != arrayFechaEnvio[i]
+			|| dummy8 != arrayFechaRecepcion[i] || dummy9 != arrayComentario[i]) {
+			return true;
+		}
+	}
+	
+	return false;
+}
 <%-- FUNCION: Control habilitar/deshabilitar los distintos botones --%>	
 var habilitarDeshabilitarButtons = function (incluirB, excluirB, descartarB, editarB, anularB, solicitarB, informarB){
 	incluirDocButton.setDisabled(incluirB);
@@ -372,6 +453,7 @@ var habilitarDeshabilitarButtons = function (incluirB, excluirB, descartarB, edi
 
 <%-- FUNCION: Chequeo estados para control botones --%>
 var actualizarBotonesDocumentos = function(){	
+		
 		habilitarDeshabilitarButtons(true, true, true, true, true, true, true);
 		incluirDocButton.setDisabled(false);
 		
@@ -388,6 +470,14 @@ var actualizarBotonesDocumentos = function(){
 			else {
 				if(myCboxSelModel2.getCount() == 0)	{
 					return;
+			}
+      	} 
+      	else {
+			habilitarDeshabilitarButtons(true,true, true, true, true, true, true);
+			return;
+      	}		
+
+		
 				}
 				<%-- SI SOLO UN ELEMENTO SELECCIONADO --%>
 				else if(myCboxSelModel2.getCount() == 1){
@@ -514,7 +604,8 @@ var actualizarBotonesDocumentos = function(){
 									<%-- pero no tienen resultado --%>
 									if (uniqueArray4.length ==1 && uniqueArray4[0] == ''){
 										<%-- DESCARTAR DOCUMENTOS y ANULAR SOLICITUDES MASIVAMENTE --%>
-										habilitarDeshabilitarButtons(false, true, false, true, false, false, true);
+										<%--habilitarDeshabilitarButtons(false, true, false, true, false, false, true); --%>
+										habilitarDeshabilitarButtons(false, true, false, true, false, false, false);<%--habilitamos informar masivo --%>
 										return;
 									}		      					      									
 								}
@@ -528,7 +619,8 @@ var actualizarBotonesDocumentos = function(){
 							<%-- Si todas las solicitudes no tienen resultado --%>
 							if (uniqueArray4.length ==1 && uniqueArray4[0] == ''){
 								<%-- ANULAR SOLICITUDES MASIVAMENTE --%>
-								habilitarDeshabilitarButtons(false, true, true, true, false, true, true);
+								<%--habilitarDeshabilitarButtons(false, true, true, true, false, true, true); --%>
+								habilitarDeshabilitarButtons(false, true, true, true, false, true, false);<%--habilitamos informar masivo --%>
 								return;
 							}		      					      																	
 						}												
@@ -547,13 +639,15 @@ var actualizarBotonesDocumentos = function(){
 							<%-- Si todas las solicitudes no tienen resultado --%>
 							if (uniqueArray4.length ==1 && uniqueArray4[0] == ''){
 								<%-- DESCARTAR DOCUMENTOS Y ANULAR SOLICITUDES MASIVAMENTE --%>
-								habilitarDeshabilitarButtons(false, true, false, true, false, false, true);
+								<%--habilitarDeshabilitarButtons(false, true, false, true, false, false, true); --%>
+								habilitarDeshabilitarButtons(false, true, false, true, false, false, false);<%--habilitamos informar masivo --%>
 								return;
 							}
 							<%-- Si hay alguna solicitud con resultado --%>
 							else {
 								<%-- SOLICITAR MASIVAMENTE --%>
-								habilitarDeshabilitarButtons(false, true, false, true, true, false, true);
+								<%--habilitarDeshabilitarButtons(false, true, false, true, true, false, true); --%>
+								habilitarDeshabilitarButtons(false, true, false, true, true, false, false);<%--habilitamos informar masivo --%>
 								return;
 							} 		      					      									
 						}
@@ -565,7 +659,8 @@ var actualizarBotonesDocumentos = function(){
 							<%-- Si todas las solicitudes no tienen resultado --%>
 							if (uniqueArray4.length ==1 && uniqueArray4[0] == ''){
 								<%-- ANULAR SOLICITUDES MASIVAMENTE --%>
-								habilitarDeshabilitarButtons(false, true, false, true, false, true, true);
+								<%--habilitarDeshabilitarButtons(false, true, false, true, false, true, true); --%>
+								habilitarDeshabilitarButtons(false, true, false, true, false, true, false);<%--habilitamos informar masivo --%>
 								return;
 							}		      					      																	
 						}				
@@ -579,7 +674,8 @@ var actualizarBotonesDocumentos = function(){
 						<%-- Si todos los seleccionados son documentos --%>	
 						if (uniqueArray2.length ==1 && uniqueArray2[0] == true){
 							<%-- SOLICITAR MASIVAMENTE --%>
-							habilitarDeshabilitarButtons(false, true, true, true, true, false, true);
+							<%--habilitarDeshabilitarButtons(false, true, true, true, true, false, true); --%>
+							habilitarDeshabilitarButtons(false, true, true, true, true, false, false);<%--habilitamos informar masivo --%>
 							return;
 						}
 		<%-- 			} --%>
@@ -669,6 +765,7 @@ Ext.namespace('Ext.ux.plugins');
 
 	var botonRefresh = new Ext.Button({
 			text : 'Refresh'
+			,id: 'botonRefreshDoc'
 			,iconCls : 'icon_refresh'
 			,handler:function(){
 				refrescarDocumentosGrid();
@@ -711,4 +808,17 @@ gridDocumentos.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {
 
 var refrescarDocumentosGrid = function() {
 	storeDocumentos.webflow({idProcedimientoPCO: data.id});
+}
+
+var ponerVisibilidadBotonesDoc = function(visibles, invisibles) {
+	for (var i=0; i < visibles.length; i++){
+		if (typeof(Ext.getCmp(visibles[i].boton)) != 'undefined') {
+			Ext.getCmp(visibles[i].boton).setVisible(true);
+		}
+	}
+	for (var i=0; i < invisibles.length; i++){
+		if (typeof(Ext.getCmp(visibles[i].boton)) != 'undefined') {
+			Ext.getCmp(invisibles[i].boton).setVisible(false);
+		}
+	}
 }

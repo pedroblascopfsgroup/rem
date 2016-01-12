@@ -58,14 +58,18 @@
 						data.esUsuarioGestoria = r.esUsuarioGestoria;
 				
 						<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_DOCUMENTOS">
+							ponerVisibilidadBotonesDoc(data.botonesVisiblesDocPco, data.botonesInvisiblesDocPco);
 							refrescarDocumentosGrid();
 						</sec:authorize>
 				
 						<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_LIQUIDACIONES">
+							ponerVisibilidadBotonesLiq(data.botonesVisiblesLiqPco, data.botonesInvisiblesLiqPco);
 							refrescarLiquidacionesGrid();
+							ocultarColumnasGrid();
 						</sec:authorize>
 				
 						<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_BUROFAXES">
+							ponerVisibilidadBotonesBur(data.botonesVisiblesBurPco, data.botonesInvisiblesBurPco);
 							refrescarBurofaxGrid();
 						</sec:authorize>
 					}

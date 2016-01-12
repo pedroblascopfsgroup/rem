@@ -7,18 +7,55 @@
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags"%>
 <%@ taglib prefix="pfs" tagdir="/WEB-INF/tags/pfs"%>
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <fwk:page>
 	
-    
 	var arrayIdBurofax='${arrayIdBurofax}';
     var arrayIdDirecciones='${arrayIdDirecciones}';
    
-   
+   <sec:authentication var="user" property="principal" />
 
 	<pfsforms:ddCombo name="tipoBurofax"
 		labelKey="plugin.precontencioso.grid.burofax.tipoBurofax" 
  		label="**Tipo Burofax" value="" dd="${tipoBurofax}" 
 		propertyCodigo="id" propertyDescripcion="descripcion" obligatory="true" blankElement="" blankElementText=""/>
+			
+	var listadoDocumentos = Ext.data.Record.create([
+		 {name:'idDoc'}
+		,{name:'tipoDocumento'}
+		,{name:'contrato'}
+	]);
+		
+	var storeDocumentos = page.getStore({
+	       flow: 'burofax/getDocuemtosPCONoDescartados'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'solicitudesDocumento'
+	    }, listadoDocumentos)	       
+	});	
+
+	var documento = new Ext.form.ComboBox({
+		store:storeDocumentos
+		,name:'documento'
+		,displayField:'tipoDocumento'
+		,valueField:'idDoc'
+		,allowBlank : true
+		,mode: 'local'
+		,width: 350
+		,resizable: true
+		,forceSelection: true
+		,tpl: new Ext.XTemplate('<tpl for="."><div class="x-combo-list-item">{contrato} - {tipoDocumento}</div></tpl>')
+		,emptyText:'<s:message code="rec-web.direccion.form.seleccionar" text="**Seleccionar" />'
+		,triggerAction: 'all'
+		,fieldLabel: '<s:message code="plugin.precontencioso.grid.burofax.tituloDocumento" text="**Titulo del documento" />'
+	});
+		
+	documento.on('select', function(box, record, index) {
+			var r = documento.getStore().find('idDoc',documento.getValue());
+			documento.setRawValue(documento.getStore().getAt(r).get('contrato')+" - "+documento.getStore().getAt(r).get('tipoDocumento'));
+	});
+
+		
+	storeDocumentos.webflow({idProcedimientoPCO: data.precontencioso.id});
 
 	var bottomBar = [];
 
@@ -30,7 +67,7 @@
 				if(tipoBurofax.validate()){	
 			    	Ext.Ajax.request({
 							url : page.resolveUrl('burofax/configurarTipoBurofax'), 
-							params : {idTipoBurofax:tipoBurofax.value,arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax},
+							params : {idTipoBurofax:tipoBurofax.value,arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax,idDocumento:documento.value},
 							method: 'POST',
 							success: function ( result, request ) {
 								page.fireEvent(app.event.DONE);
@@ -58,7 +95,10 @@
 		,width:700
 		,bodyStyle:'padding:10px;cellspacing:20px'
 		,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
-		,items : [tipoBurofax]
+		,items :[
+					tipoBurofax
+					<c:if test="${user.entidad.descripcion eq 'CAJAMAR' || user.entidad.descripcion eq 'HAYA'}">,documento</c:if>
+				]
 		,bbar:bottomBar
 	});
 	

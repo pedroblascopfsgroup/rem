@@ -288,6 +288,8 @@ public class TurnadoDespachosController {
 		cabeceras.add("TIPO IMPORTE - CONCURSOS");
 		cabeceras.add("TIPO CALIDAD - LITIGIOS");
 		cabeceras.add("TIPO CALIDAD - CONCURSOS");
+		cabeceras.add("PROVINCIA");
+		cabeceras.add("CALIDAD - PROVINCIA");
 		
 		List<List<String>> valores = new ArrayList<List<String>>();
 		List<String> fila = null;
@@ -301,23 +303,41 @@ public class TurnadoDespachosController {
 		List<DespachoExterno> despachosExternos = despachoExternoManager.getDespachoExternoByTipo(tipoDespachoExterno.getId());
 		for(DespachoExterno despachoExterno : despachosExternos) {
 			
-			if(template == templateImpar) {
-				template = templatePar;
-			}
-			else {
-				template = templateImpar;
-			}
-		
-			fila = new ArrayList<String>();
+			List<DespachoAmbitoActuacion> listaAmbitoActuacion = (despachoExterno.getId()!=null) 
+					? despachoExternoManager.getAmbitoGeograficoDespacho(despachoExterno.getId())
+					: new ArrayList<DespachoAmbitoActuacion>();
+			List<DDProvincia> listaProvinciasDespachoNombre = this.getListaProvinciasDespacho(listaAmbitoActuacion);
+			List<String> listaProvinciasPorcentaje = this.getListaProvinciasPorcentaje(listaAmbitoActuacion);
+			//Con este bucle, se agrega 1 Fila por Despacho - Provincia ........ PRODUCTO-580
+			int i=0;
+			do{
+				if(template == templateImpar) {
+					template = templatePar;
+				}
+				else {
+					template = templateImpar;
+				}
 			
-			fila.add(despachoExterno.getId() + template);
-			fila.add(despachoExterno.getDescripcion() + template);
-			fila.add((despachoExterno.getTurnadoCodigoImporteLitigios() == null ? "" : despachoExterno.getTurnadoCodigoImporteLitigios()) + template);
-			fila.add((despachoExterno.getTurnadoCodigoImporteConcursal() == null ? "" : despachoExterno.getTurnadoCodigoImporteConcursal()) + template);
-			fila.add((despachoExterno.getTurnadoCodigoCalidadLitigios() == null ? "" : despachoExterno.getTurnadoCodigoCalidadLitigios()) + template);
-			fila.add((despachoExterno.getTurnadoCodigoCalidadConcursal() == null ? "" : despachoExterno.getTurnadoCodigoCalidadConcursal()) + template);
-			
-			valores.add(fila);
+				fila = new ArrayList<String>();
+				
+				fila.add(despachoExterno.getId() + template);
+				fila.add(despachoExterno.getDescripcion() + template);
+				fila.add((despachoExterno.getTurnadoCodigoImporteLitigios() == null ? "" : despachoExterno.getTurnadoCodigoImporteLitigios()) + template);
+				fila.add((despachoExterno.getTurnadoCodigoImporteConcursal() == null ? "" : despachoExterno.getTurnadoCodigoImporteConcursal()) + template);
+				fila.add((despachoExterno.getTurnadoCodigoCalidadLitigios() == null ? "" : despachoExterno.getTurnadoCodigoCalidadLitigios()) + template);
+				fila.add((despachoExterno.getTurnadoCodigoCalidadConcursal() == null ? "" : despachoExterno.getTurnadoCodigoCalidadConcursal()) + template);
+				if(listaProvinciasDespachoNombre.size() > 0) {
+					fila.add(listaProvinciasDespachoNombre.get(i).getDescripcion().toUpperCase() + template);
+					fila.add((listaProvinciasPorcentaje.get(i) == null ? "0%" : listaProvinciasPorcentaje.get(i)+"%") + template);
+				}
+				else {
+					fila.add(template);
+					fila.add(template);
+				}
+					
+				valores.add(fila);
+				i++;
+			}while(i < listaProvinciasDespachoNombre.size());
 		}
 				
 		HojaExcelInformeSubasta hojaExcel = new HojaExcelInformeSubasta();
@@ -409,31 +429,14 @@ public class TurnadoDespachosController {
 				? despachoExternoManager.getAmbitoGeograficoDespacho(id)
 				: new ArrayList<DespachoAmbitoActuacion>();
 		
-		ArrayList<DespachoAmbitoActuacion> listaBorrarAmbito = new ArrayList<DespachoAmbitoActuacion>();
-		List<DDProvincia> listaProvinciasDespachoNombre = new LinkedList<DDProvincia>();
-		List<String> listaProvinciasPorcentaje = new LinkedList<String>();
-		for(DespachoAmbitoActuacion ambitoActuacion : listaAmbitoActuacion) {
-			if(ambitoActuacion.getProvincia() != null) {
-				listaProvinciasDespachoNombre.add(ambitoActuacion.getProvincia());
-				listaProvinciasPorcentaje.add(ambitoActuacion.getPorcentaje());
-			}
-			else {
-				listaBorrarAmbito.add(ambitoActuacion);
-			}
-		}
-		/*
-		 * Solo conservo objetos que contiene provincia en objetos de tipo DespachoAmbitoActuacion
-		 */
-		for(DespachoAmbitoActuacion borrarAmbito : listaBorrarAmbito) {
-			listaAmbitoActuacion.remove(borrarAmbito);
-		}
+		List<DDProvincia> listaProvinciasDespachoNombre = this.getListaProvinciasDespacho(listaAmbitoActuacion);
+		List<String> listaProvinciasPorcentaje = this.getListaProvinciasPorcentaje(listaAmbitoActuacion);
 
 		model.addAttribute("despachoId", id);
 		model.addAttribute("listaProvinciasDespachoNombre", listaProvinciasDespachoNombre);
 		model.addAttribute("listaProvinciasPorcentaje", listaProvinciasPorcentaje);
 		return VIEW_ASIGNAR_CALIDAD_PROVINCIA;
 	}
-	
 	
 	@RequestMapping
 	public String guardarCalidadProvincia(@RequestParam(value = "despacho", required = true) Long idDespacho,
@@ -452,5 +455,30 @@ public class TurnadoDespachosController {
 		}
 		
 		return VIEW_DEFAULT;
+	}
+	
+	private List<DDProvincia> getListaProvinciasDespacho(List<DespachoAmbitoActuacion> listaAmbitoActuacion){
+		
+		List<DDProvincia> listaProvinciasDespachoNombre = new LinkedList<DDProvincia>();
+		
+		for(DespachoAmbitoActuacion ambitoActuacion : listaAmbitoActuacion) {
+			if(ambitoActuacion.getProvincia() != null) {
+				listaProvinciasDespachoNombre.add(ambitoActuacion.getProvincia());
+			}
+		}
+		
+		return listaProvinciasDespachoNombre;
+	}
+	
+	private List<String> getListaProvinciasPorcentaje(List<DespachoAmbitoActuacion> listaAmbitoActuacion) {
+
+		List<String> listaProvinciasPorcentaje = new LinkedList<String>();
+		
+		for(DespachoAmbitoActuacion ambitoActuacion : listaAmbitoActuacion) {
+			if(ambitoActuacion.getProvincia() != null) {
+				listaProvinciasPorcentaje.add(ambitoActuacion.getPorcentaje());
+			}
+		}
+		return listaProvinciasPorcentaje;
 	}
 }

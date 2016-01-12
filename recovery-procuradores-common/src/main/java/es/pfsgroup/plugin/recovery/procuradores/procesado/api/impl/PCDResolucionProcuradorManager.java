@@ -178,8 +178,8 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 			dtoTipoResol.setDescripcionTipoResolucion(resolucion.getDescripcion());
 			dtoTipoResol.setCodigoTipoAccion(resolucion.getTipoAccion().getCodigo());
 			
-			// Si el procedimiento no tiene tareas activas no se incluye la autopr髍roga.
-			// Si se han realizado el m醲imo de autopr髍rogas no se incluye la autopr髍roga.
+			// Si el procedimiento no tiene tareas activas no se incluye la autopr贸rroga.
+			// Si se han realizado el m谩ximo de autopr贸rrogas no se incluye la autopr贸rroga.
 //			if(resolucion.getCodigo().equals(PCDResolucionProcuradorManager.COD_RESOLUCION_AUTOPRORROGA) && idTarea != null)
 //			{
 //			    	EXTTareaExterna tarea = (EXTTareaExterna) proxyFactory.proxy(TareaExternaApi.class).get(idTarea);
@@ -194,7 +194,7 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 				listaResolucionesDto.add(dtoTipoResol);
 //			}
 		}
-		
+		 
 		return listaResolucionesDto;
 	}
 	
@@ -210,7 +210,7 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 	@BusinessOperation(PCD_MSV_BO_OBTENER_RESOLUCIONES)
 	public Set<MSVTipoResolucionDto> obtenerTiposResoluciones(Long idProcedimiento, Long idTarea){
 		
-    	//Si no tiene tareas activas obtiene los tipos de resoluci髇 a partir del idProcedimiento
+    	//Si no tiene tareas activas obtiene los tipos de resoluci贸n a partir del idProcedimiento
     	Set<MSVTipoResolucionDto> setTiposResolucion = (Checks.esNulo(idTarea)) 
     			? apiProxyFactory.proxy(MSVResolucionInputApi.class).obtenerTiposResolucionesSinTarea(idProcedimiento)
     			: apiProxyFactory.proxy(MSVResolucionInputApi.class).obtenerTiposResolucionesTareas(idTarea);
@@ -219,7 +219,7 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 		MSVTipoResolucionDto tipoAutoprorroga = new MSVTipoResolucionDto();
 		tipoAutoprorroga.setCodigoTipoResolucion(COD_RESOLUCION_AUTOPRORROGA);
 		
-		//Si la tarea es nula o a llegado al m醲imo de las pr髍rogas, eliminamos la resoluci髇.
+		//Si la tarea es nula o a llegado al m谩ximo de las pr贸rrogas, eliminamos la resoluci贸n.
 		if(Checks.esNulo(idTarea)){
 			setTiposResolucion.remove(tipoAutoprorroga);
 		}else{
@@ -259,7 +259,7 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 		               result = (String) jbpmManager.evaluaScript(idProcedimiento, idTareaExterna, tareaExterna.getTareaProcedimiento().getId(), null,
 		                       script);
 		           } catch (Exception e) {
-		               throw new UserException("Error en el script de decisi髇 [" + script + "] para la tarea: " + idTareaExterna + " del procedimiento: "
+		               throw new UserException("Error en el script de decisi贸n [" + script + "] para la tarea: " + idTareaExterna + " del procedimiento: "
 		                       + idProcedimiento);
 		           }
 		           return result;
@@ -282,7 +282,7 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 		               result = (String) jbpmManager.evaluaScript(idProcedimiento, idTareaExterna, tareaExterna.getTareaProcedimiento().getId(), null,
 		                       script);
 		           } catch (Exception e) {
-		               throw new UserException("Error en el script de decisi髇 [" + script + "] para la tarea: " + idTareaExterna + " del procedimiento: "
+		               throw new UserException("Error en el script de decisi贸n [" + script + "] para la tarea: " + idTareaExterna + " del procedimiento: "
 		                       + idProcedimiento);
 		           }
 		           return result;

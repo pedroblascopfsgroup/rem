@@ -70,48 +70,54 @@ DECLARE
    
 BEGIN
 
-
+  
+    DBMS_OUTPUT.PUT_LINE('Reseteamos los contadores......');
     
-    DBMS_OUTPUT.PUT_LINE('Se borra la configuración de DD_TAT_TIPO_ATIPICO.');
-    EXECUTE IMMEDIATE('DELETE FROM '|| V_ESQUEMA ||'.DD_TAT_TIPO_ATIPICO');       
-       
-    DBMS_OUTPUT.PUT_LINE('Se borra la configuración de DD_MAT_MOTIVO_ATIPICO.');
-    EXECUTE IMMEDIATE('DELETE FROM '|| V_ESQUEMA ||'.DD_MAT_MOTIVO_ATIPICO');      
+    V_ENTIDAD_ID:=0;
+    SELECT count(*) INTO V_ENTIDAD_ID
+    FROM all_sequences
+    WHERE sequence_name = 'S_DD_TAT_TIPO_ATIPICO' and sequence_owner=V_ESQUEMA;
+   
+    if V_ENTIDAD_ID is not null and V_ENTIDAD_ID = 1 then
+        DBMS_OUTPUT.PUT_LINE('Contador 1');
+        --EXECUTE IMMEDIATE('DROP SEQUENCE '|| V_ESQUEMA || '.S_DD_TAT_TIPO_ATIPICO');
+    else
+      EXECUTE IMMEDIATE('CREATE SEQUENCE '|| V_ESQUEMA || '.S_DD_TAT_TIPO_ATIPICO
+                       START WITH 1
+                       MAXVALUE 999999999999999999999999999
+                       MINVALUE 1
+                       NOCYCLE
+                       CACHE 20
+                       NOORDER'
+                      );    
+    end if;
+   
+  
+
+    V_ENTIDAD_ID:=0;
+    SELECT count(*) INTO V_ENTIDAD_ID
+    FROM all_sequences
+    WHERE sequence_name = 'S_DD_MAT_MOTIVO_ATIPICO' and sequence_owner=V_ESQUEMA;
+   
+    if V_ENTIDAD_ID is not null and V_ENTIDAD_ID = 1 then
+        DBMS_OUTPUT.PUT_LINE('Contador 1');
+        EXECUTE IMMEDIATE('DROP SEQUENCE '|| V_ESQUEMA || '.S_DD_MAT_MOTIVO_ATIPICO');
+    else
+    	EXECUTE IMMEDIATE('CREATE SEQUENCE '|| V_ESQUEMA || '.S_DD_MAT_MOTIVO_ATIPICO
+                       START WITH 1
+                       MAXVALUE 999999999999999999999999999
+                       MINVALUE 1
+                       NOCYCLE
+                       CACHE 20
+                       NOORDER'
+                      );    
+    end if;
+   
     
-    
-    
-   DBMS_OUTPUT.PUT_LINE('Creando DD_TAT_TIPO_ATIPICO......');
-   FOR I IN V_TAT.FIRST .. V_TAT.LAST
-   LOOP
-       V_MSQL := 'SELECT '||V_ESQUEMA||'.S_DD_TAT_TIPO_ATIPICO.NEXTVAL FROM DUAL';
-       EXECUTE IMMEDIATE V_MSQL INTO V_ENTIDAD_ID;
-      V_TMP_TAT := V_TAT(I);
-      DBMS_OUTPUT.PUT_LINE('Creando TAT: '||V_TMP_TAT(1));   
+ 
 
-      V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.DD_TAT_TIPO_ATIPICO (DD_TAT_ID, DD_TAT_CODIGO, DD_TAT_DESCRIPCION,' ||
-        'DD_TAT_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
-                 ' VALUES ('||  V_ENTIDAD_ID || ','''||V_TMP_TAT(1)||''','''||SUBSTR(V_TMP_TAT(2),1, 50)||''','''
-         ||V_TMP_TAT(3)||''',0,'''||V_USUARIO_CREAR||''',SYSDATE,0)';
-      EXECUTE IMMEDIATE V_MSQL;
-   END LOOP; --LOOP TIPO_GRUPO_CLIENTE
-   V_TMP_TAT := NULL;
-
-
-   DBMS_OUTPUT.PUT_LINE('Creando DD_MAT_MOTIVO_ATIPICO......');
-   FOR I IN V_MAT.FIRST .. V_MAT.LAST
-   LOOP
-       V_MSQL := 'SELECT '||V_ESQUEMA||'.S_DD_MAT_MOTIVO_ATIPICO.NEXTVAL FROM DUAL';
-       EXECUTE IMMEDIATE V_MSQL INTO V_ENTIDAD_ID;
-      V_TMP_MAT := V_MAT(I);
-      DBMS_OUTPUT.PUT_LINE('Creando MAT: '||V_TMP_MAT(1));   
-
-      V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.DD_MAT_MOTIVO_ATIPICO (DD_MAT_ID, DD_MAT_CODIGO, DD_MAT_DESCRIPCION,' ||
-        'DD_MAT_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
-                 ' VALUES ('||  V_ENTIDAD_ID || ','''||V_TMP_MAT(1)||''','''||SUBSTR(V_TMP_MAT(2),1, 50)||''','''
-         ||V_TMP_MAT(3)||''',0,'''||V_USUARIO_CREAR||''',SYSDATE,0)';
-      EXECUTE IMMEDIATE V_MSQL;
-   END LOOP; --LOOP TIPO_GRUPO_CLIENTE
-   V_TMP_MAT := NULL;
+ 
+ 
 
 
    COMMIT;

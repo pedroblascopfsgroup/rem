@@ -322,6 +322,7 @@ public class InformeSubastaBean extends InformeSubastaCommon {
                                                 // Aprovechando el bucle, construimos en la cabecera, el campo de Titulares separados por ;
                                                 if (cp.isTitular()){
                                                     listaTitulares.append(cp.getPersona().getApellidoNombre());
+                                                    listaTitulares.append("; ");
                                                 }
                                                 
 						IntervinientesBean interviniente = new IntervinientesBean();

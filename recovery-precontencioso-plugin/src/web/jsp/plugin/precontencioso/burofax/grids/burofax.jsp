@@ -73,7 +73,7 @@ var pdfRender = function(value, meta, record) {
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.resultado" text="**Resultado"/>'
 			,dataIndex: 'resultado', sortable: true,autoWidth:true
-	<c:if test="${usuario.entidad.id eq appProperties.idEntidadHaya}">
+	<c:if test="${usuario.entidad.descripcion eq 'BANKIA'}">
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.acuseRecibo" text="**Acuse recibo"/>'
 			, dataIndex: 'acuseRecibo', sortable: false, autoWidth: true, id: 'colAcuseRecibo', renderer: pdfRender, align: 'center'

@@ -75,9 +75,9 @@ BEGIN
                       )
                     INNER JOIN tex_tarea_externa tex ON tex.tar_id =
                                                                     tar.tar_id
-                    INNER JOIN '||V_ESQUEMA_M||'.dd_epr_estado_procedimiento epr
+                    INNER JOIN hayamaster.dd_epr_estado_procedimiento epr
                     ON prc.dd_epr_id = epr.dd_epr_id
-                    JOIN '||V_ESQUEMA_M||'.dd_sta_subtipo_tarea_base sta ON sta.dd_sta_id = tar.dd_sta_id and sta.dd_sta_codigo = ''814''
+                    JOIN hayamaster.dd_sta_subtipo_tarea_base sta ON sta.dd_sta_id = tar.dd_sta_id and sta.dd_sta_codigo = ''814''
               WHERE asu.borrado = 0 AND prc.prc_paralizado = 0)';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.V_MSV_BUSQUEDA_ASU_TRAM... Creando vista');
@@ -118,9 +118,9 @@ BEGIN
                       )
                     INNER JOIN tex_tarea_externa tex ON tex.tar_id =
                                                                     tar.tar_id
-                    INNER JOIN '||V_ESQUEMA_M||'.dd_epr_estado_procedimiento epr
+                    INNER JOIN hayamaster.dd_epr_estado_procedimiento epr
                     ON prc.dd_epr_id = epr.dd_epr_id
-                    JOIN '||V_ESQUEMA_M||'.dd_sta_subtipo_tarea_base sta ON sta.dd_sta_id = tar.dd_sta_id and sta.dd_sta_codigo = ''814''
+                    JOIN hayamaster.dd_sta_subtipo_tarea_base sta ON sta.dd_sta_id = tar.dd_sta_id and sta.dd_sta_codigo = ''814''
               WHERE asu.borrado = 0 AND prc.prc_paralizado = 0)';
 			EXECUTE IMMEDIATE V_MSQL;
 			DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.V_MSV_BUSQUEDA_ASU_TRAM... Creando vista');

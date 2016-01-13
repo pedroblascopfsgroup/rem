@@ -12,9 +12,11 @@
 			<json:property name="incluir" value="${false}" />		
             <json:property name="cc" value="${contrato.codigoContrato}" />                 
             <json:property name="tipo" value="${contrato.tipoProducto.descripcion}" />
-            <json:property name="saldoIrregular" value="${contrato.lastMovimiento.posVivaVencidaAbsoluta}" />
-            <json:property name="saldoNoVencido" value="${contrato.lastMovimiento.posVivaNoVencidaAbsoluta}" />
-            <json:property name="diasIrregular" value="${contrato.diasIrregular}" /> 
+            <c:if test="${cb.contrato.lastMovimiento != null}">
+            	<json:property name="saldoIrregular" value="${contrato.lastMovimiento.posVivaVencidaAbsoluta}" />
+            	<json:property name="saldoNoVencido" value="${contrato.lastMovimiento.posVivaNoVencidaAbsoluta}" />
+                <json:property name="diasIrregular" value="${contrato.diasIrregular}" />
+            </c:if> 
             <json:property name="otrosint" value="${contrato.contratoPersonaOrdenado[0].persona.apellidoNombre}" />
             <json:property name="tipointerv" value="${contrato.contratoPersonaOrdenado[0].tipoIntervencion.descripcion} ${ec.contrato.contratoPersonaOrdenado[0].orden}" />
             <json:property name="estadoFinanciero" value="${contrato.estadoFinanciero.descripcion}" />

@@ -87,14 +87,14 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
    var contratosAsuntoCM = new Ext.grid.ColumnModel([
   	  {dataIndex: 'id', hidden:true, fixed:true }
       ,smCheck
-      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.codigo" text="**C&oacute;digo contrato" />', dataIndex : 'cc',width: 35}
-      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.producto" text="**Producto" />', dataIndex : 'tipo',width: 65}
-      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.saldoIrregular" text="**Saldo Irregular" />', dataIndex : 'saldoIrregular',width: 100}
-      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.saldoVivoNoVenc" text="**Sdo Vivo no venc" />', dataIndex : 'saldoNoVencido',width: 75}
-      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.diasIrregular" text="**Dias Irregular" />', dataIndex : 'diasIrregular',width: 75}
-      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.otrosIntervinientes" text="**Otros Intervinientes" />', dataIndex : 'otrosint',width: 65}
-      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.tipoIntervencion" text="**Tipo Intervencion" />', dataIndex : 'tipointerv',width: 65}
-      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.estadoFinanciero" text="**Estado Financ" />', dataIndex : 'estadoFinanciero',width: 65}
+      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.codigo" text="**C&oacute;digo contrato" />', dataIndex : 'cc'}
+      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.producto" text="**Producto" />', dataIndex : 'tipo'}
+      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.saldoIrregular" text="**Saldo Irregular" />', dataIndex : 'saldoIrregular'}
+      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.saldoVivoNoVenc" text="**Sdo Vivo no venc" />', dataIndex : 'saldoNoVencido'}
+      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.diasIrregular" text="**Dias Irregular" />', dataIndex : 'diasIrregular'}
+      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.otrosIntervinientes" text="**Otros Intervinientes" />', dataIndex : 'otrosint'}
+      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.tipoIntervencion" text="**Tipo Intervencion" />', dataIndex : 'tipointerv'}
+      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.estadoFinanciero" text="**Estado Financ" />', dataIndex : 'estadoFinanciero'}
    ]);
    
    var terminosAcuerdoCM = new Ext.grid.ColumnModel([

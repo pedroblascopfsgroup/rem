@@ -381,10 +381,13 @@ public class TurnadoDespachosController {
 					
 					EsquemaDespachoValidacionDto dto = new EsquemaDespachoValidacionDto();
 					dto.setEsquema(esquemaVigente);
+					dto.setDiccionarioProvincias(utilDiccionarioManager.dameValoresDiccionario(DDProvincia.class));
 					dto.validarFichero(exc);
 				
 					// Se guardan los registros
-					for(EsquemaTurnadoDespachoDto esquemaTurnadoDespachoDto : dto.getListaRegistros()) {
+					//for(EsquemaTurnadoDespachoDto esquemaTurnadoDespachoDto : dto.getListaRegistros()) {
+					for(int i=0; i< dto.getListaRegistros().size(); i++)	{
+						EsquemaTurnadoDespachoDto esquemaTurnadoDespachoDto = dto.getListaRegistros().get(i);
 						
 						List<DespachoAmbitoActuacion> listaAmbitoActuacion = despachoExternoManager.getAmbitoGeograficoDespacho(esquemaTurnadoDespachoDto.getId());
 						List<String> listaComunidadesDespacho = new LinkedList<String>();
@@ -400,8 +403,13 @@ public class TurnadoDespachosController {
 								listaProvinciasDespacho.add(ambitoActuacion.getProvincia().getCodigo());
 							}
 						}
+						if(esquemaTurnadoDespachoDto.getNombreProvincia() != null && esquemaTurnadoDespachoDto.getNombreProvincia() != "") {
+							listaProvinciasDespacho.add(this.getProvinciaByNombre(esquemaTurnadoDespachoDto.getNombreProvincia()).getCodigo());
+						}
 						esquemaTurnadoDespachoDto.setListaComunidades(StringUtils.join(listaComunidadesDespacho.toArray(), ","));
-						esquemaTurnadoDespachoDto.setListaProvincias(StringUtils.join(listaProvinciasDespacho.toArray(), ","));							
+						esquemaTurnadoDespachoDto.setListaProvincias(StringUtils.join(listaProvinciasDespacho.toArray(), ","));
+						esquemaTurnadoDespachoDto.setNombreProvincia(esquemaTurnadoDespachoDto.getNombreProvincia());
+						esquemaTurnadoDespachoDto.setPorcentajeProvincia(esquemaTurnadoDespachoDto.getPorcentajeProvincia());
 						
 						despachoExternoManager.saveEsquemaDespacho(esquemaTurnadoDespachoDto);
 					}
@@ -480,5 +488,15 @@ public class TurnadoDespachosController {
 			}
 		}
 		return listaProvinciasPorcentaje;
+	}
+	
+	private DDProvincia getProvinciaByNombre(String nombre)
+	{
+		List<DDProvincia> listProvincias = utilDiccionarioManager.dameValoresDiccionario(DDProvincia.class);
+		
+		for(DDProvincia provincia : listProvincias)
+			if(provincia.getDescripcion().toUpperCase().equals(nombre.toUpperCase()))
+				return provincia;
+		return null;
 	}
 }

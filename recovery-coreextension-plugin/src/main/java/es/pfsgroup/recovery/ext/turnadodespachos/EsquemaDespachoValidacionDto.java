@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.binding.message.Message;
 import org.springframework.binding.message.Severity;
 import org.springframework.context.support.AbstractMessageSource;
@@ -12,7 +13,11 @@ import org.springframework.context.support.AbstractMessageSource;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.devon.validation.ErrorMessageUtils;
 import es.capgemini.devon.validation.ValidationException;
+import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.impl.GenericABMDaoImpl;
+import es.pfsgroup.plugin.recovery.coreextension.utils.UtilDiccionarioManager;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
 
 public class EsquemaDespachoValidacionDto {
@@ -22,12 +27,19 @@ public class EsquemaDespachoValidacionDto {
 	private List<Message> listaErrores;
 	private List<EsquemaTurnadoDespachoDto> listaRegistros;
 	private EsquemaTurnado esquema;
-	
+	private List<String> listaProvinciasDespacho;
+	private List<String> listaProvinciasPorcentaje;
+	private List<DDProvincia> diccionarioProvincias;
+
+
 	private static final String CODIGO_ERROR_NUM_COLUMNAS = "plugin.config.esquematurnado.carga.validacion.errorNumColumnas";
 	private static final String CODIGO_ERROR_SIN_CABECERA = "plugin.config.esquematurnado.carga.validacion.errorSinCabecera";
 	private static final String CODIGO_ERROR_FICHERO_NOT_FOUND = "plugin.config.esquematurnado.carga.validacion.errorFicheroNoEncontrado";
 	private static final String CODIGO_ERROR_CAMPO_OBL_VACIO = "plugin.config.esquematurnado.carga.validacion.errorCampoObligVacio";
 	private static final String CODIGO_ERROR_CAMPO_CODIGO_INCORRECTO = "plugin.config.esquematurnado.carga.validacion.errorCampoCodigoIncorrecto";
+	private static final String CODIGO_ERROR_SUMA_PORCENTAJES_PROVINCIA= "plugin.config.esquematurnado.carga.validacion.errorSumaPorcentajesProvincia";
+	private static final String CODIGO_ERROR_PROVINCIA_INCORRECTA="plugin.config.esquematurnado.carga.validacion.errorNombreProvincia";
+	private static final String CODIGO_ERROR_FORMATO_CALIDAD_INCORRECTO="plugin.config.esquematurnado.carga.validacion.errorValorCalidad";
 	
 	private static final String ERROR_AL_ACCEDER_AL_FICHERO_EXCEL = "Error al acceder al fichero Excel";
 	private static final String ERROR_INESPERADO_AL_RECORRER_EL_FICHERO = "Error inesperado al recorrer el fichero";
@@ -41,6 +53,8 @@ public class EsquemaDespachoValidacionDto {
 			CODIFICACION_STRING + OBL,
 			CODIFICACION_STRING + OBL,
 			CODIFICACION_STRING, 
+			CODIFICACION_STRING, 
+			CODIFICACION_STRING,
 			CODIFICACION_STRING, 
 			CODIFICACION_STRING,
 			CODIFICACION_STRING
@@ -86,6 +100,30 @@ public class EsquemaDespachoValidacionDto {
 	public void setEsquema(EsquemaTurnado esquema) {
 		this.esquema = esquema;
 	}
+	
+	public List<String> getListaProvinciasDespacho() {
+		return listaProvinciasDespacho;
+	}
+
+	public void setListaProvinciasDespacho(List<String> listaProvinciasDespacho) {
+		this.listaProvinciasDespacho = listaProvinciasDespacho;
+	}
+
+	public List<String> getListaProvinciasPorcentaje() {
+		return listaProvinciasPorcentaje;
+	}
+
+	public void setListaProvinciasPorcentaje(List<String> listaProvinciasPorcentaje) {
+		this.listaProvinciasPorcentaje = listaProvinciasPorcentaje;
+	}
+	
+	public List<DDProvincia> getDiccionarioProvincias() {
+		return diccionarioProvincias;
+	}
+	public void setDiccionarioProvincias(List<DDProvincia> diccionarioProvincias) {
+		this.diccionarioProvincias = diccionarioProvincias;
+	}
+	
 	public void validarFichero(HojaExcel exc) throws ValidationException {
 
 		try {
@@ -131,6 +169,7 @@ public class EsquemaDespachoValidacionDto {
 					
 					EsquemaTurnadoDespachoDto esquemaTurnadoDespachoDto = new EsquemaTurnadoDespachoDto(); 
 					
+					
 					// validar cada una de las columnas de cada fila
 					for (int columna = 0; columna < exc.getCabeceras().size(); columna++) {
 						String contenidoCelda = exc.dameCelda(fila, columna);
@@ -153,14 +192,23 @@ public class EsquemaDespachoValidacionDto {
 							case 5:
 								esquemaTurnadoDespachoDto.setTurnadoCodigoCalidadConcursal(contenidoCelda);
 								break;
+							case 6:
+								esquemaTurnadoDespachoDto.setNombreProvincia(this.corregirCharEspecialesProvincia(contenidoCelda));
+								break;
+							case 7:
+								esquemaTurnadoDespachoDto.setPorcentajeProvincia(contenidoCelda.replace("%", ""));
+								break;
 							default:
 								break;
 							}
 							
-							listaRegistros.add(esquemaTurnadoDespachoDto);
+							
 						}
 					}
+					listaRegistros.add(esquemaTurnadoDespachoDto);
 				}
+				
+				comprobarSumaCalidades();
 				
 				if(ficheroTieneErrores) {
 					throw new ValidationException(ErrorMessageUtils.convertMessages(listaErrores));
@@ -269,7 +317,84 @@ public class EsquemaDespachoValidacionDto {
 					listaErrores.add(new Message(this, ms.getMessage(CODIGO_ERROR_CAMPO_CODIGO_INCORRECTO, new Object[] {fila, cabecera}, MessageUtils.DEFAULT_LOCALE), Severity.ERROR));
 				}
 			}		
+			else if(cabecera.equals("PROVINCIA")) {
+				//Comprueba que la provincia exista tal y como esta en DD_PRV_PROVINCIA
+				for(DDProvincia provincia : diccionarioProvincias){
+					if(provincia.getDescripcion().equalsIgnoreCase(this.corregirCharEspecialesProvincia(contenidoCelda))) {
+						enc = true;
+						break;
+					}
+				}
+				if(!enc) {
+					ficheroTieneErrores = true;
+					listaErrores.add(new Message(this, ms.getMessage(CODIGO_ERROR_PROVINCIA_INCORRECTA, new Object[] {fila, cabecera}, MessageUtils.DEFAULT_LOCALE), Severity.ERROR));
+				}
+			}
+			else if(cabecera.equals("CALIDAD - PROVINCIA")) {
+				//Comprueba que el dato insertado pueda tratarse como numérico
+				try {
+					Float.parseFloat(contenidoCelda.replace("%", ""));
+					enc = true;
+				}catch(NumberFormatException e) {
+					enc = false;
+				}
+				finally{
+					if(!enc) {
+						ficheroTieneErrores = true;
+						listaErrores.add(new Message(this, ms.getMessage(CODIGO_ERROR_FORMATO_CALIDAD_INCORRECTO, new Object[] {fila, cabecera}, MessageUtils.DEFAULT_LOCALE), Severity.ERROR));
+					}
+				}
+			}
 		}
 	}
+	
+	/**
+	 * Al leer carácteres especiales de la hoja excel, y como solo afecta a las PROVINCIAS, para luego tratarlas, hacemos la corrección ya.
+	 * El problema viene al leer las provincias del fichero excel, y no hay forma de tratar el carácter extraño.
+	 * @param nombre
+	 * @return
+	 */
+	private String corregirCharEspecialesProvincia(String nombre) {
+		List<String> provinciasBuenas = Arrays.asList("A CORU\u00d1A", "\u00c1LAVA", "ALMER\u00cdA" , "\u00c1VILA", "C\u00c1CERES","C\u00c1DIZ","CASTELL\u00d3N","C\u00d3RDOBA","GUIP\u00daZCOA","JA\u00c9N","LE\u00d3N","L\u00c9RIDA","M\u00c1LAGA");
+		List<String> provSinCharSpecials =  Arrays.asList("A CORUA","LAVA","ALMERA","VILA","CCERES","CDIZ","CASTELLN","CRDOBA","GUIPZCOA","JAN","LEN","LRIDA","MLAGA");
+
+		nombre = nombre.toUpperCase().replaceAll("[^\\x00-\\x7F]", "");
+		
+		if(provSinCharSpecials.contains(nombre)){
+			int pos = provSinCharSpecials.indexOf(nombre);
+			nombre = provinciasBuenas.get(pos);
+		}
+		
+		return nombre;
+	}
+	
+	/**
+	 * Para un mismo despacho, puede haber varias lineas en la Hoja Excel. Y comprobamos que la suma de las CALIDAD - PROVINCIA para un
+	 * mismo despacho, no sea superior al 100%.
+	 */
+	private void comprobarSumaCalidades()
+	{
+		EsquemaTurnadoDespachoDto despacho = listaRegistros.get(0);
+		Float sumaCalidad = 0.0f;
+		for(EsquemaTurnadoDespachoDto registro : listaRegistros) {
+			if(registro.getId().equals(despacho.getId())) {
+				sumaCalidad += Float.parseFloat(registro.getPorcentajeProvincia());
+				if(sumaCalidad > 100) {
+					ficheroTieneErrores = true;
+					listaErrores.add(new Message(this, ms.getMessage(CODIGO_ERROR_SUMA_PORCENTAJES_PROVINCIA, new Object[] {registro.getId(), sumaCalidad}, MessageUtils.DEFAULT_LOCALE), Severity.ERROR));
+				}
+			}
+			else {
+				despacho = registro;
+				if(despacho.getPorcentajeProvincia() != null && despacho.getPorcentajeProvincia() != "") {
+					sumaCalidad = Float.parseFloat(despacho.getPorcentajeProvincia());
+				}
+				else {
+					sumaCalidad = 0.0f;
+				}
+			}
+		}
+	}
+	
 
 }

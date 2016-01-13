@@ -111,7 +111,7 @@ public class CommonProjectContextImpl implements CommonProjectContext {
 			gestor = tipoGestores.get(tipoGestor);
 			if(gestor == null || "".equals(gestor)) {
 				try {
-					gestor = EXTDDTipoGestor.class.getDeclaredField(tipoGestor).getName();
+					gestor = (String) EXTDDTipoGestor.class.getDeclaredField(tipoGestor).get(new EXTDDTipoGestor());
 				} 
 				catch (Exception e) {
 					logger.error("Error en el método getTipoGestor(" + tipoGestor + "): " + e.getMessage());
@@ -120,7 +120,7 @@ public class CommonProjectContextImpl implements CommonProjectContext {
 		}
 		else {
 			try {
-				gestor = EXTDDTipoGestor.class.getDeclaredField(tipoGestor).getName();
+				gestor = (String) EXTDDTipoGestor.class.getDeclaredField(tipoGestor).get(new EXTDDTipoGestor());
 			} 
 			catch (Exception e) {
 				logger.error("Error en el método getTipoGestor(" + tipoGestor + "): " + e.getMessage());

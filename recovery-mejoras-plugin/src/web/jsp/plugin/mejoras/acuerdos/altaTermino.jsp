@@ -500,11 +500,10 @@ arrayCampos["codigoPersonaAfectada"]=app.creaNumber('codigoPersonaAfectada', '<s
 		,iconCls : 'icon_ok'
        ,cls: 'x-btn-text-icon'
        ,handler:function(){
-       		debugger;
        		var formulario = flujoFieldSet.getForm();
        		
        		if(formulario.isValid()){
-       			var dateSolucionPrevista = Date.parse(arrayCampos.fechaSolucionPrevista.value);
+       			var dateSolucionPrevista = Date.parse(arrayCampos.fechaSolucionPrevista.getValue());
 	       		if(comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && dateSolucionPrevista > datePaseMora) {		       		
 	       			Ext.Msg.show({
 				   		title:'Aviso',

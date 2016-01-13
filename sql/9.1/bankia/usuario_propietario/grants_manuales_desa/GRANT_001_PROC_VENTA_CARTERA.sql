@@ -9,4 +9,3 @@ grant select, update, insert, delete on BANK01.FIN_AUX_TMP_TEX_VENTACAR to BANK0
 grant select, update, insert, delete on BANK01.FIN_AUX_TMP_PRC_VENTACAR to BANK01_D_TX;
 grant select, update, insert, delete on BANK01.FIN_AUX_TMP_DPR_VENTACAR to BANK01_D_TX;
 grant select, update, insert, delete on BANK01.FIN_AUX_TMP_ASU_VENTACAR to BANK01_D_TX;
-grant select, insert, update, delete on BANK01.TMPBIEGUIA to BANK01_D_TX;

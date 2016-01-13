@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
 
+import javax.annotation.Resource;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -18,6 +19,8 @@ import javax.mail.internet.MimeMultipart;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
@@ -26,6 +29,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.recovery.Encriptador;
 
+@Component
 public class AgendaMultifuncionCorreoUtils {	
 
 	private final Log logger = LogFactory.getLog(getClass());
@@ -50,20 +54,14 @@ public class AgendaMultifuncionCorreoUtils {
 	private static final String USUARIO_CORREO = "agendaMultifuncion.mail.usuario";
 	private static final String PWD_CORREO = "agendaMultifuncion.mail.pwd";
 	
+	@Resource
 	private Properties appProperties;
 
-	private static AgendaMultifuncionCorreoUtils agendaMultifuncionCorreo;
-	
+	@Autowired
 	private Executor executor;	
 	
-	public static AgendaMultifuncionCorreoUtils dameInstancia(Executor executor) {
-		if (agendaMultifuncionCorreo == null) {
-			agendaMultifuncionCorreo = new AgendaMultifuncionCorreoUtils(executor);
-		}
-		return agendaMultifuncionCorreo;
-	}
 	
-	public AgendaMultifuncionCorreoUtils(Executor executor) {
+	/*public AgendaMultifuncionCorreoUtils(Executor executor) {
 		
 		this.appProperties = cargarProperties(DEVON_PROPERTIES);
 
@@ -78,7 +76,7 @@ public class AgendaMultifuncionCorreoUtils {
 //		
 //		System.out.println(this.getClass() + " [Cargar properties de: " + DEVON_PROPERTIES + " ]"); 
 		this.executor = executor;
-	}
+	}*/
 	
 	public void enviarCorreoConAdjuntos(String emailFrom, List<String> mailsPara
 			,List<String> direccionesMailCc, String asuntoMail, String cuerpoEmail, List<DtoAdjuntoMail> list) throws Exception {

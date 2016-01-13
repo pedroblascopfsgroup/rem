@@ -124,6 +124,7 @@ var incluirDocButton = new Ext.Button({
 		}				
 	});
 	
+
 var excluirDocButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.excluirDocumentos" text="**Excluir Documentos" />'
 		,id: 'excluirDocButton'
@@ -453,7 +454,6 @@ var habilitarDeshabilitarButtons = function (incluirB, excluirB, descartarB, edi
 
 <%-- FUNCION: Chequeo estados para control botones --%>
 var actualizarBotonesDocumentos = function(){	
-		
 		habilitarDeshabilitarButtons(true, true, true, true, true, true, true);
 		incluirDocButton.setDisabled(false);
 		
@@ -470,14 +470,6 @@ var actualizarBotonesDocumentos = function(){
 			else {
 				if(myCboxSelModel2.getCount() == 0)	{
 					return;
-			}
-      	} 
-      	else {
-			habilitarDeshabilitarButtons(true,true, true, true, true, true, true);
-			return;
-      	}		
-
-		
 				}
 				<%-- SI SOLO UN ELEMENTO SELECCIONADO --%>
 				else if(myCboxSelModel2.getCount() == 1){
@@ -604,8 +596,7 @@ var actualizarBotonesDocumentos = function(){
 									<%-- pero no tienen resultado --%>
 									if (uniqueArray4.length ==1 && uniqueArray4[0] == ''){
 										<%-- DESCARTAR DOCUMENTOS y ANULAR SOLICITUDES MASIVAMENTE --%>
-										<%--habilitarDeshabilitarButtons(false, true, false, true, false, false, true); --%>
-										habilitarDeshabilitarButtons(false, true, false, true, false, false, false);<%--habilitamos informar masivo --%>
+										habilitarDeshabilitarButtons(false, true, false, true, false, false, true);
 										return;
 									}		      					      									
 								}
@@ -619,8 +610,7 @@ var actualizarBotonesDocumentos = function(){
 							<%-- Si todas las solicitudes no tienen resultado --%>
 							if (uniqueArray4.length ==1 && uniqueArray4[0] == ''){
 								<%-- ANULAR SOLICITUDES MASIVAMENTE --%>
-								<%--habilitarDeshabilitarButtons(false, true, true, true, false, true, true); --%>
-								habilitarDeshabilitarButtons(false, true, true, true, false, true, false);<%--habilitamos informar masivo --%>
+								habilitarDeshabilitarButtons(false, true, true, true, false, true, true);
 								return;
 							}		      					      																	
 						}												
@@ -639,15 +629,13 @@ var actualizarBotonesDocumentos = function(){
 							<%-- Si todas las solicitudes no tienen resultado --%>
 							if (uniqueArray4.length ==1 && uniqueArray4[0] == ''){
 								<%-- DESCARTAR DOCUMENTOS Y ANULAR SOLICITUDES MASIVAMENTE --%>
-								<%--habilitarDeshabilitarButtons(false, true, false, true, false, false, true); --%>
-								habilitarDeshabilitarButtons(false, true, false, true, false, false, false);<%--habilitamos informar masivo --%>
+								habilitarDeshabilitarButtons(false, true, false, true, false, false, true);
 								return;
 							}
 							<%-- Si hay alguna solicitud con resultado --%>
 							else {
 								<%-- SOLICITAR MASIVAMENTE --%>
-								<%--habilitarDeshabilitarButtons(false, true, false, true, true, false, true); --%>
-								habilitarDeshabilitarButtons(false, true, false, true, true, false, false);<%--habilitamos informar masivo --%>
+								habilitarDeshabilitarButtons(false, true, false, true, true, false, true);
 								return;
 							} 		      					      									
 						}
@@ -659,8 +647,7 @@ var actualizarBotonesDocumentos = function(){
 							<%-- Si todas las solicitudes no tienen resultado --%>
 							if (uniqueArray4.length ==1 && uniqueArray4[0] == ''){
 								<%-- ANULAR SOLICITUDES MASIVAMENTE --%>
-								<%--habilitarDeshabilitarButtons(false, true, false, true, false, true, true); --%>
-								habilitarDeshabilitarButtons(false, true, false, true, false, true, false);<%--habilitamos informar masivo --%>
+								habilitarDeshabilitarButtons(false, true, false, true, false, true, true);
 								return;
 							}		      					      																	
 						}				
@@ -674,8 +661,7 @@ var actualizarBotonesDocumentos = function(){
 						<%-- Si todos los seleccionados son documentos --%>	
 						if (uniqueArray2.length ==1 && uniqueArray2[0] == true){
 							<%-- SOLICITAR MASIVAMENTE --%>
-							<%--habilitarDeshabilitarButtons(false, true, true, true, true, false, true); --%>
-							habilitarDeshabilitarButtons(false, true, true, true, true, false, false);<%--habilitamos informar masivo --%>
+							habilitarDeshabilitarButtons(false, true, true, true, true, false, true);
 							return;
 						}
 		<%-- 			} --%>

@@ -555,7 +555,7 @@ public class BurofaxController {
      * @return
      */
     @RequestMapping
-    public String guardarEnvioBurofax(WebRequest request, ModelMap model,Boolean certificado,Long idTipoBurofax,Boolean comboEditable){
+    public String guardarEnvioBurofax(WebRequest request, ModelMap model,Boolean certificado,Long idTipoBurofax,Boolean comboEditable,  Long idDocumento){
     	
     	String[] arrayIdEnvios=request.getParameter("arrayIdEnvios").replace("[","").replace("]","").replace("&quot;", "").split(",");
     	
@@ -564,7 +564,7 @@ public class BurofaxController {
     	if(comboEditable){
 	    	String[] arrayIdDirecciones=request.getParameter("arrayIdDirecciones").replace("[","").replace("]","").replace("&quot;", "").split(",");
 	    	String[] arrayIdBurofax=request.getParameter("arrayIdBurofax").replace("[","").replace("]","").replace("&quot;", "").split(",");
-	    	listaEnvioBurofaxPCO=burofaxManager.configurarTipoBurofax(idTipoBurofax,arrayIdDirecciones,arrayIdBurofax,arrayIdEnvios);
+	    	listaEnvioBurofaxPCO=burofaxManager.configurarTipoBurofax(idTipoBurofax,arrayIdDirecciones,arrayIdBurofax,arrayIdEnvios,idDocumento);
     	}
     	else{
     		for(int i=0;i<arrayIdEnvios.length;i++){
@@ -664,7 +664,7 @@ public class BurofaxController {
 		
 		List<SolicitudDocumentoPCODto> solicitudesDoc = new ArrayList<SolicitudDocumentoPCODto>();
 		
-		int idIdentificativo = 1;	
+	
 		boolean esDocumento;	
 		boolean tieneSolicitud;
 		boolean isGestoria = esUsuarioTipoDespachoGestoria();
@@ -679,14 +679,13 @@ public class BurofaxController {
 					tieneSolicitud = true;
 					// se añade el registro, si no es una gestoria o si es una gestoria y es una solicitud asignada a ella
 					if (!isGestoria || (isGestoria && usuarioManager.getUsuarioLogado().getId().equals(sol.getActor().getUsuario().getId()))) {
-						SolicitudDocumentoPCODto solDto = documentoPCOApi.crearSolicitudDocumentoDto(doc, sol, esDocumento, tieneSolicitud, idIdentificativo);
+						SolicitudDocumentoPCODto solDto = documentoPCOApi.crearSolicitudDocumentoDto(doc, sol, esDocumento, tieneSolicitud);
 						if(!Checks.esNulo(solDto.getContrato()) && !Checks.esNulo(solDto.getTipoDocumento())){
 							solicitudesDoc.add(solDto);	
 						}
 					}
 
 					if (esDocumento) esDocumento = false;
-					idIdentificativo++;
 				}
 			}
 

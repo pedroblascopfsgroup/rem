@@ -256,41 +256,42 @@ public class BurofaxManager implements BurofaxApi {
 					Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoBurofaxPCO.ESTADO_PREPARADO);
 					DDResultadoBurofaxPCO resultadoBurofaxPCO=(DDResultadoBurofaxPCO) genericDao.get(DDResultadoBurofaxPCO.class,filtro2, borrado);
 					
-				Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "id", idTipoBurofax);
-					DDTipoBurofaxPCO tipoBurofax=(DDTipoBurofaxPCO) genericDao.get(DDTipoBurofaxPCO.class,filtro3, borrado);
-				
-				Filter filtro4 = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(arrayIdBurofax[i]));
-					BurofaxPCO burofax=(BurofaxPCO) genericDao.get(BurofaxPCO.class,filtro4, borrado);
-				
-				Filter filtro5 = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(arrayIdDirecciones[i]));
-					Direccion direccion=(Direccion) genericDao.get(Direccion.class,filtro5, borrado);
-				
-				burofax.setEstadoBurofax(estadoBurofaxPCO);
-				
-				EnvioBurofaxPCO envio=null;
-				//Si id Envio Existe actualizamos el envio
-				if(!Checks.esNulo(arrayIdEnvios) && !arrayIdEnvios[i].equals("-1")){
-					Filter filtro6 = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(arrayIdEnvios[i]));
-						envio=(EnvioBurofaxPCO) genericDao.get(EnvioBurofaxPCO.class,filtro6, borrado);
+					Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "id", idTipoBurofax);
+						DDTipoBurofaxPCO tipoBurofax=(DDTipoBurofaxPCO) genericDao.get(DDTipoBurofaxPCO.class,filtro3, borrado);
 					
-				}
-				
-				//Si idEnvio=-1 Creamos un nuevo envio
-				else{
-					envio=new EnvioBurofaxPCO();	
+					Filter filtro4 = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(arrayIdBurofax[i]));
+						BurofaxPCO burofax=(BurofaxPCO) genericDao.get(BurofaxPCO.class,filtro4, borrado);
 					
+					Filter filtro5 = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(arrayIdDirecciones[i]));
+						Direccion direccion=(Direccion) genericDao.get(Direccion.class,filtro5, borrado);
+					
+					burofax.setEstadoBurofax(estadoBurofaxPCO);
+					
+					EnvioBurofaxPCO envio=null;
+					//Si id Envio Existe actualizamos el envio
+					if(!Checks.esNulo(arrayIdEnvios) && !arrayIdEnvios[i].equals("-1")){
+						Filter filtro6 = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(arrayIdEnvios[i]));
+							envio=(EnvioBurofaxPCO) genericDao.get(EnvioBurofaxPCO.class,filtro6, borrado);
+						
+					}
+					
+					//Si idEnvio=-1 Creamos un nuevo envio
+					else{
+						envio=new EnvioBurofaxPCO();	
+						
+					}
+					//Comun
+					envio.setBurofax(burofax);
+					envio.setDireccion(direccion);
+					envio.setTipoBurofax(tipoBurofax);	
+					//envio.setContenidoBurofax(tipoBurofax.getPlantilla());
+						envio.setContenidoBurofax(docBurManager.replaceVariablesGeneracionBurofax(burofax.getId(),tipoBurofax.getPlantilla()));
+					envio.setResultadoBurofax(resultadoBurofaxPCO);
+					
+					//Guardamos nuevo envio
+					genericDao.save(EnvioBurofaxPCO.class,envio);
+					listaEnvioBurofax.add(envio);
 				}
-				//Comun
-				envio.setBurofax(burofax);
-				envio.setDireccion(direccion);
-				envio.setTipoBurofax(tipoBurofax);	
-				//envio.setContenidoBurofax(tipoBurofax.getPlantilla());
-					envio.setContenidoBurofax(docBurManager.replaceVariablesGeneracionBurofax(burofax.getId(),tipoBurofax.getPlantilla()));
-				envio.setResultadoBurofax(resultadoBurofaxPCO);
-				
-				//Guardamos nuevo envio
-				genericDao.save(EnvioBurofaxPCO.class,envio);
-				listaEnvioBurofax.add(envio);
 			}	
 			
 			
@@ -905,6 +906,27 @@ public class BurofaxManager implements BurofaxApi {
 		}
 		
 		return burofaxEnvio;
+	}
+	
+	@Override
+	public void actualizaDireccion(DireccionAltaDto dto, Long idDireccion){
+		direccionApi.actualizarDireccion(dto, idDireccion);
+	}
+	
+	public Direccion getDireccion(Long idDireccion) {
+		Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idDireccion);
+		Direccion direccion=genericDao.get(Direccion.class,filtro1);
+		return direccion;
+	}
+
+	public boolean resultadoMostrarBoton(Long idProcedimiento, List<String> codigosTiposGestores) {
+		Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idProcedimiento);
+    	ProcedimientoPCO procedimientoPco=(ProcedimientoPCO) genericDao.get(ProcedimientoPCO.class,filtro1);
+    	Procedimiento procedimiento=procedimientoPco.getProcedimiento();
+    	Long idProcedimientoEnvio = procedimiento.getId();
+    	
+		boolean mostrarBoton = procedimientoPcoApi.mostrarSegunCodigos(idProcedimientoEnvio, codigosTiposGestores);
+		return mostrarBoton;
 	}
 		
 }

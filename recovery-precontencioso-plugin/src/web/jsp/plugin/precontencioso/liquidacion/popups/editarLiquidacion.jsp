@@ -365,7 +365,7 @@
 		</c:if>
 		
 		if(mensaje != ''){
-			mensaje = 'Faltan campos obligatorios por rellenar: <br/><br/>' + mensaje
+			mensaje = 'Faltan campos obligatorios por rellenar: <br/><br/>' + mensaje;
 		}
 
 		return mensaje;

@@ -27,6 +27,7 @@ agendaMultifuncion.mail.usuario=MAILUSER
 agendaMultifuncion.mail.pwd=MAILPWD
 agendaMultifuncion.mail.port=MAILPORT
 
+mail.smtp.port=MAILPORT
 
 remote.services.serverName=localhost
 remote.services.port=7001

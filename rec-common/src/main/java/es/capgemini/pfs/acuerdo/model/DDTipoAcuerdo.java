@@ -43,6 +43,7 @@ public class DDTipoAcuerdo implements Dictionary, Auditable {
     public static final String TIPO_DACION_PARA_PAGO = "03";
     public static final String TIPO_DACION_COMPRA_VENTA = "10";
     public static final String TIPO_DACION_COMPRA_VENTA_DACION = "COMPVENDACION";
+    public static final String TIPO_EFECTIVO_FONDOS_PROPIOS = "EFECFONPRO";
 
     @Id
     @Column(name = "DD_TPA_ID")

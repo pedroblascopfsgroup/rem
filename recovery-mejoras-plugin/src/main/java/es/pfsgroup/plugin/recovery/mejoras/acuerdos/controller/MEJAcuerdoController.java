@@ -2,6 +2,9 @@ package es.pfsgroup.plugin.recovery.mejoras.acuerdos.controller;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -230,6 +233,7 @@ public class MEJAcuerdoController {
 		
 		// Obtenemos el tipo de acuerdo para PLAN_PAGO
 		DDTipoAcuerdo tipoAcuerdoPlanPago = genericDao.get(DDTipoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAcuerdo.CODIGO_PLAN_PAGO));
+		DDTipoAcuerdo tipoAcuerdoFondosPropios = genericDao.get(DDTipoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAcuerdo.TIPO_EFECTIVO_FONDOS_PROPIOS));
 		
 		// Obtenemos la lista de Terminos del acuerdo
 		List<ListadoTerminosAcuerdoDto> listadoTerminosAcuerdo = proxyFactory.proxy(MEJAcuerdoApi.class).obtenerListadoTerminosAcuerdoByAcuId(idAcuerdo);
@@ -242,8 +246,19 @@ public class MEJAcuerdoController {
 			}		
 		}
 		
+		List<String> contratos = new ArrayList<String>(Arrays.asList(contratosIncluidos.split(",")));
+		List<String> fechasPaseMora = new ArrayList<String>();
+		for(String contrat : contratos) {
+			fechasPaseMora.add(mejAcuerdoApi.getFechaPaseMora(Long.valueOf(contrat)));	
+		}
+		
+		Comparator<String> comparador = Collections.reverseOrder();
+		Collections.sort(fechasPaseMora, comparador);
+		String fechaPaseMora = fechasPaseMora.get(0); 
 		map.put("idTipoAcuerdoPlanPago", tipoAcuerdoPlanPago.getId());
 		map.put("yaHayPlanPago", yaHayPlanPago);
+		map.put("fechaPaseMora", fechaPaseMora);
+		map.put("idTipoAcuerdoFondosPropios", tipoAcuerdoFondosPropios.getId());
 		
 		return JSP_ALTA_TERMINO_ACUERDO;
 	}	
@@ -448,7 +463,6 @@ public class MEJAcuerdoController {
 		return "default";
 	}	
 	
-
 	/**
 	 * Creación del DTO de TerminoAcuerdo
 	 * 

@@ -598,12 +598,14 @@ public class ADMDespachoExternoManager {
 				
 				DespachoAmbitoActuacion despachoAmbitoActuacion = despachoAmbitoActuacionDao.getByDespachoYProvincia(dto.getId(), codigoProvincia);
 				
+				DDProvincia provincia = genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoProvincia));
 				if(despachoAmbitoActuacion == null) {
-					DDProvincia provincia = genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoProvincia));
-					
 					despachoAmbitoActuacion = new DespachoAmbitoActuacion();
 					despachoAmbitoActuacion.setDespacho(despachoExterno);
-					despachoAmbitoActuacion.setProvincia(provincia);
+					despachoAmbitoActuacion.setProvincia(provincia);		
+				}
+				if(dto.getNombreProvincia() != null && provincia.getDescripcion().toUpperCase().equals(dto.getNombreProvincia().toUpperCase())) {
+					despachoAmbitoActuacion.setPorcentaje(dto.getPorcentajeProvincia());
 				}
 				
 				listDespachoAmbitoActuacion.add(despachoAmbitoActuacion);				
@@ -618,5 +620,11 @@ public class ADMDespachoExternoManager {
 			logger.error("Error en el método saveEsquemaDespacho: " + e .getMessage());
 			throw new BusinessOperationException(e);
 		}
+	}
+	
+	@Transactional(readOnly = false)
+	public void guardarAmbitoActuacion(DespachoAmbitoActuacion despachoAmbitoActuacion)
+	{
+		despachoAmbitoActuacionDao.saveOrUpdate(despachoAmbitoActuacion);
 	}
 }

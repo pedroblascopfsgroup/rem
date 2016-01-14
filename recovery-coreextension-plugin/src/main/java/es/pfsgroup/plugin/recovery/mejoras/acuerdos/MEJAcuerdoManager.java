@@ -1280,4 +1280,12 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 		
 		return res;
 	}
+	
+	@BusinessOperation(BO_ACUERDO_MGR_GET_FECHA_PASE_MORA)
+    @Transactional(readOnly = false)
+	@Override
+	public String getFechaPaseMora(Long idContrato) {
+		return acuerdoDao.getFechaPaseMora(idContrato);
+	}
+	
 }

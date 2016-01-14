@@ -86,7 +86,7 @@
     
     var comboJerarquia = app.creaCombo({data:jerarquia, 
     									triggerAction: 'all', 
-    									value:jerarquia.diccionario[0].codigo, 
+    									value:jerarquia.diccionario[0].id, 
     									name : 'jerarquia', 
     									fieldLabel : '<s:message code="expedientes.listado.jerarquia" text="**Jerarquia" />'
     									<app:test id="idComboJerarquia" addComa="true"/>	
@@ -96,42 +96,146 @@
 		// Si estamos corriendo tests selenium esta función debe ser global para que
 		// pueda ser llamada desde el JUnit 
 	</c:if> 
-	var recargarComboZonas = function(){
-		if (comboJerarquia.getValue()!=null && comboJerarquia.getValue()!=''){
-			optionsZonasStore.webflow({id:comboJerarquia.getValue()});
+	
+	var listadoCodigoZonas = [];
+	
+	comboJerarquia.on('select',function(){
+		listadoCodigoZonas = [];
+		if(comboJerarquia.value != '') {
+			comboZonas.setDisabled(false);
+			optionsZonasStore.setBaseParam('idJerarquia', comboJerarquia.getValue());
 		}else{
-			optionsZonasStore.webflow({id:0});
+			comboZonas.setDisabled(true);
 		}
-	}
+	});
 	
-	var limpiarYRecargar = function(){
-		app.resetCampos([comboZonas]);
-		recargarComboZonas();
-	}
-	
-	comboJerarquia.on('select',limpiarYRecargar);
+	var codZonaSel='';
+	var desZonaSel='';
 	
 	var zonasRecord = Ext.data.Record.create([
 		 {name:'codigo'}
 		,{name:'descripcion'}
 	]);
+	
+	//Template para el combo de zonas
+    var zonasTemplate = new Ext.XTemplate(
+        '<tpl for="."><div class="search-item">',
+            '<p>{descripcion}&nbsp;&nbsp;&nbsp;</p><p>{codigo}</p>',
+        '</div></tpl>'
+    );
+    
     
     var optionsZonasStore = page.getStore({
-	       flow: 'clientes/buscarZonas'
+	       flow: 'expediente/getZonasInstant'
 	       ,reader: new Ext.data.JsonReader({
 	    	 root : 'zonas'
 	    }, zonasRecord)
 	       
 	});
+    
+    //Combo de zonas
+    var comboZonas = new Ext.form.ComboBox({
+        name: 'comboZonas'
+        ,disabled:true 
+        ,allowBlank:true
+        ,store:optionsZonasStore
+        ,width:240
+        ,fieldLabel: '<s:message code="expedientes.listado.centros" text="**Centros"/>'
+        ,tpl: zonasTemplate  
+        ,forceSelection:true
+        ,style:'padding:0px;margin:0px;'
+        ,enableKeyEvents: true
+        ,typeAhead: false
+        ,hideTrigger:true     
+        ,minChars: 2 
+        ,hidden:false
+        ,maxLength:256 
+        ,itemSelector: 'div.search-item'
+        ,loadingText: '<s:message code="app.buscando" text="**Buscando..."/>'
+        ,onSelect: function(record) {
+        	btnIncluir.setDisabled(false);
+        	codZonaSel=record.data.codigo;
+        	desZonaSel=record.data.descripcion;
+         }
+    });	
+    
+    var recordZona = Ext.data.Record.create([
+		{name: 'id'},
+		{name: 'codigoZona'},
+		{name: 'descripcionZona'}
+	]);
+    
+    
+   	var zonasStore = page.getStore({
+		flow:''
+		,reader: new Ext.data.JsonReader({
+	  		root : 'data'
+		} 
+		, recordZona)
+	});
+    
+    
+    var zonasCM = new Ext.grid.ColumnModel([
+		{header : '<s:message code="expedientes.listado.centros.codigo" text="**Código" />', dataIndex : 'codigoZona' ,sortable:false, hidden:false, width:80}
+		,{header : '<s:message code="expedientes.listado.centros.nombre" text="**Nombre" />', dataIndex : 'descripcionZona',sortable:false, hidden:false, width:200}
+	]);
 	
-	var comboZonas = app.creaDblSelect(zonas
-               ,'<s:message code="expedientes.listado.centros" text="**Centros" />'
-               ,{store:optionsZonasStore
-	             <app:test id="comboZonas" addComa="true" />
-                 ,funcionReset:recargarComboZonas});
+	var zonasGrid = new Ext.grid.EditorGridPanel({
+	    title : '<s:message code="expedientes.listado.centros" text="**Centros" />'
+	    ,cm: zonasCM
+	    ,store: zonasStore
+	    ,width: 300
+	    ,height: 150
+	    ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
+	    ,clicksToEdit: 1
+	});
 
-	recargarComboZonas();
+	var incluirZona = function() {
+	    var zonaAInsertar = zonasGrid.getStore().recordType;
+   		var p = new zonaAInsertar({
+   			codigoZona: codZonaSel,
+   			descripcionZona: desZonaSel
+   		});
+		zonasStore.insert(0, p);
+		listadoCodigoZonas.push(codZonaSel);
+	}
+
+	var btnIncluir = new Ext.Button({
+		text : '<s:message code="rec-web.direccion.form.incluir" text="Incluir" />'
+		,iconCls : 'icon_mas'
+		,disabled: true
+		,handler : function(){
+			incluirZona();
+			codZonaSel='';
+   			desZonaSel='';
+   			btnIncluir.setDisabled(true);
+			comboZonas.focus();
+		}
+	});
+
+	var zonaAExcluir = -1;
+	var codZonaExcluir = '';
 	
+	zonasGrid.on('cellclick', function(grid, rowIndex, columnIndex, e) {
+   		codZonaExcluir = grid.selModel.selections.get(0).data.codigoZona;
+   		zonaAExcluir = rowIndex;
+   		btnExcluir.setDisabled(false);
+	});
+
+	var btnExcluir = new Ext.Button({
+		text : '<s:message code="rec-web.direccion.form.excluir" text="Excluir" />'
+		,iconCls : 'icon_menos'
+		,disabled: true
+		,handler : function(){
+			if (zonaAExcluir >= 0) {
+				zonasStore.removeAt(zonaAExcluir);
+				listadoCodigoZonas.remove(codZonaExcluir);
+			}
+			zonaAExcluir = -1;
+	   		btnExcluir.setDisabled(true);
+		}
+	});
+
 	var estados = <app:dict value="${estado}" blankElement="true" blankElementValue="" blankElementText="---" />;
 
 	var comboSegmentos = app.creaDblSelect(segmentos, '<s:message code="menu.clientes.listado.filtro.segmento" text="**Segmento" />');
@@ -253,7 +357,7 @@
 			if (comboJerarquia.getValue() != '' ){
 				return true;
 			}
-			if (comboZonas.getValue() != '' ){
+			if (listadoCodigoZonas.length > 0 ){
 				return true;
 			}			
 			if (!(mmRiesgoTotal.min.getValue() === '' )){
@@ -371,7 +475,7 @@
 			param.minSaldoVencido=mmSVencido.min.getValue();
 			param.maxSaldoVencido=mmSVencido.max.getValue();
 			param.codigoEntidad=comboJerarquia.getValue();
-			param.codigoZona=comboZonas.getValue();
+			param.codigoZona=listadoCodigoZonas.toString();
 			param.nroContrato=filtroContrato.getValue();
 			param.segmentos=comboSegmentos.getValue();
 		}
@@ -484,15 +588,23 @@
 		,autoHeight:true
 		,bodyStyle:'padding: 10px'
 		,layout:'table'
-		,layoutConfig:{columns:2}
+		,layoutConfig:{columns:4}
 		,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
 		,items:[{
 					layout:'form'
-					,items: [mmRiesgoTotal.panel,mmSVencido.panel, filtroContrato]
+					,items: [mmRiesgoTotal.panel,mmSVencido.panel, filtroContrato, comboSegmentos]
 				},{
 					layout:'form'
-					,items: [comboJerarquia, comboZonas,comboSegmentos]
-				}]
+					,items: [comboJerarquia, comboZonas]
+				},{
+					layout:'form'
+					,items: [btnIncluir, btnExcluir]
+				},{
+					layout:'form'
+					,items: [zonasGrid]
+				}
+				
+				]
 		,listeners:{
 			getParametros: function(anadirParametros, hayError) {
 				if (validarEmptyFormRiesgos()){
@@ -510,6 +622,7 @@
 						comboZonas,
 						filtroContrato
 	           ]); 
+	           zonasStore.removeAll();
     		}
 		}
 	});

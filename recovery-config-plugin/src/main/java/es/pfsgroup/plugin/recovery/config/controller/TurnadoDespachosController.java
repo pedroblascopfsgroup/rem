@@ -20,12 +20,14 @@ import org.springframework.binding.message.Message;
 import org.springframework.binding.message.Severity;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
@@ -34,6 +36,7 @@ import es.capgemini.devon.validation.ErrorMessage;
 import es.capgemini.devon.validation.ErrorMessageUtils;
 import es.capgemini.devon.validation.ValidationException;
 import es.capgemini.devon.web.fileupload.FileUpload;
+import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.DespachoAmbitoActuacion;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
@@ -41,7 +44,9 @@ import es.capgemini.pfs.direccion.model.DDComunidadAutonoma;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.config.despachoExterno.ADMDespachoExternoManager;
+import es.pfsgroup.plugin.recovery.config.despachoExterno.dao.ADMDespachoAmbitoActuacionDao;
 import es.pfsgroup.plugin.recovery.coreextension.utils.UtilDiccionarioManager;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcelInformeSubasta;
@@ -66,6 +71,7 @@ public class TurnadoDespachosController {
 	private static final String VIEW_ESQUEMA_TURNADO_LETRADO = "plugin/config/turnadodespachos/editarEsquemaLetrado";
 	private static final String JSP_DOWNLOAD_FILE = "plugin/geninformes/download";
 	private static final String OK_KO_RESPUESTA_JSON = "plugin/coreextension/OkRespuestaJSON";
+	private static final String VIEW_ASIGNAR_CALIDAD_PROVINCIA = "plugin/config/turnadodespachos/editarCalidadProvincia";
 	
 	private static final String VIEW_DEFAULT = "default";
 
@@ -96,6 +102,9 @@ public class TurnadoDespachosController {
     @Autowired
     private FileUpload fileUpload;
     
+    @Autowired
+	private ADMDespachoAmbitoActuacionDao despachoAmbitoActuacionDao;
+    
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String ventanaBusquedaEsquemas(ModelMap map) {
@@ -115,6 +124,8 @@ public class TurnadoDespachosController {
 		List<DespachoAmbitoActuacion> listaAmbitoActuacion = despachoExternoManager.getAmbitoGeograficoDespacho(idDespacho);
 		List<String> listaComunidadesDespacho = new LinkedList<String>();
 		List<String> listaProvinciasDespacho = new LinkedList<String>();
+		List<DDProvincia> listaProvinciasDespachoNombre = new LinkedList<DDProvincia>();
+		List<String> listaProvinciasPorcentaje = new LinkedList<String>();
 		
 		for(DespachoAmbitoActuacion ambitoActuacion : listaAmbitoActuacion) {
 			
@@ -124,11 +135,15 @@ public class TurnadoDespachosController {
 			
 			if(ambitoActuacion.getProvincia() != null) {
 				listaProvinciasDespacho.add(ambitoActuacion.getProvincia().getCodigo());
+				listaProvinciasDespachoNombre.add(ambitoActuacion.getProvincia());
+				listaProvinciasPorcentaje.add(ambitoActuacion.getPorcentaje());
 			}
 		}
 		
 		model.addAttribute("listaComunidadesDespacho", listaComunidadesDespacho);
 		model.addAttribute("listaProvinciasDespacho", listaProvinciasDespacho);
+		model.addAttribute("listaProvinciasDespachoNombre", listaProvinciasDespachoNombre);
+		model.addAttribute("listaProvinciasPorcentaje", listaProvinciasPorcentaje);
 		
 		List<EsquemaTurnadoConfig> listTipoImporteLitigio = new LinkedList<EsquemaTurnadoConfig>();
 		List<EsquemaTurnadoConfig> listTipoCalidadLitigio = new LinkedList<EsquemaTurnadoConfig>();
@@ -273,6 +288,8 @@ public class TurnadoDespachosController {
 		cabeceras.add("TIPO IMPORTE - CONCURSOS");
 		cabeceras.add("TIPO CALIDAD - LITIGIOS");
 		cabeceras.add("TIPO CALIDAD - CONCURSOS");
+		cabeceras.add("PROVINCIA");
+		cabeceras.add("CALIDAD - PROVINCIA");
 		
 		List<List<String>> valores = new ArrayList<List<String>>();
 		List<String> fila = null;
@@ -286,23 +303,41 @@ public class TurnadoDespachosController {
 		List<DespachoExterno> despachosExternos = despachoExternoManager.getDespachoExternoByTipo(tipoDespachoExterno.getId());
 		for(DespachoExterno despachoExterno : despachosExternos) {
 			
-			if(template == templateImpar) {
-				template = templatePar;
-			}
-			else {
-				template = templateImpar;
-			}
-		
-			fila = new ArrayList<String>();
+			List<DespachoAmbitoActuacion> listaAmbitoActuacion = (despachoExterno.getId()!=null) 
+					? despachoExternoManager.getAmbitoGeograficoDespacho(despachoExterno.getId())
+					: new ArrayList<DespachoAmbitoActuacion>();
+			List<DDProvincia> listaProvinciasDespachoNombre = this.getListaProvinciasDespacho(listaAmbitoActuacion);
+			List<String> listaProvinciasPorcentaje = this.getListaProvinciasPorcentaje(listaAmbitoActuacion);
+			//Con este bucle, se agrega 1 Fila por Despacho - Provincia ........ PRODUCTO-580
+			int i=0;
+			do{
+				if(template == templateImpar) {
+					template = templatePar;
+				}
+				else {
+					template = templateImpar;
+				}
 			
-			fila.add(despachoExterno.getId() + template);
-			fila.add(despachoExterno.getDescripcion() + template);
-			fila.add((despachoExterno.getTurnadoCodigoImporteLitigios() == null ? "" : despachoExterno.getTurnadoCodigoImporteLitigios()) + template);
-			fila.add((despachoExterno.getTurnadoCodigoImporteConcursal() == null ? "" : despachoExterno.getTurnadoCodigoImporteConcursal()) + template);
-			fila.add((despachoExterno.getTurnadoCodigoCalidadLitigios() == null ? "" : despachoExterno.getTurnadoCodigoCalidadLitigios()) + template);
-			fila.add((despachoExterno.getTurnadoCodigoCalidadConcursal() == null ? "" : despachoExterno.getTurnadoCodigoCalidadConcursal()) + template);
-			
-			valores.add(fila);
+				fila = new ArrayList<String>();
+				
+				fila.add(despachoExterno.getId() + template);
+				fila.add(despachoExterno.getDescripcion() + template);
+				fila.add((despachoExterno.getTurnadoCodigoImporteLitigios() == null ? "" : despachoExterno.getTurnadoCodigoImporteLitigios()) + template);
+				fila.add((despachoExterno.getTurnadoCodigoImporteConcursal() == null ? "" : despachoExterno.getTurnadoCodigoImporteConcursal()) + template);
+				fila.add((despachoExterno.getTurnadoCodigoCalidadLitigios() == null ? "" : despachoExterno.getTurnadoCodigoCalidadLitigios()) + template);
+				fila.add((despachoExterno.getTurnadoCodigoCalidadConcursal() == null ? "" : despachoExterno.getTurnadoCodigoCalidadConcursal()) + template);
+				if(listaProvinciasDespachoNombre.size() > 0) {
+					fila.add(listaProvinciasDespachoNombre.get(i).getDescripcion().toUpperCase() + template);
+					fila.add((listaProvinciasPorcentaje.get(i) == null ? "0%" : listaProvinciasPorcentaje.get(i)+"%") + template);
+				}
+				else {
+					fila.add(template);
+					fila.add(template);
+				}
+					
+				valores.add(fila);
+				i++;
+			}while(i < listaProvinciasDespachoNombre.size());
 		}
 				
 		HojaExcelInformeSubasta hojaExcel = new HojaExcelInformeSubasta();
@@ -346,10 +381,13 @@ public class TurnadoDespachosController {
 					
 					EsquemaDespachoValidacionDto dto = new EsquemaDespachoValidacionDto();
 					dto.setEsquema(esquemaVigente);
+					dto.setDiccionarioProvincias(utilDiccionarioManager.dameValoresDiccionario(DDProvincia.class));
 					dto.validarFichero(exc);
 				
 					// Se guardan los registros
-					for(EsquemaTurnadoDespachoDto esquemaTurnadoDespachoDto : dto.getListaRegistros()) {
+					//for(EsquemaTurnadoDespachoDto esquemaTurnadoDespachoDto : dto.getListaRegistros()) {
+					for(int i=0; i< dto.getListaRegistros().size(); i++)	{
+						EsquemaTurnadoDespachoDto esquemaTurnadoDespachoDto = dto.getListaRegistros().get(i);
 						
 						List<DespachoAmbitoActuacion> listaAmbitoActuacion = despachoExternoManager.getAmbitoGeograficoDespacho(esquemaTurnadoDespachoDto.getId());
 						List<String> listaComunidadesDespacho = new LinkedList<String>();
@@ -365,8 +403,13 @@ public class TurnadoDespachosController {
 								listaProvinciasDespacho.add(ambitoActuacion.getProvincia().getCodigo());
 							}
 						}
+						if(esquemaTurnadoDespachoDto.getNombreProvincia() != null && esquemaTurnadoDespachoDto.getNombreProvincia() != "") {
+							listaProvinciasDespacho.add(this.getProvinciaByNombre(esquemaTurnadoDespachoDto.getNombreProvincia()).getCodigo());
+						}
 						esquemaTurnadoDespachoDto.setListaComunidades(StringUtils.join(listaComunidadesDespacho.toArray(), ","));
-						esquemaTurnadoDespachoDto.setListaProvincias(StringUtils.join(listaProvinciasDespacho.toArray(), ","));							
+						esquemaTurnadoDespachoDto.setListaProvincias(StringUtils.join(listaProvinciasDespacho.toArray(), ","));
+						esquemaTurnadoDespachoDto.setNombreProvincia(esquemaTurnadoDespachoDto.getNombreProvincia());
+						esquemaTurnadoDespachoDto.setPorcentajeProvincia(esquemaTurnadoDespachoDto.getPorcentajeProvincia());
 						
 						despachoExternoManager.saveEsquemaDespacho(esquemaTurnadoDespachoDto);
 					}
@@ -384,5 +427,76 @@ public class TurnadoDespachosController {
 		model.addAttribute("okko", resultado);
 		
 		return OK_KO_RESPUESTA_JSON;
-	}		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String ventanaAsignarCalidadProvincia(@RequestParam(required=false) Long id
+			, Model model) {
+		List<DespachoAmbitoActuacion> listaAmbitoActuacion = (id!=null) 
+				? despachoExternoManager.getAmbitoGeograficoDespacho(id)
+				: new ArrayList<DespachoAmbitoActuacion>();
+		
+		List<DDProvincia> listaProvinciasDespachoNombre = this.getListaProvinciasDespacho(listaAmbitoActuacion);
+		List<String> listaProvinciasPorcentaje = this.getListaProvinciasPorcentaje(listaAmbitoActuacion);
+
+		model.addAttribute("despachoId", id);
+		model.addAttribute("listaProvinciasDespachoNombre", listaProvinciasDespachoNombre);
+		model.addAttribute("listaProvinciasPorcentaje", listaProvinciasPorcentaje);
+		return VIEW_ASIGNAR_CALIDAD_PROVINCIA;
+	}
+	
+	@RequestMapping
+	public String guardarCalidadProvincia(@RequestParam(value = "despacho", required = true) Long idDespacho,
+			@RequestParam(value = "codigoProvincia", required = true) String codProvincia,
+			@RequestParam(value = "calidadProvincia", required = true) String calidad,
+			Model model) 
+	{	
+		try {
+			DespachoAmbitoActuacion despachoAmbitoActuacion = despachoAmbitoActuacionDao.getByDespachoYProvincia(idDespacho, codProvincia);
+			despachoAmbitoActuacion.setPorcentaje(calidad);
+			despachoExternoManager.guardarAmbitoActuacion(despachoAmbitoActuacion);
+		}
+		catch(Exception e) {
+			logger.error("Error en el método guardarCalidadProvincia: " + e .getMessage());
+			throw new BusinessOperationException(e);
+		}
+		
+		return VIEW_DEFAULT;
+	}
+	
+	private List<DDProvincia> getListaProvinciasDespacho(List<DespachoAmbitoActuacion> listaAmbitoActuacion){
+		
+		List<DDProvincia> listaProvinciasDespachoNombre = new LinkedList<DDProvincia>();
+		
+		for(DespachoAmbitoActuacion ambitoActuacion : listaAmbitoActuacion) {
+			if(ambitoActuacion.getProvincia() != null) {
+				listaProvinciasDespachoNombre.add(ambitoActuacion.getProvincia());
+			}
+		}
+		
+		return listaProvinciasDespachoNombre;
+	}
+	
+	private List<String> getListaProvinciasPorcentaje(List<DespachoAmbitoActuacion> listaAmbitoActuacion) {
+
+		List<String> listaProvinciasPorcentaje = new LinkedList<String>();
+		
+		for(DespachoAmbitoActuacion ambitoActuacion : listaAmbitoActuacion) {
+			if(ambitoActuacion.getProvincia() != null) {
+				listaProvinciasPorcentaje.add(ambitoActuacion.getPorcentaje());
+			}
+		}
+		return listaProvinciasPorcentaje;
+	}
+	
+	private DDProvincia getProvinciaByNombre(String nombre)
+	{
+		List<DDProvincia> listProvincias = utilDiccionarioManager.dameValoresDiccionario(DDProvincia.class);
+		
+		for(DDProvincia provincia : listProvincias)
+			if(provincia.getDescripcion().toUpperCase().equals(nombre.toUpperCase()))
+				return provincia;
+		return null;
+	}
 }

@@ -146,79 +146,80 @@ var formBusquedaBienes=function(){
 		
 <%-- ******************* MODIFICACION BOTON BUSCAR PARA QUE SE DESACTIVEN BUSQUEDAS EN PARALELO ******************** --%>		
 	var validarForm=function(){
-		if(txtIdBien.getValue() != ''){
+		if(txtIdBien.getValue() !== ''){
 			return true;
 		}
-		if(txtPoblacion.getValue() != ''){
+		if(txtPoblacion.getValue() !== ''){
 			return true;
 		}
-		if(txtCodPostal.getValue() != ''){
+		if(txtCodPostal.getValue() !== ''){
 			return true;
 		}
-		if(comboTipoBien.getValue() != ''){
+		if(comboTipoBien.getValue() !== ''){
 			return true;
 		}
-		if(txtValorDesde.getValue() != ''){
+		if(txtValorDesde.getValue() !== ''){
 			return true;
 		}
-		if(txtTotalCargasDesde.getValue() != ''){
+		if(txtTotalCargasDesde.getValue() !== ''){
 			return true;
 		}
-		if(txtValorHasta.getValue() != ''){
+		if(txtValorHasta.getValue() !== ''){
 			return true;
 		}
-		if(txtTotalCargasHasta.getValue() != ''){
+		if(txtTotalCargasHasta.getValue() !== ''){
 			return true;
 		}
-		if(txtNumContrato.getValue() != ''){
+		if(txtNumContrato.getValue() !== ''){
 			return true;
 		}
-		if(txtPrimerTitularNIF.getValue() != ''){
+		if(txtPrimerTitularNIF.getValue() !== ''){
 			return true;
 		}
-		if(txtCodCliente.getValue() != ''){
+		if(txtCodCliente.getValue() !== ''){
 			return true;
 		}
-		if(txtNifCliente.getValue() != ''){
+		if(txtNifCliente.getValue() !== ''){
 			return true;
 		}
-		if(txtNumActivo.getValue() != ''){
+		
+		if(txtNumActivo.getValue() !== ''){
 			return true;
 		}
-		if(txtNumRegistro.getValue() != ''){
+		if(txtNumRegistro.getValue() !== ''){
 			return true;
 		}
-		if(txtReferenciaCatastral.getValue() != ''){
+		if(txtReferenciaCatastral.getValue() !== ''){
 			return true;
 		}
-		if(txtSubtipoBien.getValue() != ''){
+		if(txtSubtipoBien.getValue() !== ''){
 			return true;
 		}
-		if(txtTasacionDesde.getValue() != ''){
+		if(txtTasacionDesde.getValue() !== ''){
 			return true;
 		}
-		if(txtTasacionHasta.getValue() != ''){
+		if(txtTasacionHasta.getValue() !== ''){
 			return true;
 		}
-		if(txtTipoSubastaDesde.getValue() != ''){
+		if(txtTipoSubastaDesde.getValue() !== ''){
 			return true;
 		}
-		if(txtTipoSubastaHasta.getValue() != ''){
+		if(txtTipoSubastaHasta.getValue() !== ''){
 			return true;
 		}
-		if(txtNumFinca.getValue() != ''){
+		if(txtNumFinca.getValue() !== ''){
 			return true;
 		}
-		if(txtDireccion.getValue() != ''){
+		if(txtDireccion.getValue() !== ''){
 			return true;
 		}
-		if(txtProvincia.getValue() != ''){
+		if(txtProvincia.getValue() !== ''){
 			return true;
 		}
-		if(txtLocalidad.getValue() != ''){
+		if(txtLocalidad.getValue() !== ''){
 			return true;
 		}
-		if(txtCodigoPostal.getValue() != ''){
+		if(txtCodigoPostal.getValue() !== ''){
 			return true;
 		}
 	};

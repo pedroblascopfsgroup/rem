@@ -139,6 +139,10 @@
 		}
 	 	parametros.comentario = comentario.getValue();
 	 	
+	 	<%--añadimos los arrays para el informar masivo --%>
+		parametros.arrayIdDocs='${arrayIdDocs}';
+		parametros.arrayIdSolicitudes='${arrayIdSolicitudes}';
+		<%---------------------------------------------- --%>
 	 	return parametros;
 	 }	
 	
@@ -147,13 +151,13 @@
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){
-			if (validateForm()) {               
+			if (validateForm()) {           
 				var p = getParametros();
 				Ext.Ajax.request({
-					url : page.resolveUrl('documentopco/saveInformarSolicitud'), 
-					params : p ,
-					method: 'POST',
-					success: function ( result, request ) {
+					url : page.resolveUrl('documentopco/saveInformarSolicitud')
+					,params : p
+					,method: 'POST'
+					,success: function ( result, request ) {
 						page.fireEvent(app.event.DONE);
 					}
 				});

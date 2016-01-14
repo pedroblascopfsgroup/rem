@@ -45,7 +45,14 @@ EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 IF V_NUM_TABLAS = 0 THEN
     DBMS_OUTPUT.PUT_LINE('[INFO] Insertar Sí');
-	EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''13'', ''Enviado'', ''Enviado'', ''0'',''INICIAL'', sysdate) ';
+	V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_BFR_CODIGO = ''13''';
+	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+	IF V_NUM_TABLAS > 0 THEN  
+    DBMS_OUTPUT.PUT_LINE('OK no se modifica nada.');
+  	DBMS_OUTPUT.PUT_LINE('[INFO] Ya existe el registro "Incompleto / Falta documentación" en el diccionario '||V_DDNAME||'.');
+	ELSE
+    	EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''13'', ''Enviado'', ''Enviado'', ''0'',''INICIAL'', sysdate) ';
+    END IF;
 ELSE
 	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.DD_PCO_BFR_RESULTADO SET DD_PCO_BFR_CODIGO = ''13'', DD_PCO_BFR_NOTIFICADO=''0'' WHERE DD_PCO_BFR_CODIGO = ''ENVIADO'' ';
 END IF;
@@ -55,32 +62,152 @@ EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 IF V_NUM_TABLAS = 0 THEN
     DBMS_OUTPUT.PUT_LINE('[INFO] Insertar Sí');
+     DBMS_OUTPUT.PUT_LINE('[INFO] Insertar Sí');
+	V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_BFR_CODIGO = ''11''';
+	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+	IF V_NUM_TABLAS > 0 THEN  
+    DBMS_OUTPUT.PUT_LINE('OK no se modifica nada.');
+  	DBMS_OUTPUT.PUT_LINE('[INFO] Ya existe el registro "Incompleto / Falta documentación" en el diccionario '||V_DDNAME||'.');
+	ELSE
 	EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''11'', ''Preparado'', ''Preparado'', ''0'',''INICIAL'', sysdate) ';
+	END IF;
 ELSE
 	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.DD_PCO_BFR_RESULTADO SET DD_PCO_BFR_CODIGO = ''11'', DD_PCO_BFR_NOTIFICADO=''0'' WHERE DD_PCO_BFR_CODIGO = ''PREPARADO'' ';
 END IF;
 
-EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''00'', ''Entregado'', ''Entregado'', ''1'',''INICIAL'', sysdate) ';
-EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''01'', ''Dirección incorrecta'', ''Dirección incorrecta'', ''0'',''INICIAL'', sysdate) ';
 
-EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''02'', ''Ausente'', ''Ausente'', ''0'',''INICIAL'', sysdate) ';
-EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''03'', ''Desconocido/a'', ''Desconocido/a'', ''0'',''INICIAL'', sysdate) ';
+V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_BFR_CODIGO = ''00''';
+EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+IF V_NUM_TABLAS > 0 THEN  
+    DBMS_OUTPUT.PUT_LINE('OK no se modifica nada.');
+  	DBMS_OUTPUT.PUT_LINE('[INFO] Ya existe el registro "Incompleto / Falta documentación" en el diccionario '||V_DDNAME||'.');
+ELSE
+	EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''00'', ''Entregado'', ''Entregado'', ''1'',''INICIAL'', sysdate) ';
+	DBMS_OUTPUT.PUT_LINE('Insert Entregado');
+END IF;
 
-EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''04'', ''Fallecido'', ''Fallecido'', ''0'',''INICIAL'', sysdate) ';
-EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''05'', ''Rehusado'', ''Rehusado'', ''0'',''INICIAL'', sysdate) ';
 
-EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''06'', ''No se hace cargo'', ''No se hace cargo'', ''0'',''INICIAL'', sysdate) ';
-EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''07'', ''Entregado en oficina'', ''Entregado en oficina'', ''1'',''INICIAL'', sysdate) ';
+V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_BFR_CODIGO = ''01''';
+EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+IF V_NUM_TABLAS > 0 THEN  
+    DBMS_OUTPUT.PUT_LINE('OK no se modifica nada.');
+ELSE
+	EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''01'', ''Dirección incorrecta'', ''Dirección incorrecta'', ''0'',''INICIAL'', sysdate) ';
+	DBMS_OUTPUT.PUT_LINE('Insert Entregado');
+END IF;
 
-EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''08'', ''No retirado oficina'', ''No retirado oficina'', ''0'',''INICIAL'', sysdate) ';
-EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''09'', ''Devuelto (3 intentos)'', ''Devuelto (3 intentos)'', ''0'',''INICIAL'', sysdate) ';
+V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_BFR_CODIGO = ''02''';
+EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+IF V_NUM_TABLAS > 0 THEN  
+    DBMS_OUTPUT.PUT_LINE('OK no se modifica nada.');
+ELSE
+	EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''02'', ''Ausente'', ''Ausente'', ''0'',''INICIAL'', sysdate) ';
+	DBMS_OUTPUT.PUT_LINE('Insert Entregado');
+END IF;
 
-EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''10'', ''Sobrante'', ''Sobrante'', ''0'',''INICIAL'', sysdate) ';
+V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_BFR_CODIGO = ''03''';
+EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+IF V_NUM_TABLAS > 0 THEN  
+    DBMS_OUTPUT.PUT_LINE('OK no se modifica nada.');
+ELSE
+	EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''03'', ''Desconocido/a'', ''Desconocido/a'', ''0'',''INICIAL'', sysdate) ';
+	DBMS_OUTPUT.PUT_LINE('Insert Entregado');
+END IF;
 
-EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''12'', ''Solicitado'', ''Solicitado'', ''0'',''INICIAL'', sysdate) ';
+V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_BFR_CODIGO = ''04''';
+EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+IF V_NUM_TABLAS > 0 THEN  
+    DBMS_OUTPUT.PUT_LINE('OK no se modifica nada.');
+ELSE
+	EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''04'', ''Fallecido'', ''Fallecido'', ''0'',''INICIAL'', sysdate) ';
+	DBMS_OUTPUT.PUT_LINE('Insert Entregado');
+END IF;
 
+V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_BFR_CODIGO = ''05''';
+EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+IF V_NUM_TABLAS > 0 THEN  
+    DBMS_OUTPUT.PUT_LINE('OK no se modifica nada.');
+ELSE
+	EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''05'', ''Rehusado'', ''Rehusado'', ''0'',''INICIAL'', sysdate) ';
+	DBMS_OUTPUT.PUT_LINE('Insert Entregado');
+END IF;
+
+V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_BFR_CODIGO = ''06''';
+EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+IF V_NUM_TABLAS > 0 THEN  
+    DBMS_OUTPUT.PUT_LINE('OK no se modifica nada.');
+ELSE
+	EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''06'', ''No se hace cargo'', ''No se hace cargo'', ''0'',''INICIAL'', sysdate) ';
+	DBMS_OUTPUT.PUT_LINE('Insert Entregado');
+END IF;
+
+V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_BFR_CODIGO = ''07''';
+EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+IF V_NUM_TABLAS > 0 THEN  
+    DBMS_OUTPUT.PUT_LINE('OK no se modifica nada.');
+ELSE
+	EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''07'', ''Entregado en oficina'', ''Entregado en oficina'', ''1'',''INICIAL'', sysdate) ';
+	DBMS_OUTPUT.PUT_LINE('Insert Entregado');
+END IF;
+
+
+V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_BFR_CODIGO = ''08''';
+EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+IF V_NUM_TABLAS > 0 THEN  
+    DBMS_OUTPUT.PUT_LINE('OK no se modifica nada.');
+ELSE
+	EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''08'', ''No retirado oficina'', ''No retirado oficina'', ''0'',''INICIAL'', sysdate) ';
+	DBMS_OUTPUT.PUT_LINE('Insert Entregado');
+END IF;
+
+
+V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_BFR_CODIGO = ''09''';
+EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+IF V_NUM_TABLAS > 0 THEN  
+    DBMS_OUTPUT.PUT_LINE('OK no se modifica nada.');
+ELSE
+	EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''09'', ''Devuelto (3 intentos)'', ''Devuelto (3 intentos)'', ''0'',''INICIAL'', sysdate) ';
+	DBMS_OUTPUT.PUT_LINE('Insert Entregado');
+END IF;
+
+V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_BFR_CODIGO = ''10''';
+EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+IF V_NUM_TABLAS > 0 THEN  
+    DBMS_OUTPUT.PUT_LINE('OK no se modifica nada.');
+ELSE
+	EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''10'', ''Sobrante'', ''Sobrante'', ''0'',''INICIAL'', sysdate) ';
+	DBMS_OUTPUT.PUT_LINE('Insert Entregado');
+END IF;
+
+V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_BFR_CODIGO = ''12''';
+EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+IF V_NUM_TABLAS > 0 THEN  
+    DBMS_OUTPUT.PUT_LINE('OK no se modifica nada.');
+ELSE
+	EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''12'', ''Solicitado'', ''Solicitado'', ''0'',''INICIAL'', sysdate) ';
+	DBMS_OUTPUT.PUT_LINE('Insert Entregado');
+END IF;
+
+
+V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_BFR_CODIGO = ''14''';
+EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+IF V_NUM_TABLAS > 0 THEN  
+    DBMS_OUTPUT.PUT_LINE('OK no se modifica nada.');
+ELSE
 EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''14'', ''Procesado'', ''Procesado'', ''0'',''INICIAL'', sysdate) ';
+	DBMS_OUTPUT.PUT_LINE('Insert Entregado');
+END IF;
+
+
+V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_BFR_CODIGO = ''15''';
+EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+IF V_NUM_TABLAS > 0 THEN  
+    DBMS_OUTPUT.PUT_LINE('OK no se modifica nada.');
+ELSE
 EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_BFR_RESULTADO.nextval, ''15'', ''Incidentado'', ''Incidentado'', ''0'',''INICIAL'', sysdate) ';
+	DBMS_OUTPUT.PUT_LINE('Insert Entregado');
+END IF;
+
 
 COMMIT;
 

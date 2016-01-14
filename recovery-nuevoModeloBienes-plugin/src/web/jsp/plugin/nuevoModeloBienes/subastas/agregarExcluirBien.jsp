@@ -103,7 +103,6 @@
    bienesStore.webflow({idSubasta:idSubasta, accion:accion});
    
    
-   debugger;
    var gridBienes = new Ext.grid.EditorGridPanel({
    		 store: bienesStore
          ,cm: cmBienes

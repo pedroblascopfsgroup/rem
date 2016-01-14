@@ -1,5 +1,6 @@
 package es.capgemini.pfs.users;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -11,8 +12,11 @@ import javax.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.Authentication;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.GrantedAuthorityImpl;
+import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -28,6 +32,11 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
+import es.capgemini.pfs.dsm.EntityDataSource;
+import es.capgemini.pfs.dsm.dao.EntidadConfigDao;
+import es.capgemini.pfs.dsm.dao.EntidadDao;
+import es.capgemini.pfs.dsm.model.Entidad;
+import es.capgemini.pfs.dsm.model.EntidadConfig;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.oficina.model.Oficina;
 import es.capgemini.pfs.security.model.UsuarioSecurity;
@@ -62,6 +71,13 @@ public class UsuarioManager {
     private MailManager mailManager;
     @Resource
     private MessageService messageService;
+    @Autowired
+    private EntidadDao entidadDao;
+    @Autowired
+    private EntidadConfigDao entidadConfigDao;
+	@Autowired
+	private EntityDataSource entityDataSource;
+    
     
 
     /**
@@ -264,8 +280,57 @@ public class UsuarioManager {
         Usuario loggedUser = null;
         
         if( RequestContextHolder.getRequestAttributes()!=null && RequestContextHolder.getRequestAttributes().getAttribute(USER_SESSION_KEY,RequestAttributes.SCOPE_SESSION)!=null){
-            return (Usuario)RequestContextHolder.getRequestAttributes().getAttribute(USER_SESSION_KEY,RequestAttributes.SCOPE_SESSION);
+        	return (Usuario)RequestContextHolder.getRequestAttributes().getAttribute(USER_SESSION_KEY,RequestAttributes.SCOPE_SESSION);
         }
+        
+        if (SecurityUtils.getCurrentUser() == null && defaultUserId != null) {
+            loggedUser = get(defaultUserId);
+        } else {
+            loggedUser = get(((UsuarioSecurity) SecurityUtils.getCurrentUser()).getId());
+        }
+        
+        loggedUser.initialize();
+        
+        if( RequestContextHolder.getRequestAttributes()!=null)
+            RequestContextHolder.getRequestAttributes().setAttribute(USER_SESSION_KEY,loggedUser,RequestAttributes.SCOPE_SESSION);
+        EventFactory.onMethodStop(this.getClass());
+        return loggedUser;
+    }
+    
+    /**
+     * Recupera el usuario logeado. Y si no hay el usuario por defecto.
+     * @return usuario
+     */
+    @BusinessOperation(ConfiguracionBusinessOperation.BO_USUARIO_MGR_CAMBIAR_ENTIDAD_USU_LOGADO)
+    @Transactional
+    public void cambiarEntidadUsuarioLogado(String codEntidadSeleccionada) {
+    	EventFactory.onMethodStart(this.getClass());
+        Usuario loggedUser = null;
+        Entidad enti = entidadDao.findByDescripcion(codEntidadSeleccionada);
+    	loggedUser = (Usuario)RequestContextHolder.getRequestAttributes().getAttribute(USER_SESSION_KEY,RequestAttributes.SCOPE_SESSION);
+        DbIdContextHolder.setDbId(enti.getId());
+        loggedUser.setEntidad(enti);
+        usuarioDao.update(loggedUser);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+		UsuarioSecurity usuSec = (UsuarioSecurity) userDetails;
+        usuSec.setEntidad(enti);
+    }
+    
+    @BusinessOperation(ConfiguracionBusinessOperation.BO_USUARIO_MGR_CAMBIAR_ENTIDAD_BASE_DATOS)
+    @Transactional
+    public Usuario cambiarEntidadBaseDatos(String codEntidadSeleccionada) {
+    	EventFactory.onMethodStart(this.getClass());
+        Usuario loggedUser = null;
+        Entidad enti = entidadDao.findByDescripcion(codEntidadSeleccionada);
+        EntidadConfig entidadConfig = entidadConfigDao.findByEntidad(enti.getId());
+        
+        try {
+			entityDataSource.getConnectionMultientidad(entidadConfig.getDataValue());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         
         if (SecurityUtils.getCurrentUser() == null && defaultUserId != null) {
             loggedUser = get(defaultUserId);

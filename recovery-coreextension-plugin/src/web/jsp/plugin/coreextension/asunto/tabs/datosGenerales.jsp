@@ -5,6 +5,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 (function(){
 	var limit=25;
@@ -434,7 +435,6 @@
 				{border: false,layout:'form', items:[comboErrorPostCDD]}
 				]
 			},
-
 			{
 			layout:'table'			
 			,layoutConfig : {
@@ -488,6 +488,7 @@
 	var tipoProcedimientos=<app:dict value="${tipoProcedimientos}" />;
 	var cfgComboTipoProc = {
 	width:250
+	,bodyStyle:'margin:0px;padding:5px;cellspacing:10px;margin-bottom:0px'
 	};
     comboTipoProcedimientos = app.creaDblSelect(tipoProcedimientos, '<s:message code="asuntos.busqueda.filtro.tipoActuacion" text="**Tipo de actuación" />',cfgComboTipoProc);
 	
@@ -538,11 +539,11 @@
 		,width:300
 		,style:'margin-right:20px;margin-left:0px'
 		,border:false
-		,bodyStyle:'padding:0px;cellspacing:5px;padding-bottom: 0px;'
+		,bodyStyle:'padding:0px;cellspacing:5px;padding-bottom: 5px;'
 		,defaults : {xtype:'panel', border : false ,cellCls : 'vtop'}
 		,items:[
 			{items:[filtroNumeroCodigoProclabel]}
-			,{width:'60px'}
+			,{width:'52px'}
 			,{items:[filtroNumeroCodigoProc]}
 			,{items:[{border:false,html:'/'}]}
 			,{items:[filtroAnyoCodigoProc]}
@@ -718,22 +719,16 @@
 		//,collapsible:true
 		,bodyStyle:'padding:5px;cellspacing:10px'
 		,defaults : {xtype:'panel', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding-left:10px;padding-right:10px;padding-top:1px;padding-bottom:1px;cellspacing:10px'}
-		,items:[{items:[codigoAsunto]}
-				,{items:[saldoTotalContratos.panel]}
-				,{items:[nombre]}
-				,{items:[importeEstimado.panel]}
-				,{items:[comboEstados]}
-				,{items:[comboTipoAsunto]}
-				,{items:[fechaCreacionDesde]}
-				,{items:[filtroContrato]}
-				,{items:[fechaCreacionHasta]}
-				,{items:[filtroNumeroAutosPanel]}
-				,{items:[comboGestion]}
-				,{colspan:2,items:[comboTipoProcedimientos]}
-				,{items:[comboPropiedades]}
-				,{items:[comboJerarquia]}
-				,{items:[filtrosCDD]}
-				,{items:[comboZonas]}
+		,items:[{
+					layout:'form'
+					,bodyStyle:'padding:5px;cellspacing:10px'
+					,autoHeight:true
+					,items:[codigoAsunto,nombre,comboEstados,fechaCreacionDesde,fechaCreacionHasta,comboGestion,comboPropiedades
+									 <sec:authorize ifAllGranted="ENVIO_CIERRE_DEUDA">,filtrosCDD</sec:authorize>]}
+			   ,{	layout:'form'
+					,bodyStyle:'padding:5px;cellspacing:10px'
+					,autoHeight:true
+			   		,items:[saldoTotalContratos.panel,importeEstimado.panel,comboTipoAsunto,filtroContrato,filtroNumeroAutosPanel,comboTipoProcedimientos,comboJerarquia, comboZonas]}
 		]
 		,listeners:{	
 			getParametros: function(anadirParametros, hayError) {

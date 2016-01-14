@@ -232,6 +232,21 @@
 				<value>PROC</value>
 			</set>
 		</property>
+		<property name="codigosDocumentosConFechaCaducidad">
+			<list>
+				<value>00002</value>
+				<value>00008</value>
+				<value>00006</value>
+				<value>00007</value>
+				<value>00268</value>
+				<value>00269</value>
+				<value>00013</value>
+				<value>00544</value>
+				<value>00545</value>
+				<value>00557</value>
+				<value>ACPSAREB</value>
+			</list>
+		</property>
 	</bean>
 	
 	<bean id="procedimientosProjectContextHaya" parent="procedimientosProjectContextDefault">
@@ -359,6 +374,7 @@
 								<entry key="btnNotificar" value="1" />
 								<entry key="btnDescargarBurofax" value="1" />
 								<entry key="botonRefreshBur" value="1" />
+								<entry key="btnEditarVerDireccion" value="1" />
 							</map>
 						</entry>
 					</map>
@@ -399,6 +415,7 @@
 								<entry key="btnNotificar" value="1" />
 								<entry key="btnDescargarBurofax" value="1" />
 								<entry key="botonRefreshBur" value="1" />
+								<entry key="btnEditarVerDireccion" value="1" />
 							</map>
 						</entry>
 					</map>
@@ -406,7 +423,21 @@
 			</map>
 		</property>
 	</bean>
+	
+	<bean id="commonProjectContextHaya" parent="commonProjectContextDefault">
+		<property name="formatoNroContrato">
+			<map>
+				<entry key="BANKIA">
+					<map>
+						<entry key="contrato.codigoFormato" value="5,5,17,15" />
+					</map>	
+				</entry>
+			</map>
+		</property>
+	</bean>
 
+	<alias name="adjuntoManagerHayaImpl" alias="adjuntoManagerImpl"/>
+	<alias name="commonProjectContextHaya" alias="commonProjectContext"/>
 	<alias name="nmbCommonProjectContextHAYA" alias="nmbCommonProjectContext"/>
 	<alias name="procedimientosProjectContextHaya" alias="procedimientosProjectContext"/>		
 	<alias name="coreProjectContextHAYA" alias="coreProjectContext"/>

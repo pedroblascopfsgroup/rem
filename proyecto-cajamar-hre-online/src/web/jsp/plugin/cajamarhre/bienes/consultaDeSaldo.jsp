@@ -205,8 +205,9 @@
 	
 	var mensajeWSVacio =new Ext.ux.form.StaticTextField({
 		fieldLabel : '<s:message code="plugin.cajamar.contrato.consultaSaldo.mensajeWS" text="**Aviso" />'
-		,value : '<s:message code="plugin.cajamar.contrato.consultaSaldo.mensajeWSVacio" text="**Esta funcionalidad no está disponible para este tipo de contrato"/>'
-		,labelStyle:labelStyle
+		,value : ''
+		,labelStyle:labelStyle 
+		,rawvalue : '<s:message code="plugin.cajamar.contrato.consultaSaldo.mensajeWSVacio" text="**Esta funcionalidad no est&aacute; disponible para este tipo de contrato"/>'
 	});
 	
 	//variable de aplicativo

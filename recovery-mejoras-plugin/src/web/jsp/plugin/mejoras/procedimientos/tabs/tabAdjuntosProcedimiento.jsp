@@ -6,7 +6,7 @@
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 
 (function(){
-
+	debugger;
 
 	var comprobarAdjuntosRecord = Ext.data.Record.create([
 		 {name:'mensaje'}
@@ -157,6 +157,37 @@
 	borrar.disable();
 
 	subir.on('click', function(){
+		var comboTipoFichero = new Ext.form.ComboBox(
+			{
+				xtype:'combo'
+				,name:'comboTipoFichero'
+				<app:test id="tipoProcedimientoCombo" addComa="true" />
+				,hiddenName:'comboTipoFichero'
+				,store:tipoFicheroStore
+				,displayField:'descripcion'
+				,valueField:'codigo'
+				,mode: 'remote'
+				,emptyText:'----'
+				,width:250
+				,resizable:true
+				,triggerAction: 'all'
+				,fieldLabel : '<s:message code="asuntos.adjuntos.tipoDocumento" text="**Tipo fichero" />'
+			}
+		);
+		
+		var date_renderer = Ext.util.Format.dateRenderer('d/m/Y');
+		var fechaCaducidad = new Ext.form.DateField({
+    		xtype: 'datefield'
+            ,fieldLabel: '<s:message code="fichero.upload.fechaCaducidad" text="**Fecha de caducidad" />'
+            ,name: 'fechaCaducidad'
+            ,submitFormat: 'd/m/Y'
+ 			,format : 'd/m/Y'
+ 			,renderer: date_renderer
+ 			,hideMode: 'offsets'
+    	});
+    	
+    	fechaCaducidad.setVisible(false);
+	
 	    var upload = new Ext.FormPanel({
 		        fileUpload: true
 		        ,height: 55
@@ -165,9 +196,11 @@
 		        ,defaults: {
 		            allowBlank: false
 		            ,msgTarget: 'side'
-					,height:45
+					,height:25
 		        }
-		        ,items: [{
+		        ,items: [
+		        	comboTipoFichero
+					,{
 			            xtype: 'fileuploadfield'
 			            ,emptyText: '<s:message code="fichero.upload.fileLabel.error" text="**Debe seleccionar un fichero" />'
 			            ,fieldLabel: '<s:message code="fichero.upload.fileLabel" text="**Fichero" />'
@@ -178,7 +211,11 @@
 			                iconCls: 'icon_mas'
 			            }
 			            ,bodyStyle: 'width:50px;'
-		        },{xtype: 'hidden', name:'id', value:'${procedimiento.asunto.id}'}]
+		        	}
+<sec:authorize ifAllGranted="PERSONALIZACION-BCC">			     
+			    	,fechaCaducidad
+</sec:authorize>		        
+		        ,{xtype: 'hidden', name:'id', value:'${procedimiento.asunto.id}'}]
 		        ,buttons: [{
 		            text: 'Subir',
 		            handler: function(){
@@ -201,12 +238,36 @@
 		            }
 		        }]
 		    });
+		    
+<sec:authorize ifAllGranted="PERSONALIZACION-BCC">		    
+		comboTipoFichero.on('select', function(){
+		
+			Ext.Ajax.request({
+				url: page.resolveUrl('adjuntoasunto/isFechaCaducidadVisible')
+				,params: {codigoFichero:this.value}
+				,method: 'POST'
+				,success: function (result, request)
+				{
+					var r = Ext.util.JSON.decode(result.responseText);
+					
+					if(r.fechaCaducidadVisible) {
+						fechaCaducidad.setVisible(true);
+						fechaCaducidad.allowBlank = false;
+					}		
+					else {
+						fechaCaducidad.setVisible(false);
+						fechaCaducidad.allowBlank = true;
+					}									
+				}
+			});
+		});
+</sec:authorize>		    
 
 		var win =new Ext.Window({
 		         width:400
 				,minWidth:400
-		        ,height:125
-				,minHeight:125
+		        ,height:180
+				,minHeight:180
 		        ,layout:'fit'
 		        ,border:false
 		        ,closable:true
@@ -220,6 +281,7 @@
 
 
 	subirAdjuntoPersona.on('click', function(){
+		tipoDocStore.webflow({tipoEntidad:'<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_PERSONA" />'});
 		var upload = new Ext.FormPanel({
 		        fileUpload: true
 		        ,height: 55
@@ -282,6 +344,7 @@
 	});
 
 	subirAdjuntoExpediente.on('click', function(){
+		tipoDocStore.webflow({tipoEntidad:'<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE" />'});
 		var upload = new Ext.FormPanel({
 		        fileUpload: true
 		        ,height: 55
@@ -344,6 +407,7 @@
 	});
 
 	subirAdjuntoContrato.on('click', function(){
+		tipoDocStore.webflow({tipoEntidad:'<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO" />'});
 		var upload = new Ext.FormPanel({
 		        fileUpload: true
 		        ,height: 55

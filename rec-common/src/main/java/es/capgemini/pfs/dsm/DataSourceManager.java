@@ -43,10 +43,10 @@ public class DataSourceManager implements Initializable {
 
     public static final Long NO_DATASOURCE_ID = 0L;
     public static final Long MASTER_DATASOURCE_ID = -1L;
-
+    
     @Autowired
     private EntidadDao entidadDao;
-
+    
     @javax.annotation.Resource
     private EventManager eventManager;
 
@@ -162,7 +162,7 @@ public class DataSourceManager implements Initializable {
         entityDataSource.registerTargetDataSources(targetDataSources);
     	logger.info("DataSource inicializado correctamente!");
     }
-
+    
     /**
      * @return the masterDataSource
      */

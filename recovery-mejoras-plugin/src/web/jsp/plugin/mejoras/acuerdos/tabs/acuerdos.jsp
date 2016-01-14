@@ -171,7 +171,7 @@
       		var w = app.openWindow({
 		          flow : 'editacuerdo/open'
 		          ,closable:false
-		          ,width : 750
+		          ,width : 580
 		          ,title : '<s:message code="mejoras.plugin.acuerdos.completaAcuerdo" text="**Cumplimiento acuerdo" />'
 		          ,params : {idAcuerdo:acuerdoSeleccionado}
 		       });
@@ -226,7 +226,7 @@
 						var w = app.openWindow({
 				       	   flow : 'mejacuerdo/openFinalizacionAcuerdo'
 				          ,closable:false
-				          ,width : 750
+				          ,width : 680
 				          ,title : '<s:message code="mejoras.plugin.acuerdos.finalizarAcuerdo" text="**Finalizar acuerdo" />'
 				          ,params : {idAcuerdo:acuerdoSeleccionado}
 				       	});
@@ -263,20 +263,38 @@
        
        		if (countTerminos > 0){
        		
-       		    deshabilitarBotones();
-	      	    page.webflow({
-	      			flow:"plugin/mejoras/acuerdos/plugin.mejoras.acuerdos.proponerAcuerdo"
-	      			,params:{
-	      				idAcuerdo:acuerdoSeleccionado
-	   				}
-	      			,success: function(){
-	           		 	acuerdosStore.on('load',despuesDeEvento);
-	           		 	acuerdosStore.webflow({id:panel.getAsuntoId()});
-	           		 	btnProponerAcuerdo.hide();
-	           		 	btnIncumplirAcuerdo.hide();
-	           		}	
-		      	});
-				habilitarBotones();	
+       		Ext.Ajax.request({
+				url: page.resolveUrl('mejacuerdo/tieneConfiguracionProponerAcuerdo')
+				,method: 'POST'
+				,success: function (result, request){
+					var respuesta = Ext.util.JSON.decode(result.responseText);
+					if(Boolean(respuesta.okko)){
+						deshabilitarBotones();
+			      	    page.webflow({
+			      			flow:"plugin/mejoras/acuerdos/plugin.mejoras.acuerdos.proponerAcuerdo"
+			      			,params:{
+			      				idAcuerdo:acuerdoSeleccionado
+			   				}
+			      			,success: function(){
+			           		 	acuerdosStore.on('load',despuesDeEvento);
+			           		 	acuerdosStore.webflow({id:panel.getAsuntoId()});
+			           		 	btnProponerAcuerdo.hide();
+			           		 	btnIncumplirAcuerdo.hide();
+			           		}
+			           		,error: function(){
+
+							}	
+				      	});
+						habilitarBotones();
+					}else{
+						Ext.Msg.alert('<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.warning" text="**Aviso" />', 
+	                    	       '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.termjinos.grid.warning.ProponerAcuerdoSinDespachoConfiguracion" text="**No es posible proponer el acuerdo, el usuario no pertenece a un despacho que permita proponer" />');
+					}
+				}
+				,error: function(){
+	
+				}       				
+			});	
 
 			}else{
 					Ext.Msg.alert('<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.warning" text="**Aviso" />', 

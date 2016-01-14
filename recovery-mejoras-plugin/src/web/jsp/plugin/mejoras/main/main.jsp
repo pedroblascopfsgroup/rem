@@ -14,6 +14,7 @@ if ((view != null) && (id != null)){
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <html>
 <head>
 	<title><s:message code="main.title" text="PFS - Plataforma de Gesti&oacute;n de Recuperaciones"/></title>
@@ -124,9 +125,24 @@ if ((view != null) && (id != null)){
 	<div id="west">
     	<div id="admin_tree"></div>
   	</div>
+  	
   	<div id="north" style="background:url('/${appProperties.appName}/img/logo.png') no-repeat 50% 0">
 		<img src="/${appProperties.appName}/img/<c:out value="${logo}"/>" />
-		<div id="userInfo"><s:message code="main.userInfo.usuario" text="**Usuario : "/> ${usuario.username} (<a id="logout" href="#"><s:message code="main.logout" text="**desconectar"/></a> / <a id="logoutClose" href="#"><s:message code="main.logout.close" text="**desconectar y cerrar"/></a>)</div>
+		<div id="userInfo"><s:message code="main.userInfo.usuario" text="**Usuario : "/> ${usuario.username} 
+		<c:if test="${usuario.usuEntidad != null}">
+			<c:if test="${fn:length(usuario.usuEntidad)>0}">
+				<select id="comboEntidad" >
+					<option value='${usuario.entidad.descripcion}'selected>${usuario.entidad.descripcion}</option>
+						<c:forEach items='${usuario.usuEntidad}' var='item'>
+							<c:if test="${usuario.entidad.descripcion != item.entidad.descripcion}">
+		  						<option> <c:out value='${item.entidad.descripcion}'/></option>
+		  					</c:if>
+						</c:forEach>
+				</select> 
+			</c:if>
+		</c:if>
+		(<a id="logout" href="#"><s:message code="main.logout" text="**desconectar"/></a> / <a id="logoutClose" href="#"><s:message code="main.logout.close" text="**desconectar y cerrar"/></a>)
+		</div>
 		<div id="fechaCarga"><s:message code="main.fechaCarga" text="**&Uacute;ltima fecha de carga : "/><fwk:date value="${ultimaFechaCarga}"/></div>
     	<div id="toolbar"></div>
   	</div>

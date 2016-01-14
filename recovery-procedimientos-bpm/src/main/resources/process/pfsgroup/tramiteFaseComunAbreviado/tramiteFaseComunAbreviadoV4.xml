@@ -23,7 +23,7 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="P412_RegistrarPublicacionBOE" name="activarAlerta"></transition>
-		<transition to="P412_BPMTramiteAceptacionV4" name="avanzaBPM"></transition>
+		<transition to="fork1" name="avanzaBPM"></transition>
 	</state>
 	
 	<state name="P412_BPMTramiteAceptacionV4">
@@ -344,6 +344,29 @@
 		<transition to="P412_RegistrarInsinuacionCreditos" name="sigueBPM"></transition>
 		<transition to="P412_BPMTramiteAnalisisContratos" name="analisisContratos"></transition>
 	</fork>
+	
+	<fork name="fork1">
+		<transition to="P412_BPMTramiteAceptacionV4" name="aceptacion"></transition>
+		<transition to="P412_BPMPreparacionDocumentalPrecontencioso" name="precontencioso"></transition>
+	</fork>
+
+	<state name="P412_BPMPreparacionDocumentalPrecontencioso">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>		
+	</state>
 	
 	<end-state name="Fin">
 		<event type="node-enter">

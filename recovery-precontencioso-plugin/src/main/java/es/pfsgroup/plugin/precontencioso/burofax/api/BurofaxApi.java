@@ -236,4 +236,7 @@ public interface BurofaxApi {
 	void crearBurofaxPersonaManual(Long idPersonaManual,Long idProcedimiento, Long idContratoPersonaManual);
 	
 	void crearBurofaxPersona(Long idPersona,Long idProcedimiento, Long idContratoPersona);
+
+	void actualizaDireccion(DireccionAltaDto dto, Long idDireccion);
+
 }

@@ -32,6 +32,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.MessageUtils;
+import es.capgemini.pfs.adjuntos.api.AdjuntoApi;
 import es.capgemini.pfs.asunto.dao.EXTAsuntoDao;
 import es.capgemini.pfs.asunto.dto.DtoAsunto;
 import es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto;
@@ -47,8 +48,6 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
-import es.capgemini.pfs.contrato.model.AdjuntoContrato;
-import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.asunto.AdjuntoDto;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.asunto.EXTAdjuntoDto;
@@ -62,17 +61,14 @@ import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
-import es.capgemini.pfs.expediente.model.AdjuntoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.interna.InternaBusinessOperation;
-import es.capgemini.pfs.iplus.IPLUSAdjuntoAuxDto;
 import es.capgemini.pfs.iplus.IPLUSUtils;
 import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoDao;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
-import es.capgemini.pfs.persona.model.AdjuntoPersona;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procedimiento.dao.EXTProcedimientoDao;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -97,9 +93,9 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
-import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJFinalizarAsuntoDto;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.MEJDecisionProcedimientoManager;
@@ -122,6 +118,7 @@ import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 import es.pfsgroup.recovery.ext.impl.zona.dao.EXTZonaDao;
+import es.pfsgroup.recovery.integration.Guid;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 @Component
@@ -187,6 +184,9 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 
 	@Autowired
 	private DecisionProcedimientoManager decisionProcedimientoManager;
+	
+	@Autowired
+	private AdjuntoApi adjuntosApi;
 	
 	@Override
 	public String managerName() {
@@ -466,100 +466,9 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	@Override
 	@BusinessOperation(BO_CORE_ASUNTO_ADJUNTOSMAPEADOS)
 	public List<? extends EXTAdjuntoDto> getAdjuntosConBorrado(Long id) {
-		//List<EXTAdjuntoDto> adjuntosConBorrado = new ArrayList<EXTAdjuntoDto>();
-
-		final Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-
-		Boolean borrarOtrosUsu = true;
-		
-		if (iplus == null || !iplus.instalado()) {
-			borrarOtrosUsu = tieneFuncion(usuario, "BORRAR_ADJ_OTROS_USU");
-		}
-
-		Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(id);
-		List<EXTAdjuntoDto> adjuntosAsunto = new ArrayList<EXTAdjuntoDto>();
-		
-		if (iplus != null && iplus.instalado()) {
-			Set<AdjuntoAsunto> setAdjuntos = obtieneAdjuntosIplus(asunto.getId());
-			for (AdjuntoAsunto adjuntoAsunto : setAdjuntos) {
-				adjuntoAsunto.setAsunto(asunto);
-				IPLUSAdjuntoAuxDto dtoAux = iplus.completarInformacionAdjunto(asunto.getId(), adjuntoAsunto.getDescripcion());
-				Procedimiento procedimiento = dtoAux.getProc();
-				adjuntoAsunto.setProcedimiento(procedimiento);
-				String contentType = dtoAux.getContentType();
-				adjuntoAsunto.setContentType(contentType);
-				Long longitud = dtoAux.getLongitud();
-				adjuntoAsunto.setLength(longitud);
-				//DDTipoFicheroAdjunto tipoFicheroAdjunto = dtoAux.getTipoDocumento();
-				//adjuntoAsunto.setTipoDocumento(tipoDocumento);
-			}
-			adjuntosAsunto.addAll(creaObjetosEXTAsuntos(setAdjuntos, usuario, borrarOtrosUsu));
-		}
-		Set<EXTAdjuntoDto> adjuntosRecovery = creaObjetosEXTAsuntos(asunto.getAdjuntos(), usuario, borrarOtrosUsu);
-		Set<EXTAdjuntoDto> adjuntosRecovery2 = null;
-		if (iplus != null && iplus.instalado()) {
-			adjuntosRecovery2 = iplus.eliminarRepetidos(adjuntosRecovery, adjuntosAsunto);
-		} else {
-			adjuntosRecovery2 = adjuntosRecovery;
-		}
-		adjuntosAsunto.addAll(adjuntosRecovery2);
-		
-		return ordenaListado(adjuntosAsunto);
-
-//		Comparator<AdjuntoAsunto> comparador = new Comparator<AdjuntoAsunto>() {
-//			@Override
-//			public int compare(AdjuntoAsunto o1, AdjuntoAsunto o2) {
-//				if (Checks.esNulo(o1) && Checks.esNulo(o2)) {
-//					return 0;
-//				} else if (Checks.esNulo(o1)) {
-//					return -1;
-//				} else if (Checks.esNulo(o2)) {
-//					return 1;
-//				} else {
-//					return o2.getAuditoria().getFechaCrear().compareTo(o1.getAuditoria().getFechaCrear());
-//				}
-//			}
-//		};
-//		Collections.sort(adjuntosAsunto, comparador);
-//		
-//		for (final AdjuntoAsunto aa : adjuntosAsunto) {
-//			EXTAdjuntoDto dto = new EXTAdjuntoDto() {
-//				@Override
-//				public Boolean getPuedeBorrar() {
-//					if (borrarOtrosUsu || aa.getAuditoria().getUsuarioCrear().equals(usuario.getUsername())) {
-//						return true;
-//					} else {
-//						return false;
-//					}
-//				}
-//
-//				@Override
-//				public Object getAdjunto() {
-//					return aa;
-//				}
-//				
-//				@Override
-//				public String getTipoDocumento() {
-//					if (aa instanceof EXTAdjuntoAsunto) {
-//						if (((EXTAdjuntoAsunto) aa).getTipoFichero() != null)
-//							return ((EXTAdjuntoAsunto) aa).getTipoFichero().getDescripcion();
-//						else
-//							return "";
-//					} else
-//						return "";
-//
-//				}
-//			};
-//			adjuntosConBorrado.add(dto);
-//		}
-//		return adjuntosConBorrado;
+			return adjuntosApi.getAdjuntosConBorrado(id);
 	}
 	
-	private Set<AdjuntoAsunto> obtieneAdjuntosIplus(Long id) {
-		String idProcedi = iplus.obtenerIdAsuntoExterno(id);
-		Set<AdjuntoAsunto> adjuntos = iplus.listarAdjuntosIplus(idProcedi);
-		return adjuntos;
-	}
 
 	private List<? extends EXTAdjuntoDto> ordenaListado(List<EXTAdjuntoDto> adjuntosAsunto) {
 		Comparator<EXTAdjuntoDto> comparador = new Comparator<EXTAdjuntoDto>() {
@@ -660,159 +569,19 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	@Override
 	@BusinessOperation(BO_CORE_ASUNTO_ADJUNTOSCONTRATOS)
 	public List<ExtAdjuntoGenericoDto> getAdjuntosContratosAsu(Long id) {
-		Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(id);
-		List<ExtAdjuntoGenericoDto> adjuntosMapeados = new ArrayList<ExtAdjuntoGenericoDto>();
-
-		Comparator<AdjuntoContrato> comparador = new Comparator<AdjuntoContrato>() {
-			@Override
-			public int compare(AdjuntoContrato o1, AdjuntoContrato o2) {
-				if (Checks.esNulo(o1) && Checks.esNulo(o2)) {
-					return 0;
-				} else if (Checks.esNulo(o1)) {
-					return -1;
-				} else if (Checks.esNulo(o2)) {
-					return 1;
-				} else {
-					return o2.getAuditoria().getFechaCrear().compareTo(o1.getAuditoria().getFechaCrear());
-				}
-			}
-		};
-		if (!Checks.esNulo(asunto)) {
-			List<Contrato> contratos = new ArrayList<Contrato>();
-			contratos.addAll(asunto.getContratos());
-			for (final Contrato c : contratos) {
-				final List<AdjuntoContrato> adjuntos = c.getAdjuntosAsList();
-				Collections.sort(adjuntos, comparador);
-				ExtAdjuntoGenericoDto dto = new ExtAdjuntoGenericoDto() {
-
-					@Override
-					public Long getId() {
-						return c.getId();
-					}
-
-					@Override
-					public String getDescripcion() {
-						return c.getDescripcion();
-					}
-
-					@Override
-					public List getAdjuntosAsList() {
-						return adjuntos;
-					}
-
-					@Override
-					public List getAdjuntos() {
-						return adjuntos;
-					}
-				};
-				adjuntosMapeados.add(dto);
-			}
-		}
-		return adjuntosMapeados;
+		return adjuntosApi.getAdjuntosContratosAsu(id);
 	}
 
 	@Override
 	@BusinessOperation(BO_CORE_ASUNTO_ADJUNTOSPERSONA)
 	public List<ExtAdjuntoGenericoDto> getAdjuntosPersonaAsu(Long id) {
-		List<Persona> personas = proxyFactory.proxy(AsuntoApi.class).obtenerPersonasDeUnAsunto(id);
-		List<ExtAdjuntoGenericoDto> adjuntosMapeados = new ArrayList<ExtAdjuntoGenericoDto>();
-
-		Comparator<AdjuntoPersona> comparador = new Comparator<AdjuntoPersona>() {
-			@Override
-			public int compare(AdjuntoPersona o1, AdjuntoPersona o2) {
-				if (Checks.esNulo(o1) && Checks.esNulo(o2)) {
-					return 0;
-				} else if (Checks.esNulo(o1)) {
-					return -1;
-				} else if (Checks.esNulo(o2)) {
-					return 1;
-				} else {
-					return o2.getAuditoria().getFechaCrear().compareTo(o1.getAuditoria().getFechaCrear());
-				}
-			}
-		};
-
-		for (final Persona p : personas) {
-			final List<AdjuntoPersona> adjuntos = p.getAdjuntosAsList();
-			Collections.sort(adjuntos, comparador);
-			ExtAdjuntoGenericoDto dto = new ExtAdjuntoGenericoDto() {
-
-				@Override
-				public Long getId() {
-					return p.getId();
-				}
-
-				@Override
-				public String getDescripcion() {
-					return p.getDescripcion();
-				}
-
-				@Override
-				public List getAdjuntosAsList() {
-					return adjuntos;
-				}
-
-				@Override
-				public List getAdjuntos() {
-					return adjuntos;
-				}
-			};
-			adjuntosMapeados.add(dto);
-		}
-
-		return adjuntosMapeados;
+		return adjuntosApi.getAdjuntosPersonaAsu(id);
 	}
 
 	@Override
 	@BusinessOperation(BO_CORE_ASUNTO_ADJUNTOSEXPEDIENTE)
 	public List<ExtAdjuntoGenericoDto> getAdjuntosExpedienteAsu(Long id) {
-		final Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(id);
-		List<ExtAdjuntoGenericoDto> adjuntosMapeados = new ArrayList<ExtAdjuntoGenericoDto>();
-
-		Comparator<AdjuntoExpediente> comparador = new Comparator<AdjuntoExpediente>() {
-			@Override
-			public int compare(AdjuntoExpediente o1, AdjuntoExpediente o2) {
-				if (Checks.esNulo(o1) && Checks.esNulo(o2)) {
-					return 0;
-				} else if (Checks.esNulo(o1)) {
-					return -1;
-				} else if (Checks.esNulo(o2)) {
-					return 1;
-				} else {
-					return o2.getAuditoria().getFechaCrear().compareTo(o1.getAuditoria().getFechaCrear());
-				}
-			}
-		};
-		if (!Checks.esNulo(asunto) && !Checks.esNulo(asunto.getExpediente()) && !Checks.estaVacio(asunto.getExpediente().getAdjuntosAsList())) {
-			final List<AdjuntoExpediente> adjuntosExp = asunto.getExpediente().getAdjuntosAsList();
-			Collections.sort(adjuntosExp, comparador);
-
-			ExtAdjuntoGenericoDto dto = new ExtAdjuntoGenericoDto() {
-
-				@Override
-				public Long getId() {
-					return asunto.getExpediente().getId();
-				}
-
-				@Override
-				public String getDescripcion() {
-					return asunto.getExpediente().getDescripcion();
-				}
-
-				@Override
-				public List getAdjuntosAsList() {
-					return adjuntosExp;
-				}
-
-				@Override
-				public List getAdjuntos() {
-					return adjuntosExp;
-				}
-			};
-			adjuntosMapeados.add(dto);
-		}
-
-		return adjuntosMapeados;
+		return adjuntosApi.getAdjuntosExpedienteAsu(id); 
 	}
 
 	@Override
@@ -2214,6 +1983,19 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			return "";
 		}
 		return null;
+	}
+	
+	public EXTAsunto prepareGuid(Asunto asunto) {
+		
+		EXTAsunto extAsu =  EXTAsunto.instanceOf(asunto);
+		
+		if (Checks.esNulo(extAsu.getGuid())) {
+			//logger.debug(String.format("[INTEGRACION] Asignando nuevo GUID para procedimiento %d", procedimiento.getId()));
+			extAsu.setGuid(Guid.getNewInstance().toString());
+			asuntoDao.save(extAsu);
+		}
+		
+		return extAsu;
 	}
 
 }

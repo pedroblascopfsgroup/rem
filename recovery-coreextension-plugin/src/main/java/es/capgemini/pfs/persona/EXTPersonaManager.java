@@ -12,6 +12,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.adjuntos.api.AdjuntoApi;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.cliente.dto.DtoBuscarClientes;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
@@ -63,6 +65,9 @@ public class EXTPersonaManager extends BusinessOperationOverrider<PersonaApi> im
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private AdjuntoApi adjuntosApi; 
 	
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -183,57 +188,7 @@ public class EXTPersonaManager extends BusinessOperationOverrider<PersonaApi> im
 	@Override
 	@BusinessOperation(BO_CORE_PERSONA_ADJUNTOSMAPEADOS)
 	public List<? extends AdjuntoDto> getAdjuntosPersonaConBorrado(Long id) {
-		List<AdjuntoDto> adjuntosConBorrado = new ArrayList<AdjuntoDto>();
-
-		final Usuario usuario = proxyFactory.proxy(UsuarioApi.class)
-				.getUsuarioLogado();
-
-		final Boolean borrarOtrosUsu = tieneFuncion(usuario,
-				"BORRAR_ADJ_OTROS_USU");
-
-		Persona persona = proxyFactory.proxy(PersonaApi.class).get(id);
-		List<AdjuntoPersona> adjuntosPersona = persona.getAdjuntosAsList();
-
-		Comparator<AdjuntoPersona> comparador = new Comparator<AdjuntoPersona>() {
-			@Override
-			public int compare(AdjuntoPersona o1, AdjuntoPersona o2) {
-				if(Checks.esNulo(o1)&& Checks.esNulo(o2)){
-					return 0;
-				}
-				else if (Checks.esNulo(o1)) {
-					return -1;
-				}
-				else if (Checks.esNulo(o2)) {
-					return 1;				
-				}
-				else{
-					return o2.getAuditoria().getFechaCrear().compareTo(
-						o1.getAuditoria().getFechaCrear());
-				}	
-			}
-		};
-		Collections.sort(adjuntosPersona, comparador);
-		for (final AdjuntoPersona aa : adjuntosPersona) {
-			AdjuntoDto dto = new AdjuntoDto() {
-				@Override
-				public Boolean getPuedeBorrar() {
-					if (borrarOtrosUsu
-							|| aa.getAuditoria().getUsuarioCrear().equals(
-									usuario.getUsername())) {
-						return true;
-					} else {
-						return false;
-					}
-				}
-
-				@Override
-				public Object getAdjunto() {
-					return aa;
-				}
-			};
-			adjuntosConBorrado.add(dto);
-		}
-		return adjuntosConBorrado;
+		return adjuntosApi.getAdjuntosPersonaConBorrado(id);
 	}
 	
 	@Override

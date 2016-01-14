@@ -138,5 +138,9 @@ public interface ProcedimientoPcoApi {
 
 	@BusinessOperationDefinition(BO_PCO_EXPEDIENTE_VISIBILIDAD_BOTONES_PCO)
 	public List<String> getVisibilidadBotonesDocumentosPrecontencioso(String seccion, boolean visible);
+
+	boolean mostrarSegunCodigos(Long idProcedimiento, List<String> codigosTiposGestores);
 	
+	public boolean comprobarExistenciaGestor(Long idProcedimiento);
+
 }

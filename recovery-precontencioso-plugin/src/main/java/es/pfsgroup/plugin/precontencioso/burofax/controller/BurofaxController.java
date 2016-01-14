@@ -4,6 +4,7 @@ import java.text.Collator;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -23,6 +24,7 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
 import es.capgemini.pfs.diccionarios.comparator.DictionaryComparatorFactory;
@@ -36,8 +38,14 @@ import es.capgemini.pfs.persona.dto.DtoPersonaManual;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
 import es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi;
 import es.pfsgroup.plugin.precontencioso.burofax.dto.BurofaxDTO;
@@ -53,6 +61,9 @@ import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ProcedimientoPcoApi;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.manager.ProcedimientoPcoManager;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 
 @Controller
@@ -81,6 +92,9 @@ public class BurofaxController {
 	public static final String JSP_DOWNLOAD_FILE = "plugin/geninformes/download";
 	
 	public static final String JSON_LISTA_DOCUMENTOS = "plugin/precontencioso/documento/json/solicitudesDocumentoJSON";
+	private static final String JSP_EDITAR_DIRECCION_BUROFAX  ="plugin/precontencioso/burofax/jsp/editarDireccionPCO";
+	private static final String JSP_VER_DIRECCION_BUROFAX  ="plugin/precontencioso/burofax/jsp/verDireccionPCO";
+
 	
 	public static final String JSON_LISTA_CONTRATOS_PROCEDIMIENTOS = "plugin/precontencioso/burofax/json/listadoContratosProcedimientoIntevJSON";
 	
@@ -112,6 +126,9 @@ public class BurofaxController {
 	
 	@Autowired
 	private ProcedimientoPCODao procedimientoPCODao;
+
+	@Autowired
+	private ProcedimientoPcoApi procedimientoPcoApi;
 	
 	/**
 	 * Carga el grid de Burofaxes
@@ -626,7 +643,7 @@ public class BurofaxController {
 		return JSP_DOWNLOAD_FILE;
 		
 	}
-    
+
 	/**
      * Metodo que devuelve los domunetos de un procedimeinto que no esten descartados.
      * @param query
@@ -688,6 +705,106 @@ public class BurofaxController {
 		model.put("procedimiento", burofaxManager.getContratosProcPersona(idProcedimiento, idPersona, manual));
 		
 		return JSON_LISTA_CONTRATOS_PROCEDIMIENTOS;
+	}
+
+    @SuppressWarnings("unchecked")
+	@RequestMapping
+	private String editarVerDireccion(ModelMap model, Long idCliente, Long idProcedimiento, Long idDireccion){
+    	
+		boolean result = burofaxManager.saberOrigen(idDireccion);
+		
+		Direccion dir = new Direccion();
+		dir=burofaxManager.getDireccion(idDireccion);
+		
+		List<Dictionary> provincias = dictionaryManager.getList("DDProvincia", DictionaryComparatorFactory.getInstance().create(DictionaryComparatorFactory.COMPARATOR_BY_DESCRIPCION));
+		model.put("provincias", provincias);
+		List<DDTipoVia> tiposVia = (List<DDTipoVia>) proxyFactory.proxy(DireccionApi.class).getListTiposVia();
+		model.put("tiposVia", tiposVia);
+		
+		model.put("idCliente", idCliente);
+		model.put("idProcedimiento", idProcedimiento);
+		model.put("idDireccion", idDireccion);
+		if(!Checks.esNulo(dir.getProvincia())){
+			model.put("valorProvincia", dir.getProvincia().getId());
+			model.put("valorProvinciaTexto", dir.getProvincia().getDescripcion());
+		}
+		if(!Checks.esNulo(dir.getCodigoPostal())){
+			model.put("valorCodigoPostal", dir.getCodigoPostal());
+		}
+		if(!Checks.esNulo(dir.getLocalidad())){
+			model.put("valorLocalidad", dir.getLocalidad().getId());
+			model.put("valorLocalidadTexto", dir.getLocalidad().getDescripcion());
+		}
+		if(!Checks.esNulo(dir.getMunicipio())){
+			model.put("valorMunicipio", dir.getMunicipio());
+		}
+		if(!Checks.esNulo(dir.getDomicilio())){
+			model.put("valorDomicilio", dir.getDomicilio());
+		}
+		if(!Checks.esNulo(dir.getDomicilio_n())){
+			model.put("valorNumero", dir.getDomicilio_n());
+		}
+		if(!Checks.esNulo(dir.getPortal())){
+			model.put("valorPortal", dir.getPortal());
+		}
+		if(!Checks.esNulo(dir.getPiso())){
+			model.put("valorPiso", dir.getPiso());
+		}
+		if(!Checks.esNulo(dir.getPuerta())){
+			model.put("valorPuerta", dir.getPuerta());
+		}
+		if(!Checks.esNulo(dir.getEscalera())){
+			model.put("valorEscalera", dir.getEscalera());
+		}
+		if(!Checks.esNulo(dir.getTipoVia())){
+			model.put("valorTipoVia", dir.getTipoVia().getId());
+		}
+		
+		if(result){
+			//es manual y por tanto tenemos que poder editar
+			return JSP_EDITAR_DIRECCION_BUROFAX;
+		}else{
+			return JSP_VER_DIRECCION_BUROFAX;
+		}	
+	}
+    
+    @SuppressWarnings("unchecked")
+	@RequestMapping
+	private String mostrarBotonDependiente(WebRequest request, ModelMap map,Long idProcedimiento){
+    	
+    	List<String> codigosTiposGestores = Arrays.asList("PREDOC", "CM_GD_PCO", "SUP_PCO");
+    	boolean mostrarBoton = burofaxManager.resultadoMostrarBoton(idProcedimiento, codigosTiposGestores);
+    	
+		map.put("mostrarBoton", mostrarBoton);
+		return "plugin/precontencioso/burofax/json/mostrarDependeCodigoJSON";
+		//return mostrarBoton;
+    }
+    /**
+	 * Guarda los datos de la dirección
+	 * @param request
+	 * @param model
+	 * @throws Exception 
+	 */
+	@RequestMapping
+	public String updateDireccion(WebRequest request, ModelMap model,Long idCliente,Long idProcedimiento, Long idDireccion) throws Exception{
+		
+		DireccionAltaDto dto=new DireccionAltaDto();
+		dto.setProvincia(request.getParameter("provincia"));
+		dto.setCodigoPostal(request.getParameter("codigoPostal"));
+		dto.setLocalidad(request.getParameter("localidad"));
+		dto.setMunicipio(request.getParameter("municipio"));
+		dto.setTipoVia(request.getParameter("tipoVia"));
+		dto.setDomicilio(request.getParameter("domicilio"));
+		dto.setNumero(request.getParameter("numero"));
+		dto.setPortal(request.getParameter("portal"));
+		dto.setPiso(request.getParameter("piso"));
+		dto.setEscalera(request.getParameter("escalera"));
+		dto.setPuerta(request.getParameter("puerta"));
+		dto.setListaIdPersonas(idCliente.toString());
+		dto.setOrigen(request.getParameter("origen"));
+
+		burofaxManager.actualizaDireccion(dto, idDireccion);
+		return DEFAULT;
 	}
 
 }

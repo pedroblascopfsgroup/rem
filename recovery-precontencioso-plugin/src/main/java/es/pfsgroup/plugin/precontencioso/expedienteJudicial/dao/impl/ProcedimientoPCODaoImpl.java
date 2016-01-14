@@ -178,6 +178,8 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		select.add(Projections.property("enviosBurofax.fechaSolicitud").as("fechaSolicitud"));
 		select.add(Projections.property("enviosBurofax.fechaEnvio").as("fechaEnvio"));
 		select.add(Projections.property("enviosBurofax.fechaAcuse").as("fechaAcuse"));
+		select.add(Projections.property("enviosBurofax.refExternaEnvio").as("refExternaEnvio"));
+		select.add(Projections.property("burofax.esPersonaManual").as("esPersonaManual"));
 		select.add(Projections.property("resultadoBurofax.descripcion").as("resultado"));
 
 		Criteria query = queryBusquedaPorFiltro(filtro);
@@ -532,17 +534,35 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		}
 
 		query.createAlias("procedimientoPco.burofaxes", "burofax");
-		query.createAlias("enviosBurofax.resultadoBurofax", "resultadoBurofax", CriteriaSpecification.LEFT_JOIN);
+		
+		if (!StringUtils.emtpyString(filtro.getBurRegManual())) {
+			where.add(Restrictions.eq("burofax.esPersonaManual", "01".equals(filtro.getBurRegManual())));
+		}
 
 		// Si se realiza una busqueda por burofaxes deberán salir aquellos burofaxes que aun no tengan ningun envio.
-		if (esBusquedaPorBurofax) {
+		if (esBusquedaPorBurofax || !StringUtils.emtpyString(filtro.getBurRegManual())) {
 			query.createAlias("burofax.enviosBurofax", "enviosBurofax", CriteriaSpecification.LEFT_JOIN);
 		} else {
 			query.createAlias("burofax.enviosBurofax", "enviosBurofax");
 		}
 
+		query.createAlias("enviosBurofax.resultadoBurofax", "resultadoBurofax", CriteriaSpecification.LEFT_JOIN);
+
 		if (!StringUtils.emtpyString(filtro.getBurResultadoEnvio())) {
 			where.add(Restrictions.in("resultadoBurofax.codigo", filtro.getBurResultadoEnvio().split(",")));
+		}
+
+		if (!StringUtils.emtpyString(filtro.getBurAcuseRecibo())) {
+			// true = is not null - false = is null
+			if ("01".equals(filtro.getBurAcuseRecibo())) {
+				where.add(Restrictions.isNotNull("enviosBurofax.acuseRecibo"));
+			} else {
+				where.add(Restrictions.isNull("enviosBurofax.acuseRecibo"));
+			}
+		}
+
+		if (!StringUtils.emtpyString(filtro.getBurRefExternaEnvio())) {
+			where.add(Restrictions.like("enviosBurofax.refExternaEnvio", filtro.getBurRefExternaEnvio(), MatchMode.ANYWHERE));
 		}
 
 		where.addAll(dateRangeFilter("enviosBurofax.fechaSolicitud", filtro.getBurFechaSolicitudDesde(), filtro.getBurFechaSolicitudHasta()));

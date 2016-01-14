@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.Executor;
+import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.pfs.asunto.ProcedimientoManager;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
@@ -179,7 +180,7 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 		tareaNotif.setFechaFin(tareaExtenaPayload.getFechaFin());
 		tareaNotif.setFechaVenc(tareaExtenaPayload.getFechaVencimiento());
 		tareaNotif.setFechaVencReal(tareaExtenaPayload.getFechaVencimientoReal());
-		tareaNotif.getAuditoria().setUsuarioBorrar(tareaExtenaPayload.getData().getUsername());
+		tareaNotif.getAuditoria().setUsuarioBorrar(SecurityUtils.getCurrentUser().getUsername());
 		
 		executor.execute(ComunBusinessOperation.BO_TAREA_MGR_SAVE_OR_UPDATE, tareaNotif);
 		logger.debug(String.format("[INTEGRACION] TAR[%s] Actualizando post crear tarea finalizado", tareaNotif.getGuid()));

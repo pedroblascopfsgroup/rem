@@ -1,5 +1,6 @@
 package es.capgemini.pfs.acuerdo.dao.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -28,5 +29,32 @@ public class DDTipoAcuerdoDaoImpl extends AbstractEntityDao<DDTipoAcuerdo, Long>
 			return null;
 		}
 		return tipos.get(0);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DDTipoAcuerdo> buscarTipoAcuerdoPorFiltro(Long ambito, Long ambas) {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("Select tpa from DDTipoAcuerdo tpa ");
+		sb.append("where tpa.auditoria.borrado = 0 ");
+		sb.append("and tpa.tipoEntidad.id in ("+ambito+","+ambas+")");
+		
+		List<DDTipoAcuerdo> lista = getHibernateTemplate().find(sb.toString());
+				
+		return lista;
+	}
+	
+	private List<DDTipoAcuerdo> castearListado(List<Object[]> lista) {
+		List<DDTipoAcuerdo> resultado = new ArrayList<DDTipoAcuerdo>();
+		
+		for (Object[] item : lista) {
+			DDTipoAcuerdo tipoAcuerdo = new DDTipoAcuerdo();
+				
+						
+			resultado.add(tipoAcuerdo);
+		}
+		
+		return resultado;
 	}
 }

@@ -60,7 +60,7 @@
 		comboEstadoLiquidacion, dateFieldSolicitudLiqDesdeEle, dateFieldSolicitudLiqHastaEle, dateFieldRecepcionLiqDesdeEle, dateFieldRecepcionLiqHastaEle, 
 		dateFieldConfirmacionLiqDesdeEle, dateFieldConfirmacionLiqHastaEle, dateFieldCierreLiqDesdeEle, dateFieldCierreLiqHastaEle, fieldTotalLiqDesdeEle, 
 		fieldTotalLiqHastaEle, fieldDiasGestionLiqEle, comboNotificadoEle, comboResultadoBurofax, dateFieldSolicitudBurDesdeEle, dateFieldSolicitudBurHastaEle,
-		dateFieldEnvioBurDesdeEle, dateFieldEnvioBurHastaEle, dateFieldAcuseBurDesdeEle, dateFieldAcuseBurHastaEle];
+		dateFieldEnvioBurDesdeEle, dateFieldEnvioBurHastaEle, dateFieldAcuseBurDesdeEle, dateFieldAcuseBurHastaEle, comboAcuseReciboEle, comboRegManualEle, fieldrefExternaEnvioEle];
 
 	var camposStoreLimpiar = [optionsZonasStore, optionsGestoresStore, optionsGestoresStoreDoc];
 

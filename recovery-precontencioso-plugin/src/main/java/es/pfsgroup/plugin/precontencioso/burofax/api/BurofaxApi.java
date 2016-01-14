@@ -226,4 +226,6 @@ public interface BurofaxApi {
 	BurofaxEnvioIntegracionPCO getBurofaxEnvioIntegracionByIdEnvio(Long idEnvio);
 
 	List<ContratosPCODto> getContratosProcPersona(Long idProcedimientoPCO, Long idPersona, Boolean manual);
+
+	void actualizaDireccion(DireccionAltaDto dto, Long idDireccion);
 }

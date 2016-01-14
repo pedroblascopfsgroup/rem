@@ -39,6 +39,13 @@ BEGIN
 
 DBMS_OUTPUT.PUT_LINE('[INICIO]');
  
+ --Utilizamos el usuario de validacion val.supervisor en lugar del val.supexpjud
+    V_MSQL := 'update '||V_ESQUEMA_M||'.Usu_Usuarios set usu_username=''val.supervisor'' where usu_username=''val.supexpjud'' and entidad_id=41';
+    EXECUTE IMMEDIATE V_MSQL;
+    
+    COMMIT;
+ 
+ 
 	FOR I IN V_TIPO_TFA.FIRST .. V_TIPO_TFA.LAST 
 	LOOP              
     V_TMP_TIPO_TGE := V_TIPO_TFA(I);

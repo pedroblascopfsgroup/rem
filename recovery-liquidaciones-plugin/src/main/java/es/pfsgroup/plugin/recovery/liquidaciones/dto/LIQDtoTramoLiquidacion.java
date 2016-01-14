@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.liquidaciones.dto;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import es.capgemini.devon.dto.WebDto;
@@ -14,20 +15,24 @@ import es.capgemini.devon.validation.ValidationException;
 import es.capgemini.pfs.users.domain.Perfil;
 */
 /**
- * Dto para la búsqueda de clientes.
+ * Dto para la bï¿½squeda de clientes.
  */
 public class LIQDtoTramoLiquidacion extends WebDto {
 
     private static final long serialVersionUID = 1L;
     
     private Date fechaMovimiento;
-    private Float deuda = null;
-    private Float interes;
+    private BigDecimal deuda = null;
+    private BigDecimal interes;
     private Date fLiquidacion;
     private Long dias;
     private Float coefic = null;
-    private Float intereses = null;
-    private Float entregado = null;
+    private BigDecimal intereses = null;
+    private BigDecimal entregado = null;
+    
+    private String descrMov;
+    private BigDecimal aCNominal;
+    private BigDecimal interesCalculado;
 
     public Date getFechaMovimiento() {
 		return fechaMovimiento;
@@ -35,16 +40,16 @@ public class LIQDtoTramoLiquidacion extends WebDto {
 	public void setFechaMovimiento(Date fechaMovimiento) {
 		this.fechaMovimiento = fechaMovimiento;
 	}
-	public Float getDeuda() {
+	public BigDecimal getDeuda() {
 		return deuda;
 	}
-	public void setDeuda(Float deuda) {
+	public void setDeuda(BigDecimal deuda) {
 		this.deuda = deuda;
 	}
-	public Float getInteres() {
+	public BigDecimal getInteres() {
 		return interes;
 	}
-	public void setInteres(Float interes) {
+	public void setInteres(BigDecimal interes) {
 		this.interes = interes;
 	}
 	public Date getfLiquidacion() {
@@ -65,17 +70,35 @@ public class LIQDtoTramoLiquidacion extends WebDto {
 	public void setCoefic(Float coefic) {
 		this.coefic = coefic;
 	}
-	public Float getIntereses() {
+	public BigDecimal getIntereses() {
 		return intereses;
 	}
-	public void setIntereses(Float intereses) {
+	public void setIntereses(BigDecimal intereses) {
 		this.intereses = intereses;
 	}
-	public Float getEntregado() {
+	public BigDecimal getEntregado() {
 		return entregado;
 	}
-	public void setEntregado(Float entregado) {
+	public void setEntregado(BigDecimal entregado) {
 		this.entregado = entregado;
+	}
+	public String getDescrMov() {
+		return descrMov;
+	}
+	public void setDescrMov(String descrMov) {
+		this.descrMov = descrMov;
+	}
+	public BigDecimal getaCNominal() {
+		return aCNominal;
+	}
+	public void setaCNominal(BigDecimal aCNominal) {
+		this.aCNominal = aCNominal;
+	}
+	public BigDecimal getInteresCalculado() {
+		return interesCalculado;
+	}
+	public void setInteresCalculado(BigDecimal interesCalculado) {
+		this.interesCalculado = interesCalculado;
 	}
     
     

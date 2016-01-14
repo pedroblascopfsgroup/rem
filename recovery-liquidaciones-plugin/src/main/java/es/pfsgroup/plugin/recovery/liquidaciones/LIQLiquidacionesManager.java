@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.liquidaciones;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -103,18 +104,18 @@ public class LIQLiquidacionesManager {
 			deuda -= importe;
 			if (deuda < 0.0F) deuda = 0.0F;
 			fmov = cp.getFecha();
-			totalIntereses += tramo.getIntereses();
-			entregado += tramo.getEntregado();
+			totalIntereses += tramo.getIntereses().floatValue();
+			entregado += tramo.getEntregado().floatValue();
 			response.addTramoLiquidacion(tramo);
 		}
-		//Agregamos un último tramo desde la última entrega a cuenta hasta la fecha actual
+		//Agregamos un ï¿½ltimo tramo desde la ï¿½ltima entrega a cuenta hasta la fecha actual
 		LIQDtoTramoLiquidacion tramo = createTramoLiquidacion(deuda, interes, fmov, fechaLiquidacion, 0.0F);
 		response.addTramoLiquidacion(tramo);
 		
-		totalIntereses += tramo.getIntereses();
+		totalIntereses += tramo.getIntereses().floatValue();
 		Float totalDeuda = request.getPrincipal() + totalIntereses - entregado;
 		if (totalDeuda < 0.00F) totalDeuda = 0.00F;
-		response.getCabecera().setTotalDeuda(totalDeuda);
+		response.getCabecera().setTotalDeuda(new BigDecimal(totalDeuda.toString()));
 		
 		return response;
 	}
@@ -128,13 +129,13 @@ public class LIQLiquidacionesManager {
 		
 		LIQDtoTramoLiquidacion tramo = new LIQDtoTramoLiquidacion();
 		tramo.setCoefic(coeficiente);
-		tramo.setDeuda(deuda);
+		tramo.setDeuda(new BigDecimal(deuda.toString()));
 		tramo.setDias(dias);
-		tramo.setEntregado(importe);
+		tramo.setEntregado(new BigDecimal(importe.toString()));
 		tramo.setFechaMovimiento(desde);
 		tramo.setfLiquidacion(hasta);
-		tramo.setInteres(interes);
-		tramo.setIntereses(totalIntereses);
+		tramo.setInteres(new BigDecimal(interes.toString()));
+		tramo.setIntereses(new BigDecimal(totalIntereses.toString()));
 		return tramo;
 	}
 

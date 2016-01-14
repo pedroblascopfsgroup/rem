@@ -42,7 +42,7 @@
 	var  fechaRecepcionDepositario = app.creaLabel('<s:message code="bienesAdjudicacion.fechaRecepcionDepositario" text="**fechaRecepcionDepositario"/>','<fwk:date value="${NMBbien.adjudicacion.fechaRecepcionDepositario}"/>', {labelStyle:labelStyle});
 	var  fechaEnvioDepositario = app.creaLabel('<s:message code="bienesAdjudicacion.fechaEnvioDepositario" text="**fechaEnvioDepositario"/>','<fwk:date value="${NMBbien.adjudicacion.fechaEnvioDepositario}"/>', {labelStyle:labelStyle});
 	var  fechaRecepcionDepositarioFinal = app.creaLabel('<s:message code="bienesAdjudicacion.fechaRecepcionDepositarioFinal" text="**fechaRecepcionDepositarioFinal"/>','<fwk:date value="${NMBbien.adjudicacion.fechaRecepcionDepositarioFinal}"/>', {labelStyle:labelStyle});
-	
+	var  fechaContabilidad = app.creaLabel('<s:message code="bienesAdjudicacion.fechaContabilidad" text="**fechaContabilidad"/>','<fwk:date value="${NMBbien.adjudicacion.fechaContabilidad}"/>', {labelStyle:labelStyle});
 	
 	
 	//booleanos
@@ -89,7 +89,7 @@
 		}
 		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabAdjudicacion.datosEconomicos.titulo" text="**Datos de adjudicaci�n"/>'
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
-	    ,items : [{items:[fechaDecretoNoFirme,fechaDecretoFirme,gestoriaAdjudicataria,fechaEntregaGestor,fechaPresentacionHacienda,fechaSegundaPresentacion,txtImporteAdjudicacion]},
+	    ,items : [{items:[fechaDecretoNoFirme,fechaDecretoFirme,gestoriaAdjudicataria,fechaEntregaGestor,fechaPresentacionHacienda,fechaSegundaPresentacion,txtImporteAdjudicacion,fechaContabilidad]},
 				  {items:[entidadAdjudicataria,<sec:authorize ifAllGranted="VER_DOC_ADJUDICACION">tipoDocAdjudicacion,</sec:authorize>fondo,fechaPresentacionRegistro,fechaRecepcionTitulo,fechaInscripcionTitulo,fechaEnvioAdicion,situacionTitulo,cesionRemate,importeCesionRemate]}
 				 ]
 	});

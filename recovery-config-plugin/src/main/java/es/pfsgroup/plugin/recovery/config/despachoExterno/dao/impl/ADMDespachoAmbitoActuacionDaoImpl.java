@@ -51,7 +51,7 @@ public class ADMDespachoAmbitoActuacionDaoImpl extends
         crit.add(Restrictions.eq("auditoria.borrado", false));
 		
 		if(listadoProvincias != null && !listadoProvincias.equals("")) {
-			crit.createCriteria("provincia").add(Restrictions.not(Restrictions.in("codigo", StringUtils.split(listadoComunidades, ","))));
+			crit.createCriteria("provincia").add(Restrictions.not(Restrictions.in("codigo", StringUtils.split(listadoProvincias, ","))));
         }
         else {
 			crit.add(Restrictions.isNotNull("provincia"));

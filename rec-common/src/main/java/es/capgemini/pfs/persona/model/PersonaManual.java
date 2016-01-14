@@ -7,9 +7,13 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -30,6 +34,8 @@ public class PersonaManual implements Serializable, Auditable {
 
 	@Id
 	@Column(name="PEM_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "PersonaManualGenerator")
+	@SequenceGenerator(name = "PersonaManualGenerator", sequenceName = "S_PEM_PERSONAS_MANUALES")
 	private Long id;
 	
 	
@@ -50,8 +56,13 @@ public class PersonaManual implements Serializable, Auditable {
 	@Column(name="PEM_APELLIDO2")
 	private String apellido2;
 	
-	@Column(name="PEM_NOM50")
-	private String nom50;
+	@OneToOne(fetch = FetchType.LAZY)
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	@JoinColumn(name = "DD_PRO_ID")
+	private DDPropietario propietario;
+
+	@Column(name="PER_COD_CLIENTE_ENTIDAD")
+	private Long codClienteEntidad;
 	
 	@Embedded
 	private Auditoria auditoria;
@@ -108,13 +119,21 @@ public class PersonaManual implements Serializable, Auditable {
 	public void setApellido2(String apellido2) {
 		this.apellido2 = apellido2;
 	}
-
-	public String getNom50() {
-		return nom50;
+	
+	public DDPropietario getPropietario() {
+		return propietario;
 	}
 
-	public void setNom50(String nom50) {
-		this.nom50 = nom50;
+	public void setPropietario(DDPropietario propietario) {
+		this.propietario = propietario;
+	}
+
+	public Long getCodClienteEntidad() {
+		return codClienteEntidad;
+	}
+
+	public void setCodClienteEntidad(Long codClienteEntidad) {
+		this.codClienteEntidad = codClienteEntidad;
 	}
 
 	@Override
@@ -133,6 +152,28 @@ public class PersonaManual implements Serializable, Auditable {
 
 	public void setVersion(Integer version) {
 		this.version = version;
+	}
+	
+	/**
+	 * obtiene el apellido y el nombre.
+	 * 
+	 * @return apellido nombre
+	 */
+	public String getApellidoNombre() {
+		String r = "";
+		if (apellido1 != null && apellido1.trim().length() > 0) {
+			r += apellido1.trim() + " ";
+		}
+		if (apellido2 != null && apellido2.trim().length() > 0) {
+			r += apellido2.trim();
+		}
+		if (r.trim().length() > 0) {
+			r += ", ";
+		}
+		if (nombre != null && nombre.trim().length() > 0) {
+			r += nombre.trim();
+		}
+		return r;
 	}
 
 }

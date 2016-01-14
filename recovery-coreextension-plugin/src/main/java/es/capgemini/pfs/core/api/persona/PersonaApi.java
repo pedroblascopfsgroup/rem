@@ -94,4 +94,11 @@ public interface PersonaApi {
      */
     @BusinessOperationDefinition(BO_CORE_PERSONA_GET_BY_COD_CLIENTE_ENTIDAD)
     public Persona getPersonaByCodClienteEntidad (Long codClienteEntidad);
+    
+    /**
+     * obtiene las personas por su DNI
+     * @param dni
+     * @return List<persona>
+     */
+    public List<Persona> getPersonasByDni(String dni);
 }

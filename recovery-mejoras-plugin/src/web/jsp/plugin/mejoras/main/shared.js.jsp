@@ -1417,6 +1417,8 @@ app.crearEditorGrid=	function(myStore,columnModel, config){
 		if (config.height) cfg.height=config.height;
 		if (config.plugins) cfg.plugins=config.plugins;
 		if (config.cls) cfg.cls=config.cls;
+		if (config.sm) cfg.sm=config.sm;
+		if (config.clicksToEdit) cfg.clicksToEdit=config.clicksToEdit;
 
 		//implementa el tooltip para ver el contenido de las celdas
 		cfg.onRender = function() {

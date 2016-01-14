@@ -18,6 +18,7 @@ import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.persona.dto.DtoPersonaManual;
 import es.capgemini.pfs.persona.model.Persona;
+import es.capgemini.pfs.persona.model.PersonaManual;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -66,6 +67,8 @@ public class BurofaxDaoImpl extends AbstractEntityDao<BurofaxPCO, Long> implemen
 		StringBuilder hql = new StringBuilder();
 		StringBuilder andHql = new StringBuilder();
 		
+		List<DtoPersonaManual> dtopersMasn = new ArrayList<DtoPersonaManual>();
+		
 		hql.append("select prcPer, 'false' as Manual ");
 		hql.append(" from Persona prcPer");
 		andHql.append(" and prcPer.contratosPersona IS NOT EMPTY");
@@ -75,24 +78,43 @@ public class BurofaxDaoImpl extends AbstractEntityDao<BurofaxPCO, Long> implemen
 				+ andHql);
 		
 		hql.append(" order by prcPer.docId, prcPer.nom50");
-		
-		if (addManuales) {
-			hql.append(" union ");
-			hql.append("select prcPerM, 'true' as Manual ");
-			hql.append(" from PersonaManual prcPerM ");
-			hql.append(" where upper(concat(prcPerM.docId, ' ', prcPerM.nom50)) like '%"
-					+ query.toUpperCase() + "%' "
-					+ " and prcPerM.contratosPersonaManual IS NOT EMPTY ");
-			hql.append(" order by prcPerM.docId, prcPerM.nom50 ");
-		}
-
 		Query q = getSession().createQuery(hql.toString());
 		q.setMaxResults(20);
+		
+		List<Object> personas = q.list();
+		
+		for(Object item : personas){
+			Object[] partes = (Object[])item;
+			Persona p = (Persona)partes[0];
+			dtopersMasn.add(new DtoPersonaManual(p));
+		}
+		
+		if (addManuales) {
+			
+			StringBuilder hqlM = new StringBuilder();
+			
+			hqlM.append("select prcPerM, 'true' as Manual ");
+			hqlM.append(" from PersonaManual prcPerM ");
+			hqlM.append(" where upper(concat(prcPerM.docId, ' ', prcPerM.nombre, ' ', prcPerM.apellido1, ' ', prcPerM.apellido2 )) like '%"
+					+ query.toUpperCase() + "%' "
+					+ " and prcPerM.contratosPersonaManual IS NOT EMPTY and prcPerM.codClienteEntidad IS NULL and prcPerM.propietario IS NULL");
+			hqlM.append(" order by prcPerM.docId, prcPerM.nombre ");
+			
+			Query qM = getSession().createQuery(hqlM.toString());
+			qM.setMaxResults(20);
+			
+			List<Object> personasManual = qM.list();
+			for(Object item : personasManual){
+				Object[] partes = (Object[])item;
+				PersonaManual pm = (PersonaManual)partes[0];
+				dtopersMasn.add(new DtoPersonaManual(pm));
+			}
+		}
 
-		return castearDtoPersonaManual(q.list());
+		return dtopersMasn;
 	}
 	
-	
+	/*
 	@SuppressWarnings("unchecked")
 	private List<DtoPersonaManual> castearDtoPersonaManual(List<Object> resultados) {
 		List<DtoPersonaManual> casteado = new ArrayList<DtoPersonaManual>();
@@ -111,7 +133,7 @@ public class BurofaxDaoImpl extends AbstractEntityDao<BurofaxPCO, Long> implemen
 		}
 		
 		return casteado;
-	}
+	}*/
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -176,6 +198,12 @@ public class BurofaxDaoImpl extends AbstractEntityDao<BurofaxPCO, Long> implemen
 			sql +=", NULL AS DD_TIN_ID ";
 		}
 		
+		if(!bManual && !Checks.esNulo(idPersona)){
+			sql +=", CPE.CPE_ID ";
+		}else{
+			sql +=", NULL AS CPE_ID ";
+		}
+		
 		sql += " FROM CNT_CONTRATOS CNT " +
 						" INNER JOIN CEX_CONTRATOS_EXPEDIENTE CEX ON CEX.CNT_ID = CNT.CNT_ID " +
 							" INNER JOIN PRC_CEX PRCEX ON PRCEX.CEX_ID = CEX.CEX_ID " +
@@ -211,6 +239,10 @@ public class BurofaxDaoImpl extends AbstractEntityDao<BurofaxPCO, Long> implemen
 			if (partes[1]!=null) {
 				Long ddTinId = Long.parseLong(partes[1].toString());
 				dto.setTipoIntervencion(genericDao.get(DDTipoIntervencion.class, genericDao.createFilter(FilterType.EQUALS, "id", ddTinId)));
+			}
+			
+			if(partes[2]!=null){
+				dto.setTieneRelacionContratoPersona(true);
 			}
 			
 			casteado.add(dto);

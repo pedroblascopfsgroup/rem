@@ -16,7 +16,9 @@
                     </c:if>
                     <c:if test="${ec.tipoIntervencion != null}">
                     	<json:property name="tipointerv" value="${ec.tipoIntervencion.descripcion}" />
+                    	<json:property name="tipointervCodigo" value="${ec.tipoIntervencion.codigo}" />
                     </c:if>
+                    <json:property name="tieneRelacionContratoPersona" value="${ec.tieneRelacionContratoPersona}" />
                 </json:object>               
         </json:array>
 </fwk:json>

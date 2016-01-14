@@ -20,6 +20,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
+import es.capgemini.pfs.contrato.dao.ContratoPersonaManualDao;
+import es.capgemini.pfs.contrato.model.ContratoPersona;
+import es.capgemini.pfs.contrato.model.ContratoPersonaManual;
+import es.capgemini.pfs.contrato.model.DDTipoIntervencion;
+import es.capgemini.pfs.core.api.persona.PersonaApi;
 import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
@@ -32,12 +37,17 @@ import es.capgemini.pfs.direccion.dto.DireccionAltaDto;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Direccion;
+import es.capgemini.pfs.persona.EXTPersonaManager;
+import es.capgemini.pfs.persona.dao.PersonaManualDao;
 import es.capgemini.pfs.persona.dto.DtoPersonaManual;
 import es.capgemini.pfs.persona.model.Persona;
+import es.capgemini.pfs.persona.model.PersonaManual;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
 import es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi;
 import es.pfsgroup.plugin.precontencioso.burofax.dto.BurofaxDTO;
@@ -84,6 +94,10 @@ public class BurofaxController {
 	
 	public static final String JSON_LISTA_CONTRATOS_PROCEDIMIENTOS = "plugin/precontencioso/burofax/json/listadoContratosProcedimientoIntevJSON";
 	
+	public static final String JSON_LISTA_TIPOS_INTERVENCION = "plugin/precontencioso/burofax/json/listadoTiposIntervencionJSON";
+	
+	private static final String OK_KO_RESPUESTA_JSON = "plugin/coreextension/OkRespuestaJSON";
+	
 	protected final Log logger = LogFactory.getLog(getClass());
 	
 	@Autowired
@@ -113,6 +127,13 @@ public class BurofaxController {
 	@Autowired
 	private ProcedimientoPCODao procedimientoPCODao;
 	
+	@Autowired
+	private EXTPersonaManager personaManager; 
+	
+	@Autowired
+	private GenericABMDao genericDao;
+	
+	
 	/**
 	 * Carga el grid de Burofaxes
 	 * @param model
@@ -130,8 +151,7 @@ public class BurofaxController {
 				BurofaxDTO dto=new BurofaxDTO();
 				dto.setId(burofax.getId());
 				dto.setIdBurofax(burofax.getId());
-				dto.setIdCliente(burofax.getDemandado().getId());
-				dto.setCliente(burofax.getDemandado().getApellidoNombre());
+
 				if(!Checks.esNulo(burofax.getTipoIntervencion())){
 					dto.setTipoIntervencion(burofax.getTipoIntervencion().getDescripcion());
 				}
@@ -149,11 +169,22 @@ public class BurofaxController {
 				
 				if(burofax.isEsPersonaManual()){
 					dto.setEsPersonaManual("SI");
+					if(Checks.esNulo(burofax.getDemandadoManual().getCodClienteEntidad()) && Checks.esNulo(burofax.getDemandadoManual().getPropietario())){
+						dto.setIdCliente(burofax.getDemandadoManual().getId());
+						dto.setCliente(burofax.getDemandadoManual().getApellidoNombre());	
+					}else{
+						///Obtenemos la persona no manual
+						Persona per = genericDao.get(Persona.class, genericDao.createFilter(FilterType.EQUALS, "codClienteEntidad", burofax.getDemandadoManual().getCodClienteEntidad()), genericDao.createFilter(FilterType.EQUALS, "propietario.id", burofax.getDemandadoManual().getPropietario().getId()) );
+						dto.setIdCliente(per.getId());
+						dto.setCliente(burofax.getDemandadoManual().getApellidoNombre());
+					}
 				}else{
 					dto.setEsPersonaManual("NO");
+					dto.setIdCliente(burofax.getDemandado().getId());
+					dto.setCliente(burofax.getDemandado().getApellidoNombre());
 				}
 				
-				if(burofax.getDemandado().getDirecciones().size()>0){
+				if(!Checks.esNulo(burofax.getDemandado()) && burofax.getDemandado().getDirecciones().size()>0){
 				    for(Direccion direccion : burofax.getDemandado().getDirecciones()){
 				    		if(!Checks.esNulo(burofax.getContrato())){
 				    			dto.setId(burofax.getId()+burofax.getContrato().getId()+direccion.getId());
@@ -445,6 +476,72 @@ public class BurofaxController {
 		return DEFAULT;
 	}
 	
+	@RequestMapping
+	private String guardaPersonaYPersonaManual(WebRequest request, 
+			ModelMap model,
+			@RequestParam(value = "idPersona", required = true) Long idPersona, 
+			Long idProcedimiento,
+			boolean esPersonaManual, 
+			@RequestParam(value = "contratos", required = true) Long[] contratos, 
+			@RequestParam(value = "tipoIntervencionContratos", required = true) String[] tiposIntervencion,
+			String dni,
+			String nombre,
+			String primerApll,
+			String segundoApll){
+		
+		if(esPersonaManual){
+			
+			///Creamos la persona manual si no existe
+			PersonaManual persMan;
+			if(Checks.esNulo(idPersona)){
+				persMan = burofaxManager.guardaPersonaManual(dni, nombre, primerApll, segundoApll,null,null);
+			}else{
+				persMan = genericDao.get(PersonaManual.class, genericDao.createFilter(FilterType.EQUALS, "id", idPersona));
+			}
+			///Creamos su relacion con los contratos
+			int i = 0;
+			for(Long idContrato : contratos){
+				ContratoPersonaManual cntPersMan = burofaxManager.guardaContratoPersonaManual(persMan.getId(), idContrato, tiposIntervencion[i]);
+				if(!Checks.esNulo(cntPersMan)) burofaxManager.crearBurofaxPersonaManual(persMan.getId(),idProcedimiento, cntPersMan.getId());
+				i++;
+			}
+			
+		}else{
+			///Comprobamos si existen las relaciones y no se ha modificado el tipo de intervencion
+			int i = 0;
+			PersonaManual persMan = null;
+			ContratoPersonaManual cntPersMan = null;
+			
+			for(Long idContrato : contratos){
+				ContratoPersona contratoPersona = genericDao.get(ContratoPersona.class, genericDao.createFilter(FilterType.EQUALS, "persona.id", idPersona), genericDao.createFilter(FilterType.EQUALS, "contrato.id", idContrato), genericDao.createFilter(FilterType.EQUALS, "tipoIntervencion.codigo", tiposIntervencion[i]));
+				if(Checks.esNulo(contratoPersona)){
+					///Creamos la persona si no se ha creado en alguna iteración anterior
+					if(Checks.esNulo(persMan)){
+						Persona persona = genericDao.get(Persona.class, genericDao.createFilter(FilterType.EQUALS, "id", idPersona));
+						persMan = burofaxManager.guardaPersonaManual(persona.getDocId(), persona.getNombre(), persona.getApellido1(), persona.getApellido2(), persona.getPropietario().getCodigo(), persona.getCodClienteEntidad());
+					}
+					
+					///Creamos PERSONAS_CONTRATO_MANUAL
+					if(!Checks.esNulo(persMan)){
+						cntPersMan = burofaxManager.guardaContratoPersonaManual(persMan.getId(), idContrato, tiposIntervencion[i]);
+					}
+					
+					///Creamos el burofax
+					if(!Checks.esNulo(cntPersMan)){
+						if(!Checks.esNulo(cntPersMan)) burofaxManager.crearBurofaxPersonaManual(persMan.getId(),idProcedimiento, cntPersMan.getId());
+					}
+					
+				}else{
+					///Creamos el burofax
+					burofaxManager.crearBurofaxPersona(idPersona,idProcedimiento, contratoPersona.getId());
+				}
+				
+				i++;
+			}
+		}			
+		
+		return DEFAULT;
+	}
 
 	/**
      * Metodo que devuelve las personas para mostrarlos en el desplegable din�mico del campo Persona.
@@ -689,6 +786,45 @@ public class BurofaxController {
 		
 		return JSON_LISTA_CONTRATOS_PROCEDIMIENTOS;
 	}
+	
+    /**
+     * Devuelve un JSON con los tipos de intervencion
+     * @param request
+     * @param model
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+	@RequestMapping
+    public String getTiposDeIntervencion(WebRequest request, ModelMap model){
+    	
+    	List<DDTipoIntervencion> listaTiposIntervencion = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDTipoIntervencion.class);
+    	
+    	model.put("listaTiposIntervencion", listaTiposIntervencion);
+    	
+    	return JSON_LISTA_TIPOS_INTERVENCION;
+    	
+    }
+    
+    
+    /**
+     * Comprueba si una persona esta dada de alta
+     * @param request
+     * @param model
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+	@RequestMapping
+    public String existePersonaConDni(ModelMap model, String dniPersona){
+    	
+    	if(personaManager.getPersonasByDni(dniPersona).size()>0){
+    		model.put("okko", true);
+    	}else{
+    		model.put("okko", false);	
+    	}
+		
+		return OK_KO_RESPUESTA_JSON;
+    }
+    
 
 }
 

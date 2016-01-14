@@ -198,5 +198,11 @@ public class NMBPersonaManager extends BusinessOperationOverrider<PersonaApi> im
 	public Persona getPersonaByCodClienteEntidad(Long arg0) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public List<Persona> getPersonasByDni(String dni) {
+		// TODO Auto-generated method stub
+		return null;
 	}	
 }

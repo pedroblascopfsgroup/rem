@@ -160,6 +160,14 @@ var pdfRender = function(value, meta, record) {
 			
 	});
 	
+	var btnEditPersona = new Ext.Button({
+			text : '<s:message code="plugin.precontencioso.grid.burofax.editarPersona" text="**Editar Persona" />'
+			,id : 'btnEditPersona'
+			,iconCls : 'icon_mas'
+			,cls: 'x-btn-text-icon'
+			
+	});
+	
 	var btnEnviar = new Ext.Button({
 			text : '<s:message code="plugin.precontencioso.grid.burofax.enviar" text="**Enviar" />'
 			,id : 'btnEnviar'
@@ -240,6 +248,7 @@ var pdfRender = function(value, meta, record) {
       		btnEnviar.disabled=true;
       		btnNotificar.disabled=true;
       		btnDescargarBurofax.disabled=true;
+      		btnEditPersona.disabled=true;
       		
       		//this.store.sort('idCliente','DESC');
 	        //this.store.setDefaultSort('idCliente', 'DESC');
@@ -282,6 +291,7 @@ var pdfRender = function(value, meta, record) {
       			btnEnviar.setDisabled(true);
       			btnNotificar.setDisabled(true);
       			btnDescargarBurofax.setDisabled(true);
+      			btnEditPersona.setDisabled(true);
       		}
       		else {
       			if(actualizarBotonesBurofax()){
@@ -343,7 +353,7 @@ var pdfRender = function(value, meta, record) {
 		,cls:'cursor_pointer'
 		,iconCls : 'icon_asuntos'
 		<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_BUR_BTN">
-			,bbar : [ botonesTabla,btnAddPersona,btnEnviar, btnNuevaDir, btnEditar, btnPreparar,btnCancelar, btnNotificar,btnDescargarBurofax , new Ext.Toolbar.Fill(), botonRefresh ]
+			,bbar : [ botonesTabla,btnAddPersona,<c:if test="${user.entidad.descripcion eq 'CAJAMAR' || user.entidad.descripcion eq 'HAYA'}">btnEditPersona,</c:if>btnEnviar, btnNuevaDir, btnEditar, btnPreparar,btnCancelar, btnNotificar,btnDescargarBurofax , new Ext.Toolbar.Fill(), botonRefresh ]
 		</sec:authorize>
 		,autoWidth: true
 		,collapsible: true
@@ -741,6 +751,7 @@ var pdfRender = function(value, meta, record) {
 			var estadoActualCodigoProcedimiento = data.precontencioso.estadoActualCodigo;
 			if (!data.esExpedienteEditable || (estadoActualCodigoProcedimiento != 'PR'  && estadoActualCodigoProcedimiento != 'SU' && estadoActualCodigoProcedimiento != 'SC')) {
 				btnAddPersona.setDisabled(true);
+				btnEditPersona.setDisabled(true);
 				btnEnviar.setDisabled(true);
 				btnNuevaDir.setDisabled(true);
 				btnEditar.setDisabled(true);
@@ -773,6 +784,36 @@ var pdfRender = function(value, meta, record) {
 		if(!btnPreparar.disabled && !validarBotonPrepararHabilitado()) {
 			btnPreparar.setDisabled(true);
 		}	
+		
+		if(!btnEditPersona.disabled && !todasPersonasMarcadasIguales()) {
+			btnEditPersona.setDisabled(true);
+		}
+	}
+	
+	var todasPersonasMarcadasIguales = function() {
+		
+		rowsSelected=gridBurofax.getSelectionModel().getSelections();
+		
+		if(rowsSelected.length > 0){
+		
+			var idCliente = rowsSelected[0].get('idCliente');
+			var todasPersonasIguales = true;
+			
+			if(idCliente != ''){
+				
+				for (var i=0; i < rowsSelected.length; i++){
+					if(rowsSelected[i].get('idCliente') == '' || rowsSelected[i].get('idCliente') != idCliente){
+						todasPersonasIguales = false;
+						break;
+					}
+				}
+			}else{
+				todasPersonasIguales = false;
+			}
+
+		}
+		
+		return todasPersonasIguales;
 	}
 	
 	var validarBotonEnviarHabilitado = function() {
@@ -864,6 +905,7 @@ var pdfRender = function(value, meta, record) {
 	
 	var validarBotonesSeleccionUnica = function() {
 		btnPreparar.setDisabled(false);
+		btnEditPersona.setDisabled(false);
      		<%-- Si el envio esta en estado preparado, habilitamos el boton editar --%>
 		if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Preparado'){
 			btnEditar.setDisabled(false);

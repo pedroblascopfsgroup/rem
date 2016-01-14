@@ -20,7 +20,6 @@ DECLARE
     V_MSQL VARCHAR2(4000 CHAR);
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
-    V_ESQUEMA_IDX VARCHAR2(25 CHAR):= '#TABLESPACE_INDEX#'; -- Configuracion Esquema Master
     seq_count number(3); -- Vble. para validar la existencia de las Secuencias.
     table_count number(3); -- Vble. para validar la existencia de las Tablas.
     v_column_count number(3); -- Vble. para validar la existencia de las Columnas.
@@ -61,7 +60,7 @@ BEGIN
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.REC_RES_CAT... Tabla creada');
 		V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.REC_RES_CAT_PK ON '||V_ESQUEMA|| '.REC_RES_CAT
-					(REC_ID) TABLESPACE ' || V_ESQUEMA_IDX;
+					(REC_ID) TABLESPACE haya_idx';
 		EXECUTE IMMEDIATE V_MSQL;
 		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.REC_RES_CAT ADD (
 						CONSTRAINT REC_RES_CAT_PK PRIMARY KEY (REC_ID) USING INDEX
@@ -72,7 +71,7 @@ BEGIN
 		
 		
 		V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.REC_RES_CAT_UNIQUE ON '||V_ESQUEMA|| '.REC_RES_CAT
-					(RES_ID) TABLESPACE ' || V_ESQUEMA_IDX;
+					(RES_ID) TABLESPACE haya_idx';
 		EXECUTE IMMEDIATE V_MSQL;
 		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.REC_RES_CAT ADD (
 						CONSTRAINT REC_RES_CAT_UNIQUE UNIQUE (RES_ID) USING INDEX

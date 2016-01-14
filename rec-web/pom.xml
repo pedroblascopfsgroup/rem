@@ -479,6 +479,16 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-cambiosMasivosAsunto-plugin</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 		
 		<!-- Fin plugins de Recovery -->
 		<!-- Inicio paquetes de Cap Gemini -->

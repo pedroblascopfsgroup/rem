@@ -26,12 +26,7 @@ import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJTrazaDto;
 public class CambiosMasivosManager extends BusinessOperationOverrider<CambiosMasivosApi> implements CambiosMasivosApi{
 
 	// tipos de acciones sobre el asunto nuevos 
-	
-	public static final String CODIGO_CAMBIO_SUPERVISOR_JUDICIAL = "CAMBIO_SJUD";
-	public static final String CODIGO_CAMBIO_GESTOR_JUDICIAL = "CAMBIO_GJUD";
-	public static final String CODIGO_CAMBIO_PROCURADOR = "CAMBIO_PROC";
-	public static final String CODIGO_CAMBIO_SUPERVISOR_CEX = "CAMBIO_SCEX";
-	public static final String CODIGO_CAMBIO_GESTOR_CEX = "CAMBIO_GCEX";
+	public static final String CODIGO_CAMBIO_MASIVO_GESTOR = "CAMBIO_MASIVO";
 	
 	// tipos de clave nuevos
 	public static final String CODIGO_IRG_CLAVE_idUsuarioOld = "idUserOld";
@@ -66,20 +61,8 @@ public class CambiosMasivosManager extends BusinessOperationOverrider<CambiosMas
 		@SuppressWarnings("rawtypes")
 		List trazas;
 		
-		MEJTrazaDto dto = creaPeticionBusquedaTraza(DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, idAsunto,CODIGO_CAMBIO_SUPERVISOR_JUDICIAL);
+		MEJTrazaDto dto = creaPeticionBusquedaTraza(DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, idAsunto,CODIGO_CAMBIO_MASIVO_GESTOR);
 		trazas = proxyFactory.proxy(MEJRegistroApi.class).buscaTrazasEvento(dto);
-		
-		dto = creaPeticionBusquedaTraza(DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, idAsunto,CODIGO_CAMBIO_GESTOR_JUDICIAL);
-		trazas.addAll(proxyFactory.proxy(MEJRegistroApi.class).buscaTrazasEvento(dto));
-		
-		dto = creaPeticionBusquedaTraza(DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, idAsunto,CODIGO_CAMBIO_PROCURADOR);
-		trazas.addAll(proxyFactory.proxy(MEJRegistroApi.class).buscaTrazasEvento(dto));
-		
-		dto = creaPeticionBusquedaTraza(DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, idAsunto,CODIGO_CAMBIO_SUPERVISOR_CEX);
-		trazas.addAll(proxyFactory.proxy(MEJRegistroApi.class).buscaTrazasEvento(dto));
-		
-		dto = creaPeticionBusquedaTraza(DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, idAsunto,CODIGO_CAMBIO_GESTOR_CEX);
-		trazas.addAll(proxyFactory.proxy(MEJRegistroApi.class).buscaTrazasEvento(dto));
 		
 		return trazas;
 	}

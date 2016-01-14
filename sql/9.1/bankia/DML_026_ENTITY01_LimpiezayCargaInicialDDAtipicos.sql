@@ -16,7 +16,7 @@
 --##        0.1 Versión inicial
 --##########################################
 --*/
---Toque abs1
+--Toque abs2
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;

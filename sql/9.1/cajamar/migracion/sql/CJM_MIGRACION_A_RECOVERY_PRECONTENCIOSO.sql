@@ -413,7 +413,7 @@ BEGIN
 					   (select DD_PAS_ID FROM '||V_ESQUEMA||'.dd_pas_propiedad_asunto where dd_pas_codigo = ''CAJAMAR'') AS DD_PAS_ID,
 					   COD_RECOVERY AS USUARIOMODIFICAR,
 					   COD_RECOVERY AS ASU_ID_EXTERNO,
-					   (select dd_ges_id from '||V_ESQUEMA||'.DD_GES_GESTION_ASUNTO where dd_ges_codigo = ''CAJAMAR'') AS DD_GES_ID,
+					   (select dd_ges_id from '||V_ESQUEMA||'.DD_GES_GESTION_ASUNTO where dd_ges_codigo = ''HAYA'') AS DD_GES_ID,
 					   SYS_GUID() AS SYS_GUID
 				  FROM (
 						SELECT DISTINCT TMP.COD_RECOVERY, 

@@ -77,4 +77,7 @@ public interface ZonaDao extends AbstractDao<DDZona, Long> {
      * @return
      */
     Boolean existePerfilZona(Long idZona, Long idPerfil);
+    
+    List<DDZona> getZonasJerarquiaByCodDesc(Long idNivel, Set<String> codigoZonasUsuario, String codDesc);
+
 }

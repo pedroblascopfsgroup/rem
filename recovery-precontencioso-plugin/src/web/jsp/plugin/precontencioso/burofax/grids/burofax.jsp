@@ -39,19 +39,19 @@ var pdfRender = function(value, meta, record) {
 		myCboxSelModel
 		,{
 			header: '<s:message code="plugin.precontencioso.grid.burofax.cliente" text="**Cliente"/>',
-			dataIndex: 'cliente', sortable: true,autoWidth:true
+			dataIndex: 'cliente', sortable: false,autoWidth:true
 		},{
 			header: '<s:message code="plugin.precontencioso.grid.burofax.registro.manual" text="**Registro Manual"/>',
-			dataIndex: 'esPersonaManual', sortable: true,autoWidth:true
+			dataIndex: 'esPersonaManual', sortable: false,autoWidth:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.tipoIntervencion" text="**Tipo Intervencion"/>',
-			dataIndex: 'tipoIntervencion', sortable: true,autoWidth:true
+			dataIndex: 'tipoIntervencion', sortable: false,autoWidth:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.contrato" text="**Contrato"/>',
-			dataIndex: 'contrato', sortable: true,autoWidth:true
+			dataIndex: 'contrato', sortable: false,autoWidth:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.estado" text="**Estado"/>',
-			dataIndex: 'estado', sortable: true,autoWidth:true
+			dataIndex: 'estado', sortable: false,autoWidth:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.direccion" text="**Dirección"/>',
 			dataIndex: 'direccion', sortable: false,autoWidth:true
@@ -72,7 +72,7 @@ var pdfRender = function(value, meta, record) {
 			dataIndex: 'fechaAcuse', sortable: false,autoWidth:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.resultado" text="**Resultado"/>'
-			,dataIndex: 'resultado', sortable: true,autoWidth:true
+			,dataIndex: 'resultado', sortable: false,autoWidth:true
 	<c:if test="${usuario.entidad.descripcion eq 'HAYA'}">
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.acuseRecibo" text="**Acuse recibo"/>'
@@ -83,7 +83,7 @@ var pdfRender = function(value, meta, record) {
 			,dataIndex: 'idDireccion', sortable: false,autoWidth:true,hidden:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoo" text="**idCliente"/>'
-			,dataIndex: 'idCliente', sortable: true,autoWidth:true,hidden:true
+			,dataIndex: 'idCliente', sortable: false,autoWidth:true,hidden:true
 		}
 		, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoo" text="**idTipoBurofax"/>'
@@ -97,7 +97,7 @@ var pdfRender = function(value, meta, record) {
 			,dataIndex: 'idEnvio', sortable: false,autoWidth:true,hidden:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoo" text="**id"/>'
-			,dataIndex: 'id', sortable: true,autoWidth:true,hidden:true
+			,dataIndex: 'id', sortable: false,autoWidth:true,hidden:true
 		}
 	];
 

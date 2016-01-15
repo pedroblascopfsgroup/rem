@@ -88,10 +88,7 @@
 		                      			 	tree.getNodeById('arbol_tareas_nodo_resoluciones').collapse(true);
 											tree.getNodeById('arbol_tareas_nodo_resoluciones').getUI().show();
 		                      		}
-		                      		else{
-		                      			tree.getNodeById('arbol_tareas_nodo_resoluciones').remove();
-		                      		}
-		                            
+
 <!-- 		                        Cargamos el número de resoluciones por categoría -->
 		                            var datosCategorias = datos.categorias;
 		                            var vista = datos.vistaCount;

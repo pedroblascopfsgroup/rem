@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.precontencioso.documento.controller;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -180,6 +181,8 @@ public class DocumentoPCOController {
 			@RequestParam(value = "fechaEnvio", required = true) String fechaEnvio, 
 			@RequestParam(value = "fechaRecepcion", required = true) String fechaRecepcion, 
 			@RequestParam(value = "existeSolDisponible", required = true) String existeSolDisponible,
+			@RequestParam(value = "arrayIdDocs", required = false) List<String> arrayIdDocs,
+			@RequestParam(value = "arrayIdSolicitudes", required = false) List<String> arrayIdSolicitudes,
 			ModelMap model) {
 
 		InformarDocumentoDto dto = new InformarDocumentoDto();
@@ -231,6 +234,13 @@ public class DocumentoPCOController {
 		model.put("ddSiNo", ddsino);
 		model.put("ddSiNoNoAplica", ddsinonoaplica);
 		model.put("existeSolDisponible", ("true".equals(existeSolDisponible) ? true : false));
+		/*añadimos los model put en caso de que haya un informar masivo*/
+		if(!Checks.esNulo(arrayIdDocs)) {
+			model.put("arrayIdDocs", arrayIdDocs);			
+		}
+		if(!Checks.esNulo(arrayIdSolicitudes)) {
+			model.put("arrayIdSolicitudes", arrayIdSolicitudes);			
+		}
 		
 		return INFORMAR_DOC;
 	}
@@ -602,29 +612,40 @@ public class DocumentoPCOController {
 	 */
 	@RequestMapping 
 	private String saveInformarSolicitud(WebRequest request, ModelMap model) {
-        
-		SaveInfoSolicitudDTO dto = new SaveInfoSolicitudDTO();
-        
-        dto.setIdDoc(request.getParameter("idDoc"));
-        dto.setActor(request.getParameter("actor"));
-        dto.setIdSolicitud(request.getParameter("idSolicitud"));
-        dto.setEstado(request.getParameter("estado"));
-        dto.setAdjuntado(request.getParameter("adjuntado"));
-        if (!Checks.esNulo(request.getParameter("ejecutivo"))) {
-        	DDSiNoNoAplica siNoAplica = (DDSiNoNoAplica) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDSiNoNoAplica.class, request.getParameter("ejecutivo"));
-        	dto.setEjecutivo(siNoAplica.getId());        	
-        }
-        dto.setFechaResultado(parseaFecha(request.getParameter("fechaResultado")));
-        dto.setResultado(request.getParameter("resultado"));
-        dto.setFechaEnvio(parseaFecha(request.getParameter("fechaEnvio")));
-        dto.setFechaRecepcion(parseaFecha(request.getParameter("fechaRecepcion")));
-        dto.setComentario(request.getParameter("comentario"));
-     
-        documentoPCOApi.saveInformarSolicitud(dto);
-        
-		DocumentoPCO doc = proxyFactory.proxy(DocumentoPCOApi.class).getDocumentoPCOById(new Long(request.getParameter("idDoc")));
-		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(doc.getProcedimientoPCO().getProcedimiento().getId());
-        
+
+		List<String> arrayIdDocs = new ArrayList<String>();
+		List<String> arrayIdSolicitudes = new ArrayList<String>();
+		
+		arrayIdDocs = dameListPersonalizada(request.getParameter("arrayIdDocs"));
+		arrayIdSolicitudes = dameListPersonalizada(request.getParameter("arrayIdSolicitudes"));
+		
+		//añadimos el for, para en el caso de informar masivo que lo haga n veces
+		for(int i=0; i<arrayIdDocs.size(); i++){
+			
+			SaveInfoSolicitudDTO dto = new SaveInfoSolicitudDTO();
+	        
+
+			dto.setIdDoc(arrayIdDocs.get(i));
+			dto.setIdSolicitud(arrayIdSolicitudes.get(i));
+			
+	        dto.setEstado(request.getParameter("estado"));
+	        dto.setAdjuntado(request.getParameter("adjuntado"));
+	        if (!Checks.esNulo(request.getParameter("ejecutivo"))) {
+	        	DDSiNoNoAplica siNoAplica = (DDSiNoNoAplica) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDSiNoNoAplica.class, request.getParameter("ejecutivo"));
+	        	dto.setEjecutivo(siNoAplica.getId());        	
+	        }
+	        dto.setFechaResultado(parseaFecha(request.getParameter("fechaResultado")));
+	        dto.setResultado(request.getParameter("resultado"));
+	        dto.setFechaEnvio(parseaFecha(request.getParameter("fechaEnvio")));
+	        dto.setFechaRecepcion(parseaFecha(request.getParameter("fechaRecepcion")));
+	        dto.setComentario(request.getParameter("comentario"));
+	     
+	        documentoPCOApi.saveInformarSolicitud(dto);
+	        
+			DocumentoPCO doc = proxyFactory.proxy(DocumentoPCOApi.class).getDocumentoPCOById(new Long(request.getParameter("idDoc")));
+			proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(doc.getProcedimientoPCO().getProcedimiento().getId());
+		}//del for de arrayDocs
+		
         return DEFAULT;
 	}
 	
@@ -672,5 +693,14 @@ public class DocumentoPCOController {
 		}
 
 		return "default";
+	}
+	
+	public List<String> dameListPersonalizada(String arrayTmp) {
+		
+		int ultimaPos = arrayTmp.length();
+		arrayTmp = arrayTmp.substring(1,ultimaPos-1);
+		List<String> items = Arrays.asList(arrayTmp.split("\\s*,\\s*"));
+        
+		return items;
 	}
  }

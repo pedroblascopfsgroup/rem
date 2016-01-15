@@ -664,31 +664,9 @@ public class BurofaxController {
 		
 		List<SolicitudDocumentoPCODto> solicitudesDoc = new ArrayList<SolicitudDocumentoPCODto>();
 		
-	
-		boolean esDocumento;	
-		boolean tieneSolicitud;
-		boolean isGestoria = esUsuarioTipoDespachoGestoria();
-		
 		for (DocumentoPCO doc : documentos) {
-			List<SolicitudDocumentoPCO> solicitudes = doc.getSolicitudes();
-			esDocumento = true;
-
-			// Si hay solicitudes
-			if (solicitudes != null && solicitudes.size() > 0) {
-				for (SolicitudDocumentoPCO sol : solicitudes) {
-					tieneSolicitud = true;
-					// se añade el registro, si no es una gestoria o si es una gestoria y es una solicitud asignada a ella
-					if (!isGestoria || (isGestoria && usuarioManager.getUsuarioLogado().getId().equals(sol.getActor().getUsuario().getId()))) {
-						SolicitudDocumentoPCODto solDto = documentoPCOApi.crearSolicitudDocumentoDto(doc, sol, esDocumento, tieneSolicitud);
-						if(!Checks.esNulo(solDto.getContrato()) && !Checks.esNulo(solDto.getTipoDocumento())){
-							solicitudesDoc.add(solDto);	
-						}
-					}
-
-					if (esDocumento) esDocumento = false;
-				}
-			}
-
+			SolicitudDocumentoPCODto solDto = documentoPCOApi.crearSolicitudDocumentoDto(doc, null, true, false);
+			solicitudesDoc.add(solDto);
 		}
 
 		model.put("solicitudesDocumento", solicitudesDoc);

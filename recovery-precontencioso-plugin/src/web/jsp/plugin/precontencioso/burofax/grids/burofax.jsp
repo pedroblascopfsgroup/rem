@@ -815,6 +815,7 @@ btnEditarVerDireccion.on('click', function(){
   		  }
   		 
 		}
+		
 	
 		<%--Comprobamos que hay direcciones seleccionadas en TODAS las selecciones --%>
     		if(myCboxSelModel.getCount() > 0 && arrayIdDirecciones.length == myCboxSelModel.getCount()){	
@@ -1036,6 +1037,7 @@ btnEditarVerDireccion.on('click', function(){
 		if(!btnPreparar.disabled && !validarBotonPrepararHabilitado()) {
 			btnPreparar.setDisabled(true);
 		}	
+		
 	}
 	
 	var validarBotonEnviarHabilitado = function() {
@@ -1163,6 +1165,11 @@ btnEditarVerDireccion.on('click', function(){
 		
 		<%-- Como se puede enviar sin estar preparado habilitamos el boton enviar--%>
 		btnEnviar.setDisabled(false);
+		
+		<%--Si hay una direccion seleccionada y no es manual no se habilita el borrar direccion y si es manual si--%>
+		if(myCboxSelModel.getCount() == 1 && gridBurofax.getSelectionModel().getSelected().get('idDireccion') != ''){
+			comprobarEsManual(gridBurofax.getSelectionModel().getSelected().get('idDireccion'));
+		}
 		
 		<%-- Si el Resultado es notificado habilitamos el boton de añadir notificacion --%>
 		if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Solicitado'){

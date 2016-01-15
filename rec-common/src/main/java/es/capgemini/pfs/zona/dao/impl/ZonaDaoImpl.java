@@ -43,9 +43,9 @@ public class ZonaDaoImpl extends AbstractEntityDao<DDZona, Long> implements Zona
     }
     
     @SuppressWarnings("unchecked")
-    @Override//Tatyana Ali
-    public List<DDZona> getZonasJerarquiaByCodDesc(Long idNivel, Set<String> codigoZonasUsuario, String codDesc) {
-        String hql = " from DDZona z where z.auditoria.borrado = 0 and z.nivel.id = ?";
+    @Override
+    public List<DDZona> getZonasJerarquiaByCodDesc(Integer idNivel, Set<String> codigoZonasUsuario, String codDesc) {
+        String hql = " from DDZona z where z.auditoria.borrado = 0 and z.nivel.codigo = ?";
         if (codigoZonasUsuario != null && codigoZonasUsuario.size() > 0) {
             hql += " and ( ";
             for (String cz : codigoZonasUsuario) {

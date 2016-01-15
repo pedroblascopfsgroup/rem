@@ -269,7 +269,7 @@ public class MEJExpedienteManager implements MEJExpedienteApi {
     }
     
     @BusinessOperation(OBTENER_ZONAS_JERARQUIA_BY_COD_OR_DESC)
-    public List<DDZona> getZonasJerarquiaByCodDesc(Long idNivel, String codDesc) {
+    public List<DDZona> getZonasJerarquiaByCodDesc(Integer idNivel, String codDesc) {
         if (idNivel == null || idNivel.longValue() == 0) { return new ArrayList<DDZona>(); }
         Set<String> codigoZonasUsuario = ((Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO))
                 .getCodigoZonas();

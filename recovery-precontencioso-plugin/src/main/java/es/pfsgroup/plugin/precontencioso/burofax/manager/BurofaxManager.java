@@ -12,6 +12,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.asunto.ProcedimientoManager;
@@ -54,7 +58,6 @@ import es.pfsgroup.plugin.precontencioso.burofax.model.DDResultadoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDTipoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.ProcedimientoBurofaxTipoPCO;
-import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ProcedimientoPcoApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dao.LiquidacionDao;
@@ -106,6 +109,9 @@ public class BurofaxManager implements BurofaxApi {
 	
 	@Autowired
 	private DireccionApi direccionApi;
+	
+	@Resource
+	private MessageService messageService;
 	
 	private final Log logger = LogFactory.getLog(getClass());
 	private final String DIRECTORIO_PDF_BUROFAX_PCO = "directorioPdfBurofaxPCO";
@@ -423,11 +429,14 @@ public class BurofaxManager implements BurofaxApi {
 			Direccion direccion = (Direccion)  genericDao.get(Direccion.class, filtro);
 			if(direccion.getOrigen().equalsIgnoreCase("Manual")){//si es manual hay que borrarla
 				genericDao.deleteById(Direccion.class, idDireccion);
+			}else{
+				throw new UserException(messageService.getMessage("plugin.precontencioso.grid.burofax.mensaje.noBorrarAutomatica", null));
 			}
 			
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("borrarDireccionManualBurofax: " + e);
 		}
+		
 	}
 	
 	@BusinessOperation(GUARDA_PERSONA)

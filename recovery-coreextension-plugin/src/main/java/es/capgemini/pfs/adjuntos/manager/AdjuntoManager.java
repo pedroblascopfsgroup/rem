@@ -60,6 +60,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.recovery.api.ProcedimientoApi;
+import es.pfsgroup.recovery.ext.api.persona.EXTPersonaApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
@@ -399,6 +400,9 @@ public class AdjuntoManager implements AdjuntoApi{
 		
 		adjPers.setPersona(persona);
 		Auditoria.save(adjPers);
+		
+		persona.getAdjuntos().add(adjPers);
+		genericDao.save(Persona.class, persona);
 
         return null;
 	}
@@ -432,6 +436,9 @@ public class AdjuntoManager implements AdjuntoApi{
 		adjuntoexp.setExpediente(expediente);
 		Auditoria.save(adjuntoexp);
         
+		expediente.getAdjuntos().add(adjuntoexp);
+		genericDao.save(Expediente.class, expediente);
+
         return null;
 	}
 	
@@ -463,6 +470,9 @@ public class AdjuntoManager implements AdjuntoApi{
 		
 		adjCnt.setContrato(contrato);
 		Auditoria.save(adjCnt);
+
+		contrato.getAdjuntos().add(adjCnt);
+		genericDao.save(Contrato.class, contrato);
 
         return null;
 	}

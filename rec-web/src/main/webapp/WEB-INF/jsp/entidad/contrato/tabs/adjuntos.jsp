@@ -57,6 +57,7 @@
 		,{name : 'length'}
 		,{name : 'contentType'}
 		,{name : 'descripcion'}
+		,{name : 'tipoFichero'}
 	]);
 
 	var store = page.getStore({
@@ -228,6 +229,7 @@
 		,{header : '<s:message code="adjuntos.descripcion" text="**Descripcion" />', dataIndex : 'descripcion'}
 		,{header : '<s:message code="adjuntos.tamanyo" text="**Tama&ntilde;o" />', dataIndex : 'length', renderer : app.format.fileSizeRenderer}
 		,{header : '<s:message code="plugin.mejoras.adjuntos.tipo" text="**Tipo" />', dataIndex : 'contentType'}
+		,{header : '<s:message code="plugin.mejoras.adjuntos.tipoFichero" text="**Tipo Documento" />', dataIndex : 'tipoFichero'}
 	]);
 
 	var editarDescripcionAdjuntoContrato = new  Ext.Button({

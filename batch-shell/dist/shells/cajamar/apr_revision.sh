@@ -21,7 +21,7 @@ LAUNCH_JOB=ejecutarProcesoArquetipado
 WAIT_FOR_JOBS=procesoArquetipadoRecuperacionesJob,procesoRevisionExpedientesRecuperacionesJob,procesoRevisionClientesRecuperacionesJob,procesoCreacionClientesRecuperacionesJob,procesoCreacionExpedientesRecuperacionesJob,procesoHistorizarArquetipadoRecuperacionesJob
 JMX_TYPE=BatchRecuperaciones
 
-java -jar batch-shell.jar $JMX_USER:$JMX_PW $JMX_HOST:$JMX_PORT devon:type=$JMX_TYPE $LAUNCH_JOB=$ENTIDAD $WAIT_FOR_JOBS
+java -jar /recovery/batch-server/shells/batch-shell.jar $JMX_USER:$JMX_PW $JMX_HOST:$JMX_PORT devon:type=$JMX_TYPE $LAUNCH_JOB=$ENTIDAD $WAIT_FOR_JOBS
 
 exit $?
 

@@ -1,14 +1,7 @@
 #!/bin/bash
-# Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
 
-ENTIDAD=0240 
-DIR_INPUT=../control/etl/backup/
 MAX_WAITING_MINUTES=1
 ficheros=OFICINAS,ZONAS,USUARIOS,ZONPEFUSU
-
-#echo $(basename $0)
-
-DIR_DESTINO=../control/etl/output/aprov-haya/
 
 mascara='_'$ENTIDAD'_'????????
 extensionSem=".sem"
@@ -25,8 +18,8 @@ hora_actual=`date +%Y%m%d%H%M%S`
 
 for fichero in $arrayFicheros
 do
-	ficheroSem=$DIR_INPUT$fichero$mascara$extensionSem
-    ficheroZip=$DIR_INPUT$fichero$mascara$extensionZip
+	ficheroSem=$DIR_BACKUP$fichero$mascara$extensionSem
+    ficheroZip=$DIR_BACKUP$fichero$mascara$extensionZip
 
        #echo "$ficheroSem"
 	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -a ! -e $ficheroZip ]; do
@@ -43,17 +36,17 @@ then
 else
    for fichero in $arrayFicheros
    do
-		mascaraSem=$DIR_INPUT$fichero$mascara$extensionSem
-        mascaraZip=$DIR_INPUT$fichero$mascara$extensionZip
+		mascaraSem=$DIR_BACKUP$fichero$mascara$extensionSem
+        mascaraZip=$DIR_BACKUP$fichero$mascara$extensionZip
         ficheroSem=`ls -Art $mascaraSem | tail -n 1`
         ficheroZip=`ls -Art $mascaraZip | tail -n 1`
 	
-	sed -i 's/ //g' $ficheroSem
+	    sed -i 's/ //g' $ficheroSem
 	
-	#echo "$ficheroZip" "$DIR_DESTINO"
-	#echo "$ficheroSem" "$DIR_DESTINO"
-	cp $ficheroZip $DIR_DESTINO
-	cp $ficheroSem $DIR_DESTINO
+	    #echo "$ficheroZip" "$DIR_HRE_OUTPUT"
+    	#echo "$ficheroSem" "$DIR_HRE_OUTPUT"
+	    cp $ficheroZip $DIR_HRE_OUTPUT
+	    cp $ficheroSem $DIR_HRE_OUTPUT
    done
    echo "$(basename $0) Ficheros encontrados"
    exit 0

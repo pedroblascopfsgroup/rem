@@ -15,32 +15,25 @@
 
 	<%--/*
 		* Para asignar calidad a cada provincia del Despacho - JRA
-		*/ --%>
-	var provinciasNombreData = <app:dict value="${listaProvinciasDespachoNombre}" />;
-	var comboProvinciasNombre = app.creaCombo({
-		data: provinciasNombreData
-    	, name : 'turnadoProvinciasNombre'
-    	,fieldLabel : '<s:message code="plugin.config.despachoExterno.turnado.ventana.provincias" text="**Provincias" />'
-		,width : 130
-    });
+		*/ 
+	--%>
+    
+    var provincia = new Ext.ux.form.StaticTextField({
+		name: 'provincia'
+		,fieldLabel : '<s:message code="plugin.config.despachoExterno.turnado.tabEsquema.ambitoactuacion.provinciaSingular" text="**Provincia" />'
+		,value: '${ambitoActuacion.provincia.descripcion}'
+		//,renderer: 'htmlEncode'
+		,width: 150
+		,height: 30
+		,labelStyle: 'font-weight:bolder;width:100'
+		//,html: txtTiposGestor
+		//,style:'margin-top:5px'
+		,readOnly: true
+	});
 	
 	<pfs:textfield name="calidadProvDesp" labelKey="plugin.config.despachoExterno.turnado.ventana.panelCalidadProvincia.porcentajeCalidad"
-		label="**% Calidad Provincia" value ="" obligatory="false" width="50" />
-	
-	var arrayProvinciasPorcentaje = [ 
-	<c:forEach var="porcentajeProvincia" items="${listaProvinciasPorcentaje}" varStatus="status">
-		<c:if test="${status.index>0}">,</c:if>'<c:out value="${porcentajeProvincia}" />'
-	</c:forEach>
-	];
-	
-	var index;
-	comboProvinciasNombre.on('select', function(){
-		var v = comboProvinciasNombre.getValue();
-		var record = comboProvinciasNombre.findRecord(comboProvinciasNombre.valueField || comboProvinciasNombre.displayField, v);
-		index = comboProvinciasNombre.store.indexOf(record);
-		calidadProvDesp.setValue(arrayProvinciasPorcentaje[index]);
-	});	
-	
+		label="**% Calidad Provincia" value ="${ambitoActuacion.porcentaje}" obligatory="false" width="50" />
+
 	var ambitoActuacionFieldSet = new Ext.form.FieldSet({
 		title : '<s:message code="plugin.config.despachoExterno.turnado.ventana.panelCalidadProvincia.titulo" text="**Asginar calidad provincia" />'
 		,layout:'column'
@@ -49,10 +42,10 @@
 		,bodyStyle:'padding:3px;cellspacing:20px;'
 		,viewConfig : { columns : 1 }
 		,defaults :  {xtype : 'fieldset', autoHeight : true, border : false, width:600 }
-		,items : [{items:[comboProvinciasNombre,calidadProvDesp]}]
+		,items : [{items:[provincia,calidadProvDesp]}]
 		,doLayout:function() {
 				var margin = 40;
-				this.setWidth(600-margin);
+				this.setWidth(400-margin);
 				Ext.Panel.prototype.doLayout.call(this);
 		}
 	});
@@ -67,23 +60,15 @@
 					,items: [ambitoActuacionFieldSet]}
 				]
 	});
-	
+ 	
 	var validarCampos = function() {
-		
-		if(comboProvinciasNombre.getValue() == '')
-			return '<s:message code="plugin.config.despachoExterno.turnado.ventana.panelCalidadProvincia.validacion3" text="**No se ha seleccionado ninguna provincia"/>';
 				
 		if (calidadProvDesp.getValue() == '' || !(calidadProvDesp.getValue() >= 0 && calidadProvDesp.getValue() <= 100)) {
 			return '<s:message code="plugin.config.despachoExterno.turnado.ventana.panelCalidadProvincia.validacion1" text="**Calidad provincia debe tener un valor comprendido entre 0 y 100%"/>';
 		}
 		
-		var totalPercent = 0.0;
-		var contador = 0;
-		<c:forEach items="${listaProvinciasPorcentaje}" varStatus="status" var="calidad">
-            if(index != contador)
-                 totalPercent = totalPercent + parseFloat(arrayProvinciasPorcentaje[contador]);
-            contador++;
-        </c:forEach>
+		var totalPercent = ${sumaPorcentajes}
+
         if(parseFloat(totalPercent) + parseFloat(calidadProvDesp.getValue()) > 100)
 			return '<s:message code="plugin.config.despachoExterno.turnado.ventana.panelCalidadProvincia.validacion2" text="**La suma de las calidades de las provincias exceden el 100% de los casos."/>';
 		
@@ -100,13 +85,13 @@
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){
-			var res = validarCampos();
+		 	var res = validarCampos();
 	    	if(res == null){
 				Ext.Ajax.request({
 					url: page.resolveUrl('turnadodespachos/guardarCalidadProvincia')
 					,params: {
-						despacho: ${despachoId}
-						,codigoProvincia: comboProvinciasNombre.getValue()
+						despacho: ${ambitoActuacion.despacho.id}
+						,codigoProvincia: ${ambitoActuacion.provincia.codigo}
 						,calidadProvincia: calidadProvDesp.getValue()									
 					}
 					,method: 'POST'

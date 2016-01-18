@@ -72,6 +72,8 @@ public class TurnadoDespachosController {
 	private static final String JSP_DOWNLOAD_FILE = "plugin/geninformes/download";
 	private static final String OK_KO_RESPUESTA_JSON = "plugin/coreextension/OkRespuestaJSON";
 	private static final String VIEW_ASIGNAR_CALIDAD_PROVINCIA = "plugin/config/turnadodespachos/editarCalidadProvincia";
+	private static final String VIEW_PROVINCIA_CALIDAD_SEARCH = "plugin/config/turnadodespachos/busquedaProvinciaCalidadJSON";
+	private static final String VIEW_ESQUEMA_TURNADO_AMBITO = "plugin/config/turnadodespachos/editarEsquemaAmbito";
 	
 	private static final String VIEW_DEFAULT = "default";
 
@@ -431,18 +433,18 @@ public class TurnadoDespachosController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String ventanaAsignarCalidadProvincia(@RequestParam(required=false) Long id
+	public String ventanaAsignarCalidadProvincia(@RequestParam(required=false) Long id, @RequestParam(required=false) String codProvincia
 			, Model model) {
 		List<DespachoAmbitoActuacion> listaAmbitoActuacion = (id!=null) 
 				? despachoExternoManager.getAmbitoGeograficoDespacho(id)
 				: new ArrayList<DespachoAmbitoActuacion>();
-		
-		List<DDProvincia> listaProvinciasDespachoNombre = this.getListaProvinciasDespacho(listaAmbitoActuacion);
-		List<String> listaProvinciasPorcentaje = this.getListaProvinciasPorcentaje(listaAmbitoActuacion);
 
-		model.addAttribute("despachoId", id);
-		model.addAttribute("listaProvinciasDespachoNombre", listaProvinciasDespachoNombre);
-		model.addAttribute("listaProvinciasPorcentaje", listaProvinciasPorcentaje);
+		DespachoAmbitoActuacion daa = despachoAmbitoActuacionDao.getByDespachoYProvincia(id, codProvincia);
+		Float sumaTotalPorcentaje = sumaPorcentajesMenosActual(listaAmbitoActuacion,daa);
+	
+		model.addAttribute("ambitoActuacion", daa);
+		model.addAttribute("sumaPorcentajes", sumaTotalPorcentaje);
+
 		return VIEW_ASIGNAR_CALIDAD_PROVINCIA;
 	}
 	
@@ -498,5 +500,109 @@ public class TurnadoDespachosController {
 			if(provincia.getDescripcion().toUpperCase().equals(nombre.toUpperCase()))
 				return provincia;
 		return null;
+	}
+	
+	private Float sumaPorcentajesMenosActual(List<DespachoAmbitoActuacion> listaAmbitoActuacion, DespachoAmbitoActuacion ambitoActual){
+		Float suma = 0.0f;
+		
+		for(DespachoAmbitoActuacion daa : listaAmbitoActuacion) {
+			if(!Checks.esNulo(daa.getPorcentaje()) && !daa.equals(ambitoActual))
+				suma += Float.parseFloat(daa.getPorcentaje());
+		}
+		
+		return suma;
+	}
+	
+	@RequestMapping
+	public String buscarProvincias(@RequestParam(required=true) Long idDespacho, Model model) {
+		
+		List<DespachoAmbitoActuacion> listaAmbitoActuacion = (idDespacho!=null) 
+				? despachoExternoManager.getAmbitoGeograficoDespacho(idDespacho)
+				: new ArrayList<DespachoAmbitoActuacion>();
+		List<DDProvincia> listaProvinciasDespachoNombre = this.getListaProvinciasDespacho(listaAmbitoActuacion);
+		List<String> listaProvinciasPorcentaje = this.getListaProvinciasPorcentaje(listaAmbitoActuacion);
+		//Trampa para asignar porcentaje y asi no crear un objeto nuevo
+		for(int i=0; i<listaProvinciasDespachoNombre.size();i++)
+		{
+			if(listaProvinciasPorcentaje.get(i) != null)
+				listaProvinciasDespachoNombre.get(i).setDescripcionLarga(listaProvinciasPorcentaje.get(i)+"%");
+			else
+				listaProvinciasDespachoNombre.get(i).setDescripcionLarga("0%");
+		}
+		
+		model.addAttribute("provincias",listaProvinciasDespachoNombre);
+		return VIEW_PROVINCIA_CALIDAD_SEARCH;
+	}
+	
+	@RequestMapping
+	public String ventanaEditarAmbito(@RequestParam(value="id", required=true) Long idDespacho, 
+			Model model) {
+		
+		DespachoExterno despacho = despachoExternoManager.getDespachoExterno(idDespacho);
+		model.addAttribute("despacho", despacho);
+		
+		List<DespachoAmbitoActuacion> listaAmbitoActuacion = despachoExternoManager.getAmbitoGeograficoDespacho(idDespacho);
+		List<String> listaComunidadesDespacho = new LinkedList<String>();
+		List<String> listaProvinciasDespacho = new LinkedList<String>();
+		List<DDProvincia> listaProvinciasDespachoNombre = new LinkedList<DDProvincia>();
+		List<String> listaProvinciasPorcentaje = new LinkedList<String>();
+		
+		for(DespachoAmbitoActuacion ambitoActuacion : listaAmbitoActuacion) {
+			
+			if(ambitoActuacion.getComunidad() != null) {
+				listaComunidadesDespacho.add(ambitoActuacion.getComunidad().getCodigo());
+			}
+			
+			if(ambitoActuacion.getProvincia() != null) {
+				listaProvinciasDespacho.add(ambitoActuacion.getProvincia().getCodigo());
+				listaProvinciasDespachoNombre.add(ambitoActuacion.getProvincia());
+				listaProvinciasPorcentaje.add(ambitoActuacion.getPorcentaje());
+			}
+		}
+		
+		model.addAttribute("listaComunidadesDespacho", listaComunidadesDespacho);
+		model.addAttribute("listaProvinciasDespacho", listaProvinciasDespacho);
+		model.addAttribute("listaProvinciasDespachoNombre", listaProvinciasDespachoNombre);
+		model.addAttribute("listaProvinciasPorcentaje", listaProvinciasPorcentaje);
+	
+		
+		model.addAttribute("listaComunidadesAutonomas", utilDiccionarioManager.dameValoresDiccionario(DDComunidadAutonoma.class));
+		model.addAttribute("listaProvincias", utilDiccionarioManager.dameValoresDiccionario(DDProvincia.class));
+		
+		return VIEW_ESQUEMA_TURNADO_AMBITO;
+	}
+	
+/*	@RequestMapping
+	public String guardarAmbitoDespacho(@RequestParam(value="id", required=true) Long idDespacho, 
+			@RequestParam(value="listaComunidades", required=true) String[] listaComunidades,
+			@RequestParam(value="listaProvincias", required=true) String[] listaProvincias,
+			Model model) {
+		DespachoAmbitoActuacion daa;
+		listaComunidades = listaComunidades[0].split(",");
+		for(String codComunidad : listaComunidades) {
+			daa = despachoAmbitoActuacionDao.getByDespachoYComunidad(idDespacho, codComunidad);
+			if(Checks.esNulo(daa)) {
+				daa = new DespachoAmbitoActuacion();
+				//daa.setDespacho(idDespacho);
+			}
+			despachoExternoManager.guardarAmbitoActuacion(daa);
+		}
+		listaProvincias = listaProvincias[0].split(",");
+		for(String codProvincia : listaProvincias) {
+			daa = despachoAmbitoActuacionDao.getByDespachoYProvincia(idDespacho, codProvincia);
+			despachoExternoManager.guardarAmbitoActuacion(daa);
+		}
+		
+		return VIEW_DEFAULT;
+	}*/
+	
+	@RequestMapping
+	public String guardarAmbitoDespacho(EsquemaTurnadoDespachoDto dto,
+			Model model) {
+		if (dto.validar()) {
+			despachoExternoManager.saveEsquemaDespacho(dto);
+		}
+		
+		return VIEW_DEFAULT;
 	}
 }

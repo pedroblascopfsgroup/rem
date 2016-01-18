@@ -2,6 +2,8 @@ package es.capgemini.pfs.users;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -9,6 +11,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -77,6 +80,8 @@ public class UsuarioManager {
     private EntidadConfigDao entidadConfigDao;
 	@Autowired
 	private EntityDataSource entityDataSource;
+	@Autowired(required = false)
+    List<DynamicElement> elements;
     
     
 
@@ -523,4 +528,118 @@ public class UsuarioManager {
     public List<Perfil> getPerfiList() {
         return perfilDao.getList();
     }
+    
+    @BusinessOperation("usuarioManager.getMenuDefinition")
+    public List<MenuItem> getMenuDefinition(String entity) {
+    	 List<DynamicElement> list = getDynamicElements(entity, null);
+
+         List<MenuItem> menu = new ArrayList<MenuItem>();
+         int level = 0;
+
+         while (getNivel(list, level).size() > 0) {
+             for (DynamicElement item : getNivel(list, level)) {
+                 MenuItem m = new MenuItem(item.getName(), item.getFileName(), new ArrayList<MenuItem>());
+                 if (item.getName().contains("*")) m.setCurlyBraces(false);
+                 MenuItem padre = buscaPadre(menu, m.getId());
+                 if (padre == null) {
+                     menu.add(m);
+                 } else {
+                     List<MenuItem> submenu = padre.getMenu();
+                     if (submenu == null) submenu = new ArrayList<MenuItem>();
+                     submenu.add(m);
+                     padre.setMenu(submenu);
+                 }
+             }
+             level++;
+         }
+
+         return menu;
+    }
+    
+    public List<DynamicElement> getNivel(List<DynamicElement> lista, int level) {
+        List<DynamicElement> filtrados = new ArrayList<DynamicElement>();
+        for (DynamicElement item : lista) {
+            if (StringUtils.countMatches(item.getName(), "/") == level) {
+                filtrados.add(item);
+            }
+        }
+        return filtrados;
+    }
+    
+    public MenuItem buscaPadre(List<MenuItem> list, String id) {
+        String key = id;
+        MenuItem item = null;
+        List<MenuItem> padre = list;
+        for (int i = 0; i < StringUtils.countMatches(id, "/"); i++) {
+            String k = StringUtils.substringBefore(key, "/");
+            item = getItem(padre, k);
+            if (item != null) {
+                padre = item.getMenu();
+                if (padre == null) padre = new ArrayList<MenuItem>();
+            }
+            key = StringUtils.substringAfter(key, "/");
+        }
+        return item;
+    }
+    
+    private MenuItem getItem(List<MenuItem> list, String id) {
+        for (MenuItem item : list) {
+            if (item.getId().equals(id)) { return item; }
+
+        }
+        return null;
+    }
+    
+    @BusinessOperation
+    public List<DynamicElement> getDynamicElements(String entity, Object param) {
+        List<DynamicElement> els = new ArrayList<DynamicElement>();
+        if (elements == null) return els;
+
+        for (DynamicElement tab : getElements(entity, param)) {
+            DynamicElement found = find(els, tab.getName());
+            if (found == null) {
+                els.add(new DynamicElementAdapter("", tab.getName(), tab.getFileName(), tab.getOrder(), tab.getPriority()));
+            } else {
+                if (found.getOrder() <= tab.getOrder()) {
+                    els.remove(found);
+                    els.add(new DynamicElementAdapter("", tab.getName(), tab.getFileName(), tab.getOrder(), tab.getPriority()));
+                }
+            }
+        }
+
+        sortElements(els);
+
+        return els;
+    }
+    
+    private List<DynamicElement> getElements(String entity, Object param) {
+        List<DynamicElement> valids = new ArrayList<DynamicElement>();
+        for (DynamicElement el : elements) {
+            if (isEnabled(el) && el.getEntity().equals(entity) && el.valid(param)) {
+                valids.add(el);
+            }
+        }
+        return valids;
+    }
+    
+    private void sortElements(List<DynamicElement> tabs) {
+        Collections.sort(tabs, new Comparator<DynamicElement>() {
+            public int compare(DynamicElement o1, DynamicElement o2) {
+                return new Integer(o1.getOrder()).compareTo(o2.getOrder());
+            }
+        });
+    }
+    
+    private DynamicElement find(List<DynamicElement> els, String name) {
+        for (DynamicElement item : els) {
+            if (item.getName().equals(name)) { return item; }
+        }
+        return null;
+    }
+    
+    private boolean isEnabled(DynamicElement element) {
+        return !element.getName().startsWith("-");
+    }
+
+    
 }

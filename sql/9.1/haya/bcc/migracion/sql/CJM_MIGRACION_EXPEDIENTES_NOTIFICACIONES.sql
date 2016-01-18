@@ -119,7 +119,10 @@ BEGIN
 	       MIG.FECHA_ENVIO,
 	       MIG.FECHA_ENVIO,
 	       MIG.FECHA_ACUSE_RECIBO,
-	       DECODE(MIG.FECHA_ENVIO,NULL,2,101) AS DD_PCO_BFR_ID,
+	       DECODE(MIG.FECHA_ENVIO,NULL
+	                             ,(select DD_PCO_BFR_ID from '||V_ESQUEMA||'.DD_PCO_BFR_RESULTADO where DD_PCO_BFR_CODIGO = 11) --Preparado
+	                             ,(select DD_PCO_BFR_ID from '||V_ESQUEMA||'.DD_PCO_BFR_RESULTADO where DD_PCO_BFR_CODIGO = 0) --Entragado
+	                             ) AS DD_PCO_BFR_ID,
 	       SYS_GUID(),
 	       0,
 	       '''||USUARIO||''',

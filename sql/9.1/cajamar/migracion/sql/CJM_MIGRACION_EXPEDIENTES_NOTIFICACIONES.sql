@@ -3,6 +3,8 @@
 -- Creador: Jaime Sánchez-Cuenca, PFS Group
 -- Modificador: 
 -- Fecha: 12/01/2016
+--        18/01/2016 GMN:> Se corrección de DD_PCO_BFR_ID, acceso a diccionario por código y 
+--                         uso de subconsulta con WITH para PCO_BUR_ENVIO
 /***************************************/
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -111,7 +113,15 @@ BEGIN
                           ,SYS_GUID
                           ,VERSION
                           ,USUARIOCREAR
-                          ,FECHACREAR)
+                          ,FECHACREAR) 
+        WITH MIG_EXPNOT AS  ( SELECT CD_EXPEDIENTE
+                            , FECHA_ENVIO
+                            , FECHA_ACUSE_RECIBO
+                            , CODIGO_ENTIDAD
+                            , CODIGO_PERSONA
+                            , SUBSTR(REPLACE(NOMBRE_VIA,''C/'',''''),1,INSTR(NOMBRE_VIA,'','')-1) AS DIR_DOMICILIO
+                            , CODIGO_POSTAL 
+                     FROM '||V_ESQUEMA||'.MIG_EXPEDIENTES_NOTIFICACIONES)                          
 	SELECT '||V_ESQUEMA||'.S_PCO_BUR_ENVIO_ID.NEXTVAL,
 	       BUR.PCO_BUR_BUROFAX_ID,
 	       DIR.DIR_ID,
@@ -119,12 +129,15 @@ BEGIN
 	       MIG.FECHA_ENVIO,
 	       MIG.FECHA_ENVIO,
 	       MIG.FECHA_ACUSE_RECIBO,
-	       DECODE(MIG.FECHA_ENVIO,NULL,2,101) AS DD_PCO_BFR_ID,
+	       DECODE(MIG.FECHA_ENVIO,NULL
+	                             ,(select DD_PCO_BFR_ID from '||V_ESQUEMA||'.DD_PCO_BFR_RESULTADO where DD_PCO_BFR_CODIGO = 11) --Preparado
+	                             ,(select DD_PCO_BFR_ID from '||V_ESQUEMA||'.DD_PCO_BFR_RESULTADO where DD_PCO_BFR_CODIGO = 0) --Entragado
+	                             ) AS DD_PCO_BFR_ID,
 	       SYS_GUID(),
 	       0,
 	       '''||USUARIO||''',
 	       SYSDATE       
-	FROM '||V_ESQUEMA||'.MIG_EXPEDIENTES_NOTIFICACIONES MIG,
+	FROM MIG_EXPNOT MIG,
 	     '||V_ESQUEMA||'.PCO_BUR_BUROFAX BUR,
 	     '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS PCO,
 	     '||V_ESQUEMA||'.PER_PERSONAS PER,
@@ -133,7 +146,7 @@ BEGIN
 	AND PCO.PCO_PRC_ID = BUR.PCO_PRC_ID
 	AND MIG.CODIGO_ENTIDAD||MIG.CODIGO_PERSONA = PER.PER_COD_CLIENTE_ENTIDAD
 	AND PER.PER_ID = BUR.PER_ID
-	AND SUBSTR(REPLACE(MIG.NOMBRE_VIA,''C/'',''''),1,INSTR(MIG.NOMBRE_VIA,'','')-1) = DIR.DIR_DOMICILIO
+	AND MIG.DIR_DOMICILIO = DIR.DIR_DOMICILIO
 	AND MIG.CODIGO_POSTAL = DIR.DIR_COD_POST_INTL';
 
         DBMS_OUTPUT.PUT_LINE('Insert en PCO_BUR_ENVIO: '||sql%rowcount);

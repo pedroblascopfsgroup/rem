@@ -1,13 +1,8 @@
 #!/bin/bash
 # Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
  
-DIR_INPUT=/recovery/transferencia/aprov_troncal/
 MAX_WAITING_MINUTES=10
 ficheros=USUARIOS,ZONPEFUSU
-
-#echo $(basename $0)
-
-DIR_DESTINO=/recovery/batch-server/control/etl/input/
 
 mascara='_'$ENTIDAD'_'????????
 extensionSem=".sem"
@@ -24,8 +19,8 @@ hora_actual=`date +%Y%m%d%H%M%S`
 
 for fichero in $arrayFicheros
 do
-	ficheroSem=$DIR_INPUT$fichero$mascara$extensionSem
-        ficheroZip=$DIR_INPUT$fichero$mascara$extensionZip
+	ficheroSem=$DIR_INPUT_TR$fichero$mascara$extensionSem
+        ficheroZip=$DIR_INPUT_TR$fichero$mascara$extensionZip
 
         #echo "$ficheroSem"
 	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -a ! -e $ficheroZip ]; do
@@ -42,8 +37,8 @@ then
 else
    for fichero in $arrayFicheros
    do
-	mascaraSem=$DIR_INPUT$fichero$mascara$extensionSem
-        mascaraZip=$DIR_INPUT$fichero$mascara$extensionZip
+	mascaraSem=$DIR_INPUT_TR$fichero$mascara$extensionSem
+        mascaraZip=$DIR_INPUT_TR$fichero$mascara$extensionZip
         ficheroSem=`ls -Art $mascaraSem | tail -n 1`
         ficheroZip=`ls -Art $mascaraZip | tail -n 1`
 

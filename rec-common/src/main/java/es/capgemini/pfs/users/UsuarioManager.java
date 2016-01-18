@@ -343,7 +343,7 @@ public class UsuarioManager {
             loggedUser = get(((UsuarioSecurity) SecurityUtils.getCurrentUser()).getId());
         }
         
-        loggedUser.initialize();
+        HibernateUtils.refresh(loggedUser);
         
         if( RequestContextHolder.getRequestAttributes()!=null)
             RequestContextHolder.getRequestAttributes().setAttribute(USER_SESSION_KEY,loggedUser,RequestAttributes.SCOPE_SESSION);

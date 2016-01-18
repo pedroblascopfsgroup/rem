@@ -3,8 +3,6 @@
 MAX_WAITING_MINUTES=10
 ficheros=OFICINAS,ZONAS
 
-DIR_BACKUP=/recovery/batch-server/control/etl/backup/
-
 rm $DIR_DESTINO*
 
 mascara='_'$ENTIDAD'_'????????

@@ -43,6 +43,6 @@ public interface MEJExpedienteApi {
 	
 
 	@BusinessOperationDefinition(OBTENER_ZONAS_JERARQUIA_BY_COD_OR_DESC)
-	public List<DDZona> getZonasJerarquiaByCodDesc(Long idNivel, String codDesc);
+	public List<DDZona> getZonasJerarquiaByCodDesc(Integer idNivel, String codDesc);
     
 }

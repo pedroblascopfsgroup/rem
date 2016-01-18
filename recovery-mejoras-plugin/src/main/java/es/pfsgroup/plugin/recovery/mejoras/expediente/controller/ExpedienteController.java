@@ -31,7 +31,7 @@ public class ExpedienteController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String getZonasInstant(Long idJerarquia, String query, ModelMap model) {
+	public String getZonasInstant(Integer idJerarquia, String query, ModelMap model) {
 		List<DDZona> zonas = mejExpedienteApi.getZonasJerarquiaByCodDesc(idJerarquia, query);
 		model.put("zonas", zonas);
 		return JSON_LISTADO_ZONAS;

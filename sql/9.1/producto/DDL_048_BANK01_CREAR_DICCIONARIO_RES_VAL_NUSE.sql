@@ -48,7 +48,7 @@ and sequence_name = 'S_DD_RVN_RES_VALIDACION_NUSE';
 if V_NUM_SEQ > 0 then 
 --YA existe una versión de la secuencia , se elimina primero
   DBMS_OUTPUT.PUT('[INFO] Ya existe una versión de la secuencia S_DD_RVN_RES_VALIDACION_NUSE: se ELIMINA...');
-  EXECUTE IMMEDIATE 'drop sequence '||V_ESQUEMA||'.S_CDD_CRN_RESULTADO_NUSE';
+  EXECUTE IMMEDIATE 'drop sequence '||V_ESQUEMA||'.S_DD_RVN_RES_VALIDACION_NUSE';
   DBMS_OUTPUT.PUT_LINE('OK');
 END IF;
 

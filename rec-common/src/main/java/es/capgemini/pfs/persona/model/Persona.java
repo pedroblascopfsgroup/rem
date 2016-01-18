@@ -2,9 +2,11 @@ package es.capgemini.pfs.persona.model;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -69,6 +71,8 @@ import es.capgemini.pfs.scoring.model.PuntuacionTotal;
 import es.capgemini.pfs.segmento.model.DDSegmento;
 import es.capgemini.pfs.segmento.model.DDSegmentoEntidad;
 import es.capgemini.pfs.telefonos.model.Telefono;
+import es.capgemini.pfs.users.domain.Funcion;
+import es.capgemini.pfs.users.domain.FuncionPerfil;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.utils.Describible;
@@ -508,16 +512,20 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	@JoinColumn(name = "DD_ARG_ID")
 	private DDAreaGestion areaGestion;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "TEL_PER", joinColumns = { @JoinColumn(name = "PER_ID", unique = true) }, inverseJoinColumns = { @JoinColumn(name = "TEL_ID") })
+	@OneToMany(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PER_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private List<Telefono> telefonos;
+	private List<PersonasTelefono> personasTelefono;
 	
 	@OneToOne(fetch = FetchType.LAZY, optional=true)
 	@JoinColumn(name = "PER_ID", updatable= false)
 	@LazyToOne(LazyToOneOption.PROXY)
 	private PersonaFormulas formulas;
 	
+	@OneToOne(fetch = FetchType.LAZY)
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	@JoinColumn(name = "DD_SIC_ID")
+	private DDSituacConcursal sitConcursal;	
 
 	/**
 	 * @return the id
@@ -767,6 +775,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	 */
 	public Float getTotalBienes() {
 		Float totalBien = 0F;
+
 		for (Bien b : getBienes()) {
 			if (b.getValorActual() != null && b.getParticipacion() != null) {
 				totalBien += b.getValorActual().floatValue()
@@ -3017,18 +3026,30 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	        fieldHandler.writeObject(this, "areaGestion", this.areaGestion, areaGestion);
 		this.areaGestion = areaGestion;
 	}
-
-	public List<Telefono> getTelefonos() {
-		if(fieldHandler!=null)
-	        return (List<Telefono>)fieldHandler.readObject(this, "telefonos", telefonos);
-		return telefonos;
+	
+	public List<PersonasTelefono> getPersonasTelefono() {
+		return personasTelefono;
 	}
 
-	public void setTelefonos(List<Telefono> telefonos) {
-		if(fieldHandler!=null)
-	        fieldHandler.writeObject(this, "telefonos", this.telefonos, telefonos);
-		this.telefonos = telefonos;
+	public void setPersonasTelefono(List<PersonasTelefono> personasTelefono) {
+		this.personasTelefono = personasTelefono;
 	}
+
+	/**
+     * @return telefonos
+     */
+    public List<Telefono> getTelefonos() {
+    	List<Telefono> telefonos = new ArrayList<Telefono>();
+
+        for (PersonasTelefono pt : personasTelefono) {
+        	//FIXME Esto es un parche, ya que el borrado de teléfono no está actuando
+            if(!pt.getTelefono().getAuditoria().isBorrado()){
+            	telefonos.add(pt.getTelefono());
+            }
+        }
+
+        return telefonos;
+    }
 
 	public String getServicioNominaPension() {
 		return this.getFormulas() == null ? null :this.getFormulas().getServicioNominaPension();
@@ -3090,4 +3111,17 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 		return formulas;
 	}
 
+	/**
+	 * @return the sitConcursal
+	 */
+	public DDSituacConcursal getSitConcursal() {
+		return sitConcursal;
+	}
+
+	/**
+	 * @param sitConcursal the sitConcursal to set
+	 */
+	public void setSitConcursal(DDSituacConcursal sitConcursal) {
+		this.sitConcursal = sitConcursal;
+	}
 }

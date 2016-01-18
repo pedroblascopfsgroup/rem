@@ -21,16 +21,12 @@
 <%@ attribute name="tab_type" required="false" type="java.lang.String"%>
 
 
-
-
-
-
-
 <c:choose>
 	<c:when test="${onSuccessMode == 'tab'}">
 		var ${name}_handler =  function() {
 			var p = ${parameters}();
 			p.event = "guardar";
+			
 			Ext.Ajax.request({
 				url : page.resolveUrl('${saveOrUpdateFlow}'), 
 				params : p,
@@ -51,6 +47,95 @@
 			});
 		};
 	</c:when>
+	
+	<%--  	/* BKREC-1349
+			* Alternativa al handler de arriba, la diferencia reside en que en el siguiente handler, mostrar un mensaje de  
+		 	* 'Guardando...' cuando esta procesando la operación de guardar, oscureciendo la pantalla. 
+		 	* De esta forma el user puede ver que al pulsar el botón Guardar, esta realizando cálculos, y debe esperar. 
+		 	*/ --%> 
+	<c:when test="${onSuccessMode == 'tabConMsgGuardando'}">
+		var ${name}_handler =  function() {
+			var p = ${parameters}();
+			p.event = "guardar";
+			
+			
+			if(p.tipoTab !=null && p.tipoTab=="altaUsuarios")
+			{
+				if(p.permiteGuardar != null && ((p.despachoExterno == "" && p.tipoDespacho != "") || (p.despachoExterno != "" && p.tipoDespacho == "")) )
+					p.permiteGuardar = false;
+			}
+			<%-- BKREC-1492 - Este if sirve para controlar si algun campo recibido es erroneo, y asi que no deje guardar el proceso
+				En caso de que no existe el parametro 'permiteGuardar' no pasará nada, y seguirá su cauce natural. --%>
+			if(p.permiteGuardar == null || p.permiteGuardar) {
+				new Ext.LoadMask(panelEdicion.body, {msg:'<s:message code="fwk.ui.form.guardando" text="**Guardando.."/>'}).show();
+				
+				Ext.Ajax.request({
+					url : page.resolveUrl('${saveOrUpdateFlow}'), 
+					params : p,
+					method: 'POST',
+					success: function ( result, request ) {
+						var result = Ext.util.JSON.decode(result.responseText);
+						var param = {${tab_paramName}:result.${tab_paramValue}};
+						//Ext.MessageBox.alert('Success', 'parametros= ' + param);
+						app.openTab(${tab_titleData}.getValue()
+							,'${tab_flow}'
+							,param
+							,{id:'${tab_type}'+result.${tab_paramValue}<c:if test="${tab_iconCls != null}">,iconCls:'${tab_iconCls}'</c:if>});
+						page.fireEvent(app.event.DONE);
+					}
+	
+				});
+			}
+			else{
+				Ext.Msg.alert('Error', '<s:message code="rec-web.direccion.validacion.camposObligatorios" text="**Debe rellenar los campos obligatorios." />');
+				btnGuardar.setDisabled(false);
+       		 	btnCancelar.setDisabled(false);					
+			}
+		};
+	</c:when>
+	
+	<%--	/** BKREC-1349
+			* Alternativa al handler de ABAJO, se ha creado por lo mismo que el de arriba, solo que para este caso es un handler más
+			* simple y genérico. 
+			* Es decir, para las etiquetas <pfs:editForm ...> que no tengan el parametro onSuccessMode, le añadimos el parametro
+			* con el valor tabGenericoConMsgGuardando, para que les salga el mensaje de Guardando... mientras se resuelve la petición.
+			*/ --%> 
+	<c:when test="${onSuccessMode == 'tabGenericoConMsgGuardando'}">
+		var ${name}_handler =  function() {
+			var p = ${parameters}();
+			
+			<%-- Los siguientes 2 if solo funcionan con supervisardespacho.jsp y asociaPerfilUsuario.jsp --%>
+			if(p.tipoTab !=null && p.tipoTab=="supervisardespacho")
+			{
+				if(p.permiteGuardar != null && p.despachoExterno == "")
+					p.permiteGuardar = false;
+			}
+			if(p.tipoTab !=null && p.tipoTab=="asociaPerfilUsuario")
+			{
+				if(p.permiteGuardar != null && (p.password == "" || p.idsZona == "" || p.idPerfil == ""))
+					p.permiteGuardar = false;
+			}					
+			
+			if(p.permiteGuardar == null || p.permiteGuardar) {
+				new Ext.LoadMask(panelEdicion.body, {msg:'<s:message code="fwk.ui.form.guardando" text="**Guardando.."/>'}).show();
+		
+				page.webflow({
+					flow: '${saveOrUpdateFlow}'
+					,params: ${parameters}
+					,success : ${name}_onsuccess
+				});
+			}
+			else{
+				Ext.Msg.alert('Error', '<s:message code="rec-web.direccion.validacion.camposObligatorios" text="**Debe rellenar los campos obligatorios." />');		
+				btnGuardar.setDisabled(false);
+       		 	btnCancelar.setDisabled(false);			
+			}
+		};
+		var ${name}_onsuccess = function(){ 
+			page.fireEvent(app.event.DONE); 
+		};
+	</c:when>
+	
 	<c:otherwise>
 	
 		var ${name}_handler =  function() {

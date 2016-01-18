@@ -411,6 +411,19 @@ var comboJerarquia = app.creaCombo({
 	fieldLabel : '<s:message code="menu.clientes.listado.filtro.jerarquia" text="**Jerarquia" />'
 });
 
+<%-- Total importe (Desde / Hasta) --%>
+
+<pfsforms:numberfield name="fieldImporteDesde" labelKey="plugin.precontencioso.tab.expjudicial.importe.desde" label="** Importe desde" 
+	value="" 
+	obligatory="false" 
+	allowDecimals="true" />
+
+<pfsforms:numberfield name="fieldImporteHasta" labelKey="plugin.precontencioso.tab.expjudicial.importe.hasta" label="** Importe hasta"
+	value=""
+	obligatory="false" 
+	allowDecimals="true" />
+
+
 //Campo Zonas, double select 
 var creaDblSelectZonas = function(label, config){
 
@@ -520,10 +533,10 @@ var filtrosTabDatosProcedimiento = new Ext.Panel({
 	layoutConfig: {columns: 2},
 	items: [{
 		layout: 'form',
-		items: [fieldCodigo, fieldNombreExpedienteJudicial, fieldDiasGestion, comboTipoProcPropuesto, comboTipoPreparacion, comboDisponibleDocumentos, comboDisponibleLiquidaciones, comboDisponibleBurofaxes, comboJerarquia, comboZonas]
+		items: [fieldCodigo, fieldNombreExpedienteJudicial, fieldDiasGestion, comboTipoProcPropuesto, comboTipoPreparacion, comboDisponibleDocumentos, comboDisponibleLiquidaciones, comboDisponibleBurofaxes, comboJerarquia, comboZonas, fieldImporteDesde]
 	}, {
 		layout: 'form',
-		items: [panelFechaInicioPreparacion, panelFechaPreparado, panelFechaEnviadoLetrado, panelFechaFinalizado, panelFechaUltimaSubsanacion, panelFechaCancelado, comboTiposGestor, comboDespachos, comboGestor, filtroEstadoPreparacion]
+		items: [panelFechaInicioPreparacion, panelFechaPreparado, panelFechaEnviadoLetrado, panelFechaFinalizado, panelFechaUltimaSubsanacion, panelFechaCancelado, comboTiposGestor, comboDespachos, comboGestor, filtroEstadoPreparacion, fieldImporteHasta]
 	}]
 });
 
@@ -564,6 +577,8 @@ var getParametrosFiltroProcedimiento = function() {
 	out.proDisponibleLiquidaciones = comboDisponibleLiquidaciones.getValue();
 	out.proDisponibleBurofaxes = comboDisponibleBurofaxes.getValue();
 	out.proDiasGestion = fieldDiasGestion.getValue();
+	out.importeDesde = fieldImporteDesde.getValue();
+	out.importeHasta = fieldImporteHasta.getValue();
 
 	return out;
 }

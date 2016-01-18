@@ -1,0 +1,20 @@
+apr_wait_ofi_zon.sh
+apr_main_ofi_zon.sh
+apr_wait_users.sh
+apr_main_users.sh
+apr_move_ofi_zon_users.sh
+cleanBatch2.sh
+extract_pcr.sh
+apr_load_person.sh
+apr_load_contract.sh
+apr_load_relation.sh
+apr_validacion_pcr.sh PCR
+apr_pcr_contract.sh
+apr_pcr_person.sh
+apr_pcr_mov.sh
+apr_pcr_relation.sh
+apr_precalculo_pcr.sh
+apr_pcr_precal_per.sh
+apr_pcr_refresh_dde.sh
+apr_ana_man.sh
+apr_gen_pcr_ptro.sh

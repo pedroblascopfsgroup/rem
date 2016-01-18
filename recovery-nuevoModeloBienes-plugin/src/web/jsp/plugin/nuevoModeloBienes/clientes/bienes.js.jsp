@@ -105,7 +105,7 @@
 		inscripcion_valor = '${NMBbien.datosRegistralesActivo.inscripcion}';
 		numFinca_valor = '${NMBbien.datosRegistralesActivo.numFinca}';
 		numRegistro_valor = '${NMBbien.datosRegistralesActivo.numRegistro}';
-		municipoLibro_valor = '${NMBbien.datosRegistralesActivo.municipoLibro}';
+		municipoLibro_valor = '<s:message javaScriptEscape="true" text="${NMBbien.datosRegistralesActivo.municipoLibro}" />';
 		municipioRegistro_valor = '${NMBbien.datosRegistralesActivo.localidad.codigo}';
 		provinciaRegistro_valor = '${NMBbien.datosRegistralesActivo.provincia.codigo}';
 		codigoRegistro_valor = '${NMBbien.datosRegistralesActivo.codigoRegistro}';
@@ -385,11 +385,11 @@
 				autoCreate : {
 					tag: "input"
 					, type: "text"
-					,maxLength:"8"
+					,maxLength:"14"
 					, autocomplete: "off"
 				}
-				, maxLength:8
-				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener mï¿½s de 8 dï¿½gitos" arguments="8" />'
+				, maxLength:14
+				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener mï¿½s de 14 dï¿½gitos" arguments="14" />'
 				,labelStyle : labelStyle
 			}
 		);
@@ -1309,24 +1309,37 @@
 		}
 		var errores;
 		var validarFormNMB = function() {
-			if(tipoNMB.getValue() == null || tipoNMB.getValue() == '' ){
+			var tipoBien = tipoNMB.getValue();
+			
+			if(tipoBien == null || tipoBien == '' ){
 				return false;
-			}
-			var tabs  = [pestanaPrincipal,pestanaValoraciones,pestanaDatosRegistrales,pestanaEmpresa,pestanaIAE,pestanaVehiculo,pestanaProductosBanco,pestanaLocalizacion,pestanaObservaciones,pestanaCuentaBancaria];
+			}			
 			
-			for(var i=0;i < tabs.length;i++) {
-				<%-- if (listaTabs[i].tipoBien == tipoNMB.getValue())  {
-					for(var x=0;x < listaTabs[i].tabs.length; x++) {--%>
-				if (!validaTab(tabs[i])) {
-					return false;
-				}
-					//}
-				//return true;
-			//	}				
-			}
-			return true;
+			var tipoBienValidar = getTipoBienValidar(tipoBien);
 			
+			for(var i=0;i < listaTabs.length;i++) {
+				 if (listaTabs[i].tipoBien == tipoBienValidar)  {	 	
+				 	<!-- Comprobamos pestañas del tipo de bien correspondiente -->
+					for(var x=0;x < listaTabs[i].tabs.length; x++) {
+						if (!validaTab(listaTabs[i].tabs[x])) {
+							return false;
+						}
+					}
+				return true;
+				}				
+			}
+			return true;			
 		}
+				
+		<!-- Obtiene el tipoBien cuyas pestañas se validarán, en caso de no encontrarse, se validarán las pestañas por defecto -->
+		var getTipoBienValidar = function(tipoBien){
+			for(var i=0;i < listaTabs.length;i++) {
+				 if (listaTabs[i].tipoBien == tipoBien)  {
+				 	return listaTabs[i].tipoBien;
+				 }	
+			}
+			return 'DEFECTO';
+		} 		
 		
 		var NMBparticipacion = app.creaInteger(
 			'bien.participacion'
@@ -1462,11 +1475,11 @@
 			autoCreate : {
 				tag: "input"
 				, type: "text"
-				,maxLength:"8"
+				,maxLength:"14"
 				, autocomplete: "off"
 			}
-			, maxLength:8
-			, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener mï¿½s de 8 dï¿½gitos" arguments="8" />'
+			, maxLength:14
+			, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener mï¿½s de 14 dï¿½gitos" arguments="14" />'
 		}
 	);
 	var cargas = app.creaNumber(
@@ -2172,9 +2185,21 @@
 		this.tipoBien = tipoBien;
 		this.tabs = tabs;
 	}
-	
-	<c:forEach items="${tabs}" var="entry">
-		listaTabs[listaTabs.length] = new objTabs('${entry.key}',${entry.value.listaTabs});
+	   
+    <c:forEach items="${tabs}" var="entry">
+		var lista = [];
+		<%-- Es posible que algunas de las pestaï¿½as existentes en la configuraciï¿½n no estï¿½n definidas en la jsp, por eso filtramos la lista. --%>
+		<c:forEach items = "${entry.value.listaTabs}" var="tab">
+			try{
+				if(${tab}){
+					lista[lista.length] = ${tab};
+				}
+			}catch(e){
+				<%-- Si la pestaï¿½a no se ha creado, no se intenta aï¿½adir. --%>		
+			}	
+		</c:forEach>
+		listaTabs[listaTabs.length] = new objTabs('${entry.key}',lista);
     </c:forEach>
+    
     muestraTabs('${NMBbien.tipoBien.codigo}' || 'DEFECTO');
 </fwk:page>

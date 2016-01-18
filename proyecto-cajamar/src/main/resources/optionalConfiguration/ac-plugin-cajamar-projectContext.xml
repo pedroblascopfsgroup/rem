@@ -244,9 +244,20 @@
 			</set>
 		</property>
 	</bean>	
+	
+	<bean id="commonProjectContextCAJAMAR" parent="commonProjectContextDefault">
+		<property name="tipoGestores">
+			<map>
+				<entry key="CODIGO_TIPO_GESTOR_EXTERNO" value="GESCON" />
+				<entry key="CODIGO_TIPO_GESTOR_SUPERVISOR" value="SUCON" />
+			</map>
+		</property>		
+
+	</bean>
 
 	<alias name="nmbCommonProjectContextCAJAMAR" alias="nmbCommonProjectContext"/>
 	<alias name="procedimientosProjectContextCAJAMAR" alias="procedimientosProjectContext"/>		
 	<alias name="coreProjectContextCAJAMAR" alias="coreProjectContext"/>
+	<alias name="commonProjectContextCAJAMAR" alias="commonProjectContext"/>
 	<alias name="adjuntoManagerHayaImpl" alias="adjuntoManagerImpl"/>
 </beans>	

@@ -24,6 +24,7 @@
 	<json:property name="tieneContratosParaCliente" value="${tieneContratos==true}" />
 	<json:property name="tieneContratosActivos" value="${tieneContratosActivos}" />
 	<json:property name="tieneContratosLibres" value="${tieneContratosLibres}" />
+	<json:property name="numContratos" value="${persona.numContratos}" />
 	<json:property name="idCliente" value="${persona.clienteActivo.id}" />
 	<json:property name="fechaCreacion" >
 		<fwk:date value="${persona.fechaCreacion}"/>
@@ -204,6 +205,7 @@
 				<s:message code="mensajes.no"/>
 			</c:if>
 		</json:property>
+		<json:property name="sitConcursal" value="${persona.sitConcursal.descripcion}" />
 		<json:property name="fechaSituacionConcursal" value="${persona.fechaSituacionConcursal}"/>
 		<json:property name="clienteReestructurado">
 			<c:if test="${persona.clienteReestructurado}">
@@ -248,6 +250,14 @@
 		<json:property name="zonaTerritorial" value="${zonaTerritorial.descripcion}" />
 		
 		<json:property name="cnae" value="${persona.descripcionCnae}" />
+		<json:property name="accionFSR">
+			<c:if test="${accionFSR}">
+				<s:message code="mensajes.si"/>
+			</c:if>
+			<c:if test="${!accionFSR}">
+				<s:message code="mensajes.no"/>
+			</c:if>
+		</json:property>
 	    
 	</json:object>
 	<json:object name="solvencia">

@@ -1,138 +1,170 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-	<!-- PASO 1 - TRUNCADO TABLAS TEMPORALES -->
-	<entry key="recobro.borrado.tmp_rec_exp_sin_personas_sub.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_EXP_SIN_PERSONAS_SUB
-		]]>
-	</entry>
-	<entry key="recobro.borrado.tmp_rec_exp_sin_riesgos_sub.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_EXP_SIN_RIESGOS_SUB
-		]]>
-	</entry>
-	<entry key="recobro.borrado.tmp_rec_exp_sin_contratos_sub.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_EXP_SIN_CONTRATOS_SUB
-		]]>
-	</entry>
-	<entry key="recobro.borrado.tmp_rec_exp_sin_personas.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_EXP_SIN_PERSONAS
-		]]>
-	</entry>
-	<entry key="recobro.borrado.tmp_rec_exp_sin_riesgos.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_EXP_SIN_RIESGOS
-		]]>
-	</entry>
-	<entry key="recobro.borrado.tmp_rec_exp_sin_contratos.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_EXP_SIN_CONTRATOS
-		]]>
-	</entry>
-	<entry key="recobro.borrado.tmp_rec_exp_sin_cnt_activos.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_EXP_SIN_CNT_ACTIVOS
-		]]>
-	</entry>
-	<entry key="recobro.borrado.tmp_rec_exp_cancelados.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_EXP_CANCELADOS
-		]]>
-	</entry>
-	
-	<!-- PASO 2 Obtenemos los expedientes de recobro sin personas o que estas esten exceptuadas -->
-		<entry key="recobro.insert.tmp_rec_exp_sin_personas_sub.Oracle9iDialect">
-		<![CDATA[
-			INSERT INTO TMP_REC_EXP_SIN_PERSONAS_SUB
-			SELECT DISTINCT PEX.EXP_ID FROM BATCH_DATOS_PER_EXP PEX 
-			  WHERE PEX.PER_ID NOT IN (SELECT DISTINCT EXC.PER_ID FROM BATCH_DATOS_EXCEPTUADOS EXC 
-			  WHERE EXC.PER_ID IS NOT NULL)
-		]]>
-	</entry>
-	
-	<entry key="recobro.insert.tmp_rec_exp_sin_personas.Oracle9iDialect">
-		<![CDATA[
-			INSERT INTO TMP_REC_EXP_SIN_PERSONAS
-			SELECT DISTINCT EXP.EXP_ID
-			FROM BATCH_DATOS_EXP EXP
-			WHERE EXP.DD_EEX_CODIGO = ${ddEstadoExpedientes.Activo.codigo}
-			  	AND EXP.DD_TPE_CODIGO = ${ddTipoExpediente.Recobro.codigo}
-          		AND EXP.EXP_ID NOT IN (SELECT DISTINCT EXP_ID FROM TMP_REC_EXP_SIN_PERSONAS_SUB)   
-		]]>
-	</entry>
-	
-	<!-- PASO 3 Obtenemos los expedientes de recobro sin contratos o que estos estan exceptuados -->
-	<entry key="recobro.insert.tmp_rec_exp_sin_contratos_sub.Oracle9iDialect">
-		<![CDATA[
-			INSERT INTO TMP_REC_EXP_SIN_CONTRATOS_SUB
-			SELECT DISTINCT CEX.EXP_ID
-			FROM BATCH_DATOS_CNT_EXP CEX 
-			WHERE CEX.CNT_ID NOT IN (SELECT DISTINCT EXCP.CNT_ID FROM BATCH_DATOS_EXCEPTUADOS EXCP WHERE EXCP.CNT_ID IS NOT NULL)				
-		]]>	
-	</entry>	
-	
-	<entry key="recobro.insert.tmp_rec_exp_sin_contratos.Oracle9iDialect">
-		<![CDATA[
-			INSERT INTO TMP_REC_EXP_SIN_CONTRATOS
-			SELECT DISTINCT EXP.EXP_ID
-			FROM BATCH_DATOS_EXP EXP
-			WHERE EXP.DD_EEX_CODIGO = ${ddEstadoExpedientes.Activo.codigo}
-				AND EXP.DD_TPE_CODIGO = ${ddTipoExpediente.Recobro.codigo}
-  				AND EXP.EXP_ID NOT IN (SELECT DISTINCT EXP_ID FROM TMP_REC_EXP_SIN_CONTRATOS_SUB)  				
-		]]>	
-	</entry>
-	<!-- PASO 4 Obtenemos los expedientes de recobro regularizados (suma del riesgo de todos los contratos igual a 0 -->
-	<entry key="recobro.insert.tmp_rec_exp_sin_riesgos_sub.Oracle9iDialect">
-		<![CDATA[		
-			INSERT INTO TMP_REC_EXP_SIN_RIESGOS_SUB						
-			SELECT DISTINCT EXP.EXP_ID, SUM(NVL(CNT.CNT_RIESGO, 0))
-			FROM BATCH_DATOS_EXP EXP
-  				INNER JOIN BATCH_DATOS_CNT_EXP CEX ON EXP.EXP_ID = CEX.EXP_ID
-  				INNER JOIN BATCH_DATOS_CNT CNT ON CEX.CNT_ID = CNT.CNT_ID		
-	    	WHERE EXP.DD_EEX_CODIGO = ${ddEstadoExpedientes.Activo.codigo}      
-	  				AND EXP.DD_TPE_CODIGO = ${ddTipoExpediente.Recobro.codigo}
-	      	GROUP BY EXP.EXP_ID
-		]]>
-	</entry>
-	<entry key="recobro.insert.tmp_rec_exp_sin_riesgos.Oracle9iDialect">
-		<![CDATA[		
-			INSERT INTO TMP_REC_EXP_SIN_RIESGOS			
-			SELECT OBJ.EXP_ID FROM TMP_REC_EXP_SIN_RIESGOS_SUB OBJ WHERE OBJ.RIESGO <= 0
-		]]>
-	</entry>
-	<!-- PASO 5 Obtenemos los expedientes que no tienen ningún contrato activo y que se deben de cancelar -->	
-	<entry key="recobro.insert.tmp_rec_exp_sin_cnt_activos.Oracle9iDialect">
-		<![CDATA[		
-	      INSERT INTO TMP_REC_EXP_SIN_CNT_ACTIVOS
-	      SELECT EXP_ID FROM (
-	      SELECT /*+ MATERIALIZE */ DISTINCT EXP.EXP_ID, count(CNT.CNT_ID) NUM
-				FROM BANK01.BATCH_DATOS_EXP EXP
-	  				INNER JOIN BANK01.BATCH_DATOS_CNT_EXP CEX ON EXP.EXP_ID = CEX.EXP_ID
-	  				INNER JOIN BANK01.BATCH_DATOS_CNT CNT ON CEX.CNT_ID = CNT.CNT_ID		
-	          INNER JOIN BANK01.CNT_CONTRATOS CON ON CNT.CNT_ID = CON.CNT_ID
-		    	WHERE EXP.DD_EEX_CODIGO = ${ddEstadoExpedientes.Activo.codigo}      
-	  				AND EXP.DD_TPE_CODIGO = ${ddTipoExpediente.Recobro.codigo}
-	            AND CON.DD_ESC_ID = ${estadoContrato.Activo.id}
-		      	GROUP BY EXP.EXP_ID 
-	           ) OBJ WHERE OBJ.NUM = 0
-		]]>
-	</entry>	
-	<!-- PASO 6 Juntar los expedientes obtenidos en la tabla TMP_REC_EXP_CANCELADOS -->
-	<entry key="recobro.insert.tmp_rec_exp_cancelados.Oracle9iDialect">
-		<![CDATA[
-			INSERT INTO TMP_REC_EXP_CANCELADOS
-			SELECT DISTINCT EXP_ID FROM 
-		  		(SELECT EXP_ID FROM TMP_REC_EXP_SIN_PERSONAS
-		  		UNION
-		  		SELECT EXP_ID FROM TMP_REC_EXP_SIN_CONTRATOS
-		  		UNION
-		  		SELECT EXP_ID FROM TMP_REC_EXP_SIN_RIESGOS
-		  		UNION
-		  		SELECT EXP_ID FROM TMP_REC_EXP_EXTINCION_RU
-		  		UNION
-		  		SELECT EXP_ID FROM TMP_REC_EXP_SIN_CNT_ACTIVOS)
-  		]]>
-	</entry>
+    <!-- PASO 1 - TRUNCADO TABLAS TEMPORALES -->
+    <entry key="recobro.borrado.tmp_rec_exp_sin_personas_sub.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_SIN_PERSONAS_SUB'); END;
+        ]]>
+    </entry>
+    <entry key="recobro.borrado.tmp_rec_exp_sin_riesgos_sub.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_SIN_RIESGOS_SUB'); END;
+        ]]>
+    </entry>
+    <entry key="recobro.borrado.tmp_rec_exp_sin_contratos_sub.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_SIN_CONTRATOS_SUB'); END;
+        ]]>
+    </entry>
+    <entry key="recobro.borrado.tmp_rec_exp_sin_personas.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_SIN_PERSONAS'); END;
+        ]]>
+    </entry>
+    <entry key="recobro.borrado.tmp_rec_exp_sin_riesgos.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_SIN_RIESGOS'); END;
+        ]]>
+    </entry>
+    <entry key="recobro.borrado.tmp_rec_exp_sin_contratos.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_SIN_CONTRATOS'); END;
+        ]]>
+    </entry>
+    <entry key="recobro.borrado.tmp_rec_exp_sin_cnt_activos.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_SIN_CNT_ACTIVOS'); END;
+        ]]>
+    </entry>
+    <entry key="recobro.borrado.tmp_rec_exp_cancelados.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_CANCELADOS'); END;
+        ]]>
+    </entry>
+
+    <!-- PASO 2 Obtenemos los expedientes de recobro sin personas o que estas esten exceptuadas -->
+        <entry key="recobro.insert.tmp_rec_exp_sin_personas_sub.Oracle10gDialect">
+        <![CDATA[
+          BEGIN
+            INSERT INTO TMP_REC_EXP_SIN_PERSONAS_SUB
+            SELECT DISTINCT PEX.EXP_ID FROM BATCH_DATOS_PER_EXP PEX
+              WHERE PEX.PER_ID NOT IN (SELECT DISTINCT EXC.PER_ID FROM BATCH_DATOS_EXCEPTUADOS EXC
+              WHERE EXC.PER_ID IS NOT NULL);
+
+            OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_EXP_SIN_PERSONAS_SUB'); --estimate
+          END;
+        ]]>
+    </entry>
+
+    <entry key="recobro.insert.tmp_rec_exp_sin_personas.Oracle10gDialect">
+        <![CDATA[
+          BEGIN
+            INSERT INTO TMP_REC_EXP_SIN_PERSONAS
+            SELECT DISTINCT EXP.EXP_ID
+            FROM BATCH_DATOS_EXP EXP
+            WHERE EXP.DD_EEX_CODIGO = ${ddEstadoExpedientes.Activo.codigo}
+                AND EXP.DD_TPE_CODIGO = ${ddTipoExpediente.Recobro.codigo}
+                AND EXP.EXP_ID NOT IN (SELECT DISTINCT EXP_ID FROM TMP_REC_EXP_SIN_PERSONAS_SUB);
+
+            OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_EXP_SIN_PERSONAS'); --estimate
+          END;
+        ]]>
+    </entry>
+
+    <!-- PASO 3 Obtenemos los expedientes de recobro sin contratos o que estos estan exceptuados -->
+    <entry key="recobro.insert.tmp_rec_exp_sin_contratos_sub.Oracle10gDialect">
+        <![CDATA[
+          BEGIN
+            INSERT INTO TMP_REC_EXP_SIN_CONTRATOS_SUB
+            SELECT DISTINCT CEX.EXP_ID
+            FROM BATCH_DATOS_CNT_EXP CEX
+            WHERE CEX.CNT_ID NOT IN (SELECT DISTINCT EXCP.CNT_ID FROM BATCH_DATOS_EXCEPTUADOS EXCP WHERE EXCP.CNT_ID IS NOT NULL);
+
+            OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_EXP_SIN_CONTRATOS_SUB'); --estimate
+          END;
+        ]]>
+    </entry>
+
+    <entry key="recobro.insert.tmp_rec_exp_sin_contratos.Oracle10gDialect">
+        <![CDATA[
+          BEGIN
+            INSERT INTO TMP_REC_EXP_SIN_CONTRATOS
+            SELECT DISTINCT EXP.EXP_ID
+            FROM BATCH_DATOS_EXP EXP
+            WHERE EXP.DD_EEX_CODIGO = ${ddEstadoExpedientes.Activo.codigo}
+                AND EXP.DD_TPE_CODIGO = ${ddTipoExpediente.Recobro.codigo}
+                AND EXP.EXP_ID NOT IN (SELECT DISTINCT EXP_ID FROM TMP_REC_EXP_SIN_CONTRATOS_SUB);
+
+            OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_EXP_SIN_CONTRATOS'); --estimate
+          END;
+        ]]>
+    </entry>
+    <!-- PASO 4 Obtenemos los expedientes de recobro regularizados (suma del riesgo de todos los contratos igual a 0 -->
+    <entry key="recobro.insert.tmp_rec_exp_sin_riesgos_sub.Oracle10gDialect">
+        <![CDATA[
+          BEGIN
+            INSERT INTO TMP_REC_EXP_SIN_RIESGOS_SUB
+            SELECT DISTINCT EXP.EXP_ID, SUM(NVL(CNT.CNT_RIESGO, 0))
+            FROM BATCH_DATOS_EXP EXP
+                INNER JOIN BATCH_DATOS_CNT_EXP CEX ON EXP.EXP_ID = CEX.EXP_ID
+                INNER JOIN BATCH_DATOS_CNT CNT ON CEX.CNT_ID = CNT.CNT_ID
+            WHERE EXP.DD_EEX_CODIGO = ${ddEstadoExpedientes.Activo.codigo}
+                    AND EXP.DD_TPE_CODIGO = ${ddTipoExpediente.Recobro.codigo}
+            GROUP BY EXP.EXP_ID;
+
+            OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_EXP_SIN_RIESGOS_SUB'); --estimate
+          END;
+        ]]>
+    </entry>
+    <entry key="recobro.insert.tmp_rec_exp_sin_riesgos.Oracle10gDialect">
+        <![CDATA[
+          BEGIN
+            INSERT INTO TMP_REC_EXP_SIN_RIESGOS
+            SELECT OBJ.EXP_ID FROM TMP_REC_EXP_SIN_RIESGOS_SUB OBJ WHERE OBJ.RIESGO <= 0;
+
+            OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_EXP_SIN_RIESGOS'); --estimate
+          END;
+        ]]>
+    </entry>
+    <!-- PASO 5 Obtenemos los expedientes que no tienen ningún contrato activo y que se deben de cancelar -->
+    <entry key="recobro.insert.tmp_rec_exp_sin_cnt_activos.Oracle10gDialect">
+        <![CDATA[
+          BEGIN
+          INSERT INTO TMP_REC_EXP_SIN_CNT_ACTIVOS
+          SELECT EXP_ID FROM (
+          SELECT /*+ MATERIALIZE */ DISTINCT EXP.EXP_ID, count(CNT.CNT_ID) NUM
+                FROM BATCH_DATOS_EXP EXP
+                    INNER JOIN BATCH_DATOS_CNT_EXP CEX ON EXP.EXP_ID = CEX.EXP_ID
+                    INNER JOIN BATCH_DATOS_CNT CNT ON CEX.CNT_ID = CNT.CNT_ID
+              INNER JOIN CNT_CONTRATOS CON ON CNT.CNT_ID = CON.CNT_ID
+                WHERE EXP.DD_EEX_CODIGO = ${ddEstadoExpedientes.Activo.codigo}
+                    AND EXP.DD_TPE_CODIGO = ${ddTipoExpediente.Recobro.codigo}
+                AND CON.DD_ESC_ID = ${estadoContrato.Activo.id}
+                GROUP BY EXP.EXP_ID
+               ) OBJ WHERE OBJ.NUM = 0;
+
+          OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_EXP_SIN_CNT_ACTIVOS'); --estimate
+          END;
+        ]]>
+    </entry>
+    <!-- PASO 6 Juntar los expedientes obtenidos en la tabla TMP_REC_EXP_CANCELADOS -->
+    <entry key="recobro.insert.tmp_rec_exp_cancelados.Oracle10gDialect">
+        <![CDATA[
+          BEGIN
+            INSERT INTO TMP_REC_EXP_CANCELADOS
+            SELECT DISTINCT EXP_ID FROM
+                (SELECT EXP_ID FROM TMP_REC_EXP_SIN_PERSONAS
+                UNION
+                SELECT EXP_ID FROM TMP_REC_EXP_SIN_CONTRATOS
+                UNION
+                SELECT EXP_ID FROM TMP_REC_EXP_SIN_RIESGOS
+                UNION
+                SELECT EXP_ID FROM TMP_REC_EXP_EXTINCION_RU
+                UNION
+                SELECT EXP_ID FROM TMP_REC_EXP_SIN_CNT_ACTIVOS);
+
+            OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_EXP_CANCELADOS'); --estimate
+          END;
+        ]]>
+    </entry>
 </properties>

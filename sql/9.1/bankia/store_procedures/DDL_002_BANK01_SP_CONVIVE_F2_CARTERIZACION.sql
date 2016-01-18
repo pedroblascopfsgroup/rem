@@ -1,16 +1,18 @@
 --/*
 --##########################################
 --## AUTOR=David González
---## FECHA_CREACION=20151020
+--## FECHA_CREACION=20151027
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=0.2
+--## VERSION_ARTEFACTO=0.3
 --## INCIDENCIA_LINK=BKREC-1114
 --## PRODUCTO=NO
 --## 
 --## Finalidad: 
 --## INSTRUCCIONES:  
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        	0.1 Versión inicial
+--##		0.2 Adaptacion a plantilla
+--##		
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -18,7 +20,7 @@ SET SERVEROUTPUT ON;
 create or replace PROCEDURE CONVIVE_F2_CARTERIZACION AS
 
 BEGIN
-/* v0.2 */
+/* v0.3 */
 
 insert into #ESQUEMA#.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
 select #ESQUEMA#.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id,

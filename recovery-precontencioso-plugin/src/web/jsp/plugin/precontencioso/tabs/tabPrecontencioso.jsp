@@ -47,22 +47,33 @@
 			{
 				var r = Ext.util.JSON.decode(result.responseText);
 				data.esExpedienteEditable = r.isEditable;
-
-				<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_DOCUMENTOS">
-					ponerVisibilidadBotonesDoc(data.botonesVisiblesDocPco, data.botonesInvisiblesDocPco);
-					refrescarDocumentosGrid();
-				</sec:authorize>
-		
-				<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_LIQUIDACIONES">
-					ponerVisibilidadBotonesLiq(data.botonesVisiblesLiqPco, data.botonesInvisiblesLiqPco);
-					refrescarLiquidacionesGrid();
-					ocultarColumnasGrid();
-				</sec:authorize>
-		
-				<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_BUROFAXES">
-					ponerVisibilidadBotonesBur(data.botonesVisiblesBurPco, data.botonesInvisiblesBurPco);
-					refrescarBurofaxGrid();
-				</sec:authorize>
+				
+				Ext.Ajax.request({
+					url: page.resolveUrl('expedientejudicial/isGestoria')
+					,params: {idProcedimiento:data.id}
+					,method: 'POST'
+					,success: function (result, request)
+					{
+						var r = Ext.util.JSON.decode(result.responseText);
+						data.esUsuarioGestoria = r.esUsuarioGestoria;
+				
+						<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_DOCUMENTOS">
+							ponerVisibilidadBotonesDoc(data.botonesVisiblesDocPco, data.botonesInvisiblesDocPco);
+							refrescarDocumentosGrid();
+						</sec:authorize>
+				
+						<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_LIQUIDACIONES">
+							ponerVisibilidadBotonesLiq(data.botonesVisiblesLiqPco, data.botonesInvisiblesLiqPco);
+							refrescarLiquidacionesGrid();
+							ocultarColumnasGrid();
+						</sec:authorize>
+				
+						<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_BUROFAXES">
+							ponerVisibilidadBotonesBur(data.botonesVisiblesBurPco, data.botonesInvisiblesBurPco);
+							refrescarBurofaxGrid();
+						</sec:authorize>
+					}
+				});	
 			}
 		});
 	}

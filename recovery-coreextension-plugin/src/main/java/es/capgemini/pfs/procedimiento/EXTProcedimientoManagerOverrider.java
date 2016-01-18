@@ -23,6 +23,7 @@ import es.capgemini.pfs.core.api.asunto.AdjuntoDto;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi;
 import es.capgemini.pfs.eventfactory.EventFactory;
+import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
@@ -201,8 +202,8 @@ public class EXTProcedimientoManagerOverrider extends
 		
 		Contrato cnt = null;
 		for (ExpedienteContrato ec : listaPce) {
-			if (ec.getContrato().equals(
-					proc.getAsunto().getExpediente().getContratoPase())) {
+			final Expediente exp = proc.getAsunto().getExpediente();
+			if (exp.getContratoPase() != null && ec.getContrato().equals(exp.getContratoPase())) {
 				cnt = ec.getContrato();
 			}
 		}

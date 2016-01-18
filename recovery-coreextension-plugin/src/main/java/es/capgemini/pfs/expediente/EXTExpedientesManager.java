@@ -31,6 +31,7 @@ import es.capgemini.pfs.contrato.model.AdjuntoContrato;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.asunto.AdjuntoDto;
 import es.capgemini.pfs.core.api.expediente.EXTExpedientesApi;
+import es.capgemini.pfs.core.api.persona.PersonaApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
 import es.capgemini.pfs.exceptions.NonRollbackException;
@@ -184,7 +185,7 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 
 		// Le seteamos el nombre ya que ahora no se obtiene a trav�s de una
 		// f�rmula
-		setearNombreExpediente(expediente);
+		setearNombreExpediente(expediente, idPersona);
 
 	  // Seteamos el tipo de expediente
         DDTipoExpediente tipo = null;
@@ -410,6 +411,21 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 		}
 	}
 	
+	/**
+	 * Método para setearle el nombre a un expediente si tenemos la persona principal, 
+	 * sino utiliza el método anterior.
+	 * @param expediente
+	 * @param persona
+	 */
+	private void setearNombreExpediente(Expediente expediente, Long idPersona) {
+		Persona persona = proxyFactory.proxy(PersonaApi.class).get(idPersona);
+		if (persona == null || persona.getApellidoNombre() == null
+				|| persona.getApellidoNombre().trim().length() == 0) {
+			setearNombreExpediente(expediente);
+		} else {
+			expediente.setDescripcionExpediente(persona.getApellidoNombre());
+		}
+	}
 	/**
 	 * Recupera el m�ximo de contratos adicionales para un expediente. Si no
 	 * existe valor en la BBDD informa el error y usa el valor 20 por defecto

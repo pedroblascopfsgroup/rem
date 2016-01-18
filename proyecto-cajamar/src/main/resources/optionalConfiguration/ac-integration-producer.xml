@@ -19,6 +19,7 @@
 	</bean>
 	<bean id="salidaIntegracionAdapter" class="es.pfsgroup.recovery.integration.file.FileIntegrationAdapter">
 		<constructor-arg value="${integracion.output}/${integracion.producer.cola}"/>
+		<property name="charset" value="UTF-8"/>
 	</bean>
 
 	<!-- ******** Flow BPM ******* -->

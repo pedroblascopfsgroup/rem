@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+
+	<!-- renderiza el formulario -->
+	<end-state id="listado" view="plugin/plazasJuzgados/buscaJuzgados">
+		<secured attributes="ROLE_CONFPLAZASYJUZ" match="any" />
+		<on-entry>
+			<evaluate
+				expression="executor.execute('plugin.plazasJuzgados.web.buttons.left')"
+				result="flowScope.buttonsLeft" />
+			<evaluate
+				expression="executor.execute('plugin.plazasJuzgados.web.buttons.right')"
+				result="flowScope.buttonsRight" />
+		</on-entry>
+
+	</end-state>
+
+</flow>

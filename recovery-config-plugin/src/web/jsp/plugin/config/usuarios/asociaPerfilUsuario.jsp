@@ -47,6 +47,25 @@
 		}
 	};
 	
+	
+	var permiteGuardar = new Ext.form.TextField({
+                hidden: true
+                ,value: true
+        });	
+    
+    var tipoTab = new Ext.form.TextField({
+                hidden: true
+                ,value: 'asociaPerfilUsuario'
+        });
+	
+	perfil.on('select',function(){
+    	if(perfil.getValue() == "")
+    		permiteGuardar.setValue(false);
+    	else
+    		permiteGuardar.setValue(true);
+    });
+	
+	
     recargarComboZonas();
     
     var password = app.creaText('password',
@@ -70,10 +89,18 @@
 	<pfs:defineParameters name="parametros" paramId="" 
 		idsZona="centros" idUsuario="idUsuario"  idPerfil="perfil"
 		password="password"
-		/>
+		permiteGuardar="permiteGuardar"	
+		tipoTab="tipoTab" />
 
 	<pfs:editForm saveOrUpdateFlow="plugin/config/usuarios/ADMguardarPerfilUsuario"
 		leftColumFields="username,perfil,jerarquia,centros,password"
-		parameters="parametros" />
+		parameters="parametros" 
+		onSuccessMode="tabGenericoConMsgGuardando" />
+		
+	<%-- Para deshabilitar los botones mientras se realiza el proceso de Guardado. --%>
+	btnGuardar.on('click',function(){
+        this.setDisabled(true);
+        btnCancelar.setDisabled(true);
+	});
 
 </fwk:page>

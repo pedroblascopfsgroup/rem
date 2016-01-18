@@ -664,7 +664,7 @@
 				});
 			
 				terminosTab = new Ext.Panel({
-					title:'<s:message code="plugin.mejoras.acuerdos.tabTerminos" text="**Términos"/>'
+					title:'<s:message code="plugin.mejoras.acuerdos.tabTerminosAcuerdos" text="**Términos"/>'
 					,id:'asunto-terminosTabs-${asunto.id}'
 					,autoHeight:true
 					,autoWidth: true

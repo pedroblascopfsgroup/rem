@@ -44,6 +44,9 @@ public interface BurofaxApi {
 	public static final String OBTENER_ESTADOS_BUROFAX = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.getEstadosBurofax";
 	public static final String OBTENER_TIPO_BUROFAX_BY_CODIGO = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.getTipoBurofaxByCodigo";
 	public static final String OBTENER_BUROFAX_ENVIO_INTE = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.getBurofaxEnvioIntegracionByIdEnvio";
+	public static final String CANCELAR_EST_PREPARADO = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.cancelarEstadoPreparado";
+	public static final String DESCARTAR_PERSONA_ENVIO = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.descartarPersonaEnvio";
+	public static final String BORRAR_DIRECCION_MANUAL_BUROFAX = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.borrarDirManualBurofax";
 
 
 

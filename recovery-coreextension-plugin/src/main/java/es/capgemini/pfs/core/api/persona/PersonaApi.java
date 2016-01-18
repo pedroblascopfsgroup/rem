@@ -20,7 +20,9 @@ public interface PersonaApi {
 	String BO_CORE_PERSONA_FINDCLIENTES_PROV_SOLVENCIA_EXCEL = "plugin.coreextension.persona.findClientesProveedorSolvenciaExcel";
 //	String BO_CORE_PERSONA_CREAR_ADJUNTOS_AMPLIADOS = "plugin.coreextension.persona.crearAdjuntoPersonaAmpliado";
 	String BO_CORE_PERSONA_GET_BY_COD_CLIENTE_ENTIDAD = "plugin.coreextension.persona.getPersonaByCodClienteEntidad";
+	String BO_CORE_CLIENTES_ACTUACION_CURSO_GET_FSR = "personaManager.getAccionFSRByIdPersona";
 
+	
 	@BusinessOperationDefinition(PrimariaBusinessOperation.BO_PER_MGR_UPDATE_UMBRAL)
     public void updateUmbral(DtoUmbral dtoUmbral);
 
@@ -96,9 +98,19 @@ public interface PersonaApi {
     public Persona getPersonaByCodClienteEntidad (Long codClienteEntidad);
     
     /**
+
      * obtiene las personas por su DNI
      * @param dni
      * @return List<persona>
      */
     public List<Persona> getPersonasByDni(String dni);
+
+    /**
+     * 
+     * @param idPersona
+     * @return booleano de accion FSR
+     */
+    @BusinessOperationDefinition(BO_CORE_CLIENTES_ACTUACION_CURSO_GET_FSR)
+    public Boolean getAccionFSRByIdPersona(Long idPersona);
+
 }

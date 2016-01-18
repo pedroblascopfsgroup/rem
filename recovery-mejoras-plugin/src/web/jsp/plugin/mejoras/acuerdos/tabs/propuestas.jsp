@@ -321,7 +321,6 @@
 	var panelAnteriorExpTerminos;
 	var cumplimientoAcuerdo;
 	
-	
 	propuestasGrid.on('rowclick', function(grid, rowIndex, e) {
 	
 				ocultarBotones();
@@ -330,7 +329,8 @@
 				panel.remove(panelAnteriorExpTerminos); 
 
 				terminosExpTab = new Ext.Panel({
-					title:'<s:message code="plugin.mejoras.acuerdos.tabTerminos" text="**Términos"/>'
+					title:'<s:message code="plugin.mejoras.acuerdos.tabTerminos" text="**Solucion"/>'
+				
 					,id:'expediente-terminosTabs-'+entidad.get("data").id
 					,autoHeight:true
 					,autoWidth: true

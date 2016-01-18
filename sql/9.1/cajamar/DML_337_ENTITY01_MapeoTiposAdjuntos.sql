@@ -212,8 +212,8 @@ BEGIN
 	    			DBMS_OUTPUT.PUT_LINE('[INFO] Campo TFA_CODIGO_EXTERNO '''||TRIM(V_TMP_FUNCION(2))||''' actualizado para DD_TFA_ID = '''||V_TFA_ID||'''.');
         	
         	ELSE
-        	
-        			V_SQL_NEXT_ID := 'SELECT MAX(MTT_ID)+1 FROM '||V_ESQUEMA||'.MTT_MAP_ADJRECOVERY_ADJCM';
+
+        			V_SQL_NEXT_ID := 'SELECT NVL(MAX(MTT_ID)+1, 1) FROM '||V_ESQUEMA||'.MTT_MAP_ADJRECOVERY_ADJCM';
         			EXECUTE IMMEDIATE V_SQL_NEXT_ID INTO V_NEXT_ID;
         	  
         	  		V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.MTT_MAP_ADJRECOVERY_ADJCM (' ||

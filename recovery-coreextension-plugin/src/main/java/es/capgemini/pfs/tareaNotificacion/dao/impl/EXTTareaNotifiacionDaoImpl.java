@@ -1452,6 +1452,7 @@ public class EXTTareaNotifiacionDaoImpl extends
 		cancelarTareas(notificaciones);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<TareaNotificacion> getListByAsunto(Long idAsunto) {
 		String hql = "FROM TareaNotificacion t WHERE t.asunto.id = ?";
@@ -1604,24 +1605,6 @@ public class EXTTareaNotifiacionDaoImpl extends
 		hql.append(")");
 	}
 
-	private void filtroTareasEnEsperaAntiguo(DtoBuscarTareaNotificacion dto,
-			HashMap<String, Object> params, StringBuffer hql) {
-		// hql.append(" join gaa.tipoGestor.supervisados ges ");
-		// hql
-		// .append("where gaa.id in ("
-		// + getIdGaaSupervisoresDeUsuarioLogado("usuarioLogado")
-		// + ")");
-		// + " or gaa.id in ("
-		// + getIdGaaGestoresSupervisadosPorUsuarioLogado("usuarioLogado")
-		// + ")");
-		hql.append(" (asu in (");
-		hql.append("select a from EXTGestorAdicionalAsunto gaa join gaa.asunto a ");
-		hql.append("where ((gaa.gestor.usuario.id = :usuarioLogado) and (gaa.tipoGestor.codigo != 'SUP') and (tn.subtipoTarea.tipoGestor.codigo = 'SUP'))"
-				+ " or ((tn.subtipoTarea.tipoGestor.codigo = 'GEXT') and (gaa.tipoGestor.codigo = 'SUP') and (gaa.gestor.usuario.id = :usuarioLogado))");
-		hql.append("))");
-		params.put("usuarioLogado", dto.getUsuarioLogado().getId());
-	}
-
 	private void filtroTareasPendientes(DtoBuscarTareaNotificacion dto,
 			HashMap<String, Object> params, StringBuffer hql) {
 		hql.append(" (asu in (");
@@ -1639,13 +1622,6 @@ public class EXTTareaNotifiacionDaoImpl extends
 		hql.append("where (ges.gestorSupervisado.id = tn.subtipoTarea.tipoGestor.id) and (gaa.gestor.usuario.id = :usuarioLogado)");
 		hql.append("))");
 		params.put("usuarioLogado", dto.getUsuarioLogado().getId());
-	}
-
-	private String getIdGaaSupervisoresDeUsuarioLogado(String paramUsuarioLogado) {
-		return "select gaa.id from EXTGestorAdicionalAsunto gaa "
-				+ " join gaa.tipoGestor.supervisados ges"
-				+ " where tn.subtipoTarea.tipoGestor.id = gaa.tipoGestor.id"
-				+ " and gaa.asunto.id";
 	}
 	
 	/**

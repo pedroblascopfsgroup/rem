@@ -10,9 +10,9 @@
 --## Finalidad: Carga de datos (Asuntos, procedimientos, tareas ..) a partir de tabla intermedia de migración
 --## INSTRUCCIONES:  
 --## VERSIONES:
---##        0.1 Versión inicial
---##        0.2 Se incluyen procedimientos de tipo concursos.
---##        0.3 Se adapta a SYS_GUID para las tablas PRC_PROCEDIMIENTOS
+--##         0.1 Versión inicial
+--##         0.2 Se incluyen procedimientos de tipo concursos.
+--##         0.3 Se adapta a SYS_GUID para las tablas PRC_PROCEDIMIENTOS
 --##                                                 ASU_ASUNTOS
 --##                                                 PRB_PRC_BIE
 --##                                                 CEX_CONTRATOS_EXPEDIENTES
@@ -20,6 +20,11 @@
 --##                                                 RCR_RECURSOS_PROCEDIMIENTOS
 --##                                                 SUB_SUBASTAS
 --##                                                 LOS_LOTE_SUBASTAS
+--## 20151124 0.4 Se cruza con la tabla de BIE_BIENES para cargar LOB_LOTE_BIEN y PRB_PRC_BIE
+--##              se quita el min PK de LOS_LOTE_SUBASTA
+--##              Se saca del script la caracterizacion de procuradores
+--## 20151217 0.5 Se adapta a SYS_GUID para la tabla de EXP_EXPEDIENTES
+--## 20151229 0.6 Se modifica Nombre Asunto a la cadena: contrato+NIF/CIF+NombreApellidos
 --##########################################
 --*/
 
@@ -976,19 +981,15 @@ BEGIN
           FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_OPERACIONES PRO
           LEFT JOIN  '||V_ESQUEMA||'.CNT_CONTRATOS CNT 
                  ON (PRO.NUMERO_CONTRATO = CNT.CNT_CONTRATO)
-          LEFT JOIN '||V_ESQUEMA||'.EXT_IAC_INFO_ADD_CONTRATO IAC 
-                 ON cnt.cnt_id = iac.cnt_id
         UNION
-          SELECT DISTINCT PRO.CD_CONCURSO  
+          SELECT DISTINCT PRO.CD_CONCURSO  CD_PROCEDIMIENTO
                         , PRO.CODIGO_PROPIETARIO CODIGO_ENTIDAD   --> Los concursos son todos de CAJAMAR? Entidad 0240?
                         , PRO.NUMERO_CONTRATO AS CONTRATO
                         , CNT.CNT_ID
           FROM '||V_ESQUEMA||'.MIG_CONCURSOS_OPERACIONES PRO
           LEFT JOIN '||V_ESQUEMA||'.CNT_CONTRATOS CNT 
                  ON (PRO.NUMERO_CONTRATO = CNT.CNT_CONTRATO)
-          LEFT JOIN '||V_ESQUEMA||'.EXT_IAC_INFO_ADD_CONTRATO IAC 
-                 ON cnt.cnt_id = iac.cnt_id
-        ORDER BY 1,4';
+          ORDER BY 1,4';
 
     EXECUTE IMMEDIATE v_sql;
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' MIG_TMP_CNT_ID Creada. '||SQL%ROWCOUNT||' Filas.');
@@ -1087,7 +1088,7 @@ BEGIN
                                              , ARQ.ARQ_ID
                                FROM '||V_ESQUEMA||'.MIG_TMP_PER_ID TPI
                                   , '||V_ESQUEMA||'.PER_PERSONAS PER
-                                  , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Resto''  AND BORRADO = 0) ARQ
+                                  , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Migracion''  AND BORRADO = 1) ARQ
                                WHERE TPI.PER_ID IS NOT NULL
                                  AND TPI.PER_ID = PER.PER_ID
                               )'
@@ -1173,6 +1174,7 @@ BEGIN
            , CD_EXPEDIENTE_NUSE
            , NUMERO_EXP_NUSE
            , CD_PROCEDIMIENTO
+           , SYS_GUID
            )        
     SELECT '||V_ESQUEMA||'.S_EXP_EXPEDIENTES.NEXTVAL as EXP_ID
            , null as AAA_ID
@@ -1198,6 +1200,7 @@ BEGIN
            , PRC.CD_EXPEDIENTE_NUSE
            , PRC.NUMERO_EXP_NUSE
            , PRC.CD_PROCEDIMIENTO
+           , SYS_GUID() as SYS_GUID               
       FROM 
       	(        
         SELECT CD_PROCEDIMIENTO, CD_EXPEDIENTE_NUSE , NUMERO_EXP_NUSE FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA            	
@@ -1205,7 +1208,7 @@ BEGIN
     	  SELECT CD_CONCURSO CD_PROCEDIMIENTO, NULL CD_EXPEDIENTE_NUSE , NULL NUMERO_EXP_NUSE FROM '||V_ESQUEMA||'.MIG_CONCURSOS_CABECERA
     	) PRC
     	, (SELECT DISTINCT CD_PROCEDIMIENTO FROM MIG_MAESTRA_HITOS) MAE
-        , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Resto''  AND BORRADO = 0) ARQ             	
+        , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Migracion''  AND BORRADO = 1) ARQ             	
      WHERE MAE.CD_PROCEDIMIENTO = PRC.CD_PROCEDIMIENTO');
 
     -- 23.316 filas insertadas. <-- 1 CD_PROCEDIMIENTO = 1 EXPEDIENTE. Las mismas que el count distinct cd_procedimiento de mig_maestra_hitos
@@ -1356,6 +1359,7 @@ BEGIN
                          , FECHABORRAR
                          , BORRADO
                          , DD_AEX_ID
+                         , SYS_GUID
                          )
                    SELECT  '||V_ESQUEMA||'.S_CEX_CONTRATOS_EXPEDIENTE.NEXTVAL as  CEX_ID
                          , CNT_ID 
@@ -1371,6 +1375,7 @@ BEGIN
                          , null as FECHABORRAR
                          , 0    as BORRADO
                          , 9    as DD_AEX_ID
+                         , SYS_GUID() as SYS_GUID                         
                    FROM(
                          SELECT DISTINCT TCI.CNT_ID, EXP.EXP_ID
                          FROM '||V_ESQUEMA||'.EXP_EXPEDIENTES EXP
@@ -1443,6 +1448,7 @@ BEGIN
      , ASU_ID_EXTERNO
      , DD_PAS_ID
      , DD_GES_ID
+     , SYS_GUID     
      )
     SELECT '||V_ESQUEMA||'.S_ASU_ASUNTOS.NEXTVAL as  ASU_ID
            , null as GAS_ID
@@ -1476,9 +1482,10 @@ BEGIN
            , HIT.CD_PROCEDIMIENTO as ASU_ID_EXTERNO
            , PAS.DD_PAS_ID as DD_PAS_ID
            , GES.DD_GES_ID as DD_GES_ID
+           , SYS_GUID() as SYS_GUID           
     FROM (SELECT DISTINCT CD_PROCEDIMIENTO FROM '||V_ESQUEMA||'.MIG_MAESTRA_HITOS ) HIT, 
          (SELECT PCAB.CD_PROCEDIMIENTO
-               ,  substr(max (pcab.cd_procedimiento || '' | '' || per_doc_id || '' '' || per_nom50),1,50) AS NOMBRE_ASUNTO
+               ,  substr(max (cnt.cnt_contrato || '' | '' || per_doc_id || '' '' || per_nom50),1,50) AS NOMBRE_ASUNTO
                ,  (SELECT DD_TAS_ID FROM '||V_ESQUEMA_MASTER||'.DD_TAS_TIPOS_ASUNTO WHERE DD_TAS_DESCRIPCION_LARGA = ''Litigio'') AS DD_TAS_ID
                ,  PCAB.ENTIDAD_PROPIETARIA
                ,  PCAB.GESTION_PLATAFORMA
@@ -1486,17 +1493,25 @@ BEGIN
                left join '||V_ESQUEMA||'.mig_procedimientos_demandados pdem 
                       on pdem.CD_PROCEDIMIENTO = pcab.CD_PROCEDIMIENTO
                left join '||V_ESQUEMA||'.per_personas per 
-                      on per.per_cod_cliente_entidad = pdem.CODIGO_ENTIDAD||pdem.CODIGO_PERSONA
+                      on per.per_cod_cliente_entidad = pdem.CODIGO_PERSONA
+               left join '||V_ESQUEMA||'.cpe_contratos_personas cpe
+                      on per.per_id = cpe.per_id
+               left join '||V_ESQUEMA||'.cnt_contratos cnt
+                      on cpe.cnt_id = cnt.cnt_id                                  
              GROUP BY PCAB.CD_PROCEDIMIENTO, PCAB.ENTIDAD_PROPIETARIA, PCAB.GESTION_PLATAFORMA
           UNION
           SELECT CD_CONCURSO AS CD_PROCEDIMIENTO
-               , substr(max(cd_concurso || '' | '' || nif || '' '' || per_nom50),1,50) AS NOMBRE_ASUNTO
+               , substr(max(cnt.cnt_contrato || '' | '' || nif || '' '' || per_nom50),1,50) AS NOMBRE_ASUNTO
                , (SELECT DD_TAS_ID FROM '||V_ESQUEMA_MASTER||'.DD_TAS_TIPOS_ASUNTO WHERE DD_TAS_DESCRIPCION_LARGA = ''Concursal'') AS DD_TAS_ID
                , ENTIDAD_PROPIETARIA
                , GESTION_PLATAFORMA
             from '||V_ESQUEMA||'.mig_concursos_cabecera 
                left join  '||V_ESQUEMA||'.per_personas per 
                       on per.per_doc_id = nif
+               left join '||V_ESQUEMA||'.cpe_contratos_personas cpe
+                      on per.per_id = cpe.per_id
+               left join '||V_ESQUEMA||'.cnt_contratos cnt
+                      on cpe.cnt_id = cnt.cnt_id                              
              GROUP BY CD_CONCURSO,ENTIDAD_PROPIETARIA, GESTION_PLATAFORMA
           ) CAB,        
           '||V_ESQUEMA||'.EXP_EXPEDIENTES EXP,
@@ -1504,7 +1519,11 @@ BEGIN
           '||V_ESQUEMA||'.DD_PAS_PROPIEDAD_ASUNTO PAS
     WHERE EXP.CD_PROCEDIMIENTO = HIT.CD_PROCEDIMIENTO
     AND EXP.CD_PROCEDIMIENTO = CAB.CD_PROCEDIMIENTO
-    AND decode(CAB.GESTION_PLATAFORMA,''N'',''CAJAMAR'',''S'',''CAJAMAR'') = GES.DD_GES_CODIGO                       
+    AND CASE WHEN CAB.DD_TAS_ID = 1 THEN 
+                 decode(CAB.GESTION_PLATAFORMA,''N'',''HAYA'',''S'',''HAYA'') 
+             ELSE
+                 decode(CAB.GESTION_PLATAFORMA,''N'',''CAJAMAR'',''S'',''CAJAMAR'')              
+         END = GES.DD_GES_CODIGO                       
     AND decode(CAB.ENTIDAD_PROPIETARIA,''0240'',''CAJAMAR'',''05074'',''SAREB'') = PAS.DD_PAS_CODIGO');  
     
 -- 23.316 Asuntos cargados.
@@ -1586,7 +1605,43 @@ BEGIN
         , PRC_FECHA_PARALIZADO
         , T_REFERENCIA
         , RPR_REFERENCIA
+        , SYS_GUID
       )     
+SELECT  a.PRC_ID
+      , a.ASU_ID
+      , a.DD_TAC_ID
+      , a.DD_TRE_ID
+      , a.DD_TPO_ID
+      , a.PRC_PORCENTAJE_RECUPERACION
+      , a.PRC_PLAZO_RECUPERACION
+      , a.PRC_SALDO_ORIGINAL_VENCIDO
+      , a.PRC_SALDO_ORIGINAL_NO_VENCIDO
+      , a.PRC_SALDO_RECUPERACION
+      , a.VERSION
+      , a.USUARIOCREAR
+      , a.FECHACREAR
+      , a.USUARIOMODIFICAR
+      , a.FECHAMODIFICAR
+      , a.USUARIOBORRAR
+      , a.FECHABORRAR
+      , a.BORRADO
+      , a.PRC_PRC_ID
+      , a.DD_JUZ_ID
+      , a.PRC_COD_PROC_EN_JUZGADO
+      , a.PRC_DECIDIDO
+      , a.PRC_PROCESS_BPM
+      , a.PRC_DOC_FECHA
+      , a.PRC_DOC_OBSERVACIONES
+      , a.DD_EPR_ID
+      , a.ITE_ID, DTYPE
+      , a.TIPO_PROC_ORIGINAL
+      , a.PRC_PARALIZADO
+      , a.PRC_PLAZO_PARALIZ_MILS
+      , a.PRC_FECHA_PARALIZADO
+      , a.T_REFERENCIA
+      , a.RPR_REFERENCIA
+      , SYS_GUID() as SYS_GUID
+FROM (           
    SELECT DISTINCT
               MAE.PRC_ID as PRC_ID
             , ASU.ASU_ID as ASU_ID
@@ -1650,7 +1705,7 @@ BEGIN
       AND TPO.DD_TPO_CODIGO = MAE.DD_TPO_CODIGO 
       AND CAB.JUZGADO = JUZ.DD_JUZ_CODIGO (+)
 --GMN      AND MJ.PRC_ID = MAE.PRC_ID
-      ORDER BY 1');
+      ORDER BY 1) a');
     
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  PRC_PROCEDIMIENTOS cargada. '||SQL%ROWCOUNT||' Filas.');
     COMMIT;
@@ -1728,6 +1783,7 @@ BEGIN
          , FECHACREAR
          , BORRADO
          , PRC_ID
+         , SYS_GUID
          )
         SELECT DISTINCT 
                  MAE.TAR_ID
@@ -1749,6 +1805,7 @@ BEGIN
                , TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'')
                , MAE.TAR_TAREA_FINALIZADA AS BORRADO
                , MAE.PRC_ID
+               , SYS_GUID() as SYS_GUID               
         FROM '||V_ESQUEMA||'.MIG_MAESTRA_HITOS MAE
            , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
            , '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP
@@ -1970,7 +2027,7 @@ BEGIN
      
   */
     ---------------
-    --  SUBASTAS  --> MODIFICACIONES A CAUSA DE DUPLICADOS EN ORIGEN 
+    --  SUBASTAS  --
     ---------------  
         
     EXECUTE IMMEDIATE ('
@@ -1999,6 +2056,7 @@ BEGIN
                   , SUB_COSTAS_LETRADO
                   , CD_SUBASTA_ORIG
                   , DEUDA_JUDICIAL_MIG
+                  , SYS_GUID
                 )
             SELECT '||V_ESQUEMA||'.S_SUB_SUBASTA.NEXTVAL
                    , ASU_ID
@@ -2023,6 +2081,7 @@ BEGIN
                    , SUB_COSTAS_LETRADO
                    , CD_SUBASTA_ORIG
                    , DEUDA_JUDICIAL 
+                   , SYS_GUID() as SYS_GUID                   
             FROM (
                   SELECT DISTINCT 
                            ASU.ASU_ID
@@ -2356,6 +2415,7 @@ BEGIN
                 , BORRADO
                 , CD_LOTE
                 , LOS_NUM_LOTE
+                , SYS_GUID
                ) 
             SELECT '||V_ESQUEMA||'.S_LOS_LOTE_SUBASTA.NEXTVAL LOS_ID
                 , SUB_ID 
@@ -2376,6 +2436,7 @@ BEGIN
                 , BORRADO
                 , CD_LOTE
                 , LOS_NUM_LOTE 
+                , SYS_GUID() as SYS_GUID                
               FROM 
                     (SELECT DISTINCT
                                     SUB.SUB_ID 
@@ -2398,9 +2459,7 @@ BEGIN
                                   , PSL.NUMERO_LOTE AS LOS_NUM_LOTE
                                 FROM  '||V_ESQUEMA||'.MIG_PROCS_SUBASTAS_LOTES PSL 
                                     , '||V_ESQUEMA||'.SUB_SUBASTA SUB 
-                                    , (SELECT MIN(MIG_ID_PROCS_SUBASTA_LOTE) AS MIN_ID FROM MIG_PROCS_SUBASTAS_LOTES GROUP BY CD_LOTE ) Z
                                 WHERE PSL.CD_SUBASTA = SUB.CD_SUBASTA_ORIG
-                                  AND PSL.MIG_ID_PROCS_SUBASTA_LOTE = Z.MIN_ID
                             )'
                        );
         
@@ -2447,7 +2506,7 @@ BEGIN
     v_sql:= 'select count(*) from all_indexes where index_name=''IDX_MIG_1'' and table_name=''MIG_PROCS_SUBASTAS_LOTES_BIEN'' and table_owner = ''' || V_ESQUEMA || '''';
     EXECUTE IMMEDIATE v_sql INTO existe;
     IF (existe=0) THEN
-       EXECUTE IMMEDIATE('CREATE INDEX IDX_MIG_1 ON '||V_ESQUEMA||'.MIG_PROCS_SUBASTAS_LOTES_BIEN(CD_LOTE,CD_BIEN) ');
+       EXECUTE IMMEDIATE('CREATE INDEX IDX_MIG_1 ON '||V_ESQUEMA||'.MIG_PROCS_SUBASTAS_LOTES_BIEN (CD_LOTE,CD_BIEN) ');
     END IF;
     
     EXECUTE IMMEDIATE('Analyze table '||V_ESQUEMA||'.MIG_PROCS_SUBASTAS_LOTES_BIEN compute statistics FOR ALL INDEXES');
@@ -2458,10 +2517,20 @@ BEGIN
     v_sql:= 'select count(*) from all_indexes where index_name=''IDX_BIE_CODIGO_EXTERNO'' and table_name=''BIE_BIEN'' and table_owner = ''' || V_ESQUEMA || '''';
     EXECUTE IMMEDIATE v_sql INTO existe;
     IF (existe=0) THEN
-       EXECUTE IMMEDIATE('CREATE INDEX IDX_BIE_CODIGO_EXTERNO ON '||V_ESQUEMA||'.BIE_BIEN(BIE_CODIGO_EXTERNO) ');
+       EXECUTE IMMEDIATE('CREATE INDEX IDX_BIE_CODIGO_EXTERNO ON '||V_ESQUEMA||'.BIE_BIEN (BIE_CODIGO_EXTERNO) ');
     END IF;
     
     EXECUTE IMMEDIATE('analyze table '||V_ESQUEMA||'.BIE_BIEN compute statistics FOR ALL INDEXES'); 
+
+    -- MIG_PROCEDIMIENTOS_BIENES
+    existe := 0;
+    v_sql:= 'select count(*) from all_indexes where index_name=''IDX_MIG_PRC_BIE_X'' and table_name=''MIG_PROCEDIMIENTOS_BIENES'' and table_owner = ''' || V_ESQUEMA || '''';
+    EXECUTE IMMEDIATE v_sql INTO existe;
+    IF (existe=0) THEN
+       EXECUTE IMMEDIATE('CREATE INDEX IDX_MIG_PRC_BIE_X ON '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_BIENES (CD_PROCEDIMIENTO, CD_BIEN) ');
+    END IF;
+    
+    EXECUTE IMMEDIATE('Analyze table '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_BIENES compute statistics FOR ALL INDEXES');
 
 /*
     EXECUTE IMMEDIATE ('INSERT INTO  '||V_ESQUEMA||'.LOB_LOTE_BIEN
@@ -2488,13 +2557,21 @@ BEGIN
                               , BIE_ID
                               , VERSION 
                             ) 
-                            SELECT DISTINCT 
+                            SELECT /*+ ordered */ DISTINCT 
                                      LOS.LOS_ID
-                                   , 100314414 as BIE_ID
+                                   , E.BIE_ID
                                    , LOS.VERSION 
-                            FROM  '||V_ESQUEMA||'.MIG_PROCS_SUBASTAS_LOTES_BIEN SLB 
-                                , '||V_ESQUEMA||'.LOS_LOTE_SUBASTA LOS
-                            WHERE SLB.CD_LOTE = LOS.CD_LOTE  '
+                            FROM  '||V_ESQUEMA||'.LOS_LOTE_SUBASTA LOS,
+								  '||V_ESQUEMA||'.MIG_PROCS_SUBASTAS_LOTES A,
+								  '||V_ESQUEMA||'.MIG_PROCS_SUBASTAS_LOTES_BIEN B,
+								  '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_SUBASTAS C,
+								  '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_BIENES D,
+								  '||V_ESQUEMA||'.BIE_BIEN E
+                            WHERE A.CD_LOTE = LOS.CD_LOTE
+                              AND C.CD_SUBASTA = A.CD_SUBASTA
+							  AND B.CD_LOTE = A.CD_LOTE
+							  AND C.CD_PROCEDIMIENTO = D.CD_PROCEDIMIENTO
+							  AND D.CD_BIEN = E.BIE_CODIGO_INTERNO'
                        );
     
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  LOB_LOTE_BIEN cargada. '||SQL%ROWCOUNT||' Filas.');
@@ -2508,56 +2585,16 @@ BEGIN
     ----------------
     -- PRB_PCR_BIE
     ----------------
---> GMN  --> No CRUZA POR CODIGO BIEN, 	ponemos este bien_id 100314414 con ref catastral 5614525XG2451D0010JW hasta tener datos buenos
-/*    EXECUTE IMMEDIATE ('
-    INSERT INTO '||V_ESQUEMA||'.PRB_PRC_BIE
-            (
-                PRB_ID
-              , PRC_ID
-              , BIE_ID
-              , DD_SGB_ID
-              , USUARIOCREAR
-              , FECHACREAR
-            )
-            SELECT '||V_ESQUEMA||'.S_PRB_PRC_BIE.NEXTVAL AS PRB_ID,
-                   PRC_ID,
-                   BIE_ID,
-                   1 AS DD_SGB_ID, --SOLVENCIA
-                   '''||USUARIO||''' AS USUARIOCREAR,
-                   TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'') AS FECHACREAR
-            FROM(
-                   SELECT DISTINCT A.PRC_ID, B.BIE_ID
-                   FROM '||V_ESQUEMA||'.MIG_MAESTRA_HITOS A
-                      , '||V_ESQUEMA||'.BIE_BIEN B
-                   WHERE A.CD_BIEN IS NOT NULL --tRAMITES DE aDJUDICACION PARA ARRIBA
-                     AND A.CD_BIEN = B.BIE_CODIGO_INTERNO
-                 UNION
-                   SELECT DISTINCT D.PRC_ID, B.BIE_ID --SUBASTAS
-                   FROM '||V_ESQUEMA||'.BIE_BIEN B
-                      , '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_BIENES C
-                      , '||V_ESQUEMA||'.MIG_MAESTRA_HITOS D
-                      , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS E
-                   WHERE D.CD_BIEN IS NULL
-                     AND D.DD_TPO_CODIGO = ''H002''
-                     AND D.PRC_ID = E.PRC_ID
-                     AND D.CD_PROCEDIMIENTO = C.CD_PROCEDIMIENTO
-                     AND C.CD_BIEN = B.BIE_CODIGO_INTERNO
-                 UNION
-                    SELECT DISTINCT D.PRC_ID, B.BIE_ID --RESTO
-                    FROM '||V_ESQUEMA||'.BIE_BIEN B
-                       , '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_BIENES C
-                       , '||V_ESQUEMA||'.MIG_MAESTRA_HITOS D
-                       , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS E
-                    WHERE D.CD_BIEN IS NULL
-                      AND D.PRC_ID = E.PRC_ID
-                      AND D.DD_TPO_CODIGO <> ''H002''
-                      AND D.CD_PROCEDIMIENTO = C.CD_PROCEDIMIENTO
-                      AND C.CD_BIEN = B.BIE_CODIGO_INTERNO
-                    ORDER BY 1,2)'
-                 );
-    */
 
-    
+    EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.BIE_BIEN COMPUTE STATISTICS');
+	DBMS_OUTPUT.PUT_LINE('[WARN-ACC] - '||to_char(sysdate,'HH24:MI:SS')||'  BIE_BIEN Analizada');
+    EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.MIG_MAESTRA_HITOS COMPUTE STATISTICS');
+	DBMS_OUTPUT.PUT_LINE('[WARN-ACC] - '||to_char(sysdate,'HH24:MI:SS')||'  MIG_MAESTRA_HITOS Analizada');	
+    EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_BIENES COMPUTE STATISTICS');
+	DBMS_OUTPUT.PUT_LINE('[WARN-ACC] - '||to_char(sysdate,'HH24:MI:SS')||'  MIG_PROCEDIMIENTOS_BIENES Analizada');		
+    EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS COMPUTE STATISTICS');
+	DBMS_OUTPUT.PUT_LINE('[WARN-ACC] - '||to_char(sysdate,'HH24:MI:SS')||'  PRC_PROCEDIMIENTOS Analizada');		
+
     EXECUTE IMMEDIATE ('
     INSERT INTO '||V_ESQUEMA||'.PRB_PRC_BIE
             (
@@ -2567,36 +2604,34 @@ BEGIN
               , DD_SGB_ID
               , USUARIOCREAR
               , FECHACREAR
+              , SYS_GUID              
             )
             SELECT '||V_ESQUEMA||'.S_PRB_PRC_BIE.NEXTVAL AS PRB_ID,
                    PRC_ID,
                    BIE_ID,
-                   1 AS DD_SGB_ID, --SOLVENCIA
+                   1 AS DD_SGB_ID, 
                    '''||USUARIO||''' AS USUARIOCREAR,
-                   TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'') AS FECHACREAR
+                   TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'') AS FECHACREAR,
+                   SYS_GUID() as SYS_GUID
             FROM(
-                   SELECT DISTINCT D.PRC_ID
-                                 , 100314414 as BIE_ID --SUBASTAS
-                   FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_BIENES C
+                   SELECT DISTINCT A.PRC_ID, B.BIE_ID
+                   FROM '||V_ESQUEMA||'.MIG_MAESTRA_HITOS A
+                      , '||V_ESQUEMA||'.BIE_BIEN B
+                   WHERE A.CD_BIEN IS NOT NULL 
+                     AND A.CD_BIEN = B.BIE_CODIGO_INTERNO
+                 UNION
+                   SELECT DISTINCT D.PRC_ID, B.BIE_ID 
+                   FROM '||V_ESQUEMA||'.BIE_BIEN B
+                      , '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_BIENES C
                       , '||V_ESQUEMA||'.MIG_MAESTRA_HITOS D
                       , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS E
-                   WHERE D.CD_BIEN IS NULL
-                     AND D.DD_TPO_CODIGO = ''H002''
+                   WHERE D.CD_BIEN IS NULL                     
                      AND D.PRC_ID = E.PRC_ID
                      AND D.CD_PROCEDIMIENTO = C.CD_PROCEDIMIENTO
-                UNION
-                    SELECT DISTINCT D.PRC_ID
-                                  , 100314414 as BIE_ID --SUBASTAS
-                    FROM 
-                         '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_BIENES C
-                       , '||V_ESQUEMA||'.MIG_MAESTRA_HITOS D
-                       , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS E
-                    WHERE D.CD_BIEN IS NULL
-                      AND D.PRC_ID = E.PRC_ID
-                      AND D.DD_TPO_CODIGO <> ''H002''
-                      AND D.CD_PROCEDIMIENTO = C.CD_PROCEDIMIENTO
+                     AND C.CD_BIEN = B.BIE_CODIGO_INTERNO
                     ORDER BY 1,2)'
                  );
+    
     
     
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  PRB_PRC_BIE cargada. '||SQL%ROWCOUNT||' Filas.');
@@ -2606,6 +2641,26 @@ BEGIN
 
     -- 21.416 registros cargados
     
+
+    -- Actualizamos el dd_stda_id de tareas para CONCURSOS DD_TAS_ID = 2
+    
+    EXECUTE IMMEDIATE ('
+       MERGE INTO '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES tar
+       USING (select tap.dd_sta_id, tex.tar_id 
+              from '||V_ESQUEMA||'.TEX_TAREA_EXTERNA tex
+                 inner join '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO tap on tex.tap_id = tap.tap_id 
+                 inner join '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES t on t.TAR_ID   = tex.TAR_ID 
+                 inner join '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS      prc on prc.PRC_ID = t.PRC_ID         
+                 inner join '||V_ESQUEMA||'.ASU_ASUNTOS             asu on prc.asu_id = asu.asu_id                    
+                 where asu.usuariocrear='''||USUARIO||''' 
+                   and asu.DD_TAS_ID = 2  
+              ) tmp
+                      on (tmp.tar_id = tar.tar_id)                        
+       WHEN MATCHED THEN UPDATE SET tar.dd_sta_id = tmp.dd_sta_id,
+            tar.usuariomodificar = tar.dd_sta_id, tar.fechamodificar = sysdate'
+                     );
+       
+      COMMIT;    
     
     --------------------------------
     -- Carterizar asuntos letrado  -
@@ -2675,7 +2730,7 @@ BEGIN
 
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO cargada. Letrados de los Concursos. '||SQL%ROWCOUNT||' Filas.');
     COMMIT;
-*/    
+  
     
     
     -- Procuradores procedimientos  
@@ -2708,7 +2763,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO cargada. Procuradores. '||SQL%ROWCOUNT||' Filas.');
     COMMIT;
 
-    /*
+    
        
     --Procurador en los concursos:
     ------------------------------
@@ -2760,7 +2815,7 @@ BEGIN
                          '||V_ESQUEMA||'.des_despacho_externo        des  on des.des_despacho = migp.gestoria_adjudicacion inner join 
                          '||V_ESQUEMA||'.usd_usuarios_despachos      usd  on usd.des_id = des.des_id                     inner join
                          '||V_ESQUEMA_MASTER||'.usu_usuarios         usu  on usu.usu_id = usd.usu_id and usu.USU_EXTERNO = 1
-                    where not exists (select 1 from BANK01.GAA_GESTOR_ADICIONAL_ASUNTO gaa where gaa.asu_id = asu.asu_id and gaa.dd_tge_id = (select dd_tge_id 
+                    where not exists (select 1 from CM01.GAA_GESTOR_ADICIONAL_ASUNTO gaa where gaa.asu_id = asu.asu_id and gaa.dd_tge_id = (select dd_tge_id 
                                                                                                                                               from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor
                                                                                                                                               where dd_tge_codigo=''SGADJ'')
                                      )
@@ -2813,7 +2868,7 @@ BEGIN
      
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAH_GESTOR_ADICIONAL_HISTORICO cargada. Letrados de los Litigios. '||SQL%ROWCOUNT||' Filas.');
     COMMIT;
-        */
+        
     
     -- Procuradores
     --------------------------
@@ -2845,7 +2900,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAH_GESTOR_ADICIONAL_HISTORICO cargada. Procuradores. '||SQL%ROWCOUNT||' Filas.');
     COMMIT;
     
-/*
+
     --letrado en los concursos:
     --------------------------
     EXECUTE IMMEDIATE('insert into '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gah (gah.GAH_ID, gah.GAH_ASU_ID, gah.GAH_GESTOR_ID, gah.GAH_FECHA_DESDE, gah.GAH_TIPO_GESTOR_ID, usuariocrear, fechacrear)
@@ -2909,7 +2964,7 @@ BEGIN
     COMMIT;
 
 
--- INSERTAR GESTOR ESPECIALIZADO en todos los litigios  -- BANKIANO --
+-- INSERTAR GESTOR ESPECIALIZADO en todos los litigios  
 
 EXECUTE IMMEDIATE'
 insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
@@ -2951,7 +3006,7 @@ from
   ) aux';
 
 
---  SUPERVISORES según propiedad bankia o SAREB y gestion bankia
+--  SUPERVISORES según propiedad  o SAREB y gestion 
   
 -- SUPERVISOR NIVEL 1
 
@@ -2974,7 +3029,7 @@ select asu_id
                           and ges.dd_ges_codigo = ''CAJAMAR'')
   ) aux';
 
-    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO cargada. SUPERVISOR NIVEL 1 según propiedad bankia o SAREB y gestion bankia. '||SQL%ROWCOUNT||' Filas.');
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO cargada. SUPERVISOR NIVEL 1 según propiedad  o SAREB y gestion. '||SQL%ROWCOUNT||' Filas.');
     COMMIT;
 
 
@@ -3022,7 +3077,7 @@ from
                       and ges.dd_ges_codigo = ''CAJAMAR'')
   ) aux';
 
-    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO cargada. SUPERVISOR NIVEL 2 según propiedad bankia o SAREB y gestion bankia. '||SQL%ROWCOUNT||' Filas.');
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO cargada. SUPERVISOR NIVEL 2 según propiedad  o SAREB y gestion . '||SQL%ROWCOUNT||' Filas.');
     COMMIT;
 
 
@@ -3050,7 +3105,7 @@ from
 */
   
 /*  
--- propiedad bankia y gestion haya
+-- propiedad  y gestion haya
 
 -- SUPERVISOR NL 1
 
@@ -3073,7 +3128,7 @@ select asu_id
 and ges.dd_ges_codigo = ''HAYA'')
   ) aux';
 
-    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO cargada. SUPERVISOR NIVEL 1 según propiedad bankia o SAREB y gestion HAYA. '||SQL%ROWCOUNT||' Filas.');
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO cargada. SUPERVISOR NIVEL 1 según propiedad  o SAREB y gestion HAYA. '||SQL%ROWCOUNT||' Filas.');
     COMMIT;
 
 
@@ -3120,7 +3175,7 @@ and ges.dd_ges_codigo = ''HAYA'')
 
 V_SQL:= 'gaa SUPERVISOR 2';
 
-    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO cargada. SUPERVISOR NIVEL 2 según propiedad bankia o SAREB y gestion HAYA. '||SQL%ROWCOUNT||' Filas.');
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO cargada. SUPERVISOR NIVEL 2 según propiedad  o SAREB y gestion HAYA. '||SQL%ROWCOUNT||' Filas.');
     COMMIT;
 
 
@@ -3250,8 +3305,8 @@ from
  (
 select asu_id
   from '||V_ESQUEMA||'.asu_asuntos asu 
-  where not exists (select 1 from bank01.GAA_GESTOR_ADICIONAL_ASUNTO gaa where gaa.asu_id = asu.asu_id and gaa.dd_tge_id =
-                        (select dd_tge_id from bankmaster.dd_tge_tipo_gestor where dd_tge_codigo = ''GESTPROP''))
+  where not exists (select 1 from CM01.GAA_GESTOR_ADICIONAL_ASUNTO gaa where gaa.asu_id = asu.asu_id and gaa.dd_tge_id =
+                        (select dd_tge_id from cmmaster.dd_tge_tipo_gestor where dd_tge_codigo = ''GESTPROP''))
   and asu.asu_id in (select distinct asuu.asu_id
                     from '||V_ESQUEMA||'.asu_asuntos asuu inner join
                          '||V_ESQUEMA||'.prc_procedimientos prc on prc.asu_id = asuu.asu_id inner join
@@ -3262,7 +3317,7 @@ select asu_id
 and ges.dd_ges_codigo = ''CAJAMAR'')
   ) aux';
 
-    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO cargada. gestor de propuesta de subasta en los asuntos con trámite de supasta, hipotecario o ETNJ con gestion BANKIA. '||SQL%ROWCOUNT||' Filas.');
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO cargada. gestor de propuesta de subasta en los asuntos con trámite de supasta, hipotecario o ETNJ con gestion . '||SQL%ROWCOUNT||' Filas.');
     COMMIT;
 
 
@@ -3299,8 +3354,8 @@ from
  (
    select asu_id
      from '||V_ESQUEMA||'.asu_asuntos asu 
-     where not exists (select 1 from bank01.GAA_GESTOR_ADICIONAL_ASUNTO gaa where gaa.asu_id = asu.asu_id and gaa.dd_tge_id =
-                           (select dd_tge_id from bankmaster.dd_tge_tipo_gestor where dd_tge_codigo = ''GESTLLA''))
+     where not exists (select 1 from CM01.GAA_GESTOR_ADICIONAL_ASUNTO gaa where gaa.asu_id = asu.asu_id and gaa.dd_tge_id =
+                           (select dd_tge_id from cmmaster.dd_tge_tipo_gestor where dd_tge_codigo = ''GESTLLA''))
      and asu.asu_id in (select distinct asuu.asu_id
                        from '||V_ESQUEMA||'.asu_asuntos asuu inner join
                             '||V_ESQUEMA||'.prc_procedimientos prc on prc.asu_id = asuu.asu_id inner join
@@ -3311,349 +3366,9 @@ from
                          and ges.dd_ges_codigo = ''CAJAMAR'')
   ) aux';
 
-    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO cargada. gestor de llaves de subasta en los asuntos con trámite de subasta, hipotecario o ETNJ con gestion BANKIA. '||SQL%ROWCOUNT||' Filas.');
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO cargada. gestor de llaves de subasta en los asuntos con trámite de subasta, hipotecario o ETNJ con gestion. '||SQL%ROWCOUNT||' Filas.');
     COMMIT;
 
-
-EXECUTE IMMEDIATE'
-insert into '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gah (gah.GAH_ID, gah.GAH_ASU_ID, gah.GAH_GESTOR_ID, gah.GAH_FECHA_DESDE, gah.GAH_TIPO_GESTOR_ID, usuariocrear, fechacrear)
-select '||V_ESQUEMA||'.s_GAH_GESTOR_ADIC_HISTORICO.nextval, aux.asu_id, 
-       (select usd_id from '||V_ESQUEMA||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_MASTER||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = ''BPO1ACCEN'') usd_id, TRUNC(SYSDATE),
-(select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''GESTLLA''), '''||USUARIO||''', TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'')
-from 
- (
-   select asu_id
-     from '||V_ESQUEMA||'.asu_asuntos asu 
-     where not exists (select 1 from '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gaa where gaa.gah_asu_id = asu.asu_id and gaa.GAH_TIPO_GESTOR_ID =
-                           (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''GESTLLA''))
-     and asu.asu_id in (select distinct asuu.asu_id
-                       from '||V_ESQUEMA||'.asu_asuntos asuu inner join
-                            '||V_ESQUEMA||'.prc_procedimientos prc on prc.asu_id = asuu.asu_id inner join
-                            '||V_ESQUEMA||'.dd_tpo_tipo_procedimiento tpo on tpo.dd_tpo_id = prc.dd_tpo_id and tpo.DD_TPO_CODIGO in (''P409'',''P401'',''P01'',''P15'') inner join
-                            '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
-                            '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id 
-                       where asuu.DD_TAS_ID = (SELECT DD_TAS_ID FROM '||V_ESQUEMA_MASTER||'.DD_TAS_TIPOS_ASUNTO WHERE DD_TAS_DESCRIPCION_LARGA = ''Litigio'')
-                         and ges.dd_ges_codigo = ''BANKIA'')
-  ) aux';
-
-*/
--- CONCURSOS
- 
--- BANKIA
-/*
-
-EXECUTE IMMEDIATE'
-insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
-select '||V_ESQUEMA||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id, 
-       aux.usd_id,
-       (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''SUP''), '''||USUARIO||''', TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'')
-from 
- (  
-  select distinct asu_id, usd_supervisor usd_id 
-  from (
-        select asuu.asu_id, asuu.asu_nombre, mic.gestor_proc, 
-               CASE WHEN usd.usd_id IS NOT NULL THEN usd.usd_id ELSE usds.usd_id END usd_supervisor
-        from '||V_ESQUEMA||'.asu_asuntos asuu inner join
-             '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
-             '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id inner JOIN 
-             '||V_ESQUEMA||'.mig_concursos_cabecera mic on mic.cd_concurso = asuu.asu_id_externo inner join
-             '||V_ESQUEMA||'.BCC_BANKIA_CARTERIZA_CONCURSOS bccg on bccg.BCC_USUARIO = mic.gestor_proc left join
-             '||V_ESQUEMA_MASTER||'.usu_usuarios usu on usu.usu_username = bccg.BCC_USUARIO left join
-             '||V_ESQUEMA||'.usd_usuarios_despachos usd on usd.usu_id = usu.usu_id left join 
-             '||V_ESQUEMA||'.BCC_BANKIA_CARTERIZA_CONCURSOS bccs on bccs.BCC_RESPONSABLE = mic.gestor_proc left join
-             '||V_ESQUEMA_MASTER||'.usu_usuarios usus on usus.usu_username = bccs.BCC_RESPONSABLE left join
-             '||V_ESQUEMA||'.usd_usuarios_despachos usds on usds.usu_id = usus.usu_id  
-        where asuu.DD_TAS_ID = (SELECT DD_TAS_ID FROM '||V_ESQUEMA_MASTER||'.DD_TAS_TIPOS_ASUNTO WHERE DD_TAS_DESCRIPCION_LARGA = ''Concursal'')
-          and (select max(prc.PRC_SALDO_RECUPERACION ) from prc_procedimientos prc 
-              where prc.asu_id = asuu.asu_id) >= 2000000
-     ) aux
-  where aux.usd_supervisor is not null   
-    and not exists (select 1 from '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO gaa where gaa.asu_id = aux.asu_id and gaa.dd_tge_id = (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''SUP''))
- ) aux' ;
-
-    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO cargada. CONCURSOS BANKIA Supervisor Nivel 1. '||SQL%ROWCOUNT||' Filas.');
-    COMMIT;
-
-
-EXECUTE IMMEDIATE'
-insert into '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gah (gah.GAH_ID, gah.GAH_ASU_ID, gah.GAH_GESTOR_ID, gah.GAH_FECHA_DESDE, gah.GAH_TIPO_GESTOR_ID, usuariocrear, fechacrear)
-select '||V_ESQUEMA||'.s_GAH_GESTOR_ADIC_HISTORICO.nextval, aux.asu_id, 
-       aux.usd_id, TRUNC(SYSDATE),
-       (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''SUP''), '''||USUARIO||''', TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'')
-from 
- (  
-  select distinct asu_id, usd_supervisor usd_id 
-  from (
-        select asuu.asu_id, asuu.asu_nombre, mic.gestor_proc, 
-               CASE WHEN usd.usd_id IS NOT NULL THEN usd.usd_id ELSE usds.usd_id END usd_supervisor
-        from '||V_ESQUEMA||'.asu_asuntos asuu inner join
-             '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
-             '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id inner JOIN 
-             '||V_ESQUEMA||'.mig_concursos_cabecera mic on mic.cd_concurso = asuu.asu_id_externo inner join
-             '||V_ESQUEMA||'.BCC_BANKIA_CARTERIZA_CONCURSOS bccg on bccg.BCC_USUARIO = mic.gestor_proc left join
-             '||V_ESQUEMA_MASTER||'.usu_usuarios usu on usu.usu_username = bccg.BCC_USUARIO left join
-             '||V_ESQUEMA||'.usd_usuarios_despachos usd on usd.usu_id = usu.usu_id left join 
-             '||V_ESQUEMA||'.BCC_BANKIA_CARTERIZA_CONCURSOS bccs on bccs.BCC_RESPONSABLE = mic.gestor_proc left join
-             '||V_ESQUEMA_MASTER||'.usu_usuarios usus on usus.usu_username = bccs.BCC_RESPONSABLE left join
-             '||V_ESQUEMA||'.usd_usuarios_despachos usds on usds.usu_id = usus.usu_id  
-        where asuu.DD_TAS_ID = (SELECT DD_TAS_ID FROM '||V_ESQUEMA_MASTER||'.DD_TAS_TIPOS_ASUNTO WHERE DD_TAS_DESCRIPCION_LARGA = ''Concursal'')
-          and (select max(prc.PRC_SALDO_RECUPERACION ) from prc_procedimientos prc 
-              where prc.asu_id = asuu.asu_id) >= 2000000
-     ) aux
-  where aux.usd_supervisor is not null   
-    and not exists (select 1 from '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gaa where gaa.gah_asu_id = aux.asu_id and gaa.GAH_TIPO_GESTOR_ID = (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''SUP''))
- ) aux' ;
-
--- direccion bankia
-
-EXECUTE IMMEDIATE'
-insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
-select '||V_ESQUEMA||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id, 
-       aux.usd_id,
-       (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''SUPNVL2''), '''||USUARIO||''', TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'')
-from 
- (  
-  select distinct asu_id, usd_supervisor usd_id 
-  from (
-        select asuu.asu_id, asuu.asu_nombre, mic.gestor_proc, 
-               CASE WHEN usd.usd_id IS NOT NULL THEN usd.usd_id ELSE usds.usd_id END usd_supervisor
-        from '||V_ESQUEMA||'.asu_asuntos asuu inner join
-             '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
-             '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id inner JOIN 
-             '||V_ESQUEMA||'.mig_concursos_cabecera mic on mic.cd_concurso = asuu.asu_id_externo inner join
-             '||V_ESQUEMA||'.BCC_BANKIA_CARTERIZA_CONCURSOS bccg on bccg.BCC_USUARIO = mic.gestor_proc left join
-             '||V_ESQUEMA_MASTER||'.usu_usuarios usu on usu.usu_username = bccg.BCC_USUARIO left join
-             '||V_ESQUEMA||'.usd_usuarios_despachos usd on usd.usu_id = usu.usu_id left join 
-             '||V_ESQUEMA||'.BCC_BANKIA_CARTERIZA_CONCURSOS bccs on bccs.BCC_RESPONSABLE = mic.gestor_proc left join
-             '||V_ESQUEMA_MASTER||'.usu_usuarios usus on usus.usu_username = bccs.BCC_RESPONSABLE left join
-             '||V_ESQUEMA||'.usd_usuarios_despachos usds on usds.usu_id = usus.usu_id inner join
-             bank01.des_despacho_externo des on des.des_id = usd.des_id and des_despacho = ''DIRECCION BANKIA'' 
-        where asuu.DD_TAS_ID = (SELECT DD_TAS_ID FROM '||V_ESQUEMA_MASTER||'.DD_TAS_TIPOS_ASUNTO WHERE DD_TAS_DESCRIPCION_LARGA = ''Concursal'')
-          and (select max(prc.PRC_SALDO_RECUPERACION ) from prc_procedimientos prc 
-              where prc.asu_id = asuu.asu_id) >= 2000000
-     ) aux
-  where aux.usd_supervisor is not null   
-    and not exists (select 1 from '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO gaa where gaa.asu_id = aux.asu_id and gaa.dd_tge_id = (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''SUPNVL2''))
- ) aux' ;
-
-    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO cargada. CONCURSOS DIRECCION BANKIA. '||SQL%ROWCOUNT||' Filas.');
-    COMMIT;
-
-
-EXECUTE IMMEDIATE'
-insert into '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gah (gah.GAH_ID, gah.GAH_ASU_ID, gah.GAH_GESTOR_ID, gah.GAH_FECHA_DESDE, gah.GAH_TIPO_GESTOR_ID, usuariocrear, fechacrear)
-select '||V_ESQUEMA||'.s_GAH_GESTOR_ADIC_HISTORICO.nextval, aux.asu_id, 
-       aux.usd_id, TRUNC(SYSDATE),
-       (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''SUPNVL2''), '''||USUARIO||''', TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'')
-from 
- (  
-  select distinct asu_id, usd_supervisor usd_id 
-  from (
-        select asuu.asu_id, asuu.asu_nombre, mic.gestor_proc, 
-               CASE WHEN usd.usd_id IS NOT NULL THEN usd.usd_id ELSE usds.usd_id END usd_supervisor
-        from '||V_ESQUEMA||'.asu_asuntos asuu inner join
-             '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
-             '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id inner JOIN 
-             '||V_ESQUEMA||'.mig_concursos_cabecera mic on mic.cd_concurso = asuu.asu_id_externo inner join
-             '||V_ESQUEMA||'.BCC_BANKIA_CARTERIZA_CONCURSOS bccg on bccg.BCC_USUARIO = mic.gestor_proc left join
-             '||V_ESQUEMA_MASTER||'.usu_usuarios usu on usu.usu_username = bccg.BCC_USUARIO left join
-             '||V_ESQUEMA||'.usd_usuarios_despachos usd on usd.usu_id = usu.usu_id left join 
-             '||V_ESQUEMA||'.BCC_BANKIA_CARTERIZA_CONCURSOS bccs on bccs.BCC_RESPONSABLE = mic.gestor_proc left join
-             '||V_ESQUEMA_MASTER||'.usu_usuarios usus on usus.usu_username = bccs.BCC_RESPONSABLE left join
-             '||V_ESQUEMA||'.usd_usuarios_despachos usds on usds.usu_id = usus.usu_id  inner join
-             bank01.des_despacho_externo des on des.des_id = usd.des_id and des_despacho = ''DIRECCION BANKIA''
-        where asuu.DD_TAS_ID = (SELECT DD_TAS_ID FROM '||V_ESQUEMA_MASTER||'.DD_TAS_TIPOS_ASUNTO WHERE DD_TAS_DESCRIPCION_LARGA = ''Concursal'')
-          and (select max(prc.PRC_SALDO_RECUPERACION ) from prc_procedimientos prc 
-              where prc.asu_id = asuu.asu_id) >= 2000000
-     ) aux
-  where aux.usd_supervisor is not null   
-    and not exists (select 1 from '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gaa where gaa.gah_asu_id = aux.asu_id and gaa.GAH_TIPO_GESTOR_ID = (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''SUPNVL2''))
- ) aux' ;
-
-*/
-
-/* GMN esto parece específico de BANKIA
- -- deloitte
-
-EXECUTE IMMEDIATE'
-insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
-select '||V_ESQUEMA||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id, 
-       (select usd_id from '||V_ESQUEMA||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_MASTER||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = ''BPO2DELOIT'') usd_id,
-(select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''SUP''), '''||USUARIO||''', TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'')
-from 
- (
-select asu_id
-  from '||V_ESQUEMA||'.asu_asuntos asu 
-  where not exists (select 1 from '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO gaa where gaa.asu_id = asu.asu_id and gaa.dd_tge_id =
-                        (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''SUP''))
-  and asu.asu_id in (select asuu.asu_id
-                    from '||V_ESQUEMA||'.asu_asuntos asuu inner join
-                         '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
-                         '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id 
-                    where asuu.DD_TAS_ID = (SELECT DD_TAS_ID FROM '||V_ESQUEMA_MASTER||'.DD_TAS_TIPOS_ASUNTO WHERE DD_TAS_DESCRIPCION_LARGA = ''Concursal'')
-and ges.dd_ges_codigo = ''BANKIA'')
-  ) aux';
-
-    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO cargada. CONCURSOS DELOITTE. '||SQL%ROWCOUNT||' Filas.');
-    COMMIT;
-
-
-EXECUTE IMMEDIATE'
-insert into '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gah (gah.GAH_ID, gah.GAH_ASU_ID, gah.GAH_GESTOR_ID, gah.GAH_FECHA_DESDE, gah.GAH_TIPO_GESTOR_ID, usuariocrear, fechacrear)
-select '||V_ESQUEMA||'.s_GAH_GESTOR_ADIC_HISTORICO.nextval, aux.asu_id, 
-       (select usd_id from '||V_ESQUEMA||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_MASTER||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = ''BPO2DELOIT'') usd_id, TRUNC(SYSDATE),
-(select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''SUP''), '''||USUARIO||''', TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'')
-from 
- (
-select asu_id
-  from '||V_ESQUEMA||'.asu_asuntos asu 
-  where not exists (select 1 from '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gaa where gaa.gah_asu_id = asu.asu_id and gaa.GAH_TIPO_GESTOR_ID =
-                        (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''SUP''))
-  and asu.asu_id in (select asuu.asu_id
-                    from '||V_ESQUEMA||'.asu_asuntos asuu inner join
-                         '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
-                         '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id 
-                    where asuu.DD_TAS_ID = (SELECT DD_TAS_ID FROM '||V_ESQUEMA_MASTER||'.DD_TAS_TIPOS_ASUNTO WHERE DD_TAS_DESCRIPCION_LARGA = ''Concursal'')
-and ges.dd_ges_codigo = ''BANKIA'')
-  ) aux';
-
--- SUPERVISOR NIVEL 2
-
-EXECUTE IMMEDIATE'
-insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
-select '||V_ESQUEMA||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id, 
-       (select usd_id from '||V_ESQUEMA||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_MASTER||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = ''BPO2LV2DEL'') usd_id,
-(select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''SUPNVL2''), '''||USUARIO||''', TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'')
-from 
- (
-select asu_id
-  from '||V_ESQUEMA||'.asu_asuntos asu 
-  where not exists (select 1 from '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO gaa where gaa.asu_id = asu.asu_id and gaa.dd_tge_id =
-                        (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''SUPNVL2''))
-  and asu.asu_id in (select asuu.asu_id
-                    from '||V_ESQUEMA||'.asu_asuntos asuu inner join
-                         '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
-                         '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id 
-                    where asuu.DD_TAS_ID = (SELECT DD_TAS_ID FROM '||V_ESQUEMA_MASTER||'.DD_TAS_TIPOS_ASUNTO WHERE DD_TAS_DESCRIPCION_LARGA = ''Concursal'')
-and ges.dd_ges_codigo = ''BANKIA'')
-  ) aux';
-
-    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO cargada. CONCURSOS SUPERVISOR BANKIA NIVEL 2. '||SQL%ROWCOUNT||' Filas.');
-    COMMIT;
-
-
-EXECUTE IMMEDIATE'
-insert into '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gah (gah.GAH_ID, gah.GAH_ASU_ID, gah.GAH_GESTOR_ID, gah.GAH_FECHA_DESDE, gah.GAH_TIPO_GESTOR_ID, usuariocrear, fechacrear)
-select '||V_ESQUEMA||'.s_GAH_GESTOR_ADIC_HISTORICO.nextval, aux.asu_id, 
-       (select usd_id from '||V_ESQUEMA||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_MASTER||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = ''BPO2LV2DEL'') usd_id, TRUNC(SYSDATE),
-(select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''SUPNVL2''), '''||USUARIO||''', TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'')
-from 
- (
-select asu_id
-  from '||V_ESQUEMA||'.asu_asuntos asu 
-  where not exists (select 1 from '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gaa where gaa.gah_asu_id = asu.asu_id and gaa.GAH_TIPO_GESTOR_ID =
-                        (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''SUPNVL2''))
-  and asu.asu_id in (select asuu.asu_id
-                    from '||V_ESQUEMA||'.asu_asuntos asuu inner join
-                         '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
-                         '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id 
-                    where asuu.DD_TAS_ID = (SELECT DD_TAS_ID FROM '||V_ESQUEMA_MASTER||'.DD_TAS_TIPOS_ASUNTO WHERE DD_TAS_DESCRIPCION_LARGA = ''Concursal'')
-and ges.dd_ges_codigo = ''BANKIA'')
-  ) aux';
-
-
- 
-  -- HAYA SUP NIVEL 1
-
-EXECUTE IMMEDIATE'
-insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
-select '||V_ESQUEMA||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id, 
-       (select usd_id from '||V_ESQUEMA||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_MASTER||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = ''BPO2LV2DEL'') usd_id,
-(select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''SUP''), '''||USUARIO||''', TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'')
-from 
- (
-select asu_id
-  from '||V_ESQUEMA||'.asu_asuntos asu 
-  where not exists (select 1 from '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO gaa where gaa.asu_id = asu.asu_id and gaa.dd_tge_id =
-                        (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''SUPNVL2''))
-  and asu.asu_id in (select asuu.asu_id
-                    from '||V_ESQUEMA||'.asu_asuntos asuu inner join
-                         '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
-                         '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id 
-                    where asuu.DD_TAS_ID = (SELECT DD_TAS_ID FROM '||V_ESQUEMA_MASTER||'.DD_TAS_TIPOS_ASUNTO WHERE DD_TAS_DESCRIPCION_LARGA = ''Concursal'')
-and ges.dd_ges_codigo = ''HAYA'')
-  ) aux';
-
-    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO cargada. CONCURSOS SUPERVISOR HAYA NIVEL 1. '||SQL%ROWCOUNT||' Filas.');
-    COMMIT;
-
-
-EXECUTE IMMEDIATE'
-insert into '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gah (gah.GAH_ID, gah.GAH_ASU_ID, gah.GAH_GESTOR_ID, gah.GAH_FECHA_DESDE, gah.GAH_TIPO_GESTOR_ID, usuariocrear, fechacrear)
-select '||V_ESQUEMA||'.s_GAH_GESTOR_ADIC_HISTORICO.nextval, aux.asu_id, 
-       (select usd_id from '||V_ESQUEMA||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_MASTER||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = ''HAYA'') usd_id, TRUNC(SYSDATE),
-(select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''SUP''), '''||USUARIO||''', TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'')
-from 
- (
-select asu_id
-  from '||V_ESQUEMA||'.asu_asuntos asu 
-  where not exists (select 1 from '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gaa where gaa.gah_asu_id = asu.asu_id and gaa.GAH_TIPO_GESTOR_ID =
-                        (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''SUP''))
-  and asu.asu_id in (select asuu.asu_id
-                    from '||V_ESQUEMA||'.asu_asuntos asuu inner join
-                         '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
-                         '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id 
-                    where asuu.DD_TAS_ID = (SELECT DD_TAS_ID FROM '||V_ESQUEMA_MASTER||'.DD_TAS_TIPOS_ASUNTO WHERE DD_TAS_DESCRIPCION_LARGA = ''Concursal'')
-and ges.dd_ges_codigo = ''HAYA'')
-  ) aux';
-
-
- -- HAYA SUPERVISOR NIVEL 2
-
-EXECUTE IMMEDIATE'
-insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
-select '||V_ESQUEMA||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id, 
-       (select usd_id from '||V_ESQUEMA||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_MASTER||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = ''HAYALV2'') usd_id,
-(select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''SUPNVL2''), '''||USUARIO||''', TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'')
-from 
- (
-select asu_id
-  from '||V_ESQUEMA||'.asu_asuntos asu 
-  where not exists (select 1 from '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO gaa where gaa.asu_id = asu.asu_id and gaa.dd_tge_id =
-                        (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''SUPNVL2''))
-  and asu.asu_id in (select asuu.asu_id
-                    from '||V_ESQUEMA||'.asu_asuntos asuu inner join
-                         '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
-                         '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id 
-                    where asuu.DD_TAS_ID = (SELECT DD_TAS_ID FROM '||V_ESQUEMA_MASTER||'.DD_TAS_TIPOS_ASUNTO WHERE DD_TAS_DESCRIPCION_LARGA = ''Concursal'')
-and ges.dd_ges_codigo = ''HAYA'')
-  ) aux';
-
-    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO cargada. CONCURSOS SUPERVISOR HAYA NIVEL 2. '||SQL%ROWCOUNT||' Filas.');
-    COMMIT;
-
-
-EXECUTE IMMEDIATE'
-insert into '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gah (gah.GAH_ID, gah.GAH_ASU_ID, gah.GAH_GESTOR_ID, gah.GAH_FECHA_DESDE, gah.GAH_TIPO_GESTOR_ID, usuariocrear, fechacrear)
-select '||V_ESQUEMA||'.s_GAH_GESTOR_ADIC_HISTORICO.nextval, aux.asu_id, 
-       (select usd_id from '||V_ESQUEMA||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_MASTER||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = ''HAYALV2'') usd_id, TRUNC(SYSDATE),
-(select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''SUPNVL2''), '''||USUARIO||''', TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'')
-from 
- (
-select asu_id
-  from '||V_ESQUEMA||'.asu_asuntos asu 
-  where not exists (select 1 from '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gaa where gaa.gah_asu_id = asu.asu_id and gaa.GAH_TIPO_GESTOR_ID =
-                        (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''SUPNVL2''))
-  and asu.asu_id in (select asuu.asu_id
-                    from '||V_ESQUEMA||'.asu_asuntos asuu inner join
-                         '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
-                         '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id 
-                    where asuu.DD_TAS_ID = (SELECT DD_TAS_ID FROM '||V_ESQUEMA_MASTER||'.DD_TAS_TIPOS_ASUNTO WHERE DD_TAS_DESCRIPCION_LARGA = ''Concursal'')
-and ges.dd_ges_codigo = ''HAYA'')
-  ) aux';
-
-
-*/
 
 
 
@@ -3665,7 +3380,7 @@ and ges.dd_ges_codigo = ''HAYA'')
     EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO COMPUTE STATISTICS');
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAH_GESTOR_ADICIONAL_HISTORICO Analizada');
 
-/*  
+  
     --** update dd_tge_id
      EXECUTE IMMEDIATE('update '||V_ESQUEMA||'.gaa_gestor_adicional_asunto set dd_tge_id = (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo=''GEST'')
                         where dd_tge_id = (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo=''SGADJ'')');
@@ -3800,8 +3515,9 @@ EXECUTE IMMEDIATE('SELECT COUNT(1) FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO 
         , RCR_CONFIRM_IMPUGNACION
         , DTYPE
         , RCR_SUSPENSIVO
-        , VERSION, USUARIOCREAR, FECHACREAR, USUARIOMODIFICAR, FECHAMODIFICAR, USUARIOBORRAR, FECHABORRAR, BORRADO)
-
+        , VERSION, USUARIOCREAR, FECHACREAR, USUARIOMODIFICAR, FECHAMODIFICAR, USUARIOBORRAR, FECHABORRAR, BORRADO
+        , SYS_GUID 
+        )
         SELECT '||V_ESQUEMA||'.S_RCR_RECURSOS_PROCEDIMIENTOS.nextval, 
         grc.PRC_ID
              , act.DD_ACT_ID
@@ -3822,15 +3538,15 @@ EXECUTE IMMEDIATE('SELECT COUNT(1) FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO 
              , grc.CONFIRMACION_IMPUGNACION as RCR_CONFIRM_IMPUGNACION
              , ''MEJRecurso'' as DTYPE
              , grc.SUSPENSIVO as RCR_SUSPENSIVO
-         ,0
+             ,0
              ,'''||USUARIO||'''
              ,TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'')
              ,NULL
              ,NULL 
              ,NULL 
              ,NULL
-         ,0
-
+             ,0
+             , SYS_GUID() AS SYS_GUID 
              FROM 
              (select a.cd_procedimiento_padre,  a.SENTENCIA_RESOLUCION, a.causa, a.tipo_recurso, a.actor, a.suspensivo,
                      a.CONFIRMACION_IMPUGNACION, a.CONFIRMACION_VISTA, a.FECHA_SENTENCIA_RESOLUCION,

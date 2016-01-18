@@ -23,7 +23,7 @@ ULTIMO_TAREA_PRP AS
 		   AND SUBSTR(TRD.COD_HITO_NAL,1,1) = 'A'
            AND TAR.TAR_ID = TEX.TAR_ID
            AND TEX.TAP_ID = TAP.TAP_ID
-           AND NOT (TAR.BORRADO=0 AND TAR.TAR_TAREA_FINALIZADA=0)
+           AND TAR.BORRADO <> 0
        UNION
        SELECT DISTINCT PRC.PRC_ID, PRC.DD_TPO_ID , TAR.ASU_ID , TAR.TAR_ID
              , tap.tap_codigo, tap.tap_descripcion, tar.tar_fecha_fin
@@ -39,7 +39,6 @@ ULTIMO_TAREA_PRP AS
            AND TAP.DD_TPO_ID = TPO.DD_TPO_ID
            AND TAP.TAP_CODIGO = TRD.TAP_CODIGO
            AND TRD.DD_TPO_CODIGO = TPO.DD_TPO_CODIGO
-           AND TRD.COD_HITO_NAL = 'A0000'
            AND TAR.TAR_ID = TEX.TAR_ID
            AND TEX.TAP_ID = TAP.TAP_ID
            AND (TAR.BORRADO=0 AND TAR.TAR_TAREA_FINALIZADA=0)

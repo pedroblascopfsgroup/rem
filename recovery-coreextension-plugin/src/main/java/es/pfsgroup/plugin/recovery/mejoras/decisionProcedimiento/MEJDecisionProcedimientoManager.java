@@ -500,11 +500,11 @@ public class MEJDecisionProcedimientoManager extends
 		
 
 		logger.info("Validación 2. El procedimiento orgien está activo...");
-		if (procedimiento.getEstadoProcedimiento() != null
-				&& (procedimiento.getEstadoProcedimiento().getCodigo().equals(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO) || 
-						procedimiento.getEstadoProcedimiento().getCodigo().equals(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO))){ 
-				throw new UserException("El procedimiento de origen no está activo");
-			}
+//		if (procedimiento.getEstadoProcedimiento() != null
+//				&& (procedimiento.getEstadoProcedimiento().getCodigo().equals(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO) || 
+//						procedimiento.getEstadoProcedimiento().getCodigo().equals(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO))){ 
+//				throw new UserException("El procedimiento de origen no está activo");
+//			}
 			
 		logger.info("Validación 3 en Aceptación de Decisión...");
 		Set<String> tomasDeDecision = coreProjectContext.getCategoriasSubTareas().get(CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION);
@@ -664,8 +664,9 @@ public class MEJDecisionProcedimientoManager extends
 		}
 		
 		ConfiguradorPropuesta configuradorPropuesta = new ConfiguradorPropuesta();
-		Procedimiento procedimiento = prcManager.getProcedimiento(dtoDecisionProcedimiento.getIdProcedimiento());
-		if(procedimiento.getProcessBPM() == null) {
+		Procedimiento p = prcManager.getProcedimiento(dtoDecisionProcedimiento.getIdProcedimiento());
+		MEJProcedimiento procedimiento = MEJProcedimiento.instanceOf(p);
+		if(procedimiento.getProcessBPM() == null && procedimiento.getGuid() != null) {
 			configuradorPropuesta.setConfiguracion(ConfiguradorPropuesta.SOLO_ENVIAR);
 			dtoDecisionProcedimiento.setStrEstadoDecision(DDEstadoDecision.ESTADO_EN_CONFORMACION);
 		}

@@ -8,6 +8,9 @@ ficheros=OFICINAS,ZONAS
 #echo $(basename $0)
 
 DIR_DESTINO=/recovery/batch-server/control/etl/input/
+DIR_BACKUP=/recovery/batch-server/control/etl/backup/
+
+mv $DIR_DESTINO* $DIR_BACKUP
 
 mascara='_'$ENTIDAD'_'????????
 extensionSem=".sem"

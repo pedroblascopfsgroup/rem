@@ -1265,58 +1265,13 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
 
         if (!StringUtils.emtpyString(dtoExpediente.getMaxSaldoVencido()) || !StringUtils.emtpyString(dtoExpediente.getMaxRiesgoTotal())
                 || !StringUtils.emtpyString(dtoExpediente.getMinSaldoVencido()) || !StringUtils.emtpyString(dtoExpediente.getMinRiesgoTotal())) {
-
             hql.append(", ExpedienteContrato expc, Contrato c, Movimiento m ");
             requiereRiesgoSaldo = true;
         }
 
+        
         hql.append(" where exp.auditoria.borrado = 0 ");
 
-        /***
-		 * La lista de los parámetros dinánmicos debe venir de la siguiente manera
-		 * 
-		 * _param_origen:plugin1;plugin1param1:valor1;plugin1param2:valor2;%param%origen:plugin2;plugin2param1:valor1;plugin2param2:valor2;
-		 * 
-		 * */
-		
-		if(paramsDinamicos != null && filtrosBusquedaDinamica != null){
-			String[] paramsVector = paramsDinamicos.split("_param_");
-			if(paramsVector != null && paramsVector.length>0){
-				for(String paramDinamico:paramsVector){
-					for(BusquedaExpedienteFiltroDinamico filtro:filtrosBusquedaDinamica){
-						if(filtro.isValid(paramDinamico)){
-							
-                                                    //BKREC-943
-                                                    //Desvincular filtros de pestañas Recobro, Incidencia, Acuerdo,
-                                                    //de la busqueda principal con expedientes,
-                                                    //si no se busca por ningún parámetro que requiera Expediente
-                                                    if (isBusquedaExpedientes(dtoExpediente)) {
-                                                        hql.append(" and EXISTS ( ");
-                                                        hql.append(filtro.obtenerFiltroRecobro(paramDinamico));
-                                                        
-                                                        if (filtro.getOrigenFiltros().equals("recobro")){
-                                                            hql.append(" and exp.id = cre.expediente.id ");
-                                                        }                                                        
-                                                        if (filtro.getOrigenFiltros().equals("incidencia")){
-                                                            hql.append(" and exp.id = ine.expediente.id ");
-                                                        }
-                                                        if (filtro.getOrigenFiltros().equals("acuerdo")){
-                                                            hql.append(" and exp.id = acu.expediente.id ");
-                                                        }
-                                                        
-                                                        hql.append(" ) ");
-                                                    }else{
-                                                        hql = new StringBuilder();
-                                                        hql.append(filtro.obtenerFiltroRecobro(paramDinamico));
-                                                        //Sin vinculación, solo se hace la subconsulta a otras Entidades
-                                                    }
-							
-						}
-					}
-				}
-			}
-		}
-		
 		
         if (requiereRiesgoSaldo) {
             hql.append(" and expc.expediente.id = exp.id and expc.auditoria.borrado = 0");
@@ -1383,31 +1338,6 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         if (!StringUtils.emtpyString(dtoExpediente.getCodigoGestion())) {
             hql.append(" and exp.arquetipo.itinerario.dDtipoItinerario.codigo = :codigoGestion ");
             paramsMap.put("codigoGestion", dtoExpediente.getCodigoGestion());
-        }
-
-        //VISIBILIDAD
-        //BKREC-943
-        //Verificar si esto se quita por vinculación de esto con todos los filtros y con EXP
-        int cantZonas = dtoExpediente.getCodigoZonas().size();
-        if (cantZonas > 0) {
-            hql.append(" and ( ");
-            for (String codigoZ : dtoExpediente.getCodigoZonas()) {
-                hql.append(" SUBSTR(exp.oficina.zona.codigo, 1, 2) = '" + codigoZ + "' OR");
-            }
-            hql.deleteCharAt(hql.length() - 1);
-            hql.deleteCharAt(hql.length() - 1);
-            
-            hql.append(" or EXISTS ( ");
-            	hql.append(generaFiltroExpedientesPorGestorRecobro(usuarioLogueado));
-	        hql.append(" ) ");
-            
-	        hql.append(" ) ");
-        }
-        else{
-        	 //GESTORES EXPEDIENTE
-	        hql.append(" and EXISTS ( ");
-	        	hql.append(generaFiltroExpedientesPorGestorRecobro(usuarioLogueado));
-	        hql.append(" ) ");
         }
 
         //Centros
@@ -1484,17 +1414,100 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
             paramsMap.put("minRiesgoTotal", new Double(dtoExpediente.getMinRiesgoTotal()));
             paramsMap.put("maxRiesgoTotal", new Double(dtoExpediente.getMaxRiesgoTotal()));
         }
+
+        /***
+        * La lista de los parámetros dinánmicos debe venir de la siguiente manera
+        * 
+        * _param_origen:plugin1;plugin1param1:valor1;plugin1param2:valor2;%param%origen:plugin2;plugin2param1:valor1;plugin2param2:valor2;
+        * 
+        * */
+        //Si se incluyen filtros de expedientes, el filtro adicional ya no es el primero
+        Boolean esAdicionalPrimerFiltro = !isBusquedaExpedientes(dtoExpediente);
+        String entityId = "";
+        String joinEntityId = "";
+        String filtroPrimero = "";
+        String filtroAnt = "";
+        String filtroActual = "";
+        if(paramsDinamicos != null && filtrosBusquedaDinamica != null){
+                String[] paramsVector = paramsDinamicos.split("_param_");
+                if(paramsVector != null && paramsVector.length>0){
+                        for(String paramDinamico:paramsVector){
+                                for(BusquedaExpedienteFiltroDinamico filtro:filtrosBusquedaDinamica){
+                                        if(filtro.isValid(paramDinamico)){
+
+                                            //BKREC-943
+                                            //Desvinculación de expedientes
+                                            //Desvincular filtros de pestañas Recobro, Incidencia, Acuerdo,
+                                            //de la busqueda principal con expedientes,
+                                            //si no se busca por ningún parámetro que requiera Expediente
+                                            //Desvincular la busqueda de expedientes para optimizar 
+                                            filtroActual = filtro.getOrigenFiltros();
+
+                                            //Si el filtro actual adicional es el primero de los filtros a aplicar (o es el único)
+                                            //se construye el comienzo de la HQL sin relaciones a Expedientes
+                                            if (esAdicionalPrimerFiltro){
+                                                //Eliminar la vinculación con Expedientes es comenzar de nuevo la construccion HQL con el 1er filtro adicional
+                                                hql = new StringBuilder();
+                                                hql.append(filtro.obtenerFiltroRecobro(paramDinamico));
+                                                filtroPrimero = filtroActual;
+                                            } else {
+                                                //Si son filtros adicionales o hay vinculacion de Expedientes, los adicionales se relacionan con los anteriores
+                                                //por el filtro actual a relacionar
+                                                if (filtroActual.equals("recobro")){ joinEntityId = "cre.expediente.id"; }
+                                                if (filtroActual.equals("incidencia")){ joinEntityId = "ine.expediente.id"; }
+                                                if (filtroActual.equals("acuerdo")){ joinEntityId = "acu.expediente.id"; }
+
+                                                if (isBusquedaExpedientes(dtoExpediente)) {
+                                                    //Si había vinculación con Expedientes las relaciones con cualquier filtro adicional se hacen por exp.id
+                                                    entityId = "exp.id";
+                                                }else{
+                                                    if (filtroAnt.equals("recobro")){ entityId = "cre.expediente.id"; }
+                                                    if (filtroAnt.equals("incidencia")){ entityId = "ine.expediente.id"; }
+                                                    if (filtroAnt.equals("acuerdo")){ entityId = "acu.expediente.id"; } 
+                                                }
+
+                                                //Vinculación de filtros adicionales
+                                                hql.append(" and EXISTS ( ");
+                                                hql.append(filtro.obtenerFiltroRecobro(paramDinamico));
+                                                hql.append(" and ");
+                                                hql.append(entityId);
+                                                hql.append(" = ");
+                                                hql.append(joinEntityId);
+                                                hql.append(" ) ");
+                                            }
+
+                                            //Actualización de variables de control para bucles > 1 filtros adicionales
+                                            filtroAnt = filtroActual;
+                                            esAdicionalPrimerFiltro = false;
+
+                                            //Fin Optimizacion de Busqueda Expedientes separada de Recobro si es posible
+                                        }
+
+                                }
+                        }
+                }
+        }
         
+        //VISIBILIDAD USUARIOS EXTERNOS
         // ********* PARA USUARIOS EXTERNOS LIMITAMOS LA VISIBILIDAD A AQUELLOS USUARIOS 
         // ********* QUE SON GESTORES DE RECOBRO , SOLO VERÁN LOS EXPEDIENTES QUE ACTUALMENTE PERTENCEN A SU AGENCIA
         if (usuarioLogueado.getUsuarioExterno() ){
-        	 //GESTORES DE RECOBRO EXPEDIENTE
-	        hql.append(" and EXISTS ( ");
-	        	hql.append(generaFiltroExpedientesGestorRecobro(usuarioLogueado));
-	        hql.append(" ) ");
-        }
-
-        //hql.append(")");
+            //EXPEDIENTES ASOCIADOS AL USUARIO o AL GRUPO DE ESE USUARIO
+            //GESTORES DE RECOBRO EXPEDIENTE
+            hql.append(" and EXISTS ( ");
+               hql.append(generaFiltroExpedientesGestorGrupoOptimizado(usuarioLogueado));
+               if (isBusquedaExpedientes(dtoExpediente)) {
+                   //Si había vinculación con Expedientes las relaciones con cualquier filtro adicional se hacen por exp.id
+                   hql.append(" and exp.id = gae.expediente.id ");
+               }else{
+                   if (filtroPrimero.equals("recobro")){ hql.append(" and cre.expediente.id = gae.expediente.id "); }
+                   if (filtroPrimero.equals("incidencia")){ hql.append(" and ine.expediente.id = gae.expediente.id "); }
+                   if (filtroPrimero.equals("acuerdo")){ hql.append(" and acu.expediente.id = gae.expediente.id "); } 
+               }
+            hql.append(" ) ");
+                
+        } 
+        
         return paginationManager.getHibernatePage(getHibernateTemplate(), hql.toString(), dtoExpediente, paramsMap);
 	}
 
@@ -1534,7 +1547,7 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
 	 */
 	 private String generaFiltroExpedientesGestorRecobro(Usuario usuarioLogueado) {
 		StringBuffer hql = new StringBuffer();
-		hql.append(" select 1 from GestorExpediente ge ");
+		hql.append(" select exp.id from Expediente exp , GestorExpediente ge ");
 		hql.append(" where exp.id = ge.expediente.id and ge.tipoGestor.codigo = '").append(EXTDDTipoGestor.CODIGO_TIPO_GESTOR_AGENCIA_RECOBRO).append("' ");
 		hql.append(" and ge.usuario.id in (");
 		hql.append(obtenerListaUsuariosDelGrupo(usuarioLogueado.getId()));
@@ -1556,32 +1569,48 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
 		}
 		return resultado.substring(0, resultado.length()-2).toString();
 	}
-	
-	/***
-		 *  Devuelve un hql utilizado como subconsulta para obtener los expediente del que el usuario es gestor
-		 *  
-		 *  @param usuLogado Usuario logueado que ha realizado la busqueda
-		 *  
-		 *  @return hql con la busqueda del expediente por gestor
-		 * 
-		 * */
-		private String generaFiltroExpedientesPorGestor(Usuario usuLogado){
-			StringBuffer hql = new StringBuffer();
-			hql.append(" select exp.id from Expediente exp , EXTGestorEntidad ge ");
-			hql.append(" where exp.id = ge.unidadGestionId and ge.tipoEntidad.codigo = '").append(DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE).append("' ");
-			hql.append(" and ge.gestor.id in (");
-			hql.append(obtenerListaUsuariosDelGrupo(usuLogado.getId()));
-			hql.append(")");
-			return hql.toString();
-		}
-                
-		private String generaFiltroExpedientesPorGestorRecobro(Usuario usuLogado){
-			StringBuffer hql = new StringBuffer();
-			hql.append(" select 1 from  EXTGestorEntidad ge ");
-			hql.append(" where exp.id = ge.unidadGestionId and ge.tipoEntidad.codigo = '").append(DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE).append("' ");
-			hql.append(" and ge.gestor.id in (");
-			hql.append(obtenerListaUsuariosDelGrupo(usuLogado.getId()));
-			hql.append(")");
-			return hql.toString();
-		}
+
+        /*
+        * Optimización del método generaFiltroExpedientesGestorRecobro, para búsquedas con el nuevo buscador de expedientes recobro
+        */
+	private String generaFiltroExpedientesGestorGrupoOptimizado(Usuario usuarioLogueado) {
+            StringBuffer hql = new StringBuffer();
+               hql.append(" select 1 from GestorExpediente gae");
+               hql.append(" where gae.auditoria.borrado = false ");
+               hql.append(" and gae.tipoGestor.codigo = '").append(EXTDDTipoGestor.CODIGO_TIPO_GESTOR_AGENCIA_RECOBRO).append("' ");
+               hql.append(" and (gae.usuario.id = "+ usuarioLogueado.getId());
+               hql.append("  or gae.usuario.id in (");
+               hql.append(" select egu.grupo.id from EXTGrupoUsuarios egu where egu.usuario.id = " + usuarioLogueado.getId());
+               hql.append(" and egu.auditoria.borrado = false )) ");
+               return hql.toString();
+	}
+
+
+        /***
+        *  Devuelve un hql utilizado como subconsulta para obtener los expediente del que el usuario es gestor
+        *  
+        *  @param usuLogado Usuario logueado que ha realizado la busqueda
+        *  
+        *  @return hql con la busqueda del expediente por gestor
+        * 
+        * */
+        private String generaFiltroExpedientesPorGestor(Usuario usuLogado){
+               StringBuffer hql = new StringBuffer();
+               hql.append(" select exp.id from Expediente exp , EXTGestorEntidad ge ");
+               hql.append(" where exp.id = ge.unidadGestionId and ge.tipoEntidad.codigo = '").append(DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE).append("' ");
+               hql.append(" and ge.gestor.id in (");
+               hql.append(obtenerListaUsuariosDelGrupo(usuLogado.getId()));
+               hql.append(")");
+               return hql.toString();
+        }
+
+        private String generaFiltroExpedientesPorGestorRecobro(Usuario usuLogado){
+               StringBuffer hql = new StringBuffer();
+               hql.append(" select 1 from  EXTGestorEntidad ge ");
+               hql.append(" where exp.id = ge.unidadGestionId and ge.tipoEntidad.codigo = '").append(DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE).append("' ");
+               hql.append(" and ge.gestor.id in (");
+               hql.append(obtenerListaUsuariosDelGrupo(usuLogado.getId()));
+               hql.append(")");
+               return hql.toString();
+        }
 }

@@ -38,6 +38,7 @@ import es.capgemini.pfs.persona.dao.EXTPersonaDao;
 import es.capgemini.pfs.persona.dto.DtoUmbral;
 import es.capgemini.pfs.persona.dto.EXTDtoBuscarClientes;
 import es.capgemini.pfs.persona.model.AdjuntoPersona;
+import es.capgemini.pfs.persona.model.ClientesActuacionCurso;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.capgemini.pfs.tareaNotificacion.model.PlazoTareasDefault;
@@ -46,6 +47,7 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -338,5 +340,23 @@ public class EXTPersonaManager extends BusinessOperationOverrider<PersonaApi> im
 		List<Persona> personas = genericDao.getList(Persona.class, filtro);
 		
 		return personas;
+	}
+
+	/**
+	 * Obtiene la actuación en curso FSR de un cliente
+	 * return SI o No de dicha accion
+	 */
+	@Override
+	@BusinessOperation(BO_CORE_CLIENTES_ACTUACION_CURSO_GET_FSR)
+	public Boolean getAccionFSRByIdPersona(Long idPersona) {
+		ClientesActuacionCurso clienteActuacionCurso = new ClientesActuacionCurso();
+		Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "persona.id", idPersona);
+		Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		clienteActuacionCurso = genericDao.get(ClientesActuacionCurso.class, filtro1, filtro2);
+		
+		if(Checks.esNulo(clienteActuacionCurso) || Checks.esNulo(clienteActuacionCurso.getActuacionEnCurso()))
+			return false;
+		else
+			return clienteActuacionCurso.getActuacionEnCurso();	
 	}
 }

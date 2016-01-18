@@ -21,15 +21,41 @@
 		value="" 
 		dd="${despachos}" />
 
+	var permiteGuardar = new Ext.form.TextField({
+                hidden: true
+                ,value: false
+        });	
+    
+    var tipoTab = new Ext.form.TextField({
+                hidden: true
+                ,value: 'supervisardespacho'
+        });
+        
+    despachoExterno.on('select',function(){
+    	if(despachoExterno.getValue() == "")
+    		permiteGuardar.setValue(false);
+    	else
+    		permiteGuardar.setValue(true);
+    });
+    
 	<pfs:defineParameters name="parametros" paramId="${usuario.id}" 
 		idusuario ="idusuario"
 		despachoExterno="despachoExterno" 
 		usuarioExterno="usuarioExterno"
+		permiteGuardar="permiteGuardar"
+		tipoTab="tipoTab"
 		/>	
 
 	<pfs:editForm saveOrUpdateFlow="pfsadmin/despachosExternos/ADMasignarSupervisorDespacho"
 		leftColumFields="username"
 		rightColumFields="despachoExterno"
-		parameters="parametros" />
+		parameters="parametros" 
+		onSuccessMode="tabGenericoConMsgGuardando" />
+		
+	<%-- Para deshabilitar los botones mientras se realiza el proceso de Guardado. --%>
+	btnGuardar.on('click',function(){
+        this.setDisabled(true);
+        btnCancelar.setDisabled(true);
+	});
 
 </fwk:page>

@@ -917,7 +917,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 
 		// FILTRO DE ZONAS
 		if (dto.getJerarquia() != null && dto.getJerarquia().length() > 0) {
-			hql.append(" and cnt.zona.nivel.codigo <= :nivelId");
+			hql.append(" and cnt.zona.nivel.codigo >= :nivelId");
 			params.put("nivelId", Integer.valueOf(dto.getJerarquia()));
 
 			if (dto.getCodigoZonas().size() > 0) {
@@ -1057,9 +1057,6 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 
 		}
 
-		if (DtoBusquedaAsunto.SALIDA_XLS.equals(dto.getTipoSalida())) {
-			dto.setLimit(Integer.MAX_VALUE);
-		}
 		params.put("hql", hql);
 
 		return params;

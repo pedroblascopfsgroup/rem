@@ -167,9 +167,9 @@
             strTipoDespacho = "COMITE";
         else
         {
-	    	if(soyDeEsteTipoGestor("GEXT") || soyDeEsteTipoGestor("SUP")) 
+	    	if(soyDeEsteTipoGestor("<fwk:const value="es.capgemini.pfs.multigestor.model.EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO" />") || soyDeEsteTipoGestor("<fwk:const value="es.capgemini.pfs.multigestor.model.EXTDDTipoGestor.CODIGO_TIPO_GESTOR_SUPERVISOR" />")) 
 	    	    strTipoDespacho =  '<fwk:const value="es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno.CODIGO_DESPACHO_EXTERNO" />';  	
-	    	else if(soyDeEsteTipoGestor("GECEXP") || soyDeEsteTipoGestor("SUPCEXP"))
+	    	else if(soyDeEsteTipoGestor("<fwk:const value="es.capgemini.pfs.multigestor.model.EXTDDTipoGestor.CODIGO_TIPO_GESTOR_CONF_EXP" />") || soyDeEsteTipoGestor("<fwk:const value="es.capgemini.pfs.multigestor.model.EXTDDTipoGestor.CODIGO_TIPO_GESTOR_SUPERVISOR_CONF_EXP" />"))
 	    	    strTipoDespacho =  '<fwk:const value="es.pfsgroup.plugin.recovery.mejoras.PluginMejorasCodigosConstants.CODIGO_DESPACHO_CONFECCION_EXPEDIENTE" />';
     	}    
     	

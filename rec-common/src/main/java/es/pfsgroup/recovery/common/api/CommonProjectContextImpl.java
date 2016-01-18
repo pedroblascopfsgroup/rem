@@ -3,15 +3,21 @@ package es.pfsgroup.recovery.common.api;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.pfs.APPConstants;
 import es.capgemini.pfs.dsm.model.Entidad;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.users.UsuarioManager;
 
 public class CommonProjectContextImpl implements CommonProjectContext {
 
 	private Map<String, Map<String, String>> formatoNroContrato;
+	private Map<String, String> tipoGestores;
+	
+	private final Log logger = LogFactory.getLog(getClass());
 	
 	@Autowired
 	UsuarioManager usuarioManager;
@@ -85,5 +91,42 @@ public class CommonProjectContextImpl implements CommonProjectContext {
 	    		return contratoSubstring;
 	    	}
 		}
+	}
+
+	@Override
+	public Map<String, String> getTipoGestores() {
+		return tipoGestores;
+	}	
+	
+	public void setTipoGestores(Map<String, String> gestores) {
+		this.tipoGestores = gestores;
+	}
+	
+	public String getTipoGestor(String tipoGestor) {
+		
+		String gestor = "";
+		
+		if(tipoGestores != null) {
+			
+			gestor = tipoGestores.get(tipoGestor);
+			if(gestor == null || "".equals(gestor)) {
+				try {
+					gestor = (String) EXTDDTipoGestor.class.getDeclaredField(tipoGestor).get(new EXTDDTipoGestor());
+				} 
+				catch (Exception e) {
+					logger.error("Error en el método getTipoGestor(" + tipoGestor + "): " + e.getMessage());
+				} 
+			}
+		}
+		else {
+			try {
+				gestor = (String) EXTDDTipoGestor.class.getDeclaredField(tipoGestor).get(new EXTDDTipoGestor());
+			} 
+			catch (Exception e) {
+				logger.error("Error en el método getTipoGestor(" + tipoGestor + "): " + e.getMessage());
+			}
+		}
+		
+		return gestor;
 	}
 }

@@ -77,6 +77,10 @@ app.format.percentRenderer = function(pnumber){
 };
 
 app.format.percentRendererComa = function(pnumber){
+	if(pnumber.indexOf("%") > -1)
+    {
+		pnumber = pnumber.replace("%",""); 
+    }
 	var result = app.format.formatNumber(pnumber,2);
 	result = result.replace(".",",");
 	return String.format("{0} %",result);

@@ -375,17 +375,22 @@ public class BurofaxController {
 		//Comprobamos que las variables no han sido modificadas al editar su estilo con el HTMLEditor. Las variables son indivisibles 
 		String contenidoBurofaxAux=contenidoBurofax;
 		
-		while(contenidoBurofaxAux.length()>0 && contenidoBurofaxAux.indexOf("$") != -1){
+		while(contenidoBurofaxAux.length()>0 && contenidoBurofaxAux.indexOf("${") != -1){
 			int inicioVariable=contenidoBurofaxAux.indexOf("$");
 			int finalVariable=contenidoBurofaxAux.indexOf("}");
 			
-			String variable=contenidoBurofaxAux.substring(inicioVariable,finalVariable+1);
-			
-			if(variable.contains("<") || variable.contains("</")){
-				throw new Exception("La definición de las variables es incorrecta. Compruebe el estilo de las variables");
+			if(finalVariable != -1) {
+				String variable=contenidoBurofaxAux.substring(inicioVariable,finalVariable+1);
+				
+				if(variable.contains("<") || variable.contains("</")){
+					throw new Exception("La definición de las variables es incorrecta. Compruebe el estilo de las variables");
+				}
+				else if(!precontenciosoContext.getVariablesBurofax().contains(StringUtils.substring(variable, variable.indexOf("{") + +1, variable.lastIndexOf("}")))) {
+					throw new Exception("¡Atenci&oacute;n! se han encontrado variables err&oacute;neas en el texto");
+				}
 			}
-			else if(!precontenciosoContext.getVariablesBurofax().contains(StringUtils.substring(variable, variable.indexOf("{") + +1, variable.lastIndexOf("}")))) {
-				throw new Exception("¡Atenci&oacute;n! se han encontrado variables err&oacute;neas en el texto");
+			else {
+				finalVariable = inicioVariable + 1;
 			}
 			
 			contenidoBurofaxAux=contenidoBurofaxAux.substring(finalVariable+1);
@@ -459,6 +464,37 @@ public class BurofaxController {
 		model.put("idProcedimiento", idProcedimiento);
 		
 		return JSP_ALTA_PERSONA;
+	}
+
+	@RequestMapping
+	private String cancelarEnEstPrep(WebRequest request, ModelMap model,Long idEnvio, Long idCliente){
+		
+		burofaxManager.cancelarEnEstPrep(idEnvio, idCliente);
+		return DEFAULT;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	private String saberOrigen(WebRequest request, ModelMap map,Long idDireccion){
+		
+		boolean result = burofaxManager.saberOrigen(idDireccion);
+		map.put("esManual", result);
+		return "plugin/precontencioso/burofax/json/esManualJSON";
+		//return DEFAULT;
+	}
+	
+	@RequestMapping
+	private String borrarDirecManual(WebRequest request, ModelMap model,Long idDireccion){
+		
+		burofaxManager.borrarDireccionManualBurofax(idDireccion);
+		return DEFAULT;
+	}
+	
+	@RequestMapping
+	private String descartarPersonaEnvio(WebRequest request, ModelMap model,Long idBurofax){
+		
+		burofaxManager.descartarPersona(idBurofax);
+		return DEFAULT;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -670,7 +706,7 @@ public class BurofaxController {
      * @return
      */
     @RequestMapping
-    public String guardarEnvioBurofax(WebRequest request, ModelMap model,Boolean certificado,Long idTipoBurofax,Boolean comboEditable, Long idDocumento){
+    public String guardarEnvioBurofax(WebRequest request, ModelMap model,Boolean certificado,Long idTipoBurofax,Boolean comboEditable,  Long idDocumento){
     	
     	String[] arrayIdEnvios=request.getParameter("arrayIdEnvios").replace("[","").replace("]","").replace("&quot;", "").split(",");
     	
@@ -688,7 +724,9 @@ public class BurofaxController {
     	}
     	
 		burofaxManager.guardarEnvioBurofax(certificado,listaEnvioBurofaxPCO);
-		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(listaEnvioBurofaxPCO.get(0).getBurofax().getProcedimientoPCO().getProcedimiento().getId());			
+		if(!Checks.estaVacio(listaEnvioBurofaxPCO)){
+			proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(listaEnvioBurofaxPCO.get(0).getBurofax().getProcedimientoPCO().getProcedimiento().getId());
+		}
     		
     	return DEFAULT;
     }
@@ -727,7 +765,7 @@ public class BurofaxController {
 	    	fecAcuse = webDateFormat.parse(fechaAcuse);
 	    	fecEnvio = webDateFormat.parse(fechaEnvio);
     	}catch(Exception e){
-    		logger.error(e);
+    		logger.error("configuraInformacionEnvio: " + e);
     	}
     	burofaxManager.guardaInformacionEnvio(arrayIdEnvios, idResultadoBurofax, fecEnvio, fecAcuse);
     
@@ -742,12 +780,18 @@ public class BurofaxController {
 	private String descargarBurofax(WebRequest request, ModelMap model,@RequestParam(value = "idEnvio", required = true) Long idEnvio){
 		
     	BurofaxEnvioIntegracionPCO burofaxEnvio=burofaxManager.getBurofaxEnvioIntegracionByIdEnvio(idEnvio);
+
 		if(!Checks.esNulo(burofaxEnvio) && !Checks.esNulo(burofaxEnvio.getContenido())){
 			EnvioBurofaxPCO envioBurofax = burofaxManager.getEnvioBurofaxById(idEnvio);
 			if(!Checks.esNulo(envioBurofax)){
 				FileItem fileitem = burofaxManager.generarDocumentoBurofax(envioBurofax);
-				fileitem.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-				fileitem.setFileName("BUROFAX-"+burofaxEnvio.getCliente().replace(",","").trim()+".docx");
+				fileitem.setContentType("application/pdf");
+				if(!Checks.esNulo(burofaxEnvio.getNombreFichero())){
+					fileitem.setFileName(burofaxEnvio.getNombreFichero());
+				}
+				else{
+					fileitem.setFileName("BUROFAX-"+burofaxEnvio.getCliente().replace(",","").trim()+".pdf");
+				}
 				model.put("fileItem", fileitem);
 			}
 		}
@@ -771,7 +815,7 @@ public class BurofaxController {
 		
 		List<SolicitudDocumentoPCODto> solicitudesDoc = new ArrayList<SolicitudDocumentoPCODto>();
 		
-		int idIdentificativo = 1;	
+	
 		boolean esDocumento;	
 		boolean tieneSolicitud;
 		boolean isGestoria = esUsuarioTipoDespachoGestoria();
@@ -786,14 +830,13 @@ public class BurofaxController {
 					tieneSolicitud = true;
 					// se añade el registro, si no es una gestoria o si es una gestoria y es una solicitud asignada a ella
 					if (!isGestoria || (isGestoria && usuarioManager.getUsuarioLogado().getId().equals(sol.getActor().getUsuario().getId()))) {
-						SolicitudDocumentoPCODto solDto = documentoPCOApi.crearSolicitudDocumentoDto(doc, sol, esDocumento, tieneSolicitud, idIdentificativo);
+						SolicitudDocumentoPCODto solDto = documentoPCOApi.crearSolicitudDocumentoDto(doc, sol, esDocumento, tieneSolicitud);
 						if(!Checks.esNulo(solDto.getContrato()) && !Checks.esNulo(solDto.getTipoDocumento())){
 							solicitudesDoc.add(solDto);	
 						}
 					}
 
 					if (esDocumento) esDocumento = false;
-					idIdentificativo++;
 				}
 			}
 

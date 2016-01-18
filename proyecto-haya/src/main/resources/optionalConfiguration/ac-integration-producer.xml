@@ -19,6 +19,7 @@
 	</bean>
 	<bean id="salidaIntegracionAdapter" class="es.pfsgroup.recovery.integration.file.FileIntegrationAdapter">
 		<constructor-arg value="${integracion.output}/${integracion.producer.cola}"/>
+		<property name="charset" value="UTF-8"/>
 	</bean>
 
 	<!-- ******** Flow BPM ******* -->
@@ -62,9 +63,18 @@
 		<integration:transformer ref="jsonAsuntoPayloadTransformer" method="serialize" />					<!-- CONVIERTE EN FORMATO JSON -->
 		<integration:transformer ref="salidaIntegracionAdapter" method="transformMsg2file"/>				<!-- CONVIERTE EN FORMATO FICHERO CON METADATA -->
 	</integration:chain>
-	<file:outbound-channel-adapter
+	
+	<integration:service-activator input-channel="integra.salida.fichero.out" output-channel="nullChannel" method="handleMessage">
+		<bean class="org.springframework.integration.file.FileWritingMessageHandler">
+			<constructor-arg value="${integracion.output}/${integracion.producer.cola}"/>
+			<property name="charset" value="UTF-8"/>
+			<property name="outputChannel" ref="nullChannel"/>
+		</bean>
+	</integration:service-activator>
+	
+	<!-- file:outbound-channel-adapter
 			channel="integra.salida.fichero.out" 
-			directory="${integracion.output}/${integracion.producer.cola}" />
+			directory="${integracion.output}/${integracion.producer.cola}" / -->
 
 
 	<!-- ************* 

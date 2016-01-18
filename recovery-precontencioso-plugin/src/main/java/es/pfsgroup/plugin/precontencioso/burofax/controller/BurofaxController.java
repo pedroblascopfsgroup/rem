@@ -175,14 +175,17 @@ public class BurofaxController {
 					dto.setEsPersonaManual("SI");
 					if(Checks.esNulo(burofax.getDemandadoManual().getCodClienteEntidad()) && Checks.esNulo(burofax.getDemandadoManual().getPropietario())){
 						dto.setIdCliente(burofax.getDemandadoManual().getId());
-						dto.setCliente(burofax.getDemandadoManual().getApellidoNombre());	
+						dto.setCliente(burofax.getDemandadoManual().getApellidoNombre());
+						dto.setTienePersona(false);
 					}else{
 						///Obtenemos la persona no manual
 						Persona per = genericDao.get(Persona.class, genericDao.createFilter(FilterType.EQUALS, "codClienteEntidad", burofax.getDemandadoManual().getCodClienteEntidad()), genericDao.createFilter(FilterType.EQUALS, "propietario.id", burofax.getDemandadoManual().getPropietario().getId()) );
 						dto.setIdCliente(per.getId());
 						dto.setCliente(burofax.getDemandadoManual().getApellidoNombre());
+						dto.setTienePersona(true);
 					}
 				}else{
+					dto.setTienePersona(true);
 					dto.setEsPersonaManual("NO");
 					dto.setIdCliente(burofax.getDemandado().getId());
 					dto.setCliente(burofax.getDemandado().getApellidoNombre());
@@ -460,9 +463,34 @@ public class BurofaxController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	private String getAltaPersonaManual(WebRequest request, ModelMap model,Long idProcedimiento){
+	private String getAltaPersonaManual(WebRequest request, ModelMap model,Long idProcedimiento, Long idCliente, boolean tienePersona){
 		
 		model.put("idProcedimiento", idProcedimiento);
+		
+		if(!Checks.esNulo(idCliente)){
+			
+			///Se abre la ventana para editar
+			model.put("isEditMode", true);	
+			model.put("idCliente", idCliente);
+			
+			if(tienePersona){
+				///Obtenemos los datos de PER_PERSONAS
+				Persona pers = genericDao.get(Persona.class, genericDao.createFilter(FilterType.EQUALS, "id", idCliente));
+				model.put("DNI", pers.getDocId());	
+				model.put("NOMBRE", pers.getNombre());	
+				model.put("APELLIDO1", pers.getApellido1());	
+				model.put("APELLIDO2", pers.getApellido2());
+				model.put("tienePersona", true);
+			}else{
+				//Obtenemos los datos de PER_PERSONAS_MANUALES
+				PersonaManual persM = genericDao.get(PersonaManual.class, genericDao.createFilter(FilterType.EQUALS, "id", idCliente));
+				model.put("DNI", persM.getDocId());	
+				model.put("NOMBRE", persM.getNombre());	
+				model.put("APELLIDO1", persM.getApellido1());	
+				model.put("APELLIDO2", persM.getApellido2());
+				model.put("tienePersona", false);
+			}
+		}
 		
 		return JSP_ALTA_PERSONA_MANUAL;
 	}
@@ -500,7 +528,7 @@ public class BurofaxController {
 			if(Checks.esNulo(idPersona)){
 				persMan = burofaxManager.guardaPersonaManual(dni, nombre, primerApll, segundoApll,null,null);
 			}else{
-				persMan = genericDao.get(PersonaManual.class, genericDao.createFilter(FilterType.EQUALS, "id", idPersona));
+				persMan = burofaxManager.updatePersonaManual(dni, nombre, primerApll, segundoApll, idPersona);
 			}
 			///Creamos su relacion con los contratos
 			int i = 0;
@@ -928,6 +956,41 @@ public class BurofaxController {
 
 		burofaxManager.actualizaDireccion(dto, idDireccion);
 		return DEFAULT;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	private String existeRelacionPersonaBurofax(WebRequest request, 
+			ModelMap model,
+			Long idProcedimiento,
+			@RequestParam(value = "idPersona", required = true) Long idPersona, 
+			@RequestParam(value = "contratos", required = true) Long[] contratos, 
+			@RequestParam(value = "tipoIntervencionContratos", required = true) String[] tiposIntervencion){
+		
+		
+		int i = 0;
+		boolean existeRelacion = false;
+		for(Long idContrato : contratos){
+			List<BurofaxPCO> burofaxes = genericDao.getList(BurofaxPCO.class, genericDao.createFilter(FilterType.EQUALS, "demandado.id", idPersona),
+																  genericDao.createFilter(FilterType.EQUALS, "procedimientoPCO.id", idProcedimiento),
+																  genericDao.createFilter(FilterType.EQUALS, "contrato.id", idContrato), 
+																  genericDao.createFilter(FilterType.EQUALS, "tipoIntervencion.codigo", tiposIntervencion[i]));
+			///Comprobamos si alguna relacion contrato-tipointervencion esta relacionado con furofax
+			if(!Checks.esNulo(burofaxes) && burofaxes.size()>0){
+				existeRelacion = true;
+				break;
+			}
+			
+			i++;
+		}
+		
+		if(existeRelacion){
+    		model.put("okko", true);	
+		}else{
+			model.put("okko", false);
+		}
+		
+	return OK_KO_RESPUESTA_JSON;
 	}
 
 }

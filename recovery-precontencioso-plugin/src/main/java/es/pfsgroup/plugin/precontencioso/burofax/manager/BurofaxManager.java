@@ -1010,22 +1010,35 @@ public class BurofaxManager implements BurofaxApi {
 	@Override
 	@Transactional(readOnly = false)
 	public PersonaManual guardaPersonaManual(String dni, String nombre, String app1, String app2, String propietarioCodigo, Long codClienteEntidad){
+		
+		PersonaManual persMan = null;
+		boolean existePersonaManual = false;
+		
+		if(!Checks.esNulo(propietarioCodigo) && !Checks.esNulo(codClienteEntidad)){
+			///Comprobamos si ya se ha creado una persona manual para una persona
+			persMan = genericDao.get(PersonaManual.class, genericDao.createFilter(FilterType.EQUALS, "propietario.codigo", propietarioCodigo), genericDao.createFilter(FilterType.EQUALS, "codClienteEntidad", codClienteEntidad));
+			if(!Checks.esNulo(persMan)){
+				existePersonaManual = true;
+			}
+		}
 		 
-		PersonaManual persMan = new PersonaManual();
-		persMan.setDocId(dni);
-		persMan.setNombre(nombre);
-		persMan.setApellido1(app1);
-		persMan.setApellido2(app2);
-		persMan.setAuditoria(Auditoria.getNewInstance());
-		persMan.setVersion(0);
-		if(!Checks.esNulo(propietarioCodigo)){
-			DDPropietario propietario = (DDPropietario) dictionaryManager.getByCode(DDPropietario.class, propietarioCodigo);
-			persMan.setPropietario(propietario);
-		}
-		if(!Checks.esNulo(codClienteEntidad)){
-			persMan.setCodClienteEntidad(codClienteEntidad);
-		}
-		personaManualDao.save(persMan);	
+		if(!existePersonaManual){
+			persMan = new PersonaManual();
+			persMan.setDocId(dni);
+			persMan.setNombre(nombre);
+			persMan.setApellido1(app1);
+			persMan.setApellido2(app2);
+			persMan.setAuditoria(Auditoria.getNewInstance());
+			persMan.setVersion(0);
+			if(!Checks.esNulo(propietarioCodigo)){
+				DDPropietario propietario = (DDPropietario) dictionaryManager.getByCode(DDPropietario.class, propietarioCodigo);
+				persMan.setPropietario(propietario);
+			}
+			if(!Checks.esNulo(codClienteEntidad)){
+				persMan.setCodClienteEntidad(codClienteEntidad);
+			}
+			personaManualDao.save(persMan);	
+		}	
 		
 		return persMan;
 	}
@@ -1169,5 +1182,20 @@ public class BurofaxManager implements BurofaxApi {
     	
 		boolean mostrarBoton = procedimientoPcoApi.mostrarSegunCodigos(idProcedimientoEnvio, codigosTiposGestores);
 		return mostrarBoton;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public PersonaManual updatePersonaManual(String dni, String nombre, String app1, String app2, Long idPersonaManual){
+		 
+		PersonaManual persMan = genericDao.get(PersonaManual.class, genericDao.createFilter(FilterType.EQUALS, "id", idPersonaManual));
+		persMan.setDocId(dni);
+		persMan.setNombre(nombre);
+		persMan.setApellido1(app1);
+		persMan.setApellido2(app2);
+
+		personaManualDao.saveOrUpdate(persMan);	
+		
+		return persMan;
 	}
 }

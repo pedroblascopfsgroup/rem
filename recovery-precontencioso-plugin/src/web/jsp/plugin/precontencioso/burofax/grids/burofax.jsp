@@ -100,6 +100,9 @@ var pdfRender = function(value, meta, record) {
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoo" text="**id"/>'
 			,dataIndex: 'id', sortable: true,autoWidth:true,hidden:true
+		}, {
+			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoo" text="**tienePersona"/>'
+			,dataIndex: 'tienePersona', sortable: true,autoWidth:true,hidden:true
 		}
 	];
 
@@ -124,6 +127,7 @@ var pdfRender = function(value, meta, record) {
 	   ,{name: 'id'}
 	   ,{name: 'acuseRecibo'}
 	   ,{name: 'esPersonaManual'}
+	   ,{name: 'tienePersona'}
 	]);
 	
 	var burofaxStore = page.getStore({
@@ -230,7 +234,7 @@ var pdfRender = function(value, meta, record) {
 	
 	<%-- boton editar/ver direccion --%>
 
-btnEditarVerDireccion.on('click', function(){
+	btnEditarVerDireccion.on('click', function(){
 	   
 	    var arrayIdClientes=new Array();
 			 
@@ -571,6 +575,40 @@ btnEditarVerDireccion.on('click', function(){
 	
 	});	
 	
+    btnEditPersona.on('click', function(){
+    	
+    	rowsSelected=gridBurofax.getSelectionModel().getSelections();
+
+		if(rowsSelected.length > 0){
+		
+			var idCliente = rowsSelected[0].get('idCliente');
+			var tienePersona = rowsSelected[0].get('tienePersona');
+			
+			var w = app.openWindow({
+			  flow : 'burofax/getAltaPersonaManual'
+			  ,width:820
+			  ,autoWidth:true
+			  ,closable:true
+			  ,title : '<s:message code="plugin.precontencioso.grid.burofax.agregar.persona" text="**Añadir Notificado" />'
+			  ,params:{idProcedimiento:idProcedimiento, idCliente:idCliente, tienePersona:tienePersona}
+			
+			});
+			w.on(app.event.DONE,function(){
+					w.close();
+					refrescarBurofaxGrid();
+					
+					
+			});
+			w.on(app.event.CANCEL, function(){
+					refrescarBurofaxGrid();
+					w.close();
+				});
+
+		}
+		
+	});
+	
+	
 	
 	<c:choose>
 	    <c:when test="${user.entidad.descripcion eq 'CAJAMAR' || user.entidad.descripcion eq 'HAYA'}">
@@ -581,7 +619,7 @@ btnEditarVerDireccion.on('click', function(){
 					  ,autoWidth:true
 					  ,closable:true
 					  ,title : '<s:message code="plugin.precontencioso.grid.burofax.agregar.persona" text="**Añadir Notificado" />'
-					  ,params:{idProcedimiento:idProcedimiento}
+					  ,params:{idProcedimiento:idProcedimiento, idCliente:null, tienePersona:false}
 					
 					});
 					w.on(app.event.DONE,function(){
@@ -590,7 +628,10 @@ btnEditarVerDireccion.on('click', function(){
 							
 							
 					});
-					w.on(app.event.CANCEL, function(){w.close();});
+					w.on(app.event.CANCEL, function(){
+						refrescarBurofaxGrid();
+						w.close();
+					});
 			});
 	    </c:when>
 	    <c:otherwise>
@@ -864,6 +905,8 @@ btnEditarVerDireccion.on('click', function(){
 		
 		if(!btnEditPersona.disabled && !todasPersonasMarcadasIguales()) {
 			btnEditPersona.setDisabled(true);
+		}else if(btnEditPersona.disabled && todasPersonasMarcadasIguales()){
+			btnEditPersona.setDisabled(false);
 		}
 	}
 	

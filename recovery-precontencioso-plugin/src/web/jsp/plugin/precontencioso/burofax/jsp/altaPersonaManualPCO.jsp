@@ -15,10 +15,13 @@
 	var esPersonaManual;
 	var arrayContratos=new Array();
 	var arrayTiposIntervencion=new Array();
-	
+	var isEditMode = '${isEditMode}';
+	var idCliente = '${idCliente}';
+	var tienePersona = '${tienePersona}';
+	var esEditPersonaManual = false;
+	var esEditPersona = false;
 
 	var guardaPersonaYPersonaManual =  function() {
-	
 		Ext.Ajax.request({
 			url : page.resolveUrl('burofax/guardaPersonaYPersonaManual'), 
 			params : {
@@ -41,9 +44,13 @@
 		        switch (action.failureType) {
 		            case Ext.form.Action.CLIENT_INVALID:
 		                Ext.Msg.alert('Error', '<s:message code="rec-web.direccion.validacion.camposObligatorios" text="**Debe rellenar los campos obligatorios." />');
+		                arrayContratos=new Array();
+						arrayTiposIntervencion=new Array();
 		                break;
 		            case Ext.form.Action.CONNECT_FAILURE:
 		                Ext.Msg.alert('Error', '<s:message code="rec-web.direccion.validacion.errorComunicacion" text="**Error de comunicación" />');
+		                arrayContratos=new Array();
+						arrayTiposIntervencion=new Array();
 		                break;
 		       }
 			}
@@ -80,25 +87,24 @@
 
 	
 	var _handler =  function() {
-		    var arrayIdPersonas=new Array();
+
 			panelEdicionPersonas.container.mask('<s:message code="fwk.ui.form.guardando" text="**Guardando" />');
-			//recorrerPersonasStore(arrayIdPersonas);
 			
 			var dni = dniPersonaCmp.getValue();
 			var nombre = nombrePersonaCmp.getValue();
 			var apll1 = apellido1PersonaCmp.getValue();
 			var apll2 = apellido2PersonaCmp.getValue();
 			
+			
 			/*Si la persona es manual y nueva todos los campos son requeridos*/
-			
-			if(esPersonaManual == 'true' && idPersona.getValue() == ''){
-			
+			if(esEditPersonaManual || (esPersonaManual == 'true' && idPersona.getValue() == '')){
+				
 				if(dni == '' || nombre == '' || apll1 == '' || apll2 == ''){
 					Ext.Msg.alert('Error', '<s:message code="plugin.precontencioso.grid.burofax.aniadirNotificado.camposObligatorios" text="**Todos los campos de la persona son obligatorios." />');
 					panelEdicionPersonas.container.unmask();
 					return false;
 				}
-				
+
 				/*Comprobamos si el DNI introducido esta registrado*/
 				Ext.Ajax.request({
 							url : page.resolveUrl('burofax/existePersonaConDni'), 
@@ -123,7 +129,34 @@
 				
 			}else{
 				if(comprueba_contratos() === true){
-					guardaPersonaYPersonaManual();
+					if(esEditPersona){
+						/*Comprobamos que no se modifican relaciones PERSONA - CONTRATO que ya estan en burofax*/
+						Ext.Ajax.request({
+									url : page.resolveUrl('burofax/existeRelacionPersonaBurofax'), 
+									params : {
+												idProcedimiento:idProcedimiento,
+												idPersona:idPersona.getValue(),
+												contratos:arrayContratos,
+												tipoIntervencionContratos:arrayTiposIntervencion
+											},
+									method: 'POST',
+									success: function ( result, request ) {
+										var existePersona = Ext.util.JSON.decode(result.responseText);
+										if(existePersona.okko){
+											Ext.Msg.alert('Error', '<s:message code="plugin.precontencioso.grid.burofax.aniadirNotificado.infoBurofaxRegistrada" text="**No es posible completar la operacion, el usuario que intenta modificar ya tiene información de envío de burofax registrada." />');
+											panelEdicionPersonas.container.unmask();
+											arrayContratos=new Array();
+											arrayTiposIntervencion=new Array();
+											return false;
+										}else{
+											guardaPersonaYPersonaManual();
+										}
+									},
+					
+						});
+					}else{
+						guardaPersonaYPersonaManual();
+					}
 				}				
 			}
 		
@@ -135,20 +168,6 @@
 		,iconCls : 'icon_ok'
 		,handler : _handler
 	});
-
-
-	var recorrerPersonasStore = function(arrayIdPersonas) {
-		var i=0;
-		var auxId;
-		
-		for (i=0; i < personasStore.getCount(); i++) {
-			auxId = personasStore.getAt(i).data.id;
-			arrayIdPersonas.push(auxId);
-			
-		}
-		
-	}
-	
 	
 
 	var btnCancelar= new Ext.Button({
@@ -303,12 +322,6 @@
          }
     });
     
-    /*persona.store.on( 'load', function( store, records, options ) {
-    	if(records.length == 0){
-			personasComboStore.add(new personasComboStore.recordType({idPersona: null,nombrePersona: 'Nueva persona',personaCompleto:'Nueva persona'}, 0));
-    	}
-    	
-	} );*/
 
 	/* Grupo de controles de manejo de la lista de personas */	
 	var recordPersona = Ext.data.Record.create([
@@ -398,42 +411,7 @@
                          			   sm.set('tipointervCodigo',tiposIntervencionStore.getAt(index).data.codigo);
 						        }
 						    }
-                        }),
-              listeners :{
-              	beforeedit:function( grid,record,field,value,row,column,cancel ){
-              		/*if(relacionContratosStore.getAt(row).data.tieneRelacionContratoPersona){
-              			column.getEditor().
-              		}*/
-              		debugger;
-              	}
-              },
-              /*
-          	renderer: function(value, metaData, record, rowIndex, colIndex, store) {
-				if(relacionContratosStore.getAt(rowIndex).data.tieneRelacionContratoPersona){
-					this.getEditor().setDisabled(true);
-				}else{
-					this.getEditor().setDisabled(false);
-				}
-				debugger;
-				return store.getAt(rowIndex).data.tipointerv;
-		   	}*/
-            /*renderer: function(value, metaData, record, rowIndex, colIndex, store) {
-				var selCbx = new Ext.form.ComboBox({
-								id : 'asda',
-	                            triggerAction: 'all',
-	                            emptyText: 'Select Field...',
-	                            editable: false,
-	                            forceSelection: false,
-	                            valueField: 'codigo',
-	                            displayField: 'descripcion',
-	                            value: '02',
-	                            store: tiposIntervencionStore,
-	                            autoLoad:true
-	                        })
-				
-				this.setEditor( colIndex,  selCbx);
-				//alert(record.data.tipointervCodigo);
-		   }*/
+                        })
 		}
 		
 	]);
@@ -524,6 +502,33 @@
 		apellido1PersonaCmp.setVisible(true);
 		apellido2PersonaCmp.setVisible(true);
 	};
+	
+
+	if(isEditMode){
+		
+		persona.setVisible(false);
+		idPersona.setValue(parseInt(idCliente));
+		
+		if(tienePersona === 'true'){
+			dniPersona.setValue('${DNI}');
+			nombrePersona.setValue('${NOMBRE}');
+			apellido1Persona.setValue('${APELLIDO1}');
+			apellido2Persona.setValue('${APELLIDO2}');
+			camposRegistroEncontrado();
+			esPersonaManual = false;
+			esEditPersona = true;
+			relacionContratosStore.webflow({idProcedimiento: idProcedimiento, idPersona: idPersona.getValue(), manual: false});
+		}else{
+			dniPersonaCmp.setValue('${DNI}');
+			nombrePersonaCmp.setValue('${NOMBRE}');
+			apellido1PersonaCmp.setValue('${APELLIDO1}');
+			apellido2PersonaCmp.setValue('${APELLIDO2}');
+			camposRegistroNoEncontrado();
+			esEditPersonaManual = true;
+			esPersonaManual = true;
+			relacionContratosStore.webflow({idProcedimiento: idProcedimiento, idPersona: idPersona.getValue(), manual: true});
+		}
+	}
 	
 
 	page.add(panelEdicionPersonas);

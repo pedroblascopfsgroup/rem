@@ -238,5 +238,7 @@ public interface BurofaxApi {
 	void crearBurofaxPersona(Long idPersona,Long idProcedimiento, Long idContratoPersona);
 
 	void actualizaDireccion(DireccionAltaDto dto, Long idDireccion);
+	
+	PersonaManual updatePersonaManual(String dni, String nombre, String app1, String app2, Long idPersonaManual);
 
 }

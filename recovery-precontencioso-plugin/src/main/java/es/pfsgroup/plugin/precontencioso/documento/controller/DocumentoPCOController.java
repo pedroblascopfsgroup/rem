@@ -23,6 +23,7 @@ import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.diccionarios.Dictionary;
+import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.multigestor.api.GestorAdicionalAsuntoApi;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
@@ -261,6 +262,7 @@ public class DocumentoPCOController {
 
 		List<DDTipoFicheroAdjunto> listaTipoDocumentos = null;
 		List<DDUnidadGestionPCO> listaUG = null;
+		List<DDProvincia> listaProvincias = null;
 		
 		IncluirDocumentoDto dto = new IncluirDocumentoDto();
 	
@@ -270,8 +272,12 @@ public class DocumentoPCOController {
 		// Lista Unidades Gestion
 		listaUG = documentoPCOApi.getUnidadesGestion();
 		
+		// Lista provincias
+		listaProvincias = documentoPCOApi.getProvincias();
+		
 		model.put("tiposDocumento", listaTipoDocumentos);
 		model.put("unidadesGestion", listaUG);
+		model.put("listaProvincias", listaProvincias);
 		
 		model.put("dtoDoc", dto);
 		
@@ -291,8 +297,13 @@ public class DocumentoPCOController {
 			@RequestParam(value = "idDocumento", required = true) Long idDocumento, ModelMap model) {
 		DocumentoPCODto docDto = new DocumentoPCODto();
 		docDto = documentoPCOApi.getDocumentoPorIdDocumentoPCO(idDocumento);
+		List<DDProvincia> listaProvincias = null;
+		// Lista provincias
+		listaProvincias = documentoPCOApi.getProvincias();
+		model.put("listaProvincias", listaProvincias);
 		
 		model.put("dtoDoc", docDto);
+		
 		
 		return EDITAR_DOC;
 	}
@@ -442,6 +453,7 @@ public class DocumentoPCOController {
 		docDto.setNumRegistro(webRequest.getParameter("numRegistro"));
 		docDto.setPlaza(webRequest.getParameter("plaza"));
 		docDto.setIdufir(webRequest.getParameter("idufir"));
+		docDto.setProvinciaNotario(webRequest.getParameter("provinciaNotario"));
 		
 		documentoPCOApi.editarDocumento(docDto);
 		
@@ -502,7 +514,8 @@ public class DocumentoPCOController {
 			docDto.setTomo(request.getParameter("tomo"));	
 			docDto.setTipoDocumento(request.getParameter("comboTipoDocumento"));
 			docDto.setPlaza(request.getParameter("plaza"));
-			docDto.setFechaEscritura(request.getParameter("fechaEscritura"));					
+			docDto.setFechaEscritura(request.getParameter("fechaEscritura"));
+			docDto.setProvinciaNotario(request.getParameter("provinciaNotario"));
 			docDto.setTipoUG(tipoUG);
 			docDto.setIdProc(prcId);
 			docDto.setEstado(DDEstadoDocumentoPCO.PENDIENTE_SOLICITAR);

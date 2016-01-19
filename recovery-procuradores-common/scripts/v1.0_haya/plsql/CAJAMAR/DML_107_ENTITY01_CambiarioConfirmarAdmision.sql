@@ -1,11 +1,11 @@
 --/*
 --##########################################
---## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20150706
+--## AUTOR=JORGE MARTIN
+--## FECHA_CREACION=20160118
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.0-X
---## INCIDENCIA_LINK=MITCDD-2068
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=PRODUCTO-585
+--## PRODUCTO=NO
 --##
 --## Finalidad: Realiza las inserciones de la resolución Confirmar admision de la demanda + marcado de bienes decreto embargo para la tarea H016_confAdmiDecretoEmbargo.
 --## INSTRUCCIONES: 
@@ -43,7 +43,8 @@ DECLARE
     */
     V_TR_ID VARCHAR2(16 CHAR):= 			'306';
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_ATO_REQ_PGS';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Auto requiriendo de pago y medidas embargo preventivo';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Auto de requerimiento de pago y embargo preventivo';
+
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'PCM';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     

@@ -1,11 +1,11 @@
 --/*
 --##########################################
---## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20150706
+--## AUTOR=JORGE MARTIN
+--## FECHA_CREACION=20160118
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.0-X
---## INCIDENCIA_LINK=MITCDD-2068
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=PRODUCTO-585
+--## PRODUCTO=NO
 --##
 --## Finalidad: Realiza las inserciones de la resolución Registrar demanda oposición para la tarea H016_registrarDemandaOposicion.
 --## INSTRUCCIONES: 
@@ -43,7 +43,7 @@ DECLARE
     */
     V_TR_ID VARCHAR2(16 CHAR):= 			'309';
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_DEM_OPS_PCM';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Demanda de oposición';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Escrito de la demanda de oposición';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'PCM';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     

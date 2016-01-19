@@ -1,11 +1,11 @@
 --/*
 --##########################################
---## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20150706
+--## AUTOR=JORGE MARTIN
+--## FECHA_CREACION=20160118
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.0-X
---## INCIDENCIA_LINK=MITCDD-2068
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=PRODUCTO-585
+--## PRODUCTO=NO
 --##
 --## Finalidad: Realiza las inserciones de la resolución Confirmar notificación requerimiento de pago para la tarea H016_confNotifRequerimientoPago.
 --## INSTRUCCIONES: 
@@ -43,7 +43,7 @@ DECLARE
     */
     V_TR_ID VARCHAR2(16 CHAR):= 			'308';
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_REQ_PAG_PCM';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Requerimiento';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Notificación requerimiento de pago';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'PCM';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     

@@ -123,7 +123,7 @@
 										guardaPersonaYPersonaManual();
 									}
 								}
-							},
+							}
 			
 				});
 				
@@ -151,7 +151,7 @@
 										}else{
 											guardaPersonaYPersonaManual();
 										}
-									},
+									}
 					
 						});
 					}else{

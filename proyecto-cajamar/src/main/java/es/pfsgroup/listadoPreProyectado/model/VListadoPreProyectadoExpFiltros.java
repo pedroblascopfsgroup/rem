@@ -40,6 +40,9 @@ public class VListadoPreProyectadoExpFiltros implements Serializable {
 	@Column(name="DIAS_VENCIDOS")
 	private Long diasVencidos;
 	
+	@Column(name="FECHA_PASE_A_MORA_EXP")
+	private Date fechaPaseAMoraExp;
+	
 	@Column(name="TRAMO_EXP")
 	private String tramoCod;
 	
@@ -66,6 +69,18 @@ public class VListadoPreProyectadoExpFiltros implements Serializable {
 	
 	@Column(name="EXP_ID")
 	private Long expId;
+	
+    @Column(name="NIF_TITULAR")
+    private String nifTitular;
+    
+    @Column(name="NOM_TITULAR")
+    private String nomTitular;
+    
+    @Column(name="NIF_CLIENTE")
+    private String nifCliente;
+    
+    @Column(name="NOM_CLIENTE")
+    private String nomCliente;
 
 	public Long getCntId() {
 		return cntId;
@@ -123,6 +138,14 @@ public class VListadoPreProyectadoExpFiltros implements Serializable {
 		this.diasVencidos = diasVencidos;
 	}
 
+	public Date getFechaPaseAMoraExp() {
+		return fechaPaseAMoraExp;
+	}
+
+	public void setFechaPaseAMoraExp(Date fechaPaseAMoraExp) {
+		this.fechaPaseAMoraExp = fechaPaseAMoraExp;
+	}
+
 	public String getTipoPropuestaCod() {
 		return tipoPropuestaCod;
 	}
@@ -131,11 +154,11 @@ public class VListadoPreProyectadoExpFiltros implements Serializable {
 		this.tipoPropuestaCod = tipoPropuestaCod;
 	}
 
-	public Long getNPropuestas() {
+	public Long getnPropuestas() {
 		return nPropuestas;
 	}
 
-	public void setNPropuestas(Long nPropuestas) {
+	public void setnPropuestas(Long nPropuestas) {
 		this.nPropuestas = nPropuestas;
 	}
 
@@ -185,6 +208,38 @@ public class VListadoPreProyectadoExpFiltros implements Serializable {
 
 	public void setExpId(Long expId) {
 		this.expId = expId;
-	}	
-	
+	}
+
+	public String getNifTitular() {
+		return nifTitular;
+	}
+
+	public void setNifTitular(String nifTitular) {
+		this.nifTitular = nifTitular;
+	}
+
+	public String getNomTitular() {
+		return nomTitular;
+	}
+
+	public void setNomTitular(String nomTitular) {
+		this.nomTitular = nomTitular;
+	}
+
+	public String getNifCliente() {
+		return nifCliente;
+	}
+
+	public void setNifCliente(String nifCliente) {
+		this.nifCliente = nifCliente;
+	}
+
+	public String getNomCliente() {
+		return nomCliente;
+	}
+
+	public void setNomCliente(String nomCliente) {
+		this.nomCliente = nomCliente;
+	}
+
 }

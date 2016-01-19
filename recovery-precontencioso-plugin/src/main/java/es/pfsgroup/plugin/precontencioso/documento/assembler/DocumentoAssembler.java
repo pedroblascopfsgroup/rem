@@ -103,7 +103,10 @@ public class DocumentoAssembler {
 		doc.setTomo(documento.getTomo());
 		doc.setPlaza(documento.getPlaza());
 		if (documento.getFechaEscritura()!=null)
-			doc.setFechaEscritura(webDateFormat.format(documento.getFechaEscritura()));		
+			doc.setFechaEscritura(webDateFormat.format(documento.getFechaEscritura()));
+		if(!Checks.esNulo(documento.getProvinciaNotario())){
+			doc.setProvinciaNotario(documento.getProvinciaNotario().getCodigo());
+		}
 		
 		return doc;
 	}

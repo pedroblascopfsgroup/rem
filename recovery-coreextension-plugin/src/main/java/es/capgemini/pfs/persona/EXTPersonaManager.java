@@ -333,6 +333,15 @@ public class EXTPersonaManager extends BusinessOperationOverrider<PersonaApi> im
 		return persona;
 	}
 
+	@Override
+	public List<Persona> getPersonasByDni(String dni) {
+
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "docId", dni);
+		List<Persona> personas = genericDao.getList(Persona.class, filtro);
+		
+		return personas;
+	}
+
 	/**
 	 * Obtiene la actuación en curso FSR de un cliente
 	 * return SI o No de dicha accion

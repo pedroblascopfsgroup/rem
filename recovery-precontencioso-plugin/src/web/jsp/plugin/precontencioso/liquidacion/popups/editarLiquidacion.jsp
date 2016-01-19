@@ -14,26 +14,35 @@
 	value="${liquidacion.capitalVencido}" 
 	obligatory="true" 
 	allowDecimals="true" />
+	
+	capitalVencidoField.on('change', function(){recalculaTotal();});
 
 	<pfsforms:numberfield name="capitalNoVencidoField" labelKey="plugin.precontencioso.grid.liquidacion.capitalNoVencido" label="**Capital no vencido" 
 	value="${liquidacion.capitalNoVencido}" 
 	obligatory="true" 
 	allowDecimals="true" />
 
+	capitalNoVencidoField.on('change', function(){recalculaTotal();});
+
 	<pfsforms:numberfield name="interesesOrdinariosField" labelKey="plugin.precontencioso.grid.liquidacion.interesesOrdinarios" label="**Intereses ordinarios" 
 	value="${liquidacion.interesesOrdinarios}" 
 	obligatory="true" 
 	allowDecimals="true" />
+	
+	interesesOrdinariosField.on('change', function(){recalculaTotal();});
 
 	<pfsforms:numberfield name="interesesDemoraField" labelKey="plugin.precontencioso.grid.liquidacion.interesesDemora" label="**Intereses demora" 
 	value="${liquidacion.interesesDemora}" 
 	obligatory="true" 
 	allowDecimals="true" />
-
-	<pfsforms:numberfield name="totalField" labelKey="plugin.precontencioso.grid.liquidacion.total" label="**Total" 
-	value="${liquidacion.total}" 
-	obligatory="true" 
-	allowDecimals="true" />
+	
+	interesesDemoraField.on('change', function(){recalculaTotal();});
+	
+	var totalField = new Ext.form.NumberField({
+		fieldLabel: '<s:message code="plugin.precontencioso.grid.liquidacion.total" text="**Total" />',
+		value: '${liquidacion.total}',
+		disabled: true,
+	});
 	
 	<pfsforms:numberfield name="comisionesField" labelKey="plugin.precontencioso.grid.liquidacion.comisiones" label="**Comisiones" 
 		value="${liquidacion.comisiones}" 
@@ -358,6 +367,18 @@
 		if (totalField.getActiveError() != '') {
 			mensaje = mensaje + '- <s:message code="plugin.precontencioso.grid.liquidacion.total" /> <br/>'
 		}
+		
+		if (comisionesField.getActiveError() != '') {
+			mensaje = mensaje + '- <s:message code="plugin.precontencioso.grid.liquidacion.comisiones" /> <br/>'
+		}
+		
+		if (gastosField.getActiveError() != '') {
+			mensaje = mensaje + '- <s:message code="plugin.precontencioso.grid.liquidacion.gastos" /> <br/>'
+		}
+		
+		if (impuestosField.getActiveError() != '') {
+			mensaje = mensaje + '- <s:message code="plugin.precontencioso.grid.liquidacion.impuestos" /> <br/>'
+		}
 		<c:if test="${ocultarBtnSolicitar}">
 		if (fechaCierreField.getValue() == '' || fechaCierreField.getActiveError() != '') {
 			mensaje = mensaje + '- <s:message code="plugin.precontencioso.tab.liquidacion.fecha.cierre" /> <br/>'
@@ -394,6 +415,10 @@
 		</c:if>
 
 		return parametros;
+	}
+	
+	var recalculaTotal = function() {
+		totalField.setValue(capitalVencidoField.getValue()+capitalNoVencidoField.getValue()+interesesOrdinariosField.getValue()+interesesDemoraField.getValue());
 	}
 
 </fwk:page>

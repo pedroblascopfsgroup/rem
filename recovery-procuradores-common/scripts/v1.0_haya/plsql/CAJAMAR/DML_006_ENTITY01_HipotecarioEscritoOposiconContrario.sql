@@ -1,11 +1,11 @@
 --/*
 --##########################################
---## AUTOR=CARLOS GIL
---## FECHA_CREACION=20150623
+--## AUTOR=JORGE MARTIN
+--## FECHA_CREACION=20160118
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.0-X
---## INCIDENCIA_LINK=MITCDD-2068
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=PRODUCTO-585
+--## PRODUCTO=NO
 --##
 --## Finalidad: Realiza las inserciones de la resolución Requerimiento de pago negativo para la tarea H001_ConfirmarNotificacionReqPago.
 --## INSTRUCCIONES: 
@@ -41,9 +41,9 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			'206';
+    V_TR_ID VARCHAR2(16 CHAR):= 			''; --JODO
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_PR_HIP_ESCR_OPOS_CONTR';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Escrito de oposición de contrario';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Escrito de oposición';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'HIP';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     
@@ -61,6 +61,8 @@ DECLARE
     	T_INPUT('d_fechaOposicion','fechaOposicion'),
     	T_INPUT('d_motivoOposicion','motivoOposicion'),
     	T_INPUT('d_fechaComparecencia','fechaComparecencia'),
+        T_INPUT('d_fechaFinAlegaciones','fechaFinAlegaciones'),
+        T_INPUT('d_alegaciones','alegaciones'),
     	T_INPUT('d_observaciones','observaciones') -- Está siempre en el factoria, no eliminar.
     );
     V_TMP_T_INPUT T_INPUT;

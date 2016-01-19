@@ -74,6 +74,12 @@ public class NMBBienDaoImpl extends AbstractEntityDao<NMBBien, Long> implements 
         	hql.append(" LEFT JOIN ".concat(NAME_OF_ENTITY_NMB).concat(".contratos biecnt "));
         }
         
+        if (usuLogado.getUsuarioExterno()) {
+	        hql.append(" LEFT JOIN ".concat(NAME_OF_ENTITY_NMB).concat(".procedimientos prcbie "));
+	        hql.append(" LEFT JOIN ".concat("prcbie").concat(".procedimiento prc"));
+	        hql.append(" LEFT JOIN ".concat("prc").concat(".asunto asu "));
+        }
+        
         if(!Checks.esNulo(dto.getCodCliente()) || !Checks.esNulo(dto.getNifCliente())) {
         	hql.append(" LEFT JOIN ".concat(NAME_OF_ENTITY_NMB).concat(".NMBpersonas bieper "));
         }

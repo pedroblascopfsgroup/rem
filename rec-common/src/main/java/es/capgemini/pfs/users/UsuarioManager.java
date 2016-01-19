@@ -389,7 +389,6 @@ public class UsuarioManager {
 		}
 
 		HibernateUtils.refresh(loggedUser);
-		initializeCambioEntidad(loggedUser);
 
 		if (RequestContextHolder.getRequestAttributes() != null)
 			RequestContextHolder.getRequestAttributes().setAttribute(
@@ -733,15 +732,6 @@ public class UsuarioManager {
 
 	private boolean isEnabled(DynamicElement element) {
 		return !element.getName().startsWith("-");
-	}
-
-	private void initializeCambioEntidad(Usuario usu) {
-		// initialize
-		HibernateUtils.refresh(usu.getZonaPerfil());
-		HibernateUtils.refresh(usu.getPerfiles());
-		for (Perfil p : usu.getPerfiles()) {
-			HibernateUtils.refresh(p.getPuestosComites());
-		}
 	}
 
 }

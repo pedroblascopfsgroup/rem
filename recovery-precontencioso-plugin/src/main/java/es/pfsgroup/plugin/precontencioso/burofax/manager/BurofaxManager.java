@@ -412,7 +412,7 @@ public class BurofaxManager implements BurofaxApi {
 		try{
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idDireccion);
 			Direccion direccion = (Direccion)  genericDao.get(Direccion.class, filtro);
-			if(direccion.getOrigen().equalsIgnoreCase("Manual")){
+			if(direccion.getOrigen() != null || direccion.getOrigen().equalsIgnoreCase("Manual")){
 				variable = true;
 			}
 		}catch(Exception e){

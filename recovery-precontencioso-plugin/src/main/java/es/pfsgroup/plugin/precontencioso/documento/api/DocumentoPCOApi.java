@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.precontencioso.documento.api;
 import java.util.List;
 
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
@@ -207,4 +208,11 @@ public interface DocumentoPCOApi {
 	 * @return
 	 */
 	Boolean esTipoGestorConAcceso(EXTDDTipoGestor tipoGestor);
+	
+	/**
+	 * Recupera la lista de provincias
+	 * 
+	 * @return List<DDProvincia>
+	 */
+	public List<DDProvincia> getProvincias();
 }

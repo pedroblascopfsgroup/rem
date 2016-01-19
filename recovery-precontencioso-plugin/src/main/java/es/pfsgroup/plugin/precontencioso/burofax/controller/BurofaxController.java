@@ -118,6 +118,8 @@ public class BurofaxController {
 	
 	@Autowired
 	private ProcedimientoPcoApi procedimientoPcoApi;
+
+	
 	
 	/**
 	 * Carga el grid de Burofaxes
@@ -297,12 +299,19 @@ public class BurofaxController {
 	 * @param idTipoBurofax
 	 * @param idProcedimiento
 	 * @return
+	 * @throws Exception 
 	 */
 	@RequestMapping
-	private String configurarTipoBurofax(WebRequest request, ModelMap map,Long idTipoBurofax,Long idDireccion,Long idBurofax, Long idDocumento){
+	public String configurarTipoBurofax(WebRequest request, ModelMap map,Long idTipoBurofax,Long idDireccion,Long idBurofax, Long idDocumento) throws Exception{
 
 		String[] arrayIdDirecciones=request.getParameter("arrayIdDirecciones").replace("[","").replace("]","").split(",");
 		String[] arrayIdBurofax=request.getParameter("arrayIdBurofax").replace("[","").replace("]","").split(",");
+		
+		DocumentoPCO doc = documentoPCOApi.getDocumentoPCOById(idDocumento);
+		
+		if(Checks.esNulo(doc.getNotario()) || Checks.esNulo(doc.getFechaEscritura()) || Checks.esNulo(doc.getProtocolo()) || Checks.esNulo(doc.getProvinciaNotario())){
+			throw new Exception("No es posible guardar al no encontrarse los valores Notario, Localidad del notario, Protocolo y Fecha de escritura, informados en el documento seleccionado");
+		}
 
 		burofaxManager.configurarTipoBurofax(idTipoBurofax,arrayIdDirecciones,arrayIdBurofax,null,idDocumento);
 		
@@ -553,9 +562,10 @@ public class BurofaxController {
      * @param request
      * @param model
      * @return
+     * @throws Exception 
      */
     @RequestMapping
-    public String guardarEnvioBurofax(WebRequest request, ModelMap model,Boolean certificado,Long idTipoBurofax,Boolean comboEditable,  Long idDocumento){
+    public String guardarEnvioBurofax(WebRequest request, ModelMap model,Boolean certificado,Long idTipoBurofax,Boolean comboEditable,  Long idDocumento) throws Exception{
     	
     	String[] arrayIdEnvios=request.getParameter("arrayIdEnvios").replace("[","").replace("]","").replace("&quot;", "").split(",");
     	
@@ -571,6 +581,12 @@ public class BurofaxController {
     			listaEnvioBurofaxPCO.add(burofaxManager.getEnvioBurofaxById(Long.valueOf(arrayIdEnvios[i])));
     		}
     	}
+    	
+    	DocumentoPCO doc = documentoPCOApi.getDocumentoPCOById(idDocumento);
+		
+		if(Checks.esNulo(doc.getNotario()) || Checks.esNulo(doc.getFechaEscritura()) || Checks.esNulo(doc.getProtocolo()) || Checks.esNulo(doc.getProvinciaNotario())){
+			throw new Exception("No es posible guardar al no encontrarse los valores Notario, Localidad del notario, Protocolo y Fecha de escritura, informados en el documento seleccionado");
+		}
     	
 		burofaxManager.guardarEnvioBurofax(certificado,listaEnvioBurofaxPCO);
 		if(!Checks.estaVacio(listaEnvioBurofaxPCO)){
@@ -664,31 +680,9 @@ public class BurofaxController {
 		
 		List<SolicitudDocumentoPCODto> solicitudesDoc = new ArrayList<SolicitudDocumentoPCODto>();
 		
-	
-		boolean esDocumento;	
-		boolean tieneSolicitud;
-		boolean isGestoria = esUsuarioTipoDespachoGestoria();
-		
 		for (DocumentoPCO doc : documentos) {
-			List<SolicitudDocumentoPCO> solicitudes = doc.getSolicitudes();
-			esDocumento = true;
-
-			// Si hay solicitudes
-			if (solicitudes != null && solicitudes.size() > 0) {
-				for (SolicitudDocumentoPCO sol : solicitudes) {
-					tieneSolicitud = true;
-					// se añade el registro, si no es una gestoria o si es una gestoria y es una solicitud asignada a ella
-					if (!isGestoria || (isGestoria && usuarioManager.getUsuarioLogado().getId().equals(sol.getActor().getUsuario().getId()))) {
-						SolicitudDocumentoPCODto solDto = documentoPCOApi.crearSolicitudDocumentoDto(doc, sol, esDocumento, tieneSolicitud);
-						if(!Checks.esNulo(solDto.getContrato()) && !Checks.esNulo(solDto.getTipoDocumento())){
-							solicitudesDoc.add(solDto);	
-						}
-					}
-
-					if (esDocumento) esDocumento = false;
-				}
-			}
-
+			SolicitudDocumentoPCODto solDto = documentoPCOApi.crearSolicitudDocumentoDto(doc, null, true, false);
+			solicitudesDoc.add(solDto);
 		}
 
 		model.put("solicitudesDocumento", solicitudesDoc);

@@ -41,7 +41,7 @@ var pdfRender = function(value, meta, record) {
 		myCboxSelModel
 		,{
 			header: '<s:message code="plugin.precontencioso.grid.burofax.cliente" text="**Cliente"/>',
-			dataIndex: 'cliente', sortable: false,autoWidth:true
+			dataIndex: 'cliente', sortable: true,autoWidth:true
 		},{
 			header: '<s:message code="plugin.precontencioso.grid.burofax.registro.manual" text="**Registro Manual"/>',
 			dataIndex: 'esPersonaManual', sortable: false,autoWidth:true
@@ -589,6 +589,7 @@ var pdfRender = function(value, meta, record) {
 		if(uniqueArray.length==1){
 		 
 			var idCliente = gridBurofax.getSelectionModel().getSelected().get('idCliente');
+			var tienePersona = gridBurofax.getSelectionModel().getSelected().get('tienePersona');
 			
 			var w = app.openWindow({
 				  flow : 'burofax/getAltaDireccion'
@@ -596,7 +597,7 @@ var pdfRender = function(value, meta, record) {
 				  ,autoWidth:true
 				  ,closable:true
 				  ,title : '<s:message code="plugin.precontencioso.grid.burofax.agregar.direccion" text="**Agregar Dirección" />'
-				  ,params:{idCliente:idCliente,idProcedimiento:idProcedimiento}
+				  ,params:{idCliente:idCliente,idProcedimiento:idProcedimiento,tienePersona:tienePersona}
 				
 				});
 				w.on(app.event.DONE,function(){

@@ -25,6 +25,7 @@ import es.capgemini.pfs.contrato.model.DDTipoIntervencion;
 import es.capgemini.pfs.movimiento.model.Movimiento;
 import es.capgemini.pfs.parametrizacion.dao.ParametrizacionDao;
 import es.capgemini.pfs.persona.model.Persona;
+import es.capgemini.pfs.persona.model.PersonaManual;
 import es.capgemini.pfs.utils.FormatUtils;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -97,7 +98,16 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 
 		Persona demandado = null;
 		try {
-			demandado = envioBurofax.getBurofax().getDemandado();
+			if(envioBurofax.getBurofax().isEsPersonaManual()){
+				PersonaManual demandadoManual = envioBurofax.getBurofax().getDemandadoManual();
+				demandado = new Persona();
+				demandado.setNombre(demandadoManual.getNombre());
+				demandado.setApellido1(demandadoManual.getApellido1());
+				demandado.setApellido2(demandadoManual.getApellido2());
+			}else{
+				demandado = envioBurofax.getBurofax().getDemandado();
+			}
+			
 		} catch (NullPointerException npe) {}
 		
 		String nombre = SINNOMBRE;
@@ -168,7 +178,8 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		LiquidacionPCO liquidacion = null;
 		try {
 			filtro = genericDao.createFilter(FilterType.EQUALS, "contrato.id", contrato.getId());
-			liquidacion = genericDao.get(LiquidacionPCO.class, filtro);
+			List<LiquidacionPCO> liquidaciones = genericDao.getList(LiquidacionPCO.class, filtro); ///Por si existe en algún caso mas de una
+			liquidacion = liquidaciones.get(0);
 			if(!Checks.esNulo(liquidacion) && !Checks.esNulo(liquidacion.getFechaConfirmacion())){
 				mapaVariables.put(FECHA_LIQUIDACION,fechaFormat.format(liquidacion.getFechaConfirmacion()));
 			} else {

@@ -171,35 +171,48 @@ public class BurofaxController {
 				
 				dto.setEstado(burofax.getEstadoBurofax().getDescripcion());
 				
+				List<Direccion> direcciones = new ArrayList<Direccion>();
+				
 				if(burofax.isEsPersonaManual()){
 					dto.setEsPersonaManual("SI");
 					if(Checks.esNulo(burofax.getDemandadoManual().getCodClienteEntidad()) && Checks.esNulo(burofax.getDemandadoManual().getPropietario())){
 						dto.setIdCliente(burofax.getDemandadoManual().getId());
 						dto.setCliente(burofax.getDemandadoManual().getApellidoNombre());
 						dto.setTienePersona(false);
+						if(!Checks.esNulo(burofax.getDemandadoManual().getDirecciones()) && burofax.getDemandadoManual().getDirecciones().size()>0){
+							direcciones.addAll(burofax.getDemandadoManual().getDirecciones());
+						}
 					}else{
 						///Obtenemos la persona no manual
 						Persona per = genericDao.get(Persona.class, genericDao.createFilter(FilterType.EQUALS, "codClienteEntidad", burofax.getDemandadoManual().getCodClienteEntidad()), genericDao.createFilter(FilterType.EQUALS, "propietario.id", burofax.getDemandadoManual().getPropietario().getId()) );
 						dto.setIdCliente(per.getId());
 						dto.setCliente(burofax.getDemandadoManual().getApellidoNombre());
 						dto.setTienePersona(true);
+						if(!Checks.esNulo(per.getDirecciones()) && per.getDirecciones().size()>0){
+							direcciones.addAll(per.getDirecciones());
+						}
 					}
 				}else{
 					dto.setTienePersona(true);
 					dto.setEsPersonaManual("NO");
 					dto.setIdCliente(burofax.getDemandado().getId());
 					dto.setCliente(burofax.getDemandado().getApellidoNombre());
+					if(!Checks.esNulo(burofax.getDemandado().getDirecciones()) && burofax.getDemandado().getDirecciones().size()>0){
+						direcciones.addAll(burofax.getDemandado().getDirecciones());
+					}
 				}
 				
-				if(!Checks.esNulo(burofax.getDemandado()) && burofax.getDemandado().getDirecciones().size()>0){
-				    for(Direccion direccion : burofax.getDemandado().getDirecciones()){
+					
+				if(direcciones.size()>0){	
+					
+					for(Direccion direccion : direcciones){
 				    		if(!Checks.esNulo(burofax.getContrato())){
 				    			dto.setId(burofax.getId()+burofax.getContrato().getId()+direccion.getId());
 				    		}
 				    		else{
 				    			dto.setId(burofax.getId()+burofax.getDemandado().getId()+direccion.getId());
 				    		}
-				    		dto.setIdCliente(burofax.getDemandado().getId());
+				    		//dto.setIdCliente(burofax.getDemandado().getId());
 				    		dto.setIdDireccion(direccion.getId());
 				    		dto.setIdBurofax(burofax.getId());
 				    		dto.setIdEnvio(Long.valueOf(-1));
@@ -410,7 +423,7 @@ public class BurofaxController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	private String getAltaDireccion(WebRequest request, ModelMap model,Long idProcedimiento,Long idCliente){
+	private String getAltaDireccion(WebRequest request, ModelMap model,Long idProcedimiento,Long idCliente, boolean tienePersona){
 		
 		List<Dictionary> provincias = dictionaryManager.getList("DDProvincia", DictionaryComparatorFactory.getInstance().create(DictionaryComparatorFactory.COMPARATOR_BY_DESCRIPCION));
 		model.put("provincias", provincias);
@@ -419,6 +432,7 @@ public class BurofaxController {
 		model.put("tiposVia", tiposVia);
 		model.put("idCliente", idCliente);
 		model.put("idProcedimiento", idProcedimiento);
+		model.put("tienePersona", tienePersona);
 		
 		return JSP_ALTA_DIRECCION;
 	}	
@@ -430,7 +444,7 @@ public class BurofaxController {
 	 * @throws Exception 
 	 */
 	@RequestMapping
-	public String guardaDireccion(WebRequest request, ModelMap model,Long idCliente,Long idProcedimiento) throws Exception{
+	public String guardaDireccion(WebRequest request, ModelMap model,Long idCliente,Long idProcedimiento, boolean tienePersona) throws Exception{
 		
 		DireccionAltaDto dto=new DireccionAltaDto();
 		dto.setProvincia(request.getParameter("provincia"));
@@ -444,7 +458,12 @@ public class BurofaxController {
 		dto.setPiso(request.getParameter("piso"));
 		dto.setEscalera(request.getParameter("escalera"));
 		dto.setPuerta(request.getParameter("puerta"));
-		dto.setListaIdPersonas(idCliente.toString());
+		if(tienePersona){
+			dto.setListaIdPersonas(idCliente.toString());	
+		}else{
+			dto.setListaIdPersonasManuales(idCliente.toString());
+		}
+		
 		dto.setOrigen(request.getParameter("origen"));
 
 	    

@@ -11,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -24,6 +26,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.contrato.model.ContratoPersonaManual;
+import es.capgemini.pfs.direccion.model.Direccion;
 
 @Entity
 @Table(name="PEM_PERSONAS_MANUALES", schema="${entity.schema}")
@@ -64,6 +67,11 @@ public class PersonaManual implements Serializable, Auditable {
 	@Column(name="PER_COD_CLIENTE_ENTIDAD")
 	private Long codClienteEntidad;
 	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "DIR_PEM", joinColumns = { @JoinColumn(name = "PEM_ID", unique = true) }, inverseJoinColumns = { @JoinColumn(name = "DIR_ID") })
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private List<Direccion> direcciones;
+
 	@Embedded
 	private Auditoria auditoria;
 	
@@ -152,6 +160,14 @@ public class PersonaManual implements Serializable, Auditable {
 
 	public void setVersion(Integer version) {
 		this.version = version;
+	}
+	
+	public List<Direccion> getDirecciones() {
+		return direcciones;
+	}
+
+	public void setDirecciones(List<Direccion> direcciones) {
+		this.direcciones = direcciones;
 	}
 	
 	/**

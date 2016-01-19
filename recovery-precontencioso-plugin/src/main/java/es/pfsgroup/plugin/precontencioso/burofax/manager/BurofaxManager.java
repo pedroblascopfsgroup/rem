@@ -552,9 +552,7 @@ public class BurofaxManager implements BurofaxApi {
 				envioIntegracion.setEnvioId(envioBurofax.getId());
 				envioIntegracion.setBurofaxId(envioBurofax.getBurofax().getId());
 				envioIntegracion.setDireccionId(envioBurofax.getDireccion().getId());
-				envioIntegracion.setPersonaId(envioBurofax.getBurofax().getDemandado().getId());
 				
-				envioIntegracion.setCliente(envioBurofax.getBurofax().getDemandado().getApellidoNombre());
 				envioIntegracion.setDireccion(envioBurofax.getDireccion().getDomicilio());
 				if(!Checks.esNulo(envioBurofax.getBurofax().getContrato())){
 					envioIntegracion.setContrato(envioBurofax.getBurofax().getContrato().getNroContrato());
@@ -568,6 +566,17 @@ public class BurofaxManager implements BurofaxApi {
 				envioIntegracion.setCertificado(certificado);
 				
 				envioIntegracion.setContenido(contenidoParseadoFinal);
+				
+				if(envioBurofax.getBurofax().isEsPersonaManual()){
+					envioIntegracion.setPersonaManualId(envioBurofax.getBurofax().getDemandadoManual().getId());
+					envioIntegracion.setCliente(envioBurofax.getBurofax().getDemandadoManual().getApellidoNombre());
+					envioIntegracion.setEsPersonaManual(true);
+				}else{
+					envioIntegracion.setPersonaId(envioBurofax.getBurofax().getDemandado().getId());
+					envioIntegracion.setCliente(envioBurofax.getBurofax().getDemandado().getApellidoNombre());
+					envioIntegracion.setEsPersonaManual(false);
+				}
+				
 		
 				if (precontenciosoContext.isGenerarArchivoBurofax()) {
 					//Obtener cabecera 

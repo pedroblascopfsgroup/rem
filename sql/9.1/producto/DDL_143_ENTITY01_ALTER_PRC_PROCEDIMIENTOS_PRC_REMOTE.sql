@@ -1,9 +1,9 @@
 --/*
 --##########################################
---## AUTOR=CARLOS GIL GIMENO
---## FECHA_CREACION=20151120
+--## AUTOR=Alberto B
+--## FECHA_CREACION=20160119
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.15-hy-rc02
+--## VERSION_ARTEFACTO=9.1.0-cj-rc37
 --## INCIDENCIA_LINK=HR-1767
 --## PRODUCTO=SI
 --##

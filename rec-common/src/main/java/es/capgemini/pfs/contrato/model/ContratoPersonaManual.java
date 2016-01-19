@@ -4,8 +4,11 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Entity;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -29,6 +32,8 @@ public class ContratoPersonaManual implements Serializable, Auditable {
 	
 	@Id
 	@Column(name="CPM_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "ContratoPersonaManualGenerator")
+	@SequenceGenerator(name = "ContratoPersonaManualGenerator", sequenceName = "S_CPM_CONTRATOS_PERSONAS_MAN")
 	private Long id;
 	
 	@ManyToOne

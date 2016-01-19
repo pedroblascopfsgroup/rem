@@ -1,4 +1,4 @@
 #!/bin/bash
  
-rm $DIR_DESTINO*
+rm -f $DIR_DESTINO*
 

@@ -3,7 +3,7 @@
 MAX_WAITING_MINUTES=10
 ficheros=OFICINAS,ZONAS
 
-rm $DIR_DESTINO*
+rm -f $DIR_DESTINO*
 
 mascara='_'$ENTIDAD'_'????????
 extensionSem=".sem"

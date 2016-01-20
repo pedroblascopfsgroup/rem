@@ -9,6 +9,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,6 +23,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.contrato.model.ContratoPersonaManual;
 import es.capgemini.pfs.contrato.model.DDTipoIntervencion;
@@ -85,6 +88,8 @@ public class BurofaxController {
 	
 	private static final String DEFAULT = "default";
 	
+	private static final String JSON_RESPUESTA  ="plugin/precontencioso/burofax/json/respuestaJSON";
+	
 	public static final String JSP_DOWNLOAD_FILE = "plugin/geninformes/download";
 	
 	public static final String JSON_LISTA_DOCUMENTOS = "plugin/precontencioso/documento/json/solicitudesDocumentoJSON";
@@ -99,6 +104,9 @@ public class BurofaxController {
 	private static final String OK_KO_RESPUESTA_JSON = "plugin/coreextension/OkRespuestaJSON";
 	
 	protected final Log logger = LogFactory.getLog(getClass());
+	
+	@Resource
+	private MessageService messageService;
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -346,20 +354,23 @@ public class BurofaxController {
 	 * @throws Exception 
 	 */
 	@RequestMapping
-	public String configurarTipoBurofax(WebRequest request, ModelMap map,Long idTipoBurofax,Long idDireccion,Long idBurofax, Long idDocumento) throws Exception{
+	public String configurarTipoBurofax(WebRequest request, ModelMap model,Long idTipoBurofax,Long idDireccion,Long idBurofax, Long idDocumento) throws Exception{
 
 		String[] arrayIdDirecciones=request.getParameter("arrayIdDirecciones").replace("[","").replace("]","").split(",");
 		String[] arrayIdBurofax=request.getParameter("arrayIdBurofax").replace("[","").replace("]","").split(",");
-		
-		DocumentoPCO doc = documentoPCOApi.getDocumentoPCOById(idDocumento);
-		
-		if(Checks.esNulo(doc.getNotario()) || Checks.esNulo(doc.getFechaEscritura()) || Checks.esNulo(doc.getProtocolo()) || Checks.esNulo(doc.getProvinciaNotario())){
-			throw new Exception("No es posible guardar al no encontrarse los valores Notario, Localidad del notario, Protocolo y Fecha de escritura, informados en el documento seleccionado");
-		}
+		if(!Checks.esNulo(idDocumento)){
+    		DocumentoPCO doc = documentoPCOApi.getDocumentoPCOById(idDocumento);
+    		if(!Checks.esNulo(doc)){
+	    		if(Checks.esNulo(doc.getNotario()) || Checks.esNulo(doc.getFechaEscritura()) || Checks.esNulo(doc.getProtocolo()) || Checks.esNulo(doc.getProvinciaNotario())){
+	    			model.put("msgError", messageService.getMessage("plugin.precontencioso.grid.burofax.mensajes.validacionTipoDocumento",null));
+	    			return JSON_RESPUESTA;
+	    		}
+    		}
+    	}
 
 		burofaxManager.configurarTipoBurofax(idTipoBurofax,arrayIdDirecciones,arrayIdBurofax,null,idDocumento);
 		
-		return DEFAULT;
+		return JSON_RESPUESTA;
 	}
 	
 	
@@ -757,18 +768,22 @@ public class BurofaxController {
     		}
     	}
     	
-    	DocumentoPCO doc = documentoPCOApi.getDocumentoPCOById(idDocumento);
-		
-		if(Checks.esNulo(doc.getNotario()) || Checks.esNulo(doc.getFechaEscritura()) || Checks.esNulo(doc.getProtocolo()) || Checks.esNulo(doc.getProvinciaNotario())){
-			throw new Exception("No es posible guardar al no encontrarse los valores Notario, Localidad del notario, Protocolo y Fecha de escritura, informados en el documento seleccionado");
-		}
+    	if(!Checks.esNulo(idDocumento)){
+    		DocumentoPCO doc = documentoPCOApi.getDocumentoPCOById(idDocumento);
+    		if(!Checks.esNulo(doc)){
+	    		if(Checks.esNulo(doc.getNotario()) || Checks.esNulo(doc.getFechaEscritura()) || Checks.esNulo(doc.getProtocolo()) || Checks.esNulo(doc.getProvinciaNotario())){
+	    			model.put("msgError", messageService.getMessage("plugin.precontencioso.grid.burofax.mensajes.validacionTipoDocumento",null));
+	    			return JSON_RESPUESTA;
+	    		}
+    		}
+    	}
     	
 		burofaxManager.guardarEnvioBurofax(certificado,listaEnvioBurofaxPCO);
 		if(!Checks.estaVacio(listaEnvioBurofaxPCO)){
 			proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(listaEnvioBurofaxPCO.get(0).getBurofax().getProcedimientoPCO().getProcedimiento().getId());
 		}
     		
-    	return DEFAULT;
+		return JSON_RESPUESTA;
     }
     
     

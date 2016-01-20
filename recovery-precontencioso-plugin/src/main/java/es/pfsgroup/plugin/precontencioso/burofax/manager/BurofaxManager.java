@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -53,10 +52,10 @@ import es.capgemini.pfs.utils.FormatUtils;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
 import es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi;
 import es.pfsgroup.plugin.precontencioso.burofax.api.DocumentoBurofaxApi;
@@ -390,18 +389,20 @@ public class BurofaxManager implements BurofaxApi {
 	
 	@BusinessOperation(CANCELAR_EST_PREPARADO)
 	@Transactional(readOnly = false)
-	public void cancelarEnEstPrep(Long idEnvio, Long idCliente){
+	public void cancelarEnEstPrep(Long idEnvio, Long idCliente, List<Long> arrayidEnvios){
 		try{
-			genericDao.deleteById(EnvioBurofaxPCO.class, idEnvio);
-			
-			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "envioId", idEnvio);
-			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-			for(BurofaxEnvioIntegracionPCO envioIntegracionPCO : genericDao.getList(BurofaxEnvioIntegracionPCO.class, filtro1, filtro2)) {
-				envioIntegracionPCO.getAuditoria().setBorrado(true);
-				envioIntegracionPCO.getAuditoria().setFechaBorrar(new Date());
-				envioIntegracionPCO.getAuditoria().setUsuarioBorrar(SecurityUtils.getCurrentUser().getUsername());
+			for(int i=0; i<arrayidEnvios.size(); i++){
+				genericDao.deleteById(EnvioBurofaxPCO.class, arrayidEnvios.get(i));
 				
-				genericDao.save(BurofaxEnvioIntegracionPCO.class, envioIntegracionPCO);
+				Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "envioId", arrayidEnvios.get(i));
+				Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+				for(BurofaxEnvioIntegracionPCO envioIntegracionPCO : genericDao.getList(BurofaxEnvioIntegracionPCO.class, filtro1, filtro2)) {
+					envioIntegracionPCO.getAuditoria().setBorrado(true);
+					envioIntegracionPCO.getAuditoria().setFechaBorrar(new Date());
+					envioIntegracionPCO.getAuditoria().setUsuarioBorrar(SecurityUtils.getCurrentUser().getUsername());
+					
+					genericDao.save(BurofaxEnvioIntegracionPCO.class, envioIntegracionPCO);
+				}
 			}
 		}
 		catch(Exception e){
@@ -412,21 +413,17 @@ public class BurofaxManager implements BurofaxApi {
 	@SuppressWarnings("unchecked")
 	@BusinessOperation(DESCARTAR_PERSONA_ENVIO)
 	@Transactional(readOnly = false)
-	public void descartarPersona(Long idBurofax){
-		List<BurofaxPCO> listaBurofax=null;
+	public void descartarPersona(String idsBurofax){
 		Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoBurofaxPCO.DESCARTADA);
 		DDEstadoBurofaxPCO estadoBurofax=(DDEstadoBurofaxPCO) genericDao.get(DDEstadoBurofaxPCO.class,filtro1);
 		try{
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idBurofax);
-			listaBurofax=(List<BurofaxPCO>) genericDao.getList(BurofaxPCO.class,filtro);
-			Iterator<BurofaxPCO> it=listaBurofax.iterator();
-			BurofaxPCO burofax = new BurofaxPCO();
-			int total = listaBurofax.size();
-			for(int i=0; i<total; i++){
-				burofax=listaBurofax.get(i);
+			String[] arrBienes = idsBurofax.split(",");
+			for (String idBurofax:arrBienes) {				
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(idBurofax));
+				BurofaxPCO burofax = genericDao.get(BurofaxPCO.class,filtro);
 				burofax.setEstadoBurofax(estadoBurofax);
 				burofaxDao.save(burofax);
-			}
+			}				
 		}catch(Exception e){
 			logger.error(e);
 		}

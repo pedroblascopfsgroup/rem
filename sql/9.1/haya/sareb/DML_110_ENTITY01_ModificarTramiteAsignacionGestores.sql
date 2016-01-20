@@ -85,7 +85,7 @@ BEGIN
 	
 	-- Actualización de tareas
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
-			  ' SET BORRADO = 1 ' ||
+			  ' SET BORRADO = 1, USUARIOBORRAR = ''HR-1636'', FECHABORRAR = sysdate' ||
 			  ' WHERE TAP_CODIGO = ''H067_AsignarGestorExpediente''';
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
@@ -163,18 +163,21 @@ BEGIN
 
     -- LOOP Insertando valores en TFI_TAREAS_FORM_ITEMS
     VAR_TABLENAME := 'TFI_TAREAS_FORM_ITEMS';
+
+    V_MSQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || VAR_TABLENAME || ' WHERE TAP_ID IN (SELECT TAP_ID FROM ' || V_ESQUEMA || '.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H067_SeleccionarProcedimientoAsignarGestor'')';
+    EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+    IF V_NUM_TABLAS > 0  THEN
+    	V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.' || VAR_TABLENAME || ' SET BORRADO = 1, USUARIOBORRAR = ''HR-1636'', FECHABORRAR = sysdate WHERE TAP_ID IN (SELECT TAP_ID FROM ' || V_ESQUEMA || '.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H067_SeleccionarProcedimientoAsignarGestor'')';  
+    	DBMS_OUTPUT.PUT_LINE('[INFO] Borrando TFI_TAREAS_FORM_ITEMS de la tarea: H067_SeleccionarProcedimientoAsignarGestor.');
+    	EXECUTE IMMEDIATE V_MSQL;
+	END IF;
+
+
     DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'.' || VAR_TABLENAME || '... Empezando a insertar Campos de tareas');
     FOR I IN V_TIPO_TFI.FIRST .. V_TIPO_TFI.LAST
       LOOP
         V_TMP_TIPO_TFI := V_TIPO_TFI(I);
-        V_MSQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || VAR_TABLENAME || ' WHERE TAP_ID IN (SELECT TAP_ID FROM ' || V_ESQUEMA || '.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''' || TRIM(V_TMP_TIPO_TFI(1)) || ''')';
-        EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
-       	IF V_NUM_TABLAS > 0  THEN	  
-			V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.' || VAR_TABLENAME || ' SET BORRADO = 1 WHERE TAP_ID IN (SELECT TAP_ID FROM ' || V_ESQUEMA || '.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''' || TRIM(V_TMP_TIPO_TFI(1)) || ''')';  
-       		DBMS_OUTPUT.PUT_LINE('[INFO] Borrando TFI_TAREAS_FORM_ITEMS de la tarea: '|| TRIM(V_TMP_TIPO_TFI(1)) || '.');
-       		EXECUTE IMMEDIATE V_MSQL;
-		END IF;        
-	        V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.' || VAR_TABLENAME || 
+        V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.' || VAR_TABLENAME || 
 	                    '(TFI_ID,TAP_ID,TFI_ORDEN,TFI_TIPO,TFI_NOMBRE,TFI_LABEL,TFI_ERROR_VALIDACION,TFI_VALIDACION,TFI_VALOR_INICIAL,TFI_BUSINESS_OPERATION,VERSION,USUARIOCREAR,FECHACREAR,BORRADO)' ||
 	                    'SELECT ' ||
 	                    'S_TFI_TAREAS_FORM_ITEMS.NEXTVAL, ' ||
@@ -184,9 +187,9 @@ BEGIN
 	                    '''' || REPLACE(TRIM(V_TMP_TIPO_TFI(6)),'''','''''') || ''',''' || REPLACE(TRIM(V_TMP_TIPO_TFI(7)),'''','''''') || ''',' ||
 	                    '''' || REPLACE(TRIM(V_TMP_TIPO_TFI(8)),'''','''''') || ''',''' || REPLACE(TRIM(V_TMP_TIPO_TFI(9)),'''','''''') || ''',' ||
 	                    '''' || REPLACE(TRIM(V_TMP_TIPO_TFI(10)),'''','''''') || ''',''' || REPLACE(TRIM(V_TMP_TIPO_TFI(11)),'''','''''') || ''',sysdate,0 FROM DUAL'; 
-	        DBMS_OUTPUT.PUT_LINE(V_MSQL);
-	        DBMS_OUTPUT.PUT_LINE('INSERTANDO: ''' || V_TMP_TIPO_TFI(1) ||''','''||TRIM(V_TMP_TIPO_TFI(4))||'''');
-	        EXECUTE IMMEDIATE V_MSQL;
+	    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+	    DBMS_OUTPUT.PUT_LINE('INSERTANDO: ''' || V_TMP_TIPO_TFI(1) ||''','''||TRIM(V_TMP_TIPO_TFI(4))||'''');
+	    EXECUTE IMMEDIATE V_MSQL;
       END LOOP;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'.' || VAR_TABLENAME || '... Campos');
 

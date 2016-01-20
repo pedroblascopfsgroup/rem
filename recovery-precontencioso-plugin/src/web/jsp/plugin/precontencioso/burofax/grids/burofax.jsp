@@ -102,7 +102,7 @@ var pdfRender = function(value, meta, record) {
 			,dataIndex: 'id', sortable: false,autoWidth:true,hidden:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoo" text="**tienePersona"/>'
-			,dataIndex: 'tienePersona', sortable: true,autoWidth:true,hidden:true
+			,dataIndex: 'tienePersona', sortable: false,autoWidth:true,hidden:true
 		}
 	];
 

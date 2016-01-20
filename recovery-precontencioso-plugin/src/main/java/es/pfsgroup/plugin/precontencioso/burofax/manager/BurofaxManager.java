@@ -434,14 +434,16 @@ public class BurofaxManager implements BurofaxApi {
 	
 	public boolean saberOrigen(Long idDireccion){
 		boolean variable = false;
-		try{
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idDireccion);
-			Direccion direccion = (Direccion)  genericDao.get(Direccion.class, filtro);
-			if(direccion.getOrigen() != null || direccion.getOrigen().equalsIgnoreCase("Manual")){
-				variable = true;
+		if (!Checks.esNulo(idDireccion)) {
+			try{
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idDireccion);
+				Direccion direccion = (Direccion)  genericDao.get(Direccion.class, filtro);
+				if(direccion.getOrigen() != null || direccion.getOrigen().equalsIgnoreCase("Manual")){
+					variable = true;
+				}
+			}catch(Exception e){
+				logger.error(e);
 			}
-		}catch(Exception e){
-			logger.error(e);
 		}
 		return variable;
 	}

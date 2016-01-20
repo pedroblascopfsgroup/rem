@@ -1098,6 +1098,26 @@ var pdfRender = function(value, meta, record) {
 
 	}
 
+	var diferentesDirecciones = function() {
+		var arrayIdDirecciones=new Array();
+			 
+		rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
+			
+		for (var i=0; i < rowsSelected.length; i++){
+			arrayIdDirecciones.push(rowsSelected[i].get('idDireccion'));
+		}
+		
+		uniqueArray = arrayIdDirecciones.filter(function(item, pos) {
+		    return arrayIdDirecciones.indexOf(item) == pos;
+		});
+		
+		if(uniqueArray.length==1){
+			return false;
+		}
+		else{
+			return true;
+		}	
+	}
 	
 	var comprobarEstadoBotones = function() {
 	
@@ -1105,9 +1125,11 @@ var pdfRender = function(value, meta, record) {
 			btnEnviar.setDisabled(true);
 		}
 		
-		if(!btnNuevaDir.disabled && !validarBotonNuevaDirHabilitado()) {
+		if(validarBotonNuevaDirHabilitado()) {
+			btnNuevaDir.setDisabled(false);
+		} else {
 			btnNuevaDir.setDisabled(true);
-		}		
+		}
 		
 		if(!btnEditar.disabled && !validarBotonEditarHabilitado()) {
 			btnEditar.setDisabled(true);
@@ -1121,6 +1143,10 @@ var pdfRender = function(value, meta, record) {
 			btnEditPersona.setDisabled(true);
 		}else if(btnEditPersona.disabled && todasPersonasMarcadasIguales()){
 			btnEditPersona.setDisabled(false);
+		}
+		
+		if (diferentesDirecciones()) {
+			btnEditarVerDireccion.setDisabled(true);
 		}
 	}
 	
@@ -1314,7 +1340,9 @@ var pdfRender = function(value, meta, record) {
 				btnEnviar.setDisabled(true);
 			}
 			
-			if(!btnNuevaDir.disabled && !validarBotonNuevaDirHabilitado()) {
+			if(validarBotonNuevaDirHabilitado()) {
+				btnNuevaDir.setDisabled(false);
+			} else {
 				btnNuevaDir.setDisabled(true);
 			}
 			
@@ -1367,7 +1395,6 @@ var pdfRender = function(value, meta, record) {
 	}
 	
 	var comprobarEsManual = function(idDireccion){
-		debugger;
 			Ext.Ajax.request({
 				url: page.resolveUrl('burofax/saberOrigen')
 				,params: {idDireccion:idDireccion}
@@ -1405,7 +1432,7 @@ var pdfRender = function(value, meta, record) {
 		rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
 			
 		for (var i=0; i < rowsSelected.length; i++){
-		  arrayIdClientes.push(rowsSelected[i].get('idCliente'));
+		  arrayIdClientes.push(rowsSelected[i].get('idBurofax'));
 		}
 		
 		uniqueArray = arrayIdClientes.filter(function(item, pos) {

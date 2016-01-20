@@ -495,9 +495,10 @@ public class BurofaxController {
 	}
 
 	@RequestMapping
-	private String cancelarEnEstPrep(WebRequest request, ModelMap model,Long idEnvio, Long idCliente){
+	private String cancelarEnEstPrep(WebRequest request, ModelMap model,Long idEnvio, Long idCliente, 
+			@RequestParam(value = "arrayidEnvios", required = false) List<Long> arrayidEnvios){
 		
-		burofaxManager.cancelarEnEstPrep(idEnvio, idCliente);
+		burofaxManager.cancelarEnEstPrep(idEnvio, idCliente, arrayidEnvios);
 		return DEFAULT;
 	}
 	

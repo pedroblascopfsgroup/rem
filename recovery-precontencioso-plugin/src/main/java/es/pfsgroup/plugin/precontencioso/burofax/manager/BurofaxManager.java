@@ -390,18 +390,20 @@ public class BurofaxManager implements BurofaxApi {
 	
 	@BusinessOperation(CANCELAR_EST_PREPARADO)
 	@Transactional(readOnly = false)
-	public void cancelarEnEstPrep(Long idEnvio, Long idCliente){
+	public void cancelarEnEstPrep(Long idEnvio, Long idCliente, List<Long> arrayidEnvios){
 		try{
-			genericDao.deleteById(EnvioBurofaxPCO.class, idEnvio);
-			
-			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "envioId", idEnvio);
-			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-			for(BurofaxEnvioIntegracionPCO envioIntegracionPCO : genericDao.getList(BurofaxEnvioIntegracionPCO.class, filtro1, filtro2)) {
-				envioIntegracionPCO.getAuditoria().setBorrado(true);
-				envioIntegracionPCO.getAuditoria().setFechaBorrar(new Date());
-				envioIntegracionPCO.getAuditoria().setUsuarioBorrar(SecurityUtils.getCurrentUser().getUsername());
+			for(int i=0; i<arrayidEnvios.size(); i++){
+				genericDao.deleteById(EnvioBurofaxPCO.class, arrayidEnvios.get(i));
 				
-				genericDao.save(BurofaxEnvioIntegracionPCO.class, envioIntegracionPCO);
+				Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "envioId", arrayidEnvios.get(i));
+				Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+				for(BurofaxEnvioIntegracionPCO envioIntegracionPCO : genericDao.getList(BurofaxEnvioIntegracionPCO.class, filtro1, filtro2)) {
+					envioIntegracionPCO.getAuditoria().setBorrado(true);
+					envioIntegracionPCO.getAuditoria().setFechaBorrar(new Date());
+					envioIntegracionPCO.getAuditoria().setUsuarioBorrar(SecurityUtils.getCurrentUser().getUsername());
+					
+					genericDao.save(BurofaxEnvioIntegracionPCO.class, envioIntegracionPCO);
+				}
 			}
 		}
 		catch(Exception e){

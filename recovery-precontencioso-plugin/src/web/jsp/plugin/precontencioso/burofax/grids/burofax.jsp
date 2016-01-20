@@ -1348,7 +1348,6 @@ var pdfRender = function(value, meta, record) {
 	}
 	
 	var comprobarEsManual = function(idDireccion){
-		debugger;
 			Ext.Ajax.request({
 				url: page.resolveUrl('burofax/saberOrigen')
 				,params: {idDireccion:idDireccion}

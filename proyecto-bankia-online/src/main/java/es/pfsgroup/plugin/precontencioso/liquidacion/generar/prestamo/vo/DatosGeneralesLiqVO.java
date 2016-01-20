@@ -22,6 +22,7 @@ public class DatosGeneralesLiqVO {
 	private String DGC_NMPRTO;
 	private String DGC_COIBTQ;
 	private BigDecimal DGC_IMVRE2;
+	private Date DGC_FFCTTO;
 
 	SimpleDateFormat fechaLargaFormat = new SimpleDateFormat(FormatUtils.DD_DE_MES_DE_YYYY, MessageUtils.DEFAULT_LOCALE);
 
@@ -70,7 +71,7 @@ public class DatosGeneralesLiqVO {
 
 		if (numberInLetters != null) {
 			numberInLetters = numberInLetters.replace("CON", "euros CON");
-			return numberInLetters + " céntimos";
+			return numberInLetters + "céntimos";
 		}
 
 		return "NO DISPONIBLE";
@@ -80,6 +81,10 @@ public class DatosGeneralesLiqVO {
 		return NumberFormat.getInstance(new Locale("es", "ES")).format(DGC_IMVRE2);
 	}
 	
+	public String FFCTTO() {
+		return fechaLargaFormat.format(DGC_FFCTTO);
+	}
+
 	/*
 	 * GETTERS WITHOUT FORMAT MANIPULATION
 	 */

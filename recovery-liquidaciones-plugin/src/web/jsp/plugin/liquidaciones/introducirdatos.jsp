@@ -49,7 +49,7 @@
 		
 		 
 	<pfsforms:datefield labelKey="plugin.liquidaciones.introducirdatos.control.fechacierre" label="**Fecha de cierre" name="fechacierre" obligatory="true"/>
-	<pfsforms:numberfield name="intereses" labelKey="plugin.liquidaciones.introducirdatos.control.intereses" label="**Intereses de demora" value="" obligatory="true" allowDecimals="true"/>
+	<pfsforms:numberfield name="intereses" labelKey="plugin.liquidaciones.introducirdatos.control.intereses" label="**Tipo Intereses demora" value="" obligatory="true" allowDecimals="true"/>
 	<pfsforms:numberfield name="principal" labelKey="plugin.liquidaciones.introducirdatos.control.principal" label="**Principal" value="" obligatory="true" allowDecimals="true" />
 	<pfsforms:textfield name="nombre" labelKey="plugin.liquidaciones.introducirdatos.control.nombre" label="**Nombre" value="" obligatory="true" width="500"/>
 	<pfsforms:textfield name="dni" labelKey="plugin.liquidaciones.introducirdatos.control.dni" label="**D.N.I." value="" obligatory="true"/>

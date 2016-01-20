@@ -30,4 +30,6 @@ public interface GestorAdicionalAsuntoApi {
 	 * @return
 	 */
 	public EXTGestorAdicionalAsunto findGaaByIds(Long idTipoGestor, Long idAsunto, Long idUsuario, Long idTipoDespacho);
+
+	public Usuario obtenerLetradoDelAsunto(Long idAsunto);
 }

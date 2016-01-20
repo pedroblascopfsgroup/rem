@@ -46,6 +46,7 @@ import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
+import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoDao;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
@@ -78,6 +79,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.recovery.ext.api.tareas.EXTCrearTareaException;
 import es.pfsgroup.recovery.ext.api.tareas.EXTTareasApi;
@@ -157,6 +159,12 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 	
 	@Autowired
 	DDTipoAcuerdoDao tipoAcuerdoDao;
+	
+	@Autowired
+	CoreProjectContext coreProjectContext;
+	
+	@Autowired
+	EXTGestorAdicionalAsuntoDao gestorAdicionalAsuntoDao;
 		
 	/**
 	 * Pasa un acuerdo a estado Rechazado.
@@ -1108,8 +1116,12 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 		return idTarea;
 	}
 	
+	/**
+	 * @deprecated Usar ExtGestorAdicionalAsuntoManager.obtnerLetradoDelAsunto
+	 */
+	@Deprecated
 	protected Usuario obtenerLetradoDelAsunto(Long idAsunto){
-		List<EXTGestorAdicionalAsunto> gestoresAsunto =  genericDao.getList(EXTGestorAdicionalAsunto.class, genericDao.createFilter(FilterType.EQUALS, "tipoGestor.codigo", "LETR"), genericDao.createFilter(FilterType.EQUALS, "asunto.id",idAsunto));
+		List<EXTGestorAdicionalAsunto> gestoresAsunto = gestorAdicionalAsuntoDao.findGestoresByAsuntoTipos(idAsunto, coreProjectContext.getTipoGestorLetrado());
 		
 		Usuario letradoAsunto = null;
 

@@ -30,4 +30,6 @@ public interface CoreProjectContext {
 	Set<String> getEntidadesDesparalizacion();
 
 	public List<String> getCodigosDocumentosConFechaCaducidad();
+	
+	public Set<String> getTipoGestorLetrado();
 }

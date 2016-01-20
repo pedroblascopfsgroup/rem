@@ -19,12 +19,13 @@ public class LIQDtoLiquidacionCabecera extends WebDto {
     private String dni;
     private BigDecimal totalDeuda = null;
     
+    private String logo;
     private String usuarioLogado;
     private String numCuenta;
     private BigDecimal capital;
     private Date fechaVencimiento;
-    private BigDecimal interes;
-    private String tipoIntDemora;
+    private Float interes;
+    private Float tipoIntDemora;
     private BigDecimal principalCertif;
     private BigDecimal intCertif;
     private BigDecimal demCertif;
@@ -94,16 +95,16 @@ public class LIQDtoLiquidacionCabecera extends WebDto {
 	public void setFechaVencimiento(Date fechaVencimiento) {
 		this.fechaVencimiento = fechaVencimiento;
 	}
-	public BigDecimal getInteres() {
+	public Float getInteres() {
 		return interes;
 	}
-	public void setInteres(BigDecimal interes) {
+	public void setInteres(Float interes) {
 		this.interes = interes;
 	}
-	public String getTipoIntDemora() {
+	public Float getTipoIntDemora() {
 		return tipoIntDemora;
 	}
-	public void setTipoIntDemora(String tipoIntDemora) {
+	public void setTipoIntDemora(Float tipoIntDemora) {
 		this.tipoIntDemora = tipoIntDemora;
 	}
 	public BigDecimal getPrincipalCertif() {
@@ -147,5 +148,11 @@ public class LIQDtoLiquidacionCabecera extends WebDto {
 	}
 	public void setProcurador(String procurador) {
 		this.procurador = procurador;
+	}
+	public String getLogo() {
+		return logo;
+	}
+	public void setLogo(String logo) {
+		this.logo = logo;
 	}    
 }

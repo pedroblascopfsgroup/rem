@@ -21,7 +21,7 @@ public class LIQDtoTramoLiquidacion extends WebDto {
 
     private static final long serialVersionUID = 1L;
     
-    private Date fechaMovimiento;
+    private String fechaMovimiento;
     private BigDecimal deuda = null;
     private BigDecimal interes;
     private Date fLiquidacion;
@@ -34,10 +34,10 @@ public class LIQDtoTramoLiquidacion extends WebDto {
     private BigDecimal aCNominal;
     private BigDecimal interesCalculado;
 
-    public Date getFechaMovimiento() {
+    public String getFechaMovimiento() {
 		return fechaMovimiento;
 	}
-	public void setFechaMovimiento(Date fechaMovimiento) {
+	public void setFechaMovimiento(String fechaMovimiento) {
 		this.fechaMovimiento = fechaMovimiento;
 	}
 	public BigDecimal getDeuda() {

@@ -1,9 +1,15 @@
 package es.pfsgroup.plugin.recovery.liquidaciones;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,9 +22,14 @@ import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
+import es.capgemini.pfs.movimiento.model.Movimiento;
+import es.capgemini.pfs.multigestor.EXTGestorAdicionalAsuntoManager;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
+import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Assertions;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.plugin.recovery.liquidaciones.dao.LIQCobroPagoDao;
 import es.pfsgroup.plugin.recovery.liquidaciones.dto.LIQDtoReportRequest;
@@ -39,6 +50,12 @@ public class LIQLiquidacionesManager {
 
 	@Autowired
 	private Executor executor;
+	
+	@Autowired
+	private EXTGestorAdicionalAsuntoManager gestorAdicionalAsuntoManager; 
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
 
 	public LIQLiquidacionesManager() {
 		super();
@@ -78,38 +95,70 @@ public class LIQLiquidacionesManager {
 		} catch (ParseException e) {
 			throw new BusinessOperationException("plugin.liquidaciones.error.date.format");
 		}
-		
+	
 		LIQDtoReportResponse response = new LIQDtoReportResponse();
+		
+		String logo = usuarioManager.getUsuarioLogado().getEntidad().configValue("logo");
+		response.getCabecera().setLogo("/img/"+logo);
+		
 		response.getCabecera().setAcuerdo(cont.getCodigoContrato());
-		response.getCabecera().setAutos(proc.getCodigoProcedimientoEnJuzgado());
 		response.getCabecera().setDni(request.getDni());
-		response.getCabecera().setFechaLiquidacion(fechaCierre);
+		//response.getCabecera().setFechaLiquidacion(fechaCierre);
 		response.getCabecera().setNombre(request.getNombre());
+		
+		response.getCabecera().setNumCuenta(cont.getNroContratoFormat());
+		if (!Checks.esNulo(cont.getLimiteInicial())) {
+			response.getCabecera().setCapital(new BigDecimal(cont.getLimiteInicial().toString()));
+		}
+		response.getCabecera().setFechaVencimiento(cont.getFechaVencimiento());
+		response.getCabecera().setInteres(cont.getTipoInteres());
+		response.getCabecera().setTipoIntDemora(request.getIntereses());
+
+		response.getCabecera().setFechaLiquidacion(fechaCierre);
+		response.getCabecera().setPrincipalCertif(new BigDecimal(request.getPrincipal().toString()));
+
+		if (!Checks.esNulo(proc.getTipoProcedimiento())) {
+			response.getCabecera().setTipoProc(proc.getTipoProcedimiento().getDescripcion());
+		}
+		response.getCabecera().setAutos(proc.getCodigoProcedimientoEnJuzgado());
+		if (!Checks.esNulo(proc.getJuzgado())) {
+			response.getCabecera().setJuzgado(proc.getJuzgado().getDescripcion());
+		}
+		if (!Checks.esNulo(proc.getAsunto())) {
+			Usuario letrado = gestorAdicionalAsuntoManager.obtenerLetradoDelAsunto(proc.getAsunto().getId());
+			if (!Checks.esNulo(letrado)) {
+				response.getCabecera().setAbogado(letrado.getApellidoNombre());
+			}
+		}
+		if (!Checks.esNulo(proc.getAsunto())) {
+			if (!Checks.esNulo(proc.getAsunto().getProcurador())) {
+				if (!Checks.esNulo(proc.getAsunto().getProcurador().getUsuario())) {
+					proc.getAsunto().getProcurador().getUsuario().getApellidoNombre();
+				}
+			}
+		}
 
 		Float deuda = request.getPrincipal();
 		Float interes = request.getIntereses();
-		Date fmov = fechaCierre;
+		Timestamp fmov = new Timestamp(fechaCierre.getTime());
 		Float totalIntereses = 0.0F;
 		Float entregado = 0.0F;
 
-		List<LIQCobroPago> entregas = cobroPagoDao.findEntregasACuenta(request
-				.getContrato(), fechaCierre,fechaLiquidacion);
+		List<LIQCobroPago> entregas = cobroPagoDao.findEntregasACuenta(request.getContrato(), fechaCierre,fechaLiquidacion);
 		
 		for (LIQCobroPago cp : entregas) {
 			Float importe = cp.getImporte();
-			
-			LIQDtoTramoLiquidacion tramo = createTramoLiquidacion(deuda,
-					interes, fmov, cp.getFecha(), importe);
+			LIQDtoTramoLiquidacion tramo = createTramoLiquidacion(deuda, interes, fmov, cp.getFecha(), importe,"COBRO");
 
 			deuda -= importe;
 			if (deuda < 0.0F) deuda = 0.0F;
-			fmov = cp.getFecha();
+			fmov = new Timestamp(cp.getFecha().getTime());
 			totalIntereses += tramo.getIntereses().floatValue();
 			entregado += tramo.getEntregado().floatValue();
 			response.addTramoLiquidacion(tramo);
 		}
 		//Agregamos un �ltimo tramo desde la �ltima entrega a cuenta hasta la fecha actual
-		LIQDtoTramoLiquidacion tramo = createTramoLiquidacion(deuda, interes, fmov, fechaLiquidacion, 0.0F);
+		LIQDtoTramoLiquidacion tramo = createTramoLiquidacion(deuda, interes, fmov, fechaLiquidacion, 0.0F,"TOTAL PENDIENTE");
 		response.addTramoLiquidacion(tramo);
 		
 		totalIntereses += tramo.getIntereses().floatValue();
@@ -119,20 +168,21 @@ public class LIQLiquidacionesManager {
 		
 		return response;
 	}
-
+	
 	private LIQDtoTramoLiquidacion createTramoLiquidacion(Float deuda,
-			Float interes, Date desde, Date hasta, Float importe) {
+			Float interes, Date desde, Date hasta, Float importe, String descripcion) {
 		
 		Float coeficiente = (deuda * interes) / 36000;
 		Long dias = (hasta.getTime() - desde.getTime()) / 86400000L;
 		Float totalIntereses = dias * coeficiente;
 		
 		LIQDtoTramoLiquidacion tramo = new LIQDtoTramoLiquidacion();
+		tramo.setDescrMov(descripcion);
 		tramo.setCoefic(coeficiente);
 		tramo.setDeuda(new BigDecimal(deuda.toString()));
 		tramo.setDias(dias);
 		tramo.setEntregado(new BigDecimal(importe.toString()));
-		tramo.setFechaMovimiento(desde);
+		tramo.setFechaMovimiento(DateFormat.toString(desde));
 		tramo.setfLiquidacion(hasta);
 		tramo.setInteres(new BigDecimal(interes.toString()));
 		tramo.setIntereses(new BigDecimal(totalIntereses.toString()));

@@ -652,7 +652,9 @@
     				<c:if test="${empty NMBbien.numeroActivo or NMBbien.numeroActivo==0}">
 						panel.getBottomToolbar().addButton([btnSolicitarNumActivo]);
 					</c:if>
+					<sec:authorize ifAllGranted="SOLVENCIA_EDITAR">
         				panel.getBottomToolbar().addButton([btnSolicitarTasacion]);
+        			</sec:authorize>
     			</c:otherwise>
 			</c:choose>			
 	</sec:authorize>

@@ -2745,12 +2745,63 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
                                   
                                   
                                ]);
-		
+
+    // id: 372 : TRAMITE HIPOTECARIO (CAJAMAR) : Confirmar si existe oposición.
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name":"d_fechaOposicion","fieldLabel":"Fecha oposición",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, id:'d_fechaOposicion'+this.idFactoria
+            ,validator: function(v) {
+                if(Ext.getCmp('d_comboResultado' + idFactoria).getValue() == "01" && Ext.getCmp('d_fechaOposicion' + idFactoria).getValue() == ""){
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        }
+        ,{"xtype":'datefield',"name":"d_fechaComparecencia","fieldLabel":"Fecha comparecencia",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, id:'d_fechaComparecencia'+this.idFactoria}
+        ,{"xtype":'combo',"store":storeSINO, "name":"d_comboResultado","fieldLabel":"Oposición","autoload":true,allowBlank:false,  mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+        ,{"xtype":'textarea',"name":"d_motivoOposicion","fieldLabel":"Motivo oposición",allowBlank:true,filtrar:true,width:285, id:'d_motivoOposicion'+this.idFactoria
+            ,validator: function(v) {
+                if(Ext.getCmp('d_comboResultado' + idFactoria).getValue() == "01" && Ext.getCmp('d_motivoOposicion' + idFactoria).isVisible() && Ext.getCmp('d_motivoOposicion' + idFactoria).getValue() == ""){
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        }
+        ,{"xtype": 'datefield', "name": "d_fechaFinAlegaciones", "fieldLabel": "Fecha fin alegaciones", allowBlank: true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, id: 'd_fechaFinAlegaciones' + this.idFactoria}
+        ,{"xtype": 'textarea', "name": "d_alegaciones", "fieldLabel": "Presentar alegaciones", allowBlank: true, filtrar: true, width: 285, id: 'd_alegaciones' + this.idFactoria}
+    ]);
+
+    //id: 373 : PROCEDIMIENTO HIPOTECARIO (CAJAMAR) : Cumplimentar mandamiento de certificación de cargas
+    this.arrayCampos.push([
+       {"xtype": 'datefield', "name": "d_fecha", "fieldLabel": "Fecha", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
+    ]);
+
+    //id: 374 : PROCEDIMIENTO HIPOTECARIO (CAJAMAR) : Solicitud oficio acreedores anteriores
+    this.arrayCampos.push([
+       {"xtype": 'datefield', "name": "d_fecha", "fieldLabel": "Fecha", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
+    ]);
+
+    //id: 375 : PROCEDIMIENTO HIPOTECARIO (CAJAMAR): Registrar resolución Juzgado
+    this.arrayCampos.push([
+        {"xtype": 'datefield', "name": "d_fecha", "fieldLabel": "Fecha", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+        ,{"xtype": 'combo', "store": this.storeDDPositivoNegativo, "name": "d_resultado", "fieldLabel": "Resultado", allowBlank: true, "autoload": true, mode: 'local', triggerAction: 'all', resizable: true, id: 'd_resultado' + this.idFactoria, displayField: 'descripcion', valueField: 'codigo'}
+        ,{"xtype": 'numberfield', "name": "d_cuantiaCargasPrevias", "fieldLabel": "Cuantía cargas previas", allowBlank: true, filtradoProcurador: true, id: 'd_cuantiaCargasPrevias' + this.idFactoria}
+    ]);
+
+    //id: 376 : PROCEDIMIENTO HIPOTECARIO (CAJAMAR): ESCRITO DE ALEGACIONES
+    this.arrayCampos.push([
+        {"xtype": 'datefield', "name": "d_fecha", "fieldLabel": "Fecha presentación", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
+        ,{"xtype": 'combo', "store": storeSINO, "name": "d_comparecencia", "fieldLabel": "Comparecencia", allowBlank: false, "autoload": true, mode: 'local', triggerAction: 'all', resizable: true, id: 'd_comparecencia' + this.idFactoria, displayField: 'descripcion', valueField: 'codigo'}
+        ,{"xtype": 'datefield', "name": "d_fechaComparecencia", "fieldLabel": "Fecha comparecencia", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
+    ]);
+
+
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){
 			this.arrayCampos.push([]);
 		}
-		
+
 		///ESPECIALES
 		
 		// id: 1000 : Subida de ficheros

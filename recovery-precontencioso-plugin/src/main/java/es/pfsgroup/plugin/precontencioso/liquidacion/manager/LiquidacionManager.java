@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.liquidacion.manager;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -37,7 +38,7 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.api.ProcedimientoApi;
 
-@Service
+@Service("liquidacionManager")
 public class LiquidacionManager implements LiquidacionApi {
 
 	@Autowired
@@ -253,5 +254,17 @@ public class LiquidacionManager implements LiquidacionApi {
 			logger.error("Error en el método visar: " + e.getMessage());
 			throw new FrameworkException("Ocurrió un error inesperado durante la operación. Por favor, vuelva a intentarlo más tarde.");
 		}
+	}
+
+	@Override
+	public BigDecimal getTotalLiquidacionPCO(Long idProcedimientoPCO) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BigDecimal getTotalLiquidacion(Long idProcedimiento) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

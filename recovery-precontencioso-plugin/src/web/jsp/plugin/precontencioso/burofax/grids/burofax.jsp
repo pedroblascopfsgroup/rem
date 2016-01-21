@@ -736,11 +736,13 @@ var pdfRender = function(value, meta, record) {
 	
 	btnDescartarPersEnvio.on('click', function(){
 	 var arrayIdClientes=new Array();
-			 
+	 var arrayIdBurofax = new Array();
+	 
 		rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
 			
 		for (var i=0; i < rowsSelected.length; i++){
 		  arrayIdClientes.push(rowsSelected[i].get('idCliente'));
+		  arrayIdBurofax.push(rowsSelected[i].get('idBurofax'))
 		}
 	uniqueArray = arrayIdClientes.filter(function(item, pos) {
 		    return arrayIdClientes.indexOf(item) == pos;
@@ -755,7 +757,7 @@ var pdfRender = function(value, meta, record) {
 				var idBurofax=gridBurofax.getSelectionModel().getSelected().get('idBurofax');
 					Ext.Ajax.request({
 							url: page.resolveUrl('burofax/descartarPersonaEnvio'),
-							params: {idBurofax:idBurofax},
+							params: {idsBurofax:arrayIdBurofax},
 							method: 'POST',
 							success: function (result, request) {
 								Ext.Msg.show({
@@ -1076,6 +1078,26 @@ var pdfRender = function(value, meta, record) {
 
 	}
 
+	var diferentesDirecciones = function() {
+		var arrayIdDirecciones=new Array();
+			 
+		rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
+			
+		for (var i=0; i < rowsSelected.length; i++){
+			arrayIdDirecciones.push(rowsSelected[i].get('idDireccion'));
+		}
+		
+		uniqueArray = arrayIdDirecciones.filter(function(item, pos) {
+		    return arrayIdDirecciones.indexOf(item) == pos;
+		});
+		
+		if(uniqueArray.length==1){
+			return false;
+		}
+		else{
+			return true;
+		}	
+	}
 	
 	var comprobarEstadoBotones = function() {
 	
@@ -1083,9 +1105,11 @@ var pdfRender = function(value, meta, record) {
 			btnEnviar.setDisabled(true);
 		}
 		
-		if(!btnNuevaDir.disabled && !validarBotonNuevaDirHabilitado()) {
+		if(validarBotonNuevaDirHabilitado()) {
+			btnNuevaDir.setDisabled(false);
+		} else {
 			btnNuevaDir.setDisabled(true);
-		}		
+		}
 		
 		if(!btnEditar.disabled && !validarBotonEditarHabilitado()) {
 			btnEditar.setDisabled(true);
@@ -1109,6 +1133,10 @@ var pdfRender = function(value, meta, record) {
 			}else{
 				btnCancelarEnEstPrep.setDisabled(true);
 			}
+		}
+		
+		if (diferentesDirecciones()) {
+			btnEditarVerDireccion.setDisabled(true);
 		}
 	}
 	
@@ -1302,7 +1330,9 @@ var pdfRender = function(value, meta, record) {
 				btnEnviar.setDisabled(true);
 			}
 			
-			if(!btnNuevaDir.disabled && !validarBotonNuevaDirHabilitado()) {
+			if(validarBotonNuevaDirHabilitado()) {
+				btnNuevaDir.setDisabled(false);
+			} else {
 				btnNuevaDir.setDisabled(true);
 			}
 			
@@ -1364,7 +1394,6 @@ var pdfRender = function(value, meta, record) {
 				,method: 'POST'
 				,success: function (result, request)
 				{
-					debugger;
 					var r = Ext.util.JSON.decode(result.responseText);
 					var solucion = r.esManual;
 				 	if(solucion){
@@ -1408,7 +1437,7 @@ var pdfRender = function(value, meta, record) {
 		rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
 			
 		for (var i=0; i < rowsSelected.length; i++){
-		  arrayIdClientes.push(rowsSelected[i].get('idCliente'));
+		  arrayIdClientes.push(rowsSelected[i].get('idBurofax'));
 		}
 		
 		uniqueArray = arrayIdClientes.filter(function(item, pos) {

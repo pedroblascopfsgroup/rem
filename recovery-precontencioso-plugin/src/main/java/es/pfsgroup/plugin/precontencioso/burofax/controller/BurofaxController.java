@@ -57,7 +57,6 @@ import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.documento.api.DocumentoPCOApi;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudDocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
-import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ProcedimientoPcoApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
@@ -520,9 +519,8 @@ public class BurofaxController {
 	}
 	
 	@RequestMapping
-	private String descartarPersonaEnvio(WebRequest request, ModelMap model,Long idBurofax){
-		
-		burofaxManager.descartarPersona(idBurofax);
+	private String descartarPersonaEnvio(WebRequest request, ModelMap model,String idsBurofax){
+		burofaxManager.descartarPersona(idsBurofax);
 		return DEFAULT;
 	}
 	

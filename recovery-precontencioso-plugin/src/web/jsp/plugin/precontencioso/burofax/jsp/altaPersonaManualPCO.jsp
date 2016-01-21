@@ -60,10 +60,10 @@
 	
 	var comprueba_contratos = function(){
 		
-		if( myCboxSelModel.getSelections().length >= 1){
+		if( myCboxSelModelPers.getSelections().length >= 1){
 			
 			var todosCntConTipInter = true;
-			Ext.each(myCboxSelModel.getSelections(), function(rec){
+			Ext.each(myCboxSelModelPers.getSelections(), function(rec){
 				if(rec.data.tipointervCodigo != null && rec.data.tipointervCodigo != ''){
 					arrayContratos.push(rec.data.idContrato);
 					arrayTiposIntervencion.push(rec.data.tipointervCodigo);
@@ -330,18 +330,18 @@
 		{name: 'nombre'}
 	]);
 
-	var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
- 		/*handleMouseDown : function(g, rowIndex, e){
+	var myCboxSelModelPers = new Ext.grid.CheckboxSelectionModel({
+ 		handleMouseDown : function(g, rowIndex, e){	
   		 	var view = this.grid.getView();
     		var isSelected = this.isSelected(rowIndex);
     		if(isSelected) {
-      			this.deselectRow(rowIndex);
+      			//this.deselectRow(rowIndex);
     		} 
     		else if(!isSelected || this.getCount() > 1) {
       			this.selectRow(rowIndex, true);
       			view.focusRow(rowIndex);
     		}
-  		},*/
+  		},
   		singleSelect: false,
   		header:''
 	});
@@ -377,7 +377,7 @@
     
 
 	var columnArray = new Ext.grid.ColumnModel([
-		myCboxSelModel
+		myCboxSelModelPers
 		, {
 			header: '<s:message code="plugin.precontencioso.grid.relacionContratos.numContrato" text="**Num Contrato"/>',
 			dataIndex: 'cc', sortable: true,autoWidth:true,id:'idContrato'
@@ -401,16 +401,10 @@
                             emptyText: 'Select Field...',
                             editable: false,
                             forceSelection: false,
-                            valueField: 'codigo',
+                            valueField: 'descripcion',
                             displayField: 'descripcion',
                             store: tiposIntervencionStore,
-                            autoLoad:true,
-                            listeners: {
-						        beforeselect: function( combo, record, index) {
-			                           var sm = gridRelacionContratos.getSelectionModel().getSelected();
-                         			   sm.set('tipointervCodigo',tiposIntervencionStore.getAt(index).data.codigo);
-						        }
-						    }
+                            autoLoad:true
                         })
 		}
 		
@@ -429,7 +423,7 @@
 	
 	var gridRelacionContratos = app.crearEditorGrid(relacionContratosStore,columnArray,{
         title: '<s:message code="plugin.precontencioso.grid.relacionContratos.titulo" text="**Relacion Contratos" />'
-		,sm: myCboxSelModel
+		,sm: myCboxSelModelPers
         ,cls:'cursor_pointer'
 		,style:'padding-right:10px'
         ,iconCls:'icon_personas'
@@ -452,7 +446,19 @@
 	       			return false;
 	       		}
 	       	}
-	);
+	);	
+	
+	gridRelacionContratos.addListener( 'afteredit', function( e){
+			
+	        tiposIntervencionStore.each(function(record) {
+		        if(record.data.descripcion == e.value){
+		        	e.record.data.tipointervCodigo = record.data.codigo;
+		        }
+		    });
+			    
+	});
+	
+		
 	
 	
 	//relacionContratosStore.webflow({idProcedimiento: data.precontencioso.id});

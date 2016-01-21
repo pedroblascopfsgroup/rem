@@ -1358,13 +1358,13 @@ var pdfRender = function(value, meta, record) {
 	}
 	
 	var comprobarEsManual = function(idDireccion){
-		debugger;
 			Ext.Ajax.request({
 				url: page.resolveUrl('burofax/saberOrigen')
 				,params: {idDireccion:idDireccion}
 				,method: 'POST'
 				,success: function (result, request)
 				{
+					debugger;
 					var r = Ext.util.JSON.decode(result.responseText);
 					var solucion = r.esManual;
 				 	if(solucion){
@@ -1373,13 +1373,25 @@ var pdfRender = function(value, meta, record) {
 							btnBorrarDirOrigenManual.setDisabled(true);
 						}else{
 							btnBorrarDirOrigenManual.setDisabled(false);	
-							var idClienteComparar = gridBurofax.getSelectionModel().getSelected().get('idCliente');
+							<%-- var idClienteComparar = gridBurofax.getSelectionModel().getSelected().get('idCliente');
 							for (var i = 0; i < gridBurofax.getStore().data.length; i++) {
 						    	var element = Ext.get(gridBurofax.getView().getRow(i));
 						   		var record = gridBurofax.getStore().getAt(i);
 						   		var tmpDireccion = record.data.idDireccion;
 						   		if(tmpDireccion == idDireccion && (idClienteComparar == null || idClienteComparar == '')){
 						   			btnBorrarDirOrigenManual.setDisabled(true);
+						   		}
+							}--%>
+							var idDireccionComparar = gridBurofax.getSelectionModel().getSelected().get('idDireccion');
+							for (var i = 0; i < gridBurofax.getStore().data.length; i++) {
+						    	var element = Ext.get(gridBurofax.getView().getRow(i));
+						   		var record = gridBurofax.getStore().getAt(i);
+						   		var tmpDireccion = record.data.idDireccion;
+						   		if(tmpDireccion == idDireccionComparar){
+						   			if(record.data.resultado == 'Solicitado' || record.data.resultado == 'Enviado'){
+						   				btnBorrarDirOrigenManual.setDisabled(true);
+						   				break;
+						   			}
 						   		}
 							}
 						}

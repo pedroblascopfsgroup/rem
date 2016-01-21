@@ -64,17 +64,35 @@ public class NMBBienDaoImpl extends AbstractEntityDao<NMBBien, Long> implements 
         StringBuffer hql = new StringBuffer();
         
         hql.append(" SELECT distinct ".concat(NAME_OF_ENTITY_NMB));
-        hql.append(" FROM  NMBBien ".concat(NAME_OF_ENTITY_NMB).concat(" LEFT JOIN "));
-        hql.append("	  ".concat(NAME_OF_ENTITY_NMB).concat(".NMBpersonas bieper LEFT JOIN "));
-        hql.append("	  ".concat(NAME_OF_ENTITY_NMB).concat(".localizaciones loc LEFT JOIN "));
-        hql.append("	  ".concat(NAME_OF_ENTITY_NMB).concat(".informacionRegistral infr LEFT JOIN "));
-        hql.append("	  ".concat(NAME_OF_ENTITY_NMB).concat(".valoraciones val LEFT JOIN "));
-        hql.append("	  ".concat(NAME_OF_ENTITY_NMB).concat(".contratos biecnt LEFT JOIN "));
-        hql.append("	  ".concat(NAME_OF_ENTITY_NMB).concat(".procedimientos prcbie LEFT JOIN"));
-        hql.append("	  ".concat("prcbie").concat(".procedimiento prc LEFT JOIN "));
-        hql.append("	  ".concat("prc").concat(".asunto asu "));
-        hql.append(" WHERE 1=1 AND ");
-        hql.append("      ".concat(NAME_OF_ENTITY_NMB).concat(".auditoria.borrado = 0 "));
+        hql.append(" FROM  NMBBien ".concat(NAME_OF_ENTITY_NMB));
+        
+        if(!Checks.esNulo(dto.getPoblacion()) || !Checks.esNulo(dto.getCodPostal()) || !Checks.esNulo(dto.getDireccion()) || !Checks.esNulo(dto.getProvincia()) || !Checks.esNulo(dto.getLocalidad()) || !Checks.esNulo(dto.getCodigoPostal())) {
+        	hql.append(" LEFT JOIN ".concat(NAME_OF_ENTITY_NMB).concat(".localizaciones loc "));
+        }
+        
+        if(!Checks.esNulo(dto.getNumContrato()) || !Checks.esNulo(dto.getNifPrimerTitular())) {
+        	hql.append(" LEFT JOIN ".concat(NAME_OF_ENTITY_NMB).concat(".contratos biecnt "));
+        }
+        
+        if (usuLogado.getUsuarioExterno()) {
+	        hql.append(" LEFT JOIN ".concat(NAME_OF_ENTITY_NMB).concat(".procedimientos prcbie "));
+	        hql.append(" LEFT JOIN ".concat("prcbie").concat(".procedimiento prc"));
+	        hql.append(" LEFT JOIN ".concat("prc").concat(".asunto asu "));
+        }
+        
+        if(!Checks.esNulo(dto.getCodCliente()) || !Checks.esNulo(dto.getNifCliente())) {
+        	hql.append(" LEFT JOIN ".concat(NAME_OF_ENTITY_NMB).concat(".NMBpersonas bieper "));
+        }
+        
+        if (!Checks.esNulo(dto.getReferenciaCatastral()) || !Checks.esNulo(dto.getNumFinca()) || (dto.getSort()!=null && (dto.getSort().equals("refCatastral") || dto.getSort().equals("superficie")))) {
+        	hql.append(" LEFT JOIN ".concat(NAME_OF_ENTITY_NMB).concat(".informacionRegistral infr "));
+        }       
+        
+        if (dto.getTasacionDesde() != null || dto.getTasacionHasta() != null){
+        	hql.append(" LEFT JOIN ".concat(NAME_OF_ENTITY_NMB).concat(".valoraciones val "));
+        }
+        
+        hql.append(" WHERE ".concat(NAME_OF_ENTITY_NMB).concat(".auditoria.borrado = 0 "));
         
         if(dto.isSolvenciaNoEncontrada()){
         	hql.append(" AND ".concat(NAME_OF_ENTITY_NMB).concat(".solvenciaNoEncontrada = true "));
@@ -103,19 +121,6 @@ public class NMBBienDaoImpl extends AbstractEntityDao<NMBBien, Long> implements 
         	hql.append(" AND ".concat(NAME_OF_ENTITY_NMB).concat(".valorActual <= ".concat(dto.getValorHasta().toString())));
         }
         
-        if (!Checks.esNulo(dto.getNumContrato())){
-        	String numCntTrim = dto.getNumContrato().replaceAll(" ", ""); //No funcionaba el trim()
-        	//Quito los "0" por delante del nro. contrato
-        	for (int i=0;i<numCntTrim.length();i++) {
-        		char charCnt = numCntTrim.charAt(i); 
-        		if (charCnt != '0') {
-        			numCntTrim = numCntTrim.substring(i, numCntTrim.length());
-        			break;
-        		}
-        	}
-        	hql.append(" AND UPPER(biecnt.contrato.nroContrato) like '%".concat(numCntTrim.toUpperCase()).concat("%'"));
-        }
-        
         if (!Checks.esNulo(dto.getNifPrimerTitular())){
         	hql.append(" AND '".concat(dto.getNifPrimerTitular().toUpperCase()).concat("'"));
         	hql.append("	IN (SELECT UPPER(cp.persona.docId) FROM biecnt.contrato.contratoPersona cp ");
@@ -128,6 +133,19 @@ public class NMBBienDaoImpl extends AbstractEntityDao<NMBBien, Long> implements 
         
         if (!Checks.esNulo(dto.getNifCliente())){
         	hql.append(" AND UPPER(bieper.persona.docId) = '".concat(dto.getNifCliente().toUpperCase()).concat("'"));
+        }
+        
+        if (!Checks.esNulo(dto.getNumContrato())){
+        	String numCntTrim = dto.getNumContrato().replaceAll(" ", ""); //No funcionaba el trim()
+        	//Quito los "0" por delante del nro. contrato
+        	for (int i=0;i<numCntTrim.length();i++) {
+        		char charCnt = numCntTrim.charAt(i); 
+        		if (charCnt != '0') {
+        			numCntTrim = numCntTrim.substring(i, numCntTrim.length());
+        			break;
+        		}
+        	}
+        	hql.append(" AND UPPER(biecnt.contrato.nroContrato) like '%".concat(numCntTrim.toUpperCase()).concat("%' "));
         }
         
         if (usuLogado.getUsuarioExterno()) {
@@ -181,10 +199,6 @@ public class NMBBienDaoImpl extends AbstractEntityDao<NMBBien, Long> implements 
 
         hqlFiltroCargas(dto, hql);
 
-/*      if (!emtpyString(dto.getCodCliente())){
-    		hql.append(" AND bieper IN ( SELECT bieper FROM NMBPersonasBien WHERE bieper.persona.codClienteEntidad = ".concat(dto.getCodCliente()).concat(")"));
-    	}
-*/      
         return hql.toString();
 	}
 	

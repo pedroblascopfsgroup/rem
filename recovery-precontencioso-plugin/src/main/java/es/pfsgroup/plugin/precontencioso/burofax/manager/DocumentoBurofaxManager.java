@@ -34,6 +34,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.precontencioso.burofax.api.DocumentoBurofaxApi;
 import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
+import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dao.LiquidacionDao;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
@@ -179,7 +180,9 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		try {
 			filtro = genericDao.createFilter(FilterType.EQUALS, "contrato.id", contrato.getId());
 			List<LiquidacionPCO> liquidaciones = genericDao.getList(LiquidacionPCO.class, filtro); ///Por si existe en algún caso mas de una
-			liquidacion = liquidaciones.get(0);
+			if(!Checks.estaVacio(liquidaciones)){
+				liquidacion = liquidaciones.get(0);
+			}
 			if(!Checks.esNulo(liquidacion) && !Checks.esNulo(liquidacion.getFechaConfirmacion())){
 				mapaVariables.put(FECHA_LIQUIDACION,fechaFormat.format(liquidacion.getFechaConfirmacion()));
 			} else {
@@ -227,7 +230,6 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		} catch (NullPointerException npe) {
 			mapaVariables.put(MOV_FECHA_POS_VIVA_VENCIDA,ERROR_NO_EXISTE_VALOR);
 		}
-		
 		LiquidacionPCO liquPCO = null;
 		if (!Checks.esNulo(contrato)) {
 			liquPCO = liquidacionDao.getLiquidacionDelContrato(contrato.getId());
@@ -369,7 +371,7 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 	}
 
 	
-	public String replaceVariablesGeneracionBurofax(Long idPcoBurofax, String textoBuro){
+	public String replaceVariablesGeneracionBurofax(Long idPcoBurofax, String textoBuro, DocumentoPCO doc){
 		
 		BurofaxPCO burofax=(BurofaxPCO) genericDao.get(BurofaxPCO.class,genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(idPcoBurofax)));
 		
@@ -377,6 +379,32 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		String tipoIntervencion = "";
 		String aNombreDe = "";
 		String listaBienes = "";
+		String notario = "";
+		String localidadNotario = "";
+		String protocolo = "";;
+		String diaEscritura = "";
+		String mesEscritura = "";
+		String anyoEscritura = "";
+		String fechaEscritura = "";
+		
+		if(!Checks.esNulo(doc)){
+			notario = doc.getNotario();
+			protocolo = doc.getProtocolo();
+			if(!Checks.esNulo(doc.getProvinciaNotario())){
+				localidadNotario = doc.getProvinciaNotario().getDescripcion();
+			}
+			if(!Checks.esNulo(doc.getFechaEscritura())){
+				SimpleDateFormat df = new SimpleDateFormat("dd");
+				diaEscritura = df.format(doc.getFechaEscritura());
+				df = new SimpleDateFormat("yyyy");
+				anyoEscritura = df.format(doc.getFechaEscritura());
+				df = new SimpleDateFormat("MM");
+				mesEscritura = df.format(doc.getFechaEscritura());
+				df = new SimpleDateFormat("dd/MM/yyyy");
+				fechaEscritura = df.format(doc.getFechaEscritura());
+			}
+			
+		}
 		
 		Contrato contrato = null;
 		try {
@@ -438,7 +466,27 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 			}
 			//listaBienes += "[/#list]";
 		}
-		
+		if(notario.trim().length()>1){
+			textoBuro = textoBuro.replace("#NOTARIO_DOCUMENTO_VINCULADO#", notario);
+		}
+		if(protocolo.trim().length()>1){
+			textoBuro = textoBuro.replace("#PROTOCOLO_DOCUMENTO_VINCULADO#", protocolo);
+		}
+		if(localidadNotario.trim().length()>1){
+			textoBuro = textoBuro.replace("#LOCALIDAD_NOTARIO_DOCUMENTO_VINCULADO#", localidadNotario);
+		}
+		if(diaEscritura.trim().length()>1){
+			textoBuro = textoBuro.replace("#DIA_ESCRITURA_DOCUMENTO_VINCULADO#", diaEscritura);
+		}
+		if(diaEscritura.trim().length()>1){
+			textoBuro = textoBuro.replace("#ANYO_ESCRITURA_DOCUMENTO_VINCULADO#", anyoEscritura);
+		}
+		if(diaEscritura.trim().length()>1){
+			textoBuro = textoBuro.replace("#MES_ESCRITURA_DOCUMENTO_VINCULADO#", mesEscritura);
+		}
+		if(fechaEscritura.trim().length()>1){
+			textoBuro = textoBuro.replace("#FECHA_ESCRITURA_DOCUMENTO_VINCULADO#", fechaEscritura);
+		}
 		textoBuro = textoBuro.replace("#CON_CUENTA_ANTERIOR#", conCuentaAnterior);
 		textoBuro = textoBuro.replace("#TIPO_INTERVENCIO#", tipoIntervencion);
 		textoBuro = textoBuro.replace("#A_NOMBRE_DE#", aNombreDe);

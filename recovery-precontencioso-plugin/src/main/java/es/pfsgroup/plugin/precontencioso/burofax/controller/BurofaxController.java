@@ -358,11 +358,11 @@ public class BurofaxController {
 	 */
 	@RequestMapping
 	public String configurarTipoBurofax(WebRequest request, ModelMap model,Long idTipoBurofax,Long idDireccion,Long idBurofax, Long idDocumento) throws Exception{
-
+		DocumentoPCO doc = null;
 		String[] arrayIdDirecciones=request.getParameter("arrayIdDirecciones").replace("[","").replace("]","").split(",");
 		String[] arrayIdBurofax=request.getParameter("arrayIdBurofax").replace("[","").replace("]","").split(",");
 		if(!Checks.esNulo(idDocumento)){
-    		DocumentoPCO doc = documentoPCOApi.getDocumentoPCOById(idDocumento);
+    		doc = documentoPCOApi.getDocumentoPCOById(idDocumento);
     		if(!Checks.esNulo(doc)){
 	    		if(Checks.esNulo(doc.getNotario()) || Checks.esNulo(doc.getFechaEscritura()) || Checks.esNulo(doc.getProtocolo()) || Checks.esNulo(doc.getProvinciaNotario())){
 	    			model.put("msgError", messageService.getMessage("plugin.precontencioso.grid.burofax.mensajes.validacionTipoDocumento",null));
@@ -371,7 +371,7 @@ public class BurofaxController {
     		}
     	}
 
-		burofaxManager.configurarTipoBurofax(idTipoBurofax,arrayIdDirecciones,arrayIdBurofax,null,idDocumento);
+		burofaxManager.configurarTipoBurofax(idTipoBurofax,arrayIdDirecciones,arrayIdBurofax,null,doc);
 		
 		return JSON_RESPUESTA;
 	}
@@ -848,24 +848,10 @@ public class BurofaxController {
      */
     @RequestMapping
     public String guardarEnvioBurofax(WebRequest request, ModelMap model,Boolean certificado,Long idTipoBurofax,Boolean comboEditable,  Long idDocumento) throws Exception{
-    	
-    	String[] arrayIdEnvios=request.getParameter("arrayIdEnvios").replace("[","").replace("]","").replace("&quot;", "").split(",");
-    	
-    	//Configuramos el tipo de burofax
-    	List<EnvioBurofaxPCO> listaEnvioBurofaxPCO=new ArrayList<EnvioBurofaxPCO>();
-    	if(comboEditable){
-	    	String[] arrayIdDirecciones=request.getParameter("arrayIdDirecciones").replace("[","").replace("]","").replace("&quot;", "").split(",");
-	    	String[] arrayIdBurofax=request.getParameter("arrayIdBurofax").replace("[","").replace("]","").replace("&quot;", "").split(",");
-	    	listaEnvioBurofaxPCO=burofaxManager.configurarTipoBurofax(idTipoBurofax,arrayIdDirecciones,arrayIdBurofax,arrayIdEnvios,idDocumento);
-    	}
-    	else{
-    		for(int i=0;i<arrayIdEnvios.length;i++){
-    			listaEnvioBurofaxPCO.add(burofaxManager.getEnvioBurofaxById(Long.valueOf(arrayIdEnvios[i])));
-    		}
-    	}
+    	DocumentoPCO doc = null;
     	
     	if(!Checks.esNulo(idDocumento)){
-    		DocumentoPCO doc = documentoPCOApi.getDocumentoPCOById(idDocumento);
+    		doc = documentoPCOApi.getDocumentoPCOById(idDocumento);
     		if(!Checks.esNulo(doc)){
 	    		if(Checks.esNulo(doc.getNotario()) || Checks.esNulo(doc.getFechaEscritura()) || Checks.esNulo(doc.getProtocolo()) || Checks.esNulo(doc.getProvinciaNotario())){
 	    			model.put("msgError", messageService.getMessage("plugin.precontencioso.grid.burofax.mensajes.validacionTipoDocumento",null));
@@ -874,7 +860,24 @@ public class BurofaxController {
     		}
     	}
     	
-		burofaxManager.guardarEnvioBurofax(certificado,listaEnvioBurofaxPCO);
+    	String[] arrayIdEnvios=request.getParameter("arrayIdEnvios").replace("[","").replace("]","").replace("&quot;", "").split(",");
+    	
+    	//Configuramos el tipo de burofax
+    	List<EnvioBurofaxPCO> listaEnvioBurofaxPCO=new ArrayList<EnvioBurofaxPCO>();
+    	if(comboEditable){
+	    	String[] arrayIdDirecciones=request.getParameter("arrayIdDirecciones").replace("[","").replace("]","").replace("&quot;", "").split(",");
+	    	String[] arrayIdBurofax=request.getParameter("arrayIdBurofax").replace("[","").replace("]","").replace("&quot;", "").split(",");
+	    	listaEnvioBurofaxPCO=burofaxManager.configurarTipoBurofax(idTipoBurofax,arrayIdDirecciones,arrayIdBurofax,arrayIdEnvios,doc);
+    	}
+    	else{
+    		for(int i=0;i<arrayIdEnvios.length;i++){
+    			listaEnvioBurofaxPCO.add(burofaxManager.getEnvioBurofaxById(Long.valueOf(arrayIdEnvios[i])));
+    		}
+    	}
+    	
+    	
+    	
+		burofaxManager.guardarEnvioBurofax(certificado,listaEnvioBurofaxPCO, doc);
 		if(!Checks.estaVacio(listaEnvioBurofaxPCO)){
 			proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(listaEnvioBurofaxPCO.get(0).getBurofax().getProcedimientoPCO().getProcedimiento().getId());
 		}

@@ -68,6 +68,7 @@ import es.pfsgroup.plugin.precontencioso.burofax.model.DDResultadoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDTipoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.ProcedimientoBurofaxTipoPCO;
+import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ProcedimientoPcoApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dao.LiquidacionDao;
@@ -269,7 +270,7 @@ public class BurofaxManager implements BurofaxApi {
 	@Transactional(readOnly = false)
 	@BusinessOperation(CONFIGURA_TIPO_BUROFAX)
 	@Override
-	public List<EnvioBurofaxPCO> configurarTipoBurofax(Long idTipoBurofax,String[] arrayIdDirecciones,String[] arrayIdBurofax,String[] arrayIdEnvios, Long idDocumento){
+	public List<EnvioBurofaxPCO> configurarTipoBurofax(Long idTipoBurofax,String[] arrayIdDirecciones,String[] arrayIdBurofax,String[] arrayIdEnvios, DocumentoPCO doc){
 			
 		List<EnvioBurofaxPCO> listaEnvioBurofax=new ArrayList<EnvioBurofaxPCO>(); 
 		Filter borrado = genericDao.createFilter(FilterType.EQUALS, "borrado", false);
@@ -315,7 +316,7 @@ public class BurofaxManager implements BurofaxApi {
 					envio.setDireccion(direccion);
 					envio.setTipoBurofax(tipoBurofax);	
 					//envio.setContenidoBurofax(tipoBurofax.getPlantilla());
-						envio.setContenidoBurofax(docBurManager.replaceVariablesGeneracionBurofax(burofax.getId(),tipoBurofax.getPlantilla()));
+						envio.setContenidoBurofax(docBurManager.replaceVariablesGeneracionBurofax(burofax.getId(),tipoBurofax.getPlantilla(),doc));
 					envio.setResultadoBurofax(resultadoBurofaxPCO);
 					
 					//Guardamos nuevo envio
@@ -531,7 +532,7 @@ public class BurofaxManager implements BurofaxApi {
 	@Override
 	@Transactional(readOnly = false)
 	@BusinessOperation(GUARDAR_ENVIO_BUROFAX)
-	public void guardarEnvioBurofax(Boolean certificado,List<EnvioBurofaxPCO> listaEnvioBurofaxPCO){
+	public void guardarEnvioBurofax(Boolean certificado,List<EnvioBurofaxPCO> listaEnvioBurofaxPCO, DocumentoPCO doc){
 		
 		try{
 
@@ -544,7 +545,7 @@ public class BurofaxManager implements BurofaxApi {
 				
 				if(Checks.esNulo(envioBurofax.getResultadoBurofax()) || 
 						(!Checks.esNulo(envioBurofax.getResultadoBurofax()) && !envioBurofax.getResultadoBurofax().getCodigo().equals(DDResultadoBurofaxPCO.ESTADO_PREPARADO))){
-					contenidoParseadoIntermedio = docBurManager.replaceVariablesGeneracionBurofax(envioBurofax.getBurofax().getId(), envioBurofax.getTipoBurofax().getPlantilla());
+					contenidoParseadoIntermedio = docBurManager.replaceVariablesGeneracionBurofax(envioBurofax.getBurofax().getId(), envioBurofax.getTipoBurofax().getPlantilla(), doc);
 				} else {
 					contenidoParseadoIntermedio = envioBurofax.getContenidoBurofax();
 				}
@@ -637,17 +638,38 @@ public class BurofaxManager implements BurofaxApi {
 		try{
 		
 			String nombre="";
-			if(!Checks.esNulo(envioBurofax.getBurofax().getDemandado().getNombre())){
-				nombre=envioBurofax.getBurofax().getDemandado().getNombre();
-			}
 			String apellido1="";
-			if(!Checks.esNulo(envioBurofax.getBurofax().getDemandado().getApellido1())){
-				apellido1=envioBurofax.getBurofax().getDemandado().getApellido1();
-			}
 			String apellido2="";
-			if(!Checks.esNulo(envioBurofax.getBurofax().getDemandado().getApellido2())){
-				apellido2=envioBurofax.getBurofax().getDemandado().getApellido2();
+			String apellidoNombre="";
+			
+			if(!Checks.esNulo(envioBurofax.getBurofax().getDemandado())){
+				if(!Checks.esNulo(envioBurofax.getBurofax().getDemandado().getNombre())){
+					nombre=envioBurofax.getBurofax().getDemandado().getNombre();
+				}
+				if(!Checks.esNulo(envioBurofax.getBurofax().getDemandado().getApellido1())){
+					apellido1=envioBurofax.getBurofax().getDemandado().getApellido1();
+				}
+				if(!Checks.esNulo(envioBurofax.getBurofax().getDemandado().getApellido2())){
+					apellido2=envioBurofax.getBurofax().getDemandado().getApellido2();
+				}
+				if(!Checks.esNulo(envioBurofax.getBurofax().getDemandado().getApellidoNombre())){
+					apellidoNombre=envioBurofax.getBurofax().getDemandado().getApellidoNombre();
+				}
+			}else if(!Checks.esNulo(envioBurofax.getBurofax().getDemandadoManual())){
+				if(!Checks.esNulo(envioBurofax.getBurofax().getDemandadoManual().getNombre())){
+					nombre=envioBurofax.getBurofax().getDemandadoManual().getNombre();
+				}
+				if(!Checks.esNulo(envioBurofax.getBurofax().getDemandadoManual().getApellido1())){
+					apellido1=envioBurofax.getBurofax().getDemandadoManual().getApellido1();
+				}
+				if(!Checks.esNulo(envioBurofax.getBurofax().getDemandadoManual().getApellido2())){
+					apellido2=envioBurofax.getBurofax().getDemandadoManual().getApellido2();
+				}
+				if(!Checks.esNulo(envioBurofax.getBurofax().getDemandadoManual().getApellidoNombre())){
+					apellidoNombre=envioBurofax.getBurofax().getDemandadoManual().getApellidoNombre();
+				}
 			}
+			
 			String domicilio=envioBurofax.getDireccion().toString();
 			InputStream is = null;
 			if("BANKIA".equals(precontenciosoContext.getRecovery())){
@@ -664,19 +686,19 @@ public class BurofaxManager implements BurofaxApi {
 						+ "<td style='border:1px solid black'>"+envioBurofax.getContenidoBurofax()+"</td>"
 						+ "</tr>"
 						+ "</table>",
-						envioBurofax.getBurofax().getDemandado().getApellidoNombre());
+						apellidoNombre);
 			} else {
-				is=informesManager.createPdfFileFromHtmlText(					
+				return informesManager.createPdfFileFromHtml(					
 						"<table width='60%' style='font-size:12px'>"
 						+ "<tr>"
 						+ "<td style='border:1px solid black'>"+envioBurofax.getContenidoBurofax()+"</td>"
 						+ "</tr>"
 						+ "</table>",
-						envioBurofax.getBurofax().getDemandado().getApellidoNombre());
+						apellidoNombre);
 			}
 			
 	
-			String nombreFichero=envioBurofax.getBurofax().getDemandado().getApellidoNombre();
+			String nombreFichero=apellidoNombre;
 		
 		
 			HashMap<String, Object> mapaVariables=new HashMap<String, Object>();

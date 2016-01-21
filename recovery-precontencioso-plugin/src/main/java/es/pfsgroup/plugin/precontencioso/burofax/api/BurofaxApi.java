@@ -19,6 +19,7 @@ import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDEstadoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDTipoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
+import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 
 public interface BurofaxApi {
 
@@ -106,7 +107,7 @@ public interface BurofaxApi {
 	 * @param idDocumento
 	 */
 	@BusinessOperationDefinition(CONFIGURA_TIPO_BUROFAX)
-	List<EnvioBurofaxPCO> configurarTipoBurofax(Long idTipoBurofax,String[] arrayIdDirecciones,String[] arrayIdBurofax,String[] arrayIdEnvios, Long idDocumento);
+	List<EnvioBurofaxPCO> configurarTipoBurofax(Long idTipoBurofax,String[] arrayIdDirecciones,String[] arrayIdBurofax,String[] arrayIdEnvios, DocumentoPCO doc);
 	
 	/**
 	 * Devuelve el contenido del burofax dado su envio
@@ -212,9 +213,10 @@ public interface BurofaxApi {
 	 * Guarda toda la información cuando se realiza el envio de un burofax
 	 * @param certificado
 	 * @param listaEnvioBurofaxPCO
+	 * @param doc
 	 */
 	@BusinessOperationDefinition(GUARDAR_ENVIO_BUROFAX)
-	void guardarEnvioBurofax(Boolean certificado,List<EnvioBurofaxPCO> listaEnvioBurofaxPCO);
+	void guardarEnvioBurofax(Boolean certificado,List<EnvioBurofaxPCO> listaEnvioBurofaxPCO, DocumentoPCO doc);
 	
 	@BusinessOperationDefinition(OBTENER_BUROFAX_ENVIO_INTE)
 	BurofaxEnvioIntegracionPCO getBurofaxEnvioIntegracionByIdEnvio(Long idEnvio);

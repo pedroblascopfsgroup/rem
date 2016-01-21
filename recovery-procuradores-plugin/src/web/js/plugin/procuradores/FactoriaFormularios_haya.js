@@ -2814,6 +2814,19 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
        ,{"xtype": 'combo', "store":storeSINO,"name":"d_comboLanzamiento","fieldLabel":"Lanzamiento Necesario",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboLanzamiento'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
     ]);
 
+    // id: 379 : TRAMITE SUBASTA A TERCEROS (CAJAMAR): Registrar resultado de suspensión de subasta
+    this.arrayCampos.push([
+        {"xtype": 'datefield', "name": "d_fecha", "fieldLabel": "Fecha resolución", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
+        ,{"xtype": 'combo', "store": storeSINO, "name": "d_comboSuspension", "fieldLabel": "Subasta suspendida", allowBlank: false, "autoload": true, mode: 'local', triggerAction: 'all', resizable: true, id: 'd_comboSuspension' + this.idFactoria, displayField: 'descripcion', valueField: 'codigo'}
+    ]);
+
+    // id: 380 : TRAMITE SUBASTA A TERCEROS: Confirmar mandamiento de pago
+    this.arrayCampos.push([
+       {"xtype": 'datefield', "name": "d_fecha", "fieldLabel": "Fecha recepción", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+       {"xtype": 'datefield', "name": "d_fechaEnvio", "fieldLabel": "Fecha envío", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+       ,{"xtype": 'numberfield', "name": "d_importe", "fieldLabel": "Importe", allowBlank: false}
+    ]);
+
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){
 			this.arrayCampos.push([]);

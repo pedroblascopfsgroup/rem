@@ -222,8 +222,8 @@ public class BurofaxManager implements BurofaxApi {
 		
 		try{
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "procedimientoPCO.id", idProcedimiento); //original
-			
-			listaBurofax=(List<BurofaxPCO>) genericDao.getList(BurofaxPCO.class,filtro1); //original
+			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			listaBurofax=(List<BurofaxPCO>) genericDao.getList(BurofaxPCO.class,filtro1, filtro2); //original
 		}catch(Exception e){
 			logger.error("getListaBurofaxPCO: " + e);
 		}
@@ -427,6 +427,16 @@ public class BurofaxManager implements BurofaxApi {
 		}catch(Exception e){
 			logger.error(e);
 		}
+	}
+	
+	@Override
+	@BusinessOperation(EXCLUIR_BUROFAX_POR_IDS)
+	@Transactional(readOnly = false)	
+	public void excluirBurofaxPorIds(String idsBurofax){
+		String[] arrBienes = idsBurofax.split(",");
+		for (String idBurofax:arrBienes) {				
+			burofaxDao.deleteById(Long.valueOf(idBurofax));
+		}	
 	}
 	
 	public boolean saberOrigen(Long idDireccion){

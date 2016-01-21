@@ -524,6 +524,12 @@ public class BurofaxController {
 		return DEFAULT;
 	}
 	
+	@RequestMapping
+	public String excluirBurofax(ModelMap model, String idsBurofax) {
+		proxyFactory.proxy(BurofaxApi.class).excluirBurofaxPorIds(idsBurofax);
+		return DEFAULT;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	private String getAltaPersonaManual(WebRequest request, ModelMap model,Long idProcedimiento, Long idCliente, boolean tienePersona){

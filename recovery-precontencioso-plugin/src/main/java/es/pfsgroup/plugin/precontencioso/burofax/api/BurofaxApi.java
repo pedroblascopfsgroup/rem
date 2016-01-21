@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
-import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersonaManual;
 import es.capgemini.pfs.direccion.dto.DireccionAltaDto;
@@ -47,19 +46,8 @@ public interface BurofaxApi {
 	public static final String CANCELAR_EST_PREPARADO = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.cancelarEstadoPreparado";
 	public static final String DESCARTAR_PERSONA_ENVIO = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.descartarPersonaEnvio";
 	public static final String BORRAR_DIRECCION_MANUAL_BUROFAX = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.borrarDirManualBurofax";
+	public static final String EXCLUIR_BUROFAX_POR_IDS = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.excluirBurofaxPorIds";
 
-
-
-	
-	
-	
-	
-
-
-
-
-
-	
 	/**
 	 * Obtiene una lista de tipos de burofax a partir del Procedimiento 
 	 * @param idProcedimiento
@@ -243,5 +231,8 @@ public interface BurofaxApi {
 	void actualizaDireccion(DireccionAltaDto dto, Long idDireccion);
 	
 	PersonaManual updatePersonaManual(String dni, String nombre, String app1, String app2, Long idPersonaManual);
+	
+	@BusinessOperationDefinition(EXCLUIR_BUROFAX_POR_IDS)
+	void excluirBurofaxPorIds(String idsBurofax);
 
 }

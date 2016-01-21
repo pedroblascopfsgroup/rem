@@ -1,7 +1,7 @@
 #!/bin/bash
 
 MAX_WAITING_MINUTES=1
-ficheros=OFICINAS,ZONAS,USUARIOS,ZONPEFUSU
+ficheros=OFICINAS,ZONAS
 
 mascara='_'$ENTIDAD'_'????????
 extensionSem=".sem"

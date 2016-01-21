@@ -1,11 +1,11 @@
 --/*
 --##########################################
---## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20150707
+--## AUTOR=OSCAR DORADO
+--## FECHA_CREACION=20160118
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.0-X
---## INCIDENCIA_LINK=MITCDD-2068
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=PRODUCTO-585
+--## PRODUCTO=NO
 --##
 --## Finalidad: Realiza las inserciones de la resolución Confirmar notificacion requerimiento de pago negativo para la tarea H018_ConfirmarNotificacion.
 --## INSTRUCCIONES: 

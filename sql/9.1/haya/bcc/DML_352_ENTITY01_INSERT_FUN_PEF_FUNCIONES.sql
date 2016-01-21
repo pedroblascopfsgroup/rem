@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alberto B
---## FECHA_CREACION=20160113
+--## FECHA_CREACION=20160120
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.0-cj-rc37
 --## INCIDENCIA_LINK=CMREC-1789

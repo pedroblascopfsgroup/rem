@@ -1,11 +1,11 @@
 --/*
 --##########################################
---## AUTOR=CARLOS GIL
---## FECHA_CREACION=20150623
+--## AUTOR=JORGE MARTIN
+--## FECHA_CREACION=20160118
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.0-X
---## INCIDENCIA_LINK=MITCDD-2068
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=PRODUCTO-585
+--## PRODUCTO=NO
 --##
 --## Finalidad: Realiza las inserciones de la resolución Registrar señalamiento lanzamiento para la tarea H015_RegistrarSenyalamientoLanzamiento.
 --## INSTRUCCIONES: 
@@ -43,7 +43,7 @@ DECLARE
     */
     V_TR_ID VARCHAR2(16 CHAR):= 			'259';
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_REG_SNY_LAN';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Registrar señalamiento lanzamiento';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Diligencia señalamiento de lanzamiento';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'POS';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     

@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=PRODUCTO-585
 --## PRODUCTO=NO
 --##
---## Finalidad: Realiza las inserciones de la resolución Registrar lanzamiento efectuado para la tarea H015_RegistrarLanzamientoEfectuado.
+--## Finalidad: Realiza las inserciones de la resolución  para la tarea H015_PresentarSolicitudSenyalamientoPosesion.
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
@@ -41,24 +41,23 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			'260';
-    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_REG_LAN_EFC';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Diligencia judicial del lanzamiento';
+    V_TR_ID VARCHAR2(16 CHAR):= 			''; --JODO
+    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_POS_SOL_SEN';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Solicitud señalamiento posesión';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'POS';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     
-    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_REG_LAN_EFC';
+    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_POS_SOL_SEN';
     
     V_TPO_CODIGO VARCHAR2(20 CHAR):=		'H015';
-    V_NODO VARCHAR2(50 CHAR):=				'H015_RegistrarLanzamientoEfectuado';
+    V_NODO VARCHAR2(50 CHAR):=				'H015_PresentarSolicitudSenyalamientoPosesion';
     
     TYPE T_INPUT IS TABLE OF VARCHAR2(50);
     TYPE T_ARRAY_INPUT IS TABLE OF T_INPUT;
     V_INPUT T_ARRAY_INPUT := T_ARRAY_INPUT(
     	T_INPUT('idAsunto','idAsunto'), -- Está siempre en el factoria, no eliminar.
     	T_INPUT('d_numAutos','numAutos'), -- Está siempre en el factoria, no eliminar.
-    	T_INPUT('d_fecha','fecha'),
-    	T_INPUT('d_comboFuerzaPublica','comboFuerzaPublica'),
+        T_INPUT('d_fechaSenyalamiento','fechaSenyalamiento'),
     	T_INPUT('d_observaciones','observaciones') -- Está siempre en el factoria, no eliminar.
     );
     V_TMP_T_INPUT T_INPUT;

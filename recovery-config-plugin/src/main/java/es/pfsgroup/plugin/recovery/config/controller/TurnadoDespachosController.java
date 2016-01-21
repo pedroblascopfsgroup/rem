@@ -80,7 +80,9 @@ public class TurnadoDespachosController {
 	private static final String KEY_DATA = "data";
 	
 	private static final String CODIGO_ERROR_TIPO_FICHERO = "plugin.config.esquematurnado.carga.validacion.errorTipoFichero";
-		
+	private static final String CODIGO_ERROR_SUMA_CALIDAD = "plugin.config.esquematurnado.carga.validacion.errorSumaPorcentajesExcelYExistentes";
+	private static final String CODIGO_ERROR_DESPACHO_ERRONEO = "plugin.config.esquematurnado.carga.validacion.errorDespachoNoExiste";
+	
 	@Resource
 	private Properties appProperties;
 	
@@ -385,38 +387,54 @@ public class TurnadoDespachosController {
 					dto.setEsquema(esquemaVigente);
 					dto.setDiccionarioProvincias(utilDiccionarioManager.dameValoresDiccionario(DDProvincia.class));
 					dto.validarFichero(exc);
-				
-					// Se guardan los registros
-					//for(EsquemaTurnadoDespachoDto esquemaTurnadoDespachoDto : dto.getListaRegistros()) {
-					for(int i=0; i< dto.getListaRegistros().size(); i++)	{
-						EsquemaTurnadoDespachoDto esquemaTurnadoDespachoDto = dto.getListaRegistros().get(i);
-						
-						List<DespachoAmbitoActuacion> listaAmbitoActuacion = despachoExternoManager.getAmbitoGeograficoDespacho(esquemaTurnadoDespachoDto.getId());
-						List<String> listaComunidadesDespacho = new LinkedList<String>();
-						List<String> listaProvinciasDespacho = new LinkedList<String>();
-						
-						for(DespachoAmbitoActuacion ambitoActuacion : listaAmbitoActuacion) {
-							
-							if(ambitoActuacion.getComunidad() != null) {
-								listaComunidadesDespacho.add(ambitoActuacion.getComunidad().getCodigo());
-							}
-							
-							if(ambitoActuacion.getProvincia() != null) {
-								listaProvinciasDespacho.add(ambitoActuacion.getProvincia().getCodigo());
-							}
-						}
-						if(esquemaTurnadoDespachoDto.getNombreProvincia() != null && esquemaTurnadoDespachoDto.getNombreProvincia() != "") {
-							listaProvinciasDespacho.add(this.getProvinciaByNombre(esquemaTurnadoDespachoDto.getNombreProvincia()).getCodigo());
-						}
-						esquemaTurnadoDespachoDto.setListaComunidades(StringUtils.join(listaComunidadesDespacho.toArray(), ","));
-						esquemaTurnadoDespachoDto.setListaProvincias(StringUtils.join(listaProvinciasDespacho.toArray(), ","));
-						esquemaTurnadoDespachoDto.setNombreProvincia(esquemaTurnadoDespachoDto.getNombreProvincia());
-						esquemaTurnadoDespachoDto.setPorcentajeProvincia(esquemaTurnadoDespachoDto.getPorcentajeProvincia());
-						
-						despachoExternoManager.saveEsquemaDespacho(esquemaTurnadoDespachoDto);
-					}
 					
-					resultado = "ok";
+					//Comprobar que los despachos cargados, existen. Si alguno no existe, lanza excepción
+					this.comprobarExistenciaDespachos(dto.getListaRegistros());
+					
+					/* 	Previamente, comprobamos que la suma para un mismo despacho de la Hoja Excel, con datos existentes en la BD
+					*	no superen el 100% (si ya exisitia la provincia, se actuliza la calidad con el nuevo valor del excel)
+					*/
+					Long idDespachoError = compruebaSumaPorcentajeConExcel(dto);
+					if(idDespachoError != null) {
+						List<Message> mensajes = new ArrayList<Message>();
+						mensajes.add(new Message(this, messageSource.getMessage(CODIGO_ERROR_SUMA_CALIDAD, new Object[] {idDespachoError}, MessageUtils.DEFAULT_LOCALE), Severity.ERROR));
+						throw new ValidationException(ErrorMessageUtils.convertMessages(mensajes));
+					}
+					else
+					{
+						// Se guardan los registros
+						//for(EsquemaTurnadoDespachoDto esquemaTurnadoDespachoDto : dto.getListaRegistros()) {
+						for(int i=0; i< dto.getListaRegistros().size(); i++)	{
+							EsquemaTurnadoDespachoDto esquemaTurnadoDespachoDto = dto.getListaRegistros().get(i);
+							
+							List<DespachoAmbitoActuacion> listaAmbitoActuacion = despachoExternoManager.getAmbitoGeograficoDespacho(esquemaTurnadoDespachoDto.getId());
+							
+							List<String> listaComunidadesDespacho = new LinkedList<String>();
+							List<String> listaProvinciasDespacho = new LinkedList<String>();
+							
+							for(DespachoAmbitoActuacion ambitoActuacion : listaAmbitoActuacion) {
+								
+								if(ambitoActuacion.getComunidad() != null) {
+									listaComunidadesDespacho.add(ambitoActuacion.getComunidad().getCodigo());
+								}
+								
+								if(ambitoActuacion.getProvincia() != null) {
+									listaProvinciasDespacho.add(ambitoActuacion.getProvincia().getCodigo());
+								}
+							}
+							if(esquemaTurnadoDespachoDto.getNombreProvincia() != null && esquemaTurnadoDespachoDto.getNombreProvincia() != "") {
+								listaProvinciasDespacho.add(this.getProvinciaByNombre(esquemaTurnadoDespachoDto.getNombreProvincia()).getCodigo());
+							}
+							esquemaTurnadoDespachoDto.setListaComunidades(StringUtils.join(listaComunidadesDespacho.toArray(), ","));
+							esquemaTurnadoDespachoDto.setListaProvincias(StringUtils.join(listaProvinciasDespacho.toArray(), ","));
+							esquemaTurnadoDespachoDto.setNombreProvincia(esquemaTurnadoDespachoDto.getNombreProvincia());
+							esquemaTurnadoDespachoDto.setPorcentajeProvincia((esquemaTurnadoDespachoDto.getPorcentajeProvincia().equals("0")) ? null : esquemaTurnadoDespachoDto.getPorcentajeProvincia());
+							
+							despachoExternoManager.saveEsquemaDespacho(esquemaTurnadoDespachoDto);
+						}
+						
+						resultado = "ok";
+					}
 				}
 			}		
 		}
@@ -604,5 +622,74 @@ public class TurnadoDespachosController {
 		}
 		
 		return VIEW_DEFAULT;
+	}
+	
+	/**
+	 * Comprueba porcentajes ya existentes de un despacho con los nuevos agregados a partir de la hoja excel para el mismo despacho.
+	 * Es decir: Mismo depacho, vamos sumando los porcentajes del excel, y lo sumamos a los procentajes de provincias que no estan
+	 * en el excel, pero si en la BD.
+	 * @param dto
+	 * @return
+	 */
+	private Long compruebaSumaPorcentajeConExcel(EsquemaDespachoValidacionDto dto) {
+		Float sumaTotal = 0.0f;
+		Long idDespacho = dto.getListaRegistros().get(0).getId();
+		String listaProvinciasCodigo = "";
+		List<DespachoAmbitoActuacion> listDespAmbActExcluidos = new LinkedList<DespachoAmbitoActuacion>();
+		int contador = 0;
+
+		for(EsquemaTurnadoDespachoDto esquemaDto : dto.getListaRegistros()) {
+			if(esquemaDto.getId().equals(idDespacho)) {
+				sumaTotal += Float.parseFloat((esquemaDto.getPorcentajeProvincia() != null && esquemaDto.getPorcentajeProvincia() != "") ? esquemaDto.getPorcentajeProvincia() : "0");
+				listaProvinciasCodigo += this.getProvinciaByNombre(esquemaDto.getNombreProvincia()).getCodigo() +",";
+			}
+			else {
+				if(listaProvinciasCodigo != null && listaProvinciasCodigo != "")
+					listDespAmbActExcluidos = despachoAmbitoActuacionDao.getAmbitosActuacionExcluidos(idDespacho, null, listaProvinciasCodigo.substring(0, listaProvinciasCodigo.length()-1));
+				for(DespachoAmbitoActuacion daa : listDespAmbActExcluidos) {
+					if(!Checks.esNulo(daa.getPorcentaje()))
+						sumaTotal += Float.parseFloat(daa.getPorcentaje());
+				}
+			
+				if(sumaTotal > 100) {
+					return dto.getListaRegistros().get(contador-1).getId();
+				}
+				
+				if(esquemaDto.getPorcentajeProvincia() != null && esquemaDto.getPorcentajeProvincia() != "") {
+					sumaTotal = Float.parseFloat(esquemaDto.getPorcentajeProvincia());
+					listaProvinciasCodigo = this.getProvinciaByNombre(esquemaDto.getNombreProvincia()).getCodigo() +",";
+				}
+				else {
+					sumaTotal = 0.0f;
+					listaProvinciasCodigo = "";
+				}
+				
+				listDespAmbActExcluidos = new LinkedList<DespachoAmbitoActuacion>();
+				idDespacho = esquemaDto.getId();
+			}
+			contador++;
+		}
+		return null;
+	}
+	
+	/**
+	 * Analiza los despachos cargados del excel, si alguno no existe, lanzará un mensaje de error indicando los códigos de
+	 * los despachos inexistentes.
+	 * @param listDto
+	 */
+	private void comprobarExistenciaDespachos(List<EsquemaTurnadoDespachoDto> listDto) {	
+		String idDespachosErroneos = "";
+		for(EsquemaTurnadoDespachoDto dto : listDto) {
+			if(Checks.esNulo(despachoExternoManager.getDespachoExterno(dto.getId()))) {
+				idDespachosErroneos += dto.getId()+", ";
+			}
+		}
+		
+		if(idDespachosErroneos != "") {
+			List<Message> mensajes = new ArrayList<Message>();
+			mensajes.add(new Message(this, messageSource.getMessage(CODIGO_ERROR_DESPACHO_ERRONEO, new Object[] {idDespachosErroneos}, MessageUtils.DEFAULT_LOCALE), Severity.ERROR));
+			throw new ValidationException(ErrorMessageUtils.convertMessages(mensajes));
+		}
+		
 	}
 }

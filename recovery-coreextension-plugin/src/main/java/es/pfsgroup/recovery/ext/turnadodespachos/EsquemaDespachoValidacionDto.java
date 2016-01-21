@@ -13,6 +13,7 @@ import org.springframework.context.support.AbstractMessageSource;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.devon.validation.ErrorMessageUtils;
 import es.capgemini.devon.validation.ValidationException;
+import es.capgemini.pfs.despachoExterno.model.DespachoAmbitoActuacion;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -30,7 +31,7 @@ public class EsquemaDespachoValidacionDto {
 	private List<String> listaProvinciasDespacho;
 	private List<String> listaProvinciasPorcentaje;
 	private List<DDProvincia> diccionarioProvincias;
-
+	
 
 	private static final String CODIGO_ERROR_NUM_COLUMNAS = "plugin.config.esquematurnado.carga.validacion.errorNumColumnas";
 	private static final String CODIGO_ERROR_SIN_CABECERA = "plugin.config.esquematurnado.carga.validacion.errorSinCabecera";
@@ -196,7 +197,8 @@ public class EsquemaDespachoValidacionDto {
 								esquemaTurnadoDespachoDto.setNombreProvincia(this.corregirCharEspecialesProvincia(contenidoCelda));
 								break;
 							case 7:
-								esquemaTurnadoDespachoDto.setPorcentajeProvincia(contenidoCelda.replace("%", ""));
+								contenidoCelda = contenidoCelda.replace(",",".");
+								esquemaTurnadoDespachoDto.setPorcentajeProvincia(contenidoCelda.replace("%", "").replace(",","."));
 								break;
 							default:
 								break;
@@ -205,14 +207,18 @@ public class EsquemaDespachoValidacionDto {
 							
 						}
 					}
-					listaRegistros.add(esquemaTurnadoDespachoDto);
-				}
-				
-				comprobarSumaCalidades();
+					if(!ficheroTieneErrores) {
+						listaRegistros.add(esquemaTurnadoDespachoDto);
+					}
+				}	
 				
 				if(ficheroTieneErrores) {
 					throw new ValidationException(ErrorMessageUtils.convertMessages(listaErrores));
 				}
+				else {
+					comprobarSumaCalidades();
+				}
+					
 			}
 			else {
 				throw new ValidationException(ErrorMessageUtils.convertMessages(listaErrores));
@@ -333,7 +339,7 @@ public class EsquemaDespachoValidacionDto {
 			else if(cabecera.equals("CALIDAD - PROVINCIA")) {
 				//Comprueba que el dato insertado pueda tratarse como numérico
 				try {
-					Float.parseFloat(contenidoCelda.replace("%", ""));
+					Float.parseFloat(contenidoCelda.replace("%", "").replace(",","."));
 					enc = true;
 				}catch(NumberFormatException e) {
 					enc = false;
@@ -378,10 +384,11 @@ public class EsquemaDespachoValidacionDto {
 		Float sumaCalidad = 0.0f;
 		for(EsquemaTurnadoDespachoDto registro : listaRegistros) {
 			if(registro.getId().equals(despacho.getId())) {
-				sumaCalidad += Float.parseFloat(registro.getPorcentajeProvincia());
+				sumaCalidad += Float.parseFloat((registro.getPorcentajeProvincia() != null && registro.getPorcentajeProvincia() != "") ? registro.getPorcentajeProvincia() : "0");
 				if(sumaCalidad > 100) {
 					ficheroTieneErrores = true;
 					listaErrores.add(new Message(this, ms.getMessage(CODIGO_ERROR_SUMA_PORCENTAJES_PROVINCIA, new Object[] {registro.getId(), sumaCalidad}, MessageUtils.DEFAULT_LOCALE), Severity.ERROR));
+					break;
 				}
 			}
 			else {

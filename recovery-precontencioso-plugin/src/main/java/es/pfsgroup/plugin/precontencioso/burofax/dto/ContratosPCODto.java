@@ -7,6 +7,7 @@ public class ContratosPCODto {
 	private Contrato contrato;
 	private DDTipoIntervencion tipoIntervencion;
 	private boolean tieneRelacionContratoPersona;
+	private boolean tieneRelacionContratoPersonaManual;
 
 	public Contrato getContrato() {
 		return contrato;
@@ -25,6 +26,13 @@ public class ContratosPCODto {
 	}
 	public void setTieneRelacionContratoPersona(boolean tieneRelacionContratoPersona) {
 		this.tieneRelacionContratoPersona = tieneRelacionContratoPersona;
+	}
+	public boolean isTieneRelacionContratoPersonaManual() {
+		return tieneRelacionContratoPersonaManual;
+	}
+	public void setTieneRelacionContratoPersonaManual(
+			boolean tieneRelacionContratoPersonaManual) {
+		this.tieneRelacionContratoPersonaManual = tieneRelacionContratoPersonaManual;
 	}
 	
 }

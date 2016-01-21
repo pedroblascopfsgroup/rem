@@ -19,6 +19,7 @@
                     	<json:property name="tipointervCodigo" value="${ec.tipoIntervencion.codigo}" />
                     </c:if>
                     <json:property name="tieneRelacionContratoPersona" value="${ec.tieneRelacionContratoPersona}" />
+                    <json:property name="tieneRelacionContratoPersonaManual" value="${ec.tieneRelacionContratoPersonaManual}" />
                 </json:object>               
         </json:array>
 </fwk:json>

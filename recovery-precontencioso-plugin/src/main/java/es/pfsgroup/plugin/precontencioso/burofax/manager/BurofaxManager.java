@@ -1051,25 +1051,41 @@ public class BurofaxManager implements BurofaxApi {
 	@Transactional(readOnly = false)
 	public void crearBurofaxPersonaManual(Long idPersonaManual,Long idProcedimiento, Long idContratoPersonaManual){
 		try{
-			
-			PersonaManual personaManual = genericDao.get(PersonaManual.class, genericDao.createFilter(FilterType.EQUALS, "id", idPersonaManual));
-			
 			ContratoPersonaManual contratoPersonaManual = genericDao.get(ContratoPersonaManual.class, genericDao.createFilter(FilterType.EQUALS, "id", idContratoPersonaManual));
 			
-			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idProcedimiento);
-			ProcedimientoPCO procedimientoPCO=(ProcedimientoPCO) genericDao.get(ProcedimientoPCO.class,filtro1);
+			Filter filtroBur1 = genericDao.createFilter(FilterType.EQUALS, "procedimientoPCO.id", idProcedimiento);
+			Filter filtroBur2 = genericDao.createFilter(FilterType.EQUALS, "demandadoManual.id", idPersonaManual);
+			Filter filtroBur3 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", contratoPersonaManual.getContrato().getId());
 			
-			filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoBurofaxPCO.NO_NOTIFICADO);
-			DDEstadoBurofaxPCO estado=(DDEstadoBurofaxPCO) genericDao.get(DDEstadoBurofaxPCO.class,filtro1);
+			List<BurofaxPCO> burofaxes = genericDao.getList(BurofaxPCO.class,filtroBur1,filtroBur2,filtroBur3);
 			
-			BurofaxPCO burofax=new BurofaxPCO();
-			burofax.setDemandadoManual(personaManual);
-			burofax.setProcedimientoPCO(procedimientoPCO);
-			burofax.setEstadoBurofax(estado);
-			burofax.setContrato(contratoPersonaManual.getContrato());
-			burofax.setTipoIntervencion(contratoPersonaManual.getTipoIntervencion());
-			burofax.setEsPersonaManual(true);
-			burofaxDao.save(burofax);
+			if(burofaxes.size()>0){
+				
+				for(BurofaxPCO b : burofaxes){
+					b.setTipoIntervencion(contratoPersonaManual.getTipoIntervencion());
+					burofaxDao.update(b);
+				}
+				
+			}else{
+			
+				PersonaManual personaManual = genericDao.get(PersonaManual.class, genericDao.createFilter(FilterType.EQUALS, "id", idPersonaManual));
+				
+				Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idProcedimiento);
+				ProcedimientoPCO procedimientoPCO=(ProcedimientoPCO) genericDao.get(ProcedimientoPCO.class,filtro1);
+				
+				filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoBurofaxPCO.NO_NOTIFICADO);
+				DDEstadoBurofaxPCO estado=(DDEstadoBurofaxPCO) genericDao.get(DDEstadoBurofaxPCO.class,filtro1);
+				
+				BurofaxPCO burofax=new BurofaxPCO();
+				burofax.setDemandadoManual(personaManual);
+				burofax.setProcedimientoPCO(procedimientoPCO);
+				burofax.setEstadoBurofax(estado);
+				burofax.setContrato(contratoPersonaManual.getContrato());
+				burofax.setTipoIntervencion(contratoPersonaManual.getTipoIntervencion());
+				burofax.setEsPersonaManual(true);
+				burofaxDao.save(burofax);
+			
+			}
 			
 			
 		}catch(Exception e){
@@ -1082,24 +1098,37 @@ public class BurofaxManager implements BurofaxApi {
 	public void crearBurofaxPersona(Long idPersona,Long idProcedimiento, Long idContratoPersona){
 		try{
 			
-			Persona persona = genericDao.get(Persona.class, genericDao.createFilter(FilterType.EQUALS, "id", idPersona));
-			
 			ContratoPersona contratoPersona = genericDao.get(ContratoPersona.class, genericDao.createFilter(FilterType.EQUALS, "id", idContratoPersona));
 			
-			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idProcedimiento);
-			ProcedimientoPCO procedimientoPCO=(ProcedimientoPCO) genericDao.get(ProcedimientoPCO.class,filtro1);
+			Filter filtroBur1 = genericDao.createFilter(FilterType.EQUALS, "procedimientoPCO.id", idProcedimiento);
+			Filter filtroBur2 = genericDao.createFilter(FilterType.EQUALS, "demandado.id", idPersona);
+			Filter filtroBur3 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", contratoPersona.getContrato().getId());
 			
-			filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoBurofaxPCO.NO_NOTIFICADO);
-			DDEstadoBurofaxPCO estado=(DDEstadoBurofaxPCO) genericDao.get(DDEstadoBurofaxPCO.class,filtro1);
+			List<BurofaxPCO> burofaxes = genericDao.getList(BurofaxPCO.class,filtroBur1,filtroBur2,filtroBur3);
 			
-			BurofaxPCO burofax=new BurofaxPCO();
-			burofax.setDemandado(persona);
-			burofax.setProcedimientoPCO(procedimientoPCO);
-			burofax.setEstadoBurofax(estado);
-			burofax.setContrato(contratoPersona.getContrato());
-			burofax.setTipoIntervencion(contratoPersona.getTipoIntervencion());
-			burofaxDao.save(burofax);
-			
+			if(burofaxes.size()>0){
+				for(BurofaxPCO b : burofaxes){
+					b.setTipoIntervencion(contratoPersona.getTipoIntervencion());
+					burofaxDao.update(b);
+				}
+			}else{
+				
+				Persona persona = genericDao.get(Persona.class, genericDao.createFilter(FilterType.EQUALS, "id", idPersona));
+				
+				Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idProcedimiento);
+				ProcedimientoPCO procedimientoPCO=(ProcedimientoPCO) genericDao.get(ProcedimientoPCO.class,filtro1);
+				
+				filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoBurofaxPCO.NO_NOTIFICADO);
+				DDEstadoBurofaxPCO estado=(DDEstadoBurofaxPCO) genericDao.get(DDEstadoBurofaxPCO.class,filtro1);
+				
+				BurofaxPCO burofax=new BurofaxPCO();
+				burofax.setDemandado(persona);
+				burofax.setProcedimientoPCO(procedimientoPCO);
+				burofax.setEstadoBurofax(estado);
+				burofax.setContrato(contratoPersona.getContrato());
+				burofax.setTipoIntervencion(contratoPersona.getTipoIntervencion());
+				burofaxDao.save(burofax);	
+			}
 			
 		}catch(Exception e){
 			logger.error(e);
@@ -1140,5 +1169,98 @@ public class BurofaxManager implements BurofaxApi {
 		personaManualDao.saveOrUpdate(persMan);	
 		
 		return persMan;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean borrarContratoPersonaManualYBurofax(ContratoPersonaManual cpm, Long prcId) {
+		
+		//Obtenemos los burofaxes de la relacion
+		Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "procedimientoPCO.id", prcId);
+		Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "demandadoManual.id", cpm.getPersonaManual().getId());
+		Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", cpm.getContrato().getId());
+		
+		List<BurofaxPCO> burofaxes = genericDao.getList(BurofaxPCO.class,filtro1,filtro2,filtro3);
+		
+		for(BurofaxPCO burofax : burofaxes){
+			///Obtenemos la relacion con el envio
+			Filter filtroEnvio = genericDao.createFilter(FilterType.EQUALS, "burofax.id", burofax.getId());
+			EnvioBurofaxPCO envio = genericDao.get(EnvioBurofaxPCO.class,filtroEnvio);
+			if(!Checks.esNulo(envio)){
+				return false;
+			}
+		}
+		
+		for(BurofaxPCO burofax : burofaxes){
+			genericDao.deleteById(BurofaxPCO.class, burofax.getId());
+		}
+		
+		genericDao.deleteById(ContratoPersonaManual.class, cpm.getId());
+		
+		return true;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean puedeBorrarContratoPersonaManualYBurofax(ContratoPersonaManual cpm, Long prcId) {
+		
+		//Obtenemos los burofaxes de la relacion
+		Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "procedimientoPCO.id", prcId);
+		Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "demandadoManual.id", cpm.getPersonaManual().getId());
+		Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", cpm.getContrato().getId());
+		
+		List<BurofaxPCO> burofaxes = genericDao.getList(BurofaxPCO.class,filtro1,filtro2,filtro3);
+		
+		for(BurofaxPCO burofax : burofaxes){
+			///Obtenemos la relacion con el envio
+			Filter filtroEnvio = genericDao.createFilter(FilterType.EQUALS, "burofax.id", burofax.getId());
+			EnvioBurofaxPCO envio = genericDao.get(EnvioBurofaxPCO.class,filtroEnvio);
+			if(!Checks.esNulo(envio)){
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void borrarBurofaxContratoPersona(ContratoPersona cp, Long prcId) {
+		
+		//Obtenemos los burofaxes de la relacion
+		Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "procedimientoPCO.id", prcId);
+		Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "demandado.id", cp.getPersona().getId());
+		Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", cp.getContrato().getId());
+		
+		List<BurofaxPCO> burofaxes = genericDao.getList(BurofaxPCO.class,filtro1,filtro2,filtro3);
+		
+		
+		for(BurofaxPCO burofax : burofaxes){
+			genericDao.deleteById(BurofaxPCO.class, burofax.getId());
+		}
+
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean comprobarBorrarBurofaxContratoPersona(ContratoPersona cp, Long prcId) {
+		
+		//Obtenemos los burofaxes de la relacion
+		Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "procedimientoPCO.id", prcId);
+		Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "demandado.id", cp.getPersona().getId());
+		Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", cp.getContrato().getId());
+		
+		List<BurofaxPCO> burofaxes = genericDao.getList(BurofaxPCO.class,filtro1,filtro2,filtro3);
+		
+		for(BurofaxPCO burofax : burofaxes){
+			///Obtenemos la relacion con el envio
+			Filter filtroEnvio = genericDao.createFilter(FilterType.EQUALS, "burofax.id", burofax.getId());
+			EnvioBurofaxPCO envio = genericDao.get(EnvioBurofaxPCO.class,filtroEnvio);
+			if(!Checks.esNulo(envio)){
+				return false;
+			}
+		}
+		
+		return true;
 	}
 }

@@ -6,6 +6,7 @@ import java.util.List;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.contrato.model.ContratoPersonaManual;
 import es.capgemini.pfs.direccion.dto.DireccionAltaDto;
 import es.capgemini.pfs.persona.dto.DtoPersonaManual;
@@ -235,4 +236,23 @@ public interface BurofaxApi {
 	@BusinessOperationDefinition(EXCLUIR_BUROFAX_POR_IDS)
 	void excluirBurofaxPorIds(String idsBurofax);
 
+	/**
+	 * Borra la relacion de CPM_CONTRATOS_PERSONAS_MAN y el Burofax si no esta enviado
+	 * @param cpm
+	 * @param prcId
+	 * @return true si es posible borrar o false si existen relaciones a borrar con burofaxes enviados
+	 */
+	boolean borrarContratoPersonaManualYBurofax(ContratoPersonaManual cpm, Long prcId);
+	
+	public boolean puedeBorrarContratoPersonaManualYBurofax(ContratoPersonaManual cpm, Long prcId);
+
+	/**
+	 * Borra los Burofax si no esta enviado
+	 * @param cpm
+	 * @param prcId
+	 * @return true si es posible borrar o false si existen relaciones a borrar con burofaxes enviados
+	 */
+	public void borrarBurofaxContratoPersona(ContratoPersona cp, Long prcId);
+	
+	public boolean comprobarBorrarBurofaxContratoPersona(ContratoPersona cp, Long prcId);
 }

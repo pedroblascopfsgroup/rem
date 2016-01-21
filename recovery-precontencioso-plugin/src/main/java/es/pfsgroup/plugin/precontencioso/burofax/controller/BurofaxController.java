@@ -38,6 +38,7 @@ import es.capgemini.pfs.direccion.dto.DireccionAltaDto;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Direccion;
+import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.persona.EXTPersonaManager;
 import es.capgemini.pfs.persona.dto.DtoPersonaManual;
 import es.capgemini.pfs.persona.model.Persona;
@@ -47,6 +48,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
 import es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi;
@@ -63,6 +65,7 @@ import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ProcedimientoPcoApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 
 @Controller
@@ -601,15 +604,37 @@ public class BurofaxController {
 			String primerApll,
 			String segundoApll){
 		
+		
 		if(esPersonaManual){
-			
 			///Creamos la persona manual si no existe
 			PersonaManual persMan;
 			if(Checks.esNulo(idPersona)){
 				persMan = burofaxManager.guardaPersonaManual(dni, nombre, primerApll, segundoApll,null,null);
 			}else{
+				
+				///Borramos las relaciones manuales y burofaxes que existan con la persona y los contratos que ahora no estan marcadas
+				Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idProcedimiento);
+				ProcedimientoPCO procedimientoPCO=(ProcedimientoPCO) genericDao.get(ProcedimientoPCO.class,filtro1);
+				for(ExpedienteContrato expCnt : procedimientoPCO.getProcedimiento().getExpedienteContratos()){
+					///Comprobamos si tiene relacion con ese contrato
+					Filter filtroPerMan1 = genericDao.createFilter(FilterType.EQUALS, "personaManual.id", idPersona);
+					Filter filtroPerMan2 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", expCnt.getContrato().getId());
+					ContratoPersonaManual cntPem =(ContratoPersonaManual) genericDao.get(ContratoPersonaManual.class,filtroPerMan1,filtroPerMan2);
+					
+					if(!Checks.esNulo(cntPem) && !Arrays.asList(contratos).contains(cntPem.getContrato().getId())){
+						///Borramos la relacion y el burofax si existe
+						boolean puedeBorrar = burofaxManager.borrarContratoPersonaManualYBurofax(cntPem,idProcedimiento);
+						if(!puedeBorrar){
+			    			model.put("msgError", messageService.getMessage("plugin.precontencioso.grid.burofax.mensajes.validacionEditarPersonasManuales",null));
+			    			return JSON_RESPUESTA;
+						}
+					}
+				}
+				
 				persMan = burofaxManager.updatePersonaManual(dni, nombre, primerApll, segundoApll, idPersona);
+				
 			}
+			
 			///Creamos su relacion con los contratos
 			int i = 0;
 			for(Long idContrato : contratos){
@@ -622,14 +647,85 @@ public class BurofaxController {
 			///Comprobamos si existen las relaciones y no se ha modificado el tipo de intervencion
 			int i = 0;
 			PersonaManual persMan = null;
+			PersonaManual persManPers = null;
 			ContratoPersonaManual cntPersMan = null;
+			
+			
+			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idProcedimiento);
+			ProcedimientoPCO procedimientoPCO=(ProcedimientoPCO) genericDao.get(ProcedimientoPCO.class,filtro1);
+			
+			///Obtenemos la persona manual
+			Persona persona = genericDao.get(Persona.class, genericDao.createFilter(FilterType.EQUALS, "id", idPersona));
+			if(!Checks.esNulo(persona.getPropietario()) && !Checks.esNulo(persona.getCodClienteEntidad())){
+				///Comprobamos si ya se ha creado una persona manual para una persona
+				persManPers = genericDao.get(PersonaManual.class, genericDao.createFilter(FilterType.EQUALS, "propietario.codigo", persona.getPropietario().getCodigo()), genericDao.createFilter(FilterType.EQUALS, "codClienteEntidad", persona.getCodClienteEntidad()));
+			}
+			
+			///Comprobamos si se pueden borrar los contratos-personaManual y burofax de las personas manuales no marcados y los burofax de las personas no marcadas
+			for(ExpedienteContrato expCnt : procedimientoPCO.getProcedimiento().getExpedienteContratos()){
+				if(!Checks.esNulo(persManPers)){
+					///Comprobamos si tiene relacion con ese contrato
+					Filter filtroPerMan1 = genericDao.createFilter(FilterType.EQUALS, "personaManual.id", persManPers.getId());
+					Filter filtroPerMan2 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", expCnt.getContrato().getId());
+					ContratoPersonaManual cntPem =(ContratoPersonaManual) genericDao.get(ContratoPersonaManual.class,filtroPerMan1,filtroPerMan2);
+					
+					if(!Checks.esNulo(cntPem) && !Arrays.asList(contratos).contains(cntPem.getContrato().getId())){
+						///Comprobamos si se puede borrar la relacion y el burofax si existe
+						boolean puedeBorrar = burofaxManager.puedeBorrarContratoPersonaManualYBurofax(cntPem,idProcedimiento);
+						if(!puedeBorrar){
+			    			model.put("msgError", messageService.getMessage("plugin.precontencioso.grid.burofax.mensajes.validacionEditarPersonasManuales",null));
+			    			return JSON_RESPUESTA;
+						}
+					}
+				}
+
+				
+				Filter filtroCntPer1 = genericDao.createFilter(FilterType.EQUALS, "persona.id", idPersona);
+				Filter filtroCntPer2 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", expCnt.getContrato().getId());
+				ContratoPersona cntPer =(ContratoPersona) genericDao.get(ContratoPersona.class,filtroCntPer1,filtroCntPer2);
+				
+				if(!Checks.esNulo(cntPer) && !Arrays.asList(contratos).contains(cntPer.getContrato().getId())){
+					///Comprobamos si se puede borrar el burofax si existe
+					boolean puedeBorrar = burofaxManager.comprobarBorrarBurofaxContratoPersona(cntPer,idProcedimiento);
+					if(!puedeBorrar){
+		    			model.put("msgError", messageService.getMessage("plugin.precontencioso.grid.burofax.mensajes.validacionEditarPersonasManuales",null));
+		    			return JSON_RESPUESTA;
+					}
+				}
+			}
+			
+			
+			///Borramos los contratos-personaManual y burofax de las personas manuales no marcados
+			for(ExpedienteContrato expCnt : procedimientoPCO.getProcedimiento().getExpedienteContratos()){
+				if(!Checks.esNulo(persManPers)){
+					///Comprobamos si tiene relacion con ese contrato
+					Filter filtroPerMan1 = genericDao.createFilter(FilterType.EQUALS, "personaManual.id", persManPers.getId());
+					Filter filtroPerMan2 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", expCnt.getContrato().getId());
+					ContratoPersonaManual cntPem =(ContratoPersonaManual) genericDao.get(ContratoPersonaManual.class,filtroPerMan1,filtroPerMan2);
+					
+					if(!Checks.esNulo(cntPem) && !Arrays.asList(contratos).contains(cntPem.getContrato().getId())){
+						///borrarmos la relacion y el burofax si existe
+						burofaxManager.borrarContratoPersonaManualYBurofax(cntPem,idProcedimiento);
+					}
+				}
+				
+				Filter filtroCntPer1 = genericDao.createFilter(FilterType.EQUALS, "persona.id", idPersona);
+				Filter filtroCntPer2 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", expCnt.getContrato().getId());
+				ContratoPersona cntPer =(ContratoPersona) genericDao.get(ContratoPersona.class,filtroCntPer1,filtroCntPer2);
+				
+				if(!Checks.esNulo(cntPer) && !Arrays.asList(contratos).contains(cntPer.getContrato().getId())){
+					///Borramos el burofax si existe
+					burofaxManager.borrarBurofaxContratoPersona(cntPer,idProcedimiento);
+				}
+			}
+			
+
 			
 			for(Long idContrato : contratos){
 				ContratoPersona contratoPersona = genericDao.get(ContratoPersona.class, genericDao.createFilter(FilterType.EQUALS, "persona.id", idPersona), genericDao.createFilter(FilterType.EQUALS, "contrato.id", idContrato), genericDao.createFilter(FilterType.EQUALS, "tipoIntervencion.codigo", tiposIntervencion[i]));
 				if(Checks.esNulo(contratoPersona)){
 					///Creamos la persona si no se ha creado en alguna iteración anterior
 					if(Checks.esNulo(persMan)){
-						Persona persona = genericDao.get(Persona.class, genericDao.createFilter(FilterType.EQUALS, "id", idPersona));
 						persMan = burofaxManager.guardaPersonaManual(persona.getDocId(), persona.getNombre(), persona.getApellido1(), persona.getApellido2(), persona.getPropietario().getCodigo(), persona.getCodClienteEntidad());
 					}
 					
@@ -652,7 +748,7 @@ public class BurofaxController {
 			}
 		}			
 		
-		return DEFAULT;
+		return JSON_RESPUESTA;
 	}
 
 	/**

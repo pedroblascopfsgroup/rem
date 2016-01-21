@@ -57,8 +57,8 @@ DECLARE
     V_INPUT T_ARRAY_INPUT := T_ARRAY_INPUT(
     	T_INPUT('idAsunto','idAsunto'), -- Está siempre en el factoria, no eliminar.
     	T_INPUT('d_numAutos','numAutos'), -- Está siempre en el factoria, no eliminar.
-    	T_INPUT('d_fechaResolucion','fecha resolucion'),
-    	T_INPUT('d_comboSuspension','combo suspension'),
+    	T_INPUT('d_fecha','fecha'),
+    	T_INPUT('d_comboSuspension','comboSuspension'),
     	T_INPUT('d_observaciones','observaciones') -- Está siempre en el factoria, no eliminar.
     );
     V_TMP_T_INPUT T_INPUT;

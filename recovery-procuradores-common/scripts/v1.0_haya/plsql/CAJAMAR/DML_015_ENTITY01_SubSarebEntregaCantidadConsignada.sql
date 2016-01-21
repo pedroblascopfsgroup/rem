@@ -41,9 +41,9 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			'215';
+    V_TR_ID VARCHAR2(16 CHAR):= 			''; --JODO
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_TR_SUB_SAR_CANT_CONS';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Confirmar recepción mandamiento de pago SAREB';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Mandamiento de pago';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'SBS';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     
@@ -59,6 +59,7 @@ DECLARE
     	T_INPUT('d_numAutos','numAutos'), -- Está siempre en el factoria, no eliminar.
     	T_INPUT('d_fecha','fecha'),
     	T_INPUT('d_importe','importe'),
+    	T_INPUT('d_fechaEnvio','fecha envío'),
     	T_INPUT('d_observaciones','observaciones') -- Está siempre en el factoria, no eliminar.
     );
     V_TMP_T_INPUT T_INPUT;

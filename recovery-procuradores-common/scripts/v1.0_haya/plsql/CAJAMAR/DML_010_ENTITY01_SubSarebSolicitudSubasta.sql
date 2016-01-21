@@ -43,7 +43,7 @@ DECLARE
     */
     V_TR_ID VARCHAR2(16 CHAR):= 			'210';
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_TR_SUB_SAR_ESC_SELL';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Escrito sellado solicitando subasta SAREB';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Solicitud de subasta';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'SBS';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     

@@ -208,11 +208,10 @@ var pdfRender = function(value, meta, record) {
 			,hidden: true
 	});
 	
-	
 	var btnNotificar = new Ext.Button({
 			text : '<s:message code="plugin.precontencioso.grid.burofax.añadir.informacion.envio" text="**Añadir Información de Envío" />'
 			,id : 'btnNotificar'
-			,iconCls : 'icon_info'
+			,iconCls : 'icon_info_burofax'
 			,cls: 'x-btn-text-icon'
 			,hidden: true
 	});
@@ -238,6 +237,12 @@ var pdfRender = function(value, meta, record) {
 			,iconCls : 'icon_cancel'
 			,cls: 'x-btn-text-icon'
 <%-- 			,hidden:true --%>
+	});
+	
+	var btnExcluirPersona = new Ext.Button({
+		text : '<s:message code="plugin.precontencioso.grid.burofax.excluir" text="**Excluir" />'
+		,iconCls : 'icon_menos'
+		,cls: 'x-btn-text-icon'
 	});
 	
 	var btnCancelarEnEstPrep = 	new Ext.Button({
@@ -324,6 +329,7 @@ var pdfRender = function(value, meta, record) {
       		btnDescargarBurofax.disabled=true;
       		btnBorrarDirOrigenManual.disabled=true;
       		btnDescartarPersEnvio.disabled=true;
+      		btnExcluirPersona.disabled=true;
       		btnCancelarEnEstPrep.disabled=true;
       		btnEditarVerDireccion.disabled=true;
       		
@@ -340,6 +346,7 @@ var pdfRender = function(value, meta, record) {
       		}
       		
       		if(actualizarBotonesBurofax()){
+      			actualizaBotonExcluirBurofax();
       			if(myCboxSelModel.getCount() == 1) {
 		      		validarBotonesSeleccionUnica();
 
@@ -371,11 +378,13 @@ var pdfRender = function(value, meta, record) {
       			btnDescargarBurofax.setDisabled(true);
       			btnBorrarDirOrigenManual.setDisabled(true);
       			btnDescartarPersEnvio.setDisabled(true);
+      			btnExcluirPersona.setDisabled(true);
       			btnCancelarEnEstPrep.setDisabled(true);
       			btnEditarVerDireccion.setDisabled(true);
       		}
       		else {
       			if(actualizarBotonesBurofax()){
+      				actualizaBotonExcluirBurofax();
       				if(myCboxSelModel.getCount() == 1) {
       					validarBotonesSeleccionUnica();			      		
 					}
@@ -445,7 +454,7 @@ var pdfRender = function(value, meta, record) {
 								,btnAddPersona
 						    </c:otherwise>
 						</c:choose>
-					,btnEnviar, btnNuevaDir, btnEditarVerDireccion, btnEditar, btnPreparar,btnCancelar, btnNotificar,btnDescargarBurofax, btnBorrarDirOrigenManual, btnDescartarPersEnvio,  separadorButtons, btnCancelarEnEstPrep, botonRefresh ]
+					,btnEnviar, btnNuevaDir, btnEditarVerDireccion, btnEditar, btnPreparar,btnCancelar, btnNotificar,btnDescargarBurofax, btnBorrarDirOrigenManual, btnDescartarPersEnvio, btnExcluirPersona,  separadorButtons, btnCancelarEnEstPrep, botonRefresh ]
 		</sec:authorize>
 		,autoWidth: true
 		,collapsible: true
@@ -735,27 +744,21 @@ var pdfRender = function(value, meta, record) {
 	
 	
 	btnDescartarPersEnvio.on('click', function(){
-	 var arrayIdClientes=new Array();
-	 var arrayIdBurofax = new Array();
-	 
-		rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
+		var arrayIdBurofax = new Array();
+	 	rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
 			
 		for (var i=0; i < rowsSelected.length; i++){
-		  arrayIdClientes.push(rowsSelected[i].get('idCliente'));
 		  arrayIdBurofax.push(rowsSelected[i].get('idBurofax'))
 		}
-	uniqueArray = arrayIdClientes.filter(function(item, pos) {
-		    return arrayIdClientes.indexOf(item) == pos;
-		});
-		if(uniqueArray.length==1){
-		Ext.Msg.confirm(
-			'<s:message code="plugin.precontencioso.grid.burofax.descartarPersona" text="**Descartar Persona" />', 
-			'<s:message code="plugin.precontencioso.grid.burofax.descartarPersona.mensaje"
- 				text="**Va a descartar esta persona para el envío ¿Está usted seguro?" />', 
-			function(btn) {
-				if (btn == 'yes') {
-				var idBurofax=gridBurofax.getSelectionModel().getSelected().get('idBurofax');
-					Ext.Ajax.request({
+		
+		if(arrayIdBurofax.length>0){
+			Ext.Msg.confirm(
+				'<s:message code="plugin.precontencioso.grid.burofax.descartarPersona" text="**Descartar Persona" />', 
+				'<s:message code="plugin.precontencioso.grid.burofax.descartarPersona.mensaje"
+	 				text="**Va a descartar esta persona para el envío ¿Está usted seguro?" />', 
+				function(btn) {
+					if (btn == 'yes') {
+						Ext.Ajax.request({
 							url: page.resolveUrl('burofax/descartarPersonaEnvio'),
 							params: {idsBurofax:arrayIdBurofax},
 							method: 'POST',
@@ -777,21 +780,71 @@ var pdfRender = function(value, meta, record) {
 									buttons: Ext.MessageBox.OK
 								});
 							} 
-					});
-				}else{
-					Ext.Msg.show({
-									title: fwk.constant.alert,
-									msg: '<s:message code="plugin.precontencioso.grid.burofax.descartarPersona.NoCorrecto"
-									text="**La persona no se ha descartado" />',
-									buttons: Ext.Msg.OK
-								});
-				}
+						});
+					}else{
+						Ext.Msg.show({
+							title: fwk.constant.alert,
+							msg: '<s:message code="plugin.precontencioso.grid.burofax.descartarPersona.NoCorrecto"
+							text="**La persona no se ha descartado" />',
+							buttons: Ext.Msg.OK
+						});
+					}
 			});
-		}else{
-			Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.variosClientes" text="**Varios clientes seleccionados" />'
-                 ,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.variosClientes" text="**Debe seleccionar un unico cliente" />');
 		}
 	});
+	
+	
+	
+	
+	btnExcluirPersona.on('click', function(){
+		var arrayIdBurofax = new Array();
+	 	rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
+			
+		for (var i=0; i < rowsSelected.length; i++){
+		  arrayIdBurofax.push(rowsSelected[i].get('idBurofax'));
+		}
+		
+		if(arrayIdBurofax.length>0){
+			Ext.Msg.confirm(
+				'<s:message code="plugin.precontencioso.grid.burofax.excluirPersona" text="**Excluir Persona" />', 
+				'<s:message code="plugin.precontencioso.grid.burofax.excluirPersona.mensaje"
+	 				text="**Se va a excluir las personas/contratos seleccionadas ¿Desea continuar?" />', 
+				function(btn) {
+					if (btn == 'yes') {
+						Ext.Ajax.request({
+							url: page.resolveUrl('burofax/excluirBurofax'),
+							params: {idsBurofax:arrayIdBurofax},
+							method: 'POST',
+							success: function (result, request) {
+								Ext.Msg.show({
+									title: fwk.constant.alert,
+									msg: '<s:message code="plugin.precontencioso.grid.burofax.excluirPersonaEnvio.correcto"
+									text="**Se ha excluido correctamente" />',
+									buttons: Ext.Msg.OK
+								});
+								refrescarBurofaxGrid();
+							},
+							error: function() {
+								mask.hide();
+								Ext.MessageBox.show({
+							    	title: fwk.constant.alert,
+									msg: '<s:message code="plugin.precontencioso.button.finalizarPreparacion.error.exception" text="**Se ha producido un error. Consulte con soporte" />',
+									width: 300,
+									buttons: Ext.MessageBox.OK
+								});
+							} 
+						});
+					}else{
+						Ext.Msg.show({
+							title: fwk.constant.alert,
+							msg: '<s:message code="plugin.precontencioso.grid.burofax.excluirPersona.NoCorrecto"
+							text="**La persona no se ha excluido" />',
+							buttons: Ext.Msg.OK
+						});
+					}
+			});
+		}
+    });
 	
 	btnBorrarDirOrigenManual.on('click', function(){
 		var arrayIdClientes=new Array();
@@ -1026,7 +1079,6 @@ var pdfRender = function(value, meta, record) {
 		gridBurofax.getSelectionModel().clearSelections();
 		mostrarBotonDependiente(idProcedimiento);
 		actualizarBotonesBurofax();
-		
 	}
 	
 	<%--creamos un flag para que siempre prevalezcan los permisos por gestor --%>
@@ -1053,6 +1105,21 @@ var pdfRender = function(value, meta, record) {
 				}
 		});
 	}
+	
+	var actualizaBotonExcluirBurofax = function() {
+		var deshabiltar = false;
+		var rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
+		<%--si no esta al menos preparado, se deshabilita el botón anular --%>
+		for (var i=0; i < rowsSelected.length; i++){
+			if(rowsSelected[i].get('fechaSolicitud') != ''){
+				deshabiltar = true;
+			}
+			if(rowsSelected[i].get('idCliente') == ''){
+				deshabiltar = true;
+			}
+		}
+		btnExcluirPersona.setDisabled(deshabiltar);
+	}
 
 	var actualizarBotonesBurofax = function() {
 	// Se comprueba que el procedimiento se encuentre en un estado que permita editar los burofaxes
@@ -1078,6 +1145,26 @@ var pdfRender = function(value, meta, record) {
 
 	}
 
+	var diferentesDirecciones = function() {
+		var arrayIdDirecciones=new Array();
+			 
+		rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
+			
+		for (var i=0; i < rowsSelected.length; i++){
+			arrayIdDirecciones.push(rowsSelected[i].get('idDireccion'));
+		}
+		
+		uniqueArray = arrayIdDirecciones.filter(function(item, pos) {
+		    return arrayIdDirecciones.indexOf(item) == pos;
+		});
+		
+		if(uniqueArray.length==1){
+			return false;
+		}
+		else{
+			return true;
+		}	
+	}
 	
 	var comprobarEstadoBotones = function() {
 	
@@ -1085,9 +1172,11 @@ var pdfRender = function(value, meta, record) {
 			btnEnviar.setDisabled(true);
 		}
 		
-		if(!btnNuevaDir.disabled && !validarBotonNuevaDirHabilitado()) {
+		if(validarBotonNuevaDirHabilitado()) {
+			btnNuevaDir.setDisabled(false);
+		} else {
 			btnNuevaDir.setDisabled(true);
-		}		
+		}
 		
 		if(!btnEditar.disabled && !validarBotonEditarHabilitado()) {
 			btnEditar.setDisabled(true);
@@ -1111,6 +1200,10 @@ var pdfRender = function(value, meta, record) {
 			}else{
 				btnCancelarEnEstPrep.setDisabled(true);
 			}
+		}
+		
+		if (diferentesDirecciones()) {
+			btnEditarVerDireccion.setDisabled(true);
 		}
 	}
 	
@@ -1304,7 +1397,9 @@ var pdfRender = function(value, meta, record) {
 				btnEnviar.setDisabled(true);
 			}
 			
-			if(!btnNuevaDir.disabled && !validarBotonNuevaDirHabilitado()) {
+			if(validarBotonNuevaDirHabilitado()) {
+				btnNuevaDir.setDisabled(false);
+			} else {
 				btnNuevaDir.setDisabled(true);
 			}
 			
@@ -1397,7 +1492,7 @@ var pdfRender = function(value, meta, record) {
 		rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
 			
 		for (var i=0; i < rowsSelected.length; i++){
-		  arrayIdClientes.push(rowsSelected[i].get('idCliente'));
+		  arrayIdClientes.push(rowsSelected[i].get('idBurofax'));
 		}
 		
 		uniqueArray = arrayIdClientes.filter(function(item, pos) {

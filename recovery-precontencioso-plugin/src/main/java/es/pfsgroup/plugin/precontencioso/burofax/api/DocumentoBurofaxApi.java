@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import es.capgemini.devon.files.FileItem;
 import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
+import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 
 public interface DocumentoBurofaxApi {
 
@@ -26,5 +27,5 @@ public interface DocumentoBurofaxApi {
 
 	String obtenerNombreFicheroPdf(String nombreFichero);
 
-	String replaceVariablesGeneracionBurofax(Long idPcoBurofax, String textoBuro);
+	String replaceVariablesGeneracionBurofax(Long idPcoBurofax, String textoBuro, DocumentoPCO doc);
 }

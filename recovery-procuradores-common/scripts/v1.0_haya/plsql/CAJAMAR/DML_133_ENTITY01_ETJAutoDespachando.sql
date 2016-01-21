@@ -1,11 +1,11 @@
 --/*
 --##########################################
---## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20150707
+--## AUTOR=OSCAR DORADO
+--## FECHA_CREACION=20160118
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.0-X
---## INCIDENCIA_LINK=MITCDD-2068
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=PRODUCTO-585
+--## PRODUCTO=NO
 --##
 --## Finalidad: Realiza las inserciones de la resolución Auto despachando ejecucion - marcado de bienes decreto embargo para la tarea H018_AutoDespachando.
 --## INSTRUCCIONES: 
@@ -43,7 +43,7 @@ DECLARE
     */
     V_TR_ID VARCHAR2(16 CHAR):= 			'333';
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_AUT_DSP_PJU';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Auto despachando ejecución según demanda';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Auto despachando ejecución';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'PTJ';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     

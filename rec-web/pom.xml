@@ -13,7 +13,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.resources.overwrite>true</maven.resources.overwrite>
 
-		<devon.version.web>1.1.1</devon.version.web>
+		<devon.version.web>1.1.2</devon.version.web>
 		<devon.version.webflow>1.1.1</devon.version.webflow>
 	</properties>
 

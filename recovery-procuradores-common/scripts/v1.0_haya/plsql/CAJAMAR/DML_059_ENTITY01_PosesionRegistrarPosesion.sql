@@ -1,11 +1,11 @@
 --/*
 --##########################################
---## AUTOR=CARLOS GIL
---## FECHA_CREACION=20150623
+--## AUTOR=JORGE MARTIN
+--## FECHA_CREACION=20160118
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.0-X
---## INCIDENCIA_LINK=MITCDD-2068
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=PRODUCTO-585
+--## PRODUCTO=NO
 --##
 --## Finalidad: Realiza las inserciones de la resolución Registrar posesión y decision lanzamiento para la tarea H015_RegistrarPosesionYLanzamiento.
 --## INSTRUCCIONES: 
@@ -41,9 +41,9 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			'258';
+    V_TR_ID VARCHAR2(16 CHAR):= 			'378';
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_REG_POS_LAN';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Registrar posesión y decision lanzamiento';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Diligencia judicial de la posesión';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'POS';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     
@@ -61,7 +61,6 @@ DECLARE
     	T_INPUT('d_fecha','fecha'),
     	T_INPUT('d_comboFuerzaPublica','comboFuerzaPublica'),
     	T_INPUT('d_comboLanzamiento','comboLanzamiento'),
-    	T_INPUT('d_fechaSolLanza','fechaSolLanza'),
     	T_INPUT('d_observaciones','observaciones') -- Está siempre en el factoria, no eliminar.
     );
     V_TMP_T_INPUT T_INPUT;

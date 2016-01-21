@@ -1,11 +1,11 @@
 --/*
 --##########################################
---## AUTOR=CARLOS GIL
---## FECHA_CREACION=20150623
+--## AUTOR=JORGE MARTIN
+--## FECHA_CREACION=20160118
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.0-X
---## INCIDENCIA_LINK=MITCDD-2068
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=PRODUCTO-585
+--## PRODUCTO=NO
 --##
 --## Finalidad: Realiza las inserciones de la resolución Escrito sellado solicitando posesión para la tarea H015_RegistrarSolicitudPosesion.
 --## INSTRUCCIONES: 
@@ -41,9 +41,9 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			'256';
+    V_TR_ID VARCHAR2(16 CHAR):= 			'377';
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_REG_SOL_POS';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Escrito sellado solicitando posesión';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Solicitud señalamiento posesión';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'POS';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     
@@ -57,7 +57,8 @@ DECLARE
     V_INPUT T_ARRAY_INPUT := T_ARRAY_INPUT(
     	T_INPUT('idAsunto','idAsunto'), -- Está siempre en el factoria, no eliminar.
     	T_INPUT('d_numAutos','numAutos'), -- Está siempre en el factoria, no eliminar.
-    	T_INPUT('d_comboPosesion','comboPosesion'),
+        T_INPUT('d_comboPosesion','comboPosesion'),
+    	T_INPUT('d_comboArrendamientoValido','comboArrendamientoValido'),
     	T_INPUT('d_fechaSolicitud','fechaSolicitud'),
     	T_INPUT('d_comboOcupado','comboOcupado'),
     	T_INPUT('d_comboMoratoria','comboMoratoria'),

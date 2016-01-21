@@ -2796,6 +2796,23 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
         ,{"xtype": 'datefield', "name": "d_fechaComparecencia", "fieldLabel": "Fecha comparecencia", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
     ]);
 
+    //id: 377 : TRAMITE DE POSESIÓN (CAJAMAR): Registrar solicitud de posesión
+    this.arrayCampos.push([
+       {"xtype": 'combo',"store":storeSINO, "name": "d_comboPosesion","fieldLabel":"Posesión", allowBlank:false, "autoload":true, mode: 'local',triggerAction: 'all', resizable: true, id:'d_comboPosesion'+this.idFactoria,displayField:'descripcion', valueField:'codigo'}
+       ,{"xtype": 'datefield',"name":"d_fechaSolicitud", "fieldLabel": "Fecha de solicitud de la posesión", allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+       ,{"xtype": 'combo', "store": storeSINO, "name": "d_comboOcupado", "fieldLabel": "Ocupado", allowBlank:false, "autoload":true, mode: 'local',triggerAction: 'all', resizable: true, id:'d_comboOcupado'+this.idFactoria,displayField:'descripcion', valueField:'codigo'}
+       ,{"xtype": 'combo', "store": storeSINO, "name": "d_comboMoratoria", "fieldLabel": "Moratoria", allowBlank:false, "autoload":true, mode: 'local',triggerAction: 'all', resizable: true, id:'d_comboMoratoria'+this.idFactoria,displayField:'descripcion', valueField:'codigo'}
+       ,{"xtype": 'combo', "store": storeSINO, "name": "d_comboViviendaHab", "fieldLabel": "Vivienda Habitual", allowBlank:false, "autoload":true, mode: 'local',triggerAction: 'all', resizable: true, id:'d_comboViviendaHab'+this.idFactoria,displayField:'descripcion', valueField:'codigo'}
+       ,{"xtype": 'combo', "store": storeSINO, "name": "d_comboArrendamientoValido", "fieldLabel": "Contrato arrendamiento válido", allowBlank: false, "autoload": true, mode: 'local', triggerAction: 'all', resizable: true, id:'d_comboArrendamientoValido' + this.idFactoria, displayField: 'descripcion', valueField: 'codigo'}
+    ]);
+
+    //id: 378 : TRAMITE DE POSESIÓN (CAJAMAR): Diligencia judicial de la posesión
+    this.arrayCampos.push([
+        {"xtype": 'combo', "store":storeSINO,"name":"d_comboOcupado","fieldLabel":"Ocupado en la realización de la Diligencia",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboOcupado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+       ,{"xtype": 'datefield', "name":"d_fecha","fieldLabel":"Fecha realización de la posesión",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+       ,{"xtype": 'combo', "store":storeSINO,"name":"d_comboFuerzaPublica","fieldLabel":"Necesario fuerza pública",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboFuerzaPublica'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+       ,{"xtype": 'combo', "store":storeSINO,"name":"d_comboLanzamiento","fieldLabel":"Lanzamiento Necesario",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboLanzamiento'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+    ]);
 
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){

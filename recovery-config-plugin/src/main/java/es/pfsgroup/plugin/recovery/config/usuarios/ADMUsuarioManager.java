@@ -198,13 +198,19 @@ public class ADMUsuarioManager {
 		List<Usuario> lista = null;
 		if(!Checks.esNulo(dto.getId())){
 			Usuario usu = getUsuario(dto.getId());
+			Usuario usuLogado = getUsuarioLogado();
 			List<Long> idsGrupos = proxyFactory.proxy(EXTGrupoUsuariosApi.class).buscaIdsGrupos(usu);
 			Iterator<Long> it = idsGrupos.iterator();
 			lista = new ArrayList<Usuario>();
 			while (it.hasNext()) {
 				Long id = (Long) it.next();
 				if(!Checks.esNulo(id)){
-					lista.add(getUsuario(id));
+					
+					// Se recupera el grupo para comprobar que su entidad sea la misma que la del usuario logado
+					Usuario usuGrupo =  getUsuario(id);
+					if(usuGrupo != null && usuGrupo.getEntidad().getId().equals(usuLogado.getEntidad().getId())) {
+						lista.add(usuGrupo);
+					}
 				}
 			}
 			resultado.put("results", lista);

@@ -32,7 +32,7 @@
 	});
 	
 	<pfs:textfield name="calidadProvDesp" labelKey="plugin.config.despachoExterno.turnado.ventana.panelCalidadProvincia.porcentajeCalidad"
-		label="**% Calidad Provincia" value ="${ambitoActuacion.porcentaje}" obligatory="false" width="50" />
+		label="**% Calidad Provincia" value ="${ambitoActuacion.porcentaje}" obligatory="false" width="50" maxLength="5" />
 
 	var ambitoActuacionFieldSet = new Ext.form.FieldSet({
 		title : '<s:message code="plugin.config.despachoExterno.turnado.ventana.panelCalidadProvincia.titulo" text="**Asginar calidad provincia" />'
@@ -62,6 +62,8 @@
 	});
  	
 	var validarCampos = function() {
+		
+		calidadProvDesp.setValue(calidadProvDesp.getValue().replace(',','.'));
 				
 		if (calidadProvDesp.getValue() == '' || !(calidadProvDesp.getValue() >= 0 && calidadProvDesp.getValue() <= 100)) {
 			return '<s:message code="plugin.config.despachoExterno.turnado.ventana.panelCalidadProvincia.validacion1" text="**Calidad provincia debe tener un valor comprendido entre 0 y 100%"/>';

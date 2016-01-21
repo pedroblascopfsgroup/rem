@@ -154,7 +154,7 @@ public class Procedimiento implements Serializable, Auditable, Comparable<Proced
     private Set<AdjuntoAsunto> adjuntos;
     
     @Column(name="PRC_REMOTO")
-    private int prcRemoto; 
+    private Integer prcRemoto; 
 
 	@Transient
     private Boolean activo;
@@ -742,11 +742,11 @@ public class Procedimiento implements Serializable, Auditable, Comparable<Proced
 		this.activo = activo;
 	}
 	
-	 public int getPrcRemoto() {
+	 public Integer getPrcRemoto() {
 		return prcRemoto;
 	}
 
-	public void setPrcRemoto(int prcRemoto) {
+	public void setPrcRemoto(Integer prcRemoto) {
 		this.prcRemoto = prcRemoto;
 	}
 

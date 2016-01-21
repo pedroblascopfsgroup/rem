@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.precontencioso.liquidacion.manager;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.exception.FrameworkException;
+import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.contrato.dao.ContratoDao;
 import es.capgemini.pfs.contrato.model.Contrato;
@@ -52,6 +54,9 @@ public class LiquidacionManager implements LiquidacionApi {
 	
 	@Autowired
 	private ProcedimientoPCODao procedimientoPCODao;
+	
+	@Autowired
+	private ProcedimientoDao procedimientoDao;
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -259,12 +264,55 @@ public class LiquidacionManager implements LiquidacionApi {
 	@Override
 	public BigDecimal getTotalLiquidacionPCO(Long idProcedimientoPCO) {
 		// TODO Auto-generated method stub
-		return null;
+		// Sumatorio de todas las liquidaciones del procedimiento
+		
+		//Obtenemos las liquidaciones
+		List<LiquidacionPCO> liquidaciones = liquidacionDao.getLiquidacionesPorIdProcedimientoPCO(idProcedimientoPCO);
+		BigDecimal total = new BigDecimal(0);
+		
+		for (LiquidacionPCO liquidacion : liquidaciones) {
+			total = total.add(liquidacion.getTotal());
+		}
+
+		return total;
 	}
 
 	@Override
 	public BigDecimal getTotalLiquidacion(Long idProcedimiento) {
-		// TODO Auto-generated method stub
+		//Obtenemos el procedimiento del id 
+		Procedimiento proc = this.procedimientoDao.get(idProcedimiento);
+		if (!Checks.esNulo(proc)) {
+			if (!Checks.esNulo(proc.getAsunto())) {
+				//Si tenemos asunto, obtenemos los procedimientos del asunto
+				List<Procedimiento> procAsunto = proc.getAsunto().getProcedimientos();
+				
+				// Nos almacenamos el número de tareas del procedimiento, para quedarnos con la mayor
+				int maxNumTareas = -1;
+				Procedimiento procPrecontencioso = null;
+				
+				//Ahora descartamos los procedimientos que no sean de tipo precontencioso o que estén cancelados
+				for (Procedimiento procedimiento : procAsunto) {
+					if (!procedimiento.getEstaEstadoCancelado()) {
+						if (procedimiento.getEsPrecontencioso()) {
+							//Si su número de tareas es mayor que otro que hayamos encontrado previamente, lo seleccionamos
+							if (!Checks.esNulo(procedimiento.getTareas())) {
+								 if (procedimiento.getTareas().size() > maxNumTareas) {
+									 procPrecontencioso = procedimiento;
+									 maxNumTareas = procedimiento.getTareas().size();
+								 }
+							}
+						}
+					}
+				}
+				
+				//Si hemos localizado el procedimiento precontencioso del asunto
+				if (!Checks.esNulo(procPrecontencioso)) {
+					return this.getTotalLiquidacionPCO(procPrecontencioso.getId());
+				}
+			}
+		}
+		
+		//En caso que no encontramos el procedimiento precontencioso del asunto
 		return null;
 	}
 }

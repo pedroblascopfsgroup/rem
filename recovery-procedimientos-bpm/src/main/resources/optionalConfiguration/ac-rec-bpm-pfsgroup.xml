@@ -219,7 +219,7 @@
   			<value><![CDATA[
   			
   			def dameTotalLiquidacionPCO= {
-  				var liquidacionPCO = ctx.getBean("liquidacionManager");
+  				def liquidacionPCO = ctx.getBean("liquidacionManager");
   				if(liquidacionPCO != null){
   					return liquidacionPCO.getTotalLiquidacion(idProcedimiento);
   				}else{

@@ -9,10 +9,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.logging.Log;
@@ -37,6 +39,7 @@ import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.multigestor.api.GestorAdicionalAsuntoApi;
+import es.capgemini.pfs.parametrizacion.dao.ParametrizacionDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.dao.TareaExternaDao;
@@ -165,6 +168,9 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	
 	@Autowired
 	private EXTGrupoUsuariosApi grupoUsuarios;
+	
+	@Autowired
+    private ParametrizacionDao parametrizacionDao;
 	
 	@BusinessOperation(BO_PCO_COMPROBAR_FINALIZAR_PREPARACION_EXPEDIENTE)
 	@Override
@@ -504,6 +510,21 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			}
 		} catch (Exception e) {}
 		return resultado;		
+	}
+	
+	public String dameDecisionPrepararExpediente(Long idProc) {
+		String resultado = POSTURNADO;
+		try {		
+			ProcedimientoPCO procedimientoPco = genericDao.get(ProcedimientoPCO.class, 
+					genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProc));
+			String tipoAsunto = procedimientoPco.getProcedimiento().getAsunto().getTipoAsunto().getCodigo();
+			if (DDTiposAsunto.CONCURSAL.equals(tipoAsunto)){
+				resultado = CONCURSO;
+			}else if(procedimientoPco.getPreturnado()) {
+				resultado = PRETURNADO;
+			}		
+		} catch (Exception e) {}
+		return resultado;
 	}
 	
 	
@@ -1185,4 +1206,77 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 
 		return false;
 	}
+
+	@Override
+	@BusinessOperation(BO_PCO_EXPEDIENTE_VISIBILIDAD_BOTONES_PCO)
+	public List<String> getVisibilidadBotonesDocumentosPrecontencioso(String seccion, boolean visible) {
+		Usuario usuario = usuarioManager.getUsuarioLogado();		
+		List<String> resultado = new ArrayList<String>();
+		Map<String, Boolean> botones = precontenciosoContext.getVisibilidadBotonesPorSeccionYUsuario(seccion, usuario);
+		for (String boton : botones.keySet()) {
+			if (botones.get(boton).equals(visible)) {
+				resultado.add(boton);
+			}
+		}
+		return resultado;
+	}
+
+	public boolean mostrarSegunCodigos(Long idProcedimiento, List<String> codigosTiposGestores) {
+
+//		Se comprueba si el usuario conectado o un grupo al que pertenece está asignado al asunto 
+		Usuario usuario = usuarioManager.getUsuarioLogado();
+		Procedimiento procedimiento = procedimientoManager.getProcedimiento(idProcedimiento);
+		List<Long> idsGrupo = grupoUsuarios.buscaIdsGrupos(usuario);
+		int tamanyoListaCodigos = codigosTiposGestores.size();
+		int i=0;
+		String codigoGestor;
+		for(i=0; i<tamanyoListaCodigos; i++){
+			codigoGestor = codigosTiposGestores.get(i);
+			for(Usuario usuarioGestor : gestorAdicionalAsuntomanager.findGestoresByAsunto(procedimiento.getAsunto().getId(), codigoGestor)) {
+				if(usuario.getUsername().equals(usuarioGestor.getUsername()) || idsGrupo.contains(usuarioGestor.getId())) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+
+	public String getEstadoLimiteImporteConcurso(Long idProcedimiento)
+	{
+		String valorDecision;
+		Procedimiento procedimiento = procedimientoManager.getProcedimiento(idProcedimiento);
+		BigDecimal limite = new BigDecimal(parametrizacionDao.buscarParametroPorNombre("limiteImporteConcurso").getValor());
+		if(limite.compareTo(procedimiento.getSaldoRecuperacion()) >0)
+			valorDecision="menor";
+		else
+			valorDecision="mayor";
+		
+		return valorDecision;
+	}
+	
+	/**
+	 *		SOLO PARA BANKIA
+	 * Comprueba que el asunto correspondiente al procedimiento tenga los siguientes gestores asignados:
+	 * 	Letrado
+	 * @param idProcedimiento
+	 * @return
+	 */
+	@Override
+	public boolean comprobarExistenciaGestor(Long idProcedimiento) {
+
+		Boolean resultado = false;
+		try {
+			Procedimiento proc = procedimientoManager.getProcedimiento(idProcedimiento);
+			Long idAsunto = proc.getAsunto().getId();
+			List<String> listaTiposGestores = procedimientoPcoDao.getTiposGestoresAsunto(idAsunto);
+			if (listaTiposGestores.contains(LETRADO)) {
+				resultado = true;
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return resultado;
+	}
+	
 }

@@ -17,7 +17,7 @@ var bottomBar = [];
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/items.jsp" %>
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/botonExportar.jsp" %>
 
-//mostramos el botón guardar cuando la tarea no está terminada y cuando no hay errores de validacion
+//mostramos el botï¿½n guardar cuando la tarea no estï¿½ terminada y cuando no hay errores de validacion
 <c:if test="${form.tareaExterna.tareaPadre.fechaFin==null && form.errorValidacion==null && !readOnly}">
 	var btnGuardar = new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
@@ -35,7 +35,7 @@ var bottomBar = [];
 		}
 	});
 	
-	//Si tiene más items que el propio label de descripción se crea el botón guardar
+	//Si tiene mï¿½s items que el propio label de descripciï¿½n se crea el botï¿½n guardar
 	if (items.length > 1)
 	{
 		bottomBar.push(btnGuardar);
@@ -119,6 +119,20 @@ if (muestraBotonGuardar==1){
 	
 	
 }
+
+
+var gestionJUDICIALIZAR = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDTipoGestionRevisarExpJudicial.JUDICIALIZAR" />';
+
+var gestion = items[2];
+var proc_iniciar = items[3];
+
+gestion.on('select', function() {
+	if(gestion.getValue() == gestionJUDICIALIZAR) {
+		proc_iniciar.allowBlank = false;
+	}else{
+		proc_iniciar.allowBlank = true;
+	}
+});
 
 
 

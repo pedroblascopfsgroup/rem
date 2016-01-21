@@ -1,6 +1,9 @@
 package es.pfsgroup.plugin.precontencioso;
 
 import java.util.List;
+import java.util.Map;
+
+import es.capgemini.pfs.users.domain.Usuario;
 
 
 /**
@@ -30,5 +33,18 @@ public interface PrecontenciosoProjectContext {
 	 * @return List<String>
 	 */
 	public List<String> getVariablesBurofax();
+
+	/**
+	 * Devuelve los mapas con los datos de visibilidad de los botones 
+	 * @return mapa con todos los datos de visibilida de los botones
+	 */
+	public Map<String,Map<String,Map<String,Boolean>>> getVisibilidadBotones();
+	
+	/**
+	 * Devuelve los mapas con los datos de visibilidad de los botones de la sección especificada y para el usuario pasado como parámetro
+	 * @return mapa con todos los datos de visibilida de los botones
+	 */
+	public Map<String, Boolean> getVisibilidadBotonesPorSeccionYUsuario(String seccion, Usuario usuario);
+
 
 }

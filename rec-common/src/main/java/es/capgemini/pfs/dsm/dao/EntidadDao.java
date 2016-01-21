@@ -15,5 +15,7 @@ public interface EntidadDao extends AbstractDao<Entidad, Long> {
      * @return Entidad
      */
     Entidad findByWorkingCode(String workingCode);
+    
+    Entidad findByDescripcion(String descripcion);
 
 }

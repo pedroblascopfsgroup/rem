@@ -8,6 +8,17 @@
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 
+<sec:authentication var="user" property="principal" />
+
+<%-- Renders --%>
+
+var pdfRender = function(value, meta, record) {
+
+	if (value) {
+		return '<img src="/pfs/css/page_white_acrobat.png" height="16" width="16" alt=""/>';
+	}
+};
+
 	var limit=50;
 	
 	var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
@@ -30,19 +41,25 @@
 		myCboxSelModel
 		,{
 			header: '<s:message code="plugin.precontencioso.grid.burofax.cliente" text="**Cliente"/>',
-			dataIndex: 'cliente', sortable: true,autoWidth:true
+			dataIndex: 'cliente', sortable: false,autoWidth:true
+		},{
+			header: '<s:message code="plugin.precontencioso.grid.burofax.registro.manual" text="**Registro Manual"/>',
+			dataIndex: 'esPersonaManual', sortable: false,autoWidth:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.tipoIntervencion" text="**Tipo Intervencion"/>',
-			dataIndex: 'tipoIntervencion', sortable: true,autoWidth:true
+			dataIndex: 'tipoIntervencion', sortable: false,autoWidth:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.contrato" text="**Contrato"/>',
-			dataIndex: 'contrato', sortable: true,autoWidth:true
+			dataIndex: 'contrato', sortable: false,autoWidth:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.estado" text="**Estado"/>',
-			dataIndex: 'estado', sortable: true,autoWidth:true
+			dataIndex: 'estado', sortable: false,autoWidth:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.direccion" text="**Dirección"/>',
 			dataIndex: 'direccion', sortable: false,autoWidth:true
+		}, {
+			header: '<s:message code="plugin.precontencioso.grid.burofax.refExternaEnvio" text="**Referencia Externa Envío"/>',
+			dataIndex: 'refExternaEnvio', sortable: false, autoWidth: true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.tipo" text="**Tipo"/>',
 			dataIndex: 'tipoDescripcion', sortable: false,autoWidth:true
@@ -57,13 +74,18 @@
 			dataIndex: 'fechaAcuse', sortable: false,autoWidth:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.resultado" text="**Resultado"/>'
-			,dataIndex: 'resultado', sortable: true,autoWidth:true
+			,dataIndex: 'resultado', sortable: false,autoWidth:true
+	<c:if test="${usuario.entidad.descripcion eq 'HAYA'}">
+		}, {
+			header: '<s:message code="plugin.precontencioso.grid.burofax.acuseRecibo" text="**Acuse recibo"/>'
+			, dataIndex: 'acuseRecibo', sortable: false, autoWidth: true, id: 'colAcuseRecibo', renderer: pdfRender, align: 'center'
+	</c:if>
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoo" text="**IdDireccion"/>'
 			,dataIndex: 'idDireccion', sortable: false,autoWidth:true,hidden:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoo" text="**idCliente"/>'
-			,dataIndex: 'idCliente', sortable: true,autoWidth:true,hidden:true
+			,dataIndex: 'idCliente', sortable: false,autoWidth:true,hidden:true
 		}
 		, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoo" text="**idTipoBurofax"/>'
@@ -77,17 +99,19 @@
 			,dataIndex: 'idEnvio', sortable: false,autoWidth:true,hidden:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoo" text="**id"/>'
-			,dataIndex: 'id', sortable: true,autoWidth:true,hidden:true
+			,dataIndex: 'id', sortable: false,autoWidth:true,hidden:true
+		}, {
+			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoo" text="**tienePersona"/>'
+			,dataIndex: 'tienePersona', sortable: false,autoWidth:true,hidden:true
 		}
 	];
 
-
-	
 	var Burofax = Ext.data.Record.create([
 		{name:'cliente'}
 	   ,{name:'tipoIntervencion'}
 	   ,{name:'contrato'}
 	   ,{name:'estado'}
+	   ,{name:'refExternaEnvio'}
 	   ,{name:'direccion'}
 	   ,{name:'tipo'}
 	   ,{name:'tipoDescripcion'}
@@ -101,7 +125,9 @@
 	   ,{name: 'idBurofax'}
 	   ,{name: 'idEnvio'}
 	   ,{name: 'id'}
-		
+	   ,{name: 'acuseRecibo'}
+	   ,{name: 'esPersonaManual'}
+	   ,{name: 'tienePersona'}
 	]);
 	
 	var burofaxStore = page.getStore({
@@ -132,6 +158,15 @@
 	
 	var btnAddPersona = new Ext.Button({
 			text : '<s:message code="plugin.precontencioso.grid.burofax.agregarPersona" text="**Añadir Persona" />'
+			,id : 'btnAddPersona'
+			,iconCls : 'icon_mas'
+			,cls: 'x-btn-text-icon'
+			
+	});
+	
+	var btnAniadirEditPersona = new Ext.Button({
+			text : '<s:message code="plugin.precontencioso.grid.burofax.editarAniadirPersona" text="**Añadir/Abrir notificado" />'
+			,id : 'btnAniadirEditPersona'
 			,iconCls : 'icon_mas'
 			,cls: 'x-btn-text-icon'
 			
@@ -139,45 +174,51 @@
 	
 	var btnEnviar = new Ext.Button({
 			text : '<s:message code="plugin.precontencioso.grid.burofax.enviar" text="**Enviar" />'
+			,id : 'btnEnviar'
 			,iconCls : 'icon_comunicacion'
 			,cls: 'x-btn-text-icon'
 	});
 	
 	var btnNuevaDir = new Ext.Button({
 			text : '<s:message code="plugin.precontencioso.grid.burofax.nuevaDireccion" text="**Nueva Dirección" />'
+			,id : 'btnNuevaDir'
 			,iconCls : 'icon_edit'
 			,cls: 'x-btn-text-icon'
 	});
 	
 	var btnEditar = new Ext.Button({
 			text : '<s:message code="plugin.precontencioso.grid.burofax.editar" text="**Editar" />'
+			,id : 'btnEditar'
 			,iconCls : 'icon_edit'
 			,cls: 'x-btn-text-icon'
 	});
 	
 	var btnPreparar = new Ext.Button({
 			text : '<s:message code="plugin.precontencioso.grid.burofax.preparar" text="**Preparar" />'
+			,id : 'btnPreparar'
 			,iconCls : 'icon_mas'
 			,cls: 'x-btn-text-icon'
 	});	
 	
 	var btnCancelar = new Ext.Button({
 			text : '<s:message code="plugin.precontencioso.grid.burofax.cancelar" text="**Cancelar" />'
+			,id : 'btnCancelar'
 			,iconCls : 'icon_cancel'
 			,cls: 'x-btn-text-icon'
 			,hidden: true
 	});
 	
-	
 	var btnNotificar = new Ext.Button({
 			text : '<s:message code="plugin.precontencioso.grid.burofax.añadir.informacion.envio" text="**Añadir Información de Envío" />'
-			,iconCls : 'icon_info'
+			,id : 'btnNotificar'
+			,iconCls : 'icon_info_burofax'
 			,cls: 'x-btn-text-icon'
 			,hidden: true
 	});
 	
 	var btnDescargarBurofax = new Ext.Button({
 			text : '<s:message code="plugin.precontencioso.grid.burofax.descargar.burofax" text="**Descargar Burofax" />'
+			,id : 'btnDescargarBurofax'
 			,iconCls : 'icon_download'
 			,cls: 'x-btn-text-icon'
 <%-- 			,hidden:true --%>
@@ -198,12 +239,66 @@
 <%-- 			,hidden:true --%>
 	});
 	
+	var btnExcluirPersona = new Ext.Button({
+		text : '<s:message code="plugin.precontencioso.grid.burofax.excluir" text="**Excluir" />'
+		,iconCls : 'icon_menos'
+		,cls: 'x-btn-text-icon'
+	});
+	
 	var btnCancelarEnEstPrep = 	new Ext.Button({
 			text : '<s:message code="plugin.precontencioso.grid.burofax.anular" text="**Anular Burofax" />'
 			,iconCls : 'icon_menos'
 			,cls: 'x-btn-text-icon'
 <%-- 			,hidden:true --%>
 	});
+
+	var btnEditarVerDireccion = new Ext.Button({
+			text : '<s:message code="plugin.precontencioso.grid.burofax.boton.editarVerDireccion" text="**Editar dirección" />'
+			,id : 'btnEditarVerDireccion'
+			,iconCls : 'icon_edit'
+			,cls: 'x-btn-text-icon'
+	});
+	
+	<%-- boton editar/ver direccion --%>
+
+	btnEditarVerDireccion.on('click', function(){
+	   
+	    var arrayIdClientes=new Array();
+			 
+		rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
+		for (var i=0; i < rowsSelected.length; i++){
+		  arrayIdClientes.push(rowsSelected[i].get('idCliente'));
+		}
+		uniqueArray = arrayIdClientes.filter(function(item, pos) {
+		    return arrayIdClientes.indexOf(item) == pos;
+		});
+		if(arrayIdClientes.length==1){
+		 
+			var idCliente = gridBurofax.getSelectionModel().getSelected().get('idCliente');
+			var idDireccion = gridBurofax.getSelectionModel().getSelected().get('idDireccion');
+			
+			var w = app.openWindow({
+				  flow : 'burofax/editarVerDireccion'
+				  ,width:920
+				  ,autoWidth:true
+				  ,closable:true
+				  <%--,title : '<s:message code="plugin.precontencioso.grid.burofax.editar.direccion" text="**Dirección" />'--%>
+				  ,params:{idCliente:idCliente,idProcedimiento:idProcedimiento, idDireccion:idDireccion}
+				
+				});
+				w.on(app.event.DONE,function(){
+						w.close();
+						refrescarBurofaxGrid();
+						
+				});
+				w.on(app.event.CANCEL, function(){w.close();});
+		 }
+		 else{
+		 	 Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.variosClientes" text="**Varios clientes seleccionados" />'
+                 ,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.variosClientes" text="**Debe seleccionar un unico cliente" />');
+		 }		
+	
+	});	
 	
 	Ext.namespace('Ext.ux.plugins');
 	
@@ -234,7 +329,10 @@
       		btnDescargarBurofax.disabled=true;
       		btnBorrarDirOrigenManual.disabled=true;
       		btnDescartarPersEnvio.disabled=true;
+      		btnExcluirPersona.disabled=true;
       		btnCancelarEnEstPrep.disabled=true;
+      		btnEditarVerDireccion.disabled=true;
+      		
       		//this.store.sort('idCliente','DESC');
 	        //this.store.setDefaultSort('idCliente', 'DESC');
       		
@@ -247,7 +345,8 @@
       			this.idArray.push(rec.get(this.idProperty));
       		}
       		
-      		if(actualizarBotonesBurofax()){      		
+      		if(actualizarBotonesBurofax()){
+      			actualizaBotonExcluirBurofax();
       			if(myCboxSelModel.getCount() == 1) {
 		      		validarBotonesSeleccionUnica();
 
@@ -279,10 +378,13 @@
       			btnDescargarBurofax.setDisabled(true);
       			btnBorrarDirOrigenManual.setDisabled(true);
       			btnDescartarPersEnvio.setDisabled(true);
+      			btnExcluirPersona.setDisabled(true);
       			btnCancelarEnEstPrep.setDisabled(true);
+      			btnEditarVerDireccion.setDisabled(true);
       		}
       		else {
       			if(actualizarBotonesBurofax()){
+      				actualizaBotonExcluirBurofax();
       				if(myCboxSelModel.getCount() == 1) {
       					validarBotonesSeleccionUnica();			      		
 					}
@@ -319,6 +421,7 @@
 	
 	var botonRefresh = new Ext.Button({
 		text : 'Refresh'
+		,id : 'botonRefreshBur'
 		,iconCls : 'icon_refresh'
 		,handler:function(){
 			refrescarBurofaxGrid();
@@ -342,7 +445,16 @@
 		,cls:'cursor_pointer'
 		,iconCls : 'icon_asuntos'
 		<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_BUR_BTN">
-			,bbar : [ botonesTabla,btnAddPersona,btnEnviar, btnNuevaDir, btnEditar, btnPreparar,btnCancelar, btnNotificar,btnDescargarBurofax, btnBorrarDirOrigenManual, btnDescartarPersEnvio,  separadorButtons, btnCancelarEnEstPrep, botonRefresh ]
+			,bbar : [ botonesTabla
+						<c:choose>
+						    <c:when test="${user.entidad.descripcion eq 'CAJAMAR' || user.entidad.descripcion eq 'HAYA'}">
+								,btnAniadirEditPersona
+						    </c:when>
+						    <c:otherwise>
+								,btnAddPersona
+						    </c:otherwise>
+						</c:choose>
+					,btnEnviar, btnNuevaDir, btnEditarVerDireccion, btnEditar, btnPreparar,btnCancelar, btnNotificar,btnDescargarBurofax, btnBorrarDirOrigenManual, btnDescartarPersEnvio, btnExcluirPersona,  separadorButtons, btnCancelarEnEstPrep, botonRefresh ]
 		</sec:authorize>
 		,autoWidth: true
 		,collapsible: true
@@ -356,7 +468,14 @@
 			}
 		}		
 	});
-	
+
+	gridBurofax.on('rowdblclick', function(grid, rowIndex, e) {
+		var rec = grid.getStore().getAt(rowIndex);
+
+		if(e.target.localName.indexOf('img') === 0 && rec.get('acuseRecibo')) {
+			window.open("/pfs/bajarAdjuntoAsunto.htm?asuntoId=" + entidad.get("data").cabecera.asuntoId + "&id=" + rec.get('acuseRecibo'));
+		}
+	});
 
    <%-- Eventos para los botones --%>
    
@@ -486,6 +605,7 @@
 		if(uniqueArray.length==1){
 		 
 			var idCliente = gridBurofax.getSelectionModel().getSelected().get('idCliente');
+			var tienePersona = gridBurofax.getSelectionModel().getSelected().get('tienePersona');
 			
 			var w = app.openWindow({
 				  flow : 'burofax/getAltaDireccion'
@@ -493,7 +613,7 @@
 				  ,autoWidth:true
 				  ,closable:true
 				  ,title : '<s:message code="plugin.precontencioso.grid.burofax.agregar.direccion" text="**Agregar Dirección" />'
-				  ,params:{idCliente:idCliente,idProcedimiento:idProcedimiento}
+				  ,params:{idCliente:idCliente,idProcedimiento:idProcedimiento,tienePersona:tienePersona}
 				
 				});
 				w.on(app.event.DONE,function(){
@@ -510,27 +630,62 @@
 	
 	});	
 	
-	
-	btnAddPersona.on('click', function(){
-			var w = app.openWindow({
-				  flow : 'burofax/getAltaPersona'
-				  ,width:820
-				  ,autoWidth:true
-				  ,closable:true
-				  ,title : '<s:message code="plugin.precontencioso.grid.burofax.agregar.persona" text="**Añadir Notificado" />'
-				  ,params:{idProcedimiento:idProcedimiento}
-				
-				});
-				w.on(app.event.DONE,function(){
-						w.close();
-						refrescarBurofaxGrid();
-						
-						
-				});
-				w.on(app.event.CANCEL, function(){w.close();});
+    btnAniadirEditPersona.on('click', function(){
+    	
+    	rowsSelected=gridBurofax.getSelectionModel().getSelections();
+    	
+    	var params = {idProcedimiento:idProcedimiento, idCliente:null, tienePersona:false};
+
+		if(rowsSelected.length > 0){
+		
+			var idCliente = rowsSelected[0].get('idCliente');
+			var tienePersona = rowsSelected[0].get('tienePersona');
 			
-	
+			params = {idProcedimiento:idProcedimiento, idCliente:idCliente, tienePersona:tienePersona};
+
+		}
+		
+		var w = app.openWindow({
+		  flow : 'burofax/getAltaPersonaManual'
+		  ,width:820
+		  ,autoWidth:true
+		  ,closable:true
+		  ,title : '<s:message code="plugin.precontencioso.grid.burofax.agregar.persona" text="**Añadir Notificado" />'
+		  ,params:params
+		
+		});
+		w.on(app.event.DONE,function(){
+				w.close();
+				refrescarBurofaxGrid();
+		});
+		w.on(app.event.CANCEL, function(){
+				refrescarBurofaxGrid();
+				w.close();
+		});
+		
 	});
+	
+	
+    btnAddPersona.on('click', function(){
+		var w = app.openWindow({
+			  flow : 'burofax/getAltaPersona'
+			  ,width:820
+			  ,autoWidth:true
+			  ,closable:true
+			  ,title : '<s:message code="plugin.precontencioso.grid.burofax.agregar.persona" text="**Añadir Notificado" />'
+			  ,params:{idProcedimiento:idProcedimiento}
+			
+			});
+			w.on(app.event.DONE,function(){
+					w.close();
+					refrescarBurofaxGrid();
+					
+					
+			});
+			w.on(app.event.CANCEL, function(){w.close();});
+	});
+	
+
 	
 	btnCancelarEnEstPrep.on('click', function(){
 	 var arrayIdClientes=new Array();
@@ -540,10 +695,11 @@
 		for (var i=0; i < rowsSelected.length; i++){
 		  arrayIdClientes.push(rowsSelected[i].get('idCliente'));
 		}
-	uniqueArray = arrayIdClientes.filter(function(item, pos) {
-		    return arrayIdClientes.indexOf(item) == pos;
-		});
-		if(uniqueArray.length==1){
+		<%--creamos los arrays para mandar los id's --%>
+        var arrayidEnvios=new Array(); 			
+		for (var i=0; i < rowsSelected.length; i++){
+				arrayidEnvios.push(rowsSelected[i].get('idEnvio'));
+		}
 		Ext.Msg.confirm(
 			'<s:message code="plugin.precontencioso.grid.burofax.cancelarBurofax.EstadoPreparado" text="**Cancelar burofax" />', 
 			'<s:message code="plugin.precontencioso.grid.burofax.cancelarBurofax.EstadoPreparado.Mensaje"
@@ -554,7 +710,7 @@
 				var idCliente=gridBurofax.getSelectionModel().getSelected().get('idCliente');
 					Ext.Ajax.request({
 							url: page.resolveUrl('burofax/cancelarEnEstPrep'),
-							params: {idEnvio:idEnvio, idCliente:idCliente},
+							params: {idEnvio:idEnvio, idCliente:idCliente, arrayidEnvios:arrayidEnvios},
 							method: 'POST',
 							success: function (result, request) {
 								Ext.Msg.show({
@@ -584,35 +740,27 @@
 								});
 				}
 			});
-		}else{
-			Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.variosClientes" text="**Varios clientes seleccionados" />'
-                 ,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.variosClientes" text="**Debe seleccionar un unico cliente" />');
-		}
 	});
 	
 	
 	btnDescartarPersEnvio.on('click', function(){
-	 var arrayIdClientes=new Array();
-			 
-		rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
+		var arrayIdBurofax = new Array();
+	 	rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
 			
 		for (var i=0; i < rowsSelected.length; i++){
-		  arrayIdClientes.push(rowsSelected[i].get('idCliente'));
+		  arrayIdBurofax.push(rowsSelected[i].get('idBurofax'))
 		}
-	uniqueArray = arrayIdClientes.filter(function(item, pos) {
-		    return arrayIdClientes.indexOf(item) == pos;
-		});
-		if(uniqueArray.length==1){
-		Ext.Msg.confirm(
-			'<s:message code="plugin.precontencioso.grid.burofax.descartarPersona" text="**Descartar Persona" />', 
-			'<s:message code="plugin.precontencioso.grid.burofax.descartarPersona.mensaje"
- 				text="**Va a descartar esta persona para el envío ¿Está usted seguro?" />', 
-			function(btn) {
-				if (btn == 'yes') {
-				var idBurofax=gridBurofax.getSelectionModel().getSelected().get('idBurofax');
-					Ext.Ajax.request({
+		
+		if(arrayIdBurofax.length>0){
+			Ext.Msg.confirm(
+				'<s:message code="plugin.precontencioso.grid.burofax.descartarPersona" text="**Descartar Persona" />', 
+				'<s:message code="plugin.precontencioso.grid.burofax.descartarPersona.mensaje"
+	 				text="**Va a descartar esta persona para el envío ¿Está usted seguro?" />', 
+				function(btn) {
+					if (btn == 'yes') {
+						Ext.Ajax.request({
 							url: page.resolveUrl('burofax/descartarPersonaEnvio'),
-							params: {idBurofax:idBurofax},
+							params: {idsBurofax:arrayIdBurofax},
 							method: 'POST',
 							success: function (result, request) {
 								Ext.Msg.show({
@@ -632,21 +780,71 @@
 									buttons: Ext.MessageBox.OK
 								});
 							} 
-					});
-				}else{
-					Ext.Msg.show({
-									title: fwk.constant.alert,
-									msg: '<s:message code="plugin.precontencioso.grid.burofax.descartarPersona.NoCorrecto"
-									text="**La persona no se ha descartado" />',
-									buttons: Ext.Msg.OK
-								});
-				}
+						});
+					}else{
+						Ext.Msg.show({
+							title: fwk.constant.alert,
+							msg: '<s:message code="plugin.precontencioso.grid.burofax.descartarPersona.NoCorrecto"
+							text="**La persona no se ha descartado" />',
+							buttons: Ext.Msg.OK
+						});
+					}
 			});
-		}else{
-			Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.variosClientes" text="**Varios clientes seleccionados" />'
-                 ,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.variosClientes" text="**Debe seleccionar un unico cliente" />');
 		}
 	});
+	
+	
+	
+	
+	btnExcluirPersona.on('click', function(){
+		var arrayIdBurofax = new Array();
+	 	rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
+			
+		for (var i=0; i < rowsSelected.length; i++){
+		  arrayIdBurofax.push(rowsSelected[i].get('idBurofax'));
+		}
+		
+		if(arrayIdBurofax.length>0){
+			Ext.Msg.confirm(
+				'<s:message code="plugin.precontencioso.grid.burofax.excluirPersona" text="**Excluir Persona" />', 
+				'<s:message code="plugin.precontencioso.grid.burofax.excluirPersona.mensaje"
+	 				text="**Se va a excluir las personas/contratos seleccionadas ¿Desea continuar?" />', 
+				function(btn) {
+					if (btn == 'yes') {
+						Ext.Ajax.request({
+							url: page.resolveUrl('burofax/excluirBurofax'),
+							params: {idsBurofax:arrayIdBurofax},
+							method: 'POST',
+							success: function (result, request) {
+								Ext.Msg.show({
+									title: fwk.constant.alert,
+									msg: '<s:message code="plugin.precontencioso.grid.burofax.excluirPersonaEnvio.correcto"
+									text="**Se ha excluido correctamente" />',
+									buttons: Ext.Msg.OK
+								});
+								refrescarBurofaxGrid();
+							},
+							error: function() {
+								mask.hide();
+								Ext.MessageBox.show({
+							    	title: fwk.constant.alert,
+									msg: '<s:message code="plugin.precontencioso.button.finalizarPreparacion.error.exception" text="**Se ha producido un error. Consulte con soporte" />',
+									width: 300,
+									buttons: Ext.MessageBox.OK
+								});
+							} 
+						});
+					}else{
+						Ext.Msg.show({
+							title: fwk.constant.alert,
+							msg: '<s:message code="plugin.precontencioso.grid.burofax.excluirPersona.NoCorrecto"
+							text="**La persona no se ha excluido" />',
+							buttons: Ext.Msg.OK
+						});
+					}
+			});
+		}
+    });
 	
 	btnBorrarDirOrigenManual.on('click', function(){
 		var arrayIdClientes=new Array();
@@ -728,6 +926,7 @@
   		  }
   		 
 		}
+		
 	
 		<%--Comprobamos que hay direcciones seleccionadas en TODAS las selecciones --%>
     		if(myCboxSelModel.getCount() > 0 && arrayIdDirecciones.length == myCboxSelModel.getCount()){	
@@ -760,7 +959,7 @@
 				 //Abrimos ventana
 				 var w = app.openWindow({
 						  flow : 'burofax/getEnvioBurofax'
-						  ,width:320
+						  ,width:520
 						  ,autoWidth:true
 						  ,closable:true
 						  ,title : '<s:message code="plugin.precontencioso.grid.burofax.envio" text="**Envio Burofaxes" />'
@@ -833,7 +1032,6 @@
 		}
 	});
 	
-	
 	btnNotificar.on('click', function(){
 	
 			var arrayIdEnvios=new Array();
@@ -878,12 +1076,51 @@
 	var refrescarBurofaxGrid = function() {
 		burofaxStore.webflow({idProcedimiento: data.precontencioso.id});
 		idProcedimiento=data.precontencioso.id;
-		debugger;
 		gridBurofax.getSelectionModel().clearSelections();
+		mostrarBotonDependiente(idProcedimiento);
 		actualizarBotonesBurofax();
-		
 	}
 	
+	<%--creamos un flag para que siempre prevalezcan los permisos por gestor --%>
+	<%--por defecto a false(se muestra), si está a true, se desactiva --%>
+	var flagGestor=false;
+	var mostrarBotonDependiente = function(idProcedimiento){
+		Ext.Ajax.request({
+				url: page.resolveUrl('burofax/mostrarBotonDependiente')
+				,params: {idProcedimiento:idProcedimiento}
+				,method: 'POST'
+				,success: function (result, request)
+				{
+					var r = Ext.util.JSON.decode(result.responseText);
+					var solucion = r.mostrarBoton;
+				 	if(solucion){
+						<%--Si es true, deberemos habilitar el botón --%>
+						if(myCboxSelModel.getCount() > 0){
+							btnEditarVerDireccion.setDisabled(false);	
+						}
+		  			}else{
+		  				flagGestor=true;
+						btnEditarVerDireccion.setDisabled(true);
+		  			}
+				}
+		});
+	}
+	
+	var actualizaBotonExcluirBurofax = function() {
+		var deshabiltar = false;
+		var rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
+		<%--si no esta al menos preparado, se deshabilita el botón anular --%>
+		for (var i=0; i < rowsSelected.length; i++){
+			if(rowsSelected[i].get('fechaSolicitud') != ''){
+				deshabiltar = true;
+			}
+			if(rowsSelected[i].get('idCliente') == ''){
+				deshabiltar = true;
+			}
+		}
+		btnExcluirPersona.setDisabled(deshabiltar);
+	}
+
 	var actualizarBotonesBurofax = function() {
 	// Se comprueba que el procedimiento se encuentre en un estado que permita editar los burofaxes
 	
@@ -891,6 +1128,7 @@
 			var estadoActualCodigoProcedimiento = data.precontencioso.estadoActualCodigo;
 			if (!data.esExpedienteEditable || (estadoActualCodigoProcedimiento != 'PR'  && estadoActualCodigoProcedimiento != 'SU' && estadoActualCodigoProcedimiento != 'SC')) {
 				btnAddPersona.setDisabled(true);
+				btnAniadirEditPersona.setDisabled(true);
 				btnEnviar.setDisabled(true);
 				btnNuevaDir.setDisabled(true);
 				btnEditar.setDisabled(true);
@@ -898,6 +1136,7 @@
 				btnCancelar.setDisabled(true);
 				btnNotificar.setDisabled(true);
 				btnDescargarBurofax.setDisabled(true);
+				btnEditarVerDireccion.setDisabled(true);
 				return false;
 			}
 
@@ -906,6 +1145,26 @@
 
 	}
 
+	var diferentesDirecciones = function() {
+		var arrayIdDirecciones=new Array();
+			 
+		rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
+			
+		for (var i=0; i < rowsSelected.length; i++){
+			arrayIdDirecciones.push(rowsSelected[i].get('idDireccion'));
+		}
+		
+		uniqueArray = arrayIdDirecciones.filter(function(item, pos) {
+		    return arrayIdDirecciones.indexOf(item) == pos;
+		});
+		
+		if(uniqueArray.length==1){
+			return false;
+		}
+		else{
+			return true;
+		}	
+	}
 	
 	var comprobarEstadoBotones = function() {
 	
@@ -913,9 +1172,11 @@
 			btnEnviar.setDisabled(true);
 		}
 		
-		if(!btnNuevaDir.disabled && !validarBotonNuevaDirHabilitado()) {
+		if(validarBotonNuevaDirHabilitado()) {
+			btnNuevaDir.setDisabled(false);
+		} else {
 			btnNuevaDir.setDisabled(true);
-		}		
+		}
 		
 		if(!btnEditar.disabled && !validarBotonEditarHabilitado()) {
 			btnEditar.setDisabled(true);
@@ -924,10 +1185,55 @@
 		if(!btnPreparar.disabled && !validarBotonPrepararHabilitado()) {
 			btnPreparar.setDisabled(true);
 		}	
+		
+		if(!btnAniadirEditPersona.disabled && !todasPersonasMarcadasIguales()) {
+			btnAniadirEditPersona.setDisabled(true);
+		}else if(btnAniadirEditPersona.disabled && todasPersonasMarcadasIguales()){
+			btnAniadirEditPersona.setDisabled(false);
+		}
+		
+		var rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
+		<%--si no esta al menos preparado, se deshabilita el botón anular --%>
+		for (var i=0; i < rowsSelected.length; i++){
+			if(rowsSelected[i].get('resultado') == 'Preparado' ||  rowsSelected[i].get('resultado') == 'Solicitado'){
+				btnCancelarEnEstPrep.setDisabled(false);
+			}else{
+				btnCancelarEnEstPrep.setDisabled(true);
+			}
+		}
+		
+		if (diferentesDirecciones()) {
+			btnEditarVerDireccion.setDisabled(true);
+		}
+	}
+	
+	var todasPersonasMarcadasIguales = function() {
+		
+		rowsSelected=gridBurofax.getSelectionModel().getSelections();
+		
+		if(rowsSelected.length > 0){
+		
+			var idCliente = rowsSelected[0].get('idCliente');
+			var todasPersonasIguales = true;
+			
+			if(idCliente != ''){
+				
+				for (var i=0; i < rowsSelected.length; i++){
+					if(rowsSelected[i].get('idCliente') == '' || rowsSelected[i].get('idCliente') != idCliente){
+						todasPersonasIguales = false;
+						break;
+					}
+				}
+			}else{
+				todasPersonasIguales = false;
+			}
+
+		}
+		
+		return todasPersonasIguales;
 	}
 	
 	var validarBotonEnviarHabilitado = function() {
-		
 		var rowsSelected=new Array(); 
 		var arrayResultado=new Array();
 		var arrayIdEnvios=new Array();
@@ -999,6 +1305,9 @@
 						return false;
 					}
 				}
+				else if(uniqueArray[0]=='Solicitado'){
+						return false;
+				}
 			}
 			else{
 				return false;
@@ -1013,6 +1322,7 @@
 	
 	var validarBotonesSeleccionUnica = function() {
 		btnPreparar.setDisabled(false);
+		btnAniadirEditPersona.setDisabled(false);
 		<%-- Si la dirección ha sido borrada y no tiene una asignada se desactiva el botón preparar --%>
 		<%-- if(gridBurofax.getSelectionModel().getSelected().get('direccion') == ''){
 			btnPreparar.setDisabled(true);
@@ -1029,8 +1339,19 @@
 		<%-- Comprobamos que se ha seleccionado un cliente --%>
 		if(gridBurofax.getSelectionModel().getSelected().get('idCliente') != ''){
 			btnNuevaDir.setDisabled(false);
+			if(!flagGestor){
+				btnEditarVerDireccion.setDisabled(false);
+			}
 		}
 		
+		<%-- Comprobamos que el burofax tiene una dirección para poder editar, si no, no se habilita la edición de dirección --%>
+		if(gridBurofax.getSelectionModel().getSelected().get('idDireccion') != ''){
+			if(!flagGestor){
+				btnEditarVerDireccion.setDisabled(false);
+			}
+		}else{
+			btnEditarVerDireccion.setDisabled(true);
+		}
 		<%--Si el resultado del envio es enviado y todavia no ha sido enviado habilitamos el boton de notificar --%>
 		if(gridBurofax.getSelectionModel().getSelected().get('idEnvio') != '' && gridBurofax.getSelectionModel().getSelected().get('fechaAcuse') == ''){
 			btnNotificar.setDisabled(false);
@@ -1038,6 +1359,11 @@
 		
 		<%-- Como se puede enviar sin estar preparado habilitamos el boton enviar--%>
 		btnEnviar.setDisabled(false);
+		
+		<%--Si hay una direccion seleccionada y no es manual no se habilita el borrar direccion y si es manual si--%>
+		if(myCboxSelModel.getCount() == 1 && gridBurofax.getSelectionModel().getSelected().get('idDireccion') != ''){
+			comprobarEsManual(gridBurofax.getSelectionModel().getSelected().get('idDireccion'));
+		}
 		
 		<%-- Si el Resultado es notificado habilitamos el boton de añadir notificacion --%>
 		if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Solicitado'){
@@ -1047,7 +1373,7 @@
 			btnNotificar.setDisabled(true);
 		}
 		<%-- Si hay un envio seleccionado y su estado es ENVIADO habilitamos el boton de descargar burofax --%>
-		if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Enviado' && myCboxSelModel.getCount() == 1){
+		if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Solicitado' && myCboxSelModel.getCount() == 1){
 			btnDescargarBurofax.setDisabled(false);
 		}
 		else{
@@ -1063,6 +1389,7 @@
 			btnPreparar.setDisabled(true);
 			btnCancelar.setDisabled(true);
 			btnNotificar.setDisabled(true);
+			btnEditarVerDireccion.setDisabled(true);
 			
 		}
 		else {
@@ -1070,7 +1397,9 @@
 				btnEnviar.setDisabled(true);
 			}
 			
-			if(!btnNuevaDir.disabled && !validarBotonNuevaDirHabilitado()) {
+			if(validarBotonNuevaDirHabilitado()) {
+				btnNuevaDir.setDisabled(false);
+			} else {
 				btnNuevaDir.setDisabled(true);
 			}
 			
@@ -1116,14 +1445,16 @@
 		}else{
 			btnBorrarDirOrigenManual.setDisabled(true);
 		}--%>
+		
 		<%--Si el burafax se encuentra en Preparado, mientras no se envíe podremos cancelarlo --%>
 		if((gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Preparado' ||  gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Solicitado') && myCboxSelModel.getCount() == 1){
 			btnCancelarEnEstPrep.setDisabled(false);
+		}else{
+			btnCancelarEnEstPrep.setDisabled(true);
 		}
 	}
 	
 	var comprobarEsManual = function(idDireccion){
-		debugger;
 			Ext.Ajax.request({
 				url: page.resolveUrl('burofax/saberOrigen')
 				,params: {idDireccion:idDireccion}
@@ -1138,13 +1469,25 @@
 							btnBorrarDirOrigenManual.setDisabled(true);
 						}else{
 							btnBorrarDirOrigenManual.setDisabled(false);	
-							var idClienteComparar = gridBurofax.getSelectionModel().getSelected().get('idCliente');
+							<%-- var idClienteComparar = gridBurofax.getSelectionModel().getSelected().get('idCliente');
 							for (var i = 0; i < gridBurofax.getStore().data.length; i++) {
 						    	var element = Ext.get(gridBurofax.getView().getRow(i));
 						   		var record = gridBurofax.getStore().getAt(i);
 						   		var tmpDireccion = record.data.idDireccion;
 						   		if(tmpDireccion == idDireccion && (idClienteComparar == null || idClienteComparar == '')){
 						   			btnBorrarDirOrigenManual.setDisabled(true);
+						   		}
+							}--%>
+							var idDireccionComparar = gridBurofax.getSelectionModel().getSelected().get('idDireccion');
+							for (var i = 0; i < gridBurofax.getStore().data.length; i++) {
+						    	var element = Ext.get(gridBurofax.getView().getRow(i));
+						   		var record = gridBurofax.getStore().getAt(i);
+						   		var tmpDireccion = record.data.idDireccion;
+						   		if(tmpDireccion == idDireccionComparar){
+						   			if(record.data.resultado == 'Solicitado' || record.data.resultado == 'Enviado'){
+						   				btnBorrarDirOrigenManual.setDisabled(true);
+						   				break;
+						   			}
 						   		}
 							}
 						}
@@ -1161,7 +1504,7 @@
 		rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
 			
 		for (var i=0; i < rowsSelected.length; i++){
-		  arrayIdClientes.push(rowsSelected[i].get('idCliente'));
+		  arrayIdClientes.push(rowsSelected[i].get('idBurofax'));
 		}
 		
 		uniqueArray = arrayIdClientes.filter(function(item, pos) {
@@ -1245,9 +1588,16 @@
 	  		return false;
 	  	}
 	}
-	
-	<sec:authentication var="user" property="principal" />
-	<c:if test="${user.entidad.descripcion eq 'CAJAMAR'}">
-   		btnNotificar.setVisible(true);
-	</c:if>
 
+var ponerVisibilidadBotonesBur = function(visibles, invisibles) {
+	for (var i=0; i < visibles.length; i++){
+		if (typeof(Ext.getCmp(visibles[i].boton)) != 'undefined') {
+			Ext.getCmp(visibles[i].boton).setVisible(true);
+		}
+	}
+	for (var i=0; i < invisibles.length; i++){
+		if (typeof(Ext.getCmp(visibles[i].boton)) != 'undefined') {
+			Ext.getCmp(invisibles[i].boton).setVisible(false);
+		}
+	}
+}	

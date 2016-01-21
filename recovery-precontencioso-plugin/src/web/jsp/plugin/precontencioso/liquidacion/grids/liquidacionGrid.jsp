@@ -8,6 +8,7 @@
 
 var btnSolicitar = new Ext.Button({
 	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.solicitar" text="**Solicitar" />',
+	id : 'btnSolicitar',
 	iconCls: 'icon_mas',
 	cls: 'x-btn-text-icon',
 	handler: function() {
@@ -68,6 +69,7 @@ var abrirPantallaPlantillasLiquidacion = function() {
 
 var btnEditarValores = new Ext.Button({
 	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.editar" text="**Editar valores" />',
+	id : 'btnEditarValores',
 	iconCls: 'icon_edit',
 	cls: 'x-btn-text-icon',
 	handler: function() {
@@ -99,14 +101,17 @@ var btnEditarValores = new Ext.Button({
 
 var btnConfirmar = new Ext.Button({
 	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.confimar" text="**Confirmar" />',
+	id : 'btnConfirmar',
 	iconCls: 'x-tbar-page-next',
 	cls: 'x-btn-text-icon',
 	handler: function() {
+		myMask.show();
 		Ext.Ajax.request({
 			url: page.resolveUrl('liquidacion/confirmar'),
 			params: {idLiquidacion: idLiquidacionSeleccionada()},
 			method: 'POST',
 			success: function ( result, request ) {
+				myMask.hide();
 				refrescarLiquidacionesGrid();
 			}
 		});
@@ -115,6 +120,7 @@ var btnConfirmar = new Ext.Button({
 
 var btnVisar = new Ext.Button({
 	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.visar" text="**Visar" />',
+	id : 'btnVisar',
 	iconCls: 'icon_contratos_pase',
 	cls: 'x-btn-text-icon',
 	handler: function() {
@@ -139,14 +145,17 @@ var btnVisar = new Ext.Button({
 
 var btnDescartar = new Ext.Button({
 	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.descartar" text="**Descartar" />',
+	id : 'btnDescartar',
 	iconCls: 'icon_menos',
 	cls: 'x-btn-text-icon',
 	handler: function() {
+		myMask.show();
 		Ext.Ajax.request({
 			url: page.resolveUrl('liquidacion/descartar'),
 			params: {idLiquidacion: idLiquidacionSeleccionada()},
 			method: 'POST',
 			success: function ( result, request ) {
+				myMask.hide();
 				refrescarLiquidacionesGrid();
 			}
 		});
@@ -155,6 +164,7 @@ var btnDescartar = new Ext.Button({
 
 var btnGenerar = new Ext.Button({
 	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.generar" text="**Generar" />',
+	id : 'btnGenerar',
 	hidden: true,
 	iconCls: 'icon_pdf',
 	cls: 'x-btn-text-icon',
@@ -168,6 +178,7 @@ var btnGenerar = new Ext.Button({
 </sec:authorize>
 
 <%-- Grid --%>
+var myMask = new Ext.LoadMask(Ext.getBody(), {msg:"Cargando..."});
 
 var liquidacionesRecord = Ext.data.Record.create([
 	{name: 'id'},
@@ -230,6 +241,7 @@ var cmLiquidacion = new Ext.grid.ColumnModel([
 
 var botonRefresh = new Ext.Button({
 	text : 'Refresh'
+	,id : 'botonRefreshLiq'
 	,iconCls : 'icon_refresh'
 	,handler:function(){
 		refrescarLiquidacionesGrid();
@@ -366,7 +378,8 @@ var actualizarBotonesLiquidacion = function() {
 <%-- Utils --%>
 
 
-
+<%-- Sustituido por gestion de visibilidad a base de projectContext --%>
+<%--
 var ocultarBtnSolicitar = function(){
 	Ext.Ajax.request({
 		url : page.resolveUrl('liquidacion/getOcultarBotonSolicitar'),
@@ -391,13 +404,18 @@ var ocultarBtnSolicitar = function(){
 		}
 	});
 }
+--%>
+<%-- Acciones a tomar cuando la entidad tiene configurado que no soporta solicitar las liquidaciones --%>
+<%--
+ocultarBtnSolicitar();
+--%>
 
+<%-- Sustituido por gestion de visibilidad a base de projectContext --%>
+<%--
 if('${appProperties.precontenciosoVisadoActivo}' != 'true') {
 	btnVisar.hide();
 }
-
-<%-- Acciones a tomar cuando la entidad tiene configurado que no soporta solicitar las liquidaciones --%>
-ocultarBtnSolicitar();
+--%>
 
 var comprobarDatosCalculoRellenos = function() {
 	var liquidacion = gridLiquidaciones.getSelectionModel().getSelected();
@@ -420,3 +438,27 @@ var idLiquidacionSeleccionada = function() {
 var refrescarLiquidacionesGrid = function() {
 	storeLiquidaciones.webflow({idProcedimientoPCO: data.precontencioso.id});
 }
+
+var ponerVisibilidadBotonesLiq = function(visibles, invisibles) {
+	for (var i=0; i < visibles.length; i++){
+		if (typeof(Ext.getCmp(visibles[i].boton)) != 'undefined') {
+			Ext.getCmp(visibles[i].boton).setVisible(true);
+		}
+	}
+	for (var i=0; i < invisibles.length; i++){
+		if (typeof(Ext.getCmp(visibles[i].boton)) != 'undefined') {
+			Ext.getCmp(invisibles[i].boton).setVisible(false);
+		}
+	}
+}
+
+<%-- Visibilidad de las columnas dependiendo de la del boton Solicitar --%>
+var ocultarColumnasGrid = function() {
+	if (!btnSolicitar.isVisible()) {
+		var indexFechaSolicitud = gridLiquidaciones.getColumnModel().findColumnIndex('fechaSolicitud');
+		var indexFechaRecepcion = gridLiquidaciones.getColumnModel().findColumnIndex('fechaRecepcion');
+		gridLiquidaciones.getColumnModel().setHidden(indexFechaSolicitud, true);
+		gridLiquidaciones.getColumnModel().setHidden(indexFechaRecepcion, true);
+	}
+}
+

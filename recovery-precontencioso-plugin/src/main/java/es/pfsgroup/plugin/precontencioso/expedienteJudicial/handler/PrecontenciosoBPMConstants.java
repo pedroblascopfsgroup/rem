@@ -47,4 +47,11 @@ public class PrecontenciosoBPMConstants {
 	public static final String PCO_AsignarGestorLiquidacion = "PCO_AsignarGestorLiquidacion";
 	public static final String PCO_RevisarExpedienteAsignarLetrado = "PCO_RevisarExpedienteAsignarLetrado";	
 	
+	//Particulares de BANKIA
+	public static final String P421_DecImporteConcursoAutomatica = "P421_DecImporteConcursoAutomatica";
+	public static final String P421_AsignarLetradoConcurso = "P421_AsignarLetradoConcurso";
+	public static final String P421_Turnado = "P421_Turnado";
+	public static final String P421_RevisarTurnadoLetradoConcurso = "P421_RevisarTurnadoLetradoConcurso";
+	public static final String P421_RegistrarAceptacionConcurso = "P421_RegistrarAceptacionConcurso";
+	public static final String P421_RegistrarAceptacionConcursoDecision = "P421_RegistrarAceptacionConcursoDecision";
 }

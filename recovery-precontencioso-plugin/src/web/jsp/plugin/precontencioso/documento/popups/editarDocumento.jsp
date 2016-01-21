@@ -14,6 +14,7 @@
 
 	var config = {width: 250, labelStyle:"width:150px;font-weight:bolder"};
 	var modoConsulta = false;
+	var labelStyle='width:100';
 	
 	var btnCancelar= new Ext.Button({
 		text : '<s:message code="app.cancelar" text="**Cancelar" />'
@@ -25,12 +26,15 @@
 	
 	var handlerGuardar = function() {
 		var p = getParametros();
+		var mask=new Ext.LoadMask(panel.body, {msg:'<s:message code="fwk.ui.form.cargando" text="**Guardando..."/>'});
+		mask.show();
     	Ext.Ajax.request({
 				url : page.resolveUrl('documentopco/editarDocumento'), 
 				params : p ,
 				method: 'POST',
 				success: function ( result, request ) {
 					page.fireEvent(app.event.DONE);
+					mask.hide();
 				}
 		});
 	}
@@ -96,6 +100,7 @@
 	 	parametros.numRegistro = numRegistro.getValue();
 	 	parametros.plaza = plaza.getValue();
 	 	parametros.idufir = idufir.getValue();
+	 	parametros.provinciaNotario = comboProvinciaNotario.getValue();
 	 	
 	 	return parametros;
 	 }	
@@ -171,7 +176,13 @@
 		name : 'idufir'
 		,value : '<s:message text="${dtoDoc.idufir}" javaScriptEscape="true" />'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.editarDocumento.idufir" text="**IDUFIR" />'
-	});  	
+	});  
+	
+	<pfsforms:ddCombo name="comboProvinciaNotario"
+		labelKey="precontencioso.grid.documento.incluirDocumento.localidadNotario" 
+ 		label="**Localidad Notario" value="${dtoDoc.provinciaNotario}" dd="${listaProvincias}" 
+		propertyCodigo="codigo" propertyDescripcion="descripcion" />
+	comboProvinciaNotario.labelStyle=labelStyle;	
 
 
 	var panelEdicion = new Ext.form.FieldSet({
@@ -183,7 +194,7 @@
    	    ,autoWidth : true
 		,defaults : {xtype : 'fieldset', border:false , cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
 		,items:[{items: [ notario, asiento, finca, numFinca, numRegistro, plaza]}
-				,{items: [ protocolo, fechaEscritura, tomo, libro, folio, idufir]}
+				,{items: [ comboProvinciaNotario, protocolo, fechaEscritura, tomo, libro, folio, idufir]}
 		]
 	});	
 	

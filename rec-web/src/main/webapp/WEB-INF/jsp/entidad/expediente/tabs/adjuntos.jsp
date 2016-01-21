@@ -75,6 +75,7 @@
 		,{name : 'descripcion'}
 		,{name : 'fechaCrear'}
 		,{name : 'puedeBorrar'}
+		,{name : 'tipoFichero'}
 	]);
 
 	var AdjuntosPersonas = Ext.data.Record.create([
@@ -87,6 +88,7 @@
 		,{name : 'contentType'}
 		,{name : 'descripcion'}
 		,{name : 'fechaCrear'}
+		,{name : 'tipoFichero'}
 	]);
 
 	var AdjuntosContratos = Ext.data.Record.create([
@@ -99,6 +101,7 @@
 		,{name : 'contentType'}
 		,{name : 'descripcion'}
 		,{name : 'fechaCrear'}
+		,{name : 'tipoFichero'}
 	]);
 
 	var store = page.getStore({
@@ -206,7 +209,7 @@
 					,height:25
 		        }
 		        ,items: [
-		        	comboTipoDoc
+		        	comboTipoFichero
 					,{
 			            xtype: 'fileuploadfield'
 			            ,emptyText: '<s:message code="fichero.upload.fileLabel.error" text="**Debe seleccionar un fichero" />'
@@ -543,6 +546,7 @@
 		,{header : '<s:message code="asuntos.adjuntos.tamanyo" text="**Tama&ntilde;o" />', dataIndex : 'length', renderer : app.format.fileSizeRenderer, align:'right'}
 		,{header : '<s:message code="plugin.mejoras.adjuntos.tipo" text="**Tipo" />', dataIndex : 'contentType'}
 		,{header : '<s:message code="plugin.mejoras.asuntos.adjuntos.fechaSubida" text="**Fecha de subida" />', dataIndex : 'fechaCrear'}
+		,{header : '<s:message code="plugin.mejoras.adjuntos.tipoFichero" text="**Tipo Documento" />', dataIndex : 'tipoFichero'}
 	]);
 
 	var cmPersonas = new Ext.grid.ColumnModel([
@@ -552,6 +556,7 @@
 		,{header : '<s:message code="asuntos.adjuntos.tamanyo" text="**Tama&ntilde;o" />', dataIndex : 'length', renderer : app.format.fileSizeRenderer, align:'right'}
 		,{header : '<s:message code="plugin.mejoras.adjuntos.tipo" text="**Tipo" />', dataIndex : 'contentType'}
 		,{header : '<s:message code="plugin.mejoras.asuntos.adjuntos.fechaSubida" text="**Fecha de subida" />', dataIndex : 'fechaCrear'}
+		,{header : '<s:message code="plugin.mejoras.adjuntos.tipoFichero" text="**Tipo Documento" />', dataIndex : 'tipoFichero'}
 	]);
 
 	var cmContratos = new Ext.grid.ColumnModel([
@@ -561,6 +566,7 @@
 		,{header : '<s:message code="asuntos.adjuntos.tamanyo" text="**Tama&ntilde;o" />', dataIndex : 'length', renderer : app.format.fileSizeRenderer, align:'right'}
 		,{header : '<s:message code="plugin.mejoras.adjuntos.tipo" text="**Tipo" />', dataIndex : 'contentType'}
 		,{header : '<s:message code="plugin.mejoras.asuntos.adjuntos.fechaSubida" text="**Fecha de subida" />', dataIndex : 'fechaCrear'}
+		,{header : '<s:message code="plugin.mejoras.adjuntos.tipoFichero" text="**Tipo Documento" />', dataIndex : 'tipoFichero'}
 	]);
 
 	var editarDescripcionAdjuntoAsunto = new  Ext.Button({

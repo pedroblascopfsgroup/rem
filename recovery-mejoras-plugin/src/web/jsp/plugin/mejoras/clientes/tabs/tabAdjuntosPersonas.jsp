@@ -32,6 +32,7 @@
 			,{name : 'contentType'}
 			,{name : 'descripcion'}
 			,{name : 'fechaCrear'}
+			,{name : 'tipoFichero'}
 		]);
 	
 		var store = page.getStore({
@@ -232,6 +233,7 @@
 			,{header : '<s:message code="adjuntos.tamanyo" text="**Tama&ntilde;o" />', dataIndex : 'length', renderer : app.format.fileSizeRenderer}
 			,{header : '<s:message code="adjuntos.tipo" text="**Fecha" />', dataIndex : 'contentType'}
 			,{header : '<s:message code="plugin.mejoras.asuntos.adjuntos.fechaSubida" text="**Fecha de subida" />', dataIndex : 'fechaCrear'}
+			,{header : '<s:message code="plugin.mejoras.asuntos.adjuntos.tipoFichero" text="**Tipo Documento" />', dataIndex : 'tipoFichero'}
 		]);
 	
 		var editarDescripcionAdjuntoPersona = new  Ext.Button({

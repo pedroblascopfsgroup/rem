@@ -26,6 +26,7 @@ import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.dao.PersonaDao;
@@ -138,6 +139,20 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
     @Override
 	public List<DocumentoPCO> getDocumentosPorIdProcedimientoPCO(Long idProcedimientoPCO){
     	List<DocumentoPCO> documentos = documentoPCODao.getDocumentosPorIdProcedimientoPCO(idProcedimientoPCO);
+
+		return documentos;
+		
+	};
+	
+    /**
+	 * Obtiene los documentos de un procedimientoPCO No descartados
+	 * 
+	 * @param idProcPCO
+	 * @return
+	 */
+    @Override
+	public List<DocumentoPCO> getDocumentosPorIdProcedimientoPCONoDescartados(Long idProcedimientoPCO){
+    	List<DocumentoPCO> documentos = documentoPCODao.getDocumentosPorIdProcedimientoPCONoDescartados(idProcedimientoPCO);
 
 		return documentos;
 		
@@ -404,6 +419,11 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		documento.setNroRegistro(docDto.getNumRegistro());
 		documento.setPlaza(docDto.getPlaza());
 		documento.setIdufir(docDto.getIdufir());
+		if(!Checks.esNulo(docDto.getProvinciaNotario())){
+			DDProvincia provincia = genericDao.get(
+					DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", docDto.getProvinciaNotario()));
+			documento.setProvinciaNotario(provincia);
+		}
 
 		documentoPCODao.saveOrUpdate(documento);
 	}
@@ -476,6 +496,17 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		List<DDUnidadGestionPCO> tiposUG = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionarioSinBorrado(DDUnidadGestionPCO.class);
 		
 		return tiposUG;
+	}
+	
+	/** 
+	 * Obtiene la lista de Provincias
+	 * 
+	 */
+	@SuppressWarnings("unchecked")
+	public List<DDProvincia> getProvincias(){
+		List<DDProvincia> listaProvincias = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionarioSinBorrado(DDProvincia.class);
+		
+		return listaProvincias;
 	}	
 	
 	/**
@@ -550,6 +581,11 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 				DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", docDto.getTipoDocumento()));
 		documento.setTipoDocumento(tipoDocumento);
 		
+		if(!Checks.esNulo(docDto.getProvinciaNotario())){
+			DDProvincia provincia = genericDao.get(
+					DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", docDto.getProvinciaNotario()));
+			documento.setProvinciaNotario(provincia);
+		}
 		
 		DDUnidadGestionPCO unidadGestion = genericDao.get(
 				DDUnidadGestionPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", docDto.getTipoUG())); 
@@ -779,10 +815,23 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	public DocumentoPCO getDocumentoPCOById(Long idDocPCO){
 		return documentoPCODao.get(idDocPCO);
 	}
+
 	
 	@Override
 	public List<GestorDespacho> getGestorDespachoByUsuIdAndTipoDespacho(Long usuId, String tipoDespachoExterno) 
 	{	
 		return gestorDespachoDao.getGestorDespachoByUsuIdAndTipoDespacho(usuId, tipoDespachoExterno);
+	}
+
+	@Override
+	public Boolean esTipoGestorConAcceso(EXTDDTipoGestor tipoGestor) {
+		List<DDTipoActorPCO> listActoresConAcceso = documentoPCODao.getTipoActoresConAcceso();
+		for (DDTipoActorPCO tipoActor : listActoresConAcceso) {
+			if (tipoActor.getCodigo().equals(tipoGestor.getCodigo())) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

@@ -4,6 +4,7 @@ import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.bo.Executor;
+import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
@@ -67,9 +68,24 @@ public class PrecontenciosoUserDecisionActionHandler extends PROBaseActionHandle
 	        //executionContext.getToken().signal();
 		} else if (PrecontenciosoBPMConstants.PCO_PreTurnado.equals(getNombreNodo(executionContext)) 
 				&& PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(precontenciosoContext.getRecovery())) {
+			String valorDecision = pcoManager.dameTipoTurnado(prc.getId());
+			executionContext.setVariable(PrecontenciosoBPMConstants.PCO_PreTurnado + "Decision",valorDecision);
 			executor.execute("plugin.precontencioso.inicializarPco", prc);
-			turnadoDespachosManager.turnar(prc.getAsunto().getId(), usuarioManager.getUsuarioLogado().getUsername(), EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO);
+			if(!DDTiposAsunto.CONCURSAL.equals(prc.getAsunto().getTipoAsunto().getCodigo())) {
+				turnadoDespachosManager.turnar(prc.getAsunto().getId(), usuarioManager.getUsuarioLogado().getUsername(), EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO);				
+			}
 		} else if (PrecontenciosoBPMConstants.PCO_PostTurnado.equals(getNombreNodo(executionContext))
+				&& PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(precontenciosoContext.getRecovery())) {
+			turnadoDespachosManager.turnar(prc.getAsunto().getId(), usuarioManager.getUsuarioLogado().getUsername(), EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO);
+		}else if (PrecontenciosoBPMConstants.P421_DecImporteConcursoAutomatica.equals(getNombreNodo(executionContext))
+				&& PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(precontenciosoContext.getRecovery())) {
+			String valorDecision;
+			if(pcoManager.getEstadoLimiteImporteConcurso(prc.getId()).equals("menor"))
+				valorDecision = "menor";
+			else
+				valorDecision="mayor";
+			executionContext.setVariable(PrecontenciosoBPMConstants.P421_DecImporteConcursoAutomatica + "Decision",valorDecision);
+		}else if (PrecontenciosoBPMConstants.P421_Turnado.equals(getNombreNodo(executionContext))
 				&& PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(precontenciosoContext.getRecovery())) {
 			turnadoDespachosManager.turnar(prc.getAsunto().getId(), usuarioManager.getUsuarioLogado().getUsername(), EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO);
 		}

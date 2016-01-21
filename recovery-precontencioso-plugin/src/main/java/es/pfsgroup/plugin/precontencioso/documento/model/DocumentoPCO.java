@@ -28,6 +28,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDEstadoLiquidacionPCO;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
@@ -107,13 +108,9 @@ public class DocumentoPCO implements Serializable, Auditable {
 	@Column(name = "PCO_DOC_PDD_PLAZA")
 	private String plaza;
 		
-	@Column(name = "PCO_DOC_PDD_IDUFIR")
-	private String idufir;
-		
 	@Column(name = "PCO_DOC_PDD_OBSERVACIONES")
 	private String observaciones;
 	
-	@OrderBy(clause = "PCO_DOC_DSO_FECHA_SOLICITUD desc")
 	@OneToMany(mappedBy = "documento", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<SolicitudDocumentoPCO> solicitudes;
@@ -123,6 +120,14 @@ public class DocumentoPCO implements Serializable, Auditable {
 	
 	@Column(name = "PCO_DOC_PDD_EJECUTIVO")
 	private Long ejecutivo;
+	
+	@Column(name = "PCO_DOC_PDD_IDUFIR")
+	private String idufir;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_PRV_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)	
+	private DDProvincia provinciaNotario;
 	
 	@Version
 	private Integer version;
@@ -348,5 +353,12 @@ public class DocumentoPCO implements Serializable, Auditable {
 		this.ejecutivo = ejecutivo;
 	}
 
+	public DDProvincia getProvinciaNotario() {
+		return provinciaNotario;
+	}
+
+	public void setProvinciaNotario(DDProvincia provinciaNotario) {
+		this.provinciaNotario = provinciaNotario;
+	}
 
 }

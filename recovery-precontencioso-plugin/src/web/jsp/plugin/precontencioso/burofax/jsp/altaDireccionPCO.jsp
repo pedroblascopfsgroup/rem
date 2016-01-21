@@ -13,6 +13,7 @@
 	var labelStyle='width:100px';
 	var idCliente = "${idCliente}";
 	var idProcedimiento = "${idProcedimiento}";
+	var tienePersona = '${tienePersona}';
 	//var idContrato = "${idContrato}";	
 	
 
@@ -32,10 +33,13 @@
 			localidad.setDisabled(true);
 		}
 	})
-	
-	<pfsforms:textfield name="codigoPostal"
-			labelKey="rec-web.direccion.form.codigoPostal" label="**Código Postal"
-			value="" obligatory="true" width="100" />
+			
+	<pfsforms:numberfield name="codigoPostal" 
+		labelKey="rec-web.direccion.form.codigoPostal" 
+		label="**Código Postal" 
+		value="" 
+		allowDecimals="false" 
+		allowNegative="false"/>
 		
 	var listadoLocalidades = Ext.data.Record.create([
 		 {name:'id'}
@@ -141,7 +145,7 @@
 						url : page.resolveUrl('burofax/guardaDireccion'), 
 						params : {idProcedimiento:idProcedimiento,idCliente:idCliente,provincia:provincia.getValue(),codigoPostal:codigoPostal.getValue(),localidad:localidad.getValue(),municipio:municipio.getValue(),tipoVia:tipoVia.getValue(),
 								domicilio:domicilio.getValue(),numero:numero.getValue(),portal:portal.getValue(),piso:piso.getValue(),escalera:escalera.getValue(),puerta:puerta.getValue(),
-								origen:origen.getValue()},
+								origen:origen.getValue(),tienePersona:tienePersona},
 						method: 'POST',
 						success: function ( result, request ) {
 							page.fireEvent(app.event.DONE);

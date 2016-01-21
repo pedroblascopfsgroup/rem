@@ -345,19 +345,8 @@ public class SubastanInstMasivasUtils {
 		
 		Subasta subasta = obtenerSubasta(idSubasta);
 		
-		
-		String idLoteAnterior = null; 
-		List<Long> numerolistaLotes = new ArrayList<Long>();
-		
-		for (SubastaInstMasivasLoteDto subastaInstMasivasLoteDto : listaLotes){
-			if(!subastaInstMasivasLoteDto.getIdLote().toString().equals(idLoteAnterior)){
-				numerolistaLotes.add(subastaInstMasivasLoteDto.getIdLote());
-				idLoteAnterior = subastaInstMasivasLoteDto.getIdLote().toString();
-			}
-		}
-		
 		//Comprobar número de lotes de la subasta
-		String errorNumLotes = validarNumeroLotes(subasta, numerolistaLotes.size());
+		String errorNumLotes = validarNumeroLotes(subasta, listaLotes.size());
 		if (!Checks.esNulo(errorNumLotes)) {
 			erroresValidacion.add(errorNumLotes);
 		}

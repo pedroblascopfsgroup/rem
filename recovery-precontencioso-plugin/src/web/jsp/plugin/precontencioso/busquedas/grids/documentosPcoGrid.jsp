@@ -76,9 +76,10 @@ var gridDocumentoPco = app.crearGrid(documentoPcoStore, documentoPcoCm, {
 	bbar : [pagingBarDoc],
 	height: 250,
 	collapsible: true,
-	collapsed: true,
+	collapsed: false,
 	titleCollapse: true,
 	autoWidth: true,
+	autoHeight: true,
 	style:'padding-bottom:10px; padding-right:10px;'
 });
 

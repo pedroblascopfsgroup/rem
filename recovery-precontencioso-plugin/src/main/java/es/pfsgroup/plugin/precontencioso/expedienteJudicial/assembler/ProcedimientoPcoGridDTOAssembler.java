@@ -143,6 +143,8 @@ public class ProcedimientoPcoGridDTOAssembler {
 			burofaxGridDto.setFechaSolicitud((Date) burofax.get("fechaSolicitud"));
 			burofaxGridDto.setFechaEnvio((Date) burofax.get("fechaEnvio"));
 			burofaxGridDto.setFechaAcuse((Date) burofax.get("fechaAcuse"));
+			burofaxGridDto.setRegManual(Boolean.valueOf(ObjectUtils.toString("esPersonaManual")));
+			burofaxGridDto.setRefExternaEnvio(ObjectUtils.toString(burofax.get("refExternaEnvio")));
 			burofaxGridDto.setResultado(Boolean.valueOf(ObjectUtils.toString(burofax.get("resultado"))));
 
 			proPcoGridDto.setBurofax(burofaxGridDto);

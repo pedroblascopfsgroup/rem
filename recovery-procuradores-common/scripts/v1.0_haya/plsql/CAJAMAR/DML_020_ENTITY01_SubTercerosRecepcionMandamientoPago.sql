@@ -57,8 +57,8 @@ DECLARE
     V_INPUT T_ARRAY_INPUT := T_ARRAY_INPUT(
     	T_INPUT('idAsunto','idAsunto'), -- Está siempre en el factoria, no eliminar.
     	T_INPUT('d_numAutos','numAutos'), -- Está siempre en el factoria, no eliminar.
-    	T_INPUT('d_fechaRecepcion','fecha recepción'),
-    	T_INPUT('d_fechaEnvio','fecha envío'),
+    	T_INPUT('d_fechaRecepcion','fecha'),
+    	T_INPUT('d_fechaEnvio','fechaEnvio'),
     	T_INPUT('d_importe','importe'),
     	T_INPUT('d_observaciones','observaciones') -- Está siempre en el factoria, no eliminar.
     );

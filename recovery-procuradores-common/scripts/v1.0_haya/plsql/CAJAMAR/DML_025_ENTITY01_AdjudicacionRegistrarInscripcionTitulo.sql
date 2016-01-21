@@ -41,24 +41,25 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			'224';
-    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_TR_ADJ_DEC_ADJ';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Decreto adjudicacion';
+    V_TR_ID VARCHAR2(16 CHAR):= 			''; --JODO
+    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_TR_ADJ_REG_INS_TIT';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Registrar inscripción del título';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'ADJ';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     
-    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_TR_ADJ_DEC_ADJ';
+    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_TR_ADJ_REG_INS_TIT';
     
     V_TPO_CODIGO VARCHAR2(20 CHAR):=		'H005';
-    V_NODO VARCHAR2(50 CHAR):=				'H005_notificacionDecretoAdjudicacionAEntidad';
+    V_NODO VARCHAR2(50 CHAR):=				'H005_RegistrarInscripcionDelTitulo';
     
     TYPE T_INPUT IS TABLE OF VARCHAR2(50);
     TYPE T_ARRAY_INPUT IS TABLE OF T_INPUT;
     V_INPUT T_ARRAY_INPUT := T_ARRAY_INPUT(
     	T_INPUT('idAsunto','idAsunto'), -- Está siempre en el factoria, no eliminar.
     	T_INPUT('d_numAutos','numAutos'), -- Está siempre en el factoria, no eliminar.
-    	T_INPUT('d_fecha','fecha'),
-    	T_INPUT('d_comboSubsanacion','comboSubsanacion'),
+    	T_INPUT('d_comboSituacionTitulo','combo situación título'),
+    	T_INPUT('d_fechaInscripcion','fecha inscripción'),
+    	T_INPUT('d_fechaEnvioDecretoAdicion','fecha envío decreto adición'),
     	T_INPUT('d_observaciones','observaciones') -- Está siempre en el factoria, no eliminar.
     );
     V_TMP_T_INPUT T_INPUT;

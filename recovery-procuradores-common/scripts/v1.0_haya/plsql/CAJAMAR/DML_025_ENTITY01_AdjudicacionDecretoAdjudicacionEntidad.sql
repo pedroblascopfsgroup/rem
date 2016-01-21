@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=MITCDD-2068
 --## PRODUCTO=SI
 --##
---## Finalidad: Realiza las inserciones de la resolución Escrito sellado solicitando adjudicacion para la tarea H005_SolicitudDecretoAdjudicacion.
+--## Finalidad: Realiza las inserciones de la resolución Decreto adjudicacion para la tarea H005_notificacionDecretoAdjudicacionAEntidad.
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
@@ -41,23 +41,27 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			'223';
-    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_TR_ADJ_SOL_ESC';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Solicitud decreto adjudicación';
+    V_TR_ID VARCHAR2(16 CHAR):= 			''; --JODO
+    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_TR_ADJ_DEC_ADJ_ENT';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Decreto adjudicación';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'ADJ';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     
-    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_TR_ADJ_SOL_ESC';
+    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_TR_ADJ_DEC_ADJ_ENT';
     
     V_TPO_CODIGO VARCHAR2(20 CHAR):=		'H005';
-    V_NODO VARCHAR2(50 CHAR):=				'H005_SolicitudDecretoAdjudicacion';
+    V_NODO VARCHAR2(50 CHAR):=				'H005_notificacionDecretoAdjudicacionAEntidad';
     
     TYPE T_INPUT IS TABLE OF VARCHAR2(50);
     TYPE T_ARRAY_INPUT IS TABLE OF T_INPUT;
     V_INPUT T_ARRAY_INPUT := T_ARRAY_INPUT(
     	T_INPUT('idAsunto','idAsunto'), -- Está siempre en el factoria, no eliminar.
     	T_INPUT('d_numAutos','numAutos'), -- Está siempre en el factoria, no eliminar.
-    	T_INPUT('d_fechaSolicitud','fechaSolicitud'),
+    	T_INPUT('d_fechaNotificacion','fecha notificación'),
+    	T_INPUT('d_fechaResolucion','fecha resolución'),
+    	T_INPUT('d_comboSubsanacion','combo subsanacion'),
+    	T_INPUT('d_comboComunicacion','combo comunicacion'),
+    	T_INPUT('d_fechaComunicacion','fecha comunicacion'),
     	T_INPUT('d_observaciones','observaciones') -- Está siempre en el factoria, no eliminar.
     );
     V_TMP_T_INPUT T_INPUT;

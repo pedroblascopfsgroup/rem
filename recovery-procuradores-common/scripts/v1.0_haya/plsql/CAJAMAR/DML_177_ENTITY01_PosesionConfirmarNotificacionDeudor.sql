@@ -41,7 +41,7 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			''; --JODO
+    V_TR_ID VARCHAR2(16 CHAR):= 			'381';
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_POS_CON_DEU';
     V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Notificación deudor subrogación contrato alquiler';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'POS';

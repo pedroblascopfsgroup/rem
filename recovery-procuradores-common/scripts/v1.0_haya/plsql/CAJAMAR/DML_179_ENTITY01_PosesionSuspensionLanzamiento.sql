@@ -41,7 +41,7 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			''; --JODO
+    V_TR_ID VARCHAR2(16 CHAR):= 			'382';
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_POS_SUS_LAN';
     V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Suspensión lanzamiento';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'POS';
@@ -57,8 +57,7 @@ DECLARE
     V_INPUT T_ARRAY_INPUT := T_ARRAY_INPUT(
     	T_INPUT('idAsunto','idAsunto'), -- Está siempre en el factoria, no eliminar.
     	T_INPUT('d_numAutos','numAutos'), -- Está siempre en el factoria, no eliminar.
-        T_INPUT('d_fecha','fecha'),
-        T_INPUT('d_comboFuerzaPublica','comboFuerzaPublica'),
+        T_INPUT('d_fechaParalizacion','fechaParalizacion'),
     	T_INPUT('d_observaciones','observaciones') -- Está siempre en el factoria, no eliminar.
     );
     V_TMP_T_INPUT T_INPUT;

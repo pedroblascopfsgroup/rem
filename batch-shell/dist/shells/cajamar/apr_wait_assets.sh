@@ -1,9 +1,13 @@
 #!/bin/bash
  
-MAX_WAITING_MINUTES=10
 ficheros=BIENES,BIENCNT,BIENPER
 
-mascara='_'$ENTIDAD'_'????????
+if [ -z "$1" ]; then
+    echo "$(basename $0) Error: parámetro de entrada YYYYMMDD no definido."
+    exit 1
+fi
+
+mascara='_'$ENTIDAD'_'$1
 extensionSem=".sem"
 extensionZip=".zip"
 

@@ -1,11 +1,20 @@
 #!/bin/bash
  
-MAX_WAITING_MINUTES=10
+
 ficheros=OFICINAS,ZONAS
 
+if [ -z ${DIR_DESTINO} ]; then
+    echo "$(basename $0) Error: DIR_DESTINO no definido. Compruebe invocación previa a setBatchEnv.sh"
+    exit 1
+fi
 rm -f $DIR_DESTINO*
 
-mascara='_'$ENTIDAD'_'????????
+if [ -z "$1" ]; then
+    echo "$(basename $0) Error: parámetro de entrada YYYYMMDD no definido."
+    exit 1
+fi
+
+mascara='_'$ENTIDAD'_'$1
 extensionSem=".sem"
 extensionZip=".zip"
 

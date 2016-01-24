@@ -1,9 +1,13 @@
 #!/bin/bash
 
-MAX_WAITING_MINUTES=10
 ficheros=PCR
 
-mascara='-'$ENTIDAD'-'????????
+if [ -z "$1" ]; then
+    echo "$(basename $0) Error: parámetro de entrada YYYYMMDD no definido."
+    exit 1
+fi
+
+mascara='-'$ENTIDAD'-'$1
 extensionZip=".zip"
 
 arrayFicheros=$ficheros

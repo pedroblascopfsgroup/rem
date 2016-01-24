@@ -23,4 +23,4 @@ export DIR_DESTINO=/recovery/batch-server/control/etl/input/
 export DIR_BACKUP=/recovery/batch-server/control/etl/backup/
 export DIR_HRE_OUTPUT=/recovery/batch-server/control/etl/output/aprov-haya/
 export DIR_BASE_ETL=/recovery/batch-server/programas/etl
-export MAX_WAITING_MINUTES=0
+export MAX_WAITING_MINUTES=10

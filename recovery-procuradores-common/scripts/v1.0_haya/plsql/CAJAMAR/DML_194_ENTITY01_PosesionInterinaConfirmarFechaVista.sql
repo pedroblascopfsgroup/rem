@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=JORGE MARTIN
---## FECHA_CREACION=20160118
+--## AUTOR=ALBERTO SOLER
+--## FECHA_CREACION=20150125
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=PRODUCTO-585
 --## PRODUCTO=NO
 --##
---## Finalidad: Realiza las inserciones de la resolución Registrar auto despachando ejecución para la tarea H016_registrarAutoEjecucion.
+--## Finalidad: Realiza las inserciones de la resolución para la tarea HC105_ConfirmaFechaVista.
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
@@ -41,23 +41,23 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			'310';
-    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_AUT_DEJ_PCM';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Auto despachando ejecución';
-    V_TJ_CODIGO VARCHAR2(20 CHAR):=			'PCM';
+    V_TR_ID VARCHAR2(16 CHAR):= 			'';--JODO
+    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_POI_CON_FEC_VIS';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Señalamiento de vista';
+    V_TJ_CODIGO VARCHAR2(20 CHAR):=			'POI';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     
-    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_AUT_DEJ_PCM';
+    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_POI_CON_FEC_VIS';
     
-    V_TPO_CODIGO VARCHAR2(20 CHAR):=		'H016';
-    V_NODO VARCHAR2(50 CHAR):=				'H016_registrarAutoEjecucion';
+    V_TPO_CODIGO VARCHAR2(20 CHAR):=		'HC105';
+    V_NODO VARCHAR2(50 CHAR):=				'HC105_ConfirmaFechaVista';
     
     TYPE T_INPUT IS TABLE OF VARCHAR2(50);
     TYPE T_ARRAY_INPUT IS TABLE OF T_INPUT;
     V_INPUT T_ARRAY_INPUT := T_ARRAY_INPUT(
     	T_INPUT('idAsunto','idAsunto'), -- Está siempre en el factoria, no eliminar.
     	T_INPUT('d_numAutos','numAutos'), -- Está siempre en el factoria, no eliminar.
-    	T_INPUT('d_fecha','fecha'),
+        T_INPUT('d_fecha','fecha'),
     	T_INPUT('d_observaciones','observaciones') -- Está siempre en el factoria, no eliminar.
     );
     V_TMP_T_INPUT T_INPUT;

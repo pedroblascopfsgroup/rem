@@ -42,12 +42,12 @@ DECLARE
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
     V_TR_ID VARCHAR2(16 CHAR):= 			'';--JODO
-    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_REG_CES';--JODO
+    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_REG_ACT_CES';
     V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Acta de cesión';
-    V_TJ_CODIGO VARCHAR2(20 CHAR):=			''; --JODO
+    V_TJ_CODIGO VARCHAR2(20 CHAR):=			'CES';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     
-    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_REG_CES';--JODO
+    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_REG_ACT_CES';
     
     V_TPO_CODIGO VARCHAR2(20 CHAR):=		'H006';
     V_NODO VARCHAR2(50 CHAR):=				'H006_RealizacionCesionRemate';

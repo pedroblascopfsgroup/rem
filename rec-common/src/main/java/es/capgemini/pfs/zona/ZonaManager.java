@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
+import es.capgemini.pfs.dsm.model.Entidad;
 import es.capgemini.pfs.oficina.model.Oficina;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.dao.NivelDao;
@@ -221,9 +222,10 @@ public class ZonaManager {
      */
     @BusinessOperation(ConfiguracionBusinessOperation.BO_ZONA_MGR_GET_ZONA_TERRITORIAL)
     public DDZona getZonaTerritorial(DDZona zona) {
+    	Entidad entidad = ((Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO)).getEntidad();
         if (!Checks.esNulo(zona)) {
         	DDZona zPadre = zona.getZonaPadre();
-        	if (!Checks.esNulo(zPadre)) {
+        	if (!Checks.esNulo(zPadre) && entidad.getDescripcion().equals("BANKIA")) {
 	        	if (Nivel.NIVEL_TERRITORIO.toString().equals(zPadre.getNivel().getCodigo())) {
 
 	        		DDZona zonaTerritorial = zPadre;
@@ -234,6 +236,14 @@ public class ZonaManager {
 
 					return zPadre;
 	        	}        	
+        	}else if(!Checks.esNulo(zPadre)){
+        		DDZona zonaTerritorial = zPadre;
+				Oficina oficinaTerritorial = (!Checks.esNulo(zonaTerritorial)) ? zonaTerritorial.getOficina() : null;
+				
+				// TERRITORIAL
+				zPadre.setDescripcion(oficinaTerritorial.getCodDescripOficina(true, false));
+
+				return zPadre;
         	}
         }
         return null;

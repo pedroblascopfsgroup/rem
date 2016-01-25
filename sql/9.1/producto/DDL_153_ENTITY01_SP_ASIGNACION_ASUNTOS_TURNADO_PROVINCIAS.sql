@@ -17,12 +17,12 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 SET DEFINE OFF;
 
-create or replace PROCEDURE asignacion_asuntos_turnado AUTHID CURRENT_USER IS(
+create or replace PROCEDURE asignacion_asuntos_turnado (
    p_asu_id       #ESQUEMA#.asu_asuntos.asu_id%TYPE,
    p_username     #ESQUEMA_MASTER#.usu_usuarios.usu_username%TYPE,
    p_tge_codigo   #ESQUEMA_MASTER#.dd_tge_tipo_gestor.dd_tge_codigo%TYPE := 'GEXT'
 )
-IS
+AUTHID CURRENT_USER IS
    CURSOR crs_datos_asunto (p_asu_id #ESQUEMA#.asu_asuntos.asu_id%TYPE)
    IS
       SELECT tas.dd_tas_codigo

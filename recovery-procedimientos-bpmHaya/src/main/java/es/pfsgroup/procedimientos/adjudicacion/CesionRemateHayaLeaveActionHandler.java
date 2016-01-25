@@ -18,7 +18,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimient
 import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 
-public class CesionRemateBccLeaveActionHandler extends PROGenericLeaveActionHandler {
+public class CesionRemateHayaLeaveActionHandler extends PROGenericLeaveActionHandler {
 
 	/**
 	 * Serial ID
@@ -42,6 +42,8 @@ public class CesionRemateBccLeaveActionHandler extends PROGenericLeaveActionHand
 
 		super.process(delegateTransitionClass, delegateSpecificClass,
 				executionContext);
+		
+
 		Boolean tareaTemporal = (executionContext.getTransition().getName().equals(BPMContants.TRANSICION_PARALIZAR_TAREAS)
 				|| executionContext.getTransition().getName().equals(BPMContants.TRANSICION_ACTIVAR_TAREAS)
 				|| executionContext.getTransition().getName().equals(BPMContants.TRANSICION_PRORROGA));
@@ -74,22 +76,6 @@ public class CesionRemateBccLeaveActionHandler extends PROGenericLeaveActionHand
 				}
 			}
 		}
-	}
-
-	@Override
-	protected void setDecisionVariable(ExecutionContext executionContext) {
-		Procedimiento prc = getProcedimiento(executionContext);
-		
-		if (executionContext
-				.getNode()
-				.getName()
-				.equals("H006_RealizacionCesionRemate")) {
-			
-       		boolean cargasPrevias = hayaProcManager.existenCargasPreviasActivas(prc.getId());
-			this.setVariable("op_cargasPrevias", (cargasPrevias ? "SI" : "NO"), executionContext);
-			
-		}
-		super.setDecisionVariable(executionContext);
 	}
 
 }

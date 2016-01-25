@@ -1,11 +1,11 @@
 --/*
 --##########################################
---## AUTOR=CARLOS GIL
---## FECHA_CREACION=20150623
+--## AUTOR=OSCAR DORADO
+--## FECHA_CREACION=20160118
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.0-X
---## INCIDENCIA_LINK=MITCDD-2068
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=PRODUCTO-585
+--## PRODUCTO=NO
 --##
 --## Finalidad: Realiza las inserciones de la resolución Comunicación cambio cerradura al letrado para la tarea H040_RegistrarCambioCerradura.
 --## INSTRUCCIONES: 
@@ -41,16 +41,16 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			'242';
+    V_TR_ID VARCHAR2(16 CHAR):= 			''; --JODO
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_REG_CAM_CERR';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Comunicación cambio cerradura al letrado';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Confirmar envío de llaves';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'GLL';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     
     V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_REG_CAM_CERR';
     
     V_TPO_CODIGO VARCHAR2(20 CHAR):=		'H040';
-    V_NODO VARCHAR2(50 CHAR):=				'H040_RegistrarCambioCerradura';
+    V_NODO VARCHAR2(50 CHAR):=				'H040_RegistrarEnvioLlaves';
     
     TYPE T_INPUT IS TABLE OF VARCHAR2(50);
     TYPE T_ARRAY_INPUT IS TABLE OF T_INPUT;
@@ -58,6 +58,7 @@ DECLARE
     	T_INPUT('idAsunto','idAsunto'), -- Está siempre en el factoria, no eliminar.
     	T_INPUT('d_numAutos','numAutos'), -- Está siempre en el factoria, no eliminar.
     	T_INPUT('d_fecha','fecha'),
+    	T_INPUT('d_nombre','nombre')
     	T_INPUT('d_observaciones','observaciones') -- Está siempre en el factoria, no eliminar.
     );
     V_TMP_T_INPUT T_INPUT;

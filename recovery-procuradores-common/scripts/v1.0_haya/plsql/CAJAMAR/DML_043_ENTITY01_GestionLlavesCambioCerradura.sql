@@ -1,11 +1,11 @@
 --/*
 --##########################################
---## AUTOR=CARLOS GIL
---## FECHA_CREACION=20150623
+--## AUTOR=OSCAR DORADO
+--## FECHA_CREACION=20160118
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.0-X
---## INCIDENCIA_LINK=MITCDD-2068
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=PRODUCTO-585
+--## PRODUCTO=NO
 --##
 --## Finalidad: Realiza las inserciones de la resolución Comunicación cambio cerradura al letrado para la tarea H040_RegistrarCambioCerradura.
 --## INSTRUCCIONES: 
@@ -43,7 +43,7 @@ DECLARE
     */
     V_TR_ID VARCHAR2(16 CHAR):= 			'242';
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_REG_CAM_CERR';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Comunicación cambio cerradura al letrado';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Diligencia cambio de cerradura';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'GLL';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     

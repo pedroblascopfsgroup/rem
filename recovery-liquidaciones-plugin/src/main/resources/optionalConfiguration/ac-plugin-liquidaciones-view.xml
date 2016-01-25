@@ -19,13 +19,13 @@
 		p:fileName="/WEB-INF/jsp/plugin/liquidaciones/override/tabCobroPago.jsp" 
 		p:priority="1" class="es.capgemini.pfs.web.asuntos.CobrosPagosTab" />
 	
-	<bean p:entity="entidad.asunto.buttons.left.fast" p:name="btnLiquidaciones" p:order="1"
+	<bean p:entity="entidad.asunto.buttons.left.fast" p:name="btnLiquidaciones" p:order="14"
 		p:fileName="/WEB-INF/jsp/plugin/liquidaciones/button/btnliquidacionesFast.jsp"
-		p:priority="0" class="es.pfsgroup.plugins.web.menu.ElementoDinamicoPorFuncionYEntidad" 
-		p:permission="GENERAR-LIQUIDACIONES" p:plugin="liquidaciones"/>
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="GENERAR-LIQUIDACIONES"/>
 	
 	<bean p:entity="tabs.asuntos" p:name="cobropago" p:order="701"
 		p:fileName="/WEB-INF/jsp/plugin/liquidaciones/override/tabCobroPago.jsp" 
-		p:priority="1" class="es.capgemini.pfs.web.asuntos.CobrosPagosTab" />
+		p:priority="1" class="es.capgemini.pfs.web.asuntos.CobrosPagosTab" p:permission="GENERAR-LIQUIDACIONES" />
 
 </beans>

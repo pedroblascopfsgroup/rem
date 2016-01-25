@@ -1,11 +1,11 @@
 --/*
 --##########################################
---## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20150710
+--## AUTOR=ALBERTO SOLER
+--## FECHA_CREACION=20150125
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.0-X
---## INCIDENCIA_LINK=MITCDD-2068
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=PRODUCTO-585
+--## PRODUCTO=NO
 --##
 --## Finalidad: Realiza las inserciones de la resolución Escrito sellado solicitando notificación por edictos para la tarea P400_GestionarNotificaciones.
 --## INSTRUCCIONES: 
@@ -41,7 +41,7 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			'362';
+    V_TR_ID VARCHAR2(16 CHAR):= 			'';--JODO
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_TR_NOTI_ESC_SELL_EDI';
     V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Escrito sellado solicitando notificación por edictos';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'NOT';
@@ -57,7 +57,6 @@ DECLARE
     V_INPUT T_ARRAY_INPUT := T_ARRAY_INPUT(
     	T_INPUT('idAsunto','idAsunto'), -- Está siempre en el factoria, no eliminar.
     	T_INPUT('d_numAutos','numAutos'), -- Está siempre en el factoria, no eliminar.
-    	T_INPUT('d_fechaPresentacion','fechaPresentacion'),
     	T_INPUT('d_observaciones','observaciones') -- Está siempre en el factoria, no eliminar.
     );
     V_TMP_T_INPUT T_INPUT;

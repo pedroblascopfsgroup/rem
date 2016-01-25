@@ -200,8 +200,14 @@ public class BurofaxDaoImpl extends AbstractEntityDao<BurofaxPCO, Long> implemen
 		
 		if(!bManual && !Checks.esNulo(idPersona)){
 			sql +=", CPE.CPE_ID ";
+			sql +=", NULL AS RELMAN ";
 		}else{
 			sql +=", NULL AS CPE_ID ";
+			if(!Checks.esNulo(idPersona)){
+				sql +=", CPE.CNT_ID AS RELMAN";
+			}else{
+				sql +=", NULL AS RELMAN ";
+			}
 		}
 		
 		sql += " FROM CNT_CONTRATOS CNT " +
@@ -243,6 +249,10 @@ public class BurofaxDaoImpl extends AbstractEntityDao<BurofaxPCO, Long> implemen
 			
 			if(partes[2]!=null){
 				dto.setTieneRelacionContratoPersona(true);
+			}
+			
+			if(partes[3]!=null){
+				dto.setTieneRelacionContratoPersonaManual(true);
 			}
 			
 			casteado.add(dto);

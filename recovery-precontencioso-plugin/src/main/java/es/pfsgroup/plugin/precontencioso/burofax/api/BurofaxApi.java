@@ -5,8 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
-import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.contrato.model.ContratoPersonaManual;
 import es.capgemini.pfs.direccion.dto.DireccionAltaDto;
 import es.capgemini.pfs.persona.dto.DtoPersonaManual;
@@ -19,6 +19,7 @@ import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDEstadoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDTipoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
+import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 
 public interface BurofaxApi {
 
@@ -47,19 +48,8 @@ public interface BurofaxApi {
 	public static final String CANCELAR_EST_PREPARADO = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.cancelarEstadoPreparado";
 	public static final String DESCARTAR_PERSONA_ENVIO = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.descartarPersonaEnvio";
 	public static final String BORRAR_DIRECCION_MANUAL_BUROFAX = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.borrarDirManualBurofax";
+	public static final String EXCLUIR_BUROFAX_POR_IDS = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.excluirBurofaxPorIds";
 
-
-
-	
-	
-	
-	
-
-
-
-
-
-	
 	/**
 	 * Obtiene una lista de tipos de burofax a partir del Procedimiento 
 	 * @param idProcedimiento
@@ -117,7 +107,7 @@ public interface BurofaxApi {
 	 * @param idDocumento
 	 */
 	@BusinessOperationDefinition(CONFIGURA_TIPO_BUROFAX)
-	List<EnvioBurofaxPCO> configurarTipoBurofax(Long idTipoBurofax,String[] arrayIdDirecciones,String[] arrayIdBurofax,String[] arrayIdEnvios, Long idDocumento);
+	List<EnvioBurofaxPCO> configurarTipoBurofax(Long idTipoBurofax,String[] arrayIdDirecciones,String[] arrayIdBurofax,String[] arrayIdEnvios, DocumentoPCO doc);
 	
 	/**
 	 * Devuelve el contenido del burofax dado su envio
@@ -223,9 +213,10 @@ public interface BurofaxApi {
 	 * Guarda toda la información cuando se realiza el envio de un burofax
 	 * @param certificado
 	 * @param listaEnvioBurofaxPCO
+	 * @param doc
 	 */
 	@BusinessOperationDefinition(GUARDAR_ENVIO_BUROFAX)
-	void guardarEnvioBurofax(Boolean certificado,List<EnvioBurofaxPCO> listaEnvioBurofaxPCO);
+	void guardarEnvioBurofax(Boolean certificado,List<EnvioBurofaxPCO> listaEnvioBurofaxPCO, DocumentoPCO doc);
 	
 	@BusinessOperationDefinition(OBTENER_BUROFAX_ENVIO_INTE)
 	BurofaxEnvioIntegracionPCO getBurofaxEnvioIntegracionByIdEnvio(Long idEnvio);
@@ -243,5 +234,27 @@ public interface BurofaxApi {
 	void actualizaDireccion(DireccionAltaDto dto, Long idDireccion);
 	
 	PersonaManual updatePersonaManual(String dni, String nombre, String app1, String app2, Long idPersonaManual);
+	
+	@BusinessOperationDefinition(EXCLUIR_BUROFAX_POR_IDS)
+	void excluirBurofaxPorIds(String idsBurofax);
 
+	/**
+	 * Borra la relacion de CPM_CONTRATOS_PERSONAS_MAN y el Burofax si no esta enviado
+	 * @param cpm
+	 * @param prcId
+	 * @return true si es posible borrar o false si existen relaciones a borrar con burofaxes enviados
+	 */
+	boolean borrarContratoPersonaManualYBurofax(ContratoPersonaManual cpm, Long prcId);
+	
+	public boolean puedeBorrarContratoPersonaManualYBurofax(ContratoPersonaManual cpm, Long prcId);
+
+	/**
+	 * Borra los Burofax si no esta enviado
+	 * @param cpm
+	 * @param prcId
+	 * @return true si es posible borrar o false si existen relaciones a borrar con burofaxes enviados
+	 */
+	public void borrarBurofaxContratoPersona(ContratoPersona cp, Long prcId);
+	
+	public boolean comprobarBorrarBurofaxContratoPersona(ContratoPersona cp, Long prcId);
 }

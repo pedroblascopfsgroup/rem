@@ -22,48 +22,40 @@
 	var esEditPersona = false;
 
 	var guardaPersonaYPersonaManual =  function() {
-		Ext.Ajax.request({
-			url : page.resolveUrl('burofax/guardaPersonaYPersonaManual'), 
+    	page.webflow({
+			flow: 'burofax/guardaPersonaYPersonaManual', 
 			params : {
-						idPersona:idPersona.getValue(),
-						idProcedimiento:idProcedimiento,
-						esPersonaManual:esPersonaManual,
-						contratos:arrayContratos,
-						tipoIntervencionContratos:arrayTiposIntervencion,
-						dni:dniPersonaCmp.getValue(),
-						nombre:nombrePersonaCmp.getValue(),
-						primerApll:apellido1PersonaCmp.getValue(),
-						segundoApll:apellido2PersonaCmp.getValue()
-					},
-			method: 'POST',
-			success: function ( result, request ) {
-				page.fireEvent(app.event.DONE);
+				idPersona:idPersona.getValue(),
+				idProcedimiento:idProcedimiento,
+				esPersonaManual:esPersonaManual,
+				contratos:arrayContratos,
+				tipoIntervencionContratos:arrayTiposIntervencion,
+				dni:dniPersonaCmp.getValue(),
+				nombre:nombrePersonaCmp.getValue(),
+				primerApll:apellido1PersonaCmp.getValue(),
+				segundoApll:apellido2PersonaCmp.getValue()
 			},
-		    failure: function(form, action) {
-		    	panelEdicionPersonas.container.unmask();
-		        switch (action.failureType) {
-		            case Ext.form.Action.CLIENT_INVALID:
-		                Ext.Msg.alert('Error', '<s:message code="rec-web.direccion.validacion.camposObligatorios" text="**Debe rellenar los campos obligatorios." />');
-		                arrayContratos=new Array();
-						arrayTiposIntervencion=new Array();
-		                break;
-		            case Ext.form.Action.CONNECT_FAILURE:
-		                Ext.Msg.alert('Error', '<s:message code="rec-web.direccion.validacion.errorComunicacion" text="**Error de comunicación" />');
-		                arrayContratos=new Array();
-						arrayTiposIntervencion=new Array();
-		                break;
-		       }
+			success: function ( result, request) {
+				if(result.msgError==''){
+					page.fireEvent(app.event.DONE);
+				}else{
+					Ext.Msg.show({
+						title: fwk.constant.alert,
+						msg: result.msgError,
+						buttons: Ext.Msg.OK
+					});
+					panelEdicionPersonas.container.unmask();
+				}
 			}
 		});
-		
 	}
 	
 	var comprueba_contratos = function(){
 		
-		if( myCboxSelModel.getSelections().length >= 1){
+		if( myCboxSelModelPers.getSelections().length >= 1){
 			
 			var todosCntConTipInter = true;
-			Ext.each(myCboxSelModel.getSelections(), function(rec){
+			Ext.each(myCboxSelModelPers.getSelections(), function(rec){
 				if(rec.data.tipointervCodigo != null && rec.data.tipointervCodigo != ''){
 					arrayContratos.push(rec.data.idContrato);
 					arrayTiposIntervencion.push(rec.data.tipointervCodigo);
@@ -130,7 +122,7 @@
 			}else{
 				if(comprueba_contratos() === true){
 					if(esEditPersona){
-						/*Comprobamos que no se modifican relaciones PERSONA - CONTRATO que ya estan en burofax*/
+						/*Comprobamos que no se modifican relaciones PERSONA - CONTRATO que ya estan en burofax
 						Ext.Ajax.request({
 									url : page.resolveUrl('burofax/existeRelacionPersonaBurofax'), 
 									params : {
@@ -153,7 +145,8 @@
 										}
 									}
 					
-						});
+						});*/
+						guardaPersonaYPersonaManual();
 					}else{
 						guardaPersonaYPersonaManual();
 					}
@@ -330,18 +323,18 @@
 		{name: 'nombre'}
 	]);
 
-	var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
- 		/*handleMouseDown : function(g, rowIndex, e){
+	var myCboxSelModelPers = new Ext.grid.CheckboxSelectionModel({
+ 		handleMouseDown : function(g, rowIndex, e){	
   		 	var view = this.grid.getView();
     		var isSelected = this.isSelected(rowIndex);
     		if(isSelected) {
-      			this.deselectRow(rowIndex);
+      			//this.deselectRow(rowIndex);
     		} 
     		else if(!isSelected || this.getCount() > 1) {
       			this.selectRow(rowIndex, true);
       			view.focusRow(rowIndex);
     		}
-  		},*/
+  		},
   		singleSelect: false,
   		header:''
 	});
@@ -373,11 +366,12 @@
         ,{name:'tipointerv'}
         ,{name:'tipointervCodigo'}
         ,{name:'tieneRelacionContratoPersona'}
+        ,{name:'tieneRelacionContratoPersonaManual'}
     ]);
     
 
 	var columnArray = new Ext.grid.ColumnModel([
-		myCboxSelModel
+		myCboxSelModelPers
 		, {
 			header: '<s:message code="plugin.precontencioso.grid.relacionContratos.numContrato" text="**Num Contrato"/>',
 			dataIndex: 'cc', sortable: true,autoWidth:true,id:'idContrato'
@@ -391,6 +385,12 @@
 			header: '<s:message code="plugin.precontencioso.grid.relacionContratos.saldoVencido" text="**Saldo vencido"/>',
 			dataIndex: 'saldoNoVencido',renderer: app.format.moneyRenderer,align:'right', sortable: true,autoWidth:true
 		}, {
+			header: '<s:message code="plugin.precontencioso.grid.relacionContratos.tieneRelacionContratoPersona" text="**Relación contrato persona"/>',
+			dataIndex: 'tieneRelacionContratoPersona',hidden:true
+		}, {
+			header: '<s:message code="plugin.precontencioso.grid.relacionContratos.tieneRelacionContratoPersona" text="**Relación contrato persona manual"/>',
+			dataIndex: 'tieneRelacionContratoPersonaManual',hidden:true
+		}, {
 			header: '<s:message code="plugin.precontencioso.grid.relacionContratos.tipoIntervencion" text="**Tipo de intervención"/>',
 			dataIndex: 'tipointerv', 
 			sortable: false,
@@ -401,16 +401,10 @@
                             emptyText: 'Select Field...',
                             editable: false,
                             forceSelection: false,
-                            valueField: 'codigo',
+                            valueField: 'descripcion',
                             displayField: 'descripcion',
                             store: tiposIntervencionStore,
-                            autoLoad:true,
-                            listeners: {
-						        beforeselect: function( combo, record, index) {
-			                           var sm = gridRelacionContratos.getSelectionModel().getSelected();
-                         			   sm.set('tipointervCodigo',tiposIntervencionStore.getAt(index).data.codigo);
-						        }
-						    }
+                            autoLoad:true
                         })
 		}
 		
@@ -429,7 +423,7 @@
 	
 	var gridRelacionContratos = app.crearEditorGrid(relacionContratosStore,columnArray,{
         title: '<s:message code="plugin.precontencioso.grid.relacionContratos.titulo" text="**Relacion Contratos" />'
-		,sm: myCboxSelModel
+		,sm: myCboxSelModelPers
         ,cls:'cursor_pointer'
 		,style:'padding-right:10px'
         ,iconCls:'icon_personas'
@@ -452,8 +446,32 @@
 	       			return false;
 	       		}
 	       	}
-	);
+	);	
 	
+	gridRelacionContratos.addListener( 'afteredit', function( e){
+			
+	        tiposIntervencionStore.each(function(record) {
+		        if(record.data.descripcion == e.value){
+		        	e.record.data.tipointervCodigo = record.data.codigo;
+		        }
+		    });
+			    
+	});
+	
+	
+	gridRelacionContratos.store.on( 'load', function( store, records, options ) {
+    	var view = myCboxSelModelPers.grid.getView();
+    	Ext.each(records, function(name, index, countriesItSelf) {
+		    if(records[index].data.tieneRelacionContratoPersona || records[index].data.tieneRelacionContratoPersonaManual){
+	       		myCboxSelModelPers.selectRow(index, true);
+	       		view.focusRow(index);
+	       	}
+		});
+		
+	} );
+	
+	
+
 	
 	//relacionContratosStore.webflow({idProcedimiento: data.precontencioso.id});
 

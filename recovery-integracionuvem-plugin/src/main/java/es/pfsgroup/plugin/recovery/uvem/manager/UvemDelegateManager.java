@@ -529,7 +529,13 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			}
 			servicioGMP5JD20.setNombreProcuradornocura(nombreProcurador);
 			System.out.println(" ***REQUERIDO*** OBRECO"); // 	longitud="6"	 Referencia del Procurador
-			String referenciaProcurador = StringUtils.rightPad(procuradorAsunto.getGestor().getUsuario().getUsername(), 6,' ');
+			String referenciaProcurador = null;
+			if(procuradorAsunto != null){
+				referenciaProcurador = StringUtils.rightPad(procuradorAsunto.getGestor().getUsuario().getUsername(), 6,' ');
+			}else{
+				referenciaProcurador = StringUtils.rightPad("null", 6,' ');
+			}
+			
 			servicioGMP5JD20.setReferenciaProcuradorobreco(referenciaProcurador);
 			System.out.println("*** NOLECA"); // 	longitud="40"	 Nombre del Letrado	
 			String letradoCabecera = StringUtils.rightPad(gestorAsunto.getGestor().getUsuario().getUsername(),8,' ').substring(0, 8);

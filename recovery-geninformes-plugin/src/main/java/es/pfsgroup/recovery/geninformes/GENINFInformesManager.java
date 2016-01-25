@@ -968,6 +968,7 @@ public class GENINFInformesManager implements GENINFInformesApi {
 	    InputStream is=new FileInputStream(archivo);
 		return is;
 		
+		
 //		try {
 //		    String k = "<html><body> This is my Project </body></html>";
 //		    OutputStream file = new FileOutputStream(new File("C:\\Test.pdf"));
@@ -982,6 +983,35 @@ public class GENINFInformesManager implements GENINFInformesApi {
 //		    e.printStackTrace();
 //		}
 		
+	}
+	
+	public FileItem createPdfFileFromHtml(String htmlText,String nombreFichero) throws Exception{
+		
+		
+		File archivo = File.createTempFile(nombreFichero, ".pdf");
+		FileItem fileItem = null;
+		try {
+		    
+			String k = "<html><body>"+htmlText+"</body></html>";
+		      
+		    OutputStream file = new FileOutputStream(archivo);
+		    Document document = new Document();
+		    PdfWriter.getInstance(document, file);
+		    document.open();
+		    HTMLWorker htmlWorker = new HTMLWorker(document);
+		    htmlWorker.parse(new StringReader(k));
+		    document.close();
+		    
+		    file.close();
+		    fileItem = new FileItem(archivo);
+
+			
+		} catch (Exception e) {
+			logger.error("createPdfFileFromHtmlText: " + e);
+		}
+		
+	   
+		return fileItem;
 	}
 
 

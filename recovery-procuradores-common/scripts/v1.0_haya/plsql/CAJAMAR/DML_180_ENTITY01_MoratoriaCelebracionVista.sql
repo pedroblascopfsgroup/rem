@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=PRODUCTO-585
 --## PRODUCTO=NO
 --##
---## Finalidad: Realiza las inserciones de la resolución Presentar conformidad moratoria para la tarea H011_PresentarConformidadMoratoria.
+--## Finalidad: Realiza las inserciones de la resolución para la tarea H011_CelebracionVista.
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
@@ -41,23 +41,23 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			'254';
-    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_PRS_CONF_MOR';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Escrito conformidad a la moratoria';
+    V_TR_ID VARCHAR2(16 CHAR):= 			'';--JODO
+    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_CEL_VIST';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Celebración vista moratoria';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'MRL';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     
-    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_PRS_CONF_MOR';
+    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_CEL_VIST';
     
     V_TPO_CODIGO VARCHAR2(20 CHAR):=		'H011';
-    V_NODO VARCHAR2(50 CHAR):=				'H011_PresentarConformidadMoratoria';
+    V_NODO VARCHAR2(50 CHAR):=				'H011_CelebracionVista';
     
     TYPE T_INPUT IS TABLE OF VARCHAR2(50);
     TYPE T_ARRAY_INPUT IS TABLE OF T_INPUT;
     V_INPUT T_ARRAY_INPUT := T_ARRAY_INPUT(
     	T_INPUT('idAsunto','idAsunto'), -- Está siempre en el factoria, no eliminar.
     	T_INPUT('d_numAutos','numAutos'), -- Está siempre en el factoria, no eliminar.
-    	T_INPUT('d_fechaPresentacion','fechaPresentacion'),
+        T_INPUT('d_fechaCelebracion','fechaCelebracion'),
     	T_INPUT('d_observaciones','observaciones') -- Está siempre en el factoria, no eliminar.
     );
     V_TMP_T_INPUT T_INPUT;

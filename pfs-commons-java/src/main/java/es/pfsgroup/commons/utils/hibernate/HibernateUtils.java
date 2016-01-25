@@ -42,7 +42,7 @@ public class HibernateUtils extends HibernateDaoSupport //implements Application
 	public void flushSession() {
 		getSession().flush();
 	}
-	
+
 	public static void refresh(Object objeto) {
 		HibernateUtils u = (HibernateUtils) ApplicationContextUtil.getBean("hibernateUtils");
 		u.refreshSession(objeto);
@@ -51,8 +51,8 @@ public class HibernateUtils extends HibernateDaoSupport //implements Application
 	public void refreshSession(Object objeto) {
 		getSession().refresh(objeto);
 	}
-	
-//	@Override
+
+	//	@Override
 //	public void setApplicationContext(ApplicationContext applicationContext)
 //			throws BeansException {
 //		ctx = applicationContext;

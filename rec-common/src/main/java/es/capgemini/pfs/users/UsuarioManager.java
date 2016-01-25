@@ -604,4 +604,5 @@ public class UsuarioManager {
 	public List<Perfil> getPerfiList() {
 		return perfilDao.getList();
 	}
+
 }

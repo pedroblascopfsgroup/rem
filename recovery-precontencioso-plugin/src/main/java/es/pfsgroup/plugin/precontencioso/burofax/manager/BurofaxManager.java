@@ -1132,4 +1132,5 @@ public class BurofaxManager implements BurofaxApi {
 		
 		return persMan;
 	}
+
 }

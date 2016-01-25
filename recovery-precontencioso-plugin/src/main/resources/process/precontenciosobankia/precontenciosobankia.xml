@@ -163,20 +163,6 @@
 		</event>
 	</state>
 
-	<state name="PCO_IniciarProcJudicial">
-		<transition to="Fin" name="avanzaBPM"/>
-		<event type="node-enter">
-			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>precontenciosoEnterActionHandler</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>precontenciosoLeaveActionHandler</targetBean>
-			</action>
-		</event>
-	</state>
-
 	<decision name="PCO_RevisarSubsanacionDecision" expression="#{PCO_RevisarSubsanacionDecision}">
 		<transition to="PCO_RegistrarTomaDec" name="devolver"/>
 		<transition to="PCO_SubsanarIncidenciaExp" name="subsanar"/>
@@ -317,6 +303,14 @@
 		</event>
 		<transition to="PCO_RevisarExpDigCONC" name="avanzaBPM"/>
 	</state>
+
+	<node name="PCO_IniciarProcJudicial">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>precontenciosoDecisionActionHandler</targetBean>
+		</action>	
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</node>
 
 	<end-state name="Fin"></end-state>
 

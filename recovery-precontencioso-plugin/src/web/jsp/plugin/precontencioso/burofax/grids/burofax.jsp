@@ -327,7 +327,6 @@ var pdfRender = function(value, meta, record) {
       		btnCancelarEnEstPrep.disabled=true;
       		btnEditPersona.disabled=true;
       		btnEditarVerDireccion.disabled=true;
-      		
       		//this.store.sort('idCliente','DESC');
 	        //this.store.setDefaultSort('idCliente', 'DESC');
       		
@@ -1502,3 +1501,9 @@ var ponerVisibilidadBotonesBur = function(visibles, invisibles) {
 		}
 	}
 }	
+
+	
+	<sec:authentication var="user" property="principal" />
+	<c:if test="${user.entidad.descripcion eq 'CAJAMAR'}">
+   		btnNotificar.setVisible(true);
+	</c:if>

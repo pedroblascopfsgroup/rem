@@ -1,11 +1,11 @@
 --/*
 --##########################################
---## AUTOR=CARLOS GIL
---## FECHA_CREACION=20150623
+--## AUTOR=OSCAR DORADO
+--## FECHA_CREACION=20160118
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.0-X
---## INCIDENCIA_LINK=MITCDD-2068
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=PRODUCTO-585
+--## PRODUCTO=NO
 --##
 --## Finalidad: Realiza las inserciones de la resolución Acta audiencia previa para la tarea H024_RegistrarAudienciaPrevia.
 --## INSTRUCCIONES: 
@@ -43,7 +43,7 @@ DECLARE
     */
     V_TR_ID VARCHAR2(16 CHAR):= 			'267';
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_ACT_AUD_PRV';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Acta audiencia previa';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Celebración vista previa';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'ORD';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     

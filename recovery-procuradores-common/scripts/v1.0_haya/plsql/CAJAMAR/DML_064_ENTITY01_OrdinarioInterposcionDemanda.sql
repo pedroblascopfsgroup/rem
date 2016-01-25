@@ -1,11 +1,11 @@
 --/*
 --##########################################
---## AUTOR=CARLOS GIL
---## FECHA_CREACION=20150623
+--## AUTOR=OSCAR DORADO
+--## FECHA_CREACION=20160118
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.0-X
---## INCIDENCIA_LINK=MITCDD-2068
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=PRODUCTO-585
+--## PRODUCTO=NO
 --##
 --## Finalidad: Realiza las inserciones de la resolución Demanda sellada para la tarea H024_InterposicionDemanda.
 --## INSTRUCCIONES: 
@@ -41,9 +41,9 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			'263';
+    V_TR_ID VARCHAR2(16 CHAR):= 			''; --JODO
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_ORD_DEM_SEL';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Demanda sellada';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Copia sellada de la demanda';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'ORD';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     
@@ -64,6 +64,7 @@ DECLARE
     	T_INPUT('d_capitalVencido','capitalVencido'),
     	T_INPUT('d_interesesOrdinarios','interesesOrdinarios'),
     	T_INPUT('d_interesesDemora','interesesDemora'),
+    	T_INPUT('d_provisionFondos','provisionFondos'),
     	T_INPUT('d_observaciones','observaciones') -- Está siempre en el factoria, no eliminar.
     );
     V_TMP_T_INPUT T_INPUT;

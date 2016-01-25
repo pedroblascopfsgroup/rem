@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=PRODUCTO-585
 --## PRODUCTO=NO
 --##
---## Finalidad: Realiza las inserciones de la resolución Decreto de admision de demanda para la tarea H022_ConfirmarAdmisionDemanda.
+--## Finalidad: Realiza las inserciones de la resolución para la tarea H011_CelebracionVista.
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
@@ -41,27 +41,23 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			'273';
-    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_DEC_ADI_DEM';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Auto despachando ejecución';
-    V_TJ_CODIGO VARCHAR2(20 CHAR):=			'MON';
+    V_TR_ID VARCHAR2(16 CHAR):= 			'';--JODO
+    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_REG_ACT_CES';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Acta de cesión';
+    V_TJ_CODIGO VARCHAR2(20 CHAR):=			'CES';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     
-    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_DEC_ADI_DEM';
+    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_REG_ACT_CES';
     
-    V_TPO_CODIGO VARCHAR2(20 CHAR):=		'H022';
-    V_NODO VARCHAR2(50 CHAR):=				'H022_ConfirmarAdmisionDemanda';
+    V_TPO_CODIGO VARCHAR2(20 CHAR):=		'H006';
+    V_NODO VARCHAR2(50 CHAR):=				'H006_RealizacionCesionRemate';
     
     TYPE T_INPUT IS TABLE OF VARCHAR2(50);
     TYPE T_ARRAY_INPUT IS TABLE OF T_INPUT;
     V_INPUT T_ARRAY_INPUT := T_ARRAY_INPUT(
     	T_INPUT('idAsunto','idAsunto'), -- Está siempre en el factoria, no eliminar.
     	T_INPUT('d_numAutos','numAutos'), -- Está siempre en el factoria, no eliminar.
-    	T_INPUT('d_fecha','fecha'),
-    	T_INPUT('d_nPlaza','nPlaza'),
-    	T_INPUT('d_numJuzgado','numJuzgado'),
-    	T_INPUT('d_numProcedimiento','numProcedimiento'),
-    	T_INPUT('d_comboResultado','comboResultado'),
+        T_INPUT('d_fecha','fecha'),
     	T_INPUT('d_observaciones','observaciones') -- Está siempre en el factoria, no eliminar.
     );
     V_TMP_T_INPUT T_INPUT;

@@ -2864,6 +2864,29 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
         ,{"xtype": 'numberfield', "name": "d_importe", "fieldLabel": "Importe", allowBlank: true}
     ]);
 
+    // id: 387 : TRAMITE DE ADJUDICACION (CAJAMAR): H005_notificacionDecretoAdjudicacionAlContrario
+    this.arrayCampos.push([
+        {"xtype": 'combo', "store": storeSINO, "name": "d_comboNotificacion", "fieldLabel": "Notificado", allowBlank: false, "autoload": true, mode: 'local', triggerAction: 'all', resizable: true, id: 'd_comboNotificacion' + this.idFactoria, displayField: 'descripcion', valueField: 'codigo'}
+        ,{"xtype": 'datefield', "name": "d_fecha", "fieldLabel": "Fecha", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
+    ]);
+
+    // id: 388 : TRAMITE DE ADJUDICACION (CAJAMAR): H005_notificacionDecretoAdjudicacionAEntidad
+    this.arrayCampos.push([
+        {"xtype": 'datefield', "name": "d_fecha", "fieldLabel": "Fecha notificación", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
+        ,{"xtype": 'combo', "store": storeSINO, "name": "d_comboSubsanacion", "fieldLabel": "Requiere subsanación", "autoload": true,  mode: 'local', triggerAction: 'all', allowBlank: false, filtradoProcurador: true, resizable: true, id: 'd_comboSubsanacion' + this.idFactoria, displayField: 'descripcion', valueField: 'codigo'}
+        //,{"xtype": 'combo', "store": storeSINO, "name": "d_comboAdicional", "fieldLabel": "Comunicación adicional requerida", "autoload": true,  mode: 'local', triggerAction: 'all', allowBlank: false, filtradoProcurador: true, resizable: true, id: 'd_comboAdicional' + this.idFactoria, displayField: 'descripcion', valueField: 'codigo'}
+        ,{"xtype": 'datefield', "name": "d_fechaResol", "fieldLabel": "Fecha resolución", allowBlank: true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
+        //,{"xtype": 'datefield', "name": "d_fechaLimite", "fieldLabel": "Fecha límite comunicación", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
+    ]);
+
+    // id: 389 : TRAMITE DE ADJUDICACION (CAJAMAR): H005_RegistrarInscripcionDelTitulo
+    this.arrayCampos.push([
+        {"xtype": 'combo', "store": storeDDSituacionTitulo, "name": "d_comboSituacionTitulo", "fieldLabel": "Título Inscrito en el Registro", "autoload": true,  mode: 'local', triggerAction: 'all', allowBlank: false, resizable: true, id: 'd_comboSituacionTitulo' + this.idFactoria, displayField: 'descripcion', valueField: 'codigo'} //JODO completar store
+        ,{"xtype": 'datefield', "name": "d_fechaInscripcion", "fieldLabel": "Fecha Inscripción", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
+        ,{"xtype": 'datefield', "name": "d_fechaEnvioDecretoAdicion", "fieldLabel": "Fecha Envío Decreto Adición", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
+    ]);
+
+
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){
 			this.arrayCampos.push([]);

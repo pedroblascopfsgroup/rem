@@ -43,7 +43,7 @@ DECLARE
     IF V_NUM_TABLAS = 1 THEN
         DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.BIE_ADJ_ADJUDICACION... El campo ya existe en la tabla');
     ELSE
-        V_MSQL := 'alter table '||V_ESQUEMA||'.BIE_ADJ_ADJUDICACION add(BIE_ADJ_F_CONTABILIDAD NUMBER(16))';        
+        V_MSQL := 'alter table '||V_ESQUEMA||'.BIE_ADJ_ADJUDICACION add(BIE_ADJ_F_CONTABILIDAD DATE)';        
         DBMS_OUTPUT.PUT_LINE(V_MSQL);
         EXECUTE IMMEDIATE V_MSQL; 
         DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.BIE_ADJ_ADJUDICACION... Añadido el campo BIE_ADJ_F_CONTABILIDAD');

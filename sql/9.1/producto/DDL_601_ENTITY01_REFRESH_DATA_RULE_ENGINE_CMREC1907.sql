@@ -256,8 +256,8 @@ create or replace PROCEDURE      REFRESH_DATA_RULE_ENGINE AS
         ,EIC.DD_EIC_ID
         ,cnt.dd_cre_id
         ,GCL.DD_TGL_ID
-        ,PER.PER_RIESGO_TOTAL
-        ,GCL.GCL_NOMBRE
+        ,NVL(PER.PER_RIESGO_TOTAL,0) PER_RIESGO_TOTAL
+        ,NVL(GCL.GCL_NOMBRE,'DESCONOCIDO') GCL_NOMBRE
     FROM  per_personas per
       LEFT JOIN  cpe_contratos_personas cpe ON per.per_id = cpe.per_id --PER_CPE
       LEFT JOIN  dd_tin_tipo_intervencion tin ON cpe.dd_tin_id = tin.dd_tin_id

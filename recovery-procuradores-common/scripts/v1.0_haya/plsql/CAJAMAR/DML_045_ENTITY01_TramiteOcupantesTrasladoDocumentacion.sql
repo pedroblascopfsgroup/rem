@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=PRODUCTO-585
 --## PRODUCTO=NO
 --##
---## Finalidad: Realiza las inserciones de la resolución Señalamiento vista de ocupantes para la tarea H048_ConfirmarVista.
+--## Finalidad: Realiza las inserciones de la resolución Escrito sellado solicitando a ocupantes títulos para la tarea H048_SolicitudRequerimientoDocOcupantes.
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
@@ -41,24 +41,23 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			'249';
-    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_CONF_VIS';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Señalamiento vista de ocupantes';
+    V_TR_ID VARCHAR2(16 CHAR):= 			'244';
+    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_ESC_SOL_OCU';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Solicitud requerimiento documentación a ocupantes';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'OCU';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     
-    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_CONF_VIS';
+    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_ESC_SOL_OCU';
     
     V_TPO_CODIGO VARCHAR2(20 CHAR):=		'H048';
-    V_NODO VARCHAR2(50 CHAR):=				'H048_ConfirmarVista';
+    V_NODO VARCHAR2(50 CHAR):=				'H048_SolicitudRequerimientoDocOcupantes';
     
     TYPE T_INPUT IS TABLE OF VARCHAR2(50);
     TYPE T_ARRAY_INPUT IS TABLE OF T_INPUT;
     V_INPUT T_ARRAY_INPUT := T_ARRAY_INPUT(
     	T_INPUT('idAsunto','idAsunto'), -- Está siempre en el factoria, no eliminar.
     	T_INPUT('d_numAutos','numAutos'), -- Está siempre en el factoria, no eliminar.
-    	T_INPUT('d_comboVista','comboVista'),
-    	T_INPUT('d_fechaVista','fechaVista'),
+    	T_INPUT('d_fechaSolicitud','fechaSolicitud'),
     	T_INPUT('d_observaciones','observaciones') -- Está siempre en el factoria, no eliminar.
     );
     V_TMP_T_INPUT T_INPUT;

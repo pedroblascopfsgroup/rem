@@ -2,8 +2,8 @@
 --##########################################
 --## AUTOR=BRUNO ANGLES
 --## FECHA_CREACION=20160125
---## ARTEFACTO=
---## VERSION_ARTEFACTO=
+--## ARTEFACTO=web
+--## VERSION_ARTEFACTO=9.1.0-cj-rc36.1-CMREC-1907
 --## INCIDENCIA_LINK=CMREC-1907
 --## PRODUCTO=SI
 --## Finalidad: DDL

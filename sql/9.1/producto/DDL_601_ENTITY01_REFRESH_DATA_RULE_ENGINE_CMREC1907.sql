@@ -2,8 +2,8 @@
 --##########################################
 --## AUTOR=BRUNO ANGLES
 --## FECHA_CREACION=20160125
---## ARTEFACTO=
---## VERSION_ARTEFACTO=
+--## ARTEFACTO=web
+--## VERSION_ARTEFACTO=9.1.0-cj-rc36.1-CMREC-1907s
 --## INCIDENCIA_LINK=CMREC-1907
 --## PRODUCTO=SI
 --## Finalidad: DDL
@@ -12,7 +12,6 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
---*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 SET DEFINE OFF;

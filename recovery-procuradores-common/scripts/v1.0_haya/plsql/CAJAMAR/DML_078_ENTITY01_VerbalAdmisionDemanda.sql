@@ -1,11 +1,11 @@
 --/*
 --##########################################
---## AUTOR=CARLOS GIL
---## FECHA_CREACION=20150623
+--## AUTOR=OSCAR DORADO
+--## FECHA_CREACION=20160118
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.0-X
---## INCIDENCIA_LINK=MITCDD-2068
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=PRODUCTO-585
+--## PRODUCTO=NO
 --##
 --## Finalidad: Realiza las inserciones de la resolución Admisión demanda y señalamiento visita para la tarea H026_ConfirmarAdmisionDemanda.
 --## INSTRUCCIONES: 
@@ -43,7 +43,7 @@ DECLARE
     */
     V_TR_ID VARCHAR2(16 CHAR):= 			'277';
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_AD_DEM_VIS';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Admisión demanda y señalamiento visita';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Auto despachando ejecución';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'VBL';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     

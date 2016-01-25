@@ -2,7 +2,12 @@
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.16" id="1">
     <property name="createdBy">Eclipse BIRT Designer Version 2.3.2.r232_v20090521 Build &lt;2.3.2.v20090601-0700></property>
     <property name="units">in</property>
+    <method name="onPrepare"><![CDATA[/*importPackage(Packages.java.util.logging);
+var fileHandler = new FileHandler("/tmp/birt.log", true);
+var rootLogger = Logger.getLogger("");
+rootLogger.addHandler(fileHandler);*/]]></method>
     <property name="iconFile">/templates/blank_report.gif</property>
+    <property name="layoutPreference">fixed layout</property>
     <property name="bidiLayoutOrientation">ltr</property>
     <data-sources>
         <script-data-source name="Data Source" id="25"/>
@@ -13,7 +18,7 @@
                 <structure>
                     <property name="position">1</property>
                     <property name="name">fechaMovimiento</property>
-                    <property name="dataType">date</property>
+                    <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="position">2</property>
@@ -50,39 +55,66 @@
                     <property name="name">entregado</property>
                     <property name="dataType">float</property>
                 </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">descrMov</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">acNominal</property>
+                    <property name="dataType">float</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">interesCalculado</property>
+                    <property name="dataType">float</property>
+                </structure>
             </list-property>
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">fechaMovimiento</property>
-                    <property name="displayName">FECHA</property>
+                    <text-property name="displayName">FECHA</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">deuda</property>
-                    <property name="displayName">DEUDA</property>
+                    <text-property name="displayName">DEUDA</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">interes</property>
-                    <property name="displayName">INTERES %</property>
+                    <text-property name="displayName">INTERES %</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">fLiquidacion</property>
-                    <property name="displayName">F.LIQUIDAC.</property>
+                    <text-property name="displayName">F.LIQUIDAC.</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">dias</property>
-                    <property name="displayName">DIAS</property>
+                    <text-property name="displayName">DIAS</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">coefic</property>
-                    <property name="displayName">COEFIC.</property>
+                    <text-property name="displayName">COEFIC.</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">intereses</property>
-                    <property name="displayName">INTERESES</property>
+                    <text-property name="displayName">INTERESES</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">entregado</property>
-                    <property name="displayName">ENTREGA</property>
+                    <text-property name="displayName">ENTREGA</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">descrMov</property>
+                    <text-property name="displayName">Descr. Mov.</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">acNominal</property>
+                    <text-property name="displayName">A/C Nominal</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">interesCalculado</property>
+                    <text-property name="displayName">Interés calculado</text-property>
                 </structure>
             </list-property>
             <structure name="cachedMetaData">
@@ -90,7 +122,7 @@
                     <structure>
                         <property name="position">1</property>
                         <property name="name">fechaMovimiento</property>
-                        <property name="dataType">date</property>
+                        <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">2</property>
@@ -127,6 +159,21 @@
                         <property name="name">entregado</property>
                         <property name="dataType">float</property>
                     </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">descrMov</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">acNominal</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">interesCalculado</property>
+                        <property name="dataType">float</property>
+                    </structure>
                 </list-property>
             </structure>
             <property name="dataSource">Data Source</property>
@@ -135,6 +182,7 @@
 var p = cuerpoIt.next();
  
 row["fechaMovimiento"] = "";
+row["descrMov"] = "";
 row["deuda"] = "";
 row["interes"] = "";
 row["fLiquidacion"] = "";
@@ -144,6 +192,7 @@ row["intereses"] = "";
 row["entregado"] = "";
 
 row["fechaMovimiento"] = p.getFechaMovimiento();
+row["descrMov"] = p.getDescrMov();
 row["deuda"] = p.getDeuda();
 row["interes"] = p.getInteres();
 row["fLiquidacion"] = p.getfLiquidacion();
@@ -151,6 +200,7 @@ row["dias"] = p.getDias();
 row["coefic"] = p.getCoefic();
 row["intereses"] = p.getIntereses();
 row["entregado"] = p.getEntregado();
+
  
 return true;]]></method>
         </script-data-set>
@@ -191,173 +241,569 @@ return true;]]></method>
     </styles>
     <page-setup>
         <simple-master-page name="Simple MasterPage" id="2">
+            <property name="orientation">landscape</property>
             <property name="topMargin">0.25in</property>
             <property name="leftMargin">0.25in</property>
             <property name="bottomMargin">0.25in</property>
             <property name="rightMargin">0.25in</property>
-            <page-footer>
-                <text id="3">
-                    <property name="contentType">html</property>
-                    <text-property name="content"><![CDATA[<value-of>new Date()</value-of>]]></text-property>
-                </text>
-            </page-footer>
         </simple-master-page>
     </page-setup>
     <body>
-        <grid id="124">
-            <property name="height">0.5729166666666666in</property>
-            <property name="width">7.71875in</property>
-            <column id="125">
-                <property name="width">5.65625in</property>
+        <grid id="170">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">none</property>
+            <property name="borderRightStyle">none</property>
+            <property name="borderTopStyle">none</property>
+            <property name="height">1.0833333333333333in</property>
+            <property name="width">10.416666666666666in</property>
+            <column id="171">
+                <property name="width">3.2291666666666665in</property>
             </column>
-            <column id="126">
-                <property name="width">1.8854166666666667in</property>
+            <column id="172">
+                <property name="width">3.0833333333333335in</property>
             </column>
-            <row id="127">
-                <cell id="128">
-                    <text id="130">
-                        <property name="fontSize">12pt</property>
-                        <property name="fontWeight">bold</property>
-                        <property name="marginTop">10pt</property>
-                        <property name="marginBottom">10pt</property>
-                        <property name="textAlign">right</property>
-                        <property name="contentType">auto</property>
-                        <text-property name="content"><![CDATA[PROPUESTA DE LIQUIDACION DE INTERESES AL]]></text-property>
-                    </text>
+            <column id="173">
+                <property name="width">4.104166666666667in</property>
+            </column>
+            <row id="381">
+                <property name="height">0.8125in</property>
+                <cell id="382">
+                    <property name="fontSize">8pt</property>
+                    <property name="verticalAlign">bottom</property>
+                    <image name="logotipo" id="380">
+                        <property name="height">0.625in</property>
+                        <property name="width">3.0694444444444446in</property>
+                        <property name="source">embed</property>
+                        <property name="fitToContainer">true</property>
+                        <property name="imageName">cliente_logo.png</property>
+                    </image>
                 </cell>
-                <cell id="129">
-                    <text id="141">
-                        <property name="fontSize">12pt</property>
-                        <property name="fontWeight">bold</property>
-                        <property name="marginTop">10pt</property>
-                        <property name="marginBottom">10pt</property>
+                <cell id="383"/>
+                <cell id="384">
+                    <property name="textAlign">right</property>
+                </cell>
+            </row>
+            <row id="174">
+                <property name="verticalAlign">bottom</property>
+                <property name="height">0.2708333333333333in</property>
+                <cell id="175">
+                    <property name="fontSize">8pt</property>
+                    <property name="verticalAlign">bottom</property>
+                    <text-data id="169">
+                        <expression name="valueExpr">usuario.getUsername();</expression>
                         <property name="contentType">html</property>
-                        <text-property name="content"><![CDATA[<value-of format="dd/MM/yyyy">new Date()</value-of>
-]]></text-property>
+                    </text-data>
+                </cell>
+                <cell id="176"/>
+                <cell id="177">
+                    <property name="textAlign">right</property>
+                    <text id="179">
+                        <property name="fontSize">8pt</property>
+                        <structure name="toc"/>
+                        <property name="contentType">html</property>
+                        <text-property name="content"><![CDATA[<value-of format="dd/MM/yyyy">new Date()</value-of>]]></text-property>
                     </text>
                 </cell>
             </row>
         </grid>
-        <grid id="79">
-            <property name="marginTop">0pt</property>
-            <property name="marginBottom">10pt</property>
-            <property name="width">100%</property>
-            <column id="80">
-                <property name="width">1.2083333333333333in</property>
+        <grid id="124">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderRightStyle">none</property>
+            <property name="height">0.23958333333333334in</property>
+            <property name="width">10.4375in</property>
+            <column id="125">
+                <property name="width">3.0208333333333335in</property>
             </column>
-            <column id="81">
-                <property name="width">3.6145833333333335in</property>
+            <column id="126">
+                <property name="width">7.416666666666667in</property>
             </column>
-            <column id="82">
-                <property name="width">1.0416666666666667in</property>
-            </column>
-            <column id="83"/>
-            <row id="84">
-                <cell id="85">
-                    <text id="100">
+            <row id="127">
+                <property name="borderBottomStyle">solid</property>
+                <property name="borderBottomWidth">thin</property>
+                <property name="borderLeftStyle">none</property>
+                <property name="borderRightStyle">none</property>
+                <property name="borderTopStyle">none</property>
+                <property name="verticalAlign">bottom</property>
+                <property name="height">0.23958333333333334in</property>
+                <cell id="128">
+                    <text id="130">
+                        <property name="fontSize">8pt</property>
+                        <property name="fontWeight">normal</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="marginBottom">0pt</property>
+                        <property name="textAlign">left</property>
+                        <structure name="toc"/>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[EXTRACTO DE LA LIQUIDACION]]></text-property>
+                    </text>
+                </cell>
+                <cell id="129">
+                    <text id="180">
+                        <property name="fontSize">8pt</property>
+                        <property name="fontWeight">normal</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="marginBottom">0pt</property>
                         <property name="textAlign">left</property>
                         <property name="contentType">auto</property>
-                        <text-property name="content"><![CDATA[ACUERDO:]]></text-property>
+                        <text-property name="content"><![CDATA[LIQUIDACION JUZGADO]]></text-property>
                     </text>
-                </cell>
-                <cell id="86">
-                    <text-data id="99">
-                        <property name="fontWeight">bold</property>
-                        <expression name="valueExpr">cabecera.getAcuerdo();</expression>
-                        <property name="contentType">html</property>
-                    </text-data>
-                </cell>
-                <cell id="87">
-                    <text id="102">
-                        <property name="textAlign">right</property>
-                        <property name="contentType">auto</property>
-                        <text-property name="content"><![CDATA[AUTOS:]]></text-property>
-                    </text>
-                </cell>
-                <cell id="88">
-                    <text-data id="105">
-                        <property name="fontWeight">bold</property>
-                        <expression name="valueExpr">cabecera.getAutos();</expression>
-                        <property name="contentType">html</property>
-                    </text-data>
                 </cell>
             </row>
-            <row id="89">
-                <cell id="90">
-                    <text id="101">
-                        <property name="textAlign">left</property>
-                        <property name="contentType">auto</property>
-                        <text-property name="content"><![CDATA[NOMBRE:]]></text-property>
-                    </text>
+        </grid>
+        <grid id="181">
+            <property name="height">1.0625in</property>
+            <property name="width">10.4375in</property>
+            <column id="182">
+                <property name="width">4.25in</property>
+            </column>
+            <column id="183">
+                <property name="width">2.5104166666666665in</property>
+            </column>
+            <column id="184">
+                <property name="width">3.6770833333333335in</property>
+            </column>
+            <row id="185">
+                <property name="height">1.0625in</property>
+                <cell id="186">
+                    <grid id="189">
+                        <property name="borderBottomColor">#808080</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderLeftColor">#808080</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightColor">#808080</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <property name="borderTopColor">#808080</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <property name="display">inline</property>
+                        <property name="height">0.9270833333333334in</property>
+                        <property name="width">4.260416666666667in</property>
+                        <column id="190">
+                            <property name="width">0.625in</property>
+                        </column>
+                        <column id="191">
+                            <property name="width">2.0625in</property>
+                        </column>
+                        <column id="192">
+                            <property name="width">0.9270833333333334in</property>
+                        </column>
+                        <column id="193">
+                            <property name="canShrink">true</property>
+                            <property name="width">0.6458333333333334in</property>
+                        </column>
+                        <row id="194">
+                            <cell id="195">
+                                <text id="214">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Cuenta nº:]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="196">
+                                <text-data id="215">
+                                    <property name="fontSize">6pt</property>
+                                    <expression name="valueExpr">cabecera.getNumCuenta()</expression>
+                                    <property name="contentType">html</property>
+                                </text-data>
+                            </cell>
+                            <cell id="197">
+                                <text id="216">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Capital:]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="198">
+                                <text-data id="217">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="textAlign">right</property>
+                                    <property name="canShrink">true</property>
+                                    <expression name="valueExpr" type="javascript">cabecera.getCapital()</expression>
+                                    <property name="contentType">html</property>
+                                </text-data>
+                            </cell>
+                        </row>
+                        <row id="199">
+                            <property name="height">0.19791666666666666in</property>
+                            <cell id="200">
+                                <text id="218">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Deudores:]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="201">
+                                <property name="colSpan">1</property>
+                                <property name="rowSpan">2</property>
+                                <text-data id="219">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="fontWeight">normal</property>
+                                    <structure name="toc"/>
+                                    <expression name="valueExpr" type="javascript">cabecera.getNombre();</expression>
+                                    <property name="contentType">html</property>
+                                </text-data>
+                            </cell>
+                            <cell id="202">
+                                <text id="220">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[F.Vencimiento:]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="203">
+                                <text-data id="221">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="textAlign">right</property>
+                                    <property name="canShrink">true</property>
+                                    <structure name="toc"/>
+                                    <property name="pushDown">false</property>
+                                    <expression name="valueExpr">importPackage(java.text);
+var d = new SimpleDateFormat("dd/MM/yyyy");
+this.text = d.format(cabecera.getFechaVencimiento());</expression>
+                                    <property name="contentType">html</property>
+                                </text-data>
+                            </cell>
+                        </row>
+                        <row id="204">
+                            <property name="height">0.19791666666666666in</property>
+                            <cell id="205"/>
+                            <cell id="207">
+                                <text id="222">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Interés:]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="208">
+                                <text-data id="223">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="textAlign">right</property>
+                                    <property name="canShrink">true</property>
+                                    <expression name="valueExpr">cabecera.getInteres()</expression>
+                                    <property name="contentType">html</property>
+                                </text-data>
+                            </cell>
+                        </row>
+                        <row id="209">
+                            <property name="height">0.3020833333333333in</property>
+                            <cell id="210">
+                                <text id="224">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Nif/Cif:]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="211">
+                                <text-data id="225">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="fontWeight">normal</property>
+                                    <expression name="valueExpr">cabecera.getDni();</expression>
+                                    <property name="contentType">html</property>
+                                </text-data>
+                            </cell>
+                            <cell id="212">
+                                <text id="226">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Tipo Int.Demora:]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="213">
+                                <text-data id="243">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="textAlign">right</property>
+                                    <property name="canShrink">true</property>
+                                    <expression name="valueExpr">cabecera.getTipoIntDemora()</expression>
+                                    <property name="contentType">html</property>
+                                </text-data>
+                            </cell>
+                        </row>
+                    </grid>
                 </cell>
-                <cell id="91">
-                    <text-data id="104">
-                        <property name="fontWeight">bold</property>
-                        <expression name="valueExpr">cabecera.getNombre();</expression>
-                        <property name="contentType">html</property>
-                    </text-data>
+                <cell id="187">
+                    <grid id="227">
+                        <property name="borderBottomColor">#808080</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderLeftColor">#808080</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightColor">#808080</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <property name="borderTopColor">#808080</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <property name="display">inline</property>
+                        <property name="height">0.9270833333333334in</property>
+                        <property name="width">2.5104166666666665in</property>
+                        <column id="228">
+                            <property name="width">1.0625in</property>
+                        </column>
+                        <column id="229">
+                            <property name="width">1.4479166666666667in</property>
+                        </column>
+                        <row id="230">
+                            <property name="height">0.19791666666666666in</property>
+                            <cell id="231">
+                                <text id="242">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Fecha Certif.Deuda:]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="232">
+                                <text-data id="244">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="textAlign">right</property>
+                                    <expression name="valueExpr">importPackage(java.text);
+var d = new SimpleDateFormat("dd/MM/yyyy");
+this.text = d.format(cabecera.getFechaLiquidacion());</expression>
+                                    <property name="contentType">html</property>
+                                </text-data>
+                            </cell>
+                        </row>
+                        <row id="233">
+                            <cell id="234">
+                                <text id="245">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Principal Certif.:]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="235">
+                                <text-data id="248">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="textAlign">right</property>
+                                    <expression name="valueExpr">cabecera.getPrincipalCertif()</expression>
+                                    <property name="contentType">html</property>
+                                </text-data>
+                            </cell>
+                        </row>
+                        <row id="236">
+                            <cell id="377">
+                                <text id="246">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Int.Certif.:]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="238"/>
+                        </row>
+                        <row id="239">
+                            <property name="height">0.2708333333333333in</property>
+                            <cell id="240">
+                                <text id="247">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Dem.Certif.:]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="241"/>
+                        </row>
+                    </grid>
                 </cell>
-                <cell id="92">
-                    <text id="103">
-                        <property name="textAlign">right</property>
-                        <property name="contentType">auto</property>
-                        <text-property name="content"><![CDATA[D.N.I.:]]></text-property>
-                    </text>
-                </cell>
-                <cell id="93">
-                    <text-data id="106">
-                        <property name="fontWeight">bold</property>
-                        <expression name="valueExpr">cabecera.getDni();</expression>
-                        <property name="contentType">html</property>
-                    </text-data>
+                <cell id="188">
+                    <grid id="251">
+                        <property name="borderBottomColor">#808080</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderLeftColor">#808080</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightColor">#808080</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <property name="borderTopColor">#808080</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <property name="display">inline</property>
+                        <property name="canShrink">false</property>
+                        <property name="height">0.927in</property>
+                        <property name="width">3.53125in</property>
+                        <column id="252">
+                            <property name="width">0.6458333333333334in</property>
+                        </column>
+                        <column id="253">
+                            <property name="width">1.0416666666666667in</property>
+                        </column>
+                        <column id="254">
+                            <property name="width">0.6770833333333334in</property>
+                        </column>
+                        <column id="255">
+                            <property name="width">1.1666666666666667in</property>
+                        </column>
+                        <row id="256">
+                            <property name="height">0.23958333333333334in</property>
+                            <cell id="257">
+                                <text id="276">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Tipo proc.:]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="258">
+                                <text-data id="279">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="textAlign">left</property>
+                                    <expression name="valueExpr">cabecera.getTipoProc()</expression>
+                                    <property name="contentType">html</property>
+                                </text-data>
+                            </cell>
+                            <cell id="259">
+                                <text id="282">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Abogado:]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="260">
+                                <text-data id="284">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="display">block</property>
+                                    <property name="canShrink">false</property>
+                                    <property name="zIndex">0</property>
+                                    <structure name="toc"/>
+                                    <expression name="valueExpr" type="javascript">cabecera.getAbogado()</expression>
+                                    <property name="contentType">auto</property>
+                                </text-data>
+                            </cell>
+                        </row>
+                        <row id="261">
+                            <property name="height">0.20833333333333334in</property>
+                            <cell id="262">
+                                <text id="277">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Nº autos:]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="263">
+                                <text-data id="280">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="textAlign">left</property>
+                                    <expression name="valueExpr">cabecera.getAutos()</expression>
+                                    <property name="contentType">html</property>
+                                </text-data>
+                            </cell>
+                            <cell id="264">
+                                <text id="283">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Procurador:]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="265">
+                                <text-data id="285">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="display">block</property>
+                                    <expression name="valueExpr">cabecera.getProcurador()</expression>
+                                    <property name="contentType">html</property>
+                                </text-data>
+                            </cell>
+                        </row>
+                        <row id="266">
+                            <cell id="267">
+                                <text id="278">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Juzgado:]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="268">
+                                <text-data id="281">
+                                    <property name="fontSize">6pt</property>
+                                    <property name="textAlign">left</property>
+                                    <expression name="valueExpr">cabecera.getJuzgado()</expression>
+                                    <property name="contentType">html</property>
+                                </text-data>
+                            </cell>
+                            <cell id="269"/>
+                            <cell id="270"/>
+                        </row>
+                        <row id="271">
+                            <property name="height">0.125in</property>
+                            <cell id="272"/>
+                            <cell id="273"/>
+                            <cell id="274"/>
+                            <cell id="275"/>
+                        </row>
+                    </grid>
                 </cell>
             </row>
         </grid>
         <table id="27">
             <property name="fontSize">9pt</property>
             <property name="height">1.4791666666666667in</property>
-            <property name="width">8.03125in</property>
+            <property name="width">10.4375in</property>
             <property name="dataSet">cuerpo</property>
             <list-property name="boundDataColumns">
                 <structure>
                     <property name="name">fechaMovimiento</property>
-                    <property name="displayName">FECHA</property>
+                    <text-property name="displayName">FECHA</text-property>
                     <expression name="expression">dataSetRow["fechaMovimiento"]</expression>
-                    <property name="dataType">date</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">descrMov</property>
+                    <text-property name="displayName">DESCRIPMOV</text-property>
+                    <expression name="expression">dataSetRow["descrMov"]</expression>
+                    <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">deuda</property>
-                    <property name="displayName">DEUDA</property>
+                    <text-property name="displayName">DEUDA</text-property>
                     <expression name="expression">BirtMath.round(dataSetRow["deuda"], 2)</expression>
                     <property name="dataType">float</property>
                 </structure>
                 <structure>
                     <property name="name">interes</property>
-                    <property name="displayName">INTERES %</property>
+                    <text-property name="displayName">INTERES %</text-property>
                     <expression name="expression">dataSetRow["interes"]</expression>
                     <property name="dataType">float</property>
                 </structure>
                 <structure>
                     <property name="name">fLiquidacion</property>
-                    <property name="displayName">F.LIQUIDAC.</property>
+                    <text-property name="displayName">F.LIQUIDAC.</text-property>
                     <expression name="expression">dataSetRow["fLiquidacion"]</expression>
                     <property name="dataType">date</property>
                 </structure>
                 <structure>
                     <property name="name">dias</property>
-                    <property name="displayName">DIAS</property>
+                    <text-property name="displayName">DIAS</text-property>
                     <expression name="expression">dataSetRow["dias"]</expression>
                     <property name="dataType">decimal</property>
                 </structure>
                 <structure>
                     <property name="name">coefic</property>
-                    <property name="displayName">COEFIC.</property>
+                    <text-property name="displayName">COEFIC.</text-property>
                     <expression name="expression">BirtMath.round(dataSetRow["coefic"], 2)</expression>
                     <property name="dataType">float</property>
                 </structure>
                 <structure>
                     <property name="name">intereses</property>
-                    <property name="displayName">INTERESES</property>
+                    <text-property name="displayName">INTERESES</text-property>
                     <expression name="expression">BirtMath.round(dataSetRow["intereses"], 2)</expression>
                     <property name="dataType">float</property>
                 </structure>
@@ -385,7 +831,7 @@ return true;]]></method>
                 </structure>
                 <structure>
                     <property name="name">entregado</property>
-                    <property name="displayName">ENTREGA</property>
+                    <text-property name="displayName">ENTREGA</text-property>
                     <expression name="expression">BirtMath.round(dataSetRow["entregado"], 2)</expression>
                     <property name="dataType">float</property>
                 </structure>
@@ -402,103 +848,172 @@ return true;]]></method>
                 </structure>
                 <structure>
                     <property name="name">Aggregation</property>
-                    <property name="displayName">sumDeuda</property>
+                    <text-property name="displayName">sumDeuda</text-property>
                     <property name="dataType">float</property>
-                    <property name="aggregateFunction">MIN</property>
+                    <property name="aggregateFunction">SUM</property>
                     <list-property name="arguments">
                         <structure>
                             <property name="name">Expression</property>
-                            <expression name="value">BirtMath.round(row["deuda"],2)</expression>
+                            <expression name="value" type="javascript">BirtMath.round(row["deuda"],2)</expression>
                         </structure>
                     </list-property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">Column Binding</property>
-                    <property name="displayName">Total Deuda</property>
+                    <text-property name="displayName">Total Deuda</text-property>
                     <expression name="expression">cabecera.getTotalDeuda()</expression>
                     <property name="dataType">float</property>
                 </structure>
+                <structure>
+                    <property name="name">acNominal</property>
+                    <text-property name="displayName">A/C Nominal</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["acNominal"]</expression>
+                    <property name="dataType">float</property>
+                </structure>
+                <structure>
+                    <property name="name">interesCalculado</property>
+                    <text-property name="displayName">Interés calculado</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["intereses"]</expression>
+                    <property name="dataType">float</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">sumACNominal</property>
+                    <property name="dataType">float</property>
+                    <property name="aggregateFunction">SUM</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">BirtMath.round(row["acNominal"],2)</expression>
+                        </structure>
+                    </list-property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">sumCoef</property>
+                    <property name="dataType">float</property>
+                    <property name="aggregateFunction">SUM</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">BirtMath.round(dataSetRow["coefic"], 2)</expression>
+                        </structure>
+                    </list-property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">sumIntCalculado</property>
+                    <property name="dataType">float</property>
+                    <property name="aggregateFunction">SUM</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">dataSetRow["intereses"]</expression>
+                        </structure>
+                    </list-property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">DESCRIPCION</property>
+                    <text-property name="displayName">DESCRIPCION</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["descrMov"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">sumEntrega</property>
+                    <text-property name="displayName">sumEntrega</text-property>
+                    <property name="dataType">float</property>
+                    <property name="aggregateFunction">SUM</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">BirtMath.round(dataSetRow["entregado"], 2)</expression>
+                        </structure>
+                    </list-property>
+                    <property name="allowExport">true</property>
+                </structure>
             </list-property>
+            <property name="pageBreakInterval">0</property>
             <column id="71">
                 <property name="width">0.7in</property>
             </column>
             <column id="135">
-                <property name="width">0.7in</property>
+                <property name="width">2.5in</property>
             </column>
             <column id="72">
-                <property name="width">0.7in</property>
-            </column>
-            <column id="73">
-                <property name="width">0.7in</property>
-            </column>
-            <column id="74">
-                <property name="width">0.7in</property>
+                <property name="width">0.7083333333333334in</property>
             </column>
             <column id="75">
-                <property name="width">0.5in</property>
-            </column>
-            <column id="76">
-                <property name="width">0.5in</property>
+                <property name="width">1.6145833333333333in</property>
             </column>
             <column id="77">
-                <property name="width">0.7in</property>
+                <property name="width">0.2916666666666667in</property>
+            </column>
+            <column id="291">
+                <property name="width">0.9166666666666666in</property>
+            </column>
+            <column id="297">
+                <property name="width">0.9375in</property>
             </column>
             <header>
                 <row id="28">
+                    <property name="backgroundColor">gray</property>
                     <cell id="29">
                         <label id="30">
+                            <property name="fontSize">6pt</property>
                             <property name="fontWeight">bold</property>
                             <property name="textAlign">left</property>
-                            <text-property name="text">FECHA</text-property>
+                            <text-property name="text">F.Valor</text-property>
                         </label>
                     </cell>
                     <cell id="132">
                         <label id="36">
+                            <property name="fontSize">6pt</property>
                             <property name="fontWeight">bold</property>
                             <property name="textAlign">left</property>
-                            <text-property name="text">LIQUIDAC.</text-property>
+                            <text-property name="text">Descr. Mov.</text-property>
                         </label>
                     </cell>
                     <cell id="31">
                         <label id="32">
+                            <property name="fontSize">6pt</property>
                             <property name="fontWeight">bold</property>
-                            <property name="textAlign">left</property>
-                            <text-property name="text">DEUDA</text-property>
-                        </label>
-                    </cell>
-                    <cell id="33">
-                        <label id="136">
-                            <property name="fontWeight">bold</property>
-                            <property name="textAlign">left</property>
-                            <text-property name="text">ENTREGA</text-property>
-                        </label>
-                    </cell>
-                    <cell id="35">
-                        <label id="34">
-                            <property name="fontWeight">bold</property>
-                            <property name="textAlign">left</property>
-                            <text-property name="text">INTERES %</text-property>
+                            <property name="textAlign">right</property>
+                            <text-property name="text">Importe</text-property>
                         </label>
                     </cell>
                     <cell id="37">
                         <label id="38">
+                            <property name="fontSize">6pt</property>
                             <property name="fontWeight">bold</property>
                             <property name="textAlign">right</property>
-                            <text-property name="text">DIAS</text-property>
-                        </label>
-                    </cell>
-                    <cell id="39">
-                        <label id="40">
-                            <property name="fontWeight">bold</property>
-                            <property name="textAlign">right</property>
-                            <text-property name="text">COEFIC.</text-property>
+                            <text-property name="text">Saldo nominal pdte. cobro</text-property>
                         </label>
                     </cell>
                     <cell id="41">
                         <label id="42">
+                            <property name="fontSize">6pt</property>
                             <property name="fontWeight">bold</property>
                             <property name="textAlign">right</property>
-                            <text-property name="text">INTERESES</text-property>
+                            <text-property name="text">Día</text-property>
+                        </label>
+                    </cell>
+                    <cell id="287">
+                        <label id="292">
+                            <property name="fontSize">6pt</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">right</property>
+                            <text-property name="text">Tipo Int. Demora</text-property>
+                        </label>
+                    </cell>
+                    <cell id="293">
+                        <label id="298">
+                            <property name="fontSize">6pt</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">right</property>
+                            <text-property name="text">Interés calculado</text-property>
                         </label>
                     </cell>
                 </row>
@@ -507,157 +1022,203 @@ return true;]]></method>
                 <row id="45">
                     <cell id="46">
                         <data id="47">
+                            <property name="fontSize">6pt</property>
                             <property name="paddingTop">2pt</property>
                             <property name="paddingBottom">2pt</property>
+                            <structure name="dateTimeFormat">
+                                <property name="category">Unformatted</property>
+                            </structure>
                             <property name="textAlign">left</property>
                             <property name="resultSetColumn">fechaMovimiento</property>
                         </data>
                     </cell>
                     <cell id="133">
-                        <data id="53">
-                            <property name="paddingTop">2pt</property>
-                            <property name="paddingBottom">2pt</property>
-                            <property name="textAlign">left</property>
-                            <property name="resultSetColumn">fLiquidacion</property>
+                        <data id="385">
+                            <property name="fontSize">6pt</property>
+                            <property name="resultSetColumn">DESCRIPCION</property>
                         </data>
                     </cell>
                     <cell id="48">
-                        <data id="49">
-                            <property name="paddingTop">2pt</property>
-                            <property name="paddingBottom">2pt</property>
-                            <structure name="numberFormat">
-                                <property name="category">Currency</property>
-                                <property name="pattern">#,##0.00 €</property>
-                            </structure>
-                            <property name="textAlign">left</property>
-                            <property name="resultSetColumn">deuda</property>
-                        </data>
-                    </cell>
-                    <cell id="50">
                         <data id="139">
+                            <property name="fontSize">6pt</property>
                             <property name="paddingTop">2pt</property>
                             <property name="paddingBottom">2pt</property>
                             <structure name="numberFormat">
                                 <property name="category">Currency</property>
                                 <property name="pattern">#,##0.00 €</property>
                             </structure>
-                            <property name="textAlign">left</property>
+                            <property name="textAlign">right</property>
                             <property name="resultSetColumn">entregado</property>
                         </data>
                     </cell>
-                    <cell id="52">
-                        <data id="51">
+                    <cell id="54">
+                        <data id="49">
+                            <property name="fontSize">6pt</property>
                             <property name="paddingTop">2pt</property>
                             <property name="paddingBottom">2pt</property>
-                            <property name="textAlign">left</property>
-                            <property name="resultSetColumn">interes</property>
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">#,##0.00 €</property>
+                            </structure>
+                            <property name="textAlign">right</property>
+                            <property name="resultSetColumn">deuda</property>
                         </data>
                     </cell>
-                    <cell id="54">
+                    <cell id="58">
                         <data id="55">
+                            <property name="fontSize">6pt</property>
                             <property name="paddingTop">2pt</property>
                             <property name="paddingBottom">2pt</property>
                             <property name="textAlign">right</property>
                             <property name="resultSetColumn">dias</property>
                         </data>
                     </cell>
-                    <cell id="56">
-                        <data id="57">
+                    <cell id="288">
+                        <data id="51">
+                            <property name="fontSize">6pt</property>
                             <property name="paddingTop">2pt</property>
                             <property name="paddingBottom">2pt</property>
                             <property name="textAlign">right</property>
-                            <property name="resultSetColumn">coefic</property>
+                            <property name="resultSetColumn">interes</property>
                         </data>
                     </cell>
-                    <cell id="58">
-                        <data id="59">
-                            <property name="paddingTop">2pt</property>
-                            <property name="paddingBottom">2pt</property>
-                            <structure name="numberFormat">
-                                <property name="category">Currency</property>
-                                <property name="pattern">#,##0.00 €</property>
-                            </structure>
+                    <cell id="294">
+                        <data id="302">
+                            <property name="fontSize">6pt</property>
                             <property name="textAlign">right</property>
-                            <property name="resultSetColumn">intereses</property>
+                            <property name="resultSetColumn">interesCalculado</property>
                         </data>
                     </cell>
                 </row>
             </detail>
             <footer>
                 <row id="62">
-                    <property name="height">0.2604166666666667in</property>
-                    <property name="borderTopColor">#000000</property>
-                    <property name="borderTopStyle">solid</property>
-                    <property name="borderTopWidth">medium</property>
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
+                    <property name="height">0.22916666666666666in</property>
                     <cell id="63">
-                        <property name="colSpan">2</property>
+                        <property name="colSpan">1</property>
                         <property name="rowSpan">1</property>
+                    </cell>
+                    <cell id="299">
                         <text id="116">
+                            <property name="fontSize">6pt</property>
+                            <property name="fontWeight">bold</property>
                             <property name="paddingTop">2pt</property>
+                            <property name="textAlign">right</property>
                             <property name="contentType">auto</property>
-                            <text-property name="content"><![CDATA[TOTALES]]></text-property>
+                            <text-property name="content"><![CDATA[Totales:]]></text-property>
                         </text>
                     </cell>
                     <cell id="64">
-                        <data id="166">
-                            <structure name="numberFormat">
-                                <property name="category">Currency</property>
-                                <property name="pattern">#,##0.00 €</property>
-                            </structure>
-                            <property name="textAlign">left</property>
-                            <property name="resultSetColumn">Aggregation</property>
-                        </data>
-                    </cell>
-                    <cell id="65">
-                        <data id="140">
-                            <property name="paddingTop">2pt</property>
-                            <structure name="numberFormat">
-                                <property name="category">Currency</property>
-                                <property name="pattern">#,##0.00 €</property>
-                            </structure>
-                            <property name="textAlign">left</property>
-                            <property name="resultSetColumn">sunEntregado</property>
-                        </data>
-                    </cell>
-                    <cell id="66"/>
-                    <cell id="67"/>
-                    <cell id="68"/>
-                    <cell id="69">
-                        <data id="122">
-                            <property name="paddingTop">2pt</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <data id="387">
+                            <property name="fontSize">6pt</property>
                             <structure name="numberFormat">
                                 <property name="category">Currency</property>
                                 <property name="pattern">#,##0.00 €</property>
                             </structure>
                             <property name="textAlign">right</property>
-                            <property name="resultSetColumn">sumIntereses</property>
+                            <structure name="toc"/>
+                            <property name="resultSetColumn">sumEntrega</property>
                         </data>
                     </cell>
-                </row>
-                <row id="143">
-                    <cell id="145">
-                        <property name="colSpan">4</property>
-                        <property name="rowSpan">1</property>
-                        <text id="154">
-                            <property name="contentType">auto</property>
-                            <text-property name="content"><![CDATA[TOTAL DEUDA (principal + intereses - entregado)]]></text-property>
-                        </text>
-                    </cell>
-                    <cell id="160">
-                        <property name="colSpan">4</property>
-                        <property name="rowSpan">1</property>
-                        <data id="167">
-                            <property name="fontWeight">bold</property>
+                    <cell id="67">
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <data id="166">
+                            <property name="fontSize">6pt</property>
                             <structure name="numberFormat">
                                 <property name="category">Currency</property>
                                 <property name="pattern">#,##0.00 €</property>
                             </structure>
-                            <property name="resultSetColumn">Column Binding</property>
+                            <property name="textAlign">right</property>
+                            <structure name="toc"/>
+                            <property name="resultSetColumn">Aggregation</property>
+                        </data>
+                    </cell>
+                    <cell id="69">
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                    </cell>
+                    <cell id="289">
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                    </cell>
+                    <cell id="295">
+                        <property name="fontSize">6pt</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <data id="376">
+                            <property name="textAlign">right</property>
+                            <property name="resultSetColumn">sumIntCalculado</property>
                         </data>
                     </cell>
                 </row>
             </footer>
         </table>
-        <text id="94"/>
     </body>
+    <list-property name="images">
+        <structure>
+            <property name="name">cliente_logo.png</property>
+            <property name="type">image/png</property>
+            <property name="data">
+                iVBORw0KGgoAAAANSUhEUgAAAN0AAAAtCAYAAAAqVm4DAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAGXRF
+                WHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAC7xJREFUeNrsXU1sG8cVHgeK67iJRcGVgwS2
+                tQLqpEGRmmqqQwsUWqrHHkQ2aHvIQeQtPRQk0UvRC8VDgx4KUDpFp3J16LGgBLTXaNX2pgKmby1SVFQN
+                GEhdNKvGP1FU251HvZGGo9mZ2V0uJZHzgIWo5e7s/LxvvvfevFmOkQHIvd/dytI/eXrcpkeGHg4eYRLQ
+                o02PLXqs33j34zYZUaF9t0T/1MK+p31zgVg5VzKWssK4qDAudxoA1MFDJgyQLh41Wg7cs0YPjypZYIfN
+                igXdSbABaJoc2ABgdWStYG1yFtgO2K+9+GAb/s8iAy7AxRevPG/PVB9ufPm1p3P03yJem0UArtC/yxZ8
+                Vs6rXEgBcBX6p8GdWqdH6aP3M1kOhAsIIpUAuxXmV4MAyysK5ucKBd6SNS+teTnSoKMK0hTA4VGw1QXW
+                iyoe+Hazv/gseOXm0yYyIuEYtDDMPp8F3fDJCykCDtgNAiF3EgCOYJnN7Q9eafz1t5dL9LMv+H+baM5a
+                sTI6oAsB3BwyXKZPdXXu/+lijZZbQPZjkhHMWStWzrSM9QFwlRDAFVOoL/iB8LwqsidjuDywHTW1OkM4
+                Rr5VU+vT8YBz0HxkbLZMAben8kH6IBBEmZlfDVxkUiZVCrplO6RWht28rHGAa1PAraQMOGZOFinAPMl5
+                K1aG17ykLJcRTMiqwDyDMr3cfhWGzO2I5ynA/Zj9wy+TsGwcMIF3yeGSiK9bb8QEA1UbPVOzmqtTVpik
+                uhlAunZOlH/O7ldJ59OVX3VC7nGw/T3XhDxLrGOb3pNobZaWycZXLLuD5bc19xeJOpPKp2X4eC2M2SJ3
+                /QaMFbQhiU+X5zuEspzbTwDoBpYbxH4ArSb4iOI17JnQoSw1LQhR6jx2tmv4fA9N4zCFcjXWg0/Cs3tY
+                +8pYTlZTl+76JwlPPoD7NzVNqlOF8/CZ+bA+pddAvau8oiMoQu+j38O1K/QeLwLQsjgeeZ2+0GuhHyHz
+                aTkE4Cbj6iM4m7JxpN9Vk4Bujvu8NgCzsgd0qOBOArBlsM4Vw1scZHY4YHG/IAFuPoaZW8RAUK6f6420
+                vGIU8HMmOrSjnKA+C4a6APW6Q5Uwh6wvJkCQENA36T3wjJKK+VDxywbMLI4x1H2B3l/SMV/Ic/MKiw/6
+                dy6JT3c0mDu/vxQM2KfqCExLcOCiAG4zAuBOzOYSZSgm6INufbBe/QBcliRLSGD1yca4N+o9UM8dEi3a
+                rVJsXvGzMdvfZXQ0jaPIuIGLtZYEdA4Hug4ZrDg4o4pmlqm0EgyIJzIA/R9S3dYlk0AdGREW9T0DRe/L
+                eiPWbznEFK3jsT6o+hiMZZzJJo9sdkIoQ8nGI8BzrP1+Cu3XTbzgN/r9SngeaBrWtXcOHIHp1k0ToNHs
+                MmEAD53fQGD2sGUJtnbYHVhJcMPDZO1NxcAUEaD9kDrXR3VZHyGTqerjwjURzUzmF/oIqEYEUPFg0Pmy
+                BM1HTzMeUJ+6zA/EYEdLNR7gg0UI4OjaCf3Sn10G86tB5qP3M+0E7BFJ3vjx4wVZYwylZqA0Mn/G17AL
+                +JkzqkgilInAqykmBTdOtFTyrAD8MmhP2ISE9Smh4qlMuSigywnBkbYG2EcgofctCwGJ2xI3wsiUhego
+                +IsqvwxYh15T1zCaa2AVGE1GDPj9YjqHY4Q0Jbj69YP6xSvP+U7qmCopVTBtBIscRhLbMRW9IzzPIcch
+                +qkEphTpR304dnNSmiA9Ucnhf4xm6vxnL4QZ8nErIwMcRjP59k8Z+HdxQBdw1hLh8ZEEdEfBk/1PX1gg
+                6bMcdGDu9k8ftTRBDV1kTdkmyaJ71CCGQzTh8kELTjYLJF50NYrshpzfMwBIapM2+n4LyFqDmPRAJ8OW
+                HRKBrs38nINHFyoDaEgJU794f8yPCBLdxOAnUGzmeBc1ExUZ0MAzsDXOCvgHLRRsFdKbNRVHougEjG+B
+                LZCHSZLo5Rb78PL1p+TS1Wdp9p+Pm1mbCVjOBHR3Yyo3lKsKewdY1+lBBZ1w50dLAThQjFyMPjwPYMvQ
+                Y1MTxAGTcYb0N6Hc0wEuKeh67Nyv/uCJn7JfJ0aZlqMEHNLac8et+WUUFgEEWJYG9YoJyVYrmd+a60fA
+                5ozKJgmPUDM2KqDPt9XH5+6ZXBQbdBhsOHLUr71zkH3p2rNUZs23Fh+7Akt1YszQaZlYupB4aZBbjtCk
+                VAGuPsy7MSjDLWksmhKu452aJN1lwCt+5pvVh1P9Zrsb39snr337C/F0IQZrmFw/F4PlVAruncKrJFRL
+                Ip0ReK9MWeWmSAA3fq5Ah0GMo1n8SxPPiq9/9wv2SoXEs/utHz0ht374RMYc7Rh1NbnHjWiGuhEmpbQZ
+                l99FEKU+U8OCNlzsVlkdKzH8/DPHdF0Q8Gz3tfce1xYfbOfoMY2OemTmG7v8nLz9k0fkxvy++NVywpC+
+                CfBaEXIgsxqgdyQBFyfF8dRuu4kxcQyNiCyHuZXumQcdzCaQUAq2Mxzf+OO7bvPeG+2/7E2Sz/73Ynfg
+                0ZEnFHg+McsWAWBC2k7hem6/851f/pdM3j6QmWrVhO1dMVTcO5AuJgNfFCbEvXA8CzVPWe8coX4VMkLL
+                CciEoj8+cBkzqKhDNPuxGjtvH31+/dJjMjv+oLj64U33+9f+SZ327aW1ydkOOc5aYQGYgJU3vxrAOdWa
+                UqRXMeAM5ogZCcCSVNFqBormIECauMeMpbhlyHGo3YQ5W7hfDqJaiwNQcJ1V0cBJw8f6FMloSQtyKbGf
+                2B67swM6nBVqUen3/ueXycbnU2Tjkynng79nmz/79T8aM9c/bk+8uL+FSusKTqyrMIsCDJr4BiBzMRDi
+                onLnQi6HrH+TXMAjk1mos8u9BMk3uLciaVMqi+OYS9lRgJvtl6sNKajaBuNx2tbGSdAhs/F7sQJUrrsc
+                UzE2cNARz8qAA+bmb+69maGHu/Dqrpv7yn0yf/W+6Ywt3cHMbbl38dmuoGRQ15mw1wGgYuZIsv1WZWRf
+                SCpeJmb78tgCOUsATkuibChm5n9rSHy2gOqH6Xh0XRZyuE7XPDXQcWkzrEIrzETjlJ13ytf5/DLcPCjN
+                8aPM1z1A3nw5IFfGDsi3xv/dU5nZzAPy5/+8GvzhXze9T/ZfglOViXJPonBWp0AmazAYyZzBbT5lkiyC
+                VSe970KRBS/W2ATC+3kKn9KPWxlYEqDPmNKYjlA+rNf5BvUZP2fYqxP9qym6268wGVvXficV0KF5xvIG
+                AWxVnDUgaNIkikRZ+j1jP8imhnUQiGaWVNvl//bwsKjtYLLn/Ie7b4WZZKpoHHTgWpyt9RgJ9UJ2AwSk
+                Ny0MFDWQbGDtbgWSvECoayFIlioCDajmwA9Mkr1C7y3RMrbQ3Ha4voL2rEdcrK/QsjbQxO8QdVKCr2CU
+                OBOJ7nlStoMJlUtyznBlbaGORml/A97ngvesEXUGi1EbLyDgNnFwCrjHKMOZmGB+eJI3PDEfKi9hQHZP
+                wLGfm3DW6ODRRuWJ2nnnUnS/ZUAO9/75xMq5kTFuQKc5U3ETZ+Rp2fYEPMe2xFcRWGUOWA2cITyk8XUh
+                QMObUhkJE/DsEPq6NjB5RwF4VoZLukwnAgt8O2EXr5EgoBoSk7LHP0wqnDm8S8tcGnGmm7C/1XfOQJdG
+                oZh0WpawWBvt3g2TLRCSctk7DIvIgDMjYF62SPh6EuRSTls1tqA7Mv1whi5qHE8A4p7CCXXJyaWB7i7y
+                NHcbnyHQ7Sh8YQi4lKwaW9CFga9frwoYJcBB3+0oLpkZ5h/EtKDrjx9WIfHToQL0C5dGZXAo6BokfPkE
+                Qv8Fq8IjDLqQH2dgkci2sIgOJqfpi2JYdoo3SpFKzTspu5FlG0AZQdCpMlBCzMINcnLNTwZW5u+ROAGX
+                IQAcTEYtBeBy1qwcMdBxfppoJoqr9Sy7wxUDAASzXuwQSEEXFjzprosO6S/OWtCl4NOxNCuWxQJy6u+r
+                OKOgu0OO1zp9cvzzXJbdLOgSgxCCKnej/N6YFStWrFixEkn+L8AAIeD1z6u7xzkAAAAASUVORK5CYII=
+</property>
+        </structure>
+    </list-property>
 </report>

@@ -41,7 +41,7 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			''; --JODO
+    V_TR_ID VARCHAR2(16 CHAR):= 			'385';
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_TR_SUB_REG_RES_SUS';
     V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Resolución suspensión subasta';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'SBS';

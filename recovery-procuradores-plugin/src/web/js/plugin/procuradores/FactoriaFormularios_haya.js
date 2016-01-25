@@ -2843,6 +2843,27 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
         {"xtype":'datefield',"name":"d_fechaSenyalamiento","fieldLabel":"Fecha señalamiento para posesión",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
     ]);
 
+    // id: 384 : TRAMITE SUBASTA (CAJAMAR): H002_SenyalamientoSubasta
+    this.arrayCampos.push([
+        {"xtype":'numberfield', "name":"d_costasLetrado", "fieldLabel":"Costas de letrado", allowBlank:false,  filtrar: true}
+        ,{"xtype":'datefield', "name":"d_fechaAnuncio", "fieldLabel":"Fecha anuncio", allowBlank:false,  maxValue: (new Date().add(Date.MONTH,  2) ).format('d/m/Y'),  minValue: fechaMinima }
+        ,{"xtype":'numberfield', "name":"d_costasProcurador", "fieldLabel":"Costas del procurador", allowBlank:false}
+        ,{"xtype":'datefield', "name":"d_fechaSenyalamiento", "fieldLabel":"Fecha de celebración", allowBlank:false,  maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+    ]);
+
+    // id: 385 : TRAMITE SUBASTA (CAJAMAR): H002_RegistrarResSuspSubasta
+    this.arrayCampos.push([
+        {"xtype": 'datefield', "name": "d_fecha", "fieldLabel": "Fecha resolución", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
+        ,{"xtype": 'combo', "store": storeSINO, "name": "d_comboSuspension", "fieldLabel": "Subasta suspendida", allowBlank: false, "autoload": true, mode: 'local', triggerAction: 'all', resizable: true, id: 'd_comboSuspension' + this.idFactoria, displayField: 'descripcion', valueField: 'codigo'}
+    ]);
+
+    // id: 386 : TRAMITE SUBASTA (CAJAMAR): H002_ConfirmarRecepcionMandamientoDePago
+    this.arrayCampos.push([
+        {"xtype": 'datefield', "name": "d_fecha", "fieldLabel": "Fecha recepción", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+        ,{"xtype": 'datefield', "name": "d_fechaEnvio", "fieldLabel": "Fecha envío", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+        ,{"xtype": 'numberfield', "name": "d_importe", "fieldLabel": "Importe", allowBlank: true}
+    ]);
+
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){
 			this.arrayCampos.push([]);

@@ -1,11 +1,11 @@
 --/*
 --##########################################
---## AUTOR=CARLOS GIL
---## FECHA_CREACION=20150623
+--## AUTOR=OSCAR DORADO
+--## FECHA_CREACION=20160118
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.0-X
---## INCIDENCIA_LINK=MITCDD-2068
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=PRODUCTO-585
+--## PRODUCTO=NO
 --##
 --## Finalidad: Realiza las inserciones de la resolución Respuesta empresa embargo salario para la tarea H038_SolicitarNotificacion.
 --## INSTRUCCIONES: 
@@ -43,7 +43,7 @@ DECLARE
     */
     V_TR_ID VARCHAR2(16 CHAR):= 			'293';
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_RSP_EMP_EMB';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Respuesta empresa embargo salario';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Resultado notificación requerimiento retención';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'EMS';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     

@@ -324,7 +324,7 @@
 	]);
 
 	var myCboxSelModelPers = new Ext.grid.CheckboxSelectionModel({
- 		handleMouseDown : function(g, rowIndex, e){	
+ 		handleMouseDown : function(g, rowIndex, e){
   		 	var view = this.grid.getView();
     		var isSelected = this.isSelected(rowIndex);
     		if(isSelected) {
@@ -338,6 +338,8 @@
   		singleSelect: false,
   		header:''
 	});
+	
+	
 	
 	var TipoIntervencion = Ext.data.Record.create([
         {name:'id'}
@@ -417,8 +419,6 @@
 			root: 'contratos'
 		}, Contrato)
 	});
-	
-	var columMemoryPlugin = new Ext.ux.plugins.CheckBoxMemory();
 
 	
 	var gridRelacionContratos = app.crearEditorGrid(relacionContratosStore,columnArray,{
@@ -433,7 +433,7 @@
         ,viewConfig: {forceFit: true}
         ,autoExpand:true
         ,clicksToEdit: 'auto'
-        ,plugins: [columMemoryPlugin]
+        /*,plugins: [columMemoryPlugin]*/
        	,style:'padding-top:10px'
 		,cls:'cursor_pointer'
 		,iconCls : 'icon_contratos'
@@ -449,27 +449,22 @@
 	);	
 	
 	gridRelacionContratos.addListener( 'afteredit', function( e){
-			
 	        tiposIntervencionStore.each(function(record) {
 		        if(record.data.descripcion == e.value){
 		        	e.record.data.tipointervCodigo = record.data.codigo;
 		        }
 		    });
-			    
 	});
 	
-	
+
 	gridRelacionContratos.store.on( 'load', function( store, records, options ) {
-    	var view = myCboxSelModelPers.grid.getView();
-    	Ext.each(records, function(name, index, countriesItSelf) {
-		    if(records[index].data.tieneRelacionContratoPersona || records[index].data.tieneRelacionContratoPersonaManual){
-	       		myCboxSelModelPers.selectRow(index, true);
-	       		view.focusRow(index);
+    	Ext.each(records, function(item, index, arrayRecords) {
+		    if(item.data.tieneRelacionContratoPersona || item.data.tieneRelacionContratoPersonaManual){
+		    	myCboxSelModelPers.selectRow(index,true);
 	       	}
 		});
-		
 	} );
-	
+
 	
 
 	

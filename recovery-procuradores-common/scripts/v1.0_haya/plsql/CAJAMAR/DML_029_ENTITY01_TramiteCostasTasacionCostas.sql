@@ -1,11 +1,11 @@
 --/*
 --##########################################
---## AUTOR=CARLOS GIL
---## FECHA_CREACION=20150623
+--## AUTOR=OSCAR DORADO
+--## FECHA_CREACION=20160118
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.0-X
---## INCIDENCIA_LINK=MITCDD-2068
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=PRODUCTO-585
+--## PRODUCTO=NO
 --##
 --## Finalidad: Realiza las inserciones de la resolución Tasación de costas del juzgado para la tarea H007_TasacionCostas.
 --## INSTRUCCIONES: 
@@ -43,7 +43,7 @@ DECLARE
     */
     V_TR_ID VARCHAR2(16 CHAR):= 			'228';
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_TAS_COST_JUZG';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Tasación de costas del juzgado';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Tasación del juzgado';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'TCS';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     

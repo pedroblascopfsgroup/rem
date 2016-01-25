@@ -1,11 +1,11 @@
 --/*
 --##########################################
---## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20150706
+--## AUTOR=OSCAR DORADO
+--## FECHA_CREACION=20160118
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.0-X
---## INCIDENCIA_LINK=MITCDD-2068
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=PRODUCTO-585
+--## PRODUCTO=NO
 --##
 --## Finalidad: Realiza las inserciones de la resolución Demanda sellada para la tarea H020_InterposicionDemandaMasBienes.
 --## INSTRUCCIONES: 
@@ -43,7 +43,7 @@ DECLARE
     */
     V_TR_ID VARCHAR2(16 CHAR):= 			'320';
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_DEM_SLL_NJD';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Demanda sellada';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Copia sellada demanda';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'PNJ';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     

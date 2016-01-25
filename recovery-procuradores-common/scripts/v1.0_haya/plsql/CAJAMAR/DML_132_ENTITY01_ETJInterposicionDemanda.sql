@@ -1,11 +1,11 @@
 --/*
 --##########################################
---## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20150707
+--## AUTOR=OSCAR DORADO
+--## FECHA_CREACION=20160118
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.0-X
---## INCIDENCIA_LINK=MITCDD-2068
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=PRODUCTO-585
+--## PRODUCTO=NO
 --##
 --## Finalidad: Realiza las inserciones de la resolución Interposición de la demanda - marcado de bienes para la tarea H018_InterposicionDemanda.
 --## INSTRUCCIONES: 
@@ -41,9 +41,9 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			'332';
+    V_TR_ID VARCHAR2(16 CHAR):= 			''; --JODO
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_DEM_SLL_JUD';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Demanda sellada';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Copia sellada de la demanda';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'PTJ';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     
@@ -60,6 +60,7 @@ DECLARE
     	T_INPUT('d_fecha','fecha'),
     	T_INPUT('d_plazaJuzgado','plazaJuzgado'),
     	T_INPUT('d_numJuzgado','numJuzgado'),
+    	T_INPUT('d_provisionFondos','provisionFondos'),
     	T_INPUT('d_observaciones','observaciones') -- Está siempre en el factoria, no eliminar.
     );
     V_TMP_T_INPUT T_INPUT;

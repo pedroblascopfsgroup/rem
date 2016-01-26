@@ -3114,7 +3114,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     
     // id: 432 : T. vigilancia y caducidad de embargos (CAJAMAR): H062_revisarRegistroEmbargo
     this.arrayCampos.push([
-        {"xtype":'combo',"store":storeSINO,"name":"d_comboAlerta","fieldLabel":"Mantener alerta de seguridad",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAlerta'+this.idFactoria,displayField:'descripcion',valueField:'codigo'} //JODO completar store 
+        {"xtype":'combo',"store":storeSINO,"name":"d_comboAlerta","fieldLabel":"Mantener alerta de seguridad",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAlerta'+this.idFactoria,displayField:'descripcion',valueField:'codigo'} 
     ]);
     
     

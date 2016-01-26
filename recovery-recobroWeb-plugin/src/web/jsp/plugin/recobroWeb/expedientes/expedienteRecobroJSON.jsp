@@ -74,6 +74,12 @@
 		<json:property name="gestor" value="${expediente.gestorActual}" />
 		<json:property name="supervisor" value="${expediente.supervisorActual}" />
 		<json:property name='tipoExpediente' value="${expediente.tipoExpediente.descripcion}" />
+		<c:if test="${expediente.arquetipo!=null}">
+			<json:property name="arquetipoExp" value="${expediente.arquetipo.nombre}" />
+			<c:if test="${expediente.arquetipo.itinerario!=null}">
+				<json:property name="itinearioExp" value="${expediente.arquetipo.itinerario.nombre}" />
+			</c:if>
+		</c:if>
 	</json:object>
 	<json:object name="oficina">
 		<json:property name='nombre' value="${expediente.oficina.nombre}" />

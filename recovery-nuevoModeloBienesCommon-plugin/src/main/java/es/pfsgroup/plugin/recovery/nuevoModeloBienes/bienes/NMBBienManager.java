@@ -41,6 +41,7 @@ import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.persona.dao.EXTPersonaDao;
 import es.capgemini.pfs.persona.model.EXTPersona;
 import es.capgemini.pfs.persona.model.Persona;
@@ -244,9 +245,15 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 	@Transactional
 	public List<NMBBien> buscarBienesXLS(NMBDtoBuscarBienes dto) {
 		Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
-		dto.setLimit(2000);
+		Parametrizacion parametroLimite = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+				Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_BIENES);
+		Integer limite = Integer.parseInt(parametroLimite.getValor());
+		dto.setLimit(limite);
 		List<NMBBien> listaRetorno = new ArrayList<NMBBien>();
+		long punto_antes_dao = (new Date()).getTime();
 		PageHibernate page = (PageHibernate) nmbBienDao.buscarBienesPaginados(dto, usuarioLogado);
+		long despues_punto_dao = (new Date()).getTime();
+		long tiempo_diferencia = despues_punto_dao - punto_antes_dao;
 		listaRetorno.addAll((List<NMBBien>) page.getResults());
 		page.setResults(listaRetorno);
 		return (List<NMBBien>) page.getResults();
@@ -1333,7 +1340,7 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 						mapResults.put(idBienStr, errSolicitud);
 					}
 				} else {
-					//Faltan datos para solicitar el número de activo.
+					//Faltan datos para solicitar el nï¿½mero de activo.
 					mapResults.put(idBienStr, errValidacion);
 				}
 			}

@@ -2923,6 +2923,90 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
         ]);
 
 
+    // id: 395 : T. Cesión remate (CAJAMAR): H006_ResenyarFechaComparecencia
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+    ]); 
+    
+    // id: 396 : T. Cesión remate (CAJAMAR): H006_RealizacionCesionRemate
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+    ]);
+    
+    // id: 397 : T. Posesión interina (CAJAMAR): HC105_SolicitudPosesionInterina
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+        ,{"xtype":'combo',"store":storeSINO,"name":"d_comboOcupado","fieldLabel":"Ocupado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboOcupado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'} 
+        ,{"xtype":'combo',"store":storeSINO,"name":"d_comboBien","fieldLabel":"Tipo de bien",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboBien'+this.idFactoria,displayField:'descripcion',valueField:'codigo'} //JODO completar store
+    ]);
+    
+    // id: 398 : T. Posesión interina (CAJAMAR): HC105_DecretoAdmision
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+        ,{"xtype":'combo',"store":storeSINO,"name":"d_comboAdmision","fieldLabel":"Admisión",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAdmision'+this.idFactoria,displayField:'descripcion',valueField:'codigo'} 
+    ]);
+    
+    // id: 399 : T. Posesión interina (CAJAMAR): HC105_NotificacionOcupante
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha notificación", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+    ]);
+    
+    // id: 400 : T. Posesión interina (CAJAMAR): HC105_RegistrarFechaPosesionInterina
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+    ]);
+    
+    // id: 401 : T. Posesión interina (CAJAMAR): HC105_RendicionCuentasSecretarioJudicial
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha escrito", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+    ]);
+    
+    // id: 402 : T. Posesión interina (CAJAMAR): HC105_AprobacionRendicionCuentas
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha escrito", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+        ,{"xtype":'combo',"store":storeDDPositivoNegativo,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'} 
+    ]);
+    
+    // id: 403 : T. Posesión interina (CAJAMAR): HC105_PresentacionRendicionCuentas
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha escrito", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+        ,{"xtype":'combo',"store":storeSINO,"name":"d_comboPosesion","fieldLabel":"Finaliza posesión",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboPosesion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'} 
+    ]);
+    
+    // id: 404 : T. Posesión interina (CAJAMAR): HC105_RegistrarNotificacionRendicionCuentas
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha notificación", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+    ]);
+    
+    // id: 405 : T. Posesión interina (CAJAMAR): HC105_RegistrarDisconformidadEjecutado
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha escrito", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+        ,{"xtype":'combo',"store":storeSINO,"name":"d_comboDisconformidad","fieldLabel":"Finaliza posesión",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboDisconformidad'+this.idFactoria,displayField:'descripcion',valueField:'codigo'} 
+    ]);
+    
+    // id: 406 : T. Posesión interina (CAJAMAR): HC105_AlegacionesDisconformidad
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha escrito", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+        ,{"xtype":'combo',"store":storeSINO,"name":"d_comboAlegaciones","fieldLabel":"Finaliza posesión",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAlegaciones'+this.idFactoria,displayField:'descripcion',valueField:'codigo'} 
+    ]);
+    
+    // id: 407 : T. Posesión interina (CAJAMAR): HC105_ConfirmaFechaVista
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha vista", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+    ]);
+    
+    // id: 408 : T. Posesión interina (CAJAMAR): HC105_CelebracionVista
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+    ]);
+    
+    // id: 409 : T. Posesión interina (CAJAMAR): HC105_RegistrarResolucion
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha escrito", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+        ,{"xtype":'combo',"store":DDPosesionInterinaResolucion,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'} //JODO completar store 
+    ]);
+    
+
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){
 			this.arrayCampos.push([]);

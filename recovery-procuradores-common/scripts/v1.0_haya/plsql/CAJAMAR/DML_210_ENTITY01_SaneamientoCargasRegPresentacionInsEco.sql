@@ -41,10 +41,10 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			'';--JODO
+    V_TR_ID VARCHAR2(16 CHAR):= 			'430';
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_REG_PRE_INS_ECO';
     V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Presentación en el registro cancelación cargas registrales';
-    V_TJ_CODIGO VARCHAR2(20 CHAR):=			''; --JODO
+    V_TJ_CODIGO VARCHAR2(20 CHAR):=			'SCR';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     
     V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_REG_PRE_INS_ECO';

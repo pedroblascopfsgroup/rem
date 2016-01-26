@@ -3082,6 +3082,36 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
         {"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha presentación escrito", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
     ]);
     
+    // id: 426 : T. saneamiento cargas registrales (CAJAMAR): H008_RegistrarPresentacionInscripcion
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fechaPresentacion", "fieldLabel": "Fecha", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+    ]);
+    
+    // id: 427 : T. saneamiento cargas registrales (CAJAMAR): H008_RegInsCancelacionCargasReg
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fechaInscripcion", "fieldLabel": "Fecha", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+    ]);
+    
+    // id: 428 : T. saneamiento cargas registrales (CAJAMAR): H008_LiquidarCargas
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fechaCancelacion", "fieldLabel": "Fecha cancelación de las cargas", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+    ]);
+    
+    // id: 429 : T. saneamiento cargas registrales (CAJAMAR): H008_RegInsCancelacionCargasRegEco
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fechaInsReg", "fieldLabel": "Fecha", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+    ]);
+    
+    // id: 430 : T. saneamiento cargas registrales (CAJAMAR): H008_RegistrarPresentacionInscripcionEco
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fechaPresentacion", "fieldLabel": "Fecha", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+    ]);
+    
+    // id: 431 : T. saneamiento cargas registrales (CAJAMAR): H008_RegInsCancelacionCargasRegEco
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fechaInsReg", "fieldLabel": "Fecha", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+    ]);
+    
 
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){

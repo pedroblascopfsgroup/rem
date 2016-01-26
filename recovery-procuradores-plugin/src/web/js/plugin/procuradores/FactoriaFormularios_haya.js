@@ -3049,6 +3049,34 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
         {"xtype":'datefield',"name": "d_fechaComunicacion", "fieldLabel": "Fecha comunicación", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
     ]);
     
+    // id: 418 : T. notificación demandados (CAJAMAR): P400_GestionarNotificaciones NotificacionEscritoSellado
+    this.arrayCampos.push([
+    ]);
+    
+    // id: 419 : T. notificación demandados (CAJAMAR): P400_GestionarNotificaciones NotificacionEscritoSelladoAveriguacion
+    this.arrayCampos.push([
+    ]);
+    
+    // id: 420 : T. notificación demandados (CAJAMAR): P400_GestionarNotificaciones NotificacionResolucionAcuerdaNotificacion
+    this.arrayCampos.push([
+    ]);
+    
+    // id: 421 : T. notificación demandados (CAJAMAR): P400_GestionarNotificaciones NotificacionResolucionAcuerdaAveriguacion
+    this.arrayCampos.push([
+    ]);
+    
+    // id: 422 : T. notificación demandados (CAJAMAR): P400_GestionarNotificaciones NotificacionDiligencia
+    this.arrayCampos.push([
+    ]);
+    
+    // id: 423 : T. notificación demandados (CAJAMAR): P400_GestionarNotificaciones NotificacionEscritoSelladoNotificacion
+    this.arrayCampos.push([
+    ]);
+    
+    // id: 424 : T. notificación demandados (CAJAMAR): P400_GestionarNotificaciones NotificacionDOAcordandoNotificacion
+    this.arrayCampos.push([
+    ]);
+    
 
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){

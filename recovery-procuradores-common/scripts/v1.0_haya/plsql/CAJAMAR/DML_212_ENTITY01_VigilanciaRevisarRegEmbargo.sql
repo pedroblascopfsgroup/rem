@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=PRODUCTO-585
 --## PRODUCTO=NO
 --##
---## Finalidad: Realiza las inserciones de la resolución Mandamiento cumplimentado de anotación de embargo en el registro para la tarea Confirmar anotación en el Registro.
+--## Finalidad: Realiza las inserciones de la resolución para la tarea H062_revisarRegistroEmbargo.
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
@@ -41,24 +41,23 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			'369';
-    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_MANDA_CUM_ANO';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Mandamiento de embargo inscrito';
+    V_TR_ID VARCHAR2(16 CHAR):= 			'';--JODO
+    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_REV_REG_EMB';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Renovación del registro';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'VCA';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     
-    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_MANDA_CUM_ANO';
+    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_REV_REG_EMB';
     
     V_TPO_CODIGO VARCHAR2(20 CHAR):=		'H062';
-    V_NODO VARCHAR2(50 CHAR):=				'H062_confirmarAnotacionRegistro';
+    V_NODO VARCHAR2(50 CHAR):=				'H062_revisarRegistroEmbargo';
     
     TYPE T_INPUT IS TABLE OF VARCHAR2(50);
     TYPE T_ARRAY_INPUT IS TABLE OF T_INPUT;
     V_INPUT T_ARRAY_INPUT := T_ARRAY_INPUT(
     	T_INPUT('idAsunto','idAsunto'), -- Está siempre en el factoria, no eliminar.
     	T_INPUT('d_numAutos','numAutos'), -- Está siempre en el factoria, no eliminar.
-    	T_INPUT('d_fecha','fecha'),
-    	T_INPUT('d_comboAlerta','comboAlerta'),
+        T_INPUT('d_comboAlerta','comboAlerta'),
     	T_INPUT('d_observaciones','observaciones') -- Está siempre en el factoria, no eliminar.
     );
     V_TMP_T_INPUT T_INPUT;

@@ -3003,7 +3003,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     // id: 409 : T. Posesión interina (CAJAMAR): HC105_RegistrarResolucion
     this.arrayCampos.push([
         {"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha escrito", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-        ,{"xtype":'combo',"store":DDPosesionInterinaResolucion,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'} //JODO completar store 
+        ,{"xtype":'combo',"store":storeDDPosesionInterinaResolucion,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'} //JODO completar store 
     ]);
     
     // id: 410 : T. Inscripción título (CAJAMAR): H066_registrarEntregaTitulo
@@ -3111,6 +3111,12 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     this.arrayCampos.push([
         {"xtype":'datefield',"name": "d_fechaInsReg", "fieldLabel": "Fecha", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
     ]);
+    
+    // id: 432 : T. vigilancia y caducidad de embargos (CAJAMAR): H062_revisarRegistroEmbargo
+    this.arrayCampos.push([
+        {"xtype":'combo',"store":storeSINO,"name":"d_comboAlerta","fieldLabel":"Mantener alerta de seguridad",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAlerta'+this.idFactoria,displayField:'descripcion',valueField:'codigo'} //JODO completar store 
+    ]);
+    
     
 
 		var lengthArrayCampos = this.arrayCampos.length;

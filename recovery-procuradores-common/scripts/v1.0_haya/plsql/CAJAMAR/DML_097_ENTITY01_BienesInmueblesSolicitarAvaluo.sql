@@ -1,11 +1,11 @@
 --/*
 --##########################################
---## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20150706
+--## AUTOR=ALBERTO SOLER
+--## FECHA_CREACION=20150126
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.0-X
---## INCIDENCIA_LINK=MITCDD-2068
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=PRODUCTO-585
+--## PRODUCTO=NO
 --##
 --## Finalidad: Realiza las inserciones de la resolución Solicitar avaluo para la tarea H058_SolicitarAvaluo.
 --## INSTRUCCIONES: 
@@ -41,9 +41,9 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			'296';
+    V_TR_ID VARCHAR2(16 CHAR):= 			'';--JODO
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_SOL_AVL_PER';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Escrito sellado solicitando avaluo';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Solicitud de avalúo';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'VBI';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     
@@ -58,6 +58,7 @@ DECLARE
     	T_INPUT('idAsunto','idAsunto'), -- Está siempre en el factoria, no eliminar.
     	T_INPUT('d_numAutos','numAutos'), -- Está siempre en el factoria, no eliminar.
     	T_INPUT('d_fecha','fecha'),
+    	T_INPUT('d_provisionFondos','provisionFondos'),
     	T_INPUT('d_observaciones','observaciones') -- Está siempre en el factoria, no eliminar.
     );
     V_TMP_T_INPUT T_INPUT;

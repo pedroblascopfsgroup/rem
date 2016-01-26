@@ -3006,6 +3006,29 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
         ,{"xtype":'combo',"store":DDPosesionInterinaResolucion,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'} //JODO completar store 
     ]);
     
+    // id: 410 : T. Inscripción título (CAJAMAR): H066_registrarEntregaTitulo
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha recepción", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+    ]);
+    
+    // id: 411 : T. Inscripción título (CAJAMAR): H066_registrarPresentacionHacienda
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha presentación", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+    ]);
+    
+    // id: 412 : T. Inscripción título (CAJAMAR): H066_registrarPresentacionRegistro
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fechaPresentacion", "fieldLabel": "Fecha presentación", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+        ,{"xtype":'datefield',"name": "d_fechaTestimonio", "fieldLabel": "Fecha nuevo testimonio", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+    ]);
+    
+    // id: 413 : T. Inscripción título (CAJAMAR): H066_registrarInscripcionTitulo
+    this.arrayCampos.push([
+        {"xtype":'combo',"store":storeDDSituacionTitulo,"name":"d_situacionTitulo","fieldLabel":"Situación del título",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_situacionTitulo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'} //JODO completar store 
+        ,{"xtype":'datefield',"name": "d_fechaInscripcion", "fieldLabel": "Fecha inscripción", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+        ,{"xtype":'datefield',"name": "d_fechaEnvio", "fieldLabel": "Fecha envío escrito subsanación", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+    ]);
+    
 
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){

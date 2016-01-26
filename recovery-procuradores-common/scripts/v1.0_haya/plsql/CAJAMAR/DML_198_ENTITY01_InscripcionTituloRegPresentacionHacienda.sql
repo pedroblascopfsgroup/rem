@@ -41,9 +41,9 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			'';--JODO
+    V_TR_ID VARCHAR2(16 CHAR):= 			'411';
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_IDT_REG_PRE_HAC';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Copia de la autoiquidación presentada en hacienda';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Copia de la autoliquidación presentada en hacienda';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'IDT';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     

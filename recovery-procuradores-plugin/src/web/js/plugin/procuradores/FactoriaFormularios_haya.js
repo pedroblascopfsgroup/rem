@@ -2570,7 +2570,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboAyto","fieldLabel":"Ayuntamiento",allowBlank:true,filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAyto'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboOtros","fieldLabel":"Otros",allowBlank:true,filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboOtros'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       	,{"xtype":'numberfield',"name":"d_solvencia","fieldLabel":"Solvencia encontrada",allowBlank:true}
-	                       	,{"xtype":'numberfield',"name":"d_impuestos","fieldLabel":"Ingresos encontrados",allowBlank:true,filtrar:true,}
+	                       	,{"xtype":'numberfield',"name":"d_impuestos","fieldLabel":"Ingresos encontrados",allowBlank:true,filtrar:true}
 	                       	
 	                      ]);
 	

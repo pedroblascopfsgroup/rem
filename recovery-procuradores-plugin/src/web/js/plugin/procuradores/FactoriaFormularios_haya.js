@@ -2823,7 +2823,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     // id: 380 : TRAMITE SUBASTA A TERCEROS (CAJAMAR): Confirmar mandamiento de pago
     this.arrayCampos.push([
        {"xtype": 'datefield', "name": "d_fecha", "fieldLabel": "Fecha recepción", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-       {"xtype": 'datefield', "name": "d_fechaEnvio", "fieldLabel": "Fecha envío", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+       ,{"xtype": 'datefield', "name": "d_fechaEnvio", "fieldLabel": "Fecha envío", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
        ,{"xtype": 'numberfield', "name": "d_importe", "fieldLabel": "Importe", allowBlank: false}
     ]);
 

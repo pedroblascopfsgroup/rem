@@ -2886,11 +2886,27 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
         ,{"xtype": 'datefield', "name": "d_fechaEnvioDecretoAdicion", "fieldLabel": "Fecha Envío Decreto Adición", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
     ]);
 
-    //id: 390 : T. CERTIFICADO DE CARGAS Y REVISIÓN (CAJAMAR): Registrar certificación
+    // id: 390 : T. CERTIFICADO DE CARGAS Y REVISIÓN (CAJAMAR): Registrar certificación
     this.arrayCampos.push([
         {"xtype": 'datefield', "name": "d_fecha", "fieldLabel": "Fecha solicitud", allowBlank: false,  maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'),  minValue: fechaMinima }
     ]);
 
+    // id: 391 : T. Ocupantes (CAJAMAR): H048_TrasladoDocuDeteccionOcupantes
+    this.arrayCampos.push([
+       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+       ,{"xtype":'datefield',"name":"d_fechaVista","fieldLabel":"Fecha vista",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+       ,{"xtype":'datefield',"name":"d_fechaFinAle","fieldLabel":"Fecha fin alegaciones",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboOcupado","fieldLabel":"Bien ocupado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboOcupado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboDocumentacion","fieldLabel":"Documentación",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboDocumentacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboInquilino","fieldLabel":"Existe algún inquilino",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboInquilino'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+       ,{"xtype":'datefield',"name":"d_fechaContrato","fieldLabel":"Fecha contrato arrendamiento",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+       ,{"xtype":'textfield',"name":"d_nombreArrendatario","fieldLabel":"Nombre arrendatario",allowBlank:true,id:'d_nombreArrendatario'+this.idFactoria}
+    ]);
+
+    // id: 392 : T. Ocupantes (CAJAMAR): H048_RegistrarCelebracionVista
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fechaResolucion", "fieldLabel": "Fecha de la vista", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+    ]);
 
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){

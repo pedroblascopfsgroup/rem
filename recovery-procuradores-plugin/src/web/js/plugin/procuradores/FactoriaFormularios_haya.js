@@ -3077,6 +3077,11 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     this.arrayCampos.push([
     ]);
     
+    // id: 425 : T. tributación bienes (CAJAMAR): H054_PresentarEscritoJuzgado
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha presentación escrito", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+    ]);
+    
 
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){

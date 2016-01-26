@@ -2908,6 +2908,12 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
         {"xtype":'datefield',"name": "d_fechaResolucion", "fieldLabel": "Fecha de la vista", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
     ]);
 
+    // id: 393 : T. Moratorio Posesion (CAJAMAR): H011_CelebracionVista
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fechaCelebracion", "fieldLabel": "Fecha celebración", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+    ]);
+
+
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){
 			this.arrayCampos.push([]);

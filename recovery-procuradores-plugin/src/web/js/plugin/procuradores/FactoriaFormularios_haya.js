@@ -3029,6 +3029,26 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
         ,{"xtype":'datefield',"name": "d_fechaEnvio", "fieldLabel": "Fecha envío escrito subsanación", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
     ]);
     
+    // id: 414 : T. mandamiento cancelación cargas (CAJAMAR): HC102_SolicitudMandamiento
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fechaSolicitud", "fieldLabel": "Fecha solicitud", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+    ]);
+    
+    // id: 415 : T. mandamiento cancelación cargas (CAJAMAR): HC102_ObtencionMandamientoCancelacionCargas
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fechaNotificacion", "fieldLabel": "Fecha", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+    ]);
+    
+    // id: 416 : T. mandamiento cancelación cargas (CAJAMAR): HC102_SolicitarArchivoProcedimiento
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fechaSolicitud", "fieldLabel": "Fecha solicitud", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+    ]);
+    
+    // id: 417 : T. mandamiento cancelación cargas (CAJAMAR): HC102_ResolucionFirme
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fechaComunicacion", "fieldLabel": "Fecha comunicación", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+    ]);
+    
 
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){

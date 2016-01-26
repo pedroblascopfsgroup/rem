@@ -5,7 +5,8 @@
 update cm01.des_despacho_externo set dd_tde_id = (select dd_tde_id from cmmaster.dd_tde_tipo_despacho where dd_tde_codigo = 'D-SUADMCON')
 where des_despacho = 'Despacho Supervisor administracion contable';
 
-/*
+--insetrtamos el tipo despacho SUP_PCO
+
 insert into CMMASTER.dd_tde_tipo_despacho tde (tde.DD_TDE_ID, tde.DD_TDE_CODIGO, tde.DD_TDE_DESCRIPCION, tde.DD_TDE_DESCRIPCION_LARGA, tde.FECHACREAR, tde.usuariocrear)
 values (CMMASTER.s_dd_tde_tipo_despacho.nextval, 'SUP_PCO', 'Supervisor expediente judicial', 'Supervisor expediente judicial', sysdate, 'SAG');
 
@@ -14,13 +15,21 @@ values
 (CM01.s_TGP_TIPO_GESTOR_PROPIEDAD.nextval, (select dd_tge_id from CMMASTER.DD_TGE_TIPO_GESTOR where dd_tge_codigo = 'SUP_PCO'),
  'DES_VALIDOS', (select tde.dd_tde_codigo from CMMASTER.dd_tde_tipo_despacho tde where tde.dd_tde_codigo = 'SUP_PCO'),
  'SAG', sysdate);
-*/
+
+--ponemos los tipos de desopachos que faltan.
+
+update cm01.des_despacho_externo set dd_tde_id = (select dd_tde_id from cmmaster.dd_tde_tipo_despacho where dd_tde_codigo = 'D-SUADMCON') where des_despacho = 'Despacho Supervisor administración contable';
+UPDATE CM01.DES_DESPACHO_EXTERNO SET DD_TDE_ID = (SELECT tipo.DD_TDE_ID FROM CMMASTER.DD_TDE_TIPO_DESPACHO tipo WHERE tipo.DD_TDE_CODIGO = 'SUP_PCO'), USUARIOMODIFICAR = 'JSV', FECHAMODIFICAR   = sysdate WHERE DES_DESPACHO = 'Supervisor expedientes judiciales';
+
 
 insert into CM01.des_despacho_externo des (des_id, des_despacho, fechacrear, usuariocrear, dd_tde_id, zon_id) values (CM01.s_des_despacho_externo.nextval, 'Precontencioso - Gestor de liquidacion', sysdate, 'SAG', (select dd_tde_id from cmmaster.dd_tde_tipo_despacho where dd_tde_codigo = 'CM_GL_PCO'), (select max(zon_id) from CM01.zon_zonificacion where zon_cod = '01'));
 insert into CM01.des_despacho_externo des (des_id, des_despacho, fechacrear, usuariocrear, dd_tde_id, zon_id) values (CM01.s_des_despacho_externo.nextval, 'Precontencioso - Gestor de documentacion', sysdate, 'SAG', (select dd_tde_id from cmmaster.dd_tde_tipo_despacho where dd_tde_codigo = 'CM_GD_PCO'), (select max(zon_id) from CM01.zon_zonificacion where zon_cod = '01'));
 insert into CM01.des_despacho_externo des (des_id, des_despacho, fechacrear, usuariocrear, dd_tde_id, zon_id) values (CM01.s_des_despacho_externo.nextval, 'Supervisor expedientes judiciales', sysdate, 'SAG', (select dd_tde_id from cmmaster.dd_tde_tipo_despacho where dd_tde_codigo = 'SUP_PCO'), (select max(zon_id) from CM01.zon_zonificacion where zon_cod = '01'));
 
 --ponemos los codigos de los despachos.
+--
+UPDATE CM01.DES_DESPACHO_EXTERNO des SET  des.DES_CODIGO = (SELECT tde.DD_TDE_CODIGO from CMMASTER.DD_TDE_TIPO_DESPACHO tde where tde.DD_TDE_ID = des.DD_TDE_ID) WHERE des.DD_TDE_ID = (SELECT tipo.DD_TDE_ID from CMMASTER.DD_TDE_TIPO_DESPACHO tipo where tipo.DD_TDE_CODIGO = 'AGER');
+--
 UPDATE CM01.DES_DESPACHO_EXTERNO des SET  des.DES_CODIGO = (SELECT tde.DD_TDE_CODIGO from CMMASTER.DD_TDE_TIPO_DESPACHO tde where tde.DD_TDE_ID = des.DD_TDE_ID) WHERE des.DD_TDE_ID = (SELECT tipo.DD_TDE_ID from CMMASTER.DD_TDE_TIPO_DESPACHO tipo where tipo.DD_TDE_CODIGO = 'D-GESHREIN');
 UPDATE CM01.DES_DESPACHO_EXTERNO des SET  des.DES_CODIGO = (SELECT tde.DD_TDE_CODIGO from CMMASTER.DD_TDE_TIPO_DESPACHO tde where tde.DD_TDE_ID = des.DD_TDE_ID) WHERE des.DD_TDE_ID = (SELECT tipo.DD_TDE_ID from CMMASTER.DD_TDE_TIPO_DESPACHO tipo where tipo.DD_TDE_CODIGO = '2');
 UPDATE CM01.DES_DESPACHO_EXTERNO des SET  des.DES_CODIGO = (SELECT tde.DD_TDE_CODIGO from CMMASTER.DD_TDE_TIPO_DESPACHO tde where tde.DD_TDE_ID = des.DD_TDE_ID) WHERE des.DD_TDE_ID = (SELECT tipo.DD_TDE_ID from CMMASTER.DD_TDE_TIPO_DESPACHO tipo where tipo.DD_TDE_CODIGO = 'D-SUCHRE');

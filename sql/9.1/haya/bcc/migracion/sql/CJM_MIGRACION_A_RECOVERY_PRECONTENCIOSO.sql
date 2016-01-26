@@ -6,6 +6,7 @@
 -- Modificacion: 
 --	EJD:> Incluimos filtro por "and cab.fecha_asignacion is null"
 --	EJD:> Incluimos control sobre indice IDX_USUAMOD_PEX
+--	GMN:> Se asigna el DD_TPX_ID (tipo de expediente a recuperaciones - RECU)
 /***************************************/
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -243,7 +244,7 @@ BEGIN
 /*************************************************/
 
 	V_SQL := 'INSERT INTO '||V_ESQUEMA||'.exp_expedientes
-            (exp_id, dd_est_id, exp_fecha_est_id, ofi_id, arq_id, VERSION, usuariocrear, fechacrear, borrado, dd_eex_id, exp_descripcion, usuariomodificar, CD_EXPEDIENTE_NUSE, SYS_GUID)
+            (exp_id, dd_est_id, exp_fecha_est_id, ofi_id, arq_id, VERSION, usuariocrear, fechacrear, borrado, dd_eex_id, dd_tpx_id, exp_descripcion, usuariomodificar, CD_EXPEDIENTE_NUSE, SYS_GUID)
 				WITH VIP AS
 				(
 				  SELECT MIN(PER_NOM50) AS PER_NOM50, COD_RECOVERY
@@ -267,6 +268,7 @@ BEGIN
 					   SYSDATE AS fechacrear,
 					   0 AS borrado,
 					   4 AS dd_eex_id,
+					   (select dd_TPX_ID from '||V_ESQUEMA||'.DD_TPX_TIPO_EXPEDIENTE where DD_TPX_CODIGO = ''RECU'') as dd_tpx_id,
 					   apc.CNT_CONTRATO || '' | ''|| apc.per_nom50 AS exp_descripcion,
 					   apc.COD_RECOVERY as usuariomodificar,
 					   APC.COD_RECOVERY AS CD_EXPEDIENTE_NUSE,
@@ -413,7 +415,7 @@ BEGIN
 					   (select DD_PAS_ID FROM '||V_ESQUEMA||'.dd_pas_propiedad_asunto where dd_pas_codigo = ''CAJAMAR'') AS DD_PAS_ID,
 					   COD_RECOVERY AS USUARIOMODIFICAR,
 					   COD_RECOVERY AS ASU_ID_EXTERNO,
-					   (select dd_ges_id from '||V_ESQUEMA||'.DD_GES_GESTION_ASUNTO where dd_ges_codigo = ''CAJAMAR'') AS DD_GES_ID,
+					   (select dd_ges_id from '||V_ESQUEMA||'.DD_GES_GESTION_ASUNTO where dd_ges_codigo = ''HAYA'') AS DD_GES_ID,
 					   SYS_GUID() AS SYS_GUID
 				  FROM (
 						SELECT DISTINCT TMP.COD_RECOVERY, 

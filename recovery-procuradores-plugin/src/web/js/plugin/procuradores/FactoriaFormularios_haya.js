@@ -2913,6 +2913,15 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
         {"xtype":'datefield',"name": "d_fechaCelebracion", "fieldLabel": "Fecha celebración", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
     ]);
 
+    // id: 394 : T. Cesión remate (CAJAMAR): H006_AperturaPlazo
+    this.arrayCampos.push([
+        {"xtype":'combo',"store":storeSINO,"name":"d_comboFinaliza","fieldLabel":"Realizada solicitud con facultad de cesión de remate",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboFinaliza'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+        ,{"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+        ,{"xtype":'textfield',"name":"d_instrucciones","fieldLabel":"Instrucciones",allowBlank:true,id:'d_instrucciones'+this.idFactoria}
+        ,{"xtype":'combo',"store":storeSINO,"name":"d_cbCresionRemate","fieldLabel":"Documentación",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_cbCresionRemate'+this.idFactoria,displayField:'descripcion',valueField:'codigo'} //JODO completar store
+        ,{"xtype":'combo',"store":storeSINO,"name":"d_cbTitulizado","fieldLabel":"Documentación",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_cbTitulizado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+        ]);
+
 
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){

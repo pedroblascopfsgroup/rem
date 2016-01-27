@@ -62,6 +62,9 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	storeDDPositivoNegativo:{},
 	storeDDCorrectoCobro:{},
 	storeDDIndebidaExcesiva:{},
+    storeDDSituacionTitulo:{},
+    storeDDTipoBienCajamar:{},
+    storeDDPosesionInterinaResolucion:{},
     
     constructor : function(options){    //Step 2  
     	Date.now = Date.now || function() { return +new Date; };
@@ -751,7 +754,58 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		} , DDIndebidaExcesiva)
 	});
 
-    	
+
+    // DDSituacionTitulo - CAJAMAR
+    var DDSituacionTitulo = Ext.data.Record.create([
+        {id:'id'}
+        ,{name:'codigo'}
+        ,{name:'descripcion'}
+    ]);
+
+    this.storeDDSituacionTitulo = new Ext.data.Store({
+        url:'/pfs/pcdprocesadoresoluciones/getDictionary.htm'
+        ,baseParams: {
+            dictionary: 'DDSituacionTitulo'
+        }
+        ,reader: new Ext.data.JsonReader({
+            root: 'diccionario'
+        } , DDSituacionTitulo)
+    });
+
+    // DDTipoBienCajamar - CAJAMAR
+    var DDTipoBienCajamar = Ext.data.Record.create([
+        {id:'id'}
+        ,{name:'codigo'}
+        ,{name:'descripcion'}
+    ]);
+
+    this.storeDDTipoBienCajamar = new Ext.data.Store({
+        url:'/pfs/pcdprocesadoresoluciones/getDictionary.htm'
+        ,baseParams: {
+            dictionary: 'DDTipoBienCajamar'
+        }
+        ,reader: new Ext.data.JsonReader({
+            root: 'diccionario'
+        } , DDTipoBienCajamar)
+    });
+
+    // DDPosesionInterinaResolucion - CAJAMAR
+    var DDPosesionInterinaResolucion = Ext.data.Record.create([
+        {id:'id'}
+        ,{name:'codigo'}
+        ,{name:'descripcion'}
+    ]);
+
+    this.storeDDPosesionInterinaResolucion = new Ext.data.Store({
+        url:'/pfs/pcdprocesadoresoluciones/getDictionary.htm'
+        ,baseParams: {
+            dictionary: 'DDPosesionInterinaResolucion'
+        }
+        ,reader: new Ext.data.JsonReader({
+            root: 'diccionario'
+        } , DDPosesionInterinaResolucion)
+    });
+
 //    	this.dsPlazas.on('load', function(combo, r, options){    			
 //        	debugger;
 //        });
@@ -2881,7 +2935,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 
     // id: 389 : TRAMITE DE ADJUDICACION (CAJAMAR): H005_RegistrarInscripcionDelTitulo
     this.arrayCampos.push([
-        {"xtype": 'combo', "store": storeSINO, "name": "d_comboSituacionTitulo", "fieldLabel": "Título Inscrito en el Registro", "autoload": true,  mode: 'local', triggerAction: 'all', allowBlank: false, resizable: true, id: 'd_comboSituacionTitulo' + this.idFactoria, displayField: 'descripcion', valueField: 'codigo'} //JODO completar store storeDDSituacionTitulo
+        {"xtype": 'combo', "store": this.storeDDSituacionTitulo, "name": "d_comboSituacionTitulo", "fieldLabel": "Título Inscrito en el Registro", "autoload": true,  mode: 'local', triggerAction: 'all', allowBlank: false, resizable: true, id: 'd_comboSituacionTitulo' + this.idFactoria, displayField: 'descripcion', valueField: 'codigo'}
         ,{"xtype": 'datefield', "name": "d_fechaInscripcion", "fieldLabel": "Fecha Inscripción", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
         ,{"xtype": 'datefield', "name": "d_fechaEnvioDecretoAdicion", "fieldLabel": "Fecha Envío Decreto Adición", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
     ]);
@@ -2937,7 +2991,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     this.arrayCampos.push([
         {"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
         ,{"xtype":'combo',"store":storeSINO,"name":"d_comboOcupado","fieldLabel":"Ocupado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboOcupado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'} 
-        ,{"xtype":'combo',"store":storeSINO,"name":"d_comboBien","fieldLabel":"Tipo de bien",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboBien'+this.idFactoria,displayField:'descripcion',valueField:'codigo'} //JODO completar store DDTipoBienCajamar
+        ,{"xtype":'combo',"store":this.DDTipoBienCajamar,"name":"d_comboBien","fieldLabel":"Tipo de bien",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboBien'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
     ]);
     
     // id: 398 : T. Posesión interina (CAJAMAR): HC105_DecretoAdmision
@@ -3003,7 +3057,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     // id: 409 : T. Posesión interina (CAJAMAR): HC105_RegistrarResolucion
     this.arrayCampos.push([
         {"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha escrito", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-        ,{"xtype":'combo',"store":storeSINO,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'} //JODO completar store storeDDPosesionInterinaResolucion
+        ,{"xtype":'combo',"store":this.storeDDPosesionInterinaResolucion,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
     ]);
     
     // id: 410 : T. Inscripción título (CAJAMAR): H066_registrarEntregaTitulo
@@ -3024,7 +3078,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     
     // id: 413 : T. Inscripción título (CAJAMAR): H066_registrarInscripcionTitulo
     this.arrayCampos.push([
-        {"xtype":'combo',"store":storeSINO,"name":"d_situacionTitulo","fieldLabel":"Situación del título",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_situacionTitulo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'} //JODO completar store storeDDSituacionTitulo
+        {"xtype":'combo',"store":this.storeDDSituacionTitulo,"name":"d_situacionTitulo","fieldLabel":"Situación del título",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_situacionTitulo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
         ,{"xtype":'datefield',"name": "d_fechaInscripcion", "fieldLabel": "Fecha inscripción", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
         ,{"xtype":'datefield',"name": "d_fechaEnvio", "fieldLabel": "Fecha envío escrito subsanación", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
     ]);

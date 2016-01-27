@@ -39,6 +39,7 @@ import es.capgemini.pfs.procesosJudiciales.model.DDImpugnacion1;
 import es.capgemini.pfs.procesosJudiciales.model.DDPositivoNegativo;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
+import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.prorroga.model.CausaProrroga;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.web.genericForm.DtoGenericForm;
@@ -49,6 +50,7 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDDecisionSuspension;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDMotivoSuspSubasta;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.masivo.api.MSVAsuntoApi;
 import es.pfsgroup.plugin.recovery.masivo.api.MSVDiccionarioApi;
 import es.pfsgroup.plugin.recovery.masivo.api.MSVResolucionApi;
@@ -205,6 +207,9 @@ public class PCDProcesadoResolucionesController {
 
 	@Autowired
 	private PCDProcesadoResolucionesApi pcdProcesadoResolucionesApi;
+	
+	@Autowired
+	private UtilDiccionarioApi utilDiccionario;
 	
 	
 	/**
@@ -1182,6 +1187,13 @@ public class PCDProcesadoResolucionesController {
 		
 		return JSON_GRABAR_PROCESAR;
 	}
-	
-	
+
+    @RequestMapping
+    public String getDictionary(String dictionary, ModelMap model) throws ClassNotFoundException {
+
+    	List dictionaryData = utilDiccionario.dameValoresDiccionario(Class.forName(dictionary));
+        model.put("pagina", dictionaryData);
+
+        return JSON_LISTA_DICCIONARIO_GENERICO_PAGE;
+    }
 }

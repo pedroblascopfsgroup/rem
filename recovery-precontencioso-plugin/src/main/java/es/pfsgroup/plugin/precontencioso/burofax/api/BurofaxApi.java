@@ -43,7 +43,8 @@ public interface BurofaxApi {
 	public static final String CANCELAR_EST_PREPARADO = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.cancelarEstadoPreparado";
 	public static final String DESCARTAR_PERSONA_ENVIO = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.descartarPersonaEnvio";
 	public static final String BORRAR_DIRECCION_MANUAL_BUROFAX = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.borrarDirManualBurofax";
-
+	public static final String GENERAR_BUROFAX_PDF = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.generarBurofaxPDF";
+	
 
 
 	
@@ -223,6 +224,9 @@ public interface BurofaxApi {
 	
 	@BusinessOperationDefinition(OBTENER_BUROFAX_ENVIO_INTE)
 	BurofaxEnvioIntegracionPCO getBurofaxEnvioIntegracionByIdEnvio(Long idEnvio);
+	
+	@BusinessOperationDefinition(GENERAR_BUROFAX_PDF)
+	FileItem generarBurofaxPDF(EnvioBurofaxPCO envioBurofax, String nombreFichero);
 	
 	
 	

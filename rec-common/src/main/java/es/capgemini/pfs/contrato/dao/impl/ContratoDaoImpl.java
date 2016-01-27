@@ -619,7 +619,7 @@ public class ContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 	@Override
 	public List<ExpedienteContrato> buscarContratosExpedientesHistoricosContrato(
 			Long idContrato) {
-		String hql = "select ec from ExpedienteContrato ec where ec.contrato.id = ? order by ec.expediente.auditoria.fechaCrear desc";
+		String hql = "select ec from ExpedienteContrato ec where ec.contrato.id = ? and ec.auditoria.borrado = 0 order by ec.expediente.auditoria.fechaCrear desc";
 		return getHibernateTemplate().find(hql, idContrato);
 	}
 

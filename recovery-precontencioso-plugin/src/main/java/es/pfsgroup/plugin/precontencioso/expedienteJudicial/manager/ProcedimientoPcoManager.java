@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -1185,4 +1186,19 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 
 		return false;
 	}
+
+	@Override
+	@BusinessOperation(BO_PCO_EXPEDIENTE_VISIBILIDAD_BOTONES_PCO)
+	public List<String> getVisibilidadBotonesDocumentosPrecontencioso(String seccion, boolean visible) {
+		Usuario usuario = usuarioManager.getUsuarioLogado();		
+		List<String> resultado = new ArrayList<String>();
+		Map<String, Boolean> botones = precontenciosoContext.getVisibilidadBotonesPorSeccionYUsuario(seccion, usuario);
+		for (String boton : botones.keySet()) {
+			if (botones.get(boton).equals(visible)) {
+				resultado.add(boton);
+			}
+		}
+		return resultado;
+	}
+
 }

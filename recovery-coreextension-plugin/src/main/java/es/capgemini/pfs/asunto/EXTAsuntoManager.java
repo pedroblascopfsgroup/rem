@@ -1890,7 +1890,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 //
 //		return asuntoDao.buscarAsuntosPaginatedDinamicoCount(usuarioLogado, dto, params);
 //	}
-	
+	/*
 	@Override
 	@BusinessOperation(EXTAsuntoApi.EXT_BO_ASU_MGR_FIND_ASUNTOS_PAGINATED_DINAMICO_COUNT)
 	public Page findAsuntosPaginatedDinamicoCount(EXTDtoBusquedaAsunto dto, String params) {
@@ -1917,6 +1917,36 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		}
 		
 		return results;
+	}
+	*/
+	@Override
+	@BusinessOperation(EXTAsuntoApi.EXT_BO_ASU_MGR_FIND_ASUNTOS_PAGINATED_DINAMICO_COUNT)
+	public List<Asunto> findAsuntosPaginatedDinamicoCount(EXTDtoBusquedaAsunto dto, String params) {
+		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		
+		dto.setCodigoZonas(getCodigosDeZona(dto));
+		dto.setTiposProcedimiento(getTiposProcedimiento(dto));
+		
+		if (usuarioLogado.getUsuarioExterno()) {
+			List<Long> idsGruposUsuario = extGrupoUsuariosDao.buscaGruposUsuario(usuarioLogado);
+			dto.setIdsUsuariosGrupos(idsGruposUsuario);
+		}
+		
+		Parametrizacion param = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+                Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_ASUNTOS);		
+		
+		Integer limite = Integer.parseInt(param.getValor());
+		List<Asunto> listaRetorno = new ArrayList<Asunto>();
+		dto.setLimit(limite+1);
+		PageHibernate page = (PageHibernate) asuntoDao.buscarAsuntosPaginatedDinamico(usuarioLogado, dto, params);
+	
+
+		if(page.getTotalCount()>limite){
+			throw new UserException(messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado1") +limite+" "+ messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado2"));
+		}
+		listaRetorno.addAll((List<Asunto>) page.getResults());
+		page.setResults(listaRetorno);
+		return (List<Asunto>) page.getResults();
 	}
 	
 /*	@Override

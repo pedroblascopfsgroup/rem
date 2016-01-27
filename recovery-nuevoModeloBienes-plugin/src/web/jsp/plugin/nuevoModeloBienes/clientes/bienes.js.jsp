@@ -385,11 +385,11 @@
 				autoCreate : {
 					tag: "input"
 					, type: "text"
-					,maxLength:"8"
+					,maxLength:"14"
 					, autocomplete: "off"
 				}
-				, maxLength:8
-				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener mï¿½s de 8 dï¿½gitos" arguments="8" />'
+				, maxLength:14
+				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener más de 14 dígitos" arguments="14" />'
 				,labelStyle : labelStyle
 			}
 		);
@@ -1312,7 +1312,10 @@
 			if(tipoNMB.getValue() == null || tipoNMB.getValue() == '' ){
 				return false;
 			}
+			/*
+			Esta variable falla en BANKIA. Hablar con ODG
 			var tabs  = [pestanaPrincipal,pestanaValoraciones,pestanaDatosRegistrales,pestanaEmpresa,pestanaIAE,pestanaVehiculo,pestanaProductosBanco,pestanaLocalizacion,pestanaObservaciones,pestanaCuentaBancaria];
+			*/
 			
 			for(var i=0;i < tabs.length;i++) {
 				<%-- if (listaTabs[i].tipoBien == tipoNMB.getValue())  {
@@ -1462,11 +1465,12 @@
 			autoCreate : {
 				tag: "input"
 				, type: "text"
-				,maxLength:"8"
+				,maxLength:"14"
 				, autocomplete: "off"
 			}
-			, maxLength:8
-			, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener mï¿½s de 8 dï¿½gitos" arguments="8" />'
+			, maxLength:14
+			, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener más de 14 dígitos" arguments="14" />'
+
 		}
 	);
 	var cargas = app.creaNumber(

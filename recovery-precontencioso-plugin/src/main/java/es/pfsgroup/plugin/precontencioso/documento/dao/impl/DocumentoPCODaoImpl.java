@@ -2,12 +2,15 @@ package es.pfsgroup.plugin.precontencioso.documento.dao.impl;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.pfsgroup.plugin.precontencioso.documento.dao.DocumentoPCODao;
+import es.pfsgroup.plugin.precontencioso.documento.model.DDTipoActorPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienEntidad;
@@ -93,5 +96,12 @@ public class DocumentoPCODaoImpl extends AbstractEntityDao<DocumentoPCO, Long> i
         List<NMBBienEntidad> personas = getHibernateTemplate().find(hql);
         return personas;
     }	
-	
+
+    public List<DDTipoActorPCO> getTipoActoresConAcceso() {
+    	Criteria query = getSession().createCriteria(DDTipoActorPCO.class);
+    	query.add(Restrictions.eq("accesoRecovery", true));
+
+    	List<DDTipoActorPCO> tipoActoresConAcceso = query.list(); 
+		return tipoActoresConAcceso;
+    }
 }

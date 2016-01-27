@@ -92,4 +92,12 @@ public interface RecobroProcesosFacturacionApi {
 	void guardarModelosFacturacionSubcarteras(
 			EditModelosFacturacionSubcarterasItem gridItems);
 	
+	/**
+	 * Genera un excel con los procesos de facturación y el detalle sin importes a pagar 0.0
+	 * @param idProcesoFacturacion
+	 */
+	@BusinessOperationDefinition(RecobroCommonProcesosFacturacionConstants.PLUGIN_RECOBRO_PROCESOSFACTURACION_GENERAREXCELREDUCIDO_PROCESOS_BO)
+	FileItem generarExcelProcesosFacturacionReducido(Long idProcesoFacturacion);
+
+	
 }

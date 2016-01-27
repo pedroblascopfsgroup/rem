@@ -32,7 +32,6 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 	 */
 	private static final long serialVersionUID = -5583230911255732281L;
 	
-	private static final String TAREA_REGISTRAR_TOMA_DEC_COMBO_PROC_PROPUESTO = "proc_propuesto";
 	private static final String TAREA_REGISTRAR_TOMA_DEC_COMBO_PROC_INICIAR = "proc_a_iniciar";
 	private static final String TAREA_REVISAR_EXPEDIENTE_PREPARAR_COMBO_AGENCIA_EXTERNA = "agencia_externa";
 	private static final String TAREA_REVISAR_EXPEDIENTE_ASIGNAR_LETRADO = "expediente_correcto";

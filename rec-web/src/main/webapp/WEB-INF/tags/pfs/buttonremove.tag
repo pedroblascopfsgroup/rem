@@ -11,6 +11,7 @@
 <%@ attribute name="novalueMsgKey" required="true" type="java.lang.String"%>
 <%@ attribute name="novalueMsg" required="true" type="java.lang.String"%>
 <%@ attribute name="parameters" required="false" type="java.lang.String"%>
+<%@ attribute name="onSuccess" required="false" type="java.lang.String"%>
 
 <%@ attribute name="onSuccessMode" required="false" type="java.lang.String"%>
 
@@ -38,7 +39,7 @@
 								new Ext.LoadMask(${datagrid}.body, {msg:'<s:message code="fwk.ui.form.cargando" text="**Cargando"/>'}).hide();
 								${name}.setDisabled(false);
 								${datagrid}.getBottomToolbar().items.items[0].setDisabled(false);
-								
+								<c:if test="${onSuccess != null}">${onSuccess}();</c:if>				
 							}
 						});
 						

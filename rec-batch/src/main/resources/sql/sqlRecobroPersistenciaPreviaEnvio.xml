@@ -2867,17 +2867,17 @@
              , DECODE(MOB.DD_MOB_CODIGO
                      ,'EXC' ,'EXC' --CNT EXCEPTUADO
                      ,'EXP' ,'EXC' --PER EXCEPTUADA
-                     ,'AER' ,'FG'  --ASIGNACION ERRONEA
-                     ,'FDC' ,'FG'  --FIN DE CAMPAÑA
-                     ,'FP'  ,'FG'  --FIN PLAZO
-                     ,'FG'  ,'FG'  --FIN GESTION
-                     ,'FCRC','FG'  --FIN CRC
                      ,'CAN' ,'REG' --CANCELADO
                      ,'NR'  ,'REG' --NO RECIBIDO
                      ,'BA'  ,'REG' --BAJA APROVISIONAMIENTO
                      ,'REG' ,'REG' --REGULARIZADO
                      ,'OTR' ,'REG' --OTROS
-                     ,'REG') AS MOTIVO_BAJA
+                     ,'AER' ,'FG'  --ASIGNACION ERRONEA
+                     ,'FDC' ,'FG'  --FIN DE CAMPAÑA
+                     ,'FP'  ,'FG'  --FIN PLAZO
+                     ,'FG'  ,'FG'  --FIN GESTION
+                     ,'FCRC','FG'  --FIN CRC
+                     ,'FG') AS MOTIVO_BAJA
              , NULL FECHA_EXTRA1
              , NULL FECHA_EXTRA2
              , NULL FECHA_EXTRA3

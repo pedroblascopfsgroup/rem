@@ -58,7 +58,7 @@ VAR_DB_EXISTS=no
 function show_help () {
 	echo "Uso: "
 	echo " MODO 1: $0 [-help] [-remove] [-restart] [-oradata=<directorio datafiles>] [-port=<oracle port>] [-ignoredmp] [-ignoredmp]"
-	echo "            [-dmpdir=<directorio dumps>] [-errorlog=<fichero_logs>] [-piterdebug]"
+	echo "            [-dmpdir=<directorio dumps>] [-errorlog=<fichero_logs>] [-piterdebug] [-name=<container name>]"
 	echo " MODO 2: $0 -impdp=<fichero_dump_a_importar> [-remove] [-help] [-oradata=<directorio datafiles>]"
 	echo " MODO 3: $0 -flashback [-help]"
 	echo " MODO 4: $0 -scripts [-help] [-errorlog=<fichero_logs>] [-piterdebug] [-fromtag=<tag_de_partida>]"
@@ -146,6 +146,8 @@ if [[ "x$@" != "x" ]]; then
 			OPTION_STATISTICS=yes
 		elif [[ "x$op" == x-port=* ]]; then
 			OPTION_PORT=$(echo $op | cut -f2 -d=)
+		elif [[ "x$op" == x-name=* ]]; then
+			CONTAINER_NAME=$(echo $op | cut -f2 -d=)
 		fi
 	done
 else

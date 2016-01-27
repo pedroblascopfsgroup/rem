@@ -85,6 +85,9 @@ public class DocumentoPCOController {
 
 	@Autowired
 	private GestorAdicionalAsuntoApi gestorAdicionalAsuntoApi;
+	
+	@Autowired
+	private UtilDiccionarioApi diccionarioApi;
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -652,23 +655,33 @@ public class DocumentoPCOController {
 	}
 
 	/**
-	 * Inserta un gestor en la tabla de gestores adicionales del asunto si no existe previamente
+	 * Inserta un nuevo actor en la tabla de gestores adicionales del asunto si: no existe previamente, dicho gestor tiene acceso a recovery y no es un gestor que recarteriza el asunto (PRODUCTO-489).
 	 * 
 	 * @param idTipoGestor id del tipo de gestor, {@link EXTDDTipoGestor}
 	 * @param idAsunto id del {@link Asunto}
 	 * @param idUsuario id del {@link Usuario}
-	 * @param idTipoDespacho id del tipo de despacho, {@link GestorDespacho}
+	 * @param idDespacho id del despacho, {@link GestorDespacho}
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping
-	public String insertarGestorAdicionalAsuto(Long idTipoGestor, Long idAsunto, Long idUsuario, Long idTipoDespacho) throws Exception {
+	public String insertarGestorAdicionalAsuto(Long idTipoGestor, Long idAsunto, Long idUsuario, Long idDespacho) throws Exception {
 
-		EXTGestorAdicionalAsunto gaa = gestorAdicionalAsuntoApi.findGaaByIds(idTipoGestor, idAsunto, idUsuario, idTipoDespacho);
+		EXTDDTipoGestor tipoGestor = (EXTDDTipoGestor) diccionarioApi.dameValorDiccionario(EXTDDTipoGestor.class, idTipoGestor);
 
-		// Si existe gaa no inserta de nuevo el gestor adicional
-		if (gaa == null) {
-			proxyFactory.proxy(coreextensionApi.class).insertarGestorAdicionalAsunto(idTipoGestor, idAsunto, idUsuario, idTipoDespacho);
+		// no debe de ser PREDOC o Gestor documental.
+		if (!EXTDDTipoGestor.CODIGO_TIPO_GESTOR_DOCUMENTAL_PCO.equals(tipoGestor.getCodigo()) && !EXTDDTipoGestor.CODIGO_TIPO_PREPARADOR_DOCUMENTAL_PCO.equals(tipoGestor.getCodigo())) {
+
+			Boolean esTipoDespachoConAcceso = documentoPCOApi.esTipoGestorConAcceso(tipoGestor);
+
+			if (esTipoDespachoConAcceso) {
+
+				EXTGestorAdicionalAsunto gaa = gestorAdicionalAsuntoApi.findGaaByIds(idTipoGestor, idAsunto, idUsuario, idDespacho);
+
+				if (gaa == null) {
+					proxyFactory.proxy(coreextensionApi.class).insertarGestorAdicionalAsunto(idTipoGestor, idAsunto, idUsuario, idDespacho);
+				}
+			}
 		}
 
 		return "default";

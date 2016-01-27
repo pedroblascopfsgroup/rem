@@ -8,7 +8,7 @@
 <%@ taglib prefix="pfs" tagdir="/WEB-INF/tags/pfs"%>
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms"%>
 <%@ taglib prefix="pfslayout" tagdir="/WEB-INF/tags/pfs/layout"%>
-
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <fwk:page>
 
@@ -177,16 +177,22 @@
 	} else {
 		btLiberar.setDisabled(true);
 	}
-	
-	if ('${modelo.estado.codigo}'==ESTADO_BLOQUEADO.getValue() || '${modelo.propietario.id}' != usuarioLogado.getValue()){
-		btnAdd.setDisabled(true);
-		btnBorrar.setDisabled(true);
-		btEditar.setDisabled(true);
-	} else {
+
+	 btnAdd.setDisabled(true);
+     btnBorrar.setDisabled(true);
+     btEditar.setDisabled(true);
+
+     <sec:authorize ifAllGranted="ROLE_CONF_PROC_FACTURACION">
 		btnAdd.setDisabled(false);
 		btnBorrar.setDisabled(false);
 		btEditar.setDisabled(false);
-	}	
+    </sec:authorize>
+
+    if ('${modelo.estado.codigo}'==ESTADO_BLOQUEADO.getValue()){
+        btnAdd.setDisabled(true);
+        btnBorrar.setDisabled(true);
+        btEditar.setDisabled(true);
+    } 	
 	
 	var panel2 = new Ext.form.FieldSet({
 		style:'padding:0px'

@@ -74,11 +74,11 @@ var gridProcedimientosPco = app.crearGrid(procedimientoPcoStore, procedimientoPc
 	title: '<s:message code="plugin.precontencioso.tab.expjudicial.listado" text="**Listado Expedientes judicial" />',
 	cls: 'cursor_pointer',
 	bbar : [pagingBar],
-	height: 250,
 	collapsible: true,
-	collapsed: true,
+	collapsed: false,
 	titleCollapse: true,
 	autoWidth: true,
+	autoHeight: true,
 	style:'padding-bottom:10px; padding-right:10px;'
 });
 

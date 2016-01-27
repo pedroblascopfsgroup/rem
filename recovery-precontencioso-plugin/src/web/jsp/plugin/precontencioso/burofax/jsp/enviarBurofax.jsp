@@ -58,21 +58,21 @@
 		,iconCls : 'icon_ok'
 		,handler : function(){
 			var mask=new Ext.LoadMask(panelEdicion.body, {msg:'<s:message code="fwk.ui.form.cargando" text="**Cargando.."/>'});
-		    mask.show();	
 			if (tipoBurofax.getValue() == '' || tipoBurofax.getActiveError() != '') {
 				Ext.Msg.alert(fwk.constant.alert, '<s:message code="plugin.precontencioso.enviar.burofax.errorTipoBur" text="** Tipo burofax obligatorio" />');
 				return;
+			}else{
+				mask.show();
+				Ext.Ajax.request({
+					url : page.resolveUrl('burofax/guardarEnvioBurofax'), 
+					params : {arrayIdEnvios:arrayIdEnvios,arrayIdContrato:arrayIdContrato,certificado:certificado.getValue(),idTipoBurofax:tipoBurofax.getValue(),arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax,comboEditable:comboEditable},
+					method: 'POST',
+					success: function ( result, request ) {
+						mask.hide();
+						page.fireEvent(app.event.DONE);
+					}
+				});
 			}
-
-			Ext.Ajax.request({
-				url : page.resolveUrl('burofax/guardarEnvioBurofax'), 
-				params : {arrayIdEnvios:arrayIdEnvios,arrayIdContrato:arrayIdContrato,certificado:certificado.getValue(),idTipoBurofax:tipoBurofax.getValue(),arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax,comboEditable:comboEditable},
-				method: 'POST',
-				success: function ( result, request ) {
-					mask.hide();
-					page.fireEvent(app.event.DONE);
-				}
-			});
 		}
 	});
 	

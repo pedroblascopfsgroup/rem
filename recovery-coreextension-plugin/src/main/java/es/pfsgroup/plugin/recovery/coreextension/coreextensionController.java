@@ -42,6 +42,7 @@ public class coreextensionController {
 	private static final String GESTORES_ADICIONALES_JSON = "plugin/coreextension/multigestor/multiGestorAdicionalDataJSON";
 	private static final String OK_KO_RESPUESTA_JSON = "plugin/coreextension/OkRespuestaJSON";
 	private static final String JSON_LIST_TIPO_PROCEDIMIENTO = "procedimientos/listadoTiposProcedimientoJSON";
+	private static final String TIPO_USUARIO_DEFECTO_JSON = "plugin/coreextension/asunto/tipoUsuarioGestorDefectoJSON";
 	
 	@Autowired
 	public ApiProxyFactory proxyFactory;
@@ -268,5 +269,22 @@ public class coreextensionController {
 		model.put("listado", list);
 		
 		return JSON_LIST_TIPO_PROCEDIMIENTO;
+	}
+	
+	/**
+	 * Controlador que devuelve un JSON con la lista de usuarios para un tipo de despacho, donde se tiene
+	 * en cuenta si existe un gestor por Defecto de dicho despacho.
+	 * @param model
+	 * @param idTipoDespacho id del despacho. {@link DespachoExterno}
+	 * @return JSON
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getListUsuariosDefectoPaginatedData(ModelMap model, UsuarioDto usuarioDto){
+		
+		Page page = proxyFactory.proxy(coreextensionApi.class).getListUsuariosDefectoPaginatedData(usuarioDto);
+		model.put("pagina", page);
+		
+		return TIPO_USUARIO_DEFECTO_JSON;
 	}
 }

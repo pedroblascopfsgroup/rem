@@ -10,12 +10,15 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.hibernate.annotations.Where;
+
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 @Entity
 @Table(name = "DD_PCO_DOC_SOLICIT_TIPOACTOR", schema = "${entity.schema}")
+@Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class DDTipoActorPCO implements Dictionary, Auditable {
 
 	public static final String GESTORIA = "GESTORIA_PREDOC";

@@ -687,7 +687,7 @@ var actualizarBotonesDocumentos = function(){
 <%-- States --%>
 
 //Definimos eventos checkselectionmodel
-Ext.namespace('Ext.ux.plugins');http://www.leroymerlin.es/fp/14646212/mueble-para-lavadero-serie-henares-mueble
+Ext.namespace('Ext.ux.plugins');
 	
 	Ext.ux.plugins.CheckBoxMemory = Ext.extend(Object,{
    		constructor: function(config){

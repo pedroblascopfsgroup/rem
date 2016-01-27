@@ -667,7 +667,7 @@ public class MEJDecisionProcedimientoManager extends
 		Procedimiento p = prcManager.getProcedimiento(dtoDecisionProcedimiento.getIdProcedimiento());
 		MEJProcedimiento procedimiento = MEJProcedimiento.instanceOf(p);
 		//Comprobamos si pasa por un lado u otro, si el PrcRemoto, del procedimiento, es 1 se pondra el estado en conformacion
-		if(procedimiento.getPrcRemoto() == 1 && procedimiento.getGuid() != null) {
+		if(!Checks.esNulo(procedimiento.getPrcRemoto()) && procedimiento.getPrcRemoto() == 1 && procedimiento.getGuid() != null) {
 			configuradorPropuesta.setConfiguracion(ConfiguradorPropuesta.SOLO_ENVIAR);
 			dtoDecisionProcedimiento.setStrEstadoDecision(DDEstadoDecision.ESTADO_EN_CONFORMACION);
 		}

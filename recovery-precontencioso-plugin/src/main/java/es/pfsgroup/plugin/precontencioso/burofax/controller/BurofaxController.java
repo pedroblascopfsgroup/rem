@@ -619,7 +619,8 @@ public class BurofaxController {
 					///Comprobamos si tiene relacion con ese contrato
 					Filter filtroPerMan1 = genericDao.createFilter(FilterType.EQUALS, "personaManual.id", idPersona);
 					Filter filtroPerMan2 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", expCnt.getContrato().getId());
-					ContratoPersonaManual cntPem =(ContratoPersonaManual) genericDao.get(ContratoPersonaManual.class,filtroPerMan1,filtroPerMan2);
+					Filter filtroPerMan3 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+					ContratoPersonaManual cntPem =(ContratoPersonaManual) genericDao.get(ContratoPersonaManual.class,filtroPerMan1,filtroPerMan2,filtroPerMan3);
 					
 					if(!Checks.esNulo(cntPem) && !Arrays.asList(contratos).contains(cntPem.getContrato().getId())){
 						///Borramos la relacion y el burofax si existe
@@ -667,7 +668,8 @@ public class BurofaxController {
 					///Comprobamos si tiene relacion con ese contrato
 					Filter filtroPerMan1 = genericDao.createFilter(FilterType.EQUALS, "personaManual.id", persManPers.getId());
 					Filter filtroPerMan2 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", expCnt.getContrato().getId());
-					ContratoPersonaManual cntPem =(ContratoPersonaManual) genericDao.get(ContratoPersonaManual.class,filtroPerMan1,filtroPerMan2);
+					Filter filtroPerMan3 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+					ContratoPersonaManual cntPem =(ContratoPersonaManual) genericDao.get(ContratoPersonaManual.class,filtroPerMan1,filtroPerMan2,filtroPerMan3);
 					
 					if(!Checks.esNulo(cntPem) && !Arrays.asList(contratos).contains(cntPem.getContrato().getId())){
 						///Comprobamos si se puede borrar la relacion y el burofax si existe
@@ -682,7 +684,8 @@ public class BurofaxController {
 				
 				Filter filtroCntPer1 = genericDao.createFilter(FilterType.EQUALS, "persona.id", idPersona);
 				Filter filtroCntPer2 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", expCnt.getContrato().getId());
-				ContratoPersona cntPer =(ContratoPersona) genericDao.get(ContratoPersona.class,filtroCntPer1,filtroCntPer2);
+				Filter filtroCntPer3 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+				ContratoPersona cntPer =(ContratoPersona) genericDao.get(ContratoPersona.class,filtroCntPer1,filtroCntPer2,filtroCntPer3);
 				
 				if(!Checks.esNulo(cntPer) && !Arrays.asList(contratos).contains(cntPer.getContrato().getId())){
 					///Comprobamos si se puede borrar el burofax si existe
@@ -701,7 +704,8 @@ public class BurofaxController {
 					///Comprobamos si tiene relacion con ese contrato
 					Filter filtroPerMan1 = genericDao.createFilter(FilterType.EQUALS, "personaManual.id", persManPers.getId());
 					Filter filtroPerMan2 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", expCnt.getContrato().getId());
-					ContratoPersonaManual cntPem =(ContratoPersonaManual) genericDao.get(ContratoPersonaManual.class,filtroPerMan1,filtroPerMan2);
+					Filter filtroPerMan3 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+					ContratoPersonaManual cntPem =(ContratoPersonaManual) genericDao.get(ContratoPersonaManual.class,filtroPerMan1,filtroPerMan2,filtroPerMan3);
 					
 					if(!Checks.esNulo(cntPem) && !Arrays.asList(contratos).contains(cntPem.getContrato().getId())){
 						///borrarmos la relacion y el burofax si existe
@@ -711,7 +715,8 @@ public class BurofaxController {
 				
 				Filter filtroCntPer1 = genericDao.createFilter(FilterType.EQUALS, "persona.id", idPersona);
 				Filter filtroCntPer2 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", expCnt.getContrato().getId());
-				ContratoPersona cntPer =(ContratoPersona) genericDao.get(ContratoPersona.class,filtroCntPer1,filtroCntPer2);
+				Filter filtroCntPer3 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+				ContratoPersona cntPer =(ContratoPersona) genericDao.get(ContratoPersona.class,filtroCntPer1,filtroCntPer2,filtroCntPer3);
 				
 				if(!Checks.esNulo(cntPer) && !Arrays.asList(contratos).contains(cntPer.getContrato().getId())){
 					///Borramos el burofax si existe
@@ -988,7 +993,6 @@ public class BurofaxController {
 	@RequestMapping
 	public String getRelacionContratos(ModelMap model,Long idProcedimiento, Long idPersona, Boolean manual) {
 		
-		//model.put("procedimiento", procedimientoPCODao.get(idProcedimiento).getProcedimiento());
 		model.put("procedimiento", burofaxManager.getContratosProcPersona(idProcedimiento, idPersona, manual));
 		
 		return JSON_LISTA_CONTRATOS_PROCEDIMIENTOS;
@@ -1126,7 +1130,9 @@ public class BurofaxController {
 		dto.setPiso(request.getParameter("piso"));
 		dto.setEscalera(request.getParameter("escalera"));
 		dto.setPuerta(request.getParameter("puerta"));
-		dto.setListaIdPersonas(idCliente.toString());
+		if(!Checks.esNulo(idCliente)){
+			dto.setListaIdPersonas(idCliente.toString());
+		}
 		dto.setOrigen(request.getParameter("origen"));
 
 		burofaxManager.actualizaDireccion(dto, idDireccion);

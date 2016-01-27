@@ -659,8 +659,8 @@ var pdfRender = function(value, meta, record) {
 				refrescarBurofaxGrid();
 		});
 		w.on(app.event.CANCEL, function(){
-				refrescarBurofaxGrid();
 				w.close();
+				refrescarBurofaxGrid();
 		});
 		
 	});

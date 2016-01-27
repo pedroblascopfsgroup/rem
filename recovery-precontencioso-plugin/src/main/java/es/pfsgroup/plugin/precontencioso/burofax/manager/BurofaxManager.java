@@ -1031,7 +1031,7 @@ public class BurofaxManager implements BurofaxApi {
 		if(!Checks.esNulo(idPersonaManual) && !Checks.esNulo(idContrato) && !Checks.esNulo(codigoTipoIntervencion)){
 			
 			///Comprobamos si la relacion CONTRATO - PERSONA MANUAL EXISTE
-			ContratoPersonaManual contratosPersonaMan = genericDao.get(ContratoPersonaManual.class, genericDao.createFilter(FilterType.EQUALS, "contrato.id", idContrato), genericDao.createFilter(FilterType.EQUALS, "personaManual.id", idPersonaManual));
+			ContratoPersonaManual contratosPersonaMan = genericDao.get(ContratoPersonaManual.class, genericDao.createFilter(FilterType.EQUALS, "contrato.id", idContrato), genericDao.createFilter(FilterType.EQUALS, "personaManual.id", idPersonaManual), genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 			
 			if(!Checks.esNulo(contratosPersonaMan)){
 				
@@ -1078,8 +1078,9 @@ public class BurofaxManager implements BurofaxApi {
 			Filter filtroBur1 = genericDao.createFilter(FilterType.EQUALS, "procedimientoPCO.id", idProcedimiento);
 			Filter filtroBur2 = genericDao.createFilter(FilterType.EQUALS, "demandadoManual.id", idPersonaManual);
 			Filter filtroBur3 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", contratoPersonaManual.getContrato().getId());
+			Filter filtroBur4 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 			
-			List<BurofaxPCO> burofaxes = genericDao.getList(BurofaxPCO.class,filtroBur1,filtroBur2,filtroBur3);
+			List<BurofaxPCO> burofaxes = genericDao.getList(BurofaxPCO.class,filtroBur1,filtroBur2,filtroBur3,filtroBur4);
 			
 			if(burofaxes.size()>0){
 				
@@ -1183,10 +1184,10 @@ public class BurofaxManager implements BurofaxApi {
 	public PersonaManual updatePersonaManual(String dni, String nombre, String app1, String app2, Long idPersonaManual){
 		 
 		PersonaManual persMan = genericDao.get(PersonaManual.class, genericDao.createFilter(FilterType.EQUALS, "id", idPersonaManual));
-		persMan.setDocId(dni);
-		persMan.setNombre(nombre);
-		persMan.setApellido1(app1);
-		persMan.setApellido2(app2);
+		if(!Checks.esNulo(dni)){persMan.setDocId(dni);}
+		if(!Checks.esNulo(nombre)){persMan.setNombre(nombre);}
+		if(!Checks.esNulo(app1)){persMan.setApellido1(app1);}
+		if(!Checks.esNulo(app2)){persMan.setApellido2(app2);}
 
 		personaManualDao.saveOrUpdate(persMan);	
 		

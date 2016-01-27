@@ -46,6 +46,7 @@ OPTION_PITERDEBUG=no
 OPTION_FLASHBACK_MODE=no
 OPTION_SCRIPTS_MODE=no
 OPTION_STATISTICS=no
+OPTION_PORT=1521
 
 DOCKER_INNER_ERROR_LOG=/tmp/scriptslog/error.log
 VAR_OUTTER_ERROR_LOG=""
@@ -56,8 +57,8 @@ VAR_DB_EXISTS=no
 
 function show_help () {
 	echo "Uso: "
-	echo " MODO 1: $0 [-help] [-remove] [-restart] [-oradata=<directorio datafiles>] [-ignoredmp] [-dmpdir=<directorio dumps>]"
-	echo "            [-errorlog=<fichero_logs>] [-piterdebug]"
+	echo " MODO 1: $0 [-help] [-remove] [-restart] [-oradata=<directorio datafiles>] [-port=<oracle port>] [-ignoredmp] [-ignoredmp]"
+	echo "            [-dmpdir=<directorio dumps>] [-errorlog=<fichero_logs>] [-piterdebug]"
 	echo " MODO 2: $0 -impdp=<fichero_dump_a_importar> [-remove] [-help] [-oradata=<directorio datafiles>]"
 	echo " MODO 3: $0 -flashback [-help]"
 	echo " MODO 4: $0 -scripts [-help] [-errorlog=<fichero_logs>] [-piterdebug] [-fromtag=<tag_de_partida>]"
@@ -70,6 +71,7 @@ function show_help () {
 	echo "    -workspace=: Cambia el workspace de la tool. Esta opción es útil si montamos una"
 	echo "                 Pipeline de integración contínua, en caso contrario no tiene sentido especificarlo"
 	echo "     -statistics: Actualiza las estadísticas en la BD"
+	echo "     -port=: Puerto por el que escuchará la BBDD"
 	echo ""
 	echo " OPCIONES MODO 1. Línea base."
 	echo "    -remove: Indicar este parámetro si se quiere volver a generar el contenedor, implica reiniciar"
@@ -142,6 +144,8 @@ if [[ "x$@" != "x" ]]; then
 			VAR_WORKSPACE_CHANGED=yes
 		elif [[ "x$op" == "x-statistics" ]]; then
 			OPTION_STATISTICS=yes
+		elif [[ "x$op" == x-port=* ]]; then
+			OPTION_PORT=$(echo $op | cut -f2 -d=)
 		fi
 	done
 else
@@ -277,7 +281,7 @@ function run_container () {
 		VAR_SCRIPTS_DONE=yes
 	fi
 	echo -n "[INFO]: $CONTAINER_NAME: Generando el contenedor a partir de la imagen [$IMAGE_NAME]: "
-	docker run -d -p=22 -p 1521:1521 \
+	docker run -d -p=22 -p $OPTION_PORT:1521 \
 				-v /etc/localtime:/etc/localtime:ro \
 				-v $WORKSPACE_DIR:/setup $errorlog_volume \
 				-v $DUMP_DIRECTORY:/DUMP \

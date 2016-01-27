@@ -90,7 +90,7 @@
 								<entry key="btnSolicitar" value="1" />
 								<entry key="btnEditarValores" value="1" />
 								<entry key="btnConfirmar" value="1" />
-								<entry key="btnVisar" value="1" />
+								<entry key="btnVisar" value="0" />
 								<entry key="btnDescartar" value="1" />
 								<entry key="btnGenerar" value="1" />
 								<entry key="botonRefreshLiq" value="1" />

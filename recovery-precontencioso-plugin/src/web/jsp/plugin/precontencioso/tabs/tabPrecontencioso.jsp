@@ -60,6 +60,7 @@
 						<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_DOCUMENTOS">
 							ponerVisibilidadBotonesDoc(data.botonesVisiblesDocPco, data.botonesInvisiblesDocPco);
 							refrescarDocumentosGrid();
+							cargaTiposDeDocumentosFiltro();
 						</sec:authorize>
 				
 						<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_LIQUIDACIONES">

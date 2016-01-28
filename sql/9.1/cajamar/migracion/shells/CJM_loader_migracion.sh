@@ -166,6 +166,13 @@ if [ $? != 0 ] ; then
 #   exit 1
 fi
 
+echo "MIG_EXPEDIENTES_NOTIFICACIONES"
+$ORACLE_HOME/bin/sqlldr control="$ctl_dir"expedientes_notificacionesDataLoad.ctl log="$log_dir"EXPEDIENTES-NOTIFICACIONES_"$fecha".log bad="$bad_dir"EXPEDIENTES-NOTIFICACIONES_"$fecha".bad userid="$1" DIRECT=TRUE data="$dat_dir"EXPEDIENTES-NOTIFICACIONES.dat
+if [ $? != 0 ] ; then 
+   echo -e "[ERROR] MIG_EXPEDIENTES_NOTIFICACIONES"
+#   exit 1
+fi
+
 $ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"CJM_MiG_estadisticas.sql 
 
 if [ $? != 0 ] ; then 

@@ -77,7 +77,7 @@ public class BTATareaNotificacionDaoImpl extends AbstractEntityDao<BTATareaEncon
     
 	public Integer buscarTareasCount(BTADtoBusquedaTareas dto) {
         
-		HQLBuilder hb = new HQLBuilder("select tar from BTATareaEncontrada tar"); 
+		HQLBuilder hb = new HQLBuilder("select DISTINCT tar from BTATareaEncontrada tar"); 
 		hb = construyeQuery(hb, dto);
 		
 		final Page page = HibernateQueryUtils.page(this, hb, dto);
@@ -86,7 +86,7 @@ public class BTATareaNotificacionDaoImpl extends AbstractEntityDao<BTATareaEncon
     
 	public Page buscarTareas(BTADtoBusquedaTareas dto) {
         
-		HQLBuilder hb = new HQLBuilder("select tar from BTATareaEncontrada tar"); 
+		HQLBuilder hb = new HQLBuilder("select DISTINCT tar from BTATareaEncontrada tar"); 
 		hb = construyeQuery(hb, dto);
                  
         return HibernateQueryUtils.page(this, hb, dto);
@@ -143,7 +143,7 @@ public class BTATareaNotificacionDaoImpl extends AbstractEntityDao<BTATareaEncon
             
             // Expediente
             sql += " or (tar.tarea.tipoEntidad.codigo like '" + DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE
-                    + "' and upper (tar.descExpediente) like '%" + dto.getDescripcionTarea().toUpperCase() + "%') ";
+                    + "' and upper (tar.tarea.expediente.descripcionExpediente) like '%" + dto.getDescripcionTarea().toUpperCase() + "%') ";
 
             hb.appendWhere(sql);
         }
@@ -505,7 +505,15 @@ public class BTATareaNotificacionDaoImpl extends AbstractEntityDao<BTATareaEncon
             		List<String> listadoZonas = getListadoZonas(dto);
 
             		Collection<String> colZonas = listadoZonas;
-            		HQLBuilder.addFiltroWhereInSiNotNull(hb, "tar.tarea.cliente.oficina.zona.codigo", colZonas);
+            		for(String codZona : colZonas) {
+            			if (dto.getUgGestion() == null 
+                   		|| (!Checks.esNulo(dto.getUgGestion()) && (dto.getUgGestion().equals("") || dto.getUgGestion().equals("1")))){
+            				HQLBuilder.addFiltroLikeSiNotNull(hb, "tar.tarea.cliente.oficina.zona.codigo", codZona);
+		               	} 
+            			else if (dto.getUgGestion().equals("2")) {
+            				HQLBuilder.addFiltroLikeSiNotNull(hb, "tar.tarea.expediente.oficina.zona.codigo", codZona);
+		               	}
+            		}
             	}
             }
         } 

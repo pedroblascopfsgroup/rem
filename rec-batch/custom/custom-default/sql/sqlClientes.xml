@@ -343,7 +343,7 @@
 	                   ${ddEstadoProcedimiento.derivado.codigo}, 
 	                   ${ddEstadoProcedimiento.enConformacion.codigo})
 	                   and cex.cnt_id = c.cnt_id
-	               UNION	
+	               UNION ALL	
 	               		/* Que el contrato no esté algún expediente 'en curso' */
 	               	   SELECT DISTINCT cex.cnt_id FROM cex_contratos_expediente cex, ${master.schema}.dd_eex_estado_expediente eex, exp_expedientes exp 
 	                   WHERE exp.exp_id = cex.exp_id 
@@ -353,7 +353,7 @@
 	                   and cex.cnt_id = c.cnt_id
 	                    --No sea un expediente de recobro
 	                   and not exists (select exr.exp_id from exr_expediente_recobro exr where exp.exp_id = exr.exp_id)	                   
-	               UNION           
+	               UNION ALL           
 	               /* Que el contrato no esté en algún cliente 'en curso' */
 	                   SELECT DISTINCT ccl.cnt_id FROM ccl_contratos_cliente ccl 
 	                   WHERE ccl.borrado = 0
@@ -473,7 +473,7 @@
 		                   --No sea un expediente de recobro
 	                   	  and not exists (select exr.exp_id from exr_expediente_recobro exr where cex.exp_id = exr.exp_id)
 		              /* Que el contrato no esté algún expediente de recuperacion 'en curso' */
-		              UNION
+		              UNION ALL
 		                  SELECT DISTINCT cex.cnt_id 
 		                  FROM cex_contratos_expediente cex, 
 		                  ${master.schema}.dd_eex_estado_expediente eex, 
@@ -488,7 +488,7 @@
 		                  and eex.dd_eex_codigo IN (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo})
 		                  and cex.cnt_id = c.cnt_id
 		              /* Que el contrato no esté en algún cliente 'en curso' */
-		              UNION
+		              UNION ALL
 		                  SELECT DISTINCT ccl.cnt_id FROM ccl_contratos_cliente ccl 
 		                  WHERE ccl.borrado = 0 and ccl.cnt_id = c.cnt_id
 		              )
@@ -535,7 +535,7 @@
                        and cex.cnt_id = c.cnt_id
                         --No sea un expediente de recobro
                        and not exists (select exr.exp_id from exr_expediente_recobro exr where cex.exp_id = exr.exp_id)
-                   UNION
+                   UNION ALL
                       /* Que el contrato no esté algún expediente 'en curso' */
                        SELECT cex.cnt_id FROM cex_contratos_expediente cex                       
                        INNER JOIN exp_expedientes exp ON exp.exp_id = cex.exp_id
@@ -545,7 +545,7 @@
                        and cex.cnt_id = c.cnt_id
                         --No sea un expediente de recobro
                        and not exists (select exr.exp_id from exr_expediente_recobro exr where exp.exp_id = exr.exp_id)	                   
-                   UNION	                   
+                   UNION ALL	                   
                    /* Que el contrato no esté en algún cliente 'en curso' */
                        SELECT ccl.cnt_id FROM ccl_contratos_cliente ccl 
                        WHERE ccl.borrado = 0

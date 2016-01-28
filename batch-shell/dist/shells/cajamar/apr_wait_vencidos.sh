@@ -1,10 +1,13 @@
 #!/bin/bash
-# Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
 
-MAX_WAITING_MINUTES=10
 ficheros=VENCIDOS
 
-mascara='_'$ENTIDAD'_'????????
+if [ -z "$1" ]; then
+    echo "$(basename $0) Error: parámetro de entrada YYYYMMDD no definido."
+    exit 1
+fi
+
+mascara='_'$ENTIDAD'_'$1
 extensionSem=".sem"
 extensionZip=".zip"
 

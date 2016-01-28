@@ -1,0 +1,55 @@
+--/*
+--##########################################
+--## AUTOR=JOSE MANUEL PEREZ BARBERÁ
+--## FECHA_CREACION=20160126
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=CMREC-1589
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Limpieza de fechas incorrectas '30/11/03 00:00:00,000000000' en BIE_VALORACIONES
+--##                               , esquema CM01.
+--## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+
+
+DECLARE
+
+ V_ESQUEMA VARCHAR2(25 CHAR):=   '#ESQUEMA#'; 			-- Configuracion Esquema
+ V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; 		-- Configuracion Esquema Master
+ TABLA VARCHAR(30 CHAR) :='BIE_VALORACIONES';
+ err_num NUMBER;
+ err_msg VARCHAR2(2048 CHAR); 
+ V_MSQL VARCHAR2(8500 CHAR);
+ S_MSQL VARCHAR2(8500 CHAR);
+ V_EXISTE NUMBER (1);
+
+BEGIN 
+  
+  V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||TABLA||' 
+			SET BIE_FECHA_VALOR_SUBJETIVO = NULL, BIE_FECHA_VALOR_APRECIACION = NULL
+			WHERE USUARIOCREAR = ''APROV_BIEN'' AND (USUARIOMODIFICAR = ''APROV_BIEN'' OR USUARIOMODIFICAR IS NULL)
+			AND BIE_FECHA_VALOR_SUBJETIVO IS NOT NULL AND BIE_FECHA_VALOR_APRECIACION IS NOT NULL';
+  
+  EXECUTE IMMEDIATE V_MSQL;
+  DBMS_OUTPUT.PUT_LINE('[INFO] Campos BIE_FECHA_VALOR_SUBJETIVO y BIE_FECHA_VALOR_APRECIACION actualizados a null.');
+
+EXCEPTION
+WHEN OTHERS THEN  
+  err_num := SQLCODE;
+  err_msg := SQLERRM;
+
+  DBMS_OUTPUT.put_line('Error:'||TO_CHAR(err_num));
+  DBMS_OUTPUT.put_line(err_msg);
+  
+  ROLLBACK;
+  RAISE;
+END;
+/
+EXIT;   

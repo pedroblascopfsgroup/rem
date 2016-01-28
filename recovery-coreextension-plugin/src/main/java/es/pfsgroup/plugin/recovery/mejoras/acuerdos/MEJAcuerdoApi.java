@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.mejoras.acuerdos;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +13,6 @@ import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.DDTipoProducto;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
-import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.termino.dto.ListadoTerminosAcuerdoDto;
 import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.capgemini.pfs.termino.model.TerminoBien;
@@ -52,6 +52,7 @@ public interface MEJAcuerdoApi {
 	public static final String BO_ACUERDO_MGR_ACUERDO_CERRAR = "mejacuerdo.cerrarAcuerdo";
 	public static final String BO_ACUERDO_MGR_GET_VALIDACION_TRAMITE_CORRESPONDIENTE = "mejacuerdo.validacionTramiteCorrespondiente";
 	public static final String BO_ACUERDO_MGR_GUARDAR_ESTADO_GESTION = "mejacuerdo.guardarEstadoGestion";
+	public static final String BO_ACUERDO_MGR_GET_FECHA_PASE_MORA = "mejacuerdo.getFechaPaseMora";
 	
     
 	/**
@@ -152,5 +153,7 @@ public interface MEJAcuerdoApi {
 	@BusinessOperationDefinition(BO_ACUERDO_MGR_GUARDAR_ESTADO_GESTION)
 	public void guardarEstadoGestion(Long idTermino, Long nuevoEstadoGestion);
 	
+	@BusinessOperationDefinition(BO_ACUERDO_MGR_GET_FECHA_PASE_MORA)
+	public String getFechaPaseMora(Long idContrato);
 
 }

@@ -1558,6 +1558,17 @@ public class EditBienController {
 		} else {
 			adjudicacion.setImporteCesionRemate(null);
 		}
+		
+		if (!Checks.esNulo(request.getParameter("fechaContabilidad"))) {
+			try {
+				adjudicacion.setFechaContabilidad(DateFormat.toDate(request
+						.getParameter("fechaContabilidad")));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		} else {
+			adjudicacion.setFechaContabilidad(null);
+		}
 
 		bien.setAdjudicacion(adjudicacion);
 		adjudicacion.setBien(bien);

@@ -34,10 +34,6 @@ DECLARE
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     
-    V_ESQUEMA_MIN VARCHAR2(25 CHAR):= '#ESQUEMA_MINI#'; -- Configuracion Esquema minirec
-    V_ESQUEMA_DWH VARCHAR2(25 CHAR):= '#ESQUEMA_DWH#'; -- Configuracion Esquema recovery_bankia_dwh
-    V_ESQUEMA_STG VARCHAR2(25 CHAR):= '#ESQUEMA_STG#'; -- Configuracion Esquema recovery_bankia_datastage
-    
     V_NOMBRE_VISTA VARCHAR2(30 CHAR):= 'V_LIS_PREPROYECT_CNT';    
     
 BEGIN

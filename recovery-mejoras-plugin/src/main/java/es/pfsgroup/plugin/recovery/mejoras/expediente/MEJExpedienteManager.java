@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.recovery.mejoras.expediente;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,8 +21,6 @@ import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.core.api.web.DynamicElementApi;
-import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
-import es.capgemini.pfs.estadoFinanciero.model.DDSituacionEstadoFinanciero;
 import es.capgemini.pfs.expediente.dao.ExpedienteContratoDao;
 import es.capgemini.pfs.expediente.dao.ExpedienteDao;
 import es.capgemini.pfs.expediente.dto.DtoInclusionExclusionContratoExpediente;
@@ -29,9 +28,11 @@ import es.capgemini.pfs.expediente.model.DDAmbitoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.expediente.model.ExpedientePersona;
-import es.capgemini.pfs.interna.InternaBusinessOperation;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
+import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.zona.dao.ZonaDao;
+import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -65,6 +66,9 @@ public class MEJExpedienteManager implements MEJExpedienteApi {
 
     @Autowired
     private MEJEventoDao eventoDao;
+    
+    @Autowired
+    private ZonaDao zonaDao;
 
     @Override
     @BusinessOperation(PluginMejorasBOConstants.MEJ_BO_EXPEDIENTE_BUTTONS_LEFT)
@@ -262,6 +266,14 @@ public class MEJExpedienteManager implements MEJExpedienteApi {
 
         List<ExpedientePersona> lista = genericDao.getList(ExpedientePersona.class, filtro, filtroBorrado);
         return lista;
+    }
+    
+    @BusinessOperation(OBTENER_ZONAS_JERARQUIA_BY_COD_OR_DESC)
+    public List<DDZona> getZonasJerarquiaByCodDesc(Integer idNivel, String codDesc) {
+        if (idNivel == null || idNivel.longValue() == 0) { return new ArrayList<DDZona>(); }
+        Set<String> codigoZonasUsuario = ((Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO))
+                .getCodigoZonas();
+        return zonaDao.getZonasJerarquiaByCodDesc(idNivel, codigoZonasUsuario, codDesc);
     }
 
 }

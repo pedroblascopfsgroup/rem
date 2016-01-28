@@ -1,13 +1,12 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.impl;
 
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -80,6 +79,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		// Distinct por procedimiento id
 		select.add(Projections.property("id").as("id"));
+		select.add(Projections.distinct(Projections.property("procedimientoPco.id").as("id")));
 		select.add(Projections.property("procedimientoPco.procedimiento").as("procedimiento"));
 		select.add(Projections.property("procedimiento.id").as("prcId"));
 		select.add(Projections.property("procedimiento.id").as("codigo"));

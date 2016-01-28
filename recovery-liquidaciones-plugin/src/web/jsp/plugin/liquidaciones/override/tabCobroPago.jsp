@@ -112,5 +112,11 @@
 		,items :cobroPagoGrid
 		,nombretab : 'cobrosPagos'
 	});
+	
+	panel.setVisibleTab = function(data){
+	//	return data.toolbar.esSupervisor || data.toolbar.esGestor;
+		return true;
+	}	
+	
 	return panel;
 })()

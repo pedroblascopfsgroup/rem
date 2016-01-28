@@ -973,14 +973,18 @@ public class BurofaxController {
     @RequestMapping
     public String getDocuemtosPCONoDescartados(Long idProcedimientoPCO, ModelMap model) {
 
-		List<DocumentoPCO> listDocumentos = documentoPCOApi.getDocumentosPorIdProcedimientoPCONoDescartados(idProcedimientoPCO);
-		List<DocumentoPCO> documentos = documentoPCOApi.getDocumentosOrdenadosByUnidadGestion(listDocumentos);
 		
 		List<SolicitudDocumentoPCODto> solicitudesDoc = new ArrayList<SolicitudDocumentoPCODto>();
 		
-		for (DocumentoPCO doc : documentos) {
-			SolicitudDocumentoPCODto solDto = documentoPCOApi.crearSolicitudDocumentoDto(doc, null, true, false);
-			solicitudesDoc.add(solDto);
+		List<DocumentoPCO> listDocumentos = documentoPCOApi.getDocumentosPorIdProcedimientoPCONoDescartados(idProcedimientoPCO);
+		if(!Checks.estaVacio(listDocumentos)){
+			List<DocumentoPCO> documentos = documentoPCOApi.getDocumentosOrdenadosByUnidadGestion(listDocumentos);
+			if(!Checks.estaVacio(documentos)){
+				for (DocumentoPCO doc : documentos) {
+					SolicitudDocumentoPCODto solDto = documentoPCOApi.crearSolicitudDocumentoDto(doc, null, true, false);
+					solicitudesDoc.add(solDto);
+				}
+			}
 		}
 
 		model.put("solicitudesDocumento", solicitudesDoc);

@@ -1,6 +1,5 @@
 package es.capgemini.pfs.asunto;
 
-import java.util.List;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,7 +11,6 @@ import java.util.Properties;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -56,7 +54,7 @@ public class EXTAsuntoController {
 		Parametrizacion param = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
                 Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_ASUNTOS);
 		
-		model.put("count", proxyFactory.proxy(EXTAsuntoApi.class).findAsuntosPaginatedDinamicoCount(dto, params));
+		model.put("count", proxyFactory.proxy(EXTAsuntoApi.class).findAsuntosPaginatedDinamicoCount(dto, params).getTotalCount());
 		model.put("limit", Integer.parseInt(param.getValor()));
 		
         return "plugin/coreextension/exportacionGenericoCountJSON";
@@ -82,6 +80,7 @@ public class EXTAsuntoController {
 		return GESTORES_ADICIONALES_ASUNTO_JSON;
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String exportarExcelAsuntos(EXTDtoBusquedaAsunto filter, String params, ModelMap model) {
 		Page resultadoPaginado = extAsuntoApi.findAsuntosPaginatedDinamicoCount(filter, params);

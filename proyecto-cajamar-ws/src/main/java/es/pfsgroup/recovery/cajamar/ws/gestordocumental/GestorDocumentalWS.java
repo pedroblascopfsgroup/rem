@@ -33,6 +33,7 @@ public class GestorDocumentalWS extends BaseWS implements GestorDocumentalWSApi 
 		logger.info("LLamando al WS..."+input.getTIPOASOCIACION());
 
 		logger.info("Parametros de entrada..."+input.getTIPOASOCIACION()+"...");
+		logger.info(String.format("APLICACION_"+input.getAPLICACION()+": %s", input.getAPLICACION()));
 		logger.info(String.format("CLAVEASOCIACION_"+input.getTIPOASOCIACION()+": %s", input.getCLAVEASOCIACION()));
 		logger.info(String.format("CLAVEASOCIACION2_"+input.getTIPOASOCIACION()+": %s", input.getCLAVEASOCIACION2()));
 		logger.info(String.format("CLAVEASOCIACION3_"+input.getTIPOASOCIACION()+": %s", input.getCLAVEASOCIACION3()));

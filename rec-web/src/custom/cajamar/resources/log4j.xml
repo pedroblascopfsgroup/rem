@@ -43,14 +43,14 @@
  
     <!-- DEVON -->
     <logger name="es.capgemini.devon" additivity="false">
-        <level value="error"/> 
+        <level value="info"/> 
         <appender-ref ref="console" />
         <appender-ref ref="file" />
         <appender-ref ref="email" />
     </logger>
     <!-- PFS -->
     <logger name="es.capgemini.pfs" additivity="false">
-        <level value="error"/> 
+        <level value="info"/> 
         <appender-ref ref="console" />
         <appender-ref ref="file" />
         <appender-ref ref="email" />
@@ -147,7 +147,7 @@
    
     <!-- root -->
     <root>
-        <priority value="error" />
+        <priority value="info" />
         <appender-ref ref="console" />
         <appender-ref ref="file" />
         <appender-ref ref="email" />

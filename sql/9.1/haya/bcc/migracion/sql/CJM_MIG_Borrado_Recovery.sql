@@ -1676,6 +1676,15 @@ BEGIN
            EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.EXP_EXPEDIENTES WHERE EXP_ID IN ( SELECT EXP_ID FROM '||V_ESQUEMA||'.TABLA_TMP_EXP )';
            DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.EXP_EXPEDIENTES... Se han eliminado '||EXISTE||' registros');
            COMMIT;
+           
+           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA||'.POL_POLITICA WHERE CMP_ID IN (SELECT CMP_ID FROM '||V_ESQUEMA||'.CMP_CICLO_MARCADO_POLITICA WHERE EXP_ID not in (SELECT exp.exp_id FROM '||V_ESQUEMA||'.EXP_EXPEDIENTES EXP))';
+           DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.POL_POLITICA .. Se han eliminado con Pol Politica '||SQL%ROWCOUNT||' registros');
+           COMMIT;
+           
+           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA||'.CMP_CICLO_MARCADO_POLITICA where exp_id not in (SELECT exp.exp_id FROM '||V_ESQUEMA||'.EXP_EXPEDIENTES EXP)';
+           DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.CMP_CICLO_MARCADO_POLITICA .. Se han eliminado con Ciclo marcado Politica '||SQL%ROWCOUNT||' registros');
+           COMMIT;                             
+           
            PRO_KEYS_STATUS(V_ESQUEMA, 'EXP_EXPEDIENTES', 'ENABLE');
       END IF;
 

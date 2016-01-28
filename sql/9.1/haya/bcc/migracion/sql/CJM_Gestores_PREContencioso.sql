@@ -30,7 +30,7 @@ DECLARE
     V_TIPO_TFA T_ARRAY_TGE := T_ARRAY_TGE(  
       T_TIPO_TGE( 'CM_GE_PCO','val.gestEstudio','CM_GE_PCO Gestor de Estudio val.gestEstudio'),
       T_TIPO_TGE('CM_GL_PCO','val.gestliquidaciones','CM_GL_PCO	Gestor de Liquidación   val.gestliquidaciones'),
-	  T_TIPO_TGE('SUP_PCO','val.supexpjud','SUP_PCO	Supervisor expediente judicial val.supexpjud'),
+	  T_TIPO_TGE('SUP_PCO','val.supervisor','SUP_PCO	Supervisor expediente judicial val.supervisor'),
 	  T_TIPO_TGE('CM_GD_PCO','val.gestdocumentacion','CM_GD_PCO	Gestor de Documentación val.gestdocumentacion')
       );
       V_TMP_TIPO_TGE T_TIPO_TGE;
@@ -38,6 +38,13 @@ DECLARE
 BEGIN
 
 DBMS_OUTPUT.PUT_LINE('[INICIO]');
+ 
+ --Utilizamos el usuario de validacion val.supervisor en lugar del val.supexpjud
+    V_MSQL := 'update '||V_ESQUEMA_M||'.Usu_Usuarios set usu_username=''val.supervisor'' where usu_username=''val.supexpjud'' and entidad_id=41';
+    EXECUTE IMMEDIATE V_MSQL;
+    
+    COMMIT;
+ 
  
 	FOR I IN V_TIPO_TFA.FIRST .. V_TIPO_TFA.LAST 
 	LOOP              

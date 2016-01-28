@@ -21,5 +21,5 @@ done < ./$BASE_DIR/lists/processes-list.txt
 #PARALELO
 while read line; do
     nohup $BASE_DIR/scripts/run-parallel.sh $BASE_DIR/$line.txt > $BASE_DIR/log/$line.log 2> $BASE_DIR/log/$line.error &
-    sleep 5
+    sleep 900
 done < ./$BASE_DIR/lists/processes-parallel.txt

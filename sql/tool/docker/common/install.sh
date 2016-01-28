@@ -83,6 +83,7 @@ done
 echo "<Docker [$CONTAINER_NAME]>: BD disponible: OK"
 
 if [[ "x$OPTION_REMOVE" == "xyes" ]]; then
+	export ORACLE_SID=orcl
 	echo "<Docker [$CONTAINER_NAME]>: Limpiando el contenido de /oradata..."
 	rm -Rf /oradata/* && \
 	mkdir -p /oradata/flash && \

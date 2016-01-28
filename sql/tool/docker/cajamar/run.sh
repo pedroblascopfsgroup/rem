@@ -235,6 +235,7 @@ function run_container () {
 	rm -Rf $WORKSPACE_DIR/*
 	cp $(pwd)/*.sh $WORKSPACE_DIR && chmod ugo+rx $WORKSPACE_DIR/*.sh
 	cp -R $(pwd)/SQL-SCRIPTS $WORKSPACE_DIR && chmod ugo+r $WORKSPACE_DIR/SQL-SCRIPTS/*
+	echo $WORKSPACE_DIR > $WORKSPACE_DIR/workspace.path
 
 	if [[ "x$VAR_OUTTER_ERROR_LOG" != "x" ]]; then
 		outter_log_dir=$(dirname $VAR_OUTTER_ERROR_LOG)
@@ -376,13 +377,29 @@ function restore_or_confirm_flahsback () {
 	echo "Pulsa Ctrl + C para salir"
 }
 
+function verify_workspace () {
+	local _ws
+	if [[ ! -z "$(docker ps | grep $CONTAINER_NAME)" ]]; then
+		_ws="$(docker exec $CONTAINER_NAME cat /setup/workspace.path)"
+		if [[ "$WORKSPACE_DIR" == "$_ws" && -d $WORKSPACE_DIR ]]; then
+			echo "[INFO] Directorio de trabajo verificado."
+		else
+			echo "[ERROR] El directorio de trabajo no coincide con el del contenedor, o no existe"
+			echo -e "container ws dir = '$_ws'"
+			exit 1
+		fi
+	else
+		echo "[ERROR] $CONTAINER_NAME no está levantado."
+		exit 1
+	fi
+}
+
 # Creamos el workspace
 if [[ "x$VAR_WORKSPACE_CHANGED" == "xyes" ]]; then
 	echo "[INFO] Se va a usar el siguiente directorio como WORKSPACE: $WORKSPACE_DIR"
 else
 	echo "[WARNING] Se va a usar el siguiente directorio como WORKSPACE: $WORKSPACE_DIR"
-	echo "[WARNING]  esto no es conveniente si se quiere conservar el estado de la BD"
-	echo "[WARNING]  independiente del repositorio de versiones."
+	echo "[WARNING]  esto no es conveniente si se quiere conservar el estado de la BD independiente del repositorio de versiones."
 	echo "[WARNING] Usa el parámetro -workspace para ocultar este aviso."
 fi
 
@@ -445,6 +462,8 @@ else
 
 	if [[ "x$OPTION_SCRIPTS_MODE" == "xyes" && "x$VAR_SCRIPTS_DONE" == "xno"
 			&& "x$OPTION_RANDOM_DUMP" == "xno"  && "x$OPTION_REMOVE" == "xno" ]]; then
+		echo "[INFO] Verificando directorio de trabajo..."
+		verify_workspace
 		echo "[INFO] Empaquetando y ejecutando scripts DDL y DML"
 		package_sql $STARTING_TAG $CLIENTE
 		$(pwd)/execute-scripts.sh $CONTAINER_NAME $DOCKER_INNER_ERROR_LOG

@@ -52,7 +52,7 @@
 	
 	var comprueba_contratos = function(){
 		
-		if( myCboxSelModelPers.getSelections().length >= 1){
+		if( myCboxSelModelPers.getSelections().length >= 1 || isEditMode){
 			
 			var todosCntConTipInter = true;
 			Ext.each(myCboxSelModelPers.getSelections(), function(rec){

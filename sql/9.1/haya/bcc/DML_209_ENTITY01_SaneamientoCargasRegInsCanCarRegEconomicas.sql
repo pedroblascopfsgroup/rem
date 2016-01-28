@@ -42,15 +42,15 @@ DECLARE
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
     V_TR_ID VARCHAR2(16 CHAR):= 			'429';
-    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_REG_INS_CAN_CAR_REG_ECO';
+    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_REG_INS_CAN_CAR_ECO_REG_ECO';
     V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Inscripción cancelación de cargas económicas';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'SCR';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     
-    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_REG_INS_CAN_CAR_REG_ECO';
+    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_REG_INS_CAN_CAR_ECO_REG_ECO';
     
     V_TPO_CODIGO VARCHAR2(20 CHAR):=		'H008';
-    V_NODO VARCHAR2(50 CHAR):=				'H008_RegInsCancelacionCargasRegEco';
+    V_NODO VARCHAR2(50 CHAR):=				'H008_RegInsCancelacionCargasEconomicas';
     
     TYPE T_INPUT IS TABLE OF VARCHAR2(50);
     TYPE T_ARRAY_INPUT IS TABLE OF T_INPUT;

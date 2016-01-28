@@ -241,7 +241,7 @@ public class ZonaManager {
 				Oficina oficinaTerritorial = (!Checks.esNulo(zonaTerritorial)) ? zonaTerritorial.getOficina() : null;
 				
 				// TERRITORIAL
-				zPadre.setDescripcion(oficinaTerritorial.getCodDescripOficina(true, false));
+				zPadre.setDescripcion(oficinaTerritorial.getCodDescripOficina(true, true));
 
 				return zPadre;
         	}

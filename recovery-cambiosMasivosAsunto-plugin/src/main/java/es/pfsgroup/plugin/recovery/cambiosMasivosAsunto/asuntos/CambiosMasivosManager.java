@@ -124,4 +124,5 @@ public class CambiosMasivosManager extends BusinessOperationOverrider<CambiosMas
             return l;
         }
     }
+	
 }

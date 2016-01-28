@@ -44,7 +44,7 @@
 		,width: comboWidth
 		,resizable: true
 		,forceSelection: true
-		,editable: false
+		,editable: true
 		,emptyText:'Seleccionar'
 		,triggerAction: 'all'
 		,fieldLabel: '<s:message
@@ -69,13 +69,14 @@
 	
 
 	//Campo Combo Despacho
-	var comboDespachosOriginal = new Ext.form.ComboBox({
+    var comboDespachosOriginal = new Ext.form.ComboBox({
 				store:optionsDespachoStore
 				,displayField:'descripcion'
 				,valueField:'cod'
-				,mode: 'remote'
+				,mode: 'local'
 				,emptyText:'---'
-				,editable: false
+				,forceSelection: true
+				,editable: true
 				,triggerAction: 'all'
 				,disabled:true
 				,resizable:true
@@ -106,7 +107,7 @@
 		,width: comboWidth
 		,resizable: true
 		,forceSelection: true
-		,editable: false
+		,editable: true
 		,emptyText:'Seleccionar'
 		,triggerAction: 'all'
 		,fieldLabel: '<s:message

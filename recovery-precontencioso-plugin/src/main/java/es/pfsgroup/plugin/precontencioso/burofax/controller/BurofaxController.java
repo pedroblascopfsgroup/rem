@@ -1130,7 +1130,9 @@ public class BurofaxController {
 		dto.setPiso(request.getParameter("piso"));
 		dto.setEscalera(request.getParameter("escalera"));
 		dto.setPuerta(request.getParameter("puerta"));
-		dto.setListaIdPersonas(idCliente.toString());
+		if(!Checks.esNulo(idCliente)){
+			dto.setListaIdPersonas(idCliente.toString());
+		}
 		dto.setOrigen(request.getParameter("origen"));
 
 		burofaxManager.actualizaDireccion(dto, idDireccion);

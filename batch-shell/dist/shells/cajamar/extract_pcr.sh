@@ -1,22 +1,20 @@
 #!/bin/bash
-# Generado manualmente por PBO
- 
-DIR_INPUT=/recovery/transferencia/aprov_troncal/
-export DIR_TXT=/recovery/batch-server/control/etl/input/
 
-MAX_WAITING_MINUTES=10
 ficheros=PCR
 
-#echo $(basename $0)
+if [ -z "$1" ]; then
+    echo "$(basename $0) Error: parámetro de entrada YYYYMMDD no definido."
+    exit 1
+fi
 
-mascara='-'$ENTIDAD'-'????????
+mascara='-'$ENTIDAD'-'$1
 extensionZip=".zip"
 
 arrayFicheros=$ficheros
 
 for fichero in $arrayFicheros
 do
-        mascaraZip=$DIR_INPUT$fichero$mascara$extensionZip
+        mascaraZip=$DIR_INPUT_TR$fichero$mascara$extensionZip
         ficheroZip=`ls -Art $mascaraZip | tail -n 1`
         ultFicheroZip=$ficheroZip
 done
@@ -26,13 +24,12 @@ export mascCONTRATOS=CONTRATOS*.txt
 export mascPERSONAS=PERSONAS*.txt
 export mascRELACION=RELACION*.txt
 
-rm $DIR_TXT$mascCONTRATOS
-rm $DIR_TXT$mascPERSONAS
-rm $DIR_TXT$mascRELACION
-
+rm $DIR_DESTINO$mascCONTRATOS
+rm $DIR_DESTINO$mascPERSONAS
+rm $DIR_DESTINO$mascRELACION
 
 if [ -f "$ultFicheroZip" ] ; then
-   unzip $ficheroZip "$mascCONTRATOS" "$mascPERSONAS" "$mascRELACION" -d $DIR_TXT
+   unzip $ficheroZip "$mascCONTRATOS" "$mascPERSONAS" "$mascRELACION" -d $DIR_DESTINO
    exit 0
 else 
    exit 1

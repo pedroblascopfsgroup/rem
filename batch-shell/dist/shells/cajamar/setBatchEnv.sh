@@ -16,3 +16,11 @@ export JMX_PORT=2099
 export JMX_USER=jmx_admin
 export JMX_PW="IMYzS4aO1q6jg1q1cXFevw==38047741"
 
+# Shells
+export DIR_INPUT_AUX=/recovery/transferencia/aprov_auxiliar/
+export DIR_INPUT_TR=/recovery/transferencia/aprov_troncal/
+export DIR_DESTINO=/recovery/batch-server/control/etl/input/
+export DIR_BACKUP=/recovery/batch-server/control/etl/backup/
+export DIR_HRE_OUTPUT=/recovery/batch-server/control/etl/output/aprov-haya/
+export DIR_BASE_ETL=/recovery/batch-server/programas/etl
+export MAX_WAITING_MINUTES=10

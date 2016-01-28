@@ -19,20 +19,21 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;all>
  *         &lt;element name="CLAVEASOCIACION" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="CLAVEASOCIACION2" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="CLAVEASOCIACION3" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="DESCRIPCION" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="EXTENSIONFICHERO" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="FECHAVIGENCIA" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="FICHEROBASE64" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="LOCALIZADOR" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="CLAVEASOCIACION2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CLAVEASOCIACION3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DESCRIPCION" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="EXTENSIONFICHERO" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="FECHAVIGENCIA" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="FICHEROBASE64" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="LOCALIZADOR" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="OPERACION" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="ORIGEN" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="RUTA_FICHERO_REMOTO" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="ORIGEN" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="RUTA_FICHERO_REMOTO" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="TIPOASOCIACION" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="TIPOASOCIACION2" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="TIPOASOCIACION3" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="TIPOASOCIACION2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="TIPOASOCIACION3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="TIPODOCUMENTO" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="APLICACION" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/all>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -48,7 +49,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "INPUT")
 public class INPUT {
 
-    @XmlElement(name = "CLAVEASOCIACION")
+    @XmlElement(name = "CLAVEASOCIACION", required = true)
     protected String claveasociacion;
     @XmlElement(name = "CLAVEASOCIACION2")
     protected String claveasociacion2;
@@ -70,14 +71,16 @@ public class INPUT {
     protected String origen;
     @XmlElement(name = "RUTA_FICHERO_REMOTO")
     protected String rutaficheroremoto;
-    @XmlElement(name = "TIPOASOCIACION")
+    @XmlElement(name = "TIPOASOCIACION", required = true)
     protected String tipoasociacion;
     @XmlElement(name = "TIPOASOCIACION2")
     protected String tipoasociacion2;
     @XmlElement(name = "TIPOASOCIACION3")
     protected String tipoasociacion3;
-    @XmlElement(name = "TIPODOCUMENTO")
+    @XmlElement(name = "TIPODOCUMENTO", required = true)
     protected String tipodocumento;
+    @XmlElement(name = "APLICACION")
+    protected String aplicacion;
 
     /**
      * Gets the value of the claveasociacion property.
@@ -437,6 +440,30 @@ public class INPUT {
      */
     public void setTIPODOCUMENTO(String value) {
         this.tipodocumento = value;
+    }
+
+    /**
+     * Gets the value of the aplicacion property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getAPLICACION() {
+        return aplicacion;
+    }
+
+    /**
+     * Sets the value of the aplicacion property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setAPLICACION(String value) {
+        this.aplicacion = value;
     }
 
 }

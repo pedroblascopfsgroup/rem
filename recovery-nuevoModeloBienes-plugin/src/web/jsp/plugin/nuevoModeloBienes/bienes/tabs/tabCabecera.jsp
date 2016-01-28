@@ -652,8 +652,11 @@
     				<c:if test="${empty NMBbien.numeroActivo or NMBbien.numeroActivo==0}">
 						panel.getBottomToolbar().addButton([btnSolicitarNumActivo]);
 					</c:if>
-					<sec:authorize ifAllGranted="SOLVENCIA_EDITAR">
-        				panel.getBottomToolbar().addButton([btnSolicitarTasacion]);
+					<sec:authorize ifAllGranted="SOLVENCIA_EDITAR">		
+						<%--Se oculta el botón "Solicitar tasación" en HAYA-SAREB --%>			
+        				<sec:authorize ifNotGranted="PERSONALIZACION-HY">
+        					panel.getBottomToolbar().addButton([btnSolicitarTasacion]);
+        				</sec:authorize>
         			</sec:authorize>
     			</c:otherwise>
 			</c:choose>			

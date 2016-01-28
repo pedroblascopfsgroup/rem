@@ -92,6 +92,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.procedimiento.Dto.DtoSubast
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.recoveryapi.BienApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.recoveryapi.ProcedimientoApi;
 import es.pfsgroup.recovery.ext.api.procedimiento.EXTProcedimientoApi;
+import es.pfsgroup.recovery.ext.impl.bienes.dto.DTOBusquedaExportBienes;
 
 @Service("nmbBienManager")
 public class NMBBienManager extends BusinessOperationOverrider<BienApi> implements BienApi {
@@ -243,20 +244,27 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 	@SuppressWarnings("unchecked")
 	@BusinessOperation("plugin.nuevoModeloBienes.bienes.NMBbienManager.buscarBienesXLS")
 	@Transactional
-	public List<NMBBien> buscarBienesXLS(NMBDtoBuscarBienes dto) {
+	public List<DTOBusquedaExportBienes> buscarBienesXLS(NMBDtoBuscarBienes dto) {
 		Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
 		Parametrizacion parametroLimite = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
 				Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_BIENES);
 		Integer limite = Integer.parseInt(parametroLimite.getValor());
 		dto.setLimit(limite);
-		List<NMBBien> listaRetorno = new ArrayList<NMBBien>();
-		long punto_antes_dao = (new Date()).getTime();
-		PageHibernate page = (PageHibernate) nmbBienDao.buscarBienesPaginados(dto, usuarioLogado);
-		long despues_punto_dao = (new Date()).getTime();
-		long tiempo_diferencia = despues_punto_dao - punto_antes_dao;
-		listaRetorno.addAll((List<NMBBien>) page.getResults());
-		page.setResults(listaRetorno);
-		return (List<NMBBien>) page.getResults();
+		PageHibernate page = (PageHibernate) nmbBienDao.buscarBienesExport(dto, usuarioLogado);
+		List<Object[]> list = (List<Object[]>) page.getResults();
+		Iterator<Object[]> objectIt = list.iterator();
+		List<DTOBusquedaExportBienes> listDTO = new ArrayList<DTOBusquedaExportBienes>();
+		while(objectIt.hasNext()) {
+			Object[] aux = objectIt.next();
+			DTOBusquedaExportBienes object = new DTOBusquedaExportBienes();
+			object.setBien((NMBBien) aux[0]);
+			object.setOrigenBien((NMBDDOrigenBien) aux[1]);
+			object.setTipoBien((DDTipoBien) aux[2]);
+			object.setInformacionRegistralBien((NMBInformacionRegistralBien) aux[3]);
+			object.setLocalizacion((NMBLocalizacionesBien) aux[4]);
+			listDTO.add(object);
+		}
+		return listDTO;
 	}
 
 	/**

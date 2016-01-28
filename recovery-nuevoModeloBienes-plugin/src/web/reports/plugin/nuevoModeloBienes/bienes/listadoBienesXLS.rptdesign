@@ -151,19 +151,19 @@ row["superficie"] = "";
 row["origen"] = "";
 row["importeCargas"] = "";
 
-row["idBien"] = bie.getId();
+row["idBien"] = bie.getBien().getId();
 row["tipo"] = bie.getTipoBien().getDescripcion();
-row["detalle"] = bie.getDescripcionBien();
-row["valorActual"] = bie.getValorActual();
-row["origen"] = bie.getOrigen().getDescripcion();
-row["importeCargas"] = bie.getImporteCargas();
+row["detalle"] = bie.getBien().getDescripcionBien();
+row["valorActual"] = bie.getBien().getValorActual();
+row["origen"] = bie.getOrigenBien().getDescripcion();
+row["importeCargas"] = bie.getBien().getImporteCargas();
 
-if (bie.getDatosRegistralesActivo()!=null){
-	row["refCatastral"] = bie.getDatosRegistralesActivo().getReferenciaCatastralBien();
-	row["superficie"] = bie.getDatosRegistralesActivo().getSuperficie();
+if (bie.getInformacionRegistralBien()!=null){
+	row["refCatastral"] = bie.getInformacionRegistralBien().getReferenciaCatastralBien();
+	row["superficie"] = bie.getInformacionRegistralBien().getSuperficie();
 }
-if (bie.getLocalizacionActual()!=null){
-	row["poblacion"] = bie.getLocalizacionActual().getPoblacion();
+if (bie.getLocalizacion()!=null){
+	row["poblacion"] = bie.getLocalizacion().getPoblacion();
 }
 
 return true;]]></method>

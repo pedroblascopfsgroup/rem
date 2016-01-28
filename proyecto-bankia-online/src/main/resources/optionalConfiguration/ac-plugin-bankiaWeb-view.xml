@@ -104,7 +104,7 @@
 								<entry key="btnEditar" value="1" />
 								<entry key="btnPreparar" value="1" />
 								<entry key="btnCancelar" value="0" />
-								<entry key="btnNotificar" value="1" />
+								<entry key="btnNotificar" value="0" />
 								<entry key="btnDescargarBurofax" value="1" />
 								<entry key="botonRefreshBur" value="1" />
 							</map>

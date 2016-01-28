@@ -102,7 +102,7 @@
 			}else{
 				mask.show();
 				page.webflow({
-					flow: 'burofax/configurarTipoBurofax', 
+					flow: 'burofax/guardarEnvioBurofax', 
 					params : {arrayIdEnvios:arrayIdEnvios,arrayIdContrato:arrayIdContrato,certificado:certificado.getValue(),idTipoBurofax:tipoBurofax.getValue(),arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax,comboEditable:comboEditable,idDocumento:documento.value},
 					success: function ( result, request ) {
 						if(result.msgError==''){

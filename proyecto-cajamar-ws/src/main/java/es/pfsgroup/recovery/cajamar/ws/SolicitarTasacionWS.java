@@ -49,7 +49,7 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 	private final static String FINALIDAD = "03";
 	private final static String INCO = "N";
 	private final static String TENC = "1";
-	private final static String ADJU = "N";
+	//private final static String ADJU = "N";
 	private final static String CKCA = "1";
 	
 	private Map<String, String> mapaTIMN;
@@ -228,7 +228,7 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 		
 		String sCuenta = "";
 		if(cuenta != null) {
-			sCuenta = cuenta.toString();
+			sCuenta = StringUtils.leftPad(cuenta.toString(), 20, "0");
 		}
 		
 		logger.info("CTAC: " + sCuenta);

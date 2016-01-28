@@ -46,6 +46,7 @@ public class GestorDocumentalInputAssembler {
 
 		SimpleDateFormat frmt = new SimpleDateFormat("ddMMyyyy");
 		INPUT input = new INPUT();
+		input.setAPLICACION(GestorDocumentalInputDto.APLICACION);
 		input.setCLAVEASOCIACION(inputDto.getClaveAsociacion());
 		input.setCLAVEASOCIACION2(inputDto.getClaveAsociacion2());
 		input.setCLAVEASOCIACION3(inputDto.getClaveAsociacion3());

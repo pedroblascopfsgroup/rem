@@ -64,7 +64,7 @@
         text:'<s:message code="menu.clientes.listado.filtro.exportar.xls" text="**Exportar a Excel" />'
         ,iconCls:'icon_exportar_csv'
         ,handler: function() {
-            var parametros = new Array();
+            var parametros = new Object();
             var hayParametros = false;
             var anadirParametros = function(newParametros) {
                 for (var i in newParametros) {
@@ -100,19 +100,33 @@
 				}
 				parametros['params'] = paramAux;
 				
-				//var flow='asuntos/exportAsuntos';
-                //var flow='plugin/coreextension/asunto/core.exportAsuntos';
-                var flow = '/pfs/extasunto/exportarExcelAsuntos';
-             
                 var params=parametros;
                
-                parametros.tipoSalida='<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.SALIDA_XLS" />';
-
-                app.openBrowserWindow(flow,parametros);
-                    
-                
-				parametrosTab = new Array();            
-                
+               Ext.Ajax.request({
+					url: page.resolveUrl('extasunto/exportacionAsuntosCount')
+					,params: params
+					,method: 'POST'
+					,success: function (result, request){
+						var r = Ext.util.JSON.decode(result.responseText);
+						debugger;
+						if(r.count <= r.limit) {
+						    var flow = '/pfs/extasunto/exportarExcelAsuntos';
+             			
+							parametros.tipoSalida='<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.SALIDA_XLS" />';
+    			            app.openBrowserWindow(flow,parametros);
+    			            
+    			            parametrosTab = new Array();            
+				   		}
+			    		else {
+			    			if(r.count != undefined && r.limit != undefined) {
+			    				Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>', '<s:message code="plugin.coreextension.asuntos.exportarExcel.limiteSuperado1"/>' + r.limit + ' <s:message code="plugin.coreextension.asuntos.exportarExcel.limiteSuperado2"/>');
+			    			}
+			    				
+			    			return false;
+			    		}	
+		    		}
+				});				
+               
             } else {
                 Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="expedientes.listado.criterios"/>');
             }

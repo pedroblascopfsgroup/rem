@@ -25,6 +25,7 @@
 --##              Se saca del script la caracterizacion de procuradores
 --## 20151217 0.5 Se adapta a SYS_GUID para la tabla de EXP_EXPEDIENTES
 --## 20151229 0.6 Se modifica Nombre Asunto a la cadena: contrato+NIF/CIF+NombreApellidos
+--## 20160114 0.7 GMN Se asigna el DD_TPX_ID (tipo de expediente a recuperaciones - RECU)
 --##########################################
 --*/
 
@@ -1196,7 +1197,7 @@ BEGIN
            , 0    as BORRADO
            , 4    as DD_EEX_ID
            , null as EXP_DESCRIPCION
-           , null as DD_TPX_ID
+           , (select dd_TPX_ID from '||V_ESQUEMA||'.DD_TPX_TIPO_EXPEDIENTE where DD_TPX_CODIGO = ''RECU'') as DD_TPX_ID
            , PRC.CD_EXPEDIENTE_NUSE
            , PRC.NUMERO_EXP_NUSE
            , PRC.CD_PROCEDIMIENTO

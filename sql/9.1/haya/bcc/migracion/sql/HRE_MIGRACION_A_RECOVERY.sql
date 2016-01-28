@@ -14,9 +14,10 @@
 --##                  0.2 Se incluyen procedimientos de tipo concursos.
 --##       20151118 - 0.3 Adaptación a migracion HRE. NO migramos concursos.
 --##                                                 LOS_LOTE_SUBASTAS
---##       210151123 - 0.4 Se cruza con la tabla de BIE_BIENES para cargar LOB_LOTE_BIEN y PRB_PRC_BIE
---##       210151127 - 0.5 Ponemos propiedad CAJAMAR - Gestion HAYA
---##       210151211 - 0.6 Seleccionamos arquetipo específico migración
+--##       20151123 - 0.4 Se cruza con la tabla de BIE_BIENES para cargar LOB_LOTE_BIEN y PRB_PRC_BIE
+--##       20151127 - 0.5 Ponemos propiedad CAJAMAR - Gestion HAYA
+--##       20151211 - 0.6 Seleccionamos arquetipo específico migración
+--##       20160114 - 0.7 GMN Se asigna el DD_TPX_ID (tipo de expediente a recuperaciones - RECU)
 --##########################################
 --*/
 
@@ -1191,7 +1192,7 @@ BEGIN
            , 0    as BORRADO
            , 4    as DD_EEX_ID
            , null as EXP_DESCRIPCION
-           , null as DD_TPX_ID
+           , (select dd_TPX_ID from '||V_ESQUEMA||'.DD_TPX_TIPO_EXPEDIENTE where DD_TPX_CODIGO = ''RECU'') as DD_TPX_ID
            , PRC.CD_EXPEDIENTE_NUSE
            , PRC.NUMERO_EXP_NUSE
            , PRC.CD_PROCEDIMIENTO

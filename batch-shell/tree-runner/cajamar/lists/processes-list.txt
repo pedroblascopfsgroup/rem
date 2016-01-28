@@ -3,7 +3,6 @@ apr_main_ofi_zon.sh
 apr_wait_users.sh
 apr_main_users.sh
 apr_move_ofi_zon_users.sh
-cleanBatch2.sh
 extract_pcr.sh
 apr_load_person.sh
 apr_load_contract.sh

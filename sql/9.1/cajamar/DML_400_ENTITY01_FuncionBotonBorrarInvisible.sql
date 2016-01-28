@@ -59,7 +59,7 @@ where f.fun_descripcion='BOTON_BORRAR_INVISIBLE' and f.borrado=0 and p.borrado=0
 ON (fp.fun_id=nuevo_fp.fun_id and fp.pef_id=nuevo_fp.pef_id)
 WHEN NOT MATCHED THEN
 INSERT (fp_id, fun_id, pef_id, usuariocrear, fechacrear, version, borrado)
-VALUES (' || V_ESQUEMA || '.s_fun_pef.nextval, nuevo_fp.fun_id, nuevo_fp.pef_id, 
+VALUES ('] || V_ESQUEMA || q['.s_fun_pef.nextval, nuevo_fp.fun_id, nuevo_fp.pef_id, 
 nuevo_fp.usuariocrear, nuevo_fp.fechacrear, nuevo_fp.version, nuevo_fp.borrado)]';
 	EXECUTE IMMEDIATE V_SQL; 
 	DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '... registros afectados: ' || sql%rowcount);

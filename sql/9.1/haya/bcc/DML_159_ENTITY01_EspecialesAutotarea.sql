@@ -1,11 +1,11 @@
 --/*
 --##########################################
---## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20150710
+--## AUTOR=JORGE MARTIN
+--## FECHA_CREACION=20160118
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.0-X
---## INCIDENCIA_LINK=MITCDD-2068
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=PRODUCTO-585
+--## PRODUCTO=NO
 --##
 --## Finalidad: Realiza las inserciones de la resolución especial Subida de ficheros.
 --## INSTRUCCIONES: 
@@ -40,11 +40,11 @@ DECLARE
     ## En descripción larga introducirá los datos de la descripción (Tanto en la resolución como en el Input).
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			'1005';
-    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'RESOL_ESP_NOTI';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Notificacion';
+    V_TR_ID VARCHAR2(16 CHAR):= 			'1004';
+    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'RESOL_ESP_AUTOTAREA';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Autotarea';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'HIP';
-    V_TAC_CODIGO VARCHAR2(20 CHAR):=		'NOTIFICACION'; -- ADVANCE, INFO, etc.
+    V_TAC_CODIGO VARCHAR2(20 CHAR):=		'AUTOTAREA'; -- ADVANCE, INFO, etc.
     
     
     -- ## FIN DATOS DE LA RESOLUCION

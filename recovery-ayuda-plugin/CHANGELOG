@@ -1,0 +1,8 @@
+RECOVERY - AYUDA
+-----------------------------------------
+
+---------------------------------
+VERSION 1.2.0 [pedro - 20/05/2014]
+
+- Modificaciones necesarias para evitar agujero de seguridad de Navegación Transversal
+- Cambio de encoding del Proyecto (a UTF-8) y de los ficheros JSP

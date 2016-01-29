@@ -72,6 +72,8 @@ public class APPConstants {
 	public static final String CNT_PROP_FORMAT_SUBST_INI = "contrato.codigo.subStringIni";
 	public static final String CNT_PROP_FORMAT_SUBST_FIN = "contrato.codigo.subStringFin";
 
+	public static final String CNT_PROP_CONTRATO_SIN_ENTIDAD = "contrato.codigoSinEntidad";
+	
 	public static final String CNT_IAC_ESTADO_CONTRATO_ENTIDAD = "DD_ECE_CODIGO";
 	
 	//BANKIA
@@ -79,10 +81,17 @@ public class APPConstants {
 	public static final String NUM_EXTRA2 = "num_extra2";
 	public static final String NUM_EXTRA3 = "num_extra3";
 	public static final String NUM_EXTRA4 = "num_extra4";
+	public static final String NUM_EXTRA5 = "num_extra5";
 	public static final String DATE_EXTRA1 = "date_extra1";
+	public static final String DATE_EXTRA2 = "date_extra2";
+	public static final String DATE_EXTRA3 = "date_extra3";
+	public static final String DATE_EXTRA4 = "date_extra4";
+	public static final String DATE_EXTRA5 = "date_extra5";
+	public static final String DATE_EXTRA6 = "date_extra6";
 	public static final String FLAG_EXTR3 = "flag_extra3";
 	public static final String FLAG_EXTRA2 = "flag_extra2";
 	public static final String FLAG_EXTRA1 = "flag_extra1";
+	public static final String FLAG_EXTRA4 = "flag_extra4";
 	public static final String CHAR_EXTRA8 = "char_extra8";
 	public static final String CHAR_EXTRA7 = "char_extra7";
 	public static final String CHAR_EXTRA6 = "char_extra6";

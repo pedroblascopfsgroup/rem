@@ -6,4 +6,4 @@
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
     <iframe src="/${appProperties.appName}/${reporte}.htm?tipo=${tipo}&${params}" width="100%" height="100%"/>
 
-<!--<meta http-equiv="REFRESH" content="0;url=/${appProperties.appName}/${reporte}.htm?tipo=${tipo}"></HEAD>-->
+<%--<meta http-equiv="REFRESH" content="0;url=/${appProperties.appName}/${reporte}.htm?tipo=${tipo}"></HEAD>--%>

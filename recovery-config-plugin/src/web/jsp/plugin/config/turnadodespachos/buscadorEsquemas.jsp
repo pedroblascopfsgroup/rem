@@ -295,7 +295,6 @@
 	                    		,waitMsg: '<s:message code="plugin.config.esquematurnado.buscador.grid.boton.cargar.procesando" text="**Procesando la información..." />'
 	                    		,params:params
 	                    		,success: function(upload, o){
-	                    			debugger;
 	                    			
 	                    			var resultado = Ext.decode(o.response.responseText);
 								

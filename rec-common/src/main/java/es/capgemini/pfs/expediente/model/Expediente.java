@@ -165,10 +165,17 @@ public class Expediente implements Serializable, Auditable, Describible {
     @Basic(fetch = FetchType.LAZY)
     private Double volumenRiesgoVencido;
 
-    @Formula(value = "(select tar.tar_fecha_venc from tar_tareas_notificaciones tar, ${master.schema}.DD_STA_SUBTIPO_TAREA_BASE dd_sta "
-            + " where tar.exp_id = exp_id and tar.borrado = 0 and tar.DD_STA_ID = dd_sta.DD_STA_ID " + " and dd_sta.dd_sta_codigo in ('"
-            + SubtipoTarea.CODIGO_COMPLETAR_EXPEDIENTE + "','" + SubtipoTarea.CODIGO_REVISAR_EXPEDIENE + "','" + SubtipoTarea.CODIGO_DECISION_COMITE
-            + "') )")
+    //La fecha de vencimiento se calculaba antes así
+//    @Formula(value = "(select tar.tar_fecha_venc from tar_tareas_notificaciones tar, ${master.schema}.DD_STA_SUBTIPO_TAREA_BASE dd_sta "
+//            + " where tar.exp_id = exp_id and tar.borrado = 0 and tar.DD_STA_ID = dd_sta.DD_STA_ID " + " and dd_sta.dd_sta_codigo in ('"
+//            + SubtipoTarea.CODIGO_COMPLETAR_EXPEDIENTE + "','" + SubtipoTarea.CODIGO_REVISAR_EXPEDIENE + "','" + SubtipoTarea.CODIGO_DECISION_COMITE
+//            + "') )")
+//    
+    @Formula(value = "(SELECT min(M.MOV_FECHA_POS_VENCIDA) "
+    		+ " FROM mov_movimientos m, cex_contratos_expediente cex, cnt_contratos cnt "
+    		+ " WHERE cex.borrado = 0 AND m.borrado = 0 AND cnt.borrado = 0 "
+    		+ " AND m.cnt_id = cex.cnt_id AND cex.exp_id = exp_id " 
+    		+ " AND cnt.cnt_id = cex.cnt_id AND m.mov_fecha_extraccion = cnt.CNT_FECHA_EXTRACCION)")
     private Date fechaVencimiento;
 
     /**
@@ -567,6 +574,13 @@ public class Expediente implements Serializable, Auditable, Describible {
     public boolean getSeguimiento() {
         return arquetipo.getItinerario().getdDtipoItinerario().getItinerarioSeguimiento();
     }
+    
+    /**
+     * @return boolean: <code>true</code> si el itineario del expediente es de recuperacion
+     */
+    public boolean getRecuperacion() {
+        return arquetipo.getItinerario().getdDtipoItinerario().getItinerarioRecuperacion();
+    }
 
     /**
      * @return String: Descripci�n del itinerario del expediente
@@ -810,11 +824,19 @@ public class Expediente implements Serializable, Auditable, Describible {
     }
 
     /**
-     * Indica si el expediente est� en estado activo.
-     * @return true si est� congelado
+     * Indica si el expediente está en estado activo.
+     * @return true si está Activo
      */
     public boolean getEstaEstadoActivo() {
         return DDEstadoExpediente.ESTADO_EXPEDIENTE_ACTIVO.equals(estadoExpediente.getCodigo());
+    }
+    
+    /**
+     * Indica si el expediente está en estado cancelado.
+     * @return true si está cancelado
+     */
+    public boolean getEstaCancelado() {
+        return DDEstadoExpediente.ESTADO_EXPEDIENTE_CANCELADO.equals(estadoExpediente.getCodigo());
     }
 
     /**

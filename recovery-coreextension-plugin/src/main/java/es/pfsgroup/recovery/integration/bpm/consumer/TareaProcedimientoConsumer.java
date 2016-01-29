@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.Executor;
+import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.pfs.asunto.ProcedimientoManager;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
@@ -135,7 +136,7 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 		String prcUUID = getGuidProcedimiento(tareaExtenaPayload);
 		String tarUUID = getGuidTareaNotificacion(tareaExtenaPayload);
 		String codTAPTarea = tareaExtenaPayload.getCodigoTAPTarea();
-		logger.info(String.format("[INTEGRACION] TAR[%s] Creando tarea...", tarUUID));
+		logger.debug(String.format("[INTEGRACION] TAR[%s] Creando tarea...", tarUUID));
 
 		TareaProcedimiento tareaProcedimiento = proxyFactory.proxy(TareaProcedimientoApi.class)
 				.getByCodigoTareaIdTipoProcedimiento(procedimiento.getTipoProcedimiento().getId(), codTAPTarea);
@@ -159,15 +160,15 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 		valores.put("idTareaProcedimiento", tareaProcedimiento.getId());
 		valores.put("tokenIdBpm", null);
 
-		logger.info(String.format("[INTEGRACION] TAR[%s] Guardando datos de la tarea", tarUUID));
+		logger.debug(String.format("[INTEGRACION] TAR[%s] Guardando datos de la tarea", tarUUID));
 		EXTDtoCrearTareaExterna dto = DynamicDtoUtils.create(EXTDtoCrearTareaExterna.class, valores);
 		Long idTarea = proxyFactory.proxy(TareaExternaApi.class).crearTareaExternaDto(dto);
 
-		logger.info(String.format("[INTEGRACION] TAR[%s] Gguardando datos adicionales...", tarUUID));
+		logger.debug(String.format("[INTEGRACION] TAR[%s] Gguardando datos adicionales...", tarUUID));
 		TareaExterna tex = tareaExternaManager.get(idTarea);
 		EXTTareaNotificacion tareaNotif = (EXTTareaNotificacion)tex.getTareaPadre(); 
 		postCrearTarea(tareaExtenaPayload, tareaNotif);
-		logger.info(String.format("[INTEGRACION] TAR[%s] Tarea creada correctamente!!!", tarUUID));
+		logger.debug(String.format("[INTEGRACION] TAR[%s] Tarea creada correctamente!!!", tarUUID));
 		return tareaNotif;
 	}
 
@@ -179,7 +180,7 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 		tareaNotif.setFechaFin(tareaExtenaPayload.getFechaFin());
 		tareaNotif.setFechaVenc(tareaExtenaPayload.getFechaVencimiento());
 		tareaNotif.setFechaVencReal(tareaExtenaPayload.getFechaVencimientoReal());
-		tareaNotif.getAuditoria().setUsuarioBorrar(tareaExtenaPayload.getData().getUsername());
+		tareaNotif.getAuditoria().setUsuarioBorrar(SecurityUtils.getCurrentUser().getUsername());
 		
 		executor.execute(ComunBusinessOperation.BO_TAREA_MGR_SAVE_OR_UPDATE, tareaNotif);
 		logger.debug(String.format("[INTEGRACION] TAR[%s] Actualizando post crear tarea finalizado", tareaNotif.getGuid()));
@@ -192,12 +193,12 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 		String tarUUID = getGuidTareaNotificacion(tareaExtenaPayload);
 
 		String logMsg = String.format("[INTEGRACION] ASU[%s] PRC[%s] TAR[%s] Recuperando tarea...", refAsunto, prcUUID, tarUUID);
-		logger.info(logMsg);
+		logger.debug(logMsg);
 
 		EXTTareaNotificacion tareaNotif = extTareaNotifificacionManager.getTareaNoficiacionByGuid(tarUUID);
 		if (tareaNotif==null) {
 			logMsg = String.format("[INTEGRACION] ASU[%s] PRC[%s] TAR[%s] Ups, La tarea no existe!! se intenta crear una nueva...", refAsunto, prcUUID, tarUUID);
-			logger.info(logMsg);
+			logger.debug(logMsg);
 			tareaNotif = crearTarea(tareaExtenaPayload, procedimiento);
 			tareaNotif = extTareaNotifificacionManager.getTareaNoficiacionByGuid(tarUUID);
 /*	Se quita para ser nemos restrictivos...  tarea que no existe se crea...
@@ -234,7 +235,7 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 		String tarUUID = getGuidTareaNotificacion(tareaExtenaPayload);
 		//
 		String logMsg = String.format("[INTEGRACION] TAR[%s] TEX[%d] Cancelando tarea externa...", tarUUID, tex.getId());
-		logger.info(logMsg);
+		logger.debug(logMsg);
         tex.setCancelada(true);
         tex.setDetenida(false);
 		//suplantarUsuario(tareaExtenaPayload.getUsuario(), tex);
@@ -252,12 +253,12 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 		String tarUUID = getGuidTareaNotificacion(tareaExtenaPayload);
 		//
 		String logMsg = String.format("[INTEGRACION] TAR[%s] TEX[%d] Activando tarea externa...", tarUUID, tex.getId());
-		logger.info(logMsg);
+		logger.debug(logMsg);
 		//suplantarUsuario(tareaExtenaPayload.getUsuario(), tex);
         tareaExternaManager.activar(tex);
         //
         logMsg = String.format("[INTEGRACION] PRC[%d] TEX[%d] Activando procedimiento.", prc.getId(), tex.getId());
-		logger.info(logMsg);
+		logger.debug(logMsg);
 		prc.setEstaParalizado(false);
 		//suplantarUsuario(tareaExtenaPayload.getUsuario(), prc);
 		procedimientoManager.saveProcedimiento(prc);
@@ -271,12 +272,12 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 		TareaExterna tex = tareaExternaManager.getByIdTareaNotificacion(tareaNotif.getId());
 		//
 		String logMsg = String.format("[INTEGRACION] TEX[%d] Paralizando tarea y procedimiento...", tex.getId());
-		logger.info(logMsg);
+		logger.debug(logMsg);
 		//suplantarUsuario(tareaExtenaPayload.getUsuario(), tex);
         tareaExternaManager.detener(tex);
         //
         logMsg = String.format("[INTEGRACION] PRC[%d] TEX[%d] Paralizando procedimiento.", prc.getId(), tex.getId());
-		logger.info(logMsg);
+		logger.debug(logMsg);
 		prc.setEstaParalizado(true);
 		prc.setFechaUltimaParalizacion(new Date());
 		//suplantarUsuario(tareaExtenaPayload.getUsuario(), prc);
@@ -289,7 +290,7 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 	@Transactional(readOnly = false)
 	private void saveFormValues(TareaExternaPayload tareaExtenaPayload, TareaExterna tarea) {
 		String tapCodigo = tarea.getTareaProcedimiento().getCodigo();
-		logger.info(String.format("[INTEGRACION] TAP [%s] Guardando campos formulario en tarea.", tapCodigo));
+		logger.debug(String.format("[INTEGRACION] TAP [%s] Guardando campos formulario en tarea.", tapCodigo));
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "tareaProcedimiento.id", tarea.getTareaProcedimiento().getId()); 
 		List<GenericFormItem> items = genericDao.getList(GenericFormItem.class, filtro);
@@ -333,26 +334,26 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 		}
 		
 		//
-		logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] TAR[%s] Recuperando procedimiento...", asuGUID, prcUUID, tarUUID));
+		logger.debug(String.format("[INTEGRACION] ASU[%s] PRC[%s] TAR[%s] Recuperando procedimiento...", asuGUID, prcUUID, tarUUID));
 		MEJProcedimiento procedimiento = getProcedimiento(tareaExtenaPayload);
 
-		logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] TAR[%s] Recuperando Tarea...", asuGUID, prcUUID, tarUUID));
+		logger.debug(String.format("[INTEGRACION] ASU[%s] PRC[%s] TAR[%s] Recuperando Tarea...", asuGUID, prcUUID, tarUUID));
 		EXTTareaNotificacion tareaNotif = recuperaYCreaTareaNotificacion(procedimiento, tareaExtenaPayload);
 		
 		//if (payload.getTipo().equals(IntegracionBpmService.TIPO_INICIO_TAREA)) {
 		//	inicioTarea(procedimiento, tareaExtenaPayload);
 		//} else if (payload.getTipo().equals(IntegracionBpmService.TIPO_FINALIZACION_TAREA)) {
 		if (payload.getTipo().equals(IntegracionBpmService.TIPO_FINALIZACION_TAREA)) {
-			logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] TAR[%s] Finalizando Tarea...", asuGUID, prcUUID, tarUUID));
+			logger.debug(String.format("[INTEGRACION] ASU[%s] PRC[%s] TAR[%s] Finalizando Tarea...", asuGUID, prcUUID, tarUUID));
 			finTarea(tareaExtenaPayload, tareaNotif);
 		} else if (payload.getTipo().equals(IntegracionBpmService.TIPO_CANCELACION_TAREA)) {
-			logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] TAR[%s]  Cancelando Tarea...", asuGUID, prcUUID, tarUUID));
+			logger.debug(String.format("[INTEGRACION] ASU[%s] PRC[%s] TAR[%s]  Cancelando Tarea...", asuGUID, prcUUID, tarUUID));
 			cancelarTarea(tareaExtenaPayload, tareaNotif);
 		} else if (payload.getTipo().equals(IntegracionBpmService.TIPO_PARALIZAR_TAREA)) {
-			logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] TAR[%s]  Paralizando Tarea...", asuGUID, prcUUID, tarUUID));
+			logger.debug(String.format("[INTEGRACION] ASU[%s] PRC[%s] TAR[%s]  Paralizando Tarea...", asuGUID, prcUUID, tarUUID));
 			paralizarTarea(tareaExtenaPayload, tareaNotif);
 		} else if (payload.getTipo().equals(IntegracionBpmService.TIPO_ACTIVAR_TAREA)) {
-			logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] TAR[%s] Activando tarea paralizada...", asuGUID, prcUUID, tarUUID));
+			logger.debug(String.format("[INTEGRACION] ASU[%s] PRC[%s] TAR[%s] Activando tarea paralizada...", asuGUID, prcUUID, tarUUID));
 			activarTarea(tareaExtenaPayload, tareaNotif);
 		}
 

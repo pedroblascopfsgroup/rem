@@ -11,6 +11,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsuntoHistorico;
@@ -180,5 +181,5 @@ public class GestorEntidadController {
 		return TIPO_GESTOR_JSON;
 		
 	}
-
+	
 }

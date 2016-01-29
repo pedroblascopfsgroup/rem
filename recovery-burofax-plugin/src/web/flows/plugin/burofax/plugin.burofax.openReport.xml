@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<var name="dto" class="es.pfsgroup.plugin.recovery.burofax.dto.BURDtoBurofax"/>
+
+	<end-state id="reporteBurofaxPDF" view="reportPDF/plugin/burofax/burofax">
+		<on-entry>
+			<evaluate expression="binder.bindAndValidate(flowRequestContext,dto)" />
+			<evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')" result="flowScope.usuario"/>
+			<evaluate expression="executor.execute('plugin.burofax.bo.getPluginConfig')" result="flowScope.config"/>
+			<evaluate expression="config.getConfig('burofax.firmante').value" result="dto.firmante"/>
+			<evaluate expression="config.getConfig('burofax.cargo').value" result="dto.cargo"/>
+			<evaluate expression="config.getConfig('burofax.plaza').value" result="dto.plaza"/> 
+			<evaluate expression="config.getConfig('burofax.numContrato').value" result="dto.numContrato"/>
+			<evaluate expression="config.getConfig('burofax.numCliente').value" result="dto.numCliente"/>
+			<evaluate expression="config.getConfig('burofax.dir1').value" result="dto.dir1"/>
+			<evaluate expression="config.getConfig('burofax.dir2').value" result="dto.dir2"/>
+			<evaluate expression="config.getConfig('burofax.dir3').value" result="dto.dir3"/>
+			<evaluate expression="config.getConfig('burofax.modoEntrega').value" result="dto.modoEntrega"/>
+			
+			<evaluate expression="usuario.entidad.configValue('logo')" result="flowScope.logo" />		
+		</on-entry>
+	</end-state>
+
+</flow>

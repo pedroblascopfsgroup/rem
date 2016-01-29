@@ -1,7 +1,6 @@
 #!/bin/bash
 # Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
  
-ENTIDAD=3058
 DIR_INPUT=/recovery/transferencia/aprov_troncal/
 MAX_WAITING_MINUTES=10
 ficheros=OFICINAS,ZONAS
@@ -21,14 +20,14 @@ arrayFicheros=$ficheros
 #Calculo de hora limite
 hora_limite=`date --date="$MAX_WAITING_MINUTES minutes" +%Y%m%d%H%M%S`
 hora_actual=`date +%Y%m%d%H%M%S`
-#echo "Hora actual: $hora_actual - Hora limite: $hora_limite"
+echo "Hora actual: $hora_actual - Hora limite: $hora_limite"
 
 for fichero in $arrayFicheros
 do
 	ficheroSem=$DIR_INPUT$fichero$mascara$extensionSem
         ficheroZip=$DIR_INPUT$fichero$mascara$extensionZip
 
-        #echo "$ficheroSem"
+        echo "$ficheroSem"
 	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -a ! -e $ficheroZip ]; do
 	   sleep 10
 	   hora_actual=`date +%Y%m%d%H%M%S`
@@ -55,3 +54,4 @@ else
    echo "$(basename $0) Ficheros encontrados"
    exit 0
 fi
+

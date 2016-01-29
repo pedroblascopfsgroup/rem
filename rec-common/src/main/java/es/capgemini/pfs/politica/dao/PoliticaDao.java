@@ -7,6 +7,7 @@ import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.politica.model.CicloMarcadoPolitica;
+import es.capgemini.pfs.politica.model.DDTipoPolitica;
 import es.capgemini.pfs.politica.model.Politica;
 
 /**
@@ -60,4 +61,6 @@ public interface PoliticaDao extends AbstractDao<Politica, Long> {
      * @return
      */
     CicloMarcadoPolitica buscarPoliticasParaPersonaExpediente(Long idPersona, Long idExpediente);
+    
+    List<Politica> buscarPoliticasPorCmp(Long cmpId);
 }

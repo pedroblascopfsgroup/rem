@@ -104,21 +104,21 @@ var crearActuacionesAExplorar=function(){
 	   });
    </c:if>
 
-<!--    var actuacionesAExplorarGrid = app.crearGrid(actuacionesStore,cmActuacionesAExplorar,{ -->
-<!--          title : '&nbsp;' -->
+<%--    var actuacionesAExplorarGrid = app.crearGrid(actuacionesStore,cmActuacionesAExplorar,{ --%>
+<%--          title : '&nbsp;' --%>
 <%--          <app:test id="actuacionesGrid" addComa="true" /> --%>
-<!--          ,style:'padding-right:10px' -->
-<!--          ,autoHeight : true -->
-<!-- 		 ,border:true -->
-<!-- 		 ,margin:90 -->
-<!--          ,cls:'cursor_pointer' -->
-<!--          ,sm: new Ext.grid.RowSelectionModel({singleSelect:true}) -->
-<!--          ,bbar : [ -->
+<%--          ,style:'padding-right:10px' --%>
+<%--          ,autoHeight : true --%>
+<%-- 		 ,border:true --%>
+<%-- 		 ,margin:90 --%>
+<%--          ,cls:'cursor_pointer' --%>
+<%--          ,sm: new Ext.grid.RowSelectionModel({singleSelect:true}) --%>
+<%--          ,bbar : [ --%>
 <%-- 	        <c:if test="${puedeEditar}"> --%>
-<!-- 	        	btnEditActuacionAExplorar -->
+<%-- 	        	btnEditActuacionAExplorar --%>
 <%-- 	        </c:if> --%>
-<!-- 	     ] -->
-<!--    });  -->
+<%-- 	     ] --%>
+<%--    });  --%>
    
    var actuacionesAExplorarGrid = new Ext.grid.GridPanel({
             title : '&nbsp;'

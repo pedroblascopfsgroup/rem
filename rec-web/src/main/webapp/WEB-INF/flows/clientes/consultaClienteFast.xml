@@ -34,9 +34,16 @@
             <evaluate expression="executor.execute('personaManager.obtenerExpedientePropuestoPersona', id)" result="flowScope.expedientePropuesto" />
             <evaluate expression="executor.execute('telecobroManager.getSubtipoTareaTelecobro', id)" result="flowScope.subtipoTareaTelecobro" />
             <evaluate expression="executor.execute('arquetipoManager.getArquetipoCalculadoWithEstado', flowScope.persona)" result="flowScope.arquetipoPersona" />
+            <evaluate expression="executor.execute('arquetipoManager.getArquetipoRecuperacionByPersonaId', id)" result="flowScope.arquetipoRecuperacion" />
+            <evaluate expression="executor.execute('expedienteManager.tieneExpedienteSeguimiento', id)" result="flowScope.tieneExpedienteSeguimiento" />
+            <evaluate expression="executor.execute('expedienteManager.tieneExpedienteRecuperacion', id)" result="flowScope.tieneExpedienteRecuperacion" />
             <evaluate expression="executor.execute('clienteManager.tieneContratosParaGenerarExpediente', id)" result="flowScope.tieneContratos" />
+            <evaluate expression="executor.execute('clienteManager.tieneContratosLibres',id)" result="flowScope.tieneContratosLibres" />
+            <evaluate expression="executor.execute('clienteManager.tieneContractosActivos',id)" result="flowScope.tieneContratosActivos" />
 			<evaluate expression="executor.execute('plugin.clientes.getGestorProveedorSolvencia', id)" result="flowScope.gestorProveedor" />
             <evaluate expression="executor.execute('personaManager.getZonaPersona', id)" result="flowScope.zonaPersona" />
+            <evaluate expression="executor.execute('arquetipoManager.getListRecuperacion')" result="flowScope.arquetiposRecup" />
+            <evaluate expression="executor.execute('arquetipoManager.getListSeguimiento')" result="flowScope.arquetiposSeg" />
 			
 			<evaluate expression="zonaPersona != null ? executor.execute('zonaManager.getZonaTerritorial', zonaPersona) : null" result="flowScope.zonaTerritorial" />
 			

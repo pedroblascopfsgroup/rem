@@ -119,9 +119,29 @@
 		<property name = "plantillaReportPropuestaCancelacionCargas">
 			<value>reportPropuestaCancelacionCargas.jrxml</value>
 		</property>
+		
+		<property name="codigoRegistrarSolicitudMoratoria">
+				<value>P418_RegistrarSolicitudMoratoria</value>
+		</property>
+		
+		<property name="fechaSolicitudRegistrarSolicitudMoratoria">
+				<value>fechaSolicitud</value>
+		</property>
+		
+		<property name="codigoRegistrarResolucionMoratoria">
+				<value>P418_RegistrarResolucion</value>
+		</property>
+		
+		<property name="fechaFinMoratoriaRegistrarResolucion">
+				<value>fechaFinMoratoria</value>
+		</property>
+		
+		<property name="resultadoMoratoria">
+				<value>comboFavDesf</value>
+		</property>
 	</bean>	
 	
 	<!-- Implementaciones por defecto-->
 	<bean id="nmbCommonProjectContext" parent="nmbCommonProjectContextDefault"/>
-	 
+	
 </beans>	

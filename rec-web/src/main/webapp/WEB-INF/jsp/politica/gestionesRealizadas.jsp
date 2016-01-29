@@ -179,6 +179,7 @@ var gestionesGrid = new Ext.grid.GridPanel({
 		,handler : function(){
 			comentarioGestionesH.setValue(comentarioGestiones.getValue());
 			gestionesIncluirH.setValue(transform(gestionesGrid));
+			
 			page.submit({
 				eventName : 'update'
 				,formPanel : saveForm

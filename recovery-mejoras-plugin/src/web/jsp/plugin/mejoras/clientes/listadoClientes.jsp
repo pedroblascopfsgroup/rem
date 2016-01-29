@@ -607,6 +607,9 @@
 			}
 			if (comboJerarquia.getValue()!= '' ){
 				return true;
+			}
+			if (comboGestion.getValue()!='') {
+				return true;
 			}			
 		}	
 		return false;	
@@ -756,7 +759,8 @@
 			p.propietario =comboPropietario.getValue();
 			p.codigoZona=comboZonas.getValue();
     		p.tipoIntervercion=comboIntervencion.getValue();			
-			p.jerarquia=comboJerarquia.getValue();			
+			p.jerarquia=comboJerarquia.getValue();
+			p.codigoGestion=comboGestion.getValue();			
     	}
     	return p;
     }

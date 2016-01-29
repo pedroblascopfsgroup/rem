@@ -173,6 +173,20 @@ public class TareaNotificacion implements Serializable, Auditable {
 
     @Version
     private Integer version;
+    
+    private transient String categoriaTarea;
+    
+    public void setCategoriaTarea(String categoriaTarea) {
+    	this.categoriaTarea = categoriaTarea;
+    }
+    
+    public String getCategoriaTarea() {
+    	/*if (projectContext.getTareasTipoDecision().contains(this.subtipoTareaCodigoSubtarea))
+    		return projectContext.CONST_TAREA_TIPO_DECISION;
+    	
+    	return "";*/
+    	return this.categoriaTarea;
+    }    
 
     /**
      * Devuelve el recurso asociado a la tarea (si es que existe).

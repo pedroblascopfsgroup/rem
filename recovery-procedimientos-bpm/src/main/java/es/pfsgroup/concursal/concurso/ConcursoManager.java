@@ -532,14 +532,14 @@ public class ConcursoManager {
 						for (Credito c : listado) {
 							//SUMAMOS TODOS LOS CREDITOS
 							if(tipoCredito.equalsIgnoreCase("0")){
-								resultado += c.getPrincipalDefinitivo();
+								resultado += Checks.esNulo(c.getPrincipalDefinitivo()) ? 0F : c.getPrincipalDefinitivo();
 							}
 							else{
 								if (c.getTipoDefinitivo() != null
 										&& c.getTipoDefinitivo().getCodigo()
 										.equalsIgnoreCase(tipoCredito)) {
 									if (c.getPrincipalDefinitivo() != null)
-										resultado += c.getPrincipalDefinitivo();
+										resultado += Checks.esNulo(c.getPrincipalDefinitivo()) ? 0F : c.getPrincipalDefinitivo();
 								}
 							}
 						}

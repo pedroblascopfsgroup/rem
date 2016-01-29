@@ -43,6 +43,10 @@ public class MEJHistoricoAsuntoViewDto implements Serializable {
 	private BigDecimal importe;
 
 	private Date fechaInicio;
+	
+	private String fechaIni;
+	
+	private Boolean agenda;
 
 	private Date fechaVencimiento;
 
@@ -273,7 +277,6 @@ public class MEJHistoricoAsuntoViewDto implements Serializable {
 	public void setDestinatarioTarea(String destinatarioTarea) {
 		this.destinatarioTarea = destinatarioTarea;
 	}
-
 	public String getSubtipoTarea() {
 		return subtipoTarea;
 	}
@@ -288,6 +291,22 @@ public class MEJHistoricoAsuntoViewDto implements Serializable {
 
 	public void setTipoRegistro(String tipoRegistro) {
 		this.tipoRegistro = tipoRegistro;
+	}
+
+	public String getFechaIni() {
+		return fechaIni;
+	}
+
+	public void setFechaIni(String fechaIni) {
+		this.fechaIni = fechaIni;
+	}
+
+	public Boolean getAgenda() {
+		return agenda;
+	}
+
+	public void setAgenda(Boolean agenda) {
+		this.agenda = agenda;
 	}	
 	
 }

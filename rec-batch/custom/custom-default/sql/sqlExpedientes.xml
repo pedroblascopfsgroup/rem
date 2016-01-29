@@ -31,4 +31,392 @@
             where exp_id = ? and borrado = 0
   		]]>
   	</entry>
+  	<entry key="expedientes.recuperacion.clientesParaExpedimentar.Oracle9iDialect">
+  		<![CDATA[
+		WITH fechasEstados AS (
+			  SELECT SYSDATE - ((((SUM(est.est_plazo)/1000)/24)/60)/60) fecha, --Sumamos los días
+			    ARQ_ID, arq_prioridad
+			  FROM arq_arquetipos arq
+			  INNER JOIN iti_itinerarios iti
+			    ON arq.iti_id = iti.iti_id
+			  INNER JOIN est_estados est
+			    ON iti.iti_id = est.iti_id
+			  INNER JOIN ${master.schema}.dd_est_estados_itinerarios dd_est
+			    ON est.dd_est_id = dd_est.dd_est_id
+			    and DD_EST.DD_EST_ORDEN <= --Sumamos todos los plazos que estén por debajo de GestiónVencidos
+			    (SELECT DD_EST_ORDEN
+			    FROM ${master.schema}.DD_EST_ESTADOS_ITINERARIOS
+			    WHERE DD_EST_CODIGO = ${ddEstadoItinerario.gestionVencidos.codigo}
+			    )
+			  INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Solo los de la entidad cliente
+			    ON DD_EST.DD_EIN_ID        = DD_EIN.DD_EIN_ID
+			    AND DD_EIN_CODIGO          = ${ddEntidadInformacion.Cliente.codigo}        
+        where arq.borrado = 0
+        GROUP BY ARQ.ARQ_ID, arq.arq_prioridad --Agrupamos por arquetipo para poder calcular el plazo del itinerario de los clientes        
+         )
+		 SELECT cli.cli_id
+		    FROM fechasEstados vFechas
+		    INNER JOIN cli_clientes cli
+		      ON vFechas.arq_id = cli.arq_id 
+		    INNER JOIN ${master.schema}.dd_est_estados_itinerarios dd_est --Solo los que estén en gestionVencidos
+		      ON cli.dd_est_id  = dd_est.dd_est_id
+		      AND dd_est_codigo = ${ddEstadoItinerario.gestionVencidos.codigo}
+		    INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN
+		      ON DD_EST.DD_EIN_ID = DD_EIN.DD_EIN_ID
+		      AND DD_EIN_CODIGO   = ${ddEntidadInformacion.Cliente.codigo}
+		    WHERE 
+		      CLI.BORRADO   = 0
+		      AND TO_DATE(CLI.CLI_FECHA_CREACION,'DD/MM/RR') <= TO_DATE(vFechas.fecha,'DD/MM/RR')  --Que estén fuera de plazo del itinerario
+		      /* Ordenamos por prioridad del arquetipo para crear primero expedientes a los clientes con arq. más prioritarios 
+		      	 y desechar a las personas relacionadas menos prioritarias*/
+		  ORDER BY arq_prioridad 		
+  		]]>
+  	</entry>
+  	<entry key="expedientes.recuperacion.revisionExpedientes.limpiarTMPExpRevision.Oracle9iDialect">
+  		<![CDATA[
+  			TRUNCATE TABLE TMP_EXP_REVISION
+  		]]>
+  	</entry>
+  	<entry key="expedientes.recuperacion.revisionExpedientes.obtenerExpActivos.Oracle9iDialect">
+  		<![CDATA[
+  		INSERT INTO TMP_EXP_REVISION
+		(
+		  SELECT e.exp_id EXP_ID, cex.cnt_id CNT_ID, cex.cex_pase PASE, e.EXP_PROCESS_BPM PROCESS_BPM, e.exp_manual MANUAL --Se deja el campo "MANUAL" por si lo necesitamos a posteriori, en ese caso quitar el filtro del where exp_manual=0     
+		      FROM exp_expedientes e
+		          JOIN ${master.schema}.dd_eex_estado_expediente eex ON e.dd_eex_id = eex.dd_eex_id AND eex.dd_eex_codigo in (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo})
+		          JOIN cex_contratos_expediente cex ON cex.exp_id = e.exp_id
+		          JOIN CNT_CONTRATOS cnt ON cex.cnt_id = cnt.cnt_id
+		          JOIN ${master.schema}.dd_esc_estado_cnt esc ON cnt.dd_esc_id = esc.dd_esc_id
+		          JOIN MOV_MOVIMIENTOS mov ON mov.cnt_id = cnt.cnt_id and 
+		               (mov.mov_fecha_extraccion = cnt.cnt_fecha_extraccion 
+		               OR ${estadoContrato.Cancelado.codigo} = (SELECT esc.dd_esc_codigo FROM ${master.schema}.dd_esc_estado_cnt esc WHERE cnt.dd_esc_id = esc.dd_esc_id))
+		          JOIN dd_tpe_tipo_prod_entidad t ON cnt.dd_tpe_id = t.dd_tpe_id
+		      WHERE e.borrado = 0  and e.exp_manual = 0 --Solo se revisan los expedientes automáticos     
+		      AND NOT EXISTS (SELECT 1 FROM exr_expediente_recobro EXR WHERE e.EXP_ID = EXR.EXP_ID)
+		)
+  		]]>
+  	</entry>
+  	
+  	
+  	<entry key="expedientes.recuperacion.revisionExpedientes.limpiarTMPMovRevisados.Oracle9iDialect">
+    <![CDATA[	     
+  		TRUNCATE TABLE TMP_MOV_REVISADOS_EXP
+  	]]>
+  	</entry>
+  	
+  	<entry key="expedientes.recuperacion.revisionExpedientes.revisarMovimientos.Oracle9iDialect">
+    <![CDATA[
+    /***************************************************
+  		Revisar movimientos e insertarlo en tabla temporal para tratar a continuación
+  		-- TODO - y generar notificaciones
+  	*****************************************************/
+  	
+  	INSERT INTO TMP_MOV_REVISADOS_EXP   
+(SELECT C.CNT_ID, tmp.exp_id, tmp.pase ES_PASE,     
+CASE 
+    WHEN e.dd_esc_codigo <> ${estadoContrato.Activo.codigo} --Cancelado es cualquier tipo que no sea activo, no solo el 7   
+      THEN 1        
+    ELSE 0      
+  END Cancelado,      
+CASE 
+    WHEN (movAct.mov_deuda_irregular = 0)        
+      THEN 1        
+    ELSE 0      
+  END SaldadoSinMovAnterior,      
+CASE        
+    WHEN (movAct.mov_deuda_irregular = 0 AND movAnt.mov_deuda_irregular  <> 0)        
+      THEN 1        
+    ELSE 0      
+  END Saldado,      
+  NVL(movAnt.mov_deuda_irregular - movAct.mov_deuda_irregular, 0) Diferencia,      
+  movAct.mov_deuda_irregular Importe,      
+  movAnt.mov_deuda_irregular ImporteAnterior,      
+  t.dd_tpe_activo activo,      
+  movAnt.MOV_FECHA_POS_VENCIDA fechaVencido,      
+  movAct.mov_fecha_extraccion fechaExtraccion    
+FROM cnt_contratos c,      
+  dd_tpe_tipo_prod_entidad t,      
+  mov_movimientos movAct,      
+  mov_movimientos movAnt,      
+  ${master.schema}.dd_esc_estado_cnt e,      
+  tmp_exp_revision tmp 
+WHERE c.dd_tpe_id = t.dd_tpe_id    
+ -- AND C.CNT_ID IN (SELECT CNT_ID FROM vTMP_CNT)          
+  AND c.dd_esc_id                 = e.dd_esc_id    
+  AND movAct.cnt_id               = c.cnt_id    
+  AND movAct.MOV_FECHA_EXTRACCION = c.cnt_fecha_extraccion    
+  AND movAnt.cnt_id               = c.cnt_id    
+  AND movAnt.MOV_FECHA_EXTRACCION =      
+  (SELECT        
+    CASE          
+        WHEN MAX(mov_fecha_extraccion)IS NULL          
+          THEN c.cnt_fecha_extraccion          
+        ELSE MAX(mov_fecha_extraccion)        
+    END      
+  FROM mov_movimientos      
+  WHERE mov_fecha_extraccion < c.cnt_fecha_extraccion      
+    AND CNT_ID                 = c.cnt_id      
+)    
+AND tmp.CNT_ID = C.CNT_ID  
+)
+    ]]>
+    </entry>
+    
+     <entry key="expedientes.recuperacion.revisionExpedientes.informarContratosReducidos.Oracle9iDialect">
+    <![CDATA[
+    /******************************************
+    Inserta en rec_recuperaciones la variación de saldo
+    ******************************************/
+   
+ INSERT into rec_recuperaciones
+        (REC_ID,
+         CNT_ID,
+         DD_EST_ID,
+         ASU_ID,
+         EXP_ID,
+         CLI_ID,
+         REC_FECHA_ENTREGA,
+         REC_IMPORTE_ENTREGADO,
+         REC_IMPORTE_RECUPERADO,
+         USUARIOCREAR,
+         FECHACREAR)         
+	 with vCliExp AS (
+	  select distinct tmp.cnt_id, cli.dd_est_id, tmp.exp_id, cli.cli_id, tmp.diferencia, tmp.fechaextraccion from tmp_mov_revisados_exp tmp 
+	  inner join pex_personas_expediente pex on tmp.exp_id = pex.exp_id 
+	  inner join cli_clientes cli on pex.per_id = cli.per_id
+	  where tmp.diferencia > 0 and not exists (select 1 from rec_recuperaciones rec where rec.cnt_id = tmp.cnt_id and rec.rec_fecha_entrega = tmp.fechaextraccion)
+	 )          
+    SELECT 
+        S_REC_RECUPERACIONES.NEXTVAL,
+         tmp_mov.cnt_id,
+         tmp_mov.dd_est_id,
+         null,         
+         tmp_mov.exp_id,
+         tmp_mov.cli_id,
+         tmp_mov.fechaextraccion,
+         abs(tmp_mov.diferencia),
+         abs(tmp_mov.diferencia) + (mAnt.mov_int_remuneratorios - mAct.mov_int_remuneratorios)
+                + (mAnt.mov_int_moratorios - mAct.mov_int_moratorios)
+                + (mAnt.mov_comisiones - mAct.mov_comisiones)
+                + (mAnt.mov_gastos - mAct.mov_gastos),
+         'REV-JOB',
+         sysdate
+      FROM vCliExp TMP_MOV inner join      
+      (SELECT c.cnt_id, m.mov_int_remuneratorios, m.mov_int_moratorios, m.mov_comisiones, m.mov_gastos FROM mov_movimientos m, cnt_contratos c WHERE m.cnt_id = c.cnt_id AND mov_fecha_extraccion = c.cnt_fecha_extraccion) mAct on mAct.cnt_id = tmp_mov.cnt_id
+      inner join (SELECT m.cnt_id
+      , m.mov_int_remuneratorios, m.mov_int_moratorios, m.mov_comisiones, m.mov_gastos 
+      FROM mov_movimientos m       
+      WHERE  mov_fecha_extraccion = 
+        (SELECT MAX(m2.mov_fecha_extraccion) FROM mov_movimientos m2, cnt_contratos c2 WHERE m.cnt_id = m2.cnt_id and m2.cnt_id = c2.cnt_id  AND m2.mov_fecha_extraccion < c2.cnt_fecha_extraccion)) mAnt on tmp_mov.cnt_id = mAnt.cnt_id
+      
+    ]]>
+    </entry>
+    
+    <entry key="expedientes.recuperacion.revisionExpedientes.antecedentes.incrementar.Oracle9iDialect">
+    <![CDATA[
+    /***************************
+	SI LOS CONTRATOS ESTÁN SALDADOS SE ACTUALIZAN LOS ANTECEDENTES
+	****************************/
+
+  	/********************************
+  	INCREMENTAR ANTECEDENTES
+  	********************************/	
+  
+  	  	UPDATE ant_antecedentes
+        SET ANT_REINCIDENCIA_INTERNOS=NVL(ANT_REINCIDENCIA_INTERNOS+1, 1),
+            USUARIOMODIFICAR='REV-JOB',
+            FECHAMODIFICAR=SYSDATE
+        WHERE ANT_ID IN 
+        (
+          SELECT p.ant_id 
+          FROM cpe_contratos_personas cpe, per_personas p, 
+            dd_tin_tipo_intervencion tin
+          WHERE p.per_id = cpe.per_id
+            AND tin.DD_TIN_ID = cpe.DD_TIN_ID
+            AND tin.DD_TIN_TITULAR = 1 
+            AND EXISTS
+            (          
+              SELECT TMP_MOV.CNT_ID
+                FROM TMP_MOV_REVISADOS_EXP TMP_MOV    
+                  INNER JOIN cex_contratos_expediente cex
+                    ON TMP_MOV.CNT_ID                = cex.CNT_ID    
+                WHERE     
+                  TMP_MOV.CANCELADO = 0 
+                  AND TMP_MOV.SALDADO = 1  
+                  AND NOT tmp_mov.fechavencido IS NULL         
+                  AND tmp_mov.cnt_id = cpe.cnt_id
+                  AND CEX.BORRADO = 0
+            )
+        )
+    
+    ]]>
+    </entry>
+    
+    <entry key="expedientes.recuperacion.revisionExpedientes.antecedentes.actualizar.Oracle9iDialect">
+    <![CDATA[
+    MERGE INTO AIN_ANTECEDENTEINTERNOS AIN USING (
+    SELECT DISTINCT TMP_MOV.CNT_ID, tmp_mov.fechaextraccion-TMP_MOV.FECHAVENCIDO DIAS_DESCUBIERTO, TMP_MOV.IMPORTEANTERIOR, TMP_MOV.FECHAEXTRACCION
+        FROM TMP_MOV_REVISADOS_EXP TMP_MOV    
+        INNER JOIN cex_contratos_expediente CEX ON TMP_MOV.CNT_ID      = CEX.CNT_ID    
+        WHERE     
+          TMP_MOV.CANCELADO = 0 
+          AND TMP_MOV.SALDADO = 1  
+          AND NOT tmp_mov.fechavencido IS NULL
+          AND CEX.BORRADO = 0
+  ) ORIGEN ON (AIN.CNT_ID = ORIGEN.CNT_ID)
+  WHEN MATCHED THEN
+  UPDATE 
+    SET AIN_POS_IRREGULAR_MAX=CASE WHEN(ABS(AIN_POS_IRREGULAR_MAX ) > ABS(ORIGEN.IMPORTEANTERIOR)) THEN AIN_POS_IRREGULAR_MAX ELSE ORIGEN.IMPORTEANTERIOR END,
+            AIN_DIAS_MAX_IRREGULAR=CASE WHEN(AIN_DIAS_MAX_IRREGULAR > ORIGEN.DIAS_DESCUBIERTO) THEN AIN_DIAS_MAX_IRREGULAR ELSE ORIGEN.DIAS_DESCUBIERTO END,
+            AIN_FECHA_ULT_REGULARIZACION= ORIGEN.FECHAEXTRACCION, --to_date(?, 'yyyy-MM-dd'),
+            USUARIOMODIFICAR='REV-JOB',
+            FECHAMODIFICAR=SYSDATE
+  WHEN NOT MATCHED THEN
+    INSERT (AIN_ID, CNT_ID, AIN_POS_IRREGULAR_MAX, AIN_DIAS_MAX_IRREGULAR, AIN_FECHA_ULT_REGULARIZACION, USUARIOCREAR, FECHACREAR)
+        values (s_ain_antecedenteinternos.nextVal, ORIGEN.CNT_ID, ORIGEN.IMPORTEANTERIOR, ORIGEN.DIAS_DESCUBIERTO, ORIGEN.FECHAEXTRACCION, 'REV-JOB', SYSDATE)
+    ]]>
+    </entry>
+    
+    <entry key="expedientes.recuperacion.revisionExpedientes.limpiarTMPExpAcancelar.Oracle9iDialect">
+    <![CDATA[	     
+  		TRUNCATE TABLE TMP_EXP_A_CANCELAR
+  	]]>
+  	</entry>
+    
+    <entry key="expedientes.recuperacion.revisionExpedientes.revisarContratosPase.cancelados.Oracle9iDialect">
+    <![CDATA[
+     /***********************************
+    CONTRATOS CANCELADOS DE PASE - Se cancelan siempre todos los expedientes    
+    ***********************************/
+    MERGE INTO TMP_EXP_A_CANCELAR TMP_EXP USING 
+        (    
+          SELECT DISTINCT (EXP_ID)    
+            FROM TMP_MOV_REVISADOS_EXP TMP_MOV            
+          WHERE              
+            (TMP_MOV.CANCELADO = 1)
+              AND TMP_MOV.ES_PASE = 1              
+        ) ORIGEN ON (TMP_EXP.EXP_ID = ORIGEN.EXP_ID)
+        WHEN NOT MATCHED THEN  
+          INSERT (EXP_ID) VALUES (ORIGEN.EXP_ID)
+    ]]>
+    </entry>
+    
+    <entry key="expedientes.recuperacion.revisionExpedientes.revisarContratosPase.saldados.Oracle9iDialect">
+    <![CDATA[
+     /**************************************
+    CONTRATOS SALDADOS DE PASE - Cancelamos los EXPEDIENTES que 
+    su CONTRATO sea de PASE
+    **************************************/
+    MERGE INTO TMP_EXP_A_CANCELAR TMP_EXP USING 
+        (    
+          SELECT DISTINCT (EXP_ID)    
+            FROM TMP_MOV_REVISADOS_EXP TMP_MOV           
+          WHERE     
+          (TMP_MOV.CANCELADO = 0 
+          AND (
+                TMP_MOV.SALDADO = 1 
+                  OR 
+                TMP_MOV.SALDADOSINMOVANTERIOR = 1)
+              )    
+          AND TMP_MOV.ES_PASE       = 1          
+      ) ORIGEN ON (TMP_EXP.EXP_ID      = ORIGEN.EXP_ID)
+        WHEN NOT MATCHED THEN  
+          INSERT (EXP_ID) VALUES (ORIGEN.EXP_ID)
+    ]]>
+    </entry>
+    
+    <entry key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarBPM.Oracle9iDialect">
+    <![CDATA[   
+       INSERT INTO ${master.schema}.JBPM_JOB (ID_, CLASS_, VERSION_, DUEDATE_, TASKINSTANCE_, ISSUSPENDED_, ISEXCLUSIVE_,
+               LOCKOWNER_, LOCKTIME_, EXCEPTION_, RETRIES_, NAME_, REPEAT_, TRANSITIONNAME_, ACTION_, GRAPHELEMENTTYPE_, GRAPHELEMENT_, NODE_, PROCESSINSTANCE_, TOKEN_)
+               SELECT ${master.schema}.HIBERNATE_SEQUENCE.NEXTVAL, 'T', 0, SYSDATE - 2, NULL, 0, 1, NULL, NULL, NULL, 1,'finalizarExp', NULL, 'Fin Expediente', NULL, NULL, NULL, NULL
+                       ,ID_, ROOTTOKEN_
+               FROM tmp_exp_a_cancelar TMP INNER JOIN 
+               EXP_EXPEDIENTES EXP ON TMP.EXP_ID = EXP.EXP_ID INNER JOIN               
+               ${master.schema}.JBPM_PROCESSINSTANCE JBPM ON EXP.EXP_PROCESS_BPM = JBPM.ID_
+    ]]>
+    </entry>
+    
+     <entry key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarTareas.Oracle9iDialect">
+    <![CDATA[
+	   update tar_tareas_notificaciones 
+	   		set tar_tarea_finalizada = 1,
+			borrado = 1,
+			usuarioborrar = 'REV-JOB'
+			where exp_id in (select exp_id from tmp_exp_a_cancelar TMP)
+				and borrado = 0 
+				and (tar_tarea_finalizada = 0 or tar_tarea_finalizada is null)
+      ]]>
+      </entry>
+    
+    
+    <entry key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarContratos.Oracle9iDialect">
+    <![CDATA[   
+    UPDATE cex_contratos_expediente CEX
+      SET BORRADO    =1,        
+          USUARIOBORRAR='REV-JOB',        
+          FECHABORRAR  = SYSDATE      
+      WHERE EXISTS        
+        (SELECT EXP_ID FROM TMP_EXP_A_CANCELAR TMP WHERE CEX.EXP_ID = TMP.EXP_ID)
+    ]]>
+    </entry>
+    
+    <entry key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarExpedientes.Oracle9iDialect">
+    <![CDATA[   
+      UPDATE EXP_EXPEDIENTES EXP      
+      SET BORRADO    =1,        
+          USUARIOBORRAR='REV-JOB',        
+          FECHABORRAR  =SYSDATE,        
+          DD_EEX_ID    =        
+            (SELECT DD_EEX_ID        
+            FROM ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE        
+            WHERE DD_EEX_CODIGO = ${ddEstadoExpedientes.Cancelado.codigo}),
+          EXP_PROCESS_BPM = NULL     
+      WHERE EXISTS        
+        (SELECT EXP_ID FROM TMP_EXP_A_CANCELAR TMP WHERE EXP.EXP_ID = TMP.EXP_ID)
+    ]]>
+    </entry>
+
+    <entry key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.crearNotificacion.Oracle9iDialect">
+    <![CDATA[   
+		INSERT INTO tar_tareas_notificaciones
+		  (
+		    TAR_ID, TAR_TAREA, TAR_DESCRIPCION, TAR_CODIGO, DD_STA_ID, DD_EIN_ID, TAR_FECHA_INI, 
+		    EXP_ID, DD_EST_ID, TAR_EN_ESPERA, TAR_ALERTA, TAR_EMISOR, 
+		    VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DTYPE
+		  )
+		  SELECT s_tar_tareas_notificaciones.nextval TAR_ID,
+		    STA.dd_sta_descripcion TAR_TAREA,
+		    STA.dd_sta_descripcion TAR_DESCRIPCION,
+		    ${ddTipoTarea.notificacion.codigo} TAR_CODIGO,
+		    STA.dd_sta_id DD_STA_ID,
+		    EntidadExpediente.dd_ein_id DD_EIN_ID,
+		    SYSDATE TAR_FECHA_INI,
+		    TMP.EXP_ID EXP_ID,
+		    exp.dd_est_id DD_EST_ID,
+		    0 TAR_EN_ESPERA,
+		    0 TAR_ALERTA,
+		    SUBSTR(CONCAT(PEF.PEF_DESCRIPCION, ' - '
+		    || ZON.ZON_DESCRIPCION),1,49) TAR_EMISOR,
+		    0 VERSION,
+		    'REV-JOB' USUARIOCREAR,
+		    SYSDATE FECHACREAR,
+		    0 BORRADO,
+		    'EXTTareaNotificacion' DTYPE
+		  FROM TMP_EXP_A_CANCELAR TMP
+		    INNER JOIN EXP_EXPEDIENTES EXP  ON TMP.EXP_ID = EXP.EXP_ID
+		    INNER JOIN ZON_ZONIFICACION ZON ON EXP.OFI_ID = ZON.OFI_ID
+		    INNER JOIN ARQ_ARQUETIPOS ARQ  ON EXP.ARQ_ID = ARQ.ARQ_ID
+		    INNER JOIN ITI_ITINERARIOS ITI  ON ARQ.ITI_ID = ITI.ITI_ID
+		    INNER JOIN ${master.schema}.DD_EST_ESTADOS_ITINERARIOS DD_EST  ON EXP.DD_EST_ID = DD_EST.DD_EST_ID
+		    INNER JOIN EST_ESTADOS EST  ON DD_EST.DD_EST_ID = EST.DD_EST_ID AND ITI.ITI_ID  = EST.ITI_ID
+		    INNER JOIN PEF_PERFILES PEF  ON EST.PEF_ID_GESTOR = PEF.PEF_ID,
+		    (SELECT DD_EIN_ID FROM ${master.schema}.DD_EIN_ENTIDAD_INFORMACION WHERE DD_EIN_CODIGO = ${ddEntidadInformacion.Expediente.codigo}) EntidadExpediente,
+		    (SELECT DD_STA_ID, DD_STA_DESCRIPCION FROM ${master.schema}.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO = ${ddSubTipoTarea.notificacionExpCerrado.codigo}
+		      AND DD_TAR_ID = (SELECT DD_TAR_ID FROM ${master.schema}.DD_TAR_TIPO_TAREA_BASE WHERE DD_TAR_CODIGO = ${ddTipoTarea.notificacion.codigo})
+		    ) STA
+    ]]>
+    </entry>
+    
+  	
 </properties>

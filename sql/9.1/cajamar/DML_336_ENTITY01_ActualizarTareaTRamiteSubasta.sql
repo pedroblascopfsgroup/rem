@@ -1,0 +1,58 @@
+--/*
+--##########################################
+--## AUTOR=GONZALOE
+--## FECHA_CREACION=20151130
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=CMREC-382
+--## PRODUCTO=NO
+--##
+--## Finalidad: Modificación trámite subasta
+--## INSTRUCCIONES: Relanzable
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF; 
+DECLARE
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+
+    V_COD_PROCEDIMIENTO VARCHAR (20 CHAR) := 'H002';
+    
+    VAR_TABLENAME VARCHAR2(50 CHAR); -- Nombre de la tabla a crear
+    VAR_SEQUENCENAME VARCHAR2(50 CHAR); -- Nombre de la tabla a crear
+
+    
+    V_TAREA VARCHAR(100 CHAR);
+    
+BEGIN	
+	
+	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
+			  ' SET DD_TPO_ID_BPM = (select dd_tpo_id from '||V_ESQUEMA||'.Dd_Tpo_Tipo_Procedimiento where Dd_Tpo_Codigo=''HC104'')' ||
+			  ' WHERE TAP_CODIGO = ''H002_BPMTramiteSolSolvenciaPatrimonial''';
+    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H002_SolicitudSubasta actualizada.');
+
+COMMIT;
+ 
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;

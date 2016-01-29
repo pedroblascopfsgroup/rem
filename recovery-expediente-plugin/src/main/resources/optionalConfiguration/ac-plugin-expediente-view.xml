@@ -46,6 +46,5 @@
         p:name="cssNombreUnicoParaMiHojaDeEstilo" p:order="1"
         p:fileName="../js/plugin/expediente/css/expediente.css"
         p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
-
-	
+        
 </beans>	

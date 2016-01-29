@@ -61,7 +61,7 @@ var crearCumplimiento=function(idAcuerdo){
 		layout:'form'
 		,border : false
 		,autoScroll:false
-<!-- 		,bodyStyle:'padding:5px;margin:5px' -->
+<%-- 		,bodyStyle:'padding:5px;margin:5px' --%>
 		,bodyStyle:'margin:5px'
 		,autoHeight:true
 		,autoWidth : true
@@ -74,17 +74,17 @@ var crearCumplimiento=function(idAcuerdo){
    
    return panelCumplimiento;
   
-<!--    return { -->
+<%--    return { --%>
 <%-- 		title:'<s:message code="plugin.mejoras.acuerdos.cumplimiento.titulo" text="**Detalles sobre el cumplimiento del acuerdo"/>' --%>
-<!-- 		,autoHeight:true -->
-<!-- 		,xtype:'fieldset' -->
-<!-- 		,border:true -->
-<!-- 		,bodyStyle:'padding:5px;cellspacing:20px;' -->
-<!-- 		,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false, style:'margin:4px;width:97%',border:true} -->
-<!-- 		,items : [ -->
-<!-- 		 	cumplimientoGrid -->
-<!-- 		] -->
-<!-- 	} -->
+<%-- 		,autoHeight:true --%>
+<%-- 		,xtype:'fieldset' --%>
+<%-- 		,border:true --%>
+<%-- 		,bodyStyle:'padding:5px;cellspacing:20px;' --%>
+<%-- 		,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false, style:'margin:4px;width:97%',border:true} --%>
+<%-- 		,items : [ --%>
+<%-- 		 	cumplimientoGrid --%>
+<%-- 		] --%>
+<%-- 	} --%>
    
 
 

@@ -128,7 +128,7 @@ public class BusquedaExpedientesIncidencia implements BusquedaExpedienteFiltroDi
 //BKREC-943
 //		filtro.append(" SELECT distinct expRec.id FROM Expediente expRec ");		
 //		filtro.append(" WHERE expRec.id in( SELECT distinct ine.expediente.id FROM IncidenciaExpediente ine WHERE 1=1 ");
-		filtro.append(" SELECT DISTINCT ine.expediente as exp FROM IncidenciaExpediente ine WHERE 1=1 ");
+		filtro.append(" SELECT ine.expediente as exp FROM IncidenciaExpediente ine WHERE 1=1 ");
 		if (!Checks.esNulo(dto.getFechaDesdeIncidencia())){			
 			if (dto.getFechaDesdeIncidencia() != null
 					&& !"".equals(dto.getFechaDesdeIncidencia())) {

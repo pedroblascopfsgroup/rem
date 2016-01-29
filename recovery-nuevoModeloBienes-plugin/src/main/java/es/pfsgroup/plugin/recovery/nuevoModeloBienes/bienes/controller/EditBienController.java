@@ -635,7 +635,7 @@ public class EditBienController {
 			dto.setParticipacion(Integer.parseInt(request
 					.getParameter("oldParticipacion")));
 		if (!Checks.esNulo(request.getParameter("oldValorActual")))
-			dto.setValorActual(new Float(request.getParameter("oldValorActual")));
+			dto.setValorActual(new BigDecimal(request.getParameter("oldValorActual")));
 		if (!Checks.esNulo(request.getParameter("oldImporteCargas")))
 			dto.setImporteCargas(new Float(request
 					.getParameter("oldImporteCargas")));
@@ -658,7 +658,7 @@ public class EditBienController {
 		if (!Checks.esNulo(request.getParameter("tipoBien")))
 			dto.setTipoBien(request.getParameter("tipoBien"));
 		if (!Checks.esNulo(request.getParameter("valorActual")))
-			dto.setValorActual(new Float(request.getParameter("valorActual")));
+			dto.setValorActual(new BigDecimal(request.getParameter("valorActual")));
 		if (!Checks.esNulo(request.getParameter("importeCargas")))
 			dto.setImporteCargas(new Float(request
 					.getParameter("importeCargas")));
@@ -4142,14 +4142,14 @@ public class EditBienController {
 		
 		final StringBuilder sbRespuesta = new StringBuilder();
 		if(sbErrorValidacion.length() > 0){
-			sbRespuesta.append("Los campos tipo de inmueble, provincia, localidad, n�mero de finca y n�mero de registro son obligatorios para solicitar el n�mero de activo de los siguientes bienes: ");
+			sbRespuesta.append("Los campos tipo de inmueble, provincia, localidad, n\u00FAmero de finca y n\u00FAmero de registro son obligatorios para solicitar el n\u00FAmero de activo de los siguientes bienes: ");
 			sbErrorValidacion.setLength(sbErrorValidacion.length() -1);
 			sbErrorValidacion.append(". \n");
 			sbRespuesta.append(sbErrorValidacion);
 		}			
 		
 		if(sbErrorSolicitud.length() > 0){
-			sbRespuesta.append("No se pudo obtener el n�mero de activo de los siguientes bienes: ");
+			sbRespuesta.append("No se pudo obtener el n\u00FAmero de activo de los siguientes bienes: ");
 			sbErrorSolicitud.setLength(sbErrorSolicitud.length() -1);
 			sbErrorSolicitud.append(". \n");
 			sbRespuesta.append(sbErrorSolicitud);			

@@ -68,14 +68,39 @@
 		value="${despacho!=null?despacho.id:''}"
 		valueField="id"
 		displayField="despacho" 
-		autoload="${despacho!= null?'true':'false'}" obligatory="true"/>
+		autoload="${despacho!= null?'true':'false'}"/>
+	
+	<%-- Campo oculto para controlar que si se elige un 'Tipo Despacho' no se pueda dejar
+	 el campo 'Despacho' vacío --%>
+	var permiteGuardar = new Ext.form.TextField({
+                hidden: true
+                ,value: true
+        });	
+
+	var tipoTab = new Ext.form.TextField({
+                hidden: true
+                ,value: 'altaUsuarios'
+        });
 
 	tipoDespacho.on('select',function(){
-		despachoExterno.setDisabled(false);
-		despachoExterno.reload(true);
+		if(tipoDespacho.getValue() == ""){
+			despachoExterno.setValue('');
+			despachoExterno.setDisabled(true);
+			permiteGuardar.setValue(true);
+        }
+        else
+        {
+        	despachoExterno.setDisabled(false);
+			despachoExterno.reload(true);
+			permiteGuardar.setValue(false);
+        }
 	});
 		
-	
+	despachoExterno.on('select',function(){
+        if(tipoDespacho.getValue() != ""){
+            permiteGuardar.setValue(true);
+        }
+	});
 	
 	if (usuarioExterno.checked == true){
 			tipoDespacho.setDisabled(false);
@@ -114,6 +139,9 @@
 		usuarioExterno="usuarioExterno"
 		usuarioGrupo="usuarioGrupo"
 		despachoExterno="despachoExterno"
+		tipoDespacho="tipoDespacho"
+		permiteGuardar="permiteGuardar"
+		tipoTab="tipoTab"
 		/>
 
 
@@ -128,5 +156,11 @@
 			tab_paramValue="usuario.id"
 			tab_titleData="username"
 			tab_type="Usuario"/>
+			
+	<%-- Para deshabilitar los botones mientras se realiza el proceso de Guardado. --%>
+	btnGuardar.on('click',function(){
+        this.setDisabled(true);
+        btnCancelar.setDisabled(true);
+	});
 
 </fwk:page>

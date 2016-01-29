@@ -84,7 +84,7 @@
       ,{header : '<s:message code="subastas.agregarExcluirBien.grid.codigo" text="**C&oacute;digo" />', hidden:true, dataIndex : 'codigo', width: 50}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.numeroFinca" text="**N&uacute;mero finca" />', dataIndex : 'numFinca'}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.referenciaCatastral" text="**Referencia catastral"/>', dataIndex : 'referenciaCatastral' }
-		,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.numeroActivo" text="**Número activo"/>', dataIndex : 'numeroActivo' }
+		,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.numeroActivo" text="**Nï¿½mero activo"/>', dataIndex : 'numeroActivo' }
 		,{header : '<s:message code="subastas.agregarExcluirBien.grid.descripcion" text="**Descripcion" />', dataIndex : 'descripcion', width: 250}
 		,{header : '<s:message code="subastas.agregarExcluirBien.grid.tipo" text="**Tipo" />', dataIndex : 'tipo'}
       ,{header : '<s:message code="subastas.agregarExcluirBien.grid.origen" text="**Origen" />', dataIndex : 'origen'}
@@ -101,6 +101,7 @@
    });  
 	
    bienesStore.webflow({idSubasta:idSubasta, accion:accion});
+   
    
    var gridBienes = new Ext.grid.EditorGridPanel({
    		 store: bienesStore

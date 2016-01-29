@@ -1,4 +1,4 @@
-Ôªøvar estadoPoliticaStore;
+var estadoPoliticaStore;
 var pPrePolitica;
 var pCEPolitica;
 var pREPolitica;
@@ -102,7 +102,7 @@ var createDatosPoliticaPanel = function() {
 		var esPropuesta = rec.get('esPropuesta');		
 		var esPropuestaSuperusuario = rec.get('esPropuestaSuperusuario');		
 		
-		//Si est√° vigente y es gestor de objetivos o, est√° propuesta y es gestor / supervisor del expediente
+		//Si est· vigente y es gestor de objetivos o, est· propuesta y es gestor / supervisor del expediente
 		if ((esVigente && esGestorObjetivos) 
 			|| (esPropuesta && (esGestorExpediente || esSupervisorExpediente)) 
 			|| (esPropuestaSuperusuario && isSuperusuario))
@@ -150,7 +150,7 @@ var createDatosPoliticaPanel = function() {
 
 
     var panelPolitica = new Ext.Panel({
-        title : '<s:message code="politica.datosPolitica" text="**Datos de una pol√≠tica" />'
+        title : '<s:message code="politica.datosPolitica" text="**Datos de una polÌtica" />'
         ,layout:'table'
         ,layoutConfig : {
             columns:6
@@ -186,7 +186,7 @@ var createDatosPoliticaPanel = function() {
                     hideLabel:true
                     ,height:20
                     ,style:'font-weight:bolder'
-                    ,value:'<s:message code="politica.politica" text="**Pol√≠tica" />'
+                    ,value:'<s:message code="politica.politica" text="**PolÌtica" />'
                 })
                  ]
     });
@@ -262,13 +262,14 @@ var setearDatos = function(data) {
 
 		//Seleccionamos un panel para cargar datos
 		var panel = null;
-      var panelEstado = {
-         estadoPrepolitica : pPrePolitica
-         ,estadoCE : pCEPolitica
-         ,estadoRE : pREPolitica
-         ,estadoDC : pDCPolitica
-         ,estadoVigente : pVigentePolitica
-      }
+      
+      var panelEstado = [];
+      panelEstado[estadoPrepolitica] = pPrePolitica;
+      panelEstado[estadoCE] = pCEPolitica;
+      panelEstado[estadoRE] = pREPolitica;
+      panelEstado[estadoDC] = pDCPolitica;
+      panelEstado[estadoVigente] = pVigentePolitica;
+     
       panel = panelEstado[politica.estado];
 		
 		setearPanel(panel, politica);

@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
-import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
 import es.capgemini.pfs.diccionarios.comparator.DictionaryComparatorFactory;
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.direccion.api.DireccionApi;
 import es.capgemini.pfs.direccion.dto.DireccionAltaDto;
 import es.capgemini.pfs.direccion.model.DDProvincia;
@@ -29,8 +29,6 @@ import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Direccion;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
 import es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi;
 import es.pfsgroup.plugin.precontencioso.burofax.dto.BurofaxDTO;
@@ -580,7 +578,8 @@ public class BurofaxController {
 		if(!Checks.esNulo(burofaxEnvio) && !Checks.esNulo(burofaxEnvio.getContenido())){
 			EnvioBurofaxPCO envioBurofax = burofaxManager.getEnvioBurofaxById(idEnvio);
 			if(!Checks.esNulo(envioBurofax)){
-				FileItem fileitem = burofaxManager.generarDocumentoBurofax(envioBurofax);
+				
+				FileItem fileitem = burofaxManager.generarBurofaxPDF(envioBurofax, burofaxEnvio.getNombreFichero());
 				fileitem.setContentType("application/pdf");
 				if(!Checks.esNulo(burofaxEnvio.getNombreFichero())){
 					fileitem.setFileName(burofaxEnvio.getNombreFichero());
@@ -589,6 +588,7 @@ public class BurofaxController {
 					fileitem.setFileName("BUROFAX-"+burofaxEnvio.getCliente().replace(",","").trim()+".pdf");
 				}
 				model.put("fileItem", fileitem);
+			
 			}
 		}
 

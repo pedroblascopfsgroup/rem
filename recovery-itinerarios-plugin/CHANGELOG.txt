@@ -1,0 +1,3 @@
+***** 1.2.1 ********
+- Corregida la visualización de los itinerarios en caso de no tener los tres estados por defecto del itinerario. (Completar Exp., Revisar Exp.,Decisión comite)
+

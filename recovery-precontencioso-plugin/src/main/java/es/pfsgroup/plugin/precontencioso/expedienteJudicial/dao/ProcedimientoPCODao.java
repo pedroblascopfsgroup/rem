@@ -4,8 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import es.capgemini.pfs.dao.AbstractDao;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
-import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.ProcedimientoPcoGridDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 
 public interface ProcedimientoPCODao extends AbstractDao<ProcedimientoPCO, Long> {
@@ -46,6 +47,15 @@ public interface ProcedimientoPCODao extends AbstractDao<ProcedimientoPCO, Long>
 	 * @return Listado de códigos de tipo de gestor que cumplen dicho filtro.
 	 */
 	List<String> getTiposGestoresAsunto(Long idAsunto);
+	
+	/**
+	 * Busqueda las tareas precedentes
+	 * @param idProcedimiento
+	 * @param precedentes
+	 * @param order
+	 * @return Listado de TareaExterna
+	 */
+	List<TareaExterna> getTareasPrecedentes(Long idProcedimiento, List<TareaProcedimiento> precedentes, String order);
 
 	/**
 	 * Devuelve el numero de resultados que va a devolver la consulta con el filtro enviado por parametro

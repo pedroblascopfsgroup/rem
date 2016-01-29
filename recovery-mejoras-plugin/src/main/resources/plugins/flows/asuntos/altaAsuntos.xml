@@ -6,10 +6,12 @@
 	<var name="EXTdtoAsunto" class="es.pfsgroup.recovery.ext.impl.asunto.dto.EXTDtoAsunto"/> 
 	
 	<input name="idExpediente" type="java.lang.Long"/>
+	<input name="codigoEstadoAsunto" type="java.lang.String"/>
 	 	 
 	<view-state id="formulario" view="${view}">
     	<on-entry>
-     		<evaluate expression="requestParameters.idExpediente" result="flowScope.idExpediente"></evaluate>
+     		<evaluate expression="requestParameters.idExpediente" result="idExpediente"></evaluate>
+     		<evaluate expression="requestParameters.codigoEstadoAsunto" result="codigoEstadoAsunto"></evaluate>
             <evaluate expression="executor.execute('expedienteManager.getExpediente', idExpediente)" result="flowScope.expediente"></evaluate>
     		<evaluate expression="executor.execute('despachoExternoManager.getDespachosExternos')" result="flowScope.despachos" />
 			<evaluate expression="executor.execute('zonaManager.getAllNiveles')" result="flowScope.niveles" />

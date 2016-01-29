@@ -453,6 +453,18 @@
 			</exclusions>
 		</dependency>
 		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-arquetipos-plugin</artifactId>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
 			<groupId>es.pfs</groupId>
 			<artifactId>pfs-rec-core</artifactId>
 			<type>jar</type>
@@ -563,6 +575,17 @@
 			<version>${devon.version.web}</version>
 			<scope>compile</scope>
 		</dependency>
+		<!--<dependency>
+			<groupId>es.pfsgroup.devon</groupId>
+			<artifactId>devon-web</artifactId>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>-->
 		<dependency>
 			<groupId>es.pfsgroup.recovery.devon.v1</groupId>
 			<artifactId>devon-webflow</artifactId>
@@ -1397,11 +1420,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<!-- Fin provided -->
-        <dependency>
-            <groupId>es.pfsgroup.plugin</groupId>
-            <artifactId>recovery-bi-plugin</artifactId>
-            <scope>compile</scope>
-        </dependency>
 	</dependencies>
 	<build>
 		<finalName>pfs-${project.version}</finalName>
@@ -1581,6 +1599,11 @@
 					<scope>compile</scope>
 				</dependency>
 				<!-- Fin versión de AspectJ -->
+				<dependency>
+            		<groupId>es.pfsgroup.plugin</groupId>
+            		<artifactId>recovery-bi-plugin</artifactId>
+            		<scope>compile</scope>
+        		</dependency>
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>proyecto-bankia-online</artifactId>
@@ -1791,6 +1814,11 @@
 					<scope>compile</scope>
 				</dependency>
 				<!-- Fin versión de AspectJ -->
+				<dependency>
+            		<groupId>es.pfsgroup.plugin</groupId>
+            		<artifactId>recovery-bi-plugin</artifactId>
+            		<scope>compile</scope>
+        		</dependency>
 			</dependencies>
 			<build>
 				<resources>
@@ -1846,6 +1874,11 @@
 					<scope>compile</scope>
 				</dependency>
 				<!-- Fin versión de AspectJ -->
+				<dependency>
+            		<groupId>es.pfsgroup.plugin</groupId>
+            		<artifactId>recovery-bi-plugin</artifactId>
+            		<scope>compile</scope>
+        		</dependency>
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-integracionuvem-plugin</artifactId>
@@ -2043,8 +2076,27 @@
 				</dependency>
 				<!-- Fin versión de AspectJ -->
 				<dependency>
+            		<groupId>es.pfsgroup.plugin</groupId>
+            		<artifactId>recovery-bi-plugin</artifactId>
+            		<scope>compile</scope>
+        		</dependency>
+				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-procedimientos-bpmHaya</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>es.pfsgroup</groupId>
+							<artifactId>recovery-domain</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>proyecto-cajamar-hre-online</artifactId>
 					<exclusions>
 						<exclusion>
 							<groupId>es.pfsgroup</groupId>
@@ -2185,6 +2237,11 @@
 					<artifactId>spring-ldap-core</artifactId>
 					<version>1.3.0.RELEASE</version>
 				</dependency>
+				<dependency>
+            		<groupId>es.pfsgroup.plugin</groupId>
+            		<artifactId>recovery-bi-plugin</artifactId>
+            		<scope>compile</scope>
+        		</dependency>
 			</dependencies>
 			<build>
 				<resources>
@@ -2244,6 +2301,21 @@
 				</dependency>
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>proyecto-cajamar-hre-online</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>es.pfsgroup</groupId>
+							<artifactId>recovery-domain</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<!-- PONER EN DELIVERY !!! -->
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>proyecto-cajamar-ws</artifactId>
 					<exclusions>
 						<exclusion>
@@ -2256,6 +2328,7 @@
 						</exclusion>
 					</exclusions>
 				</dependency>
+				<!-- FIN PONER EN DELIVERY !!! -->
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>proyecto-cajamar</artifactId>
@@ -2310,7 +2383,7 @@
                                     <directory>src/custom/cajamar/webapp/</directory>
                                     <includes>
                                         <include>login.jsp</include>
-                                        <include>img/cliente_logo.gif</include>
+                                        <include>img/cliente_logo.png</include>
                                     </includes>
                                     <filtering>true</filtering>
                                 </resource>

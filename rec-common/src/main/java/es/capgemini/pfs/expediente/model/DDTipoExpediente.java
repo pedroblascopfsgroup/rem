@@ -36,6 +36,8 @@ public class DDTipoExpediente implements Auditable, Dictionary{
 	
 	public static final String TIPO_EXPEDIENTE_INTERNO = "INT";
 	public static final String TIPO_EXPEDIENTE_RECOBRO = "REC";
+	public static final String TIPO_EXPEDIENTE_RECUPERACION = "RECU";
+	public static final String TIPO_EXPEDIENTE_SEGUIMIENTO = "SEG";
 
 	@Id
 	 @Column(name = "DD_TPX_ID")

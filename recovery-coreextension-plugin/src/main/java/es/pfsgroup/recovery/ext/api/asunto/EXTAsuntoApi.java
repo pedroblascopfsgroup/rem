@@ -4,12 +4,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJFinalizarAsuntoDto;
@@ -18,6 +20,7 @@ import es.pfsgroup.recovery.ext.impl.asunto.dto.EXTDtoBusquedaAsunto;
 public interface EXTAsuntoApi  {
 
 	public static final String EXT_MGR_ASUNTO_GET_GESTORES = "es.pfsgroup.recovery.ext.api.asunto.getGestoresAsuto";
+	public static final String EXT_MGR_ASUNTO_GET_GESTORES_ADICIONALES_ASUNTO = "es.pfsgroup.recovery.ext.api.asunto.getGestoresAdicionalesAsunto";
 	public static final String EXT_MGR_ASUNTO_GET_USUARIOS_RELACIONADOS = "es.pfsgroup.recovery.ext.api.asunto.getUsuariosAsociados";
 	public static final String EXT_MGR_ASUNTO_GET_SUPERVISORES = "es.pfsgroup.recovery.ext.api.asunto.getSupervisoresAsunto";
 	public static final String EXT_MGR_ASUNTO_MODELO_MULTI_GESTOR = "es.pfsgroup.recovery.ext.api.asunto.modeloMultiGestor";
@@ -110,6 +113,10 @@ public interface EXTAsuntoApi  {
     */
 	@BusinessOperationDefinition(EXT_BO_MSG_ERROR_ENVIO_CDD_ASUNTO)
 	public String getMsgErrorEnvioCDDCabecera(Long idAsunto);
+
+
+	@BusinessOperationDefinition(EXT_MGR_ASUNTO_GET_GESTORES_ADICIONALES_ASUNTO)
+	List<EXTGestorAdicionalAsunto> getGestoresAdicionalesAsunto(Long idAsunto);
 	
 	/**
 	 * Finaliza un asunto.

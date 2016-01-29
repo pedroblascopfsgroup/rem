@@ -67,6 +67,17 @@ public class ADMPerfilManager {
 		EventFactory.onMethodStart(this.getClass());
 		return perfilDao.getList();
 	}
+	
+	/**
+	 * Devuelve todos los perfiles.
+	 * 
+	 * @return
+	 */
+	@BusinessOperation("ADMPerfilManager.buscaPerfilesNoBorrados")
+	public List<EXTPerfil> buscaPerfilesNoBorrados() {
+		EventFactory.onMethodStart(this.getClass());
+		return perfilDao.getListUndeleted();
+	}	
 
 	/**
 	 * Busca perfiles seg�n los criterios definidos en el DTO

@@ -267,7 +267,7 @@
 	var historicoCm = new Ext.grid.ColumnModel([
 		{dataIndex : 'idEntidad', fixed:true, hidden:true}
 		,{dataIndex : 'tipoEntidad', fixed:true, hidden:true}
-		,{header : '<s:message code="procedimiento.historico.grid.tareas" text="**tarea"/>', dataIndex : 'tarea', width:275}
+		,{header : '<s:message code="procedimiento.historico.grid.tareas" text="**tarea"/>', dataIndex : 'tarea', width:275, renderer: Ext.util.Format.htmlDecode}
 		,{header : '<s:message code="procedimiento.historico.grid.fechaInicio" text="**fecha inicio"/>', dataIndex : 'fechaInicio', width:65}
 		,{header : '<s:message code="procedimiento.historico.grid.fechaFin" text="**fecha fin"/>', dataIndex : 'fechaFin', width:65}
 		,{header : '<s:message code="procedimiento.historico.grid.fechaVencimiento" text="**fecha venc"/>', dataIndex : 'fechaVencimiento', width:65}

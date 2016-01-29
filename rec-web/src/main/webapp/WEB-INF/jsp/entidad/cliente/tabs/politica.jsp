@@ -52,8 +52,37 @@
       panel.getValue = function(){}
 
       panel.setValue = function(){
-         var data= entidad.get("data");
       
+      	//Limpiamos los paneles de políticas
+      	limpiarPanel(pPrePolitica);
+      	limpiarPanel(pCEPolitica);
+      	limpiarPanel(pREPolitica);
+      	limpiarPanel(pDCPolitica);
+      	limpiarPanel(pVigentePolitica);
+      	
+      	//Quitamos el borde de activo si lo hay
+      	 pDCPolitica.getEl().replaceClass('bordeActivo', 'bordeInactivo');
+        pCEPolitica.getEl().replaceClass('bordeActivo', 'bordeInactivo');
+        pREPolitica.getEl().replaceClass('bordeActivo', 'bordeInactivo');
+        pDCPolitica.getEl().replaceClass('bordeActivo', 'bordeInactivo');
+        pVigentePolitica.getEl().replaceClass('bordeActivo', 'bordeInactivo');
+      	
+      	//Reseteamos el grid de objetivos
+      	objetivosGrid.getStore().removeAll();
+      	
+      	//Deshabilitamos los botones
+    	btnPolModificar.disable();
+		btnPolVerAnalisis.disable();	
+    	btnPolMarcarVigente.disable();
+    	btnPolCancelarPropuesta.disable();
+    	btnNuevo.disable();
+    	btnModificar.disable();
+		btnBorrar.disable();
+		btnRechazar.disable();
+		btnProponerCumplimiento.disable();
+		btnJustificar.disable();
+      	
+         var data= entidad.get("data");
          entidad.cacheOrLoad(data, histPoliticaGrid.getStore(), { id : data.id} );
 //         entidadcacheOrLoad(data, objetivosGrid.getStore(), { idPolitica : data.id} );
       }

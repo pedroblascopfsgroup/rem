@@ -16,4 +16,6 @@ public interface EXTGestorAdicionalAsuntoDao extends
 	List<DespachoExterno> getTipoDespachoExternoList(long idUsuario);
 	List<EXTTipoGestorPropiedad> getTipoGestorPropiedadList(String codSta);
 
+	List<EXTGestorAdicionalAsunto> findGestorAdicionalesByAsunto(Long idAsunto);
+
 }

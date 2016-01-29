@@ -470,7 +470,7 @@ public class HojaExcel {
 	    WritableCellFormat cellFormatCabeceras = new WritableCellFormat(cellFontBold12);
 	    cellFormatCabeceras.setFont(cellFontBold10);
 	    cellFormatCabeceras.setAlignment(Alignment.CENTRE);
-	    cellFormatCabeceras.setBackground(Colour.PLUM2);
+	    cellFormatCabeceras.setBackground(Colour.GRAY_25);
 	    cellFormatCabeceras.setBorder(Border.ALL, BorderLineStyle.THIN);
 	    cellFormatCabeceras.setWrap(false);
 	    for (int i = 0; i < cabeceras.size(); i++) {

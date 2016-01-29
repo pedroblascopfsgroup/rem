@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<var name="request"
+		class="es.pfsgroup.plugin.recovery.liquidaciones.dto.LIQDtoReportRequest" />
+
+	<end-state id="reporteLiquidaciones" view="reportPDF/plugin/liquidaciones/liquidaciones">
+		<on-entry>
+			<evaluate expression="binder.bindAndValidate(flowRequestContext,request)" />
+			<evaluate
+				expression="executor.execute('plugin.liquidaciones.liquidacionesManager.createReport', request)"
+				result="flowScope.response" />
+			<evaluate expression="response.cabecera" result="flowScope.cabecera" />
+			<evaluate expression="response.cuerpo" result="flowScope.cuerpo" />
+		</on-entry>
+	</end-state>
+</flow>

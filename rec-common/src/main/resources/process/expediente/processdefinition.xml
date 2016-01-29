@@ -74,6 +74,7 @@
 		<transition to="GenerarNotificacion" name="GenerarNotificacion"></transition>
         <transition to="DecisionComiteAutomatica" name="DecisionComiteAutomatica"></transition>
 		<transition to="Fin Expediente" name="Fin"></transition>
+		<transition to="EnviarAFormalizar" name="EnviarAFormalizar"></transition>
 	</state>
 
 	<node name="DevolverRevision">
@@ -110,6 +111,7 @@
 		<transition to="DecisionComite" name="DecisionComite"></transition>
 		<transition to="EnviarARevision" name="EnviarARevision"></transition>
 		<transition to="EnviarAComite" name="EnviarAComite"></transition>
+		<transition to="FormalizarPropuesta" name="FormalizarPropuesta"></transition>
 	</node>
 
 	<node name="SolicitarProrrogaExtra">
@@ -127,6 +129,44 @@
 			<targetBean>decisionComiteAutomaticaActionHandler</targetBean>
 		</action>
 		<transition to="ExpedienteDecidido" name="TomarDecision"></transition>
+		<transition to="DecisionComite" name="DecisionComite"></transition>
+	</node>
+
+	<state name="FormalizarPropuesta">
+		<event type="node-enter">
+			<action name="FormalizarPropuestaAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>formalizarPropuestaActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="DevolverADecision" name="DevolverADecision"></transition>
+		<transition to="Fin Expediente" name="Fin"></transition>
+		<transition to="ExpedienteDecididoFP" name="ExpedienteDecididoFP"></transition>
+		<transition to="GenerarNotificacion" name="GenerarNotificacion"></transition>
+	</state>
+
+	<node name="EnviarAFormalizar">
+		<action name="EnviarAFormalizarAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>enviarAFormalizarActionHandler</targetBean>
+		</action>
+		<transition to="FormalizarPropuesta"></transition>
+	</node>
+
+	<node name="DevolverADecision">
+		<action name="DevolverADecisionAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>devolverADecisionActionHandler</targetBean>
+		</action>
+		<transition to="DecisionComite"></transition>
+	</node>
+
+	<node name="ExpedienteDecididoFP">
+		<action name="ExpedienteDecididoFPAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>expedienteDecididoActionHandler</targetBean>
+		</action>
+		<transition to="Fin Expediente"></transition>
 	</node>
 
 	<end-state name="Fin Expediente"></end-state>

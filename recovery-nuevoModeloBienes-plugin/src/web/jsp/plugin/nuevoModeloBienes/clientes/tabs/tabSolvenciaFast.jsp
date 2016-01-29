@@ -54,7 +54,7 @@
 		,style:'margin-left:5px; width:auto'
 		,width:'90%'
 		,maxLength:250
-		,name : 'observacionesRevisionSolvencia'
+		,name : 'observacionesSolvencia'
 		,value: ''
 	});
 
@@ -452,6 +452,9 @@
 			url : app.resolveFlow('clientes/solvenciaObservacionData')
 			,params : {id :getPersonaId()}
 		});
+		
+		
+		
 	};
 	panel.bienesGrid=app.crearGrid(bienesST,bienesCm,{
 		title:'<s:message code="menu.clientes.consultacliente.solvenciatab.bienes.title" text="**Bienes"/>'

@@ -9,7 +9,7 @@
         <json:object>
             <json:property name="id" value="${o.id}" />
             <json:property name="idPolitica" value="${o.politica.id}" />
-            <json:property name="padreId" value="${o.objetivoPadre.id}" />            
+            <%--<json:property name="padreId" value="${o.objetivoPadre.id}" />--%>            
             <json:property name="resumen" value="${o.resumen}" />
             <json:property name="observacion" value="${o.observacion}" />
             <json:property name="tipo" value="${o.tipoObjetivo.descripcion}" />
@@ -17,6 +17,10 @@
             <json:property name="estadoObjetivo" value="${o.estadoObjetivo.descripcion}" />
             <json:property name="estadoCumplimiento" value="${o.estadoCumplimiento.descripcion}" />
             <json:property name="justificacion" value="${o.justificacion}" />
+            <json:property name="fechaLimite">
+				<fwk:date value="${o.fechaLimite}" />
+			</json:property>
+<%--             <json:property name="fechaLimite" value="${o.fechaLimite}" /> --%>
 			<json:property name="estadoObjetivo" value="${o.estadoObjetivo.descripcion}" />
             <json:property name="estaPendiente" value="${o.estaPendiente}" />
             <json:property name="esRechazable" value="${o.definidoEstadoAnterior}" />

@@ -123,7 +123,6 @@
 				if (rec.get('id') == '' || rec.get('id') == null) listadoId += ' ';
 				else listadoId += rec.get('id');				
 
-				listadoId += rec.get('id');
 				listadoIdPersonas += '${idPersona}';
 				listadoIdParcelas += rec.get('idParcela');
 				listadoCodigoImpactos += rec.get('codImpacto');

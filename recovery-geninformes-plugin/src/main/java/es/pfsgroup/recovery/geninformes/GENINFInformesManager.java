@@ -919,6 +919,7 @@ public class GENINFInformesManager implements GENINFInformesApi {
 			resultado.setFile(fileSalidaTemporal);
 			
 		}catch(Throwable e){
+			System.out.println("generarEscritoConVariables: " + e);
 			throw e;
 		}finally{
 			if(!Checks.esNulo(out)){
@@ -1013,6 +1014,7 @@ public class GENINFInformesManager implements GENINFInformesApi {
             metadataCuerpo.addFieldAsTextStyling(CONTENIDO, SyntaxKind.Html);
     
             // Incluir el contenido de la cabecera
+            String formato = "<table width='60%' style='font-size:12px'>" + "<tr>" + "<td style='border:1px solid black'>" + contenidoParseadoFinal + "</td>" + "</tr>" + "</table>";
             context.put(CONTENIDO,cabecera + contenidoParseadoFinal);
 			
 			// Preparamos el fichero temporal

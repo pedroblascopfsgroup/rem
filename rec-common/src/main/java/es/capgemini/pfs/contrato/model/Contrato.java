@@ -29,6 +29,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
@@ -56,6 +57,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.utils.Describible;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.recovery.common.api.CommonProjectContext;
 
 /**
  * Entidad Contrato.
@@ -67,15 +69,17 @@ import es.pfsgroup.commons.utils.Checks;
 @Table(name = "CNT_CONTRATOS", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Contrato implements Serializable, Auditable, Comparable<Contrato>, Describible {
-
-    /**
+	
+	/**
      * serialVersionUID.
      */
     private static final long serialVersionUID = -8368485360179310334L;
 
 	private static Properties appProperties;
-    
-    @Id
+	
+	private static CommonProjectContext projectContext;
+	
+	@Id
     @Column(name = "CNT_ID")
     private Long id;
 
@@ -352,6 +356,11 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
   			+ APPConstants.NUM_EXTRA4 + "'))")
   	private String indicadorNominaPension;
   	
+  	@Formula("(select est.dd_eic_descripcion from ext_iac_info_add_contrato iac, dd_eic_estado_interno_entidad est where iac.cnt_id = cnt_id "
+  			+ "and iac.iac_value = est.dd_eic_codigo and iac.dd_ifc_id = (select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.CHAR_EXTRA10 + "'))")
+  	private String estadoEntidad;
+  	
   	/**@Formula("select acn.acn_num_reinciden from acn_anteced_contratos acn where acn.cnt_id = cnt_id")
   	private Integer contadorReincidencias;*/
   	
@@ -559,11 +568,17 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      */
     public String getCodigoContratoENTITY() {
         if (codigoContrato == null) {
-            String codEntidad = rellenaConCeros(4, codigoEntidad.toString());
-            String codOficina = rellenaConCeros(4, codigoOficina.toString());
-            String contrato = rellenaConCeros(10, nroContrato.toString());
+        	String contrato = rellenaConCeros(10, nroContrato.toString());
+        	
+        	String contratoSinEntidad = appProperties.getProperty(APPConstants.CNT_PROP_CONTRATO_SIN_ENTIDAD);        	
+        	if (Checks.esNulo(contratoSinEntidad)) {
+	            String codEntidad = rellenaConCeros(4, codigoEntidad.toString());
+	            String codOficina = rellenaConCeros(4, codigoOficina.toString());	            
 
-            return codEntidad + " " + codOficina + " " + contrato;
+	            return codEntidad + " " + codOficina + " " + contrato;
+        	} else {
+        		return contrato;
+        	}
         }
         return codigoContrato;
     }
@@ -653,15 +668,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
         return false;
     }
 
-    /**
-     * hashcode.
-     * @return hashcode
-     */
-    /*   @Override
-       public int hashCode() {
-           return this.getId().hashCode();
-       }
-    */
     /**
      * is vencido.
      *
@@ -803,39 +809,7 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
     public List<ContratoPersona> getContratoPersona() {
         return contratoPersona;
     }
-
-//    /**
-//     * Lista ordenada por tipo de intervencion y orden de la misma.
-//     * @return the contratoPersona
-//     */
-//    public List<ContratoPersona> getContratoPersonaOrdenado() {
-//        if (contratoPersona == null || contratoPersona.isEmpty()) { return contratoPersona; }
-//        SortedSet<ContratoPersona> cntPerSort = new TreeSet<ContratoPersona>(new Comparator<ContratoPersona>() {
-//
-//            @Override
-//            public int compare(ContratoPersona o1, ContratoPersona o2) {
-//                // Validaciones
-//                if (o1.getTipoIntervencion() == null) { return 1; }
-//                if (o2.getTipoIntervencion() == null) { return -1; }
-//                // Si es del mismo tipo de intervencion orderno por el orden
-//                if (o1.getTipoIntervencion().getCodigo().equals(o2.getTipoIntervencion().getCodigo())) { return o1.getOrden()
-//                        .compareTo(o2.getOrden()); }
-//                // Si el o1 es titular va primero
-//                if (o1.getTipoIntervencion().getTitular()) { return -1; }
-//                // Si el o2 es el titular o1 va después
-//                if (o2.getTipoIntervencion().getTitular()) { return 1; }
-//                // Si ninguno es titular ordena por codigo
-//                return o1.getTipoIntervencion().getCodigo().compareTo(o2.getTipoIntervencion().getCodigo());
-//            }
-//        });
-//
-//        cntPerSort.addAll(contratoPersona);
-//        // Lo transformo a lista para usarla en el jsp.
-//        List<ContratoPersona> lista = new ArrayList<ContratoPersona>();
-//        lista.addAll(cntPerSort);
-//        return lista;
-//    }
-
+    
     /**
      * @param contratoPersona
      *            the contratoPersona to set
@@ -928,73 +902,18 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
 
     
     public String getNroContratoFormat() {
+    	
     	if (nroContrato == null) {
     		return null;
     	}
-		String formato = appProperties.getProperty(APPConstants.CNT_PROP_FORMATO_CONTRATO);
-		String formatoSubstringStart = appProperties.getProperty(APPConstants.CNT_PROP_FORMAT_SUBST_INI);
-		String formatoSubstringEnd = appProperties.getProperty(APPConstants.CNT_PROP_FORMAT_SUBST_FIN);
-		if (formato == null || formatoSubstringStart==null || formatoSubstringEnd== null) {
-			return nroContrato;
-		}
-		
-    	
-    	return getCodigoFormat(nroContrato, formato, formatoSubstringStart, formatoSubstringEnd);
+    	else {
+    		if(projectContext != null && projectContext.getFormatoNroContrato() != null) {
+	    		return projectContext.getNroContratoFormateado(nroContrato);
+    		}
+    		else return nroContrato;
+    	}
     }
     
-    /**
-     * Devuelve el c�digo a�adiendo espacios seg�n el formato indicado 
-     * @param formato Se debe indicar los caracteres en los que habr� 
-     * espacio separados por ",".<br><br><u>Ejemplo: 5,5,17,15</u> <br>indicar� que el c�digo se compone de 42 d�gitos, 
-     * en caso de no alcanzar la longitud de 42 d�gitos se rellenar�n con ceros por la izquierda. <br><br> 
-     * Y el formato devuelto ser�a el siguiente:<br>
-     * 12345 12345 12345678901234567 123456789012345  
-     * @param formatoSubstringEnd hace un substring desde este caracter inicio, si es null será el primero
-     * @param formatoSubstringStart hasta este caracter fin, si es null será el último
-     * @return
-     */
-	private String getCodigoFormat(String codigo, String formato, String formatoSubstringStart, String formatoSubstringEnd) {
-    	
-    	if (codigo == null ) {
-    		return null;
-    	}
-    	String contratoSubstring= codigo;
-    	
-    	if (formatoSubstringStart!=null || formatoSubstringEnd!=null){
-    		if (formatoSubstringStart== null){
-    			formatoSubstringStart="0";
-    		} 
-    		if (formatoSubstringEnd==null){
-    			contratoSubstring = codigo.substring(Integer.parseInt(formatoSubstringStart));
-    		} else {
-    			contratoSubstring = codigo.substring(Integer.parseInt(formatoSubstringStart), Integer.parseInt(formatoSubstringEnd));
-    		} 
-    	}
-    	
-    	if (formato!= null){
-	    	String[] formatDigitos = formato.split(",");
-	    	int longitud = 0;
-	    	for (int i=0;i<formatDigitos.length;i++) {
-	    		longitud += Integer.parseInt(formatDigitos[i]);
-	    	}
-	    	
-	    	String nroContratoCompleto = rellenaConCeros(longitud, contratoSubstring);
-	    	String nroContratoFormat = "";
-	    	int digitoInicio = 0;
-	    	int digitoFinal = 0;
-	    	for (int i=0;i<formatDigitos.length;i++) {
-	    		if (i>0) {
-	    			nroContratoFormat += " ";
-	    		}
-	    		digitoFinal += Integer.parseInt(formatDigitos[i]);
-	    		nroContratoFormat += nroContratoCompleto.substring(digitoInicio, digitoFinal);
-	    		digitoInicio += Integer.parseInt(formatDigitos[i]);
-	    	}
-	    	return nroContratoFormat;
-    	} else {
-    		return contratoSubstring;
-    	}
-    }
     /**
      * @param nroContrato
      *            the nroContrato to set
@@ -1205,22 +1124,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
     public List<Procedimiento> getProcedimientos() {
         return getExpedienteContratoActivo().getProcedimientosActivos();
     }
-
-//    /**
-//     * Devuelve los asuntos activos del contrato.
-//     * @return una lista de asuntos activos
-//     */
-//    public List<Asunto> getAsuntosActivos() {
-//        List<Asunto> asuntos = new ArrayList<Asunto>();
-//        if (getExpedienteContratoActivo() != null) {
-//            for (Procedimiento p : getProcedimientos()) {
-//                if (!asuntos.contains(p.getAsunto())) {
-//                    asuntos.add(p.getAsunto());
-//                }
-//            }
-//        }
-//        return asuntos;
-//    }
 
     /**
      * @param procedimientos the procedimientos to set
@@ -1655,74 +1558,42 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
 			+ APPConstants.CNT_IAC_ESTADO_CONTRATO_ENTIDAD + "')))")
 	private String estadoContratoEntidad;
 	
-	/*
-	 * @Formula("(" + " select to_char(a.ENTIDAD, '0000') || ' ' ||" +
-	 * "         to_char(b.SUCURSAL, '0000') || ' ' ||" +
-	 * "       to_char(c.CUENTA, '0000000000')" + " from" +
-	 * "	  ( select iac_value as ENTIDAD" +
-	 * "		from ext_iac_info_add_contrato iac, ext_dd_ifc_info_contrato ifc" +
-	 * "		where iac.dd_ifc_id = ifc.dd_ifc_id" +
-	 * "		and ifc.dd_ifc_codigo = 'CODEXTRA1'" + "		and iac.cnt_id = cnt_id" +
-	 * "	  ) a," + "	  ( select iac_value as SUCURSAL" +
-	 * "		from ext_iac_info_add_contrato iac, ext_dd_ifc_info_contrato ifc" +
-	 * "		where iac.dd_ifc_id = ifc.dd_ifc_id" +
-	 * "		and ifc.dd_ifc_codigo = 'CODEXTRA2'" + "		and iac.cnt_id = cnt_id" +
-	 * "	  ) b," + "	  ( select iac_value as CUENTA" +
-	 * "		from ext_iac_info_add_contrato iac, ext_dd_ifc_info_contrato ifc" +
-	 * "		where iac.dd_ifc_id = ifc.dd_ifc_id" +
-	 * "		and ifc.dd_ifc_codigo = 'CODEXTRA3'" + "		and iac.cnt_id = cnt_id" +
-	 * "	  ) c" + ")") private String codigoContratoSQL;
-	 */
-
 //	@Override
 	public String getCodigoContrato() {
 		if (codigoContrato == null) {
 
-			//Si las propiedades est�n seteadas por la clase SpringContratoConfigurator las comprobamos
-			String formato = null;
-			String formatoSubstringStart=null;
-			String formatoSubstringEnd=null;
-			if (appProperties != null) {
-				formato = appProperties.getProperty(APPConstants.CNT_PROP_FORMATO_CONTRATO);
-				formatoSubstringStart = appProperties.getProperty(APPConstants.CNT_PROP_FORMAT_SUBST_INI);
-				formatoSubstringEnd = appProperties.getProperty(APPConstants.CNT_PROP_FORMAT_SUBST_FIN);
-			}
+			String contrato = (contratoOrigen == null) ? nroContrato : contratoOrigen;
 			
-			//Si tiene el formato creado es que est� usando el modelo V10 
-			// en el que el contrato est� todo persistido en el mismo campo 
-			if (formato != null || formatoSubstringStart !=null || formatoSubstringEnd !=null) {			
-				String contrato = (contratoOrigen == null) ? nroContrato : contratoOrigen;
-				return getCodigoFormat(contrato, formato, formatoSubstringStart, formatoSubstringEnd);
+			if(projectContext != null && projectContext.getFormatoNroContrato() != null) {
+				return projectContext.getNroContratoFormateado(contrato);
 			}
+			else {
 			
-			if (entidadOrigen==null
-					|| nuevoCodigoOficina==null
-					|| contratoOrigen==null) {
-				return this.getCodigoContratoENTITY();
-			} else {
-				String codEntidad = rellenaConCeros(4, entidadOrigen);
-				String codOficina = rellenaConCeros(4, nuevoCodigoOficina);
-				String contrato = rellenaConCeros(10, contratoOrigen);
-				codigoContrato = codEntidad + " " + codOficina + " " + contrato;
+				if (entidadOrigen==null
+						|| nuevoCodigoOficina==null
+						|| contratoOrigen==null) {
+					return this.getCodigoContratoENTITY();
+				} 
+				else {
+					String codEntidad = rellenaConCeros(4, entidadOrigen);
+					String codOficina = rellenaConCeros(4, nuevoCodigoOficina);
+					contrato = rellenaConCeros(10, contratoOrigen);
+					codigoContrato = codEntidad + " " + codOficina + " " + contrato;
+				}
 			}
 		}
 		return codigoContrato;
 	}
 
-	private String rellenaConCeros(int longitud, String nbr) {
-		StringBuffer s = new StringBuffer();
-		for (int i = 0; i < longitud - nbr.length(); i++) {
-			s.append("0");
-		}
-		
-		return s.toString() + nbr;
+	private String rellenaConCeros(int longitud, String nbr) 
+	{
+		return StringUtils.leftPad(nbr, longitud, "0");
 	}
 
 	public String getEntidadOrigen() {
 		return entidadOrigen;
 	}
 
-//	@Override
 	public List<Asunto> getAsuntosActivos() {
 		List<Asunto> asuntos = new ArrayList<Asunto>();
 		for (ExpedienteContrato exp : getListaExpedienteContratoActivo()) {
@@ -1735,12 +1606,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
 		}
 		return asuntos;
 	}
-
-//	@Override
-//	public ExpedienteContrato getExpedienteContratoActivo() {
-//		// TODO Auto-generated method stub
-//		return super.getExpedienteContratoActivo();
-//	}
 
 	public List<ExpedienteContrato> getListaExpedienteContratoActivo() {
 
@@ -1934,10 +1799,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
         return lista;
     }
 
-	/*
-	 * public String getCodigoContratoSQL() { return codigoContratoSQL; }
-	 */
-    
     /**
      * PBO: Introducido para soporte de Lindorff
      */
@@ -1987,33 +1848,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
 			codigoContratoParaguas=contratoParaguas.toString();
 		}
 		return codigoContratoParaguas;
-		// comento esto porque es un poco rallada, de momento muestro simplemente el contratoparaguas
-//		if (contratoParaguas==null) {
-//			return null;
-//		}
-			
-//		String codEntProp = rellenaConCeros(5, codEntidadPropietaria==null ? "" : codEntidadPropietaria);
-//		String codConPar = rellenaConCeros(22, contratoParaguas.toString());
-//		String numEspec = rellenaConCeros(15, condicionesEspeciales==null ? "" : condicionesEspeciales);
-//		
-//		String codigo = codEntProp + codConPar + numEspec;
-//		
-//		String formato = null;
-//		String formatoSubstringStart=null;
-//		String formatoSubstringEnd=null;
-//		if (appProperties != null) {
-//			formato = appProperties.getProperty(APPConstants.CNT_PROP_FORMATO_CONTRATO);
-//			formatoSubstringStart = appProperties.getProperty(APPConstants.CNT_PROP_FORMAT_SUBST_INI);
-//			formatoSubstringEnd = appProperties.getProperty(APPConstants.CNT_PROP_FORMAT_SUBST_FIN);
-//		}
-//		
-//		//Si tiene el formato creado es que est� usando el modelo V10 
-//		// en el que el contrato est� todo persistido en el mismo campo 
-//		if (formato != null || formatoSubstringStart !=null || formatoSubstringEnd !=null) {			
-//			return codigo;
-//		} else {
-//			return getCodigoFormat(codigo, formato, formatoSubstringStart, formatoSubstringEnd);
-//		}
 	}
 	
 
@@ -2170,6 +2004,11 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
 	public static void setAppProperties(final Properties p) {
 		appProperties = p;
 		
+	}	
+
+	public static void setProjectContext(final CommonProjectContext commonProjectContext) 
+	{
+		projectContext = commonProjectContext;
 	}
 
 	public DDMotivoRenumeracion getMotivoRenumeracion() {
@@ -2210,6 +2049,10 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
 		return indicadorNominaPension;
 	}
 
-	
+	@Basic(fetch=FetchType.LAZY)
+	public String getEstadoEntidad() {
+		return estadoEntidad;
+	}
+
 	
 }

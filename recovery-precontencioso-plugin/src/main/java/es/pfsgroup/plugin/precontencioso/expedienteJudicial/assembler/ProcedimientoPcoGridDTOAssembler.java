@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.assembler;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,7 +48,7 @@ public class ProcedimientoPcoGridDTOAssembler {
 			procedimientoGridDto.setTipoPreparacion(ObjectUtils.toString(procedimiento.get("tipoPreparacion")));
 			procedimientoGridDto.setFechaInicioPreparacion((Date) procedimiento.get("fechaInicioPreparacion"));
 			procedimientoGridDto.setDiasEnPreparacion((Integer) procedimiento.get("diasEnPreparacion"));
-			procedimientoGridDto.setTotalLiquidacion((Float) procedimiento.get("totalLiquidacion"));
+			procedimientoGridDto.setTotalLiquidacion((BigDecimal) procedimiento.get("totalLiquidacion"));
 			procedimientoGridDto.setFechaEnvioLetrado((Date) procedimiento.get("fechaEnvioLetrado"));
 			procedimientoGridDto.setAceptadoLetrado(Boolean.valueOf(ObjectUtils.toString(procedimiento.get("aceptadoLetrado"))));
 			procedimientoGridDto.setTodosDocumentos(Boolean.valueOf(ObjectUtils.toString(procedimiento.get("todosDocumentos"))));

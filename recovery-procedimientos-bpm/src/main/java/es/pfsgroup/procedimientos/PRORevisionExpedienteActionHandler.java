@@ -81,8 +81,9 @@ public class PRORevisionExpedienteActionHandler extends PROBaseActionHandler imp
 
             expedienteManager.setInstanteCambioEstadoExpediente(idExpediente);
             executionContext.setVariable(TAREA_ASOCIADA_RE, idTareaRE);
-            if (estadoRE.getAutomatico() != null && estadoRE.getAutomatico()) {
-                executionContext.setVariable(GENERAALERTA, Boolean.FALSE);
+            //Si venimos de "devolver a revisiÃ³n" se desactiva el avance automÃ¡tico en todos los casos.
+            if (!DEVOLVER_REVISION.equals(comeFrom) && estadoRE.getAutomatico() != null && estadoRE.getAutomatico()) {
+                executionContext.setVariable(GENERAALERTA, Boolean.TRUE);
                 executionContext.setVariable(WHERE_TO_GO, TRANSITION_ENVIARADECISIONCOMITE);
             } else {
                 executionContext.setVariable(GENERAALERTA, Boolean.TRUE);
@@ -93,7 +94,7 @@ public class PRORevisionExpedienteActionHandler extends PROBaseActionHandler imp
         }
 
         /**
-         * @deprecated Este trozo de código está deprecado, en fase 1 se usaba, ahora ya no
+         * @deprecated Este trozo de cï¿½digo estï¿½ deprecado, en fase 1 se usaba, ahora ya no
          */
         if (SOLICITAR_PRORROGA_EXTRA.equals(comeFrom)) {
             Long idTareaRE = (Long) executionContext.getVariable(TAREA_ASOCIADA_RE);
@@ -103,12 +104,12 @@ public class PRORevisionExpedienteActionHandler extends PROBaseActionHandler imp
             tarea.setFechaVenc(fechaPropuesta);
             notificacionManager.saveOrUpdate(tarea);
 
-            //Si el timer ya existía lo recalculamos
+            //Si el timer ya existï¿½a lo recalculamos
             Timer timer = BPMUtils.getTimer(executionContext.getJbpmContext(), executionContext.getProcessInstance(), TIMER_TAREA_RE);
             if (timer != null) {
                 jbpmUtils.recalculaTimer(executionContext.getProcessInstance().getId(), TIMER_TAREA_RE, fechaPropuesta);
             } else {
-                //Si el timer no existía lo creamos
+                //Si el timer no existï¿½a lo creamos
                 BPMUtils.createTimer(executionContext, TIMER_TAREA_RE, fechaPropuesta, GENERAR_NOTIFICACION);
             }
         }
@@ -128,7 +129,8 @@ public class PRORevisionExpedienteActionHandler extends PROBaseActionHandler imp
         if (fechaFin != null) { return fechaFin - now; }
         Long creacionExp = expedienteManager.getExpediente(idExpediente).getAuditoria().getFechaCrear().getTime();
         Long tiempoTranscurrido = now - creacionExp;
-        return plazo - tiempoTranscurrido;
+        Long tiempoRestante = plazo - tiempoTranscurrido;        
+        return (tiempoRestante<0) ? (24*60*60*1000L) : tiempoRestante;
     }
 
     /**

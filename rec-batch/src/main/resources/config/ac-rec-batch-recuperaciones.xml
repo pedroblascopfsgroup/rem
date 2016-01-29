@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:si="http://www.springframework.org/schema/integration"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd 
+                        http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd 
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+	default-merge="true" default-autowire="byName">
+
+	<!-- Sobreescribimos el batch.simpleJob para heredar de PFSStoppableSimpleJob en lugar de StoppableSimpleJob -->
+	<bean id="batch.simpleJob" class="es.capgemini.pfs.batch.PFSStoppableSimpleJob" abstract="true">
+		<property name="jobRepository" ref="batch.jobRepository" />
+		<property name="restartable" value="true" />
+	</bean>
+	
+	
+	<!-- Definimos el bean del arquetipado de recuperaciones -->
+	<bean id="procesoArquetipadoRecuperacionesHandler"	class="es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoArquetipadoRecuperacionesJobLauncher" scope="prototype">
+		 <property name="channel" value="procesoArquetipadoRecuperacionesChannel" /> 
+	</bean>
+	
+	<bean id="procesoArquetipadoRecuperacionesQueueSubscriptor" parent="batch.QueueSubscriptorByFolderGenerator">
+		<property name="channel" value="procesoArquetipadoRecuperacionesChannel" />
+		<property name="beanName" value="procesoArquetipadoRecuperacionesHandler" />
+		<property name="methodName" value="handle" />
+	</bean>
+
+	<!-- Definimos el bean de Creacion clientes de recuperaciones -->	
+	<bean id="procesoCreacionClientesRecuperacionesHandler"	class="es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoCreacionClientesRecuperacionesJobLauncher" scope="prototype">
+		 <property name="channel" value="procesoCreacionClientesRecuperacionesChannel" /> 
+	</bean>
+	
+	<bean id="procesoCreacionClientesRecuperacionesQueueSubscriptor" parent="batch.QueueSubscriptorByFolderGenerator">
+		<property name="channel" value="procesoCreacionClientesRecuperacionesChannel" />
+		<property name="beanName" value="procesoCreacionClientesRecuperacionesHandler" />
+		<property name="methodName" value="handle" />
+	</bean>
+	
+	<!-- Definimos el bean de Creacion expedientes de recuperaciones -->	
+	<bean id="procesoCreacionExpedientesRecuperacionesHandler"	class="es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoCreacionExpedientesRecuperacionesJobLauncher" scope="prototype">
+		 <property name="channel" value="procesoCreacionExpedientesRecuperacionesChannel" /> 
+	</bean>
+	
+	<bean id="procesoCreacionExpedientesRecuperacionesQueueSubscriptor" parent="batch.QueueSubscriptorByFolderGenerator">
+		<property name="channel" value="procesoCreacionExpedientesRecuperacionesChannel" />
+		<property name="beanName" value="procesoCreacionExpedientesRecuperacionesHandler" />
+		<property name="methodName" value="handle" />
+	</bean>
+	
+	<!-- Definimos el bean de Revisión clientes de recuperaciones -->	
+	<bean id="procesoRevisionClientesRecuperacionesHandler"	class="es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoRevisionClientesRecuperacionesJobLauncher" scope="prototype">
+		 <property name="channel" value="procesoRevisionClientesRecuperacionesChannel" /> 
+	</bean>
+	
+	<bean id="procesoRevisionClientesRecuperacionesQueueSubscriptor" parent="batch.QueueSubscriptorByFolderGenerator">
+		<property name="channel" value="procesoRevisionClientesRecuperacionesChannel" />
+		<property name="beanName" value="procesoRevisionClientesRecuperacionesHandler" />
+		<property name="methodName" value="handle" />
+	</bean>
+
+	<!-- Definimos el bean de Revisión Expedientes de recuperaciones -->	
+	<bean id="procesoRevisionExpedientesRecuperacionesHandler"	class="es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoRevisionExpedientesRecuperacionesJobLauncher" scope="prototype">
+		 <property name="channel" value="procesoRevisionExpedientesRecuperacionesChannel" /> 
+	</bean>
+	
+	<bean id="procesoRevisionExpedientesRecuperacionesQueueSubscriptor" parent="batch.QueueSubscriptorByFolderGenerator">
+		<property name="channel" value="procesoRevisionExpedientesRecuperacionesChannel" />
+		<property name="beanName" value="procesoRevisionExpedientesRecuperacionesHandler" />
+		<property name="methodName" value="handle" />
+	</bean>
+	
+	<!-- Definimos el bean de Historización Arquetipado de recuperaciones -->	
+	<bean id="procesoHistorizarArquetipadoRecuperacionesHandler"	class="es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoHistorizarArquetipadoRecuperacionesJobLauncher" scope="prototype">
+		 <property name="channel" value="procesoHistorizarArquetipadoRecuperacionesChannel" /> 
+	</bean>
+	
+	<bean id="procesoHistorizarArquetipadoRecuperacionesQueueSubscriptor" parent="batch.QueueSubscriptorByFolderGenerator">
+		<property name="channel" value="procesoHistorizarArquetipadoRecuperacionesChannel" />
+		<property name="beanName" value="procesoHistorizarArquetipadoRecuperacionesHandler" />
+		<property name="methodName" value="handle" />
+	</bean>
+	
+	
+ 	<bean id="securityDefaultUserId" class="java.lang.Long">
+        <constructor-arg value="1" />
+	</bean>
+  
+</beans>

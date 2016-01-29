@@ -80,4 +80,3 @@ echo ""
 ls config/tmp/batch/${cliente}/devon.properties
 ls config/tmp/web/${cliente}/devon.properties
 echo ""
-

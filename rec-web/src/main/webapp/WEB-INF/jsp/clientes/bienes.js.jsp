@@ -18,7 +18,6 @@
 		,value : '${bien.tipoBien.codigo}'
 	});
 
-		
 	var poblacion = app.creaText('bien.poblacion', '<s:message code="bienesCliente.poblacion" text="**Poblacion" />' , '${bien.poblacion}', {maxLength:50});
 	
 	var refCatastral = app.creaText('bien.referenciaCatastral', '<s:message code="bienesCliente.refcatastral" text="**Ref. catastral" />' , '<s:message text="${bien.referenciaCatastral}" javaScriptEscape="true" />', {maxLength:50,width:250});
@@ -36,7 +35,7 @@
 				, autocomplete: "off"
 			}
 			, maxLength:3
-			, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener más de 8 dígitos" arguments="3" />'
+			, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener mï¿½s de 8 dï¿½gitos" arguments="3" />'
 		}
 	);
 
@@ -62,7 +61,7 @@
 				, autocomplete: "off"
 			}
 			, maxLength:8
-			, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener más de 8 dígitos" arguments="8" />'
+			, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener mï¿½s de 8 dï¿½gitos" arguments="8" />'
 		}
 	);
 	var cargas = app.creaNumber(
@@ -76,7 +75,7 @@
 				, autocomplete: "off"
 			}
 			, maxLength:8
-			, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener más de 8 dígitos" arguments="8" />'
+			, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener mï¿½s de 8 dï¿½gitos" arguments="8" />'
 		}
 	);
 	var superficie = app.creaNumber(
@@ -91,7 +90,7 @@
 				, autocomplete: "off"
 			}
 			, maxLength:8
-			, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener más de 8 dígitos" arguments="8" />'
+			, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener mï¿½s de 8 dï¿½gitos" arguments="8" />'
 		}
 	);
 			
@@ -207,7 +206,7 @@
 	});
 
 	var desactivarCamposInmueble = function() {
-	//El cliente no quiere que se habiliten los campos. Los quiere siempre activos. Se comprobarán cuando de verdad se diferencien con un tipo los bienes/inmuebles
+	//El cliente no quiere que se habiliten los campos. Los quiere siempre activos. Se comprobarï¿½n cuando de verdad se diferencien con un tipo los bienes/inmuebles
 /*
 		if(tipo.getValue()==app.tipoBien.CODIGO_TIPOBIEN_PISO || tipo.getValue()==app.tipoBien.CODIGO_TIPOBIEN_FINCA) {
 			datosRegistrales.enable();

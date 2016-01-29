@@ -456,7 +456,58 @@
                             }
                         </value>                       
                     </property>
-                </bean>                                                                                                                                                                                                                                                                                                                  
+                </bean>     
+                 <!-- BATCH RECUPERACIONES -->
+                <bean parent="events.router.groovyStrategy">
+ 					<property name="script">
+                        <value>
+                            if (sourceChannel =~ /^procesoArquetipadoRecuperacionesChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/procesoArquetipadoRecuperacionesChannel/) 
+                                return matcher.replaceAll(/procesoRevisionExpedientesRecuperacionesChannel/) 
+                            }
+                        </value>                       
+                    </property>
+                </bean>      
+                <bean parent="events.router.groovyStrategy">
+ 					<property name="script">
+                        <value>
+                            if (sourceChannel =~ /^procesoRevisionExpedientesRecuperacionesChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/procesoRevisionExpedientesRecuperacionesChannel/) 
+                                return matcher.replaceAll(/procesoRevisionClientesRecuperacionesChannel/) 
+                            }
+                        </value>                       
+                    </property>
+                </bean>
+                <bean parent="events.router.groovyStrategy">
+ 					<property name="script">
+                        <value>
+                            if (sourceChannel =~ /^procesoRevisionClientesRecuperacionesChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/procesoRevisionClientesRecuperacionesChannel/) 
+                                return matcher.replaceAll(/procesoCreacionClientesRecuperacionesChannel/) 
+                            }
+                        </value>                       
+                    </property>
+                </bean>
+                <bean parent="events.router.groovyStrategy">
+ 					<property name="script">
+                        <value>
+                            if (sourceChannel =~ /^procesoCreacionClientesRecuperacionesChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/procesoCreacionClientesRecuperacionesChannel/) 
+                                return matcher.replaceAll(/procesoCreacionExpedientesRecuperacionesChannel/) 
+                            }
+                        </value>                       
+                    </property>
+                </bean>
+                 <bean parent="events.router.groovyStrategy">
+ 					<property name="script">
+                        <value>
+                            if (sourceChannel =~ /^procesoCreacionExpedientesRecuperacionesChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/procesoCreacionExpedientesRecuperacionesChannel/) 
+                                return matcher.replaceAll(/procesoHistorizarArquetipadoRecuperacionesChannel/) 
+                            }
+                        </value>                       
+                    </property>
+                </bean>
             </list>
         </property>
     </bean>

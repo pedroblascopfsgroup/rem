@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+	default-autowire="byName" default-merge="true">
+
+	<bean id="procesoRevisionClientesRecuperacionesJob" parent="batch.simpleJob"
+		scope="prototype">
+		<property name="steps">
+			<list>
+				<bean parent="batch.taskletStep" scope="prototype">
+					<property name="tasklet">
+						<bean parent="batch.task.MultipleSqlScript" p:dataSource-ref="entityDataSource">
+							<property name="scripts">
+								<!-- Lista de scripts SQL ha ejecutar -->
+								<list>									
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.limpiarTMPCliPerArq.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.limpiarTMPCliPerArq" />
+										<entry key="severidad" value="error" />
+									</map>		
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.marcarCliPerArq.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.marcarCliPerArq" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.limpiarTMPCliACancelar.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.limpiarTMPCliACancelar" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.marcarClientesSinGestion.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.marcarClientesSinGestion" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.asignarNuevosArquetipos.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.asignarNuevosArquetipos" />
+										<entry key="severidad" value="error" />
+									</map>
+									<!-- Estas dos sqls se mueven al job de creación de clientes para que ordene correctamente
+									los estados de itinerario del cliente y así sólo se hará una vez -->
+									<!-- 
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.carenciaToGestionVencidos.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.carenciaToGestionVencidos" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.gestionVencidosToCarencia.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.gestionVencidosToCarencia" />
+										<entry key="severidad" value="error" />
+									</map>
+									 -->
+									
+									
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.limpiarTMPMovRevisados.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.limpiarTMPMovRevisados" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.informarContratosReducidos.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.informarContratosReducidos" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.antecedentes.incrementar.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.antecedentes.incrementar" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.antecedentes.actualizar.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.antecedentes.actualizar" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.revisarContratosPase.cancelados.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.revisarContratosPase.cancelados" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.revisarContratosPase.saldados.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.revisarContratosPase.saldados" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.insertarNuevosContratosCliente.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.insertarNuevosContratosCliente" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.eliminarCliConCntsEnExp.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.eliminarCliConCntsEnExp" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.cancelarClientes.borrarContratos.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.cancelarClientes.borrarContratos" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.cancelarClientes.borrarClientes.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.cancelarClientes.borrarClientes" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.cancelarContratos.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.cancelarContratos" />
+										<entry key="severidad" value="error" />
+									</map>
+				
+																
+								</list>
+							</property>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+
+
+</beans>

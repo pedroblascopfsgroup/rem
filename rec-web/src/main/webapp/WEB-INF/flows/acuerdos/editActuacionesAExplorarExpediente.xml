@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <var name="dto" class="es.pfsgroup.recovery.ext.impl.acuerdo.dto.DTOActuacionesExplorarExpediente" />
+    
+    <input name="idExpediente" type="java.lang.Long" />
+    <input name="idActuacion" type="java.lang.Long" />
+    <input name="codSubtipoSolucion" type="java.lang.String" />
+
+	<decision-state id="newOrEdit">
+		<if test="idActuacion!=null" then="buscar" else="formulario" />
+	</decision-state>
+
+	<action-state id="buscar">
+			<evaluate expression="executor.execute('propuestaApi.getActuacionExplorarExpediente', idActuacion)" result="flowScope.actuaciones" />
+			<transition to="formulario" />
+	</action-state>
+
+    <view-state id="formulario" view="${view}" model="dto">
+        <binder>
+    		<binding property="ddSubtipoSolucionAmistosaAcuerdo" />
+    		<binding property="ddValoracionActuacionAmistosa" />
+    		<binding property="observaciones" />
+    		<binding property="idActuacion" />
+    		<binding property="idExpediente" />
+    	</binder>
+        <on-entry>
+            <set name="flowScope.view" value="'acuerdos/editActuacionesAExplorarExpediente.js'" />
+        </on-entry>
+        <on-render>
+            <set name="flowScope.view" value="'default'" />
+			<evaluate expression="executor.execute('expedienteManager.getExpediente', idExpediente)" result="flowScope.expediente" />
+            <evaluate expression="executor.execute('dictionaryManager.getByCodeClassName', 'es.capgemini.pfs.acuerdo.model.DDSubtipoSolucionAmistosaAcuerdo', codSubtipoSolucion)" result="flashScope.subtipoSolucionAmistosa"/>
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDValoracionActuacionAmistosa')" result="flashScope.tiposValoracionActuacionAmistosa"/>
+        </on-render>
+      	<transition on="update" to="update" />
+       	<transition on="cancel" to="close" bind="false" />
+    </view-state>
+    
+    <action-state id="update">
+		<evaluate expression="executor.execute('propuestaApi.saveActuacionesExplorarExpediente', dto)" />
+        <transition to="close" />
+    </action-state>
+    
+    <end-state id="close" view="default" />
+
+</flow>

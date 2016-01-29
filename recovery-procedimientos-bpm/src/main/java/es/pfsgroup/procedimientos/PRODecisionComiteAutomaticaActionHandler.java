@@ -77,13 +77,14 @@ public class PRODecisionComiteAutomaticaActionHandler extends PROBaseActionHandl
 		Expediente expediente = expedienteManager.getExpediente(idExpediente);
 		if (expediente == null) {
 			logger.warn("EXPEDIENTE NO ENCONTRADO [" + idExpediente
-					+ "]: no se va a tomar la decisión automática");
+					+ "]: no se va a tomar la decisiÃ³n automÃ¡tica");
+			executionContext.getProcessInstance().signal(DECISION_COMITE);
 			return;
 		}
 		if (DDEstadoExpediente.ESTADO_EXPEDIENTE_CANCELADO.equals(expediente
 				.getEstadoExpediente().getCodigo())) {
 			logger.warn("EXPEDIENTE CANCELADO [" + idExpediente
-					+ "]: no se va a tomar la decisión automática");
+					+ "]: no se va a tomar la decisiÃ³n automÃ¡tica");
 			return;
 		}
 

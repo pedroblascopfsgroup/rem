@@ -31,6 +31,7 @@ public class HistoricoProcedimiento implements Serializable {
     private String nombreTarea;
     private Date fechaRegistro;
     private Date fechaIni;
+    private String fechaInicio;
     private Date fechaVencimiento;
     private Date fechaFin;
     private String nombreUsuario;
@@ -174,5 +175,13 @@ public class HistoricoProcedimiento implements Serializable {
     public void setNombreUsuario(String nombreUsuario) {
         this.nombreUsuario = nombreUsuario;
     }
+
+	public String getFechaInicio() {
+		return fechaInicio;
+	}
+
+	public void setFechaInicio(String fechaInicio) {
+		this.fechaInicio = fechaInicio;
+	}
 
 }

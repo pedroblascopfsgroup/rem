@@ -10,7 +10,7 @@
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
 	default-autowire="byName">
 	
-	<bean id="solicitarTasacionWS" class="es.pfsgroup.recovery.tasacion.SolicitarTasacionWS">
+	<bean id="solicitarTasacionWSCajamar" class="es.pfsgroup.recovery.cajamar.ws.SolicitarTasacionWS">
 		<property name="mapaTIMN">
 			<map>
 				<entry key="1" value="00"/>
@@ -95,4 +95,21 @@
 			</map>
 		</property>
 	</bean>
+
+	<!-- WS Consulta de saldos -->	
+	<bean id="consultaDeSaldosWSCajamar" class="es.pfsgroup.recovery.cajamar.ws.ConsultaDeSaldosWS">
+		<property name="configuracionServicios">
+			<map>			
+				<entry key="AV" value-ref="wsCSCuentaAV"/>
+				<entry key="CF" value-ref="wsCSCuentaCF"/>
+				<entry key="CR" value-ref="wsCSCuentaCR"/>
+				<entry key="FT" value-ref="wsCSCuentaFT"/>
+				<entry key="LS" value-ref="wsCSCuentaLS"/>
+				<entry key="PR" value-ref="wsCSCuentaPR"/>
+				<entry key="RF" value-ref="wsCSCuentaRF"/>
+				<!-- DESCUENTOS, TARJETAS y COMERCIO EXTERIOR NO ASIGNADAS TODAVÍA  -->
+			</map>
+		</property>
+	</bean>
+	
 </beans>	

@@ -101,6 +101,7 @@ public class CalculoFacturacionManagerImpl implements CalculoFacturacionManager 
 
 						//Generamos la excel de facturación para que sea inmediato cuando le dén descargar
 						recobroProcesosFacturacionManager.generarExcelProcesosFacturacion(recobroProcesoFacturacion.getId());
+						recobroProcesosFacturacionManager.generarExcelProcesosFacturacionReducido(recobroProcesoFacturacion.getId());
 						
 						recobroProcesosFacturacionManager.cambiaEstadoProcesoFacturacion(recobroProcesoFacturacion.getId(), RecobroDDEstadoProcesoFacturable.RCF_ESTADO_PROCESO_FACTURACION_PROCESADO);						
 					} catch (Exception e) {

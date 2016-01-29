@@ -114,6 +114,7 @@ public final class ComunBusinessOperation {
     public static final String BO_JBPM_MGR_DETERMINAR_BBDD = "JBPMProcessManager.determinarBBDD";
     public static final String BO_JBPM_MGR_CREA_O_RECALCULA_TIMER = "JBPMProcessManager.creaORecalculaTimer";
     public static final String BO_JBPM_MGR_DESTROY_PROCESS = "JBPMProcessManager.destroyProcess";
+    public static final String BO_JBPM_MGR_MANDAR_A_FIN_PROCESS = "JBPMProcessManager.mandarAFinProcess";
     public static final String BO_JBPM_MGR_GET_PROCESS_VARIABLES = "JBPMProcessManager.getProcessVariable";
     public static final String BO_JBPM_MGR_HAS_TRANSITION_TOKEN = "JBPMProcessManager.hasTransitionToken";
     public static final String BO_JBPM_MGR_OBTENER_FECHA_FIN_PROCESO = "JBPMProcessManager.obtenerFechaFinProceso";

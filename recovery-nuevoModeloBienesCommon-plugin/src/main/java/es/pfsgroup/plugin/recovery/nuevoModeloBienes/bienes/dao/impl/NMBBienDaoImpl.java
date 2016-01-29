@@ -56,14 +56,19 @@ public class NMBBienDaoImpl extends AbstractEntityDao<NMBBien, Long> implements 
         		dto.setSort(NAME_OF_ENTITY_NMB.concat(".").concat(dto.getSort()));    			
     		}
     	}
-    	return paginationManager.getHibernatePage(getHibernateTemplate(), generarHQLBuscarBienesPaginados(dto,usuLogado), dto);
+    	return paginationManager.getHibernatePage(getHibernateTemplate(), generarHQLBuscarBienesPaginados(dto,usuLogado, false), dto);
 	}
-
     
-	private String generarHQLBuscarBienesPaginados(NMBDtoBuscarBienes dto, Usuario usuLogado) {
+	private String generarHQLBuscarBienesPaginados(NMBDtoBuscarBienes dto, Usuario usuLogado, boolean export) {
         StringBuffer hql = new StringBuffer();
         
         hql.append(" SELECT distinct ".concat(NAME_OF_ENTITY_NMB));
+        if(export){
+        	hql.append(",".concat(NAME_OF_ENTITY_NMB).concat(".origen"));
+        	hql.append(",".concat(NAME_OF_ENTITY_NMB).concat(".tipoBien"));
+        	hql.append(",".concat(NAME_OF_ENTITY_NMB).concat(".informacionRegistral"));
+        	hql.append(",".concat(NAME_OF_ENTITY_NMB).concat(".localizaciones"));        	
+        }
         hql.append(" FROM  NMBBien ".concat(NAME_OF_ENTITY_NMB));
         
         if(!Checks.esNulo(dto.getPoblacion()) || !Checks.esNulo(dto.getCodPostal()) || !Checks.esNulo(dto.getDireccion()) || !Checks.esNulo(dto.getProvincia()) || !Checks.esNulo(dto.getLocalidad()) || !Checks.esNulo(dto.getCodigoPostal())) {
@@ -397,6 +402,24 @@ public class NMBBienDaoImpl extends AbstractEntityDao<NMBBien, Long> implements 
 		Query q = getSession().createQuery(sb.toString());	
 		listaBienes = q.list();
 		return listaBienes;
+	}
+
+
+	@Override
+	public Page buscarBienesExport(NMBDtoBuscarBienes dto, Usuario usuLogado) {
+		if (dto.getSort()!=null){
+    		if (dto.getSort().equals("poblacion")){
+    			dto.setSort("loc.localidad.descripcion");    			
+    		}else if (dto.getSort().equals("refCatastral")) {
+    			dto.setSort("infr.referenciaCatastralBien");
+    		} else if (dto.getSort().equals("superficie")) {
+    			dto.setSort("infr.superficie");
+    		} else {
+    			if (dto.getSort().equals("tipo")) dto.setSort("tipoBien.descripcion");
+        		dto.setSort(NAME_OF_ENTITY_NMB.concat(".").concat(dto.getSort()));    			
+    		}
+    	}
+    	return paginationManager.getHibernatePage(getHibernateTemplate(), generarHQLBuscarBienesPaginados(dto,usuLogado, true), dto);
 	}
 	
 }

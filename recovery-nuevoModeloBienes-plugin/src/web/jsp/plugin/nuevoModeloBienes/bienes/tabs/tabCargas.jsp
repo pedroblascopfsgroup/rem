@@ -167,6 +167,7 @@
 	       	}			
 		});
 
+	
 	var btnPropuestaCancelacion = new Ext.Button({
 	    text : '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCargas.btnPropuestaCancelacion" text="**Prop. de cancelación de cargas" />'
 		,iconCls : 'icon_pdf'
@@ -182,10 +183,12 @@
         title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCargas.cargasAnterioresGrid.titulo" text="**Cargas Anteriores"/>'
         ,style : 'margin-bottom:10px;padding-right:10px'
         ,iconCls : 'icon_contratos'
-        ,height : 220 
-        ,bbar : [<sec:authorize ifAllGranted="SOLVENCIA_EDITAR">
-        			btnNuevaCargaAnterior, btnEditarCargaAnterior, btnBorrarCargaAnterior,btnPropuestaCancelacion
-        		</sec:authorize>]		
+        ,height : 220
+        ,bbar : [<sec:authorize ifAllGranted="SOLVENCIA_EDITAR">btnNuevaCargaAnterior, btnEditarCargaAnterior, btnBorrarCargaAnterior</sec:authorize>] 
+        <sec:authorize ifAllGranted="MUESTRA_DOC_CANC_CARGAS">
+        ,bbar : [<sec:authorize ifAllGranted="SOLVENCIA_EDITAR">btnNuevaCargaAnterior, btnEditarCargaAnterior, btnBorrarCargaAnterior,btnPropuestaCancelacion</sec:authorize>]		
+        </sec:authorize>
+        
     });
 
 	cargasAnterioresGrid.on('rowclick',function(grid, rowIndex, e){

@@ -14,6 +14,8 @@
         ,allowBlank: false
         ,fieldLabel: '<s:message code="politica.tipoPolitica" text="**Tipo de política" />'
         ,value: '${dtoPolitica.politica.tipoPolitica.codigo}'
+        ,valueNotFoundText : '---'
+        ,validator : function(value) {return (value!=this.valueNotFoundText); }
     });
 
     var estadoField = new Ext.ux.form.StaticTextField({
@@ -22,17 +24,22 @@
         ,name : 'estado'
     });
 
-    var motivoField = new Ext.ux.form.StaticTextField({
-        fieldLabel : '<s:message code="politica.motivo" text="**Motivo" />'
-        ,value : '${dtoPolitica.politica.motivo.descripcion}'
-        ,name : 'motivo'
+
+    var motivoField = app.creaCombo({
+    	data:<app:dict value="${motivos}"/>
+    	,name : 'motivo'
+    	,allowBlanck: false
+    	,fieldLabel : '<s:message code="politica.motivo" text="**Motivo" />'
+    	,value : '${dtoPolitica.politica.motivo.codigo}'
     });
 
-    var fechaField = new Ext.ux.form.StaticTextField({
-        fieldLabel : '<s:message code="politica.fechaCreacion" text="**Fecha creación" />'
-        ,value : '<fwk:date value="${dtoPolitica.politica.auditoria.fechaCrear}"/>'
-        ,name : 'fecha'
-    });
+    
+    var fechaField = new Ext.ux.form.XDateField({ 
+ 		name : 'fecha'
+ 		,fieldLabel : '<s:message code="politica.fechaCreacion" text="**Fecha creación" />' 
+ 		,value : '<fwk:date value="${dtoPolitica.politica.auditoria.fechaCrear}"/>'
+ 		,width:100 
+ 	}); 
 
 	
 
@@ -73,9 +80,9 @@
 
     var recargarComboZonas = function(combo, store){
         if (combo.getValue()!=null && combo.getValue()!=''){
-            store.webflow({idPerfil:combo.getValue()});
+            store.webflow({codPerfil:combo.getValue()});
         }else{
-            store.webflow({idPerfil:0});
+            store.webflow({codPerfil:0});
         }
     };
 

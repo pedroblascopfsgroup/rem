@@ -55,7 +55,7 @@
 				idTipoGestor: comboTipoGestor.getValue(),
 				idAsunto: data.cabecera.asuntoId,
 				idUsuario: comboUsuario.getValue(),
-				idTipoDespacho: comboTipoDespacho.getValue()
+				idDespacho: comboTipoDespacho.getValue()
 			},
 			success: function(){}
 		})

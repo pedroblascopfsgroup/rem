@@ -67,7 +67,7 @@
    });  
    
    
-   <!--    Desactivamos el boton de proponer si esxisten acuerdos en conformacion, propuesto o aceptado -->
+   <%--    Desactivamos el boton de proponer si esxisten acuerdos en conformacion, propuesto o aceptado --%>
    acuerdosStore.on('load', function () {
    		var btnDisbled = false
 	    acuerdosStore.data.each(function() {
@@ -118,17 +118,17 @@
    }
 
   
-   <!-- entidad.cacheStore(acuerdosStore); -->
+   <%-- entidad.cacheStore(acuerdosStore); --%>
    
-<!--    var btnEditAcuerdo = new Ext.Button({ -->
+<%--    var btnEditAcuerdo = new Ext.Button({ --%>
 <%--        text:  '<s:message code="app.editar" text="**Editar" />' --%>
 <%--        <app:test id="EditAcuerdoBtn" addComa="true" /> --%>
-<!--        ,iconCls : 'icon_edit' -->
-<!--        ,cls: 'x-btn-text-icon' -->
-<!--        ,handler:function(){ -->
-<!--       		alert("Edit"); -->
-<!--      	} -->
-<!--    }); -->
+<%--        ,iconCls : 'icon_edit' --%>
+<%--        ,cls: 'x-btn-text-icon' --%>
+<%--        ,handler:function(){ --%>
+<%--       		alert("Edit"); --%>
+<%--      	} --%>
+<%--    }); --%>
  
    var cargarUltimoAcuerdo = function(){
    		analisisTab.remove(panelAnterior);
@@ -171,15 +171,15 @@
       		var w = app.openWindow({
 		          flow : 'editacuerdo/open'
 		          ,closable:false
-		          ,width : 750
+		          ,width : 580
 		          ,title : '<s:message code="mejoras.plugin.acuerdos.completaAcuerdo" text="**Cumplimiento acuerdo" />'
 		          ,params : {idAcuerdo:acuerdoSeleccionado}
 		       });
 		       w.on(app.event.DONE, function(){
-<!-- 		          acuerdosStore.on('load',despuesDeNuevoAcuerdo); -->
+<%-- 		          acuerdosStore.on('load',despuesDeNuevoAcuerdo); --%>
 		          	acuerdosStore.webflow({id:panel.getAsuntoId()});
 		          w.close();
-<!-- 		          cargarUltimoAcuerdo(); -->
+<%-- 		          cargarUltimoAcuerdo(); --%>
 		       });
 		       w.on(app.event.CANCEL, function(){ w.close(); });
      	}
@@ -205,7 +205,7 @@
 					var derivacionesConfig = Ext.util.JSON.decode(result.responseText);
 					
 					var tramiteRestrictivosinResolver = false;
-					<!-- Primero mostramos tramitres restrictivos que no permiten guardar -->
+					<%-- Primero mostramos tramitres restrictivos que no permiten guardar --%>
 					for (var i=0; i < derivacionesConfig.derivacionesTerminosAcuerdo.length; i++) {
 							if(derivacionesConfig.derivacionesTerminosAcuerdo[i].restrictivo){
 								tramiteRestrictivosinResolver = true;
@@ -213,7 +213,7 @@
 							}
 					}
 					
-					<!-- Si no tenemos tramites restrictivos sin resolver mostramos los posibles tramites sin resolver no restrictivos y abrimos la ventana -->
+					<%-- Si no tenemos tramites restrictivos sin resolver mostramos los posibles tramites sin resolver no restrictivos y abrimos la ventana --%>
 					if(!tramiteRestrictivosinResolver){
 					
 						for (var i=0; i < derivacionesConfig.derivacionesTerminosAcuerdo.length; i++) {
@@ -226,13 +226,13 @@
 						var w = app.openWindow({
 				       	   flow : 'mejacuerdo/openFinalizacionAcuerdo'
 				          ,closable:false
-				          ,width : 750
+				          ,width : 680
 				          ,title : '<s:message code="mejoras.plugin.acuerdos.finalizarAcuerdo" text="**Finalizar acuerdo" />'
 				          ,params : {idAcuerdo:acuerdoSeleccionado}
 				       	});
 				       	w.on(app.event.DONE, function(){
 				       	  btnRegistrarFinalizacionAcuerdo.setVisible(false);
-<!-- 				          acuerdosStore.on('load',despuesDeNuevoAcuerdo); -->
+<%-- 				          acuerdosStore.on('load',despuesDeNuevoAcuerdo); --%>
 				          acuerdosStore.webflow({id:panel.getAsuntoId()});
 				          w.close();
 				          cargarUltimoAcuerdo();
@@ -263,20 +263,38 @@
        
        		if (countTerminos > 0){
        		
-       		    deshabilitarBotones();
-	      	    page.webflow({
-	      			flow:"plugin/mejoras/acuerdos/plugin.mejoras.acuerdos.proponerAcuerdo"
-	      			,params:{
-	      				idAcuerdo:acuerdoSeleccionado
-	   				}
-	      			,success: function(){
-	           		 	acuerdosStore.on('load',despuesDeEvento);
-	           		 	acuerdosStore.webflow({id:panel.getAsuntoId()});
-	           		 	btnProponerAcuerdo.hide();
-	           		 	btnIncumplirAcuerdo.hide();
-	           		}	
-		      	});
-				habilitarBotones();	
+       		Ext.Ajax.request({
+				url: page.resolveUrl('mejacuerdo/tieneConfiguracionProponerAcuerdo')
+				,method: 'POST'
+				,success: function (result, request){
+					var respuesta = Ext.util.JSON.decode(result.responseText);
+					if(Boolean(respuesta.okko)){
+						deshabilitarBotones();
+			      	    page.webflow({
+			      			flow:"plugin/mejoras/acuerdos/plugin.mejoras.acuerdos.proponerAcuerdo"
+			      			,params:{
+			      				idAcuerdo:acuerdoSeleccionado
+			   				}
+			      			,success: function(){
+			           		 	acuerdosStore.on('load',despuesDeEvento);
+			           		 	acuerdosStore.webflow({id:panel.getAsuntoId()});
+			           		 	btnProponerAcuerdo.hide();
+			           		 	btnIncumplirAcuerdo.hide();
+			           		}
+			           		,error: function(){
+
+							}	
+				      	});
+						habilitarBotones();
+					}else{
+						Ext.Msg.alert('<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.warning" text="**Aviso" />', 
+	                    	       '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.termjinos.grid.warning.ProponerAcuerdoSinDespachoConfiguracion" text="**No es posible proponer el acuerdo, el usuario no pertenece a un despacho que permita proponer" />');
+					}
+				}
+				,error: function(){
+	
+				}       				
+			});	
 
 			}else{
 					Ext.Msg.alert('<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.warning" text="**Aviso" />', 
@@ -410,7 +428,7 @@
 	      				idAcuerdo:acuerdoSeleccionado
 	   				}
 	      			,success: function(){
-<!-- 	           		 	acuerdosStore.on('load',despuesDeEvento); -->
+<%-- 	           		 	acuerdosStore.on('load',despuesDeEvento); --%>
 	           		 	acuerdosStore.webflow({id:panel.getAsuntoId()});
 	           		 	btnAceptarAcuerdo.hide();
 	           		 	btnRechazarAcuerdo.hide();
@@ -436,31 +454,31 @@
        ,hidden:true      
 	});
 
-<!--     function processResult(opt, text){ -->
-<!--        if(opt == 'cancel'){ -->
-<!-- 	      //Nada -->
-<!-- 	   } -->
-<!-- 	   if(opt == 'ok'){ -->
-<!-- 	   	   deshabilitarBotones(); -->
-<!-- 	       page.webflow({ -->
-<!--       			flow:'mejacuerdo/rechazarAcuerdoMotivo' -->
-<!--       			,params:{ -->
-<!--       				idAcuerdo:acuerdoSeleccionado -->
-<!--       				,motivo: text -->
-<!--    				} -->
-<!--    				,success: function(){ -->
-<!-- 	   				acuerdosStore.on('load',despuesDeEvento); -->
-<!-- 		   		 	acuerdosStore.webflow({id:panel.getAsuntoId()}); -->
-<!-- 		   		 	btnAceptarAcuerdo.hide(); -->
-<!-- 		   		 	btnRechazarAcuerdo.hide(); -->
-<!-- 		   		 	btnCerrarAcuerdo.hide(); -->
-<!-- 		   		 	btnIncumplirAcuerdo.hide(); -->
-<!-- 		   		 	btnVigenteAcuerdo.hide(); -->
-<!--    		 		} -->
-<!-- 	      	});	 -->
-<!--       		habilitarBotones(); -->
-<!-- 	   } -->
-<!-- 	} -->
+<%--     function processResult(opt, text){ --%>
+<%--        if(opt == 'cancel'){ --%>
+<%-- 	      //Nada --%>
+<%-- 	   } --%>
+<%-- 	   if(opt == 'ok'){ --%>
+<%-- 	   	   deshabilitarBotones(); --%>
+<%-- 	       page.webflow({ --%>
+<%--       			flow:'mejacuerdo/rechazarAcuerdoMotivo' --%>
+<%--       			,params:{ --%>
+<%--       				idAcuerdo:acuerdoSeleccionado --%>
+<%--       				,motivo: text --%>
+<%--    				} --%>
+<%--    				,success: function(){ --%>
+<%-- 	   				acuerdosStore.on('load',despuesDeEvento); --%>
+<%-- 		   		 	acuerdosStore.webflow({id:panel.getAsuntoId()}); --%>
+<%-- 		   		 	btnAceptarAcuerdo.hide(); --%>
+<%-- 		   		 	btnRechazarAcuerdo.hide(); --%>
+<%-- 		   		 	btnCerrarAcuerdo.hide(); --%>
+<%-- 		   		 	btnIncumplirAcuerdo.hide(); --%>
+<%-- 		   		 	btnVigenteAcuerdo.hide(); --%>
+<%--    		 		} --%>
+<%-- 	      	});	 --%>
+<%--       		habilitarBotones(); --%>
+<%-- 	   } --%>
+<%-- 	} --%>
     
 	btnRechazarAcuerdo.on('click',function(){
 	
@@ -485,7 +503,7 @@
 		        	w.close();
 		       	});
 	
-<!-- 		  Ext.MessageBox.prompt('Motivo rechazo', 'Introduzca los motivos por los que rechaza el acuerdo:', processResult); -->
+<%-- 		  Ext.MessageBox.prompt('Motivo rechazo', 'Introduzca los motivos por los que rechaza el acuerdo:', processResult); --%>
        		
 	});
 	
@@ -629,6 +647,11 @@
 					
 				}
 				
+				var noPuedeEditarEstGest = true;
+				if(codigoEstado == app.codigoAcuerdoVigente && tipoDespachoLogado == tipoDespachoPropAcuerdo){
+					noPuedeEditarEstGest = false;
+				}
+				
 				panel.remove(acuerdosTabs);	
 				panel.remove(panelAnterior);
 				panel.remove(panelAnteriorTerminos);
@@ -660,7 +683,7 @@
 				    
 		
 				panelAnterior = recargarAcuerdo(idAcuerdo);
-				panelAnteriorTerminos = recargarAcuerdoTerminos(idAcuerdo,noPuedeModificar);
+				panelAnteriorTerminos = recargarAcuerdoTerminos(idAcuerdo,noPuedeModificar,noPuedeEditarEstGest);
 				
 				analisisTab.add(panelAnterior);
 				terminosTab.add(panelAnteriorTerminos);
@@ -735,11 +758,11 @@
 	};
 
 	
-	var recargarAcuerdoTerminos = function(idAcuerdo,noPuedeModificar){
+	var recargarAcuerdoTerminos = function(idAcuerdo,noPuedeModificar, noPuedeEditarEstadoGestion){
 		
 		<%@ include file="/WEB-INF/jsp/plugin/mejoras/acuerdos/detalleTerminos.jsp" %>
 
-		var panTerminos = crearTerminosAsuntos(noPuedeModificar);
+		var panTerminos = crearTerminosAsuntos(noPuedeModificar,false, noPuedeEditarEstadoGestion);
 
 		return panTerminos;
 		
@@ -789,10 +812,10 @@
 		}
 		 --%>
 		
-<!-- 		var esVisible = [ -->
-<!-- 			 [btnAltaAcuerdo, data.toolbar.esGestor || data.toolbar.esSupervisor] -->
-<!-- 			,[btnCumplimientoAcuerdo, data.toolbar.esGestor || data.toolbar.esSupervisor] -->
-<!-- 		]; -->
+<%-- 		var esVisible = [ --%>
+<%-- 			 [btnAltaAcuerdo, data.toolbar.esGestor || data.toolbar.esSupervisor] --%>
+<%-- 			,[btnCumplimientoAcuerdo, data.toolbar.esGestor || data.toolbar.esSupervisor] --%>
+<%-- 		]; --%>
 
 		//entidad.setVisible(esVisible);
 		//Por defecto establecemos el botón como no visible

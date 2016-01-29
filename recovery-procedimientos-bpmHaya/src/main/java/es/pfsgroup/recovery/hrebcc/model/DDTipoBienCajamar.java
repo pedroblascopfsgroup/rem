@@ -14,16 +14,16 @@ public class DDTipoBienCajamar implements Dictionary {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "DD_TBI_ID")
+    @Column(name = "DD_TBI_ID", insertable = false, updatable = false)
     private Long id;
 
-    @Column(name = "DD_TBI_CODIGO")
+    @Column(name = "DD_TBI_CODIGO", insertable = false, updatable = false)
     private String codigo;
 
-    @Column(name = "DD_TBI_DESCRIPCION")
+    @Column(name = "DD_TBI_DESCRIPCION", insertable = false, updatable = false)
     private String descripcion;
 
-    @Column(name = "DD_TBI_DESCRIPCION_LARGA")
+    @Column(name = "DD_TBI_DESCRIPCION_LARGA", insertable = false, updatable = false)
     private String descripcionLarga;
 
     /**

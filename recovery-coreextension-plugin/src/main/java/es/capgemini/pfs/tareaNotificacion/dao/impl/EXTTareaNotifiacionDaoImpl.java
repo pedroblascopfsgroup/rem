@@ -34,7 +34,7 @@ import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.commons.utils.Checks;
 
 /**
- * Implementación del dao de notificaciones para Hibenate.
+ * Implementaciï¿½n del dao de notificaciones para Hibenate.
  * 
  * @author pamuller
  * 
@@ -491,7 +491,7 @@ public class EXTTareaNotifiacionDaoImpl extends
 
 	/**
 	 * Mï¿½todo encargado de buscar todas las tareas para un id de una entidad
-	 * información determinada.
+	 * informaciï¿½n determinada.
 	 * 
 	 * @param dtoBuscarTareaNotificacion
 	 *            DtoBuscarTareaNotificacion
@@ -611,11 +611,11 @@ public class EXTTareaNotifiacionDaoImpl extends
 	}
 
 	/**
-	 * Devuelve la tarea de acuerdo a la solicitud de cancelación y el
+	 * Devuelve la tarea de acuerdo a la solicitud de cancelaciï¿½n y el
 	 * expediente.
 	 * 
 	 * @param idSol
-	 *            el id de la solicitud de cancelación
+	 *            el id de la solicitud de cancelaciï¿½n
 	 * @param idExp
 	 *            el id del expediente
 	 * @return la tarea o null si no existe.
@@ -807,14 +807,16 @@ public class EXTTareaNotifiacionDaoImpl extends
 			hql.append(" and tn.alerta = true ");
 		}
 
-		hql.append(" and ( ");
-		for (String zonCodigo : listadoZonas) {
-			hql.append(" tn.cliente.oficina.zona.codigo like '")
-					.append(zonCodigo).append("%' OR");
+		if (!Checks.estaVacio(listadoZonas)) {
+			hql.append(" and ( ");
+			for (String zonCodigo : listadoZonas) {
+				hql.append(" tn.cliente.oficina.zona.codigo like '")
+						.append(zonCodigo).append("%' OR");
+			}
+			hql.deleteCharAt(hql.length() - 1);
+			hql.deleteCharAt(hql.length() - 1);
+			hql.append(" ) ");
 		}
-		hql.deleteCharAt(hql.length() - 1);
-		hql.deleteCharAt(hql.length() - 1);
-		hql.append(" ) ");
 
 		hql.append(construyeFiltroPerfiles(dto, listadoPerfiles, params,
 				conCarterizacion, usuarioLogado, DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE,"tn.cliente.id"));
@@ -857,19 +859,21 @@ public class EXTTareaNotifiacionDaoImpl extends
 			// No se debe mostrar la tarea de DC, se accederï¿½ atraves del menu
 			// de comite.
 
-			// SE COMENTA DEBIDO QUE CON LA CREACIÓN MANUAL DE EXPEDIENTES
+			// SE COMENTA DEBIDO QUE CON LA CREACIï¿½N MANUAL DE EXPEDIENTES
 			// NECESITAMOS ESE TIPO DE TAREA
 			// hql.append(" and tn.subtipoTarea.codigoSubtarea != ").append(
 			// SubtipoTarea.CODIGO_DECISION_COMITE).append(" ");
 		}
-		hql.append(" and ( ");
-		for (String zonCodigo : listadoZonas) {
-			hql.append(" tn.expediente.oficina.zona.codigo like '")
-					.append(zonCodigo).append("%' OR");
+		if (!Checks.estaVacio(listadoZonas)) {
+			hql.append(" and ( ");
+			for (String zonCodigo : listadoZonas) {
+				hql.append(" tn.expediente.oficina.zona.codigo like '")
+						.append(zonCodigo).append("%' OR");
+			}
+			hql.deleteCharAt(hql.length() - 1);
+			hql.deleteCharAt(hql.length() - 1);
+			hql.append(" ) ");
 		}
-		hql.deleteCharAt(hql.length() - 1);
-		hql.deleteCharAt(hql.length() - 1);
-		hql.append(" ) ");
 
 		hql.append(construyeFiltroPerfiles(dto, listadoPerfiles, params,
 				conCarterizacion, usuarioLogado,
@@ -1130,16 +1134,20 @@ public class EXTTareaNotifiacionDaoImpl extends
 
 			// DESTINATARIO OFICINA
 			hql.append(" or ( tn.tipoDestinatario like '"
-					+ EXTTareaNotificacion.CODIGO_DESTINATARIO_OFICINA
-					+ "' and ( ");
+					+ EXTTareaNotificacion.CODIGO_DESTINATARIO_OFICINA + "' ");
+					
+			if (!Checks.estaVacio(listadoZonas)) {
+				hql.append(" and ( ");
 
-			for (String zonCodigo : listadoZonas) {
-				hql.append(" tn.asunto.expediente.oficina.zona.codigo like '")
+				for (String zonCodigo : listadoZonas) {
+					hql.append(" tn.asunto.expediente.oficina.zona.codigo like '")
 						.append(zonCodigo).append("%' OR");
+				}
+				hql.deleteCharAt(hql.length() - 1);
+				hql.deleteCharAt(hql.length() - 1);
+				hql.append(" ) ");
 			}
-			hql.deleteCharAt(hql.length() - 1);
-			hql.deleteCharAt(hql.length() - 1);
-			hql.append(" )) ");
+			hql.append(" ) ");
 
 			// params.put("destinatario", dto.getUsuarioLogado().getUsername());
 			params.put("destinatarioId", dto.getUsuarioLogado().getId());
@@ -1248,7 +1256,8 @@ public class EXTTareaNotifiacionDaoImpl extends
 			sb.append("'" + zona + "',");
 		}
 		String sListadoZonas = sb.toString();
-		sListadoZonas = sListadoZonas.substring(0, sListadoZonas.length() - 1);
+		if (sListadoZonas.length()>0)
+			sListadoZonas = sListadoZonas.substring(0, sListadoZonas.length() - 1);
 
 		// Perfiles y zonas de supervisor de objetivos
 		hql.append(construyeFiltroPerfilesObjetivos(dto, listadoPerfiles,
@@ -1301,9 +1310,9 @@ public class EXTTareaNotifiacionDaoImpl extends
 	 * @param dto
 	 *            dto
 	 * @param codigoTipoentidad
-	 *            Tipo de entidad de gestión que se está buscando
+	 *            Tipo de entidad de gestiï¿½n que se estï¿½ buscando
 	 * @param propertyIdUnidadGestion
-	 *            Expresión hql para obtener el ID de la Unidad de Gestión en la
+	 *            Expresiï¿½n hql para obtener el ID de la Unidad de Gestiï¿½n en la
 	 *            consulta padre
 	 * @return query
 	 */
@@ -1341,8 +1350,8 @@ public class EXTTareaNotifiacionDaoImpl extends
 
 		if (conCarterizacion) {
 			/*
-			 * Con estas líneas se busca una entidad entre las que el gestor
-			 * tiene en cartera, sólo si el perfil no es carterizado
+			 * Con estas lï¿½neas se busca una entidad entre las que el gestor
+			 * tiene en cartera, sï¿½lo si el perfil no es carterizado
 			 */
 
 			hql.append(" and (");
@@ -1350,7 +1359,7 @@ public class EXTTareaNotifiacionDaoImpl extends
 			// Si el perfil no es un EXTPerfil no se busca entre las entidades
 			// carterizadas
 			hql.append(" ((case when tn.subtipoTarea.gestor = true then est.gestorPerfil.class else est.supervisor.class end ) not in EXTPerfil)");
-			// Si el flag de esCarterizado del perfil está en 'false' tampoco se
+			// Si el flag de esCarterizado del perfil estï¿½ en 'false' tampoco se
 			// busca
 			hql.append(" or ((case when tn.subtipoTarea.gestor = true then est.gestorPerfil.esCarterizado else est.supervisor.esCarterizado end ) = false)");
 			// Buscamos entre las entidades que el usuario tenga carterizadas
@@ -1379,10 +1388,20 @@ public class EXTTareaNotifiacionDaoImpl extends
 			String sListadoZonas, HashMap<String, Object> params) {
 		StringBuilder hql = new StringBuilder();
 
-		String filtrosGestor = "pol.perfilGestor.codigo in (" + listadoPerfiles
-				+ ") and pol.zonaGestor.codigo in (" + sListadoZonas + ")";
-		String filtrosSupervisor = "pol.perfilSupervisor.codigo in ("
-				+ listadoPerfiles + ") and pol.zonaSupervisor.codigo in ("
+		String filtrosGestor = "";
+		if (!Checks.esNulo(listadoPerfiles))
+			filtrosGestor = "pol.perfilGestor.codigo in (" + listadoPerfiles + ") and ";
+		
+		if (!Checks.esNulo(sListadoZonas))
+			filtrosGestor += "pol.zonaGestor.codigo in (" + sListadoZonas + ")";
+		
+		String filtrosSupervisor = "";
+		if (!Checks.esNulo(listadoPerfiles))
+			filtrosSupervisor = "pol.perfilSupervisor.codigo in ("
+				+ listadoPerfiles + ") and ";
+		
+		if (!Checks.esNulo(sListadoZonas))
+				filtrosSupervisor += "pol.zonaSupervisor.codigo in ("
 				+ sListadoZonas + ")";
 
 		if (dto.getPerfiles() != null && dto.getPerfiles().size() > 0) {

@@ -34,6 +34,7 @@
 	</bean>
 	<bean id="entradaIntegracionAdapter" class="es.pfsgroup.recovery.integration.file.FileIntegrationAdapter">
 		<constructor-arg value="${integracion.input}/${integracion.consumer.cola}"/>
+		<property name="charset" value="UTF-8"/>
 	</bean>
 
 
@@ -44,7 +45,7 @@
 	<file:inbound-channel-adapter
 			auto-startup="${integracion.activa}"
 			filename-pattern=".+.msg"
-			channel="integra.salida.fichero.in" 
+			channel="integra.salida.fichero.in"
 			directory="${integracion.output}/${integracion.producer.cola}" >
 		<integration:poller>
 			<integration:interval-trigger 
@@ -111,9 +112,18 @@
 		output-channel="entradaCajamarJMSFichero" 
 		ref="entradaIntegracionAdapter"
 		method="transformMsg2file"/>
-	<file:outbound-channel-adapter
+	<integration:service-activator input-channel="entradaCajamarJMSFichero" output-channel="nullChannel" method="handleMessage">
+		<bean class="org.springframework.integration.file.FileWritingMessageHandler">
+			<constructor-arg value="${integracion.input}/${integracion.consumer.cola}"/>
+			<property name="charset" value="UTF-8"/>
+			<property name="outputChannel" ref="nullChannel"/>
+		</bean>
+	</integration:service-activator>
+		
+	<!-- file:outbound-channel-adapter
 			id="entradaCajamarJMSFichero"
-			directory="${integracion.input}/${integracion.consumer.cola}"/>
+			charset="UTF-8" 
+			directory="${integracion.input}/${integracion.consumer.cola}"/ -->
 
 	<file:inbound-channel-adapter
 		id="entradaDeCajamarFichero"
@@ -202,6 +212,16 @@
 						</bean>
 					</constructor-arg>
 					<property name="description" value="Finalzia un Asunto de forma remota"/>
+				</bean>
+				
+				<!-- Riesgo Operacional-->
+				<bean class="es.pfsgroup.recovery.haya.integration.bpm.consumer.RiesgoOperacionalConsumer">
+					<constructor-arg index="0">
+						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
+							<property name="tipo" value="DATOS_RIESGO_OPERACIONAL"/>
+						</bean>
+					</constructor-arg>
+					<property name="description" value="Carga los datos del riesgo operacional"/>
 				</bean>
 
 				<!-- Decisión de procedimiento -->

@@ -8,8 +8,9 @@
     
     <end-state id="listado" view="politica/verAnalisisPolitica">
         <on-entry>
-            <evaluate expression="executor.execute('analisisPoliticaManager.getAnalisisPoliticaHistorico', idPolitica)" result="flowScope.analisisPolitica" />
+            <evaluate expression="executor.execute('analisisPoliticaManager.getAnalisisPoliticaHistoricoByCmp', idPolitica)" result="flowScope.analisisPolitica" />
             <evaluate expression="executor.execute('personaManager.get', idPersona)" result="flowScope.persona" />
+            <evaluate expression="requestParameters.verAnalisis" result="flowScope.verAnalisis" />
 			<set name="flowScope.readOnly" value="true" />
         </on-entry>
     </end-state>

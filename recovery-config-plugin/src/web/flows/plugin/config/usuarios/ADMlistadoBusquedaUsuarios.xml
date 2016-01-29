@@ -11,7 +11,7 @@
 			<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
 			<evaluate expression="executor.execute('ADMDiccionariosManager.getSiNo')" result="flowScope.ddSiNo" />
 			<evaluate expression="executor.execute('ADMDespachoExternoManager.buscaDespachosExternos')" result="flowScope.despachos" />
-			<evaluate expression="executor.execute('ADMPerfilManager.buscaPerfiles')" result="flowScope.perfiles" />
+			<evaluate expression="executor.execute('ADMPerfilManager.buscaPerfilesNoBorrados')" result="flowScope.perfiles" />
 			<evaluate expression="executor.execute('plugin.config.web.usuarios.buttons.left')" result="flowScope.buttonsLeft"/>
 			<evaluate expression="executor.execute('plugin.config.web.usuarios.buttons.right')" result="flowScope.buttonsRight"/>
 	    </on-entry>

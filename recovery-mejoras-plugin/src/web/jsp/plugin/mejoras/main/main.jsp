@@ -33,16 +33,16 @@ if ((view != null) && (id != null)){
 	    <script type="text/javascript" src="../js/fwk/ext3.4.pfs.1/ext-all.js?devon_version=${appProperties.jsVersion}"></script>
 	</c:if>
 
-	<!-- traducción de ext -->
+	<%-- traducción de ext --%>
     <script type="text/javascript" src="../js/fwk/ext3.4/locale/ext-lang-es.js?devon_version=${appProperties.jsVersion}"></script>
 
-	<!-- extensiones -->
+	<%-- extensiones --%>
     <script type="text/javascript" src="../js/fwk/ext.ux/Toast.js?devon_version=${appProperties.jsVersion}"></script>
     <script type="text/javascript" src="../js/fwk/ext.ux/StaticTextField.js?devon_version=${appProperties.jsVersion}"></script>
     <script type="text/javascript" src="../js/fwk/ext.ux/Multiselect/DDView.js?devon_version=${appProperties.jsVersion}"></script>
     <script type="text/javascript" src="../js/fwk/ext.ux/Multiselect/Multiselect.js?devon_version=${appProperties.jsVersion}"></script>
     <script type="text/javascript" src="../js/fwk/ext.ux/Multiselect/ItemSelector.js?devon_version=${appProperties.jsVersion}"></script>
-    <!--  <script type="text/javascript" src="../js/fwk/ext.ux/XDateField.js?devon_version=${appProperties.jsVersion}"></script>  -->
+    <%--  <script type="text/javascript" src="../js/fwk/ext.ux/XDateField.js?devon_version=${appProperties.jsVersion}"></script>  --%>
     <script type="text/javascript" src="../js/plugin/mejoras/ux/XDateFieldJuniper.js?devon_version=${appProperties.jsVersion}"></script>
 	<link rel="stylesheet" type="text/css" href="../js/fwk/ext.ux/StaticTextField.css?devon_version=${appProperties.jsVersion}"/>
 	<link rel="stylesheet" type="text/css" href="../js/fwk/ext.ux/Multiselect/Multiselect.css?devon_version=${appProperties.jsVersion}"/>
@@ -58,7 +58,7 @@ if ((view != null) && (id != null)){
     <script type="text/javascript" src="../js/plugin/mejoras/ux/gridfilters/NumericFilter.js?devon_version=${appProperties.jsVersion}"></script>
     <script type="text/javascript" src="../js/plugin/mejoras/ux/gridfilters/BooleanFilter.js?devon_version=${appProperties.jsVersion}"></script>
     
-    <!-- framework -->
+    <%-- framework --%>
     <script type="text/javascript" src="../js/fwk/fwk.js.jsp?devon_version=${appProperties.jsVersion}"></script>
 	<c:if test="${appProperties.jsDebug}">
 		<link rel="stylesheet" type="text/css" href="../js/fwk/joe.css?devon_version=${appProperties.jsVersion}"/>
@@ -73,23 +73,23 @@ if ((view != null) && (id != null)){
     <script type="text/javascript" src="../js/fwk/ext.ux/FileUpload/locale.js.jsp"></script>
     <link rel="stylesheet" type="text/css" href="../js/fwk/ext.ux/FileUpload/css/fileuploadfield.css">
 
-	<!--  previsiones  -->
+	<%--  previsiones  --%>
 
 	<script type="text/javascript" src="../js/plugin/mejoras/ux/ColumnHeaderGroup.js?devon_version=${appProperties.jsVersion}"></script>
     <link rel="stylesheet" type="text/css" href="../js/plugin/mejoras/ux/ColumnHeaderGroup.css">
 
-	<!--  libreria de control de navegador  -->
+	<%--  libreria de control de navegador  --%>
   	<script type="text/javascript" src="../js/plugin/mejoras/ux/browser.js?devon_version=${appProperties.jsVersion}"></script>
   	
   	<c:forEach var="lib" items="${jsLibraries}">
         <script type="text/javascript" src="<c:out value='${lib.fileName}' />"></script>
 	</c:forEach>
     
-    <!-- 
+    <%-- 
     <link rel="stylesheet" type="text/css" href="../js/fwk/ext.ux/FileUpload/css/icons.css">
   	<link rel="stylesheet" type="text/css" href="../js/fwk/ext.ux/FileUpload/css/filetype.css">
   	<link rel="stylesheet" type="text/css" href="../js/fwk/ext.ux/FileUpload/css/filetree.css">
-     -->
+     --%>
   
 
 	<link rel="stylesheet" type="text/css" href="../css/app.css" />
@@ -124,7 +124,7 @@ if ((view != null) && (id != null)){
 	<div id="west">
     	<div id="admin_tree"></div>
   	</div>
-  	<div id="north" style="background:url('/${appProperties.appName}/img/logo.gif') no-repeat 50% 0">
+  	<div id="north" style="background:url('/${appProperties.appName}/img/logo.png') no-repeat 50% 0">
 		<img src="/${appProperties.appName}/img/<c:out value="${logo}"/>" />
 		<div id="userInfo"><s:message code="main.userInfo.usuario" text="**Usuario : "/> ${usuario.username} (<a id="logout" href="#"><s:message code="main.logout" text="**desconectar"/></a> / <a id="logoutClose" href="#"><s:message code="main.logout.close" text="**desconectar y cerrar"/></a>)</div>
 		<div id="fechaCarga"><s:message code="main.fechaCarga" text="**&Uacute;ltima fecha de carga : "/><fwk:date value="${ultimaFechaCarga}"/></div>

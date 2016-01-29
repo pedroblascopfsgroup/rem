@@ -211,12 +211,25 @@ public class ScoringManager {
          */
 
         String tituloColumna = C + String.valueOf(fecha.getTime());
-
+        
+        // Prueba
+        DtoDynamicRow rowTotal = getRowForName(rows, GRUPO, TOTAL);
+        
+        //Si el nombre de la columna ya existe, le añadimos un número detras de la cadena
+        //Esto lo hacemos porque cuando hay fechas repetidas, el cálculo de las columnas no lo hace bien
+        if(rowTotal!=null && rowTotal.getCell(tituloColumna)!=null){
+        	for(Integer i = 1;i<=10;i++){
+        		if(rowTotal.getCell(tituloColumna + i.toString())==null){
+        			tituloColumna = tituloColumna + i.toString();
+        			break;
+        		}
+        	}
+        }
         //Recuperamos todas las puntuaciones
         List<PuntuacionParcial> listadoPuntuaciones = puntuacionTotalDao.getPuntuacionesOrdenadas(puntuacionTotal.getId());
 
         //Recuperamos el totalizador TOTAL y si no existe lo creamos
-        DtoDynamicRow rowTotal = getRowForName(rows, GRUPO, TOTAL);
+        
         if (rowTotal == null) {
             rowTotal = new DtoDynamicRow();
             rows.add(rowTotal);
@@ -429,12 +442,36 @@ public class ScoringManager {
         meta.setHeader(messageService.getMessage("scoring.grid.alerta"));
         list.add(meta);
         SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");
+        Integer contador = 1;
         for (Date fecha : fechas) {
             DtoMetadata metadata = new DtoMetadata();
             metadata.setName(C + String.valueOf(fecha.getTime()));
-            metadata.setHeader(sdf1.format(fecha));
+            String titulo = sdf1.format(fecha);
+            if(contador==fechas.size()){
+            	titulo = titulo + messageService.getMessage("scoring.grid.fechaSeleccionada");
+            }
+            switch (contador) {
+			case 1:
+				titulo = titulo + messageService.getMessage("scoring.grid.fechaHoy");
+				break;
+			case 2:
+				titulo = titulo + messageService.getMessage("scoring.grid.fecha1MesPasado");
+				break;
+			case 3:
+				titulo = titulo + messageService.getMessage("scoring.grid.fecha2MesesPasado");
+				break;
+			case 4:
+				titulo = titulo + messageService.getMessage("scoring.grid.fecha3MesesPasado");
+				break;
+			case 5:
+				titulo = titulo + messageService.getMessage("scoring.grid.fecha365DiasPasado");
+				break;
+			
+            }
+            metadata.setHeader(titulo);
             metadata.setAlign("right");
             list.add(metadata);
+            contador++;
         }
         return list;
     }

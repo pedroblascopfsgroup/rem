@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+    default-autowire="byName">
+    
+    <!-- Folder File Source Generator -->
+    <bean id="batch.FolderFileSourceGenerator" abstract="true" class="es.capgemini.devon.batch.file.FolderFileSourceGenerator">
+        <property name="baseDirectoryToGenerate" value="${batch.files.home}" />
+        <property name="patternToGenerate" value="${batch.files.workingcode.pattern}" />
+        <property name="workingCodePlaceholder" value="${batch.files.workingcode.placeholder}" />
+        <property name="backupSubDir" value="${batch.files.backupSubDir}" />
+        <property name="type" value="file" />
+        <property name="order" value="300" />
+    </bean>
+    
+    <!-- Queue Subscriptor By Folder Generator -->
+    <bean id="batch.QueueSubscriptorByFolderGenerator" abstract="true" class="es.capgemini.devon.batch.file.QueueSubscriptorByFolderGenerator">
+        <property name="baseDirectoryToGenerate" value="${batch.files.home}" />
+        <property name="patternToGenerate" value="${batch.files.workingcode.pattern}" />        
+    </bean>
+    
+    <!-- Custom tasks -->
+    <bean id="batch.task.UnZip" abstract="true" class="es.capgemini.devon.batch.tasks.UnZipTasklet"/>
+    <bean id="batch.task.SqlScript" abstract="true" class="es.capgemini.devon.batch.tasks.SQLScriptTasklet"/>
+    <bean id="batch.task.FlatFileItemReader" abstract="true" class="es.capgemini.devon.batch.item.file.FlatFileItemReader"/>
+    <bean id="batch.task.FlatFileItemWriter" abstract="true" class="es.capgemini.devon.batch.item.file.FlatFileItemWriter"/>
+    <bean id="batch.task.DataLoader" abstract="true" class="es.capgemini.devon.batch.tasks.${entity.dialect}DataLoaderTasklet"/>
+    
+    <!-- Custom transformers -->
+    <bean id="batch.transform.DelimitedLineAggregator" abstract="true"  class="es.capgemini.devon.batch.item.file.transform.DelimitedLineAggregator"/>
+    <bean id="batch.transform.FixedLengthTokenizer" abstract="true"  class="org.springframework.batch.item.file.transform.FixedLengthTokenizer"/>
+    
+    <!--  Mappers -->
+    <bean id="batch.mapper.PassThroughFieldSetMapper" abstract="true"  class="org.springframework.batch.item.file.mapping.PassThroughFieldSetMapper"/>
+    
+</beans>

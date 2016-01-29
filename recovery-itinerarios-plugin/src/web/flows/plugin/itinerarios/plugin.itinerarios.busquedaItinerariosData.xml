@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+   <var name="dtoBusquedaItinerarios" class="es.pfsgroup.plugin.recovery.itinerarios.itinerario.dto.ITIDtoBusquedaItinerarios"/>
+
+    
+    <!--a partir de este momento sólo enviamos ajax -->
+    <end-state id="listado" view="plugin/itinerarios/busquedaItinerariosJSON" >
+    	<secured attributes="ROLE_CONFITI" match="any" />
+		<on-entry>
+			<evaluate expression="binder.bindAndValidate(flowRequestContext,dtoBusquedaItinerarios)" />
+			<evaluate expression="executor.execute('plugin.itinerarios.itinerario.findItinerario', dtoBusquedaItinerarios)" result="flowScope.pagina"/>
+		</on-entry>
+	</end-state>
+    
+</flow>

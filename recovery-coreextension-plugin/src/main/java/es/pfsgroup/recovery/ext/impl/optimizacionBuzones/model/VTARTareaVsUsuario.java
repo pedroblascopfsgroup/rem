@@ -23,7 +23,7 @@ import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 
 /**
  * Vista que obtiene las tareas que debe realizar un determinado usuario. Esta
- * vista está pensada para optimizar los buzones de tareas
+ * vista estï¿½ pensada para optimizar los buzones de tareas
  * 
  * @author bruno
  * 
@@ -177,6 +177,12 @@ public class VTARTareaVsUsuario {
 
     @Column(name = "CONTRATO", insertable = false, updatable = false)
     private String contrato;
+    
+    @Column(name="ZON_COD", insertable=false, updatable = false)
+    private String zonCodigo;
+    
+    @Column(name="PEF_ID", insertable=false, updatable = false)
+    private Long idPerfil;
     
     @ManyToOne
     @JoinColumn(name = "PRC_ID")
@@ -568,6 +574,22 @@ public class VTARTareaVsUsuario {
 
 	public void setProcedimiento(Procedimiento procedimiento) {
 		this.procedimiento = procedimiento;
+	}
+
+	public String getZonCodigo() {
+		return zonCodigo;
+	}
+
+	public void setZonCodigo(String zonCodigo) {
+		this.zonCodigo = zonCodigo;
+	}
+
+	public Long getIdPerfil() {
+		return idPerfil;
+	}
+
+	public void setIdPerfil(Long idPerfil) {
+		this.idPerfil = idPerfil;
 	}    
     
 }

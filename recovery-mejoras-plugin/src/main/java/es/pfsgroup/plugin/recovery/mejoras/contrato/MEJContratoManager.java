@@ -31,6 +31,8 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.mejoras.contrato.dao.MEJContratoDao;
 import es.pfsgroup.plugin.recovery.mejoras.contrato.dto.MEJBusquedaContratosDto;
+import es.pfsgroup.recovery.ext.impl.contrato.model.AtipicoContrato;
+import es.pfsgroup.recovery.ext.impl.contrato.model.EXTInfoAdicionalContrato;
 
 @Component
 public class MEJContratoManager extends
@@ -187,5 +189,17 @@ public class MEJContratoManager extends
 		
 		return contratoDao.buscaContratosSinAsignar(idAsunto,asunto.getProcedimientos(),dto);
 	}
+	
+	/**
+     * Busca los contratos atipicos en los que esté o haya estado el contato.
+     * @param idContrato el id del contrato
+     * @return la lista de atipicos.
+     */
+    @BusinessOperation(MEJ_BUSCAR_ATIPICOS_CONTRATO)
+    public List<AtipicoContrato> getAtipicosContrato(Long idContrato) {
+    	Filter fAtipico = genericDao.createFilter(FilterType.EQUALS,"contrato.id", idContrato);
+    	List<AtipicoContrato> listAtipicosContrato = genericDao.getList(AtipicoContrato.class, fAtipico);
+    	return listAtipicosContrato;
+    }
 
 }

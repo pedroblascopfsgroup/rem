@@ -2,11 +2,11 @@
 <flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
     
-    <input name="idPerfil" type="java.lang.Long" />
+    <input name="codPerfil" type="java.lang.String" />
     
     <end-state id="zonas" view="clientes/listadoZonasJSON" >
         <on-entry>
-            <evaluate expression="executor.execute('zonaManager.getZonasPorPerfil',idPerfil)" result="flowScope.zonas" />
+            <evaluate expression="executor.execute('zonaManager.getZonasPorCodigoPerfil',codPerfil)" result="flowScope.zonas" />
         </on-entry>
     </end-state>    
 

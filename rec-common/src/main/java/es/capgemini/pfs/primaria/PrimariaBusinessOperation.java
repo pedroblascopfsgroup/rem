@@ -74,6 +74,8 @@ public final class PrimariaBusinessOperation {
     public static final String BO_CLI_MGR_SAVE = "clienteManager.save";
     public static final String BO_CLI_MGR_SAVE_OR_UPDATE = "clienteManager.saveOrUpdate";
     public static final String BO_CLI_MGR_TIENE_CONTRATOS_CLIENTE = "clienteManager.tieneContratosParaGenerarExpediente";
+    public static final String BO_CLI_MGR_TIENE_CONTRATOS_ACTIVOS = "clienteManager.tieneContractosActivos";
+    public static final String BO_CLI_MGR_TIENE_CONTRATOS_LIBRES = "clienteManager.tieneContratosLibres";
 
     /*****************************************************************************
      ** ContratoManager.
@@ -107,6 +109,8 @@ public final class PrimariaBusinessOperation {
     public static final String BO_CNT_MGR_GET_RECIBOS_DE_CONTRATO = "contratoManager.getRecibosContrato";
     public static final String BO_CNT_MGR_GET_DISPOSICIONES_DE_CONTRATO = "contratoManager.getDisposicionesContrato";
     public static final String BO_CNT_MGR_GET_EFECTOS_DE_CONTRATO = "contratoManager.getEfectosContrato";
+    public static final String BO_CNT_MGR_GET_RIESGO = "riesgoOperacionalManager.obtenerRiesgoOperacionalContrato";
+    public static final String BO_CNT_MGR_GET_VENCIDOS = "riesgoOperacionalManager.obtenerVencidosByCntId";
 
     /*****************************************************************************
      ** AntecedenteManager.

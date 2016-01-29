@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+		
+	<bean p:entity="menu" p:name="arqconfig" p:order="520"
+		p:fileName="/WEB-INF/jsp/plugin/arquetipos/menu/menuArquetipos.jsp"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="ROLE_MENUARQ"/>
+		
+	<bean p:entity="menu" p:name="arqconfig/buscarquetipos" p:order="521"
+		p:fileName="/WEB-INF/jsp/plugin/arquetipos/menu/busquedaArquetipos-menu.jsp"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="ROLE_CONFARQ"/>
+		
+	<bean p:entity="menu" p:name="arqconfig/buscamodelos" p:order="522"
+		p:fileName="/WEB-INF/jsp/plugin/arquetipos/menu/busquedaModelos-menu.jsp"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="ROLE_CONFMODELOS"/>
+		
+	<bean p:entity="menu" p:name="arqconfig/arquetipos" p:order="510" 
+		p:fileName="/WEB-INF/jsp/main/menus/configuracion/configuracion_arquetipos.jsp" 
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="VER-CONFIGURACION"/>
+	
+</beans>

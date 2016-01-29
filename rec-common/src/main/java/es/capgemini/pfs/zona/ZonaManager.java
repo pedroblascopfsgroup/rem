@@ -108,6 +108,16 @@ public class ZonaManager {
     }
 
     /**
+     * Obtiene las zonas relacionadas con el perfil de la tabla ZON_PEF_USU.
+     * @param idPerfil id idPerfil
+     * @return zonas
+     */
+    @BusinessOperation(ConfiguracionBusinessOperation.BO_ZONA_MGR_GET_ZONA_POR_CODIGO_PERFIL)
+    public List<DDZona> getZonasPorCodigoPerfil(String codPerfil) {
+        return zonaDao.buscarZonasPorCodigoPerfil(codPerfil);
+    }
+    
+    /**
      * Obtiene la zona correspondiente a un nÃºmero de centro.
      *
      * @param centro String

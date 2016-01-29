@@ -95,6 +95,7 @@
 	var imposicionVenta = '${NMBbien.tipoImposicionVenta.descripcion}';
 	var inversionRenuncia = '${NMBbien.inversionPorRenuncia.descripcion}';
 	
+	var fechaMinima = new Date(1900,0,1);
 	
 	<c:if test="${NMBbien.datosRegistralesActivo!=null}">
 		referenciaCatastralBien_valor = '${NMBbien.datosRegistralesActivo.referenciaCatastralBien}';
@@ -170,7 +171,12 @@
 	<sec:authorize ifAllGranted="ESTRUCTURA_COMPLETA_BIENES">
 		if ('${NMBbien.origen.id}' == '2') {
 			/* AUTOMATICO */
-			bloquearCampos = 1; 
+			/*
+			CPI - 14/11/2015
+			Se permite modificar bienes automaticos por tener la pestañaa datos_entidad
+			bloquearCampos = 1;
+			*/			 
+			bloquearCampos = 2; 
 			origen = 'Automático';
 		} else {
 			/* MANUAL */
@@ -379,11 +385,11 @@
 				autoCreate : {
 					tag: "input"
 					, type: "text"
-					,maxLength:"8"
+					,maxLength:"14"
 					, autocomplete: "off"
 				}
-				, maxLength:8
-				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener más de 8 dígitos" arguments="8" />'
+				, maxLength:14
+				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener más de 14 dígitos" arguments="14" />'
 				,labelStyle : labelStyle
 			}
 		);
@@ -598,7 +604,6 @@
 		);
 		
 		var hoy = new Date();
-		var fechaMinima = new Date(1900,0,1);
 
 		var fechaVerifNMB=new Ext.ux.form.XDateField({
 			fieldLabel:'<s:message code="bienesCliente.fechaverificacion" text="**Fecha VErificacion" />'
@@ -1144,6 +1149,17 @@
 					focusError(pestanaValoraciones,porcentajeImpuestoCompra);
 					return false;
 				}
+				if(fechaValorSubjetivo.getValue() < fechaMinima){
+					msgError = '<s:message text="**Fecha erronea" code="plugin.nuevoModeloBienes.error.fechaValorSubjetivo"/>';
+					focusError(pestanaValoraciones,porcentajeImpuestoCompra);
+					return false;
+				}
+				
+				if(fechaValorApreciacion.getValue() < fechaMinima){
+					msgError = '<s:message text="**Fecha erronea" code="plugin.nuevoModeloBienes.error.fechaValorApreciacion"/>';
+					focusError(pestanaValoraciones,porcentajeImpuestoCompra);
+					return false;
+				}
 			
 			}
 			
@@ -1156,6 +1172,12 @@
 				
 				if(!referenciaCatastral.validate()){
 					msgError="<br><s:message code="" text="Validar referencia catastral"/>";	
+					return false;
+				}
+				
+				if(fechaInscripcion.getValue() < fechaMinima){
+					msgError = '<s:message text="**Fecha erronea" code="plugin.nuevoModeloBienes.error.fechaInscripcion"/>';
+					focusError(pestanaDatosRegistrales,fechaInscripcion);
 					return false;
 				}
 				<%-- Ya no es obligatorio segun bankia dgg 
@@ -1184,6 +1206,12 @@
 			}
 			
 			if (pestanaVehiculo == tab) {
+				if(fechaMatriculacion.getValue() < fechaMinima){
+					msgError = '<s:message text="**Fecha erronea" code="plugin.nuevoModeloBienes.error.fechaMatriculacion"/>';
+					focusError(pestanaVehiculo,fechaMatriculacion);
+					return false;
+				}
+				
 				/*if (marca.getValue() == null || marca.getValue() == '') {
 					msgError = '<s:message text="**La marca es un dato obligatorio obligatorio." code="plugin.nuevoModeloBienes.error.marca"/>';
 					focusError(pestanaVehiculo,marca);
@@ -1284,6 +1312,10 @@
 			if(tipoNMB.getValue() == null || tipoNMB.getValue() == '' ){
 				return false;
 			}
+			/*
+			Esta variable falla en BANKIA. Hablar con ODG
+			var tabs  = [pestanaPrincipal,pestanaValoraciones,pestanaDatosRegistrales,pestanaEmpresa,pestanaIAE,pestanaVehiculo,pestanaProductosBanco,pestanaLocalizacion,pestanaObservaciones,pestanaCuentaBancaria];
+			*/
 			
 			for(var i=0;i < listaTabs.length;i++) {
 				if (listaTabs[i].tipoBien == tipoNMB.getValue())  {
@@ -1295,8 +1327,7 @@
 					return true;
 				}				
 			}
-			
-				return true;
+			return true;
 			
 		}
 		
@@ -1434,11 +1465,12 @@
 			autoCreate : {
 				tag: "input"
 				, type: "text"
-				,maxLength:"8"
+				,maxLength:"14"
 				, autocomplete: "off"
 			}
-			, maxLength:8
-			, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener más de 8 dígitos" arguments="8" />'
+			, maxLength:14
+			, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener más de 14 dígitos" arguments="14" />'
+
 		}
 	);
 	var cargas = app.creaNumber(
@@ -1729,7 +1761,7 @@
 					,iconCls : 'icon_ok'
 					,handler : function() {
 					
-						if (panelEdicion.getForm().isValid()){
+						//if (panelEdicion.getForm().isValid()){
 							if(validarFormNMB()){
 								var p = getParametros();
 								Ext.Ajax.request({
@@ -1751,11 +1783,11 @@
 									Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>',msgError);
 								}
 							}
-						}
-						else
-						{	
-							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor erróneo" code="fwk.ui.errorList.fieldLabel.error"/>');										   		
-						}
+						//}
+						//else
+						//{	
+						//	Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor erróneo" code="fwk.ui.errorList.fieldLabel.error"/>');										   		
+						//}
 				   }
 				});
 			</sec:authorize>
@@ -1766,8 +1798,7 @@
 					<app:test id="btnGuardarBien" addComa="true" />
 					,iconCls : 'icon_ok'
 					,handler : function() {
-					
-						if (panelEdicion.getForm().isValid()){
+						//if (validaTab()){
 							if(validarFormNMB()){
 								var p = getParametros();
 								Ext.Ajax.request({
@@ -1785,11 +1816,11 @@
 									Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>',msgError);
 								}
 							}
-						}
-						else
-						{											   		
-							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor erróneo" code="fwk.ui.errorList.fieldLabel.error"/>');
-						}
+						//}
+						//else
+						//{											   		
+							//Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor erróneo" code="fwk.ui.errorList.fieldLabel.error"/>');
+						//}
 				   }
 				});
 			</sec:authorize>
@@ -1805,7 +1836,8 @@
 			,layoutConfig:{columns:2}
 			,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px;width:350'}
 			,items:[ {items: [origenCarga, tipoNMB<c:if test="${operacion == 'editar'}">,solvenciaNoEncontradaNMB</c:if>,obraEnCurso<sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION">,dueDilligence</sec:authorize><c:if test="${idPersona!=null}">, NMBparticipacion</c:if>,situacionPosesoria,viviendaHabitual<sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION">,usoPromotorMayorDosAnyos</sec:authorize>,tipoSubasta ]}
-					,{items: [numeroActivo,licenciaPrimeraOcupacion,primeraTransmision<sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION">,transmitentePromotor,contratoAlquiler,arrendadoSinOpcCompra</sec:authorize>,descripcionNMB]}
+					,{items: [					
+					<sec:authorize ifNotGranted="PERSONALIZACION-BCC">numeroActivo,</sec:authorize>licenciaPrimeraOcupacion,primeraTransmision,<sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION">transmitentePromotor,contratoAlquiler,arrendadoSinOpcCompra,</sec:authorize>descripcionNMB]}
 				   ]
 		});
 		

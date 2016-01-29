@@ -135,6 +135,18 @@ public class TerminoOperaciones implements Serializable, Auditable{
     @Column(name = "OP_DESC_ACUERDO")
     private String descripcionAcuerdo;
     
+    @Column(name = "OP_FECHA_SOL_PREVISTA")
+    private Date fechaSolucionPrevista;
+
+    @Column(name = "OP_NUM_CONTRATO_DESCUENTO")
+    private String numContratoDescuento;
+    
+    @Column(name = "OP_NUM_CONTRATO_PTMO_PROMOTOR")
+    private String numeroContratoPtmoPromotor;
+    
+    @Column(name = "OP_COD_PERSONA_AFECTADA")
+    private String codigoPersonaAfectada;
+    
 	@Version
     private Integer version;
 
@@ -407,5 +419,36 @@ public class TerminoOperaciones implements Serializable, Auditable{
 		this.version = version;
 	}
     
+	public Date getFechaSolucionPrevista() {
+		return fechaSolucionPrevista;
+	}
+
+	public void setFechaSolucionPrevista(Date fechaSolucionPrevista) {
+		this.fechaSolucionPrevista = fechaSolucionPrevista;
+	}
+
+	public String getNumContratoDescuento() {
+		return numContratoDescuento;
+	}
+
+	public void setNumContratoDescuento(String numContratoDescuento) {
+		this.numContratoDescuento = numContratoDescuento;
+	}
+
+	public String getNumeroContratoPtmoPromotor() {
+		return numeroContratoPtmoPromotor;
+	}
+
+	public void setNumeroContratoPtmoPromotor(String numeroContratoPtmoPromotor) {
+		this.numeroContratoPtmoPromotor = numeroContratoPtmoPromotor;
+	}
+
+	public String getCodigoPersonaAfectada() {
+		return codigoPersonaAfectada;
+	}
+
+	public void setCodigoPersonaAfectada(String codigoPersonaAfectada) {
+		this.codigoPersonaAfectada = codigoPersonaAfectada;
+	}
 
 }

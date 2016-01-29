@@ -159,10 +159,11 @@
 	var tipoUsuario = Ext.data.Record.create([
 		 {name:'id'}
 		,{name:'username'}
+		,{name: 'defecto'}
 	]);
 	
 	var optionsUsuarioStore = page.getStore({
-	       flow: 'coreextension/getListUsuariosPaginatedData'
+	       flow: 'coreextension/getListUsuariosDefectoPaginatedData'
 	       ,reader: new Ext.data.JsonReader({
 	    	 root : 'listadoUsuarios'
 	    }, tipoUsuario)	       
@@ -204,6 +205,16 @@
 		combo.mode='remote';
 	});
 	
+	<%-- BKREC-1041 Al cargar los usuarios de un despacho, muestra en su combo el valor por defecto del listado --%>
+	var primeraVez=true;	
+    optionsUsuarioStore.on('load',function(ds,records,o){
+		if(primeraVez && records[0].data.defecto){
+		    comboTipoUsuario.setValue(records[0].data.id);
+		    primeraVez=false;
+		}
+    });
+	
+
 	comboTipoGestor.on('select', function(){
 		comboTipoUsuario.reset();
 		comboTipoDespacho.reset();
@@ -220,6 +231,7 @@
 		optionsUsuarioStore.webflow({'idTipoDespacho': comboTipoDespacho.getValue()}); 
 		comboTipoUsuario.reset();		
 		comboTipoUsuario.setDisabled(false);
+		primeraVez=true;
 	});	
 	
 	

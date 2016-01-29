@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+
+
+	<!--<bean p:entity="tabs.asuntos" p:name="infoJudicialSidhi" p:order="3000"
+		p:fileName="/WEB-INF/jsp/plugin/sidhiweb/asunto/tabs/tabInfoJudicialAsuntoSidhi.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="INFOJUDICIAL_SIDHI"/>-->
+		
+	<bean p:entity="tabs.asunto.fast" p:name="infoJudicialSidhi" p:order="3000"
+		p:fileName="/WEB-INF/jsp/plugin/sidhiweb/asunto/tabs/tabInfoJudicialAsuntoSidhiFast.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="INFOJUDICIAL_SIDHI"/>
+		
+	<!--<bean p:entity="tabs.asuntos" p:name="actuacionesNoProcesables" p:order="3500"
+		p:fileName="/WEB-INF/jsp/plugin/sidhiweb/asunto/tabs/tabActuacionesNoProc.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="ACTUACIONES_ADICIONAL"/>-->	
+	
+	<!--	
+	<bean p:entity="tabs.expediente" p:name="informacionJudicialExpSidhi"  p:order="1500" 
+		p:fileName="/WEB-INF/jsp/plugin/sidhiweb/expedientes/tabs/tabInfoJudicialExpSidhi.jsp" p:priority="1"  
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="INFOJUDICIAL_SIDHI"/>
+	-->
+	<!--
+	<bean p:entity="tabs.expediente" p:name="actuacionesNoProcesablesExp" p:order="1600"
+		p:fileName="/WEB-INF/jsp/plugin/sidhiweb/expedientes/tabs/tabActuacionesNoProcExp.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="ACTUACIONES_ADICIONAL"/>	
+	-->
+		
+	
+
+</beans>

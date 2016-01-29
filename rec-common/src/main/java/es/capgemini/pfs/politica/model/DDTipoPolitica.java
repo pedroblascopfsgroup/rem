@@ -16,6 +16,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
+import es.capgemini.pfs.persona.model.DDPolitica;
 import es.capgemini.pfs.ruleengine.rule.definition.RuleDefinition;
 import es.capgemini.pfs.ruleengine.state.RuleEndState;
 
@@ -65,6 +66,11 @@ public class DDTipoPolitica implements Dictionary, Auditable, RuleEndState {
 
     @Column(name = "TPL_PLAZO_VIGENCIA")
     private Long plazoVigencia;
+    
+    @ManyToOne
+    @JoinColumn(name ="DD_POL_ID")
+    private DDPolitica politicaEntidad;
+    
 
     /**
      * @return the id
@@ -218,5 +224,13 @@ public class DDTipoPolitica implements Dictionary, Auditable, RuleEndState {
     public Long getPlazoVigencia() {
         return plazoVigencia;
     }
+
+	public DDPolitica getPoliticaEntidad() {
+		return politicaEntidad;
+	}
+
+	public void setPoliticaEntidad(DDPolitica politicaEntidad) {
+		this.politicaEntidad = politicaEntidad;
+	}
 
 }

@@ -11,7 +11,7 @@
 (function(page,entidad){
 
 
-	<!-- valor seteado para pruebas -->
+	<%-- valor seteado para pruebas --%>
 	var idExpediente;
 	
 	var idIncidencia;

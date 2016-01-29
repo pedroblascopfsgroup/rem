@@ -41,6 +41,7 @@
 		<json:property name='tareaPendienteDescripcion' value="${tareaPendiente.descripcionTarea}" escapeXml="false"/>
 		<json:property name='esRecuperacion' value="${expediente.arquetipo.itinerario.dDtipoItinerario.itinerarioRecuperacion == true}"/>
 		<json:property name='esSeguimiento' value="${expediente.arquetipo.itinerario.dDtipoItinerario.itinerarioSeguimiento == true}"/>
+		
 		<json:property name='comiteElevarNull' value="${comiteElevar==null}"/>
 		<json:property name='comiteElevar' value="${comiteElevar.id}"/>
 		<json:property name='comitesDelegarNull' value="${comitesDelegarNull==null}"/>
@@ -168,8 +169,16 @@
 		</json:property>
 	</json:object>
 	<json:object name="usuario">
+		<json:property name="id" value="${usuario.id}"/>
 		<json:property name="usuarioExterno" value="${usuario.usuarioExterno}"/>
 	</json:object>
 	<json:property name="esSupervisor" value="${esSupervisor}"/>
 	<json:property name="esAgencia" value="${esAgencia}"/>
+	<json:property name="esGestorSupervisorActual" value="${esGestorSupervisorActual}"/>
+	<json:array name= "estados" items = "${expediente.arquetipo.itinerario.estados}" var= "est">
+		<json:object>
+			<json:property name = "id" value = "${est.estadoItinerario.id }"/>
+			<json:property name = "codigo" value = "${est.estadoItinerario.codigo}"/>
+		</json:object>
+	</json:array>
 </fwk:json>

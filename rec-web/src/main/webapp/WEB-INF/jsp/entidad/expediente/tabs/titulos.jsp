@@ -179,10 +179,9 @@
         var perfilGestor = entidad.getData("titulos.idGestorActual");
         var perfilSupervisor = entidad.getData("titulos.idSupervisorActual");
         var rec = grid.getStore().getAt(rowIndex);
-        
         if((permisosVisibilidadGestorSupervisor(perfilGestor) == true 
                 || permisosVisibilidadGestorSupervisor(perfilSupervisor) == true) &&
-                    (entidad.getData('titulos.estadoExpediente') == expedienteActivo)){
+                    (entidad.getData('titulos.estadoExpediente') == expedienteActivo) && (grid.getSelectionModel().getSelected() != null)){
                         
                         <sec:authorize ifAllGranted="NUEVO_TITULO">
                             btnAgregarTitulo.enable();
@@ -203,6 +202,10 @@
                                 btnBorrarTitulo.disable();
                             </sec:authorize>
                         }
+                }else{
+                	 btnAgregarTitulo.disable();
+                	 btnEditarTitulo.disable();
+                	 btnBorrarTitulo.disable();
                 }
         }); 
 
@@ -233,7 +236,7 @@
       function showEnable(control){
         if (!control) return;
         control.show();
-        control.enable();
+        //control.enable();
       }
       
 

@@ -38,6 +38,8 @@ public class DDAmbitoExpediente implements Dictionary, Auditable {
     public static final String PERSONAS_GRUPO = "PG";
     public static final String PERSONAS_PRIMERA_GENERACION = "PPGRA";
     public static final String PERSONAS_SEGUNDA_GENERACION = "PSGRA";
+    
+    public static final String EXPEDIENTE = "EXP";
 
     /**
      * Método estático que devuelve un listado de ambitos englobados en el ambito que se le pasa como parametro.

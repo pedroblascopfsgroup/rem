@@ -2928,9 +2928,9 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     this.arrayCampos.push([
         {"xtype": 'datefield', "name": "d_fecha", "fieldLabel": "Fecha notificación", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
         ,{"xtype": 'combo', "store": storeSINO, "name": "d_comboSubsanacion", "fieldLabel": "Requiere subsanación", "autoload": true,  mode: 'local', triggerAction: 'all', allowBlank: false, filtradoProcurador: true, resizable: true, id: 'd_comboSubsanacion' + this.idFactoria, displayField: 'descripcion', valueField: 'codigo'}
-        //,{"xtype": 'combo', "store": storeSINO, "name": "d_comboAdicional", "fieldLabel": "Comunicación adicional requerida", "autoload": true,  mode: 'local', triggerAction: 'all', allowBlank: false, filtradoProcurador: true, resizable: true, id: 'd_comboAdicional' + this.idFactoria, displayField: 'descripcion', valueField: 'codigo'}
+        ,{"xtype": 'combo', "store": storeSINO, "name": "d_comboAdicional", "fieldLabel": "Comunicación adicional requerida", "autoload": true,  mode: 'local', triggerAction: 'all', allowBlank: false, filtrar: true, resizable: true, id: 'd_comboAdicional' + this.idFactoria, displayField: 'descripcion', valueField: 'codigo'}
         ,{"xtype": 'datefield', "name": "d_fechaResol", "fieldLabel": "Fecha resolución", allowBlank: true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
-        //,{"xtype": 'datefield', "name": "d_fechaLimite", "fieldLabel": "Fecha límite comunicación", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
+        ,{"xtype": 'datefield', "name": "d_fechaLimite", "fieldLabel": "Fecha límite comunicación", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, filtrar: true}
     ]);
 
     // id: 389 : TRAMITE DE ADJUDICACION (CAJAMAR): H005_RegistrarInscripcionDelTitulo

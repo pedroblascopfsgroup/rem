@@ -2246,7 +2246,7 @@
 	</bean>
 	
 	<!-- H066 mapaInscripcionTitulo_haya -->
-		<bean id="mapaVigilanciaCaducidad_haya"
+		<bean id="mapaInscripcionTitulo_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				

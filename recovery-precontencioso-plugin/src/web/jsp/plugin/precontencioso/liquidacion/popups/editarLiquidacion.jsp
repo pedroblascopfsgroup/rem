@@ -41,7 +41,7 @@
 	var totalField = new Ext.form.NumberField({
 		fieldLabel: '<s:message code="plugin.precontencioso.grid.liquidacion.total" text="**Total" />',
 		value: '${liquidacion.total}',
-		disabled: true,
+		disabled: true
 	});
 	
 	<pfsforms:numberfield name="comisionesField" labelKey="plugin.precontencioso.grid.liquidacion.comisiones" label="**Comisiones" 

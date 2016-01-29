@@ -9,8 +9,9 @@
 --## Finalidad: Enganchar el motor de BPMs a los Procedimeintos Concursales.
 --## INSTRUCCIONES:  
 --## VERSIONES:
---##        0.1 Versión inicial
---##        0.2 Ajustes para Cajamar y Concursales.
+--##            0.1 Versión inicial
+--##            0.2 Ajustes para Cajamar y Concursales.
+--##   20151127 0.3 Actualizacion fechas vencimiento en tar_tareas_notificaciones
 --##########################################
 --*/
 
@@ -70,6 +71,7 @@ DECLARE
   err_msg VARCHAR2(2048 CHAR);
   /* Variables */
   V_DBID NUMBER(16);
+
 BEGIN
 
   SELECT ENTIDAD_ID INTO V_DBID
@@ -308,6 +310,22 @@ BEGIN
     FROM TMP_ALTA_BPM_INSTANCES TMP;
   DBMS_OUTPUT.PUT_LINE('FIN VARIABLE INSTANCE!!') ;
 
+--Insertamos variable sin concatenar TOKEN_PADRE_ID    
+  
+    INSERT INTO CMMASTER.JBPM_VARIABLEINSTANCE
+        (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, LONGVALUE_)
+      SELECT CMMASTER.HIBERNATE_SEQUENCE.NEXTVAL
+      ,'L' --CLASS_
+      , 0 --VERSION_
+      , 'id'||TMP.TAP_CODIGO --||'.'||TMP.TOKEN_PADRE_ID --NAME_
+      , TMP.TOKEN_PADRE_ID --TOKEM_
+      , TMP.VMAP_PADRE_ID  --TOKENVARIABLEMAP_
+      , TMP.INST_ID --PROCESSINSTANCE_
+      , TMP.TEX_ID --LONGVLAUE_
+    FROM TMP_ALTA_BPM_INSTANCES TMP;
+  DBMS_OUTPUT.PUT_LINE('FIN VARIABLE INSTANCE!!') ;  
+  
+  
   DBMS_OUTPUT.PUT_LINE('Actualizando los procedimientos...') ;
   MERGE INTO PRC_PROCEDIMIENTOS PRC
   USING (SELECT DISTINCT PRC_ID,INST_ID FROM TMP_ALTA_BPM_INSTANCES) TMP
@@ -334,6 +352,28 @@ BEGIN
 
 --select * from prc_procedimientos where prc_id=1000000000066843
 --select * from CMMASTER.Jbpm_Variableinstance where processinstance_=164046426
+
+--Actualizamos fechas vencimiento en tar_tareas_notificaciones
+
+UPDATE CM01.tar_tareas_notificaciones
+   SET tar_fecha_venc = SYSDATE + (DBMS_RANDOM.VALUE (1, 5))
+ WHERE fechacrear > SYSDATE - 1
+   AND tar_fecha_venc IS NULL
+   AND prc_id IS NOT NULL
+   AND tar_tarea_finalizada = 0
+   AND tar_tar_id IS NULL
+   AND USUARIOCREAR = 'MIGRACM01';
+
+   COMMIT ;
+
+
+
+UPDATE CM01.tar_tareas_notificaciones
+   SET tar_fecha_venc_real = tar_fecha_venc
+ WHERE tar_fecha_venc IS NOT NULL AND tar_fecha_venc_real IS NULL
+ AND USUARIOCREAR = 'MIGRACM01';
+
+ COMMIT ;
 
 
 EXCEPTION

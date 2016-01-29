@@ -142,7 +142,6 @@
 				</sec:authorize>			
 			]} ] );
 
-
    panel.add(datosPersonalesFieldSet);
    panel.add(datosGestionFieldSet);
    //panel.add(ratingFieldSet);

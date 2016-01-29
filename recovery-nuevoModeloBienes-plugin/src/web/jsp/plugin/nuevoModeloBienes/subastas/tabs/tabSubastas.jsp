@@ -491,16 +491,13 @@
 		    	texto = '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEnviarCierre.conBien1" text="**¿Está seguro de enviar el bien a cierre de deudas?" />';
 		    }			
 			
-			Ext.Msg.confirm(fwk.constant.confirmar, texto, this.decide, this);  	
-        	
-        	
+			Ext.Msg.confirm(fwk.constant.confirmar, texto, this.decide, this);
 		}
 		,decide : function(boton){
 			if (boton=='yes'){ this.enviar(); }
 		}
 		,enviar : function(){
 			var idSubasta = gridSubastas.getSelectionModel().getSelected().get('id');
-		    var flow='/pfs/subasta/enviarCierreDeuda';
 		    var params;
 		    
 		    if(Ext.isEmpty(bienesSeleccionados) || bienesSeleccionados.length == 0){
@@ -508,9 +505,23 @@
 			} else {
 				params = {idSubasta:idSubasta, idBien:bienesSeleccionados};
 			}   				
-			 
-			app.openBrowserWindow(flow,params);
-	
+	    	page.webflow({
+	      		flow:'subasta/validarInformeCierreDeuda'
+	      		,params: params		      		
+	      		,success: function(result,request){
+					if(result.msgError==''){
+						app.openBrowserWindow('/pfs/subasta/enviarCierreDeuda',params);
+		  				page.fireEvent(app.event.DONE);					
+					}else{						
+						Ext.Msg.show({
+							title:'Faltan datos para poder enviar el informe de cierre de deuda',
+							msg: result.msgError,
+							buttons: Ext.Msg.OK,
+							width: 500,
+							icon:Ext.MessageBox.WARNING});					
+					} 					
+				}		    	
+			});		    
 		}
 	});
 	

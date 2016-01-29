@@ -18,13 +18,13 @@
 <c:choose>
 	<%--  	/* BKREC-1349
 			* Alternativa al handler de arriba, la diferencia reside en que en el siguiente handler, mostrar un mensaje de  
-		 	* 'Guardando...' cuando esta procesando la operación de, oscureciendo la pantalla. 
-		 	* De esta forma el user puede ver que al pulsar el botón, esta realizando cálculos, y debe esperar. 
+		 	* 'Guardando...' cuando esta procesando la operaciï¿½n de, oscureciendo la pantalla. 
+		 	* De esta forma el user puede ver que al pulsar el botï¿½n, esta realizando cï¿½lculos, y debe esperar. 
 		 	*/ --%> 
 	<c:when test="${onSuccessMode == 'tabConMsgGuardando'}">
 		var ${name}_handler =  function() {
 			if (${datagrid}.getSelectionModel().getCount()>0){
-				Ext.Msg.confirm('<s:message code="pfs.tags.buttonremove.borrar" text="**Borrar" />', '<s:message code="pfs.tags.buttonremove.pregunta" text="**¿Está seguro de borrar?" />', function(btn){
+				Ext.Msg.confirm('<s:message code="pfs.tags.buttonremove.borrar" text="**Borrar" />', '<s:message code="pfs.tags.buttonremove.pregunta" text="**ï¿½Estï¿½ seguro de borrar?" />', function(btn){
     				if (btn == 'yes'){
     					<c:if test="${parameters != null}">var parms = ${parameters}();</c:if>
     					<c:if test="${parameters == null}">var parms = {};</c:if>
@@ -34,9 +34,12 @@
     					page.webflow({
 							flow: '${flow}'
 							,params: parms
-							,success : function(){
-								${datagrid}.store.webflow(parms);
-								<c:if test="${onSuccess != null}">${onSuccess}();</c:if>							
+							,success : function(){ 
+								${datagrid}.store.webflow(parms); 
+								new Ext.LoadMask(${datagrid}.body, {msg:'<s:message code="fwk.ui.form.cargando" text="**Cargando"/>'}).hide();
+								${name}.setDisabled(false);
+								${datagrid}.getBottomToolbar().items.items[0].setDisabled(false);
+								<c:if test="${onSuccess != null}">${onSuccess}();</c:if>				
 							}
 						});
 						
@@ -55,7 +58,7 @@
 	<c:otherwise>
 		var ${name}_handler =  function() {
 			if (${datagrid}.getSelectionModel().getCount()>0){
-				Ext.Msg.confirm('<s:message code="pfs.tags.buttonremove.borrar" text="**Borrar" />', '<s:message code="pfs.tags.buttonremove.pregunta" text="**¿Está seguro de borrar?" />', function(btn){
+				Ext.Msg.confirm('<s:message code="pfs.tags.buttonremove.borrar" text="**Borrar" />', '<s:message code="pfs.tags.buttonremove.pregunta" text="**ï¿½Estï¿½ seguro de borrar?" />', function(btn){
     				if (btn == 'yes'){
     					<c:if test="${parameters != null}">var parms = ${parameters}();</c:if>
     					<c:if test="${parameters == null}">var parms = {};</c:if>

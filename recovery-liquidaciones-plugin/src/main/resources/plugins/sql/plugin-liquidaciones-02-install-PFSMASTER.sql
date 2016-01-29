@@ -1,0 +1,2 @@
+insert into fun_funciones (fun_id,fun_descripcion,fun_descripcion_larga,version,usuariocrear,fechacrear,borrado) values 
+(s_fun_funciones.nextval, 'GENERAR-LIQUIDACIONES', 'Generar informe de liquidaciones desde la ficha del asunto',0,'LIQ',sysdate,0);

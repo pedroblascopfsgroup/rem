@@ -504,15 +504,80 @@ var actualizarBotonesDocumentos = function(){
 						habilitarDeshabilitarButtons(false, true, false, true, true, false, true);
 						return;							
 					}
-					else {
-						<%-- Y ademas no tienen solicitudes --%>
-						if (uniqueArray3.length ==1 && uniqueArray3[0] == false){
-							<%-- EXCLUIR DOCUMENTOS Y SOLICITAR MASIVAMENTE --%>
-							habilitarDeshabilitarButtons(false, false, false, true, true, false, true);	
-							return;	      					      									
+					<%-- Para realizar una acción multiple todos los elementos tienen que estar en el mismo estado --%>	
+					<%-- Para saber si las filas seleccionadas todas están en el mismo estado, eliminamos los elementos duplicados del array
+					entonces si todas las filas seleccionadas tienen el mismo estado el array tendrá un tamaño=1 --%>
+					uniqueArray = arrayCodigoEstadoDocumento.filter(function(item, pos) {
+			    			return arrayCodigoEstadoDocumento.indexOf(item) == pos;
+					});	
+					
+					<%-- SI DOCUMENTOS ELEGIDOS DE DISTINTO ESTADO -> AVISO DE LA IMPOSIBILIDAD DE HACER NADA --%>
+		<%-- 			if (uniqueArray.length > 1){ --%>
+		<%-- 				habilitarDeshabilitarButtons(true, true, true, true, true, true, true); --%>
+		<%-- 				Ext.MessageBox.alert('<s:message code="precontencioso.grid.documento.estadoDocumentosDistintos.titulo" text="**Estados de documento distintos" />' --%>
+		<%--                  ,'<s:message code="precontencioso.grid.documento.estadoDocumentosDistintos.aviso" text="**Debe seleccionar documentos con el mismo estado" />'); --%>
+		<%--                 return; --%>
+		<%-- 			} --%>
+								
+					<%-- **** ESTADO PENDIENTE DE SOLICITAR --%>
+					<%-- Vemos si tenemos solo un resultado y es PS (PENDIENTE SOLICITAR --%>
+		<%-- 			if (uniqueArray.length == 1 && uniqueArray[0] == 'PS'){ --%>
+						uniqueArray2 = arrayEsDocumento.filter(function(item, pos) {
+			    			return arrayEsDocumento.indexOf(item) == pos;
+						});
+						<%-- Si todos los seleccionados son documentos --%>	
+						if (uniqueArray2.length ==1 && uniqueArray2[0] == true){
+							uniqueArray3 = arrayTieneSolicitud.filter(function(item, pos) {
+				    			return arrayTieneSolicitud.indexOf(item) == pos;
+							});
+							<%-- Si hay documentos con solicitudes o sin solicitudes --%>
+							if (uniqueArray3.length > 1){
+								<%-- SOLICITAR MASIVAMENTE --%>
+								habilitarDeshabilitarButtons(false, true, false, true, true, false, true);
+								return;							
+							}
+							else {
+								<%-- Y ademas no tienen solicitudes --%>
+								if (uniqueArray3.length ==1 && uniqueArray3[0] == false){
+									<%-- EXCLUIR DOCUMENTOS Y SOLICITAR MASIVAMENTE --%>
+									habilitarDeshabilitarButtons(false, false, false, true, true, false, true);	
+									return;	      					      									
+								}
+								<%-- Si todas tienen solicitudes --%>
+								if (uniqueArray3.length ==1 && uniqueArray3[0] == true){
+									uniqueArray4 = arrayResultado.filter(function(item, pos) {
+						    			return arrayResultado.indexOf(item) == pos;
+									});
+									<%-- pero no tienen resultado --%>
+									if (uniqueArray4.length ==1 && uniqueArray4[0] == ''){
+										<%-- DESCARTAR DOCUMENTOS y ANULAR SOLICITUDES MASIVAMENTE --%>
+										habilitarDeshabilitarButtons(false, true, false, true, false, false, true);
+										return;
+									}		      					      									
+								}
+							}
 						}
-						<%-- Si todas tienen solicitudes --%>
-						if (uniqueArray3.length ==1 && uniqueArray3[0] == true){
+						<%-- Si no todos los seleccionado son documentos, tambien hay solicitudes --%>
+						else {
+							uniqueArray4 = arrayResultado.filter(function(item, pos) {
+					    		return arrayResultado.indexOf(item) == pos;
+							});
+							<%-- Si todas las solicitudes no tienen resultado --%>
+							if (uniqueArray4.length ==1 && uniqueArray4[0] == ''){
+								<%-- ANULAR SOLICITUDES MASIVAMENTE --%>
+								habilitarDeshabilitarButtons(false, true, true, true, false, true, true);
+								return;
+							}		      					      																	
+						}												
+		<%-- 			} --%>
+					<%-- **** ESTADO SOLICITADO --%>
+					<%-- Vemos si tenemos solo un resultado y es SO (SOLICITADO) --%>
+		<%-- 			if (uniqueArray.length == 1 && uniqueArray[0] == 'SO'){ --%>
+						uniqueArray2 = arrayEsDocumento.filter(function(item, pos) {
+			    			return arrayEsDocumento.indexOf(item) == pos;
+						});
+						<%-- Si todos los seleccionados son documentos --%>	
+						if (uniqueArray2.length ==1 && uniqueArray2[0] == true){
 							uniqueArray4 = arrayResultado.filter(function(item, pos) {
 				    			return arrayResultado.indexOf(item) == pos;
 							});
@@ -521,9 +586,41 @@ var actualizarBotonesDocumentos = function(){
 								<%-- DESCARTAR DOCUMENTOS y ANULAR SOLICITUDES MASIVAMENTE --%>
 								habilitarDeshabilitarButtons(false, true, false, true, false, false, true);
 								return;
-							}		      					      									
+							}
+							<%-- Si hay alguna solicitud con resultado --%>
+							else {
+								<%-- SOLICITAR MASIVAMENTE --%>
+								habilitarDeshabilitarButtons(false, true, false, true, true, false, true);
+								return;
+							} 		      					      									
 						}
-					}
+						<%-- Si no todos los seleccionado son documentos, tambien hay solicitudes --%>
+						else {
+							uniqueArray4 = arrayResultado.filter(function(item, pos) {
+					    		return arrayResultado.indexOf(item) == pos;
+							});
+							<%-- Si todas las solicitudes no tienen resultado --%>
+							if (uniqueArray4.length ==1 && uniqueArray4[0] == ''){
+								<%-- ANULAR SOLICITUDES MASIVAMENTE --%>
+								habilitarDeshabilitarButtons(false, true, false, true, false, true, true);
+								return;
+							}		      					      																	
+						}				
+		<%-- 			} --%>
+					<%-- **** ESTADO DESCARTADO --%>
+					<%-- Vemos si tenemos solo un resultado y es DE (DESCARTADO) --%>
+		<%-- 			if (uniqueArray.length == 1 && uniqueArray[0] == 'DE'){ --%>
+						uniqueArray2 = arrayEsDocumento.filter(function(item, pos) {
+			    			return arrayEsDocumento.indexOf(item) == pos;
+						});
+						<%-- Si todos los seleccionados son documentos --%>	
+						if (uniqueArray2.length ==1 && uniqueArray2[0] == true){
+							<%-- SOLICITAR MASIVAMENTE --%>
+							habilitarDeshabilitarButtons(false, true, true, true, true, false, true);
+							return;
+						}
+		<%-- 			} --%>
+								
 				}
 				<%-- Si no todos los seleccionado son documentos, tambien hay solicitudes --%>
 				else {
@@ -694,6 +791,15 @@ var gridDocumentos = new Ext.grid.GridPanel({
 		<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_DOC_BTN">
 			,bbar : [ incluirDocButton, excluirDocButton, descartarDocButton, editarDocButton, separadorButtons, anularSolicitudesButton, solicitarDocButton, informarDocButton, botonRefresh]
 		</sec:authorize>
+		,doLayout: function() {
+			if(this.isVisible()){
+				var margin = 10;
+				var parentSize = app.contenido.getSize(true);
+				var width = (parentSize.width) - (2*margin);
+				this.setWidth(width);
+				Ext.grid.GridPanel.prototype.doLayout.call(this);
+			}
+		}
 }); 
 
 gridDocumentos.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {

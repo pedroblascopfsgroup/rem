@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+    default-autowire="byName">
+    
+    <!-- Quartz Scheduler -->
+    <bean id="quartzSchedulerManager" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" lazy-init="true">
+        <!-- 
+        <property name="dataSource" ref="masterDataSource" />
+         <property name="transactionManager" ref ="masterTransactionManager"/>
+         -->
+        <property name="applicationContextSchedulerContextKey" value="applicationContext"/>
+        <property name="quartzProperties">
+            <props>
+                <!-- 
+                <prop key="org.quartz.jobStore.class">org.quartz.impl.jdbcjobstore.JobStoreCMT</prop>
+                <prop key="org.quartz.jobStore.driverDelegateClass">org.quartz.impl.jdbcjobstore.StdJDBCDelegate</prop>
+                <prop key="org.quartz.jobStore.tablePrefix">QRTZ_</prop>
+                <prop key="org.quartz.jobStore.misfireThreshold">60000</prop>
+                <prop key="org.quartz.jobStore.isClustered">true</prop>
+                 -->
+                <prop key="org.quartz.threadPool.class">org.quartz.simpl.SimpleThreadPool</prop>
+                <prop key="org.quartz.threadPool.threadCount">10</prop>
+                <prop key="org.quartz.threadPool.threadPriority"> 5</prop>
+            </props>
+        </property>         
+        <property name="overwriteExistingJobs" value="true"/>
+        <property name="startupDelay" value="10"/>
+    </bean>
+    
+    <!-- JobDetails with Trigger -->
+    <bean id="scheduling.schedulableTrigger" abstract="true" class="es.capgemini.devon.scheduling.SchedulableTriggerBean"/>
+    
+</beans>

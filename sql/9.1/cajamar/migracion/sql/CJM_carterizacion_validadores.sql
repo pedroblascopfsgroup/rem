@@ -11,7 +11,8 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial (Carlos Gil)
---##        0.2 GMN Adaptación script a lanzador
+--##        0.2          GMN Adaptación script a lanzador
+--##        0.3 20151209 GMN Se reasignan gestores GESCHRE, SUCHRE y DIRREC solo a litigios
 --##########################################
 --*/
 
@@ -81,7 +82,7 @@ from
 
 EXECUTE IMMEDIATE V_SQL; 
 
--- Gestor control de gestión HRE
+-- Gestor control de gestión HRE  solo para litigios
 
 V_SQL:= 'insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
 select '||V_ESQUEMA||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id,
@@ -96,7 +97,7 @@ from
                     from '||V_ESQUEMA||'.asu_asuntos asuu inner join
                          '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
                          '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id
-                    where asuu.DD_TAS_ID = 2)
+                    where asuu.DD_TAS_ID = 1)
  ) aux';
 
  EXECUTE IMMEDIATE V_SQL; 
@@ -114,12 +115,12 @@ from
                     from '||V_ESQUEMA||'.asu_asuntos asuu inner join
                          '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
                          '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id
-                    where asuu.DD_TAS_ID = 2)
+                    where asuu.DD_TAS_ID = 1)
 ) aux';
   
 EXECUTE IMMEDIATE V_SQL; 
 
--- Supervisor control gestión HRE
+-- Supervisor control gestión HRE  solo para litigios
 
 V_SQL:= 'insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
 select '||V_ESQUEMA||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id,
@@ -134,7 +135,7 @@ from
                     from '||V_ESQUEMA||'.asu_asuntos asuu inner join
                          '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
                          '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id
-                    where asuu.DD_TAS_ID = 2)
+                    where asuu.DD_TAS_ID = 1)
  ) aux';
 
 EXECUTE IMMEDIATE V_SQL; 
@@ -152,12 +153,12 @@ from
                     from '||V_ESQUEMA||'.asu_asuntos asuu inner join
                          '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
                          '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id
-                    where asuu.DD_TAS_ID = 2)
+                    where asuu.DD_TAS_ID = 1)
 ) aux';
 
 EXECUTE IMMEDIATE V_SQL; 
 
--- Dirección recuperaciones
+-- Dirección recuperaciones HRE solo para litigios
 
 V_SQL:= 'insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
 select '||V_ESQUEMA||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id,
@@ -172,7 +173,7 @@ from
                     from '||V_ESQUEMA||'.asu_asuntos asuu inner join
                          '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
                          '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id
-                    where asuu.DD_TAS_ID = 2)
+                    where asuu.DD_TAS_ID = 1)
  ) aux';
 
  
@@ -191,7 +192,7 @@ from
                     from '||V_ESQUEMA||'.asu_asuntos asuu inner join
                          '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
                          '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id
-                    where asuu.DD_TAS_ID = 2)
+                    where asuu.DD_TAS_ID = 1)
 ) aux';
  
 EXECUTE IMMEDIATE V_SQL; 
@@ -736,7 +737,7 @@ from
 
 V_SQL:= 'insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
 select '||V_ESQUEMA||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id,
-       (select usd_id from '||V_ESQUEMA||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_MASTER||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = ''val.gestdocumentacion'') usd_id,
+       (select max(usd_id) from '||V_ESQUEMA||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_MASTER||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = ''val.gestdocumentacion'') usd_id,
        (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''CM_GD_PCO''), '''||USUARIO||''', sysdate
 from
  (select asu.asu_id
@@ -755,7 +756,7 @@ from
 
 V_SQL:= 'insert into '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gah (gah.GAH_ID, gah.GAH_ASU_ID, gah.GAH_GESTOR_ID, gah.GAH_FECHA_DESDE, gah.GAH_TIPO_GESTOR_ID, usuariocrear, fechacrear)
 select '||V_ESQUEMA||'.s_GAH_GESTOR_ADIC_HISTORICO.nextval, aux.asu_id,
-       (select usd_id from '||V_ESQUEMA||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_MASTER||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = ''val.gestdocumentacion'') usd_id,
+       (select max(usd_id) from '||V_ESQUEMA||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_MASTER||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = ''val.gestdocumentacion'') usd_id,
        sysdate, (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''CM_GD_PCO''), ''SAG'', sysdate
 from
  (select asu.asu_id
@@ -775,7 +776,7 @@ from
 
 V_SQL:= 'insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
 select '||V_ESQUEMA||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id,
-       (select usd_id from '||V_ESQUEMA||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_MASTER||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = ''val.gestliquidaciones'') usd_id,
+       (select max(usd_id) from '||V_ESQUEMA||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_MASTER||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = ''val.gestliquidaciones'') usd_id,
        (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''CM_GL_PCO''), '''||USUARIO||''', sysdate
 from
  (select asu.asu_id
@@ -793,7 +794,7 @@ EXECUTE IMMEDIATE V_SQL;
 
 V_SQL:= 'insert into '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gah (gah.GAH_ID, gah.GAH_ASU_ID, gah.GAH_GESTOR_ID, gah.GAH_FECHA_DESDE, gah.GAH_TIPO_GESTOR_ID, usuariocrear, fechacrear)
 select '||V_ESQUEMA||'.s_GAH_GESTOR_ADIC_HISTORICO.nextval, aux.asu_id,
-       (select usd_id from '||V_ESQUEMA||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_MASTER||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = ''val.gestliquidaciones'') usd_id,
+       (select max(usd_id) from '||V_ESQUEMA||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_MASTER||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = ''val.gestliquidaciones'') usd_id,
        sysdate, (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = ''CM_GL_PCO''), ''SAG'', sysdate
 from
  (select asu.asu_id
@@ -811,6 +812,82 @@ from
  
  
  commit;
+ 
+
+
+  
+   -- Procuradores procedimientos  
+    ------------------------------
+    EXECUTE IMMEDIATE('insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
+    select '||V_ESQUEMA||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval uk,
+           aux.asu_id, 
+           aux.usd_id,
+           (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo=''PROC''), 
+           '''||USUARIO||''', 
+           TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'')
+    from 
+     (
+      select distinct auxi.asu_id, auxi.usd_id
+      from (
+          select distinct asu.asu_id, usd.usd_id,
+                 rank() over (partition by asu.asu_id order by usd.usu_id) as ranking
+          from '||V_ESQUEMA||'.asu_asuntos asu                                                                inner join 
+               '||V_ESQUEMA||'.mig_procedimientos_cabecera migp on migp.cd_procedimiento = asu.asu_id_externo inner join
+               '||V_ESQUEMA||'.des_despacho_externo        des  on des.des_despacho = ''Despacho Procuradores''        inner join 
+               '||V_ESQUEMA||'.usd_usuarios_despachos      usd  on usd.des_id = des.des_id                    inner join
+               '||V_ESQUEMA_MASTER||'.usu_usuarios         usu  on usu.usu_id = usd.usu_id and usu.USU_EXTERNO = 1 AND usu_username = ''val.PROCU_''||migp.CD_PROCURADOR||''''
+         where not exists (select 1 from '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO gaa where gaa.asu_id = asu.asu_id and gaa.dd_tge_id = (select dd_tge_id 
+                                                                                                                                            from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor 
+                                                                                                                                            where dd_tge_codigo=''PROC'')
+                          )
+      ) auxi where auxi.ranking = 1
+     ) aux');
+     
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO cargada. Procuradores. '||SQL%ROWCOUNT||' Filas.');
+    COMMIT;
+    
+    
+    -- Procuradores
+    --------------------------
+    EXECUTE IMMEDIATE('insert into '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gah (gah.GAH_ID, gah.GAH_ASU_ID, gah.GAH_GESTOR_ID, gah.GAH_FECHA_DESDE, gah.GAH_TIPO_GESTOR_ID, usuariocrear, fechacrear)
+    select '||V_ESQUEMA||'.s_GAH_GESTOR_ADIC_HISTORICO.nextval, 
+           aux.asu_id, 
+           aux.usd_id,
+           TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF''), 
+           (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo=''PROC''), 
+           '''||USUARIO||''', 
+           TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'')
+    from 
+     (
+      select distinct auxi.asu_id, auxi.usd_id
+      from (
+          select distinct asu.asu_id, usd.usd_id,
+                 rank() over (partition by asu.asu_id order by usd.usu_id) as ranking
+          from '||V_ESQUEMA||'.asu_asuntos asu                                                                inner join 
+               '||V_ESQUEMA||'.mig_procedimientos_cabecera migp on migp.cd_procedimiento = asu.asu_id_externo inner join
+               '||V_ESQUEMA||'.des_despacho_externo        des on des.des_despacho = ''Despacho Procuradores''   inner join 
+               '||V_ESQUEMA||'.usd_usuarios_despachos      usd on usd.des_id = des.des_id                     inner join
+               '||V_ESQUEMA_MASTER||'.usu_usuarios         usu on usu.usu_id = usd.usu_id and usu.USU_EXTERNO = 1 AND usu_username = ''val.PROCU_''||migp.CD_PROCURADOR||''''
+          where not exists (select 1 from '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gaa where gaa.gah_asu_id = asu.asu_id and GAH_TIPO_GESTOR_ID = (select dd_tge_id 
+                                                                                                                                                         from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor 
+                                                                                                                                                         where dd_tge_codigo=''PROC''))
+      ) auxi where auxi.ranking = 1
+     ) aux');    
+     
+     
+    
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAH_GESTOR_ADICIONAL_HISTORICO cargada. Procuradores. '||SQL%ROWCOUNT||' Filas.');
+    COMMIT;
+    
+
+    EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO COMPUTE STATISTICS');
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAH_GESTOR_ADICIONAL_ASUNTO Analizada');
+
+
+
+    EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO COMPUTE STATISTICS');
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAH_GESTOR_ADICIONAL_HISTORICO Analizada');
+ 
  
 --/***************************************
 --*     FIN CARACTERIZACION VALIDADORES  *

@@ -1,0 +1,59 @@
+.JOE_SearchWindow,
+DIV.ObjectExplorer TH, 
+DIV.ObjectExplorer TD
+ { 	font: bold 11px "Trebuchet MS", Verdana, Arial, Helvetica; text-align: left;}
+
+.JOE_SearchWindow {position: fixed; bottom: 5px; right: 10px; height: 62px; width: 251px; background: url('http://sweb.cz/nxtwrld/box.back.png') repeat-x center center; z-index: 100000;}
+* html .JOE_SearchWindow {position: absolute; }
+.JOE_SearchWindow INPUT { width: 130px; border: 1px solid #999; font-size: 12px;}
+.JOE_SearchWindow .JOE_Content { padding-top: 15px; padding-left: 5px;}
+.JOE_SearchWindow A { color: #FFF; text-decoration: none;}
+
+DIV#ObjectExplorerOutput { position: fixed; bottom: 70px; right: 20px; max-height: 40%; max-width: 95%;  overflow: auto;}
+DIV.ObjectExplorer { border: 2px solid #333; background: #CCC; padding: 8px; z-index: 100000;}
+
+DIV.ObjectExplorer TABLE { width: 100%;}
+DIV.ObjectExplorer CAPTION { color: #666; text-align: left;	padding: 2px;}
+DIV.ObjectExplorer CAPTION .current {font-size: 1.5em; color: #000;}
+DIV.ObjectExplorer TH {
+	font: bold 11px "Trebuchet MS", Verdana, Arial, Helvetica,
+	sans-serif;
+	color: #6D929B;
+	border-right: 1px solid #C1DAD7;
+	border-bottom: 1px solid #C1DAD7;
+	border-top: 1px solid #C1DAD7;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+	text-align: left;
+	padding: 6px 6px 6px 12px;
+	background: #CAE8EA ;
+}
+
+DIV.ObjectExplorer TH.nobg {
+	border: 0;
+	background: none;
+}
+
+DIV.ObjectExplorer  TD  {
+	border-right: 1px solid #C1DAD7;
+	border-bottom: 1px solid #C1DAD7;
+	background: #fff;
+	padding: 6px 6px 6px 12px;
+	color: #6D929B;
+}
+
+DIV.ObjectExplorer .closeview {float: right;}
+DIV.ObjectExplorer TR.boolean TD { background: #F0D6F4; color: #51005D;}
+DIV.ObjectExplorer TR.string TD { background: #FFF;}
+DIV.ObjectExplorer TR.number TD { background: #F5FAFA;}
+DIV.ObjectExplorer TR.array TD { background: #D1EBED;; color: #006F77;}
+DIV.ObjectExplorer TR.object TD { background: #FFEAC9;; color: #716450;}
+DIV.ObjectExplorer TR.DOMobject TD { background: #FFFF99;; color: #663333;}
+DIV.ObjectExplorer TR.function TD { background: #EAFAB4; color: #749600;}
+DIV.ObjectExplorer TR.nativeFunction TD { background: #EEE; color: #999;}
+
+DIV#ObjectExplorerOutput TD.alt {
+	background: #F5FAFA;
+	color: #B4AA9D;
+}
+DIV#ObjectExplorerOutput PRE.functionSource {display: none;}

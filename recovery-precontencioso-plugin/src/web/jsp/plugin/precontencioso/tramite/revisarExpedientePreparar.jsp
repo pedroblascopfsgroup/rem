@@ -69,6 +69,19 @@ if (muestraBotonGuardar==1){
 <c:if test="${form.tareaExterna.tareaProcedimiento.descripcion=='Dictar Instrucciones'}">
 	bottomBar.push(btnExportarPDF);
 </c:if>
+
+	var agenciaExternaSi = '<fwk:const value="es.capgemini.pfs.procesosJudiciales.model.DDSiNo.SI" />';
+	
+	var agenciaExt = items[2];
+	var procedimientoProp = items[3];
+	
+	agenciaExt.on('select', function() {
+		if(agenciaExt.getValue() == agenciaExternaSi) {
+			procedimientoProp.allowBlank = true;
+		}else{
+			procedimientoProp.allowBlank = false;
+		}
+	});
 	
 	var dsProcedimientos = new Ext.data.Store({
 		autoLoad:true,

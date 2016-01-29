@@ -407,7 +407,22 @@
 			</map>
 		</property>
 	</bean>
+	
+	<bean id="commonProjectContextHaya" parent="commonProjectContextDefault">
+            <property name="formatoNroContrato">
+                    <map>
+                            <entry key="HAYA">
+                                    <map>
+                                            <!--<entry key="contrato.codigoFormato" value="5,5,17,15"/>-->
+                                            <entry key="contrato.codigo.subStringIni" value="10"/>
+                                            <entry key="contrato.codigo.subStringFin" value="27"/>
+                                    </map>
+                            </entry>
+                    </map>
+            </property>
+    </bean>
 
+	<alias name="commonProjectContextHaya" alias="commonProjectContext"/>
 	<alias name="nmbCommonProjectContextHAYA" alias="nmbCommonProjectContext"/>
 	<alias name="procedimientosProjectContextHaya" alias="procedimientosProjectContext"/>		
 	<alias name="coreProjectContextHAYA" alias="coreProjectContext"/>

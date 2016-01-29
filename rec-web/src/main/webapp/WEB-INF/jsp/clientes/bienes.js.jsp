@@ -18,7 +18,6 @@
 		,value : '${bien.tipoBien.codigo}'
 	});
 
-		debugger;
 	var poblacion = app.creaText('bien.poblacion', '<s:message code="bienesCliente.poblacion" text="**Poblacion" />' , '${bien.poblacion}', {maxLength:50});
 	
 	var refCatastral = app.creaText('bien.referenciaCatastral', '<s:message code="bienesCliente.refcatastral" text="**Ref. catastral" />' , '<s:message text="${bien.referenciaCatastral}" javaScriptEscape="true" />', {maxLength:50,width:250});

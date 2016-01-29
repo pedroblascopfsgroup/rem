@@ -10,7 +10,6 @@
 
 <pfslayout:tabpage titleKey="plugin.itinerarios.reglasElevacion.titulo" title="**Reglas de elevacion" 
 	items="panelCE,panelRE,panelDC,panelFP" >
-	debugger;
 	var refrescoCompletarActivar = ${ceSiNo};
 	var refrescoRevisarActivar = ${reSiNo};
 	

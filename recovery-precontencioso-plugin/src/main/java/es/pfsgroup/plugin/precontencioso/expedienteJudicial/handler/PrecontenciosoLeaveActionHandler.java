@@ -19,6 +19,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
 import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContextImpl;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ProcedimientoPcoApi;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
@@ -39,7 +40,7 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 	
 
 	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-
+	
 	@Autowired
 	GenericABMDao genericDao;
 
@@ -142,6 +143,8 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 			if(PROYECTO_HAYA.equalsIgnoreCase(precontenciosoContext.getRecovery())){
 				if(!(!Checks.esNulo(prc.getAuditoria()) && USU_MIGRACION_PCO.equals(prc.getAuditoria().getUsuarioCrear()))){
 					executor.execute("plugin.precontencioso.inicializarPco", prc);
+				}else{
+					executor.execute("plugin.precontencioso.cambiarEstadoExpediete", prc.getId(), DDEstadoPreparacionPCO.PREPARACION);
 				}
 			} else {
 				executor.execute("plugin.precontencioso.inicializarPco", prc);
@@ -155,13 +158,25 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 				executor.execute("plugin.precontencioso.inicializarPco", prc);
 			} else {
 				String agencia_externa = "";
+				String prcPropuesto = "";
 				for(EXTTareaExternaValor valor : listado) {
 					if(TAREA_REVISAR_EXPEDIENTE_PREPARAR_COMBO_AGENCIA_EXTERNA.equals(valor.getNombre())){
 						agencia_externa = valor.getValor();
 					}
+					if(TAREA_REGISTRAR_TOMA_DEC_COMBO_PROC_INICIAR.equals(valor.getNombre())){
+						prcPropuesto = valor.getValor();
+					}
 				}
 				if (DDSiNo.SI.equals(agencia_externa)) {
 					executor.execute("plugin.precontencioso.cambiarEstadoExpediete", prc.getId(), PrecontenciosoBPMConstants.PCO_FINALIZADO);					
+				}
+				if(PrecontenciosoProjectContextImpl.RECOVERY_CAJAMAR.equals(precontenciosoContext.getRecovery())) {
+					ProcedimientoPCO pco = proxyFactory.proxy(ProcedimientoPcoApi.class).getPCOByProcedimientoId(prc.getId());
+					if(!Checks.esNulo(prcPropuesto)) {
+						TipoProcedimiento tipoProcProp = (TipoProcedimiento)diccionarioApi.dameValorDiccionarioByCod(TipoProcedimiento.class, prcPropuesto);
+						pco.setTipoProcPropuesto(tipoProcProp);
+					}
+					proxyFactory.proxy(ProcedimientoPcoApi.class).update(pco);
 				}
 			}
 		} else if (PrecontenciosoBPMConstants.PCO_AsignarGestorLiquidacion.equals(tex.getTareaProcedimiento().getCodigo())) {

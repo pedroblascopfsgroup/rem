@@ -11,7 +11,6 @@
 
 <pfslayout:tabpage titleKey="plugin.itinerarios.tabReglasVigencia.titulo" title="**Reglas de Vigencia" 
 	items="panelCE,panelRE" >
-	debugger;
 	var recargar = function (){
 		app.openTab('${itinerario.nombre}'
 					,'plugin.itinerarios.consultaItinerario'

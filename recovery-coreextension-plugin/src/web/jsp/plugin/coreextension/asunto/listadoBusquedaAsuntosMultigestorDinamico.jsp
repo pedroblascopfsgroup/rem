@@ -388,5 +388,4 @@
 	    ,border: false
     });
 	page.add(mainPanel);
-
 </fwk:page>

@@ -18,12 +18,18 @@ public class ConsumerActionManager<T> implements ConsumerManager<T> {
 
 	public void dispatch(Message<T> message) {
 		// busca los mensajes 
+		boolean encontrado = false;
 		for (ConsumerAction<T> consumer : consumerList) {
 			if (consumer.check(message)) {
-				logger.info(String.format("[INTEGRACION] Ejecutando ActionConsumer [%s] ...", consumer.getDescription()));
+				logger.debug(String.format("[INTEGRACION] Ejecutando ActionConsumer [%s] ...", consumer.getDescription()));
 				consumer.execute(message);
 				logger.info(String.format("[INTEGRACION] ActionConsumer [%s] ejecutado!!", consumer.getDescription()));
+				encontrado = true;
 			}
+		}
+		
+		if (!encontrado) {
+			logger.info(String.format("[INTEGRACION] Mensaje GUID[%s] descartado !!! (No existe ActionConsumer configurado para este mensaje)", message.getHeaders().getId()));
 		}
 	}
 	

@@ -197,20 +197,20 @@
 			text : '<s:message code="plugin.precontencioso.grid.burofax.borrarOrigenManual" text="**Borrar Dir. Manual" />'
 			,iconCls : 'icon_menos'
 			,cls: 'x-btn-text-icon'
-<!-- 			,hidden:true -->
+<%-- 			,hidden:true --%>
 	});	
 	var btnDescartarPersEnvio = new Ext.Button({
 			text : '<s:message code="plugin.precontencioso.grid.burofax.descartar" text="**Descartar persona" />'
 			,iconCls : 'icon_cancel'
 			,cls: 'x-btn-text-icon'
-<!-- 			,hidden:true -->
+<%-- 			,hidden:true --%>
 	});
 	
 	var btnCancelarEnEstPrep = 	new Ext.Button({
 			text : '<s:message code="plugin.precontencioso.grid.burofax.anular" text="**Anular Burofax" />'
 			,iconCls : 'icon_menos'
 			,cls: 'x-btn-text-icon'
-<!-- 			,hidden:true -->
+<%-- 			,hidden:true --%>
 	});
 	
 	Ext.namespace('Ext.ux.plugins');
@@ -350,7 +350,6 @@
        	,style:'padding-top:10px'
 		,cls:'cursor_pointer'
 		,iconCls : 'icon_asuntos'
-
 		<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_BUR_BTN">
 			,bbar : [ botonesTabla,btnAddPersona,btnEnviar, btnNuevaDir, btnEditar, btnPreparar,btnCancelar, btnNotificar,btnDescargarBurofax, btnBorrarDirOrigenManual, btnDescartarPersEnvio,  separadorButtons, btnCancelarEnEstPrep, botonRefresh ]
 		</sec:authorize>
@@ -1256,6 +1255,12 @@
 	  		return false;
 	  	}
 	}
+	
+	<sec:authentication var="user" property="principal" />
+	<c:if test="${user.entidad.descripcion eq 'CAJAMAR'}">
+   		btnNotificar.setVisible(true);
+	</c:if>
+
 
 var ponerVisibilidadBotonesBur = function(visibles, invisibles) {
 	for (var i=0; i < visibles.length; i++){

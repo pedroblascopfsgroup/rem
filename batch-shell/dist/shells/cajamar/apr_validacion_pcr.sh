@@ -11,9 +11,9 @@ export DIR_CONFIG=$DIR_BASE_ETL/config/
 export CFG_FILE=config.ini
 export MAINSH="$nameETL"_run.sh
 
-cd "$DIR_ETL" &> null
+cd "$DIR_ETL" &> /dev/null
 
-if [ $? = 1 ] ; then
+if [ $? -ne 0 ] ; then
    echo "$(basename $0) Error en $filename: directorio inexistente $DIR_ETL"
    exit 1
 fi

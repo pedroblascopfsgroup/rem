@@ -167,7 +167,6 @@
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){
-			debugger;
 			Ext.Ajax.request({
 				url: page.resolveUrl('turnadodespachos/guardarEsquemaDespacho'),
 				params: {

@@ -4,6 +4,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <fwk:page>
 
@@ -296,6 +297,8 @@
 
 	<%-- Panel --%>
 
+	<sec:authentication var="user" property="principal" />
+	
 	var panelEdicion = new Ext.Panel({
 		layout: 'table',
 		layoutConfig: { columns: 2 },
@@ -320,9 +323,12 @@
 						comboTipoGestor,
 						comboTipoDespacho,
 						comboUsuario ]
-			}, {
-				items: [ capitalVencidoOriginalField, capitalNoVencidoOriginalField, interesesOrdinariosOriginalField, interesesDemoraOriginalField, totalOriginalField,comisionesOriginalField,gastosOriginalField,impuestosOriginalField]
 			}
+			<c:if test="${user.entidad.descripcion != 'CAJAMAR'}">
+				, {
+					items: [ capitalVencidoOriginalField, capitalNoVencidoOriginalField, interesesOrdinariosOriginalField, interesesDemoraOriginalField, totalOriginalField,comisionesOriginalField,gastosOriginalField,impuestosOriginalField]
+				}
+			</c:if>
 		]
 	});
 

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <action-state id="start">
+        <evaluate expression="executor.execute('usuarioManager.findByUsername', '')" result="flowScope.users"/>
+        <transition on="*" to="listUsers" />
+    </action-state>
+    
+    <end-state id="listUsers" view="fwkListUsers"/>
+
+</flow>

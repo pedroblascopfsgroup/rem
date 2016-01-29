@@ -2299,12 +2299,12 @@
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
-				<entry key="R_REG_INS_CAN_CAR_ECO_REG_ECO">
+				<entry key="R_REG_INS_CC_ECO_REG_ECO">
 					<list>
 						<bean
 							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
 							<property name="codigoInput">
-								<value>I_REG_INS_CAN_CAR_ECO_REG_ECO</value>
+								<value>I_REG_INS_CC_ECO_REG_ECO</value>
 							</property>
 						</bean>
 					</list>

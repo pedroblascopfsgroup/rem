@@ -2,15 +2,15 @@ package es.pfsgroup.recovery.pwdatasource;
 
 import java.sql.SQLException;
 import java.util.Properties;
-
-import org.apache.commons.dbcp.BasicDataSource;
+import javax.sql.DataSource;
 
 import es.capgemini.pfs.DevonPropertiesConstants.DatabaseConfig;
 import es.pfsgroup.recovery.Encriptador;
 
-import javax.sql.DataSource;
+import es.pfsgroup.recovery.txdatasource.TransactionalBasicDataSourceWrapper;
 
-public class PwDataSource extends BasicDataSource {
+
+public class PwDataSource extends TransactionalBasicDataSourceWrapper {
 
 	@javax.annotation.Resource
 	private Properties appProperties;

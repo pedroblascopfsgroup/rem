@@ -38,9 +38,10 @@ public interface DocumentoPCOApi {
 	 * Obtiene los documentos de un procedimientoPCO
 	 * 
 	 * @param idProcPCO
+	 * @param idTipoDocumento
 	 * @return
 	 */
-	List<DocumentoPCO> getDocumentosPorIdProcedimientoPCO(Long idProcPCO);
+	List<DocumentoPCO> getDocumentosPorIdProcedimientoPCO(Long idProcPCO, Long idTipoDocumento);
 	
 	/**
 	 * Obtiene los documentos de un procedimientoPCO no descartado

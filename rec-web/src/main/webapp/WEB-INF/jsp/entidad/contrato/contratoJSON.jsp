@@ -64,6 +64,13 @@
 	<fwk:date value="${contrato.fechaVencimiento}"/>
     </json:property>
     <json:property name="entidadPropietaria" value="${contrato.codEntidadPropietaria}" />
+<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
+	<json:property name="entidadPropietaria">
+		<fmt:formatNumber pattern="#0000">
+			${contrato.codigoEntidad}
+		</fmt:formatNumber>
+	</json:property>
+</sec:authorize>        
     <c:if test="${contrato.condicionesEspeciales=='000000000000000'}">
     	<json:property name="condEspec" value="" />
     </c:if>

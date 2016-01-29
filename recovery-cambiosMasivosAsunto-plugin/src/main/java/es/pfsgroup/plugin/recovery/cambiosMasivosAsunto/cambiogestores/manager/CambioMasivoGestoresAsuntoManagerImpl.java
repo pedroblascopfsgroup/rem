@@ -1,10 +1,12 @@
 package es.pfsgroup.plugin.recovery.cambiosMasivosAsunto.cambiogestores.manager;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import edu.emory.mathcs.backport.java.util.Collections;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
@@ -19,7 +21,7 @@ import es.pfsgroup.plugin.recovery.cambiosMasivosAsunto.cambiogestores.dao.Cambi
 import es.pfsgroup.plugin.recovery.cambiosMasivosAsunto.cambiogestores.dto.PeticionCambioMasivoGestoresDtoImpl;
 
 /**
- * Implementación de las operaciones de negocio para el cambio masivo de
+ * Implementaciï¿½n de las operaciones de negocio para el cambio masivo de
  * gestores del asunto
  * 
  * @author bruno
@@ -70,7 +72,28 @@ public class CambioMasivoGestoresAsuntoManagerImpl implements CambioMasivoGestor
 	@Override
 	@BusinessOperation(CAMBIO_MASIVO_GESTORES_GET_GESTORES)
 	public List<GestorDespacho> buscaGestoresByDespachoTipoGestor(Long despacho, Long tipoGestor) {
-		return gestorDespachoDao.buscaGestoresByDespachoTipoGestor(despacho, tipoGestor, (tipoGestor != null));
+
+		List<GestorDespacho> listaGestores = gestorDespachoDao.buscaGestoresByDespachoTipoGestor(despacho, tipoGestor, (tipoGestor != null));
+		Comparator comparador = new Comparator<GestorDespacho>() {
+			@Override
+			public int compare(GestorDespacho arg0, GestorDespacho arg1) {
+				if (arg0 == null){
+					if (arg1 == null){
+						return 0;
+					}else{
+						return 1;
+					}
+				}else{
+					if (arg1 == null || arg1.getUsuario()==null || arg0.getUsuario()==null || arg1.getUsuario().getApellidoNombre()==null || arg0.getUsuario().getApellidoNombre()==null ){
+						return -1;
+					}else{
+						return arg0.getUsuario().getApellidoNombre().toUpperCase().compareTo(arg1.getUsuario().getApellidoNombre().toUpperCase());
+					}
+				}
+			}
+		};
+		Collections.sort(listaGestores, comparador);
+		return listaGestores;
 	}
 
 	@Override

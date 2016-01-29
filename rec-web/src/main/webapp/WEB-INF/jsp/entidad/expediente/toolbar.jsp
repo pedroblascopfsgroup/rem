@@ -742,7 +742,7 @@ function(entidad,page){
 		}
 		
 		function showHide(action, elements___){
-			for(var i=1;i<arguments.length;i++){
+			for(var i=1;i< arguments.length;i++){
 				if (action){
 					Ext.getCmp(arguments[i]).show();
 					subMenusVisibles += 1;

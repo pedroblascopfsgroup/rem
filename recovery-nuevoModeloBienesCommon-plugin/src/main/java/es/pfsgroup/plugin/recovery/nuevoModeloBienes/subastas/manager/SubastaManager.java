@@ -586,27 +586,23 @@ public class SubastaManager implements SubastaApi {
 	public FileItem buscarSubastasXLS(NMBDtoBuscarSubastas dto) {
 		Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
 
-		Parametrizacion parametroLimite = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
-				Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_SUBASTAS);
 
-		List<HashMap<String, Object>> resultadoCount = subastaDao.buscarSubastasExcel(dto, usuarioLogado, true);
+		if (!comprobarLimiteXLS(dto)) {
+			Parametrizacion parametroLimite = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+					Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_SUBASTAS);
 
-		if (resultadoCount.size() > 0) {
-			Integer numRegistrosExportar = (Integer) resultadoCount.get(0).get("count");
 			Integer limite = Integer.parseInt(parametroLimite.getValor());
 
-			if (numRegistrosExportar > limite) {
-				throw new UserException(messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado1") + limite + " "
-						+ messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado2"));
-			}
+			throw new UserException(messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado1") + limite + " "
+					+ messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado2"));
 		}
+		else {
+			List<HashMap<String, Object>> resultadosExportar = subastaDao.buscarSubastasExcel(dto, usuarioLogado, false);
 
-		List<HashMap<String, Object>> resultadosExportar = subastaDao.buscarSubastasExcel(dto, usuarioLogado, false);
-
-		return generarInformeBusquedaSubastas(resultadosExportar);
+			return generarInformeBusquedaSubastas(resultadosExportar);	
+		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	@BusinessOperation("plugin.nuevoModeloBienes.subastas.manager.SubastaManager.buscarTareasSubastaBankia")
 	public List<TareaProcedimiento> buscarTareasSubastaBankia() {
 
@@ -621,7 +617,6 @@ public class SubastaManager implements SubastaApi {
 		}
 	}	
 	
-	@SuppressWarnings("unchecked")
 	@BusinessOperation("plugin.nuevoModeloBienes.subastas.manager.SubastaManager.buscarTareasSubastaSareb")
 	public List<TareaProcedimiento> buscarTareasSubastaSareb() {
 		
@@ -644,7 +639,6 @@ public class SubastaManager implements SubastaApi {
 	 *            Long
 	 * @return lista de bienes.
 	 */
-	@SuppressWarnings("unchecked")
 	@BusinessOperation("plugin.nuevoModeloBienes.subastas.manager.SubastaManager.buscarBienesDeUnaSubasta")
 	public List<NMBBien> getBienesDeUnaSubasta(Subasta subasta) {
 		
@@ -1529,5 +1523,26 @@ public class SubastaManager implements SubastaApi {
 			}
 			return "ok";
 	    }
+
+		public boolean comprobarLimiteXLS(NMBDtoBuscarSubastas dto) {
+
+			Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
+
+			Parametrizacion parametroLimite = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+					Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_SUBASTAS);
+
+			List<HashMap<String, Object>> resultadoCount = subastaDao.buscarSubastasExcel(dto, usuarioLogado, true);
+
+			if (resultadoCount.size() > 0) {
+				Integer numRegistrosExportar = (Integer) resultadoCount.get(0).get("count");
+				Integer limite = Integer.parseInt(parametroLimite.getValor());
+
+				if (numRegistrosExportar > limite) {
+					return false;
+				}
+			}
+
+			return true;
+		}
 
 }

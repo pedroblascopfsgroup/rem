@@ -597,7 +597,7 @@ public class BurofaxController {
 			@RequestParam(value = "idPersona", required = true) Long idPersona, 
 			Long idProcedimiento,
 			boolean esPersonaManual, 
-			@RequestParam(value = "contratos", required = true) Long[] contratos, 
+			@RequestParam(value = "contratos", required = false) Long[] contratos, 
 			@RequestParam(value = "tipoIntervencionContratos", required = true) String[] tiposIntervencion,
 			String dni,
 			String nombre,
@@ -639,8 +639,10 @@ public class BurofaxController {
 			///Creamos su relacion con los contratos
 			int i = 0;
 			for(Long idContrato : contratos){
-				ContratoPersonaManual cntPersMan = burofaxManager.guardaContratoPersonaManual(persMan.getId(), idContrato, tiposIntervencion[i]);
-				if(!Checks.esNulo(cntPersMan)) burofaxManager.crearBurofaxPersonaManual(persMan.getId(),idProcedimiento, cntPersMan.getId());
+				if(!Checks.esNulo(idContrato)){
+					ContratoPersonaManual cntPersMan = burofaxManager.guardaContratoPersonaManual(persMan.getId(), idContrato, tiposIntervencion[i]);
+					if(!Checks.esNulo(cntPersMan)) burofaxManager.crearBurofaxPersonaManual(persMan.getId(),idProcedimiento, cntPersMan.getId());	
+				}
 				i++;
 			}
 			
@@ -727,26 +729,28 @@ public class BurofaxController {
 
 			
 			for(Long idContrato : contratos){
-				ContratoPersona contratoPersona = genericDao.get(ContratoPersona.class, genericDao.createFilter(FilterType.EQUALS, "persona.id", idPersona), genericDao.createFilter(FilterType.EQUALS, "contrato.id", idContrato), genericDao.createFilter(FilterType.EQUALS, "tipoIntervencion.codigo", tiposIntervencion[i]));
-				if(Checks.esNulo(contratoPersona)){
-					///Creamos la persona si no se ha creado en alguna iteración anterior
-					if(Checks.esNulo(persMan)){
-						persMan = burofaxManager.guardaPersonaManual(persona.getDocId(), persona.getNombre(), persona.getApellido1(), persona.getApellido2(), persona.getPropietario().getCodigo(), persona.getCodClienteEntidad());
-					}
-					
-					///Creamos PERSONAS_CONTRATO_MANUAL
-					if(!Checks.esNulo(persMan)){
-						cntPersMan = burofaxManager.guardaContratoPersonaManual(persMan.getId(), idContrato, tiposIntervencion[i]);
-					}
-					
-					///Creamos el burofax
-					if(!Checks.esNulo(cntPersMan)){
-						if(!Checks.esNulo(cntPersMan)) burofaxManager.crearBurofaxPersonaManual(persMan.getId(),idProcedimiento, cntPersMan.getId());
-					}
-					
-				}else{
-					///Creamos el burofax
-					burofaxManager.crearBurofaxPersona(idPersona,idProcedimiento, contratoPersona.getId());
+				if(!Checks.esNulo(idContrato)){
+					ContratoPersona contratoPersona = genericDao.get(ContratoPersona.class, genericDao.createFilter(FilterType.EQUALS, "persona.id", idPersona), genericDao.createFilter(FilterType.EQUALS, "contrato.id", idContrato), genericDao.createFilter(FilterType.EQUALS, "tipoIntervencion.codigo", tiposIntervencion[i]));
+					if(Checks.esNulo(contratoPersona)){
+						///Creamos la persona si no se ha creado en alguna iteración anterior
+						if(Checks.esNulo(persMan)){
+							persMan = burofaxManager.guardaPersonaManual(persona.getDocId(), persona.getNombre(), persona.getApellido1(), persona.getApellido2(), persona.getPropietario().getCodigo(), persona.getCodClienteEntidad());
+						}
+						
+						///Creamos PERSONAS_CONTRATO_MANUAL
+						if(!Checks.esNulo(persMan)){
+							cntPersMan = burofaxManager.guardaContratoPersonaManual(persMan.getId(), idContrato, tiposIntervencion[i]);
+						}
+						
+						///Creamos el burofax
+						if(!Checks.esNulo(cntPersMan)){
+							if(!Checks.esNulo(cntPersMan)) burofaxManager.crearBurofaxPersonaManual(persMan.getId(),idProcedimiento, cntPersMan.getId());
+						}
+						
+					}else{
+						///Creamos el burofax
+						burofaxManager.crearBurofaxPersona(idPersona,idProcedimiento, contratoPersona.getId());
+					}	
 				}
 				
 				i++;
@@ -969,14 +973,18 @@ public class BurofaxController {
     @RequestMapping
     public String getDocuemtosPCONoDescartados(Long idProcedimientoPCO, ModelMap model) {
 
-		List<DocumentoPCO> listDocumentos = documentoPCOApi.getDocumentosPorIdProcedimientoPCONoDescartados(idProcedimientoPCO);
-		List<DocumentoPCO> documentos = documentoPCOApi.getDocumentosOrdenadosByUnidadGestion(listDocumentos);
 		
 		List<SolicitudDocumentoPCODto> solicitudesDoc = new ArrayList<SolicitudDocumentoPCODto>();
 		
-		for (DocumentoPCO doc : documentos) {
-			SolicitudDocumentoPCODto solDto = documentoPCOApi.crearSolicitudDocumentoDto(doc, null, true, false);
-			solicitudesDoc.add(solDto);
+		List<DocumentoPCO> listDocumentos = documentoPCOApi.getDocumentosPorIdProcedimientoPCONoDescartados(idProcedimientoPCO);
+		if(!Checks.estaVacio(listDocumentos)){
+			List<DocumentoPCO> documentos = documentoPCOApi.getDocumentosOrdenadosByUnidadGestion(listDocumentos);
+			if(!Checks.estaVacio(documentos)){
+				for (DocumentoPCO doc : documentos) {
+					SolicitudDocumentoPCODto solDto = documentoPCOApi.crearSolicitudDocumentoDto(doc, null, true, false);
+					solicitudesDoc.add(solDto);
+				}
+			}
 		}
 
 		model.put("solicitudesDocumento", solicitudesDoc);
@@ -1130,7 +1138,9 @@ public class BurofaxController {
 		dto.setPiso(request.getParameter("piso"));
 		dto.setEscalera(request.getParameter("escalera"));
 		dto.setPuerta(request.getParameter("puerta"));
-		dto.setListaIdPersonas(idCliente.toString());
+		if(!Checks.esNulo(idCliente)){
+			dto.setListaIdPersonas(idCliente.toString());
+		}
 		dto.setOrigen(request.getParameter("origen"));
 
 		burofaxManager.actualizaDireccion(dto, idDireccion);

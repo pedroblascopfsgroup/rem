@@ -45,7 +45,7 @@
 		,width: comboWidth
 		,resizable: true
 		,forceSelection: true
-		,editable: false
+		,editable: true
 		,emptyText:'---'
 		,triggerAction: 'all'
 		,fieldLabel: '<s:message
@@ -80,9 +80,10 @@
 		store:optionsDespachoStoreOriginal
 		,displayField:'descripcion'
 		,valueField:'cod'
-		,mode: 'remote'
+		,mode: 'local'
 		,emptyText:'---'
-		,editable: false
+		,forceSelection: true
+		,editable: true
 		,triggerAction: 'all'
 		,disabled:true
 		,resizable:true
@@ -94,9 +95,10 @@
 		store:optionsDespachoStoreDestino
 		,displayField:'descripcion'
 		,valueField:'cod'
-		,mode: 'remote'
+		,mode: 'local'
 		,emptyText:'---'
-		,editable: false
+		,forceSelection: true
+		,editable: true
 		,triggerAction: 'all'
 		,disabled:true
 		,resizable:true
@@ -135,7 +137,7 @@
 		,width: comboWidth
 		,resizable: true
 		,forceSelection: true
-		,editable: false
+		,editable: true
 		,emptyText:'---'
 		,triggerAction: 'all'
 		,fieldLabel: '<s:message
@@ -153,7 +155,7 @@
 		,width: comboWidth
 		,resizable: true
 		,forceSelection: true
-		,editable: false
+		,editable: true
 		,emptyText:'---'
 		,triggerAction: 'all'
 		,fieldLabel: '<s:message
@@ -188,7 +190,8 @@
         ,width:comboWidth
         ,fieldLabel: '<s:message code="plugin.cambiosMasivosAsuntos.cambiogestores.usuario" text="**Usuario"/>'
         ,tpl: usuarioTemplate  
-        ,forceSelection:true
+		,forceSelection: true
+		,editable: true
         ,style:'padding:0px;margin:0px;'
         ,anchor: '100%'
         ,allowBlank:false

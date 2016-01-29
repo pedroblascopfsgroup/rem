@@ -265,7 +265,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] CAJAMAR MIGRACION CONTRATOS MARCA HAYA');
                            3 as dd_eas_id, -- estadoasunto aceptado
                            ''EXTAsunto'' as dtype,
                            (SELECT dd_tas_id FROM '||v_esquema_master||'.dd_tas_tipos_asunto WHERE dd_tas_descripcion = ''Litigio'') as dd_tas_id,
-                           (SELECT dd_pas_id FROM '||v_esquema||'.dd_pas_propiedad_asunto WHERE dd_pas_codigo = ''CAJAMAR'') as dd_pas_id,  
+                           (SELECT dd_pas_id FROM '||v_esquema||'.dd_pas_propiedad_asunto WHERE dd_pas_codigo = ''CAJAMAR'') as dd_pas_id,
                            cd_expediente_nuse as asu_id_externo,
                            (select dd_ges_id FROM '||v_esquema||'.dd_ges_gestion_asunto WHERE dd_ges_codigo = ''HAYA'') as dd_ges_id,
                            sys_guid() as sys_guid
@@ -482,7 +482,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] CAJAMAR MIGRACION CONTRATOS MARCA HAYA');
                      , tex.tex_id
                      , tev.tev_nombre
                      , decode( tev.tev_nombre
-                             , ''fecha_fin'', to_char(sysdate,''yyyy-mm-dd'')
+                             , ''fecha_fin_revision'', to_char(sysdate,''yyyy-mm-dd'')
                              , ''gestion'', decode(tmp.cdTipoAct,''AGE'',''AGENCIA_EXTERNA''
                                                                 ,''PCO'',''SIN_GESTION''
                                                                 ,''GES'',''SIN_GESTION'')
@@ -500,7 +500,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] CAJAMAR MIGRACION CONTRATOS MARCA HAYA');
                      , '||v_esquema||'.TAP_TAREA_PROCEDIMIENTO    TAP
                      , '||v_esquema||'.TEX_TAREA_EXTERNA          TEX
                      --** Obtenemos valores por producto cartesiano
-                     , (Select ''fecha_fin'' as tev_nombre from dual
+                     , (Select ''fecha_fin_revision'' as tev_nombre from dual
                         union all
                         Select ''gestion'' as tev_nombre from dual
                         union all

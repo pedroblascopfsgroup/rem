@@ -2,12 +2,7 @@
  
 ficheros=ALERTAS
 
-if [ -z "$1" ]; then
-    echo "$(basename $0) Error: parámetro de entrada YYYYMMDD no definido."
-    exit 1
-fi
-
-mascara='_'$ENTIDAD'_'$1
+mascara='_'$ENTIDAD'_'????????
 extensionSem=".sem"
 extensionZip=".zip"
 

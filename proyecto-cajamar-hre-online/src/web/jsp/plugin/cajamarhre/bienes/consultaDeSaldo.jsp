@@ -8,7 +8,6 @@
 
 <fwk:page>
 
-
 	var labelStyle='font-weight:bolder;width:150px'
 	
 	var excedido =new Ext.ux.form.StaticTextField({
@@ -210,11 +209,6 @@
 		,rawvalue : '<s:message code="plugin.cajamar.contrato.consultaSaldo.mensajeWSVacio" text="**Esta funcionalidad no est&aacute; disponible para este tipo de contrato"/>'
 	});
 	
-	//variable de aplicativo
-	//var codigoAplicativo = ${resultado.aplicativo.codigo};
-	//var idAplicativo = ${resultado.aplicativo.id};
-	//alert("el codigo aplicativo dentro del jsp es: "+codigoAplicativo+" y su id es: "+idAplicativo);
-	
 	<c:set var="codigoAplicativo" value="${resultado.aplicativo.codigo}"/>
 	<c:choose>
   		<c:when test="${codigoAplicativo eq 'RF'}">
@@ -254,6 +248,8 @@
     	</c:otherwise>
  </c:choose>	
 	
+	debugger;
+	
 	var btnCerrar= new Ext.Button({
 		text : '<s:message code="app.aceptar" text="**Aceptar" />'
 		,iconCls:'icon_ok'
@@ -265,7 +261,7 @@
 		var panelEdicion = new Ext.form.FormPanel({
 			autoHeight : true
 			,autoWidth : true
-			,bodyStyle:'padding:-10px;cellspacing:10px;'
+			,bodyStyle:'padding:10px; cellspacing:10px;'
 			,border : true
 			,items : [
 				 { xtype : 'errorList', id:'errL' }

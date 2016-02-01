@@ -39,11 +39,11 @@ BEGIN
 	EXECUTE IMMEDIATE V_MSQL INTO table_count;
 	
 	IF table_count = 1 THEN
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.V_MSV_BUSQUEDA_ASU_TRAM... ya existe, se reemplazará');
-		EXECUTE IMMEDIATE 'DROP VIEW V_MSV_BUSQUEDA_ASU_TRAM';
-		V_MSQL := 'CREATE OR REPLACE VIEW ' ||V_ESQUEMA||'.V_MSV_BUSQUEDA_ASU_TRAM
-		("ID_", "ASU_ID", "PRC_ID", "ASU_NOMBRE", "PLAZA", "JUZGADO", "AUTO", "TIPO_PRC", "PRINCIPAL", "TEX_ID", "COD_ESTADO_PRC", "DES_ESTADO_PRC", "PRC_SALDO_RECUPERACION", "PRC_FECHA_CREAR", "TAR_TAREA") AS 
-  		(SELECT DISTINCT ROWNUM id_, asu.asu_id "ASU_ID", prc.prc_id "PRC_ID",
+    DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.V_MSV_BUSQUEDA_ASU_TRAM... ya existe, se reemplazará');
+    EXECUTE IMMEDIATE 'DROP VIEW V_MSV_BUSQUEDA_ASU_TRAM';
+    V_MSQL := 'CREATE OR REPLACE VIEW ' ||V_ESQUEMA||'.V_MSV_BUSQUEDA_ASU_TRAM
+    ("ID_", "ASU_ID", "PRC_ID", "ASU_NOMBRE", "PLAZA", "JUZGADO", "AUTO", "TIPO_PRC", "PRINCIPAL", "TEX_ID", "COD_ESTADO_PRC", "DES_ESTADO_PRC", "PRC_SALDO_RECUPERACION", "PRC_FECHA_CREAR", "TAR_TAREA") AS 
+      (SELECT DISTINCT ROWNUM id_, asu.asu_id "ASU_ID", prc.prc_id "PRC_ID",
                     asu.asu_nombre "ASU_NOMBRE",
                     pla.dd_pla_descripcion "PLAZA",
                     juz.dd_juz_descripcion "JUZGADO",
@@ -75,18 +75,18 @@ BEGIN
                       )
                     INNER JOIN tex_tarea_externa tex ON tex.tar_id =
                                                                     tar.tar_id
-                    INNER JOIN hayamaster.dd_epr_estado_procedimiento epr
+                    INNER JOIN '||V_ESQUEMA_M||'.dd_epr_estado_procedimiento epr
                     ON prc.dd_epr_id = epr.dd_epr_id
-                    JOIN hayamaster.dd_sta_subtipo_tarea_base sta ON sta.dd_sta_id = tar.dd_sta_id and sta.dd_sta_codigo = ''814''
+                    JOIN '||V_ESQUEMA_M||'.dd_sta_subtipo_tarea_base sta ON sta.dd_sta_id = tar.dd_sta_id and sta.dd_sta_codigo = ''814''
               WHERE asu.borrado = 0 AND prc.prc_paralizado = 0)';
-		EXECUTE IMMEDIATE V_MSQL;
+    EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.V_MSV_BUSQUEDA_ASU_TRAM... Creando vista');
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.V_MSV_BUSQUEDA_ASU_TRAM... OK');
 			
-		ELSE
-			V_MSQL := 'CREATE OR REPLACE VIEW ' ||V_ESQUEMA||'.V_MSV_BUSQUEDA_ASU_TRAM 
-		("ID_", "ASU_ID", "PRC_ID", "ASU_NOMBRE", "PLAZA", "JUZGADO", "AUTO", "TIPO_PRC", "PRINCIPAL", "TEX_ID", "COD_ESTADO_PRC", "DES_ESTADO_PRC", "PRC_SALDO_RECUPERACION", "PRC_FECHA_CREAR", "TAR_TAREA") AS 
-  		(SELECT DISTINCT ROWNUM id_, asu.asu_id "ASU_ID", prc.prc_id "PRC_ID",
+    ELSE
+      V_MSQL := 'CREATE OR REPLACE VIEW ' ||V_ESQUEMA||'.V_MSV_BUSQUEDA_ASU_TRAM 
+    ("ID_", "ASU_ID", "PRC_ID", "ASU_NOMBRE", "PLAZA", "JUZGADO", "AUTO", "TIPO_PRC", "PRINCIPAL", "TEX_ID", "COD_ESTADO_PRC", "DES_ESTADO_PRC", "PRC_SALDO_RECUPERACION", "PRC_FECHA_CREAR", "TAR_TAREA") AS 
+      (SELECT DISTINCT ROWNUM id_, asu.asu_id "ASU_ID", prc.prc_id "PRC_ID",
                     asu.asu_nombre "ASU_NOMBRE",
                     pla.dd_pla_descripcion "PLAZA",
                     juz.dd_juz_descripcion "JUZGADO",
@@ -118,11 +118,11 @@ BEGIN
                       )
                     INNER JOIN tex_tarea_externa tex ON tex.tar_id =
                                                                     tar.tar_id
-                    INNER JOIN hayamaster.dd_epr_estado_procedimiento epr
+                    INNER JOIN '||V_ESQUEMA_M||'.dd_epr_estado_procedimiento epr
                     ON prc.dd_epr_id = epr.dd_epr_id
-                    JOIN hayamaster.dd_sta_subtipo_tarea_base sta ON sta.dd_sta_id = tar.dd_sta_id and sta.dd_sta_codigo = ''814''
+                    JOIN '||V_ESQUEMA_M||'.dd_sta_subtipo_tarea_base sta ON sta.dd_sta_id = tar.dd_sta_id and sta.dd_sta_codigo = ''814''
               WHERE asu.borrado = 0 AND prc.prc_paralizado = 0)';
-			EXECUTE IMMEDIATE V_MSQL;
+      EXECUTE IMMEDIATE V_MSQL;
 			DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.V_MSV_BUSQUEDA_ASU_TRAM... Creando vista');
 			DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.V_MSV_BUSQUEDA_ASU_TRAM... OK');
 	END IF;

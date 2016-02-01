@@ -69,6 +69,10 @@ while read tagname; do
         git reset --hard HEAD
         git checkout $tagname 
         ./sql/tool/package-scripts-from-tag.sh $tagnametmp $2
+        if [ $? -ne 0 ]; then
+            echo "ERROR al generar el empaquetado"
+            exit 1
+        fi
         mkdir ./package-tags/$count
         if [ -e ./sql/tool/tmp/package/DDL/DDL-scripts.zip ];then
             cp -r ./sql/tool/tmp/package/DDL ./package-tags/$count/

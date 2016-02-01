@@ -8,8 +8,12 @@ SELECT
     GUID_DD_TPO_CODIGO|| ';' || 
     GUID_BIE_CODIGO_INTERNO|| ';' || 
     GUID_CNT_CONTRATO|| ';' || 
-    TRIM(GUID_TAP_CODIGO)
-FROM TMP_GUID_BCC
+    TRIM(GUID_TAP_CODIGO)|| ';' || 
+    TRIM(GUID_DD_PCO_PEP_CODIGO)|| ';' || 
+    TRIM(GUID_DD_TFA_CODIGO)|| ';' || 
+    TRIM(GUID_PCO_DOC_PDD_DESC)|| ';' || 
+    TRIM(GUID_DD_PCO_DTD_CODIGO)|| ';'
+FROM CM01.TMP_GUID_BCC
 ORDER BY GUID_DES DESC;
 SPOOL OFF;
 set echo on heading on feedback on termout on

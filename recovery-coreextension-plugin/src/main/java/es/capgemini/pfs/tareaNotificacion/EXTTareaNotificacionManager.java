@@ -1335,7 +1335,13 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
 		EXTTareaNotificacion extTareaNotif = EXTTareaNotificacion.instanceOf(tareaNotif); 
 		if (tareaNotif == null) return null;
 		if (Checks.esNulo(extTareaNotif.getGuid())) {
-			extTareaNotif.setGuid(Guid.getNewInstance().toString());
+			
+			String guid = Guid.getNewInstance().toString();
+			while(getTareaNoficiacionByGuid(guid) != null) {
+				guid = Guid.getNewInstance().toString();
+			}
+			
+			extTareaNotif.setGuid(guid);
 			genericDao.save(EXTTareaNotificacion.class, extTareaNotif);
 		}
 		return extTareaNotif;

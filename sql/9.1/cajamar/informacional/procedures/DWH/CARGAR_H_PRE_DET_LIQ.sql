@@ -157,7 +157,7 @@ DECLARE
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;    
 
-    -- Borrado del dï¿½a a insertar
+    -- Borrado del día a insertar
     delete from H_PRE_DET_LIQ where DIA_ID = fecha;
     commit;   
     
@@ -659,7 +659,7 @@ close c_semana;
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
     
-  -- Bucle que recorre los aï¿½os
+  -- Bucle que recorre los años
   open c_anio;
   loop --C_ANIO_LOOP
     fetch c_anio into anio;        
@@ -670,7 +670,7 @@ close c_semana;
     --Año anterior
     select max(ANIO_ID) into anio_ant from H_PRE_DET_LIQ_ANIO where ANIO_ID < anio;
         
-    -- Borrado de loa aï¿½os a insertar
+    -- Borrado de loa años a insertar
     delete from H_PRE_DET_LIQ_ANIO where ANIO_ID = anio;
     commit;
   

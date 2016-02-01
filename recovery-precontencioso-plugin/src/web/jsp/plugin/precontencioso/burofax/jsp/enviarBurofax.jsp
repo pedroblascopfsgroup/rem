@@ -101,13 +101,21 @@
 				return;
 			}else{
 				mask.show();
-				Ext.Ajax.request({
-					url : page.resolveUrl('burofax/guardarEnvioBurofax'), 
+				page.webflow({
+					flow: 'burofax/guardarEnvioBurofax', 
 					params : {arrayIdEnvios:arrayIdEnvios,arrayIdContrato:arrayIdContrato,certificado:certificado.getValue(),idTipoBurofax:tipoBurofax.getValue(),arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax,comboEditable:comboEditable,idDocumento:documento.value},
-					method: 'POST',
 					success: function ( result, request ) {
-						mask.hide();
-						page.fireEvent(app.event.DONE);
+						if(result.msgError==''){
+							mask.hide();
+							page.fireEvent(app.event.DONE);
+						}else{
+							mask.hide();
+							Ext.Msg.show({
+								title: fwk.constant.alert,
+								msg: result.msgError,
+								buttons: Ext.Msg.OK
+							});
+						}
 					}
 				});
 			}

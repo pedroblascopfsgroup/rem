@@ -1,0 +1,5 @@
+apr_wait_atypical.sh
+apr_load_atypical.sh
+apr_validacion_pcr.sh ATIPICOS
+apr_main_atypical.sh
+apr_gen_atypical_ptro.sh

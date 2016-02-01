@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<var name="aaa" class="es.capgemini.pfs.actitudAptitudActuacion.model.ActitudAptitudActuacion" />
+	<var name="dtoActitudAptitudActuacion" class="es.capgemini.pfs.actitudAptitudActuacion.dto.DtoActitudAptitudActuacion" />
+	<input name="id" type="java.lang.Long"/>
+	
+	<decision-state id="newOrEdit">
+		<if test="id!=null" then="buscar" else="formulario"/>
+	</decision-state>
+	
+	
+	<action-state id="buscar">
+			<evaluate expression="executor.execute('expedienteManager.buscarAAA', id)" result="flowScope.aaa"/>
+			<transition to="formulario" />
+	</action-state>
+
+
+    <view-state id="formulario" view="${view}" model="dtoActitudAptitudActuacion">
+    	<binder>
+    		<binding property="aaa.id" />
+    		<binding property="aaa.gestiones"/>
+    		<binding property="aaa.causaImpago" converter="DDCausaImpago"/>
+    		<binding property="aaa.tipoPropuestaActuacion" converter="DDPropuestaActuacion"/>
+    		<binding property="aaa.tipoAyudaActuacion" converter="DDTipoAyudaActuacion"/>
+    		<binding property="aaa.comentariosSituacion"/>
+    		<binding property="aaa.propuestaActuacion"/>
+    		<binding property="aaa.descripcionTipoAyudaActuacion"/>
+    	</binder>
+    	
+    	<on-entry>
+    		<set name="dtoActitudAptitudActuacion.aaa" value="aaa" />
+    		<set name="flowScope.view" value="'expedientes/editaGestionyAnalisisPropuesta'" />
+    	</on-entry>
+    	<on-render>
+			<!-- a partir de la segunda vez, la respuesta ya debe ser json  por tanto
+			cambiaremos el nombre de la vista a 'default' -->
+			<set name="flowScope.view" value="'default'" />
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDCausaImpago')" result="flowScope.causasImpago" />
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDTipoAyudaActuacion')" result="flashScope.tiposAyuda" />
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDPropuestaActuacion')" result="flashScope.tiposPropuestaActuacion"/>			
+		</on-render>
+		<transition on="update" to="update"/>
+		<transition on="cancel" to="close" bind="false"/>
+    </view-state> 	
+    
+ 	<action-state id="update">
+    	<evaluate expression="executor.execute('expedienteManager.updateActitudAptitudActuacion', dtoActitudAptitudActuacion)" />
+		<transition to="close" />
+	</action-state>
+	
+	<end-state id="close" view="default" />
+        
+</flow>

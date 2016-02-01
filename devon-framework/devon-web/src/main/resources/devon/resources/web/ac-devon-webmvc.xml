@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+    default-autowire="byName">
+           
+    <!--
+        Message source for this context, loaded from localized "messages_xx" files.
+    -->
+    <bean id="fwk.messageSource" class="es.capgemini.devon.message.PatternReloadableResourceBundleMessageSource" abstract="true">
+        <property name="basenames">
+            <list>
+                <value>classpath*:devon/resources/**/*Messages*</value>
+                <value>classpath*:plugins/messages/*</value>
+                <value>classpath:messages/*</value>
+            </list>
+        </property> 
+        <property name="cacheSeconds" value="1"/>
+    </bean>
+    <bean id="messageSource" parent="fwk.messageSource"/>
+    
+    <!-- 
+            <property name="basenames">
+            <list>
+                <value>classpath:devon/resources/core/fwkMessages</value>
+                <value>classpath:devon/resources/web/fwkWebMessages</value>
+                <value>classpath:messages/appMessages</value>
+            </list>
+        </property> 
+     -->
+
+    <!--
+        This bean resolves specific types of exceptions to corresponding logical 
+        view names for error views. The default behaviour of DispatcherServlet 
+        is to propagate all exceptions to the servlet container: this will happen 
+        here with all other types of exceptions.
+    -->
+    <bean id="simpleMappingExceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="org.springframework.dao.DataAccessException">dataAccessFailure</prop>
+                <prop key="org.springframework.transaction.TransactionException">dataAccessFailure</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- Admi path configured controllers -->
+    <bean class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping">
+        <property name="pathPrefix" value="admin"/>
+        <property name="order" value="20" />
+    </bean>
+
+    <!-- Application configured controllers -->
+    <bean class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping">
+        <property name="order" value="15" />
+    </bean>
+
+    <!-- Maps all other request URLs to views (defaultHandler Selects view names to render based on the request URI: e.g. /index selects "index") 
+    <bean id="viewMappings" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="defaultHandler">
+            <bean class="org.springframework.web.servlet.mvc.UrlFilenameViewController" />
+        </property>
+        <property name="order" value="2" />
+    </bean>
+    -->
+
+    <!-- Maps the "XML" logical view name to the xml serializer -->
+    <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver">
+        <property name="location" value="classpath:es/capgemini/devon/view/views.xml" />
+        <property name="order" value="10" />
+    </bean>
+    
+    <!-- Maps logical view names selected by the url filename controller to .jsp view templates within the /WEB-INF directory -->
+    <bean id="fwk.fwkJspViewResolver" abstract="true" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="es.capgemini.devon.view.JSPView"/>
+        <property name="viewNames" value="fwk*"/>
+        <property name="prefix" value="/WEB-INF/fwk/jsp/" />
+        <property name="suffix" value=".jsp" />
+        <property name="order" value="20"/>
+        <property name="attributes">
+        	<map>
+        		<!-- introduce el bean appProperties en el model, para que lo tengan disponibles las JSP -->
+        		<entry key="appProperties" value-ref="appProperties"/>
+        		<entry key="webEventsSubscriptor" value-ref="webEventsSubscriptor"/>
+        	</map>
+        </property>
+    </bean>
+    <bean id="fwkJspViewResolver" parent="fwk.fwkJspViewResolver"/> 
+    
+    <!-- Maps logical view names selected by the url filename controller to .jsp view templates within the /WEB-INF directory -->
+    <bean id="fwk.jspViewResolver" abstract="true" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    	<property name="viewClass" value="es.capgemini.devon.view.JSPView"/>
+        <property name="prefix" value="/WEB-INF/jsp/" />
+        <property name="suffix" value=".jsp" />
+        <property name="order" value="40"/>
+        <property name="attributes">
+        	<map>
+        		<!-- introduce el bean appProperties en el model, para que lo tengan disponibles las JSP -->
+        		<entry key="appProperties" value-ref="appProperties"/>
+        		<entry key="webEventsSubscriptor" value-ref="webEventsSubscriptor"/>
+        	</map>
+        </property>
+    </bean>
+    <bean id="jspViewResolver" parent="fwk.jspViewResolver"/>
+
+    <!-- Enables annotated POJO @Controllers 
+        <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
+    -->
+
+    <!-- Enables plain Controllers 
+    <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
+    -->
+    
+    <bean id="fwkMVCExceptionResolver" class="es.capgemini.devon.web.MVCExceptionResolver"/>
+
+    <!-- Fixed locale resolver -->
+    <bean id="localeResolver" class="org.springframework.web.servlet.i18n.FixedLocaleResolver">
+        <constructor-arg value="${locale.default}" />    
+    </bean>     
+
+</beans>

@@ -502,6 +502,8 @@
 	};
 	
 	var groupRenderer=function(val){
+		if(val==-1)
+			return '<s:message code="main.arbol_tareas.groups.sinvencimiento" text="**Sin vencimiento" />';
 		if(val==0)
 			return '<s:message code="main.arbol_tareas.groups.vencidas" text="**Vencidas / Incumplidas " />';
 		if(val==1)
@@ -521,7 +523,7 @@
 		{	/*Columna 0*/ header: '<s:message code="tareas.listado.tarea" text="**Tarea"/>', sortable: true, dataIndex: nombreTareaField}
 		,{	/*Columna 2*/ header: '<s:message code="tareas.listado.descripcion" text="**Descripcion"/>', sortable: false, dataIndex: 'descripcion'}
 		,{	/*Columna 1*/ header: '<s:message code="tareas.listado.entidadinformacion" text="**Entidad Informacion"/>', sortable: false, dataIndex: 'entidadInformacion'}
-		,{	/*Columna 3*/ header: '<s:message code="tareas.listado.itinerario" text="**Itinerario"/>', sortable: false, hidden:true, dataIndex: 'itinerario'}
+		,{	/*Columna 3*/ header: '<s:message code="tareas.listado.itinerario" text="**Itinerario"/>', sortable: false, dataIndex: 'itinerario'}
 		,{	/*Columna 4*/ header: '<s:message code="tareas.listado.fechainicio" text="**Fecha inicio"/>', sortable: true, hidden:true, dataIndex: 'fechaInicio', width:50}
 		,{	/*Columna 5*/ header: '<s:message code="tareas.listado.fechavenc" text="**Fecha Vto."/>', sortable: true, dataIndex: 'fechaVenc', width:50}
 		,{	/*Columna 5*/ header: '<s:message code="plugin.mejoras.tareas.listado.fechavencOri" text="**Fecha Vto. Orig."/>', sortable: true, dataIndex: 'fechaVencReal', width:50}
@@ -545,7 +547,7 @@
 			{	/*Columna 0*/ header: '<s:message code="tareas.listado.tarea" text="**Tarea"/>', sortable: true, dataIndex: nombreTareaField}
 			,{	/*Columna 2*/ header: '<s:message code="tareas.listado.descripcion" text="**Descripcion"/>', sortable: false, dataIndex: 'descripcion'}
 			,{	/*Columna 1*/ header: '<s:message code="tareas.listado.entidadinformacion" text="**Entidad Informacion"/>', sortable: false, dataIndex: 'entidadInformacion'}
-			,{	/*Columna 3*/ header: '<s:message code="tareas.listado.itinerario" text="**Itinerario"/>', sortable: false, hidden:true, dataIndex: 'itinerario'}
+			,{	/*Columna 3*/ header: '<s:message code="tareas.listado.itinerario" text="**Itinerario"/>', sortable: false, dataIndex: 'itinerario'}
 			,{	/*Columna 4*/ header: '<s:message code="tareas.listado.fechainicio" text="**Fecha inicio"/>', sortable: true, hidden:true, dataIndex: 'fechaInicio', width:50}
 			,{	/*Columna 5*/ header: '<s:message code="tareas.listado.fechavenc" text="**Fecha Vto."/>', sortable: true, dataIndex: 'fechaVenc', width:50}
 			,{	/*Columna 5*/ header: '<s:message code="plugin.mejoras.tareas.listado.fechavencOri" text="**Fecha Realizacion."/>', sortable: true, dataIndex: 'fechaVencReal', width:50}
@@ -569,7 +571,7 @@
 			{	/*Columna 0*/ header: '<s:message code="tareas.listado.tarea" text="**Tarea"/>', sortable: true, dataIndex: nombreTareaField}
 			,{	/*Columna 2*/ header: '<s:message code="tareas.listado.descripcion" text="**Descripcion"/>', sortable: false, dataIndex: 'descripcion'}
 			,{	/*Columna 1*/ header: '<s:message code="tareas.listado.entidadinformacion" text="**Entidad Informacion"/>', sortable: false, dataIndex: 'entidadInformacion'}
-			,{	/*Columna 3*/ header: '<s:message code="tareas.listado.itinerario" text="**Itinerario"/>', sortable: false, hidden:true, dataIndex: 'itinerario'}
+			,{	/*Columna 3*/ header: '<s:message code="tareas.listado.itinerario" text="**Itinerario"/>', sortable: false, dataIndex: 'itinerario'}
 			,{	/*Columna 4*/ header: '<s:message code="tareas.listado.fechainicio" text="**Fecha inicio"/>', sortable: true, hidden:true, dataIndex: 'fechaInicio', width:50}
 			,{	/*Columna 5*/ header: '<s:message code="tareas.listado.fechavenc" text="**Fecha Vto."/>', sortable: true, dataIndex: 'fechaVenc', width:50}
 			,{	/*Columna 5*/ header: '<s:message code="plugin.mejoras.tareas.listado.fechavencOri" text="**Fecha Realizacion."/>', sortable: true, dataIndex: 'fechaVencReal', width:50}
@@ -592,7 +594,7 @@
 			{	/*Columna 0*/ header: '<s:message code="tareas.listado.tarea" text="**Tarea"/>', sortable: true, dataIndex: nombreTareaField}
 			,{	/*Columna 2*/ header: '<s:message code="tareas.listado.descripcion" text="**Descripcion"/>', sortable: false, dataIndex: 'descripcion'}
 			,{	/*Columna 1*/ header: '<s:message code="tareas.listado.entidadinformacion" text="**Entidad Informacion"/>', sortable: false, dataIndex: 'entidadInformacion'}
-			,{	/*Columna 3*/ header: '<s:message code="tareas.listado.itinerario" text="**Itinerario"/>', sortable: false, hidden:true, dataIndex: 'itinerario'}
+			,{	/*Columna 3*/ header: '<s:message code="tareas.listado.itinerario" text="**Itinerario"/>', sortable: false, dataIndex: 'itinerario'}
 			,{	/*Columna 4*/ header: '<s:message code="tareas.listado.fechainicio" text="**Fecha inicio"/>', sortable: true, hidden:true, dataIndex: 'fechaInicio', width:50}
 			,{	/*Columna 5*/ header: '<s:message code="tareas.listado.fechavenc" text="**Fecha Vto."/>', sortable: true, dataIndex: 'fechaVenc', width:50}
 			,{	/*Columna 5*/ header: '<s:message code="plugin.mejoras.tareas.listado.fechavencOri" text="**Fecha Realizacion."/>', sortable: true, dataIndex: 'fechaVencReal', width:50}
@@ -931,6 +933,7 @@
 	
 	
 	tareasGrid.on('rowdblclick', function(grid, rowIndex, e) {
+		debugger;
 		//agregar funcionalidad....
 		var rec = grid.getStore().getAt(rowIndex);
 		
@@ -1133,6 +1136,7 @@
 		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_LETRADO:
 		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR_LIQUIDACIONES:
 		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR_DOCUMENTOS:
+		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR_ESTUDIO:
 		    
 		    		Ext.Ajax.request({
 						url: page.resolveUrl('expedientejudicial/getEsTareaPrecontenciosoEspecial')
@@ -1358,6 +1362,10 @@
 					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_TAREA_PROCEDIMIENTO:
 						app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
 						break;
+					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_EXP:
+						app.abreExpediente(rec.get('idEntidad'), rec.get('descripcion'));
+						break;
+						
 
 					default:
 				

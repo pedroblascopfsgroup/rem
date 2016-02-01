@@ -102,4 +102,34 @@
 	<json:property name="numExpExterno" value="${precontencioso.numExpExterno}" />
 	<json:property name="cntPrincipal" value="${precontencioso.cntPrincipal}" />
   </json:object>
+	<json:array name="botonesVisiblesDocPco" items="${botonesVisiblesDocPco}" var="bot">
+		<json:object>
+			<json:property name="boton" value="${bot}"/>
+		</json:object>
+	</json:array>
+	<json:array name="botonesInvisiblesDocPco" items="${botonesInvisiblesDocPco}" var="bot">
+		<json:object>
+			<json:property name="boton" value="${bot}"/>
+		</json:object>
+	</json:array>
+	<json:array name="botonesVisiblesLiqPco" items="${botonesVisiblesLiqPco}" var="bot">
+		<json:object>
+			<json:property name="boton" value="${bot}"/>
+		</json:object>
+	</json:array>
+	<json:array name="botonesInvisiblesLiqPco" items="${botonesInvisiblesLiqPco}" var="bot">
+		<json:object>
+			<json:property name="boton" value="${bot}"/>
+		</json:object>
+	</json:array>
+	<json:array name="botonesVisiblesBurPco" items="${botonesVisiblesBurPco}" var="bot">
+    	<json:object>
+		    <json:property name="boton" value="${bot}"/>
+      	</json:object>
+	</json:array>
+  	<json:array name="botonesInvisiblesBurPco" items="${botonesInvisiblesBurPco}" var="bot">
+    	<json:object>
+      		<json:property name="boton" value="${bot}"/>
+      	</json:object>
+  	</json:array>
 </fwk:json>

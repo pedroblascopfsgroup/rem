@@ -156,6 +156,17 @@ public class ZonaDaoImpl extends AbstractEntityDao<DDZona, Long> implements Zona
                 + "and zup.auditoria." + Auditoria.UNDELETED_RESTICTION + " and z.auditoria." + Auditoria.UNDELETED_RESTICTION;
         return getHibernateTemplate().find(hql, idPerfil);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<DDZona> buscarZonasPorCodigoPerfil(String codPerfil) {
+        String hql = "select distinct z from DDZona z, ZonaUsuarioPerfil zup " + " where zup.zona.id = z.id and zup.perfil.codigo = ? "
+                + "and zup.auditoria." + Auditoria.UNDELETED_RESTICTION + " and z.auditoria." + Auditoria.UNDELETED_RESTICTION;
+        return getHibernateTemplate().find(hql, codPerfil);
+    }
 
     /**
      * {@inheritDoc}

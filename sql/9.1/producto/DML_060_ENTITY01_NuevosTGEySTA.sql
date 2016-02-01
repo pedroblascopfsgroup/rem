@@ -95,7 +95,7 @@ BEGIN
           V_MSQL := 'UPDATE  '||V_ESQUEMA_MASTER||'.' || VAR_TABLENAME || ' SET DD_STA_DESCRIPCION='''||TRIM(V_TMP_TIPO_LINEA2(2))||''', ' ||
             'DD_STA_DESCRIPCION_LARGA='''||TRIM(V_TMP_TIPO_LINEA2(2))||''' , DD_STA_GESTOR=null, DD_TAR_ID=1, ' ||
             'DTYPE=''EXTSubtipoTarea'', ' || 
-            'DD_TGE_ID=(SELECT DD_TGE_ID FROM '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO=''' || V_TMP_TIPO_LINEA2(3) || ''') ' ||
+            'DD_TGE_ID=(SELECT DD_TGE_ID FROM ' || V_ESQUEMA_MASTER || '.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO=''' || V_TMP_TIPO_LINEA2(3) || ''') ' ||
             '  WHERE DD_STA_CODIGO='''||TRIM(V_TMP_TIPO_LINEA2(1))||'''';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA_MASTER || '.' || VAR_TABLENAME || ' Actualizado DD_STA_CODIGO = '''||TRIM(V_TMP_TIPO_LINEA2(1))||'''');
@@ -105,7 +105,7 @@ BEGIN
                     'SELECT '||V_ESQUEMA_MASTER||'.' || 'S_' || VAR_TABLENAME || '.NEXTVAL, 1, ' ||
                     '''' || REPLACE(TRIM(V_TMP_TIPO_LINEA2(1)),'''','''''') || ''',''' || REPLACE(TRIM(V_TMP_TIPO_LINEA2(2)),'''','''''') || ''',' ||
                     '''' || REPLACE(TRIM(V_TMP_TIPO_LINEA2(2)),'''','''''') || ''', ''PCO'',sysdate, null, ' || 
-                    '(SELECT DD_TGE_ID FROM '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO=''' || REPLACE(TRIM(V_TMP_TIPO_LINEA2(3)),'''','''''') || ''') ,''EXTSubtipoTarea''' || 
+                    '(SELECT DD_TGE_ID FROM ' || V_ESQUEMA_MASTER || '.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO=''' || REPLACE(TRIM(V_TMP_TIPO_LINEA2(3)),'''','''''') || ''') ,''EXTSubtipoTarea''' || 
                     ' FROM DUAL'; 
             DBMS_OUTPUT.PUT_LINE('INSERTANDO: '''  || V_TMP_TIPO_LINEA2(1) ||''','''||TRIM(V_TMP_TIPO_LINEA2(2))||'''');
             EXECUTE IMMEDIATE V_MSQL;

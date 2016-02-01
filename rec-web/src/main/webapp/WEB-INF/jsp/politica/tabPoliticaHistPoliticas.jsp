@@ -29,7 +29,7 @@ var verAnalisis = function(texto,idPolitica) {
         flow : 'politica/verAnalisisPolitica'
         ,closable:true
         ,title:texto
-        ,params :{idPolitica : idPolitica, idPersona:${id}, verAnalisis:true}
+        ,params :{idPolitica : idPolitica, idPersona:${id}, verAnalisis:false}
         ,width:850
       });
 	  w.on(app.event.DONE, function(){

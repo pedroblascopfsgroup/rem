@@ -20,6 +20,11 @@
 						<value>46</value>
 					</set>
 				</entry>
+				<entry key="ABRIR_EXP">
+					<set>
+						<value>FZAR_PPUESTA</value>
+					</set>
+				</entry>
 			</map>
 		</property>
 		<property name="tiposProcedimientosAdjudicados">

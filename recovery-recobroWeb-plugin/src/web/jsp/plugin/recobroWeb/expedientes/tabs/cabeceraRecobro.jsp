@@ -69,6 +69,7 @@
 	var manual			= label('manual',	'<s:message code="expedientes.consulta.tabcabecera.manual" text="**Manual"/>',cfg);
 	var gestor			= label('gestor',	'<s:message code="expedientes.consulta.tabcabecera.gestor" text="**Gestor"/>',cfg);
 	var supervisor		= label('supervisor',	'<s:message code="expedientes.consulta.tabcabecera.supervisor" text="**Supervisor"/>',cfg);
+	var fechaVencimiento= label('fechaVencimiento', '<s:message code="expedientes.consulta.tabcabecera.fechavto" text="**Situación Vencimiento"/>',cfg);
 	
 	var tipoExpediente		= label('tipoExpediente',	'<s:message code="expedientes.consulta.tabcabecera.tipoExpediente" text="**Tipo Expediente"/>',cfg);
 	var cartera				= label('cartera',	'<s:message code="expedientes.consulta.tabcabecera.cartera" text="**Cartera"/>',cfg);
@@ -92,15 +93,15 @@
 				  		,situacion
 				  		,supervisor
 				  		//,fechaComite
+				  		,fechaVencimiento
 				  		,oficina
 				  		,oficinaDir
 				  		,oficinaTel]},
-				  {items:[// diasVencido,
-				  			gestor,volRiesgos,volRiesgosVenc
-				  			//,comite
-				  			, fechaMaxCobroParcial
-				  		    , fechaMaxEnAgencia
-				  			]}
+				  {items:[diasVencido,
+				  		  gestor,volRiesgos,volRiesgosVenc
+				  		  ,comite
+				  		  ,fechaMaxCobroParcial
+				  		  ,fechaMaxEnAgencia]}
 		]);
 		
 	var datosRecobroFieldSet = fieldSet('<s:message code="menu.clientes.consultacliente.menu.DatosRecobro" text="**Datos Recobro"/>'
@@ -185,9 +186,22 @@
 		gestor.setVisible(false);
 		situacion.setVisible(false);
 		supervisor.setVisible(false);
+		
+		situacion.setVisible(false);
+		diasVencido.setVisible(false);
+		comite.setVisible(false);
+		fechaVencimiento.setVisible(false);
 	} else {
 		datosRecobroFieldSet.setVisible(false);
 		tipoExpediente.setVisible(false);
+		fechaMaxEnAgencia.setVisible(false);
+		fechaMaxCobroParcial.setVisible(false);
+		
+		situacion.setVisible(true);
+		diasVencido.setVisible(true);
+		comite.setVisible(true);
+		fechaVencimiento.setVisible(true);
+		
 	}
 	
   };

@@ -1,4 +1,9 @@
-﻿var histPoliticaStore;
+var histPoliticaStore;
+var btnPolNuevo;
+var btnPolModificar;
+var btnPolVerAnalisis;	
+var btnPolMarcarVigente;
+var btnPolCancelarPropuesta;
 
 var editarPolitica = function(texto, idPolitica, visibilidadSuperusuario) {
     var w = app.openWindow({
@@ -21,8 +26,8 @@ var verAnalisis = function(texto,idPolitica) {
         flow : 'politica/verAnalisisPolitica'
         ,closable:true
         ,title:texto
-        ,params :{idPolitica : idPolitica, idPersona:panel.getPersonaId(), verAnalisis:true}
-        ,width:850
+        ,params :{idPolitica : idPolitica, idPersona:panel.getPersonaId(), verAnalisis:false}
+        ,width:950
       });
 	  w.on(app.event.DONE, function(){
         w.close(); 
@@ -33,7 +38,7 @@ var verAnalisis = function(texto,idPolitica) {
 
 var marcarVigente = function(texto,idPolitica) {
 	  Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmacion" />',
-                      '<s:message code="politica.marcarVigencia" text="**¿Esta seguro que desea marcar la política como vigente?" />', 
+                      '<s:message code="politica.marcarVigencia" text="**�Esta seguro que desea marcar la pol�tica como vigente?" />', 
                       function(result){
 				        if(result == 'yes') {
 					      var mask=new Ext.LoadMask(panel.body, {msg:'<s:message code="fwk.ui.form.cargando" text="**Cargando.."/>'});
@@ -62,7 +67,7 @@ var marcarVigente = function(texto,idPolitica) {
 
 var cancelarPropuesta = function(texto,idPolitica) {
   Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmacion" />',
-                     '<s:message code="politica.cancelarPolitica" text="**¿Esta seguro que desea cancelar la política?" />', 
+                     '<s:message code="politica.cancelarPolitica" text="**�Esta seguro que desea cancelar la pol�tica?" />', 
                      function(result){
 			        if(result == 'yes') {
 					  var mask=new Ext.LoadMask(panel.body, {msg:'<s:message code="fwk.ui.form.cargando" text="**Cargando.."/>'});
@@ -78,7 +83,8 @@ var cancelarPropuesta = function(texto,idPolitica) {
 					            	mask.hide();
 							        histPoliticaStore.webflow({id:panel.getPersonaId()});
 							        reloadEstados(0);
-					            }					            
+							        
+							    }
 					            ,error: function(){
 					            	mask.hide();
 							        histPoliticaStore.webflow({id:panel.getPersonaId()});
@@ -92,17 +98,17 @@ var cancelarPropuesta = function(texto,idPolitica) {
 
 var createHistorialPoliticasPanel = function() {
 
-    var btnPolNuevo = new Ext.Button({
+    btnPolNuevo = new Ext.Button({
         text : '<s:message code="app.nuevo" text="**Nuevo" />'
         ,iconCls : 'icon_mas'
         ,handler: function() {
         	var superUsuario = isSuperusuario;
         	
-        	editarPolitica('<s:message code="politica.alta" text="**Alta Política" />', 0, superUsuario);
+        	editarPolitica('<s:message code="politica.alta" text="**Alta Pol�tica" />', 0, superUsuario);
         }
     });
 
-    var btnPolModificar = new Ext.Button({
+    btnPolModificar = new Ext.Button({
         text : '<s:message code="app.editar" text="**Modificar" />'
         ,iconCls : 'icon_edit'
         ,handler: function() 
@@ -112,26 +118,26 @@ var createHistorialPoliticasPanel = function() {
         	var isPropuestaSuperusuario = rec.get('propuestaSuperusuario');
         	var superUsuario = isPropuestaSuperusuario && isSuperusuario;
         	
-        	editarPolitica('<s:message code="politica.editar" text="**Editar Política" />' , idUltimaPolitica, superUsuario);}
+        	editarPolitica('<s:message code="politica.editar" text="**Editar Pol�tica" />' , idUltimaPolitica, superUsuario);}
     });
 
-	var btnPolVerAnalisis = new Ext.Button({
-        text : '<s:message code="politica.verAnalisis" text="**Ver Análisis" />'
+	btnPolVerAnalisis = new Ext.Button({
+        text : '<s:message code="politica.verAnalisis" text="**Ver An�lisis" />'
         ,iconCls : 'icon_edit'
-        ,handler: function() {verAnalisis('<s:message code="politica.analisis" text="**Análisis Política" />' , histPoliticaGrid.getSelectionModel().getSelections()[0].data.id);}
+        ,handler: function() {verAnalisis('<s:message code="politica.analisis" text="**An�lisis Pol�tica" />' , histPoliticaGrid.getSelectionModel().getSelections()[0].data.id);}
     });
 
 
-	var btnPolMarcarVigente = new Ext.Button({
+	btnPolMarcarVigente = new Ext.Button({
         text : '<s:message code="politica.marcarVigente" text="**Marcar vigente" />'
         ,iconCls : 'icon_ok'
-        ,handler: function() {marcarVigente('<s:message code="politica.analisis" text="**Análisis Política" />' , histPoliticaGrid.getSelectionModel().getSelections()[0].data.id);}
+        ,handler: function() {marcarVigente('<s:message code="politica.analisis" text="**An�lisis Pol�tica" />' , histPoliticaGrid.getSelectionModel().getSelections()[0].data.id);}
     });
 
-	var btnPolCancelarPropuesta = new Ext.Button({
+	btnPolCancelarPropuesta = new Ext.Button({
         text : '<s:message code="politica.cancelarPropuesta" text="**Cancelar propuesta" />'
         ,iconCls : 'icon_menos'
-        ,handler: function() {cancelarPropuesta('<s:message code="politica.analisis" text="**Análisis Política" />' , histPoliticaGrid.getSelectionModel().getSelections()[0].data.id);}
+        ,handler: function() {cancelarPropuesta('<s:message code="politica.analisis" text="**An�lisis Pol�tica" />' , histPoliticaGrid.getSelectionModel().getSelections()[0].data.id);}
     });
 
 
@@ -157,6 +163,7 @@ var createHistorialPoliticasPanel = function() {
         ,{name : 'propuesta'}
         ,{name : 'propuestaSuperusuario'}
 		,{name : 'idAnalisis'}
+		,{name: 'idExpediente'}
     ]);
 
     histPoliticaStore = page.getStore({
@@ -168,6 +175,40 @@ var createHistorialPoliticasPanel = function() {
             , politica
         )
     });
+    
+    histPoliticaStore.on('load', function(){
+    
+    	if(histPoliticaGrid.getSelectionModel().getSelected()!=null){
+	    	var rec = histPoliticaStore.getById(histPoliticaGrid.getSelectionModel().getSelected().get('id'));    
+	        var propuesta=rec.get('propuesta');
+	        
+	        if(propuesta) {
+	            btnPolModificar.enable();
+	        } else {
+	            btnPolModificar.disable();
+	        }
+	        
+			if(rec.get('idAnalisis')!=null && rec.get('idAnalisis')!=''){
+				btnPolVerAnalisis.enable();
+			}else{
+				btnPolVerAnalisis.disable();
+			}
+			
+			var propuestaSuperusuario=rec.get('propuestaSuperusuario');
+			if (propuestaSuperusuario && isSuperusuario)
+			{
+			    btnPolMarcarVigente.enable();
+			    btnPolCancelarPropuesta.enable();
+			}
+			else
+			{
+			    btnPolMarcarVigente.disable();
+			    btnPolCancelarPropuesta.disable();
+			
+			}
+		}
+    });
+    
     histPoliticaStore.webflow({id:panel.getPersonaId()});
 
     var politicaCm = new Ext.grid.ColumnModel([                                                                                                                         
@@ -178,18 +219,19 @@ var createHistorialPoliticasPanel = function() {
         ,{header : '<s:message code="politica.objetivos" text="**Objetivos" />', dataIndex : 'objetivos'}
         ,{header : '<s:message code="politica.objetivosCumplidos" text="**O. Cumplidos" />', dataIndex : 'objCumplidos'}
         ,{header : '<s:message code="politica.objetivosIncumplidos" text="**O. Incumplidos" />', dataIndex : 'objIncumplidos'}
+        ,{header : '<s:message code="politica.expediente" text="**Expediente" />', dataIndex : 'idExpediente'}
     ]);
                 
     var configHistPolit = {
-        title: '<s:message code="politica.historial" text="**Historial de políticas" />'
+        title: '<s:message code="politica.historial" text="**Historial de pol�ticas" />'
         ,style: 'padding-bottom:10px'
         ,autoHeight: false
         ,height: 150
         ,bbar : [btnPolModificar,btnPolVerAnalisis,'->',btnPolNuevo,btnPolMarcarVigente,btnPolCancelarPropuesta]}
 
     var histPoliticaGrid = app.crearGrid(histPoliticaStore, politicaCm, configHistPolit);
- 
-    histPoliticaGrid.on('rowclick', function(grid, rowIndex, e){
+     
+    histPoliticaGrid.on('rowclick',function(grid, rowIndex, e){
         var rec = grid.getStore().getAt(rowIndex);
         var propuesta=rec.get('propuesta');
         if(propuesta) {

@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+
+	<bean id="dicDiccionarioEditableManager"
+		class="es.pfsgroup.plugin.recovery.diccionarios.diccionarios.DICDiccionarioEditableManager">
+		<property name="daos">
+			<map>
+				<entry key="DD_PAR_PARCELAS">
+					<bean class="es.capgemini.pfs.politica.dao.impl.DDParcelasPersonasDaoImpl" />
+				</entry>
+				<entry key="DD_SCE_SEGTO_CLI_ENTIDAD">
+					<bean class="es.capgemini.pfs.segmento.dao.impl.SegmentoEntidadDaoImpl" />
+				</entry>
+				<entry key="DD_SCL_SEGTO_CLI">
+					<bean class="es.capgemini.pfs.segmento.dao.impl.SegmentoDaoImpl" />
+				</entry>
+				<entry key="DD_SSA_SUBTI_SOLUC_AMIST">
+					<bean class="es.capgemini.pfs.acuerdo.dao.impl.DDSubtipoSolucionAmistosaAcuerdoDaoImpl" />
+				</entry>
+				<entry key="DD_ACC_CAPACIDAD_PAGO">
+					<bean class="es.capgemini.pfs.acuerdo.dao.impl.DDAnalisisCapacidadPagoDaoImpl" />
+				</entry>
+				<entry key="DD_ACS_CAMBIO_SOLVENCIA">
+					<bean class="es.capgemini.pfs.acuerdo.dao.impl.DDCambioSolvenciaAcuerdoDaoImpl" />
+				</entry>
+				<entry key="DD_ACT_ACTOR">
+					<bean class="es.capgemini.pfs.recurso.dao.impl.DDActorDaoImpl" />
+				</entry>
+				<entry key="DD_ACT_CONCLUSION_TITULO">
+					<bean class="es.capgemini.pfs.acuerdo.dao.impl.DDConclusionTituloAcuerdoDaoImpl" />
+				</entry>
+				<entry key="DD_APE_PERIODICIDAD_ACUERDO">
+					<bean class="es.capgemini.pfs.acuerdo.dao.impl.DDPeriodicidadAcuerdoDaoImpl" />
+				</entry>
+				<entry key="DD_ATA_TIP_ACTUA_ACUE">
+					<bean class="es.capgemini.pfs.acuerdo.dao.impl.DDTipoActuacionAcuerdoDaoImpl" />
+				</entry>
+				<entry key="DD_ATP_ACUERDO_TIPO_PAGO">
+					<bean class="es.capgemini.pfs.acuerdo.dao.impl.DDTipoPagoAcuerdoDaoImpl" />
+				</entry>
+				<entry key="DD_CDE_CAUSAS_DECISION">
+					<bean class="es.capgemini.pfs.decisionProcedimiento.dao.impl.DDCausaDecisionDaoImpl" />
+				</entry>
+				<entry key="DD_CIM_CAUSAS_IMPAGO">
+					<bean class="es.capgemini.pfs.actitudAptitudActuacion.dao.impl.CausaImpagoDaoImpl" />
+				</entry>
+				<entry key="DD_CPR_CAUSA_PRORROGA">
+					<bean class="es.capgemini.pfs.prorroga.dao.impl.CausaProrrogaDaoImpl" />
+				</entry>
+				<entry key="DD_ECP_ESTADO_COBRO_PAGO">
+					<bean class="es.capgemini.pfs.cobropago.dao.impl.DDEstadoCobroPagoDaoImpl" />
+				</entry>
+				<entry key="DD_EFC_ESTADO_FINAN_CNT">
+					<bean class="es.capgemini.pfs.contrato.dao.impl.DDEstadoFinancieroDaoImpl" />
+				</entry>
+				<entry key="DD_IMP_IMPACTO">
+					<bean class="es.capgemini.pfs.politica.dao.impl.DDImpactoDaoImpl" />
+				</entry>
+				<entry key="DD_MET_MOT_EXC_TELECOBRO">
+					<bean class="es.capgemini.pfs.telecobro.dao.impl.MotivosExclusionTelecobroDaoImpl" />
+				</entry>
+				<entry key="DD_MEX_MOTIVOS_EXP_MANUAL">
+					<bean class="es.capgemini.pfs.expediente.dao.impl.DDMotivoExpedienteManualDaoImpl" />
+				</entry>
+				<entry key="DD_PRA_PROPUESTA_AAA">
+					<bean class="es.capgemini.pfs.actitudAptitudActuacion.dao.impl.DDPropuestaActuacionDaoImpl" />
+				</entry>
+				<entry key="DD_RAA_RESULTADO_ACUERDO">
+					<bean class="es.capgemini.pfs.acuerdo.dao.impl.DDResultadoAcuerdoActuacionDaoImpl" />
+				</entry>
+				<entry key="DD_RPR_RAZON_PRORROGA">
+					<bean class="es.capgemini.pfs.prorroga.dao.impl.RespuestaProrrogaDaoImpl" />
+				</entry>
+				<entry key="DD_STI_SITUACION">
+					<bean class="es.capgemini.pfs.titulo.dao.impl.DDSituacionDaoImpl" />
+				</entry>
+				<entry key="DD_TAA_TIPO_AYUDA_ACTUACION">
+					<bean class="es.capgemini.pfs.actitudAptitudActuacion.dao.impl.TipoAyudaActuacionDaoImpl" />
+				</entry>
+				<entry key="DD_TAC_TIPO_ACTUACION">
+					<bean class="es.capgemini.pfs.asunto.dao.impl.TipoActuacionDaoImpl" />
+				</entry>
+				<entry key="DD_TAN_TIPO_ANALISIS">
+					<bean class="es.capgemini.pfs.politica.dao.impl.DDTipoAnalisisDaoImpl" />
+				</entry>
+				<entry key="DD_TAY_TIPO_AYUDA_ACUERDO">
+					<bean class="es.capgemini.pfs.acuerdo.dao.impl.DDTipoAyudaAcuerdoDaoImpl" />
+				</entry>
+				<entry key="DD_TBI_TIPO_BIEN">
+					<bean class="es.capgemini.pfs.bien.dao.impl.DDTipoBienDaoImpl" />
+				</entry>
+				<entry key="DD_TIG_TIPO_INGRESO">
+					<bean class="es.capgemini.pfs.ingreso.dao.impl.DDTipoIngresoDaoImpl" />
+				</entry>
+				<entry key="DD_TPA_TIPO_ACUERDO">
+					<bean class="es.capgemini.pfs.acuerdo.dao.impl.DDTipoAcuerdoDaoImpl" />
+				</entry>
+				<entry key="DD_TRE_TIPO_RECLAMACION">
+					<bean class="es.capgemini.pfs.asunto.dao.impl.TipoReclamacionDaoImpl" />
+				</entry>
+				<entry key="DD_TTG_TIPO_TIT_GEN">
+					<bean class="es.capgemini.pfs.titulo.dao.impl.DDTipoTituloGeneralDaoImpl" />
+				</entry>
+				<entry key="DD_TTI_TIPO_TITULO">
+					<bean class="es.capgemini.pfs.titulo.dao.impl.DDTipoTituloDaoImpl" />
+				</entry>
+				<entry key="DD_VAA_VALORA_ACTU_AMIST">
+					<bean class="es.capgemini.pfs.acuerdo.dao.impl.DDValoracionActuacionAmistosaDaoImpl" />
+				</entry>
+				<entry key="DD_GES_GESTORIA">
+					<bean class="es.pfsgroup.plugin.recovery.coreextension.dao.impl.DDGestoriaDaoImpl" />
+				</entry>					
+			</map>
+		</property>
+	</bean>
+
+<!-- 
+	<entry key="DD_CRE_CAUSA_RECURSO">
+		<bean class="es.capgemini.pfs.politica.dao.impl.ADMDDCausaRecursoDaoImpl" />
+	</entry>
+	<entry key="DD_DCA_DEMANDANTES_CARGAS">
+		<bean class="es.capgemini.pfs.cargabien.dao.impl.DDDemandantesCargasDaoImpl" />
+	</entry>
+	<entry key="DD_PRV_PROVINCIA">
+		<bean class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDProvinciaDaoImpl" />
+	</entry>
+	<entry key="DD_ACA_ACCION_AUTO">
+		<bean class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDAccionAutoDaoImpl" />
+	</entry>
+	<entry key="DD_CCO_CORRECTO_COBROS">
+		<bean class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDCorrectoCobroDaoImpl" />
+	</entry>
+	<entry key="DD_CIC_CODIGO_ISO_CIRBE">
+		<bean class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDPaisDaoImpl" />
+	</entry>
+	<entry key="DD_COM_COMPLETITUD">
+		<bean
+			class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDCompletitudDaoImpl" />
+	</entry>
+	<entry key="DD_COR_CORRECTO">
+		<bean
+			class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDCorrectoDaoImpl" />
+	</entry>
+	<entry key="DD_DRR_RESULTADO_RESOL">
+		<bean
+			class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDResultadoResolucionDaoImpl" />
+	</entry>
+	<entry key="DD_DTR_TIPO_RECURSO">
+		<bean
+			class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDTipoRecursoDaoImpl" />
+	</entry>
+	<entry key="DD_EIN_ENTIDAD_INFORMACION">
+		<bean
+			class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDTipoEntidadDaoImpl" />
+	</entry>
+	<entry key="DD_FAV_FAVORABLE">
+		<bean
+			class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDFavorableDaoImpl" />
+	</entry>
+	<entry key="DD_FCN_FINALIDAD_CONTRATO">
+		<bean
+			class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDFinalidadContratoDaoImpl" />
+	</entry>
+	<entry key="DD_IM1_IMPUGNACION1">
+		<bean
+			class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDImpugnacion1DaoImpl" />
+	</entry>
+	<entry key="DD_IM2_IMPUGNACION2">
+		<bean
+			class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDImpugnacion2DaoImpl" />
+	</entry>
+	<entry key="DD_INS_INSTRUCCIONES">
+		<bean
+			class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDInstruccionesDaoImpl" />
+	</entry>
+	<entry key="DD_MX3_MOVIMIENTO_EXTRA_3">
+		<bean
+			class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDMovimientoExtra3DaoImpl" />
+	</entry>
+	<entry key="DD_MX4_MOVIMIENTO_EXTRA_4">
+		<bean
+			class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDMovimientoExtra4DaoImpl" />
+	</entry>
+	<entry key="DD_POS_POSITIVO_NEGATIVO">
+		<bean
+			class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDPositivoNegativoDaoImpl" />
+	</entry>
+	<entry key="DD_PS1_POSTORES1">
+		<bean
+			class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDPostores1DaoImpl" />
+	</entry>
+	<entry key="DD_PS2_POSTORES2">
+		<bean
+			class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDPostores2DaoImpl" />
+	</entry>
+	<entry key="DD_PX3_PERSONA_EXTRA_3">
+		<bean
+			class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDPersonaExtra3DaoImpl" />
+	</entry>
+	<entry key="DD_PX4_PERSONA_EXTRA_4">
+		<bean
+			class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDPersonaExtra4DaoImpl" />
+	</entry>
+	<entry key="DD_RAX_RATING_AUXILIAR">
+		<bean
+			class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDRatingAuxiliarDaoImpl" />
+	</entry>
+	<entry key="DD_REX_RATING_EXTERNO">
+		<bean
+			class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDRatingExternoDaoImpl" />
+	</entry>
+	<entry key="DD_SEX_SEXOS">
+		<bean
+			class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDSexoDaoImpl" />
+	</entry>
+	<entry key="DD_SIN_SINO">
+		<bean class="es.capgemini.pfs.admin.dao.impl.ADMDDSiNoDaoImpl" />
+	</entry>
+	<entry key="DD_TAR_TIPO_TAREA_BASE">
+		<bean
+			class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMTipoTareaDaoImpl" />
+	</entry>
+	<entry key="DD_TDI_TIPO_DOCUMENTO_ID">
+		<bean
+			class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDTipoDocumentoDaoImpl" />
+	</entry>
+	<entry key="DD_TFI_TIPO_FICHERO">
+		<bean
+			class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDTipoFicheroDaoImpl" />
+	</entry>	
+	<entry key="DD_TRC_TERCEROS">
+	<bean
+			class="es.capgemini.pfs.admin.diccionarios.dao.impl.ADMDDTercerosDaoImpl" />
+	</entry>
+	<entry key="DD_TVI_TIPO_VIA">
+		<bean class="es.capgemini.pfs.admin.dao.impl.ADMDDTipoViaDaoImpl" />
+	</entry>
+	<entry key="DD_DCA_DEMANDANTES_CARGAS">
+		<bean
+			class="es.capgemini.pfs.cargabien.dao.impl.DDDemandantesCargasDaoImpl" />
+	</entry>	
+	<entry key="DD_TCA_TIPOS_CARGAS">
+		<bean class="es.capgemini.pfs.cargabien.dao.impl.DDTipoCargaDaoImpl" />
+	</entry>	
+	
+
+	<bean id="dicDiccionarioEditableMaestroManager"
+		class="es.pfsgroup.plugin.recovery.diccionarios.diccionarios.DICDiccionarioEditableMaestroManager">
+		<property name="daos">
+			<map>
+				<entry key="DD_AEX_AMBITOS_EXPEDIENTE">
+					<bean
+						class="es.capgemini.pfs.expediente.dao.impl.DDAmbitoExpedienteDaoImpl" />
+				</entry>
+				<entry key="DD_CRA_CRITERIO_ANALISIS">
+					<bean
+						class="es.capgemini.pfs.mapaGlobalOficina.dao.impl.DDCriterioAnalisisDaoImpl" />
+				</entry>
+				<entry key="DD_EST_ESTADOS_ITINERARIOS">
+					<bean
+						class="es.capgemini.pfs.itinerario.dao.impl.DDEstadoItinerarioDaoImpl" />
+				</entry>
+				<entry key="DD_FMG_FASES_MAPA_GLOBAL">
+					<bean class="es.capgemini.pfs.subfase.dao.impl.FaseDaoImpl" />
+				</entry>
+				<entry key="DD_SCP_SUBTIPO_COBRO_PAGO">
+					<bean
+						class="es.capgemini.pfs.cobropago.dao.impl.DDSubtipoCobroPagoDaoImpl" />
+				</entry>
+				<entry key="DD_EPI_EST_POL_ITINERARIO">
+					<bean
+						class="es.capgemini.pfs.politica.dao.impl.DDEstadoItinerarioPoliticaDaoImpl" />
+				</entry>
+				<entry key="DD_SMG_SUBFASES_MAPA_GLOBAL">
+					<bean class="es.capgemini.pfs.subfase.dao.impl.SubfaseDaoImpl" />
+				</entry>
+				<entry key="DD_EAC_ESTADO_ACUERDO">
+					<bean class="es.capgemini.pfs.acuerdo.dao.impl.DDEstadoAcuerdoDaoImpl" />
+				</entry>
+				<entry key="DD_EDE_ESTADOS_DECISION">
+					<bean
+						class="es.capgemini.pfs.decisionProcedimiento.dao.impl.DDEstadoDecisionDaoImpl" />
+				</entry>
+				<entry key="DD_ESC_ESTADO_CNT">
+					<bean class="es.capgemini.pfs.contrato.dao.impl.DDEstadoContratoDaoImpl" />
+				</entry>
+				<entry key="DD_SOL_SOLICITANTE">
+					<bean class="es.capgemini.pfs.acuerdo.dao.impl.DDSolicitanteDaoImpl" />
+				</entry>
+				<entry key="DD_STA_SUBTIPO_TAREA_BASE">
+					<bean
+						class="es.capgemini.pfs.tareaNotificacion.dao.impl.SubtipoTareaDaoImpl" />
+				</entry>
+				<entry key="DD_TAY_TIPO_AYUDA_ACUERDO">
+					<bean class="es.capgemini.pfs.acuerdo.dao.impl.DDTipoAyudaAcuerdoDaoImpl" />
+				</entry>
+
+				<entry key="DD_TMC_TIPO_MONEDA_CIRBE">
+					<bean class="es.capgemini.pfs.cirbe.dao.impl.DDTipoMonedaCirbeDaoImpl" />
+				</entry>
+				<entry key="DD_TPE_TIPO_PERSONA">
+					<bean class="es.capgemini.pfs.persona.dao.impl.DDTipoPersonaDaoImpl" />
+				</entry>
+				<entry key="DD_ECL_ESTADO_CLIENTE">
+					<bean class="es.capgemini.pfs.cliente.dao.impl.EstadoClienteDaoImpl" />
+				</entry>
+				<entry key="DD_EEX_ESTADO_EXPEDIENTE">
+					<bean
+						class="es.capgemini.pfs.expediente.dao.impl.DDEstadoExpedienteDaoImpl" />
+				</entry>
+				<entry key="DD_COC_COD_OPERAC_CIRBE">
+					<bean
+						class="es.capgemini.pfs.cirbe.dao.impl.DDCodigoOperacionCirbeDaoImpl" />
+				</entry>
+				<entry key="DD_CRC_CLASE_RIESGO_CIRBE">
+					<bean class="es.capgemini.pfs.cirbe.dao.impl.DDClaseRiesgoCirbeDaoImpl" />
+				</entry>
+				<entry key="DD_EAS_ESTADO_ASUNTOS">
+					<bean class="es.capgemini.pfs.asunto.dao.impl.EstadoAsuntoDaoImpl" />
+				</entry>
+				<entry key="DD_EPR_ESTADO_PROCEDIMIENTO">
+					<bean class="es.capgemini.pfs.asunto.dao.impl.EstadoProcedimientoDaoImpl" />
+				</entry>
+				<entry key="DD_ESC_ESTADO_CUMPLIMIENTO">
+					<bean
+						class="es.capgemini.pfs.politica.dao.impl.DDEstadoCumplimientoDaoImpl" />
+				</entry>
+				<entry key="DD_ESO_ESTADO_OBJETIVO">
+					<bean class="es.capgemini.pfs.politica.dao.impl.DDEstadoObjetivoDaoImpl" />
+				</entry>
+				<entry key="DD_ESP_ESTADO_POLITICA">
+					<bean class="es.capgemini.pfs.politica.dao.impl.DDEstadoPoliticaDaoImpl" />
+				</entry>
+				<entry key="DD_TGC_TIPO_GARANTIA_CIRBE">
+					<bean class="es.capgemini.pfs.cirbe.dao.impl.DDTipoGarantiaCirbeDaoImpl" />
+				</entry>
+				<entry key="DD_TIT_TIPO_ITINERARIOS">
+					<bean
+						class="es.capgemini.pfs.itinerario.dao.impl.DDTipoItinerarioDaoImpl" />
+				</entry>
+				<entry key="DD_TOP_TIPO_OPERADOR">
+					<bean class="es.capgemini.pfs.politica.dao.impl.TipoOperadorDaoImpl" />
+				</entry>
+				<entry key="DD_TPR_TIPO_PRORROGA">
+					<bean class="es.capgemini.pfs.prorroga.dao.impl.DDTipoProrrogaDaoImpl" />
+				</entry>
+				<entry key="DD_TRE_TIPO_REGLAS_ELEVACION">
+					<bean
+						class="es.capgemini.pfs.itinerario.dao.impl.DDTipoReglasElevacionDaoImpl" />
+				</entry>
+				<entry key="DD_TSC_TIPO_SITUAC_CIRBE">
+					<bean class="es.capgemini.pfs.cirbe.dao.impl.DDTipoSituacionCirbeDaoImpl" />
+				</entry>
+				<entry key="DD_TVC_TIPO_VENC_CIRBE">
+					<bean
+						class="es.capgemini.pfs.cirbe.dao.impl.DDTipoVencimientoCirbeDaoImpl" />
+				</entry>
+				<entry key="DD_VAL_VALORACION">
+					<bean class="es.capgemini.pfs.politica.dao.impl.DDValoracionDaoImpl" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+	 -->
+</beans>

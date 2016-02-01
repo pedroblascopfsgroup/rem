@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd" start-state="listado">
+	
+	<var name="formEstadosItinerarios" class="es.pfsgroup.plugin.recovery.itinerarios.estado.web.ITIFormListadoEstados" />
+	<input name="id" type="java.lang.Long"/>
+    
+	<!--a partir de este momento solo enviamos ajax -->
+	<view-state id="listado" view="plugin/itinerarios/modificarEstadosItinerario" model="formEstadosItinerarios">
+		<on-render>
+			<evaluate expression="executor.execute('plugin.itinerarios.itinerario.getItinerario',id)" result="flowScope.itinerario"/>
+			<evaluate expression="executor.execute('plugin.itinerarios.perfil.getPerfiles')" result="flowScope.gestores" />
+			<evaluate expression="executor.execute('plugin.itinerarios.perfil.getPerfiles')" result="flowScope.supervisores" />
+			<evaluate expression="executor.execute('plugin.itinerarios.ddSiNo.lista')" result="flowScope.ddSiNo" />
+			<evaluate expression="executor.execute('plugin.itinerarios.estados.listaDtoEstadosItinerario',id)" result="flowScope.formEstadosItinerarios.dtoEstados"/>
+			 
+			<evaluate expression="executor.execute('plugin.itinerarios.estados.listaEstadosItinerario',id)" result="flowScope.formEstadosItinerarios.estados"/>
+		</on-render>
+		<transition on="getData" to="getData1"/>	
+		<transition on="fin1" to="fin"/>
+	</view-state>
+    
+	<view-state id="getData1" view="plugin/itinerarios/listaEstadosItinerarioJSON" model="formEstadosItinerarios">
+		<transition on="update" to="update"/>
+		<transition on="getData" to="getData1"/>
+		<transition on="fin1" to="fin"/>
+		<!-- <exception-handler bean="swfExceptionHandler" /> -->
+	</view-state>
+	
+	<action-state id="update">
+		<evaluate expression="executor.execute('plugin.itinerarios.estados.updateList',formEstadosItinerarios.dtoEstados)"></evaluate>
+		<transition to="fin"/>
+	</action-state>    
+	
+	<end-state id="fin" view="default"></end-state>
+	<exception-handler bean="swfExceptionHandler" />
+</flow>

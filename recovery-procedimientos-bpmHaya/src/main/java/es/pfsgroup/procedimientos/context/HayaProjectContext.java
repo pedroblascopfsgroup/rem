@@ -10,6 +10,24 @@ public interface HayaProjectContext {
 
 	public String getTareaAceptacionLitigios();
 	
+	public String getCodigoHipotecario();
+
+	public String getCodigoMonitorio();
+
+	public String getCodigoOrdinario();
+	
+	public String getCodigoTareaDemandaHipotecario();
+	
+	public String getCodigoTareaDemandaMonitorio();
+	
+	public String getCodigoTareaDemandaOrdinario();
+	
+	public String getFechaDemandaHipotecario();
+	
+	public String getFechaDemandaMonitorio();
+	
+	public String getFechaDemandaOrdinario();
+
 	public String getTareaInicioConcurso();
 
 }

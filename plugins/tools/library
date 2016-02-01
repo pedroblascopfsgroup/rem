@@ -1,0 +1,246 @@
+#!/bin/bash
+. $(dirname $0)/functions.sh
+DEVON_PROPERTIES=/${DEVON_HOME}/devon.properties
+ACTION=$1
+LIBNAME=$2
+LIBVERSION=$3
+ENTORNO=$4
+
+function main () {
+	if [ -z "$ACTION" ] || [ -z "$LIBNAME" ] || [ -z "$LIBVERSION" ] || [ -z "$ENTORNO" ]; then
+		echo "ERROR: Argumentos insuficientes"
+		print_usage
+		exit 1
+	fi
+
+	### Comprobaciones básicas
+	check_command zip
+	check_file $DEVON_PROPERTIES
+	check_entorno $ENTORNO
+	check_tomcat
+	
+	### Variables
+	local WAR=$(get_property $DEVON_PROPERTIES recovery.war)
+	local TOMCAT_HOME=$(get_property $DEVON_PROPERTIES tomcat.home)
+	local OUTDIR=/tmp/library-$(date +%s)
+	local JAR=${LIBNAME}-${LIBVERSION}.jar
+	local LIBDIR=$OUTDIR/war/WEB-INF/lib
+	local CFGDSTDIR=$OUTDIR/war/WEB-INF/classes/optionalConfiguration
+	local CFGSRCDIR=$OUTDIR/jar/optionalConfiguration
+	local JSPDSTDIR=$OUTDIR/war/WEB-INF/jsp/lib/$LIBNAME
+	local JSPSRCDIR=$OUTDIR/jar/jsp/lib/$LIBNAME
+	local JSDSTDIR=$OUTDIR/war/js/lib/$LIBNAME
+	local JSSRCDIR=$OUTDIR/jar/js/lib/$LIBNAME
+	local TAGSDSTDIR=$OUTDIR/war/WEB-INF/tags
+	local TAGSSRCDIR=$OUTDIR/jar/META-INF/tags
+	local LOGFILE=/home/$ENTORNO/$(get_property $DEVON_PROPERTIES install.log)
+	
+	# Comprobacion valores variables
+	if [ -z "$TOMCAT_HOME" ]; then 
+		exit 1
+	fi
+	if [ -z "$LOGFILE" ]; then 
+		exit 1
+	fi
+	check_file $WAR
+	if [ x${ACTION} != xremove ]; then 
+		check_file $JAR
+	fi
+	check_file $LOGFILE
+
+	case "$ACTION" in
+		install)
+			echo "------------------------------------------"
+			echo " INSTALACION DEL LA LIBRERIA $JAR EN $WAR"
+			echo -e "\tlibrary.name=$LIBNAME"
+			echo -e "\tlibrary.version=$LIBVERSION"
+			echo "------------------------------------------"
+			echo ""	
+			unzip_sources $WAR $OUTDIR/war $JAR $OUTDIR/jar
+			### Verificamos que no se encuentre instalada la libreria
+			if [ -n "$(find $LIBDIR -name "*$LIBNAME*.jar")" ]; then
+				exit_with_error "Ya existe una version instalada de la libreria. Actualice o desinstale"
+			fi
+			### Instalamos la libreria
+			lib_copy_jar $LIBNAME $JAR $LIBDIR
+			lib_copy_web_resources $TAGSSRCDIR $TAGSDSTDIR $JSPSRCDIR $JSPDSTDIR $JSSRCDIR $JSDSTDIR
+			lib_copy_config $LIBNAME $OUTDIR/jar $CFGDSTDIR
+			### Generamos el nombre del nuevo war
+			local NEWWAR="$(basename $WAR | sed "s/\.war/-installed-$LIBNAME-lib-$(date -I).war/")"
+			;;
+		upgrade)
+			echo "------------------------------------------"
+			echo " ACTUALIZACION DEL LA LIBRERIA $JAR EN $WAR"
+			echo -e "\tlibrary.name=$LIBNAME"
+			echo -e "\tlibrary.version=$LIBVERSION"
+			echo "------------------------------------------"
+			echo ""
+			unzip_sources $WAR $OUTDIR/war $JAR $OUTDIR/jar
+			### Verificamos que la libreria esta instalada y la desinstalamos
+			local OLD_JAR="$(find $LIBDIR -name "*$LIBNAME*.jar")"
+			if [ -z "$OLD_JAR" ]; then
+				exit_with_error "No existe una version de libreria a actualizar. Instale de nuevo"
+			fi
+			if [ -n "$(find $CFGDSTDIR -name *$LIBNAME*.xml)" ]; then
+				echo "Eliminando archivos de configuracion Spring"
+				rm -f $CFGDSTDIR/*$LIBNAME*.xml
+			fi
+			if [ -d $JSPDSTDIR ]; then
+				echo "Eliminando JSP's"
+				rm -Rf $JSPDSTDIR
+			fi
+			echo "Se ha encontrado el siguiente fichero $(basename $OLD_JAR) que se va a eliminar"
+			rm -f $OLD_JAR
+			### Instalamos la libreria
+			lib_copy_jar $LIBNAME $JAR $LIBDIR
+			lib_copy_web_resources $TAGSSRCDIR $TAGSDSTDIR $JSPSRCDIR $JSPDSTDIR $JSSRCDIR $JSDSTDIR
+			lib_copy_config $LIBNAME $OUTDIR/jar $CFGDSTDIR
+			### Generamos el nombre del nuevo war
+			local NEWWAR="$(basename $WAR | sed "s/\.war/-upgraded-$LIBNAME-lib-$(date -I).war/")"
+			;;
+		remove)
+			echo "------------------------------------------"
+			echo " DESINSTALACION DEL LA LIBRERIA $JAR EN $WAR"
+			echo "------------------------------------------"
+			echo ""
+			unzip_file $WAR $OUTDIR/war
+			### Verificamos que la libreria esta instalada y la desinstalamos
+			local OLD_JAR="$(find $LIBDIR -name "*$LIBNAME*.jar")"
+			if [ -z "$OLD_JAR" ]; then
+				exit_with_error "No existe una version de libreria a borrar. Instale de nuevo"
+			fi
+			if [ -n "$(find $CFGDSTDIR -name *$LIBNAME*.xml)" ]; then
+				echo "Eliminando archivos de configuracion Spring"
+				rm -f $CFGDSTDIR/*$LIBNAME*.xml
+			fi
+			if [ -d $JSPDSTDIR ]; then
+				echo "Eliminando JSP's"
+				rm -Rf $JSPDSTDIR
+			fi
+			if [ -d $JSDSTDIR ]; then
+				echo "Eliminando Librerias Javascript"
+				rm -Rf $JSDSTDIR
+			fi
+			echo "Se ha encontrado el siguiente fichero $(basename $OLD_JAR) que se va a eliminar"
+			rm -f $OLD_JAR
+			### Generamos el nombre del nuevo war
+			local NEWWAR="$(basename $WAR | sed "s/\.war/-removed-$LIBNAME-lib-$(date -I).war/")"
+			;;
+		*)
+			echo "ERROR $ACTION: Accion desconocida"
+			print_usage
+			exit 1
+			;;
+	esac
+	### Volvemos a generar el WAR
+	local CURRENT=$(pwd)
+	cd $OUTDIR/war
+	zip -r -q ${CURRENT}/${NEWWAR} *
+	cd $CURRENT
+	### Borramos el directorio temporal
+	rm -Rf $OUTDIR
+	### Instalamos el war
+	install_war $TOMCAT_HOME $WAR $NEWWAR $LOGFILE $JAR $ACTION
+}	
+
+
+function unzip_sources () {
+	unzip_file $1 $2
+	unzip_file $3 $4
+}
+
+function lib_copy_web_resources () {
+
+	local TAGSSRC=$1
+	local TAGSDST=$2
+	local JSPSRC=$3
+	local JSPDST=$4
+	local JSSRC=$5
+	local JSDST=$6
+
+	if [ -d $TAGSSRC ]; then
+		echo -n "Copiando TAGS's: "
+		cp -Rf $TAGSSRC/* $TAGSDST
+		echo ""
+	fi
+	
+	if [ -d $JSPSRC ]; then
+		echo -n "Copiando JSP's: "
+		if [ -d $JSPDST ]; then 
+			exit_with_error "Se han encontrado JSP's de otra version. Actualice o desinstale"
+		fi
+		mkdir -p $JSPDST
+		cp -Rf $JSPSRC/* $JSPDST
+		echo ""
+	else
+		echo "No se han encontrado JSP's para copiar"
+	fi
+	
+	if [ -d $JSSRC ]; then
+		echo -n "Copiando librerias javascript: "
+		mkdir -p $JSDST
+		cp -Rf $JSSRC/* $JSDST
+		echo ""
+	fi
+	
+}
+
+function lib_copy_jar (){
+	local LNAME=$1
+	local JAR=$2
+	local DEST=$3
+	
+
+	check_file $JAR
+	check_dir $DEST
+
+	echo "Copiando $JAR en lib"
+	
+	cp $JAR $DEST
+}
+
+function lib_copy_config (){
+	local LNAME=$1
+	local LIB=$2
+	local DEST=$3
+	
+	local SOURCE=$LIB/optionalConfiguration
+
+	check_dir $SOURCE
+	check_dir $DEST
+	
+	echo -n "Copiando ficheros Spring: "
+	local FILES=0
+	for f in $(find $SOURCE -name ac-*.xml); do
+		FILES=$(( $FILES + 1 ))
+		echo -n "$(basename $f) "
+		cp $f $DEST
+	done
+	
+	if [ $FILES -eq 0 ]; then
+		echo " No se han encontrado ficheros"
+	else
+		echo "[$FILES ficheros]"
+	fi
+}
+
+
+function print_usage () {
+	echo "Uso $0 ACTION NOMBRE VERSION ENTORNO"
+	echo "ACTION := [install|upgrade|remove]"
+	echo -e "\tinstall -> Instala un plugin. Falla si el plugin ya esta instalado."
+	echo -e "\tupgrade -> Actualiza un plugin."
+	echo -e "\tremove -> Desinstala un plugin."	
+	echo ""
+	echo "NOMBRE := Nombre de la libreria a instalar"
+	echo ""
+	echo "VERSION := Version de la libreria a instalar"
+	echo ""
+	echo "ENTORNO := Entorno en el que se va a instalar"
+}
+
+
+
+
+
+main

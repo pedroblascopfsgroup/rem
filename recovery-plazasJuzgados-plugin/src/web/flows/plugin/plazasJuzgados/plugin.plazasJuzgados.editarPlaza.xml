@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+	
+	<input name="id" type="java.lang.Long"/>
+
+	<end-state id="listado" view="plugin/plazasJuzgados/altaPlaza">
+		<on-entry>
+			<evaluate expression="executor.execute('plugin.plazasJuzgados.juzgado.getPlaza',id)" result="flowScope.plaza"/>
+		</on-entry>
+	</end-state>
+</flow>
+
+

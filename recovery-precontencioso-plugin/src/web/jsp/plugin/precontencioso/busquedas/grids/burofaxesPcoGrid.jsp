@@ -77,9 +77,10 @@ var gridBurofaxPco = app.crearGrid(burofaxPcoStore, burofaxPcoCm, {
 	bbar : [pagingBarBur],
 	height: 250,
 	collapsible: true,
-	collapsed: true,
+	collapsed: false,
 	titleCollapse: true,
 	autoWidth: true,
+	autoHeight: true,
 	style:'padding-bottom:10px; padding-right:10px;'
 });
 

@@ -635,7 +635,7 @@ public class EditBienController {
 			dto.setParticipacion(Integer.parseInt(request
 					.getParameter("oldParticipacion")));
 		if (!Checks.esNulo(request.getParameter("oldValorActual")))
-			dto.setValorActual(new Float(request.getParameter("oldValorActual")));
+			dto.setValorActual(new BigDecimal(request.getParameter("oldValorActual")));
 		if (!Checks.esNulo(request.getParameter("oldImporteCargas")))
 			dto.setImporteCargas(new Float(request
 					.getParameter("oldImporteCargas")));
@@ -658,7 +658,7 @@ public class EditBienController {
 		if (!Checks.esNulo(request.getParameter("tipoBien")))
 			dto.setTipoBien(request.getParameter("tipoBien"));
 		if (!Checks.esNulo(request.getParameter("valorActual")))
-			dto.setValorActual(new Float(request.getParameter("valorActual")));
+			dto.setValorActual(new BigDecimal(request.getParameter("valorActual")));
 		if (!Checks.esNulo(request.getParameter("importeCargas")))
 			dto.setImporteCargas(new Float(request
 					.getParameter("importeCargas")));

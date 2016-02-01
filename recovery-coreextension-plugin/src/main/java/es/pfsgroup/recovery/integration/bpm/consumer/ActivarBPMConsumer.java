@@ -60,7 +60,7 @@ public class ActivarBPMConsumer extends ConsumerAction<DataContainerPayload>  {
 			throw new IntegrationDataException(logMsg);
 		}
 		extProcedimientoManager.desparalizarProcedimiento(prc.getId(), false);
-		logger.info(String.format("[INTEGRACION] PRC[%s] Procedimiento activado!!", prcUUID));
+		logger.debug(String.format("[INTEGRACION] PRC[%s] Procedimiento activado!!", prcUUID));
 	}
 	
 }

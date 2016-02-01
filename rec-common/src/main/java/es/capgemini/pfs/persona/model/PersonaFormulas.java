@@ -11,7 +11,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
-@Table(name = "PER_PERSONAS_FORMULAS", schema = "${entity.schema}")
+@Table(name = "V_PER_PERSONAS_FORMULAS", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class PersonaFormulas implements Serializable {
 
@@ -78,6 +78,12 @@ public class PersonaFormulas implements Serializable {
 	@Column(name = "DESC_CNAE")
 	private String descripcionCnae;
 
+	@Column(name = "DESC_FECHA_SIT_CONCURSAL")
+	private String fechaSituacionConcursal;
+	
+	@Column(name = "DESC_CLIENTE_REESTRUC")
+	private Boolean clienteReestructurado;
+	
 	public Long getId() {
 		return id;
 	}
@@ -152,6 +158,22 @@ public class PersonaFormulas implements Serializable {
 
 	public String getDescripcionCnae() {
 		return descripcionCnae;
+	}
+
+	public String getFechaSituacionConcursal() {
+		return fechaSituacionConcursal;
+	}
+
+	public void setFechaSituacionConcursal(String fechaSituacionConcursal) {
+		this.fechaSituacionConcursal = fechaSituacionConcursal;
+	}
+
+	public Boolean getClienteReestructurado() {
+		return clienteReestructurado;
+	}
+
+	public void setClienteReestructurado(Boolean clienteReestructurado) {
+		this.clienteReestructurado = clienteReestructurado;
 	}
 
 	

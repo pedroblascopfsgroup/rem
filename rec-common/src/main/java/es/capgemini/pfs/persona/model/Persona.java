@@ -2,6 +2,7 @@ package es.capgemini.pfs.persona.model;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -29,6 +31,7 @@ import javax.persistence.Version;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.LazyToOne;
 import org.hibernate.annotations.LazyToOneOption;
 import org.hibernate.annotations.Where;
@@ -40,6 +43,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.antecedente.model.Antecedente;
 import es.capgemini.pfs.antecedenteinterno.model.AntecedenteInterno;
+import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
@@ -51,6 +55,8 @@ import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.contrato.model.DDEstadoFinanciero;
 import es.capgemini.pfs.contrato.model.DDTipoProducto;
 import es.capgemini.pfs.direccion.model.Direccion;
+import es.capgemini.pfs.expediente.model.DDEstadoExpediente;
+import es.capgemini.pfs.expediente.model.DDTipoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.grupoCliente.model.PersonaGrupo;
@@ -476,6 +482,9 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	@Column(name = "PER_EMPLEADO")
 	private Boolean esEmpleado;
 
+	@Column(name = "PER_SITUACION_CONCURSAL")
+	private String situacionConcursal;
+	
 	@OneToOne(fetch = FetchType.LAZY)
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	@JoinColumn(name = "DD_COS_ID")
@@ -500,17 +509,15 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	@JoinColumn(name = "DD_ARG_ID")
 	private DDAreaGestion areaGestion;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "TEL_PER", joinColumns = { @JoinColumn(name = "PER_ID", unique = true) }, inverseJoinColumns = { @JoinColumn(name = "TEL_ID") })
-	@Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private List<Telefono> telefonos;
+	@OneToMany(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PER_ID")
+	 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private List<PersonasTelefono> personasTelefono;
 	
 	@OneToOne(fetch = FetchType.LAZY, optional=true)
 	@JoinColumn(name = "PER_ID", updatable= false)
 	@LazyToOne(LazyToOneOption.PROXY)
 	private PersonaFormulas formulas;
-	
-
 	
 
 	/**
@@ -761,6 +768,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	 */
 	public Float getTotalBienes() {
 		Float totalBien = 0F;
+
 		for (Bien b : getBienes()) {
 			if (b.getValorActual() != null && b.getParticipacion() != null) {
 				totalBien += b.getValorActual().floatValue()
@@ -889,7 +897,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	 * @return situacion
 	 */
 	public String getSituacion() {
-		return this.getFormulas() == null ? null :this.getFormulas() == null ? null :this.getFormulas().getSituacion();
+		return this.getFormulas() == null ? null : this.getFormulas().getSituacion();
 	}
 
 	/**
@@ -3012,17 +3020,23 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 		this.areaGestion = areaGestion;
 	}
 
+	/**
+	 * @return telefonos
+	 */
 	public List<Telefono> getTelefonos() {
-		if(fieldHandler!=null)
-	        return (List<Telefono>)fieldHandler.readObject(this, "telefonos", telefonos);
+		List<Telefono> telefonos = new ArrayList<Telefono>();
+
+		for (PersonasTelefono pt : personasTelefono) {
+			// FIXME Esto es un parche, ya que el borrado de teléfono no está
+			// actuando
+			if (!pt.getTelefono().getAuditoria().isBorrado()) {
+				telefonos.add(pt.getTelefono());
+			}
+		}
+
 		return telefonos;
 	}
-
-	public void setTelefonos(List<Telefono> telefonos) {
-		if(fieldHandler!=null)
-	        fieldHandler.writeObject(this, "telefonos", this.telefonos, telefonos);
-		this.telefonos = telefonos;
-	}
+	
 
 	public String getServicioNominaPension() {
 		return this.getFormulas() == null ? null :this.getFormulas().getServicioNominaPension();
@@ -3039,7 +3053,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 
 	public String getDispuestoVencido() {
 		return this.getFormulas() == null ? null : Checks.esNulo(this.getFormulas().getDispuestoVencido()) ? null : this.getFormulas().getDispuestoVencido().replaceAll(",", ".");
-
+		
 	}
 
 	public String getEstadoCicloVida() {
@@ -3051,6 +3065,22 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 		return this.getFormulas() == null ? null :this.getFormulas().getDescripcionCnae();
 	}
 
+	public String getSituacionConcursal() {
+		return situacionConcursal;
+	}
+
+	public void setSituacionConcursal(String situacionConcursal) {
+		this.situacionConcursal = situacionConcursal;
+	}
+
+	public String getFechaSituacionConcursal() {
+		return this.getFormulas() == null ? null :this.getFormulas().getFechaSituacionConcursal();
+	}
+	
+	public Boolean getClienteReestructurado() {
+		return this.getFormulas() == null ? null :this.getFormulas().getClienteReestructurado();
+	}
+	
 	@Override
 	public void setFieldHandler(FieldHandler handler) {
 		this.fieldHandler = handler;
@@ -3066,6 +3096,14 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 		if(fieldHandler!=null)
 	        return (PersonaFormulas)fieldHandler.readObject(this, "formulas", formulas);
 		return formulas;
+	}
+	
+	public List<PersonasTelefono> getPersonasTelefono() {
+		return personasTelefono;
+	}
+
+	public void setPersonasTelefono(List<PersonasTelefono> personasTelefono) {
+		this.personasTelefono = personasTelefono;
 	}
 
 }

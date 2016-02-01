@@ -1,0 +1,64 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.6.5
+Created-By: R27.5.0-110-94909-1.6.0_03-20080204-1558-windows-ia32 (BEA
+  Systems, Inc.)
+Built-By: ncornagl
+Build-Jdk: jdk16
+Implementation-Vendor: Capgemini
+Implementation-Implementation-Title: devon-hibernate
+Implementation-Version: 1.1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Devon Hibernate
+Bundle-Vendor: Capgemini
+Bundle-Version: 1.1.0
+Bundle-SymbolicName: es.capgemini.devon.hibernate
+Export-Package: es.capgemini.devon.hibernate;version="1.1.0";uses:="es
+ .capgemini.devon.bo.annotations,org.springframework.beans.factory.ann
+ otation,org.springframework.jmx.export.annotation,org.springframework
+ .stereotype",es.capgemini.devon.hibernate.console.plugins;version="1.
+ 1.0";uses:="es.capgemini.devon.console,org.springframework.beans.fact
+ ory.annotation,org.springframework.jmx.export.annotation,org.springfr
+ amework.stereotype",es.capgemini.devon.hibernate.dao;version="1.1.0";
+ uses:="javax.transaction,org.aspectj.lang,org.aspectj.lang.annotation
+ ,org.hibernate,org.springframework.jdbc.support.lob,org.springframewo
+ rk.orm.hibernate3,org.springframework.orm.hibernate3.support,org.spri
+ ngframework.stereotype",es.capgemini.devon.hibernate.events.defered;v
+ ersion="1.1.0";uses:="es.capgemini.devon.events,es.capgemini.devon.ev
+ ents.defered,javax.persistence,org.springframework.stereotype",es.cap
+ gemini.devon.hibernate.events.defered.dao;version="1.1.0";uses:="es.c
+ apgemini.devon.events.defered,es.capgemini.devon.hibernate.dao,javax.
+ annotation,org.hibernate,org.springframework.dao,org.springframework.
+ stereotype",es.capgemini.devon.hibernate.pagination;version="1.1.0";u
+ ses:="es.capgemini.devon.pagination,javax.annotation,org.hibernate,or
+ g.springframework.orm.hibernate3,org.springframework.stereotype",es.c
+ apgemini.devon.hibernate.session;version="1.1.0";uses:="org.springfra
+ mework.orm.hibernate3.annotation",es.capgemini.devon.hibernate.test;v
+ ersion="1.1.0";uses:="javax.annotation,org.junit,org.springframework.
+ batch.core,org.springframework.batch.core.launch,org.springframework.
+ beans.factory.annotation,org.springframework.test.context,org.springf
+ ramework.test.context.junit4",es.capgemini.devon.hibernate.utils;vers
+ ion="1.1.0";uses:="org.hibernate",es.capgemini.devon.stubs.hibernate.
+ dao;version="1.1.0",es.capgemini.devon.stubs.hibernate.events.defered
+ .dao;version="1.1.0";uses:="es.capgemini.devon.events.defered,es.capg
+ emini.devon.stubs.hibernate.dao,org.springframework.dao,org.springfra
+ mework.stereotype",devon.resources.hibernate;version="1.1.0"
+Import-Package: javax.annotation;version="1.0.0",javax.sql;version="0.
+ 0.0",javax.transaction;version="1.1.0",org.apache.commons.lang;versio
+ n="2.1",org.apache.commons.lang.time;version="2.1",org.apache.commons
+ .logging;version="1.1.1",org.aspectj.lang;version="1.6.0",org.aspectj
+ .lang.annotation;version="1.6.0",org.junit;version="4.4.0";resolution
+ :=optional
+Require-Bundle: es.capgemini.devon.core;bundle-version="1.1.0";visibil
+ ity:=reexport,org.springframework.beans;bundle-version="2.5.6.SEC01";
+ visibility:=reexport,org.springframework.context;bundle-version="2.5.
+ 6.SEC01";visibility:=reexport,org.springframework.core;bundle-version
+ ="2.5.6.SEC01";visibility:=reexport,org.springframework.jdbc;bundle-v
+ ersion="2.5.6.SEC01";visibility:=reexport,org.springframework.transac
+ tion;bundle-version="2.5.6.SEC01";visibility:=reexport,org.springfram
+ ework.orm;bundle-version="2.5.6.SEC01";visibility:=reexport,com.sprin
+ gsource.javax.persistence;bundle-version="1.0.0";visibility:=reexport
+ ,com.springsource.org.hibernate;bundle-version="3.2.6.ga";visibility:
+ =reexport,com.springsource.org.hibernate.annotations.common;bundle-ve
+ rsion="3.3.0.ga";visibility:=reexport,com.springsource.net.sf.ehcache
+ ;bundle-version="1.5.0";visibility:=reexport
+

@@ -94,18 +94,22 @@
 	// Retorna si el tipo de objetivo seleccionado es automático
 	var isAutomatico = function(codigo) {
 		var i=0;
-		while(!(objetivos.diccionario[i].codigo==codigo)) { i++; };
-		return objetivos.diccionario[i].automatico;
+		if(objetivos.diccionario.length!=0){
+			while(!(objetivos.diccionario[i].codigo==codigo)) { i++; };
+			return objetivos.diccionario[i].automatico;
+		}
 	};
 
 	// Retorna true si el tipo de objetivo seleccionado es automático de tipo persona (contrato = false)
 	var isTipoPersona = function(codigo) {
 		var i=0;
-		while(!(objetivos.diccionario[i].codigo==codigo)) { i++; };
-		if(!objetivos.diccionario[i].automatico) {
-			return false;
+		if(objetivos.diccionario.length!=0){
+			while(!(objetivos.diccionario[i].codigo==codigo)) { i++; };
+			if(!objetivos.diccionario[i].automatico) {
+				return false;
+			}
+			return !objetivos.diccionario[i].contrato;
 		}
-		return !objetivos.diccionario[i].contrato;
 	};
 
 	isObjetivoAutomatico = isAutomatico('${objetivo.tipoObjetivo.codigo}');
@@ -125,7 +129,9 @@
 			resumenObjetivo.enable();
 			isObjetivoAutomatico = false;
 			operadorCombo.disable();
+			operadorCombo.setValue('');
 			cantLimiteNumber.disable();
+			cantLimiteNumber.setValue('');
 			if(!isPrimerLlamada) {
 				resumenObjetivo.setValue('');
 			} else {
@@ -362,7 +368,8 @@
 	var estadoItiH = new Ext.form.Hidden({name: 'idEstadoItinerarioPolitica', value:'${idEstadoItinerarioPolitica}',hidden:true});
 
 	var objetivoForm = new Ext.form.FormPanel({
-		items:[idObjetivoH,idContratoH,tipoOperadorH,tipoObjetivoH,fechaLimiteH,valorH,observacionH,resumenH,estadoItiH,justificacionH]
+		items:[idObjetivoH,idContratoH,tipoOperadorH,tipoObjetivoH,fechaLimiteH,valorH,observacionH,resumenH,estadoItiH,justificacionH],
+		border:false
 	  });
 
 	//--------------------------------------------------------
@@ -449,7 +456,7 @@
     
         var submitAcepto = function(){
             page.submit({
-                    eventName : 'aceptar'
+                    even/var/tomcat/desahaya/webapps/pfs/WEB-INF/jsp/politica/editObjetivo.jsptName : 'aceptar'
                     ,formPanel : objetivoForm
                     ,success : function(){ page.fireEvent(app.event.DONE) }
                 });

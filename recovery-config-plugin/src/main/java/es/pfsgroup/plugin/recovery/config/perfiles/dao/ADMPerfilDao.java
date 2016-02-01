@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.recovery.config.perfiles.dao;
 
+import java.util.List;
+
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.plugin.recovery.config.perfiles.dto.ADMDtoBuscaPerfil;
@@ -29,5 +31,12 @@ public interface ADMPerfilDao extends AbstractDao<EXTPerfil, Long> {
 	 * @return
 	 */
 	public Long getLastCodigo();
+	
+	/**
+	 * Devuelve todos los perfiles NO borrados logicamente 
+	 * (borrado = 0)
+	 * @return
+	 */
+	public List<EXTPerfil> getListUndeleted();
 
 }

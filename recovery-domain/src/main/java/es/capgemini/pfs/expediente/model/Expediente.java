@@ -553,7 +553,7 @@ public class Expediente implements Serializable, Auditable, Describible {
     public boolean isManual() {
         return manual;
     }
-
+    
     /**
      * @param manual the manual to set
      */

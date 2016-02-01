@@ -32,10 +32,13 @@
 			localidad.setDisabled(true);
 		}
 	})
-	
-	<pfsforms:textfield name="codigoPostal"
-			labelKey="rec-web.direccion.form.codigoPostal" label="**Código Postal"
-			value="" obligatory="true" width="100" />
+			
+	<pfsforms:numberfield name="codigoPostal" 
+		labelKey="rec-web.direccion.form.codigoPostal" 
+		label="**Código Postal" 
+		value="" 
+		allowDecimals="false" 
+		allowNegative="false"/>
 		
 	var listadoLocalidades = Ext.data.Record.create([
 		 {name:'id'}

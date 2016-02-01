@@ -304,7 +304,7 @@ public class Cliente implements Serializable, Auditable {
     public Long getIdGestorActual() {
         Long idEstado = null;
         Estado estadoActual = arquetipo.getItinerario().getEstado(this.getEstadoItinerario().getCodigo());
-        if (estadoActual.getGestorPerfil() != null) {
+        if (estadoActual!=null && estadoActual.getGestorPerfil() != null) {
             idEstado = estadoActual.getGestorPerfil().getId();
         }
         return idEstado;
@@ -317,7 +317,7 @@ public class Cliente implements Serializable, Auditable {
     public Long getIdSupervisorActual() {
         Long idEstado = null;
         Estado estadoActual = arquetipo.getItinerario().getEstado(this.getEstadoItinerario().getCodigo());
-        if (estadoActual.getSupervisor() != null) {
+        if (estadoActual!=null && estadoActual.getSupervisor() != null) {
             idEstado = estadoActual.getSupervisor().getId();
         }
         return idEstado;

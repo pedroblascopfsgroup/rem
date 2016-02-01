@@ -1,6 +1,7 @@
 package es.capgemini.pfs.bien.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
 
@@ -54,7 +55,7 @@ public class Bien implements Serializable, Auditable {
     private Integer participacion;
 
     @Column(name = "BIE_VALOR_ACTUAL")
-    private Float valorActual;
+    private BigDecimal valorActual;
 
     @Column(name = "BIE_IMPORTE_CARGAS")
     private Float importeCargas;
@@ -139,7 +140,7 @@ public class Bien implements Serializable, Auditable {
     /**
      * @return the valorActual
      */
-    public Float getValorActual() {
+    public BigDecimal getValorActual() {
         return valorActual;
     }
 
@@ -147,7 +148,7 @@ public class Bien implements Serializable, Auditable {
      * @param valorActual
      *            the valorActual to set
      */
-    public void setValorActual(Float valorActual) {
+    public void setValorActual(BigDecimal valorActual) {
         this.valorActual = valorActual;
     }
 

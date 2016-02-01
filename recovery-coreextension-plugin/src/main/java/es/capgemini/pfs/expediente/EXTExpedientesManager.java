@@ -29,6 +29,7 @@ import es.capgemini.pfs.contrato.model.AdjuntoContrato;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.asunto.AdjuntoDto;
 import es.capgemini.pfs.core.api.expediente.EXTExpedientesApi;
+import es.capgemini.pfs.core.api.persona.PersonaApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
 import es.capgemini.pfs.exceptions.NonRollbackException;
@@ -37,6 +38,7 @@ import es.capgemini.pfs.expediente.dao.ExpedienteDao;
 import es.capgemini.pfs.expediente.model.AdjuntoExpediente;
 import es.capgemini.pfs.expediente.model.DDAmbitoExpediente;
 import es.capgemini.pfs.expediente.model.DDEstadoExpediente;
+import es.capgemini.pfs.expediente.model.DDTipoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.expediente.model.ExpedientePersona;
@@ -192,7 +194,7 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 	public Expediente crearExpedienteAutomatico(Long idContrato,
 			Long idPersona, Long idArquetipo, Long idBPMExpediente,
 			Long idBPMCliente) {
-		validarContratoPase(idContrato);
+			validarContratoPase(idContrato);
 
 		Expediente expediente = new Expediente();
 		expediente.setExpProcessBpm(idBPMExpediente);
@@ -219,8 +221,9 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 		expediente.setManual(false);
 
 		// Seteo el arquetipo del expediente
-		expediente.setArquetipo((Arquetipo) executor.execute(
-				ConfiguracionBusinessOperation.BO_ARQ_MGR_GET, idArquetipo));
+		Arquetipo arq = (Arquetipo) executor.execute(
+				ConfiguracionBusinessOperation.BO_ARQ_MGR_GET, idArquetipo);
+		expediente.setArquetipo(arq);
 
 		// Obtenemos la oficina del contrato de pase
 		// VRE
@@ -243,8 +246,16 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 
 		// Le seteamos el nombre ya que ahora no se obtiene a trav�s de una
 		// f�rmula
-		setearNombreExpediente(expediente);
+		setearNombreExpediente(expediente, idPersona);
 
+	  // Seteamos el tipo de expediente
+        DDTipoExpediente tipo = null;
+        if(arq !=null && arq.getItinerario()!=null && arq.getItinerario().getdDtipoItinerario().getItinerarioSeguimiento())
+        	tipo = genericDao.get(DDTipoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoExpediente.TIPO_EXPEDIENTE_SEGUIMIENTO), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+        else
+        	tipo = genericDao.get(DDTipoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoExpediente.TIPO_EXPEDIENTE_RECUPERACION), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+        expediente.setTipoExpediente(tipo); 
+	
 		
 		expedienteDao.saveOrUpdate(expediente);
 
@@ -347,6 +358,7 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 		Expediente exp = expedienteDao
 				.buscarExpedientesParaContrato(idContrato);
 		if (exp != null) {
+			logger.error("expediente.contrato.invalido.otroExpediente: "+idContrato);
 			throw new NonRollbackException(
 					"expediente.contrato.invalido.otroExpediente", idContrato);
 		}
@@ -463,25 +475,21 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 		// Borramos clientes por contrato
 		for (ExpedienteContrato expContrato : expediente.getContratos()) {
 			Long idContrato = expContrato.getContrato().getId();
-			List<Cliente> clientes = (List<Cliente>) executor
-					.execute(
-							PrimariaBusinessOperation.BO_CLI_MGR_BUSCAR_CLIENTES_POR_CONTRATO,
-							idContrato);
+			List<Cliente> clientes = (List<Cliente>) executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_BUSCAR_CLIENTES_POR_CONTRATO, idContrato);
 			for (Cliente cliente : clientes) {
-				if (cliente.getProcessBPM() != null
+				// AHORA EN NINGÚN CASO SE CREA BPM PARA EL CLIENTE
+				/*
+				if (!Checks.esNulo(idInvocacion) && !Checks.esNulo(cliente.getProcessBPM())
 						&& !cliente.getProcessBPM().equals(idInvocacion)) {
-					executor.execute(
-							ComunBusinessOperation.BO_JBPM_MGR_DESTROY_PROCESS,
-							cliente.getProcessBPM());
-				} else if (cliente.getProcessBPM() == null
-						&& EstadoCliente.ESTADO_CLIENTE_MANUAL.equals(cliente
-								.getEstadoCliente().getCodigo())) {
+					executor.execute(ComunBusinessOperation.BO_JBPM_MGR_DESTROY_PROCESS,cliente.getProcessBPM());
+				} else if (cliente.getProcessBPM() == null) {
+				
+//						&& EstadoCliente.ESTADO_CLIENTE_MANUAL.equals(cliente
+//								.getEstadoCliente().getCodigo())) {
 					// En caso de que se hayan generado manualmente
-					executor
-							.execute(
-									PrimariaBusinessOperation.BO_CLI_MGR_ELIMINAR_CLIENTE,
-									cliente.getId());
-				}
+					executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_ELIMINAR_CLIENTE, cliente.getId());
+				}*/
+				executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_ELIMINAR_CLIENTE, cliente.getId());
 			}
 		}
 
@@ -490,11 +498,11 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 			Cliente cliente = expPersona.getPersona().getClienteActivo();
 
 			if (cliente != null) {
-				if (cliente.getProcessBPM() != null
+				// AHORA EN NINGÚN CASO SE CREA BPM PARA EL CLIENTE
+				/*
+				if (!Checks.esNulo(idInvocacion) && !Checks.esNulo(cliente.getProcessBPM())
 						&& !cliente.getProcessBPM().equals(idInvocacion)) {
-					executor.execute(
-							ComunBusinessOperation.BO_JBPM_MGR_DESTROY_PROCESS,
-							cliente.getProcessBPM());
+					executor.execute(ComunBusinessOperation.BO_JBPM_MGR_DESTROY_PROCESS, cliente.getProcessBPM());
 				} else if (cliente.getProcessBPM() == null
 						&& EstadoCliente.ESTADO_CLIENTE_MANUAL.equals(cliente
 								.getEstadoCliente().getCodigo())) {
@@ -504,6 +512,8 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 									PrimariaBusinessOperation.BO_CLI_MGR_ELIMINAR_CLIENTE,
 									cliente.getId());
 				}
+				*/
+				executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_ELIMINAR_CLIENTE,cliente.getId());
 			}
 		}
 	}
@@ -527,6 +537,21 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 		}
 	}
 	
+	/**
+	 * Método para setearle el nombre a un expediente si tenemos la persona principal, 
+	 * sino utiliza el método anterior.
+	 * @param expediente
+	 * @param persona
+	 */
+	private void setearNombreExpediente(Expediente expediente, Long idPersona) {
+		Persona persona = proxyFactory.proxy(PersonaApi.class).get(idPersona);
+		if (persona == null || persona.getApellidoNombre() == null
+				|| persona.getApellidoNombre().trim().length() == 0) {
+			setearNombreExpediente(expediente);
+		} else {
+			expediente.setDescripcionExpediente(persona.getApellidoNombre());
+		}
+	}
 	/**
 	 * Recupera el m�ximo de contratos adicionales para un expediente. Si no
 	 * existe valor en la BBDD informa el error y usa el valor 20 por defecto

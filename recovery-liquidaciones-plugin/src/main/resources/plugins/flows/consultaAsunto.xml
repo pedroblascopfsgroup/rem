@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+	<input name="id" type="java.lang.Long"/>
+   <input name="nombreTab" type="java.lang.String"/>
+   
+	<!-- renderiza el formulario -->
+    <end-state id="consultaAsunto" view="plugin/liquidaciones/override/consultaAsunto" >
+	      <on-entry>
+	    	<evaluate expression="requestParameters.aceptacion" result="flowScope.aceptacion"/>
+	    	<evaluate expression="requestParameters.acuerdos" result="flowScope.acuerdos"/>
+	    	<evaluate expression="true" result="flowScope.readOnly"/>
+	    	<evaluate expression="executor.execute('asuntosManager.get',id)" result="flowScope.asunto" />
+	    	<evaluate expression="executor.execute('asuntosManager.puedoDevolverAsunto',id)" result="flowScope.puedoDevolver" />
+	    	<evaluate expression="executor.execute('asuntosManager.puedeTomarAccionAsunto',id)" result="flowScope.puedeTomarAccion" />
+	    	<evaluate expression="executor.execute('asuntosManager.buscarTareaPendiente',id)" result="flowScope.tareaPendiente" />
+	    	<evaluate expression="executor.execute('asuntosManager.esGestor',id)" result="flowScope.esGestor" />
+	    	<evaluate expression="executor.execute('asuntosManager.esSupervisor',id)" result="flowScope.esSupervisor" />
+	    	<evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')" result="flowScope.usuario" />
+			<evaluate expression="executor.execute('asuntosManager.esSupervisorOriginal',id)" result="flowScope.esSupervisorOriginal" />
+			<evaluate expression="executor.execute('asuntosManager.esSupervisorTemporal',id)" result="flowScope.esSupervisorTemporal" />
+			<evaluate expression="executor.execute('consultaAsuntoManager.getTabs',id)" result="flowScope.tabsAsunto" />
+			<evaluate expression="executor.execute('asunto.buttons',id)" result="flowScope.buttonsAsunto" />
+	    </on-entry>
+    </end-state> 	
+    
+</flow>

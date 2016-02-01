@@ -17,12 +17,19 @@ import org.springframework.web.context.request.WebRequest;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.asunto.EXTAsuntoManager;
+import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.contrato.model.DDEstadoContrato;
 import es.capgemini.pfs.core.api.plazaJuzgado.BuscaPlazaPaginadoDtoInfo;
 import es.capgemini.pfs.core.api.plazaJuzgado.PlazaJuzgadoApi;
+import es.capgemini.pfs.expediente.model.ExpedienteContrato;
+import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -66,6 +73,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.GuardarInstruc
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.LotesSubastaDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.manager.SubastaManager;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.manager.SubastaManager.ValorNodoTarea;
+import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.geninformes.GENINFVisorInformeController;
 import es.pfsgroup.recovery.geninformes.api.GENINFInformesApi;
 
@@ -83,15 +91,13 @@ public class SubastaController {
 	private static final String EDITAR_INFORMACION_CIERRE = "plugin/nuevoModeloBienes/subastas/editarInformacionCierre";
 	private static final String DICCIONARIO_JSON = "plugin/nuevoModeloBienes/subastas/diccionarioJSON";
 	private static final String JSON_RESPUESTA_SERVICIO = "plugin/nuevoModeloBienes/adjudicacion/generico/respuestaJSON";
-
-	
 	
 	private static final String ADD_RELACION_CONTRATO_BIEN = "plugin/nuevoModeloBienes/subastas/addRelacionContratoBien";
 	private static final String BORRAR_RELACION_CONTRATO_BIEN = "plugin/nuevoModeloBienes/subastas/borrarRelacionContratoBien";
 	private static final String BUSQUEDA_CONTRATO_JSON = "plugin/nuevoModeloBienes/subastas/busquedaContratoJSON";
 	private static final String ADD_BIEN_CARGAS = "plugin/nuevoModeloBienes/bienes/AgregarBienCargasMultiple";
 	private static final String ADD_REVISION_CARGAS = "plugin/nuevoModeloBienes/subastas/editarRevisionCargasMultiple";
-	
+	private static final String ENVIO_CIERRE_OK = "plugin/nuevoModeloBienes/subastas/envioCierreDeudaOk";
 
 	
 	@Autowired
@@ -113,7 +119,13 @@ public class SubastaController {
     private Executor executor;	
 	
 	@Autowired
+	private UsuarioManager usuarioLogado;
+	
+	@Autowired
 	private NMBBienManager nmbBienManager;
+	
+	@Autowired
+	private EXTAsuntoManager extAsuntoManager;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -265,7 +277,7 @@ public class SubastaController {
 			model.put("fileItem", resultado);
 			
 			return GENINFVisorInformeController.JSP_DOWNLOAD_FILE;
-		} else {
+                } else if(!"CAJAMAR".equals(usuarioLogado.getUsuarioLogado().getEntidad().getDescripcion())) {
 			//sareb
 			plantilla = "reportInformeSubastaSareb.jrxml";
 			InformeSubastaSarebBean informe = new InformeSubastaSarebBean();
@@ -283,6 +295,23 @@ public class SubastaController {
 			
 			return GENINFVisorInformeController.JSP_DOWNLOAD_FILE;			
 			
+		}else{
+			//cajamar
+			plantilla = "reportInformeSubastaCajamar.jrxml";
+			InformeSubastaSarebBean informe = new InformeSubastaSarebBean();
+			informe.setIdAsunto(idAsunto);
+			informe.setIdSubasta(idSubasta);
+			informe.setProxyFactory(proxyFactory);
+			informe.setSubastaApi(subastaApi);
+			informe.setNmbCommonProjectContext(nmbProjectContext);
+			List<Object> array = informe.create();
+			Map<String, Object> mapaValores = null;
+			FileItem resultado = proxyFactory.proxy(GENINFInformesApi.class)
+			.generarInforme(plantilla, mapaValores, array);
+			
+			model.put("fileItem", resultado);
+			
+			return GENINFVisorInformeController.JSP_DOWNLOAD_FILE;	
 		}
 					
 	}
@@ -296,9 +325,180 @@ public class SubastaController {
 
 		InformeValidacionCDDDto informe = proxyFactory.proxy(SubastaProcedimientoDelegateApi.class)
 				.generarInformeValidacionCDD(idSubasta, idsBien);
+		
 		return creaExcelValidacion(informe,model);
 	}
 	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String validarInformeCierreDeuda(@RequestParam(value = "idSubasta", required = true) Long idSubasta,
+			@RequestParam(value = "idBien", required = false) String idsBien, ModelMap model) {
+
+		final StringBuilder sb = new StringBuilder();
+		final Subasta subasta = subastaApi.getSubasta(idSubasta);
+		final Procedimiento procedimiento = subasta.getProcedimiento();
+		
+		if (!Checks.esNulo(procedimiento) && !procedimiento.getAuditoria().isBorrado()) {
+			sb.append(validarTipoProcedimiento(procedimiento));
+			sb.append(validarAsuntoExpediente(procedimiento));
+			sb.append(validarExpedienteContrato(procedimiento));
+			sb.append(validarPersonasAfectadasProcedimiento(procedimiento));						
+		} else {
+			// Que el procedimiento no esté borrado
+			sb.append("El procedimiento no existe o ha sido borrado.\n");			
+		}
+		
+		sb.append(validarPersonasBienes(subasta, idsBien));
+		
+		model.put("msgError", sb.toString());		
+		return JSON_RESPUESTA_SERVICIO;
+	}
+
+	private String validarPersonasBienes(final Subasta subasta, final String idsBien) {
+		// Que exista al menos una persona relacionada con cada bien y además tenga informado el campo tipo de documento
+		String[] arrIdsBien = null;
+		try {
+			arrIdsBien = idsBien.split(",");
+		} catch (final Exception e) {
+			//
+		}
+		
+		final StringBuilder sb = new StringBuilder();
+		if (arrIdsBien != null) {
+			if (!Checks.estaVacio(subasta.getLotesSubasta())) {
+				for (final LoteSubasta loteSubasta : subasta.getLotesSubasta()) {
+					final List<Bien> listBienes = loteSubasta.getBienes();
+					for (final Bien bien : listBienes) {
+						final NMBBien nmbBien = (NMBBien) bien;
+						for (final String strIdBien : arrIdsBien) {
+							final Long idBien = Long.parseLong(strIdBien);
+							if (nmbBien.getId().equals(idBien)) {
+								sb.append(validarBien(nmbBien));
+							}
+						}
+					}
+				}
+			}
+		} else {
+			if (!Checks.estaVacio(subasta.getLotesSubasta())) {
+				for (final LoteSubasta loteSubasta : subasta.getLotesSubasta()) {
+					final List<Bien> listBienes = loteSubasta.getBienes();
+					for (final Bien bien : listBienes) {
+						final NMBBien nmbBien = (NMBBien) bien;
+						sb.append(validarBien(nmbBien));
+					}
+				}
+			}			
+		}
+		
+		if(sb.length() > 0){
+			final String result = sb.toString();
+			return "Al menos una persona con tipo documento informado debe estar relacionada con los bienes con n\u00FAmero de activo: " + result.substring(0, result.length()-2);
+		}
+		return "";
+	}
+
+	private String validarBien(final NMBBien nmbBien) {
+		if (Checks.estaVacio(nmbBien.getPersonas())) {									
+			return nmbBien.getNumeroActivo() + ",";						
+		}else{
+			return validarPersonas(nmbBien);
+		}
+	}
+
+	private String validarPersonas(final NMBBien nmbBien) {
+		//Comprobar que alguna persona tenga el tipo documento informado.
+		Boolean existePersonaTipoDocumentoInformado = false;
+		for (final Persona persona : nmbBien.getPersonas()) {										
+			if (persona.getTipoDocumento() != null) {
+				existePersonaTipoDocumentoInformado = true;
+			}
+		}
+		if (!existePersonaTipoDocumentoInformado) {
+			// no existe persona con campo tipo documento informado
+			return nmbBien.getNumeroActivo() + ",";			
+		}
+		return "";
+	}
+
+	private String validarPersonasAfectadasProcedimiento(final Procedimiento procedimiento) {
+		if (!Checks.estaVacio(procedimiento.getPersonasAfectadas())) {
+			Boolean existePersonaTipoDocumentoInformado = false;
+			for (final Persona persona : procedimiento.getPersonasAfectadas()) {
+				// Que exista al menos una persona relacionada con el
+				// procedimiento y además tenga informado el campo tipo de
+				// documento
+				if (persona.getTipoDocumento() != null) {
+					existePersonaTipoDocumentoInformado = true;
+				}
+			}
+			if (!existePersonaTipoDocumentoInformado) {
+				// no existe persona con campo tipo documento informado
+				return "No existen personas con tipo de documento en el procedimiento. ";
+			}
+		} else {
+			// no existe persona con campo tipo documento informado
+			return "No existen personas con tipo de documento en el procedimiento. ";
+		}
+		return "";
+	}
+	
+	
+
+	private String validarExpedienteContrato(final Procedimiento procedimiento) {
+		if(!Checks.estaVacio(procedimiento.getExpedienteContratos())){
+			final List<ExpedienteContrato> listEc = procedimiento.getExpedienteContratos(); 
+			Boolean existenContratosActivos = false; 
+			for(final ExpedienteContrato ec: listEc){
+				// Que el contrato tenga informado el campo (ID_ACUERDO_CIERRE) y el estado del contrato sea activo.
+				final Contrato contrato = ec.getContrato();				
+				final DDEstadoContrato estadoContrato = contrato.getEstadoContrato();
+				final String codigoContrato = estadoContrato.getCodigo();				
+				//Contrato Activo: DD_ESC_CODIGO = 0 
+				if(DDEstadoContrato.ESTADO_CONTRATO_ACTIVO.equals(codigoContrato) && !contrato.getAuditoria().isBorrado()){
+					existenContratosActivos = true;
+				}					
+			}
+			if (!existenContratosActivos) {
+				// no existen contratos activos 
+				return "No existen contratos activos. ";
+				
+			}			
+		}else{
+			// no existen contratos activos 
+			return "No existen contratos activos. ";
+		}	
+		return "";
+	}
+
+	private String validarAsuntoExpediente(final Procedimiento procedimiento) {
+		if (procedimiento.getAsunto() == null || procedimiento.getAsunto().getAuditoria().isBorrado()) {
+			// Que el procedimiento esté relacionado con un asunto no borrado
+			return "El procedimiento no \u00BFest\u00E1 relacionado con ningún asunto. ";			
+		} else {
+			final Asunto asunto = procedimiento.getAsunto();
+			final EXTAsunto extAsunto = extAsuntoManager.getAsuntoById(asunto.getId());
+			if (extAsunto.getPropiedadAsunto() == null) {
+				// Que el asunto tenga informado el campo propiedad (DD_PAS_ID)
+				return "El asunto no tiene informado el campo propiedad. ";			
+			}
+			if (extAsunto.getExpediente() == null || extAsunto.getExpediente().getAuditoria().isBorrado()) {
+				// Que el asunto tenga un expediente relacionado y no borrado
+				return "El asunto no tiene un expediente relacionado. ";			
+			}
+		}
+		return "";
+	}
+
+	private String validarTipoProcedimiento(final Procedimiento procedimiento) {
+		if (procedimiento.getTipoProcedimiento() == null || procedimiento.getTipoProcedimiento().getAuditoria().isBorrado()) {
+			// Que el procedimiento tenga informado el campo tipo de procedimiento y éste no esté borrado (DD_TPO_ID)
+			return "El procedimiento no tiene tipo de procedimiento, o el tipo es incorrecto. ";			
+		}
+		return "";
+	}
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String enviarCierreDeuda(
@@ -336,7 +536,7 @@ public class SubastaController {
 				resultadoGlobalOK = false;					
 			}
 		}
-		
+
 		// Si alguna validación es KO, generamos el excel		
 		if(!resultadoGlobalOK) {
 
@@ -344,7 +544,7 @@ public class SubastaController {
 			
 		} else {	
 			
-			return DEFAULT;
+			return ENVIO_CIERRE_OK;
 		}
 	}
 
@@ -527,7 +727,7 @@ public class SubastaController {
 		cabeceras.add("DEUDA");
 		cabeceras.add("COSTAS LETRADO");
 		cabeceras.add("COSTAS PROCURADOR");
-		cabeceras.add("F. SEÑALAMIENTO");
+		cabeceras.add("F. SE\u00D1ALAMIENTO");
 		cabeceras.add("CON POSTORES");
 		
 		fila=new ArrayList<String>();
@@ -635,17 +835,25 @@ public class SubastaController {
 					
 				fila=new ArrayList<String>();
 				fila.add(" ; ;Text");
-				fila.add("Nº FINCA;Blue;Text");
-				fila.add("Nº ACTIVO;Blue;Text");
-//				fila.add("REFERENCIA CATASTRAL;Blue;Text");
-				fila.add("DESCRIPCIÓN;Blue;Text");
-				fila.add("Nº REGISTRO;Blue;Text");
-				fila.add("VALOR TASACIÓN;Blue;Text");
-				fila.add("FECHA TASACIÓN;Blue;Text");
+				fila.add("N\u00BA FINCA;Blue;Text");
+				fila.add("N\u00BA ACTIVO;Blue;Text");
+				fila.add("PA\u00CDS;Blue;Text");
+				fila.add("PROVINCIA;Blue;Text");
+				fila.add("LOCALIDAD;Blue;Text");
+				fila.add("C\u00D3DIGO POSTAL;Blue;Text");
+				fila.add("NOMBRE V\uu00CDA;Blue;Text");
+				fila.add("DESCRIPCI\u00D3N;Blue;Text");
+				fila.add("PROVINCIA REGISTRO;Blue;Text");
+				fila.add("LOCALIDAD REGISTRO;Blue;Text");
+				fila.add("N\u00BA REGISTRO;Blue;Text");
+				fila.add("VALOR TASACI\u00D3N;Blue;Text");
+				fila.add("FECHA TASACI\u00D3N;Blue;Text");
 				fila.add("VALOR JUDICIAL;Blue;Text");
+				fila.add("TIPO INMUEBLE;Blue;Text");
 				fila.add("VIVIENDA HABITUAL;Blue;Text");
-				fila.add("RESULTADO ADJUDICACIÓN;Blue;Text");
-				fila.add("IMPORTE ADJUDICACIÓN;Blue;Text");
+				fila.add("RESULTADO ADJUDICACI\u00D3N;Blue;Text");
+				fila.add("IMPORTE ADJUDICACI\u00D3N;Blue;Text");
+				
 				//Si la subasta es de Bankia no mostramos la columna Fecha Testimonio
 				if(!"P401".equals(informe.getSubasta().getProcedimiento().getTipoProcedimiento().getCodigo())){
 					fila.add("F. TESTIMONIO ADJ SAREB;Blue;Text");
@@ -668,16 +876,57 @@ public class SubastaController {
 						fila.add("******;Red;Text");
 					}
 					
-//					if(!Checks.esNulo(infoBienes.getReferenciaCatastral())){
-//						fila.add(infoBienes.getReferenciaCatastral().concat(";White;Text"));
-//					}
-//					else
-//					{
-//						fila.add("******;Red;Text");
-//					}
+					if (!Checks.esNulo(infoBienes.getPais()) && !infoBienes.getPais().equals("")) {
+						String pais = infoBienes.getPais();
+						fila.add(pais.concat(";White;Text"));
+					} else {
+						fila.add("******;Red;Text");
+					}
 					
+					if (!Checks.esNulo(infoBienes.getProvincia()) && !infoBienes.getProvincia().equals("")) {
+						String provincia = infoBienes.getProvincia();
+						fila.add(provincia.concat(";White;Text"));
+					} else {
+						fila.add("******;Red;Text");
+					}
+					
+					if (!Checks.esNulo(infoBienes.getLocalidad()) && !infoBienes.getLocalidad().equals("")) {
+						String localidad = infoBienes.getLocalidad();
+						fila.add(localidad.concat(";White;Text"));
+					} else {
+						fila.add("******;Red;Text");
+					}
+					
+					if (!Checks.esNulo(infoBienes.getCodigoPostal()) && !infoBienes.getCodigoPostal().equals("")) {
+						String cp = infoBienes.getCodigoPostal();
+						fila.add(cp.concat(";White;Text"));
+					} else {
+						fila.add("******;Red;Text");
+					}
+					
+					if (!Checks.esNulo(infoBienes.getDireccion()) && !infoBienes.getDireccion().equals("")) {
+						String direccion = infoBienes.getDireccion();
+						fila.add(direccion.concat(";White;Text"));
+					} else {
+						fila.add("******;Red;Text");
+					}
+										
 					if(!Checks.esNulo(infoBienes.getDescripcion())){
 						fila.add(infoBienes.getDescripcion().concat(";White;Text"));
+					} else {
+						fila.add("******;Red;Text");
+					}
+					
+					if (!Checks.esNulo(infoBienes.getProvinciaDatosRegistrales()) && !infoBienes.getProvinciaDatosRegistrales().equals("")) {
+						String provinciaDatosRegistrales = infoBienes.getProvinciaDatosRegistrales();
+						fila.add(provinciaDatosRegistrales.concat(";White;Text"));
+					} else {
+						fila.add("******;Red;Text");
+					}
+
+					if (!Checks.esNulo(infoBienes.getLocalidadDatosRegistrales()) && !infoBienes.getLocalidadDatosRegistrales().equals("")) {
+						String localidadDatosRegistrales = infoBienes.getLocalidadDatosRegistrales();
+						fila.add(localidadDatosRegistrales.concat(";White;Text"));
 					} else {
 						fila.add("******;Red;Text");
 					}
@@ -708,7 +957,12 @@ public class SubastaController {
 						fila.add("******;Red;Text");
 					}
 					
-					
+					if(!Checks.esNulo(infoBienes.getTipoInmueble())){
+						fila.add(infoBienes.getTipoInmueble().concat(";White;Text"));
+					} else {
+						fila.add("******;Red;Text");
+					}
+										
 					if(!Checks.esNulo(infoBienes.getViviendaHabitual())){
 						fila.add(infoBienes.getViviendaHabitual().concat(";White;Text"));
 					} else {
@@ -727,6 +981,7 @@ public class SubastaController {
 					} else {
 						fila.add("******;Red;Text");
 					}
+															
 					//Si la subasta es de Bankia no mostramos la columna Fecha Testimonio
 					if(!"P401".equals(informe.getSubasta().getProcedimiento().getTipoProcedimiento().getCodigo())){
 						if(!Checks.esNulo(infoBienes.getFechaTestimonioAdjudicacionSareb())){
@@ -749,7 +1004,7 @@ public class SubastaController {
 		valores.add(fila);
 		
 		fila=new ArrayList<String>();
-		fila.add("MENSAJES VALIDACION;Blue;Text");
+		fila.add("MENSAJES VALIDACI\u00D3N;Blue;Text");
 		fila.add(" ;Blue;Text");
 		fila.add(" ;Blue;Text");
 		fila.add(" ;Blue;Text");

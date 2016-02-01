@@ -10,6 +10,9 @@
 		<json:object>
 			<json:property name="cod" value="${rec.id}"/>
 			<json:property name="descripcion" value="${rec.despacho}"/>
+			<json:property name="domicilio" value="${rec.domicilio}" />
+			<json:property name="localidad" value="${rec.domicilioPlaza}" />
+			<json:property name="telefono" value="${rec.telefono1}" />
 		</json:object>
 	</json:array>
 </fwk:json>			

@@ -43,7 +43,13 @@ public class TerminoOperacionesDto extends WebDto{
     private Integer importePlanpago;
     private String analisiSolvencia;
     private String descripcionAcuerdo;
-    private Integer version;
+    private String numContratoDescuento;
+    private String fechaSolucionPrevista;
+    private String numeroContratoPtmoPromotor;
+    private String codigoPersonaAfectada;
+   
+
+	private Integer version;
     private Auditoria auditoria;
 
     public Long getId() {
@@ -311,4 +317,36 @@ public class TerminoOperacionesDto extends WebDto{
 	public void setVersion(Integer version) {
 		this.version = version;
 	}
+	
+	 public String getNumContratoDescuento() {
+			return numContratoDescuento;
+		}
+
+		public void setNumContratoDescuento(String numContratoDescuento) {
+			this.numContratoDescuento = numContratoDescuento;
+		}
+
+		public String getFechaSolucionPrevista() {
+			return fechaSolucionPrevista;
+		}
+
+		public void setFechaSolucionPrevista(String fechaSolucionPrevista) {
+			this.fechaSolucionPrevista = fechaSolucionPrevista;
+		}
+
+		public String getNumeroContratoPtmoPromotor() {
+			return numeroContratoPtmoPromotor;
+		}
+
+		public void setNumeroContratoPtmoPromotor(String numeroContratoPtmoPromotor) {
+			this.numeroContratoPtmoPromotor = numeroContratoPtmoPromotor;
+		}
+
+		public String getCodigoPersonaAfectada() {
+			return codigoPersonaAfectada;
+		}
+
+		public void setCodigoPersonaAfectada(String codigoPersonaAfectada) {
+			this.codigoPersonaAfectada = codigoPersonaAfectada;
+		}
 }

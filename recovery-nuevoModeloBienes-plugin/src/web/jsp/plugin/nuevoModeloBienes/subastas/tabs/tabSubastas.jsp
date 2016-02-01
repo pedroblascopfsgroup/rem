@@ -491,16 +491,13 @@
 		    	texto = '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEnviarCierre.conBien1" text="**¿Está seguro de enviar el bien a cierre de deudas?" />';
 		    }			
 			
-			Ext.Msg.confirm(fwk.constant.confirmar, texto, this.decide, this);  	
-        	
-        	
+			Ext.Msg.confirm(fwk.constant.confirmar, texto, this.decide, this);
 		}
 		,decide : function(boton){
 			if (boton=='yes'){ this.enviar(); }
 		}
 		,enviar : function(){
 			var idSubasta = gridSubastas.getSelectionModel().getSelected().get('id');
-		    var flow='/pfs/subasta/enviarCierreDeuda';
 		    var params;
 		    
 		    if(Ext.isEmpty(bienesSeleccionados) || bienesSeleccionados.length == 0){
@@ -508,22 +505,25 @@
 			} else {
 				params = {idSubasta:idSubasta, idBien:bienesSeleccionados};
 			}   				
-			 
-			app.openBrowserWindow(flow,params);
-		    page.fireEvent(app.event.DONE);
-		    
-		    var idSubasta = gridSubastas.getSelectionModel().getSelected().get('id');
-		    var flow='/pfs/subasta/enviarCierreDeuda';
-		    var params;
-		    
-		    if(Ext.isEmpty(bienesSeleccionados) || bienesSeleccionados.length == 0){
-        		params = {idSubasta:idSubasta};				
-			} else {
-				params = {idSubasta:idSubasta, idBien:bienesSeleccionados};
-			}   				
+	    	page.webflow({
+	      		flow:'subasta/validarInformeCierreDeuda'
+	      		,params: params		      		
+	      		,success: function(result,request){
+					if(result.msgError==''){
+						app.openBrowserWindow('/pfs/subasta/enviarCierreDeuda',params);
+		  				page.fireEvent(app.event.DONE);					
+					}else{						
+						Ext.Msg.show({
+							title:'Faltan datos para poder enviar el informe de cierre de deuda',
+							msg: result.msgError,
+							buttons: Ext.Msg.OK,
+							width: 500,
+							icon:Ext.MessageBox.WARNING});					
+					} 					
+				}		    	
+			});		    
 		}
 	});
-	
 	
 	
 	var reiniciarKOCDD =  function() {
@@ -856,9 +856,13 @@
 			,selectedRowClass : 'x-grid-row-selected'	
 		})
 		,bbar:[ btnExpandAll, btnCollapseAll 
-				<sec:authorize ifNotGranted = "SOLO_CONSULTA">,btnAgregarBien, btnExcluirBien, btnInstrucLotes</sec:authorize>
-				<sec:authorize ifAllGranted="ENVIO_CIERRE_DEUDA">,btnGenerarInformeCierre, btnEnviarCierre</sec:authorize>
-				<sec:authorize ifNotGranted = "SOLO_CONSULTA">,btnAccionesSubasta</sec:authorize>]
+				<sec:authorize ifNotGranted = "SOLO_CONSULTA">, btnAgregarBien, btnExcluirBien, btnInstrucLotes</sec:authorize>
+				<sec:authorize ifAllGranted="ENVIO_CIERRE_DEUDA">, btnGenerarInformeCierre , btnEnviarCierre</sec:authorize>
+				<sec:authorize ifNotGranted = "SOLO_CONSULTA">
+					<sec:authorize ifAllGranted="MENU_ACC_MULTIPLES_SUBASTA">
+						,btnAccionesSubasta
+					</sec:authorize>
+				</sec:authorize>]
 	};
 		
 	var gridLotes = app.crearGrid(lotesStore,lotesCM,cfg);

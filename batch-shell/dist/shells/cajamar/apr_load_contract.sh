@@ -1,7 +1,7 @@
 #!/bin/bash
 # Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
  
-DIR_BASE_ETL=/aplicaciones/recovecb/programas/etl
+DIR_BASE_ETL=/recovery/batch-server/programas/etl
 
 export NLS_LANG=SPANISH_SPAIN.WE8ISO8859P1
 
@@ -13,8 +13,8 @@ export DIR_CONFIG=$DIR_BASE_ETL/config/
 export CFG_FILE=config.ini
 export MAINSH="$nameETL"_run.sh
 
-cd "$DIR_ETL" &> null
-if [ $? = 1 ] ; then
+cd "$DIR_ETL" &> /dev/null
+if [ $? -ne 0 ] ; then
    echo "$(basename $0) Error en $filename: directorio inexistente $DIR_ETL"
    exit 1
 fi

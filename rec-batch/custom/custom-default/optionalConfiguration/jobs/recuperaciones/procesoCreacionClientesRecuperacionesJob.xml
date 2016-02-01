@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+	default-autowire="byName" default-merge="true">
+
+	<bean id="procesoCreacionClientesRecuperacionesJob" parent="batch.simpleJob"
+		scope="prototype">
+		<property name="steps">
+			<list>
+
+				<bean parent="batch.taskletStep" scope="prototype">
+					<property name="tasklet">
+						<bean parent="batch.task.MultipleSqlScript" p:dataSource-ref="entityDataSource">
+							<property name="scripts">
+								<!-- Lista de scripts SQL ha ejecutar -->
+								<list>									
+									
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.creacionClientes.01.truncateTmpPER.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.creacionClientes.01.truncateTmpPER" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.creacionClientes.02.insertTmpPER_Recuperacion.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.creacionClientes.02.insertTmpPER_Recuperacion" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.creacionClientes.02.insertTmpPER_Seguimiento.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.creacionClientes.02.insertTmpPER_Seguimiento" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.creacionClientes.03.truncateTmpCNTnuevosCLI.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.creacionClientes.03.truncateTmpCNTnuevosCLI" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.creacionClientes.04.insertTmpCNTnuevosCLI.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.creacionClientes.04.insertTmpCNTnuevosCLI" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.creacionClientes.05.insertCLIENTES.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.creacionClientes.05.insertCLIENTES" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.creacionClientes.06.insertCONTRATOS_CLIENTE.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.creacionClientes.06.insertCONTRATOS_CLIENTE" />
+										<entry key="severidad" value="error" />
+									</map>
+									
+									<!-- Estas dos sql de cálculo de estados de itinerario del cliente 
+									se han movido del job de revisión clientes
+									ya que se tiene que volver a calcular una vez creados los clientes -->
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.carenciaToGestionVencidos.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.carenciaToGestionVencidos" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.gestionVencidosToCarencia.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.gestionVencidosToCarencia" />
+										<entry key="severidad" value="error" />
+									</map>
+								</list>
+							</property>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+
+
+</beans>

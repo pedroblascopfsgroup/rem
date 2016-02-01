@@ -31,6 +31,7 @@
 		 ,{name:'titular'}
 		 ,{name:'saldoVencido'}
 		 ,{name:'estadoFinanciero'}
+		 ,{name:'secuenciaGarantia'}
 		 ,{name:'tipoProducto'}
 		 ,{name:'situacion'}
 		 ,{name:'usuarioExterno'}
@@ -63,6 +64,9 @@ var rendererSituacion =  function renderF(val){  if (val=="2"){ return "<s:messa
         ,{header: '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabRelaciones.primerTitular" text="**titular"/>', sortable: true, dataIndex: 'titular'}
         ,{header: '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabRelaciones.situacion" text="**situacion"/>', sortable: true, dataIndex: 'situacion',renderer:rendererSituacion}
         ,{header: '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabRelaciones.estadoFinanciero" text="**Estado financiero"/>', sortable: true, dataIndex: 'estadoFinanciero'}
+<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
+        ,{header: '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabRelaciones.otrosDatos.secGarantia" text="**Secuencia de la Garantía de la operación"/>', sortable: true, dataIndex: 'secuenciaGarantia'}
+</sec:authorize>
     ]);
  
    

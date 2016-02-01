@@ -1,0 +1,1 @@
+<%@ tag body-content="empty" %><%@ attribute name="value" required="true" type="java.util.Date"%><%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %><fmt:formatDate type="date" pattern="dd/MM/yyyy" value="${value}" />

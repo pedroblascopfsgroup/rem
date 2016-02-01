@@ -4,6 +4,7 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 var formBusquedaContratos=function(){
 
@@ -148,12 +149,18 @@ var formBusquedaContratos=function(){
 
 
 	//diccionario de tiposProducto
+	
 	var diccTiposProducto = 
 		<json:object>
 			<json:array name="diccionario" items="${tiposProductoEntidad}" var="d">	
 			 <json:object>
 			   <json:property name="codigo" value="${d.codigo}" />
-			   <json:property name="descripcion" value="(${d.codigo}) ${d.descripcion}" />
+			   <sec:authorize ifAllGranted="PERSONALIZACION-BCC">
+			   		<json:property name="descripcion" value="${d.descripcion} (${d.codigo})" />
+			   </sec:authorize>
+			   <sec:authorize ifNotGranted="PERSONALIZACION-BCC">
+			   		<json:property name="descripcion" value="(${d.codigo}) ${d.descripcion}" />
+			   </sec:authorize>
 			 </json:object>
 			</json:array>
 		</json:object>;

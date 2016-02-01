@@ -42,4 +42,9 @@ public class PrecontenciosoBPMConstants {
 	public static final String PCO_PARALIZADO = "PA";
 	public static final String PCO_CANCELADO = "CA";
 	
+	//Particulares de CAJAMAR
+	public static final String PCO_RevisarExpedientePreparar = "PCO_RevisarExpedientePreparar";
+	public static final String PCO_AsignarGestorLiquidacion = "PCO_AsignarGestorLiquidacion";
+	public static final String PCO_RevisarExpedienteAsignarLetrado = "PCO_RevisarExpedienteAsignarLetrado";	
+	
 }

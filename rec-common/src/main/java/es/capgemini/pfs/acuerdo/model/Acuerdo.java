@@ -25,13 +25,14 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
+import es.capgemini.pfs.acuerdo.model.DDMotivoRechazoAcuerdo;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.contrato.model.AdjuntoContrato;
-import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
+import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.expediente.model.Expediente;
+import es.capgemini.pfs.users.domain.Usuario;
 
 /**
  * Clase que representa a un Acuerdo de un Asunto.
@@ -142,6 +143,30 @@ public class Acuerdo implements Serializable, Auditable {
     @Column(name = "ACU_DEUDA_TOTAL")
     private Double deudaTotal;
 
+    @Column(name="ACU_MOTIVO")
+	private String motivo;
+	
+	@Column(name = "ACU_FECHA_LIMITE")
+	private Date fechaLimite;	
+	
+	@Column(name = "ACU_IMPORTE_COSTAS")
+	private Long importeCostas;	
+	
+    @ManyToOne
+    @JoinColumn(name = "ACU_USER_PROPONENTE")
+	private Usuario proponente;
+    
+    @ManyToOne
+    @JoinColumn(name = "USD_ID")
+	private GestorDespacho gestorDespacho;
+
+    @ManyToOne
+    @JoinColumn(name = "DD_MTR_ID")
+    private DDMotivoRechazoAcuerdo motivoRechazo;
+
+    @Column(name = "SYS_GUID")
+	private String guid;
+    
     @Version
     private Integer version;
 
@@ -498,5 +523,63 @@ public class Acuerdo implements Serializable, Auditable {
 	public void setDeudaTotal(Double deudaTotal) {
 		this.deudaTotal = deudaTotal;
 	}
+	
+
+	public GestorDespacho getGestorDespacho() {
+		return gestorDespacho;
+	}
+
+	public void setGestorDespacho(GestorDespacho gestorDespacho) {
+		this.gestorDespacho = gestorDespacho;
+	}
+
+    public DDMotivoRechazoAcuerdo getMotivoRechazo() {
+        return motivoRechazo;
+    }
+
+    public void setMotivoRechazo(DDMotivoRechazoAcuerdo motivoRechazo) {
+        this.motivoRechazo = motivoRechazo;
+    }
+
+	public Usuario getProponente() {
+		return proponente;
+	}
+
+	public void setProponente(Usuario proponente) {
+		this.proponente = proponente;
+	}
+
+	public Long getImporteCostas() {
+		return importeCostas;
+	}
+
+	public void setImporteCostas(Long importeCostas) {
+		this.importeCostas = importeCostas;
+	}
+	
+	public String getMotivo() {
+		return motivo;
+	}
+
+	public void setMotivo(String motivo) {
+		this.motivo = motivo;
+	}
+
+	public Date getFechaLimite() {
+		return fechaLimite;
+	}
+
+	public void setFechaLimite(Date fechaLimite) {
+		this.fechaLimite = fechaLimite;
+	}
+
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
+	
     
 }

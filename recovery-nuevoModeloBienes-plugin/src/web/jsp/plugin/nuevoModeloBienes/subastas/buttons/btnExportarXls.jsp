@@ -6,7 +6,6 @@ new Ext.Button({
         text:'<s:message code="menu.clientes.listado.filtro.exportar.xls" text="**Exportar a Excel" />'
         ,iconCls:'icon_exportar_csv'
         ,handler: function() {
-        		debugger;
         		var parametros=getParametros();
         		
         		Ext.Ajax.request({
@@ -14,7 +13,6 @@ new Ext.Button({
 					,params: parametros
 					,method: 'POST'
 					,success: function (result, request){
-						debugger;
 						
 						var r = Ext.util.JSON.decode(result.responseText);
 						

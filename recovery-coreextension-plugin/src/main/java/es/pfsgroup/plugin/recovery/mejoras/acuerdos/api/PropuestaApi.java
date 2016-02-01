@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.core.api.acuerdo.CumplimientoAcuerdoDto;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.recovery.ext.impl.acuerdo.dto.DTOActuacionesExplorarExpediente;
 import es.pfsgroup.recovery.ext.impl.acuerdo.dto.DTOActuacionesRealizadasExpediente;
@@ -113,4 +114,16 @@ public interface PropuestaApi {
 	 * @return
 	 */	
 	public Boolean estadoAlgunaPropuesta(List<EXTAcuerdo> propuestas, List<String> codigosEstadosValidos);	
+	
+	
+    /**
+     * @param id Long
+     */
+    public void cerrarPropuesta(Long id) ;
+    
+    
+    /**
+     * @param dto CumplimientoAcuerdoDto
+     */
+    public void registraCumplimientoPropuesta(CumplimientoAcuerdoDto dto);
 }

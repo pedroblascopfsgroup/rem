@@ -67,6 +67,7 @@
 	//Fitros	
 	var comboFechaDesdeOp=new Ext.form.ComboBox({
 		store:[">=",">","=","<>"]
+		,hidden: true
 		,triggerAction : 'all'
 		,mode:'local'
 		//,labelSeparator:""
@@ -168,12 +169,13 @@
 	            }  
 	        } 
 		}
-		,fieldLabel:'<s:message code="tareas.filtros.fvencimiento" text="**F. Vencimiento" />'
+		,fieldLabel:'<s:message code="tareas.filtros.fvencimiento.desde" text="**F. Vencimiento desde" />'
 		,value:'${fechaVencDesde}'
 	});
 	
 	var comboFechaHastaOp=new Ext.form.ComboBox({
 		store:["<=","<"]
+		,hidden: true
 		,triggerAction : 'all'
 		,mode:'local'
 		,fieldLabel:'<s:message code="tareas.filtros.hasta" text="**Venc hasta" />'
@@ -199,7 +201,7 @@
 	            }  
 	        } 
 		}
-		,fieldLabel:'<s:message code="tareas.filtros.fvencimiento" text="**F. Vencimiento" />'
+		,fieldLabel:'<s:message code="tareas.filtros.fvencimiento.hasta" text="**F. Vencimiento hasta" />'
 		,value:'${fechaVencHasta}'
 	});
 	
@@ -230,9 +232,9 @@
 			return true;
 		if(nombreTarea.getValue()!='')
 			return true;
-		if(fechaVencDesde.getValue()!='' && comboFechaDesdeOp.getValue()!='')
+		if(fechaVencDesde.getValue()!='')
 			return true;
-		if(fechaVencHasta.getValue()!='' && comboFechaHastaOp.getValue()!='')
+		if(fechaVencHasta.getValue()!='')
 			return true;
 		if(${tieneProcurador} == true && comboEstado.getValue()!='') 
 			return true;
@@ -242,13 +244,6 @@
 		var valid=true;
 		if(fechaVencDesde.getValue()!='' && fechaVencHasta.getValue()!=''){
 			valid = (fechaVencDesde.getValue()<= fechaVencHasta.getValue())
-		}
-		if(comboFechaDesdeOp.getValue()=='>=' || comboFechaDesdeOp.getValue()=='>'){
-			if (fechaVencHasta.getValue()!='' && comboFechaHastaOp.getValue()!='') 
-				if(fechaVencDesde.getValue()=='')
-					valid = valid && false;
-				else
-					valid = valid && true;
 		}
 		return valid;
 	}
@@ -320,7 +315,6 @@
         text:'<s:message code="menu.clientes.listado.filtro.exportar.xls" text="**exportar a xls" />'
         ,iconCls:'icon_exportar_csv'
         ,handler: function() {
-
 			if(validarForm()|| (panelFiltros.validate && panelFiltros.validate())){
 				if(validaFechasVenc()){
 					
@@ -361,7 +355,6 @@
 							,fechaVencimientoHasta:app.format.dateRenderer(fechaVencHasta.getValue())
 							,fechaVencimientoHastaOperador:operadorFechaHasta},
 						success : function(data) {
-
 							var data = Ext.decode(data.responseText);
 							var count = data.count;
 							var limit = data.limit;
@@ -435,10 +428,10 @@
 				,width:'320px'
 				<c:choose>
 				    <c:when test="${tieneProcurador == true && activoDespachoIntegral==true}">
-				       ,items:[nombreTarea, comboFechaDesdeOp, comboFechaHastaOp, comboEstado]
+				       ,items:[nombreTarea, fechaVencDesde, comboFechaDesdeOp, comboFechaHastaOp, comboEstado]
 				    </c:when>
 				    <c:otherwise>
-				        ,items:[nombreTarea, comboFechaDesdeOp, comboFechaHastaOp]
+				        ,items:[nombreTarea, fechaVencDesde, comboFechaDesdeOp, comboFechaHastaOp]
 				    </c:otherwise>
 				</c:choose>
 			},{
@@ -447,13 +440,12 @@
 				,defaults:{xtype:'fieldset',border:false}
 				<c:choose>
 				    <c:when test="${tieneProcurador == true && activoDespachoIntegral==true}">
-				       ,items:[descTarea, fechaVencDesde, fechaVencHasta, comboCtgResol]
+				       ,items:[descTarea, fechaVencHasta, comboCtgResol]
 				    </c:when>
 				    <c:otherwise>
-				        ,items:[descTarea, fechaVencDesde, fechaVencHasta]
+				        ,items:[descTarea, fechaVencHasta]
 				    </c:otherwise>
 				</c:choose>
-				
 			}
 		]              
 		,tbar:new Ext.Toolbar()
@@ -616,6 +608,7 @@
 	}
 	
 	if(eval(esAlerta)){
+	
 	var tareasNewCm=new Ext.grid.ColumnModel([
 		{	/*Columna 0*/ header: '<s:message code="tareas.listado.tarea" text="**Tarea"/>', sortable: true, dataIndex: nombreTareaField}
 		,{	/*Columna 2*/ header: '<s:message code="tareas.listado.descripcion" text="**Descripcion"/>', sortable: false, dataIndex: 'descripcion'}
@@ -630,8 +623,8 @@
 		,{  /*Columna 9*/ header: '<s:message code="tareas.listado.supervisor" text="**Supervisor"/>', sortable: false, dataIndex: 'supervisor', hidden:true}
 		,{  /*Columna 10*/ header: '<s:message code="tareas.listado.emisor" text="**Emisor"/>', sortable: true, dataIndex: 'emisor', width:50}		
 		,{  /*Columna 11*/ header: '<s:message code="tareas.listado.id" text="**Id"/>', sortable: true, hidden:true ,dataIndex: 'id'}
-		,{  /*Columna 12*/ header: '<s:message code="tareas.listado.volumenRiesgo" text="**VR"/>',	sortable: true, dataIndex: 'volumenRiesgoSQL', hidden:false,renderer:app.format.moneyRendererNull,align:'right'}
-		,{  /*Columna 13*/ header: '<s:message code="tareas.listado.volumenRiesgoVencido" text="**VRV"/>', sortable: false, dataIndex: 'volumenRiesgoVencido', hidden:true,renderer:app.format.moneyRendererNull,align:'right'}
+		,{  /*Columna 12*/ header: '<s:message code="tareas.listado.volumenRiesgo" text="**VR"/>',	sortable: true, dataIndex: 'volumenRiesgoSQL' <sec:authorize ifAllGranted="PERSONALIZACION-BCC">,hidden:true </sec:authorize> ,renderer:app.format.moneyRendererNull,align:'right'}
+		,{  /*Columna 13*/ header: '<s:message code="tareas.listado.volumenRiesgoVencido" text="**VRV"/>', sortable: false, dataIndex: 'volumenRiesgoVencido',hidden:true,renderer:app.format.moneyRendererNull,align:'right'}
 		,{  /*Columna 14*/ header: '<s:message code="tareas.listado.vencimiento" text="**vencimiento"/>', 	sortable: false, dataIndex: 'group', hidden:true,renderer:groupRenderer}
 		<sec:authorize ifAllGranted="ROLE_REVISAR_ALERTA">
 				,revisada_edit
@@ -654,7 +647,7 @@
 			,{  /*Columna 9*/ header: '<s:message code="tareas.listado.supervisor" text="**Supervisor"/>', sortable: false, dataIndex: 'supervisor', hidden:true}
 			,{  /*Columna 10*/ header: '<s:message code="tareas.listado.emisor" text="**Emisor"/>', sortable: true, dataIndex: 'emisor', width:50}		
 			,{  /*Columna 11*/ header: '<s:message code="tareas.listado.id" text="**Id"/>', sortable: true, hidden:true ,dataIndex: 'id'}
-			,{  /*Columna 12*/ header: '<s:message code="tareas.listado.volumenRiesgo" text="**VR"/>',	sortable: true, dataIndex: 'volumenRiesgoSQL', hidden:false,renderer:app.format.moneyRendererNull,align:'right'}
+			,{  /*Columna 12*/ header: '<s:message code="tareas.listado.volumenRiesgo" text="**VR"/>',	sortable: true, dataIndex: 'volumenRiesgoSQL' <sec:authorize ifAllGranted="PERSONALIZACION-BCC">,hidden:true </sec:authorize>,renderer:app.format.moneyRendererNull,align:'right'}
 			,{  /*Columna 13*/ header: '<s:message code="tareas.listado.volumenRiesgoVencido" text="**VRV"/>', sortable: false, dataIndex: 'volumenRiesgoVencido', hidden:true,renderer:app.format.moneyRendererNull,align:'right'}
 			,{  /*Columna 14*/ header: '<s:message code="tareas.listado.vencimiento" text="**vencimiento"/>', 	sortable: false, dataIndex: 'group', hidden:true,renderer:groupRenderer}
 			<sec:authorize ifAllGranted="ROLE_REVISAR_ESPERA">
@@ -678,7 +671,7 @@
 			,{  /*Columna 9*/ header: '<s:message code="tareas.listado.supervisor" text="**Supervisor"/>', sortable: false, dataIndex: 'supervisor', hidden:true}
 			,{  /*Columna 10*/ header: '<s:message code="tareas.listado.emisor" text="**Emisor"/>', sortable: true, dataIndex: 'emisor', width:50}		
 			,{  /*Columna 11*/ header: '<s:message code="tareas.listado.id" text="**Id"/>', sortable: true, hidden:true ,dataIndex: 'id'}
-			,{  /*Columna 12*/ header: '<s:message code="tareas.listado.volumenRiesgo" text="**VR"/>',	sortable: true, dataIndex: 'volumenRiesgoSQL', hidden:false,renderer:app.format.moneyRendererNull,align:'right'}
+			,{  /*Columna 12*/ header: '<s:message code="tareas.listado.volumenRiesgo" text="**VR"/>',	sortable: true, dataIndex: 'volumenRiesgoSQL'<sec:authorize ifAllGranted="PERSONALIZACION-BCC">,hidden:true </sec:authorize>,renderer:app.format.moneyRendererNull,align:'right'}
 			,{  /*Columna 13*/ header: '<s:message code="tareas.listado.volumenRiesgoVencido" text="**VRV"/>', sortable: false, dataIndex: 'volumenRiesgoVencido', hidden:true,renderer:app.format.moneyRendererNull,align:'right'}
 			,{  /*Columna 14*/ header: '<s:message code="tareas.listado.vencimiento" text="**vencimiento"/>', 	sortable: false, dataIndex: 'group', hidden:true,renderer:groupRenderer}
 			<sec:authorize ifAllGranted="ROLE_REVISAR_NOTIFICACION">
@@ -701,7 +694,7 @@
 			,{  /*Columna 9*/ header: '<s:message code="tareas.listado.supervisor" text="**Supervisor"/>', sortable: false, dataIndex: 'supervisor', hidden:true}
 			,{  /*Columna 10*/ header: '<s:message code="tareas.listado.emisor" text="**Emisor"/>', sortable: true, dataIndex: 'emisor', width:50}		
 			,{  /*Columna 11*/ header: '<s:message code="tareas.listado.id" text="**Id"/>', sortable: true, hidden:true ,dataIndex: 'id'}
-			,{  /*Columna 12*/ header: '<s:message code="tareas.listado.volumenRiesgo" text="**VR"/>',	sortable: true, dataIndex: 'volumenRiesgoSQL', hidden:false,renderer:app.format.moneyRendererNull,align:'right'}
+			,{  /*Columna 12*/ header: '<s:message code="tareas.listado.volumenRiesgo" text="**VR"/>',	sortable: true, dataIndex: 'volumenRiesgoSQL'<sec:authorize ifAllGranted="PERSONALIZACION-BCC">,hidden:true </sec:authorize>,renderer:app.format.moneyRendererNull,align:'right'}
 			,{  /*Columna 13*/ header: '<s:message code="tareas.listado.volumenRiesgoVencido" text="**VRV"/>', sortable: false, dataIndex: 'volumenRiesgoVencido', hidden:true,renderer:app.format.moneyRendererNull,align:'right'}
 			,{  /*Columna 14*/ header: '<s:message code="tareas.listado.vencimiento" text="**vencimiento"/>', 	sortable: false, dataIndex: 'group', hidden:true,renderer:groupRenderer}
 			 <sec:authorize ifAllGranted="ROLE_REVISAR_TAREA">
@@ -1030,7 +1023,6 @@
 	
 	
 	tareasGrid.on('rowdblclick', function(grid, rowIndex, e) {
-		debugger;
 		//agregar funcionalidad....
 		var rec = grid.getStore().getAt(rowIndex);
 		
@@ -1537,9 +1529,17 @@
 		
 		//Muestro las columnas VR y VRV si lo permite el perfil
 		<sec:authorize ifAllGranted="MOSTRAR_VR_TAREAS">
+			<sec:authorize ifNotGranted="PERSONALIZACION-BCC">
+				tareasNewCm.setHidden(13,false);
+			</sec:authorize>
+			<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
+				tareasNewCm.setHidden(13,true);
+			</sec:authorize>
 			tareasNewCm.setHidden(12,false);
-			tareasNewCm.setHidden(13,false);
 		</sec:authorize>
+		
+			
+		
 		
 	}
 	if(!eval(enEspera) && ("${codigoTipoTarea}" == "3")){
@@ -1559,12 +1559,18 @@
 		//muestro columna tipo solicitud
 		tareasNewCm.setHidden(6,false);
 	}
+	
 	if(!(eval(enEspera) || ("${codigoTipoTarea}" == "3"))){
 		//Listado de tareas
 		//Muestro las columnas VR y VRV si lo permite el perfil
 		<sec:authorize ifAllGranted="MOSTRAR_VR_TAREAS">
+			<sec:authorize ifNotGranted="PERSONALIZACION-BCC">
+				tareasNewCm.setHidden(13,false);
+			</sec:authorize>
+			<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
+				tareasNewCm.setHidden(13,true);
+			</sec:authorize>
 			tareasNewCm.setHidden(12,false);
-			tareasNewCm.setHidden(13,false);
 		</sec:authorize>
 	}
 	

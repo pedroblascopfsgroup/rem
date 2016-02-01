@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.api;
 
 import java.util.List;
-import java.util.Map;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.asunto.model.Procedimiento;
@@ -29,6 +28,21 @@ public interface ProcedimientoPcoApi {
 	public static final String BO_PCO_CREAR_PROCEDIMIENTO_PCO = "plugin.precontencioso.crearProcedimientoPco";
 	public static final String BO_PCO_EXPEDIENTE_COMPROBAR_EDICION_EXPEDIENTE = "plugin.precontencioso.isExpedienteEditable";
 	public static final String BO_PCO_EXPEDIENTE_VISIBILIDAD_BOTONES_PCO = "plugin.precontencioso.getVisibilidadBotonesPrecontencioso";
+	
+	/**
+	 * Devuelve el numero de resultados que va a devolver la consulta con el filtro enviado por parametro
+	 * @param filtro
+	 * @return numero de resultados
+	 */
+	Integer countBusquedaProcedimientosPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
+
+	/**
+	 * Devuelve el numero de resultados que va a devolver la consulta con el filtro enviado por parametro
+	 * @param filtro
+	 * @return numero de resultados
+	 */
+	Integer countBusquedaElementosPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
+	
 	/**
 	 * Obtiene el historico de estados de un procedimientoPCO mediante un id procedimiento.
 	 * 
@@ -58,13 +72,6 @@ public interface ProcedimientoPcoApi {
 	 */
 	@BusinessOperationDefinition(BO_PCO_DEVOLVER_PREPARACION_POR_PRC_ID)
 	void devolverPreparacionPorProcedimientoId(Long idProcedimiento);
-
-	/**
-	 * Devuelve el numero de resultados que va a devolver la consulta con el filtro enviado por parametro
-	 * @param filtro
-	 * @return numero de resultados
-	 */
-	Integer countBusquedaPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
 
 	/**
 	 * Busqueda de ProcedimientoPcoGridDTO que cumplan el filtro enviado por parametro
@@ -141,4 +148,6 @@ public interface ProcedimientoPcoApi {
 
 	boolean mostrarSegunCodigos(Long idProcedimiento, List<String> codigosTiposGestores);
 	
+	public boolean comprobarExistenciaGestor(Long idProcedimiento);
+
 }

@@ -2,6 +2,9 @@ package es.pfsgroup.plugin.recovery.mejoras.acuerdos.controller;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
+import es.capgemini.pfs.acuerdo.model.AcuerdoConfigAsuntoUsers;
 import es.capgemini.pfs.acuerdo.model.DDMotivoRechazoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDSubTipoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
@@ -25,6 +29,7 @@ import es.capgemini.pfs.contrato.model.DDTipoProducto;
 import es.capgemini.pfs.core.api.acuerdo.AcuerdoApi;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.termino.TerminoOperacionesManager;
 import es.capgemini.pfs.termino.dto.ListadoTerminosAcuerdoDto;
 import es.capgemini.pfs.termino.dto.TerminoAcuerdoDto;
@@ -65,6 +70,7 @@ public class MEJAcuerdoController {
 	static final String JSON_LISTADO_DERIVACIONES = "plugin/mejoras/acuerdos/listadoDerivacionesAcuerdoJSON";	
 	static final String JSP_EDITAR_TERMINO_ESTADO_GESTION = "plugin/mejoras/acuerdos/edicionEstadoGestionTermino";
 	static final String JSP_RECHAZAR_ACUERDO = "plugin/mejoras/acuerdos/rechazarAcuerdo";
+	static final String OK_KO_RESPUESTA_JSON = "plugin/coreextension/OkRespuestaJSON";
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -210,12 +216,13 @@ public class MEJAcuerdoController {
 	@RequestMapping
 	public String openAltaTermino(ModelMap map, 
 			@RequestParam(value = "idAcuerdo", required = true) Long idAcuerdo,
-			String contratosIncluidos, Boolean esPropuesta) {
+			String contratosIncluidos, Boolean esPropuesta, String ambito) {
 			
 
 		map.put("contratosIncluidos", contratosIncluidos);		
 		map.put("idAcuerdo", idAcuerdo);
 		map.put("esPropuesta", esPropuesta);
+		map.put("ambito", ambito);
 		
 		if(esPropuesta){
 			Acuerdo acuerdo = genericDao.get(Acuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", idAcuerdo));
@@ -226,6 +233,7 @@ public class MEJAcuerdoController {
 		
 		// Obtenemos el tipo de acuerdo para PLAN_PAGO
 		DDTipoAcuerdo tipoAcuerdoPlanPago = genericDao.get(DDTipoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAcuerdo.CODIGO_PLAN_PAGO));
+		DDTipoAcuerdo tipoAcuerdoFondosPropios = genericDao.get(DDTipoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAcuerdo.TIPO_EFECTIVO_FONDOS_PROPIOS));
 		
 		// Obtenemos la lista de Terminos del acuerdo
 		List<ListadoTerminosAcuerdoDto> listadoTerminosAcuerdo = proxyFactory.proxy(MEJAcuerdoApi.class).obtenerListadoTerminosAcuerdoByAcuId(idAcuerdo);
@@ -238,8 +246,19 @@ public class MEJAcuerdoController {
 			}		
 		}
 		
+		List<String> contratos = new ArrayList<String>(Arrays.asList(contratosIncluidos.split(",")));
+		List<String> fechasPaseMora = new ArrayList<String>();
+		for(String contrat : contratos) {
+			fechasPaseMora.add(mejAcuerdoApi.getFechaPaseMora(Long.valueOf(contrat)));	
+		}
+		
+		Comparator<String> comparador = Collections.reverseOrder();
+		Collections.sort(fechasPaseMora, comparador);
+		String fechaPaseMora = fechasPaseMora.get(0); 
 		map.put("idTipoAcuerdoPlanPago", tipoAcuerdoPlanPago.getId());
 		map.put("yaHayPlanPago", yaHayPlanPago);
+		map.put("fechaPaseMora", fechaPaseMora);
+		map.put("idTipoAcuerdoFondosPropios", tipoAcuerdoFondosPropios.getId());
 		
 		return JSP_ALTA_TERMINO_ACUERDO;
 	}	
@@ -253,7 +272,7 @@ public class MEJAcuerdoController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String openDetalleTermino(ModelMap map, @RequestParam(value = "id", required = true) Long id, 
+	public String openDetalleTermino(ModelMap map, @RequestParam(value = "ambito", required = true) String ambito ,@RequestParam(value = "id", required = true) Long id, 
 							@RequestParam(value = "idAcuerdo", required = true) Long idAcuerdo,
 							@RequestParam(value = "soloConsulta", required = true) String soloConsulta) {
 		
@@ -266,6 +285,7 @@ public class MEJAcuerdoController {
 		map.put("operacionesPorTipo", terminoOperacionesManager.getOperacionesPorTipoAcuerdo(termino.getOperaciones()));
 		
 		map.put("idAcuerdo", idAcuerdo);
+		map.put("ambito", ambito);
 		
 		map.put("soloConsulta", soloConsulta);
 		
@@ -307,6 +327,9 @@ public class MEJAcuerdoController {
 		Acuerdo acuerdo = proxyFactory.proxy(AcuerdoApi.class).getAcuerdoById(id);
 		map.put("acuerdo",acuerdo);
 		
+		List<DDSiNo> ddsino = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDSiNo.class);
+		map.put("ddSiNo", ddsino);
+		
 		return JSP_FINALIZACION_ACUERDO;
 	}
 	
@@ -318,8 +341,8 @@ public class MEJAcuerdoController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String getListTipoAcuerdosData(ModelMap model){
-		List<DDTipoAcuerdo> list = proxyFactory.proxy(MEJAcuerdoApi.class).getListTipoAcuerdo();
+	public String getListTipoAcuerdosData(ModelMap model, String entidad){
+		List<DDTipoAcuerdo> list = proxyFactory.proxy(MEJAcuerdoApi.class).getListTipoAcuerdo(entidad);
 		model.put("data", list);
 		return JSON_LIST_TIPO_ACUERDO;
 	}	
@@ -440,7 +463,6 @@ public class MEJAcuerdoController {
 		return "default";
 	}	
 	
-
 	/**
 	 * Creación del DTO de TerminoAcuerdo
 	 * 
@@ -716,5 +738,50 @@ public class MEJAcuerdoController {
 		
 		return JSP_RECHAZAR_ACUERDO;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String tieneConfiguracionProponerAcuerdo(ModelMap map) {
+		
+		Usuario user = usuarioManager.getUsuarioLogado();
+		
+    	GestorDespacho gestorDespacho = null;
+    	Order order = new Order(OrderType.ASC, "id");
+    	List<GestorDespacho> usuariosDespacho =  genericDao.getListOrdered(GestorDespacho.class,order, genericDao.createFilter(FilterType.EQUALS, "usuario.id", user.getId()));
+    	
+    	if(usuariosDespacho.size()==1){
+			
+    		gestorDespacho = usuariosDespacho.get(0);
+			
+		}else if(usuariosDespacho.size()>1){
+			
+			gestorDespacho = usuariosDespacho.get(0);
+			
+			for(GestorDespacho gesDes : usuariosDespacho){
+				if(gesDes.getGestorPorDefecto()){
+					gestorDespacho = gesDes;
+					break;
+				}
+			}
+			
+		}
+    	
+    	List<AcuerdoConfigAsuntoUsers> configs = null;
+    	
+    	if(!Checks.esNulo(gestorDespacho)){
+    		configs = genericDao.getList(AcuerdoConfigAsuntoUsers.class, genericDao.createFilter(FilterType.EQUALS, "proponente.id", gestorDespacho.getDespachoExterno().getTipoDespacho().getId() ));	
+        	if(configs != null && configs.size() > 0){
+        		map.put("okko",true);
+        	}else{
+        		map.put("okko",false);	
+        	}
+    	}else{
+    		map.put("okko",false);
+    	}   	
+    	
+		
+		return OK_KO_RESPUESTA_JSON;
+	}
+	
 
 }

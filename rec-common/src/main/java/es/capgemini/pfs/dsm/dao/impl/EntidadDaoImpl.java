@@ -20,5 +20,11 @@ public class EntidadDaoImpl extends AbstractMasterDao<Entidad, Long> implements 
         return (Entidad) (getHibernateTemplate().find(
                 "select c.entidad from EntidadConfig c where c.dataKey='workingCode' and c.dataValue = ?", workingCode)).iterator().next();
     }
-
+    
+    @Override
+    public Entidad findByDescripcion(String descripcion) {
+        return (Entidad) (getHibernateTemplate().find(
+                "select c from Entidad c where c.descripcion = ?", descripcion)).iterator().next();
+    }
+    
 }

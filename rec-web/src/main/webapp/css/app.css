@@ -468,6 +468,12 @@ button.icon_info{
   padding-top:4px;
   padding-bottom:0px;
 }
+button.icon_info_burofax{
+  background: transparent url('information.png') no-repeat !important;
+}
+* html button.icon_info_burofax{
+  background: transparent url('information.gif') no-repeat !important;
+}		
 .icon_elevar_revision{
   background: transparent url('folder_explore.png') no-repeat;
 }

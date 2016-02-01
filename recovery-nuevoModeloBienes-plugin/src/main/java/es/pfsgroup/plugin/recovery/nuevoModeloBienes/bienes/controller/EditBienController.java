@@ -41,6 +41,7 @@ import es.capgemini.pfs.contrato.dto.BusquedaContratosDto;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.diccionarios.comparator.DictionaryComparatorFactory;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
@@ -635,7 +636,7 @@ public class EditBienController {
 			dto.setParticipacion(Integer.parseInt(request
 					.getParameter("oldParticipacion")));
 		if (!Checks.esNulo(request.getParameter("oldValorActual")))
-			dto.setValorActual(new Float(request.getParameter("oldValorActual")));
+			dto.setValorActual(new BigDecimal(request.getParameter("oldValorActual")));
 		if (!Checks.esNulo(request.getParameter("oldImporteCargas")))
 			dto.setImporteCargas(new Float(request
 					.getParameter("oldImporteCargas")));
@@ -658,7 +659,7 @@ public class EditBienController {
 		if (!Checks.esNulo(request.getParameter("tipoBien")))
 			dto.setTipoBien(request.getParameter("tipoBien"));
 		if (!Checks.esNulo(request.getParameter("valorActual")))
-			dto.setValorActual(new Float(request.getParameter("valorActual")));
+			dto.setValorActual(new BigDecimal(request.getParameter("valorActual")));
 		if (!Checks.esNulo(request.getParameter("importeCargas")))
 			dto.setImporteCargas(new Float(request
 					.getParameter("importeCargas")));
@@ -981,6 +982,7 @@ public class EditBienController {
 		return saveEmbargo(request);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String generarInformePropCancelacionCargas(
 			@RequestParam(value = "id", required = true) Long idBien,
@@ -1555,6 +1557,17 @@ public class EditBienController {
 					.getParameter("importeCesionRemate")));
 		} else {
 			adjudicacion.setImporteCesionRemate(null);
+		}
+		
+		if (!Checks.esNulo(request.getParameter("fechaContabilidad"))) {
+			try {
+				adjudicacion.setFechaContabilidad(DateFormat.toDate(request
+						.getParameter("fechaContabilidad")));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		} else {
+			adjudicacion.setFechaContabilidad(null);
 		}
 
 		bien.setAdjudicacion(adjudicacion);
@@ -3381,7 +3394,6 @@ public class EditBienController {
 	private void saveAdjudicaciones(BienesAdjudicaciones bienesAdjudicaciones) {
 		NMBAdjudicacionBien adjudicacion = new NMBAdjudicacionBien();
 		NMBBien bien = null;
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
 		SimpleDateFormat formatText = new SimpleDateFormat("dd/MM/yyyy");
 		// 1901-05-23T00:00:00
 		for (BienAdjudicacion bienAdjudicacion : bienesAdjudicaciones
@@ -4142,14 +4154,14 @@ public class EditBienController {
 		
 		final StringBuilder sbRespuesta = new StringBuilder();
 		if(sbErrorValidacion.length() > 0){
-			sbRespuesta.append("Los campos tipo de inmueble, provincia, localidad, n�mero de finca y n�mero de registro son obligatorios para solicitar el n�mero de activo de los siguientes bienes: ");
+			sbRespuesta.append("Los campos tipo de inmueble, provincia, localidad, n\u00FAmero de finca y n\u00FAmero de registro son obligatorios para solicitar el n\u00FAmero de activo de los siguientes bienes: ");
 			sbErrorValidacion.setLength(sbErrorValidacion.length() -1);
 			sbErrorValidacion.append(". \n");
 			sbRespuesta.append(sbErrorValidacion);
 		}			
 		
 		if(sbErrorSolicitud.length() > 0){
-			sbRespuesta.append("No se pudo obtener el n�mero de activo de los siguientes bienes: ");
+			sbRespuesta.append("No se pudo obtener el n\u00FAmero de activo de los siguientes bienes: ");
 			sbErrorSolicitud.setLength(sbErrorSolicitud.length() -1);
 			sbErrorSolicitud.append(". \n");
 			sbRespuesta.append(sbErrorSolicitud);			
@@ -4177,6 +4189,9 @@ public class EditBienController {
 	public String getListLocalidades(ModelMap model, String codProvincia) {
 		List<Localidad> list = proxyFactory.proxy(BienApi.class)
 				.getListLocalidades(codProvincia);
+		
+		Collections.sort(list, DictionaryComparatorFactory.getInstance().create(DictionaryComparatorFactory.COMPARATOR_BY_DESCRIPCION));
+		
 		model.put("listLocalidades", list);
 		return JSON_LIST_LOCALIDADES;
 	}

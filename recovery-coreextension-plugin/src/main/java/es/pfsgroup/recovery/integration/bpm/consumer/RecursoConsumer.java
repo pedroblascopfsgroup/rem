@@ -154,7 +154,7 @@ public class RecursoConsumer extends ConsumerAction<DataContainerPayload> {
 		
 		// BO negocio
 		mejRecursoManager.createOrUpdateUserInfo(dtoRecurso, esGestor, esSupervisor);
-		logger.info(String.format("[INTEGRACION] PRC[%s] REC[%s] Recurso guardado!!", prcUID, recursoUID));
+		logger.debug(String.format("[INTEGRACION] PRC[%s] REC[%s] Recurso guardado!!", prcUID, recursoUID));
 	}
 
 }

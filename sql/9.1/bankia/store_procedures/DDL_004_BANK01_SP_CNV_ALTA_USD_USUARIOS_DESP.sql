@@ -1,16 +1,18 @@
 --/*
 --##########################################
 --## AUTOR=David González
---## FECHA_CREACION=20151020
+--## FECHA_CREACION=20151027
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=0.2
+--## VERSION_ARTEFACTO=0.3
 --## INCIDENCIA_LINK=BKREC-1114
 --## PRODUCTO=NO
 --## 
 --## Finalidad: 
 --## INSTRUCCIONES:  
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        	0.1 Versión inicial
+--##		0.2 Adaptacion a plantilla
+--##		
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -27,7 +29,7 @@ create or replace PROCEDURE CNV_ALTA_USD_USUARIOS_DESP AS
     V_FECHA_RECH TIMESTAMP;
     
 BEGIN
-/* v0.2 */
+/* v0.3 */
 
   /*
    * CONSTANTES
@@ -59,7 +61,7 @@ BEGIN
   WITH DES_USU AS (
     SELECT DES_ID, COUNT(1) N_USU FROM #ESQUEMA#.USD_USUARIOS_DESPACHOS WHERE BORRADO = 0 GROUP BY DES_ID
   )
-  SELECT S_USD_USUARIOS_DESPACHOS.NEXTVAL, USU.USU_ID, DES.DES_ID
+  SELECT #ESQUEMA#.S_USD_USUARIOS_DESPACHOS.NEXTVAL, USU.USU_ID, DES.DES_ID
     , CASE
       WHEN (DES_USU.N_USU IS NULL) OR (DES_USU.N_USU = 0) THEN 1
       ELSE 0

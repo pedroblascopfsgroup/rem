@@ -1,10 +1,10 @@
 package es.capgemini.pfs.telefonos.model;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -13,7 +13,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -29,6 +28,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.persona.model.DDOrigenTelefono;
 import es.capgemini.pfs.persona.model.DDTipoTelefono;
 import es.capgemini.pfs.persona.model.Persona;
+import es.capgemini.pfs.persona.model.PersonasTelefono;
 
 @Entity
 @Table(name = "TEL_TELEFONOS", schema = "${entity.schema}")
@@ -73,10 +73,10 @@ public class Telefono implements Serializable, Auditable{
 	  @JoinColumn(name="DD_ETE_ID")
 	  private DDEstadoTelefono estadoTelefono;
 	  
-	  @ManyToMany(mappedBy = "telefonos")
-	    // map info is in person class
+	  @OneToMany(fetch = FetchType.LAZY)
+	  @JoinColumn(name = "TEL_ID")
 	  @Where(clause = Auditoria.UNDELETED_RESTICTION)
-	  private Set<Persona> personas;
+	  private List<PersonasTelefono> personasTelefono;
 	  
 	  @Column(name="TEL_OBSERVACIONES")
 	  private String observaciones;
@@ -152,19 +152,26 @@ public class Telefono implements Serializable, Auditable{
 	}
 
 	/**
-     * @return the personas
+     * @return personas
      */
-    public Set<Persona> getPersonas() {
-        return personas;
-    }
+	
+	public Set<Persona> getPersonas() {
+		Set<Persona> personas = new HashSet<Persona>();
 
-    /**
-     * @param personas the personas to set
-     */
-    public void setPersonas(Set<Persona> personas) {
-        this.personas = personas;
-    }
+		for (PersonasTelefono pt : personasTelefono) {
+			personas.add(pt.getPersona());
+		}
 
+		return personas;
+	}
+	
+	public List<PersonasTelefono> getPersonasTelefono() {
+		return personasTelefono;
+	}
+
+	public void setPersonasTelefono(List<PersonasTelefono> personasTelefono) {
+		this.personasTelefono = personasTelefono;
+	}
 
 	public String getObservaciones() {
 		return observaciones;

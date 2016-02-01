@@ -3,22 +3,22 @@ perfiles
 */
 Insert into  CM01.PEF_PERFILES (PEF_ID,PEF_DESCRIPCION_LARGA,PEF_DESCRIPCION,VERSION,USUARIOCREAR,FECHACREAR,USUARIOMODIFICAR,FECHAMODIFICAR,USUARIOBORRAR,FECHABORRAR,BORRADO,PEF_CODIGO,PEF_ES_CARTERIZADO,DTYPE) 
 values 
-(S_PEF_PERFILES.nextval,'Acceso a las funcionalidades de oficina','Oficina','0','SAG',sysdate,null,null,null,null,'0','OFI_OFICINA','0','EXTPerfil');
+(CM01.S_PEF_PERFILES.nextval,'Acceso a las funcionalidades de oficina','Oficina','0','SAG',sysdate,null,null,null,null,'0','OFI_OFICINA','0','EXTPerfil');
 Insert into  CM01.PEF_PERFILES (PEF_ID,PEF_DESCRIPCION_LARGA,PEF_DESCRIPCION,VERSION,USUARIOCREAR,FECHACREAR,USUARIOMODIFICAR,FECHAMODIFICAR,USUARIOBORRAR,FECHABORRAR,BORRADO,PEF_CODIGO,PEF_ES_CARTERIZADO,DTYPE) 
 values 
-(S_PEF_PERFILES.nextval,'Acceso a las funcionalidades de Gestor de riesgos','Gestor de riesgos','0','SAG',sysdate,null,null,null,null,'0','GES_RIESGOS','0','EXTPerfil');
+(CM01.S_PEF_PERFILES.nextval,'Acceso a las funcionalidades de Gestor de riesgos','Gestor de riesgos','0','SAG',sysdate,null,null,null,null,'0','GES_RIESGOS','0','EXTPerfil');
 Insert into  CM01.PEF_PERFILES (PEF_ID,PEF_DESCRIPCION_LARGA,PEF_DESCRIPCION,VERSION,USUARIOCREAR,FECHACREAR,USUARIOMODIFICAR,FECHAMODIFICAR,USUARIOBORRAR,FECHABORRAR,BORRADO,PEF_CODIGO,PEF_ES_CARTERIZADO,DTYPE) 
 values 
-(S_PEF_PERFILES.nextval,'Acceso a las funcionalidades de Director de riesgos','Director de riesgos','0','SAG',sysdate,null,null,null,null,'0','DIR_RIESGOS','0','EXTPerfil');
+(CM01.S_PEF_PERFILES.nextval,'Acceso a las funcionalidades de Director de riesgos','Director de riesgos','0','SAG',sysdate,null,null,null,null,'0','DIR_RIESGOS','0','EXTPerfil');
 Insert into  CM01.PEF_PERFILES (PEF_ID,PEF_DESCRIPCION_LARGA,PEF_DESCRIPCION,VERSION,USUARIOCREAR,FECHACREAR,USUARIOMODIFICAR,FECHAMODIFICAR,USUARIOBORRAR,FECHABORRAR,BORRADO,PEF_CODIGO,PEF_ES_CARTERIZADO,DTYPE) 
 values 
-(S_PEF_PERFILES.nextval,'Acceso a las funcionalidades de Servicios centrales','Servicios centrales','0','SAG',sysdate,null,null,null,null,'0','SER_CENTRALES','0','EXTPerfil');
+(CM01.S_PEF_PERFILES.nextval,'Acceso a las funcionalidades de Servicios centrales','Servicios centrales','0','SAG',sysdate,null,null,null,null,'0','SER_CENTRALES','0','EXTPerfil');
 Insert into  CM01.PEF_PERFILES (PEF_ID,PEF_DESCRIPCION_LARGA,PEF_DESCRIPCION,VERSION,USUARIOCREAR,FECHACREAR,USUARIOMODIFICAR,FECHAMODIFICAR,USUARIOBORRAR,FECHABORRAR,BORRADO,PEF_CODIGO,PEF_ES_CARTERIZADO,DTYPE) 
 values 
-(S_PEF_PERFILES.nextval,'Acceso a las funcionalidades de Comite de oficina','Comite oficina','0','SAG',sysdate,null,null,null,null,'0','COM_OFICINA','0','EXTPerfil');
+(CM01.S_PEF_PERFILES.nextval,'Acceso a las funcionalidades de Comite de oficina','Comite oficina','0','SAG',sysdate,null,null,null,null,'0','COM_OFICINA','0','EXTPerfil');
 Insert into  CM01.PEF_PERFILES (PEF_ID,PEF_DESCRIPCION_LARGA,PEF_DESCRIPCION,VERSION,USUARIOCREAR,FECHACREAR,USUARIOMODIFICAR,FECHAMODIFICAR,USUARIOBORRAR,FECHABORRAR,BORRADO,PEF_CODIGO,PEF_ES_CARTERIZADO,DTYPE) 
 values 
-(S_PEF_PERFILES.nextval,'Acceso a las funcionalidades de Comite de banco','Comite banco','0','SAG',sysdate,null,null,null,null,'0','COM_BANCO','0','EXTPerfil');
+(CM01.S_PEF_PERFILES.nextval,'Acceso a las funcionalidades de Comite de banco','Comite banco','0','SAG',sysdate,null,null,null,null,'0','COM_BANCO','0','EXTPerfil');
 
 
 --'Oficina'
@@ -117,7 +117,7 @@ Insert into CM01.ZON_PEF_USU (ZON_ID,PEF_ID,USU_ID,ZPU_ID,VERSION,USUARIOCREAR,F
     (select max(ZON_ID) from CM01.ZON_ZONIFICACION where ZON_COD = '01')
     ,(SELECT PEF_ID from CM01.PEF_PERFILES  WHERE PEF_DESCRIPCION = 'Oficina')
     ,(select usu_id from CMMASTER.usu_usuarios where usu_username = 'oficina_1')
-    ,S_ZON_PEF_USU.nextval
+    ,CM01.S_ZON_PEF_USU.nextval
     ,'0','JSV',sysdate,null,null,null,null,'0',null);
 
 Insert into CM01.ZON_PEF_USU (ZON_ID,PEF_ID,USU_ID,ZPU_ID,VERSION,USUARIOCREAR,FECHACREAR,USUARIOMODIFICAR,FECHAMODIFICAR,USUARIOBORRAR,FECHABORRAR,BORRADO,ZPU_FECHA_EXTRACCION) 
@@ -125,7 +125,7 @@ Insert into CM01.ZON_PEF_USU (ZON_ID,PEF_ID,USU_ID,ZPU_ID,VERSION,USUARIOCREAR,F
     (select max(ZON_ID) from CM01.ZON_ZONIFICACION where ZON_COD = '01')
     ,(SELECT PEF_ID from CM01.PEF_PERFILES  WHERE PEF_DESCRIPCION = 'Gestor de riesgos')
     ,(select usu_id from CMMASTER.usu_usuarios where usu_username = 'gesriesgo1')
-    ,S_ZON_PEF_USU.nextval,
+    ,CM01.S_ZON_PEF_USU.nextval,
     '0','JSV',sysdate,null,null,null,null,'0',null);
 
 Insert into CM01.ZON_PEF_USU (ZON_ID,PEF_ID,USU_ID,ZPU_ID,VERSION,USUARIOCREAR,FECHACREAR,USUARIOMODIFICAR,FECHAMODIFICAR,USUARIOBORRAR,FECHABORRAR,BORRADO,ZPU_FECHA_EXTRACCION) 
@@ -133,7 +133,7 @@ Insert into CM01.ZON_PEF_USU (ZON_ID,PEF_ID,USU_ID,ZPU_ID,VERSION,USUARIOCREAR,F
     (select max(ZON_ID) from CM01.ZON_ZONIFICACION where ZON_COD = '01')
     ,(SELECT PEF_ID from CM01.PEF_PERFILES  WHERE PEF_DESCRIPCION = 'Director de riesgos')
     ,(select usu_id from CMMASTER.usu_usuarios where usu_username = 'dirriesgo1')
-    ,S_ZON_PEF_USU.nextval
+    ,CM01.S_ZON_PEF_USU.nextval
     ,'0','JSV',sysdate,null,null,null,null,'0',null);
 
 

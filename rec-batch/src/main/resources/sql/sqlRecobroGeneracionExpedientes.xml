@@ -1,616 +1,613 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-	<entry key="recobro.idxdrop.jobGeneracionExpedientes.Oracle9iDialect">
-		<![CDATA[
-DECLARE
-  A_TABLES DBMS_SQL.VARCHAR2_TABLE;
-  nCount NUMBER;
+    <entry key="recobro.idxdrop.jobGeneracionExpedientes.Oracle10gDialect">
+        <![CDATA[
+            DECLARE
+              A_TABLES DBMS_SQL.VARCHAR2_TABLE;
+              nCount NUMBER;
 
-BEGIN
-  A_TABLES(1) := 'TMP_REC_CNT_LIBRES_ARQ_REC_EXT';
-  A_TABLES(A_TABLES.LAST + 1) := 'TMP_PER_ARQUETIPO';
-  A_TABLES(A_TABLES.LAST + 1) := 'TMP_PER_FILTRADAS';
-  A_TABLES(A_TABLES.LAST + 1) := 'TMP_CNT_PER_VALIDAS';
-  
+            BEGIN
+              A_TABLES(1) := 'TMP_REC_CNT_LIBRES_ARQ_REC_EXT';
+              A_TABLES(A_TABLES.LAST + 1) := 'TMP_PER_ARQUETIPO';
+              A_TABLES(A_TABLES.LAST + 1) := 'TMP_PER_FILTRADAS';
+              A_TABLES(A_TABLES.LAST + 1) := 'TMP_CNT_PER_VALIDAS';
 
-  FOR I IN A_TABLES.FIRST..A_TABLES.LAST LOOP
-    DBMS_OUTPUT.PUT_LINE('Limpiando índice de '||A_TABLES(I));
-    
-    FOR IDX IN (SELECT INDEX_NAME FROM USER_INDEXES  WHERE TABLE_NAME = A_TABLES(I)) LOOP
-      DBMS_OUTPUT.PUT_LINE('- Borrando índice '||IDX.INDEX_NAME);
-      EXECUTE IMMEDIATE 'DROP INDEX '||IDX.INDEX_NAME;
-    END LOOP;
-  END LOOP;
 
-END;
-		]]>
-	</entry>
-	
-	<!-- PASO 1 - TRUNCADO DE TABLAS TEMPORALES Y DE INTERFACES DE SALIDA -->
-	<entry key="recobro.truncate.tmp_rec_cnt_libres_arq_rec_ext.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_REC_CNT_LIBRES_ARQ_REC_EXT
-		]]>
-	</entry>
-	<entry key="recobro.truncate.batch_datos_salida.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE BATCH_DATOS_SALIDA
-		]]>
-	</entry>
-	<entry key="recobro.borrado.tmp_per_arquetipo.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_PER_ARQUETIPO
-		]]>
-	</entry>
-	<entry key="recobro.borrado.tmp_per_filtradas.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_PER_FILTRADAS
-		]]>
-	</entry>
-	<entry key="recobro.borrado.tmp_cnt_per_validas.Oracle9iDialect">
-		<![CDATA[
-			TRUNCATE TABLE TMP_CNT_PER_VALIDAS
-		]]>
-	</entry>
-	
-	<!-- PASO 2 - CARGAMOS LA TABLA TMP_REC_CNT_LIBRES_ARQ_REC_EXT A PARTIR DE LA TABLA TMP_REC_CNT_LIBRES_ARQ_REC -->
-	<entry key="recobro.insert.tmp_rec_cnt_libres_arq_rec_ext.Oracle9iDialect">
-		<![CDATA[
-			INSERT INTO TMP_REC_CNT_LIBRES_ARQ_REC_EXT
-  				(ORD_ID,CNT_ID,PER_ID,ARQ_ID,OFI_ID,MOV_RIESGO,PER_NOMBRE,PER_APELLIDO1,PER_APELLIDO2,DD_TIN_CODIGO,CPE_ORDEN,RCF_DD_AER_CODIGO,CNT_PER_ARRASTRE)
-      		WITH CNT_EXC AS (
-		        select /*+ MATERIALIZE */ distinct cnt_id from BATCH_DATOS_EXCEPTUADOS where cnt_id is not null
-      		), CNT_LIBRES AS (
-        		select /*+ MATERIALIZE */lib.cnt_id, lib.per_id, lib.arq_id, cnt.ofi_id, lib.mov_riesgo, PER.PER_NOMBRE, PER.PER_APELLIDO1, PER.PER_APELLIDO2, 
-							cpe.cnt_per_tin, cpe.cnt_per_oin,
-							conf.rcf_dd_aer_codigo dd_aer_codigo,rcf_esc_prioridad, CPE.CNT_PER_ARRASTRE
-		    	from TMP_REC_CNT_LIBRES_ARQ_REC lib
-		      	join batch_datos_cnt cnt on lib.cnt_id = cnt.cnt_id
-		      	join batch_datos_cnt_per cpe on lib.cnt_id = cpe.cnt_id and lib.per_id = cpe.per_id
-		      	join batch_datos_per per on lib.per_id = per.per_id
-		      	join BATCH_RCF_ENTRADA conf on conf.RCF_DD_EES_CODIGO = 'LBR' and conf.RCF_ESQ_BORRADO = 0 and lib.arq_id = conf.rcf_car_id
-		      	where lib.cnt_id not in (select CNT_ID FROM CNT_EXC)
-      		), DIST AS (
-        		select /*+ MATERIAIZE */ distinct * from CNT_LIBRES
-      		), DATOS as (
-        		SELECT /*+ MATERIALIZE */ * FROM DIST order by rcf_esc_prioridad, mov_riesgo desc
-      		)
- 			select rownum, d.cnt_id, d.per_id, d.arq_id, d.ofi_id, d.mov_riesgo, d.per_nombre, d.per_apellido1, d.per_apellido2, d.cnt_per_tin, d.cnt_per_oin, d.dd_aer_codigo, d.cnt_per_arrastre 
-      		from DATOS d
-		]]>
-	</entry>
-	
-		<entry key="recobro.idxcreate.tmp_rec_cnt_libres_arq_rec_ext.Oracle9iDialect">
-		<![CDATA[
-BEGIN
-  EXECUTE IMMEDIATE 'CREATE INDEX IDX_CNT_LIBRES_ARQ_REC_EXT_1 ON TMP_REC_CNT_LIBRES_ARQ_REC_EXT (CNT_ID, PER_ID)';
-  EXECUTE IMMEDIATE 'CREATE INDEX IDX_CNT_LIBRES_ARQ_REC_EXT_2 ON TMP_REC_CNT_LIBRES_ARQ_REC_EXT (CNT_ID)';
-  EXECUTE IMMEDIATE 'CREATE INDEX IDX_CNT_LIBRES_ARQ_REC_EXT_3 ON TMP_REC_CNT_LIBRES_ARQ_REC_EXT (PER_ID)';
-  EXECUTE IMMEDIATE 'CREATE INDEX IDX_CNT_LIBRES_ARQ_REC_EXT_4 ON TMP_REC_CNT_LIBRES_ARQ_REC_EXT (CNT_PER_ARRASTRE)';
-  EXECUTE IMMEDIATE 'ANALYZE TABLE TMP_REC_CNT_LIBRES_ARQ_REC_EXT COMPUTE STATISTICS';
+              FOR I IN A_TABLES.FIRST..A_TABLES.LAST LOOP
+                DBMS_OUTPUT.PUT_LINE('Limpiando índice de '||A_TABLES(I));
 
-END;
-		]]>
-	</entry>
-	
-		<entry key="recobro.insert.tmp_per_arquetipo.Oracle9iDialect">
-		<![CDATA[
-DECLARE
-  CURSOR C_PROD IS SELECT DISTINCT PER_ID, ARQ_ID FROM (
-    SELECT PER_ID, ARQ_ID, ROW_NUMBER() OVER (PARTITION BY PER_ID ORDER BY ARQ_DATE DESC) ORD
-    FROM ARP_ARQ_RECOBRO_PERSONA
-  ) WHERE ORD = 1;
-  
-  CURSOR C_SIMU IS SELECT DISTINCT PER_ID, ARQ_ID FROM (
-    SELECT PER_ID, ARQ_ID, ROW_NUMBER() OVER (PARTITION BY PER_ID ORDER BY ARQ_DATE DESC) ORD
-    FROM ARP_ARQ_RECOBRO_PERSONA_SIM
-  ) WHERE ORD = 1;
-  
-  TYPE T_ARP IS TABLE OF C_PROD%ROWTYPE INDEX BY BINARY_INTEGER;
-  V_ARP T_ARP;
-  
-  V_MODE VARCHAR2(20 CHAR);
-BEGIN
-  SELECT RERA_MODE INTO V_MODE FROM BATCH_RERA_CONTROL_PROC;
+                FOR IDX IN (SELECT INDEX_NAME FROM USER_INDEXES  WHERE TABLE_NAME = A_TABLES(I)) LOOP
+                  DBMS_OUTPUT.PUT_LINE('- Borrando índice '||IDX.INDEX_NAME);
+                  OPERACION_DDL.DDL_INDEX('DROP',IDX.INDEX_NAME); --unusable
+                END LOOP;
+              END LOOP;
 
-  
-  IF (V_MODE = 'PROD') THEN
-    OPEN C_PROD;
-  ELSE 
-    OPEN C_SIMU;
-  END IF;
-  
-  LOOP
-    IF (V_MODE = 'PROD') THEN
-      FETCH C_PROD BULK COLLECT INTO V_ARP LIMIT 1000;
-    ELSE 
-      FETCH C_SIMU BULK COLLECT INTO V_ARP LIMIT 1000;
-    END IF;
-    
-    EXIT WHEN V_ARP.COUNT = 0;
-    
-    FORALL I IN 1..V_ARP.COUNT
-    INSERT INTO TMP_PER_ARQUETIPO (PER_ID, ARQ_ID) VALUES (V_ARP(I).PER_ID, V_ARP(I).ARQ_ID);
-    
-    
-  END LOOP;
-  
-  IF (V_MODE = 'PROD') THEN
-    CLOSE C_PROD;
-  ELSE 
-    CLOSE C_SIMU;
-  END IF;
-  
-  COMMIT;
-END;
-		]]>
-	</entry>
-	
-			<entry key="recobro.insert.tmp_per_filtradas.Oracle9iDialect">
-		<![CDATA[
-INSERT INTO TMP_PER_FILTRADAS
-SELECT DISTINCT PER_ID FROM (
-  SELECT TMP.PER_ID
-  FROM TMP_PER_ARQUETIPO TMP
-    INNER JOIN (SELECT DISTINCT RCF_CAR_ID, RCF_DD_TCE_CODIGO 
-                    FROM BATCH_RCF_ENTRADA 
-                    WHERE RCF_DD_EES_CODIGO = 'LBR') RCFE
-                ON TMP.ARQ_ID = RCFE.RCF_CAR_ID
-  WHERE RCFE.RCF_DD_TCE_CODIGO = 'FIL'
-  UNION
-  SELECT PER_ID
-  FROM BATCH_DATOS_EXCEPTUADOS
-  WHERE PER_ID IS NOT NULL
-)
-		]]>
-	</entry>
-	
-	<entry key="recobro.idxcreate.tmp_per_filtradas.Oracle9iDialect">
-		<![CDATA[
-BEGIN
-  EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_PER_FILTRADAS_1 ON TMP_PER_FILTRADAS(PER_ID)';
-  EXECUTE IMMEDIATE 'ANALYZE TABLE TMP_PER_FILTRADAS COMPUTE STATISTICS';
+            END;
+        ]]>
+    </entry>
 
-END;
-		]]>
-	</entry>
-	
-	<entry key="recobro.insert.tmp_cnt_per_validas.Oracle9iDialect">
-		<![CDATA[
-INSERT INTO TMP_CNT_PER_VALIDAS (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN, CNT_PER_ARRASTRE)
-SELECT DISTINCT CPE.CNT_ID, CPE.PER_ID, CPE.CNT_PER_TIN, CPE.CNT_PER_OIN, CPE.CNT_PER_ARRASTRE
-FROM BATCH_DATOS_CNT_PER CPE
-  LEFT JOIN BATCH_DATOS_EXCEPTUADOS EXC ON CPE.CNT_ID = EXC.CNT_ID
-  LEFT JOIN TMP_PER_FILTRADAS PF ON CPE.PER_ID = PF.PER_ID
-WHERE EXC.EXC_ID IS NULL AND PF.PER_ID IS NULL
+    <!-- PASO 1 - TRUNCADO DE TABLAS TEMPORALES Y DE INTERFACES DE SALIDA -->
+    <entry key="recobro.truncate.tmp_rec_cnt_libres_arq_rec_ext.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_CNT_LIBRES_ARQ_REC_EXT'); END;
+        ]]>
+    </entry>
+    <entry key="recobro.truncate.batch_datos_salida.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','BATCH_DATOS_SALIDA'); END;
+        ]]>
+    </entry>
+    <entry key="recobro.borrado.tmp_per_arquetipo.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_PER_ARQUETIPO'); END;
+        ]]>
+    </entry>
+    <entry key="recobro.borrado.tmp_per_filtradas.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_PER_FILTRADAS'); END;
+        ]]>
+    </entry>
+    <entry key="recobro.borrado.tmp_cnt_per_validas.Oracle10gDialect">
+        <![CDATA[
+            BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_CNT_PER_VALIDAS'); END;
+        ]]>
+    </entry>
 
-		]]>
-	</entry>
-	
-	
-		<entry key="recobro.idxcreate.tmp_cnt_per_validas.Oracle9iDialect">
-		<![CDATA[
-BEGIN
-  EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_CNT_PER_VALIDAS_1 ON TMP_CNT_PER_VALIDAS(CNT_ID)';
-  EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_CNT_PER_VALIDAS_2 ON TMP_CNT_PER_VALIDAS(PER_ID)';
-  EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_CNT_PER_VALIDAS_3 ON TMP_CNT_PER_VALIDAS(CNT_PER_ARRASTRE	)';
-  EXECUTE IMMEDIATE 'ANALYZE TABLE TMP_CNT_PER_VALIDAS COMPUTE STATISTICS';
+    <!-- PASO 2 - CARGAMOS LA TABLA TMP_REC_CNT_LIBRES_ARQ_REC_EXT A PARTIR DE LA TABLA TMP_REC_CNT_LIBRES_ARQ_REC -->
+    <entry key="recobro.insert.tmp_rec_cnt_libres_arq_rec_ext.Oracle10gDialect">
+        <![CDATA[
+            INSERT INTO TMP_REC_CNT_LIBRES_ARQ_REC_EXT
+                (ORD_ID,CNT_ID,PER_ID,ARQ_ID,OFI_ID,MOV_RIESGO,PER_NOMBRE,PER_APELLIDO1,PER_APELLIDO2,DD_TIN_CODIGO,CPE_ORDEN,RCF_DD_AER_CODIGO,CNT_PER_ARRASTRE)
+            WITH CNT_EXC AS (
+                select /*+ MATERIALIZE */ distinct cnt_id from BATCH_DATOS_EXCEPTUADOS where cnt_id is not null
+            ), CNT_LIBRES AS (
+                select /*+ MATERIALIZE */lib.cnt_id, lib.per_id, lib.arq_id, cnt.ofi_id, lib.mov_riesgo, PER.PER_NOMBRE, PER.PER_APELLIDO1, PER.PER_APELLIDO2,
+                            cpe.cnt_per_tin, cpe.cnt_per_oin,
+                            conf.rcf_dd_aer_codigo dd_aer_codigo,rcf_esc_prioridad, CPE.CNT_PER_ARRASTRE
+                from TMP_REC_CNT_LIBRES_ARQ_REC lib
+                join batch_datos_cnt cnt on lib.cnt_id = cnt.cnt_id
+                join batch_datos_cnt_per cpe on lib.cnt_id = cpe.cnt_id and lib.per_id = cpe.per_id
+                join batch_datos_per per on lib.per_id = per.per_id
+                join BATCH_RCF_ENTRADA conf on conf.RCF_DD_EES_CODIGO = 'LBR' and conf.RCF_ESQ_BORRADO = 0 and lib.arq_id = conf.rcf_car_id
+                where lib.cnt_id not in (select CNT_ID FROM CNT_EXC)
+            ), DIST AS (
+                select /*+ MATERIAIZE */ distinct * from CNT_LIBRES
+            ), DATOS as (
+                SELECT /*+ MATERIALIZE */ * FROM DIST order by rcf_esc_prioridad, mov_riesgo desc
+            )
+            select rownum, d.cnt_id, d.per_id, d.arq_id, d.ofi_id, d.mov_riesgo, d.per_nombre, d.per_apellido1, d.per_apellido2, d.cnt_per_tin, d.cnt_per_oin, d.dd_aer_codigo, d.cnt_per_arrastre
+            from DATOS d
+        ]]>
+    </entry>
 
-END;
-		]]>
-	</entry>
-	
-	<!-- PASO 3 - EJECUTAMOS EL PL/SQL DEL PROCESO DE CREACIÓN DE EXPEDIENTES -->
-	<entry key="recobro.insert.batch_datos_salida.Oracle9iDialect">
-		<![CDATA[
-DECLARE
-  /*
-   * CONSTANTES
-   */
-  C_EST_ID NUMBER(16);
-  C_ITI_ID NUMBER(16);
-  /* CURSORES */
-  -- Este cursor nos devuelve las relaciones entre contrato y persona, libres, con el arquetipo ya calculado.
-  CURSOR C_CNTLIBRES IS 
-        SELECT T.* 
-        FROM TMP_REC_CNT_LIBRES_ARQ_REC_EXT T
-        WHERE NOT EXISTS (SELECT EXP_ID FROM BATCH_DATOS_SALIDA WHERE CNT_ID = T.CNT_ID AND PER_ID = T.PER_ID)
-        	AND CNT_PER_ARRASTRE = 1
-        ORDER BY T.ORD_ID;
+        <entry key="recobro.idxcreate.tmp_rec_cnt_libres_arq_rec_ext.Oracle10gDialect">
+        <![CDATA[
+            BEGIN
+              OPERACION_DDL.DDL_INDEX('CREATE','IDX_CNT_LIBRES_ARQ_REC_EXT_1'); --rebuild
+              OPERACION_DDL.DDL_INDEX('CREATE','IDX_CNT_LIBRES_ARQ_REC_EXT_2'); --rebuild
+              OPERACION_DDL.DDL_INDEX('CREATE','IDX_CNT_LIBRES_ARQ_REC_EXT_3'); --rebuild
+              OPERACION_DDL.DDL_INDEX('CREATE','IDX_CNT_LIBRES_ARQ_REC_EXT_4'); --rebuild
+              OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_CNT_LIBRES_ARQ_REC_EXT'); --estimate
+            END;
+        ]]>
+    </entry>
 
-  R_CNT C_CNTLIBRES%ROWTYPE;
-        
-  -- este cursor sirve para obtener los INTERVINIENTES de un contrato
-  CURSOR C_TITULARES(P_CNT_ID NUMBER) IS SELECT DISTINCT T.PER_ID, T.CNT_ID, CNT.OFI_ID
-      , T.CNT_PER_ARRASTRE
-      , CASE WHEN TV.PER_ID IS NOT NULL THEN 1 ELSE 0 END AS PER_VALIDA
-    FROM BATCH_DATOS_CNT_PER T
-      JOIN BATCH_DATOS_CNT CNT ON T.CNT_ID = CNT.CNT_ID
-      LEFT JOIN TMP_CNT_PER_VALIDAS TV ON T.PER_ID = TV.PER_ID AND T.CNT_ID = TV.CNT_ID
-    WHERE T.CNT_ID = P_CNT_ID;
-        
-  R_TIT C_TITULARES%ROWTYPE;
-  
-  -- este cursor sirve para obtener las relaciones de las personas del grupo de una dada
-  CURSOR C_GRUPO(P_PER_ID NUMBER) IS SELECT T.CNT_ID, T.PER_ID, CNT.OFI_ID, T.CNT_PER_ARRASTRE
-    FROM BATCH_DATOS_GCL GCL1
-      JOIN BATCH_DATOS_GCL GCL2 ON GCL1.GCL_ID = GCL2.GCL_ID
-      JOIN TMP_CNT_PER_VALIDAS T ON GCL2.PER_ID = T.PER_ID AND T.PER_ID <> P_PER_ID
-      JOIN BATCH_DATOS_CNT CNT ON T.CNT_ID = CNT.CNT_ID
-    WHERE NOT EXISTS (SELECT EXP_ID FROM BATCH_DATOS_SALIDA WHERE CNT_ID = T.CNT_ID AND PER_ID = T.PER_ID) 
-    	AND EXISTS (SELECT 1 FROM TMP_REC_CNT_LIBRES_ARQ_REC_EXT WHERE CNT_ID = T.CNT_ID)
-    	AND GCL1.PER_ID = P_PER_ID
-      AND T.CNT_PER_ARRASTRE = 1;
-  
-  R_GRUPO C_GRUPO%ROWTYPE;
-  
-  -- este cursor sirve para obtener la próxima generación de un expediente, pivotando por personas
-  -- buscamos nuevos contratos de las personas del expediente
-  -- Filtramos por
-  --    Que el contrato esté libre (no exceptuado)
-  --    Que estén relacionados con personas
-  --      incluidas en el expediente
-  --      que no estén filtradas ni exceptuadas
-  --      que sean de arrastre
-  CURSOR C_NEXTGEN_BYPER(P_EXP_ID NUMBER) IS 
-  WITH PERSONAS AS (
-    SELECT DISTINCT PER_ID FROM BATCH_DATOS_SALIDA WHERE EXP_ID = P_EXP_ID AND CNT_PER_ARRASTRE = 1
-  ), PER_VALIDAS AS (
-    SELECT  DISTINCT PER_ID FROM TMP_CNT_PER_VALIDAS WHERE PER_ID IN (SELECT PER_ID FROM PERSONAS)
-  ),RELACIONES_LIBRES AS ( -- Sólo de las personas incluidas en el exp y válidas
-    SELECT  CNT_ID, PER_ID, OFI_ID, CNT_PER_ARRASTRE
-    FROM TMP_REC_CNT_LIBRES_ARQ_REC_EXT
-    WHERE PER_ID IN (SELECT PER_ID FROM PER_VALIDAS)
-      AND CNT_PER_ARRASTRE = 1
-  )
-  SELECT T.CNT_ID, T.PER_ID, CNT.OFI_ID
-        , T.CNT_PER_ARRASTRE
-  FROM RELACIONES_LIBRES T
-        JOIN BATCH_DATOS_CNT CNT ON T.CNT_ID = CNT.CNT_ID
-  WHERE NOT EXISTS (SELECT EXP_ID FROM BATCH_DATOS_SALIDA WHERE CNT_ID = T.CNT_ID AND PER_ID = T.PER_ID);
-        
-  R_NGPER C_NEXTGEN_BYPER%ROWTYPE;
-        
-  -- este cursor sirve para obtener la próxima generación de un expediente, pivotando por contratos
-  CURSOR C_NEXTGEN_BYCNT(P_EXP_ID NUMBER) IS SELECT T.CNT_ID, T.PER_ID, CNT.OFI_ID
-          , T.CNT_PER_ARRASTRE
-      FROM TMP_CNT_PER_VALIDAS T
-        JOIN BATCH_DATOS_CNT CNT ON T.CNT_ID = CNT.CNT_ID
-      WHERE NOT EXISTS (SELECT EXP_ID FROM BATCH_DATOS_SALIDA WHERE CNT_ID = T.CNT_ID AND PER_ID = T.PER_ID)
-        AND EXISTS (SELECT CNT_ID FROM BATCH_DATOS_SALIDA WHERE EXP_ID = P_EXP_ID AND CNT_ID = T.CNT_ID);        
-  
-  R_NGCNT C_NEXTGEN_BYCNT%ROWTYPE;
-  /* VARIABLES */
-  V_EXP_ID NUMBER(16);
-  V_ARQ_ID NUMBER(16);
-  V_EXP_NAME VARCHAR2(250 CHAR);
-  V_AEX_CODIGO VARCHAR2(10 CHAR);
-  V_CNT_FOUND NUMBER(16);
-  V_PER_FOUND NUMBER(16);
-  V_CEX_PASE NUMBER(16);
-  V_PEX_PASE NUMBER(16);
-  V_ES_CNT_PASE NUMBER(1);
-  V_ES_PER_PASE NUMBER(1);
-  
-BEGIN
-  /*
-   * CONSTANTES
-   */
-  C_EST_ID := 2;
-  C_ITI_ID := 3;
+    <entry key="recobro.insert.tmp_per_arquetipo.Oracle10gDialect">
+        <![CDATA[
+            DECLARE
+              CURSOR C_PROD IS SELECT DISTINCT PER_ID, ARQ_ID FROM (
+                SELECT PER_ID, ARQ_ID, ROW_NUMBER() OVER (PARTITION BY PER_ID ORDER BY ARQ_DATE DESC) ORD
+                FROM ARP_ARQ_RECOBRO_PERSONA
+              ) WHERE ORD = 1;
 
-  IF NOT C_CNTLIBRES%ISOPEN THEN
-    OPEN C_CNTLIBRES;
-  END IF;
-  
-  DBMS_OUTPUT.PUT_LINE('<EXPGEN> Start');
-  /* BUCLE PRINCIPAL CONTRATOS */
-  LOOP
-    FETCH C_CNTLIBRES INTO R_CNT;
-    EXIT WHEN C_CNTLIBRES%NOTFOUND;
-    
-    -- comprobamos si la relación contrato-persona ya se ha añadido
-    V_CNT_FOUND := 0;
-    EXECUTE IMMEDIATE 'SELECT COUNT(EXP_ID) FROM BATCH_DATOS_SALIDA
-              WHERE CNT_ID ='||R_CNT.CNT_ID
-    INTO V_CNT_FOUND;
-    
-    IF V_CNT_FOUND <> 0 THEN
-      CONTINUE;
-    END IF;
-    
-    DBMS_OUTPUT.PUT_LINE('<EXPGEN> Cnt Found ['||R_CNT.CNT_ID||']');
-    
-    -- generamos el id para el pŕoximo expediente
-    SELECT S_EXP_EXPEDIENTES.NEXTVAL INTO V_EXP_ID FROM DUAL;
-    
-    -- generamos el nombre que va a tener el expediente
-    -- se escapan las comillas simples, poniéndolas dos veces. Esto obliga a hacer un escapado sobre escapado
-    V_EXP_NAME := REPLACE(TRIM(R_CNT.PER_NOMBRE||' '||R_CNT.PER_APELLIDO1||' '||R_CNT.PER_APELLIDO2),'''','''''');
-    
-    -- otenemos el arq_id para toda la iteración
-    V_ARQ_ID := R_CNT.ARQ_ID;
-    
-    --obtenemos el ámbito de genración del expediente
-    V_AEX_CODIGO := R_CNT.RCF_DD_AER_CODIGO;
-    
-    DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> Start [CNT_ID= '||R_CNT.CNT_ID||'; NAME='||V_EXP_NAME||'; AEX_CODIGO='||V_AEX_CODIGO||'; ARQ_ID='||V_ARQ_ID||']');
-    
-    -- Insertamos el contrato de pase
+              CURSOR C_SIMU IS SELECT DISTINCT PER_ID, ARQ_ID FROM (
+                SELECT PER_ID, ARQ_ID, ROW_NUMBER() OVER (PARTITION BY PER_ID ORDER BY ARQ_DATE DESC) ORD
+                FROM ARP_ARQ_RECOBRO_PERSONA_SIM
+              ) WHERE ORD = 1;
 
-    EXECUTE IMMEDIATE 'INSERT INTO BATCH_DATOS_SALIDA
-        (EXP_ID,EXP_DESCRIPCION,EXP_MANUAL,DD_AEX_CODIGO,DD_EEX_ID,DD_EST_ID,EXP_FECHA_EST_ID,OFI_ID,CNT_ID,PER_ID,ARQ_ID,CEX_PASE,PEX_PASE,CNT_PER_ARRASTRE)
-      VALUES('||V_EXP_ID||' 		-- EXPEDIENTE
-       , '''||V_EXP_NAME||''' 	-- DESCRIPCIÓN
-       , 0 		-- MANUAL
-       , '''||V_AEX_CODIGO||''' -- ÁMBITO DEL EXPEDIENTE
-       , '||C_EST_ID||' 		-- ESTADO DEL EXPEDIENTE
-       , '||C_ITI_ID||' 		-- ESTADO DEL ITINERARIO
-       , sysdate 	-- FECHA ESTADO ITINERARIO
-       , '||R_CNT.OFI_ID||' 	-- OFICINA
-       , '||R_CNT.CNT_ID||' 	-- CONTRATO 
-       , '||R_CNT.PER_ID||' 	-- PERSONA
-       , '||V_ARQ_ID||' 	-- ARQUETIPO
-       , 1		-- CEX_PASE
-       , 1		-- PEX_PASE
-       , '||R_CNT.CNT_PER_ARRASTRE||' 	-- FLAG_ARRASTRE
-       )';    
-    
-    V_CEX_PASE := R_CNT.CNT_ID;
-    V_PEX_PASE := R_CNT.PER_ID;
-    
-    -- Insertamos los titulares del contrato de pase.
-    IF C_TITULARES%ISOPEN THEN
-      CLOSE C_TITULARES;
-    END IF;
-    OPEN C_TITULARES(R_CNT.CNT_ID);
-    LOOP
-      FETCH C_TITULARES INTO R_TIT;
-      EXIT WHEN C_TITULARES%NOTFOUND;
-      DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> <PERSON> Start [PER_ID= '||R_TIT.PER_ID||']');
-      -- comprobamos que no hayamos metido a la persona como interviniente del contrato'
-      V_PER_FOUND := 0;
-      EXECUTE IMMEDIATE 'SELECT COUNT(PER_ID) FROM BATCH_DATOS_SALIDA
-              WHERE CNT_ID ='||R_TIT.CNT_ID||' AND PER_ID ='||R_TIT.PER_ID
-      INTO V_PER_FOUND;
-      -- si no hemos añadido a la persona
-      IF V_PER_FOUND = 0 THEN 
-        DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> <PERSON> Insert [PER_ID= '||R_TIT.PER_ID||']');
-        
-        IF (V_CEX_PASE = R_TIT.CNT_ID) THEN V_ES_CNT_PASE := 1; ELSE V_ES_CNT_PASE := 0; END IF;
-        IF (V_PEX_PASE = R_TIT.PER_ID) THEN V_ES_PER_PASE := 1; ELSE V_ES_PER_PASE := 0; END IF;
-        
-        EXECUTE IMMEDIATE 'INSERT INTO BATCH_DATOS_SALIDA
-            (EXP_ID,EXP_DESCRIPCION,EXP_MANUAL,DD_AEX_CODIGO,DD_EEX_ID,DD_EST_ID,EXP_FECHA_EST_ID,OFI_ID,CNT_ID,PER_ID,ARQ_ID,CEX_PASE,PEX_PASE,CNT_PER_ARRASTRE)
-          VALUES('||V_EXP_ID||' 		-- EXPEDIENTE
-			     , '''||V_EXP_NAME||''' 	-- DESCRIPCIÓN
-			     , 0 		-- MANUAL
-			     , '''||V_AEX_CODIGO||''' -- ÁMBITO DEL EXPEDIENTE
-			     , '||C_EST_ID||' 		-- ESTADO DEL EXPEDIENTE
-			     , '||C_ITI_ID||' 		-- ESTADO DEL ITINERARIO
-			     , sysdate 	-- FECHA ESTADO ITINERARIO
-			     , '||R_TIT.OFI_ID||' 	-- OFICINA
-			     , '||R_TIT.CNT_ID||' 	-- CONTRATO 
-			     , '||R_TIT.PER_ID||' 	-- PERSONA
-			     , '||V_ARQ_ID||' 	-- ARQUETIPO
-			     , '||V_ES_CNT_PASE||'		-- CEX_PASE
-			     , '||V_ES_PER_PASE||'		-- PEX_PASE
-           , '||R_TIT.CNT_PER_ARRASTRE||' 	-- FLAG_ARRASTRE
-           )';
-      END IF; --fin si no hemos añadido a la persona
-      -- insertamos personas del grupo si hace falta
-      IF ((R_TIT.PER_VALIDA = 1) AND (R_TIT.CNT_PER_ARRASTRE = 1) AND (V_AEX_CODIGO IN ('CPGRA', 'CSGRA'))) THEN
-         IF C_GRUPO%ISOPEN THEN
-           CLOSE C_GRUPO;
-         END IF;
-         OPEN C_GRUPO(R_TIT.PER_ID);
-         -- inicio bucle grupos
-         LOOP
-          FETCH C_GRUPO INTO R_GRUPO;
-          EXIT WHEN C_GRUPO%NOTFOUND;
-          
-          DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> <PERSON> <GROUP> Member [PER_ID= '||R_GRUPO.PER_ID||']');
-          IF (V_CEX_PASE = R_GRUPO.CNT_ID) THEN V_ES_CNT_PASE := 1; ELSE V_ES_CNT_PASE := 0; END IF;
-          IF (V_PEX_PASE = R_GRUPO.PER_ID) THEN V_ES_PER_PASE := 1; ELSE V_ES_PER_PASE := 0; END IF;
-          
-          IF (R_GRUPO.CNT_PER_ARRASTRE = 1) THEN
-            EXECUTE IMMEDIATE 'INSERT INTO BATCH_DATOS_SALIDA
-                (EXP_ID,EXP_DESCRIPCION,EXP_MANUAL,DD_AEX_CODIGO,DD_EEX_ID,DD_EST_ID,EXP_FECHA_EST_ID,OFI_ID,CNT_ID,PER_ID,ARQ_ID,CEX_PASE,PEX_PASE,CNT_PER_ARRASTRE)
-              VALUES('||V_EXP_ID||' 		-- EXPEDIENTE
-              , '''||V_EXP_NAME||''' 	-- DESCRIPCIÓN
-              , 0 		-- MANUAL
-              , '''||V_AEX_CODIGO||''' -- ÁMBITO DEL EXPEDIENTE
-              , '||C_EST_ID||' 		-- ESTADO DEL EXPEDIENTE
-              , '||C_ITI_ID||' 		-- ESTADO DEL ITINERARIO
-              , sysdate 	-- FECHA ESTADO ITINERARIO
-              , '||R_GRUPO.OFI_ID||' 	-- OFICINA
-              , '||R_GRUPO.CNT_ID||' 	-- CONTRATO 
-              , '||R_GRUPO.PER_ID||' 	-- PERSONA
-              , '||V_ARQ_ID||' 	-- ARQUETIPO
-              , '||V_ES_CNT_PASE||'		-- CEX_PASE
-              , '||V_ES_PER_PASE||'		-- PEX_PASE
-              , '||R_TIT.CNT_PER_ARRASTRE||' 	-- FLAG_ARRASTRE
-            )';
-          END IF;
-          
-         END LOOP;-- fin bucle grupos
-         CLOSE C_GRUPO;
-      END IF;-- fin insertar personas del grupo si hace falta
-      
-      DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> <PERSON> End  [PER_ID= '||R_TIT.PER_ID||']');
-    END LOOP;
-    CLOSE C_TITULARES;
-    -- fin bucle titulares contrato de pase
-   
-    -- inicio primera generación si hace falta
-    IF V_AEX_CODIGO IN ('CPGRA', 'CSGRA') THEN
-      DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> <1st GENERATION> Start [EXP_ID= '||V_EXP_ID||']');
-      IF C_NEXTGEN_BYPER%ISOPEN THEN
-        CLOSE C_NEXTGEN_BYPER;
-      END IF;
-      OPEN C_NEXTGEN_BYPER(V_EXP_ID);
-      -- bucle pivotando por personas
-      -- buscamos nuevos contratos de las personas del expediente
-      -- aquí vamos a tener en cuenta el flag de arrastre.
-      LOOP
-        FETCH C_NEXTGEN_BYPER INTO R_NGPER;
-        EXIT WHEN C_NEXTGEN_BYPER%NOTFOUND;
-        
-        IF (R_NGPER.CNT_PER_ARRASTRE = 1) THEN
-          DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> <1st GENERATION> Add by PER [PER_ID='||R_NGPER.PER_ID||'; CNT_ID='||R_NGPER.CNT_ID ||']');
-          IF (V_CEX_PASE = R_NGPER.CNT_ID) THEN V_ES_CNT_PASE := 1; ELSE V_ES_CNT_PASE := 0; END IF;
-          IF (V_PEX_PASE = R_NGPER.PER_ID) THEN V_ES_PER_PASE := 1; ELSE V_ES_PER_PASE := 0; END IF;
-        
-          EXECUTE IMMEDIATE 'INSERT INTO BATCH_DATOS_SALIDA
-                (EXP_ID,EXP_DESCRIPCION,EXP_MANUAL,DD_AEX_CODIGO,DD_EEX_ID,DD_EST_ID,EXP_FECHA_EST_ID,OFI_ID,CNT_ID,PER_ID,ARQ_ID,CEX_PASE,PEX_PASE,CNT_PER_ARRASTRE)
-              VALUES('||V_EXP_ID||' 		-- EXPEDIENTE
-              , '''||V_EXP_NAME||''' 	-- DESCRIPCIÓN
-              , 0 		-- MANUAL
-              , '''||V_AEX_CODIGO||''' -- ÁMBITO DEL EXPEDIENTE
-              , '||C_EST_ID||' 		-- ESTADO DEL EXPEDIENTE
-              , '||C_ITI_ID||' 		-- ESTADO DEL ITINERARIO
-              , sysdate 	-- FECHA ESTADO ITINERARIO
-              , '||R_NGPER.OFI_ID||' 	-- OFICINA
-              , '||R_NGPER.CNT_ID||' 	-- CONTRATO 
-              , '||R_NGPER.PER_ID||' 	-- PERSONA
-              , '||V_ARQ_ID||' 	-- ARQUETIPO
-              , '||V_ES_CNT_PASE||'		-- CEX_PASE
-              , '||V_ES_PER_PASE||'		-- PEX_PASE
-              , '||R_NGPER.CNT_PER_ARRASTRE||' 	-- FLAG_ARRASTRE
-            )';
-          END IF;
-        
-      END LOOP; -- fin bucle pivotando por personas
-      
-      CLOSE C_NEXTGEN_BYPER;
-      
-      IF C_NEXTGEN_BYCNT%ISOPEN THEN
-        CLOSE C_NEXTGEN_BYCNT;
-      END IF;
-      OPEN C_NEXTGEN_BYCNT(V_EXP_ID);
-      -- bucle pivontando por contratos
-      -- Buscamos nuevas personas
-      -- No tenemos en cuenta criterios de arrastre.
-      LOOP
-        FETCH C_NEXTGEN_BYCNT INTO R_NGCNT;
-        EXIT WHEN C_NEXTGEN_BYCNT%NOTFOUND;
-        
-        DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> <1st GENERATION> Add by CNT [PER_ID='||R_NGCNT.PER_ID||'; CNT_ID='||R_NGCNT.CNT_ID ||']');
-        IF (V_CEX_PASE = R_NGCNT.CNT_ID) THEN V_ES_CNT_PASE := 1; ELSE V_ES_CNT_PASE := 0; END IF;
-        IF (V_PEX_PASE = R_NGCNT.PER_ID) THEN V_ES_PER_PASE := 1; ELSE V_ES_PER_PASE := 0; END IF;
-        
-        EXECUTE IMMEDIATE 'INSERT INTO BATCH_DATOS_SALIDA
-              (EXP_ID,EXP_DESCRIPCION,EXP_MANUAL,DD_AEX_CODIGO,DD_EEX_ID,DD_EST_ID,EXP_FECHA_EST_ID,OFI_ID,CNT_ID,PER_ID,ARQ_ID,CEX_PASE,PEX_PASE,CNT_PER_ARRASTRE)
-            VALUES('||V_EXP_ID||' 		-- EXPEDIENTE
-            , '''||V_EXP_NAME||''' 	-- DESCRIPCIÓN
-            , 0 		-- MANUAL
-            , '''||V_AEX_CODIGO||''' -- ÁMBITO DEL EXPEDIENTE
-            , '||C_EST_ID||' 		-- ESTADO DEL EXPEDIENTE
-            , '||C_ITI_ID||' 		-- ESTADO DEL ITINERARIO
-            , sysdate 	-- FECHA ESTADO ITINERARIO
-            , '||R_NGCNT.OFI_ID||' 	-- OFICINA
-            , '||R_NGCNT.CNT_ID||' 	-- CONTRATO 
-            , '||R_NGCNT.PER_ID||' 	-- PERSONA
-            , '||V_ARQ_ID||' 	-- ARQUETIPO
-            , '||V_ES_CNT_PASE||'		-- CEX_PASE
-			      , '||V_ES_PER_PASE||'		-- PEX_PASEE
-            , '||R_NGCNT.CNT_PER_ARRASTRE||' 	-- FLAG_ARRASTRE
-           )';
-      END LOOP; -- fin bucle pivotando por contratos
-      CLOSE C_NEXTGEN_BYCNT;
-      DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> <1st GENERATION> End   [EXP_ID= '||V_EXP_ID||']');
-    END IF; -- fin primera generacion si hace falta
-     
-    -- inicio segunda generación si hace falta
-    IF V_AEX_CODIGO IN ('CSGRA') THEN
-      DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> <2nd GENERATION> Start [EXP_ID= '||V_EXP_ID||']');
-      IF C_NEXTGEN_BYPER%ISOPEN THEN
-        CLOSE C_NEXTGEN_BYPER;
-      END IF;
-      OPEN C_NEXTGEN_BYPER(V_EXP_ID);
-      -- bucle pivotando por personas
-      LOOP
-        FETCH C_NEXTGEN_BYPER INTO R_NGPER;
-        EXIT WHEN C_NEXTGEN_BYPER%NOTFOUND;
-        
-        DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> <2nd GENERATION> Add by PER [PER_ID='||R_NGPER.PER_ID||'; CNT_ID='||R_NGPER.CNT_ID ||']');
-        IF (V_CEX_PASE = R_NGPER.CNT_ID) THEN V_ES_CNT_PASE := 1; ELSE V_ES_CNT_PASE := 0; END IF;
-        IF (V_PEX_PASE = R_NGPER.PER_ID) THEN V_ES_PER_PASE := 1; ELSE V_ES_PER_PASE := 0; END IF;
-        
-        EXECUTE IMMEDIATE 'INSERT INTO BATCH_DATOS_SALIDA
-              (EXP_ID,EXP_DESCRIPCION,EXP_MANUAL,DD_AEX_CODIGO,DD_EEX_ID,DD_EST_ID,EXP_FECHA_EST_ID,OFI_ID,CNT_ID,PER_ID,ARQ_ID,CEX_PASE,PEX_PASE,CNT_PER_ARRASTRE)
-            VALUES('||V_EXP_ID||' 		-- EXPEDIENTE
-            , '''||V_EXP_NAME||''' 	-- DESCRIPCIÓN
-            , 0 		-- MANUAL
-            , '''||V_AEX_CODIGO||''' -- ÁMBITO DEL EXPEDIENTE
-            , '||C_EST_ID||' 		-- ESTADO DEL EXPEDIENTE
-            , '||C_ITI_ID||' 		-- ESTADO DEL ITINERARIO
-            , sysdate 	-- FECHA ESTADO ITINERARIO
-            , '||R_NGPER.OFI_ID||' 	-- OFICINA
-            , '||R_NGPER.CNT_ID||' 	-- CONTRATO 
-            , '||R_NGPER.PER_ID||' 	-- PERSONA
-            , '||V_ARQ_ID||' 	-- ARQUETIPO
-            , '||V_ES_CNT_PASE||'		-- CEX_PASE
-			      , '||V_ES_PER_PASE||'		-- PEX_PASEE
-            , '||R_NGPER.CNT_PER_ARRASTRE||' 	-- FLAG_ARRASTRE
-           )';
-        
-      END LOOP; -- fin bucle pivotando por personas
-      CLOSE C_NEXTGEN_BYPER;
-      
-      IF C_NEXTGEN_BYCNT%ISOPEN THEN
-        CLOSE C_NEXTGEN_BYCNT;
-      END IF;
-      OPEN C_NEXTGEN_BYCNT(V_EXP_ID);
-      -- bucle pivontando por contratos
-      LOOP
-        FETCH C_NEXTGEN_BYCNT INTO R_NGCNT;
-        EXIT WHEN C_NEXTGEN_BYCNT%NOTFOUND;
-        
-        DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> <2nd GENERATION> Add by CNT [PER_ID='||R_NGCNT.PER_ID||'; CNT_ID='||R_NGCNT.CNT_ID ||']');
-        IF (V_CEX_PASE = R_NGCNT.CNT_ID) THEN V_ES_CNT_PASE := 1; ELSE V_ES_CNT_PASE := 0; END IF;
-        IF (V_PEX_PASE = R_NGCNT.PER_ID) THEN V_ES_PER_PASE := 1; ELSE V_ES_PER_PASE := 0; END IF;
-        
-        EXECUTE IMMEDIATE 'INSERT INTO BATCH_DATOS_SALIDA
-              (EXP_ID,EXP_DESCRIPCION,EXP_MANUAL,DD_AEX_CODIGO,DD_EEX_ID,DD_EST_ID,EXP_FECHA_EST_ID,OFI_ID,CNT_ID,PER_ID,ARQ_ID,CEX_PASE,PEX_PASE,CNT_PER_ARRASTRE)
-            VALUES('||V_EXP_ID||' 		-- EXPEDIENTE
-            , '''||V_EXP_NAME||''' 	-- DESCRIPCIÓN
-            , 0 		-- MANUAL
-            , '''||V_AEX_CODIGO||''' -- ÁMBITO DEL EXPEDIENTE
-            , '||C_EST_ID||' 		-- ESTADO DEL EXPEDIENTE
-            , '||C_ITI_ID||' 		-- ESTADO DEL ITINERARIO
-            , sysdate 	-- FECHA ESTADO ITINERARIO
-            , '||R_NGCNT.OFI_ID||' 	-- OFICINA
-            , '||R_NGCNT.CNT_ID||' 	-- CONTRATO 
-            , '||R_NGCNT.PER_ID||' 	-- PERSONA
-            , '||V_ARQ_ID||' 	-- ARQUETIPO
-            , '||V_ES_CNT_PASE||'		-- CEX_PASE
-			      , '||V_ES_PER_PASE||'		-- PEX_PASEE
-            , '||R_NGCNT.CNT_PER_ARRASTRE||' 	-- FLAG_ARRASTRE
-           )';
-      END LOOP; -- fin bucle pivotando por contratos
-      CLOSE C_NEXTGEN_BYCNT;
-      DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> <2nd GENERATION> End   [EXP_ID= '||V_EXP_ID||']');
-    END IF; -- fin primera generacion si hace falta
-    
-    DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> End   [CNT_ID= '||R_CNT.CNT_ID||'; NAME='||V_EXP_NAME||'; AEX_CODIGO='||V_AEX_CODIGO||'; ARQ_ID='||V_ARQ_ID||']');
-    DBMS_OUTPUT.PUT_LINE('');
+              TYPE T_ARP IS TABLE OF C_PROD%ROWTYPE INDEX BY BINARY_INTEGER;
+              V_ARP T_ARP;
 
-  END LOOP;
-  CLOSE C_CNTLIBRES;
-  /* BUCLE PRINCIPAL CONTRATOS */
-  DBMS_OUTPUT.PUT_LINE('<EXPGEN> End');
-   COMMIT;
-END;
-		]]>
-	</entry>
-	
-			<entry key="recobro.idxcreate.batch_datos_salida.Oracle9iDialect">
-		<![CDATA[
-BEGIN
-  EXECUTE IMMEDIATE 'ANALYZE TABLE BATCH_DATOS_SALIDA COMPUTE STATISTICS';
+              V_MODE VARCHAR2(20 CHAR);
+            BEGIN
+              SELECT RERA_MODE INTO V_MODE FROM BATCH_RERA_CONTROL_PROC;
 
-END;
-		]]>
-	</entry>
+
+              IF (V_MODE = 'PROD') THEN
+                OPEN C_PROD;
+              ELSE
+                OPEN C_SIMU;
+              END IF;
+
+              LOOP
+                IF (V_MODE = 'PROD') THEN
+                  FETCH C_PROD BULK COLLECT INTO V_ARP LIMIT 1000;
+                ELSE
+                  FETCH C_SIMU BULK COLLECT INTO V_ARP LIMIT 1000;
+                END IF;
+
+                EXIT WHEN V_ARP.COUNT = 0;
+
+                FORALL I IN 1..V_ARP.COUNT
+                INSERT INTO TMP_PER_ARQUETIPO (PER_ID, ARQ_ID) VALUES (V_ARP(I).PER_ID, V_ARP(I).ARQ_ID);
+
+
+              END LOOP;
+
+              IF (V_MODE = 'PROD') THEN
+                CLOSE C_PROD;
+              ELSE
+                CLOSE C_SIMU;
+              END IF;
+
+              COMMIT;
+              OPERACION_DDL.DDL_TABLE('STATS','TMP_PER_ARQUETIPO'); --estimate
+            END;
+        ]]>
+    </entry>
+
+    <entry key="recobro.insert.tmp_per_filtradas.Oracle10gDialect">
+        <![CDATA[
+            INSERT INTO TMP_PER_FILTRADAS
+            SELECT DISTINCT PER_ID FROM (
+              SELECT TMP.PER_ID
+              FROM TMP_PER_ARQUETIPO TMP
+                INNER JOIN (SELECT DISTINCT RCF_CAR_ID, RCF_DD_TCE_CODIGO
+                                FROM BATCH_RCF_ENTRADA
+                                WHERE RCF_DD_EES_CODIGO = 'LBR') RCFE
+                            ON TMP.ARQ_ID = RCFE.RCF_CAR_ID
+              WHERE RCFE.RCF_DD_TCE_CODIGO = 'FIL'
+              UNION
+              SELECT PER_ID
+              FROM BATCH_DATOS_EXCEPTUADOS
+              WHERE PER_ID IS NOT NULL
+            )
+        ]]>
+    </entry>
+
+    <entry key="recobro.idxcreate.tmp_per_filtradas.Oracle10gDialect">
+        <![CDATA[
+            BEGIN
+              OPERACION_DDL.DDL_INDEX('CREATE','IDX_TMP_PER_FILTRADAS_1'); --rebuild
+              OPERACION_DDL.DDL_TABLE('STATS','TMP_PER_FILTRADAS'); --estimate
+            END;
+        ]]>
+    </entry>
+
+    <entry key="recobro.insert.tmp_cnt_per_validas.Oracle10gDialect">
+        <![CDATA[
+            INSERT INTO TMP_CNT_PER_VALIDAS (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN, CNT_PER_ARRASTRE)
+            SELECT DISTINCT CPE.CNT_ID, CPE.PER_ID, CPE.CNT_PER_TIN, CPE.CNT_PER_OIN, CPE.CNT_PER_ARRASTRE
+            FROM BATCH_DATOS_CNT_PER CPE
+              LEFT JOIN BATCH_DATOS_EXCEPTUADOS EXC ON CPE.CNT_ID = EXC.CNT_ID
+              LEFT JOIN TMP_PER_FILTRADAS PF ON CPE.PER_ID = PF.PER_ID
+            WHERE EXC.EXC_ID IS NULL AND PF.PER_ID IS NULL
+
+        ]]>
+    </entry>
+
+
+    <entry key="recobro.idxcreate.tmp_cnt_per_validas.Oracle10gDialect">
+        <![CDATA[
+            BEGIN
+              OPERACION_DDL.DDL_INDEX('CREATE','IDX_TMP_CNT_PER_VALIDAS_1'); --rebuild
+              OPERACION_DDL.DDL_INDEX('CREATE','IDX_TMP_CNT_PER_VALIDAS_2'); --rebuild
+              OPERACION_DDL.DDL_INDEX('CREATE','IDX_TMP_CNT_PER_VALIDAS_3'); --rebuild
+              OPERACION_DDL.DDL_TABLE('STATS','TMP_CNT_PER_VALIDAS'); --estimate
+            END;
+        ]]>
+    </entry>
+
+    <!-- PASO 3 - EJECUTAMOS EL PL/SQL DEL PROCESO DE CREACIÓN DE EXPEDIENTES -->
+    <entry key="recobro.insert.batch_datos_salida.Oracle10gDialect">
+        <![CDATA[
+            DECLARE
+              /*
+               * CONSTANTES
+               */
+              C_EST_ID NUMBER(16);
+              C_ITI_ID NUMBER(16);
+              /* CURSORES */
+              -- Este cursor nos devuelve las relaciones entre contrato y persona, libres, con el arquetipo ya calculado.
+              CURSOR C_CNTLIBRES IS
+                    SELECT T.*
+                    FROM TMP_REC_CNT_LIBRES_ARQ_REC_EXT T
+                    WHERE NOT EXISTS (SELECT EXP_ID FROM BATCH_DATOS_SALIDA WHERE CNT_ID = T.CNT_ID AND PER_ID = T.PER_ID)
+                        AND CNT_PER_ARRASTRE = 1
+                    ORDER BY T.ORD_ID;
+
+              R_CNT C_CNTLIBRES%ROWTYPE;
+
+              -- este cursor sirve para obtener los INTERVINIENTES de un contrato
+              CURSOR C_TITULARES(P_CNT_ID NUMBER) IS SELECT DISTINCT T.PER_ID, T.CNT_ID, CNT.OFI_ID
+                  , T.CNT_PER_ARRASTRE
+                  , CASE WHEN TV.PER_ID IS NOT NULL THEN 1 ELSE 0 END AS PER_VALIDA
+                FROM BATCH_DATOS_CNT_PER T
+                  JOIN BATCH_DATOS_CNT CNT ON T.CNT_ID = CNT.CNT_ID
+                  LEFT JOIN TMP_CNT_PER_VALIDAS TV ON T.PER_ID = TV.PER_ID AND T.CNT_ID = TV.CNT_ID
+                WHERE T.CNT_ID = P_CNT_ID;
+
+              R_TIT C_TITULARES%ROWTYPE;
+
+              -- este cursor sirve para obtener las relaciones de las personas del grupo de una dada
+              CURSOR C_GRUPO(P_PER_ID NUMBER) IS SELECT T.CNT_ID, T.PER_ID, CNT.OFI_ID, T.CNT_PER_ARRASTRE
+                FROM BATCH_DATOS_GCL GCL1
+                  JOIN BATCH_DATOS_GCL GCL2 ON GCL1.GCL_ID = GCL2.GCL_ID
+                  JOIN TMP_CNT_PER_VALIDAS T ON GCL2.PER_ID = T.PER_ID AND T.PER_ID <> P_PER_ID
+                  JOIN BATCH_DATOS_CNT CNT ON T.CNT_ID = CNT.CNT_ID
+                WHERE NOT EXISTS (SELECT EXP_ID FROM BATCH_DATOS_SALIDA WHERE CNT_ID = T.CNT_ID AND PER_ID = T.PER_ID)
+                    AND EXISTS (SELECT 1 FROM TMP_REC_CNT_LIBRES_ARQ_REC_EXT WHERE CNT_ID = T.CNT_ID)
+                    AND GCL1.PER_ID = P_PER_ID
+                  AND T.CNT_PER_ARRASTRE = 1;
+
+              R_GRUPO C_GRUPO%ROWTYPE;
+
+              -- este cursor sirve para obtener la próxima generación de un expediente, pivotando por personas
+              -- buscamos nuevos contratos de las personas del expediente
+              -- Filtramos por
+              --    Que el contrato esté libre (no exceptuado)
+              --    Que estén relacionados con personas
+              --      incluidas en el expediente
+              --      que no estén filtradas ni exceptuadas
+              --      que sean de arrastre
+              CURSOR C_NEXTGEN_BYPER(P_EXP_ID NUMBER) IS
+              WITH PERSONAS AS (
+                SELECT DISTINCT PER_ID FROM BATCH_DATOS_SALIDA WHERE EXP_ID = P_EXP_ID AND CNT_PER_ARRASTRE = 1
+              ), PER_VALIDAS AS (
+                SELECT  DISTINCT PER_ID FROM TMP_CNT_PER_VALIDAS WHERE PER_ID IN (SELECT PER_ID FROM PERSONAS)
+              ),RELACIONES_LIBRES AS ( -- Sólo de las personas incluidas en el exp y válidas
+                SELECT  CNT_ID, PER_ID, OFI_ID, CNT_PER_ARRASTRE
+                FROM TMP_REC_CNT_LIBRES_ARQ_REC_EXT
+                WHERE PER_ID IN (SELECT PER_ID FROM PER_VALIDAS)
+                  AND CNT_PER_ARRASTRE = 1
+              )
+              SELECT T.CNT_ID, T.PER_ID, CNT.OFI_ID
+                    , T.CNT_PER_ARRASTRE
+              FROM RELACIONES_LIBRES T
+                    JOIN BATCH_DATOS_CNT CNT ON T.CNT_ID = CNT.CNT_ID
+              WHERE NOT EXISTS (SELECT EXP_ID FROM BATCH_DATOS_SALIDA WHERE CNT_ID = T.CNT_ID AND PER_ID = T.PER_ID);
+
+              R_NGPER C_NEXTGEN_BYPER%ROWTYPE;
+
+              -- este cursor sirve para obtener la próxima generación de un expediente, pivotando por contratos
+              CURSOR C_NEXTGEN_BYCNT(P_EXP_ID NUMBER) IS SELECT T.CNT_ID, T.PER_ID, CNT.OFI_ID
+                      , T.CNT_PER_ARRASTRE
+                  FROM TMP_CNT_PER_VALIDAS T
+                    JOIN BATCH_DATOS_CNT CNT ON T.CNT_ID = CNT.CNT_ID
+                  WHERE NOT EXISTS (SELECT EXP_ID FROM BATCH_DATOS_SALIDA WHERE CNT_ID = T.CNT_ID AND PER_ID = T.PER_ID)
+                    AND EXISTS (SELECT CNT_ID FROM BATCH_DATOS_SALIDA WHERE EXP_ID = P_EXP_ID AND CNT_ID = T.CNT_ID);
+
+              R_NGCNT C_NEXTGEN_BYCNT%ROWTYPE;
+              /* VARIABLES */
+              V_EXP_ID NUMBER(16);
+              V_ARQ_ID NUMBER(16);
+              V_EXP_NAME VARCHAR2(250 CHAR);
+              V_AEX_CODIGO VARCHAR2(10 CHAR);
+              V_CNT_FOUND NUMBER(16);
+              V_PER_FOUND NUMBER(16);
+              V_CEX_PASE NUMBER(16);
+              V_PEX_PASE NUMBER(16);
+              V_ES_CNT_PASE NUMBER(1);
+              V_ES_PER_PASE NUMBER(1);
+
+            BEGIN
+              /*
+               * CONSTANTES
+               */
+              C_EST_ID := 2;
+              C_ITI_ID := 3;
+
+              IF NOT C_CNTLIBRES%ISOPEN THEN
+                OPEN C_CNTLIBRES;
+              END IF;
+
+              DBMS_OUTPUT.PUT_LINE('<EXPGEN> Start');
+              /* BUCLE PRINCIPAL CONTRATOS */
+              LOOP
+                FETCH C_CNTLIBRES INTO R_CNT;
+                EXIT WHEN C_CNTLIBRES%NOTFOUND;
+
+                -- comprobamos si la relación contrato-persona ya se ha añadido
+                V_CNT_FOUND := 0;
+                EXECUTE IMMEDIATE 'SELECT COUNT(EXP_ID) FROM BATCH_DATOS_SALIDA
+                          WHERE CNT_ID ='||R_CNT.CNT_ID
+                INTO V_CNT_FOUND;
+
+                IF V_CNT_FOUND <> 0 THEN
+                  CONTINUE;
+                END IF;
+
+                DBMS_OUTPUT.PUT_LINE('<EXPGEN> Cnt Found ['||R_CNT.CNT_ID||']');
+
+                -- generamos el id para el pŕoximo expediente
+                SELECT S_EXP_EXPEDIENTES.NEXTVAL INTO V_EXP_ID FROM DUAL;
+
+                -- generamos el nombre que va a tener el expediente
+                -- se escapan las comillas simples, poniéndolas dos veces. Esto obliga a hacer un escapado sobre escapado
+                V_EXP_NAME := REPLACE(TRIM(R_CNT.PER_NOMBRE||' '||R_CNT.PER_APELLIDO1||' '||R_CNT.PER_APELLIDO2),'''','''''');
+
+                -- otenemos el arq_id para toda la iteración
+                V_ARQ_ID := R_CNT.ARQ_ID;
+
+                --obtenemos el ámbito de genración del expediente
+                V_AEX_CODIGO := R_CNT.RCF_DD_AER_CODIGO;
+
+                DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> Start [CNT_ID= '||R_CNT.CNT_ID||'; NAME='||V_EXP_NAME||'; AEX_CODIGO='||V_AEX_CODIGO||'; ARQ_ID='||V_ARQ_ID||']');
+
+                -- Insertamos el contrato de pase
+
+                EXECUTE IMMEDIATE 'INSERT INTO BATCH_DATOS_SALIDA
+                    (EXP_ID,EXP_DESCRIPCION,EXP_MANUAL,DD_AEX_CODIGO,DD_EEX_ID,DD_EST_ID,EXP_FECHA_EST_ID,OFI_ID,CNT_ID,PER_ID,ARQ_ID,CEX_PASE,PEX_PASE,CNT_PER_ARRASTRE)
+                  VALUES('||V_EXP_ID||'         -- EXPEDIENTE
+                   , '''||V_EXP_NAME||'''   -- DESCRIPCIÓN
+                   , 0      -- MANUAL
+                   , '''||V_AEX_CODIGO||''' -- ÁMBITO DEL EXPEDIENTE
+                   , '||C_EST_ID||'         -- ESTADO DEL EXPEDIENTE
+                   , '||C_ITI_ID||'         -- ESTADO DEL ITINERARIO
+                   , sysdate    -- FECHA ESTADO ITINERARIO
+                   , '||R_CNT.OFI_ID||'     -- OFICINA
+                   , '||R_CNT.CNT_ID||'     -- CONTRATO
+                   , '||R_CNT.PER_ID||'     -- PERSONA
+                   , '||V_ARQ_ID||'     -- ARQUETIPO
+                   , 1      -- CEX_PASE
+                   , 1      -- PEX_PASE
+                   , '||R_CNT.CNT_PER_ARRASTRE||'   -- FLAG_ARRASTRE
+                   )';
+
+                V_CEX_PASE := R_CNT.CNT_ID;
+                V_PEX_PASE := R_CNT.PER_ID;
+
+                -- Insertamos los titulares del contrato de pase.
+                IF C_TITULARES%ISOPEN THEN
+                  CLOSE C_TITULARES;
+                END IF;
+                OPEN C_TITULARES(R_CNT.CNT_ID);
+                LOOP
+                  FETCH C_TITULARES INTO R_TIT;
+                  EXIT WHEN C_TITULARES%NOTFOUND;
+                  DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> <PERSON> Start [PER_ID= '||R_TIT.PER_ID||']');
+                  -- comprobamos que no hayamos metido a la persona como interviniente del contrato'
+                  V_PER_FOUND := 0;
+                  EXECUTE IMMEDIATE 'SELECT COUNT(PER_ID) FROM BATCH_DATOS_SALIDA
+                          WHERE CNT_ID ='||R_TIT.CNT_ID||' AND PER_ID ='||R_TIT.PER_ID
+                  INTO V_PER_FOUND;
+                  -- si no hemos añadido a la persona
+                  IF V_PER_FOUND = 0 THEN
+                    DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> <PERSON> Insert [PER_ID= '||R_TIT.PER_ID||']');
+
+                    IF (V_CEX_PASE = R_TIT.CNT_ID) THEN V_ES_CNT_PASE := 1; ELSE V_ES_CNT_PASE := 0; END IF;
+                    IF (V_PEX_PASE = R_TIT.PER_ID) THEN V_ES_PER_PASE := 1; ELSE V_ES_PER_PASE := 0; END IF;
+
+                    EXECUTE IMMEDIATE 'INSERT INTO BATCH_DATOS_SALIDA
+                        (EXP_ID,EXP_DESCRIPCION,EXP_MANUAL,DD_AEX_CODIGO,DD_EEX_ID,DD_EST_ID,EXP_FECHA_EST_ID,OFI_ID,CNT_ID,PER_ID,ARQ_ID,CEX_PASE,PEX_PASE,CNT_PER_ARRASTRE)
+                      VALUES('||V_EXP_ID||'         -- EXPEDIENTE
+                             , '''||V_EXP_NAME||'''     -- DESCRIPCIÓN
+                             , 0        -- MANUAL
+                             , '''||V_AEX_CODIGO||''' -- ÁMBITO DEL EXPEDIENTE
+                             , '||C_EST_ID||'       -- ESTADO DEL EXPEDIENTE
+                             , '||C_ITI_ID||'       -- ESTADO DEL ITINERARIO
+                             , sysdate  -- FECHA ESTADO ITINERARIO
+                             , '||R_TIT.OFI_ID||'   -- OFICINA
+                             , '||R_TIT.CNT_ID||'   -- CONTRATO
+                             , '||R_TIT.PER_ID||'   -- PERSONA
+                             , '||V_ARQ_ID||'   -- ARQUETIPO
+                             , '||V_ES_CNT_PASE||'      -- CEX_PASE
+                             , '||V_ES_PER_PASE||'      -- PEX_PASE
+                       , '||R_TIT.CNT_PER_ARRASTRE||'   -- FLAG_ARRASTRE
+                       )';
+                  END IF; --fin si no hemos añadido a la persona
+                  -- insertamos personas del grupo si hace falta
+                  IF ((R_TIT.PER_VALIDA = 1) AND (R_TIT.CNT_PER_ARRASTRE = 1) AND (V_AEX_CODIGO IN ('CPGRA', 'CSGRA'))) THEN
+                     IF C_GRUPO%ISOPEN THEN
+                       CLOSE C_GRUPO;
+                     END IF;
+                     OPEN C_GRUPO(R_TIT.PER_ID);
+                     -- inicio bucle grupos
+                     LOOP
+                      FETCH C_GRUPO INTO R_GRUPO;
+                      EXIT WHEN C_GRUPO%NOTFOUND;
+
+                      DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> <PERSON> <GROUP> Member [PER_ID= '||R_GRUPO.PER_ID||']');
+                      IF (V_CEX_PASE = R_GRUPO.CNT_ID) THEN V_ES_CNT_PASE := 1; ELSE V_ES_CNT_PASE := 0; END IF;
+                      IF (V_PEX_PASE = R_GRUPO.PER_ID) THEN V_ES_PER_PASE := 1; ELSE V_ES_PER_PASE := 0; END IF;
+
+                      IF (R_GRUPO.CNT_PER_ARRASTRE = 1) THEN
+                        EXECUTE IMMEDIATE 'INSERT INTO BATCH_DATOS_SALIDA
+                            (EXP_ID,EXP_DESCRIPCION,EXP_MANUAL,DD_AEX_CODIGO,DD_EEX_ID,DD_EST_ID,EXP_FECHA_EST_ID,OFI_ID,CNT_ID,PER_ID,ARQ_ID,CEX_PASE,PEX_PASE,CNT_PER_ARRASTRE)
+                          VALUES('||V_EXP_ID||'         -- EXPEDIENTE
+                          , '''||V_EXP_NAME||'''    -- DESCRIPCIÓN
+                          , 0       -- MANUAL
+                          , '''||V_AEX_CODIGO||''' -- ÁMBITO DEL EXPEDIENTE
+                          , '||C_EST_ID||'      -- ESTADO DEL EXPEDIENTE
+                          , '||C_ITI_ID||'      -- ESTADO DEL ITINERARIO
+                          , sysdate     -- FECHA ESTADO ITINERARIO
+                          , '||R_GRUPO.OFI_ID||'    -- OFICINA
+                          , '||R_GRUPO.CNT_ID||'    -- CONTRATO
+                          , '||R_GRUPO.PER_ID||'    -- PERSONA
+                          , '||V_ARQ_ID||'  -- ARQUETIPO
+                          , '||V_ES_CNT_PASE||'     -- CEX_PASE
+                          , '||V_ES_PER_PASE||'     -- PEX_PASE
+                          , '||R_TIT.CNT_PER_ARRASTRE||'    -- FLAG_ARRASTRE
+                        )';
+                      END IF;
+
+                     END LOOP;-- fin bucle grupos
+                     CLOSE C_GRUPO;
+                  END IF;-- fin insertar personas del grupo si hace falta
+
+                  DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> <PERSON> End  [PER_ID= '||R_TIT.PER_ID||']');
+                END LOOP;
+                CLOSE C_TITULARES;
+                -- fin bucle titulares contrato de pase
+
+                -- inicio primera generación si hace falta
+                IF V_AEX_CODIGO IN ('CPGRA', 'CSGRA') THEN
+                  DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> <1st GENERATION> Start [EXP_ID= '||V_EXP_ID||']');
+                  IF C_NEXTGEN_BYPER%ISOPEN THEN
+                    CLOSE C_NEXTGEN_BYPER;
+                  END IF;
+                  OPEN C_NEXTGEN_BYPER(V_EXP_ID);
+                  -- bucle pivotando por personas
+                  -- buscamos nuevos contratos de las personas del expediente
+                  -- aquí vamos a tener en cuenta el flag de arrastre.
+                  LOOP
+                    FETCH C_NEXTGEN_BYPER INTO R_NGPER;
+                    EXIT WHEN C_NEXTGEN_BYPER%NOTFOUND;
+
+                    IF (R_NGPER.CNT_PER_ARRASTRE = 1) THEN
+                      DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> <1st GENERATION> Add by PER [PER_ID='||R_NGPER.PER_ID||'; CNT_ID='||R_NGPER.CNT_ID ||']');
+                      IF (V_CEX_PASE = R_NGPER.CNT_ID) THEN V_ES_CNT_PASE := 1; ELSE V_ES_CNT_PASE := 0; END IF;
+                      IF (V_PEX_PASE = R_NGPER.PER_ID) THEN V_ES_PER_PASE := 1; ELSE V_ES_PER_PASE := 0; END IF;
+
+                      EXECUTE IMMEDIATE 'INSERT INTO BATCH_DATOS_SALIDA
+                            (EXP_ID,EXP_DESCRIPCION,EXP_MANUAL,DD_AEX_CODIGO,DD_EEX_ID,DD_EST_ID,EXP_FECHA_EST_ID,OFI_ID,CNT_ID,PER_ID,ARQ_ID,CEX_PASE,PEX_PASE,CNT_PER_ARRASTRE)
+                          VALUES('||V_EXP_ID||'         -- EXPEDIENTE
+                          , '''||V_EXP_NAME||'''    -- DESCRIPCIÓN
+                          , 0       -- MANUAL
+                          , '''||V_AEX_CODIGO||''' -- ÁMBITO DEL EXPEDIENTE
+                          , '||C_EST_ID||'      -- ESTADO DEL EXPEDIENTE
+                          , '||C_ITI_ID||'      -- ESTADO DEL ITINERARIO
+                          , sysdate     -- FECHA ESTADO ITINERARIO
+                          , '||R_NGPER.OFI_ID||'    -- OFICINA
+                          , '||R_NGPER.CNT_ID||'    -- CONTRATO
+                          , '||R_NGPER.PER_ID||'    -- PERSONA
+                          , '||V_ARQ_ID||'  -- ARQUETIPO
+                          , '||V_ES_CNT_PASE||'     -- CEX_PASE
+                          , '||V_ES_PER_PASE||'     -- PEX_PASE
+                          , '||R_NGPER.CNT_PER_ARRASTRE||'  -- FLAG_ARRASTRE
+                        )';
+                      END IF;
+
+                  END LOOP; -- fin bucle pivotando por personas
+
+                  CLOSE C_NEXTGEN_BYPER;
+
+                  IF C_NEXTGEN_BYCNT%ISOPEN THEN
+                    CLOSE C_NEXTGEN_BYCNT;
+                  END IF;
+                  OPEN C_NEXTGEN_BYCNT(V_EXP_ID);
+                  -- bucle pivontando por contratos
+                  -- Buscamos nuevas personas
+                  -- No tenemos en cuenta criterios de arrastre.
+                  LOOP
+                    FETCH C_NEXTGEN_BYCNT INTO R_NGCNT;
+                    EXIT WHEN C_NEXTGEN_BYCNT%NOTFOUND;
+
+                    DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> <1st GENERATION> Add by CNT [PER_ID='||R_NGCNT.PER_ID||'; CNT_ID='||R_NGCNT.CNT_ID ||']');
+                    IF (V_CEX_PASE = R_NGCNT.CNT_ID) THEN V_ES_CNT_PASE := 1; ELSE V_ES_CNT_PASE := 0; END IF;
+                    IF (V_PEX_PASE = R_NGCNT.PER_ID) THEN V_ES_PER_PASE := 1; ELSE V_ES_PER_PASE := 0; END IF;
+
+                    EXECUTE IMMEDIATE 'INSERT INTO BATCH_DATOS_SALIDA
+                          (EXP_ID,EXP_DESCRIPCION,EXP_MANUAL,DD_AEX_CODIGO,DD_EEX_ID,DD_EST_ID,EXP_FECHA_EST_ID,OFI_ID,CNT_ID,PER_ID,ARQ_ID,CEX_PASE,PEX_PASE,CNT_PER_ARRASTRE)
+                        VALUES('||V_EXP_ID||'       -- EXPEDIENTE
+                        , '''||V_EXP_NAME||'''  -- DESCRIPCIÓN
+                        , 0         -- MANUAL
+                        , '''||V_AEX_CODIGO||''' -- ÁMBITO DEL EXPEDIENTE
+                        , '||C_EST_ID||'        -- ESTADO DEL EXPEDIENTE
+                        , '||C_ITI_ID||'        -- ESTADO DEL ITINERARIO
+                        , sysdate   -- FECHA ESTADO ITINERARIO
+                        , '||R_NGCNT.OFI_ID||'  -- OFICINA
+                        , '||R_NGCNT.CNT_ID||'  -- CONTRATO
+                        , '||R_NGCNT.PER_ID||'  -- PERSONA
+                        , '||V_ARQ_ID||'    -- ARQUETIPO
+                        , '||V_ES_CNT_PASE||'       -- CEX_PASE
+                              , '||V_ES_PER_PASE||'     -- PEX_PASEE
+                        , '||R_NGCNT.CNT_PER_ARRASTRE||'    -- FLAG_ARRASTRE
+                       )';
+                  END LOOP; -- fin bucle pivotando por contratos
+                  CLOSE C_NEXTGEN_BYCNT;
+                  DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> <1st GENERATION> End   [EXP_ID= '||V_EXP_ID||']');
+                END IF; -- fin primera generacion si hace falta
+
+                -- inicio segunda generación si hace falta
+                IF V_AEX_CODIGO IN ('CSGRA') THEN
+                  DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> <2nd GENERATION> Start [EXP_ID= '||V_EXP_ID||']');
+                  IF C_NEXTGEN_BYPER%ISOPEN THEN
+                    CLOSE C_NEXTGEN_BYPER;
+                  END IF;
+                  OPEN C_NEXTGEN_BYPER(V_EXP_ID);
+                  -- bucle pivotando por personas
+                  LOOP
+                    FETCH C_NEXTGEN_BYPER INTO R_NGPER;
+                    EXIT WHEN C_NEXTGEN_BYPER%NOTFOUND;
+
+                    DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> <2nd GENERATION> Add by PER [PER_ID='||R_NGPER.PER_ID||'; CNT_ID='||R_NGPER.CNT_ID ||']');
+                    IF (V_CEX_PASE = R_NGPER.CNT_ID) THEN V_ES_CNT_PASE := 1; ELSE V_ES_CNT_PASE := 0; END IF;
+                    IF (V_PEX_PASE = R_NGPER.PER_ID) THEN V_ES_PER_PASE := 1; ELSE V_ES_PER_PASE := 0; END IF;
+
+                    EXECUTE IMMEDIATE 'INSERT INTO BATCH_DATOS_SALIDA
+                          (EXP_ID,EXP_DESCRIPCION,EXP_MANUAL,DD_AEX_CODIGO,DD_EEX_ID,DD_EST_ID,EXP_FECHA_EST_ID,OFI_ID,CNT_ID,PER_ID,ARQ_ID,CEX_PASE,PEX_PASE,CNT_PER_ARRASTRE)
+                        VALUES('||V_EXP_ID||'       -- EXPEDIENTE
+                        , '''||V_EXP_NAME||'''  -- DESCRIPCIÓN
+                        , 0         -- MANUAL
+                        , '''||V_AEX_CODIGO||''' -- ÁMBITO DEL EXPEDIENTE
+                        , '||C_EST_ID||'        -- ESTADO DEL EXPEDIENTE
+                        , '||C_ITI_ID||'        -- ESTADO DEL ITINERARIO
+                        , sysdate   -- FECHA ESTADO ITINERARIO
+                        , '||R_NGPER.OFI_ID||'  -- OFICINA
+                        , '||R_NGPER.CNT_ID||'  -- CONTRATO
+                        , '||R_NGPER.PER_ID||'  -- PERSONA
+                        , '||V_ARQ_ID||'    -- ARQUETIPO
+                        , '||V_ES_CNT_PASE||'       -- CEX_PASE
+                              , '||V_ES_PER_PASE||'     -- PEX_PASEE
+                        , '||R_NGPER.CNT_PER_ARRASTRE||'    -- FLAG_ARRASTRE
+                       )';
+
+                  END LOOP; -- fin bucle pivotando por personas
+                  CLOSE C_NEXTGEN_BYPER;
+
+                  IF C_NEXTGEN_BYCNT%ISOPEN THEN
+                    CLOSE C_NEXTGEN_BYCNT;
+                  END IF;
+                  OPEN C_NEXTGEN_BYCNT(V_EXP_ID);
+                  -- bucle pivontando por contratos
+                  LOOP
+                    FETCH C_NEXTGEN_BYCNT INTO R_NGCNT;
+                    EXIT WHEN C_NEXTGEN_BYCNT%NOTFOUND;
+
+                    DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> <2nd GENERATION> Add by CNT [PER_ID='||R_NGCNT.PER_ID||'; CNT_ID='||R_NGCNT.CNT_ID ||']');
+                    IF (V_CEX_PASE = R_NGCNT.CNT_ID) THEN V_ES_CNT_PASE := 1; ELSE V_ES_CNT_PASE := 0; END IF;
+                    IF (V_PEX_PASE = R_NGCNT.PER_ID) THEN V_ES_PER_PASE := 1; ELSE V_ES_PER_PASE := 0; END IF;
+
+                    EXECUTE IMMEDIATE 'INSERT INTO BATCH_DATOS_SALIDA
+                          (EXP_ID,EXP_DESCRIPCION,EXP_MANUAL,DD_AEX_CODIGO,DD_EEX_ID,DD_EST_ID,EXP_FECHA_EST_ID,OFI_ID,CNT_ID,PER_ID,ARQ_ID,CEX_PASE,PEX_PASE,CNT_PER_ARRASTRE)
+                        VALUES('||V_EXP_ID||'       -- EXPEDIENTE
+                        , '''||V_EXP_NAME||'''  -- DESCRIPCIÓN
+                        , 0         -- MANUAL
+                        , '''||V_AEX_CODIGO||''' -- ÁMBITO DEL EXPEDIENTE
+                        , '||C_EST_ID||'        -- ESTADO DEL EXPEDIENTE
+                        , '||C_ITI_ID||'        -- ESTADO DEL ITINERARIO
+                        , sysdate   -- FECHA ESTADO ITINERARIO
+                        , '||R_NGCNT.OFI_ID||'  -- OFICINA
+                        , '||R_NGCNT.CNT_ID||'  -- CONTRATO
+                        , '||R_NGCNT.PER_ID||'  -- PERSONA
+                        , '||V_ARQ_ID||'    -- ARQUETIPO
+                        , '||V_ES_CNT_PASE||'       -- CEX_PASE
+                              , '||V_ES_PER_PASE||'     -- PEX_PASEE
+                        , '||R_NGCNT.CNT_PER_ARRASTRE||'    -- FLAG_ARRASTRE
+                       )';
+                  END LOOP; -- fin bucle pivotando por contratos
+                  CLOSE C_NEXTGEN_BYCNT;
+                  DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> <2nd GENERATION> End   [EXP_ID= '||V_EXP_ID||']');
+                END IF; -- fin primera generacion si hace falta
+
+                DBMS_OUTPUT.PUT_LINE('<EXPGEN> <NEW EXP> End   [CNT_ID= '||R_CNT.CNT_ID||'; NAME='||V_EXP_NAME||'; AEX_CODIGO='||V_AEX_CODIGO||'; ARQ_ID='||V_ARQ_ID||']');
+                DBMS_OUTPUT.PUT_LINE('');
+
+              END LOOP;
+              CLOSE C_CNTLIBRES;
+              /* BUCLE PRINCIPAL CONTRATOS */
+              DBMS_OUTPUT.PUT_LINE('<EXPGEN> End');
+              COMMIT;
+            END;
+        ]]>
+    </entry>
+
+            <entry key="recobro.idxcreate.batch_datos_salida.Oracle10gDialect">
+        <![CDATA[
+            BEGIN
+              OPERACION_DDL.DDL_TABLE('STATS','BATCH_DATOS_SALIDA'); --estimate
+            END;
+        ]]>
+    </entry>
 </properties>

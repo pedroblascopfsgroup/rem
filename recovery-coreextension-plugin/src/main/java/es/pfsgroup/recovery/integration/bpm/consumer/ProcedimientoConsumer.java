@@ -164,7 +164,7 @@ public class ProcedimientoConsumer extends ConsumerAction<DataContainerPayload> 
 		String codigoTipoProcedimiento = getCodigoTipoProcedimiento(procedimiento);
 		String valor;
 		
-		logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] Preparando datos para guardar procedimiento...", asuntoUUID, prcUUID));
+		logger.debug(String.format("[INTEGRACION] ASU[%s] PRC[%s] Preparando datos para guardar procedimiento...", asuntoUUID, prcUUID));
 		Procedimiento prc = (Checks.esNulo(prcUUID)) 
 				? null 
 				: extProcedimientoManager.getProcedimientoByGuid(prcUUID);
@@ -174,7 +174,7 @@ public class ProcedimientoConsumer extends ConsumerAction<DataContainerPayload> 
 			logger.debug(String.format("[INTEGRACION] ASU[%s] PRC[%s] Procedimiento encontrado, actualizando...", asuntoUUID, prcUUID));
 			procDto.setIdProcedimiento(prc.getId());
 		} else {
-			logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] Procedimiento no encontrado, creando uno nuevo...", asuntoUUID, prcUUID));
+			logger.debug(String.format("[INTEGRACION] ASU[%s] PRC[%s] Procedimiento no encontrado, creando uno nuevo...", asuntoUUID, prcUUID));
 			procDto.setGuid(prcUUID);
 
 			// Asunto
@@ -188,7 +188,7 @@ public class ProcedimientoConsumer extends ConsumerAction<DataContainerPayload> 
 			procDto.setAsunto(asunto);
 
 			// Tipo
-			logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] TPO[%s] Asignando tipo procedimiento...", asuntoUUID, prcUUID, codigoTipoProcedimiento));
+			logger.debug(String.format("[INTEGRACION] ASU[%s] PRC[%s] TPO[%s] Asignando tipo procedimiento...", asuntoUUID, prcUUID, codigoTipoProcedimiento));
 			TipoProcedimiento tipoProcedimiento = tipoProcedimientoManager.getByCodigo(codigoTipoProcedimiento);
 			if (tipoProcedimiento==null) {
 				String logMsg = String.format("[INTEGRACION] PRC[%s] TPO[%s] El tipo de procedimiento no existe!!, NO SE CREA EL PROCEDIMIENTO!!", prcUUID, codigoTipoProcedimiento);
@@ -233,17 +233,17 @@ public class ProcedimientoConsumer extends ConsumerAction<DataContainerPayload> 
 		procDto.setSaldoOriginalVencido(procedimiento.getSaldoOriginalVencido());
 		procDto.setSaldoRecuperacion(procedimiento.getSaldoRecuperacion());
 		
-		logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] Asignando lista contrados-expediente...", asuntoUUID, prcUUID));
+		logger.debug(String.format("[INTEGRACION] ASU[%s] PRC[%s] Asignando lista contrados-expediente...", asuntoUUID, prcUUID));
 		List<ExpedienteContrato> expContratoList = mergeExpedienteContratos(procedimiento, prc);
 		procDto.setExpedienteContratos(expContratoList);
-		logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] Asignando lista personas...", asuntoUUID, prcUUID));
+		logger.debug(String.format("[INTEGRACION] ASU[%s] PRC[%s] Asignando lista personas...", asuntoUUID, prcUUID));
 		List<Persona> personaList = mergePersonas(procedimiento, prc);
 		procDto.setPersonas(personaList);
 		List<ProcedimientoBien> prcBienList = mergeProcedimientoBienes(procedimiento, prc);
 		procDto.setBienes(prcBienList);
 
 		//
-		logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] Datos preparados para guardar procedimiento!!", asuntoUUID, prcUUID));
+		logger.debug(String.format("[INTEGRACION] ASU[%s] PRC[%s] Datos preparados para guardar procedimiento!!", asuntoUUID, prcUUID));
 		return procDto;
 	}
 	
@@ -380,7 +380,7 @@ public class ProcedimientoConsumer extends ConsumerAction<DataContainerPayload> 
         prc.setProcessBPM(idBPM);
         //suplantarUsuario(prc);
         procedimientoManager.saveOrUpdateProcedimiento(prc);
-		logger.info(String.format("[INTEGRACION] PRC[%d] TAR[%s] BPM iniciado!!", prc.getId(), tarUUID));
+		logger.debug(String.format("[INTEGRACION] PRC[%d] TAR[%s] BPM iniciado!!", prc.getId(), tarUUID));
 	}
 	
 	@Override
@@ -392,7 +392,7 @@ public class ProcedimientoConsumer extends ConsumerAction<DataContainerPayload> 
 		EXTProcedimientoDto procDto = buildProcedimientoDto(procedimiento);
 		//
 		Procedimiento prc = extProcedimientoManager.guardaProcedimiento(procDto);
-		logger.info(String.format("[INTEGRACION] PRC[%s] Procedimiento guardado!!!", prcUUID));
+		logger.debug(String.format("[INTEGRACION] PRC[%s] Procedimiento guardado!!!", prcUUID));
 		
 		if (this.isIniciarBPM()) {
 			iniciarBPM(payload, prc);

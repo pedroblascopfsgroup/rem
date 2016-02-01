@@ -153,7 +153,10 @@ public class Procedimiento implements Serializable, Auditable, Comparable<Proced
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private Set<AdjuntoAsunto> adjuntos;
     
-    @Transient
+    @Column(name="PRC_REMOTO")
+    private Integer prcRemoto; 
+
+	@Transient
     private Boolean activo;
 
 
@@ -739,5 +742,12 @@ public class Procedimiento implements Serializable, Auditable, Comparable<Proced
 		this.activo = activo;
 	}
 	
+	 public Integer getPrcRemoto() {
+		return prcRemoto;
+	}
+
+	public void setPrcRemoto(Integer prcRemoto) {
+		this.prcRemoto = prcRemoto;
+	}
 
 }

@@ -54,7 +54,7 @@
 		var i=0;
 		var auxId;
 		
-		for (i=0; i<personasStore.getCount(); i++) {
+		for (i=0; i < personasStore.getCount(); i++) {
 			auxId = personasStore.getAt(i).data.id;
 			arrayIdPersonas.push(auxId);
 			

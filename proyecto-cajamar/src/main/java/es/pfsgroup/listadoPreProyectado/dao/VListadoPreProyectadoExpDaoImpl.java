@@ -40,6 +40,14 @@ public class VListadoPreProyectadoExpDaoImpl extends AbstractEntityDao<VListadoP
 			sb.append(" and f.tipoPersonaCod = '" + dto.getCodTipoPersona() + "' ");
 		}
 		
+		if (!Checks.esNulo(dto.getNif())) {
+			sb.append(" and (f.nifTitular like '" + dto.getNif() + "%' or f.nifCliente like '" + dto.getNif() + "%') ");
+		}
+		
+		if (!Checks.esNulo(dto.getNombreCompleto())) {
+			sb.append(" and (f.nomTitular like '" + dto.getNombreCompleto().toUpperCase() + "%' or f.nomCliente like '" + dto.getNombreCompleto().toUpperCase() + "%') ");
+		}
+		
 		if (!Checks.esNulo(dto.getMinRiesgoTotal())) {
 			sb.append(" and f.riesgoTotal >= " + dto.getMinRiesgoTotal() + " ");
 		}
@@ -55,6 +63,22 @@ public class VListadoPreProyectadoExpDaoImpl extends AbstractEntityDao<VListadoP
 		if (!Checks.esNulo(dto.getMaxDeudaIrregular())) {
 			sb.append(" and f.deudaIrregular <= " + dto.getMaxDeudaIrregular() + " ");
 		}
+		
+		if (!Checks.esNulo(dto.getMinDiasVencidos())) {
+			sb.append(" and f.diasVencidos >= " + dto.getMinDiasVencidos() + " ");
+		}
+		
+		if (!Checks.esNulo(dto.getMaxDiasVencidos())) {
+			sb.append(" and f.diasVencidos <= " + dto.getMaxDiasVencidos() + " ");
+		}
+		
+		if (!Checks.esNulo(dto.getPaseMoraDesde())) {
+			sb.append(" and f.fechaPaseAMoraExp >= TO_DATE('" + dto.getPaseMoraDesde().substring(0, 10) + "', 'yyyy-MM-dd') ");
+		}
+		
+		if (!Checks.esNulo(dto.getPaseMoraHasta())) {
+			sb.append(" and f.fechaPaseAMoraExp <= TO_DATE('" + dto.getPaseMoraHasta().substring(0, 10) + "', 'yyyy-MM-dd') ");
+		}		
 		
 		if (!Checks.esNulo(dto.getTramos())) {
 			String[] tramos = dto.getTramos().split(",");
@@ -101,7 +125,7 @@ public class VListadoPreProyectadoExpDaoImpl extends AbstractEntityDao<VListadoP
 				sb.append(" and (");
 				for (int i = 0; i < zonasExp.length; i++) {
 					String zonaExp = zonasExp[i];
-					sb.append(" f.zonExp = '" + zonaExp + "' ");
+					sb.append(" f.zonExp like '" + zonaExp + "%' ");
 					if (i<zonasExp.length-1) {
 						sb.append(" or ");
 					}

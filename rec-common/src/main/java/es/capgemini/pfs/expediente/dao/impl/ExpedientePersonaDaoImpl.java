@@ -66,6 +66,12 @@ public class ExpedientePersonaDaoImpl extends AbstractEntityDao<ExpedientePerson
             hql.append("'" + amb + "'");
         }
         hql.append(")");
+        
+        if(ambitoExpediente.getCodigo().equals(DDAmbitoExpediente.PERSONA_PASE)){
+        	hql.append(" and pex.pase = 1 ");
+        }
+        
+        
 
         //Filtramos las personas que están excluidas
         if (personas != null && personas.size() > 0) {

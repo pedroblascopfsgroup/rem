@@ -109,6 +109,9 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 	
 	@Autowired
 	private Executor executor;	
+	
+	@Autowired
+	private AgendaMultifuncionCorreoUtils agendaMultifuncionCorreoUtils;
 
 	@Override
 	@BusinessOperation(AMF_GET_USUARIOS)
@@ -415,7 +418,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 						 StringUtils.collectionToCommaDelimitedString(mailsCC), dto.getAsuntoMail(), ug, nombre, HtmlUtils.htmlUnescape(dto.getCuerpoEmail()),
 						dto);
 				
-				AgendaMultifuncionCorreoUtils.dameInstancia(executor).enviarCorreoConAdjuntos( null, mailsPara, mailsCC,
+				agendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos( null, mailsPara, mailsCC,
 						asuntoMail, cuerpoEmail, dto.getAdjuntosList());
 				
 				/*DIANA: Nuevo m�todo para a�adir adjuntos al email

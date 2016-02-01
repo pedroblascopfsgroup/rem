@@ -51,7 +51,7 @@ public class ADMDespachoAmbitoActuacionDaoImpl extends
         crit.add(Restrictions.eq("auditoria.borrado", false));
 		
 		if(listadoProvincias != null && !listadoProvincias.equals("")) {
-			crit.createCriteria("provincia").add(Restrictions.not(Restrictions.in("codigo", StringUtils.split(listadoComunidades, ","))));
+			crit.createCriteria("provincia").add(Restrictions.not(Restrictions.in("codigo", StringUtils.split(listadoProvincias, ","))));
         }
         else {
 			crit.add(Restrictions.isNotNull("provincia"));
@@ -86,7 +86,7 @@ public class ADMDespachoAmbitoActuacionDaoImpl extends
 		HQLBuilder b = new HQLBuilder("from DespachoAmbitoActuacion d");
 		b.appendWhere("d.auditoria." + Auditoria.UNDELETED_RESTICTION);
 		HQLBuilder.addFiltroIgualQue(b, "d.despacho.id", idDespacho);
-		HQLBuilder.addFiltroIgualQue(b, "d.comunidad.codigo", codigoProvincia);
+		HQLBuilder.addFiltroIgualQue(b, "d.provincia.codigo", codigoProvincia);
 		return HibernateQueryUtils.uniqueResult(this, b);
 	}    
 }

@@ -362,13 +362,21 @@
   <entry key="personas.historizarArquetiposPersonas.insert.Oracle9iDialect">
   	<![CDATA[
   		INSERT INTO H_ARR_ARQ_RECUPERACION_PERSONA 
-		SELECT * FROM ARR_ARQ_RECUPERACION_PERSONA arr WHERE trunc(arr.ARQ_DATE) < trunc(sysdate)
+		SELECT * FROM ARR_ARQ_RECUPERACION_PERSONA arr WHERE trunc(arr.ARQ_DATE) < (select trunc(nvl(max(execu.START_TIME),sysdate-10))
+from cmmaster.BATCH_JOB_INSTANCE ins
+inner join cmmaster.BATCH_JOB_EXECUTION execu on ins.JOB_INSTANCE_ID = execu.JOB_INSTANCE_ID 
+where ins.JOB_NAME = 'procesoArquetipadoRecuperacionesJob'
+    and execu.STATUS = 'COMPLETED')
 	]]>
   </entry>
   
   <entry key="personas.historizarArquetiposPersonas.delete.Oracle9iDialect">
   	<![CDATA[
-  		DELETE FROM ARR_ARQ_RECUPERACION_PERSONA arr WHERE trunc(arr.ARQ_DATE) < trunc(sysdate)
+  		DELETE FROM ARR_ARQ_RECUPERACION_PERSONA arr WHERE trunc(arr.ARQ_DATE) < (select trunc(nvl(max(execu.START_TIME),sysdate-10))
+from cmmaster.BATCH_JOB_INSTANCE ins
+inner join cmmaster.BATCH_JOB_EXECUTION execu on ins.JOB_INSTANCE_ID = execu.JOB_INSTANCE_ID 
+where ins.JOB_NAME = 'procesoArquetipadoRecuperacionesJob'
+    and execu.STATUS = 'COMPLETED')
   	]]>
   </entry>
 </properties>

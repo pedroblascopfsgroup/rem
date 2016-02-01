@@ -3,10 +3,13 @@
 
   <!--     INSERTAR RELACIONES EN TABLAS DE PRODUCCION      -->
   <entry key="pcr.borrar.relaciones">
-    <![CDATA[ TRUNCATE TABLE cpe_contratos_personas]]>
+    <![CDATA[ begin
+                DDL_OPERACION.DDL_TABLE('TRUNCATE','CPE_CONTRATOS_PERSONAS');
+              end;
+             ]]>
   </entry>
   <entry key="pcr.insert.relaciones.MySQLDialect">
-    <![CDATA[    
+    <![CDATA[
            INSERT into cpe_contratos_personas(
               PER_ID,
               CNT_ID,
@@ -33,10 +36,10 @@
                       t.USUARIOBORRAR,
                       t.FECHABORRAR,
                       t.BORRADO
-                  FROM tmp_cnt_per t                  
+                  FROM tmp_cnt_per t
         ]]>
   </entry>
-  <entry key="pcr.insert.relaciones.Oracle9iDialect">
+  <entry key="pcr.insert.relaciones.Oracle10gDialect">
     <![CDATA[
             insert into cpe_contratos_personas(CPE_ID,
               PER_ID,
@@ -72,10 +75,13 @@
   </entry>
   <entry key="pcr.analize.relaciones">
       <![CDATA[
-        ANALYZE TABLE cpe_contratos_personas ${sql.analyze}
+        begin
+          OPERACION_DDL.DDL_TABLE('STATS','CPE_CONTRATOS_PERSONAS');
+        end;
+
          ]]>
   </entry>
-  
+
   <entry key="cnt-per-01.entityValidator">
         <![CDATA[SELECT (''||tcp.TMP_CNT_PER_COD_ENTIDAD) as ERROR_FIELD, (tcp.TMP_CNT_PER_COD_CLIENTE ||'-'|| tcp.TMP_CNT_PER_CONTRATO) as ENTITY_CODE
                     FROM tmp_cnt_per tcp
@@ -85,7 +91,7 @@
                 <![CDATA[SELECT (''||tcp.TMP_CNT_PER_COD_ENTIDAD) as ERROR_FIELD, (tcp.TMP_CNT_PER_COD_CLIENTE ||'-'|| tcp.TMP_CNT_PER_CONTRATO) as ENTITY_CODE
                             FROM TMP_CNT_PER tcp
                             WHERE TMP_CNT_PER_FECHA_EXTRACCION <> str_to_date(?,'%Y%m%d')]]></entry>
-  <entry key="cnt-per-02.loadDateValidator.Oracle9iDialect">
+  <entry key="cnt-per-02.loadDateValidator.Oracle10gDialect">
                 <![CDATA[SELECT (''||tcp.TMP_CNT_PER_COD_ENTIDAD) as ERROR_FIELD, (tcp.TMP_CNT_PER_COD_CLIENTE ||'-'|| tcp.TMP_CNT_PER_CONTRATO) as ENTITY_CODE
                             FROM TMP_CNT_PER tcp
                             WHERE TMP_CNT_PER_FECHA_EXTRACCION <> to_date(?,'YYYYMMDD')]]></entry>
@@ -115,7 +121,7 @@
           )
         ]]>
   </entry>
-  <entry key="cnt-per-04.integridadValidator.Oracle9iDialect">
+  <entry key="cnt-per-04.integridadValidator.Oracle10gDialect">
     <![CDATA[
         SELECT (
           ''||tcp.TMP_CNT_PER_COD_CLIENTE||TMP_CNT_PER_CONTRATO) as ERROR_FIELD,
@@ -140,13 +146,13 @@
         AND tcp.TMP_CNT_PER_COD_OFICINA <> c.TMP_CNT_COD_OFICINA
         ]]>
   </entry>
-  <entry key="cnt-per-05.integridadCodOficinaValidator.Oracle9iDialect">
+  <entry key="cnt-per-05.integridadCodOficinaValidator.Oracle10gDialect">
     <![CDATA[
         SELECT (''||tcp.TMP_CNT_PER_CONTRATO||TMP_CNT_PER_COD_OFICINA) as ERROR_FIELD, (tcp.TMP_CNT_PER_COD_CLIENTE ||'-'|| tcp.TMP_CNT_PER_CONTRATO) as ENTITY_CODE
         FROM TMP_CNT_PER tcp
-        WHERE    (tcp.TMP_CNT_PER_CONTRATO, tcp.TMP_CNT_PER_COD_OFICINA) 
+        WHERE    (tcp.TMP_CNT_PER_CONTRATO, tcp.TMP_CNT_PER_COD_OFICINA)
                        not in (select c.TMP_CNT_CONTRATO, c.TMP_CNT_COD_OFICINA  from tmp_cnt_contratos c)
         ]]>
   </entry>
-  
+
 </properties>

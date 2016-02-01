@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+	<var name="dtoCobroPago" class="es.pfsgroup.plugin.recovery.liquidaciones.dto.LIQDtoCobroPago" />
+	<var name="liqCobroPago" class="es.pfsgroup.plugin.recovery.liquidaciones.model.LIQCobroPago" />
+	<input name="id" type="java.lang.Long"/>
+	<input name="idAsunto" type="java.lang.Long"/>
+	
+	<decision-state id="newOrEdit">
+		<if test="id!=null" then="buscar" else="crear"/>
+	</decision-state>
+	
+	<action-state id="buscar">
+		<evaluate expression="executor.execute('cobroPagoManager.get', id)" result="flowScope.liqCobroPago"/>
+		<transition to="formulario" />
+	</action-state>
+	
+	<action-state id="crear">
+		<evaluate expression="executor.execute('cobroPagoManager.getInstance',idAsunto)"
+			result="flowScope.liqCobroPago" />
+		<transition to="formulario" />
+	</action-state>
+	
+	<view-state id="formulario" view="${view}" model="dtoCobroPago">
+		<binder>
+    		<binding property="liqCobroPago.fecha"/>
+    		<binding property="liqCobroPago.importe"/>
+    		<binding property="liqCobroPago.observaciones"/>
+    		<binding property="procedimiento"/>
+    		<binding property="idAsunto"/>
+    		<binding property="contrato"/>
+    		<binding property="liqCobroPago.estado" converter="DDEstadoCobroPago"/>
+    		<binding property="liqCobroPago.subTipo" converter="DDSubtipoCobroPago"/>
+    		<binding property="origenCobro"/>
+    		<binding property="modalidadCobro"/>
+    	</binder>
+	<on-entry>
+		<set name="dtoCobroPago.liqCobroPago" value="liqCobroPago" />
+		<set name="flowScope.view" value="'plugin/liquidaciones/override/cobroPago'" />
+	</on-entry>
+	<on-render>
+	<set name="flowScope.view" value="'default'"/>
+		<evaluate expression="executor.execute('dictionaryManager.getList','DDEstadoCobroPago')" result="flowScope.estado"/>
+		<evaluate expression="executor.execute('cobroPagoManager.getProcedimientosPorAsunto',idAsunto)" result="flowScope.procedimientos"/>
+		<!-- <evaluate expression="executor.execute('dictionaryManager.getList','DDSubtipoCobroPago')" result="flowScope.subTipo"/> -->
+		<evaluate expression="executor.execute('dictionaryManager.getList','DDTipoCobroPago')" result="flowScope.tipo"/>
+		<evaluate expression="executor.execute('dictionaryManager.getList','DDOrigenCobro')" result="flowScope.origenCobro"/>
+		<evaluate expression="executor.execute('dictionaryManager.getList','DDModalidadCobro')" result="flowScope.modalidadCobro"/>
+		
+	</on-render>
+	<transition on="update" to="update"/>
+	
+	<transition on="cancel" to="close" bind="false"/>
+	</view-state>
+	
+	<action-state id="update">
+		<evaluate expression="executor.execute('cobroPagoManager.createOrUpdate',dtoCobroPago)"/>
+	 <transition to="close"></transition>
+	 
+	</action-state>
+	
+	<end-state id="close" view="default" />
+</flow>

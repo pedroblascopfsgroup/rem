@@ -198,6 +198,12 @@
 			fechaEnvio.setDisabled(true);
 			fechaRecepcion.setDisabled(true);
 		}
+		else if (data.esGestoria) {
+			adjuntado.setDisabled(true);
+			ejecutivo.setDisabled(true);
+			fechaRecepcion.setDisabled(true);
+			comentario.setDisabled(true);
+		}
 	}
 	estadoInicial();
 	

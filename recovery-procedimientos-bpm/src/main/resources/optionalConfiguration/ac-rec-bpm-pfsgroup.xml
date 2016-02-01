@@ -211,6 +211,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteHomologacionAcuerdo/tramiteHomologacionAcuerdo.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteAnalisisContratos/tramiteAnalisisContratosV4.xml" p:version="-1"/>		
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteInicioExpJudicial/tramiteInicioExpJudicialV4.xml" p:version="-1"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteAceptacionConcursoPrecontencioso/tramiteAceptacionConcursoPrecontencioso.xml" p:version="-1"/>
 
 	<bean id="jbpmUtil" class="es.capgemini.pfs.utils.JBPMProcessManager" >
   	<property name="contextScripts">
@@ -1307,6 +1308,11 @@
             def validacionesContratosConfirmarTestimonioPOST = {
                 def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoDelegateManager");
                 return subastaProcedimientoManager.validacionesContratosConfirmarTestimonioPOST(idProcedimiento);
+            }
+            
+            def validacionesAdjudicacionEntregaTituloPRE = {
+            	def adjudicacionManager = ctx.getBean("adjudicacionManager");
+            	return adjudicacionManager.validacionesAdjudicacionEntregaTituloPRE(idProcedimiento);
             }
 
             

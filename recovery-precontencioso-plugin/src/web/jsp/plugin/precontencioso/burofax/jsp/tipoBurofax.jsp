@@ -65,12 +65,19 @@
 		,handler : function(){
 				
 				if(tipoBurofax.validate()){	
-			    	Ext.Ajax.request({
-							url : page.resolveUrl('burofax/configurarTipoBurofax'), 
+			    	page.webflow({
+							flow: 'burofax/configurarTipoBurofax', 
 							params : {idTipoBurofax:tipoBurofax.value,arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax,idDocumento:documento.value},
-							method: 'POST',
-							success: function ( result, request ) {
-								page.fireEvent(app.event.DONE);
+							success: function ( result, request) {
+								if(result.msgError==''){
+									page.fireEvent(app.event.DONE);
+								}else{
+									Ext.Msg.show({
+										title: fwk.constant.alert,
+										msg: result.msgError,
+										buttons: Ext.Msg.OK
+									});
+								}
 							}
 						});
 				}

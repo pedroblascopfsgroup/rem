@@ -2,7 +2,7 @@
 
 ENTITY_CODE=0240
 QUEUE_DIR_INPUT=/recovery/transferencia/integration/messages/input
-QUEUE_NAME=para.cajamar
+QUEUE_NAME=para.cajamar.ENTORNO
 
 DAY=$(date +%d)
 MONTH=$(date +%m)

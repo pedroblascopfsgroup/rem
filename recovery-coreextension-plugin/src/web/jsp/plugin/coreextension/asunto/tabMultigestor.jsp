@@ -204,6 +204,15 @@
 		combo.mode='remote';
 	});
 	
+	<%-- BKREC-1041 Al cargar los usuarios de un despacho, muestra en su combo el valor por defecto del listado --%>
+	var primeraVez=true;
+	optionsUsuarioStore.on('load',function(ds,records,o){
+		if(primeraVez){
+			comboTipoUsuario.setValue(records[0].data.id);
+			primeraVez=false;
+		}
+	});
+
 	comboTipoGestor.on('select', function(){
 		comboTipoUsuario.reset();
 		comboTipoDespacho.reset();
@@ -220,6 +229,7 @@
 		optionsUsuarioStore.webflow({'idTipoDespacho': comboTipoDespacho.getValue()}); 
 		comboTipoUsuario.reset();		
 		comboTipoUsuario.setDisabled(false);
+		primeraVez=true;
 	});	
 	
 	
@@ -268,9 +278,14 @@
 					}
 					,success:function(result, request){
 						var resultado = Ext.decode(result.responseText);
+						var tienePermisoCambioProcuradorConProvision = false;
 						
-						if((resultado.okko == 'KO') ||
-							((resultado.okko == 'OK') && (comboTipoGestor.getRawValue().toUpperCase() != 'PROCURADOR'))){
+						<sec:authorize ifAllGranted="ROLE_PUEDE_CAMBIAR_PROCURADORES_CON_PROVISION">
+						tienePermisoCambioProcuradorConProvision = true;
+						</sec:authorize>
+						
+						if((resultado.okko == 'KO') || (tienePermisoCambioProcuradorConProvision) ||
+							((resultado.okko == 'OK') && (comboTipoGestor.getRawValue().toUpperCase() != 'PROCURADOR' ))){
 							insertarFunction();
 							resetCombos();
 						}else{

@@ -28,6 +28,7 @@ public class BurofaxDTO extends WebDto{
 	private Date fechaAcuse;
 	private String resultado;
 	private String esPersonaManual;
+	private boolean tienePersona;
 
 	// id ADJ_ADJUNTOS
 	private Long acuseRecibo;
@@ -159,4 +160,10 @@ public class BurofaxDTO extends WebDto{
 		this.esPersonaManual = esPersonaManual;
 	}
 
+	public boolean isTienePersona() {
+		return tienePersona;
+	}
+	public void setTienePersona(boolean tienePersona) {
+		this.tienePersona = tienePersona;
+	}
 }

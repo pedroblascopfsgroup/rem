@@ -29,6 +29,7 @@
 			<json:property name="todosDocumentos" value="${p.todosDocumentos}" />
 			<json:property name="todasLiquidaciones" value="${p.todasLiquidaciones}" />
 			<json:property name="todosBurofaxes" value="${p.todosBurofaxes}" />
+			<json:property name="importe" value="${p.importe}" />
 
 			<%-- Documentos --%>
 			<json:property name="docEstado" value="${p.documento.estado}" />

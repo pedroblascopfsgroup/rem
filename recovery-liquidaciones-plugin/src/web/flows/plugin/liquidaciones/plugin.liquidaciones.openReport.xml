@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<var name="request" class="es.pfsgroup.plugin.recovery.liquidaciones.dto.LIQDtoReportRequest" />
+	
+	<action-state id="valor">
+		<evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')" result="flowScope.usuario" />
+	    <evaluate expression="usuario.entidad.descripcion" result="flowScope.cliente" />
+		<transition to="decision-cliente" />	
+	</action-state>
+	
+	
+	<decision-state id="decision-cliente">
+		<on-entry>
+			<evaluate expression="usuario.entidad.descripcion" result="flowScope.cliente" />
+		</on-entry>
+		<if test="(cliente=='CAJAMAR')" then="cajamar" />
+		<if test="(cliente=='HAYA')" then="haya" />
+		<if test="(cliente=='BANKIA')" then="bankia" else="cajamar" />
+	</decision-state>
+	
+	<action-state id="cajamar">
+		<set name="flowScope.view" value="'reportPDF/plugin/liquidaciones/liquidaciones_cajamar'" />
+		<transition to="reporteLiquidaciones" />
+	</action-state>
+	
+	<action-state id="haya">
+		<set name="flowScope.view" value="'reportPDF/plugin/liquidaciones/liquidaciones_haya'" />
+		<transition to="reporteLiquidaciones" />
+	</action-state>	
+
+	<action-state id="bankia">
+		<set name="flowScope.view" value="'reportPDF/plugin/liquidaciones/liquidaciones_bankia'" />
+		<transition to="reporteLiquidaciones" />
+	</action-state>	
+
+	<end-state id="reporteLiquidaciones" view="${view}">
+		<on-entry>
+			<evaluate expression="externalContext.nativeRequest.requestURL" result="flowScope.url" />
+			<evaluate expression="externalContext.contextPath" result="flowScope.path" />
+			<evaluate expression="binder.bindAndValidate(flowRequestContext,request)" />
+			<evaluate expression="executor.execute('plugin.liquidaciones.liquidacionesManager.createReport', request)"	result="flowScope.response" />
+			<evaluate expression="response.cabecera" result="flowScope.cabecera" />
+			<evaluate expression="response.cuerpo" result="flowScope.cuerpo" />
+			<!-- <evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')" result="flowScope.usuario" /> -->
+	    	<evaluate expression="usuario.entidad.configValue('logo')" result="flowScope.logo" />
+		</on-entry>
+	</end-state>
+</flow>

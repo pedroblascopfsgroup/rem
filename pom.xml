@@ -68,6 +68,12 @@
 		<dependencies>
 			<!-- DEVON -->
 			<dependency>
+				<groupId>es.pfsgroup.devon</groupId>
+				<artifactId>devon-web</artifactId>
+			<!--	<version>${devon.version.web}</version> -->
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>capgemini</groupId>
 				<artifactId>devon-core</artifactId>
 				<version>${devon.version}</version>
@@ -107,6 +113,11 @@
 				<groupId>es.pfsgroup</groupId>
 				<artifactId>pfs-commons-java</artifactId>
 				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>es.pfsgroup</groupId>
+				<artifactId>pfs-tesfwk</artifactId>
+				<version>1.0.3</version>
 			</dependency>
 			<dependency>
 				<groupId>pfs</groupId>
@@ -206,7 +217,7 @@
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
 				<artifactId>recovery-liquidaciones-plugin</artifactId>
-				<version>${plugin.liquidaciones.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
@@ -387,7 +398,7 @@
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
-				<artifactId>recovery-bankiaWeb-plugin</artifactId>
+				<artifactId>proyecto-bankia-online</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<!-- HAYA-CAJAMAR COMUNES -->
@@ -527,13 +538,20 @@
 	</build>
 	<!-- Maven 2.2.1 does not support isolates project dependencies :( -->
 	<modules>
+
+		<module>devon-framework</module>
 		<module>pfs-commons-java</module>
+		<module>pfs-testfwk</module>
+		<module>plugins</module>
 		<module>rec-encrypt</module>
 		<module>batch-monitor</module>
 		<module>batch-shell</module>
 		<module>rec-common</module>
+		<module>recovery-api-plugin</module>
+		<module>recovery-ayuda-plugin</module>
+		<module>recovery-burofax-plugin</module>
+		<module>recovery-diccionarios-plugin</module>
 		<module>recovery-domain</module>
-		<!--module>recovery-api-plugin</module-->
 		<module>recovery-coreextension-plugin</module>
 		<module>recovery-expediente-plugin</module>
 		<module>recovery-busquedaProcedimientos-plugin</module>
@@ -543,10 +561,13 @@
 		<module>recovery-geninformes-plugin</module>
 		<module>recovery-bpmframework-plugin</module>
 		<module>recovery-itinerarios-plugin</module>
+		<module>recovery-liquidaciones-plugin</module>
 		<module>recovery-mejoras-plugin</module>
 		<module>recovery-calendario-plugin</module>
 		<module>recovery-nuevoModeloBienesCommon-plugin</module>
 		<module>recovery-nuevoModeloBienes-plugin</module>
+		<module>recovery-plazasJuzgados-plugin</module>
+		<module>recovery-plazosExterna-plugin</module>
 		<module>recovery-procedimientos-bpm</module>
 		<module>recovery-procedimientos-plugin</module>
 		<module>recovery-masivo-common</module>
@@ -566,6 +587,8 @@
 		<module>recovery-arquetipos-plugin</module>
 		<module>recovery-procuradores-common</module>
 		<module>recovery-procuradores-plugin</module>
+		<module>recovery-sidhi-api</module>
+		<module>recovery-sidhiweb-plugin</module>
 	</modules>
 
 	<profiles>
@@ -575,7 +598,7 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<modules>
-				<module>recovery-bankiaWeb-plugin</module>
+				<module>proyecto-bankia-online</module>
 				<module>recovery-iplus-plugin</module>
 				<module>recovery-integracionuvem-plugin</module>
 		        <module>recovery-bi-plugin</module>
@@ -598,6 +621,7 @@
 				<module>proyecto-haya</module>
 				<module>recovery-procedimientos-bpmHaya-plugin</module>
 		        <module>recovery-bi-plugin</module>
+				
 
 				<module>rec-web</module>
 				<module>rec-batch</module>

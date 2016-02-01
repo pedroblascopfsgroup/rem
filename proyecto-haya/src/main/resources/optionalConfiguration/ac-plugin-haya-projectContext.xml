@@ -131,6 +131,7 @@
 						<value>822</value>
 						<value>823</value>
 						<value>824</value>
+						<value>825</value>
 						<value>PCO_DPREDOC</value>
 						
 						<!-- HRE-BCC -->
@@ -231,6 +232,27 @@
 			<set>
 				<value>PROC</value>
 			</set>
+		</property>
+		<property name="tipoGestorLetrado">
+			<set>
+				<value>GEXT</value>
+				<value>CJ-LETR</value>
+			</set>
+		</property>
+		<property name="codigosDocumentosConFechaCaducidad">
+			<list>
+				<value>00002</value>
+				<value>00008</value>
+				<value>00006</value>
+				<value>00007</value>
+				<value>00268</value>
+				<value>00269</value>
+				<value>00013</value>
+				<value>00544</value>
+				<value>00545</value>
+				<value>00557</value>
+				<value>ACPSAREB</value>
+			</list>
 		</property>
 	</bean>
 	
@@ -355,7 +377,7 @@
 								<entry key="btnNuevaDir" value="1" />
 								<entry key="btnEditar" value="1" />
 								<entry key="btnPreparar" value="1" />
-								<entry key="btnCancelar" value="1" />
+								<entry key="btnCancelar" value="0" />
 								<entry key="btnNotificar" value="1" />
 								<entry key="btnDescargarBurofax" value="1" />
 								<entry key="botonRefreshBur" value="1" />
@@ -396,7 +418,7 @@
 								<entry key="btnNuevaDir" value="1" />
 								<entry key="btnEditar" value="1" />
 								<entry key="btnPreparar" value="1" />
-								<entry key="btnCancelar" value="1" />
+								<entry key="btnCancelar" value="0" />
 								<entry key="btnNotificar" value="1" />
 								<entry key="btnDescargarBurofax" value="1" />
 								<entry key="botonRefreshBur" value="1" />
@@ -408,7 +430,23 @@
 			</map>
 		</property>
 	</bean>
+	
+	<bean id="commonProjectContextHaya" parent="commonProjectContextDefault">
+            <property name="formatoNroContrato">
+                    <map>
+                            <entry key="HAYA">
+                                    <map>
+                                            <!--<entry key="contrato.codigoFormato" value="5,5,17,15"/>-->
+                                            <entry key="contrato.codigo.subStringIni" value="10"/>
+                                            <entry key="contrato.codigo.subStringFin" value="27"/>
+                                    </map>
+                            </entry>
+                    </map>
+            </property>
+    </bean>
 
+	<alias name="adjuntoManagerHayaImpl" alias="adjuntoManagerImpl"/>
+	<alias name="commonProjectContextHaya" alias="commonProjectContext"/>
 	<alias name="nmbCommonProjectContextHAYA" alias="nmbCommonProjectContext"/>
 	<alias name="procedimientosProjectContextHaya" alias="procedimientosProjectContext"/>		
 	<alias name="coreProjectContextHAYA" alias="coreProjectContext"/>

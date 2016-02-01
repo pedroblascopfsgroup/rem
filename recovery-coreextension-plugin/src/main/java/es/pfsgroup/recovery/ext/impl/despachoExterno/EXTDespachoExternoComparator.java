@@ -18,7 +18,7 @@ public class EXTDespachoExternoComparator implements Comparator<DespachoExterno>
 			if (arg1 == null || arg1.getDespacho()==null || arg0.getDespacho()==null){
 				return -1;
 			}else{
-				return arg0.getDespacho().compareTo(arg1.getDespacho());
+				return arg0.getDespacho().toUpperCase().compareTo(arg1.getDespacho().toUpperCase());
 			}
 		}
 	}

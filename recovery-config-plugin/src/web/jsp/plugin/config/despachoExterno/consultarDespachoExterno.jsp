@@ -32,9 +32,8 @@
 		<pfslayout:tabpanel name="tabsDespacho"
 			tabs="tabCabecera,tabGestores" />
 	</c:if>
-	
-	
-	<c:if test="${despacho.tipoDespacho.codigo==1}">
+
+	<c:if test="${despacho.tipoDespacho.codigo=='1'}">
 		<pfslayout:includetab name="tabEsquemaTurnado">
 			<%@ include file="tabEsquemaTurnado.jsp"%>
 		</pfslayout:includetab>

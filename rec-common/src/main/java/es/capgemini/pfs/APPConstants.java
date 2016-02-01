@@ -54,9 +54,9 @@ public class APPConstants {
 	public static final String MEJ_EXP_GET_CONTRATOS_PARA_CONCURSO = "plugin.mejoras.expediente.getContratosParaConcurso";
 	public static final String MEJ_EXP_GET_CONTRATOS_PARA_NO_CONCURSO = "plugin.mejoras.expediente.getContratosParaNoConcurso";
 	
-	public static final String OPERADOR_MAYOR_IGUAL = "ME";
-	public static final String OPERADOR_MENOR_IGUAL = "LE";
-	public static final String OPERADOR_IGUAL = "E";
+	public static final String OPERADOR_MAYOR_IGUAL = ">=";
+	public static final String OPERADOR_MENOR_IGUAL = "<=";
+	public static final String OPERADOR_IGUAL = "=";
 	
     public static final String ESTADO_PROCEDIMIENTO_REORGANIZADO = "9";
 

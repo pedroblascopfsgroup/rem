@@ -26,9 +26,9 @@ var formBusquedaBienes=function(){
 		,codCliente:'${codCliente}'
 	};
 	
-	var txtIdBien = app.creaInteger('id', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.codBien" text="**Cï¿½digo del bien" />', '${id}'); 
-	var txtPoblacion = app.creaText('poblacion', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.poblacion" text="**Poblaciï¿½n" />', '${poblacion}');
-	var txtCodPostal = app.creaText('codPostal', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.codPostal" text="**Cï¿½digo Postal" />', '${codPostal}');
+	var txtIdBien = app.creaInteger('id', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.codBien" text="**Código del bien" />', '${id}'); 
+	var txtPoblacion = app.creaText('poblacion', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.poblacion" text="**Población" />', '${poblacion}');
+	var txtCodPostal = app.creaText('codPostal', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.codPostal" text="**Código Postal" />', '${codPostal}');
 	<pfs:ddCombo name="comboTipoBien" 
 		labelKey="plugin.nuevoModeloBienes.busquedaBienes.filtros.tipoBien" label="**Tipo de bien"
 		blankElement="true" blankElementText="Todos" value="${idTipoBien}" dd="${tiposBien}" />;
@@ -59,27 +59,27 @@ var formBusquedaBienes=function(){
 		});
 		
 	<%--Nuevos filtros datos del bien--%>
-	var txtNumActivo = app.creaInteger('numActivo', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.numActivo" text="**Nï¿½ activo" />', '${numActivo}'); 
-	var txtNumRegistro = app.creaInteger('numRegistro', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.numRegistro" text="**Nï¿½ registro" />', '${numRegistro}'); 
+	var txtNumActivo = app.creaInteger('numActivo', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.numActivo" text="**Nº activo" />', '${numActivo}'); 
+	var txtNumRegistro = app.creaInteger('numRegistro', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.numRegistro" text="**Nº registro" />', '${numRegistro}'); 
 	var txtReferenciaCatastral = app.creaText('referenciaCatastral', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.referenciaCatastral" text="**Referencia catastral" />', '${referenciaCatastral}'); 
 	var txtSubtipoBien = app.creaInteger('subtipoBien', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.subtipoBien" text="**Subtipo bien" />', '${subtipoBien}'); 
-	var txtTasacionDesde = app.creaInteger('tasacionDesde', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.valorTasacionDesde" text="**Valor tasaciï¿½n desde" />', '${tasacionDesde}'); 
-	var txtTasacionHasta = app.creaInteger('tasacionHasta', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.valorTasacionHasta" text="**Valor tasaciï¿½n hasta" />', '${tasacionHasta}'); 
+	var txtTasacionDesde = app.creaInteger('tasacionDesde', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.valorTasacionDesde" text="**Valor tasación desde" />', '${tasacionDesde}'); 
+	var txtTasacionHasta = app.creaInteger('tasacionHasta', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.valorTasacionHasta" text="**Valor tasación hasta" />', '${tasacionHasta}'); 
 	var txtTipoSubastaDesde = app.creaInteger('tipoSubastaDesde', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.tipoSubastaDesde" text="**Tipo subasta desde" />', '${tipoSubastaDesde}'); 
 	var txtTipoSubastaHasta = app.creaInteger('tipoSubastaHasta', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.tipoSubastaHasta" text="**Tipo subasta hasta" />', '${tipoSubastaHasta}');
-	var txtNumFinca = app.creaText('numFinca', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.numFinca" text="**Nï¿½ finca" />', '${numFinca}'); 
+	var txtNumFinca = app.creaText('numFinca', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.numFinca" text="**Nº finca" />', '${numFinca}'); 
 	
 	<%-- Filtros localizaciones --%>
-	var txtDireccion = app.creaText('direccion', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.direccion" text="**Direcciï¿½n" />', '${direccion}');
+	var txtDireccion = app.creaText('direccion', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.direccion" text="**Dirección" />', '${direccion}');
 	var txtProvincia = app.creaText('provincia', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.provincia" text="**Provincia" />', '${provincia}');
 	var txtLocalidad = app.creaText('localidad', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.localidad" text="**Localidad" />', '${localidad}');
-	var txtCodigoPostal = app.creaText('codigoPostal', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.codPostal" text="**Cï¿½digo Postal" />', '${codigoPostal}');
+	var txtCodigoPostal = app.creaText('codigoPostal', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.codPostal" text="**Código Postal" />', '${codigoPostal}');
 	
 	
 	var buttonsR = <app:includeArray files="${buttonsRight}" />;
 	var buttonsL = <app:includeArray files="${buttonsLeft}" />;
 	
-<%-- ************************* PESTAï¿½A 1 FILTROS BIEN *************************************** --%>
+<%-- ************************* PESTAÑA 1 FILTROS BIEN *************************************** --%>
 	
 	var filtrosTabDatosBien = new Ext.Panel({
 		title:'<s:message code="plugin.nuevoModeloBienes.busquedaBienes.tabFiltros.datosBien" text="**Datos del bien" />'
@@ -104,7 +104,7 @@ var formBusquedaBienes=function(){
 				}]
 	});
 
-<%-- ************************* PESTAï¿½A 2 FILTROS BIEN *************************************** --%>
+<%-- ************************* PESTAÑA 2 FILTROS BIEN *************************************** --%>
 	var tabFiltrosRelacion = false;	
 	var filtrosTabRelacionesBien = new Ext.Panel({
 		title:'<s:message code="plugin.nuevoModeloBienes.busquedaBienes.tabFiltros.relacionesBien" text="**Relaciones del bien" />'
@@ -126,7 +126,7 @@ var formBusquedaBienes=function(){
 	});
 		
 		
-<%-- ************************* PESTAï¿½A 3 FILTROS BIEN LOCALIZACIï¿½N *************************************** --%>
+<%-- ************************* PESTAÑA 3 FILTROS BIEN LOCALIZACIÓN *************************************** --%>
 	var tabFiltrosLocalizacion = false;	
 	var filtrosTabLocalizacionBien = new Ext.Panel({
 		title:'<s:message code="plugin.nuevoModeloBienes.busquedaBienes.tabFiltros.localizacion" text="**Localizaciones del bien" />'
@@ -144,8 +144,102 @@ var formBusquedaBienes=function(){
 		tabFiltrosLocalizacion=true;
 	});
 		
-<%-- *************TABPANEL QUE CONTIENE TODAS LAS PESTAï¿½AS********************************   --%>
+<%-- ******************* MODIFICACION BOTON BUSCAR PARA QUE SE DESACTIVEN BUSQUEDAS EN PARALELO ******************** --%>		
+	var validarForm=function(){
+		if(txtIdBien.getValue() !== ''){
+			return true;
+		}
+		if(txtPoblacion.getValue() !== ''){
+			return true;
+		}
+		if(txtCodPostal.getValue() !== ''){
+			return true;
+		}
+		if(comboTipoBien.getValue() !== ''){
+			return true;
+		}
+		if(txtValorDesde.getValue() !== ''){
+			return true;
+		}
+		if(txtTotalCargasDesde.getValue() !== ''){
+			return true;
+		}
+		if(txtValorHasta.getValue() !== ''){
+			return true;
+		}
+		if(txtTotalCargasHasta.getValue() !== ''){
+			return true;
+		}
+		if(txtNumContrato.getValue() !== ''){
+			return true;
+		}
+		if(txtPrimerTitularNIF.getValue() !== ''){
+			return true;
+		}
+		if(txtCodCliente.getValue() !== ''){
+			return true;
+		}
+		if(txtNifCliente.getValue() !== ''){
+			return true;
+		}
+		if(txtNumActivo.getValue() !== ''){
+			return true;
+		}
+		if(txtNumRegistro.getValue() !== ''){
+			return true;
+		}
+		if(txtReferenciaCatastral.getValue() !== ''){
+			return true;
+		}
+		if(txtSubtipoBien.getValue() !== ''){
+			return true;
+		}
+		if(txtTasacionDesde.getValue() !== ''){
+			return true;
+		}
+		if(txtTasacionHasta.getValue() !== ''){
+			return true;
+		}
+		if(txtTipoSubastaDesde.getValue() !== ''){
+			return true;
+		}
+		if(txtTipoSubastaHasta.getValue() !== ''){
+			return true;
+		}
+		if(txtNumFinca.getValue() !== ''){
+			return true;
+		}
+		if(txtDireccion.getValue() !== ''){
+			return true;
+		}
+		if(txtProvincia.getValue() !== ''){
+			return true;
+		}
+		if(txtLocalidad.getValue() !== ''){
+			return true;
+		}
+		if(txtCodigoPostal.getValue() !== ''){
+			return true;
+		}
+	};
 	
+	var buscarFunc=function(){
+		if(validarForm()){
+			var isBusqueda=true;
+			panelFiltros.collapse(true);
+			pagingBar.show();
+			bienesStore.webflow(getParametros());
+			panelFiltros.getTopToolbar().setDisabled(true);	
+		}else{
+			Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','Introduzca parámetros de búsqueda');
+		}
+	};
+    
+    buttonsL[0] = app.crearBotonBuscar({
+		handler : buscarFunc
+	});	
+		
+<%-- *************TABPANEL QUE CONTIENE TODAS LAS PESTAÑAS********************************   --%>	
 	var filtroTabPanel=new Ext.TabPanel({
 		items:[filtrosTabDatosBien, filtrosTabRelacionesBien, filtrosTabLocalizacionBien]
 		,id:'idTabFiltrosBien'
@@ -158,7 +252,7 @@ var formBusquedaBienes=function(){
 		,activeItem:0
 	});
 
-<%-- **************************** PANEL QUE CONTIENE EL PANEL DE PESTAï¿½AS******************** --%>
+<%-- **************************** PANEL QUE CONTIENE EL PANEL DE PESTAÑAS******************** --%>
 	
 	var panelFiltros = new Ext.Panel({
 		autoHeight:true
@@ -317,23 +411,23 @@ var formBusquedaBienes=function(){
 		,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.numActivo" text="**Nº activo"/>', sortable: false, dataIndex: 'numActivo'}
 		</sec:authorize>
 	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.tipo" text="**Tipo"/>', width: 200, sortable: false, dataIndex: 'tipo'}
-	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.descripcion" text="**Descipciï¿½n"/>', width: 200, sortable: true, dataIndex: 'descripcionBien'}
-	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.poblacion" text="**Poblaciï¿½n"/>', width: 200, sortable: false, dataIndex: 'poblacion'}
+	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.descripcion" text="**Descipción"/>', width: 200, sortable: true, dataIndex: 'descripcionBien'}
+	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.poblacion" text="**Población"/>', width: 200, sortable: false, dataIndex: 'poblacion'}
 		,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.Valor" text="**Valor"/>', renderer: app.format.moneyRenderer, sortable: true, dataIndex: 'valorActual'}
 		,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.Cargas" text="**Cargas"/>', renderer: app.format.moneyRenderer, sortable: true, dataIndex: 'importeCargas'}
 		,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.origen" text="**Origen"/>', sortable: true, dataIndex: 'origen'}
 		,{header: '<s:message code="plugin.nuevoModeloBienes.solvenciaNoEncontrada" text="**Solvencia no encontrada"/>', dataIndex: 'solvenciaNoEncontrada', sortable: true,renderer:rendererChechkbox}	    
-	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.idBien" text="**Cï¿½digo"/>', dataIndex: 'id', sortable: true, hidden:true}
+	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.idBien" text="**Código"/>', dataIndex: 'id', sortable: true, hidden:true}
 	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.codigoInterno" text="**codigoInterno"/>', width: 200, sortable: true, dataIndex: 'codigoInterno', hidden:true}
 	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.superficie" text="**Superficie"/>', dataIndex: 'superficie', renderer: app.format.sqrMtsRenderer, align:'right', sortable: false, hidden:true}
 
-<%-- 		,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.numRegistro" text="**Nï¿½ registro"/>', sortable: false, dataIndex: 'numRegistro', hidden:true} --%>
+<%-- 		,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.numRegistro" text="**Nº registro"/>', sortable: false, dataIndex: 'numRegistro', hidden:true} --%>
 <%--		,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.referenciaCatastral" text="**Referencia catastral"/>', sortable: false, dataIndex: 'referenciaCatastral', hidden:true}  --%>
 <%-- 		,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.subtipoBien" text="**Subtipo bien"/>', sortable: false, dataIndex: 'subtipoBien', hidden:true} --%>
-<%-- 		,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.direccion" text="**Direcciï¿½n"/>', sortable: false, dataIndex: 'direccion', hidden:true} --%>
+<%-- 		,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.direccion" text="**Dirección"/>', sortable: false, dataIndex: 'direccion', hidden:true} --%>
 <%-- 		,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.provincia" text="**Provincia"/>', sortable: false, dataIndex: 'provincia', hidden:true} --%>
 <%-- 		,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.localidad" text="**Localidad"/>', sortable: false, dataIndex: 'localidad', hidden:true} --%>
-<%-- 		,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.codigoPostal" text="**Cï¿½digo postal"/>', sortable: false, dataIndex: 'codigoPostal', hidden:true} --%>
+<%-- 		,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.grid.codigoPostal" text="**Código postal"/>', sortable: false, dataIndex: 'codigoPostal', hidden:true} --%>
 	]);
 
 	<sec:authorize ifAllGranted="SOLVENCIA_BORRAR">
@@ -399,7 +493,7 @@ var formBusquedaBienes=function(){
 		bienesGrid.on('rowclick',function(grid, rowIndex, e){
 			var rec = grid.getStore().getAt(rowIndex);
 	        var origen= rec.get('origen');
-			if(origen=='Automï¿½tica'){
+			if(origen=='Automática'){
 				btnBorrarBien.disable();
 			} else {
 				btnBorrarBien.enable();
@@ -416,6 +510,10 @@ var formBusquedaBienes=function(){
     };
 	    	
 	bienesGrid.addListener('rowdblclick', bienesGridListener);
+	
+	bienesStore.on('load',function(){
+           panelFiltros.getTopToolbar().setDisabled(false);
+    });
 	
 	var mainPanel = new Ext.Panel({
 		items : [

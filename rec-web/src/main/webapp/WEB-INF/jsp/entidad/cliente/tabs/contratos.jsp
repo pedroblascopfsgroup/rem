@@ -78,15 +78,15 @@
 	tipoRiesgo.INDIRECTO = 'riesgoIndirecto';
 	tipoRiesgo.PASIVO = 'riesgoPasivo';
 		
-	contratoRiesgoDirecto.on('load', function(){muestraDatosTitulo(contratoRiesgoDirecto, riesgosDirectosGrid, false, tipoRiesgo.DIRECTO);});
-	contratoRiesgoIndirecto.on('load', function(){muestraDatosTitulo(contratoRiesgoIndirecto, riesgosIndGrid, false, tipoRiesgo.INDIRECTO);});
-	contratoRiesgoPasivo.on('load', function(){muestraDatosTitulo(contratoRiesgoPasivo, riesgosDirectosPasivosGrid, true, tipoRiesgo.PASIVO);});
+	contratoRiesgoDirecto.on('load', function(){muestraDatosTitulo(contratoRiesgoDirecto, riesgosDirectosGrid, false, tipoRiesgo.DIRECTO, data.numContratos);});
+	contratoRiesgoIndirecto.on('load', function(){muestraDatosTitulo(contratoRiesgoIndirecto, riesgosIndGrid, false, tipoRiesgo.INDIRECTO, contratoRiesgoIndirecto.getTotalCount());});
+	contratoRiesgoPasivo.on('load', function(){muestraDatosTitulo(contratoRiesgoPasivo, riesgosDirectosPasivosGrid, true, tipoRiesgo.PASIVO, contratoRiesgoPasivo.getTotalCount());});
 
     var contratosRDCm= new Ext.grid.ColumnModel([
             {header: '<s:message code="contratos.cc" text="**Codigo" />', width: 160,  dataIndex: 'cc', id:'colCodigoContrato'},
             {header: '<s:message code="contratos.fechaDato" text="**Fecha dato" />', width: 160,  dataIndex: 'fechaDato', id:'colFechaDato'},
             {header: '<s:message code="contratos.tipo" text="**Tipo" />', width: 120,  dataIndex: 'tipo'},
-            {header: '<s:message code="contratos.condicionesEspeciales" text="**Disposicion" />', width: 120,  dataIndex: 'condEspec',renderer: app.format.moneyRenderer,align:'right'},
+            {header: '<s:message code="contratos.condicionesEspeciales" text="**Disponible" />', width: 120,  dataIndex: 'condEspec',renderer: app.format.moneyRenderer,align:'right'},
             {header: '<s:message code="contratos.saldoirr" text="**Saldo Irregular" />', width: 120, dataIndex: 'saldoIrregular',renderer: app.format.moneyRenderer,align:'right'},
             {header: '<s:message code="contratos.saldotot" text="**Saldo No Vencido" />', width: 120,  dataIndex: 'saldoNoVencido',renderer: app.format.moneyRenderer,align:'right'},
             {header: '<s:message code="contratos.diasirr" text="**Dias Irregular" />', width: 90,  dataIndex: 'diasIrregular'},
@@ -249,7 +249,7 @@
         });
 	}
 
-	function muestraDatosTitulo(store, grid, pasivo, tipo){
+	function muestraDatosTitulo(store, grid, pasivo, tipo, total){
 		var texto = '';
 		// inicializar titulos
 		switch(tipo){
@@ -264,8 +264,7 @@
 				break;
 		}
 		grid.setTitle(texto);
-		
-		var total = store.getTotalCount();
+			
 		var rec = store.getAt(store.getRange().length-1);
 		
 		if (total == null || rec == null) return;
@@ -297,7 +296,7 @@
 	    texto += '&nbsp;]';
 		grid.setTitle(texto);
 	};
-
+	
 	panel.getValue = function(){ 
 		return { 
 			titulo1 : riesgosDirectosGrid.title,

@@ -30,7 +30,7 @@ public class DocumentoAssembler {
 	 */
 	public static SolicitudDocumentoPCODto docAndSolEntityToSolicitudDto(DocumentoPCO documento,
 			SolicitudDocumentoPCO solicitud, String ugIdDto, String descripcionUG, boolean esDocumento, 
-			boolean tieneSolicitud, DDSiNo siNo, DDSiNoNoAplica siNoAplica, int idIdentificativo) {
+			boolean tieneSolicitud, DDSiNo siNo, DDSiNoNoAplica siNoAplica, Long idIdentificativo) {
 		SolicitudDocumentoPCODto solicitudDto = new SolicitudDocumentoPCODto();
 				
 		solicitudDto.setIdIdentificativo(idIdentificativo + "");
@@ -103,7 +103,10 @@ public class DocumentoAssembler {
 		doc.setTomo(documento.getTomo());
 		doc.setPlaza(documento.getPlaza());
 		if (documento.getFechaEscritura()!=null)
-			doc.setFechaEscritura(webDateFormat.format(documento.getFechaEscritura()));		
+			doc.setFechaEscritura(webDateFormat.format(documento.getFechaEscritura()));
+		if(!Checks.esNulo(documento.getProvinciaNotario())){
+			doc.setProvinciaNotario(documento.getProvinciaNotario().getCodigo());
+		}
 		
 		return doc;
 	}

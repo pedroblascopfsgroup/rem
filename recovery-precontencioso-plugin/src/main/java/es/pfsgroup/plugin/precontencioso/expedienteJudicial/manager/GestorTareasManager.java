@@ -116,13 +116,21 @@ public class GestorTareasManager implements GestorTareasApi {
 			Long idProc, List<GestorTareasLineaConfigPCO> lineasConfig) {
 
 		List<GestorTareasAccionPCODto> listaAcciones = new ArrayList<GestorTareasAccionPCODto>();
-		for (GestorTareasLineaConfigPCO linea : lineasConfig) {
-			if (gestorTareasDao.evaluaCondicion(idProc, linea.getCondicionHQL())) {
-				GestorTareasAccionPCODto accion = new GestorTareasAccionPCODto();
-				accion.setTipoAccion(linea.getCodigoAccion());
-				accion.setTipoTarea(linea.getCodigoTarea());
-				listaAcciones.add(accion);
+		try{
+			for (GestorTareasLineaConfigPCO linea : lineasConfig) {
+				if (gestorTareasDao.evaluaCondicion(idProc, linea.getCondicionHQL())) {
+					GestorTareasAccionPCODto accion = new GestorTareasAccionPCODto();
+					accion.setTipoAccion(linea.getCodigoAccion());
+					accion.setTipoTarea(linea.getCodigoTarea());
+					listaAcciones.add(accion);
+					logger.debug("[evaluarTareasProcedimiento]: " + linea.getCodigoAccion() + "/" + linea.getCodigoTarea() + ": SI");					
+				} else {
+					logger.debug("[evaluarTareasProcedimiento]: " + linea.getCodigoAccion() + "/" + linea.getCodigoTarea() + ": NO");					
+				}
 			}
+		}
+		catch(Exception e){
+			logger.error("evaluarTareasProcedimiento: " + e);
 		}
 		return listaAcciones;
 		
@@ -168,7 +176,7 @@ public class GestorTareasManager implements GestorTareasApi {
 	@Transactional(readOnly = false)
 	public boolean crearTareaEspecial(Long idProc, String codigoTarea) {
 
-        Procedimiento procedimiento = proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(idProc);
+    	Procedimiento procedimiento = proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(idProc);
 
         //Buscamos la tarea perteneciente a ese procedimiento con el código tarea y el idTipoProcedimiento y extraemos su ID tarea
         Long idTipoProcedimiento = procedimiento.getTipoProcedimiento().getId();
@@ -200,12 +208,18 @@ public class GestorTareasManager implements GestorTareasApi {
         if (juzgado != null) idTipoJuzgado = juzgado.getId();
         if (plaza != null) idTipoPlaza = plaza.getId();
 
+        if (logger.isDebugEnabled()) {
+            logger.debug("Antes de crear la tarea " + codigoTarea + ", de subtipo " + subtipoTarea);
+        }
+
         Long plazoTarea = getPlazoTarea(idTipoPlaza, idTareaProcedimiento, idTipoJuzgado, idProc);
         Long idTarea = tareaExternaManager.crearTareaExterna(subtipoTarea, plazoTarea, nombreTarea, idProc, idTareaProcedimiento,
                 getTokenId(procedimiento.getProcessBPM()));
 
         if (logger.isDebugEnabled()) {
-            logger.debug(TXT_CREAMOS_LA_TAREA + codigoTarea + ", " + idTarea);
+            logger.debug(TXT_CREAMOS_LA_TAREA + codigoTarea + ", " + idTarea + ", de subtipo " + subtipoTarea);
+        } else {
+        	System.out.println("[crearTareaEspecial]: " + TXT_CREAMOS_LA_TAREA + codigoTarea + ", " + idTarea + ", de subtipo " + subtipoTarea);
         }
 
         return true;
@@ -245,7 +259,7 @@ public class GestorTareasManager implements GestorTareasApi {
             String result = processUtils.evaluaScript(idProcedimiento, null, idTipoTarea, null, script).toString();
             plazo = Long.parseLong(result.toString());
         } catch (Exception e) {
-            logger.error(TXT_ERR_PLAZO_1 + script + TXT_ERR_PLAZO_2 + idProcedimiento + TXT_ERR_PLAZO_3
+            logger.error("getPlazoTarea: " + TXT_ERR_PLAZO_1 + script + TXT_ERR_PLAZO_2 + idProcedimiento + TXT_ERR_PLAZO_3
                     + idTipoTarea + TXT_ERR_PLAZO_4, e);
             throw new UserException(BPM_ERROR_SCRIPT);
         }
@@ -295,10 +309,6 @@ public class GestorTareasManager implements GestorTareasApi {
 	public boolean getEsTareaPrecontenciosoEspecial(Long tareaId) {
 
 		TareaExterna tareaExterna = genericDao.get(TareaExterna.class, genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", tareaId));
-	
-		if(tareaExterna == null){
-			return false;
-		}
 		
 		if (Checks.esNulo(tareaExterna)) {
 			return false;
@@ -320,6 +330,5 @@ public class GestorTareasManager implements GestorTareasApi {
 			
 		}
 		return resultado;
-		
 	}
 }

@@ -25,7 +25,7 @@ public class DecisionProcedimientoDaoImpl extends AbstractEntityDao<DecisionProc
 	@Override
 	public List<DecisionProcedimiento> getByIdProcedimiento(Long id) {
 
-		String sql = "from DecisionProcedimiento where procedimiento.id = ?";
+		String sql = "from DecisionProcedimiento where procedimiento.id = ? and auditoria.borrado=false";
 		return getHibernateTemplate().find(sql, id);
 	}
 

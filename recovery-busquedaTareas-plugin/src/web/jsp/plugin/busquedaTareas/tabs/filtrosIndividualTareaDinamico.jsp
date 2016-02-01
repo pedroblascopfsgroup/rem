@@ -105,7 +105,7 @@
 	
 	var comboTipoIntervencion=new Ext.form.ComboBox({
 		// no cambiar valores - lógica de negocio	
-		store:[['GEXT','<s:message code="plugin.busquedaTareas.filtroTipoIntervencion.sup" text="**Como supervisor" />'],['SUP','<s:message code="plugin.busquedaTareas.filtroTipoIntervencion.ges" text="**Como gestor" />']<%--,['3','De usuario'] --%>]
+		store:[['<fwk:const value="es.capgemini.pfs.multigestor.model.EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO" />','<s:message code="plugin.busquedaTareas.filtroTipoIntervencion.sup" text="**Como supervisor" />'],['<fwk:const value="es.capgemini.pfs.multigestor.model.EXTDDTipoGestor.CODIGO_TIPO_GESTOR_SUPERVISOR" />','<s:message code="plugin.busquedaTareas.filtroTipoIntervencion.ges" text="**Como gestor" />']<%--,['3','De usuario'] --%>]
 		,allowBlank: false
 		,triggerAction : 'all'
 		,mode:'local'
@@ -145,7 +145,7 @@
 	var bloquearCombos = function(){
 		filtroGestores.disable();
 		//comboTiposGestor.disable();
-		if (comboTiposGestor.getValue() != 'SUP'){
+		if (comboTiposGestor.getValue() != '<fwk:const value="es.capgemini.pfs.multigestor.model.EXTDDTipoGestor.CODIGO_TIPO_GESTOR_SUPERVISOR" />'){
 			comboTipoIntervencion.disable();
 		}
 	}
@@ -156,7 +156,7 @@
 	
 	busquedaUsuario.on('change',function(){
 		if (comboTiposGestor.getValue()==''){
-			comboTiposGestor.setValue('GEXT');
+			comboTiposGestor.setValue('<fwk:const value="es.capgemini.pfs.multigestor.model.EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO" />');
 		}
 	});
 	
@@ -167,9 +167,9 @@
 	comboDespachos.on('select',limpiarYRecargarGestores);
 	
 	comboTiposGestor.on('select', function(){
-		if (comboTiposGestor.getValue()=='SUP'){
+		if (comboTiposGestor.getValue()=='<fwk:const value="es.capgemini.pfs.multigestor.model.EXTDDTipoGestor.CODIGO_TIPO_GESTOR_SUPERVISOR" />'){
 			comboTipoIntervencion.enable();
-			comboTipoIntervencion.setValue('SUP');
+			comboTipoIntervencion.setValue('<fwk:const value="es.capgemini.pfs.multigestor.model.EXTDDTipoGestor.CODIGO_TIPO_GESTOR_SUPERVISOR" />');
 		}else{
 			comboTipoIntervencion.reset();
 			comboTipoIntervencion.disable();

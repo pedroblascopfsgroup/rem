@@ -158,7 +158,8 @@ var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
 	 	parametros.numFinca = numFinca.getValue();
 	 	parametros.numRegistro = numRegistro.getValue();
 	 	parametros.plaza = plaza.getValue();
-	 	parametros.idufir = idufir.getValue();	 	
+	 	parametros.idufir = idufir.getValue();
+	 	parametros.provinciaNotario = comboProvinciaNotario.getValue();	 	
 	 	
 		parametros.idPrc = data.id;
 
@@ -273,7 +274,7 @@ var gridDocs = new Ext.grid.GridPanel({
 		,height:150
 	});
 
-   var tipoDocRecord = Ext.data.Record.create([
+  <%--  var tipoDocRecord = Ext.data.Record.create([
          {name:'codigo'}
         ,{name:'descripcion'}
     ]);
@@ -281,7 +282,7 @@ var gridDocs = new Ext.grid.GridPanel({
     var optionsTipoDocStore = page.getStore({
            flow: 'expedientes/buscarTiposDocumento'
            ,reader: new Ext.data.JsonReader({root : 'tiposDocumento'}, tipoDocRecord)           
-    }); 
+    }); --%>
     
     var style='margin-bottom:1px;margin-top:1px';
     var labelStyle='width:100';
@@ -291,6 +292,12 @@ var gridDocs = new Ext.grid.GridPanel({
  		label="**Tipo Documento" value="" dd="${tiposDocumento}" 
 		propertyCodigo="codigo" propertyDescripcion="descripcion" />
 	comboTipoDocumento.labelStyle=labelStyle;
+	
+	<pfsforms:ddCombo name="comboProvinciaNotario"
+		labelKey="precontencioso.grid.documento.incluirDocumento.localidadNotario" 
+ 		label="**Localidad Notario" value="" dd="${listaProvincias}" 
+		propertyCodigo="codigo" propertyDescripcion="descripcion" />
+	comboProvinciaNotario.labelStyle=labelStyle;
 	    
 	var protocolo = new Ext.form.TextField({
 		name : 'protocolo'
@@ -410,7 +417,7 @@ var gridDocs = new Ext.grid.GridPanel({
    	    ,autoWidth : true
 		,defaults : {xtype : 'fieldset', border:false , cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
 		,items:[{items: [ comboTipoDocumento, notario, asiento, finca, numFinca, numRegistro, plaza]}
-				,{items: [ protocolo, fechaEscritura, tomo, libro, folio, idufir]}
+				,{items: [ comboProvinciaNotario, protocolo, fechaEscritura, tomo, libro, folio, idufir]}
 		]
 	});	
 	

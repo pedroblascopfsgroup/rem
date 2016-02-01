@@ -11,7 +11,7 @@
 <fwk:page>
 	
 	<pfs:numberfield name="rankingPosicion" labelKey="plugin.recobroConfig.modeloFacturacion.corrector.cabeceraPosicionRanking" 
-		label="**Posicion" value="${correctoFacturacion.rankingPosicion}" obligatory="true"/>
+		label="**Tramo de mejora" value="${correctoFacturacion.rankingPosicion}" obligatory="true"/>
 	
 	<pfs:numberfield name="objetivoInicio" labelKey="plugin.recobroConfig.modeloFacturacion.corrector.inicio" 
 		label="**Tramo inicio" value="${correctoFacturacion.objetivoInicio}" obligatory="true" allowDecimals="true"/>
@@ -67,7 +67,7 @@
 		
 		if(rankingPosicion.isVisible()) {
 			if (rankingPosicion.getActiveError() != "") {
-				Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="plugin.recobroConfig.modeloFacturacion.corrector.cabeceraPosicionRanking" text="**Posición"/>: '+rankingPosicion.getActiveError());
+				Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="plugin.recobroConfig.modeloFacturacion.corrector.cabeceraPosicionRanking" text="**Tramo de mejora"/>: '+rankingPosicion.getActiveError());
 				return false;
 			}
 		}

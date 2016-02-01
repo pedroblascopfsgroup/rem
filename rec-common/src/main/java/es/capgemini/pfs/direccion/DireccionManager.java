@@ -11,6 +11,8 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Direccion;
+import es.capgemini.pfs.direccion.model.DireccionPersonaManual;
+import es.capgemini.pfs.direccion.model.DireccionPersonaManualId;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.Persona;
 import es.pfsgroup.commons.utils.Checks;
@@ -21,6 +23,7 @@ import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.capgemini.pfs.direccion.api.DireccionApi;
 import es.capgemini.pfs.direccion.dao.DireccionDao;
 import es.capgemini.pfs.direccion.dao.DireccionPersonaDao;
+import es.capgemini.pfs.direccion.dao.DireccionPersonaManualDao;
 import es.capgemini.pfs.direccion.dto.DireccionAltaDto;
 import es.capgemini.pfs.direccion.model.DireccionPersona;
 import es.capgemini.pfs.direccion.model.DireccionPersonaId;
@@ -42,6 +45,9 @@ public class DireccionManager implements DireccionApi {
 	
 	@Autowired
 	private DireccionPersonaDao direccionPersonaDao;
+	
+	@Autowired
+	private DireccionPersonaManualDao direccionPersonaManualDao;
 
 	@BusinessOperation(DireccionApi.GET_LIST_LOCALIDADES)
 	public List<Localidad> getListLocalidades(Long idProvincia) {
@@ -148,6 +154,15 @@ public class DireccionManager implements DireccionApi {
 		
 			direccionPersonaDao.saveOrUpdate(dirPers);
 		}
+		
+		for (Long idPersonaManual : dto.getSetIdPersonasManuales()) {
+			DireccionPersonaManual dirPersMan = new DireccionPersonaManual();
+			DireccionPersonaManualId dirPersManId = new DireccionPersonaManualId(idDireccion, idPersonaManual);
+			dirPersMan.setId(dirPersManId);
+		
+			direccionPersonaManualDao.saveOrUpdate(dirPersMan);
+		}
+		
 		return idDireccion;
 	}
 	

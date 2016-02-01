@@ -7,7 +7,14 @@
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms" %>
 <fwk:page>
 
-	var codigoTipoAcuerdoDacion = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo.TIPO_DACION" />';
+	var codigoTipoDacionCompra = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo.TIPO_DACION_COMPRA" />';
+	var codigoTipoDacionEnPago = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo.TIPO_DACION_EN_PAGO" />';
+	var codigoTipoDacionParaPago = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo.TIPO_DACION_PARA_PAGO" />';
+	var codigoTipoDacionCompraVenta = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo.TIPO_DACION_COMPRA_VENTA" />';
+	var codigoTipoDacionCompraVentaDacion = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo.TIPO_DACION_COMPRA_VENTA_DACION" />';
+	var codigoTipoFondosPropios = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo.TIPO_EFECTIVO_FONDOS_PROPIOS" />';
+	
+	
 	var codigoSubtipoEstandar = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDSubTipoAcuerdo.SUBTIPO_ESTANDAR" />';
 
 	var labelStyle = 'width:185px;font-weight:bolder",width:375';
@@ -24,7 +31,12 @@
 	var soloConsulta = '${soloConsulta}';
 	var idTipoAcuerdoPlanPago ='${idTipoAcuerdoPlanPago}';
 	var yaHayPlanPago = '${yaHayPlanPago}';
+	var fechaPaseMora = '${fechaPaseMora}';
+	var ambito = '${ambito}';
+	var idTipoAcuerdoFondosPropios ='${idTipoAcuerdoFondosPropios}';
 	
+	var datePaseMora = Date.parse(fechaPaseMora);
+
     var tipoAcu = Ext.data.Record.create([
 		 {name:'id'}
 		,{name:'descripcion'}
@@ -33,6 +45,7 @@
 	
 	var optionsAcuerdosStore = page.getStore({
 	       flow: 'mejacuerdo/getListTipoAcuerdosData'
+	       ,params:{entidad:"${ambito}"} 
 	       ,reader: new Ext.data.JsonReader({
 	    	 root : 'listadoAcuerdos'
 	    }, tipoAcu)	       
@@ -52,10 +65,12 @@
 		,editable: false
 		,emptyText:'Seleccionar'
 		,triggerAction: 'all'
-		,fieldLabel: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.flujo.tipoAcuerdo" text="**Tipo acuerdo" />'
+		,fieldLabel: (ambito!='asunto') ? '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.flujo.tipoTermino" text="**Solución Propuesta" />':'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.flujo.tipoAcuerdo" text="**Tipo termino" />'
 		,labelStyle: 'width:150px'
 		,width: 150		
 	});
+	
+	optionsAcuerdosStore.webflow({entidad:"${ambito}"});
 	
 	comboTipoAcuerdo.on('select', function() {
 	    creaCamposDynamics(this);
@@ -114,7 +129,12 @@
 	
 		
 	var creaCamposDynamics = function (cmp) {
-		if (cmp.getValue()!='' && cmp.getStore().getById(cmp.getValue()).data['codigo']==codigoTipoAcuerdoDacion) {
+			if (cmp.getValue()!='' && 
+				(cmp.getStore().getById(cmp.getValue()).data['codigo']==codigoTipoDacionCompra ||
+				 cmp.getStore().getById(cmp.getValue()).data['codigo']==codigoTipoDacionEnPago ||
+				 cmp.getStore().getById(cmp.getValue()).data['codigo']==codigoTipoDacionParaPago ||
+				 cmp.getStore().getById(cmp.getValue()).data['codigo']==codigoTipoDacionCompraVenta ||
+				 cmp.getStore().getById(cmp.getValue()).data['codigo']==codigoTipoDacionCompraVentaDacion) ){
 			bienesFieldSet.show();
 		} else {
 			bienesFieldSet.hide();
@@ -125,14 +145,13 @@
 			,method: 'POST'
 			,params:{idTipoAcuerdo:cmp.getValue()} 
 			,success: function (result, request){
-			
 				var cmpLft = Ext.getCmp('dinamicElementsLeft');
-			   	if (cmpLft) {
+			   	if (cmpLft && cmpLft.el) {
 					cmpLft.el.remove();
 			   	}
 			   	
 			  	var cmpRgt = Ext.getCmp('dinamicElementsRight');
-			   	if (cmpRgt) {
+			   	if (cmpRgt && cmpRgt.el) {
 					cmpRgt.el.remove();
 			   	}
 				
@@ -156,8 +175,13 @@
 				    }
 				}
 
-				detalleFieldSet.setVisible( true );
-		    	detalleFieldSetContenedor.setVisible( true );
+				if (camposDynamics.camposTerminoAcuerdo.length>0) {
+					detalleFieldSet.setVisible( true );
+		    		detalleFieldSetContenedor.setVisible( true );
+		    	} else {
+					detalleFieldSet.setVisible( false );
+		    		detalleFieldSetContenedor.setVisible( false );		    	
+		    	}
 		    	
 		    	var dinamicElementsLeftSize = 400
 		    	
@@ -196,7 +220,7 @@
 		,editable: false
 		,emptyText:'Seleccionar'
 		,triggerAction: 'all'
-		,fieldLabel: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.flujo.subtipoAcuerdo" text="**Sub tipo acuerdo" />'
+		,fieldLabel: (ambito!='asunto') ? '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.flujo.subtipoTermino" text="**Subtipo Solució Propuesta" />' :'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.flujo.subtipoAcuerdo" text="**Subtipo termino" />'
 		,labelStyle: 'width:150px'
 		,width: 150				
 	});
@@ -321,7 +345,7 @@ arrayCampos["fechaSolucionPrevista"]=new Ext.form.DateField({
 	id:'fechaSolucionPrevista'
 	,name:'fechaSolucionPrevista'
 	,value : ''
-	, allowBlank : true
+	, allowBlank : false
 	,autoWidth:true
 	 ,fieldLabel: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.fechaSolucionPrevista" text="**Fecha Sol. Prevista" />'
 });
@@ -461,7 +485,7 @@ arrayCampos["codigoPersonaAfectada"]=app.creaNumber('codigoPersonaAfectada', '<s
 			{items:[informeLetrado]}
 		]
 	});		
-		
+	
 	var btnCancelar= new Ext.Button({
 		text : '<s:message code="app.cancelar" text="**Cancelar" />'
 		,iconCls : 'icon_cancel'
@@ -476,11 +500,19 @@ arrayCampos["codigoPersonaAfectada"]=app.creaNumber('codigoPersonaAfectada', '<s
 		,iconCls : 'icon_ok'
        ,cls: 'x-btn-text-icon'
        ,handler:function(){
-       		
        		var formulario = flujoFieldSet.getForm();
        		
        		if(formulario.isValid()){
-       			if (yaHayPlanPago=='true' && comboTipoAcuerdo.getValue()==idTipoAcuerdoPlanPago){
+       			var dateSolucionPrevista = Date.parse(arrayCampos.fechaSolucionPrevista.getValue());
+	       		if(comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && dateSolucionPrevista > datePaseMora) {		       		
+	       			Ext.Msg.show({
+				   		title:'Aviso',
+				   		msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.fondosPropios" text="**Fecha solicitud prevista debe ser menor a la fecha de pase a mora." />',
+				   		buttons: Ext.Msg.OK
+					});
+	       		}else if(comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && !arrayCampos.fechaSolucionPrevista.isValid()) {
+	       			return false;
+	       		}else if (yaHayPlanPago=='true' && comboTipoAcuerdo.getValue()==idTipoAcuerdoPlanPago){
 	        		Ext.Msg.show({
 				   		title:'Aviso',
 				   		msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.planPago" text="**Este acuerdo ya tiene asignado un Plan de Pago" />',
@@ -558,7 +590,6 @@ arrayCampos["codigoPersonaAfectada"]=app.creaNumber('codigoPersonaAfectada', '<s
 				});	
 			}
 			}	
-       		
      	}		
 	});
 	
@@ -708,7 +739,6 @@ if("${esPropuesta}" == "true"){
 			//Valor por defecto para SubTipoAcuerdo
 	       	comboSubTipoAcuerdo.store.load();
 	    	comboSubTipoAcuerdo.store.on('load', function(){ 
-	    		debugger;
 	        	
 				var index = comboSubTipoAcuerdo.store.findBy(function (record) {
    					return record.data.codigo == codigoSubtipoEstandar;

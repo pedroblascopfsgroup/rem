@@ -1,8 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.burofax.manager;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -13,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,22 +20,33 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.message.MessageService;
+import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.asunto.ProcedimientoManager;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.asunto.model.ProcedimientoContratoExpediente;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
+import es.capgemini.pfs.contrato.dao.ContratoPersonaManualDao;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
+import es.capgemini.pfs.contrato.model.ContratoPersonaManual;
 import es.capgemini.pfs.contrato.model.DDTipoIntervencion;
 import es.capgemini.pfs.contrato.model.DDTipoProductoEntidad;
+import es.capgemini.pfs.diccionarios.DictionaryManager;
 import es.capgemini.pfs.direccion.api.DireccionApi;
 import es.capgemini.pfs.direccion.dto.DireccionAltaDto;
 import es.capgemini.pfs.direccion.model.Direccion;
 import es.capgemini.pfs.movimiento.model.Movimiento;
 import es.capgemini.pfs.parametrizacion.dao.ParametrizacionDao;
+import es.capgemini.pfs.persona.dao.PersonaManualDao;
+import es.capgemini.pfs.persona.dto.DtoPersonaManual;
+import es.capgemini.pfs.persona.model.DDPropietario;
 import es.capgemini.pfs.persona.model.Persona;
+import es.capgemini.pfs.persona.model.PersonaManual;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.utils.FormatUtils;
 import es.pfsgroup.commons.utils.Checks;
@@ -43,9 +54,13 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
 import es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi;
+import es.pfsgroup.plugin.precontencioso.burofax.api.DocumentoBurofaxApi;
 import es.pfsgroup.plugin.precontencioso.burofax.dao.BurofaxDao;
+import es.pfsgroup.plugin.precontencioso.burofax.dto.ContratosPCODto;
 import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxEnvioIntegracionPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDEstadoBurofaxPCO;
@@ -101,7 +116,22 @@ public class BurofaxManager implements BurofaxApi {
 	ParametrizacionDao parametrizacionDao;
 	
 	@Autowired
+	private PersonaManualDao personaManualDao;
+	
+	@Autowired
+	private ContratoPersonaManualDao contratoPersonaManualDao;
+	
+	@Autowired 
+	private DictionaryManager dictionaryManager;
+
+	@Autowired
+	DocumentoBurofaxApi docBurManager;
+	
+	@Autowired
 	private DireccionApi direccionApi;
+
+	@Resource
+	private MessageService messageService;
 	
 	private final Log logger = LogFactory.getLog(getClass());
 	private final String DIRECTORIO_PDF_BUROFAX_PCO = "directorioPdfBurofaxPCO";
@@ -187,19 +217,23 @@ public class BurofaxManager implements BurofaxApi {
 	
 	@Override
 	@BusinessOperation(OBTENER_LISTA_BUROFAX)
+	@Transactional(readOnly = false)
 	public List<BurofaxPCO> getListaBurofaxPCO(Long idProcedimiento){
 		List<BurofaxPCO> listaBurofax=null;
 		
 		try{
-			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "procedimientoPCO.id", idProcedimiento);
-			
-			listaBurofax=(List<BurofaxPCO>) genericDao.getList(BurofaxPCO.class,filtro1);
+			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "procedimientoPCO.id", idProcedimiento); //original
+			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			listaBurofax=(List<BurofaxPCO>) genericDao.getList(BurofaxPCO.class,filtro1, filtro2); //original
 		}catch(Exception e){
 			logger.error("getListaBurofaxPCO: " + e);
 		}
-		
 		return listaBurofax;
-		
+	}
+	
+	@Override
+	public List<ContratosPCODto> getContratosProcPersona(Long idProcedimientoPCO, Long idPersona, Boolean manual) {
+		return burofaxDao.getContratosProcPersona(idProcedimientoPCO, idPersona, manual);
 	}
 	
 	@Override
@@ -217,56 +251,6 @@ public class BurofaxManager implements BurofaxApi {
 		return idDireccion;
 	}
 	
-	//No se está utilizando
-	/*
-	@Override
-	@Transactional(readOnly = false)
-	@BusinessOperation(GUARDA_DIRECCION_BUROFAX)
-	public boolean guardaDireccionBurofax(Long idPersona,Long idDireccion,Long idProcedimiento,Long idContrato){
-		
-		try{
-			
-			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(1));
-			BurofaxPCO burofaxPCO=(BurofaxPCO) genericDao.get(BurofaxPCO.class,filtro1);
-			
-			filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idPersona);
-			Persona demandado=(Persona) genericDao.get(Persona.class,filtro1);
-			
-			filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoBurofaxPCO.NO_NOTIFICADO);
-			DDEstadoBurofaxPCO estadoBurofax=(DDEstadoBurofaxPCO) genericDao.get(DDEstadoBurofaxPCO.class,filtro1);
-			
-			filtro1 = genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProcedimiento);
-			ProcedimientoPCO procedimientoPCO=(ProcedimientoPCO) genericDao.get(ProcedimientoPCO.class,filtro1);
-			
-			filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idDireccion);
-			Direccion direccion=(Direccion) genericDao.get(Direccion.class,filtro1);
-			
-			//BurofaxPCO burofaxPCO=new BurofaxPCO();
-			burofaxPCO.setDemandado(demandado);
-			burofaxPCO.setEstadoBurofax(estadoBurofax);
-			burofaxPCO.setProcedimientoPCO(procedimientoPCO);
-			
-			
-			EnvioBurofaxPCO envioBurofax=new EnvioBurofaxPCO();
-			envioBurofax.setBurofax(burofaxPCO);
-			envioBurofax.setDireccion(direccion);
-			envioBurofax.setTipoBurofax(getTipoBurofaxPorDefecto(idProcedimiento, idContrato));
-			envioBurofax.setAuditoria(Auditoria.getNewInstance());
-			
-			List<EnvioBurofaxPCO> listaEnvio=new ArrayList<EnvioBurofaxPCO>();
-			listaEnvio.add(envioBurofax);
-			burofaxPCO.setEnviosBurofax(listaEnvio);
-			
-			
-			//genericDao.saveOrUpdate(BurofaxPCO.class, burofaxPCO);
-			burofaxDao.saveOrUpdate(burofaxPCO);
-		
-		}catch(Exception e){
-			logger.error(e);
-		}
-		return true;
-	}*/
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	@BusinessOperation(DICCIONARIO_TIPO_BUROFAX)
@@ -276,7 +260,6 @@ public class BurofaxManager implements BurofaxApi {
 			dicionarioBurofax = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDTipoBurofaxPCO.class);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
 			logger.error("getTiposBurofaxex: " + e);
 		}
 		
@@ -287,55 +270,59 @@ public class BurofaxManager implements BurofaxApi {
 	@Transactional(readOnly = false)
 	@BusinessOperation(CONFIGURA_TIPO_BUROFAX)
 	@Override
-	public List<EnvioBurofaxPCO> configurarTipoBurofax(Long idTipoBurofax,String[] arrayIdDirecciones,String[] arrayIdBurofax,String[] arrayIdEnvios, Long idDocumento){
+	public List<EnvioBurofaxPCO> configurarTipoBurofax(Long idTipoBurofax,String[] arrayIdDirecciones,String[] arrayIdBurofax,String[] arrayIdEnvios, DocumentoPCO doc){
 			
 		List<EnvioBurofaxPCO> listaEnvioBurofax=new ArrayList<EnvioBurofaxPCO>(); 
-		
+		Filter borrado = genericDao.createFilter(FilterType.EQUALS, "borrado", false);
+						
 		try{
 			
 			for(int i=0;i<arrayIdDirecciones.length;i++){
-			
-				Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoBurofaxPCO.NO_NOTIFICADO);
-				DDEstadoBurofaxPCO estadoBurofaxPCO=(DDEstadoBurofaxPCO) genericDao.get(DDEstadoBurofaxPCO.class,filtro1);
 				
-				Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoBurofaxPCO.ESTADO_PREPARADO);
-				DDResultadoBurofaxPCO resultadoBurofaxPCO=(DDResultadoBurofaxPCO) genericDao.get(DDResultadoBurofaxPCO.class,filtro2);
+				if(!Checks.esNulo(arrayIdDirecciones[i])){
 				
-				Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "id", idTipoBurofax);
-				DDTipoBurofaxPCO tipoBurofax=(DDTipoBurofaxPCO) genericDao.get(DDTipoBurofaxPCO.class,filtro3);
-				
-				Filter filtro4 = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(arrayIdBurofax[i]));
-				BurofaxPCO burofax=(BurofaxPCO) genericDao.get(BurofaxPCO.class,filtro4);
-				
-				Filter filtro5 = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(arrayIdDirecciones[i]));
-				Direccion direccion=(Direccion) genericDao.get(Direccion.class,filtro5);
-				
-				burofax.setEstadoBurofax(estadoBurofaxPCO);
-				
-				EnvioBurofaxPCO envio=null;
-				//Si id Envio Existe actualizamos el envio
-				if(!Checks.esNulo(arrayIdEnvios) && !arrayIdEnvios[i].equals("-1")){
-					Filter filtro6 = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(arrayIdEnvios[i]));
-					envio=(EnvioBurofaxPCO) genericDao.get(EnvioBurofaxPCO.class,filtro6);
+					Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoBurofaxPCO.NO_NOTIFICADO);
+					DDEstadoBurofaxPCO estadoBurofaxPCO=(DDEstadoBurofaxPCO) genericDao.get(DDEstadoBurofaxPCO.class,filtro1, borrado);
 					
-				}
-				
-				//Si idEnvio=-1 Creamos un nuevo envio
-				else{
-					envio=new EnvioBurofaxPCO();	
+					Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoBurofaxPCO.ESTADO_PREPARADO);
+					DDResultadoBurofaxPCO resultadoBurofaxPCO=(DDResultadoBurofaxPCO) genericDao.get(DDResultadoBurofaxPCO.class,filtro2, borrado);
 					
+					Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "id", idTipoBurofax);
+						DDTipoBurofaxPCO tipoBurofax=(DDTipoBurofaxPCO) genericDao.get(DDTipoBurofaxPCO.class,filtro3, borrado);
+					
+					Filter filtro4 = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(arrayIdBurofax[i]));
+						BurofaxPCO burofax=(BurofaxPCO) genericDao.get(BurofaxPCO.class,filtro4, borrado);
+					
+					Filter filtro5 = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(arrayIdDirecciones[i]));
+						Direccion direccion=(Direccion) genericDao.get(Direccion.class,filtro5, borrado);
+					
+					burofax.setEstadoBurofax(estadoBurofaxPCO);
+					
+					EnvioBurofaxPCO envio=null;
+					//Si id Envio Existe actualizamos el envio
+					if(!Checks.esNulo(arrayIdEnvios) && !arrayIdEnvios[i].equals("-1")){
+						Filter filtro6 = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(arrayIdEnvios[i]));
+							envio=(EnvioBurofaxPCO) genericDao.get(EnvioBurofaxPCO.class,filtro6, borrado);
+						
+					}
+					
+					//Si idEnvio=-1 Creamos un nuevo envio
+					else{
+						envio=new EnvioBurofaxPCO();	
+						
+					}
+					//Comun
+					envio.setBurofax(burofax);
+					envio.setDireccion(direccion);
+					envio.setTipoBurofax(tipoBurofax);	
+					//envio.setContenidoBurofax(tipoBurofax.getPlantilla());
+						envio.setContenidoBurofax(docBurManager.replaceVariablesGeneracionBurofax(burofax.getId(),tipoBurofax.getPlantilla(),doc));
+					envio.setResultadoBurofax(resultadoBurofaxPCO);
+					
+					//Guardamos nuevo envio
+					genericDao.save(EnvioBurofaxPCO.class,envio);
+					listaEnvioBurofax.add(envio);
 				}
-				//Comun
-				envio.setBurofax(burofax);
-				envio.setDireccion(direccion);
-				envio.setTipoBurofax(tipoBurofax);	
-				//envio.setContenidoBurofax(tipoBurofax.getPlantilla());
-				envio.setContenidoBurofax(replaceVariablesGeneracionBurofax(burofax.getId(),tipoBurofax.getPlantilla(), idDocumento));
-				envio.setResultadoBurofax(resultadoBurofaxPCO);
-				
-				//Guardamos nuevo envio
-				genericDao.save(EnvioBurofaxPCO.class,envio);
-				listaEnvioBurofax.add(envio);
 			}	
 			
 			
@@ -375,6 +362,7 @@ public class BurofaxManager implements BurofaxApi {
 		try{
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idEnvio);
 			EnvioBurofaxPCO envioBurofax=(EnvioBurofaxPCO) genericDao.get(EnvioBurofaxPCO.class,filtro1);
+			contenido = contenido.replace("<br>", "<br/>");
 			envioBurofax.setContenidoBurofax(contenido);
 			
 			genericDao.save(EnvioBurofaxPCO.class,envioBurofax);
@@ -394,10 +382,96 @@ public class BurofaxManager implements BurofaxApi {
 			persona=(Persona) genericDao.get(Persona.class,filtro1);
 			
 		}catch(Exception e){
-			logger.error("getPersonaById: " + e);
+			logger.error("getPersonaById: "+ e);
 		}
 		
 		return persona;
+	}
+	
+	@BusinessOperation(CANCELAR_EST_PREPARADO)
+	@Transactional(readOnly = false)
+	public void cancelarEnEstPrep(Long idEnvio, Long idCliente, List<Long> arrayidEnvios){
+		try{
+			for(int i=0; i<arrayidEnvios.size(); i++){
+				genericDao.deleteById(EnvioBurofaxPCO.class, arrayidEnvios.get(i));
+				
+				Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "envioId", arrayidEnvios.get(i));
+				Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+				for(BurofaxEnvioIntegracionPCO envioIntegracionPCO : genericDao.getList(BurofaxEnvioIntegracionPCO.class, filtro1, filtro2)) {
+					envioIntegracionPCO.getAuditoria().setBorrado(true);
+					envioIntegracionPCO.getAuditoria().setFechaBorrar(new Date());
+					envioIntegracionPCO.getAuditoria().setUsuarioBorrar(SecurityUtils.getCurrentUser().getUsername());
+					
+					genericDao.save(BurofaxEnvioIntegracionPCO.class, envioIntegracionPCO);
+				}
+			}
+		}
+		catch(Exception e){
+			logger.error(e);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@BusinessOperation(DESCARTAR_PERSONA_ENVIO)
+	@Transactional(readOnly = false)
+	public void descartarPersona(String idsBurofax){
+		Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoBurofaxPCO.DESCARTADA);
+		DDEstadoBurofaxPCO estadoBurofax=(DDEstadoBurofaxPCO) genericDao.get(DDEstadoBurofaxPCO.class,filtro1);
+		try{
+			String[] arrBienes = idsBurofax.split(",");
+			for (String idBurofax:arrBienes) {				
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(idBurofax));
+				BurofaxPCO burofax = genericDao.get(BurofaxPCO.class,filtro);
+				burofax.setEstadoBurofax(estadoBurofax);
+				burofaxDao.save(burofax);
+			}				
+		}catch(Exception e){
+			logger.error(e);
+		}
+	}
+	
+	@Override
+	@BusinessOperation(EXCLUIR_BUROFAX_POR_IDS)
+	@Transactional(readOnly = false)	
+	public void excluirBurofaxPorIds(String idsBurofax){
+		String[] arrBienes = idsBurofax.split(",");
+		for (String idBurofax:arrBienes) {				
+			burofaxDao.deleteById(Long.valueOf(idBurofax));
+		}	
+	}
+	
+	public boolean saberOrigen(Long idDireccion){
+		boolean variable = false;
+		if (!Checks.esNulo(idDireccion)) {
+			try{
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idDireccion);
+				Direccion direccion = (Direccion)  genericDao.get(Direccion.class, filtro);
+				if(direccion.getOrigen() != null && direccion.getOrigen().equalsIgnoreCase("Manual")){
+					variable = true;
+				}
+			}catch(Exception e){
+				logger.error(e);
+			}
+		}
+		return variable;
+	}
+	@BusinessOperation(BORRAR_DIRECCION_MANUAL_BUROFAX)
+	@Transactional(readOnly = false)
+	public void borrarDireccionManualBurofax(Long idDireccion){
+		try{
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idDireccion);
+			Direccion direccion = (Direccion)  genericDao.get(Direccion.class, filtro);
+			if(direccion.getOrigen().equalsIgnoreCase("Manual")){//si es manual hay que borrarla
+				genericDao.deleteById(Direccion.class, idDireccion);
+			}else{
+				throw new UserException(messageService.getMessage("plugin.precontencioso.grid.burofax.mensaje.noBorrarAutomatica", null));
+			}
+			
+		}catch(Exception e){
+			logger.error("borrarDireccionManualBurofax: " + e);
+		}
+		
 	}
 	
 	@BusinessOperation(GUARDA_PERSONA)
@@ -446,14 +520,19 @@ public class BurofaxManager implements BurofaxApi {
 	
 	@Override
 	@BusinessOperation(OBTENER_PERSONAS_CON_CONTRATO)
-	public Collection<? extends Persona> getPersonasConContrato(String query){
+	public Collection<DtoPersonaManual> getPersonasConContrato(String query){
 		return burofaxDao.getPersonasConContrato(query);
 	}
 	
 	@Override
+	public Collection<DtoPersonaManual> getPersonasConContrato(String query, boolean addManuales){
+		return burofaxDao.getPersonasConContrato(query, addManuales);
+	}	
+	
+	@Override
 	@Transactional(readOnly = false)
 	@BusinessOperation(GUARDAR_ENVIO_BUROFAX)
-	public void guardarEnvioBurofax(Boolean certificado,List<EnvioBurofaxPCO> listaEnvioBurofaxPCO){
+	public void guardarEnvioBurofax(Boolean certificado,List<EnvioBurofaxPCO> listaEnvioBurofaxPCO, DocumentoPCO doc){
 		
 		try{
 
@@ -462,26 +541,32 @@ public class BurofaxManager implements BurofaxApi {
 			
 			for(EnvioBurofaxPCO envioBurofax : listaEnvioBurofaxPCO){
 				
+				String contenidoParseadoIntermedio = "";
+				
+				if(Checks.esNulo(envioBurofax.getResultadoBurofax()) || 
+						(!Checks.esNulo(envioBurofax.getResultadoBurofax()) && !envioBurofax.getResultadoBurofax().getCodigo().equals(DDResultadoBurofaxPCO.ESTADO_PREPARADO))){
+					contenidoParseadoIntermedio = docBurManager.replaceVariablesGeneracionBurofax(envioBurofax.getBurofax().getId(), envioBurofax.getTipoBurofax().getPlantilla(), doc);
+				} else {
+					contenidoParseadoIntermedio = envioBurofax.getContenidoBurofax();
+				}
 				envioBurofax.setResultadoBurofax(resultado);
 				envioBurofax.setFechaSolicitud(new Date());
-				if(Checks.esNulo(envioBurofax.getResultadoBurofax()) || (!Checks.esNulo(envioBurofax.getResultadoBurofax()) && !envioBurofax.getResultadoBurofax().getCodigo().equals(DDResultadoBurofaxPCO.ESTADO_PREPARADO))){
-					envioBurofax.setContenidoBurofax(replaceVariablesGeneracionBurofax(envioBurofax.getBurofax().getId(), envioBurofax.getContenidoBurofax(), null));
-				}
+				HashMap<String, Object> mapeoVariables = docBurManager.obtenerMapeoVariables(envioBurofax);
 				
+				String contenidoParseadoFinal = docBurManager.parseoFinalBurofax(contenidoParseadoIntermedio, mapeoVariables);
+				
+				envioBurofax.setContenidoBurofax(contenidoParseadoFinal);
 				genericDao.save(EnvioBurofaxPCO.class, envioBurofax);
 				
 				BurofaxEnvioIntegracionPCO envioIntegracion=new BurofaxEnvioIntegracionPCO();
 				envioIntegracion.setEnvioId(envioBurofax.getId());
 				envioIntegracion.setBurofaxId(envioBurofax.getBurofax().getId());
 				envioIntegracion.setDireccionId(envioBurofax.getDireccion().getId());
-				envioIntegracion.setPersonaId(envioBurofax.getBurofax().getDemandado().getId());
 				
-				envioIntegracion.setCliente(envioBurofax.getBurofax().getDemandado().getApellidoNombre());
 				envioIntegracion.setDireccion(envioBurofax.getDireccion().getDomicilio());
 				if(!Checks.esNulo(envioBurofax.getBurofax().getContrato())){
 					envioIntegracion.setContrato(envioBurofax.getBurofax().getContrato().getNroContrato());
-				}
-				else{
+				} else {
 					envioIntegracion.setContrato(null);
 				}
 				envioIntegracion.setTipoBurofax(envioBurofax.getTipoBurofax().getDescripcion());
@@ -490,58 +575,46 @@ public class BurofaxManager implements BurofaxApi {
 				envioIntegracion.setFechaAcuse(new Date());
 				envioIntegracion.setCertificado(certificado);
 				
+				envioIntegracion.setContenido(contenidoParseadoFinal);
+				
+				if(envioBurofax.getBurofax().isEsPersonaManual()){
+					envioIntegracion.setPersonaManualId(envioBurofax.getBurofax().getDemandadoManual().getId());
+					envioIntegracion.setCliente(envioBurofax.getBurofax().getDemandadoManual().getApellidoNombre());
+					envioIntegracion.setEsPersonaManual(true);
+				}else{
+					envioIntegracion.setPersonaId(envioBurofax.getBurofax().getDemandado().getId());
+					envioIntegracion.setCliente(envioBurofax.getBurofax().getDemandado().getApellidoNombre());
+					envioIntegracion.setEsPersonaManual(false);
+				}
+				
 		
 				if (precontenciosoContext.isGenerarArchivoBurofax()) {
-					String nombreFichero = null;
-
-					if ("BANKIA".equals(precontenciosoContext.getRecovery())) {
-						FileItem archivoBurofax = generarDocumentoBurofax(envioBurofax);
-						InputStream inputStream = archivoBurofax.getInputStream();
-						FileOutputStream outputStream = null;
-						String directorio = parametrizacionDao.buscarParametroPorNombre(DIRECTORIO_PDF_BUROFAX_PCO).getValor();
-
-						try {
-							nombreFichero = obtenerNombreFichero();
-							envioIntegracion.setNombreFichero(nombreFichero);
-							envioIntegracion.setIdAsunto(envioBurofax.getBurofax().getProcedimientoPCO().getProcedimiento().getAsunto().getId());
-							// write the inputStream to a FileOutputStream
-							outputStream = new FileOutputStream(new File(directorio + "/" + nombreFichero));
-
-							int read = 0;
-							byte[] bytes = new byte[1024];
-
-							while ((read = inputStream.read(bytes)) != -1) {
-								outputStream.write(bytes, 0, read);
-							}
-
-						} catch (IOException e) {
-							e.printStackTrace();
-						} finally {
-							if (inputStream != null) {
-								try {
-									inputStream.close();
-								} catch (IOException e) {
-									e.printStackTrace();
-								}
-							}
-							if (outputStream != null) {
-								try {
-									// outputStream.flush();
-									outputStream.close();
-								} catch (IOException e) {
-									e.printStackTrace();
-								}
-							}
-						}
-					}
-
-					envioBurofax.setRefExternaEnvio(nombreFichero);
-					genericDao.save(EnvioBurofaxPCO.class, envioBurofax);
+					//Obtener cabecera 
+					String cabecera = docBurManager.obtenerCabecera(mapeoVariables);
+					// Obtener plantilla
+					InputStream plantillaBurofax = docBurManager.obtenerPlantillaBurofax();
+					// Obtener nombre de fichero
+					String nombreFichero = obtenerNombreFichero();
+					//Generar documento a partir de la plantilla y de los campos HTML cabecera y contenido
+					FileItem archivoBurofax = docBurManager.generarDocumentoBurofax(plantillaBurofax, nombreFichero, cabecera, contenidoParseadoFinal);
+					// Transformar el archivo docx en PDF
+					String directorio = parametrizacionDao.buscarParametroPorNombre(DIRECTORIO_PDF_BUROFAX_PCO).getValor();
+					String nombreFicheroPdf = docBurManager.obtenerNombreFicheroPdf(nombreFichero);
+					File archivoBurofaxPDF = docBurManager.convertirAPdf(archivoBurofax, directorio + File.separator + nombreFicheroPdf);
+					FileItem fi = new FileItem();
+					fi.setFile(archivoBurofaxPDF);
+					fi.setFileName(nombreFicheroPdf);
+					fi.setContentType("application/pdf");
+					fi.setLength(archivoBurofaxPDF.length());
+					
+					//envioIntegracion.setArchivoBurofax(fi);
+					envioIntegracion.setNombreFichero(nombreFicheroPdf);
+					envioIntegracion.setIdAsunto(envioBurofax.getBurofax().getProcedimientoPCO().getProcedimiento().getAsunto().getId());
+					
 				} else {
 					//envioIntegracion.setArchivoBurofax(new FileItem(File.createTempFile("TMP", ".log")));
+					envioIntegracion.setContenido(envioBurofax.getContenidoBurofax());
 				}
-
-				envioIntegracion.setContenido(envioBurofax.getContenidoBurofax());
 
 				genericDao.save(BurofaxEnvioIntegracionPCO.class, envioIntegracion);
 			}
@@ -556,6 +629,7 @@ public class BurofaxManager implements BurofaxApi {
 		return FICHERO_DOCUMENTO_RANKIA+String.format("%011d", secuencia)+".docx";
 	}
 	
+
 	
 	public FileItem generarDocumentoBurofax(EnvioBurofaxPCO envioBurofax){
 		
@@ -564,21 +638,42 @@ public class BurofaxManager implements BurofaxApi {
 		try{
 		
 			String nombre="";
-			if(!Checks.esNulo(envioBurofax.getBurofax().getDemandado().getNombre())){
-				nombre=envioBurofax.getBurofax().getDemandado().getNombre();
-			}
 			String apellido1="";
-			if(!Checks.esNulo(envioBurofax.getBurofax().getDemandado().getApellido1())){
-				apellido1=envioBurofax.getBurofax().getDemandado().getApellido1();
-			}
 			String apellido2="";
-			if(!Checks.esNulo(envioBurofax.getBurofax().getDemandado().getApellido2())){
-				apellido2=envioBurofax.getBurofax().getDemandado().getApellido2();
+			String apellidoNombre="";
+			
+			if(!Checks.esNulo(envioBurofax.getBurofax().getDemandado())){
+				if(!Checks.esNulo(envioBurofax.getBurofax().getDemandado().getNombre())){
+					nombre=envioBurofax.getBurofax().getDemandado().getNombre();
+				}
+				if(!Checks.esNulo(envioBurofax.getBurofax().getDemandado().getApellido1())){
+					apellido1=envioBurofax.getBurofax().getDemandado().getApellido1();
+				}
+				if(!Checks.esNulo(envioBurofax.getBurofax().getDemandado().getApellido2())){
+					apellido2=envioBurofax.getBurofax().getDemandado().getApellido2();
+				}
+				if(!Checks.esNulo(envioBurofax.getBurofax().getDemandado().getApellidoNombre())){
+					apellidoNombre=envioBurofax.getBurofax().getDemandado().getApellidoNombre();
+				}
+			}else if(!Checks.esNulo(envioBurofax.getBurofax().getDemandadoManual())){
+				if(!Checks.esNulo(envioBurofax.getBurofax().getDemandadoManual().getNombre())){
+					nombre=envioBurofax.getBurofax().getDemandadoManual().getNombre();
+				}
+				if(!Checks.esNulo(envioBurofax.getBurofax().getDemandadoManual().getApellido1())){
+					apellido1=envioBurofax.getBurofax().getDemandadoManual().getApellido1();
+				}
+				if(!Checks.esNulo(envioBurofax.getBurofax().getDemandadoManual().getApellido2())){
+					apellido2=envioBurofax.getBurofax().getDemandadoManual().getApellido2();
+				}
+				if(!Checks.esNulo(envioBurofax.getBurofax().getDemandadoManual().getApellidoNombre())){
+					apellidoNombre=envioBurofax.getBurofax().getDemandadoManual().getApellidoNombre();
+				}
 			}
+			
 			String domicilio=envioBurofax.getDireccion().toString();
 			InputStream is = null;
 			if("BANKIA".equals(precontenciosoContext.getRecovery())){
-				is=informesManager.createDocxFileFromHtmlText(
+				is=informesManager.createPdfFileFromHtmlText(
 						"<table width='60%' style='font-size:12px'>"
 						+ "<tr>"
 						+ "<td width='40' style='border:1px solid black'>BANKIA S.A<br />PASEO DE LA CASTELLANA, 189<br />28046 Madrid</td>"
@@ -591,19 +686,19 @@ public class BurofaxManager implements BurofaxApi {
 						+ "<td style='border:1px solid black'>"+envioBurofax.getContenidoBurofax()+"</td>"
 						+ "</tr>"
 						+ "</table>",
-						envioBurofax.getBurofax().getDemandado().getApellidoNombre());
+						apellidoNombre);
 			} else {
-				is=informesManager.createDocxFileFromHtmlText(					
+				return informesManager.createPdfFileFromHtml(					
 						"<table width='60%' style='font-size:12px'>"
 						+ "<tr>"
 						+ "<td style='border:1px solid black'>"+envioBurofax.getContenidoBurofax()+"</td>"
 						+ "</tr>"
 						+ "</table>",
-						envioBurofax.getBurofax().getDemandado().getApellidoNombre());
+						apellidoNombre);
 			}
 			
 	
-			String nombreFichero=envioBurofax.getBurofax().getDemandado().getApellidoNombre();
+			String nombreFichero=apellidoNombre;
 		
 		
 			HashMap<String, Object> mapaVariables=new HashMap<String, Object>();
@@ -802,9 +897,7 @@ public class BurofaxManager implements BurofaxApi {
 		try {
 			dicionarioEstadoBurofax = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDEstadoBurofaxPCO.class);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			logger.error("getEstadosBurofax: " + e);
+			logger.error("getEstadosBurofax: "+ e);
 		}
 		
 		return dicionarioEstadoBurofax;
@@ -893,109 +986,183 @@ public class BurofaxManager implements BurofaxApi {
 		
 		return burofaxEnvio;
 	}
-		
-	private String replaceVariablesGeneracionBurofax(Long idPcoBurofax, String textoBuro, Long idDocumento){
-		
-		BurofaxPCO burofax=(BurofaxPCO) genericDao.get(BurofaxPCO.class,genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(idPcoBurofax)));
-		
-		String conCuentaAnterior = "";
-		String tipoIntervencion = "";
-		String aNombreDe = "";
-		String listaBienes = "";
-		
-		if(burofax.getContrato().getNroContrato()!=null){
-			conCuentaAnterior = "ANTERIORMENTE IDENTIFICADO CON EL NUM. ${NUM_CUENTA_ANTERIOR}";
-		}
-		
-		if(burofax.getTipoIntervencion().getCodigo().equals(DDTipoIntervencion.CODIGO_TITULAR_REGISTRAL)){
-			tipoIntervencion="TITULAR REGISTRAL";
-		}else if(burofax.getTipoIntervencion().getTitular()){
-			tipoIntervencion="TITULAR";
-		}else{
-			tipoIntervencion="FIADOR";
-		}
-		
-		if(burofax.getTipoIntervencion().getAvalista()){
-			aNombreDe = "A NOMBRE DE ${TITULAR_ORDEN_MENOR_CONTRATO} <br />";
-		}
-		
-		List<Bien> bienes = procedimientoManager.getBienesDeUnProcedimiento(burofax.getProcedimientoPCO().getProcedimiento().getId());
-		if(burofax.getTipoIntervencion().getCodigo().equals(DDTipoIntervencion.CODIGO_TITULAR_REGISTRAL) && bienes.size()>0){			
-			listaBienes += "<br />";
-			listaBienes += "[#list bienesEnt as bienEntidad]";
-			listaBienes += "<br />";
-			for(Bien bien : bienes){
-				NMBBienEntidad nmbe = genericDao.get(NMBBien.class, genericDao.createFilter(FilterType.EQUALS, "id", bien.getId())).getBienEntidad();
-				
-				listaBienes += "FINCA REGISTRAL NÚMERO ";
-				
-				if(!Checks.esNulo(nmbe) && !Checks.esNulo(nmbe.getNumFinca())){
-					listaBienes += "${bienEntidad.numFinca} ";
-				}else{
-					listaBienes += "[ERROR - No existe valor] ";
-				}
-				
-				listaBienes		+= "DEL REGISTRO DE LA PROPIEDAD NÚMERO ";
-				
-				if(!Checks.esNulo(nmbe) && !Checks.esNulo(nmbe.getNumRegistro())){
-					listaBienes += "${bienEntidad.numRegistro} ";
-				}else{
-					listaBienes += "[ERROR - No existe valor] ";
-				}
-				
-				listaBienes += "DE ";
-				
-				if(!Checks.esNulo(nmbe) && !Checks.esNulo(nmbe.getPoblacion())){
-					listaBienes += "${bienEntidad.poblacion} ";
-				}else{
-					listaBienes += "[ERROR - No existe valor] ";
-				}
-				
-				listaBienes += "<br />";		
-			}
-			listaBienes += "[/#list]";
-		}
-		
-		textoBuro = textoBuro.replace("#CON_CUENTA_ANTERIOR#", conCuentaAnterior);
-		textoBuro = textoBuro.replace("#TIPO_INTERVENCIO#", tipoIntervencion);
-		textoBuro = textoBuro.replace("#A_NOMBRE_DE#", aNombreDe);
-		textoBuro = textoBuro.replace("#LISTA_BIENES#", listaBienes);
-		
-		if(!Checks.esNulo(idDocumento)){
-			
-			DocumentoPCO documento = genericDao.get(DocumentoPCO.class, genericDao.createFilter(FilterType.EQUALS, "id", idDocumento));
-			SimpleDateFormat fechaFormat = new SimpleDateFormat(FormatUtils.DD_DE_MES_DE_YYYY,MessageUtils.DEFAULT_LOCALE);
-			
-			if(!Checks.esNulo(documento.getNotario())) textoBuro = textoBuro.replace("[Notario del Documento Vinculado]", documento.getNotario());
-			if(!Checks.esNulo(documento.getPlaza())) textoBuro = textoBuro.replace("[Localidad del Notario del Documento Vinculado]", documento.getPlaza());
-			if(!Checks.esNulo(documento.getProtocolo())) textoBuro = textoBuro.replace("[Protocolo del Documento Vinculado]", documento.getProtocolo());
-			if(!Checks.esNulo(documento.getFechaEscritura())) textoBuro = textoBuro.replace("[Día Fecha Escritura Documento Vinculado]", fechaFormat.format(documento.getFechaEscritura()));
-		}
-				
-		
-		return textoBuro;
-	}
 
-	//funcion duplicada para saber origen, cuando se haga merge bueno, eliminar
-	public boolean saberOrigen(Long idDireccion){
-		boolean variable = false;
-		try{
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idDireccion);
-			Direccion direccion = (Direccion)  genericDao.get(Direccion.class, filtro);
-			if(direccion.getOrigen().equalsIgnoreCase("Manual")){
-				variable = true;
+	
+	@Override
+	@Transactional(readOnly = false)
+	public PersonaManual guardaPersonaManual(String dni, String nombre, String app1, String app2, String propietarioCodigo, Long codClienteEntidad){
+		
+		PersonaManual persMan = null;
+		boolean existePersonaManual = false;
+		
+		if(!Checks.esNulo(propietarioCodigo) && !Checks.esNulo(codClienteEntidad)){
+			///Comprobamos si ya se ha creado una persona manual para una persona
+			persMan = genericDao.get(PersonaManual.class, genericDao.createFilter(FilterType.EQUALS, "propietario.codigo", propietarioCodigo), genericDao.createFilter(FilterType.EQUALS, "codClienteEntidad", codClienteEntidad));
+			if(!Checks.esNulo(persMan)){
+				existePersonaManual = true;
 			}
-		}catch(Exception e){
-			logger.error("saberOrigen: " + e);
 		}
-		return variable;
+		 
+		if(!existePersonaManual){
+			persMan = new PersonaManual();
+			persMan.setDocId(dni);
+			persMan.setNombre(nombre);
+			persMan.setApellido1(app1);
+			persMan.setApellido2(app2);
+			persMan.setAuditoria(Auditoria.getNewInstance());
+			persMan.setVersion(0);
+			if(!Checks.esNulo(propietarioCodigo)){
+				DDPropietario propietario = (DDPropietario) dictionaryManager.getByCode(DDPropietario.class, propietarioCodigo);
+				persMan.setPropietario(propietario);
+			}
+			if(!Checks.esNulo(codClienteEntidad)){
+				persMan.setCodClienteEntidad(codClienteEntidad);
+			}
+			personaManualDao.save(persMan);	
+		}	
+		
+		return persMan;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public ContratoPersonaManual guardaContratoPersonaManual(Long idPersonaManual, Long idContrato, String codigoTipoIntervencion){
+		
+		if(!Checks.esNulo(idPersonaManual) && !Checks.esNulo(idContrato) && !Checks.esNulo(codigoTipoIntervencion)){
+			
+			///Comprobamos si la relacion CONTRATO - PERSONA MANUAL EXISTE
+			ContratoPersonaManual contratosPersonaMan = genericDao.get(ContratoPersonaManual.class, genericDao.createFilter(FilterType.EQUALS, "contrato.id", idContrato), genericDao.createFilter(FilterType.EQUALS, "personaManual.id", idPersonaManual), genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+			
+			if(!Checks.esNulo(contratosPersonaMan)){
+				
+				DDTipoIntervencion tipoIntervencion = genericDao.get(DDTipoIntervencion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoTipoIntervencion));
+				contratosPersonaMan.setTipoIntervencion(tipoIntervencion);
+				contratoPersonaManualDao.saveOrUpdate(contratosPersonaMan);
+				return contratosPersonaMan;
+				
+			}else{
+				PersonaManual personaManual = genericDao.get(PersonaManual.class, genericDao.createFilter(FilterType.EQUALS, "id", idPersonaManual));
+				Contrato contrato = genericDao.get(Contrato.class, genericDao.createFilter(FilterType.EQUALS, "id", idContrato));
+				Order order = new Order(OrderType.DESC, "orden");
+				List<ContratoPersona> contratosPersona = genericDao.getListOrdered(ContratoPersona.class, order ,genericDao.createFilter(FilterType.EQUALS, "contrato.id", idContrato));
+				long orden = 1;
+				if(contratosPersona.size()>0){
+					orden = contratosPersona.get(0).getOrden() + 1;
+				}
+				DDTipoIntervencion tipoIntervencion = genericDao.get(DDTipoIntervencion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoTipoIntervencion));
+				
+				if(!Checks.esNulo(personaManual) && !Checks.esNulo(contrato) && !Checks.esNulo(tipoIntervencion)){
+					ContratoPersonaManual cntPersMan = new ContratoPersonaManual();
+					cntPersMan.setPersonaManual(personaManual);
+					cntPersMan.setContrato(contrato);
+					cntPersMan.setTipoIntervencion(tipoIntervencion);
+					cntPersMan.setOrden(orden);
+					cntPersMan.setAuditoria(Auditoria.getNewInstance());
+					cntPersMan.setVersion(0);
+					contratoPersonaManualDao.save(cntPersMan);
+					return cntPersMan;
+				}
+			}
+			
+		}
+		
+		return null;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void crearBurofaxPersonaManual(Long idPersonaManual,Long idProcedimiento, Long idContratoPersonaManual){
+		try{
+			ContratoPersonaManual contratoPersonaManual = genericDao.get(ContratoPersonaManual.class, genericDao.createFilter(FilterType.EQUALS, "id", idContratoPersonaManual));
+			
+			Filter filtroBur1 = genericDao.createFilter(FilterType.EQUALS, "procedimientoPCO.id", idProcedimiento);
+			Filter filtroBur2 = genericDao.createFilter(FilterType.EQUALS, "demandadoManual.id", idPersonaManual);
+			Filter filtroBur3 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", contratoPersonaManual.getContrato().getId());
+			Filter filtroBur4 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			
+			List<BurofaxPCO> burofaxes = genericDao.getList(BurofaxPCO.class,filtroBur1,filtroBur2,filtroBur3,filtroBur4);
+			
+			if(burofaxes.size()>0){
+				
+				for(BurofaxPCO b : burofaxes){
+					b.setTipoIntervencion(contratoPersonaManual.getTipoIntervencion());
+					burofaxDao.update(b);
+				}
+				
+			}else{
+			
+				PersonaManual personaManual = genericDao.get(PersonaManual.class, genericDao.createFilter(FilterType.EQUALS, "id", idPersonaManual));
+				
+				Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idProcedimiento);
+				ProcedimientoPCO procedimientoPCO=(ProcedimientoPCO) genericDao.get(ProcedimientoPCO.class,filtro1);
+				
+				filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoBurofaxPCO.NO_NOTIFICADO);
+				DDEstadoBurofaxPCO estado=(DDEstadoBurofaxPCO) genericDao.get(DDEstadoBurofaxPCO.class,filtro1);
+				
+				BurofaxPCO burofax=new BurofaxPCO();
+				burofax.setDemandadoManual(personaManual);
+				burofax.setProcedimientoPCO(procedimientoPCO);
+				burofax.setEstadoBurofax(estado);
+				burofax.setContrato(contratoPersonaManual.getContrato());
+				burofax.setTipoIntervencion(contratoPersonaManual.getTipoIntervencion());
+				burofax.setEsPersonaManual(true);
+				burofaxDao.save(burofax);
+			
+			}
+			
+			
+		}catch(Exception e){
+			logger.error(e);
+		}
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void crearBurofaxPersona(Long idPersona,Long idProcedimiento, Long idContratoPersona){
+		try{
+			
+			ContratoPersona contratoPersona = genericDao.get(ContratoPersona.class, genericDao.createFilter(FilterType.EQUALS, "id", idContratoPersona));
+			
+			Filter filtroBur1 = genericDao.createFilter(FilterType.EQUALS, "procedimientoPCO.id", idProcedimiento);
+			Filter filtroBur2 = genericDao.createFilter(FilterType.EQUALS, "demandado.id", idPersona);
+			Filter filtroBur3 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", contratoPersona.getContrato().getId());
+			
+			List<BurofaxPCO> burofaxes = genericDao.getList(BurofaxPCO.class,filtroBur1,filtroBur2,filtroBur3);
+			
+			if(burofaxes.size()>0){
+				for(BurofaxPCO b : burofaxes){
+					b.setTipoIntervencion(contratoPersona.getTipoIntervencion());
+					burofaxDao.update(b);
+				}
+			}else{
+				
+				Persona persona = genericDao.get(Persona.class, genericDao.createFilter(FilterType.EQUALS, "id", idPersona));
+				
+				Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idProcedimiento);
+				ProcedimientoPCO procedimientoPCO=(ProcedimientoPCO) genericDao.get(ProcedimientoPCO.class,filtro1);
+				
+				filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoBurofaxPCO.NO_NOTIFICADO);
+				DDEstadoBurofaxPCO estado=(DDEstadoBurofaxPCO) genericDao.get(DDEstadoBurofaxPCO.class,filtro1);
+				
+				BurofaxPCO burofax=new BurofaxPCO();
+				burofax.setDemandado(persona);
+				burofax.setProcedimientoPCO(procedimientoPCO);
+				burofax.setEstadoBurofax(estado);
+				burofax.setContrato(contratoPersona.getContrato());
+				burofax.setTipoIntervencion(contratoPersona.getTipoIntervencion());
+				burofaxDao.save(burofax);	
+			}
+			
+		}catch(Exception e){
+			logger.error(e);
+		}
 	}
 
 	@Override
 	public void actualizaDireccion(DireccionAltaDto dto, Long idDireccion){
 		direccionApi.actualizarDireccion(dto, idDireccion);
 	}
-
+	
 	public Direccion getDireccion(Long idDireccion) {
 		Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idDireccion);
 		Direccion direccion=genericDao.get(Direccion.class,filtro1);
@@ -1011,4 +1178,113 @@ public class BurofaxManager implements BurofaxApi {
 		boolean mostrarBoton = procedimientoPcoApi.mostrarSegunCodigos(idProcedimientoEnvio, codigosTiposGestores);
 		return mostrarBoton;
 	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public PersonaManual updatePersonaManual(String dni, String nombre, String app1, String app2, Long idPersonaManual){
+		 
+		PersonaManual persMan = genericDao.get(PersonaManual.class, genericDao.createFilter(FilterType.EQUALS, "id", idPersonaManual));
+		if(!Checks.esNulo(dni)){persMan.setDocId(dni);}
+		if(!Checks.esNulo(nombre)){persMan.setNombre(nombre);}
+		if(!Checks.esNulo(app1)){persMan.setApellido1(app1);}
+		if(!Checks.esNulo(app2)){persMan.setApellido2(app2);}
+
+		personaManualDao.saveOrUpdate(persMan);	
+		
+		return persMan;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean borrarContratoPersonaManualYBurofax(ContratoPersonaManual cpm, Long prcId) {
+		
+		//Obtenemos los burofaxes de la relacion
+		Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "procedimientoPCO.id", prcId);
+		Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "demandadoManual.id", cpm.getPersonaManual().getId());
+		Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", cpm.getContrato().getId());
+		
+		List<BurofaxPCO> burofaxes = genericDao.getList(BurofaxPCO.class,filtro1,filtro2,filtro3);
+		
+		for(BurofaxPCO burofax : burofaxes){
+			///Obtenemos la relacion con el envio
+			Filter filtroEnvio = genericDao.createFilter(FilterType.EQUALS, "burofax.id", burofax.getId());
+			EnvioBurofaxPCO envio = genericDao.get(EnvioBurofaxPCO.class,filtroEnvio);
+			if(!Checks.esNulo(envio)){
+				return false;
+			}
+		}
+		
+		for(BurofaxPCO burofax : burofaxes){
+			genericDao.deleteById(BurofaxPCO.class, burofax.getId());
+		}
+		
+		genericDao.deleteById(ContratoPersonaManual.class, cpm.getId());
+		
+		return true;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean puedeBorrarContratoPersonaManualYBurofax(ContratoPersonaManual cpm, Long prcId) {
+		
+		//Obtenemos los burofaxes de la relacion
+		Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "procedimientoPCO.id", prcId);
+		Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "demandadoManual.id", cpm.getPersonaManual().getId());
+		Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", cpm.getContrato().getId());
+		
+		List<BurofaxPCO> burofaxes = genericDao.getList(BurofaxPCO.class,filtro1,filtro2,filtro3);
+		
+		for(BurofaxPCO burofax : burofaxes){
+			///Obtenemos la relacion con el envio
+			Filter filtroEnvio = genericDao.createFilter(FilterType.EQUALS, "burofax.id", burofax.getId());
+			EnvioBurofaxPCO envio = genericDao.get(EnvioBurofaxPCO.class,filtroEnvio);
+			if(!Checks.esNulo(envio)){
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void borrarBurofaxContratoPersona(ContratoPersona cp, Long prcId) {
+		
+		//Obtenemos los burofaxes de la relacion
+		Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "procedimientoPCO.id", prcId);
+		Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "demandado.id", cp.getPersona().getId());
+		Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", cp.getContrato().getId());
+		
+		List<BurofaxPCO> burofaxes = genericDao.getList(BurofaxPCO.class,filtro1,filtro2,filtro3);
+		
+		
+		for(BurofaxPCO burofax : burofaxes){
+			genericDao.deleteById(BurofaxPCO.class, burofax.getId());
+		}
+
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean comprobarBorrarBurofaxContratoPersona(ContratoPersona cp, Long prcId) {
+		
+		//Obtenemos los burofaxes de la relacion
+		Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "procedimientoPCO.id", prcId);
+		Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "demandado.id", cp.getPersona().getId());
+		Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", cp.getContrato().getId());
+		
+		List<BurofaxPCO> burofaxes = genericDao.getList(BurofaxPCO.class,filtro1,filtro2,filtro3);
+		
+		for(BurofaxPCO burofax : burofaxes){
+			///Obtenemos la relacion con el envio
+			Filter filtroEnvio = genericDao.createFilter(FilterType.EQUALS, "burofax.id", burofax.getId());
+			EnvioBurofaxPCO envio = genericDao.get(EnvioBurofaxPCO.class,filtroEnvio);
+			if(!Checks.esNulo(envio)){
+				return false;
+			}
+		}
+		
+		return true;
+	}
+
 }

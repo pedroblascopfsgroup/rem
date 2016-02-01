@@ -220,7 +220,7 @@ public class EXTContratoManager implements EXTContratoApi {
         dto.setCodigosZona(getCodigosDeZona(dto));
         dto.setEstadosContrato(getEstadosContrato(dto));
         Parametrizacion param = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
-                Parametrizacion.LIMITE_EXPORT_EXCEL);
+                Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_CONTRATOS);
         int limit = Integer.parseInt(param.getValor());
         dto.setLimit(limit + 2); // Se suma 2 al limite, 1 porque el limite es el índice,
         // no la cant. de registros, +1 para verificar que se

@@ -114,7 +114,7 @@ la entidad.</p>
 
 
 
-<p style="text-align: center; font-family: Arial;" class="MsoNormal"><!--[if gte vml 1]><v:shapetype
+<p style="text-align: center; font-family: Arial;" class="MsoNormal"><%--[if gte vml 1]><v:shapetype
  id="_x0000_t75" coordsize="21600,21600" o:spt="75" o:preferrelative="t"
  path="m@4@5l@4@11@9@11@9@5xe" filled="f" stroked="f">
  <v:stroke joinstyle="miter"/>
@@ -138,7 +138,7 @@ la entidad.</p>
  style='width:396.75pt;height:297pt;visibility:visible;mso-wrap-style:square'>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image001.png"
   o:title=""/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--><img style="width: 700px; height: 500px;" alt="contrato_cabecera" src="../img/plugin/ayuda/contratos/contrato_cabecera.jpg"></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%><img style="width: 700px; height: 500px;" alt="contrato_cabecera" src="../img/plugin/ayuda/contratos/contrato_cabecera.jpg"></p>
 
 
 

@@ -546,7 +546,7 @@ configurados este comit&eacute;.</p>
 
 
 
-<p class="MsoNormal" style="text-indent: 0cm; font-family: Arial;"><!--[endif]--></p>
+<p class="MsoNormal" style="text-indent: 0cm; font-family: Arial;"><%--[endif]--%></p>
 
 
 

@@ -298,7 +298,7 @@ partes:</p>
 
 
 
-<p class="MsoListParagraphCxSpFirst" style="text-indent: -18pt; font-family: Arial;"><img src="chrome://editor/content/images/tag-comment.gif"><!--[if !supportLists]-->1.&nbsp;&nbsp;&nbsp;&nbsp;En la superior aparecen los datos b&aacute;sicos del itinerario</p>
+<p class="MsoListParagraphCxSpFirst" style="text-indent: -18pt; font-family: Arial;"><img src="chrome://editor/content/images/tag-comment.gif"><%--[if !supportLists]--%>1.&nbsp;&nbsp;&nbsp;&nbsp;En la superior aparecen los datos b&aacute;sicos del itinerario</p>
 
 
 
@@ -308,7 +308,7 @@ partes:</p>
 
 
 
-<p class="MsoListParagraphCxSpLast" style="text-indent: -18pt; font-family: Arial;"><img src="chrome://editor/content/images/tag-comment.gif"><!--[if !supportLists]-->2.&nbsp;&nbsp;&nbsp;&nbsp;En la inferior vemos pesta&ntilde;as con informaci&oacute;n del itinerario sobre:
+<p class="MsoListParagraphCxSpLast" style="text-indent: -18pt; font-family: Arial;"><img src="chrome://editor/content/images/tag-comment.gif"><%--[if !supportLists]--%>2.&nbsp;&nbsp;&nbsp;&nbsp;En la inferior vemos pesta&ntilde;as con informaci&oacute;n del itinerario sobre:
 estados, configuraci&oacute;n de telecobro, configuraci&oacute;n de decisi&oacute;n autom&aacute;tica de
 comit&eacute;, reglas de elevaci&oacute;n de estado, reglas de vigencia de pol&iacute;tica, comit&eacute;s
 compatibles con ese itinerario.</p>

@@ -59,6 +59,11 @@ public class Parametrizacion implements Serializable, Auditable {
     public static final String LIMITE_FICHERO_EXPEDIENTE_GESTOR_DOCUMENTAL = "fichero.expediente.limite.gestorDoc";
     public static final String LIMITE_FICHERO_ASUNTO_GESTOR_DOCUMENTAL = "fichero.asunto.limite.gestorDoc";
     public static final String LIMITE_EXPORT_EXCEL_BUSCADOR_BIENES = "limiteExportExcelBuscadorBienes";
+    public static final String LIMITE_EXPORT_EXCEL_BUSCADOR_CLIENTES = "limiteExportExcelBuscadorClientes";
+    public static final String LIMITE_EXPORT_EXCEL_BUSCADOR_CONTRATOS = "limiteExportExcelBuscadorContratos";
+    public static final String LIMITE_EXPORT_EXCEL_BUSCADOR_PROCEDIMIENTOS = "limiteExportExcelBuscadorProcedimientos";
+    public static final String LIMITE_EXPORT_EXCEL_BUSCADOR_EXPEDIENTES = "limiteExportExcelBuscadorExpedientes";
+    public static final String LIMITE_EXPORT_EXCEL_BUSCADOR_TAREAS = "limiteExportExcelBuscadorTareas";
 
     @Id
     @Column(name = "PEN_ID")

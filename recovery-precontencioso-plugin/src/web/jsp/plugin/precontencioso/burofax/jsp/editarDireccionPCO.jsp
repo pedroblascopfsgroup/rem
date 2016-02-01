@@ -9,7 +9,6 @@
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms"%>
 <fwk:page>
 
-debugger;
 	var panelWidth=800;
 	var labelStyle='width:100px';
 	var idCliente = "${idCliente}";
@@ -35,7 +34,6 @@ debugger;
  		label="**Provincia" value="${valorProvincia}" dd="${provincias}" 
 		propertyCodigo="id" propertyDescripcion="descripcion" />
 	
-    debugger;
 	provincia.on('select',function(){
 		if( provincia.getValue() != null && provincia.getValue() != '' ){
 			localidad.reset();

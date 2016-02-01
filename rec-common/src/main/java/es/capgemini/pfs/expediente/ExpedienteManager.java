@@ -252,7 +252,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	@SuppressWarnings("unchecked")
     @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_EXPEDIENTES_PARA_EXCEL_DINAMICO)
     public List<Expediente> findExpedientesParaExcelDinamico(DtoBuscarExpedientes dto, String params) {
-        Page p = this.findExpedientesPaginatedDinamico(dto, params, 2000, false);
+		Parametrizacion param = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+                Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_EXPEDIENTES);
+        int limit = Integer.parseInt(param.getValor());
+		Page p = this.findExpedientesPaginatedDinamico(dto, params, limit, false);
         return (List<Expediente>) p.getResults();
     }
     

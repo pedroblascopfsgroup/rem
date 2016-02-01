@@ -108,7 +108,6 @@
 					,method: 'POST'
 					,success: function (result, request){
 						var r = Ext.util.JSON.decode(result.responseText);
-						debugger;
 						if(r.count <= r.limit) {
 						    var flow = '/pfs/extasunto/exportarExcelAsuntos';
              			

@@ -6,7 +6,6 @@
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 
 (function(){
-	debugger;
 
 	var comprobarAdjuntosRecord = Ext.data.Record.create([
 		 {name:'mensaje'}

@@ -10,7 +10,6 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <fwk:page>
-debugger;
 	<%-- var panelWidth=800;
 	var labelStyle='width:100px';--%>
 	var idCliente = "${idCliente}";

@@ -85,14 +85,14 @@
 			page.webflow({
       			flow:'categorias/comprobarBorradoCategoria'
       			,params:{
-      				id: selection.data.id,
+      				id: selection.data.id
      			}
       			,success: function(result){		
       				if(result.permitirBorrar == true){
       					page.webflow({
 			      			flow:'categorias/borrarCategoria'
 			      			,params:{
-			      				id: selection.data.id,
+			      				id: selection.data.id
 			      			}
 			      			,success: function(){
 			      				mainPanel.container.unmask();
@@ -111,7 +111,7 @@
 			      				page.webflow({
 					      			flow:'categorias/borrarCategoria'
 					      			,params:{
-					      				id: selection.data.id,
+					      				id: selection.data.id
 					      			}
 					      			,success: function(){
 					      				mainPanel.container.unmask();

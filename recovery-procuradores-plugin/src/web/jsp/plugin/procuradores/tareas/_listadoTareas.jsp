@@ -42,7 +42,7 @@
 
 	//Store de Categorizaciones	
 	var categorizacionesRecord = Ext.data.Record.create([
-		 {name:'id'},
+		 {name:'id'}
         ,{name:'nombre'}
         ,{name:'codigo'}
         ,{name:'iddespacho'}

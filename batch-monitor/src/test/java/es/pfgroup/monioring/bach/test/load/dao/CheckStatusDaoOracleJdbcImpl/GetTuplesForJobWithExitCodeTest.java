@@ -13,6 +13,7 @@ import org.mockito.InOrder;
 
 import es.pfgroup.monioring.bach.load.dao.model.CheckStatusTuple;
 import es.pfgroup.monioring.bach.load.exceptions.CheckStatusErrorType;
+import es.pfgroup.monioring.bach.load.exceptions.CheckStatusRecoverableException;
 import es.pfgroup.monioring.bach.load.exceptions.CheckStatusRuntimeError;
 
 public class GetTuplesForJobWithExitCodeTest extends AbstractCheckStatusDaoOracleJdbcImplTests{
@@ -69,7 +70,13 @@ public class GetTuplesForJobWithExitCodeTest extends AbstractCheckStatusDaoOracl
 
     @Override
     protected List<CheckStatusTuple> runMethod(final Date lastTime) {
-        List<CheckStatusTuple> result = dao.getTuplesForJobWithExitCodeOrderedByIdDesc(entity, jobName, exitCode, lastTime);
+        List<CheckStatusTuple> result = null;
+		try {
+			result = dao.getTuplesForJobWithExitCodeOrderedByIdDesc(entity, jobName, exitCode, lastTime);
+		} catch (CheckStatusRecoverableException e) {
+			fail("Se ha producido una excepción no controlada");
+			e.printStackTrace();
+		}
         return result;
     }
 

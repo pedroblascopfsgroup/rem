@@ -9,6 +9,7 @@
 	<end-state id="listado" view="plugin/config/despachoExterno/consultarDespachoExterno">
 		<secured attributes="ROLE_ADMIN" match="any" />
 		<on-entry>
+			<evaluate expression="executor.execute('usuarioManager.getUsuarioLogado').entidad.descripcion" result="flowScope.usuarioEntidad" />
 			<evaluate expression="executor.execute('ADMDespachoExternoManager.getDespachoExterno',id)" result="flowScope.despacho"/>
 			<evaluate expression="executor.execute('ADMDespachoExternoManager.getAmbitoGeograficoDespacho',id)" result="flowScope.ambitoGreograficoDespacho"/>
 			<evaluate expression="executor.execute('admTipoDespachoExternoManager.getList')"

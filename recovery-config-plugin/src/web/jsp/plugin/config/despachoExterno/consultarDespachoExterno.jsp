@@ -35,6 +35,8 @@
 	
 var tabPanel;
 var numTab = '${numTab}';
+var xxx = '${usuarioEntidad}';
+debugger;
 	<c:if test="${despacho.tipoDespacho.codigo=='1'}">
 		<pfslayout:includetab name="tabEsquemaTurnado">
 			<%@ include file="tabEsquemaTurnado.jsp"%>
@@ -46,10 +48,10 @@ var numTab = '${numTab}';
 				tabs="tabCabecera,tabGestores,tabSupervisores,tabProcuradores,tabEsquemaTurnado" /> --%>
 		tabsDespacho=new Ext.TabPanel({
 		       autoHeight:true
-		       <c:if test="${usuario.entidad.descripcion eq 'BANKIA'}">
+		       <c:if test="${usuarioEntidad == 'BANKIA'}">
 		       ,items:[tabCabecera,tabGestores,tabSupervisores,tabProcuradores,tabEsquemaTurnado]
 		       </c:if>
-		       <c:if test="${usuario.entidad.descripcion != 'BANKIA'}">
+		       <c:if test="${usuarioEntidad != 'BANKIA'}">
 		       ,items:[tabCabecera,tabGestores,tabSupervisores,tabProcuradores]
 		       </c:if>		
 		       ,layoutOnTabChange:true 

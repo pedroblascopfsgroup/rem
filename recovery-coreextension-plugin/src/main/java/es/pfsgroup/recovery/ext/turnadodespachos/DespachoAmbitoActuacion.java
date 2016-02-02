@@ -65,8 +65,7 @@ public class DespachoAmbitoActuacion implements Serializable, Auditable {
     @Embedded
     private Auditoria auditoria;
     
-    @Column(name = "DAA_PROV_CALIDAD_PORCENTAJE")
-    private String porcentaje;
+
     
     @OneToOne(fetch = FetchType.LAZY)
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
@@ -126,13 +125,6 @@ public class DespachoAmbitoActuacion implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 	
-	public String getPorcentaje() {
-		return porcentaje;
-	}
-
-	public void setPorcentaje(String porcentaje) {
-		this.porcentaje = porcentaje;
-	}
 
 	public EsquemaTurnadoConfig getEtcLitigio() {
 		return etcLitigio;

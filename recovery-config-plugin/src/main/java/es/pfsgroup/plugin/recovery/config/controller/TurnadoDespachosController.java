@@ -437,6 +437,14 @@ public class TurnadoDespachosController {
 		return OK_KO_RESPUESTA_JSON;
 	}
 	
+	/**
+	 * Abre el pop-up para asignar la calidad de litigio y concurso a la provincia de un despacho.
+	 * Recupera los valores que ya tenga asginados, y los valores del ETC para asignar o cambiar.
+	 * @param idDespacho
+	 * @param codProvincia
+	 * @param model
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String ventanaAsignarCalidadProvincia(@RequestParam(value="id", required=true) Long idDespacho, @RequestParam(required=false) String codProvincia
@@ -446,7 +454,6 @@ public class TurnadoDespachosController {
 				: new ArrayList<DespachoAmbitoActuacion>();
 
 		DespachoAmbitoActuacion daa = despachoAmbitoActuacionDao.getByDespachoYProvincia(idDespacho, codProvincia);
-		Float sumaTotalPorcentaje = sumaPorcentajesMenosActual(listaAmbitoActuacion,daa);
 			
 		List<EsquemaTurnadoConfig> listTipoImporteLitigio = new LinkedList<EsquemaTurnadoConfig>();
 		List<EsquemaTurnadoConfig> listTipoCalidadLitigio = new LinkedList<EsquemaTurnadoConfig>();
@@ -479,11 +486,19 @@ public class TurnadoDespachosController {
 		model.addAttribute("tiposCalidadConcursal", listTipoCalidadConcursal);
 
 		model.addAttribute("ambitoActuacion", daa);
-		model.addAttribute("sumaPorcentajes", sumaTotalPorcentaje);
 
 		return VIEW_ASIGNAR_CALIDAD_PROVINCIA;
 	}
 	
+	/**
+	 * Guarda la calidad (litigio y/o concurso) a la provincia asociada al despacho
+	 * @param idDespacho
+	 * @param codProvincia
+	 * @param codConcursal
+	 * @param codLitigio
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping
 	public String guardarCalidadProvincia(@RequestParam(value = "despacho", required = true) Long idDespacho,
 			@RequestParam(value = "codigoProvincia", required = true) String codProvincia,
@@ -506,6 +521,11 @@ public class TurnadoDespachosController {
 		return VIEW_DEFAULT;
 	}
 	
+	/**
+	 * Recupera las provincias de un despacho
+	 * @param listaAmbitoActuacion
+	 * @return
+	 */
 	private List<DDProvincia> getListaProvinciasDespacho(List<DespachoAmbitoActuacion> listaAmbitoActuacion){
 		
 		List<DDProvincia> listaProvinciasDespachoNombre = new LinkedList<DDProvincia>();
@@ -519,30 +539,40 @@ public class TurnadoDespachosController {
 		return listaProvinciasDespachoNombre;
 	}
 	
+	/**
+	 * Recupera las provincias de un despacho que tengan calidad de LITIGIO asignada
+	 * @param listaAmbitoActuacion
+	 * @return
+	 */
 	private List<EsquemaTurnadoConfig> getListaProvinciasCalidadLit(List<DespachoAmbitoActuacion> listaAmbitoActuacion) {
 
 		List<EsquemaTurnadoConfig> listaProvinciasLitigio = new LinkedList<EsquemaTurnadoConfig>();
 		
 		for(DespachoAmbitoActuacion ambitoActuacion : listaAmbitoActuacion) {
-			if(ambitoActuacion.getEtcLitigio() != null) {
+			if(ambitoActuacion.getProvincia() != null && ambitoActuacion.getEtcLitigio() != null) {
 				listaProvinciasLitigio.add(ambitoActuacion.getEtcLitigio());
 			}
-			else {
+			else if(ambitoActuacion.getProvincia() != null) {
 				listaProvinciasLitigio.add(null);
 			}
 		}
 		return listaProvinciasLitigio;
 	}
 	
+	/**
+	 * Recupera las provincias de un despacho que tengan calidad de CONCURSO asignada
+	 * @param listaAmbitoActuacion
+	 * @return
+	 */
 	private List<EsquemaTurnadoConfig> getListaProvinciasCalidadCon(List<DespachoAmbitoActuacion> listaAmbitoActuacion) {
 
 		List<EsquemaTurnadoConfig> listaProvinciasConcurso = new LinkedList<EsquemaTurnadoConfig>();
 		
 		for(DespachoAmbitoActuacion ambitoActuacion : listaAmbitoActuacion) {
-			if(ambitoActuacion.getEtcConcurso() != null) {
+			if(ambitoActuacion.getProvincia() != null && ambitoActuacion.getEtcConcurso() != null) {
 				listaProvinciasConcurso.add(ambitoActuacion.getEtcConcurso());
 			}
-			else {
+			else if(ambitoActuacion.getProvincia() != null) {
 				listaProvinciasConcurso.add(null);
 			}
 				
@@ -550,6 +580,11 @@ public class TurnadoDespachosController {
 		return listaProvinciasConcurso;
 	}
 	
+	/**
+	 * Recupera la provincia a partir del nombre
+	 * @param nombre
+	 * @return
+	 */
 	private DDProvincia getProvinciaByNombre(String nombre)
 	{
 		List<DDProvincia> listProvincias = utilDiccionarioManager.dameValoresDiccionario(DDProvincia.class);
@@ -560,17 +595,13 @@ public class TurnadoDespachosController {
 		return null;
 	}
 	
-	private Float sumaPorcentajesMenosActual(List<DespachoAmbitoActuacion> listaAmbitoActuacion, DespachoAmbitoActuacion ambitoActual){
-		Float suma = 0.0f;
-		
-		for(DespachoAmbitoActuacion daa : listaAmbitoActuacion) {
-			if(!Checks.esNulo(daa.getPorcentaje()) && !daa.equals(ambitoActual))
-				suma += Float.parseFloat(daa.getPorcentaje());
-		}
-		
-		return suma;
-	}
-	
+	/**
+	 * Recoge la información de las provincias de un despacho, para mostrar en el grid de la pestaña del 
+	 * despacho turnado.
+	 * @param idDespacho
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping
 	public String buscarProvincias(@RequestParam(required=true) Long idDespacho, Model model) {
 		
@@ -602,6 +633,12 @@ public class TurnadoDespachosController {
 		return VIEW_PROVINCIA_CALIDAD_SEARCH;
 	}
 	
+	/**
+	 * Abre el pop-up para asignar/quitar las comunidades y provincias a un despacho
+	 * @param idDespacho
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping
 	public String ventanaEditarAmbito(@RequestParam(value="id", required=true) Long idDespacho, 
 			Model model) {

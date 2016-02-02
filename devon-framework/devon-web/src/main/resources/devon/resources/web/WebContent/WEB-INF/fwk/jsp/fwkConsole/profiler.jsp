@@ -90,7 +90,7 @@
 		,fields: ['name', {name: 'time', type: 'date'}, 'count', 'avg']
 	});
 	
-	<!-- Timer -->
+	<%-- Timer --%>
 	var stop = false;
 	var task = {
 	    run: function(){
@@ -111,7 +111,7 @@
 	    },
 	    interval: 2000
 	});
-	<!-- End Timer -->	
+	<%-- End Timer --%>	
 	
 	var graphPanel = new Ext.Panel({
 		border: false

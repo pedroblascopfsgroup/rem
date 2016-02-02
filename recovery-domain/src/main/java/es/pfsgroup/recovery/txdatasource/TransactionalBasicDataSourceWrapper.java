@@ -22,10 +22,10 @@ import es.capgemini.pfs.security.model.UsuarioSecurity;
 /**
  * TODO Documentar.
  *
- * @author Bruno Angl√©s / JoseVi Jimenez
+ * @author Bruno AnglÈs / JoseVi Jimenez
  */
 @Component
-public class TransactionalBasicDataSourceWrapper extends BasicDataSource{
+public class TransactionalBasicDataSourceWrapper {
 
     @javax.annotation.Resource
     private Properties appProperties;
@@ -34,14 +34,23 @@ public class TransactionalBasicDataSourceWrapper extends BasicDataSource{
 
     private final Map<Long, String> mappingCache = new HashMap<Long, String>();
 
-    @Override
-    public Connection getConnection() throws SQLException {
-            // Sobreescribimos el m√©todo para a√±adirle la gesti√≥n de los usuarios
+    
+   /**
+     * MÈtodo getConnection(super.conn) utilizado para reemplazar a los de clases DataSource superiores
+     * 
+     * @param conn
+     *            ConexiÛn creada en el DS superior
+     * @throws SQLException
+     *             Si ocurre cualquier problema con el manejo de conexiones
+     */
+ 
+    public Connection getConnectionTx(Connection conn) throws SQLException {
+            // Sobreescribimos el mÈtodo para aÒadirle la gestiÛn de los usuarios
             // transaccionales
             log.debug("***&*** Ha llamado a TransactionalBasicDataSourceWrapper.getConnection() ");
-            Connection cnx = super.getConnection();
+            //Connection cnx = conn.getConnection();
 
-            TransactionalUsersConnectionWrapper cnwrap = new TransactionalUsersConnectionWrapper(cnx);
+            TransactionalUsersConnectionWrapper cnwrap = new TransactionalUsersConnectionWrapper(conn);
 
             String transactionalUsers = appProperties
                             .getProperty(DevonPropertiesConstants.DatabaseConfig.USE_TRANSACTIONAL_USERS_KEY);
@@ -53,35 +62,17 @@ public class TransactionalBasicDataSourceWrapper extends BasicDataSource{
                     return cnwrap;
             } else {
                     log.debug("***&*** Se detecta entorno PROPIETARIO ");
-                    return cnx;
+                    return conn;
             }
     }
 
-    @Override
-    public Connection getConnection(String username, String password)
-                    throws SQLException {
-            // Sobreescribimos el m√©todo para a√±adirle la gesti√≥n de los usuarios
-            // transaccionales
-            log.debug("***&*** ha llamado a TransactionalBasicDataSourceWrapper.getConnection(username, password) ");
-            Connection cnx = super.getConnection(username, password);
-            TransactionalUsersConnectionWrapper cnwrap = new TransactionalUsersConnectionWrapper(cnx);
-
-            String transactionalUsers = appProperties
-                            .getProperty(DevonPropertiesConstants.DatabaseConfig.USE_TRANSACTIONAL_USERS_KEY);
-
-            if (DevonPropertiesConstants.DatabaseConfig.USE_TRANSACTIONAL_USERS_VALUE_YES
-                            .equals(transactionalUsers)) {
-                    cambiaCurrentSchema(cnwrap);
-                    log.debug("***&*** Se detecta entorno TRANSACCIONAL, se ejecuta ALTER CURRENT SCHEMA ");
-            }
-            return cnx;
-    }
+ 
 
     /**
      * Ejecuta ALTER SESSION en Oracle para cambiar el current_schema
      * 
      * @param cnx
-     *            Conexi√≥n
+     *            ConexiÛn
      * @throws SQLException
      *             Si ocurre cualquier problema al ejecutar el cambio de schema
      * @throws RecoveryDSMConfigurationException
@@ -92,7 +83,7 @@ public class TransactionalBasicDataSourceWrapper extends BasicDataSource{
             if (!DataSourceManager.NO_DATASOURCE_ID.equals(dbId)) {
                     Statement st = cnx.createStatement();
                     if (DataSourceManager.MASTER_DATASOURCE_ID.equals(dbId)) {
-                            log.debug("Cambiando la sesi√≥n de la BBDD: master");
+                            log.debug("Cambiando la sesiÛn de la BBDD: master");
                             String masterSchema = appProperties
                                             .getProperty(DevonPropertiesConstants.DatabaseConfig.MASTER_SCHEMA_KEY);
                             String sql = "ALTER SESSION SET CURRENT_SCHEMA = "
@@ -102,7 +93,7 @@ public class TransactionalBasicDataSourceWrapper extends BasicDataSource{
                             st.execute(sql);
 
                     } else {
-                            log.debug("Cambiando la sesi√≥n de la BBDD: entity");
+                            log.debug("Cambiando la sesiÛn de la BBDD: entity");
                             String mapping = appProperties
                                             .getProperty(DevonPropertiesConstants.DatabaseConfig.TRANSACTIONAL_USER_MAPPING_KEY);
                             try {
@@ -130,13 +121,13 @@ public class TransactionalBasicDataSourceWrapper extends BasicDataSource{
      *            Mapeo obtenido de devon.properties
      * @return
      * @throws RecoveryDSMConfigurationException
-     *             Si hay cualquier problema de configuraci√≥n
+     *             Si hay cualquier problema de configuraciÛn
      */
     private String schemaMapeadoParaEntidad(Long dbId, String mapping) {
             log.debug("Buscando mapeo para dbId = " + dbId + " en [" + mapping + "]");
             String schema = mappingCache.get(dbId);
             if (schema != null) {
-                    log.debug("Valor recuperado de la cach√©");
+                    log.debug("Valor recuperado de la cachÈ");
                     return schema;
             } else {
                     if (mapping != null) {
@@ -153,9 +144,9 @@ public class TransactionalBasicDataSourceWrapper extends BasicDataSource{
                                                     schema = subArray[1];
                                                     if (schemaId.equals(dbId)) {
                                                             // Tan pronto encontramos el mapeo salimos del
-                                                            // m√©todo
+                                                            // mÈtodo
                                                             log.debug("Coincide con el buscado");
-                                                            log.debug("Guardando el valor en la cach√©");
+                                                            log.debug("Guardando el valor en la cachÈ");
                                                             mappingCache.put(dbId, schema);
                                                             return schema;
                                                     } else {
@@ -172,7 +163,7 @@ public class TransactionalBasicDataSourceWrapper extends BasicDataSource{
                                                                             + ": El mapeo de usuarios transaccionales no es correcto");
                                     }
                             }
-                            // Si conseguimos terminar del for sin salir del m√©todo es que
+                            // Si conseguimos terminar del for sin salir del mÈtodo es que
                             // no
                             // hemos encontrado el mapeo para la entidad
                             throw new RecoveryDSMConfigurationException(
@@ -182,7 +173,7 @@ public class TransactionalBasicDataSourceWrapper extends BasicDataSource{
                     } else {
                             throw new RecoveryDSMConfigurationException(
                                             DevonPropertiesConstants.DatabaseConfig.TRANSACTIONAL_USER_MAPPING_KEY
-                                                            + ": se requiere definici√≥n en devon.properties al activar usuarios transaccionales");
+                                                            + ": se requiere definiciÛn en devon.properties al activar usuarios transaccionales");
                     }
             }
     }

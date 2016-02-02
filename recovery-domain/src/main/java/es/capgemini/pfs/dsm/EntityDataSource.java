@@ -64,18 +64,18 @@ public class EntityDataSource extends AbstractRoutingDataSource {
 	@Override
 	public Connection getConnection() throws SQLException {
             // Sobreescribimos el método para añadirle la gestión de los usuarios
-            // transaccionales
+            // transaccionales si aplica
             log.debug("***&*** Ha llamado a EntityDataSource.getConnection() ");
-            return transactionalBasicDataSourceWrapper.getConnection();
+            return transactionalBasicDataSourceWrapper.getConnectionTx(super.getConnection());
 	}
 
 	@Override
 	public Connection getConnection(String username, String password)
 			throws SQLException {
             // Sobreescribimos el método para añadirle la gestión de los usuarios
-            // transaccionales
+            // transaccionales si aplica
             log.debug("***&*** Ha llamado a EntityDataSource.getConnection() ");
-            return transactionalBasicDataSourceWrapper.getConnection(username, password);
+            return transactionalBasicDataSourceWrapper.getConnectionTx(super.getConnection(username, password));
 	}
 
 }

@@ -4,16 +4,27 @@ import java.sql.SQLException;
 import java.util.Properties;
 import javax.sql.DataSource;
 
+import org.apache.commons.dbcp.BasicDataSource;
+
 import es.capgemini.pfs.DevonPropertiesConstants.DatabaseConfig;
 import es.pfsgroup.recovery.Encriptador;
 
 import es.pfsgroup.recovery.txdatasource.TransactionalBasicDataSourceWrapper;
+import java.sql.Connection;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
-public class PwDataSource extends TransactionalBasicDataSourceWrapper {
+public class PwDataSource extends BasicDataSource {
 
+	private static Log log = LogFactory.getLog(PwDataSource.class);
+        
 	@javax.annotation.Resource
 	private Properties appProperties;
+        
+        @Autowired
+        private TransactionalBasicDataSourceWrapper transactionalBasicDataSourceWrapper;
 
 	@Override
 	public <T> T unwrap(Class<T> iface) throws SQLException {
@@ -65,6 +76,23 @@ public class PwDataSource extends TransactionalBasicDataSourceWrapper {
 			resultado = resultado.replace(password, pwDesencriptada);
 		}
 		return resultado;
+	}
+        
+	@Override
+	public Connection getConnection() throws SQLException {
+            // Sobreescribimos el método para añadirle la gestión de los usuarios
+            // transaccionales si aplica
+            log.debug("***&*** Ha llamado a PwDataSource.getConnection() ");
+            return transactionalBasicDataSourceWrapper.getConnectionTx(super.getConnection());
+	}
+
+	@Override
+	public Connection getConnection(String username, String password)
+			throws SQLException {
+            // Sobreescribimos el método para añadirle la gestión de los usuarios
+            // transaccionales si aplica
+            log.debug("***&*** Ha llamado a PwDataSource.getConnection() ");
+            return transactionalBasicDataSourceWrapper.getConnectionTx(super.getConnection(username, password));
 	}
 
 }

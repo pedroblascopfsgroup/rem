@@ -25,7 +25,7 @@ import es.capgemini.pfs.security.model.UsuarioSecurity;
  * @author Bruno Anglés / JoseVi Jimenez
  */
 @Component
-public class TransactionalBasicDataSourceWrapper extends BasicDataSource{
+public class TransactionalBasicDataSourceWrapper {
 
     @javax.annotation.Resource
     private Properties appProperties;
@@ -34,14 +34,23 @@ public class TransactionalBasicDataSourceWrapper extends BasicDataSource{
 
     private final Map<Long, String> mappingCache = new HashMap<Long, String>();
 
-    @Override
-    public Connection getConnection() throws SQLException {
+    
+   /**
+     * Método getConnection(super.conn) utilizado para reemplazar a los de clases DataSource superiores
+     * 
+     * @param conn
+     *            Conexión creada en el DS superior
+     * @throws SQLException
+     *             Si ocurre cualquier problema con el manejo de conexiones
+     */
+ 
+    public Connection getConnectionTx(Connection conn) throws SQLException {
             // Sobreescribimos el método para añadirle la gestión de los usuarios
             // transaccionales
             log.debug("***&*** Ha llamado a TransactionalBasicDataSourceWrapper.getConnection() ");
-            Connection cnx = super.getConnection();
+            //Connection cnx = conn.getConnection();
 
-            TransactionalUsersConnectionWrapper cnwrap = new TransactionalUsersConnectionWrapper(cnx);
+            TransactionalUsersConnectionWrapper cnwrap = new TransactionalUsersConnectionWrapper(conn);
 
             String transactionalUsers = appProperties
                             .getProperty(DevonPropertiesConstants.DatabaseConfig.USE_TRANSACTIONAL_USERS_KEY);
@@ -53,29 +62,11 @@ public class TransactionalBasicDataSourceWrapper extends BasicDataSource{
                     return cnwrap;
             } else {
                     log.debug("***&*** Se detecta entorno PROPIETARIO ");
-                    return cnx;
+                    return conn;
             }
     }
 
-    @Override
-    public Connection getConnection(String username, String password)
-                    throws SQLException {
-            // Sobreescribimos el método para añadirle la gestión de los usuarios
-            // transaccionales
-            log.debug("***&*** ha llamado a TransactionalBasicDataSourceWrapper.getConnection(username, password) ");
-            Connection cnx = super.getConnection(username, password);
-            TransactionalUsersConnectionWrapper cnwrap = new TransactionalUsersConnectionWrapper(cnx);
-
-            String transactionalUsers = appProperties
-                            .getProperty(DevonPropertiesConstants.DatabaseConfig.USE_TRANSACTIONAL_USERS_KEY);
-
-            if (DevonPropertiesConstants.DatabaseConfig.USE_TRANSACTIONAL_USERS_VALUE_YES
-                            .equals(transactionalUsers)) {
-                    cambiaCurrentSchema(cnwrap);
-                    log.debug("***&*** Se detecta entorno TRANSACCIONAL, se ejecuta ALTER CURRENT SCHEMA ");
-            }
-            return cnx;
-    }
+ 
 
     /**
      * Ejecuta ALTER SESSION en Oracle para cambiar el current_schema

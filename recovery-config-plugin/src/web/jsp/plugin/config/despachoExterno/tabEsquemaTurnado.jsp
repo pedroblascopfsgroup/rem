@@ -104,7 +104,8 @@
 	var provincia = Ext.data.Record.create([
 		 {name:'codigo'}
 		 ,{name:'nombreProvincia'}
-		 ,{name:'calidad'}
+		 ,{name:'calidadLitigio'}
+		 ,{name:'calidadConcurso'}
 		 ,{name:'borrable', type:'boolean'}
 		 ,{name:'activable', type:'boolean'}
 	]);
@@ -125,7 +126,8 @@
 	var provinciasCm = new Ext.grid.ColumnModel([	    
 		{header: 'Id', dataIndex: 'codigo', hidden: true}
 		,{header: '<s:message code="plugin.config.despachoExterno.turnado.tabEsquema.ambitoactuacion.provincias" text="**Provincia"/>', dataIndex: 'nombreProvincia', sortable: true}
-		,{header: '<s:message code="plugin.config.despachoExterno.turnado.tabEsquema.concursos.tipoCalidad" text="**Calidad"/>', dataIndex: 'calidad', sortable: true}
+		,{header: '<s:message code="plugin.config.despachoExterno.turnado.tabEsquema.litigios.calidadLitigio" text="**Calidad Litigio"/>', dataIndex: 'calidadLitigio', sortable: true}
+		,{header: '<s:message code="plugin.config.despachoExterno.turnado.tabEsquema.concursos.calidadConcurso" text="**Calidad Concurso"/>', dataIndex: 'calidadConcurso', sortable: true}
 		]);
 	
 	var sm = new Ext.grid.RowSelectionModel({
@@ -138,7 +140,6 @@
             	}
             	var borrable = r.data.borrable;
             	var activable = r.data.activable;
-				btnBorrar.setDisabled(!borrable);
             }
          }
 	});
@@ -190,7 +191,7 @@
 				w.on(app.event.CANCEL, function(){ w.close(); });		
 	});
 	
-	
+	<!-- ¿Esto aplica a algo? -->
 	var ventanaEdicion = function(id) {
 		var w = app.openWindow({
 			flow : 'turnadodespachos/ventanaEditarLetrado'

@@ -38,7 +38,6 @@ import es.capgemini.devon.validation.ValidationException;
 import es.capgemini.devon.web.fileupload.FileUpload;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
-import es.capgemini.pfs.despachoExterno.model.DespachoAmbitoActuacion;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.direccion.model.DDComunidadAutonoma;
 import es.capgemini.pfs.direccion.model.DDProvincia;
@@ -51,6 +50,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.UtilDiccionarioManager;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcelInformeSubasta;
 import es.pfsgroup.recovery.ext.turnadodespachos.DDEstadoEsquemaTurnado;
+import es.pfsgroup.recovery.ext.turnadodespachos.DespachoAmbitoActuacion;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaDespachoValidacionDto;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnado;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoBusquedaDto;
@@ -80,7 +80,6 @@ public class TurnadoDespachosController {
 	private static final String KEY_DATA = "data";
 	
 	private static final String CODIGO_ERROR_TIPO_FICHERO = "plugin.config.esquematurnado.carga.validacion.errorTipoFichero";
-	private static final String CODIGO_ERROR_SUMA_CALIDAD = "plugin.config.esquematurnado.carga.validacion.errorSumaPorcentajesExcelYExistentes";
 	private static final String CODIGO_ERROR_DESPACHO_ERRONEO = "plugin.config.esquematurnado.carga.validacion.errorDespachoNoExiste";
 	
 	@Resource
@@ -119,8 +118,6 @@ public class TurnadoDespachosController {
 	@RequestMapping
 	public String ventanaEditarLetrado(@RequestParam(value="id", required=true) Long idDespacho, 
 			Model model) {
-		EsquemaTurnado esquemaVigente = null;
-		
 		
 		DespachoExterno despacho = despachoExternoManager.getDespachoExterno(idDespacho);
 		model.addAttribute("despacho", despacho);
@@ -293,7 +290,8 @@ public class TurnadoDespachosController {
 		cabeceras.add("TIPO CALIDAD - LITIGIOS");
 		cabeceras.add("TIPO CALIDAD - CONCURSOS");
 		cabeceras.add("PROVINCIA");
-		cabeceras.add("CALIDAD - PROVINCIA");
+		cabeceras.add("CALIDAD PROVINCIA - LITIGIOS");
+		cabeceras.add("CALIDAD PROVINCIA - CONCURSOS");
 		
 		List<List<String>> valores = new ArrayList<List<String>>();
 		List<String> fila = null;
@@ -311,7 +309,8 @@ public class TurnadoDespachosController {
 					? despachoExternoManager.getAmbitoGeograficoDespacho(despachoExterno.getId())
 					: new ArrayList<DespachoAmbitoActuacion>();
 			List<DDProvincia> listaProvinciasDespachoNombre = this.getListaProvinciasDespacho(listaAmbitoActuacion);
-			List<String> listaProvinciasPorcentaje = this.getListaProvinciasPorcentaje(listaAmbitoActuacion);
+			List<EsquemaTurnadoConfig> listaProvinciasCalidadLit = this.getListaProvinciasCalidadLit(listaAmbitoActuacion);
+			List<EsquemaTurnadoConfig> listaProvinciasCalidadCon = this.getListaProvinciasCalidadCon(listaAmbitoActuacion);
 			//Con este bucle, se agrega 1 Fila por Despacho - Provincia ........ PRODUCTO-580
 			int i=0;
 			do{
@@ -332,9 +331,11 @@ public class TurnadoDespachosController {
 				fila.add((despachoExterno.getTurnadoCodigoCalidadConcursal() == null ? "" : despachoExterno.getTurnadoCodigoCalidadConcursal()) + template);
 				if(listaProvinciasDespachoNombre.size() > 0) {
 					fila.add(listaProvinciasDespachoNombre.get(i).getDescripcion().toUpperCase() + template);
-					fila.add((listaProvinciasPorcentaje.get(i) == null ? "0%" : listaProvinciasPorcentaje.get(i)+"%") + template);
+					fila.add((listaProvinciasCalidadLit.get(i) == null ? "" : listaProvinciasCalidadLit.get(i).getCodigo()) + template);
+					fila.add((listaProvinciasCalidadCon.get(i) == null ? "" : listaProvinciasCalidadCon.get(i).getCodigo()) + template);
 				}
 				else {
+					fila.add(template);
 					fila.add(template);
 					fila.add(template);
 				}
@@ -390,51 +391,38 @@ public class TurnadoDespachosController {
 					
 					//Comprobar que los despachos cargados, existen. Si alguno no existe, lanza excepción
 					this.comprobarExistenciaDespachos(dto.getListaRegistros());
-					
-					/* 	Previamente, comprobamos que la suma para un mismo despacho de la Hoja Excel, con datos existentes en la BD
-					*	no superen el 100% (si ya exisitia la provincia, se actuliza la calidad con el nuevo valor del excel)
-					*/
-					Long idDespachoError = compruebaSumaPorcentajeConExcel(dto);
-					if(idDespachoError != null) {
-						List<Message> mensajes = new ArrayList<Message>();
-						mensajes.add(new Message(this, messageSource.getMessage(CODIGO_ERROR_SUMA_CALIDAD, new Object[] {idDespachoError}, MessageUtils.DEFAULT_LOCALE), Severity.ERROR));
-						throw new ValidationException(ErrorMessageUtils.convertMessages(mensajes));
-					}
-					else
-					{
-						// Se guardan los registros
-						//for(EsquemaTurnadoDespachoDto esquemaTurnadoDespachoDto : dto.getListaRegistros()) {
-						for(int i=0; i< dto.getListaRegistros().size(); i++)	{
-							EsquemaTurnadoDespachoDto esquemaTurnadoDespachoDto = dto.getListaRegistros().get(i);
-							
-							List<DespachoAmbitoActuacion> listaAmbitoActuacion = despachoExternoManager.getAmbitoGeograficoDespacho(esquemaTurnadoDespachoDto.getId());
-							
-							List<String> listaComunidadesDespacho = new LinkedList<String>();
-							List<String> listaProvinciasDespacho = new LinkedList<String>();
-							
-							for(DespachoAmbitoActuacion ambitoActuacion : listaAmbitoActuacion) {
-								
-								if(ambitoActuacion.getComunidad() != null) {
-									listaComunidadesDespacho.add(ambitoActuacion.getComunidad().getCodigo());
-								}
-								
-								if(ambitoActuacion.getProvincia() != null) {
-									listaProvinciasDespacho.add(ambitoActuacion.getProvincia().getCodigo());
-								}
-							}
-							if(esquemaTurnadoDespachoDto.getNombreProvincia() != null && esquemaTurnadoDespachoDto.getNombreProvincia() != "") {
-								listaProvinciasDespacho.add(this.getProvinciaByNombre(esquemaTurnadoDespachoDto.getNombreProvincia()).getCodigo());
-							}
-							esquemaTurnadoDespachoDto.setListaComunidades(StringUtils.join(listaComunidadesDespacho.toArray(), ","));
-							esquemaTurnadoDespachoDto.setListaProvincias(StringUtils.join(listaProvinciasDespacho.toArray(), ","));
-							esquemaTurnadoDespachoDto.setNombreProvincia(esquemaTurnadoDespachoDto.getNombreProvincia());
-							esquemaTurnadoDespachoDto.setPorcentajeProvincia((esquemaTurnadoDespachoDto.getPorcentajeProvincia().equals("0")) ? null : esquemaTurnadoDespachoDto.getPorcentajeProvincia());
-							
-							despachoExternoManager.saveEsquemaDespacho(esquemaTurnadoDespachoDto);
-						}
+
+					for(int i=0; i< dto.getListaRegistros().size(); i++)	{
+						EsquemaTurnadoDespachoDto esquemaTurnadoDespachoDto = dto.getListaRegistros().get(i);
 						
-						resultado = "ok";
+						List<DespachoAmbitoActuacion> listaAmbitoActuacion = despachoExternoManager.getAmbitoGeograficoDespacho(esquemaTurnadoDespachoDto.getId());
+						
+						List<String> listaComunidadesDespacho = new LinkedList<String>();
+						List<String> listaProvinciasDespacho = new LinkedList<String>();
+						
+						for(DespachoAmbitoActuacion ambitoActuacion : listaAmbitoActuacion) {
+							
+							if(ambitoActuacion.getComunidad() != null) {
+								listaComunidadesDespacho.add(ambitoActuacion.getComunidad().getCodigo());
+							}
+							
+							if(ambitoActuacion.getProvincia() != null) {
+								listaProvinciasDespacho.add(ambitoActuacion.getProvincia().getCodigo());
+							}
+						}
+						if(esquemaTurnadoDespachoDto.getNombreProvincia() != null && esquemaTurnadoDespachoDto.getNombreProvincia().length() > 1) {
+							listaProvinciasDespacho.add(this.getProvinciaByNombre(esquemaTurnadoDespachoDto.getNombreProvincia()).getCodigo());
+						}
+						esquemaTurnadoDespachoDto.setListaComunidades(StringUtils.join(listaComunidadesDespacho.toArray(), ","));
+						esquemaTurnadoDespachoDto.setListaProvincias(StringUtils.join(listaProvinciasDespacho.toArray(), ","));
+						esquemaTurnadoDespachoDto.setNombreProvincia(esquemaTurnadoDespachoDto.getNombreProvincia());
+						esquemaTurnadoDespachoDto.setProvinciaCalidadLitigio(esquemaTurnadoDespachoDto.getProvinciaCalidadLitigio());
+						esquemaTurnadoDespachoDto.setProvinciaCalidadConcurso(esquemaTurnadoDespachoDto.getProvinciaCalidadConcurso());
+						
+						despachoExternoManager.saveEsquemaDespacho(esquemaTurnadoDespachoDto);
 					}
+					
+					resultado = "ok";
 				}
 			}		
 		}
@@ -449,32 +437,80 @@ public class TurnadoDespachosController {
 		return OK_KO_RESPUESTA_JSON;
 	}
 	
+	/**
+	 * Abre el pop-up para asignar la calidad de litigio y concurso a la provincia de un despacho.
+	 * Recupera los valores que ya tenga asginados, y los valores del ETC para asignar o cambiar.
+	 * @param idDespacho
+	 * @param codProvincia
+	 * @param model
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String ventanaAsignarCalidadProvincia(@RequestParam(required=false) Long id, @RequestParam(required=false) String codProvincia
+	public String ventanaAsignarCalidadProvincia(@RequestParam(value="id", required=true) Long idDespacho, @RequestParam(required=false) String codProvincia
 			, Model model) {
-		List<DespachoAmbitoActuacion> listaAmbitoActuacion = (id!=null) 
-				? despachoExternoManager.getAmbitoGeograficoDespacho(id)
+		List<DespachoAmbitoActuacion> listaAmbitoActuacion = (idDespacho!=null) 
+				? despachoExternoManager.getAmbitoGeograficoDespacho(idDespacho)
 				: new ArrayList<DespachoAmbitoActuacion>();
 
-		DespachoAmbitoActuacion daa = despachoAmbitoActuacionDao.getByDespachoYProvincia(id, codProvincia);
-		Float sumaTotalPorcentaje = sumaPorcentajesMenosActual(listaAmbitoActuacion,daa);
-	
+		DespachoAmbitoActuacion daa = despachoAmbitoActuacionDao.getByDespachoYProvincia(idDespacho, codProvincia);
+			
+		List<EsquemaTurnadoConfig> listTipoImporteLitigio = new LinkedList<EsquemaTurnadoConfig>();
+		List<EsquemaTurnadoConfig> listTipoCalidadLitigio = new LinkedList<EsquemaTurnadoConfig>();
+		List<EsquemaTurnadoConfig> listTipoImporteConcursal = new LinkedList<EsquemaTurnadoConfig>();
+		List<EsquemaTurnadoConfig> listTipoCalidadConcursal = new LinkedList<EsquemaTurnadoConfig>();
+
+		
+		EsquemaTurnado esquema = turnadoDespachosManager.getEsquemaVigente();
+		List<EsquemaTurnadoConfig> configs = esquema.getConfiguracion();
+		
+		for(EsquemaTurnadoConfig config : configs) {
+			
+			if(config.getTipo().equals(EsquemaTurnadoConfig.TIPO_LITIGIOS_IMPORTE)) {
+				listTipoImporteLitigio.add(config);
+			}
+			else if(config.getTipo().equals(EsquemaTurnadoConfig.TIPO_LITIGIOS_CALIDAD)) {
+				listTipoCalidadLitigio.add(config);
+			}
+			else if(config.getTipo().equals(EsquemaTurnadoConfig.TIPO_CONCURSAL_IMPORTE)) {
+				listTipoImporteConcursal.add(config);
+			}
+			else if(config.getTipo().equals(EsquemaTurnadoConfig.TIPO_CONCURSAL_CALIDAD)) {
+				listTipoCalidadConcursal.add(config);
+			}
+		}
+
+		model.addAttribute("tiposImporteLitigio", listTipoImporteLitigio);
+		model.addAttribute("tiposCalidadLitigio", listTipoCalidadLitigio);
+		model.addAttribute("tiposImporteConcursal", listTipoImporteConcursal);
+		model.addAttribute("tiposCalidadConcursal", listTipoCalidadConcursal);
+
 		model.addAttribute("ambitoActuacion", daa);
-		model.addAttribute("sumaPorcentajes", sumaTotalPorcentaje);
 
 		return VIEW_ASIGNAR_CALIDAD_PROVINCIA;
 	}
 	
+	/**
+	 * Guarda la calidad (litigio y/o concurso) a la provincia asociada al despacho
+	 * @param idDespacho
+	 * @param codProvincia
+	 * @param codConcursal
+	 * @param codLitigio
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping
 	public String guardarCalidadProvincia(@RequestParam(value = "despacho", required = true) Long idDespacho,
 			@RequestParam(value = "codigoProvincia", required = true) String codProvincia,
-			@RequestParam(value = "calidadProvincia", required = true) String calidad,
+			@RequestParam(value = "turnadoCodigoCalidadConcursal", required = true) String codConcursal,
+			@RequestParam(value = "turnadoCodigoCalidadLitigios", required = true) String codLitigio,
 			Model model) 
 	{	
 		try {
 			DespachoAmbitoActuacion despachoAmbitoActuacion = despachoAmbitoActuacionDao.getByDespachoYProvincia(idDespacho, codProvincia);
-			despachoAmbitoActuacion.setPorcentaje(calidad);
+			
+			despachoAmbitoActuacion.setEtcLitigio(turnadoDespachosManager.getEsquemaVigente().getConfigByCodigo(codLitigio));
+			despachoAmbitoActuacion.setEtcConcurso(turnadoDespachosManager.getEsquemaVigente().getConfigByCodigo(codConcursal));
 			despachoExternoManager.guardarAmbitoActuacion(despachoAmbitoActuacion);
 		}
 		catch(Exception e) {
@@ -485,6 +521,11 @@ public class TurnadoDespachosController {
 		return VIEW_DEFAULT;
 	}
 	
+	/**
+	 * Recupera las provincias de un despacho
+	 * @param listaAmbitoActuacion
+	 * @return
+	 */
 	private List<DDProvincia> getListaProvinciasDespacho(List<DespachoAmbitoActuacion> listaAmbitoActuacion){
 		
 		List<DDProvincia> listaProvinciasDespachoNombre = new LinkedList<DDProvincia>();
@@ -498,18 +539,52 @@ public class TurnadoDespachosController {
 		return listaProvinciasDespachoNombre;
 	}
 	
-	private List<String> getListaProvinciasPorcentaje(List<DespachoAmbitoActuacion> listaAmbitoActuacion) {
+	/**
+	 * Recupera las provincias de un despacho que tengan calidad de LITIGIO asignada
+	 * @param listaAmbitoActuacion
+	 * @return
+	 */
+	private List<EsquemaTurnadoConfig> getListaProvinciasCalidadLit(List<DespachoAmbitoActuacion> listaAmbitoActuacion) {
 
-		List<String> listaProvinciasPorcentaje = new LinkedList<String>();
+		List<EsquemaTurnadoConfig> listaProvinciasLitigio = new LinkedList<EsquemaTurnadoConfig>();
 		
 		for(DespachoAmbitoActuacion ambitoActuacion : listaAmbitoActuacion) {
-			if(ambitoActuacion.getProvincia() != null) {
-				listaProvinciasPorcentaje.add(ambitoActuacion.getPorcentaje());
+			if(ambitoActuacion.getProvincia() != null && ambitoActuacion.getEtcLitigio() != null) {
+				listaProvinciasLitigio.add(ambitoActuacion.getEtcLitigio());
+			}
+			else if(ambitoActuacion.getProvincia() != null) {
+				listaProvinciasLitigio.add(null);
 			}
 		}
-		return listaProvinciasPorcentaje;
+		return listaProvinciasLitigio;
 	}
 	
+	/**
+	 * Recupera las provincias de un despacho que tengan calidad de CONCURSO asignada
+	 * @param listaAmbitoActuacion
+	 * @return
+	 */
+	private List<EsquemaTurnadoConfig> getListaProvinciasCalidadCon(List<DespachoAmbitoActuacion> listaAmbitoActuacion) {
+
+		List<EsquemaTurnadoConfig> listaProvinciasConcurso = new LinkedList<EsquemaTurnadoConfig>();
+		
+		for(DespachoAmbitoActuacion ambitoActuacion : listaAmbitoActuacion) {
+			if(ambitoActuacion.getProvincia() != null && ambitoActuacion.getEtcConcurso() != null) {
+				listaProvinciasConcurso.add(ambitoActuacion.getEtcConcurso());
+			}
+			else if(ambitoActuacion.getProvincia() != null) {
+				listaProvinciasConcurso.add(null);
+			}
+				
+		}
+		return listaProvinciasConcurso;
+	}
+	
+	/**
+	 * Recupera la provincia a partir del nombre
+	 * @param nombre
+	 * @return
+	 */
 	private DDProvincia getProvinciaByNombre(String nombre)
 	{
 		List<DDProvincia> listProvincias = utilDiccionarioManager.dameValoresDiccionario(DDProvincia.class);
@@ -520,17 +595,13 @@ public class TurnadoDespachosController {
 		return null;
 	}
 	
-	private Float sumaPorcentajesMenosActual(List<DespachoAmbitoActuacion> listaAmbitoActuacion, DespachoAmbitoActuacion ambitoActual){
-		Float suma = 0.0f;
-		
-		for(DespachoAmbitoActuacion daa : listaAmbitoActuacion) {
-			if(!Checks.esNulo(daa.getPorcentaje()) && !daa.equals(ambitoActual))
-				suma += Float.parseFloat(daa.getPorcentaje());
-		}
-		
-		return suma;
-	}
-	
+	/**
+	 * Recoge la información de las provincias de un despacho, para mostrar en el grid de la pestaña del 
+	 * despacho turnado.
+	 * @param idDespacho
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping
 	public String buscarProvincias(@RequestParam(required=true) Long idDespacho, Model model) {
 		
@@ -538,20 +609,36 @@ public class TurnadoDespachosController {
 				? despachoExternoManager.getAmbitoGeograficoDespacho(idDespacho)
 				: new ArrayList<DespachoAmbitoActuacion>();
 		List<DDProvincia> listaProvinciasDespachoNombre = this.getListaProvinciasDespacho(listaAmbitoActuacion);
-		List<String> listaProvinciasPorcentaje = this.getListaProvinciasPorcentaje(listaAmbitoActuacion);
+		List<EsquemaTurnadoConfig> listaProvinciasCalidadLitigio = this.getListaProvinciasCalidadLit(listaAmbitoActuacion);
+		List<EsquemaTurnadoConfig> listaProvinciasCalidadConcurso = this.getListaProvinciasCalidadCon(listaAmbitoActuacion);
 		//Trampa para asignar porcentaje y asi no crear un objeto nuevo
 		for(int i=0; i<listaProvinciasDespachoNombre.size();i++)
 		{
-			if(listaProvinciasPorcentaje.get(i) != null)
-				listaProvinciasDespachoNombre.get(i).setDescripcionLarga(listaProvinciasPorcentaje.get(i)+"%");
-			else
-				listaProvinciasDespachoNombre.get(i).setDescripcionLarga("0%");
+			if(listaProvinciasCalidadLitigio.get(i) != null) {
+				listaProvinciasDespachoNombre.get(i).setDescripcionLarga(listaProvinciasCalidadLitigio.get(i).getCodigo()+" ("+ listaProvinciasCalidadLitigio.get(i).getPorcentaje().intValue()+"%)");
+			}
+			else {
+				listaProvinciasDespachoNombre.get(i).setDescripcionLarga("---");
+			}
+			if(listaProvinciasCalidadConcurso.get(i) != null) {
+				listaProvinciasDespachoNombre.get(i).getAuditoria().setUsuarioBorrar(listaProvinciasCalidadConcurso.get(i).getCodigo()+" ("+ listaProvinciasCalidadConcurso.get(i).getPorcentaje().intValue()+"%)");
+			}
+			else {
+				listaProvinciasDespachoNombre.get(i).getAuditoria().setUsuarioBorrar("---");
+
+			}
 		}
 		
 		model.addAttribute("provincias",listaProvinciasDespachoNombre);
 		return VIEW_PROVINCIA_CALIDAD_SEARCH;
 	}
 	
+	/**
+	 * Abre el pop-up para asignar/quitar las comunidades y provincias a un despacho
+	 * @param idDespacho
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping
 	public String ventanaEditarAmbito(@RequestParam(value="id", required=true) Long idDespacho, 
 			Model model) {
@@ -590,30 +677,6 @@ public class TurnadoDespachosController {
 		return VIEW_ESQUEMA_TURNADO_AMBITO;
 	}
 	
-/*	@RequestMapping
-	public String guardarAmbitoDespacho(@RequestParam(value="id", required=true) Long idDespacho, 
-			@RequestParam(value="listaComunidades", required=true) String[] listaComunidades,
-			@RequestParam(value="listaProvincias", required=true) String[] listaProvincias,
-			Model model) {
-		DespachoAmbitoActuacion daa;
-		listaComunidades = listaComunidades[0].split(",");
-		for(String codComunidad : listaComunidades) {
-			daa = despachoAmbitoActuacionDao.getByDespachoYComunidad(idDespacho, codComunidad);
-			if(Checks.esNulo(daa)) {
-				daa = new DespachoAmbitoActuacion();
-				//daa.setDespacho(idDespacho);
-			}
-			despachoExternoManager.guardarAmbitoActuacion(daa);
-		}
-		listaProvincias = listaProvincias[0].split(",");
-		for(String codProvincia : listaProvincias) {
-			daa = despachoAmbitoActuacionDao.getByDespachoYProvincia(idDespacho, codProvincia);
-			despachoExternoManager.guardarAmbitoActuacion(daa);
-		}
-		
-		return VIEW_DEFAULT;
-	}*/
-	
 	@RequestMapping
 	public String guardarAmbitoDespacho(EsquemaTurnadoDespachoDto dto,
 			Model model) {
@@ -622,54 +685,6 @@ public class TurnadoDespachosController {
 		}
 		
 		return VIEW_DEFAULT;
-	}
-	
-	/**
-	 * Comprueba porcentajes ya existentes de un despacho con los nuevos agregados a partir de la hoja excel para el mismo despacho.
-	 * Es decir: Mismo depacho, vamos sumando los porcentajes del excel, y lo sumamos a los procentajes de provincias que no estan
-	 * en el excel, pero si en la BD.
-	 * @param dto
-	 * @return
-	 */
-	private Long compruebaSumaPorcentajeConExcel(EsquemaDespachoValidacionDto dto) {
-		Float sumaTotal = 0.0f;
-		Long idDespacho = dto.getListaRegistros().get(0).getId();
-		String listaProvinciasCodigo = "";
-		List<DespachoAmbitoActuacion> listDespAmbActExcluidos = new LinkedList<DespachoAmbitoActuacion>();
-		int contador = 0;
-
-		for(EsquemaTurnadoDespachoDto esquemaDto : dto.getListaRegistros()) {
-			if(esquemaDto.getId().equals(idDespacho)) {
-				sumaTotal += Float.parseFloat((esquemaDto.getPorcentajeProvincia() != null && esquemaDto.getPorcentajeProvincia() != "") ? esquemaDto.getPorcentajeProvincia() : "0");
-				listaProvinciasCodigo += this.getProvinciaByNombre(esquemaDto.getNombreProvincia()).getCodigo() +",";
-			}
-			else {
-				if(listaProvinciasCodigo != null && listaProvinciasCodigo != "")
-					listDespAmbActExcluidos = despachoAmbitoActuacionDao.getAmbitosActuacionExcluidos(idDespacho, null, listaProvinciasCodigo.substring(0, listaProvinciasCodigo.length()-1));
-				for(DespachoAmbitoActuacion daa : listDespAmbActExcluidos) {
-					if(!Checks.esNulo(daa.getPorcentaje()))
-						sumaTotal += Float.parseFloat(daa.getPorcentaje());
-				}
-			
-				if(sumaTotal > 100) {
-					return dto.getListaRegistros().get(contador-1).getId();
-				}
-				
-				if(esquemaDto.getPorcentajeProvincia() != null && esquemaDto.getPorcentajeProvincia() != "") {
-					sumaTotal = Float.parseFloat(esquemaDto.getPorcentajeProvincia());
-					listaProvinciasCodigo = this.getProvinciaByNombre(esquemaDto.getNombreProvincia()).getCodigo() +",";
-				}
-				else {
-					sumaTotal = 0.0f;
-					listaProvinciasCodigo = "";
-				}
-				
-				listDespAmbActExcluidos = new LinkedList<DespachoAmbitoActuacion>();
-				idDespacho = esquemaDto.getId();
-			}
-			contador++;
-		}
-		return null;
 	}
 	
 	/**

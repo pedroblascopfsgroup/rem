@@ -113,7 +113,10 @@ public class DtoResultadoBusquedaTareasBuzones implements Serializable {
     
     private transient String categoriaTarea;
     
-    public void setCategoriaTarea(String categoriaTarea) {
+    private Long idProrroga;
+    
+
+	public void setCategoriaTarea(String categoriaTarea) {
     	this.categoriaTarea = categoriaTarea;
     }
     
@@ -613,5 +616,13 @@ public class DtoResultadoBusquedaTareasBuzones implements Serializable {
     public void setDescSupervisor(String descSupervisor) {
         this.descSupervisor = descSupervisor;
     }
+    
+    public Long getIdProrroga() {
+		return idProrroga;
+	}
+
+	public void setIdProrroga(Long idProrroga) {
+		this.idProrroga = idProrroga;
+	}
 
 }

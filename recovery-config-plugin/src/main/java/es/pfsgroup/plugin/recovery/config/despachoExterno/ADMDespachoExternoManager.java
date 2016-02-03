@@ -20,7 +20,6 @@ import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.devon.web.DynamicElement;
 import es.capgemini.pfs.core.api.web.DynamicElementApi;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
-import es.capgemini.pfs.despachoExterno.model.DespachoAmbitoActuacion;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.direccion.model.DDComunidadAutonoma;
@@ -47,6 +46,9 @@ import es.pfsgroup.plugin.recovery.config.despachoExterno.dto.ADMDtoBusquedaDesp
 import es.pfsgroup.plugin.recovery.config.despachoExterno.dto.ADMDtoDespachoExterno;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTDDTipoGestorApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
+import es.pfsgroup.recovery.ext.turnadodespachos.DespachoAmbitoActuacion;
+import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnado;
+import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoDao;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoDespachoDto;
 
 @Service("ADMDespachoExternoManager")
@@ -83,6 +85,9 @@ public class ADMDespachoExternoManager {
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
+	
+	@Autowired
+	private EsquemaTurnadoDao esquemaTurnadoDao;
 
 	public ADMDespachoExternoManager() {
 
@@ -611,7 +616,10 @@ public class ADMDespachoExternoManager {
 						despachoAmbitoActuacion.setProvincia(provincia);		
 					}
 					if(dto.getNombreProvincia() != null && provincia.getDescripcion().toUpperCase().equals(dto.getNombreProvincia().toUpperCase())) {
-						despachoAmbitoActuacion.setPorcentaje(dto.getPorcentajeProvincia());
+						EsquemaTurnado esquema = new EsquemaTurnado();
+						esquema = esquemaTurnadoDao.getEsquemaVigente();
+						despachoAmbitoActuacion.setEtcLitigio(esquema.getConfigByCodigo(dto.getProvinciaCalidadLitigio()));
+						despachoAmbitoActuacion.setEtcConcurso(esquema.getConfigByCodigo(dto.getProvinciaCalidadConcurso()));
 					}
 					
 					listDespachoAmbitoActuacion.add(despachoAmbitoActuacion);				

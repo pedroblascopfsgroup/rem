@@ -31,6 +31,7 @@
 				<value>TOTAL_LIQUIDACION</value>
 				<value>FECHA_CIERRE_LIQUIDACION</value>
 				<value>MOV_FECHA_POS_VIVA_VENCIDA</value>
+				<value>CODIGO_DE_CONTRATO</value>
 				<value>CODIGO_DE_CONTRATO_DE_17_DIGITOS</value>
 				<value>totalLiq</value>
 				<value>fechaLiquidacion</value>

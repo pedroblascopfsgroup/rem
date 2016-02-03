@@ -261,12 +261,12 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 		input.setSITUACIONBIEN("");
 		
 		if(bien.getIdDireccion() != null) {
-			logger.info("CODDIR: " + bien.getIdDireccion());
+			logger.info("RINM: " + bien.getIdDireccion());
 			input.setCODDIR(bien.getIdDireccion());
 		}
 		else {
-			logger.info("CODDIR: ");
-			input.setCODDIR("");
+			logger.info("RINM PRUEBA: 232051");
+			input.setCODDIR("232051");
 		}
 		
 		String poblacion = "";
@@ -354,7 +354,7 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 		input.setTELFNCONTAS("");
 
 		logger.info("TENCRELA: ");
-		input.setTENCRELA("");
+		input.setTENCRELA("");	
 	}
 
 	/**

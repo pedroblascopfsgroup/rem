@@ -13,6 +13,7 @@ public interface RecobroConfigConstants {
 		public static final String PLUGIN_RECOBRO_PROCESOSFACTURACION_CAMBIA_ESTADO_PROCESO_BO="plugin.recobroConfig.procesosFacturacionApi.cambiaEstadoProcesoFacturacion";
 		public static final String PLUGIN_RECOBRO_PROCESOSFACTURACION_BORRARDETALLE_BO="plugin.recobroConfig.procesosFacturacionApi.borrarDetalleFacturacion";
 		public static final String PLUGIN_RECOBRO_PROCESOSFACTURACION_GENERAREXCEL_PROCESOS_BO = "plugin.recobroConfig.procesosFacturacionApi.generarExcelProcesos";
+		public static final String PLUGIN_RECOBRO_PROCESOSFACTURACION_GENERAREXCELREDUCIDO_PROCESOS_BO = "plugin.recobroConfig.procesosFacturacionApi.generarExcelProcesosReducido";
 		public static final String PLUGIN_RECOBRO_PROCESOSFACTURACION_GUARDARMODELOS="plugin.recobroConfig.procesosFacturacionApi.guardarModelosFacturacionSubcarteras";
 		
 		public static final String PLUGIN_RECOBRO_PROCESOSFACTURACIONSUBCARTERA_SAVE="plugin.recobroConfig.procesosFacturacionSubcarteraApi.save";

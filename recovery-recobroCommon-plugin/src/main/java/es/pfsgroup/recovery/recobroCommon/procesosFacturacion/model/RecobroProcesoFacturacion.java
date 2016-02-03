@@ -97,6 +97,10 @@ public class RecobroProcesoFacturacion implements Auditable, Serializable{
 	@JoinColumn(name = "REA_ID")
 	private RecobroAdjuntos fichero;
 	
+	@OneToOne
+	@JoinColumn(name = "REA_ID_REDUCIDO")
+	private RecobroAdjuntos ficheroReducido;
+
 	@Column(name = "PRF_ERROR_BATCH")
 	private String errorBatch;
 	
@@ -254,6 +258,14 @@ public class RecobroProcesoFacturacion implements Auditable, Serializable{
 
 	public void setErrorBatch(String errorBatch) {
 		this.errorBatch = errorBatch;
+	}
+	
+	public RecobroAdjuntos getFicheroReducido() {
+		return ficheroReducido;
+	}
+
+	public void setFicheroReducido(RecobroAdjuntos ficheroReducido) {
+		this.ficheroReducido = ficheroReducido;
 	}
 
 }

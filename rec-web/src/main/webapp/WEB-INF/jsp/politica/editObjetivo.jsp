@@ -456,7 +456,7 @@
     
         var submitAcepto = function(){
             page.submit({
-                    eventName : 'aceptar'
+                    even/var/tomcat/desahaya/webapps/pfs/WEB-INF/jsp/politica/editObjetivo.jsptName : 'aceptar'
                     ,formPanel : objetivoForm
                     ,success : function(){ page.fireEvent(app.event.DONE) }
                 });

@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.burofax.api;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 
@@ -16,7 +15,7 @@ public interface DocumentoBurofaxApi {
 	String parseoFinalBurofax(String contenidoParseadoIntermedio,
 			HashMap<String, Object> mapeoVariables);
 
-	String obtenerCabecera(HashMap<String, Object> mapeoVariables);
+	String obtenerCabecera(EnvioBurofaxPCO envioBurofaxPCO, String contexto);
 
 	InputStream obtenerPlantillaBurofax();
 

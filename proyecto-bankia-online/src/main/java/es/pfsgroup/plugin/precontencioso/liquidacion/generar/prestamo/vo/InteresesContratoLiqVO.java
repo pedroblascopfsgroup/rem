@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.precontencioso.liquidacion.vo;
+package es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;

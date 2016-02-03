@@ -208,7 +208,7 @@ public interface DocumentoPCOApi {
 	 * @return
 	 */
 	Boolean esTipoGestorConAcceso(EXTDDTipoGestor tipoGestor);
-	
+
 	/**
 	 * Recupera la lista de provincias
 	 * 

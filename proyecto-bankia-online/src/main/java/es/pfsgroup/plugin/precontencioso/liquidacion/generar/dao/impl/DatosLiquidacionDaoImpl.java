@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.precontencioso.liquidacion.dao.impl;
+package es.pfsgroup.plugin.precontencioso.liquidacion.generar.dao.impl;
 
 import java.util.List;
 
@@ -12,10 +12,10 @@ import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import es.pfsgroup.plugin.precontencioso.liquidacion.dao.DatosLiquidacionDao;
-import es.pfsgroup.plugin.precontencioso.liquidacion.vo.DatosGeneralesLiqVO;
-import es.pfsgroup.plugin.precontencioso.liquidacion.vo.InteresesContratoLiqVO;
-import es.pfsgroup.plugin.precontencioso.liquidacion.vo.RecibosLiqVO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.generar.dao.DatosLiquidacionDao;
+import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.DatosGeneralesLiqVO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.InteresesContratoLiqVO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.RecibosLiqVO;
 
 @Repository
 public class DatosLiquidacionDaoImpl implements DatosLiquidacionDao {
@@ -70,6 +70,7 @@ public class DatosLiquidacionDaoImpl implements DatosLiquidacionDao {
 			.addScalar("DGC_NOMFED1", Hibernate.STRING)
 			.addScalar("DGC_COIBTQ", Hibernate.STRING)
 			.addScalar("DGC_IMDEUD", Hibernate.BIG_DECIMAL)
+			.addScalar("DGC_IMVRE2", Hibernate.BIG_DECIMAL)
 			.setLong("idLiquidacion", idLiquidacion);
 
 		return query.setResultTransformer(Transformers.aliasToBean(DatosGeneralesLiqVO.class)).list();

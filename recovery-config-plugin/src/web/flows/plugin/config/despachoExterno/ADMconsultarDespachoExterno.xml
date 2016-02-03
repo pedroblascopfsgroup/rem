@@ -4,10 +4,12 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 	
 	<input name="id" type="java.lang.Long"/>
-
+	<input name="numTab" type="java.lang.Integer"/>
+	
 	<end-state id="listado" view="plugin/config/despachoExterno/consultarDespachoExterno">
 		<secured attributes="ROLE_ADMIN" match="any" />
 		<on-entry>
+			<evaluate expression="executor.execute('usuarioManager.getUsuarioLogado').entidad.descripcion" result="flowScope.usuarioEntidad" />
 			<evaluate expression="executor.execute('ADMDespachoExternoManager.getDespachoExterno',id)" result="flowScope.despacho"/>
 			<evaluate expression="executor.execute('ADMDespachoExternoManager.getAmbitoGeograficoDespacho',id)" result="flowScope.ambitoGreograficoDespacho"/>
 			<evaluate expression="executor.execute('admTipoDespachoExternoManager.getList')"
@@ -20,5 +22,5 @@
 			<evaluate expression="executor.execute('ADMDespachoExternoManager.getTipoVia')"	result="flowScope.ddTipoVia" />
 			<evaluate expression="executor.execute('plugin.recovery.coreextension.api.getListTipoGestor', despacho.tipoDespacho.codigo)" result="flowScope.tiposGestorPropiedad" />
 		</on-entry>
-	</end-state>
+	</end-state >
 </flow>

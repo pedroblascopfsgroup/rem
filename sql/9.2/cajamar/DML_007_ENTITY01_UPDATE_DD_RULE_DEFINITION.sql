@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20160203
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2.0-cj
---## INCIDENCIA_LINK=CMREC-1991
+--## INCIDENCIA_LINK=CMREC-1973
 --## PRODUCTO=NO
 --## Finalidad: DML
 --##           
@@ -31,19 +31,10 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('******** FUN_PEF ********'); 
     DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.FUN_PEF... Comprobaciones previas DD_RULE_DEFINITION'); 
 
-	V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.DD_RULE_DEFINITION WHERE RD_TITLE = ''Plan de Actuacion''';
-	DBMS_OUTPUT.PUT_LINE(V_SQL);
-    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-    IF V_NUM_TABLAS > 0 THEN
-		DBMS_OUTPUT.PUT_LINE('[INFO] El registro ya ha sido actualizado en la tabla '||V_ESQUEMA||'.DD_RULE_DEFINITION.');    	
-	ELSE
-		V_MSQL := 'UPDATE '||V_ESQUEMA||'.DD_RULE_DEFINITION SET RD_TITLE = ''Plan de Actuacion'' WHERE RD_TITLE = ''Politica de la Entidad'' ';
-		DBMS_OUTPUT.PUT_LINE(V_MSQL);
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Registro actualizado en '||V_ESQUEMA||'.DD_RULE_DEFINITION');
-	END IF;
-	
-	
+	V_MSQL := 'UPDATE '||V_ESQUEMA||'.DD_RULE_DEFINITION SET RD_TITLE = ''Plan de Actuacion'' WHERE RD_TITLE = ''Politica de la Entidad'' ';
+	DBMS_OUTPUT.PUT_LINE(V_MSQL);
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Registro actualizado en '||V_ESQUEMA||'.DD_RULE_DEFINITION');
 	
     COMMIT;
 	

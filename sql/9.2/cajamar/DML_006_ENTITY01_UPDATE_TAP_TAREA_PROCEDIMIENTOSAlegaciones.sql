@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Alberto B
---## FECHA_CREACION=20160202
+--## FECHA_CREACION=20160203
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2.0-cj
---## INCIDENCIA_LINK=CMREC-1943
+--## INCIDENCIA_LINK=CMREC-1973
 --## PRODUCTO=NO
 --## Finalidad: DML
 --##           

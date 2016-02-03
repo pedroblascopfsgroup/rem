@@ -126,7 +126,6 @@ public class TurnadoDespachosController {
 		List<String> listaComunidadesDespacho = new LinkedList<String>();
 		List<String> listaProvinciasDespacho = new LinkedList<String>();
 		List<DDProvincia> listaProvinciasDespachoNombre = new LinkedList<DDProvincia>();
-		List<String> listaProvinciasPorcentaje = new LinkedList<String>();
 		
 		for(DespachoAmbitoActuacion ambitoActuacion : listaAmbitoActuacion) {
 			
@@ -137,14 +136,12 @@ public class TurnadoDespachosController {
 			if(ambitoActuacion.getProvincia() != null) {
 				listaProvinciasDespacho.add(ambitoActuacion.getProvincia().getCodigo());
 				listaProvinciasDespachoNombre.add(ambitoActuacion.getProvincia());
-				listaProvinciasPorcentaje.add(ambitoActuacion.getPorcentaje());
 			}
 		}
 		
 		model.addAttribute("listaComunidadesDespacho", listaComunidadesDespacho);
 		model.addAttribute("listaProvinciasDespacho", listaProvinciasDespacho);
 		model.addAttribute("listaProvinciasDespachoNombre", listaProvinciasDespachoNombre);
-		model.addAttribute("listaProvinciasPorcentaje", listaProvinciasPorcentaje);
 		
 		List<EsquemaTurnadoConfig> listTipoImporteLitigio = new LinkedList<EsquemaTurnadoConfig>();
 		List<EsquemaTurnadoConfig> listTipoCalidadLitigio = new LinkedList<EsquemaTurnadoConfig>();
@@ -650,7 +647,6 @@ public class TurnadoDespachosController {
 		List<String> listaComunidadesDespacho = new LinkedList<String>();
 		List<String> listaProvinciasDespacho = new LinkedList<String>();
 		List<DDProvincia> listaProvinciasDespachoNombre = new LinkedList<DDProvincia>();
-		List<String> listaProvinciasPorcentaje = new LinkedList<String>();
 		
 		for(DespachoAmbitoActuacion ambitoActuacion : listaAmbitoActuacion) {
 			
@@ -661,14 +657,12 @@ public class TurnadoDespachosController {
 			if(ambitoActuacion.getProvincia() != null) {
 				listaProvinciasDespacho.add(ambitoActuacion.getProvincia().getCodigo());
 				listaProvinciasDespachoNombre.add(ambitoActuacion.getProvincia());
-				listaProvinciasPorcentaje.add(ambitoActuacion.getPorcentaje());
 			}
 		}
 		
 		model.addAttribute("listaComunidadesDespacho", listaComunidadesDespacho);
 		model.addAttribute("listaProvinciasDespacho", listaProvinciasDespacho);
 		model.addAttribute("listaProvinciasDespachoNombre", listaProvinciasDespachoNombre);
-		model.addAttribute("listaProvinciasPorcentaje", listaProvinciasPorcentaje);
 	
 		
 		model.addAttribute("listaComunidadesAutonomas", utilDiccionarioManager.dameValoresDiccionario(DDComunidadAutonoma.class));

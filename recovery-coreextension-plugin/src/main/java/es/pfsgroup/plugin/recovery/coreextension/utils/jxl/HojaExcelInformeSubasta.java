@@ -101,11 +101,9 @@ public class HojaExcelInformeSubasta extends HojaExcel{
 				if (!copiado) {
 					// Pintamos las cabeceras de las columnas.
 				    
-				    WritableFont cellFontBold10 = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD);
 				    WritableFont cellFontBold12 = new WritableFont(WritableFont.ARIAL, 12, WritableFont.BOLD, false, UnderlineStyle.NO_UNDERLINE, Colour.WHITE);
 
 				    WritableCellFormat cellFormatCabeceras = new WritableCellFormat(cellFontBold12);
-				    cellFormatCabeceras.setFont(cellFontBold10);
 				    cellFormatCabeceras.setAlignment(Alignment.CENTRE);
 				    cellFormatCabeceras.setBackground(Colour.BLUE);
 				    cellFormatCabeceras.setBorder(Border.ALL, BorderLineStyle.THIN);

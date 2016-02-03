@@ -751,6 +751,13 @@ public class BurofaxManager implements BurofaxApi {
 				mapaVariables.put("CODIGO_DE_CONTRATO_DE_17_DIGITOS","[ERROR - No existe valor]");
 			}
 			
+			if(!Checks.esNulo(envioBurofax.getBurofax().getContrato().getNroContratoFormat())){
+				mapaVariables.put("CODIGO_DE_CONTRATO", envioBurofax.getBurofax().getContrato().getNroContratoFormat());
+			}
+			else{
+				mapaVariables.put("CODIGO_DE_CONTRATO","[ERROR - No existe valor]");
+			}
+			
 			
 			if(!Checks.esNulo(envioBurofax.getBurofax().getContrato().getMovimientos())){
 				List<Movimiento> movimientos = envioBurofax.getBurofax().getContrato().getMovimientos(); 

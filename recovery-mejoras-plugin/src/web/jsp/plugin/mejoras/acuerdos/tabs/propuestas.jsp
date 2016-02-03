@@ -201,7 +201,7 @@
 			var w = app.openWindow({
 				flow : 'propuestas/abrirFinalizacion'
 				,closable:false
-				,width : 680
+				,width : 750
 				,title : '<s:message code="mejoras.plugin.acuerdos.finalizarAcuerdo" text="**Finalizar acuerdo" />'
 				,params : {idAcuerdo: acuerdoSeleccionado}
 			});

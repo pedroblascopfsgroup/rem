@@ -1684,7 +1684,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		
 		return results;
 	}
-	
+
 /*	@Override
 	@BusinessOperation(EXTAsuntoApi.EXT_BO_ASU_MGR_FIND_ASUNTOS_PAGINATED_DINAMICO_COUNT)
 	public List<Asunto> findAsuntosPaginatedDinamicoCount(EXTDtoBusquedaAsunto dto, String params) {

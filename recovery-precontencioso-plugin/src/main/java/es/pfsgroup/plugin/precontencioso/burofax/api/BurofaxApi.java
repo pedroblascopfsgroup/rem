@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.contrato.model.ContratoPersonaManual;
@@ -49,6 +50,7 @@ public interface BurofaxApi {
 	public static final String DESCARTAR_PERSONA_ENVIO = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.descartarPersonaEnvio";
 	public static final String BORRAR_DIRECCION_MANUAL_BUROFAX = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.borrarDirManualBurofax";
 	public static final String EXCLUIR_BUROFAX_POR_IDS = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.excluirBurofaxPorIds";
+	public static final String GENERAR_BUROFAX_PDF = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.generarBurofaxPDF";
 
 	/**
 	 * Obtiene una lista de tipos de burofax a partir del Procedimiento 
@@ -224,6 +226,9 @@ public interface BurofaxApi {
 	List<ContratosPCODto> getContratosProcPersona(Long idProcedimientoPCO, Long idPersona, Boolean manual);
 	
 	PersonaManual guardaPersonaManual(String dni, String nombre, String app1, String app2, String propietarioCodigo, Long codClienteEntidad);
+
+	@BusinessOperationDefinition(GENERAR_BUROFAX_PDF)
+	FileItem generarBurofaxPDF(EnvioBurofaxPCO envioBurofax, String nombreFichero);
 	
 	ContratoPersonaManual guardaContratoPersonaManual(Long idPersonaManual, Long idContrato, String codigoTipoIntervencion);
 	

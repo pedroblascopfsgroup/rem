@@ -9,6 +9,10 @@
 <fwk:page>
 
 
+	var buttonsR = <app:includeArray files="${buttonsRight}" />;
+	var buttonsL = <app:includeArray files="${buttonsLeft}" />;
+	
+
 	var tabs = <app:includeArray files="${tabsAsunto}" />;
 	var buttons = <app:includeArray files="${buttonsAsunto}" />;
 
@@ -283,19 +287,20 @@
 		,handler: function() {
 			
 			if (asuntoTabPanel.getActiveTab() != null && asuntoTabPanel.getActiveTab().initialConfig.nombreTab != null)
-				app.abreAsuntoTab(${asunto.id},'${asunto.nombre}', asuntoTabPanel.getActiveTab().initialConfig.nombreTab);
+				app.abreAsuntoTab(${asunto.id},'<s:message text="${asunto.nombre}" javaScriptEscape="true" />', asuntoTabPanel.getActiveTab().initialConfig.nombreTab);
 			else
-				app.abreAsunto(${asunto.id},'${asunto.nombre}');
+				app.abreAsunto(${asunto.id},'<s:message text="${asunto.nombre}" javaScriptEscape="true" />');
 			
 			
 		}
 	});
 	
-	panel.getTopToolbar().add(buttons);
-	
+	panel.getTopToolbar().add(buttonsL);
 	panel.getTopToolbar().add('->');
-	panel.getTopToolbar().add(app.crearBotonAyuda());
+	<%-- panel.getTopToolbar().add(app.crearBotonAyuda()); --%>
 	panel.getTopToolbar().add(botonRefrezcar);
+	panel.getTopToolbar().add(buttonsR);
+	
 
 	
 </fwk:page>

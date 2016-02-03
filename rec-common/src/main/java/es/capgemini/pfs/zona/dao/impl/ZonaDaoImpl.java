@@ -14,6 +14,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.zona.dao.ZonaDao;
 import es.capgemini.pfs.zona.model.DDZona;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * Implementación del dao zona.
@@ -37,6 +38,28 @@ public class ZonaDaoImpl extends AbstractEntityDao<DDZona, Long> implements Zona
             }
             hql = hql.substring(0, hql.length() - 2);
             hql += " ) ";
+        }
+        return getHibernateTemplate().find(hql, idNivel);
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<DDZona> getZonasJerarquiaByCodDesc(Integer idNivel, Set<String> codigoZonasUsuario, String codDesc) {
+        String hql = " from DDZona z where z.auditoria.borrado = 0 and z.nivel.codigo = ?";
+        if (codigoZonasUsuario != null && codigoZonasUsuario.size() > 0) {
+            hql += " and ( ";
+            for (String cz : codigoZonasUsuario) {
+                hql += " z.codigo like '" + cz + "%' or";
+            }
+            hql = hql.substring(0, hql.length() - 2);
+            hql += " ) ";
+        }
+        if(!Checks.esNulo(codDesc)) {
+        	hql += " and ( z.codigo like '%";
+        	hql += codDesc;
+        	hql += "%' or z.descripcion like '%";
+        	hql += codDesc;
+        	hql += "%' )";
         }
         return getHibernateTemplate().find(hql, idNivel);
     }

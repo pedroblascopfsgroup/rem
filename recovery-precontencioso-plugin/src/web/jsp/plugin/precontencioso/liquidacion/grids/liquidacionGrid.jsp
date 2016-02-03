@@ -3,6 +3,7 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <%-- Buttons --%>
 
@@ -252,7 +253,7 @@ var gridLiquidaciones = app.crearGrid(storeLiquidaciones, cmLiquidacion, {
 	title: '<s:message code="plugin.precontencioso.grid.liquidacion.titulo" text="**Liquidaciones" />',
 	<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_LIQ_BTN">
 	bbar: [
-		btnSolicitar, 
+	<sec:authorize ifNotGranted="PERSONALIZACION-BCC">	btnSolicitar, </sec:authorize>
 		btnEditarValores, 
 		btnConfirmar, 
 		btnVisar,

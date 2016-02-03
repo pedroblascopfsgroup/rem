@@ -106,7 +106,34 @@ public class AdjudicacionHandlerDelegateManager implements
 			}
 		}
 	}
+	
+	@Override
+	@BusinessOperation(overrides = BO_ADJUDICACION_HANDLER_INSERT_ADJUDICACION_FECHA_CONTABILIDAD)
+	public void insertarFechaContabilidad(Long prcId, Date valor) {
+		@SuppressWarnings("unchecked")
+		List<Bien> listaBienes = (List<Bien>) executor
+				.execute(
+						ExternaBusinessOperation.BO_PRC_MGR_GET_BIENES_DE_UN_PROCEDIMIENTO,
+						prcId);
+		if (listaBienes != null && listaBienes.size() > 0) {
+			for (Bien bien : listaBienes) {
+				if (bien instanceof NMBBien) {
+					NMBBien nmbBien = (NMBBien) bien;
+					NMBAdjudicacionBien adjudicacion = ((NMBBien) bien)
+							.getAdjudicacion();
+					if (adjudicacion == null)
+						adjudicacion = new NMBAdjudicacionBien();
+					// TODO: confirmar la fecha
+					adjudicacion.setFechaContabilidad(valor);
+					adjudicacion.setBien(nmbBien);
+					proxyFactory.proxy(EditBienApi.class).guardarAdjudicacion(
+							adjudicacion);
+				}
+			}
+		}
+	}
 
+	
 	@Override
 	@BusinessOperation(overrides = BO_ADJUDICACION_HANDLER_INSERT_CARGA_FECHA_INS)
 	public void insertarFechaInsCarga(Long prcId, Date fechaIns) {

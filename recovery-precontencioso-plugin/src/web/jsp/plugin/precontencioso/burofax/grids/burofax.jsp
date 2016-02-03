@@ -332,7 +332,6 @@ var pdfRender = function(value, meta, record) {
       		btnExcluirPersona.disabled=true;
       		btnCancelarEnEstPrep.disabled=true;
       		btnEditarVerDireccion.disabled=true;
-      		
       		//this.store.sort('idCliente','DESC');
 	        //this.store.setDefaultSort('idCliente', 'DESC');
       		
@@ -454,7 +453,7 @@ var pdfRender = function(value, meta, record) {
 								,btnAddPersona
 						    </c:otherwise>
 						</c:choose>
-					,btnEnviar, btnNuevaDir, btnEditarVerDireccion, btnEditar, btnPreparar,btnCancelar, btnNotificar,btnDescargarBurofax, btnBorrarDirOrigenManual, btnDescartarPersEnvio, btnExcluirPersona,  separadorButtons, btnCancelarEnEstPrep, botonRefresh ]
+					,btnEnviar, btnNuevaDir, btnEditarVerDireccion, btnCancelar, btnBorrarDirOrigenManual, btnDescartarPersEnvio, btnExcluirPersona,  separadorButtons,btnEditar, btnPreparar, btnNotificar,btnDescargarBurofax, btnCancelarEnEstPrep, botonRefresh ]
 		</sec:authorize>
 		,autoWidth: true
 		,collapsible: true
@@ -1601,3 +1600,9 @@ var ponerVisibilidadBotonesBur = function(visibles, invisibles) {
 		}
 	}
 }	
+
+	
+	<sec:authentication var="user" property="principal" />
+	<c:if test="${user.entidad.descripcion eq 'CAJAMAR'}">
+   		btnNotificar.setVisible(true);
+	</c:if>

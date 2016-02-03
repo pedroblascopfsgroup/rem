@@ -46,23 +46,27 @@ public class GestorDocumentalInputAssembler {
 
 		SimpleDateFormat frmt = new SimpleDateFormat("ddMMyyyy");
 		INPUT input = new INPUT();
-		input.setCLAVEASOCIACION(inputDto.getClaveAsociacion());
-		input.setCLAVEASOCIACION2(inputDto.getClaveAsociacion2());
-		input.setCLAVEASOCIACION3(inputDto.getClaveAsociacion3());
-		input.setDESCRIPCION(inputDto.getDescripcion());
-		input.setEXTENSIONFICHERO(inputDto.getExtensionFichero());
+		input.setAPLICACION(GestorDocumentalInputDto.APLICACION);
+		input.setCLAVEASOCIACION(inputDto.getClaveAsociacion() == null ? "" : inputDto.getClaveAsociacion());
+		input.setCLAVEASOCIACION2(inputDto.getClaveAsociacion2() == null ? "" : inputDto.getClaveAsociacion2());
+		input.setCLAVEASOCIACION3(inputDto.getClaveAsociacion3() == null ? "" : inputDto.getClaveAsociacion3());
+		input.setDESCRIPCION(inputDto.getDescripcion() == null ? "" : inputDto.getDescripcion());
+		input.setEXTENSIONFICHERO(inputDto.getExtensionFichero() == null ? "" : inputDto.getExtensionFichero());
 		if(!Checks.esNulo(inputDto.getFechaVigencia())) {
 			input.setFECHAVIGENCIA(frmt.format(inputDto.getFechaVigencia()));			
 		}
-	    input.setFICHEROBASE64(inputDto.getFicheroBase64());
-	    input.setLOCALIZADOR(inputDto.getLocalizador());
-	    input.setOPERACION(inputDto.getOperacion());
-		input.setORIGEN(inputDto.getOrigen());
-		input.setRUTAFICHEROREMOTO(inputDto.getRutaFicheroRemoto());
-		input.setTIPOASOCIACION(inputDto.getTipoAsociacion());
-		input.setTIPOASOCIACION2(inputDto.getTipoAsociacion2());
-		input.setTIPOASOCIACION3(inputDto.getTipoAsociacion3());
-		input.setTIPODOCUMENTO(inputDto.getTipoDocumento());
+		else {
+			input.setFECHAVIGENCIA("");
+		}
+	    input.setFICHEROBASE64(inputDto.getFicheroBase64() == null ? "" : inputDto.getFicheroBase64());
+	    input.setLOCALIZADOR(inputDto.getLocalizador() == null ? "" : inputDto.getLocalizador());
+	    input.setOPERACION(inputDto.getOperacion() == null ? "" : inputDto.getOperacion());
+		input.setORIGEN(inputDto.getOrigen() == null ? "" : inputDto.getOrigen());
+		input.setRUTAFICHEROREMOTO(inputDto.getRutaFicheroRemoto() == null ? "" : inputDto.getRutaFicheroRemoto());
+		input.setTIPOASOCIACION(inputDto.getTipoAsociacion() == null ? "" : inputDto.getTipoAsociacion());
+		input.setTIPOASOCIACION2(inputDto.getTipoAsociacion2() == null ? "" : inputDto.getTipoAsociacion2());
+		input.setTIPOASOCIACION3(inputDto.getTipoAsociacion3() == null ? "" : inputDto.getTipoAsociacion3());
+		input.setTIPODOCUMENTO(inputDto.getTipoDocumento() == null ? "" : inputDto.getTipoDocumento());
 	    
 		return input;
 	}

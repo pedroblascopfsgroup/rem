@@ -10,17 +10,18 @@
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
 	default-autowire="byName">
 	
-	<!-- Tareas tipo decision -->
 	<bean id="coreProjectContextDefault" 
 		class="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContextImpl" abstract="true">
 		<property name="categoriasSubTareas">
 			<map>
 				<entry key="TOMA_DE_DECISION">
+					<!-- Tareas tipo decision -->
 					<set>
 						<value>46</value>
 					</set>
 				</entry>
 				<entry key="ABRIR_EXP">
+					<!-- Tareas tipo abrir propuesta -->
 					<set>
 						<value>FZAR_PPUESTA</value>
 					</set>
@@ -43,6 +44,11 @@
 		<property name="tiposGestorProcurador">
 			<set>
 				<value>PROC</value>
+			</set>
+		</property>
+		<property name="tipoGestorLetrado">
+			<set>
+				<value>LETR</value>
 			</set>
 		</property>
 	</bean>  

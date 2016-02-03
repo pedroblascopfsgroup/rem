@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.jbpm.graph.exe.ExecutionContext;
@@ -39,16 +38,14 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 	 */
 	private static final long serialVersionUID = -5583230911255732281L;
 
-	private static final String TAREA_REGISTRAR_TOMA_DEC_COMBO_PROC_PROPUESTO = "proc_propuesto";
 	private static final String TAREA_REGISTRAR_TOMA_DEC_COMBO_PROC_INICIAR = "proc_iniciar";
-	private static final String TAREA_REVISAR_EXPEDIENTE_PREPARAR_COMBO_AGENCIA_EXTERNA = "agencia_externa";
 	private static final String TAREA_REVISAR_EXPEDIENTE_ASIGNAR_LETRADO = "expediente_correcto";
 	private static final String PROYECTO_HAYA = "HAYA";
 	private static final String USU_MIGRACION_PCO = "MIGRAPCO";
 
-	private static final String TAREA_REVISAR_EXPEDIENTE_PREPARAR_COMBO_GESTION = "gestion";	private static final String TAREA_REVISAR_EXPEDIENTE_PREPARAR_PROC_INICIAR = "proc_iniciar";
-
-	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+	private static final String TAREA_REVISAR_EXPEDIENTE_PREPARAR_COMBO_GESTION = "gestion";	
+	private static final String TAREA_REVISAR_EXPEDIENTE_PREPARAR_PROC_INICIAR = "proc_iniciar";
+	
 	
 	@Autowired
 	GenericABMDao genericDao;

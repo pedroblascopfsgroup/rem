@@ -38,6 +38,7 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 	private String proDisponibleLiquidaciones;
 	private String proDisponibleBurofaxes;
 	private String proDiasGestion;
+	
 	private String proTipoGestor;
 	private String proDespacho;
 	private String proGestor;
@@ -625,23 +626,18 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 	public void setDocGestor(String docGestor) {
 		this.docGestor = docGestor;
 	}
-
 	public String getImporteDesde() {
 		return importeDesde;
 	}
-
 	public void setImporteDesde(String importeDesde) {
 		this.importeDesde = importeDesde;
 	}
-
 	public String getImporteHasta() {
 		return importeHasta;
 	}
-
 	public void setImporteHasta(String importeHasta) {
 		this.importeHasta = importeHasta;
 	}
-	
 	public String getBurRefExternaEnvio() {
 		return burRefExternaEnvio;
 	}

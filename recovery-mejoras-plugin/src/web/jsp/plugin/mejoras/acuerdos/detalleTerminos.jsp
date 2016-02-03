@@ -10,8 +10,6 @@
 var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEstadoGestion){
    var ambito = entidad.id;
    
-   
-   
    var panelTerminos=new Ext.Panel({
 		layout:'form'
 		,border : false
@@ -21,10 +19,6 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
 		,autoWidth : true
 		,nombreTab : 'terminos'
 	});
-
-   var checkColumn = new Ext.grid.CheckColumn({ 
-        header : '<s:message code="listadoContratos.listado.incluir" text="**Incluir" />'
-        ,dataIndex : 'incluir', width: 40});
 
    var contratosAsuntoRecord = Ext.data.Record.create([
 	      {name : 'id' }
@@ -53,17 +47,54 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
 		 ,{name : 'codigoTipoAcuerdo'} 
         ]);        
 
+
+	var smCheck = new Ext.grid.CheckboxSelectionModel({
+		dataIndex : 'incluir'
+		,checkOnly : true
+		,singleSelect: false
+		,listeners: {
+            selectionchange: function(sel) {
+           		var selModel = contratosAsuntoGrid.getSelectionModel()
+            	var selections = selModel.getSelections();
+				if(selModel.getCount() > 0) {
+					for (i = 0; i <= selModel.getCount()-1; i++) {
+						selections[i].data.incluir = true;
+					}
+				}else{
+					var store = panelTerminos.contratosAsuntoGrid.getStore();
+					for (var i=0; i < store.data.length; i++) {
+						store.data.get(i).data.incluir = false;
+					}
+				}
+            }
+         }
+	});
+	
+	var getParametrosEstado = function(codEstado) {
+		var selModel = subastasGrid.getSelectionModel()
+		var selections = selModel.getSelections();
+		var sel = '';							
+		var parametros = {
+			idLotes : []
+			,codEstado : codEstado
+		};
+		for (i = 0; i <= selModel.getCount()-1; i++) {
+			parametros.idLotes.push(selections[i].json.idLote);
+		}
+		return parametros;
+	}	
+	
    var contratosAsuntoCM = new Ext.grid.ColumnModel([
   	  {dataIndex: 'id', hidden:true, fixed:true }
-      ,checkColumn
-      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.codigo" text="**C&oacute;digo contrato" />', dataIndex : 'cc',width: 35}
-      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.producto" text="**Producto" />', dataIndex : 'tipo',width: 65}
-      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.saldoIrregular" text="**Saldo Irregular" />', dataIndex : 'saldoIrregular',width: 100}
-      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.saldoVivoNoVenc" text="**Sdo Vivo no venc" />', dataIndex : 'saldoNoVencido',width: 75}
-      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.diasIrregular" text="**Dias Irregular" />', dataIndex : 'diasIrregular',width: 75}
-      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.otrosIntervinientes" text="**Otros Intervinientes" />', dataIndex : 'otrosint',width: 65}
-      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.tipoIntervencion" text="**Tipo Intervencion" />', dataIndex : 'tipointerv',width: 65}
-      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.estadoFinanciero" text="**Estado Financ" />', dataIndex : 'estadoFinanciero',width: 65}
+      ,smCheck
+      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.codigo" text="**C&oacute;digo contrato" />', dataIndex : 'cc'}
+      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.producto" text="**Producto" />', dataIndex : 'tipo'}
+      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.saldoIrregular" text="**Saldo Irregular" />', dataIndex : 'saldoIrregular'}
+      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.saldoVivoNoVenc" text="**Sdo Vivo no venc" />', dataIndex : 'saldoNoVencido'}
+      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.diasIrregular" text="**Dias Irregular" />', dataIndex : 'diasIrregular'}
+      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.otrosIntervinientes" text="**Otros Intervinientes" />', dataIndex : 'otrosint'}
+      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.tipoIntervencion" text="**Tipo Intervencion" />', dataIndex : 'tipointerv'}
+      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.contratos.grid.estadoFinanciero" text="**Estado Financ" />', dataIndex : 'estadoFinanciero'}
    ]);
    
    var terminosAcuerdoCM = new Ext.grid.ColumnModel([
@@ -95,7 +126,7 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
 	   	});
    
    }else{
-   
+    
 	    var contratosAsuntoStore = page.getStore({
 	        flow: 'mejacuerdo/obtenerListadoContratosAcuerdoByAsuId'
 	        ,storeId : 'contratosAsuntoStore'
@@ -291,21 +322,19 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
    
    
    terminosAcuerdoStore.webflow({idAcuerdo : acuerdoSeleccionado});    
-  
-   var contratosAsuntoGrid = app.crearGrid(contratosAsuntoStore,contratosAsuntoCM,{
-         title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.contratos.titulo" text="**Contratos/Asunto" />'
-         ,style:'padding : 5px'
-         ,autoHeight : true
-         ,autoWidth:true
-         ,cls:'cursor_pointer'
-         ,loadMask: {msg: "Cargando...", msgCls: "x-mask-loading"}
-         ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
-         ,plugins:checkColumn
-         ,bbar : [
-	        btnAltaTermino
-	      ]         
-   });
-   
+
+   var contratosAsuntoGrid = new Ext.grid.EditorGridPanel({
+        store: contratosAsuntoStore
+        ,cm: contratosAsuntoCM
+        ,title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.contratos.titulo" text="**Contratos/Asunto" />'
+        ,style:'padding : 5px'
+        ,autoHeight : true
+        ,autoWidth:true
+        ,cls:'cursor_pointer'
+        ,loadMask: {msg: "Cargando...", msgCls: "x-mask-loading"}
+		,sm:smCheck
+		,bbar:[btnAltaTermino]
+    });
    
     if(esPropuesta){
     	contratosAsuntoStore.webflow({idExpediente:panel.getExpedienteId()});

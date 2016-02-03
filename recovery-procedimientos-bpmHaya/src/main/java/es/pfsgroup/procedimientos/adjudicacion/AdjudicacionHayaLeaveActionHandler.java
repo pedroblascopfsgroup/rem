@@ -9,6 +9,7 @@ import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.bo.Executor;
+import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.multigestor.api.GestorAdicionalAsuntoApi;
@@ -56,8 +57,12 @@ public class AdjudicacionHayaLeaveActionHandler extends
 
 		super.process(delegateTransitionClass, delegateSpecificClass,
 				executionContext);
-
-		personalizamosTramiteAdjudicacion(executionContext);
+		Boolean tareaTemporal = (executionContext.getTransition().getName().equals(BPMContants.TRANSICION_PARALIZAR_TAREAS)
+				|| executionContext.getTransition().getName().equals(BPMContants.TRANSICION_ACTIVAR_TAREAS)
+				|| executionContext.getTransition().getName().equals(BPMContants.TRANSICION_PRORROGA));
+		if (!tareaTemporal) {
+			personalizamosTramiteAdjudicacion(executionContext);
+		}
 	}
 
 	private void personalizamosTramiteAdjudicacion(
@@ -77,6 +82,22 @@ public class AdjudicacionHayaLeaveActionHandler extends
 						Date fecha = formatter.parse(tev.getValor());
 						executor.execute(
 								AdjudicacionHandlerDelegateApi.BO_ADJUDICACION_HANDLER_INSERT_ADJUDICACION_FECHA_SOLICITUD_DECRETO,
+								prc.getId(), fecha);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		else if ("H005_ConfirmarContabilidad".equals(executionContext
+				.getNode().getName())) {
+			for (TareaExternaValor tev : listado) {
+				try {
+					if ("fecha".equals(tev.getNombre())) {
+						Date fecha = formatter.parse(tev.getValor());
+						executor.execute(
+								AdjudicacionHandlerDelegateApi.BO_ADJUDICACION_HANDLER_INSERT_ADJUDICACION_FECHA_CONTABILIDAD,
 								prc.getId(), fecha);
 					}
 				} catch (Exception e) {

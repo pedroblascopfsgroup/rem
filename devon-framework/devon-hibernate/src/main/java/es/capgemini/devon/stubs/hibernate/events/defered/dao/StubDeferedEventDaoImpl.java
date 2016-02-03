@@ -11,7 +11,7 @@ import es.capgemini.devon.events.defered.DeferedEventDao;
 import es.capgemini.devon.stubs.hibernate.dao.StubAbstractHibernateDao;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @Repository("DeferedEventDao")
 public class StubDeferedEventDaoImpl extends StubAbstractHibernateDao<DeferedEvent, Long> implements DeferedEventDao {

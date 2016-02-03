@@ -15,7 +15,7 @@ import es.capgemini.devon.utils.QueueUtils;
 /**
  * Clase para "escuchar" en todas las carpetas configuradas.
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class QueueSubscriptorByFolderGenerator implements Initializable {
 

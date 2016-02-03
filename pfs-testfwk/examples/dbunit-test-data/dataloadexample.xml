@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+
+	<USU_USUARIOS USU_ID="1"
+   				ENTIDAD_ID="1"
+   				USU_USERNAME="TEST1"
+   				USU_PASSWORD="TEST1"
+   				USU_NOMBRE="USUARIO PRUEBAS 1"
+   				USU_APELLIDO1=""
+   				USU_APELLIDO2=""
+   				USU_TELEFONO=""
+   				USU_MAIL=""
+   				VERSION="0"
+   				USUARIOCREAR="DD"
+   				FECHACREAR="2001-01-01"
+   				BORRADO="0"/>
+
+	<!-- Despachos externos -->
+	<DES_DESPACHO_EXTERNO DES_ID='1' 
+						DES_DESPACHO="name1"
+						DES_TIPO_VIA="name1" 
+						DES_DOMICILIO="name1" 
+						DES_DOMICILIO_PLAZA="name1"
+						DES_CODIGO_POSTAL="46009" 
+						DES_PERSONA_CONTACTO="name1" 
+						DES_TELEFONO1="name1" 
+						USUARIOCREAR="DD"
+						FECHACREAR="2001-01-01"
+						BORRADO="0"/>
+						
+						
+	<USD_USUARIOS_DESPACHOS USD_ID="1"
+    						USU_ID="1"
+    						DES_ID="1"
+    						USD_GESTOR_DEFECTO="1"
+    						USD_SUPERVISOR="0"
+    						VERSION="0"
+    						USUARIOCREAR="DD"
+    						FECHACREAR="2001-01-01"
+    						BORRADO="0"/>
+
+</dataset>

@@ -10,7 +10,7 @@ import org.springframework.batch.repeat.ExitStatus;
 import org.springframework.util.Assert;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class StoppableTaskletStep extends AbstractStep {
 

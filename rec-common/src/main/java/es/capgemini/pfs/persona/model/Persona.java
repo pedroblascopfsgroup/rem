@@ -2,6 +2,7 @@ package es.capgemini.pfs.persona.model;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -508,10 +509,10 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	@JoinColumn(name = "DD_ARG_ID")
 	private DDAreaGestion areaGestion;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "TEL_PER", joinColumns = { @JoinColumn(name = "PER_ID", unique = true) }, inverseJoinColumns = { @JoinColumn(name = "TEL_ID") })
-	@Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private List<Telefono> telefonos;
+	@OneToMany(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PER_ID")
+	 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private List<PersonasTelefono> personasTelefono;
 	
 	@OneToOne(fetch = FetchType.LAZY, optional=true)
 	@JoinColumn(name = "PER_ID", updatable= false)
@@ -767,6 +768,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	 */
 	public Float getTotalBienes() {
 		Float totalBien = 0F;
+
 		for (Bien b : getBienes()) {
 			if (b.getValorActual() != null && b.getParticipacion() != null) {
 				totalBien += b.getValorActual().floatValue()
@@ -3018,17 +3020,23 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 		this.areaGestion = areaGestion;
 	}
 
+	/**
+	 * @return telefonos
+	 */
 	public List<Telefono> getTelefonos() {
-		if(fieldHandler!=null)
-	        return (List<Telefono>)fieldHandler.readObject(this, "telefonos", telefonos);
+		List<Telefono> telefonos = new ArrayList<Telefono>();
+
+		for (PersonasTelefono pt : personasTelefono) {
+			// FIXME Esto es un parche, ya que el borrado de teléfono no está
+			// actuando
+			if (!pt.getTelefono().getAuditoria().isBorrado()) {
+				telefonos.add(pt.getTelefono());
+			}
+		}
+
 		return telefonos;
 	}
-
-	public void setTelefonos(List<Telefono> telefonos) {
-		if(fieldHandler!=null)
-	        fieldHandler.writeObject(this, "telefonos", this.telefonos, telefonos);
-		this.telefonos = telefonos;
-	}
+	
 
 	public String getServicioNominaPension() {
 		return this.getFormulas() == null ? null :this.getFormulas().getServicioNominaPension();
@@ -3045,7 +3053,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 
 	public String getDispuestoVencido() {
 		return this.getFormulas() == null ? null : Checks.esNulo(this.getFormulas().getDispuestoVencido()) ? null : this.getFormulas().getDispuestoVencido().replaceAll(",", ".");
-
+		
 	}
 
 	public String getEstadoCicloVida() {
@@ -3088,6 +3096,14 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 		if(fieldHandler!=null)
 	        return (PersonaFormulas)fieldHandler.readObject(this, "formulas", formulas);
 		return formulas;
+	}
+	
+	public List<PersonasTelefono> getPersonasTelefono() {
+		return personasTelefono;
+	}
+
+	public void setPersonasTelefono(List<PersonasTelefono> personasTelefono) {
+		this.personasTelefono = personasTelefono;
 	}
 
 }

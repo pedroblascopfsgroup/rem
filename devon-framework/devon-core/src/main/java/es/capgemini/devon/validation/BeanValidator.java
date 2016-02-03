@@ -20,10 +20,10 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 /**
- * Servicio de validaciÛn del framework
+ * Servicio de validaci√≥n del framework
  * 
  * @author amarinso
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  * 
  */
 @Service("validator")

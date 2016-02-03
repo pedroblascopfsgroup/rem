@@ -500,11 +500,11 @@ public class MEJDecisionProcedimientoManager extends
 		
 
 		logger.info("Validación 2. El procedimiento orgien está activo...");
-		if (procedimiento.getEstadoProcedimiento() != null
-				&& (procedimiento.getEstadoProcedimiento().getCodigo().equals(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO) || 
-						procedimiento.getEstadoProcedimiento().getCodigo().equals(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO))){ 
-				throw new UserException("El procedimiento de origen no está activo");
-			}
+//		if (procedimiento.getEstadoProcedimiento() != null
+//				&& (procedimiento.getEstadoProcedimiento().getCodigo().equals(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO) || 
+//						procedimiento.getEstadoProcedimiento().getCodigo().equals(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO))){ 
+//				throw new UserException("El procedimiento de origen no está activo");
+//			}
 			
 		logger.info("Validación 3 en Aceptación de Decisión...");
 		Set<String> tomasDeDecision = coreProjectContext.getCategoriasSubTareas().get(CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION);

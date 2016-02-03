@@ -5,7 +5,7 @@ import java.util.Map;
 /**
  * Interface to be implemented by BusinessOperation scanners
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public interface BusinessOperationScanner {
 

@@ -22,6 +22,12 @@
 	    	<evaluate expression="executor.execute('consultaProcedimientoManager.getTabs',id)" result="flowScope.tabsProcedimiento" />
 			<evaluate expression="executor.execute('plugin.mejoras.procedimientoManager.procedimientoParalizado',id)" result="flowScope.paralizado" />
 			<evaluate expression="executor.execute('plugin.precontencioso.getPrecontenciosoPorProcedimientoId',id)" result="flowScope.precontencioso" />
+			<evaluate expression="executor.execute('plugin.precontencioso.getVisibilidadBotonesPrecontencioso','botonesDocumentos',true)" result="flowScope.botonesVisiblesDocPco" />
+			<evaluate expression="executor.execute('plugin.precontencioso.getVisibilidadBotonesPrecontencioso','botonesDocumentos',false)" result="flowScope.botonesInvisiblesDocPco" />
+			<evaluate expression="executor.execute('plugin.precontencioso.getVisibilidadBotonesPrecontencioso','botonesLiquidaciones',true)" result="flowScope.botonesVisiblesLiqPco" />
+			<evaluate expression="executor.execute('plugin.precontencioso.getVisibilidadBotonesPrecontencioso','botonesLiquidaciones',false)" result="flowScope.botonesInvisiblesLiqPco" />
+			<evaluate expression="executor.execute('plugin.precontencioso.getVisibilidadBotonesPrecontencioso','botonesBurofaxes',true)" result="flowScope.botonesVisiblesBurPco" />
+			<evaluate expression="executor.execute('plugin.precontencioso.getVisibilidadBotonesPrecontencioso','botonesBurofaxes',false)" result="flowScope.botonesInvisiblesBurPco" />
 	    </on-entry>
     </end-state>     
 </flow>

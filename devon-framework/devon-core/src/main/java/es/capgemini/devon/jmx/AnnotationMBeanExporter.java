@@ -4,7 +4,7 @@ import org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource;
 import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class AnnotationMBeanExporter extends org.springframework.jmx.export.annotation.AnnotationMBeanExporter {
 

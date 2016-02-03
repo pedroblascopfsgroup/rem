@@ -19,7 +19,7 @@ import org.springframework.integration.core.MessageChannel;
 import org.springframework.stereotype.Service;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @Service
 @MessageEndpoint

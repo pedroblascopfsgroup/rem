@@ -20,7 +20,6 @@ import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Where;
 import org.hibernate.proxy.HibernateProxy;
 
-import es.capgemini.pfs.PluginCoreextensionConstantes;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.asunto.model.Procedimiento;

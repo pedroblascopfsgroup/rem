@@ -6,7 +6,7 @@ import java.util.Date;
 import org.springframework.scheduling.quartz.CronTriggerBean;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class TimeUtils {
 

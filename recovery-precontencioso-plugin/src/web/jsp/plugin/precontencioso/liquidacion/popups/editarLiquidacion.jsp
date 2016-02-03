@@ -4,6 +4,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <fwk:page>
 
@@ -269,11 +270,14 @@
 		style: 'padding-top:0px',
 		handler: function() {
 			if (validarForm() == '') {
+				var mask=new Ext.LoadMask(panelEdicion.body, {msg:'<s:message code="fwk.ui.form.cargando" text="**Guardando..."/>'});
+				mask.show();
 				Ext.Ajax.request({
 					url: page.resolveUrl('liquidacion/editar'),
 					params: getParametros(),
 					method: 'POST',
 					success: function ( result, request ) {
+						mask.hide();
 						page.fireEvent(app.event.DONE);
 					}
 				});
@@ -293,6 +297,8 @@
 
 	<%-- Panel --%>
 
+	<sec:authentication var="user" property="principal" />
+	
 	var panelEdicion = new Ext.Panel({
 		layout: 'table',
 		layoutConfig: { columns: 2 },
@@ -317,9 +323,12 @@
 						comboTipoGestor,
 						comboTipoDespacho,
 						comboUsuario ]
-			}, {
-				items: [ capitalVencidoOriginalField, capitalNoVencidoOriginalField, interesesOrdinariosOriginalField, interesesDemoraOriginalField, totalOriginalField,comisionesOriginalField,gastosOriginalField,impuestosOriginalField]
 			}
+			<c:if test="${user.entidad.descripcion != 'CAJAMAR'}">
+				, {
+					items: [ capitalVencidoOriginalField, capitalNoVencidoOriginalField, interesesOrdinariosOriginalField, interesesDemoraOriginalField, totalOriginalField,comisionesOriginalField,gastosOriginalField,impuestosOriginalField]
+				}
+			</c:if>
 		]
 	});
 
@@ -331,29 +340,33 @@
 		var mensaje = '';
 
 		if (capitalVencidoField.getActiveError() != '') {
-			mensaje = mensaje + capitalVencidoField.getActiveError() + ' <s:message code="plugin.precontencioso.grid.liquidacion.capitalVencido" /> \n'
+			mensaje = mensaje + '- <s:message code="plugin.precontencioso.grid.liquidacion.capitalVencido" /> <br/>'
 		}
 
 		if (capitalNoVencidoField.getActiveError() != '') {
-			mensaje = mensaje + capitalNoVencidoField.getActiveError() + ' <s:message code="plugin.precontencioso.grid.liquidacion.capitalNoVencido" /> \n'
+			mensaje = mensaje + '- <s:message code="plugin.precontencioso.grid.liquidacion.capitalNoVencido" /> <br/>'
 		}
 
 		if (interesesOrdinariosField.getActiveError() != '') {
-			mensaje = mensaje + interesesOrdinariosField.getActiveError() + ' <s:message code="plugin.precontencioso.grid.liquidacion.interesesOrdinarios" /> \n'
+			mensaje = mensaje + '- <s:message code="plugin.precontencioso.grid.liquidacion.interesesOrdinarios" /> <br/>'
 		}
 
 		if (interesesDemoraField.getActiveError() != '') {
-			mensaje = mensaje + interesesDemoraField.getActiveError() + ' <s:message code="plugin.precontencioso.grid.liquidacion.interesesDemora" /> \n'
+			mensaje = mensaje + '- <s:message code="plugin.precontencioso.grid.liquidacion.interesesDemora" /> <br/>'
 		}
 
 		if (totalField.getActiveError() != '') {
-			mensaje = mensaje + totalField.getActiveError() + ' <s:message code="plugin.precontencioso.grid.liquidacion.total" /> \n'
+			mensaje = mensaje + '- <s:message code="plugin.precontencioso.grid.liquidacion.total" /> <br/>'
 		}
 		<c:if test="${ocultarBtnSolicitar}">
 		if (fechaCierreField.getValue() == '' || fechaCierreField.getActiveError() != '') {
-			mensaje = mensaje + ' <s:message code="plugin.precontencioso.tab.liquidacion.error.fecha.cierre" /> \n'
+			mensaje = mensaje + '- <s:message code="plugin.precontencioso.tab.liquidacion.fecha.cierre" /> <br/>'
 		}
 		</c:if>
+		
+		if(mensaje != ''){
+			mensaje = 'Faltan campos obligatorios por rellenar: <br/><br/>' + mensaje
+		}
 
 		return mensaje;
 	}

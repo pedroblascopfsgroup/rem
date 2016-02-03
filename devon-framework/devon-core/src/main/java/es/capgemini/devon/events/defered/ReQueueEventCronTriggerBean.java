@@ -12,7 +12,7 @@ import es.capgemini.devon.scheduling.SchedulableTriggerBean;
 /**
  * TODO Documentar
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class ReQueueEventCronTriggerBean extends SchedulableTriggerBean implements Schedulable {
 

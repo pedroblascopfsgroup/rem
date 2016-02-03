@@ -19,7 +19,7 @@ import es.capgemini.devon.events.EventManager;
 import es.capgemini.devon.utils.ZipUtils;
 
 /**
- * @author Nicolás Cornaglia
+ * @author NicolÃ¡s Cornaglia
  */
 public class UnZipTasklet implements Tasklet, StepExecutionListener {
 
@@ -99,7 +99,7 @@ public class UnZipTasklet implements Tasklet, StepExecutionListener {
     }
     
     /**
-     * Inyección del {@link EventManager} para gestión de eventos
+     * InyecciÃ³n del {@link EventManager} para gestiÃ³n de eventos
      * 
      * @param eventManager 
      */

@@ -5,7 +5,7 @@ import es.capgemini.devon.exception.FrameworkException;
 /**
  * Enum utils to get an Codable Enum by his "code"
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class CodableEnumUtils {
 

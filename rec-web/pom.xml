@@ -575,6 +575,17 @@
 			<version>${devon.version.web}</version>
 			<scope>compile</scope>
 		</dependency>
+		<!--<dependency>
+			<groupId>es.pfsgroup.devon</groupId>
+			<artifactId>devon-web</artifactId>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>-->
 		<dependency>
 			<groupId>es.pfsgroup.recovery.devon.v1</groupId>
 			<artifactId>devon-webflow</artifactId>

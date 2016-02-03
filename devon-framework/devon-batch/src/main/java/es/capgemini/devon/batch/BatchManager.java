@@ -10,7 +10,7 @@ import es.capgemini.devon.exception.FrameworkException;
 /**
  * Gestiona los "jobs" de Spring Batch.
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  * @see Job
  */
 public interface BatchManager {
@@ -29,7 +29,7 @@ public interface BatchManager {
      * </pre> 
      * 
      * <p>
-     * La "key" de los par·metros es {@link String}, los par·metros en sÌ pueden ser: 
+     * La "key" de los par√°metros es {@link String}, los par√°metros en s√≠ pueden ser: 
      * <ul>
      * <li>{@link String}</li>
      * <li>{@link Long}</li>
@@ -38,8 +38,8 @@ public interface BatchManager {
      * </ul>
      * 
      * @param jobName Nombre del job, correspondiente al nombre del bean que lo define
-     * @param jobParameters Map de par·metros del job. 
-     * @return BatchExitStatus CÛdigo de resultado de la ejecuciÛn
+     * @param jobParameters Map de par√°metros del job. 
+     * @return BatchExitStatus C√≥digo de resultado de la ejecuci√≥n
      * @throws FrameworkException
      */
     public abstract BatchExitStatus run(String jobName, Map<String, Object> jobParameters) throws FrameworkException;

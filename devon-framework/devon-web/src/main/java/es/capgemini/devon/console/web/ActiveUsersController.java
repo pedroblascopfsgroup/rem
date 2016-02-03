@@ -13,7 +13,7 @@ import es.capgemini.devon.console.ConsolePlugin;
 import es.capgemini.devon.security.SecurityUserInfo;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @Controller
 public class ActiveUsersController implements ConsolePlugin {

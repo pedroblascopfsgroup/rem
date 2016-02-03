@@ -322,19 +322,105 @@
 		<property name="recovery">
 			<value>HAYA</value>
 		</property>
-	</bean>
-	
-	<bean id="commonProjectContextHaya" parent="commonProjectContextDefault">
-		<property name="formatoNroContrato">
+		<property name="visibilidadBotones">
 			<map>
-				<entry key="BANKIA">
+				<entry key="defecto">
 					<map>
-						<entry key="contrato.codigoFormato" value="5,5,17,15" />
-					</map>	
+						<entry key="botonesDocumentos">
+							<map>
+								<entry key="incluirDocButton" value="1" />
+								<entry key="excluirDocButton" value="1" />
+								<entry key="descartarDocButton" value="1" />
+								<entry key="editarDocButton" value="1" />
+								<entry key="anularSolicitudesButton" value="1" />
+								<entry key="solicitarDocButton" value="1" />
+								<entry key="informarDocButton" value="1" />
+								<entry key="botonRefreshDoc" value="1" />
+							</map>
+						</entry>
+						<entry key="botonesLiquidaciones">
+							<map>
+								<entry key="btnSolicitar" value="1" />
+								<entry key="btnEditarValores" value="1" />
+								<entry key="btnConfirmar" value="1" />
+								<entry key="btnVisar" value="0" />
+								<entry key="btnDescartar" value="1" />
+								<entry key="btnGenerar" value="1" />
+								<entry key="botonRefreshLiq" value="1" />
+							</map>
+						</entry>
+						<entry key="botonesBurofaxes">
+							<map>
+								<entry key="btnAddPersona" value="1" />
+								<entry key="btnEnviar" value="1" />
+								<entry key="btnNuevaDir" value="1" />
+								<entry key="btnEditar" value="1" />
+								<entry key="btnPreparar" value="1" />
+								<entry key="btnCancelar" value="1" />
+								<entry key="btnNotificar" value="1" />
+								<entry key="btnDescargarBurofax" value="1" />
+								<entry key="botonRefreshBur" value="1" />
+							</map>
+						</entry>
+					</map>
+				</entry>
+				<entry key="HAYA">
+					<map>
+						<entry key="botonesDocumentos">
+							<map>
+								<entry key="incluirDocButton" value="1" />
+								<entry key="excluirDocButton" value="1" />
+								<entry key="descartarDocButton" value="1" />
+								<entry key="editarDocButton" value="1" />
+								<entry key="anularSolicitudesButton" value="1" />
+								<entry key="solicitarDocButton" value="1" />
+								<entry key="informarDocButton" value="1" />
+								<entry key="botonRefreshDoc" value="1" />
+							</map>
+						</entry>
+						<entry key="botonesLiquidaciones">
+							<map>
+								<entry key="btnSolicitar" value="0" />
+								<entry key="btnEditarValores" value="1" />
+								<entry key="btnConfirmar" value="1" />
+								<entry key="btnVisar" value="1" />
+								<entry key="btnDescartar" value="1" />
+								<entry key="btnGenerar" value="0" />
+								<entry key="botonRefreshLiq" value="1" />
+							</map>
+						</entry>
+						<entry key="botonesBurofaxes">
+							<map>
+								<entry key="btnAddPersona" value="1" />
+								<entry key="btnEnviar" value="1" />
+								<entry key="btnNuevaDir" value="1" />
+								<entry key="btnEditar" value="1" />
+								<entry key="btnPreparar" value="1" />
+								<entry key="btnCancelar" value="1" />
+								<entry key="btnNotificar" value="1" />
+								<entry key="btnDescargarBurofax" value="1" />
+								<entry key="botonRefreshBur" value="1" />
+							</map>
+						</entry>
+					</map>
 				</entry>
 			</map>
 		</property>
 	</bean>
+	
+	<bean id="commonProjectContextHaya" parent="commonProjectContextDefault">
+            <property name="formatoNroContrato">
+                    <map>
+                            <entry key="HAYA">
+                                    <map>
+                                            <!--<entry key="contrato.codigoFormato" value="5,5,17,15"/>-->
+                                            <entry key="contrato.codigo.subStringIni" value="10"/>
+                                            <entry key="contrato.codigo.subStringFin" value="27"/>
+                                    </map>
+                            </entry>
+                    </map>
+            </property>
+    </bean>
 
 	<alias name="commonProjectContextHaya" alias="commonProjectContext"/>
 	<alias name="nmbCommonProjectContextHAYA" alias="nmbCommonProjectContext"/>

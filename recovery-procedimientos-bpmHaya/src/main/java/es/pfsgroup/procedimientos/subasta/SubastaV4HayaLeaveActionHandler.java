@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.recovery.coreextension.model.DDResultadoComiteConcursa
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDDecisionSuspension;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDEstadoSubasta;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDMotivoSuspSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoComite;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDTipoSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
@@ -190,10 +191,12 @@ public class SubastaV4HayaLeaveActionHandler extends
 
 			if (!Checks.esNulo(sub)) {
 
-				cambiaEstadoSubasta(
-						sub,
-						obtenerEstadoSiguiente(executionContext,
-								"CelebracionSubasta", "comboCelebracion"));
+				final String estadoSiguiente = obtenerEstadoSiguiente(executionContext, "CelebracionSubasta", "comboCelebracion");
+				if (DDEstadoSubasta.SUS.equals(estadoSiguiente)) {
+					setMotivoSuspensionSubasta(sub);
+				}
+				cambiaEstadoSubasta(sub, estadoSiguiente);
+				
 				estableceContexto();
 			}
 		} else if (executionContext.getNode().getName()
@@ -202,6 +205,7 @@ public class SubastaV4HayaLeaveActionHandler extends
 			if (!Checks.esNulo(sub)) {
 
 				cambiaEstadoSubasta(sub, DDEstadoSubasta.SUS);
+				setMotivoSuspensionSubasta(sub);
 			}
 
 			// Finalizamos el procedimiento padre
@@ -249,6 +253,16 @@ public class SubastaV4HayaLeaveActionHandler extends
 					genericDao
 							.createFilter(FilterType.EQUALS, "borrado", false));
 			sub.setEstadoSubasta(esu);
+		}
+	}
+	
+	private void setMotivoSuspensionSubasta(final Subasta sub){
+		TareaExterna tex = getTareaExterna(executionContext);
+		List<TareaExternaValor> listadoValores = tex.getValores();
+		for(TareaExternaValor val : listadoValores){
+			if("comboMotivoSuspension".equals(val.getNombre())){
+				sub.setMotivoSuspension(genericDao.get(DDMotivoSuspSubasta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", val.getValor())));
+			}
 		}
 	}
 

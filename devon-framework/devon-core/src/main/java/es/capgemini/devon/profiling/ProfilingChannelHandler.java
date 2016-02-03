@@ -8,7 +8,7 @@ import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.core.Message;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @MessageEndpoint
 public class ProfilingChannelHandler {
@@ -19,7 +19,7 @@ public class ProfilingChannelHandler {
     private ProfilerManager profilerManager;
 
     /**
-     * Logear los mensajes genÈricos en el logger del Handler
+     * Logear los mensajes gen√©ricos en el logger del Handler
      * 
      * @param message
      */

@@ -1265,11 +1265,11 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
 
         if (!StringUtils.emtpyString(dtoExpediente.getMaxSaldoVencido()) || !StringUtils.emtpyString(dtoExpediente.getMaxRiesgoTotal())
                 || !StringUtils.emtpyString(dtoExpediente.getMinSaldoVencido()) || !StringUtils.emtpyString(dtoExpediente.getMinRiesgoTotal())) {
-
             hql.append(", ExpedienteContrato expc, Contrato c, Movimiento m ");
             requiereRiesgoSaldo = true;
         }
 
+        
         hql.append(" where exp.auditoria.borrado = 0 ");
 
 		
@@ -1339,34 +1339,6 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
             hql.append(" and exp.arquetipo.itinerario.dDtipoItinerario.codigo = :codigoGestion ");
             paramsMap.put("codigoGestion", dtoExpediente.getCodigoGestion());
         }
-
-        //VISIBILIDAD
-        //BKREC-943
-        //Se elimina este filtro porque NO es necesario:
-        // En producción casi todos los codigos de zona empiezan por codigoZ
-        // Además el filtro de abajo GESTORES EXPEDIENTE, filtra usando la tabla GE_GESTOR_EXPEDIENTE
-        // la cual está siempre vacía (en cualquier entorno, incluso PRO)
-//        int cantZonas = dtoExpediente.getCodigoZonas().size();
-//        if (cantZonas > 0) {
-//            hql.append(" and ( ");
-//            for (String codigoZ : dtoExpediente.getCodigoZonas()) {
-//                hql.append(" SUBSTR(exp.oficina.zona.codigo, 1, 2) = '" + codigoZ + "' OR");
-//            }
-//            hql.deleteCharAt(hql.length() - 1);
-//            hql.deleteCharAt(hql.length() - 1);
-//            
-//            hql.append(" or EXISTS ( ");
-//            	hql.append(generaFiltroExpedientesPorGestorRecobro(usuarioLogueado));
-//	        hql.append(" ) ");
-//            
-//	        hql.append(" ) ");
-//        }
-//        else{
-//        	 //GESTORES EXPEDIENTE
-//	        hql.append(" and EXISTS ( ");
-//	        	hql.append(generaFiltroExpedientesPorGestorRecobro(usuarioLogueado));
-//	        hql.append(" ) ");
-//        }
 
         //Centros
         if (!StringUtils.emtpyString(dtoExpediente.getCodigoEntidad())) {
@@ -1442,15 +1414,6 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
             paramsMap.put("minRiesgoTotal", new Double(dtoExpediente.getMinRiesgoTotal()));
             paramsMap.put("maxRiesgoTotal", new Double(dtoExpediente.getMaxRiesgoTotal()));
         }
-        
-        // ********* PARA USUARIOS EXTERNOS LIMITAMOS LA VISIBILIDAD A AQUELLOS USUARIOS 
-        // ********* QUE SON GESTORES DE RECOBRO , SOLO VERÁN LOS EXPEDIENTES QUE ACTUALMENTE PERTENCEN A SU AGENCIA
-        if (usuarioLogueado.getUsuarioExterno() ){
-        	 //GESTORES DE RECOBRO EXPEDIENTE
-	        hql.append(" and EXISTS ( ");
-	        	hql.append(generaFiltroExpedientesGestorRecobro(usuarioLogueado));
-	        hql.append(" ) ");
-        }
 
         /***
         * La lista de los parámetros dinánmicos debe venir de la siguiente manera
@@ -1462,6 +1425,7 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         Boolean esAdicionalPrimerFiltro = !isBusquedaExpedientes(dtoExpediente);
         String entityId = "";
         String joinEntityId = "";
+        String filtroPrimero = "";
         String filtroAnt = "";
         String filtroActual = "";
         if(paramsDinamicos != null && filtrosBusquedaDinamica != null){
@@ -1485,6 +1449,7 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
                                                 //Eliminar la vinculación con Expedientes es comenzar de nuevo la construccion HQL con el 1er filtro adicional
                                                 hql = new StringBuilder();
                                                 hql.append(filtro.obtenerFiltroRecobro(paramDinamico));
+                                                filtroPrimero = filtroActual;
                                             } else {
                                                 //Si son filtros adicionales o hay vinculacion de Expedientes, los adicionales se relacionan con los anteriores
                                                 //por el filtro actual a relacionar
@@ -1521,6 +1486,45 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
                                 }
                         }
                 }
+        }
+        
+        //VISIBILIDAD USUARIOS EXTERNOS
+        // ********* PARA USUARIOS EXTERNOS LIMITAMOS LA VISIBILIDAD A AQUELLOS USUARIOS 
+        // ********* QUE SON GESTORES DE RECOBRO , SOLO VERÁN LOS EXPEDIENTES QUE ACTUALMENTE PERTENCEN A SU AGENCIA
+        if (usuarioLogueado.getUsuarioExterno() ){
+            //EXPEDIENTES ASOCIADOS AL USUARIO o AL GRUPO DE ESE USUARIO
+            //GESTORES DE RECOBRO EXPEDIENTE
+            hql.append(" and EXISTS ( ");
+               hql.append(generaFiltroExpedientesGestorGrupoOptimizado(usuarioLogueado));
+               if (isBusquedaExpedientes(dtoExpediente)) {
+                   //Si había vinculación con Expedientes las relaciones con cualquier filtro adicional se hacen por exp.id
+                   hql.append(" and exp.id = gae.expediente.id ");
+               }else{
+                   if (filtroPrimero.equals("recobro")){ hql.append(" and cre.expediente.id = gae.expediente.id "); }
+                   if (filtroPrimero.equals("incidencia")){ hql.append(" and ine.expediente.id = gae.expediente.id "); }
+                   if (filtroPrimero.equals("acuerdo")){ hql.append(" and acu.expediente.id = gae.expediente.id "); } 
+               }
+            hql.append(" ) ");
+                
+        } 
+		/*
+		 * BKREC-1588
+		 * Si es usuario interno, debe aplicar igualmente el fitro de NO BUSCAR
+		 * entre expedientes que hayan pasado por una agencia anterior
+		 */
+        else{
+        	 hql.append(" and EXISTS ( ");
+        	 hql.append(" select 1 from GestorExpediente gae");
+             hql.append(" where gae.auditoria.borrado = false ");
+             if (isBusquedaExpedientes(dtoExpediente)) {
+                 //Si había vinculación con Expedientes las relaciones con cualquier filtro adicional se hacen por exp.id
+                 hql.append(" and exp.id = gae.expediente.id ");
+             }else{
+                 if (filtroPrimero.equals("recobro")){ hql.append(" and cre.expediente.id = gae.expediente.id "); }
+                 if (filtroPrimero.equals("incidencia")){ hql.append(" and ine.expediente.id = gae.expediente.id "); }
+                 if (filtroPrimero.equals("acuerdo")){ hql.append(" and acu.expediente.id = gae.expediente.id "); } 
+             }
+             hql.append(" ) ");
         }
         
         return paginationManager.getHibernatePage(getHibernateTemplate(), hql.toString(), dtoExpediente, paramsMap);
@@ -1562,7 +1566,7 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
 	 */
 	 private String generaFiltroExpedientesGestorRecobro(Usuario usuarioLogueado) {
 		StringBuffer hql = new StringBuffer();
-		hql.append(" select 1 from GestorExpediente ge ");
+		hql.append(" select exp.id from Expediente exp , GestorExpediente ge ");
 		hql.append(" where exp.id = ge.expediente.id and ge.tipoGestor.codigo = '").append(EXTDDTipoGestor.CODIGO_TIPO_GESTOR_AGENCIA_RECOBRO).append("' ");
 		hql.append(" and ge.usuario.id in (");
 		hql.append(obtenerListaUsuariosDelGrupo(usuarioLogueado.getId()));
@@ -1584,32 +1588,38 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
 		}
 		return resultado.substring(0, resultado.length()-2).toString();
 	}
-	
-	/***
-		 *  Devuelve un hql utilizado como subconsulta para obtener los expediente del que el usuario es gestor
-		 *  
-		 *  @param usuLogado Usuario logueado que ha realizado la busqueda
-		 *  
-		 *  @return hql con la busqueda del expediente por gestor
-		 * 
-		 * */
-		private String generaFiltroExpedientesPorGestor(Usuario usuLogado){
-			StringBuffer hql = new StringBuffer();
-			hql.append(" select exp.id from Expediente exp , EXTGestorEntidad ge ");
-			hql.append(" where exp.id = ge.unidadGestionId and ge.tipoEntidad.codigo = '").append(DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE).append("' ");
-			hql.append(" and ge.gestor.id in (");
-			hql.append(obtenerListaUsuariosDelGrupo(usuLogado.getId()));
-			hql.append(")");
-			return hql.toString();
-		}
-                
-		private String generaFiltroExpedientesPorGestorRecobro(Usuario usuLogado){
-			StringBuffer hql = new StringBuffer();
-			hql.append(" select 1 from  EXTGestorEntidad ge ");
-			hql.append(" where exp.id = ge.unidadGestionId and ge.tipoEntidad.codigo = '").append(DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE).append("' ");
-			hql.append(" and ge.gestor.id in (");
-			hql.append(obtenerListaUsuariosDelGrupo(usuLogado.getId()));
-			hql.append(")");
-			return hql.toString();
-		}
+
+        /*
+        * Optimización del método generaFiltroExpedientesGestorRecobro, para búsquedas con el nuevo buscador de expedientes recobro
+        */
+	private String generaFiltroExpedientesGestorGrupoOptimizado(Usuario usuarioLogueado) {
+            StringBuffer hql = new StringBuffer();
+               hql.append(" select 1 from GestorExpediente gae");
+               hql.append(" where gae.auditoria.borrado = false ");
+               hql.append(" and gae.tipoGestor.codigo = '").append(EXTDDTipoGestor.CODIGO_TIPO_GESTOR_AGENCIA_RECOBRO).append("' ");
+               hql.append(" and (gae.usuario.id = "+ usuarioLogueado.getId());
+               hql.append("  or gae.usuario.id in (");
+               hql.append(" select egu.grupo.id from EXTGrupoUsuarios egu where egu.usuario.id = " + usuarioLogueado.getId());
+               hql.append(" and egu.auditoria.borrado = false )) ");
+               return hql.toString();
+	}
+
+
+        /***
+        *  Devuelve un hql utilizado como subconsulta para obtener los expediente del que el usuario es gestor
+        *  
+        *  @param usuLogado Usuario logueado que ha realizado la busqueda
+        *  
+        *  @return hql con la busqueda del expediente por gestor
+        * 
+        * */
+        private String generaFiltroExpedientesPorGestor(Usuario usuLogado){
+               StringBuffer hql = new StringBuffer();
+               hql.append(" select exp.id from Expediente exp , EXTGestorEntidad ge ");
+               hql.append(" where exp.id = ge.unidadGestionId and ge.tipoEntidad.codigo = '").append(DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE).append("' ");
+               hql.append(" and ge.gestor.id in (");
+               hql.append(obtenerListaUsuariosDelGrupo(usuLogado.getId()));
+               hql.append(")");
+               return hql.toString();
+        }
 }

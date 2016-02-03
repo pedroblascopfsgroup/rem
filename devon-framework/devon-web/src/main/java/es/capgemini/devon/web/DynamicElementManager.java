@@ -29,7 +29,7 @@ public class DynamicElementManager {
         item.setEntity(newEntityName);
     }
 
-    //si el nombre comienza con "-" no es v·lido.
+    //si el nombre comienza con "-" no es v√°lido.
     private boolean isEnabled(DynamicElement element) {
         return !element.getName().startsWith("-");
     }

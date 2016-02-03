@@ -3,7 +3,7 @@
 --## AUTOR=ALBERTO SOLER
 --## FECHA_CREACION=20151124
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=-
+--## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=PRODUCTO-354
 --## PRODUCTO=SI 
 --## Finalidad: Actualiza los campos de supervisores de las tareas de precontencioso

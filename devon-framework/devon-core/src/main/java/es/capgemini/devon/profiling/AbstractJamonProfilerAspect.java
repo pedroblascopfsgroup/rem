@@ -15,9 +15,9 @@ import es.capgemini.devon.events.EventManager;
 
 /**
  * Clase padre para los profilers de JAMon.
- * Se envÌa un evento asÌncrono si est· habilitado el log, con los datos del profiler.
+ * Se env√≠a un evento as√≠ncrono si est√° habilitado el log, con los datos del profiler.
  * 
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @Aspect
 @Component
@@ -29,13 +29,13 @@ public abstract class AbstractJamonProfilerAspect {
     private EventManager eventManager;
 
     /**
-     * MÈtodo a ser sobreescrito con el pointcut deseado
+     * M√©todo a ser sobreescrito con el pointcut deseado
      */
     @Pointcut
     public abstract void profiledOperations();
 
     /**  
-     * @return ReptresentaciÛn como string de los par·metros, para el logger.
+     * @return Reptresentaci√≥n como string de los par√°metros, para el logger.
      */
     public abstract String getArgsAsString(ProceedingJoinPoint joinPoint);
 
@@ -73,7 +73,7 @@ public abstract class AbstractJamonProfilerAspect {
     }
 
     /**
-     * Obtiene la key donde se guardar· la performance
+     * Obtiene la key donde se guardar√° la performance
      * 
      * @param joinPoint
      * @return

@@ -3,7 +3,7 @@ package es.capgemini.devon.view;
 import org.eclipse.birt.report.engine.api.HTMLRenderOption;
 
 /**
- * Clase para la generación de reportes en formato HTML
+ * Clase para la generaciÃ³n de reportes en formato HTML
  * 
  * @author lgiavedo
  *

@@ -19,16 +19,16 @@ import es.capgemini.devon.files.WebFileItem;
 
 /** 
  * Manager es el encargado de realizar la subida de ficheros
- * Permite una sola subida de ficheros por sesiÛn
+ * Permite una sola subida de ficheros por sesi√≥n
  *  
  * @author amarinso
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  *
  */
 @Service(FwkBusinessOperations.FILEUPLOAD_SERVICE)
 public class FileUpload {
 
-    /** el nombre del objeto en sesiÛn
+    /** el nombre del objeto en sesi√≥n
     * 
     */
     public static final String FILE_UPLOAD_LISTENER = "fileUploadListener";
@@ -53,10 +53,10 @@ public class FileUpload {
         ServletFileUpload upload = new ServletFileUpload(factory);
         ProgressInfo pl = new ProgressInfo();
 
-        //tamaÒo aproximado del fichero == tamaÒo de la request
+        //tama√±o aproximado del fichero == tama√±o de la request
         pl.setMaxSize(request.getContentLength());
 
-        //subimos el listener a sesiÛn
+        //subimos el listener a sesi√≥n
         request.getSession().setAttribute(FILE_UPLOAD_LISTENER, pl);
         upload.setProgressListener(pl);
 
@@ -75,13 +75,13 @@ public class FileUpload {
 
                     uploadForm.putParameter(fit.getFieldName(), fit.getString());
 
-                    //aquÌ viene la info del tramaÒo m·ximo, se la pasamos al progress listener
+                    //aqu√≠ viene la info del trama√±o m√°ximo, se la pasamos al progress listener
                     if ("MAX_FILE_SIZE".equals(fit.getFieldName())) {
                         maxSize = Integer.parseInt(fit.getString());
                         pl.setMaxSize(maxSize);
                     }
 
-                    //aquÌ viene la info del identificador del upload, se la pasamos al progress listener
+                    //aqu√≠ viene la info del identificador del upload, se la pasamos al progress listener
                     if ("UPLOAD_IDENTIFIER".equals(fit.getFieldName())) {
                         String uploadIdentifier = fit.getString();
                         pl.setUploadIdentifier(uploadIdentifier);

@@ -2,9 +2,9 @@
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
 <%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
 <%-- 
-Este tag escribe lo necesario para renderizar una página por ajax en ExtJS.
+Este tag escribe lo necesario para renderizar una pÃ¡gina por ajax en ExtJS.
 
-El código de la página se ejecuta dentro de una función anónima y tiene como parámetro el objeto "page"
+El cÃ³digo de la pÃ¡gina se ejecuta dentro de una funciÃ³n anÃ³nima y tiene como parÃ¡metro el objeto "page"
 --%>
 <span id="${fwk.uuid}"></span>
 <script>

@@ -779,10 +779,23 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	public DocumentoPCO getDocumentoPCOById(Long idDocPCO){
 		return documentoPCODao.get(idDocPCO);
 	}
+
 	
 	@Override
 	public List<GestorDespacho> getGestorDespachoByUsuIdAndTipoDespacho(Long usuId, String tipoDespachoExterno) 
 	{	
 		return gestorDespachoDao.getGestorDespachoByUsuIdAndTipoDespacho(usuId, tipoDespachoExterno);
+	}
+
+	@Override
+	public Boolean esTipoGestorConAcceso(EXTDDTipoGestor tipoGestor) {
+		List<DDTipoActorPCO> listActoresConAcceso = documentoPCODao.getTipoActoresConAcceso();
+		for (DDTipoActorPCO tipoActor : listActoresConAcceso) {
+			if (tipoActor.getCodigo().equals(tipoGestor.getCodigo())) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

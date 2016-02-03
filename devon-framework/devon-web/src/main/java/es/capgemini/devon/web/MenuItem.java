@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Elemento b·sico para crear una estructura jer·rquica de elementos de men˙s que luego se dibujar·n con el tag de menu
+ * Elemento b√°sico para crear una estructura jer√°rquica de elementos de men√∫s que luego se dibujar√°n con el tag de menu
  */
 public class MenuItem implements Serializable {
 

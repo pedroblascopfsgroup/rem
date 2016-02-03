@@ -25,6 +25,7 @@
   <entry key="facturacion.recobroDetalleFacturaTemporal.procesaProceso">
     <![CDATA[
         BEGIN
+            RERA_CALCULO_RAS_RANKING();
             PROCESA_PROCESO_FACT();
         END;
     ]]>
@@ -68,7 +69,7 @@
             USUARIOCREAR, FECHACREAR, BORRADO, VERSION)
         SELECT S_RDF_RECOBRO_DETALLE_FACTURA.nextVal, CPA_ID, PFS_ID, CNT_ID, EXP_ID, RDF_FECHA_COBRO, RDF_PORCENTAJE,
             RDF_IMPORTE_A_PAGAR, RCF_TCC_ID, RDF_IMP_CONCEP_FACTU, RDF_IMP_REAL_FACTU, RCF_SCA_ID, RCF_AGE_ID, CPR_ID,
-            'BATCH-FAC', sysdate, 0, 0 FROM TMP_RECOBRO_DETALLE_FACTURA
+            'BATCH-FAC', sysdate, 0, 0 FROM TMP_RECOBRO_DETALLE_FACTURA_CO
     ]]>
   </entry>
   <entry key="facturacion.recobroDetalleFacturaTemporal.moveDetallesTemporalesSinCorrectoresQuery">

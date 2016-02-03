@@ -1,7 +1,7 @@
 package es.capgemini.devon.profiling;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class ProfileData {
 

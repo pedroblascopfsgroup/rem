@@ -19,7 +19,7 @@
 	    <script type="text/javascript" src="../js/fwk/ext3/ext-all.js?devon_version=${appProperties.jsVersion}"></script>
 	</c:if>
 
-	<!-- traducción de ext -->
+	<!-- traducciÃ³n de ext -->
     <script type="text/javascript" src="../js/fwk/ext/locale/ext-lang-es-min.js?devon_version=${appProperties.jsVersion}"></script>
 
 	<!-- extensiones -->

@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 import es.capgemini.devon.utils.FileUtils;
 
 /**
- * @author Nicolás Cornaglia
+ * @author NicolÃ¡s Cornaglia
  */
 @Service("fileManager")
 public class FileManagerImpl implements FileManager {
@@ -33,19 +33,19 @@ public class FileManagerImpl implements FileManager {
     private static final String TIME_TO_LIVE_KEY = "files.timeToLive";
     public static final String FILE_ITEM_KEY = "fileItem";
 
-    // Instancia para acceso estático 
+    // Instancia para acceso estÃ¡tico 
     private static FileManager instance;
 
     // Directorio donde ubicar los ficheros temporales, obtenido de appProperties
     private String temporaryPath;
     private File temporaryPathFile;
-    // Colección de ficheros manejados actualmente por el manager
+    // ColecciÃ³n de ficheros manejados actualmente por el manager
     private Map<UUID, FileItem> files = new HashMap<UUID, FileItem>();
     // Delete evicting files timer
     private Timer timer = null;
     // Tiempo default (en segundos) de evictTime para los ficheros
     private long temporaryFilesTimeToLive = 600L;
-    // Delay inicial para las antes de la primera ejecución de "evictTemporaryFiles"
+    // Delay inicial para las antes de la primera ejecuciÃ³n de "evictTemporaryFiles"
     private long evictTemporaryFilesDelay = 120L;
     // Tiempo entre ejecuciones de "evictTemporaryFiles"
     private long evictTemporaryFilesPeriod = 60L;
@@ -79,7 +79,7 @@ public class FileManagerImpl implements FileManager {
     }
 
     /**
-     * Acceso estático para clases no gestionadas por Spring
+     * Acceso estÃ¡tico para clases no gestionadas por Spring
      * 
      * @return
      */

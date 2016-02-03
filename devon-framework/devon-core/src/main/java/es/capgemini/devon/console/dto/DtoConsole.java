@@ -3,7 +3,7 @@ package es.capgemini.devon.console.dto;
 import es.capgemini.devon.dto.WebDto;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class DtoConsole extends WebDto {
 

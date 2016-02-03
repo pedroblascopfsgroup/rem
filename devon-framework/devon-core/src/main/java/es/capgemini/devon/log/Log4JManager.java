@@ -14,7 +14,7 @@ import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 @ManagedResource(description = "Manages the Application logger", objectName = "type=logger")
 public class Log4JManager implements LoggerManager {

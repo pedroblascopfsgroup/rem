@@ -3,7 +3,7 @@ package es.capgemini.devon.batch.events;
 import es.capgemini.devon.events.GenericEvent;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public abstract class BatchEvent extends GenericEvent {
 

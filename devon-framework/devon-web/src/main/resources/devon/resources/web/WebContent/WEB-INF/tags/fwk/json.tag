@@ -42,6 +42,6 @@
 	</c:if>
 </json:object>
 <%
-//eliminamos la excepción de la request puesto que ya ha sido tratada. Si no, el tomcat la tratará de manejar
+//eliminamos la excepciÃ³n de la request puesto que ya ha sido tratada. Si no, el tomcat la tratarÃ¡ de manejar
 request.removeAttribute("javax.servlet.error.exception");
 %>

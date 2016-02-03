@@ -1,0 +1,304 @@
+#!/bin/bash
+. $(dirname $0)/functions.sh
+DEVON_PROPERTIES=/${DEVON_HOME}/devon.properties
+ACTION=$1
+PLUGIN=$2
+ENTORNO=$3
+
+function main () {
+	if [ -z "$ACTION" ] || [ -z "$PLUGIN" ] || [ -z "$ENTORNO" ]; then
+		echo "ERROR: Argumentos insuficientes"
+		print_usage
+		exit 1
+	fi
+
+	### Comprobaciones básicas
+	check_command zip
+	check_file $DEVON_PROPERTIES
+	check_entorno $ENTORNO
+	check_tomcat
+	check_file $PLUGIN
+	
+	### Variables
+	local PLUGIN_NAME=$(echo $PLUGIN | cut -f2 -d-)
+	local SUFIX=$(echo $PLUGIN | cut -f3 -d-)
+	local PLUGIN_VERSION=$(echo $PLUGIN | cut -f4,5,6,7,8 -d-)
+	local WAR=$(get_property $DEVON_PROPERTIES recovery.war)
+	local TOMCAT_HOME=$(get_property $DEVON_PROPERTIES tomcat.home)
+	local OUTDIR=/tmp/plugin-$(date +%s)
+	local LIBDIR=$OUTDIR/war/WEB-INF/lib
+	local CFGDSTDIR=$OUTDIR/war/WEB-INF/classes/optionalConfiguration
+	local CFGSRCDIR=$OUTDIR/jar/optionalConfiguration
+	local JSPDSTDIR=$OUTDIR/war/WEB-INF/jsp/plugin/$PLUGIN_NAME
+	local JSPSRCDIR=$OUTDIR/jar/jsp/plugin/$PLUGIN_NAME
+	local FLOWSDSTDIR=$OUTDIR/war/WEB-INF/flows/plugin/$PLUGIN_NAME
+	local FLOWSSRCDIR=$OUTDIR/jar/flows/plugin/$PLUGIN_NAME
+	local LOGFILE=/home/$ENTORNO/$(get_property $DEVON_PROPERTIES install.log)
+	local IMGDSTDIR=$OUTDIR/war/img/plugin/$PLUGIN_NAME
+	local IMGSRCDIR=$OUTDIR/jar/img/plugin/$PLUGIN_NAME
+	local JSDSTDIR=$OUTDIR/war/js/plugin/$PLUGIN_NAME
+	local JSSRCDIR=$OUTDIR/jar/js/plugin/$PLUGIN_NAME
+	local REPORTSDSTDIR=$OUTDIR/war/reports/plugin/$PLUGIN_NAME
+	local REPORTSSRCDIR=$OUTDIR/jar/reports/plugin/$PLUGIN_NAME
+	
+	# Comprobacion valores variables
+	if [ -z "$TOMCAT_HOME" ]; then 
+		exit 1
+	fi
+	if [ -z "$LOGFILE" ]; then 
+		exit 1
+	fi
+	if [ -z "$PLUGIN_NAME" ] || [ -z "$PLUGIN_VERSION" ] || [ -z "$SUFIX" ] || [ x${SUFIX}x != "xpluginx" ]; then
+		echo  "ERROR: El nombre del plugin no es correcto"
+		print_usage
+		exit 1
+	fi
+	check_file $WAR
+	check_file $LOGFILE
+
+	case "$ACTION" in
+		install)
+			echo "------------------------------------------"
+			echo " INSTALACION DEL PLUGIN $PLUGIN EN $WAR"
+			echo -e "\tplugin.name=$PLUGIN_NAME"
+			echo -e "\tplugin.version=$PLUGIN_VERSION"
+			echo "------------------------------------------"
+			echo ""	
+			unzip_sources $WAR $OUTDIR/war $PLUGIN $OUTDIR/jar
+			### Verificamos que no se encuentre instalado el plugin
+			if [ -n "$(find $LIBDIR -name "*-$PLUGIN_NAME-plugin*.jar")" ]; then
+				exit_with_error "Ya existe una version instalada del plugin. Actualice o desinstale"
+			fi
+			if [ -n "$(find $CFGDSTDIR -name *$PLUGIN_NAME*.xml)" ]; then
+				exit_with_error "Existen ficheros de configuracion del plugin. Actualice o desinstale"
+			fi
+			check_no_dir $JSPDSTDIR "Existen JSP's para este proyecto. Actualice o desinstale"
+			check_no_dir $FLOWSDSTDIR "Existen FLOWS para este proyecto. Actualice o desinstale"
+			### Instalamos el plugin
+			plugin_copy_jar $PLUGIN_NAME $PLUGIN $LIBDIR
+			plugin_copy_config $PLUGIN_NAME $OUTDIR/jar $CFGDSTDIR
+			plugin_copy_web_resources $PLUGIN_NAME $JSPSRCDIR $JSPDSTDIR $FLOWSSRCDIR $FLOWSDSTDIR $IMGSRCDIR $IMGDSTDIR $JSSRCDIR $JSDSTDIR $REPORTSSRCDIR $REPORTSDSTDIR
+			### Generamos el nombre del nuevo war
+			local NEWWAR="$(basename $WAR | sed "s/\.war/-installed-$PLUGIN_NAME-plugin-$(date -I).war/")"
+			;;
+		upgrade)
+			echo "------------------------------------------"
+			echo " ACTUALIZACION DEL PLUGIN $PLUGIN_NAME EN $WAR"
+			echo -e "\tplugin.name=$PLUGIN_NAME"
+			echo -e "\tplugin.version=$PLUGIN_VERSION"
+			echo "------------------------------------------"
+			echo ""
+			unzip_sources $WAR $OUTDIR/war $PLUGIN $OUTDIR/jar
+			### Verificamos que el plugin este instalado y lo desinstalamos
+			local OLD_JAR="$(find $LIBDIR -name "*-$PLUGIN_NAME-plugin*.jar")"
+			if [ -z "$OLD_JAR" ]; then
+				exit_with_error "No existe una version del plugin a actualizar. Instale de nuevo"
+			fi
+			echo "Se ha encontrado el siguiente fichero $(basename $OLD_JAR) que se va a eliminar"
+			rm -f $OLD_JAR
+			if [ -n "$(find $CFGDSTDIR -name *$PLUGIN_NAME*.xml)" ]; then
+				echo "Eliminando archivos de configuracion Spring antiguos"
+				rm -f $CFGDSTDIR/*$PLUGIN_NAME*.xml
+			fi
+			if [ -d $JSPDSTDIR ]; then
+				echo "Eliminando JSP's antiguos"
+				rm -Rf $JSPDSTDIR
+			fi
+			if [ -d $FLOWSDSTDIR ]; then
+				echo "Eliminando FLOWS antiguos"
+				rm -Rf $FLOWSDSTDIR
+			fi
+			if [ -d $IMGDSTDIR ]; then
+				echo "Eliminando recursos graficos antiguos"
+				rm -Rf $IMGDSTDIR
+			fi
+			### Instalamos el plugin
+			plugin_copy_jar $PLUGIN_NAME $PLUGIN $LIBDIR
+			plugin_copy_config $PLUGIN_NAME $OUTDIR/jar $CFGDSTDIR
+			plugin_copy_web_resources $PLUGIN_NAME $JSPSRCDIR $JSPDSTDIR $FLOWSSRCDIR $FLOWSDSTDIR $IMGSRCDIR $IMGDSTDIR $JSSRCDIR $JSDSTDIR $REPORTSSRCDIR $REPORTSDSTDIR
+			### Generamos el nombre del nuevo war
+			local NEWWAR="$(basename $WAR | sed "s/\.war/-upgraded-$PLUGIN_NAME-plugin-$(date -I).war/")"
+			;;
+		remove)
+			echo "------------------------------------------"
+			echo " DESINSTALACION DEL PLUGIN $PLUGIN_NAME EN $WAR"
+			echo -e "\tplugin.name=$PLUGIN_NAME"
+			echo -e "\tplugin.version=$PLUGIN_VERSION"
+			echo "------------------------------------------"
+			echo ""
+			unzip_sources $WAR $OUTDIR/war $PLUGIN $OUTDIR/jar
+			### Verificamos que el plugin este instalado y lo borramos
+			local OLD_JAR="$(find $LIBDIR -name "*-$PLUGIN_NAME-plugin*.jar")"
+			if [ -n "$OLD_JAR" ]; then
+				echo "Se ha encontrado el siguiente fichero $(basename $OLD_JAR) que se va a eliminar"
+				rm -f $OLD_JAR
+			fi
+			if [ -n "$(find $CFGDSTDIR -name *$PLUGIN_NAME*.xml)" ]; then
+				echo "Eliminando archivos de configuracion Spring"
+				rm -f $CFGDSTDIR/*$PLUGIN_NAME*.xml
+			fi
+			if [ -d $JSPDSTDIR ]; then
+				echo "Eliminando JSP's"
+				rm -Rf $JSPDSTDIR
+			fi
+			if [ -d $JSDSTDIR ]; then
+				echo "Eliminando Librerias Javascript"
+				rm -Rf $JSDSTDIR
+			fi
+			if [ -d $FLOWSDSTDIR ]; then
+				echo "Eliminando FLOWS"
+				rm -Rf $FLOWSDSTDIR
+			fi
+			if [ -d $IMGDSTDIR ]; then
+				echo "Eliminando recursos graficos"
+				rm -Rf $IMGDSTDIR
+			fi
+			### Generamos el nombre del nuevo war
+			local NEWWAR="$(basename $WAR | sed "s/\.war/-removed-$PLUGIN_NAME-plugin-$(date -I).war/")"
+			;;
+		*)
+			echo "ERROR $ACTION: Accion desconocida"
+			print_usage
+			exit 1
+			;;
+	esac
+	### Volvemos a generar el WAR
+	local CURRENT=$(pwd)
+	cd $OUTDIR/war
+	zip -r -q ${CURRENT}/${NEWWAR} *
+	cd $CURRENT
+	### Borramos el directorio temporal
+	rm -Rf $OUTDIR
+	### Instalamos el war
+	install_war $TOMCAT_HOME $WAR $NEWWAR $LOGFILE $PLUGIN $ACTION
+		
+}
+
+
+function unzip_sources () {
+	unzip_file $1 $2
+	unzip_file $3 $4
+}
+
+function plugin_copy_web_resources () {
+
+	local JSPSRC=$2
+	local JSPDST=$3
+	local FLOWSSRC=$4
+	local FLOWSDST=$5
+	local IMGSRC=$6
+	local IMGDST=$7
+	local JSSRC=$8
+	local JSDST=$9
+	local REPORTSSRC=${10}
+	local REPORTSDST=${11}
+
+
+	if [ -d $JSPSRC ]; then
+		echo -n "Copiando JSP's: "
+		if [ -d $JSPDST ]; then 
+			exit_with_error "Se han encontrado JSP's de otra version. Actualice o desinstale"
+		fi
+		mkdir -p $JSPDST
+		cp -Rf $JSPSRC/* $JSPDST
+		echo ""
+	else
+		echo "No se han encontrado JSP's para copiar"
+	fi
+
+	if [ -d $FLOWSSRC ]; then
+		echo -n "Copiando FLOWS's: "
+		if [ -d $FLOWSDST ]; then 
+			exit_with_error "Se han encontrado FLOWS de otra version. Actualice o desinstale"
+		fi
+		mkdir -p $FLOWSDST
+		cp -Rf $FLOWSSRC/* $FLOWSDST
+		echo ""
+	else
+		echo "No se han encontrado FLOWS's para copiar"
+	fi
+	
+	if [ -d $IMGSRC ]; then
+		echo -n "Copiando recursos graficos's: "
+		mkdir -p $IMGDST
+		cp -Rf $IMGSRC/* $IMGDST
+		echo ""
+	fi
+	
+	if [ -d $JSSRC ]; then
+		echo -n "Copiando librerias javascript: "
+		mkdir -p $JSDST
+		cp -Rf $JSSRC/* $JSDST
+		echo ""
+	fi
+	
+	if [ -d $REPORTSSRC ]; then
+		echo -n "Copiando reports de BIRT: "
+		mkdir -p $REPORTSDST
+		cp -Rf $REPORTSSRC/* $REPORTSDST
+		echo ""
+	fi
+	
+}
+
+function plugin_copy_jar (){
+	local PNAME=$1
+	local JAR=$2
+	local DEST=$3
+	
+
+	check_file $JAR
+	check_dir $DEST
+
+	echo "Copiando $JAR en lib"
+	
+	cp $JAR $DEST
+}
+
+function plugin_copy_config (){
+	local PNAME=$1
+	local PLUGIN=$2
+	local DEST=$3
+	
+	local SOURCE=$PLUGIN/optionalConfiguration
+
+	check_dir $SOURCE
+	check_dir $DEST
+	
+	echo -n "Copiando ficheros Spring: "
+	local FILES=0
+	for f in $(find $SOURCE -name ac-*.xml); do
+		FILES=$(( $FILES + 1 ))
+		echo -n "$(basename $f) "
+		cp $f $DEST
+	done
+	
+	if [ $FILES -eq 0 ]; then
+		echo " No se han encontrado ficheros"
+	else
+		echo "[$FILES ficheros]"
+	fi
+}
+
+
+
+
+function print_usage () {
+	echo "Uso $0 ACTION PLUGIN ENTORNO"
+	echo "ACTION := [install|upgrade|remove]"
+	echo -e "\tinstall -> Instala un plugin. Falla si el plugin ya esta instalado."
+	echo -e "\tupgrade -> Actualiza un plugin."
+	echo -e "\tremove -> Desinstala un plugin."	
+	echo ""
+	echo "PLUGIN := Plugin a instalar"
+	echo -e "\tDebe ser un JAR. El nombre del fichero debe tener el formato"
+	echo -e "\t\trecovery-NOMBREPLUGIN-plugin-VERSION.jar"
+	echo ""
+	echo "ENTORNO := Entorno en el que se va a instalar"
+}
+
+
+
+
+
+main

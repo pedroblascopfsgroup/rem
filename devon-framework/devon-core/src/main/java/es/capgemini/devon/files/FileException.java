@@ -3,7 +3,7 @@ package es.capgemini.devon.files;
 import es.capgemini.devon.exception.FrameworkException;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class FileException extends FrameworkException {
 

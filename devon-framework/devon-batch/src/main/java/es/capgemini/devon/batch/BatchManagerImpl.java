@@ -19,10 +19,10 @@ import es.capgemini.devon.events.EventManager;
 import es.capgemini.devon.exception.FrameworkException;
 
 /**
- * Implementaci髇 por defecto de {@link BatchManager}.
+ * Implementaci贸n por defecto de {@link BatchManager}.
  * Obtiene los "jobs" del contexto de Spring, listando todos los beans que implementen la clase {@link Job}
  * 
- * @author Nicol醩 Cornaglia
+ * @author Nicol谩s Cornaglia
  */
 @Service("batchManager")
 public class BatchManagerImpl implements BatchManager {
@@ -55,7 +55,7 @@ public class BatchManagerImpl implements BatchManager {
             logger.error("[" + jobName + "] not found.");
             return BatchExitStatus.NOOP;
         } else {
-            logger.info("Lanzando job [" + jobName + "] con par醡etros [" + jobParameters + "]");
+            logger.info("Lanzando job [" + jobName + "] con par谩metros [" + jobParameters + "]");
             eventManager.fireEvent(BatchManager.BATCH_CHANNEL, new BatchStartedEvent(jobName));
             try {
                 jobExecution = jobLauncher.run(job, BatchUtils.getJobParameters(jobParameters));
@@ -65,9 +65,9 @@ public class BatchManagerImpl implements BatchManager {
                 result = BatchExitStatus.FAILED.toString();
             }
             if (exception != null) {
-                logger.error("Error en job [" + jobName + "] con par醡etros [" + jobParameters + "]", new BatchException(exception));
+                logger.error("Error en job [" + jobName + "] con par谩metros [" + jobParameters + "]", new BatchException(exception));
             } else {
-                logger.info("Fin " + result + " de job [" + jobName + "] con par醡etros [" + jobParameters + "]");
+                logger.info("Fin " + result + " de job [" + jobName + "] con par谩metros [" + jobParameters + "]");
             }
             eventManager.fireEvent(BatchManager.BATCH_CHANNEL, new BatchEndedEvent(jobName, exception));
         }
@@ -76,7 +76,7 @@ public class BatchManagerImpl implements BatchManager {
     }
 
     /**
-     * Inyecci髇 del {@link JobLauncher} para la ejecuci髇 de "jobs" de Spring
+     * Inyecci贸n del {@link JobLauncher} para la ejecuci贸n de "jobs" de Spring
      * 
      * @param jobLauncher
      */
@@ -85,7 +85,7 @@ public class BatchManagerImpl implements BatchManager {
     }
 
     /**
-     * Inyecci髇 del {@link EventManager} para gesti髇 de eventos
+     * Inyecci贸n del {@link EventManager} para gesti贸n de eventos
      * 
      * @param eventManager 
      */

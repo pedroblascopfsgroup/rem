@@ -17,16 +17,16 @@ import es.capgemini.devon.net.IPList;
 import es.capgemini.devon.utils.DatabaseUtils;
 
 /**
- * Filtro utilizado durante la autenticación para bloquear/permitir el acceso según la IP del usuario que se conecte.<br/>
+ * Filtro utilizado durante la autenticaciÃ³n para bloquear/permitir el acceso segÃºn la IP del usuario que se conecte.<br/>
  * <br/>
- * El proceso de filtrado se basa en 2 listas de permisos, que se evalúan en orden:
+ * El proceso de filtrado se basa en 2 listas de permisos, que se evalÃºan en orden:
  * <il>
  * <ul>1. IPs NO permitidas para el usuario o para los authorities del usuario</ul>
  * <ul>3. IPs permitidas para el usuario o para los authorities del usuario</ul>
  * </il>
  * <br/>
- * Si el usuario o algún authority del usuario está en la primer lista, se deniega el acceso.<br/>
- * Si ni el usuario ni los authorities del usuario están en la segunda lista se deniega el acceso.<br/>
+ * Si el usuario o algÃºn authority del usuario estÃ¡ en la primer lista, se deniega el acceso.<br/>
+ * Si ni el usuario ni los authorities del usuario estÃ¡n en la segunda lista se deniega el acceso.<br/>
  * <br/>
  * La lista de permisos se configura en forma de Properties, por ejemplo:<br/>
  * <br/>
@@ -42,7 +42,7 @@ import es.capgemini.devon.utils.DatabaseUtils;
  * # El authority COMISION no puede ingresar desde 10.68.1.1 pero si desde 10.68.1.2<br/> 
  * [COMISION] = !10.68.1.1, 10.68.1.2<br/>
  * <br/>
- * @author Nicolás Cornaglia
+ * @author NicolÃ¡s Cornaglia
  */
 public class IpAuthenticationFilter implements AuthenticationFilter {
 
@@ -70,13 +70,13 @@ public class IpAuthenticationFilter implements AuthenticationFilter {
      * @return
      */
     private boolean isIPAllowed(String username, GrantedAuthority[] authorities, String host) {
-        // Asegurar que el usuario NO esté en la lista de ips bloqueadas
+        // Asegurar que el usuario NO estÃ© en la lista de ips bloqueadas
         if (isHostInList(notAllowedIps, username, host)) {
             logger.warn("ip " + host + " not allowed for " + username);
             return false;
         }
 
-        // Asegurar que los authorities del usuario NO estén en la lista de ips bloqueadas
+        // Asegurar que los authorities del usuario NO estÃ©n en la lista de ips bloqueadas
         for (GrantedAuthority authority : authorities) {
             if (isHostInList(notAllowedIps, "[" + authority.getAuthority() + "]", host)) {
                 logger.warn("ip " + host + " not allowed for [" + username + ":" + authority.getAuthority() + "]");
@@ -85,12 +85,12 @@ public class IpAuthenticationFilter implements AuthenticationFilter {
 
         }
 
-        // Verificar si el usuario esté en la lista de ips permitidas
+        // Verificar si el usuario estÃ© en la lista de ips permitidas
         if (isHostInList(allowedIps, username, host)) {
             return true;
         }
 
-        // Verificar si algún authority del usuario está en la lista de ips permitidas
+        // Verificar si algÃºn authority del usuario estÃ¡ en la lista de ips permitidas
         for (GrantedAuthority authority : authorities) {
             if (isHostInList(allowedIps, "[" + authority.getAuthority() + "]", host)) {
                 return true;

@@ -17,7 +17,7 @@ import org.springframework.security.userdetails.jdbc.JdbcDaoImpl;
 import org.springframework.util.Assert;
 
 /**
- * Implementación de usuarios en base de datos, según las siguientes tablas:
+ * ImplementaciÃ³n de usuarios en base de datos, segÃºn las siguientes tablas:
  * 
  * CREATE TABLE USUARIO (
  *   ID               NUMBER(20)              NOT NULL,
@@ -37,7 +37,7 @@ import org.springframework.util.Assert;
  *     FOREIGN KEY (USUARIO_ID) REFERENCES USUARIO (ID)
  * );
  * 
- * @author Nicolás Cornaglia
+ * @author NicolÃ¡s Cornaglia
  */
 public class JDBCUsersDetailService extends JdbcDaoImpl {
 

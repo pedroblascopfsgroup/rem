@@ -141,7 +141,7 @@ public class TareaNotificacionConsumer extends ConsumerAction<DataContainerPaylo
 		String tarUUID = getGuidTareaNotificacion(tareaPayload);
 
 		String logMsg = String.format("[INTEGRACION] TAR[%s] Comprobando la existencia de prórroga...", tarUUID);
-		logger.info(logMsg);
+		logger.debug(logMsg);
 		
 		if (!tareaPayload.contieneProrroga()) {
 			logMsg = String.format("[INTEGRACION] TAR[%s] No se ha encontrado información de prórroga", tarUUID);
@@ -150,7 +150,7 @@ public class TareaNotificacionConsumer extends ConsumerAction<DataContainerPaylo
 		}
 
 		logMsg = String.format("[INTEGRACION] TAR[%s] Creando prórroga...", tarUUID);
-		logger.info(logMsg);
+		logger.debug(logMsg);
 		
 		DtoSolicitarProrroga dtoProrroga = new DtoSolicitarProrroga();
 		
@@ -187,7 +187,7 @@ public class TareaNotificacionConsumer extends ConsumerAction<DataContainerPaylo
 		}
 		
 		logMsg = String.format("[INTEGRACION] TAR[%s] Prórroga creada!", tarUUID);
-		logger.info(logMsg);
+		logger.debug(logMsg);
 		
 	}
 
@@ -208,7 +208,7 @@ public class TareaNotificacionConsumer extends ConsumerAction<DataContainerPaylo
 		String guid = getGuidTareaNotificacion(tareaPayload);
 		EXTTareaNotificacion tarNotif = extTareaNotifificacionManager.getTareaNoficiacionByGuid(guid);
 		if (tarNotif==null) {
-			logger.info(String.format("[INTEGRACION] TAR[%s] Tarea no existe, se crea una nueva...", tarUID));
+			logger.debug(String.format("[INTEGRACION] TAR[%s] Tarea no existe, se crea una nueva...", tarUID));
 			String codigoTipoEntidad = tareaPayload.getTipoEntidad();
 			String guidEntidad = getGuidEntidad(tareaPayload);
 
@@ -261,8 +261,8 @@ public class TareaNotificacionConsumer extends ConsumerAction<DataContainerPaylo
 			tarNotif.getAuditoria().setUsuarioBorrar(SecurityUtils.getCurrentUser().getUsername());			
 		}
 		
-		logger.info(String.format("[INTEGRACION] TAR[%s] Guardando adicionales de Tarea Notificación...", tarUID));
+		logger.debug(String.format("[INTEGRACION] TAR[%s] Guardando adicionales de Tarea Notificación...", tarUID));
 		postCrearTarea(tareaPayload, tarNotif);
-		logger.info(String.format("[INTEGRACION] TAR[%s] Tarea Notificación guardada!!", tarUID));
+		logger.debug(String.format("[INTEGRACION] TAR[%s] Tarea Notificación guardada!!", tarUID));
 	}	
 }

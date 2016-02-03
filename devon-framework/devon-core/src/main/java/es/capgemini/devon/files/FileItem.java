@@ -17,9 +17,9 @@ import java.util.UUID;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 /**
- * RepresentaciÛn de un fichero
+ * Representaci√≥n de un fichero
  *
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 
 public class FileItem implements Serializable {

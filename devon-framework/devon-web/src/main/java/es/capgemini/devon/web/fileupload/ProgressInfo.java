@@ -7,10 +7,10 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-/** Esta clase sirve como progessListener del fileUpload. Implementa el mÈtodo update que se llamar· cada vez que el objeto Apache FileUpload notifique que ha leÌdo
+/** Esta clase sirve como progessListener del fileUpload. Implementa el m√©todo update que se llamar√° cada vez que el objeto Apache FileUpload notifique que ha le√≠do
  * cierta cantidad de bytes
  * 
- * Adem·s sirve para almacenar la informaciÛn y que el cliente pueda hacer polling para mostrar el progreso en la web
+ * Adem√°s sirve para almacenar la informaci√≥n y que el cliente pueda hacer polling para mostrar el progreso en la web
  * 
  * @author amarinso
  *

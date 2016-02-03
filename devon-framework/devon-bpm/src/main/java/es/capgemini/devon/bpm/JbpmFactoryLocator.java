@@ -5,7 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanFactory;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class JbpmFactoryLocator extends org.springmodules.workflow.jbpm31.JbpmFactoryLocator {
 

@@ -3,7 +3,7 @@ package es.capgemini.devon.batch;
 import es.capgemini.devon.bo.BusinessOperationException;
 
 /**
- * @author Nicol·s Cornaglia
+ * @author Nicol√°s Cornaglia
  */
 public class BatchException extends BusinessOperationException {
 

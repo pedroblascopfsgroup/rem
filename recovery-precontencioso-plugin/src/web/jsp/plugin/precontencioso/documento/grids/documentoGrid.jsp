@@ -467,8 +467,7 @@ var actualizarBotonesDocumentos = function(){
 			}
 			else if(data.esGestoria) {
 				habilitarDeshabilitarButtons(true, true, true, false, true, true, false);
-			}
-			else {
+			} else {
 				if(myCboxSelModel2.getCount() == 0)	{
 					return;
 				}

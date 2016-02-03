@@ -80,6 +80,18 @@ public class VListadoPreProyectadoCnt implements Serializable {
 	@Column(name="ZON_COD_CONTRATO")
 	private String zonCodContrato;
 	
+    @Column(name="NIF_TITULAR")
+    private String nifTitular;
+    
+    @Column(name="NOM_TITULAR")
+    private String nomTitular;
+    
+    @Column(name="NIF_CLIENTE")
+    private String nifCliente;
+    
+    @Column(name="NOM_CLIENTE")
+    private String nomCliente;
+	
 	// -------------------------------------------------------------------
 	
 
@@ -236,6 +248,38 @@ public class VListadoPreProyectadoCnt implements Serializable {
 
 	public void setZonCodContrato(String zonCodContrato) {
 		this.zonCodContrato = zonCodContrato;
+	}
+
+	public String getNifTitular() {
+		return nifTitular;
+	}
+
+	public void setNifTitular(String nifTitular) {
+		this.nifTitular = nifTitular;
+	}
+
+	public String getNomTitular() {
+		return nomTitular;
+	}
+
+	public void setNomTitular(String nomTitular) {
+		this.nomTitular = nomTitular;
+	}
+
+	public String getNifCliente() {
+		return nifCliente;
+	}
+
+	public void setNifCliente(String nifCliente) {
+		this.nifCliente = nifCliente;
+	}
+
+	public String getNomCliente() {
+		return nomCliente;
+	}
+
+	public void setNomCliente(String nomCliente) {
+		this.nomCliente = nomCliente;
 	}
 
 	

@@ -14,6 +14,7 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	private Set<String> tiposGestorProcurador;
 	private Set<String> entidadesDesparalizacion;
 	private List<String> codigosDocumentosConFechaCaducidad;
+	private Set<String> tipoGestorLetrado;
 	
 	public CoreProjectContextImpl() {
 		entidadesDesparalizacion = new HashSet<String>();
@@ -86,5 +87,13 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	public void setCodigosDocumentosConFechaCaducidad(List<String> codigosDocumentosConFechaCaducidad) 
 	{
 		this.codigosDocumentosConFechaCaducidad = codigosDocumentosConFechaCaducidad;
+	}
+
+	public Set<String> getTipoGestorLetrado() {
+		return tipoGestorLetrado;
+	}
+
+	public void setTipoGestorLetrado(Set<String> tipoGestorLetrado) {
+		this.tipoGestorLetrado = tipoGestorLetrado;
 	}
 }

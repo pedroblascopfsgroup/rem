@@ -44,6 +44,14 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 			sb.append(" and f.tipoPersonaCod = '" + dto.getCodTipoPersona() + "' ");
 		}
 		
+		if (!Checks.esNulo(dto.getNif())) {
+			sb.append(" and (f.nifTitular like '" + dto.getNif().toUpperCase() + "%' or f.nifCliente like '" + dto.getNif().toUpperCase() + "%') ");
+		}
+		
+		if (!Checks.esNulo(dto.getNombreCompleto())) {
+			sb.append(" and (f.nomTitular like '" + dto.getNombreCompleto().toUpperCase() + "%' or f.nomCliente like '" + dto.getNombreCompleto().toUpperCase() + "%') ");
+		}
+		
 		if (!Checks.esNulo(dto.getMinRiesgoTotal())) {
 			sb.append(" and f.riesgoTotal >= " + dto.getMinRiesgoTotal() + " ");
 		}
@@ -154,6 +162,14 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 		
 		if (!Checks.esNulo(dto.getFechaPrevRegularizacionHasta())) {
 			sb.append(" and f.fechaPrevReguCnt <= TO_DATE('" + dto.getFechaPrevRegularizacionHasta().substring(0,10) + "','yyyy-MM-dd') ");
+		}
+		
+		if (!Checks.esNulo(dto.getPaseMoraDesde())) {
+			sb.append(" and f.fechaPaseAMoraCnt >= TO_DATE('" + dto.getPaseMoraDesde().substring(0,10) + "','yyyy-MM-dd') ");
+		}
+		
+		if (!Checks.esNulo(dto.getPaseMoraHasta())) {
+			sb.append(" and f.fechaPaseAMoraCnt <= TO_DATE('" + dto.getPaseMoraHasta().substring(0,10) + "','yyyy-MM-dd') ");
 		}
 		
 		if (!Checks.esNulo(dto.getZonasCto())) {

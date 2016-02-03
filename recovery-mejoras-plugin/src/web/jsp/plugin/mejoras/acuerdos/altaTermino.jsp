@@ -12,6 +12,7 @@
 	var codigoTipoDacionParaPago = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo.TIPO_DACION_PARA_PAGO" />';
 	var codigoTipoDacionCompraVenta = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo.TIPO_DACION_COMPRA_VENTA" />';
 	var codigoTipoDacionCompraVentaDacion = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo.TIPO_DACION_COMPRA_VENTA_DACION" />';
+	var codigoTipoFondosPropios = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo.TIPO_EFECTIVO_FONDOS_PROPIOS" />';
 	
 	
 	var codigoSubtipoEstandar = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDSubTipoAcuerdo.SUBTIPO_ESTANDAR" />';
@@ -30,8 +31,12 @@
 	var soloConsulta = '${soloConsulta}';
 	var idTipoAcuerdoPlanPago ='${idTipoAcuerdoPlanPago}';
 	var yaHayPlanPago = '${yaHayPlanPago}';
+	var fechaPaseMora = '${fechaPaseMora}';
 	var ambito = '${ambito}';
+	var idTipoAcuerdoFondosPropios ='${idTipoAcuerdoFondosPropios}';
 	
+	var datePaseMora = Date.parse(fechaPaseMora);
+
     var tipoAcu = Ext.data.Record.create([
 		 {name:'id'}
 		,{name:'descripcion'}
@@ -340,7 +345,7 @@ arrayCampos["fechaSolucionPrevista"]=new Ext.form.DateField({
 	id:'fechaSolucionPrevista'
 	,name:'fechaSolucionPrevista'
 	,value : ''
-	, allowBlank : true
+	, allowBlank : false
 	,autoWidth:true
 	 ,fieldLabel: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.fechaSolucionPrevista" text="**Fecha Sol. Prevista" />'
 });
@@ -480,7 +485,7 @@ arrayCampos["codigoPersonaAfectada"]=app.creaNumber('codigoPersonaAfectada', '<s
 			{items:[informeLetrado]}
 		]
 	});		
-		
+	
 	var btnCancelar= new Ext.Button({
 		text : '<s:message code="app.cancelar" text="**Cancelar" />'
 		,iconCls : 'icon_cancel'
@@ -495,11 +500,19 @@ arrayCampos["codigoPersonaAfectada"]=app.creaNumber('codigoPersonaAfectada', '<s
 		,iconCls : 'icon_ok'
        ,cls: 'x-btn-text-icon'
        ,handler:function(){
-       		
        		var formulario = flujoFieldSet.getForm();
        		
        		if(formulario.isValid()){
-       			if (yaHayPlanPago=='true' && comboTipoAcuerdo.getValue()==idTipoAcuerdoPlanPago){
+       			var dateSolucionPrevista = Date.parse(arrayCampos.fechaSolucionPrevista.getValue());
+	       		if(comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && dateSolucionPrevista > datePaseMora) {		       		
+	       			Ext.Msg.show({
+				   		title:'Aviso',
+				   		msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.fondosPropios" text="**Fecha solicitud prevista debe ser menor a la fecha de pase a mora." />',
+				   		buttons: Ext.Msg.OK
+					});
+	       		}else if(comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && !arrayCampos.fechaSolucionPrevista.isValid()) {
+	       			return false;
+	       		}else if (yaHayPlanPago=='true' && comboTipoAcuerdo.getValue()==idTipoAcuerdoPlanPago){
 	        		Ext.Msg.show({
 				   		title:'Aviso',
 				   		msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.planPago" text="**Este acuerdo ya tiene asignado un Plan de Pago" />',
@@ -577,7 +590,6 @@ arrayCampos["codigoPersonaAfectada"]=app.creaNumber('codigoPersonaAfectada', '<s
 				});	
 			}
 			}	
-       		
      	}		
 	});
 	

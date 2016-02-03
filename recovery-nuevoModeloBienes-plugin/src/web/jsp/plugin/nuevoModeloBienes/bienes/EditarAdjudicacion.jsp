@@ -238,6 +238,15 @@
 			,style:'margin:0px'
 			,minValue: fechaMinima			
 		});
+		
+	var fechaContabilidad =new Ext.ux.form.XDateField({
+			fieldLabel:'<s:message code="bienesAdjudicacion.fechaContabilidad" text="**fechaContabilidad" />'
+			,labelStyle: labelStyle
+			,name:'bien.fechaContabilidad'
+			,value:	'<fwk:date value="${NMBbien.adjudicacion.fechaContabilidad}"/>'
+			,style:'margin:0px'
+			,minValue: fechaMinima			
+		});
 	
 	var diccionarioRecord = Ext.data.Record.create([
 		{name : 'id'}
@@ -506,6 +515,7 @@
 		parametros.fechaRecepcionDepositario = fechaRecepcionDepositario.getValue() ? fechaRecepcionDepositario.getValue().format('d/m/Y') : '';
 		parametros.fechaEnvioDepositario = fechaEnvioDepositario.getValue() ? fechaEnvioDepositario.getValue().format('d/m/Y') : '';
 		parametros.fechaRecepcionDepositarioFinal = fechaRecepcionDepositarioFinal.getValue() ? fechaRecepcionDepositarioFinal.getValue().format('d/m/Y') : '';
+		parametros.fechaContabilidad = fechaContabilidad.getValue() ? fechaContabilidad.getValue().format('d/m/Y') : '';
 		
 	    parametros.ocupado = ocupado.getValue() == '' ? null : ocupado.getValue() == 'Si' || ocupado.getValue() == '01' ? true : false ;
 		parametros.posiblePosesion = posiblePosesion.getValue() == '' ? null : posiblePosesion.getValue() == 'Si' || posiblePosesion.getValue() == '01'? true : false ;
@@ -552,7 +562,7 @@
 		}
 		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabAdjudicacion.datosEconomicos.titulo" text="**Datos de adjudicaci�n"/>'
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
-	    ,items : [{items:[fechaDecretoNoFirme,fechaDecretoFirme,gestoriaAdjudicataria,fechaEntregaGestor,fechaPresentacionHacienda,fechaSegundaPresentacion, txtImporteAdjudicacion]},
+	    ,items : [{items:[fechaDecretoNoFirme,fechaDecretoFirme,gestoriaAdjudicataria,fechaEntregaGestor,fechaPresentacionHacienda,fechaSegundaPresentacion, txtImporteAdjudicacion,fechaContabilidad]},
 				  {items:[entidadAdjudicataria,<sec:authorize ifAllGranted="VER_DOC_ADJUDICACION">tipoDocAdjudicacion,</sec:authorize>fondo,fechaPresentacionRegistro,fechaRecepcionTitulo,fechaInscripcionTitulo,fechaEnvioAdicion,situacionTitulo,cesionRemate,importeCesionRemate]}
 				 ]
 	});
@@ -628,7 +638,8 @@
 			|| fechaRealizacionPosesion.getValue() < fechaMinima || fechaSolicitudLanzamiento.getValue() < fechaMinima || fechaSenalamientoLanzamiento.getValue() < fechaMinima
 			|| fechaRealizacionLanzamiento.getValue() < fechaMinima || fechaSolicitudMoratoria.getValue() < fechaMinima || fechaResolucionMoratoria.getValue() < fechaMinima 
 			|| fechaContratoArrendamiento.getValue() < fechaMinima || fechaCambioCerradura.getValue() < fechaMinima || fechaEnvioLLaves.getValue() < fechaMinima
-			|| fechaRecepcionDepositario.getValue() < fechaMinima || fechaEnvioDepositario.getValue() < fechaMinima || fechaRecepcionDepositarioFinal.getValue() < fechaMinima) {
+			|| fechaRecepcionDepositario.getValue() < fechaMinima || fechaEnvioDepositario.getValue() < fechaMinima || fechaRecepcionDepositarioFinal.getValue() < fechaMinima 
+			|| fechaContabilidad.getValue() < fechaMinima) {
 			
 				return 1;
 		}
@@ -739,6 +750,7 @@
 	fechaSolicitudMoratoria.setDisabled(true);
 	resolucionMoratoria.setDisabled(true);
 	fechaResolucionMoratoria.setDisabled(true);
+	fechaContabilidad.setDisabled(true);
 	necesariaFuerzaPublica.setDisabled(true);
 	existeInquilino.setDisabled(true);
 	fechaContratoArrendamiento.setDisabled(true);
@@ -783,6 +795,7 @@
 		fechaSolicitudMoratoria.setDisabled(false);
 		resolucionMoratoria.setDisabled(false);
 		fechaResolucionMoratoria.setDisabled(false);
+		fechaContabilidad.setDisabled(false);
 		necesariaFuerzaPublica.setDisabled(false);
 		existeInquilino.setDisabled(false);
 		fechaContratoArrendamiento.setDisabled(false);

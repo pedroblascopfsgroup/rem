@@ -128,9 +128,9 @@ public class ListadoPreProyectadoController {
 			}
 			filaExportar.add(ObjectUtils.toString(row.getPropuesta())); 	//Propuesta
 			filaExportar.add(ObjectUtils.toString(row.getEstadoGestion())); 	//Estado Gestion
-			if(!Checks.esNulo(row.getFechaPrevReguCnt())){
+			/*if(!Checks.esNulo(row.getFechaPrevReguCnt())){
 				filaExportar.add(ObjectUtils.toString(sdf.format(row.getFechaPrevReguCnt()))); //Fecha prevista regularizacion	
-			}
+			}*/
 			
 			valores.add(filaExportar);
 		}
@@ -168,7 +168,7 @@ public class ListadoPreProyectadoController {
 		cabeceras.add(formatearString("Fecha pase a mora"));
 		cabeceras.add(formatearString("Última Propuesta"));
 		cabeceras.add(formatearString("Estado gestión"));
-		cabeceras.add(formatearString("Fecha prevista regularización"));
+		//cabeceras.add(formatearString("Fecha prevista regularización"));
 		
 		return cabeceras;
 	}

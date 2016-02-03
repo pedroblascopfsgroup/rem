@@ -68,6 +68,7 @@
 	//Fitros	
 	var comboFechaDesdeOp=new Ext.form.ComboBox({
 		store:[">=",">","=","<>"]
+		,hidden: true
 		,triggerAction : 'all'
 		,mode:'local'
 		//,labelSeparator:""
@@ -107,12 +108,13 @@
 	            }  
 	        } 
 		}
-		,fieldLabel:'<s:message code="tareas.filtros.fvencimiento" text="**F. Vencimiento" />'
+		,fieldLabel:'<s:message code="tareas.filtros.fvencimiento.desde" text="**F. Vencimiento desde" />'
 		,value:'${fechaVencDesde}'
 	});
 	
 	var comboFechaHastaOp=new Ext.form.ComboBox({
 		store:["<=","<"]
+		,hidden: true
 		,triggerAction : 'all'
 		,mode:'local'
 		,fieldLabel:'<s:message code="tareas.filtros.hasta" text="**Venc hasta" />'
@@ -138,7 +140,7 @@
 	            }  
 	        } 
 		}
-		,fieldLabel:'<s:message code="tareas.filtros.fvencimiento" text="**F. Vencimiento" />'
+		,fieldLabel:'<s:message code="tareas.filtros.fvencimiento.hasta" text="**F. Vencimiento hasta" />'
 		,value:'${fechaVencHasta}'
 	});
 	
@@ -169,9 +171,9 @@
 			return true;
 		if(nombreTarea.getValue()!='')
 			return true;
-		if(fechaVencDesde.getValue()!='' && comboFechaDesdeOp.getValue()!='')
+		if(fechaVencDesde.getValue()!='')
 			return true;
-		if(fechaVencHasta.getValue()!='' && comboFechaHastaOp.getValue()!='')
+		if(fechaVencHasta.getValue()!='')
 			return true;
 	}
 	
@@ -179,13 +181,6 @@
 		var valid=true;
 		if(fechaVencDesde.getValue()!='' && fechaVencHasta.getValue()!=''){
 			valid = (fechaVencDesde.getValue()<= fechaVencHasta.getValue())
-		}
-		if(comboFechaDesdeOp.getValue()=='>=' || comboFechaDesdeOp.getValue()=='>'){
-			if (fechaVencHasta.getValue()!='' && comboFechaHastaOp.getValue()!='') 
-				if(fechaVencDesde.getValue()=='')
-					valid = valid && false;
-				else
-					valid = valid && true;
 		}
 		return valid;
 	}
@@ -244,7 +239,6 @@
         text:'<s:message code="menu.clientes.listado.filtro.exportar.xls" text="**exportar a xls" />'
         ,iconCls:'icon_exportar_csv'
         ,handler: function() {
-
 			if(validarForm()|| (panelFiltros.validate && panelFiltros.validate())){
 				if(validaFechasVenc()){
 					
@@ -285,7 +279,6 @@
 							,fechaVencimientoHasta:app.format.dateRenderer(fechaVencHasta.getValue())
 							,fechaVencimientoHastaOperador:operadorFechaHasta},
 						success : function(data) {
-
 							var data = Ext.decode(data.responseText);
 							var count = data.count;
 							var limit = data.limit;
@@ -356,12 +349,12 @@
 				layout:'form'
 				,defaults:{xtype:'fieldset',border:false}
 				,width:'320px'
-				,items:[nombreTarea, comboFechaDesdeOp, comboFechaHastaOp]
+				,items:[nombreTarea, fechaVencDesde, comboFechaDesdeOp, comboFechaHastaOp]
 			},{
 				layout:'form' 
 				,width:'320px'
 				,defaults:{xtype:'fieldset',border:false}
-				,items:[descTarea, fechaVencDesde, fechaVencHasta]
+				,items:[descTarea, fechaVencHasta]
 			}
 		]              
 		,tbar:new Ext.Toolbar()

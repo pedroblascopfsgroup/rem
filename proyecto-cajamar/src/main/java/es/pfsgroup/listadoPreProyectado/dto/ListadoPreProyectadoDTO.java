@@ -24,6 +24,8 @@ public class ListadoPreProyectadoDTO extends WebDto {
 	//Pestanya datos generales
 	private String codEstadoGestion;
 	private String codTipoPersona;
+	private String nif;
+	private String nombreCompleto;
 	private BigDecimal minRiesgoTotal;
 	private BigDecimal maxRiesgoTotal;
 	private BigDecimal minDeudaIrregular;
@@ -43,6 +45,8 @@ public class ListadoPreProyectadoDTO extends WebDto {
 	private String codContrato;
 	private String fechaPrevRegularizacion;
 	private String fechaPrevRegularizacionHasta;
+	private String paseMoraDesde;
+	private String paseMoraHasta;
 	private String zonasCto;
 	
 	private Usuario usuarioLogado;
@@ -63,6 +67,26 @@ public class ListadoPreProyectadoDTO extends WebDto {
 		this.codTipoPersona = codTipoPersona;
 	}
 	
+	public String getNif() {
+		return nif;
+	}
+
+	public void setNif(String nif) {
+		this.nif = nif;
+	}
+
+	public String getNombreCompleto() {
+		return nombreCompleto;
+	}
+
+	public void setNombreCompleto(String nombreCompleto) {
+		this.nombreCompleto = nombreCompleto;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
 	public BigDecimal getMinRiesgoTotal() {
 		return minRiesgoTotal;
 	}
@@ -183,6 +207,22 @@ public class ListadoPreProyectadoDTO extends WebDto {
 		this.fechaPrevRegularizacionHasta = fechaPrevRegularizacionHasta;
 	}
 	
+	public String getPaseMoraDesde() {
+		return paseMoraDesde;
+	}
+
+	public void setPaseMoraDesde(String paseMoraDesde) {
+		this.paseMoraDesde = paseMoraDesde;
+	}
+
+	public String getPaseMoraHasta() {
+		return paseMoraHasta;
+	}
+
+	public void setPaseMoraHasta(String paseMoraHasta) {
+		this.paseMoraHasta = paseMoraHasta;
+	}
+
 	public String getZonasCto() {
 		return zonasCto;
 	}

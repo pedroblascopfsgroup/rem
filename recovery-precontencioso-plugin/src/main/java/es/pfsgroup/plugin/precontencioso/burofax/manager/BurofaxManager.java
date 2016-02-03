@@ -1286,4 +1286,5 @@ public class BurofaxManager implements BurofaxApi {
 		
 		return true;
 	}
+
 }

@@ -13,6 +13,7 @@
 <%@ attribute name="searchOnEnter" required="false" type="java.lang.Boolean"%>
 <%@ attribute name="width" required="false" type="java.lang.Integer"%>
 <%@ attribute name="value" required="false" type="java.util.Date"%>
+<%@ attribute name="hideLabel" required="false" type="java.lang.Boolean" %>
 
 <c:set var="_width" value="100" />
 
@@ -43,4 +44,5 @@ var ${name} = new Ext.ux.form.XDateField({
   					}
   				}
 		}</c:if>
+		<c:if test="${hideLabel}">,hideLabel:true</c:if>
 	});

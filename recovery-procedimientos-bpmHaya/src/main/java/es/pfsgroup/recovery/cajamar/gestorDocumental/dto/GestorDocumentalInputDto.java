@@ -37,6 +37,8 @@ public class GestorDocumentalInputDto {
 	private String tipoDocumento;
 	// Id de la entidad de recovery
 	private Long idEntidad;
+	
+	public static final String APLICACION = "05";
 
 	public String getClaveAsociacion() {
 		return claveAsociacion;

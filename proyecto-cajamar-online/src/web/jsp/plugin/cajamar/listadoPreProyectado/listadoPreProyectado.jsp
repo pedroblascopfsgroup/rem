@@ -53,6 +53,20 @@
 		,fieldLabel:'<s:message code="plugin.cajamar.listadoPreProyectado.datosGenerales.tipoPersona" text="**Tipo Persona"/>'
 	});
 	
+	var txtNif = new Ext.form.TextField({
+		fieldLabel:'<s:message code="plugin.cajamar.listadoPreProyectado.datosGenerales.nif" text="**NIF/CIF" />'
+		,enableKeyEvents: true
+		,style : 'margin:0px'
+		,autoCreate : {tag: "input", type: "text",maxLength:"20", autocomplete: "off"}
+		});	
+		
+	var txtNombreCompleto = new Ext.form.TextField({
+		fieldLabel:'<s:message code="plugin.cajamar.listadoPreProyectado.datosGenerales.nombreCompleto" text="**Nombre completo" />'
+		,enableKeyEvents: true
+		,style : 'margin:0px'
+		,autoCreate : {tag: "input", type: "text",maxLength:"200", autocomplete: "off"}
+		});		
+	
 	// Field riesgo total
 	var mmRiesgoTotal = app.creaMinMaxMoneda('<s:message code="plugin.cajamar.listadoPreProyectado.datosGenerales.riesgoTotal" text="**Riesgo Total" />', 'riesgo',{width : 80, labelWidth:105});
 	
@@ -230,6 +244,29 @@
 		]
 	}); 
 	
+	// Field fecha pase a mora
+	<pfsforms:datefield name="filtroPaseMoraDesde" labelKey="plugin.cajamar.listadoPreProyectado.contrato.fechaPaseMora"
+	label="**Fecha Pase a Mora" width="140" />
+	<pfsforms:datefield name="filtroPaseMoraHasta" labelKey="" label="" hideLabel="true" width="140" />
+	var panelFehasPaseMora = new Ext.Panel({
+		layout:'table'
+		,title:''
+		,id:'panelFechasPaseMora'
+		,collapsible:false
+		,titleCollapse:false
+		,layoutConfig:{
+			columns:2
+		}
+		,style:'margin-right:0px;margin-left:0px'
+		,border:false
+		,autoWidth:true
+		,defaults:{xtype:'panel',border:false,cellCls:'vtop'}
+		,items:[
+			{layout:'form',items:[filtroPaseMoraDesde]}
+			,{layout:'form',items:[filtroPaseMoraHasta]}
+		]
+	});
+	
 	//Combo jerarquia
 	
 	var jerarquia = <app:dict value="${niveles}" blankElement="true" blankElementValue="" blankElementText="---" />; 
@@ -293,12 +330,12 @@
 		,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
 		,items:[{
 					layout:'form'
-					,items: [comboEstadoGestion,comboTipoPersona,mmRiesgoTotal.panel,mmDeudaIrregular.panel,comboAgruparPor]	
+					,items: [comboEstadoGestion<%-- ,comboTipoPersona --%>,txtNif,mmRiesgoTotal.panel,mmDeudaIrregular.panel,comboAgruparPor]	
 		
 				},
 				{
 					layout:'form'
-					,items: [mmDiasVencidos.panel,dobleSelTramo,dobleSelPropuesta]
+					,items: [mmDiasVencidos.panel,txtNombreCompleto,dobleSelTramo,dobleSelPropuesta]
 				}]
 		
 	});
@@ -339,7 +376,7 @@
 		,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
 		,items:[{
 					layout:'form'
-					,items:[txtCodContrato, panelFechasPrevistaRegul]
+					,items:[txtCodContrato, panelFechasPrevistaRegul,panelFehasPaseMora]
 					,autoWidth:true
 				}
 				,{
@@ -367,6 +404,8 @@
 	var btnReset = app.crearBotonResetCampos([ 
  			comboEstadoGestion,
  			comboTipoPersona,
+ 			txtNif,
+ 			txtNombreCompleto,
  			mmRiesgoTotal.min,
  			mmRiesgoTotal.max,
  			mmDeudaIrregular.min,
@@ -383,6 +422,8 @@
  			txtCodContrato,
  			filtroFechaDesde,
  			filtroFechaHasta,
+ 			filtroPaseMoraDesde,
+ 			filtroPaseMoraHasta,
  			comboJerarquiaContrato,
  			dobleSelCentroContrato
  			
@@ -466,7 +507,7 @@
 		,{header: '<s:message code="preproyectado.contratos.fechaPaseAMora" text="**Fecha pase a mora" />',dataIndex: 'fechaPaseAMoraCnt',sortable:true}
 		,{header: '<s:message code="preproyectado.contratos.propuesta" text="**Última Propuesta" />',dataIndex: 'propuesta',sortable:true}
 		,{header: '<s:message code="preproyectado.contratos.estadoGestion" text="**Estado Gestión" />',dataIndex: 'estadoGestion',sortable:true}
-		,{header: '<s:message code="preproyectado.contratos.fechaPrevistaRegularizacion" text="**Fecha prevista regularización" />',dataIndex: 'fechaPrevReguCnt',sortable:true}
+		<%-- ,{header: '<s:message code="preproyectado.contratos.fechaPrevistaRegularizacion" text="**Fecha prevista regularización" />',dataIndex: 'fechaPrevReguCnt',sortable:true} --%>
 	]);
 	
 	var pagingBar = fwk.ux.getPaging(preProCntsStore);
@@ -612,7 +653,7 @@
 		,{header: '<s:message code="preproyectado.expedientes.diasVencidosExp" text="**Días vencidos" />',dataIndex: 'diasVencidosExp',sortable:true, align: 'right', css: cssExp}
 		,{header: '<s:message code="preproyectado.expedientes.fechaPaseAMoraExp" text="**Fecha pase a mora" />',dataIndex: 'fechaPaseAMoraExp',sortable:true, css: cssExp}
 		,{header: '<s:message code="preproyectado.expedientes.propuesta" text="**Propuesta" />',dataIndex: 'propuesta',sortable:true, css: cssExp}
-		,{header: '<s:message code="preproyectado.expedientes.fechaPrevReguExp" text="**Fecha prevista regularización" />',dataIndex: 'fechaPrevReguExp',sortable:true, css: cssExp}		
+		<%-- ,{header: '<s:message code="preproyectado.expedientes.fechaPrevReguExp" text="**Fecha prevista regularización" />',dataIndex: 'fechaPrevReguExp',sortable:true, css: cssExp} --%>		
 	]);
 	
 	var pagingBar = fwk.ux.getPaging(preProExpsStore);
@@ -678,6 +719,14 @@
 			return true;
 		}
 		
+		if(txtNif.getValue() != ''){
+			return true;
+		}
+		
+		if (txtNombreCompleto.getValue() != '') {
+			return true;
+		}
+		
 		if(!(mmRiesgoTotal.min.getValue() === '')){
 			return true;
 		}
@@ -729,6 +778,12 @@
 			if(filtroFechaHasta.getValue() != ''){
 				return true;		
 			}
+			if (filtroPaseMoraDesde.getValue() != '') {
+				return true;
+			}
+			if (filtroPaseMoraHasta.getValue() != '') {
+				return true;
+			}
 			if(dobleSelCentroContrato.getValue() != ''){
 	 			return true;		 
 			} 
@@ -776,16 +831,26 @@
 				filtroFechaHasta.setValue('');
 			}
 			
+			if (filtroPaseMoraDesde.getValue()=='undefined' || !filtroPaseMoraDesde.getValue()) {
+				filtroPaseMoraDesde.setValue('');
+			}
+			
+			if (filtroPaseMoraHasta.getValue()=='undefined' || !filtroPaseMoraHasta.getValue()) {
+				filtroPaseMoraHasta.setValue('');
+			}
+			
 			if(dobleSelCentroContrato.getValue() == 'undefined' || !dobleSelCentroContrato.getValue()){
 				dobleSelCentroContrato.setValue('');
 			}
 		}
 		
 		if(tabContrato){
-			param.codContrato=txtCodContrato.getValue()
-			param.fechaPrevRegularizacion=filtroFechaDesde.getValue()
-			param.fechaPrevRegularizacionHasta=filtroFechaHasta.getValue()
-			param.zonasCto=dobleSelCentroContrato.getValue()
+			param.codContrato=txtCodContrato.getValue();
+			param.fechaPrevRegularizacion=filtroFechaDesde.getValue();
+			param.fechaPrevRegularizacionHasta=filtroFechaHasta.getValue();
+			param.paseMoraDesde = filtroPaseMoraDesde.getValue();
+			param.paseMoraHasta = filtroPaseMoraHasta.getValue();
+			param.zonasCto=dobleSelCentroContrato.getValue();
 		}
 		
 		return param;
@@ -800,6 +865,8 @@
 		
 		param.codEstadoGestion=comboEstadoGestion.getValue();
 		param.codTipoPersona=comboTipoPersona.getValue();
+		param.nif=txtNif.getValue();
+		param.nombreCompleto=txtNombreCompleto.getValue();
 		param.minRiesgoTotal=mmRiesgoTotal.min.getValue();
 		param.maxRiesgoTotal=mmRiesgoTotal.max.getValue();
 		param.minDeudaIrregular=mmDeudaIrregular.min.getValue();

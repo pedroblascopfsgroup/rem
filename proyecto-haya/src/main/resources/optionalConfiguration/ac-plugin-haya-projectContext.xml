@@ -233,6 +233,12 @@
 				<value>PROC</value>
 			</set>
 		</property>
+		<property name="tipoGestorLetrado">
+			<set>
+				<value>GEXT</value>
+				<value>CJ-LETR</value>
+			</set>
+		</property>
 		<property name="codigosDocumentosConFechaCaducidad">
 			<list>
 				<value>00002</value>

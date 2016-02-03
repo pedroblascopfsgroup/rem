@@ -113,7 +113,7 @@ if ((view != null) && (id != null)){
 		}
 		
 		#fechaCarga {
-			top : 20px;
+			top : 26px;
 		}
 		
 		#logout, #logoutClose{ 

@@ -68,10 +68,22 @@ if (muestraBotonGuardar==1){
 	bottomBar.push(btnExportarPDF);
 </c:if>
 
-var principal = items[1];
-var conflicto_intereses = items[2];
-var aceptacion = items[3];
-var ObservacionesLetrado = items[4];
+var principal;
+var conflicto_intereses;
+var aceptacion;
+var ObservacionesLetrado;
+
+if('${form.errorValidacion}' == ''){
+	principal = items[1];
+	conflicto_intereses = items[2];
+	aceptacion = items[3];
+	ObservacionesLetrado = items[4];
+ } else {
+ 	principal = items[2];
+ 	conflicto_intereses = items[3];
+	aceptacion = items[4];
+ 	ObservacionesLetrado = items[5];
+ }
 
 principal.setDisabled(true);
 conflicto_intereses.setDisabled(true);

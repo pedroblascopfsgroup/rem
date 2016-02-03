@@ -13,17 +13,20 @@
 	<bean p:entity="tabs.asunto.fast" p:name="filtrosAsuntoCambiosGestores"
 		p:order="5100"
 		p:fileName="/WEB-INF/jsp/plugin/cambiosMasivosAsunto/asunto/tabs/cambiosGestores.jsp"
-		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"  
+		p:permission="BOTONES_CAMBIO_MASIVO" />
 
 	<bean p:entity="menu" p:name="configuracion/cambioSelectivoDeGestoresAsunto" p:order="10100"
 		p:fileName="/WEB-INF/jsp/plugin/cambiosMasivosAsunto/asunto/buttons/btnMenuCambioSelectivoAsuntos.jsp"
 		p:priority="1"
-		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="BOTONES_CAMBIO_MASIVO" />
 		
 	<bean p:entity="menu" p:name="configuracion/cambioMasivoGestoresAsunto" p:order="10000"
 		p:fileName="/WEB-INF/jsp/plugin/cambiosMasivosAsunto/cambiogestores/button.jsp"
 		p:priority="1"
-		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"  
+		p:permission="BOTONES_CAMBIO_MASIVO" />
 
 	<bean p:entity="plugin.cambiosmasivos.web.asuntos.tabs" p:name="filtrosAsuntoDatosGestorMasivos"
 		p:order="1" p:fileName="/WEB-INF/jsp/plugin/coreextension/asunto/tabs/filtrosGestor.jsp"

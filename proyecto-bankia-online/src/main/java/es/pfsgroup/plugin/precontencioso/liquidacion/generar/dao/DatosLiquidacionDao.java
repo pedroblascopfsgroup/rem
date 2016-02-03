@@ -1,16 +1,16 @@
-package es.pfsgroup.plugin.precontencioso.liquidacion.dao;
+package es.pfsgroup.plugin.precontencioso.liquidacion.generar.dao;
 
 import java.util.List;
 
-import es.pfsgroup.plugin.precontencioso.liquidacion.vo.DatosGeneralesLiqVO;
-import es.pfsgroup.plugin.precontencioso.liquidacion.vo.InteresesContratoLiqVO;
-import es.pfsgroup.plugin.precontencioso.liquidacion.vo.RecibosLiqVO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.DatosGeneralesLiqVO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.InteresesContratoLiqVO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.RecibosLiqVO;
 
 public interface DatosLiquidacionDao {
 
 	/**
 	 * LQ04 - Recibos liquidacion
-	 * 
+	 * 	
 	 * @param idLiquidacion
 	 * @return
 	 */

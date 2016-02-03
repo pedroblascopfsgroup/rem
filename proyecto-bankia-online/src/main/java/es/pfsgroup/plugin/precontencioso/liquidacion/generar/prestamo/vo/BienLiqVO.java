@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.precontencioso.liquidacion.vo;
+package es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo;
 
 public class BienLiqVO {
 	private String fincaRegistral;

@@ -33,6 +33,8 @@
 			tabs="tabCabecera,tabGestores" />
 	</c:if>
 	
+var tabPanel;
+var numTab = '${numTab}';
 
 	<c:if test="${despacho.tipoDespacho.codigo=='1'}">
 		<pfslayout:includetab name="tabEsquemaTurnado">
@@ -40,10 +42,43 @@
 		</pfslayout:includetab>
 		<pfslayout:includetab name="tabProcuradores">
 			<%@ include file="tabProcuradoresDespachoExterno.jsp"%>
-		</pfslayout:includetab>	
-		<pfslayout:tabpanel name="tabsDespacho"
-			tabs="tabCabecera,tabGestores,tabSupervisores,tabProcuradores,tabEsquemaTurnado" />
+		</pfslayout:includetab>
+			<%--<pfslayout:tabpanel name="tabsDespacho"
+				tabs="tabCabecera,tabGestores,tabSupervisores,tabProcuradores,tabEsquemaTurnado" /> --%>
+		tabsDespacho=new Ext.TabPanel({
+		       autoHeight:true
+		       <c:if test="${usuarioEntidad == 'BANKIA'}">
+		       ,items:[tabCabecera,tabGestores,tabSupervisores,tabProcuradores,tabEsquemaTurnado]
+		       </c:if>
+		       <c:if test="${usuarioEntidad != 'BANKIA'}">
+		       ,items:[tabCabecera,tabGestores,tabSupervisores,tabProcuradores]
+		       </c:if>		
+		       ,layoutOnTabChange:true 
+		       ,activeItem:${numTab == null ? 0 : numTab}
+		       ,autoScroll:true
+		       ,border : false
+		})
+
 	</c:if>	
 	
-	page.add(tabsDespacho);
+	var panel = new Ext.Panel({
+       bodyStyle : 'padding : 5px'
+       ,autoHeight : true
+       ,items : [tabsDespacho]
+       ,tbar : new Ext.Toolbar()
+})
+	<%--<c:if test="${nombretab !=null}">
+		page.add(panel);
+	</c:if> --%>
+page.add(panel);
+		<%--page.add(tabsDespacho); --%>
+	<%--<c:choose>
+    <c:when test="${numTab != ''}">
+        page.add(panel);
+    </c:when>    
+    <c:otherwise>
+        page.add(tabsDespacho);
+    </c:otherwise>
+</c:choose> --%>
+
 </fwk:page>

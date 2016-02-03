@@ -1,4 +1,4 @@
-package es.capgemini.pfs.despachoExterno.model;
+package es.pfsgroup.recovery.ext.turnadodespachos;
 
 import java.io.Serializable;
 
@@ -21,8 +21,10 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.direccion.model.DDComunidadAutonoma;
 import es.capgemini.pfs.direccion.model.DDProvincia;
+
 
 /**
  * Clase que representa un despacho externo.
@@ -63,9 +65,17 @@ public class DespachoAmbitoActuacion implements Serializable, Auditable {
     @Embedded
     private Auditoria auditoria;
     
-    @Column(name = "DAA_PROV_CALIDAD_PORCENTAJE")
-    private String porcentaje;
-   
+
+    
+    @OneToOne(fetch = FetchType.LAZY)
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    @JoinColumn(name = "ETC_ID_LITIGIO")
+    private EsquemaTurnadoConfig etcLitigio;
+    
+    @OneToOne(fetch = FetchType.LAZY)
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    @JoinColumn(name = "ETC_ID_CONCURSO")
+    private EsquemaTurnadoConfig etcConcurso;
 
 	public Long getId() {
 		return id;
@@ -115,12 +125,20 @@ public class DespachoAmbitoActuacion implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 	
-	public String getPorcentaje() {
-		return porcentaje;
+
+	public EsquemaTurnadoConfig getEtcLitigio() {
+		return etcLitigio;
 	}
 
-	public void setPorcentaje(String porcentaje) {
-		this.porcentaje = porcentaje;
+	public void setEtcLitigio(EsquemaTurnadoConfig etcLitigio) {
+		this.etcLitigio = etcLitigio;
 	}
 
+	public EsquemaTurnadoConfig getEtcConcurso() {
+		return etcConcurso;
+	}
+
+	public void setEtcConcurso(EsquemaTurnadoConfig etcConcurso) {
+		this.etcConcurso = etcConcurso;
+	}
 }

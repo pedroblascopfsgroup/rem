@@ -121,4 +121,12 @@ public interface RecobroProcesosFacturacionControllerApi {
 	 * @return
 	 */
 	String marcarPendienteProcesoFacturacion(@RequestParam(value = "idProcesoFacturacion", required = true) Long idProcesoFacturacion, ModelMap map);
+
+	/**
+	 * Método para descargar el fichero de procesos de facturación reducido
+	 * @param idProcesoFacturacion
+	 * @param map
+	 * @return
+	 */
+	String descargarFicheroReducido(Long idProcesoFacturacion, ModelMap map);
 }

@@ -45,7 +45,6 @@
 		,html:''
         });	
 		
-
 	var lblObservaciones = app.creaLabel('<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.bienes.informe" text="**Observaciones"/>', "",{labelStyle:'font-weight:bolder;width:150px'});
 
 	var cumplidoData=<app:dict value="${ddSiNo}" />;

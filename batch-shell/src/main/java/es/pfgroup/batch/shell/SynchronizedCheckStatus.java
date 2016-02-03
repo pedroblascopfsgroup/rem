@@ -5,6 +5,7 @@ import java.util.Date;
 import es.pfgroup.monioring.bach.load.BatchExecutionData;
 import es.pfgroup.monioring.bach.load.CheckStatusApp;
 import es.pfgroup.monioring.bach.load.CheckStatusResult;
+import es.pfgroup.monioring.bach.load.exceptions.CheckStatusRecoverableException;
 import es.pfgroup.monioring.bach.load.exceptions.CheckStatusWrongArgumentsException;
 
 /**
@@ -23,11 +24,12 @@ public class SynchronizedCheckStatus {
 
 	private CheckStatusApp app;
 	private Date lastDate;
+	private boolean debugMode = false;
 
-	public SynchronizedCheckStatus(final CheckStatusApp checkStatusApp,
-			final Date date) {
+	public SynchronizedCheckStatus(final CheckStatusApp checkStatusApp, final Date date, boolean debugMode) {
 		this.app = checkStatusApp;
 		this.lastDate = date;
+		this.debugMode = debugMode;
 	}
 
 	private class RunnableCheckStatus implements Runnable {
@@ -52,26 +54,38 @@ public class SynchronizedCheckStatus {
 		@Override
 		public synchronized void run() {
 			app.getConfig().setUsePasajeProduccionMark(false);
+			long count = 0;
 
 			try {
 				CheckStatusResult localResult = null;
 				BatchExecutionData execData;
 				do {
-					Thread.currentThread().sleep(interval_ms);
+					Thread.sleep(interval_ms);
 
-					execData = app.getBusinessLogic().getExecutionInfo(entidad,
-							job, lastDate);
-
-					if (execData.hasErrors()) {
-						localResult = CheckStatusResult.ERROR;
-					} else if (execData.hasExecuted()) {
-						if (execData.finishWithNOOP()) {
-							localResult = CheckStatusResult.NOOP;
-						} else {
-							localResult = CheckStatusResult.OK;
+					try {
+						if (debugMode) {
+							System.out.print("Check status [" + entidad + ", " + job +"] num. " + (++count) + ": ");
 						}
-					}else if (prevNoop && (!execData.isRunning())){
-						localResult = CheckStatusResult.NOT_EXECUTED;
+						execData = app.getBusinessLogic().getExecutionInfo(entidad, job, lastDate);
+						if (execData.hasErrors()) {
+							localResult = CheckStatusResult.ERROR;
+						} else if (execData.hasExecuted()) {
+							if (execData.finishWithNOOP()) {
+								localResult = CheckStatusResult.NOOP;
+							} else {
+								localResult = CheckStatusResult.OK;
+							}
+						} else if (prevNoop && (!execData.isRunning())) {
+							localResult = CheckStatusResult.NOT_EXECUTED;
+						}
+						if (debugMode) {
+							System.out.println(localResult);
+						}
+					} catch (CheckStatusRecoverableException e) {
+						if (debugMode) {
+							System.out.println("RECOVERABLE ERROR");
+						}
+						System.err.println("WARNING: Error transitorio en BD: " + e.getMessage());
 					}
 
 				} while (localResult == null);
@@ -83,7 +97,7 @@ public class SynchronizedCheckStatus {
 				throw new IllegalStateException(e);
 			} catch (InterruptedException e) {
 				throw new UserInterruptionNonCheckedException(e);
-			}finally {
+			} finally {
 				notifyAll();
 			}
 

@@ -14,6 +14,7 @@ import es.pfgroup.monioring.bach.load.dao.jdbc.OracleJdbcFacade;
 import es.pfgroup.monioring.bach.load.dao.model.query.OracleModelQueryBuilder;
 import es.pfgroup.monioring.bach.load.exceptions.CheckStatusErrorType;
 import es.pfgroup.monioring.bach.load.exceptions.CheckStatusMalfunctionError;
+import es.pfgroup.monioring.bach.load.exceptions.CheckStatusRecoverableException;
 import es.pfgroup.monioring.bach.load.exceptions.CheckStatusUserError;
 import es.pfgroup.monioring.bach.load.exceptions.CheckStatusWrongArgumentsException;
 import es.pfgroup.monioring.bach.load.logic.CheckStatusLogic;
@@ -151,7 +152,9 @@ public class CheckStatusApp {
             
         } catch (CheckStatusWrongArgumentsException e) {
             throw new CheckStatusMalfunctionError(e);
-        }
+        } catch (CheckStatusRecoverableException e) {
+        	throw new CheckStatusMalfunctionError(e);
+		}
 
     }
 

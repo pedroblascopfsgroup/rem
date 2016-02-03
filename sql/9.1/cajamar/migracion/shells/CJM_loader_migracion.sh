@@ -52,6 +52,13 @@ if [ $? != 0 ] ; then
 #   exit 1
 fi
 
+echo "EXPEDIENTES-OBSERVACIONES-TROZOS"
+$ORACLE_HOME/bin/sqlldr control="$ctl_dir"expedientes_observaciones_trozosDataLoad.ctl log="$log_dir"EXPEDIENTES_OBSERVACIONES_TROZOS"$fecha".log bad="$bad_dir"EXPEDIENTES_OBSERVACIONES_TROZOS"$fecha".bad userid="$1" DIRECT=TRUE data="$dat_dir"OBSERVACIONES-TROZOS.dat
+if [ $? != 0 ] ; then 
+   echo -e "[ERROR] EXPEDIENTES-OBSERVACIONES-TROZOS"
+#   exit 1
+fi
+
 
 echo "PROCEDIMIENTOS-ACTORES"
 $ORACLE_HOME/bin/sqlldr control="$ctl_dir"procedimientos_actoresDataLoad.ctl log="$log_dir"PROCEDIMIENTOS-ACTORES_"$fecha".log bad="$bad_dir"PROCEDIMIENTOS-ACTORES_"$fecha".bad userid="$1" DIRECT=TRUE data="$dat_dir"PROCEDIMIENTOS-ACTORES.dat
@@ -156,6 +163,13 @@ echo "MIG_ANOTACIONES"
 $ORACLE_HOME/bin/sqlldr control="$ctl_dir"anotaciones_expedientes_DataLoad.ctl log="$log_dir"ANOTACIONES_CLIENTES_"$fecha".log bad="$bad_dir"ANOTACIONES_CLIENTES_"$fecha".bad userid="$1" DIRECT=TRUE data="$dat_dir"ANOTACIONES-CLIENTES.dat
 if [ $? != 0 ] ; then 
    echo -e "[ERROR] MIG_ANOTACIONES"
+#   exit 1
+fi
+
+echo "MIG_EXPEDIENTES_NOTIFICACIONES"
+$ORACLE_HOME/bin/sqlldr control="$ctl_dir"expedientes_notificacionesDataLoad.ctl log="$log_dir"EXPEDIENTES-NOTIFICACIONES_"$fecha".log bad="$bad_dir"EXPEDIENTES-NOTIFICACIONES_"$fecha".bad userid="$1" DIRECT=TRUE data="$dat_dir"EXPEDIENTES-NOTIFICACIONES.dat
+if [ $? != 0 ] ; then 
+   echo -e "[ERROR] MIG_EXPEDIENTES_NOTIFICACIONES"
 #   exit 1
 fi
 

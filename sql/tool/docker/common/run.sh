@@ -29,7 +29,8 @@ DUMP_DIRECTORY=$(pwd)/DUMP
 ORADATA_HOST_DIR=~/oradata-$CONTAINER_NAME
 SET_ENV_FILE=~/setEnvGlobal$CLIENTE.sh
 WORKSPACE_DIR=$PROJECT_BASE/.workspace
-
+TAG_LISTS_FILE=$(pwd)/../../../../tags-list.txt
+PACKAGE_TAGS_DIR=$(pwd)/../../../../package-tags
 
 OPTION_REMOVE=no
 OPTION_IGNORE_DUMP=no
@@ -147,11 +148,26 @@ else
 fi
 
 cd $(pwd)/$(dirname $0)
-
+##
+# $1 -> tag
+# $1 -> cliente
 function package_sql () {
 	if [[ "x$OPTION_RANDOM_DUMP" != "xyes" ]]; then
 		local current_dir=$(pwd)
+		local package_script=./sql/tool/package-scripts-from-tag.sh
+		local tag_or_list=$1
+		local cliente=$2
+		rm -Rf $WORKSPACE_DIR/package*
+		rm -Rf $SQL_PACKAGE_DIR
+		rm -Rf $PACKAGE_TAGS_DIR
 		cd ../../../..
+
+		if [[ -f $TAG_LISTS_FILE ]]; then
+			tag_or_list=$(basename $TAG_LISTS_FILE)
+			echo "[WARNING]: Piterdebug: $tag_or_list encontrado"
+			echo "[WARNING]: Piterdebug: Se va a realizar un empaquetado por etapas"
+			package_script=./sql/tool/package-scripts-from-tags-list.sh
+		fi
 		
 		if [[ "x$ORACLE_HOME" == "x" ]]; then
 			export ORACLE_HOME=empty
@@ -162,7 +178,7 @@ function package_sql () {
 			echo "<<<<<<<<<< PITERTUL DEBUG MODE ON >>>>>>>>>>>>>"
 			OLD_T=$TERM
 			export TERM=dumb
-			./sql/tool/package-scripts-from-tag.sh $1 $2
+			$package_script $tag_or_list $cliente
 			if [[ $? -eq 0 ]]; then
 				echo "<<<<<<<<<< PITERTUL DEBUG MODE OFF >>>>>>>>>>>>>"
 				TERM=$OLD_T
@@ -172,7 +188,7 @@ function package_sql () {
 			fi
 		else
 			echo -n "[INFO]: Pitertul - Empaquetando desde $(pwd): "
-			./sql/tool/package-scripts-from-tag.sh $1 $2 &>/dev/null
+			$package_script $tag_or_list $cliente &>/dev/null
 			if [[ $? -eq 0 ]]; then
 				echo "OK"
 			else
@@ -180,12 +196,18 @@ function package_sql () {
 				exit 1
 			fi
 		fi
-		ws_package_dir=$WORKSPACE_DIR/package
-		rm -Rf $ws_package_dir
+		if [[ -d $PACKAGE_TAGS_DIR ]]; then
+			ws_package_dir=$WORKSPACE_DIR/package-tags
+			SQL_PACKAGE_DIR=$PACKAGE_TAGS_DIR
+		else
+			ws_package_dir=$WORKSPACE_DIR/package
+		fi
+
 		cp -R $SQL_PACKAGE_DIR $ws_package_dir
-		chmod -R go+w $ws_package_dir/*
-		chmod +x $ws_package_dir/DDL/*.sh
-		chmod +x $ws_package_dir/DML/*.sh
+		chmod -R go+w $ws_package_dir
+		for sh in $(find $ws_package_dir -name '*.sh'); do
+			chmod ugo+x $sh
+		done
 
 		cd $current_dir
 		
@@ -202,11 +224,22 @@ function run_container () {
 	rm -Rf $WORKSPACE_DIR/*
 	cp $(pwd)/*.sh $WORKSPACE_DIR && chmod ugo+rx $WORKSPACE_DIR/*.sh
 	cp -R $PROJECT_BASE/SQL-SCRIPTS $WORKSPACE_DIR
+	if [[ -d $PROJECT_BASE/pre-scripts ]]; then
+		cp -R $PROJECT_BASE/pre-scripts $WORKSPACE_DIR
+		chmod 777 $WORKSPACE_DIR/pre-scripts
+		chmod +x $WORKSPACE_DIR/pre-scripts/*.sh
+	fi
+	if [[ -d $PROJECT_BASE/post-scripts ]]; then 
+		cp -R $PROJECT_BASE/post-scripts $WORKSPACE_DIR
+		chmod 777 $WORKSPACE_DIR/post-scripts
+		chmod +x $WORKSPACE_DIR/post-scripts/*.sh
+	fi
 	scripts_dir=$WORKSPACE_DIR/SQL-SCRIPTS/
 	cp $(pwd)/sql-files/*.sql $scripts_dir
 	chmod ugo+r $scripts_dir/*
 	$(pwd)/showversion.sh > $WORKSPACE_DIR/version.txt
 	chmod go+r $WORKSPACE_DIR/version.txt
+	echo $WORKSPACE_DIR > $WORKSPACE_DIR/workspace.path
 
 	if [[ "x$VAR_OUTTER_ERROR_LOG" != "x" ]]; then
 		outter_log_dir=$(dirname $VAR_OUTTER_ERROR_LOG)
@@ -349,13 +382,29 @@ function restore_or_confirm_flahsback () {
 	echo "Pulsa Ctrl + C para salir"
 }
 
+function verify_workspace () {
+	local _ws
+	if [[ ! -z "$(docker ps | grep $CONTAINER_NAME)" ]]; then
+		_ws="$(docker exec $CONTAINER_NAME cat /setup/workspace.path)"
+		if [[ "$WORKSPACE_DIR" == "$_ws" && -d $WORKSPACE_DIR ]]; then
+			echo "[INFO] Directorio de trabajo verificado."
+		else
+			echo "[ERROR] El directorio de trabajo no coincide con el del contenedor, o no existe"
+			echo -e "container ws dir = '$_ws'"
+			exit 1
+		fi
+	else
+		echo "[ERROR] $CONTAINER_NAME no está levantado."
+		exit 1
+	fi
+}
+
 # Creamos el workspace
 if [[ "x$VAR_WORKSPACE_CHANGED" == "xyes" ]]; then
 	echo "[INFO] Se va a usar el siguiente directorio como WORKSPACE: $WORKSPACE_DIR"
 else
 	echo "[WARNING] Se va a usar el siguiente directorio como WORKSPACE: $WORKSPACE_DIR"
-	echo "[WARNING]  esto no es conveniente si se quiere conservar el estado de la BD"
-	echo "[WARNING]  independiente del repositorio de versiones."
+	echo "[WARNING]  esto no es conveniente si se quiere conservar el estado de la BD independiente del repositorio de versiones."
 	echo "[WARNING] Usa el parámetro -workspace para ocultar este aviso."
 fi
 
@@ -423,6 +472,8 @@ else
 
 	if [[ "x$OPTION_SCRIPTS_MODE" == "xyes" && "x$VAR_SCRIPTS_DONE" == "xno"
 			&& "x$OPTION_RANDOM_DUMP" == "xno"  && "x$OPTION_REMOVE" == "xno" ]]; then
+		echo "[INFO] Verificando directorio de trabajo..."
+		verify_workspace
 		echo "[INFO] Empaquetando y ejecutando scripts DDL y DML"
 		package_sql $STARTING_TAG $CLIENTE
 		$(pwd)/execute-scripts.sh $CONTAINER_NAME $DOCKER_INNER_ERROR_LOG

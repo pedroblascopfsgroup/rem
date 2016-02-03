@@ -20,7 +20,9 @@ fi
 LAUNCH_JOB=ejecutarProcesoArquetipado
 WAIT_FOR_JOBS=procesoArquetipadoRecuperacionesJob,procesoRevisionExpedientesRecuperacionesJob,procesoRevisionClientesRecuperacionesJob,procesoCreacionClientesRecuperacionesJob,procesoCreacionExpedientesRecuperacionesJob,procesoHistorizarArquetipadoRecuperacionesJob
 JMX_TYPE=BatchRecuperaciones
+BASEDIR=$(dirname $0)
 
+cd $BASEDIR
 java -jar batch-shell.jar $JMX_USER:$JMX_PW $JMX_HOST:$JMX_PORT devon:type=$JMX_TYPE $LAUNCH_JOB=$ENTIDAD $WAIT_FOR_JOBS
 
 exit $?

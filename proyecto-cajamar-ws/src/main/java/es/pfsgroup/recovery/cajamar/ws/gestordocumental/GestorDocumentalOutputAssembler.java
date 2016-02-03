@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.cajamar.ws.S_M_GESTIONDOCUMENTAL.OUTPUT;
 
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalOutputDto;
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalOutputListDto;
 
@@ -57,7 +58,7 @@ public class GestorDocumentalOutputAssembler {
 		dto.setFicheroBase64(output.getFICHEROBASE64());
 		dto.setIdDocumento(output.getIDDOCUMENTO());
 		dto.setCodError(output.getCODERROR());
-		dto.setTxtError(output.getTXTERROR());
+		dto.setTxtError(Checks.esNulo(output.getTXTERROR()) ? null : output.getTXTERROR());
 		dto.setLbListadoDocumentos(new ArrayList<GestorDocumentalOutputListDto>());
 		List<GestorDocumentalOutputListDto> listDto = GestorDocumentalOutputListAssembler.outputListToDtoList(output.getLBLISTADODOCUMENTOS().getElement());
 		for(GestorDocumentalOutputListDto dtoAss : listDto){

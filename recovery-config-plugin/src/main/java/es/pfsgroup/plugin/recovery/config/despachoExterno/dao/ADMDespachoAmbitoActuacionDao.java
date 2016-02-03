@@ -3,7 +3,7 @@ package es.pfsgroup.plugin.recovery.config.despachoExterno.dao;
 import java.util.List;
 
 import es.capgemini.pfs.dao.AbstractDao;
-import es.capgemini.pfs.despachoExterno.model.DespachoAmbitoActuacion;
+import es.pfsgroup.recovery.ext.turnadodespachos.DespachoAmbitoActuacion;
 
 public interface ADMDespachoAmbitoActuacionDao extends AbstractDao<DespachoAmbitoActuacion, Long> {
 

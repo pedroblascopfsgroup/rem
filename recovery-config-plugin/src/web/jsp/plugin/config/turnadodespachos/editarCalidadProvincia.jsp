@@ -17,8 +17,8 @@
 		* Para asignar calidad a cada provincia del Despacho - JRA
 		*/ 
 	--%>
-    
-    var provincia = new Ext.ux.form.StaticTextField({
+	
+	var provincia = new Ext.ux.form.StaticTextField({
 		name: 'provincia'
 		,fieldLabel : '<s:message code="plugin.config.despachoExterno.turnado.tabEsquema.ambitoactuacion.provinciaSingular" text="**Provincia" />'
 		,value: '${ambitoActuacion.provincia.descripcion}'
@@ -30,10 +30,63 @@
 		//,style:'margin-top:5px'
 		,readOnly: true
 	});
-	
-	<pfs:textfield name="calidadProvDesp" labelKey="plugin.config.despachoExterno.turnado.ventana.panelCalidadProvincia.porcentajeCalidad"
-		label="**% Calidad Provincia" value ="${ambitoActuacion.porcentaje}" obligatory="false" width="50" maxLength="5" />
+    
+    var tiposCalidadLitData = <app:dict value="${tiposCalidadLitigio}" />;
+    
+    var cmbTipoCalidadLit = app.creaCombo({
+		data: tiposCalidadLitData
+    	,name : 'turnadoCodigoCalidadLitigios'
+    	, value: '${ambitoActuacion.etcLitigio.codigo}'
+    	,fieldLabel : '<s:message code="plugin.config.despachoExterno.turnado.ventana.label.tipocalidad" text="**Tipo calidad" />'
+		,width : 130
+    });
+    
+    var tiposCalidadConData = <app:dict value="${tiposCalidadConcursal}" />;
+    
+    var cmbTipoCalidadCon = app.creaCombo({
+		data: tiposCalidadConData
+    	,name : 'turnadoCodigoCalidadConcursal'
+    	, value: '${ambitoActuacion.etcConcurso.codigo}'
+    	,fieldLabel : '<s:message code="plugin.config.despachoExterno.turnado.ventana.label.tipocalidad" text="**Tipo calidad" />'
+		,width : 130
+    });
 
+	var turnadoLitigiosFieldSet = new Ext.form.FieldSet({
+		title : '<s:message code="plugin.config.despachoExterno.turnado.ventana.panelLitigios.titulo" text="**Turnado Litigios" />'
+		,layout:'column'
+		,autoHeight:true
+		,border:true
+		,bodyStyle:'padding:3px;cellspacing:20px;'
+		,viewConfig : { columns : 1 }
+		,defaults :  {xtype : 'fieldset', autoHeight : true, border : false, width:310 }
+		,items : [
+		 	{items:[<%-- cmbTipoImporteLit, --%>cmbTipoCalidadLit]}
+		]
+		,doLayout:function() {
+				var margin = 40;
+				this.setWidth(310-margin);
+				Ext.Panel.prototype.doLayout.call(this);
+		}
+	});
+
+	var turnadoConcursosFieldSet = new Ext.form.FieldSet({
+		title : '<s:message code="plugin.config.despachoExterno.turnado.ventana.panelConcursos.titulo" text="**Turnado Concursos" />'
+		,layout:'column'
+		,autoHeight:true
+		,border:true
+		,bodyStyle:'padding:3px;cellspacing:20px;'
+		,viewConfig : { columns : 1 }
+		,defaults :  {xtype : 'fieldset', autoHeight : true, border : false, width:310 }
+		,items : [
+		 	{items:[<%-- cmbTipoImporteCon, --%>cmbTipoCalidadCon]}
+		]
+		,doLayout:function() {
+				var margin = 40;
+				this.setWidth(310-margin);
+				Ext.Panel.prototype.doLayout.call(this);
+		}
+	});
+	
 	var ambitoActuacionFieldSet = new Ext.form.FieldSet({
 		title : '<s:message code="plugin.config.despachoExterno.turnado.ventana.panelCalidadProvincia.titulo" text="**Asginar calidad provincia" />'
 		,layout:'column'
@@ -42,76 +95,51 @@
 		,bodyStyle:'padding:3px;cellspacing:20px;'
 		,viewConfig : { columns : 1 }
 		,defaults :  {xtype : 'fieldset', autoHeight : true, border : false, width:600 }
-		,items : [{items:[provincia,calidadProvDesp]}]
+		,items : [{items:[provincia,turnadoLitigiosFieldSet, turnadoConcursosFieldSet]}]
 		,doLayout:function() {
 				var margin = 40;
 				this.setWidth(400-margin);
 				Ext.Panel.prototype.doLayout.call(this);
 		}
 	});
-	var bottomPanel = new Ext.Panel({
-		autoHeight:true
-		,layout:'table'
-		,border:false
-		,layoutConfig:{columns:1}
-		,viewConfig : {forceFit : true}
-		,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
-		,items:[{layout:'form'
-					,items: [ambitoActuacionFieldSet]}
-				]
-	});
- 	
-	var validarCampos = function() {
-		
-		calidadProvDesp.setValue(calidadProvDesp.getValue().replace(',','.'));
-				
-		if (calidadProvDesp.getValue() == '' || !(calidadProvDesp.getValue() >= 0 && calidadProvDesp.getValue() <= 100)) {
-			return '<s:message code="plugin.config.despachoExterno.turnado.ventana.panelCalidadProvincia.validacion1" text="**Calidad provincia debe tener un valor comprendido entre 0 y 100%"/>';
-		}
-		
-		var totalPercent = ${sumaPorcentajes}
 
-        if(parseFloat(totalPercent) + parseFloat(calidadProvDesp.getValue()) > 100)
-			return '<s:message code="plugin.config.despachoExterno.turnado.ventana.panelCalidadProvincia.validacion2" text="**La suma de las calidades de las provincias exceden el 100% de los casos."/>';
+	var bottomPanel = new Ext.Panel({
+			autoHeight:true
+			,layout:'table'
+			,border:false
+			,layoutConfig:{columns:1}
+			,viewConfig : {forceFit : true}
+			,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
+			,items:[{layout:'form'
+						,items: [ambitoActuacionFieldSet]}
+					]
+		});
 		
-		return null;
-	};
-	
 	var btnCancelar= new Ext.Button({
 		text : '<s:message code="app.cancelar" text="**Cancelar" />'
 		,iconCls : 'icon_cancel'
 		,handler : function(){page.fireEvent(app.event.CANCEL);}
 	});
 	
+	
 	var btnGuardar = new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){
-		 	var res = validarCampos();
-	    	if(res == null){
-				Ext.Ajax.request({
-					url: page.resolveUrl('turnadodespachos/guardarCalidadProvincia')
-					,params: {
-						despacho: ${ambitoActuacion.despacho.id}
-						,codigoProvincia: ${ambitoActuacion.provincia.codigo}
-						,calidadProvincia: calidadProvDesp.getValue()									
-					}
-					,method: 'POST'
-					,success: function ( result, request ) {
-						page.fireEvent(app.event.DONE);
-					}
-				});
-			}
-			else {
-				Ext.MessageBox.show({
-		           title: 'Guardado'
-		           ,msg: res
-		           ,width:300
-		           ,buttons: Ext.MessageBox.OK
-		       });
-		    }			
+			Ext.Ajax.request({
+				url: page.resolveUrl('turnadodespachos/guardarCalidadProvincia'),
+				params: {
+					despacho: ${ambitoActuacion.despacho.id},
+					codigoProvincia: ${ambitoActuacion.provincia.codigo},
+					turnadoCodigoCalidadConcursal: cmbTipoCalidadCon.getValue(),
+					turnadoCodigoCalidadLitigios: cmbTipoCalidadLit.getValue()										
+				},
+				method: 'POST',
+				success: function ( result, request ) {
+					page.fireEvent(app.event.DONE);
+				}
+			});		
 		}
-		<app:test id="btnGuardarABM" addComa="true"/>
 	});
 
 	var mainPanel = new Ext.FormPanel({
@@ -120,7 +148,7 @@
 		,layout:'table'
 		,layoutConfig:{columns:1}
 		,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
-		,bbar: [btnGuardar,btnCancelar]
+		,bbar: [btnGuardar, btnCancelar]
 		,items:[{layout:'form', items: [bottomPanel]}
 		]
 	});	

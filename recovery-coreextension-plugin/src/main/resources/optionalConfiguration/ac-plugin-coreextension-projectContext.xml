@@ -51,6 +51,13 @@
 				<value>LETR</value>
 			</set>
 		</property>
+		<property name="tipoSupervisorProrroga">
+			<map>
+				<entry key="SUP">
+					<value>41</value>
+				</entry>
+			</map>
+		</property>
 	</bean>  
 	
 		<!-- Implementaciones por defecto-->

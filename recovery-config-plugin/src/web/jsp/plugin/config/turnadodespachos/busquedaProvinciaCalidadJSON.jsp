@@ -12,7 +12,9 @@
 		<json:object>
 			<json:property name="codigo" value="${provincias.codigo}" />
 			<json:property name="nombreProvincia" value="${provincias.descripcion}" />
-			<json:property name="calidad" value="${provincias.descripcionLarga}" />
+			<json:property name="calidadLitigio" value="${provincias.descripcionLarga}" />
+			<json:property name="calidadConcurso" value="${provincias.auditoria.usuarioBorrar}" />
 		</json:object>
 	</json:array>
+	
 </fwk:json>

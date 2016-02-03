@@ -15,6 +15,7 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	private Set<String> entidadesDesparalizacion;
 	private List<String> codigosDocumentosConFechaCaducidad;
 	private Set<String> tipoGestorLetrado;
+	private Map<String, String> tipoSupervisorProrroga;
 	
 	public CoreProjectContextImpl() {
 		entidadesDesparalizacion = new HashSet<String>();
@@ -95,5 +96,14 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 
 	public void setTipoGestorLetrado(Set<String> tipoGestorLetrado) {
 		this.tipoGestorLetrado = tipoGestorLetrado;
+	}
+
+	@Override
+	public Map<String, String> getTipoSupervisorProrroga() {
+		return this.tipoSupervisorProrroga;
+	}
+	
+	public void setTipoSupervisorProrroga(Map<String, String>tipoSupervisorProrroga) {
+		this.tipoSupervisorProrroga = tipoSupervisorProrroga;
 	}
 }

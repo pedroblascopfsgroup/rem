@@ -1,0 +1,127 @@
+--/*
+--##########################################
+--## AUTOR=Carlos Gil Gimeno
+--## FECHA_CREACION=20160201
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.1.3-hy-master
+--## INCIDENCIA_LINK=HR-1179
+--## PRODUCTO=SI
+--##
+--## Finalidad: Inserta el Subtipo de tarea para la aceptación de prorrogas en DD_STA_SUBTIPO_TAREA_BASE
+--## INSTRUCCIONES: 
+--## VERSIONES:
+--##        0.1 Version inicial
+--##########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+
+DECLARE
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_SQL_TGE VARCHAR2(4000 CHAR); -- Vble. para la query de consultar el id del codigo TGE.  
+    V_ID_TGE VARCHAR2(25 CHAR); --Vbla. para almacenar el id del TGE
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+	
+    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
+    V_ENTIDAD_ID NUMBER(16);
+  
+    --Valores en DD_STA_SUBTIPO_TAREA_BASE
+    TYPE T_STA_SUBTIPO IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_STA IS TABLE OF T_STA_SUBTIPO;
+    V_STA_SUBTIPO T_ARRAY_STA := T_ARRAY_STA(
+      T_STA_SUBTIPO(1, 'RESPRO_SUP', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'SUP', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_SUPNVL2', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'SUPNVL2', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_SUCO', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'SUCO', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_GUCO', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'GUCO', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_GSUB', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'GSUB', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_SSUB', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'SSUB', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_GDEU', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'GDEU', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_SDEU', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'SDEU', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_SCON', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'SCON', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_SFIS', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'SFIS', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_GAREO', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'GAREO', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_SAREO', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'SAREO', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_GULI', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'GULI', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_DULI', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'DULI', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_SUCHRE', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'SUCHRE', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_DIRREC', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'DIRREC', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_GESCON', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'GESCON', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_GESINC', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'GESINC', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_GERREC', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'GERREC', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_SUCON', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'SUCON', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_SUINC', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'SUINC', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_SUANREC', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'SUANREC', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_SUHRE', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'SUHRE', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_SUADMCON', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'SUADMCON', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_DIRCON', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'DIRCON', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_DIRHRE', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'DIRHRE', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_SUP_PCO', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'SUP_PCO', 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'RESPRO_CM_GD_PCO', 'Solicitar Prorroga PRC', 'Solicitar Prorroga PRC', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'CM_GD_PCO', 'EXTSubtipoTarea')
+    );   
+    V_TMP_STA_SUBTIPO T_STA_SUBTIPO;
+
+BEGIN	
+
+      -- LOOP Insertando valores en DD_STA_SUBTIPO_TAREA_BASE ------------------------------------------------------------------------
+
+	
+    DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE... Empezando a insertar datos en DD_STA_SUBTIPO_TAREA_BASE');
+    FOR I IN V_STA_SUBTIPO.FIRST .. V_STA_SUBTIPO.LAST
+      LOOP
+            V_TMP_STA_SUBTIPO := V_STA_SUBTIPO(I);
+        --Comprobamos el dato a insertar
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO = '''||TRIM(V_TMP_STA_SUBTIPO(2))||'''';
+        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+        IF V_NUM_TABLAS > 0 THEN				
+          DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA_M || '.DD_STA_SUBTIPO_TAREA_BASE... Ya existe el DD_STA_SUBTIPO_TAREA_BASE '''|| TRIM(V_TMP_STA_SUBTIPO(2)) ||'''');
+        ELSE
+        
+          V_SQL := 'SELECT COUNT(DD_TGE_ID) FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = '''||TRIM(V_TMP_STA_SUBTIPO(14))||'''';
+          EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+        
+          IF V_NUM_TABLAS = 1 THEN
+	          V_SQL_TGE := 'SELECT DD_TGE_ID FROM '|| V_ESQUEMA_M ||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = '''||V_TMP_STA_SUBTIPO(14)||'''';
+	          EXECUTE IMMEDIATE V_SQL_TGE INTO V_ID_TGE;
+	        
+	          V_MSQL := 'SELECT '|| V_ESQUEMA_M ||'.S_DD_STA_SUBTIPO_TAREA_BASE.NEXTVAL FROM DUAL';
+	          EXECUTE IMMEDIATE V_MSQL INTO V_ENTIDAD_ID;
+	          V_MSQL := 'INSERT INTO '|| V_ESQUEMA_M ||'.DD_STA_SUBTIPO_TAREA_BASE (' ||
+	                      'DD_STA_ID, DD_TAR_ID, DD_STA_CODIGO, DD_STA_DESCRIPCION, DD_STA_DESCRIPCION_LARGA, DD_STA_GESTOR, VERSION, USUARIOCREAR, FECHACREAR, USUARIOMODIFICAR, FECHAMODIFICAR, USUARIOBORRAR, FECHABORRAR, BORRADO, DD_TGE_ID, DTYPE)' ||
+	                      'SELECT '|| V_ENTIDAD_ID || ','''||V_TMP_STA_SUBTIPO(1)||''','''||V_TMP_STA_SUBTIPO(2)||''','''||V_TMP_STA_SUBTIPO(3)||''''||
+							','''||V_TMP_STA_SUBTIPO(4)||''','''||V_TMP_STA_SUBTIPO(5)||''','''||V_TMP_STA_SUBTIPO(6)||''''||
+							','''||V_TMP_STA_SUBTIPO(7)||''','''||V_TMP_STA_SUBTIPO(8)||''','''||V_TMP_STA_SUBTIPO(9)||''''||
+							','''||V_TMP_STA_SUBTIPO(10)||''','''||V_TMP_STA_SUBTIPO(11)||''','''||V_TMP_STA_SUBTIPO(12)||''''||
+							','''||V_TMP_STA_SUBTIPO(13)||''','''||V_ID_TGE||''','''||V_TMP_STA_SUBTIPO(15)||''' FROM DUAL';
+	              DBMS_OUTPUT.PUT_LINE('INSERTANDO: '''||V_TMP_STA_SUBTIPO(2)||'''');
+	          EXECUTE IMMEDIATE V_MSQL;
+	       ELSE
+	       		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA_M || '.DD_TGE_TIPO_GESTOR... No tiene resultados o obtiene mas de uno para el codigo '''|| TRIM(V_TMP_STA_SUBTIPO(14)) ||'''');
+	       END IF;   
+        END IF;
+      END LOOP;
+    COMMIT;
+    DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA_M||'.STA_SUBTIPO... Datos del subtipo de tarea insertado.');
+    
+    
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;

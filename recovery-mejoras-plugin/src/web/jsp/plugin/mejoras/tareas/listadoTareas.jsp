@@ -419,6 +419,7 @@
 		,{name:'fechaRevisionAlerta'}
 		,{name:'dtype'}
 		,{name:'categoriaTarea'}
+		,{name:'esPeticionProrroga'}
 	]);
 	
 	Ext.grid.CheckColumn = function(config){ 
@@ -907,10 +908,32 @@
 				break;
 			--%>	
 			default:
-				btnQuickAceptarCancelacion.setVisible(false);
-				btnQuickRechazarCancelacion.setVisible(false);
-				btnQuickRechazarProrroga.setVisible(false);
-				btnQuickAceptarProrroga.setVisible(false);
+				if(rec.get('esPeticionProrroga')){
+					var params ={
+							idEntidadInformacion: rec.get('idEntidad')
+							,isConsulta:false
+							,fechaVencimiento: app.format.dateRenderer(rec.get('fechaVenc'))
+							,fechaCreacion: rec.get('fcreacionEntidad')
+							,situacion:'Asunto' 
+							,destareaOri:  rec.get(nombreTareaField)
+							,idTipoEntidadInformacion: '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO" />'
+							,fechaPropuesta: rec.get('fechaPropuesta')
+							,motivo: rec.get('motivo')
+							,idTareaOriginal: rec.get('id')	
+							,descripcion:"Toma decision procedimiento"		
+							,codigoTipoProrroga: '<fwk:const value="es.capgemini.pfs.prorroga.model.DDTipoProrroga.TIPO_PRORROGA_EXTERNA" />'
+					}
+					btnQuickAceptarProrroga.setHandler(function(){
+							redefinirFuncionContestarProrroga(params)
+						});	
+					btnQuickAceptarProrroga.setVisible(true);
+				}else{
+					btnQuickAceptarCancelacion.setVisible(false);
+					btnQuickRechazarCancelacion.setVisible(false);
+					btnQuickRechazarProrroga.setVisible(false);
+					btnQuickAceptarProrroga.setVisible(false);
+				}
+
 				break;
 		}
 		if(tipoTareaNotificacion=='EXTTareaNotificacion'){

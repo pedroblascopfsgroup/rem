@@ -59,13 +59,13 @@
    // DEFINICION TIPOS GRIDs 
 	var TipoImporte = Ext.data.Record.create([
 	    {name: 'id', type: 'int', mapping:0},
-	    {name: 'codigo', mapping:1},
+	    {name: 'codigo', tag: 'input', type: 'text', maxlength: '10', autocomplete: 'off', mapping:1},
 	    {name: 'desde', type: 'float', mapping:2},
 	    {name: 'hasta', type: 'float', mapping:3}
 	]);
 	var TipoCalidad = Ext.data.Record.create([
 	    {name: 'id', type: 'int', mapping:0},
-	    {name: 'codigo', mapping:1},
+	    {name: 'codigo', mapping:1, maxLength:10, size:"10"},
 	    {name: 'porcentaje', type: 'float', mapping:2}
 	]);
 
@@ -122,7 +122,9 @@
 	// GRID 
 	var txtGridEditor = function() {
 		return {
-			allowBlank: false
+			xtype: 'textfield'
+			,maxLength: 10
+			,allowBlank: false
 		};
 	};
 	var txtCantidadGridEditor = function() {
@@ -241,17 +243,17 @@
 					totalPercent = (changes.porcentaje) ? changes.porcentaje : 0;
 
 					store.each(function (record, index) {
-						//validating new title field value with existing title field value 
+						//validating new title field value with existing title field value
 						if (index !== rowIndex && record.data.codigo === value) {
 							valid = false;
 							return false;
 						}
-						
+
 						if (record.data.porcentaje) {
 							totalPercent+=record.data.porcentaje;
 						}
 					});
-					
+
 					if (!valid) {
 						Ext.Msg.alert('<s:message code="fwk.constant.alert" text="**Alerta"/>','<s:message code="plugin.config.esquematurnado.editar.grid.error.codigoExistente" text="**Este codigo ya existe, no se creará la línea."/>');
 						return false;

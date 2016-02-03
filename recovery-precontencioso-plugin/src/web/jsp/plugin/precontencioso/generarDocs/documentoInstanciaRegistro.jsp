@@ -74,7 +74,7 @@
    ]);
  
    var bienesStore = page.getStore({
-        flow: 'expedienteJudicial/bienesAsociadosProcedimiento'
+        flow: 'expedientejudicial/bienesAsociadosProcedimiento'
         ,storeId : 'bienesStore'
         ,reader : new Ext.data.JsonReader(
             {root:'bienesPrc'}
@@ -94,47 +94,24 @@
          ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
 	});
 	
+	var strIds = '';
 	
 	var comprobarSiHayFilSeleccionada=function(){
 		var store = gridBienes.getStore();
 		var datos;
+		strIds = '';
 		var numFilasSeleccionadas=0;
 		for (var i=0; i < store.data.length; i++) {
 			datos = store.getAt(i);
 			if(datos.get('incluido') == true) {
       			numFilasSeleccionadas=numFilasSeleccionadas+1
+      			if(strIds!='') {
+					strIds += ',';
+				}
+	      		strIds += datos.get('idBien');
 			}
 		}
 		return numFilasSeleccionadas;
-	}
-	
-	
-	var getParams = function() {
-		
-		var objParams = {};
-		
-		var store = gridBienes.getStore();
-		var strIds = '';
-		var strSolvencias = '';
-		var datos;
-		for (var i=0; i < store.data.length; i++) {
-			datos = store.getAt(i);
-			if(datos.get('incluido') == true) {
-				if(strIds!='') {
-					strIds += ',';
-					strSolvencias += ',';
-				}
-	      		strIds += datos.get('idBien');
-	      		strSolvencias += datos.get('codSolvencia');	      		
-			}
-		}
-		objParams = {
-			idProcedimiento:idProcedimiento,
-			idsBien:strIds,
-			codsSolvencia:strSolvencias,
-		}
-		
-		return objParams;
 	}
 	
 	var btnAceptar = new Ext.Button({
@@ -143,16 +120,23 @@
 	       ,cls: 'x-btn-text-icon'
 	       ,handler:function(){
 				if (comprobarSiHayFilSeleccionada()>=1){
-					page.webflow({
-			      		flow:'expedienteJudicial/instanciarDocumentoBienes'
-			      		,params: getParams()
-			      		,success: function(){
-		            		page.fireEvent(app.event.DONE);
-		            	}	
-			      	});
+					instanciar();
 	      		}else{
 					Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="nuevoModeloBienes.agregarExcluirBien.agregar.faltanDatos" text="**Debe seleccionar algún bien"/>');
 	      		}
+	     	}
+	     	,instanciar=function() {
+	     		page.webflow({
+		      		flow:'expedientejudicial/instanciarDocumentoBienes'
+		      		,params:{idProcedimiento:data.id, idsBien:strIds}
+		      		,success: function(result,request){
+		      			if(result.resultadoOK=='true'){
+	            			page.fireEvent(app.event.DONE);											
+						}else{
+							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="nuevoModeloBienes.agregarExcluirBien.agregar.faltanDatos.a" text="**HAy algun campo vacio"/>');
+						}
+	            	}	
+		      	});
 	     	}
 	});
 		
@@ -187,7 +171,7 @@
 		,bbar : [btnAceptar, btnCancelar]
 	});
  	
-    bienesStore.webflow({idProcedimiento:idProcedimiento, accion:accion});
+    bienesStore.webflow({id:data.id});
    
 	page.add(panelAlta);
 	panelAlta.el.mask('<s:message code="fwk.ui.form.cargando" text="**Cargando.."/>','x-mask-loading');

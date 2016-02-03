@@ -67,6 +67,7 @@ public class ExpedienteJudicialController {
 	private static final String OK_KO_RESPUESTA_JSON = "plugin/coreextension/OkRespuestaJSON";
 	private static final String DOCUMENTO_INSTANCIA_REGISTRO = "plugin/precontencioso/generarDocs/documentoInstanciaRegistro";
 	private static final String JSON_BIENES_PROCEDIMIENTO = "plugin/precontencioso/generarDocs/bienesProcedimientoJSON";
+	private static final String JSON_RESPUESTA_SERVICIO = "plugin/precontencioso/generarDocs/resultadoOKJSON";
 
 	@Autowired
 	ProcedimientoPcoApi procedimientoPcoApi;
@@ -423,6 +424,7 @@ public class ExpedienteJudicialController {
 			@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento,
 			@RequestParam(value = "idsBien", required = true) String idsBien) {
 		boolean resultadoOK = procedimientoPcoApi.instanciarDocumentoBienes(idProcedimiento, idsBien);
-		return DEFAULT;
+		model.put("resultadoOK", resultadoOK);
+		return JSON_RESPUESTA_SERVICIO;
 	}
 }

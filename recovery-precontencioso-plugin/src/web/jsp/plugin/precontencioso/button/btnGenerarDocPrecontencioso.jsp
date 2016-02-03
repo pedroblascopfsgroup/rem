@@ -13,8 +13,7 @@ new Ext.Button({
 			icon:'/pfs/css/book_next.png',
 			handler: function() {
 				var w = app.openWindow({
-					flow: 'expedienteJudicial/documentoInstanciaRegistro'
-					,params:{idPCO:data.precontencioso.id}
+					flow: 'expedientejudicial/documentoInstanciaRegistro'
 					,title: '<s:message code="plugin.precontencioso.button.documento.instancia.registro" text="**Documento de instancia al registro" />'
 					,width: 640
 				});

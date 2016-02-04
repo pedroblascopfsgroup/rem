@@ -47,6 +47,7 @@ import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.exclusionexpedientecliente.model.ExclusionExpedienteCliente;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.itinerario.model.Estado;
+import es.capgemini.pfs.movimiento.model.Movimiento;
 import es.capgemini.pfs.oficina.model.Oficina;
 import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
@@ -154,13 +155,6 @@ public class Expediente implements Serializable, Auditable, Describible {
             + DDEstadoAsunto.ESTADO_ASUNTO_PROPUESTO + "') " + " and asu.borrado = 0 and asu.exp_id = exp_id)")
     private Long cantidadAsuntos;
 
-    @Formula(value = "(Select NVL(sum(m.mov_riesgo),0)"
-            + " from mov_movimientos m, cex_contratos_expediente cex, cnt_contratos cnt, DD_TPE_TIPO_PROD_ENTIDAD tpe"
-            + " where cex.borrado = 0 and m.cnt_id = cex.cnt_id" + " and cex.exp_id = exp_id AND cnt.cnt_id = cex.cnt_id"
-            + " and m.mov_fecha_extraccion = cnt.CNT_FECHA_EXTRACCION" + " and cnt.dd_tpe_id = tpe.dd_tpe_id)")
-    @Basic(fetch = FetchType.LAZY)
-    private Double volumenRiesgo;
-
     @Formula(value = "(Select NVL(sum(m.mov_deuda_irregular), 0)"
             + " from mov_movimientos m, cex_contratos_expediente cex, cnt_contratos cnt, DD_TPE_TIPO_PROD_ENTIDAD tpe"
             + " where cex.borrado = 0 and m.cnt_id = cex.cnt_id" + " and cex.exp_id = exp_id AND cnt.cnt_id = cex.cnt_id"
@@ -187,7 +181,28 @@ public class Expediente implements Serializable, Auditable, Describible {
      * @return el monto del riesgo del expediente.
      */
     public Double getVolumenRiesgo() {
-        return volumenRiesgo;
+    	
+    	Double volumenRiesgo = 0.0;
+    	Double dispuesto = 0.0;
+    	
+    	
+    	for (ExpedienteContrato expedienteContrato : contratos) {
+    		Date fechaExtraccion = null;
+    		Contrato contrato = expedienteContrato.getContrato();
+    		for(Movimiento movimiento : contrato.getMovimientos()) {
+    			if(contrato.getFechaExtraccion().equals(movimiento.getFechaExtraccion())) {
+    				
+    				if(fechaExtraccion == null || fechaExtraccion.before(movimiento.getFechaExtraccion())) {
+    					fechaExtraccion = movimiento.getFechaExtraccion();
+    					dispuesto = new Double(movimiento.getDispuesto());
+    					
+    				}
+    			}
+    		}
+    		volumenRiesgo = volumenRiesgo +  dispuesto;
+    	}
+    	
+    	return volumenRiesgo;
     }
 
     /**
@@ -881,8 +896,8 @@ public class Expediente implements Serializable, Auditable, Describible {
      * @return el volumen de riesgo en valor absoluto.
      */
     public Double getVolumenRiesgoAbsoluto() {
-        if (volumenRiesgo == null) { return 0D; }
-        return Math.abs(volumenRiesgo);
+        if (getVolumenRiesgo() == null) { return 0D; }
+        return Math.abs(getVolumenRiesgo());
     }
 
     /**

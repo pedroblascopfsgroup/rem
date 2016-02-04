@@ -478,7 +478,8 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 
             Date fechaHastaFinal;
             if (!Checks.esNulo(dto.getFechaVencimientoHasta())) {
-                fechaHastaFinal = fechaHastaParsed.getTime();
+            	fechaHastaParsed.add(Calendar.DAY_OF_MONTH, +1);
+            	fechaHastaFinal = fechaHastaParsed.getTime();
             } else {
                 if ("=".equals(dto.getFechaVencDesdeOperador()) && fechaDesdeParse != null) {
                     fechaHastaParsed = fechaDesdeParse;

@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.precontencioso.liquidacion.dao.impl;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +17,7 @@ public class LiquidacionDaoImpl extends AbstractEntityDao<LiquidacionPCO, Long> 
 	@Override
 	public List<LiquidacionPCO> getLiquidacionesPorIdProcedimientoPCO(Long idProcedimientoPCO) {
 
-		Criteria query = getSession().createCriteria(LiquidacionPCO.class);
+		Criteria query = getSession().createCriteria(LiquidacionPCO.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		query.createAlias("procedimientoPCO", "procedimientoPCO");
 		query.add(Restrictions.eq("procedimientoPCO.id", idProcedimientoPCO));
 

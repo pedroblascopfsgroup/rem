@@ -732,7 +732,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 					docUG.setId(contrato.getId());
 					docUG.setContrato(contrato.getNroContrato());
 					docUG.setUnidadGestionId(DDUnidadGestionPCO.CONTRATOS);
-					docUG.setDescripcionUG(contrato.getTipoProducto().getDescripcion());			
+					docUG.setDescripcionUG(contrato.getTipoProductoEntidad().getDescripcion());			
 					documentosUG.add(docUG);
 				}
 			}

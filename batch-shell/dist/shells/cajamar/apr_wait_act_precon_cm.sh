@@ -1,6 +1,6 @@
 #!/bin/bash
-
-ficheros=ALERTAS
+ 
+ficheros=STOCK_PRECON_PRC,STOCK_PRECON_LIQ,STOCK_PRECON_DOC,STOCK_PRECON_SOL,STOCK_PRECON_BUR,STOCK_PRECON_ENV
 
 mascara='_'$ENTIDAD'_'????????
 extensionSem=".sem"
@@ -40,8 +40,8 @@ else
         ficheroSem=`ls -Art $mascaraSem | tail -n 1`
         ficheroZip=`ls -Art $mascaraZip | tail -n 1`
 	
-	    sed -i 's/ //g' $ficheroSem
-	    mv $ficheroZip $DIR_DESTINO
+        sed -i 's/ //g' $ficheroSem
+        mv $ficheroZip $DIR_DESTINO
 	    mv $ficheroSem $DIR_DESTINO
    done
    echo "$(basename $0) Ficheros encontrados"

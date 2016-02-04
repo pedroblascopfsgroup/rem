@@ -263,15 +263,20 @@ public class LiquidacionManager implements LiquidacionApi {
 
 	@Override
 	public BigDecimal getTotalLiquidacionPCO(Long idProcedimientoPCO) {
-		// TODO Auto-generated method stub
+		ProcedimientoPCO pco = procedimientoPCODao.getProcedimientoPcoPorIdProcedimiento(idProcedimientoPCO);
 		// Sumatorio de todas las liquidaciones del procedimiento
 		
 		//Obtenemos las liquidaciones
-		List<LiquidacionPCO> liquidaciones = liquidacionDao.getLiquidacionesPorIdProcedimientoPCO(idProcedimientoPCO);
-		BigDecimal total = new BigDecimal(0);
 		
-		for (LiquidacionPCO liquidacion : liquidaciones) {
-			total = total.add(liquidacion.getTotal());
+		BigDecimal total = new BigDecimal(0);
+		if(!Checks.esNulo(pco)){
+			List<LiquidacionPCO> liquidaciones = liquidacionDao.getLiquidacionesPorIdProcedimientoPCO(pco.getId());
+			
+			for (LiquidacionPCO liquidacion : liquidaciones) {
+				if(!Checks.esNulo(liquidacion.getTotal())){
+					total = total.add(liquidacion.getTotal());
+				}
+			}
 		}
 
 		return total;

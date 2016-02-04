@@ -218,6 +218,15 @@
   		<list>
   			<value><![CDATA[
   			
+  			def dameTotalLiquidacionPCO= {
+  				def liquidacionPCO = ctx.getBean("liquidacionManager");
+  				if(liquidacionPCO != null){
+  					return liquidacionPCO.getTotalLiquidacion(idProcedimiento);
+  				}else{
+  					return null;
+  				}
+  			}
+  			
   			def todosNotificados = {
                 def notificacionDemandadosManager = ctx.getBean("MSVNotificacionDemandadosManager");
                 return notificacionDemandadosManager.todosNotificados(idProcedimiento);

@@ -518,7 +518,7 @@ public class BTABusquedaTareaManager {
                             sheet1.addCell(row);
                             if (dto.getTarea() != null && dto.getTarea().getAsunto() != null && dto.getTarea().getAsunto().getNombre() != null) {
                             	String desc = dto.getTarea().getAsunto().getNombre();
-                            	if (dto.getTarea().getProcedimiento().getTipoProcedimiento().getDescripcion() != null){
+                            	if (dto.getTarea().getProcedimiento() != null && dto.getTarea().getProcedimiento().getTipoProcedimiento() != null && dto.getTarea().getProcedimiento().getTipoProcedimiento().getDescripcion() != null){
                             		desc = desc + " - " + dto.getTarea().getProcedimiento().getTipoProcedimiento().getDescripcion();
                             	}
                                 row = new Label(4, i, desc);

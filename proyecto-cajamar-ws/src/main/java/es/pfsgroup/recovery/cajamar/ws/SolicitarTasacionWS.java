@@ -49,7 +49,6 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 	private final static String FINALIDAD = "03";
 	private final static String INCO = "N";
 	private final static String TENC = "1";
-	//private final static String ADJU = "N";
 	private final static String CKCA = "1";
 	
 	private Map<String, String> mapaTIMN;
@@ -165,7 +164,7 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 		// Se selecciona el contrato que tiene mayor importe garantizado
 		String numeroContrato = "";
 		Float importeGarantizado = 0f;
-		Float secuenciaGarantia = 0f; 
+		Integer secuenciaGarantia = 0; 
 		
 		for(NMBContratoBien contratoBien : contratosBien) {
 			
@@ -201,8 +200,8 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 			input.setNSECUENCIA(String.valueOf(secuenciaGarantia));
 		}
 		else {
-			logger.info("NSECUENCIA PRUEBA: 1");
-			input.setNSECUENCIA("1");
+			logger.info("NSECUENCIA: ");
+			input.setNSECUENCIA("");
 		}
 		
 		// Se selecciona la persona que tiene una mayor participación. En caso de igualdad, el primer registro
@@ -266,8 +265,8 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 			input.setCODDIR(bien.getIdDireccion());
 		}
 		else {
-			logger.info("RINM PRUEBA: 232051");
-			input.setCODDIR("232051");
+			logger.info("RINM: ");
+			input.setCODDIR("");
 		}
 		
 		String poblacion = "";

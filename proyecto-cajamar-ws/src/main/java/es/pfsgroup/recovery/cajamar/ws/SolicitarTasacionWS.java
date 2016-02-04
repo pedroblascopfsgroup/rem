@@ -133,14 +133,15 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 			for (NMBValoracionesBien val : valoraciones) {
 				if (val.getId() == valoracionActiva.getId() ) 
 					nueva = val;
-					nueva.setCodigoNuita(new Integer(output.getIDTA()));
+				
+					nueva.setCodigoNuita(new Long(output.getIDTA()));
 					nueva.setFechaSolicitudTasacion(new Date());
 					Auditoria auditoria = Auditoria.getNewInstance();
 					nueva.setAuditoria(auditoria);
 					break;
 	        }
 		} else {
-			nueva.setCodigoNuita(new Integer(output.getIDTA()));
+			nueva.setCodigoNuita(new Long(output.getIDTA()));
 			nueva.setBien(bien);
 			Auditoria auditoria = Auditoria.getNewInstance();
 			nueva.setAuditoria(auditoria);

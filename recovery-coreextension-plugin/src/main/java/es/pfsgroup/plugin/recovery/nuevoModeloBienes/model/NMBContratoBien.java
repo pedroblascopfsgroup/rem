@@ -65,7 +65,7 @@ public class NMBContratoBien implements  Serializable, Auditable, NMBContratoBie
     private Date fechaCierre;
 	
 	@Transient
-	@Column(name = "NUM_EXTRA1")
+	@Column(name = "BIE_SEC_GARANTIA_CNT")
     private Float secuenciaGarantia;
 	
 	@Embedded

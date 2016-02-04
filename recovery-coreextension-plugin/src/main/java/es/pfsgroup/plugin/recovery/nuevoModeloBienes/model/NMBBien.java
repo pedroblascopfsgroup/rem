@@ -207,7 +207,7 @@ public class NMBBien extends Bien implements NMBBienInfo{
 	private String numDomicilio;
 	
 	@Transient
-	@Column(name = "CHAR_EXTRA2")
+	@Column(name = "BIE_IND_DIR_UNIVOCA")
 	private String idDireccion;
 	
 	@Transient

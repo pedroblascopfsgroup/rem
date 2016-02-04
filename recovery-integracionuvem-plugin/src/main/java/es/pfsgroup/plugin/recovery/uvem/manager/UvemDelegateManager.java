@@ -997,14 +997,14 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			for (NMBValoracionesBien val : valoraciones) {
 				if (val.getId() == valoracionActiva.getId() ) 
 					nueva = val;
-					nueva.setCodigoNuita(numeroIdentificadorTasacion);
+					nueva.setCodigoNuita(new Long(numeroIdentificadorTasacion));
 					nueva.setFechaSolicitudTasacion(new Date());
 					Auditoria auditoria = Auditoria.getNewInstance();
 					nueva.setAuditoria(auditoria);
 					break;
 	        }
 		} else {
-			nueva.setCodigoNuita(numeroIdentificadorTasacion);
+			nueva.setCodigoNuita(new Long(numeroIdentificadorTasacion));
 			nueva.setBien(bien);
 			Auditoria auditoria = Auditoria.getNewInstance();
 			nueva.setAuditoria(auditoria);

@@ -168,6 +168,17 @@ public class DDTipoAcuerdo implements Dictionary, Auditable {
 		this.tipoEntidad = tipoEntidad;
 	}
     
+	public boolean isTipoCompraVentaDacion() {
+		if (this.codigo.equalsIgnoreCase(this.TIPO_DACION_COMPRA) ||
+				this.codigo.equalsIgnoreCase(this.TIPO_DACION_EN_PAGO) ||
+				this.codigo.equalsIgnoreCase(this.TIPO_DACION_PARA_PAGO) ||
+				this.codigo.equalsIgnoreCase(this.TIPO_DACION_COMPRA_VENTA) ||
+				this.codigo.equalsIgnoreCase(this.TIPO_DACION_COMPRA_VENTA_DACION)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
     
 
 }

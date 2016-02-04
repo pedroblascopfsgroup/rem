@@ -1,6 +1,8 @@
 package es.capgemini.pfs.termino.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -21,6 +23,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * 
@@ -50,6 +53,15 @@ public class CamposTerminoTipoAcuerdo implements Serializable, Auditable{
 
 	@Column(name = "CMP_NOMBRE_CAMPO")
     private String nombreCampo;
+	
+	@Column(name = "CMP_LABEL")
+	private String labelCampo;
+	
+	@Column(name = "CMP_TIPO_CAMPO")
+	private String tipoCampo;
+	
+	@Column(name = "CMP_VALORES_COMBO")
+	private String valoresCombo;
 	
 	@Version
     private Integer version;
@@ -96,5 +108,52 @@ public class CamposTerminoTipoAcuerdo implements Serializable, Auditable{
 
 	public void setVersion(Integer version) {
 		this.version = version;
+	}
+
+	public String getLabelCampo() {
+		return labelCampo;
+	}
+
+	public void setLabelCampo(String labelCampo) {
+		this.labelCampo = labelCampo;
+	}
+
+	public String getTipoCampo() {
+		return tipoCampo;
+	}
+
+	public void setTipoCampo(String tipoCampo) {
+		this.tipoCampo = tipoCampo;
+	}
+
+	public String getValoresCombo() {
+		return valoresCombo;
+	}
+
+	public void setValoresCombo(String valoresCombo) {
+		this.valoresCombo = valoresCombo;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public List<List> getArrayValoresCombo() {
+		List<List> result = null;		
+		
+		if (!Checks.esNulo(this.valoresCombo)) {
+			result = new ArrayList<List>();
+			String[] registros = this.valoresCombo.split(";");
+			for (String registro : registros) {
+				String[] par = registro.split(",");
+				
+				if (par.length>1) {
+					List<String> sub = new ArrayList<String>();
+					sub.add(par[0]);
+					sub.add(par[1]);
+				
+					result.add(sub);
+				}
+			}
+		}
+		
+		return result;
 	}
 }

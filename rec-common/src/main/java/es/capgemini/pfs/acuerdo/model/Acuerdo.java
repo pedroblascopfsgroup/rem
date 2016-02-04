@@ -32,6 +32,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.expediente.model.Expediente;
+import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.capgemini.pfs.users.domain.Usuario;
 
 /**
@@ -164,6 +165,11 @@ public class Acuerdo implements Serializable, Auditable {
     @JoinColumn(name = "DD_MTR_ID")
     private DDMotivoRechazoAcuerdo motivoRechazo;
 
+    @OneToMany(mappedBy = "acuerdo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "acu_id")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private List<TerminoAcuerdo> terminos;    
+    
     @Column(name = "SYS_GUID")
 	private String guid;
     
@@ -579,6 +585,14 @@ public class Acuerdo implements Serializable, Auditable {
 
 	public void setGuid(String guid) {
 		this.guid = guid;
+	}
+
+	public List<TerminoAcuerdo> getTerminos() {
+		return terminos;
+	}
+
+	public void setTerminos(List<TerminoAcuerdo> terminos) {
+		this.terminos = terminos;
 	}
 	
     

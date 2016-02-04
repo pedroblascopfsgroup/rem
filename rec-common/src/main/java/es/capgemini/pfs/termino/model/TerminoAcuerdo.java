@@ -99,14 +99,28 @@ public class TerminoAcuerdo implements Serializable, Auditable{
     private String informeLetrado;
     
     @OneToMany(mappedBy = "termino", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "BIE_TEA_ID")
+    @JoinColumn(name = "TEA_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<TerminoBien> bienes;
     
+    /**
+     * @deprecated Usar la propiedad valoresCampos
+     */
+    @Deprecated
     @OneToOne(mappedBy = "termino", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "OP_TERM_ID")
+    @JoinColumn(name = "TEA_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private TerminoOperaciones operaciones;
+    
+    @OneToMany(mappedBy = "termino", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "TEA_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private List<ValoresCamposTermino> valoresCampos;
+    
+    @OneToMany(mappedBy = "termino", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "TEA_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private List<TerminoContrato> contratosTermino;    
 
 	@Version
     private Integer version;
@@ -287,6 +301,22 @@ public class TerminoAcuerdo implements Serializable, Auditable{
 
 	public void setEstadoGestion(DDEstadoGestionTermino estadoGestion) {
 		this.estadoGestion = estadoGestion;
+	}
+
+	public List<TerminoContrato> getContratosTermino() {
+		return contratosTermino;
+	}
+
+	public void setContratosTermino(List<TerminoContrato> contratosTermino) {
+		this.contratosTermino = contratosTermino;
+	}
+
+	public List<ValoresCamposTermino> getValoresCampos() {
+		return valoresCampos;
+	}
+
+	public void setValoresCampos(List<ValoresCamposTermino> valoresCampos) {
+		this.valoresCampos = valoresCampos;
 	}
 
 }

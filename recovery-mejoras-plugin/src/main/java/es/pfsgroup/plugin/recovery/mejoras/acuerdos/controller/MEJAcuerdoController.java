@@ -34,11 +34,13 @@ import es.capgemini.pfs.termino.TerminoOperacionesManager;
 import es.capgemini.pfs.termino.dto.ListadoTerminosAcuerdoDto;
 import es.capgemini.pfs.termino.dto.TerminoAcuerdoDto;
 import es.capgemini.pfs.termino.dto.TerminoOperacionesDto;
+import es.capgemini.pfs.termino.model.CamposTerminoTipoAcuerdo;
 import es.capgemini.pfs.termino.model.DDEstadoGestionTermino;
 import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.capgemini.pfs.termino.model.TerminoBien;
 import es.capgemini.pfs.termino.model.TerminoContrato;
 import es.capgemini.pfs.termino.model.TerminoOperaciones;
+import es.capgemini.pfs.termino.model.ValoresCamposTermino;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -282,7 +284,8 @@ public class MEJAcuerdoController {
 		termino.setBienes(tbList);		
 		map.put("termino", termino);
 		
-		map.put("operacionesPorTipo", terminoOperacionesManager.getOperacionesPorTipoAcuerdo(termino.getOperaciones()));
+		//map.put("operacionesPorTipo", terminoOperacionesManager.getOperacionesPorTipoAcuerdo(termino.getOperaciones()));
+		map.put("operacionesPorTipo", termino.getValoresCampos());
 		
 		map.put("idAcuerdo", idAcuerdo);
 		map.put("ambito", ambito);
@@ -397,6 +400,7 @@ public class MEJAcuerdoController {
 	 * @return
 	 * @throws ParseException 
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String crearTerminoAcuerdo(TerminoOperacionesDto termOpDto, WebRequest request, ModelMap model) throws ParseException{
 		
@@ -435,18 +439,55 @@ public class MEJAcuerdoController {
 		ta.setPeriodoVariable(taDTO.getPeriodoVariable());
 		ta.setInformeLetrado(taDTO.getInformeLetrado());
 		
+		//Borramos si tenia valores terminos antes
+		mejAcuerdoApi.deleteAllValoresTermino(ta);
+		
+		//Y creamos los nuevos
+		List<ValoresCamposTermino> valores = new ArrayList<ValoresCamposTermino>();
+		List<CamposTerminoTipoAcuerdo> campos = terminoOperacionesManager.getCamposOperacionesPorTipoAcuerdo(ta.getTipoAcuerdo().getId());
+		for (CamposTerminoTipoAcuerdo campo : campos) {
+			if (request.getParameterMap().containsKey(campo.getNombreCampo())) {
+				if (!Checks.esNulo(request.getParameter(campo.getNombreCampo()))) {
+					ValoresCamposTermino va = new ValoresCamposTermino();
+					va.setCampo(campo);
+					va.setTermino(ta);
+					if (!campo.getTipoCampo().equals("combobox")) {
+						va.setValor(request.getParameter(campo.getNombreCampo()));
+					} else {
+						//Buscamos el value del text enviado
+						for (List<String> value : campo.getArrayValoresCombo()) {
+							if (value.get(1).equals(request.getParameter(campo.getNombreCampo()))) {
+								va.setValor(value.get(0));
+							}
+						}
+					}
+					
+					//genericDao.save(ValoresCamposTermino.class, va);
+					valores.add(va);
+				}
+			}
+		}
+		if (valores.size()>0) {
+			ta.setValoresCampos(valores);
+		} else {
+			ta.setValoresCampos(null);
+		}
+			
+		
+		/*
 		TerminoOperaciones terminooperaciones;
 		// Borramos la operacion asociada al termino
 		if (terminoId != null && terminoId.length()>0){
 			terminooperaciones = genericDao.get(TerminoOperaciones.class, genericDao.createFilter(FilterType.EQUALS, "termino.id", new Long(terminoId)));
 			proxyFactory.proxy(MEJAcuerdoApi.class).deleteTerminoOperaciones(terminooperaciones);
-		}
+		}*/
 		TerminoAcuerdo taSaved = proxyFactory.proxy(MEJAcuerdoApi.class).saveTerminoAcuerdo(ta);
-		
+		/*
 		terminooperaciones = terminoOperacionesManager.creaTerminoOperaciones(termOpDto);
 		terminooperaciones.setTermino(taSaved);
 		Auditoria.save(terminooperaciones);
 		terminoOperacionesManager.guardaTerminoOperaciones(terminooperaciones);
+		*/
 		
 		// Creamos los contratos asociados al termino
 		if (contratosIncluidos.trim().length()>0) 

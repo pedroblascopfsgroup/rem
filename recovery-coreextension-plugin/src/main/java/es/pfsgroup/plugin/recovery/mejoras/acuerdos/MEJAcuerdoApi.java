@@ -38,7 +38,8 @@ public interface MEJAcuerdoApi {
 	public static final String BO_ACUERDO_MGR_SAVE_TERMINO_BIEN = "mejacuerdo.saveTerminoBien";	
 	public static final String BO_ACUERDO_MGR_GET_LISTADO_BIENES_ASUNTO = "mejacuerdo.obtenerListadoBienesAcuerdoByAsuId";	
 	public static final String BO_ACUERDO_MGR_GET_LISTADO_BIENES_TERMINO = "mejacuerdo.obtenerListadoBienesAcuerdoByTeaId";	
-	public static final String BO_ACUERDO_MGR_DELETE_TERMINO_ACUERDO = "mejacuerdo.deleteTerminoAcuerdo";	
+	public static final String BO_ACUERDO_MGR_DELETE_TERMINO_ACUERDO = "mejacuerdo.deleteTerminoAcuerdo";
+	public static final String BO_ACUERDO_MGR_DELETE_VALORES_TERMINO = "mejacuerdo.deleteAllValoresTermino";
 	public static final String BO_ACUERDO_MGR_DELETE_TERMINO_CONTRATO = "mejacuerdo.deleteTerminoContrato";	
 	public static final String BO_ACUERDO_MGR_DELETE_TERMINO_BIEN = "mejacuerdo.deleteTerminoBien";	
 	public static final String BO_ACUERDO_MGR_DELETE_TERMINO_OPERACIONES = "mejacuerdo.deleteTerminoOperaciones";		
@@ -110,6 +111,10 @@ public interface MEJAcuerdoApi {
 	@BusinessOperationDefinition(BO_ACUERDO_MGR_DELETE_TERMINO_ACUERDO)
 	@Transactional(readOnly = false)
 	public void deleteTerminoAcuerdo(TerminoAcuerdo ta);    
+	
+	@BusinessOperationDefinition(BO_ACUERDO_MGR_DELETE_VALORES_TERMINO)
+	@Transactional(readOnly = false)	
+    public void deleteAllValoresTermino(TerminoAcuerdo ta);
 	
 	@BusinessOperationDefinition(BO_ACUERDO_MGR_DELETE_TERMINO_CONTRATO)
 	@Transactional(readOnly = false)

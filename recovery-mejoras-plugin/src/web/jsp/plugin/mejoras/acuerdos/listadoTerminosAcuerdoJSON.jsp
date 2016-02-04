@@ -32,6 +32,7 @@
 		            <json:property name="cc" value="${cont.codigoContrato}" />                 
 		            <json:property name="tipo" value="${cont.tipoProducto.descripcion}" />
 		            <json:property name="estadoFinanciero" value="${cont.estadoFinanciero.descripcion}" />
+		            <json:property name="estadoGestion" value="${termino.estadoGestion.descripcion}" />
 		         </json:object>
 		     </c:if>			
         </c:forEach> 

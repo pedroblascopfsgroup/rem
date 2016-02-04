@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.16" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 2.3.0.v20080606 Build &lt;2.3.0.v20080618-0630></property>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 4.3.2.v20140211-1400 Build &lt;4.3.2.v20140218-1056></property>
     <property name="units">in</property>
     <property name="iconFile">/templates/blank_report.gif</property>
+    <property name="layoutPreference">auto layout</property>
     <parameters>
         <scalar-parameter name="img_src" id="237">
-            <property name="valueType">static</property>
-            <property name="dataType">string</property>
-            <property name="paramType">simple</property>
             <text-property name="promptText">img_src</text-property>
+            <property name="valueType">static</property>
             <property name="isRequired">false</property>
-            <property name="controlType">text-box</property>
-            <property name="defaultValue">default</property>
+            <property name="dataType">string</property>
             <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">default</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
             <structure name="format">
                 <property name="category">Unformatted</property>
-            </structure> 
+            </structure>
         </scalar-parameter>
     </parameters>
     <data-sources>
@@ -68,35 +71,35 @@
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">Nombre</property>
-                    <property name="displayName">Nombre</property>
+                    <text-property name="displayName">Nombre</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">Apellido1</property>
-                    <property name="displayName">Apellido1</property>
+                    <text-property name="displayName">Apellido1</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">Apellido2</property>
-                    <property name="displayName">Apellido2</property>
+                    <text-property name="displayName">Apellido2</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">Cargo</property>
-                    <property name="displayName">Cargo</property>
+                    <text-property name="displayName">Cargo</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">Asiste</property>
-                    <property name="displayName">Asiste</property>
+                    <text-property name="displayName">Asiste</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">Supervisor</property>
-                    <property name="displayName">Supervisor</property>
+                    <text-property name="displayName">Supervisor</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">Centro</property>
-                    <property name="displayName">Centro</property>
+                    <text-property name="displayName">Centro</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">Restrictivo</property>
-                    <property name="displayName">Restrictivo</property>
+                    <text-property name="displayName">Restrictivo</text-property>
                 </structure>
             </list-property>
             <structure name="cachedMetaData">
@@ -210,6 +213,16 @@ return true;]]></method>
                     <property name="columnName">Nombre</property>
                 </structure>
             </list-property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">expId</property>
+                    <property name="dataType">string</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">""</expression>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
             <structure name="cachedMetaData">
                 <list-property name="resultSet">
                     <structure>
@@ -235,16 +248,6 @@ return true;]]></method>
                 </list-property>
             </structure>
             <property name="dataSource">Data Source</property>
-            <list-property name="parameters">
-                <structure>
-                    <property name="name">expId</property>
-                    <property name="dataType">string</property>
-                    <property name="position">1</property>
-                    <expression name="defaultValue">""</expression>
-                    <property name="isInput">true</property>
-                    <property name="isOutput">false</property>
-                </structure>
-            </list-property>
             <method name="open"><![CDATA[asuntos = dtoActa.getAsuntoParaExpediente(inputParams["expId"]); 
 asuIt = asuntos.iterator();]]></method>
             <method name="fetch"><![CDATA[if (!asuIt.hasNext()) return false;
@@ -451,6 +454,16 @@ return true;]]></method>
                     <property name="columnName">recuperacionTiempo</property>
                 </structure>
             </list-property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">idAsunto</property>
+                    <property name="dataType">string</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">""</expression>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
             <structure name="cachedMetaData">
                 <list-property name="resultSet">
                     <structure>
@@ -501,16 +514,6 @@ return true;]]></method>
                 </list-property>
             </structure>
             <property name="dataSource">Data Source</property>
-            <list-property name="parameters">
-                <structure>
-                    <property name="name">idAsunto</property>
-                    <property name="dataType">string</property>
-                    <property name="position">1</property>
-                    <expression name="defaultValue">""</expression>
-                    <property name="isInput">true</property>
-                    <property name="isOutput">false</property>
-                </structure>
-            </list-property>
             <method name="open"><![CDATA[asuntoId = inputParams["idAsunto"];
 contratos = dtoActa.getContratosParaAsunto(asuntoId);
 cntIt = contratos.iterator();
@@ -588,16 +591,6 @@ return true;]]></method>
                     <property name="columnName">codigo</property>
                 </structure>
             </list-property>
-            <structure name="cachedMetaData">
-                <list-property name="resultSet">
-                    <structure>
-                        <property name="position">1</property>
-                        <property name="name">codigo</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                </list-property>
-            </structure>
-            <property name="dataSource">Data Source</property>
             <list-property name="parameters">
                 <structure>
                     <property name="name">expId</property>
@@ -608,6 +601,16 @@ return true;]]></method>
                     <property name="isOutput">false</property>
                 </structure>
             </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">codigo</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">Data Source</property>
             <method name="open"><![CDATA[cntDescartadosIt = dtoActa.getExpediente(inputParams["expId"]).getContratosDescartadosRiesgo().iterator();]]></method>
             <method name="fetch"><![CDATA[if (!cntDescartadosIt.hasNext()) return false;
 var cntDescartado = cntDescartadosIt.next().getContrato();
@@ -670,38 +673,38 @@ return true;]]></method>
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">Punto</property>
-                    <property name="displayName">Punto tratado</property>
+                    <text-property name="displayName">Punto tratado</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">ExpDesc</property>
-                    <property name="displayName">Expediente</property>
+                    <text-property name="displayName">Expediente</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">NumObjetivos</property>
-                    <property name="displayName">Objetivos generados</property>
+                    <text-property name="displayName">Objetivos generados</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">GestorAsignado</property>
-                    <property name="displayName">Gestor asignado</property>
+                    <text-property name="displayName">Gestor asignado</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">SupervisorAsignado</property>
-                    <property name="displayName">Supervisor asignado</property>
+                    <text-property name="displayName">Supervisor asignado</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">MarcadoPoliticaId</property>
                 </structure>
                 <structure>
                     <property name="columnName">persona</property>
-                    <property name="displayName">Persona</property>
+                    <text-property name="displayName">Persona</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">tipoPolitica</property>
-                    <property name="displayName">Tipo Politica</property>
+                    <text-property name="displayName">Tipo Politica</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">fechaPolitica</property>
-                    <property name="displayName">Fecha Politica</property>
+                    <text-property name="displayName">Fecha Politica</text-property>
                 </structure>
             </list-property>
             <structure name="cachedMetaData">
@@ -803,11 +806,21 @@ return true;]]></method>
                 </structure>
                 <structure>
                     <property name="columnName">TipoObjetivo</property>
-                    <property name="displayName">TipoObjetivo</property>
+                    <text-property name="displayName">TipoObjetivo</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">ResumenObjetivo</property>
-                    <property name="displayName">Resumen objetivo</property>
+                    <text-property name="displayName">Resumen objetivo</text-property>
+                </structure>
+            </list-property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">MarcadoPoliticaId</property>
+                    <property name="dataType">string</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">""</expression>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
                 </structure>
             </list-property>
             <structure name="cachedMetaData">
@@ -830,16 +843,6 @@ return true;]]></method>
                 </list-property>
             </structure>
             <property name="dataSource">Data Source</property>
-            <list-property name="parameters">
-                <structure>
-                    <property name="name">MarcadoPoliticaId</property>
-                    <property name="dataType">string</property>
-                    <property name="position">1</property>
-                    <expression name="defaultValue">""</expression>
-                    <property name="isInput">true</property>
-                    <property name="isOutput">false</property>
-                </structure>
-            </list-property>
             <method name="open"><![CDATA[MarcadoPoliticaId = inputParams["MarcadoPoliticaId"];
 ciclo = dtoActa.getCicloMarcadoPolitica(MarcadoPoliticaId);
 objIt = ciclo.getUltimaPolitica().getObjetivos().iterator();
@@ -907,6 +910,7 @@ return true;]]></method>
             <property name="orientation">landscape</property>
             <property name="topMargin">0.1in</property>
             <property name="leftMargin">0.8in</property>
+            <property name="bottomMargin">1in</property>
             <property name="rightMargin">0.8in</property>
             <property name="fontFamily">sans-serif</property>
             <property name="fontSize">medium</property>
@@ -1551,49 +1555,49 @@ return true;]]></method>
             <list-property name="boundDataColumns">
                 <structure>
                     <property name="name">Nombre</property>
-                    <property name="displayName">Nombre</property>
+                    <text-property name="displayName">Nombre</text-property>
                     <expression name="expression">dataSetRow["Nombre"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">Centro</property>
-                    <property name="displayName">Centro</property>
+                    <text-property name="displayName">Centro</text-property>
                     <expression name="expression">dataSetRow["Centro"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">Apellido1</property>
-                    <property name="displayName">Apellido1</property>
+                    <text-property name="displayName">Apellido1</text-property>
                     <expression name="expression">dataSetRow["Apellido1"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">Apellido2</property>
-                    <property name="displayName">Apellido2</property>
+                    <text-property name="displayName">Apellido2</text-property>
                     <expression name="expression">dataSetRow["Apellido2"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">Cargo</property>
-                    <property name="displayName">Cargo</property>
+                    <text-property name="displayName">Cargo</text-property>
                     <expression name="expression">dataSetRow["Cargo"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">Asiste</property>
-                    <property name="displayName">Asiste</property>
+                    <text-property name="displayName">Asiste</text-property>
                     <expression name="expression">dataSetRow["Asiste"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">Restrictivo</property>
-                    <property name="displayName">Restrictivo</property>
+                    <text-property name="displayName">Restrictivo</text-property>
                     <expression name="expression">dataSetRow["Restrictivo"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">Supervisor</property>
-                    <property name="displayName">Supervisor</property>
+                    <text-property name="displayName">Supervisor</text-property>
                     <expression name="expression">dataSetRow["Supervisor"]</expression>
                     <property name="dataType">string</property>
                 </structure>
@@ -2123,43 +2127,43 @@ return true;]]></method>
             <list-property name="boundDataColumns">
                 <structure>
                     <property name="name">Punto</property>
-                    <property name="displayName">Punto</property>
+                    <text-property name="displayName">Punto</text-property>
                     <expression name="expression">dataSetRow["Punto"].toPrecision(1)</expression>
                     <property name="dataType">any</property>
                 </structure>
                 <structure>
                     <property name="name">ExpId</property>
-                    <property name="displayName">ExpId</property>
+                    <text-property name="displayName">ExpId</text-property>
                     <expression name="expression">dataSetRow["ExpId"]</expression>
                     <property name="dataType">any</property>
                 </structure>
                 <structure>
                     <property name="name">CantCnt</property>
-                    <property name="displayName">CantCnt</property>
+                    <text-property name="displayName">CantCnt</text-property>
                     <expression name="expression">dataSetRow["CantCnt"]</expression>
                     <property name="dataType">any</property>
                 </structure>
                 <structure>
                     <property name="name">CantCntDescartados</property>
-                    <property name="displayName">CantCntDescartados</property>
+                    <text-property name="displayName">CantCntDescartados</text-property>
                     <expression name="expression">dataSetRow["CantCntDescartados"]</expression>
                     <property name="dataType">any</property>
                 </structure>
                 <structure>
                     <property name="name">CantAsuntos</property>
-                    <property name="displayName">CantAsuntos</property>
+                    <text-property name="displayName">CantAsuntos</text-property>
                     <expression name="expression">dataSetRow["CantAsuntos"]</expression>
                     <property name="dataType">any</property>
                 </structure>
                 <structure>
                     <property name="name">Observaciones</property>
-                    <property name="displayName">Observaciones</property>
+                    <text-property name="displayName">Observaciones</text-property>
                     <expression name="expression">dataSetRow["Observaciones"]</expression>
                     <property name="dataType">any</property>
                 </structure>
                 <structure>
                     <property name="name">Descripcion</property>
-                    <property name="displayName">Descripcion</property>
+                    <text-property name="displayName">Descripcion</text-property>
                     <expression name="expression">dataSetRow["Descripcion"]</expression>
                     <property name="dataType">any</property>
                 </structure>
@@ -2307,31 +2311,33 @@ return true;]]></method>
                                         <list-property name="paramBindings">
                                             <structure>
                                                 <property name="paramName">expId</property>
-                                                <expression name="expression">row["ExpId"]</expression>
+                                                <simple-property-list name="expression">
+                                                    <value>row["ExpId"]</value>
+                                                </simple-property-list>
                                             </structure>
                                         </list-property>
                                         <list-property name="boundDataColumns">
                                             <structure>
                                                 <property name="name">AsuntoId</property>
-                                                <property name="displayName">AsuntoId</property>
+                                                <text-property name="displayName">AsuntoId</text-property>
                                                 <expression name="expression">dataSetRow["AsuntoId"]</expression>
                                                 <property name="dataType">any</property>
                                             </structure>
                                             <structure>
                                                 <property name="name">Gestor</property>
-                                                <property name="displayName">Gestor</property>
+                                                <text-property name="displayName">Gestor</text-property>
                                                 <expression name="expression">dataSetRow["Gestor"]</expression>
                                                 <property name="dataType">any</property>
                                             </structure>
                                             <structure>
                                                 <property name="name">Supervisor</property>
-                                                <property name="displayName">Supervisor</property>
+                                                <text-property name="displayName">Supervisor</text-property>
                                                 <expression name="expression">dataSetRow["Supervisor"]</expression>
                                                 <property name="dataType">any</property>
                                             </structure>
                                             <structure>
                                                 <property name="name">Nombre</property>
-                                                <property name="displayName">Nombre</property>
+                                                <text-property name="displayName">Nombre</text-property>
                                                 <expression name="expression">dataSetRow["Nombre"]</expression>
                                                 <property name="dataType">any</property>
                                             </structure>
@@ -2430,7 +2436,9 @@ return true;]]></method>
                                                         <list-property name="paramBindings">
                                                             <structure>
                                                                 <property name="paramName">idAsunto</property>
-                                                                <expression name="expression">row["AsuntoId"]</expression>
+                                                                <simple-property-list name="expression">
+                                                                    <value>row["AsuntoId"]</value>
+                                                                </simple-property-list>
                                                             </structure>
                                                         </list-property>
                                                         <list-property name="boundDataColumns">
@@ -2471,13 +2479,13 @@ return true;]]></method>
                                                             </structure>
                                                             <structure>
                                                                 <property name="name">saldoDeudorTotal</property>
-                                                                <property name="displayName">saldoDeudorTotal</property>
+                                                                <text-property name="displayName">saldoDeudorTotal</text-property>
                                                                 <expression name="expression">dataSetRow["saldoDeudorTotal"]</expression>
                                                                 <property name="dataType">any</property>
                                                             </structure>
                                                             <structure>
                                                                 <property name="name">recuperacionTiempo</property>
-                                                                <property name="displayName">recuperacionTiempo</property>
+                                                                <text-property name="displayName">recuperacionTiempo</text-property>
                                                                 <expression name="expression">dataSetRow["recuperacionTiempo"]</expression>
                                                                 <property name="dataType">any</property>
                                                             </structure>
@@ -2739,7 +2747,9 @@ return true;]]></method>
                                         <list-property name="paramBindings">
                                             <structure>
                                                 <property name="paramName">expId</property>
-                                                <expression name="expression">row["ExpId"]</expression>
+                                                <simple-property-list name="expression">
+                                                    <value>row["ExpId"]</value>
+                                                </simple-property-list>
                                             </structure>
                                         </list-property>
                                         <list-property name="boundDataColumns">
@@ -2848,7 +2858,7 @@ return true;]]></method>
             <property name="marginBottom">5pt</property>
             <property name="textAlign">center</property>
             <text-property name="text">SEGUIMIENTO: POLÍTICAS MARCADAS POR EL COMITÉ</text-property>
-        </label>        
+        </label>
         <table id="1136">
             <property name="fontFamily">"Arial"</property>
             <property name="marginLeft">15pt</property>
@@ -2904,7 +2914,7 @@ return true;]]></method>
                 </structure>
             </list-property>
             <column id="1165">
-                <property name="width">1.0in</property>
+                <property name="width">1in</property>
             </column>
             <column id="1166">
                 <property name="width">2.5in</property>
@@ -2919,7 +2929,7 @@ return true;]]></method>
                 <property name="width">0.75in</property>
             </column>
             <column id="1170">
-                <property name="width">0.50in</property>
+                <property name="width">0.5in</property>
             </column>
             <header>
                 <row id="1137">
@@ -3054,7 +3064,6 @@ return true;]]></method>
                         <property name="borderRightWidth">thin</property>
                         <text-data id="991178">
                             <expression name="valueExpr">row["fechaPolitica"]</expression>
-                            <property name="dataType">date</property>
                         </text-data>
                     </cell>
                 </row>
@@ -3071,30 +3080,32 @@ return true;]]></method>
                             <list-property name="paramBindings">
                                 <structure>
                                     <property name="paramName">MarcadoPoliticaId</property>
-                                    <expression name="expression">row["MarcadoPoliticaId"]</expression>
+                                    <simple-property-list name="expression">
+                                        <value>row["MarcadoPoliticaId"]</value>
+                                    </simple-property-list>
                                 </structure>
                             </list-property>
                             <list-property name="boundDataColumns">
                                 <structure>
                                     <property name="name">TipoObjetivo</property>
-                                    <property name="displayName">TipoObjetivo</property>
+                                    <text-property name="displayName">TipoObjetivo</text-property>
                                     <expression name="expression">dataSetRow["TipoObjetivo"]</expression>
                                     <property name="dataType">string</property>
                                 </structure>
                                 <structure>
                                     <property name="name">ResumenObjetivo</property>
-                                    <property name="displayName">Resumen objetivo</property>
+                                    <text-property name="displayName">Resumen objetivo</text-property>
                                     <expression name="expression">dataSetRow["ResumenObjetivo"]</expression>
                                     <property name="dataType">any</property>
                                 </structure>
                             </list-property>
                             <column id="1217">
-                                <property name="width">0.75in</property>
                                 <property name="textAlign">left</property>
+                                <property name="width">0.75in</property>
                             </column>
                             <column id="1218">
-                                <property name="width">4in</property>
                                 <property name="textAlign">left</property>
+                                <property name="width">4in</property>
                             </column>
                             <header>
                                 <row id="1187">
@@ -3102,15 +3113,15 @@ return true;]]></method>
                                     <property name="borderBottomColor">#000000</property>
                                     <property name="borderBottomStyle">solid</property>
                                     <property name="borderBottomWidth">thin</property>
-                                    <property name="borderTopColor">#000000</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
                                     <property name="borderLeftColor">#000000</property>
                                     <property name="borderLeftStyle">solid</property>
                                     <property name="borderLeftWidth">thin</property>
                                     <property name="borderRightColor">#000000</property>
                                     <property name="borderRightStyle">solid</property>
                                     <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
                                     <cell id="1190">
                                         <label id="1191">
                                             <text-property name="text">Tipo de objetivo</text-property>
@@ -3133,7 +3144,7 @@ return true;]]></method>
                                     </cell>
                                     <cell id="1207">
                                         <data id="1208">
-                                            <property name="resultSetColumn">ResumenObjetivo</property> 
+                                            <property name="resultSetColumn">ResumenObjetivo</property>
                                         </data>
                                     </cell>
                                 </row>

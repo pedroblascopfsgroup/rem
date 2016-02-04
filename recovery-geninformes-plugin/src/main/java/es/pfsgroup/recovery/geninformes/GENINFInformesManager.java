@@ -994,7 +994,7 @@ public class GENINFInformesManager implements GENINFInformesApi {
 		File fileSalidaTemporal = null;
 		FileItem resultado = null;
 		OutputStream out = null;
-        final String TABLA_AUX = "<table width='100%' style='font-size:12px; font-family: Arial'><tr><td>&nbsp;</td></tr></table>";
+        final String TABLA_AUX = "<table width='100%' style='font-size:6px'><tr><td>&nbsp;</td></tr></table>";
 		
 		try{
 			// Comprobamos que exista la plantilla

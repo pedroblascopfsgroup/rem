@@ -67,6 +67,7 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 	private static final String FECHA_CIERRE_LIQUIDACION = "FECHA_CIERRE_LIQUIDACION";
 	private static final String MOV_FECHA_POS_VIVA_VENCIDA = "MOV_FECHA_POS_VIVA_VENCIDA";
 	private static final String CODIGO_DE_CONTRATO = "CODIGO_DE_CONTRATO";
+	private static final String CODIGO_DE_CONTRATO_DE_17_DIGITOS = "CODIGO_DE_CONTRATO_DE_17_DIGITOS";
 	private static final String TOTAL_LIQ = "totalLiq";
 	private static final String FECHA_LIQUIDACION = "fechaLiquidacion";
 	private static final String ENTIDAD_ORIGEN = "entidadOrigen";
@@ -204,13 +205,23 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		
 		///Variables especificas BANKIA
 		if (!Checks.esNulo(contrato)) {
-			if(!Checks.esNulo(contrato.getDescripcion())){
-				mapaVariables.put(CODIGO_DE_CONTRATO, contrato.getDescripcion());
+			if(!Checks.esNulo(contrato.getNroContratoFormat())){
+				mapaVariables.put(CODIGO_DE_CONTRATO, contrato.getNroContratoFormat());
 			} else{
 				mapaVariables.put(CODIGO_DE_CONTRATO,ERROR_NO_EXISTE_VALOR);
 			}
 		} else {
 			mapaVariables.put(CODIGO_DE_CONTRATO,ERROR_NO_EXISTE_VALOR);
+		}
+		
+		if (!Checks.esNulo(contrato)) {
+			if(!Checks.esNulo(contrato.getNroContratoFormat())){
+				mapaVariables.put(CODIGO_DE_CONTRATO_DE_17_DIGITOS, contrato.getNroContratoFormat());
+			} else{
+				mapaVariables.put(CODIGO_DE_CONTRATO_DE_17_DIGITOS,ERROR_NO_EXISTE_VALOR);
+			}
+		} else {
+			mapaVariables.put(CODIGO_DE_CONTRATO_DE_17_DIGITOS,ERROR_NO_EXISTE_VALOR);
 		}
 		
 		try {
@@ -300,7 +311,7 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 				resultado = resultado.replace(INICIO_MARCA + key + FIN_MARCA, mapeoVariables.get(key).toString());
 			}
 		}
-		return INICIO_CUERPO+resultado+FIN_CUERPO;
+		return resultado;
 	}
 
 	private String construyeNombre(Persona persona) {

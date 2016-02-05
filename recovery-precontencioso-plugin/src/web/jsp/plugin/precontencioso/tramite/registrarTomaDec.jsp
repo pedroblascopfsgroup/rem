@@ -107,9 +107,12 @@ docCompleta.on('select', function() {
 		tipoProblema.allowBlank = false;
 		tipoProblema.setDisabled(false);
 		procedimientoPropuesto.allowBlank = false;
-		procedimientoIniciar.allowBlank = true;
-		procedimientoIniciar.setDisabled(true);
-		procedimientoIniciar.setValue(procedimientoPropuesto.getValue());
+		
+		if(procedimientoPropuesto.getValue() != '') { 
+			procedimientoIniciar.allowBlank = true;
+			procedimientoIniciar.setDisabled(true);
+			procedimientoIniciar.setValue(procedimientoPropuesto.getValue());
+		}
 	}else{
 		fechaRecep.allowBlank = false;
 		docCompleta.allowBlank = false;
@@ -124,8 +127,10 @@ docCompleta.on('select', function() {
 		if(tipoProblema.getValue() == cambioProcedimiento) {
 			procedimientoIniciar.setDisabled(false);
 		} else {
-			procedimientoIniciar.setDisabled(true);
-			procedimientoIniciar.setValue(procedimientoPropuesto.getValue());
+			if(procedimientoPropuesto.getValue() != '') {
+				procedimientoIniciar.setDisabled(true);
+				procedimientoIniciar.setValue(procedimientoPropuesto.getValue());
+			}
 		}
 	}
 });
@@ -135,8 +140,10 @@ tipoProblema.on('select', function() {
 	if(tipoProblema.getValue() == cambioProcedimiento) {
 		procedimientoIniciar.setDisabled(false);
 	}else{
-		procedimientoIniciar.setDisabled(true);
-		procedimientoIniciar.setValue(procedimientoPropuesto.getValue());
+		if(procedimientoPropuesto.getValue() != '') {
+			procedimientoIniciar.setDisabled(true);
+			procedimientoIniciar.setValue(procedimientoPropuesto.getValue());
+		}
 	}
 });
 

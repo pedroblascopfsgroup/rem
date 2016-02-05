@@ -2,6 +2,7 @@ package es.capgemini.pfs.dsm;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -81,7 +82,6 @@ public class EntityDataSource extends AbstractRoutingDataSource {
 	}
 
 	
-	
 	@Override
 	public Connection getConnection(String username, String password)
 			throws SQLException {
@@ -91,4 +91,14 @@ public class EntityDataSource extends AbstractRoutingDataSource {
             return transactionalBasicDataSourceWrapper.getConnectionTx(super.getConnection(username, password));
 	}
 
+	
+	private void cambiaCurrentSchemaMultientidad(TransactionalUsersConnectionWrapper cnx, String schema) throws SQLException {
+		Statement st = cnx.createStatement();
+		String sql = "ALTER SESSION SET CURRENT_SCHEMA = "
+				+ schema;
+		cnx.setCurrentSchema(schema);
+		log.debug(sql);
+		st.execute(sql);
+	}
+	
 }

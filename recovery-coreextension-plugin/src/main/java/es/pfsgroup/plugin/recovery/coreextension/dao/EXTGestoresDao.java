@@ -33,5 +33,15 @@ public interface EXTGestoresDao extends AbstractDao<Usuario, Long>{
 	 * @return p�gina con el resultado de la b�squeda.
 	 */
 	Page getGestoresByDespacho(UsuarioDto usuarioDto);
+	
+	/**
+	 * Dao que obtiene una lista de {@link Usuario} para un tipo de despacho dado.
+	 * Ordenado por el que tenga la marca gestor Defecto activa
+	 * Paginado
+	 * 
+	 * @param usuarioDto usuarioDto dto con los datos de b�squeda. {@link UsuarioDto}
+	 * @return p�gina con el resultado de la b�squeda.
+	 */
+	Page getGestoresByDespachoDefecto(UsuarioDto usuarioDto);
 
 }

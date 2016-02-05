@@ -1,9 +1,5 @@
 package es.capgemini.pfs.asunto;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,8 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import javax.annotation.Resource;
 
@@ -76,8 +70,7 @@ import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.process.TareaBPMConstants;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import es.capgemini.pfs.utils.ZipUtils;
 
 
 /**
@@ -113,6 +106,9 @@ public class AsuntosManager {
 
     @Autowired
     private SesionComiteDao sesionComiteDao;
+    
+    @Autowired
+    private ZipUtils zipUtils;
 
     /**
      * Actualiza el estado del asunto (abierto o cerrado) en función de sus procedimientos (abiertos o cerrados)
@@ -461,7 +457,8 @@ public class AsuntosManager {
      * @param idAsunto Long
      * @return Lista de ExpedienteContrato
      */
-    @BusinessOperation(ExternaBusinessOperation.BO_ASU_MGR_FIND_EXPEDIENTE_CONTRATOS_POR_ID)
+    @SuppressWarnings("unchecked")
+	@BusinessOperation(ExternaBusinessOperation.BO_ASU_MGR_FIND_EXPEDIENTE_CONTRATOS_POR_ID)
     public List<ExpedienteContrato> findExpedienteContratosPorId(Long idAsunto) {
     	EventFactory.onMethodStart(this.getClass());
         List<ExpedienteContrato> list = new ArrayList<ExpedienteContrato>();
@@ -613,7 +610,8 @@ public class AsuntosManager {
      * @param idAsunto long
      * @param observaciones observaciones de la decision
      */
-    @BusinessOperation(ExternaBusinessOperation.BO_ASU_MGR_TOMAR_DECISIONES_COMITE)
+    @SuppressWarnings("unchecked")
+	@BusinessOperation(ExternaBusinessOperation.BO_ASU_MGR_TOMAR_DECISIONES_COMITE)
     @Transactional(readOnly = false)
     public void tomarDecisionComite(Long idAsunto, String observaciones) {
         DecisionComite dc = new DecisionComite();
@@ -693,7 +691,8 @@ public class AsuntosManager {
      * @param idAsunto id del asunto
      * @return set de contratos
      */
-    @BusinessOperation(ExternaBusinessOperation.BO_ASU_MGR_OBTENER_CONTRATO_DE_ASUNTO_E_HIJOS)
+    @SuppressWarnings("unchecked")
+	@BusinessOperation(ExternaBusinessOperation.BO_ASU_MGR_OBTENER_CONTRATO_DE_ASUNTO_E_HIJOS)
     public Set<Contrato> obtenerContratosDeUnAsuntoYSusHijos(Long idAsunto) {
         Set<Contrato> contratos = new HashSet<Contrato>();
 
@@ -920,74 +919,7 @@ public class AsuntosManager {
             return new Integer(2 * 1024 * 1024);
         }
     }
-
-    /**
-     * Recupera la cadena de extensiones de archivos adjuntos que deben comprimirse en ZIP durante la descarga
-     * @return String
-     */    
-    private String getParamZipExtensiones() {
-        try {
-            Parametrizacion param = (Parametrizacion) executor.execute(
-                    ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE, Parametrizacion.ADJUNTOS_DESCARGA_ZIP_EXTENSIONES);
-            return param.getValor();
-        } catch (Exception e) {
-            logger.warn("No esta parametrizado la compresion en zip de la descarga de archivos");
-            return "";
-        }
-    }
-    
-    /**
-     * Recupera de parametros el nivel de compresion de los archivos ZIP, entero [0-9]. Min=0, Max=9.
-     * @return int
-     */    
-    private int getParamZipNivelCompresion() {
-        final int DEFAULT_LEVEL = 8;
-        try {
-            Parametrizacion param = (Parametrizacion) executor.execute(
-                    ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE, Parametrizacion.ADJUNTOS_DESCARGA_ZIP_NIVEL_COMPRESION);
-            return Integer.valueOf(param.getValor());
-        } catch (Exception e) {
-            logger.warn("No esta parametrizado el nivel de compresion en zip de la descarga de archivos");
-        } 
-        return DEFAULT_LEVEL;
-    }
-    
-    /**
-     * Busca por nombre de archivo si su extension es una de las que hay que comprimir en ZIP durante la descarga
-     * @return Boolean
-     */
-    private Boolean esDescargaZip(String fileName) {
-     
-        //Separa nombre y extension de archivo en un vector de String(). Ej nombre: archivo1.ext1.ext2.ext3
-        String[] fileExts = fileName.split("\\.");
-        
-        //Del vector de extensiones de un archivo, solo toma la ultima como referencia: .ext3
-        //Si el nombre no tiene extensiones (o nombre vacio), retorna ".xxx" en lastFileExt
-        String lastFileExt = new String();
-        if (fileExts.length < 2){
-            lastFileExt = ".".concat("xxx");
-        } else {
-            lastFileExt = ".".concat(fileExts[fileExts.length-1]);
-        }
-        
-        //Convierte todo a minusculas
-        //Busca coincidencias en el parametro de extenciones a comprimir, si existe la ultima extension del archivo: ext3
-        //Si el parametro contiene "*.*" directamente retorna TRUE = Comprimir siempre
-        //Si no existe el parametro zip por extensiones en PEN_PARAM_ENTIDAD, retorna siempre FALSE
-        //Si el parametro es la palabra "disable", retorna siempre FALSE y no comprime nunca
-        String extParam = getParamZipExtensiones().toLowerCase();
-        lastFileExt = lastFileExt.toLowerCase();
-        if (extParam.isEmpty() || extParam.equals("disable")){
-            return false;
-        } else {
-            if (extParam.contains("*.*")){
-                return true;
-            } else {
-                return extParam.toLowerCase().contains(lastFileExt);
-            }
-        }
-    
-    }
+   
     
     /**
      * bajar un adjunto.
@@ -1003,8 +935,8 @@ public class AsuntosManager {
 
         FileItem adjunto = asunto.getAdjunto(adjuntoId).getAdjunto().getFileItem();
         
-        if (esDescargaZip(adjunto.getFileName())) {
-            return zipFileItem(adjunto);
+        if (zipUtils.esDescargaZip(adjunto.getFileName())) {
+            return zipUtils.zipFileItem(adjunto);
         } else {
             return adjunto;
         }
@@ -1012,58 +944,7 @@ public class AsuntosManager {
     Se traslada esta funcionalidad a AdjuntosApi
     */
 
-    private FileItem zipFileItem (FileItem fi) {
-    
-        //Es importante reutilizar el nombre del archivo temporal del FileItem de entrada, mas ext. zip
-        String zipFileName = fi.getFile().getName().concat(".zip");
-        File zipFile = new File(zipFileName);
-        FileItem fo = new FileItem();
-        
-        try {
-            //Verifica si ya estaba creado y lo elimina para crearlo vacio
-            if (zipFile.exists()) {
-               zipFile.delete();
-               zipFile.createNewFile();
-            }
-            
-            // Crea un buffer de 1024
-            byte[] buffer = new byte[1024];
-            FileInputStream fis = new FileInputStream(fi.getFile());
-            FileOutputStream fos = new FileOutputStream(zipFileName);
-            ZipOutputStream zos = new ZipOutputStream(fos);
-
-            //Define el nivel de compresion a 0 (sin)
-            zos.setLevel(getParamZipNivelCompresion());
-
-            //Incluye el archivo de entrada dentro del zip
-            zos.putNextEntry(new ZipEntry(fi.getFileName()));
-
-            int length;
-            while ((length = fis.read(buffer)) > 0) {
-                zos.write(buffer, 0, length);
-            }
-
-            //Cierra las entradas al zip
-            zos.closeEntry();
-            //Cierra FileInputStream
-            fis.close();
-            //Cierra ZipOutputStream
-            zos.close();
-
-        }
-        catch (IOException ioe) {
-            System.out.println("Error creating zip file" + ioe);
-        }
-
-        fo.setFile(zipFile);
-        fo.setFileName(fi.getFileName().concat(".zip"));
-        fo.setLength(zipFile.length());
-        fo.setContentType("application/zip");
-
-        return fo;
-        
-    }
- 
+   
     
     /**
      * delete un adjunto.
@@ -1206,7 +1087,7 @@ public class AsuntosManager {
      * @param idAsunto Long
      * @return Lista de ProcedimientoJerarquiaDto
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes" })
     @BusinessOperation(ExternaBusinessOperation.BO_ASU_MGR_OBTENER_ACTUACIONES_ASUNTO_JERARQUICO)
     public List<ProcedimientoJerarquiaDto> obtenerActuacionesAsuntoJerarquico(Long idAsunto) {
         List<ProcedimientoJerarquiaDto> procedimientos = new ArrayList<ProcedimientoJerarquiaDto>();
@@ -1235,7 +1116,7 @@ public class AsuntosManager {
      * @param tree Procedimiento-TreeMap
      * @param proc Procedimiento
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void insertaProcedimientoJerarquia(TreeMap<Procedimiento, TreeMap> tree, Procedimiento proc) {
         //System.out.println("id:" + proc.getId() + " padre:" + proc.getProcedimientoPadre() != null ? proc.getProcedimientoPadre().getId() : "none");
         if (proc.getProcedimientoPadre() == null) {
@@ -1272,7 +1153,7 @@ public class AsuntosManager {
      * @param arbol el arbol jerarquico de procedimientos
      * @param nivel parametro de nivel (automatico, inicialmente se setea en null)
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void listarProcedimientos(List<ProcedimientoJerarquiaDto> procedimientos, TreeMap<Procedimiento, TreeMap> arbol, Integer nivel) {
         if (nivel == null) {
             nivel = 0;
@@ -1294,7 +1175,7 @@ public class AsuntosManager {
      * @param proc el procedimiento hijo del cual se desea buscar el padre para anidarlo
      * @return
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private TreeMap<Procedimiento, TreeMap> buscaNodo(TreeMap<Procedimiento, TreeMap> tree, Procedimiento proc) {
         TreeMap ret = null;
         if (tree.containsKey(proc.getProcedimientoPadre())) {

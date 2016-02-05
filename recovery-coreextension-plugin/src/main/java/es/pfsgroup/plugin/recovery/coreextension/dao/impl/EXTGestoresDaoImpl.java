@@ -98,5 +98,40 @@ public class EXTGestoresDaoImpl extends AbstractEntityDao<Usuario, Long> impleme
 		int totalCount = Integer.parseInt(query.uniqueResult().toString());
 		return totalCount;
 	}
+	
+	/* (non-Javadoc)
+	 * @see es.pfsgroup.plugin.recovery.coreextension.dao.EXTGestoresDao#getGestoresByDespacho(es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto)
+	 */
+	public Page getGestoresByDespachoDefecto(UsuarioDto usuarioDto) {
+
+		PageSql page = new PageSql();
+		int totalCount = this.getCountGestoresByDespacho(usuarioDto);
+		
+		StringBuilder sqlUsuarios = new StringBuilder();
+		sqlUsuarios.append("select gd from GestorDespacho gd ");
+		sqlUsuarios.append("where gd.despachoExterno.id = :idTipoDespacho ");
+		sqlUsuarios.append(" and gd.auditoria.borrado = false ");
+		if (StringUtils.hasText(usuarioDto.getQuery())){
+			String[] palabras = usuarioDto.getQuery().split(" ");
+			for (String palabra : palabras) {
+				sqlUsuarios.append(" and (upper(gd.usuario.apellido1) like '%" + palabra.toUpperCase() + "%' ");
+				sqlUsuarios.append(" or upper(gd.usuario.apellido2) like '%" + palabra.toUpperCase() + "%' ");
+				sqlUsuarios.append(" or upper(gd.usuario.nombre) like '%" + palabra.toUpperCase() + "%' ) ");
+			}
+		}
+		sqlUsuarios.append("order by ");
+		sqlUsuarios.append("gd.gestorPorDefecto desc, ");
+		sqlUsuarios.append("gd.usuario.apellido1 asc, gd.usuario.apellido2 asc, gd.usuario.nombre asc ");
+		
+		Query query = getSession().createQuery(sqlUsuarios.toString());
+		query.setParameter("idTipoDespacho", usuarioDto.getIdTipoDespacho());
+		query.setFirstResult(usuarioDto.getStart());
+		query.setMaxResults(usuarioDto.getLimit());
+		List<Usuario> lista = query.list();
+		
+		page.setTotalCount(totalCount);
+		page.setResults(lista);
+		return page;
+	}
 
 }

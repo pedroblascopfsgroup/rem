@@ -13,7 +13,6 @@ import org.springframework.context.support.AbstractMessageSource;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.devon.validation.ErrorMessageUtils;
 import es.capgemini.devon.validation.ValidationException;
-import es.capgemini.pfs.despachoExterno.model.DespachoAmbitoActuacion;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -57,6 +56,7 @@ public class EsquemaDespachoValidacionDto {
 			CODIFICACION_STRING, 
 			CODIFICACION_STRING,
 			CODIFICACION_STRING, 
+			CODIFICACION_STRING,
 			CODIFICACION_STRING,
 			CODIFICACION_STRING
 	});
@@ -197,14 +197,14 @@ public class EsquemaDespachoValidacionDto {
 								esquemaTurnadoDespachoDto.setNombreProvincia(this.corregirCharEspecialesProvincia(contenidoCelda));
 								break;
 							case 7:
-								contenidoCelda = contenidoCelda.replace(",",".");
-								esquemaTurnadoDespachoDto.setPorcentajeProvincia(contenidoCelda.replace("%", "").replace(",","."));
+								esquemaTurnadoDespachoDto.setProvinciaCalidadLitigio(contenidoCelda);
+								break;
+							case 8:
+								esquemaTurnadoDespachoDto.setProvinciaCalidadConcurso(contenidoCelda);
 								break;
 							default:
 								break;
-							}
-							
-							
+							}	
 						}
 					}
 					if(!ficheroTieneErrores) {
@@ -214,11 +214,7 @@ public class EsquemaDespachoValidacionDto {
 				
 				if(ficheroTieneErrores) {
 					throw new ValidationException(ErrorMessageUtils.convertMessages(listaErrores));
-				}
-				else {
-					comprobarSumaCalidades();
-				}
-					
+				}	
 			}
 			else {
 				throw new ValidationException(ErrorMessageUtils.convertMessages(listaErrores));
@@ -336,19 +332,38 @@ public class EsquemaDespachoValidacionDto {
 					listaErrores.add(new Message(this, ms.getMessage(CODIGO_ERROR_PROVINCIA_INCORRECTA, new Object[] {fila, cabecera}, MessageUtils.DEFAULT_LOCALE), Severity.ERROR));
 				}
 			}
-			else if(cabecera.equals("CALIDAD - PROVINCIA")) {
-				//Comprueba que el dato insertado pueda tratarse como numérico
-				try {
-					Float.parseFloat(contenidoCelda.replace("%", "").replace(",","."));
-					enc = true;
-				}catch(NumberFormatException e) {
-					enc = false;
-				}
-				finally{
-					if(!enc) {
-						ficheroTieneErrores = true;
-						listaErrores.add(new Message(this, ms.getMessage(CODIGO_ERROR_FORMATO_CALIDAD_INCORRECTO, new Object[] {fila, cabecera}, MessageUtils.DEFAULT_LOCALE), Severity.ERROR));
+			else if(cabecera.equals("CALIDAD PROVINCIA - LITIGIOS")) {
+				List<EsquemaTurnadoConfig> configs = esquemaVigente.getConfiguracion();
+				for(EsquemaTurnadoConfig config : configs) {
+					
+					if(config.getTipo().equals(EsquemaTurnadoConfig.TIPO_LITIGIOS_CALIDAD)) {
+						if(contenidoCelda.equals(config.getCodigo())) {
+							enc = true;
+							break;
+						}
 					}
+				}
+				
+				if(!enc) {
+					ficheroTieneErrores = true;
+					listaErrores.add(new Message(this, ms.getMessage(CODIGO_ERROR_CAMPO_CODIGO_INCORRECTO, new Object[] {fila, cabecera}, MessageUtils.DEFAULT_LOCALE), Severity.ERROR));
+				}
+			}
+			else if(cabecera.equals("CALIDAD PROVINCIA - CONCURSOS")) {
+				List<EsquemaTurnadoConfig> configs = esquemaVigente.getConfiguracion();
+				for(EsquemaTurnadoConfig config : configs) {
+					
+					if(config.getTipo().equals(EsquemaTurnadoConfig.TIPO_CONCURSAL_CALIDAD)) {
+						if(contenidoCelda.equals(config.getCodigo())) {
+							enc = true;
+							break;
+						}
+					}	
+				}
+				
+				if(!enc) {
+					ficheroTieneErrores = true;
+					listaErrores.add(new Message(this, ms.getMessage(CODIGO_ERROR_CAMPO_CODIGO_INCORRECTO, new Object[] {fila, cabecera}, MessageUtils.DEFAULT_LOCALE), Severity.ERROR));
 				}
 			}
 		}
@@ -373,35 +388,4 @@ public class EsquemaDespachoValidacionDto {
 		
 		return nombre;
 	}
-	
-	/**
-	 * Para un mismo despacho, puede haber varias lineas en la Hoja Excel. Y comprobamos que la suma de las CALIDAD - PROVINCIA para un
-	 * mismo despacho, no sea superior al 100%.
-	 */
-	private void comprobarSumaCalidades()
-	{
-		EsquemaTurnadoDespachoDto despacho = listaRegistros.get(0);
-		Float sumaCalidad = 0.0f;
-		for(EsquemaTurnadoDespachoDto registro : listaRegistros) {
-			if(registro.getId().equals(despacho.getId())) {
-				sumaCalidad += Float.parseFloat((registro.getPorcentajeProvincia() != null && registro.getPorcentajeProvincia() != "") ? registro.getPorcentajeProvincia() : "0");
-				if(sumaCalidad > 100) {
-					ficheroTieneErrores = true;
-					listaErrores.add(new Message(this, ms.getMessage(CODIGO_ERROR_SUMA_PORCENTAJES_PROVINCIA, new Object[] {registro.getId(), sumaCalidad}, MessageUtils.DEFAULT_LOCALE), Severity.ERROR));
-					break;
-				}
-			}
-			else {
-				despacho = registro;
-				if(despacho.getPorcentajeProvincia() != null && despacho.getPorcentajeProvincia() != "") {
-					sumaCalidad = Float.parseFloat(despacho.getPorcentajeProvincia());
-				}
-				else {
-					sumaCalidad = 0.0f;
-				}
-			}
-		}
-	}
-	
-
 }

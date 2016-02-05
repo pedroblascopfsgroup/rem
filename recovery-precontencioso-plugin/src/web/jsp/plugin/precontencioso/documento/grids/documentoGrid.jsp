@@ -124,7 +124,6 @@ var incluirDocButton = new Ext.Button({
 		}				
 	});
 	
-
 var excluirDocButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.excluirDocumentos" text="**Excluir Documentos" />'
 		,id: 'excluirDocButton'
@@ -467,7 +466,8 @@ var actualizarBotonesDocumentos = function(){
 			}
 			else if(data.esGestoria) {
 				habilitarDeshabilitarButtons(true, true, true, false, true, true, false);
-			} else {
+			}
+			else {
 				if(myCboxSelModel2.getCount() == 0)	{
 					return;
 				}
@@ -633,6 +633,7 @@ var actualizarBotonesDocumentos = function(){
 								<%-- DESCARTAR DOCUMENTOS Y ANULAR SOLICITUDES MASIVAMENTE --%>
 								<%--habilitarDeshabilitarButtons(false, true, false, true, false, false, true); --%>
 								habilitarDeshabilitarButtons(false, true, false, true, false, false, false);<%--habilitamos informar masivo --%>
+
 								return;
 							}
 							<%-- Si hay alguna solicitud con resultado --%>
@@ -768,15 +769,19 @@ var gridDocumentos = new Ext.grid.GridPanel({
 		title: '<s:message code="precontencioso.grid.documento.titulo" text="**Documentos" />'	
 		,columns: cmDocumento
 		,store: storeDocumentos
+		,height: 170
 		,loadMask: true
         ,sm: myCboxSelModel2
         ,clicksToEdit: 1
+        ,viewConfig: {forceFit:true}
         ,plugins: [columMemoryPlugin]
 		,collapsible: true
 		,height: 250
 		,autoWidth: true	
+		,resizable:true	
 		,collapsed : false
 		,titleCollapse : false
+		,autoHeight: false
 		,monitorResize: true
 		<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_DOC_BTN">
 			,bbar : [ incluirDocButton, excluirDocButton, descartarDocButton, editarDocButton, separadorButtons, anularSolicitudesButton, solicitarDocButton, informarDocButton, botonRefresh]

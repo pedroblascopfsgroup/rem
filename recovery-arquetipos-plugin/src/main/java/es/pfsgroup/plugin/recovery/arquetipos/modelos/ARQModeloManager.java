@@ -12,12 +12,10 @@ import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.web.DynamicElement;
-import es.capgemini.pfs.arquetipo.ArquetipoManager;
 import es.capgemini.pfs.core.api.web.DynamicElementApi;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.recovery.arquetipos.PluginArquetiposBusinessOperations;
-import es.pfsgroup.plugin.recovery.arquetipos.arquetipos.ARQArquetipoManager;
 import es.pfsgroup.plugin.recovery.arquetipos.arquetipos.dao.ARQArqArquetipoDao;
 import es.pfsgroup.plugin.recovery.arquetipos.arquetipos.model.ARQArquetipo;
 import es.pfsgroup.plugin.recovery.arquetipos.estadoModelo.dao.ARQDDEstadoModeloDao;
@@ -27,7 +25,6 @@ import es.pfsgroup.plugin.recovery.arquetipos.modelos.dto.ARQDtoBusquedaModelo;
 import es.pfsgroup.plugin.recovery.arquetipos.modelos.dto.ARQDtoModelo;
 import es.pfsgroup.plugin.recovery.arquetipos.modelos.model.ARQModelo;
 import es.pfsgroup.plugin.recovery.arquetipos.modelosArquetipos.ARQModeloArquetipoManager;
-import es.pfsgroup.plugin.recovery.arquetipos.modelosArquetipos.dao.ARQModeloArquetipoDao;
 import es.pfsgroup.plugin.recovery.arquetipos.modelosArquetipos.model.ARQModeloArquetipo;
 
 @Service("ARQModeloManager")
@@ -44,9 +41,6 @@ public class ARQModeloManager {
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
-	
-	@Autowired
-	private ArquetipoManager arquetipoManager;
 	
 	@Autowired
 	private ARQArqArquetipoDao arqArqArquetipoDao;
@@ -192,7 +186,7 @@ public class ARQModeloManager {
 	 * @param modelo a validar
 	 * @return true si correcto, false en caso contrario
 	 */
-	private String validar(ARQModelo modelo) {
+	public String validar(ARQModelo modelo) {
 		StringBuilder mensaje = new StringBuilder("");
 		
 		//Si no se cumple alguna validación se devuelve un mensaje de error
@@ -204,7 +198,7 @@ public class ARQModeloManager {
 		
 		//Comprobamos que tenga asociado algún arquetipo
 		if (arquetipos == null || arquetipos.size()==0)
-			mensaje.append("- El modelo debe de tener algún arquetipo asociado.<br/>");
+			mensaje.append("- El modelo debe de tener alg�n arquetipo asociado.<br/>");
 		
 		for (ARQModeloArquetipo arqModeloArquetipo : arquetipos) {
 			if (arqModeloArquetipo.getArquetipo()== null)

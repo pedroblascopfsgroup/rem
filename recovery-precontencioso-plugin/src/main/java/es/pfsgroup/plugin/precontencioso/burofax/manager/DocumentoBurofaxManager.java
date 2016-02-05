@@ -206,7 +206,7 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		///Variables especificas BANKIA
 		if (!Checks.esNulo(contrato)) {
 			if(!Checks.esNulo(contrato.getNroContratoFormat())){
-				mapaVariables.put(CODIGO_DE_CONTRATO, contrato.getNroContratoFormat());
+				mapaVariables.put(CODIGO_DE_CONTRATO, contrato.getDescripcion());
 			} else{
 				mapaVariables.put(CODIGO_DE_CONTRATO,ERROR_NO_EXISTE_VALOR);
 			}
@@ -216,7 +216,7 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		
 		if (!Checks.esNulo(contrato)) {
 			if(!Checks.esNulo(contrato.getNroContratoFormat())){
-				mapaVariables.put(CODIGO_DE_CONTRATO_DE_17_DIGITOS, contrato.getNroContratoFormat());
+				mapaVariables.put(CODIGO_DE_CONTRATO_DE_17_DIGITOS, contrato.getDescripcion());
 			} else{
 				mapaVariables.put(CODIGO_DE_CONTRATO_DE_17_DIGITOS,ERROR_NO_EXISTE_VALOR);
 			}

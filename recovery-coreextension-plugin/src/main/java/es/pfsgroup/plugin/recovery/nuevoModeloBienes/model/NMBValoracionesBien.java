@@ -74,7 +74,7 @@ public class NMBValoracionesBien implements Serializable, Auditable, NMBValoraci
     private Date fechaSolicitudTasacion;
     
     @Column(name = "BIE_CD_NUITA") 
-    private Integer codigoNuita;
+    private Long codigoNuita;
 
     public String getRespuestaConsulta() {
 		return respuestaConsulta;
@@ -191,11 +191,11 @@ public class NMBValoracionesBien implements Serializable, Auditable, NMBValoraci
 		this.auditoria = auditoria;
 	}
 
-	public Integer getCodigoNuita() {
+	public Long getCodigoNuita() {
 		return codigoNuita;
 	}
 
-	public void setCodigoNuita(Integer codigoNuita) {
+	public void setCodigoNuita(Long codigoNuita) {
 		this.codigoNuita = codigoNuita;
 	}	
 	

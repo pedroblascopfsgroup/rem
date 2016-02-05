@@ -217,8 +217,11 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		input.setOperacion(ConstantesGestorDocumental.CONSULTA_DOCUMENTO_OPERACION);
 		input.setLocalizador(idRefCentera);
 		outputDto = gestorDocumentalWSApi.ejecutar(input);
-		return AdjuntoGridAssembler.outputDtoToAdjuntoGridDto(outputDto).get(0);
-
+		List<AdjuntoGridDto> listDto = AdjuntoGridAssembler.outputDtoToAdjuntoGridDto(outputDto);
+		if(Checks.estaVacio(listDto)) {
+			return null;
+		}
+		return listDto.get(0);
 	}
 
 	private GestorDocumentalInputDto rellenaInputDto(String claveAsociacion,

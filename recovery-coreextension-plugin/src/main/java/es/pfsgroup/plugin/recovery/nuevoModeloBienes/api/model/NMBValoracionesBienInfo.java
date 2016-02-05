@@ -12,13 +12,13 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 public interface NMBValoracionesBienInfo {
 
 	/**
-	 * Id de la valoración del bien 
+	 * Id de la valoraciï¿½n del bien 
 	 * @return Lista de datos registrales
 	 */
 	Long getId();
 	
 	/**
-	 * El bien relacionado con esta valoración
+	 * El bien relacionado con esta valoraciï¿½n
 	 * @return Lista de datos registrales
 	 */
 	NMBBienInfo getBien();
@@ -35,23 +35,23 @@ public interface NMBValoracionesBienInfo {
 	Float getImporteValorSubjetivo();
 
 	/**
-	 * Fecha valor apreciación para el bien
+	 * Fecha valor apreciaciï¿½n para el bien
 	 */	
 	Date getFechaValorApreciacion();
 
 	/**
-	 * Importe valor apreciación para el bien
+	 * Importe valor apreciaciï¿½n para el bien
 	 * @return
 	 */
 	Float getImporteValorApreciacion();
 	
 	/**
-	 * Fecha valor tasación para el bien
+	 * Fecha valor tasaciï¿½n para el bien
 	 */	
 	Date getFechaValorTasacion();
 
 	/**
-	 * Importe valor tasación para el bien
+	 * Importe valor tasaciï¿½n para el bien
 	 * @return
 	 */
 	Float getImporteValorTasacion();	
@@ -62,7 +62,7 @@ public interface NMBValoracionesBienInfo {
 	Auditoria getAuditoria();
 	
 	/**
-	 * Código nuita para el bien
+	 * Cï¿½digo nuita para el bien
 	 */
-	Integer getCodigoNuita();
+	Long getCodigoNuita();
 }

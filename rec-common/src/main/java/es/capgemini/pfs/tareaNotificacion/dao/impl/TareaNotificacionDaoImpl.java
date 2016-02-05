@@ -29,7 +29,6 @@ import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.utils.StringUtils;
 import es.capgemini.pfs.zona.model.DDZona;
-import es.pfsgroup.commons.utils.Checks;
 
 /**
  * Implementación del dao de notificaciones para Hibenate.

@@ -17,7 +17,8 @@
 						<json:property name="descripcion" >
 							<pfsformat:cut value="${entity.adjuntosAsList[0].descripcion}" max="27"/>
 						</json:property>
-						<json:property name="fechaCrear" value="${entity.adjuntosAsList[0].auditoria.fechaCrear}">
+						<json:property name="fechaCrear" >
+							<fwk:date value="${entity.adjuntosAsList[0].auditoria.fechaCrear}"/>
 						</json:property>
 					</c:if>
 			</json:object>
@@ -31,9 +32,6 @@
 							<json:property name="length" value="${adj.length}" />
 							<json:property name="descripcion" >
 								<pfsformat:cut value="${adj.descripcion}" max="27"/>
-							</json:property>
-							<json:property name="fechaCrear">
-							 	<fwk:date value="${adj.auditoria.fechaCrear}"/>
 							</json:property>
 							<json:property name="fechaCrear">
 							 	<fwk:date value="${adj.auditoria.fechaCrear}"/>

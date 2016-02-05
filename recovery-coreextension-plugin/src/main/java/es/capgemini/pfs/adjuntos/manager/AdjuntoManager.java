@@ -11,7 +11,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.AbstractMessageSource;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
@@ -60,7 +59,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.recovery.api.ProcedimientoApi;
-import es.pfsgroup.recovery.ext.api.persona.EXTPersonaApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
@@ -401,8 +399,7 @@ public class AdjuntoManager implements AdjuntoApi{
 		adjPers.setPersona(persona);
 		Auditoria.save(adjPers);
 		
-		persona.getAdjuntos().add(adjPers);
-		genericDao.save(Persona.class, persona);
+		genericDao.save(AdjuntoPersona.class, adjPers);
 
         return null;
 	}
@@ -436,8 +433,7 @@ public class AdjuntoManager implements AdjuntoApi{
 		adjuntoexp.setExpediente(expediente);
 		Auditoria.save(adjuntoexp);
         
-		expediente.getAdjuntos().add(adjuntoexp);
-		genericDao.save(Expediente.class, expediente);
+		genericDao.save(AdjuntoExpediente.class, adjuntoexp);
 
         return null;
 	}
@@ -471,8 +467,7 @@ public class AdjuntoManager implements AdjuntoApi{
 		adjCnt.setContrato(contrato);
 		Auditoria.save(adjCnt);
 
-		contrato.getAdjuntos().add(adjCnt);
-		genericDao.save(Contrato.class, contrato);
+		genericDao.save(AdjuntoContrato.class, adjCnt);
 
         return null;
 	}

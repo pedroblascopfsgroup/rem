@@ -14,7 +14,8 @@
 --##########################################
 --*/
 
-
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
 create or replace PROCEDURE CARGAR_DIM_TAREA(O_ERROR_STATUS OUT VARCHAR2) AS
 
 -- -------------------------------------------- ÍNDICE -------------------------------------------

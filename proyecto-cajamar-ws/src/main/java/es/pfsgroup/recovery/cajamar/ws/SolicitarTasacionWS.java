@@ -146,6 +146,8 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 			nueva.setAuditoria(auditoria);
 		}
 		
+		nueva.setFechaSolicitudTasacion(new Date());
+		
 		String codigoTasadora = output.getTASA();
 		if(codigoTasadora != null) {
 			Filter filtroTasadora = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoTasadora);

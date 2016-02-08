@@ -1,10 +1,14 @@
 package es.capgemini.pfs.dsm.dao.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
+import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.dao.AbstractMasterDao;
 import es.capgemini.pfs.dsm.dao.EntidadDao;
 import es.capgemini.pfs.dsm.model.Entidad;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 
 /**
  * @author Nicolás Cornaglia
@@ -26,5 +30,13 @@ public class EntidadDaoImpl extends AbstractMasterDao<Entidad, Long> implements 
         return (Entidad) (getHibernateTemplate().find(
                 "select c from Entidad c where c.descripcion = ?", descripcion)).iterator().next();
     }
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<EXTDDTipoGestor> getListGestores(long idEntidad) {
+        String hql = "select e.tiposDeGestores from Entidad e where e.id = ? and a.auditoria.borrado = 0 order by e.tiposDeGestores.descripcion ASC";
+        List<EXTDDTipoGestor> gestores = (List<EXTDDTipoGestor>) getHibernateTemplate().find(hql, idEntidad);
+        return gestores;
+	}
     
 }

@@ -159,6 +159,20 @@ public class EsquemaTurnado implements Serializable, Auditable {
 		return null;
 	}
 	
+	
+	/**
+	 * Recupera una configuración por el Id. Null en caso de no encontrarla.
+	 * 
+	 * @param id id de configuración
+	 * @return Configuración con el id, null en caso de no encontrarla
+	 */
+	public EsquemaTurnadoConfig getConfigByCodigo(String codigo) {
+		if (configuracion==null) return null;
+		for (EsquemaTurnadoConfig config : configuracion) {
+			if (config.getCodigo().equals(codigo)) return config;
+ 		}
+		return null;
+	}
 	/**
 	 * Comprueba si este esquema contiene la configuración que se le pasa.
 	 * 

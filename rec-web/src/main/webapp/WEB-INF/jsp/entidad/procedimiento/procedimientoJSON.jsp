@@ -9,8 +9,8 @@
   <json:property name="activoDespachoIntegral" value="${activoDespachoIntegral}" />
   <json:property name="id" value="${procedimiento.id}" />
   <json:property name="nombreTab" value="${nombreTab}" />
-<!--  <json:property name="fechaVenc" value="${fechaVenc}" /> -->
-<!--  <json:property name="tarea" value="${tarea}" /> -->
+<%--  <json:property name="fechaVenc" value="${fechaVenc}" /> --%>
+<%--  <json:property name="tarea" value="${tarea}" /> --%>
   <json:property name="paralizado" value="${paralizado}" />
   <json:property name="esGestor" value="${esGestor}" />
   <json:property name="esSupervisor" value="${esSupervisor}" />

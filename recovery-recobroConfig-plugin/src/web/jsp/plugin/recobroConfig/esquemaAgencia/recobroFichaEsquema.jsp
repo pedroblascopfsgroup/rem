@@ -230,38 +230,44 @@
 			]
 	});
 	
-	if (!ultimaVersionDelEsquema ) {
-   		btnSimular.setDisabled(true);
-   		btnModificar.setDisabled(true);
-   		btDefinicion.setDisabled(true);
-    } 
-    
-	if ('${esquema.propietario.id}' != usuarioLogado.getValue()) {
-   		btnSimular.setDisabled(true);
-   		btnModificar.setDisabled(true);
-   		btDefinicion.setDisabled(true);
-    }
-    	
-	if ('${esquema.estadoEsquema.codigo}' != 'DEF'){
-		btnSimular.setDisabled(true);
-	}
+	 btnSimular.setDisabled(true);
+     btnModificar.setDisabled(true);
+     btDefinicion.setDisabled(true);
+
+     <sec:authorize ifAllGranted="ROLE_CONF_ESQUEMA">
+             btnSimular.setDisabled(false);
+             btnModificar.setDisabled(false);
+             btDefinicion.setDisabled(false);
+     </sec:authorize>
+
+     if (!ultimaVersionDelEsquema ) {
+             btnSimular.setDisabled(true);
+             btnModificar.setDisabled(true);
+             btDefinicion.setDisabled(true);
+     }
+
+     if ('${esquema.estadoEsquema.codigo}' != 'DEF'){
+             btnSimular.setDisabled(true);
+     }
 	 
-	if ((ESTADO_SIMULADO.getValue()=='${esquema.estadoEsquema.codigo}' || ESTADO_PENDIENTESIMULAR.getValue()=='${esquema.estadoEsquema.codigo}')
-		&& ('${esquema.propietario.id}' == usuarioLogado.getValue())){
-		btDefinicion.setDisabled(false);
+	if (ESTADO_SIMULADO.getValue()=='${esquema.estadoEsquema.codigo}' || ESTADO_PENDIENTESIMULAR.getValue()=='${esquema.estadoEsquema.codigo}'){
+	        <sec:authorize ifAllGranted="ROLE_CONF_ESQUEMA">
+	        btDefinicion.setDisabled(false);
+	        </sec:authorize>
 	} else{
-		btDefinicion.setDisabled(true);
+	        btDefinicion.setDisabled(true);
 	}
 	
-	if ( ${enEstadoCorrectoLiberar}
-		 && '${esquema.propietario.id}' == usuarioLogado.getValue() && ultimaVersionDelEsquema){
-		btLiberar.setDisabled(false);
+	if ( ${enEstadoCorrectoLiberar} && ultimaVersionDelEsquema){
+	        <sec:authorize ifAllGranted="ROLE_CONF_ESQUEMA">
+	        btLiberar.setDisabled(false);
+	        </sec:authorize>
 	} else {
-		btLiberar.setDisabled(true);
+	        btLiberar.setDisabled(true);
 	}
 	
 	if ('${esquema.estadoEsquema.codigo}' == ESTADO_LIBERADO.getValue()){
-		btnModificar.setDisabled(true);
+	        btnModificar.setDisabled(true);
 	}
 		
 	page.add(panel);

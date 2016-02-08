@@ -19,6 +19,7 @@ import es.pfgroup.monioring.bach.load.CheckStatusApp;
 import es.pfgroup.monioring.bach.load.CheckStatusResult;
 import es.pfgroup.monioring.bach.load.exceptions.CheckStatusErrorType;
 import es.pfgroup.monioring.bach.load.exceptions.CheckStatusMalfunctionError;
+import es.pfgroup.monioring.bach.load.exceptions.CheckStatusRecoverableException;
 import es.pfgroup.monioring.bach.load.exceptions.CheckStatusUserError;
 import es.pfgroup.monioring.bach.load.exceptions.CheckStatusWrongArgumentsException;
 import es.pfgroup.monioring.bach.load.logic.CheckStatusLogic;
@@ -264,7 +265,9 @@ public class CheckStatusTest {
             when(logic.getExecutionInfo(entity, jobName, lastTime)).thenReturn(batchExecutionData);
         } catch (CheckStatusWrongArgumentsException e) {
             // SÓLO MOCKS no se produce la excepción
-        }
+        } catch (CheckStatusRecoverableException e) {
+        	// SÓLO MOCKS no se produce la excepción
+		}
     }
 
     private void exceptionOnGetExecutionInfo(Class<CheckStatusWrongArgumentsException> exception) {
@@ -272,7 +275,9 @@ public class CheckStatusTest {
             when(logic.getExecutionInfo(any(Integer.class), any(String.class), any(Date.class))).thenThrow(exception);
         } catch (CheckStatusWrongArgumentsException e) {
             // No se produce la excepción porque es un mock
-        }
+        } catch (CheckStatusRecoverableException e) {
+        	// No se produce la excepción porque es un mock
+		}
     }
 
 }

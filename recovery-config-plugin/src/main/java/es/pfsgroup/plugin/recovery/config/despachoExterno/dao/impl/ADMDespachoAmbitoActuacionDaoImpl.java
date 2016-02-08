@@ -9,11 +9,11 @@ import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.dao.AbstractEntityDao;
-import es.capgemini.pfs.despachoExterno.model.DespachoAmbitoActuacion;
 import es.pfsgroup.commons.utils.Assertions;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.recovery.config.despachoExterno.dao.ADMDespachoAmbitoActuacionDao;
+import es.pfsgroup.recovery.ext.turnadodespachos.DespachoAmbitoActuacion;
 
 @Repository("ADMDespachoAmbitoActuacionDao")
 public class ADMDespachoAmbitoActuacionDaoImpl extends

@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.pagination.Page;
-import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoBuscarTareaNotificacion;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 
@@ -25,11 +24,11 @@ public interface EXTTareasApi {
 
 	/**
 	 * Crea una tarea individualizada, es decir, que va destinada a un usuario
-	 * particular. Esta tarea siempre le va a salir al buzón de ese usuario,
-	 * independiententemente de que sea gestro o no de una unidad de gestión
+	 * particular. Esta tarea siempre le va a salir al buzï¿½n de ese usuario,
+	 * independiententemente de que sea gestro o no de una unidad de gestiï¿½n
 	 * 
 	 * @param dto
-	 *            Información necesaria para generar la tarea
+	 *            Informaciï¿½n necesaria para generar la tarea
 	 * @return
 	 * @throws EXTCrearTareaException
 	 *             Si se produce un error al generar la tarea
@@ -40,8 +39,8 @@ public interface EXTTareasApi {
 			EXTDtoGenerarTareaIdividualizada dto) throws EXTCrearTareaException;
 
 	/**
-	 * Este método, dependiendo de las funciones que tenga el usuario, delega la
-	 * búsqueda de tareas a otras operaciones con opciones ampliadas. Las
+	 * Este mï¿½todo, dependiendo de las funciones que tenga el usuario, delega la
+	 * bï¿½squeda de tareas a otras operaciones con opciones ampliadas. Las
 	 * opciones disponbles son
 	 * <ul>
 	 * <li>Para la funcion BUSQUEDA_CARTERIZADA_TAREAS, devuelve las tareas
@@ -56,8 +55,8 @@ public interface EXTTareasApi {
 	public Page buscarTareasPendientesDelegator(DtoBuscarTareaNotificacion dto);
 
 	/**
-	 * Este método, dependiendo de las funciones que tenga el usuario, delega la
-	 * obtención del count de todas las tareas pendientes a otras operaciones
+	 * Este mï¿½todo, dependiendo de las funciones que tenga el usuario, delega la
+	 * obtenciï¿½n del count de todas las tareas pendientes a otras operaciones
 	 * con opciones ampliadas. Las opciones disponbles son
 	 * <ul>
 	 * <li>Para la funcion BUSQUEDA_CARTERIZADA_TAREAS, devuelve las tareas
@@ -74,7 +73,7 @@ public interface EXTTareasApi {
 			DtoBuscarTareaNotificacion dto);
 
 	/**
-	 * Variante de la búsqueda de tareas con soporte para la carterización
+	 * Variante de la bï¿½squeda de tareas con soporte para la carterizaciï¿½n
 	 * 
 	 * @param dto
 	 * @return
@@ -85,7 +84,7 @@ public interface EXTTareasApi {
 			DtoBuscarTareaNotificacion dto);
 	
 	/**
-	 * Variante de la obtención de los contadores para las tareas pendientes con soporte para la carterización
+	 * Variante de la obtenciï¿½n de los contadores para las tareas pendientes con soporte para la carterizaciï¿½n
 	 * 
 	 * @param dto
 	 * @return

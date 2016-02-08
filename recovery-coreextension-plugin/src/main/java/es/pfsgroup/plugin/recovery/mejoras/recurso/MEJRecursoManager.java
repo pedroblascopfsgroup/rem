@@ -420,7 +420,13 @@ public class MEJRecursoManager implements MEJRecursoAPI {
 
 	public void prepareGuid(MEJRecurso recurso) {
 		if (Checks.esNulo(recurso.getGuid())) {
-			recurso.setGuid(Guid.getNewInstance().toString());
+			
+			String guid = Guid.getNewInstance().toString();
+			while(getRecursoByGuid(guid) != null) {
+				guid = Guid.getNewInstance().toString();
+			}
+			
+			recurso.setGuid(guid);
 		}
 		recursoDao.saveOrUpdate(recurso);
 	}

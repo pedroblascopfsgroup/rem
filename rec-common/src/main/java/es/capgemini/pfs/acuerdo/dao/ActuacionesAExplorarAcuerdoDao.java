@@ -25,4 +25,11 @@ public interface ActuacionesAExplorarAcuerdoDao extends HibernateDao<Actuaciones
      * @return List DDSubtipoSolucionAmistosaAcuerdo
      */
     List<DDSubtipoSolucionAmistosaAcuerdo> getSubtiposActivosOMarcadosByAcuerdo(Long idAcuerdo);
+
+    /**
+     * Devuelve un objeto ActuacionesAExplorarAcuerdo a partir de su identificador único
+     * @param guid Identificador único del objeto
+     * @return ActuacionesAExplorarAcuerdo
+     */
+	ActuacionesAExplorarAcuerdo getByGuid(String guid);
 }

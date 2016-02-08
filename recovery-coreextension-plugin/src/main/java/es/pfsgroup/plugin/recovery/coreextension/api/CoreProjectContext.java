@@ -32,4 +32,6 @@ public interface CoreProjectContext {
 	public List<String> getCodigosDocumentosConFechaCaducidad();
 	
 	public Set<String> getTipoGestorLetrado();
+	
+	public Map<String, String> getTipoSupervisorProrroga();
 }

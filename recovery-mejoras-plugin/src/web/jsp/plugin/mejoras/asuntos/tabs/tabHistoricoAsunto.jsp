@@ -149,6 +149,22 @@
 			,enableNoGroups:true
 		})
 	};
+	
+	
+	<%-- PRODUCTO-671 Comprueba si la tarea es de tipo COMUNICACION y es dueño o destinatario de la misma *Para users de perfil solo consulta--%>		
+	var comprobacionComunicacionesYPerfil = function(tipoTareaCom, userCreador, userDestino) {
+		<sec:authorize ifAllGranted="SOLO_CONSULTA"> 
+			if(tipoTareaCom == '700' || tipoTareaCom == '701')
+			{ 
+				if( (userCreador == app.usuarioLogado.apellidoNombre || userDestino == app.usuarioLogado.apellidoNombre) ) {
+						return 	true;
+				}
+				return false;
+			}
+		</sec:authorize>
+		
+		return true;
+	}
 		
 	var historicoGrid = app.crearGrid(tareasProcStore,historicoAsuntoCM,cfg);
 	
@@ -232,6 +248,8 @@
 
 		}else if(recStore.get('tarea') || recStore.get('idTraza')){
 		
+			var abrirTarea = true;
+		
 			if(subtipoTarea == '703'){
 				var w = app.openWindow({
 					flow : 'especializadamasiva/abreDetalleAnotacionEspecializada'
@@ -252,40 +270,47 @@
 					}
 				});					
 			}
-			else{		
-			
-				var w = app.openWindow({
-					flow : 'historicoasunto/abreDetalleHistorico'
-					,title : '<s:message code="tareas.notificacion" text="Notificacion" />'
-					,closable:true
-					,width:650
-					,y:1 
-					,params : {
-							idEntidad: recStore.get('idEntidad')
-							,codigoTipoEntidad: recStore.get('tipoEntidad')
-							,descripcion: recStore.get('descripcionTarea')
-							,fecha: app.format.dateRenderer(recStore.get('fechaInicio'))
-							,situacion: 'Asunto'
-							,idTareaAsociada: recStore.get('idTarea')
-							,isConsulta:true
-							,idTraza:recStore.get('idTraza')
-							,idTarea:recStore.get('idTarea')
-							,tipoTraza:recStore.get('tipoTraza')
-					}
+			else{			
+				if(comprobacionComunicacionesYPerfil(subtipoTarea, recStore.get('nombreUsuario'), destinatarioTarea))
+				{
+					
+					var w = app.openWindow({
+						flow : 'historicoasunto/abreDetalleHistorico'
+						,title : '<s:message code="tareas.notificacion" text="Notificacion" />'
+						,closable:true
+						,width:650
+						,y:1 
+						,params : {
+								idEntidad: recStore.get('idEntidad')
+								,codigoTipoEntidad: recStore.get('tipoEntidad')
+								,descripcion: recStore.get('descripcionTarea')
+								,fecha: app.format.dateRenderer(recStore.get('fechaInicio'))
+								,situacion: 'Asunto'
+								,idTareaAsociada: recStore.get('idTarea')
+								,isConsulta:true
+								,idTraza:recStore.get('idTraza')
+								,idTarea:recStore.get('idTarea')
+								,tipoTraza:recStore.get('tipoTraza')
+						}
+					});
+				} 
+				else {
+					abrirTarea = false;
+				}
+			}
+			if(abrirTarea) {
+				w.on(app.event.DONE, function(){
+					w.close();
+				});
+				w.on(app.event.CANCEL, function(){ w.close(); });
+				w.on(app.event.OPEN_ENTITY, function(){
+					w.close();
+																			
+					app.abreAsuntoTab(recStore.get('idEntidad'), recStore.get('tarea'), 'cabeceraAsunto');
+					
+								
 				});
 			}
-			
-			w.on(app.event.DONE, function(){
-				w.close();
-			});
-			w.on(app.event.CANCEL, function(){ w.close(); });
-			w.on(app.event.OPEN_ENTITY, function(){
-				w.close();
-																		
-				app.abreAsuntoTab(recStore.get('idEntidad'), recStore.get('tarea'), 'cabeceraAsunto');
-				
-							
-			});
 		}
 		
 	});	

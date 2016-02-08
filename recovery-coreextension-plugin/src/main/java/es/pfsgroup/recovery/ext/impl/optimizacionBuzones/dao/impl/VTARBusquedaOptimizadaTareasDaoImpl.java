@@ -264,12 +264,13 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
     }
     
     private StringBuilder armaFiltrosBasicosString(final DtoBuscarTareaNotificacion dto, final Usuario u) {
-    	final StringBuilder hb = new StringBuilder();
-    	
-    	//Ante todo que cumpla el tipo de tarea
+        final StringBuilder hb = new StringBuilder();
+
+        //Ante todo que cumpla el tipo de tarea
         // Filtro por tipo de tarea
         //HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vtar.codigoTipoTarea", dto.getCodigoTipoTarea());
         hb.append(" vtar.codigoTipoTarea = " + dto.getCodigoTipoTarea() + " AND (");
+   	
     	
     	List<Long> grupos = grupoUsuarioDao.buscaGruposUsuario(u);
     	grupos.add(u.getId()); // incluimos el usuario
@@ -479,7 +480,8 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 
             Date fechaHastaFinal;
             if (!Checks.esNulo(dto.getFechaVencimientoHasta())) {
-                fechaHastaFinal = fechaHastaParsed.getTime();
+            	fechaHastaParsed.add(Calendar.DAY_OF_MONTH, +1);
+            	fechaHastaFinal = fechaHastaParsed.getTime();
             } else {
                 if ("=".equals(dto.getFechaVencDesdeOperador()) && fechaDesdeParse != null) {
                     fechaHastaParsed = fechaDesdeParse;

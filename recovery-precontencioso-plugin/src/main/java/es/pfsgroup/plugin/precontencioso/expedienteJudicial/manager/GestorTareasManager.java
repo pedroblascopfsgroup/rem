@@ -108,7 +108,8 @@ public class GestorTareasManager implements GestorTareasApi {
     }
     
 	private List<GestorTareasLineaConfigPCO> obtenerLineasConfiguracion() {
-		return genericDao.getList(GestorTareasLineaConfigPCO.class);
+		
+		return genericDao.getList(GestorTareasLineaConfigPCO.class, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 	}
 
 

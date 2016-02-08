@@ -11,7 +11,8 @@ public class EsquemaTurnadoDespachoDto {
     private String listaComunidades;
     private String listaProvincias;
     private String nombreProvincia;
-    private String porcentajeProvincia;
+    private String provinciaCalidadLitigio;
+    private String provinciaCalidadConcurso;
     
 	public Long getId() {
 		return id;
@@ -101,11 +102,17 @@ public class EsquemaTurnadoDespachoDto {
 	public void setNombreProvincia(String nombreProvincia) {
 		this.nombreProvincia = nombreProvincia;
 	}
-	public String getPorcentajeProvincia() {
-		return porcentajeProvincia;
+	public String getProvinciaCalidadLitigio() {
+		return provinciaCalidadLitigio;
 	}
-	public void setPorcentajeProvincia(String porcentajeProvincia) {
-		this.porcentajeProvincia = porcentajeProvincia;
+	public void setProvinciaCalidadLitigio(String provinciaCalidadLitigio) {
+		this.provinciaCalidadLitigio = provinciaCalidadLitigio;
+	}
+	public String getProvinciaCalidadConcurso() {
+		return provinciaCalidadConcurso;
+	}
+	public void setProvinciaCalidadConcurso(String provinciaCalidadConcurso) {
+		this.provinciaCalidadConcurso = provinciaCalidadConcurso;
 	}
 	
 	/**

@@ -17,4 +17,11 @@ public interface ActuacionesRealizadasAcuerdoDao extends AbstractDao<Actuaciones
      * @return List ActuacionesRealizadasAcuerdo
      */
     List<ActuacionesRealizadasAcuerdo> buscarPorAcuerdo(Long idAcuerdo);
+
+    /**
+     * Devuelve un objeto ActuacionesRealizadasAcuerdo a partir de su identificador único
+     * @param guid
+     * @return ActuacionesRealizadasAcuerdo
+     */
+	ActuacionesRealizadasAcuerdo getByGuid(String guid);
 }

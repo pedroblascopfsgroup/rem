@@ -502,33 +502,35 @@
     	var idPropietario = politicasGrid.getSelectionModel().getSelected().get('idPropietario');
     	btnEditarPalanca.setDisabled(true);
     	if (codigoEstado == ESTADO_BLOQUEADO.getValue()){
-    		btBorrar.setDisabled(true);
-    		btnEditar.setDisabled(true); 
-    		btCopiar.setDisabled(false);
-    		btLiberar.setDisabled(true);
-    		btBorrarPalanca.setDisabled(true);
-    		btnAgregarPalanca.setDisabled(true);
-    	} else {
-    		if (idPropietario != usuarioLogado.getValue()){
-    			btBorrar.setDisabled(true);
-    			btnEditar.setDisabled(true); 
-    			btLiberar.setDisabled(true);
-    			btBorrarPalanca.setDisabled(true);
-    			btnAgregarPalanca.setDisabled(true);
-    		} else {
-    			btBorrar.setDisabled(false);
-    			btnEditar.setDisabled(false); 
-    			btBorrarPalanca.setDisabled(false);
-    			btnAgregarPalanca.setDisabled(false);
-    			if (codigoEstado == ESTADO_DEFINICION.getValue()){
-    				btLiberar.setDisabled(false);
-    			} else {
-    				btLiberar.setDisabled(true);
-    			}
-    		}
-    		if (codigoEstado == ESTADO_DEFINICION.getValue()){
-    			btCopiar.setDisabled(true);
-    		} else {
+                btBorrar.setDisabled(true);
+                btnEditar.setDisabled(true);
+                btCopiar.setDisabled(false);
+                btLiberar.setDisabled(true);
+                btBorrarPalanca.setDisabled(true);
+                btnAgregarPalanca.setDisabled(true);
+        } else {
+                btBorrar.setDisabled(true);
+                btnEditar.setDisabled(true);
+                btLiberar.setDisabled(true);
+                btBorrarPalanca.setDisabled(true);
+                btnAgregarPalanca.setDisabled(true);
+
+                <sec:authorize ifAllGranted="ROLE_CONF_POLITICA">
+                        btBorrar.setDisabled(false);
+                        btnEditar.setDisabled(false);
+                        btBorrarPalanca.setDisabled(false);
+                        btnAgregarPalanca.setDisabled(false);
+                        if (codigoEstado == ESTADO_DEFINICION.getValue()){
+                                btLiberar.setDisabled(false);
+                        } else {
+                                btLiberar.setDisabled(true);
+                        }
+                </sec:authorize>
+
+                if (codigoEstado == ESTADO_DEFINICION.getValue()){
+                        btCopiar.setDisabled(true);
+                } else {
+
     			btCopiar.setDisabled(false);
     		}
     	}

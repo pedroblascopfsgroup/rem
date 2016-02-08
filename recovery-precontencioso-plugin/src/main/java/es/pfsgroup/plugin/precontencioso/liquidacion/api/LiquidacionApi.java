@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.liquidacion.api;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -87,5 +88,23 @@ public interface LiquidacionApi {
      * @param liquidacionDto
      */
 	void visar(LiquidacionDTO liquidacionDto);
+	
+	/**
+	 * Obtiene el total de las liquidaciones PCO a partir del siguiente trámite al PCO
+	 * 
+	 * @param idProcedimiento
+	 *            
+	 * @return BigDecimal
+	 */
+	BigDecimal getTotalLiquidacion(Long idProcedimiento);
+	
+	/**
+	 * Obtiene el total de la suma de las liquidaciones de un procedimientos precontencioso.
+	 * 
+	 * @param idProcedimiento
+	 *            
+	 * @return BigDecimal
+	 */
+	BigDecimal getTotalLiquidacionPCO(Long idProcedimientoPCO);
 
 }

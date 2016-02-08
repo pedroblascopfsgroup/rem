@@ -108,7 +108,8 @@
 			
 	<bean p:entity="bien.tabs" p:name="tabRelacionesBien" p:order="30"
 		p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/bienes/tabs/tabRelaciones.jsp"
-		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="TAB_BIEN_RELACIONES" />
 	
 	<bean p:entity="bien.tabs" p:name="tabEmbargosBien" p:order="60"
 		p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/bienes/tabs/tabEmbargos.jsp"
@@ -117,7 +118,8 @@
 		
 	<bean p:entity="bien.tabs" p:name="tabDatosEntidad" p:order="20"
 		p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/bienes/tabs/tabDatosEntidad.jsp"
-		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>	
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="TAB_BIEN_DATOSENTIDAD" />	
 		
 	<bean p:entity="bien.tabs" p:name="tabCargas" p:order="50"
 		p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/bienes/tabs/tabCargas.jsp"
@@ -129,7 +131,8 @@
 		
 	<bean p:entity="bien.tabs" p:name="tabProcedimientos" p:order="70"
 		p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/bienes/tabs/tabProcedimientos.jsp"
-		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>			
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="TAB_BIEN_PROCEDIMIENTOS" />			
 	
 	<!-- fast -->
 	
@@ -153,7 +156,8 @@
 		  
 	<bean p:entity="tabs.asunto.fast" p:name="tabTramiteSubastas" p:order="2100" 
 		  p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/subastas/tabs/tabSubastas.jsp" 
-		  p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"  />	
+		  p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		  p:permission="TAB_ADJUDICADOS"  />	
 		  
 	<bean p:entity="tabs.asunto.fast" p:name="tabAdjudicados" p:order="2200" 
 		  p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/adjudicacion/tabs/tabAdjudicados.jsp" 

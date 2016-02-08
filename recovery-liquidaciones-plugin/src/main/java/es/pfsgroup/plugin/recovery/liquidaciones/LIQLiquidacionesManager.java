@@ -3,11 +3,8 @@ package es.pfsgroup.plugin.recovery.liquidaciones;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +16,6 @@ import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
-import es.capgemini.pfs.movimiento.model.Movimiento;
 import es.capgemini.pfs.multigestor.EXTGestorAdicionalAsuntoManager;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;

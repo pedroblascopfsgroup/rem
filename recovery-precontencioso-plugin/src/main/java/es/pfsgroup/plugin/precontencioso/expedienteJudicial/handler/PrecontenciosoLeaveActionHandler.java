@@ -38,7 +38,6 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 	 */
 	private static final long serialVersionUID = -5583230911255732281L;
 	private static final String TAREA_REGISTRAR_TOMA_DEC_COMBO_PROC_INICIAR = "proc_a_iniciar";
-	private static final String TAREA_REVISAR_EXPEDIENTE_PREPARAR_COMBO_AGENCIA_EXTERNA = "agencia_externa";
 	private static final String TAREA_REVISAR_EXPEDIENTE_ASIGNAR_LETRADO = "expediente_correcto";
 	private static final String PROYECTO_HAYA = "HAYA";
 	private static final String USU_MIGRACION_PCO = "MIGRAPCO";
@@ -152,7 +151,7 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 			if (!DDTipoGestionRevisarExpJudicial.JUDICIALIZAR.equals(gestion)) {
 				executor.execute(BO_PLUGIN_PRECONTENCIOSO_CAMBIAR_ESTADO_EXPEDIETE, prc.getId(), DDEstadoPreparacionPCO.FINALIZADO);
 			} else {
-				actualizarProcIniciar(prc, listado, TAREA_REVISAR_EXPEDIENTE_PREPARAR_PROC_INICIAR);			
+				actualizarProcPropuesto(prc, listado, TAREA_REVISAR_EXPEDIENTE_PREPARAR_PROC_INICIAR);			
 			}
 		} else if (PrecontenciosoBPMConstants.PCO_AsignarGestorLiquidacion.equals(tex.getTareaProcedimiento().getCodigo())) {
 			if(PrecontenciosoProjectContextImpl.RECOVERY_HAYA.equals(precontenciosoContext.getRecovery()) || 
@@ -179,6 +178,17 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 		if(!Checks.esNulo(procIniciar)) {
 			TipoProcedimiento tipoProcInic = (TipoProcedimiento)diccionarioApi.dameValorDiccionarioByCod(TipoProcedimiento.class, procIniciar);
 			pco.setTipoProcIniciado(tipoProcInic);
+		}
+		proxyFactory.proxy(ProcedimientoPcoApi.class).update(pco);
+	}
+	
+	private void actualizarProcPropuesto(Procedimiento prc,
+			List<EXTTareaExternaValor> listado, String nombreVariableProcPropuesto) {
+		String procPropuesto = obtenerValorVariable(listado,nombreVariableProcPropuesto, "");
+		ProcedimientoPCO pco = proxyFactory.proxy(ProcedimientoPcoApi.class).getPCOByProcedimientoId(prc.getId());
+		if(!Checks.esNulo(procPropuesto)) {
+			TipoProcedimiento tipoProcProp = (TipoProcedimiento)diccionarioApi.dameValorDiccionarioByCod(TipoProcedimiento.class, procPropuesto);
+			pco.setTipoProcPropuesto(tipoProcProp);
 		}
 		proxyFactory.proxy(ProcedimientoPcoApi.class).update(pco);
 	}

@@ -122,8 +122,10 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 	@Override
 	@BusinessOperation(AMF_CREATE_ANOTACION)
 	@Transactional(readOnly = false)
-	public void createAnotacion(DtoCrearAnotacionInfo dto) {
-
+	//public void createAnotacion(DtoCrearAnotacionInfo dto) {
+	public List<Long> createAnotacion(DtoCrearAnotacionInfo dto) {
+		List<Long> listaTareas = new ArrayList<Long>();
+		
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class)
 				.getUsuarioLogado();
 
@@ -318,6 +320,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 									dto.getAsuntoMail(), usuarioLogado.getId(),
 									false, SUBTIPO_ANOTACION_AUTOTAREA,
 									user.getFecha());
+							listaTareas.add(idTarea); // Metemos la tarea creada en la lista de tareas.
 							dejarTraza(
 									usuarioLogado.getId(),
 									AgendaMultifuncionTipoEventoRegistro.TIPO_EVENTO_TAREA,
@@ -336,6 +339,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 							Long idTarea = crearTarea(idUg, codUg,
 									dto.getAsuntoMail(), user.getId(), true,
 									SUBTIPO_ANOTACION_TAREA, user.getFecha());
+							listaTareas.add(idTarea); // Metemos la tarea creada en la lista de tareas.
 							// crearTarea(asunto.getId(), dto.getAsuntoMail(),
 							// usuarioLogado.getId(), true,
 							// SUBTIPO_ANOTACION_TAREA_EN_ESPERA,
@@ -359,6 +363,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 						Long idTarea = crearTarea(idUg, codUg,
 								dto.getAsuntoMail(), user.getId(), false,
 								SUBTIPO_ANOTACION_NOTIFICACION, user.getFecha());
+						listaTareas.add(idTarea); // Metemos la tarea creada en la lista de tareas.
 						dejarTraza(
 								usuarioLogado.getId(),
 								AgendaMultifuncionTipoEventoRegistro.TIPO_EVENTO_NOTIFICACION,
@@ -442,6 +447,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 			}
 		}
 
+		return listaTareas;
 	}
 
 

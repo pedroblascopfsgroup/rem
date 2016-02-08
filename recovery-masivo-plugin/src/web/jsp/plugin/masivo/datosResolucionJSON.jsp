@@ -15,6 +15,9 @@
             </c:if>		
 			<c:if test="${resolucion.tipoResolucion != null}">
             	<json:property name="comboTipoResolucionNew" value="${resolucion.tipoResolucion.id}" />
+            </c:if>	
+            <c:if test="${resolucion.tipoResolucion != null}">
+            	<json:property name="codigoTipoAccion" value="${resolucion.tipoResolucion.tipoAccion.codigo}" />
             </c:if>		
 			<json:property name="auto" value="${resolucion.autos}" />
 			<json:property name="juzgado" value="${resolucion.juzgado}" />

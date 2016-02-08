@@ -7,7 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.devon.pagination.Page;
+import es.capgemini.devon.pagination.PaginationParams;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.HQLBuilder;
+import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -70,6 +75,28 @@ public class MSVDiccionarioManager implements MSVDiccionarioApi{
 		List lista = genericDao.getListOrdered(clazz, order, filtro);
 		//List lista = genericDao.getList(clazz, filtro);
 		return lista;
+	}
+	
+	
+	@SuppressWarnings("rawtypes")
+	@Override
+	@BusinessOperation(MSV_BO_DAME_VALORES_DICCIONARIO_PAGE)
+	public Page dameValoresDiccionarioPage(Class clazz, PaginationParams dto, String codigo, String busqueda) {
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		
+		if(!Checks.esNulo(codigo)){
+			Filter filtroCodigo = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);	
+			@SuppressWarnings("unchecked")
+			Page page = genericDao.getPage(clazz, dto,filtro,filtroCodigo);
+			return page;
+		}else{
+			@SuppressWarnings("unchecked")
+			Page page = genericDao.getPage(clazz, dto,filtro);
+			return page;
+		}
+		
+		
 	}
 
 	/* (non-Javadoc)

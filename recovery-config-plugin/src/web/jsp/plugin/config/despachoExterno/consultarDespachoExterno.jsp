@@ -20,7 +20,7 @@
 	</pfslayout:includetab>
 
 	<%--El tab supervisores solo lo mostramos en el caso que el despacho no sea de procuradores --%>
-	<c:if test="${despacho.tipoDespacho.codigo!='2' || despacho.tipoDespacho.codigo!='1'}">
+	<c:if test="${despacho.tipoDespacho.codigo=='DLETR' && despacho.tipoDespacho.codigo!='2' || despacho.tipoDespacho.codigo!='1'}">
 		<pfslayout:includetab name="tabSupervisores">
 			<%@ include file="tabSupervisoresDespachoExterno.jsp"%>
 		</pfslayout:includetab>
@@ -58,7 +58,6 @@ var numTab = '${numTab}';
 		       ,autoScroll:true
 		       ,border : false
 		})
-
 	</c:if>	
 	
 	var panel = new Ext.Panel({

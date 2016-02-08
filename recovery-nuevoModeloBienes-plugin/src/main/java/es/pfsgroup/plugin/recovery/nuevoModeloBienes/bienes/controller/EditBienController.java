@@ -79,6 +79,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.bienes.InformeProp
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDDocAdjudicacion;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDImposicionVenta;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionPosesoria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionTitulo;
@@ -392,7 +393,17 @@ public class EditBienController {
 		
 		List<DDTipoImposicion> imposicion = (List<DDTipoImposicion>) executor
 				.execute("dictionaryManager.getList", "DDTipoImposicion");
+		//HR-1316 Funcion provisional para que no muestre el valor 16 que debe desaparecer del diccionario
+		for(int i=0; i<imposicion.size();i++)
+			if(imposicion.get(i).getCodigo().equals("16")) {
+				imposicion.remove(i);
+				break;
+			}
 		map.put("imposicion", imposicion);
+		
+		List<DDImposicionVenta> imposicionVenta = (List<DDImposicionVenta>) executor
+				.execute("dictionaryManager.getList", "DDImposicionVenta");
+		map.put("imposicionVenta", imposicionVenta);
 		
 		List<DDSiNo> sino = (List<DDSiNo>) executor
 				.execute("dictionaryManager.getList", "DDSiNo");
@@ -476,6 +487,10 @@ public class EditBienController {
 				.execute("dictionaryManager.getList", "DDTipoImposicion");
 		map.put("imposicion", imposicion);
 		
+		List<DDImposicionVenta> imposicionVenta = (List<DDImposicionVenta>) executor
+				.execute("dictionaryManager.getList", "DDImposicionVenta");
+		map.put("imposicionVenta", imposicionVenta);
+		
 		List<DDSiNo> sino = (List<DDSiNo>) executor
 				.execute("dictionaryManager.getList", "DDSiNo");
 		map.put("sino", sino);
@@ -524,6 +539,10 @@ public class EditBienController {
 		List<DDTipoImposicion> imposicion = (List<DDTipoImposicion>) executor
 				.execute("dictionaryManager.getList", "DDTipoImposicion");
 		map.put("imposicion", imposicion);
+		
+		List<DDImposicionVenta> imposicionVenta = (List<DDImposicionVenta>) executor
+				.execute("dictionaryManager.getList", "DDImposicionVenta");
+		map.put("imposicionVenta", imposicionVenta);
 		
 		List<DDSiNo> sino = (List<DDSiNo>) executor
 				.execute("dictionaryManager.getList", "DDSiNo");
@@ -579,6 +598,10 @@ public class EditBienController {
 		List<DDTipoImposicion> imposicion = (List<DDTipoImposicion>) executor
 				.execute("dictionaryManager.getList", "DDTipoImposicion");
 		map.put("imposicion", imposicion);
+		
+		List<DDImposicionVenta> imposicionVenta = (List<DDImposicionVenta>) executor
+				.execute("dictionaryManager.getList", "DDImposicionVenta");
+		map.put("imposicionVenta", imposicionVenta);
 		
 		List<DDSiNo> sino = (List<DDSiNo>) executor
 				.execute("dictionaryManager.getList", "DDSiNo");

@@ -198,7 +198,7 @@ public class NMBBien extends Bien implements NMBBienInfo{
 	
 	@ManyToOne
     @JoinColumn(name = "DD_TPIV_ID")
-	private DDTipoImposicion tipoImposicionVenta;
+	private DDImposicionVenta tipoImposicionVenta;
 	
 	@ManyToOne
     @JoinColumn(name = "DD_IPR_ID")
@@ -970,11 +970,11 @@ public class NMBBien extends Bien implements NMBBienInfo{
 		this.tributacionVenta = tributacionVenta;
 	}
 
-	public DDTipoImposicion getTipoImposicionVenta() {
+	public DDImposicionVenta getTipoImposicionVenta() {
 		return tipoImposicionVenta;
 	}
 
-	public void setTipoImposicionVenta(DDTipoImposicion tipoImposicionVenta) {
+	public void setTipoImposicionVenta(DDImposicionVenta tipoImposicionVenta) {
 		this.tipoImposicionVenta = tipoImposicionVenta;
 	}
 

@@ -65,6 +65,7 @@ import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.adjudicacion.dto.DtoNMBBienAdjudicacion;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.dao.NMBBienDao;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDImposicionVenta;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionPosesoria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTasadora;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoImposicion;
@@ -341,13 +342,16 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 			bien.setTributacionVenta(tipoTributacionVenta);
 		}
 		if (dtoBien.getTipoImposicionCompra() != null) {
-			Filter filtroImposicion = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoBien.getTipoImposicionCompra());
+			Filter filtroImposicion = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoBien.getTipoImposicionCompra());			
 			DDTipoImposicion tipoImposicion = genericDao.get(DDTipoImposicion.class, filtroImposicion);
+			//if(Checks.esNulo(tipoImposicion)) {
+			//	tipoImposicion = genericDao.get(DDTipoImposicion.class, filtroImposicion, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", true));
+			//}
 			bien.setTipoImposicionCompra(tipoImposicion);
 		}
 		if (dtoBien.getTipoImposicionVenta() != null) {
 			Filter filtroImposicionVenta = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoBien.getTipoImposicionVenta());
-			DDTipoImposicion tipoImposicionVenta = genericDao.get(DDTipoImposicion.class, filtroImposicionVenta);
+			DDImposicionVenta tipoImposicionVenta = genericDao.get(DDImposicionVenta.class, filtroImposicionVenta);
 			bien.setTipoImposicionVenta(tipoImposicionVenta);
 		}
 		if (dtoBien.getInversionPorRenuncia() != null) {

@@ -90,7 +90,7 @@
 								<entry key="btnSolicitar" value="1" />
 								<entry key="btnEditarValores" value="1" />
 								<entry key="btnConfirmar" value="1" />
-								<entry key="btnVisar" value="1" />
+								<entry key="btnVisar" value="0" />
 								<entry key="btnDescartar" value="1" />
 								<entry key="btnGenerar" value="1" />
 								<entry key="botonRefreshLiq" value="1" />
@@ -104,7 +104,7 @@
 								<entry key="btnEditar" value="1" />
 								<entry key="btnPreparar" value="1" />
 								<entry key="btnCancelar" value="0" />
-								<entry key="btnNotificar" value="1" />
+								<entry key="btnNotificar" value="0" />
 								<entry key="btnDescargarBurofax" value="1" />
 								<entry key="botonRefreshBur" value="1" />
 							</map>

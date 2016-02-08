@@ -56,6 +56,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.InformeActaComiteB
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastaSareb.InformeSubastaSarebBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastabankia.InformeSubastaBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastabankia.InformeSubastaLetradoBean;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDDocAdjudicacion;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdicionalBien;
@@ -987,7 +988,7 @@ public class SubastaController {
 					if(!"P401".equals(informe.getSubasta().getProcedimiento().getTipoProcedimiento().getCodigo())){
 						if(!Checks.esNulo(infoBienes.getFechaTestimonioAdjudicacionSareb())){
 							fila.add(infoBienes.getFechaTestimonioAdjudicacionSareb().concat(";White;Text"));
-						} else {
+						} else if(!DDDocAdjudicacion.ESCRITURA.equalsIgnoreCase(infoBienes.getCodigoDocAdjudicacion())){
 							fila.add("******;Red;Text");
 						}
 					}

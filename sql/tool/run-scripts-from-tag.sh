@@ -220,11 +220,7 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
             exit 1
         fi
     done < $BASEDIR/tmp/list-from-tag.txt
-    mkdir -p $BASEDIR/tmp/package
-    mkdir $BASEDIR/tmp/package/DDL
-    mkdir $BASEDIR/tmp/package/DDL/scripts/
-    mkdir $BASEDIR/tmp/package/DML
-    mkdir $BASEDIR/tmp/package/DML/scripts/
+    mkdir -p $BASEDIR/tmp/package/DB/scripts/
     passtring=''
     if [ "$MULTIENTIDAD" != "" ] ; then
         IFS=',' read -a entidades <<< "$MULTIENTIDAD"
@@ -236,51 +232,46 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
         passtring="entity01_pass@host:port\/sid"
     fi
     if [ $2 == 'BANKIA' ]; then
-        cp $BASEDIR/scripts/DxL-scripts-BK.sh $BASEDIR/tmp/package/DDL/DDL-scripts.sh
+        cp $BASEDIR/scripts/DxL-scripts-BK.sh $BASEDIR/tmp/package/DB/DB-scripts.sh
     else
-        sed -e s/#ENTITY#/"${passtring}"/g $BASEDIR/scripts/DxL-scripts.sh > $BASEDIR/tmp/package/DDL/DDL-scripts.sh
+        sed -e s/#ENTITY#/"${passtring}"/g $BASEDIR/scripts/DxL-scripts.sh > $BASEDIR/tmp/package/DB/DB-scripts.sh
     fi
-    cp $BASEDIR/scripts/DxL-scripts-one-user.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh
+    cp $BASEDIR/scripts/DxL-scripts-one-user.sh $BASEDIR/tmp/package/DB/DB-scripts-one-user.sh
     if [ $CUSTOMER_IN_UPPERCASE == 'CAJAMAR' ] ; then
-        echo "export NLS_LANG=AMERICAN.AL32UTF8" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null
-        echo "export NLS_DATE_FORMAT=\"DD-MON-RR\"" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null
+        echo "export NLS_LANG=AMERICAN.AL32UTF8" | tee -a $BASEDIR/tmp/package/DB/DB-scripts.sh $BASEDIR/tmp/package/DB/DB-scripts-one-user.sh > /dev/null
+        echo "export NLS_DATE_FORMAT=\"DD-MON-RR\"" | tee -a $BASEDIR/tmp/package/DB/DB-scripts.sh $BASEDIR/tmp/package/DB/DB-scripts-one-user.sh > /dev/null
     else
-        echo "export NLS_LANG=.AL32UTF8" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null 
+        echo "export NLS_LANG=.AL32UTF8" | tee -a $BASEDIR/tmp/package/DB/DB-scripts.sh $BASEDIR/tmp/package/DB/DB-scripts-one-user.sh > /dev/null 
     fi
-    cp $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DML/DML-scripts.sh
-    cp $BASEDIR/scripts/DxL-scripts-one-user.sh $BASEDIR/tmp/package/DML/DML-scripts-one-user.sh
-    if [ -f $BASEDIR/tmp/DDL-scripts.sh ] ; then 
 
-        # Herramientas de Pitertul (actualización)
-        VARIABLES_SUSTITUCION=`echo -e "${VARIABLES_SUSTITUCION}" | tr -d '[[:space:]]'`
-        IFS=',' read -a array <<< "$VARIABLES_SUSTITUCION"
-        for index in "${!array[@]}"
-        do
-            KEY=`echo ${array[index]} | cut -d\; -f1`
-            VALUE=`echo ${array[index]} | cut -d\; -f2`
-            if [[ $KEY == '#ESQUEMA#' ]]; then
-               ESQUEMA=$VALUE
-                echo "exit | sqlplus -s -l $ESQUEMA/\$2 @./scripts/DDL_000_$ESQUEMA.sql" >> $BASEDIR/tmp/package/DDL/DDL-scripts.sh
-                echo "exit | sqlplus -s -l \$1 @./scripts/DDL_000_$ESQUEMA.sql" >> $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh
-            fi
-        done
-        cp $BASEDIR/tmp/DDL_000_$ESQUEMA.sql $BASEDIR/tmp/package/DDL/scripts/
+    # Herramientas de Pitertul (actualización)
+    VARIABLES_SUSTITUCION=`echo -e "${VARIABLES_SUSTITUCION}" | tr -d '[[:space:]]'`
+    IFS=',' read -a array <<< "$VARIABLES_SUSTITUCION"
+    for index in "${!array[@]}"
+    do
+        KEY=`echo ${array[index]} | cut -d\; -f1`
+        VALUE=`echo ${array[index]} | cut -d\; -f2`
+        if [[ $KEY == '#ESQUEMA#' ]]; then
+           ESQUEMA=$VALUE
+            echo "exit | sqlplus -s -l $ESQUEMA/\$2 @./scripts/DDL_000_$ESQUEMA.sql" >> $BASEDIR/tmp/package/DB/DB-scripts.sh
+            echo "exit | sqlplus -s -l \$1 @./scripts/DDL_000_$ESQUEMA.sql" >> $BASEDIR/tmp/package/DB/DB-scripts-one-user.sh
+        fi
+    done
+    cp $BASEDIR/tmp/DDL_000_$ESQUEMA.sql $BASEDIR/tmp/package/DB/scripts/
 
-        cat $BASEDIR/tmp/DDL-scripts.sh >> $BASEDIR/tmp/package/DDL/DDL-scripts.sh
-        cat $BASEDIR/tmp/DDL-scripts-one-user.sh >> $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh
-        cp -r $BASEDIR/tmp/DDL*reg*.sql $BASEDIR/tmp/package/DDL/scripts/
-        cd $BASEDIR/tmp/package/DDL
-        zip DDL-scripts.zip -r *
-        cd -
+    if [ -f $BASEDIR/tmp/DDL-scripts.sh ] ; then    
+        cat $BASEDIR/tmp/DDL-scripts.sh >> $BASEDIR/tmp/package/DB/DB-scripts.sh
+        cat $BASEDIR/tmp/DDL-scripts-one-user.sh >> $BASEDIR/tmp/package/DB/DB-scripts-one-user.sh
+        cp -r $BASEDIR/tmp/DDL*reg*.sql $BASEDIR/tmp/package/DB/scripts/
     fi
-    if [ -f $BASEDIR/tmp/DML-scripts.sh ] ; then
-        cat $BASEDIR/tmp/DML-scripts.sh >> $BASEDIR/tmp/package/DML/DML-scripts.sh
-        cat $BASEDIR/tmp/DML-scripts-one-user.sh >> $BASEDIR/tmp/package/DML/DML-scripts-one-user.sh
-        cp -r $BASEDIR/tmp/DML*reg*.sql $BASEDIR/tmp/package/DML/scripts/
-        cd $BASEDIR/tmp/package/DML
-        zip DML-scripts.zip -r *
-        cd -
-    fi      
+    if [ -f $BASEDIR/tmp/DML-scripts.sh ] ; then    
+        cat $BASEDIR/tmp/DML-scripts.sh >> $BASEDIR/tmp/package/DB/DB-scripts.sh
+        cat $BASEDIR/tmp/DML-scripts-one-user.sh >> $BASEDIR/tmp/package/DB/DB-scripts-one-user.sh
+        cp -r $BASEDIR/tmp/DML*reg*.sql $BASEDIR/tmp/package/DB/scripts/
+    fi
+    cd $BASEDIR/tmp/package/DB
+    zip DB-scripts.zip -r *
+    cd -
     echo ""
     echo "---------------------------------------------------"
     echo "---- EMPAQUETADOS PARA SOLICITUD DE DESPLIEGUE ----" 

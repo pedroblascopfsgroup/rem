@@ -8,6 +8,7 @@
 --	EJD:> Incluimos control sobre indice IDX_USUAMOD_PEX
 --	GMN:> Se asigna el DD_TPX_ID (tipo de expediente a recuperaciones - RECU)
 --	GMN:> Reasignación de estados de expedientes
+--	GMN:> incluimos paralizados sin fecha asignación informada
 /***************************************/
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -122,6 +123,8 @@ BEGIN
                             inner join '||V_ESQUEMA||'.mig_expedientes_operaciones op on cab.cd_expediente = op.cd_expediente
                             where --cab.fecha_baja is null and cab.MOTIVO_BAJA is null AND CAB.FECHA_ACEPTACION_LETRADO IS NULL
                                   cab.fecha_asignacion is not null
+--                                 ( cab.fecha_asignacion is not null                                                          
+--                                   OR (cab.fecha_asignacion is null and fecha_paralizacion is not null))                                  
                               and NOT EXISTS(SELECT 1 
                                                 FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA C 
                                                 WHERE C.CD_EXPEDIENTE_NUSE = CAB.CD_EXPEDIENTE) -- LOS QUE EVOLUCIONAN A PROCEDIMIENTOS NO SE MIGRAN COMO PRECONTENCIOSOS.
@@ -678,8 +681,8 @@ BEGIN
 				WHERE PCO.PRC_ID = PRC.PRC_ID
 				  AND PCO.PCO_PRC_NUM_EXP_EXT = EXP.CD_EXPEDIENTE
 				  AND EXP.CD_EXPEDIENTE = tmp.COD_RECOVERY  -- Solo procedimientos de precontenciosos "no GAE"
-				  AND EXP.FECHA_ASIGNACION IS NOT NULL -- Pdte de revisión si debe tener fecha asignacion a nulo
-				  AND EXP.MOTIVO_PARALIZACION IS NOT NULL)';
+--				  AND EXP.FECHA_ASIGNACION IS NOT NULL -- Pdte de revisión si debe tener fecha asignacion a nulo
+				  AND EXP.FECHA_PARALIZACION IS NOT NULL)';
 
 	EXECUTE IMMEDIATE V_SQL;
 	

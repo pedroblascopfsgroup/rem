@@ -17,6 +17,16 @@ else
   echo "Link a ../../shells/apr_main_observaciones.sh creado correctamente"
 fi
 
+
+echo "[INFO] Creamos el soft link al ETL apr_main_obs_expediente.sh"
+
+if [ -f  ./shells/apr_main_obs_expediente.sh ] ; then 
+  echo "El link a ../shells/apr_main_obs_expediente.sh ya existe" 
+else
+  ln -s ../../shells/apr_main_obs_expediente.sh ./shells/apr_main_obs_expediente.sh
+  echo "Link a ../../shells/apr_main_obs_expediente.sh creado correctamente"
+fi
+
 sh_dir="shells/"
 
 echo "[INFO] INICIO EJECUCION MIGRACION  $0" `date` 
@@ -89,14 +99,14 @@ fi
 echo "[OK] ""$sh_dir""CJM_migracion_anotaciones.sh ejecutado correctamente"  
 
 
-echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_migracion_caracteriza_validadores.sh"                               
-./"$sh_dir"CJM_migracion_caracteriza_validadores.sh "$1"   
-if [ $? != 0 ] ; then 
-  echo -e "\n\n======>>> [ERROR] en "$sh_dir"CJM_migracion_caracteriza_validadores.sh"
-  echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"          
-  exit 1
-fi
-echo "[OK] ""$sh_dir""CJM_migracion_caracteriza_validadores.sh ejecutado correctamente" 
+#echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_migracion_caracteriza_validadores.sh"                               
+#./"$sh_dir"CJM_migracion_caracteriza_validadores.sh "$1"   
+#if [ $? != 0 ] ; then 
+#  echo -e "\n\n======>>> [ERROR] en "$sh_dir"CJM_migracion_caracteriza_validadores.sh"
+#  echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"          
+#  exit 1
+#fi
+#echo "[OK] ""$sh_dir""CJM_migracion_caracteriza_validadores.sh ejecutado correctamente" 
 
 
 
@@ -141,39 +151,19 @@ fi
 echo "[OK] ""$sh_dir""CJM_migracion_contratos_HRE_resto.sh ejecutado correctamente"     
 
 
-echo "[INFO] Comienza ejecución de: ""$sh_dir""apr_main_observaciones.sh"                      
-./"$sh_dir"apr_main_observaciones.sh 
-if [ $? != 0 ] ; then
-    echo -e "\n\n======>>> [ERROR] en "$sh_dir"apr_main_observaciones.sh"
-    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
-    exit 1           
-fi
-echo "[OK] ""$sh_dir""apr_main_observaciones.sh ejecutado correctamente"      
-
-
-echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_MIGRACION_EXPEDIENTES_NOTIFICACIONES.sh"                               
-./"$sh_dir"CJM_MIGRACION_EXPEDIENTES_NOTIFICACIONES.sh "$1"   
-if [ $? != 0 ] ; then 
-  echo -e "\n\n======>>> [ERROR] en "$sh_dir"CJM_MIGRACION_EXPEDIENTES_NOTIFICACIONES.sh"
-  echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"          
-  exit 1
-fi
-echo "[OK] ""$sh_dir""CJM_MIGRACION_EXPEDIENTES_NOTIFICACIONES.sh ejecutado correctamente" 
-
-
 
 #####################################
-### BLOQUE Correccion incidencias
+### BLOQUE Correccion incidencias y Cambios
 #####################################
 
-echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_1449_ARREGLA_LETRADOS_y_PROCURADORES.sh"                      
-./"$sh_dir"CMREC_1449_ARREGLA_LETRADOS_y_PROCURADORES.sh "$1"
-if [ $? != 0 ] ; then
-    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC_1449_ARREGLA_LETRADOS_y_PROCURADORES.sh"
-    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
-    exit 1           
-fi
-echo "[OK] ""$sh_dir""CMREC_1449_ARREGLA_LETRADOS_y_PROCURADORES.sh ejecutado correctamente"   
+#echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_1449_ARREGLA_LETRADOS_y_PROCURADORES.sh"                      
+#./"$sh_dir"CMREC_1449_ARREGLA_LETRADOS_y_PROCURADORES.sh "$1"
+#if [ $? != 0 ] ; then
+#    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC_1449_ARREGLA_LETRADOS_y_PROCURADORES.sh"
+#    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
+#    exit 1           
+#fi
+#echo "[OK] ""$sh_dir""CMREC_1449_ARREGLA_LETRADOS_y_PROCURADORES.sh ejecutado correctamente"   
 
 
 echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_1505_migracion_paraliza_procedimientos_precontencioso.sh"                      
@@ -187,14 +177,14 @@ echo "[OK] ""$sh_dir""CMREC_1505_migracion_paraliza_procedimientos_precontencios
 
 
 
-echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_1645_Asignacion_Gestores_PREContencioso.sh"                      
-./"$sh_dir"CMREC_1645_Asignacion_Gestores_PREContencioso.sh "$1" 
-if [ $? != 0 ] ; then
-    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC_1645_Asignacion_Gestores_PREContencioso.sh"
-    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
-    exit 1           
-fi
-echo "[OK] ""$sh_dir""CMREC_1645_Asignacion_Gestores_PREContencioso.sh ejecutado correctamente"   
+#echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_1645_Asignacion_Gestores_PREContencioso.sh"                      
+#./"$sh_dir"CMREC_1645_Asignacion_Gestores_PREContencioso.sh "$1" 
+#if [ $? != 0 ] ; then
+#    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC_1645_Asignacion_Gestores_PREContencioso.sh"
+#    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
+#    exit 1           
+#fi
+#echo "[OK] ""$sh_dir""CMREC_1645_Asignacion_Gestores_PREContencioso.sh ejecutado correctamente"   
 
 
 echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_1728_Situacion_cliente_Asunto.sh"                      
@@ -215,6 +205,84 @@ if [ $? != 0 ] ; then
 fi
 echo "[OK] ""$sh_dir""CMREC_1460_Modifica_Nombre_Asunto.sh ejecutado correctamente"   
 
+echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_1671_Gestion_asunto_por_marca_haya.sh"                      
+./"$sh_dir"CMREC_1671_Gestion_asunto_por_marca_haya.sh "$1" 
+if [ $? != 0 ] ; then
+    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC_1671_Gestion_asunto_por_marca_haya.sh"
+    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
+    exit 1           
+fi
+echo "[OK] ""$sh_dir""CMREC_1671_Gestion_asunto_por_marca_haya.sh ejecutado correctamente"   
+
+
+echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_MIGRACION_EXPEDIENTES_NOTIFICACIONES.sh"                               
+./"$sh_dir"CJM_MIGRACION_EXPEDIENTES_NOTIFICACIONES.sh "$1"   
+if [ $? != 0 ] ; then 
+  echo -e "\n\n======>>> [ERROR] en "$sh_dir"CJM_MIGRACION_EXPEDIENTES_NOTIFICACIONES.sh"
+  echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"          
+  exit 1
+fi
+echo "[OK] ""$sh_dir""CJM_MIGRACION_EXPEDIENTES_NOTIFICACIONES.sh ejecutado correctamente" 
+
+
+echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_1510_MIGRACION_PROPUESTAS_FONDOS_PROPIOS.sh"                               
+./"$sh_dir"CMREC_1510_MIGRACION_PROPUESTAS_FONDOS_PROPIOS.sh "$1"   
+if [ $? != 0 ] ; then 
+  echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC_1510_MIGRACION_PROPUESTAS_FONDOS_PROPIOS.sh"
+  echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"          
+  exit 1
+fi
+echo "[OK] ""$sh_dir""CMREC_1510_MIGRACION_PROPUESTAS_FONDOS_PROPIOS.sh ejecutado correctamente" 
+
+
+echo "[INFO] Comienza ejecución de: ""$sh_dir""apr_main_observaciones.sh"                      
+./"$sh_dir"apr_main_observaciones.sh 
+if [ $? != 0 ] ; then
+    echo -e "\n\n======>>> [ERROR] en "$sh_dir"apr_main_observaciones.sh"
+    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
+    exit 1           
+fi
+echo "[OK] ""$sh_dir""apr_main_observaciones.sh ejecutado correctamente"     
+
+
+echo "[INFO] Comienza ejecución de: ""$sh_dir""apr_main_obs_expediente.sh"                      
+./"$sh_dir"apr_main_obs_expediente.sh 
+if [ $? != 0 ] ; then
+    echo -e "\n\n======>>> [ERROR] en "$sh_dir"apr_main_obs_expediente.sh"
+    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
+    exit 1           
+fi
+echo "[OK] ""$sh_dir""apr_main_obs_expediente.sh ejecutado correctamente"      
+
+
+echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC-1797_carterizacion_CAJAMAR_postmigracion.sh"                               
+./"$sh_dir"CMREC-1797_carterizacion_CAJAMAR_postmigracion.sh "$1"   
+if [ $? != 0 ] ; then 
+  echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC-1797_carterizacion_CAJAMAR_postmigracion.sh"
+  echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"          
+  exit 1
+fi
+echo "[OK] ""$sh_dir""CMREC-1797_carterizacion_CAJAMAR_postmigracion.sh ejecutado correctamente" 
+
+
+echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC-1797_Carga_DD_Letrados_procuradores.sh"                               
+./"$sh_dir"CMREC-1797_Carga_DD_Letrados_procuradores.sh "$1"   
+if [ $? != 0 ] ; then 
+  echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC-1797_Carga_DD_Letrados_procuradores.sh"
+  echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"          
+  exit 1
+fi
+echo "[OK] ""$sh_dir""CMREC-1797_Carga_DD_Letrados_procuradores.sh ejecutado correctamente" 
+
+
+echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC-1797_Carterizacion_LETRADOS_y_PROCURADORES.sh"                               
+./"$sh_dir"CMREC-1797_Carterizacion_LETRADOS_y_PROCURADORES.sh "$1"   
+if [ $? != 0 ] ; then 
+  echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC-1797_Carterizacion_LETRADOS_y_PROCURADORES.sh"
+  echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"          
+  exit 1
+fi
+echo "[OK] ""$sh_dir""CMREC-1797_Carterizacion_LETRADOS_y_PROCURADORES.sh ejecutado correctamente" 
 
 echo "[INFO] FIN CJM_lanza_migracion.sh. Revise el fichero de log" `date` 
 exit 0

@@ -183,19 +183,23 @@ public class Expediente implements Serializable, Auditable, Describible {
     public Double getVolumenRiesgo() {
     	
     	Double volumenRiesgo = 0.0;
-    	Date fechaExtraccion = null;
+    	Double dispuesto = 0.0;
+    	
     	
     	for (ExpedienteContrato expedienteContrato : contratos) {
+    		Date fechaExtraccion = null;
     		Contrato contrato = expedienteContrato.getContrato();
     		for(Movimiento movimiento : contrato.getMovimientos()) {
     			if(contrato.getFechaExtraccion().equals(movimiento.getFechaExtraccion())) {
     				
     				if(fechaExtraccion == null || fechaExtraccion.before(movimiento.getFechaExtraccion())) {
     					fechaExtraccion = movimiento.getFechaExtraccion();
-    					volumenRiesgo = new Double(movimiento.getRiesgo());
+    					dispuesto = new Double(movimiento.getDispuesto());
+    					
     				}
     			}
     		}
+    		volumenRiesgo = volumenRiesgo +  dispuesto;
     	}
     	
     	return volumenRiesgo;

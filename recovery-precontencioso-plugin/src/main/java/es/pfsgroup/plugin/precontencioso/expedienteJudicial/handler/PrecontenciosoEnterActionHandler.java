@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.jbpm.graph.exe.ExecutionContext;
@@ -27,8 +26,6 @@ public class PrecontenciosoEnterActionHandler extends PROGenericEnterActionHandl
 	 * 
 	 */
 	private static final long serialVersionUID = -5583230911255732281L;
-	
-	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
 	@Autowired
 	GenericABMDao genericDao;

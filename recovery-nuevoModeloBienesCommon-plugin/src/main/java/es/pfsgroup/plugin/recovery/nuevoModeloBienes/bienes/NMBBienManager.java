@@ -1030,12 +1030,13 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 	@Transactional(readOnly = false)
 	public void excluirBienes(Long idProcedimiento, String[] arrBien) {
 		Filter f1 = genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProcedimiento);
+		Filter f3 = genericDao.createFilter(FilterType.EQUALS, "borrado", false);
 
 		for (int i = 0; i < arrBien.length; i++) {
 			NMBBien bien = nmbBienDao.get(Long.parseLong(arrBien[i]));
 			if (!Checks.esNulo(bien)) {
 				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "bien.id", bien.getId());
-				ProcedimientoBien procBien = genericDao.get(ProcedimientoBien.class, f1, f2);
+				ProcedimientoBien procBien = genericDao.get(ProcedimientoBien.class, f1, f2, f3);
 
 				genericDao.deleteById(ProcedimientoBien.class, procBien.getId());	
 			}

@@ -1137,6 +1137,8 @@ var pdfRender = function(value, meta, record) {
 				btnDescargarBurofax.setDisabled(true);
 				btnEditarVerDireccion.setDisabled(true);
 				return false;
+			}else{
+				btnAniadirEditPersona.setDisabled(false);
 			}
 
 		}

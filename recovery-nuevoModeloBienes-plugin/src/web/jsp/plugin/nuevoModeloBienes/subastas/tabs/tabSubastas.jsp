@@ -526,7 +526,6 @@
 	});
 	
 	
-	
 	var reiniciarKOCDD =  function() {
 		panel.el.mask('<s:message code="fwk.ui.form.guardando" text="**Guardando" />','x-mask-loading');
 		Ext.Ajax.request({

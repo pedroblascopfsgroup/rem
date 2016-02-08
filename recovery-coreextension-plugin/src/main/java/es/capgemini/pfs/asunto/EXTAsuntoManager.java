@@ -120,7 +120,6 @@ import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 import es.pfsgroup.recovery.ext.impl.zona.dao.EXTZonaDao;
 import es.pfsgroup.recovery.integration.Guid;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
-import es.capgemini.devon.hibernate.pagination.PageHibernate;
 
 @Component
 public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> implements es.pfsgroup.recovery.api.AsuntoApi, AsuntoApi, EXTAsuntoApi {
@@ -750,14 +749,6 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		return tiposProcedimiento;
 	}
 	
-	private Set<String> getTipoAsunto(DtoBusquedaAsunto dtoBusquedaAsuntos) {
-		Set<String> tipoAsunto = null;
-		if (dtoBusquedaAsuntos.getComboTipoAsunto() != null && dtoBusquedaAsuntos.getComboTipoAsunto().trim().length() > 0) {
-			tipoAsunto = new HashSet<String>(Arrays.asList((dtoBusquedaAsuntos.getComboTipoAsunto().split(","))));
-		}
-		return tipoAsunto;
-	}
-
 	private boolean tieneValorGestorUnico(Asunto asunto) {
 		if (asunto == null) {
 			return false;
@@ -1449,6 +1440,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	@BusinessOperation(ExternaBusinessOperation.BO_ASU_MGR_GET_BIENES_AS_LIST)
 	public List<Bien> getBienesDeUnAsunto(Long idAsunto) {
@@ -1595,7 +1587,6 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	private Boolean isProcedimientoActivo(Procedimiento prc) {
 
 		MEJProcedimiento procedimiento = (MEJProcedimiento) prc;
@@ -1684,7 +1675,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		
 		return results;
 	}
-	
+
 /*	@Override
 	@BusinessOperation(EXTAsuntoApi.EXT_BO_ASU_MGR_FIND_ASUNTOS_PAGINATED_DINAMICO_COUNT)
 	public List<Asunto> findAsuntosPaginatedDinamicoCount(EXTDtoBusquedaAsunto dto, String params) {
@@ -2021,8 +2012,13 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		EXTAsunto extAsu =  EXTAsunto.instanceOf(asunto);
 		
 		if (Checks.esNulo(extAsu.getGuid())) {
-			//logger.debug(String.format("[INTEGRACION] Asignando nuevo GUID para procedimiento %d", procedimiento.getId()));
-			extAsu.setGuid(Guid.getNewInstance().toString());
+			
+			String guid = Guid.getNewInstance().toString();
+			while(getAsuntoByGuid(guid) != null) {
+				guid = Guid.getNewInstance().toString();
+			}
+
+			extAsu.setGuid(guid);
 			asuntoDao.save(extAsu);
 		}
 		

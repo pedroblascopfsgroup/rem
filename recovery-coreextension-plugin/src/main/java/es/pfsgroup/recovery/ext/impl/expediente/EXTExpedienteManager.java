@@ -351,8 +351,13 @@ public class EXTExpedienteManager extends BaseExpedienteManager implements EXTEx
 	public Expediente prepareGuid(Expediente expediente) {
 		boolean modificados = false;
 		if (Checks.esNulo(expediente.getGuid())) {
-			//logger.debug(String.format("[INTEGRACION] Asignando nuevo GUID para procedimiento %d", procedimiento.getId()));
-			expediente.setGuid(Guid.getNewInstance().toString());
+
+			String guid = Guid.getNewInstance().toString();
+			while(extExpedienteDao.getByGuid(guid) != null) {
+				guid = Guid.getNewInstance().toString();
+			}
+			
+			expediente.setGuid(guid);
 			modificados = true;
 		}
 		// En caso de haber cambiado algo se guarda el estado

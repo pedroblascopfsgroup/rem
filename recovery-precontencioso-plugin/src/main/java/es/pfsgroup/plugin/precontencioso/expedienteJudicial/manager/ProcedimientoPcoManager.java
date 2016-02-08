@@ -760,8 +760,14 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		//Obtener tipo de procedimiento propuesto
 		String tipoProcProp = null;
 		try {
-			tipoProcProp = procedimientoPco.getTipoProcPropuesto().getCodigo();
-		} catch (Exception e) {
+			if(procedimientoPco.getTipoProcIniciado() != null) {
+				tipoProcProp = procedimientoPco.getTipoProcIniciado().getCodigo();
+			}
+			else {
+				tipoProcProp = procedimientoPco.getTipoProcPropuesto().getCodigo();
+			}
+		} 
+		catch (Exception e) {
 			logger.error(e.getMessage());
 		}
 		

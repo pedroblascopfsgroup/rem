@@ -305,18 +305,38 @@ public class RecobroProcesosFacturacionManager implements RecobroProcesosFactura
 		}
 		
 	}
+	
+	
 
 	@Override
 	@BusinessOperation(RecobroCommonProcesosFacturacionConstants.PLUGIN_RECOBRO_PROCESOSFACTURACION_GENERAREXCEL_PROCESOS_BO)
 	@Transactional(readOnly=false)
 	public FileItem generarExcelProcesosFacturacion(Long idProcesoFacturacion) {
 		
+		return this.generarExcelProcesosFacturacionGenerico(idProcesoFacturacion, false);
+	}
+	
+	@Override
+	@BusinessOperation(RecobroCommonProcesosFacturacionConstants.PLUGIN_RECOBRO_PROCESOSFACTURACION_GENERAREXCELREDUCIDO_PROCESOS_BO)
+	@Transactional(readOnly=false)
+	public FileItem generarExcelProcesosFacturacionReducido(Long idProcesoFacturacion) {
+		
+		return this.generarExcelProcesosFacturacionGenerico(idProcesoFacturacion, true);
+	}
+	
+	
+	private FileItem generarExcelProcesosFacturacionGenerico(Long idProcesoFacturacion, Boolean reducido) {
+		
 		RecobroProcesoFacturacion procesoFacturacion = recobroProcesoFacturacionDao.get(idProcesoFacturacion);
 		
 		if (!Checks.esNulo(procesoFacturacion)) {
 			//Si ya se ha generado el fichero se devuelve el persistido en la bd			
-			if (!Checks.esNulo(procesoFacturacion.getFichero())) {				
+			if (!reducido && !Checks.esNulo(procesoFacturacion.getFichero())) {				
 				return procesoFacturacion.getFichero().getFileItem();
+			} 
+			//Si ya se ha generado el fichero reducido se devuelve el persistido en la bd
+			else if(reducido && !Checks.esNulo(procesoFacturacion.getFicheroReducido())) {				
+				return procesoFacturacion.getFicheroReducido().getFileItem();
 			}
 		
 			
@@ -409,8 +429,15 @@ public class RecobroProcesosFacturacionManager implements RecobroProcesosFactura
 					
 					filaValores.add(detalle.getCobroPago().getSubTipo().getDescripcion());
 					filaValores.add(detalle.getTarifaCobro().getTipoTarifa().getDescripcion());
-
-					listaValores.add(filaValores);
+					
+					if(reducido){
+						if(detalle.getImporteAPagar() != 0){
+							listaValores.add(filaValores);
+						}
+					}
+					else{
+						listaValores.add(filaValores);
+					}
 				}
 			}
 			
@@ -419,7 +446,11 @@ public class RecobroProcesosFacturacionManager implements RecobroProcesosFactura
 							appProperties.getProperty("procesoFacturacion.rutaExcelDetalles") : "tmp" + File.separator;
 			
 			makeDir(rutaFicheroResultados);
-			String nombreFicheroResultados = "procFactu_" +	procesoFacturacion.getId()+".xls";			
+			String nombreFicheroResultados = "procFactu_" +	procesoFacturacion.getId();
+			if(reducido){
+				nombreFicheroResultados+="_reducido";
+			}
+			nombreFicheroResultados += ".xls";	
 			excel.crearNuevoExcel(rutaFicheroResultados + nombreFicheroResultados, cabeceras, listaValores,false, 50000);
 
 			FileItem excelFileItem = new FileItem(excel.getFile());
@@ -431,7 +462,12 @@ public class RecobroProcesosFacturacionManager implements RecobroProcesosFactura
 				RecobroAdjuntos recobroAdjuntos = new RecobroAdjuntos(excelFileItem);
 				recobroAdjuntos.setTipo(RecobroAdjuntos.TIPO_PROCESOS_FACTURACION);
 				genericDao.save(RecobroAdjuntos.class, recobroAdjuntos);
-				procesoFacturacion.setFichero(recobroAdjuntos);
+				if(reducido){
+					procesoFacturacion.setFicheroReducido(recobroAdjuntos);
+				}
+				else{
+					procesoFacturacion.setFichero(recobroAdjuntos);
+				}
 				recobroProcesoFacturacionDao.saveOrUpdate(procesoFacturacion);
 			}
 			return excelFileItem;

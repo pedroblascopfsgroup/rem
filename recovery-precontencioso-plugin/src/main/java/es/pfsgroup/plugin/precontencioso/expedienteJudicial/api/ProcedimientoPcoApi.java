@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.api;
 
 import java.util.List;
+import java.util.Map;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.asunto.model.Procedimiento;
@@ -42,7 +43,7 @@ public interface ProcedimientoPcoApi {
 	 * @return numero de resultados
 	 */
 	Integer countBusquedaElementosPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
-	
+
 	/**
 	 * Obtiene el historico de estados de un procedimientoPCO mediante un id procedimiento.
 	 * 
@@ -149,5 +150,4 @@ public interface ProcedimientoPcoApi {
 	boolean mostrarSegunCodigos(Long idProcedimiento, List<String> codigosTiposGestores);
 	
 	public boolean comprobarExistenciaGestor(Long idProcedimiento);
-
 }

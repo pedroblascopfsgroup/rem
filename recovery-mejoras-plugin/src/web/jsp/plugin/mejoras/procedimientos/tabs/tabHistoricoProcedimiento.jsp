@@ -243,6 +243,7 @@
 		,{name : "fechaFin"}
 		,{name : "fechaVencimiento"}
 		,{name : "nombreUsuario"}
+		,{name  : "usuarioResponsable"}
 	]);
 
 	var btnConsultar =new Ext.Button({
@@ -274,7 +275,7 @@
 		,{header : '<s:message code="procedimiento.historico.grid.fechaInicio" text="**fecha inicio"/>', dataIndex : 'fechaInicio', width:65}
 		,{header : '<s:message code="procedimiento.historico.grid.fechaFin" text="**fecha fin"/>', dataIndex : 'fechaFin', width:65}
 		,{header : '<s:message code="procedimiento.historico.grid.fechaVencimiento" text="**fecha venc"/>', dataIndex : 'fechaVencimiento', width:65}
-		,{header : '<s:message code="procedimiento.historico.grid.usuario" text="**usuario"/>', dataIndex : 'nombreUsuario', width:50}
+		,{header : '<s:message code="plugin.mejoras.asunto.tabHistorico.destinatarioTarea" text="**destinatario"/>', dataIndex : 'usuarioResponsable', width:50}
 	]);
 
     var historicoGrid = app.crearGrid(tareasProcStore,historicoCm,{

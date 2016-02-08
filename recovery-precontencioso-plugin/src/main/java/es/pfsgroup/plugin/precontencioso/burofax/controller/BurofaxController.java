@@ -947,7 +947,8 @@ public class BurofaxController {
 		if(!Checks.esNulo(burofaxEnvio) && !Checks.esNulo(burofaxEnvio.getContenido())){
 			EnvioBurofaxPCO envioBurofax = burofaxManager.getEnvioBurofaxById(idEnvio);
 			if(!Checks.esNulo(envioBurofax)){
-				FileItem fileitem = burofaxManager.generarDocumentoBurofax(envioBurofax);
+				
+				FileItem fileitem = burofaxManager.generarBurofaxPDF(envioBurofax, burofaxEnvio.getNombreFichero());
 				fileitem.setContentType("application/pdf");
 				if(!Checks.esNulo(burofaxEnvio.getNombreFichero())){
 					fileitem.setFileName(burofaxEnvio.getNombreFichero());
@@ -956,6 +957,7 @@ public class BurofaxController {
 					fileitem.setFileName("BUROFAX-"+burofaxEnvio.getCliente().replace(",","").trim()+".pdf");
 				}
 				model.put("fileItem", fileitem);
+			
 			}
 		}
 

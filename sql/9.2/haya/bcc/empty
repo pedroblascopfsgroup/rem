@@ -1,3 +1,0 @@
-Este fichero sólo permite crear directorios en GIT (si no existe un directorio vacío no lo propaga GIT).
-
-En el momento que este directorio tenga un fichero se puede eliminar.

@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.controller;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -94,13 +95,12 @@ public class SubastaController {
 	private static final String EDITAR_INFORMACION_CIERRE = "plugin/nuevoModeloBienes/subastas/editarInformacionCierre";
 	private static final String DICCIONARIO_JSON = "plugin/nuevoModeloBienes/subastas/diccionarioJSON";
 	private static final String JSON_RESPUESTA_SERVICIO = "plugin/nuevoModeloBienes/adjudicacion/generico/respuestaJSON";	
-	
 	private static final String ADD_RELACION_CONTRATO_BIEN = "plugin/nuevoModeloBienes/subastas/addRelacionContratoBien";
 	private static final String BORRAR_RELACION_CONTRATO_BIEN = "plugin/nuevoModeloBienes/subastas/borrarRelacionContratoBien";
 	private static final String BUSQUEDA_CONTRATO_JSON = "plugin/nuevoModeloBienes/subastas/busquedaContratoJSON";
 	private static final String ADD_BIEN_CARGAS = "plugin/nuevoModeloBienes/bienes/AgregarBienCargasMultiple";
 	private static final String ADD_REVISION_CARGAS = "plugin/nuevoModeloBienes/subastas/editarRevisionCargasMultiple";
-	
+	private static final String ENVIO_CIERRE_OK = "plugin/nuevoModeloBienes/subastas/envioCierreDeudaOk";
 
 	
 	@Autowired
@@ -282,7 +282,7 @@ public class SubastaController {
 			model.put("fileItem", resultado);
 			
 			return GENINFVisorInformeController.JSP_DOWNLOAD_FILE;
-		} else if(!"CAJAMAR".equals(usuarioLogado.getUsuarioLogado().getEntidad().getDescripcion())) {
+                } else if(!"CAJAMAR".equals(usuarioLogado.getUsuarioLogado().getEntidad().getDescripcion())) {
 			//sareb
 			plantilla = "reportInformeSubastaSareb.jrxml";
 			InformeSubastaSarebBean informe = new InformeSubastaSarebBean();
@@ -539,7 +539,7 @@ public class SubastaController {
 				resultadoGlobalOK = false;					
 			}
 		}
-		
+
 		// Si alguna validación es KO, generamos el excel		
 		if(!resultadoGlobalOK) {
 
@@ -547,7 +547,7 @@ public class SubastaController {
 			
 		} else {	
 			
-			return DEFAULT;
+			return ENVIO_CIERRE_OK;
 		}
 	}
 

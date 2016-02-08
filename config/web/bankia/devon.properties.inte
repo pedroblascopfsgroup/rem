@@ -72,7 +72,7 @@ ruta.imprimir.docs=/home/iap013/imprimeDocs
 autorizacion.kerberos.driver=es.capgemini.pfs.security.KerberosStubDriver
 #autorizacion.kerberos.driver=es.pfs.bankia.security.KerberosBankiaDriver
 autorizacion.kerberos.perfil.acceso=FPFSRACCESO
-autorizacion.kerberos.perfiles=FPFSRSOPORT,FPFSRADMIN,FPFSREXT,FPFSRINT
+autorizacion.kerberos.perfiles=FPFSRSOPORT,FPFSRADMIN,FPFSREXT,FPFSRINT,FPFSRPROV
 
 #Limite en exportacion de tareas
 exportar.excel.limite.tareas = 2000

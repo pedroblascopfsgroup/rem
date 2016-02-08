@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -82,7 +84,7 @@ public class EXTExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> im
 	            hql.append(" and m.contrato.id = c.id and m.fechaExtraccion = c.fechaExtraccion ");
 	        }
 
-	        //Código
+	        //Cï¿½digo
 	        if (dtoExpediente.getCodigo() != null) {
 	            hql.append(" and exp.id = :expId ");
 	            params.put("expId", dtoExpediente.getCodigo());
@@ -132,13 +134,13 @@ public class EXTExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> im
 	            params.put("nroCnt", dtoExpediente.getNroContrato().toLowerCase());
 	        }
 
-	        // *** Este comité se utiliza para la búsqueda desde la página de búsquedas de expedientes *** //
+	        // *** Este comitï¿½ se utiliza para la bï¿½squeda desde la pï¿½gina de bï¿½squedas de expedientes *** //
 	        if (dtoExpediente.getComiteBusqueda() != null) {
 	            hql.append(" and exp.comite.id = :comiteBusquedaId ");
 	            params.put("comiteBusquedaId", dtoExpediente.getComiteBusqueda());
 	        }
 
-	        //Tipo de Gestión
+	        //Tipo de Gestiï¿½n
 	        if (!StringUtils.emtpyString(dtoExpediente.getCodigoGestion())) {
 	            hql.append(" and exp.arquetipo.itinerario.dDtipoItinerario.codigo = :codigoGestion ");
 	            params.put("codigoGestion", dtoExpediente.getCodigoGestion());
@@ -259,5 +261,24 @@ public class EXTExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> im
 			hql.append(" and ge.gestor.id = ").append(usuLogado.getId());
 			return hql.toString();
 		}
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Expediente getByGuid(String guid) {
+		
+		Expediente expediente = null;
+		
+		DetachedCriteria crit = DetachedCriteria.forClass(Expediente.class);
+		crit.add(Restrictions.eq("guid", guid));
+        crit.add(Restrictions.eq("auditoria.borrado", false));
+        
+        List<Expediente> listado = getHibernateTemplate().findByCriteria(crit);
+        if(listado != null && listado.size() > 0) {
+        	expediente = listado.get(0);
+        }
+        
+        return expediente;
+	}
 
 }

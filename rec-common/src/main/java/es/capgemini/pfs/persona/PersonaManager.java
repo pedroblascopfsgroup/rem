@@ -540,9 +540,9 @@ public class PersonaManager {
     	Oficina oficina = persona.getOficinaGestora();
     	if (!Checks.esNulo(oficina)) {
     		//Comprobamos si la oficina tiene zona
-    		if(!Checks.esNulo(oficina.getZona())){
+    		/*if(!Checks.esNulo(oficina.getZona())){
     			oficina.getZona().setDescripcion(oficina.getCodDescripOficina(true, false));
-    		}
+    		}*/
     		return oficina.getZona();
     	} else {
     		return null;

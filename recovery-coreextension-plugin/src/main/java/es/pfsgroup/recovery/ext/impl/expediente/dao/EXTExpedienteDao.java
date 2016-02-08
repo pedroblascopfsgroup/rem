@@ -21,4 +21,11 @@ public interface EXTExpedienteDao extends AbstractDao<Expediente, Long>{
 	
 	 public Page buscarExpedientesPaginado(DtoBuscarExpedientes dtoExpediente,Usuario usuarioLogueado);
 
+	 /**
+	  * Devuelve un objeto Expediente a partir de su identificador único global
+	  * @param guid
+	  * @return Expediente
+	  */
+	 Expediente getByGuid(String guid);
+
 }

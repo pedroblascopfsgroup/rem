@@ -35,8 +35,7 @@
 	
 var tabPanel;
 var numTab = '${numTab}';
-var xxx = '${usuarioEntidad}';
-debugger;
+
 	<c:if test="${despacho.tipoDespacho.codigo=='1'}">
 		<pfslayout:includetab name="tabEsquemaTurnado">
 			<%@ include file="tabEsquemaTurnado.jsp"%>
@@ -61,6 +60,7 @@ debugger;
 		})
 
 	</c:if>	
+	
 	var panel = new Ext.Panel({
        bodyStyle : 'padding : 5px'
        ,autoHeight : true

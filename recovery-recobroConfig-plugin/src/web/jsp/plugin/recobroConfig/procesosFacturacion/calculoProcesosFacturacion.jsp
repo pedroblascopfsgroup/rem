@@ -230,6 +230,23 @@
 			}
 		}
 	});	
+	
+	var btDescargarReducido= new Ext.Button({
+		text : '<s:message code="plugin.recobroConfig.procesosFacturacion.remesas.descargarReducido" text="**Descargar fichero reducido" />'
+		,iconCls : 'icon_download'
+		,disabled:true
+		,handler : function(){
+			if (gridProcesosFacturacion.getSelectionModel().getCount()>0){
+				var estado = gridProcesosFacturacion.getSelectionModel().getSelected().get('estadoProcesoFacturableCod');
+				if (estado == ESTADO_LIBERADO.getValue() || estado == ESTADO_PROCESADO.getValue()) {
+					var id = gridProcesosFacturacion.getSelectionModel().getSelected().get('id');
+					var params = {idProcesoFacturacion : id};					
+					var flow = '/pfs/recobroprocesosfacturacion/descargarFicheroReducido';
+					app.openBrowserWindow(flow,params);
+				}
+			}
+		}
+	});	
     		
 	var gridProcesosFacturacion = new Ext.grid.GridPanel({
         store: procesosFacturacionDS
@@ -243,7 +260,7 @@
 		,style:'padding: 10px;'
 		,viewConfig : {  forceFit : true}
 		,monitorResize: true
-		,bbar:[pagingBar, btnNuevo, btBorrar, btLiberar,btPendiente, btDescargar]
+		,bbar:[pagingBar, btnNuevo, btBorrar, btLiberar,btPendiente, btDescargar, btDescargarReducido]
     });	
     
     
@@ -375,11 +392,13 @@
     			}
     			if (estado == ESTADO_PROCESADO.getValue() || estado == ESTADO_LIBERADO.getValue()){
     				btDescargar.setDisabled(false);
+    				btDescargarReducido.setDisabled(false);
     				if (estado == ESTADO_LIBERADO.getValue()) {
     					btBorrar.setText('<s:message code="plugin.recobroConfig.procesosFacturacion.remesas.cancelar" text="**Cancelar" />');
     				}
     			}  else {
     				btDescargar.setDisabled(true);
+    				btDescargarReducido.setDisabled(true);
     			}
     			if (estado == ESTADO_ERRORES.getValue() || estado==ESTADO_PROCESADO.getValue() ){
     				/* Solo un proceso de facturación en estado pendiente */
@@ -398,7 +417,8 @@
 				}
 		} else {
 			btBorrar.setDisabled(true); 
-    		btDescargar.setDisabled(true); 
+    		btDescargar.setDisabled(true);
+    		btDescargarReducido.setDisabled(true); 
     		btnCorregirModelosFacturacion.setDisabled(true);
     		btLiberar.setDisabled(true);
     		btPendiente.setDisabled(true);

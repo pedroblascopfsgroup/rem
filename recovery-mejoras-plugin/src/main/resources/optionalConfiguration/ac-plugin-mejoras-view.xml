@@ -131,7 +131,7 @@
 	<bean p:entity="tabs.procedimiento.fast" p:name="tareasProcedimiento"  p:order="600"  	
 		p:fileName="/WEB-INF/jsp/plugin/mejoras/procedimientos/tabs/tareas.jsp" 
 		p:priority="1"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
-		p:permission="TAB_PRC_TAREAS" />	
+		 />	
 		
 	<!--Propuestas del expediente -->	
 	<bean p:entity="tabs.expediente.fast" p:name="propuestasExpediente"  p:order="270"  	

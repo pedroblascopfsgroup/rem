@@ -262,7 +262,7 @@
 	<bean p:entity="tabs.procedimiento.fast" p:name="tareasProcedimiento"  p:order="600" 
 		p:fileName="/WEB-INF/jsp/entidad/procedimiento/tabs/tareas.jsp" 
 		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
-		p:permission="TAB_PRC_TAREAS" />
+		 />
 		
 <!-- <bean p:entity="tabs.procedimiento.fast" p:name="docRequeridaProcedimiento" p:order="700" 
 		p:fileName="/WEB-INF/jsp/entidad/procedimiento/tabs/documentacion.jsp" 

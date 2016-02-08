@@ -35,19 +35,19 @@ DECLARE
   	
     V_ENTIDAD_ID NUMBER(16);
     --Insertando valores en FUN_FUNCIONES
-    TYPE ROL_ARRAY IS VARRAY(12) OF VARCHAR2(128);
+    TYPE ROL_ARRAY IS VARRAY(11) OF VARCHAR2(128);
     V_FUNCION_DESC_LARGA ROL_ARRAY := ROL_ARRAY(
     	'Permite ver la pestaña Títulos de un asunto', 'Permite ver la pestaña Acuerdos de un asunto',
       	'Permite ver la pestaña Adjuntos de un asunto','Permite ver la pestaña Convenios de un asunto',
       	'Permite ver la pestaña Fase común de un asunto', 'Permite ver la pestaña Adjuntos de un procedimiento',
-      	'Permite ver la pestaña Decisiones de un procedimiento','Permite ver la pestaña Tareas de un procedimiento',
+      	'Permite ver la pestaña Decisiones de un procedimiento',
       	'Permite ver la pestaña Contratos de un procedimiento', 'Permite ver la pestaña Procedimientos de un bien',
       	'Permite ver la pestaña Datos entidad de un bien', 'Permite ver la pestaña Relaciones de un bien'
     );
     V_FUNCION_ROL ROL_ARRAY := ROL_ARRAY(
      	'TAB_ASUNTO_TITULOS', 'TAB_ASUNTO_ACUERDOS', 'TAB_ASUNTO_ADJUNTOS',
       	'TAB_ASUNTO_CONVENIOS','TAB_ASUNTO_FASECOMUN', 'TAB_PRC_ADJUNTO',
-      	'TAB_PRC_DECISION', 'TAB_PRC_TAREAS', 'TAB_PRC_CONTRATO',
+      	'TAB_PRC_DECISION', 'TAB_PRC_CONTRATO',
       	'TAB_BIEN_PROCEDIMIENTOS', 'TAB_BIEN_DATOSENTIDAD', 'TAB_BIEN_RELACIONES'
     );
     

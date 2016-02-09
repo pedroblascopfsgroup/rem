@@ -546,6 +546,11 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 					else 
 						return null;
 				}
+
+				@Override
+				public String getRefCentera() {
+					return null;
+				}
 			};
 			result.add(dto);
 		}

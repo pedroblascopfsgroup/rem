@@ -20,7 +20,7 @@ public class AdjuntoGridAssembler {
 		for(GestorDocumentalOutputListDto olDto : outputDto.getLbListadoDocumentos()) {
 			AdjuntoGridDto dto = new AdjuntoGridDto();
 			dto.setId(Long.parseLong(olDto.getIdDocumento()));
-			dto.setNombre(olDto.getClaveRelacion());
+			dto.setNombre(olDto.getDescripcion()+"."+olDto.getExtFichero());
 			dto.setContentType(olDto.getNombreTipoDoc());
 			dto.setDescripcion(olDto.getDescripcion());
 			dto.setLength("");

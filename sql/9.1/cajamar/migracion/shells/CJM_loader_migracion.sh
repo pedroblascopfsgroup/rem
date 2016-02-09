@@ -197,6 +197,13 @@ if [ $? != 0 ] ; then
 #   exit 1
 fi
 
+echo "MIG_RGE_REL_GESTOR_EXPEDIENTE"
+$ORACLE_HOME/bin/sqlldr control="$ctl_dir"gestores_expedientesDataLoad.ctl log="$log_dir"EXPEDIENTES-GESTORES_"$fecha".log bad="$bad_dir"EXPEDIENTES-GESTORES_"$fecha".bad userid="$1" DIRECT=TRUE data="$dat_dir"EXPEDIENTES-GESTORES.dat
+if [ $? != 0 ] ; then 
+   echo -e "[ERROR] MIG_RGE_REL_GESTOR_EXPEDIENTE"
+#   exit 1
+fi
+
 
 $ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"CJM_MiG_estadisticas.sql 
 

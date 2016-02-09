@@ -609,10 +609,21 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 	@BusinessOperationDefinition(BO_ACUERDO_MGR_DELETE_VALORES_TERMINO)
 	@Transactional(readOnly = false)    
     public void deleteAllValoresTermino(TerminoAcuerdo ta) {
-    	for (ValoresCamposTermino valor : ta.getValoresCampos()) {
-			genericDao.deleteById(ValoresCamposTermino.class, valor.getId());
+		if (ta.getValoresCampos()!=null) {
+	    	for (ValoresCamposTermino valor : ta.getValoresCampos()) {
+				genericDao.deleteById(ValoresCamposTermino.class, valor.getId());
+			}
 		}
     }
+	
+	@Transactional(readOnly = false)
+	public void saveAllValoresTermino(TerminoAcuerdo ta) {
+		if (ta.getValoresCampos()!=null) {
+			for (ValoresCamposTermino valor: ta.getValoresCampos()) {
+				genericDao.save(ValoresCamposTermino.class, valor);
+			}
+		}
+	}
     
 	/**
      * @param to TerminoOperaciones

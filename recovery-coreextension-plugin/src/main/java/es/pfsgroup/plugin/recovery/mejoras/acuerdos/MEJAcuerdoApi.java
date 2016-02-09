@@ -116,6 +116,9 @@ public interface MEJAcuerdoApi {
 	@Transactional(readOnly = false)	
     public void deleteAllValoresTermino(TerminoAcuerdo ta);
 	
+	@Transactional(readOnly = false)
+	public void saveAllValoresTermino(TerminoAcuerdo ta);
+	
 	@BusinessOperationDefinition(BO_ACUERDO_MGR_DELETE_TERMINO_CONTRATO)
 	@Transactional(readOnly = false)
 	public void deleteTerminoContrato(TerminoContrato tc); 

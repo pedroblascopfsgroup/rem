@@ -34,9 +34,5 @@ public class EntidadManager {
     public Entidad findByWorkingCode(String workingCode) {
     	return entidadDao.findByWorkingCode(workingCode);
     }
-    
-    public List<EXTDDTipoGestor> getListGestores(long idEntidad){
-		return entidadDao.getListGestores(idEntidad);
-    }
-    
+   
 }

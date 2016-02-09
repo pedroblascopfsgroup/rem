@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -48,7 +49,8 @@ public class Entidad implements Serializable {
     private Map<String, EntidadConfig> configuracion;
     
     @ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "ETG_ENTIDAD_TIPO_GESTOR",  joinColumns = {@JoinColumn(name = "ENTIDAD_ID", nullable = false, updatable = false) }, inverseJoinColumns = { @JoinColumn(name = "DD_TGE_ID", nullable = false, updatable = false) })
+    @OrderBy("descripcion ASC")
+	@JoinTable(name = "${master.schema}.ETG_ENTIDAD_TIPO_GESTOR",  joinColumns = {@JoinColumn(name = "ENTIDAD_ID", referencedColumnName = "ID",nullable = false, updatable = false) }, inverseJoinColumns = { @JoinColumn(name = "DD_TGE_ID", nullable = false, updatable = false) })
     private List<EXTDDTipoGestor> tiposDeGestores;
     
 

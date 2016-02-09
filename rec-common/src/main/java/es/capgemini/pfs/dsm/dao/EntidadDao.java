@@ -21,6 +21,5 @@ public interface EntidadDao extends AbstractDao<Entidad, Long> {
     
     Entidad findByDescripcion(String descripcion);
     
-    List<EXTDDTipoGestor> getListGestores(long idEntidad);
 
 }

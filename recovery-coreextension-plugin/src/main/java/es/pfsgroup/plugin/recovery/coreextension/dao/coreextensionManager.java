@@ -156,10 +156,12 @@ public class coreextensionManager implements coreextensionApi {
 		List<EXTDDTipoGestor> listado = new ArrayList<EXTDDTipoGestor>();
 		
 		if(!Checks.esNulo(listEnt) && listEnt.size()>1){
-			listado = entidadManager.getListGestores(usuarioManager.getUsuarioLogado().getEntidad().getId());
+			Entidad entidad = genericDao.get(Entidad.class, 
+					genericDao.createFilter(FilterType.EQUALS, "id", usuarioManager.getUsuarioLogado().getEntidad().getId()));
+			listado = entidad.getTiposDeGestores();
 		}else{
 			Order order = new Order(OrderType.ASC, "descripcion");
-			listado = genericDao.getListOrdered(EXTDDTipoGestor.class, order, genericDao.createFilter(FilterType.EQUALS, "borrado", false));	
+			listado = genericDao.getListOrdered(EXTDDTipoGestor.class, order, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));	
 		}
 		
 		

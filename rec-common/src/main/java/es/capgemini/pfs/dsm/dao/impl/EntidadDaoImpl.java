@@ -31,12 +31,5 @@ public class EntidadDaoImpl extends AbstractMasterDao<Entidad, Long> implements 
                 "select c from Entidad c where c.descripcion = ?", descripcion)).iterator().next();
     }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<EXTDDTipoGestor> getListGestores(long idEntidad) {
-        String hql = "select e.tiposDeGestores from Entidad e where e.id = ? and a.auditoria.borrado = 0 order by e.tiposDeGestores.descripcion ASC";
-        List<EXTDDTipoGestor> gestores = (List<EXTDDTipoGestor>) getHibernateTemplate().find(hql, idEntidad);
-        return gestores;
-	}
     
 }

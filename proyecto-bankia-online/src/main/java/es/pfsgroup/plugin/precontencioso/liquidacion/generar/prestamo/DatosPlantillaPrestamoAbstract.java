@@ -14,6 +14,7 @@ import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.BienLiqVO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.CabeceraLiquidacionLiqVO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.ConceptoLiqVO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.DatosGeneralesLiqVO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.InteresesContratoLiqVO;
@@ -415,4 +416,38 @@ public abstract class DatosPlantillaPrestamoAbstract {
 
         return nombreApoderado.toString();
     }
+    
+	/**
+	 * @param CabeceraLiquidacionLiqVO
+	 * 
+	 * @return HashMap keys
+	 * 
+	 * 115_FIN_IMLIAC	->	String
+	 * 115_FIN_FANTLQ	->	String
+	 * 115_FIN_FEVALQ	->	String
+	 */
+	protected HashMap<String, Object> generarUltimaCabeceraLiquidacion(List<CabeceraLiquidacionLiqVO> cabeceraLiquidacion) {
+		HashMap<String, Object> datosLiquidacion = new HashMap<String, Object>();
+
+		if (cabeceraLiquidacion.isEmpty()) {
+			datosLiquidacion.put("C15_FIN_IMLIAC", "[NO-DISPONIBLE]");
+			datosLiquidacion.put("C15_FIN_FANTLQ", "[NO-DISPONIBLE]");
+			datosLiquidacion.put("C15_FIN_FEVALQ", "[NO-DISPONIBLE]");
+			datosLiquidacion.put("C15_FIN_FEFCON", "[NO-DISPONIBLE]");
+			datosLiquidacion.put("C15_FIN_POINDB", "[NO-DISPONIBLE]");
+			datosLiquidacion.put("C15_FIN_NCTAOP", "[NO-DISPONIBLE]");
+			datosLiquidacion.put("C15_FIN_DESLIQ", "[NO-DISPONIBLE]");
+			return datosLiquidacion;
+		}
+		
+		int tam = cabeceraLiquidacion.size();
+		datosLiquidacion.put("C15_FIN_IMLIAC", cabeceraLiquidacion.get(tam-1).IMLIAC());
+		datosLiquidacion.put("C15_FIN_FANTLQ", cabeceraLiquidacion.get(tam-1).FANTLQ());
+		datosLiquidacion.put("C15_FIN_FEVALQ", cabeceraLiquidacion.get(tam-1).FEVALQ());
+		datosLiquidacion.put("C15_FIN_FEFCON", cabeceraLiquidacion.get(tam-1).FEFCON());
+		datosLiquidacion.put("C15_FIN_POINDB", cabeceraLiquidacion.get(tam-1).POINDB());
+		datosLiquidacion.put("C15_FIN_NCTAOP", cabeceraLiquidacion.get(tam-1).NCTAOP());
+		datosLiquidacion.put("C15_FIN_DESLIQ", cabeceraLiquidacion.get(tam-1).DESLIQ());
+		return datosLiquidacion;
+	}
 }

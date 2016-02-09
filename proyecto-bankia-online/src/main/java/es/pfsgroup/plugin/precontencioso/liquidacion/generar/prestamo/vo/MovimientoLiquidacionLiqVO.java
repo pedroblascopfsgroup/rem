@@ -15,6 +15,7 @@ public class MovimientoLiquidacionLiqVO {
 	private Date MLQ_FECHAV;
 	private String MLQ_CNCORT;
 	private String MLQ_IMMOVY;
+	private String MLQ_CASALY;
 	private String MLQ_CADISY;
 	private String MLQ_CANUDY;
 	private String MLQ_CANUCY;
@@ -32,6 +33,10 @@ public class MovimientoLiquidacionLiqVO {
 	
 	public String IMMOVY() {
 		return MLQ_IMMOVY == null ? "[NO DISPONIBLE]" : MLQ_IMMOVY;
+	}
+	
+	public String CASALY() {
+		return MLQ_CASALY == null ? "[NO DISPONIBLE]" : MLQ_CASALY;
 	}
 	
 	public String CADISY() {

@@ -7,14 +7,15 @@ import java.util.Locale;
 // 113
 public class CabeceraExpedienteLiqVO {
 	private Long CEL_PCO_LIQ_ID;
-	private BigDecimal CEL_COEXPD;
+	private String CEL_COEXPD;
 	private String CEL_NOMBRE;
 	private BigDecimal CEL_NUCTOP;
 	private BigDecimal CEL_IMLIAC;
 	private String CEL_NCTAOP;
 
 	public String COEXPD() {
-		return NumberFormat.getInstance(new Locale("es", "ES")).format(CEL_COEXPD);
+		//return NumberFormat.getInstance(new Locale("es", "ES")).format(CEL_COEXPD);
+		return CEL_COEXPD == null ? "[NO DISPONIBLE]" : CEL_COEXPD;
 	}
 	
 	public String NOMBRE() {
@@ -35,9 +36,9 @@ public class CabeceraExpedienteLiqVO {
 
 	/* Getters */
 
-	public BigDecimal getCEL_COEXPD() {
+	/*public BigDecimal getCEL_COEXPD() {
 		return CEL_COEXPD;
-	}
+	}*/
 	
 	public BigDecimal getCEL_NUCTOP() {
 		return CEL_NUCTOP;

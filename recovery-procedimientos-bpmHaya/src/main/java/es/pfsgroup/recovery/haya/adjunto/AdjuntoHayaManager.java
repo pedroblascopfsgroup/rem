@@ -417,7 +417,9 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 		if(!Checks.esNulo(id)){
 			AdjuntoGridDto adjunto = gestorDocumentalApi.recuperacionDocumento(id);
 			try {
-				return generaFileItem(adjunto.getNombre(), adjunto.getFicheroBase64(), adjunto.getExtFichero());
+				if(adjunto != null) {
+					return generaFileItem(adjunto.getNombre(), adjunto.getFicheroBase64(), adjunto.getExtFichero());
+				}
 			} catch (Throwable e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -36,7 +36,8 @@ public class DatosLiquidacionExtractosDaoImpl implements DatosLiquidacionExtract
 				.addScalar("CEL_PCO_LIQ_ID", Hibernate.LONG)
 				.addScalar("CEL_NOMBRE", Hibernate.STRING)
 				.addScalar("CEL_NCTAOP", Hibernate.STRING)
-				.addScalar("CEL_COEXPD", Hibernate.BIG_DECIMAL)
+				//.addScalar("CEL_COEXPD", Hibernate.BIG_DECIMAL)
+				.addScalar("CEL_COEXPD", Hibernate.STRING)
 				.addScalar("CEL_NUCTOP", Hibernate.BIG_DECIMAL)
 				.addScalar("CEL_IMLIAC", Hibernate.BIG_DECIMAL)
 				.setLong("idLiquidacion", idLiquidacion);
@@ -75,7 +76,7 @@ public class DatosLiquidacionExtractosDaoImpl implements DatosLiquidacionExtract
 	private String plainQueryCabeceraLiq() {
 		StringBuilder plainQueryCabeceraLiq = new StringBuilder();
 		plainQueryCabeceraLiq.append(" SELECT * ");
-		plainQueryCabeceraLiq.append(" FROM DGC_DATOS_GENERALES_CNT_LIQ ");
+		plainQueryCabeceraLiq.append(" FROM CLQ_CAB_LIQ_CUENTAS_CREDITO ");
 		plainQueryCabeceraLiq.append(" WHERE BORRADO = 0 ");
 		plainQueryCabeceraLiq.append("  AND CLQ_PCO_LIQ_ID = :idLiquidacion ");
 		plainQueryCabeceraLiq.append("	ORDER BY CLQ_FANTLQ ASC ");
@@ -93,6 +94,7 @@ public class DatosLiquidacionExtractosDaoImpl implements DatosLiquidacionExtract
 			.addScalar("MLQ_FECHAV", Hibernate.DATE)
 			.addScalar("MLQ_CNCORT", Hibernate.STRING)
 			.addScalar("MLQ_IMMOVY", Hibernate.STRING)
+			.addScalar("MLQ_CASALY", Hibernate.STRING)
 			.addScalar("MLQ_CADISY", Hibernate.STRING)
 			.addScalar("MLQ_CANUDY", Hibernate.STRING)
 			.addScalar("MLQ_CANUCY", Hibernate.STRING)
@@ -105,7 +107,7 @@ public class DatosLiquidacionExtractosDaoImpl implements DatosLiquidacionExtract
 	private String plainQueryMovimientoLiq() {
 		StringBuilder plainQueryMovimientoLiq = new StringBuilder();
 		plainQueryMovimientoLiq.append(" SELECT * ");
-		plainQueryMovimientoLiq.append(" FROM INC_INTERESES_CONTRATO_LIQ ");
+		plainQueryMovimientoLiq.append(" FROM MLQ_MOV_LIQ_CUENTAS_CREDITO ");
 		plainQueryMovimientoLiq.append(" WHERE BORRADO = 0 ");
 		plainQueryMovimientoLiq.append("  AND MLQ_PCO_LIQ_ID = :idLiquidacion ");
 		plainQueryMovimientoLiq.append("	ORDER BY MLQ_FECHAO ASC ");

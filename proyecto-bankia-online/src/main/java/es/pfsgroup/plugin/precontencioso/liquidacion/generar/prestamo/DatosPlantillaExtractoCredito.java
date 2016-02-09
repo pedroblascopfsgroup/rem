@@ -14,10 +14,12 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.DatosPlantillaFactory;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.dao.DatosLiquidacionDao;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.dao.DatosLiquidacionExtractosDao;
+import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.CabeceraExpedienteLiqVO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.CabeceraLiquidacionLiqVO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.ConceptoLiqVO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.DatosGeneralesLiqVO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.InteresesContratoLiqVO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.MovimientoLiquidacionLiqVO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.RecibosLiqVO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 
@@ -27,10 +29,10 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
  * @author asoler
  */
 @Component
-public class DatosPlantillaCredito extends DatosPlantillaPrestamoAbstract implements DatosPlantillaFactory {
+public class DatosPlantillaExtractoCredito extends DatosPlantillaPrestamoAbstract implements DatosPlantillaFactory {
 
 	// Codigo de la liquidacion a la que aplica los datos
-	private static final String CODIGO_TIPO_LIQUIDACION = "CREDITO";
+	private static final String CODIGO_TIPO_LIQUIDACION = "EXTRACTO";
 
 	@Autowired
 	private DatosLiquidacionDao datosLiquidacionDao;
@@ -57,6 +59,8 @@ public class DatosPlantillaCredito extends DatosPlantillaPrestamoAbstract implem
 		List<InteresesContratoLiqVO> interesesContratoLiq = datosLiquidacionDao.getInteresesContratoLiquidacion(idLiquidacion);
 		LiquidacionPCO liquidacion = liquidacionApi.getLiquidacionPCOById(idLiquidacion);
 		List<CabeceraLiquidacionLiqVO> cabeceraLiquidacion = datosLiquidacionExtractoDao.getCabeceraLiquidacion(idLiquidacion);
+		List<MovimientoLiquidacionLiqVO> movimientosLiquidacion = datosLiquidacionExtractoDao.getMovimientoLiquidacion(idLiquidacion);
+		List<CabeceraExpedienteLiqVO> cabeceraExpediente = datosLiquidacionExtractoDao.getCabeceraExpedienteLiquidacion(idLiquidacion);
 		
 		if (datosGenerales.isEmpty()) {
 			throw new BusinessOperationException("GenerarLiquidacionBankiaManager.obtenerDatosLiquidacion: No se encuentra datos LQ03");
@@ -66,6 +70,8 @@ public class DatosPlantillaCredito extends DatosPlantillaPrestamoAbstract implem
 		datosLiquidacion.put("LQ03", datosGenerales.get(0));
 		datosLiquidacion.put("LQ04", recibosLiq);
 		datosLiquidacion.put("LQ07", interesesContratoLiq);
+		datosLiquidacion.put("C17", movimientosLiquidacion);
+		
 
 		// calculated data
 		datosLiquidacion.putAll(obtenerDatosLiquidacionPco(liquidacion));
@@ -76,6 +82,7 @@ public class DatosPlantillaCredito extends DatosPlantillaPrestamoAbstract implem
 		datosLiquidacion.put("FECHA_FIRMA", datosGenerales.get(0).FEVACM());
 		datosLiquidacion.put("CIUDAD_FIRMA", "Madrid");
 		datosLiquidacion.put("SUCURSAL_MAYOR_DEUDA", sucursal_mayor_deuda_exp);
+		datosLiquidacion.put("COEXPD_GLOBAL", cabeceraExpediente.get(0).COEXPD());
 
 		return datosLiquidacion;
 	}

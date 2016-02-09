@@ -3,7 +3,7 @@
 --## AUTOR=José Luis Gauxachs
 --## FECHA_CREACION=20160204	
 --## ARTEFACTO=web
---## VERSION_ARTEFACTO=9.1.0-cj-rc37
+--## VERSION_ARTEFACTO=v_Febrero
 --## INCIDENCIA_LINK=CMREC-2026
 --## PRODUCTO=SI
 --## Finalidad: DDL Creación de la restricción en la tabla CRI_CONTRATOS_RIESGOOPERACIONAL 

@@ -249,6 +249,9 @@
 		<c:when test="${codigoAplicativo eq 'CE'}">
     		camposMostrar=[oficina, saldoAct ,riesgoGlobal, capitalNoVencido, capitalVencido, intereses, demoras, saldoGastos];
 		</c:when>
+		<c:when test="${codigoAplicativo eq 'PR'}">
+    		camposMostrar=[oficina,fechaImpago,saldoAct,capitalDispuesto,capitalNoVencido,capitalVencido,carencia,demoras,intereses,riesgoGlobal,saldoGastos];
+		</c:when>
    		<c:otherwise>
    			camposMostrar=[mensajeWSVacio];
     	</c:otherwise>

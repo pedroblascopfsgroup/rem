@@ -1,13 +1,13 @@
 /*
 --##########################################
---## AUTOR=Jorge Ros
---## FECHA_CREACION=20151222
+--## AUTOR=Oscar Dorado
+--## FECHA_CREACION=20160208
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1
+--## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-709
 --## PRODUCTO=NO
 --##
---## Finalidad: BPM - Trámite de aceptación de concursos precontencioso
+--## Finalidad: BPM - Trámite de envío de demanda
 --## INSTRUCCIONES:  Ejecutar y definir las variables
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -48,8 +48,8 @@ DECLARE
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
        T_TIPO_TAP('HC106','HC106_RedactarDemandaAdjuntarDocu',null,null,null,null,null,'0','Redactar demanda y adjuntar documentación','0','PRODUCTO-709','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'39',null,null,null),
-       T_TIPO_TAP('HC106','HC106_RevisarCompletitudDocu',null,'Revisar completitud de la documentación','0','PRODUCTO-709','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'39',null,null,null),
-       T_TIPO_TAP('HC106','HC106_BPMTramiteProvisionFondos',null,null,null,null,null,'0','Se inicia trámite de provisiones de fondos','0','PRODUCTO-709','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'39',null,null,null)
+       T_TIPO_TAP('HC106','HC106_RevisarCompletitudDocu',null,null,null,null,null,'0','Revisar completitud de la documentación','0','PRODUCTO-709','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'543',null,null,null),
+       T_TIPO_TAP('HC106','HC106_BPMTramiteProvisionFondos',null,null,null,null,null,'0','Se inicia trámite de provisiones de fondos','0','PRODUCTO-709','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'39',null,null,null)
     ); 
     V_TMP_TIPO_TAP T_TIPO_TAP;
 

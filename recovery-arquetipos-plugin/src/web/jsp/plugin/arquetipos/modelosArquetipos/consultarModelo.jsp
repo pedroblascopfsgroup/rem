@@ -39,16 +39,33 @@
 	<pfs:buttonedit name="btModificarModelo" 
 			flow="plugin/arquetipos/modelosArquetipos/ARQmodificarModelo" 
 			parameters="arquetipoParams" 
-			windowTitle="plugin.arquetipos.modelo.consultar.modificarModelo" 
-			windowTitleKey="**Modificar modelo"
+			windowTitleKey="plugin.arquetipos.modelo.consultar.modificarModelo" 
+			windowTitle="**Modificar modelo"
 			on_success="recargar"
 			/>
 	
+	<c:choose>
+	  <c:when test="${modelo.estado.codigo=='3' || modelo.estado.codigo=='4'}">
+			<pfs:panel name="datosGeneralesPanel" columns="2" collapsible="false">
+				<pfs:items items="nombre, descripcion, estado "/>
+				<pfs:items items="fechaInicioVigencia, fechaFinVigencia"/>
+			</pfs:panel>
+	  </c:when>
+	  <c:otherwise>
+			<pfs:buttonedit name="btModificarModelo" 
+				flow="plugin/arquetipos/modelosArquetipos/ARQmodificarModelo" 
+				parameters="arquetipoParams" 
+				windowTitleKey="plugin.arquetipos.modelo.consultar.modificarModelo" 
+				windowTitle="**Modificar modelo"
+				on_success="recargar"/>
+				<pfs:panel name="datosGeneralesPanel" columns="2" collapsible="false" bbar="btModificarModelo">
+					<pfs:items items="nombre, descripcion, estado "/>
+					<pfs:items items="fechaInicioVigencia, fechaFinVigencia"/>
+				</pfs:panel>
+	  </c:otherwise>
+	</c:choose>
 	
-	<pfs:panel name="datosGeneralesPanel" columns="2" collapsible="false" bbar="btModificarModelo">
-		<pfs:items items="nombre, descripcion, estado "/>
-		<pfs:items items="fechaInicioVigencia, fechaFinVigencia"/>
-	</pfs:panel>
+
 
 
 	<pfs:defineRecordType name="ArquetiposModeloRT">
@@ -299,7 +316,5 @@
 	    ,border: false
     });
 	page.add(compuesto);
-	<%--
-	 --%>
 
 </fwk:page>

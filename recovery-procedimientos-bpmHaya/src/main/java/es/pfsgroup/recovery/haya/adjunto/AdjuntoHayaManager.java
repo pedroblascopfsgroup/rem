@@ -415,22 +415,13 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	}
 	
 	public FileItem recuperacionDocumento(String id, String nombre, String extension){
-		
-		if(!Checks.esNulo(id)){
-			AdjuntoGridDto adjunto = gestorDocumentalApi.recuperacionDocumento(id);
-			try {
-				if(adjunto != null) {
-					return generaFileItem(nombre, adjunto.getFicheroBase64(), extension);
-				}
-			} catch (Throwable e) {
-				logger.error("Error del file item..."+e);
-			}
-			
-		}else{
-			return null;
+		String ficheroBase64 = gestorDocumentalApi.recuperacionDocumento(id);
+		try {
+			return generaFileItem(nombre, ficheroBase64, extension);
+		} catch (Throwable e) {
+			logger.error("RecuperacionDocumento error: " + e);
 		}
-		return null;
-		
+		return new FileItem();
 	}
 	
 	private FileItem generaFileItem(String nombreFichero, String contenido, String extension) throws Throwable {

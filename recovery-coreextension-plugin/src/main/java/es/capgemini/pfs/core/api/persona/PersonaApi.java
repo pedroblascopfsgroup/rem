@@ -2,7 +2,6 @@ package es.capgemini.pfs.core.api.persona;
 
 import java.util.List;
 
-import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.core.api.asunto.AdjuntoDto;

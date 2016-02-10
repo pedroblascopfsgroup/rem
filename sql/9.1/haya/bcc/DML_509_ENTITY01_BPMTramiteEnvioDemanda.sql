@@ -39,7 +39,7 @@ DECLARE
     TYPE T_TIPO_TPO IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TPO IS TABLE OF T_TIPO_TPO;
     V_TIPO_TPO T_ARRAY_TPO := T_ARRAY_TPO(
-      T_TIPO_TPO('HC106','T. de envío de la demanda','T. de envío de la demanda',null,'hcj_tramiteEnvioDemanda','0','PRODUCTO-709','0','TR',null,null,'1','MEJTipoProcedimiento','1','0')
+      T_TIPO_TPO('HC106','T. de envío de la demanda','T. de envío de la demanda',null,'hcj_tramiteEnvioDemanda','0','PRODUCTO-709','0','03',null,null,'1','MEJTipoProcedimiento','1','0')
     ); 
     V_TMP_TIPO_TPO T_TIPO_TPO;
 

@@ -49,7 +49,7 @@ DECLARE
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
        T_TIPO_TAP('HC106','HC106_RedactarDemandaAdjuntarDocu',null,null,null,null,null,'0','Redactar demanda y adjuntar documentación','0','PRODUCTO-709','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_LET',null,null,null),
        T_TIPO_TAP('HC106','HC106_RevisarCompletitudDocu',null,null,null,'valores[''HC106_RevisarCompletitudDocu''][''documentacionCompletada''] == DDSiNo.SI ? ''completa'' : ''incompleta''',null,'0','Revisar completitud de la documentación','0','PRODUCTO-709','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'543',null,null,null),
-       T_TIPO_TAP('HC106','HC106_BPMTramiteProvisionFondos',null,null,null,null,null,'0','Se inicia trámite de provisiones de fondos','0','PRODUCTO-709','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_LET',null,null,null)
+       T_TIPO_TAP('HC106','HC106_BPMTramiteProvisionFondosProcurador',null,null,null,null,null,'0','Se inicia trámite de provisiones de fondos','0','PRODUCTO-709','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_LET',null,null,null)
     ); 
     V_TMP_TIPO_TAP T_TIPO_TAP;
 
@@ -59,7 +59,7 @@ DECLARE
     V_TIPO_PLAZAS T_ARRAY_PLAZAS := T_ARRAY_PLAZAS(
       T_TIPO_PLAZAS(null,null,'HC106_RedactarDemandaAdjuntarDocu','15*24*60*60*1000L','0','0','PRODUCTO-709'),
       T_TIPO_PLAZAS(null,null,'HC106_RevisarCompletitudDocu','1*24*60*60*1000L','0','0','PRODUCTO-709'),  
-      T_TIPO_PLAZAS(null,null,'HC106_BPMTramiteProvisionFondos','300*24*60*60*1000L','0','0','PRODUCTO-709') 
+      T_TIPO_PLAZAS(null,null,'HC106_BPMTramiteProvisionFondosProcurador','300*24*60*60*1000L','0','0','PRODUCTO-709') 
     ); 
     V_TMP_TIPO_PLAZAS T_TIPO_PLAZAS;
     
@@ -75,7 +75,8 @@ DECLARE
 	    T_TIPO_TFI('HC106_RevisarCompletitudDocu','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Dado que el importe del concurso es igual o superior a 5 millones, antes de dar por finalizada esta tarea deberá acceder a la pestaña Gestores del asunto correspondiente y asignar el letrado que estime oportuno.</p>Es posible que esta tarea aparezca porque el letrado que haya asignado previamente no haya aceptado el concurso asignado, en tal caso le aparecerá en los campos ‘Conflicto de intereses’, ‘Aceptación del asunto’ y ‘Observaciones de letrado’ los valores introducidos por el letrado en el momento de la no aceptación del concurso.</p>En el campo observaciones consignar cualquier aspecto relevante que le interese que quede reflejado en este punto del procedimiento.</p>Una vez rellene esta pantalla la siguiente tarea será "Registrar aceptación del concurso”  a completar por el letrado que haya quedado registrado en la pestaña Gestores del asunto correspondiente.</p></div>',null,null,null,null,'0','PRODUCTO-709'),
         T_TIPO_TFI('HC106_RevisarCompletitudDocu','1','currency','principal','Principal de la demanda',null,null,'procedimientoManager.getProcedimiento(idProcedimiento).getSaldoRecuperacion()',null,'0','PRODUCTO-709'),
         T_TIPO_TFI('HC106_RevisarCompletitudDocu','2','combo','documentacionCompletada','Documentación completada',null,null,'valores[''P421_RegistrarAceptacionConcurso''] == null ? '''' : valores[''P421_RegistrarAceptacionConcurso''][''conflicto_intereses'']','DDSiNo','0','PRODUCTO-709'),
-        T_TIPO_TFI('HC106_RevisarCompletitudDocu','3','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-709')
+        T_TIPO_TFI('HC106_RevisarCompletitudDocu','3','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-709'),
+        T_TIPO_TFI('HC106_BPMTramiteProvisionFondosProcurador','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Se inicia el trámite de provisión de fondos procurador</p></div>',null,null,null,null,'0','PRODUCTO-709')
         ); 
     V_TMP_TIPO_TFI T_TIPO_TFI;
     

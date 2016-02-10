@@ -1,30 +1,25 @@
 package es.pfsgroup.plugin.recovery.mejoras.procuradores;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.pfs.parametrizacion.ParametrizacionManager;
+import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 
 @Component
 public class MEJProcuradoresManager extends BusinessOperationOverrider<MEJProcuradoresApi> implements MEJProcuradoresApi {
-	
-  @Autowired
-  public ApplicationContext appContext;
+
+	@Autowired
+	private ParametrizacionManager parametrizacionManager; 
 
 	@Override
 	@BusinessOperation(MEJ_PROCURADORES_IS_INSTALL)
 	public boolean pluginProcuradoresIsInstall() {
-		// TODO Auto-generated method stub
-		
-		try{
-			Object bean = appContext.getBean("Procurador");
-		}catch(Exception e){
-			return false;
-		}
+		Parametrizacion parametroModuloProcuradoresActivado = parametrizacionManager.buscarParametroPorNombre("moduloProcuradoresActivado");
 
-		return true;
+		return Boolean.valueOf(parametroModuloProcuradoresActivado.getValor()); 
 	}
 
 	@Override
@@ -33,6 +28,4 @@ public class MEJProcuradoresManager extends BusinessOperationOverrider<MEJProcur
 		return "MEJProcuradoresManager";
 	}
 
-
-    
 }

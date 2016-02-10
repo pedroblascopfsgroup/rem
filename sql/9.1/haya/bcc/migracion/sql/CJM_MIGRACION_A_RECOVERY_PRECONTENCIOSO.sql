@@ -32,6 +32,7 @@ DECLARE
 /**       BORRAR LOS WORKFLOWS YA GENERADOS **/
 /*********************************************/
 
+
 BEGIN
 
   DBMS_OUTPUT.PUT_LINE('[INICIO] CAJAMAR MIGRACION PRECONTENCIOSO.sql');  
@@ -42,7 +43,7 @@ BEGIN
 	
 	IF V_NUM_TABLAS = 0 THEN
 	
-		V_SQL := 'CREATE TABLE '||V_ESQUEMA||'. TMP_CREA_ASUNTOSPCO_NUEVOS
+		V_SQL := 'CREATE TABLE '||V_ESQUEMA||'.TMP_CREA_ASUNTOSPCO_NUEVOS
 							(
 							  COD_RECOVERY VARCHAR(20 CHAR),
 							  COD_WORKFLOW VARCHAR(20 CHAR), 
@@ -111,21 +112,33 @@ BEGIN
 		EXECUTE IMMEDIATE V_SQL;
 	
 	V_SQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_CREA_ASUNTOSPCO_NUEVOS
-				select DISTINCT
-					cab.cd_expediente cod_recovery, 
-					cab.cd_expediente cod_workflow, 
-					null fecha_sareb, 
-					null fecha_peticion, 
-					op.NUMERO_CONTRATO cnt_contrato
-				from '||V_ESQUEMA||'.mig_expedientes_cabecera cab
-				inner join '||V_ESQUEMA||'.mig_expedientes_operaciones op on cab.cd_expediente = op.cd_expediente
-				where cab.fecha_baja is null and cab.MOTIVO_BAJA is null AND CAB.FECHA_ACEPTACION_LETRADO IS NULL
-				   and cab.fecha_asignacion is not null
-				AND NOT EXISTS(SELECT 1 
-							   FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA C 
-							   WHERE C.CD_EXPEDIENTE_NUSE = CAB.CD_EXPEDIENTE)'; -- LOS QUE EVOLUCIONAN A PROCEDIMIENTOS NO SE MIGRAN COMO PRECONTENCIOSOS.
-							   
-	COMMIT;
+                            select DISTINCT
+                                   cab.cd_expediente cod_recovery, 
+                                   cab.cd_expediente cod_workflow, 
+                                   null fecha_sareb, 
+                                   null fecha_peticion, 
+                                   op.NUMERO_CONTRATO cnt_contrato
+                            from '||V_ESQUEMA||'.mig_expedientes_cabecera cab
+                            inner join '||V_ESQUEMA||'.mig_expedientes_operaciones op on cab.cd_expediente = op.cd_expediente
+                            where --cab.fecha_baja is null and cab.MOTIVO_BAJA is null AND CAB.FECHA_ACEPTACION_LETRADO IS NULL
+                                  cab.fecha_asignacion is not null
+--                                 ( cab.fecha_asignacion is not null                                                          
+--                                   OR (cab.fecha_asignacion is null and fecha_paralizacion is not null))                                  
+                              and NOT EXISTS(SELECT 1 
+                                                FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA C 
+                                                WHERE C.CD_EXPEDIENTE_NUSE = CAB.CD_EXPEDIENTE) -- LOS QUE EVOLUCIONAN A PROCEDIMIENTOS NO SE MIGRAN COMO PRECONTENCIOSOS.
+--                                  AND NOT EXISTS(SELECT 1 
+--                                                FROM '||V_ESQUEMA||'.MIG_CONCURSOS_CABECERA CON
+--                                                   , '||V_ESQUEMA||'.ASU_ASUNTOS ASU
+--                                                WHERE CON.CD_CONCURSO = ASU.ASU_ID_EXTERNO) -- LOS QUE EVOLUCIONAN A CONCURSOS NO SE MIGRAN COMO PRECONTENCIOSOS.
+                                   AND NOT EXISTS (SELECT 1 FROM (select distinct eop.cd_expediente as cod_recovery
+                                                  from '||V_ESQUEMA||'.TMP_CNT_CONTRATOS           cnt             
+                                                     , '||V_ESQUEMA||'.MIG_EXPEDIENTES_OPERACIONES eop             
+                                                 where cnt.tmp_cnt_contrato = eop.numero_contrato
+                                                   and cnt.tmp_cnt_remu_gest_especial = ''EX'') tmp  
+                                                         where tmp.cod_recovery = cab.CD_EXPEDIENTE) ';
+
+        COMMIT;
 
 	EXECUTE IMMEDIATE V_SQL;
 	
@@ -648,27 +661,65 @@ BEGIN
 
 
 /*************************************/
-/** INSERTAR ESTADO EN ESTUDIO      **/
+/** INSERTAR ESTADO PARALIZADO      **/
+/*************************************/    
+
+	V_SQL := 'INSERT INTO '||V_ESQUEMA||'.PCO_PRC_HEP_HISTOR_EST_PREP (PCO_PRC_HEP_ID, PCO_PRC_ID, DD_PCO_PEP_ID, PCO_PRC_HEP_FECHA_INCIO, USUARIOCREAR, FECHACREAR, SYS_GUID)
+				SELECT '||V_ESQUEMA||'.S_PCO_PRC_HEP_HIST_EST_PREP.NEXTVAL, 
+					   PCO_PRC_ID,
+					   (SELECT DD_PCO_PEP_ID FROM '||V_ESQUEMA||'.DD_PCO_PRC_ESTADO_PREPARACION WHERE DD_PCO_PEP_CODIGO = ''PA'') ,-- PARALIZADO
+					   NVL(FECHA_PARALIZACION, (SYSDATE-2)) AS PRC_HEP_FECHA_INICIO,
+					   '''||USUARIO||''' AS USUARIOCREAR,
+					   SYSDATE, SYS_GUID() AS SYS_GUID
+				FROM(
+				SELECT PCO.PCO_PRC_ID, FECHA_PARALIZACION
+				FROM '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS PCO
+				   , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
+				   , '||V_ESQUEMA||'.MIG_EXPEDIENTES_CABECERA EXP
+				   , '||V_ESQUEMA||'.TMP_CREA_ASUNTOSPCO_NUEVOS tmp
+				WHERE PCO.PRC_ID = PRC.PRC_ID
+				  AND PCO.PCO_PRC_NUM_EXP_EXT = EXP.CD_EXPEDIENTE
+				  AND EXP.CD_EXPEDIENTE = tmp.COD_RECOVERY  -- Solo procedimientos de precontenciosos "no GAE"
+--				  AND EXP.FECHA_ASIGNACION IS NOT NULL -- Pdte de revisión si debe tener fecha asignacion a nulo
+				  AND EXP.FECHA_PARALIZACION IS NOT NULL)';
+
+	EXECUTE IMMEDIATE V_SQL;
+	
+	DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '...' || sql%rowcount);
+  
+    COMMIT;
+    
+/*************************************/
+/** INSERTAR ESTADO ENVIADO         **/
 /*************************************/
 
 	V_SQL := 'INSERT INTO '||V_ESQUEMA||'.PCO_PRC_HEP_HISTOR_EST_PREP (PCO_PRC_HEP_ID, PCO_PRC_ID, DD_PCO_PEP_ID, PCO_PRC_HEP_FECHA_INCIO, USUARIOCREAR, FECHACREAR, SYS_GUID)
 				SELECT '||V_ESQUEMA||'.S_PCO_PRC_HEP_HIST_EST_PREP.NEXTVAL, 
 					   PCO_PRC_ID,
-					   (SELECT DD_PCO_PEP_ID FROM '||V_ESQUEMA||'.DD_PCO_PRC_ESTADO_PREPARACION WHERE DD_PCO_PEP_CODIGO = ''PT'') ,-- EN ESTUDIO
-					   NVL(FECHA_ASIGNACION, (SYSDATE-2)) AS PRC_HEP_FECHA_INICIO,
+					   (SELECT DD_PCO_PEP_ID FROM DD_PCO_PRC_ESTADO_PREPARACION WHERE DD_PCO_PEP_CODIGO = ''EN'') AS DD_PCO_PEP_ID,-- ENVIADO
+					   NVL(FECHA_ENVIO_LETRADO, (SYSDATE-2)) AS PRC_HEP_FECHA_INICIO,
 					   '''||USUARIO||''' AS USUARIOCREAR,
 					   SYSDATE, SYS_GUID() AS SYS_GUID
 				FROM(
-				SELECT PCO.PCO_PRC_ID, FECHA_ASIGNACION
-				FROM '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS PCO, '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC, '||V_ESQUEMA||'.MIG_EXPEDIENTES_CABECERA EXP
+				SELECT PCO.PCO_PRC_ID, FECHA_ENVIO_LETRADO
+				FROM '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS PCO
+				   , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
+				   , '||V_ESQUEMA||'.MIG_EXPEDIENTES_CABECERA EXP
+				   , '||V_ESQUEMA||'.TMP_CREA_ASUNTOSPCO_NUEVOS tmp
 				WHERE PCO.PRC_ID = PRC.PRC_ID
-				AND PCO.PCO_PRC_NUM_EXP_EXT = EXP.CD_EXPEDIENTE
-				AND NOT EXISTS(SELECT 1
-								 FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA CAB
-								 WHERE CAB.CD_EXPEDIENTE_NUSE = EXP.CD_EXPEDIENTE)
-				AND EXP.FECHA_REALIZ_ESTUDIO_SOLV IS NULL
-				AND EXP.FECHA_ENVIO_LETRADO IS NULL
-				AND EXP.FECHA_ACEPTACION_LETRADO IS NULL)';
+				  AND PCO.PCO_PRC_NUM_EXP_EXT = EXP.CD_EXPEDIENTE
+				  AND EXP.CD_EXPEDIENTE = tmp.COD_RECOVERY  -- Solo procedimientos de precontenciosos "no GAE"	
+				  AND EXP.FECHA_ASIGNACION IS NOT NULL      
+			      -- No paralizados
+				  AND NOT EXISTS(SELECT 1
+						   FROM '||V_ESQUEMA||'.PCO_PRC_HEP_HISTOR_EST_PREP EST
+						  WHERE PCO.PCO_PRC_ID = EST.PCO_PRC_ID
+						    AND EST.DD_PCO_PEP_ID = (SELECT DD_PCO_PEP_ID FROM '||V_ESQUEMA||'.DD_PCO_PRC_ESTADO_PREPARACION WHERE DD_PCO_PEP_CODIGO = ''PA'')
+						)
+			      -- enviados
+				  AND FECHA_REALIZ_ESTUDIO_SOLV is not null
+				  AND FECHA_ENVIO_LETRADO is not null				  
+				  )';
 
 	EXECUTE IMMEDIATE V_SQL;
 	
@@ -676,7 +727,38 @@ BEGIN
   
     COMMIT;
 
---189.293 filas insertadas.
+--3.680 filas insertadas.    
+
+/*************************************/
+/** INSERTAR ESTADO PREPARADO  **/
+/*************************************/
+
+	V_SQL := 'INSERT INTO '||V_ESQUEMA||'.PCO_PRC_HEP_HISTOR_EST_PREP (PCO_PRC_HEP_ID, PCO_PRC_ID, DD_PCO_PEP_ID, PCO_PRC_HEP_FECHA_INCIO, USUARIOCREAR, FECHACREAR, SYS_GUID)
+				SELECT '||V_ESQUEMA||'.S_PCO_PRC_HEP_HIST_EST_PREP.NEXTVAL, 
+					   PCO_PRC_ID,
+					   (SELECT DD_PCO_PEP_ID FROM '||V_ESQUEMA||'.DD_PCO_PRC_ESTADO_PREPARACION WHERE DD_PCO_PEP_CODIGO = ''PP'') ,-- PREPARADO
+					   NVL(FECHA_PREPARADO, (SYSDATE-2)) AS PRC_HEP_FECHA_INICIO,
+					   '''||USUARIO||''' AS USUARIOCREAR,
+					   SYSDATE, SYS_GUID() AS SYS_GUID
+				FROM(
+				SELECT PCO.PCO_PRC_ID, FECHA_PREPARADO
+				FROM '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS PCO
+				   , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
+				   , '||V_ESQUEMA||'.MIG_EXPEDIENTES_CABECERA EXP
+				   , '||V_ESQUEMA||'.TMP_CREA_ASUNTOSPCO_NUEVOS tmp
+				WHERE PCO.PRC_ID = PRC.PRC_ID
+				AND PCO.PCO_PRC_NUM_EXP_EXT = EXP.CD_EXPEDIENTE
+				  AND EXP.CD_EXPEDIENTE = tmp.COD_RECOVERY  -- Solo procedimientos de precontenciosos "no GAE"	
+				  AND EXP.FECHA_ASIGNACION IS NOT NULL      
+				  -- No (paralizados, enviados)
+				  AND NOT EXISTS(SELECT 1
+						   FROM '||V_ESQUEMA||'.PCO_PRC_HEP_HISTOR_EST_PREP EST
+						  WHERE PCO.PCO_PRC_ID = EST.PCO_PRC_ID
+						    AND EST.DD_PCO_PEP_ID IN (SELECT DD_PCO_PEP_ID FROM '||V_ESQUEMA||'.DD_PCO_PRC_ESTADO_PREPARACION WHERE DD_PCO_PEP_CODIGO IN (''PA'', ''EN''))
+						)
+				-- preparacion
+				AND EXP.FECHA_PREPARADO IS NOT NULL)';
+
 
 /*************************************/
 /** INSERTAR ESTADO EN PREPARACION  **/
@@ -691,15 +773,22 @@ BEGIN
 					   SYSDATE, SYS_GUID() AS SYS_GUID
 				FROM(
 				SELECT PCO.PCO_PRC_ID, FECHA_REALIZ_ESTUDIO_SOLV
-				FROM '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS PCO, '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC, '||V_ESQUEMA||'.MIG_EXPEDIENTES_CABECERA EXP
+				FROM '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS PCO
+				   , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
+				   , '||V_ESQUEMA||'.MIG_EXPEDIENTES_CABECERA EXP
+				   , '||V_ESQUEMA||'.TMP_CREA_ASUNTOSPCO_NUEVOS tmp
 				WHERE PCO.PRC_ID = PRC.PRC_ID
 				AND PCO.PCO_PRC_NUM_EXP_EXT = EXP.CD_EXPEDIENTE
-				AND NOT EXISTS(SELECT 1
-								 FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA CAB
-								 WHERE CAB.CD_EXPEDIENTE_NUSE = EXP.CD_EXPEDIENTE)
-				AND EXP.FECHA_REALIZ_ESTUDIO_SOLV IS NOT NULL
-				AND EXP.FECHA_ENVIO_LETRADO IS NULL
-				AND EXP.FECHA_ACEPTACION_LETRADO IS NULL)';
+				  AND EXP.CD_EXPEDIENTE = tmp.COD_RECOVERY  -- Solo procedimientos de precontenciosos "no GAE"	
+				  AND EXP.FECHA_ASIGNACION IS NOT NULL      
+				  -- No (paralizados, enviados, preparados)
+				  AND NOT EXISTS(SELECT 1
+						   FROM '||V_ESQUEMA||'.PCO_PRC_HEP_HISTOR_EST_PREP EST
+						  WHERE PCO.PCO_PRC_ID = EST.PCO_PRC_ID
+						    AND EST.DD_PCO_PEP_ID IN (SELECT DD_PCO_PEP_ID FROM '||V_ESQUEMA||'.DD_PCO_PRC_ESTADO_PREPARACION WHERE DD_PCO_PEP_CODIGO IN (''PA'', ''EN'', ''PP''))
+						)
+				-- preparacion
+				AND EXP.FECHA_REALIZ_ESTUDIO_SOLV IS NOT NULL)';
 
 	EXECUTE IMMEDIATE V_SQL;
 	
@@ -707,27 +796,36 @@ BEGIN
   
     COMMIT;
 
+
 /*************************************/
-/** INSERTAR ESTADO ENVIADO         **/
+/** INSERTAR ESTADO EN ESTUDIO      **/
 /*************************************/
 
 	V_SQL := 'INSERT INTO '||V_ESQUEMA||'.PCO_PRC_HEP_HISTOR_EST_PREP (PCO_PRC_HEP_ID, PCO_PRC_ID, DD_PCO_PEP_ID, PCO_PRC_HEP_FECHA_INCIO, USUARIOCREAR, FECHACREAR, SYS_GUID)
 				SELECT '||V_ESQUEMA||'.S_PCO_PRC_HEP_HIST_EST_PREP.NEXTVAL, 
 					   PCO_PRC_ID,
-					   (SELECT DD_PCO_PEP_ID FROM DD_PCO_PRC_ESTADO_PREPARACION WHERE DD_PCO_PEP_CODIGO = ''EN'') ,-- ENVIADO
-					   NVL(FECHA_ENVIO_LETRADO, (SYSDATE-2)) AS PRC_HEP_FECHA_INICIO,
+					   (SELECT DD_PCO_PEP_ID FROM '||V_ESQUEMA||'.DD_PCO_PRC_ESTADO_PREPARACION WHERE DD_PCO_PEP_CODIGO = ''PT'') ,-- EN ESTUDIO
+					   NVL(FECHA_ASIGNACION, (SYSDATE-2)) AS PRC_HEP_FECHA_INICIO,
 					   '''||USUARIO||''' AS USUARIOCREAR,
 					   SYSDATE, SYS_GUID() AS SYS_GUID
 				FROM(
-				SELECT PCO.PCO_PRC_ID, FECHA_ENVIO_LETRADO
-				FROM '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS PCO, '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC, '||V_ESQUEMA||'.MIG_EXPEDIENTES_CABECERA EXP
+				SELECT PCO.PCO_PRC_ID, FECHA_ASIGNACION
+				FROM '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS PCO
+				   , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
+				   , '||V_ESQUEMA||'.MIG_EXPEDIENTES_CABECERA EXP
+				   , '||V_ESQUEMA||'.TMP_CREA_ASUNTOSPCO_NUEVOS tmp				   
 				WHERE PCO.PRC_ID = PRC.PRC_ID
 				AND PCO.PCO_PRC_NUM_EXP_EXT = EXP.CD_EXPEDIENTE
-				AND NOT EXISTS(SELECT 1
-								 FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA CAB
-								 WHERE CAB.CD_EXPEDIENTE_NUSE = EXP.CD_EXPEDIENTE)
-				AND EXP.FECHA_ENVIO_LETRADO IS NOT NULL
-				AND EXP.FECHA_ACEPTACION_LETRADO IS NULL)';
+				  AND EXP.CD_EXPEDIENTE = tmp.COD_RECOVERY  -- Solo procedimientos de precontenciosos "no GAE"	
+				  AND EXP.FECHA_ASIGNACION IS NOT NULL      
+				  -- No (paralizados, enviados, preparados, en preparacion)
+				  AND NOT EXISTS(SELECT 1
+						   FROM '||V_ESQUEMA||'.PCO_PRC_HEP_HISTOR_EST_PREP EST
+						  WHERE PCO.PCO_PRC_ID = EST.PCO_PRC_ID
+						    AND EST.DD_PCO_PEP_ID IN (SELECT DD_PCO_PEP_ID FROM '||V_ESQUEMA||'.DD_PCO_PRC_ESTADO_PREPARACION WHERE DD_PCO_PEP_CODIGO IN (''PA'', ''EN'', ''PP'', ''PR''))
+						)
+				-- En estudio es el resto
+                                )';
 
 	EXECUTE IMMEDIATE V_SQL;
 	
@@ -735,7 +833,9 @@ BEGIN
   
     COMMIT;
 
---3.680 filas insertadas.
+--189.293 filas insertadas.
+
+
 
 	V_SQL := 'UPDATE '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS A
 				SET PCO_PRC_TIPO_PRC_INICIADO = (SELECT DISTINCT TPO.DD_TPO_ID  

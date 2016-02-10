@@ -2490,7 +2490,7 @@ BEGIN
                               , BIE_ID
                               , VERSION 
                             ) 
-                            SELECT DISTINCT 
+                            SELECT /*+ ordered */ DISTINCT 
                                      LOS.LOS_ID
                                    , E.BIE_ID
                                    , LOS.VERSION 
@@ -2519,6 +2519,15 @@ BEGIN
     ----------------
     -- PRB_PCR_BIE
     ----------------
+
+    EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.BIE_BIEN COMPUTE STATISTICS');
+	DBMS_OUTPUT.PUT_LINE('[WARN-ACC] - '||to_char(sysdate,'HH24:MI:SS')||'  BIE_BIEN Analizada');
+    EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.MIG_MAESTRA_HITOS COMPUTE STATISTICS');
+	DBMS_OUTPUT.PUT_LINE('[WARN-ACC] - '||to_char(sysdate,'HH24:MI:SS')||'  MIG_MAESTRA_HITOS Analizada');	
+    EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_BIENES COMPUTE STATISTICS');
+	DBMS_OUTPUT.PUT_LINE('[WARN-ACC] - '||to_char(sysdate,'HH24:MI:SS')||'  MIG_PROCEDIMIENTOS_BIENES Analizada');		
+    EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS COMPUTE STATISTICS');
+	DBMS_OUTPUT.PUT_LINE('[WARN-ACC] - '||to_char(sysdate,'HH24:MI:SS')||'  PRC_PROCEDIMIENTOS Analizada');		
 
     EXECUTE IMMEDIATE ('
     INSERT INTO '||V_ESQUEMA||'.PRB_PRC_BIE

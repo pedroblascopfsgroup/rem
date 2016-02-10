@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=JoaquÌn S·nchez Valverde
+--## AUTOR=Joaqu√≠n S√°nchez Valverde
 --## FECHA_CREACION=20160210
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.3
@@ -10,7 +10,7 @@
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 VersiÛn inicial
+--##        0.1 Versi√≥n inicial
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -28,8 +28,8 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     ERR_BUCLE VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el bucle donde estamos.
 	
-	V_TABLA VARCHAR2(100 CHAR);--Campo de b˙squeda.
-	V_CAMPO VARCHAR2(100 CHAR);--Campo de b˙squeda.
+	V_TABLA VARCHAR2(100 CHAR);--Campo de b√∫squeda.
+	V_CAMPO VARCHAR2(100 CHAR);--Campo de b√∫squeda.
 	V_VALOR VARCHAR2(1000 CHAR);--Valor buscado.
 
 	/*
@@ -51,12 +51,12 @@ DECLARE
     TYPE T_TIPO_DATO IS TABLE OF VARCHAR2(3500);
     TYPE T_ARRAY_DATO IS TABLE OF T_TIPO_DATO;
     V_TIPO_DATO T_ARRAY_DATO := T_ARRAY_DATO(  
-      T_TIPO_DATO('let.joliver','HAYA','Haya510','JosÈ','Oliver','MompÛ','joliver@oliverabogados.com','01','HAYAGESTEXT','OLIVER ABOGADOS Y ECONOMISTAS','GRUPO - OLIVER ABOGADOS Y ECONOMISTAS','1','1'),
-      T_TIPO_DATO('let.agarciaj','HAYA','Haya510','Anna','GarcÌa','Junc‡','anna.gjunca@oliveradvocats.com','01','HAYAGESTEXT','OLIVER ABOGADOS Y ECONOMISTAS','GRUPO - OLIVER ABOGADOS Y ECONOMISTAS','1','1'),
+      T_TIPO_DATO('let.joliver','HAYA','Haya510','Jos√©','Oliver','Momp√≥','joliver@oliverabogados.com','01','HAYAGESTEXT','OLIVER ABOGADOS Y ECONOMISTAS','GRUPO - OLIVER ABOGADOS Y ECONOMISTAS','1','1'),
+      T_TIPO_DATO('let.agarciaj','HAYA','Haya510','Anna','Garc√≠a','Junc√†','anna.gjunca@oliveradvocats.com','01','HAYAGESTEXT','OLIVER ABOGADOS Y ECONOMISTAS','GRUPO - OLIVER ABOGADOS Y ECONOMISTAS','1','1'),
       T_TIPO_DATO('let.phernandez','HAYA','Haya510','Pablo','Hernandez','Cebrecos','phernandez@corporatealia.com','01','HAYAGESTEXT','CORPORATE ALIA ABOGADOS S.L.P.','GRUPO - CORPORATE ALIA ABOGADOS S.L.P.','1','1'),
       T_TIPO_DATO('let.jlopez','HAYA','Haya510','Javier','Lopez','Lopez','jlopez@corporatealia.com','01','HAYAGESTEXT','CORPORATE ALIA ABOGADOS S.L.P.','GRUPO - CORPORATE ALIA ABOGADOS S.L.P.','1','1'),
       T_TIPO_DATO('let.svalls','HAYA','Haya510','Silvia','Valls','Guardiola','svalls@corporatealia.com','01','HAYAGESTEXT','CORPORATE ALIA ABOGADOS S.L.P.','GRUPO - CORPORATE ALIA ABOGADOS S.L.P.','1','1'),
-      T_TIPO_DATO('mhereza','HAYA','Haya510','MarÌa Raquel','Hereza','Amezcua','mhereza@haya.es','01','HAYACONSULTA','','','','0')   
+      T_TIPO_DATO('mhereza','HAYA','Haya510','Mar√≠a Raquel','Hereza','Amezcua','mhereza@haya.es','01','HAYACONSULTA','','','','0')   
     ); 
     V_TMP_TIPO_DATO T_TIPO_DATO;
 	
@@ -136,7 +136,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] FOR');
             EXECUTE IMMEDIATE V_MSQL;
             DBMS_OUTPUT.PUT_LINE('Creado Despacho ' || V_TMP_TIPO_DATO(10));
           ELSE --fichero adjunto ya existe
-            DBMS_OUTPUT.PUT_LINE('Despacho existe: '||V_TMP_TIPO_DATO(1)||' NO se crear· de nuevo otra vez.');				
+            DBMS_OUTPUT.PUT_LINE('Despacho existe: '||V_TMP_TIPO_DATO(1)||' NO se crear√° de nuevo otra vez.');				
           END IF;	 --fin Si no existe el fichero adjunto lo damos de alta
 --asignamos a Despacho a usuario
           V_MSQL := 'INSERT INTO ' || V_ESQUEMA || '.usd_usuarios_despachos (usd_id,usu_id,des_id,usd_gestor_defecto,usd_supervisor,usuariocrear,fechacrear) VALUES ('
@@ -159,7 +159,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] FOR');
           DBMS_OUTPUT.PUT_LINE('El usuario ' || V_TMP_TIPO_DATO(1) || ' No tiene despacho $-' || V_TMP_TIPO_DATO(10) || '-$');
         END IF;
       ELSE
-        DBMS_OUTPUT.PUT_LINE('El usuario ' || V_TMP_TIPO_DATO(1) || ' ya existe. NO se crear· de nuevo otra vez.');
+        DBMS_OUTPUT.PUT_LINE('El usuario ' || V_TMP_TIPO_DATO(1) || ' ya existe. NO se crear√° de nuevo otra vez.');
       END IF;
       DBMS_OUTPUT.PUT_LINE('[FIN] FOR');
 		END LOOP;  
@@ -173,8 +173,8 @@ EXCEPTION
     ERR_NUM := SQLCODE;
     ERR_MSG := SQLERRM;
 	DBMS_OUTPUT.put_line('[ERROR PROCEDIMIENTO]-----------' || V_USUARIO_EJECUTA  || '-----------');
-	DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecuciÛn del bucle:'||ERR_BUCLE);
-    DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecuciÛn:'||TO_CHAR(ERR_NUM));
+	DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecuci√≥n del bucle:'||ERR_BUCLE);
+    DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecuci√≥n:'||TO_CHAR(ERR_NUM));
     DBMS_OUTPUT.put_line('[FIN PROCEDIMIENTO]-------------' || V_USUARIO_EJECUTA  || '-----------'); 
     DBMS_OUTPUT.put_line(ERR_MSG);
     ROLLBACK;

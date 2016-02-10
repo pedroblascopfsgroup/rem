@@ -70,12 +70,19 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] CAJAMAR MIGRACION CONTRATOS MARCA HAYA');
              , '||v_esquema||'.MIG_EXPEDIENTES_OPERACIONES eop
              , '||v_esquema||'.MIG_EXPEDIENTES_CABECERA cab
              , '||v_esquema||'.TMP_CNT_CONTRATOS           tmp
+             , '||v_esquema||'.dd_ges_gestion_especial b
+             , '||v_esquema||'.dd_cre_condiciones_remun_ext r
          where tmp.tmp_cnt_remu_gest_especial = ''EX''
            and g.cnt_contrato = eop.numero_contrato
            and g.cnt_contrato = tmp.tmp_cnt_contrato
+           and g.dd_ges_id = b.dd_ges_id 
+           and g.dd_cre_id = r.dd_cre_id
            and eop.cd_Expediente = cab.cd_expediente 
+           and b.dd_ges_codigo = ''HAYA'' 
+           and r.dd_cre_codigo  in (''EX'',''CN'',''IM'',''AR'',''MA'',''SC'')           
            and cab.fecha_asignacion is not null
            ';
+           
     execute immediate v_sql;
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - Tabla temporal '||v_esquema||'.TMP_GUIA_CONTRATOS_HRE creada. '||SQL%ROWCOUNT||' Filas');
 

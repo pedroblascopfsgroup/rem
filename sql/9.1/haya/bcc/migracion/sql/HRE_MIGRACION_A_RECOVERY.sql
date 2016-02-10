@@ -18,6 +18,7 @@
 --##       20151127 - 0.5 Ponemos propiedad CAJAMAR - Gestion HAYA
 --##       20151211 - 0.6 Seleccionamos arquetipo específico migración
 --##       20160114 - 0.7 GMN Se asigna el DD_TPX_ID (tipo de expediente a recuperaciones - RECU)
+--##       20160210 - 0.8 GMN Se filtra por marca HAYA y motivos ('EX','CN','IM','AR','MA','SC')
 --##########################################
 --*/
 
@@ -1204,7 +1205,18 @@ BEGIN
     	) PRC
     	, (SELECT DISTINCT CD_PROCEDIMIENTO FROM MIG_MAESTRA_HITOS) MAE
         , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Migracion''  AND BORRADO = 1) ARQ
-     WHERE MAE.CD_PROCEDIMIENTO = PRC.CD_PROCEDIMIENTO');
+        , ( select op.CD_PROCEDIMIENTO, op.numero_contrato
+              from '||V_ESQUEMA||'.mig_procedimientos_operaciones op
+                 , '||V_ESQUEMA||'.cnt_contratos cnt
+                 , '||V_ESQUEMA||'.dd_ges_gestion_especial b
+                 , '||V_ESQUEMA||'.dd_cre_condiciones_remun_ext r
+             where op.numero_contrato = cnt.cnt_contrato
+               and cnt.dd_ges_id = b.dd_ges_id 
+               and cnt.dd_cre_id = r.dd_cre_id
+               and b.dd_ges_codigo = ''HAYA'' 
+               and r.dd_cre_codigo  in (''EX'',''CN'',''IM'',''AR'',''MA'',''SC'') ) MARCA
+     WHERE MAE.CD_PROCEDIMIENTO = PRC.CD_PROCEDIMIENTO
+       AND PRC.CD_PROCEDIMIENTO = MARCA.CD_PROCEDIMIENTO');
 
     -- 23.316 filas insertadas. <-- 1 CD_PROCEDIMIENTO = 1 EXPEDIENTE. Las mismas que el count distinct cd_procedimiento de mig_maestra_hitos
     

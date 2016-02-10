@@ -119,9 +119,15 @@ BEGIN
                                    null fecha_peticion, 
                                    op.NUMERO_CONTRATO cnt_contrato
                             from '||V_ESQUEMA||'.mig_expedientes_cabecera cab
-                            inner join '||V_ESQUEMA||'.mig_expedientes_operaciones op on cab.cd_expediente = op.cd_expediente
-                            where --cab.fecha_baja is null and cab.MOTIVO_BAJA is null AND CAB.FECHA_ACEPTACION_LETRADO IS NULL
-                                  cab.fecha_asignacion is not null
+                                inner join '||V_ESQUEMA||'.mig_expedientes_operaciones op on cab.cd_expediente = op.cd_expediente
+                                inner join '||V_ESQUEMA||'.cnt_contratos cnt on op.numero_contrato = cnt.cnt_contrato
+                                inner join '||V_ESQUEMA||'.dd_ges_gestion_especial b on cnt.dd_ges_id = b.dd_ges_id 
+                                inner join '||V_ESQUEMA||'.dd_cre_condiciones_remun_ext r on cnt.dd_cre_id = r.dd_cre_id
+                            where 
+                                 b.dd_ges_codigo = ''HAYA'' 
+                             and r.dd_cre_codigo  in (''EX'',''CN'',''IM'',''AR'',''MA'',''SC'')                             
+--                             and cab.fecha_baja is null and cab.MOTIVO_BAJA is null AND CAB.FECHA_ACEPTACION_LETRADO IS NULL
+                             and  cab.fecha_asignacion is not null
 --                                 ( cab.fecha_asignacion is not null                                                          
 --                                   OR (cab.fecha_asignacion is null and fecha_paralizacion is not null))                                  
                               and NOT EXISTS(SELECT 1 
@@ -131,7 +137,7 @@ BEGIN
 --                                                FROM '||V_ESQUEMA||'.MIG_CONCURSOS_CABECERA CON
 --                                                   , '||V_ESQUEMA||'.ASU_ASUNTOS ASU
 --                                                WHERE CON.CD_CONCURSO = ASU.ASU_ID_EXTERNO) -- LOS QUE EVOLUCIONAN A CONCURSOS NO SE MIGRAN COMO PRECONTENCIOSOS.
-                                   AND NOT EXISTS (SELECT 1 FROM (select distinct eop.cd_expediente as cod_recovery
+                              and NOT EXISTS (SELECT 1 FROM (select distinct eop.cd_expediente as cod_recovery
                                                   from '||V_ESQUEMA||'.TMP_CNT_CONTRATOS           cnt             
                                                      , '||V_ESQUEMA||'.MIG_EXPEDIENTES_OPERACIONES eop             
                                                  where cnt.tmp_cnt_contrato = eop.numero_contrato

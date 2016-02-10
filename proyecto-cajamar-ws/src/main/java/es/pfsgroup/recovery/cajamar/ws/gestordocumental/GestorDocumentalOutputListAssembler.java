@@ -82,7 +82,7 @@ public class GestorDocumentalOutputListAssembler {
 		dto.setIdDocumento(output.getIDDOCUMENTO());
 		dto.setConsultabilidad(output.getCONSULTABILIDAD());
 		dto.setRetenido(output.getRETENIDO());
-		dto.setExtFichero(output.getEXTFICHERO());
+		dto.setExtFichero(output.getEXTFICHERO().toLowerCase());
 		dto.setEstadosFd(output.getESTADOSFD());
 		dto.setRefCentera(output.getREFCENTERA());
 	    

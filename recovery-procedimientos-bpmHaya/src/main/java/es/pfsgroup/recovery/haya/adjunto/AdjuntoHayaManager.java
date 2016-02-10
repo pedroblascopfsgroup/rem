@@ -13,6 +13,8 @@ import java.util.Properties;
 import javax.annotation.Resource;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,6 +53,8 @@ import es.pfsgroup.tipoFicheroAdjunto.MapeoTipoFicheroAdjunto;
 
 @Service("adjuntoManagerHayaImpl")
 public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
+	
+	protected final Log logger = LogFactory.getLog(getClass());
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -419,8 +423,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 					return generaFileItem(nombre, adjunto.getFicheroBase64(), extension);
 				}
 			} catch (Throwable e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("Error del file item..."+e);
 			}
 			
 		}else{
@@ -431,7 +434,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	}
 	
 	private FileItem generaFileItem(String nombreFichero, String contenido, String extension) throws Throwable {
-		
+		logger.info("Recupera documento generaFileItem...");
 		String nomFichero = nombreFichero.substring(0, nombreFichero.indexOf("."));
 		String ext = nombreFichero.substring(nombreFichero.indexOf(".")+1);
 		
@@ -455,6 +458,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 		}
 
 		outputStream.close();
+		logger.info("Finaliza generaFileItem...");
 		return resultado;
 		
 	}

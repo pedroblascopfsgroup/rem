@@ -977,13 +977,33 @@ return true;]]></method>
                 </structure>
                 <structure>
                     <property name="position">7</property>
-                    <property name="name">tipoSolucionCodigoTermino</property>
+                    <property name="name">bienesDacionTermino</property>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="position">8</property>
-                    <property name="name">bienesDacionTermino</property>
+                    <property name="name">isTipoCompraVentaDacion</property>
+                    <property name="dataType">boolean</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">informeLetrado</property>
                     <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">nSolucion</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">nPropuesta</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">nCampos</property>
+                    <property name="dataType">integer</property>
                 </structure>
             </list-property>
             <list-property name="columnHints">
@@ -1012,10 +1032,23 @@ return true;]]></method>
                     <property name="displayName">Estado Gestión</property>
                 </structure>
                 <structure>
-                    <property name="columnName">tipoSolucionCodigoTermino</property>
+                    <property name="columnName">bienesDacionTermino</property>
                 </structure>
                 <structure>
-                    <property name="columnName">bienesDacionTermino</property>
+                    <property name="columnName">isTipoCompraVentaDacion</property>
+                </structure>
+                <structure>
+                    <property name="columnName">informeLetrado</property>
+                    <property name="displayName">Observaciones</property>
+                </structure>
+                <structure>
+                    <property name="columnName">nSolucion</property>
+                </structure>
+                <structure>
+                    <property name="columnName">nPropuesta</property>
+                </structure>
+                <structure>
+                    <property name="columnName">nCampos</property>
                 </structure>
             </list-property>
             <structure name="cachedMetaData">
@@ -1052,13 +1085,33 @@ return true;]]></method>
                     </structure>
                     <structure>
                         <property name="position">7</property>
-                        <property name="name">tipoSolucionCodigoTermino</property>
+                        <property name="name">bienesDacionTermino</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">8</property>
-                        <property name="name">bienesDacionTermino</property>
+                        <property name="name">isTipoCompraVentaDacion</property>
+                        <property name="dataType">boolean</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">informeLetrado</property>
                         <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">nSolucion</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">nPropuesta</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">nCampos</property>
+                        <property name="dataType">integer</property>
                     </structure>
                 </list-property>
             </structure>
@@ -1080,7 +1133,7 @@ var solucionFila = propuestas.get(np).getTerminos().get(ns);
 
 if (solucionFila.getTipoAcuerdo()!=null) {
 	row["tipoSolucionTermino"] = solucionFila.getTipoAcuerdo().getDescripcion();
-	row["tipoSolucionCodigoTermino"]= solucionFila.getTipoAcuerdo().getCodigo();
+	row["isTipoCompraVentaDacion"]= solucionFila.getTipoAcuerdo().isTipoCompraVentaDacion();
 }
 
 if (solucionFila.getSubtipoAcuerdo()!=null) {
@@ -1121,8 +1174,100 @@ if (solucionFila.getBienes()!=null) {
 	row["bienesDacionTermino"]=bienesStr;
 }
 
+if (solucionFila.getInformeLetrado()!=null) {
+	row["informeLetrado"] = solucionFila.getInformeLetrado().replaceAll("<br>", "\n");
+}
+
+row["nCampos"] = solucionFila.getValoresCampos().size();
+
+row["nSolucion"] = ns;
+row["nPropuesta"] = np;
+
 
 ns++;
+return true;]]></method>
+        </script-data-set>
+        <script-data-set name="CamposSoluciones" id="1247">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">Label</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">Valor</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">Label</property>
+                </structure>
+                <structure>
+                    <property name="columnName">Valor</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">Label</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">Valor</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">Data Source</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">iSolucion</property>
+                    <property name="dataType">integer</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">1</expression>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">iPropuesta</property>
+                    <property name="dataType">integer</property>
+                    <property name="position">2</property>
+                    <expression name="defaultValue">1</expression>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <method name="open"><![CDATA[numprop = inputParams["iPropuesta"]
+numsol = inputParams["iSolucion"];
+numcampo = 0;]]></method>
+            <method name="fetch"><![CDATA[if (numcampo >= propuestas.get(numprop).getTerminos().get(numsol).getValoresCampos().size()) return false;
+
+var campoFila = propuestas.get(numprop).getTerminos().get(numsol).getValoresCampos().get(numcampo);
+
+if (campoFila.getCampo()!=null) {
+	var campo = campoFila.getCampo();
+	
+	row["Label"]=campo.getLabelCampo() + ":";
+	if (campo.getTipoCampo() != "combobox") {
+		row["Valor"] = campoFila.getValor();
+	} else {
+		var Valor = "";
+		for (var nc = 0; nc < campo.getArrayValoresCombo().size(); nc++) {
+			Valor = campo.getArrayValoresCombo().get(nc).get(0);
+			if (Valor.equals(campoFila.getValor().toString())) {
+				row["Valor"] = campo.getArrayValoresCombo().get(nc).get(1);
+			}
+		}
+	}
+}
+
+numcampo++;
+
+
 return true;]]></method>
         </script-data-set>
     </data-sets>
@@ -4832,6 +4977,7 @@ riesgo = formatCurrency(n, '.', ',');]]></method>
         </text>
         <table id="1110">
             <property name="marginTop">2pt</property>
+            <property name="pageBreakInside">avoid</property>
             <property name="dataSet">Propuestas</property>
             <list-property name="visibility">
                 <structure>
@@ -4886,6 +5032,7 @@ riesgo = formatCurrency(n, '.', ',');]]></method>
                     <property name="dataType">integer</property>
                 </structure>
             </list-property>
+            <property name="repeatHeader">false</property>
             <column id="1135"/>
             <column id="1136"/>
             <column id="1137"/>
@@ -5271,6 +5418,10 @@ riesgo = formatCurrency(n, '.', ',');]]></method>
             </header>
             <detail>
                 <row id="1119">
+                    <property name="backgroundColor">#BFBFBF</property>
+                    <property name="pageBreakAfter">avoid</property>
+                    <property name="pageBreakBefore">auto</property>
+                    <property name="pageBreakInside">avoid</property>
                     <cell id="1120">
                         <data id="1143">
                             <property name="backgroundAttachment">scroll</property>
@@ -5642,12 +5793,36 @@ riesgo = formatCurrency(n, '.', ',');]]></method>
                     </cell>
                 </row>
                 <row id="1157">
-                    <cell id="1159"/>
+                    <property name="verticalAlign">top</property>
+                    <property name="pageBreakAfter">avoid</property>
+                    <property name="pageBreakBefore">avoid</property>
+                    <property name="pageBreakInside">avoid</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr">row["nSoluciones"]==0</expression>
+                        </structure>
+                    </list-property>
+                    <cell id="1159">
+                        <property name="paddingTop">0pt</property>
+                        <property name="paddingLeft">1pt</property>
+                        <property name="paddingBottom">1pt</property>
+                        <property name="paddingRight">1pt</property>
+                        <property name="verticalAlign">top</property>
+                        <property name="whiteSpace">normal</property>
+                        <property name="widows">2</property>
+                        <label id="1266">
+                            <property name="fontWeight">bold</property>
+                            <text-property name="text">SOLUCIONES:</text-property>
+                        </label>
+                    </cell>
                     <cell id="1158">
                         <property name="colSpan">6</property>
                         <property name="rowSpan">1</property>
                         <table id="1160">
-                            <property name="backgroundColor">#BFBFBF</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">auto</property>
+                            <property name="pageBreakInside">auto</property>
                             <property name="dataSet">Soluciones</property>
                             <list-property name="visibility">
                                 <structure>
@@ -5693,17 +5868,38 @@ riesgo = formatCurrency(n, '.', ',');]]></method>
                                     <property name="dataType">string</property>
                                 </structure>
                                 <structure>
-                                    <property name="name">tipoSolucionCodigoTermino</property>
-                                    <expression name="expression">dataSetRow["tipoSolucionCodigoTermino"]</expression>
-                                    <property name="dataType">string</property>
-                                </structure>
-                                <structure>
                                     <property name="name">bienesDacionTermino</property>
                                     <property name="displayName">bienesDacionTermino</property>
                                     <expression name="expression">dataSetRow["bienesDacionTermino"]</expression>
                                     <property name="dataType">string</property>
                                 </structure>
+                                <structure>
+                                    <property name="name">isTipoCompraVentaDacion</property>
+                                    <expression name="expression">dataSetRow["isTipoCompraVentaDacion"]</expression>
+                                    <property name="dataType">boolean</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">informeLetrado</property>
+                                    <expression name="expression">dataSetRow["informeLetrado"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">nSolucion</property>
+                                    <expression name="expression">dataSetRow["nSolucion"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">nPropuesta</property>
+                                    <expression name="expression">dataSetRow["nPropuesta"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">nCampos</property>
+                                    <expression name="expression">dataSetRow["nCampos"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
                             </list-property>
+                            <property name="repeatHeader">false</property>
                             <column id="1182"/>
                             <column id="1183"/>
                             <column id="1184"/>
@@ -5715,7 +5911,14 @@ riesgo = formatCurrency(n, '.', ',');]]></method>
                                     <property name="borderBottomColor">#000000</property>
                                     <property name="borderBottomStyle">solid</property>
                                     <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="pageBreakBefore">avoid</property>
                                     <cell id="1162">
+                                        <property name="borderLeftColor">#000000</property>
+                                        <property name="borderLeftStyle">solid</property>
+                                        <property name="borderLeftWidth">thin</property>
                                         <label id="1192">
                                             <property name="backgroundAttachment">scroll</property>
                                             <property name="backgroundPositionX">0%</property>
@@ -5976,6 +6179,9 @@ riesgo = formatCurrency(n, '.', ',');]]></method>
                                         </label>
                                     </cell>
                                     <cell id="1167">
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
                                         <label id="1202">
                                             <property name="backgroundAttachment">scroll</property>
                                             <property name="backgroundPositionX">0%</property>
@@ -6040,6 +6246,7 @@ riesgo = formatCurrency(n, '.', ',');]]></method>
                                     <property name="borderTopColor">#000000</property>
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">thin</property>
+                                    <property name="pageBreakBefore">avoid</property>
                                     <cell id="1169">
                                         <data id="1193">
                                             <property name="backgroundAttachment">scroll</property>
@@ -6092,6 +6299,9 @@ riesgo = formatCurrency(n, '.', ',');]]></method>
                                         </data>
                                     </cell>
                                     <cell id="1170">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">dashed</property>
+                                        <property name="borderBottomWidth">thin</property>
                                         <data id="1195">
                                             <property name="backgroundAttachment">scroll</property>
                                             <property name="backgroundPositionX">0%</property>
@@ -6143,6 +6353,9 @@ riesgo = formatCurrency(n, '.', ',');]]></method>
                                         </data>
                                     </cell>
                                     <cell id="1171">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">dashed</property>
+                                        <property name="borderBottomWidth">thin</property>
                                         <data id="1197">
                                             <property name="backgroundAttachment">scroll</property>
                                             <property name="backgroundPositionX">0%</property>
@@ -6194,6 +6407,9 @@ riesgo = formatCurrency(n, '.', ',');]]></method>
                                         </data>
                                     </cell>
                                     <cell id="1172">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">dashed</property>
+                                        <property name="borderBottomWidth">thin</property>
                                         <data id="1199">
                                             <property name="backgroundAttachment">scroll</property>
                                             <property name="backgroundPositionX">0%</property>
@@ -6245,6 +6461,9 @@ riesgo = formatCurrency(n, '.', ',');]]></method>
                                         </data>
                                     </cell>
                                     <cell id="1173">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">dashed</property>
+                                        <property name="borderBottomWidth">thin</property>
                                         <data id="1201">
                                             <property name="backgroundAttachment">scroll</property>
                                             <property name="backgroundPositionX">0%</property>
@@ -6296,6 +6515,9 @@ riesgo = formatCurrency(n, '.', ',');]]></method>
                                         </data>
                                     </cell>
                                     <cell id="1174">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">dashed</property>
+                                        <property name="borderBottomWidth">thin</property>
                                         <data id="1203">
                                             <property name="backgroundAttachment">scroll</property>
                                             <property name="backgroundPositionX">0%</property>
@@ -6354,9 +6576,18 @@ riesgo = formatCurrency(n, '.', ',');]]></method>
                                     <property name="borderRightColor">#000000</property>
                                     <property name="borderRightStyle">solid</property>
                                     <property name="borderRightWidth">thin</property>
+                                    <property name="pageBreakBefore">avoid</property>
+                                    <list-property name="visibility">
+                                        <structure>
+                                            <property name="format">all</property>
+                                            <expression name="valueExpr">row["isTipoCompraVentaDacion"]!=true</expression>
+                                        </structure>
+                                    </list-property>
                                     <cell id="1205">
-                                        <property name="colSpan">3</property>
+                                        <property name="colSpan">1</property>
                                         <property name="rowSpan">1</property>
+                                    </cell>
+                                    <cell id="1230">
                                         <label id="1215">
                                             <property name="backgroundAttachment">scroll</property>
                                             <property name="backgroundPositionX">0%</property>
@@ -6405,34 +6636,11 @@ riesgo = formatCurrency(n, '.', ',');]]></method>
                                             <property name="pageBreakInside">auto</property>
                                             <property name="showIfBlank">false</property>
                                             <property name="canShrink">false</property>
-                                            <list-property name="visibility">
-                                                <structure>
-                                                    <property name="format">all</property>
-                                                    <expression name="valueExpr">row["tipoSolucionCodigoTermino"]!="COMPVENDACION" &amp;&amp; 
-row["tipoSolucionCodigoTermino"]!="DA_CV" &amp;&amp; 
-row["tipoSolucionCodigoTermino"]!="01" &amp;&amp; 
-row["tipoSolucionCodigoTermino"]!="03" &amp;&amp; 
-row["tipoSolucionCodigoTermino"]!="10" &amp;&amp; 
-row["tipoSolucionCodigoTermino"]!="COMPVENDACION"</expression>
-                                                </structure>
-                                            </list-property>
                                             <text-property name="text">Bienes para dación:</text-property>
                                         </label>
                                     </cell>
-                                    <cell id="1218">
-                                        <property name="colSpan">3</property>
-                                        <property name="rowSpan">1</property>
-                                    </cell>
-                                </row>
-                                <row id="1221">
-                                    <property name="borderLeftColor">#000000</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#000000</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <cell id="1222">
-                                        <property name="colSpan">3</property>
+                                    <cell id="1231">
+                                        <property name="colSpan">4</property>
                                         <property name="rowSpan">1</property>
                                         <data id="1216">
                                             <property name="backgroundAttachment">scroll</property>
@@ -6485,39 +6693,302 @@ row["tipoSolucionCodigoTermino"]!="COMPVENDACION"</expression>
                                             <property name="pageBreakInside">auto</property>
                                             <property name="showIfBlank">false</property>
                                             <property name="canShrink">true</property>
-                                            <list-property name="visibility">
-                                                <structure>
-                                                    <property name="format">all</property>
-                                                    <expression name="valueExpr">row["tipoSolucionCodigoTermino"]!="COMPVENDACION" &amp;&amp; 
-row["tipoSolucionCodigoTermino"]!="DA_CV" &amp;&amp; 
-row["tipoSolucionCodigoTermino"]!="01" &amp;&amp; 
-row["tipoSolucionCodigoTermino"]!="03" &amp;&amp; 
-row["tipoSolucionCodigoTermino"]!="10" &amp;&amp; 
-row["tipoSolucionCodigoTermino"]!="COMPVENDACION"</expression>
-                                                </structure>
-                                            </list-property>
                                             <property name="resultSetColumn">bienesDacionTermino</property>
                                         </data>
                                     </cell>
-                                    <cell id="1225">
-                                        <property name="colSpan">3</property>
+                                </row>
+                                <row id="1221">
+                                    <property name="borderLeftColor">#000000</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightColor">#000000</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <list-property name="visibility">
+                                        <structure>
+                                            <property name="format">all</property>
+                                            <expression name="valueExpr">row["nCampos"]&lt;=0</expression>
+                                        </structure>
+                                    </list-property>
+                                    <cell id="1222">
+                                        <property name="colSpan">1</property>
                                         <property name="rowSpan">1</property>
+                                    </cell>
+                                    <cell id="1234">
+                                        <property name="colSpan">2</property>
+                                        <property name="rowSpan">1</property>
+                                        <table id="1248">
+                                            <property name="width">100%</property>
+                                            <property name="dataSet">CamposSoluciones</property>
+                                            <list-property name="paramBindings">
+                                                <structure>
+                                                    <property name="paramName">iSolucion</property>
+                                                    <expression name="expression">row["nSolucion"]</expression>
+                                                </structure>
+                                                <structure>
+                                                    <property name="paramName">iPropuesta</property>
+                                                    <expression name="expression">row["nPropuesta"]</expression>
+                                                </structure>
+                                            </list-property>
+                                            <list-property name="boundDataColumns">
+                                                <structure>
+                                                    <property name="name">Label</property>
+                                                    <expression name="expression">dataSetRow["Label"]</expression>
+                                                    <property name="dataType">string</property>
+                                                </structure>
+                                                <structure>
+                                                    <property name="name">Valor</property>
+                                                    <expression name="expression">dataSetRow["Valor"]</expression>
+                                                    <property name="dataType">string</property>
+                                                </structure>
+                                            </list-property>
+                                            <column id="1258"/>
+                                            <column id="1259"/>
+                                            <detail>
+                                                <row id="1252">
+                                                    <cell id="1253">
+                                                        <data id="1263">
+                                                            <property name="backgroundAttachment">scroll</property>
+                                                            <property name="backgroundPositionX">0%</property>
+                                                            <property name="backgroundPositionY">0%</property>
+                                                            <property name="backgroundRepeat">repeat</property>
+                                                            <property name="fontFamily">sans-serif</property>
+                                                            <property name="fontSize">x-small</property>
+                                                            <property name="fontWeight">bold</property>
+                                                            <property name="fontStyle">normal</property>
+                                                            <property name="fontVariant">normal</property>
+                                                            <property name="color">black</property>
+                                                            <property name="textLineThrough">none</property>
+                                                            <property name="textOverline">none</property>
+                                                            <property name="textUnderline">none</property>
+                                                            <property name="borderBottomColor">black</property>
+                                                            <property name="borderBottomStyle">none</property>
+                                                            <property name="borderBottomWidth">medium</property>
+                                                            <property name="borderLeftColor">black</property>
+                                                            <property name="borderLeftStyle">none</property>
+                                                            <property name="borderLeftWidth">medium</property>
+                                                            <property name="borderRightColor">black</property>
+                                                            <property name="borderRightStyle">none</property>
+                                                            <property name="borderRightWidth">medium</property>
+                                                            <property name="borderTopColor">black</property>
+                                                            <property name="borderTopStyle">none</property>
+                                                            <property name="borderTopWidth">medium</property>
+                                                            <property name="marginTop">0pt</property>
+                                                            <property name="marginLeft">0pt</property>
+                                                            <property name="marginBottom">0pt</property>
+                                                            <property name="marginRight">0pt</property>
+                                                            <property name="paddingTop">1pt</property>
+                                                            <property name="paddingLeft">1pt</property>
+                                                            <property name="paddingBottom">1pt</property>
+                                                            <property name="paddingRight">1pt</property>
+                                                            <property name="textAlign">left</property>
+                                                            <property name="letterSpacing">normal</property>
+                                                            <property name="lineHeight">normal</property>
+                                                            <property name="orphans">2</property>
+                                                            <property name="textTransform">none</property>
+                                                            <property name="whiteSpace">normal</property>
+                                                            <property name="widows">2</property>
+                                                            <property name="wordSpacing">normal</property>
+                                                            <property name="display">block</property>
+                                                            <property name="pageBreakAfter">auto</property>
+                                                            <property name="pageBreakBefore">auto</property>
+                                                            <property name="pageBreakInside">auto</property>
+                                                            <property name="showIfBlank">false</property>
+                                                            <property name="canShrink">false</property>
+                                                            <property name="resultSetColumn">Label</property>
+                                                        </data>
+                                                    </cell>
+                                                    <cell id="1254">
+                                                        <data id="1264">
+                                                            <property name="backgroundAttachment">scroll</property>
+                                                            <property name="backgroundPositionX">0%</property>
+                                                            <property name="backgroundPositionY">0%</property>
+                                                            <property name="backgroundRepeat">repeat</property>
+                                                            <property name="fontFamily">sans-serif</property>
+                                                            <property name="fontSize">x-small</property>
+                                                            <property name="fontWeight">normal</property>
+                                                            <property name="fontStyle">normal</property>
+                                                            <property name="fontVariant">normal</property>
+                                                            <property name="color">black</property>
+                                                            <property name="textLineThrough">none</property>
+                                                            <property name="textOverline">none</property>
+                                                            <property name="textUnderline">none</property>
+                                                            <property name="borderBottomColor">black</property>
+                                                            <property name="borderBottomStyle">none</property>
+                                                            <property name="borderBottomWidth">medium</property>
+                                                            <property name="borderLeftColor">black</property>
+                                                            <property name="borderLeftStyle">none</property>
+                                                            <property name="borderLeftWidth">medium</property>
+                                                            <property name="borderRightColor">black</property>
+                                                            <property name="borderRightStyle">none</property>
+                                                            <property name="borderRightWidth">medium</property>
+                                                            <property name="borderTopColor">black</property>
+                                                            <property name="borderTopStyle">none</property>
+                                                            <property name="borderTopWidth">medium</property>
+                                                            <property name="marginTop">0pt</property>
+                                                            <property name="marginLeft">0pt</property>
+                                                            <property name="marginBottom">0pt</property>
+                                                            <property name="marginRight">0pt</property>
+                                                            <property name="paddingTop">1pt</property>
+                                                            <property name="paddingLeft">1pt</property>
+                                                            <property name="paddingBottom">1pt</property>
+                                                            <property name="paddingRight">1pt</property>
+                                                            <structure name="dateTimeFormat">
+                                                                <property name="category">Custom</property>
+                                                                <property name="pattern">dd/MM/yyyy</property>
+                                                            </structure>
+                                                            <property name="letterSpacing">normal</property>
+                                                            <property name="lineHeight">normal</property>
+                                                            <property name="orphans">2</property>
+                                                            <property name="textTransform">none</property>
+                                                            <property name="whiteSpace">normal</property>
+                                                            <property name="widows">2</property>
+                                                            <property name="wordSpacing">normal</property>
+                                                            <property name="display">block</property>
+                                                            <property name="pageBreakAfter">auto</property>
+                                                            <property name="pageBreakBefore">auto</property>
+                                                            <property name="pageBreakInside">auto</property>
+                                                            <property name="showIfBlank">false</property>
+                                                            <property name="canShrink">true</property>
+                                                            <property name="resultSetColumn">Valor</property>
+                                                        </data>
+                                                    </cell>
+                                                </row>
+                                            </detail>
+                                        </table>
+                                    </cell>
+                                    <cell id="1225">
+                                        <property name="colSpan">1</property>
+                                        <property name="rowSpan">1</property>
+                                    </cell>
+                                    <cell id="1228">
+                                        <property name="colSpan">1</property>
+                                        <property name="rowSpan">1</property>
+                                    </cell>
+                                    <cell id="1233"/>
+                                </row>
+                                <row id="1237">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftColor">#000000</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightColor">#000000</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <cell id="1238"/>
+                                    <cell id="1239">
+                                        <label id="1244">
+                                            <property name="backgroundAttachment">scroll</property>
+                                            <property name="backgroundPositionX">0%</property>
+                                            <property name="backgroundPositionY">0%</property>
+                                            <property name="backgroundRepeat">repeat</property>
+                                            <property name="fontFamily">sans-serif</property>
+                                            <property name="fontSize">x-small</property>
+                                            <property name="fontWeight">bold</property>
+                                            <property name="fontStyle">normal</property>
+                                            <property name="fontVariant">normal</property>
+                                            <property name="color">black</property>
+                                            <property name="textLineThrough">none</property>
+                                            <property name="textOverline">none</property>
+                                            <property name="textUnderline">none</property>
+                                            <property name="borderBottomColor">black</property>
+                                            <property name="borderBottomStyle">none</property>
+                                            <property name="borderBottomWidth">medium</property>
+                                            <property name="borderLeftColor">black</property>
+                                            <property name="borderLeftStyle">none</property>
+                                            <property name="borderLeftWidth">medium</property>
+                                            <property name="borderRightColor">black</property>
+                                            <property name="borderRightStyle">none</property>
+                                            <property name="borderRightWidth">medium</property>
+                                            <property name="borderTopColor">black</property>
+                                            <property name="borderTopStyle">none</property>
+                                            <property name="borderTopWidth">medium</property>
+                                            <property name="marginTop">0pt</property>
+                                            <property name="marginLeft">0pt</property>
+                                            <property name="marginBottom">0pt</property>
+                                            <property name="marginRight">0pt</property>
+                                            <property name="paddingTop">1pt</property>
+                                            <property name="paddingLeft">1pt</property>
+                                            <property name="paddingBottom">1pt</property>
+                                            <property name="paddingRight">1pt</property>
+                                            <property name="textAlign">left</property>
+                                            <property name="letterSpacing">normal</property>
+                                            <property name="lineHeight">normal</property>
+                                            <property name="orphans">2</property>
+                                            <property name="textTransform">none</property>
+                                            <property name="whiteSpace">normal</property>
+                                            <property name="widows">2</property>
+                                            <property name="wordSpacing">normal</property>
+                                            <property name="display">block</property>
+                                            <property name="pageBreakAfter">auto</property>
+                                            <property name="pageBreakBefore">auto</property>
+                                            <property name="pageBreakInside">auto</property>
+                                            <property name="showIfBlank">false</property>
+                                            <property name="canShrink">false</property>
+                                            <text-property name="text">Observaciones:</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="1240">
+                                        <property name="colSpan">4</property>
+                                        <property name="rowSpan">1</property>
+                                        <data id="1246">
+                                            <property name="backgroundAttachment">scroll</property>
+                                            <property name="backgroundPositionX">0%</property>
+                                            <property name="backgroundPositionY">0%</property>
+                                            <property name="backgroundRepeat">repeat</property>
+                                            <property name="fontFamily">sans-serif</property>
+                                            <property name="fontSize">x-small</property>
+                                            <property name="fontWeight">normal</property>
+                                            <property name="fontStyle">normal</property>
+                                            <property name="fontVariant">normal</property>
+                                            <property name="color">black</property>
+                                            <property name="textLineThrough">none</property>
+                                            <property name="textOverline">none</property>
+                                            <property name="textUnderline">none</property>
+                                            <property name="borderBottomColor">black</property>
+                                            <property name="borderBottomStyle">none</property>
+                                            <property name="borderBottomWidth">medium</property>
+                                            <property name="borderLeftColor">black</property>
+                                            <property name="borderLeftStyle">none</property>
+                                            <property name="borderLeftWidth">medium</property>
+                                            <property name="borderRightColor">black</property>
+                                            <property name="borderRightStyle">none</property>
+                                            <property name="borderRightWidth">medium</property>
+                                            <property name="borderTopColor">black</property>
+                                            <property name="borderTopStyle">none</property>
+                                            <property name="borderTopWidth">medium</property>
+                                            <property name="marginTop">0pt</property>
+                                            <property name="marginLeft">0pt</property>
+                                            <property name="marginBottom">0pt</property>
+                                            <property name="marginRight">0pt</property>
+                                            <property name="paddingTop">1pt</property>
+                                            <property name="paddingLeft">1pt</property>
+                                            <property name="paddingBottom">1pt</property>
+                                            <property name="paddingRight">1pt</property>
+                                            <structure name="dateTimeFormat">
+                                                <property name="category">Custom</property>
+                                                <property name="pattern">dd/MM/yyyy</property>
+                                            </structure>
+                                            <property name="letterSpacing">normal</property>
+                                            <property name="lineHeight">normal</property>
+                                            <property name="orphans">2</property>
+                                            <property name="textTransform">none</property>
+                                            <property name="whiteSpace">normal</property>
+                                            <property name="widows">2</property>
+                                            <property name="wordSpacing">normal</property>
+                                            <property name="display">block</property>
+                                            <property name="pageBreakAfter">auto</property>
+                                            <property name="pageBreakBefore">auto</property>
+                                            <property name="pageBreakInside">auto</property>
+                                            <property name="showIfBlank">false</property>
+                                            <property name="canShrink">true</property>
+                                            <property name="resultSetColumn">informeLetrado</property>
+                                        </data>
                                     </cell>
                                 </row>
                             </detail>
-                            <footer>
-                                <row id="1175">
-                                    <property name="borderTopColor">#000000</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
-                                    <cell id="1176"/>
-                                    <cell id="1177"/>
-                                    <cell id="1178"/>
-                                    <cell id="1179"/>
-                                    <cell id="1180"/>
-                                    <cell id="1181"/>
-                                </row>
-                            </footer>
                         </table>
                     </cell>
                 </row>

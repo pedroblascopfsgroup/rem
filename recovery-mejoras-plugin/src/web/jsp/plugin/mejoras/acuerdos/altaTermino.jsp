@@ -374,8 +374,8 @@
 	       		Ext.apply(params, {idTipoAcuerdo : comboTipoAcuerdo.getValue()});
 	       		Ext.apply(params, {idSubTipoAcuerdo : comboSubTipoAcuerdo.getValue()});
 	       		<%--Ext.apply(params, {idTipoProducto : comboTipoProducto.getValue()});--%>
-<%--	       		
-	       		Ext.apply(params, {informeLetrado : informeLetrado.getValue()});--%>
+	       		
+	       		Ext.apply(params, {informeLetrado : informeLetrado.getValue()});
 	       		Ext.apply(params, {contratosIncluidos : '${contratosIncluidos}'});
 	       		Ext.apply(params, {bienesIncluidos : comboBienes.getValue()});     		
 	       		Ext.apply(params, {idTermino : idTermino });     		
@@ -426,7 +426,6 @@
 	bienesStore.webflow({idAsunto:idAsunto});
  --%>	
 
-debugger;
 	if("${esPropuesta}" == "true"){
 			
 		var bienesStore = page.getStore({

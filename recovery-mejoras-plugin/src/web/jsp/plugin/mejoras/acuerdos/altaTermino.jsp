@@ -19,6 +19,7 @@
 	var config = {width: 250, labelStyle:"width:150px;font-weight:bolder"};
 <%-- 	var idAsunto = '${asunto.id}'; --%>
 	var idTermino = '${termino.id}';
+	var idExpediente = '${idExpediente}';
 	var contratosIncluidos = '${contratosIncluidos}';
 	var soloConsulta = '${soloConsulta}';
 	var idTipoAcuerdoPlanPago ='${idTipoAcuerdoPlanPago}';
@@ -425,16 +426,28 @@
 	bienesStore.webflow({idAsunto:idAsunto});
  --%>	
 
-
-<%-- if("${esPropuesta}" == "true"){ --%>
+debugger;
+	if("${esPropuesta}" == "true"){
+			
+		var bienesStore = page.getStore({
+			eventName : 'listado'
+			,flow:'propuestas/obtenerListadoBienesPropuesta'
+			,reader: new Ext.data.JsonReader({
+		        root: 'bienes'
+			}, bienesRecord)
+		});
+				
+	}else{
 		
-	var bienesStore = page.getStore({
-		eventName : 'listado'
-		,flow:'propuestas/obtenerListadoBienesPropuesta'
-		,reader: new Ext.data.JsonReader({
-	        root: 'bienes'
-		}, bienesRecord)
-	});
+		var bienesStore = page.getStore({
+			eventName : 'listado'
+			,flow:'mejacuerdo/obtenerListadoBienesContratosAcuerdo'
+			,reader: new Ext.data.JsonReader({
+		        root: 'bienes'
+			}, bienesRecord)
+		});	
+	}
+
 	if("${termino}"!=null && "${termino}"!=''){
 		bienesStore.on('load', function() {
 	       	if("${termino.bienes}"!=null && "${termino.bienes}"!=''){
@@ -443,21 +456,15 @@
 				</c:forEach>
 		    }
 		});
+	}			
+
+
+	if("${esPropuesta}" == "true"){
+		bienesStore.webflow({idExpediente:idExpediente, contratosIncluidos:contratosIncluidos});
+	}else {
+		bienesStore.webflow({idTermino:idTermino, contratosIncluidos:contratosIncluidos});
 	}
-			
-	bienesStore.webflow({idExpediente:${idExpediente}, contratosIncluidos:contratosIncluidos});
-<%--}else{
-	
-	var bienesStore = page.getStore({
-		eventName : 'listado'
-		,flow:'mejacuerdo/obtenerListadoBienesContratosAcuerdo'
-		,reader: new Ext.data.JsonReader({
-	        root: 'bienes'
-		}, bienesRecord)
-	});	
-			
-	bienesStore.webflow({idTermino:idTermino, contratosIncluidos:contratosIncluidos});
-<%--}  --%>			
+
 				
 	config.store = bienesStore;	
 	

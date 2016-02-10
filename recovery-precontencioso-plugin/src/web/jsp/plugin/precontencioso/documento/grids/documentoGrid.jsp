@@ -112,6 +112,7 @@ var incluirDocButton = new Ext.Button({
         	}else{
 		        var w = app.openWindow({
 						flow: 'documentopco/abrirIncluirDocumento'
+						,params:{idPCO:data.precontencioso.id}
 						,title: '<s:message code="precontencioso.grid.documento.incluirDocumento" text="**Incluir Documento" />'
 						,width: 640
 					});
@@ -765,8 +766,60 @@ Ext.namespace('Ext.ux.plugins');
 			}
 	});
 	
+	var limpiarFiltro = new Ext.Button({
+			text : 'Limpiar filtro'
+			,id: 'limpiarFiltro'
+			,iconCls : 'icon_refresh'
+			,handler:function(){
+				refrescarDocumentosGrid();
+			}
+	});
+	
+	var listadoTiposDocumento = Ext.data.Record.create([
+		 {name:'id'}
+		,{name:'descripcion'}
+	]);
+	
+	var tiposDeDocumentoStore = page.getStore({
+	       flow: 'documentopco/getTiposDocumentoPorTipoActuacion'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'tipoFicherosAdjunto'
+	    }, listadoTiposDocumento)	      
+	});
+    
+    
+	var filtroTipoDocumento = new Ext.form.ComboBox({
+		name:'filtroTipoDocumento'
+        ,store: tiposDeDocumentoStore
+        ,mode:'local'
+        ,triggerAction:'all'
+        ,editable: true
+        ,fieldLabel: '<s:message code="embargobienes.clientes" text="**Clientes" />'
+        ,displayField:'descripcion'
+        ,valueField: 'id'
+        ,labelStyle:'font-weight:bolder'
+        ,height : 35
+        ,width : 200
+        ,emptyText :'Filtrar por...'
+        ,listeners :
+			       {
+			       		'select' : function (combo, record, index) { 
+			       				refrescarDocumentosGridTipoDocumento(record.id); 
+			       		}
+			       }
+    });
+    
+    var tituloFiltro = new Ext.form.Label({
+   		text:'<s:message code="precontencioso.grid.documento.tipoDocumento" text="**Tipo Documento" />:'
+   		,style: {
+            marginRight: '25px'
+        }
+	}); 
+	
+	
 var gridDocumentos = new Ext.grid.GridPanel({
 		title: '<s:message code="precontencioso.grid.documento.titulo" text="**Documentos" />'	
+		,tbar:[tituloFiltro,filtroTipoDocumento,limpiarFiltro]
 		,columns: cmDocumento
 		,store: storeDocumentos
 		,loadMask: true
@@ -793,6 +846,7 @@ var gridDocumentos = new Ext.grid.GridPanel({
 		}
 }); 
 
+
 gridDocumentos.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {
 		var rec = gridDocumentos.getStore().getAt(rowIndex);
 		idSolicitud = rec.get('id');
@@ -800,7 +854,16 @@ gridDocumentos.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {
 });
 
 var refrescarDocumentosGrid = function() {
+	filtroTipoDocumento.reset( );
 	storeDocumentos.webflow({idProcedimientoPCO: data.id});
+}
+
+var refrescarDocumentosGridTipoDocumento = function(tipoDocumento) {
+	storeDocumentos.webflow({idProcedimientoPCO: data.id, idTipoDocumento : tipoDocumento});
+}
+
+var cargaTiposDeDocumentosFiltro = function(){
+	tiposDeDocumentoStore.webflow({'idPCO':  data.precontencioso.id });
 }
 
 var ponerVisibilidadBotonesDoc = function(visibles, invisibles) {

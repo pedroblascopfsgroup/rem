@@ -137,8 +137,8 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	 * @return
 	 */
     @Override
-	public List<DocumentoPCO> getDocumentosPorIdProcedimientoPCO(Long idProcedimientoPCO){
-    	List<DocumentoPCO> documentos = documentoPCODao.getDocumentosPorIdProcedimientoPCO(idProcedimientoPCO);
+	public List<DocumentoPCO> getDocumentosPorIdProcedimientoPCO(Long idProcedimientoPCO, Long idTipoDocumento){
+    	List<DocumentoPCO> documentos = documentoPCODao.getDocumentosPorIdProcedimientoPCO(idProcedimientoPCO, idTipoDocumento);
 
 		return documentos;
 		

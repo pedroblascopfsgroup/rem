@@ -41,7 +41,7 @@ DECLARE
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
        T_TIPO_TAP('PCO','PCO_PreasignarProcurador',null,'asuntoConProcurador()',null,null,null,'0','Preasignar procurador','0','PRODUCTO-708','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'543',null,null,null),
        T_TIPO_TAP('PCO','PCO_ConfirmarProcurador',null,'asuntoConProcurador()',null,null,null,'0','Confirmar procurador','0','PRODUCTO-708','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'543',null,null,null),
-       T_TIPO_TAP('PCO','PCO_BPMTramiteEnvioDemanda',null,null,null,null,null,'0','Se inicia el trámite envío de la demanda','0','PRODUCTO-708','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'543',null,null,null)
+       T_TIPO_TAP('PCO','PCO_BPMTramiteEnvioDemanda',null,null,null,null,'HC106','0','Se inicia el trámite envío de la demanda','0','PRODUCTO-708','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'543',null,null,null)
     ); 
     V_TMP_TIPO_TAP T_TIPO_TAP;
 
@@ -88,7 +88,8 @@ BEGIN
         	' TAP_SCRIPT_VALIDACION=''' || REPLACE(TRIM(V_TMP_TIPO_TAP(4)),'''','''''') || ''',' ||
         	' TAP_SCRIPT_VALIDACION_JBPM=''' || REPLACE(TRIM(V_TMP_TIPO_TAP(5)),'''','''''') || ''',' ||
         	' TAP_SCRIPT_DECISION=''' || REPLACE(TRIM(V_TMP_TIPO_TAP(6)),'''','''''') || ''',' ||
-        	' DD_STA_ID=(SELECT DD_STA_ID FROM ' || V_ESQUEMA_MASTER || '.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO=''' || TRIM(V_TMP_TIPO_TAP(20)) || ''')' || 
+        	' DD_TPO_ID_BPM=(SELECT DD_TPO_ID FROM ' || V_ESQUEMA || '.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = ''' || TRIM(V_TMP_TIPO_TAP(7)) || '''),' ||
+            ' DD_STA_ID=(SELECT DD_STA_ID FROM ' || V_ESQUEMA_MASTER || '.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO=''' || TRIM(V_TMP_TIPO_TAP(20)) || ''')' || 
         	' WHERE DD_TPO_ID = (SELECT DD_TPO_ID FROM ' || V_ESQUEMA || '.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = '''||TRIM(V_TMP_TIPO_TAP(1))||''') and TAP_CODIGO = '''||TRIM(V_TMP_TIPO_TAP(2))||'''';
 			--DBMS_OUTPUT.PUT_LINE(V_SQL);
 		    EXECUTE IMMEDIATE V_SQL;	

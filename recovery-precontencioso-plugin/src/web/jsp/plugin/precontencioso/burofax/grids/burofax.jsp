@@ -453,7 +453,7 @@ var pdfRender = function(value, meta, record) {
 								,btnAddPersona
 						    </c:otherwise>
 						</c:choose>
-					,btnEnviar, btnNuevaDir, btnEditarVerDireccion, btnCancelar, btnBorrarDirOrigenManual, btnDescartarPersEnvio, btnExcluirPersona,  separadorButtons,btnEditar, btnPreparar, btnNotificar,btnDescargarBurofax, btnCancelarEnEstPrep, botonRefresh ]
+					,btnNuevaDir, btnEditarVerDireccion, btnCancelar, btnBorrarDirOrigenManual, btnDescartarPersEnvio, btnExcluirPersona,  separadorButtons,btnEnviar,btnEditar, btnPreparar, btnNotificar,btnDescargarBurofax, btnCancelarEnEstPrep, botonRefresh ]
 		</sec:authorize>
 		,autoWidth: true
 		,collapsible: true

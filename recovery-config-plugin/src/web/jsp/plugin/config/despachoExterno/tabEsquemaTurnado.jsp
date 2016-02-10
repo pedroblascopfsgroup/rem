@@ -183,7 +183,7 @@
 					w.close();
 					app.openTab('${despacho.despacho}'
 						,'plugin/config/despachoExterno/ADMconsultarDespachoExterno'
-						,{id:${despacho.id}, numTab:4}
+						,{id:${despacho.id}, numTab:3}
 						,{id:'DespachoExterno${despacho.id}'}
 					)
 				});
@@ -225,7 +225,7 @@
 					w.close();
 					app.openTab('${despacho.despacho}'
 						,'plugin/config/despachoExterno/ADMconsultarDespachoExterno'
-						,{id:${despacho.id},numTab:4}
+						,{id:${despacho.id},numTab:3}
 						,{id:'DespachoExterno${despacho.id}'}
 					)
 				});
@@ -249,7 +249,7 @@
 					w.close();
 					app.openTab('${despacho.despacho}'
 						,'plugin/config/despachoExterno/ADMconsultarDespachoExterno'
-						,{id:${despacho.id},numTab:4}
+						,{id:${despacho.id},numTab:3}
 						,{id:'DespachoExterno${despacho.id}'}
 					)
 				});

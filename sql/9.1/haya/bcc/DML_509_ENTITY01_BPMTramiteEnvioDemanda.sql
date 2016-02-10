@@ -47,7 +47,7 @@ DECLARE
     TYPE T_TIPO_TAP IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
-       T_TIPO_TAP('HC106','HC106_RedactarDemandaAdjuntarDocu',null,null,null,null,null,'0','Redactar demanda y adjuntar documentación','0','PRODUCTO-709','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_LET',null,null,null),
+       T_TIPO_TAP('HC106','HC106_RedactarDemandaAdjuntarDocu','plugin/cajamar/tramiteEnvioDemanda/redactarDemanda',null,null,null,null,'0','Redactar demanda y adjuntar documentación','0','PRODUCTO-709','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_LET',null,null,null),
        T_TIPO_TAP('HC106','HC106_RevisarCompletitudDocu',null,null,null,'valores[''HC106_RevisarCompletitudDocu''][''documentacionCompletada''] == DDSiNo.SI ? ''completa'' : ''incompleta''',null,'0','Revisar completitud de la documentación','0','PRODUCTO-709','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'543',null,null,null),
        T_TIPO_TAP('HC106','HC106_BPMTramiteProvisionFondosProcurador',null,null,null,null,null,'0','Se inicia trámite de provisiones de fondos','0','PRODUCTO-709','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_LET',null,null,null)
     ); 

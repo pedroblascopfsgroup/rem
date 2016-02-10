@@ -17,7 +17,7 @@
 	<bean id="subastaV4HayaEjecucionNotarialEnterActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaV4HayaEjecucionNotarialEnterActionHandler"></bean>
  	<bean id="subastaV4HayaEjecucionNotarialLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaV4HayaEjecucionNotarialLeaveActionHandler"></bean>
  	<bean id="subastaComprobarProcedeSubastaSuspendidaHandler" class="es.pfsgroup.procedimientos.subasta.SubastaComprobarProcedeSubastaSuspendidaHandler"></bean>
- 	<bean id="bccPrecontenciosoLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.BCCPrecontenciosoLeaveActionHandler" />
+ 	<bean id="bccPrecontenciosoLeaveActionHandler" class="es.pfsgroup.procedimientos.precontencioso.BCCPrecontenciosoLeaveActionHandler" />
 	 	    
 	<!-- BPM activos -->
 	<!-- Nacho -->

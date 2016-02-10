@@ -280,7 +280,13 @@ public class MEJAcuerdoController {
 							@RequestParam(value = "soloConsulta", required = true) String soloConsulta) {
 		
 		TerminoAcuerdo termino = proxyFactory.proxy(MEJAcuerdoApi.class).getTerminoAcuerdo(id);
-		map.put("idExpediente", termino.getAcuerdo().getExpediente().getId());
+		if (termino.getAcuerdo().getExpediente()!=null) {
+			map.put("idExpediente", termino.getAcuerdo().getExpediente().getId());
+			map.put("esPropuesta",true);
+		} else {
+			map.put("esPropuesta",false);
+		}
+			
 		if (!contratosIncluidos.equals("")) {
 			map.put("contratosIncluidos", contratosIncluidos);
 		} else {

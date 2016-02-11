@@ -202,6 +202,10 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 				}
 				olDto.setNombreTipoDoc(getMimeType(olDto.getExtFichero()));
 			}	
+		}else{
+			for(GestorDocumentalOutputListDto olDto : outputDto.getLbListadoDocumentos()) {
+				olDto.setNombreTipoDoc(getMimeType(olDto.getExtFichero()));
+			}
 		}
 		return AdjuntoGridAssembler.outputDtoToAdjuntoGridDto(outputDto);
 	}

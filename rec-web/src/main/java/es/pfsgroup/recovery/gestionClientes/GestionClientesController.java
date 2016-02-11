@@ -7,6 +7,8 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.WebRequest;
 
+import es.pfsgroup.plugin.recovery.mejoras.cliente.dto.MEJBuscarClientesDto;
+
 @Controller
 public class GestionClientesController {
 	
@@ -24,4 +26,16 @@ public class GestionClientesController {
 		return "gestionClientes/gestionClientesCountJSON";
 	}
 
+	@RequestMapping
+	public String getListadoVencidos(WebRequest request, ModelMap model) {
+		return "gestionClientes/listadoVencidos";
+	}
+	
+	@RequestMapping
+	public String getVencidos(WebRequest request, ModelMap model) {
+		
+		MEJBuscarClientesDto clientesDto = new MEJBuscarClientesDto();
+		
+		return "gestionClientes/gestionVencidosJSON";
+	}
 }

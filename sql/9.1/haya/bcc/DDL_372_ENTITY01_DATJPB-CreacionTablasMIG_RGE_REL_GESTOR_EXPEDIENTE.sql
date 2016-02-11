@@ -40,20 +40,12 @@ BEGIN
   FROM ALL_TABLES
   WHERE TABLE_NAME = ''||TABLA1||'';
 
-
   V_MSQL1 := 'CREATE TABLE '||V_ESQUEMA||'.'||TABLA1||' 
    (
         CD_EXPEDIENTE               NUMBER(16) NOT NULL ENABLE, 
+        TIPO_GESTOR		            NUMBER(3) NOT NULL ENABLE, 
         COD_GESTOR	                VARCHAR(20 CHAR) NOT NULL ENABLE,
-        FECHA_FICHERO	            DATE NOT NULL ENABLE,
-        VERSION                     INTEGER             DEFAULT 0                     NOT NULL,
-        USUARIOCREAR                VARCHAR2(25 CHAR)   NOT NULL,
-        FECHACREAR                  DATE                DEFAULT SYSDATE               NOT NULL,
-        BORRADO                     INTEGER             DEFAULT 0                     NOT NULL,
-        USUARIOMODIFICAR            VARCHAR2(25 CHAR),
-        FECHAMODIFICAR              DATE,
-        USUARIOBORRAR               VARCHAR2(25 CHAR),
-        FECHABORRAR                 DATE
+        FECHA_FICHERO	            DATE NOT NULL ENABLE
    ) SEGMENT CREATION IMMEDIATE';
 
 

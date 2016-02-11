@@ -102,9 +102,6 @@ public class AdjuntoAssembler {
 
 					@Override
 					public String getRefCentera() {
-						if(Checks.esNulo(adjDto.getRefCentera())) {
-							return null;
-						}
 						return adjDto.getRefCentera();
 					}
 				};
@@ -348,9 +345,6 @@ public class AdjuntoAssembler {
 
 					@Override
 					public String getRefCentera() {
-						if(Checks.esNulo(adjDto.getRefCentera())) {
-							return null;
-						}
 						return adjDto.getRefCentera();
 					}
 				};

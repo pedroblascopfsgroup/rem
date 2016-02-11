@@ -26,7 +26,12 @@
 	            <c:forEach items="${entity.adjuntos}" var="adj">
 					<c:if test="${adj.id!=entity.adjuntosAsList[0].id}">
 			        	<json:object>
-							<json:property name="id" value="${adj.id}" />
+			        		<c:if test="${adj.refCentera != null}">		
+			        			<json:property name="id" value="${adj.refCentera}" />
+			        		</c:if>
+			        		<c:if test="${adj.refCentera == null}">
+			        			<json:property name="id" value="${adj.id}" />
+			        		</c:if>
 							<json:property name="nombre" value="${adj.nombre}" />
 							<json:property name="contentType" value="${adj.contentType}" />
 							<json:property name="length" value="${adj.length}" />

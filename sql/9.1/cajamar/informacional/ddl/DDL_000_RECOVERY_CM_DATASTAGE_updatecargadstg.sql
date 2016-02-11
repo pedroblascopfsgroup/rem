@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20160211
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=GC-xxx
+--## INCIDENCIA_LINK=GC-1103
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Update insolventes

@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20160211
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=GC-XXXX
+--## INCIDENCIA_LINK=GC-1103
 --## PRODUCTO=NO
 --## 
 --## Finalidad: duplicidades lanzamientos

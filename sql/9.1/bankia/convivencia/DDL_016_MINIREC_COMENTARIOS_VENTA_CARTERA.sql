@@ -2,8 +2,8 @@
 --##########################################
 --## AUTOR=RAFAEL ARACIL
 --## FECHA_CREACION=20160211
---## ARTEFACTO=[online|batch]
---## VERSION_ARTEFACTO=X.X.X_rcXX
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=BKREC-1786
 --## PRODUCTO=NO
 --## 

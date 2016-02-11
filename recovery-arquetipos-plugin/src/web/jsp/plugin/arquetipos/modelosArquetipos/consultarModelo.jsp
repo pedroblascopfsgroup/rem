@@ -44,6 +44,7 @@
 			on_success="recargar"
 			/>
 	
+	
 	<c:choose>
 	  <c:when test="${modelo.estado.codigo=='3' || modelo.estado.codigo=='4'}">
 			<pfs:panel name="datosGeneralesPanel" columns="2" collapsible="false">
@@ -64,8 +65,6 @@
 				</pfs:panel>
 	  </c:otherwise>
 	</c:choose>
-	
-
 
 
 	<pfs:defineRecordType name="ArquetiposModeloRT">
@@ -215,42 +214,11 @@
 		
 	</pfs:button>
 	
-
-	var btPteSimular= new Ext.Button({
-		text : '<s:message code="plugin.arquetipos.modelo.consulta.ptesimular" text="**Pte. Simular" />'
-		,iconCls : 'icon_objetivos_pendientes'
-		,handler : function(){
-			Ext.Ajax.request({
-				url: page.resolveUrl('plugin/arquetipos/modelosArquetipos/ARQPendienteSimularModelo')
-				,params: {event:'pendienteSimulacionModelo',id:'${modelo.id}'}
-				,method: 'POST'
-				,success: function (result, request){
-						recargar();
-					}
-			});
-		}
-	});
 	
-	var btCancelarPteSimular= new Ext.Button({
-		text : '<s:message code="plugin.arquetipos.modelo.consulta.cancelarPteSimular" text="**Cancel Pte. Simular" />'
-		,iconCls : 'icon_objetivos_pendientes'
-		,handler : function(){
-			Ext.Ajax.request({
-				url: page.resolveUrl('plugin/arquetipos/modelosArquetipos/ARQPendienteSimularModelo')
-				,params: {event:'cancelarPendienteSimulacionModelo',id:'${modelo.id}'}
-				,method: 'POST'
-				,success: function (result, request){
-						recargar();
-					}
-			});
-		}
-	});
-	
-	<%-- Este botón nunca deberá de aparecer ya que esta tarea se realizará desde el bathc --%>
 	<pfs:button name="btSimula" caption="**Simular modelo"  captioneKey="plugin.arquetipos.modelo.consulta.simular" iconCls="icon_objetivos_pendientes">
 		var w= app.openWindow({
 					flow: 'plugin/arquetipos/modelosArquetipos/ARQsimulaModelo'
-					,params: {event:'simulaModelo',id:'${modelo.id}'}
+					,params: {id:'${modelo.id}'}
 					,title : '<s:message code="plugin.arquetipos.modelo.consulta.simular" text="**Simular modelo" />'
 					,closable : true
 					,width: 700
@@ -261,7 +229,7 @@
 						w.close();
 						recargar();
 					});	
-	</pfs:button>	
+	</pfs:button>
 	
 	<pfs:button name="btLibera" caption="**Liberar modelo"  captioneKey="plugin.arquetipos.modelo.consulta.liberar" iconCls="icon_liberar">
 			Ext.Msg.show({
@@ -280,32 +248,20 @@
 			});
 	</pfs:button>
 	
-	<c:choose>
-	  <c:when test="${modelo.estado.codigo=='1'}">
-			<pfs:panel name="botonesPanel" columns="2" collapsible="false" >
-				<pfs:items items="btCopia"/>
-				<pfs:items items="btPteSimular"/>
-			</pfs:panel>
-	  </c:when>
-	  <c:when test="${modelo.estado.codigo=='5'}">
-			<pfs:panel name="botonesPanel" columns="2" collapsible="false" >
-				<pfs:items items="btCopia"/>
-				<pfs:items items="btCancelarPteSimular"/>
-			</pfs:panel>
-	  </c:when>
-	   <c:when test="${modelo.estado.codigo=='6'}">
-			<pfs:panel name="botonesPanel" columns="2" collapsible="false" >
-				<pfs:items items="btCopia"/>
-				<pfs:items items="btLibera"/>
-			</pfs:panel>
-	  </c:when>
-	  <c:otherwise>
-			<pfs:panel name="botonesPanel" columns="1" collapsible="false" >
-				<pfs:items items="btCopia"/>
-			</pfs:panel>
-	  </c:otherwise>
-	</c:choose>
+	<c:if test="${modelo.estado.codigo!='2'}">
+		<pfs:panel name="botonesPanel" columns="2" collapsible="false" >
+			<pfs:items items="btCopia"/>
+			<pfs:items items="btSimula"/>
+		</pfs:panel>
+	</c:if>	
 	
+	<c:if test="${modelo.estado.codigo=='2'}">
+		<pfs:panel name="botonesPanel" columns="3" collapsible="false" >
+			<pfs:items items="btCopia"/>
+			<pfs:items items="btSimula"/>
+			<pfs:items items="btLibera"/>
+		</pfs:panel>
+	</c:if>	
 	 	
 	var compuesto = new Ext.Panel({
 	    items : [{items:[datosGeneralesPanel],border:false,style:'margin-top: 7px; margin-left:5px'}

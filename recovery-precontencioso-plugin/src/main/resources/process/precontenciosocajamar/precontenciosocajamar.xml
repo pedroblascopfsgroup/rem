@@ -40,7 +40,7 @@
 
 	<decision name="PCO_RegistrarAceptacionPostDecision" expression="#{PCO_RegistrarAceptacionPostDecision}">
 		<transition to="PCO_RevisarNoAceptacionPost" name="no_aceptacion"/>
-		<transition to=forkAceptacion name="aceptacion"/>
+		<transition to="forkAceptacion" name="aceptacion"/>
 	</decision>
 		
 	<fork name="forkAceptacion">

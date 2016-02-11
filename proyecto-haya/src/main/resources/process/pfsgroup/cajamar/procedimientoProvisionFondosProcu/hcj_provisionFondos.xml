@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="hcj_provisionFondosProcu" xmlns="urn:jbpm.org:jpdl-3.2">
+
+	<start-state name="Inicio">
+		<transition to="HC107_SolicitarProvision" name="avanzaBPM"></transition>
+	</start-state>
+
+
+	<state name="HC107_VisarSolicitud">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="HC107_VisarSolicitud" name="activarAlerta"></transition>
+		<transition to="HC107_VisarSolicitudDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+
+	<decision name="HC107_VisarSolicitudDecision" expression="#{HC107_SolicitarProvisionDecision}">
+		<transition to="HC107_RevisarSolicitud" name="SI"></transition>
+		<transition to="HC107_AprobarSolicitudFondos" name="NO"></transition>
+		<transition to="HC107_SolicitarProvision" name="KO"></transition>
+	</decision>
+
+	<state name="HC107_RevisarSolicitud">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="HC107_RevisarSolicitud" name="activarAlerta"></transition>
+		<transition to="HC107_RevisarSolicitudDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="HC107_VisarSolicitud" name="vueltraAtras"></transition>
+	</state>
+
+	<decision name="HC107_RevisarSolicitudDecision" expression="#{HC107_RevisarSolicitudDecision}">
+		<transition to="HC107_VisarSolicitud" name="subsanar"></transition>
+		<transition to="HC107_AprobarSolicitudFondos" name="cesion"></transition>
+		<transition to="HC107_AprobarSolicitudInsc" name="otro"></transition>
+	</decision>
+
+	<state name="HC107_AprobarSolicitudFondos">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="HC107_AprobarSolicitudFondos" name="activarAlerta"></transition>
+		<transition to="HC107_AprobarSolicitudFondosDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="HC107_AprobarSolicitudInsc">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="HC107_RevisarSolicitud" name="vueltaAtras"></transition>
+		<transition to="HC107_AprobarSolicitudInsc" name="activarAlerta"></transition>
+		<transition to="HC107_AprobarSolicitudInscDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<decision name="HC107_AprobarSolicitudFondosDecision" expression="#{HC107_AprobarSolicitudFondosDecision}">
+		<transition to="HC107_ConfirmarSolicitud" name="sinatribuciones"></transition>
+		<transition to="HC107_RealizarTransferencia" name="APR"></transition>
+		<transition to="HC107_DecisionAprobFondos" name="REC"></transition>
+		<transition to="HC107_VisarSolicitud" name="SUB"></transition>
+	</decision>
+
+
+	<state name="HC107_RealizarTransferencia">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="HC107_RealizarTransferencia" name="activarAlerta"></transition>
+		<transition to="HC107_ConfirmarTransferencia" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<node name="HC107_DecisionAprobFondos">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>genericUserDecisionActionHandler</targetBean>
+		</action>	
+		<transition to="Fin" name="Fin"></transition>
+	</node>
+
+	<state name="HC107_ConfirmarSolicitud">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="HC107_AprobarSolicitudFondos" name="vueltaAtras"></transition>
+		<transition to="HC107_ConfirmarSolicitudDecision" name="avanzaBPM"></transition>
+		<transition to="HC107_ConfirmarSolicitud" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<decision name="HC107_AprobarSolicitudInscDecision" expression="#{HC107_AprobarSolicitudInscDecision}">
+		<transition to="HC107_DecisionAprobarSolcIns" name="RECHAZADO"></transition>
+		<transition to="HC107_RealizarTransferencia" name="ACEPTADO"></transition>
+	</decision>
+
+	<node name="HC107_DecisionAprobarSolcIns">
+		<transition to="Fin" name="Fin"></transition>
+	</node>
+
+	<decision name="HC107_ConfirmarSolicitudDecision" expression="#{HC107_ConfirmarSolicitudDecision}">
+		<transition to="HC107_RealizarTransferencia" name="aceptado"></transition>
+		<transition to="Fin" name="denegado"></transition>
+	</decision>
+
+	<state name="HC107_ConfirmarTransferencia">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="HC107_RealizarTransferencia" name="vueltaAtras"></transition>
+		<transition to="HC107_ConfirmarTransferencia" name="activarAlerta"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="HC107_SolicitarProvision">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="HC107_VisarSolicitud" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="HC107_SolicitarProvision" name="activarAlerta"></transition>
+	</state>
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+</process-definition>

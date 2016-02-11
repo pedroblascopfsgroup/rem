@@ -44,7 +44,7 @@ public class SubastasServicioTasacionDelegateImpl implements SubastasServicioTas
 	protected void actualizaCodigoNuita(Long bienId, int codigoNuita) {
 		NMBBien nmbBien = proxyFactory.proxy(EditBienApi.class).getBien(bienId);
 		NMBValoracionesBien valoracion = (NMBValoracionesBien)nmbBien.getValoracionActiva();
-		valoracion.setCodigoNuita(codigoNuita);
+		valoracion.setCodigoNuita(new Long(codigoNuita));
 		genericDao.update(NMBValoracionesBien.class, valoracion);
 	}
 	

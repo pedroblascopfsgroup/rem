@@ -38,6 +38,8 @@ public interface coreextensionApi {
 	String GET_LIST_TIPO_DESPACHO_DE_USUARIO = "plugin.recovery.coreextension.api.getListDespachosDeUsuario";
 	String GET_LIST_TIPO_GESTOR_DE_USUARIO = "plugin.recovery.coreextension.api.getLisTipoGestorDeUsuario";
 	String GET_LIST_TIPO_PROCEDIMIENTO_BY_PROPIEDAD_ASUNTO = "plugin.recovery.coreextension.api.getListTipoProcedimientoByPropiedadAsunto";
+	String GET_LIST_USUARIOS_DEFECTO_PAGINATED = "plugin.recovery.coreextension.api.getListUsuariosDefectoPaginatedData";
+	
 	
 	@BusinessOperationDefinition(GET_LIST_TIPO_GESTOR)
 	List<EXTDDTipoGestor> getList(String ugCodigo);
@@ -105,6 +107,16 @@ public interface coreextensionApi {
 	 */
 	@BusinessOperationDefinition(GET_LIST_USUARIOS_PAGINATED)
 	Page getListUsuariosPaginatedData(UsuarioDto usuarioDto);
+	
+	/**
+	 * Funci�n de negocio que devuelve el listado de usuarios para un tipo de despacho dado.
+	 * Soporta paginaci�n y b�squeda.
+	 * Ordenado por {@link GestorDespacho#getGestorPorDefecto()}
+	 * @param usuarioDto dto con los par�metros de b�squeda y paginaci�n. {@link UsuarioDto}
+	 * @return P�gina de usuarios obtenida.
+	 */
+	@BusinessOperationDefinition(GET_LIST_USUARIOS_DEFECTO_PAGINATED)
+	Page getListUsuariosDefectoPaginatedData(UsuarioDto usuarioDto);
 
 	@BusinessOperationDefinition(SAVE_GESTOR)
 	void insertarGestor(Long idTipoGestor, Long idAsunto, Long idUsuario);

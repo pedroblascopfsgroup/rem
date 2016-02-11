@@ -4,12 +4,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,6 +24,7 @@ import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.contrato.model.DDTipoIntervencion;
+import es.capgemini.pfs.direccion.model.Direccion;
 import es.capgemini.pfs.movimiento.model.Movimiento;
 import es.capgemini.pfs.parametrizacion.dao.ParametrizacionDao;
 import es.capgemini.pfs.persona.model.Persona;
@@ -31,6 +34,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContextImpl;
 import es.pfsgroup.plugin.precontencioso.burofax.api.DocumentoBurofaxApi;
 import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
@@ -44,6 +48,11 @@ import es.pfsgroup.recovery.geninformes.GENINFInformesManager;
 @Service
 public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 
+	private static final String CABECERA_NOMBRE_PERSONA = "nombrePersona";
+	private static final String CABECERA_DIRECCION1 = "direccion1";
+	private static final String CABECERA_DIRECCION2 = "direccion2";
+	private static final String CABECERA_DIRECCION3 = "direccion3";
+
 	private static final String INICIO_MARCA = "${";
 	private static final String FIN_MARCA = "}";
 	private static final String BIENES_ENT = "bienesEnt";
@@ -53,6 +62,7 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 	private static final String FECHA_CIERRE_LIQUIDACION = "FECHA_CIERRE_LIQUIDACION";
 	private static final String MOV_FECHA_POS_VIVA_VENCIDA = "MOV_FECHA_POS_VIVA_VENCIDA";
 	private static final String CODIGO_DE_CONTRATO = "CODIGO_DE_CONTRATO";
+	private static final String CODIGO_DE_CONTRATO_DE_17_DIGITOS = "CODIGO_DE_CONTRATO_DE_17_DIGITOS";
 	private static final String TOTAL_LIQ = "totalLiq";
 	private static final String FECHA_LIQUIDACION = "fechaLiquidacion";
 	private static final String ENTIDAD_ORIGEN = "entidadOrigen";
@@ -73,6 +83,8 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 
 	private static final String DIRECTORIO_PLANTILLAS_LIQUIDACION = "directorioPlantillasLiquidacion";
 	private static final String NOMBRE_PLANTILLA_BUROFAX = "plantillaBurofax.docx";
+	private static final String NOMBRE_PLANTILLA_BUROFAX_BANKIA = "plantillaBurofaxBankia.docx";
+	private static final String NOMBRE_PLANTILLA_BUROFAX_BFA = "plantillaBurofaxBFA.docx";
 
 	private static final SimpleDateFormat fechaFormat = new SimpleDateFormat(FormatUtils.DD_DE_MES_DE_YYYY,MessageUtils.DEFAULT_LOCALE);
 	private static final NumberFormat currencyInstance = NumberFormat.getCurrencyInstance(new Locale("es","ES"));
@@ -200,13 +212,23 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		
 		///Variables especificas BANKIA
 		if (!Checks.esNulo(contrato)) {
-			if(!Checks.esNulo(contrato.getDescripcion())){
+			if(!Checks.esNulo(contrato.getNroContratoFormat())){
 				mapaVariables.put(CODIGO_DE_CONTRATO, contrato.getDescripcion());
 			} else{
 				mapaVariables.put(CODIGO_DE_CONTRATO,ERROR_NO_EXISTE_VALOR);
 			}
 		} else {
 			mapaVariables.put(CODIGO_DE_CONTRATO,ERROR_NO_EXISTE_VALOR);
+		}
+		
+		if (!Checks.esNulo(contrato)) {
+			if(!Checks.esNulo(contrato.getNroContratoFormat())){
+				mapaVariables.put(CODIGO_DE_CONTRATO_DE_17_DIGITOS, contrato.getDescripcion());
+			} else{
+				mapaVariables.put(CODIGO_DE_CONTRATO_DE_17_DIGITOS,ERROR_NO_EXISTE_VALOR);
+			}
+		} else {
+			mapaVariables.put(CODIGO_DE_CONTRATO_DE_17_DIGITOS,ERROR_NO_EXISTE_VALOR);
 		}
 		
 		try {
@@ -260,7 +282,7 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		if(!Checks.esNulo(contrato) && !Checks.esNulo(contrato.getContratoPersonaOrdenado()) && 
 				contrato.getContratoPersonaOrdenado().size()>0 ){
 			ContratoPersona cntPers = contrato.getContratoPersonaOrdenado().get(0);
-			mapaVariables.put(TITULAR_ORDEN_MENOR_CONTRATO,cntPers.getPersona().getNombre()+" "+cntPers.getPersona().getApellido1()+" "+cntPers.getPersona().getApellido2());
+			mapaVariables.put(TITULAR_ORDEN_MENOR_CONTRATO,construyeNombre(cntPers.getPersona()));
 		} else {
 			mapaVariables.put(TITULAR_ORDEN_MENOR_CONTRATO,ERROR_NO_EXISTE_VALOR);
 		}
@@ -295,38 +317,97 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 				resultado = resultado.replace(INICIO_MARCA + key + FIN_MARCA, mapeoVariables.get(key).toString());
 			}
 		}
-		return INICIO_CUERPO+resultado+FIN_CUERPO;
+		return resultado;
 	}
 
-	@Override
-	public String obtenerCabecera(HashMap<String, Object> mapeoVariables) {
+	private String construyeNombre(Persona persona) {
+	
+		String r = "";
+		if (!Checks.esNulo(persona.getNombre())) {
+			r += persona.getNombre().trim() + " ";
+		}
+		if (!Checks.esNulo(persona.getApellido1())) {
+			r += persona.getApellido1().trim() + " ";
+		}
+		if (!Checks.esNulo(persona.getApellido2())) {
+			r += persona.getApellido2().trim();
+		}
+		return r.trim().toUpperCase();
 
-		String cabecera = "<table style='font-size:12px'>"
-				+ "<tr>"
-				+ "<td width='45%' style='border:1px solid black'>BANKIA S.A<br />PASEO DE LA CASTELLANA, 189<br />28046 Madrid</td>"
-				+ "<td width='10%' style='border-style: hidden'></td>"
-				+ "<td width='45%' style='border:1px solid black'>" 
-				+ mapeoVariables.get(NOMBRE) 
-				+ " "+ mapeoVariables.get(APELLIDO1) 
-				+ " "+ mapeoVariables.get(APELLIDO1) 
-				+ "<br/>"+ mapeoVariables.get(DOMICILIO) 
-				+ "</td>"
-				+ "</tr>"
-				+ "</table><br />";
+	}
+
+	private String construyeDireccion1(Direccion dir) {
 		
+		String resultado = "";
+		if (!Checks.esNulo(dir.getTipoVia()) && !Checks.esNulo(dir.getTipoVia().getDescripcion())) {			
+			resultado += dir.getTipoVia().getDescripcion().trim();
+		}
+		if (!Checks.esNulo(dir.getDomicilio())) {			
+			resultado += " " + dir.getDomicilio().trim();
+		}
+		if (!Checks.esNulo(dir.getDomicilio_n())) {
+			resultado += " " + dir.getDomicilio_n().trim();
+		}
+		return resultado.trim().toUpperCase();
+	}
+	
+	private String construyeDireccion2(Direccion dir) {
+		NumberFormat nf = new DecimalFormat("00000");
+		String resultado = "";
+		if (!Checks.esNulo(dir.getCodigoPostal())) {
+			resultado += nf.format(dir.getCodigoPostal()) + " ";
+		}
+		if (!Checks.esNulo(dir.getLocalidad()) && !Checks.esNulo(dir.getLocalidad().getDescripcion())) {
+			resultado += dir.getLocalidad().getDescripcion();
+		} else if (!Checks.esNulo(dir.getMunicipio())) {
+			resultado += dir.getMunicipio();
+		}
+		return resultado.trim().toUpperCase();
+	}
+	
+	private String construyeDireccion3(Direccion dir) {
+		String resultado = "";
+		if (!Checks.esNulo(dir.getProvincia()) && !Checks.esNulo(dir.getProvincia().getDescripcion())) {
+			resultado += " (" + dir.getProvincia().getDescripcion() + ")";
+		}
+		return resultado.trim().toUpperCase();
+	}
+	
+	@Override
+	public Map<String, String> obtenerCabecera(EnvioBurofaxPCO envioBurofax, String contexto) {
+
+		Map<String, String> cabecera = new HashMap<String, String>();
+
+		if (PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(contexto)) {
+			cabecera.put(CABECERA_NOMBRE_PERSONA, construyeNombre(envioBurofax.getBurofax().getDemandado()));
+			cabecera.put(CABECERA_DIRECCION1, construyeDireccion1(envioBurofax.getDireccion()));
+			cabecera.put(CABECERA_DIRECCION2, construyeDireccion2(envioBurofax.getDireccion()));
+			cabecera.put(CABECERA_DIRECCION3, construyeDireccion3(envioBurofax.getDireccion()));
+		}
 		return cabecera;
 	}
 
 	@Override
-	public InputStream obtenerPlantillaBurofax() {
+	public InputStream obtenerPlantillaBurofax(String proyectoRecovery, String operacionBFA) {
+
+		String tipoPlantilla;
+		if (!PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(proyectoRecovery)) {
+			tipoPlantilla = NOMBRE_PLANTILLA_BUROFAX;
+		} else {
+			if ("S".equals(operacionBFA)) {
+				tipoPlantilla = NOMBRE_PLANTILLA_BUROFAX_BFA;
+			} else {
+				tipoPlantilla = NOMBRE_PLANTILLA_BUROFAX_BANKIA;
+			}
+		}
 
 		String directorio = parametrizacionDao.buscarParametroPorNombre(DIRECTORIO_PLANTILLAS_LIQUIDACION).getValor();
 
 		String nombreFichero = "";
 		if (!directorio.endsWith(File.separator)) {
-			nombreFichero = directorio + File.separator + NOMBRE_PLANTILLA_BUROFAX;
+			nombreFichero = directorio + File.separator + tipoPlantilla;
 		} else {
-			nombreFichero = directorio + NOMBRE_PLANTILLA_BUROFAX;
+			nombreFichero = directorio + tipoPlantilla;
 		}
 
 		InputStream is = null;
@@ -344,11 +425,11 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 
 	@Override
 	public FileItem generarDocumentoBurofax(InputStream plantillaBurofax,
-			String nombreFichero, String cabecera, String contenidoParseadoFinal) {
+			String nombreFichero, Map<String, String> cabecera, String contenidoParseadoFinal) {
 		
 		FileItem documentoBurofax = null;
 		try {
-			documentoBurofax  = informesManager.generarEscritoConContenidoHTML(cabecera, contenidoParseadoFinal, nombreFichero,plantillaBurofax);
+			documentoBurofax  = informesManager.generarEscritoConContenidoHTML(cabecera, contenidoParseadoFinal, nombreFichero, plantillaBurofax);
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

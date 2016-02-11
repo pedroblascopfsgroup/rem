@@ -21,12 +21,28 @@
 	<input name="traerGestionVencidos" type="java.lang.Boolean"/>
 	<input name="tituloAdicionalGrid" type="java.lang.String"/>
 	
+	<action-state id="tienePluginProcurador">
+		<evaluate expression="executor.execute('plugin.mejoras.web.procuradores.pluginProcuradoresIsInstall')" result="flowScope.tieneProcurador" />
+		<transition to="decisionTieneProcurador"/>
+	</action-state>
+	
+	<decision-state id="decisionTieneProcurador">
+		<if test="tieneProcurador" then="moduloProcurador" else="listado"/>
+	</decision-state>
+	
+	<action-state id="moduloProcurador">
+		<evaluate expression="executor.execute('es.pfsgroup.plugin.recovery.procuradores.configuracion.api.activoDespachoIntegral')" result="flowScope.activoDespachoIntegral" />
+		<transition to="listadoprocuradores"/>
+	</action-state>
+	
+	<action-state id="listadoprocuradores">
+		<evaluate expression="executor.execute('es.pfsgroup.plugin.recovery.procuradores.configuracion.api.activoCategorizacion')" result="flowScope.idCategorizacion" />
+		<transition to="listado"/>
+	</action-state>
 	
 	<!-- renderiza el formulario -->
     <end-state id="listado" view="plugin/mejoras/tareas/listadoTareas" >	
-	    
 		<on-entry>
-	    	
     		<evaluate expression="requestParameters.codigoTipoTarea" result="flowScope.codigoTipoTarea" />
 			<evaluate expression="requestParameters.alerta" result="flowScope.alerta" />
 			<evaluate expression="requestParameters.espera" result="flowScope.espera" />
@@ -45,7 +61,7 @@
 			<evaluate expression="executor.execute('es.pfsgroup.recovery.ext.api.tareas.opciones.tieneOpcionBuzonOptimizado')" result="flowScope.buzonOptimizado" />
 	    </on-entry>
 		
-    </end-state> 
+    </end-state>   
 
     
 </flow>

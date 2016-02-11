@@ -11,6 +11,7 @@
 			<json:property name="id" value="${rec.id}"/>
 			<json:property name="descripcion" value="${rec.descripcion}"/>
 			<json:property name="codigo" value="${rec.codigo}"/>
+			<json:property name="esTipoCompraVentaDacion" value="${rec.tipoCompraVentaDacion}" />
 		</json:object>
 	</json:array>
 </fwk:json>			

@@ -10,7 +10,7 @@
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <fwk:page>
-	
+
 	<pfslayout:includetab name="tabCabecera">
 		<%@ include file="tabCabeceraDespachoExterno.jsp"%>
 	</pfslayout:includetab>
@@ -19,66 +19,63 @@
 		<%@ include file="tabGestoresDespachoExterno.jsp"%>
 	</pfslayout:includetab>
 
-	<%--El tab supervisores solo lo mostramos en el caso que el despacho no sea de procuradores --%>
-	<c:if test="${despacho.tipoDespacho.codigo!='2' || despacho.tipoDespacho.codigo!='1'}">
-		<pfslayout:includetab name="tabSupervisores">
-			<%@ include file="tabSupervisoresDespachoExterno.jsp"%>
-		</pfslayout:includetab>
-		<pfslayout:tabpanel name="tabsDespacho"
-			tabs="tabCabecera,tabGestores,tabSupervisores" />
-	</c:if>
-	
-	<c:if test="${despacho.tipoDespacho.codigo=='2'}">
-		<pfslayout:tabpanel name="tabsDespacho"
-			tabs="tabCabecera,tabGestores" />
-	</c:if>
-	
-var tabPanel;
-var numTab = '${numTab}';
-var xxx = '${usuarioEntidad}';
-debugger;
-	<c:if test="${despacho.tipoDespacho.codigo=='1'}">
-		<pfslayout:includetab name="tabEsquemaTurnado">
-			<%@ include file="tabEsquemaTurnado.jsp"%>
-		</pfslayout:includetab>
-		<pfslayout:includetab name="tabProcuradores">
-			<%@ include file="tabProcuradoresDespachoExterno.jsp"%>
-		</pfslayout:includetab>
-			<%--<pfslayout:tabpanel name="tabsDespacho"
-				tabs="tabCabecera,tabGestores,tabSupervisores,tabProcuradores,tabEsquemaTurnado" /> --%>
-		tabsDespacho=new Ext.TabPanel({
-		       autoHeight:true
-		       <c:if test="${usuarioEntidad == 'BANKIA'}">
-		       ,items:[tabCabecera,tabGestores,tabSupervisores,tabProcuradores,tabEsquemaTurnado]
-		       </c:if>
-		       <c:if test="${usuarioEntidad != 'BANKIA'}">
-		       ,items:[tabCabecera,tabGestores,tabSupervisores,tabProcuradores]
-		       </c:if>		
-		       ,layoutOnTabChange:true 
-		       ,activeItem:${numTab == null ? 0 : numTab}
-		       ,autoScroll:true
-		       ,border : false
-		})
+	<pfslayout:includetab name="tabSupervisores">
+		<%@ include file="tabSupervisoresDespachoExterno.jsp"%>
+	</pfslayout:includetab>
 
-	</c:if>	
+	<c:choose>
+
+		<%-- Es tipo despacho letrado --%>
+		<c:when test="${despacho.tipoDespacho.codigo == codigoTipoDespachoLetradoValido}">
+			tabsDespacho = new Ext.TabPanel({
+				autoHeight: true
+				,items: [tabCabecera, tabGestores, tabSupervisores]
+				,layoutOnTabChange: true 
+				,activeItem: ${numTab == null ? 0 : numTab}
+				,autoScroll: true
+				,border: false
+			})
+
+			<%-- Es tipo despacho letrado y es bankia se añade el tab turnado --%>
+			<c:if test="${usuarioEntidad == 'BANKIA'}">
+
+				<pfslayout:includetab name="tabEsquemaTurnado">
+					<%@ include file="tabEsquemaTurnado.jsp"%>
+				</pfslayout:includetab>
+
+				tabsDespacho.add(tabEsquemaTurnado);
+			</c:if>
+
+			<%-- Es tipo despacho letrado y está habilitado el modulo de procuradores se añade el tab procuradores--%>
+			<c:if test="${moduloProcuradoresActivado}">
+
+				<pfslayout:includetab name="tabProcuradores">
+					<%@ include file="tabProcuradoresDespachoExterno.jsp"%>
+				</pfslayout:includetab>
+
+				tabsDespacho.add(tabProcuradores);
+			</c:if>
+
+		</c:when>
+
+		<%-- Es tipo despacho procurador (no debe mostrar el tabSupervisores) --%>
+		<c:when test="${despacho.tipoDespacho.codigo == '2'}">
+			<pfslayout:tabpanel name="tabsDespacho" tabs="tabCabecera, tabGestores" />
+		</c:when>
+
+		<%-- Por defecto y para todos los tipos restantes de despacho se muestra [tabCabecera, tabGestores, tabSupervisores] --%>
+		<c:otherwise>
+			<pfslayout:tabpanel name="tabsDespacho" tabs="tabCabecera, tabGestores, tabSupervisores" />
+		</c:otherwise>
+	</c:choose>
+
 	var panel = new Ext.Panel({
-       bodyStyle : 'padding : 5px'
-       ,autoHeight : true
-       ,items : [tabsDespacho]
-       ,tbar : new Ext.Toolbar()
-})
-	<%--<c:if test="${nombretab !=null}">
-		page.add(panel);
-	</c:if> --%>
-page.add(panel);
-		<%--page.add(tabsDespacho); --%>
-	<%--<c:choose>
-    <c:when test="${numTab != ''}">
-        page.add(panel);
-    </c:when>    
-    <c:otherwise>
-        page.add(tabsDespacho);
-    </c:otherwise>
-</c:choose> --%>
+		bodyStyle : 'padding : 5px'
+		,autoHeight : true
+		,items : [tabsDespacho]
+		,tbar : new Ext.Toolbar()
+	})
+
+	page.add(panel);
 
 </fwk:page>

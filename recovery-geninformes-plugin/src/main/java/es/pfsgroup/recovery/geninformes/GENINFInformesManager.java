@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -919,6 +920,7 @@ public class GENINFInformesManager implements GENINFInformesApi {
 			resultado.setFile(fileSalidaTemporal);
 			
 		}catch(Throwable e){
+			System.out.println("generarEscritoConVariables: " + e);
 			throw e;
 		}finally{
 			if(!Checks.esNulo(out)){
@@ -1015,13 +1017,14 @@ public class GENINFInformesManager implements GENINFInformesApi {
 	}
 
 
-	public FileItem generarEscritoConContenidoHTML(String cabecera,
+	public FileItem generarEscritoConContenidoHTML(Map<String, String> cabecera,
 			String contenidoParseadoFinal, String nombreFichero,
 			InputStream plantillaBurofax)  throws Throwable {
 
 		File fileSalidaTemporal = null;
 		FileItem resultado = null;
 		OutputStream out = null;
+        final String TABLA_AUX = "<table width='100%' style='font-size:6px'><tr><td>&nbsp;</td></tr></table>";
 		
 		try{
 			// Comprobamos que exista la plantilla
@@ -1037,14 +1040,18 @@ public class GENINFInformesManager implements GENINFInformesApi {
 			IXDocReport report = XDocReportRegistry.getRegistry().loadReport(plantillaBurofax, TemplateEngineKind.Freemarker);		
 			IContext context = report.createContext();
 
-
             // Creamos campo de metadata para manejar el formateo del contenido 
-            FieldsMetadata metadataCuerpo = report.createFieldsMetadata();
-            metadataCuerpo.addFieldAsTextStyling(CONTENIDO, SyntaxKind.Html);
-    
-            // Incluir el contenido de la cabecera
-            context.put(CONTENIDO,cabecera + contenidoParseadoFinal);
+            FieldsMetadata metadata = report.createFieldsMetadata();
+
+            // Incluir el contenido del cuerpo
+            metadata.addFieldAsTextStyling(CONTENIDO, SyntaxKind.Html);
+			context.put(CONTENIDO,TABLA_AUX + contenidoParseadoFinal + TABLA_AUX);
 			
+            // Incluir el contenido de la cabecera
+			for(Map.Entry<String, String> entry : cabecera.entrySet()){
+				context.put(entry.getKey(),entry.getValue());	
+			}
+
 			// Preparamos el fichero temporal
 			fileSalidaTemporal = File.createTempFile("escrito", ".docx");
 			

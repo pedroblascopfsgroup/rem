@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.dto.WebDto;
@@ -34,7 +35,7 @@ import es.pfsgroup.recovery.ext.factory.dao.dto.DtoResultadoBusquedaTareasBuzone
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.VTARBusquedaOptimizadaTareasDao;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.model.VTARTareaVsUsuario;
 
-@Repository("VTARBusquedaOptimizadaTareasDao")
+@Component
 public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<TareaNotificacion, Long> implements VTARBusquedaOptimizadaTareasDao {
     
     @Autowired
@@ -82,6 +83,7 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
      * @param modelClass
      * @return
      */
+    @Override
     public final HQLBuilderReutilizable createHQLBbuscarTareasPendiente(DtoBuscarTareaNotificacion dto, Usuario u, final Class<? extends DtoResultadoBusquedaTareasBuzones> modelClass){
     	dto.setSort(reescribeParametro(dto.getSort()));
 
@@ -262,12 +264,13 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
     }
     
     private StringBuilder armaFiltrosBasicosString(final DtoBuscarTareaNotificacion dto, final Usuario u) {
-    	final StringBuilder hb = new StringBuilder();
-    	
-    	//Ante todo que cumpla el tipo de tarea
+        final StringBuilder hb = new StringBuilder();
+
+        //Ante todo que cumpla el tipo de tarea
         // Filtro por tipo de tarea
         //HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vtar.codigoTipoTarea", dto.getCodigoTipoTarea());
         hb.append(" vtar.codigoTipoTarea = " + dto.getCodigoTipoTarea() + " AND (");
+   	
     	
     	List<Long> grupos = grupoUsuarioDao.buscaGruposUsuario(u);
     	grupos.add(u.getId()); // incluimos el usuario
@@ -477,7 +480,8 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 
             Date fechaHastaFinal;
             if (!Checks.esNulo(dto.getFechaVencimientoHasta())) {
-                fechaHastaFinal = fechaHastaParsed.getTime();
+            	fechaHastaParsed.add(Calendar.DAY_OF_MONTH, +1);
+            	fechaHastaFinal = fechaHastaParsed.getTime();
             } else {
                 if ("=".equals(dto.getFechaVencDesdeOperador()) && fechaDesdeParse != null) {
                     fechaHastaParsed = fechaDesdeParse;

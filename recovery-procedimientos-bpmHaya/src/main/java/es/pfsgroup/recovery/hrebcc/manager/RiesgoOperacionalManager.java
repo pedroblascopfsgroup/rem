@@ -43,9 +43,11 @@ public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 	GenericABMDao genericDao;
 	
 	@Autowired
+
 	RiesgoOperacionalVencidosDao riesgoOperacionalVencidosDao;
 	
 	@Autowired
+
 	ProcedimientoManager procedimientoManager;
 	
 	@Autowired
@@ -130,6 +132,7 @@ public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 		Vencidos resulVencidos = null;
 		
 		if(!Checks.esNulo(cntId)){
+
 			List<Vencidos> vencidos = riesgoOperacionalVencidosDao.getListVencidos(cntId);
 			
 			if(!Checks.esNulo(vencidos) && vencidos.size() > 0){

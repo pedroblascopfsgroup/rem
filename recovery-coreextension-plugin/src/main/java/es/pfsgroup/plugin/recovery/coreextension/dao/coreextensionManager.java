@@ -243,9 +243,18 @@ public class coreextensionManager implements coreextensionApi {
 	@Override
 	@BusinessOperation(GET_LIST_USUARIOS_PAGINATED)
 	public Page getListUsuariosPaginatedData(UsuarioDto usuarioDto) {
-		Page page = gestoresDao.getGestoresByDespacho(usuarioDto);
-		return this.colocarGestorDefectoPrimeraPosicion((List<Usuario>) page.getResults(),usuarioDto.getIdTipoDespacho(),page.getTotalCount());
-	}	
+		return gestoresDao.getGestoresByDespacho(usuarioDto);
+	//	return this.colocarGestorDefectoPrimeraPosicion((List<Usuario>) page.getResults(),usuarioDto.getIdTipoDespacho(),page.getTotalCount());
+	}
+	
+	/* (non-Javadoc)
+	 * @see es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi#getListUsuariosDefectoPaginatedData(es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto)
+	 */
+	@BusinessOperation(GET_LIST_USUARIOS_DEFECTO_PAGINATED)
+	public Page getListUsuariosDefectoPaginatedData(UsuarioDto usuarioDto) {
+		return gestoresDao.getGestoresByDespachoDefecto(usuarioDto);
+	//	return this.colocarGestorDefectoPrimeraPosicion((List<Usuario>) page.getResults(),usuarioDto.getIdTipoDespacho(),page.getTotalCount());
+	}
 
 	@Override
 	@BusinessOperation(SAVE_GESTOR)
@@ -602,13 +611,19 @@ public class coreextensionManager implements coreextensionApi {
 		return null;
 	}
 	
+	
+	/*
+	 * Los siguientes 2 métodos estan comentados porque al final no se han requerido, pero se mantienen para 
+	 * un posible uso futuro.
+	 */
+	
 	/**
 	 * Método que dada una lista de Gestores de un despacho, coloca en primera posición al gestor por defecto, 
 	 * dejando del segundo de la lista al final en el orden que le llega (alfabeticamente por defecto).
 	 * @param lista
 	 * @param idDespacho
 	 * @return
-	 */
+	 *
 	private Page colocarGestorDefectoPrimeraPosicion(List<Usuario> lista, Long idDespacho, int totalCount)
 	{
 		PageSql page = new PageSql();
@@ -644,7 +659,7 @@ public class coreextensionManager implements coreextensionApi {
 		page.setTotalCount(totalCount);
 		page.setResults(lista);
 		return page;
-	}
+	}*/
 
 	/**
 	 * Realiza un ranking en la coincidencia de palabras del nombre del Despacho (DES_DESPACHO) con el nombre del 
@@ -654,7 +669,7 @@ public class coreextensionManager implements coreextensionApi {
 	 * @param ranking
 	 * @param contador
 	 * @return
-	 */
+	 *
 	private int[] criterioPorNombreDespUsu(List<Usuario> lista, String[] cadenaDespacho, int[] ranking) {
 		int contador = 0;
 		for(Usuario usuario : lista)
@@ -672,6 +687,6 @@ public class coreextensionManager implements coreextensionApi {
 		}
 		
 		return ranking;
-	}
+	}*/
 
 }

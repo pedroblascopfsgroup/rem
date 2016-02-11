@@ -157,6 +157,10 @@
 			<scope>test</scope>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-masivo-common</artifactId>
+		</dependency> 
 	</dependencies>
 
 	<build>

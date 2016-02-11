@@ -28,6 +28,8 @@ public class ARQDDEstadoModelo implements Auditable, Dictionary{
     public static final String CODIGO_ESTADO_PRUEBAS = "2";
     public static final String CODIGO_ESTADO_VIGENTE = "3";
     public static final String CODIGO_ESTADO_HISTORICO = "4";
+    public static final String CODIGO_ESTADO_PENDIENTE_SIMULACION = "5";
+    public static final String CODIGO_ESTADO_SIMULACION = "6";
 	
 	@Id
     @Column(name = "DD_ESM_ID")

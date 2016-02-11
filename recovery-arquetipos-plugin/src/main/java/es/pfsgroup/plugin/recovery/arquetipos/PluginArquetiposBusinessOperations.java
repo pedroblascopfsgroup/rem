@@ -245,6 +245,20 @@ public class PluginArquetiposBusinessOperations {
 	 * @return
 	 */
 	public static final String SIM_SIMULA_MODELO = "plugin.arquetipos.simulacion.simulaModelo";
+	
+	/**
+	 * Deja pendiente de simulación un determinado modelo preparado para que dejarlo en estado simulación
+	 * @param idModelo
+	 * @return
+	 */
+	public static final String SIM_PENDIENTE_SIMULACION = "plugin.arquetipos.simulacion.pendienteSimulacionModelo";
+	
+	/**
+	 * Deja pendiente de simulación un determinado modelo preparado para que dejarlo en estado simulación
+	 * @param idModelo
+	 * @return
+	 */
+	public static final String SIM_CANCELAR_PENDIENTE_SIMULACION = "plugin.arquetipos.simulacion.cancelarPendienteSimulacionModelo";
 
 	
 }

@@ -19,6 +19,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.asunto.model.Asunto;
+import es.capgemini.pfs.asunto.model.DDTipoActuacion;
 import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
@@ -32,6 +33,7 @@ import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.precontencioso.documento.api.DocumentoPCOApi;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentosUGPCODto;
@@ -48,8 +50,10 @@ import es.pfsgroup.plugin.precontencioso.documento.model.DDUnidadGestionPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.recovery.ext.api.tipoFicheroAdjunto.dao.DDTipoFicheroAdjuntoDao;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
 
@@ -74,6 +78,7 @@ public class DocumentoPCOController {
 	private static final String CREAR_SOLICITUDES = "plugin/precontencioso/documento/popups/crearSolicitudes";
 	private static final String TIPO_GESTOR_JSON = "plugin/coreextension/asunto/tipoGestorJSON";
 	private static final String VALIDACION_DOCUMENTO_UNICO = "plugin/precontencioso/documento/json/validacionDocUnicoJSON";
+	private static final String TIPO_FICHERO_ADJUNTO_JSON = "plugin/coreextension/tipoFicheroAdjunto/tipoFicheroAdjuntoJSON";
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -90,10 +95,16 @@ public class DocumentoPCOController {
 	
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
+	
+	@Autowired
+	private ProcedimientoPCODao procedimientoPCODao;
+	
+    @Autowired
+    private DDTipoFicheroAdjuntoDao tipoFicheroAdjuntoDao;
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String getSolicitudesDocumentosPorProcedimientoId(@RequestParam(value = "idProcedimientoPCO", required = true) Long idProcedimientoPCO, ModelMap model) {
+	public String getSolicitudesDocumentosPorProcedimientoId(@RequestParam(value = "idProcedimientoPCO", required = true) Long idProcedimientoPCO, Long idTipoDocumento, ModelMap model) {
 	
 		boolean esDocumento;	
 		boolean tieneSolicitud;
@@ -101,7 +112,7 @@ public class DocumentoPCOController {
 		
 		List<SolicitudDocumentoPCODto> solicitudesDoc = new ArrayList<SolicitudDocumentoPCODto>();
 		
-		List<DocumentoPCO> listDocumentos = documentoPCOApi.getDocumentosPorIdProcedimientoPCO(idProcedimientoPCO);
+		List<DocumentoPCO> listDocumentos = documentoPCOApi.getDocumentosPorIdProcedimientoPCO(idProcedimientoPCO,idTipoDocumento);
 		List<DocumentoPCO> documentos = documentoPCOApi.getDocumentosOrdenadosByUnidadGestion(listDocumentos);
 
 		for (DocumentoPCO doc : documentos) {
@@ -258,7 +269,7 @@ public class DocumentoPCOController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String abrirIncluirDocumento(ModelMap model) {
+	public String abrirIncluirDocumento(ModelMap model, @RequestParam(value = "idPCO", required = true) Long idPCO) {
 
 		List<DDTipoFicheroAdjunto> listaTipoDocumentos = null;
 		List<DDUnidadGestionPCO> listaUG = null;
@@ -267,7 +278,9 @@ public class DocumentoPCOController {
 		IncluirDocumentoDto dto = new IncluirDocumentoDto();
 	
 		// Lista tipo documentos
-		listaTipoDocumentos = documentoPCOApi.getTiposDocumento();
+		List<DDTipoActuacion> actuaciones = new ArrayList<DDTipoActuacion>();
+		actuaciones.add(procedimientoPCODao.get(idPCO).getProcedimiento().getTipoActuacion());
+		listaTipoDocumentos = tipoFicheroAdjuntoDao.getListaPorTipoDeActuacion(actuaciones);
 		
 		// Lista Unidades Gestion
 		listaUG = documentoPCOApi.getUnidadesGestion();
@@ -728,5 +741,24 @@ public class DocumentoPCOController {
 		List<String> items = Arrays.asList(arrayTmp.split("\\s*,\\s*"));
         
 		return items;
+	}
+	
+	/**
+	 * Obtiene los tipos de documento del tipo de actuación PCO
+	 * 
+	 * @param request
+	 * @param model
+	 * @param idPCO
+	 * @return
+	 */
+	@RequestMapping
+	public String getTiposDocumentoPorTipoActuacion(WebRequest request, ModelMap model, @RequestParam(value = "idPCO", required = true) Long idPCO) {
+		
+		List<DDTipoActuacion> actuaciones = new ArrayList<DDTipoActuacion>();
+		actuaciones.add(procedimientoPCODao.get(idPCO).getProcedimiento().getTipoActuacion());
+		
+		model.put("tipoFicherosAdjunto", tipoFicheroAdjuntoDao.getListaPorTipoDeActuacion(actuaciones));
+		
+		return TIPO_FICHERO_ADJUNTO_JSON;
 	}
  }

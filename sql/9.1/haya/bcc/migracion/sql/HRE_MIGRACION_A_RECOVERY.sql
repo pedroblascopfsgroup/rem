@@ -2561,8 +2561,10 @@ BEGIN
                    SELECT DISTINCT A.PRC_ID, B.BIE_ID
                    FROM '||V_ESQUEMA||'.MIG_MAESTRA_HITOS A
                       , '||V_ESQUEMA||'.BIE_BIEN B
+		      , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS C
                    WHERE A.CD_BIEN IS NOT NULL --tRAMITES DE aDJUDICACION PARA ARRIBA
                      AND A.CD_BIEN = B.BIE_CODIGO_INTERNO
+		     AND A.PRC_ID = C.PRC_ID
                  UNION
                    SELECT DISTINCT D.PRC_ID, B.BIE_ID --SUBASTAS
                    FROM '||V_ESQUEMA||'.BIE_BIEN B

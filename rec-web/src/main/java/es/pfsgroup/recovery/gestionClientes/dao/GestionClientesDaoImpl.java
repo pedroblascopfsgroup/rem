@@ -11,10 +11,13 @@ import javax.annotation.Resource;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
+import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.HibernateQueryUtils;
+import es.pfsgroup.recovery.gestionClientes.GestionVencidosDTO;
 
 @Repository
 public class GestionClientesDaoImpl extends AbstractEntityDao<Persona, Long> implements GestionClientesDao {
@@ -22,6 +25,7 @@ public class GestionClientesDaoImpl extends AbstractEntityDao<Persona, Long> imp
 	@Resource
 	private Properties appProperties;
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<Map> obtenerCantidadDeVencidosUsuario(Usuario usuarioLogado) {
 
@@ -97,6 +101,70 @@ public class GestionClientesDaoImpl extends AbstractEntityDao<Persona, Long> imp
 			}
 		}
 		return set;
+	}
+
+	@Override
+	public Page obtenerListaVencidos(String codigoGestion, Usuario usuarioLogado) {
+		
+		StringBuilder sql = new StringBuilder("SELECT p.per_id AS \"id\", tpe.dd_tpe_descripcion AS \"descripcion\", p.per_nombre AS \"nombre\", "
+				+ "p.per_apellido1 AS \"apellido1\", p.per_apellido2 AS \"apellido2\", p.per_cod_cliente_entidad AS \"codClienteEntidad\", p.per_doc_id AS \"docId\", "
+				+ "p.per_telefono_1 AS \"telefono1\", scl.dd_scl_descripcion AS \"descripcionSegmento\", sce.dd_sce_descripcion AS \"descripcionSegmentoEntidad\", "
+				+ "p.per_num_contratos AS \"numContratos\", p.per_deuda_irregular AS \"deudaIrregular\", p.per_riesgo_dir_danyado AS \"riesgoDirectoDanyado\", "
+				+ "efc.dd_efc_descripcion AS \"descripcionEstadoFinanciero\", p.per_riesgo_autorizado AS \"riesgoAutorizado\", p.per_riesgo_dispuesto AS \"riesgoDispuesto\""
+				+ " FROM v_cve_clientes_vencidos_usu v INNER JOIN per_personas p ON v.per_id = p.per_id LEFT JOIN dd_tpe_tipo_persona tpe ON p.dd_tpe_id = tpe.dd_tpe_id"
+				+ " LEFT JOIN dd_scl_segto_cli scl ON p.dd_scl_id = scl.dd_scl_id LEFT JOIN dd_sce_segto_cli_entidad sce ON p.dd_sce_id = sce.dd_sce_id "
+				+ " LEFT JOIN dd_efc_estado_finan_cnt efc ON efc.dd_efc_id = p.dd_efc_id");
+		sql.append(getFiltroVencidos(codigoGestion, usuarioLogado));
+
+		return HibernateQueryUtils.pageSql(this, sql.toString(), GestionVencidosDTO.class);
+	}
+	
+	private String getFiltroVencidos(String codigoGestion, Usuario usuarioLogado) {
+		
+		Set<String> codigoZonas = usuarioLogado.getCodigoZonas();
+		Set<Long> perfiles = obtenIdPerfiles(usuarioLogado.getPerfiles());
+		
+		StringBuilder sql = new StringBuilder(" WHERE v.dd_tit_codigo = '");
+		sql.append(codigoGestion.replaceAll("[^\\w]", "")).append("'");
+		
+		//Inicio filtro por perfiles
+		if (perfiles != null){
+			int count = 0;
+			sql.append(" and V.PEF_ID_GESTOR in (");
+			for (Long p : perfiles){
+				count ++;
+				if (count > 1){
+					sql.append(", ");
+				}
+				sql.append(p.toString());
+			}
+			sql.append(")");
+		}
+		// Fin Filtro por perfiles
+		
+		// Inicio filtro por zonas
+		if (codigoZonas != null){
+			sql.append(" and (");
+			int count = 0;
+			for (String z : codigoZonas){
+				count ++;
+				if (count > 1){
+					sql.append(" or ");
+				}
+				sql.append("V.ZON_COD like '").append(z).append("%'");
+			}
+			sql.append(")");
+		}
+		// Fin filtro por zonas
+		
+		return sql.toString();
+	}
+
+	@Override
+	public Long obtenerCantidadDeVencidosUsuario(String codigoGestion,
+			Usuario usuarioLogado) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

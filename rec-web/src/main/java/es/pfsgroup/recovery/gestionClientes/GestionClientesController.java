@@ -8,7 +8,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.WebRequest;
 
-import es.pfsgroup.plugin.recovery.mejoras.cliente.dto.MEJBuscarClientesDto;
+import es.capgemini.devon.pagination.Page;
 
 @Controller
 public class GestionClientesController {
@@ -16,6 +16,7 @@ public class GestionClientesController {
 	@Autowired
 	private GestionClientesManager manager;
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getContadores(WebRequest request, ModelMap model ){
 		List<GestionClientesCountDTO> tareas = manager.getContadoresGestionVencidos();
@@ -35,6 +36,7 @@ public class GestionClientesController {
 		return "gestionClientes/listadoVencidos";
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getListadoSintomaticos(WebRequest request, ModelMap model) {
 		//TODO
@@ -48,10 +50,11 @@ public class GestionClientesController {
 	}
 	
 	@RequestMapping
-	public String getVencidos(WebRequest request, ModelMap model) {
+	public String getDatosVencidos(WebRequest request, ModelMap model) {
 		
-		MEJBuscarClientesDto clientesDto = new MEJBuscarClientesDto();
-		
+		Page vencidos = manager.getDatosVencidos();
+				
+		model.put("pagina", vencidos);
 		return "gestionClientes/gestionVencidosJSON";
 	}
 }

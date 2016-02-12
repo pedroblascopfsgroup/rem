@@ -12,6 +12,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
+import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.itinerario.model.DDTipoItinerario;
 import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
@@ -78,6 +79,11 @@ public class GestionClientesManager {
 		dto.setDtype(TareaNotificacion.class.getSimpleName());
 		dto.setCategoriaTarea("");
 		return dto;
+	}
+
+	public Page getDatosVencidos() {
+		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		return dao.obtenerListaVencidos(DDTipoItinerario.ITINERARIO_RECUPERACION, usuario);
 	}
 
 }

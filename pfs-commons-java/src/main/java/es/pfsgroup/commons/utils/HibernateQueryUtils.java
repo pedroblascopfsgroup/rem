@@ -19,7 +19,7 @@ import es.capgemini.devon.pagination.PaginationParams;
  * 
  */
 public class HibernateQueryUtils {
-
+	
 	/**
 	 * Obtiene un objeto �nico mediante una consulta a Hibernate.
 	 * 
@@ -79,49 +79,11 @@ public class HibernateQueryUtils {
 	 *            DTO con informaci�n de paginaci�n
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public static <T extends Serializable, K extends Serializable> Page page(AbstractHibernateDao<T, K> dao, HQLBuilder hqlbuilder, PaginationParams dto) {
 
 		return page(dao, hqlbuilder, dto, null);
 	}
-
-//	/**
-//	 * Devuelve una lista de objetos mediante una consulta a Hibernate
-//	 * 
-//	 * @param dao
-//	 *            Dao actual
-//	 * @param hqlbuilder
-//	 *            Builder HQL
-//	 * @param dto
-//	 *            DTO con informaci�n de paginaci�nar
-//	 * @return
-//	 */
-//	@SuppressWarnings("unchecked")
-//	public static <T extends Serializable, K extends Serializable> Page page(AbstractHibernateDao<T, K> dao, HQLBuilder hqlbuilder, WebDto dto) {
-//
-//		return page(dao, hqlbuilder, dto, null);
-//	}
-
-//	/**
-//	 * Devuelve una lista de objetos mediante una consulta a Hibernate. Este
-//	 * m�todo transforma los resultados a un DTO concreto
-//	 * 
-//	 * @param dao
-//	 *            Dao actual
-//	 * @param hqlbuilder
-//	 *            Builder HQL
-//	 * @param dto
-//	 *            DTO con informaci�n de paginaci�n
-//	 * @param clazz
-//	 *            DTO al que queremos transformar
-//	 * @return
-//	 */
-//	@SuppressWarnings("unchecked")
-//	public static <T extends Serializable, K extends Serializable> Page page(AbstractHibernateDao<T, K> dao, HQLBuilder hqlbuilder, WebDto dto, Class clazz) {
-//
-//		return page(dao, hqlbuilder, dto, clazz);
-//	}
-
+	
 	/**
 	 * Devuelve una lista de objetos mediante una consulta a Hibernate. Este
 	 * m�todo transforma los resultados a un DTO concreto
@@ -136,7 +98,6 @@ public class HibernateQueryUtils {
 	 *            DTO al que queremos transformar
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public static <T extends Serializable, K extends Serializable> Page page(AbstractHibernateDao<T, K> dao, HQLBuilder hqlbuilder, PaginationParams dto, Class clazz) {
 
 		if (clazz == null) {
@@ -145,6 +106,29 @@ public class HibernateQueryUtils {
 			return returnPageTransformed(dao, hqlbuilder, dto, clazz);
 		}
 	}
+	
+	/**
+	 * Devuelve una lista de objetos mediante una consulta a Hibernate. Este
+	 * m�todo transforma los resultados a un DTO concreto
+	 * 
+	 * @param dao
+	 *            Dao actual
+	 * @param sql
+	 *            Sentencia sql
+	 * @param clazz
+	 *            DTO al que queremos transformar
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	public static <T extends Serializable, K extends Serializable> Page pageSql(AbstractHibernateDao<T, K> dao, String sql, Class clazz) {
+
+		PageSQLTransformHibernate page = new PageSQLTransformHibernate(sql, clazz);
+		page.setResultsPerPage(25);
+		dao.getHibernateTemplate().executeFind(page);
+
+		return page;
+	}
+
 
 	private static <T extends Serializable, K extends Serializable> Page returnPage(AbstractHibernateDao<T, K> dao, HQLBuilder hqlbuilder, PaginationParams dto) {
 		PageHibernate page;

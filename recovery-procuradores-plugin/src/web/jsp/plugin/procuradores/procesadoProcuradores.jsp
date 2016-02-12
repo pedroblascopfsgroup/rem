@@ -507,7 +507,7 @@ onViewClick : function(doFocus){
         name: 'asunto' 
         ,allowBlank:false
         ,store:asuntosComboStore
-        ,width:680
+        ,width:605
         ,fieldLabel: '<s:message code="plugin.procuradores.procesadoResoluciones.filtroAsunto" text="**Asunto"/>'
         ,tpl: newAsuntoTemplate  
         ,forceSelection:true
@@ -580,7 +580,45 @@ onViewClick : function(doFocus){
 				app.abreAsunto(idAsunto.getValue(), filtroAsunto.getValue());
     		}
     });
-    
+
+    var btnAbreAnotacion = new Ext.Button({
+	    text:'<s:message code="asunto.boton.anotacion" text="**Anotacion"/>'
+	    ,iconCls:'icon_comunicacion'
+	    ,disabled: true
+	    ,handler: function() {	        
+    		var fieldIdAsunto = this.findParentByType(Ext.form.FormPanel).getForm().findField('idAsunto');
+
+            var w = new Ext.Window({
+                autoLoad: {
+                    url: app.resolveFlow('recoveryagendamultifuncionanotacion/anotacionWindow')
+                    ,scripts: true
+                    ,params: {id: fieldIdAsunto.value, codUg: '3'}
+                }
+                ,width:600
+                ,title : '<s:message code="plugin.agendaMultifuncion.nuevaAnotacion.window.title" text="**Crear anotacion" />'
+                ,height:530
+                ,closable:false
+                ,resizable: true
+                ,modal:true
+                ,layout:'fit'
+                ,autoShow:true    
+                ,x:50
+                ,y:0
+                ,bodyBorder : false
+            });
+
+            w.on(app.event.DONE, function() {
+                w.close();
+            });
+
+            w.on(app.event.CANCEL, function() {
+                w.close();
+            });
+
+            w.show();
+    	}
+	})
+
     var btnAbrePrc = new Ext.Button({
            text : '<s:message code="plugin.procuradores.procesadoTareas.btnAbreProcedimiento" text="**Procedimiento" />'
            ,iconCls:'icon_procedimiento'
@@ -665,20 +703,23 @@ onViewClick : function(doFocus){
         ,border:false
         ,layout : 'table'
         ,layoutConfig:{
-            columns:3
+            columns:4
         }
         ,width:950
-        ,defaults : {layout:'form',border: false,bodyStyle:'padding: 10px 5px 0px 10px'} 
+        ,defaults : {layout:'form',border: false,bodyStyle:'padding: 6px 0px 0px 10px'} 
         ,items : [
                  {     
                  	 labelWidth: 50,
                      items:[ filtroAsunto ]
                  }, 
                  {	labelWidht: 00,
-                 	items: [ btnAbreAsunto]
+                 	items: [ btnAbreAsunto ]
                  }, 
                  {	labelWidht: 00,
-                 	items: [ btnAbrePrc, idAsunto, idTarea, idProcedimiento]
+                 	items: [ btnAbrePrc ]
+                 }, 
+                 {	labelWidht: 00,
+                 	items: [ btnAbreAnotacion, idAsunto, idTarea, idProcedimiento]
                  }
          ]
     });      
@@ -1098,6 +1139,7 @@ var actualizaBotones = function(){
 }
 
 var habilitaBotonesPopUp = function(asunto, proc) {
+	btnAbreAnotacion.setDisabled(asunto);
 	btnAbreAsunto.setDisabled(asunto);
 	btnAbrePrc.setDisabled(proc);
 }

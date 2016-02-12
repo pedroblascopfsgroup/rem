@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JORGE MARTIN
---## FECHA_CREACION=20160118
+--## FECHA_CREACION=20160214
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=PRODUCTO-585
@@ -42,7 +42,7 @@ DECLARE
     */
     V_TR_ID VARCHAR2(16 CHAR):= 			'1005';
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'RESOL_ESP_NOTI';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Notificacion';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Notificación letrado';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'HIP';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'NOTIFICACION'; -- ADVANCE, INFO, etc.
     
@@ -61,6 +61,9 @@ BEGIN
     
     IF table_count = 1 THEN
    		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.DD_TR_TIPOS_RESOLUCION... Ya existe el DD_TR_TIPOS_RESOLUCION '||V_TR_CODIGO||'.');
+      V_MSQL := 'UPDATE ' || V_ESQUEMA || '.DD_TR_TIPOS_RESOLUCION SET DD_TR_DESCRIPCION = ''' || V_TR_DESCRIPCION || ''' WHERE DD_TR_ID = ' || V_TR_ID;
+      EXECUTE IMMEDIATE V_MSQL;
+
 	ELSE
 		-- Insertamos en la tabla dd_tr_tipos_resolucion el tipo de resolución
 		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION (' ||

@@ -95,7 +95,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 			
 			final Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 			final Boolean borrarOtrosUsu = tieneFuncion(usuario, "BORRAR_ADJ_OTROS_USU");
-			return adjuntoAssembler.listAdjuntoGridDtoToEXTAdjuntoDto(gestorDocumentalApi.listadoDocumentos(asunto.getGuid() , DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, null), borrarOtrosUsu);
+			return adjuntoAssembler.listAdjuntoGridDtoToEXTAdjuntoDto(gestorDocumentalApi.listadoDocumentos(id, asunto.getGuid() , DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, null), borrarOtrosUsu);
 		}else{
 			return super.getAdjuntosConBorrado(id);
 		}
@@ -110,7 +110,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 			Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(id);
 			
 			for(Contrato contrato : asunto.getContratos()){
-				List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(contrato.getNroContrato() , DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, null);
+				List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(null, contrato.getNroContrato() , DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, null);
 				if(Checks.esNulo(listDto) || Checks.estaVacio(listDto)){
 					adjuntos.add(adjuntoAssembler.contratoToExtAdjuntoGenericoDto(contrato));
 				}else{
@@ -133,7 +133,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 			List<Persona> personas = proxyFactory.proxy(AsuntoApi.class).obtenerPersonasDeUnAsunto(id);
 			
 			for(Persona persona : personas){
-				List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(persona.getCodClienteEntidad().toString(), DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, null);
+				List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(null, persona.getCodClienteEntidad().toString(), DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, null);
 				if(Checks.esNulo(listDto) || Checks.estaVacio(listDto)){
 					adjuntos.add(adjuntoAssembler.personaToExtAdjuntoGenericoDto(persona));
 				}else{
@@ -159,7 +159,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 				
 				Expediente expediente = genericDao.get(Expediente.class, genericDao.createFilter(FilterType.EQUALS, "id", asunto.getExpediente().getId()));
 				
-				List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(expediente.getGuid(), DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null);
+				List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(null, expediente.getGuid(), DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null);
 				if(Checks.esNulo(listDto) || Checks.estaVacio(listDto)){
 					adjuntos.add(adjuntoAssembler.expedienteToExtAdjuntoGenericoDto(expediente));
 				}else{
@@ -249,7 +249,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 			Procedimiento prc = genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", prcId));
 			MEJProcedimiento procedimiento = extProcedimientoManager.prepareGuid(prc);
 			
-			final List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(procedimiento.getGuid(), DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO, null);
+			final List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(prcId, procedimiento.getGuid(), DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO, null);
 			final Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 			final Boolean borrarOtrosUsu = tieneFuncion(usuario, "BORRAR_ADJ_OTROS_USU");
 			return adjuntoAssembler.listAdjuntoGridDtoTOListAdjuntoDto(listDto,borrarOtrosUsu);	
@@ -265,7 +265,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 			
 			Expediente expediente = genericDao.get(Expediente.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
 			
-			final List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(expediente.getGuid(), DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null);
+			final List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(null, expediente.getGuid(), DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null);
 			final Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 			final Boolean borrarOtrosUsu = tieneFuncion(usuario, "BORRAR_ADJ_OTROS_USU");
 			return adjuntoAssembler.listAdjuntoGridDtoTOListAdjuntoDto(listDto,borrarOtrosUsu);	
@@ -282,7 +282,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 			List<ExtAdjuntoGenericoDto> adjuntos = new ArrayList<ExtAdjuntoGenericoDto>();
 			
 			for(Persona persona : expedienteManagerApi.findPersonasByExpedienteId(id)){
-				List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(persona.getCodClienteEntidad().toString(), DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null);	
+				List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(null, persona.getCodClienteEntidad().toString(), DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null);	
 				if(Checks.esNulo(listDto) || Checks.estaVacio(listDto)){
 					adjuntos.add(adjuntoAssembler.personaToExtAdjuntoGenericoDto(persona));
 				}else{
@@ -304,7 +304,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 			List<ExtAdjuntoGenericoDto> adjuntos = new ArrayList<ExtAdjuntoGenericoDto>();
 			
 			for(Contrato contrato : expedienteManagerApi.findContratosRiesgoExpediente(id)){
-				List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(contrato.getNroContrato(), DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null);
+				List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(null, contrato.getNroContrato(), DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null);
 				if(Checks.esNulo(listDto) || Checks.estaVacio(listDto)){
 					adjuntos.add(adjuntoAssembler.contratoToExtAdjuntoGenericoDto(contrato));
 				}else{
@@ -325,7 +325,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 			
 			Contrato contrato = genericDao.get(Contrato.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
 			
-			final List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(contrato.getNroContrato(), DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, null);
+			final List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(null, contrato.getNroContrato(), DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, null);
 			final Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 			final Boolean borrarOtrosUsu = tieneFuncion(usuario, "BORRAR_ADJ_OTROS_USU");
 			return adjuntoAssembler.listAdjuntoGridDtoTOListAdjuntoDto(listDto,borrarOtrosUsu);	
@@ -340,7 +340,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 			
 			Persona persona = genericDao.get(Persona.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
 			
-			final List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(persona.getCodClienteEntidad().toString(), DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, null);
+			final List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(null, persona.getCodClienteEntidad().toString(), DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, null);
 			final Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 			final Boolean borrarOtrosUsu = tieneFuncion(usuario, "BORRAR_ADJ_OTROS_USU");
 			return adjuntoAssembler.listAdjuntoGridDtoTOListAdjuntoDto(listDto,borrarOtrosUsu);	

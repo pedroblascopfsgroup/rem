@@ -10,5 +10,7 @@ public interface AdjuntoDto {
 	
 	public String getRefCentera();
 	
+	public String getNombreTipoDoc();
+	
 
 }

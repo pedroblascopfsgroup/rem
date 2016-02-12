@@ -551,6 +551,11 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 				public String getRefCentera() {
 					return null;
 				}
+
+				@Override
+				public String getNombreTipoDoc() {
+					return null;
+				}
 			};
 			result.add(dto);
 		}

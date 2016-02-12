@@ -547,6 +547,11 @@ public class AdjuntoManager implements AdjuntoApi{
 				public String getRefCentera() {
 					return null;
 				}
+
+				@Override
+				public String getNombreTipoDoc() {
+					return null;
+				}
 			};
 			adjuntosConBorrado.add(dto);
 		}
@@ -688,6 +693,11 @@ public class AdjuntoManager implements AdjuntoApi{
 				public String getRefCentera() {
 					return null;
 				}
+
+				@Override
+				public String getNombreTipoDoc() {
+					return null;
+				}
 			};
 			adjuntosConBorrado.add(dto);
 		}
@@ -750,6 +760,11 @@ public class AdjuntoManager implements AdjuntoApi{
 
 				@Override
 				public String getRefCentera() {
+					return null;
+				}
+
+				@Override
+				public String getNombreTipoDoc() {
 					return null;
 				}
 			};
@@ -852,6 +867,12 @@ public class AdjuntoManager implements AdjuntoApi{
 
 				@Override
 				public String getRefCentera() {
+					return null;
+				}
+
+				@Override
+				public String getNombreTipoDoc() {
+					// TODO Auto-generated method stub
 					return null;
 				}
 			};

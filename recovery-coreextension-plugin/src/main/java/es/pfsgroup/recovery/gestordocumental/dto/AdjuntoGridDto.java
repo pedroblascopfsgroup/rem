@@ -16,6 +16,7 @@ public class AdjuntoGridDto {
 	private String ficheroBase64;
 	private String extFichero;
 	private Auditoria auditoria;
+	private String nombreTipoDoc;
 	
 	public Long getId() {
 		return id;
@@ -111,6 +112,14 @@ public class AdjuntoGridDto {
 	
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public String getNombreTipoDoc() {
+		return nombreTipoDoc;
+	}
+
+	public void setNombreTipoDoc(String nombreTipoDoc) {
+		this.nombreTipoDoc = nombreTipoDoc;
 	}
 
 }

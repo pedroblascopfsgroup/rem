@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.Set;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
@@ -79,6 +81,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.bienes.InformeProp
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDDocAdjudicacion;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDImposicionVenta;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionPosesoria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionTitulo;
@@ -373,9 +376,18 @@ public class EditBienController {
 		List<DDTasadora> tasadora = (List<DDTasadora>) executor.execute(
 				"dictionaryManager.getList", "DDTasadora");
 		map.put("tasadora", tasadora);
-		List<DDTipoTributacion> tributacion = (List<DDTipoTributacion>) executor
+		
+		List<DDTipoTributacion	> tributacion = (List<DDTipoTributacion>) executor
 				.execute("dictionaryManager.getList", "DDTipoTributacion");
+		//Para ordenar la lista por descripcion
+		Comparator<DDTipoTributacion> comparador = new Comparator<DDTipoTributacion> () {
+		    public int compare(DDTipoTributacion p1, DDTipoTributacion p2) {
+		    	return new String(p1.getDescripcion()).compareTo(new String(p2.getDescripcion()));
+		    }
+		};
+		Collections.sort(tributacion, comparador);
 		map.put("tributacion", tributacion);
+		
 		Map<String, NMBconfigTabsTipoBien> mapaTabs = nmbConfigTabs
 				.getMapaTabsTipoBien();
 		List<DDimpuestoCompra> impuestoCompra = (List<DDimpuestoCompra>) executor
@@ -392,7 +404,40 @@ public class EditBienController {
 		
 		List<DDTipoImposicion> imposicion = (List<DDTipoImposicion>) executor
 				.execute("dictionaryManager.getList", "DDTipoImposicion");
+		//HR-1316 Funcion provisional para que no muestre el valor 16 que debe desaparecer del diccionario
+		for(int i=0; i<imposicion.size();i++)
+			if(imposicion.get(i).getCodigo().equals("16") || imposicion.get(i).getCodigo().equals("20")) {
+				imposicion.remove(i);
+			}
+		//Para ordenar la lista por codigo - Este tiene en cuenta si los codigos de Diccionario son Numeros y Letras
+		Comparator<DDTipoImposicion> comparadorImp = new Comparator<DDTipoImposicion> () {
+		    public int compare(DDTipoImposicion p1, DDTipoImposicion p2) {
+		    	if((int)p1.getCodigo().charAt(0)>= 48 && (int)p1.getCodigo().charAt(0) <= 57 && 
+		    			(int)p2.getCodigo().charAt(0)>= 48 && (int)p2.getCodigo().charAt(0)	<= 57) {
+		    		return new Integer(Integer.parseInt(p1.getCodigo())).compareTo(new Integer(Integer.parseInt(p2.getCodigo())));
+		    	}
+		    	else
+		    		return new String(p1.getCodigo()).compareTo(new String(p2.getCodigo()));
+		    }
+		};
+		Collections.sort(imposicion, comparadorImp);
 		map.put("imposicion", imposicion);
+		
+		List<DDImposicionVenta> imposicionVenta = (List<DDImposicionVenta>) executor
+				.execute("dictionaryManager.getList", "DDImposicionVenta");
+		//Para ordenar la lista por codigo - Este tiene en cuenta si los codigos de Diccionario son Numeros y Letras
+		Comparator<DDImposicionVenta> comparadorImpVenta = new Comparator<DDImposicionVenta> () {
+		    public int compare(DDImposicionVenta p1, DDImposicionVenta p2) {
+		    	if((int)p1.getCodigo().charAt(0)>= 48 && (int)p1.getCodigo().charAt(0) <= 57 && 
+		    			(int)p2.getCodigo().charAt(0)>= 48 && (int)p2.getCodigo().charAt(0)	<= 57) {
+		    		return new Integer(Integer.parseInt(p1.getCodigo())).compareTo(new Integer(Integer.parseInt(p2.getCodigo())));
+		    	}
+		    	else
+		    		return new String(p1.getCodigo()).compareTo(new String(p2.getCodigo()));
+		    }
+		};
+		Collections.sort(imposicionVenta, comparadorImpVenta);
+		map.put("imposicionVenta", imposicionVenta);
 		
 		List<DDSiNo> sino = (List<DDSiNo>) executor
 				.execute("dictionaryManager.getList", "DDSiNo");
@@ -476,6 +521,10 @@ public class EditBienController {
 				.execute("dictionaryManager.getList", "DDTipoImposicion");
 		map.put("imposicion", imposicion);
 		
+		List<DDImposicionVenta> imposicionVenta = (List<DDImposicionVenta>) executor
+				.execute("dictionaryManager.getList", "DDImposicionVenta");
+		map.put("imposicionVenta", imposicionVenta);
+		
 		List<DDSiNo> sino = (List<DDSiNo>) executor
 				.execute("dictionaryManager.getList", "DDSiNo");
 		map.put("sino", sino);
@@ -524,6 +573,10 @@ public class EditBienController {
 		List<DDTipoImposicion> imposicion = (List<DDTipoImposicion>) executor
 				.execute("dictionaryManager.getList", "DDTipoImposicion");
 		map.put("imposicion", imposicion);
+		
+		List<DDImposicionVenta> imposicionVenta = (List<DDImposicionVenta>) executor
+				.execute("dictionaryManager.getList", "DDImposicionVenta");
+		map.put("imposicionVenta", imposicionVenta);
 		
 		List<DDSiNo> sino = (List<DDSiNo>) executor
 				.execute("dictionaryManager.getList", "DDSiNo");
@@ -579,6 +632,10 @@ public class EditBienController {
 		List<DDTipoImposicion> imposicion = (List<DDTipoImposicion>) executor
 				.execute("dictionaryManager.getList", "DDTipoImposicion");
 		map.put("imposicion", imposicion);
+		
+		List<DDImposicionVenta> imposicionVenta = (List<DDImposicionVenta>) executor
+				.execute("dictionaryManager.getList", "DDImposicionVenta");
+		map.put("imposicionVenta", imposicionVenta);
 		
 		List<DDSiNo> sino = (List<DDSiNo>) executor
 				.execute("dictionaryManager.getList", "DDSiNo");

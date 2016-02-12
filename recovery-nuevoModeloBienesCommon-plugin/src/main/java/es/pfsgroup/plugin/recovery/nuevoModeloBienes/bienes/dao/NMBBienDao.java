@@ -42,4 +42,6 @@ public interface NMBBienDao extends AbstractDao<NMBBien, Long>{
 	
 	List<Bien> getSolvenciasDeUnProcedimiento(Long idProcedimiento);
 	
+	Page buscarBienesExport(NMBDtoBuscarBienes dto, Usuario usuLogado);
+	
 }

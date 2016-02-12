@@ -801,6 +801,53 @@ Ext.namespace('Ext.ux.plugins');
         ,height : 35
         ,width : 200
         ,emptyText :'Filtrar por...'
+        ,enableKeyEvents: true
+        ,emptyText :'Filtrar por...'
+        ,doQuery : function(q, forceAll){
+	        q = Ext.isEmpty(q) ? '' : q;
+	        var qe = {
+	            query: q,
+	            forceAll: forceAll,
+	            combo: this,
+	            cancel:false
+	        };
+	        if(this.fireEvent('beforequery', qe)===false || qe.cancel){
+	            return false;
+	        }
+	        q = qe.query;
+	        forceAll = qe.forceAll;
+	        if(forceAll === true || (q.length >= this.minChars)){
+	            if(this.lastQuery !== q){
+	                this.lastQuery = q;
+	                if(this.mode == 'local'){
+	                    this.selectedIndex = -1;
+	                    if(forceAll){
+	                        this.store.clearFilter();
+	                    }else{
+	                        //this.store.filter(this.displayField, q);
+                      		this.store.filterBy(function(record){
+									var desc = record.get('descripcion');
+									if (desc.indexOf(filtroTipoDocumento.getRawValue()) > -1) {
+										return true;
+									}else{
+										return false;
+									}
+								});
+	                    }
+	                    this.onLoad();
+	                }else{
+	                    this.store.baseParams[this.queryParam] = q;
+	                    this.store.load({
+	                        params: this.getParams(q)
+	                    });
+	                    this.expand();
+	                }
+	            }else{
+	                this.selectedIndex = -1;
+	                this.onLoad();
+	            }
+	        }
+	    }
         ,listeners :
 			       {
 			       		'select' : function (combo, record, index) { 
@@ -809,6 +856,7 @@ Ext.namespace('Ext.ux.plugins');
 			       }
     });
     
+
     var tituloFiltro = new Ext.form.Label({
    		text:'<s:message code="precontencioso.grid.documento.tipoDocumento" text="**Tipo Documento" />:'
    		,style: {

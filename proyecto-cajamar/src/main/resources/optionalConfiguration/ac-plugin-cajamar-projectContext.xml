@@ -152,6 +152,36 @@
 						<value>TGESRIE</value>
 						<value>TDIRTERRIE</value>
 						<value>TDIRRIETERGCC</value>
+						<!-- PRORROGAS -->
+						<value>RESPRO_SUHRE</value>
+						<value>RESPRO_SUP</value>
+						<value>RESPRO_SUPNVL2</value>
+						<value>RESPRO_SUCO</value>
+						<value>RESPRO_GUCO</value>
+						<value>RESPRO_GSUB</value>
+						<value>RESPRO_SSUB</value>
+						<value>RESPRO_GDEU</value>
+						<value>RESPRO_SDEU</value>
+						<value>RESPRO_SCON</value>
+						<value>RESPRO_SFIS</value>
+						<value>RESPRO_GAREO</value>
+						<value>RESPRO_SAREO</value>
+						<value>RESPRO_GULI</value>
+						<value>RESPRO_DULI</value>
+						<value>RESPRO_SUCHRE</value>
+						<value>RESPRO_DIRREC</value>
+						<value>RESPRO_GESCON</value>
+						<value>RESPRO_GESINC</value>
+						<value>RESPRO_GERREC</value>
+						<value>RESPRO_SUCON</value>
+						<value>RESPRO_SUINC</value>
+						<value>RESPRO_SUANREC</value>
+						<value>RESPRO_SUADMCON</value>
+						<value>RESPRO_DIRCON</value>
+						<value>RESPRO_DIRHRE</value>
+						<value>RESPRO_SUP_PCO</value>
+						<value>RESPRO_CM_GD_PCO</value>
+						
 					</set>
 				</entry>
 				<entry key="ABRIR_EXP">
@@ -187,6 +217,94 @@
 				<value>00545</value>
 				<value>00557</value>
 			</list>
+		</property>
+		<property name="tipoSupervisorProrroga">
+			<map>
+				<entry key="SUP">
+					<value>RESPRO_SUP</value>
+				</entry>
+				<entry key="SUPNVL2">
+					<value>RESPRO_SUPNVL2</value>
+				</entry>
+				<entry key="SUCO">
+					<value>RESPRO_SUCO</value>
+				</entry>
+				<entry key="GUCO">
+					<value>RESPRO_GUCO</value>
+				</entry>
+				<entry key="GSUB">
+					<value>RESPRO_GSUB</value>
+				</entry>
+				<entry key="SSUB">
+					<value>RESPRO_SSUB</value>
+				</entry>
+				<entry key="GDEU">
+					<value>RESPRO_GDEU</value>
+				</entry>
+				<entry key="SDEU">
+					<value>RESPRO_SDEU</value>
+				</entry>
+				<entry key="SCON">
+					<value>RESPRO_SCON</value>
+				</entry>
+				<entry key="SFIS">
+					<value>RESPRO_SFIS</value>
+				</entry>
+				<entry key="GAREO">
+					<value>RESPRO_GAREO</value>
+				</entry>
+				<entry key="SAREO">
+					<value>RESPRO_SAREO</value>
+				</entry>
+				<entry key="GULI">
+					<value>RESPRO_GULI</value>
+				</entry>
+				<entry key="DULI">
+					<value>RESPRO_DULI</value>
+				</entry>
+				<entry key="SUCHRE">
+					<value>RESPRO_SUCHRE</value>
+				</entry>
+				<entry key="DIRREC">
+					<value>RESPRO_DIRREC</value>
+				</entry>
+				<entry key="GESCON">
+					<value>RESPRO_GESCON</value>
+				</entry>
+				<entry key="GESINC">
+					<value>RESPRO_GESINC</value>
+				</entry>
+				<entry key="GERREC">
+					<value>RESPRO_GERREC</value>
+				</entry>
+				<entry key="SUCON">
+					<value>RESPRO_SUCON</value>
+				</entry>
+				<entry key="SUINC">
+					<value>RESPRO_SUINC</value>
+				</entry>
+				<entry key="SUANREC">
+					<value>RESPRO_SUANREC</value>
+				</entry>
+				<entry key="SUHRE">
+					<value>RESPRO_SUHRE</value>
+				</entry>
+				<entry key="SUADMCON">
+					<value>RESPRO_SUADMCON</value>
+				</entry>
+				<entry key="DIRCON">
+					<value>RESPRO_DIRCON</value>
+				</entry>
+				<entry key="DIRHRE">
+					<value>RESPRO_DIRHRE</value>
+				</entry>
+				<entry key="SUP_PCO">
+					<value>RESPRO_SUP_PCO</value>
+				</entry>
+				<entry key="CM_GD_PCO">
+					<value>RESPRO_CM_GD_PCO</value>
+				</entry>
+			</map>
 		</property>
 	</bean>
 	

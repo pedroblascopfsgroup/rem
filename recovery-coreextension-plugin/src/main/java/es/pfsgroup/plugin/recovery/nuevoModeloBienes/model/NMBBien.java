@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
+import javax.persistence.OrderBy;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,6 +45,7 @@ public class NMBBien extends Bien implements NMBBienInfo{
 	@OneToMany(mappedBy = "bien", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "BIE_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
+	@OrderBy("fechaInscripcion DESC")
     private List<NMBInformacionRegistralBien> informacionRegistral;
 
 	@OneToMany(mappedBy = "bien", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -196,7 +198,7 @@ public class NMBBien extends Bien implements NMBBienInfo{
 	
 	@ManyToOne
     @JoinColumn(name = "DD_TPIV_ID")
-	private DDTipoImposicion tipoImposicionVenta;
+	private DDImposicionVenta tipoImposicionVenta;
 	
 	@ManyToOne
     @JoinColumn(name = "DD_IPR_ID")
@@ -968,11 +970,11 @@ public class NMBBien extends Bien implements NMBBienInfo{
 		this.tributacionVenta = tributacionVenta;
 	}
 
-	public DDTipoImposicion getTipoImposicionVenta() {
+	public DDImposicionVenta getTipoImposicionVenta() {
 		return tipoImposicionVenta;
 	}
 
-	public void setTipoImposicionVenta(DDTipoImposicion tipoImposicionVenta) {
+	public void setTipoImposicionVenta(DDImposicionVenta tipoImposicionVenta) {
 		this.tipoImposicionVenta = tipoImposicionVenta;
 	}
 

@@ -329,11 +329,13 @@
 	<sec:authorize ifNotGranted="SOLO_CONSULTA">
 	buttonBar.push(btnAgregarBien);
 	buttonBar.push(btnExcluirBien);
-	</sec:authorize>
 	buttonBar.push(btnEditar);
-	buttonBar.push(btnVerificarBien);
 	/*buttonBar.push(btnDictarInstruccionesNotarial);*/
 	buttonBar.push(btnDictarInstruccionesApremio);
+	</sec:authorize>
+	
+	buttonBar.push(btnVerificarBien);
+
 	<sec:authorize ifAllGranted="BOTON_MARCAR_BIENES_PARA_EXTERNOS">
 		buttonBar.push(btnMarcarGarantia);
 	</sec:authorize>

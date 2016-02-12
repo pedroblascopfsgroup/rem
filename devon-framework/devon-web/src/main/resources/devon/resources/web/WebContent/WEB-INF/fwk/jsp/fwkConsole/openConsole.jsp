@@ -19,10 +19,10 @@
 	    <script type="text/javascript" src="../js/fwk/ext3/ext-all.js?devon_version=${appProperties.jsVersion}"></script>
 	</c:if>
 
-	<!-- traducción de ext -->
+	<%-- traducción de ext --%>
     <script type="text/javascript" src="../js/fwk/ext/locale/ext-lang-es-min.js?devon_version=${appProperties.jsVersion}"></script>
 
-	<!-- extensiones -->
+	<%-- extensiones --%>
     <script type="text/javascript" src="../js/fwk/ext.ux/Toast.js?devon_version=${appProperties.jsVersion}"></script>
     <script type="text/javascript" src="../js/fwk/ext.ux/StaticTextField.js?devon_version=${appProperties.jsVersion}"></script>
     <script type="text/javascript" src="../js/fwk/ext.ux/Multiselect/DDView.js?devon_version=${appProperties.jsVersion}"></script>
@@ -32,7 +32,7 @@
 	<link rel="stylesheet" type="text/css" href="../js/fwk/ext.ux/StaticTextField.css?devon_version=${appProperties.jsVersion}"/>
 	<link rel="stylesheet" type="text/css" href="../js/fwk/ext.ux/Multiselect/Multiselect.css?devon_version=${appProperties.jsVersion}"/>
     
-    <!-- framework -->
+    <%-- framework --%>
     <script type="text/javascript" src="../js/fwk/fwk.js.jsp?devon_version=${appProperties.jsVersion}"></script>
 
 	</head>

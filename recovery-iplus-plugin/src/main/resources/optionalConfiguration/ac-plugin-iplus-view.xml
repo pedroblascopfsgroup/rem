@@ -12,6 +12,7 @@
 	
 	<bean p:entity="tabs.asunto.fast" p:name="adjuntosAsunto"  p:order="1100" 	
 		p:fileName="/WEB-INF/jsp/plugin/iplus/asuntos/tabs/adjuntos.jsp" 
-		p:priority="2" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		p:priority="2" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="TAB_ASUNTO_ADJUNTOS" />
 
 </beans>

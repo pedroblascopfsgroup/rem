@@ -126,7 +126,7 @@ comunes que se refieren a actuaciones ser&aacute;n:</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Las
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Las
 propias de cada actuaci&oacute;n, siendo por ejemplo, la presentaci&oacute;n de la demanda,
 la confirmaci&oacute;n de la notificaci&oacute;n del requerimiento de pago al deudor, dar
 parte de la existencia o no de oposici&oacute;n, etc.. que son particulares de cada
@@ -137,10 +137,10 @@ procedimiento, concretamente a la pesta&ntilde;a de tareas que ser explica m&aac
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Las
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Las
 comunes a todas las actuaciones relativas a la toma de decisi&oacute;n de continuidad
 o derivaci&oacute;n de unas actuaciones a otras, que se explican en la pesta&ntilde;a
 &ldquo;Decisi&oacute;n&rdquo;</p>
@@ -148,10 +148,10 @@ o derivaci&oacute;n de unas actuaciones a otras, que se explican en la pesta&nti
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Las
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Las
 relativas a mantener actualizado el estado de un recurso, que se explican en la
 pesta&ntilde;a &ldquo;Recursos&rdquo;.</p>
 
@@ -182,7 +182,7 @@ DETALLE DE ACTUACIONES/PROCEDIMIENTOS</a></font></h3>
 
 
 
-<p class="MsoNormal" style="font-family: Arial; text-align: center;"><!--[if gte vml 1]><v:shapetype
+<p class="MsoNormal" style="font-family: Arial; text-align: center;"><%--[if gte vml 1]><v:shapetype
  id="_x0000_t75" coordsize="21600,21600" o:spt="75" o:preferrelative="t"
  path="m@4@5l@4@11@9@11@9@5xe" filled="f" stroked="f">
  <v:stroke joinstyle="miter"/>
@@ -212,7 +212,7 @@ DETALLE DE ACTUACIONES/PROCEDIMIENTOS</a></font></h3>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image001.png"
   o:title="" croptop="9256f" cropbottom="53133f" cropleft="9131f" cropright="30283f"/>
  <w:wrap type="tight"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--><img style="width: 626px; height: 84px;" alt="menu_procedimiento" src="../img/plugin/ayuda/procediminetos_actuaciones/menu_procedimiento.jpg"></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%><img style="width: 626px; height: 84px;" alt="menu_procedimiento" src="../img/plugin/ayuda/procediminetos_actuaciones/menu_procedimiento.jpg"></p>
 
 
 
@@ -248,12 +248,12 @@ DETALLE DE ACTUACIONES/PROCEDIMIENTOS</a></font></h3>
 
 
 
-<p class="MsoNormal" style="text-align: center;"><!--[if gte vml 1]><v:shape id="Imagen_x0020_185"
+<p class="MsoNormal" style="text-align: center;"><%--[if gte vml 1]><v:shape id="Imagen_x0020_185"
  o:spid="_x0000_i1033" type="#_x0000_t75" style='width:397.5pt;height:224.25pt;
  visibility:visible;mso-wrap-style:square'>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image003.png"
   o:title=""/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--><img style="width: 700px; height: 410px;" alt="cabecera_actuacion" src="../img/plugin/ayuda/procediminetos_actuaciones/cabecera_actuacion.jpg"></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%><img style="width: 700px; height: 410px;" alt="cabecera_actuacion" src="../img/plugin/ayuda/procediminetos_actuaciones/cabecera_actuacion.jpg"></p>
 
 
 
@@ -263,22 +263,22 @@ DETALLE DE ACTUACIONES/PROCEDIMIENTOS</a></font></h3>
 
 
 
-<p class="MsoListParagraph" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]--><span style="font-weight: bold;">&nbsp;ASUNTO:</span> Recoge los
+<p class="MsoListParagraph" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%><span style="font-weight: bold;">&nbsp;ASUNTO:</span> Recoge los
 datos b&aacute;sicos del asunto:</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<!--[endif]-->Asunto: se trata de un enlace desde el cual se puede acceder a
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<%--[endif]--%>Asunto: se trata de un enlace desde el cual se puede acceder a
 consultar el asunto de forma directa.</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
 <p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;Despacho: al que se ha designado el asunto</p>
@@ -286,34 +286,34 @@ consultar el asunto de forma directa.</p>
 
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<!--[endif]-->Gestor: responsable de realizar las actuaciones</p>
-
-
-
-
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
-
-
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<!--[endif]-->Fecha de inicio</p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<%--[endif]--%>Gestor: responsable de realizar las actuaciones</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<!--[endif]-->Supervisor</p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<%--[endif]--%>Fecha de inicio</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<!--[endif]--><!--[if gte vml 1]><v:shape id="Imagen_x0020_186" o:spid="_x0000_s1070"
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<%--[endif]--%>Supervisor</p>
+
+
+
+
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
+
+
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<%--[endif]--%><%--[if gte vml 1]><v:shape id="Imagen_x0020_186" o:spid="_x0000_s1070"
  type="#_x0000_t75" style='position:absolute;left:0;text-align:left;
  margin-left:9.9pt;margin-top:18.25pt;width:397.7pt;height:68.75pt;z-index:26;
  visibility:visible;mso-wrap-style:square;mso-wrap-distance-left:9pt;
@@ -324,7 +324,7 @@ consultar el asunto de forma directa.</p>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image005.png"
   o:title=""/>
  <w:wrap type="square"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]-->Procurador</p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%>Procurador</p>
 
 
 
@@ -340,58 +340,58 @@ consultar el asunto de forma directa.</p>
 
 
 
-<p class="MsoListParagraph" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]--><span style="font-weight: bold;">&nbsp;ACTUACI&Oacute;N: </span>Datos b&aacute;sico
+<p class="MsoListParagraph" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%><span style="font-weight: bold;">&nbsp;ACTUACI&Oacute;N: </span>Datos b&aacute;sico
 del Procedimiento:</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<!--[endif]-->Actuaci&oacute;n</p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<%--[endif]--%>Actuaci&oacute;n</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<!--[endif]-->N&ordm;
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<%--[endif]--%>N&ordm;
 Actuaci&oacute;n Interno</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<!--[endif]-->N&ordm;
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<%--[endif]--%>N&ordm;
 Procedimiento en Juzgado</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<!--[endif]-->Juzgado</p>
-
-
-
-
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
-
-
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<!--[endif]-->Plaza</p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<%--[endif]--%>Juzgado</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<!--[endif]-->Estado</p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<%--[endif]--%>Plaza</p>
+
+
+
+
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
+
+
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<%--[endif]--%>Estado</p>
 
 
 
@@ -401,12 +401,12 @@ Procedimiento en Juzgado</p>
 
 
 
-<p class="Prrafodelista1" style="margin-left: 7.1pt; text-align: center; font-family: Arial;"><!--[if gte vml 1]><v:shape id="Imagen_x0020_187"
+<p class="Prrafodelista1" style="margin-left: 7.1pt; text-align: center; font-family: Arial;"><%--[if gte vml 1]><v:shape id="Imagen_x0020_187"
  o:spid="_x0000_i1032" type="#_x0000_t75" style='width:396.75pt;height:61.5pt;
  visibility:visible;mso-wrap-style:square'>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image007.png"
   o:title=""/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--><img style="width: 700px; height: 131px;" alt="actuacion" src="../img/plugin/ayuda/procediminetos_actuaciones/actuacion.jpg"></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%><img style="width: 700px; height: 131px;" alt="actuacion" src="../img/plugin/ayuda/procediminetos_actuaciones/actuacion.jpg"></p>
 
 
 
@@ -416,71 +416,71 @@ Procedimiento en Juzgado</p>
 
 
 
-<p class="MsoListParagraph" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]--><span style="font-weight: bold;">&nbsp;DATOS ECON&Oacute;MICOS: PRINCIPAL Y ESTIMACI&Oacute;N</span></p>
+<p class="MsoListParagraph" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%><span style="font-weight: bold;">&nbsp;DATOS ECON&Oacute;MICOS: PRINCIPAL Y ESTIMACI&Oacute;N</span></p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<!--[endif]-->Saldo vencido actual</p>
-
-
-
-
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
-
-
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<!--[endif]-->Saldo no vencido actual</p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<%--[endif]--%>Saldo vencido actual</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<!--[endif]-->Saldo original vencido</p>
-
-
-
-
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
-
-
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<!--[endif]-->Saldo original no vencido</p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<%--[endif]--%>Saldo no vencido actual</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<!--[endif]-->Reclamaci&oacute;n</p>
-
-
-
-
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
-
-
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<!--[endif]-->Principal</p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<%--[endif]--%>Saldo original vencido</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<!--[endif]-->Estimaci&oacute;n principal (%)</p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<%--[endif]--%>Saldo original no vencido</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<!--[endif]-->Estimaci&oacute;n Plazo (meses)</p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<%--[endif]--%>Reclamaci&oacute;n</p>
+
+
+
+
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
+
+
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<%--[endif]--%>Principal</p>
+
+
+
+
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
+
+
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<%--[endif]--%>Estimaci&oacute;n principal (%)</p>
+
+
+
+
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
+
+
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<%--[endif]--%>Estimaci&oacute;n Plazo (meses)</p>
 
 
 
@@ -490,12 +490,12 @@ Procedimiento en Juzgado</p>
 
 
 
-<p class="MsoNormal" style="text-indent: 7.1pt; text-align: center; font-family: Arial;"><!--[if gte vml 1]><v:shape id="Imagen_x0020_188" o:spid="_x0000_i1031"
+<p class="MsoNormal" style="text-indent: 7.1pt; text-align: center; font-family: Arial;"><%--[if gte vml 1]><v:shape id="Imagen_x0020_188" o:spid="_x0000_i1031"
  type="#_x0000_t75" style='width:396pt;height:72.75pt;visibility:visible;
  mso-wrap-style:square'>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image009.png"
   o:title=""/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--><img style="width: 700px; height: 153px;" alt="datos_economicos" src="../img/plugin/ayuda/procediminetos_actuaciones/datos_economicos.jpg"></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%><img style="width: 700px; height: 153px;" alt="datos_economicos" src="../img/plugin/ayuda/procediminetos_actuaciones/datos_economicos.jpg"></p>
 
 
 
@@ -518,7 +518,7 @@ Procedimiento en Juzgado</p>
 
 
 
-<p class="MsoNormal" style="text-align: left; font-family: Arial;" align="left"><!--[if !supportLists]-->&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; &middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]--><!--[if gte vml 1]><v:shape id="Imagen_x0020_189" o:spid="_x0000_s1069"
+<p class="MsoNormal" style="text-align: left; font-family: Arial;" align="left"><%--[if !supportLists]--%>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; &middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%><%--[if gte vml 1]><v:shape id="Imagen_x0020_189" o:spid="_x0000_s1069"
  type="#_x0000_t75" style='position:absolute;left:0;text-align:left;
  margin-left:9.4pt;margin-top:35.7pt;width:396.1pt;height:54.8pt;z-index:27;
  visibility:visible;mso-wrap-style:square;mso-wrap-distance-left:9pt;
@@ -529,61 +529,61 @@ Procedimiento en Juzgado</p>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image011.png"
   o:title=""/>
  <w:wrap type="square"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--><span style="font-weight: bold;">&nbsp;DEUDORES:</span> recoge el
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%><span style="font-weight: bold;">&nbsp;DEUDORES:</span> recoge el
 listado de los deudores afectados por la actuaci&oacute;n con los datos b&aacute;sicos. Recoge
 la siguiente informaci&oacute;n:</p>
 
 
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left"><!--[if !supportLists]--></p>
+<p class="MsoNormal" style="margin-left: 35.45pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left"><%--[if !supportLists]--%></p>
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left">o&nbsp;<!--[endif]-->Nombre</p>
+<p class="MsoNormal" style="margin-left: 35.45pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left">o&nbsp;<%--[endif]--%>Nombre</p>
 
 
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left"><!--[if !supportLists]--></p>
+<p class="MsoNormal" style="margin-left: 35.45pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left"><%--[if !supportLists]--%></p>
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left">o&nbsp;<!--[endif]-->Primer
+<p class="MsoNormal" style="margin-left: 35.45pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left">o&nbsp;<%--[endif]--%>Primer
 Apellido</p>
 
 
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left"><!--[if !supportLists]--></p>
+<p class="MsoNormal" style="margin-left: 35.45pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left"><%--[if !supportLists]--%></p>
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left">o&nbsp;<!--[endif]-->Segundo
+<p class="MsoNormal" style="margin-left: 35.45pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left">o&nbsp;<%--[endif]--%>Segundo
 Apellido</p>
 
 
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left"><!--[if !supportLists]--></p>
+<p class="MsoNormal" style="margin-left: 35.45pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left"><%--[if !supportLists]--%></p>
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left">o&nbsp;<!--[endif]-->Saldo
+<p class="MsoNormal" style="margin-left: 35.45pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left">o&nbsp;<%--[endif]--%>Saldo
 Vencido</p>
 
 
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left"><!--[if !supportLists]--></p>
+<p class="MsoNormal" style="margin-left: 35.45pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left"><%--[if !supportLists]--%></p>
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left">o&nbsp;<!--[endif]-->Saldo
+<p class="MsoNormal" style="margin-left: 35.45pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left">o&nbsp;<%--[endif]--%>Saldo
 Total</p>
 
 
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left"><!--[if !supportLists]--></p>
+<p class="MsoNormal" style="margin-left: 35.45pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left"><%--[if !supportLists]--%></p>
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left">o&nbsp;<!--[endif]-->Incluido</p>
+<p class="MsoNormal" style="margin-left: 35.45pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left">o&nbsp;<%--[endif]--%>Incluido</p>
 
 <p class="MsoNormal" style="margin-left: 35.45pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left"></p>
 
@@ -621,15 +621,15 @@ la actuaci&oacute;n o procedimiento que se est&aacute; llevando a cabo.</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->C&oacute;digo contrato</p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>C&oacute;digo contrato</p>
 
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Producto</p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Producto</p>
 
 
 
@@ -637,47 +637,47 @@ la actuaci&oacute;n o procedimiento que se est&aacute; llevando a cabo.</p>
 <p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"></p>
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Saldo Irregular / Haber</p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Saldo Irregular / Haber</p>
 
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Saldo vivo no vencido</p>
-
-
-
-
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
-
-
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->D&iacute;as Irregular</p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Saldo vivo no vencido</p>
 
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Otros Intervinientes</p>
-
-
-
-
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
-
-
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Tipo de intervenci&oacute;n</p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>D&iacute;as Irregular</p>
 
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Estado Financiero</p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Otros Intervinientes</p>
+
+
+
+
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
+
+
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Tipo de intervenci&oacute;n</p>
+
+
+
+
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
+
+
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Estado Financiero</p>
 
 
 
@@ -743,76 +743,76 @@ dichos bienes.</p>
 
 
 
-<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->C&oacute;digo</p>
+<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>C&oacute;digo</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Descripci&oacute;n</p>
-
-
-
-
-<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm;"><!--[if !supportLists]--></p>
-
-
-<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]--><span style="font-family: Arial;">Tipo</span></p>
+<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Descripci&oacute;n</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Fecha
+<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%><span style="font-family: Arial;">Tipo</span></p>
+
+
+
+
+<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
+
+
+<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Fecha
 de solicitud</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Fecha
+<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Fecha
 decreto</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Fecha
+<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Fecha
 registro</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Fecha
+<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Fecha
 adjudicaci&oacute;n</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Carga
+<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Carga
 bien</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Titular</p>
+<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Titular</p>
 
 
 
@@ -838,12 +838,12 @@ permite cargar los siguientes datos referentes a los procedimientos judiciales:<
 
 
 
-<p class="MsoNormal" style="text-align: center; font-family: Arial;" align="center"><!--[if gte vml 1]><v:shape id="Imagen_x0020_193"
+<p class="MsoNormal" style="text-align: center; font-family: Arial;" align="center"><%--[if gte vml 1]><v:shape id="Imagen_x0020_193"
  o:spid="_x0000_i1030" type="#_x0000_t75" style='width:396.75pt;height:198.75pt;
  visibility:visible;mso-wrap-style:square'>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image017.png"
   o:title=""/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--><img style="width: 700px; height: 390px;" alt="marcado_bien" src="../img/plugin/ayuda/procediminetos_actuaciones/marcado_bien.jpg"></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%><img style="width: 700px; height: 390px;" alt="marcado_bien" src="../img/plugin/ayuda/procediminetos_actuaciones/marcado_bien.jpg"></p>
 
 
 
@@ -927,7 +927,7 @@ finalizado dicho recurso.</p>
 
 <img style="width: 700px; height: 268px; font-family: Arial;" alt="recurso" src="../img/plugin/ayuda/procediminetos_actuaciones/recurso.jpg">
 
-<p style="font-family: Arial;" class="MsoNormal"><!--[if gte vml 1]><v:shape id="Imagen_x0020_194" o:spid="_x0000_s1066"
+<p style="font-family: Arial;" class="MsoNormal"><%--[if gte vml 1]><v:shape id="Imagen_x0020_194" o:spid="_x0000_s1066"
  type="#_x0000_t75" style='position:absolute;left:0;text-align:left;
  margin-left:16.9pt;margin-top:5.35pt;width:395pt;height:152.05pt;z-index:30;
  visibility:visible;mso-wrap-style:square;mso-wrap-distance-left:9pt;
@@ -938,7 +938,7 @@ finalizado dicho recurso.</p>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image019.png"
   o:title=""/>
  <w:wrap type="square"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%></p>
 
 
 
@@ -985,7 +985,7 @@ recurso y se selecciona Guardar:</p>
 
 
 
-<p class="MsoNormal" style="text-indent: 35.4pt; font-family: Arial;"><!--[if gte vml 1]><v:shape id="Imagen_x0020_195"
+<p class="MsoNormal" style="text-indent: 35.4pt; font-family: Arial;"><%--[if gte vml 1]><v:shape id="Imagen_x0020_195"
  o:spid="_x0000_s1065" type="#_x0000_t75" style='position:absolute;left:0;
  text-align:left;margin-left:21.2pt;margin-top:13.4pt;width:396.6pt;height:126.25pt;
  z-index:31;visibility:visible;mso-wrap-style:square;mso-wrap-distance-left:9pt;
@@ -996,7 +996,7 @@ recurso y se selecciona Guardar:</p>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image021.png"
   o:title=""/>
  <w:wrap type="square"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--><img style="width: 650px; height: 207px;" alt="alta_recurso" src="../img/plugin/ayuda/procediminetos_actuaciones/alta_recurso.jpg"></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%><img style="width: 650px; height: 207px;" alt="alta_recurso" src="../img/plugin/ayuda/procediminetos_actuaciones/alta_recurso.jpg"></p>
 
 
 
@@ -1023,26 +1023,26 @@ recurso y se selecciona Guardar:</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Fecha recurso: fecha en la que se interpone el recurso</p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Fecha recurso: fecha en la que se interpone el recurso</p>
 
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Actor: entidad o parte contraria</p>
-
-
-
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Actor: entidad o parte contraria</p>
 
 
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&nbsp;<br>
 
-&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]--><!--[if gte vml 1]><v:shape id="Imagen_x0020_515" o:spid="_x0000_s1063"
+
+
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&nbsp;<br>
+
+&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%><%--[if gte vml 1]><v:shape id="Imagen_x0020_515" o:spid="_x0000_s1063"
  type="#_x0000_t75" style='position:absolute;left:0;text-align:left;
  margin-left:103.95pt;margin-top:12pt;width:111.3pt;height:49.95pt;z-index:-41;
  visibility:visible;mso-wrap-style:square;mso-wrap-distance-left:9pt;
@@ -1053,7 +1053,7 @@ recurso y se selecciona Guardar:</p>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image025.png"
   o:title=""/>
  <w:wrap type="square"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]-->Tipo</p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%>Tipo</p>
 
 
 
@@ -1079,32 +1079,32 @@ recurso y se selecciona Guardar:</p>
 <p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&nbsp;<br>
 
 
-<!--[if !supportLists]--><!--[endif]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Causa</p>
+<%--[if !supportLists]--%><%--[endif]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Causa</p>
 
 &nbsp;&nbsp;
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Observaciones</p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Observaciones</p>
 
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Confirmaci&oacute;n impugnaci&oacute;n</p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Confirmaci&oacute;n impugnaci&oacute;n</p>
 
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Fecha de impugnaci&oacute;n</p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Fecha de impugnaci&oacute;n</p>
 
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Confirmaci&oacute;n vista</p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Confirmaci&oacute;n vista</p>
 
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Resultado</p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Resultado</p>
 
 
 
@@ -1123,7 +1123,7 @@ recurso y se selecciona Guardar:</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Fecha resoluci&oacute;n</p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Fecha resoluci&oacute;n</p>
 
 
 
@@ -1208,7 +1208,7 @@ bien solo consultar un recurso que ya estaba dado de alta.</p>
 
 
 
-<p class="MsoNormal" style="text-indent: 35.4pt; font-family: Arial;"><!--[if gte vml 1]><v:shape id="Imagen_x0020_196"
+<p class="MsoNormal" style="text-indent: 35.4pt; font-family: Arial;"><%--[if gte vml 1]><v:shape id="Imagen_x0020_196"
  o:spid="_x0000_s1060" type="#_x0000_t75" style='position:absolute;left:0;
  text-align:left;margin-left:39.15pt;margin-top:7.75pt;width:333.45pt;height:108.3pt;
  z-index:32;visibility:visible;mso-wrap-style:square;mso-wrap-distance-left:9pt;
@@ -1219,7 +1219,7 @@ bien solo consultar un recurso que ya estaba dado de alta.</p>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image031.png"
   o:title=""/>
  <w:wrap type="square"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--><img style="width: 615px; height: 197px;" alt="consultar_recurso" src="../img/plugin/ayuda/procediminetos_actuaciones/consultar_recurso.jpg"></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%><img style="width: 615px; height: 197px;" alt="consultar_recurso" src="../img/plugin/ayuda/procediminetos_actuaciones/consultar_recurso.jpg"></p>
 
 
 
@@ -1255,14 +1255,14 @@ bien solo consultar un recurso que ya estaba dado de alta.</p>
 
 <p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&nbsp;<br>
 
-<!--[if !supportLists]--><!--[endif]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fecha recurso: fecha en la que se interpone el recurso</p>
+<%--[if !supportLists]--%><%--[endif]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fecha recurso: fecha en la que se interpone el recurso</p>
 
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Actor: entidad o parte contraria</p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Actor: entidad o parte contraria</p>
 
-<!--[if !supportLists]--> &nbsp; &nbsp; &nbsp; &nbsp;&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]--><!--[if gte vml 1]><v:shape id="Imagen_x0020_519" o:spid="_x0000_s1058"
+<%--[if !supportLists]--%> &nbsp; &nbsp; &nbsp; &nbsp;&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%><%--[if gte vml 1]><v:shape id="Imagen_x0020_519" o:spid="_x0000_s1058"
  type="#_x0000_t75" style='position:absolute;left:0;text-align:left;
  margin-left:149.6pt;margin-top:8.35pt;width:111.3pt;height:49.95pt;z-index:-37;
  visibility:visible;mso-wrap-style:square;mso-wrap-distance-left:9pt;
@@ -1273,7 +1273,7 @@ bien solo consultar un recurso que ya estaba dado de alta.</p>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image025.png"
   o:title=""/>
  <w:wrap type="square"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--><span style="font-family: Arial;">Tipo</span>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%><span style="font-family: Arial;">Tipo</span>
 
 
 
@@ -1290,12 +1290,12 @@ bien solo consultar un recurso que ya estaba dado de alta.</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Causa</p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Causa</p>
 
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; font-family: Arial;"><!--[if gte vml 1]><v:shape id="Imagen_x0020_520"
+<p class="MsoNormal" style="margin-left: 21.3pt; font-family: Arial;"><%--[if gte vml 1]><v:shape id="Imagen_x0020_520"
  o:spid="_x0000_s1057" type="#_x0000_t75" style='position:absolute;left:0;
  text-align:left;margin-left:124.35pt;margin-top:10.75pt;width:140.25pt;
  height:57.45pt;z-index:-36;visibility:visible;mso-wrap-style:square;
@@ -1306,7 +1306,7 @@ bien solo consultar un recurso que ya estaba dado de alta.</p>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image027.png"
   o:title=""/>
  <w:wrap type="square"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%></p>
 
 
 
@@ -1336,32 +1336,32 @@ bien solo consultar un recurso que ya estaba dado de alta.</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Observaciones</p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Observaciones</p>
 
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Confirmaci&oacute;n impugnaci&oacute;n</p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Confirmaci&oacute;n impugnaci&oacute;n</p>
 
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Fecha de impugnaci&oacute;n</p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Fecha de impugnaci&oacute;n</p>
 
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Confirmaci&oacute;n vista</p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Confirmaci&oacute;n vista</p>
 
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Resultado</p>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Resultado</p>
 
 
 
 
-<p class="MsoNormal" style="margin-left: 63.8pt; text-indent: -14.2pt; font-family: Arial;"><!--[if gte vml 1]><v:shape
+<p class="MsoNormal" style="margin-left: 63.8pt; text-indent: -14.2pt; font-family: Arial;"><%--[if gte vml 1]><v:shape
  id="_x0000_s1056" type="#_x0000_t75" style='position:absolute;left:0;
  text-align:left;margin-left:119pt;margin-top:4.15pt;width:133.9pt;height:32.75pt;
  z-index:-35;visibility:visible;mso-wrap-style:square;mso-wrap-distance-left:9pt;
@@ -1372,12 +1372,12 @@ bien solo consultar un recurso que ya estaba dado de alta.</p>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image029.png"
   o:title=""/>
  <w:wrap type="square"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%></p>
 
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Fecha
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Fecha
 resoluci&oacute;n</p>
 
 
@@ -1475,7 +1475,7 @@ Decisi&oacute;n </p>
 
 
 
-<p style="font-family: Arial;" class="MsoNormal"><!--[if gte vml 1]><v:shape id="Imagen_x0020_198" o:spid="_x0000_s1054"
+<p style="font-family: Arial;" class="MsoNormal"><%--[if gte vml 1]><v:shape id="Imagen_x0020_198" o:spid="_x0000_s1054"
  type="#_x0000_t75" style='position:absolute;left:0;text-align:left;
  margin-left:55.15pt;margin-top:44.55pt;width:331.15pt;height:240.65pt;
  z-index:44;visibility:visible;mso-wrap-style:square;mso-wrap-distance-left:9pt;
@@ -1486,7 +1486,7 @@ Decisi&oacute;n </p>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image037.png"
   o:title=""/>
  <w:wrap type="square"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]-->Si desde la ficha &ldquo;Decisiones&rdquo; del procedimiento agregamos una
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%>Si desde la ficha &ldquo;Decisiones&rdquo; del procedimiento agregamos una
 decisi&oacute;n nos sale esta pantalla emergente para poder introducir la decisi&oacute;n que
 queremos agregar. El gestor agrega una decisi&oacute;n para proponerla, luego es el
 supervisor quien debe aceptarla.</p>
@@ -1534,7 +1534,7 @@ agrupada en dos partes:</p>
 
 
 
-<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Actuaciones
+<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Actuaciones
 derivadas:</p>
 
 
@@ -1545,79 +1545,79 @@ derivadas:</p>
 
 
 
-<p style="font-family: Arial;" class="MsoNormal"><!--[if gte vml 1]><v:shape
+<p style="font-family: Arial;" class="MsoNormal"><%--[if gte vml 1]><v:shape
  id="Imagen_x0020_199" o:spid="_x0000_i1029" type="#_x0000_t75" style='width:396.75pt;
  height:182.25pt;visibility:visible;mso-wrap-style:square'>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image039.png"
   o:title=""/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--><img style="width: 700px; height: 313px;" alt="actuaciones_derivadas" src="../img/plugin/ayuda/procediminetos_actuaciones/actuaciones_derivadas.jpg"></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%><img style="width: 700px; height: 313px;" alt="actuaciones_derivadas" src="../img/plugin/ayuda/procediminetos_actuaciones/actuaciones_derivadas.jpg"></p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<!--[endif]-->Tipo
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<%--[endif]--%>Tipo
 de Actuaci&oacute;n:</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;">-&nbsp;&nbsp;<!--[endif]-->Tipo
+<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;">-&nbsp;&nbsp;<%--[endif]--%>Tipo
 de Acci&oacute;n</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;">-&nbsp;&nbsp;<!--[endif]-->Tipo
+<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;">-&nbsp;&nbsp;<%--[endif]--%>Tipo
 de actuaci&oacute;n</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;">-&nbsp;&nbsp;<!--[endif]-->Tipo
+<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;">-&nbsp;&nbsp;<%--[endif]--%>Tipo
 de reclamaci&oacute;n</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<!--[endif]-->Demandados</p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<%--[endif]--%>Demandados</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<!--[endif]-->Datos
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<%--[endif]--%>Datos
 econ&oacute;micos: Principal y estimaci&oacute;n</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;">-&nbsp;&nbsp;<!--[endif]-->Principal:
+<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;">-&nbsp;&nbsp;<%--[endif]--%>Principal:
 saldo que se debe recuperar</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
 <p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;">-&nbsp;&nbsp;Estimaci&oacute;n
@@ -1626,19 +1626,19 @@ Principal (%): porcentaje de recuperaci&oacute;n</p>
 
 
 
-<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;">-&nbsp;&nbsp;<!--[endif]-->Estimaci&oacute;n
+<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;">-&nbsp;&nbsp;<%--[endif]--%>Estimaci&oacute;n
 Plazo (meses)</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--></p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%></p>
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<!--[endif]-->Actuaciones:
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;">o&nbsp;<%--[endif]--%>Actuaciones:
 listado de procedimientos</p>
 
 
@@ -1649,7 +1649,7 @@ listado de procedimientos</p>
 
 
 
-<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Posibilidad
+<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Posibilidad
 de finalizar o paralizar el procedimiento o actuaci&oacute;n en vigor (en la que nos
 encontramos), debiendo introducir una causa para solicitarlo y en el caso de la
 paralizaci&oacute;n la fecha de fin.</p>
@@ -1662,12 +1662,12 @@ paralizaci&oacute;n la fecha de fin.</p>
 
 
 
-<p class="MsoNormal" style="text-align: center; font-family: Arial;" align="center"><!--[if gte vml 1]><v:shape id="Imagen_x0020_200"
+<p class="MsoNormal" style="text-align: center; font-family: Arial;" align="center"><%--[if gte vml 1]><v:shape id="Imagen_x0020_200"
  o:spid="_x0000_i1028" type="#_x0000_t75" style='width:396.75pt;height:75pt;
  visibility:visible;mso-wrap-style:square'>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image041.png"
   o:title=""/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--><img style="width: 700px; height: 127px;" alt="finalizar_origen" src="../img/plugin/ayuda/procediminetos_actuaciones/finalizar_origen.jpg"></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%><img style="width: 700px; height: 127px;" alt="finalizar_origen" src="../img/plugin/ayuda/procediminetos_actuaciones/finalizar_origen.jpg"></p>
 
 
 
@@ -1677,7 +1677,7 @@ paralizaci&oacute;n la fecha de fin.</p>
 
 
 
-<p style="font-family: Arial;" class="MsoNormal"><!--[if gte vml 1]><v:shape id="Imagen_x0020_43" o:spid="_x0000_s1053"
+<p style="font-family: Arial;" class="MsoNormal"><%--[if gte vml 1]><v:shape id="Imagen_x0020_43" o:spid="_x0000_s1053"
  type="#_x0000_t75" style='position:absolute;left:0;text-align:left;
  margin-left:154.95pt;margin-top:39.75pt;width:45.45pt;height:16.25pt;
  z-index:33;visibility:visible;mso-wrap-style:square;mso-wrap-distance-left:9pt;
@@ -1688,7 +1688,7 @@ paralizaci&oacute;n la fecha de fin.</p>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image043.png"
   o:title=""/>
  <w:wrap type="square"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]-->Una vez el gestor ha propuesto (o elevado) una decisi&oacute;n pulsando
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%>Una vez el gestor ha propuesto (o elevado) una decisi&oacute;n pulsando
 bot&oacute;n Proponer, el gestor deber&aacute; esperar a que el supervisor apruebe la
 decisi&oacute;n, la deniegue o bien proponga el otra decisi&oacute;n.</p>
 
@@ -1725,7 +1725,7 @@ consultar los datos o bien modificar alg&uacute;n dato.</p>
 
 
 
-<p style="font-family: Arial; text-align: center;" class="MsoNormal"><!--[if gte vml 1]><v:shape id="Imagen_x0020_202" o:spid="_x0000_s1052"
+<p style="font-family: Arial; text-align: center;" class="MsoNormal"><%--[if gte vml 1]><v:shape id="Imagen_x0020_202" o:spid="_x0000_s1052"
  type="#_x0000_t75" style='position:absolute;left:0;text-align:left;
  margin-left:50.8pt;margin-top:8.95pt;width:325.05pt;height:234.75pt;z-index:34;
  visibility:visible;mso-wrap-style:square;mso-wrap-distance-left:9pt;
@@ -1736,7 +1736,7 @@ consultar los datos o bien modificar alg&uacute;n dato.</p>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image045.png"
   o:title=""/>
  <w:wrap type="square"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--><img style="width: 575px; height: 414px;" alt="editar_decision" src="../img/plugin/ayuda/procediminetos_actuaciones/editar_decision.jpg"></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%><img style="width: 575px; height: 414px;" alt="editar_decision" src="../img/plugin/ayuda/procediminetos_actuaciones/editar_decision.jpg"></p>
 
 
 
@@ -1808,7 +1808,7 @@ agrupada en dos partes:</p>
 
 
 
-<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]--><!--[if gte vml 1]><v:shape
+<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%><%--[if gte vml 1]><v:shape
  id="Imagen_x0020_203" o:spid="_x0000_s1051" type="#_x0000_t75" style='position:absolute;
  left:0;text-align:left;margin-left:6.15pt;margin-top:16.2pt;width:396.6pt;
  height:182.65pt;z-index:37;visibility:visible;mso-wrap-style:square;
@@ -1819,65 +1819,65 @@ agrupada en dos partes:</p>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image039.png"
   o:title=""/>
  <w:wrap type="square"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]-->Actuaciones derivadas:</p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%>Actuaciones derivadas:</p>
 
 <div style="text-align: center;"><img style="width: 700px; height: 317px;" alt="actuaciones_derivadas_2" src="../img/plugin/ayuda/procediminetos_actuaciones/actuaciones_derivadas_2.jpg"></div>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->o&nbsp;<!--[endif]-->Tipo de Actuaci&oacute;n:</p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>o&nbsp;<%--[endif]--%>Tipo de Actuaci&oacute;n:</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Tipo
+<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Tipo
 de Acci&oacute;n</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Tipo
+<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Tipo
 de actuaci&oacute;n</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Tipo
+<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Tipo
 de reclamaci&oacute;n</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->o&nbsp;<!--[endif]-->Demandados</p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>o&nbsp;<%--[endif]--%>Demandados</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->o&nbsp;<!--[endif]-->Datos econ&oacute;micos: Principal y estimaci&oacute;n</p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>o&nbsp;<%--[endif]--%>Datos econ&oacute;micos: Principal y estimaci&oacute;n</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Principal:
+<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Principal:
 saldo que se debe recuperar</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Estimaci&oacute;n
+<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Estimaci&oacute;n
 Principal (%): porcentaje de recuperaci&oacute;n</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Estimaci&oacute;n
+<p class="Prrafodelista1" style="margin-left: 49.65pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Estimaci&oacute;n
 Plazo (meses)</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->o&nbsp;<!--[endif]-->Actuaciones: listado de procedimientos</p>
+<p class="Prrafodelista1" style="margin-left: 35.45pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>o&nbsp;<%--[endif]--%>Actuaciones: listado de procedimientos</p>
 
 
 
@@ -1887,7 +1887,7 @@ Plazo (meses)</p>
 
 
 
-<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]--><!--[if gte vml 1]><v:shape
+<p class="Prrafodelista1" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%><%--[if gte vml 1]><v:shape
  id="Imagen_x0020_204" o:spid="_x0000_s1050" type="#_x0000_t75" style='position:absolute;
  left:0;text-align:left;margin-left:12.05pt;margin-top:46.8pt;width:396.6pt;
  height:75.2pt;z-index:36;visibility:visible;mso-wrap-style:square;
@@ -1898,7 +1898,7 @@ Plazo (meses)</p>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image041.png"
   o:title=""/>
  <w:wrap type="square"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]-->Posibilidad de finalizar o paralizar el procedimiento o actuaci&oacute;n
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%>Posibilidad de finalizar o paralizar el procedimiento o actuaci&oacute;n
 en vigor (en la que nos encontramos), debiendo introducir una causa para
 solicitarlo y en el caso de la paralizaci&oacute;n la fecha de fin.</p>
 
@@ -1910,7 +1910,7 @@ solicitarlo y en el caso de la paralizaci&oacute;n la fecha de fin.</p>
 
 
 
-<p style="font-family: Arial;" class="MsoNormal"><!--[if gte vml 1]><v:shape id="_x0000_s1049" type="#_x0000_t75"
+<p style="font-family: Arial;" class="MsoNormal"><%--[if gte vml 1]><v:shape id="_x0000_s1049" type="#_x0000_t75"
  style='position:absolute;left:0;text-align:left;margin-left:153.1pt;
  margin-top:37.35pt;width:58.6pt;height:20pt;z-index:35;visibility:visible;
  mso-wrap-style:square;mso-wrap-distance-left:9pt;mso-wrap-distance-top:0;
@@ -1920,7 +1920,7 @@ solicitarlo y en el caso de la paralizaci&oacute;n la fecha de fin.</p>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image043.png"
   o:title=""/>
  <w:wrap type="square"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]-->Una
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%>Una
 vez el gestor ha propuesto (o elevado) una decisi&oacute;n pulsando bot&oacute;n Proponer, el
 gestor deber&aacute; esperar a que el supervisor apruebe la decisi&oacute;n, la deniegue o
 bien proponga el otra decisi&oacute;n.</p>
@@ -1959,12 +1959,12 @@ en el cuadro de Actuaciones.</p>
 
 
 <p class="MsoNormal" style="text-indent: 35.45pt; font-family: Arial;"></p>
-<div style="text-align: center;"><!--[if gte vml 1]><v:rect
+<div style="text-align: center;"><%--[if gte vml 1]><v:rect
  id="_x0000_s1026" style='position:absolute;left:0;text-align:left;
  margin-left:-362.2pt;margin-top:6.8pt;width:351.95pt;height:107pt;z-index:13'
  filled="f" strokecolor="red">
  <v:stroke dashstyle="dash"/>
-</v:rect><![endif]--><!--[if !vml]--><!--[endif]--><!--[if gte vml 1]><v:shape id="Imagen_x0020_206"
+</v:rect><![endif]--%><%--[if !vml]--%><%--[endif]--%><%--[if gte vml 1]><v:shape id="Imagen_x0020_206"
  o:spid="_x0000_s1048" type="#_x0000_t75" style='position:absolute;left:0;
  text-align:left;margin-left:27.85pt;margin-top:4.3pt;width:358.5pt;height:262.3pt;
  z-index:-44;visibility:visible;mso-wrap-style:square;mso-wrap-distance-left:9pt;
@@ -1975,7 +1975,7 @@ en el cuadro de Actuaciones.</p>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image050.png"
   o:title=""/>
  <w:wrap type="square"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--><img style="width: 663px; height: 479px;" alt="nueva_decision_2" src="../img/plugin/ayuda/procediminetos_actuaciones/nueva_decision_2.jpg"></div>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%><img style="width: 663px; height: 479px;" alt="nueva_decision_2" src="../img/plugin/ayuda/procediminetos_actuaciones/nueva_decision_2.jpg"></div>
 
 
 
@@ -2093,27 +2093,27 @@ para marcar la tarea como finalizada.</p>
 <img style="width: 700px; height: 268px;" alt="tareas_actuaciones" src="../img/plugin/ayuda/procediminetos_actuaciones/tareas_actuaciones.jpg">
 <p class="Prrafodelista1" style="margin-left: 21.3pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left"></p>
 
-<p class="Prrafodelista1" style="margin-left: 21.3pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Tarea</p>
+<p class="Prrafodelista1" style="margin-left: 21.3pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Tarea</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 21.3pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Fecha de inicio</p>
+<p class="Prrafodelista1" style="margin-left: 21.3pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Fecha de inicio</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 21.3pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Fecha de vencimiento</p>
+<p class="Prrafodelista1" style="margin-left: 21.3pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left">&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Fecha de vencimiento</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 21.3pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Fecha de finalizaci&oacute;n</p>
+<p class="Prrafodelista1" style="margin-left: 21.3pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Fecha de finalizaci&oacute;n</p>
 
 
 
 
-<p class="Prrafodelista1" style="margin-left: 21.3pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Usuario</p>
+<p class="Prrafodelista1" style="margin-left: 21.3pt; text-align: left; text-indent: 0cm; font-family: Arial;" align="left"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Usuario</p>
 
 
 
@@ -2128,7 +2128,7 @@ para marcar la tarea como finalizada.</p>
 
 
 
-<p class="MsoNormal" style="text-align: left; text-indent: 35.4pt; font-family: Arial;" align="left"><!--[if gte vml 1]><v:shape
+<p class="MsoNormal" style="text-align: left; text-indent: 35.4pt; font-family: Arial;" align="left"><%--[if gte vml 1]><v:shape
  id="Imagen_x0020_208" o:spid="_x0000_s1046" type="#_x0000_t75" style='position:absolute;
  left:0;text-align:left;margin-left:103.95pt;margin-top:13.3pt;width:189.2pt;
  height:19.85pt;z-index:2;visibility:visible;mso-wrap-style:square;
@@ -2139,7 +2139,7 @@ para marcar la tarea como finalizada.</p>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image057.png"
   o:title=""/>
  <w:wrap type="square"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--><img style="width: 350px; height: 38px;" alt="ver_editar" src="../img/plugin/ayuda/procediminetos_actuaciones/ver_editar.jpg"></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%><img style="width: 350px; height: 38px;" alt="ver_editar" src="../img/plugin/ayuda/procediminetos_actuaciones/ver_editar.jpg"></p>
 
 
 
@@ -2147,11 +2147,11 @@ para marcar la tarea como finalizada.</p>
 
 
 
-<p class="MsoNormal" style="text-align: left; font-family: Arial;" align="left"><!--[if gte vml 1]><v:rect
+<p class="MsoNormal" style="text-align: left; font-family: Arial;" align="left"><%--[if gte vml 1]><v:rect
  id="_x0000_s1031" style='position:absolute;margin-left:165.7pt;margin-top:2.3pt;
  width:43pt;height:18pt;z-index:18' filled="f" strokecolor="red">
  <v:stroke dashstyle="dash"/>
-</v:rect><![endif]--><!--[if !vml]--><!--[endif]-->&nbsp;</p>
+</v:rect><![endif]--%><%--[if !vml]--%><%--[endif]--%>&nbsp;</p>
 
 <span style="font-family: Arial;">A trav&eacute;s de este bot&oacute;n se puede consultar o
 bien modificar las tareas.</span>
@@ -2178,7 +2178,7 @@ entidad.</p>
 
 
 
-<p class="MsoNormal" style="font-family: Arial; text-align: center;"><!--[if gte vml 1]><v:shape
+<p class="MsoNormal" style="font-family: Arial; text-align: center;"><%--[if gte vml 1]><v:shape
  id="Imagen_x0020_209" o:spid="_x0000_s1045" type="#_x0000_t75" style='position:absolute;
  margin-left:90.5pt;margin-top:3.3pt;width:202.65pt;height:139.15pt;z-index:38;
  visibility:visible;mso-wrap-style:square;mso-wrap-distance-left:9pt;
@@ -2189,7 +2189,7 @@ entidad.</p>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image060.png"
   o:title=""/>
  <w:wrap type="square"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--><img style="width: 375px; height: 258px;" alt="titulo_judicial" src="../img/plugin/ayuda/procediminetos_actuaciones/titulo_judicial.jpg"></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%><img style="width: 375px; height: 258px;" alt="titulo_judicial" src="../img/plugin/ayuda/procediminetos_actuaciones/titulo_judicial.jpg"></p>
 
 
 
@@ -2275,7 +2275,7 @@ establecido anteriormente se retrase hasta la fecha deseada.</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; font-family: Arial; text-align: center;"><!--[if gte vml 1]><v:shape
+<p class="MsoNormal" style="margin-left: 35.45pt; font-family: Arial; text-align: center;"><%--[if gte vml 1]><v:shape
  id="Imagen_x0020_210" o:spid="_x0000_s1044" type="#_x0000_t75" style='position:absolute;
  left:0;text-align:left;margin-left:58.8pt;margin-top:6.95pt;width:276.8pt;
  height:114.95pt;z-index:39;visibility:visible;mso-wrap-style:square;
@@ -2286,7 +2286,7 @@ establecido anteriormente se retrase hasta la fecha deseada.</p>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image062.png"
   o:title=""/>
  <w:wrap type="square"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--><img style="width: 113px; height: 30px;" alt="prorroga" src="../img/plugin/ayuda/procediminetos_actuaciones/prorroga.jpg"></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%><img style="width: 113px; height: 30px;" alt="prorroga" src="../img/plugin/ayuda/procediminetos_actuaciones/prorroga.jpg"></p>
 
 
 
@@ -2378,7 +2378,7 @@ establecido anteriormente se retrase hasta la fecha deseada.</p>
 
 <p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;">&nbsp;<br>
 
-<!--[if !supportLists]--><!--[endif]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Motivo: Donde se debe marcar un motivo (codificado).</p>
+<%--[if !supportLists]--%><%--[endif]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Motivo: Donde se debe marcar un motivo (codificado).</p>
 
 
 
@@ -2391,7 +2391,7 @@ establecido anteriormente se retrase hasta la fecha deseada.</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Nueva Fecha: Donde se marca la nueva fecha que solicita para
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Nueva Fecha: Donde se marca la nueva fecha que solicita para
 realizar la tarea</p>
 
 
@@ -2403,14 +2403,14 @@ realizar la tarea</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->&nbsp;<br>
+<p class="MsoNormal" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>&nbsp;<br>
 
-&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--[endif]-->Detalle: Justificar el motivo en un campo de texto libre</p>
-
-
+&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%--[endif]--%>Detalle: Justificar el motivo en un campo de texto libre</p>
 
 
-<p style="font-family: Arial;" class="MsoNormal"><!--[if !vml]--><!--[endif]--></p>
+
+
+<p style="font-family: Arial;" class="MsoNormal"><%--[if !vml]--%><%--[endif]--%></p>
 
 
 
@@ -2444,7 +2444,7 @@ en su par&aacute;metro correspondiente por los Servicios Centrales de la Entidad
 
 
 
-<p class="Prrafodelista1" style="margin-left: 0cm; text-align: left; font-family: Arial;" align="left"><!--[if !vml]--><!--[endif]-->Solicitada la prorroga, pulsando la opci&oacute;n Guardar, autom&aacute;ticamente
+<p class="Prrafodelista1" style="margin-left: 0cm; text-align: left; font-family: Arial;" align="left"><%--[if !vml]--%><%--[endif]--%>Solicitada la prorroga, pulsando la opci&oacute;n Guardar, autom&aacute;ticamente
 le saldr&aacute; una tarea al Supervisor en su panel de tareas para que la conteste y,
 si la autoriza, el plazo queda prorrogado autom&aacute;ticamente en la lista de tareas
 del gestor.</p>
@@ -2467,11 +2467,11 @@ del gestor.</p>
 
 <p class="MsoNormal" style="text-align: left; font-family: Arial;" align="left">&nbsp;<br>
 
-<!--[if gte vml 1]><v:rect
+<%--[if gte vml 1]><v:rect
  id="_x0000_s1032" style='position:absolute;margin-left:216.1pt;margin-top:4.05pt;
  width:73.5pt;height:18pt;z-index:19' filled="f" strokecolor="red">
  <v:stroke dashstyle="dash"/>
-</v:rect><![endif]--><!--[if !vml]--><!--[endif]--><!--[if gte vml 1]><v:shape id="Imagen_x0020_212" o:spid="_x0000_s1038"
+</v:rect><![endif]--%><%--[if !vml]--%><%--[endif]--%><%--[if gte vml 1]><v:shape id="Imagen_x0020_212" o:spid="_x0000_s1038"
  type="#_x0000_t75" style='position:absolute;margin-left:110.4pt;margin-top:2.45pt;
  width:189.2pt;height:19.85pt;z-index:1;visibility:visible;mso-wrap-style:square;
  mso-wrap-distance-left:9pt;mso-wrap-distance-top:0;mso-wrap-distance-right:9pt;
@@ -2481,7 +2481,7 @@ del gestor.</p>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image057.png"
   o:title=""/>
  <w:wrap type="square"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%></p>
 
 
 
@@ -2507,7 +2507,7 @@ algunas ocasiones es posible Podremos cancelar la &uacute;ltima tarea realizada<
 
 
 
-<p class="MsoNormal" style="font-family: Arial; text-align: center;"><!--[if gte vml 1]><v:shape
+<p class="MsoNormal" style="font-family: Arial; text-align: center;"><%--[if gte vml 1]><v:shape
  id="Imagen_x0020_213" o:spid="_x0000_s1037" type="#_x0000_t75" style='position:absolute;
  margin-left:44.4pt;margin-top:-.25pt;width:305.65pt;height:63.9pt;z-index:41;
  visibility:visible;mso-wrap-style:square;mso-wrap-distance-left:9pt;
@@ -2518,7 +2518,7 @@ algunas ocasiones es posible Podremos cancelar la &uacute;ltima tarea realizada<
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image076.png"
   o:title=""/>
  <w:wrap type="square"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--><img style="width: 558px; height: 112px;" alt="ventana_cancelar_tarea" src="../img/plugin/ayuda/procediminetos_actuaciones/ventana_cancelar_tarea.jpg"></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%><img style="width: 558px; height: 112px;" alt="ventana_cancelar_tarea" src="../img/plugin/ayuda/procediminetos_actuaciones/ventana_cancelar_tarea.jpg"></p>
 
 
 
@@ -2582,12 +2582,12 @@ observaciones.</p>
 
 
 
-<p class="MsoNormal" style="text-align: center; font-family: Arial;" align="center"><!--[if gte vml 1]><v:shape id="Imagen_x0020_214"
+<p class="MsoNormal" style="text-align: center; font-family: Arial;" align="center"><%--[if gte vml 1]><v:shape id="Imagen_x0020_214"
  o:spid="_x0000_i1027" type="#_x0000_t75" style='width:396.75pt;height:245.25pt;
  visibility:visible;mso-wrap-style:square'>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image078.png"
   o:title=""/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--><img style="width: 700px; height: 438px;" alt="documentacion" src="../img/plugin/ayuda/procediminetos_actuaciones/documentacion.jpg"></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%><img style="width: 700px; height: 438px;" alt="documentacion" src="../img/plugin/ayuda/procediminetos_actuaciones/documentacion.jpg"></p>
 
 
 
@@ -2613,12 +2613,12 @@ operaciones:</a> </h4>
 
 
 
-<p class="MsoNormal" style="text-align: center; font-family: Arial;" align="center"><!--[if gte vml 1]><v:shape id="Imagen_x0020_215"
+<p class="MsoNormal" style="text-align: center; font-family: Arial;" align="center"><%--[if gte vml 1]><v:shape id="Imagen_x0020_215"
  o:spid="_x0000_i1026" type="#_x0000_t75" style='width:397.5pt;height:153.75pt;
  visibility:visible;mso-wrap-style:square'>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image080.png"
   o:title=""/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--><img style="width: 700px; height: 267px;" alt="historico" src="../img/plugin/ayuda/procediminetos_actuaciones/historico.jpg"></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%><img style="width: 700px; height: 267px;" alt="historico" src="../img/plugin/ayuda/procediminetos_actuaciones/historico.jpg"></p>
 
 
 
@@ -2683,7 +2683,7 @@ tarea con los datos que se rellenaron.</p>
 
 
 
-<p style="font-family: Arial; text-align: center;" class="MsoNormal"><!--[if gte vml 1]><v:shape id="Imagen_x0020_216" o:spid="_x0000_s1036"
+<p style="font-family: Arial; text-align: center;" class="MsoNormal"><%--[if gte vml 1]><v:shape id="Imagen_x0020_216" o:spid="_x0000_s1036"
  type="#_x0000_t75" style='position:absolute;left:0;text-align:left;
  margin-left:74.95pt;margin-top:.05pt;width:268.25pt;height:148.25pt;z-index:42;
  visibility:visible;mso-wrap-style:square;mso-wrap-distance-left:9pt;
@@ -2694,7 +2694,7 @@ tarea con los datos que se rellenaron.</p>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image082.png"
   o:title=""/>
  <w:wrap type="square"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--><img style="width: 492px; height: 270px;" alt="monitorio" src="../img/plugin/ayuda/procediminetos_actuaciones/monitorio.jpg"></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%><img style="width: 492px; height: 270px;" alt="monitorio" src="../img/plugin/ayuda/procediminetos_actuaciones/monitorio.jpg"></p>
 
 
 
@@ -2773,7 +2773,7 @@ comunicaci&oacute;n, se despliega el siguiente cuadro:</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 18pt; font-family: Arial; text-align: center;"><!--[if gte vml 1]><v:shape id="Imagen_x0020_217"
+<p class="MsoNormal" style="margin-left: 18pt; font-family: Arial; text-align: center;"><%--[if gte vml 1]><v:shape id="Imagen_x0020_217"
  o:spid="_x0000_s1035" type="#_x0000_t75" style='position:absolute;left:0;
  text-align:left;margin-left:65.2pt;margin-top:2pt;width:277.7pt;height:162.15pt;
  z-index:46;visibility:visible;mso-wrap-style:square;mso-wrap-distance-left:9pt;
@@ -2784,7 +2784,7 @@ comunicaci&oacute;n, se despliega el siguiente cuadro:</p>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image084.png"
   o:title=""/>
  <w:wrap type="square"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--><img style="width: 520px; height: 305px;" alt="comunicacion" src="../img/plugin/ayuda/procediminetos_actuaciones/comunicacion.jpg"></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%><img style="width: 520px; height: 305px;" alt="comunicacion" src="../img/plugin/ayuda/procediminetos_actuaciones/comunicacion.jpg"></p>
 
 &nbsp;
 
@@ -2801,30 +2801,30 @@ del que puede optar por:</p>
 
 
 
-<p class="MsoListParagraph" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->a)&nbsp;&nbsp;&nbsp;<!--[endif]-->No requerir respuesta, en cuyo caso,
+<p class="MsoListParagraph" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>a)&nbsp;&nbsp;&nbsp;<%--[endif]--%>No requerir respuesta, en cuyo caso,
 su supervisor simplemente se dar&aacute; por enterado al leerla en su panel. Las
 encontrar&aacute; en el buz&oacute;n de notificaciones.</p>
 
 
 
 
-<p class="MsoListParagraph" style="margin-left: 21.3pt; font-family: Arial;"><!--[if gte vml 1]><v:shape id="Imagen_x0020_218" o:spid="_x0000_i1025"
+<p class="MsoListParagraph" style="margin-left: 21.3pt; font-family: Arial;"><%--[if gte vml 1]><v:shape id="Imagen_x0020_218" o:spid="_x0000_i1025"
  type="#_x0000_t75" style='width:119.25pt;height:15.75pt;visibility:visible;
  mso-wrap-style:square'>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image086.png"
   o:title=""/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%></p>
 
 
 
 
-<p class="MsoListParagraph" style="margin: 0cm -7.1pt 0.0001pt 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]-->b)&nbsp;&nbsp;&nbsp;<!--[endif]-->Requerir respuesta, en cuyo caso, deber&aacute;
+<p class="MsoListParagraph" style="margin: 0cm -7.1pt 0.0001pt 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%>b)&nbsp;&nbsp;&nbsp;<%--[endif]--%>Requerir respuesta, en cuyo caso, deber&aacute;
 marcarlo:</p>
 
 
 
 
-<p class="MsoListParagraph" style="margin-left: 21.3pt; font-family: Arial;"><!--[if gte vml 1]><v:shape
+<p class="MsoListParagraph" style="margin-left: 21.3pt; font-family: Arial;"><%--[if gte vml 1]><v:shape
  id="Imagen_x0020_9" o:spid="_x0000_s1034" type="#_x0000_t75" style='position:absolute;
  left:0;text-align:left;margin-left:108.55pt;margin-top:4.8pt;width:111.1pt;
  height:12.6pt;z-index:-23;visibility:visible;mso-wrap-style:square;
@@ -2835,7 +2835,7 @@ marcarlo:</p>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image088.png"
   o:title=""/>
  <w:wrap type="tight"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%></p>
 
 
 
@@ -2845,7 +2845,7 @@ marcarlo:</p>
 
 
 
-<p class="MsoListParagraph" style="margin-left: 21.3pt; font-family: Arial;"><!--[if gte vml 1]><v:shape
+<p class="MsoListParagraph" style="margin-left: 21.3pt; font-family: Arial;"><%--[if gte vml 1]><v:shape
  id="Imagen_x0020_541" o:spid="_x0000_s1033" type="#_x0000_t75" style='position:absolute;
  left:0;text-align:left;margin-left:108.55pt;margin-top:26pt;width:126.35pt;
  height:19.7pt;z-index:-22;visibility:visible;mso-wrap-style:square;
@@ -2856,7 +2856,7 @@ marcarlo:</p>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image090.png"
   o:title=""/>
  <w:wrap type="tight"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]-->En este caso, adem&aacute;s ha de
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%>En este caso, adem&aacute;s ha de
 introducir una fecha l&iacute;mite en la que el gestor desee obtener la respuesta:</p>
 
 

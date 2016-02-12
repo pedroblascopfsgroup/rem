@@ -206,7 +206,9 @@ public class PropuestasController {
 		
 		List<Long> idsContrato = new ArrayList<Long>();
 		for(String contrato : contratosIncluidos.split(",")){
-			idsContrato.add(Long.parseLong(contrato));
+			if (!contrato.equals("")) {
+				idsContrato.add(Long.parseLong(contrato));
+			}
 		}
 
 		model.put("listadoBienesAcuerdo", propuestaApi.getBienesDelExpedienteParaLaPropuesta(idExpediente,idsContrato));

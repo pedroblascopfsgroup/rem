@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.servlet.ServletContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +45,7 @@ import es.pfsgroup.plugin.recovery.masivo.model.MSVDDTipoResolucion;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVFileItem;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVResolucion;
 import es.pfsgroup.plugin.recovery.masivo.resolInputConfig.api.MSVResolucionInputApi;
+import es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolucionesProc;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.recovery.api.ProcedimientoApi;
 import es.pfsgroup.recovery.api.TareaExternaApi;
@@ -69,7 +71,7 @@ import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 public class MSVResolucionManager implements MSVResolucionApi {
 
 	private static final String FICHERO_VACIO = "/reports/plugin/masivo/vacio.file";
-
+	
 	@Autowired
 	private GenericABMDao genericDao;
 	
@@ -700,6 +702,27 @@ public class MSVResolucionManager implements MSVResolucionApi {
 
 		return msvResolucionDao.getResolucionByTareaNotificacion(idTareaNotificacion);
 
+	}
+
+	@Override
+	@BusinessOperation(MSV_BO_GUARDAR_ARCHIVO_ADJUNTO_RESOLUCION)
+	public MSVResolucion guardarAdjuntoResolucion(MSVResolucionesDto dtoResolucion) {
+		
+		MSVResolucion msvResolucion = getResolucion(dtoResolucion.getIdResolucion());
+		
+		if (dtoResolucion.getIdFichero() != null){
+			//MSVFileItem msvFileItem = proxyFactory.proxy(MSVFileManagerApi.class).getFile(dtoResolucion.getIdFichero());
+			MSVFileItem msvFileItem = this.getFile(dtoResolucion);
+			msvResolucion.setNombreFichero(msvFileItem.getNombre());
+			msvResolucion.setContenidoFichero(msvFileItem.getFileItem());
+			msvResolucion.setAdjunto(msvFileItem);
+			msvResolucion.setAdjuntoFinal(adjuntarFicheroFinal(msvResolucion.getAdjunto(), msvResolucion));
+			msvResolucionDao.saveOrUpdate(msvResolucion);
+		}
+		
+		//msvResolucionDao.saveOrUpdate(msvResolucion);
+
+		return msvResolucion;
 	}
 
 }

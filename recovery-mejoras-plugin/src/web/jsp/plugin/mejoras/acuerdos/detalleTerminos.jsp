@@ -255,6 +255,7 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
 		iconCls: 'icon_edit',
 		hidden : noPuedeModificar,
 		handler: function(){
+			var contratosIncluidos = transformParamInc();
 			if (typeof idTerminoSeleccionado != 'undefined'){
 				//var ambito = entidad.id;
 	     	   	var w = app.openWindow({
@@ -266,6 +267,7 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
         		   ,params:{
 	    			  	  ambito: ambito,
 	     				  id:idTerminoSeleccionado,
+	      				  contratosIncluidos: contratosIncluidos,     				  
 <%-- 	     				  idAsunto:panel.getAsuntoId(), --%>
 	     				  idAcuerdo : idAcuerdo,
 	     				  soloConsulta : 'false'     				  
@@ -390,6 +392,7 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
 	});
 	
 	terminosAcuerdoGrid.on('rowdblclick', function(grid, rowIndex, e){
+		var contratosIncluidos = transformParamInc();
 		var rec = grid.getStore().getAt(rowIndex);
 		idTerminoSeleccionado = rec.get('id');
 			//var ambito = entidad.id;
@@ -404,8 +407,8 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
      				  id:idTerminoSeleccionado,
 <%--      				  idAsunto:panel.getAsuntoId(), --%>
 					  idAcuerdo : idAcuerdo,
-					  soloConsulta : 'true'   				  
-<%--      				  contratosIncluidos: contratosIncluidos, --%>
+					  soloConsulta : 'true',   				  
+      				  contratosIncluidos: contratosIncluidos
 <%--      				  idAcuerdo : idAcuerdo --%>
      				}
 	       });

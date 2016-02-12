@@ -65,22 +65,13 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] CAJAMAR MIGRACION CONTRATOS MARCA HAYA');
         select distinct g.cnt_id, g.cnt_cod_entidad, g.cnt_cod_oficina, g.cnt_cod_centro, g.cnt_contrato
              , eop.cd_expediente as cod_recovery
              , tmp.tmp_cnt_char_extra7
-             , Case When tmp.tmp_cnt_char_extra7 is not null
-                     Then ''AGE'' -- Gestion Externa
-                    When tmp.tmp_cnt_char_extra7 is null and eop.cd_expediente is not null
-                     Then ''PCO'' -- Precontencioso
-                    Else ''GES''  -- Sin gestión
-               End as cdTipoAct
-          from '||v_esquema||'.cnt_contratos g, '||v_esquema||'.dd_ges_gestion_especial b, '||v_esquema||'.cex_contratos_expediente c, '||v_esquema||'.dd_cre_condiciones_remun_ext r
+             , ''AGE'' as cdTipoAct -- Gestion Externa
+          from '||v_esquema||'.cnt_contratos g
              , '||v_esquema||'.MIG_EXPEDIENTES_OPERACIONES eop
              , '||v_esquema||'.TMP_CNT_CONTRATOS           tmp
-         where g.dd_ges_id = b.dd_ges_id and g.dd_cre_id = r.dd_cre_id
-           and g.cnt_id  = c.cnt_id(+) and c.cex_id is null
-           and b.dd_ges_codigo = ''HAYA'' and r.dd_cre_codigo in (''EX'',''CN'',''IM'',''AR'',''MA'',''SC'')
-           and g.cnt_contrato = eop.numero_contrato(+)
-           and g.cnt_cod_entidad = eop.cod_entidad(+)
-           and g.cnt_contrato = tmp.tmp_cnt_contrato(+)
-           and g.cnt_cod_entidad = tmp.tmp_cnt_cod_entidad(+)
+         where tmp.tmp_cnt_remu_gest_especial = ''EX''
+           and g.cnt_contrato = eop.numero_contrato
+           and g.cnt_contrato = tmp.tmp_cnt_contrato
            ';
     execute immediate v_sql;
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - Tabla temporal '||v_esquema||'.TMP_GUIA_CONTRATOS_HRE creada. '||SQL%ROWCOUNT||' Filas');
@@ -274,9 +265,9 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] CAJAMAR MIGRACION CONTRATOS MARCA HAYA');
                            3 as dd_eas_id, -- estadoasunto aceptado
                            ''EXTAsunto'' as dtype,
                            (SELECT dd_tas_id FROM '||v_esquema_master||'.dd_tas_tipos_asunto WHERE dd_tas_descripcion = ''Litigio'') as dd_tas_id,
-                           (SELECT dd_pas_id FROM '||v_esquema||'.dd_pas_propiedad_asunto WHERE dd_pas_codigo = ''CAJAMAR'') as dd_pas_id,  -->>> haya??
+                           (SELECT dd_pas_id FROM '||v_esquema||'.dd_pas_propiedad_asunto WHERE dd_pas_codigo = ''CAJAMAR'') as dd_pas_id,
                            cd_expediente_nuse as asu_id_externo,
-                           (select dd_ges_id FROM '||v_esquema||'.dd_ges_gestion_asunto WHERE dd_ges_codigo = ''CAJAMAR'') as dd_ges_id,
+                           (select dd_ges_id FROM '||v_esquema||'.dd_ges_gestion_asunto WHERE dd_ges_codigo = ''HAYA'') as dd_ges_id,
                            sys_guid() as sys_guid
                       FROM '||v_esquema||'.TMP_EXP_EXPEDIENTES_HRE';
     execute immediate v_sql;
@@ -491,7 +482,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] CAJAMAR MIGRACION CONTRATOS MARCA HAYA');
                      , tex.tex_id
                      , tev.tev_nombre
                      , decode( tev.tev_nombre
-                             , ''fecha_fin'', to_char(sysdate,''yyyy-mm-dd'')
+                             , ''fecha_fin_revision'', to_char(sysdate,''yyyy-mm-dd'')
                              , ''gestion'', decode(tmp.cdTipoAct,''AGE'',''AGENCIA_EXTERNA''
                                                                 ,''PCO'',''SIN_GESTION''
                                                                 ,''GES'',''SIN_GESTION'')
@@ -509,7 +500,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] CAJAMAR MIGRACION CONTRATOS MARCA HAYA');
                      , '||v_esquema||'.TAP_TAREA_PROCEDIMIENTO    TAP
                      , '||v_esquema||'.TEX_TAREA_EXTERNA          TEX
                      --** Obtenemos valores por producto cartesiano
-                     , (Select ''fecha_fin'' as tev_nombre from dual
+                     , (Select ''fecha_fin_revision'' as tev_nombre from dual
                         union all
                         Select ''gestion'' as tev_nombre from dual
                         union all

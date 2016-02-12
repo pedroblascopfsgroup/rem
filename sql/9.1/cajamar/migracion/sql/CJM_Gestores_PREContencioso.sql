@@ -30,7 +30,7 @@ DECLARE
     V_TIPO_TFA T_ARRAY_TGE := T_ARRAY_TGE(  
       T_TIPO_TGE( 'CM_GE_PCO','val.gestEstudio','CM_GE_PCO Gestor de Estudio val.gestEstudio'),
       T_TIPO_TGE('CM_GL_PCO','val.gestliquidaciones','CM_GL_PCO	Gestor de Liquidación   val.gestliquidaciones'),
-	  T_TIPO_TGE('SUP_PCO','val.supervisor','SUP_PCO	Supervisor expediente judicial val.supervisor'),
+--	  T_TIPO_TGE('SUP_PCO','val.supervisor','SUP_PCO	Supervisor expediente judicial val.supervisor'),
 	  T_TIPO_TGE('CM_GD_PCO','val.gestdocumentacion','CM_GD_PCO	Gestor de Documentación val.gestdocumentacion')
       );
       V_TMP_TIPO_TGE T_TIPO_TGE;

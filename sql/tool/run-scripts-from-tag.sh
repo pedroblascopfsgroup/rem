@@ -270,6 +270,7 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
         cp -r $BASEDIR/tmp/DML*reg*.sql $BASEDIR/tmp/package/DB/scripts/
     fi
     cd $BASEDIR/tmp/package/DB
+    chmod +x ./*.sh
     zip DB-scripts.zip -r *
     cd -
     echo ""

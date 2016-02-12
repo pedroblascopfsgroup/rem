@@ -143,7 +143,7 @@ public class ARQSimulacionDeModelosManager {
 		}
 		return resultado;
 	}
-	
+	/*
 	private ArrayList<ARQDtoResultadoSimulacion> simulaModelo(
 			List<ARQListaArquetipo> arquetipos) {
 		ArrayList<ARQDtoResultadoSimulacion> resultado = new ArrayList<ARQDtoResultadoSimulacion>();
@@ -157,6 +157,30 @@ public class ARQSimulacionDeModelosManager {
 				errores.append("\n".concat(rr.getError()));
 			}
 			resultado.add(r);
+		}
+		if (! "".equals(errores.toString().trim())){
+			
+		}
+		return resultado;
+	}
+	*/
+	private ArrayList<ARQDtoResultadoSimulacion> simulaModelo(
+			List<ARQListaArquetipo> arquetipos) {
+		ArrayList<ARQDtoResultadoSimulacion> resultado = new ArrayList<ARQDtoResultadoSimulacion>();
+		StringBuilder errores = new StringBuilder("");
+		List<String> sqlMostPriority = new ArrayList<String>();
+		for (ARQListaArquetipo a : arquetipos) {
+			ARQDtoResultadoSimulacion r = new ARQDtoResultadoSimulacion();
+			r.setArquetipo(a);
+			
+			RuleResult rr = (RuleResult)executor.execute("arquetiposRuleExecutor.checkRule",a.getRuleDefinition(),sqlMostPriority);
+			r.setTotalClientes(rr.getRowsModified());
+			if (rr.getError() != null){
+				errores.append("\n".concat(rr.getError()));
+			}
+			resultado.add(r);
+			String sqlGen = (String)executor.execute("arquetiposRuleExecutor.generateMostPriorityBaseRule",a.getRuleDefinition());
+			sqlMostPriority.add(sqlGen);
 		}
 		if (! "".equals(errores.toString().trim())){
 			

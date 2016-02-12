@@ -1,0 +1,137 @@
+--/*
+--##########################################
+--## AUTOR=JAVIER RUIZ
+--## FECHA_CREACION=20160201
+--## ARTEFACTO=producto
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=CMREC-1856
+--## PRODUCTO=SI
+--##
+--## Finalidad: DDL Alterar la tabla ACU_CAMPOS_TIPO_ACUERDO y crear la ACU_VALORES_TERMINOS para hacer completamente dinámico los campos de los términos (Soluciones a propuestas)
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_TS_INDEX VARCHAR2(25 CHAR):= '#TABLESPACE_INDEX#'; -- Configuracion Indice
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.  
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+
+    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
+    
+BEGIN
+
+    -- ******** Alterar la tabla ACU_CAMPOS_TIPO_ACUERDO *******
+    DBMS_OUTPUT.PUT_LINE('******** Alterar la tabla ACU_CAMPOS_TIPO_ACUERDO *******'); 
+    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.ACU_CAMPOS_TIPO_ACUERDO... Comprobaciones previas'); 
+    
+    -- Comprobamos si existe la tabla   
+    V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''ACU_CAMPOS_TIPO_ACUERDO'' and owner = '''||V_ESQUEMA||'''';
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+    -- Si NO existe la tabla no hacemos nada
+    IF V_NUM_TABLAS = 0 THEN 
+            DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.ACU_CAMPOS_TIPO_ACUERDO... Tabla NO existe, imposible continuar');    
+    ELSE
+    	-- Campo CMP_LABEL
+    	V_SQL := 'SELECT COUNT(1) FROM SYS.COL WHERE TNAME=''ACU_CAMPOS_TIPO_ACUERDO'' AND CNAME=''CMP_LABEL''';
+    	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+    	IF V_NUM_TABLAS = 0 THEN
+	    	 --Alteramos la tabla
+	    	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.ACU_CAMPOS_TIPO_ACUERDO 
+						ADD (CMP_LABEL VARCHAR2(100 CHAR) DEFAULT '''' NOT NULL)';
+			EXECUTE IMMEDIATE V_MSQL;
+			DBMS_OUTPUT.PUT_LINE('[INFO] Campo: '||V_ESQUEMA||'.ACU_CAMPOS_TIPO_ACUERDO.CMP_LABEL añadido....');
+		ELSE
+			DBMS_OUTPUT.PUT_LINE('[INFO] Campo: '||V_ESQUEMA||'.ACU_CAMPOS_TIPO_ACUERDO.CMP_LABEL ya existia');
+		END IF;
+		
+		-- Campo CMP_TIPO_CAMPO
+    	V_SQL := 'SELECT COUNT(1) FROM SYS.COL WHERE TNAME=''ACU_CAMPOS_TIPO_ACUERDO'' AND CNAME=''CMP_TIPO_CAMPO''';
+    	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+    	IF V_NUM_TABLAS = 0 THEN
+	    	 --Alteramos la tabla		
+			V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.ACU_CAMPOS_TIPO_ACUERDO 
+						ADD (CMP_TIPO_CAMPO VARCHAR2(50 CHAR) DEFAULT ''text'' NOT NULL)';
+			EXECUTE IMMEDIATE V_MSQL;
+			V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.ACU_CAMPOS_TIPO_ACUERDO.CMP_TIPO_CAMPO IS ''Valores: text, number, combobox, fecha, html''';
+			EXECUTE IMMEDIATE V_MSQL;
+			DBMS_OUTPUT.PUT_LINE('[INFO] Campo: '||V_ESQUEMA||'.ACU_CAMPOS_TIPO_ACUERDO.CMP_TIPO_CAMPO añadido....');
+		ELSE
+			DBMS_OUTPUT.PUT_LINE('[INFO] Campo: '||V_ESQUEMA||'.ACU_CAMPOS_TIPO_ACUERDO.CMP_TIPO_CAMPO ya existia');
+		END IF;
+		
+		-- Campo CMP_TIPO_CAMPO
+    	V_SQL := 'SELECT COUNT(1) FROM SYS.COL WHERE TNAME=''ACU_CAMPOS_TIPO_ACUERDO'' AND CNAME=''CMP_VALORES_COMBO''';
+    	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+    	IF V_NUM_TABLAS = 0 THEN
+	    	 --Alteramos la tabla		
+			V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.ACU_CAMPOS_TIPO_ACUERDO 
+						ADD (CMP_VALORES_COMBO VARCHAR2(1024 CHAR) )';
+			EXECUTE IMMEDIATE V_MSQL;
+			V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.ACU_CAMPOS_TIPO_ACUERDO.CMP_VALORES_COMBO IS ''Valores en formato: id1,valor1;id2,valor2''';
+			EXECUTE IMMEDIATE V_MSQL;
+			DBMS_OUTPUT.PUT_LINE('[INFO] Campo: '||V_ESQUEMA||'.ACU_CAMPOS_TIPO_ACUERDO.CMP_VALORES_COMBO añadido....');
+		ELSE
+			DBMS_OUTPUT.PUT_LINE('[INFO] Campo: '||V_ESQUEMA||'.ACU_CAMPOS_TIPO_ACUERDO.CMP_VALORES_COMBO ya existia');
+		END IF;
+	END IF;
+		
+	V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''ACU_VALORES_TERMINOS'' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+	IF V_NUM_TABLAS = 0 THEN
+		V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.ACU_VALORES_TERMINOS 
+				(AVT_ID NUMBER(16, 0) NOT NULL PRIMARY KEY
+				, TEA_ID NUMBER(16, 0) NOT NULL 
+				, CMP_ID NUMBER(16, 0) NOT NULL 
+				, AVT_VALOR VARCHAR2(1024 CHAR) 
+				, VERSION NUMBER(*,0) DEFAULT 0 NOT NULL
+				, USUARIOCREAR VARCHAR2(50 CHAR) NOT NULL
+				, FECHACREAR TIMESTAMP (6) DEFAULT SYSDATE NOT NULL 
+				, BORRADO NUMBER(1,0) DEFAULT 0 NOT NULL
+				, USUARIOMODIFICAR VARCHAR2(50 CHAR)
+				, FECHAMODIFICAR TIMESTAMP (6)
+				, USUARIOBORRAR VARCHAR2(50 CHAR)
+				, FECHABORRAR TIMESTAMP (6)
+				)';
+	
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.ACU_VALORES_TERMINOS... Tabla creada');
+	
+		V_MSQL := 'CREATE INDEX '||V_ESQUEMA||'.IDX_TEA_CMP ON ACU_VALORES_TERMINOS (TEA_ID, CMP_ID) TABLESPACE ' || V_TS_INDEX;
+  		EXECUTE IMMEDIATE V_MSQL;
+  		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.IDX_TEA_CMP... Indice creado');
+  		
+  	    V_MSQL := 'CREATE SEQUENCE ' || V_ESQUEMA || '.S_ACU_VALORES_TERMINOS MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 100 NOORDER  NOCYCLE';
+  	    EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.S_AVT_ID... Secuencia creada correctamente.');
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('[INFO] La tabla ' || V_ESQUEMA || '.S_ACU_VALORES_TERMINOS Ya existia.');
+    END IF;
+    
+EXCEPTION
+  WHEN OTHERS THEN
+    ERR_NUM := SQLCODE;
+    ERR_MSG := SQLERRM;
+    DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+    DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+    DBMS_OUTPUT.put_line(ERR_MSG);
+    ROLLBACK;
+    RAISE;   
+END;
+/
+EXIT;

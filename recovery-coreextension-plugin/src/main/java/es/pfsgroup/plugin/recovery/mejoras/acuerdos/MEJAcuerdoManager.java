@@ -68,6 +68,7 @@ import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.capgemini.pfs.termino.model.TerminoBien;
 import es.capgemini.pfs.termino.model.TerminoContrato;
 import es.capgemini.pfs.termino.model.TerminoOperaciones;
+import es.capgemini.pfs.termino.model.ValoresCamposTermino;
 import es.capgemini.pfs.users.FuncionManager;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -603,7 +604,26 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
     	genericDao.deleteById(TerminoAcuerdo.class, ta.getId());
     	
 		integracionBpmService.enviarDatos(ta);
-	}	
+	}
+    
+	@BusinessOperationDefinition(BO_ACUERDO_MGR_DELETE_VALORES_TERMINO)
+	@Transactional(readOnly = false)    
+    public void deleteAllValoresTermino(TerminoAcuerdo ta) {
+		if (ta.getValoresCampos()!=null) {
+	    	for (ValoresCamposTermino valor : ta.getValoresCampos()) {
+				genericDao.deleteById(ValoresCamposTermino.class, valor.getId());
+			}
+		}
+    }
+	
+	@Transactional(readOnly = false)
+	public void saveAllValoresTermino(TerminoAcuerdo ta) {
+		if (ta.getValoresCampos()!=null) {
+			for (ValoresCamposTermino valor: ta.getValoresCampos()) {
+				genericDao.save(ValoresCamposTermino.class, valor);
+			}
+		}
+	}
     
 	/**
      * @param to TerminoOperaciones

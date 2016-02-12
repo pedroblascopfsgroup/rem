@@ -20,13 +20,31 @@ public class GestionClientesController {
 	public String getContadores(WebRequest request, ModelMap model ){
 		List<GestionClientesCountDTO> tareas = manager.getContadoresGestionVencidos();
 		
+		model.put("count", tareas.size());
 		model.put("tareas", tareas);
 		return "gestionClientes/gestionClientesCountJSON";
+	}
+	
+	@RequestMapping
+	public String getListadoGestionClientes(WebRequest request, ModelMap model){
+		return "gestionClientes/listadoGestionClientes";
 	}
 
 	@RequestMapping
 	public String getListadoVencidos(WebRequest request, ModelMap model) {
 		return "gestionClientes/listadoVencidos";
+	}
+	
+	@RequestMapping
+	public String getListadoSintomaticos(WebRequest request, ModelMap model) {
+		//TODO
+		return null;
+	}
+	
+	@RequestMapping
+	public String getListadoSistematicos(WebRequest request, ModelMap model) {
+		//TODO
+		return null;
 	}
 	
 	@RequestMapping

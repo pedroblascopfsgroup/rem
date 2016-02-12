@@ -5,15 +5,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <fwk:json>
-	<json:property name="total" value="1" />
+	<json:property name="total" value="${count}" />
 	<json:array name="tareas" items="${tareas}" var="tar">
 		<json:object>
-			<json:property name="descripcionTarea"
-				value="${tar.descripcionTarea}" escapeXml="false" />
+			<json:property name="descripcionTarea" value="${tar.descripcionTarea}" escapeXml="false"/>
 			<json:property name="descripcion" value="${tar.descripcion}" />
 			<json:property name="subtipo" value="${tar.subtipo}" />
-			<json:property name="codigoSubtipoTarea"
-				value="${tar.codigoSubtipoTarea}" />
+			<json:property name="codigoSubtipoTarea" value="${tar.codigoSubtipoTarea}" />
 			<json:property name="dtype" value="${tar.dtype}" />
 			<json:property name="categoriaTarea" value="${tar.categoriaTarea}" />
 			<json:property name="group" value="2" />

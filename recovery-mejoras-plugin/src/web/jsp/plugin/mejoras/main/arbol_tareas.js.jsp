@@ -498,24 +498,8 @@ Ext.onReady(function() {
                                 ,leaf:true
                                 ,listeners:tabListener(
                                     "<s:message code="tareas.gc" text="**Gesti&oacute;n de Clientes"/>"
-                                    , "plugin/mejoras/tareas/MEJlistadoTareas",
-                                {
-                                    codigoTipoTarea:'1'
-                                    ,alerta:false
-                                    ,espera:false
-                                    ,titulo:"<s:message code="tareas.gc" text="**Gesti&oacute;n de Clientes"/>"
-                                    ,icon:'icon_gv_tree'
-                                    //,isBusqueda:false
-                                    //,noGrouping:true
-                                    //,fechaVencDesde:app.format.dateRenderer(app.getFirstDateOfWeek(new Date()))
-                                    //,fechaVencDesdeOp:'>='
-                                    //,fechaVencHasta:app.format.dateRenderer(app.getLastDateOfWeek(new Date()))
-                                    //,fechaVencHastaOp:'<='
-                                    ,traerGestionVencidos:true
-                                    //,tituloAdicionalGrid:'<s:message code="main.arbol_tareas.groups.estasemana" text="**Esta Semana" /> '
-                                    ,id: 'gestion_clientes'
-                                },
-                                {id:'gestion_clientes',iconCls:'icon_gv_tree'})
+                                    , "gestionclientes/getListadoGestionClientes",{},
+                                    {id:'gestion_clientes',iconCls:'icon_gv_tree'})
                                 
                 }
 </sec:authorize>

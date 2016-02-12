@@ -60,7 +60,7 @@ BEGIN
         EXECUTE IMMEDIATE V_SQL; 
         DBMS_OUTPUT.PUT_LINE('---' || V_TABLENAME || ': ' || V_TMP_TIPO_TPO(1) || '... registros afectados: ' || sql%rowcount);
     END LOOP;
-    DBMS_OUTPUT.PUT_LINE('[FIN] FIN DE INSERCION DE EN LA TABLA ' || V_TABLENAME);
+    DBMS_OUTPUT.PUT_LINE('[FIN] FIN DE INSERCION EN LA TABLA ' || V_TABLENAME);
 
     COMMIT;
 

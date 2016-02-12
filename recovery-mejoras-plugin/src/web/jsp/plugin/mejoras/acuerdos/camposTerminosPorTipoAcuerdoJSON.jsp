@@ -1,4 +1,4 @@
-<%@page pageEncoding="iso-8859-1" contentType="text/html; charset=UTF-8" %>
+<%@page pageEncoding="iso-8859-1" contentType="text/html; charset=utf-8" %>
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
 <%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -11,6 +11,16 @@
 			<json:property name="id" value="${campo.id}" />
 	        <json:property name="tipoAcuerdo" value="${campo.tipoAcuerdo}" />   
 	        <json:property name="nombreCampo" value="${campo.nombreCampo}" /> 
+	        <json:property name="labelCampo" value="${campo.labelCampo}" />
+	        <json:property name="tipoCampo" value="${campo.tipoCampo}" />
+	        <c:if test="${campo.arrayValoresCombo != null}">
+		        <json:array name="valoresCombo" items="${campo.arrayValoresCombo}" var="valor">
+		        	<json:object>
+		        		<json:property name="myId" value="${valor[0]}" />
+		        		<json:property name="displayText" value="${valor[1]}" />
+		        	</json:object>
+		        </json:array>
+		    </c:if>
 		</json:object>
 	</json:array>
 </fwk:json>

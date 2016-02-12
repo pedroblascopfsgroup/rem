@@ -18,6 +18,7 @@ fi
 LOCAL_PATH=`pwd`
 
 cp config/$1/devon.properties /recovery/batch-server/
+cp config/$1/config.ini /recovery/batch-server/programas/etl/config/
 unzip zip/batch*.zip
 rm -rf /recovery/batch-server/programas/batch/*
 cp -r batch/* /recovery/batch-server/programas/batch/

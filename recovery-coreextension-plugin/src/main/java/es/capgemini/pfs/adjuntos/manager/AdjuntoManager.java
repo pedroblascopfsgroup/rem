@@ -760,7 +760,7 @@ public class AdjuntoManager implements AdjuntoApi{
 	
 	@Override
 	@Transactional(readOnly = false)
-	public FileItem bajarAdjuntoAsunto(Long asuntoId, String adjuntoId) {
+	public FileItem bajarAdjuntoAsunto(Long asuntoId, String adjuntoId, String nombre, String extension) {
         Asunto asunto = (Asunto) executor.execute(ExternaBusinessOperation.BO_ASU_MGR_GET, asuntoId); //get(asuntoId);
         return asunto.getAdjunto(Long.parseLong(adjuntoId)).getAdjunto().getFileItem();
 	}
@@ -768,20 +768,20 @@ public class AdjuntoManager implements AdjuntoApi{
 	
 	@Override
 	@Transactional(readOnly = false)
-	public FileItem bajarAdjuntoPersona(String adjuntoId) {
+	public FileItem bajarAdjuntoPersona(String adjuntoId, String nombre, String extension) {
 		return adjuntoPersonaDao.get(Long.valueOf(adjuntoId)).getAdjunto().getFileItem();
 	}
 	
 	
 	@Override
 	@Transactional(readOnly = false)
-	public FileItem bajarAdjuntoExpediente(String adjuntoId) {
+	public FileItem bajarAdjuntoExpediente(String adjuntoId, String nombre, String extension) {
 		return adjuntoExpedienteDao.get(Long.parseLong(adjuntoId)).getAdjunto().getFileItem();
 	}
 	
 	@Override
 	@Transactional(readOnly = false)
-	public FileItem bajarAdjuntoContrato(String adjuntoId) {
+	public FileItem bajarAdjuntoContrato(String adjuntoId, String nombre, String extension) {
 		return adjuntoContratoDao.get(Long.parseLong(adjuntoId)).getAdjunto().getFileItem();
 	}
 	

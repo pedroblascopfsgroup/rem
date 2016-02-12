@@ -4,8 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.FileNameMap;
-import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,6 +13,8 @@ import java.util.Properties;
 import javax.annotation.Resource;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +53,8 @@ import es.pfsgroup.tipoFicheroAdjunto.MapeoTipoFicheroAdjunto;
 
 @Service("adjuntoManagerHayaImpl")
 public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
+	
+	protected final Log logger = LogFactory.getLog(getClass());
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -348,38 +350,38 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	}
 	
 	@Override
-	public FileItem bajarAdjuntoAsunto(Long asuntoId, String adjuntoId) {
+	public FileItem bajarAdjuntoAsunto(Long asuntoId, String adjuntoId, String nombre, String extension) {
 		if(esEntidadCajamar()){
-			return recuperacionDocumento(adjuntoId);	
+			return recuperacionDocumento(adjuntoId, nombre, extension);	
 		}else{
-			return super.bajarAdjuntoAsunto(asuntoId, adjuntoId);
+			return super.bajarAdjuntoAsunto(asuntoId, adjuntoId, nombre, extension);
 		}
 	}
 	
 	@Override
-	public FileItem bajarAdjuntoExpediente(String adjuntoId) {
+	public FileItem bajarAdjuntoExpediente(String adjuntoId, String nombre, String extension) {
 		if(esEntidadCajamar()){
-			return recuperacionDocumento(adjuntoId);	
+			return recuperacionDocumento(adjuntoId, nombre, extension);	
 		}else{
-			return super.bajarAdjuntoExpediente(adjuntoId);
+			return super.bajarAdjuntoExpediente(adjuntoId, nombre, extension);
 		}
 	}
 
 	@Override
-	public FileItem bajarAdjuntoContrato(String adjuntoId) {
+	public FileItem bajarAdjuntoContrato(String adjuntoId, String nombre, String extension) {
 		if(esEntidadCajamar()){
-			return recuperacionDocumento(adjuntoId);	
+			return recuperacionDocumento(adjuntoId, nombre, extension);	
 		}else{
-			return super.bajarAdjuntoContrato(adjuntoId);
+			return super.bajarAdjuntoContrato(adjuntoId, nombre, extension);
 		}
 	}
 
 	@Override
-	public FileItem bajarAdjuntoPersona(String adjuntoId) {
+	public FileItem bajarAdjuntoPersona(String adjuntoId, String nombre, String extension) {
 		if(esEntidadCajamar()){
-			return recuperacionDocumento(adjuntoId);
+			return recuperacionDocumento(adjuntoId, nombre, extension);
 		}else{
-			return super.bajarAdjuntoPersona(adjuntoId);
+			return super.bajarAdjuntoPersona(adjuntoId, nombre, extension);
 		}
 	}
 
@@ -412,38 +414,31 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 		return gestorDocumentalApi.altaDocumento(idEntidad, tipoEntidadGrid, tipoDocumento, uploadForm);
 	}
 	
-	public FileItem recuperacionDocumento(String id){
-		
-		if(!Checks.esNulo(id)){
-			AdjuntoGridDto adjunto = gestorDocumentalApi.recuperacionDocumento(id);
-			try {
-				if(adjunto != null) {
-					return generaFileItem(adjunto.getNombre(), adjunto.getFicheroBase64(), adjunto.getExtFichero());
-				}
-			} catch (Throwable e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		}else{
-			return null;
+	public FileItem recuperacionDocumento(String id, String nombre, String extension){
+		String ficheroBase64 = gestorDocumentalApi.recuperacionDocumento(id);
+		try {
+			return generaFileItem(nombre, ficheroBase64, extension);
+		} catch (Throwable e) {
+			logger.error("RecuperacionDocumento error: " + e);
 		}
-		return null;
-		
+		return new FileItem();
 	}
 	
 	private FileItem generaFileItem(String nombreFichero, String contenido, String extension) throws Throwable {
+		logger.info("Recupera documento generaFileItem...");
+		String nomFichero = nombreFichero.substring(0, nombreFichero.indexOf("."));
+		String ext = nombreFichero.substring(nombreFichero.indexOf(".")+1);
 		
 		File fileSalidaTemporal = null;
 		FileItem resultado = null;
 		InputStream stream =  new ByteArrayInputStream(Base64.decodeBase64(contenido.getBytes()));
 		
-		fileSalidaTemporal = File.createTempFile(nombreFichero, "."+extension);
+		fileSalidaTemporal = File.createTempFile(nomFichero, "."+ext);
 		fileSalidaTemporal.deleteOnExit();
 		
 		resultado = new FileItem();
-		resultado.setFileName(nombreFichero + (new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + "."+extension);
-		resultado.setContentType(getMimeType(extension));
+		resultado.setFileName(nomFichero + (new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + "."+ext);
+		resultado.setContentType(extension);
 		resultado.setFile(fileSalidaTemporal);
         OutputStream outputStream = resultado.getOutputStream(); // Last step is to get FileItem's output stream, and write your inputStream in it. This is the way to write to your FileItem.
         int read = 0;
@@ -454,14 +449,9 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 		}
 
 		outputStream.close();
+		logger.info("Finaliza generaFileItem...");
 		return resultado;
 		
-	}
-	
-	public String getMimeType(String fileName) {
-	    // 1. first use java's built-in utils
-	    FileNameMap mimeTypes = URLConnection.getFileNameMap();
-	    return mimeTypes.getContentTypeFor("."+fileName);
 	}
 	
 }

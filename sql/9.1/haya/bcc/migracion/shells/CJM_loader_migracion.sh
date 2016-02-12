@@ -175,6 +175,37 @@ if [ $? != 0 ] ; then
 fi
 
 
+echo "MIG_PROPUESTAS_CABECERA"
+$ORACLE_HOME/bin/sqlldr control="$ctl_dir"propuestas_cabeceraDataLoad.ctl log="$log_dir"PROPUESTAS-CABECERA_"$fecha".log bad="$bad_dir"PROPUESTAS-CABECERA_"$fecha".bad userid="$1" DIRECT=TRUE data="$dat_dir"PROPUESTAS-CABECERA.dat
+if [ $? != 0 ] ; then 
+   echo -e "[ERROR] MIG_PROPUESTAS_CABECERA"
+#   exit 1
+fi
+
+
+#echo "MIG_PROPUESTAS_TERMINO_ACUERDO"
+#$ORACLE_HOME/bin/sqlldr control="$ctl_dir"propuestas_terminos_acuerdosDataLoad.ctl log="$log_dir"PROPUESTAS-TERMINOSACUERDO_"$fecha".log bad="$bad_dir"PROPUESTAS-TERMINOSACUERDO_"$fecha".bad userid="$1" DIRECT=TRUE data="$dat_dir"PROPUESTAS-TERMINOSACUERDO.dat
+#if [ $? != 0 ] ; then 
+#   echo -e "[ERROR] MIG_PROPUESTAS_TERMINO_ACUERDO"
+##   exit 1
+#fi
+#
+#
+#echo "MIG_PROPUESTAS_TERMI_OPERAC"
+#$ORACLE_HOME/bin/sqlldr control="$ctl_dir"propuestas_terminos_acuerdos_operacionesDataLoad.ctl log="$log_dir"TERMINOS-OPERACIONES_"$fecha".log bad="$bad_dir"TERMINOS-OPERACIONES_"$fecha".bad userid="$1" DIRECT=TRUE data="$dat_dir"TERMINOS-OPERACIONES.dat
+#if [ $? != 0 ] ; then 
+#   echo -e "[ERROR] MIG_PROPUESTAS_TERMI_OPERAC"
+##   exit 1
+#fi
+#
+#echo "MIG_RGE_REL_GESTOR_EXPEDIENTE"
+#$ORACLE_HOME/bin/sqlldr control="$ctl_dir"gestores_expedientesDataLoad.ctl log="$log_dir"EXPEDIENTES-GESTORES_"$fecha".log bad="$bad_dir"EXPEDIENTES-GESTORES_"$fecha".bad userid="$1" DIRECT=TRUE data="$dat_dir"EXPEDIENTES-GESTORES.dat
+#if [ $? != 0 ] ; then 
+#   echo -e "[ERROR] MIG_RGE_REL_GESTOR_EXPEDIENTE"
+##   exit 1
+#fi
+#
+
 $ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"CJM_MiG_estadisticas.sql 
 
 if [ $? != 0 ] ; then 

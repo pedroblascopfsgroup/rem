@@ -68,10 +68,13 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] CAJAMAR MIGRACION CONTRATOS MARCA HAYA');
              , ''AGE'' as cdTipoAct -- Gestion Externa
           from '||v_esquema||'.cnt_contratos g
              , '||v_esquema||'.MIG_EXPEDIENTES_OPERACIONES eop
+             , '||v_esquema||'.MIG_EXPEDIENTES_CABECERA cab
              , '||v_esquema||'.TMP_CNT_CONTRATOS           tmp
          where tmp.tmp_cnt_remu_gest_especial = ''EX''
            and g.cnt_contrato = eop.numero_contrato
            and g.cnt_contrato = tmp.tmp_cnt_contrato
+           and eop.cd_Expediente = cab.cd_expediente 
+           and cab.fecha_asignacion is not null
            ';
     execute immediate v_sql;
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - Tabla temporal '||v_esquema||'.TMP_GUIA_CONTRATOS_HRE creada. '||SQL%ROWCOUNT||' Filas');
@@ -295,7 +298,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] CAJAMAR MIGRACION CONTRATOS MARCA HAYA');
                                '''||USUARIO||''' AS usuariocrear,
                                SYSDATE AS fechacrear,
                                0 AS borrado,
-                              (select dd_epr_id from '||v_esquema_master||'.dd_epr_estado_procedimiento WHERE dd_epr_codigo = ''CERRADO'') AS dd_epr_id, -- ESTADO PROCEDIMIENTO = ACEPTADO  ---lrc
+                              (select dd_epr_id from '||v_esquema_master||'.dd_epr_estado_procedimiento WHERE dd_epr_codigo = ''05'') AS dd_epr_id, -- ESTADO PROCEDIMIENTO = ACEPTADO  ---lrc
                                ''MEJProcedimiento'' AS dtype,
                                SYS_GUID() AS SYS_GUID
                     FROM  '||v_esquema||'.TMP_EXP_EXPEDIENTES_HRE TMP

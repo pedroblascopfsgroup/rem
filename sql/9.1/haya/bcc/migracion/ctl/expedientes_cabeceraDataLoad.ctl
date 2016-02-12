@@ -18,4 +18,5 @@ TRAILING NULLCOLS
    , FECHA_BAJA                        POSITION(628:635)   DATE 'DDMMYYYY' nullif (FECHA_BAJA=BLANKS) "replace( replace(:FECHA_BAJA, '01010001', ''), '00000000', '')"   
    , MOTIVO_BAJA                       POSITION(636:1135)  CHAR  nullif (MOTIVO_BAJA=BLANKS) "replace(replace(replace(TRIM(:MOTIVO_BAJA),';',' '), '\"',''),'''','')"
    , FECHA_REALIZ_ESTUDIO_SOLV         POSITION(1135:1142) DATE 'DDMMYYYY' nullif (FECHA_REALIZ_ESTUDIO_SOLV=BLANKS) "replace( replace(:FECHA_REALIZ_ESTUDIO_SOLV, '01010001', ''), '00000000', '')"     
+--   , FECHA_PREPARADO                   POSITION(1143:1150) DATE 'DDMMYYYY' nullif (FECHA_PREPARADO=BLANKS) "replace( replace(:FECHA_PREPARADO, '01010001', ''), '00000000', '')"        
 )

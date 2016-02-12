@@ -550,7 +550,7 @@ public class AdjuntoManager implements AdjuntoApi{
 
 				@Override
 				public String getNombreTipoDoc() {
-					return null;
+					return adj.getTipoAdjuntoEntidad().getDescripcion();
 				}
 			};
 			adjuntosConBorrado.add(dto);
@@ -696,7 +696,7 @@ public class AdjuntoManager implements AdjuntoApi{
 
 				@Override
 				public String getNombreTipoDoc() {
-					return null;
+					return aa.getTipoAdjuntoEntidad().getDescripcion();
 				}
 			};
 			adjuntosConBorrado.add(dto);
@@ -765,7 +765,7 @@ public class AdjuntoManager implements AdjuntoApi{
 
 				@Override
 				public String getNombreTipoDoc() {
-					return null;
+					return aa.getTipoAdjuntoEntidad().getDescripcion();
 				}
 			};
 			adjuntosConBorrado.add(dto);

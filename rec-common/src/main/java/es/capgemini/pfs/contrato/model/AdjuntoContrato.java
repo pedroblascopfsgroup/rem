@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
@@ -72,7 +73,10 @@ public class AdjuntoContrato implements Serializable, Auditable {
 
     @Embedded
     private Auditoria auditoria;
-
+    
+	@Transient
+	private String refCentera;
+    
     /**
      * Constructor vacio.
      */
@@ -243,4 +247,11 @@ public class AdjuntoContrato implements Serializable, Auditable {
 		this.tipoAdjuntoEntidad = tipoAdjuntoEntidad;
 	}
 
+	public String getRefCentera() {
+		return refCentera;
+	}
+	
+	public void setRefCentera(String refCentera) {
+		this.refCentera = refCentera;
+	}
 }

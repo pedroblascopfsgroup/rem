@@ -72,7 +72,7 @@ BEGIN
 
 -- Insertamos los procuradores
 
-FOR v_procurador IN (SELECT DISTINCT CD_PROCURADOR FROM MIG_PROCEDIMIENTOS_CABECERA) LOOP
+FOR v_procurador IN (SELECT DISTINCT CD_PROCURADOR FROM CM01.MIG_PROCEDIMIENTOS_CABECERA) LOOP
 
   V_MSQL:= 'insert into '||V_ESQUEMA_MASTER||'.usu_usuarios (
             usu_id
@@ -121,7 +121,7 @@ END LOOP;
 -- Insertamos la relación de usuarios despachos para procuradores USD_USUARIOS_DESPACHOS , .DES_DESPACHO_EXTERNO      
 FOR v_usuario_id IN (SELECT USU_ID, USU_USERNAME 
                        FROM CMMASTER.USU_USUARIOS usu
-                         , (SELECT DISTINCT CD_PROCURADOR FROM MIG_PROCEDIMIENTOS_CABECERA) procs
+                         , (SELECT DISTINCT CD_PROCURADOR FROM CM01.MIG_PROCEDIMIENTOS_CABECERA) procs
                             WHERE USU.USU_USERNAME = PROCS.CD_PROCURADOR
                     ) 
                  LOOP
@@ -165,7 +165,7 @@ END LOOP;
 
 FOR v_procurador IN (SELECT USU_ID, USU_USERNAME 
                        FROM CMMASTER.USU_USUARIOS usu
-                         , (SELECT DISTINCT CD_PROCURADOR FROM MIG_PROCEDIMIENTOS_CABECERA) procs
+                         , (SELECT DISTINCT CD_PROCURADOR FROM CM01.MIG_PROCEDIMIENTOS_CABECERA) procs
                             WHERE USU.USU_USERNAME = PROCS.CD_PROCURADOR
                      ) 
                  LOOP
@@ -213,7 +213,7 @@ END LOOP;
    -- Procuradores procedimientos  
     ------------------------------
 
-FOR v_procurador IN (SELECT DISTINCT CD_PROCURADOR FROM MIG_PROCEDIMIENTOS_CABECERA) LOOP
+FOR v_procurador IN (SELECT DISTINCT CD_PROCURADOR FROM CM01.MIG_PROCEDIMIENTOS_CABECERA) LOOP
     
     EXECUTE IMMEDIATE('insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
     select '||V_ESQUEMA||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval uk,
@@ -249,7 +249,7 @@ END LOOP;
     
     -- Procuradores
     --------------------------
-FOR v_procurador IN (SELECT DISTINCT CD_PROCURADOR FROM MIG_PROCEDIMIENTOS_CABECERA) LOOP
+FOR v_procurador IN (SELECT DISTINCT CD_PROCURADOR FROM CM01.MIG_PROCEDIMIENTOS_CABECERA) LOOP
     
     EXECUTE IMMEDIATE('insert into '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gah (gah.GAH_ID, gah.GAH_ASU_ID, gah.GAH_GESTOR_ID, gah.GAH_FECHA_DESDE, gah.GAH_TIPO_GESTOR_ID, usuariocrear, fechacrear)
     select '||V_ESQUEMA||'.s_GAH_GESTOR_ADIC_HISTORICO.nextval, 
@@ -330,7 +330,7 @@ FOR v_procurador IN (SELECT DISTINCT CD_PROCURADOR FROM MIG_PROCEDIMIENTOS_CABEC
 
 -- Insertamos los usuarios letrados
 
-FOR v_letrado IN (SELECT DISTINCT CD_ACTOR FROM MIG_PROCEDIMIENTOS_ACTORES WHERE TIPO_ACTOR = 1) LOOP
+FOR v_letrado IN (SELECT DISTINCT CD_ACTOR FROM CM01.MIG_PROCEDIMIENTOS_ACTORES WHERE TIPO_ACTOR = 1) LOOP
 
   V_MSQL:= 'insert into '||V_ESQUEMA_MASTER||'.usu_usuarios (
             usu_id
@@ -423,7 +423,7 @@ END LOOP;
 -- Insertamos la relación de usuarios despachos para letrados USD_USUARIOS_DESPACHOS , .DES_DESPACHO_EXTERNO      
 FOR v_usuario_id IN (SELECT USU_ID, USU_USERNAME 
                        FROM CMMASTER.USU_USUARIOS usu
-                         , (SELECT DISTINCT CD_DESPACHO FROM MIG_PROCEDIMIENTOS_CABECERA) procs
+                         , (SELECT DISTINCT CD_DESPACHO FROM CM01.MIG_PROCEDIMIENTOS_CABECERA) procs
                             WHERE USU.USU_USERNAME = PROCS.CD_DESPACHO
                     ) 
                  LOOP
@@ -469,7 +469,7 @@ END LOOP;
 
 FOR v_usuario_id IN (SELECT USU_ID, USU_USERNAME , PROCS.CD_DESPACHO AS USERNAME 
                        FROM CMMASTER.USU_USUARIOS usu
-                         , (SELECT DISTINCT CD_DESPACHO FROM MIG_PROCEDIMIENTOS_CABECERA) procs
+                         , (SELECT DISTINCT CD_DESPACHO FROM CM01.MIG_PROCEDIMIENTOS_CABECERA) procs
                             WHERE USU.USU_USERNAME = 'GRUPO-'||PROCS.CD_DESPACHO
                     ) 
                  LOOP
@@ -512,7 +512,7 @@ END LOOP;
 
 FOR v_letrado IN (SELECT USU_ID, USU_USERNAME 
                        FROM CMMASTER.USU_USUARIOS usu
-                         , (SELECT DISTINCT CD_DESPACHO FROM MIG_PROCEDIMIENTOS_CABECERA) procs
+                         , (SELECT DISTINCT CD_DESPACHO FROM CM01.MIG_PROCEDIMIENTOS_CABECERA) procs
                             WHERE USU.USU_USERNAME = PROCS.CD_DESPACHO
                      ) 
                  LOOP
@@ -559,7 +559,7 @@ END LOOP;
 -- Asignar grupos a letrados
 FOR v_letrado IN (SELECT USU_ID, USU_USERNAME , 'GRUPO-'||USU_USERNAME AS USERNAME 
                        FROM CMMASTER.USU_USUARIOS usu
-                         , (SELECT DISTINCT CD_DESPACHO FROM MIG_PROCEDIMIENTOS_CABECERA) procs
+                         , (SELECT DISTINCT CD_DESPACHO FROM CM01.MIG_PROCEDIMIENTOS_CABECERA) procs
                             WHERE USU.USU_USERNAME = PROCS.CD_DESPACHO
                      ) 
                  LOOP
@@ -590,7 +590,7 @@ END LOOP;
    -- LETRADOS EN LA GAA
     ------------------------------
 
-FOR v_letrado IN (SELECT DISTINCT CD_DESPACHO FROM MIG_PROCEDIMIENTOS_CABECERA) LOOP
+FOR v_letrado IN (SELECT DISTINCT CD_DESPACHO FROM CM01.MIG_PROCEDIMIENTOS_CABECERA) LOOP
     
     EXECUTE IMMEDIATE('insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
     select '||V_ESQUEMA||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval uk,
@@ -626,7 +626,7 @@ END LOOP;
     
     -- letrados en GAH
     --------------------------
-FOR v_letrado IN (SELECT DISTINCT CD_DESPACHO FROM MIG_PROCEDIMIENTOS_CABECERA) LOOP
+FOR v_letrado IN (SELECT DISTINCT CD_DESPACHO FROM CM01.MIG_PROCEDIMIENTOS_CABECERA) LOOP
     
     EXECUTE IMMEDIATE('insert into '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gah (gah.GAH_ID, gah.GAH_ASU_ID, gah.GAH_GESTOR_ID, gah.GAH_FECHA_DESDE, gah.GAH_TIPO_GESTOR_ID, usuariocrear, fechacrear)
     select '||V_ESQUEMA||'.s_GAH_GESTOR_ADIC_HISTORICO.nextval, 

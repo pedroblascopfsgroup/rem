@@ -115,10 +115,13 @@ do
 done
 
 executionFile=""
+regFile=""
 if [[ $NOMBRE_SCRIPT =~ ^DML ]]; then
     executionFile=$BASEDIR/DML-scripts
+	regFile=DML_000_ENTITY01_
 else
     executionFile=$BASEDIR/DDL-scripts
+	regFile=DDL_000_ENTITY01_
 fi
 executionPass=""
 executionPassWin=""
@@ -151,17 +154,18 @@ else
 fi
 
 #Invocar PASO2
-export PASO2=reg2.sql
-sed -e s/#ESQUEMA#/${ESQUEMA_REGISTRO}/g "$BASEDIR/${PASO2}" > $BASEDIR/${nombreSinExt}-${PASO2}
+PASO2=reg2.sql
+sed -e s/#ESQUEMA#/${ESQUEMA_REGISTRO}/g "$BASEDIR/${PASO2}" > "$BASEDIR/${regFile}${PASO2}"
+PASO2=${regFile}${PASO2}
 if [[ $VERBOSE == 1 ]]; then
-    echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${nombreSinExt}-${PASO2} $NOMBRE_SCRIPT $FECHA_CREACION $ESQUEMA_EJECUCION > /dev/null"
+    echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${PASO2} $NOMBRE_SCRIPT $FECHA_CREACION $ESQUEMA_EJECUCION > /dev/null"
 fi
 if [[ $PACKAGE == 0 ]]; then
-    exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${nombreSinExt}-${PASO2} $NOMBRE_SCRIPT $FECHA_CREACION $ESQUEMA_EJECUCION > /dev/null
+    exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${PASO2} $NOMBRE_SCRIPT $FECHA_CREACION $ESQUEMA_EJECUCION > /dev/null
     export RESULTADO=$?
 else
-    echo "exit | sqlplus -s -l $ESQUEMA_REGISTRO/\$2 @./scripts/${nombreSinExt}-${PASO2} $NOMBRE_SCRIPT $FECHA_CREACION $ESQUEMA_EJECUCION > /dev/null" >> ${executionFile}.sh 
-    echo "exit | sqlplus -s -l \$1 @./scripts/${nombreSinExt}-${PASO2} $NOMBRE_SCRIPT $FECHA_CREACION $ESQUEMA_EJECUCION > /dev/null" >> ${executionFile}-one-user.sh
+    echo "exit | sqlplus -s -l $ESQUEMA_REGISTRO/\$2 @./scripts/${PASO2} $NOMBRE_SCRIPT $FECHA_CREACION $ESQUEMA_EJECUCION > /dev/null" >> ${executionFile}.sh 
+    echo "exit | sqlplus -s -l \$1 @./scripts/${PASO2} $NOMBRE_SCRIPT $FECHA_CREACION $ESQUEMA_EJECUCION > /dev/null" >> ${executionFile}-one-user.sh
     echo 'export RESULTADO=$?' | tee -a ${executionFile}.sh ${executionFile}-one-user.sh > /dev/null
 fi
 if [[ $PACKAGE == 0 ]]; then
@@ -178,9 +182,9 @@ if [[ $PACKAGE == 0 ]]; then
     fi
     if [ $RESULTADO != 0 ] ; then 
         if [[ $VERBOSE == 1 ]]; then
-            echo -e "\n\n======>>> "Error en @$BASEDIR/${nombreSinExt}-${PASO2} > /dev/tty
+            echo -e "\n\n======>>> "Error en @$BASEDIR/${PASO2} > /dev/tty
         fi
-        echo -e "\n\n======>>> "Error en @$BASEDIR/${nombreSinExt}-${PASO2} >> $BASEDIR/$nombreLog
+        echo -e "\n\n======>>> "Error en @$BASEDIR/${PASO2} >> $BASEDIR/$nombreLog
         if [[ $VERBOSE == 1 ]]; then
             echo -e "\n#####    Fichero log generado: $BASEDIR/$nombreLog" > /dev/tty
         fi
@@ -198,19 +202,20 @@ else
 fi
 
 #Inserción inicial de datos en tabla de registro
-export PASO3=reg3.sql
-sed -e s/#ESQUEMA#/${ESQUEMA_REGISTRO}/g "$BASEDIR/${PASO3}" > $BASEDIR/${nombreSinExt}-${PASO3}
+PASO3=reg3.sql
+sed -e s/#ESQUEMA#/${ESQUEMA_REGISTRO}/g "$BASEDIR/${PASO3}" > "$BASEDIR/${regFile}${PASO3}"
+PASO3=${regFile}${PASO3}
 if [[ $PACKAGE == 0 ]]; then
     echo "#####    Inserción inicial de datos en tabla de registro"  >> $BASEDIR/$nombreLog
 fi
 if [[ $VERBOSE == 1 ]]; then
-    echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${nombreSinExt}-${PASO3} "$NOMBRE_SCRIPT" "$ESQUEMA_EJECUCION" "$AUTOR" "$ARTEFACTO" "$VERSION_ARTEFACTO" "$FECHA_CREACION" "$INCIDENCIA_LINK" "$PRODUCTO""
+    echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${PASO3} "$NOMBRE_SCRIPT" "$ESQUEMA_EJECUCION" "$AUTOR" "$ARTEFACTO" "$VERSION_ARTEFACTO" "$FECHA_CREACION" "$INCIDENCIA_LINK" "$PRODUCTO""
 fi
 if [[ $PACKAGE == 0 ]]; then
-    exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${nombreSinExt}-${PASO3} "$NOMBRE_SCRIPT" "$ESQUEMA_EJECUCION" "$AUTOR" "$ARTEFACTO" "$VERSION_ARTEFACTO" "$FECHA_CREACION" "$INCIDENCIA_LINK" "$PRODUCTO" >> $BASEDIR/$nombreLog
+    exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${PASO3} "$NOMBRE_SCRIPT" "$ESQUEMA_EJECUCION" "$AUTOR" "$ARTEFACTO" "$VERSION_ARTEFACTO" "$FECHA_CREACION" "$INCIDENCIA_LINK" "$PRODUCTO" >> $BASEDIR/$nombreLog
 else
-    echo "  exit | sqlplus -s -l $ESQUEMA_REGISTRO/\$2 @./scripts/${nombreSinExt}-${PASO3} \"$NOMBRE_SCRIPT\" \"$ESQUEMA_EJECUCION\" \"$AUTOR\" \"$ARTEFACTO\"  \"$VERSION_ARTEFACTO\" \"$FECHA_CREACION\" \"$INCIDENCIA_LINK\" \"$PRODUCTO\"" >> ${executionFile}.sh 
-    echo "  exit | sqlplus -s -l \$1 @./scripts/${nombreSinExt}-${PASO3} \"$NOMBRE_SCRIPT\" \"$ESQUEMA_EJECUCION\" \"$AUTOR\" \"$ARTEFACTO\"  \"$VERSION_ARTEFACTO\" \"$FECHA_CREACION\" \"$INCIDENCIA_LINK\" \"$PRODUCTO\"" >> ${executionFile}-one-user.sh
+    echo "  exit | sqlplus -s -l $ESQUEMA_REGISTRO/\$2 @./scripts/${PASO3} \"$NOMBRE_SCRIPT\" \"$ESQUEMA_EJECUCION\" \"$AUTOR\" \"$ARTEFACTO\"  \"$VERSION_ARTEFACTO\" \"$FECHA_CREACION\" \"$INCIDENCIA_LINK\" \"$PRODUCTO\"" >> ${executionFile}.sh 
+    echo "  exit | sqlplus -s -l \$1 @./scripts/${PASO3} \"$NOMBRE_SCRIPT\" \"$ESQUEMA_EJECUCION\" \"$AUTOR\" \"$ARTEFACTO\"  \"$VERSION_ARTEFACTO\" \"$FECHA_CREACION\" \"$INCIDENCIA_LINK\" \"$PRODUCTO\"" >> ${executionFile}-one-user.sh
 fi
 
 #Ejecución del script en sí mismo
@@ -235,8 +240,9 @@ else
     echo ")" >> ${executionFile}.bat
 fi
 
-export PASO4=reg4.sql
-sed -e s/#ESQUEMA#/${ESQUEMA_REGISTRO}/g "$BASEDIR/${PASO4}" > $BASEDIR/${nombreSinExt}-${PASO4}
+PASO4=reg4.sql
+sed -e s/#ESQUEMA#/${ESQUEMA_REGISTRO}/g "$BASEDIR/${PASO4}" > "$BASEDIR/${regFile}${PASO4}"
+PASO4=${regFile}${PASO4}
 if [[ $PACKAGE == 0 ]]; then
     #Si ERROR, guardar respuesta y ejecución fallida
     if [ $RESULTADO != 0 ] ; then
@@ -247,11 +253,11 @@ if [[ $PACKAGE == 0 ]]; then
         echo -e "\n\n======>>> "Error en @$BASEDIR/${NOMBRE_SCRIPT} >> $BASEDIR/$nombreLog
         echo "#####    Ejecución la actualización de resultados en la tabla de registro"  >> $BASEDIR/$nombreLog
         if [[ $VERBOSE == 1 ]]; then
-            echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${nombreSinExt}-${PASO4} "$NOMBRE_SCRIPT" "$FECHA_CREACION" "$ESQUEMA_EJECUCION" "KO" "$RESULTADO"  >> $BASEDIR/$nombreLog"
+            echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${PASO4} "$NOMBRE_SCRIPT" "$FECHA_CREACION" "$ESQUEMA_EJECUCION" "KO" "$RESULTADO"  >> $BASEDIR/$nombreLog"
         fi
-        exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${nombreSinExt}-${PASO4} "$NOMBRE_SCRIPT" "$FECHA_CREACION" "$ESQUEMA_EJECUCION" "KO" "$RESULTADO"  >> $BASEDIR/$nombreLog
+        exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${PASO4} "$NOMBRE_SCRIPT" "$FECHA_CREACION" "$ESQUEMA_EJECUCION" "KO" "$RESULTADO"  >> $BASEDIR/$nombreLog
         if [ $? != 0 ] ; then 
-            echo -e "\n\n======>>> "Error en @$BASEDIR/${nombreSinExt}-${PASO4} >> $BASEDIR/$nombreLog
+            echo -e "\n\n======>>> "Error en @$BASEDIR/${PASO4} >> $BASEDIR/$nombreLog
             echo " #KO# :  $BASEDIR/$nombreLog"
             exit 1
         fi
@@ -265,11 +271,11 @@ if [[ $PACKAGE == 0 ]]; then
         echo -e "\n\nSCRIPT @${NOMBRE_SCRIPT} FINALIZADO CORRECTAMENTE" >> $BASEDIR/$nombreLog
         echo "#####    Ejecución la actualización de resultados en la tabla de registro"  >> $BASEDIR/$nombreLog
         if [[ $VERBOSE == 1 ]]; then
-            echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${nombreSinExt}-${PASO4} "$NOMBRE_SCRIPT" "$FECHA_CREACION" "$ESQUEMA_EJECUCION" "OK" "$RESULTADO"  >> $BASEDIR/$nombreLog"
+            echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${PASO4} "$NOMBRE_SCRIPT" "$FECHA_CREACION" "$ESQUEMA_EJECUCION" "OK" "$RESULTADO"  >> $BASEDIR/$nombreLog"
         fi
-        exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${nombreSinExt}-${PASO4} "$NOMBRE_SCRIPT" "$FECHA_CREACION" "$ESQUEMA_EJECUCION" "OK" "$RESULTADO"  >> $BASEDIR/$nombreLog
+        exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${PASO4} "$NOMBRE_SCRIPT" "$FECHA_CREACION" "$ESQUEMA_EJECUCION" "OK" "$RESULTADO"  >> $BASEDIR/$nombreLog
         if [ $? != 0 ] ; then 
-            echo -e "\n\n======>>> "Error en @${nombreSinExt}-${PASO4} >> $BASEDIR/$nombreLog
+            echo -e "\n\n======>>> "Error en @${PASO4} >> $BASEDIR/$nombreLog
             echo " #KO# :  $BASEDIR/$nombreLog"
             exit 1
         fi
@@ -282,13 +288,13 @@ if [[ $PACKAGE == 0 ]]; then
     exit $RESULTADO
 else
     echo '  if [ $RESULTADO != 0 ] ; then' | tee -a ${executionFile}.sh ${executionFile}-one-user.sh > /dev/null
-    echo "      exit | sqlplus -s -l $ESQUEMA_REGISTRO/\$2 @./scripts/${nombreSinExt}-${PASO4} \"$NOMBRE_SCRIPT\" \"$FECHA_CREACION\" \"$ESQUEMA_EJECUCION\" \"KO\" \"$RESULTADO\"" >> ${executionFile}.sh 
-    echo "      exit | sqlplus -s -l \$1 @./scripts/${nombreSinExt}-${PASO4} \"$NOMBRE_SCRIPT\" \"$FECHA_CREACION\" \"$ESQUEMA_EJECUCION\" \"KO\" \"$RESULTADO\"" >> ${executionFile}-one-user.sh
+    echo "      exit | sqlplus -s -l $ESQUEMA_REGISTRO/\$2 @./scripts/${PASO4} \"$NOMBRE_SCRIPT\" \"$FECHA_CREACION\" \"$ESQUEMA_EJECUCION\" \"KO\" \"$RESULTADO\"" >> ${executionFile}.sh 
+    echo "      exit | sqlplus -s -l \$1 @./scripts/${PASO4} \"$NOMBRE_SCRIPT\" \"$FECHA_CREACION\" \"$ESQUEMA_EJECUCION\" \"KO\" \"$RESULTADO\"" >> ${executionFile}-one-user.sh
     echo "      echo \"@KO@: $NOMBRE_SCRIPT\"" | tee -a ${executionFile}.sh ${executionFile}-one-user.sh > /dev/null
     echo "      exit 1" | tee -a ${executionFile}.sh ${executionFile}-one-user.sh > /dev/null
     echo '  else' | tee -a ${executionFile}.sh ${executionFile}-one-user.sh > /dev/null
-    echo "      exit | sqlplus -s -l $ESQUEMA_REGISTRO/\$2 @./scripts/${nombreSinExt}-${PASO4} \"$NOMBRE_SCRIPT\" \"$FECHA_CREACION\" \"$ESQUEMA_EJECUCION\" \"OK\" \"$RESULTADO\"" >> ${executionFile}.sh 
-    echo "      exit | sqlplus -s -l \$1 @./scripts/${nombreSinExt}-${PASO4} \"$NOMBRE_SCRIPT\" \"$FECHA_CREACION\" \"$ESQUEMA_EJECUCION\" \"OK\" \"$RESULTADO\"" >> ${executionFile}-one-user.sh
+    echo "      exit | sqlplus -s -l $ESQUEMA_REGISTRO/\$2 @./scripts/${PASO4} \"$NOMBRE_SCRIPT\" \"$FECHA_CREACION\" \"$ESQUEMA_EJECUCION\" \"OK\" \"$RESULTADO\"" >> ${executionFile}.sh 
+    echo "      exit | sqlplus -s -l \$1 @./scripts/${PASO4} \"$NOMBRE_SCRIPT\" \"$FECHA_CREACION\" \"$ESQUEMA_EJECUCION\" \"OK\" \"$RESULTADO\"" >> ${executionFile}-one-user.sh
     echo "      echo \" OK : $NOMBRE_SCRIPT\"" | tee -a ${executionFile}.sh ${executionFile}-one-user.sh > /dev/null
     echo '  fi' | tee -a ${executionFile}.sh ${executionFile}-one-user.sh > /dev/null
     echo 'fi' | tee -a ${executionFile}.sh ${executionFile}-one-user.sh > /dev/null

@@ -214,16 +214,29 @@ BEGIN
 
   
      V_SQL:= 'INSERT INTO '||V_ESQUEMA||'.TMP_GUID_PRC_PROCS_HRE (SYS_GUID, PRC_ID)
-                           SELECT tmp.GUID_SYSGUID, prchre.PRC_ID  
+                           SELECT distinct tmp.GUID_SYSGUID, prchre.PRC_ID  
                           FROM '||V_ESQUEMA||'.TMP_GUID_HRE_2 tmp
                              , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS prchre                             
                              , '||V_ESQUEMA||'.TMP_HAYA_PRC_SYSGUID haya
                          WHERE  prchre.PRC_ID             = haya.PRC_ID      
---                           AND NVL(tmp.GUID_BIE_CODIGO_INTERNO,''-123'') = NVL(haya.BIE_CODIGO_INTERNO,''-123'')
+                           AND NVL(tmp.GUID_BIE_CODIGO_INTERNO,''-123'') = NVL(haya.BIE_CODIGO_INTERNO,''-123'')
                            AND tmp.GUID_ASU_ID_EXTERNO    = haya.ASU_ID_EXTERNO 
                            AND tmp.GUID_DD_TPO_CODIGO     = haya.DD_TPO_CODIGO
                            AND tmp.GUID_DES               = ''PRC_PROCEDIMIENTOS''
-                           AND prchre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')';
+                           AND prchre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')
+                           and prchre.prc_id not in  (
+                              SELECT  prchre.prc_id from         
+                               '||V_ESQUEMA||'.TMP_GUID_HRE_2 tmp
+                             , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS prchre                             
+                             , '||V_ESQUEMA||'.TMP_HAYA_PRC_SYSGUID haya
+                         WHERE  prchre.PRC_ID             = haya.PRC_ID      
+                           AND NVL(tmp.GUID_BIE_CODIGO_INTERNO,''-123'') = NVL(haya.BIE_CODIGO_INTERNO,''-123'')
+                           AND tmp.GUID_ASU_ID_EXTERNO    = haya.ASU_ID_EXTERNO 
+                           AND tmp.GUID_DD_TPO_CODIGO     = haya.DD_TPO_CODIGO
+                           AND tmp.GUID_DES               = ''PRC_PROCEDIMIENTOS''
+                           AND prchre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')     
+                group by  prchre.prc_id
+                having count(*) > 1)';
 
      EXECUTE IMMEDIATE V_SQL;
      COMMIT;
@@ -433,7 +446,21 @@ BEGIN
                            AND bcc.GUID_DD_TPO_CODIGO  = haya.DD_TPO_CODIGO
                            AND TRIM(bcc.GUID_TAP_CODIGO)     = TRIM(tap.TAP_CODIGO)
                            AND bcc.GUID_DES            = ''TAR_TAREAS_NOTIFICACIONES''
-                           AND tarhre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')'
+                           AND tarhre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')
+                            and haya.prc_id not in  (
+                              SELECT  prchre.prc_id 
+                                  from         
+                                   '||V_ESQUEMA||'.TMP_GUID_HRE_2 tmp
+                                 , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS prchre                             
+                                 , '||V_ESQUEMA||'.TMP_HAYA_PRC_SYSGUID haya
+                              WHERE  prchre.PRC_ID             = haya.PRC_ID      
+                                AND NVL(tmp.GUID_BIE_CODIGO_INTERNO,''-123'') = NVL(haya.BIE_CODIGO_INTERNO,''-123'')
+                                AND tmp.GUID_ASU_ID_EXTERNO    = haya.ASU_ID_EXTERNO 
+                                AND tmp.GUID_DD_TPO_CODIGO     = haya.DD_TPO_CODIGO
+                                AND tmp.GUID_DES               = ''PRC_PROCEDIMIENTOS''
+                                AND prchre.USUARIOCREAR IN ('''||USUARIO||''','''||USUARIOPCO||''')     
+                              group by  prchre.prc_id
+                               having count(*) > 1)'
                            ;   
                                         
    
@@ -860,16 +887,5 @@ END;
 /
 
 EXIT;
-
-
-
-
-
-
-
-
-
-
-
 
 

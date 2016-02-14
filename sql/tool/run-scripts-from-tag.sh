@@ -127,6 +127,7 @@ if [ ! -f $SETENVGLOBAL ]; then
 fi
 source $SETENVGLOBAL
 
+mkdir -p $BASEDIR/tmp
 rm -rf $BASEDIR/tmp/*.txt $BASEDIR/tmp/*.log $BASEDIR/tmp/*.sh $BASEDIR/tmp/*.bat $BASEDIR/tmp/*.sql $BASEDIR/tmp/**/*
 
 DIRECTORIO=""

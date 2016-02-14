@@ -16,7 +16,7 @@
 var count=0;
 
 function centeredWindowStyle() {
-        return 'width='.concat(screen.width,',height=',screen.height,',titlebar=no,location=no,menubar=no,toolbar=no,scrollbars=yes');
+        return 'width='.concat(screen.width,',height=',screen.height,',top=0,left=0,titlebar=no,location=no,menubar=no,toolbar=no,scrollbars=yes');
 }
 
 function openRecBI() {

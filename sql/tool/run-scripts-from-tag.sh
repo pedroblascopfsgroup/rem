@@ -127,7 +127,7 @@ if [ ! -f $SETENVGLOBAL ]; then
 fi
 source $SETENVGLOBAL
 
-rm -rf $BASEDIR/tmp/*.txt $BASEDIR/tmp/*.log $BASEDIR/tmp/*.sh $BASEDIR/tmp/*.sql $BASEDIR/tmp/**/*
+rm -rf $BASEDIR/tmp/*.txt $BASEDIR/tmp/*.log $BASEDIR/tmp/*.sh $BASEDIR/tmp/*.bat $BASEDIR/tmp/*.sql $BASEDIR/tmp/**/*
 
 DIRECTORIO=""
 if [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]] && [[ "$3" != "null" ]]; then
@@ -272,6 +272,10 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
 
         cat $BASEDIR/tmp/DDL-scripts.sh >> $BASEDIR/tmp/package/DDL/DDL-scripts.sh
         cat $BASEDIR/tmp/DDL-scripts-one-user.sh >> $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh
+
+        cp $BASEDIR/tmp/DDL-scripts.bat $BASEDIR/tmp/package/DDL/
+        cp $BASEDIR/tmp/DDL-scripts.bat $BASEDIR/tmp/package/DB/DB-scripts.bat
+
         cp -r $BASEDIR/tmp/DDL*reg*.sql $BASEDIR/tmp/package/DDL/scripts/
         cp -r $BASEDIR/tmp/DDL*reg*.sql $BASEDIR/tmp/package/DB/scripts/
 
@@ -285,6 +289,8 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
     if [ -f $BASEDIR/tmp/DML-scripts.sh ] ; then
         cat $BASEDIR/tmp/DML-scripts.sh | tee -a $BASEDIR/tmp/package/DML/DML-scripts.sh $BASEDIR/tmp/package/DB/DB-scripts.sh > /dev/null
         cat $BASEDIR/tmp/DML-scripts-one-user.sh | tee -a $BASEDIR/tmp/package/DML/DML-scripts-one-user.sh $BASEDIR/tmp/package/DB/DB-scripts-one-user.sh > /dev/null
+        cp $BASEDIR/tmp/DML-scripts.bat $BASEDIR/tmp/package/DML/
+        cat $BASEDIR/tmp/DML-scripts.bat >> $BASEDIR/tmp/package/DB/DB-scripts.bat
         cp -r $BASEDIR/tmp/DML*reg*.sql $BASEDIR/tmp/package/DML/scripts/
         cp -r $BASEDIR/tmp/DML*reg*.sql $BASEDIR/tmp/package/DB/scripts/
         cd $BASEDIR/tmp/package

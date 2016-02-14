@@ -121,12 +121,16 @@ else
     executionFile=$BASEDIR/DDL-scripts
 fi
 executionPass=""
+executionPassWin=""
 if [[ $ESQUEMA_EJECUCION =~ MASTER$ ]]; then
     executionPass="\$1"
+    executionPassWin="%1"
 elif [[ $ESQUEMA_EJECUCION == 'MINIREC' ]]; then
     executionPass="\$3"
+    executionPassWin="%3"
 else
     executionPass="\$$((${ESQUEMA_EJECUCION: -1} + 1))"
+    executionPassWin="%$((${ESQUEMA_EJECUCION: -1} + 1))"
 fi
 
 #Invocar PASO1
@@ -223,6 +227,12 @@ else
     echo "  exit | sqlplus -s -l $ESQUEMA_EJECUCION/$executionPass @./scripts/${nombreSinExt}-$ESQUEMA_EJECUCION-reg3.1.sql > ${nombreSinExt}.log" >> ${executionFile}.sh
     echo "  exit | sqlplus -s -l \$1 @./scripts/${nombreSinExt}-$ESQUEMA_EJECUCION-reg3.1.sql > ${nombreSinExt}.log" >> ${executionFile}-one-user.sh
     echo '  export RESULTADO=$?' | tee -a ${executionFile}.sh ${executionFile}-one-user.sh > /dev/null
+
+    echo "echo 'exit' | sqlplus $ESQUEMA_EJECUCION/$executionPassWin @./scripts/${nombreSinExt}-$ESQUEMA_EJECUCION-reg3.1.sql > ${nombreSinExt}.log" >> ${executionFile}.bat
+    echo "if errorlevel 1 (" >> ${executionFile}.bat 
+    echo "  echo ERROR. Revise ${nombreSinExt}.log" >> ${executionFile}.bat
+    echo "  exit 1" >> ${executionFile}.bat
+    echo ")" >> ${executionFile}.bat
 fi
 
 export PASO4=reg4.sql

@@ -203,6 +203,8 @@ public class PCDProcuradores implements Serializable{
 	    @Column(name = "PROCEDIMIENTO_DESCRIPCION", insertable = false, updatable = false)
 	    private String descripcionProcedimiento;
 
+	    @Column(name="SPR_ID", insertable=false, updatable = false)
+	    private Long idProrroga;
 		
 	    public Long getGroupTareas() {
 			return groupTareas;

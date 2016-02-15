@@ -137,6 +137,8 @@ public class PCDProcuradoresDaoImpl extends AbstractEntityDao<PCDProcuradores, L
 		HQLBuilderReutilizable reuthql = vtarBusquedaOptimizadaTareasDao.createHQLBbuscarTareasPendiente(dto, usuarioLogado, modelClass);
 		HQLBuilder hb = reuthql.getHqlBuilder();
 		hb.changeFrom("VTARTareaVsUsuario", "PCDProcuradores");
+
+		hb.setHasWhere(true);
 		
         HQLBuilder.addFiltroIgualQueSiNotNull(hb, "idcategoria", comboCtgResol);
         HQLBuilder.addFiltroIgualQueSiNotNull(hb, "idcategorizacion", idCategorizacion);

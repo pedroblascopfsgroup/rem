@@ -13,6 +13,7 @@ public class EXTAdjuntoIplusDto implements EXTAdjuntoDto {
 	private String tipoDocumento;
 	private Long prcId;
 	private String refCentera;
+	private String nombreTipoDoc;
 	
 	@Override
 	public Boolean getPuedeBorrar() {
@@ -57,6 +58,15 @@ public class EXTAdjuntoIplusDto implements EXTAdjuntoDto {
 	}
 	public void setRefCentera(String refCentera) {
 		this.refCentera = refCentera;
+	}
+
+	@Override
+	public String getNombreTipoDoc() {
+		return null;
+	}
+	
+	public void setNombreTipoDoc(String nombreTipoDoc) {
+		this.nombreTipoDoc = nombreTipoDoc;
 	}
 
 }

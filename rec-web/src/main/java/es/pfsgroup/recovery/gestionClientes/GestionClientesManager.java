@@ -9,10 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.itinerario.model.DDTipoItinerario;
 import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
@@ -29,6 +32,9 @@ public class GestionClientesManager {
 
 	@Autowired
 	private GestionClientesDao dao;
+	
+	@Resource
+	private MessageService messageService;
 
 	public List<GestionClientesCountDTO> getContadoresGestionVencidos() {
 		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
@@ -43,17 +49,15 @@ public class GestionClientesManager {
 				if ((codigo != null) && SubtipoTarea.CODIGO_GESTION_VENCIDOS.equals(codigo.toString())) {
 					// addCantidadTareasGestionVencidos
 					result.add(
-							creaGestionClientesCountDTO(map, "Gestion de Vencidos", "Clientes a gestionar vencidos: "));
+							creaGestionClientesCountDTO(map, messageService.getMessage("cliente.gestion.vencidos"), messageService.getMessage("cliente.gestionar.vencidos")));
 				} else if ((codigo != null)
 						&& SubtipoTarea.CODIGO_GESTION_SEGUIMIENTO_SINTOMATICO.equals(codigo.toString())) {
 					// addCantidadTareasSeguimientoSintomatico
-					result.add(creaGestionClientesCountDTO(map, "Gestion de Seguimiento Sintomático",
-							"Clientes a gestionar Seguimiento Sintomático: "));
+					result.add(creaGestionClientesCountDTO(map, messageService.getMessage("cliente.gestion.seguimiento.sintomatico"), messageService.getMessage("cliente.gestionar.seguimiento.sintomatico")));
 				} else if ((codigo != null)
 						&& SubtipoTarea.CODIGO_GESTION_SEGUIMIENTO_SISTEMATICO.equals(codigo.toString())) {
 					// addCantidadTareasSeguimientoSistematico
-					result.add(creaGestionClientesCountDTO(map, "Gestion de Seguimiento Sistemático",
-							"Clientes a gestionar Seguimiento Sistemático: "));
+					result.add(creaGestionClientesCountDTO(map, messageService.getMessage("cliente.gestion.seguimiento.sistematico"), messageService.getMessage("cliente.gestionar.seguimiento.sistematicos")));
 				}
 			}
 

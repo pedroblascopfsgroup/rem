@@ -70,6 +70,7 @@ while read line; do
     if [[ $line =~ ^.+=.+$ ]] ; then
         KEY=`echo $line | cut -d= -f1`
         VALUE=${!KEY//\//\\/}
+        VALUE=${VALUE//:/\\\\:}
         sed -e "s/${KEY}/${VALUE}/g" -i config/tmp/batch/${cliente}/devon.properties
         sed -e "s/${KEY}/${VALUE}/g" -i config/tmp/web/${cliente}/devon.properties
     fi 

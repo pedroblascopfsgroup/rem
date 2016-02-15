@@ -137,7 +137,16 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
 		String claveRel = guardarRecuperarDatoEntidad(idEntidad, tipoEntidadGrid, uploadForm, tipoDocumento);
 
-		
+		//Obtenemos el codigo mapeado		
+		if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidadGrid)	|| DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidadGrid)) {
+			if(!Checks.esNulo(tipoDocumento)){
+				MapeoTipoFicheroAdjunto mapeo = genericDao.get(MapeoTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "tipoFichero.codigo", tipoDocumento));
+				if(!Checks.esNulo(mapeo)){
+					tipoDocumento = mapeo.getTipoFicheroExterno();
+				}
+			}
+		}
+				
 		outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(
 				claveRel, ALTA_GESTOR_DOC, tipoDocumento,
 				tipoEntidadGrid, uploadForm));

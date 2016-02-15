@@ -1,6 +1,5 @@
 package es.pfsgroup.recovery.geninformes.api;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -75,5 +74,7 @@ public interface GENINFInformesApi {
 	
 	@BusinessOperationDefinition(MSV_GENERAR_ESCRITO_PDF_FROM_HTML)
 	InputStream createPdfFileFromHtmlText(String htmlText,String nombreFichero) throws Exception;
+
+	FileItem generarEscritoConVariablesYLogo(HashMap<String, Object> mapaVariables, String escrito,InputStream is, String codigoPropietaria) throws Throwable;
 
 }

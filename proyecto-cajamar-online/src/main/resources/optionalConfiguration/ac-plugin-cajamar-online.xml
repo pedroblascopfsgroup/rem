@@ -138,6 +138,7 @@
 								<entry key="btnVisar" value="0" />
 								<entry key="btnDescartar" value="1" />
 								<entry key="btnGenerar" value="1" />
+								<entry key="btnLiqGenDoc" value="1" />
 								<entry key="botonRefreshLiq" value="1" />
 							</map>
 						</entry>
@@ -179,6 +180,7 @@
 								<entry key="btnVisar" value="0" />
 								<entry key="btnDescartar" value="1" />
 								<entry key="btnGenerar" value="0" />
+								<entry key="btnLiqGenDoc" value="1" />
 								<entry key="botonRefreshLiq" value="1" />
 							</map>
 						</entry>
@@ -200,7 +202,46 @@
 				</entry>
 			</map>
 		</property>
-	</bean>  
+	</bean> 
+
+	<bean id="listaEntidades" class="java.util.HashMap">
+		<constructor-arg>
+	   		<map>
+				<entry key="3058" value="CAJAS RURALES UNIDAS, SOCIEDAD COOPERATIVA DE CRÉDITO, CAJAMAR|Cajas Rurales Unidas, Sociedad Cooperativa de Crédito, Dom. Social Plaza de Barcelona, 5  04006 - Almeria  Teléfono: (950) 21 01 00*  E-mail:Cajamar@cajamar.es. Inscrita en el Registro Mercantil de Almeria, Libro 0, folio 1, tomo  1526, Hoja AL-40338, Inscripción 1Ş de fecha 31 de octubre de 2012. C.I.F. F04743175" />
+				<entry key="3094" value="CAJA CAMPO, Caja Rural, Sociedad Cooperativa de Crédito|CAJA CAMPO, Caja Rural, Sociedad Cooperativa de Crédito, Dom. Social Avda. de Arrabal, 18 - 46340 REQUENA (Valencia). Inscrita en el R.M. de Valencia, T.6292, L.3597, Sec.8, F.73, H.V-28035, NIF F46026993" />
+				<entry key="3137" value="CAJA RURAL DE CASINOS, S.C.C.V.|Dom. Social Plaça Major, 10 - 46171 CASINOS (Valencia). Inscrita en el R.M. de Valencia, T.3061, L.377,S.G. H.V-5422, NIF F46043808" />
+				<entry key="3186" value="CAIXA RURAL ALBALAT DELS SORELLS, C.C.V.|CAIXA RURAL ALBALAT DELS SORELLS, Cooperativa de Crèdit Valenciana. Inscrita en el R.M. de Valencia, T.6267, L.3572, F.1, H.V-64305. NIF F96828728. Dom. Social Cl. Padre Salvador, 11 - 46135 ALBALAT DELS SORELLS (Valencia)." />
+				<entry key="3029" value="CAJA DE CRÉDITO DE PETREL, CAJA RURAL, C.C.V.|CAJA DE CRÉDITO DE PETREL, CAJA RURAL, Cooperativa de Crédito Valenciana, Dom. Social Cl. San Bartolomé, 2 - 03610 PETRER (ALICANTE) Inscrita en el R.M. de Alicante, T.1240, F.72, H.A-3766, NIF F03014982" />
+				<entry key="3123" value="CAIXA RURAL DE TURIS, C.C.V.|CAIXA RURAL DE TURIS, Cooperativa de Crédito Valenciana, Dom. Social Pla. Constitución, 2 - 46389 TURÍS (Valencia), Inscrita en el R.M. de Valencia, T.5357, L.2665, F.1, H.V-44948, NIF F46027504" />
+				<entry key="3045" value="CAIXA RURAL ALTEA, C.C.V.|CAIXA RURAL ALTEA, Coop. de Crédito V. Domicilio Social: Passatge del Llaurador, 1 03590 Altea, CIF. F03027901. Inscrita en el Registro Mercantil de Alicante, T. 1701, F.50, H.A-26807, inscripción 1ª. Reg. Cooperativas CV-81. CIF F03027901" />
+				<entry key="3095" value="CAJA R. S. ROQUE DE ALMENARA, S.C.C.V.|CAJA RURAL SAN ROQUE DE ALMENARA, S. Coop. de Crédito V. Domicilio Social: C/ Doctor Berenguer, 4 12590-Almenara. Inscrita en el Registro Mercantil de Castellón, T.775, L.342, F.21, H. CS-9375, inscripción 1ª. Reg. Cooperativas CV-374. CIF F12013306." />
+				<entry key="3102" value="CAIXA R. S. VICENT FERRER DE LA VALL D UIXO, C.C.V.|CAIXA RURAL SANT VICENT FERRER DE LA VALL D’UIXÓ, COOP. DE CRÈDIT V. Domicilio social: Plaza Centro, 4. 12600 La Vall d’Uixó. Inscrita en el Registro Mercantil de Castellón hoja CS 2015,  Folio 110, Tomo 506,  Libro 73 de la Sección general. F12014221" />
+				<entry key="3105" value="CAIXA R. DE CALLOSA D EN SARRIA, C.C.V.|CAIXA RURAL DE CALLOSA D'EN SARRIÂ, S. Coop. de Crédito V. Domicilio Social: Avda. Jaime I,1 03510 Callosa d'en Sarrià. Inscrita en el Registro Mercantil de Alicante, T.1199, F.77, H. A-1985. Reg. Cooperativas CV-34. CIF F03042595." />
+				<entry key="3110" value="CAJA RURAL CATÓLICO AGRARIA, S.C.C.V.|CAJA RURAL CATÓLICO AGRARIA, S.COOP. DE CRÉDITO V. Domicilio Social: Plaza Mayor, 10, 12540 Vila- Real. Inscrita en el Registro Mercantil de Castellón, Tomo 507, Libro 74,  Sección General, Folio.108, Hoja CS-2048. F-12.013.223" />
+				<entry key="3112" value="CAJA R. S. JOSE DE BURRIANA, S.C.C.V.|CAJA RURAL SAN JOSÉ DE BURRIANA, S. Coop. de Crédito V. Domicilio Social: Plaza El Plà,1 12530 Burriana. Inscrita en el Registro Mercantil de Castellón, T.504, L.71, F.144, H. CS-1967, inscripción 1ª. Reg. Cooperativas CV-72. CIF F12013256." />
+				<entry key="3118" value="CAIXA RURAL TORRENT, C.C.V.|CAIXA RURAL TORRENT, Cooperativa de Crèdit Valenciana. Domicilio Social: Avenida Al Vedat, 3 46900 Torrent. Inscrita en el Registro Mercantil de Valencia, T.4789, L.2099, sección gral, F.173, H. V-32421, inscripción 1ª. Reg. Cooperativas CV-94. CIF F46047809." />
+				<entry key="3119" value="CAJA R. S. JAIME ALQUERIAS NIÑO PERDIDO, S.C.C.V.|CAJA RURAL SAN JAIME DE ALQUERÍAS DEL NIÑO PERDIDO, S. Coop. de Crédito V. Domicilio Social: C/Jaime Chicharro, 24 12539 Alquerías del Niño Perdido. Inscrita en el Registro Mercantil de Castellón, T.504, F.129, H. CS-1965, inscripción 1ª. Reg. Cooperativas CV-4. CIF F12013298" />
+				<entry key="3121" value="CAJA RURAL DE CHESTE, S.C.C.|CAJA RURAL DE CHESTE, S. Coop. de Crédito. Domicilio Social: Pza. Doctor Cajal, 2 46380 Cheste. Inscrita en el Registro Mercantil de Valencia, T.5154, L.2462, sección gral, F.1  H. V-40464, inscripción 1ª. Reg. Cooperativas CV-40. CIF F46025433." />
+				<entry key="3135" value="CAJA R. S. JOSE DE NULES, S.C.C.V.|CAJA RURAL DE SAN JOSÉ DE NULES, S. Coop. de Crédito V. Domicilio Social: C/Mayor, 66 12520 Nules. Inscrita en el Registro Mercantil de Castellón, T.5104, L.71, F.69  H. CS-1957, inscripción 1ª. Reg. Cooperativas CV-61. CIF F12013140." />
+				<entry key="3152" value="CAJA RURAL DE VILLAR, C.C.V.|CAJA RURAL DE VILLAR, Coop. de Crédito V. Domicilio Social: C/ Las Cruces, 33 46170 Villar del Arzobispo. Inscrita en el Registro Mercantil de Valencia, T.7806, L.5102, F.222  H. V-30552, inscripción 1º. Reg. Cooperativas CV-319. CIF F46043816." />
+				<entry key="3157" value="CAJA RURAL LA JUNQUERA DE CHILCHES, S.C.C.V.|CAJA RURAL LA JUNQUERA DE CHILCHES, S.Coop. de Crédito V. Domicilio Social: PL España, 8 12592 Chilches. Inscrita en el Registro Mercantil de Castellón, T.507, L.74, F.155, H. CS-2056, inscripción 1ª. Reg. Cooperativas CV-2. CIF F12013124." />
+				<entry key="3160" value="CAIXA R. S. JOSEP DE VILAVELLA, S.C.C.V.|CAIXA RURAL SANT JOSEP DE VILAVELLA, S.Coop. de Crédit V. Domicilio Social: C/Cova Santa, 11 12526 La Vilavella. Inscrita en el Registro Mercantil de Castellón, T.584, L.151, F.191, H. CS-4179. Reg. Cooperativas CV-6. CIF F12013231." />
+				<entry key="3165" value="CAJA R. S. ISIDRO DE VILAFAMES, S.C.C.V.|CAJA RURAL SAN ISIDRO DE VILAFAMÉS, S.Coop. de Crédito V. Domicilio Social:  Avda. Barceló, 6 12192 Vilafamés. Inscrita en el Registro Mercantil de Castellón, T.870, L.437, sección 8,  F.22, H. CS-1969, inscripción 41ª. Reg. Cooperativas CV-7. CIF F12013215." />
+				<entry key="3179" value="CAJA RURAL DE ALGINET, S.C.C.V.|CAJA RURAL DE ALGINET, S. Coop. de Crédito V. Domicilio Social:  C/Valencia, 13 46230 Alginet.Inscrita en el Registro Mercantil de Valencia, T.3249, L.563, F.35, H. V-822, inscripción 39. Reg. Cooperativas CV-163. CIF F46163598." />
+	   		</map>
+	   	</constructor-arg>
+	</bean>
+
+	<bean id="listaLocalidades" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<value>Almeria</value>
+				<value>Madrid</value>
+				<value>Murcia</value>
+				<value>Valencia</value>
+			</list>
+		</constructor-arg>
+	</bean>
 	
 	<alias name="mapaTabsPorTipoBienCajamar" alias="mapaTabsPorTipoBien"/>
 	<alias name="precontenciosoProjectContextCAJAMAR" alias="precontenciosoProjectContext"/>

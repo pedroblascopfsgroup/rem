@@ -1,10 +1,11 @@
-create or replace PROCEDURE CARGAR_H_BIEN (DATE_START IN DATE, DATE_END IN DATE, O_ERROR_STATUS OUT VARCHAR2) AS
+create or replace
+PROCEDURE CARGAR_H_BIEN (DATE_START IN DATE, DATE_END IN DATE, O_ERROR_STATUS OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Jaime Sánchez-Cuenca Bellido, PFS Group
 -- Fecha creación: Septiembre 2015
 -- Responsable ultima modificacion: María Villanueva, PFS Group
 
--- Fecha ultima modificacion: 04/01/2016
+-- Fecha ultima modificacion: 02/01/2016
 -- Motivos del cambio: Desarrollo - FECHA_INTERP_DEM_HIP
 
 -- Cliente: Recovery BI Cajamar
@@ -440,7 +441,7 @@ BEGIN
         WHERE ENTIDAD_BIEN_ID IS NULL;
 
         COMMIT;
-        
+
         -- LANZAMIENTOS:
         -- 01 - Entrega Voluntaria - Dacion en Pago
         EXECUTE IMMEDIATE'
@@ -460,7 +461,7 @@ BEGIN
         -- 02 - Entrega Voluntaria - Otros
         EXECUTE IMMEDIATE'
         MERGE INTO TMP_H_BIE TMP USING (
-            SELECT DISTINCT PRC.BIE_ID, TRUNC(TAR.TAR_FECHA_FIN) AS FECHA
+            SELECT PRC.BIE_ID, MAX(TRUNC(TAR.TAR_FECHA_FIN)) AS FECHA
             FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRC
             WHERE TEV.TEX_ID = TEX.TEX_ID
             AND TEX.TAP_ID = 10000000002965 -- Registrar posesión y decisión sobre lanzamiento
@@ -468,7 +469,8 @@ BEGIN
             AND TEV.TEV_VALOR = ''02'' -- NO
             AND TEX.TAR_ID = TAR.TAR_ID
             AND TAR.PRC_ID = PRC.PRC_ID
-            AND TRUNC(TAR.TAR_FECHA_FIN) <= ''' || fecha || ''') BIENES
+            AND TRUNC(TAR.TAR_FECHA_FIN) <= ''' || fecha || '''
+            GROUP BY PRC.BIE_ID) BIENES
         ON (TMP.BIE_ID = BIENES.BIE_ID)
         WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 2,
                                      TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA'; 
@@ -478,7 +480,7 @@ BEGIN
         -- 03 - Lanzamiento Celebrado - Vivienda no ocupada
         EXECUTE IMMEDIATE '
         MERGE INTO TMP_H_BIE TMP USING (
-              SELECT DISTINCT PRC.BIE_ID, TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'') AS FECHA
+              SELECT PRC.BIE_ID, MAX(TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'')) AS FECHA
               FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRC
               WHERE TEV.TEX_ID = TEX.TEX_ID
               AND TEX.TAP_ID = 10000000002967 -- Registrar lanzamiento efectuado
@@ -494,6 +496,7 @@ BEGIN
                          AND TEV2.TEV_VALOR = ''02''
                          AND TEX2.TAR_ID = TAR2.TAR_ID
                          AND TAR2.PRC_ID = PRC.PRC_ID)
+              GROUP BY PRC.BIE_ID           
                          ) BIENES
         ON (TMP.BIE_ID = BIENES.BIE_ID)
         WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 3,
@@ -504,7 +507,7 @@ BEGIN
         -- 04 -  Lanzamiento Celebrado - Vivienda ocupada
         EXECUTE IMMEDIATE '
         MERGE INTO TMP_H_BIE TMP USING (
-              SELECT DISTINCT PRC.BIE_ID, TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'') AS FECHA
+              SELECT PRC.BIE_ID, MAX(TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'')) AS FECHA
               FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRC
               WHERE TEV.TEX_ID = TEX.TEX_ID
               AND TEX.TAP_ID = 10000000002967 -- -- Registrar lanzamiento efectuado
@@ -520,6 +523,7 @@ BEGIN
                          AND TEV2.TEV_VALOR = ''01''
                          AND TEX2.TAR_ID = TAR2.TAR_ID
                          AND TAR2.PRC_ID = PRC.PRC_ID)
+               GROUP BY PRC.BIE_ID          
                          ) BIENES
         ON (TMP.BIE_ID = BIENES.BIE_ID)
         WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 4,
@@ -530,7 +534,7 @@ BEGIN
         -- 05 -  Lanzamiento Celebrado - Intervención FF.OO.
         EXECUTE IMMEDIATE '
         MERGE INTO TMP_H_BIE TMP USING (
-              SELECT DISTINCT PRC.BIE_ID, TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'') AS FECHA
+              SELECT PRC.BIE_ID, MAX(TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'')) AS FECHA
               FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRC
               WHERE TEV.TEX_ID = TEX.TEX_ID
               AND TEX.TAP_ID = 10000000002967 -- Registrar lanzamiento efectuado
@@ -546,6 +550,7 @@ BEGIN
                          AND TEV2.TEV_VALOR = ''01''
                          AND TEX2.TAR_ID = TAR2.TAR_ID
                          AND TAR2.PRC_ID = PRC.PRC_ID)
+              GROUP BY PRC.BIE_ID           
                          ) BIENES
         ON (TMP.BIE_ID = BIENES.BIE_ID)
         WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 5,
@@ -573,7 +578,7 @@ BEGIN
         -- 07 - Lanzamiento Suspendido (por el Juzgado) - Por título reconocido
         EXECUTE IMMEDIATE'
         MERGE INTO TMP_H_BIE TMP USING (
-              SELECT DISTINCT PRC.BIE_ID, TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'') AS FECHA
+              SELECT PRC.BIE_ID, MAX(TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'')) AS FECHA
               FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRC
               WHERE TEV.TEX_ID = TEX.TEX_ID
               AND TEX.TAP_ID = 10000000002934 -- H011_RegistrarResolucion
@@ -589,6 +594,7 @@ BEGIN
                          AND TEV2.TEV_VALOR = ''02'' -- NO
                          AND TEX2.TAR_ID = TAR2.TAR_ID
                          AND TAR2.PRC_ID = PRC.PRC_ID)
+              GROUP BY PRC.BIE_ID           
                          ) BIENES
         ON (TMP.BIE_ID = BIENES.BIE_ID)
         WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 7,
@@ -602,7 +608,7 @@ BEGIN
         -- O esta situacion:
         EXECUTE IMMEDIATE'
         MERGE INTO TMP_H_BIE TMP USING (
-            SELECT DISTINCT PRC.BIE_ID, TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'') AS FECHA
+            SELECT PRC.BIE_ID, MAX(TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'')) AS FECHA
             FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRC
             WHERE TEV.TEX_ID = TEX.TEX_ID
             AND TEX.TAP_ID = 10000000004093 -- H015_FormalizacionAlquilerSocial
@@ -624,6 +630,7 @@ BEGIN
                        AND TEX2.TAR_ID = TAR2.TAR_ID
                        AND TAR2.TAR_FECHA_FIN IS NOT NULL
                        AND TAR2.PRC_ID = PRC.PRC_ID)
+             GROUP BY PRC.BIE_ID          
                        ) BIENES
         ON (TMP.BIE_ID = BIENES.BIE_ID)
         WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 8,
@@ -632,7 +639,7 @@ BEGIN
         -- O esta otra:
         EXECUTE IMMEDIATE'
         MERGE INTO TMP_H_BIE TMP USING (
-            SELECT DISTINCT PRC.BIE_ID, TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'') AS FECHA
+            SELECT PRC.BIE_ID, MAX(TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'')) AS FECHA
             FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRC
             WHERE TEV.TEX_ID = TEX.TEX_ID
             AND TEX.TAP_ID = 10000000004520 -- H015_ConfirmarFormalizacion
@@ -655,6 +662,7 @@ BEGIN
                        AND TEX2.TAR_ID = TAR2.TAR_ID
                        AND TAR2.TAR_FECHA_FIN IS NOT NULL
                        AND TAR2.PRC_ID = PRC.PRC_ID)
+            GROUP BY PRC.BIE_ID           
                        ) BIENES
         ON (TMP.BIE_ID = BIENES.BIE_ID)
         WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 8,
@@ -665,7 +673,7 @@ BEGIN
         -- 09 - Lanzamiento Suspendido (por la Entidad) - Pdte. Aprob. Alquiler
         EXECUTE IMMEDIATE'
         MERGE INTO TMP_H_BIE TMP USING (
-            SELECT DISTINCT PRC.BIE_ID, TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'') AS FECHA
+            SELECT PRC.BIE_ID, MAX(TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'')) AS FECHA
             FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRC
             WHERE TEV.TEX_ID = TEX.TEX_ID
             AND TEX.TAP_ID = 10000000004094 -- H015_SuspensionLanzamiento
@@ -694,6 +702,7 @@ BEGIN
                        AND TEV4.TEV_NOMBRE = ''alquilerFormalizado''
                        AND TEV4.TEV_VALOR = ''02'' -- NO
                        AND TAR4.PRC_ID = PRC.PRC_ID)
+            GROUP BY PRC.BIE_ID           
                        ) BIENES
         ON (TMP.BIE_ID = BIENES.BIE_ID)
         WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 9,
@@ -1332,3 +1341,4 @@ EXCEPTION
 end;
 
 END CARGAR_H_BIEN;
+

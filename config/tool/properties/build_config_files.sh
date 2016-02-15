@@ -62,6 +62,7 @@ mkdir -p config/tmp/batch/$cliente/
 mkdir -p config/tmp/web/$cliente/
 
 cp config/batch/${cliente}/devon.properties config/tmp/batch/$cliente/devon.properties
+cp config/batch/${cliente}/config.ini config/tmp/batch/$cliente/config.ini
 cp config/web/${cliente}/devon.properties config/tmp/web/$cliente/devon.properties
 
 source ./config/tool/properties/${cliente}/${entorno}.properties
@@ -72,6 +73,7 @@ while read line; do
         VALUE=${!KEY//\//\\/}
         VALUE=${VALUE//:/\\\\:}
         sed -e "s/${KEY}/${VALUE}/g" -i config/tmp/batch/${cliente}/devon.properties
+        sed -e "s/${KEY}/${VALUE}/g" -i config/tmp/batch/${cliente}/config.ini
         sed -e "s/${KEY}/${VALUE}/g" -i config/tmp/web/${cliente}/devon.properties
     fi 
 done < ./config/tool/properties/${cliente}/${entorno}.properties
@@ -79,5 +81,6 @@ done < ./config/tool/properties/${cliente}/${entorno}.properties
 echo "Ficheros generados:"
 echo ""
 ls config/tmp/batch/${cliente}/devon.properties
+ls config/tmp/batch/${cliente}/config.ini
 ls config/tmp/web/${cliente}/devon.properties
 echo ""

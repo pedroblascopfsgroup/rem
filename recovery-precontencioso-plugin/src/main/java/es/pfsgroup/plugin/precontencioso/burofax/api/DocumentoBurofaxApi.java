@@ -1,9 +1,9 @@
 package es.pfsgroup.plugin.precontencioso.burofax.api;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Map;
 
 import es.capgemini.devon.files.FileItem;
 import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
@@ -16,12 +16,12 @@ public interface DocumentoBurofaxApi {
 	String parseoFinalBurofax(String contenidoParseadoIntermedio,
 			HashMap<String, Object> mapeoVariables);
 
-	String obtenerCabecera(HashMap<String, Object> mapeoVariables);
+	Map<String, String> obtenerCabecera(EnvioBurofaxPCO envioBurofaxPCO, String contexto);
 
-	InputStream obtenerPlantillaBurofax();
+	InputStream obtenerPlantillaBurofax(String proyectoRecovery, String operacionBFA);
 
 	FileItem generarDocumentoBurofax(InputStream plantillaBurofax,
-			String nombreFichero, String cabecera, String contenidoParseadoFinal);
+			String nombreFichero, Map<String,String> cabecera, String contenidoParseadoFinal);
 
 	File convertirAPdf(FileItem archivoBurofax, String nombreFicheroPdfSalida);
 

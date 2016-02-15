@@ -367,7 +367,9 @@ Ext.onReady(function() {
                                 {id:'tareas_notificaciones',iconCls:'icon_comunicacion_tab'})
                         }
                     ]
-                },{
+                }
+<sec:authorize ifNotGranted="MENU_PROCURADORES_GENERAL">
+                ,{
                     text: '<s:message code="main.arbol_tareas.alertas" text="**Alertas" /><%--  (${countTareas[3]})--%>'
                     ,id : 'arbol_tareas_nodo_alertas'
                     ,leaf : false
@@ -489,6 +491,7 @@ Ext.onReady(function() {
                         }
                     ]
                  }
+</sec:authorize>
 <sec:authorize ifNotGranted="ROLE_OCULTAR_ARBOL_GESTION_CLIENTES">
                  ,{
                                 text:"<s:message code="tareas.gc" text="**Gesti&oacute;n de Clientes"/>"
@@ -519,7 +522,7 @@ Ext.onReady(function() {
                                 
                 }
 </sec:authorize>
-<sec:authorize ifNotGranted="ROLE_OCULTAR_ARBOL_OBJETIVOS_PENDIENTES">              
+<sec:authorize ifNotGranted="ROLE_OCULTAR_ARBOL_OBJETIVOS_PENDIENTES">
                 ,{
                     text:'<s:message code="main.arbol_tareas.groups.objetivos" text="**Objetivos Pendientes" /> (${countObjetivos})'
                     //,listeners:
@@ -609,10 +612,12 @@ Ext.onReady(function() {
                     strToast += "<s:message code="main.arbol_tareas.nuevas_tareas_notificaciones" text="**Nuevas notificaciones" /><br/>";
                     tree.getNodeById('notificaciones').setText('<b><s:message code="main.arbol_tareas.notificaciones" text="**Notificaciones" /> (' +tareas[2]+")</b>");
                  }
+<sec:authorize ifNotGranted="MENU_PROCURADORES_GENERAL">
                 if (tareas[3]>countTareas[3]){
                      strToast += "<s:message code="main.arbol_tareas.nuevas_tareas_alertas" text="**Nuevas alertas" /><br/>";
                     tree.getNodeById('arbol_tareas_nodo_alertas').setText('<b><s:message code="main.arbol_tareas.alertas" text="**Alertas" /> (' +tareas[3]+")</b>");
                 }
+</sec:authorize>  
 <sec:authorize ifNotGranted="ROLE_OCULTAR_ARBOL_OBJETIVOS_PENDIENTES">
                 if (tareas[4]>countTareas[4]){
                      strToast += "<s:message code="main.arbol_tareas.nuevos_objetivos" text="**Nuevos objetivos" /><br/>";

@@ -265,7 +265,7 @@
 		}
 		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.datosEconomicos.titulo" text="**Datos económicos"/>'
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
-	    ,items : [{items:[fechaVerificacion, valorActual, ValorTotalCargas, fechaValSubjetivo, valorSubjetivo,tributacion<sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION">,imposicionCompra,tributacionVenta,imposicionVenta,inversionRenuncia</sec:authorize>,respuestaConsulta]},
+	    ,items : [{items:[fechaVerificacion, valorActual, ValorTotalCargas, fechaValSubjetivo, valorSubjetivo,tributacion<sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION"><c:if test="${usuario.entidad.descripcion != 'BANKIA'}">,imposicionCompra,tributacionVenta,imposicionVenta</c:if>,inversionRenuncia</sec:authorize>,respuestaConsulta]},
 				  {items:[valorTasacionExterna,fechaTasacionExterna,tasadora,fechaSolicitudTasacion,fechaValApreciacion, valorApreciacion, fechaValTasacion, valorTasacion<sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION">, fechaSolicitudDueD, fechaDueD</sec:authorize> <sec:authorize ifNotGranted="PUEDE_VER_TRIBUTACION">, porcentajeImpuestoCompra, impuestoCompra</sec:authorize>]}
 				 ]
 	});

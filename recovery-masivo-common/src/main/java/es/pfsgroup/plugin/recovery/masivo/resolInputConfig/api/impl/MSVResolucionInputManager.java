@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.bo.BusinessOperationException;
@@ -43,6 +44,7 @@ public class MSVResolucionInputManager implements MSVResolucionInputApi {
 	private ApiProxyFactory proxyFactory;
 
 	@Autowired(required = false)
+	@Qualifier("selectorProperty")
 	private MSVConfigResolucionesProc mapaResolInputProc;
 
 	@Autowired

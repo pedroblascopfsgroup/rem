@@ -5,6 +5,7 @@ import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoBuscarTareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.recovery.ext.factory.dao.HQLBuilderReutilizable;
 import es.pfsgroup.recovery.ext.factory.dao.dto.DtoResultadoBusquedaTareasBuzones;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.impl.ResultadoBusquedaTareasBuzonesDto;
 
@@ -53,5 +54,16 @@ public interface VTARBusquedaOptimizadaTareasDao extends AbstractDao<TareaNotifi
      * @return Devuelve null si no encuentra tarea o responsable.
      */
     Usuario obtenerResponsableTarea(Long idTarea);
+    
+    /**
+     * Obtiene el HQL de la busqueda de tareas pendientes.
+     * 
+     * @param dto
+     * @param u
+     * @param modelClass
+     * @return HQLBuilderReutilizable
+     */
+    public HQLBuilderReutilizable createHQLBbuscarTareasPendiente(DtoBuscarTareaNotificacion dto, Usuario u, final Class<? extends DtoResultadoBusquedaTareasBuzones> modelClass);
+
 
 }

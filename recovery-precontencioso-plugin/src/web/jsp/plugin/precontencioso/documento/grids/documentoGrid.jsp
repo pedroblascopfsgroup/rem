@@ -125,7 +125,6 @@ var incluirDocButton = new Ext.Button({
 		}				
 	});
 	
-
 var excluirDocButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.excluirDocumentos" text="**Excluir Documentos" />'
 		,id: 'excluirDocButton'
@@ -468,7 +467,8 @@ var actualizarBotonesDocumentos = function(){
 			}
 			else if(data.esGestoria) {
 				habilitarDeshabilitarButtons(true, true, true, false, true, true, false);
-			} else {
+			}
+			else {
 				if(myCboxSelModel2.getCount() == 0)	{
 					return;
 				}
@@ -634,6 +634,7 @@ var actualizarBotonesDocumentos = function(){
 								<%-- DESCARTAR DOCUMENTOS Y ANULAR SOLICITUDES MASIVAMENTE --%>
 								<%--habilitarDeshabilitarButtons(false, true, false, true, false, false, true); --%>
 								habilitarDeshabilitarButtons(false, true, false, true, false, false, false);<%--habilitamos informar masivo --%>
+
 								return;
 							}
 							<%-- Si hay alguna solicitud con resultado --%>
@@ -799,7 +800,53 @@ Ext.namespace('Ext.ux.plugins');
         ,labelStyle:'font-weight:bolder'
         ,height : 35
         ,width : 200
+        ,enableKeyEvents: true
         ,emptyText :'Filtrar por...'
+        ,doQuery : function(q, forceAll){
+	        q = Ext.isEmpty(q) ? '' : q;
+	        var qe = {
+	            query: q,
+	            forceAll: forceAll,
+	            combo: this,
+	            cancel:false
+	        };
+	        if(this.fireEvent('beforequery', qe)===false || qe.cancel){
+	            return false;
+	        }
+	        q = qe.query;
+	        forceAll = qe.forceAll;
+	        if(forceAll === true || (q.length >= this.minChars)){
+	            if(this.lastQuery !== q){
+	                this.lastQuery = q;
+	                if(this.mode == 'local'){
+	                    this.selectedIndex = -1;
+	                    if(forceAll){
+	                        this.store.clearFilter();
+	                    }else{
+	                        //this.store.filter(this.displayField, q);
+                      		this.store.filterBy(function(record){
+									var desc = record.get('descripcion');
+									if (desc.indexOf(filtroTipoDocumento.getRawValue()) > -1) {
+										return true;
+									}else{
+										return false;
+									}
+								});
+	                    }
+	                    this.onLoad();
+	                }else{
+	                    this.store.baseParams[this.queryParam] = q;
+	                    this.store.load({
+	                        params: this.getParams(q)
+	                    });
+	                    this.expand();
+	                }
+	            }else{
+	                this.selectedIndex = -1;
+	                this.onLoad();
+	            }
+	        }
+	    }
         ,listeners :
 			       {
 			       		'select' : function (combo, record, index) { 
@@ -807,6 +854,11 @@ Ext.namespace('Ext.ux.plugins');
 			       		}
 			       }
     });
+    
+
+    
+  
+    
     
     var tituloFiltro = new Ext.form.Label({
    		text:'<s:message code="precontencioso.grid.documento.tipoDocumento" text="**Tipo Documento" />:'
@@ -821,15 +873,19 @@ var gridDocumentos = new Ext.grid.GridPanel({
 		,tbar:[tituloFiltro,filtroTipoDocumento,limpiarFiltro]
 		,columns: cmDocumento
 		,store: storeDocumentos
+		,height: 170
 		,loadMask: true
         ,sm: myCboxSelModel2
         ,clicksToEdit: 1
+        ,viewConfig: {forceFit:true}
         ,plugins: [columMemoryPlugin]
 		,collapsible: true
 		,height: 250
 		,autoWidth: true	
+		,resizable:true	
 		,collapsed : false
 		,titleCollapse : false
+		,autoHeight: false
 		,monitorResize: true
 		<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_DOC_BTN">
 			,bbar : [ incluirDocButton, excluirDocButton, descartarDocButton, editarDocButton, separadorButtons, anularSolicitudesButton, solicitarDocButton, informarDocButton, botonRefresh]

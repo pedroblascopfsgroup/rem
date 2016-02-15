@@ -253,6 +253,16 @@ public class RecobroProcesosFacturacionController implements RecobroProcesosFact
 		return RecobroCommonProcesosFacturacionConstants.PLUGIN_RECOBROCONFIG_DEFAULT ;
 	}
 	
-	
+	@SuppressWarnings("unchecked")
+	@Override
+	@RequestMapping
+	@Secured("ROLE_VER_PROC_FACTURACION")
+	public String descargarFicheroReducido(Long idProcesoFacturacion, ModelMap map) {
+		FileItem excelFileItem = proxyFactory.proxy(RecobroProcesosFacturacionApi.class).generarExcelProcesosFacturacionReducido(idProcesoFacturacion);
+		
+		map.put("fileItem", excelFileItem);
+		
+		return RecobroProcesosFacturacionConstants.PLUGIN_RECOBROCONFIG_JSP_DOWNLOAD_FILE;
+	}	
 
 }

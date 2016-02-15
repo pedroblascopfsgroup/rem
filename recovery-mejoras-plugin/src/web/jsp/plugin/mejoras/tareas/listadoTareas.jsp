@@ -23,7 +23,6 @@
 	var buzonOptimizado='${buzonOptimizado}';
 		
 	var nombreTareaField = (buzonOptimizado == 'true') ? 'nombreTarea' : 'descripcionTarea';
-		
 	var codigoTipoTarea="${codigoTipoTarea}";
 	var esAlerta="${alerta}";
 	var enEspera="${espera}";
@@ -95,6 +94,68 @@
 			comboFechaHastaOp.enable();
 			fechaVencHasta.enable();
 		}	
+	});
+	
+	
+	var comboEstado=new Ext.form.ComboBox({
+		store:["Todas","Pendientes validar"]
+		,name: 'comboEstado'
+		,triggerAction : 'all'
+		,mode:'local'
+		,editable: false
+    	,emptyText: 'Seleccionar...'
+		,fieldLabel:'<s:message code="tareas.filtro.procuradores.estado" text="**Estado" />'
+		,width:100
+		,listeners:{
+			specialkey: function(f,e){  
+	            if(e.getKey()==e.ENTER){  
+	                buscarFunc();
+	            }  
+	        } 
+		}
+		,value:'${estado}'
+	})
+	
+	
+	comboEstado.on('select', function(){
+		if(comboEstado.getValue()=="Pendientes validar")
+		{
+			comboCtgResol.setDisabled(false);
+		}else{
+			comboCtgResol.setDisabled(true);
+		}
+	});
+	
+	
+	var categoriasRecord = Ext.data.Record.create([
+		 {name:'id'}
+        ,{name:'nombre'}
+    ]);
+       
+    var categoriasStore = page.getStore({   
+		flow : 'categorias/getListaCategorias'
+		,limit: limit
+		,baseParams:paramsBusquedaInicial
+		,reader : new Ext.data.JsonReader({root:'categorias', totalProperty : 'total'}, categoriasRecord)
+	});
+
+	categoriasStore.webflow({idcategorizacion: "${idCategorizacion}"});
+	
+	//Combo Categorias Resoluciones
+	var comboCtgResol = new Ext.form.ComboBox({
+		name: 'comboCtgResol'
+    	//,store: categorizacionesStore
+    	,store: categoriasStore
+    	,id: 'comboCtgResol'
+    	,displayField: 'nombre'
+    	,valueField: 'id'
+    	,mode: 'local'
+    	,triggerAction: 'all'
+    	,editable: false
+    	,emptyText: 'Seleccionar...'
+   		,fieldLabel: '<s:message code="tareas.filtro.procuradores.categorias" text="**Categorías" />'
+		,labelStyle: 'width:100'
+		,forceSelection: true
 	});
 	
 	var fechaVencDesde = new Ext.ux.form.XDateField({
@@ -175,6 +236,8 @@
 			return true;
 		if(fechaVencHasta.getValue()!='')
 			return true;
+		if(${tieneProcurador} == true && comboEstado.getValue()!='') 
+			return true;
 	}
 	
 	var validaFechasVenc=function(){
@@ -186,7 +249,7 @@
 	}
 	
 	var getParametrosBusqueda=function(){
-		return {
+		var params = {
 			codigoTipoTarea:codigoTipoTarea
 			,perfilUsuario:perfilUsuario
 			,enEspera:enEspera
@@ -201,10 +264,23 @@
 			,fechaVencDesdeOperador:operadorFechaDesde
 			,fechaVencimientoHasta:app.format.dateRenderer(fechaVencHasta.getValue())
 			,fechaVencimientoHastaOperador:operadorFechaHasta
+		};
+		
+		if(${tieneProcurador} == true) {
+			params.estado = comboEstado.getValue();
+			params.categorizacion = comboCtgResol.getValue();
 		}
+
+		
+		return params;
 	}
 	
 	var buscarFunc=function(){
+		if(${tieneProcurador} == true) {
+			var estado = comboEstado.getValue();
+			var categorizacion = comboCtgResol.getValue();
+		}
+		
 		if(validarForm()){
 			if(validaFechasVenc()){
 				isBusqueda=true;
@@ -337,6 +413,7 @@
 
 	}
 	
+	
 	var panelFiltros = new Ext.Panel({
 		title : '<s:message code="tareas.listado.busqueda" text="**Busqueda de Tareas"/>'
 		,collapsible : true
@@ -349,16 +426,34 @@
 				layout:'form'
 				,defaults:{xtype:'fieldset',border:false}
 				,width:'320px'
-				,items:[nombreTarea, fechaVencDesde, comboFechaDesdeOp, comboFechaHastaOp]
+				<c:choose>
+				    <c:when test="${tieneProcurador == true && activoDespachoIntegral==true}">
+				       ,items:[nombreTarea, fechaVencDesde, comboFechaDesdeOp, comboFechaHastaOp, comboEstado]
+				    </c:when>
+				    <c:otherwise>
+				        ,items:[nombreTarea, fechaVencDesde, comboFechaDesdeOp, comboFechaHastaOp]
+				    </c:otherwise>
+				</c:choose>
 			},{
 				layout:'form' 
 				,width:'320px'
 				,defaults:{xtype:'fieldset',border:false}
-				,items:[descTarea, fechaVencHasta]
+				<c:choose>
+				    <c:when test="${tieneProcurador == true && activoDespachoIntegral==true}">
+				       ,items:[descTarea, fechaVencHasta, comboCtgResol]
+				    </c:when>
+				    <c:otherwise>
+				        ,items:[descTarea, fechaVencHasta]
+				    </c:otherwise>
+				</c:choose>
 			}
 		]              
 		,tbar:new Ext.Toolbar()
 	});
+	
+	<c:if test="${tieneProcurador == true && activoDespachoIntegral==true}">
+		comboCtgResol.setDisabled(true);
+	</c:if>
 	
 	if(!eval(enEspera) && ("${codigoTipoTarea}" == "3")){
 		panelFiltros.getTopToolbar().add(btnBuscar,btnClean,btnExportarXls,buttonsLNot,'->',buttonsRNot);
@@ -419,6 +514,7 @@
 		,{name:'fechaRevisionAlerta'}
 		,{name:'dtype'}
 		,{name:'categoriaTarea'}
+		,{name:'esPeticionProrroga'}
 	]);
 	
 	Ext.grid.CheckColumn = function(config){ 
@@ -473,6 +569,7 @@
 	    	,totalProperty : 'total'
 	    }, tarea)
 	});
+	
 	
 	tareasStore.addListener('load', agrupa);
 	tareasStore.setDefaultSort('fechaVenc', 'ASC');
@@ -907,10 +1004,32 @@
 				break;
 			--%>	
 			default:
-				btnQuickAceptarCancelacion.setVisible(false);
-				btnQuickRechazarCancelacion.setVisible(false);
-				btnQuickRechazarProrroga.setVisible(false);
-				btnQuickAceptarProrroga.setVisible(false);
+				if(rec.get('esPeticionProrroga')){
+					var params ={
+							idEntidadInformacion: rec.get('idEntidad')
+							,isConsulta:false
+							,fechaVencimiento: app.format.dateRenderer(rec.get('fechaVenc'))
+							,fechaCreacion: rec.get('fcreacionEntidad')
+							,situacion:'Asunto' 
+							,destareaOri:  rec.get(nombreTareaField)
+							,idTipoEntidadInformacion: '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO" />'
+							,fechaPropuesta: rec.get('fechaPropuesta')
+							,motivo: rec.get('motivo')
+							,idTareaOriginal: rec.get('id')	
+							,descripcion:"Toma decision procedimiento"		
+							,codigoTipoProrroga: '<fwk:const value="es.capgemini.pfs.prorroga.model.DDTipoProrroga.TIPO_PRORROGA_EXTERNA" />'
+					}
+					btnQuickAceptarProrroga.setHandler(function(){
+							redefinirFuncionContestarProrroga(params)
+						});	
+					btnQuickAceptarProrroga.setVisible(true);
+				}else{
+					btnQuickAceptarCancelacion.setVisible(false);
+					btnQuickRechazarCancelacion.setVisible(false);
+					btnQuickRechazarProrroga.setVisible(false);
+					btnQuickAceptarProrroga.setVisible(false);
+				}
+
 				break;
 		}
 		if(tipoTareaNotificacion=='EXTTareaNotificacion'){
@@ -927,6 +1046,7 @@
 	
 	
 	tareasGrid.on('rowdblclick', function(grid, rowIndex, e) {
+		debugger;
 		//agregar funcionalidad....
 		var rec = grid.getStore().getAt(rowIndex);
 		

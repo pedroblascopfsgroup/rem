@@ -126,7 +126,7 @@
     
     
     var optionsZonasStore = page.getStore({
-	       flow: 'expediente/getZonasInstant'
+	       flow: 'mejexpediente/getZonasInstant'
 	       ,reader: new Ext.data.JsonReader({
 	    	 root : 'zonas'
 	    }, zonasRecord)

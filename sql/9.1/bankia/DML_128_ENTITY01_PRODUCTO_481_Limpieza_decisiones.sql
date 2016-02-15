@@ -31,7 +31,7 @@ BEGIN
 
     
 	execute immediate 'update '||V_ESQUEMA||'.dpr_decisiones_procedimientos set borrado = 1, usuarioborrar=''PROD-481'', FECHABORRAR=SYSDATE WHERE DPR_ID IN (
-SELECT DPR_ID FROM DPR_DECISIONES_PROCEDIMIENTOS DPR
+SELECT DPR_ID FROM '||V_ESQUEMA||'.DPR_DECISIONES_PROCEDIMIENTOS DPR
 join '||V_ESQUEMA_M||'.dd_ede_estados_decision ede on dpr.dd_ede_id = ede.dd_ede_id
 where EDE.DD_EDE_descripcion = ''EN CONFORMACIÓN''
 )';

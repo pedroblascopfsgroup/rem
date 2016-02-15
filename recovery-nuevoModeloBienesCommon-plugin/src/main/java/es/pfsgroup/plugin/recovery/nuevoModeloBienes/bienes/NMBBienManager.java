@@ -65,6 +65,7 @@ import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.adjudicacion.dto.DtoNMBBienAdjudicacion;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.dao.NMBBienDao;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDImposicionVenta;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionPosesoria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTasadora;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoImposicion;
@@ -341,13 +342,16 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 			bien.setTributacionVenta(tipoTributacionVenta);
 		}
 		if (dtoBien.getTipoImposicionCompra() != null) {
-			Filter filtroImposicion = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoBien.getTipoImposicionCompra());
+			Filter filtroImposicion = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoBien.getTipoImposicionCompra());			
 			DDTipoImposicion tipoImposicion = genericDao.get(DDTipoImposicion.class, filtroImposicion);
+			//if(Checks.esNulo(tipoImposicion)) {
+			//	tipoImposicion = genericDao.get(DDTipoImposicion.class, filtroImposicion, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", true));
+			//}
 			bien.setTipoImposicionCompra(tipoImposicion);
 		}
 		if (dtoBien.getTipoImposicionVenta() != null) {
 			Filter filtroImposicionVenta = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoBien.getTipoImposicionVenta());
-			DDTipoImposicion tipoImposicionVenta = genericDao.get(DDTipoImposicion.class, filtroImposicionVenta);
+			DDImposicionVenta tipoImposicionVenta = genericDao.get(DDImposicionVenta.class, filtroImposicionVenta);
 			bien.setTipoImposicionVenta(tipoImposicionVenta);
 		}
 		if (dtoBien.getInversionPorRenuncia() != null) {
@@ -1030,12 +1034,13 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 	@Transactional(readOnly = false)
 	public void excluirBienes(Long idProcedimiento, String[] arrBien) {
 		Filter f1 = genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProcedimiento);
+		Filter f3 = genericDao.createFilter(FilterType.EQUALS, "borrado", false);
 
 		for (int i = 0; i < arrBien.length; i++) {
 			NMBBien bien = nmbBienDao.get(Long.parseLong(arrBien[i]));
 			if (!Checks.esNulo(bien)) {
 				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "bien.id", bien.getId());
-				ProcedimientoBien procBien = genericDao.get(ProcedimientoBien.class, f1, f2);
+				ProcedimientoBien procBien = genericDao.get(ProcedimientoBien.class, f1, f2, f3);
 
 				genericDao.deleteById(ProcedimientoBien.class, procBien.getId());	
 			}

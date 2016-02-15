@@ -271,16 +271,11 @@ public class DocumentoPCOController {
 	@RequestMapping
 	public String abrirIncluirDocumento(ModelMap model, @RequestParam(value = "idPCO", required = true) Long idPCO) {
 
-		List<DDTipoFicheroAdjunto> listaTipoDocumentos = null;
 		List<DDUnidadGestionPCO> listaUG = null;
 		List<DDProvincia> listaProvincias = null;
 		
 		IncluirDocumentoDto dto = new IncluirDocumentoDto();
 	
-		// Lista tipo documentos
-		List<DDTipoActuacion> actuaciones = new ArrayList<DDTipoActuacion>();
-		actuaciones.add(procedimientoPCODao.get(idPCO).getProcedimiento().getTipoActuacion());
-		listaTipoDocumentos = tipoFicheroAdjuntoDao.getListaPorTipoDeActuacion(actuaciones);
 		
 		// Lista Unidades Gestion
 		listaUG = documentoPCOApi.getUnidadesGestion();
@@ -288,7 +283,6 @@ public class DocumentoPCOController {
 		// Lista provincias
 		listaProvincias = documentoPCOApi.getProvincias();
 		
-		model.put("tiposDocumento", listaTipoDocumentos);
 		model.put("unidadesGestion", listaUG);
 		model.put("listaProvincias", listaProvincias);
 		

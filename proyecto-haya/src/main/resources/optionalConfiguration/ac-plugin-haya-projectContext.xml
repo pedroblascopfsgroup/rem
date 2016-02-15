@@ -204,7 +204,51 @@
 						<value>TSPGL</value>
 						<value>CJ-TGESEXT</value>
 						<value>CJ-TSUEXT</value>
-
+						
+						<!-- PRORROGAS -->
+						<value>RESPRO_GADM</value>
+						<value>RESPRO_SCON</value>
+						<value>RESPRO_SFIS</value>
+						<value>RESPRO_GAREO</value>
+						<value>RESPRO_DSDE</value>
+						<value>RESPRO_DADM</value>
+						<value>RESPRO_DCON</value>
+						<value>RESPRO_DDEU</value>
+						<value>RESPRO_DIRCON</value>
+						<value>RESPRO_DLISUB</value>
+						<value>RESPRO_GSUBC</value>
+						<value>RESPRO_SSUBC</value>
+						<value>RESPRO_SPGL</value>
+						<value>RESPRO_SUPNVL2</value>
+						<value>RESPRO_GUCO</value>
+						<value>RESPRO_GSUB</value>
+						<value>RESPRO_SSUB</value>
+						<value>RESPRO_SDEU</value>
+						<value>RESPRO_SSDE</value>
+						<value>RESPRO_SAREO</value>
+						<value>RESPRO_DUCO</value>
+						<value>RESPRO_GULI</value>
+						<value>RESPRO_SUP</value>
+						<value>RESPRO_DULI</value>
+						<value>RESPRO_PREDOC</value>
+						<value>RESPRO_SUP_PCO</value>
+						<value>RESPRO_DRECU</value>
+						<value>RESPRO_CJ-GAREO</value>
+						<value>RESPRO_GCONGE</value>
+						<value>RESPRO_GCONPR</value>
+						<value>RESPRO_CJ-GESTLLA</value>
+						<value>RESPRO_CJ-SAREO</value>
+						<value>SAEST</value>
+						<value>RESPRO_SAJUR</value>
+						<value>RESPRO_CJ-SCON</value>
+						<value>RESPRO_SUCONT</value>
+						<value>RESPRO_SUCONPR</value>
+						<value>RESPRO_SCTRGE</value>
+						<value>RESPRO_SGESDOC</value>
+						<value>CJ-SUEXT</value>
+						<value>RESPRO_SUCONGEN2</value>
+						<value>RESPRO_SUCONGE</value>
+						
 					</set>
 				</entry>
 				<entry key="ABRIR_EXP">
@@ -253,6 +297,136 @@
 				<value>00557</value>
 				<value>ACPSAREB</value>
 			</list>
+		</property>
+		<property name="tipoSupervisorProrroga">
+			<map>
+				<entry key="GADM">
+					<value>RESPRO_GADM</value>
+				</entry>
+				<entry key="SCON">
+					<value>RESPRO_SCON</value>
+				</entry>
+				<entry key="SFIS">
+					<value>RESPRO_SFIS</value>
+				</entry>
+				<entry key="GAREO">
+					<value>RESPRO_GAREO</value>
+				</entry>
+				<entry key="DSDE">
+					<value>RESPRO_DSDE</value>
+				</entry>
+				<entry key="DADM">
+					<value>RESPRO_DADM</value>
+				</entry>
+				<entry key="DCON">
+					<value>RESPRO_DCON</value>
+				</entry>
+				<entry key="DDEU">
+					<value>RESPRO_DDEU</value>
+				</entry>
+				<entry key="DIRCON">
+					<value>RESPRO_DIRCON</value>
+				</entry>
+				<entry key="DLISUB">
+					<value>RESPRO_DLISUB</value>
+				</entry>
+				<entry key="GSUBC">
+					<value>RESPRO_GSUBC</value>
+				</entry>
+				<entry key="SSUBC">
+					<value>RESPRO_SSUBC</value>
+				</entry>
+				<entry key="SPGL">
+					<value>RESPRO_SPGL</value>
+				</entry>
+				<entry key="SUPNVL2">
+					<value>RESPRO_SUPNVL2</value>
+				</entry>
+				<entry key="GUCO">
+					<value>RESPRO_GUCO</value>
+				</entry>
+				<entry key="GSUB">
+					<value>RESPRO_GSUB</value>
+				</entry>
+				<entry key="SSUB">
+					<value>RESPRO_SSUB</value>
+				</entry>
+				<entry key="SDEU">
+					<value>RESPRO_SDEU</value>
+				</entry>
+				<entry key="SSDE">
+					<value>RESPRO_SSDE</value>
+				</entry>
+				<entry key="SAREO">
+					<value>RESPRO_SAREO</value>
+				</entry>
+				<entry key="DUCO">
+					<value>RESPRO_DUCO</value>
+				</entry>
+				<entry key="GULI">
+					<value>RESPRO_GULI</value>
+				</entry>
+				<entry key="SUP">
+					<value>RESPRO_SUP</value>
+				</entry>
+				<entry key="DULI">
+					<value>RESPRO_DULI</value>
+				</entry>
+				<entry key="PREDOC">
+					<value>RESPRO_PREDOC</value>
+				</entry>
+				<entry key="SUP_PCO">
+					<value>RESPRO_SUP_PCO</value>
+				</entry>
+				<entry key="DRECU">
+					<value>RESPRO_DRECU</value>
+				</entry>
+				<entry key="CJ-GAREO">
+					<value>RESPRO_CJ-GAREO</value>
+				</entry>
+				<entry key="GCONGE">
+					<value>RESPRO_GCONGE</value>
+				</entry>
+				<entry key="GCONPR">
+					<value>RESPRO_GCONPR</value>
+				</entry>
+				<entry key="CJ-GESTLLA">
+					<value>RESPRO_CJ-GESTLLA</value>
+				</entry>
+				<entry key="CJ-SAREO">
+					<value>RESPRO_CJ-SAREO</value>
+				</entry>
+				<entry key="RESPRO_SAEST">
+					<value>SAEST</value>
+				</entry>
+				<entry key="SAJUR">
+					<value>RESPRO_SAJUR</value>
+				</entry>
+				<entry key="CJ-SCON">
+					<value>RESPRO_CJ-SCON</value>
+				</entry>
+				<entry key="SUCONT">
+					<value>RESPRO_SUCONT</value>
+				</entry>
+				<entry key="SUCONPR">
+					<value>RESPRO_SUCONPR</value>
+				</entry>
+				<entry key="SCTRGE">
+					<value>RESPRO_SCTRGE</value>
+				</entry>
+				<entry key="SGESDOC">
+					<value>RESPRO_SGESDOC</value>
+				</entry>
+				<entry key="RESPRO_CJ-SUEXT">
+					<value>CJ-SUEXT</value>
+				</entry>
+				<entry key="SUCONGEN2">
+					<value>RESPRO_SUCONGEN2</value>
+				</entry>
+				<entry key="SUCONGE">
+					<value>RESPRO_SUCONGE</value>
+				</entry>
+			</map>
 		</property>
 	</bean>
 	

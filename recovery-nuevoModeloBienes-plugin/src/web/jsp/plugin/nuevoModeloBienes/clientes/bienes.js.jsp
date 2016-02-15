@@ -505,7 +505,7 @@
 		});
 		
 		var imposicionVenta = app.creaCombo({
-			data : <app:dict value="${imposicion}" />
+			data : <app:dict value="${imposicionVenta}" />
 			<app:test id="imposicionVentaCombo" addComa="true" />
 			,name : 'bien.imposicionVenta'
 			,fieldLabel : '<s:message code="plugin.mejoras.bienesNMB.imposicionVenta" text="**imposicionVenta" />'
@@ -1318,8 +1318,7 @@
 			var tipoBienValidar = getTipoBienValidar(tipoBien);
 			
 			for(var i=0;i < listaTabs.length;i++) {
-				 if (listaTabs[i].tipoBien == tipoBienValidar)  {	
-				  	
+				 if (listaTabs[i].tipoBien == tipoBienValidar)  {	 	
 				 	<%-- Comprobamos pestañas del tipo de bien correspondiente --%>
 					for(var x=0;x < listaTabs[i].tabs.length; x++) {
 						if (!validaTab(listaTabs[i].tabs[x])) {
@@ -1332,7 +1331,7 @@
 			return true;			
 		}
 				
-		<%-- Obtiene el tipoBien cuyas pestañas se validarán, en caso de no encontrarse, se validarán las pestañas por defecto --%>
+		<%--Obtiene el tipoBien cuyas pestañas se validarán, en caso de no encontrarse, se validarán las pestañas por defecto --%>
 		var getTipoBienValidar = function(tipoBien){
 			for(var i=0;i < listaTabs.length;i++) {
 				 if (listaTabs[i].tipoBien == tipoBien)  {
@@ -1859,7 +1858,7 @@
 			,layout:'table'
 			,layoutConfig:{columns:2}
 			,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px;width:350'}
-			,items:[ {items: [fechaVerifNMB, valorNMB, cargasNMB, fechaValorSubjetivo, importeValorSubjetivo,fechaValorApreciacion,importeValorApreciacion,tributacion <sec:authorize ifNotGranted="PUEDE_VER_TRIBUTACION">,porcentajeImpuestoCompra,impuestoCompra</sec:authorize> <sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION">,imposicionCompra,tributacionVenta,imposicionVenta,inversionRenuncia</sec:authorize>]}
+			,items:[ {items: [fechaVerifNMB, valorNMB, cargasNMB, fechaValorSubjetivo, importeValorSubjetivo,fechaValorApreciacion,importeValorApreciacion,tributacion <sec:authorize ifNotGranted="PUEDE_VER_TRIBUTACION">,porcentajeImpuestoCompra,impuestoCompra</sec:authorize> <sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION"><c:if test="${usuario.entidad.descripcion != 'BANKIA'}">,imposicionCompra,tributacionVenta,imposicionVenta</c:if>,inversionRenuncia</sec:authorize>]}
 					,{items: [valorTasacionExterna,fechaTasacionExterna,tasadora,fechaSolicitudTasacion, fechaValorTasacion <sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION">,fechaSolicitudDue,fechaRecepcionDue</sec:authorize>, importeValorTasacion,respuestaConsulta]}
 				   ]
 		});

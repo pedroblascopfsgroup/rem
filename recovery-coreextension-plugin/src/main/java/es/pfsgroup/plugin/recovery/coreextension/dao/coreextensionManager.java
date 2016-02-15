@@ -25,6 +25,8 @@ import es.capgemini.pfs.despachoExterno.DespachoExternoManager;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.dsm.EntidadManager;
+import es.capgemini.pfs.dsm.model.Entidad;
 import es.capgemini.pfs.multigestor.EXTDDTipoGestorManager;
 import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoDao;
 import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoHistoricoDao;
@@ -37,6 +39,7 @@ import es.capgemini.pfs.multigestor.model.EXTTipoGestorPropiedad;
 import es.capgemini.pfs.persona.dao.impl.PageSql;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -93,6 +96,12 @@ public class coreextensionManager implements coreextensionApi {
 	@Autowired
 	CoreProjectContext coreProjectContext;
 	
+	@Autowired
+	private UsuarioManager usuarioManager;
+	
+	@Autowired
+	private EntidadManager entidadManager;
+	 
 	@Override
 	@BusinessOperation(GET_LIST_TIPO_GESTOR)
 	public List<EXTDDTipoGestor> getList(String ugCodigo) {		
@@ -143,8 +152,18 @@ public class coreextensionManager implements coreextensionApi {
 	@BusinessOperation(GET_LIST_TIPO_GESTOR_ADICIONAL)
 	public List<EXTDDTipoGestor> getListTipoGestorAdicional() {
 		
-		Order order = new Order(OrderType.ASC, "descripcion");
-		List<EXTDDTipoGestor> listado = genericDao.getListOrdered(EXTDDTipoGestor.class, order, genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+		List<Entidad> listEnt = entidadManager.getListaEntidades();
+		List<EXTDDTipoGestor> listado = new ArrayList<EXTDDTipoGestor>();
+		
+		if(!Checks.esNulo(listEnt) && listEnt.size()>1){
+			Entidad entidad = genericDao.get(Entidad.class, 
+					genericDao.createFilter(FilterType.EQUALS, "id", usuarioManager.getUsuarioLogado().getEntidad().getId()));
+			listado = entidad.getTiposDeGestores();
+		}else{
+			Order order = new Order(OrderType.ASC, "descripcion");
+			listado = genericDao.getListOrdered(EXTDDTipoGestor.class, order, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));	
+		}
+		
 		
 		return listado;
 	}
@@ -224,9 +243,18 @@ public class coreextensionManager implements coreextensionApi {
 	@Override
 	@BusinessOperation(GET_LIST_USUARIOS_PAGINATED)
 	public Page getListUsuariosPaginatedData(UsuarioDto usuarioDto) {
-		Page page = gestoresDao.getGestoresByDespacho(usuarioDto);
-		return this.colocarGestorDefectoPrimeraPosicion((List<Usuario>) page.getResults(),usuarioDto.getIdTipoDespacho(),page.getTotalCount());
-	}	
+		return gestoresDao.getGestoresByDespacho(usuarioDto);
+	//	return this.colocarGestorDefectoPrimeraPosicion((List<Usuario>) page.getResults(),usuarioDto.getIdTipoDespacho(),page.getTotalCount());
+	}
+	
+	/* (non-Javadoc)
+	 * @see es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi#getListUsuariosDefectoPaginatedData(es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto)
+	 */
+	@BusinessOperation(GET_LIST_USUARIOS_DEFECTO_PAGINATED)
+	public Page getListUsuariosDefectoPaginatedData(UsuarioDto usuarioDto) {
+		return gestoresDao.getGestoresByDespachoDefecto(usuarioDto);
+	//	return this.colocarGestorDefectoPrimeraPosicion((List<Usuario>) page.getResults(),usuarioDto.getIdTipoDespacho(),page.getTotalCount());
+	}
 
 	@Override
 	@BusinessOperation(SAVE_GESTOR)
@@ -583,13 +611,19 @@ public class coreextensionManager implements coreextensionApi {
 		return null;
 	}
 	
+	
+	/*
+	 * Los siguientes 2 métodos estan comentados porque al final no se han requerido, pero se mantienen para 
+	 * un posible uso futuro.
+	 */
+	
 	/**
 	 * Método que dada una lista de Gestores de un despacho, coloca en primera posición al gestor por defecto, 
 	 * dejando del segundo de la lista al final en el orden que le llega (alfabeticamente por defecto).
 	 * @param lista
 	 * @param idDespacho
 	 * @return
-	 */
+	 *
 	private Page colocarGestorDefectoPrimeraPosicion(List<Usuario> lista, Long idDespacho, int totalCount)
 	{
 		PageSql page = new PageSql();
@@ -625,7 +659,7 @@ public class coreextensionManager implements coreextensionApi {
 		page.setTotalCount(totalCount);
 		page.setResults(lista);
 		return page;
-	}
+	}*/
 
 	/**
 	 * Realiza un ranking en la coincidencia de palabras del nombre del Despacho (DES_DESPACHO) con el nombre del 
@@ -635,7 +669,7 @@ public class coreextensionManager implements coreextensionApi {
 	 * @param ranking
 	 * @param contador
 	 * @return
-	 */
+	 *
 	private int[] criterioPorNombreDespUsu(List<Usuario> lista, String[] cadenaDespacho, int[] ranking) {
 		int contador = 0;
 		for(Usuario usuario : lista)
@@ -653,6 +687,6 @@ public class coreextensionManager implements coreextensionApi {
 		}
 		
 		return ranking;
-	}
+	}*/
 
 }

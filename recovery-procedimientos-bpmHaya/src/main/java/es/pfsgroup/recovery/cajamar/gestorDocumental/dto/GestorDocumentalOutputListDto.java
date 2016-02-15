@@ -52,6 +52,8 @@ public class GestorDocumentalOutputListDto {
 	// Localizador/referencia de centera (Este campo es necesario para la
 	// descarga individual)
 	private String refCentera;
+	
+	private String contentType;
 
 	public String getTipoDoc() {
 		return tipoDoc;
@@ -203,6 +205,14 @@ public class GestorDocumentalOutputListDto {
 
 	public void setRefCentera(String refCentera) {
 		this.refCentera = refCentera;
+	}
+
+	public String getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
 	}
 
 }

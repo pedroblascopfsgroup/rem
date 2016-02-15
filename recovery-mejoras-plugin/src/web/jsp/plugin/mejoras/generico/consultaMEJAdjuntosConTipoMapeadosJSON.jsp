@@ -24,13 +24,17 @@
 			</json:property>
 			<json:property name="puedeBorrar" value="${dto.puedeBorrar}" />
 			
-			<c:if test="${dto.adjunto.tipoFichero != null}">
-				<json:property name="tipoFichero" value="${dto.adjunto.tipoFichero.descripcion}" />
-			</c:if>			
-			<c:if test="${dto.adjunto.tipoFichero == null}">
-				<json:property name="tipoFichero" value="" />
+			<c:if test="${dto.nombreTipoDoc != null}">
+				<json:property name="tipoFichero" value="${dto.nombreTipoDoc}" />
 			</c:if>
-				
+			<c:if test="${dto.nombreTipoDoc == null}">
+				<c:if test="${dto.adjunto.tipoFichero != null}">
+					<json:property name="tipoFichero" value="${dto.adjunto.tipoFichero.descripcion}" />
+				</c:if>			
+				<c:if test="${dto.adjunto.tipoFichero == null}">
+					<json:property name="tipoFichero" value="" />
+				</c:if>
+			</c:if>
 		</json:object>
 	</json:array>
 </fwk:json>

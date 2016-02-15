@@ -137,7 +137,16 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
 		String claveRel = guardarRecuperarDatoEntidad(idEntidad, tipoEntidadGrid, uploadForm, tipoDocumento);
 
-		
+		//Obtenemos el codigo mapeado		
+		if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidadGrid)	|| DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidadGrid)) {
+			if(!Checks.esNulo(tipoDocumento)){
+				MapeoTipoFicheroAdjunto mapeo = genericDao.get(MapeoTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "tipoFichero.codigo", tipoDocumento));
+				if(!Checks.esNulo(mapeo)){
+					tipoDocumento = mapeo.getTipoFicheroExterno();
+				}
+			}
+		}
+				
 		outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(
 				claveRel, ALTA_GESTOR_DOC, tipoDocumento,
 				tipoEntidadGrid, uploadForm));
@@ -159,7 +168,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_LISTADO_DOCUMENTO)
 	@Transactional(readOnly = false)
-	public List<AdjuntoGridDto> listadoDocumentos(String claveAsociacion, String tipoEntidadGrid, String tipoDocumento) {
+	public List<AdjuntoGridDto> listadoDocumentos(Long idAsuPrc, String claveAsociacion, String tipoEntidadGrid, String tipoDocumento) {
 		if (Checks.esNulo(gestorDocumentalWSApi)) {
 			logger.warn("No encontrada implementación para el WS de gestión documental en Cajamar");
 			return null;
@@ -174,6 +183,26 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			
 			for(GestorDocumentalOutputListDto olDto : outputDto.getLbListadoDocumentos()) {
 				
+				//TODO temporal mientras el WS no nos devuelva el codigo del tipo de documento
+				String fichero = olDto.getDescripcion() + "." + olDto.getExtFichero().toLowerCase();
+				
+				if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidadGrid)) {
+					List<EXTAdjuntoAsunto> adjuntoAsuntoList = genericDao.getList(EXTAdjuntoAsunto.class, 
+														genericDao.createFilter(FilterType.EQUALS, "nombre", fichero), 
+														genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsuPrc));
+					if(!Checks.estaVacio(adjuntoAsuntoList)){
+						olDto.setNombreTipoDoc(adjuntoAsuntoList.get(0).getTipoFichero().getDescripcion());
+					}
+				}
+				if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidadGrid)) {
+					List<EXTAdjuntoAsunto> adjuntoAsuntoList = genericDao.getList(EXTAdjuntoAsunto.class, 
+														genericDao.createFilter(FilterType.EQUALS, "nombre", fichero), 
+														genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idAsuPrc));
+					if(!Checks.estaVacio(adjuntoAsuntoList)){
+						olDto.setNombreTipoDoc(adjuntoAsuntoList.get(0).getTipoFichero().getDescripcion());
+					}
+				}
+				//-------------------------------------------------------------------------------------------------------------------
 				List<MapeoTipoFicheroAdjunto> mapeo = genericDao.getList(MapeoTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "tipoFicheroExterno", olDto.getTipoDoc()));
 				if(!Checks.esNulo(mapeo) && mapeo.size()>0){
 					
@@ -200,11 +229,11 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 					}
 					
 				}
-				olDto.setNombreTipoDoc(getMimeType(olDto.getExtFichero()));
+				olDto.setContentType(getMimeType(olDto.getExtFichero()));
 			}	
 		}else{
 			for(GestorDocumentalOutputListDto olDto : outputDto.getLbListadoDocumentos()) {
-				olDto.setNombreTipoDoc(getMimeType(olDto.getExtFichero()));
+				olDto.setContentType(getMimeType(olDto.getExtFichero()));
 			}
 		}
 		return AdjuntoGridAssembler.outputDtoToAdjuntoGridDto(outputDto);

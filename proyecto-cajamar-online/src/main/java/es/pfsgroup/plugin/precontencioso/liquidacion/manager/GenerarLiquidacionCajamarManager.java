@@ -3,11 +3,8 @@ package es.pfsgroup.plugin.precontencioso.liquidacion.manager;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,7 +15,6 @@ import es.capgemini.pfs.parametrizacion.dao.ParametrizacionDao;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectUtils;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.GenerarDocumentoApi;
-import es.pfsgroup.plugin.precontencioso.liquidacion.api.GenerarLiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.DatosPlantillaFactory;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDTipoLiquidacionPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -130,6 +126,44 @@ public class GenerarLiquidacionCajamarManager implements GenerarDocumentoApi {
 		}
 
 		throw new RuntimeException("Error al obtenerDatosParaPlantilla: no hay implementaciones disponibles.");
+	}
+
+	@Override
+	public FileItem generarInstanciaRegistro(Long idLiquidacion, Long idPlantilla, String codigoPropietaria, String localidadFirma) {
+		
+		DDTipoLiquidacionPCO tipoLiquidacion = (DDTipoLiquidacionPCO) diccionarioApi.dameValorDiccionario(DDTipoLiquidacionPCO.class, idPlantilla);
+		String nombrePlantilla = tipoLiquidacion.getPlantilla();
+	
+		HashMap<String, Object> datosPlantilla = obtenerDatosParaPlantilla(idLiquidacion, tipoLiquidacion);
+	
+		// Añadimos la variable localidad de Firma
+		datosPlantilla.put(LOCCRD, localidadFirma);
+		
+		// Añadimos la variable nombre de la entidad y el texto de cabecera
+		String nombreEntidad = "";
+		String textoLogo = "";
+		if (precontenciosoUtils != null) {
+			nombreEntidad = precontenciosoUtils.obtenerNombrePorClave(codigoPropietaria);
+			textoLogo = precontenciosoUtils.obtenerInfoPorClave(codigoPropietaria);
+		}
+		datosPlantilla.put(GEN_ENT_N, nombreEntidad);
+		datosPlantilla.put(TEXTO_LOGO, textoLogo);
+		
+		FileItem ficheroLiquidacion;
+		try {
+			String directorio = parametrizacionDao.buscarParametroPorNombre(DIRECTORIO_PLANTILLAS_LIQUIDACION).getValor();
+			InputStream is = new FileInputStream(directorio + nombrePlantilla);
+			String rutaLogo = directorio + "logos/" + codigoPropietaria + ".jpg";
+			ficheroLiquidacion = informesApi.generarEscritoConVariablesYLogo(datosPlantilla, nombrePlantilla, is, rutaLogo);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			throw new BusinessOperationException(e);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			throw new BusinessOperationException(e);
+		}
+	
+		return ficheroLiquidacion;
 	}
 	
 }

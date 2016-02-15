@@ -1299,10 +1299,6 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 				if(validarDatosRegistralesBienErroneo(bien)) {
 					return false;
 				}
-//				ProcedimientoBien procBien = new ProcedimientoBien();
-//				procBien.setProcedimiento(proc);
-//				procBien.setBien(bien);
-//				genericDao.save(ProcedimientoBien.class, procBien);				
 			}
 		}
 		return true;

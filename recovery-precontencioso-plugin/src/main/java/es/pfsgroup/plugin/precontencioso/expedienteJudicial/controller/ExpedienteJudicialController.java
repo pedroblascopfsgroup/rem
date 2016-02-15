@@ -3,6 +3,8 @@ package es.pfsgroup.plugin.precontencioso.expedienteJudicial.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
+import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.asunto.dao.TipoProcedimientoDao;
 import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
@@ -45,6 +48,7 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroB
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.ProcedimientoPcoGridDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDTipoPreparacionPCO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.api.GenerarDocumentoApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDEstadoLiquidacionPCO;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -54,6 +58,8 @@ import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 @Controller
 public class ExpedienteJudicialController {
 
+	protected final Log logger = LogFactory.getLog(getClass());
+	
 	private static final String DEFAULT = "default";
 	private static final String JSON_HISTORICO_ESTADOS = "plugin/precontencioso/historicoEstados/json/historicoEstadosJSON";
 	private static final String JSON_BUSQUEDA_PROCEDIMIENTO = "plugin/precontencioso/busquedas/json/procedimientoPcoJSON";
@@ -68,7 +74,8 @@ public class ExpedienteJudicialController {
 	private static final String DOCUMENTO_INSTANCIA_REGISTRO = "plugin/precontencioso/generarDocs/documentoInstanciaRegistro";
 	private static final String JSON_BIENES_PROCEDIMIENTO = "plugin/precontencioso/generarDocs/bienesProcedimientoJSON";
 	private static final String JSON_RESPUESTA_SERVICIO = "plugin/precontencioso/generarDocs/resultadoOKJSON";
-
+	private static final String JSP_DOWNLOAD_FILE = "plugin/geninformes/download";
+	
 	@Autowired
 	ProcedimientoPcoApi procedimientoPcoApi;
 
@@ -92,6 +99,9 @@ public class ExpedienteJudicialController {
 	
 	@Autowired
 	private ProcedimientoApi procedimientoApi; 
+	
+	@Autowired(required = false)
+	private GenerarDocumentoApi generarDocumentoApi;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -426,5 +436,25 @@ public class ExpedienteJudicialController {
 		boolean resultadoOK = procedimientoPcoApi.instanciarDocumentoBienes(idProcedimiento, idsBien);
 		model.put("resultadoOK", resultadoOK);
 		return JSON_RESPUESTA_SERVICIO;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String generarCertSaldo(@RequestParam(value = "idLiquidacion", required = true) Long idLiquidacion, 
+			@RequestParam(value = "idPlantilla", required = true) Long idPlantilla, 
+			@RequestParam(value = "codigoPropietaria", required = true) String codigoPropietaria,
+			@RequestParam(value = "localidadFirma", required = true) String localidadFirma,
+			ModelMap model) {
+
+		if (generarDocumentoApi == null) {
+			logger.error("LiquidacionDocController.generarCertSaldo: No existe una implementacion para generarDocumentoApi");
+			throw new BusinessOperationException("Not implemented generarDocumentoApi");
+		}
+
+		FileItem instanciaDocumento = generarDocumentoApi.generarCertificadoSaldo(idLiquidacion, idPlantilla, codigoPropietaria, localidadFirma);
+		model.put("fileItem", instanciaDocumento);
+
+		return JSP_DOWNLOAD_FILE;
+
 	}
 }

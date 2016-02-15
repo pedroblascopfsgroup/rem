@@ -10,6 +10,37 @@
 
 <fwk:page>
 
+	var localidadesRecord = Ext.data.Record.create([
+		{name: 'descripcion'}
+	]);
+
+	var localidadesStore = page.getStore({
+		flow: 'liquidaciondoc/obtenerLocalidadesFirma',
+		reader: new Ext.data.JsonReader({
+			root: 'localidadesFirma'
+		}, localidadesRecord)
+	});
+	
+	var comboLocalidades = new Ext.form.ComboBox({
+		store: localidadesStore,
+		displayField: 'descripcion',
+		valueField: 'descripcion',
+		mode: 'local',
+		allowBlank: false,
+		forceSelection: true,
+		triggerAction: 'all',
+		disabled: false,
+		width: 150,
+		editable: true,
+		emptyText:'<s:message code="rec-web.direccion.form.seleccionar" text="**Seleccionar" />',
+		fieldLabel: '<s:message code="plugin.precontencioso.liquidaciones.generar.localidadFirma" text="**Localidad firma" />'
+	});
+	
+	comboLocalidades.on('afterrender', function(combo) {
+		localidadesStore.webflow();
+	});
+	
+	
 	Ext.grid.CheckColumn = function(config){
 	    Ext.apply(this, config);
 	    if(!this.id){
@@ -104,7 +135,7 @@
 		for (var i=0; i < store.data.length; i++) {
 			datos = store.getAt(i);
 			if(datos.get('incluido') == true) {
-      			numFilasSeleccionadas=numFilasSeleccionadas+1
+      			numFilasSeleccionadas=numFilasSeleccionadas+1;
       			if(strIds!='') {
 					strIds += ',';
 				}
@@ -119,19 +150,22 @@
 			,iconCls : 'icon_ok'
 	       ,cls: 'x-btn-text-icon'
 	       ,handler:function(){
-				if (comprobarSiHayFilSeleccionada()>=1){
-					instanciar();
+				if (comprobarSiHayFilSeleccionada()>=1 && comboLocalidades.getValue() != ''){
+					this.instanciar();
 	      		}else{
 					Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="nuevoModeloBienes.agregarExcluirBien.agregar.faltanDatos" text="**Debe seleccionar algún bien"/>');
 	      		}
 	     	}
-	     	,instanciar=function() {
+	     	,instanciar:function() {
 	     		page.webflow({
 		      		flow:'expedientejudicial/instanciarDocumentoBienes'
 		      		,params:{idProcedimiento:data.id, idsBien:strIds}
 		      		,success: function(result,request){
 		      			if(result.resultadoOK=='true'){
-	            			page.fireEvent(app.event.DONE);											
+	            			page.fireEvent(app.event.DONE);
+	            			
+	            			localidadFirma: comboLocalidades.getValue();
+	            														
 						}else{
 							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="nuevoModeloBienes.agregarExcluirBien.agregar.faltanDatos.a" text="**HAy algun campo vacio"/>');
 						}
@@ -165,7 +199,7 @@
 				bodyStyle:'padding:5px;cellspacing:10px'
 				,border:false
 				,defaults : {xtype:'panel' ,cellCls : 'vtop'}
-				,items : [gridBienes]
+				,items : [comboLocalidades, gridBienes]
 		  	}
 		]
 		,bbar : [btnAceptar, btnCancelar]

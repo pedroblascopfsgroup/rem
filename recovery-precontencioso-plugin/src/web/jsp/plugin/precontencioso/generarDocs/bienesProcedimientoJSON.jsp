@@ -8,15 +8,15 @@
 	<json:array name="bienesPrc" items="${bienesPrc}" var="item">
 		<json:object>         	
 			<json:property name="idBien" value="${item.bien.id}" />
-<%--             <json:property name="codigo" value="${item.bien.codigo}" /> --%>
-<%--             <json:property name="origen" value="${item.bien.origen}" /> --%>
-<%--             <json:property name="descripcion" value="${item.bien.descripcion}" /> --%>
-<%--             <json:property name="tipo" value="${item.bien.tipo}" /> --%>
-<%--             <json:property name="solvencia" value="${item.bien.solvencia}" />  --%>
-<%--             <json:property name="codSolvencia" value="${item.bien.codSolvencia}" /> --%>
-<%--             <json:property name="numeroActivo" value="${item.bien.numActivo}"/> --%>
-<%-- 			<json:property name="referenciaCatastral" value="${item.bien.referenciaCatastral}"/> --%>
-<%-- 			<json:property name="numFinca" value="${item.bien.numFinca}"/> --%>
+<%--             <json:property name="codigo" value="${item.codigo}" /> --%>
+<%--             <json:property name="origen" value="${item.origen}" /> --%>
+<%--             <json:property name="descripcion" value="${item.descripcion}" /> --%>
+<%--             <json:property name="tipo" value="${item.tipo}" /> --%>
+<%--             <json:property name="solvencia" value="${item.solvencia}" />  --%>
+<%--             <json:property name="codSolvencia" value="${item.codSolvencia}" /> --%>
+<%--             <json:property name="numeroActivo" value="${item.numActivo}"/> --%>
+<%-- 			<json:property name="referenciaCatastral" value="${item.referenciaCatastral}"/> --%>
+<%-- 			<json:property name="numFinca" value="${item.numFinca}"/> --%>
 		</json:object>
 	</json:array>	
 </fwk:json> 

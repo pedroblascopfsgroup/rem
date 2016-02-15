@@ -150,4 +150,7 @@ public interface ProcedimientoPcoApi {
 	boolean mostrarSegunCodigos(Long idProcedimiento, List<String> codigosTiposGestores);
 	
 	public boolean comprobarExistenciaGestor(Long idProcedimiento);
+	
+	public boolean instanciarDocumentoBienes(Long idProcedimiento, String idsBien);
+
 }

@@ -11,7 +11,7 @@ import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.plugin.recovery.mejoras.expediente.MEJExpedienteApi;
 
 @Controller
-public class ExpedienteController {
+public class MEJExpedienteController {
 
 	static final String JSON_LISTADO_ZONAS = "plugin/mejoras/expedientes/listadoZonasJSON";
 

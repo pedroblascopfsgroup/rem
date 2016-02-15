@@ -310,7 +310,7 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
         //Parte Expedientes
         hb.append(") OR (");
         
-		if (dto.getZonas().size()>0) {
+		if (!Checks.esNulo(dto.getZonas()) && dto.getZonas().size()>0) {
 			hb.append(" (");
 			for (DDZona zonCodigo : dto.getZonas()) {
 				hb.append(" vtar.zonCodigo like '")
@@ -321,7 +321,7 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 			hb.append(" )");
 		}
 		
-		if (dto.getPerfiles().size()>0) {
+		if (!Checks.esNulo(dto.getPerfiles()) && dto.getPerfiles().size()>0) {
 			if (dto.getZonas().size()>0)
 				hb.append(" and ");
 			hb.append(" (vtar.idPerfil IN (");

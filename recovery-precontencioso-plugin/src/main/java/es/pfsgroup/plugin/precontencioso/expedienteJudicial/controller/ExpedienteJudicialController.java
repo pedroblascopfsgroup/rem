@@ -14,6 +14,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.asunto.dao.TipoProcedimientoDao;
 import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.contrato.model.DDTipoProductoEntidad;
 import es.capgemini.pfs.core.api.plazaJuzgado.PlazaJuzgadoApi;
 import es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi;
@@ -64,6 +65,9 @@ public class ExpedienteJudicialController {
 	private static final String JSON_ZONAS = "plugin/precontencioso/busquedas/json/listadoZonasJSON";
 	private static final String LISTA_PROCEDIMIENTOS_JSON = "plugin/precontencioso/acciones/json/tipoProcedimientoJSON";
 	private static final String OK_KO_RESPUESTA_JSON = "plugin/coreextension/OkRespuestaJSON";
+	private static final String DOCUMENTO_INSTANCIA_REGISTRO = "plugin/precontencioso/generarDocs/documentoInstanciaRegistro";
+	private static final String JSON_BIENES_PROCEDIMIENTO = "plugin/precontencioso/generarDocs/bienesProcedimientoJSON";
+	private static final String JSON_RESPUESTA_SERVICIO = "plugin/precontencioso/generarDocs/resultadoOKJSON";
 
 	@Autowired
 	ProcedimientoPcoApi procedimientoPcoApi;
@@ -85,6 +89,9 @@ public class ExpedienteJudicialController {
 	
 	@Autowired
 	private DocumentoPCOApi documentoPCOManager;
+	
+	@Autowired
+	private ProcedimientoApi procedimientoApi; 
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -394,5 +401,30 @@ public class ExpedienteJudicialController {
 		map.put("esGestoria", !listaGestorDespacho.isEmpty());
 
 		return "plugin/precontencioso/acciones/json/esGestoriaJSON";
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String documentoInstanciaRegistro(ModelMap model) {
+		return DOCUMENTO_INSTANCIA_REGISTRO;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String bienesAsociadosProcedimiento(ModelMap model, @RequestParam(value = "id", required = true) Long idProcedimiento) {
+		Procedimiento prc = procedimientoApi.getProcedimiento(idProcedimiento);
+		List<ProcedimientoBien> listBienesPco = prc.getBienes();
+		model.put("bienesPrc", listBienesPco);
+		return JSON_BIENES_PROCEDIMIENTO;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String instanciarDocumentoBienes(ModelMap model,
+			@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento,
+			@RequestParam(value = "idsBien", required = true) String idsBien) {
+		boolean resultadoOK = procedimientoPcoApi.instanciarDocumentoBienes(idProcedimiento, idsBien);
+		model.put("resultadoOK", resultadoOK);
+		return JSON_RESPUESTA_SERVICIO;
 	}
 }

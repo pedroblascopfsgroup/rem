@@ -29,7 +29,7 @@
 	</state>
 
 
-	<decision name="HC107_VisarSolicitudDecision" expression="#{HC107_SolicitarProvisionDecision}">
+	<decision name="HC107_VisarSolicitudDecision" expression="#{HC107_VisarSolicitudDecision}">
 		<transition to="HC107_RevisarSolicitud" name="SI"></transition>
 		<transition to="HC107_AprobarSolicitudFondos" name="NO"></transition>
 		<transition to="HC107_SolicitarProvision" name="KO"></transition>

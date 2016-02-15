@@ -132,7 +132,7 @@ DECLARE
         /*TAP_VIEW.....................:*/ null,
         /*TAP_SCRIPT_VALIDACION........:*/ null,
         /*TAP_SCRIPT_VALIDACION_JBPM...:*/ 'valores[''HC107_VisarSolicitud''][''fecha''] == null || valores[''HC107_VisarSolicitud''][''fecha''] == '''' ? ''El campo "Fecha" es obligatorio.'' : null',
-        /*TAP_SCRIPT_DECISION..........:*/ 'valoresBPMPadre[''H005_ConfirmarTestimonio''] != null ? ''SI'' : ''NO''',
+        /*TAP_SCRIPT_DECISION..........:*/ 'valores[''HC107_VisarSolicitud''][''conforme''] == ''NO'' ? ''KO'' : (valoresBPMPadre[''H005_ConfirmarTestimonio''] != null ? ''SI'' : ''NO'''),
         /*DD_TPO_ID_BPM(FK)............:*/ null,
         /*TAP_SUPERVISOR,..............:*/ '0',
         /*TAP_DESCRIPCION,.............:*/ 'Visar solicitud',

@@ -35,7 +35,7 @@ DECLARE
 BEGIN
 
         V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.PCO_LIQ_LIQUIDACIONES (PCO_LIQ_ID, PCO_PRC_ID, DD_PCO_LIQ_ID, CNT_ID, usuariocrear, fechacrear, SYS_GUID)
-                      SELECT s_PCO_LIQ_LIQUIDACIONES.nextval, pco_prc_id, 1, cnt_id, ''SAG'', sysdate, SYS_GUID() AS SYS_GUID
+                      SELECT CM01.s_PCO_LIQ_LIQUIDACIONES.nextval, pco_prc_id, 1, cnt_id, ''SAG'', sysdate, SYS_GUID() AS SYS_GUID
                    FROM (
                          select distinct prc.prc_id, pco.pco_prc_id, cex.cnt_id
                            from '||V_ESQUEMA||'.prc_procedimientos prc inner join 

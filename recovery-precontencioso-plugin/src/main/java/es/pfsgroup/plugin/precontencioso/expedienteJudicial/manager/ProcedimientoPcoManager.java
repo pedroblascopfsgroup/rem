@@ -911,7 +911,7 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	private List<EXTTareaExternaValor> obtenerValoresTareaByTexId(Long texId) {
 		return genericDao.getList(EXTTareaExternaValor.class, genericDao
 				.createFilter(FilterType.EQUALS, "tareaExterna.id", texId),
-				genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+				genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 	}
 	
 	

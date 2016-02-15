@@ -1,0 +1,3426 @@
+create or replace PROCEDURE "CARGAR_DIM_PROCEDIMIENTO" (O_ERROR_STATUS OUT VARCHAR2) AS
+-- ===============================================================================================
+-- Autor:  Gonzalo Martín, PFS Group
+-- Fecha creación: Febrero 2014
+-- Responsable ultima modificacion: María Villanueva Mares, PFS Group
+-- Fecha ultima modificacion:01/02/2016
+-- Motivos del cambio:Finalizaciones
+
+-- Cliente: Recovery BI Bankia
+--
+-- Descripción: Procedimiento almancenado que carga las tablas de la dimensión Procedimiento.
+-- ===============================================================================================
+
+-- -------------------------------------------- Ã?NDICE -------------------------------------------
+-- DIMENSIÓN PROCEDIMIENTO
+    -- D_PRC_JUZGADO;
+    -- D_PRC_PLAZA;
+    -- D_PRC_TIPO_RECLAMACION;
+    -- D_PRC_TIPO_PROCEDIMIENTO_AGR;
+    -- D_PRC_TIPO_PROCEDIMIENTO;
+    -- D_PRC_TIPO_PROCEDIMIENTO_DET;
+    -- D_PRC_FASE_ACTUAL;
+    -- D_PRC_FASE_ACTUAL_DETALLE;
+    -- D_PRC_FASE_ANTERIOR;
+    -- D_PRC_FASE_ANTERIOR_DETALLE;
+    -- D_PRC_ESTADO_PROCEDIMIENTO;
+    -- D_PRC_ESTADO_FASE_ACTUAL;
+    -- D_PRC_ESTADO_FASE_ANTERIOR;
+    -- D_PRC_ULT_TAR_CREADA_TIPO;
+    -- D_PRC_ULT_TAR_CREADA_TIPO_DET;
+    -- D_PRC_ULT_TAR_CREADA_DESC;
+    -- D_PRC_ULT_TAR_FIN_TIPO;
+    -- D_PRC_ULT_TAR_FIN_TIPO_DET;
+    -- D_PRC_ULT_TAR_FIN_DESC;
+    -- D_PRC_ULT_TAR_ACT_TIPO;
+    -- D_PRC_ULT_TAR_ACT_TIPO_DET;
+    -- D_PRC_ULT_TAR_ACT_DESC;
+    -- D_PRC_ULT_TAR_PEND_TIPO;
+    -- D_PRC_ULT_TAR_PEND_TIPO_DET;
+    -- D_PRC_ULT_TAR_PEND_DESC;
+    -- D_PRC_GESTOR;
+
+    -- D_PRC_GESTOR_EN_RECOVERY;
+    -- D_PRC_SUPERVISOR;
+    -- D_PRC_DESPACHO_GESTOR;
+    -- D_PRC_DESPACHO_SUPERVISOR;
+    -- D_PRC_TIPO_DESP_GESTOR;
+    -- D_PRC_TIPO_DESPACHO_SUPERVISOR;
+    -- D_PRC_ENTIDAD_GESTOR;
+    -- D_PRC_ENTIDAD_SUPERVISOR;
+    -- D_PRC_NIVEL_DESP_GESTOR;
+    -- D_PRC_NIVEL_DESP_SUPERVISOR;
+    -- D_PRC_OFI_DESP_GESTOR;
+    -- D_PRC_OFI_DESP_SUPERVISOR;
+    -- D_PRC_PROV_DESP_GESTOR;
+    -- D_PRC_PROV_DESP_SUPERVISOR;
+    -- D_PRC_ZONA_DESP_GESTOR;
+    -- D_PRC_ZONA_DESP_SUPERVISOR;
+    -- D_PRC_T_SALDO_TOTAL;
+    -- D_PRC_T_SALDO_RECUPERACION
+    -- D_PRC_T_SALDO_TOTAL_CONCURSO;
+    -- D_PRC_TD_ULTIMA_ACTUALIZACION;
+    -- D_PRC_TD_CONTRATO_VENCIDO;
+    -- D_PRC_TD_CNT_VENC_CREACION_ASU;
+    -- D_PRC_ULT_TAR_PEND_CUMPL;
+    -- D_PRC_ULT_TAR_FIN_CUMPL;
+    -- D_PRC_TD_AUTO_FC_DIA_ANALISIS;
+    -- D_PRC_TD_AUTO_FC_LIQUIDACION;
+    -- D_PRC_ESTADO_CONVENIO;
+    -- D_PRC_SEGUIMIENTO_CONVENIO;
+    -- D_PRC_T_PORCENTAJE_QUITA_CONV;
+    -- D_PRC_GARANTIA_CONCURSO;
+    -- D_PRC_TD_CREA_ASU_A_INTERP_DEM;
+    -- D_PRC_TD_CREACION_ASU_ACEPT;
+    -- D_PRC_TD_CREA_ASU_REC_DOC_ACEP;
+    -- D_PRC_TD_REC_DOC_ACEPT_REG_TD;
+    -- D_PRC_TD_REC_DOC_ACEPT_REC_DC;
+    -- D_PRC_TD_ACEPT_ASU_INTERP_DEM;
+    -- D_PRC_TD_ID_DECL_RESOL_FIRME;
+    -- D_PRC_TD_ID_ORD_INI_APREMIO;
+    -- D_PRC_TD_ID_HIP_SUBASTA;
+    -- D_PRC_TD_SUB_SOL_SUB_CEL;
+    -- D_PRC_TD_SUB_CEL_CESION_REMATE;
+
+
+    -- D_PRC_FASE_SUBASTA_HIPOTECARIO;
+    -- D_PRC_ULT_TAR_FASE_HIP;
+    -- D_PRC_TD_ID_MON_DECRETO_FIN;
+    -- D_PRC_F_SUBASTA_EJEC_NOTARIAL;
+    -- D_PRC_CNT_GARANTIA_REAL_ASOC;
+    -- D_PRC_COBRO_TIPO_DET;
+    -- D_PRC_COBRO_TIPO;
+    -- D_PRC_ACT_ESTIMACIONES;
+    -- D_PRC_CARTERA;
+    -- D_PRC_PARALIZADO;
+    -- D_PRC_MOTIVO_PARALIZACION;
+    -- D_PRC_TITULAR;
+    -- D_PRC_ZONA_NIVEL_0
+    -- D_PRC_ZONA_NIVEL_1
+    -- D_PRC_ZONA_NIVEL_2
+    -- D_PRC_ZONA_NIVEL_3
+    -- D_PRC_ZONA_NIVEL_4
+    -- D_PRC_ZONA_NIVEL_5
+    -- D_PRC_ZONA_NIVEL_6
+    -- D_PRC_ZONA_NIVEL_7
+    -- D_PRC_ZONA_NIVEL_8
+    -- D_PRC_ZONA_NIVEL_9    
+    -- D_PRC;
+    -- D_PRC_TIPO_ACUERDO
+    -- D_PRC_ESTADO_ACUERDO
+    
+    
+        -- DIMENSIONES PRECONTENCIOSO
+
+
+
+
+
+
+
+
+
+
+
+
+-- D_PRC_ESTADO_BUROFAX
+
+
+
+
+-- D_PRC_ESTADO_DOCUMENTO
+-- D_PRC_ESTADO_DOCUMENTO_PER_ANT
+-- D_PRC_ESTADO_LIQ_PER_ANT
+-- D_PRC_ESTADO_PREPARACION
+-- D_PRC_GESTOR_PRECONTENCIOSO
+
+
+
+-- D_PRC_LIQUIDACION_ESTADO
+-- D_PRC_MOTIVO_CANCELACION
+-- D_PRC_MOTIVO_SUBSANACION
+-- D_PRC_PROPIETARIO
+-- D_PRC_RESULT_BUROFAX_ENVIO
+-- D_PRC_RESULTADO_BUROFAX
+-- D_PRC_RESULTADO_SOLICITUD
+-- D_PRC_TIPO PREPARACION
+-- D_PRC_TIPO_ACTOR_SOLICITUD
+-- D_PRC_TIPO_BUROFAX_ENVIO
+-- D_PRC_TIPO_DOCUMENTO
+-- D_PRC_TIPO_PRE
+-- D_PRC_TIPO_PRE_AGR
+-- D_PRC_TRAMO_AVANCE_BUROFAX
+
+-- D_PRC_TRAMO_AVANCE_DOCUMENTO
+-- D_PRC_TRAMO_AVANCE_LIQUIDACION
+-- D_PRC_TRAMO_SUBSANACION
+-- D_PRC_USUARIO_SOLICITUD
+
+
+
+    
+
+BEGIN
+DECLARE
+-- ===============================================================================================
+--                  									DeclaracaciÃ³n de variables
+-- ===============================================================================================
+  MAX_ID INT;
+  TAREA_DESC VARCHAR(100);
+  C_TAREA_DESC SYS_REFCURSOR;
+
+  V_NUM_ROW NUMBER(10);
+  V_DATASTAGE VARCHAR2(100);
+  V_MSQL VARCHAR(5000);
+  V_SQL VARCHAR(5000);
+
+-- --------------------------------------------------------------------------------
+-- DEFINICIÃ“N DE LOS HANDLER DE ERROR
+-- --------------------------------------------------------------------------------
+  OBJECTEXISTS EXCEPTION;
+  INSERT_NULL EXCEPTION;
+  PARAMETERS_NUMBER EXCEPTION;
+  PRAGMA EXCEPTION_INIT(OBJECTEXISTS, -955);
+  PRAGMA EXCEPTION_INIT(INSERT_NULL, -1400);
+  PRAGMA EXCEPTION_INIT(PARAMETERS_NUMBER, -909);
+
+  V_NOMBRE VARCHAR2(50) := 'CARGAR_DIM_PROCEDIMIENTO';
+  V_ROWCOUNT NUMBER;
+
+BEGIN
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Empieza ' || V_NOMBRE, 2;
+
+  select valor into V_DATASTAGE from PARAMETROS_ENTORNO where parametro = 'ESQUEMA_DATASTAGE';
+  
+-- ----------------------------------------------------------------------------------------------
+--                            D_PRC_JUZGADO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_JUZGADO WHERE JUZGADO_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_JUZGADO (JUZGADO_ID, JUZGADO_DESC, JUZGADO_DESC_2, PLAZA_ID) VALUES (-1 ,'Desconocido', 'Desconocido', -1);
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_JUZGADO(JUZGADO_ID, JUZGADO_DESC, JUZGADO_DESC_2, PLAZA_ID)
+     SELECT DD_JUZ_ID, DD_JUZ_DESCRIPCION, DD_JUZ_DESCRIPCION_LARGA, DD_PLA_ID FROM '||V_DATASTAGE||'.DD_JUZ_JUZGADOS_PLAZA';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_JUZGADO. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+-- ----------------------------------------------------------------------------------------------
+--                            D_PRC_PLAZA
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_PLAZA WHERE PLAZA_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_PLAZA (PLAZA_ID, PLAZA_DESC, PLAZA_DESC_2) VALUES (-1 ,'Desconocido', 'Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_PLAZA(PLAZA_ID, PLAZA_DESC, PLAZA_DESC_2)
+     SELECT DD_PLA_ID, DD_PLA_DESCRIPCION, DD_PLA_DESCRIPCION_LARGA FROM '||V_DATASTAGE||'.DD_PLA_PLAZAS';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_PLAZA. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+-- ----------------------------------------------------------------------------------------------
+--                          D_PRC_TIPO_RECLAMACION
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_RECLAMACION WHERE TIPO_RECLAMACION_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_RECLAMACION (TIPO_RECLAMACION_ID, TIPO_RECLAMACION_DESC, TIPO_RECLAMACION_DESC_2) VALUES (-1 ,'Desconocido', 'Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_TIPO_RECLAMACION(TIPO_RECLAMACION_ID, TIPO_RECLAMACION_DESC, TIPO_RECLAMACION_DESC_2)
+     SELECT DD_TRE_ID, DD_TRE_DESCRIPCION, DD_TRE_DESCRIPCION_LARGA FROM '||V_DATASTAGE||'.DD_TRE_TIPO_RECLAMACION';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TIPO_RECLAMACION. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+-- ----------------------------------------------------------------------------------------------
+--                          D_PRC_TIPO_PROCEDIMIENTO_AGR
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_PROCEDIMIENTO_AGR WHERE TIPO_PROCEDIMIENTO_AGR_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_PROCEDIMIENTO_AGR (TIPO_PROCEDIMIENTO_AGR_ID, TIPO_PROCEDIMIENTO_AGR_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_PROCEDIMIENTO_AGR WHERE TIPO_PROCEDIMIENTO_AGR_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_PROCEDIMIENTO_AGR (TIPO_PROCEDIMIENTO_AGR_ID, TIPO_PROCEDIMIENTO_AGR_DESC) VALUES (1 ,'P. Monitorio');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_PROCEDIMIENTO_AGR WHERE TIPO_PROCEDIMIENTO_AGR_ID = 2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_PROCEDIMIENTO_AGR (TIPO_PROCEDIMIENTO_AGR_ID, TIPO_PROCEDIMIENTO_AGR_DESC) VALUES (2 ,'ETNJ');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_PROCEDIMIENTO_AGR WHERE TIPO_PROCEDIMIENTO_AGR_ID = 3;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_PROCEDIMIENTO_AGR (TIPO_PROCEDIMIENTO_AGR_ID, TIPO_PROCEDIMIENTO_AGR_DESC) VALUES (3 ,'P. Hipotecario');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_PROCEDIMIENTO_AGR WHERE TIPO_PROCEDIMIENTO_AGR_ID = 4;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_PROCEDIMIENTO_AGR (TIPO_PROCEDIMIENTO_AGR_ID, TIPO_PROCEDIMIENTO_AGR_DESC) VALUES (4 ,'P. Declarativo');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_PROCEDIMIENTO_AGR WHERE TIPO_PROCEDIMIENTO_AGR_ID = 5;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_PROCEDIMIENTO_AGR (TIPO_PROCEDIMIENTO_AGR_ID, TIPO_PROCEDIMIENTO_AGR_DESC) VALUES (5 ,'Concurso');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_PROCEDIMIENTO_AGR WHERE TIPO_PROCEDIMIENTO_AGR_ID = 6;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_PROCEDIMIENTO_AGR (TIPO_PROCEDIMIENTO_AGR_ID, TIPO_PROCEDIMIENTO_AGR_DESC) VALUES (6 ,'GestiÃ³n Especializada');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_PROCEDIMIENTO_AGR WHERE TIPO_PROCEDIMIENTO_AGR_ID = 7;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_PROCEDIMIENTO_AGR (TIPO_PROCEDIMIENTO_AGR_ID, TIPO_PROCEDIMIENTO_AGR_DESC) VALUES (7 ,'Resto');
+  END IF;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TIPO_PROCEDIMIENTO_AGR. Realizados INSERTS', 3;
+
+-- ----------------------------------------------------------------------------------------------
+--                          D_PRC_TIPO_PROCEDIMIENTO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_PROCEDIMIENTO WHERE TIPO_PROCEDIMIENTO_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_PROCEDIMIENTO (TIPO_PROCEDIMIENTO_ID, TIPO_PROCEDIMIENTO_DESC, TIPO_PROCEDIMIENTO_DESC_2) VALUES (-1 ,'Desconocido', 'Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_TIPO_PROCEDIMIENTO(TIPO_PROCEDIMIENTO_ID, TIPO_PROCEDIMIENTO_DESC, TIPO_PROCEDIMIENTO_DESC_2)
+     SELECT DD_TAC_ID, DD_TAC_DESCRIPCION, DD_TAC_DESCRIPCION_LARGA FROM '||V_DATASTAGE||'.DD_TAC_TIPO_ACTUACION';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TIPO_PROCEDIMIENTO. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+-- ----------------------------------------------------------------------------------------------
+--                       D_PRC_TIPO_PROCEDIMIENTO_DET
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_PROCEDIMIENTO_DET WHERE TIPO_PROCEDIMIENTO_DET_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_PROCEDIMIENTO_DET (TIPO_PROCEDIMIENTO_DET_ID, TIPO_PROCEDIMIENTO_DET_DESC, TIPO_PROCEDIMIENTO_DET_DESC_2, TIPO_PROCEDIMIENTO_ID, TIPO_PROCEDIMIENTO_AGR_ID) VALUES (-1 ,'Desconocido', 'Desconocido', -1, -1);
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_TIPO_PROCEDIMIENTO_DET(TIPO_PROCEDIMIENTO_DET_ID, TIPO_PROCEDIMIENTO_DET_DESC, TIPO_PROCEDIMIENTO_DET_DESC_2, TIPO_PROCEDIMIENTO_ID)
+     SELECT DD_TPO_ID, DD_TPO_DESCRIPCION, DD_TPO_DESCRIPCION_LARGA, DD_TAC_ID FROM '||V_DATASTAGE||'.DD_TPO_TIPO_PROCEDIMIENTO';
+
+  V_ROWCOUNT := sql%rowcount;     
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TIPO_PROCEDIMIENTO_DET. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+  -- Incluimos TIPO_PROCEDIMIENTO_AGR_ID
+  -- 1 - P. Monitorio
+  UPDATE D_PRC_TIPO_PROCEDIMIENTO_DET SET TIPO_PROCEDIMIENTO_AGR_ID = 1 WHERE TIPO_PROCEDIMIENTO_DET_ID IN (2);
+  -- 2-ETNJ
+  UPDATE D_PRC_TIPO_PROCEDIMIENTO_DET SET TIPO_PROCEDIMIENTO_AGR_ID = 2 WHERE TIPO_PROCEDIMIENTO_DET_ID IN (33);
+  -- 3-P. Hipotecario
+  UPDATE D_PRC_TIPO_PROCEDIMIENTO_DET SET TIPO_PROCEDIMIENTO_AGR_ID = 3 WHERE TIPO_PROCEDIMIENTO_DET_ID IN (1);
+  -- 4-P. Declarativo
+
+  UPDATE D_PRC_TIPO_PROCEDIMIENTO_DET SET TIPO_PROCEDIMIENTO_AGR_ID = 4 WHERE TIPO_PROCEDIMIENTO_DET_ID IN (21,22,41,155,156,157,158,159,160,162,163,164,165,166,167,168,169,170,171,172);
+  -- 5-Concurso
+  UPDATE D_PRC_TIPO_PROCEDIMIENTO_DET SET TIPO_PROCEDIMIENTO_AGR_ID = 5 WHERE TIPO_PROCEDIMIENTO_DET_ID IN (141,142,143,144,145,146,147,148,149,150,151,152,541,542,543,841,1141, 2645, 2644, 2545, 2449, 2446);
+  -- 6-GestiÃ³n Especializada
+
+
+  UPDATE D_PRC_TIPO_PROCEDIMIENTO_DET SET TIPO_PROCEDIMIENTO_AGR_ID = 6 WHERE TIPO_PROCEDIMIENTO_DET_ID IN (1241,1242);
+  -- 7-Resto
+  UPDATE D_PRC_TIPO_PROCEDIMIENTO_DET SET TIPO_PROCEDIMIENTO_AGR_ID = 7 WHERE TIPO_PROCEDIMIENTO_AGR_ID IS NULL;
+
+
+
+
+
+
+
+
+
+
+
+
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TIPO_PROCEDIMIENTO_DET. Realizados UPDATES', 3;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- ----------------------------------------------------------------------------------------------
+--                             D_PRC_FASE_ACTUAL
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_FASE_ACTUAL WHERE FASE_ACTUAL_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_FASE_ACTUAL (FASE_ACTUAL_ID, FASE_ACTUAL_DESC, FASE_ACTUAL_DESC_2) VALUES (-1 ,'Desconocido', 'Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_FASE_ACTUAL(FASE_ACTUAL_ID, FASE_ACTUAL_DESC, FASE_ACTUAL_DESC_2)
+     SELECT DD_TAC_ID, DD_TAC_DESCRIPCION, DD_TAC_DESCRIPCION_LARGA FROM '||V_DATASTAGE||'.DD_TAC_TIPO_ACTUACION';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_FASE_ACTUAL. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+-- ----------------------------------------------------------------------------------------------
+--                           D_PRC_FASE_ACTUAL_DETALLE
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_FASE_ACTUAL_DETALLE WHERE FASE_ACTUAL_DETALLE_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_FASE_ACTUAL_DETALLE (FASE_ACTUAL_DETALLE_ID, FASE_ACTUAL_DETALLE_DESC, FASE_ACTUAL_DETALLE_DESC_2, FASE_ACTUAL_ID) VALUES (-1 ,'Desconocido', 'Desconocido', -1);
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_FASE_ACTUAL_DETALLE(FASE_ACTUAL_DETALLE_ID, FASE_ACTUAL_DETALLE_DESC, FASE_ACTUAL_DETALLE_DESC_2, FASE_ACTUAL_ID)
+     SELECT DD_TPO_ID, DD_TPO_DESCRIPCION, DD_TPO_DESCRIPCION_LARGA, DD_TAC_ID FROM '||V_DATASTAGE||'.DD_TPO_TIPO_PROCEDIMIENTO';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_FASE_ACTUAL_DETALLE. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- ----------------------------------------------------------------------------------------------
+--                          D_PRC_FASE_ANTERIOR
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_FASE_ANTERIOR WHERE FASE_ANTERIOR_ID = -2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_FASE_ANTERIOR (FASE_ANTERIOR_ID, FASE_ANTERIOR_DESC, FASE_ANTERIOR_DESC_2) VALUES (-2 ,'No Aplica (Iter)', 'No Aplica (Iter)');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_FASE_ANTERIOR WHERE FASE_ANTERIOR_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_FASE_ANTERIOR (FASE_ANTERIOR_ID, FASE_ANTERIOR_DESC, FASE_ANTERIOR_DESC_2) VALUES (-1 ,'Desconocido', 'Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_FASE_ANTERIOR(FASE_ANTERIOR_ID, FASE_ANTERIOR_DESC, FASE_ANTERIOR_DESC_2)
+     SELECT DD_TAC_ID, DD_TAC_DESCRIPCION, DD_TAC_DESCRIPCION_LARGA FROM '||V_DATASTAGE||'.DD_TAC_TIPO_ACTUACION';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_FASE_ANTERIOR. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+-- ----------------------------------------------------------------------------------------------
+--                      D_PRC_FASE_ANTERIOR_DETALLE
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_FASE_ANTERIOR_DETALLE WHERE FASE_ANTERIOR_DETALLE_ID = -2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_FASE_ANTERIOR_DETALLE (FASE_ANTERIOR_DETALLE_ID, FASE_ANTERIOR_DETALLE_DESC, FASE_ANTERIOR_DETALLE_DESC_2, FASE_ANTERIOR_ID) VALUES (-2 ,'No Aplica (Iter)', 'No Aplica (Iter)', -2);
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_FASE_ANTERIOR_DETALLE WHERE FASE_ANTERIOR_DETALLE_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_FASE_ANTERIOR_DETALLE (FASE_ANTERIOR_DETALLE_ID, FASE_ANTERIOR_DETALLE_DESC, FASE_ANTERIOR_DETALLE_DESC_2, FASE_ANTERIOR_ID) VALUES (-1 ,'Desconocido', 'Desconocido', -1);
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_FASE_ANTERIOR_DETALLE(FASE_ANTERIOR_DETALLE_ID, FASE_ANTERIOR_DETALLE_DESC, FASE_ANTERIOR_DETALLE_DESC_2, FASE_ANTERIOR_ID)
+     SELECT DD_TPO_ID, DD_TPO_DESCRIPCION, DD_TPO_DESCRIPCION_LARGA, DD_TAC_ID FROM '||V_DATASTAGE||'.DD_TPO_TIPO_PROCEDIMIENTO';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_FASE_ANTERIOR_DETALLE. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+  
+-- ----------------------------------------------------------------------------------------------
+--                      D_PRC_ESTADO_PROCEDIMIENTO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ESTADO_PROCEDIMIENTO WHERE ESTADO_PROCEDIMIENTO_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ESTADO_PROCEDIMIENTO (ESTADO_PROCEDIMIENTO_ID, ESTADO_PROCEDIMIENTO_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ESTADO_PROCEDIMIENTO WHERE ESTADO_PROCEDIMIENTO_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ESTADO_PROCEDIMIENTO (ESTADO_PROCEDIMIENTO_ID, ESTADO_PROCEDIMIENTO_DESC) VALUES (0,'Activo');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ESTADO_PROCEDIMIENTO WHERE ESTADO_PROCEDIMIENTO_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ESTADO_PROCEDIMIENTO (ESTADO_PROCEDIMIENTO_ID, ESTADO_PROCEDIMIENTO_DESC) VALUES (1 ,'No Activo');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ESTADO_PROCEDIMIENTO. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                      D_PRC_ESTADO_FASE_ACTUAL
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ESTADO_FASE_ACTUAL WHERE ESTADO_FASE_ACTUAL_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ESTADO_FASE_ACTUAL (ESTADO_FASE_ACTUAL_ID, ESTADO_FASE_ACTUAL_DESC, ESTADO_FASE_ACTUAL_DESC_2) VALUES (-1 ,'Desconocido', 'Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_ESTADO_FASE_ACTUAL(ESTADO_FASE_ACTUAL_ID, ESTADO_FASE_ACTUAL_DESC, ESTADO_FASE_ACTUAL_DESC_2)
+     SELECT DD_EPR_ID, DD_EPR_DESCRIPCION, DD_EPR_DESCRIPCION_LARGA FROM '||V_DATASTAGE||'.DD_EPR_ESTADO_PROCEDIMIENTO';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ESTADO_FASE_ACTUAL. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+-- ----------------------------------------------------------------------------------------------
+--                      D_PRC_ESTADO_FASE_ANTERIOR
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ESTADO_FASE_ANTERIOR WHERE ESTADO_FASE_ANTERIOR_ID = -2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ESTADO_FASE_ANTERIOR (ESTADO_FASE_ANTERIOR_ID, ESTADO_FASE_ANTERIOR_DESC, ESTADO_FASE_ANTERIOR_DESC_2) VALUES (-2 ,'No Aplica (Iter)', 'No Aplica (Iter)');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ESTADO_FASE_ANTERIOR WHERE ESTADO_FASE_ANTERIOR_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ESTADO_FASE_ANTERIOR (ESTADO_FASE_ANTERIOR_ID, ESTADO_FASE_ANTERIOR_DESC, ESTADO_FASE_ANTERIOR_DESC_2) VALUES (-1 ,'Desconocido', 'Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_ESTADO_FASE_ANTERIOR(ESTADO_FASE_ANTERIOR_ID, ESTADO_FASE_ANTERIOR_DESC, ESTADO_FASE_ANTERIOR_DESC_2)
+     SELECT DD_EPR_ID, DD_EPR_DESCRIPCION, DD_EPR_DESCRIPCION_LARGA FROM '||V_DATASTAGE||'.DD_EPR_ESTADO_PROCEDIMIENTO';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ESTADO_FASE_ANTERIOR. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+-- ----------------------------------------------------------------------------------------------
+--                      D_PRC_ULT_TAR_CREADA_TIPO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_CREADA_TIPO WHERE ULT_TAR_CREADA_TIPO_ID = -2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_CREADA_TIPO (ULT_TAR_CREADA_TIPO_ID, ULT_TAR_CREADA_TIPO_DESC, ULT_TAR_CREADA_TIPO_DESC_2) VALUES (-2 ,'Ninguna Tarea Asociada', 'Ninguna Tarea Asociada');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_CREADA_TIPO WHERE ULT_TAR_CREADA_TIPO_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_CREADA_TIPO (ULT_TAR_CREADA_TIPO_ID, ULT_TAR_CREADA_TIPO_DESC, ULT_TAR_CREADA_TIPO_DESC_2) VALUES (-1 ,'Desconocido', 'Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_ULT_TAR_CREADA_TIPO(ULT_TAR_CREADA_TIPO_ID, ULT_TAR_CREADA_TIPO_DESC, ULT_TAR_CREADA_TIPO_DESC_2)
+     SELECT DD_TAR_ID, DD_TAR_DESCRIPCION, DD_TAR_DESCRIPCION_LARGA FROM '||V_DATASTAGE||'.DD_TAR_TIPO_TAREA_BASE';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ULT_TAR_CREADA_TIPO. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+-- ----------------------------------------------------------------------------------------------
+--                      D_PRC_ULT_TAR_CREADA_TIPO_DET
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_CREADA_TIPO_DET WHERE ULT_TAR_CREADA_TIPO_DET_ID = -2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_CREADA_TIPO_DET (ULT_TAR_CREADA_TIPO_DET_ID, ULT_TAR_CREADA_TIPO_DET_DESC, ULT_TAR_CREADA_TIPO_DET_DESC_2, ULT_TAR_CREADA_TIPO_ID) VALUES (-2 ,'Ninguna Tarea Asociada', 'Ninguna Tarea Asociada', -2);
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_CREADA_TIPO_DET WHERE ULT_TAR_CREADA_TIPO_DET_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_CREADA_TIPO_DET (ULT_TAR_CREADA_TIPO_DET_ID, ULT_TAR_CREADA_TIPO_DET_DESC, ULT_TAR_CREADA_TIPO_DET_DESC_2, ULT_TAR_CREADA_TIPO_ID) VALUES (-1 ,'Desconocido', 'Desconocido', -1);
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_ULT_TAR_CREADA_TIPO_DET(ULT_TAR_CREADA_TIPO_DET_ID, ULT_TAR_CREADA_TIPO_DET_DESC, ULT_TAR_CREADA_TIPO_DET_DESC_2, ULT_TAR_CREADA_TIPO_ID)
+     SELECT DD_STA_ID, DD_STA_DESCRIPCION, DD_STA_DESCRIPCION_LARGA, DD_TAR_ID FROM '||V_DATASTAGE||'.DD_STA_SUBTIPO_TAREA_BASE';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ULT_TAR_CREADA_TIPO_DET. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+-- ----------------------------------------------------------------------------------------------
+--                      D_PRC_ULT_TAR_CREADA_DESC
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_CREADA_DESC WHERE ULT_TAR_CREADA_DESC_ID = -2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_CREADA_DESC (ULT_TAR_CREADA_DESC_ID, ULT_TAR_CREADA_DESC_DESC) VALUES (-2 ,'Ninguna Tarea Asociada');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_CREADA_DESC WHERE ULT_TAR_CREADA_DESC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_CREADA_DESC (ULT_TAR_CREADA_DESC_ID, ULT_TAR_CREADA_DESC_DESC) VALUES (-1, 'Desconocido');
+  END IF;
+
+  V_MSQL := 'SELECT DISTINCT TAR_TAREA FROM '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES WHERE PRC_ID IS NOT NULL ORDER BY 1';
+
+  OPEN C_TAREA_DESC FOR V_MSQL;
+  LOOP --TAREA_DESC_LOOP
+    FETCH C_TAREA_DESC INTO TAREA_DESC;
+    EXIT WHEN C_TAREA_DESC%NOTFOUND;
+
+    SELECT MAX(ULT_TAR_CREADA_DESC_ID)+1 INTO MAX_ID FROM D_PRC_ULT_TAR_CREADA_DESC;
+    INSERT INTO D_PRC_ULT_TAR_CREADA_DESC (ULT_TAR_CREADA_DESC_ID, ULT_TAR_CREADA_DESC_DESC)
+    VALUES (MAX_ID,TAREA_DESC);
+
+  END LOOP;
+  CLOSE C_TAREA_DESC;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ULT_TAR_CREADA_DESC. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                      D_PRC_ULT_TAR_FIN_TIPO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_FIN_TIPO WHERE ULT_TAR_FIN_TIPO_ID = -2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_FIN_TIPO (ULT_TAR_FIN_TIPO_ID, ULT_TAR_FIN_TIPO_DESC, ULT_TAR_FIN_TIPO_DESC_2) VALUES (-2 ,'Ninguna Tarea Asociada', 'Ninguna Tarea Asociada');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_FIN_TIPO WHERE ULT_TAR_FIN_TIPO_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_FIN_TIPO (ULT_TAR_FIN_TIPO_ID, ULT_TAR_FIN_TIPO_DESC, ULT_TAR_FIN_TIPO_DESC_2) VALUES (-1 ,'Desconocido', 'Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_ULT_TAR_FIN_TIPO(ULT_TAR_FIN_TIPO_ID, ULT_TAR_FIN_TIPO_DESC, ULT_TAR_FIN_TIPO_DESC_2)
+     SELECT DD_TAR_ID, DD_TAR_DESCRIPCION, DD_TAR_DESCRIPCION_LARGA FROM '||V_DATASTAGE||'.DD_TAR_TIPO_TAREA_BASE';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ULT_TAR_FIN_TIPO. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+
+-- ----------------------------------------------------------------------------------------------
+--                      D_PRC_ULT_TAR_FIN_TIPO_DET
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_FIN_TIPO_DET WHERE ULT_TAR_FIN_TIPO_DET_ID = -2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_FIN_TIPO_DET (ULT_TAR_FIN_TIPO_DET_ID, ULT_TAR_FIN_TIPO_DET_DESC, ULT_TAR_FIN_TIPO_DET_DESC_2, ULT_TAR_FIN_TIPO_ID) VALUES (-2 ,'Ninguna Tarea Asociada', 'Ninguna Tarea Asociada', -2);
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_FIN_TIPO_DET WHERE ULT_TAR_FIN_TIPO_DET_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_FIN_TIPO_DET (ULT_TAR_FIN_TIPO_DET_ID, ULT_TAR_FIN_TIPO_DET_DESC, ULT_TAR_FIN_TIPO_DET_DESC_2, ULT_TAR_FIN_TIPO_ID) VALUES (-1 ,'Desconocido', 'Desconocido', -1);
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_ULT_TAR_FIN_TIPO_DET(ULT_TAR_FIN_TIPO_DET_ID, ULT_TAR_FIN_TIPO_DET_DESC, ULT_TAR_FIN_TIPO_DET_DESC_2, ULT_TAR_FIN_TIPO_ID)
+     SELECT DD_STA_ID, DD_STA_DESCRIPCION, DD_STA_DESCRIPCION_LARGA, DD_TAR_ID FROM '||V_DATASTAGE||'.DD_STA_SUBTIPO_TAREA_BASE';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ULT_TAR_FIN_TIPO_DET. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+
+-- ----------------------------------------------------------------------------------------------
+--                      D_PRC_ULT_TAR_FIN_DESC
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_FIN_DESC WHERE ULT_TAR_FIN_DESC_ID = -2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_FIN_DESC (ULT_TAR_FIN_DESC_ID, ULT_TAR_FIN_DESC_DESC) VALUES (-2 ,'Ninguna Tarea Asociada');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_FIN_DESC WHERE ULT_TAR_FIN_DESC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_FIN_DESC (ULT_TAR_FIN_DESC_ID, ULT_TAR_FIN_DESC_DESC) VALUES (-1, 'Desconocido');
+  END IF;
+
+  OPEN C_TAREA_DESC FOR V_MSQL;
+  LOOP --TAREA_DESC_LOOP
+    FETCH C_TAREA_DESC INTO TAREA_DESC;
+    EXIT WHEN C_TAREA_DESC%NOTFOUND;
+
+    SELECT MAX(ULT_TAR_FIN_DESC_ID)+1 INTO MAX_ID FROM D_PRC_ULT_TAR_FIN_DESC;
+    INSERT INTO D_PRC_ULT_TAR_FIN_DESC (ULT_TAR_FIN_DESC_ID, ULT_TAR_FIN_DESC_DESC)
+    VALUES (MAX_ID,TAREA_DESC);
+
+  END LOOP;
+  CLOSE C_TAREA_DESC;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ULT_TAR_FIN_DESC. Realizados INSERTS', 3;
+
+-- ----------------------------------------------------------------------------------------------
+--                      D_PRC_ULT_TAR_ACT_TIPO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_ACT_TIPO WHERE ULT_TAR_ACT_TIPO_ID = -2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_ACT_TIPO (ULT_TAR_ACT_TIPO_ID, ULT_TAR_ACT_TIPO_DESC, ULT_TAR_ACT_TIPO_DESC_2) VALUES (-2 ,'Ninguna Tarea Asociada', 'Ninguna Tarea Asociada');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_ACT_TIPO WHERE ULT_TAR_ACT_TIPO_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_ACT_TIPO (ULT_TAR_ACT_TIPO_ID, ULT_TAR_ACT_TIPO_DESC, ULT_TAR_ACT_TIPO_DESC_2) VALUES (-1 ,'Desconocido', 'Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_ULT_TAR_ACT_TIPO(ULT_TAR_ACT_TIPO_ID, ULT_TAR_ACT_TIPO_DESC, ULT_TAR_ACT_TIPO_DESC_2)
+     SELECT DD_TAR_ID, DD_TAR_DESCRIPCION, DD_TAR_DESCRIPCION_LARGA FROM '||V_DATASTAGE||'.DD_TAR_TIPO_TAREA_BASE';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ULT_TAR_ACT_TIPO. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+-- ----------------------------------------------------------------------------------------------
+--                      D_PRC_ULT_TAR_ACT_TIPO_DET
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_ACT_TIPO_DET WHERE ULT_TAR_ACT_TIPO_DET_ID = -2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_ACT_TIPO_DET (ULT_TAR_ACT_TIPO_DET_ID, ULT_TAR_ACT_TIPO_DET_DESC, ULT_TAR_ACT_TIPO_DET_DESC_2, ULT_TAR_ACT_TIPO_ID) VALUES (-2 ,'Ninguna Tarea Asociada', 'Ninguna Tarea Asociada', -2);
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_ACT_TIPO_DET WHERE ULT_TAR_ACT_TIPO_DET_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_ACT_TIPO_DET (ULT_TAR_ACT_TIPO_DET_ID, ULT_TAR_ACT_TIPO_DET_DESC, ULT_TAR_ACT_TIPO_DET_DESC_2, ULT_TAR_ACT_TIPO_ID) VALUES (-1 ,'Desconocido', 'Desconocido', -1);
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_ULT_TAR_ACT_TIPO_DET(ULT_TAR_ACT_TIPO_DET_ID, ULT_TAR_ACT_TIPO_DET_DESC, ULT_TAR_ACT_TIPO_DET_DESC_2, ULT_TAR_ACT_TIPO_ID)
+     SELECT DD_STA_ID, DD_STA_DESCRIPCION, DD_STA_DESCRIPCION_LARGA, DD_TAR_ID FROM '||V_DATASTAGE||'.DD_STA_SUBTIPO_TAREA_BASE';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ULT_TAR_ACT_TIPO_DET. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+
+-- ----------------------------------------------------------------------------------------------
+--                      D_PRC_ULT_TAR_ACT_DESC
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_ACT_DESC WHERE ULT_TAR_ACT_DESC_ID = -2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_ACT_DESC (ULT_TAR_ACT_DESC_ID, ULT_TAR_ACT_DESC_DESC) VALUES (-2 ,'Ninguna Tarea Asociada');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_ACT_DESC WHERE ULT_TAR_ACT_DESC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_ACT_DESC (ULT_TAR_ACT_DESC_ID, ULT_TAR_ACT_DESC_DESC) VALUES (-1, 'Desconocido');
+  END IF;
+
+  OPEN C_TAREA_DESC FOR V_MSQL;
+  LOOP  --TAREA_DESC_LOOP
+    FETCH C_TAREA_DESC INTO TAREA_DESC;
+    EXIT WHEN C_TAREA_DESC%NOTFOUND;
+
+    SELECT MAX(ULT_TAR_ACT_DESC_ID)+1 INTO MAX_ID FROM D_PRC_ULT_TAR_ACT_DESC;
+    INSERT INTO D_PRC_ULT_TAR_ACT_DESC (ULT_TAR_ACT_DESC_ID, ULT_TAR_ACT_DESC_DESC)
+    VALUES (MAX_ID,TAREA_DESC);
+
+  END LOOP;
+  CLOSE C_TAREA_DESC;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ULT_TAR_ACT_DESC. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                       D_PRC_ULT_TAR_PEND_TIPO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_PEND_TIPO WHERE ULT_TAR_PEND_TIPO_ID = -2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_PEND_TIPO (ULT_TAR_PEND_TIPO_ID, ULT_TAR_PEND_TIPO_DESC, ULT_TAR_PEND_TIPO_DESC_2) VALUES (-2 ,'Ninguna Tarea Asociada', 'Ninguna Tarea Asociada');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_PEND_TIPO WHERE ULT_TAR_PEND_TIPO_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_PEND_TIPO (ULT_TAR_PEND_TIPO_ID, ULT_TAR_PEND_TIPO_DESC, ULT_TAR_PEND_TIPO_DESC_2) VALUES (-1 ,'Desconocido', 'Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_ULT_TAR_PEND_TIPO(ULT_TAR_PEND_TIPO_ID, ULT_TAR_PEND_TIPO_DESC, ULT_TAR_PEND_TIPO_DESC_2)
+     SELECT DD_TAR_ID, DD_TAR_DESCRIPCION, DD_TAR_DESCRIPCION_LARGA FROM '||V_DATASTAGE||'.DD_TAR_TIPO_TAREA_BASE';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ULT_TAR_PEND_TIPO. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+
+-- ----------------------------------------------------------------------------------------------
+--                                    D_PRC_ULT_TAR_PEND_TIPO_DET
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_PEND_TIPO_DET WHERE ULT_TAR_PEND_TIPO_DET_ID = -2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_PEND_TIPO_DET (ULT_TAR_PEND_TIPO_DET_ID, ULT_TAR_PEND_TIPO_DET_DESC, ULT_TAR_PEND_TIPO_DET_DESC_2, ULT_TAR_PEND_TIPO_ID) VALUES (-2 ,'Ninguna Tarea Asociada', 'Ninguna Tarea Asociada', -2);
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_PEND_TIPO_DET WHERE ULT_TAR_PEND_TIPO_DET_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_PEND_TIPO_DET (ULT_TAR_PEND_TIPO_DET_ID, ULT_TAR_PEND_TIPO_DET_DESC, ULT_TAR_PEND_TIPO_DET_DESC_2, ULT_TAR_PEND_TIPO_ID) VALUES (-1 ,'Desconocido', 'Desconocido', -1);
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_ULT_TAR_PEND_TIPO_DET(ULT_TAR_PEND_TIPO_DET_ID, ULT_TAR_PEND_TIPO_DET_DESC, ULT_TAR_PEND_TIPO_DET_DESC_2, ULT_TAR_PEND_TIPO_ID)
+     SELECT DD_STA_ID, DD_STA_DESCRIPCION, DD_STA_DESCRIPCION_LARGA, DD_TAR_ID FROM '||V_DATASTAGE||'.DD_STA_SUBTIPO_TAREA_BASE';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ULT_TAR_PEND_TIPO_DET. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+
+-- ----------------------------------------------------------------------------------------------
+--                      D_PRC_ULT_TAR_PEND_DESC
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_PEND_DESC WHERE ULT_TAR_PEND_DESC_ID = -2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_PEND_DESC (ULT_TAR_PEND_DESC_ID, ULT_TAR_PEND_DESC_DESC) VALUES (-2 ,'Ninguna Tarea Asociada');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_PEND_DESC WHERE ULT_TAR_PEND_DESC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_PEND_DESC (ULT_TAR_PEND_DESC_ID, ULT_TAR_PEND_DESC_DESC) VALUES (-1, 'Desconocido');
+  END IF;
+
+  OPEN C_TAREA_DESC FOR V_MSQL;
+  LOOP --TAREA_DESC_LOOP
+    FETCH C_TAREA_DESC INTO TAREA_DESC;
+    EXIT WHEN C_TAREA_DESC%NOTFOUND;
+
+    SELECT MAX(ULT_TAR_PEND_DESC_ID)+1 INTO MAX_ID FROM D_PRC_ULT_TAR_PEND_DESC;
+    INSERT INTO D_PRC_ULT_TAR_PEND_DESC (ULT_TAR_PEND_DESC_ID, ULT_TAR_PEND_DESC_DESC)
+    VALUES (MAX_ID,TAREA_DESC);
+
+  END LOOP;
+  CLOSE C_TAREA_DESC;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ULT_TAR_PEND_DESC. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                                 D_PRC_GESTOR
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_GESTOR WHERE GESTOR_PRC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_GESTOR(
+      GESTOR_PRC_ID,
+      GESTOR_PRC_NOMBRE_COMPLETO,
+      GESTOR_PRC_NOMBRE,
+      GESTOR_PRC_APELLIDO1,
+      GESTOR_PRC_APELLIDO2,
+      ENTIDAD_GESTOR_PRC_ID,
+      DESPACHO_GESTOR_PRC_ID) VALUES (-1 ,'Sin Gestor Asignado','Sin Gestor Asignado', 'Sin Gestor Asignado', 'Sin Gestor Asignado', -1, -1);
+  END IF;
+
+  EXECUTE IMMEDIATE
+  'INSERT INTO D_PRC_GESTOR (
+      GESTOR_PRC_ID,
+      GESTOR_PRC_NOMBRE_COMPLETO,
+      GESTOR_PRC_NOMBRE,
+      GESTOR_PRC_APELLIDO1,
+      GESTOR_PRC_APELLIDO2,
+      ENTIDAD_GESTOR_PRC_ID,
+      DESPACHO_GESTOR_PRC_ID
+      )
+  SELECT USU.USU_ID,
+      NVL(TRIM(REPLACE(USU.USU_NOMBRE||'' ''||USU.USU_APELLIDO1||'' ''||USU.USU_APELLIDO2,'' '',''  '')), ''Desconocido''),
+      NVL(USU.USU_NOMBRE, ''Desconocido''),
+      NVL(USU.USU_APELLIDO1, ''Desconocido''),
+      NVL(USU.USU_APELLIDO2, ''Desconocido''),
+      USU.ENTIDAD_ID,
+      USD.DES_ID
+  FROM '||V_DATASTAGE||'.USD_USUARIOS_DESPACHOS USD
+    JOIN '||V_DATASTAGE||'.USU_USUARIOS USU ON USD.USU_ID = USU.USU_ID
+    JOIN '||V_DATASTAGE||'.GAA_GESTOR_ADICIONAL_ASUNTO GAA ON GAA.USD_ID = USD.USD_ID
+    JOIN '||V_DATASTAGE||'.DD_TGE_TIPO_GESTOR TGES ON GAA.DD_TGE_ID = TGES.DD_TGE_ID
+  WHERE TGES.DD_TGE_DESCRIPCION = ''Letrado''
+  GROUP BY USU.USU_ID, USU.USU_NOMBRE, USU.USU_APELLIDO1, USU.USU_APELLIDO2, USU.ENTIDAD_ID, USD.DES_ID';
+
+
+  /*
+  EXECUTE IMMEDIATE
+  'UPDATE D_PRC_GESTOR SET GESTOR_EN_RECOVERY_PRC_ID = (CASE WHEN GESTOR_PRC_ID IN (SELECT USU_ID FROM '||V_DATASTAGE||'.LSS_LETRADOS_NCG_PFS LSS
+                                                                                  JOIN '||V_DATASTAGE||'.USU_USUARIOS USU ON USU.USU_USERNAME = LSS.USUARIO
+                                                                                  WHERE INDICADOR=''C'' OR INDICADOR=''P'')THEN 1
+                                                                              ELSE 0 END)';*/
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_GESTOR. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+-- ----------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--                      D_PRC_GESTOR_EN_RECOVERY
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_GESTOR_EN_RECOVERY WHERE GESTOR_EN_RECOVERY_PRC_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_GESTOR_EN_RECOVERY (GESTOR_EN_RECOVERY_PRC_ID, GESTOR_EN_RECOVERY_PRC_DESC) VALUES (0 ,'No Usa Recovery');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_GESTOR_EN_RECOVERY WHERE GESTOR_EN_RECOVERY_PRC_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_GESTOR_EN_RECOVERY (GESTOR_EN_RECOVERY_PRC_ID, GESTOR_EN_RECOVERY_PRC_DESC) VALUES (1 ,'Usa Recovery');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_GESTOR_EN_RECOVERY. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                           D_PRC_SUPERVISOR
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_SUPERVISOR WHERE SUPERVISOR_PRC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_SUPERVISOR(
+      SUPERVISOR_PRC_ID,
+      SUPERVISOR_PRC_NOMBRE_COMPLETO,
+      SUPERVISOR_PRC_NOMBRE,
+      SUPERVISOR_PRC_APELLIDO1,
+      SUPERVISOR_PRC_APELLIDO2,
+      ENTIDAD_SUPER_PRC_ID,
+      DESP_SUPER_PRC_ID) VALUES (-1 ,'Sin Supervisor Asignado', 'Sin Supervisor Asignado', 'Sin Supervisor Asignado', 'Sin Supervisor Asignado', -1, -1);
+  END IF;
+
+  EXECUTE IMMEDIATE
+  'INSERT INTO D_PRC_SUPERVISOR (
+      SUPERVISOR_PRC_ID,
+      SUPERVISOR_PRC_NOMBRE_COMPLETO,
+      SUPERVISOR_PRC_NOMBRE,
+      SUPERVISOR_PRC_APELLIDO1,
+      SUPERVISOR_PRC_APELLIDO2,
+      ENTIDAD_SUPER_PRC_ID,
+      DESP_SUPER_PRC_ID)
+  SELECT USU.USU_ID,
+      NVL(TRIM(REPLACE(USU.USU_NOMBRE||'' ''||USU.USU_APELLIDO1||'' ''||USU.USU_APELLIDO2,'' '',''  '')), ''Desconocido''),
+      NVL(USU.USU_NOMBRE, ''Desconocido''),
+      NVL(USU.USU_APELLIDO1, ''Desconocido''),
+      NVL(USU.USU_APELLIDO2, ''Desconocido''),
+      USU.ENTIDAD_ID,
+      USD.DES_ID
+  FROM '||V_DATASTAGE||'.USD_USUARIOS_DESPACHOS USD
+    JOIN '||V_DATASTAGE||'.USU_USUARIOS USU ON USD.USU_ID = USU.USU_ID
+    JOIN '||V_DATASTAGE||'.GAA_GESTOR_ADICIONAL_ASUNTO GAA ON GAA.USD_ID = USD.USD_ID
+    JOIN '||V_DATASTAGE||'.DD_TGE_TIPO_GESTOR TGES ON GAA.DD_TGE_ID = TGES.DD_TGE_ID
+  WHERE TGES.DD_TGE_DESCRIPCION = ''Supervisor nivel 1''
+  GROUP BY USU.USU_ID, USU.USU_NOMBRE, USU.USU_APELLIDO1, USU.USU_APELLIDO2, USU.ENTIDAD_ID, USD.DES_ID';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_SUPERVISOR. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+-- ----------------------------------------------------------------------------------------------
+--          D_PRC_DESPACHO_GESTOR / D_PRC_DESPACHO_SUPERVISOR
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_DESPACHO_GESTOR WHERE DESPACHO_GESTOR_PRC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_DESPACHO_GESTOR (DESPACHO_GESTOR_PRC_ID, DESPACHO_GESTOR_PRC_DESC, TIPO_DESP_GESTOR_PRC_ID, ZONA_DESP_GESTOR_PRC_ID) VALUES (-1 ,'Desconocido', -1, -1);
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_DESPACHO_GESTOR(DESPACHO_GESTOR_PRC_ID, DESPACHO_GESTOR_PRC_DESC, TIPO_DESP_GESTOR_PRC_ID, ZONA_DESP_GESTOR_PRC_ID)
+     SELECT DES_ID, DES_DESPACHO, NVL(DD_TDE_ID, -1), NVL(ZON_ID, -1) FROM '||V_DATASTAGE||'.DES_DESPACHO_EXTERNO';
+
+  V_ROWCOUNT := sql%rowcount;     
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_DESPACHO_GESTOR. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_DESPACHO_SUPERVISOR WHERE DESP_SUPER_PRC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_DESPACHO_SUPERVISOR (DESP_SUPER_PRC_ID, DESP_SUPER_PRC_DESC, TIPO_DESP_SUPER_PRC_ID, ZONA_DESP_SUPER_PRC_ID) VALUES (-1 ,'Desconocido', -1, -1);
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_DESPACHO_SUPERVISOR(DESP_SUPER_PRC_ID, DESP_SUPER_PRC_DESC, TIPO_DESP_SUPER_PRC_ID, ZONA_DESP_SUPER_PRC_ID)
+     SELECT DES_ID, DES_DESPACHO, NVL(DD_TDE_ID, -1), NVL(ZON_ID, -1) FROM '||V_DATASTAGE||'.DES_DESPACHO_EXTERNO';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_DESPACHO_SUPERVISOR. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+
+-- ----------------------------------------------------------------------------------------------
+--      D_PRC_TIPO_DESP_GESTOR / D_PRC_TIPO_DESPACHO_SUPERVISOR
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_DESP_GESTOR WHERE TIPO_DESP_GESTOR_PRC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_DESP_GESTOR (TIPO_DESP_GESTOR_PRC_ID, TIPO_DESP_GESTOR_PRC_DESC, TIPO_DESP_GESTOR_PRC_DESC_2) VALUES (-1 ,'Desconocido', 'Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_TIPO_DESP_GESTOR(TIPO_DESP_GESTOR_PRC_ID, TIPO_DESP_GESTOR_PRC_DESC, TIPO_DESP_GESTOR_PRC_DESC_2)
+     SELECT DD_TDE_ID, DD_TDE_DESCRIPCION, DD_TDE_DESCRIPCION_LARGA FROM '||V_DATASTAGE||'.DD_TDE_TIPO_DESPACHO';
+
+  V_ROWCOUNT := sql%rowcount;     
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TIPO_DESP_GESTOR. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_DESPACHO_SUPERVISOR WHERE TIPO_DESP_SUPER_PRC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_DESPACHO_SUPERVISOR (TIPO_DESP_SUPER_PRC_ID, TIPO_DESP_SUPER_PRC_DESC, TIPO_DESP_SUPER_PRC_DESC_2) VALUES (-1 ,'Desconocido', 'Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_TIPO_DESPACHO_SUPERVISOR(TIPO_DESP_SUPER_PRC_ID, TIPO_DESP_SUPER_PRC_DESC, TIPO_DESP_SUPER_PRC_DESC_2)
+     SELECT DD_TDE_ID, DD_TDE_DESCRIPCION, DD_TDE_DESCRIPCION_LARGA FROM '||V_DATASTAGE||'.DD_TDE_TIPO_DESPACHO';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TIPO_DESPACHO_SUPERVISOR. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+
+-- ----------------------------------------------------------------------------------------------
+--            D_PRC_ENTIDAD_GESTOR / D_PRC_ENTIDAD_SUPERVISOR
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ENTIDAD_GESTOR WHERE ENTIDAD_GESTOR_PRC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ENTIDAD_GESTOR (ENTIDAD_GESTOR_PRC_ID, ENTIDAD_GESTOR_PRC_DESC) VALUES (-1, 'Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_ENTIDAD_GESTOR(ENTIDAD_GESTOR_PRC_ID, ENTIDAD_GESTOR_PRC_DESC)
+     SELECT ENT_ID, ENT_DESCRIPCION FROM '||V_DATASTAGE||'.ENTIDAD';
+
+  V_ROWCOUNT := sql%rowcount;     
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ENTIDAD_GESTOR. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ENTIDAD_SUPERVISOR WHERE ENTIDAD_SUPER_PRC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ENTIDAD_SUPERVISOR (ENTIDAD_SUPER_PRC_ID, ENTIDAD_SUPER_PRC_DESC) VALUES (-1, 'Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_ENTIDAD_SUPERVISOR(ENTIDAD_SUPER_PRC_ID, ENTIDAD_SUPER_PRC_DESC)
+     SELECT ENT_ID, ENT_DESCRIPCION FROM '||V_DATASTAGE||'.ENTIDAD';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ENTIDAD_SUPERVISOR. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+-- ----------------------------------------------------------------------------------------------
+--    D_PRC_NIVEL_DESP_GESTOR / D_PRC_NIVEL_DESP_SUPERVISOR
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_NIVEL_DESP_GESTOR WHERE NIVEL_DESP_GESTOR_PRC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_NIVEL_DESP_GESTOR (NIVEL_DESP_GESTOR_PRC_ID, NIVEL_DESP_GESTOR_PRC_DESC, NIVEL_DESP_GESTOR_PRC_DESC_2) VALUES (-1 ,'Desconocido', 'Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_NIVEL_DESP_GESTOR(NIVEL_DESP_GESTOR_PRC_ID, NIVEL_DESP_GESTOR_PRC_DESC, NIVEL_DESP_GESTOR_PRC_DESC_2)
+     SELECT NIV_ID, NIV_DESCRIPCION, NIV_DESCRIPCION_LARGA FROM '||V_DATASTAGE||'.NIV_NIVEL';
+
+  V_ROWCOUNT := sql%rowcount;     
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_NIVEL_DESP_GESTOR. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_NIVEL_DESP_SUPERVISOR WHERE NIVEL_DESP_SUPER_PRC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_NIVEL_DESP_SUPERVISOR (NIVEL_DESP_SUPER_PRC_ID, NIVEL_DESP_SUPER_PRC_DESC, NIVEL_DESP_SUPER_PRC_DESC_2) VALUES (-1 ,'Desconocido', 'Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_NIVEL_DESP_SUPERVISOR(NIVEL_DESP_SUPER_PRC_ID, NIVEL_DESP_SUPER_PRC_DESC, NIVEL_DESP_SUPER_PRC_DESC_2)
+     SELECT NIV_ID, NIV_DESCRIPCION, NIV_DESCRIPCION_LARGA FROM '||V_DATASTAGE||'.NIV_NIVEL';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_NIVEL_DESP_SUPERVISOR. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+-- ----------------------------------------------------------------------------------------------
+--   D_PRC_OFI_DESP_GESTOR / D_PRC_OFI_DESP_SUPERVISOR
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_OFI_DESP_GESTOR WHERE OFI_DESP_GESTOR_PRC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_OFI_DESP_GESTOR (OFI_DESP_GESTOR_PRC_ID, OFI_DESP_GESTOR_PRC_DESC, OFI_DESP_GESTOR_PRC_DESC_2, PROV_DESP_GESTOR_PRC_ID) VALUES (-1 ,'Desconocido', 'Desconocido', -1);
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_OFI_DESP_GESTOR(OFI_DESP_GESTOR_PRC_ID, OFI_DESP_GESTOR_PRC_DESC, PROV_DESP_GESTOR_PRC_ID)
+     SELECT OFI_ID, OFI_NOMBRE, DD_PRV_ID FROM '||V_DATASTAGE||'.OFI_OFICINAS';
+
+  V_ROWCOUNT := sql%rowcount;     
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_OFI_DESP_GESTOR. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_OFI_DESP_SUPERVISOR WHERE OFICINA_DESP_SUPER_PRC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_OFI_DESP_SUPERVISOR (OFICINA_DESP_SUPER_PRC_ID, OFICINA_DESP_SUPER_PRC_DESC, OFICINA_DESP_SUPER_PRC_DESC_2, PROV_DESP_SUPER_PRC_ID) VALUES (-1 ,'Desconocido', 'Desconocido', -1);
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_OFI_DESP_SUPERVISOR(OFICINA_DESP_SUPER_PRC_ID, OFICINA_DESP_SUPER_PRC_DESC, PROV_DESP_SUPER_PRC_ID)
+     SELECT OFI_ID, OFI_NOMBRE, DD_PRV_ID FROM '||V_DATASTAGE||'.OFI_OFICINAS';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_OFI_DESP_SUPERVISOR. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+-- ----------------------------------------------------------------------------------------------
+--  D_PRC_PROV_DESP_GESTOR / D_PRC_PROV_DESP_SUPERVISOR
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_PROV_DESP_GESTOR WHERE PROV_DESP_GESTOR_PRC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_PROV_DESP_GESTOR (PROV_DESP_GESTOR_PRC_ID, PROV_DESP_GESTOR_PRC_DESC, PROV_DESP_GESTOR_PRC_DESC_2) VALUES (-1 ,'Desconocido', 'Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_PROV_DESP_GESTOR(PROV_DESP_GESTOR_PRC_ID, PROV_DESP_GESTOR_PRC_DESC, PROV_DESP_GESTOR_PRC_DESC_2)
+     SELECT DD_PRV_ID, DD_PRV_DESCRIPCION, DD_PRV_DESCRIPCION_LARGA FROM '||V_DATASTAGE||'.DD_PRV_PROVINCIA';
+
+  V_ROWCOUNT := sql%rowcount;     
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_PROV_DESP_GESTOR. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_PROV_DESP_SUPERVISOR WHERE PROV_DESP_SUPER_PRC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_PROV_DESP_SUPERVISOR (PROV_DESP_SUPER_PRC_ID, PROV_DESP_SUPER_PRC_DESC, PROV_DESP_SUPER_PRC_DESC_2) VALUES (-1 ,'Desconocido', 'Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_PROV_DESP_SUPERVISOR(PROV_DESP_SUPER_PRC_ID, PROV_DESP_SUPER_PRC_DESC, PROV_DESP_SUPER_PRC_DESC_2)
+     SELECT DD_PRV_ID, DD_PRV_DESCRIPCION, DD_PRV_DESCRIPCION_LARGA FROM '||V_DATASTAGE||'.DD_PRV_PROVINCIA';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_PROV_DESP_SUPERVISOR. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+-- ----------------------------------------------------------------------------------------------
+--     D_PRC_ZONA_DESP_GESTOR / D_PRC_ZONA_DESP_SUPERVISOR
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ZONA_DESP_GESTOR WHERE ZONA_DESP_GESTOR_PRC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ZONA_DESP_GESTOR (ZONA_DESP_GESTOR_PRC_ID, ZONA_DESP_GESTOR_PRC_DESC, ZONA_DESP_GESTOR_PRC_DESC_2, NIVEL_DESP_GESTOR_PRC_ID, OFI_DESP_GESTOR_PRC_ID) VALUES (-1 ,'Desconocido', 'Desconocido', -1, -1);
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_ZONA_DESP_GESTOR(ZONA_DESP_GESTOR_PRC_ID, ZONA_DESP_GESTOR_PRC_DESC, ZONA_DESP_GESTOR_PRC_DESC_2, NIVEL_DESP_GESTOR_PRC_ID, OFI_DESP_GESTOR_PRC_ID)
+     SELECT ZON_ID, ZON_DESCRIPCION, ZON_DESCRIPCION_LARGA, NIV_ID, COALESCE(OFI_ID, -1) FROM '||V_DATASTAGE||'.ZON_ZONIFICACION';
+
+  V_ROWCOUNT := sql%rowcount;     
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ZONA_DESP_GESTOR. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ZONA_DESP_SUPERVISOR WHERE ZONA_DESP_SUPER_PRC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ZONA_DESP_SUPERVISOR (ZONA_DESP_SUPER_PRC_ID, ZONA_DESP_SUPER_PRC_DESC, ZONA_DESP_SUPER_PRC_DESC_2, NIVEL_DESP_SUPER_PRC_ID, OFICINA_DESP_SUPER_PRC_ID) VALUES (-1 ,'Desconocido', 'Desconocido', -1, -1);
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_ZONA_DESP_SUPERVISOR(ZONA_DESP_SUPER_PRC_ID, ZONA_DESP_SUPER_PRC_DESC, ZONA_DESP_SUPER_PRC_DESC_2, NIVEL_DESP_SUPER_PRC_ID, OFICINA_DESP_SUPER_PRC_ID)
+     SELECT ZON_ID, ZON_DESCRIPCION, ZON_DESCRIPCION_LARGA, NIV_ID, COALESCE(OFI_ID, -1) FROM '||V_DATASTAGE||'.ZON_ZONIFICACION';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ZONA_DESP_SUPERVISOR. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+-- ----------------------------------------------------------------------------------------------
+--                      D_PRC_T_SALDO_TOTAL
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_T_SALDO_TOTAL WHERE T_SALDO_TOTAL_PRC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_T_SALDO_TOTAL (T_SALDO_TOTAL_PRC_ID, T_SALDO_TOTAL_PRC_DESC) VALUES (-1 ,'Saldo Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_T_SALDO_TOTAL WHERE T_SALDO_TOTAL_PRC_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_T_SALDO_TOTAL (T_SALDO_TOTAL_PRC_ID, T_SALDO_TOTAL_PRC_DESC) VALUES (0,'< 1MM €');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_T_SALDO_TOTAL WHERE T_SALDO_TOTAL_PRC_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_T_SALDO_TOTAL (T_SALDO_TOTAL_PRC_ID, T_SALDO_TOTAL_PRC_DESC) VALUES (1 ,'>= 1 MM €');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_T_SALDO_TOTAL. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                      D_PRC_T_SALDO_RECUPERACION
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_T_SALDO_RECUPERACION WHERE T_SALDO_RECUPERACION_PRC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_T_SALDO_RECUPERACION (T_SALDO_RECUPERACION_PRC_ID, T_SALDO_RECUPERACION_PRC_DESC) VALUES (-1 ,'Saldo Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_T_SALDO_RECUPERACION WHERE T_SALDO_RECUPERACION_PRC_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_T_SALDO_RECUPERACION (T_SALDO_RECUPERACION_PRC_ID, T_SALDO_RECUPERACION_PRC_DESC) VALUES (0,'< 1MM €');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_T_SALDO_RECUPERACION WHERE T_SALDO_RECUPERACION_PRC_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_T_SALDO_RECUPERACION (T_SALDO_RECUPERACION_PRC_ID, T_SALDO_RECUPERACION_PRC_DESC) VALUES (1 ,'>= 1 MM €');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_T_SALDO_RECUPERACION. Realizados INSERTS', 3;
+  
+
+-- ----------------------------------------------------------------------------------------------
+--                      D_PRC_T_SALDO_TOTAL_CONCURSO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_T_SALDO_TOTAL_CONCURSO WHERE T_SALDO_TOTAL_CONCURSO_ID = -2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_T_SALDO_TOTAL_CONCURSO (T_SALDO_TOTAL_CONCURSO_ID, T_SALDO_TOTAL_CONCURSO_DESC) VALUES (-2 ,'Concursado Sin Riesgo Directo');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_T_SALDO_TOTAL_CONCURSO WHERE T_SALDO_TOTAL_CONCURSO_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_T_SALDO_TOTAL_CONCURSO (T_SALDO_TOTAL_CONCURSO_ID, T_SALDO_TOTAL_CONCURSO_DESC) VALUES (-1 ,'Saldo Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_T_SALDO_TOTAL_CONCURSO WHERE T_SALDO_TOTAL_CONCURSO_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_T_SALDO_TOTAL_CONCURSO (T_SALDO_TOTAL_CONCURSO_ID, T_SALDO_TOTAL_CONCURSO_DESC) VALUES (0,'< 1MM €');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_T_SALDO_TOTAL_CONCURSO WHERE T_SALDO_TOTAL_CONCURSO_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_T_SALDO_TOTAL_CONCURSO (T_SALDO_TOTAL_CONCURSO_ID, T_SALDO_TOTAL_CONCURSO_DESC) VALUES (1 ,'>= 1 MM €');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_T_SALDO_TOTAL_CONCURSO. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                      D_PRC_TD_ULTIMA_ACTUALIZACION
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ULTIMA_ACTUALIZACION WHERE TD_ULT_ACTUALIZACION_PRC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ULTIMA_ACTUALIZACION (TD_ULT_ACTUALIZACION_PRC_ID, TD_ULT_ACTUALIZACION_PRC_DESC) VALUES (-1 ,'Número Días Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ULTIMA_ACTUALIZACION WHERE TD_ULT_ACTUALIZACION_PRC_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ULTIMA_ACTUALIZACION (TD_ULT_ACTUALIZACION_PRC_ID, TD_ULT_ACTUALIZACION_PRC_DESC) VALUES (0 ,'<= 30 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ULTIMA_ACTUALIZACION WHERE TD_ULT_ACTUALIZACION_PRC_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ULTIMA_ACTUALIZACION (TD_ULT_ACTUALIZACION_PRC_ID, TD_ULT_ACTUALIZACION_PRC_DESC) VALUES (1,'31-60 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ULTIMA_ACTUALIZACION WHERE TD_ULT_ACTUALIZACION_PRC_ID = 2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ULTIMA_ACTUALIZACION (TD_ULT_ACTUALIZACION_PRC_ID, TD_ULT_ACTUALIZACION_PRC_DESC) VALUES (2 ,'61-90 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ULTIMA_ACTUALIZACION WHERE TD_ULT_ACTUALIZACION_PRC_ID = 3;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ULTIMA_ACTUALIZACION (TD_ULT_ACTUALIZACION_PRC_ID, TD_ULT_ACTUALIZACION_PRC_DESC) VALUES (3 ,'> 90 Días');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TD_ULTIMA_ACTUALIZACION. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                      D_PRC_TD_CONTRATO_VENCIDO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CONTRATO_VENCIDO WHERE TD_CONTRATO_VENCIDO_ID = -2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CONTRATO_VENCIDO (TD_CONTRATO_VENCIDO_ID, TD_CONTRATO_VENCIDO_DESC) VALUES (-2 ,'Ningún Contrato Asociado Vencido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CONTRATO_VENCIDO WHERE TD_CONTRATO_VENCIDO_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CONTRATO_VENCIDO (TD_CONTRATO_VENCIDO_ID, TD_CONTRATO_VENCIDO_DESC) VALUES (-1 ,'Número Días Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CONTRATO_VENCIDO WHERE TD_CONTRATO_VENCIDO_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CONTRATO_VENCIDO (TD_CONTRATO_VENCIDO_ID, TD_CONTRATO_VENCIDO_DESC) VALUES (0 ,'<= 30 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CONTRATO_VENCIDO WHERE TD_CONTRATO_VENCIDO_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CONTRATO_VENCIDO (TD_CONTRATO_VENCIDO_ID, TD_CONTRATO_VENCIDO_DESC) VALUES (1,'31-60 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CONTRATO_VENCIDO WHERE TD_CONTRATO_VENCIDO_ID = 2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CONTRATO_VENCIDO (TD_CONTRATO_VENCIDO_ID, TD_CONTRATO_VENCIDO_DESC) VALUES (2 ,'61-90 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CONTRATO_VENCIDO WHERE TD_CONTRATO_VENCIDO_ID = 3;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CONTRATO_VENCIDO (TD_CONTRATO_VENCIDO_ID, TD_CONTRATO_VENCIDO_DESC) VALUES (3 ,'> 90 Días');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TD_CONTRATO_VENCIDO. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                D_PRC_TD_CNT_VENC_CREACION_ASU
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CNT_VENC_CREACION_ASU WHERE TD_CNT_VENC_CREACION_ASU_ID = -2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CNT_VENC_CREACION_ASU (TD_CNT_VENC_CREACION_ASU_ID, TD_CNT_VENC_CREACION_ASU_DESC) VALUES (-2 ,'Ningún Contrato Asociado Vencido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CNT_VENC_CREACION_ASU WHERE TD_CNT_VENC_CREACION_ASU_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CNT_VENC_CREACION_ASU (TD_CNT_VENC_CREACION_ASU_ID, TD_CNT_VENC_CREACION_ASU_DESC) VALUES (-1 ,'Número Días Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CNT_VENC_CREACION_ASU WHERE TD_CNT_VENC_CREACION_ASU_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CNT_VENC_CREACION_ASU (TD_CNT_VENC_CREACION_ASU_ID, TD_CNT_VENC_CREACION_ASU_DESC) VALUES (0 ,'0-30 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CNT_VENC_CREACION_ASU WHERE TD_CNT_VENC_CREACION_ASU_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CNT_VENC_CREACION_ASU (TD_CNT_VENC_CREACION_ASU_ID, TD_CNT_VENC_CREACION_ASU_DESC) VALUES (1,'31-60 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CNT_VENC_CREACION_ASU WHERE TD_CNT_VENC_CREACION_ASU_ID = 2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CNT_VENC_CREACION_ASU (TD_CNT_VENC_CREACION_ASU_ID, TD_CNT_VENC_CREACION_ASU_DESC) VALUES (2,'61-90 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CNT_VENC_CREACION_ASU WHERE TD_CNT_VENC_CREACION_ASU_ID = 3;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CNT_VENC_CREACION_ASU (TD_CNT_VENC_CREACION_ASU_ID, TD_CNT_VENC_CREACION_ASU_DESC) VALUES (3,'91-120 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CNT_VENC_CREACION_ASU WHERE TD_CNT_VENC_CREACION_ASU_ID = 4;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CNT_VENC_CREACION_ASU (TD_CNT_VENC_CREACION_ASU_ID, TD_CNT_VENC_CREACION_ASU_DESC) VALUES (4,'121-150 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CNT_VENC_CREACION_ASU WHERE TD_CNT_VENC_CREACION_ASU_ID = 5;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CNT_VENC_CREACION_ASU (TD_CNT_VENC_CREACION_ASU_ID, TD_CNT_VENC_CREACION_ASU_DESC) VALUES (5,'151-180 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CNT_VENC_CREACION_ASU WHERE TD_CNT_VENC_CREACION_ASU_ID = 6;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CNT_VENC_CREACION_ASU (TD_CNT_VENC_CREACION_ASU_ID, TD_CNT_VENC_CREACION_ASU_DESC) VALUES (6,'> 180 Días');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TD_CNT_VENC_CREACION_ASU. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                      D_PRC_ULT_TAR_PEND_CUMPL
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_PEND_CUMPL WHERE CUMPLIMIENTO_ULT_TAR_PEND_ID = -2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_PEND_CUMPL (CUMPLIMIENTO_ULT_TAR_PEND_ID, CUMPLIMIENTO_ULT_TAR_PEND_DESC) VALUES (-2, 'Ninguna Tarea Pendiente Asocidada');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_PEND_CUMPL WHERE CUMPLIMIENTO_ULT_TAR_PEND_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_PEND_CUMPL (CUMPLIMIENTO_ULT_TAR_PEND_ID, CUMPLIMIENTO_ULT_TAR_PEND_DESC) VALUES (-1, 'Última Tarea Pendiente Sin Fecha de Vencimiento');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_PEND_CUMPL WHERE CUMPLIMIENTO_ULT_TAR_PEND_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_PEND_CUMPL (CUMPLIMIENTO_ULT_TAR_PEND_ID, CUMPLIMIENTO_ULT_TAR_PEND_DESC) VALUES (0, 'En Plazo');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_PEND_CUMPL WHERE CUMPLIMIENTO_ULT_TAR_PEND_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_PEND_CUMPL (CUMPLIMIENTO_ULT_TAR_PEND_ID, CUMPLIMIENTO_ULT_TAR_PEND_DESC) VALUES (1, 'Fuera De Plazo');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ULT_TAR_PEND_CUMPL. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                      D_PRC_ULT_TAR_FIN_CUMPL
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_FIN_CUMPL WHERE CUMPLIMIENTO_ULT_TAR_FIN_ID = -2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_FIN_CUMPL (CUMPLIMIENTO_ULT_TAR_FIN_ID, CUMPLIMIENTO_ULT_TAR_FIN_DESC) VALUES (-2, 'Ninguna Tarea Finalizada Asocidada');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_FIN_CUMPL WHERE CUMPLIMIENTO_ULT_TAR_FIN_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_FIN_CUMPL (CUMPLIMIENTO_ULT_TAR_FIN_ID, CUMPLIMIENTO_ULT_TAR_FIN_DESC) VALUES (-1, 'Última Tarea Finalizada Sin Fecha de Vencimiento');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_FIN_CUMPL WHERE CUMPLIMIENTO_ULT_TAR_FIN_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_FIN_CUMPL (CUMPLIMIENTO_ULT_TAR_FIN_ID, CUMPLIMIENTO_ULT_TAR_FIN_DESC) VALUES (0, 'En Plazo');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_FIN_CUMPL WHERE CUMPLIMIENTO_ULT_TAR_FIN_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_FIN_CUMPL (CUMPLIMIENTO_ULT_TAR_FIN_ID, CUMPLIMIENTO_ULT_TAR_FIN_DESC) VALUES (1, 'Fuera De Plazo');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ULT_TAR_FIN_CUMPL. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                      D_PRC_TD_AUTO_FC_DIA_ANALISIS
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_AUTO_FC_DIA_ANALISIS WHERE TD_AUTO_FC_DIA_ANALISIS_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_AUTO_FC_DIA_ANALISIS (TD_AUTO_FC_DIA_ANALISIS_ID, TD_AUTO_FC_DIA_ANALISIS_DESC) VALUES (-1 ,'Número Días Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_AUTO_FC_DIA_ANALISIS WHERE TD_AUTO_FC_DIA_ANALISIS_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_AUTO_FC_DIA_ANALISIS (TD_AUTO_FC_DIA_ANALISIS_ID, TD_AUTO_FC_DIA_ANALISIS_DESC) VALUES (0 ,'<= 365 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_AUTO_FC_DIA_ANALISIS WHERE TD_AUTO_FC_DIA_ANALISIS_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_AUTO_FC_DIA_ANALISIS (TD_AUTO_FC_DIA_ANALISIS_ID, TD_AUTO_FC_DIA_ANALISIS_DESC) VALUES (1,'> 365 Días');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TD_AUTO_FC_DIA_ANALISIS. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                D_PRC_TD_AUTO_FC_LIQUIDACION
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_AUTO_FC_LIQUIDACION WHERE TD_AUTO_FC_LIQUIDACION_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_AUTO_FC_LIQUIDACION (TD_AUTO_FC_LIQUIDACION_ID, TD_AUTO_FC_LIQUIDACION_DESC) VALUES (-1 ,'Número Días Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_AUTO_FC_LIQUIDACION WHERE TD_AUTO_FC_LIQUIDACION_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_AUTO_FC_LIQUIDACION (TD_AUTO_FC_LIQUIDACION_ID, TD_AUTO_FC_LIQUIDACION_DESC) VALUES (0 ,'<= 365 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_AUTO_FC_LIQUIDACION WHERE TD_AUTO_FC_LIQUIDACION_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_AUTO_FC_LIQUIDACION (TD_AUTO_FC_LIQUIDACION_ID, TD_AUTO_FC_LIQUIDACION_DESC) VALUES (1,'> 365 Días');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TD_AUTO_FC_LIQUIDACION. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                D_PRC_ESTADO_CONVENIO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ESTADO_CONVENIO WHERE ESTADO_CONVENIO_ID = -2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ESTADO_CONVENIO (ESTADO_CONVENIO_ID, ESTADO_CONVENIO_DESC) VALUES (-2 ,'No Aplica');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ESTADO_CONVENIO WHERE ESTADO_CONVENIO_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ESTADO_CONVENIO (ESTADO_CONVENIO_ID, ESTADO_CONVENIO_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ESTADO_CONVENIO WHERE ESTADO_CONVENIO_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ESTADO_CONVENIO (ESTADO_CONVENIO_ID, ESTADO_CONVENIO_DESC) VALUES (0 ,'No Aprobado');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ESTADO_CONVENIO WHERE ESTADO_CONVENIO_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ESTADO_CONVENIO (ESTADO_CONVENIO_ID, ESTADO_CONVENIO_DESC) VALUES (1,'Aprobado');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ESTADO_CONVENIO. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                D_PRC_SEGUIMIENTO_CONVENIO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_SEGUIMIENTO_CONVENIO WHERE SEGUIMIENTO_CONVENIO_ID = -2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_SEGUIMIENTO_CONVENIO (SEGUIMIENTO_CONVENIO_ID, SEGUIMIENTO_CONVENIO_DESC) VALUES (-2 ,'No Aplica');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_SEGUIMIENTO_CONVENIO WHERE SEGUIMIENTO_CONVENIO_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_SEGUIMIENTO_CONVENIO (SEGUIMIENTO_CONVENIO_ID, SEGUIMIENTO_CONVENIO_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_SEGUIMIENTO_CONVENIO WHERE SEGUIMIENTO_CONVENIO_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_SEGUIMIENTO_CONVENIO (SEGUIMIENTO_CONVENIO_ID, SEGUIMIENTO_CONVENIO_DESC) VALUES (0 ,'Incumplimiento');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_SEGUIMIENTO_CONVENIO WHERE SEGUIMIENTO_CONVENIO_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_SEGUIMIENTO_CONVENIO (SEGUIMIENTO_CONVENIO_ID, SEGUIMIENTO_CONVENIO_DESC) VALUES (1,'Cumplimiento');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_SEGUIMIENTO_CONVENIO WHERE SEGUIMIENTO_CONVENIO_ID = 2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_SEGUIMIENTO_CONVENIO (SEGUIMIENTO_CONVENIO_ID, SEGUIMIENTO_CONVENIO_DESC) VALUES (2 ,'Pendiente');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_SEGUIMIENTO_CONVENIO. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                D_PRC_T_PORCENTAJE_QUITA_CONV
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_T_PORCENTAJE_QUITA_CONV WHERE T_PORCENTAJE_QUITA_ID = -2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_T_PORCENTAJE_QUITA_CONV (T_PORCENTAJE_QUITA_ID, T_PORCENTAJE_QUITA_DESC) VALUES (-2 ,'No Aplica');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_T_PORCENTAJE_QUITA_CONV WHERE T_PORCENTAJE_QUITA_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_T_PORCENTAJE_QUITA_CONV (T_PORCENTAJE_QUITA_ID, T_PORCENTAJE_QUITA_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_T_PORCENTAJE_QUITA_CONV WHERE T_PORCENTAJE_QUITA_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_T_PORCENTAJE_QUITA_CONV (T_PORCENTAJE_QUITA_ID, T_PORCENTAJE_QUITA_DESC) VALUES (0 ,'0%-30%');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_T_PORCENTAJE_QUITA_CONV WHERE T_PORCENTAJE_QUITA_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_T_PORCENTAJE_QUITA_CONV (T_PORCENTAJE_QUITA_ID, T_PORCENTAJE_QUITA_DESC) VALUES (1,'31%-50%');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_T_PORCENTAJE_QUITA_CONV WHERE T_PORCENTAJE_QUITA_ID = 2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_T_PORCENTAJE_QUITA_CONV (T_PORCENTAJE_QUITA_ID, T_PORCENTAJE_QUITA_DESC) VALUES (2,'> 50%');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_T_PORCENTAJE_QUITA_CONV. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                D_PRC_GARANTIA_CONCURSO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_GARANTIA_CONCURSO WHERE GARANTIA_CONCURSO_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_GARANTIA_CONCURSO (GARANTIA_CONCURSO_ID, GARANTIA_CONCURSO_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_GARANTIA_CONCURSO WHERE GARANTIA_CONCURSO_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_GARANTIA_CONCURSO (GARANTIA_CONCURSO_ID, GARANTIA_CONCURSO_DESC) VALUES (0 ,'Garantía Personal');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_GARANTIA_CONCURSO WHERE GARANTIA_CONCURSO_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_GARANTIA_CONCURSO (GARANTIA_CONCURSO_ID, GARANTIA_CONCURSO_DESC) VALUES (1,'Garantía Real');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_GARANTIA_CONCURSO. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                D_PRC_TD_CREA_ASU_A_INTERP_DEM
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CREA_ASU_A_INTERP_DEM WHERE TD_CREA_ASU_A_INTERP_DEM_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CREA_ASU_A_INTERP_DEM (TD_CREA_ASU_A_INTERP_DEM_ID, TD_CREA_ASU_A_INTERP_DEM_DESC) VALUES (-1 ,'Número Días Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CREA_ASU_A_INTERP_DEM WHERE TD_CREA_ASU_A_INTERP_DEM_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CREA_ASU_A_INTERP_DEM (TD_CREA_ASU_A_INTERP_DEM_ID, TD_CREA_ASU_A_INTERP_DEM_DESC) VALUES (0 ,'0-10 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CREA_ASU_A_INTERP_DEM WHERE TD_CREA_ASU_A_INTERP_DEM_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CREA_ASU_A_INTERP_DEM (TD_CREA_ASU_A_INTERP_DEM_ID, TD_CREA_ASU_A_INTERP_DEM_DESC) VALUES (1,'11-20 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CREA_ASU_A_INTERP_DEM WHERE TD_CREA_ASU_A_INTERP_DEM_ID = 2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CREA_ASU_A_INTERP_DEM (TD_CREA_ASU_A_INTERP_DEM_ID, TD_CREA_ASU_A_INTERP_DEM_DESC) VALUES (2,'21-30 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CREA_ASU_A_INTERP_DEM WHERE TD_CREA_ASU_A_INTERP_DEM_ID = 3;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CREA_ASU_A_INTERP_DEM (TD_CREA_ASU_A_INTERP_DEM_ID, TD_CREA_ASU_A_INTERP_DEM_DESC) VALUES (3,'> 30 Días');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TD_CREA_ASU_A_INTERP_DEM. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                D_PRC_TD_CREACION_ASU_ACEPT
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CREACION_ASU_ACEPT WHERE TD_CREACION_ASU_ACEPT_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CREACION_ASU_ACEPT (TD_CREACION_ASU_ACEPT_ID, TD_CREACION_ASU_ACEPT_DESC) VALUES (-1 ,'Número Días Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CREACION_ASU_ACEPT WHERE TD_CREACION_ASU_ACEPT_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CREACION_ASU_ACEPT (TD_CREACION_ASU_ACEPT_ID, TD_CREACION_ASU_ACEPT_DESC) VALUES (0 ,'0-5 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CREACION_ASU_ACEPT WHERE TD_CREACION_ASU_ACEPT_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CREACION_ASU_ACEPT (TD_CREACION_ASU_ACEPT_ID, TD_CREACION_ASU_ACEPT_DESC) VALUES (1,'6-10 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CREACION_ASU_ACEPT WHERE TD_CREACION_ASU_ACEPT_ID = 2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CREACION_ASU_ACEPT (TD_CREACION_ASU_ACEPT_ID, TD_CREACION_ASU_ACEPT_DESC) VALUES (2,'11-20 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CREACION_ASU_ACEPT WHERE TD_CREACION_ASU_ACEPT_ID = 3;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CREACION_ASU_ACEPT (TD_CREACION_ASU_ACEPT_ID, TD_CREACION_ASU_ACEPT_DESC) VALUES (3,'> 20 Días');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TD_CREACION_ASU_ACEPT. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                D_PRC_TD_CREA_ASU_REC_DOC_ACEP
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CREA_ASU_REC_DOC_ACEP WHERE TD_CREA_ASU_REC_DOC_ACEP_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CREA_ASU_REC_DOC_ACEP (TD_CREA_ASU_REC_DOC_ACEP_ID, TD_CREA_ASU_REC_DOC_ACEP_DESC) VALUES (-1 ,'Número Días Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CREA_ASU_REC_DOC_ACEP WHERE TD_CREA_ASU_REC_DOC_ACEP_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CREA_ASU_REC_DOC_ACEP (TD_CREA_ASU_REC_DOC_ACEP_ID, TD_CREA_ASU_REC_DOC_ACEP_DESC) VALUES (0 ,'0-5 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CREA_ASU_REC_DOC_ACEP WHERE TD_CREA_ASU_REC_DOC_ACEP_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CREA_ASU_REC_DOC_ACEP (TD_CREA_ASU_REC_DOC_ACEP_ID, TD_CREA_ASU_REC_DOC_ACEP_DESC) VALUES (1,'6-10 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CREA_ASU_REC_DOC_ACEP WHERE TD_CREA_ASU_REC_DOC_ACEP_ID = 2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CREA_ASU_REC_DOC_ACEP (TD_CREA_ASU_REC_DOC_ACEP_ID, TD_CREA_ASU_REC_DOC_ACEP_DESC) VALUES (2,'11-20 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_CREA_ASU_REC_DOC_ACEP WHERE TD_CREA_ASU_REC_DOC_ACEP_ID = 3;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_CREA_ASU_REC_DOC_ACEP (TD_CREA_ASU_REC_DOC_ACEP_ID, TD_CREA_ASU_REC_DOC_ACEP_DESC) VALUES (3,'> 20 Días');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TD_CREA_ASU_REC_DOC_ACEP. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                D_PRC_TD_REC_DOC_ACEPT_REG_TD
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_REC_DOC_ACEPT_REG_TD WHERE TD_REC_DOC_ACEPT_REG_TD_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_REC_DOC_ACEPT_REG_TD (TD_REC_DOC_ACEPT_REG_TD_ID, TD_REC_DOC_ACEPT_REG_TD_DESC) VALUES (-1 ,'Número Días Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_REC_DOC_ACEPT_REG_TD WHERE TD_REC_DOC_ACEPT_REG_TD_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_REC_DOC_ACEPT_REG_TD (TD_REC_DOC_ACEPT_REG_TD_ID, TD_REC_DOC_ACEPT_REG_TD_DESC) VALUES (0 ,'0-5 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_REC_DOC_ACEPT_REG_TD WHERE TD_REC_DOC_ACEPT_REG_TD_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_REC_DOC_ACEPT_REG_TD (TD_REC_DOC_ACEPT_REG_TD_ID, TD_REC_DOC_ACEPT_REG_TD_DESC) VALUES (1,'6-10 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_REC_DOC_ACEPT_REG_TD WHERE TD_REC_DOC_ACEPT_REG_TD_ID = 2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_REC_DOC_ACEPT_REG_TD (TD_REC_DOC_ACEPT_REG_TD_ID, TD_REC_DOC_ACEPT_REG_TD_DESC) VALUES (2,'11-20 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_REC_DOC_ACEPT_REG_TD WHERE TD_REC_DOC_ACEPT_REG_TD_ID = 3;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_REC_DOC_ACEPT_REG_TD (TD_REC_DOC_ACEPT_REG_TD_ID, TD_REC_DOC_ACEPT_REG_TD_DESC) VALUES (3,'> 20 Días');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TD_REC_DOC_ACEPT_REG_TD. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                D_PRC_TD_REC_DOC_ACEPT_REC_DC
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_REC_DOC_ACEPT_REC_DC WHERE TD_REC_DOC_ACEPT_REC_DC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_REC_DOC_ACEPT_REC_DC (TD_REC_DOC_ACEPT_REC_DC_ID, TD_REC_DOC_ACEPT_REC_DC_DESC) VALUES (-1 ,'Número Días Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_REC_DOC_ACEPT_REC_DC WHERE TD_REC_DOC_ACEPT_REC_DC_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_REC_DOC_ACEPT_REC_DC (TD_REC_DOC_ACEPT_REC_DC_ID, TD_REC_DOC_ACEPT_REC_DC_DESC) VALUES (0 ,'0-5 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_REC_DOC_ACEPT_REC_DC WHERE TD_REC_DOC_ACEPT_REC_DC_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_REC_DOC_ACEPT_REC_DC (TD_REC_DOC_ACEPT_REC_DC_ID, TD_REC_DOC_ACEPT_REC_DC_DESC) VALUES (1,'6-10 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_REC_DOC_ACEPT_REC_DC WHERE TD_REC_DOC_ACEPT_REC_DC_ID = 2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_REC_DOC_ACEPT_REC_DC (TD_REC_DOC_ACEPT_REC_DC_ID, TD_REC_DOC_ACEPT_REC_DC_DESC) VALUES (2,'11-20 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_REC_DOC_ACEPT_REC_DC WHERE TD_REC_DOC_ACEPT_REC_DC_ID = 3;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_REC_DOC_ACEPT_REC_DC (TD_REC_DOC_ACEPT_REC_DC_ID, TD_REC_DOC_ACEPT_REC_DC_DESC) VALUES (3,'> 20 Días');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TD_REC_DOC_ACEPT_REC_DC. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                D_PRC_TD_ACEPT_ASU_INTERP_DEM
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ACEPT_ASU_INTERP_DEM WHERE TD_ACEPT_ASU_INTERP_DEM_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ACEPT_ASU_INTERP_DEM (TD_ACEPT_ASU_INTERP_DEM_ID, TD_ACEPT_ASU_INTERP_DEM_DESC) VALUES (-1 ,'Número Días Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ACEPT_ASU_INTERP_DEM WHERE TD_ACEPT_ASU_INTERP_DEM_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ACEPT_ASU_INTERP_DEM (TD_ACEPT_ASU_INTERP_DEM_ID, TD_ACEPT_ASU_INTERP_DEM_DESC) VALUES (0 ,'0-5 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ACEPT_ASU_INTERP_DEM WHERE TD_ACEPT_ASU_INTERP_DEM_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ACEPT_ASU_INTERP_DEM (TD_ACEPT_ASU_INTERP_DEM_ID, TD_ACEPT_ASU_INTERP_DEM_DESC) VALUES (1,'6-10 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ACEPT_ASU_INTERP_DEM WHERE TD_ACEPT_ASU_INTERP_DEM_ID = 2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ACEPT_ASU_INTERP_DEM (TD_ACEPT_ASU_INTERP_DEM_ID, TD_ACEPT_ASU_INTERP_DEM_DESC) VALUES (2,'11-20 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ACEPT_ASU_INTERP_DEM WHERE TD_ACEPT_ASU_INTERP_DEM_ID = 3;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ACEPT_ASU_INTERP_DEM (TD_ACEPT_ASU_INTERP_DEM_ID, TD_ACEPT_ASU_INTERP_DEM_DESC) VALUES (3,'> 20 Días');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TD_ACEPT_ASU_INTERP_DEM. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                D_PRC_TD_ID_DECL_RESOL_FIRME
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_DECL_RESOL_FIRME WHERE TD_ID_DECL_RESOL_FIRME_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_DECL_RESOL_FIRME (TD_ID_DECL_RESOL_FIRME_ID, TD_ID_DECL_RESOL_FIRME_DESC) VALUES (-1 ,'Número Días Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_DECL_RESOL_FIRME WHERE TD_ID_DECL_RESOL_FIRME_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_DECL_RESOL_FIRME (TD_ID_DECL_RESOL_FIRME_ID, TD_ID_DECL_RESOL_FIRME_DESC) VALUES (0 ,'0-30 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_DECL_RESOL_FIRME WHERE TD_ID_DECL_RESOL_FIRME_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_DECL_RESOL_FIRME (TD_ID_DECL_RESOL_FIRME_ID, TD_ID_DECL_RESOL_FIRME_DESC) VALUES (1,'31-60 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_DECL_RESOL_FIRME WHERE TD_ID_DECL_RESOL_FIRME_ID = 2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_DECL_RESOL_FIRME (TD_ID_DECL_RESOL_FIRME_ID, TD_ID_DECL_RESOL_FIRME_DESC) VALUES (2,'61-90 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_DECL_RESOL_FIRME WHERE TD_ID_DECL_RESOL_FIRME_ID = 3;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_DECL_RESOL_FIRME (TD_ID_DECL_RESOL_FIRME_ID, TD_ID_DECL_RESOL_FIRME_DESC) VALUES (3,'91-120 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_DECL_RESOL_FIRME WHERE TD_ID_DECL_RESOL_FIRME_ID = 4;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_DECL_RESOL_FIRME (TD_ID_DECL_RESOL_FIRME_ID, TD_ID_DECL_RESOL_FIRME_DESC) VALUES (4,'121-150 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_DECL_RESOL_FIRME WHERE TD_ID_DECL_RESOL_FIRME_ID = 5;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_DECL_RESOL_FIRME (TD_ID_DECL_RESOL_FIRME_ID, TD_ID_DECL_RESOL_FIRME_DESC) VALUES (5,'> 150 Días');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TD_ID_DECL_RESOL_FIRME. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                D_PRC_TD_ID_ORD_INI_APREMIO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_ORD_INI_APREMIO WHERE TD_ID_ORD_INI_APREMIO_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_ORD_INI_APREMIO (TD_ID_ORD_INI_APREMIO_ID, TD_ID_ORD_INI_APREMIO_DESC) VALUES (-1 ,'Número Días Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_ORD_INI_APREMIO WHERE TD_ID_ORD_INI_APREMIO_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_ORD_INI_APREMIO (TD_ID_ORD_INI_APREMIO_ID, TD_ID_ORD_INI_APREMIO_DESC) VALUES (0 ,'0-30 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_ORD_INI_APREMIO WHERE TD_ID_ORD_INI_APREMIO_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_ORD_INI_APREMIO (TD_ID_ORD_INI_APREMIO_ID, TD_ID_ORD_INI_APREMIO_DESC) VALUES (1,'31-60 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_ORD_INI_APREMIO WHERE TD_ID_ORD_INI_APREMIO_ID = 2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_ORD_INI_APREMIO (TD_ID_ORD_INI_APREMIO_ID, TD_ID_ORD_INI_APREMIO_DESC) VALUES (2,'61-90 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_ORD_INI_APREMIO WHERE TD_ID_ORD_INI_APREMIO_ID = 3;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_ORD_INI_APREMIO (TD_ID_ORD_INI_APREMIO_ID, TD_ID_ORD_INI_APREMIO_DESC) VALUES (3,'91-120 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_ORD_INI_APREMIO WHERE TD_ID_ORD_INI_APREMIO_ID = 4;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_ORD_INI_APREMIO (TD_ID_ORD_INI_APREMIO_ID, TD_ID_ORD_INI_APREMIO_DESC) VALUES (4,'121-150 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_ORD_INI_APREMIO WHERE TD_ID_ORD_INI_APREMIO_ID = 5;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_ORD_INI_APREMIO (TD_ID_ORD_INI_APREMIO_ID, TD_ID_ORD_INI_APREMIO_DESC) VALUES (5,'> 150 Días');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TD_ID_ORD_INI_APREMIO. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                D_PRC_TD_ID_HIP_SUBASTA
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_HIP_SUBASTA WHERE TD_ID_HIP_SUBASTA_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_HIP_SUBASTA (TD_ID_HIP_SUBASTA_ID, TD_ID_HIP_SUBASTA_DESC) VALUES (-1 ,'Número Días Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_HIP_SUBASTA WHERE TD_ID_HIP_SUBASTA_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_HIP_SUBASTA (TD_ID_HIP_SUBASTA_ID, TD_ID_HIP_SUBASTA_DESC) VALUES (0 ,'0-30 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_HIP_SUBASTA WHERE TD_ID_HIP_SUBASTA_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_HIP_SUBASTA (TD_ID_HIP_SUBASTA_ID, TD_ID_HIP_SUBASTA_DESC) VALUES (1,'31-60 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_HIP_SUBASTA WHERE TD_ID_HIP_SUBASTA_ID = 2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_HIP_SUBASTA (TD_ID_HIP_SUBASTA_ID, TD_ID_HIP_SUBASTA_DESC) VALUES (2,'61-90 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_HIP_SUBASTA WHERE TD_ID_HIP_SUBASTA_ID = 3;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_HIP_SUBASTA (TD_ID_HIP_SUBASTA_ID, TD_ID_HIP_SUBASTA_DESC) VALUES (3,'91-120 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_HIP_SUBASTA WHERE TD_ID_HIP_SUBASTA_ID = 4;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_HIP_SUBASTA (TD_ID_HIP_SUBASTA_ID, TD_ID_HIP_SUBASTA_DESC) VALUES (4,'121-150 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_HIP_SUBASTA WHERE TD_ID_HIP_SUBASTA_ID = 5;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_HIP_SUBASTA (TD_ID_HIP_SUBASTA_ID, TD_ID_HIP_SUBASTA_DESC) VALUES (5,'> 150 Días');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TD_ID_HIP_SUBASTA. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                D_PRC_TD_SUB_SOL_SUB_CEL
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_SUB_SOL_SUB_CEL WHERE TD_SUB_SOL_SUB_CEL_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_SUB_SOL_SUB_CEL (TD_SUB_SOL_SUB_CEL_ID, TD_SUB_SOL_SUB_CEL_DESC) VALUES (-1 ,'Número Días Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_SUB_SOL_SUB_CEL WHERE TD_SUB_SOL_SUB_CEL_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_SUB_SOL_SUB_CEL (TD_SUB_SOL_SUB_CEL_ID, TD_SUB_SOL_SUB_CEL_DESC) VALUES (0 ,'0-30 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_SUB_SOL_SUB_CEL WHERE TD_SUB_SOL_SUB_CEL_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_SUB_SOL_SUB_CEL (TD_SUB_SOL_SUB_CEL_ID, TD_SUB_SOL_SUB_CEL_DESC) VALUES (1,'31-60 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_SUB_SOL_SUB_CEL WHERE TD_SUB_SOL_SUB_CEL_ID = 2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_SUB_SOL_SUB_CEL (TD_SUB_SOL_SUB_CEL_ID, TD_SUB_SOL_SUB_CEL_DESC) VALUES (2,'61-90 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_SUB_SOL_SUB_CEL WHERE TD_SUB_SOL_SUB_CEL_ID = 3;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_SUB_SOL_SUB_CEL (TD_SUB_SOL_SUB_CEL_ID, TD_SUB_SOL_SUB_CEL_DESC) VALUES (3,'> 90 Días');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TD_SUB_SOL_SUB_CEL. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                D_PRC_TD_SUB_CEL_CESION_REMATE
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_SUB_CEL_CESION_REMATE WHERE TD_SUB_CEL_CESION_REMATE_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_SUB_CEL_CESION_REMATE (TD_SUB_CEL_CESION_REMATE_ID, TD_SUB_CEL_CESION_REMATE_DESC) VALUES (-1 ,'Número Días Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_SUB_CEL_CESION_REMATE WHERE TD_SUB_CEL_CESION_REMATE_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_SUB_CEL_CESION_REMATE (TD_SUB_CEL_CESION_REMATE_ID, TD_SUB_CEL_CESION_REMATE_DESC) VALUES (0 ,'0-30 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_SUB_CEL_CESION_REMATE WHERE TD_SUB_CEL_CESION_REMATE_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_SUB_CEL_CESION_REMATE (TD_SUB_CEL_CESION_REMATE_ID, TD_SUB_CEL_CESION_REMATE_DESC) VALUES (1,'31-60 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_SUB_CEL_CESION_REMATE WHERE TD_SUB_CEL_CESION_REMATE_ID = 2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_SUB_CEL_CESION_REMATE (TD_SUB_CEL_CESION_REMATE_ID, TD_SUB_CEL_CESION_REMATE_DESC) VALUES (2,'61-90 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_SUB_CEL_CESION_REMATE WHERE TD_SUB_CEL_CESION_REMATE_ID = 3;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_SUB_CEL_CESION_REMATE (TD_SUB_CEL_CESION_REMATE_ID, TD_SUB_CEL_CESION_REMATE_DESC) VALUES (3,'> 90 Días');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TD_SUB_CEL_CESION_REMATE. Realizados INSERTS', 3;
+
+-- ----------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--                D_PRC_FASE_SUBASTA_HIPOTECARIO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_FASE_SUBASTA_HIPOTECARIO WHERE FASE_SUBASTA_HIPOTECARIO_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_FASE_SUBASTA_HIPOTECARIO (FASE_SUBASTA_HIPOTECARIO_ID, FASE_SUBASTA_HIPOTECARIO_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_FASE_SUBASTA_HIPOTECARIO WHERE FASE_SUBASTA_HIPOTECARIO_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_FASE_SUBASTA_HIPOTECARIO (FASE_SUBASTA_HIPOTECARIO_ID, FASE_SUBASTA_HIPOTECARIO_DESC) VALUES (1,'Pendiente Interposición');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_FASE_SUBASTA_HIPOTECARIO WHERE FASE_SUBASTA_HIPOTECARIO_ID = 2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_FASE_SUBASTA_HIPOTECARIO (FASE_SUBASTA_HIPOTECARIO_ID, FASE_SUBASTA_HIPOTECARIO_DESC) VALUES (2,'Demanda Presentada');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_FASE_SUBASTA_HIPOTECARIO WHERE FASE_SUBASTA_HIPOTECARIO_ID = 3;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_FASE_SUBASTA_HIPOTECARIO (FASE_SUBASTA_HIPOTECARIO_ID, FASE_SUBASTA_HIPOTECARIO_DESC) VALUES (3,'Subasta Solicitada');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_FASE_SUBASTA_HIPOTECARIO WHERE FASE_SUBASTA_HIPOTECARIO_ID = 4;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_FASE_SUBASTA_HIPOTECARIO (FASE_SUBASTA_HIPOTECARIO_ID, FASE_SUBASTA_HIPOTECARIO_DESC) VALUES (4,'Subasta Señalada');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_FASE_SUBASTA_HIPOTECARIO WHERE FASE_SUBASTA_HIPOTECARIO_ID = 5;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_FASE_SUBASTA_HIPOTECARIO (FASE_SUBASTA_HIPOTECARIO_ID, FASE_SUBASTA_HIPOTECARIO_DESC) VALUES (5,'Subasta Suspendida');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_FASE_SUBASTA_HIPOTECARIO WHERE FASE_SUBASTA_HIPOTECARIO_ID = 6;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_FASE_SUBASTA_HIPOTECARIO (FASE_SUBASTA_HIPOTECARIO_ID, FASE_SUBASTA_HIPOTECARIO_DESC) VALUES (6,'Subasta Celebrada: Pte Cesión Remate');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_FASE_SUBASTA_HIPOTECARIO WHERE FASE_SUBASTA_HIPOTECARIO_ID = 7;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_FASE_SUBASTA_HIPOTECARIO (FASE_SUBASTA_HIPOTECARIO_ID, FASE_SUBASTA_HIPOTECARIO_DESC) VALUES (7,'Subasta Celebrada: con Cesión Remate');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_FASE_SUBASTA_HIPOTECARIO WHERE FASE_SUBASTA_HIPOTECARIO_ID = 8;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_FASE_SUBASTA_HIPOTECARIO (FASE_SUBASTA_HIPOTECARIO_ID, FASE_SUBASTA_HIPOTECARIO_DESC) VALUES (8,'Subasta Celebrada: Pte Adjudicacion');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_FASE_SUBASTA_HIPOTECARIO WHERE FASE_SUBASTA_HIPOTECARIO_ID = 9;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_FASE_SUBASTA_HIPOTECARIO (FASE_SUBASTA_HIPOTECARIO_ID, FASE_SUBASTA_HIPOTECARIO_DESC) VALUES (9,'Adjudicación');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_FASE_SUBASTA_HIPOTECARIO WHERE FASE_SUBASTA_HIPOTECARIO_ID = 10;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_FASE_SUBASTA_HIPOTECARIO (FASE_SUBASTA_HIPOTECARIO_ID, FASE_SUBASTA_HIPOTECARIO_DESC) VALUES (10,'Pendiente Posesión');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_FASE_SUBASTA_HIPOTECARIO WHERE FASE_SUBASTA_HIPOTECARIO_ID = 11;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_FASE_SUBASTA_HIPOTECARIO (FASE_SUBASTA_HIPOTECARIO_ID, FASE_SUBASTA_HIPOTECARIO_DESC) VALUES (11,'Posesión');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_FASE_SUBASTA_HIPOTECARIO WHERE FASE_SUBASTA_HIPOTECARIO_ID = 12;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_FASE_SUBASTA_HIPOTECARIO (FASE_SUBASTA_HIPOTECARIO_ID, FASE_SUBASTA_HIPOTECARIO_DESC) VALUES (12,'Otros');
+  END IF; 
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_FASE_SUBASTA_HIPOTECARIO. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                      D_PRC_ULT_TAR_FASE_HIP
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_FASE_HIP WHERE ULT_TAR_FASE_HIP_ID = -2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_FASE_HIP (ULT_TAR_FASE_HIP_ID, ULT_TAR_FASE_HIP_DESC) VALUES (-2 ,'Ninguna Tarea Asociada');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ULT_TAR_FASE_HIP WHERE ULT_TAR_FASE_HIP_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ULT_TAR_FASE_HIP (ULT_TAR_FASE_HIP_ID, ULT_TAR_FASE_HIP_DESC) VALUES (-1, 'Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_ULT_TAR_FASE_HIP (ULT_TAR_FASE_HIP_ID, ULT_TAR_FASE_HIP_DESC)
+    SELECT TAP_ID, TAP_DESCRIPCION FROM '||V_DATASTAGE||'.TAP_TAREA_PROCEDIMIENTO';
+	
+   --update de las descripciones de las tareas para diferenciar BANKIA de SAREB
+  EXECUTE IMMEDIATE
+	'UPDATE D_PRC_ULT_TAR_FASE_HIP
+	 SET ULT_TAR_FASE_HIP_DESC= ULT_TAR_FASE_HIP_DESC || '' SAREB''
+	 where ULT_TAR_FASE_HIP_ID IN (''10000000002631'',''10000000002632'',''10000000002633'',''10000000002634'',''10000000002635'',''10000000002636'',''10000000002637'',''10000000002638'',''10000000002639'',''10000000002640'',''10000000002641'',''10000000002642'',''10000000002643'',''10000000002644'',''10000000002645'',''10000000002646'',''10000000002647'',''10000000002648'',''10000000002649'',''10000000002650'')';
+	
+  EXECUTE IMMEDIATE
+    'UPDATE D_PRC_ULT_TAR_FASE_HIP
+	 SET ULT_TAR_FASE_HIP_DESC= ULT_TAR_FASE_HIP_DESC || '' BANKIA''
+	 where ULT_TAR_FASE_HIP_ID IN (''10000000002333'',''10000000002829'',''10000000002830'',''10000000002831'',''10000000002832'',''10000000002833'',''10000000002834'',''10000000002835'',''10000000002836'',''10000000002837'',''10000000002838'',''10000000002839'',''10000000002840'',''10000000002841'',''10000000002842'',''10000000002843'',''10000000002844'',''10000000002845'')';
+	
+   V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ULT_TAR_FASE_HIP. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+-- ----------------------------------------------------------------------------------------------
+--                D_PRC_TD_ID_MON_DECRETO_FIN
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_MON_DECRETO_FIN WHERE TD_ID_MON_DECRETO_FIN_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_MON_DECRETO_FIN (TD_ID_MON_DECRETO_FIN_ID, TD_ID_MON_DECRETO_FIN_DESC) VALUES (-1 ,'Número Días Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_MON_DECRETO_FIN WHERE TD_ID_MON_DECRETO_FIN_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_MON_DECRETO_FIN (TD_ID_MON_DECRETO_FIN_ID, TD_ID_MON_DECRETO_FIN_DESC) VALUES (0 ,'0-30 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_MON_DECRETO_FIN WHERE TD_ID_MON_DECRETO_FIN_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_MON_DECRETO_FIN (TD_ID_MON_DECRETO_FIN_ID, TD_ID_MON_DECRETO_FIN_DESC) VALUES (1,'31-60 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_MON_DECRETO_FIN WHERE TD_ID_MON_DECRETO_FIN_ID = 2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_MON_DECRETO_FIN (TD_ID_MON_DECRETO_FIN_ID, TD_ID_MON_DECRETO_FIN_DESC) VALUES (2,'61-90 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_MON_DECRETO_FIN WHERE TD_ID_MON_DECRETO_FIN_ID = 3;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_MON_DECRETO_FIN (TD_ID_MON_DECRETO_FIN_ID, TD_ID_MON_DECRETO_FIN_DESC) VALUES (3,'91-120 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_MON_DECRETO_FIN WHERE TD_ID_MON_DECRETO_FIN_ID = 4;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_MON_DECRETO_FIN (TD_ID_MON_DECRETO_FIN_ID, TD_ID_MON_DECRETO_FIN_DESC) VALUES (4,'121-150 Días');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TD_ID_MON_DECRETO_FIN WHERE TD_ID_MON_DECRETO_FIN_ID = 5;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TD_ID_MON_DECRETO_FIN (TD_ID_MON_DECRETO_FIN_ID, TD_ID_MON_DECRETO_FIN_DESC) VALUES (5,'>150 Días');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TD_ID_MON_DECRETO_FIN. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                D_PRC_F_SUBASTA_EJEC_NOTARIAL
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_F_SUBASTA_EJEC_NOTARIAL WHERE F_SUBASTA_EJEC_NOTARIAL_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_F_SUBASTA_EJEC_NOTARIAL (F_SUBASTA_EJEC_NOTARIAL_ID, F_SUBASTA_EJEC_NOTARIAL_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_F_SUBASTA_EJEC_NOTARIAL WHERE F_SUBASTA_EJEC_NOTARIAL_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_F_SUBASTA_EJEC_NOTARIAL (F_SUBASTA_EJEC_NOTARIAL_ID, F_SUBASTA_EJEC_NOTARIAL_DESC) VALUES (1 ,'Demanda Presentada');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_F_SUBASTA_EJEC_NOTARIAL WHERE F_SUBASTA_EJEC_NOTARIAL_ID = 2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_F_SUBASTA_EJEC_NOTARIAL (F_SUBASTA_EJEC_NOTARIAL_ID, F_SUBASTA_EJEC_NOTARIAL_DESC) VALUES (2,'Subasta Solicitada');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_F_SUBASTA_EJEC_NOTARIAL WHERE F_SUBASTA_EJEC_NOTARIAL_ID = 3;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_F_SUBASTA_EJEC_NOTARIAL (F_SUBASTA_EJEC_NOTARIAL_ID, F_SUBASTA_EJEC_NOTARIAL_DESC) VALUES (3,'Subasta Señalada');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_F_SUBASTA_EJEC_NOTARIAL WHERE F_SUBASTA_EJEC_NOTARIAL_ID = 4;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_F_SUBASTA_EJEC_NOTARIAL (F_SUBASTA_EJEC_NOTARIAL_ID, F_SUBASTA_EJEC_NOTARIAL_DESC) VALUES (4,'Subasta Celebrada: Con Cesión de Remate');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_F_SUBASTA_EJEC_NOTARIAL WHERE F_SUBASTA_EJEC_NOTARIAL_ID = 5;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_F_SUBASTA_EJEC_NOTARIAL (F_SUBASTA_EJEC_NOTARIAL_ID, F_SUBASTA_EJEC_NOTARIAL_DESC) VALUES (5,'Subasta Celebrada: Pendiente Adjudicación');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_F_SUBASTA_EJEC_NOTARIAL WHERE F_SUBASTA_EJEC_NOTARIAL_ID = 6;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_F_SUBASTA_EJEC_NOTARIAL (F_SUBASTA_EJEC_NOTARIAL_ID, F_SUBASTA_EJEC_NOTARIAL_DESC) VALUES (6,'Otros');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_F_SUBASTA_EJEC_NOTARIAL. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                      D_PRC_CNT_GARANTIA_REAL_ASOC
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_CNT_GARANTIA_REAL_ASOC WHERE CNT_GARANTIA_REAL_ASOC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_CNT_GARANTIA_REAL_ASOC (CNT_GARANTIA_REAL_ASOC_ID, CNT_GARANTIA_REAL_ASOC_DESC) VALUES (-1, 'Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_CNT_GARANTIA_REAL_ASOC WHERE CNT_GARANTIA_REAL_ASOC_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_CNT_GARANTIA_REAL_ASOC (CNT_GARANTIA_REAL_ASOC_ID, CNT_GARANTIA_REAL_ASOC_DESC) VALUES (0, 'Contrato Garantía Real No Asociado');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_CNT_GARANTIA_REAL_ASOC WHERE CNT_GARANTIA_REAL_ASOC_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_CNT_GARANTIA_REAL_ASOC (CNT_GARANTIA_REAL_ASOC_ID, CNT_GARANTIA_REAL_ASOC_DESC) VALUES (1, 'Contrato Garantía Real Asociado');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_CNT_GARANTIA_REAL_ASOC. Realizados INSERTS', 3;
+
+  
+-- ----------------------------------------------------------------------------------------------
+--                                 D_PRC_COBRO_TIPO_DET
+-- ----------------------------------------------------------------------------------------------
+  
+select count(1) into V_NUM_ROW from D_PRC_COBRO_TIPO_DET where TIPO_COBRO_ID = -1;
+  if (V_NUM_ROW = 0) then
+	V_SQL := 'insert into D_PRC_COBRO_TIPO_DET (TIPO_COBRO_DETALLE_ID, TIPO_COBRO_DETALLE_DESC, TIPO_COBRO_ID) values (-1 ,''Desconocido'', -1)';
+   execute immediate(V_SQL);
+  end if;
+
+	V_SQL :=  'insert into D_PRC_COBRO_TIPO_DET (TIPO_COBRO_DETALLE_ID, TIPO_COBRO_DETALLE_DESC, TIPO_COBRO_ID)
+    select DD_SCP_ID, DD_SCP_DESCRIPCION, DD_TCP_ID from ' || V_DATASTAGE || '.DD_SCP_SUBTIPO_COBRO_PAGO scp
+	where not exists (select 1 from D_PRC_COBRO_TIPO_DET prc where prc.TIPO_COBRO_DETALLE_ID = scp.DD_SCP_ID)';
+	execute immediate (V_SQL);	
+	
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_COBRO_TIPO_DET. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                                 D_PRC_COBRO_TIPO
+-- ----------------------------------------------------------------------------------------------
+
+select count(1) into V_NUM_ROW from  D_PRC_COBRO_TIPO where TIPO_COBRO_ID = -1;
+  if (V_NUM_ROW = 0) then
+	V_SQL := 'insert into  D_PRC_COBRO_TIPO (TIPO_COBRO_ID, TIPO_COBRO_DESC) values (-1 ,''Desconocido'')';
+   execute immediate(V_SQL);
+  end if;
+
+	V_SQL :=  'insert into  D_PRC_COBRO_TIPO (TIPO_COBRO_ID, TIPO_COBRO_DESC)
+    select DD_TCP_ID, DD_TCP_DESCRIPCION from ' || V_DATASTAGE || '.DD_TCP_TIPO_COBRO_PAGO tcp
+	where not exists (select 1 from D_PRC_COBRO_TIPO prc where prc.TIPO_COBRO_ID = tcp.DD_TCP_ID)';
+	execute immediate (V_SQL);	
+	
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_COBRO_TIPO. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                                 D_PRC_ACT_ESTIMACIONES
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ACT_ESTIMACIONES WHERE ACT_ESTIMACIONES_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ACT_ESTIMACIONES (ACT_ESTIMACIONES_ID, ACT_ESTIMACIONES_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ACT_ESTIMACIONES WHERE ACT_ESTIMACIONES_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ACT_ESTIMACIONES (ACT_ESTIMACIONES_ID, ACT_ESTIMACIONES_DESC) VALUES (0 ,'No Actualizada En Último Semestre');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ACT_ESTIMACIONES WHERE ACT_ESTIMACIONES_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ACT_ESTIMACIONES (ACT_ESTIMACIONES_ID, ACT_ESTIMACIONES_DESC) VALUES (1, 'Actualizada En Último Semestre');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ACT_ESTIMACIONES. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                                      D_PRC_CARTERA
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_CARTERA WHERE CARTERA_PROCEDIMIENTO_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_CARTERA (CARTERA_PROCEDIMIENTO_ID, CARTERA_PROCEDIMIENTO_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_CARTERA WHERE CARTERA_PROCEDIMIENTO_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_CARTERA (CARTERA_PROCEDIMIENTO_ID, CARTERA_PROCEDIMIENTO_DESC) VALUES (0 ,'Bankia');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_CARTERA WHERE CARTERA_PROCEDIMIENTO_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_CARTERA (CARTERA_PROCEDIMIENTO_ID, CARTERA_PROCEDIMIENTO_DESC) VALUES (1 ,'SAREB');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_CARTERA WHERE CARTERA_PROCEDIMIENTO_ID = 2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_CARTERA (CARTERA_PROCEDIMIENTO_ID, CARTERA_PROCEDIMIENTO_DESC) VALUES (2 ,'Compartida');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_CARTERA. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                                      D_PRC_PARALIZADO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_PARALIZADO WHERE PRC_PARALIZADO_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_PARALIZADO (PRC_PARALIZADO_ID, PRC_PARALIZADO_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_PARALIZADO WHERE PRC_PARALIZADO_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_PARALIZADO (PRC_PARALIZADO_ID, PRC_PARALIZADO_DESC) VALUES (0 ,'No paralizado');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_PARALIZADO WHERE PRC_PARALIZADO_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_PARALIZADO (PRC_PARALIZADO_ID, PRC_PARALIZADO_DESC) VALUES (1 ,'Paralizado');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_PARALIZADO. Realizados INSERTS', 3;
+  
+  
+  
+  -- ----------------------------------------------------------------------------------------------
+ -- ----------------------------------------------------------------------------------------------
+--                                      D_PRC_FINALIZADO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_FINALIZADO WHERE PRC_FINALIZADO_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_FINALIZADO (PRC_FINALIZADO_ID, PRC_FINALIZADO_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_FINALIZADO WHERE PRC_FINALIZADO_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_FINALIZADO (PRC_FINALIZADO_ID, PRC_FINALIZADO_DESC) VALUES (0 ,'No Finalizado');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_FINALIZADO WHERE PRC_FINALIZADO_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_FINALIZADO (PRC_FINALIZADO_ID, PRC_FINALIZADO_DESC) VALUES (1 ,'Finalizado');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_FINALIZADO. Realizados INSERTS', 3;
+
+
+--                          D_PRC_MOTIVO_PARALIZACION
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_MOTIVO_PARALIZACION WHERE MOTIVO_PARALIZACION_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_MOTIVO_PARALIZACION (MOTIVO_PARALIZACION_ID, MOTIVO_PARALIZACION_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_MOTIVO_PARALIZACION(MOTIVO_PARALIZACION_ID, MOTIVO_PARALIZACION_DESC)
+     SELECT DD_DPA_ID, DD_DPA_DESCRIPCION FROM '||V_DATASTAGE||'.DD_DPA_DECISION_PARALIZAR';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_MOTIVO_PARALIZACION. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+
+-- ----------------------------------------------------------------------------------------------
+--                          D_PRC_MOTIVO_FINALIZACION
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_MOTIVO_FINALIZACION WHERE MOTIVO_FINALIZACION_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_MOTIVO_FINALIZACION (MOTIVO_FINALIZACION_ID, MOTIVO_FINALIZACION_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_MOTIVO_FINALIZACION(MOTIVO_FINALIZACION_ID, MOTIVO_FINALIZACION_DESC)
+     SELECT DD_DFI_ID, DD_DFI_DESCRIPCION FROM '||V_DATASTAGE||'.DD_DFI_DECISION_FINALIZAR';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_MOTIVO_FINALIZACION. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+
+
+  
+-- ----------------------------------------------------------------------------------------------
+--                                      D_PRC_TITULAR
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TITULAR WHERE TITULAR_PROCEDIMIENTO_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TITULAR (TITULAR_PROCEDIMIENTO_ID, TITULAR_PROCEDIMIENTO_DESC, DOCUMENTO_ID, NOMBRE, APELLIDO_1, APELLIDO_2) VALUES (-1 , -1, 'Desconocido', 'Desconocido', 'Desconocido', 'Desconocido');
+  END IF;
+
+  -- Insert del primer titular del contrato de pase
+  EXECUTE IMMEDIATE
+  'INSERT INTO D_PRC_TITULAR (TITULAR_PROCEDIMIENTO_ID, TITULAR_PROCEDIMIENTO_DESC, DOCUMENTO_ID, NOMBRE, APELLIDO_1, APELLIDO_2)
+  SELECT P.PER_ID,
+         PER_COD_CLIENTE_ENTIDAD,
+         NVL(PER_DOC_ID, ''Desconocido''),
+         NVL(PER_NOMBRE, ''Desconocido''),
+         NVL(PER_APELLIDO1, ''Desconocido''),
+         NVL(PER_APELLIDO2, ''Desconocido'')
+  FROM '||V_DATASTAGE||'.PER_PERSONAS P
+  JOIN '||V_DATASTAGE||'.CPE_CONTRATOS_PERSONAS CPE ON P.PER_ID = CPE.PER_ID
+  JOIN '||V_DATASTAGE||'.CEX_CONTRATOS_EXPEDIENTE CEX ON CPE.CNT_ID = CEX.CNT_ID
+  WHERE DD_TIN_ID = 1 AND CPE_ORDEN = 1 AND CEX.CEX_PASE = 1
+  GROUP BY P.PER_ID, PER_COD_CLIENTE_ENTIDAD, PER_DOC_ID, PER_NOMBRE, PER_APELLIDO1, PER_APELLIDO2';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TITULAR. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+  
+    -- ----------------------------------------------------------------------------------------------
+--                                  D_PRC_TIPO_ACUERDO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_ACUERDO WHERE TIPO_ACUERDO_PRC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_ACUERDO (TIPO_ACUERDO_PRC_ID, TIPO_ACUERDO_PRC_DESC, TIPO_ACUERDO_PRC_DESC_2) VALUES (-1 ,'Desconocido', 'Desconocido');
+  END IF;
+  
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_TIPO_ACUERDO (TIPO_ACUERDO_PRC_ID, TIPO_ACUERDO_PRC_DESC, TIPO_ACUERDO_PRC_DESC_2)
+     select DD_TPA_ID, DD_TPA_DESCRIPCION, DD_TPA_DESCRIPCION_LARGA from  '||V_DATASTAGE||'.DD_TPA_TIPO_ACUERDO';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+
+
+  
+    -- ----------------------------------------------------------------------------------------------
+--                                  D_PRC_ESTADO_ACUERDO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ESTADO_ACUERDO WHERE ESTADO_ACUERDO_PRC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ESTADO_ACUERDO (ESTADO_ACUERDO_PRC_ID, ESTADO_ACUERDO_PRC_DESC, ESTADO_ACUERDO_PRC_DESC_2) VALUES (-1 ,'Desconocido', 'Desconocido');
+  END IF;
+  
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_ESTADO_ACUERDO (ESTADO_ACUERDO_PRC_ID, ESTADO_ACUERDO_PRC_DESC, ESTADO_ACUERDO_PRC_DESC_2)
+     select DD_EAC_ID, DD_EAC_DESCRIPCION, DD_EAC_DESCRIPCION_LARGA from  '||V_DATASTAGE||'.DD_EAC_ESTADO_ACUERDO';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+
+  
+
+  -- ----------------------------------------------------------------------------------------------
+--                                  D_PRC_TIPO_GESTOR
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_GESTOR WHERE TIPO_GESTOR_PRC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_GESTOR (TIPO_GESTOR_PRC_ID, TIPO_GESTOR_PRC_DESC, TIPO_GESTOR_PRC_DESC_2) VALUES (-1 ,'Desconocido', 'Desconocido');
+  END IF;
+  
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_TIPO_GESTOR (TIPO_GESTOR_PRC_ID, TIPO_GESTOR_PRC_DESC, TIPO_GESTOR_PRC_DESC_2)
+     select DD_TGE_ID, DD_TGE_DESCRIPCION, DD_TGE_DESCRIPCION_LARGA from  '||V_DATASTAGE||'.DD_TGE_TIPO_GESTOR';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TIPO_GESTOR. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+   
+
+-- ----------------------------------------------------------------------------------------------
+--             D_PRC (Usamos el ID de la primera fase del procedimiento)
+-- ----------------------------------------------------------------------------------------------
+  EXECUTE IMMEDIATE
+  'INSERT INTO D_PRC
+   (PROCEDIMIENTO_ID,
+    NUMERO_AUTO,
+    ANIO_CODIGO_AUTO,
+    ASUNTO_ID,
+    JUZGADO_ID,
+    TIPO_RECLAMACION_ID,
+	PROCEDIMIENTO_DESC
+
+   )
+  SELECT PRC_ID,
+    NVL(PRC_COD_PROC_EN_JUZGADO, ''Desconocido''),
+    NVL(SUBSTR(PRC_COD_PROC_EN_JUZGADO, -4,4), ''Desconocido''),    -- Actualizar para recoger los que tienen la fecha en la izquierda (mal introducidos).
+    ASU_ID,
+    NVL(DD_JUZ_ID, -1),
+    NVL(DD_TRE_ID, -1),
+	TO_CHAR(PRC_ID)
+
+  FROM '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS 
+  WHERE PRC_PRC_ID IS NULL';
+
+  V_ROWCOUNT := sql%rowcount;     
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+
+
+
+  
+  EXECUTE IMMEDIATE
+  'INSERT INTO TMP_PRC_GESTOR (PROCEDIMIENTO_ID, GESTOR_PRC_ID)
+  SELECT PRC.PRC_ID, USU.USU_ID FROM '||V_DATASTAGE||'.USD_USUARIOS_DESPACHOS USD
+                    JOIN '||V_DATASTAGE||'.USU_USUARIOS USU ON USD.USU_ID = USU.USU_ID
+                    JOIN '||V_DATASTAGE||'.GAA_GESTOR_ADICIONAL_ASUNTO GAA ON GAA.USD_ID = USD.USD_ID
+                    JOIN '||V_DATASTAGE||'.DD_TGE_TIPO_GESTOR TGES ON GAA.DD_TGE_ID = TGES.DD_TGE_ID
+                    JOIN '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC ON GAA.ASU_ID = PRC.ASU_ID
+                    WHERE TGES.DD_TGE_DESCRIPCION = ''Letrado''';
+
+  EXECUTE IMMEDIATE
+  'INSERT INTO TMP_PRC_SUPERVISOR (PROCEDIMIENTO_ID, SUPERVISOR_PRC_ID)
+  SELECT PRC.PRC_ID, USU.USU_ID FROM '||V_DATASTAGE||'.USD_USUARIOS_DESPACHOS USD
+                    JOIN '||V_DATASTAGE||'.USU_USUARIOS USU ON USD.USU_ID = USU.USU_ID
+                    JOIN '||V_DATASTAGE||'.GAA_GESTOR_ADICIONAL_ASUNTO GAA ON GAA.USD_ID = USD.USD_ID
+                    JOIN '||V_DATASTAGE||'.DD_TGE_TIPO_GESTOR TGES ON GAA.DD_TGE_ID = TGES.DD_TGE_ID
+                    JOIN '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC ON GAA.ASU_ID = PRC.ASU_ID
+                    WHERE TGES.DD_TGE_DESCRIPCION = ''Supervisor nivel 1''';
+
+
+  UPDATE D_PRC DPRC SET GESTOR_PRC_ID = (SELECT GESTOR_PRC_ID FROM TMP_PRC_GESTOR TPG WHERE DPRC.PROCEDIMIENTO_ID =  TPG.PROCEDIMIENTO_ID);
+  UPDATE D_PRC SET GESTOR_PRC_ID = -1 WHERE  GESTOR_PRC_ID IS NULL;
+  UPDATE D_PRC DPRC SET SUPERVISOR_PRC_ID =(SELECT NVL(SUPERVISOR_PRC_ID, -1) FROM TMP_PRC_SUPERVISOR TPS WHERE DPRC.PROCEDIMIENTO_ID = TPS.PROCEDIMIENTO_ID);
+  UPDATE D_PRC SET SUPERVISOR_PRC_ID = -1 WHERE  SUPERVISOR_PRC_ID IS NULL;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC. Realizados UPDATES', 3;
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+-- ----------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--                                  D_PRC_PROPIETARIO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_PROPIETARIO WHERE PROPIETARIO_PRC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_PROPIETARIO (PROPIETARIO_PRC_ID, PROPIETARIO_PRC_DESC, PROPIETARIO_PRC_DESC_2) VALUES (-1 ,'Desconocido', 'Desconocido');
+  END IF;
+  
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_PROPIETARIO (PROPIETARIO_PRC_ID, PROPIETARIO_PRC_DESC, PROPIETARIO_PRC_DESC_2)
+     select DD_PRO_ID, DD_PRO_DESCRIPCION, DD_PRO_DESCRIPCION_LARGA from  '||V_DATASTAGE||'.DD_PRO_PROPIETARIOS';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_PROPIETARIO. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                                  D_PRC_TIPO_PRE
+-- ----------------------------------------------------------------------------------------------
+ SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_PRE WHERE TIPO_PROCEDIMIENTO_PRE_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_PRE (TIPO_PROCEDIMIENTO_PRE_ID, TIPO_PROCEDIMIENTO_PRE_DESC, TIPO_PROCEDIMIENTO_PRE_DESC_2, TIPO_PRE_AGR_ID) VALUES (-1 ,'Desconocido', 'Desconocido', -1);
+  END IF;
+  
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_TIPO_PRE (TIPO_PROCEDIMIENTO_PRE_ID, TIPO_PROCEDIMIENTO_PRE_DESC, TIPO_PROCEDIMIENTO_PRE_DESC_2)
+     select DD_TPO_ID, DD_TPO_DESCRIPCION, DD_TPO_DESCRIPCION_LARGA from  '||V_DATASTAGE||'.DD_TPO_TIPO_PROCEDIMIENTO';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+  -- Incluimos TIPO_PRE_AGR_DESC
+  -- 1 - P. Monitorio
+  UPDATE D_PRC_TIPO_PRE SET TIPO_PRE_AGR_ID = 1 WHERE TIPO_PROCEDIMIENTO_PRE_ID IN (2382);
+  -- 2-ETNJ
+  UPDATE D_PRC_TIPO_PRE SET TIPO_PRE_AGR_ID = 2 WHERE TIPO_PROCEDIMIENTO_PRE_ID IN (2378);
+  -- 3-P. Hipotecario
+  UPDATE D_PRC_TIPO_PRE SET TIPO_PRE_AGR_ID = 3 WHERE TIPO_PROCEDIMIENTO_PRE_ID IN (2353);
+  -- 4-Ordinario
+  UPDATE D_PRC_TIPO_PRE SET TIPO_PRE_AGR_ID = 4 WHERE TIPO_PROCEDIMIENTO_PRE_ID IN (2381);
+  -- 5-Concurso
+  UPDATE D_PRC_TIPO_PRE SET TIPO_PRE_AGR_ID = 5 WHERE TIPO_PROCEDIMIENTO_PRE_ID IN 
+	(2154,2542,2357,2446,2356,2371,2385,2370,2373,2358,2384,2351,2374,2449,2372,2369);
+  -- 6-ETJ
+  UPDATE D_PRC_TIPO_PRE SET TIPO_PRE_AGR_ID = 6 WHERE TIPO_PROCEDIMIENTO_PRE_ID IN (2377);
+  -- 7-Resto
+  UPDATE D_PRC_TIPO_PRE SET TIPO_PRE_AGR_ID = 7 WHERE TIPO_PROCEDIMIENTO_PRE_ID IS NULL;
+  -- 8-Cambiario
+  UPDATE D_PRC_TIPO_PRE SET TIPO_PRE_AGR_ID = 8 WHERE TIPO_PROCEDIMIENTO_PRE_ID IN (2452);
+  -- 9-Aceptación y decisión
+  UPDATE D_PRC_TIPO_PRE SET TIPO_PRE_AGR_ID = 9 WHERE TIPO_PROCEDIMIENTO_PRE_ID IN (2156);
+  -- 10-Verbal desde monitorio
+  UPDATE D_PRC_TIPO_PRE SET TIPO_PRE_AGR_ID = 10 WHERE TIPO_PROCEDIMIENTO_PRE_ID IN (2544);
+  -- 11-Ejecución notarial
+  UPDATE D_PRC_TIPO_PRE SET TIPO_PRE_AGR_ID = 11 WHERE TIPO_PROCEDIMIENTO_PRE_ID IN (2450);
+  -- 12-Verbal
+  UPDATE D_PRC_TIPO_PRE SET TIPO_PRE_AGR_ID = 12 WHERE TIPO_PROCEDIMIENTO_PRE_ID IN (2543);
+  -- 13-Pre concurso
+  UPDATE D_PRC_TIPO_PRE SET TIPO_PRE_AGR_ID = 13 WHERE TIPO_PROCEDIMIENTO_PRE_ID IN (2375);
+
+  COMMIT;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TIPO_PRE. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+
+-- ----------------------------------------------------------------------------------------------
+--                          D_PRC_TIPO_PRE_AGR
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_PRE_AGR WHERE TIPO_PRE_AGR_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_PRE_AGR (TIPO_PRE_AGR_ID, TIPO_PRE_AGR_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_PRE_AGR WHERE TIPO_PRE_AGR_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_PRE_AGR (TIPO_PRE_AGR_ID, TIPO_PRE_AGR_DESC) VALUES (1 ,'Monitorio');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_PRE_AGR WHERE TIPO_PRE_AGR_ID = 2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_PRE_AGR (TIPO_PRE_AGR_ID, TIPO_PRE_AGR_DESC) VALUES (2 ,'ETNJ');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_PRE_AGR WHERE TIPO_PRE_AGR_ID = 3;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_PRE_AGR (TIPO_PRE_AGR_ID, TIPO_PRE_AGR_DESC) VALUES (3 ,'Hipotecario');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_PRE_AGR WHERE TIPO_PRE_AGR_ID = 4;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_PRE_AGR (TIPO_PRE_AGR_ID, TIPO_PRE_AGR_DESC) VALUES (4 ,'Ordinario');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_PRE_AGR WHERE TIPO_PRE_AGR_ID = 5;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_PRE_AGR (TIPO_PRE_AGR_ID, TIPO_PRE_AGR_DESC) VALUES (5 ,'Concursal');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_PRE_AGR WHERE TIPO_PRE_AGR_ID = 6;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_PRE_AGR (TIPO_PRE_AGR_ID, TIPO_PRE_AGR_DESC) VALUES (6 ,'ETJ');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_PRE_AGR WHERE TIPO_PRE_AGR_ID = 7;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_PRE_AGR (TIPO_PRE_AGR_ID, TIPO_PRE_AGR_DESC) VALUES (7 ,'Resto');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_PRE_AGR WHERE TIPO_PRE_AGR_ID = 8;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_PRE_AGR (TIPO_PRE_AGR_ID, TIPO_PRE_AGR_DESC) VALUES (8 ,'Cambiario');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_PRE_AGR WHERE TIPO_PRE_AGR_ID = 9;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_PRE_AGR (TIPO_PRE_AGR_ID, TIPO_PRE_AGR_DESC) VALUES (9 ,'Aceptación y decisión');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_PRE_AGR WHERE TIPO_PRE_AGR_ID = 10;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_PRE_AGR (TIPO_PRE_AGR_ID, TIPO_PRE_AGR_DESC) VALUES (10 ,'Verbal desde monitorio');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_PRE_AGR WHERE TIPO_PRE_AGR_ID = 11;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_PRE_AGR (TIPO_PRE_AGR_ID, TIPO_PRE_AGR_DESC) VALUES (11 ,'Ejecución notarial');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_PRE_AGR WHERE TIPO_PRE_AGR_ID = 12;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_PRE_AGR (TIPO_PRE_AGR_ID, TIPO_PRE_AGR_DESC) VALUES (12 ,'Verbal');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_PRE_AGR WHERE TIPO_PRE_AGR_ID = 13;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_PRE_AGR (TIPO_PRE_AGR_ID, TIPO_PRE_AGR_DESC) VALUES (13 ,'Pre concurso');
+  END IF;
+
+  COMMIT;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                                  D_PRC_ESTADO_PREPARACION
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ESTADO_PREPARACION WHERE ESTADO_PREPARACION_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ESTADO_PREPARACION (ESTADO_PREPARACION_ID, ESTADO_PREPARACION_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_ESTADO_PREPARACION (ESTADO_PREPARACION_ID, ESTADO_PREPARACION_DESC)
+     select DD_PCO_PEP_ID, DD_PCO_PEP_DESCRIPCION from  '||V_DATASTAGE||'.DD_PCO_PRC_ESTADO_PREPARACION';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ESTADO_PREPARACION. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+
+-- ----------------------------------------------------------------------------------------------
+--                                  D_PRC_TIPO_PREPARACION
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_PREPARACION WHERE TIPO_PREPARACION_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_PREPARACION (TIPO_PREPARACION_ID, TIPO_PREPARACION_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_TIPO_PREPARACION (TIPO_PREPARACION_ID, TIPO_PREPARACION_DESC)
+     select DD_PCO_PTP_ID, DD_PCO_PTP_DESCRIPCION from  '||V_DATASTAGE||'.DD_PCO_PRC_TIPO_PREPARACION';
+
+  V_ROWCOUNT := sql%rowcount;     
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TIPO_PREPARACION. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  commit;
+  
+  
+-- ----------------------------------------------------------------------------------------------
+--                                  D_PRC_ESTADO_BUROFAX
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ESTADO_BUROFAX WHERE ESTADO_BUROFAX_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ESTADO_BUROFAX (ESTADO_BUROFAX_ID, ESTADO_BUROFAX_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_ESTADO_BUROFAX (ESTADO_BUROFAX_ID, ESTADO_BUROFAX_DESC)
+     select DD_PCO_BFE_ID, DD_PCO_BFE_DESCRIPCION from  '||V_DATASTAGE||'.DD_PCO_BFE_ESTADO';
+
+  V_ROWCOUNT := sql%rowcount;     
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ESTADO_BUROFAX. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  commit;
+  
+  
+-- ----------------------------------------------------------------------------------------------
+--                                  D_PRC_RESULTADO_BUROFAX
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_RESULTADO_BUROFAX WHERE RESULTADO_BUROFAX_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_RESULTADO_BUROFAX (RESULTADO_BUROFAX_ID, RESULTADO_BUROFAX_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_RESULTADO_BUROFAX WHERE RESULTADO_BUROFAX_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_RESULTADO_BUROFAX (RESULTADO_BUROFAX_ID, RESULTADO_BUROFAX_DESC) VALUES (0 ,'Negativo');
+  END IF;
+  
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_RESULTADO_BUROFAX WHERE RESULTADO_BUROFAX_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_RESULTADO_BUROFAX (RESULTADO_BUROFAX_ID, RESULTADO_BUROFAX_DESC) VALUES (1 ,'Positivo');
+  END IF;
+
+  V_ROWCOUNT := sql%rowcount;     
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_RESULTADO_BUROFAX. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  commit;
+  
+-- ----------------------------------------------------------------------------------------------
+--                                  D_PRC_TIPO_BUROFAX_ENVIO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_BUROFAX_ENVIO WHERE TIPO_BUROFAX_ENVIO_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_BUROFAX_ENVIO (TIPO_BUROFAX_ENVIO_ID, TIPO_BUROFAX_ENVIO_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_TIPO_BUROFAX_ENVIO (TIPO_BUROFAX_ENVIO_ID, TIPO_BUROFAX_ENVIO_DESC)
+     select DD_PCO_BFT_ID, DD_PCO_BFT_DESCRIPCION from  '||V_DATASTAGE||'.DD_PCO_BFT_TIPO';
+
+  V_ROWCOUNT := sql%rowcount;     
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TIPO_BUROFAX_ENVIO. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  commit;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                                  D_PRC_RESULT_BUROFAX_ENVIO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_RESULT_BUROFAX_ENVIO WHERE RESULTADO_BUROFAX_ENVIO_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_RESULT_BUROFAX_ENVIO (RESULTADO_BUROFAX_ENVIO_ID, RESULTADO_BUROFAX_ENVIO_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_RESULT_BUROFAX_ENVIO (RESULTADO_BUROFAX_ENVIO_ID, RESULTADO_BUROFAX_ENVIO_DESC)
+     select DD_PCO_BFR_ID, DD_PCO_BFR_DESCRIPCION from  '||V_DATASTAGE||'.DD_PCO_BFR_RESULTADO';
+
+  V_ROWCOUNT := sql%rowcount;     
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_RESULT_BUROFAX_ENVIO. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  commit;
+  
+-- ----------------------------------------------------------------------------------------------
+--                                  D_PRC_TIPO_DOCUMENTO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_DOCUMENTO WHERE TIPO_DOCUMENTO_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_DOCUMENTO (TIPO_DOCUMENTO_ID, TIPO_DOCUMENTO_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_TIPO_DOCUMENTO (TIPO_DOCUMENTO_ID, TIPO_DOCUMENTO_DESC, TIPO_DOCUMENTO_DESC_2)
+     select DD_TFA_ID, DD_TFA_DESCRIPCION, DD_TFA_DESCRIPCION_LARGA from  '||V_DATASTAGE||'.DD_TFA_FICHERO_ADJUNTO';
+
+  V_ROWCOUNT := sql%rowcount;     
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TIPO_DOCUMENTO. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  commit;
+  
+  
+-- ----------------------------------------------------------------------------------------------
+--                                  D_PRC_ESTADO_DOCUMENTO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ESTADO_DOCUMENTO WHERE ESTADO_DOCUMENTO_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ESTADO_DOCUMENTO (ESTADO_DOCUMENTO_ID, ESTADO_DOCUMENTO_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_ESTADO_DOCUMENTO (ESTADO_DOCUMENTO_ID, ESTADO_DOCUMENTO_DESC)
+     select DD_PCO_DED_ID, DD_PCO_DED_DESCRIPCION from  '||V_DATASTAGE||'.DD_PCO_DOC_ESTADO';
+
+  V_ROWCOUNT := sql%rowcount;     
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ESTADO_DOCUMENTO. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  commit;
+  
+  
+-- ----------------------------------------------------------------------------------------------
+--                                  D_PRC_RESULTADO_SOLICITUD
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_RESULTADO_SOLICITUD WHERE RESULTADO_SOLICITUD_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_RESULTADO_SOLICITUD (RESULTADO_SOLICITUD_ID, RESULTADO_SOLICITUD_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_RESULTADO_SOLICITUD (RESULTADO_SOLICITUD_ID, RESULTADO_SOLICITUD_DESC)
+     select DD_PCO_DSR_ID, DD_PCO_DSR_DESCRIPCION from  '||V_DATASTAGE||'.DD_PCO_DOC_SOLICIT_RESULTADO';
+
+  V_ROWCOUNT := sql%rowcount;     
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_RESULTADO_SOLICITUD. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  commit;
+
+-- ----------------------------------------------------------------------------------------------
+--                                  D_PRC_TIPO_ACTOR_SOLICITUD
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TIPO_ACTOR_SOLICITUD WHERE TIPO_ACTOR_SOLICITUD_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TIPO_ACTOR_SOLICITUD (TIPO_ACTOR_SOLICITUD_ID, TIPO_ACTOR_SOLICITUD_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_TIPO_ACTOR_SOLICITUD (TIPO_ACTOR_SOLICITUD_ID, TIPO_ACTOR_SOLICITUD_DESC)
+     select DD_PCO_DSA_ID, DD_PCO_DSA_DESCRIPCION from  '||V_DATASTAGE||'.DD_PCO_DOC_SOLICIT_TIPOACTOR';
+
+  V_ROWCOUNT := sql%rowcount;     
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TIPO_ACTOR_SOLICITUD. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  commit;
+
+
+
+-- ----------------------------------------------------------------------------------------------
+--                                  D_PRC_USUARIO_SOLICITUD
+-- ----------------------------------------------------------------------------------------------
+  
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_USUARIO_SOLICITUD (USUARIO_SOLICITUD_ID, USUARIO_SOLICITUD_NOMBRE, USUARIO_SOLICITUD_APELLIDO1, USUARIO_SOLICITUD_APELLIDO2)
+     SELECT DISTINCT B.USU_ID, B.USU_NOMBRE, B.USU_APELLIDO1, B.USU_APELLIDO2
+     FROM '||V_DATASTAGE||'.USD_USUARIOS_DESPACHOS A, '||V_DATASTAGE||'.USU_USUARIOS B
+     WHERE A.USU_ID = B.USU_ID';
+     
+  V_ROWCOUNT := sql%rowcount;     
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_USUARIO_SOLICITUD. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  commit;
+  
+  
+-- ----------------------------------------------------------------------------------------------
+--                                  D_PRC_LIQUIDACION_ESTADO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_LIQUIDACION_ESTADO WHERE ESTADO_LIQUIDACION_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_LIQUIDACION_ESTADO (ESTADO_LIQUIDACION_ID, ESTADO_LIQUIDACION_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_LIQUIDACION_ESTADO (ESTADO_LIQUIDACION_ID, ESTADO_LIQUIDACION_DESC)
+     select DD_PCO_LIQ_ID, DD_PCO_LIQ_DESCRIPCION from  '||V_DATASTAGE||'.DD_PCO_LIQ_ESTADO';
+
+  V_ROWCOUNT := sql%rowcount;     
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_LIQUIDACION_ESTADO. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  commit;
+  
+
+-- ----------------------------------------------------------------------------------------------
+--                                  D_PRC_MOTIVO_CANCELACION
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_MOTIVO_CANCELACION WHERE MOTIVO_CANCELACION_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_MOTIVO_CANCELACION (MOTIVO_CANCELACION_ID, MOTIVO_CANCELACION_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_MOTIVO_CANCELACION (MOTIVO_CANCELACION_ID, MOTIVO_CANCELACION_DESC)
+     select DD_PCO_LIQ_ID, DD_PCO_LIQ_DESCRIPCION from  '||V_DATASTAGE||'.DD_PCO_LIQ_ESTADO';
+
+  V_ROWCOUNT := sql%rowcount;     
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_MOTIVO_CANCELACION. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  commit;
+
+
+
+
+
+-- ----------------------------------------------------------------------------------------------
+--                                  D_PRC_MOTIVO_SUBSANACION
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_MOTIVO_SUBSANACION WHERE MOTIVO_SUBSANACION_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_MOTIVO_SUBSANACION (MOTIVO_SUBSANACION_ID, MOTIVO_SUBSANACION_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_MOTIVO_SUBSANACION (MOTIVO_SUBSANACION_ID, MOTIVO_SUBSANACION_DESC)
+     select DD_TPD_PCO_ID, DD_TPD_PCO_DESCRIPCION from  '||V_DATASTAGE||'.DD_TPD_PCO_TIPO_PRM_DOC';
+
+  V_ROWCOUNT := sql%rowcount;     
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_MOTIVO_SUBSANACION. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  commit;
+
+
+
+-- ----------------------------------------------------------------------------------------------
+--                             D_PRC_TRAMO_SUBSANACION
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TRAMO_SUBSANACION WHERE TRAMO_SUBSANACION_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TRAMO_SUBSANACION (TRAMO_SUBSANACION_ID, TRAMO_SUBSANACION_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TRAMO_SUBSANACION WHERE TRAMO_SUBSANACION_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TRAMO_SUBSANACION (TRAMO_SUBSANACION_ID, TRAMO_SUBSANACION_DESC) VALUES (1,'1 Subsanación');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TRAMO_SUBSANACION WHERE TRAMO_SUBSANACION_ID = 2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TRAMO_SUBSANACION (TRAMO_SUBSANACION_ID, TRAMO_SUBSANACION_DESC) VALUES (2,' 2 Subsanaciones');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TRAMO_SUBSANACION WHERE TRAMO_SUBSANACION_ID = 3;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TRAMO_SUBSANACION (TRAMO_SUBSANACION_ID, TRAMO_SUBSANACION_DESC) VALUES (3,' 3 Subsanaciones');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TRAMO_SUBSANACION WHERE TRAMO_SUBSANACION_ID = 4;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TRAMO_SUBSANACION (TRAMO_SUBSANACION_ID, TRAMO_SUBSANACION_DESC) VALUES (4,'Más de 3 Subsanaciones');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TRAMO_SUBSANACION. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--									D_PRC_TRAMO_AVANCE_DOCUMENTO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TRAMO_AVANCE_DOCUMENTO WHERE TRAMO_AVANCE_DOCUMENTO_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TRAMO_AVANCE_DOCUMENTO (TRAMO_AVANCE_DOCUMENTO_ID, TRAMO_AVANCE_DOCUMENTO_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TRAMO_AVANCE_DOCUMENTO WHERE TRAMO_AVANCE_DOCUMENTO_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TRAMO_AVANCE_DOCUMENTO (TRAMO_AVANCE_DOCUMENTO_ID, TRAMO_AVANCE_DOCUMENTO_DESC) VALUES (1,'0%-25%');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TRAMO_AVANCE_DOCUMENTO WHERE TRAMO_AVANCE_DOCUMENTO_ID = 2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TRAMO_AVANCE_DOCUMENTO (TRAMO_AVANCE_DOCUMENTO_ID, TRAMO_AVANCE_DOCUMENTO_DESC) VALUES (2,'25%-50%');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TRAMO_AVANCE_DOCUMENTO WHERE TRAMO_AVANCE_DOCUMENTO_ID = 3;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TRAMO_AVANCE_DOCUMENTO (TRAMO_AVANCE_DOCUMENTO_ID, TRAMO_AVANCE_DOCUMENTO_DESC) VALUES (3,'50%-75%');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TRAMO_AVANCE_DOCUMENTO WHERE TRAMO_AVANCE_DOCUMENTO_ID = 4;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TRAMO_AVANCE_DOCUMENTO (TRAMO_AVANCE_DOCUMENTO_ID, TRAMO_AVANCE_DOCUMENTO_DESC) VALUES (4,'75%-100%');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TRAMO_AVANCE_DOCUMENTO. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--									D_PRC_TRAMO_AVANCE_LIQUIDACION
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TRAMO_AVANCE_LIQUIDACION WHERE TRAMO_AVANCE_LIQUIDACION_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TRAMO_AVANCE_LIQUIDACION (TRAMO_AVANCE_LIQUIDACION_ID, TRAMO_AVANCE_LIQUIDACION_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TRAMO_AVANCE_LIQUIDACION WHERE TRAMO_AVANCE_LIQUIDACION_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TRAMO_AVANCE_LIQUIDACION (TRAMO_AVANCE_LIQUIDACION_ID, TRAMO_AVANCE_LIQUIDACION_DESC) VALUES (1,'0%-25%');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TRAMO_AVANCE_LIQUIDACION WHERE TRAMO_AVANCE_LIQUIDACION_ID = 2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TRAMO_AVANCE_LIQUIDACION (TRAMO_AVANCE_LIQUIDACION_ID, TRAMO_AVANCE_LIQUIDACION_DESC) VALUES (2,'25%-50%');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TRAMO_AVANCE_LIQUIDACION WHERE TRAMO_AVANCE_LIQUIDACION_ID = 3;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TRAMO_AVANCE_LIQUIDACION (TRAMO_AVANCE_LIQUIDACION_ID, TRAMO_AVANCE_LIQUIDACION_DESC) VALUES (3,'50%-75%');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TRAMO_AVANCE_LIQUIDACION WHERE TRAMO_AVANCE_LIQUIDACION_ID = 4;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TRAMO_AVANCE_LIQUIDACION (TRAMO_AVANCE_LIQUIDACION_ID, TRAMO_AVANCE_LIQUIDACION_DESC) VALUES (4,'75%-100%');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TRAMO_AVANCE_LIQUIDACION. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--									D_PRC_TRAMO_AVANCE_BUROFAX
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TRAMO_AVANCE_BUROFAX WHERE TRAMO_AVANCE_BUROFAX_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TRAMO_AVANCE_BUROFAX (TRAMO_AVANCE_BUROFAX_ID, TRAMO_AVANCE_BUROFAX_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TRAMO_AVANCE_BUROFAX WHERE TRAMO_AVANCE_BUROFAX_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TRAMO_AVANCE_BUROFAX (TRAMO_AVANCE_BUROFAX_ID, TRAMO_AVANCE_BUROFAX_DESC) VALUES (1,'0%-25%');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TRAMO_AVANCE_BUROFAX WHERE TRAMO_AVANCE_BUROFAX_ID = 2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TRAMO_AVANCE_BUROFAX (TRAMO_AVANCE_BUROFAX_ID, TRAMO_AVANCE_BUROFAX_DESC) VALUES (2,'25%-50%');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TRAMO_AVANCE_BUROFAX WHERE TRAMO_AVANCE_BUROFAX_ID = 3;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TRAMO_AVANCE_BUROFAX (TRAMO_AVANCE_BUROFAX_ID, TRAMO_AVANCE_BUROFAX_DESC) VALUES (3,'50%-75%');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_TRAMO_AVANCE_BUROFAX WHERE TRAMO_AVANCE_BUROFAX_ID = 4;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_TRAMO_AVANCE_BUROFAX (TRAMO_AVANCE_BUROFAX_ID, TRAMO_AVANCE_BUROFAX_DESC) VALUES (4,'75%-100%');
+  END IF;
+
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TRAMO_AVANCE_BUROFAX. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                                  D_PRC_ESTADO_DOCUMENTO_PER_ANT
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ESTADO_DOCUMENTO_PER_ANT WHERE ESTADO_DOCUMENTO_PER_ANT_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ESTADO_DOCUMENTO_PER_ANT (ESTADO_DOCUMENTO_PER_ANT_ID, ESTADO_DOCUMENTO_PER_ANT_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ESTADO_DOCUMENTO_PER_ANT WHERE ESTADO_DOCUMENTO_PER_ANT_ID = -2;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ESTADO_DOCUMENTO_PER_ANT (ESTADO_DOCUMENTO_PER_ANT_ID, ESTADO_DOCUMENTO_PER_ANT_DESC) VALUES (-2 ,'No Aplica');
+  END IF;
+  
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_ESTADO_DOCUMENTO_PER_ANT (ESTADO_DOCUMENTO_PER_ANT_ID, ESTADO_DOCUMENTO_PER_ANT_DESC)
+     select DD_PCO_DED_ID, DD_PCO_DED_DESCRIPCION from  '||V_DATASTAGE||'.DD_PCO_DOC_ESTADO';
+     
+         
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_ESTADO_DOCUMENTO_PER_ANT. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+-- ----------------------------------------------------------------------------------------------
+--                                  D_PRC_ESTADO_LIQ_PER_ANT
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_ESTADO_LIQ_PER_ANT WHERE ESTADO_LIQ_PER_ANT_DESC = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_ESTADO_LIQ_PER_ANT (ESTADO_LIQ_PER_ANT_ID, ESTADO_LIQ_PER_ANT_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_ESTADO_LIQ_PER_ANT (ESTADO_LIQ_PER_ANT_ID, ESTADO_LIQ_PER_ANT_DESC)
+     select DD_PCO_LIQ_ID, DD_PCO_LIQ_DESCRIPCION from  '||V_DATASTAGE||'.DD_PCO_LIQ_ESTADO';
+
+  V_ROWCOUNT := sql%rowcount;     
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_LIQUIDACION_ESTADO. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+  commit;
+  
+  
+  
+  
+  -- ----------------------------------------------------------------------------------------------
+--                                 D_PRC_GESTOR_PRECONTENCIOSO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_GESTOR_PRECONTENCIOSO WHERE GESTOR_PRE_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_GESTOR_PRECONTENCIOSO(
+      GESTOR_PRE_ID,
+      GESTOR_PRE_NOMBRE_COMPLETO,
+      GESTOR_PRE_NOMBRE,
+      GESTOR_PRE_APELLIDO1,
+      GESTOR_PRE_APELLIDO2) VALUES (-1 ,'Sin Gestor Asignado','Sin Gestor Asignado', 'Sin Gestor Asignado', 'Sin Gestor Asignado');
+  END IF;
+
+  EXECUTE IMMEDIATE
+  'INSERT INTO D_PRC_GESTOR_PRECONTENCIOSO (
+      GESTOR_PRE_ID,
+      GESTOR_PRE_NOMBRE_COMPLETO,
+      GESTOR_PRE_NOMBRE,
+      GESTOR_PRE_APELLIDO1,
+      GESTOR_PRE_APELLIDO2
+      )
+  SELECT DISTINCT USU.USU_ID,
+      NVL(TRIM(REPLACE(USU.USU_NOMBRE||'' ''||USU.USU_APELLIDO1||'' ''||USU.USU_APELLIDO2,'' '',''  '')), ''Desconocido''),
+      NVL(USU.USU_NOMBRE, ''Desconocido''),
+      NVL(USU.USU_APELLIDO1, ''Desconocido''),
+      NVL(USU.USU_APELLIDO2, ''Desconocido'')
+  FROM '||V_DATASTAGE||'.USD_USUARIOS_DESPACHOS USD
+    JOIN '||V_DATASTAGE||'.USU_USUARIOS USU ON USD.USU_ID = USU.USU_ID
+    JOIN '||V_DATASTAGE||'.GAA_GESTOR_ADICIONAL_ASUNTO GAA ON GAA.USD_ID = USD.USD_ID
+    JOIN '||V_DATASTAGE||'.DD_TGE_TIPO_GESTOR TGES ON GAA.DD_TGE_ID = TGES.DD_TGE_ID
+  WHERE TGES.DD_TGE_ID=261';
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_GESTOR_PRECONTENCIOSO. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+ 
+
+
+
+  
+ 
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina ' || V_NOMBRE, 2;
+
+
+END;
+END CARGAR_DIM_PROCEDIMIENTO;

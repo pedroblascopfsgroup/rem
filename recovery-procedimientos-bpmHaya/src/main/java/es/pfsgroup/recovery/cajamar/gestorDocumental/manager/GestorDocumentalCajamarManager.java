@@ -1,6 +1,8 @@
 package es.pfsgroup.recovery.cajamar.gestorDocumental.manager;
 
 import java.io.InputStream;
+import java.net.FileNameMap;
+import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -198,16 +200,24 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 					}
 					
 				}
-				
+				olDto.setNombreTipoDoc(getMimeType(olDto.getExtFichero()));
 			}	
+		}else{
+			for(GestorDocumentalOutputListDto olDto : outputDto.getLbListadoDocumentos()) {
+				olDto.setNombreTipoDoc(getMimeType(olDto.getExtFichero()));
+			}
 		}
-		
 		return AdjuntoGridAssembler.outputDtoToAdjuntoGridDto(outputDto);
 	}
 
+	private String getMimeType(String fileName) {
+		FileNameMap mimeTypes = URLConnection.getFileNameMap();
+		return mimeTypes.getContentTypeFor("."+fileName);
+	}
+	
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_RECUPERACION_DOCUMENTO)
 	@Transactional(readOnly = false)
-	public AdjuntoGridDto recuperacionDocumento(String idRefCentera) {
+	public String recuperacionDocumento(String idRefCentera) {
 		if (Checks.esNulo(gestorDocumentalWSApi)) {
 			logger.warn("No encontrada implementación para el WS de gestión documental en Cajamar");
 			return null;
@@ -217,11 +227,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		input.setOperacion(ConstantesGestorDocumental.CONSULTA_DOCUMENTO_OPERACION);
 		input.setLocalizador(idRefCentera);
 		outputDto = gestorDocumentalWSApi.ejecutar(input);
-		List<AdjuntoGridDto> listDto = AdjuntoGridAssembler.outputDtoToAdjuntoGridDto(outputDto);
-		if(Checks.estaVacio(listDto)) {
-			return null;
-		}
-		return listDto.get(0);
+		return outputDto.getFicheroBase64();
 	}
 
 	private GestorDocumentalInputDto rellenaInputDto(String claveAsociacion,
@@ -236,6 +242,9 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			inputDto.setTipoDocumento(tipoDocumento);
 			inputDto.setFicheroBase64(ficheroBase64(uploadForm));
 			inputDto.setClaveAsociacion(claveAsociacion);
+			String nombreFichero = uploadForm.getFileItem().getFileName();
+			nombreFichero = nombreFichero.substring(0, nombreFichero.indexOf("."));
+			inputDto.setDescripcion(nombreFichero);
 			if(!Checks.esNulo(uploadForm.getParameter("fechaCaducidad"))) {
 				SimpleDateFormat frmt = new SimpleDateFormat("ddMMyyyy");
 				try {

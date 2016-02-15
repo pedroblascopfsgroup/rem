@@ -8,7 +8,12 @@
 <fwk:json>
 	<json:array name="adjuntos" items="${dtos}" var="dto">
 		<json:object>
-			<json:property name="id" value="${dto.adjunto.id}" />
+			<c:if test="${dto.refCentera != null}">
+				<json:property name="id" value="${dto.refCentera}" />
+			</c:if>
+			<c:if test="${dto.refCentera == null}">
+				<json:property name="id" value="${dto.adjunto.id}" />
+			</c:if>
 			<json:property name="nombre" value="${dto.adjunto.nombre}" />
 			<json:property name="contentType" value="${dto.adjunto.contentType}" />
 			<json:property name="length" value="${dto.adjunto.length}" />

@@ -99,6 +99,11 @@ public class AdjuntoAssembler {
 					public Long prcId() {
 						return adjDto.getNumActuacion();
 					}
+
+					@Override
+					public String getRefCentera() {
+						return adjDto.getRefCentera();
+					}
 				};
 				adjuntosMapeados.add(dto);
 			}
@@ -336,6 +341,11 @@ public class AdjuntoAssembler {
 					@Override
 					public String getTipoDocumento() {
 						return adjDto.getContentType();
+					}
+
+					@Override
+					public String getRefCentera() {
+						return adjDto.getRefCentera();
 					}
 				};
 

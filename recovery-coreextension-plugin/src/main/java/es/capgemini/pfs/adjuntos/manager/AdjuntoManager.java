@@ -11,7 +11,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.AbstractMessageSource;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
@@ -60,7 +59,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.recovery.api.ProcedimientoApi;
-import es.pfsgroup.recovery.ext.api.persona.EXTPersonaApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
@@ -401,8 +399,7 @@ public class AdjuntoManager implements AdjuntoApi{
 		adjPers.setPersona(persona);
 		Auditoria.save(adjPers);
 		
-		persona.getAdjuntos().add(adjPers);
-		genericDao.save(Persona.class, persona);
+		genericDao.save(AdjuntoPersona.class, adjPers);
 
         return null;
 	}
@@ -436,8 +433,7 @@ public class AdjuntoManager implements AdjuntoApi{
 		adjuntoexp.setExpediente(expediente);
 		Auditoria.save(adjuntoexp);
         
-		expediente.getAdjuntos().add(adjuntoexp);
-		genericDao.save(Expediente.class, expediente);
+		genericDao.save(AdjuntoExpediente.class, adjuntoexp);
 
         return null;
 	}
@@ -471,8 +467,7 @@ public class AdjuntoManager implements AdjuntoApi{
 		adjCnt.setContrato(contrato);
 		Auditoria.save(adjCnt);
 
-		contrato.getAdjuntos().add(adjCnt);
-		genericDao.save(Contrato.class, contrato);
+		genericDao.save(AdjuntoContrato.class, adjCnt);
 
         return null;
 	}
@@ -546,6 +541,11 @@ public class AdjuntoManager implements AdjuntoApi{
 				@Override
 				public Object getAdjunto() {
 					return adj;
+				}
+
+				@Override
+				public String getRefCentera() {
+					return null;
 				}
 			};
 			adjuntosConBorrado.add(dto);
@@ -683,6 +683,11 @@ public class AdjuntoManager implements AdjuntoApi{
 				public Object getAdjunto() {
 					return aa;
 				}
+
+				@Override
+				public String getRefCentera() {
+					return null;
+				}
 			};
 			adjuntosConBorrado.add(dto);
 		}
@@ -742,6 +747,11 @@ public class AdjuntoManager implements AdjuntoApi{
 				public Object getAdjunto() {
 					return aa;
 				}
+
+				@Override
+				public String getRefCentera() {
+					return null;
+				}
 			};
 			adjuntosConBorrado.add(dto);
 		}
@@ -750,7 +760,7 @@ public class AdjuntoManager implements AdjuntoApi{
 	
 	@Override
 	@Transactional(readOnly = false)
-	public FileItem bajarAdjuntoAsunto(Long asuntoId, String adjuntoId) {
+	public FileItem bajarAdjuntoAsunto(Long asuntoId, String adjuntoId, String nombre, String extension) {
         Asunto asunto = (Asunto) executor.execute(ExternaBusinessOperation.BO_ASU_MGR_GET, asuntoId); //get(asuntoId);
         return asunto.getAdjunto(Long.parseLong(adjuntoId)).getAdjunto().getFileItem();
 	}
@@ -758,20 +768,20 @@ public class AdjuntoManager implements AdjuntoApi{
 	
 	@Override
 	@Transactional(readOnly = false)
-	public FileItem bajarAdjuntoPersona(String adjuntoId) {
+	public FileItem bajarAdjuntoPersona(String adjuntoId, String nombre, String extension) {
 		return adjuntoPersonaDao.get(Long.valueOf(adjuntoId)).getAdjunto().getFileItem();
 	}
 	
 	
 	@Override
 	@Transactional(readOnly = false)
-	public FileItem bajarAdjuntoExpediente(String adjuntoId) {
+	public FileItem bajarAdjuntoExpediente(String adjuntoId, String nombre, String extension) {
 		return adjuntoExpedienteDao.get(Long.parseLong(adjuntoId)).getAdjunto().getFileItem();
 	}
 	
 	@Override
 	@Transactional(readOnly = false)
-	public FileItem bajarAdjuntoContrato(String adjuntoId) {
+	public FileItem bajarAdjuntoContrato(String adjuntoId, String nombre, String extension) {
 		return adjuntoContratoDao.get(Long.parseLong(adjuntoId)).getAdjunto().getFileItem();
 	}
 	
@@ -838,6 +848,11 @@ public class AdjuntoManager implements AdjuntoApi{
 					}
 					else 
 						return null;
+				}
+
+				@Override
+				public String getRefCentera() {
+					return null;
 				}
 			};
 			result.add(dto);

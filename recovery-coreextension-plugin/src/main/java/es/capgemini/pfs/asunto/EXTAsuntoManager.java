@@ -120,7 +120,6 @@ import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 import es.pfsgroup.recovery.ext.impl.zona.dao.EXTZonaDao;
 import es.pfsgroup.recovery.integration.Guid;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
-import es.capgemini.devon.hibernate.pagination.PageHibernate;
 
 @Component
 public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> implements es.pfsgroup.recovery.api.AsuntoApi, AsuntoApi, EXTAsuntoApi {
@@ -546,6 +545,11 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 					}
 					else 
 						return null;
+				}
+
+				@Override
+				public String getRefCentera() {
+					return null;
 				}
 			};
 			result.add(dto);

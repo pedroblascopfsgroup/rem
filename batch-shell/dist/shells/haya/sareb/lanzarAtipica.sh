@@ -1,20 +1,16 @@
 #!/bin/bash
 
-################################################
-#       BLOQUE SALIDA DE CONVIVENCIAS F2       #
-################################################
+######################################
+#       BLOQUE CONVIVENCIAS          #
+######################################
+
 
 FECHA=`date +%d%b%G`
 FECHA_ANT=`date +%d%b%G --date="1 days ago"`
-LOG="/home/ops-haya/bloqueSalidaConvivenciasF2.log"
+LOG="/home/ops-haya/bloqueConvivencias.log"
 DIR=/etl/HRE/shells
-
-TESTIGO=testigoConvF2.sem
 #DIR=./
 source $DIR/setBatchEnv.sh
-
- 
-rm -f $DIR/$TESTIGO
 
 
 
@@ -27,12 +23,12 @@ echo "****************************************************" >> $LOG
 
 function lanzar () {
 	echo "****************************************************" >> $LOG
-	echo "--- INICIO: $1 ($FECHA)" >> $LOG
+	echo "--- INICIO: $1 (`date`)" >> $LOG
 	$DIR/$1 >> $LOG
 	if [ "$?" == "0" ] ; then
-	   echo "--- $1 finalizado correctamente ($FECHA)" >> $LOG
+	   echo "--- $1 finalizado correctamente (`date`)" >> $LOG
 	else
-	   echo "==== ERROR $? EN $1 ($FECHA)" >> $LOG
+	   echo "==== ERROR $? EN $1" >> $LOG
 	   exit 1
 	fi
         echo "****************************************************" >> $LOG  
@@ -40,12 +36,12 @@ function lanzar () {
 
 function lanzarSinFinalizarPorError () {
 	echo "****************************************************" >> $LOG
-	echo "--- INICIO NO BLOQUEANTE: $1 ($FECHA)" >> $LOG
+	echo "--- INICIO NO BLOQUEANTE: $1 (`date`)" >> $LOG
 	$DIR/$1 >> $LOG
 	if [ "$?" == "0" ] ; then
-	   echo "--- $1 finalizado correctamente ($FECHA)" >> $LOG
+	   echo "--- $1 finalizado correctamente (`date`)" >> $LOG
 	else
-	   echo "==== ERROR $? EN $1 ... Seguimos ($FECHA)" >> $LOG
+	   echo "==== ERROR $? EN $1 ... Seguimos (`date`)" >> $LOG
 	fi    
 	echo "****************************************************" >> $LOG
 }
@@ -56,7 +52,7 @@ function lanzarParalelo () {
 
 	for proceso in $* ; do
 		echo "****************************************************" >> $LOG
-		echo "--- INICIO PARALELO: $proceso ($FECHA)" >> $LOG
+		echo "--- INICIO PARALELO: $proceso (`date`)" >> $LOG
 		$DIR/$proceso & >> $LOG
 	done
 
@@ -68,9 +64,9 @@ function lanzarParalelo () {
 	 
 	if [ "$FAIL" == "0" ];
 	then
-	    echo "---- $* finalizados correctamente  ($FECHA)" >> $LOG
+	    echo "---- $* finalizados correctamente  (`date`)" >> $LOG
 	else
- 	    echo "==== ERROR EN ALGUNO ($FAIL) DE ESTOS PROCESOS $*  ($FECHA)" >> $LOG
+ 	    echo "==== ERROR EN ALGUNO ($FAIL) DE ESTOS PROCESOS $*  (`date`)" >> $LOG
 	    exit 1
 	fi
 	echo "****************************************************" >> $LOG
@@ -82,7 +78,7 @@ function lanzarParaleloSinEsperar () {
 
 	for proceso in $* ; do
 		echo "****************************************************" >> $LOG
-		echo "--- INICIO PARALELO NO BLOQUEANTE: $proceso ($FECHA)" >> $LOG
+		echo "--- INICIO PARALELO NO BLOQUEANTE: $proceso (`date`)" >> $LOG
 		$DIR/$proceso & >> $LOG
 	done
 
@@ -94,27 +90,25 @@ function lanzarParaleloSinEsperar () {
 	 
 	if [ "$FAIL" == "0" ];
 	then
-	    echo "---- $* finalizados correctamente  ($FECHA)" >> $LOG
+	    echo "---- $* finalizados correctamente  (`date`)" >> $LOG
 	else
  	    echo "==== ERROR EN ALGUNO ($FAIL) DE ESTOS PROCESOS $*" >> $LOG
-	    echo "---- Seguimos... Seguimos... ($FECHA)" >> $LOG
+	    echo "---- Seguimos... Seguimos... (`date`)" >> $LOG
 	fi
 	echo "****************************************************" >> $LOG
 }
 
 
-# BLOQUE SALIDA CONVIVENCIA (FASE2) #
+# BLOQUE CONVIVENCIAS #
+#lanzar wait_convivenciasF2.sh
+lanzar convivenciaF2_procedimientos.sh
+lanzar convivenciaF2_bienes_1.9.sh
 
-lanzar proc_convivencia_stock_bienes.sh
-lanzar proc_convivencia_cargas_bienes.sh
-touch $DIR/$TESTIGO
-
-
-echo "HA FINALIZADO LA EJECUCION DE LOS PROCESOS: $FECHA"
+echo "HA FINALIZADO LA EJECUCION DE LOS PROCESOS: `date`"
 echo "Comprueba el LOG en $LOG y el Batch               " 
 
 echo "                                                  " >> $LOG
-echo "EXPLOTACION FINALIZADA: $FECHA			" >> $LOG
+echo "EXPLOTACION FINALIZADA: `date`			" >> $LOG
 echo "Comprueba log de ejecucion batch                  " >> $LOG
 echo "***************************************************" >> $LOG
 

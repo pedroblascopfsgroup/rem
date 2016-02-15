@@ -3,7 +3,7 @@
  
 ENTIDAD=2038
 DIR_INPUT=/datos/usuarios/ops-haya/transferencia/aprov_auxiliar/
-MAX_WAITING_MINUTES=10
+MAX_WAITING_MINUTES=720
 ficheros=URSUS
 
 #echo $(basename $0)

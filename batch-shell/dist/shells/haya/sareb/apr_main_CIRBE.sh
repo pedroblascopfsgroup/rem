@@ -26,6 +26,12 @@ if [ -f $MAINSH ]; then
     CLASEINICIO="$(cat $MAINSH | grep "^ java" | cut -f11 -d" ")"
     java -Xms512M -Xmx1536M -Dconfig.dir=$DIR_CONFIG -Dconfig.file.mask=$CFG_FILE -Duser.country=ES -Duser.language=es -cp $CLASS2 $CLASEINICIO --context=Default "$@"
     exit $?
+
+estado=$?
+    if [ $estado == 1 ]; then
+        cat $filename >> abortsAUX.txt
+    fi
+
 else
     echo "$(basename $0) Error en $filename: no se ha encontrado  $MAINSH"
     exit 1

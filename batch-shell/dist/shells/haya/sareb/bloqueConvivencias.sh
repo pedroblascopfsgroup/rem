@@ -101,8 +101,8 @@ function lanzarParaleloSinEsperar () {
 
 # BLOQUE CONVIVENCIAS #
 lanzar wait_convivenciasF2.sh
-lanzar convivenciaF2_procedimientos_1.23.sh
-lanzar convivenciaF2_bienes_1.9.sh
+lanzar convivenciaF2_procedimientos.sh
+lanzar convivenciaF2_bienes.sh
 
 echo "HA FINALIZADO LA EJECUCION DE LOS PROCESOS: `date`"
 echo "Comprueba el LOG en $LOG y el Batch               " 

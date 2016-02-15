@@ -3,7 +3,7 @@
  
 ENTIDAD=2038
 DIR_INPUT=/datos/usuarios/ops-haya/transferencia/interfaces
-MAX_WAITING_MINUTES=10
+MAX_WAITING_MINUTES=720
 ficheros=ACUERDOS,ADECUACIONES
 
 #echo $(basename $0)

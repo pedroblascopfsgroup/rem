@@ -104,6 +104,11 @@ public class AdjuntoAssembler {
 					public String getRefCentera() {
 						return adjDto.getRefCentera();
 					}
+					
+					@Override
+					public String getNombreTipoDoc() {
+						return adjDto.getNombreTipoDoc();
+					}
 				};
 				adjuntosMapeados.add(dto);
 			}
@@ -346,6 +351,11 @@ public class AdjuntoAssembler {
 					@Override
 					public String getRefCentera() {
 						return adjDto.getRefCentera();
+					}
+
+					@Override
+					public String getNombreTipoDoc() {
+						return adjDto.getNombreTipoDoc();
 					}
 				};
 

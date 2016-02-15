@@ -16,7 +16,6 @@ import java.util.Set;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
@@ -119,7 +118,7 @@ public class EditBienController {
 	private static final String BIENES_PRC_JSON = "plugin/nuevoModeloBienes/procedimientos/bienesJSON";
 	private static final String BIENES_PROCEDIMIENTO_JSON = "plugin/nuevoModeloBienes/adjudicacion/marcadoBienesJSON";
 	private static final String DEFAULT = "default";
-	private static final String DICCIONARIO_JSON = "plugin/nuevoModeloBienes/bienes/diccionarioJSON";
+	private static final String DICCIONARIO_JSON = "plugin/nuebien.getImporteCargas()voModeloBienes/bienes/diccionarioJSON";
 	private static final String TIPO_USUARIO_JSON = "plugin/coreextension/asunto/tipoUsuarioJSON";
 	private static final String JSON_LIST_LOCALIDADES = "plugin/nuevoModeloBienes/bienes/LocalidadesJSON";
 	private static final String JSON_LIST_UNIDADES_POBLACIONALES = "plugin/nuevoModeloBienes/bienes/UnidadesPoblacionalesJSON";
@@ -695,7 +694,7 @@ public class EditBienController {
 		if (!Checks.esNulo(request.getParameter("oldValorActual")))
 			dto.setValorActual(new BigDecimal(request.getParameter("oldValorActual")));
 		if (!Checks.esNulo(request.getParameter("oldImporteCargas")))
-			dto.setImporteCargas(new Float(request
+			dto.setImporteCargas(new BigDecimal(request
 					.getParameter("oldImporteCargas")));
 		if (!Checks.esNulo(request.getParameter("oldFechaVerificacion")))
 			dto.setFechaVerificacion(request
@@ -704,7 +703,7 @@ public class EditBienController {
 			dto.setReferenciaCatastral(request
 					.getParameter("oldReferenciaCatastral"));
 		if (!Checks.esNulo(request.getParameter("oldSuperficie")))
-			dto.setBieSuperficie(new Float(request
+			dto.setBieSuperficie(new BigDecimal(request
 					.getParameter("oldSuperficie")));
 		if (!Checks.esNulo(request.getParameter("oldDatosRegistrales")))
 			dto.setDatosRegistrales(request.getParameter("oldDatosRegistrales"));
@@ -718,7 +717,7 @@ public class EditBienController {
 		if (!Checks.esNulo(request.getParameter("valorActual")))
 			dto.setValorActual(new BigDecimal(request.getParameter("valorActual")));
 		if (!Checks.esNulo(request.getParameter("importeCargas")))
-			dto.setImporteCargas(new Float(request
+			dto.setImporteCargas(new BigDecimal(request
 					.getParameter("importeCargas")));
 		if (!Checks.esNulo(request.getParameter("descripcionBien")))
 			dto.setDescripcionBien(request.getParameter("descripcionBien"));
@@ -776,9 +775,9 @@ public class EditBienController {
 			dto.setReferenciaCatastralBien(request
 					.getParameter("referenciaCatastralBien"));
 		if (!Checks.esNulo(request.getParameter("superficie")))
-			dto.setSuperficie(new Float(request.getParameter("superficie")));
+			dto.setSuperficie(new BigDecimal(request.getParameter("superficie")));
 		if (!Checks.esNulo(request.getParameter("superficieConstruida")))
-			dto.setSuperficieConstruida(new Float(request
+			dto.setSuperficieConstruida(new BigDecimal(request
 					.getParameter("superficieConstruida")));
 		if (!Checks.esNulo(request.getParameter("tomo")))
 			dto.setTomo(request.getParameter("tomo"));
@@ -845,19 +844,19 @@ public class EditBienController {
 			dto.setFechaValorSubjetivo(request
 					.getParameter("fechaValorSubjetivo"));
 		if (!Checks.esNulo(request.getParameter("importeValorSubjetivo")))
-			dto.setImporteValorSubjetivo(new Float(request
+			dto.setImporteValorSubjetivo(new BigDecimal(request
 					.getParameter("importeValorSubjetivo")));
 		if (!Checks.esNulo(request.getParameter("fechaValorApreciacion")))
 			dto.setFechaValorApreciacion(request
 					.getParameter("fechaValorApreciacion"));
 		if (!Checks.esNulo(request.getParameter("importeValorApreciacion")))
-			dto.setImporteValorApreciacion(new Float(request
+			dto.setImporteValorApreciacion(new BigDecimal(request
 					.getParameter("importeValorApreciacion")));
 		if (!Checks.esNulo(request.getParameter("fechaValorTasacion")))
 			dto.setFechaValorTasacion(request
 					.getParameter("fechaValorTasacion"));
 		if (!Checks.esNulo(request.getParameter("importeValorTasacion")))
-			dto.setImporteValorTasacion(new Float(request
+			dto.setImporteValorTasacion(new BigDecimal(request
 					.getParameter("importeValorTasacion")));
 
 		if (!Checks.esNulo(request.getParameter("solvenciaNoEncontrada")))
@@ -865,7 +864,7 @@ public class EditBienController {
 					.getParameter("solvenciaNoEncontrada")));
 
 		if (!Checks.esNulo(request.getParameter("valorTasacionExterna")))
-			dto.setValorTasacionExterna(Float.parseFloat(request
+			dto.setValorTasacionExterna(new BigDecimal(request
 					.getParameter("valorTasacionExterna")));
 
 		if (!Checks.esNulo(request.getParameter("fechaTasacionExterna")))
@@ -925,7 +924,7 @@ public class EditBienController {
 		if (!Checks.esNulo(request.getParameter("tipoInmueble")))
 			dto.setTipoInmueble(request.getParameter("tipoInmueble"));
 		if (!Checks.esNulo(request.getParameter("valoracion")))
-			dto.setValoracion(new Float(request.getParameter("valoracion")));
+			dto.setValoracion(new BigDecimal(request.getParameter("valoracion")));
 		if (!Checks.esNulo(request.getParameter("entidad")))
 			dto.setEntidad(request.getParameter("entidad"));
 		if (!Checks.esNulo(request.getParameter("numCuenta")))

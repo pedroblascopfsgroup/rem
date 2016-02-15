@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -43,25 +44,25 @@ public class NMBValoracionesBien implements Serializable, Auditable, NMBValoraci
     private Date fechaValorSubjetivo;
 	
 	@Column(name = "BIE_IMPORTE_VALOR_SUBJETIVO")
-    private Float importeValorSubjetivo;
+    private BigDecimal importeValorSubjetivo;
 	
 	@Column(name = "BIE_FECHA_VALOR_APRECIACION")
     private Date fechaValorApreciacion;
 	
 	@Column(name = "BIE_IMPORTE_VALOR_APRECIACION")
-    private Float importeValorApreciacion;
+    private BigDecimal importeValorApreciacion;
 	
 	@Column(name = "BIE_FECHA_VALOR_TASACION")
     private Date fechaValorTasacion;
 	
 	@Column(name = "BIE_IMPORTE_VALOR_TASACION")
-    private Float importeValorTasacion;
+    private BigDecimal importeValorTasacion;
 	
 	@Column(name = "BIE_RESPUESTA_CONSULTA") 
 	private String respuestaConsulta;
 	
 	@Column(name = "BIE_VALOR_TASACION_EXT")  
-    private Float valorTasacionExterna;
+    private BigDecimal valorTasacionExterna;
     
     @Column(name = "BIE_F_TAS_EXTERNA")      
     private Date fechaTasacionExterna;
@@ -84,11 +85,11 @@ public class NMBValoracionesBien implements Serializable, Auditable, NMBValoraci
 		this.respuestaConsulta = respuestaConsulta;
 	}
 
-	public Float getValorTasacionExterna() {
+	public BigDecimal getValorTasacionExterna() {
 		return valorTasacionExterna;
 	}
 
-	public void setValorTasacionExterna(Float valorTasacionExterna) {
+	public void setValorTasacionExterna(BigDecimal valorTasacionExterna) {
 		this.valorTasacionExterna = valorTasacionExterna;
 	}
 
@@ -143,11 +144,11 @@ public class NMBValoracionesBien implements Serializable, Auditable, NMBValoraci
 		this.fechaValorSubjetivo = fechaValorSubjetivo;
 	}
 
-	public Float getImporteValorSubjetivo() {
+	public BigDecimal getImporteValorSubjetivo() {
 		return importeValorSubjetivo;
 	}
 
-	public void setImporteValorSubjetivo(Float importeValorSubjetivo) {
+	public void setImporteValorSubjetivo(BigDecimal importeValorSubjetivo) {
 		this.importeValorSubjetivo = importeValorSubjetivo;
 	}
 
@@ -159,11 +160,11 @@ public class NMBValoracionesBien implements Serializable, Auditable, NMBValoraci
 		this.fechaValorApreciacion = fechaValorApreciacion;
 	}
 
-	public Float getImporteValorApreciacion() {
+	public BigDecimal getImporteValorApreciacion() {
 		return importeValorApreciacion;
 	}
 
-	public void setImporteValorApreciacion(Float importeValorApreciacion) {
+	public void setImporteValorApreciacion(BigDecimal importeValorApreciacion) {
 		this.importeValorApreciacion = importeValorApreciacion;
 	}
 
@@ -175,11 +176,11 @@ public class NMBValoracionesBien implements Serializable, Auditable, NMBValoraci
 		this.fechaValorTasacion = fechaValorTasacion;
 	}
 
-	public Float getImporteValorTasacion() {
+	public BigDecimal getImporteValorTasacion() {
 		return importeValorTasacion;
 	}
 
-	public void setImporteValorTasacion(Float importeValorTasacion) {
+	public void setImporteValorTasacion(BigDecimal importeValorTasacion) {
 		this.importeValorTasacion = importeValorTasacion;
 	}
 

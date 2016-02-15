@@ -22,9 +22,13 @@
 				<fmt:formatDate value="${dto.adjunto.auditoria.fechaCrear}" pattern="dd/MM/yyyy" />
 			</json:property>
 			<json:property name="puedeBorrar" value="${dto.puedeBorrar}" />
-			
-			<c:if test="${dto.adjunto.tipoFichero != null}">
-				<json:property name="tipoFichero" value="${dto.adjunto.tipoFichero.descripcion}" />
+			<c:if test="${dto.nombreTipoDoc != null}">
+				<json:property name="tipoFichero" value="${dto.nombreTipoDoc}" />
+			</c:if>
+			<c:if test="${dto.nombreTipoDoc == null}">
+				<c:if test="${dto.adjunto.tipoFichero != null}">
+					<json:property name="tipoFichero" value="${dto.adjunto.tipoFichero.descripcion}" />
+				</c:if>
 			</c:if>
 			<json:property name="prcId" value="${dto.adjunto.procedimiento.id}" />
 		</json:object>

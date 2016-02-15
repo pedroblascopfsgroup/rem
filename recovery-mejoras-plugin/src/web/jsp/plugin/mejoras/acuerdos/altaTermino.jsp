@@ -59,7 +59,7 @@
 		,editable: false
 		,emptyText:'Seleccionar'
 		,triggerAction: 'all'
-		,fieldLabel: (ambito!='asunto') ? '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.flujo.tipoTermino" text="**Solución Propuesta" />':'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.flujo.tipoAcuerdo" text="**Tipo termino" />'
+		,fieldLabel: (ambito!='asunto') ? '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.flujo.tipoTermino" text="**Soluciï¿½n Propuesta" />':'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.flujo.tipoAcuerdo" text="**Tipo termino" />'
 		,labelStyle: 'width:150px'
 		,width: 150		
 	});
@@ -344,7 +344,7 @@
        			if (Ext.getCmp('fechaSolucionPrevista')!=undefined) {
        				dateSolucionPrevista = Date.parse(Ext.getCmp('fechaSolucionPrevista').getValue());
        			}
-	       		if(comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && dataSolucionPrevista!=null && !isNaN(parseFloat(dateSolucionPrevista)) && dateSolucionPrevista > datePaseMora) {		       		
+	       		if(comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && dataSolucionPrevista!=null && dateSolucionPrevista > datePaseMora) {		       		
 	       			Ext.Msg.show({
 				   		title:'Aviso',
 				   		msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.fondosPropios" text="**Fecha solicitud prevista debe ser menor a la fecha de pase a mora." />',

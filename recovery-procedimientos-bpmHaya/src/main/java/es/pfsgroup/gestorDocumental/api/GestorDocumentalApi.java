@@ -26,7 +26,7 @@ public interface GestorDocumentalApi {
 	 * tipoDocumento tipoDocumento seleccionado
 	 */
 	@BusinessOperationDefinition(BO_GESTOR_DOCUMENTAL_LISTADO_DOCUMENTO)
-	List<AdjuntoGridDto> listadoDocumentos(String claveAsociacion, String tipoEntidadGrid, String tipoDocumento);
+	List<AdjuntoGridDto> listadoDocumentos(Long idAsuPrc, String claveAsociacion, String tipoEntidadGrid, String tipoDocumento);
 
 	/**
 	 * idRefCentera id del documento que queremos descargar

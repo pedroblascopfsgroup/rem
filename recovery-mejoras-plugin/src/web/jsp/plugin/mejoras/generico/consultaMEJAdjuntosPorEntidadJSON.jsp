@@ -26,6 +26,9 @@
 						<json:property name="fechaCrear">
 							<fmt:formatDate value="${entity.adjuntosAsList[0].auditoria.fechaCrear}" pattern="dd/MM/yyyy" />
 						</json:property>
+						<c:if test="${entity.adjuntosAsList[0].tipoAdjuntoEntidad != null}">
+							<json:property name="tipoFichero" value="${entity.adjuntosAsList[0].tipoAdjuntoEntidad.descripcion}" />
+						</c:if>
 					</c:if>
 			</json:object>
 			<c:if test="${entity.adjuntos!=null}">
@@ -47,6 +50,9 @@
 							<json:property name="fechaCrear">
 								<fmt:formatDate value="${adj.auditoria.fechaCrear}" pattern="dd/MM/yyyy" />
 							</json:property>
+							<c:if test="${adj.tipoAdjuntoEntidad != null}">
+								<json:property name="tipoFichero" value="${adj.tipoAdjuntoEntidad.descripcion}" />
+							</c:if>
 			            </json:object>
 					</c:if>
 	            </c:forEach>

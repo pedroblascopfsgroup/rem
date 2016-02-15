@@ -22,11 +22,12 @@ public class AdjuntoGridAssembler {
 			AdjuntoGridDto dto = new AdjuntoGridDto();
 			dto.setId(Long.parseLong(olDto.getIdDocumento()));
 			dto.setNombre(olDto.getDescripcion()+"."+olDto.getExtFichero());
-			dto.setContentType(olDto.getNombreTipoDoc());
+			dto.setContentType(olDto.getContentType());
 			dto.setDescripcion(olDto.getDescripcion());
 			dto.setLength("");
 			dto.setFicheroBase64(outputDto.getFicheroBase64());
 			dto.setTipo(olDto.getTipoDoc());
+			dto.setNombreTipoDoc(olDto.getNombreTipoDoc());
 			try {
 				dto.setAuditoria(new Auditoria());
 				dto.getAuditoria().setFechaCrear(frmt.parse(olDto.getAltaVersion()));

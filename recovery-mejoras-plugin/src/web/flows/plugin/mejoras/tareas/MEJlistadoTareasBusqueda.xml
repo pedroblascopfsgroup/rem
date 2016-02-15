@@ -18,7 +18,8 @@
 	</decision-state>
 	
 	<decision-state id="listadoBusquedaAvanzadaProcurador">
-		<if test="(estado=='Todas' || estado==null)" then="esBuzonOptimizado" else="BusquedaAvanzadaProcurador"/>
+		<!-- JODO if test="(estado=='Todas' || estado==null)" then="esBuzonOptimizado" else="BusquedaAvanzadaProcurador"/ -->
+		<if test="(estado=='Todas' || estado==null)" then="esBuzonOptimizado" else="esBuzonOptimizado"/>
 	</decision-state>
 	
 	<action-state id="esBuzonOptimizado">

@@ -199,6 +199,7 @@ nombreFicheroSinDir=`basename $FICHERO`
 nombreSinDirSinExt=${nombreFicheroSinDir%%.*}
 nombreSetEnv=setEnv_${nombreSinDirSinExt}.sh
 
+mkdir -p $BASEDIR/tmp
 if [[ $PACKAGE == 0 ]]; then
     rm -f $BASEDIR/tmp/*$nombreSinDirSinExt* 
 fi

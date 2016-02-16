@@ -3,7 +3,7 @@
 --## AUTOR=Joaquín Sánchez Valverde
 --## FECHA_CREACION=20160211
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=
+--## VERSION_ARTEFACTO=1.0
 --## INCIDENCIA_LINK=CAJAMAR-0002
 --## PRODUCTO=NO
 --## Finalidad: DML ......

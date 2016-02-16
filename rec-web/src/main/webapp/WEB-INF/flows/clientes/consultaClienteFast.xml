@@ -24,6 +24,7 @@
     <view-state id="buscaCliente" view="entidad/cliente/clienteJSON" model="dto">
         <on-render>
             <evaluate expression="executor.execute('analisisPoliticaManager.getAnalisisPolitica', id)" result="flowScope.analisisPolitica" />
+            <evaluate expression="executor.execute('politicaManager.buscarUltimaPolitica', id)" result="flowScope.ultimaPolitica" />
             <evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')" result="flowScope.usuario"/>
             <evaluate expression="executor.execute('personaManager.get', id)" result="flowScope.persona" />
             <evaluate expression="executor.execute('antecedenteManager.findByPersonaId', id)" result="flowScope.antecedente" />

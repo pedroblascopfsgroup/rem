@@ -257,7 +257,7 @@ BEGIN
 		IF V_NUM_TABLAS < 1 THEN
 			DBMS_OUTPUT.PUT_LINE('--Creamos relacion GESTC-MAD con D-GESCON-MAD');  
 			V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS(USD_ID,USU_ID,DES_ID,USD_GESTOR_DEFECTO,USD_SUPERVISOR,USUARIOCREAR,FECHACREAR) VALUES ('
-				|| V_ESQUEMA_M||'.s_usd_usuarios_despachos.nextval,'
+				|| V_ESQUEMA ||'.s_usd_usuarios_despachos.nextval,'
 				|| ' (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS grupo WHERE grupo.USU_USERNAME =''GESTC-MAD''),'
 				|| ' (SELECT DES_ID FROM '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO despa WHERE despa.DES_CODIGO=''D-GESCON-MAD''),'
 				|| ' 1,0,''' || V_USUARIO_EJECUTA || ''',sysdate)'
@@ -278,7 +278,7 @@ BEGIN
 		IF V_NUM_TABLAS < 1 THEN
 			DBMS_OUTPUT.PUT_LINE('--Creamos relacion GESTC-CAN con D-GESCON-CAN');  
 			V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS(USD_ID,USU_ID,DES_ID,USD_GESTOR_DEFECTO,USD_SUPERVISOR,USUARIOCREAR,FECHACREAR) VALUES ('
-				|| V_ESQUEMA_M||'.s_usd_usuarios_despachos.nextval,'
+				|| V_ESQUEMA ||'.s_usd_usuarios_despachos.nextval,'
 				|| ' (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS grupo WHERE grupo.USU_USERNAME =''GESTC-CAN''),'
 				|| ' (SELECT DES_ID FROM '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO despa WHERE despa.DES_CODIGO=''D-GESCON-CAN''),'
 				|| ' 1,0,''' || V_USUARIO_EJECUTA || ''',sysdate)'
@@ -300,7 +300,7 @@ BEGIN
 		IF V_NUM_TABLAS < 1 THEN
 			DBMS_OUTPUT.PUT_LINE('--Creamos relacion SUPCO-MAD con D-SUCON-MAD');  
 			V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS(USD_ID,USU_ID,DES_ID,USD_GESTOR_DEFECTO,USD_SUPERVISOR,USUARIOCREAR,FECHACREAR) VALUES ('
-				|| V_ESQUEMA_M||'.s_usd_usuarios_despachos.nextval,'
+				|| V_ESQUEMA ||'.s_usd_usuarios_despachos.nextval,'
 				|| ' (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS grupo WHERE grupo.USU_USERNAME =''SUPCO-MAD''),'
 				|| ' (SELECT DES_ID FROM '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO despa WHERE despa.DES_CODIGO=''D-SUCON-MAD''),'
 				|| ' 1,0,''' || V_USUARIO_EJECUTA || ''',sysdate)'
@@ -321,7 +321,7 @@ BEGIN
 		IF V_NUM_TABLAS < 1 THEN
 			DBMS_OUTPUT.PUT_LINE('--Creamos relacion SUPCO-CAN con D-SUCON-CAN');  
 			V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS(USD_ID,USU_ID,DES_ID,USD_GESTOR_DEFECTO,USD_SUPERVISOR,USUARIOCREAR,FECHACREAR) VALUES ('
-				|| V_ESQUEMA_M||'.s_usd_usuarios_despachos.nextval,'
+				|| V_ESQUEMA ||'.s_usd_usuarios_despachos.nextval,'
 				|| ' (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS grupo WHERE grupo.USU_USERNAME =''SUPCO-CAN''),'
 				|| ' (SELECT DES_ID FROM '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO despa WHERE despa.DES_CODIGO=''D-SUCON-CAN''),'
 				|| ' 1,0,''' || V_USUARIO_EJECUTA || ''',sysdate)'

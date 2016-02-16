@@ -204,7 +204,7 @@ BEGIN
 		END IF;	
 
 --Relacionamos usuario con grupo.
-		V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.usu_usuarios usu WHERE usu.usu_username = ''val.dirzona''';
+		V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.usu_usuarios usu WHERE usu.usu_username  = ''val.dirzona''';
 		DBMS_OUTPUT.PUT_LINE(V_MSQL);
 		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
 		IF V_NUM_TABLAS >= 1 THEN
@@ -223,7 +223,7 @@ BEGIN
 		END IF;		
 
 	ELSE 
-		DBMS_OUTPUT.PUT_LINE('El  Procedimiento ' || V_USUARIO_EJECUTA || ' ya se ejecuto, NO se ejecutara de nuevo otra vez.');				
+		DBMS_OUTPUT.PUT_LINE('El  Procedimiento ' || V_USUARIO_EJECUTA || ' ya se ejecuto , NO se ejecutara de nuevo otra vez.');				
 	END IF;	 
 
 	COMMIT;

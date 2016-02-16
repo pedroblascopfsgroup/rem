@@ -29,6 +29,12 @@ public class PageSQLTransformHibernate extends PageTransformHibernate {
 	}	
 	
 	@SuppressWarnings("rawtypes")
+	public PageSQLTransformHibernate(String queryString, Class clazz,
+			PaginationParams dto) {
+		this(queryString, dto, null, clazz);
+	}
+
+	@SuppressWarnings("rawtypes")
 	public PageSQLTransformHibernate(String queryString,
 			PaginationParams paginationParams, HashMap params, Class clazz) {
 		super(queryString, paginationParams, params, clazz);

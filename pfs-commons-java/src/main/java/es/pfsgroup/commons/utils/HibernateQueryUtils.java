@@ -62,7 +62,6 @@ public class HibernateQueryUtils {
 	 *            DTO con informaci�n de paginaci�n
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public static <T extends Serializable, K extends Serializable> Page page(AbstractHibernateDao<T, K> dao, HQLBuilder hqlbuilder, WebDto dto) {
 
 		return page(dao, hqlbuilder, dto, null);
@@ -98,6 +97,7 @@ public class HibernateQueryUtils {
 	 *            DTO al que queremos transformar
 	 * @return
 	 */
+	@SuppressWarnings("rawtypes")
 	public static <T extends Serializable, K extends Serializable> Page page(AbstractHibernateDao<T, K> dao, HQLBuilder hqlbuilder, PaginationParams dto, Class clazz) {
 
 		if (clazz == null) {
@@ -120,10 +120,9 @@ public class HibernateQueryUtils {
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	public static <T extends Serializable, K extends Serializable> Page pageSql(AbstractHibernateDao<T, K> dao, String sql, Class clazz) {
+	public static <T extends Serializable, K extends Serializable> Page pageSql(AbstractHibernateDao<T, K> dao, String sql, Class clazz, PaginationParams dto) {
 
-		PageSQLTransformHibernate page = new PageSQLTransformHibernate(sql, clazz);
-		page.setResultsPerPage(25);
+		PageSQLTransformHibernate page = new PageSQLTransformHibernate(sql, clazz, dto);
 		dao.getHibernateTemplate().executeFind(page);
 
 		return page;
@@ -144,6 +143,7 @@ public class HibernateQueryUtils {
 		return page;
 	}
 
+	@SuppressWarnings("rawtypes")
 	private static <T extends Serializable, K extends Serializable> Page returnPageTransformed(AbstractHibernateDao<T, K> dao, HQLBuilder hqlbuilder, PaginationParams dto, Class clazz) {
 		PageTransformHibernate page = new PageTransformHibernate(hqlbuilder.toString(), dto, hqlbuilder.getParameters(), clazz);
 

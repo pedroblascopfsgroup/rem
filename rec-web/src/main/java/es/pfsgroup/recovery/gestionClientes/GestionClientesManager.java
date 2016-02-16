@@ -3,7 +3,6 @@ package es.pfsgroup.recovery.gestionClientes;
 import static es.pfsgroup.recovery.gestionClientes.dao.GestionClientesDao.COLUMN_STA_CODIGO;
 import static es.pfsgroup.recovery.gestionClientes.dao.GestionClientesDao.COLUMN_STA_DESCRIPCION;
 import static es.pfsgroup.recovery.gestionClientes.dao.GestionClientesDao.COLUMN_TOTAL_COUNT;
-import static es.pfsgroup.recovery.gestionClientes.dao.GestionClientesDao.COLUM_CODIGO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +13,8 @@ import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
-import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.message.MessageService;
+import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.itinerario.model.DDTipoItinerario;
 import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
@@ -36,6 +35,7 @@ public class GestionClientesManager {
 	@Resource
 	private MessageService messageService;
 
+	@SuppressWarnings("rawtypes")
 	public List<GestionClientesCountDTO> getContadoresGestionVencidos() {
 		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 
@@ -57,7 +57,7 @@ public class GestionClientesManager {
 				} else if ((codigo != null)
 						&& SubtipoTarea.CODIGO_GESTION_SEGUIMIENTO_SISTEMATICO.equals(codigo.toString())) {
 					// addCantidadTareasSeguimientoSistematico
-					result.add(creaGestionClientesCountDTO(map, messageService.getMessage("cliente.gestion.seguimiento.sistematico"), messageService.getMessage("cliente.gestionar.seguimiento.sistematicos")));
+					result.add(creaGestionClientesCountDTO(map, messageService.getMessage("cliente.gestion.seguimiento.sistematico"), messageService.getMessage("cliente.gestionar.seguimiento.sistematico")));
 				}
 			}
 
@@ -65,6 +65,7 @@ public class GestionClientesManager {
 		return result;
 	}
 
+	@SuppressWarnings("rawtypes")
 	private GestionClientesCountDTO creaGestionClientesCountDTO(Map map, String descripcionTarea,
 			String descripcionSubstring) {
 		Object cantidadVecidos = map.get(COLUMN_TOTAL_COUNT);
@@ -85,9 +86,18 @@ public class GestionClientesManager {
 		return dto;
 	}
 
-	public Page getDatosVencidos() {
+	public Page getDatosVencidos(GestionClientesBusquedaDTO dto) {
 		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		return dao.obtenerListaVencidos(DDTipoItinerario.ITINERARIO_RECUPERACION, usuario);
+		return dao.obtenerListaGestionClientes(DDTipoItinerario.ITINERARIO_RECUPERACION, usuario, dto);
 	}
-
+	
+	public Page getDatosSeguimientoSistematico(GestionClientesBusquedaDTO dto) {
+		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		return dao.obtenerListaGestionClientes(DDTipoItinerario.ITINERARIO_SEGUIMIENTO_SISTEMATICO, usuario, dto);
+	}
+	
+	public Page getDatosSeguimientoSintomatico(GestionClientesBusquedaDTO dto) {
+		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		return dao.obtenerListaGestionClientes(DDTipoItinerario.ITINERARIO_SEGUIMIENTO_SINTOMATICO, usuario, dto);
+	}
 }

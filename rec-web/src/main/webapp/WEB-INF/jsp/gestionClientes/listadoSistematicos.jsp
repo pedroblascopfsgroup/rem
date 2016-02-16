@@ -165,7 +165,7 @@
 		,limit:limit
 		,remoteSort : true
 		,loading:false
-		,flow:'gestionclientes/getDatosVencidos'
+		,flow:'gestionclientes/getDatosSeguimientoSistematico'
 		,reader: new Ext.data.JsonReader({
 	    	root : 'clientes'
 	    	,totalProperty : 'total'

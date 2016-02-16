@@ -36,25 +36,43 @@ public class GestionClientesController {
 		return "gestionClientes/listadoVencidos";
 	}
 	
-	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getListadoSintomaticos(WebRequest request, ModelMap model) {
-		//TODO
-		return null;
+		return "gestionClientes/listadoSintomaticos";
 	}
 	
 	@RequestMapping
 	public String getListadoSistematicos(WebRequest request, ModelMap model) {
-		//TODO
-		return null;
+		return "gestionClientes/listadoSistematicos";
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String getDatosVencidos(WebRequest request, ModelMap model) {
+	public String getDatosVencidos(GestionClientesBusquedaDTO dto, ModelMap model) {
 		
-		Page vencidos = manager.getDatosVencidos();
+		Page vencidos = manager.getDatosVencidos(dto);
 				
 		model.put("pagina", vencidos);
-		return "gestionClientes/gestionVencidosJSON";
+		return "gestionClientes/gestionClientesJSON";
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getDatosSeguimientoSistematico(GestionClientesBusquedaDTO dto, ModelMap model) {
+		
+		Page vencidos = manager.getDatosSeguimientoSistematico(dto);
+				
+		model.put("pagina", vencidos);
+		return "gestionClientes/gestionClientesJSON";
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getDatosSeguimientoSintomatico(GestionClientesBusquedaDTO dto, ModelMap model) {
+		
+		Page vencidos = manager.getDatosSeguimientoSintomatico(dto);
+				
+		model.put("pagina", vencidos);
+		return "gestionClientes/gestionClientesJSON";
 	}
 }

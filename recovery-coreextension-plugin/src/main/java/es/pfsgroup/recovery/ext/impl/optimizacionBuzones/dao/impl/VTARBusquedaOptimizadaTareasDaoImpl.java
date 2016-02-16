@@ -517,7 +517,7 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
         if (!Checks.esNulo(dto.getDescripcionTarea())) {
         	if (hb.length()>0)
         		hb.append(" and ");
-        	hb.append(" UPPER(vtar.descripcionTarea) like '%" + dto.getDescripcionTarea().toUpperCase() + "%'");
+        	hb.append(" UPPER(vtar.descripcionEntidad) like '%" + dto.getDescripcionTarea().toUpperCase() + "%'");
         	//La descripcion expediente es el campo descripcion que se muestra en la grid
         	//hb.append(" UPPER(vtar.descripcionExpediente) like '%" + dto.getDescripcionTarea().toUpperCase() + "%'"); 
         }

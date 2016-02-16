@@ -6,7 +6,7 @@
 --## VERSION_ARTEFACTO=1.0
 --## INCIDENCIA_LINK=CAJAMAR-0001
 --## PRODUCTO=NO
---## Finalidad: DML ......
+--## Finalidad: DML_379_ENTITY01_CREAR_DESPACHOS.sql
 --##           
 --## INSTRUCCIONES: Cierra procedimientos erroneos por peticion usuario HR-1856 y HR-1911
 --## VERSIONES:

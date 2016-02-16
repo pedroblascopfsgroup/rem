@@ -97,7 +97,7 @@ BEGIN
                               FECHA_ULTIMA_POSICION_VENCIDA DATE ,              -- Fecha de la ultima posicion vencida asociada de los contratos asociados al procedimiento
                               FECHA_ULTIMA_ESTIMACION DATE ,
                               FECHA_ESTIMADA_COBRO DATE ,
-                              CONTEXTO_FASE VARCHAR2(250) ,                     -- Secuencia de fases (IDs de las fases del procedimiento)
+                              CONTEXTO_FASE VARCHAR2(600) ,                     -- Secuencia de fases (IDs de las fases del procedimiento)
                               NIVEL INTEGER ,                                   -- Nivel de profundidad en la jerarquia de fases del procedimiento
                               -- Dimensiones
                               ASUNTO_ID NUMBER(16,0) ,                          -- Asunto al que pertenece el procedimiento
@@ -229,7 +229,7 @@ BEGIN
                               FECHA_ULTIMA_POSICION_VENCIDA DATE ,              -- Fecha de la ultima posicion vencida asociada de los contratos asociados al procedimiento
                               FECHA_ULTIMA_ESTIMACION DATE ,
                               FECHA_ESTIMADA_COBRO DATE ,
-                              CONTEXTO_FASE VARCHAR2(250) ,                     -- Secuencia de fases (IDs de las fases del procedimiento)
+                              CONTEXTO_FASE VARCHAR2(600) ,                     -- Secuencia de fases (IDs de las fases del procedimiento)
                               NIVEL INTEGER ,                                   -- Nivel de profundidad en la jerarquia de fases del procedimiento
                               -- Dimensiones
                               ASUNTO_ID NUMBER(16,0) ,                          -- Asunto al que pertenece el procedimiento
@@ -357,7 +357,7 @@ BEGIN
                               FECHA_ULTIMA_POSICION_VENCIDA DATE ,              -- Fecha de la ultima posicion vencida asociada de los contratos asociados al procedimiento
                               FECHA_ULTIMA_ESTIMACION DATE ,
                               FECHA_ESTIMADA_COBRO DATE ,
-                              CONTEXTO_FASE VARCHAR2(250) ,                     -- Secuencia de fases (IDs de las fases del procedimiento)
+                              CONTEXTO_FASE VARCHAR2(600) ,                     -- Secuencia de fases (IDs de las fases del procedimiento)
                               NIVEL INTEGER ,                                   -- Nivel de profundidad en la jerarquia de fases del procedimiento
                               -- Dimensiones
                               ASUNTO_ID NUMBER(16,0) ,                          -- Asunto al que pertenece el procedimiento
@@ -482,7 +482,7 @@ BEGIN
                               FECHA_ULTIMA_POSICION_VENCIDA DATE ,              -- Fecha de la ultima posicion vencida asociada de los contratos asociados al procedimiento
                               FECHA_ULTIMA_ESTIMACION DATE ,
                               FECHA_ESTIMADA_COBRO DATE ,
-                              CONTEXTO_FASE VARCHAR2(250) ,                     -- Secuencia de fases (IDs de las fases del procedimiento)
+                              CONTEXTO_FASE VARCHAR2(600) ,                     -- Secuencia de fases (IDs de las fases del procedimiento)
                               NIVEL INTEGER ,                                   -- Nivel de profundidad en la jerarquia de fases del procedimiento
                               -- Dimensiones
                               ASUNTO_ID NUMBER(16,0) ,                          -- Asunto al que pertenece el procedimiento
@@ -607,7 +607,7 @@ BEGIN
                               FECHA_ULTIMA_POSICION_VENCIDA DATE ,              -- Fecha de la ultima posicion vencida asociada de los contratos asociados al procedimiento
                               FECHA_ULTIMA_ESTIMACION DATE ,
                               FECHA_ESTIMADA_COBRO DATE ,
-                              CONTEXTO_FASE VARCHAR2(250) ,                     -- Secuencia de fases (IDs de las fases del procedimiento)
+                              CONTEXTO_FASE VARCHAR2(600) ,                     -- Secuencia de fases (IDs de las fases del procedimiento)
                               NIVEL INTEGER ,                                   -- Nivel de profundidad en la jerarquia de fases del procedimiento
                               -- Dimensiones
                               ASUNTO_ID NUMBER(16,0) ,                          -- Asunto al que pertenece el procedimiento
@@ -732,7 +732,7 @@ BEGIN
                               FECHA_ULTIMA_POSICION_VENCIDA DATE ,              -- Fecha de la ultima posicion vencida asociada de los contratos asociados al procedimiento
                               FECHA_ULTIMA_ESTIMACION DATE ,
                               FECHA_ESTIMADA_COBRO DATE ,
-                              CONTEXTO_FASE VARCHAR2(250) ,                     -- Secuencia de fases (IDs de las fases del procedimiento)
+                              CONTEXTO_FASE VARCHAR2(600) ,                     -- Secuencia de fases (IDs de las fases del procedimiento)
                               NIVEL INTEGER ,                                   -- Nivel de profundidad en la jerarquia de fases del procedimiento
                               -- Dimensiones
                               ASUNTO_ID NUMBER(16,0) ,                          -- Asunto al que pertenece el procedimiento
@@ -1289,7 +1289,7 @@ BEGIN
                               FECHA_ULTIMA_ESTIMACION DATE ,
                               FASE_MAX_PRIORIDAD NUMBER(16,0) ,
                               NIVEL NUMBER(2,0) ,
-                              CONTEXTO varchar(300) ,
+                              CONTEXTO varchar(600) ,
                               CODIGO_FASE_ACTUAL varchar(20) ,
                               PRIORIDAD_FASE INTEGER ,
                               PRIORIDAD_PROCEDIMIENTO INTEGER ,

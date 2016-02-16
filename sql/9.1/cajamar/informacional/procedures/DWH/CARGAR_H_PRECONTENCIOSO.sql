@@ -137,7 +137,7 @@ BEGIN
                hprc.PCO_PRC_ID,
                max(PCO_PRC_HEP_FECHA_INCIO)
         from '||V_DATASTAGE||'.PCO_PRC_PROCEDIMIENTOS prc, '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP hprc 
-        where prc.PCO_PRC_ID = hprc.PCO_PRC_ID and trunc(prc.FECHACREAR) <= '''||fecha||''' and prc.BORRADO = 0
+        where prc.PCO_PRC_ID = hprc.PCO_PRC_ID and trunc(prc.FECHACREAR) <= '''||fecha||''' and prc.BORRADO = 0 and trunc(hprc.FECHACREAR) <= '''||fecha||''' and hprc.BORRADO = 0
         group by PRC_ID, hprc.PCO_PRC_ID';
     commit;
     
@@ -146,9 +146,9 @@ BEGIN
                                   from '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP a 
                            left join 
                            (select PCO_PRC_ID, Max(PCO_PRC_HEP_FECHA_INCIO) as fecha, max(pco_prc_hep_id) as secuencial
-                                  from '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP 
+                                  from '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP where trunc(FECHACREAR) <= '''||fecha||''' and BORRADO = 0
                                   group by pco_prc_id) b
-                           on a.pco_prc_id=b.pco_prc_id and a.PCO_PRC_HEP_FECHA_INCIO=b.fecha and a.pco_prc_hep_id=b.secuencial 
+                           on a.pco_prc_id=b.pco_prc_id and a.PCO_PRC_HEP_FECHA_INCIO=b.fecha and a.pco_prc_hep_id=b.secuencial and trunc(a.FECHACREAR) <= '''||fecha||''' and a.BORRADO = 0
                            where b.pco_prc_id is not null) t2
 
                            on (t1.PCO_PRC_ID = t2.PCO_PRC_ID and t1.FECHA_ACTUAL_ESTADO = t2.PCO_PRC_HEP_FECHA_INCIO)
@@ -185,7 +185,7 @@ execute immediate 'merge into  TMP_PRE_FECHA_ESTADO t3
     execute immediate 'merge into TMP_H_PRE t1  
                        using (select PRC_ID, max(trunc(PCO_PRC_HEP_FECHA_INCIO)) as FECHA_ESTADO 
                               from '||V_DATASTAGE||'.PCO_PRC_PROCEDIMIENTOS prc, '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP hprc, '||V_DATASTAGE||'.DD_PCO_PRC_ESTADO_PREPARACION dd
-                              where prc.PCO_PRC_ID = hprc.PCO_PRC_ID and hprc.DD_PCO_PEP_ID = dd.DD_PCO_PEP_ID and dd.DD_PCO_PEP_DESCRIPCION = ''En estudio''
+                              where prc.PCO_PRC_ID = hprc.PCO_PRC_ID and hprc.DD_PCO_PEP_ID = dd.DD_PCO_PEP_ID and dd.DD_PCO_PEP_DESCRIPCION = ''En estudio'' and trunc(prc.FECHACREAR) <= '''||fecha||''' and prc.BORRADO = 0 and trunc(hprc.FECHACREAR) <= '''||fecha||''' and hprc.BORRADO = 0
                               group by PRC_ID) t2
                        on (t1.PROCEDIMIENTO_ID = t2.PRC_ID)
                        when matched then update set t1.FECHA_ESTUDIO_PRE = t2.FECHA_ESTADO where t1.DIA_ID = '''||fecha||'''';
@@ -194,7 +194,7 @@ execute immediate 'merge into  TMP_PRE_FECHA_ESTADO t3
     execute immediate 'merge into TMP_H_PRE t1  
                        using (select PRC_ID, max(trunc(PCO_PRC_HEP_FECHA_INCIO)) as FECHA_ESTADO 
                               from '||V_DATASTAGE||'.PCO_PRC_PROCEDIMIENTOS prc, '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP hprc, '||V_DATASTAGE||'.DD_PCO_PRC_ESTADO_PREPARACION dd
-                              where prc.PCO_PRC_ID = hprc.PCO_PRC_ID and hprc.DD_PCO_PEP_ID = dd.DD_PCO_PEP_ID and (dd.DD_PCO_PEP_DESCRIPCION = ''En Preparado'' or dd.DD_PCO_PEP_DESCRIPCION = ''Preparacion'')
+                              where prc.PCO_PRC_ID = hprc.PCO_PRC_ID and hprc.DD_PCO_PEP_ID = dd.DD_PCO_PEP_ID and (dd.DD_PCO_PEP_DESCRIPCION = ''En Preparado'' or dd.DD_PCO_PEP_DESCRIPCION = ''Preparacion'') and trunc(prc.FECHACREAR) <= '''||fecha||''' and prc.BORRADO = 0 and trunc(hprc.FECHACREAR) <= '''||fecha||''' and hprc.BORRADO = 0
                               group by PRC_ID) t2
                        on (t1.PROCEDIMIENTO_ID = t2.PRC_ID)
                        when matched then update set t1.FECHA_PREPARADO_PRE = t2.FECHA_ESTADO where t1.DIA_ID = '''||fecha||'''';
@@ -203,7 +203,7 @@ execute immediate 'merge into  TMP_PRE_FECHA_ESTADO t3
     execute immediate 'merge into TMP_H_PRE t1  
                        using (select PRC_ID, max(trunc(PCO_PRC_HEP_FECHA_INCIO)) as FECHA_ESTADO 
                               from '||V_DATASTAGE||'.PCO_PRC_PROCEDIMIENTOS prc, '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP hprc, '||V_DATASTAGE||'.DD_PCO_PRC_ESTADO_PREPARACION dd
-                              where prc.PCO_PRC_ID = hprc.PCO_PRC_ID and hprc.DD_PCO_PEP_ID = dd.DD_PCO_PEP_ID and dd.DD_PCO_PEP_DESCRIPCION = ''Enviado''
+                              where prc.PCO_PRC_ID = hprc.PCO_PRC_ID and hprc.DD_PCO_PEP_ID = dd.DD_PCO_PEP_ID and dd.DD_PCO_PEP_DESCRIPCION = ''Enviado'' and trunc(prc.FECHACREAR) <= '''||fecha||''' and prc.BORRADO = 0 and trunc(hprc.FECHACREAR) <= '''||fecha||''' and hprc.BORRADO = 0
                               group by PRC_ID) t2
                        on (t1.PROCEDIMIENTO_ID = t2.PRC_ID)
                        when matched then update set t1.FECHA_ENV_LET_PRE = t2.FECHA_ESTADO where t1.DIA_ID = '''||fecha||'''';
@@ -212,7 +212,7 @@ execute immediate 'merge into  TMP_PRE_FECHA_ESTADO t3
     execute immediate 'merge into TMP_H_PRE t1  
                        using (select PRC_ID, max(trunc(PCO_PRC_HEP_FECHA_INCIO)) as FECHA_ESTADO 
                               from '||V_DATASTAGE||'.PCO_PRC_PROCEDIMIENTOS prc, '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP hprc, '||V_DATASTAGE||'.DD_PCO_PRC_ESTADO_PREPARACION dd
-                              where prc.PCO_PRC_ID = hprc.PCO_PRC_ID and hprc.DD_PCO_PEP_ID = dd.DD_PCO_PEP_ID and dd.DD_PCO_PEP_DESCRIPCION = ''Finalizado''
+                              where prc.PCO_PRC_ID = hprc.PCO_PRC_ID and hprc.DD_PCO_PEP_ID = dd.DD_PCO_PEP_ID and dd.DD_PCO_PEP_DESCRIPCION = ''Finalizado'' and trunc(prc.FECHACREAR) <= '''||fecha||''' and prc.BORRADO = 0 and trunc(hprc.FECHACREAR) <= '''||fecha||''' and hprc.BORRADO = 0
                               group by PRC_ID) t2
                        on (t1.PROCEDIMIENTO_ID = t2.PRC_ID)
                        when matched then update set t1.FECHA_FINALIZADO_PRE = t2.FECHA_ESTADO where t1.DIA_ID = '''||fecha||'''';
@@ -221,7 +221,7 @@ execute immediate 'merge into  TMP_PRE_FECHA_ESTADO t3
     execute immediate 'merge into TMP_H_PRE t1  
                        using (select PRC_ID, max(trunc(PCO_PRC_HEP_FECHA_INCIO)) as FECHA_ESTADO 
                               from '||V_DATASTAGE||'.PCO_PRC_PROCEDIMIENTOS prc, '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP hprc, '||V_DATASTAGE||'.DD_PCO_PRC_ESTADO_PREPARACION dd
-                              where prc.PCO_PRC_ID = hprc.PCO_PRC_ID and hprc.DD_PCO_PEP_ID = dd.DD_PCO_PEP_ID and (dd.DD_PCO_PEP_DESCRIPCION = ''Subsanar'' or dd.DD_PCO_PEP_DESCRIPCION = ''Subsanar por cambio proc'')
+                              where prc.PCO_PRC_ID = hprc.PCO_PRC_ID and hprc.DD_PCO_PEP_ID = dd.DD_PCO_PEP_ID and (dd.DD_PCO_PEP_DESCRIPCION = ''Subsanar'' or dd.DD_PCO_PEP_DESCRIPCION = ''Subsanar por cambio proc'') and trunc(prc.FECHACREAR) <= '''||fecha||''' and prc.BORRADO = 0 and trunc(hprc.FECHACREAR) <= '''||fecha||''' and hprc.BORRADO = 0
                               group by PRC_ID) t2
                        on (t1.PROCEDIMIENTO_ID = t2.PRC_ID)
                        when matched then update set t1.FECHA_ULT_SUBSANACION_PRE = t2.FECHA_ESTADO where t1.DIA_ID = '''||fecha||'''';
@@ -230,7 +230,7 @@ execute immediate 'merge into  TMP_PRE_FECHA_ESTADO t3
     execute immediate 'merge into TMP_H_PRE t1  
                        using (select PRC_ID, max(trunc(PCO_PRC_HEP_FECHA_INCIO)) as FECHA_ESTADO 
                               from '||V_DATASTAGE||'.PCO_PRC_PROCEDIMIENTOS prc, '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP hprc, '||V_DATASTAGE||'.DD_PCO_PRC_ESTADO_PREPARACION dd
-                              where prc.PCO_PRC_ID = hprc.PCO_PRC_ID and hprc.DD_PCO_PEP_ID = dd.DD_PCO_PEP_ID and dd.DD_PCO_PEP_DESCRIPCION = ''Cancelado''
+                              where prc.PCO_PRC_ID = hprc.PCO_PRC_ID and hprc.DD_PCO_PEP_ID = dd.DD_PCO_PEP_ID and dd.DD_PCO_PEP_DESCRIPCION = ''Cancelado'' and trunc(prc.FECHACREAR) <= '''||fecha||''' and prc.BORRADO = 0 and trunc(hprc.FECHACREAR) <= '''||fecha||''' and hprc.BORRADO = 0
                               group by PRC_ID) t2
                        on (t1.PROCEDIMIENTO_ID = t2.PRC_ID)
                        when matched then update set t1.FECHA_CANCELADO_PRE = t2.FECHA_ESTADO where t1.DIA_ID = '''||fecha||'''';
@@ -239,7 +239,7 @@ execute immediate 'merge into  TMP_PRE_FECHA_ESTADO t3
     execute immediate 'merge into TMP_H_PRE t1  
                        using (select PRC_ID, max(trunc(PCO_PRC_HEP_FECHA_INCIO)) as FECHA_ESTADO 
                               from '||V_DATASTAGE||'.PCO_PRC_PROCEDIMIENTOS prc, '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP hprc, '||V_DATASTAGE||'.DD_PCO_PRC_ESTADO_PREPARACION dd
-                              where prc.PCO_PRC_ID = hprc.PCO_PRC_ID and hprc.DD_PCO_PEP_ID = dd.DD_PCO_PEP_ID and dd.DD_PCO_PEP_DESCRIPCION = ''Paralizado''
+                              where prc.PCO_PRC_ID = hprc.PCO_PRC_ID and hprc.DD_PCO_PEP_ID = dd.DD_PCO_PEP_ID and dd.DD_PCO_PEP_DESCRIPCION = ''Paralizado'' and trunc(prc.FECHACREAR) <= '''||fecha||''' and prc.BORRADO = 0 and trunc(hprc.FECHACREAR) <= '''||fecha||''' and hprc.BORRADO = 0
                               group by PRC_ID) t2
                        on (t1.PROCEDIMIENTO_ID = t2.PRC_ID)
                        when matched then update set t1.FECHA_PARALIZADO_PRE = t2.FECHA_ESTADO where t1.DIA_ID = '''||fecha||'''';

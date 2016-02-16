@@ -6,7 +6,7 @@
 --## VERSION_ARTEFACTO=1.0
 --## INCIDENCIA_LINK=CAJAMAR-0002
 --## PRODUCTO=NO
---## Finalidad: DML_380_ENTITY01_NUEVO_PERFIL.sql
+--## Finalidad: DML ......
 --##           
 --## INSTRUCCIONES: Cierra procedimientos erroneos por peticion usuario HR-1856 y HR-1911
 --## VERSIONES:
@@ -39,10 +39,11 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE(V_MSQL);
 	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
 	IF V_NUM_TABLAS < 1 THEN
-		V_MSQL := 'SELECT pef.PEF_CODIGO FROM '||V_ESQUEMA||'.PEF_PERFILES pef WHERE pef.PEF_DESCRIPCION = ''D. Zona'' '; -- DIR_ZONA
+		
+		V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.PEF_PERFILES pef WHERE pef.PEF_DESCRIPCION = ''D. Zona'' '; -- DIR_ZONA
 		DBMS_OUTPUT.PUT_LINE(V_MSQL);
-		EXECUTE IMMEDIATE V_MSQL INTO V_COD_PERFIL;
-		IF V_COD_PERFIL is null THEN
+		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+		IF V_NUM_TABLAS < 1 THEN
 			DBMS_OUTPUT.PUT_LINE('--Creamos el nuevo perfil DIR_ZONA');  
 			V_COD_PERFIL := 'DIR_ZONA';	
 			
@@ -53,7 +54,10 @@ BEGIN
 			EXECUTE IMMEDIATE V_MSQL;
 			DBMS_OUTPUT.PUT_LINE('Creamos el nuevo perfil DIR_ZONA' );
 		ELSE 
-			DBMS_OUTPUT.PUT_LINE('Creamos el nuevo perfil DIR_ZONA ya existe');				
+			DBMS_OUTPUT.PUT_LINE('El nuevo perfil DIR_ZONA ya existe');
+			V_MSQL := 'SELECT pef.PEF_CODIGO FROM '||V_ESQUEMA||'.PEF_PERFILES pef WHERE pef.PEF_DESCRIPCION = ''D. Zona'' '; -- DIR_ZONA
+			DBMS_OUTPUT.PUT_LINE(V_MSQL);
+			EXECUTE IMMEDIATE V_MSQL INTO V_COD_PERFIL;
 		END IF;
 
 --Asignamos las funciones al perfil
@@ -204,7 +208,7 @@ BEGIN
 		END IF;	
 
 --Relacionamos usuario con grupo.
-		V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.usu_usuarios usu WHERE usu.usu_username  = ''val.dirzona''';
+		V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.usu_usuarios usu WHERE usu.usu_username = ''val.dirzona''';
 		DBMS_OUTPUT.PUT_LINE(V_MSQL);
 		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
 		IF V_NUM_TABLAS >= 1 THEN
@@ -223,7 +227,7 @@ BEGIN
 		END IF;		
 
 	ELSE 
-		DBMS_OUTPUT.PUT_LINE('El  Procedimiento ' || V_USUARIO_EJECUTA || ' ya se ejecuto , NO se ejecutara de nuevo otra vez.');				
+		DBMS_OUTPUT.PUT_LINE('El  Procedimiento ' || V_USUARIO_EJECUTA || ' ya se ejecuto, NO se ejecutara de nuevo otra vez.');				
 	END IF;	 
 
 	COMMIT;

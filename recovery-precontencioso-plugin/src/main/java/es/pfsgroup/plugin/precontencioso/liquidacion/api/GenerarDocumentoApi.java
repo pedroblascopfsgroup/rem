@@ -11,6 +11,6 @@ public interface GenerarDocumentoApi {
 
 	public FileItem generarDocumento(Long idLiquidacion, Long idPlantilla);
 	
-	public FileItem generarCertificadoSaldo(Long idLiquidacion, Long idPlantilla, String codigoPropietaria, String localidadFirma);
+	public FileItem generarCertificadoSaldo(Long idLiquidacion, Long idPlantilla, String codigoPropietaria, String localidadFirma, String notario);
 	
 }

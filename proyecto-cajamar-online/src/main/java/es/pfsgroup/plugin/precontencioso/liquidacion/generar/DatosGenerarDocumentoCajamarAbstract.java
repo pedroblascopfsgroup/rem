@@ -25,7 +25,7 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
  */
 public abstract class DatosGenerarDocumentoCajamarAbstract {
 
-	/** CAMPOS COMUNES DE TODOS LOS DOCUMENTOS */
+	/* CAMPOS COMUNES DE TODOS LOS DOCUMENTOS */
 	public static final String DATOS_TITULARES = "DATOS_TITULARES";
 	public static final String DATOS_FIADORES = "DATOS_FIADORES";
 	public static final String NOMAPOTELEGRAMA = "NOMAPOTELEGRAMA";
@@ -33,7 +33,7 @@ public abstract class DatosGenerarDocumentoCajamarAbstract {
 	public static final String NOMOFI = "NOMOFI";
 	public static final String NUMCUENTATELE = "NUMCUENTATELE";
 	public static final String IMPCER = "IMPCER";
-
+	
 	public static final String NOMBRE_TITULAR_PRINCIPAL = "NOMBRE_TITULAR_PRINCIPAL";
 
 	private static final String CONECTOR_ESPACIO = " ";
@@ -45,12 +45,12 @@ public abstract class DatosGenerarDocumentoCajamarAbstract {
 	private static final String FIN_NO_DISP = " NO DISPONIBLE]";	
 
 	private static final Locale localeSpa = new java.util.Locale("es", "ES");
-	private static final SimpleDateFormat formatFecha = new SimpleDateFormat(FormatUtils.DD_DE_MES_DE_YYYY, localeSpa);
-	private static final NumberFormat currencyInstance = NumberFormat.getCurrencyInstance(localeSpa);
+	protected static final SimpleDateFormat formatFecha = new SimpleDateFormat(FormatUtils.DD_DE_MES_DE_YYYY, localeSpa);
+	protected static final NumberFormat currencyInstance = NumberFormat.getCurrencyInstance(localeSpa);
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
-	// Ver más formas de obtener datos en DatosGenerarDocumentoBankiaAbstract
+	// Ver más formas de obtener datos en DatosPlantillaPrestamoAbstract
 	
 	/**
 	 * @param liquidacion

@@ -118,6 +118,15 @@
 		localidadesStore.webflow();
 	});
 
+	var notario = new Ext.form.TextField({
+		name : 'notario'
+		,width: 400
+		,allowBlank : true
+		,value : '<s:message text="${dtoDoc.notario}" javaScriptEscape="true" />'
+		,fieldLabel : '<s:message code="precontencioso.grid.documento.editarDocumento.notario" text="**Notario" />'
+	});  
+	
+
 	<%-- Buttons --%>
 
 	var btnGuardar = new Ext.Button({
@@ -128,7 +137,7 @@
 			if (validarForm() == '') {
 				var flow='/pfs/liquidaciondoc/generarCertSaldo';
 				var params={idLiquidacion: idLiquidacionSeleccionada, idPlantilla: comboPlantillas.getValue(), 
-					codigoPropietaria: comboPropietarias.getValue(), localidadFirma: comboLocalidades.getValue()};
+					codigoPropietaria: comboPropietarias.getValue(), localidadFirma: comboLocalidades.getValue(), notario: notario.getValue()};
 				app.openBrowserWindow(flow,params);
 				page.fireEvent(app.event.DONE);
 			}else{
@@ -166,7 +175,7 @@
 		bbar: [btnGuardar, btnCancelar],
 		items: [
 			{
-				items: [ comboPlantillas, comboPropietarias, comboLocalidades]
+				items: [ comboPlantillas, comboPropietarias, comboLocalidades, notario]
 			}
 		]
 	});

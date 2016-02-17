@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import es.capgemini.pfs.dao.AbstractDao;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.model.DDZona;
 
 /**
@@ -79,5 +80,22 @@ public interface ZonaDao extends AbstractDao<DDZona, Long> {
     Boolean existePerfilZona(Long idZona, Long idPerfil);
     
     List<DDZona> getZonasJerarquiaByCodDesc(Integer idNivel, Set<String> codigoZonasUsuario, String codDesc);
-
+    
+    /**
+     * Método que devuelve las zonas a partir del usuario y el perfil
+     * @param idUsuario
+     * @param codPerfil
+     * @return
+     */
+    List<DDZona> getZonaPorUsuarioPerfil(Long idUsuario, String codPerfil);
+    
+    /**
+     * 
+     * Guarda un nuevo registro en ZON_PEF_USU, si no existe ya (se comrpueba que no haya ya un registro con la zona,
+     * el perfil, y el usuario pasados por parametro)
+     * @param zona
+     * @param usuario
+     * @param codPerfil
+     */
+    void guardarNuevoZonaPerfilUsuario(DDZona zona, Usuario usuario, String codPerfil);
 }

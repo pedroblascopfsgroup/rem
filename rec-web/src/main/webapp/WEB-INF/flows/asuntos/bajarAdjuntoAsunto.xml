@@ -4,10 +4,12 @@
 
 	<input name="asuntoId" required="true" type="java.lang.Long"/>
 	<input name="id" required="true" type="java.lang.String"/>
+	<input name="nombre" required="false" type="java.lang.String"/>
+	<input name="extension" required="false" type="java.lang.String"/>
 	    
     <end-state id="listado" view="file" >
 		<on-entry>
-			<evaluate expression="executor.execute('adjuntosManager.bajarAdjuntoAsunto', asuntoId, id)" result="flowScope.fileItem"/>
+			<evaluate expression="executor.execute('adjuntosManager.bajarAdjuntoAsunto', asuntoId, id, nombre, extension)" result="flowScope.fileItem"/>
 		</on-entry>
 	</end-state>
     

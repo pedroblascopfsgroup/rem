@@ -371,6 +371,9 @@ var pdfRender = function(value, meta, record) {
       		if(myCboxSelModel.getCount() == 0){
       			btnPreparar.setDisabled(true);
       			btnEditar.setDisabled(true);
+				<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
+					btnEditar.setDisabled(false);
+				</sec:authorize>
       			btnNuevaDir.setDisabled(true);
       			btnEnviar.setDisabled(true);
       			btnNotificar.setDisabled(true);
@@ -1131,6 +1134,9 @@ var pdfRender = function(value, meta, record) {
 				btnEnviar.setDisabled(true);
 				btnNuevaDir.setDisabled(true);
 				btnEditar.setDisabled(true);
+				<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
+				btnEditar.setDisabled(false);
+				</sec:authorize>
 				btnPreparar.setDisabled(true);
 				btnCancelar.setDisabled(true);
 				btnNotificar.setDisabled(true);
@@ -1181,6 +1187,9 @@ var pdfRender = function(value, meta, record) {
 		
 		if(!btnEditar.disabled && !validarBotonEditarHabilitado()) {
 			btnEditar.setDisabled(true);
+			<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
+				btnEditar.setDisabled(false);
+			</sec:authorize>
 		}	
 		
 		if(!btnPreparar.disabled && !validarBotonPrepararHabilitado()) {
@@ -1329,12 +1338,14 @@ var pdfRender = function(value, meta, record) {
 			btnPreparar.setDisabled(true);
 		}--%>
      		<%-- Si el envio esta en estado preparado, habilitamos el boton editar --%>
+		<sec:authorize ifNotGranted="PERSONALIZACION-BCC">
 		if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Preparado'){
 			btnEditar.setDisabled(false);
 		}
 		else{
 			btnEditar.setDisabled(true);
 		}
+		</sec:authorize>
 		
 		
 		<%-- Comprobamos que se ha seleccionado un cliente --%>
@@ -1387,6 +1398,9 @@ var pdfRender = function(value, meta, record) {
 			btnEnviar.setDisabled(true);
 			//btnNuevaDir.setDisabled(true);
 			btnEditar.setDisabled(true);
+			<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
+				btnEditar.setDisabled(false);
+			</sec:authorize>
 			btnPreparar.setDisabled(true);
 			btnCancelar.setDisabled(true);
 			btnNotificar.setDisabled(true);
@@ -1403,11 +1417,11 @@ var pdfRender = function(value, meta, record) {
 			} else {
 				btnNuevaDir.setDisabled(true);
 			}
-			
-			if(!btnEditar.disabled && !validarBotonEditarHabilitado()) {
-				btnEditar.setDisabled(true);
-			}
-			
+			<sec:authorize ifNotGranted="PERSONALIZACION-BCC">
+				if(!btnEditar.disabled && !validarBotonEditarHabilitado()) {
+					btnEditar.setDisabled(true);
+				}
+			</sec:authorize>
 			if(!btnPreparar.disabled && !validarBotonPrepararHabilitado()) {
 				btnPreparar.setDisabled(true);
 			}

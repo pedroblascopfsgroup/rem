@@ -20,5 +20,21 @@ if [ $? != 0 ] ; then
    exit 1
 fi
 
+echo "Asignación de BPMs ...."
+
+$ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"CJM_BMPs_Precontencioso.sql  
+if [ $? != 0 ] ; then
+   echo -e "\n\n======>>> "Error en @"$sql_dir"CJM_BMPs_Precontencioso.sql
+   exit 1
+fi
+
+echo "Gestores Precontencioso en curso...."
+
+$ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"CJM_Gestores_PREContencioso.sql
+if [ $? != 0 ] ; then
+   echo -e "\n\n======>>> "Error en @"$sql_dir"CJM_Gestores_PREContencioso.sql
+   exit 1
+fi
+
 echo "Fin CJM_migracion_contratos_HRE_resto. Revise el fichero de log"
 exit 0

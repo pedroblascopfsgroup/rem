@@ -1,0 +1,11 @@
+grant select, update, insert, delete on BANK01.TMP_CONTRATOS_VENTA to BANK01_D_TX;
+grant select, update, insert, delete on BANK01.FIN_AUX_CNT_PRC_VIVOS to BANK01_D_TX;
+grant select, update, insert, delete on BANK01.FIN_AUX_CONTRATOS_VENTA to BANK01_D_TX;
+grant select, update, insert, delete on BANK01.TMP_CONTRATOS_VENTA_RECHAZOS to BANK01_D_TX;
+grant select, update, insert, delete on BANK01.FIN_AUX_PRC_CERRAR_INICIAL to BANK01_D_TX;
+grant select, update, insert, delete on BANK01.FIN_AUX_PRC_CERRAR_FINAL to BANK01_D_TX;
+grant select, update, insert, delete on BANK01.FIN_AUX_TMP_TAR_VENTACAR to BANK01_D_TX;
+grant select, update, insert, delete on BANK01.FIN_AUX_TMP_TEX_VENTACAR to BANK01_D_TX;
+grant select, update, insert, delete on BANK01.FIN_AUX_TMP_PRC_VENTACAR to BANK01_D_TX;
+grant select, update, insert, delete on BANK01.FIN_AUX_TMP_DPR_VENTACAR to BANK01_D_TX;
+grant select, update, insert, delete on BANK01.FIN_AUX_TMP_ASU_VENTACAR to BANK01_D_TX;

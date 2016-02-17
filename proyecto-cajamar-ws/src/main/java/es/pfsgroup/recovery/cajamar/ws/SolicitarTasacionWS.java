@@ -146,6 +146,8 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 			nueva.setAuditoria(auditoria);
 		}
 		
+		nueva.setFechaSolicitudTasacion(new Date());
+		
 		String codigoTasadora = output.getTASA();
 		if(codigoTasadora != null) {
 			Filter filtroTasadora = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoTasadora);
@@ -206,6 +208,7 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 		
 		// Se selecciona la persona que tiene una mayor participación. En caso de igualdad, el primer registro
 		Long nPersona = null;
+		String codEntidad = "";
 		if(bien.getPersonas() != null) {
 			
 			float participacion = -1;
@@ -213,14 +216,18 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 				if(personaBien.getParticipacion() != null && personaBien.getParticipacion() > participacion) {
 					nPersona = personaBien.getPersona().getCodClienteEntidad();
 					participacion = personaBien.getParticipacion();
+					codEntidad = personaBien.getPersona().getCodigoEntidad();
 				}
 			}			
 		}
-		
-		
+				
 		String sPersona = "";
 		if(nPersona != null) {
 			sPersona = nPersona.toString();
+			
+			if(sPersona.startsWith(codEntidad)) {
+				sPersona = StringUtils.substringAfter(sPersona, codEntidad);
+			}
 		}
 		
 		logger.info("NPERSONA: " + StringUtils.substring(sPersona, 0, 10));

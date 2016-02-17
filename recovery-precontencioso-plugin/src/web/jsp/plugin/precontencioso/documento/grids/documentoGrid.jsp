@@ -800,6 +800,7 @@ Ext.namespace('Ext.ux.plugins');
         ,labelStyle:'font-weight:bolder'
         ,height : 35
         ,width : 200
+        ,emptyText :'Filtrar por...'
         ,enableKeyEvents: true
         ,emptyText :'Filtrar por...'
         ,doQuery : function(q, forceAll){
@@ -856,10 +857,6 @@ Ext.namespace('Ext.ux.plugins');
     });
     
 
-    
-  
-    
-    
     var tituloFiltro = new Ext.form.Label({
    		text:'<s:message code="precontencioso.grid.documento.tipoDocumento" text="**Tipo Documento" />:'
    		,style: {

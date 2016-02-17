@@ -1068,7 +1068,6 @@
 			codigoSubtipoTarea = app.subtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_RESPONDIDA_DE_SUPERVISOR;
 		}
 
-
 		switch (codigoSubtipoTarea){
 			case app.subtipoTarea.CODIGO_COMPLETAR_EXPEDIENTE:
 			case app.subtipoTarea.CODIGO_REVISAR_EXPEDIENE:
@@ -1083,7 +1082,7 @@
 				app.abreCliente(rec.get('idEntidadPersona'), rec.get('descripcion'));
 			break;
 			case app.subtipoTarea.CODIGO_GESTION_VENCIDOS:
-				app.openTab("<s:message code="tareas.gv" text="**Gesti&oacute;n de Vencidos"/>", "clientes/listadoClientes", {gv:true,gsis:false,gsin:false},{id:'GV',iconCls:'icon_busquedas'});
+				app.openTab("<s:message code="tareas.gv" text="**Gesti&oacute;n de Vencidos"/>", "gestionclientes/getListadoVencidos", {gv:true,gsis:false,gsin:false},{id:'GV',iconCls:'icon_busquedas'});
 			break;
 			case app.subtipoTarea.CODIGO_GESTION_SEGUIMIENTO_SISTEMATICO:
 				app.openTab("<s:message code="tareas.gsis" text="**Gesti&oacute;n de Seguimiento Sistem&aacute;tico"/>", "clientes/listadoClientes", {gv:false,gsis:true,gsin:false},{id:'GSIN',iconCls:'icon_busquedas'});

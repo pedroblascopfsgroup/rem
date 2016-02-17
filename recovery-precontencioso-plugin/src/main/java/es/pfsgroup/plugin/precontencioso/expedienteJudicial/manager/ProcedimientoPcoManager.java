@@ -14,6 +14,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.annotation.Resource;
+
 import java.math.BigDecimal;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -1283,6 +1284,20 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			logger.error(e.getMessage());
 		}
 		return resultado;
+	}
+	
+	@Override
+	public String asuntoConProcuradorPrecontencioso(Long idProcedimiento) {
+		
+		try {
+			Procedimiento proc = procedimientoManager.getProcedimiento(idProcedimiento);
+			if (proc.getAsunto().getProcurador() != null) {
+				return "1";
+			}
+		} catch (Exception e) {
+			logger.error("asuntoConProcurador "+ e.getMessage());
+		}
+		return "0";
 	}
 	
 }

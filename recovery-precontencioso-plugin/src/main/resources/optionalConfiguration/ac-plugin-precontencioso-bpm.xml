@@ -110,6 +110,10 @@
 				 def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
 				 return procedimientoPcoManager.comprobarExistenciaGestor(idProcedimiento);
 			}
+            def asuntoConProcuradorPrecontencioso = {
+                def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
+                return procedimientoPcoManager.asuntoConProcuradorPrecontencioso(idProcedimiento);
+            }
 			]]></value>
   		</list>
   	</property>

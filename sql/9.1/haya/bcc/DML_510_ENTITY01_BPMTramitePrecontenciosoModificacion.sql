@@ -39,8 +39,8 @@ DECLARE
     TYPE T_TIPO_TAP IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
-       T_TIPO_TAP('PCO','PCO_PreasignarProcurador',null,'asuntoConProcurador()',null,null,null,'0','Preasignar procurador','0','PRODUCTO-708','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'543',null,null,null),
-       T_TIPO_TAP('PCO','PCO_ConfirmarProcurador',null,'asuntoConProcurador()',null,null,null,'0','Confirmar procurador','0','PRODUCTO-708','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'543',null,null,null),
+       T_TIPO_TAP('PCO','PCO_PreasignarProcurador',null,'asuntoConProcuradorPrecontencioso() == ''0'' ? ''Error: Debe asignar un procurador al asunto'' : null',null,null,null,'0','Preasignar procurador','0','PRODUCTO-708','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'TGP',null,null,null),
+       T_TIPO_TAP('PCO','PCO_ConfirmarProcurador',null,'asuntoConProcuradorPrecontencioso() == ''0'' ? ''Error: Debe asignar un procurador al asunto'' : null',null,null,null,'0','Confirmar procurador','0','PRODUCTO-708','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'TGP',null,null,null),
        T_TIPO_TAP('PCO','PCO_BPMTramiteEnvioDemanda',null,null,null,null,'HC106','0','Se inicia el trámite envío de la demanda','0','PRODUCTO-708','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'543',null,null,null)
     ); 
     V_TMP_TIPO_TAP T_TIPO_TAP;

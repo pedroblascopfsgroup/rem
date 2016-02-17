@@ -186,7 +186,7 @@ var anyadirFechaFaltante = function(response){
 	
 	// combo plaza de juzgado ------------------------------------------
 	
-	var codPlaza = "${valores['H001_DemandaCertificacionCargas']['plazaJuzgado']}";
+	var codPlaza = "${valores['H001_DemandaCertificacionCargas']['nPlaza']}";
 	var decenaInicio = 0;
 	var dsplazas = new Ext.data.Store({
 		autoLoad: false,
@@ -238,7 +238,9 @@ var anyadirFechaFaltante = function(response){
 	});
 	comboPlaza.on('afterrender', function(combo) {
 		combo.mode='remote';
+		codPlaza = "${valores['H001_DemandaCertificacionCargas']['nPlaza']}";
 	});
+	
 	//comboPlaza.setDisabled(true);
 	items[2 + offset] = comboPlaza;
 
@@ -266,6 +268,11 @@ var anyadirFechaFaltante = function(response){
 		,resizable: true		
 		,triggerAction: 'all'
 		,fieldLabel : items[3 + offset].fieldLabel
+	});
+	
+	comboPlaza.on('select', function(){
+		codPlaza = comboPlaza.getValue();
+		juzgadosStore.webflow({id:codPlaza});
 	});
 	
 	Ext.onReady(function() {

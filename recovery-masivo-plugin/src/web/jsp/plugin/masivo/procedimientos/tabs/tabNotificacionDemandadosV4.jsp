@@ -228,7 +228,7 @@ resumenNotificacionGrid.on('cellclick', function(grid, rowIndex, columnIndex, e)
 		    	idPersonaSelected = idDemandado;
     			idDireccionSelected = '';
     			direccionSelected = '';
-		    	historicoDetalleNotificacionGrid.setVisible(false);
+		    	historicoDetalleNotificacionGrid.setVisible(true);
 		    	recordDetalleStore.webflow({idProcedimiento: idProcedimiento, idPersona: idDemandado});
 		    	if (columnName == 'excluido') {
 					if (!datosEditables) {

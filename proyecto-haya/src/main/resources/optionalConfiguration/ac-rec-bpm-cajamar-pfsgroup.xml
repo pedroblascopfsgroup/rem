@@ -30,6 +30,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteAdjudicacion/hcj_tramiteAdjudicacion.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCesionRemate/hcj_tramiteCesionRemate.xml" p:version="-1"/>		
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSaneamientoCargas/hcj_tramiteSaneamientoCargas.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoProvisionFondosProcu/hcj_provisionFondosProcu.xml" p:version="-1"/>
 	
 	<!-- Alberto -->
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoCambiario/haya_procedimientoCambiario.xml" p:version="-1"/>

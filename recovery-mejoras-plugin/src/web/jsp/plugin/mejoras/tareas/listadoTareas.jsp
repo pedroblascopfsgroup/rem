@@ -139,8 +139,10 @@
 		,reader : new Ext.data.JsonReader({root:'categorias', totalProperty : 'total'}, categoriasRecord)
 	});
 
+<c:if test="${tieneProcurador == true && activoDespachoIntegral==true}">
 	categoriasStore.webflow({idcategorizacion: "${idCategorizacion}"});
-	
+</c:if>
+
 	//Combo Categorias Resoluciones
 	var comboCtgResol = new Ext.form.ComboBox({
 		name: 'comboCtgResol'
@@ -1046,7 +1048,6 @@
 	
 	
 	tareasGrid.on('rowdblclick', function(grid, rowIndex, e) {
-		debugger;
 		//agregar funcionalidad....
 		var rec = grid.getStore().getAt(rowIndex);
 		

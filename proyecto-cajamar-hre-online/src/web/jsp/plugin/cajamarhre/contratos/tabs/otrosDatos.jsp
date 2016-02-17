@@ -24,8 +24,8 @@
  	var odFlagExtra4 = label('odFlagExtra4','<s:message code="contrato.consulta.tabOtrosDatos.flagExtra4" text="**Operación Reestructurada"/>');
  	var odDateExtra2 = label('odDateExtra2','<s:message code="contrato.consulta.tabOtrosDatos.dateExtra2" text="**Fecha de Entrada Actual en Gestión especial"/>');
  	var odDateExtra3 = label('odDateExtra3','<s:message code="contrato.consulta.tabOtrosDatos.dateExtra3" text="**Fecha Próxima Amortización"/>');
- 	var odDateExtra4 = label('odDateExtra4','<s:message code="contrato.consulta.tabOtrosDatos.dateExtra4" text="**Fecha Próxima Revisión"/>');
- 	var odDateExtra5 = label('odDateExtra5','<s:message code="contrato.consulta.tabOtrosDatos.dateExtra5" text="**Fecha Fin de la Carencia"/>');
+ 	var odDateExtra4 = label('odDateExtra4','<s:message code="contrato.consulta.tabOtrosDatos.dateExtra4" text="**Fecha Fin de la Carencia"/>');
+ 	var odDateExtra5 = label('odDateExtra5','<s:message code="contrato.consulta.tabOtrosDatos.dateExtra5" text="**Fecha Próxima Revisión"/>');
  	var odDateExtra6 = label('odDateExtra6','<s:message code="contrato.consulta.tabOtrosDatos.dateExtra6" text="**Fecha Test de Cumplimiento"/>');
  	var odNumExtra4 = label('odNumExtra4','<s:message code="contrato.consulta.tabOtrosDatos.numExtra4" text="**Número de Expediente GESDACI"/>');
  	var odNumExtra5 = label('odNumExtra5','<s:message code="contrato.consulta.tabOtrosDatos.numExtra5" text="**Importe Retenciones"/>');
@@ -92,8 +92,8 @@
 		,layoutConfig:{columns:2}
 		,title:''
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:400, style:'padding:10px; margin:10px'}
-		,items : [{items:[contratoNivel2, odCharExtra9, odFlagExtra4, odDateExtra3, odDateExtra5, odNumExtra4,riesgoOperacional,tipoVencido]}
-				, {items:[odCharExtra7, odCharExtra10, odDateExtra2, odDateExtra4, odDateExtra6, odNumExtra5,tramoPrevio]}]
+		,items : [{items:[contratoNivel2, odCharExtra9, odFlagExtra4, odDateExtra3, odDateExtra4, odNumExtra4,riesgoOperacional,tipoVencido]}
+				, {items:[odCharExtra7, odCharExtra10, odDateExtra2, odDateExtra5, odDateExtra6, odNumExtra5,tramoPrevio]}]
 	});
 	  
 	//Panel propiamente dicho...

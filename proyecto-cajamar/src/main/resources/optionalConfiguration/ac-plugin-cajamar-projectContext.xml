@@ -149,7 +149,9 @@
 						<value>TDIRCON</value>
 						<value>TDIRHRE</value>
 						<value>TGESHREIN</value>
-						
+						<value>TGESRIE</value>
+						<value>TDIRTERRIE</value>
+						<value>TDIRRIETERGCC</value>
 						<!-- PRORROGAS -->
 						<value>RESPRO_SUHRE</value>
 						<value>RESPRO_SUP</value>
@@ -174,7 +176,6 @@
 						<value>RESPRO_SUCON</value>
 						<value>RESPRO_SUINC</value>
 						<value>RESPRO_SUANREC</value>
-						<value>RESPRO_SUHRE</value>
 						<value>RESPRO_SUADMCON</value>
 						<value>RESPRO_DIRCON</value>
 						<value>RESPRO_DIRHRE</value>

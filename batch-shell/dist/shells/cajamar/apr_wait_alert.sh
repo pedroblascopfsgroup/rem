@@ -1,13 +1,11 @@
 #!/bin/bash
+
 # Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
 
 DIR_INPUT=/recovery/transferencia/aprov_auxiliar/
 MAX_WAITING_MINUTES=10
 ficheros=ALERTAS
 
-#echo $(basename $0)
-
-DIR_DESTINO=/recovery/batch-server/control/etl/input/
 
 mascara='_'$ENTIDAD'_'????????
 extensionSem=".sem"

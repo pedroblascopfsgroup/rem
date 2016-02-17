@@ -247,10 +247,15 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 	@Transactional
 	public List<DTOBusquedaExportBienes> buscarBienesXLS(NMBDtoBuscarBienes dto) {
 		Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
-		Parametrizacion parametroLimite = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+		
+		/*Parametrizacion parametroLimite = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
 				Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_BIENES);
 		Integer limite = Integer.parseInt(parametroLimite.getValor());
-		dto.setLimit(limite);
+		dto.setLimit(limite);*/
+		
+		int count = ((PageHibernate)nmbBienDao.buscarBienesExport(dto, usuarioLogado)).getTotalCount();
+		
+		dto.setLimit(count+1);
 		PageHibernate page = (PageHibernate) nmbBienDao.buscarBienesExport(dto, usuarioLogado);
 		List<Object[]> list = (List<Object[]>) page.getResults();
 		Iterator<Object[]> objectIt = list.iterator();

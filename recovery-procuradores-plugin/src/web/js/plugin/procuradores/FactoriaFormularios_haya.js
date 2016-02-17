@@ -3171,6 +3171,47 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
         {"xtype":'combo',"store":storeSINO,"name":"d_comboAlerta","fieldLabel":"Mantener alerta de seguridad",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAlerta'+this.idFactoria,displayField:'descripcion',valueField:'codigo'} 
     ]);
     
+    //id: 433 : P. CAMBIARIO: Confirmar admision de la demanda (CAJAMAR): 
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'combo',"store": this.dsPlazas, "name":"d_comboPlaza","hiddenName":"d_comboPlaza",fieldLabel:"Plaza del juzgado",allowBlank:false,triggerAction: 'all',resizable:true, id:'d_comboPlaza'+this.idFactoria
+		                      	 ,displayField:'descripcion',valueField:'codigo',typeAhead: false,loadingText: 'Searching...',width: '300',resizable: true,pageSize: 10,	mode: 'local'
+		                      		,listeners:{afterRender:function(combo){
+		                      			 combo.mode='remote';
+		                      		 		},
+		                      		 		select :function(combo){
+		              							var idFactoria = combo.id.replace('d_comboPlaza','');
+		              							var juzgado=Ext.getCmp('d_comboJuzgado' + idFactoria);
+		              							var storeJuzgado= juzgado.getStore();
+		              							storeJuzgado.load({params:{codigoPlaza:combo.getValue()}});
+		            							storeJuzgado.on('load', function(){  
+	                  								  var foundValue = false;
+	                								  storeJuzgado.each(function(record)  
+	                								  {
+	                									  if(record.get("codigo") == juzgado.getValue()){
+	                										  juzgado.setValue(juzgado.getValue());
+	                										  foundValue = true;
+	                									  }
+	
+	                								  }, this); 
+	                								
+	                								  if(!foundValue){
+	                									  juzgado.setValue("");
+	                								  }
+		            							});
+		              						}
+		                      		 }
+		                        }
+		                     ,{"xtype":'combo',"editable":"false", "store":this.dsJuzgado, width:280,mode:'local', "name":"d_comboJuzgado","hiddenName":"d_comboJuzgado","fieldLabel":"Nº Juzgado",triggerAction: 'all',allowBlank:false, displayField:'descripcion',valueField:'codigo', id:'d_comboJuzgado' + this.idFactoria }
+		                     ,{"xtype":'textfield',"name":"d_numProcedimiento","fieldLabel":"Nº de procedimiento",allowBlank:false, id:'d_numProcedimiento_id'+this.idFactoria
+		         				,validator : function(v) {
+		         						return /[0-9]{5}\/[0-9]{4}$/.test(v)? true : "Debe introducir un n&uacute;mero con formato xxxxx/xxxx";
+		         				}
+		                      }
+		                     ,{"xtype":'combo',"store":storeSINO,"name":"d_comboAdmision","fieldLabel":"Admisión",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAdmision'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+		                     ,{"xtype":'combo',"store":storeSINO,"name":"d_comboBienes","fieldLabel":"Existen bienes registrables",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboBienes'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                      ]);
+    
     
 
 		var lengthArrayCampos = this.arrayCampos.length;

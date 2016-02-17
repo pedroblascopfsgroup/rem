@@ -1129,8 +1129,8 @@ public class GENINFInformesManager implements GENINFInformesApi {
 		    metadata.addFieldAsImage("logo");
 			IImageProvider logo = new FileImageProvider(new File(rutaLogo));
 			logo.setUseImageSize(true);
-		    logo.setHeight(50f);
-		    logo.setResize(true);
+		    //logo.setHeight(50f);
+		    //logo.setResize(true);
 		    context.put("logo", logo);
             
 			context.put(DOMFontsPreprocessor.FONT_SIZE_KEY, "8");

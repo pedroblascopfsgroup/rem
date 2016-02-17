@@ -26,6 +26,7 @@ public class GenerarLiquidacionCajamarManager implements GenerarDocumentoApi {
 	private static final String LOCCRD = "LOCCRD";
 	private static final String TEXTO_LOGO = "TEXTO_LOGO";
 	private static final String GEN_ENT_N = "GEN_ENT_N";
+	private static final String NOMBRE_NOT_TELE = "NOMBRE_NOT_TELE";
 	
 	@Autowired
 	private ParametrizacionDao parametrizacionDao;
@@ -70,7 +71,7 @@ public class GenerarLiquidacionCajamarManager implements GenerarDocumentoApi {
 	}
 
 	@Override
-	public FileItem generarCertificadoSaldo(Long idLiquidacion, Long idPlantilla, String codigoPropietaria, String localidadFirma) {
+	public FileItem generarCertificadoSaldo(Long idLiquidacion, Long idPlantilla, String codigoPropietaria, String localidadFirma, String notario) {
 		
 		DDTipoLiquidacionPCO tipoLiquidacion = (DDTipoLiquidacionPCO) diccionarioApi.dameValorDiccionario(DDTipoLiquidacionPCO.class, idPlantilla);
 		String nombrePlantilla = tipoLiquidacion.getPlantilla();
@@ -89,6 +90,11 @@ public class GenerarLiquidacionCajamarManager implements GenerarDocumentoApi {
 		}
 		datosPlantilla.put(GEN_ENT_N, nombreEntidad);
 		datosPlantilla.put(TEXTO_LOGO, textoLogo);
+		if (Checks.esNulo(notario)) {
+			datosPlantilla.put(NOMBRE_NOT_TELE, "[ Campo " + NOMBRE_NOT_TELE + " no disponible]");
+		} else {
+			datosPlantilla.put(NOMBRE_NOT_TELE, notario);
+		}
 		
 		FileItem ficheroLiquidacion;
 		try {

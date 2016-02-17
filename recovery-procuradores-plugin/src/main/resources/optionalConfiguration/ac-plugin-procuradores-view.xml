@@ -109,10 +109,11 @@
 <!-- 		p:priority="1"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" /> -->
 		
 	
-<!-- 	<bean p:entity="tabs.procedimiento.fast" p:name="historicoProcedimiento" -->
-<!--		p:order="900" -->
-<!--		p:fileName="/WEB-INF/jsp/plugin/procuradores/procedimientos/tabs/tabHistoricoPrcResoluciones.jsp" -->
-<!--		p:priority="3" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" /> -->
+	<bean p:entity="tabs.procedimiento.fast" p:name="historicoProcedimiento"
+		p:order="900"
+		p:fileName="/WEB-INF/jsp/plugin/procuradores/procedimientos/tabs/tabHistoricoPrcResoluciones.jsp"
+		p:priority="3" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+			p:permission="TAB_HISTORICO_RESOLUCIONES_PROCURADOR" />
 		
 <!--		<bean p:entity="tabs.procedimiento.fast" p:name="historicoProcedimiento" -->
 <!--			p:order="900" -->

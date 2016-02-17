@@ -10,6 +10,4 @@
          <evaluate expression="executor.execute('es.pfsgroup.plugin.recovery.coreextension.api.historicoProcedimiento.getListByProcedimientoEXT', idProcedimiento)" result="flowScope.tareas" />
  		</on-entry>
 	</end-state>
-	
-    
 </flow>

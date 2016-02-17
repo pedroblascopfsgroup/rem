@@ -227,7 +227,7 @@
 					<constructor-arg index="0">
 						<bean class="es.pfsgroup.recovery.integration.bpm.TareaExternaPayloadRegexRule">
 							<property name="tipo" value="BPM-TAREA-INICIO"/>
-							<property name="codigoTarea" value="HC103_ConfirmarSolicitud|H064_resultadoSolicitudConsignacion|H032_AutorizarPago|H011_AutorizarPropuesta|H015_AutorizarSuspension|HC104_AutorizarPropuesta|H008_ObtenerAprobPropuesta"/>
+							<property name="codigoTarea" value="HC103_ConfirmarSolicitud|HC107_ConfirmarSolicitud|H064_resultadoSolicitudConsignacion|H032_AutorizarPago|H011_AutorizarPropuesta|H015_AutorizarSuspension|HC104_AutorizarPropuesta|H008_ObtenerAprobPropuesta"/>
 						</bean>
 					</constructor-arg>
 					<property name="description" value="Inicio de Autorización"/>

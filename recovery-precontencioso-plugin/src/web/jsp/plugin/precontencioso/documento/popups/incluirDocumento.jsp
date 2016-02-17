@@ -286,12 +286,78 @@ var gridDocs = new Ext.grid.GridPanel({
     
     var style='margin-bottom:1px;margin-top:1px';
     var labelStyle='width:100';
-    
-<pfsforms:ddCombo name="comboTipoDocumento"
-		labelKey="precontencioso.grid.documento.incluirDocumento.tipodocumento" 
- 		label="**Tipo Documento" value="" dd="${tiposDocumento}" 
-		propertyCodigo="codigo" propertyDescripcion="descripcion" />
-	comboTipoDocumento.labelStyle=labelStyle;
+
+	
+	var listadoTiposDocumento = Ext.data.Record.create([
+		 {name:'codigo'}
+		,{name:'descripcion'}
+	]);
+	
+	var tiposDeDocumentoStore = page.getStore({
+	       flow: 'documentopco/getTiposDocumentoPorTipoActuacion'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'tipoFicherosAdjunto'
+	    }, listadoTiposDocumento)	      
+	});
+	
+	tiposDeDocumentoStore.webflow({'idPCO':  data.precontencioso.id });
+	
+	var comboTipoDocumento = new Ext.form.ComboBox({
+		name:'comboTipoDocumento'
+        ,store: tiposDeDocumentoStore
+        ,mode:'local'
+        ,triggerAction:'all'
+        ,editable: true
+        ,fieldLabel: '<s:message code="precontencioso.grid.documento.incluirDocumento.tipodocumento" text="**Tipo Documento" />'
+        ,displayField:'descripcion'
+        ,valueField: 'codigo'
+        ,enableKeyEvents: true
+        ,labelStyle: labelStyle
+        ,doQuery : function(q, forceAll){
+	        q = Ext.isEmpty(q) ? '' : q;
+	        var qe = {
+	            query: q,
+	            forceAll: forceAll,
+	            combo: this,
+	            cancel:false
+	        };
+	        if(this.fireEvent('beforequery', qe)===false || qe.cancel){
+	            return false;
+	        }
+	        q = qe.query;
+	        forceAll = qe.forceAll;
+	        if(forceAll === true || (q.length >= this.minChars)){
+	            if(this.lastQuery !== q){
+	                this.lastQuery = q;
+	                if(this.mode == 'local'){
+	                    this.selectedIndex = -1;
+	                    if(forceAll){
+	                        this.store.clearFilter();
+	                    }else{
+                      		this.store.filterBy(function(record){
+									var desc = record.get('descripcion').toLowerCase();
+									if (desc.indexOf(comboTipoDocumento.getRawValue().toLowerCase()) > -1) {
+										return true;
+									}else{
+										return false;
+									}
+								});
+	                    }
+	                    this.onLoad();
+	                }else{
+	                    this.store.baseParams[this.queryParam] = q;
+	                    this.store.load({
+	                        params: this.getParams(q)
+	                    });
+	                    this.expand();
+	                }
+	            }else{
+	                this.selectedIndex = -1;
+	                this.onLoad();
+	            }
+	        }
+	    }
+    });
 	
 	<pfsforms:ddCombo name="comboProvinciaNotario"
 		labelKey="precontencioso.grid.documento.incluirDocumento.localidadNotario" 

@@ -12,9 +12,13 @@ import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.users.domain.Perfil;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.dao.ZonaDao;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.Checks;
+
+import java.math.BigDecimal;
 
 /**
  * Implementación del dao zona.
@@ -205,5 +209,47 @@ public class ZonaDaoImpl extends AbstractEntityDao<DDZona, Long> implements Zona
         Long total = (Long) query.uniqueResult();
 
         return (total != null && total > 0L);
+    }
+    
+    /**
+     * Método que devuelve las zonas a partir del usuario y el perfil
+     * @param idUsuario
+     * @param codPerfil
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public List<DDZona> getZonaPorUsuarioPerfil(Long idUsuario, String codPerfil) {
+    	String hql = "select distinct z.zona from ZonaUsuarioPerfil z where z.perfil.codigo = :codPerfil" +
+    			" and z.usuario.id = :idUsuario and z.auditoria." + Auditoria.UNDELETED_RESTICTION;
+    	Query query = getSession().createQuery(hql);
+        query.setParameter("codPerfil", codPerfil);
+        query.setParameter("idUsuario", idUsuario);
+        List<DDZona> zonas = query.list();
+        if (Checks.esNulo(zonas) || zonas.size()==0) {
+            return null;
+        } else /*if (zonas.size() == 1)*/ {
+        	return zonas; 
+        } //else {
+        //	throw new DataIntegrityViolationException("Duplicate zona de usuario: " + idUsuario + " perfil: "+codPerfil);
+      //  }
+    }
+    
+    /**
+     * Guarda un nuevo registro en ZON_PEF_USU, si no existe ya (se comrpueba que no haya ya un registro con la zona,
+     * el perfil, y el usuario pasados por parametro)
+     */
+    public void guardarNuevoZonaPerfilUsuario(DDZona zona, Usuario usuario, String codPerfil) {
+    	String sqlSecuence = "SELECT S_ZON_PEF_USU.NEXTVAL FROM DUAL";
+    	Long secuenciaHistorico = ((BigDecimal)getSession().createSQLQuery(sqlSecuence).uniqueResult()).longValue();
+    	
+    	Perfil perfil = (Perfil) getHibernateTemplate().find("from Perfil p where p.codigo = ? and p.auditoria.borrado=0", codPerfil).get(0);
+    	
+    	String hql = "select * from ZON_PEF_USU where zon_id="+zona.getId()+" and pef_id="+perfil.getId()+" and usu_id="+usuario.getId() +" and borrado=0";
+    	if(getSession().createSQLQuery(hql).list().size() == 0)
+    	{
+	    	hql = "insert into ZON_PEF_USU (zpu_id,zon_id, pef_id, usu_id, version, usuariocrear,fechacrear,borrado) "
+	    			+ "select "+secuenciaHistorico+", "+zona.getId()+", "+perfil.getId()+", "+usuario.getId()+", "+0+", '"+usuario.getUsername()+"', TRUNC(sysdate),"+0+" from dual";
+	    	getSession().createSQLQuery(hql).executeUpdate();
+    	}
     }
 }

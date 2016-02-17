@@ -131,6 +131,16 @@ fi
 echo "[OK] ""$sh_dir""CJM_migracion_a_recovery_precontencioso.sh ejecutado correctamente"      
 
 
+echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_migracion_contratos_HRE_resto.sh"                      
+./"$sh_dir"CJM_migracion_contratos_HRE_resto.sh "$1"
+if [ $? != 0 ] ; then
+    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CJM_migracion_contratos_HRE_resto.sh"
+    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
+    exit 1           
+fi
+echo "[OK] ""$sh_dir""CJM_migracion_contratos_HRE_resto.sh ejecutado correctamente"     
+
+
 echo "[INFO] Comienza ejecución de: ""$sh_dir""apr_main_observaciones.sh"                      
 ./"$sh_dir"apr_main_observaciones.sh 
 if [ $? != 0 ] ; then
@@ -195,6 +205,15 @@ if [ $? != 0 ] ; then
     exit 1           
 fi
 echo "[OK] ""$sh_dir""CMREC_1728_Situacion_cliente_Asunto.sh ejecutado correctamente"   
+
+echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_1460_Modifica_Nombre_Asunto.sh"                      
+./"$sh_dir"CMREC_1460_Modifica_Nombre_Asunto.sh "$1" 
+if [ $? != 0 ] ; then
+    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC_1460_Modifica_Nombre_Asunto.sh"
+    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
+    exit 1           
+fi
+echo "[OK] ""$sh_dir""CMREC_1460_Modifica_Nombre_Asunto.sh ejecutado correctamente"   
 
 
 echo "[INFO] FIN CJM_lanza_migracion.sh. Revise el fichero de log" `date` 

@@ -281,7 +281,7 @@
 	
 		grid.on('rowdblclick', function(grid, rowIndex, e) {
 			var rec = grid.getStore().getAt(rowIndex);
-			window.open("/pfs/bajarAdjuntoPersona.htm?id="+rec.get('id'));
+			window.open("/pfs/bajarAdjuntoPersona.htm?id="+rec.get('id')+"&nombre="+rec.data.nombre+"&extension="+rec.data.contentType);
 		});
 		
 		grid.on('rowclick', function(grid, rowIndex,e){

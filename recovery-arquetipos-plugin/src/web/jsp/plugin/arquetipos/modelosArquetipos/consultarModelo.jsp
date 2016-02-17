@@ -29,28 +29,74 @@
 	
 	<pfs:defineParameters name="arquetipoParams" paramId="${modelo.id}"/>
 	
-	var recargar = function (){
+	var subirClick = false;
+	var bajarClick = false;
+	
+	var recargar = function(){
+		storeArquetipos.webflow({id:${modelo.id}});
+		console.log(gridArquetiposModelo.getSelectionModel().getSelected().get('prioridad'));
+		console.log(storeArquetipos.data.length)
+		if(subirClick || bajarClick){
+			if(subirClick==true){
+				btLibera.disable();
+				btBajar.enable();
+				if(gridArquetiposModelo.getSelectionModel().getSelected().get('prioridad')<3){
+					btSubir.disable();
+				}
+			}
+			if(bajarClick==true){
+				btLibera.disable();
+				btSubir.enable();
+				if(gridArquetiposModelo.getSelectionModel().getSelected().get('prioridad') == (storeArquetipos.data.length-1)){
+					btBajar.disable();
+				}
+			}
+		}else{
+			btSubir.disable();
+			btBajar.disable();
+		}
+
+		subirClick = false;
+		bajarClick = false;
+	};
+
+	var recargarTab = function (){
 		app.openTab('${modelo.nombre}'
 					,'modelosArquetipos/ARQconsultarModelo'
 					,{id:${modelo.id}}
 					,{id:'ModeloRT${modelo.id}'}
 				)
 	};
+
 	<pfs:buttonedit name="btModificarModelo" 
 			flow="plugin/arquetipos/modelosArquetipos/ARQmodificarModelo" 
 			parameters="arquetipoParams" 
 			windowTitle="plugin.arquetipos.modelo.consultar.modificarModelo" 
 			windowTitleKey="**Modificar modelo"
-			on_success="recargar"
+			on_success="recargarTab"
 			/>
 	
+	<c:choose>
+	  <c:when test="${modelo.estado.codigo=='3' || modelo.estado.codigo=='4'}">
+			<pfs:panel name="datosGeneralesPanel" columns="2" collapsible="false">
+				<pfs:items items="nombre, descripcion, estado "/>
+				<pfs:items items="fechaInicioVigencia, fechaFinVigencia"/>
+			</pfs:panel>
+	  </c:when>
+	  <c:otherwise>
+			<pfs:buttonedit name="btModificarModelo" 
+				flow="plugin/arquetipos/modelosArquetipos/ARQmodificarModelo" 
+				parameters="arquetipoParams" 
+				windowTitleKey="plugin.arquetipos.modelo.consultar.modificarModelo" 
+				windowTitle="**Modificar modelo"
+				on_success="recargar"/>
+				<pfs:panel name="datosGeneralesPanel" columns="2" collapsible="false" bbar="btModificarModelo">
+					<pfs:items items="nombre, descripcion, estado "/>
+					<pfs:items items="fechaInicioVigencia, fechaFinVigencia"/>
+				</pfs:panel>
+	  </c:otherwise>
+	</c:choose>
 	
-	<pfs:panel name="datosGeneralesPanel" columns="2" collapsible="false" bbar="btModificarModelo">
-		<pfs:items items="nombre, descripcion, estado "/>
-		<pfs:items items="fechaInicioVigencia, fechaFinVigencia"/>
-	</pfs:panel>
-
-
 	<pfs:defineRecordType name="ArquetiposModeloRT">
 		<pfs:defineTextColumn name="id"/>
 		<pfs:defineTextColumn name="prioridad"/>
@@ -63,25 +109,19 @@
 	</pfs:defineRecordType>
 			
 	<pfs:defineColumnModel name="columnasArquetipos">
+		<pfs:defineHeader dataIndex="id" 
+			captionKey="plugin.arquetipos.callList.id.regla" caption="ID" 
+			sortable="true" firstHeader="true"/>
 		<pfs:defineHeader dataIndex="prioridad" 
 			captionKey="plugin.arquetipos.modelo.consulta.prioridad" caption="**Prioridad" 
-			sortable="true" firstHeader="true"/>
+			sortable="true"/>
 		<pfs:defineHeader dataIndex="arquetipo" 
 			captionKey="plugin.arquetipos.modelo.nombre" caption="**Nombre" 
 			sortable="true" />
-		<pfs:defineHeader dataIndex="itinerario_nombre" 
-			captionKey="plugin.arquetipos.modelo.consulta.itinerario" 
-			caption="**Itinerario" sortable="true" />
 		<pfs:defineHeader dataIndex="nivel" captionKey="plugin.arquetipos.modelo.consulta.nivel" caption="**Nivel" 
 			sortable="true" />
 		<pfs:defineHeader dataIndex="gestion"
 			captionKey="plugin.arquetipos.modelo.gestion" caption="**Gestión"
-			sortable="true" />
-		<pfs:defineHeader dataIndex="plazoDisparo"
-			captionKey="plugin.arquetipos.modelo.plazoDisparo" caption="**Plazo de Disparo"
-			sortable="true" />
-		<pfs:defineHeader dataIndex="tipoSaltoNivel"
-			captionKey="plugin.arquetipos.modelo.tipoSaltoNivel" caption="**Tipo Salto Nivel"
 			sortable="true" />
 	</pfs:defineColumnModel>
 	
@@ -100,7 +140,7 @@
 		paramId="idModeloArquetipo"  
 		datagrid="gridArquetiposModelo" 
 		parameters="arquetipoParams"
-		onSuccess="recargar"
+		onSuccess="recargarTab"
 		/>
 	
 	<pfs:buttonnew name="btAdd" 
@@ -108,7 +148,7 @@
 		createTitleKey="plugin.arquetipos.modelo.consulta.insertarArquetipo" 
 		createTitle="**Insertar Arquetipo"
 		parameters="arquetipoParams"
-		onSuccess="recargar"
+		onSuccess="recargarTab"
 		/>
 	
 	
@@ -124,6 +164,7 @@
 					,params: parametros
 					,success : recargar 
 				});
+				subirClick = true;
 			}else{
 				Ext.Msg.alert('<s:message code="plugin.arquetipos.modelo.consulta.subir" text="**Subir Prioridad" />','<s:message code="plugin.arquetipos.modelo.consulta.novalor" text="**Debe seleccionar un arquetipo de la lista" />');
 			}
@@ -141,6 +182,7 @@
 					,params: parametros
 					,success : recargar
 				});
+				bajarClick = true;
 			}else{
 				Ext.Msg.alert('<s:message code="plugin.arquetipos.modelo.consulta.bajar" text="**Bajar Prioridad" />','<s:message code="plugin.arquetipos.modelo.consulta.novalor" text="**Debe seleccionar un arquetipo de la lista" />');
 			}
@@ -153,9 +195,7 @@
 			windowTitleKey=""
 			store_ref="storeArquetipos"
 			on_success="recargar"
-			/>
-	 
-	
+			/> 
 	
 	<c:if test="${modelo.estado.codigo=='3'|| modelo.estado.codigo=='4'}">
 		<pfs:grid name="gridArquetiposModelo"
@@ -176,7 +216,7 @@
 			titleKey="plugin.arquetipos.modelo.consulta.arquetipo"
 			bbar="btAdd,btModificarArquetMod,btEliminar,btSubir,btBajar"
 			iconCls="icon_arquetipo"/>
-	</c:if>
+	</c:if>	
 		
 		
 	<pfs:button name="btCopia" caption="**Crear una copia"  captioneKey="plugin.arquetipos.modelo.consulta.copiar" iconCls="icon_copiar">
@@ -198,53 +238,22 @@
 		
 	</pfs:button>
 	
-
-	var btPteSimular= new Ext.Button({
-		text : '<s:message code="plugin.arquetipos.modelo.consulta.ptesimular" text="**Pte. Simular" />'
-		,iconCls : 'icon_objetivos_pendientes'
-		,handler : function(){
-			Ext.Ajax.request({
-				url: page.resolveUrl('plugin/arquetipos/modelosArquetipos/ARQPendienteSimularModelo')
-				,params: {event:'pendienteSimulacionModelo',id:'${modelo.id}'}
-				,method: 'POST'
-				,success: function (result, request){
-						recargar();
-					}
-			});
-		}
-	});
 	
-	var btCancelarPteSimular= new Ext.Button({
-		text : '<s:message code="plugin.arquetipos.modelo.consulta.cancelarPteSimular" text="**Cancel Pte. Simular" />'
-		,iconCls : 'icon_objetivos_pendientes'
-		,handler : function(){
-			Ext.Ajax.request({
-				url: page.resolveUrl('plugin/arquetipos/modelosArquetipos/ARQPendienteSimularModelo')
-				,params: {event:'cancelarPendienteSimulacionModelo',id:'${modelo.id}'}
-				,method: 'POST'
-				,success: function (result, request){
-						recargar();
-					}
-			});
-		}
-	});
-	
-	<%-- Este botón nunca deberá de aparecer ya que esta tarea se realizará desde el bathc --%>
 	<pfs:button name="btSimula" caption="**Simular modelo"  captioneKey="plugin.arquetipos.modelo.consulta.simular" iconCls="icon_objetivos_pendientes">
 		var w= app.openWindow({
 					flow: 'plugin/arquetipos/modelosArquetipos/ARQsimulaModelo'
-					,params: {event:'simulaModelo',id:'${modelo.id}'}
+					,params: {id:'${modelo.id}'}
 					,title : '<s:message code="plugin.arquetipos.modelo.consulta.simular" text="**Simular modelo" />'
 					,closable : true
 					,width: 700
-					,success: recargar
+					,success: recargarTab
 					//,height: 600
 					});
 					w.on(app.event.DONE, function(){
 						w.close();
-						recargar();
+						recargarTab();
 					});	
-	</pfs:button>	
+	</pfs:button>
 	
 	<pfs:button name="btLibera" caption="**Liberar modelo"  captioneKey="plugin.arquetipos.modelo.consulta.liberar" iconCls="icon_liberar">
 			Ext.Msg.show({
@@ -256,39 +265,22 @@
 						page.webflow({
 							flow: 'plugin/arquetipos/modelosArquetipos/ARQliberarModelo'
 							,params: arquetipoParams
-							,success : recargar
+							,success : recargarTab
 						});
 					}
 				}
 			});
 	</pfs:button>
+
+	<pfs:panel name="botonesPanel" columns="3" collapsible="false" >
+			<pfs:items items="btCopia"/>
+			<pfs:items items="btSimula"/>
+			<pfs:items items="btLibera"/>
+	</pfs:panel>
 	
-	<c:choose>
-	  <c:when test="${modelo.estado.codigo=='1'}">
-			<pfs:panel name="botonesPanel" columns="2" collapsible="false" >
-				<pfs:items items="btCopia"/>
-				<pfs:items items="btPteSimular"/>
-			</pfs:panel>
-	  </c:when>
-	  <c:when test="${modelo.estado.codigo=='5'}">
-			<pfs:panel name="botonesPanel" columns="2" collapsible="false" >
-				<pfs:items items="btCopia"/>
-				<pfs:items items="btCancelarPteSimular"/>
-			</pfs:panel>
-	  </c:when>
-	   <c:when test="${modelo.estado.codigo=='6'}">
-			<pfs:panel name="botonesPanel" columns="2" collapsible="false" >
-				<pfs:items items="btCopia"/>
-				<pfs:items items="btLibera"/>
-			</pfs:panel>
-	  </c:when>
-	  <c:otherwise>
-			<pfs:panel name="botonesPanel" columns="1" collapsible="false" >
-				<pfs:items items="btCopia"/>
-			</pfs:panel>
-	  </c:otherwise>
-	</c:choose>
-	
+	<c:if test="${modelo.estado.codigo!='2'}">
+		btLibera.disable();
+	</c:if>			
 	 	
 	var compuesto = new Ext.Panel({
 	    items : [{items:[datosGeneralesPanel],border:false,style:'margin-top: 7px; margin-left:5px'}
@@ -299,7 +291,19 @@
 	    ,border: false
     });
 	page.add(compuesto);
-	<%--
-	 --%>
+	btSubir.disable();
+	btBajar.disable();
+	gridArquetiposModelo.getSelectionModel().on('rowselect', function(sm, rowIdx, r) {
+		if(r.data.prioridad>1){
+			btSubir.enable();
+		}else{
+			btSubir.disable();
+		}
+		if(r.data.prioridad < storeArquetipos.data.length){
+			btBajar.enable();
+		}else{
+			btBajar.disable();
+		}
+  	});
 
 </fwk:page>

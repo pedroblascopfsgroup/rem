@@ -800,6 +800,7 @@ Ext.namespace('Ext.ux.plugins');
         ,labelStyle:'font-weight:bolder'
         ,height : 35
         ,width : 200
+        ,emptyText :'Filtrar por...'
         ,enableKeyEvents: true
         ,emptyText :'Filtrar por...'
         ,doQuery : function(q, forceAll){
@@ -825,8 +826,8 @@ Ext.namespace('Ext.ux.plugins');
 	                    }else{
 	                        //this.store.filter(this.displayField, q);
                       		this.store.filterBy(function(record){
-									var desc = record.get('descripcion');
-									if (desc.indexOf(filtroTipoDocumento.getRawValue()) > -1) {
+									var desc = record.get('descripcion').toLowerCase();
+									if (desc.indexOf(filtroTipoDocumento.getRawValue().toLowerCase()) > -1) {
 										return true;
 									}else{
 										return false;
@@ -856,10 +857,6 @@ Ext.namespace('Ext.ux.plugins');
     });
     
 
-    
-  
-    
-    
     var tituloFiltro = new Ext.form.Label({
    		text:'<s:message code="precontencioso.grid.documento.tipoDocumento" text="**Tipo Documento" />:'
    		,style: {

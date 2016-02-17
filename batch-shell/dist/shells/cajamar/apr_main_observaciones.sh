@@ -1,7 +1,7 @@
 #!/bin/bash
 # Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
  
-
+DIR_BASE_ETL=/recovery/batch-server/programas/etl
 
 filename=$(basename $0)
 nameETL="${filename%.*}"

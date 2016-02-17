@@ -111,16 +111,18 @@
 
 		//tareas del bpm
 		if(tipoEntidad == constantes.TIPO_ENTIDAD_TAREA){
-		  //return;
 			page.webflow({
 				flow : 'bpm/buscarDatosTarea'
 				,params : {id:idEntidad}
 				,success : function(response, config){ 
 				  var recDatos = response['datos'];
+				  
 				  titulo = panel.getData().nombreProcedimiento+ ' - ' + rec.get('tarea');
 				  webflow = 'generico/genericForm';
 				  width = null;    
+				  
 				  parametros = {idTareaExterna:recDatos['idTareaExterna'], readOnly:'true', idProcedimiento:panel.getProcedimientoId()};
+				  
 				  funcionVerTarea(webflow, id, titulo, parametros, width);
 				}
 			});
@@ -144,7 +146,7 @@
 					,idTareaAsociada: recDatos['idTareaAsociada']
 					,descripcionTareaAsociada: recDatos['descripcionTareaAsociada']
 					,idTarea:recDatos['id']
-								,tipoTarea:recDatos['tipoTarea']
+					,tipoTarea:recDatos['tipoTarea']
 				  };
 
 				  funcionVerTarea(webflow, id, titulo, parametros, width);
@@ -155,8 +157,7 @@
 			  page.webflow({
 				flow : 'bpm/buscarDatosRecurso'
 				,params : {id:idEntidad}
-				,success : function(response, config)
-				{ 
+				,success : function(response, config) { 
 				  var recDatos = response['datos'];
 
 				  titulo = '<s:message code="procedimiento.recursos.verEditar" text="**Consultar Recurso" />';
@@ -241,7 +242,8 @@
 		} //decisiones
 		else if(tipoEntidad == constantes.TIPO_ENTIDAD_PETICION_DECISION || tipoEntidad == constantes.TIPO_ENTIDAD_RESPUESTA_DECISION) {
 			titulo = '<s:message code="procedimiento.listadoDecisiones.editar" text="**Editar Decision" />';
-			webflow = 'procedimientos/decisionProcedimiento';
+			//webflow = 'procedimientos/decisionProcedimiento';
+			webflow = 'decisionprocedimiento/ventanaDecision';
 			width = 870;
 
 			parametros = {idProcedimiento:panel.getProcedimientoId(), id:idEntidad, readOnly:'true'};
@@ -249,7 +251,7 @@
 			funcionVerTarea(webflow, id, titulo, parametros, width);
 		}
 	};
-
+<%--
   var tarea = Ext.data.Record.create([                                                                                                                              
     ,{name : "tipoEntidad"           }
     ,{name : "tarea"           }
@@ -259,29 +261,39 @@
     ,{name : "fechaVencimiento",type:'date', dateFormat:'d/m/Y'}
     ,{name : "nombreUsuario"}
     ,{name : "historicoResoluciones"}
-  ]);                
+  ]);  --%>
+
+  var tarea = Ext.data.Record.create([
+		,{name : "tipoEntidad"}
+		,{name : "tarea"}
+		,{name : "idEntidad"}
+		,{name : "fechaInicio"}
+		,{name : "fechaFin"}
+		,{name : "fechaVencimiento"}
+		,{name : "nombreUsuario"}
+		,{name  : "usuarioResponsable"}
+	]);              
 
   var btnConsultar =new Ext.Button({
-      text:'<s:message code="app.consultar" text="**Consultar" />'
-    <app:test id="btnConsultarTareahistorica" addComa="true" />
-         ,iconCls : 'icon_edit'
-    ,cls: 'x-btn-text-icon'
-    ,handler:funcionConsultar
-    ,disabled: false
+      	text:'<s:message code="app.consultar" text="**Consultar" />'
+    	<app:test id="btnConsultarTareahistorica" addComa="true" />
+        ,iconCls : 'icon_edit'
+	    ,cls: 'x-btn-text-icon'
+	    ,handler:funcionConsultar
+	    ,disabled: false
   });
 
 //procedimientos/historicoProcedimiento
 //msvhistoricotareas/getHistoricoPorTareas
   var tareasProcStore = page.getStore({
-    event:'listado'
-    ,flow : 'msvhistoricotareas/getHistoricoPorTareas'
-    ,storeId : 'historicoTareasProcStore'
-    ,limit:20
-    ,reader : new Ext.data.JsonReader(
-      {root:'historicoTareas'}
-      , tarea
-    )                                                                                                  
-  });                                                                                                                                                                  
+		event:'listado'
+		,flow : 'procedimientos/historicoProcedimiento'
+		,reader : new Ext.data.JsonReader(
+			{root:'historicoProcedimiento'}
+			,tarea
+		)
+	});
+	                                                                                                                                  
   entidad.cacheStore(tareasProcStore);
 
   var pagingBar=fwk.ux.getPaging(tareasProcStore);
@@ -485,24 +497,21 @@
   	});
   
 	var historicoCm = new Ext.grid.ColumnModel([
-		expander
-		,{header : 'id', dataIndex : 'idEntidad', fixed:true, hidden:true}
-		,{header : 'id Tipo', dataIndex : 'tipoEntidad', fixed:true, hidden:true}		
+		{dataIndex : 'idEntidad', fixed:true, hidden:true}
+		,{dataIndex : 'tipoEntidad', fixed:true, hidden:true}
 		,{header : '<s:message code="procedimiento.historico.grid.tareas" text="**tarea"/>', dataIndex : 'tarea', width:275}
-		,{header : '<s:message code="procedimiento.historico.grid.fechaInicio" text="**fecha inicio"/>', dataIndex : 'fechaInicio', renderer:app.format.dateRenderer, width:65}
-		,{header : '<s:message code="procedimiento.historico.grid.fechaVencimiento" text="**fecha venc"/>', dataIndex : 'fechaVencimiento', renderer:app.format.dateRenderer, width:65}
-		,{header : '<s:message code="procedimiento.historico.grid.fechaFin" text="**fecha fin"/>', dataIndex : 'fechaFin', renderer:app.format.dateRenderer, width:65}
-		,{header : '<s:message code="procedimiento.historico.grid.usuario" text="**usuario"/>', dataIndex : 'nombreUsuario', width:50}
+		,{header : '<s:message code="procedimiento.historico.grid.fechaInicio" text="**fecha inicio"/>', dataIndex : 'fechaInicio', width:65}
+		,{header : '<s:message code="procedimiento.historico.grid.fechaFin" text="**fecha fin"/>', dataIndex : 'fechaFin', width:65}
+		,{header : '<s:message code="procedimiento.historico.grid.fechaVencimiento" text="**fecha venc"/>', dataIndex : 'fechaVencimiento', width:65}
+		,{header : '<s:message code="plugin.mejoras.asunto.tabHistorico.destinatarioTarea" text="**destinatario"/>', dataIndex : 'usuarioResponsable', width:50}
 	]);
-  
-    
+
     var historicoGrid = app.crearGrid(tareasProcStore,historicoCm,{
 		title:'<s:message code="procedimiento.historico.grid" text="**Historico del procedimiento" />'
 		,cls:'cursor_pointer'
 		,width : 700
 		,height : 400
-		,plugins: expander
-        ,bbar:[btnExpandAll, btnCollapseAll, pagingBar, btnConsultarRes]
+		,bbar:[btnConsultar]
     });
 	
  	var historicoResolucionesGrid = app.crearGrid(resolucionesProcStore,historicoResCM2,{
@@ -522,28 +531,25 @@
 	});
 
   tareasProcStore.on('load', function(store, records, options){
-    for (var i=0; i < records.length; i++){
-      var rec = records[i];
-      var tipoEntidad = rec.get('tipoEntidad');
-      var titulo = rec.get('tarea');  
-        
-      if(tipoEntidad == constantes.TIPO_ENTIDAD_TAREA_CANCELADA){
-        var nombreTarea = "<font color='red'>" + titulo + " (Cancelada)</font>";
-        rec.set('tarea', nombreTarea);
-      }
-       
-	  expander.expandRow(i);
-	  
-    }
-  });
-  
-  var historicoTabPanel = new Ext.TabPanel({
-	items:[
-		historicoGrid, historicoResolucionesGrid
-	]
-	,height : 480
-	,border: true
-  });                                                                                                                                                                  
+		for (var i=0; i < records.length; i++){
+			var rec = records[i];
+			var tipoEntidad = rec.get('tipoEntidad');
+			var titulo = rec.get('tarea');
+			if(tipoEntidad == constantes.TIPO_ENTIDAD_TAREA_CANCELADA){
+				var nombreTarea = "<font color='red'>" + titulo + " (Cancelada)</font>";
+				rec.set('tarea', nombreTarea);
+			}
+		}
+	});
+	    
+	 var historicoTabPanel = new Ext.TabPanel({
+		items:[
+			historicoGrid, historicoResolucionesGrid
+		]
+		,height : 480
+		,border: true
+	  });     
+	                                                                                                                                                                
   historicoTabPanel.setActiveTab(historicoGrid);
 
   panel.add(historicoTabPanel);
@@ -559,6 +565,7 @@
 	var data = entidad.get("data");
 	entidad.cacheOrLoad(data, tareasProcStore, {idProcedimiento : data.id});
 	entidad.cacheOrLoad(data, resolucionesProcStore, {idProcedimiento : data.id});
+	entidad.cacheOrLoad(data, despachoIntegralStore, {idProcedimiento : data.id});
   }
 
   panel.getProcedimientoId = function(){
@@ -567,3 +574,4 @@
   
   return panel;
 })
+

@@ -24,7 +24,7 @@
             <json:property name="codEstadoSubasta" value="${s.estadoSubasta.codigo}" />
             <json:property name="estadoSubasta" value="${s.estadoSubasta.descripcion}" />
             <json:property name="resultadoComite" value="${s.resultadoComite.descripcion}" />
-            <json:property name="motivoSuspension" value="${s.motivoSuspension}" />
+            <json:property name="motivoSuspension" value="${s.motivoSuspension.descripcion}" />
             
             <json:property name="tasacion" value="${s.tasacion}" />
             <json:property name="infoLetrado" value="${s.infoLetrado}" />

@@ -968,7 +968,7 @@
 	
 	grid.on('rowdblclick', function(grid, rowIndex, e){
 		var rec = grid.getStore().getAt(rowIndex);
-		window.open("/pfs/bajarAdjuntoAsunto.htm?asuntoId="+panel.getAsuntoId()+"&id="+rec.get('id'));
+		window.open("/pfs/bajarAdjuntoAsunto.htm?asuntoId="+panel.getAsuntoId()+"&id="+rec.get('id')+"&nombre="+rec.data.nombre+"&extension="+rec.data.contentType);
 	});
 
 	gridPersonas.on('rowdblclick', function(grid, rowIndex, e){
@@ -984,7 +984,7 @@
 			var id = rec.get('id');
 			if(id!=null && id!='') {
 				// Abrimos el adjunto
-				window.open("/pfs/bajarAdjuntoPersona.htm?&id="+id);
+				window.open("/pfs/bajarAdjuntoPersona.htm?&id="+id+"&nombre="+rec.data.nombre+"&extension="+rec.data.contentType);
 			}
 		}
 	});
@@ -1021,7 +1021,7 @@
 			// Abrimos el adjunto
 			var id = rec.get('id');
 			if(id!=null && id!='') {
-				window.open("/pfs/bajarAdjuntoExpediente.htm?&id="+id);
+				window.open("/pfs/bajarAdjuntoExpediente.htm?&id="+id+"&nombre="+rec.data.nombre+"&extension="+rec.data.contentType);
 			}
 		}
 	});
@@ -1058,7 +1058,7 @@
 			var id = rec.get('id');
 			if(id!=null && id!='') {
 				// Abrimos el adjunto
-				window.open("/pfs/bajarAdjuntoContrato.htm?&id="+id);
+				window.open("/pfs/bajarAdjuntoContrato.htm?&id="+id+"&nombre="+rec.data.nombre+"&extension="+rec.data.contentType);
 			}
 		}
 	});

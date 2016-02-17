@@ -335,8 +335,8 @@ var gridDocs = new Ext.grid.GridPanel({
 	                        this.store.clearFilter();
 	                    }else{
                       		this.store.filterBy(function(record){
-									var desc = record.get('descripcion');
-									if (desc.indexOf(comboTipoDocumento.getRawValue()) > -1) {
+									var desc = record.get('descripcion').toLowerCase();
+									if (desc.indexOf(comboTipoDocumento.getRawValue().toLowerCase()) > -1) {
 										return true;
 									}else{
 										return false;

@@ -825,8 +825,8 @@ Ext.namespace('Ext.ux.plugins');
 	                    }else{
 	                        //this.store.filter(this.displayField, q);
                       		this.store.filterBy(function(record){
-									var desc = record.get('descripcion');
-									if (desc.indexOf(filtroTipoDocumento.getRawValue()) > -1) {
+									var desc = record.get('descripcion').toLowerCase();
+									if (desc.indexOf(filtroTipoDocumento.getRawValue().toLowerCase()) > -1) {
 										return true;
 									}else{
 										return false;

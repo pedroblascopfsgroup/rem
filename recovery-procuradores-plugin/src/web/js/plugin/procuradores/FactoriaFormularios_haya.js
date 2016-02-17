@@ -3211,6 +3211,28 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		                     ,{"xtype":'combo',"store":storeSINO,"name":"d_comboAdmision","fieldLabel":"Admisión",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAdmision'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 		                     ,{"xtype":'combo',"store":storeSINO,"name":"d_comboBienes","fieldLabel":"Existen bienes registrables",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboBienes'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
+	
+	//id: 434 : T. EMBARGO DE SALARIOS: Solicitar la notificacion retención al pagador
+	this.arrayCampos.push([
+	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       	,{"xtype":'numberfield',"name":"d_importeNom","fieldLabel":"Importe base retención",allowBlank:true}
+	                       	,{"xtype":'numberfield',"name":"d_importeRet","fieldLabel":"Importe de retención",allowBlank:true}
+	                      ]);
+	
+	//id: 435 : T. EMBARGO DE SALARIOS: Confirmar requerimiento de resultado
+	this.arrayCampos.push([
+	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       	,{"xtype":'combo',"store":storeSINO,"name":"d_comboRequerido","fieldLabel":"Requerido",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboRequerido'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'numberfield',"name":"d_importeNom","fieldLabel":"Importe base retención",allowBlank:true}
+	                       	,{"xtype":'numberfield',"name":"d_importeRet","fieldLabel":"Importe de retención",allowBlank:true}
+	                      ]);
+	
+	//id: 436 : T. EMBARGO DE SALARIOS: Confirmar retenciones practicadas
+	this.arrayCampos.push([
+	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       	,{"xtype":'combo',"store":this.storeDDCorrectoCobro,"name":"d_comboCorr","fieldLabel":"Situación",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboCorr'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                      ]);
     
     
 

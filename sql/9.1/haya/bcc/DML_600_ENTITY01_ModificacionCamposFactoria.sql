@@ -37,6 +37,15 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('De 306 a 433 - R_ATO_REQ_PGS');
     V_MSQL := 'update '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION set dd_tr_id = ''433'', usuariomodificar = ''PRODUCTO-766'', fechamodificar=sysdate where dd_tr_codigo = ''R_ATO_REQ_PGS''';
     
+    DBMS_OUTPUT.PUT_LINE('De 292 a 434 - R_SOL_NOT_EMB');
+    V_MSQL := 'update '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION set dd_tr_id = ''434'', usuariomodificar = ''PRODUCTO-784'', fechamodificar=sysdate where dd_tr_codigo = ''R_SOL_NOT_EMB''';
+
+    DBMS_OUTPUT.PUT_LINE('De 293 a 435 - R_RSP_EMP_EMB');
+    V_MSQL := 'update '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION set dd_tr_id = ''435'', usuariomodificar = ''PRODUCTO-784'', fechamodificar=sysdate where dd_tr_codigo = ''R_RSP_EMP_EMB''';
+    
+    DBMS_OUTPUT.PUT_LINE('De 294 a 436 - R_ACU_ENT_CNT');
+    V_MSQL := 'update '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION set dd_tr_id = ''436'', usuariomodificar = ''PRODUCTO-784'', fechamodificar=sysdate where dd_tr_codigo = ''R_ACU_ENT_CNT''';
+    
 	
     COMMIT;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'.' || VAR_TABLENAME || '... Campos');

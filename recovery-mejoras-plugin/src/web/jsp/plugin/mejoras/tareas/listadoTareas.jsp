@@ -1046,7 +1046,6 @@
 	
 	
 	tareasGrid.on('rowdblclick', function(grid, rowIndex, e) {
-		debugger;
 		//agregar funcionalidad....
 		var rec = grid.getStore().getAt(rowIndex);
 		

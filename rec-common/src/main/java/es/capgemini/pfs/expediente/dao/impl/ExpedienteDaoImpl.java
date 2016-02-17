@@ -1600,7 +1600,7 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
                hql.append(" and (gae.usuario.id = "+ usuarioLogueado.getId());
                hql.append("  or gae.usuario.id in (");
                hql.append(" select egu.grupo.id from EXTGrupoUsuarios egu where egu.usuario.id = " + usuarioLogueado.getId());
-               hql.append(" and egu.auditoria.borrado = false )) ");
+               hql.append(" and egu.auditoria.borrado = false and egu.usuario.entidad.id = egu.grupo.entidad.id)) ");
                return hql.toString();
 	}
 

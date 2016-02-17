@@ -18,7 +18,8 @@
  	<bean id="subastaV4HayaEjecucionNotarialLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaV4HayaEjecucionNotarialLeaveActionHandler"></bean>
  	<bean id="subastaComprobarProcedeSubastaSuspendidaHandler" class="es.pfsgroup.procedimientos.subasta.SubastaComprobarProcedeSubastaSuspendidaHandler"></bean>
  	<bean id="bccPrecontenciosoLeaveActionHandler" class="es.pfsgroup.procedimientos.precontencioso.BCCPrecontenciosoLeaveActionHandler" />
-	 	    
+ 	<bean id="costasProcuradorHandler" class="es.pfsgroup.procedimientos.costas.CostasProcuradorHandler"></bean>
+
 	<!-- BPM activos -->
 	<!-- Nacho -->
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSubasta/hcj_tramiteSubasta.xml" p:version="-1"/>

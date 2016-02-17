@@ -42,20 +42,20 @@ public interface AdjuntoOnlineApi {
 	
 	@BusinessOperationDefinition(BO_ADJ_BAJAR_ADJUNTO_ASUNTO)
 	@Transactional(readOnly = false)
-	public FileItem bajarAdjuntoAsunto(Long asuntoId, String adjuntoId);
+	public FileItem bajarAdjuntoAsunto(Long asuntoId, String adjuntoId, String nombre, String extension);
 	
 	/*PROCEDIMIENTO*/
 	@BusinessOperationDefinition(BO_ADJ_BAJAR_ADJUNTO_EXPEDIENTE)
 	@Transactional(readOnly = false)
-	public FileItem bajarAdjuntoExpediente(String adjuntoId);
+	public FileItem bajarAdjuntoExpediente(String adjuntoId, String nombre, String extension);
 	
 	/*CONTRATO*/	
 	@BusinessOperationDefinition(BO_ADJ_BAJAR_ADJUNTO_CONTRATO)
 	@Transactional(readOnly = false)
-	public FileItem bajarAdjuntoContrato(String adjuntoId);
+	public FileItem bajarAdjuntoContrato(String adjuntoId, String nombre, String extension);
 	
 	@BusinessOperationDefinition(BO_ADJ_BAJAR_ADJUNTO_PERSONA)
 	@Transactional(readOnly = false)
-	public FileItem bajarAdjuntoPersona(String adjuntoId);
+	public FileItem bajarAdjuntoPersona(String adjuntoId, String nombre, String extension);
 
 }

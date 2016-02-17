@@ -122,7 +122,6 @@ items[2] = new Ext.form.ComboBox({
 aceptacion = items[2];
 
 conflicto.on('select', function(){
-	debugger;
 	if(conflicto.getValue() == 'S'){
 		aceptacion.setValue('N');
 	}else{

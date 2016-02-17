@@ -1,6 +1,7 @@
 package es.capgemini.pfs.plugin.arquetipado.editor.web;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,10 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.util.HtmlUtils;
 
 import es.capgemini.devon.bo.Executor;
-import es.capgemini.pfs.ruleengine.RuleEngineBusinessOperations;
-import es.capgemini.pfs.ruleengine.RuleResult;
-import es.capgemini.pfs.ruleengine.rule.definition.RuleDefinition;
 import es.capgemini.pfs.arquetipo.factory.ReglasFactory;
+import es.capgemini.pfs.ruleengine.RuleEngineBusinessOperations;
+import es.capgemini.pfs.ruleengine.rule.definition.RuleDefinition;
 import es.pfsgroup.commons.utils.Checks;
 
 /**
@@ -137,7 +137,7 @@ public class EditorController {
   			byte[] decodedValue = base.decode(ruleDefinition.getBytes(UNICODE_FORMAT));		
   			String ruleDecode = bytes2String(decodedValue);
   			
-  			model.put("r", executor.execute("arquetiposRuleExecutor.checkRule",ruleDecode));
+  			model.put("r", executor.execute("arquetiposRuleExecutor.checkRule",ruleDecode, new ArrayList<String>()));
   			
   		} catch (UnsupportedEncodingException e) {
 			logger.error(e.getMessage());

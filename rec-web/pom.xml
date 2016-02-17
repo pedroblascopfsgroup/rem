@@ -432,26 +432,6 @@
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
-			<artifactId>recovery-procuradores-plugin</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>es.pfsgroup.plugin</groupId>
-			<artifactId>recovery-procuradores-common</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-sidhi-api</artifactId>
 			<scope>compile</scope>
 			<exclusions>
@@ -2221,6 +2201,26 @@
 						</exclusion>
 					</exclusions>
 				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>recovery-procuradores-plugin</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>recovery-procuradores-common</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
 			</dependencies>
 			<build>
 				<plugins>
@@ -2394,6 +2394,7 @@
                                     <includes>
                                         <include>login.jsp</include>
                                         <include>img/cliente_logo.png</include>
+                                        <include>img/logo.png</include>
                                     </includes>
                                     <filtering>true</filtering>
                                 </resource>

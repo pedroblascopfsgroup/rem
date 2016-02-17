@@ -11,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -23,6 +25,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
+import es.capgemini.pfs.dsm.model.Entidad;
 import es.pfsgroup.recovery.common.api.CommonProjectContext;
 
 @Entity
@@ -85,8 +88,12 @@ public class EXTDDTipoGestor implements Dictionary, Auditable{
 
     @Version
     private Integer version;
+    
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "tiposDeGestores")
+	private List<Entidad> entidades;
+	
 
-    /**
+	/**
      * @return the id
      */
     public Long getId() {
@@ -184,6 +191,14 @@ public class EXTDDTipoGestor implements Dictionary, Auditable{
 
 	public void setSupervisados(List<EXTDDSupervisores> supervisados) {
 		this.supervisados = supervisados;
+	}
+	
+	public List<Entidad> getEntidades() {
+		return entidades;
+	}
+
+	public void setEntidades(List<Entidad> entidades) {
+		this.entidades = entidades;
 	}
 
 	@Override

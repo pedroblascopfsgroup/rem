@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContext;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContextImpl;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDDocAdjudicacion;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBContratoBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.recoveryapi.BienApi;
@@ -308,13 +309,18 @@ public class InformeValidacionCDDBean {
 					infobien.setTipoInmueble(nmbBien.getAdicional().getTipoInmueble().getDescripcion());
 				}				
 			}
-
+			
+			if(!Checks.esNulo(nmbBien.getAdjudicacion())){
+				if(!Checks.esNulo(nmbBien.getAdjudicacion().getTipoDocAdjudicacion())){
+					infobien.setCodigoDocAdjudicacion(nmbBien.getAdjudicacion().getTipoDocAdjudicacion().getCodigo());					
+				}
+			}
                         // Esta validaci�n no debe hacerse si el CDD proviene de un Subasta Bankia. En el resto de T. subasta del resto de clientes, si debe hacerse.
 			if(!nmbProjectContext.getCodigoSubastaBankia().equals(loteSubasta.getSubasta().getProcedimiento().getTipoProcedimiento().getCodigo())) {
 				infobien.setFechaTestimonioAdjudicacionSareb(getFechaTestimonioAdjudicacionSareb(nmbBien));
-				if (Checks.esNulo(infobien.getFechaTestimonioAdjudicacionSareb())) {
+				if (Checks.esNulo(infobien.getFechaTestimonioAdjudicacionSareb()) && !DDDocAdjudicacion.ESCRITURA.equalsIgnoreCase(infobien.getCodigoDocAdjudicacion())) {
 					sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Fecha testimonio adjudicacion sareb; ");
-				}				
+				}		
 			}
 			listInfoBienes.add(infobien);
 		}

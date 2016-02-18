@@ -67,20 +67,20 @@
 		},dsprocuradoresRecord)
 	});
 	
-<!-- 	var dsprocuradores = new Ext.data.Store({ -->
-<!-- 		autoLoad: false, -->
-<!-- 		baseParams: {limit:10, start:0}, -->
-<!-- 		proxy: new Ext.data.HttpProxy({ -->
-<!-- 			url: page.resolveUrl('procurador/getListaProcuradoresDeLaSociedad') -->
-<!-- 		}), -->
-<!-- 		reader: new Ext.data.JsonReader({ -->
-<!-- 			root: 'procuradores' -->
-<!-- 			,totalProperty: 'total' -->
-<!-- 		}, [ -->
-<!-- 			{name: 'nombre', mapping: 'nombre'}, -->
-<!-- 			{name: 'id', mapping: 'id'} -->
-<!-- 		]) -->
-<!-- 	}); -->
+<%--	var dsprocuradores = new Ext.data.Store({ --%>
+<%--		autoLoad: false, --%>
+<%--		baseParams: {limit:10, start:0}, --%>
+<%--		proxy: new Ext.data.HttpProxy({ --%>
+<%--			url: page.resolveUrl('procurador/getListaProcuradoresDeLaSociedad') --%>
+<%--		}), --%>
+<%--		reader: new Ext.data.JsonReader({ --%>
+<%--			root: 'procuradores' --%>
+<%--			,totalProperty: 'total' --%>
+<%--		}, [ --%>
+<%--			{name: 'nombre', mapping: 'nombre'}, --%>
+<%--			{name: 'id', mapping: 'id'} --%>
+<%--		]) --%>
+<%--	}); --%>
 
 	TaskLocation = Ext.data.Record.create([
 	    {name: "nombre"},
@@ -250,7 +250,7 @@
 		
 		if (codProc!=''){
 			dsprocuradores.baseParams.procurador = codProc;
-<!-- 			dsprocuradores.baseParams.start = '${posListProcuradores}'; -->
+<%--			dsprocuradores.baseParams.start = '${posListProcuradores}'; --%>
 			procuradorJuzgado.store.reload();
 			dsprocuradores.on('load', function(){ 
 					procuradorJuzgado.setValue(codProc);
@@ -294,9 +294,9 @@
 	var recargarProcuradores = function(){
 		procuradorJuzgado.store.removeAll();
 		procuradorJuzgado.clearValue();
-<!-- 		dsprocuradores.on('load', function(){   -->
-<!--  			procuradorJuzgado.setValue();  -->
-<!-- 		}); 		 -->
+<%--		dsprocuradores.on('load', function(){   --%>
+<%-- 			procuradorJuzgado.setValue();  --%>
+<%--		}); 		 --%>
 		
 		dsprocuradores.webflow({codigo:sociedadProcuradores.getValue()});
 	}

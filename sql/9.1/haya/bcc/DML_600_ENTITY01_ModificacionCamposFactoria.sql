@@ -49,6 +49,11 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('De 231 a 437 - R_AUT_APRO_COST');
     V_MSQL := 'update '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION set dd_tr_id = ''437'', usuariomodificar = ''PRODUCTO-786'', fechamodificar=sysdate where dd_tr_codigo = ''R_AUT_APRO_COST''';
     
+    DBMS_OUTPUT.PUT_LINE('Id 227 se le cambia la resolución de "Solicitud costas letrado" a "Solicitud tasación costas" - R_TR_SOL_TAS_COST');
+    V_MSQL := 'update '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION set dd_tr_descripcion = ''Solicitud tasación costas'', dd_tr_descripcion_larga = ''Solicitud tasación costas'', usuariomodificar = ''PRODUCTO-786'', fechamodificar=sysdate where dd_tr_codigo = ''R_TR_SOL_TAS_COST''';
+    
+    DBMS_OUTPUT.PUT_LINE('Id 410 se le cambia la "Recepción de Gestoria" de "(Adjudicación)" a "(Inscripción de título)" - R_IDT_REG_ENT_TIT');
+    V_MSQL := 'update '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION set dd_tr_descripcion = ''Recibí de gestoría (Inscripción de título)'', dd_tr_descripcion_larga = ''Recibí de gestoría (Inscripción de título)'', usuariomodificar = ''PRODUCTO-785'', fechamodificar=sysdate where dd_tr_codigo = ''R_IDT_REG_ENT_TIT''';
     
     COMMIT;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'.' || VAR_TABLENAME || '... Campos');

@@ -20,36 +20,36 @@
 	
 	var dateRenderer = Ext.util.Format.dateRenderer('d/m/Y');
 	
-<!-- 	Ext.grid.CheckColumn = function(config){  -->
-<!--         Ext.apply(this, config);  -->
-<!--         if(!this.id){  -->
-<!--             this.id = Ext.id();  -->
-<!--         }  -->
-<!--         this.renderer = this.renderer.createDelegate(this);  -->
-<!--     };  -->
+<%--	Ext.grid.CheckColumn = function(config){  --%>
+<%--        Ext.apply(this, config);  --%>
+<%--        if(!this.id){  --%>
+<%--            this.id = Ext.id();  --%>
+<%--        }  --%>
+<%--        this.renderer = this.renderer.createDelegate(this);  --%>
+<%--    };  --%>
    
-<!--     Ext.grid.CheckColumn.prototype = {  -->
-<!--         init : function(grid){  -->
-<!--             this.grid = grid;  -->
-<!--             this.grid.on('render', function(){  -->
-<!--                 var view = this.grid.getView();  -->
-<!--                 view.mainBody.on('mousedown', this.onMouseDown, this);  -->
-<!--             }, this);  -->
-<!--         },  -->
-<!--         onMouseDown : function(e, t){  -->
-<!--             if(t.className && t.className.indexOf('x-grid3-cc-'+this.id) != -1){  -->
-<!--                 e.stopEvent();  -->
-<!--                 var index = this.grid.getView().findRowIndex(t);  -->
-<!--                 var record = this.grid.store.getAt(index);  -->
-<!--                 var value = !record.data[this.dataIndex]; -->
-<!--                 record.set(this.dataIndex, value);  -->
-<!--             }  -->
-<!--         },  -->
-<!--         renderer : function(v, p, record){  -->
-<!--             p.css += ' x-grid3-check-col-td';   -->
-<!--             return '<div class="x-grid3-check-col'+(v?'-on':'')+' x-grid3-cc-'+this.id+'">&#160;</div>';  -->
-<!--         }  -->
-<!--     }; -->
+<%--    Ext.grid.CheckColumn.prototype = {  --%>
+<%--        init : function(grid){  --%>
+<%--            this.grid = grid;  --%>
+<%--            this.grid.on('render', function(){  --%>
+<%--                var view = this.grid.getView();  --%>
+<%--                view.mainBody.on('mousedown', this.onMouseDown, this);  --%>
+<%--            }, this);  --%>
+<%--        },  --%>
+<%--        onMouseDown : function(e, t){  --%>
+<%--            if(t.className && t.className.indexOf('x-grid3-cc-'+this.id) != -1){  --%>
+<%--                e.stopEvent();  --%>
+<%--                var index = this.grid.getView().findRowIndex(t);  --%>
+<%--                var record = this.grid.store.getAt(index);  --%>
+<%--                var value = !record.data[this.dataIndex]; --%>
+<%--                record.set(this.dataIndex, value);  --%>
+<%--            }  --%>
+<%--        },  --%>
+<%--        renderer : function(v, p, record){  --%>
+<%--            p.css += ' x-grid3-check-col-td';   --%>
+<%--            return '<div class="x-grid3-check-col'+(v?'-on':'')+' x-grid3-cc-'+this.id+'">&#160;</div>';  --%>
+<%--        }  --%>
+<%--    }; --%>
 	
 	var recordatoriosRecord = Ext.data.Record.create([
 		{name:'id'}
@@ -96,13 +96,13 @@
 		,flow:'recrecordatorio/getListaTareasRecordatorios'
 		,reader: new Ext.data.JsonReader({root:'listadoTareas',totalProperty:'total',idProperty: 'tarea'},tareasRecord)
 	});
-<!-- 	tareasStore.groupBy('esVencido', true); -->
-<!-- 	tareasStore.addListener('load', agrupa); -->
-<!-- 	tareasStore.setDefaultSort('fechaVenc', 'ASC'); -->
-<!-- 	function agrupa(store, meta) { -->
-<!-- 		store.groupBy('group', true);		 -->
-<!-- 		tareasStore.removeListener('load', agrupa); -->
-<!--     }; -->
+<%--	tareasStore.groupBy('esVencido', true); --%>
+<%--	tareasStore.addListener('load', agrupa); --%>
+<%--	tareasStore.setDefaultSort('fechaVenc', 'ASC'); --%>
+<%--	function agrupa(store, meta) { --%>
+<%--		store.groupBy('group', true);		 --%>
+<%--		tareasStore.removeListener('load', agrupa); --%>
+<%--    }; --%>
 	
 	var groupRenderer=function(val){
 

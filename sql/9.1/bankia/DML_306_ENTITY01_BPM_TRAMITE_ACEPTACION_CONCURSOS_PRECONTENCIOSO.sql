@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20151222
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=PRODUCTO-541
+--## INCIDENCIA_LINK=PRODUCTO-709
 --## PRODUCTO=NO
 --##
 --## Finalidad: BPM - Trámite de aceptación de concursos precontencioso
@@ -39,7 +39,7 @@ DECLARE
     TYPE T_TIPO_TPO IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TPO IS TABLE OF T_TIPO_TPO;
     V_TIPO_TPO T_ARRAY_TPO := T_ARRAY_TPO(
-      T_TIPO_TPO('P421','T. aceptación de concursos','T. aceptación de concursos',null,'tramiteAceptacionConcursoPrecontencioso','0','PRODUCTO-541','0','TR',null,null,'1','MEJTipoProcedimiento','1','0')
+      T_TIPO_TPO('HC106','T. de envío de la demanda','T. de envío de la demanda',null,'hcj_tramiteEnvioDemanda','0','PRODUCTO-709','0','TR',null,null,'1','MEJTipoProcedimiento','1','0')
     ); 
     V_TMP_TIPO_TPO T_TIPO_TPO;
 
@@ -47,9 +47,9 @@ DECLARE
     TYPE T_TIPO_TAP IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
-       T_TIPO_TAP('P421','P421_AsignarLetradoConcurso','plugin/precontencioso/tramite/asignarLetradoConcurso','comprobarExistenciaGestor() ? ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;"><p>&iexcl;Atenci&oacute;n! Para dar por terminada esta tarea debe asignar al asunto un letrado (gestor externo) .</p></div>'' : null',null,null,null,'0','Asignar letrado para concurso','0','PRODUCTO-541','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'39',null,null,null),
-       T_TIPO_TAP('P421','P421_RevisarTurnadoLetradoConcurso','plugin/precontencioso/tramite/revisarTurnadoLetradoConcurso','comprobarExistenciaGestor() ? ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;"><p>&iexcl;Atenci&oacute;n! Para dar por terminada esta tarea debe asignar al asunto un letrado (gestor externo) .</p></div>'' : null',null,null,null,'0','Revisar turnado de letrado para concurso','0','PRODUCTO-541','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'39',null,null,null),
-       T_TIPO_TAP('P421','P421_RegistrarAceptacionConcurso','plugin/precontencioso/tramite/registrarAceptacionConcurso',null,null,'valores[''P421_RegistrarAceptacionConcurso''][''aceptacion''] == DDSiNo.SI ? ''SI'' : getEstadoLimiteImporteConcurso() ',null,'0','Registrar aceptación del concurso','0','PRODUCTO-541','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'39',null,null,null)
+       T_TIPO_TAP('HC106','HC106_RedactarDemandaAdjuntarDocu',null,null,null,null,null,'0','Redactar demanda y adjuntar documentación','0','PRODUCTO-709','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'39',null,null,null),
+       T_TIPO_TAP('HC106','HC106_RevisarCompletitudDocu',null,'Revisar completitud de la documentación','0','PRODUCTO-709','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'39',null,null,null),
+       T_TIPO_TAP('HC106','HC106_BPMTramiteProvisionFondos',null,null,null,null,null,'0','Se inicia trámite de provisiones de fondos','0','PRODUCTO-709','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'39',null,null,null)
     ); 
     V_TMP_TIPO_TAP T_TIPO_TAP;
 
@@ -57,9 +57,9 @@ DECLARE
     TYPE T_TIPO_PLAZAS IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_PLAZAS IS TABLE OF T_TIPO_PLAZAS;
     V_TIPO_PLAZAS T_ARRAY_PLAZAS := T_ARRAY_PLAZAS(
-      T_TIPO_PLAZAS(null,null,'P421_AsignarLetradoConcurso','2*24*60*60*1000L','0','0','PRODUCTO-541'),
-      T_TIPO_PLAZAS(null,null,'P421_RevisarTurnadoLetradoConcurso','2*24*60*60*1000L','0','0','PRODUCTO-541'),  
-      T_TIPO_PLAZAS(null,null,'P421_RegistrarAceptacionConcurso','5*24*60*60*1000L','0','0','PRODUCTO-541') 
+      T_TIPO_PLAZAS(null,null,'HC106_RedactarDemandaAdjuntarDocu','15*24*60*60*1000L','0','0','PRODUCTO-709'),
+      T_TIPO_PLAZAS(null,null,'HC106_RevisarCompletitudDocu','1*24*60*60*1000L','0','0','PRODUCTO-709'),  
+      T_TIPO_PLAZAS(null,null,'HC106_BPMTramiteProvisionFondos','300*24*60*60*1000L','0','0','PRODUCTO-709') 
     ); 
     V_TMP_TIPO_PLAZAS T_TIPO_PLAZAS;
     
@@ -68,45 +68,17 @@ DECLARE
     TYPE T_TIPO_TFI IS TABLE OF VARCHAR2(5000);
     TYPE T_ARRAY_TFI IS TABLE OF T_TIPO_TFI;
     V_TIPO_TFI T_ARRAY_TFI := T_ARRAY_TFI(
-        T_TIPO_TFI('P421_RegistrarAceptacionConcurso','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">A través de esta pantalla deberá indicar si acepta el Asunto asignado por la entidad o no. En el campo "Conflicto de intereses" deberá consignar la existencia de conflicto o no, que le impida aceptar la dirección de la acción a instar, en caso de que haya conflicto de intereses no se le permitirá la aceptación del Asunto. En el campo "Aceptación del asunto " deberá indicar si acepta o no el asunto, si ha marcado con anterioridad que existe conflicto de intereses, deberá marcar, en todo caso, la no aceptación del asunto.</p>En el campo observaciones consignar cualquier aspecto relevante que le interesa quede reflejado en este punto.</p>Una vez rellene esta pantalla la siguiente tarea será "Revisar asignación de letrado”  en caso de no haber aceptado el asunto se creará una tarea al supervisor para que tenga en cuenta su respuesta a la vez que reasigna el asunto a otro letrado, en caso de haber aceptado el asunto se dará por terminada esta actuación.</p></div>',null,null,null,null,'0','PRODUCTO-541'),
-        T_TIPO_TFI('P421_RegistrarAceptacionConcurso','1','combo','conflicto_intereses','Conflicto intereses','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','PRODUCTO-541'),
-        T_TIPO_TFI('P421_RegistrarAceptacionConcurso','2','combo','aceptacion','Aceptación asunto','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','PRODUCTO-541'),
-        T_TIPO_TFI('P421_RegistrarAceptacionConcurso','3','date','fecha_aceptacion','Fecha de aceptación',null,null,null,null,'0','PRODUCTO-541'),
-        T_TIPO_TFI('P421_RegistrarAceptacionConcurso','4','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-541'),
-	    T_TIPO_TFI('P421_AsignarLetradoConcurso','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Dado que el importe del concurso es igual o superior a 5 millones, antes de dar por finalizada esta tarea deberá acceder a la pestaña Gestores del asunto correspondiente y asignar el letrado que estime oportuno.</p>Es posible que esta tarea aparezca porque el letrado que haya asignado previamente no haya aceptado el concurso asignado, en tal caso le aparecerá en los campos ‘Conflicto de intereses’, ‘Aceptación del asunto’ y ‘Observaciones de letrado’ los valores introducidos por el letrado en el momento de la no aceptación del concurso.</p>En el campo observaciones consignar cualquier aspecto relevante que le interese que quede reflejado en este punto del procedimiento.</p>Una vez rellene esta pantalla la siguiente tarea será "Registrar aceptación del concurso”  a completar por el letrado que haya quedado registrado en la pestaña Gestores del asunto correspondiente.</p></div>',null,null,null,null,'0','PRODUCTO-541'),
-        T_TIPO_TFI('P421_AsignarLetradoConcurso','1','currency','principal','Principal',null,null,'procedimientoManager.getProcedimiento(idProcedimiento).getSaldoRecuperacion()',null,'0','PRODUCTO-541'),
-        T_TIPO_TFI('P421_AsignarLetradoConcurso','2','combo','conflicto_intereses','Conflicto intereses',null,null,'valores[''P421_RegistrarAceptacionConcurso''] == null ? '''' : valores[''P421_RegistrarAceptacionConcurso''][''conflicto_intereses'']','DDSiNo','0','PRODUCTO-541'),
-        T_TIPO_TFI('P421_AsignarLetradoConcurso','3','combo','aceptacion','Aceptación  asunto',null,null,'valores[''P421_RegistrarAceptacionConcurso''] == null ? '''' : valores[''P421_RegistrarAceptacionConcurso''][''aceptacion'']','DDSiNo','0','PRODUCTO-541'),
-        T_TIPO_TFI('P421_AsignarLetradoConcurso','4','textarea','ObservacionesLetrado','Observaciones letrado',null,null,'valores[''P421_RegistrarAceptacionConcurso''] == null ? '''' : valores[''P421_RegistrarAceptacionConcurso''][''observaciones'']',null,'0','PRODUCTO-541'),
-        T_TIPO_TFI('P421_AsignarLetradoConcurso','5','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-541'),
-        T_TIPO_TFI('P421_RevisarTurnadoLetradoConcurso','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">A través de esta tarea debe validar  que el letrado y procurador asignados son correctos para el concurso. En caso de no serlo, por favor, reasigne convenientemente.</p>Es posible que esta tarea aparezca porque el letrado que haya asignado previamente no haya aceptado el concurso asignado, en tal caso le aparecerá en los campos ‘Conflicto de intereses’, ‘Aceptación del asunto’ y ‘Observaciones de letrado’ los valores introducidos por el letrado en el momento de la no aceptación del concurso, proceda a reasignar nuevo letrado y complete esta tarea.</p>En el campo observaciones consignar cualquier aspecto relevante que le interese que quede reflejado en este punto del procedimiento.</p></div>',null,null,null,null,'0','PRODUCTO-541'),
-        T_TIPO_TFI('P421_RevisarTurnadoLetradoConcurso','1','currency','principal','Principal',null,null,'procedimientoManager.getProcedimiento(idProcedimiento).getSaldoRecuperacion()',null,'0','PRODUCTO-541'),
-        T_TIPO_TFI('P421_RevisarTurnadoLetradoConcurso','2','combo','conflicto_intereses','Conflicto intereses',null,null,'valores[''P421_RegistrarAceptacionConcurso''] == null ? '''' : valores[''P421_RegistrarAceptacionConcurso''][''conflicto_intereses'']','DDSiNo','0','PRODUCTO-541'),
-        T_TIPO_TFI('P421_RevisarTurnadoLetradoConcurso','3','combo','aceptacion','Aceptación  asunto',null,null,'valores[''P421_RegistrarAceptacionConcurso''] == null ? '''' : valores[''P421_RegistrarAceptacionConcurso''][''aceptacion'']','DDSiNo','0','PRODUCTO-541'),
-        T_TIPO_TFI('P421_RevisarTurnadoLetradoConcurso','4','textarea','ObservacionesLetrado','Observaciones letrado',null,null,'valores[''P421_RegistrarAceptacionConcurso''] == null ? '''' : valores[''P421_RegistrarAceptacionConcurso''][''observaciones'']',null,'0','PRODUCTO-541'),
-    	T_TIPO_TFI('P421_RevisarTurnadoLetradoConcurso','5','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-541')
-    ); 
+        T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">A través de esta pantalla deberá indicar si acepta el Asunto asignado por la entidad o no. En el campo "Conflicto de intereses" deberá consignar la existencia de conflicto o no, que le impida aceptar la dirección de la acción a instar, en caso de que haya conflicto de intereses no se le permitirá la aceptación del Asunto. En el campo "Aceptación del asunto " deberá indicar si acepta o no el asunto, si ha marcado con anterioridad que existe conflicto de intereses, deberá marcar, en todo caso, la no aceptación del asunto.</p>En el campo observaciones consignar cualquier aspecto relevante que le interesa quede reflejado en este punto.</p>Una vez rellene esta pantalla la siguiente tarea será "Revisar asignación de letrado”  en caso de no haber aceptado el asunto se creará una tarea al supervisor para que tenga en cuenta su respuesta a la vez que reasigna el asunto a otro letrado, en caso de haber aceptado el asunto se dará por terminada esta actuación.</p></div>',null,null,null,null,'0','PRODUCTO-709'),
+        T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu','1','currency','principal','Principal de la demanda','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false','procedimientoManager.getProcedimiento(idProcedimiento).getSaldoRecuperacion()',null,'0','PRODUCTO-709'),
+        T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu','2','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-709'),
+	    T_TIPO_TFI('HC106_RevisarCompletitudDocu','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Dado que el importe del concurso es igual o superior a 5 millones, antes de dar por finalizada esta tarea deberá acceder a la pestaña Gestores del asunto correspondiente y asignar el letrado que estime oportuno.</p>Es posible que esta tarea aparezca porque el letrado que haya asignado previamente no haya aceptado el concurso asignado, en tal caso le aparecerá en los campos ‘Conflicto de intereses’, ‘Aceptación del asunto’ y ‘Observaciones de letrado’ los valores introducidos por el letrado en el momento de la no aceptación del concurso.</p>En el campo observaciones consignar cualquier aspecto relevante que le interese que quede reflejado en este punto del procedimiento.</p>Una vez rellene esta pantalla la siguiente tarea será "Registrar aceptación del concurso”  a completar por el letrado que haya quedado registrado en la pestaña Gestores del asunto correspondiente.</p></div>',null,null,null,null,'0','PRODUCTO-709'),
+        T_TIPO_TFI('HC106_RevisarCompletitudDocu','1','currency','principal','Principal de la demanda',null,null,'procedimientoManager.getProcedimiento(idProcedimiento).getSaldoRecuperacion()',null,'0','PRODUCTO-709'),
+        T_TIPO_TFI('HC106_RevisarCompletitudDocu','2','combo','documentacionCompletada','Documentación completada',null,null,'valores[''P421_RegistrarAceptacionConcurso''] == null ? '''' : valores[''P421_RegistrarAceptacionConcurso''][''conflicto_intereses'']','DDSiNo','0','PRODUCTO-709'),
+        T_TIPO_TFI('HC106_RevisarCompletitudDocu','3','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-709')
+        ); 
     V_TMP_TIPO_TFI T_TIPO_TFI;
     
 BEGIN	
-	-- Inserción en PEN_PARAM_ENTIDAD para determinar el límite del importe para el turnado automático del BPM tramiteAceptacionConcursoPrecontencioso
-	DBMS_OUTPUT.PUT_LINE('******** PEN_PARAM_ENTIDAD ********'); 
-    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.PEN_PARAM_ENTIDAD... Comprobaciones previas'); 
-
-    V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.PEN_PARAM_ENTIDAD WHERE PEN_ID = (SELECT PEN_ID FROM '||V_ESQUEMA||'.PEN_PARAM_ENTIDAD WHERE PEN_PARAM = ''limiteImporteConcurso'')';
-
-    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-    IF V_NUM_TABLAS > 0 THEN	  
-		DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.PEN_PARAM_ENTIDAD...no se modifica nada.');
-	ELSE
-		V_MSQL_1 := 'INSERT INTO '||V_ESQUEMA||'.PEN_PARAM_ENTIDAD' ||
-					' (PEN_ID, PEN_PARAM, PEN_VALOR, PEN_DESCRIPCION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) values' || 
-					' ('||V_ESQUEMA||'.S_PEN_PARAM_ENTIDAD.NEXTVAL, ''limiteImporteConcurso'', 5000000, ''Límite del Importe de un Concurso, donde en el BPM de tramiteAceptacionConcursoPrecontencioso irá hacia una tarea u otra, dependiendo de si es menor o mayor al PEN_VALOR de este registro.'',0, ''PRODUCTO-541'', sysdate, 0)';
-    	
-		EXECUTE IMMEDIATE V_MSQL_1;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Datos insertados correctamente en la tabla '||V_ESQUEMA||'.PEN_PARAM_ENTIDAD.');
-    END IF;
-    COMMIT;
 	
     -- LOOP Insertando valores en DD_TPO_TIPO_PROCEDIMIENTO
     VAR_TABLENAME := 'DD_TPO_TIPO_PROCEDIMIENTO';

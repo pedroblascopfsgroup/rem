@@ -780,6 +780,10 @@ function(entidad,page){
 							showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion7-formulacionPropuesta','expediente-accion2-devolverRevision');
 						</sec:authorize>
 					}
+					if(!permiteElevar && permiteDevolver){
+						showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion2-devolverRevision');
+					}
+					
 					break;
 				case 'FP' :
 					if(permiteDevolver){

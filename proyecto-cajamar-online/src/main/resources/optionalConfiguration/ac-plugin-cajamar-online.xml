@@ -463,6 +463,27 @@
 		</constructor-arg>
 	</bean>
 	
+	<bean id="listaCentrosRecuperacion" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<value>CENTRO RECUPERACION DE DEUDA RURAL CAJA</value>
+				<value>CENTRO DE RECUPERACION DE DEUDA PETRER</value>
+				<value>CENTRO DE RECUPERACION DE DEUDA TURIS</value>
+				<value>CENTRO DE RECUPERACION DE DEUDA ALBALAT</value>
+				<value>CENTRO RECUP. DEUDA CAJA RURAL NULES</value>
+				<value>CENTRO RECUPERACION DE DEUDA CANARIAS</value>
+				<value>CENTRO DE RECUPERACION DE DEUDA CASINOS</value>
+				<value>CENTRO DE RECUPERACION DE DEUDA ALMERIA</value>
+				<value>CENTRO DE RECUPERACION DE DEUDA MURCIA</value>
+				<value>CENTRO RECUPERACION DE DEUDA BARCELONA</value>
+				<value>CENTRO DE RECUPERACION DE DEUDA MALAGA</value>
+				<value>CENTRO DE RECUPERACION DE DEUDA MADRID</value>
+				<value>CENTRO DE RECUPERACION DE DEUDA LEVANTE</value>
+				<value>CENTRO DE RECUPERACION DE DEUDA NORTE</value>
+			</list>
+		</constructor-arg>
+	</bean>
+	
 	<alias name="mapaTabsPorTipoBienCajamar" alias="mapaTabsPorTipoBien"/>
 	<alias name="precontenciosoProjectContextCAJAMAR" alias="precontenciosoProjectContext"/>
 

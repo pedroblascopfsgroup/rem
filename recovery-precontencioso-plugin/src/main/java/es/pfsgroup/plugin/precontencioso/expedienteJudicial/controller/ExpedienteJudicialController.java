@@ -444,6 +444,7 @@ public class ExpedienteJudicialController {
 			@RequestParam(value = "idPlantilla", required = true) Long idPlantilla, 
 			@RequestParam(value = "codigoPropietaria", required = true) String codigoPropietaria,
 			@RequestParam(value = "localidadFirma", required = true) String localidadFirma,
+			@RequestParam(value = "notario", required = true) String notario,
 			ModelMap model) {
 
 		if (generarDocumentoApi == null) {
@@ -451,7 +452,7 @@ public class ExpedienteJudicialController {
 			throw new BusinessOperationException("Not implemented generarDocumentoApi");
 		}
 
-		FileItem instanciaDocumento = generarDocumentoApi.generarCertificadoSaldo(idLiquidacion, idPlantilla, codigoPropietaria, localidadFirma);
+		FileItem instanciaDocumento = generarDocumentoApi.generarCertificadoSaldo(idLiquidacion, idPlantilla, codigoPropietaria, localidadFirma, notario);
 		model.put("fileItem", instanciaDocumento);
 
 		return JSP_DOWNLOAD_FILE;

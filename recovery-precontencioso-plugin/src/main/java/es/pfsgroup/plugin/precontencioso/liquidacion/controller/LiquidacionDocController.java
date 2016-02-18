@@ -27,9 +27,10 @@ public class LiquidacionDocController {
 
 	private static final String JSP_LIQUIDACION_CERT_SALDO = "plugin/precontencioso/liquidacion/popups/seleccionarLiquidacionCertSaldo";
 	private static final String JSP_LIQUIDACION_CARTA_NOTARIO = "plugin/precontencioso/liquidacion/popups/seleccionarLiquidacionCartaNotario";
-
+	
 	private static final String JSON_PROPIETARIAS = "plugin/precontencioso/liquidacion/json/propietariasJSON";
 	private static final String JSON_LOCALIDADES_FIRMA = "plugin/precontencioso/liquidacion/json/localidadesFirmaJSON";
+	private static final String JSON_CENTROS = "plugin/precontencioso/liquidacion/json/centrosJSON";
 	private static final String JSP_DOWNLOAD_FILE = "plugin/geninformes/download";
 	private static final String JSON_PLANTILLAS = "plugin/precontencioso/liquidacion/json/plantillasJSON";
 
@@ -107,6 +108,18 @@ public class LiquidacionDocController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping
+	public String obtenerCentros(ModelMap model) {
+
+		List<String> centros = null;
+		if (precontenciosoUtils != null) {
+			centros = precontenciosoUtils.getListaCentros();
+		}
+		model.put("centros", centros);		
+		return JSON_CENTROS;
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping
 	public String generarCertSaldo(@RequestParam(value = "idLiquidacion", required = true) Long idLiquidacion, 
 			@RequestParam(value = "idPlantilla", required = true) Long idPlantilla, 
 			@RequestParam(value = "codigoPropietaria", required = true) String codigoPropietaria,
@@ -126,4 +139,26 @@ public class LiquidacionDocController {
 
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String generarCartaNotario(@RequestParam(value = "idLiquidacion", required = true) Long idLiquidacion, 
+			@RequestParam(value = "notario", required = true) String notario,
+			@RequestParam(value = "localidadNotario", required = true) String localidadNotario,
+			@RequestParam(value = "adjuntosAdicionales", required = true) String adjuntosAdicionales,
+			@RequestParam(value = "codigoPropietaria", required = true) String codigoPropietaria,
+			@RequestParam(value = "centro", required = true) String centro,
+			@RequestParam(value = "localidadFirma", required = true) String localidadFirma,
+			ModelMap model) {
+			
+		if (generarDocumentoApi == null) {
+			logger.error("LiquidacionDocController.generarCartaNotario: No existe una implementacion para generarDocumentoApi");
+			throw new BusinessOperationException("Not implemented generarDocumentoApi");
+		}
+
+		FileItem documentoLiquidacion = generarDocumentoApi.generarCartaNotario(idLiquidacion, notario, localidadNotario, adjuntosAdicionales, codigoPropietaria, centro, localidadFirma);
+		model.put("fileItem", documentoLiquidacion);
+
+		return JSP_DOWNLOAD_FILE;
+
+	}
 }

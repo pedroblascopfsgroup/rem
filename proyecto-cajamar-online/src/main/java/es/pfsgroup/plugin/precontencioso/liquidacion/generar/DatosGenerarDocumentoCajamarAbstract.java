@@ -36,10 +36,10 @@ public abstract class DatosGenerarDocumentoCajamarAbstract {
 	
 	public static final String NOMBRE_TITULAR_PRINCIPAL = "NOMBRE_TITULAR_PRINCIPAL";
 
-	private static final String CONECTOR_ESPACIO = " ";
-	private static final String CONECTOR_COMA = ", ";
-	private static final String CONECTOR_CONJUNCION = " y ";
-	private static final String CONECTOR_CON = " con ";
+	protected static final String CONECTOR_ESPACIO = " ";
+	protected static final String CONECTOR_COMA = ", ";
+	protected static final String CONECTOR_CONJUNCION = " y ";
+	protected static final String CONECTOR_CON = " con ";
 
 	private static final String INICIO_NO_DISP = "[CAMPO ";
 	private static final String FIN_NO_DISP = " NO DISPONIBLE]";	

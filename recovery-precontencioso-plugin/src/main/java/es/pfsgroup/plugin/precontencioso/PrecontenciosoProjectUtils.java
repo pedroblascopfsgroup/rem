@@ -37,4 +37,11 @@ public interface PrecontenciosoProjectUtils {
 	public String obtenerNombrePorClave(String clave);
 	
 	public String obtenerInfoPorClave(String clave);
+
+	public List<String> getListaCentros();
+	
+	public List<String> getListaCentrosRecuperacion();
+	
+	public void setListaCentrosRecuperacion(List<String> listaCentrosRecuperacion);
+	
 }

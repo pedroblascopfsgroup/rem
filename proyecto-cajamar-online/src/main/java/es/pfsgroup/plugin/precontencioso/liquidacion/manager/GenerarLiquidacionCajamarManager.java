@@ -27,6 +27,10 @@ public class GenerarLiquidacionCajamarManager implements GenerarDocumentoApi {
 	private static final String TEXTO_LOGO = "TEXTO_LOGO";
 	private static final String GEN_ENT_N = "GEN_ENT_N";
 	private static final String NOMBRE_NOT_TELE = "NOMBRE_NOT_TELE";
+	private static final String NOMNOT = "NOMNOT";
+	private static final String LOCNOM = "LOCNOM";
+	private static final String ADJUNTOSTELEGRAM = "ADJUNTOSTELEGRAM";
+	private static final String NOMCRD = "NOMCRD";
 	
 	@Autowired
 	private ParametrizacionDao parametrizacionDao;
@@ -170,6 +174,52 @@ public class GenerarLiquidacionCajamarManager implements GenerarDocumentoApi {
 		}
 	
 		return ficheroLiquidacion;
+	}
+
+	@Override
+	public FileItem generarCartaNotario(Long idLiquidacion, String notario,
+			String localidadNotario, String adjuntosAdicionales,
+			String codigoPropietaria, String centro, String localidadFirma) {
+
+		final String codigoPlantilla = "CARTA_NOTARIO";
+		final String nombrePlantilla = codigoPlantilla + ".docx";
+		DDTipoLiquidacionPCO tipoLiquidacion = new DDTipoLiquidacionPCO();
+		tipoLiquidacion.setCodigo(codigoPlantilla);
+		HashMap<String, Object> datosPlantilla = obtenerDatosParaPlantilla(idLiquidacion, tipoLiquidacion);
+	
+		// Añadimos la variable localidad de Firma
+		datosPlantilla.put(LOCCRD, localidadFirma);
+		
+		// Añadimos la variable nombre de la entidad y el texto de cabecera
+		String nombreEntidad = "";
+		String textoLogo = "";
+		if (precontenciosoUtils != null) {
+			nombreEntidad = precontenciosoUtils.obtenerNombrePorClave(codigoPropietaria);
+			textoLogo = precontenciosoUtils.obtenerInfoPorClave(codigoPropietaria);
+		}
+		datosPlantilla.put(GEN_ENT_N, nombreEntidad);
+		datosPlantilla.put(TEXTO_LOGO, textoLogo);
+		datosPlantilla.put(NOMNOT, notario);
+		datosPlantilla.put(LOCNOM, localidadNotario);
+		datosPlantilla.put(ADJUNTOSTELEGRAM, adjuntosAdicionales);
+		datosPlantilla.put(NOMCRD, centro);
+		
+		FileItem ficheroLiquidacion;
+		try {
+			String directorio = parametrizacionDao.buscarParametroPorNombre(DIRECTORIO_PLANTILLAS_LIQUIDACION).getValor();
+			InputStream is = new FileInputStream(directorio + nombrePlantilla);
+			String rutaLogo = directorio + "logos/" + codigoPropietaria + ".jpg";
+			ficheroLiquidacion = informesApi.generarEscritoConVariablesYLogo(datosPlantilla, nombrePlantilla, is, rutaLogo);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			throw new BusinessOperationException(e);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			throw new BusinessOperationException(e);
+		}
+	
+		return ficheroLiquidacion;
+
 	}
 	
 }

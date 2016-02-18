@@ -26,6 +26,19 @@ public class PrecontenciosoProjectUtilsCajamar implements
 	@Autowired
 	private List<String> listaLocalidades;
 
+	@Autowired
+	private List<String> listaCentrosRecuperacion;
+
+	@Override
+	public List<String> getListaCentrosRecuperacion() {
+		return listaCentrosRecuperacion;
+	}
+
+	@Override
+	public void setListaCentrosRecuperacion(List<String> listaCentrosRecuperacion) {
+		this.listaCentrosRecuperacion = listaCentrosRecuperacion;
+	}
+
 	@Override
 	public void setListaEntidades(Map<String, String> listaEntidades) {
 		this.listaEntidades = listaEntidades;
@@ -98,6 +111,11 @@ public class PrecontenciosoProjectUtilsCajamar implements
 		} else {
 			return "";
 		}
+	}
+
+	@Override
+	public List<String> getListaCentros() {
+		return listaCentrosRecuperacion;
 	}
 	
 }

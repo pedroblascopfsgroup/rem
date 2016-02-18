@@ -182,52 +182,26 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		if(DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidadGrid) || DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidadGrid)){
 			
 			for(GestorDocumentalOutputListDto olDto : outputDto.getLbListadoDocumentos()) {
-				
-				//TODO temporal mientras el WS no nos devuelva el codigo del tipo de documento
-				String fichero = olDto.getDescripcion() + "." + olDto.getExtFichero().toLowerCase();
-				
-				if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidadGrid)) {
-					List<EXTAdjuntoAsunto> adjuntoAsuntoList = genericDao.getList(EXTAdjuntoAsunto.class, 
-														genericDao.createFilter(FilterType.EQUALS, "nombre", fichero), 
-														genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsuPrc));
-					if(!Checks.estaVacio(adjuntoAsuntoList)){
-						olDto.setNombreTipoDoc(adjuntoAsuntoList.get(0).getTipoFichero().getDescripcion());
-					}
-				}
-				if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidadGrid)) {
-					List<EXTAdjuntoAsunto> adjuntoAsuntoList = genericDao.getList(EXTAdjuntoAsunto.class, 
-														genericDao.createFilter(FilterType.EQUALS, "nombre", fichero), 
-														genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idAsuPrc));
-					if(!Checks.estaVacio(adjuntoAsuntoList)){
-						olDto.setNombreTipoDoc(adjuntoAsuntoList.get(0).getTipoFichero().getDescripcion());
-					}
-				}
-				//-------------------------------------------------------------------------------------------------------------------
 				List<MapeoTipoFicheroAdjunto> mapeo = genericDao.getList(MapeoTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "tipoFicheroExterno", olDto.getTipoDoc()));
 				if(!Checks.esNulo(mapeo) && mapeo.size()>0){
-					
 					if(mapeo.size() == 1){
 						olDto.setTipoDoc(mapeo.get(0).getTipoFichero().getCodigo());
+						olDto.setNombreTipoDoc(mapeo.get(0).getTipoFichero().getDescripcion());
 					}else{
-						if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidadGrid)) {
-							
-							EXTAsunto extAsun = genericDao.get(EXTAsunto.class, genericDao.createFilter(FilterType.EQUALS, "guid", claveAsociacion));
-							List<EXTAdjuntoAsunto> adjsAsun = genericDao.getList(EXTAdjuntoAsunto.class, genericDao.createFilter(FilterType.EQUALS, "asunto.id", extAsun.getId()));
-							if(!Checks.esNulo(adjsAsun) && adjsAsun.size() > 0){
-								olDto.setTipoDoc(adjsAsun.get(0).getTipoFichero().getCodigo());
-							}
-							
-						} else if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidadGrid)) {
-							
-							MEJProcedimiento procedimiento = genericDao.get(MEJProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "guid", claveAsociacion));
-							List<EXTAdjuntoAsunto> adjsAsun = genericDao.getList(EXTAdjuntoAsunto.class, genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", procedimiento.getId()));
-							if(!Checks.esNulo(adjsAsun) && adjsAsun.size() > 0){
-								olDto.setTipoDoc(adjsAsun.get(0).getTipoFichero().getCodigo());
-							}
-							
+						String fichero = olDto.getDescripcion() + "." + olDto.getExtFichero().toLowerCase();
+						List<EXTAdjuntoAsunto> adjsAsun = null;
+						if(DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidadGrid)) {
+							adjsAsun = genericDao.getList(EXTAdjuntoAsunto.class, genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsuPrc),
+																					genericDao.createFilter(FilterType.EQUALS, "nombre", fichero));
+						}else{
+							adjsAsun = genericDao.getList(EXTAdjuntoAsunto.class, genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idAsuPrc),
+																					genericDao.createFilter(FilterType.EQUALS, "nombre", fichero));
+						}
+						if(!Checks.esNulo(adjsAsun) && adjsAsun.size() > 0){
+							olDto.setTipoDoc(adjsAsun.get(0).getTipoFichero().getCodigo());
+							olDto.setNombreTipoDoc(adjsAsun.get(0).getTipoFichero().getDescripcion());
 						}
 					}
-					
 				}
 				olDto.setContentType(getMimeType(olDto.getExtFichero()));
 			}	

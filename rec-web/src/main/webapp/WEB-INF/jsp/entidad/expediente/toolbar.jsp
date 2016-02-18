@@ -692,7 +692,6 @@ function(entidad,page){
 		
 		function elevarDevolver(){
 		var estados = entidad.getData('estados');
-			debugger;
 			if(d.codigoEstado == 'CE'){
 				for(var i = 0; i < estados.length; i++){
 					if(estados[i].codigo == 'RE'){
@@ -716,7 +715,6 @@ function(entidad,page){
 			
 			if(d.codigoEstado == 'DC'){
 				for(var i = 0; i < estados.length; i++){
-				debugger;
 					if(estados[i].codigo == 'FP'){
 						permiteElevar = true;
 						<sec:authorize ifAllGranted="PERSONALIZACION-BCC">

@@ -33,12 +33,12 @@
 	var operadorFechaDesde='';
 	var operadorFechaHasta='';
 	
-<!-- 	var categorizacionesStore = page.getStore({ -->
-<!-- 		flow : 'categorizaciones/getListaCategorizaciones' -->
-<!-- 		,reader : new Ext.data.JsonReader({root:'categorizaciones', totalProperty : 'total'}, categorizacionesRecord) -->
-<!-- 	}); -->
+<%--	var categorizacionesStore = page.getStore({ --%>
+<%--		flow : 'categorizaciones/getListaCategorizaciones' --%>
+<%--		,reader : new Ext.data.JsonReader({root:'categorizaciones', totalProperty : 'total'}, categorizacionesRecord) --%>
+<%--	}); --%>
 		
-<!-- 	categorizacionesStore.webflow({});		 -->
+<%--	categorizacionesStore.webflow({});		 --%>
 
 	//Store de Categorizaciones	
 	var categorizacionesRecord = Ext.data.Record.create([
@@ -1252,6 +1252,8 @@
 			case '103':
 			case '104':
 			case '105':
+			case '543':
+			case 'TGP':
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
 			break;
 			case app.subtipoTarea.CODIGO_ACTUALIZAR_ESTADO_RECURSO_GESTOR:

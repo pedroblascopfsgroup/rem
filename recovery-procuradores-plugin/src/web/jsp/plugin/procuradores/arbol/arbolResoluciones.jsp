@@ -56,31 +56,31 @@
 												}]);
 											};
 											
-											<!-- Añadimos el nodo de tareas pausadas -->
-<!-- 											page.webflow({ -->
-<!-- 						                      flow:"configuraciondespachoexterno/getConfiguracionDespachoExterno" -->
-<!-- 						                      ,params: {idDespacho:datos.idDespacho} -->
-<!-- 						                      ,success: function(conf){ -->
+											<%--Añadimos el nodo de tareas pausadas --%>
+<%--											page.webflow({ --%>
+<%--						                      flow:"configuraciondespachoexterno/getConfiguracionDespachoExterno" --%>
+<%--						                      ,params: {idDespacho:datos.idDespacho} --%>
+<%--						                      ,success: function(conf){ --%>
 						                      
-<!-- 						                      			if(conf.pausados){ -->
-<!-- 							                      			tree.getNodeById('arbol_tareas_nodo_resoluciones').appendChild([{ -->
+<%--						                      			if(conf.pausados){ --%>
+<%--							                      			tree.getNodeById('arbol_tareas_nodo_resoluciones').appendChild([{ --%>
 <%-- 																text:'<s:message code="plugin.procuradores.listadoResoluciones.tareasPausadas" text="**Tareas Pausadas"/>' --%>
-<!-- 																,id :'arbol_tareas_nodo_resoluciones_pausadas' -->
-<!-- 											        			,iconCls:'icon_pendientes' -->
-<!-- 											        			,leaf:true -->
-<!-- 											        			,idCategoria: 10000 -->
-<!-- 											        			,listeners:{click: function() { -->
-<!-- 										        							//var node = tree.getNodeById('arbol_tareas_nodo_resoluciones'); -->
-<!-- 										        							//node.setText(node.getUI().getTextEl().innerHTML.replace(/<.?b>/g,"")); -->
+<%--																,id :'arbol_tareas_nodo_resoluciones_pausadas' --%>
+<%--											        			,iconCls:'icon_pendientes' --%>
+<%--											        			,leaf:true --%>
+<%--											        			,idCategoria: 10000 --%>
+<%--											        			,listeners:{click: function() { --%>
+<%--										        							//var node = tree.getNodeById('arbol_tareas_nodo_resoluciones'); --%>
+<%--										        							//node.setText(node.getUI().getTextEl().innerHTML.replace(/<.?b>/g,"")); --%>
 <%-- 										        							app.openTab('<s:message code="plugin.procuradores.listadoResoluciones.ListadotareasPausadas" text="**Listado de Tareas Pausadas"/>', --%>
-<!-- 														        			"procuradores/getPanelListadoTareasPendientes",{pausadas:true},{id:'tareas_resoluciones_panel'}); -->
-<!-- 										        					} -->
-<!-- 										        				} -->
-<!-- 															}]); -->
-<!-- 						                      			} -->
+<%--														        			"procuradores/getPanelListadoTareasPendientes",{pausadas:true},{id:'tareas_resoluciones_panel'}); --%>
+<%--										        					} --%>
+<%--										        				} --%>
+<%--															}]); --%>
+<%--						                      			} --%>
 
-<!-- 												} -->
-<!-- 											}); -->
+<%--												} --%>
+<%--											}); --%>
 											
 
 
@@ -89,7 +89,7 @@
 											tree.getNodeById('arbol_tareas_nodo_resoluciones').getUI().show();
 		                      		}
 
-<!-- 		                        Cargamos el número de resoluciones por categoría -->
+<%--		                        Cargamos el número de resoluciones por categoría --%>
 		                            var datosCategorias = datos.categorias;
 		                            var vista = datos.vistaCount;
 		                            var total = Number(0);

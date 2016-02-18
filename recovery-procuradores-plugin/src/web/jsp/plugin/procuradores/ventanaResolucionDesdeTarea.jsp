@@ -147,13 +147,13 @@
 		
 		if (formulario.isValid()){
 			panelEdicion.container.mask('<s:message code="fwk.ui.form.guardando" text="**Guardando" />');
-<!-- 			Ext.Ajax.request({ -->
-<!-- 				url: '/pfs/pcdprocesadoresoluciones/dameValidacionJBPM.htm' -->
+<%--			Ext.Ajax.request({ --%>
+<%--				url: '/pfs/pcdprocesadoresoluciones/dameValidacionJBPM.htm' --%>
 <%-- 				,params: {idResolucion: ${idResolucion}} --%>
-<!-- 				,method: 'POST' -->
-<!-- 				,success: function (result, request){ -->
-<!-- 					var r = Ext.util.JSON.decode(result.responseText); -->
-<!-- 					if (r.resultadoDatosvalidacion.validacion == "" ){ -->
+<%--				,method: 'POST' --%>
+<%--				,success: function (result, request){ --%>
+<%--					var r = Ext.util.JSON.decode(result.responseText); --%>
+<%--					if (r.resultadoDatosvalidacion.validacion == "" ){ --%>
 							Ext.Ajax.request({
 								url: '/pfs/pcdprocesadoresoluciones/procesar.htm'
 								,params: valores
@@ -177,16 +177,16 @@
 									alert("Error procesar");
 								}
 							});
-<!-- 					}else{ -->
-<!-- 						Ext.fly('validacionCMPS').dom.innerHTML = Ext.util.Format.htmlDecode(r.resultadoDatosvalidacion.validacion); -->
-<!-- 						panelEdicion.container.unmask(); -->
-<!-- 					} -->
+<%--					}else{ --%>
+<%--						Ext.fly('validacionCMPS').dom.innerHTML = Ext.util.Format.htmlDecode(r.resultadoDatosvalidacion.validacion); --%>
+<%--						panelEdicion.container.unmask(); --%>
+<%--					} --%>
 					
-<!-- 				} -->
-<!-- 				,error: function(result, request){ -->
-<!-- 					panelEdicion.container.unmask(); -->
-<!-- 				} -->
-<!-- 			}); -->
+<%--				} --%>
+<%--				,error: function(result, request){ --%>
+<%--					panelEdicion.container.unmask(); --%>
+<%--				} --%>
+<%--			}); --%>
 		
 		}else{
 		
@@ -197,30 +197,30 @@
 
 	});
 	
-<!-- 	var btnPausar = new Ext.Button({ -->
-<!-- 		text : 'Pausar' -->
-<!-- 		,iconCls : 'icon_cancel' -->
-<!-- 		,disabled:false -->
-<!-- 	}); -->
+<%--	var btnPausar = new Ext.Button({ --%>
+<%--		text : 'Pausar' --%>
+<%--		,iconCls : 'icon_cancel' --%>
+<%--		,disabled:false --%>
+<%--	}); --%>
 	
 	
-<!-- 	btnPausar.on('click', function(){ -->
-<!-- 		var valores = panelEdicion.getForm().getFieldValues(); -->
+<%--	btnPausar.on('click', function(){ --%>
+<%--		var valores = panelEdicion.getForm().getFieldValues(); --%>
 <%-- 		panelEdicion.container.mask('<s:message code="fwk.ui.form.pausando" text="**Pausando" />'); --%>
-<!-- 		Ext.Ajax.request({ -->
-<!-- 			url: '/pfs/pcdprocesadoresoluciones/pausar.htm' -->
+<%--		Ext.Ajax.request({ --%>
+<%--			url: '/pfs/pcdprocesadoresoluciones/pausar.htm' --%>
 <%-- 			,params: {valores:valores, idResolucion: ${idResolucion}} --%>
-<!-- 			,method: 'POST' -->
-<!-- 			,success: function (result, request){ -->
-<!-- 				panelEdicion.container.unmask(); -->
-<!-- 				page.fireEvent(app.event.CANCEL); -->
-<!-- 			} -->
-<!-- 			,error: function(result, request){ -->
-<!-- 				panelEdicion.container.unmask(); -->
-<!-- 				alert("Error pausar"); -->
-<!-- 			} -->
-<!-- 		}); -->
-<!-- 	}); -->
+<%--			,method: 'POST' --%>
+<%--			,success: function (result, request){ --%>
+<%--				panelEdicion.container.unmask(); --%>
+<%--				page.fireEvent(app.event.CANCEL); --%>
+<%--			} --%>
+<%--			,error: function(result, request){ --%>
+<%--				panelEdicion.container.unmask(); --%>
+<%--				alert("Error pausar"); --%>
+<%--			} --%>
+<%--		}); --%>
+<%--	}); --%>
 	
 	var btnRechazar = new Ext.Button({
 		text : 'Rechazar'
@@ -270,12 +270,12 @@
 	bottomBar.push(btnAdjuntar);
 	bottomBar.push(btnRechazar);
 <%-- 	if(${permitirPausar} == true){ --%>
-<!-- 		bottomBar.push(btnPausar); -->
-<!-- 	} -->
+<%--		bottomBar.push(btnPausar); --%>
+<%--	} --%>
 	
 <%-- 	if ('${estadoResolucion}' == 'PAU'){ --%>
-<!-- 		btnPausar.setDisabled(true); -->
-<!-- 	} -->
+<%--		btnPausar.setDisabled(true); --%>
+<%--	} --%>
 	
 	
 	var panelEdicion=new Ext.form.FormPanel({
@@ -441,14 +441,14 @@ var fn_subirFicheroOk = function(r){
 					,params: valores
 					,method: 'POST'
 					,success: function (result, request){
-<!-- 						panelEdicion.container.unmask(); -->
-<!-- 						//btnCancelar.fireEvent('click',btnCancelar); -->
-<!-- 						page.fireEvent(app.event.DONE); -->
+<%--						panelEdicion.container.unmask(); --%>
+<%--						//btnCancelar.fireEvent('click',btnCancelar); --%>
+<%--						page.fireEvent(app.event.DONE); --%>
 							updateBotonGuardar();
 					}
 					,error: function(result, request){
-<!-- 						panelEdicion.container.unmask(); -->
-<!-- 						alert("Error procesar"); -->
+<%--						panelEdicion.container.unmask(); --%>
+<%--						alert("Error procesar"); --%>
 							updateBotonGuardar();
 					}
 				});

@@ -33,12 +33,12 @@
 	var operadorFechaDesde='';
 	var operadorFechaHasta='';
 	
-<!-- 	var categorizacionesStore = page.getStore({ -->
-<!-- 		flow : 'categorizaciones/getListaCategorizaciones' -->
-<!-- 		,reader : new Ext.data.JsonReader({root:'categorizaciones', totalProperty : 'total'}, categorizacionesRecord) -->
-<!-- 	}); -->
+<%--	var categorizacionesStore = page.getStore({ --%>
+<%--		flow : 'categorizaciones/getListaCategorizaciones' --%>
+<%--		,reader : new Ext.data.JsonReader({root:'categorizaciones', totalProperty : 'total'}, categorizacionesRecord) --%>
+<%--	}); --%>
 		
-<!-- 	categorizacionesStore.webflow({});		 -->
+<%--	categorizacionesStore.webflow({});		 --%>
 
 	//Store de Categorizaciones	
 	var categorizacionesRecord = Ext.data.Record.create([

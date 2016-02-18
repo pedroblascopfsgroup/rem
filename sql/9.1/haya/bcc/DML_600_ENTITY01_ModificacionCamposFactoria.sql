@@ -69,7 +69,6 @@ BEGIN
     
     
     COMMIT;
-    DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'.' || VAR_TABLENAME || '... Campos');
 
 EXCEPTION
      WHEN OTHERS THEN

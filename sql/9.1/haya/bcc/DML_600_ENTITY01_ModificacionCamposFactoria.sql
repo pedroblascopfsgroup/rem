@@ -46,7 +46,10 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('De 294 a 436 - R_ACU_ENT_CNT');
     V_MSQL := 'update '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION set dd_tr_id = ''436'', usuariomodificar = ''PRODUCTO-784'', fechamodificar=sysdate where dd_tr_codigo = ''R_ACU_ENT_CNT''';
     
-	
+	DBMS_OUTPUT.PUT_LINE('De 231 a 437 - R_AUT_APRO_COST');
+    V_MSQL := 'update '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION set dd_tr_id = ''437'', usuariomodificar = ''PRODUCTO-786'', fechamodificar=sysdate where dd_tr_codigo = ''R_AUT_APRO_COST''';
+    
+    
     COMMIT;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'.' || VAR_TABLENAME || '... Campos');
 

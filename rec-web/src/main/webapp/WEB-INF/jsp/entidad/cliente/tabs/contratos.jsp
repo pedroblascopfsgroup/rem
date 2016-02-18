@@ -64,6 +64,7 @@
         ,reader: new Ext.data.JsonReader({
             root: 'contratos'
             ,totalProperty : 'total'
+            ,id: 'rowIndex'
         }, Contrato)
         ,storeId : name
        });

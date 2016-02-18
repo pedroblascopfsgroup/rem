@@ -3,9 +3,9 @@ create or replace PROCEDURE CARGAR_H_CONTRATO (DATE_START IN date, DATE_END IN d
 -- Autor: María Villanueva, PFS Group
 -- Fecha creaciÓn: Septiembre 2015
 -- Responsable ultima modificacion: Jaime Sánchez-Cuenca, PFS Group
--- Fecha ultima modificacion: 17/12/2015
+-- Fecha ultima modificacion: 18/02/2016
 
--- Motivos del cambio: Desarrollo - Informes específicos CM - Contratos, cobros y asuntos
+-- Motivos del cambio: Inicialización de SIT_CART_DANADA_ID a -1(Desconocido)
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripci�n: Procedimiento almancenado que carga las tablas hechos H_CNT.
@@ -180,7 +180,8 @@ BEGIN
 		PERIMETRO_EXP_REC_ID,
 		PERIMETRO_EXP_SEG_ID,
 		CONTRATO_JUDICIALIZADO_ID,
-		PERIMETRO_SIN_GESTION_ID
+		PERIMETRO_SIN_GESTION_ID,
+	SIT_CART_DANADA_ID
        )
       select '''||fecha||''',
         '''||fecha||''',
@@ -237,7 +238,8 @@ BEGIN
 		0,
 		0,
 		0,
-		2
+		2,
+	-1
       from '||V_CM01||'.H_MOV_MOVIMIENTOS where MOV_FECHA_EXTRACCION = '''||max_dia_con_contratos||''' and BORRADO = 0';
 
       V_ROWCOUNT := sql%rowcount;
@@ -306,7 +308,8 @@ BEGIN
 		PERIMETRO_EXP_REC_ID,
 		PERIMETRO_EXP_SEG_ID,
 		CONTRATO_JUDICIALIZADO_ID,
-		PERIMETRO_SIN_GESTION_ID
+		PERIMETRO_SIN_GESTION_ID,
+	SIT_CART_DANADA_ID
        )
       select '''||fecha||''',
         '''||fecha||''',
@@ -363,7 +366,8 @@ BEGIN
 		0,
 		0,
 		0,
-		2
+		2,
+	-1
         from '||V_DATASTAGE||'.MOV_MOVIMIENTOS mov,
              '||V_DATASTAGE||'.CNT_CONTRATOS cnt
       where mov.CNT_ID = cnt.CNT_ID and mov.MOV_FECHA_EXTRACCION = '''||fecha||''' and mov.BORRADO = 0';

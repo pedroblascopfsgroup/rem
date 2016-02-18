@@ -1,13 +1,13 @@
 /*
 --##########################################
---## AUTOR=Jorge Ros
---## FECHA_CREACION=20151222
+--## AUTOR=Oscar Dorado
+--## FECHA_CREACION=20160208
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1
+--## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-709
 --## PRODUCTO=NO
 --##
---## Finalidad: BPM - Trámite de aceptación de concursos precontencioso
+--## Finalidad: BPM - Trámite de envío de demanda
 --## INSTRUCCIONES:  Ejecutar y definir las variables
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -39,7 +39,7 @@ DECLARE
     TYPE T_TIPO_TPO IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TPO IS TABLE OF T_TIPO_TPO;
     V_TIPO_TPO T_ARRAY_TPO := T_ARRAY_TPO(
-      T_TIPO_TPO('HC106','T. de envío de la demanda','T. de envío de la demanda',null,'hcj_tramiteEnvioDemanda','0','PRODUCTO-709','0','TR',null,null,'1','MEJTipoProcedimiento','1','0')
+      T_TIPO_TPO('HC106','T. de envío de la demanda','T. de envío de la demanda',null,'hcj_tramiteEnvioDemanda','0','PRODUCTO-709','0','03',null,null,'1','MEJTipoProcedimiento','1','0')
     ); 
     V_TMP_TIPO_TPO T_TIPO_TPO;
 
@@ -47,9 +47,9 @@ DECLARE
     TYPE T_TIPO_TAP IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
-       T_TIPO_TAP('HC106','HC106_RedactarDemandaAdjuntarDocu',null,null,null,null,null,'0','Redactar demanda y adjuntar documentación','0','PRODUCTO-709','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'39',null,null,null),
-       T_TIPO_TAP('HC106','HC106_RevisarCompletitudDocu',null,'Revisar completitud de la documentación','0','PRODUCTO-709','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'39',null,null,null),
-       T_TIPO_TAP('HC106','HC106_BPMTramiteProvisionFondos',null,null,null,null,null,'0','Se inicia trámite de provisiones de fondos','0','PRODUCTO-709','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'39',null,null,null)
+       T_TIPO_TAP('HC106','HC106_RedactarDemandaAdjuntarDocu','plugin/cajamar/tramiteEnvioDemanda/redactarDemanda',null,null,null,null,'0','Redactar demanda y adjuntar documentación','0','PRODUCTO-709','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_LET',null,null,null),
+       T_TIPO_TAP('HC106','HC106_RevisarCompletitudDocu',null,null,'(valores[''HC106_RevisarCompletitudDocu''][''documentacionCompletada''] == DDSiNo.NO && valores[''HC106_RevisarCompletitudDocu''][''observaciones''] == null) ? ''Atención, al haber indicado disconformidad con la documentación, deberá indicar el motivo en el campo Observaciones.'' : null ' ,'valores[''HC106_RevisarCompletitudDocu''][''documentacionCompletada''] == DDSiNo.SI ? ''completa'' : ''incompleta''',null,'0','Revisar completitud de la documentación','0','PRODUCTO-709','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'543',null,null,null),
+       T_TIPO_TAP('HC106','HC106_BPMTramiteProvisionFondosProcurador',null,null,null,null,'HC107','0','Se inicia trámite de provisiones de fondos','0','PRODUCTO-709','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_LET',null,null,null)
     ); 
     V_TMP_TIPO_TAP T_TIPO_TAP;
 
@@ -59,7 +59,7 @@ DECLARE
     V_TIPO_PLAZAS T_ARRAY_PLAZAS := T_ARRAY_PLAZAS(
       T_TIPO_PLAZAS(null,null,'HC106_RedactarDemandaAdjuntarDocu','15*24*60*60*1000L','0','0','PRODUCTO-709'),
       T_TIPO_PLAZAS(null,null,'HC106_RevisarCompletitudDocu','1*24*60*60*1000L','0','0','PRODUCTO-709'),  
-      T_TIPO_PLAZAS(null,null,'HC106_BPMTramiteProvisionFondos','300*24*60*60*1000L','0','0','PRODUCTO-709') 
+      T_TIPO_PLAZAS(null,null,'HC106_BPMTramiteProvisionFondosProcurador','300*24*60*60*1000L','0','0','PRODUCTO-709') 
     ); 
     V_TMP_TIPO_PLAZAS T_TIPO_PLAZAS;
     
@@ -68,13 +68,15 @@ DECLARE
     TYPE T_TIPO_TFI IS TABLE OF VARCHAR2(5000);
     TYPE T_ARRAY_TFI IS TABLE OF T_TIPO_TFI;
     V_TIPO_TFI T_ARRAY_TFI := T_ARRAY_TFI(
-        T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">A través de esta pantalla deberá indicar si acepta el Asunto asignado por la entidad o no. En el campo "Conflicto de intereses" deberá consignar la existencia de conflicto o no, que le impida aceptar la dirección de la acción a instar, en caso de que haya conflicto de intereses no se le permitirá la aceptación del Asunto. En el campo "Aceptación del asunto " deberá indicar si acepta o no el asunto, si ha marcado con anterioridad que existe conflicto de intereses, deberá marcar, en todo caso, la no aceptación del asunto.</p>En el campo observaciones consignar cualquier aspecto relevante que le interesa quede reflejado en este punto.</p>Una vez rellene esta pantalla la siguiente tarea será "Revisar asignación de letrado”  en caso de no haber aceptado el asunto se creará una tarea al supervisor para que tenga en cuenta su respuesta a la vez que reasigna el asunto a otro letrado, en caso de haber aceptado el asunto se dará por terminada esta actuación.</p></div>',null,null,null,null,'0','PRODUCTO-709'),
+        T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Para dar por completada esta tarea deberá de indicar en el campo Principal de la demanda, dicho importe. Además, deberá adjuntar al procedimiento el escrito de la demanda completo, así como toda la documentación que requiera el procurador para su revisión. </p><p style="margin-bottom: 10px">En el caso de que el procurador haya indicado disconformidad con la documentación que hubiera adjuntado al procedimiento, en el campo ‘Observaciones procurador’ aparecerá el motivo de dicha disconformidad. </p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla la siguiente tarea será "Revisar completitud de la documentación" a realizar por el procurador asignado al asunto de referencia.</p></div>',null,null,null,null,'0','PRODUCTO-709'),
         T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu','1','currency','principal','Principal de la demanda','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false','procedimientoManager.getProcedimiento(idProcedimiento).getSaldoRecuperacion()',null,'0','PRODUCTO-709'),
-        T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu','2','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-709'),
-	    T_TIPO_TFI('HC106_RevisarCompletitudDocu','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Dado que el importe del concurso es igual o superior a 5 millones, antes de dar por finalizada esta tarea deberá acceder a la pestaña Gestores del asunto correspondiente y asignar el letrado que estime oportuno.</p>Es posible que esta tarea aparezca porque el letrado que haya asignado previamente no haya aceptado el concurso asignado, en tal caso le aparecerá en los campos ‘Conflicto de intereses’, ‘Aceptación del asunto’ y ‘Observaciones de letrado’ los valores introducidos por el letrado en el momento de la no aceptación del concurso.</p>En el campo observaciones consignar cualquier aspecto relevante que le interese que quede reflejado en este punto del procedimiento.</p>Una vez rellene esta pantalla la siguiente tarea será "Registrar aceptación del concurso”  a completar por el letrado que haya quedado registrado en la pestaña Gestores del asunto correspondiente.</p></div>',null,null,null,null,'0','PRODUCTO-709'),
+        T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu','2','textarea','observacionesProcu','Observaciones procurador',null,null,'valores[''HC106_RevisarCompletitudDocu''] != null ? valores[''HC106_RevisarCompletitudDocu''][''observaciones''] : ''''',null,'0','PRODUCTO-709'),
+	    T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu','3','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-709'),
+	    T_TIPO_TFI('HC106_RevisarCompletitudDocu','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Para dar por completada esta tarea deberá revisar que toda la documentación subida por el letrado en la pestaña Adjuntos del procedimiento es la necesaria para la presentación de la demanda. </p><p style="margin-bottom: 10px">A través del campo Documentación completada, indique si efectivamente la documentación es completa o no. En caso de indicar que la documentación no es completa, introduzca el motivo en el campo observaciones. </p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interese que quede reflejado en este punto del procedimiento.</p></div>',null,null,null,null,'0','PRODUCTO-709'),
         T_TIPO_TFI('HC106_RevisarCompletitudDocu','1','currency','principal','Principal de la demanda',null,null,'procedimientoManager.getProcedimiento(idProcedimiento).getSaldoRecuperacion()',null,'0','PRODUCTO-709'),
         T_TIPO_TFI('HC106_RevisarCompletitudDocu','2','combo','documentacionCompletada','Documentación completada',null,null,'valores[''P421_RegistrarAceptacionConcurso''] == null ? '''' : valores[''P421_RegistrarAceptacionConcurso''][''conflicto_intereses'']','DDSiNo','0','PRODUCTO-709'),
-        T_TIPO_TFI('HC106_RevisarCompletitudDocu','3','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-709')
+        T_TIPO_TFI('HC106_RevisarCompletitudDocu','3','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-709'),
+        T_TIPO_TFI('HC106_BPMTramiteProvisionFondosProcurador','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Se inicia el trámite de provisión de fondos procurador</p></div>',null,null,null,null,'0','PRODUCTO-709')
         ); 
     V_TMP_TIPO_TFI T_TIPO_TFI;
     
@@ -125,7 +127,8 @@ BEGIN
         	' TAP_SCRIPT_VALIDACION=''' || REPLACE(TRIM(V_TMP_TIPO_TAP(4)),'''','''''') || ''',' ||
         	' TAP_SCRIPT_VALIDACION_JBPM=''' || REPLACE(TRIM(V_TMP_TIPO_TAP(5)),'''','''''') || ''',' ||
         	' TAP_SCRIPT_DECISION=''' || REPLACE(TRIM(V_TMP_TIPO_TAP(6)),'''','''''') || ''',' ||
-        	' DD_STA_ID=(SELECT DD_STA_ID FROM ' || V_ESQUEMA_MASTER || '.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO=''' || TRIM(V_TMP_TIPO_TAP(20)) || ''')' || 
+        	' DD_TPO_ID_BPM=(SELECT DD_TPO_ID FROM ' || V_ESQUEMA || '.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = ''' || TRIM(V_TMP_TIPO_TAP(7)) || '''),' ||
+            ' DD_STA_ID=(SELECT DD_STA_ID FROM ' || V_ESQUEMA_MASTER || '.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO=''' || TRIM(V_TMP_TIPO_TAP(20)) || ''')' || 
         	' WHERE DD_TPO_ID = (SELECT DD_TPO_ID FROM ' || V_ESQUEMA || '.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = '''||TRIM(V_TMP_TIPO_TAP(1))||''') and TAP_CODIGO = '''||TRIM(V_TMP_TIPO_TAP(2))||'''';
 			--DBMS_OUTPUT.PUT_LINE(V_SQL);
 		    EXECUTE IMMEDIATE V_SQL;	

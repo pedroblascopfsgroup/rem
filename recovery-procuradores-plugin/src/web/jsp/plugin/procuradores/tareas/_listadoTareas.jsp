@@ -1252,6 +1252,8 @@
 			case '103':
 			case '104':
 			case '105':
+			case '543':
+			case 'TGP':
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
 			break;
 			case app.subtipoTarea.CODIGO_ACTUALIZAR_ESTADO_RECURSO_GESTOR:

@@ -1286,6 +1286,8 @@
 			case '101':			
 			case '105':
 			case '102':
+			case '543':
+			case 'TGP':
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
 				break;			
 			case '103':

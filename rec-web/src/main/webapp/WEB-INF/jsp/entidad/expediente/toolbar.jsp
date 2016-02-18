@@ -692,6 +692,7 @@ function(entidad,page){
 		
 		function elevarDevolver(){
 		var estados = entidad.getData('estados');
+			debugger;
 			if(d.codigoEstado == 'CE'){
 				for(var i = 0; i < estados.length; i++){
 					if(estados[i].codigo == 'RE'){
@@ -715,6 +716,7 @@ function(entidad,page){
 			
 			if(d.codigoEstado == 'DC'){
 				for(var i = 0; i < estados.length; i++){
+				debugger;
 					if(estados[i].codigo == 'FP'){
 						permiteElevar = true;
 						<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
@@ -779,6 +781,9 @@ function(entidad,page){
 						<sec:authorize ifNotGranted="PERSONALIZACION-BCC">
 							showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion7-formulacionPropuesta','expediente-accion2-devolverRevision');
 						</sec:authorize>
+					}
+					if(!permiteElevar && permiteDevolver){
+						showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion2-devolverRevision');
 					}
 					break;
 				case 'FP' :

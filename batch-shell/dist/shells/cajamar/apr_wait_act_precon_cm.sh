@@ -2,7 +2,7 @@
  
 ficheros=STOCK_PRECON_PRC,STOCK_PRECON_LIQ,STOCK_PRECON_DOC,STOCK_PRECON_SOL,STOCK_PRECON_BUR,STOCK_PRECON_ENV
 
-mascara='_'$ENTIDAD'_'????????
+mascara='_'????????
 extensionSem=".sem"
 extensionZip=".zip"
 

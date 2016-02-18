@@ -60,7 +60,7 @@ BEGIN
     V_MSQL := 'delete '||V_ESQUEMA||'.BPM_TPI_TIPO_PROC_INPUT where  DD_TPO_ID = (SELECT DD_TPO_ID FROM DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = ''H016'')';
     
     DBMS_OUTPUT.PUT_LINE('Borrado - BPM_DD_TIN_TIPO_INPUT');
-    V_MSQL := 'delete '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_dd_tin_codigo = ''I_DEM_SEL_PCM''';
+    V_MSQL := 'delete from'||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_dd_tin_codigo = ''I_DEM_SEL_PCM''';
     
     DBMS_OUTPUT.PUT_LINE('Borrado - DD_TR_TIPOS_RESOLUCION');
     V_MSQL := 'delete '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_DEM_SEL_PCM''';

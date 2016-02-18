@@ -3,6 +3,7 @@ package es.capgemini.pfs.contrato.model;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -33,7 +34,7 @@ public class DDTipoProductoEntidad implements Dictionary, Auditable {
    @Column(name = "DD_TPE_ID")
    private Long id;
 
-   @ManyToOne
+   @ManyToOne(fetch=FetchType.LAZY)
    @JoinColumn(name = "DD_TPR_ID")
    private DDTipoProducto tipoProducto;
 

@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.recovery.mejoras.cliente;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -105,7 +106,7 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "serial" })
 	@Override
 	public Page findClientesPage(MEJBuscarClientesDto clientes,
 			Usuario usuarioLogueado, boolean conCarterizacion) {
@@ -567,7 +568,7 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 						clientes.getMinSaldoVencido(),
 						clientes.getMaxSaldoVencido());
 				if (!Checks.esNulo(filtro)) {
-					hql.append("and per_id in (");
+					hql.append("and EXISTS (");
 					hql.append(filtro);
 					hql.append(")");
 				}
@@ -605,12 +606,12 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 		final StringBuilder srtbuilder = new StringBuilder();
 
 		if (!StringUtils.isBlank(minValue) || !StringUtils.isBlank(maxValue)) {
-			srtbuilder.append("SELECT PER_ID FROM V_PER_PERSONAS_FORMULAS WHERE NVL(V_PER_PERSONAS_FORMULAS.DISPUESTO_VENCIDO, 0) BETWEEN ");
+			srtbuilder.append("SELECT 1 FROM V_PER_PERSONAS_FORMULAS v WHERE p.PER_ID = v.PER_ID AND TO_NUMBER(REPLACE(NVL(v.DISPUESTO_VENCIDO, 0), ',', '.')) BETWEEN ");
 						
 			if (!StringUtils.isBlank(minValue)) {
 				try {
 					Float valor = Float.parseFloat(minValue);
-					String filtroFinal = String.format("%f", valor);
+					String filtroFinal = new DecimalFormat("#.##").format(valor);
 					srtbuilder.append(filtroFinal);
 				} catch (NumberFormatException nfe) {}
 			}
@@ -624,12 +625,12 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 			if (!StringUtils.isBlank(maxValue)) {
 				try {
 					Float valor = Float.parseFloat(maxValue);
-					String filtroFinal = String.format("%f", valor);
+					String filtroFinal = new DecimalFormat("#.##").format(valor);
 					srtbuilder.append(filtroFinal);
 				} catch (NumberFormatException nfe) {}
 			}
 			else {
-				String filtroFinal = String.format("%f", Float.MAX_VALUE);
+				String filtroFinal =  new DecimalFormat("#.##").format(Float.MAX_VALUE);
 				srtbuilder.append(filtroFinal);
 			}			
 			

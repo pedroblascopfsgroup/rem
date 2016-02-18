@@ -21,6 +21,8 @@ var formBusquedaContratos=function(){
 	var txtCodEfecto = app.creaText('codEfecto', '<s:message code="listadoContratos.codigoEfecto" text="**Cod. efecto" />'); 
 	//codigo de disposicion
 	var txtCodDisposicion = app.creaText('codDisposicion', '<s:message code="listadoContratos.codigoDisposicion" text="**Cod. disposición" />'); 
+	//motivo de gestion HRE
+	var motivoGestionHRE = app.creaText('motivoGestionHRE', '<s:message code="listadoContratos.motivoGestion" text="**Motivo Gestión" />');
 	
 	
 	//nombre
@@ -182,7 +184,7 @@ var formBusquedaContratos=function(){
         		p.codRecibo=txtCodRecibo.getValue();
         		p.codEfecto=txtCodEfecto.getValue();
         		p.codDisposicion=txtCodDisposicion.getValue();
-				
+        		p.motivoGestionHRE=motivoGestionHRE.getValue();
         	}
         	if(tabRelaciones){
         		p.nombre=txtNombre.getValue();
@@ -239,6 +241,9 @@ var formBusquedaContratos=function(){
 				return true;
 			}
 			if (txtCodDisposicion.getValue().trim()!=''){
+				return true;
+			}
+			if (motivoGestionHRE.getValue().trim()!=''){
 				return true;
 			}
 		}
@@ -376,7 +381,11 @@ var formBusquedaContratos=function(){
 		,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
 		,items:[{
 					layout:'form'
-					,items: [txtContrato,txtCodRecibo,txtCodEfecto,txtCodDisposicion]
+					,items: [txtContrato,txtCodRecibo,txtCodEfecto,txtCodDisposicion,
+						
+						motivoGestionHRE
+						
+					]
 				},{
 					layout:'form'
 					,items: [comboEstadoContrato,comboTiposProducto]

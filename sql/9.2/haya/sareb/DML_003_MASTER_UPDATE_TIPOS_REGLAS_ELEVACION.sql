@@ -46,7 +46,7 @@ BEGIN
 					VALUES ('||V_ESQUEMA_M||'.S_DD_TRE_TIPO_REGLAS_ELEVACION.NEXTVAL, ''SANCIONAR_PROPUESTA'', ''Sancionar Propuesta'', ''Sancionar Propuesta'', 0, ''DML'', SYSDATE, 0)';
 		DBMS_OUTPUT.PUT_LINE(V_MSQL);
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Registros insertado en '||V_ESQUEMA||'.DD_TRE_DESCRIPCION');
+		DBMS_OUTPUT.PUT_LINE('[INFO] Registros insertado en '||V_ESQUEMA_M||'.DD_TRE_DESCRIPCION');
 	ELSE
 		DBMS_OUTPUT.PUT_LINE('[INFO] Ya existe el tipo de regla de elevación: Sancionar Propuesta.');
 	END IF;

@@ -565,25 +565,36 @@
 			<sec:authorize ifAllGranted="VIGENCIA_SOLVENCIA">,btnEditarSolvencia</sec:authorize>]
 	});
 	
+	var columnsPanelInf = 2;
+	var defColW = .50;
+	<sec:authorize ifAllGranted="VER_REVISION_SOLVENCIA">
+		columnsPanelInf = 3;
+		var defColW = .33;
+	</sec:authorize>
+	
 	panelInferior=new Ext.Panel({
 		layout:'column'
-		,layoutConfig:{columns:3}
+		,layoutConfig:{columns:columnsPanelInf}
 		,autoHeight:true
 		,border:false
 		,bodyStyle:'padding-top:10px'
 		,autoWidth:true
-		,defaults:{columnWidth:.33}
+		,defaults:{columnWidth:defColW}
 		,items:[{
 				items:panel.ingresosGrid
 				,layout:'fit'
 				,border:false
 				,style:'padding-right:10px'
-			},{
+			},
+			<sec:authorize ifAllGranted="VER_REVISION_SOLVENCIA">
+			{
 				items:panelRevisionSolvencia
 				,layout:'fit' 
 				,border:false
 				,style:'padding-right:10px'
-			},{
+			},
+			</sec:authorize>
+			{
 				items:panelVigenciaDatos
 				,layout:'fit'
 				,border:false

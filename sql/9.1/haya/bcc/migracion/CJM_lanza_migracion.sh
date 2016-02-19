@@ -315,5 +315,15 @@ fi
 echo "[OK] ""$sh_dir""CJM_MIGRACION_EXPEDIENTES_NOTIFICACIONES.sh ejecutado correctamente" 
 
 
+echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC-2102_Corrige_estados_subastas.sh"                               
+./"$sh_dir"CMREC-2102_Corrige_estados_subastas.sh "$1"   
+if [ $? != 0 ] ; then 
+  echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC-2102_Corrige_estados_subastas.sh"
+  echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"          
+  exit 1
+fi
+echo "[OK] ""$sh_dir""CMREC-2102_Corrige_estados_subastas.sh ejecutado correctamente" 
+
+
 echo "[INFO] FIN CJM_lanza_migracion.sh. Revise el fichero de log" `date` 
 exit 0

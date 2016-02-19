@@ -2,7 +2,7 @@
  
 ficheros=STOCK_PRECON_PRC,STOCK_PRECON_LIQ,STOCK_PRECON_DOC,STOCK_PRECON_SOL,STOCK_PRECON_BUR,STOCK_PRECON_ENV
 
-mascara='_'$ENTIDAD'_'????????
+mascara='_'????????
 extensionSem=".sem"
 extensionZip=".zip"
 
@@ -17,8 +17,8 @@ echo "Hora actual: $hora_actual - Hora limite: $hora_limite"
 
 for fichero in $arrayFicheros
 do
-	ficheroSem=$DIR_INPUT_AUX$fichero$mascara$extensionSem
-    ficheroZip=$DIR_INPUT_AUX$fichero$mascara$extensionZip
+	ficheroSem=$DIR_HRE_INPUT$fichero$mascara$extensionSem
+    ficheroZip=$DIR_HRE_INPUT$fichero$mascara$extensionZip
 
     echo "$ficheroSem"
 	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -a ! -e $ficheroZip ]; do
@@ -35,8 +35,8 @@ then
 else
    for fichero in $arrayFicheros
    do
-	    mascaraSem=$DIR_INPUT_AUX$fichero$mascara$extensionSem
-        mascaraZip=$DIR_INPUT_AUX$fichero$mascara$extensionZip
+	    mascaraSem=$DIR_HRE_INPUT$fichero$mascara$extensionSem
+        mascaraZip=$DIR_HRE_INPUT$fichero$mascara$extensionZip
         ficheroSem=`ls -Art $mascaraSem | tail -n 1`
         ficheroZip=`ls -Art $mascaraZip | tail -n 1`
 	

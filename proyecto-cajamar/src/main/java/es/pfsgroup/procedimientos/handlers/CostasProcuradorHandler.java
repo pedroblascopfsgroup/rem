@@ -28,6 +28,7 @@ public class CostasProcuradorHandler extends PROBaseActionHandler {
 				}
 			}
 		}
+		executionContext.getToken().signal("avanza");
 	}
 
 }

@@ -3243,13 +3243,13 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 						   ,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",allowBlank:false}
 	   				]);
 	
-	//id: 438 : TRAMITE COSTAS: Confirmar Notificacion H007_ConfirmarNotificacion REVISAR TODO
+	//id: 438 : TRAMITE COSTAS: Confirmar Notificacion H007_ConfirmarNotificacion
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       	,{"xtype":'combo',"store":storeSINO,"value":"",allowBlank:false, "name":"d_comboResultado","fieldLabel":"Resultado notificación","autoload":true,	mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":storeSINO,"value":"",allowBlank:true, "name":"d_comboResultado","fieldLabel":"Resultado notificación","autoload":true,	mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
-	//id: 439 : P. CAMBIARIO: Interposicion de la demanda H016_interposicionDemandaMasBienes REVISAR TODO
+	//id: 439 : P. CAMBIARIO: Interposicion de la demanda H016_interposicionDemandaMasBienes
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha presentación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'combo',"store": this.dsPlazas, "name":"d_comboPlaza","hiddenName":"d_comboPlaza",fieldLabel:"Plaza del juzgado",triggerAction: 'all',allowBlank:false, resizable:true, id:'d_comboPlaza'+this.idFactoria

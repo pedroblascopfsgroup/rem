@@ -305,7 +305,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] CAJAMAR MIGRACION CONTRATOS MARCA HAYA');
                                '''||USUARIO||''' AS usuariocrear,
                                SYSDATE AS fechacrear,
                                0 AS borrado,
-                              (select dd_epr_id from '||v_esquema_master||'.dd_epr_estado_procedimiento WHERE dd_epr_codigo = ''05'') AS dd_epr_id, -- ESTADO PROCEDIMIENTO = ACEPTADO  ---lrc
+                              (select dd_epr_id from '||v_esquema_master||'.dd_epr_estado_procedimiento WHERE dd_epr_codigo = ''03'') AS dd_epr_id, -- ESTADO PROCEDIMIENTO = ACEPTADO  ---lrc
                                ''MEJProcedimiento'' AS dtype,
                                SYS_GUID() AS SYS_GUID
                     FROM  '||v_esquema||'.TMP_EXP_EXPEDIENTES_HRE TMP

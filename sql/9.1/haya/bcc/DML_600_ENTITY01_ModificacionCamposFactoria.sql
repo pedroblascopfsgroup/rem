@@ -59,15 +59,28 @@ BEGIN
     V_MSQL := 'update '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION set dd_tr_descripcion = ''Recibí de gestoría (Inscripción de título)'', dd_tr_descripcion_larga = ''Recibí de gestoría (Inscripción de título)'', usuariomodificar = ''PRODUCTO-785'', fechamodificar=sysdate where dd_tr_codigo = ''R_IDT_REG_ENT_TIT''';
     EXECUTE IMMEDIATE V_MSQL;
     
+    
     --PRODUCTO-766
     DBMS_OUTPUT.PUT_LINE('Borrado - BPM_IDT_INPUT_DATOS');
     V_MSQL := 'delete '||V_ESQUEMA||'.BPM_IDT_INPUT_DATOS WHERE BPM_TPI_ID IN (SELECT BPM_TPI_ID FROM '||V_ESQUEMA||'.BPM_TPI_TIPO_PROC_INPUT where  DD_TPO_ID = (SELECT DD_TPO_ID FROM '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = ''H016''))';
     EXECUTE IMMEDIATE V_MSQL;
     
     DBMS_OUTPUT.PUT_LINE('Borrado - BPM_TPI_TIPO_PROC_INPUT');
-    V_MSQL := 'delete '||V_ESQUEMA||'.BPM_TPI_TIPO_PROC_INPUT where  DD_TPO_ID = (SELECT DD_TPO_ID FROM '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = ''H016'')';
+    V_MSQL := 'delete '||V_ESQUEMA||'.BPM_TPI_TIPO_PROC_INPUT where  DD_TPO_ID = (SELECT DD_TPO_ID FROM '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = ''H016'') and bpm_dd_tin_id = (select bpm_dD_tin_id FROM '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_dd_tin_codigo = ''I_DEM_SEL_PCM'' ) ';
+    EXECUTE IMMEDIATE V_MSQL;
+     
+    DBMS_OUTPUT.PUT_LINE('Borrado - ita_inputs_tareas');
+    V_MSQL := 'delete '||V_ESQUEMA||'.ita_inputs_tareas where bpm_ipt_id = (select bpm_ipt_id from '||V_ESQUEMA||'.bpm_ipt_input where bpm_dd_tin_id = (select bpm_dd_tin_id from '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_dd_tin_codigo = ''I_DEM_SEL_PCM''))';
     EXECUTE IMMEDIATE V_MSQL;
     
+    DBMS_OUTPUT.PUT_LINE('Borrado - bpm_dip_datos_input');
+    V_MSQL := 'delete '||V_ESQUEMA||'.bpm_dip_datos_input WHERE BPM_IPT_ID = (select bpm_ipt_id from '||V_ESQUEMA||'.bpm_ipt_input where bpm_dd_tin_id = (select bpm_dd_tin_id from '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_dd_tin_codigo = ''I_DEM_SEL_PCM''))';
+    EXECUTE IMMEDIATE V_MSQL;    
+  
+    DBMS_OUTPUT.PUT_LINE('Borrado - bpm_ipt_input');
+    V_MSQL := 'delete '||V_ESQUEMA||'.bpm_ipt_input where bpm_dd_tin_id = (select bpm_dd_tin_id from '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_dd_tin_codigo = ''I_DEM_SEL_PCM'')';
+    EXECUTE IMMEDIATE V_MSQL;    
+
     DBMS_OUTPUT.PUT_LINE('Borrado - BPM_DD_TIN_TIPO_INPUT');
     V_MSQL := 'delete from '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_dd_tin_codigo = ''I_DEM_SEL_PCM''';
     EXECUTE IMMEDIATE V_MSQL;
@@ -77,11 +90,9 @@ BEGIN
     EXECUTE IMMEDIATE V_MSQL;
     
     DBMS_OUTPUT.PUT_LINE('Borrado - DD_TR_TIPOS_RESOLUCION');
-    V_MSQL := 'delete '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_DEM_SEL_PCM''';
+    V_MSQL := 'delete '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dd_tr_codigo  =''R_DEM_SEL_PCM''';
     EXECUTE IMMEDIATE V_MSQL;
-    
-
-    
+        
     
     COMMIT;
 

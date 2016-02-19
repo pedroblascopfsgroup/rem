@@ -1634,7 +1634,8 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         Expediente exp = expedienteDao.get(idExpediente);
 
         String nombreTab = "";
-        if (exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioRecuperacion()) {
+        if (exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioRecuperacion() ||
+        		exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioGestionDeuda()) {
             nombreTab = "DECISION DE COMITE";
         } else if (exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioSeguimiento()) {
             nombreTab = "MARCADO DE POLITICAS";
@@ -1648,11 +1649,19 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
                     + "O PORQUE NO HAY SESIONES ABIERTAS DE EL COMITE");
             return Boolean.FALSE;
         }
-        if ((solapaRecuperacion && exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioSeguimiento())
-                || (!solapaRecuperacion && exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioRecuperacion())) {
-            //No est� en decisión de comit� o no tiene sesiones abiertas.
-            logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE EL EXPEDIENTE NO ESTÁ EN EL ITINERARIO CORRESPONDIENTE ");
-            return Boolean.FALSE;
+        if (exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioGestionDeuda()) {
+	        if (!solapaRecuperacion) {
+	        	//En Gestión de deuda no se muestra la pestaña Marcado de politicas
+	        	logger.debug("EN GESTIÓN DE DEUDA NO SE MUESTRA LA PESTAÑA MARCADO DE POLITICAS");
+	        	return Boolean.FALSE;
+	        }
+        } else {
+	        if ((solapaRecuperacion && exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioSeguimiento())
+	                || (!solapaRecuperacion && exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioRecuperacion())) {
+	            //No est� en decisión de comit� o no tiene sesiones abiertas.
+	            logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE EL EXPEDIENTE NO ESTÁ EN EL ITINERARIO CORRESPONDIENTE ");
+	            return Boolean.FALSE;
+	        }
         }
         Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
         //VALIDO CONDICIONES DE ACTIVACION CU WEB-30
@@ -1666,7 +1675,8 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
                         logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE EL COMITE DEL EXPEDIENTE, O LOS "
                                 + "DEL USUARIO LOGUEADO NO SON DEL TIPO DE ITINERARIO DE RECUPERACION");
                         return Boolean.FALSE;
-                    } else if (exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioSeguimiento()
+                    } else if (!exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioGestionDeuda() &&
+                    		exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioSeguimiento()
                             && !puestoComite.getComite().isComiteSeguimiento()) {
                         logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE EL COMITE DEL EXPEDIENTE, O LOS "
                                 + "DEL USUARIO LOGUEADO NO SON DEL TIPO DE ITINERARIO DE SEGUIMIENTO");

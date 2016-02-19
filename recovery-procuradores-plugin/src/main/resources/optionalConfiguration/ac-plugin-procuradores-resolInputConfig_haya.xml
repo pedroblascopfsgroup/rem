@@ -1409,16 +1409,6 @@
 						</bean>
 					</list>
 				</entry>
-				<entry key="R_ACT_AUD_PRV">
-					<list>
-						<bean
-							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
-							<property name="codigoInput">
-								<value>I_ACT_AUD_PRV</value>
-							</property>
-						</bean>
-					</list>
-				</entry>
 				<entry key="R_ESC_CON_DEM">
 					<list>
 						<bean
@@ -1431,10 +1421,10 @@
 				</entry>
 				<entry key="R_ACT_AUD_PRV">
 					<list>
-						<bean
+						<bean 
 							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
 							<property name="codigoInput">
-								<value>I_ESC_CON_DEM</value>
+								<value>I_ACT_AUD_PRV"</value>
 							</property>
 						</bean>
 					</list>

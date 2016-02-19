@@ -1,6 +1,7 @@
 #!/bin/bash
-if [ "$#" -ne 2 ] ; then
-    echo "Parametros: <CM01/CM01_pass@host:puerto/ORACLE_SID> <fecha_datos YYYYMMDD>" 
+if [ "$#" -ne 3 ] ; then
+    echo "Parametros: <CM01/CM01_pass@host:puerto/ORACLE_SID> <fecha_datos YYYYMMDD> <entorno>" 
+    echo "  <entorno>: desa, pre, pro"
     exit 1
 fi
 
@@ -8,24 +9,8 @@ export NLS_LANG=SPANISH_SPAIN.AL32UTF8
 
 echo "[INFO] Se ha establecido la variable de entorno NLS_LANG=SPANISH_SPAIN.AL32UTF8"
 
-echo "[INFO] Creamos el soft link al ETL apr_main_observaciones.sh"
-
-if [ -f  ./shells/apr_main_observaciones.sh ] ; then 
-  echo "El link a ../shells/apr_main_observaciones.sh ya existe" 
-else
-  ln -s ../../shells/apr_main_observaciones.sh ./shells/apr_main_observaciones.sh
-  echo "Link a ../../shells/apr_main_observaciones.sh creado correctamente"
-fi
-
-
-echo "[INFO] Creamos el soft link al ETL apr_main_obs_expediente.sh"
-
-if [ -f  ./shells/apr_main_obs_expediente.sh ] ; then 
-  echo "El link a ../shells/apr_main_obs_expediente.sh ya existe" 
-else
-  ln -s ../../shells/apr_main_obs_expediente.sh ./shells/apr_main_obs_expediente.sh
-  echo "Link a ../../shells/apr_main_obs_expediente.sh creado correctamente"
-fi
+echo "[INFO] Cogiendo información del entorno correpondiente"
+cp etls/config/$3/config.ini etls/config/
 
 sh_dir="shells/"
 

@@ -20,25 +20,25 @@ var txtTitulo = app.creaLabel('<s:message code="ext.comunicaciones.recordatorios
 	var altoOriginalDos = 70;
 	var altoExpandidoDos = 160;
 
-<!-- 	var labeltareaRespuesta = new Ext.form.HtmlEditor({ -->
-<!-- 		id:'htmlRespuesta' -->
-<!-- 		,fieldLabel : 'Texto de respuesta' -->
-<!-- 		,hideLabel:true -->
-<!-- 		,width:790 -->
-<!-- 		,maxLength:3500 -->
-<!-- 		,height : altoOriginalDos -->
-<!-- 		,readOnly:false -->
-<!-- 		,hideParent:true -->
-<!-- 		,enableColors: false -->
-<!--        	,enableAlignments: false -->
-<!--        	,enableFont:false -->
-<!--        	,enableFontSize:false -->
-<!--        	,enableFormat:false -->
-<!--        	,enableLinks:false -->
-<!--        	,enableLists:false -->
-<!--        	,enableSourceEdit:false -->
+<%--	var labeltareaRespuesta = new Ext.form.HtmlEditor({ --%>
+<%--		id:'htmlRespuesta' --%>
+<%--		,fieldLabel : 'Texto de respuesta' --%>
+<%--		,hideLabel:true --%>
+<%--		,width:790 --%>
+<%--		,maxLength:3500 --%>
+<%--		,height : altoOriginalDos --%>
+<%--		,readOnly:false --%>
+<%--		,hideParent:true --%>
+<%--		,enableColors: false --%>
+<%--       	,enableAlignments: false --%>
+<%--       	,enableFont:false --%>
+<%--       	,enableFontSize:false --%>
+<%--       	,enableFormat:false --%>
+<%--       	,enableLinks:false --%>
+<%--       	,enableLists:false --%>
+<%--       	,enableSourceEdit:false --%>
 <%--        	,value:'<s:message text="${data.respuesta}" javaScriptEscape="true" />' --%>
-<!-- 		}); -->
+<%--		}); --%>
 		
 <%-- 	var txtRespuesta = app.creaLabel('<s:message code="ext.comunicaciones.generarnotificacion.respuesta" text="**Texto de respuesta" />'); --%>
 			
@@ -113,12 +113,12 @@ var txtTitulo = app.creaLabel('<s:message code="ext.comunicaciones.recordatorios
     		,listeners: {    			
               beforeExpand:function(){
 					labeltareaOriginal.setHeight(altoOriginalDos);
-<!-- 					labeltareaRespuesta.setHeight(altoOriginalDos); -->
+<%--					labeltareaRespuesta.setHeight(altoOriginalDos); --%>
 					
               }
               ,beforeCollapse:function(){
               		labeltareaOriginal.setHeight(altoExpandidoDos);
-<!-- 					labeltareaRespuesta.setHeight(altoExpandidoDos);	 -->
+<%--					labeltareaRespuesta.setHeight(altoExpandidoDos);	 --%>
               }
              }
           }
@@ -149,8 +149,8 @@ var txtTitulo = app.creaLabel('<s:message code="ext.comunicaciones.recordatorios
 				,titulolabeltareaOriginal
 				,labeltareaOriginal
 				,idEntidad
-<!-- 				,txtRespuesta -->
-<!-- 				,labeltareaRespuesta -->
+<%--				,txtRespuesta --%>
+<%--				,labeltareaRespuesta --%>
 				,chkLeida
 				]
 				, style : 'margin-right:15px' 

@@ -190,7 +190,7 @@
 				w.on(app.event.CANCEL, function(){ w.close(); });		
 	});
 	
-	<!-- ¿Esto aplica a algo? -->
+	<%-- ¿¡Esto aplica a algo!? --%>
 	var ventanaEdicion = function(id) {
 		var w = app.openWindow({
 			flow : 'turnadodespachos/ventanaEditarLetrado'

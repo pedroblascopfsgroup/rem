@@ -52,15 +52,15 @@
 		       page.fireEvent(app.event.DONE);
 		    },
 		    failure: function(form, action) {
-<!-- 		    	panelEdicion.container.unmask(); -->
-<!-- 		        switch (action.failureType) { -->
-<!-- 		            case Ext.form.Action.CLIENT_INVALID: -->
+<%--		    	panelEdicion.container.unmask(); --%>
+<%--		        switch (action.failureType) { --%>
+<%--		            case Ext.form.Action.CLIENT_INVALID: --%>
 <%-- 		            	Ext.Msg.alert('<s:message code="plugin.procuradores.categorizaciones.formalta.validacion.sinSeleccion.titulo" text="**Error"/>','<s:message code="plugin.procuradores.categorizaciones.formalta.validacion.camposObligatorios.texto" text="**Debe rellenar los campos obligatorios." />'); --%>
-<!-- 		                break; -->
-<!-- 		            case Ext.form.Action.CONNECT_FAILURE:	  -->
+<%--		                break; --%>
+<%--		            case Ext.form.Action.CONNECT_FAILURE:	  --%>
 <%-- 		            	Ext.Msg.alert('<s:message code="plugin.procuradores.categorizaciones.formalta.validacion.sinSeleccion.titulo" text="**Error"/>','<s:message code="plugin.procuradores.categorizaciones.formalta.validacion.errorComunicacion.texto" text="**Error de comunicaci&oacute;n." />');		            	           	 --%>
-<!-- 		                break; -->
-<!-- 		       } -->
+<%--		                break; --%>
+<%--		       } --%>
 		    }
 		});
 	};

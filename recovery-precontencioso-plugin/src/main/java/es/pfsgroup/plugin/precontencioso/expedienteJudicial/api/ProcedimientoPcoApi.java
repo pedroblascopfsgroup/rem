@@ -150,4 +150,6 @@ public interface ProcedimientoPcoApi {
 	boolean mostrarSegunCodigos(Long idProcedimiento, List<String> codigosTiposGestores);
 	
 	public boolean comprobarExistenciaGestor(Long idProcedimiento);
+	
+	public String asuntoConProcuradorPrecontencioso(Long idProcedimiento);
 }

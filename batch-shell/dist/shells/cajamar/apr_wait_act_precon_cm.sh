@@ -33,17 +33,6 @@ then
    echo "$(basename $0) Error: Tiempo límite alcanzado: ficheros $ficheros no encontrados"
    exit 1
 else
-   for fichero in $arrayFicheros
-   do
-	    mascaraSem=$DIR_HRE_INPUT$fichero$mascara$extensionSem
-        mascaraZip=$DIR_HRE_INPUT$fichero$mascara$extensionZip
-        ficheroSem=`ls -Art $mascaraSem | tail -n 1`
-        ficheroZip=`ls -Art $mascaraZip | tail -n 1`
-	
-        sed -i 's/ //g' $ficheroSem
-        mv $ficheroZip $DIR_DESTINO
-	    mv $ficheroSem $DIR_DESTINO
-   done
    echo "$(basename $0) Ficheros encontrados"
    exit 0
 fi

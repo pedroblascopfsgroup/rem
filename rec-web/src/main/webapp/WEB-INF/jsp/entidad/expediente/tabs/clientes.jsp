@@ -59,7 +59,7 @@
 		 //VR Irregular
 		 ,{header: '<s:message code="expediente.consulta.clientesExpediente.grid.vrIrregular" text="**vrIrregular" />',dataIndex:'vrIrregular',renderer: app.format.moneyRenderer,align:'right'}
 		 //riesgoDirectoDanyado
-		 ,{header: '<s:message code="expediente.consulta.clientesExpediente.grid.riesgoDirectoDanyado" text="**riesgoDirectoDanyado" />',dataIndex:'riesgoDirectoDanyado',renderer: app.format.moneyRenderer,align:'right'}
+		 ,{header: '<s:message code="expediente.consulta.clientesExpediente.grid.riesgoDirectoDanyado" text="**riesgoDirectoDanyado" />',dataIndex:'riesgoDirectoDanyado',hidden:true,renderer: app.format.moneyRenderer,align:'right'}
 		 //VR Directo no G
 		 ,{header: '<s:message code="expediente.consulta.clientesExpediente.grid.vrDirectoNoG" text="**vrDirectoNoG" />',hidden:true,dataIndex:'vrDirectoNoG',renderer: app.format.moneyRenderer,align:'right'}
 		 //Num Clientes activo

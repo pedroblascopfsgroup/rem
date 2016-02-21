@@ -441,6 +441,11 @@
                                             <entry key="contrato.codigo.subStringFin" value="27"/>
                                     </map>
                             </entry>
+                            <entry key="CAJAMAR">
+                            	<map>
+									<entry key="contrato.codigo.subStringIni" value="0"/>
+                            	</map>
+                            </entry>
                     </map>
             </property>
     </bean>

@@ -288,7 +288,9 @@
 		   {items:[domiciExtTotal,contratoAnt,motivoRenum,riesgo
 		   ,charextra1,charextra2,charextra3,
 			   //charextra4,
-		   charextra5,charextra6,charextra7,charextra8,marca,motivoMarca,contadorReincidencia]}
+		   charextra5,charextra6
+		   <sec:authorize ifNotGranted="PERSONALIZACION-BCC">,charextra7</sec:authorize>
+		   ,charextra8,marca,motivoMarca,contadorReincidencia]}
 		  ]
 	  });
   

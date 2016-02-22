@@ -292,10 +292,10 @@ public class ScoringManager {
         // ***    Iteramos para todas las puntuaciones parciales    *** //
         // ************************************************************ //
         for (PuntuacionParcial pp : listadoPuntuaciones) {
-            String codigoGrupo = pp.getAlerta().getTipoAlerta().getGrupoAlerta().getDescripcion();
-            String codigoAlerta = pp.getAlerta().getTipoAlerta().getDescripcion();
+            String codigoGrupo = pp.getAlerta().getTipoAlerta().getGrupoAlerta().getCodigo() + " - " + pp.getAlerta().getTipoAlerta().getGrupoAlerta().getDescripcion();
+            String codigoAlerta = pp.getAlerta().getTipoAlerta().getCodigo()  + " - " + pp.getAlerta().getTipoAlerta().getDescripcion();
             Long puntuacionAlerta = pp.getPuntuacion();
-            String codigoGravedad = pp.getAlerta().getNivelGravedad().getDescripcion();
+            String codigoGravedad = pp.getAlerta().getNivelGravedad().getCodigo()  + " - " + pp.getAlerta().getNivelGravedad().getDescripcion();
 
             //Recupero el row del grupo y si no existe lo creo
             DtoDynamicRow rowGrupo = getRowForName(rows, GRUPO, codigoGrupo);
@@ -462,23 +462,23 @@ public class ScoringManager {
             metadata.setName(C + String.valueOf(fecha.getTime()));
             String titulo = sdf1.format(fecha);
             if(contador==fechas.size()){
-            	titulo = titulo + messageService.getMessage("scoring.grid.fechaSeleccionada");
+            	titulo = titulo + " " + messageService.getMessage("scoring.grid.fechaSeleccionada");
             }
             switch (contador) {
 			case 1:
-				titulo = titulo + messageService.getMessage("scoring.grid.fechaHoy");
+				titulo = titulo + " " + messageService.getMessage("scoring.grid.fechaHoy");
 				break;
 			case 2:
-				titulo = titulo + messageService.getMessage("scoring.grid.fecha1MesPasado");
+				titulo = titulo + " " + messageService.getMessage("scoring.grid.fecha1MesPasado");
 				break;
 			case 3:
-				titulo = titulo + messageService.getMessage("scoring.grid.fecha2MesesPasado");
+				titulo = titulo + " " + messageService.getMessage("scoring.grid.fecha2MesesPasado");
 				break;
 			case 4:
-				titulo = titulo + messageService.getMessage("scoring.grid.fecha3MesesPasado");
+				titulo = titulo + " " + messageService.getMessage("scoring.grid.fecha3MesesPasado");
 				break;
 			case 5:
-				titulo = titulo + messageService.getMessage("scoring.grid.fecha365DiasPasado");
+				titulo = titulo + " " + messageService.getMessage("scoring.grid.fecha365DiasPasado");
 				break;
 			
             }

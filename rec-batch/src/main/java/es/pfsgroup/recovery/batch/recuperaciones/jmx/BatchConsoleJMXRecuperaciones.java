@@ -9,17 +9,16 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.utils.ApplicationContextUtil;
-import es.capgemini.pfs.batch.recobro.constantes.RecobroConstantes.ProcesoMarcadoExpedientes;
-import es.capgemini.pfs.batch.recobro.jobs.ProcesoMarcadoExpedientesJobLauncher;
-import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes;
 import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes.ProcesoArquetipadoRecuperaciones;
 import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes.ProcesoCreacionClientesRecuperaciones;
 import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes.ProcesoCreacionExpedientesRecuperaciones;
+import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes.ProcesoCreacionExpedientesRecuperacionesETL;
 import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes.ProcesoHistorizarArquetipadoRecuperaciones;
 import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes.ProcesoRevisionClientesRecuperaciones;
 import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes.ProcesoRevisionExpedientesRecuperaciones;
 import es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoArquetipadoRecuperacionesJobLauncher;
 import es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoCreacionClientesRecuperacionesJobLauncher;
+import es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoCreacionExpedientesRecuperacionesETLJobLauncher;
 import es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoCreacionExpedientesRecuperacionesJobLauncher;
 import es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoHistorizarArquetipadoRecuperacionesJobLauncher;
 import es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoRevisionClientesRecuperacionesJobLauncher;
@@ -125,6 +124,21 @@ public class BatchConsoleJMXRecuperaciones {
     	historizarArquetipadoJobLauncher.handle(workingCode,new Date());
     	
     	logger.debug(ProcesoHistorizarArquetipadoRecuperaciones.PROCESO_HISTORIZAR_ARQUETIPADO_RECUPERACIONES_HANDLER + " ya se ha encolado");
+		
+	}
+	
+	@ManagedOperation(description = "Ejecuta el proceso de Creacion expedientes para el batch de Recuperaciones. Se debe indicar el workingCode")
+	public void ejecutarProcesoCreacionExpedientesETL(String workingCode) {
+		
+		logger.debug("Encolando " + ProcesoCreacionExpedientesRecuperacionesETL.PROCESO_CREACION_EXPEDIENTES_RECUPERACIONES_ETL_HANDLER);
+		
+		ProcesoCreacionExpedientesRecuperacionesETLJobLauncher creacionClientesJobLauncher = (ProcesoCreacionExpedientesRecuperacionesETLJobLauncher)ApplicationContextUtil.
+    			getApplicationContext().getBean(ProcesoCreacionExpedientesRecuperacionesETL.PROCESO_CREACION_EXPEDIENTES_RECUPERACIONES_ETL_HANDLER);
+		
+		
+    	creacionClientesJobLauncher.handle(workingCode,new Date());
+    	
+    	logger.debug(ProcesoCreacionExpedientesRecuperacionesETL.PROCESO_CREACION_EXPEDIENTES_RECUPERACIONES_ETL_HANDLER + " ya se ha encolado");
 		
 	}
 

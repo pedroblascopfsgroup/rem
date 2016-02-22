@@ -776,7 +776,14 @@ BEGIN
            from '||V_DATASTAGE||'.CEX_CONTRATOS_EXPEDIENTE cex 
            join '||V_DATASTAGE||'.PRC_CEX pcex on cex.CEX_ID = pcex.CEX_ID
            join H_PRE pre on pre.PROCEDIMIENTO_ID = pcex.PRC_ID
-           where pre.DIA_ID = '''||fecha||''') hprc
+           where pre.DIA_ID = '''||fecha||'''
+           AND NOT EXISTS (SELECT 1
+                      FROM '||V_DATASTAGE||'.PCO_PRC_PROCEDIMIENTOS PCO, '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP HEP
+                      WHERE PCO.PCO_PRC_ID = HEP.PCO_PRC_ID
+                      AND DD_PCO_PEP_ID IN (SELECT DD_PCO_PEP_ID FROM '||V_DATASTAGE||'.DD_PCO_PRC_ESTADO_PREPARACION WHERE DD_PCO_PEP_CODIGO IN (''FI''))
+                      AND PCO_PRC_HEP_FECHA_FIN IS NULL
+                      AND PCO.PRC_ID = PCEX.PRC_ID)
+           ) hprc
     on (h.CONTRATO_ID = hprc.CNT_ID)
     when matched then update set h.PERIMETRO_GES_PRE_ID = 1
     where h.DIA_ID = '''||fecha||'''';
@@ -1050,26 +1057,26 @@ BEGIN
                       WHEN MATCHED THEN UPDATE SET PERIMETRO_GESTION_CM_ID = PERIMETRO.PERIMETRO_GESTION_CM_ID';
     
  
-    -- 3) PRECONTENCIOSOS:
-    EXECUTE IMMEDIATE 'MERGE INTO TMP_H_CNT TMP USING(
-                                    SELECT DISTINCT CEX.CNT_ID, 3 AS PERIMETRO_GESTION_CM_ID -- PRECONTENCIOSO
-                                    FROM '||V_DATASTAGE||'.ASU_ASUNTOS ASU, '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC, '||V_DATASTAGE||'.PRC_CEX, '||V_DATASTAGE||'.CEX_CONTRATOS_EXPEDIENTE CEX
-                                    WHERE ASU.ASU_ID = PRC.ASU_ID
-                                    AND PRC.PRC_ID = PRC_CEX.PRC_ID
-                                    AND PRC_CEX.CEX_ID = CEX.CEX_ID
-                                    AND ASU.BORRADO = 0 AND PRC.BORRADO = 0 AND CEX.BORRADO = 0
-                                    AND EXISTS (SELECT 1
-                                                FROM '||V_DATASTAGE||'.PCO_PRC_PROCEDIMIENTOS PCO, '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP HEP
-                                                WHERE PCO.PCO_PRC_ID = HEP.PCO_PRC_ID
-                                                AND DD_PCO_PEP_ID IN (SELECT DD_PCO_PEP_ID FROM '||V_DATASTAGE||'.DD_PCO_PRC_ESTADO_PREPARACION WHERE DD_PCO_PEP_CODIGO IN (''PT'',''PR'',''PP'',''EN'',''SU'',''SC''))
-                                                AND PCO_PRC_HEP_FECHA_FIN IS NULL
-                                                AND PCO.PRC_ID = PRC.PRC_ID)
-                                    ) PERIMETRO
-                        ON (TMP.CONTRATO_ID = PERIMETRO.CNT_ID)
-                        WHEN MATCHED THEN UPDATE SET PERIMETRO_GESTION_CM_ID = PERIMETRO.PERIMETRO_GESTION_CM_ID';
-    
-    
-    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     -- 4 y 5 ) LITIGIOS y CONCURSOS (OJO. HAY CONTRATOS QUE ESTÁN EN AMBOS....COGEMOS EL MAXIMO --> CONCURSO).
     EXECUTE IMMEDIATE 'MERGE INTO TMP_H_CNT TMP USING(
                                     SELECT CNT_ID, MAX(PERIMETRO_GESTION_CM_ID) PERIMETRO_GESTION_CM_ID FROM(
@@ -1082,30 +1089,70 @@ BEGIN
                                                                         AND PRC.PRC_ID = PRC_CEX.PRC_ID
                                                                         AND PRC_CEX.CEX_ID = CEX.CEX_ID
                                                                         AND ASU.BORRADO = 0 AND PRC.BORRADO = 0 AND CEX.BORRADO = 0
-                                                                        AND NOT EXISTS (SELECT 1
-                                                                                        FROM '||V_DATASTAGE||'.PCO_PRC_PROCEDIMIENTOS PCO WHERE PCO.PRC_ID = PRC.PRC_ID)
-                                                                        UNION
-                                                                        SELECT DISTINCT CEX.CNT_ID, CASE DD_TAS_ID 
-                                                                                                          WHEN 1 THEN 4 --CONTENCIOSO
-                                                                                                          WHEN 2 THEN 5 --CONCURSO
-                                                                                                    END AS PERIMETRO_GESTION_CM_ID
-                                                                        FROM '||V_DATASTAGE||'.ASU_ASUNTOS ASU, '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC, '||V_DATASTAGE||'.PRC_CEX, '||V_DATASTAGE||'.CEX_CONTRATOS_EXPEDIENTE CEX
-                                                                        WHERE ASU.ASU_ID = PRC.ASU_ID
-                                                                        AND PRC.PRC_ID = PRC_CEX.PRC_ID
-                                                                        AND PRC_CEX.CEX_ID = CEX.CEX_ID
-                                                                        AND ASU.BORRADO = 0 AND PRC.BORRADO = 0 AND CEX.BORRADO = 0
-                                                                        AND EXISTS(SELECT 1
-                                                                                   FROM '||V_DATASTAGE||'.PCO_PRC_PROCEDIMIENTOS PCO, '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP HEP
-                                                                                   WHERE PCO.PCO_PRC_ID = HEP.PCO_PRC_ID
-                                                                                   AND DD_PCO_PEP_ID = (SELECT DD_PCO_PEP_ID FROM '||V_DATASTAGE||'.DD_PCO_PRC_ESTADO_PREPARACION WHERE DD_PCO_PEP_CODIGO IN (''FI''))
-                                                                                   AND PCO_PRC_HEP_FECHA_FIN IS NOT NULL
-                                                                                   AND PCO.PRC_ID = PRC.PRC_ID)
+
+
+
+
+
+
+
                                     )                                               
                                     GROUP BY CNT_ID
                                     ) PERIMETRO
                        ON (TMP.CONTRATO_ID = PERIMETRO.CNT_ID)
                        WHEN MATCHED THEN UPDATE SET PERIMETRO_GESTION_CM_ID = PERIMETRO.PERIMETRO_GESTION_CM_ID';
     
+    -- 3) PRECONTENCIOSOS:
+    EXECUTE IMMEDIATE 'MERGE INTO TMP_H_CNT TMP USING(
+                                    SELECT DISTINCT CEX.CNT_ID, 3 AS PERIMETRO_GESTION_CM_ID -- PRECONTENCIOSO
+                                    FROM '||V_DATASTAGE||'.ASU_ASUNTOS ASU, '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC, '||V_DATASTAGE||'.PRC_CEX, '||V_DATASTAGE||'.CEX_CONTRATOS_EXPEDIENTE CEX
+                                    WHERE ASU.ASU_ID = PRC.ASU_ID
+                                    AND PRC.PRC_ID = PRC_CEX.PRC_ID
+                                    AND PRC_CEX.CEX_ID = CEX.CEX_ID
+                                    AND ASU.BORRADO = 0 AND PRC.BORRADO = 0 AND CEX.BORRADO = 0
+                                    AND EXISTS (SELECT 1
+                                                FROM '||V_DATASTAGE||'.PCO_PRC_PROCEDIMIENTOS PCO, '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP HEP
+                                                WHERE PCO.PCO_PRC_ID = HEP.PCO_PRC_ID
+
+
+                                                AND DD_PCO_PEP_ID IN (SELECT DD_PCO_PEP_ID FROM '||V_DATASTAGE||'.DD_PCO_PRC_ESTADO_PREPARACION WHERE DD_PCO_PEP_CODIGO IN (''PT'',''PR'',''PP'',''EN'',''SU'',''SC''))
+                                                AND PCO_PRC_HEP_FECHA_FIN IS NULL
+                                                AND PCO.PRC_ID = PRC.PRC_ID)
+
+
+                                    ) PERIMETRO
+                        ON (TMP.CONTRATO_ID = PERIMETRO.CNT_ID)
+                        WHEN MATCHED THEN UPDATE SET PERIMETRO_GESTION_CM_ID = PERIMETRO.PERIMETRO_GESTION_CM_ID';
+
+
+
+
+
+
+
+
+
+
+
+
+
+   --2) Pendotraoperación (trámite paralizado con motivo otra operación):
+    EXECUTE IMMEDIATE' MERGE INTO TMP_H_CNT TMP USING(
+                                    SELECT DISTINCT CEX.CNT_ID, 2 AS PERIMETRO_GESTION_CM_ID 
+                                    FROM '||V_DATASTAGE||'.ASU_ASUNTOS ASU, '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC, '||V_DATASTAGE||'.PRC_CEX, '||V_DATASTAGE||'.CEX_CONTRATOS_EXPEDIENTE CEX, '||V_DATASTAGE||'.DPR_DECISIONES_PROCEDIMIENTOS DPR
+                                    WHERE ASU.ASU_ID = PRC.ASU_ID
+                                    AND PRC.PRC_ID = PRC_CEX.PRC_ID
+                                    AND PRC_CEX.CEX_ID = CEX.CEX_ID
+                                    AND PRC.PRC_ID = DPR.PRC_ID
+                                    AND DPR.DPR_PARALIZA = 1
+                                    AND DPR.DD_DPA_ID = (SELECT DD_DPA_ID FROM '||V_DATASTAGE||'.DD_DPA_DECISION_PARALIZAR WHERE DD_DPA_CODIGO = ''RD'') --PDTE RESOLUCIÓN OTRAS OPERACIONES
+                                    AND TRUNC(DPR.FECHACREAR) <= ''' || fecha || '''
+                                    AND ASU.BORRADO = 0 AND PRC.BORRADO = 0 AND CEX.BORRADO = 0
+                                    ) PERIMETRO
+                        ON (TMP.CONTRATO_ID = PERIMETRO.CNT_ID)
+                        WHEN MATCHED THEN UPDATE SET PERIMETRO_GESTION_CM_ID = PERIMETRO.PERIMETRO_GESTION_CM_ID';
+    
+
     -- 6) INSOVENTE (EN EMPRESA EXTERNA) --> CHAR_EXTRA7 DE LA IAC A NOT NULL:
     EXECUTE IMMEDIATE 'MERGE INTO TMP_H_CNT TMP USING(
                                     SELECT DISTINCT CNT.CNT_ID, 6 AS PERIMETRO_GESTION_CM_ID -- INSOLVENTE
@@ -1118,22 +1165,7 @@ BEGIN
                         ON (TMP.CONTRATO_ID = PERIMETRO.CNT_ID)
                         WHEN MATCHED THEN UPDATE SET PERIMETRO_GESTION_CM_ID = PERIMETRO.PERIMETRO_GESTION_CM_ID';
 
-   --2) Pendotraoperación (trámite paralizado con motivo otra operación):
-    EXECUTE IMMEDIATE' MERGE INTO TMP_H_CNT TMP USING(
-                                    SELECT DISTINCT CEX.CNT_ID, 2 AS PERIMETRO_GESTION_CM_ID 
-                                    FROM '||V_DATASTAGE||'.ASU_ASUNTOS ASU, '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC, '||V_DATASTAGE||'.PRC_CEX, '||V_DATASTAGE||'.CEX_CONTRATOS_EXPEDIENTE CEX, '||V_DATASTAGE||'.DPR_DECISIONES_PROCEDIMIENTOS DPR
-                                    WHERE ASU.ASU_ID = PRC.ASU_ID
-                                    AND PRC.PRC_ID = PRC_CEX.PRC_ID
-                                    AND PRC_CEX.CEX_ID = CEX.CEX_ID
-                                    AND PRC.PRC_ID = DPR.PRC_ID
-                                    AND DPR.DPR_PARALIZA = 1
-                                    AND DPR.DD_DPA_ID = (SELECT DD_DPA_ID FROM '||V_DATASTAGE||'.DD_DPA_DECISION_PARALIZAR WHERE DD_DPA_CODIGO = ''RD'') --PDTE RESOLUCIÓN OTRAS OPERACIONES
-                                    AND TRUNC(DPR_FECHA_PARA) <= ''' || fecha || '''
-                                    AND ASU.BORRADO = 0 AND PRC.BORRADO = 0 AND CEX.BORRADO = 0
-                                    ) PERIMETRO
-                        ON (TMP.CONTRATO_ID = PERIMETRO.CNT_ID)
-                        WHEN MATCHED THEN UPDATE SET PERIMETRO_GESTION_CM_ID = PERIMETRO.PERIMETRO_GESTION_CM_ID';
-    
+
     UPDATE TMP_H_CNT
        SET PERIMETRO_GESTION_CM_ID = -1
     WHERE PERIMETRO_GESTION_CM_ID IS NULL;

@@ -74,10 +74,7 @@
 			<bean id="usuarioConCategorias" class="es.pfsgroup.plugin.recovery.procuradores.categorias.dynamicelements.UsuarioConCategorias"/>
 		</property>
 	</bean>
-		<!-- class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"  -->
-		<!--  class="es.pfsgroup.plugins.web.menu.ElementoDinamicoPorLogica"-->
-		<!--  -->
-		
+
 	<!-- <bean p:entity="plugin.mejoras.web.buzonTareas.nodosDinamicos" p:name="arbolResoluciones" p:priority="1" p:order="1"
 		p:fileName="/WEB-INF/jsp/plugin/procuradores/arbol/arbolResoluciones.jsp"
 		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 

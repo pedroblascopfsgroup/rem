@@ -1348,6 +1348,27 @@
             V_NUFILAS:=SQL%ROWCOUNT;
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'PEX_PERSONAS_EXPEDIENTE Cargada',V_NUFILAS);
             COMMIT;
+
+            --** Correccion del nombre de expedientes de recuperacion
+            MERGE INTO EXP_EXPEDIENTES old
+            USING ( Select t.exp_id , t.exp_descripcion
+                      From (select gui.exp_id
+                                 , TRIM(per.PER_NOMBRE||' '||per.PER_APELLIDO1||' '||per.PER_APELLIDO2) as EXP_DESCRIPCION
+                                 , row_number() over (partition by gui.exp_id, cpe.cnt_id order by cpe.cpe_orden, decode(gui.per_id,cpe.per_id,1,2), cpe.per_id) as orden_descr
+                              from BATCH_VEN_DATOS_SALIDA_GUIA gui
+                                 , BATCH_SV_DATOS_CNT_PER cpe
+                                 , PER_PERSONAS per
+                             where gui.cnt_id = cpe.cnt_id
+                               and cpe.per_id = per.per_id) t
+                     Where orden_descr = 1) new
+            ON (old.exp_id = new.exp_id)
+            WHEN MATCHED THEN
+             UPDATE SET old.exp_descripcion = new.exp_descripcion;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'Revisa nombres de expediente',V_NUFILAS);
+            COMMIT;
         END;
         ]]>
     </entry>
@@ -1686,23 +1707,68 @@
                   , null --LONGVLAUE_
                FROM '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE';
 
+            -- e) idArquetipo
+            EXECUTE IMMEDIATE '
+            INSERT INTO '||cMASTER_SCHEMA||'.JBPM_VARIABLEINSTANCE
+             (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, LONGVALUE_)
+            SELECT '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL
+                 ,'L' --CLASS_
+                 , 0 --VERSION_
+                 , 'idArquetipo' --NAME_
+                 , TMP.TOKEN --TOKEM_
+                 , TMP.VARIABLEMAP --TOKENVARIABLEMAP_
+                 , TMP.PROCESSINSTANCE --PROCESSINSTANCE_
+                 , EXP.ARQ_ID --LONGVLAUE_
+              FROM '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE TMP
+                JOIN '||cENTITY_SCHEMA||'.EXP_EXPEDIENTES EXP ON TMP.EXP_ID = EXP.EXP_ID';
+
+
+            --** Comprobamos que la transicion es correcta
+            EXECUTE IMMEDIATE '
+            Insert Into '||cMASTER_SCHEMA||'.JBPM_TRANSITION (id_, name_, processdefinition_, from_, to_, fromindex_)
+            select '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL, DATA.* FROM (
+              select distinct ''CompletarExpediente'' name_, pi.processdefinition_, tr1.from_, tr1.to_, 0
+              from EXP_EXPEDIENTES exp
+                join '||cMASTER_SCHEMA||'.JBPM_PROCESSINSTANCE pi on exp.EXP_PROCESS_BPM = pi.id_
+                join '||cMASTER_SCHEMA||'.JBPM_TOKEN tk on EXP.EXP_PROCESS_BPM = tk.processinstance_
+                join '||cMASTER_SCHEMA||'.JBPM_NODE nd on tk.node_ = nd.id_
+                join '||cMASTER_SCHEMA||'.JBPM_TRANSITION tr1 on nd.id_ = tr1.from_ and tr1.name_ is null
+                left join '||cMASTER_SCHEMA||'.JBPM_TRANSITION tr on nd.id_ = tr.from_ and tr.name_ = ''CompletarExpediente''
+              where nd.name_ = ''CreacionExpediente'' and tr.id_ is null
+            )DATA';
+
 
             --** Insertamos los timers cadudados
-              -->> esto de momento no lo ponemos, preguntamos a Carlos por si hace falta ponerle un timer al primer nodo.
-              -->> crear timer crearnotificacion dependiendo del itinerario y de si es automatico.
-                /*
-                EXECUTE IMMEDIATE 'INSERT INTO '||cMASTER_SCHEMA||'.JBPM_JOB
-                   ( ID_, CLASS_, VERSION_, DUEDATE_, TASKINSTANCE_, ISSUSPENDED_, ISEXCLUSIVE_
-                   , LOCKOWNER_, LOCKTIME_, EXCEPTION_, RETRIES_, NAME_, REPEAT_, TRANSITIONNAME_
-                   , ACTION_, GRAPHELEMENTTYPE_, GRAPHELEMENT_, NODE_, PROCESSINSTANCE_, TOKEN_)
-                SELECT '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL
-                     , ''T'', 0, SYSDATE - 2, NULL, 0, 1, NULL, NULL, NULL, 1,''TIMER_INI_REC'', NULL, ''avanzaBPM'', NULL, NULL, NULL, NULL
-                     , PROCESSINSTANCE, TOKEN
-                  FROM '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE';
-                */
-            --LOG
+            EXECUTE IMMEDIATE '
+            Insert into '||cMASTER_SCHEMA||'.jbpm_job
+              (ID_, CLASS_, VERSION_, DUEDATE_, PROCESSINSTANCE_, TOKEN_, TASKINSTANCE_, ISSUSPENDED_, ISEXCLUSIVE_,LOCKOWNER_, LOCKTIME_, EXCEPTION_ , RETRIES_, NAME_, REPEAT_, TRANSITIONNAME_, ACTION_, GRAPHELEMENTTYPE_, GRAPHELEMENT_, NODE_)
+            Select cmmaster.hibernate_sequence.nextval as ID_
+                 , ''T'' as CLASS_
+                 , 0 as VERSION_
+                 , sysdate - 2 as DUEDATE_
+                 , PROCESSINSTANCE as PROCESSINSTANCE_
+                 , TOKEN as TOKEN_
+                 , null as TASKINSTANCE_
+                 , 0 ISSUSPENDED_
+
+                 , 1 ISEXCLUSIVE_
+                 , null LOCKOWNER_
+                 , null LOCKTIME_
+                 , null  EXCEPTION_
+                 , 1 RETRIES_
+                 , ''TIMER_MAN_ELEVAR'' NAME_
+                 , null REPEAT_
+                 , ''CompletarExpediente''  TRANSITIONNAME_
+                 , null ACTION_
+                 , null GRAPHELEMENTTYPE_
+                 , null GRAPHELEMENT_
+                 , null NODE_
+            From '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE';
+
+          --LOG
           V_NUFILAS:=SQL%ROWCOUNT;
-          INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'Fin Generacion de expedientes',V_NUFILAS);
+          INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'Timers caducados insertados correctamente',V_NUFILAS);
+          INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'Fin Generacion de expedientes',null);
           COMMIT;
 
         END;

@@ -2,9 +2,9 @@ create or replace PROCEDURE CARGAR_DIM_CONTRATO(O_ERROR_STATUS OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: María Villanueva, PFS Group
 -- Fecha creacion: Septiembre 2015
--- Responsable ultima modificacion: Pedro S., PFS Group
--- Fecha ultima modificacion: 15/01/2016
--- Motivos del cambio: CMREC-1610 Añadimos detalle soluciones previstas a acuerdos
+-- Responsable ultima modificacion: María.V, PFS Group
+-- Fecha ultima modificacion: 22/02/2016
+-- Motivos del cambio: Se añade a d_cnt_entidad la entidad 3058, CAJAMAR
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripcion: Procedimiento almancenado que carga las tablas de la dimension contrato
@@ -4497,7 +4497,15 @@ SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_CALIF_FINAL_CREDITO WHERE CALIFICACION
        SELECT DISTINCT ENP.DD_ENP_ID, ENP.DD_ENP_DESCRIPCION, ENP.DD_ENP_DESCRIPCION_LARGA
        FROM '||V_DATASTAGE||'.DD_ENP_ENTIDADES_PROPIETARIAS ENP
        WHERE NOT EXISTS(SELECT 1 FROM D_CNT_ENTIDAD CNT WHERE CNT.CONTRATO_ENTIDAD_ID = ENP.DD_ENP_ID)
-       ORDER BY 1';
+       ORDER BY 1'; 
+
+SELECT COUNT(*) INTO V_NUM_ROW FROM D_CNT_ENTIDAD WHERE CONTRATO_ENTIDAD_ID = 3058;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_CNT_ENTIDAD (CONTRATO_ENTIDAD_ID, CONTRATO_ENTIDAD_DESC, CONTRATO_ENTIDAD_DESC_2)
+    VALUES (3058 ,'Cajamar', 'Cajamar');
+  END IF;
+
+
         
   V_ROWCOUNT := sql%rowcount;     
   commit;

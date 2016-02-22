@@ -486,5 +486,9 @@
 		return entidad.get("data").toolbar.estadoExpediente;	
 	}
 
+	panel.setVisibleTab = function(data){
+		return entidad.get("data").toolbar.tipoExpediente != 'REC';
+   	}
+   	
 	return panel;
 })

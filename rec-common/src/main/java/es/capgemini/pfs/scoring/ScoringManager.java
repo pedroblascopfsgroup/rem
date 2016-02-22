@@ -292,10 +292,10 @@ public class ScoringManager {
         // ***    Iteramos para todas las puntuaciones parciales    *** //
         // ************************************************************ //
         for (PuntuacionParcial pp : listadoPuntuaciones) {
-            String codigoGrupo = pp.getAlerta().getTipoAlerta().getGrupoAlerta().getCodigo();
-            String codigoAlerta = pp.getAlerta().getTipoAlerta().getCodigo();
+            String codigoGrupo = pp.getAlerta().getTipoAlerta().getGrupoAlerta().getDescripcion();
+            String codigoAlerta = pp.getAlerta().getTipoAlerta().getDescripcion();
             Long puntuacionAlerta = pp.getPuntuacion();
-            String codigoGravedad = pp.getAlerta().getNivelGravedad().getCodigo();
+            String codigoGravedad = pp.getAlerta().getNivelGravedad().getDescripcion();
 
             //Recupero el row del grupo y si no existe lo creo
             DtoDynamicRow rowGrupo = getRowForName(rows, GRUPO, codigoGrupo);

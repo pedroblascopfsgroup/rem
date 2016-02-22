@@ -48,7 +48,7 @@
                    , nvl(mov.mov_riesgo, 0) As cnt_riesgo --, nvl(mov.mov_deuda_irregular, 0) AS cnt_riesgo
                    , nvl(mov.mov_pos_viva_vencida, 0) As pos_viva_vencida
                 From CNT_CONTRATOs cnt
-                Join '${master.schema}'.DD_ESC_ESTADO_CNT esc ON cnt.dd_esc_id = esc.dd_esc_id
+                Join ${master.schema}.DD_ESC_ESTADO_CNT esc ON cnt.dd_esc_id = esc.dd_esc_id
                   Join MOV_MOVIMIENTOS mov ON cnt.cnt_id = mov.cnt_id AND cnt.cnt_fecha_extraccion = mov.mov_fecha_extraccion
                Where cnt.borrado = 0
                  And esc.dd_esc_codigo = '0';
@@ -161,7 +161,7 @@
             Select cex.exp_id, cex.cnt_id, tpx.dd_tpx_codigo
               From CEX_CONTRATOS_EXPEDIENTE cex
                Join EXP_EXPEDIENTES exp On cex.exp_id = exp.exp_id
-                Join '${master.schema}'.DD_EEX_ESTADO_EXPEDIENTE EEX On exp.dd_eex_id = eex.dd_eex_id
+                Join ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE EEX On exp.dd_eex_id = eex.dd_eex_id
                 Join DD_TPX_TIPO_EXPEDIENTE tpx On exp.dd_tpx_id = tpx.dd_tpx_id
              Where eex.dd_eex_codigo in ('1','2','4') --activo, bloqueado o congelado
                And tpx.dd_tpx_codigo in ('SEG','RECU')
@@ -183,7 +183,7 @@
             Select pex.exp_id, pex.per_id, tpx.dd_tpx_codigo
               From PEX_PERSONAS_EXPEDIENTE pex
                Join EXP_EXPEDIENTES exp On pex.exp_id = exp.exp_id
-                Join '${master.schema}'.DD_EEX_ESTADO_EXPEDIENTE EEX On exp.dd_eex_id = eex.dd_eex_id
+                Join ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE EEX On exp.dd_eex_id = eex.dd_eex_id
                 Join DD_TPX_TIPO_EXPEDIENTE tpx On exp.dd_tpx_id = tpx.dd_tpx_id
              Where eex.dd_eex_codigo in ('1','2','4') --activo, bloqueado o congelado
                And tpx.dd_tpx_codigo in ('SEG','RECU')
@@ -206,11 +206,11 @@
                   From ARQ_ARQUETIPOS arq
                   Inner Join ITI_ITINERARIOS iti On arq.iti_id = iti.iti_id
                   Inner Join EST_ESTADOS est On iti.iti_id = est.iti_id
-                  Inner Join '${master.schema}'.DD_EST_ESTADOS_ITINERARIOS dd_est On est.dd_est_id = dd_est.dd_est_id
+                  Inner Join ${master.schema}.DD_EST_ESTADOS_ITINERARIOS dd_est On est.dd_est_id = dd_est.dd_est_id
                   --sumamos todos los plazos que esten por debajo de gestionvencidos
-                  And dd_est.dd_est_orden <= (select dd_est_orden from '${master.schema}'.DD_EST_ESTADOS_ITINERARIOS where dd_est_codigo = 'GV')
+                  And dd_est.dd_est_orden <= (select dd_est_orden from ${master.schema}.DD_EST_ESTADOS_ITINERARIOS where dd_est_codigo = 'GV')
                   --solo los de la entidad cliente
-                  Inner Join '${master.schema}'.DD_EIN_ENTIDAD_INFORMACION dd_ein On dd_est.dd_ein_id = dd_ein.dd_ein_id And dd_ein_codigo = '1'
+                  Inner Join ${master.schema}.DD_EIN_ENTIDAD_INFORMACION dd_ein On dd_est.dd_ein_id = dd_ein.dd_ein_id And dd_ein_codigo = '1'
                  Where arq.borrado = 0
                  --agrupamos por arquetipo para poder calcular el plazo del itinerario de los clientes
                  Group by arq.arq_id, arq.arq_prioridad)
@@ -218,8 +218,8 @@
               FROM FECHASESTADOS vFechas
                 INNER JOIN CLI_CLIENTES cli ON vFechas.arq_id = cli.arq_id
                 --Solo los que esten en gestionVencidos
-                INNER JOIN '${master.schema}'.DD_EST_ESTADOS_ITINERARIOS dd_est ON cli.dd_est_id  = dd_est.dd_est_id AND dd_est_codigo = 'GV'
-                INNER JOIN '${master.schema}'.DD_EIN_ENTIDAD_INFORMACION dd_ein ON dd_est.dd_ein_id = dd_ein.dd_ein_id AND dd_ein_codigo = '1'
+                INNER JOIN ${master.schema}.DD_EST_ESTADOS_ITINERARIOS dd_est ON cli.dd_est_id  = dd_est.dd_est_id AND dd_est_codigo = 'GV'
+                INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION dd_ein ON dd_est.dd_ein_id = dd_ein.dd_ein_id AND dd_ein_codigo = '1'
              WHERE cli.borrado   = 0
                AND to_date(cli.cli_fecha_creacion,'DD/MM/RR') <= to_date(vfechas.fecha,'DD/MM/RR')  --Que esten fuera de plazo del itinerario
                /* Ordenamos por prioridad del arquetipo para crear primero expedientes a los clientes con arq. mas prioritarios y desechar a las personas relacionadas menos prioritarias */
@@ -247,8 +247,8 @@
                  , ARR_ARQ_RECUPERACION_PERSONA       arr
                  , ARQ_ARQUETIPOS                     arq
                  , ITI_ITINERARIOS                    iti
-                 , '${master.schema}'.DD_TIT_TIPO_ITINERARIOS   tit
-                 , '${master.schema}'.DD_AEX_AMBITOS_EXPEDIENTE aex
+                 , ${master.schema}.DD_TIT_TIPO_ITINERARIOS   tit
+                 , ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE aex
              Where cli.per_id = per.per_id
                And per.per_id = arr.per_id And per.borrado = 0
                And arr.arq_id = arq.arq_id And arq.borrado = 0
@@ -1267,8 +1267,8 @@
           v_proce := 'GeneracionExpedientes';
           v_paso := 'vencidos.persistencia.expedientes';
 
-             select dd_eex_id into v_dd_eex_id from '${master.schema}'.DD_EEX_ESTADO_EXPEDIENTE Where dd_eex_codigo = '1'; --activo
-             select dd_est_id into v_dd_est_id from '${master.schema}'.DD_EST_ESTADOS_ITINERARIOS Where dd_est_codigo = 'CE'; --completar expedietne
+             select dd_eex_id into v_dd_eex_id from ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE Where dd_eex_codigo = '1'; --activo
+             select dd_est_id into v_dd_est_id from ${master.schema}.DD_EST_ESTADOS_ITINERARIOS Where dd_est_codigo = 'CE'; --completar expedietne
              select dd_tpx_id into v_dd_tpx_id_seg from DD_TPX_TIPO_EXPEDIENTE Where dd_tpx_codigo = 'SEG';
              select dd_tpx_id into v_dd_tpx_id_ven from DD_TPX_TIPO_EXPEDIENTE Where dd_tpx_codigo = 'RECU';
 
@@ -1293,7 +1293,7 @@
                     Union All
                     Select  EXP_ID, EXP_DESCRIPCION, OFI_ID, ARQ_ID, CEX_PASE, PEX_PASE, v_dd_tpx_id_ven as DD_TPX_ID, DD_AEX_CODIGO
                     From BATCH_VEN_DATOS_SALIDA) a
-                 , '${master.schema}'.DD_AEX_AMBITOS_EXPEDIENTE b
+                 , ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE b
              Where a.dd_aex_codigo = b.dd_aex_codigo
                And a.cex_pase = 1 And a.pex_pase = 1;
 
@@ -1314,11 +1314,11 @@
                  , sysdate as FECHACREAR
                  , 0 as BORRADO
               From (select Distinct a.CNT_ID, a.EXP_ID, b.DD_AEX_ID, a.CEX_PASE, a.DD_AEX_CODIGO
-                    from BATCH_SEG_DATOS_SALIDA a, '${master.schema}'.DD_AEX_AMBITOS_EXPEDIENTE b
+                    from BATCH_SEG_DATOS_SALIDA a, ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE b
                     where a.dd_aex_codigo = b.dd_aex_codigo
                     UNION ALL
                     select Distinct a.CNT_ID, a.EXP_ID, b.DD_AEX_ID, a.CEX_PASE, a.DD_AEX_CODIGO
-                    from BATCH_VEN_DATOS_SALIDA a, '${master.schema}'.DD_AEX_AMBITOS_EXPEDIENTE b
+                    from BATCH_VEN_DATOS_SALIDA a, ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE b
                     where a.dd_aex_codigo = b.dd_aex_codigo) t;
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;
@@ -1337,11 +1337,11 @@
                  , sysdate as FECHACREAR
                  , 0 as BORRADO
               From (select distinct a.EXP_ID, a.PER_ID, b.DD_AEX_ID, a.PEX_PASE, a.DD_AEX_CODIGO
-                    from BATCH_SEG_DATOS_SALIDA a, '${master.schema}'.DD_AEX_AMBITOS_EXPEDIENTE b
+                    from BATCH_SEG_DATOS_SALIDA a, ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE b
                     where a.dd_aex_codigo = b.dd_aex_codigo
                     UNION ALL
                     select distinct a.EXP_ID, a.PER_ID, b.DD_AEX_ID, a.PEX_PASE, a.DD_AEX_CODIGO
-                    from BATCH_VEN_DATOS_SALIDA a, '${master.schema}'.DD_AEX_AMBITOS_EXPEDIENTE b
+                    from BATCH_VEN_DATOS_SALIDA a, ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE b
                     where a.dd_aex_codigo = b.dd_aex_codigo) t;
 
             --LOG
@@ -1455,8 +1455,8 @@
             Select tmp.per_id
                  , cmp.CMP_ID
                  , nvl(tpl.TPL_ID, iti.tpl_id) as TPL_ID
-                 , (select dd_esp_id from '${master.schema}'.DD_ESP_ESTADO_POLITICA where dd_esp_codigo = 'PROP') as DD_ESP_ID --DD_ESP_ESTADO_POLITICA --Propuesta
-                 , (select dd_epi_id from '${master.schema}'.DD_EPI_EST_POL_ITINERARIO where dd_epi_codigo='CE') as DD_EPI_ID --DD_EPI_EST_POL_ITINERARIO --P. Completar Expediente
+                 , (select dd_esp_id from ${master.schema}.DD_ESP_ESTADO_POLITICA where dd_esp_codigo = 'PROP') as DD_ESP_ID --DD_ESP_ESTADO_POLITICA --Propuesta
+                 , (select dd_epi_id from ${master.schema}.DD_EPI_EST_POL_ITINERARIO where dd_epi_codigo='CE') as DD_EPI_ID --DD_EPI_EST_POL_ITINERARIO --P. Completar Expediente
                  , est.PEF_ID_GESTOR
                  , est.PEF_ID_SUPERVISOR
                  , zon.ZON_ID --GESTOR

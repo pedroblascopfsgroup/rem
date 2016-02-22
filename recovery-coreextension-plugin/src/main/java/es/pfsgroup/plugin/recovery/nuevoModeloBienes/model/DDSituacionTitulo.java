@@ -17,13 +17,14 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.diccionarios.Dictionary;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.DDTipoInmuebleInfo;
 
 @Entity
 @Table(name = "DD_SIT_SITUACION_TITULO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
-public class DDSituacionTitulo implements  Serializable, Auditable, DDTipoInmuebleInfo {
+public class DDSituacionTitulo implements  Serializable, Auditable, DDTipoInmuebleInfo, Dictionary {
 
 	private static final long serialVersionUID = -4497097910086775262L;
 

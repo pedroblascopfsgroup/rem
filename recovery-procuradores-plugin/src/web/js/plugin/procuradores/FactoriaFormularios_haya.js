@@ -765,7 +765,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     this.storeDDSituacionTitulo = new Ext.data.Store({
         url:'/pfs/pcdprocesadoresoluciones/getDictionary.htm'
         ,baseParams: {
-            dictionary: 'DDSituacionTitulo'
+            dictionary: 'es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionTitulo'
         }
         ,reader: new Ext.data.JsonReader({
             root: 'diccionario'

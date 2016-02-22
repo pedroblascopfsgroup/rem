@@ -75,7 +75,7 @@ public class ProcesoCreacionExpedientesRecuperacionesETLJobLauncher implements J
 	            		Genericas.CORCHETE_DER + Genericas.FALLO_MSG);
 	        }
         } catch (Exception e) {
-        	logger.error(ProcesoCreacionExpedientesRecuperacionesETL.FIN_MSG + Genericas.CORCHETE_IZQ + workingCode + Genericas.CORCHETE_DER + Genericas.FALLO_MSG);
+        	logger.error(ProcesoCreacionExpedientesRecuperacionesETL.FIN_MSG + Genericas.CORCHETE_IZQ + workingCode + Genericas.CORCHETE_DER + Genericas.FALLO_MSG + "-->" + e.toString());
             sendEndChainEvent(workingCode);
             throw new RuntimeException();
         }

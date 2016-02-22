@@ -132,11 +132,11 @@ public class BatchConsoleJMXRecuperaciones {
 		
 		logger.debug("Encolando " + ProcesoCreacionExpedientesRecuperacionesETL.PROCESO_CREACION_EXPEDIENTES_RECUPERACIONES_ETL_HANDLER);
 		
-		ProcesoCreacionExpedientesRecuperacionesETLJobLauncher creacionClientesJobLauncher = (ProcesoCreacionExpedientesRecuperacionesETLJobLauncher)ApplicationContextUtil.
+		ProcesoCreacionExpedientesRecuperacionesETLJobLauncher creacionExpedientesETLJobLauncher = (ProcesoCreacionExpedientesRecuperacionesETLJobLauncher)ApplicationContextUtil.
     			getApplicationContext().getBean(ProcesoCreacionExpedientesRecuperacionesETL.PROCESO_CREACION_EXPEDIENTES_RECUPERACIONES_ETL_HANDLER);
 		
 		
-    	creacionClientesJobLauncher.handle(workingCode,new Date());
+		creacionExpedientesETLJobLauncher.handle(workingCode,new Date());
     	
     	logger.debug(ProcesoCreacionExpedientesRecuperacionesETL.PROCESO_CREACION_EXPEDIENTES_RECUPERACIONES_ETL_HANDLER + " ya se ha encolado");
 		

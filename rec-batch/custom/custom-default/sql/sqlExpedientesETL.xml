@@ -8,9 +8,6 @@
          --Operacion_DDL.DDL_INDEX('DROP','IDX_BATCH_SV_DATOS_CNT_2');
          EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_CNT_1 UNUSABLE';
          EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_CNT_2 UNUSABLE';
-         ----------------------------
-         execute immediate 'truncate table batch_log';
-         ----------------------------
         END;
         ]]>
     </entry>
@@ -1646,7 +1643,7 @@
              SELECT VARIABLEMAP
                   , 0 --VERSION_
                   , TOKEN --ROOTTOKEN_
-                  , MODULEINSTANCE  --CONTEXTINSTANCE_
+                  , MODULEINSTANCE  --CONTEvencidos.persistencia.expedientesbpm.OracleXTINSTANCE_
                FROM '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE';
 
           --** Insertamos variables
@@ -1712,9 +1709,9 @@
             INSERT INTO '||cMASTER_SCHEMA||'.JBPM_VARIABLEINSTANCE
              (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, LONGVALUE_)
             SELECT '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL
-                 ,'L' --CLASS_
+                 ,''L'' --CLASS_
                  , 0 --VERSION_
-                 , 'idArquetipo' --NAME_
+                 , ''idArquetipo'' --NAME_
                  , TMP.TOKEN --TOKEM_
                  , TMP.VARIABLEMAP --TOKENVARIABLEMAP_
                  , TMP.PROCESSINSTANCE --PROCESSINSTANCE_
@@ -1742,7 +1739,7 @@
             EXECUTE IMMEDIATE '
             Insert into '||cMASTER_SCHEMA||'.jbpm_job
               (ID_, CLASS_, VERSION_, DUEDATE_, PROCESSINSTANCE_, TOKEN_, TASKINSTANCE_, ISSUSPENDED_, ISEXCLUSIVE_,LOCKOWNER_, LOCKTIME_, EXCEPTION_ , RETRIES_, NAME_, REPEAT_, TRANSITIONNAME_, ACTION_, GRAPHELEMENTTYPE_, GRAPHELEMENT_, NODE_)
-            Select cmmaster.hibernate_sequence.nextval as ID_
+            Select '||cMASTER_SCHEMA||'.hibernate_sequence.nextval as ID_
                  , ''T'' as CLASS_
                  , 0 as VERSION_
                  , sysdate - 2 as DUEDATE_
@@ -1750,7 +1747,6 @@
                  , TOKEN as TOKEN_
                  , null as TASKINSTANCE_
                  , 0 ISSUSPENDED_
-
                  , 1 ISEXCLUSIVE_
                  , null LOCKOWNER_
                  , null LOCKTIME_

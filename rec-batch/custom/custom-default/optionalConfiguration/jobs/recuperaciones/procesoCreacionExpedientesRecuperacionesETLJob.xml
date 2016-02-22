@@ -4,7 +4,7 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
     default-autowire="byName" default-merge="true">
 
-    <bean id="procesoGeneracionExpedientesJob" parent="batch.simpleJob"
+    <bean id="procesoCreacionExpedientesRecuperacionesETLJob" parent="batch.simpleJob"
         scope="prototype">
         <property name="steps">
             <list>

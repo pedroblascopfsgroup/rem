@@ -25,7 +25,7 @@ LOCAL_PATH=`pwd`
 #chmod -R a+rwx /recovery/batch-server/programas/batch/*
 #cd $LOCAL_PATH
 rm -f /recovery/batch-server/sareb/shells/*.sh
-cp scripts/shells/* /recovery/batch-server/sareb/shells/
+cp -r scripts/shells/* /recovery/batch-server/sareb/shells/
 chmod a+rx /recovery/batch-server/sareb/shells/*.sh
 rm -rf /recovery/batch-server/sareb/programas/etl/apr_*
 rm -rf /recovery/batch-server/sareb/programas/etl/APR_*

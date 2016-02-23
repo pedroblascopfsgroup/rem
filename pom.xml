@@ -46,11 +46,11 @@
 		</repository>
 		<repository>
 			<id>thirdparty</id>
-			<url>http://192.168.0.16:8081/nexus/content/repositories/thirdparty</url>
+			<url>http://192.168.31.16:8081/nexus/content/repositories/thirdparty</url>
 		</repository>
 		<repository>
 			<id>pfsNexusFramework</id>
-			<url>http://192.168.0.16:8081/nexus/content/repositories/framework</url>
+			<url>http://192.168.31.16:8081/nexus/content/repositories/framework</url>
 		</repository>
 		<repository>
 			<id>com.springsource.repository.bundles.release</id>

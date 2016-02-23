@@ -238,7 +238,7 @@
 
 	var estados = <app:dict value="${estado}" blankElement="true" blankElementValue="" blankElementText="---" />;
 
-	var comboSegmentos = app.creaDblSelect(segmentos, '<s:message code="menu.clientes.listado.filtro.segmento" text="**Segmento" />');
+	//var comboSegmentos = app.creaDblSelect(segmentos, '<s:message code="menu.clientes.listado.filtro.segmento" text="**Segmento" />');
 
 	var comboTipoPersona = app.creaCombo({data:tiposPersona, name : 'tipopersona', fieldLabel : '<s:message code="menu.clientes.listado.filtro.tipopersona" text="**Tipo Persona" />' <app:test id="comboTipoPersona" addComa="true" />,width : 160});
 
@@ -375,9 +375,9 @@
 			if (!(filtroContrato.getValue() === '')){
 				return true;
 			}
-			if (comboSegmentos.getValue() != '' ){
+			/*if (comboSegmentos.getValue() != '' ){
 				return true;
-			}
+			}*/
 		}
 			
 		return false;
@@ -440,6 +440,7 @@
 	}
 	
 	var getParametrosRiesgos = function() {  
+		
 		if (tabRiesgos) {
 			if(mmRiesgoTotal.min.getValue()=='undefined' || !mmRiesgoTotal.min.getValue()){
 				mmRiesgoTotal.min.setValue('');
@@ -463,9 +464,9 @@
 			if(filtroContrato.getValue()=='undefined' || !filtroContrato.getValue()){
 				filtroContrato.setValue('');
 			}
-			if(comboSegmentos.getValue()=='undefined' || !comboSegmentos.getValue()){
+			/*if(comboSegmentos.getValue()=='undefined' || !comboSegmentos.getValue()){
 				comboSegmentos.setValue('');
-			}
+			}*/
 		}
 		
    		var param = new Object();   		
@@ -477,7 +478,7 @@
 			param.codigoEntidad=comboJerarquia.getValue();
 			param.codigoZona=listadoCodigoZonas.toString();
 			param.nroContrato=filtroContrato.getValue();
-			param.segmentos=comboSegmentos.getValue();
+			//param.segmentos=comboSegmentos.getValue();
 		}
 		param.busqueda=true;
 		
@@ -583,27 +584,57 @@
 	});
 	
 	
+var panel1 = new Ext.form.FieldSet({
+		defaults : {cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
+		,border : false
+		,height : 120
+        ,layout : 'table'
+        ,autoWidth : true
+		//,width:panelWidth
+		,items : [
+			{   layout:'table'
+				,layoutConfig:{columns:1}
+				,border:false
+				,defaults : {xtype : 'fieldset',autoHeight:true, border : false ,cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
+				,items:[{items: [mmRiesgoTotal.panel,mmSVencido.panel, filtroContrato]}
+				]
+			},
+			{ xtype : 'errorList', id:'errL' }			
+		]
+	});	
+	
+	var panel2 = new Ext.form.FieldSet({
+		defaults : {cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
+		,border : false
+		,autoHeight:true
+        ,layout : 'table'
+        ,autoWidth : true
+		//,width:panelWidth
+		,items : [
+			{   layout:'table'
+				,layoutConfig:{columns:3}
+				,border:false
+				,defaults : {xtype : 'fieldset',autoHeight:true, border : false ,cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
+				,items:[{items: [ comboJerarquia, comboZonas]}
+						,{items: [ btnIncluir, btnExcluir]}
+						,{items: [ zonasGrid]}
+				]
+			},
+			{ xtype : 'errorList', id:'errL' }			
+		]
+	});	
+	
 	var filtrosTabRiesgos = new Ext.Panel({
 		title:'<s:message code="plugin.mejoras.expedientes.busqueda.riesgos" text="**Riesgos" />'
 		,autoHeight:true
 		,bodyStyle:'padding: 10px'
 		,layout:'table'
-		,layoutConfig:{columns:4}
+		,layoutConfig:{columns:1}
 		,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
 		,items:[{
 					layout:'form'
-					,items: [mmRiesgoTotal.panel,mmSVencido.panel, filtroContrato, comboSegmentos]
-				},{
-					layout:'form'
-					,items: [comboJerarquia, comboZonas]
-				},{
-					layout:'form'
-					,items: [btnIncluir, btnExcluir]
-				},{
-					layout:'form'
-					,items: [zonasGrid]
-				}
-				
+					,items: [panel1, panel2]
+				}			
 				]
 		,listeners:{
 			getParametros: function(anadirParametros, hayError) {
@@ -613,7 +644,7 @@
 			}			
 			,limpiar: function() {
     		   app.resetCampos([      
-    		   			comboSegmentos,
+    		   			//comboSegmentos,
 						mmRiesgoTotal.min,
 						mmRiesgoTotal.max,
 						mmSVencido.min,

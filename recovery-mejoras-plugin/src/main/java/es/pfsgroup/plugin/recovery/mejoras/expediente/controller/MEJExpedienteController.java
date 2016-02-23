@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import es.capgemini.pfs.expediente.model.DDDecisionSancion;
 import es.capgemini.pfs.zona.model.DDZona;
@@ -18,6 +19,7 @@ public class MEJExpedienteController {
 
 	static final String JSON_LISTADO_ZONAS = "plugin/mejoras/expedientes/listadoZonasJSON";
 	static final String JSON_LISTADO_DECISION_SANCION = "plugin/mejoras/expedientes/listadoDecisionSancionJSON";
+	private static final String DEFAULT = "default";
 
 	@Autowired
 	private MEJExpedienteApi mejExpedienteApi;
@@ -50,4 +52,18 @@ public class MEJExpedienteController {
 		model.put("ddecisionsancion", ddecisionsancion);
 		return JSON_LISTADO_DECISION_SANCION;
 	}
+	
+	/**
+	 * Guarda la entidad sancion y la relacion con el expediente
+	 * 
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String guardaSancionExpediente(@RequestParam(value = "idExpediente", required = false) Long idExpediente, @RequestParam(value = "decionSancion", required = false) String codDecionSancion , String observaciones, ModelMap model) {
+		
+		mejExpedienteApi.guardaSancionExpediente(idExpediente, codDecionSancion, observaciones);
+		
+		return DEFAULT;
+	}
+	
 }

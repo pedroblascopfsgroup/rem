@@ -5,6 +5,7 @@
 <fwk:json>
 	<json:array name="decisionSancion" items="${ddecisionsancion}" var="decSan">
 		<json:object>
+			<json:property name="id" value="${decSan.id}" />
 			<json:property name="codigo" value="${decSan.codigo}" />
 			<json:property name="descripcion" value="${decSan.descripcion}" />
 		</json:object>

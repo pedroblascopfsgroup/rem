@@ -11,9 +11,9 @@
 
 (function(page,entidad){
 
-
 	var listadoDecisionSancion = Ext.data.Record.create([
 		 {name:'id'}
+		,{name:'codigo'}
 		,{name:'descripcion'}
 	]);
 	
@@ -34,7 +34,7 @@
         ,editable: false
         ,fieldLabel: '<s:message code="expedientes.consulta.tabsancion.decision" text="**Decisión" />'
         ,displayField:'descripcion'
-        ,valueField: 'id'
+        ,valueField: 'codigo'
         ,labelStyle:'font-weight:bolder'
         ,height : 35
         ,width : 200
@@ -61,6 +61,7 @@
 	btnModificar = new Ext.Button({
 			text: '<s:message code="expedientes.consulta.tabsancion.btnModificar" text="**Modificar" />'
 			,border:false
+			,hidden : true
 			,iconCls : 'icon_edit'
 			,cls: 'x-btn-text-icon'
 			,handler:function(){
@@ -96,11 +97,30 @@
 			,cls: 'x-btn-text-icon'
 			,hidden : true 
 			,handler:function(){
-				observaciones.setReadOnly(true);
-				decionSancion.setReadOnly(true);
-				btnCancelar.setVisible(false);
-				btnGuardar.setVisible(false);
-				btnModificar.setVisible(true);
+					if(decionSancion.getValue() == ''){
+						Ext.Msg.alert('Error', '<s:message code="expedientes.consulta.tabsancion.msg.cmpTipo.required" text="**Debe indicar la decisi\u00F3n sobre la sanci\u00F3n." />');
+					}else if(app.decisionSancion.CODIGO_DECISION_SANCION_APROBADA_CON_CONDICIONES == decionSancion.getValue() && observaciones.getValue()==''){
+						Ext.Msg.alert('Error', '<s:message code="expedientes.consulta.tabsancion.msg.validacionTipo" text="**Debe rellenar el campo de observaciones si el tipo decision es Aprobado con condiciones." />');
+					}else{
+						formSancion.container.mask('<s:message code="fwk.ui.form.guardando" text="**Guardando" />');
+						observaciones.setReadOnly(true);
+						decionSancion.setReadOnly(true);
+						btnCancelar.setVisible(false);
+						btnGuardar.setVisible(false);
+						btnModificar.setVisible(true);
+						
+						Ext.Ajax.request({
+									url : page.resolveUrl('mejexpediente/guardaSancionExpediente'), 
+									params : {idExpediente:panel.getCodExpediente(),decionSancion:decionSancion.getValue(),observaciones:observaciones.getValue()},
+									method: 'POST',
+									success: function ( result, request ) {
+										formSancion.container.unmask();
+										page.fireEvent(app.event.DONE);
+									}
+					
+						});
+					}
+
 	   	    }
 	});
 	
@@ -144,17 +164,27 @@
 
 	
 	panel.getValue = function(){};
-	panel.setValue = function(){};
+	panel.setValue = function(){
+		var data= entidad.get("data");
+		decionSancion.setValue(data.sancion.codDecision);
+		observaciones.setValue(data.sancion.observaciones);
+		if(entidad.get("data").esGestorSupervisorActual && entidad.get("data").gestion.estadoItinerario == app.estItinerario.ESTADO_ITINERARIO_EN_SANCION){
+			btnModificar.setVisible(true);
+		}else{
+			btnModificar.setVisible(false);
+		}
+	};
 	
-	<%--   
-		panel.getCodExpediente = function(){
+	   
+	panel.getCodExpediente = function(){
 		return entidad.get("data").cabecera.codExpediente;
 	}
 	
+	
 	panel.setVisibleTab = function(data){
-		return entidad.get("data").toolbar.tipoExpediente != 'REC';
+		return entidad.get("data").toolbar.tipoExpediente == app.tipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA;
    	}
-	 --%>
+	 
 	 
 	return panel;
 })

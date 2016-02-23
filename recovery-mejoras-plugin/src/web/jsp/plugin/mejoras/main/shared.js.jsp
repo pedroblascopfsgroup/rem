@@ -181,6 +181,7 @@ app.estItinerario.ESTADO_RE = '<fwk:const value="es.capgemini.pfs.itinerario.mod
 app.estItinerario.ESTADO_DECISION_COMITE = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_DECISION_COMIT" />';
 app.estItinerario.ESTADO_FORMALIZAR_PROPUESTA = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA" />';
 app.estItinerario.ESTADO_REVISAR_EXPEDIENTE = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE" />';
+app.estItinerario.ESTADO_ITINERARIO_EN_SANCION = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION" />';
 
 app.tipoBien={};
 app.tipoBien.CODIGO_TIPOBIEN_PISO = '<fwk:const value="es.capgemini.pfs.bien.model.DDTipoBien.CODIGO_TIPOBIEN_PISO" />';
@@ -210,6 +211,14 @@ app.codigoAcuerdoFinalizado = '<fwk:const value="es.capgemini.pfs.acuerdo.model.
 app.codigoAcuerdoEnviado = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_ENVIADO" />';
 app.codigoAcuerdoIncumplido = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_INCUMPLIDO" />';
 app.codigoAcuerdoCumplido = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_CUMPLIDO" />';
+
+app.decisionSancion={};
+app.decisionSancion.CODIGO_DECISION_SANCION_APROBADA = '<fwk:const value="es.capgemini.pfs.expediente.model.Sancion.CODIGO_DECISION_SANCION_APROBADA" />';
+app.decisionSancion.CODIGO_DECISION_SANCION_APROBADA_CON_CONDICIONES = '<fwk:const value="es.capgemini.pfs.expediente.model.Sancion.CODIGO_DECISION_SANCION_APROBADA_CON_CONDICIONES" />';
+app.decisionSancion.CODIGO_DECISION_SANCION_RECHAZADA = '<fwk:const value="es.capgemini.pfs.expediente.model.Sancion.CODIGO_DECISION_SANCION_RECHAZADA" />';
+
+app.tipoExpediente={};
+app.tipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA = '<fwk:const value="es.capgemini.pfs.expediente.model.DDTipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA" />';
 
 
 /**

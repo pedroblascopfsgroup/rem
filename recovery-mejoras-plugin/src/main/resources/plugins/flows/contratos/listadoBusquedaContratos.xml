@@ -9,6 +9,7 @@
 			<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
 			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDEstadoContrato')" result="flowScope.estados"/>
 			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDEstadoFinanciero')" result="flowScope.estadosFinancieros"/>
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDCondicionesRemuneracion')" result="flowScope.condicionesRemuneracion"/>
 			<evaluate expression="executor.execute('tipoProductoManager.getTiposProducto')" result="flowScope.tiposProducto" />
 			<evaluate expression="executor.execute('tipoProductoEntidadManager.getTiposProductoEntidad')" result="flowScope.tiposProductoEntidad" />
 			<evaluate expression="executor.execute('plugin.mejoras.web.contratos.busqueda.buttons.left')" result="flowScope.buttonsLeft"/>

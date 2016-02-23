@@ -21,13 +21,14 @@ var formBusquedaContratos=function(){
 	var txtCodEfecto = app.creaText('codEfecto', '<s:message code="listadoContratos.codigoEfecto" text="**Cod. efecto" />'); 
 	//codigo de disposicion
 	var txtCodDisposicion = app.creaText('codDisposicion', '<s:message code="listadoContratos.codigoDisposicion" text="**Cod. disposición" />'); 
-	//motivo de gestion HRE
 	
+	//motivo de gestion HRE
 	var motivoGestion = <app:dict value="${condicionesRemuneracion}" blankElement="true" blankElementValue="" blankElementText="---" />;
 	
 	var comboMotivoGestionHRE = app.creaCombo({
 							triggerAction: 'all'
 							, data:motivoGestion
+							, tpl:  '<tpl for="."><div ext:qtip="{motivoGestion.diccionario[0].codigo}. {motivoGestion.diccionario[0].codigo}" class="x-combo-list-item">{state}</div></tpl>'
 							, value:motivoGestion.diccionario[0].codigo
 							, name : 'motivoGestionHRE'
 							, fieldLabel : '<s:message code="listadoContratos.motivoGestion" text="**Motivo Gestión" />'});
@@ -388,11 +389,8 @@ var formBusquedaContratos=function(){
 		,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
 		,items:[{
 					layout:'form'
-					,items: [txtContrato,txtCodRecibo,txtCodEfecto,txtCodDisposicion,
-						
-						comboMotivoGestionHRE
-						
-					]
+					,items: [txtContrato,txtCodRecibo,txtCodEfecto,txtCodDisposicion
+					<sec:authorize ifAllGranted="PERSONALIZACION-HY">,comboMotivoGestionHRE</sec:authorize>]
 				},{
 					layout:'form'
 					,items: [comboEstadoContrato,comboTiposProducto]

@@ -22,16 +22,36 @@ var formBusquedaContratos=function(){
 	//codigo de disposicion
 	var txtCodDisposicion = app.creaText('codDisposicion', '<s:message code="listadoContratos.codigoDisposicion" text="**Cod. disposición" />'); 
 	
-	//motivo de gestion HRE
-	var motivoGestion = <app:dict value="${condicionesRemuneracion}" blankElement="true" blankElementValue="" blankElementText="---" />;
+	var ddCondicionesRemuneracion = Ext.data.Record.create([
+		 {name:'id'}
+		,{name:'descripcion'}
+		,{name:'codigo'}
+	]);
 	
-	var comboMotivoGestionHRE = app.creaCombo({
-							triggerAction: 'all'
-							, data:motivoGestion
-							, tpl:  '<tpl for="."><div ext:qtip="{motivoGestion.diccionario[0].codigo}. {motivoGestion.diccionario[0].codigo}" class="x-combo-list-item">{state}</div></tpl>'
-							, value:motivoGestion.diccionario[0].codigo
-							, name : 'motivoGestionHRE'
-							, fieldLabel : '<s:message code="listadoContratos.motivoGestion" text="**Motivo Gestión" />'});
+	var optionsCondicionesRemuneracionStore = page.getStore({
+	       flow: 'mejacuerdo/getListDDCondicionesRemuneracionData'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'condicionesRemuneracion'
+	    }, ddCondicionesRemuneracion)	       
+	});	
+
+	var comboMotivoGestionHRE = new Ext.form.ComboBox({
+		store:optionsCondicionesRemuneracionStore
+		,id:'motivoGestionHRE'
+		,displayField:'descripcion'
+		,valueField:'codigo'
+		,mode: 'local'
+		,resizable: true
+		,forceSelection: true
+		,emptyText:'---'
+		,triggerAction: 'all'
+		,fieldLabel: '<s:message code="listadoContratos.motivoGestion" text="**Motivo Gestión" />'
+		,width: 220		
+	});
+	
+	comboMotivoGestionHRE.on('afterrender', function(combo) {
+		optionsCondicionesRemuneracionStore.webflow();
+	});
 	
 	//nombre
 	var txtNombre = app.creaText('nombre', '<s:message code="listadoContratos.nombre" text="**Nombre" />');

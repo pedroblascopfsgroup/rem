@@ -95,9 +95,9 @@
 				<json:property name="idPersona" value="${expedientePersona.persona.id}" />
 				<json:property name='pase' value="${expedientePersona.pase}" />
 				<json:property name='cliente' value="${expedientePersona.persona.apellidoNombre}" />
-				<json:property name='vrDirecto' value="${expedientePersona.persona.riesgoDirecto}" />
-				<json:property name='vrIndirecto' value="${expedientePersona.persona.montoTotalRiesgosIndirectos}" />
-				<json:property name='vrIrregular' value="${expedientePersona.persona.riesgoDirectoVencido}" />
+				<json:property name='vrDirecto' value="${expedientePersona.persona.riesgoTotal}" />
+				<json:property name='vrIndirecto' value="${expedientePersona.persona.riesgoIndirecto}" />
+				<json:property name='vrIrregular' value="${expedientePersona.persona.dispuestoVencido}" />
 				<json:property name='riesgoDirectoDanyado' value="${expedientePersona.persona.riesgoDirectoDanyado}" />
 				<json:property name='vrDirectoNoG' value="${expedientePersona.persona.grupo.grupoCliente.riesgoDirecto}" />
 				<json:property name='contratosActivos' value="${expedientePersona.persona.numContratos}" />

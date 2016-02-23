@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="expedienteDeuda">
+	
+	<event type="process-end">
+		<action name="processEndAction" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>eliminaTareasExpedienteActionHandler</targetBean>
+		</action>
+	</event>
+	
+	<start-state name="Inicio Expediente">
+		<transition to="CreacionExpediente"></transition>
+	</start-state>
+
+	<node name="CreacionExpediente">
+		<action name="CreacionExpedienteAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>crearExpedienteActionHandler</targetBean>
+		</action>
+		<transition to="CompletarExpediente"></transition>
+	</node>
+
+	<state name="CompletarExpediente">
+		<event type="node-enter">
+			<action name="CompletarExpedienteAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>completarExpedienteActionHandler</targetBean>
+			</action>
+		</event>
+		<transition name="EnviarARevision" to="EnviarARevision"></transition>
+		<transition to="GenerarNotificacion" name="GenerarNotificacion"></transition>
+		<transition to="SolicitarProrrogaExtra" name="EnviarSolicitarProrrogaExtra"></transition>
+		<transition to="Fin Expediente" name="Fin"></transition>
+	</state>
+
+	<node name="EnviarARevision">
+		<action name="EnviarARevisionAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>enviarARevisionActionHandler</targetBean>
+		</action>
+		<transition to="RevisionExpediente"></transition>
+	</node>
+	<state name="RevisionExpediente">
+		<event type="node-enter">
+			<action name="RevisionExpedienteAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>revisionExpedienteActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="EnviarAComite" name="EnviarAComite"></transition>
+		<transition to="DevolverCompletar" name="DevolverACompletar"></transition>
+		<transition to="GenerarNotificacion" name="GenerarNotificacion"></transition>
+		<transition to="SolicitarProrrogaExtra" name="EnviarSolicitarProrrogaExtra"></transition>
+		<transition to="Fin Expediente" name="Fin"></transition>
+	</state>
+
+	<node name="EnviarAComite">
+		<action name="EnviarAComiteAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>enviarAComiteActionHandler</targetBean>
+		</action>
+		<transition to="DecisionComite"></transition>
+	</node>
+
+	<state name="DecisionComite">
+		<event type="node-enter">
+			<action name="DecisionComiteAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>desicionComiteActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="ExpedienteDecidido" name="TomarDecision"></transition>
+		<transition to="DevolverRevision" name="DevolverRevision"></transition>
+		<transition to="GenerarNotificacion" name="GenerarNotificacion"></transition>
+        <transition to="DecisionComiteAutomatica" name="DecisionComiteAutomatica"></transition>
+		<transition to="Fin Expediente" name="Fin"></transition>
+		<transition to="EnviarAFormalizar" name="EnviarAFormalizar"></transition>
+	</state>
+
+	<node name="DevolverRevision">
+		<action name="DevolverRevisionAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>devolverRevisionActionHandler</targetBean>
+		</action>
+		<transition to="RevisionExpediente"></transition>
+	</node>
+
+	<node name="DevolverCompletar">
+		<action name="ExpedienteDecididoAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>devolverCompletarActionHandler</targetBean>
+		</action>
+		<transition to="CompletarExpediente"></transition>
+	</node>
+
+	<node name="ExpedienteDecidido">
+		<action name="ExpedienteDecididoAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>expedienteDecididoActionHandler</targetBean>
+		</action>
+		<transition to="Fin Expediente"></transition>
+	</node>
+
+	<node name="GenerarNotificacion">
+		<action name="GenerarNotificacionAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>generarNotificacionExpedienteActionHandler</targetBean>
+		</action>
+		<transition to="CompletarExpediente" name="CompletarExpediente"></transition>
+		<transition to="RevisionExpediente" name="RevisionExpediente"></transition>
+		<transition to="DecisionComite" name="DecisionComite"></transition>
+		<transition to="EnviarARevision" name="EnviarARevision"></transition>
+		<transition to="EnviarAComite" name="EnviarAComite"></transition>
+		<transition to="FormalizarPropuesta" name="FormalizarPropuesta"></transition>
+	</node>
+
+	<node name="SolicitarProrrogaExtra">
+		<action name="SolicitarProrrogaExtraAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>solicitarProrrogaExtraActionHandler</targetBean>
+		</action>
+		<transition to="CompletarExpediente" name="CompletarExpediente"></transition>
+		<transition to="RevisionExpediente" name="RevisionExpediente"></transition>
+	</node>
+    
+    <node name="DecisionComiteAutomatica">
+		<action name="DesisionComiteAutomatica" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>decisionComiteAutomaticaActionHandler</targetBean>
+		</action>
+		<transition to="ExpedienteDecidido" name="TomarDecision"></transition>
+		<transition to="DecisionComite" name="DecisionComite"></transition>
+	</node>
+
+	<state name="FormalizarPropuesta">
+		<event type="node-enter">
+			<action name="FormalizarPropuestaAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>formalizarPropuestaActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="DevolverADecision" name="DevolverADecision"></transition>
+		<transition to="Fin Expediente" name="Fin"></transition>
+		<transition to="ExpedienteDecididoFP" name="ExpedienteDecididoFP"></transition>
+		<transition to="GenerarNotificacion" name="GenerarNotificacion"></transition>
+	</state>
+
+	<node name="EnviarAFormalizar">
+		<action name="EnviarAFormalizarAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>enviarAFormalizarActionHandler</targetBean>
+		</action>
+		<transition to="FormalizarPropuesta"></transition>
+	</node>
+
+	<node name="DevolverADecision">
+		<action name="DevolverADecisionAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>devolverADecisionActionHandler</targetBean>
+		</action>
+		<transition to="DecisionComite"></transition>
+	</node>
+
+	<node name="ExpedienteDecididoFP">
+		<action name="ExpedienteDecididoFPAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>expedienteDecididoActionHandler</targetBean>
+		</action>
+		<transition to="Fin Expediente"></transition>
+	</node>
+
+	<end-state name="Fin Expediente"></end-state>
+
+</process-definition>

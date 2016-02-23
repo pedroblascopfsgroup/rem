@@ -111,6 +111,8 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
+	
+	private Long idAdjuntoAsunto;
 
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_ALTA_DOCUMENTO)
 	@Transactional(readOnly = false)
@@ -247,7 +249,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			inputDto.setClaveAsociacion(claveAsociacion);
 			String nombreFichero = uploadForm.getFileItem().getFileName();
 			nombreFichero = nombreFichero.substring(0, nombreFichero.indexOf("."));
-			inputDto.setDescripcion(nombreFichero);
+			inputDto.setDescripcion(nombreFichero+"_"+idAdjuntoAsunto);
 			if(!Checks.esNulo(uploadForm.getParameter("fechaCaducidad"))) {
 				SimpleDateFormat frmt = new SimpleDateFormat("ddMMyyyy");
 				try {
@@ -387,6 +389,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		        Auditoria.save(adjuntoAsunto);
 		        asunto.getAdjuntos().add(adjuntoAsunto);
 		        proxyFactory.proxy(AsuntoApi.class).saveOrUpdateAsunto(asunto);
+		        modificarNombreAdjAsu(uploadForm.getFileItem().getFileName(), adjuntoAsunto.getId());
 			}
 			claveRel = asunto.getGuid();
 		} else if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidad)) {
@@ -404,10 +407,25 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		        Auditoria.save(adjuntoAsunto);
 		        prc.getAsunto().getAdjuntos().add(adjuntoAsunto);
 		        proxyFactory.proxy(AsuntoApi.class).saveOrUpdateAsunto(prc.getAsunto());
+		        modificarNombreAdjAsu(uploadForm.getFileItem().getFileName(), adjuntoAsunto.getId());
 			}
 			claveRel = extProcedimientoManager.prepareGuid(prc).getGuid();
 		}
 		return claveRel;
 	}
+	
+	private void modificarNombreAdjAsu(String fichero, Long idAdjAsu) {
+		EXTAdjuntoAsunto adjAsu = genericDao.get(EXTAdjuntoAsunto.class, genericDao.createFilter(FilterType.EQUALS, "id", idAdjAsu));
+        adjAsu.setNombre(fichero.substring(0, fichero.indexOf(".")) + "_" + idAdjAsu + fichero.substring(fichero.indexOf(".")));
+        genericDao.update(EXTAdjuntoAsunto.class, adjAsu);
+        idAdjuntoAsunto = adjAsu.getId();
+	}
 
+	public Long getIdAdjuntoAsunto() {
+		return idAdjuntoAsunto;
+	}
+	
+	public void setIdAdjuntoAsunto(Long idAdjuntoAsunto) {
+		this.idAdjuntoAsunto = idAdjuntoAsunto;
+	}
 }

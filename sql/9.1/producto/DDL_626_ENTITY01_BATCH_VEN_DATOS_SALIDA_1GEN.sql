@@ -38,7 +38,7 @@ BEGIN
               EXP_DESCRIPCION  VARCHAR2(310 CHAR),
               DD_AEX_CODIGO    VARCHAR2(25 CHAR),
               OFI_ID           NUMBER(16),
-              CNT_RIESGO       NUMBER(14,2),
+              POS_VIVA_VENCIDA NUMBER(14,2),
               CNT_ID           NUMBER(16),
               PER_ID           NUMBER(16),
               CPE_ORDEN        NUMBER,

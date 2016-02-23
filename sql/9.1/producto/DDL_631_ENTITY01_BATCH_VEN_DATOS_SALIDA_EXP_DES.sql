@@ -35,9 +35,9 @@ BEGIN
 
   V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||TABLA||'
             (
-              EXP_ID    NUMBER(16)    NOT NULL,
-              PER_ID    NUMBER(16),
-              PEX_PASE  NUMBER(1)
+              EXP_ID    NUMBER(16) NOT NULL,
+              CNT_ID    NUMBER(16),
+              CEX_PASE  NUMBER(1)
             ) NOLOGGING';
 
   IF V_EXISTE = 0 THEN

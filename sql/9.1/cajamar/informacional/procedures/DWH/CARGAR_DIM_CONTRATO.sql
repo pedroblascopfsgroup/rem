@@ -659,8 +659,8 @@ BEGIN
   end if;
 
   execute immediate
-    'insert into D_CNT_OFICINA(OFICINA_CONTRATO_ID, OFICINA_CONTRATO_DESC, PROVINCIA_CONTRATO_ID)
-    select OFI_ID, OFI_NOMBRE, DD_PRV_ID from '||V_DATASTAGE||'.OFI_OFICINAS';
+    'insert into D_CNT_OFICINA(OFICINA_CONTRATO_ID, OFICINA_CONTRATO_DESC, OFICINA_CONTRATO_DESC_2, PROVINCIA_CONTRATO_ID)
+    select OFI_ID, OFI_NOMBRE, OFI_CODIGO_OFICINA, DD_PRV_ID from '||V_DATASTAGE||'.OFI_OFICINAS';
 
   V_ROWCOUNT := sql%rowcount;
   commit;
@@ -732,7 +732,7 @@ BEGIN
 
   execute immediate
     'insert into D_CNT_ZONA(ZONA_CONTRATO_ID, ZONA_CONTRATO_DESC, ZONA_CONTRATO_DESC_2, NIVEL_CONTRATO_ID, OFICINA_CONTRATO_ID)
-     select distinct zon2.zon_id, Zon2.Zon_Descripcion, Zon2.Zon_Descripcion_larga, zon2.niv_id, ofi.ofi_id
+     select distinct zon2.zon_id, Zon2.Zon_Descripcion, ofi.ofi_codigo_oficina, zon2.niv_id, ofi.ofi_id
      from  '||V_DATASTAGE||'.ofi_oficinas ofi 
      left join '||V_DATASTAGE||'.Zon_Zonificacion zon1 on ofi.ofi_id=zon1.ofi_id
      left join '||V_DATASTAGE||'.Zon_Zonificacion zon2 on zon1.zon_pid=zon2.zon_id';
@@ -4471,8 +4471,8 @@ SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_CALIF_FINAL_CREDITO WHERE CALIFICACION
   end if;
   
 	V_SQL := 'insert into D_CNT_DIR_TERRITORIAL (DIR_TERRITORIAL_ID, DIR_TERRITORIAL_DESC, DIR_TERRITORIAL_DESC_2)
-    select ZON_ID, ZON_DESCRIPCION, ZON_DESCRIPCION_LARGA from ' || V_DATASTAGE || '.ZON_ZONIFICACION ZON
-	where ZON.NIV_ID = 3 --(DT)
+    select ZON_ID, ZON_DESCRIPCION, OFI.OFI_CODIGO_OFICINA from ' || V_DATASTAGE || '.ZON_ZONIFICACION ZON, ' || V_DATASTAGE || '.OFI_OFICINAS OFI 
+	where ZON.NIV_ID = 3 AND OFI.OFI_ID = ZON.OFI_ID --(DT)
   AND not exists (select 1 from D_CNT_DIR_TERRITORIAL CNT WHERE CNT.DIR_TERRITORIAL_ID = ZON.ZON_ID)';
 	EXECUTE IMMEDIATE (V_SQL);
   V_ROWCOUNT := sql%rowcount;

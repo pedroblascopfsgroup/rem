@@ -1424,7 +1424,7 @@
 						<bean 
 							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
 							<property name="codigoInput">
-								<value>I_ACT_AUD_PRV"</value>
+								<value>I_ACT_AUD_PRV</value>
 							</property>
 						</bean>
 					</list>

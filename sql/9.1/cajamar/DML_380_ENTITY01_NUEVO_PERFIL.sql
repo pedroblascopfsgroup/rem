@@ -225,11 +225,11 @@ BEGIN
 		ELSE 
 			DBMS_OUTPUT.PUT_LINE('val.dirzona no existe');				
 		END IF;		
-
+*/
 	ELSE 
 		DBMS_OUTPUT.PUT_LINE('El  Procedimiento ' || V_USUARIO_EJECUTA || ' ya se ejecuto, NO se ejecutara de nuevo otra vez.');				
 	END IF;	 
-*/
+
 	COMMIT;
 	DBMS_OUTPUT.PUT_LINE('[FIN PROCEDIMIENTO]********' || V_USUARIO_EJECUTA || '********'); 
 	EXCEPTION

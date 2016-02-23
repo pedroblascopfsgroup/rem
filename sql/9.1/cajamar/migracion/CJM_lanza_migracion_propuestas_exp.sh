@@ -19,7 +19,7 @@ echo "[INFO] ########################################################"
 
 
 echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_1510_MIGRACION_PROPUESTAS_FONDOS_PROPIOS_EXP.sh"                               
-./"$sh_dir"CMREC_1510_MIGRACION_PROPUESTAS_FONDOS_PROPIOS_EXP.sh "$1"   
+./"$sh_dir"CMREC_1510_MIGRACION_PROPUESTAS_FONDOS_PROPIOS_EXP.sh "$1" "$2" 
 if [ $? != 0 ] ; then 
   echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC_1510_MIGRACION_PROPUESTAS_FONDOS_PROPIOS_EXP.sh"
   echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"          

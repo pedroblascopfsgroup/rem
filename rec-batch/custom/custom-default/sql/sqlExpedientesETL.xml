@@ -1724,7 +1724,7 @@
             EXECUTE IMMEDIATE '
             Insert Into '||cMASTER_SCHEMA||'.JBPM_TRANSITION (id_, name_, processdefinition_, from_, to_, fromindex_)
             select '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL, DATA.* FROM (
-              select distinct ''CompletarExpediente'' name_, pi.processdefinition_, tr1.from_, tr1.to_, 0
+              select distinct ''CompletarExpediente'' name_, pi.processdefinition_, tr1.from_, tr1.to_, 1
               from EXP_EXPEDIENTES exp
                 join '||cMASTER_SCHEMA||'.JBPM_PROCESSINSTANCE pi on exp.EXP_PROCESS_BPM = pi.id_
                 join '||cMASTER_SCHEMA||'.JBPM_TOKEN tk on EXP.EXP_PROCESS_BPM = tk.processinstance_

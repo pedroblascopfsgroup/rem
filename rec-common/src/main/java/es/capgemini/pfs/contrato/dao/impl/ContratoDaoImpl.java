@@ -44,7 +44,7 @@ public class ContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 
 	private static Date staticCacheFechaCarga = null;
 
-	private static final long FECHA_CARGA_CACHE_TIMEOUT = 14400000;
+	private static final long FECHA_CARGA_CACHE_TIMEOUT = 3600000;
 	
 	@Autowired
 	private GenericABMDao genericDao;

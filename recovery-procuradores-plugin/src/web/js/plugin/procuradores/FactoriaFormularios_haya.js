@@ -782,7 +782,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     this.storeDDTipoBienCajamar = new Ext.data.Store({
         url:'/pfs/pcdprocesadoresoluciones/getDictionary.htm'
         ,baseParams: {
-            dictionary: 'DDTipoBienCajamar'
+            dictionary: 'es.capgemini.pfs.bien.model.DDTipoBien'
         }
         ,reader: new Ext.data.JsonReader({
             root: 'diccionario'
@@ -2666,7 +2666,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	   	   				,{"xtype":'numberfield',"name":"d_costasProcurador","fieldLabel":"Costas del procurador",allowBlank:false}
 	   	   				,{"xtype":'numberfield',"name":"d_costasLetrado","fieldLabel":"Costas de letrado",allowBlank:false,filtrar:true}
 	   	   				,{"xtype":'numberfield',"name":"d_suplidos","fieldLabel":"Suplidos",allowBlank:false}
-	   	   				,{"xtype":'combo',"store":storeSINO,"value":"02", "name":"d_comboImpugnacion","fieldLabel":"Presentación de impugnación",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, 	id:'d_comboImpugnacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	   	   				,{"xtype":'combo',"store":storeSINO,"value":"02", "name":"d_comboImpugnacion","fieldLabel":"Presentación de impugnación",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, 	id:'d_comboImpugnacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	   	   		]);
 	
     // id: 353 : TRAMITE COSTAS CONTRA ENTIDAD : Escrito sellado impugnando costas

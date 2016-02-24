@@ -2035,6 +2035,18 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		
 		return extAsu;
 	}
+	
+	public Boolean tieneProcurador(Long idAsunto){
+		List<EXTGestorAdicionalAsunto> gestores = getGestoresAdicionalesAsunto(idAsunto);
+		if(!gestores.isEmpty()){
+			for(EXTGestorAdicionalAsunto gestor : gestores){
+				if(gestor != null && gestor.getTipoGestor() != null && coreProjectContext.getTiposGestorProcurador().contains(gestor.getTipoGestor().getCodigo())){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 }
 

@@ -170,7 +170,8 @@ BEGIN
 		PERIMETRO_EXP_REC_ID,
 		PERIMETRO_EXP_SEG_ID,
 		CONTRATO_JUDICIALIZADO_ID,
-		PERIMETRO_SIN_GESTION_ID
+		PERIMETRO_SIN_GESTION_ID,
+		SIT_CART_DANADA_ID
        )
       select '''||fecha||''',
         '''||fecha||''',
@@ -227,7 +228,8 @@ BEGIN
 		0,
 		0,
 		0,
-		2
+		2,
+		-1
       from '||V_HAYA01||'.H_MOV_MOVIMIENTOS where MOV_FECHA_EXTRACCION = '''||max_dia_con_contratos||''' and BORRADO = 0';
 
       V_ROWCOUNT := sql%rowcount;
@@ -296,7 +298,8 @@ BEGIN
 		PERIMETRO_EXP_REC_ID,
 		PERIMETRO_EXP_SEG_ID,
 		CONTRATO_JUDICIALIZADO_ID,
-		PERIMETRO_SIN_GESTION_ID
+		PERIMETRO_SIN_GESTION_ID,
+		SIT_CART_DANADA_ID
        )
       select '''||fecha||''',
         '''||fecha||''',
@@ -353,7 +356,8 @@ BEGIN
 		0,
 		0,
 		0,
-		2
+		2,
+		-1
         from '||V_DATASTAGE||'.MOV_MOVIMIENTOS mov,
              '||V_DATASTAGE||'.CNT_CONTRATOS cnt
       where mov.CNT_ID = cnt.CNT_ID and mov.MOV_FECHA_EXTRACCION = '''||fecha||''' and mov.BORRADO = 0';
@@ -457,7 +461,7 @@ BEGIN
                                                  else -1 end) where DIA_ID = fecha;
     commit;
 
-/*
+
     -- SIT_CART_DANADA_ID (Repasar cnt_id repetidos)
     execute immediate 'merge into TMP_H_CNT h
                        using (select CNT_ID, VEN_ARRASTRE 
@@ -485,7 +489,7 @@ BEGIN
                        when matched then update set h.TIPO_GESTION_EXP_ID = texp.DD_TPX_ID 
                        where h.DIA_ID = '''||fecha||'''';
     commit;     
- */   
+    
     update TMP_H_CNT set TRAMO_ANTIGUEDAD_DEUDA_ID = (case when NUM_DIAS_VENCIDOS <= 0 then 0
                                                            when NUM_DIAS_VENCIDOS > 0 and NUM_DIAS_VENCIDOS <= 30 then 1
                                                            when NUM_DIAS_VENCIDOS > 30 and NUM_DIAS_VENCIDOS <= 60 then 2
@@ -747,7 +751,14 @@ BEGIN
            from '||V_DATASTAGE||'.CEX_CONTRATOS_EXPEDIENTE cex 
            join '||V_DATASTAGE||'.PRC_CEX pcex on cex.CEX_ID = pcex.CEX_ID
            join H_PRE pre on pre.PROCEDIMIENTO_ID = pcex.PRC_ID
-           where pre.DIA_ID = '''||fecha||''') hprc
+           where pre.DIA_ID = '''||fecha||'''
+           AND NOT EXISTS (SELECT 1
+                      FROM '||V_DATASTAGE||'.PCO_PRC_PROCEDIMIENTOS PCO, '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP HEP
+                      WHERE PCO.PCO_PRC_ID = HEP.PCO_PRC_ID
+                      AND DD_PCO_PEP_ID IN (SELECT DD_PCO_PEP_ID FROM '||V_DATASTAGE||'.DD_PCO_PRC_ESTADO_PREPARACION WHERE DD_PCO_PEP_CODIGO IN (''FI''))
+                      AND PCO_PRC_HEP_FECHA_FIN IS NULL
+                      AND PCO.PRC_ID = PCEX.PRC_ID)
+			) hprc
     on (h.CONTRATO_ID = hprc.CNT_ID)
     when matched then update set h.PERIMETRO_GES_PRE_ID = 1
     where h.DIA_ID = '''||fecha||'''';

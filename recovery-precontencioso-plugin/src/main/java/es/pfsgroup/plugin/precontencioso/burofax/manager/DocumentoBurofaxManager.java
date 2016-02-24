@@ -8,6 +8,9 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -32,6 +35,7 @@ import es.capgemini.pfs.direccion.model.Direccion;
 import es.capgemini.pfs.movimiento.model.Movimiento;
 import es.capgemini.pfs.oficina.model.Oficina;
 import es.capgemini.pfs.parametrizacion.dao.ParametrizacionDao;
+import es.capgemini.pfs.persona.model.DDPropietario;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.persona.model.PersonaManual;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -69,7 +73,8 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 	private static final String CABECERA_EXPEDIDORDIR3 = "CABECERA_EXPEDIDORDIR3";
 	private static final String CABECERA_CONTACTO1 = "CABECERA_CONTACTO1";
 	private static final String CABECERA_CONTACTO2 = "CABECERA_CONTACTO2";
-			
+	private static final String PARRAFO_DISCLAIMER = "PARRAFO_DISCLAIMER";
+	
 	private static final String INICIO_MARCA = "${";
 	private static final String FIN_MARCA = "}";
 	private static final String BIENES_ENT = "bienesEnt";
@@ -430,28 +435,35 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 			cabecera.put(CABECERA_DIRECCION1, construyeDireccion1(envioBurofax.getDireccion()));
 			cabecera.put(CABECERA_DIRECCION2, construyeDireccion2(envioBurofax.getDireccion()));
 			cabecera.put(CABECERA_DIRECCION3, construyeDireccion3(envioBurofax.getDireccion()));
+			cabecera.put(PARRAFO_DISCLAIMER, construyeParrafoDisclaimer(envioBurofax.getBurofax().getContrato(), esBFA));
 		}
 		return cabecera;
 	}
 
-	private String construyeContacto1(Persona demandado) {
-		final String texto = "Persona de contacto: ";
+	private String construyeParrafoDisclaimer(Contrato contrato, boolean esBFA) {
+		final String codigoBankia = "2038";
+		Calendar fechaReferencia = Calendar.getInstance();
+		fechaReferencia.set(2011, 05, 16, 0, 0);
+		String resultado = "";
 		try {
-			return texto + demandado.getOficinaGestora().getNombre();
+			String codigoEntidadOrigen = contrato.getCharextra5();
+			String nombreEntidadOrigen = ((DDPropietario) genericDao.get(DDPropietario.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEntidadOrigen))).getDescripcion();
+			if (!codigoBankia.equals(codigoEntidadOrigen) || 
+					(contrato.getFechaCreacion().before(fechaReferencia.getTime()))) {
+				if (esBFA) {
+					resultado = "LA CAJA DE AHORROS " + nombreEntidadOrigen + 
+							", APROBÓ LA SEGREGACIÓN DE LA TOTALIDAD DE LOS ACTIVOS Y PASIVOS DE SU NEGOCIO BANCARIO A FAVOR DE BANCO FINANCIERO Y DE AHORROS S.A., " + 
+							"Y AL HACERSE EFECTIVA DICHA SEGREGACIÓN USTED HA PASADO A SER CLIENTE DE BANCO FINANCIERO Y DE AHORROS  S.A.";
+				} else {
+					resultado = "LA CAJA DE AHORROS " + nombreEntidadOrigen + 
+							", APROBÓ LA SEGREGACIÓN DE LA TOTALIDAD DE LOS ACTIVOS Y PASIVOS DE SU NEGOCIO BANCARIO A FAVOR DE BANCO FINANCIERO Y DE AHORROS S.A., " + 
+							"QUE A SU VEZ, HA AUTORIZADO SU SEGREGACIÓN A FAVOR DE BANKIA S.A., Y AL HACERSE EFECTIVA DICHA SEGREGACIÓN USTED HA PASADO A SER CLIENTE DE BANKIA, S.A.";
+				}
+			}
 		} catch (Exception e) {
-			logger.error("construyeContacto1: " + e.getMessage());
-			return texto + DATO_NO_DISPONIBLE;
+			logger.error("construyeParrafoDisclaimer: " + e.getMessage());
 		}
-	}
-
-	private String construyeContacto2(Persona demandado) {
-		final String texto = "Teléfono: ";
-		try {
-			return texto + demandado.getOficinaGestora().getTelefono1();
-		} catch (Exception e) {
-			logger.error("construyeContacto2: " + e.getMessage());
-			return texto + DATO_NO_DISPONIBLE;
-		}
+		return resultado;
 	}
 
 	private Oficina obtenerOficinaUsuarioConectato(Usuario usuario) {
@@ -549,6 +561,27 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 			}
 		}
 		return resultado;
+	}
+
+
+	private String construyeContacto1(Persona demandado) {
+		final String texto = "Persona de contacto: ";
+		try {
+			return texto + demandado.getOficinaGestora().getNombre();
+		} catch (Exception e) {
+			logger.error("construyeContacto1: " + e.getMessage());
+			return texto + DATO_NO_DISPONIBLE;
+		}
+	}
+
+	private String construyeContacto2(Persona demandado) {
+		final String texto = "Teléfono: ";
+		try {
+			return texto + demandado.getOficinaGestora().getTelefono1();
+		} catch (Exception e) {
+			logger.error("construyeContacto2: " + e.getMessage());
+			return texto + DATO_NO_DISPONIBLE;
+		}
 	}
 
 	@Override

@@ -26,6 +26,7 @@ import es.capgemini.pfs.persona.model.Persona;
 @Entity
 @Table(name = "CPE_CONTRATOS_PERSONAS", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class ContratoPersona implements Serializable, Auditable {
 
     private static final long serialVersionUID = 1L;

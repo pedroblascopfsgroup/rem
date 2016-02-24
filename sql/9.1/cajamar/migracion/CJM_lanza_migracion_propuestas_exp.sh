@@ -16,7 +16,14 @@ echo "[INFO] ########################################################"
 echo "[INFO] #####    INICIO CJM_lanza_migracion_propuestas_exp.sh"  
 echo "[INFO] ########################################################"  
 
-
+echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_prepara_ficheros_migracion.sh"           
+./"$sh_dir"CJM_prepara_ficheros_migracion.sh 
+if [ $? != 0 ] ; then 
+   echo -e "\n\n======>>> [ERROR] en "$sh_dir"CJM_prepara_ficheros_migracion.sh" 
+   echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"         
+   exit 1 
+fi
+echo "[OK] ""$sh_dir""CJM_prepara_ficheros_migracion.sh ejecutado correctamente"
 
 echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_1510_MIGRACION_PROPUESTAS_FONDOS_PROPIOS_EXP.sh"                               
 ./"$sh_dir"CMREC_1510_MIGRACION_PROPUESTAS_FONDOS_PROPIOS_EXP.sh "$1" "$2" 

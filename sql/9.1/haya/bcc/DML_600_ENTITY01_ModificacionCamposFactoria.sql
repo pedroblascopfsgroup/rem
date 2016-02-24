@@ -92,6 +92,10 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('Borrado - DD_TR_TIPOS_RESOLUCION');
     V_MSQL := 'delete '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dd_tr_codigo  =''R_DEM_SEL_PCM''';
     EXECUTE IMMEDIATE V_MSQL;
+    
+    DBMS_OUTPUT.PUT_LINE('Modificado bug, de I_DOT_DET_OCU a I_DOC_DET_OCU');
+    V_MSQL := 'update '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_dd_tin_codigo = ''I_DOT_DET_OCU''';
+    EXECUTE IMMEDIATE V_MSQL;
         
     
     COMMIT;

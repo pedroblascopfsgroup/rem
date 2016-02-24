@@ -129,13 +129,17 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 
 	private String obtenerTextoViviendaHabitual(Contrato contrato, String campo) {
 		boolean isViviendaHabitual = false;
-		if (!Checks.esNulo(contrato) && !Checks.estaVacio(contrato.getBienes())) {
-			for (Bien bien : contrato.getBienes()) {
-				NMBBien nmbBien = (NMBBien) bien;
-				if ("1".equals(nmbBien.getViviendaHabitual())) {
-					isViviendaHabitual = true;
+		try {
+			if (!Checks.esNulo(contrato) && !Checks.estaVacio(contrato.getBienes())) {
+				for (Bien bien : contrato.getBienes()) {
+					NMBBien nmbBien = (NMBBien) bien;
+					if ("1".equals(nmbBien.getViviendaHabitual())) {
+						isViviendaHabitual = true;
+					}
 				}
 			}
+		} catch (Exception e) {
+			logger.debug(campo + " error: " + e.getMessage());
 		}
 		StringBuffer sb = new StringBuffer("");
 		if (isViviendaHabitual) {

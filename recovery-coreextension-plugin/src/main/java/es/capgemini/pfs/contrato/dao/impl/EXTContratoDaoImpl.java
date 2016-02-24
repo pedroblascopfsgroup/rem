@@ -1,6 +1,5 @@
 package es.capgemini.pfs.contrato.dao.impl;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -9,6 +8,7 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.hibernate.pagination.PaginationManager;
@@ -26,9 +26,6 @@ import es.capgemini.pfs.expediente.model.DDEstadoExpediente;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.HQLBuilder;
-import es.pfsgroup.commons.utils.HibernateQueryUtils;
-import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.recovery.ext.api.contrato.dto.EXTBusquedaContratosDto;
 
 @Repository
@@ -357,40 +354,59 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 						+ dto.getMaxDiasVencidos() + " ");
 			}
 		}
-		/*
-		 * FIXME deshabilitado de momento para probar if
-		 * (dto.getCodigosZonaAdm() != null && dto.getCodigosZonaAdm().size() >
-		 * 0) { int cantZonas = dto.getCodigosZona().size(); if (cantZonas > 0)
-		 * { hql.append(" and ( "); for (Iterator<String> it =
-		 * dto.getCodigosZona().iterator(); it .hasNext();) { String codigoZ =
-		 * it.next(); hql.append(" c.oficinaAdministrativa.zona.codigo like '" +
-		 * codigoZ + "%'"); if (it.hasNext()) { hql.append(" OR"); } } // SE
-		 * PONE ESTE FILTRO AQU�, DEBIDO A QUE PARA VISUALIZAR EL // CONTRATO,
-		 * PUEDE O BIEN PERTENECER A LA ZONA // DEL USUARIO LOGEADO, O QUE ESTE
-		 * SEA GESTOR DEL CONTRATO hql.append(" or c.id in (");
-		 * hql.append(generaFiltroContratosPorGestor(usuLogado, params));
-		 * hql.append(")"); hql.append(" ) "); } } else { if
-		 * (dto.getCodigosZona() != null && dto.getCodigosZona().size() > 0) {
-		 * int cantZonas = dto.getCodigosZona().size(); if (cantZonas > 0) {
-		 * hql.append(" and ( "); for (Iterator<String> it =
-		 * dto.getCodigosZona().iterator(); it .hasNext();) { String codigoZ =
-		 * it.next();
-		 * hql.append(" c.oficinaContable.zona.codigo like :codigo_zona_" +
-		 * codigoZ);
-		 * 
-		 * params.put("codigo_zona_" + codigoZ, "" + codigoZ + "%");
-		 * 
-		 * if (it.hasNext()) { hql.append(" OR"); } } // SE PONE ESTE FILTRO
-		 * AQU�, DEBIDO A QUE PARA VISUALIZAR EL // CONTRATO, PUEDE O BIEN
-		 * PERTENECER A LA ZONA // DEL USUARIO LOGEADO, O QUE ESTE SEA GESTOR
-		 * DEL CONTRATO hql.append(" or c.id in (");
-		 * hql.append(generaFiltroContratosPorGestor(usuLogado, params));
-		 * hql.append(")"); hql.append(" ) "); } } else {// EN CASO DE QUE NO
-		 * TENGA ZONAS ASIGNADAS Y SEA GESTOR DEL // CONTRATO // DEBE PODER
-		 * SEGUIR VISUALIZANDO EL CONTRATO hql.append(" and c.id in ( ");
-		 * hql.append(generaFiltroContratosPorGestor(usuLogado, params));
-		 * hql.append(" ) "); } }
-		 */
+
+		if (!Checks.esNulo(dto.getCodigoZonaAdm())) {
+			 
+			 String[] codigosZona = StringUtils.split(dto.getCodigoZonaAdm(), ",");
+			 int cantZonas = codigosZona.length; 
+			 if (cantZonas > 0) { 
+				 hql.append(" and ( "); 
+				 for (int i = 0; i < codigosZona.length; i++) { 
+					 String codigoZ = codigosZona[i]; 
+					 hql.append(" c.oficinaAdministrativa.zona.codigo like '" + codigoZ + "%'"); 
+					 if (i < codigosZona.length - 1) { 
+						 hql.append(" OR"); 
+					 } 
+				 } 
+		 			
+				 // SE PONE ESTE FILTRO AQU�, DEBIDO A QUE PARA VISUALIZAR EL 
+				 // CONTRATO, PUEDE O BIEN PERTENECER A LA ZONA 
+				 // DEL USUARIO LOGEADO, O QUE ESTE SEA GESTOR DEL CONTRATO 
+				 hql.append(" or c.id in (");
+				 hql.append(generaFiltroContratosPorGestor(usuLogado, params));
+				 hql.append(")"); 
+				 hql.append(" ) "); 
+			 } 
+		} 
+
+		if (dto.getCodigosZona() != null && dto.getCodigosZona().size() > 0) {
+			int cantZonas = dto.getCodigosZona().size(); 
+			if (cantZonas > 0) {
+				hql.append(" and ( "); 
+				for (Iterator<String> it = dto.getCodigosZona().iterator(); it .hasNext();) { 
+					String codigoZ = it.next();
+					hql.append(" c.oficinaContable.zona.codigo like '" + codigoZ + "%'");
+	  
+					if (it.hasNext()) { 
+						hql.append(" OR"); 
+					} 
+				} 
+					
+				// SE PONE ESTE FILTRO AQU�, DEBIDO A QUE PARA VISUALIZAR EL 
+				// CONTRATO, PUEDE O BIEN PERTENECER A LA ZONA 
+				// DEL USUARIO LOGEADO, O QUE ESTE SEA GESTOR DEL CONTRATO 
+				hql.append(" or c.id in (");
+				hql.append(generaFiltroContratosPorGestor(usuLogado, params));
+				hql.append(")"); 
+				hql.append(" ) "); 
+			} 
+		} 
+		else {
+			// EN CASO DE QUE NO TENGA ZONAS ASIGNADAS Y SEA GESTOR DEL // CONTRATO // DEBE PODER SEGUIR VISUALIZANDO EL CONTRATO 
+			hql.append(" and c.id in ( ");
+			hql.append(generaFiltroContratosPorGestor(usuLogado, params));
+			hql.append(" ) "); 
+		}
 
 		return hql.toString();
 	}
@@ -547,7 +563,7 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 	/**
 	 * {@inheritDoc}
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes" })
 	public HashMap<String, Object> buscarTotalContratosCliente(
 			DtoBuscarContrato dto) {
 		StringBuffer hql = new StringBuffer();
@@ -883,9 +899,11 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 				hql.append(")");
 				hql.append(" ) ");
 			}
-		} else {// EN CASO DE QUE NO TENGA ZONAS ASIGNADAS Y SEA GESTOR DEL
-				// CONTRATO
-				// DEBE PODER SEGUIR VISUALIZANDO EL CONTRATO
+		} 
+		else {
+			// EN CASO DE QUE NO TENGA ZONAS ASIGNADAS Y SEA GESTOR DEL
+			// CONTRATO
+			// DEBE PODER SEGUIR VISUALIZANDO EL CONTRATO
 			hql.append(" and c.id in ( ");
 			hql.append(generaFiltroContratosPorGestor(usuLogado, params));
 			hql.append(" ) ");

@@ -142,8 +142,7 @@
             SELECT cpe.cnt_id, cpe.per_id, min(cpe.cpe_orden) AS cpe_orden
               FROM CPE_CONTRATOS_PERSONAS cpe
                JOIN DD_TIN_TIPO_INTERVENCION tin ON cpe.dd_tin_id = tin.dd_tin_id
-                -- Se incluyen todos  los obligados de cada contrato
-             WHERE cpe.borrado = 0 AND NOT (dd_tin_titular <> 1 and dd_tin_avalista <> 1)
+             WHERE cpe.borrado = 0 AND dd_tin_titular = 1 --solo titulares
              GROUP BY cpe.cnt_id, cpe.per_id;
 
             --LOG
@@ -1348,16 +1347,21 @@
 
             --** Correccion del nombre de expedientes de recuperacion
             MERGE INTO EXP_EXPEDIENTES old
-            USING ( Select t.exp_id , t.exp_descripcion
+            USING (
+                    Select t.exp_id , t.exp_descripcion
                       From (select gui.exp_id
                                  , TRIM(per.PER_NOMBRE||' '||per.PER_APELLIDO1||' '||per.PER_APELLIDO2) as EXP_DESCRIPCION
                                  , row_number() over (partition by gui.exp_id, cpe.cnt_id order by cpe.cpe_orden, decode(gui.per_id,cpe.per_id,1,2), cpe.per_id) as orden_descr
-                              from BATCH_VEN_DATOS_SALIDA_GUIA gui
-                                 , BATCH_SV_DATOS_CNT_PER cpe
-                                 , PER_PERSONAS per
+                              from BATCH_VEN_DATOS_SALIDA_GUIA  gui
+                                 , CPE_CONTRATOS_PERSONAS       cpe
+                                 , PER_PERSONAS                 per
+                                 , DD_TIN_TIPO_INTERVENCION     tin
                              where gui.cnt_id = cpe.cnt_id
-                               and cpe.per_id = per.per_id) t
-                     Where orden_descr = 1) new
+                               and cpe.per_id = per.per_id
+                               and cpe.dd_tin_id = tin.dd_tin_id
+                               and tin.dd_tin_codigo='01') t
+                     Where orden_descr = 1
+                ) new
             ON (old.exp_id = new.exp_id)
             WHEN MATCHED THEN
              UPDATE SET old.exp_descripcion = new.exp_descripcion;

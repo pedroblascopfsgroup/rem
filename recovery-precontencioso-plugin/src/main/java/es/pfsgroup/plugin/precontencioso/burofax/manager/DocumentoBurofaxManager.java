@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
@@ -24,12 +26,17 @@ import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.contrato.model.DDTipoIntervencion;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Direccion;
 import es.capgemini.pfs.movimiento.model.Movimiento;
+import es.capgemini.pfs.oficina.model.Oficina;
 import es.capgemini.pfs.parametrizacion.dao.ParametrizacionDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.persona.model.PersonaManual;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.utils.FormatUtils;
+import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -44,15 +51,25 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienEntidad;
 import es.pfsgroup.recovery.geninformes.GENINFInformesManager;
+import es.pfsgroup.recovery.integration.bpm.DiccionarioDeCodigos;
 
 @Service
 public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 
+	private static final String DATO_NO_DISPONIBLE = "DATO NO DISPONIBLE";
 	private static final String CABECERA_NOMBRE_PERSONA = "nombrePersona";
 	private static final String CABECERA_DIRECCION1 = "direccion1";
 	private static final String CABECERA_DIRECCION2 = "direccion2";
 	private static final String CABECERA_DIRECCION3 = "direccion3";
 
+	private static final String CABECERA_EXPEDIDOR1 = "CABECERA_EXPEDIDOR1";
+	private static final String CABECERA_EXPEDIDOR2 = "CABECERA_EXPEDIDOR2";
+	private static final String CABECERA_EXPEDIDORDIR1 = "CABECERA_EXPEDIDORDIR1";
+	private static final String CABECERA_EXPEDIDORDIR2 = "CABECERA_EXPEDIDORDIR2";
+	private static final String CABECERA_EXPEDIDORDIR3 = "CABECERA_EXPEDIDORDIR3";
+	private static final String CABECERA_CONTACTO1 = "CABECERA_CONTACTO1";
+	private static final String CABECERA_CONTACTO2 = "CABECERA_CONTACTO2";
+			
 	private static final String INICIO_MARCA = "${";
 	private static final String FIN_MARCA = "}";
 	private static final String BIENES_ENT = "bienesEnt";
@@ -86,8 +103,12 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 	private static final String NOMBRE_PLANTILLA_BUROFAX_BANKIA = "plantillaBurofaxBankia.docx";
 	private static final String NOMBRE_PLANTILLA_BUROFAX_BFA = "plantillaBurofaxBFA.docx";
 
+	private static final String NOMBRE_BANKIA = "BANKIA, S.A.";
+	private static final String NOMBRE_BFA = "BANCO FINANCIERO Y DE AHORRO, S.A.";
+	
 	private static final SimpleDateFormat fechaFormat = new SimpleDateFormat(FormatUtils.DD_DE_MES_DE_YYYY,MessageUtils.DEFAULT_LOCALE);
 	private static final NumberFormat currencyInstance = NumberFormat.getCurrencyInstance(new Locale("es","ES"));
+	private static final NumberFormat codigoPostalFormat = new DecimalFormat("00000");
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -103,6 +124,11 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 
 	@Autowired
 	private GENINFInformesManager informesManager;
+
+	@Autowired
+	private UsuarioApi usuarioManager;
+	
+	private final Log logger = LogFactory.getLog(getClass());
 
 	@Override
 	public HashMap<String, Object> obtenerMapeoVariables(EnvioBurofaxPCO envioBurofax) {
@@ -274,7 +300,7 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		}
 				
 		if(!Checks.esNulo(contrato) && !Checks.esNulo(contrato.getContratoAnterior()) && !contrato.getContratoAnterior().equals("0")){
-			mapaVariables.put(NUM_CUENTA_ANTERIOR,contrato.getContratoAnterior());
+			mapaVariables.put(NUM_CUENTA_ANTERIOR,contrato.getCharextra8());
 		} else {
 			mapaVariables.put(NUM_CUENTA_ANTERIOR,ERROR_NO_EXISTE_VALOR);
 		}
@@ -348,14 +374,25 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		if (!Checks.esNulo(dir.getDomicilio_n())) {
 			resultado += " " + dir.getDomicilio_n().trim();
 		}
+		if (!Checks.esNulo(dir.getPortal())) {
+			resultado += " " + dir.getPortal().trim();
+		}
+		if (!Checks.esNulo(dir.getEscalera())) {
+			resultado += " " + dir.getEscalera().trim();
+		}
+		if (!Checks.esNulo(dir.getPiso())) {
+			resultado += " " + dir.getPiso().trim();
+		}
+		if (!Checks.esNulo(dir.getPuerta())) {
+			resultado += " " + dir.getPuerta().trim();
+		}
 		return resultado.trim().toUpperCase();
 	}
 	
 	private String construyeDireccion2(Direccion dir) {
-		NumberFormat nf = new DecimalFormat("00000");
 		String resultado = "";
 		if (!Checks.esNulo(dir.getCodigoPostal())) {
-			resultado += nf.format(dir.getCodigoPostal()) + " ";
+			resultado += codigoPostalFormat.format(dir.getCodigoPostal()) + " ";
 		}
 		if (!Checks.esNulo(dir.getLocalidad()) && !Checks.esNulo(dir.getLocalidad().getDescripcion())) {
 			resultado += dir.getLocalidad().getDescripcion();
@@ -374,11 +411,21 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 	}
 	
 	@Override
-	public Map<String, String> obtenerCabecera(EnvioBurofaxPCO envioBurofax, String contexto) {
+	public Map<String, String> obtenerCabecera(EnvioBurofaxPCO envioBurofax, String contexto, boolean esBFA) {
 
 		Map<String, String> cabecera = new HashMap<String, String>();
 
 		if (PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(contexto)) {
+			final Usuario usuario = usuarioManager.getUsuarioLogado();
+			final Oficina oficina = obtenerOficinaUsuarioConectato(usuario);
+			boolean esCentroEspecial = comprobarCentroEspecial(oficina);
+			cabecera.put(CABECERA_EXPEDIDOR1, construyeExpedidor1(esBFA));
+			cabecera.put(CABECERA_EXPEDIDOR2, construyeExpedidor2(esCentroEspecial, oficina));
+			cabecera.put(CABECERA_EXPEDIDORDIR1, construyeExpedidorDir1(esCentroEspecial, oficina));
+			cabecera.put(CABECERA_EXPEDIDORDIR2, construyeExpedidorDir2(esCentroEspecial, oficina));
+			cabecera.put(CABECERA_EXPEDIDORDIR3, construyeExpedidorDir3(esCentroEspecial, oficina));
+			cabecera.put(CABECERA_CONTACTO1, construyeContacto1(envioBurofax.getBurofax().getDemandado()));
+			cabecera.put(CABECERA_CONTACTO2, construyeContacto2(envioBurofax.getBurofax().getDemandado()));
 			cabecera.put(CABECERA_NOMBRE_PERSONA, construyeNombre(envioBurofax.getBurofax().getDemandado()));
 			cabecera.put(CABECERA_DIRECCION1, construyeDireccion1(envioBurofax.getDireccion()));
 			cabecera.put(CABECERA_DIRECCION2, construyeDireccion2(envioBurofax.getDireccion()));
@@ -387,14 +434,131 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		return cabecera;
 	}
 
+	private String construyeContacto1(Persona demandado) {
+		final String texto = "Persona de contacto: ";
+		try {
+			return texto + demandado.getOficinaGestora().getNombre();
+		} catch (Exception e) {
+			logger.error("construyeContacto1: " + e.getMessage());
+			return texto + DATO_NO_DISPONIBLE;
+		}
+	}
+
+	private String construyeContacto2(Persona demandado) {
+		final String texto = "Teléfono: ";
+		try {
+			return texto + demandado.getOficinaGestora().getTelefono1();
+		} catch (Exception e) {
+			logger.error("construyeContacto2: " + e.getMessage());
+			return texto + DATO_NO_DISPONIBLE;
+		}
+	}
+
+	private Oficina obtenerOficinaUsuarioConectato(Usuario usuario) {
+		final String perfilAcceso = "FPFSRACCESO";
+		Oficina resultado = null;
+		try {
+			final List<ZonaUsuarioPerfil> zonasPerfil = usuario.getZonaPerfil();
+			if (zonasPerfil.size() == 1) {
+				resultado = zonasPerfil.get(0).getZona().getOficina();
+			} else {
+				for (ZonaUsuarioPerfil zpu : zonasPerfil) {
+					if (perfilAcceso.equals(zpu.getPerfil().getCodigo())) {
+						resultado = zpu.getZona().getOficina();
+					}
+				};
+			}
+		} catch (Exception e) {
+			logger.error("obtenerOficinaUsuarioConectato: " + e.getMessage());
+		}
+		return resultado;
+
+	}
+
+	private boolean comprobarCentroEspecial(Oficina oficina) {
+		Long codigoOficina = null;
+		boolean resultado = false;
+		final Long codigoEspecial1 = 802L;
+		final Long codigoEspecial2 = 803L;
+		try {
+			codigoOficina = oficina.getCodigo();
+			if (!Checks.esNulo(codigoOficina)) {
+				if (codigoEspecial1.equals(codigoOficina / 100) || codigoEspecial2.equals(codigoOficina / 100)) {
+					resultado = true;
+				}
+			}
+		} catch (Exception e) {
+			logger.error("comprobarCentroEspecial: " + e.getMessage());
+		}
+		return resultado;
+	}
+
+	private String construyeExpedidor1(boolean esBFA) {
+		return (esBFA ? NOMBRE_BANKIA : NOMBRE_BFA);
+	}
+
+	private String construyeExpedidor2(boolean esCentroEspecial, Oficina oficina) {
+		String nombreCentro = "BANKIA PREJUDICIAL";
+		if (!esCentroEspecial) {
+			if (!Checks.esNulo(oficina) && !Checks.esNulo(oficina.getNombre())) {
+				nombreCentro = oficina.getNombre();
+			} else {
+				nombreCentro = DATO_NO_DISPONIBLE;
+			}
+		}
+		return nombreCentro;
+	}
+
+	private String construyeExpedidorDir1(boolean esCentroEspecial,	Oficina oficina) {
+		String resultado = "";
+		if (!esCentroEspecial) {
+			if (!Checks.esNulo(oficina) && !Checks.esNulo(oficina.getDomicilio())) {
+				resultado = oficina.getDomicilio();
+			} else {
+				resultado = DATO_NO_DISPONIBLE;
+			}
+		}
+		return resultado;
+	}
+
+	private String construyeExpedidorDir2(boolean esCentroEspecial,	Oficina oficina) {
+		String resultado = "";
+		if (!esCentroEspecial) {
+			if (!Checks.esNulo(oficina) && !Checks.esNulo(oficina.getCodigoPostal())) {
+				resultado = codigoPostalFormat.format(oficina.getCodigoPostal());
+			} else {
+				resultado = DATO_NO_DISPONIBLE;
+			}
+		}
+		return resultado;
+	}
+
+	private String construyeExpedidorDir3(boolean esCentroEspecial,	Oficina oficina) {
+		String resultado = "";
+		if (!esCentroEspecial) {
+			if (!Checks.esNulo(oficina) && !Checks.esNulo(oficina.getIdProvincia())) {
+				try {
+					resultado = ((DDProvincia)genericDao.get(DDProvincia.class, 
+							genericDao.createFilter(FilterType.EQUALS, "id", oficina.getIdProvincia()))).getDescripcion();
+				} catch (Exception e) {
+					logger.error("construyeExpedidorDir3: " + e.getMessage());
+					resultado = DATO_NO_DISPONIBLE;
+				}
+			} else {
+				resultado = DATO_NO_DISPONIBLE;
+			}
+		}
+		return resultado;
+	}
+
 	@Override
-	public InputStream obtenerPlantillaBurofax(String proyectoRecovery, String operacionBFA) {
+	public InputStream obtenerPlantillaBurofax(String proyectoRecovery, boolean esBFA) {
 
 		String tipoPlantilla;
 		if (!PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(proyectoRecovery)) {
 			tipoPlantilla = NOMBRE_PLANTILLA_BUROFAX;
 		} else {
-			if ("S".equals(operacionBFA)) {
+			if (esBFA) {
 				tipoPlantilla = NOMBRE_PLANTILLA_BUROFAX_BFA;
 			} else {
 				tipoPlantilla = NOMBRE_PLANTILLA_BUROFAX_BANKIA;
@@ -576,4 +740,37 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		
 		return textoBuro;
 	}
+	
+	public boolean isOperacionBFA(Contrato contrato, String contexto) {
+		final Integer codigoOficinaContableBFA = 8427;
+		final String codigoPropietario1 = "00000";
+		final String codigoPropietario2 = "05074";
+		
+		if (PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(contexto)) {
+			String indicadorBFA = "";
+			Integer oficinaContable = null;
+			String codigoPropietario = "";
+			try {
+				codigoPropietario = contrato.getCharextra1();
+				indicadorBFA = contrato.getCharextra4();
+				oficinaContable = contrato.getOficinaContable().getCodigoOficina();
+			} catch (NullPointerException e) {
+				logger.error("isOperacionBFA: " + e);
+			}
+			
+			if (codigoPropietario.equals(codigoPropietario1) || codigoPropietario.equals(codigoPropietario2)) {
+				return (indicadorBFA.equals("S") || (oficinaContable.equals(codigoOficinaContableBFA)));
+			} else {
+				String mensaje = "isOperacionBFA: codigoPropietaria del contrato " + contrato.getId() + " vale " + 
+						codigoPropietario + ", diferente de " + codigoPropietario1 + " y " + codigoPropietario2; 
+				logger.error(mensaje);
+				//throw new Exception(mensaje);
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+	
+
 }

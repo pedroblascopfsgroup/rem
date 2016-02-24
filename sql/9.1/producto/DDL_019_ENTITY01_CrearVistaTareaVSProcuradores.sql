@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20150623
+--## AUTOR=JORGE MARTIN
+--## FECHA_CREACION=20160118
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.0-X
---## INCIDENCIA_LINK=MITCDD-2068
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=PRODUCTO-585
 --## PRODUCTO=SI
 --##
 --## Finalidad: Vista VTAR_TAREA_VS_PROCURADORES
@@ -84,7 +84,9 @@ BEGIN
 	                        THEN ''3''
 	                     ELSE ''4''
 	                  END
-	             FROM DUAL)
+	             FROM DUAL),
+	          vtar.ZON_COD,
+	          vtar.PEF_ID
 	     FROM vtar_tarea_vs_usuario vtar JOIN res_resoluciones_masivo res
 	          ON res.res_tar_id = vtar.tar_id AND res.borrado = 0
 	          JOIN dd_tr_tipos_resolucion tr ON tr.dd_tr_id = res.res_tre_id
@@ -150,7 +152,9 @@ BEGIN
 	                        THEN ''3''
 	                     ELSE ''4''
 	                  END
-	             FROM DUAL)
+	             FROM DUAL),
+	          vtar.ZON_COD,
+	          vtar.PEF_ID
 	     FROM vtar_tarea_vs_usuario vtar JOIN res_resoluciones_masivo res
 	          ON res.res_tar_id = vtar.tar_id AND res.borrado = 0
 	          JOIN dd_tr_tipos_resolucion tr ON tr.dd_tr_id = res.res_tre_id

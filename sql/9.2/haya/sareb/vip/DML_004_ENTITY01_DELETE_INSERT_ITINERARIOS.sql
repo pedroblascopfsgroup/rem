@@ -39,6 +39,7 @@ DECLARE
     
     V_EST_CE NUMBER;
     V_EST_RE NUMBER;
+    V_EST_FP NUMBER;
     V_EST_ENSAN NUMBER;
     V_EST_SANC NUMBER;
     
@@ -58,9 +59,8 @@ BEGIN
   				 	INNER JOIN '||V_ESQUEMA||'.ARQ_ARQUETIPOS ARQ ON EXP.ARQ_ID = ARQ.ARQ_ID
 				 WHERE EXP.BORRADO = 0 AND NOT ARQ.ITI_ID IS NULL)
 				AND DD_TIT_ID <> (SELECT DD_TIT_ID FROM '||V_ESQUEMA_M||'.DD_TIT_TIPO_ITINERARIOS WHERE DD_TIT_CODIGO = ''DEU'')';
-	DBMS_OUTPUT.PUT_LINE(V_MSQL);
 	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] Registros borrados de '||V_ESQUEMA||'.ITI_ITINERARIOS');
+	DBMS_OUTPUT.PUT_LINE('[INFO] Borrados los itinerarios sin asignar a expedientes que no sea el de gestión de deuda');
 	
 	-- Insertamos si no existe el nuevo itinerario de tipo Gestión de deuda
 	V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ITI_ITINERARIOS WHERE ITI_NOMBRE = ''Estándar''';
@@ -91,9 +91,8 @@ BEGIN
 
 		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.ITI_ITINERARIOS (ITI_ID, ITI_NOMBRE, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TIT_ID, DD_AEX_ID)
 					VALUES ('||V_ITI||', ''Estándar'', 0, ''DML'', SYSDATE, 0, '||V_DD_TIT_ID||', '||V_DD_AEX_ID||')';
-		DBMS_OUTPUT.PUT_LINE(V_MSQL);
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Registros insertado en '||V_ESQUEMA||'.ITI_ITINERARIOS');
+		DBMS_OUTPUT.PUT_LINE('[INFO] Se ha creado un nuevo itinerario de tipo Gestión Deuda con el nombre: Estándar, ITI_ID: '||V_ITI);
 		
 		-- ***************************************************** Estados **************************************
 		-- Creamos el nuevo estado solo para Sareb En Sancion si no existe ya en el mismo orden que el estado Decision Comite
@@ -111,15 +110,40 @@ BEGIN
 		END IF;
 		
 		
-		-- Ahora creamos los registros para enlazar los estados a este nuevo itinerario
-		V_SQL := 'SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = ''OFI_OFICINA''';
-		EXECUTE IMMEDIATE V_SQL INTO V_PEF_GESTOR;
-    	DBMS_OUTPUT.PUT_LINE('[INFO] Perfil gestor: '|| V_PEF_GESTOR);
-		V_SQL := 'SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = ''GES_RIESGOS''';
-		EXECUTE IMMEDIATE V_SQL INTO V_PEF_SUPER;
-    	DBMS_OUTPUT.PUT_LINE('[INFO] Perfil supervisor: '|| V_PEF_SUPER);
+		-- Creamos los perfiles de gestión y supervisión para los nuevos estados del itinerario
+		V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = ''GESTDEUDA''';
+		EXECUTE IMMEDIATE V_SQL INTO V_NUM;
+		IF V_NUM = 0 THEN
+			V_SQL := 'SELECT '||V_ESQUEMA||'.S_PEF_PERFILES.NEXTVAL FROM DUAL';
+			EXECUTE IMMEDIATE V_SQL INTO V_PEF_GESTOR;
+			
+			V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.PEF_PERFILES (PEF_ID, PEF_DESCRIPCION_LARGA, PEF_DESCRIPCION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, PEF_CODIGO, PEF_ES_CARTERIZADO)
+						VALUES ('||V_PEF_GESTOR||',''Gestor para la gestión de deuda'',''Gestor para la gestión de deuda'',0,''DML'',SYSDATE,0,''GESTDEUDA'',0)';
+			EXECUTE IMMEDIATE V_MSQL;
+			DBMS_OUTPUT.PUT_LINE('[INFO] Se ha creado un perfil gestor deuda(GESTDEUDA), con PEF_ID: '||V_PEF_GESTOR);
+		ELSE		
+			V_SQL := 'SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = ''GESTDEUDA''';
+			EXECUTE IMMEDIATE V_SQL INTO V_PEF_GESTOR;
+			DBMS_OUTPUT.PUT_LINE('[INFO] Ya existia el perfil gestor deuda(GESTDEUDA), con PEF_ID: '||V_PEF_GESTOR);
+		END IF;
+		
+		V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = ''SUPGESTDEUDA''';
+		EXECUTE IMMEDIATE V_SQL INTO V_NUM;
+		IF V_NUM = 0 THEN
+			V_SQL := 'SELECT '||V_ESQUEMA||'.S_PEF_PERFILES.NEXTVAL FROM DUAL';
+			EXECUTE IMMEDIATE V_SQL INTO V_PEF_SUPER;
+			
+			V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.PEF_PERFILES (PEF_ID, PEF_DESCRIPCION_LARGA, PEF_DESCRIPCION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, PEF_CODIGO, PEF_ES_CARTERIZADO)
+						VALUES ('||V_PEF_SUPER||',''Supervisor para la gestión de deuda'',''Supervisor para la gestión de deuda'',0,''DML'',SYSDATE,0,''SUPGESTDEUDA'',0)';
+			EXECUTE IMMEDIATE V_MSQL;
+			DBMS_OUTPUT.PUT_LINE('[INFO] Se ha creado un perfil gestor deuda(SUPGESTDEUDA), con PEF_ID: '||V_PEF_SUPER);
+		ELSE			
+			V_SQL := 'SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = ''SUPGESTDEUDA''';
+			EXECUTE IMMEDIATE V_SQL INTO V_PEF_SUPER;
+		END IF;
     
-		-- CE Completar expediente
+		-- Ahora creamos los registros para enlazar los estados a este nuevo itinerario
+    	-- CE Completar expediente
 		V_SQL := 'SELECT DD_EST_ID FROM '||V_ESQUEMA_M||'.DD_EST_ESTADOS_ITINERARIOS WHERE DD_EST_CODIGO=''CE'' AND DD_EIN_ID = 2';
 		EXECUTE IMMEDIATE V_SQL INTO V_DD_EST;
 		V_SQL := 'SELECT '||V_ESQUEMA||'.S_EST_ESTADOS.NEXTVAL FROM DUAL';
@@ -138,6 +162,16 @@ BEGIN
 					VALUES ('||V_EST_RE||', '||V_PEF_GESTOR||', '||V_PEF_SUPER||', '||V_ITI||', '||V_DD_EST||', 0, 864000000, 0, ''DML'', SYSDATE, 0)';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Insertado estado Revisar expediente al itinerario: Estándar.');
+		
+		-- FP Formalizar propuesta
+		V_SQL := 'SELECT DD_EST_ID FROM '||V_ESQUEMA_M||'.DD_EST_ESTADOS_ITINERARIOS WHERE DD_EST_CODIGO=''FP'' AND DD_EIN_ID = 2';
+		EXECUTE IMMEDIATE V_SQL INTO V_DD_EST;
+		V_SQL := 'SELECT '||V_ESQUEMA||'.S_EST_ESTADOS.NEXTVAL FROM DUAL';
+		EXECUTE IMMEDIATE V_SQL INTO V_EST_FP;
+		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.EST_ESTADOS (EST_ID, PEF_ID_GESTOR, PEF_ID_SUPERVISOR, ITI_ID, DD_EST_ID, EST_TELECOBRO, EST_PLAZO, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) 
+					VALUES ('||V_EST_FP||', '||V_PEF_GESTOR||', '||V_PEF_SUPER||', '||V_ITI||', '||V_DD_EST||', 0, 864000000, 0, ''DML'', SYSDATE, 0)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Insertado estado Formalizar propuesta al itinerario: Estándar.');		
 		
 		-- ENSAN En sanción
 		V_SQL := 'SELECT DD_EST_ID FROM '||V_ESQUEMA_M||'.DD_EST_ESTADOS_ITINERARIOS WHERE DD_EST_CODIGO=''ENSAN'' AND DD_EIN_ID = 2';
@@ -199,6 +233,28 @@ BEGIN
 					VALUES ('||V_ESQUEMA||'.S_REE_REGLAS_ELEVACION_ESTADO.NEXTVAL, '||V_DD_TRE_ID||', '||V_DD_AEX_ID||', '||V_EST_RE||', 0, ''DML'', SYSDATE, 0)';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Insertada POLITICA para PPGRA');
+		
+		-- ***************************************************** FP Formularizar propuesta **************************************
+		/*
+		DBMS_OUTPUT.PUT_LINE('[INFO] Reglas elevación para estado FP Formularizar propuesta.********************************');
+		V_SQL := 'SELECT DD_TRE_ID FROM '||V_ESQUEMA_M||'.DD_TRE_TIPO_REGLAS_ELEVACION WHERE DD_TRE_CODIGO=''GESTION_PROPUESTA''';
+		EXECUTE IMMEDIATE V_SQL INTO V_DD_TRE_ID;
+		V_SQL := 'SELECT DD_AEX_ID FROM '||V_ESQUEMA_M||'.DD_AEX_AMBITOS_EXPEDIENTE WHERE DD_AEX_CODIGO=''EXP''';
+		EXECUTE IMMEDIATE V_SQL INTO V_DD_AEX_ID;
+		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.REE_REGLAS_ELEVACION_ESTADO (REE_ID, DD_TRE_ID, DD_AEX_ID, EST_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) 
+					VALUES ('||V_ESQUEMA||'.S_REE_REGLAS_ELEVACION_ESTADO.NEXTVAL, '||V_DD_TRE_ID||', '||V_DD_AEX_ID||', '||V_EST_FP||', 0, ''DML'', SYSDATE, 0)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Insertada GESTION PROPUESTA para EXPEDIENTE');
+		
+		V_SQL := 'SELECT DD_TRE_ID FROM '||V_ESQUEMA_M||'.DD_TRE_TIPO_REGLAS_ELEVACION WHERE DD_TRE_CODIGO=''POLITICA''';
+		EXECUTE IMMEDIATE V_SQL INTO V_DD_TRE_ID;
+		V_SQL := 'SELECT DD_AEX_ID FROM '||V_ESQUEMA_M||'.DD_AEX_AMBITOS_EXPEDIENTE WHERE DD_AEX_CODIGO=''PPGRA''';
+		EXECUTE IMMEDIATE V_SQL INTO V_DD_AEX_ID;
+		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.REE_REGLAS_ELEVACION_ESTADO (REE_ID, DD_TRE_ID, DD_AEX_ID, EST_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) 
+					VALUES ('||V_ESQUEMA||'.S_REE_REGLAS_ELEVACION_ESTADO.NEXTVAL, '||V_DD_TRE_ID||', '||V_DD_AEX_ID||', '||V_EST_FP||', 0, ''DML'', SYSDATE, 0)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Insertada POLITICA para PPGRA');
+		*/		
 		
 		-- ***************************************************** ENSAN En sancion **************************************
 		DBMS_OUTPUT.PUT_LINE('[INFO] Reglas elevación para estado ENSAN EN sancion.********************************');

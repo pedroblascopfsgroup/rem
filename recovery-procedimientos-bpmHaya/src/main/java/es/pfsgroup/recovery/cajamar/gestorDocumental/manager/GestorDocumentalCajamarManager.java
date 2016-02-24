@@ -254,7 +254,11 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			inputDto.setClaveAsociacion(claveAsociacion);
 			String nombreFichero = uploadForm.getFileItem().getFileName();
 			nombreFichero = nombreFichero.substring(0, nombreFichero.indexOf("."));
-			inputDto.setDescripcion(nombreFichero+"_"+idAdjuntoAsunto);
+			if(DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidadGrid) || DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidadGrid)) {
+				inputDto.setDescripcion(nombreFichero+"_"+idAdjuntoAsunto);
+			}else{
+				inputDto.setDescripcion(nombreFichero);
+			}
 			if(!Checks.esNulo(uploadForm.getParameter("fechaCaducidad"))) {
 				SimpleDateFormat frmt = new SimpleDateFormat("ddMMyyyy");
 				try {

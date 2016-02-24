@@ -97,13 +97,13 @@ BEGIN
      select ''' || fecha || ''',
          ''' || fecha || ''',
          acu.ACU_ID,
-         acc.CNT_ID,
+         tec.CNT_ID,
 		 ter.TEA_ID,
          TRUNC(ope.OP_FECHA_SOL_PREVISTA),
          NVL(ter.DD_TPA_ID, -1),
          1
-    from  ' || V_DATASTAGE || '.ACU_ACUERDO_PROCEDIMIENTOS acu,  ' || V_DATASTAGE || '.ACC_ACUERDO_CONTRATO acc,  ' || V_DATASTAGE || '.TEA_TERMINOS_ACUERDO ter, ' || V_DATASTAGE || '.ACU_OPERACIONES_TERMINOS ope
-    where acu.ACU_ID = acc.ACU_ID and acu.BORRADO = 0 and acc.BORRADO = 0 and TRUNC(ACU_FECHA_PROPUESTA)<=''' || fecha || ''' and acu.ACU_ID = ter.ACU_ID and ter.BORRADO = 0 and ter.TEA_ID = ope.TEA_ID and ope.BORRADO = 0';
+    from  ' || V_DATASTAGE || '.ACU_ACUERDO_PROCEDIMIENTOS acu,  ' || V_DATASTAGE || '.TEA_CNT tec,  ' || V_DATASTAGE || '.TEA_TERMINOS_ACUERDO ter, ' || V_DATASTAGE || '.ACU_OPERACIONES_TERMINOS ope
+    where acu.BORRADO = 0 and tec.BORRADO = 0 and TRUNC(ACU_FECHA_PROPUESTA)<=''' || fecha || ''' and acu.ACU_ID = ter.ACU_ID and ter.BORRADO = 0 and tec.tea_id = ter.tea_id and ter.TEA_ID = ope.TEA_ID and ope.BORRADO = 0';
     V_ROWCOUNT := sql%rowcount;     
     commit;
   

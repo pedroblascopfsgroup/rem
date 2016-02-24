@@ -99,15 +99,15 @@ BEGIN
      select ''' || fecha || ''',
          ''' || fecha || ''',
          acu.ACU_ID,
-         acc.CNT_ID,
+         tec.CNT_ID,
          TRUNC(ACU_FECHA_PROPUESTA),
          NVL(RCF_TPP_ID,- 1),
          NVL(DD_SOL_ID,- 1),
          NVL(DD_EAC_ID,- 1),
          1,
          ACU_IMPORTE_PAGO   
-    from  ' || V_DATASTAGE || '.ACU_ACUERDO_PROCEDIMIENTOS acu,  ' || V_DATASTAGE || '.ACC_ACUERDO_CONTRATO acc 
-    where acu.ACU_ID = acc.ACU_ID and acu.BORRADO = 0 and acc.BORRADO = 0 and TRUNC(ACU_FECHA_PROPUESTA)<=''' || fecha || '''';
+    from  ' || V_DATASTAGE || '.ACU_ACUERDO_PROCEDIMIENTOS acu,  ' || V_DATASTAGE || '.TEA_CNT tec,  ' || V_DATASTAGE || '.TEA_TERMINOS_ACUERDO ter 
+    where acu.BORRADO = 0 and tec.BORRADO = 0 and TRUNC(ACU_FECHA_PROPUESTA)<=''' || fecha || ''' and acu.ACU_ID = ter.ACU_ID and ter.BORRADO = 0 and tec.tea_id = ter.tea_id';
     V_ROWCOUNT := sql%rowcount;     
     commit;
   

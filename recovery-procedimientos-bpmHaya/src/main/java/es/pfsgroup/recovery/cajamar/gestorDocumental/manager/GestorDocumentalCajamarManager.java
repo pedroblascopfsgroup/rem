@@ -238,6 +238,11 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	private GestorDocumentalInputDto rellenaInputDto(String claveAsociacion,
 			String tipoGestion, String tipoDocumento, String tipoEntidadGrid,
 			WebFileItem uploadForm) {
+		
+		if(DDTipoEntidad.CODIGO_ENTIDAD_PERSONA.equals(tipoEntidadGrid)) {
+			claveAsociacion = claveAsociacion.substring(4);
+		}
+		
 		GestorDocumentalInputDto inputDto = new GestorDocumentalInputDto();
 		if (ALTA_GESTOR_DOC.equals(tipoGestion)) {
 			inputDto.setOperacion(ConstantesGestorDocumental.ALTA_DOCUMENTO_OPERACION);

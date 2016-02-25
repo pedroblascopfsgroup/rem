@@ -45,7 +45,8 @@ BEGIN
               ARQ_ID           NUMBER(16),
               CEX_PASE         NUMBER,
               PEX_PASE         NUMBER,
-              DD_TIT_CODIGO    VARCHAR2(50 CHAR)            NOT NULL
+              DD_TIT_CODIGO    VARCHAR2(50 CHAR)            NOT NULL,
+              ARRASTRE         NUMBER
             ) NOLOGGING';
 
   IF V_EXISTE = 0 THEN

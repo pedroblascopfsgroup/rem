@@ -45,6 +45,7 @@ BEGIN
               ARQ_ID           NUMBER(16),
               CEX_PASE         NUMBER,
               PEX_PASE         NUMBER,
+              ARRASTRE         NUMBER,
               PRIO             NUMBER
             ) NOLOGGING';
 
@@ -56,9 +57,10 @@ BEGIN
      DBMS_OUTPUT.PUT_LINE(TABLA||' BORRADA');
      EXECUTE IMMEDIATE V_MSQL;
      DBMS_OUTPUT.PUT_LINE(TABLA||' CREADA');
-     EXECUTE IMMEDIATE ('Create index IDX_BATCH_SEG_DAT_SAL_BASE on BATCH_SEG_DATOS_SALIDA_BASE(exp_id, cnt_id, per_id) nologging');
-     DBMS_OUTPUT.PUT_LINE(TABLA||' INDICE CREADO');
   END IF;
+
+  EXECUTE IMMEDIATE ('Create index IDX_BATCH_SEG_DAT_SAL_BASE on BATCH_SEG_DATOS_SALIDA_BASE(exp_id, cnt_id, per_id) nologging');
+  DBMS_OUTPUT.PUT_LINE(TABLA||' INDICE CREADO');
 
 EXCEPTION
   WHEN OTHERS THEN

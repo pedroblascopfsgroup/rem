@@ -4,6 +4,11 @@
     <entry key="comunes.idxdrop.PreparaGeneracionExpedientes.Oracle9iDialect">
         <![CDATA[
         BEGIN
+
+         --Log
+         INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,null,'GeneracionExpedientes','comunes.idxdrop.PreparaGeneracionExpedientes','Inicio Generacion de expedientes',null);
+         COMMIT;
+
          --Operacion_DDL.DDL_INDEX('DROP','IDX_BATCH_SV_DATOS_CNT_1');
          --Operacion_DDL.DDL_INDEX('DROP','IDX_BATCH_SV_DATOS_CNT_2');
          EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_CNT_1 UNUSABLE';
@@ -40,12 +45,12 @@
             --** Informacion de contratos
             Insert /*+append*/ INTO BATCH_SV_DATOS_CNT
               (cnt_id, ofi_id, cnt_riesgo, pos_viva_vencida)
-              Select cnt.cnt_id
+              Select /*+parallel*/ cnt.cnt_id
                    , cnt.ofi_id
                    , nvl(mov.mov_riesgo, 0) As cnt_riesgo --, nvl(mov.mov_deuda_irregular, 0) AS cnt_riesgo
                    , nvl(mov.mov_pos_viva_vencida, 0) As pos_viva_vencida
                 From CNT_CONTRATOs cnt
-                Join ${master.schema}.DD_ESC_ESTADO_CNT esc ON cnt.dd_esc_id = esc.dd_esc_id
+                Join cmmaster.DD_ESC_ESTADO_CNT esc ON cnt.dd_esc_id = esc.dd_esc_id
                   Join MOV_MOVIMIENTOS mov ON cnt.cnt_id = mov.cnt_id AND cnt.cnt_fecha_extraccion = mov.mov_fecha_extraccion
                Where cnt.borrado = 0
                  And esc.dd_esc_codigo = '0';
@@ -139,10 +144,10 @@
            --** Relaciones personas-contratos validas
             -------------------------------------------
             Insert /*+append*/ INTO BATCH_SV_DATOS_CNT_PER
-            SELECT cpe.cnt_id, cpe.per_id, min(cpe.cpe_orden) AS cpe_orden
+            SELECT cpe.cnt_id, cpe.per_id, min(cpe.cpe_orden) AS cpe_orden, MAX(decode(dd_tin_titular,1,1,0)) as arrastre
               FROM CPE_CONTRATOS_PERSONAS cpe
                JOIN DD_TIN_TIPO_INTERVENCION tin ON cpe.dd_tin_id = tin.dd_tin_id
-             WHERE cpe.borrado = 0 AND dd_tin_titular = 1 --solo titulares
+             WHERE cpe.borrado = 0 AND NOT (dd_tin_titular <> 1 AND dd_tin_avalista <> 1) --solo titulares
              GROUP BY cpe.cnt_id, cpe.per_id;
 
             --LOG
@@ -150,14 +155,13 @@
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SV_DATOS_CNT_PER Cargada',V_NUFILAS);
             COMMIT;
 
-
             --** Contratos en expedientes de recuperacion o seguimiento (no libres)
             ------------------------------------------------------------------------
             Insert /*+append*/ INTO BATCH_SV_DATOS_CNT_EXP
             Select cex.exp_id, cex.cnt_id, tpx.dd_tpx_codigo
               From CEX_CONTRATOS_EXPEDIENTE cex
                Join EXP_EXPEDIENTES exp On cex.exp_id = exp.exp_id
-                Join ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE EEX On exp.dd_eex_id = eex.dd_eex_id
+                Join cmmaster.DD_EEX_ESTADO_EXPEDIENTE EEX On exp.dd_eex_id = eex.dd_eex_id
                 Join DD_TPX_TIPO_EXPEDIENTE tpx On exp.dd_tpx_id = tpx.dd_tpx_id
              Where eex.dd_eex_codigo in ('1','2','4') --activo, bloqueado o congelado
                And tpx.dd_tpx_codigo in ('SEG','RECU')
@@ -179,7 +183,7 @@
             Select pex.exp_id, pex.per_id, tpx.dd_tpx_codigo
               From PEX_PERSONAS_EXPEDIENTE pex
                Join EXP_EXPEDIENTES exp On pex.exp_id = exp.exp_id
-                Join ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE EEX On exp.dd_eex_id = eex.dd_eex_id
+                Join cmmaster.DD_EEX_ESTADO_EXPEDIENTE EEX On exp.dd_eex_id = eex.dd_eex_id
                 Join DD_TPX_TIPO_EXPEDIENTE tpx On exp.dd_tpx_id = tpx.dd_tpx_id
              Where eex.dd_eex_codigo in ('1','2','4') --activo, bloqueado o congelado
                And tpx.dd_tpx_codigo in ('SEG','RECU')
@@ -202,11 +206,11 @@
                   From ARQ_ARQUETIPOS arq
                   Inner Join ITI_ITINERARIOS iti On arq.iti_id = iti.iti_id
                   Inner Join EST_ESTADOS est On iti.iti_id = est.iti_id
-                  Inner Join ${master.schema}.DD_EST_ESTADOS_ITINERARIOS dd_est On est.dd_est_id = dd_est.dd_est_id
+                  Inner Join cmmaster.DD_EST_ESTADOS_ITINERARIOS dd_est On est.dd_est_id = dd_est.dd_est_id
                   --sumamos todos los plazos que esten por debajo de gestionvencidos
-                  And dd_est.dd_est_orden <= (select dd_est_orden from ${master.schema}.DD_EST_ESTADOS_ITINERARIOS where dd_est_codigo = 'GV')
+                  And dd_est.dd_est_orden <= (select dd_est_orden from cmmaster.DD_EST_ESTADOS_ITINERARIOS where dd_est_codigo = 'GV')
                   --solo los de la entidad cliente
-                  Inner Join ${master.schema}.DD_EIN_ENTIDAD_INFORMACION dd_ein On dd_est.dd_ein_id = dd_ein.dd_ein_id And dd_ein_codigo = '1'
+                  Inner Join cmmaster.DD_EIN_ENTIDAD_INFORMACION dd_ein On dd_est.dd_ein_id = dd_ein.dd_ein_id And dd_ein_codigo = '1'
                  Where arq.borrado = 0
                  --agrupamos por arquetipo para poder calcular el plazo del itinerario de los clientes
                  Group by arq.arq_id, arq.arq_prioridad)
@@ -214,8 +218,8 @@
               FROM FECHASESTADOS vFechas
                 INNER JOIN CLI_CLIENTES cli ON vFechas.arq_id = cli.arq_id
                 --Solo los que esten en gestionVencidos
-                INNER JOIN ${master.schema}.DD_EST_ESTADOS_ITINERARIOS dd_est ON cli.dd_est_id  = dd_est.dd_est_id AND dd_est_codigo = 'GV'
-                INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION dd_ein ON dd_est.dd_ein_id = dd_ein.dd_ein_id AND dd_ein_codigo = '1'
+                INNER JOIN cmmaster.DD_EST_ESTADOS_ITINERARIOS dd_est ON cli.dd_est_id  = dd_est.dd_est_id AND dd_est_codigo = 'GV'
+                INNER JOIN cmmaster.DD_EIN_ENTIDAD_INFORMACION dd_ein ON dd_est.dd_ein_id = dd_ein.dd_ein_id AND dd_ein_codigo = '1'
              WHERE cli.borrado   = 0
                AND to_date(cli.cli_fecha_creacion,'DD/MM/RR') <= to_date(vfechas.fecha,'DD/MM/RR')  --Que esten fuera de plazo del itinerario
                /* Ordenamos por prioridad del arquetipo para crear primero expedientes a los clientes con arq. mas prioritarios y desechar a las personas relacionadas menos prioritarias */
@@ -243,8 +247,8 @@
                  , ARR_ARQ_RECUPERACION_PERSONA       arr
                  , ARQ_ARQUETIPOS                     arq
                  , ITI_ITINERARIOS                    iti
-                 , ${master.schema}.DD_TIT_TIPO_ITINERARIOS   tit
-                 , ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE aex
+                 , cmmaster.DD_TIT_TIPO_ITINERARIOS   tit
+                 , cmmaster.DD_AEX_AMBITOS_EXPEDIENTE aex
              Where cli.per_id = per.per_id
                And per.per_id = arr.per_id And per.borrado = 0
                And arr.arq_id = arq.arq_id And arq.borrado = 0
@@ -356,6 +360,7 @@
                          , 1 as CEX_PASE
                          , 1 as PEX_PASE
                          , cli.dd_tit_codigo
+                         , 1 as ARRASTRE
                       From BATCH_SV_CLIENTES       cli
                          , BATCH_SV_DATOS_PER_EXP  pex
                          , CCL_CONTRATOS_CLIENTE   ccl
@@ -401,12 +406,13 @@
                  , DECODE(gui.CNT_ID, cpe.CNT_ID ,1,0) as CEX_PASE
                  , DECODE(gui.PER_ID, cpe.PER_ID ,1,0) as PEX_PASE
                  , gui.dd_tit_codigo
+                 , cpe.ARRASTRE
               From BATCH_SEG_DATOS_SALIDA_GUIA gui
                  , BATCH_SV_DATOS_CNT_PER      cpe
                  , BATCH_SV_DATOS_CNT          cnt
-             Where gui.PER_ID = cpe.PER_ID
-               And cpe.CNT_ID = cnt.CNT_ID
-               And gui.CNT_ID <> cpe.CNT_ID;
+             Where gui.PER_ID  = cpe.PER_ID
+               And gui.CNT_ID <> cpe.CNT_ID
+               And cpe.CNT_ID = cnt.CNT_ID;
 
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;
@@ -417,8 +423,8 @@
             DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_TIT', estimate_percent => 20);
 
 
-            --** Obtenemos otras personas del grupo de la persona de pase y sus contratos
-            ------------------------------------------------------------------------------
+            --** Obtenemos otras personas del grupo de la persona de pase y los contratos de los cuales sean titulares
+            ----------------------------------------------------------------------------------------------------------
             Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_GCL
             Select distinct gui.EXP_ID
                  , gui.EXP_DESCRIPCION
@@ -442,7 +448,7 @@
                And gl2.PER_ID = pex.PER_ID(+) and pex.exp_id is null --libre
                And pex.dd_tpx_codigo(+) = 'SEG'
                And gl2.PER_ID =  cpe.PER_ID
-               And gui.PER_ID <> cpe.PER_ID
+               And gui.PER_ID <> cpe.PER_ID and cpe.ARRASTRE = 1
                And cpe.CNT_ID = cnt.CNT_ID
                And gui.DD_AEX_CODIGO in ('PG','PPGRA', 'PSGRA');
 
@@ -455,19 +461,16 @@
             DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_GCL', estimate_percent => 20);
 
 
-            --** Juntamos todas las relaciones (intervinientes + arrastrados del grupo)
-            -------------------------------------------------------------------------------
+            --** Juntamos todas las relaciones
+            ----------------------------------
             Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_BASE
-            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, MIN(PRIO) as PRIO
-            FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 1 as PRIO
+            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, MIN(PRIO) as PRIO
+            FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, 1 as PRIO
                     From BATCH_SEG_DATOS_SALIDA_GUIA
                   UNION ALL
-                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 2 as PRIO
-                    From BATCH_SEG_DATOS_SALIDA_TIT
-                  UNION ALL
-                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 3 as PRIO
-                    From BATCH_SEG_DATOS_SALIDA_GCL)
-            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE;
+                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, 2 as PRIO
+                    From BATCH_SEG_DATOS_SALIDA_TIT)
+            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE;
 
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;
@@ -481,7 +484,7 @@
             --** Inicio Primera Generacion si hace falta
             ---------------------------------------------
 
-            -- a) Buscamos otras personas relacionadas con los contratos del expediente.
+            -- a) Buscamos otros titulares de los contratos de los que es titular la persona de pase.
             Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_1G_PER
             Select distinct gui.EXP_ID
                  , gui.EXP_DESCRIPCION
@@ -500,12 +503,13 @@
                  , BATCH_SV_DATOS_CNT           cnt
                  , BATCH_SEG_DATOS_SALIDA_GUIA  pas
              Where gui.CNT_ID =  cpe.CNT_ID
-               And gui.PER_ID <> cpe.PER_ID
+               And gui.PER_ID <> cpe.PER_ID and cpe.ARRASTRE = 1
                And cpe.PER_ID = pex.PER_ID(+) and pex.EXP_ID is null --libre
                And pex.dd_tpx_codigo(+) = 'SEG'
                And cpe.CNT_ID = cnt.CNT_ID
                And gui.EXP_ID = pas.EXP_ID
                And gui.DD_AEX_CODIGO in ('PPGRA', 'PSGRA')
+               And gui.ARRASTRE = 1
             ;
 
             --LOG
@@ -516,7 +520,7 @@
             --Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA_1G_PER');
             DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_1G_PER', estimate_percent => 20);
 
-            --b) Buscamos otros contratos relacionados con las personas del paso a).
+            --b) Buscamos otros contratos de los que sean titulares las personas del paso a).
             Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_1G_CNT
             SELECT distinct gui.EXP_ID
                  , gui.EXP_DESCRIPCION
@@ -534,7 +538,7 @@
                  , BATCH_SV_DATOS_CNT            cnt
                  , BATCH_SEG_DATOS_SALIDA_GUIA   pas
              WHERE gui.PER_ID =  cpe.PER_ID
-               AND gui.CNT_ID <> cpe.CNT_ID
+               AND gui.CNT_ID <> cpe.CNT_ID and cpe.ARRASTRE = 1
                AND cpe.CNT_ID = cnt.CNT_ID
                AND gui.EXP_ID = pas.EXP_ID
                AND gui.DD_AEX_CODIGO in ('PPGRA', 'PSGRA')
@@ -548,19 +552,20 @@
             --Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA_1G_CNT');
             DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_1G_CNT', estimate_percent => 20);
 
-            --** Juntamos todas las relaciones (intervinientes + arrastrados del grupo + 1Gen)
+
+            --** Juntamos todas las relaciones (intervinientes + arrastrados 1Gen)
             ----------------------------------------------------------------------------------
             Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_1GEN
-            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, MIN(PRIO) as PRIO
-            FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, PRIO
+            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, MIN(PRIO) as PRIO
+            FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, PRIO
                     From BATCH_SEG_DATOS_SALIDA_BASE
                   UNION ALL
-                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 4 as PRIO
+                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 1 as ARRASTRE, 4 as PRIO
                     From BATCH_SEG_DATOS_SALIDA_1G_PER
                   UNION ALL
-                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 5 as PRIO
+                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 1 as ARRASTRE, 5 as PRIO
                     From BATCH_SEG_DATOS_SALIDA_1G_CNT)
-            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE;
+            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE;
 
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;
@@ -574,7 +579,7 @@
             --** Inicio Segunda Generacion si hace falta
             ---------------------------------------------
 
-            -- a) Buscamos otras personas relacionadas con los contratos del expediente.
+            -- a) Buscamos otros titulares de los contratos del expediente.
             Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_2G_PER
             Select distinct gui.EXP_ID
                  , gui.EXP_DESCRIPCION
@@ -593,12 +598,13 @@
                  , BATCH_SV_DATOS_CNT           cnt
                  , BATCH_SEG_DATOS_SALIDA_GUIA  pas
              Where gui.CNT_ID =  cpe.CNT_ID
-               And gui.PER_ID <> cpe.PER_ID
+               And gui.PER_ID <> cpe.PER_ID and cpe.ARRASTRE = 1
                And cpe.PER_ID = pex.PER_ID(+) and pex.EXP_ID is null --libre
                And pex.dd_tpx_codigo(+) = 'SEG'
                And cpe.CNT_ID = cnt.CNT_ID
                And gui.EXP_ID = pas.EXP_ID
-               And gui.DD_AEX_CODIGO = 'PSGRA';
+               And gui.DD_AEX_CODIGO = 'PSGRA'
+               And gui.ARRASTRE = 1;
 
 
             --LOG
@@ -606,7 +612,7 @@
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA_2G_PER Cargada',V_NUFILAS);
             COMMIT;
 
-            --b) Buscamos otros contratos relacionados con las personas del paso a).
+            --b) Buscamos otros contratos de los que sean titulares las personas del paso a).
             Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_2G_CNT
             SELECT distinct gui.EXP_ID
                  , gui.EXP_DESCRIPCION
@@ -624,7 +630,7 @@
                  , BATCH_SV_DATOS_CNT            cnt
                  , BATCH_SEG_DATOS_SALIDA_GUIA   pas
              WHERE gui.PER_ID =  cpe.PER_ID
-               AND gui.CNT_ID <> cpe.CNT_ID
+               AND gui.CNT_ID <> cpe.CNT_ID and cpe.ARRASTRE = 1
                AND cpe.CNT_ID = cnt.CNT_ID
                AND gui.EXP_ID = pas.EXP_ID
                AND gui.DD_AEX_CODIGO = 'CSGRA'
@@ -636,16 +642,19 @@
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA_2G_CNT Cargada',V_NUFILAS);
             COMMIT;
 
-            --** Juntamos todas las relaciones (intervinientes + arrastrados del grupo + 1Gen + 2Gen)
-            -----------------------------------------------------------------------------------------
+            --** Juntamos todas las relaciones
+            -----------------------------------
             Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_TODO
             SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, MIN(PRIO) as PRIO
             FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, PRIO
                     From BATCH_SEG_DATOS_SALIDA_1GEN
-                  UNION ALL
+                  UNION
+                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 3 as PRIO
+                    From BATCH_SEG_DATOS_SALIDA_GCL
+                  UNION
                   Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 6 as PRIO
                     From BATCH_SEG_DATOS_SALIDA_2G_PER
-                  UNION ALL
+                  UNION
                   Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 7 as PRIO
                     From BATCH_SEG_DATOS_SALIDA_2G_CNT)
             GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE
@@ -814,7 +823,7 @@
             --** Filtramos personas en exp de recuperacion y buscamos contratos de pase con riesgo
             -----------------------------------------------------------------------------------------
             Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_GUIA
-              (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,POS_VIVA_VENCIDA,CNT_ID,PER_ID,ARQ_ID,CPE_ORDEN,CEX_PASE,PEX_PASE,DD_TIT_CODIGO)
+              (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,POS_VIVA_VENCIDA,CNT_ID,PER_ID,ARQ_ID,CPE_ORDEN,CEX_PASE,PEX_PASE,DD_TIT_CODIGO,ARRASTRE)
             SELECT s_exp_expedientes.nextval as EXP_ID --cast(rownum as number(16)) as EXP_ID
                  , t.*
             FROM (Select TRIM(cli.PER_NOMBRE||' '||cli.PER_APELLIDO1||' '||cli.PER_APELLIDO2) as EXP_DESCRIPCION
@@ -828,6 +837,7 @@
                        , 1 as CEX_PASE
                        , 1 as PEX_PASE
                        , cli.dd_tit_codigo
+                       , 1 as ARRASTRE
                     From BATCH_SV_CLIENTES       cli
                        , BATCH_SV_DATOS_CNT_EXP  cex
                        , CCL_CONTRATOS_CLIENTE   ccl
@@ -860,7 +870,7 @@
             --** Obtenemos los intervinientes obligados del contrato de pase.
             -----------------------------------------------------------------
             Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_TIT
-             (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,POS_VIVA_VENCIDA,CNT_ID,PER_ID,CPE_ORDEN,ARQ_ID,CEX_PASE,PEX_PASE,DD_TIT_CODIGO)
+             (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,POS_VIVA_VENCIDA,CNT_ID,PER_ID,CPE_ORDEN,ARQ_ID,CEX_PASE,PEX_PASE,DD_TIT_CODIGO,ARRASTRE)
             Select distinct gui.EXP_ID
                  , gui.EXP_DESCRIPCION
                  , gui.DD_AEX_CODIGO
@@ -873,6 +883,7 @@
                  , DECODE(gui.CNT_ID, cpe.CNT_ID ,1,0) as CEX_PASE
                  , DECODE(gui.PER_ID, cpe.PER_ID ,1,0) as PEX_PASE
                  , gui.dd_tit_codigo
+                 , cpe.ARRASTRE
               From BATCH_VEN_DATOS_SALIDA_GUIA gui
                  , BATCH_SV_DATOS_CNT_PER      cpe
                  , BATCH_SV_DATOS_CNT          cnt
@@ -886,61 +897,17 @@
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_VEN_DATOS_SALIDA_TIT Cargada',V_NUFILAS);
             COMMIT;
 
-
-            --** Obtenemos otras personas del grupo y sus cnt
-            --------------------------------------------------
-            Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_GCL
-            (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,POS_VIVA_VENCIDA,CNT_ID,PER_ID,CPE_ORDEN,ARQ_ID,CEX_PASE,PEX_PASE)
-            Select distinct gui.EXP_ID
-                 , gui.EXP_DESCRIPCION
-                 , gui.DD_AEX_CODIGO
-                 , cnt.OFI_ID
-                 , cnt.POS_VIVA_VENCIDA
-                 , cpe.CNT_ID
-                 , cpe.PER_ID
-                 , cpe.CPE_ORDEN
-                 , gui.ARQ_ID
-                 , DECODE(gui.CNT_ID, cpe.CNT_ID ,1 ,0) as CEX_PASE
-                 , DECODE(gui.PER_ID, cpe.PER_ID ,1 ,0) as PEX_PASE
-              From BATCH_VEN_DATOS_SALIDA_GUIA gui
-                 , BATCH_SV_DATOS_GCL          gl1
-                 , BATCH_SV_DATOS_GCL          gl2
-                 , BATCH_SV_DATOS_CNT_EXP      cex
-                 , BATCH_SV_DATOS_CNT_PER      cpe
-                 , BATCH_SV_DATOS_CNT          cnt
-                 , BATCH_VEN_DATOS_SALIDA_GUIA pas
-             Where gui.PER_ID = gl1.PER_ID
-               And gl1.GCL_ID = gl2.GCL_ID
-               And gl2.PER_ID = cpe.PER_ID
-               And gui.PER_ID <> cpe.PER_ID
-               And cpe.CNT_ID = cnt.CNT_ID
-               And cnt.CNT_ID = cex.CNT_ID(+) and cex.EXP_ID is null --contratos libres
-               And cex.DD_TPX_CODIGO(+) = 'RECU'
-               And gui.EXP_ID = pas.EXP_ID
-               And pas.CEX_PASE = 1 and pas.PEX_PASE = 1
-               And gui.DD_AEX_CODIGO in ('CG','CPGRA', 'CSGRA');
-
-            --LOG
-            V_NUFILAS:=SQL%ROWCOUNT;
-            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_VEN_DATOS_SALIDA_GCL Cargada',V_NUFILAS);
-            COMMIT;
-
-
-
             --** Juntamos todas las relaciones (intervinientes + arrastrados del grupo)
             -------------------------------------------------------------------------------
             Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_BASE
-            (EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, PRIO)
-            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, MIN(PRIO) as PRIO
-            FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 1 as PRIO
+            (EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, PRIO)
+            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, MIN(PRIO) as PRIO
+            FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, 1 as PRIO
                     from BATCH_VEN_DATOS_SALIDA_GUIA
                   UNION
-                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 2 as PRIO
-                    from BATCH_VEN_DATOS_SALIDA_TIT
-                  UNION
-                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 3 as PRIO
-                    From BATCH_VEN_DATOS_SALIDA_GCL)
-            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE;
+                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, 2 as PRIO
+                    from BATCH_VEN_DATOS_SALIDA_TIT )
+            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE;
 
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;
@@ -951,10 +918,51 @@
             DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_VEN_DATOS_SALIDA_BASE', estimate_percent => 20);
 
 
+            --** Obtenemos otras personas de los grupos de los titulares de contratos de pase y los contratos de los que son titulares.
+            ---------------------------------------------------------------------------------------------------------------------------
+            Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_GCL
+            (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,POS_VIVA_VENCIDA,CNT_ID,PER_ID,CPE_ORDEN,ARQ_ID,CEX_PASE,PEX_PASE)
+            Select distinct gui.EXP_ID
+                           , gui.EXP_DESCRIPCION
+                           , gui.DD_AEX_CODIGO
+                           , cnt.OFI_ID
+                           , cnt.POS_VIVA_VENCIDA
+                           , cpe.CNT_ID
+                           , cpe.PER_ID
+                           , cpe.CPE_ORDEN
+                           , gui.ARQ_ID
+                           , DECODE(gui.CNT_ID, cpe.CNT_ID ,1 ,0) as CEX_PASE
+                           , DECODE(gui.PER_ID, cpe.PER_ID ,1 ,0) as PEX_PASE
+                        From BATCH_VEN_DATOS_SALIDA_BASE gui
+                           , BATCH_SV_DATOS_GCL          gl1
+                           , BATCH_SV_DATOS_GCL          gl2
+                           , BATCH_SV_DATOS_CNT_EXP      cex
+                           , BATCH_SV_DATOS_CNT_PER      cpe
+                           , BATCH_SV_DATOS_CNT          cnt
+                           , BATCH_VEN_DATOS_SALIDA_GUIA pas
+                       Where gui.PER_ID = gl1.PER_ID
+                         And gl1.GCL_ID = gl2.GCL_ID
+                         And gl2.PER_ID =  cpe.PER_ID
+                         And gui.PER_ID <> cpe.PER_ID and cpe.ARRASTRE = 1 --contratos de las personas del grupo (solo si son titulares)
+                         And cpe.CNT_ID = cnt.CNT_ID
+                         And cnt.CNT_ID = cex.CNT_ID(+) and cex.EXP_ID is null --contratos libres
+                         And cex.DD_TPX_CODIGO(+) = 'RECU'
+                         And gui.EXP_ID = pas.EXP_ID
+                         And pas.CEX_PASE = 1 and pas.PEX_PASE = 1
+                         And gui.DD_AEX_CODIGO in ('CG','CPGRA', 'CSGRA')
+                         And gui.ARRASTRE = 1; --grupos solo de los titulares del contrato de pase
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_VEN_DATOS_SALIDA_GCL Cargada.',V_NUFILAS);
+            COMMIT;
+
+
+
             --** Inicio Primera Generacion si hace falta
             ---------------------------------------------
 
-            -- a) Buscamos otros contratos de las personas del expediente
+            -- a) Buscamos otros contratos de los cuales sean titulares los titulares del contrato de pase
             Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_1G_CNT
              (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,POS_VIVA_VENCIDA,CNT_ID,PER_ID,CPE_ORDEN,ARQ_ID,CEX_PASE,PEX_PASE)
             SELECT distinct gui.EXP_ID
@@ -974,10 +982,11 @@
                  , BATCH_SV_DATOS_CNT          cnt
                  , BATCH_VEN_DATOS_SALIDA_GUIA pas
              WHERE gui.PER_ID =  cpe.PER_ID
-               AND gui.CNT_ID <> cpe.CNT_ID
+               AND gui.CNT_ID <> cpe.CNT_ID And cpe.ARRASTRE = 1 --contratos de los que sean titulares
                And cnt.CNT_ID = cex.CNT_ID(+) And cex.DD_TPX_CODIGO(+) = 'RECU' And cex.EXP_ID is null --libres
                AND cpe.CNT_ID = cnt.CNT_ID
                AND gui.EXP_ID = pas.EXP_ID
+               AND gui.ARRASTRE = 1 --solo de titulares
                AND gui.DD_AEX_CODIGO in ('CPGRA', 'CSGRA')
                And pas.CEX_PASE = 1 and pas.PEX_PASE = 1;
 
@@ -991,7 +1000,7 @@
             DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_VEN_DATOS_SALIDA_1G_CNT', estimate_percent => 20);
 
 
-            -- b) Buscamos personas relacionadas con los contratos del paso a).
+            -- b) Buscamos otros titulares de los contratos del paso a).
             Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_1G_PER
              (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,POS_VIVA_VENCIDA,CNT_ID,PER_ID,CPE_ORDEN,ARQ_ID,CEX_PASE,PEX_PASE)
             Select distinct gui.EXP_ID
@@ -1010,7 +1019,7 @@
                  , BATCH_SV_DATOS_CNT             cnt
                  , BATCH_VEN_DATOS_SALIDA_GUIA    pas
              Where gui.CNT_ID =  cpe.CNT_ID
-               And gui.PER_ID <> cpe.PER_ID
+               And gui.PER_ID <> cpe.PER_ID and cpe.ARRASTRE = 1
                And cpe.CNT_ID = cnt.CNT_ID
                And gui.EXP_ID = pas.EXP_ID
                And gui.DD_AEX_CODIGO in ('CPGRA', 'CSGRA')
@@ -1023,19 +1032,19 @@
 
 
 
-            --** Juntamos todas las relaciones (intervinientes + arrastrados del grupo + 1Gen)
-            ----------------------------------------------------------------------------------
+            --** Juntamos relaciones (intervinientes + arrastrados  1Gen)
+            ----------------------------------------------------------------
             Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_1GEN
-            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, MIN(PRIO) as PRIO
-            FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, PRIO
+            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, MIN(PRIO) as PRIO
+            FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, PRIO
                     from BATCH_VEN_DATOS_SALIDA_BASE
                   UNION
-                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 4 as PRIO
+                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 1 as ARRASTRE, 4 as PRIO
                     From BATCH_VEN_DATOS_SALIDA_1G_CNT
                   UNION
-                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 5 as PRIO
+                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 1 as ARRASTRE, 5 as PRIO
                     From BATCH_VEN_DATOS_SALIDA_1G_PER)
-            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE;
+            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE;
 
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;
@@ -1050,7 +1059,7 @@
             --** Inicio Segunda Generacion si hace falta
             ---------------------------------------------
 
-            -- a) Buscamos otros contratos de las personas del expediente
+            -- a) Buscamos otros contratos de las personas (titulares) del expediente
             Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_2G_CNT
              (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,POS_VIVA_VENCIDA,CNT_ID,PER_ID,CPE_ORDEN,ARQ_ID,CEX_PASE,PEX_PASE)
             SELECT distinct gui.EXP_ID
@@ -1064,19 +1073,19 @@
                  , gui.ARQ_ID
                  , DECODE(pas.CNT_ID, cpe.CNT_ID ,1 ,0) as CEX_PASE
                  , DECODE(pas.PER_ID, cpe.PER_ID ,1 ,0) as PEX_PASE
-              FROM BATCH_VEN_DATOS_SALIDA_BASE gui
+              FROM BATCH_VEN_DATOS_SALIDA_1GEN gui
                  , BATCH_SV_DATOS_CNT_PER      cpe
                  , BATCH_SV_DATOS_CNT_EXP      cex
                  , BATCH_SV_DATOS_CNT          cnt
                  , BATCH_VEN_DATOS_SALIDA_GUIA pas
              WHERE gui.PER_ID =  cpe.PER_ID
-               And gui.CNT_ID <> cpe.CNT_ID
-               And cnt.CNT_ID = cex.CNT_ID(+) And cex.DD_TPX_CODIGO(+) = 'RECU' And cex.EXP_ID is null
+               AND gui.CNT_ID <> cpe.CNT_ID And cpe.ARRASTRE = 1 --contratos de los que sean titulares
+               And cnt.CNT_ID = cex.CNT_ID(+) And cex.DD_TPX_CODIGO(+) = 'RECU' And cex.EXP_ID is null --libres
                AND cpe.CNT_ID = cnt.CNT_ID
                AND gui.EXP_ID = pas.EXP_ID
+               AND gui.ARRASTRE = 1 --solo de titulares
                AND gui.DD_AEX_CODIGO = 'CSGRA'
                And pas.CEX_PASE = 1 and pas.PEX_PASE = 1;
-
 
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;
@@ -1087,7 +1096,7 @@
             DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_VEN_DATOS_SALIDA_2G_CNT', estimate_percent => 20);
 
 
-            -- b) Buscamos personas relacionadas con los contratos del paso a).
+            -- b) Buscamos titulares relacionadas con los contratos del paso a).
             Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_2G_PER
              (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,POS_VIVA_VENCIDA,CNT_ID,PER_ID,CPE_ORDEN,ARQ_ID,CEX_PASE,PEX_PASE)
             Select distinct gui.EXP_ID
@@ -1101,12 +1110,12 @@
                  , gui.ARQ_ID
                  , DECODE(pas.CNT_ID, cpe.CNT_ID ,1 ,0) as CEX_PASE
                  , DECODE(pas.PER_ID, cpe.PER_ID ,1 ,0) as PEX_PASE
-              From BATCH_VEN_DATOS_SALIDA_1GEN  gui
-                 , BATCH_SV_DATOS_CNT_PER       cpe
-                 , BATCH_SV_DATOS_CNT           cnt
-                 , BATCH_VEN_DATOS_SALIDA_GUIA  pas
+              From BATCH_VEN_DATOS_SALIDA_2G_CNT gui
+                 , BATCH_SV_DATOS_CNT_PER        cpe
+                 , BATCH_SV_DATOS_CNT            cnt
+                 , BATCH_VEN_DATOS_SALIDA_GUIA   pas
              Where gui.CNT_ID =  cpe.CNT_ID
-               And gui.PER_ID <> cpe.PER_ID
+               And gui.PER_ID <> cpe.PER_ID and cpe.ARRASTRE = 1
                And cpe.CNT_ID = cnt.CNT_ID
                And gui.EXP_ID = pas.EXP_ID
                And gui.DD_AEX_CODIGO = 'CSGRA';
@@ -1123,10 +1132,13 @@
             SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, MIN(PRIO) as PRIO
             FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, PRIO
                     From BATCH_VEN_DATOS_SALIDA_1GEN
-                  UNION ALL
+                  UNION
+                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 3 as PRIO
+                    From BATCH_VEN_DATOS_SALIDA_GCL
+                  UNION
                   Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 6 as PRIO
                     From BATCH_VEN_DATOS_SALIDA_2G_PER
-                  UNION ALL
+                  UNION
                   Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 7 as PRIO
                     From BATCH_VEN_DATOS_SALIDA_2G_CNT)
             GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE
@@ -1263,8 +1275,8 @@
           v_proce := 'GeneracionExpedientes';
           v_paso := 'vencidos.persistencia.expedientes';
 
-             select dd_eex_id into v_dd_eex_id from ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE Where dd_eex_codigo = '1'; --activo
-             select dd_est_id into v_dd_est_id from ${master.schema}.DD_EST_ESTADOS_ITINERARIOS Where dd_est_codigo = 'CE'; --completar expedietne
+             select dd_eex_id into v_dd_eex_id from cmmaster.DD_EEX_ESTADO_EXPEDIENTE Where dd_eex_codigo = '1'; --activo
+             select dd_est_id into v_dd_est_id from cmmaster.DD_EST_ESTADOS_ITINERARIOS Where dd_est_codigo = 'CE'; --completar expedietne
              select dd_tpx_id into v_dd_tpx_id_seg from DD_TPX_TIPO_EXPEDIENTE Where dd_tpx_codigo = 'SEG';
              select dd_tpx_id into v_dd_tpx_id_ven from DD_TPX_TIPO_EXPEDIENTE Where dd_tpx_codigo = 'RECU';
 
@@ -1281,7 +1293,7 @@
                  , 0 as EXP_MANUAL
                  , DD_TPX_ID
                  , 0 as VERSION
-                 , '${usuario.crear}' as USUARIOCREAR
+                 , 'DD' as USUARIOCREAR
                  , sysdate as FECHACREAR
                  , 0 as BORRADO
               From (Select EXP_ID, EXP_DESCRIPCION, OFI_ID, ARQ_ID, CEX_PASE, PEX_PASE, v_dd_tpx_id_seg as DD_TPX_ID, DD_AEX_CODIGO
@@ -1289,7 +1301,7 @@
                     Union All
                     Select  EXP_ID, EXP_DESCRIPCION, OFI_ID, ARQ_ID, CEX_PASE, PEX_PASE, v_dd_tpx_id_ven as DD_TPX_ID, DD_AEX_CODIGO
                     From BATCH_VEN_DATOS_SALIDA) a
-                 , ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE b
+                 , cmmaster.DD_AEX_AMBITOS_EXPEDIENTE b
              Where a.dd_aex_codigo = b.dd_aex_codigo
                And a.cex_pase = 1 And a.pex_pase = 1;
 
@@ -1306,15 +1318,15 @@
                  , t.DD_AEX_ID
                  , t.CEX_PASE
                  , 0 as VERSION
-                 , '${usuario.crear}' as USUARIOCREAR
+                 , 'DD' as USUARIOCREAR
                  , sysdate as FECHACREAR
                  , 0 as BORRADO
               From (select Distinct a.CNT_ID, a.EXP_ID, b.DD_AEX_ID, a.CEX_PASE, a.DD_AEX_CODIGO
-                    from BATCH_SEG_DATOS_SALIDA a, ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE b
+                    from BATCH_SEG_DATOS_SALIDA a, cmmaster.DD_AEX_AMBITOS_EXPEDIENTE b
                     where a.dd_aex_codigo = b.dd_aex_codigo
                     UNION ALL
                     select Distinct a.CNT_ID, a.EXP_ID, b.DD_AEX_ID, a.CEX_PASE, a.DD_AEX_CODIGO
-                    from BATCH_VEN_DATOS_SALIDA a, ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE b
+                    from BATCH_VEN_DATOS_SALIDA a, cmmaster.DD_AEX_AMBITOS_EXPEDIENTE b
                     where a.dd_aex_codigo = b.dd_aex_codigo) t;
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;
@@ -1329,15 +1341,15 @@
                  , t.DD_AEX_ID
                  , t.PEX_PASE
                  , 0 as VERSION
-                 , '${usuario.crear}' as USUARIOCREAR
+                 , 'DD' as USUARIOCREAR
                  , sysdate as FECHACREAR
                  , 0 as BORRADO
               From (select distinct a.EXP_ID, a.PER_ID, b.DD_AEX_ID, a.PEX_PASE, a.DD_AEX_CODIGO
-                    from BATCH_SEG_DATOS_SALIDA a, ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE b
+                    from BATCH_SEG_DATOS_SALIDA a, cmmaster.DD_AEX_AMBITOS_EXPEDIENTE b
                     where a.dd_aex_codigo = b.dd_aex_codigo
                     UNION ALL
                     select distinct a.EXP_ID, a.PER_ID, b.DD_AEX_ID, a.PEX_PASE, a.DD_AEX_CODIGO
-                    from BATCH_VEN_DATOS_SALIDA a, ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE b
+                    from BATCH_VEN_DATOS_SALIDA a, cmmaster.DD_AEX_AMBITOS_EXPEDIENTE b
                     where a.dd_aex_codigo = b.dd_aex_codigo) t;
 
             --LOG
@@ -1393,7 +1405,7 @@
             --------------------------------------
             update CCL_CONTRATOS_CLIENTE ccl
                set borrado = 1
-                 , usuarioborrar = '${usuario.crear}'
+                 , usuarioborrar = 'DD'
                  , fechaborrar = sysdate
             where exists (select 1 from BATCH_SEG_DATOS_SALIDA tmp, CLI_CLIENTES cli where tmp.per_id = cli.per_id and cli.cli_id = ccl.cli_id);
 
@@ -1403,7 +1415,7 @@
 
             Update CLI_CLIENTES cli
                set borrado=1
-                 , usuarioborrar = '${usuario.crear}'
+                 , usuarioborrar = 'DD'
                  , fechaborrar = sysdate
             where exists (select 1 from BATCH_SEG_DATOS_SALIDA tmp where cli.per_id = tmp.per_id);
 
@@ -1438,7 +1450,7 @@
                  , PER_ID
                  , EXP_ID
                  , 0 as VERSION
-                 , '${usuario.crear}' as USUARIOCREAR
+                 , 'DD' as USUARIOCREAR
                  , sysdate as FECHACREAR
                  , 0 as BORRADO
               From BATCH_SEG_DATOS_SALIDA tmp
@@ -1456,14 +1468,14 @@
             Select tmp.per_id
                  , cmp.CMP_ID
                  , nvl(tpl.TPL_ID, iti.tpl_id) as TPL_ID
-                 , (select dd_esp_id from ${master.schema}.DD_ESP_ESTADO_POLITICA where dd_esp_codigo = 'PROP') as DD_ESP_ID --DD_ESP_ESTADO_POLITICA --Propuesta
-                 , (select dd_epi_id from ${master.schema}.DD_EPI_EST_POL_ITINERARIO where dd_epi_codigo='CE') as DD_EPI_ID --DD_EPI_EST_POL_ITINERARIO --P. Completar Expediente
+                 , (select dd_esp_id from cmmaster.DD_ESP_ESTADO_POLITICA where dd_esp_codigo = 'PROP') as DD_ESP_ID --DD_ESP_ESTADO_POLITICA --Propuesta
+                 , (select dd_epi_id from cmmaster.DD_EPI_EST_POL_ITINERARIO where dd_epi_codigo='CE') as DD_EPI_ID --DD_EPI_EST_POL_ITINERARIO --P. Completar Expediente
                  , est.PEF_ID_GESTOR
                  , est.PEF_ID_SUPERVISOR
                  , zon.ZON_ID --GESTOR
                  , zon.ZON_ID --SUPER
                  , 0 as VERSION
-                 , '${usuario.crear}' as USUARIOCREAR
+                 , 'DD' as USUARIOCREAR
                  , sysdate as FECHACREAR
                  , 0 as BORRADO
               From BATCH_SEG_DATOS_SALIDA      tmp
@@ -1525,8 +1537,8 @@
           v_proce := 'GeneracionExpedientes';
           v_paso := 'vencidos.persistencia.expedientesbpm';
 
-          cUSUARIO_BATCH := '${usuario.crear}';
-          cMASTER_SCHEMA := '${master.schema}';
+          cUSUARIO_BATCH := 'DD';
+          cMASTER_SCHEMA := 'cmmaster';
           cENTITY_SCHEMA := SYS_CONTEXT('userenv','current_schema');
 
           cBPM_NAME          := 'expediente';

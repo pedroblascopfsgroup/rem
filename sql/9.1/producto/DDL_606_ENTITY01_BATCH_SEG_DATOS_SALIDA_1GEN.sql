@@ -45,6 +45,7 @@ BEGIN
               ARQ_ID           NUMBER(16),
               CEX_PASE         NUMBER,
               PEX_PASE         NUMBER,
+              ARRASTRE         NUMBER,
               PRIO             NUMBER
             ) NOLOGGING';
 

@@ -135,7 +135,7 @@ BEGIN
                      (NVL(TRUNC(SUB_FECHA_SENYALAMIENTO), TRUNC(SYSDATE)) - TRUNC(SUB_FECHA_SOLICITUD)) AS P_SENYALAMIENTO_SOLICITUD,
                      1 AS NUM_PROCEDIMIENTO
             FROM '||V_DATASTAGE||'.SUB_SUBASTA SUB, '||V_DATASTAGE||'.LOS_LOTE_SUBASTA LOS, '||V_DATASTAGE||'.LOB_LOTE_BIEN LOB,
-            (select ASU_ID, PRC_COD_PROC_EN_JUZGADO as SUB_NUM_AUTOS from '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS where BORRADO = 0 and ''' || fecha || ''' >= trunc(FECHACREAR) group by ASU_ID) SUB2
+            (select distinct ASU_ID, NVL(PRC_COD_PROC_EN_JUZGADO,0) SUB_NUM_AUTOS  from '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS where BORRADO = 0 and ''' || fecha || ''' >= trunc(FECHACREAR)) SUB2
             WHERE LOS.SUB_ID(+) = SUB.SUB_ID
             AND SUB.ASU_ID = SUB2.ASU_ID(+)
             AND (SUB.BORRADO = 0 AND LOS.BORRADO(+) = 0 and ''' || fecha || ''' >= trunc(SUB.FECHACREAR) and ''' || fecha || ''' >= trunc(LOS.FECHACREAR(+)))

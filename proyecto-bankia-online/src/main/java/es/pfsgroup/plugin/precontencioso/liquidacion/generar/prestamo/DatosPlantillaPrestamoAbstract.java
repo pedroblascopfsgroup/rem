@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang.StringUtils;
+
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
@@ -23,6 +25,8 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBInformacionRegistralBienInfo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBLocalizacionesBienInfo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBContratoBien;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBDDEstadoBienContrato;
 
 /**
  * Contiene el codigo comun para generar datos para las plantillas de tipo Hipotecario, Personal y Leasing
@@ -77,67 +81,81 @@ public abstract class DatosPlantillaPrestamoAbstract {
 		List<BienLiqVO> bienes = new ArrayList<BienLiqVO>(); 
 
 		StringBuffer bienesConcatenados = new StringBuffer();
-		int size = liquidacion.getContrato().getBienes().size();
-		int i=0;
-
+		List<String> aBienesConcatenados = new ArrayList<String>();
+		
 		for (Bien bien : liquidacion.getContrato().getBienes()) {
 			NMBBien nmbBien = (NMBBien) bien;
-
-			NMBInformacionRegistralBienInfo infoRegistral = nmbBien.getDatosRegistralesActivo();
-			NMBLocalizacionesBienInfo localizacion = nmbBien.getLocalizacionActual();
-
-			// Numero finca
-			String numFinca = "";
-			if (infoRegistral != null && infoRegistral.getNumFinca() != null) {
-				numFinca = " FINCA " + infoRegistral.getNumFinca();	
-				bienesConcatenados.append(numFinca);
-			}
-
-			// Numero Registro
-			String numRegistro = "";
-			if (infoRegistral != null && infoRegistral.getNumRegistro() != null) {
-				numRegistro = " NUM.R " + infoRegistral.getNumRegistro();
-				bienesConcatenados.append(numRegistro);
-			}
-
-			// Localizacion registro
-			String locRegistro = "";
-			if (infoRegistral != null && infoRegistral.getLocalidad() != null && infoRegistral.getLocalidad().getDescripcion() != null) {
-				locRegistro = " LOC.R " + infoRegistral.getLocalidad().getDescripcion();
-				bienesConcatenados.append(locRegistro);
-			}
-
-			String nombreVia = "";
-			if (localizacion != null && localizacion.getNombreVia() != null) {
-				nombreVia = localizacion.getNombreVia();
-			}
-
-			String numeroDomicilio = "";
-			if (localizacion != null && localizacion.getNumeroDomicilio() != null) {
-				numeroDomicilio = localizacion.getNumeroDomicilio();				
-			}
-
-			// Direccion
-			String direccion = nombreVia + " " + numeroDomicilio + " ";
-			bienesConcatenados.append(direccion);
-
-			// Localidad
-			String localidad = "";
-			if (localizacion != null && localizacion.getLocalidad() != null && localizacion.getLocalidad().getDescripcion() != null) {
-				localidad = localizacion.getLocalidad().getDescripcion();
-				bienesConcatenados.append(localidad);
+			boolean continuar = false;
+			
+			for(NMBContratoBien nmbContratoBien : nmbBien.getContratos()) {
+				if(nmbContratoBien.getContrato().getId().equals(liquidacion.getContrato().getId())) {
+					if(nmbContratoBien.getEstado() != null && nmbContratoBien.getEstado().getCodigo().equals(NMBDDEstadoBienContrato.COD_ESTADO_BIEN_ACTIVO)) {
+						continuar = true;
+						break;
+					}
+				}
 			}
 			
-			i++;
-			if(i == size-1) bienesConcatenados.append(" y ");
-			else if(i<size) bienesConcatenados.append(", ");			
+			if(continuar) {
 
-			BienLiqVO bienVo = new BienLiqVO(numFinca + numRegistro + locRegistro, direccion, localidad);
-			bienes.add(bienVo);
+				NMBInformacionRegistralBienInfo infoRegistral = nmbBien.getDatosRegistralesActivo();
+				NMBLocalizacionesBienInfo localizacion = nmbBien.getLocalizacionActual();
+	
+				// Numero finca
+				String numFinca = "";
+				if (infoRegistral != null && infoRegistral.getNumFinca() != null) {
+					numFinca = " FINCA " + infoRegistral.getNumFinca();	
+					bienesConcatenados.append(numFinca);
+				}
+	
+				// Numero Registro
+				String numRegistro = "";
+				if (infoRegistral != null && infoRegistral.getNumRegistro() != null) {
+					numRegistro = " NUM.R " + infoRegistral.getNumRegistro();
+					bienesConcatenados.append(numRegistro);
+				}
+	
+				// Localizacion registro
+				String locRegistro = "";
+				if (infoRegistral != null && infoRegistral.getLocalidad() != null && infoRegistral.getLocalidad().getDescripcion() != null) {
+					locRegistro = " LOC.R " + infoRegistral.getLocalidad().getDescripcion();
+					bienesConcatenados.append(locRegistro);
+				}
+	
+				String nombreVia = "";
+				if (localizacion != null && localizacion.getNombreVia() != null) {
+					nombreVia = localizacion.getNombreVia();
+				}
+	
+				String numeroDomicilio = "";
+				if (localizacion != null && localizacion.getNumeroDomicilio() != null) {
+					numeroDomicilio = localizacion.getNumeroDomicilio();				
+				}
+	
+				// Direccion
+				String direccion = nombreVia + " " + numeroDomicilio + " ";
+				bienesConcatenados.append(direccion);
+	
+				// Localidad
+				String localidad = "";
+				if (localizacion != null && localizacion.getLocalidad() != null && localizacion.getLocalidad().getDescripcion() != null) {
+					localidad = localizacion.getLocalidad().getDescripcion();
+					bienesConcatenados.append(localidad);
+				}
+				
+				aBienesConcatenados.add(bienesConcatenados.toString());
+				BienLiqVO bienVo = new BienLiqVO(numFinca + numRegistro + locRegistro, direccion, localidad);
+				bienes.add(bienVo);
+			}
 		}
 
+		String sBienesConcatenados = StringUtils.join(aBienesConcatenados.toArray(), ", ");
+		if(StringUtils.contains(sBienesConcatenados, ",")) {
+			sBienesConcatenados = StringUtils.substringBeforeLast(sBienesConcatenados, ",") + " y" + StringUtils.substringAfterLast(sBienesConcatenados, ","); 
+		}
+		
 		datosBienes.put("BIENES", bienes);
-		datosBienes.put("BIENES_CONCATENADOS", bienesConcatenados.toString());
+		datosBienes.put("BIENES_CONCATENADOS", sBienesConcatenados);
 
 		return datosBienes;
 	}
@@ -346,16 +364,13 @@ public abstract class DatosPlantillaPrestamoAbstract {
 		
 		int cuentaAvalista=0;
 		int cuentaTmp=0;
-		int i = 0;
 		for(ContratoPersona cp : contratosPersona) {
-			i++;
 			if (cp.isAvalista()) {
 				cuentaAvalista++;
 			}
 		}
 		
 		for (ContratoPersona cp : contratosPersona) {
-            i++;
             if (cp.isAvalista()) {
             	cuentaTmp++;
             	nombresFiadores.append(cp.getPersona().getNom50());

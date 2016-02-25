@@ -2,9 +2,9 @@ create or replace PROCEDURE CARGAR_H_SUBASTA (DATE_START IN DATE, DATE_END IN DA
 -- ===============================================================================================
 -- Autor: Jaime Sánchez-Cuenca Bellido, PFS Group
 -- Fecha creación: Septiembre 2015
--- Responsable última modificación: Jaime Sánchez-Cuenca Bellido, PFS Group
--- Fecha ultima modificacion: 05/11/2015
--- Motivos del cambio: Desarrollo - Informes específicos CM - Bienes y Subastas
+-- Responsable última modificación: María Villanueva, PFS Group
+-- Fecha ultima modificacion: 25/02/2016
+-- Motivos del cambio: Se modifica la carga del atributo nuúmero de auto
 
 -- Cliente: Recovery BI CAJAMAR
 --
@@ -135,7 +135,7 @@ BEGIN
                      (NVL(TRUNC(SUB_FECHA_SENYALAMIENTO), TRUNC(SYSDATE)) - TRUNC(SUB_FECHA_SOLICITUD)) AS P_SENYALAMIENTO_SOLICITUD,
                      1 AS NUM_PROCEDIMIENTO
             FROM '||V_DATASTAGE||'.SUB_SUBASTA SUB, '||V_DATASTAGE||'.LOS_LOTE_SUBASTA LOS, '||V_DATASTAGE||'.LOB_LOTE_BIEN LOB,
-            (select ASU_ID, max(NVL(SUB_NUM_AUTOS,0)) SUB_NUM_AUTOS from '||V_DATASTAGE||'.SUB_SUBASTA where BORRADO = 0 and ''' || fecha || ''' >= trunc(FECHACREAR) group by ASU_ID) SUB2
+            (select ASU_ID, PRC_COD_PROC_EN_JUZGADO as SUB_NUM_AUTOS from '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS where BORRADO = 0 and ''' || fecha || ''' >= trunc(FECHACREAR) group by ASU_ID) SUB2
             WHERE LOS.SUB_ID(+) = SUB.SUB_ID
             AND SUB.ASU_ID = SUB2.ASU_ID(+)
             AND (SUB.BORRADO = 0 AND LOS.BORRADO(+) = 0 and ''' || fecha || ''' >= trunc(SUB.FECHACREAR) and ''' || fecha || ''' >= trunc(LOS.FECHACREAR(+)))

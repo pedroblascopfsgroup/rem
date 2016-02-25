@@ -265,7 +265,7 @@ var gridLiquidaciones = app.crearGrid(storeLiquidaciones, cmLiquidacion, {
 	</sec:authorize>
 	height: 250,
 	autoWidth: true,
-	style:'padding-top: inherit',
+	style:'padding-top:10px',
 	collapsible: true,
 	sm: new Ext.grid.RowSelectionModel({singleSelect:true})
 });

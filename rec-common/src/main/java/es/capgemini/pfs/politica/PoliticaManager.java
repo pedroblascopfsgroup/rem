@@ -97,7 +97,7 @@ public class PoliticaManager {
     @BusinessOperation(InternaBusinessOperation.BO_POL_MGR_GUARDAR_POLITICA)
     @Transactional(readOnly = false)
     public void guardarPolitica(DtoPolitica dto) {
-        Politica politica = dto.getPolitica();
+        Politica politica =  politicaDao.buscarUltimaPolitica(dto.getIdPersona());
 
         Long idPersona = dto.getIdPersona();
         Long idExpediente = dto.getIdExpediente();

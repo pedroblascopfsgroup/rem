@@ -114,8 +114,6 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
-	private Long idAdjuntoAsunto;
-
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_ALTA_DOCUMENTO)
 	@Transactional(readOnly = false)
 	public String altaDocumento(Long idEntidad, String tipoEntidadGrid, String tipoDocumento, WebFileItem uploadForm) {
@@ -285,10 +283,10 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			inputDto.setFicheroBase64(ficheroBase64(uploadForm));
 			inputDto.setClaveAsociacion(claveAsociacion);
 			String nombreFichero = uploadForm.getFileItem().getFileName();
-			nombreFichero = nombreFichero.substring(0, nombreFichero.indexOf("."));
 			if(DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidadGrid) || DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidadGrid)) {
-				inputDto.setDescripcion(nombreFichero+"_"+idAdjuntoAsunto);
+				inputDto.setDescripcion(obtenerNombreUnicoSinExt(nombreFichero));
 			}else{
+				nombreFichero = nombreFichero.substring(0, nombreFichero.indexOf("."));
 				inputDto.setDescripcion(nombreFichero);
 			}
 			if(!Checks.esNulo(uploadForm.getParameter("fechaCaducidad"))) {
@@ -425,12 +423,11 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 					DDTipoFicheroAdjunto tipoFicheroAdjunto = genericDao.get(DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoDocumento));
 					adjuntoAsunto.setTipoFichero(tipoFicheroAdjunto);
 				}
-				
+		        adjuntoAsunto.setNombre(obtenerNombreUnico(adjuntoAsunto.getNombre()));
 		        adjuntoAsunto.setAsunto(asunto);
 		        Auditoria.save(adjuntoAsunto);
 		        asunto.getAdjuntos().add(adjuntoAsunto);
 		        proxyFactory.proxy(AsuntoApi.class).saveOrUpdateAsunto(asunto);
-		        modificarNombreAdjAsu(uploadForm.getFileItem().getFileName(), adjuntoAsunto.getId());
 			}
 			claveRel = asunto.getGuid();
 		} else if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidad)) {
@@ -442,31 +439,36 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 					DDTipoFicheroAdjunto tipoFicheroAdjunto = genericDao.get(DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoDocumento));
 					adjuntoAsunto.setTipoFichero(tipoFicheroAdjunto);
 				}
-				
-		        adjuntoAsunto.setAsunto(prc.getAsunto());
+		        adjuntoAsunto.setNombre(obtenerNombreUnico(adjuntoAsunto.getNombre()));
+				adjuntoAsunto.setAsunto(prc.getAsunto());
 		        adjuntoAsunto.setProcedimiento(prc);
 		        Auditoria.save(adjuntoAsunto);
 		        prc.getAsunto().getAdjuntos().add(adjuntoAsunto);
 		        proxyFactory.proxy(AsuntoApi.class).saveOrUpdateAsunto(prc.getAsunto());
-		        modificarNombreAdjAsu(uploadForm.getFileItem().getFileName(), adjuntoAsunto.getId());
 			}
 			claveRel = extProcedimientoManager.prepareGuid(prc).getGuid();
 		}
 		return claveRel;
 	}
 	
-	private void modificarNombreAdjAsu(String fichero, Long idAdjAsu) {
-		EXTAdjuntoAsunto adjAsu = genericDao.get(EXTAdjuntoAsunto.class, genericDao.createFilter(FilterType.EQUALS, "id", idAdjAsu));
-        adjAsu.setNombre(fichero.substring(0, fichero.indexOf(".")) + "_" + idAdjAsu + fichero.substring(fichero.indexOf(".")));
-        genericDao.update(EXTAdjuntoAsunto.class, adjAsu);
-        idAdjuntoAsunto = adjAsu.getId();
-	}
-
-	public Long getIdAdjuntoAsunto() {
-		return idAdjuntoAsunto;
+	private String obtenerNombreUnico(String nombre) {
+		List<EXTAdjuntoAsunto> list = genericDao.getList(EXTAdjuntoAsunto.class, genericDao.createFilter(FilterType.EQUALS, "nombre", nombre));
+		if(!Checks.estaVacio(list)) {
+			String nombreAux = nombre.substring(0, nombre.indexOf("."));
+			String ext = nombre.substring(nombre.indexOf("."));
+			nombre = nombreAux + "_(" + list.size() + ")" + ext;
+		}
+		return nombre;
 	}
 	
-	public void setIdAdjuntoAsunto(Long idAdjuntoAsunto) {
-		this.idAdjuntoAsunto = idAdjuntoAsunto;
+	private String obtenerNombreUnicoSinExt(String nombre) {
+		List<EXTAdjuntoAsunto> list = genericDao.getList(EXTAdjuntoAsunto.class, genericDao.createFilter(FilterType.EQUALS, "nombre", nombre));
+		if(!Checks.estaVacio(list) && list.size() > 1) {
+			String nombreAux = nombre.substring(0, nombre.indexOf("."));
+			nombre = nombreAux + "_(" + list.size() + ")";
+		}else{
+			nombre = nombre.substring(0, nombre.indexOf("."));
+		}
+		return nombre;
 	}
 }

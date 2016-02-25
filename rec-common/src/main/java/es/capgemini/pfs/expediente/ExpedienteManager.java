@@ -1642,8 +1642,11 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         }
         logger.debug("EVALUO SI DEBO MOSTRAR LA PESTAÑA " + nombreTab);
         //VALIDO PRECONDICIONES CU WEB-30
-        if (!exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT)
-                || (exp.getComite() == null || exp.getComite().getSesiones() == null || exp.getComite().getSesiones().size() == 0)) {
+        if(DDTipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA.equals(exp.getTipoExpediente().getCodigo()) && !exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA) && !exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO) ){
+        	return Boolean.FALSE;
+        }
+        if ((!DDTipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA.equals(exp.getTipoExpediente().getCodigo()) || (DDTipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA.equals(exp.getTipoExpediente().getCodigo()) && !exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA) && !exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO) ))
+        	&& !exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT) || (exp.getComite() == null || exp.getComite().getSesiones() == null || exp.getComite().getSesiones().size() == 0)) {
             //No est� en decisión de comit� o no tiene sesiones abiertas.
             logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO ESTA EN EL ESTADO CORRESPONDIENTE "
                     + "O PORQUE NO HAY SESIONES ABIERTAS DE EL COMITE");

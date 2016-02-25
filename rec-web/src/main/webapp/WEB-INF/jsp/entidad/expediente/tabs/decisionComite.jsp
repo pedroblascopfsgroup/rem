@@ -800,21 +800,23 @@
 		entidad.cacheOrLoad(entidad.getData(), asuntosStore, {id : entidad.getData("id"), idSesion : entidad.getData("decision.ultimaSesion") });
 
     var congelado = entidad.getData("decision.estaCongelado");
+    var esGestorSupervisorDeFase = entidad.get("data").esGestorSupervisorActual;
+    
     var visible = [
-      [btnActuacion, congelado ]
-		,[btnNuevo, congelado]
-        ,[btnEditar, congelado]
-        ,[btnBorrar, congelado]
-        ,[btnAltaProcedimiento, congelado]
-        ,[btnEditProcedimiento, congelado]
-        ,[btnBorraProcedimiento, congelado]
+      [btnActuacion, congelado && esGestorSupervisorDeFase]
+		,[btnNuevo, congelado && esGestorSupervisorDeFase]
+        ,[btnEditar, congelado && esGestorSupervisorDeFase]
+        ,[btnBorrar, congelado && esGestorSupervisorDeFase]
+        ,[btnAltaProcedimiento, congelado && esGestorSupervisorDeFase]
+        ,[btnEditProcedimiento, congelado && esGestorSupervisorDeFase]
+        ,[btnBorraProcedimiento, congelado && esGestorSupervisorDeFase]
         <sec:authorize ifAllGranted="CERRAR_DECISION">
-        ,[btnCerrarDecision, congelado]
+        ,[btnCerrarDecision, congelado && esGestorSupervisorDeFase]
         </sec:authorize>
-        ,[btnEditarObs, congelado]
+        ,[btnEditarObs, congelado && esGestorSupervisorDeFase]
     ]
 
-    entidad.setVisible(visible);
+     entidad.setVisible(visible); 
 
     var contratosSinActuacion = entidad.getData("decision.contratosSinActuacion");
 		refrescaCheckBox(contratosSinActuacion);

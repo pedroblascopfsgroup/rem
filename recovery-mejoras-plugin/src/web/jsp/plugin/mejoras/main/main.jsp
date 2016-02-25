@@ -141,7 +141,6 @@ if ((view != null) && (id != null)){
 				</select> 
 			</c:if>
 		</c:if>
-		(<a id="logout" href="#"><s:message code="main.logout" text="**desconectar"/></a> / <a id="logoutClose" href="#"><s:message code="main.logout.close" text="**desconectar y cerrar"/></a>)
 		</div>
 		<div id="fechaCarga"><s:message code="main.fechaCarga" text="**&Uacute;ltima fecha de carga : "/><fwk:date value="${ultimaFechaCarga}"/></div>
     	<div id="toolbar"></div>

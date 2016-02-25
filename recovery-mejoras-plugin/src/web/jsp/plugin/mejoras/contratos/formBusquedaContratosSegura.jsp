@@ -22,6 +22,36 @@ var formBusquedaContratos=function(){
 	//codigo de disposicion
 	var txtCodDisposicion = app.creaText('codDisposicion', '<s:message code="listadoContratos.codigoDisposicion" text="**Cod. disposición" />'); 
 	
+	var ddCondicionesRemuneracion = Ext.data.Record.create([
+		 {name:'id'}
+		,{name:'descripcion'}
+		,{name:'codigo'}
+	]);
+	
+	var optionsCondicionesRemuneracionStore = page.getStore({
+	       flow: 'mejacuerdo/getListDDCondicionesRemuneracionData'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'condicionesRemuneracion'
+	    }, ddCondicionesRemuneracion)	       
+	});	
+
+	var comboMotivoGestionHRE = new Ext.form.ComboBox({
+		store:optionsCondicionesRemuneracionStore
+		,id:'motivoGestionHRE'
+		,displayField:'descripcion'
+		,valueField:'codigo'
+		,mode: 'local'
+		,resizable: true
+		,forceSelection: true
+		,emptyText:'---'
+		,triggerAction: 'all'
+		,fieldLabel: '<s:message code="listadoContratos.motivoGestion" text="**Motivo Gestión" />'
+		,width: 220		
+	});
+	
+	comboMotivoGestionHRE.on('afterrender', function(combo) {
+		optionsCondicionesRemuneracionStore.webflow();
+	});
 	
 	//nombre
 	var txtNombre = app.creaText('nombre', '<s:message code="listadoContratos.nombre" text="**Nombre" />');
@@ -182,7 +212,7 @@ var formBusquedaContratos=function(){
         		p.codRecibo=txtCodRecibo.getValue();
         		p.codEfecto=txtCodEfecto.getValue();
         		p.codDisposicion=txtCodDisposicion.getValue();
-				
+        		p.motivoGestionHRE=comboMotivoGestionHRE.getValue();
         	}
         	if(tabRelaciones){
         		p.nombre=txtNombre.getValue();
@@ -239,6 +269,9 @@ var formBusquedaContratos=function(){
 				return true;
 			}
 			if (txtCodDisposicion.getValue().trim()!=''){
+				return true;
+			}
+			if (comboMotivoGestionHRE.getValue().trim()!=''){
 				return true;
 			}
 		}
@@ -376,7 +409,8 @@ var formBusquedaContratos=function(){
 		,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
 		,items:[{
 					layout:'form'
-					,items: [txtContrato,txtCodRecibo,txtCodEfecto,txtCodDisposicion]
+					,items: [txtContrato,txtCodRecibo,txtCodEfecto,txtCodDisposicion
+					<sec:authorize ifAllGranted="PERSONALIZACION-HY">,comboMotivoGestionHRE</sec:authorize>]
 				},{
 					layout:'form'
 					,items: [comboEstadoContrato,comboTiposProducto]

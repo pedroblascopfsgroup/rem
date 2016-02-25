@@ -4,18 +4,21 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.hibernate.pagination.PaginationManager;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.dao.ContratoDao;
 import es.capgemini.pfs.contrato.dto.BusquedaContratosDto;
 import es.capgemini.pfs.contrato.dto.DtoBuscarContrato;
@@ -26,6 +29,7 @@ import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.expediente.model.DDEstadoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
+import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.persona.model.Persona;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -48,9 +52,15 @@ public class ContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+    private Executor executor;
 
 	@Resource
 	private PaginationManager paginationManager;
+	
+	@Resource
+    private Properties appProperties;
 
 	/**
 	 * Devuelve un HQL con los contratos existentes en los procedimientos en
@@ -115,10 +125,24 @@ public class ContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 	 */
 	@SuppressWarnings("unchecked")
 	public Date getUltimaFechaCarga() {
+		long valor=0;
+		
+		try {
+            Parametrizacion param = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+            		Parametrizacion.TIEMPO_CARGA_FECHA_CACHEO);
+            valor= Long.parseLong(param.getValor());
+            
+        } catch (Exception e) {
+            logger.warn("No esta parametrizado el tiempo de cacheo para la fecha de carga, se toma un valor por defecto (1 Hora)");
+            valor= FECHA_CARGA_CACHE_TIMEOUT;
+        }
+		
+		
+		
 		// si no hemos cacheado la fecha o ha pasado demasiado tiempo desde que la hemos cacheado, la volvemos a consultar.
 		if ((staticCheckFechaCargaTimestamp == null)
 				|| (staticCacheFechaCarga == null)
-				|| ((new Date().getTime() - staticCheckFechaCargaTimestamp) > FECHA_CARGA_CACHE_TIMEOUT)) {
+				|| ((new Date().getTime() - staticCheckFechaCargaTimestamp) > valor)) {
 			staticCacheFechaCarga = recuperaUltimaFechaCargaDeBBDD();
                         staticCheckFechaCargaTimestamp = new Date().getTime();
 		}

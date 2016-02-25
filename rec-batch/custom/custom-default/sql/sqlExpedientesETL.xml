@@ -423,8 +423,8 @@
             DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_TIT', estimate_percent => 20);
 
 
-            --** Obtenemos otras personas del grupo de la persona de pase y los contratos de los cuales sean titulares
-            ----------------------------------------------------------------------------------------------------------
+            --** Obtenemos otras personas del grupo de la persona de pase y sus contratos
+            ------------------------------------------------------------------------------
             Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_GCL
             Select distinct gui.EXP_ID
                  , gui.EXP_DESCRIPCION
@@ -448,7 +448,7 @@
                And gl2.PER_ID = pex.PER_ID(+) and pex.exp_id is null --libre
                And pex.dd_tpx_codigo(+) = 'SEG'
                And gl2.PER_ID =  cpe.PER_ID
-               And gui.PER_ID <> cpe.PER_ID and cpe.ARRASTRE = 1
+               And gui.PER_ID <> cpe.PER_ID
                And cpe.CNT_ID = cnt.CNT_ID
                And gui.DD_AEX_CODIGO in ('PG','PPGRA', 'PSGRA');
 

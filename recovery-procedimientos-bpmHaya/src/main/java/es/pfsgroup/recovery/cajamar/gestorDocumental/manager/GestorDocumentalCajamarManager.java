@@ -5,6 +5,7 @@ import java.net.FileNameMap;
 import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
@@ -23,6 +24,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.asunto.dao.AsuntoDao;
 import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
+import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.dao.AdjuntoContratoDao;
@@ -111,7 +113,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
-
+	
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_ALTA_DOCUMENTO)
 	@Transactional(readOnly = false)
 	public String altaDocumento(Long idEntidad, String tipoEntidadGrid, String tipoDocumento, WebFileItem uploadForm) {
@@ -127,14 +129,21 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		}
 
 		Integer max = getLimiteFichero(getParametroLimite(tipoEntidadGrid));
-
+ 
 		if (fileItem.getLength() > max) {
 			AbstractMessageSource ms = MessageUtils.getMessageSource();
 			return ms.getMessage("fichero.limite.tamanyo",
 					new Object[] { (int) ((float) max / 1024f) },
 					MessageUtils.DEFAULT_LOCALE);
 		}
-
+		
+		if (comprobarExtensionNoPermitida(getFileExtension(uploadForm.getFileItem()))) {
+			AbstractMessageSource ms = MessageUtils.getMessageSource();
+			return ms.getMessage("fichero.extension.permitida",
+					new Object[] { getFileExtension(uploadForm.getFileItem()) },
+					MessageUtils.DEFAULT_LOCALE);
+		}
+		
 		String claveRel = guardarRecuperarDatoEntidad(idEntidad, tipoEntidadGrid, uploadForm, tipoDocumento);
 
 		//Obtenemos el codigo mapeado		
@@ -153,6 +162,14 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
 		return outputDto.getTxtError();
 		
+	}
+	
+	private boolean comprobarExtensionNoPermitida(String extension) {
+		List<String> extensionPermitida = Arrays.asList("BMP", "CSV", "DOC", "DOCM", "DOCX", "DOT", "GIF", "HTM", "HTML", "JPEG", "JPG", "MSG", "NOVAL", "ODS", "ODT", "PDF", "PNG", "PPT", "RTF", "SXC", "TIF", "TIFF", "TXT", "ULL", "XLS", "XLST", "XLSX", "XML", "XPS", "XSL", "ZIP");
+		if(!Checks.esNulo(extension) && extensionPermitida.contains(extension.toUpperCase())) {
+			return false;
+		}
+		return true;
 	}
 	
 	private String getFileExtension(FileItem file) { 
@@ -180,6 +197,21 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		outputDto = gestorDocumentalWSApi.ejecutar(inputDto);
 		
 		if(DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidadGrid) || DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidadGrid)){
+			
+			if(DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidadGrid)) {
+				EXTAsunto asunto = EXTAsunto.instanceOf(asuntoDao.get(idAsuPrc));
+				for(Procedimiento prc : asunto.getProcedimientos()) {
+					MEJProcedimiento procedimiento = extProcedimientoManager.prepareGuid(prc);
+					
+					GestorDocumentalInputDto inputPrcDto = rellenaInputDto(
+							procedimiento.getGuid(), LISTADO_GESTOR_DOC, tipoDocumento,
+							DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO, null);
+					GestorDocumentalOutputDto outputPrcDto = new GestorDocumentalOutputDto();
+					outputPrcDto = gestorDocumentalWSApi.ejecutar(inputPrcDto);
+					outputDto.getLbListadoDocumentos().addAll(outputPrcDto.getLbListadoDocumentos());
+				}
+			}
+			
 			
 			for(GestorDocumentalOutputListDto olDto : outputDto.getLbListadoDocumentos()) {
 				List<MapeoTipoFicheroAdjunto> mapeo = genericDao.getList(MapeoTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "tipoFicheroExterno", olDto.getTipoDoc()));
@@ -251,8 +283,12 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			inputDto.setFicheroBase64(ficheroBase64(uploadForm));
 			inputDto.setClaveAsociacion(claveAsociacion);
 			String nombreFichero = uploadForm.getFileItem().getFileName();
-			nombreFichero = nombreFichero.substring(0, nombreFichero.indexOf("."));
-			inputDto.setDescripcion(nombreFichero);
+			if(DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidadGrid) || DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidadGrid)) {
+				inputDto.setDescripcion(obtenerNombreUnicoSinExt(nombreFichero));
+			}else{
+				nombreFichero = nombreFichero.substring(0, nombreFichero.indexOf("."));
+				inputDto.setDescripcion(nombreFichero);
+			}
 			if(!Checks.esNulo(uploadForm.getParameter("fechaCaducidad"))) {
 				SimpleDateFormat frmt = new SimpleDateFormat("ddMMyyyy");
 				try {
@@ -387,7 +423,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 					DDTipoFicheroAdjunto tipoFicheroAdjunto = genericDao.get(DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoDocumento));
 					adjuntoAsunto.setTipoFichero(tipoFicheroAdjunto);
 				}
-				
+		        adjuntoAsunto.setNombre(obtenerNombreUnico(adjuntoAsunto.getNombre()));
 		        adjuntoAsunto.setAsunto(asunto);
 		        Auditoria.save(adjuntoAsunto);
 		        asunto.getAdjuntos().add(adjuntoAsunto);
@@ -403,8 +439,8 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 					DDTipoFicheroAdjunto tipoFicheroAdjunto = genericDao.get(DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoDocumento));
 					adjuntoAsunto.setTipoFichero(tipoFicheroAdjunto);
 				}
-				
-		        adjuntoAsunto.setAsunto(prc.getAsunto());
+		        adjuntoAsunto.setNombre(obtenerNombreUnico(adjuntoAsunto.getNombre()));
+				adjuntoAsunto.setAsunto(prc.getAsunto());
 		        adjuntoAsunto.setProcedimiento(prc);
 		        Auditoria.save(adjuntoAsunto);
 		        prc.getAsunto().getAdjuntos().add(adjuntoAsunto);
@@ -414,5 +450,25 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		}
 		return claveRel;
 	}
-
+	
+	private String obtenerNombreUnico(String nombre) {
+		List<EXTAdjuntoAsunto> list = genericDao.getList(EXTAdjuntoAsunto.class, genericDao.createFilter(FilterType.EQUALS, "nombre", nombre));
+		if(!Checks.estaVacio(list)) {
+			String nombreAux = nombre.substring(0, nombre.indexOf("."));
+			String ext = nombre.substring(nombre.indexOf("."));
+			nombre = nombreAux + "_(" + list.size() + ")" + ext;
+		}
+		return nombre;
+	}
+	
+	private String obtenerNombreUnicoSinExt(String nombre) {
+		List<EXTAdjuntoAsunto> list = genericDao.getList(EXTAdjuntoAsunto.class, genericDao.createFilter(FilterType.EQUALS, "nombre", nombre));
+		if(!Checks.estaVacio(list) && list.size() > 1) {
+			String nombreAux = nombre.substring(0, nombre.indexOf("."));
+			nombre = nombreAux + "_(" + list.size() + ")";
+		}else{
+			nombre = nombre.substring(0, nombre.indexOf("."));
+		}
+		return nombre;
+	}
 }

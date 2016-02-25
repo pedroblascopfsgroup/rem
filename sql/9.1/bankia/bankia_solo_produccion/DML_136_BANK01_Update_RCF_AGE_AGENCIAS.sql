@@ -19,7 +19,7 @@ SET SERVEROUTPUT ON;
 SET DEFINE OFF;
 
 DECLARE
-    V_ESQUEMA VARCHAR2(25 CHAR):= 'BANK01'; -- Configuracion Esquema
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     seq_count number(3); -- Vble. para validar la existencia de las Secuencias.
     table_count number(3); -- Vble. para validar la existencia de las Tablas.

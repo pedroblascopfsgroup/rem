@@ -545,7 +545,7 @@
                   /*  SE HA MODIFICADO POR LA FECHA POLITICA VIGENTE */
                   /* Que tenga un arquetipo ACTUAL con fecha de disparo que cuadre */
                   /* AND (arq_per.arq_plazo_disparo is null OR arr.per_ultima_operacion is null OR (sysdate-arr.per_ultima_operacion > arq_per.arq_plazo_disparo)) */
-                  /* Que la persona no esté atrapada en ningún expediente */
+                  /* Que la persona no esté atrapada en ningún expediente de seguimiento*/
                   AND NOT EXISTS (
                     SELECT pex.per_id
                         FROM pex_personas_expediente pex
@@ -554,6 +554,7 @@
                         WHERE pex.borrado = 0
                             AND pex.per_id = arr.per_id
                             AND eex.dd_eex_codigo IN (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo})
+                            AND exp.dd_tpx_id = (select tpx.dd_tpx_id from cm01.dd_tpx_tipo_expediente TPX where dd_tpx_codigo = 'SEG')
                              --No sea un expediente de recobro
                             AND not exists (select exr.exp_id from exr_expediente_recobro exr where exp.exp_id = exr.exp_id)
                   )

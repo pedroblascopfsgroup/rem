@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Esteve
---## FECHA_CREACION=20160224
+--## FECHA_CREACION=20160225
 --## ARTEFACTO=[online|batch]
 --## VERSION_ARTEFACTO=X.X.X_rcXX
 --## INCIDENCIA_LINK=PROJECTKEY-ISSUENUMBER
@@ -37,6 +37,8 @@ DECLARE
 
     V_MSQL := 'update ' || V_ESQUEMA ||'.BIE_BIEN 
                         set DD_TBI_ID = (select DD_TBI_ID from ' || V_ESQUEMA ||'.DD_TBI_TIPO_BIEN where DD_TBI_CODIGO like ''01'') 
+                        , USUARIOMODIFICAR = ''HR-2016''
+                        , FECHAMODIFICAR = SYSDATE 
                         where BIE_ID in (
     1000000000125937,
     1000000000182534,

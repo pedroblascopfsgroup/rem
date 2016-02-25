@@ -601,7 +601,8 @@ public class BurofaxManager implements BurofaxApi {
 		boolean esBFA = docBurManager.isOperacionBFA(envioBurofax.getBurofax().getContrato(), contexto);
 		
 		FileItem archivoBurofax = docBurManager.generarDocumentoBurofax(docBurManager.obtenerPlantillaBurofax(contexto, esBFA), nombreFichero, 
-				docBurManager.obtenerCabecera(envioBurofax, contexto, esBFA), envioBurofax.getContenidoBurofax());
+				docBurManager.obtenerCabecera(envioBurofax, contexto, esBFA), 
+				docBurManager.agregarDisclaimer(envioBurofax.getContenidoBurofax(), docBurManager.obtenerDisclaimer(envioBurofax, contexto, esBFA)));
 		// Transformar el archivo docx en PDF
 		String directorio = parametrizacionDao.buscarParametroPorNombre(DIRECTORIO_PDF_BUROFAX_PCO).getValor();
 		String nombreFicheroPdf = docBurManager.obtenerNombreFicheroPdf(nombreFichero);

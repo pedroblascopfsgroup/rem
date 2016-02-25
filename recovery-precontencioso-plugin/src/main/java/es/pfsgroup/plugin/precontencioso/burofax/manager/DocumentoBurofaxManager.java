@@ -9,8 +9,6 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -55,7 +53,6 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienEntidad;
 import es.pfsgroup.recovery.geninformes.GENINFInformesManager;
-import es.pfsgroup.recovery.integration.bpm.DiccionarioDeCodigos;
 
 @Service
 public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
@@ -73,7 +70,6 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 	private static final String CABECERA_EXPEDIDORDIR3 = "CABECERA_EXPEDIDORDIR3";
 	private static final String CABECERA_CONTACTO1 = "CABECERA_CONTACTO1";
 	private static final String CABECERA_CONTACTO2 = "CABECERA_CONTACTO2";
-	private static final String PARRAFO_DISCLAIMER = "PARRAFO_DISCLAIMER";
 	
 	private static final String INICIO_MARCA = "${";
 	private static final String FIN_MARCA = "}";
@@ -110,6 +106,7 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 
 	private static final String NOMBRE_BANKIA = "BANKIA, S.A.";
 	private static final String NOMBRE_BFA = "BANCO FINANCIERO Y DE AHORRO, S.A.";
+	private static final String CODIGO_BANKIA = "2038";
 	
 	private static final SimpleDateFormat fechaFormat = new SimpleDateFormat(FormatUtils.DD_DE_MES_DE_YYYY,MessageUtils.DEFAULT_LOCALE);
 	private static final NumberFormat currencyInstance = NumberFormat.getCurrencyInstance(new Locale("es","ES"));
@@ -304,7 +301,7 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 			mapaVariables.put(TOTAL_LIQUIDACION,ERROR_NO_EXISTE_VALOR);
 		}
 				
-		if(!Checks.esNulo(contrato) && !Checks.esNulo(contrato.getContratoAnterior()) && !contrato.getContratoAnterior().equals("0")){
+		if(!Checks.esNulo(contrato) && !Checks.esNulo(contrato.getCharextra8()) && !contrato.getCharextra8().equals("0")){
 			mapaVariables.put(NUM_CUENTA_ANTERIOR,contrato.getCharextra8());
 		} else {
 			mapaVariables.put(NUM_CUENTA_ANTERIOR,ERROR_NO_EXISTE_VALOR);
@@ -422,7 +419,7 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 
 		if (PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(contexto)) {
 			final Usuario usuario = usuarioManager.getUsuarioLogado();
-			final Oficina oficina = obtenerOficinaUsuarioConectato(usuario);
+			final Oficina oficina = obtenerOficinaUsuarioConectado(usuario);
 			boolean esCentroEspecial = comprobarCentroEspecial(oficina);
 			cabecera.put(CABECERA_EXPEDIDOR1, construyeExpedidor1(esBFA));
 			cabecera.put(CABECERA_EXPEDIDOR2, construyeExpedidor2(esCentroEspecial, oficina));
@@ -435,29 +432,29 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 			cabecera.put(CABECERA_DIRECCION1, construyeDireccion1(envioBurofax.getDireccion()));
 			cabecera.put(CABECERA_DIRECCION2, construyeDireccion2(envioBurofax.getDireccion()));
 			cabecera.put(CABECERA_DIRECCION3, construyeDireccion3(envioBurofax.getDireccion()));
-			cabecera.put(PARRAFO_DISCLAIMER, construyeParrafoDisclaimer(envioBurofax.getBurofax().getContrato(), esBFA));
 		}
 		return cabecera;
 	}
 
 	private String construyeParrafoDisclaimer(Contrato contrato, boolean esBFA) {
-		final String codigoBankia = "2038";
 		Calendar fechaReferencia = Calendar.getInstance();
 		fechaReferencia.set(2011, 05, 16, 0, 0);
 		String resultado = "";
 		try {
 			String codigoEntidadOrigen = contrato.getCharextra5();
-			String nombreEntidadOrigen = ((DDPropietario) genericDao.get(DDPropietario.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEntidadOrigen))).getDescripcion();
-			if (!codigoBankia.equals(codigoEntidadOrigen) || 
-					(contrato.getFechaCreacion().before(fechaReferencia.getTime()))) {
-				if (esBFA) {
-					resultado = "LA CAJA DE AHORROS " + nombreEntidadOrigen + 
-							", APROBÓ LA SEGREGACIÓN DE LA TOTALIDAD DE LOS ACTIVOS Y PASIVOS DE SU NEGOCIO BANCARIO A FAVOR DE BANCO FINANCIERO Y DE AHORROS S.A., " + 
-							"Y AL HACERSE EFECTIVA DICHA SEGREGACIÓN USTED HA PASADO A SER CLIENTE DE BANCO FINANCIERO Y DE AHORROS  S.A.";
-				} else {
-					resultado = "LA CAJA DE AHORROS " + nombreEntidadOrigen + 
-							", APROBÓ LA SEGREGACIÓN DE LA TOTALIDAD DE LOS ACTIVOS Y PASIVOS DE SU NEGOCIO BANCARIO A FAVOR DE BANCO FINANCIERO Y DE AHORROS S.A., " + 
-							"QUE A SU VEZ, HA AUTORIZADO SU SEGREGACIÓN A FAVOR DE BANKIA S.A., Y AL HACERSE EFECTIVA DICHA SEGREGACIÓN USTED HA PASADO A SER CLIENTE DE BANKIA, S.A.";
+			if (!Checks.esNulo(codigoEntidadOrigen)) {
+				if (!CODIGO_BANKIA.equals(codigoEntidadOrigen) || 
+						(contrato.getFechaCreacion().before(fechaReferencia.getTime()))) {
+					String nombreEntidadOrigen = ((DDPropietario) genericDao.get(DDPropietario.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEntidadOrigen))).getDescripcion();
+					if (esBFA) {
+						resultado = "LA CAJA DE AHORROS " + nombreEntidadOrigen + 
+								", APROBÓ LA SEGREGACIÓN DE LA TOTALIDAD DE LOS ACTIVOS Y PASIVOS DE SU NEGOCIO BANCARIO A FAVOR DE BANCO FINANCIERO Y DE AHORROS S.A., " + 
+								"Y AL HACERSE EFECTIVA DICHA SEGREGACIÓN USTED HA PASADO A SER CLIENTE DE BANCO FINANCIERO Y DE AHORROS  S.A.";
+					} else {
+						resultado = "LA CAJA DE AHORROS " + nombreEntidadOrigen + 
+								", APROBÓ LA SEGREGACIÓN DE LA TOTALIDAD DE LOS ACTIVOS Y PASIVOS DE SU NEGOCIO BANCARIO A FAVOR DE BANCO FINANCIERO Y DE AHORROS S.A., " + 
+								"QUE A SU VEZ, HA AUTORIZADO SU SEGREGACIÓN A FAVOR DE BANKIA S.A., Y AL HACERSE EFECTIVA DICHA SEGREGACIÓN USTED HA PASADO A SER CLIENTE DE BANKIA, S.A.";
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -466,7 +463,7 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		return resultado;
 	}
 
-	private Oficina obtenerOficinaUsuarioConectato(Usuario usuario) {
+	private Oficina obtenerOficinaUsuarioConectado(Usuario usuario) {
 		final String perfilAcceso = "FPFSRACCESO";
 		Oficina resultado = null;
 		try {
@@ -477,8 +474,12 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 				for (ZonaUsuarioPerfil zpu : zonasPerfil) {
 					if (perfilAcceso.equals(zpu.getPerfil().getCodigo())) {
 						resultado = zpu.getZona().getOficina();
+						break;
 					}
 				};
+				if (resultado == null && zonasPerfil.size() >= 1) {
+					resultado = zonasPerfil.get(0).getZona().getOficina();
+				}
 			}
 		} catch (Exception e) {
 			logger.error("obtenerOficinaUsuarioConectato: " + e.getMessage());
@@ -506,7 +507,7 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 	}
 
 	private String construyeExpedidor1(boolean esBFA) {
-		return (esBFA ? NOMBRE_BANKIA : NOMBRE_BFA);
+		return (esBFA ? NOMBRE_BFA : NOMBRE_BANKIA);
 	}
 
 	private String construyeExpedidor2(boolean esCentroEspecial, Oficina oficina) {
@@ -551,7 +552,7 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 			if (!Checks.esNulo(oficina) && !Checks.esNulo(oficina.getIdProvincia())) {
 				try {
 					resultado = ((DDProvincia)genericDao.get(DDProvincia.class, 
-							genericDao.createFilter(FilterType.EQUALS, "id", oficina.getIdProvincia()))).getDescripcion();
+							genericDao.createFilter(FilterType.EQUALS, "codigo", oficina.getIdProvincia().toString()))).getDescripcion();
 				} catch (Exception e) {
 					logger.error("construyeExpedidorDir3: " + e.getMessage());
 					resultado = DATO_NO_DISPONIBLE;
@@ -689,7 +690,7 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 			contrato = burofax.getContrato();
 		} catch (NullPointerException npe) {}
 			
-		if(!Checks.esNulo(contrato) && !Checks.esNulo(contrato.getContratoAnterior()) && !contrato.getContratoAnterior().equals("0")){
+		if(!Checks.esNulo(contrato) && !Checks.esNulo(contrato.getCharextra8()) && !contrato.getCharextra8().equals("0")){
 			conCuentaAnterior = "ANTERIORMENTE IDENTIFICADO CON EL NUM. ${NUM_CUENTA_ANTERIOR}";
 		}
 		
@@ -778,6 +779,7 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		final Integer codigoOficinaContableBFA = 8427;
 		final String codigoPropietario1 = "00000";
 		final String codigoPropietario2 = "05074";
+		final String codigoPropietario3 = "5074";
 		
 		if (PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(contexto)) {
 			String indicadorBFA = "";
@@ -791,7 +793,8 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 				logger.error("isOperacionBFA: " + e);
 			}
 			
-			if (codigoPropietario.equals(codigoPropietario1) || codigoPropietario.equals(codigoPropietario2)) {
+			if (codigoPropietario.equals(codigoPropietario1) || codigoPropietario.equals(codigoPropietario2) 
+					|| codigoPropietario.equals(codigoPropietario3) || codigoPropietario.equals(CODIGO_BANKIA)) {
 				return (indicadorBFA.equals("S") || (oficinaContable.equals(codigoOficinaContableBFA)));
 			} else {
 				String mensaje = "isOperacionBFA: codigoPropietaria del contrato " + contrato.getId() + " vale " + 
@@ -802,6 +805,26 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 			}
 		} else {
 			return false;
+		}
+	}
+
+	@Override
+	public String obtenerDisclaimer(EnvioBurofaxPCO envioBurofax, String contexto, boolean esBFA) {
+
+		if (PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(contexto)) {
+			return construyeParrafoDisclaimer(envioBurofax.getBurofax().getContrato(), esBFA);
+		} else {
+			return "";
+		}
+		
+	}
+
+	@Override
+	public String agregarDisclaimer(String contenidoBurofax, String disclaimer) {
+		if (!Checks.esNulo(disclaimer)) {
+			return contenidoBurofax + INICIO_CUERPO + INICIO_CUERPO + disclaimer;
+		} else {
+			return contenidoBurofax;
 		}
 	}
 	

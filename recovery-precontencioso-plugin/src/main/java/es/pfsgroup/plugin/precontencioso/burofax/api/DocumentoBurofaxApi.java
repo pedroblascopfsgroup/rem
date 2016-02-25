@@ -31,4 +31,8 @@ public interface DocumentoBurofaxApi {
 	String replaceVariablesGeneracionBurofax(Long idPcoBurofax, String textoBuro, DocumentoPCO doc);
 	
 	boolean isOperacionBFA(Contrato contrato, String contexto);
+
+	String obtenerDisclaimer(EnvioBurofaxPCO envioBurofax, String contexto,	boolean esBFA);
+
+	String agregarDisclaimer(String contenidoBurofax, String obtenerDisclaimer);
 }

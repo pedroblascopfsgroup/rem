@@ -12,11 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
---*/
-
-   
-
-- See more at: http://7sabores.com/blog/crear-funcion-parametro-salida-usando-plsql-oracle#sthash.p3hkxFbG.dpuf
+--*/ 
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
@@ -40,9 +36,11 @@ DECLARE
     -- USAR M_SQL para construir SQL a ejecutar
     -- USAR EXECUTE IMMEDIATE para ejecutar M_SQL
 
-    UPDATE V_ESQUEMA.RCF_AGE_AGENCIAS
+    V_MSQL := 'UPDATE' || V_ESQUEMA || '.RCF_AGE_AGENCIAS
     SET BORRADO = 1 
-    WHERE RCF_AGE_CODIGO IN (105,1,2,4,104,110);
+    WHERE RCF_AGE_CODIGO IN (105,1,2,4,104,110)';
+
+    EXECUTE IMMEDIATE V_MSQL;
 
  EXCEPTION
 

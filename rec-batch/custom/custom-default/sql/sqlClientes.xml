@@ -354,7 +354,7 @@
 	                   and eex.dd_eex_id = exp.dd_eex_id
 	                   and eex.dd_eex_codigo IN (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo})
 	                   and cex.cnt_id = c.cnt_id
-	                   AND EXP.dd_tpx_id = (select tpx.dd_tpx_id from cm01.dd_tpx_tipo_expediente TPX where dd_tpx_codigo = 'REC')
+	                   AND EXP.dd_tpx_id = (select tpx.dd_tpx_id from cm01.dd_tpx_tipo_expediente TPX where dd_tpx_codigo = 'RECU')
 	                    --No sea un expediente de recobro
 	                   and not exists (select exr.exp_id from exr_expediente_recobro exr where exp.exp_id = exr.exp_id)	                   
 	               UNION ALL       

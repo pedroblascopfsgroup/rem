@@ -5,6 +5,7 @@ import java.net.FileNameMap;
 import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
@@ -23,6 +24,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.asunto.dao.AsuntoDao;
 import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
+import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.dao.AdjuntoContratoDao;
@@ -129,14 +131,21 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		}
 
 		Integer max = getLimiteFichero(getParametroLimite(tipoEntidadGrid));
-
+ 
 		if (fileItem.getLength() > max) {
 			AbstractMessageSource ms = MessageUtils.getMessageSource();
 			return ms.getMessage("fichero.limite.tamanyo",
 					new Object[] { (int) ((float) max / 1024f) },
 					MessageUtils.DEFAULT_LOCALE);
 		}
-
+		
+		if (comprobarExtensionNoPermitida(getFileExtension(uploadForm.getFileItem()))) {
+			AbstractMessageSource ms = MessageUtils.getMessageSource();
+			return ms.getMessage("fichero.extension.permitida",
+					new Object[] { getFileExtension(uploadForm.getFileItem()) },
+					MessageUtils.DEFAULT_LOCALE);
+		}
+		
 		String claveRel = guardarRecuperarDatoEntidad(idEntidad, tipoEntidadGrid, uploadForm, tipoDocumento);
 
 		//Obtenemos el codigo mapeado		
@@ -155,6 +164,14 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
 		return outputDto.getTxtError();
 		
+	}
+	
+	private boolean comprobarExtensionNoPermitida(String extension) {
+		List<String> extensionPermitida = Arrays.asList("BMP", "CSV", "DOC", "DOCM", "DOCX", "DOT", "GIF", "HTM", "HTML", "JPEG", "JPG", "MSG", "NOVAL", "ODS", "ODT", "PDF", "PNG", "PPT", "RTF", "SXC", "TIF", "TIFF", "TXT", "ULL", "XLS", "XLST", "XLSX", "XML", "XPS", "XSL", "ZIP");
+		if(!Checks.esNulo(extension) && extensionPermitida.contains(extension.toUpperCase())) {
+			return false;
+		}
+		return true;
 	}
 	
 	private String getFileExtension(FileItem file) { 
@@ -182,6 +199,21 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		outputDto = gestorDocumentalWSApi.ejecutar(inputDto);
 		
 		if(DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidadGrid) || DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidadGrid)){
+			
+			if(DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidadGrid)) {
+				EXTAsunto asunto = EXTAsunto.instanceOf(asuntoDao.get(idAsuPrc));
+				for(Procedimiento prc : asunto.getProcedimientos()) {
+					MEJProcedimiento procedimiento = extProcedimientoManager.prepareGuid(prc);
+					
+					GestorDocumentalInputDto inputPrcDto = rellenaInputDto(
+							procedimiento.getGuid(), LISTADO_GESTOR_DOC, tipoDocumento,
+							DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO, null);
+					GestorDocumentalOutputDto outputPrcDto = new GestorDocumentalOutputDto();
+					outputPrcDto = gestorDocumentalWSApi.ejecutar(inputPrcDto);
+					outputDto.getLbListadoDocumentos().addAll(outputPrcDto.getLbListadoDocumentos());
+				}
+			}
+			
 			
 			for(GestorDocumentalOutputListDto olDto : outputDto.getLbListadoDocumentos()) {
 				List<MapeoTipoFicheroAdjunto> mapeo = genericDao.getList(MapeoTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "tipoFicheroExterno", olDto.getTipoDoc()));

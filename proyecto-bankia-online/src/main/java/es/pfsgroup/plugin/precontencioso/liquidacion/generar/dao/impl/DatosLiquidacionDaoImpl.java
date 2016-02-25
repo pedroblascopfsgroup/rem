@@ -112,5 +112,32 @@ public class DatosLiquidacionDaoImpl implements DatosLiquidacionDao {
 
 		return plainQueryInteresesContratoLiq.toString();
 	}
+	
+	@Override
+	public List<InteresesContratoLiqVO> getInteresesContratoLiquidacionOrdinario(Long idLiquidacion) {
+		Session session = sessionFactory.getCurrentSession();
+
+		Query query = session.createSQLQuery(plainQueryInteresesContratoLiqOrdinario())
+			.addScalar("INC_PCO_LIQ_ID", Hibernate.LONG)
+			.addScalar("INC_FEPTDE", Hibernate.DATE)
+			.addScalar("INC_FEPTHA", Hibernate.DATE)
+			.addScalar("INC_CDINTS", Hibernate.BIG_DECIMAL)
+			.setLong("idLiquidacion", idLiquidacion);
+
+		return query.setResultTransformer(Transformers.aliasToBean(InteresesContratoLiqVO.class)).list();
+	}
+
+	private String plainQueryInteresesContratoLiqOrdinario() {
+		StringBuilder plainQueryInteresesContratoLiq = new StringBuilder();
+		plainQueryInteresesContratoLiq.append(" SELECT * ");
+		plainQueryInteresesContratoLiq.append(" FROM INC_INTERESES_CONTRATO_LIQ ");
+		plainQueryInteresesContratoLiq.append(" WHERE BORRADO = 0 ");
+		plainQueryInteresesContratoLiq.append("  AND INC_PCO_LIQ_ID = :idLiquidacion ");
+		plainQueryInteresesContratoLiq.append("  AND INC_CDTIIN = 'O' ");
+		plainQueryInteresesContratoLiq.append("	ORDER BY INC_FEPTDE ASC ");
+
+		return plainQueryInteresesContratoLiq.toString();
+	}
+
 
 }

@@ -556,12 +556,11 @@
                            /* Que el contrato no esté en algún procedimiento o expediente 'en curso' */
                            LEFT JOIN TMP_CNT_NUEVOS_CLI_DES tmp ON  c.CNT_ID = tmp.CNT_ID
                            /* Que el contrato no esté en algún cliente 'en curso' */
-                           LEFT JOIN ccl_contratos_cliente ccl ON  c.CNT_ID = ccl.CNT_ID
+                           LEFT JOIN ccl_contratos_cliente ccl ON  c.CNT_ID = ccl.CNT_ID AND ccl.borrado = 0
                        /* Que el contrato no esté cancelado (Se considera cancelado cualquiera que no este activo)*/
                        WHERE e.dd_esc_codigo = ${estadoContrato.Activo.codigo}
                          AND tmp.CNT_ID IS NULL
-                         AND ccl.CNT_ID IS NULL
-                         AND ccl.borrado = 0;
+                         AND ccl.CCL_ID IS NULL;
         COMMIT;
 
         DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CNT_NUEVOS_CLI_VCPE', estimate_percent => 20);

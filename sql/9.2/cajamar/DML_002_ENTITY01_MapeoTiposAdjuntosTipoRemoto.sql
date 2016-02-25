@@ -34,12 +34,6 @@ DECLARE
 
 
 BEGIN
-	- Modificar bpm del TPO
-   V_MSQL := 'UPDATE ' || V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO' ||  q'[ SET DD_TPO_XML_JBPM='precontenciosobankia' WHERE DD_TPO_CODIGO='PCO' ]';
-   DBMS_OUTPUT.PUT_LINE('ACTUALIZANDO : ' || V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO' || ' A DD_TPO_XML_JBPM=''precontenciosobankia''');
-   DBMS_OUTPUT.PUT_LINE(V_MSQL);
-   EXECUTE IMMEDIATE V_MSQL;
---q'[  ]'
 	-- insertar todos los tipos de documento activos como tipos de documento de Procedimiento remoto
 	
 	V_MSQL:= 'insert into '||V_ESQUEMA||'.dd_tfa_fichero_adjunto (DD_TFA_ID, DD_TFA_CODIGO, DD_TFA_DESCRIPCION, DD_TFA_DESCRIPCION_LARGA, USUARIOCREAR, FECHACREAR,DD_TAC_ID)

@@ -16,8 +16,10 @@
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
 DECLARE
-    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA VARCHAR2(25 CHAR):= 'BANK01'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     seq_count number(3); -- Vble. para validar la existencia de las Secuencias.
     table_count number(3); -- Vble. para validar la existencia de las Tablas.
@@ -35,13 +37,14 @@ DECLARE
     -- PARA LA CREACIÓN DE OBJETOS USAR LA CONSULTA DE EXISTENCIA PREVIA
     -- USAR M_SQL para construir SQL a ejecutar
     -- USAR EXECUTE IMMEDIATE para ejecutar M_SQL
+    DBMS_OUTPUT.put_line('- INICIO PROCESO -');
+    
+    DBMS_OUTPUT.put_line('UPDATE ' || V_ESQUEMA || '.RCF_AGE_AGENCIAS SET BORRADO = 1 WHERE RCF_AGE_CODIGO IN (105,1,2,4,104,110)');
 
-    V_MSQL := 'UPDATE' || V_ESQUEMA || '.RCF_AGE_AGENCIAS
-    SET BORRADO = 1 
-    WHERE RCF_AGE_CODIGO IN (105,1,2,4,104,110)';
-
-    EXECUTE IMMEDIATE V_MSQL;
-
+    EXECUTE IMMEDIATE 'UPDATE ' || V_ESQUEMA || '.RCF_AGE_AGENCIAS SET BORRADO = 1 WHERE RCF_AGE_CODIGO IN (105,1,2,4,104,110)';
+    
+    DBMS_OUTPUT.put_line('- FIN PROCESO -');
+    
  EXCEPTION
 
     -- Opcional: Excepciones particulares que se quieran tratar

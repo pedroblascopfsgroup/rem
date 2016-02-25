@@ -115,6 +115,7 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.utils.FormatUtils;
 import es.capgemini.pfs.zona.model.DDZona;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 
@@ -2837,6 +2838,16 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
                             		//de DC a FP
                             		if(expediente.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT)){
                             			regla.setCumple(cumplimientoReglaDCFP(expediente, acuerdos));                            			
+                            		}
+                            	} else {
+                            		//Comprobamos si se cumple la regla Sancionar Propuesta
+                            		if (DDTipoReglasElevacion.MARCADO_SANCIONAR_PROPUESTA.equals(codigoTipoRegla)) {
+                            			//La relga se cumple si el expediente tiene una sanción con una propuesta
+                            			if (!Checks.esNulo(expediente.getSancion()) && !Checks.esNulo(expediente.getSancion().getDecision())) {
+                            				regla.setCumple(true);
+                            			} else {
+                            				regla.setCumple(false);
+                            			}
                             		}
                             	}
                             }

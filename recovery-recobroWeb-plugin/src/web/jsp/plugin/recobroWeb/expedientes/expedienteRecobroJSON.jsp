@@ -179,6 +179,7 @@
 		<json:property name="usuarioExterno" value="${usuario.usuarioExterno}"/>
 	</json:object>
 	<json:property name="esSupervisor" value="${esSupervisor}"/>
+	<json:property name="esGestor" value="${esGestor}"/>
 	<json:property name="esAgencia" value="${esAgencia}"/>
 	<json:property name="esGestorSupervisorActual" value="${esGestorSupervisorActual}"/>
 	<json:array name= "estados" items = "${expediente.arquetipo.itinerario.estados}" var= "est">

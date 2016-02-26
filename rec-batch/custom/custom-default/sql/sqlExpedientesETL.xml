@@ -375,7 +375,6 @@
                        And cli.per_id = cpe.per_id
                        And ccl.cnt_id = cpe.cnt_id
                        And ccl.borrado = 0
-                       And cnt.cnt_riesgo > 0 --con riesgo
                        And cli.dd_tit_codigo in ('SIS','SIN')
                      Order by cli.arq_prioridad
                             , cpe.cpe_orden

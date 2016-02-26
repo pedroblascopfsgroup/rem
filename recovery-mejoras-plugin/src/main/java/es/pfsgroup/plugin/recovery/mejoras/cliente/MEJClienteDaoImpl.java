@@ -566,7 +566,7 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 						clientes.getMinSaldoVencido(),
 						clientes.getMaxSaldoVencido());
 				if (!Checks.esNulo(filtro)) {
-					hql.append("and per_id in (");
+					hql.append("and EXISTS (");
 					hql.append(filtro);
 					hql.append(")");
 				}
@@ -576,14 +576,14 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 				if (!StringUtils.isBlank(clientes.getMinSaldoVencido())) {
 					try {
 						Float valor = Float.parseFloat(clientes.getMinSaldoVencido());
-						String filtroFinal = String.format(" AND (%s IS NOT NULL and %s>=%f)", campoBusqueda, campoBusqueda, valor);
+						String filtroFinal = String.format(" AND (%s IS NOT NULL and %s>=%s)", campoBusqueda, campoBusqueda, valor);
 						hql.append(filtroFinal);
 					} catch (NumberFormatException nfe) {}
 				}
 				if (!StringUtils.isBlank(clientes.getMaxSaldoVencido())) {
 					try {
 						Float valor = Float.parseFloat(clientes.getMaxSaldoVencido());
-						String filtroFinal = String.format(" AND (%s IS NOT NULL and %s<=%f)", campoBusqueda, campoBusqueda, valor);
+						String filtroFinal = String.format(" AND (%s IS NOT NULL and %s<=%s)", campoBusqueda, campoBusqueda, valor);
 						hql.append(filtroFinal);
 					} catch (NumberFormatException nfe) {}
 				}
@@ -604,33 +604,28 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 		final StringBuilder srtbuilder = new StringBuilder();
 
 		if (!StringUtils.isBlank(minValue) || !StringUtils.isBlank(maxValue)) {
-			srtbuilder.append("SELECT PER_ID FROM V_PER_PERSONAS_FORMULAS WHERE NVL(V_PER_PERSONAS_FORMULAS.DISPUESTO_VENCIDO, 0) BETWEEN ");
+			srtbuilder.append("SELECT 1 FROM V_PER_PERSONAS_FORMULAS v WHERE v.PER_ID = p.PER_ID AND v.DISPUESTO_VENCIDO IS NOT NULL ");
 						
 			if (!StringUtils.isBlank(minValue)) {
+				srtbuilder.append(" AND TO_NUMBER(REPLACE(LPAD(v.DISPUESTO_VENCIDO, 4, '0'), ',', '.')) >= ");
+				
 				try {
 					Float valor = Float.parseFloat(minValue);
-					String filtroFinal = String.format("%f", valor);
+					String filtroFinal = String.format("%s", valor);
 					srtbuilder.append(filtroFinal);
 				} catch (NumberFormatException nfe) {}
 			}
-			else {
-				String filtroFinal = String.format("0");
-				srtbuilder.append(filtroFinal);
-			}
 			
-			srtbuilder.append(" AND ");
 			
 			if (!StringUtils.isBlank(maxValue)) {
+				srtbuilder.append(" AND TO_NUMBER(REPLACE(LPAD(v.DISPUESTO_VENCIDO, 4, '0'), ',', '.')) <= ");
+				
 				try {
 					Float valor = Float.parseFloat(maxValue);
-					String filtroFinal = String.format("%f", valor);
+					String filtroFinal = String.format("%s", valor);
 					srtbuilder.append(filtroFinal);
 				} catch (NumberFormatException nfe) {}
-			}
-			else {
-				String filtroFinal = String.format("%f", Float.MAX_VALUE);
-				srtbuilder.append(filtroFinal);
-			}			
+			}		
 			
 			return srtbuilder.toString();
 		} 
@@ -658,14 +653,14 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 		if (!StringUtils.isBlank(clientes.getMinRiesgoTotal())) {
 			try {
 				Float valor = Float.parseFloat(clientes.getMinRiesgoTotal());
-				String filtroFinal = String.format(" AND (p.%s IS NOT NULL and p.%s>=%f)", campoBusqueda, campoBusqueda, valor);
+				String filtroFinal = String.format(" AND (p.%s IS NOT NULL and p.%s>=%s)", campoBusqueda, campoBusqueda, valor);
 				filtroRiesgoBuilder.append(filtroFinal);
 			} catch (NumberFormatException nfe) {}
 		}
 		if (!StringUtils.isBlank(clientes.getMaxRiesgoTotal())) {
 			try {
 				Float valor = Float.parseFloat(clientes.getMaxRiesgoTotal());
-				String filtroFinal = String.format(" AND (p.%s IS NOT NULL and p.%s<=%f)", campoBusqueda, campoBusqueda, valor);
+				String filtroFinal = String.format(" AND (p.%s IS NOT NULL and p.%s<=%s)", campoBusqueda, campoBusqueda, valor);
 				filtroRiesgoBuilder.append(filtroFinal);
 			} catch (NumberFormatException nfe) {}
 		}
@@ -1078,18 +1073,14 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 
 	private boolean compruebaSaldoVencido(MEJBuscarClientesDto clientes) {
 		boolean saldovencido = false;
-		if (clientes.getMaxSaldoVencido() == null
-				|| clientes.getMaxSaldoVencido().length() < 1) {
-			clientes.setMaxSaldoVencido("" + Integer.MAX_VALUE);
-		} else {
+		if (!Checks.esNulo(clientes.getMaxSaldoVencido())) {
 			saldovencido = true;
 		}
-		if (clientes.getMinSaldoVencido() == null
-				|| clientes.getMinSaldoVencido().length() < 1) {
-			clientes.setMinSaldoVencido("" + Integer.MIN_VALUE);
-		} else {
+	
+		if (!Checks.esNulo(clientes.getMinSaldoVencido())) {
 			saldovencido = true;
 		}
+		
 		return saldovencido;
 	}
 

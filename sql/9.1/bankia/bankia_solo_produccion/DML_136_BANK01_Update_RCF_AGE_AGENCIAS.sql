@@ -44,6 +44,8 @@ DECLARE
     EXECUTE IMMEDIATE 'UPDATE ' || V_ESQUEMA || '.RCF_AGE_AGENCIAS SET BORRADO = 1 
                       , USUARIOMODIFICAR = ''BKREC-1945''
                       , FECHAMODIFICAR = SYSDATE
+                      , USUARIOBORRAR = ''BKREC-1945''
+                      , FECHABORRAR = SYSDATE
                       WHERE RCF_AGE_CODIGO IN (105,1,2,4,104,110)';
     
     DBMS_OUTPUT.put_line('- FIN PROCESO -');

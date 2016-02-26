@@ -55,6 +55,7 @@ import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalInputDt
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalOutputDto;
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalOutputListDto;
 import es.pfsgroup.recovery.cajamar.serviciosonline.GestorDocumentalWSApi;
+import es.pfsgroup.recovery.ext.impl.adjunto.dao.EXTAdjuntoAsuntoDao;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.expediente.EXTExpedienteManager;
@@ -110,6 +111,9 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	
 	@Autowired
 	private AdjuntoContratoDao adjuntoContratoDao;
+	
+	@Autowired
+	private EXTAdjuntoAsuntoDao extAdjuntoAsuntoDao;
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -283,12 +287,8 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			inputDto.setFicheroBase64(ficheroBase64(uploadForm));
 			inputDto.setClaveAsociacion(claveAsociacion);
 			String nombreFichero = uploadForm.getFileItem().getFileName();
-			if(DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidadGrid) || DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidadGrid)) {
-				inputDto.setDescripcion(obtenerNombreUnicoSinExt(nombreFichero));
-			}else{
-				nombreFichero = nombreFichero.substring(0, nombreFichero.indexOf("."));
-				inputDto.setDescripcion(nombreFichero);
-			}
+			nombreFichero = nombreFichero.substring(0, nombreFichero.indexOf("."));
+			inputDto.setDescripcion(nombreFichero);
 			if(!Checks.esNulo(uploadForm.getParameter("fechaCaducidad"))) {
 				SimpleDateFormat frmt = new SimpleDateFormat("ddMMyyyy");
 				try {
@@ -423,7 +423,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 					DDTipoFicheroAdjunto tipoFicheroAdjunto = genericDao.get(DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoDocumento));
 					adjuntoAsunto.setTipoFichero(tipoFicheroAdjunto);
 				}
-		        adjuntoAsunto.setNombre(obtenerNombreUnico(adjuntoAsunto.getNombre()));
+		        adjuntoAsunto.setNombre(obtenerNombreUnico(asunto.getId(), adjuntoAsunto.getNombre(), uploadForm));
 		        adjuntoAsunto.setAsunto(asunto);
 		        Auditoria.save(adjuntoAsunto);
 		        asunto.getAdjuntos().add(adjuntoAsunto);
@@ -439,7 +439,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 					DDTipoFicheroAdjunto tipoFicheroAdjunto = genericDao.get(DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoDocumento));
 					adjuntoAsunto.setTipoFichero(tipoFicheroAdjunto);
 				}
-		        adjuntoAsunto.setNombre(obtenerNombreUnico(adjuntoAsunto.getNombre()));
+		        adjuntoAsunto.setNombre(obtenerNombreUnico(prc.getAsunto().getId(), adjuntoAsunto.getNombre(), uploadForm));
 				adjuntoAsunto.setAsunto(prc.getAsunto());
 		        adjuntoAsunto.setProcedimiento(prc);
 		        Auditoria.save(adjuntoAsunto);
@@ -451,23 +451,13 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		return claveRel;
 	}
 	
-	private String obtenerNombreUnico(String nombre) {
-		List<EXTAdjuntoAsunto> list = genericDao.getList(EXTAdjuntoAsunto.class, genericDao.createFilter(FilterType.EQUALS, "nombre", nombre));
+	private String obtenerNombreUnico(Long idAsunto, String nombre, WebFileItem uploadForm) {
+		String nombreAux = nombre.substring(0, nombre.indexOf("."));
+		List<EXTAdjuntoAsunto> list = extAdjuntoAsuntoDao.getAdjuntoAsuntoByNombreByAsu(idAsunto, nombreAux);
 		if(!Checks.estaVacio(list)) {
-			String nombreAux = nombre.substring(0, nombre.indexOf("."));
 			String ext = nombre.substring(nombre.indexOf("."));
 			nombre = nombreAux + "_(" + list.size() + ")" + ext;
-		}
-		return nombre;
-	}
-	
-	private String obtenerNombreUnicoSinExt(String nombre) {
-		List<EXTAdjuntoAsunto> list = genericDao.getList(EXTAdjuntoAsunto.class, genericDao.createFilter(FilterType.EQUALS, "nombre", nombre));
-		if(!Checks.estaVacio(list) && list.size() > 1) {
-			String nombreAux = nombre.substring(0, nombre.indexOf("."));
-			nombre = nombreAux + "_(" + list.size() + ")";
-		}else{
-			nombre = nombre.substring(0, nombre.indexOf("."));
+			uploadForm.getFileItem().setFileName(nombre);
 		}
 		return nombre;
 	}

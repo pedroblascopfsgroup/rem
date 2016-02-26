@@ -5,10 +5,10 @@
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
 --## INCIDENCIA_LINK=CMREC-2209
---## PRODUCTO=
+--## PRODUCTO=No
 --## 
 --## Finalidad: Otra tabla temporal para el ETL de CIRBE para evitar duplicidades
---## INSTRUCCIONES:
+--## INSTRUCCIONES:Sustituir variables
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################

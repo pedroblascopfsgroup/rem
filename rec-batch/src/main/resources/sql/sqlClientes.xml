@@ -626,82 +626,79 @@
 
    <entry key="clientes.creacionClientes.04.insertTmpCNTnuevosCLI.Oracle9iDialect">
     <![CDATA[
-    BEGIN
-        /* Contrato en algún procedimiento 'en curso' */
-        Insert /*+append*/ into TMP_CNT_NUEVOS_CLI_DES (CNT_ID)
-                       SELECT cex.cnt_id
-                         FROM CEX_CONTRATOS_EXPEDIENTE cex INNER JOIN PRC_CEX pce ON cex.cex_id = pce.cex_id
+     BEGIN
+
+     INSERT /*+append*/ INTO TMP_CNT_NUEVOS_CLI_VCPE
+              /*Obtengo los contratos de los titulares*/
+              SELECT distinct cpe.per_id, cpe.cnt_id, c.cnt_fecha_extraccion, c.ofi_id
+                  FROM cpe_contratos_personas cpe
+                    /*Que el contrato no esté borrado*/
+                    INNER JOIN cnt_contratos c ON cpe.cnt_id = c.cnt_id AND c.borrado = 0
+                   INNER JOIN mov_movimientos m ON m.cnt_id = cpe.cnt_id AND m.mov_fecha_extraccion = c.cnt_fecha_extraccion
+                   /* Que sea titular del contrato */
+                    INNER JOIN dd_tin_tipo_intervencion tin ON cpe.DD_TIN_ID = tin.DD_TIN_ID AND tin.DD_TIN_TITULAR = 1
+                    INNER JOIN ${master.schema}.dd_esc_estado_cnt e ON c.dd_esc_id = e.dd_esc_id
+                WHERE --cpe.per_id = arr.per_id
+                  /* Que el contrato no esté cancelado (Se considera cancelado cualquiera que no este activo)*/
+                  e.dd_esc_codigo = ${estadoContrato.Activo.codigo}
+                  /* Que el contrato no esté en algún procedimiento 'en curso' */
+                  AND NOT EXISTS (
+                       SELECT cex.cnt_id FROM
+                        CEX_CONTRATOS_EXPEDIENTE cex INNER JOIN PRC_CEX pce ON cex.cex_id = pce.cex_id
                         INNER JOIN PRC_PROCEDIMIENTOS prc ON pce.prc_id = prc.prc_id and prc.borrado = 0
                         INNER JOIN ${master.schema}.DD_EPR_ESTADO_PROCEDIMIENTO epr ON prc.dd_epr_id  = epr.dd_epr_id
-                        LEFT JOIN exr_expediente_recobro exr ON cex.exp_id = exr.exp_id --No sea un expediente de recobro
                        WHERE cex.borrado = 0
-                         AND exr.exp_id IS NULL
-                         AND epr.dd_epr_codigo IN (${ddEstadoProcedimiento.propuesto.codigo},
-                                                   ${ddEstadoProcedimiento.confirmado.codigo},
-                                                   ${ddEstadoProcedimiento.aceptado.codigo},
-                                                   ${ddEstadoProcedimiento.derivado.codigo},
-                                                   ${ddEstadoProcedimiento.enConformacion.codigo})
-                        UNION
-                        /* Que el contrato no esté algún expediente 'en curso' */
-                        SELECT cex.cnt_id
-                          FROM cex_contratos_expediente cex
-                         INNER JOIN exp_expedientes exp ON exp.exp_id = cex.exp_id
-                         INNER JOIN ${master.schema}.dd_eex_estado_expediente eex ON eex.dd_eex_id = exp.dd_eex_id
-                          LEFT JOIN exr_expediente_recobro exr ON exp.exp_id = exr.exp_id --No sea un expediente de recobro
-                         WHERE cex.borrado = 0
-                           AND eex.dd_eex_codigo IN (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo})
-                           AND exr.exp_id IS NULL;
-        COMMIT;
+                       and epr.dd_epr_codigo IN (${ddEstadoProcedimiento.propuesto.codigo},
+                      ${ddEstadoProcedimiento.confirmado.codigo},
+                      ${ddEstadoProcedimiento.aceptado.codigo},
+                      ${ddEstadoProcedimiento.derivado.codigo},
+                      ${ddEstadoProcedimiento.enConformacion.codigo})
+                       and cex.cnt_id = c.cnt_id
+                        --No sea un expediente de recobro
+                       and not exists (select exr.exp_id from exr_expediente_recobro exr where cex.exp_id = exr.exp_id)
+                   UNION ALL
+                      /* Que el contrato no esté algún expediente 'en curso' */
+                       SELECT cex.cnt_id FROM cex_contratos_expediente cex
+                       INNER JOIN exp_expedientes exp ON exp.exp_id = cex.exp_id
+                       INNER JOIN ${master.schema}.dd_eex_estado_expediente eex ON eex.dd_eex_id = exp.dd_eex_id
+                       WHERE cex.borrado = 0
+                       and eex.dd_eex_codigo IN (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo})
+                       and cex.cnt_id = c.cnt_id
+                        --No sea un expediente de recobro
+                       and not exists (select exr.exp_id from exr_expediente_recobro exr where exp.exp_id = exr.exp_id)
+                   UNION ALL
+                   /* Que el contrato no esté en algún cliente 'en curso' */
+                       SELECT ccl.cnt_id FROM ccl_contratos_cliente ccl
+                       WHERE ccl.borrado = 0
+                       and ccl.cnt_id = c.cnt_id
+                  );
 
-        DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CNT_NUEVOS_CLI_DES', estimate_percent => 20);
+         DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CNT_NUEVOS_CLI_VCPE', estimate_percent => 20);
+         commit;
 
-        /*Obtengo los contratos de los titulares*/
-        Insert /*+append*/ into TMP_CNT_NUEVOS_CLI_VCPE
-                      SELECT distinct cpe.per_id, cpe.cnt_id, c.cnt_fecha_extraccion, c.ofi_id
-                           FROM cpe_contratos_personas cpe
-                            /*Que el contrato no esté borrado*/
-                             INNER JOIN cnt_contratos c ON cpe.cnt_id = c.cnt_id AND c.borrado = 0
-                           INNER JOIN mov_movimientos m ON m.cnt_id = cpe.cnt_id AND m.mov_fecha_extraccion = c.cnt_fecha_extraccion
-                           /* Que sea titular del contrato */
-                             INNER JOIN dd_tin_tipo_intervencion tin ON cpe.DD_TIN_ID = tin.DD_TIN_ID AND tin.DD_TIN_TITULAR = 1
-                             INNER JOIN ${master.schema}.dd_esc_estado_cnt e ON c.dd_esc_id = e.dd_esc_id
-                           /* Que el contrato no esté en algún procedimiento o expediente 'en curso' */
-                           LEFT JOIN TMP_CNT_NUEVOS_CLI_DES tmp ON  c.CNT_ID = tmp.CNT_ID
-                           /* Que el contrato no esté en algún cliente 'en curso' */
-                           LEFT JOIN ccl_contratos_cliente ccl ON  c.CNT_ID = ccl.CNT_ID AND ccl.borrado = 0
-                       /* Que el contrato no esté cancelado (Se considera cancelado cualquiera que no este activo)*/
-                       WHERE e.dd_esc_codigo = ${estadoContrato.Activo.codigo}
-                         AND tmp.CNT_ID IS NULL
-                         AND ccl.CCL_ID IS NULL;
-        COMMIT;
+        INSERT /*+append*/ INTO TMP_CNT_NUEVOS_CLI_MOV
+          --De los anteriores personas y titulares, ordenados por pos vencida ó riesgo
+            select vcpe.per_id, row_mov.cnt_id, row_mov.mov_fecha_extraccion, row_mov.mov_pos_viva_vencida, row_mov.mov_riesgo, row_mov.mov_fecha_pos_vencida, vcpe.ofi_id
+              , row_number () over (partition by per_id order by row_mov.mov_pos_viva_vencida desc) n_mov_pos_vencida
+              , row_number () over (partition by per_id order by row_mov.mov_riesgo desc) n_mov_riesgo
+            from TMP_CNT_NUEVOS_CLI_VCPE vcpe inner join mov_movimientos row_mov on vcpe.cnt_id = row_mov.cnt_id  AND row_mov.mov_fecha_extraccion = vcpe.cnt_fecha_extraccion;
 
-        DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CNT_NUEVOS_CLI_VCPE', estimate_percent => 20);
+    DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CNT_NUEVOS_CLI_MOV', estimate_percent => 20);
+    commit;
+
+    INSERT /*+append*/ INTO TMP_CNT_NUEVOS_CLI
+        select mov.per_id, mov.cnt_id, mov.ofi_id, mov.mov_fecha_pos_vencida
+                  ,case when tmp.dd_tit_codigo = ${ddTipoItinerario.recuperacion.codigo} then -- Recuperacion, vamos por mov pos viva vencida
+                        case mov.n_mov_pos_vencida when 1 then 1 else 0 end
+                      else -- Seguimiento, vamos por riesgo
+                        case mov.n_mov_riesgo when 1 then 1 else 0 end
+                      end es_cnt_pase
+        from TMP_PER_ARQUETIPO_RECUPERACION tmp
+          join TMP_CNT_NUEVOS_CLI_MOV mov on tmp.per_id = mov.per_id;
 
 
-        Insert /*+append*/ into TMP_CNT_NUEVOS_CLI_MOV
-                    --De los anteriores personas y titulares, ordenados por pos vencida ó riesgo
-                    select vcpe.per_id, row_mov.cnt_id, row_mov.mov_fecha_extraccion, row_mov.mov_pos_viva_vencida, row_mov.mov_riesgo, row_mov.mov_fecha_pos_vencida, vcpe.ofi_id
-                      , row_number () over (partition by per_id order by row_mov.mov_pos_viva_vencida desc) n_mov_pos_vencida
-                      , row_number () over (partition by per_id order by row_mov.mov_riesgo desc) n_mov_riesgo
-                    from TMP_CNT_NUEVOS_CLI_VCPE vcpe
-                     inner join mov_movimientos row_mov on vcpe.cnt_id = row_mov.cnt_id and row_mov.mov_fecha_extraccion = vcpe.cnt_fecha_extraccion;
-        COMMIT;
-
-        DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CNT_NUEVOS_CLI_MOV', estimate_percent => 20);
-
-        INSERT INTO TMP_CNT_NUEVOS_CLI
-                select distinct mov.per_id, mov.cnt_id, mov.ofi_id, mov.mov_fecha_pos_vencida
-                          ,case when tmp.dd_tit_codigo = ${ddTipoItinerario.recuperacion.codigo} then -- Recuperacion, vamos por mov pos viva vencida
-                                case mov.n_mov_pos_vencida when 1 then 1 else 0 end
-                              else -- Seguimiento, vamos por riesgo
-                                case mov.n_mov_riesgo when 1 then 1 else 0 end
-                              end es_cnt_pase
-                from TMP_PER_ARQUETIPO_RECUPERACION tmp
-                  join TMP_CNT_NUEVOS_CLI_MOV mov on tmp.per_id = mov.per_id;
-        COMMIT;
-
-        DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CNT_NUEVOS_CLI', estimate_percent => 20);
-
+          DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CNT_NUEVOS_CLI', estimate_percent => 20);
+    commit;
     END;
     ]]>
   </entry>

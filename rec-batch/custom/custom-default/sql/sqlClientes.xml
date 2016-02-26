@@ -629,7 +629,7 @@
     ]]>
   </entry>
 
-   <entry key="clientes.creacionClientes.04.insertTmpCNTnuevosCLI_NUEVO.Oracle9iDialect">
+   <entry key="clientes.creacionClientes.04.insertTmpCNTnuevosCLI.Oracle9iDialect">
     <![CDATA[
     BEGIN
         /* Contrato en algún procedimiento 'en curso' */
@@ -645,11 +645,8 @@
                                                    ${ddEstadoProcedimiento.confirmado.codigo},
                                                    ${ddEstadoProcedimiento.aceptado.codigo},
                                                    ${ddEstadoProcedimiento.derivado.codigo},
-                                                   ${ddEstadoProcedimiento.enConformacion.codigo});
-        COMMIT;
-
-        /* Contrato en algún expediente 'en curso' */
-        Insert /*+append*/ into TMP_CNT_NUEVOS_CLI_DES
+                                                   ${ddEstadoProcedimiento.enConformacion.codigo})
+                        UNION
                         /* Que el contrato no esté algún expediente 'en curso' */
                         SELECT cex.cnt_id
                           FROM cex_contratos_expediente cex
@@ -698,7 +695,7 @@
         DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CNT_NUEVOS_CLI_MOV', estimate_percent => 20);
 
         INSERT INTO TMP_CNT_NUEVOS_CLI
-                select mov.per_id, mov.cnt_id, mov.ofi_id, mov.mov_fecha_pos_vencida
+                select distinct mov.per_id, mov.cnt_id, mov.ofi_id, mov.mov_fecha_pos_vencida
                           ,case when tmp.dd_tit_codigo = ${ddTipoItinerario.recuperacion.codigo} then -- Recuperacion, vamos por mov pos viva vencida
                                 case mov.n_mov_pos_vencida when 1 then 1 else 0 end
                               else -- Seguimiento, vamos por riesgo
@@ -714,7 +711,7 @@
     ]]>
   </entry>
 
-  <entry key="clientes.creacionClientes.04.insertTmpCNTnuevosCLI.Oracle9iDialect">
+  <entry key="clientes.creacionClientes.04.insertTmpCNTnuevosCLI_OLD.Oracle9iDialect">
     <![CDATA[
         INSERT INTO TMP_CNT_NUEVOS_CLI
         with vcpe as (
@@ -797,7 +794,7 @@
           ,CASE WHEN DD_TIT_CODIGO = ${tipoGestionArquetipo.seguimiento} THEN
             SYSDATE --SEGUIMIENTO, EL ITINERARIO EMPIEZA A CONTAR DESDE LA FECHA DE CREACION
           ELSE
-            NVL(TMP_CNT.FECHA_POS_VENCIDA, SYSDATE) --RECUPERACION, EL ITINERARIO EMP. A CONTAR DESDE LA F.POS.VENCIDA, SI NULL = FECHA CREACION 
+            NVL(TMP_CNT.FECHA_POS_VENCIDA, SYSDATE) --RECUPERACION, EL ITINERARIO EMP. A CONTAR DESDE LA F.POS.VENCIDA, SI NULL = FECHA CREACION
           END AS CLI_FECHA_CREACION
           , NULL AS PTE_ID --PROVEEDOR TELECOBRO
           , '0' AS CLI_TELECOBRO --CLIENTE TELECOBRO

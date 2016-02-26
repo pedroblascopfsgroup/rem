@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JAVIER DIAZ RAMOS
---## FECHA_CREACION=20150724
+--## FECHA_CREACION=20160225
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3.1
 --## INCIDENCIA_LINK=CMREC-435
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Nuevo valor ENTIDAD_ORIGEN '3058','CAJAMAR'
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -1050,6 +1051,7 @@ DECLARE
    V_ENTIDAD_PROP T_ARRAY_ENTIDAD_PROP := T_ARRAY_ENTIDAD_PROP(
                                     T_ENTIDAD_PROP('3029','CAIXA PETRER','CAIXA PETRER'),
 									T_ENTIDAD_PROP('3045','CAIXALTEA','CAIXALTEA'),
+									T_ENTIDAD_PROP('3058','CAJAMAR','CAJAMAR'),
 									T_ENTIDAD_PROP('3082','RURALCAJA','RURALCAJA'),
 									T_ENTIDAD_PROP('3083','CAJA RURAL DEL DUERO','CAJA RURAL DEL DUERO'),
 									T_ENTIDAD_PROP('3094','CAJA CAMPO','CAJA CAMPO'),

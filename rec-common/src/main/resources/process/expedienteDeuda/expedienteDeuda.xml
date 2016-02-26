@@ -47,11 +47,11 @@
 				<targetBean>revisionExpedienteActionHandler</targetBean>
 			</action>
 		</event>
-		<transition to="EnviarAComite" name="EnviarAComite"></transition>
 		<transition to="DevolverCompletar" name="DevolverACompletar"></transition>
 		<transition to="GenerarNotificacion" name="GenerarNotificacion"></transition>
 		<transition to="SolicitarProrrogaExtra" name="EnviarSolicitarProrrogaExtra"></transition>
 		<transition to="Fin Expediente" name="Fin"></transition>
+		<transition to="EnviarAEnSancion" name="EnviarAEnSancion"></transition>
 	</state>
 
 	<node name="EnviarAComite">
@@ -70,11 +70,11 @@
 			</action>
 		</event>
 		<transition to="ExpedienteDecidido" name="TomarDecision"></transition>
-		<transition to="DevolverRevision" name="DevolverRevision"></transition>
 		<transition to="GenerarNotificacion" name="GenerarNotificacion"></transition>
         <transition to="DecisionComiteAutomatica" name="DecisionComiteAutomatica"></transition>
 		<transition to="Fin Expediente" name="Fin"></transition>
 		<transition to="EnviarAFormalizar" name="EnviarAFormalizar"></transition>
+		<transition to="DevolverAEnSancion" name="DevolverAEnSancion"></transition>
 	</state>
 
 	<node name="DevolverRevision">
@@ -112,6 +112,7 @@
 		<transition to="EnviarARevision" name="EnviarARevision"></transition>
 		<transition to="EnviarAComite" name="EnviarAComite"></transition>
 		<transition to="FormalizarPropuesta" name="FormalizarPropuesta"></transition>
+		<transition to="EnSancion" name="EnSancion"></transition>
 	</node>
 
 	<node name="SolicitarProrrogaExtra">
@@ -167,6 +168,21 @@
 			<targetBean>expedienteDecididoActionHandler</targetBean>
 		</action>
 		<transition to="Fin Expediente"></transition>
+	</node>
+
+	<state name="EnSancion">
+		<transition to="DevolverRevision" name="DevolverRevision"></transition>
+		<transition to="EnviarAComite" name="EnviarAComite"></transition>
+		<transition to="GenerarNotificacion" name="GenerarNotificacion"></transition>
+		<transition to="Fin Expediente" name="Fin "></transition>
+	</state>
+
+	<node name="DevolverAEnSancion">
+		<transition to="EnSancion"></transition>
+	</node>
+
+	<node name="EnviarAEnSancion">
+		<transition to="EnSancion"></transition>
 	</node>
 
 	<end-state name="Fin Expediente"></end-state>

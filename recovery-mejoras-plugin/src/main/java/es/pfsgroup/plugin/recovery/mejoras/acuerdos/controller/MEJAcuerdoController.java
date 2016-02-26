@@ -248,12 +248,23 @@ public class MEJAcuerdoController {
 		
 		List<String> contratos = new ArrayList<String>(Arrays.asList(contratosIncluidos.split(",")));
 		List<String> fechasPaseMora = new ArrayList<String>();
+		List<String> fechasPaseMoraFormated = new ArrayList<String>();
 		for(String contrat : contratos) {
 			fechasPaseMora.add(mejAcuerdoApi.getFechaPaseMora(Long.valueOf(contrat)));	
 		}
 		
+		
+		for(String fecha : fechasPaseMora){
+			if(fecha == null){
+				fechasPaseMoraFormated.add("0");
+			}else{
+				fechasPaseMoraFormated.add(fecha);
+			}
+		}
+		
 		Comparator<String> comparador = Collections.reverseOrder();
-		Collections.sort(fechasPaseMora, comparador);
+		Collections.sort(fechasPaseMoraFormated, comparador);
+		
 		String fechaPaseMora = fechasPaseMora.get(0); 
 		map.put("idTipoAcuerdoPlanPago", tipoAcuerdoPlanPago.getId());
 		map.put("yaHayPlanPago", yaHayPlanPago);

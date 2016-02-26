@@ -1,4 +1,4 @@
-create or replace PROCEDURE      cm01.SP_MIG_A_TABLA_INTERMEDIA IS
+create or replace PROCEDURE      SP_MIG_A_TABLA_INTERMEDIA IS
 
 	CURSOR c_PROCS IS
                  SELECT CD_PROCEDIMIENTO,
@@ -42,7 +42,7 @@ create or replace PROCEDURE      cm01.SP_MIG_A_TABLA_INTERMEDIA IS
     					 FROM MIG_PARAM_HITOS_VALORES
     					 WHERE MIG_PARAM_HITO_ID = p_MIG_PARAM_HITO_ID
     					 ORDER BY ORDEN;
-
+               
    CURSOR c_BIENES_PROCEDIMIENTO (p_CD_PROCEDIMIENTO IN VARCHAR2) IS SELECT DISTINCT NVL(CD_BIEN,0) AS CD_BIEN, ULTIMO_HITO_BIEN_PROC
                                                                      FROM MIG_PROCEDIMIENTOS_BIENES
                                                                      WHERE CD_PROCEDIMIENTO = p_CD_PROCEDIMIENTO
@@ -103,9 +103,9 @@ create or replace PROCEDURE      cm01.SP_MIG_A_TABLA_INTERMEDIA IS
   Z NUMBER := 0;
 
   v_MAX_ORDEN NUMBER(1):=0;
-  
   v_COUNT_TEMP NUMBER:=0;
   v_COUNT_TEMP_COMMIT NUMBER:=0;
+
 
 BEGIN
 
@@ -192,13 +192,12 @@ DBMS_OUTPUT.ENABLE(1000000);
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' MIG_PROCEDIMIENTOS_DEMANDADOS ANALIZADA');
 
     EXECUTE IMMEDIATE ('SELECT COUNT(1) FROM ALL_INDEXES WHERE INDEX_NAME=''IDX_MIG_PRC_BIE_X'' AND OWNER=''CM01''') INTO V_COUNT;
-
     IF V_COUNT = 0 THEN
         EXECUTE IMMEDIATE('CREATE INDEX IDX_MIG_PRC_BIE_X ON '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_BIENES (CD_PROCEDIMIENTO, CD_BIEN) nologging');
-
     END IF;
     EXECUTE IMMEDIATE 'ANALYZE TABLE '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_BIENES COMPUTE STATISTICS FOR ALL INDEXES';
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' MIG_PROCEDIMIENTOS_BIENES ANALIZADA');
+
 
     SELECT COUNT(1)
     INTO V_COUNT
@@ -259,11 +258,12 @@ DBMS_OUTPUT.ENABLE(1000000);
         v_COUNT := v_COUNT + 1;
 
         IF MOD(v_COUNT,1000) = 0 THEN
-            
+
+
             SELECT COUNT(1)
             INTO v_COUNT_TEMP_COMMIT
             FROM TEMP_MIG_MAESTRA_HITOS_BIENES;
-            
+
             COMMIT;
             DBMS_OUTPUT.PUT_LINE(TO_CHAR(SYSDATE,'HH24:MI:SS')||' - COMMIT Reached at '||v_COUNT||' / CD_PROCEDIMIENTO = '||v_CD_PROCEDIMIENTO);
             DBMS_OUTPUT.PUT_LINE('[INFO] '||v_COUNT_TEMP_COMMIT||' CONSULTAS EN TABLA TEMP Realizadas');
@@ -750,7 +750,7 @@ DBMS_OUTPUT.ENABLE(1000000);
                                     END IF;
 
                             ELSIF (k.TAP_CODIGO = 'H001_ConfirmarSiExisteOposicion' AND l.TEV_NOMBRE = 'comboResultado' AND v_TEV_VALOR = '0' AND j.ULTIMO_HITO > 33) THEN
-
+                            
                                   v_CONTROL := 3;
 
                             ELSIF k.TAP_CODIGO = 'H001_ConfirmarSiExisteOposicion' AND l.TEV_NOMBRE = 'comboResultado' AND v_TEV_VALOR = '1' AND j.ULTIMO_HITO > 33 THEN
@@ -1255,14 +1255,14 @@ DBMS_OUTPUT.ENABLE(1000000);
             IF k.DD_TPO_CODIGO = 'H002' THEN
 
                 v_CONTROL := 0;
-
+                
                 v_PRC_ID_SUBASTA := v_PRC_ID;
 
              END IF;
 
 
             END IF; --FLAG_POR_cADA_BIEN = 0
-
+            
             -------- HITOS X CADA BIEN (SOLO 38 - ADJUDICACION Y 39 - POSESION)
             IF k.FLAG_POR_CADA_BIEN = 1 THEN --HITOS DE BIENES
 
@@ -1271,7 +1271,7 @@ DBMS_OUTPUT.ENABLE(1000000);
                         v_CD_BIEN := z.CD_BIEN;
 
                         v_MAX_HITO_BIEN := z.ULTIMO_HITO_BIEN_PROC;
-
+                            
                         IF k.COD_HITO_ACTUAL <= v_MAX_HITO_BIEN THEN -- HITO BIEN
 
                             IF k.DD_TPO_CODIGO = 'H002' THEN -- T. DE ADJUDICACION
@@ -1281,7 +1281,7 @@ DBMS_OUTPUT.ENABLE(1000000);
                                v_PRC_PRC_ID := v_PRC_ID_SUBASTA;
 
                             END IF;
-
+                            
                             BEGIN
 
                               SELECT DISTINCT PRC_ID, PRC_PRC_ID
@@ -1290,7 +1290,7 @@ DBMS_OUTPUT.ENABLE(1000000);
                               WHERE CD_PROCEDIMIENTO = j.CD_PROCEDIMIENTO
                               AND DD_TPO_CODIGO = k.DD_TPO_CODIGO
                               AND CD_BIEN = v_CD_BIEN;
-                              
+
                               v_COUNT_TEMP := v_COUNT_TEMP + 1;
 
                             EXCEPTION
@@ -1307,7 +1307,7 @@ DBMS_OUTPUT.ENABLE(1000000);
                                 v_CD_BIEN_ANTERIOR := v_CD_BIEN;
 
                             END;
-
+                            
                             IF k.DD_TPO_CODIGO IN('H015') THEN
 
 
@@ -1319,11 +1319,11 @@ DBMS_OUTPUT.ENABLE(1000000);
                               AND CD_BIEN = v_CD_BIEN;
 
                               v_ORDEN := v_ORDEN_ADJU;
-                              
+
                               v_COUNT_TEMP := v_COUNT_TEMP + 1;
 
                             END IF;
-
+                            
                         END IF;
 
                         IF l.FLAG_ES_FECHA = 1 THEN
@@ -1331,26 +1331,26 @@ DBMS_OUTPUT.ENABLE(1000000);
                             IF INSTR(l.CAMPO_INTERFAZ,'FECHA') > 0 AND INSTR(l.CAMPO_INTERFAZ,'DECODE') = 0 THEN
 
                                 IF l.TABLA_MIG = 'MIG_PROCEDIMIENTOS_BIENES' THEN
-
-
+                        
+                        
                                     v_SQL := 'SELECT TO_CHAR('||l.CAMPO_INTERFAZ||',''DD-MM-YYYY'')
                                               FROM '||l.TABLA_MIG||'
                                               WHERE CD_PROCEDIMIENTO = '||J.CD_PROCEDIMIENTO||'
                                               AND CD_BIEN = '''||v_CD_BIEN||'''';
 
-                                ELSE -- MIG_PROCEDIMIENTOS_SUBASTAS
+                                ELSE -- MIG_PROCEDIMIENTOS_SUBASTAS    
 
                                       v_SQL := 'SELECT TO_CHAR('||l.CAMPO_INTERFAZ||')
                                                 FROM '||l.TABLA_MIG||'
                                                 WHERE CD_SUBASTA = (SELECT MAX(CD_SUBASTA) FROM '||l.TABLA_MIG||'
                                                                     WHERE CD_PROCEDIMIENTO = '||j.CD_PROCEDIMIENTO||')';
-
+                                    
                                 END IF;
-
+                            
                             END IF;
-
+                               
                         ELSIF l.FLAG_ES_FECHA = 0 THEN
-
+                        
 
                                IF INSTR(l.CAMPO_INTERFAZ,'FECHA') = 0 OR INSTR(l.CAMPO_INTERFAZ,'DECODE') > 0 THEN
 
@@ -1362,25 +1362,25 @@ DBMS_OUTPUT.ENABLE(1000000);
                                ELSE
 
                                       IF l.TABLA_MIG = 'MIG_PROCEDIMIENTOS_BIENES' THEN
-
-
+                              
+                              
                                           v_SQL := 'SELECT TO_CHAR('||l.CAMPO_INTERFAZ||',''DD-MM-YYYY'')
                                                     FROM '||l.TABLA_MIG||'
                                                     WHERE CD_PROCEDIMIENTO = '||J.CD_PROCEDIMIENTO||'
                                                     AND CD_BIEN = '''||v_CD_BIEN||'''';
-
-                                      ELSE -- MIG_PROCEDIMIENTOS_SUBASTAS
-
+      
+                                      ELSE -- MIG_PROCEDIMIENTOS_SUBASTAS    
+      
                                             v_SQL := 'SELECT TO_CHAR('||l.CAMPO_INTERFAZ||')
                                                       FROM '||l.TABLA_MIG||'
                                                       WHERE CD_SUBASTA = (SELECT MAX(CD_SUBASTA) FROM '||l.TABLA_MIG||'
                                                                           WHERE CD_PROCEDIMIENTO = '||j.CD_PROCEDIMIENTO||')';
-
+                                          
                                       END IF;
-
-                               END IF;
-
-                        END IF;
+                                
+                               END IF;                                
+                                
+                        END IF;                                
 
 
                         BEGIN
@@ -1393,7 +1393,7 @@ DBMS_OUTPUT.ENABLE(1000000);
                                  v_TEV_VALOR := NULL;
 
                         END;
-
+  
                         IF (v_TAR_FINALIZADA = 1 AND v_CONTROL <> 3 AND l.FLAG_ES_FECHA = 1) THEN
 
                              INSERT INTO TEMP_MIG_MAESTRA_HITOS_BIENES
@@ -1408,13 +1408,13 @@ DBMS_OUTPUT.ENABLE(1000000);
                                     ,k.DD_TPO_CODIGO
                                     ,v_CD_BIEN);
 
-
+                             
                              SELECT S_TAR_TAREAS_NOTIFICACIONES.NEXTVAL
                              INTO v_TAR_ID
                              FROM DUAL;
 
 
-
+                             
                              INSERT INTO MIG_MAESTRA_HITOS
                                            (CD_PROCEDIMIENTO,
                                             PRC_ID,
@@ -1446,7 +1446,7 @@ DBMS_OUTPUT.ENABLE(1000000);
                                         ,k.COD_HITO_ACTUAL
                                         ,j.ULTIMO_HITO);
 
-
+                             
                              SELECT S_TEV_TAREA_EXTERNA_VALOR.NEXTVAL
                              INTO v_TEV_ID
                              FROM DUAL;
@@ -1470,9 +1470,9 @@ DBMS_OUTPUT.ENABLE(1000000);
 
                         END IF; --v_CONTROL <> 3
 
-                        IF  (v_TAR_FINALIZADA = 1 AND v_CONTROL <> 3 AND l.FLAG_ES_FECHA = 0) THEN
-
-
+                        IF  (v_TAR_FINALIZADA = 1 AND v_CONTROL <> 3 AND l.FLAG_ES_FECHA = 0) THEN                      
+ 
+ 
                              SELECT S_TEV_TAREA_EXTERNA_VALOR.NEXTVAL
                              INTO v_TEV_ID
                              FROM DUAL;
@@ -1493,7 +1493,7 @@ DBMS_OUTPUT.ENABLE(1000000);
                                    ,l.ORDEN
                                    ,l.TEV_NOMBRE
                                    ,v_TEV_VALOR);
-
+                        
                         END IF;
 
                         IF (k.COD_HITO_ACTUAL = j.ULTIMO_HITO AND v_TAR_FINALIZADA = 0 AND v_CONTROL <> 3) THEN --TAREA PENDIENTE X CADA BIEN
@@ -1501,7 +1501,7 @@ DBMS_OUTPUT.ENABLE(1000000);
                                SELECT S_TAR_TAREAS_NOTIFICACIONES.NEXTVAL
                                INTO v_TAR_ID
                                FROM DUAL;
-
+              
                                INSERT INTO MIG_MAESTRA_HITOS
                                        (CD_PROCEDIMIENTO,
                                         PRC_ID,
@@ -1532,15 +1532,15 @@ DBMS_OUTPUT.ENABLE(1000000);
                                       ,v_CD_BIEN
                                       ,k.COD_HITO_ACTUAL
                                       ,j.ULTIMO_HITO);
-
+              
                         END IF;
 --       DBMS_OUTPUT.PUT_LINE('TAP : '||k.TAP_CODIGO||' - v_TAR_FINALIZADA : '||v_TAR_FINALIZADA);
 --       DBMS_OUTPUT.PUT_LINE('k.COD_HITO_ACTUAL :'|| k.COD_HITO_ACTUAL || 'j.ULTIMO_HITO : ' || j.ULTIMO_HITO||' - v_CONTROL: '||v_CONTROL);
 
                 END LOOP; ---BIENES
-
+            
              END IF; -- X CADA BIEN
-
+             
              v_CD_BIEN := NULL;
 
       END LOOP; --l VALORES
@@ -1602,7 +1602,7 @@ DBMS_OUTPUT.ENABLE(1000000);
 
     DBMS_OUTPUT.PUT_LINE('PROCESO de MIGRACION a Tabla MAESTRA TERMINADO CORRECTAMENTE. Last CD_PROCEDIMIENTO = '||v_CD_PROCEDIMIENTO);
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_COUNT||' PROCEDIMIENTOS Procesados');
-    
+
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_COUNT_TEMP||' CONSULTAS EN TABLA TEMP Realizadas');
 
     EXECUTE IMMEDIATE ('SELECT COUNT(1) FROM ALL_INDEXES WHERE INDEX_NAME=''INDX_MIGRACION_MAE'' AND OWNER=''CM01''') INTO V_COUNT;
@@ -1622,3 +1622,10 @@ EXCEPTION
       DBMS_OUTPUT.PUT_LINE(SQLERRM);
 
 END;
+/
+
+EXEC CM01.SP_MIG_A_TABLA_INTERMEDIA;
+/
+
+
+EXIT;

@@ -146,8 +146,6 @@ if [[ "x$@" != "x" ]]; then
 			OPTION_STATISTICS=yes
 		elif [[ "x$op" == x-port=* ]]; then
 			OPTION_PORT=$(echo $op | cut -f2 -d=)
-		elif [[ "x$op" == x-name=* ]]; then
-			CONTAINER_NAME=$(echo $op | cut -f2 -d=)
 		fi
 	done
 else
@@ -220,6 +218,10 @@ function package_sql () {
         cp $PREVIOUS_SCRIPTS_DIR/DML_008_ENTITY_LIMPIEZA_TABLAS_RESIDUALES_ARQUETIPOS.sql $ws_package_dir/
         cp $PREVIOUS_SCRIPTS_DIR/DML_009_MASTER_CARGA_TODAS_FUNCIONES.sql $ws_package_dir/
         cp $PREVIOUS_SCRIPTS_DIR/DML_010_ENTITY_CARGA_TODOS_PERFILES.sql $ws_package_dir/
+
+        # FIX: Bug de la versión que tenemos de Oracle. Problema con MERGE
+        # ORA-00600: internal error code, arguments: [kkmupsViewDestFro_4], [76107],[75624], [], [], [], [], [], [], [], [], []
+        sed -e 's/DD_SCL_ID NUEVO_DD_SCL_ID/DD_SCL_ID NUEVO_DD_SCL_ID, ROWNUM/g' -i $ws_package_dir/**/**/scripts/DML_382_ENTITY01_DATJPB_MergeSCE_SCL_en_PER_PERSONAS*.sql
 
 		chmod -R go+w $ws_package_dir
 		for sh in $(find $ws_package_dir -name '*.sh'); do

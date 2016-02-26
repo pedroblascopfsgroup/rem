@@ -448,22 +448,76 @@
          	,handler:function(){
 				if (false) {
 					Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="acuerdos.conclusiones.observaciones.error"/>');
-				} 
-				else {	
-					page.webflow({
-		      			flow:'editbien/solicitarTasacion'
-		      			,params:{id:${NMBbien.id}}
-		      			,success: function(){
-		      			   Ext.Msg.show({
-								title:'Operación realizada',
-								msg: '<s:message code="plugin.nuevoModeloBienes.uvem.tasacion.ok"/>',
-								buttons: Ext.Msg.OK,
-								icon:Ext.MessageBox.INFO
-							});	
-		      			   app.abreBienTab(${NMBbien.id}, '${NMBbien.id}' + '${NMBbien.tipoBien.descripcion}', bienTabPanel.getActiveTab().initialConfig.nombreTab);
-		            	}
-		      		});
-		      	}
+				} else {	
+					if(solicitarTas<=-3 || solicitarTas==0)
+					{
+					    var mensaje;
+					    if(solicitarTas==0){
+					    	Ext.Msg.show({
+							title:'Advertencia',
+							msg: '<s:message code="plugin.nuevoModeloBienes.uvem.tasacion.ko0"/>',
+							buttons: Ext.Msg.OK,
+							icon:Ext.MessageBox.WARNING
+							});
+					    }
+					    if(solicitarTas==-1){
+					    	Ext.Msg.show({
+							title:'Advertencia',
+							msg: '<s:message code="plugin.nuevoModeloBienes.uvem.tasacion.ko1"/>',
+							buttons: Ext.Msg.OK,
+							icon:Ext.MessageBox.WARNING
+							});
+					    }
+					   	if(solicitarTas==-2){
+					    	Ext.Msg.show({
+							title:'Advertencia',
+							msg: '<s:message code="plugin.nuevoModeloBienes.uvem.tasacion.ko2"/>',
+							buttons: Ext.Msg.OK,
+							icon:Ext.MessageBox.WARNING
+							});
+					    }
+					   	if(solicitarTas==-3){
+					    	Ext.Msg.show({
+							title:'Advertencia',
+							msg: '<s:message code="plugin.nuevoModeloBienes.uvem.tasacion.ko3"/>',
+							buttons: Ext.Msg.OK,
+							icon:Ext.MessageBox.WARNING
+							});
+					    }
+					   	if(solicitarTas==-4){
+					    	Ext.Msg.show({
+							title:'Advertencia',
+							msg: '<s:message code="plugin.nuevoModeloBienes.uvem.tasacion.ko4"/>',
+							buttons: Ext.Msg.OK,
+							icon:Ext.MessageBox.WARNING
+							});
+					    }
+					   	if(solicitarTas==-5){
+					    	Ext.Msg.show({
+							title:'Advertencia',
+							msg: '<s:message code="plugin.nuevoModeloBienes.uvem.tasacion.ko5"/>',
+							buttons: Ext.Msg.OK,
+							icon:Ext.MessageBox.WARNING
+							});
+					   	}
+						
+					}
+					else{			
+			      		page.webflow({
+			      			flow:'editbien/solicitarTasacion'
+			      			,params:{id:${NMBbien.id}}
+			      			,success: function(){
+			      			   Ext.Msg.show({
+									title:'Operación realizada',
+									msg: '<s:message code="plugin.nuevoModeloBienes.uvem.tasacion.ok"/>',
+									buttons: Ext.Msg.OK,
+									icon:Ext.MessageBox.INFO
+								});	
+			      			   app.abreBienTab(${NMBbien.id}, '${NMBbien.id}' + '${NMBbien.tipoBien.descripcion}', bienTabPanel.getActiveTab().initialConfig.nombreTab);
+			            	}
+			      		});
+		      		}
+				}
 	        }
 		});
 		

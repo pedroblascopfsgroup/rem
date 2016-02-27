@@ -471,8 +471,8 @@ select valor into V_SCHEMA_DS from PARAMETROS_ENTORNO where parametro = 'ESQUEMA
     EXECUTE IMMEDIATE (V_SQL);
   END IF;
 
-	V_SQL :=  'insert into D_EXP_OFICINA(OFICINA_EXPEDIENTE_ID, OFICINA_EXPEDIENTE_DESC, PROVINCIA_EXPEDIENTE_ID)
-    select OFI_ID, OFI_NOMBRE, DD_PRV_ID FROM ' || V_SCHEMA_DS || '.OFI_OFICINAS OFI
+	V_SQL :=  'insert into D_EXP_OFICINA(OFICINA_EXPEDIENTE_ID, OFICINA_EXPEDIENTE_DESC, OFICINA_EXPEDIENTE_DESC_2, PROVINCIA_EXPEDIENTE_ID)
+    select OFI_ID, OFI_NOMBRE, OFI_CODIGO_OFICINA, DD_PRV_ID FROM ' || V_SCHEMA_DS || '.OFI_OFICINAS OFI
 	where not exists (select 1 from D_EXP_OFICINA EXP WHERE EXP.OFICINA_EXPEDIENTE_ID = OFI.OFI_ID)';
 	EXECUTE IMMEDIATE (V_SQL);
 	
@@ -572,7 +572,7 @@ select valor into V_SCHEMA_DS from PARAMETROS_ENTORNO where parametro = 'ESQUEMA
   END IF;
 
 	V_SQL :=  'insert into D_EXP_ZONA(ZONA_EXPEDIENTE_ID, ZONA_EXPEDIENTE_DESC, ZONA_EXPEDIENTE_DESC_2, NIVEL_EXPEDIENTE_ID, OFICINA_EXPEDIENTE_ID)
-    select distinct zon2.zon_id, Zon2.Zon_Descripcion, Zon2.Zon_Descripcion_larga, zon2.niv_id, ofi.ofi_id
+    select distinct zon2.zon_id, Zon2.Zon_Descripcion, ofi.ofi_codigo_oficina, zon2.niv_id, ofi.ofi_id
      from  '||V_SCHEMA_DS||'.ofi_oficinas ofi 
      left join '||V_SCHEMA_DS||'.Zon_Zonificacion zon1 on ofi.ofi_id=zon1.ofi_id
      left join '||V_SCHEMA_DS||'.Zon_Zonificacion zon2 on zon1.zon_pid=zon2.zon_id';

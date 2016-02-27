@@ -2,9 +2,9 @@ create or replace PROCEDURE CARGAR_DIM_CONTRATO(O_ERROR_STATUS OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: María Villanueva, PFS Group
 -- Fecha creacion: Septiembre 2015
--- Responsable ultima modificacion: Pedro S., PFS Group
--- Fecha ultima modificacion: 15/01/2016
--- Motivos del cambio: CMREC-1610 Añadimos detalle soluciones previstas a acuerdos
+-- Responsable ultima modificacion: María.V, PFS Group
+-- Fecha ultima modificacion: 22/02/2016
+-- Motivos del cambio: Se añade a d_cnt_entidad la entidad 3058, CAJAMAR
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripcion: Procedimiento almancenado que carga las tablas de la dimension contrato
@@ -659,8 +659,8 @@ BEGIN
   end if;
 
   execute immediate
-    'insert into D_CNT_OFICINA(OFICINA_CONTRATO_ID, OFICINA_CONTRATO_DESC, PROVINCIA_CONTRATO_ID)
-    select OFI_ID, OFI_NOMBRE, DD_PRV_ID from '||V_DATASTAGE||'.OFI_OFICINAS';
+    'insert into D_CNT_OFICINA(OFICINA_CONTRATO_ID, OFICINA_CONTRATO_DESC, OFICINA_CONTRATO_DESC_2, PROVINCIA_CONTRATO_ID)
+    select OFI_ID, OFI_NOMBRE, OFI_CODIGO_OFICINA, DD_PRV_ID from '||V_DATASTAGE||'.OFI_OFICINAS';
 
   V_ROWCOUNT := sql%rowcount;
   commit;
@@ -732,7 +732,7 @@ BEGIN
 
   execute immediate
     'insert into D_CNT_ZONA(ZONA_CONTRATO_ID, ZONA_CONTRATO_DESC, ZONA_CONTRATO_DESC_2, NIVEL_CONTRATO_ID, OFICINA_CONTRATO_ID)
-     select distinct zon2.zon_id, Zon2.Zon_Descripcion, Zon2.Zon_Descripcion_larga, zon2.niv_id, ofi.ofi_id
+     select distinct zon2.zon_id, Zon2.Zon_Descripcion, ofi.ofi_codigo_oficina, zon2.niv_id, ofi.ofi_id
      from  '||V_DATASTAGE||'.ofi_oficinas ofi 
      left join '||V_DATASTAGE||'.Zon_Zonificacion zon1 on ofi.ofi_id=zon1.ofi_id
      left join '||V_DATASTAGE||'.Zon_Zonificacion zon2 on zon1.zon_pid=zon2.zon_id';
@@ -4471,8 +4471,8 @@ SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_CALIF_FINAL_CREDITO WHERE CALIFICACION
   end if;
   
 	V_SQL := 'insert into D_CNT_DIR_TERRITORIAL (DIR_TERRITORIAL_ID, DIR_TERRITORIAL_DESC, DIR_TERRITORIAL_DESC_2)
-    select ZON_ID, ZON_DESCRIPCION, ZON_DESCRIPCION_LARGA from ' || V_DATASTAGE || '.ZON_ZONIFICACION ZON
-	where ZON.NIV_ID = 3 --(DT)
+    select ZON_ID, ZON_DESCRIPCION, OFI.OFI_CODIGO_OFICINA from ' || V_DATASTAGE || '.ZON_ZONIFICACION ZON, ' || V_DATASTAGE || '.OFI_OFICINAS OFI 
+	where ZON.NIV_ID = 3 AND OFI.OFI_ID = ZON.OFI_ID --(DT)
   AND not exists (select 1 from D_CNT_DIR_TERRITORIAL CNT WHERE CNT.DIR_TERRITORIAL_ID = ZON.ZON_ID)';
 	EXECUTE IMMEDIATE (V_SQL);
   V_ROWCOUNT := sql%rowcount;
@@ -4497,7 +4497,15 @@ SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_CALIF_FINAL_CREDITO WHERE CALIFICACION
        SELECT DISTINCT ENP.DD_ENP_ID, ENP.DD_ENP_DESCRIPCION, ENP.DD_ENP_DESCRIPCION_LARGA
        FROM '||V_DATASTAGE||'.DD_ENP_ENTIDADES_PROPIETARIAS ENP
        WHERE NOT EXISTS(SELECT 1 FROM D_CNT_ENTIDAD CNT WHERE CNT.CONTRATO_ENTIDAD_ID = ENP.DD_ENP_ID)
-       ORDER BY 1';
+       ORDER BY 1'; 
+
+SELECT COUNT(*) INTO V_NUM_ROW FROM D_CNT_ENTIDAD WHERE CONTRATO_ENTIDAD_ID = 3058;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_CNT_ENTIDAD (CONTRATO_ENTIDAD_ID, CONTRATO_ENTIDAD_DESC, CONTRATO_ENTIDAD_DESC_2)
+    VALUES (3058 ,'Cajamar', 'Cajamar');
+  END IF;
+
+
         
   V_ROWCOUNT := sql%rowcount;     
   commit;

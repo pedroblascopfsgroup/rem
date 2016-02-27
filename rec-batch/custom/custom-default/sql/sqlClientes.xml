@@ -554,8 +554,8 @@
                         WHERE pex.borrado = 0
                             AND pex.per_id = arr.per_id
                             AND eex.dd_eex_codigo IN (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo})
-                            -- AND exp.dd_tpx_id = (select tpx.dd_tpx_id from dd_tpx_tipo_expediente TPX where dd_tpx_codigo = 'SEG')
-                            -- No sea un expediente de recobro
+                            AND exp.dd_tpx_id = (select tpx.dd_tpx_id from cm01.dd_tpx_tipo_expediente TPX where dd_tpx_codigo = 'SEG')
+                             --No sea un expediente de recobro
                             AND not exists (select exr.exp_id from exr_expediente_recobro exr where exp.exp_id = exr.exp_id)
                   )
                   /* Que la persona no tenga un cliente creado */

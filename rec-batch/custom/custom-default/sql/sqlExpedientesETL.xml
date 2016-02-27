@@ -176,6 +176,28 @@
             COMMIT;
 
 
+            --** Contratos en expedientes con procedimiento en curso - en asunto
+            ---------------------------------------------------------------------
+            Insert /*+append*/ INTO BATCH_SV_DATOS_CNT_EXP (EXP_ID,CNT_ID,DD_TPX_CODIGO)
+            Select cex.exp_id, cex.cnt_id, null as dd_tpx_codigo
+              From CEX_CONTRATOS_EXPEDIENTE cex
+               Inner Join PRC_CEX pce On cex.cex_id = pce.cex_id
+               Inner Join PRC_PROCEDIMIENTOS prc On pce.prc_id = prc.prc_id And prc.borrado = 0
+               Inner Join ${master.schema}.DD_EPR_ESTADO_PROCEDIMIENTO epr On prc.dd_epr_id  = epr.dd_epr_id
+             Where cex.borrado = 0
+               And epr.dd_epr_codigo in (${ddEstadoProcedimiento.propuesto.codigo},
+                                         ${ddEstadoProcedimiento.confirmado.codigo},
+                                         ${ddEstadoProcedimiento.aceptado.codigo},
+                                         ${ddEstadoProcedimiento.derivado.codigo},
+                                         ${ddEstadoProcedimiento.enConformacion.codigo})
+               And not exists (select exr.exp_id from EXR_EXPEDIENTE_RECOBRO exr where cex.exp_id = exr.exp_id);
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SV_DATOS_CNT_EXP Cargada. Cnt en proc en curso.',V_NUFILAS);
+            COMMIT;
+
+
 
             --** Personas en expedientes de recuperacion o seguimiento (no libres)
             ------------------------------------------------------------------------

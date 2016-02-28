@@ -26,14 +26,15 @@ public class AdjuntoGridAssembler {
 		for(GestorDocumentalOutputListDto olDto : outputDto.getLbListadoDocumentos()) {
 			AdjuntoGridDto dto = new AdjuntoGridDto();
 			dto.setId(Long.parseLong(olDto.getIdDocumento()));
-			dto.setNombre(olDto.getDescripcion()+"."+olDto.getExtFichero());
 			dto.setContentType(olDto.getContentType());
 			
 			if(!Checks.esNulo(olDto.getDescripcion())) {			
+				dto.setNombre(olDto.getDescripcion()+"."+olDto.getExtFichero());
 				dto.setDescripcion(olDto.getDescripcion());
 			}
 			else {
 				logger.warn("Método outputDtoToAdjuntoGridDto, el campo descripción está vacío");
+				dto.setNombre(olDto.getNombreTipoDoc()+"."+olDto.getExtFichero());
 				dto.setDescripcion(olDto.getNombreTipoDoc());
 			}
 			

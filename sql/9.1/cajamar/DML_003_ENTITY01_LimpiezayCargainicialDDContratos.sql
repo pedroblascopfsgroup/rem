@@ -1,11 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JAVIER DIAZ RAMOS
-<<<<<<< HEAD
 --## FECHA_CREACION=20160226
-=======
---## FECHA_CREACION=20160225
->>>>>>> 3ddc36028282812b4f97abf34f5c7d938c6b2372
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3.1
 --## INCIDENCIA_LINK=CMREC-435
@@ -15,11 +11,7 @@
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
-<<<<<<< HEAD
 --##        0.2 Restauramos versión inicial
-=======
---##		0.2 Nuevo valor ENTIDAD_ORIGEN '3058','CAJAMAR'
->>>>>>> 3ddc36028282812b4f97abf34f5c7d938c6b2372
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;

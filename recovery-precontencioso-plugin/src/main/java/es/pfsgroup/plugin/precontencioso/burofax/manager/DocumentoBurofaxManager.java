@@ -452,19 +452,21 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		String resultado = "";
 		try {
 			String codigoEntidadOrigen = contrato.getCharextra5();
+			String nombreEntidadOrigen = null;
 			if (!Checks.esNulo(codigoEntidadOrigen)) {
-				if (!CODIGO_BANKIA.equals(codigoEntidadOrigen) || 
-						(contrato.getFechaCreacion().before(fechaReferencia.getTime()))) {
-					String nombreEntidadOrigen = ((DDPropietario) genericDao.get(DDPropietario.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEntidadOrigen))).getDescripcion();
-					if (esBFA) {
-						resultado = "LA CAJA DE AHORROS " + nombreEntidadOrigen + 
-								", APROBÓ LA SEGREGACIÓN DE LA TOTALIDAD DE LOS ACTIVOS Y PASIVOS DE SU NEGOCIO BANCARIO A FAVOR DE BANCO FINANCIERO Y DE AHORROS S.A., " + 
-								"Y AL HACERSE EFECTIVA DICHA SEGREGACIÓN USTED HA PASADO A SER CLIENTE DE BANCO FINANCIERO Y DE AHORROS  S.A.";
-					} else {
-						resultado = "LA CAJA DE AHORROS " + nombreEntidadOrigen + 
-								", APROBÓ LA SEGREGACIÓN DE LA TOTALIDAD DE LOS ACTIVOS Y PASIVOS DE SU NEGOCIO BANCARIO A FAVOR DE BANCO FINANCIERO Y DE AHORROS S.A., " + 
-								"QUE A SU VEZ, HA AUTORIZADO SU SEGREGACIÓN A FAVOR DE BANKIA S.A., Y AL HACERSE EFECTIVA DICHA SEGREGACIÓN USTED HA PASADO A SER CLIENTE DE BANKIA, S.A.";
-					}
+				nombreEntidadOrigen = ((DDPropietario) genericDao.get(DDPropietario.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEntidadOrigen))).getDescripcion();
+			} else if (contrato.getFechaCreacion().before(fechaReferencia.getTime())) {
+				nombreEntidadOrigen = "Y MONTE DE PIEDAD DE MADRID (CAJAMADRID)";
+			}
+			if (!Checks.esNulo(nombreEntidadOrigen)) {
+				if (esBFA) {
+					resultado = "LA CAJA DE AHORROS " + nombreEntidadOrigen + 
+							", APROBÓ LA SEGREGACIÓN DE LA TOTALIDAD DE LOS ACTIVOS Y PASIVOS DE SU NEGOCIO BANCARIO A FAVOR DE BANCO FINANCIERO Y DE AHORROS S.A., " + 
+							"Y AL HACERSE EFECTIVA DICHA SEGREGACIÓN USTED HA PASADO A SER CLIENTE DE BANCO FINANCIERO Y DE AHORROS  S.A.";
+				} else {
+					resultado = "LA CAJA DE AHORROS " + nombreEntidadOrigen + 
+							", APROBÓ LA SEGREGACIÓN DE LA TOTALIDAD DE LOS ACTIVOS Y PASIVOS DE SU NEGOCIO BANCARIO A FAVOR DE BANCO FINANCIERO Y DE AHORROS S.A., " + 
+							"QUE A SU VEZ, HA AUTORIZADO SU SEGREGACIÓN A FAVOR DE BANKIA S.A., Y AL HACERSE EFECTIVA DICHA SEGREGACIÓN USTED HA PASADO A SER CLIENTE DE BANKIA, S.A.";
 				}
 			}
 		} catch (Exception e) {

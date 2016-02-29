@@ -510,7 +510,7 @@ arrayCampos["codigoPersonaAfectada"]=app.creaNumber('codigoPersonaAfectada', '<s
 				   		msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.fondosPropios" text="**Fecha solicitud prevista debe ser menor a la fecha de pase a mora." />',
 				   		buttons: Ext.Msg.OK
 					});
-	       		}else if((comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && !arrayCampos.fechaSolucionPrevista.isValid()) || isNaN(parseFloat(dateSolucionPrevista))) {
+	       		}else if((comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && !arrayCampos.fechaSolucionPrevista.isValid())) {
 	       			return false;
 	       		}else if (yaHayPlanPago=='true' && comboTipoAcuerdo.getValue()==idTipoAcuerdoPlanPago){
 	        		Ext.Msg.show({

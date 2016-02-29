@@ -66,6 +66,9 @@ public class DatosPlantillaCredito extends DatosPlantillaPrestamoAbstract implem
 		if (datosGenerales.isEmpty()) {
 			throw new BusinessOperationException("GenerarLiquidacionBankiaManager.obtenerDatosLiquidacion: No se encuentra datos LQ03");
 		}
+		if (cabeceraExpediente.isEmpty()) {
+			throw new BusinessOperationException("GenerarLiquidacionBankiaManager.obtenerDatosLiquidacion: No se encuentra datos 113(Cabecera exp)");
+		}
 
 		// add data
 		datosLiquidacion.put("LQ03", datosGenerales.get(0));

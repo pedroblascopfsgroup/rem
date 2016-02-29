@@ -1506,6 +1506,7 @@
               from BATCH_SEG_DATOS_SALIDA        tmp
                  , CMP_CICLO_MARCADO_POLITICA    cmp
                  , PER_PERSONAS                  per
+                 , DD_POL_POLITICAS              pol
                  , TPL_TIPO_POLITICA             tpl
                  , ARQ_ARQUETIPOS                arq
                  , ITI_ITINERARIOS               iti
@@ -1516,12 +1517,14 @@
              where tmp.per_id = cmp.per_id
                And tmp.exp_id = cmp.exp_id
                And tmp.per_id = per.per_id(+)
-               And per.dd_pol_id = tpl.dd_pol_id(+)
+               And per.dd_pol_id = pol.dd_pol_id(+)
+               And pol.dd_pol_id = tpl.dd_pol_id(+)
                And tmp.arq_id = arq.arq_id(+)
                And arq.iti_id = iti.iti_id(+)
                And iti.iti_id = est.iti_id(+)
                And per.ofi_id = zon.ofi_id(+)
                And est.dd_est_id =sit.dd_est_id
+               And sit.dd_est_codigo = 'CE'
                And epi.dd_epi_codigo in ('PRE','CE')
             );
 

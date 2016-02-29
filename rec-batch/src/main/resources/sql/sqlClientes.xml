@@ -354,7 +354,7 @@
                        and eex.dd_eex_id = exp.dd_eex_id
                        and eex.dd_eex_codigo IN (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo})
                        and cex.cnt_id = c.cnt_id
-                       AND EXP.dd_tpx_id = (select tpx.dd_tpx_id from cm01.dd_tpx_tipo_expediente TPX where dd_tpx_codigo = 'RECU')
+                       AND EXP.dd_tpx_id = (select tpx.dd_tpx_id from dd_tpx_tipo_expediente TPX where dd_tpx_codigo = 'RECU')
                         --No sea un expediente de recobro
                        and not exists (select exr.exp_id from exr_expediente_recobro exr where exp.exp_id = exr.exp_id)
                    UNION ALL
@@ -554,7 +554,7 @@
                         WHERE pex.borrado = 0
                             AND pex.per_id = arr.per_id
                             AND eex.dd_eex_codigo IN (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo})
-                            AND exp.dd_tpx_id = (select tpx.dd_tpx_id from cm01.dd_tpx_tipo_expediente TPX where dd_tpx_codigo = 'SEG')
+                            AND exp.dd_tpx_id = (select tpx.dd_tpx_id from dd_tpx_tipo_expediente TPX where dd_tpx_codigo = 'SEG')
                              --No sea un expediente de recobro
                             AND not exists (select exr.exp_id from exr_expediente_recobro exr where exp.exp_id = exr.exp_id)
                   )
@@ -643,6 +643,7 @@
                    /* Que sea titular del contrato */
                     INNER JOIN dd_tin_tipo_intervencion tin ON cpe.DD_TIN_ID = tin.DD_TIN_ID AND tin.DD_TIN_TITULAR = 1
                     INNER JOIN ${master.schema}.dd_esc_estado_cnt e ON c.dd_esc_id = e.dd_esc_id
+                    INNER JOIN TMP_PER_ARQUETIPO_RECUPERACION tmp on cpe.per_id = tmp.per_id
                 WHERE --cpe.per_id = arr.per_id
                   /* Que el contrato no esté cancelado (Se considera cancelado cualquiera que no este activo)*/
                   e.dd_esc_codigo = ${estadoContrato.Activo.codigo}
@@ -662,7 +663,7 @@
                         --No sea un expediente de recobro
                        and not exists (select exr.exp_id from exr_expediente_recobro exr where cex.exp_id = exr.exp_id)
                    UNION ALL
-                      /* Que el contrato no esté algún expediente 'en curso' */
+                      /* Que el contrato no esté algún expediente 'en curso' de recuperación si el cliente es de recuperación*/
                        SELECT cex.cnt_id FROM cex_contratos_expediente cex
                        INNER JOIN exp_expedientes exp ON exp.exp_id = cex.exp_id
                        INNER JOIN ${master.schema}.dd_eex_estado_expediente eex ON eex.dd_eex_id = exp.dd_eex_id
@@ -671,8 +672,10 @@
                        and cex.cnt_id = c.cnt_id
                         --No sea un expediente de recobro
                        and not exists (select exr.exp_id from exr_expediente_recobro exr where exp.exp_id = exr.exp_id)
+                       --Para los clientes de recuperación que tengan contratos de recuperación
+                       and (tmp.DD_TIT_CODIGO = ${ddTipoItinerario.recuperacion.codigo} and exp.dd_tpx_id = (select tpx.dd_tpx_id from dd_tpx_tipo_expediente TPX where dd_tpx_codigo = 'RECU'))
                    UNION ALL
-                   /* Que el contrato no esté en algún cliente 'en curso' */
+                   	   --Que el contrato no esté en algún cliente 'en curso' 
                        SELECT ccl.cnt_id FROM ccl_contratos_cliente ccl
                        WHERE ccl.borrado = 0
                        and ccl.cnt_id = c.cnt_id

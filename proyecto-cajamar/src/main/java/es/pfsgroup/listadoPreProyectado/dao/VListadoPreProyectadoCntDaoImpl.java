@@ -8,6 +8,10 @@ import java.util.List;
 import javax.mail.Session;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
@@ -245,6 +249,31 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 		
 		List<Object[]> lista = getHibernateTemplate().find(sb.toString());
 		return castearListado(lista);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VListadoPreProyectadoCnt> getListadoPreProyectadoCntExp(List<Long> expsId) {
+		ProjectionList select = Projections.projectionList();
+		select.add(Projections.property("f.cntId").as("cntId"));
+		select.add(Projections.property("f.contrato").as("contrato"));
+		select.add(Projections.property("f.expId").as("expId"));
+		select.add(Projections.property("f.riesgoTotal").as("riesgoTotal"));
+		select.add(Projections.property("f.deudaIrregular").as("deudaIrregular"));
+		select.add(Projections.property("f.tramo").as("tramo"));
+		select.add(Projections.property("f.diasVencidos").as("diasVencidos"));
+		select.add(Projections.property("f.fechaPaseAMoraCnt").as("fechaPaseAMoraCnt"));
+		select.add(Projections.property("f.propuesta").as("propuesta"));
+		select.add(Projections.property("f.estadoGestion").as("estadoGestion"));
+		select.add(Projections.property("f.fechaPrevReguCnt").as("fechaPrevReguCnt"));
+
+		Criteria query = getSession().createCriteria(VListadoPreProyectadoCnt.class, "f");
+		query.setProjection(Projections.distinct(select));
+		query.add(Restrictions.in("f.expId", expsId));
+
+		query.setResultTransformer(Transformers.aliasToBean(VListadoPreProyectadoCnt.class));
+		
+		return query.list();
 	}
 
 	@SuppressWarnings("unchecked")

@@ -155,6 +155,7 @@
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SV_DATOS_CNT_PER Cargada',V_NUFILAS);
             COMMIT;
 
+
             --** Contratos en expedientes de recuperacion o seguimiento (no libres)
             ------------------------------------------------------------------------
             Insert /*+append*/ INTO BATCH_SV_DATOS_CNT_EXP
@@ -168,22 +169,17 @@
                And eex.borrado = 0
                And tpx.borrado = 0
                And cex.borrado = 0
-               And exp.borrado = 0;
-
-            --LOG
-            V_NUFILAS:=SQL%ROWCOUNT;
-            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SV_DATOS_CNT_EXP Cargada',V_NUFILAS);
-            COMMIT;
-
-
+               And exp.borrado = 0
+            UNION
             --** Contratos en expedientes con procedimiento en curso - en asunto
             ---------------------------------------------------------------------
-            Insert /*+append*/ INTO BATCH_SV_DATOS_CNT_EXP (EXP_ID,CNT_ID,DD_TPX_CODIGO)
-            Select cex.exp_id, cex.cnt_id, null as dd_tpx_codigo
+            Select cex.exp_id, cex.cnt_id, dd_tpx_codigo
               From CEX_CONTRATOS_EXPEDIENTE cex
                Inner Join PRC_CEX pce On cex.cex_id = pce.cex_id
                Inner Join PRC_PROCEDIMIENTOS prc On pce.prc_id = prc.prc_id And prc.borrado = 0
                Inner Join ${master.schema}.DD_EPR_ESTADO_PROCEDIMIENTO epr On prc.dd_epr_id  = epr.dd_epr_id
+               Join EXP_EXPEDIENTES exp On cex.exp_id = exp.exp_id
+               Join DD_TPX_TIPO_EXPEDIENTE tpx On exp.dd_tpx_id = tpx.dd_tpx_id
              Where cex.borrado = 0
                And epr.dd_epr_codigo in (${ddEstadoProcedimiento.propuesto.codigo},
                                          ${ddEstadoProcedimiento.confirmado.codigo},
@@ -194,7 +190,7 @@
 
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;
-            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SV_DATOS_CNT_EXP Cargada. Cnt en proc en curso.',V_NUFILAS);
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SV_DATOS_CNT_EXP Cargada',V_NUFILAS);
             COMMIT;
 
 
@@ -261,14 +257,17 @@
             --** Buscamos sus umbrales y tipo de itinerarios (recuperacion o seguimiento)
             ------------------------------------------------------------------------------
             Insert /*+append*/ INTO BATCH_SV_CLIENTES
-            Select DISTINCT cli.cli_id, cli.per_id, cli.arq_id, cli.arq_prioridad
+            Select /*+parallel*/ DISTINCT cli.cli_id, cli.per_id, cli.arq_id, cli.arq_prioridad
                  , per.per_nombre, per.per_apellido1, per.per_apellido2
                  , aex.dd_aex_codigo, iti.iti_nombre, tit.dd_tit_codigo
-              From BATCH_SV_CLIENTES_BASE             cli
-                 , PER_PERSONAS                       per
-                 , ARR_ARQ_RECUPERACION_PERSONA       arr
-                 , ARQ_ARQUETIPOS                     arq
-                 , ITI_ITINERARIOS                    iti
+              From BATCH_SV_CLIENTES_BASE                     cli
+                 , PER_PERSONAS                               per
+                 , (select per_id, arq_id, row_number()
+                    over (partition by per_id
+                    order by arq_date desc) as arq_orden
+                    from ARR_ARQ_RECUPERACION_PERSONA)        arr
+                 , ARQ_ARQUETIPOS                             arq
+                 , ITI_ITINERARIOS                            iti
                  , ${master.schema}.DD_TIT_TIPO_ITINERARIOS   tit
                  , ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE aex
              Where cli.per_id = per.per_id
@@ -281,7 +280,7 @@
                -- No este afectado por umbrales
                And nvl(per.PER_EXP_UMBRAL_FECHA, to_date('19000101','yyyymmdd')) < SYSDATE --fecha unmbral ha pasado
                And nvl(per.PER_EXP_UMBRAL_IMPORTE, -1) < nvl(per.PER_RIESGO_DIR_VENCIDO,0) --importe vencido superior a importe umbral
-             ;
+               And arr.arq_orden = 1;
 
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;
@@ -1260,7 +1259,7 @@
                      , f.CEX_PASE
                      , f.PEX_PASE
                   FROM BATCH_VEN_DATOS_SALIDA_TODO_LM f
-                 WHERE f.NUM_CNT <= (Select PEN_VALOR From PEN_PARAM_ENTIDAD WHERE pen_param = 'expediente.obtenerContratosAdicionales.limite') --15
+                 WHERE f.NUM_CNT <= (Select PEN_VALOR From PEN_PARAM_ENTIDAD WHERE pen_param = 'expediente.obtenerContratosAdicionales.limite')
                    AND f.NUM_PER <= (Select PEN_VALOR From PEN_PARAM_ENTIDAD WHERE pen_param = 'expediente.obtenerPersonasAdicionales.limite');
 
             --LOG
@@ -1474,49 +1473,57 @@
                  , '${usuario.crear}' as USUARIOCREAR
                  , sysdate as FECHACREAR
                  , 0 as BORRADO
-              From BATCH_SEG_DATOS_SALIDA tmp
-             Where cex_pase =1 and pex_pase=1;
+              From (Select distinct per_id, exp_id
+                    From BATCH_SEG_DATOS_SALIDA);
 
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'CMP_CICLO_MARCADO_POLITICA Cargada',V_NUFILAS);
             COMMIT;
 
-            Insert into POL_POLITICA
+
+            -- Pre-Politica
+             Insert into POL_POLITICA
              ( POL_ID, CMP_ID, TPL_ID, DD_ESP_ID, DD_EPI_ID
              , PEF_ID_GESTOR, PEF_ID_SUPER, ZON_ID_GESTOR, ZON_ID_SUPER
              , VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
-            Select tmp.per_id
-                 , cmp.CMP_ID
-                 , nvl(tpl.TPL_ID, iti.tpl_id) as TPL_ID
-                 , (select dd_esp_id from ${master.schema}.DD_ESP_ESTADO_POLITICA where dd_esp_codigo = 'PROP') as DD_ESP_ID --DD_ESP_ESTADO_POLITICA --Propuesta
-                 , (select dd_epi_id from ${master.schema}.DD_EPI_EST_POL_ITINERARIO where dd_epi_codigo='CE') as DD_EPI_ID --DD_EPI_EST_POL_ITINERARIO --P. Completar Expediente
-                 , est.PEF_ID_GESTOR
-                 , est.PEF_ID_SUPERVISOR
-                 , zon.ZON_ID --GESTOR
-                 , zon.ZON_ID --SUPER
+            Select s_pol_politica.nextval as POL_ID
+                 , CMP_ID, TPL_ID, DD_ESP_ID, DD_EPI_ID, PEF_ID_GESTOR, PEF_ID_SUPERVISOR, GESTOR, SUPER
                  , 0 as VERSION
                  , '${usuario.crear}' as USUARIOCREAR
                  , sysdate as FECHACREAR
                  , 0 as BORRADO
-              From BATCH_SEG_DATOS_SALIDA      tmp
-                 , CMP_CICLO_MARCADO_POLITICA  cmp
-                 , PER_PERSONAS                per
-                 , TPL_TIPO_POLITICA           tpl
-                 , ARQ_ARQUETIPOS              arq
-                 , ITI_ITINERARIOS             iti
-                 , EST_ESTADOS                 est
-                 , ZON_ZONIFICACION            zon
-             Where tmp.per_id = cmp.per_id
+              From
+             ( select /*+all_rows*/ distinct
+                   cmp.CMP_ID
+                 , nvl(tpl.TPL_ID, iti.tpl_id) as TPL_ID
+                 , (select dd_esp_id from ${master.schema}.DD_ESP_ESTADO_POLITICA where dd_esp_codigo = 'PROP') as DD_ESP_ID --Propuesta
+                 , epi.DD_EPI_ID --Por producto cartesiano
+                 , est.PEF_ID_GESTOR
+                 , est.PEF_ID_SUPERVISOR
+                 , zon.ZON_ID as GESTOR
+                 , zon.ZON_ID as SUPER
+              from BATCH_SEG_DATOS_SALIDA        tmp
+                 , CMP_CICLO_MARCADO_POLITICA    cmp
+                 , PER_PERSONAS                  per
+                 , TPL_TIPO_POLITICA             tpl
+                 , ARQ_ARQUETIPOS                arq
+                 , ITI_ITINERARIOS               iti
+                 , EST_ESTADOS                   est
+                 , ZON_ZONIFICACION              zon
+                 , ${master.schema}.DD_EST_ESTADOS_ITINERARIOS sit
+                 , ${master.schema}.DD_EPI_EST_POL_ITINERARIO  epi
+             where tmp.per_id = cmp.per_id
                And tmp.exp_id = cmp.exp_id
                And tmp.per_id = per.per_id(+)
                And per.dd_pol_id = tpl.dd_pol_id(+)
                And tmp.arq_id = arq.arq_id(+)
                And arq.iti_id = iti.iti_id(+)
                And iti.iti_id = est.iti_id(+)
-               And tmp.ofi_id = zon.ofi_id(+)
-               And est.dd_est_id = 3 --Completar Expediente
-               And cex_pase =1 and pex_pase=1;
+               And per.ofi_id = zon.ofi_id(+)
+               And est.dd_est_id =sit.dd_est_id
+               And epi.dd_epi_codigo in ('PRE','CE')
+            );
 
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;

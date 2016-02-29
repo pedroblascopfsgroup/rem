@@ -414,7 +414,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	
 	private FileItem generaFileItem(String nombreFichero, String contenido, String extension) throws Throwable {
 		logger.info("Recupera documento generaFileItem...");
-		String nomFichero = nombreFichero.substring(0, nombreFichero.indexOf("."));
+		String nomFichero = "nomFichero";
 		String ext = nombreFichero.substring(nombreFichero.indexOf(".")+1);
 		
 		File fileSalidaTemporal = null;

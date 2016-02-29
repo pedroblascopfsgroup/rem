@@ -49,12 +49,6 @@ public class ConfiguracionDespachoExternoManager implements ConfiguracionDespach
 	
 	@Autowired
 	DespachoExternoDao despachoDao;
-	
-	@Autowired
-	ZonaDao zonaDao;
-
-//    @Autowired
-//    private DespachoExternoDao despachoExternoDao;
     
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -131,10 +125,7 @@ public class ConfiguracionDespachoExternoManager implements ConfiguracionDespach
 		
 		this.populateEntity(configuracionDespachoExterno, configuracionDespachoExternoDto);
 		configuracionDespachoExternoDao.saveOrUpdate(configuracionDespachoExterno);
-		
-		if(configuracionDespachoExternoDto.getDespachoIntegral())
-			activarRoleEn(configuracionDespachoExterno.getDespachoExterno().getId());
-		
+				
 		return configuracionDespachoExterno;
 	}
 
@@ -206,27 +197,4 @@ public class ConfiguracionDespachoExternoManager implements ConfiguracionDespach
 	return null;
 	}
 	
-	/**
-	 * Si al guardar la configuración de procuradores de un despacho (de tipo Letrado) y siendo Integral. Entonces a los usuarios de ese despacho,
-	 * se le agregara el perfil PROCUINTEGRAL, a aquellos usuarios que tengan el perfil PROCUCAJAMAR, para que tengan ciertas funcionalidades.
-	 * @param idDespacho
-	 */
-	private void activarRoleEn(Long idDespacho) {
-		Filter filtroIdDespacho = genericDao.createFilter(FilterType.EQUALS, "id", idDespacho);
-		DespachoExterno despacho = genericDao.getList(DespachoExterno.class, filtroIdDespacho).get(0);
-		if(!Checks.esNulo(despacho.getTipoDespacho()) && ("1".equals(despacho.getTipoDespacho().getCodigo()) || 
-				"DLETR".equals(despacho.getTipoDespacho().getCodigo()) || "D-CJ-LETR".equals(despacho.getTipoDespacho().getCodigo()) )) {
-			
-			List<Usuario> listaUsuarios = despachoDao.getGestoresListadoDespachos(idDespacho.toString());
-			
-			GestorDespacho gestorDespacho;
-			for(Usuario usuario : listaUsuarios) {
-				List<DDZona> listaZonas = zonaDao.getZonaPorUsuarioPerfil(usuario.getId(),"PROCUCAJAMAR");
-				
-				if(!Checks.esNulo(listaZonas))
-					for(DDZona zona: listaZonas)
-						zonaDao.guardarNuevoZonaPerfilUsuario(zona,usuario,"PROCUINTEGRAL");
-			}	
-		}
-	}
 }

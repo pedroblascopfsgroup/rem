@@ -319,6 +319,18 @@
 	panel.getProcedimientoId = function(){
 		return entidad.get("data").id;
 	}
+	
+	<%-- Si el asunto ha tenido asignado algun despacho integral, debe ocultar esta pestaña 
+			para mostrar la pestaña con histórico de Resoluciones --%>
+	panel.setVisibleTab = function(data) {
+		if(data.hayDespachoIntegral == true) {
+			return false;
+		}
+		else {
+			return true;
+		}
+}
+	
 
 	return panel;
 })

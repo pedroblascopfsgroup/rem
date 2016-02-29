@@ -146,6 +146,8 @@ if [[ "x$@" != "x" ]]; then
 			OPTION_STATISTICS=yes
 		elif [[ "x$op" == x-port=* ]]; then
 			OPTION_PORT=$(echo $op | cut -f2 -d=)
+		elif [[ "x$op" == x-name=* ]]; then
+			CONTAINER_NAME=$(echo $op | cut -f2 -d=)
 		fi
 	done
 else

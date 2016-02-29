@@ -501,7 +501,7 @@ arrayCampos["codigoPersonaAfectada"]=app.creaNumber('codigoPersonaAfectada', '<s
        ,cls: 'x-btn-text-icon'
        ,handler:function(){
        		var formulario = flujoFieldSet.getForm();
-
+			debugger;
        		if(formulario.isValid()){
        			var dateSolucionPrevista = Date.parse(arrayCampos.fechaSolucionPrevista.getValue());
 	       		if(comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && !isNaN(parseFloat(dateSolucionPrevista)) && dateSolucionPrevista > datePaseMora) {		       		

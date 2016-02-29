@@ -186,6 +186,11 @@ if [ -f $BASEDIR/tmp/customer-list-from-tag.txt ] ; then
     cat $BASEDIR/tmp/customer-list-from-tag.txt | sort >> $BASEDIR/tmp/list-from-tag.txt
 fi
 
+if [ ! -f $BASEDIR/tmp/list-from-tag.txt ] ; then
+    echo ""
+    echo "No se encontraron scripts para los parámetros suministrados."
+    exit 1
+fi
 
 if [[ "$#" -ge 4 ]] && [[ "$4" == "go!" ]]; then
 
@@ -240,12 +245,7 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
         sed -e s/#ENTITY#/"${passtring}"/g $BASEDIR/scripts/DxL-scripts.sh > $BASEDIR/tmp/package/DDL/DDL-scripts.sh
     fi
     cp $BASEDIR/scripts/DxL-scripts-one-user.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh
-    if [ $CUSTOMER_IN_UPPERCASE == 'CAJAMAR' ] ; then
-        echo "export NLS_LANG=AMERICAN.AL32UTF8" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null
-        echo "export NLS_DATE_FORMAT=\"DD-MON-RR\"" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null
-    else
-        echo "export NLS_LANG=.AL32UTF8" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null 
-    fi
+    echo "export NLS_LANG=.AL32UTF8" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null 
     cp $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DB/DB-scripts.sh
     cp $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DML/DML-scripts.sh
     cp $BASEDIR/scripts/DxL-scripts-one-user.sh $BASEDIR/tmp/package/DML/DML-scripts-one-user.sh
@@ -274,8 +274,10 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
         cat $BASEDIR/tmp/DDL-scripts.sh >> $BASEDIR/tmp/package/DDL/DDL-scripts.sh
         cat $BASEDIR/tmp/DDL-scripts-one-user.sh >> $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh
 
-        cp $BASEDIR/tmp/DDL-scripts.bat $BASEDIR/tmp/package/DDL/
-        cp $BASEDIR/tmp/DDL-scripts.bat $BASEDIR/tmp/package/DB/DB-scripts.bat
+        if [[ $GENERATE_BAT == 'true' ]]; then
+            cp $BASEDIR/tmp/DDL-scripts.bat $BASEDIR/tmp/package/DDL/
+            cp $BASEDIR/tmp/DDL-scripts.bat $BASEDIR/tmp/package/DB/DB-scripts.bat
+        fi
 
         cp -r $BASEDIR/tmp/DDL*reg*.sql $BASEDIR/tmp/package/DDL/scripts/
         cp -r $BASEDIR/tmp/DDL*reg*.sql $BASEDIR/tmp/package/DB/scripts/
@@ -290,8 +292,10 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
     if [ -f $BASEDIR/tmp/DML-scripts.sh ] ; then
         cat $BASEDIR/tmp/DML-scripts.sh | tee -a $BASEDIR/tmp/package/DML/DML-scripts.sh $BASEDIR/tmp/package/DB/DB-scripts.sh > /dev/null
         cat $BASEDIR/tmp/DML-scripts-one-user.sh | tee -a $BASEDIR/tmp/package/DML/DML-scripts-one-user.sh $BASEDIR/tmp/package/DB/DB-scripts-one-user.sh > /dev/null
-        cp $BASEDIR/tmp/DML-scripts.bat $BASEDIR/tmp/package/DML/
-        cat $BASEDIR/tmp/DML-scripts.bat >> $BASEDIR/tmp/package/DB/DB-scripts.bat
+        if [[ $GENERATE_BAT == 'true' ]]; then
+            cp $BASEDIR/tmp/DML-scripts.bat $BASEDIR/tmp/package/DML/
+            cat $BASEDIR/tmp/DML-scripts.bat >> $BASEDIR/tmp/package/DB/DB-scripts.bat
+        fi
         cp -r $BASEDIR/tmp/DML*reg*.sql $BASEDIR/tmp/package/DML/scripts/
         cp -r $BASEDIR/tmp/DML*reg*.sql $BASEDIR/tmp/package/DB/scripts/
         cd $BASEDIR/tmp/package

@@ -531,6 +531,7 @@
 	});
 
   tareasProcStore.on('load', function(store, records, options){
+   	
 		for (var i=0; i < records.length; i++){
 			var rec = records[i];
 			var tipoEntidad = rec.get('tipoEntidad');
@@ -541,18 +542,19 @@
 			}
 		}
 	});
-	    
+	
+ 	
 	 var historicoTabPanel = new Ext.TabPanel({
 		items:[
 			historicoGrid, historicoResolucionesGrid
 		]
-		,height : 480
+		,autoHeight : true
 		,border: true
-	  });     
-	                                                                                                                                                                
+	  }); 
+                                                                                                                                                                
   historicoTabPanel.setActiveTab(historicoGrid);
-
-  panel.add(historicoTabPanel);
+  
+  panel.add(historicoTabPanel);	
   
   panel.getData = function(){
     return entidad.get("data").historico;
@@ -565,12 +567,17 @@
 	var data = entidad.get("data");
 	entidad.cacheOrLoad(data, tareasProcStore, {idProcedimiento : data.id});
 	entidad.cacheOrLoad(data, resolucionesProcStore, {idProcedimiento : data.id});
-	entidad.cacheOrLoad(data, despachoIntegralStore, {idProcedimiento : data.id});
   }
 
   panel.getProcedimientoId = function(){
     return entidad.get("data").id;
   }
+  
+  <%-- Si el asunto NO ha tenido asignado algun despacho integral, debe ocultar esta pestaña 
+			para mostrar la pestaña Historico Operaciones normal --%>
+  panel.setVisibleTab = function(data) {
+        return data.hayDespachoIntegral;
+	}
   
   return panel;
 })

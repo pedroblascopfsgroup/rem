@@ -39,31 +39,6 @@
 		<servlet.api.version>2.3</servlet.api.version>
 	</properties>
 
-	<repositories>
-		<repository>
-			<id>pfsrepo</id>
-			<url>http://interecovery.pfsgroup.es:8086</url>
-		</repository>
-		<repository>
-			<id>thirdparty</id>
-			<url>http://192.168.31.16:8081/nexus/content/repositories/thirdparty</url>
-		</repository>
-		<repository>
-			<id>pfsNexusFramework</id>
-			<url>http://192.168.31.16:8081/nexus/content/repositories/framework</url>
-		</repository>
-		<repository>
-			<id>com.springsource.repository.bundles.release</id>
-			<name>SpringSource Enterprise Bundle Repository - SpringSource Bundle Releases</name>
-			<url>http://repository.springsource.com/maven/bundles/release</url>
-		</repository>
-		<repository>
-			<id>com.springsource.repository.bundles.external</id>
-			<name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
-			<url>http://repository.springsource.com/maven/bundles/external</url>
-		</repository>
-	</repositories>
-
 	<dependencyManagement>
 		<dependencies>
 			<!-- DEVON -->

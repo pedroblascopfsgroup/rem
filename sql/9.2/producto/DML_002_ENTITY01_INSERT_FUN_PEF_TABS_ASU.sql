@@ -54,14 +54,14 @@ BEGIN
 
 	    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 	
-		-- Se interarán las funciones a todos los perfiles que no los tengan ya asociados, y que no sean el perfil PROCUCAJAMAR
-		-- De esta forma, si se crear perfiles futuros, se puede relanzar y seguirán sin meterse en el perfil PROCUCAJAMAR
+		-- Se interarán las funciones a todos los perfiles que no los tengan ya asociados, y que no sean el perfil FPFSRPROC
+		-- De esta forma, si se crear perfiles futuros, se puede relanzar y seguirán sin meterse en el perfil FPFSRPROC
 		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.FUN_PEF' ||
 					' (FUN_ID, PEF_ID, FP_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)' || 
 					' SELECT FUN.FUN_ID, PEF.PEF_ID, '||V_ESQUEMA||'.S_FUN_PEF.NEXTVAL, 0, ''PROD-671'', SYSDATE, 0' ||
 					' FROM '||V_ESQUEMA||'.PEF_PERFILES PEF, '||V_ESQUEMA_M||'.FUN_FUNCIONES FUN' ||
 					' WHERE FUN.FUN_DESCRIPCION = '''||TRIM(V_FUNCION_ROL(I))||''' '||
-					' AND PEF.PEF_CODIGO <> ''PROCUCAJAMAR'' '||
+					' AND PEF.PEF_CODIGO <> ''FPFSRPROC'' '||
 					' AND PEF.PEF_ID NOT IN (SELECT PEF_ID FROM '||V_ESQUEMA||'.FUN_PEF WHERE FUN_ID=(SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = '''||TRIM(V_FUNCION_ROL(I))||'''))';
 		EXECUTE IMMEDIATE V_MSQL;
 		 DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.FUN_PEF -- FUNCION: '||TRIM(V_FUNCION_ROL(I))||'');

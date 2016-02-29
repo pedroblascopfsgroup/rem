@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.pfs.contrato.model.Contrato;
 import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 
@@ -16,9 +17,9 @@ public interface DocumentoBurofaxApi {
 	String parseoFinalBurofax(String contenidoParseadoIntermedio,
 			HashMap<String, Object> mapeoVariables);
 
-	Map<String, String> obtenerCabecera(EnvioBurofaxPCO envioBurofaxPCO, String contexto);
+	Map<String, String> obtenerCabecera(EnvioBurofaxPCO envioBurofaxPCO, String contexto, boolean esBFA);
 
-	InputStream obtenerPlantillaBurofax(String proyectoRecovery, String operacionBFA);
+	InputStream obtenerPlantillaBurofax(String proyectoRecovery, boolean esBFA);
 
 	FileItem generarDocumentoBurofax(InputStream plantillaBurofax,
 			String nombreFichero, Map<String,String> cabecera, String contenidoParseadoFinal);
@@ -28,4 +29,10 @@ public interface DocumentoBurofaxApi {
 	String obtenerNombreFicheroPdf(String nombreFichero);
 
 	String replaceVariablesGeneracionBurofax(Long idPcoBurofax, String textoBuro, DocumentoPCO doc);
+	
+	boolean isOperacionBFA(Contrato contrato, String contexto);
+
+	String obtenerDisclaimer(EnvioBurofaxPCO envioBurofax, String contexto,	boolean esBFA);
+
+	String agregarDisclaimer(String contenidoBurofax, String obtenerDisclaimer);
 }

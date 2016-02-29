@@ -112,12 +112,19 @@
 <!-- 		p:fileName="/WEB-INF/jsp/plugin/procuradores/procedimientos/tabs/cabecera.jsp"  -->
 <!-- 		p:priority="1"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" /> -->
 		
-	
-	<bean p:entity="tabs.procedimiento.fast" p:name="historicoProcedimiento"
-		p:order="900"
+	<!-- PRODUCTO-671 
+		De las dos siguentes pestañas, solo se mostrará una, dependiendo si el asunto ha tenido asociado
+		algun despacho integral (mostrará historicoProcedimientoResoluciones, y sino historicoProcedimiento -->
+	<bean p:entity="tabs.procedimiento.fast" p:name="historicoProcedimientoResoluciones"
+		p:order="1000"
 		p:fileName="/WEB-INF/jsp/plugin/procuradores/procedimientos/tabs/tabHistoricoPrcResoluciones.jsp"
 		p:priority="3" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
-			p:permission="TAB_HISTORICO_RESOLUCIONES_PROCURADOR" />
+		 />
+	<bean p:entity="tabs.procedimiento.fast" p:name="historicoProcedimiento"
+		p:order="900"
+		p:fileName="/WEB-INF/jsp/plugin/mejoras/procedimientos/tabs/tabHistoricoProcedimiento.jsp"
+		p:priority="3" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		 />
 		
 <!--		<bean p:entity="tabs.procedimiento.fast" p:name="historicoProcedimiento" -->
 <!--			p:order="900" -->

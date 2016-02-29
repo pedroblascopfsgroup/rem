@@ -1,13 +1,16 @@
 package es.capgemini.pfs.multigestor.dao.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
+import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoHistoricoDao;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsuntoHistorico;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * 
@@ -18,7 +21,7 @@ import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsuntoHistorico;
  */
 @Repository
 public class EXTGestorAdicionalAsuntoHistoricoDaoImpl extends AbstractEntityDao<EXTGestorAdicionalAsuntoHistorico, Long> implements EXTGestorAdicionalAsuntoHistoricoDao {
-
+	
 	/* (non-Javadoc)
 	 * @see es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoHistoricoDao#actualizaFechaHasta(java.lang.Long, java.lang.Long)
 	 */
@@ -41,8 +44,7 @@ public class EXTGestorAdicionalAsuntoHistoricoDaoImpl extends AbstractEntityDao<
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<EXTGestorAdicionalAsuntoHistorico> getListOrderedByAsunto(
-			Long idAsunto) {
+	public List<EXTGestorAdicionalAsuntoHistorico> getListOrderedByAsunto(Long idAsunto) {
 		
         StringBuilder hqlList = new StringBuilder(" from EXTGestorAdicionalAsuntoHistorico gah ");
         hqlList.append(" where gah.asunto.id = :idAsunto order by gah.tipoGestor.descripcion asc, gah.fechaDesde desc");
@@ -51,6 +53,29 @@ public class EXTGestorAdicionalAsuntoHistoricoDaoImpl extends AbstractEntityDao<
         queryList.setParameter("idAsunto", idAsunto);
         
         return queryList.list();
+	}
+	
+	/**
+	 * Comprueba si un Asunto ha tenido algun gestor que peretece a un despacho Integral
+	 * @param idAsunto id del asunto
+	 * @return True si el asunto ha tenido asignadot un despacho integral (del historico GAH)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean hayAlgunDespachoIntegral(Long idAsunto) {
+		
+		StringBuilder hqlList = new StringBuilder(" from ConfiguracionDespachoExterno dec ");
+        hqlList.append(" where dec.despachoIntegal = :despachoIntegal and dec.despachoExterno.id in ( select gah.gestor.despachoExterno.id from EXTGestorAdicionalAsuntoHistorico gah where gah.asunto.id = :idAsunto)");
+        Query queryList = this.getSession().createQuery(hqlList.toString());
+
+        queryList.setParameter("despachoIntegal", true);
+        queryList.setParameter("idAsunto", idAsunto);
+        
+        if(!Checks.esNulo(queryList.list()) && queryList.list().size() > 0) {
+        	return true;
+        }
+		
+		return false;
 	}
 
 }

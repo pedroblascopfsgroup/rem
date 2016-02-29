@@ -1,6 +1,7 @@
 package es.pfsgroup.recovery.txdatasource;
 
 import es.capgemini.pfs.dsm.*;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -11,7 +12,6 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.dbcp.BasicDataSource;
-
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.security.SecurityUtils;
@@ -49,15 +49,14 @@ public class TransactionalBasicDataSourceWrapper {
             // transaccionales
             log.debug("***&*** Ha llamado a TransactionalBasicDataSourceWrapper.getConnection() ");
             //Connection cnx = conn.getConnection();
-
-            TransactionalUsersConnectionWrapper cnwrap = new TransactionalUsersConnectionWrapper(conn);
-
+            
             String transactionalUsers = appProperties
                             .getProperty(DevonPropertiesConstants.DatabaseConfig.USE_TRANSACTIONAL_USERS_KEY);
 
             if (DevonPropertiesConstants.DatabaseConfig.USE_TRANSACTIONAL_USERS_VALUE_YES
                             .equals(transactionalUsers)) {
                     log.debug("***&***  Se detecta entorno TRANSACCIONAL, se ejecuta ALTER CURRENT SCHEMA ");
+                    TransactionalUsersConnectionWrapper cnwrap = new TransactionalUsersConnectionWrapper(conn);
                     cambiaCurrentSchema(cnwrap);
                     return cnwrap;
             } else {
@@ -202,5 +201,64 @@ public class TransactionalBasicDataSourceWrapper {
             return dbId;
 
     }
+    
+
+
+	public Connection getConnectionTxMultientidad(Connection connection,
+			String schema) throws SQLException {
+		
+		log.debug("***&*** Ha llamado a TransactionalBasicDataSourceWrapper.getConnection() ");
+        //Connection cnx = conn.getConnection();
+        
+        String transactionalUsers = appProperties
+                        .getProperty(DevonPropertiesConstants.DatabaseConfig.USE_TRANSACTIONAL_USERS_KEY);
+
+        if (DevonPropertiesConstants.DatabaseConfig.USE_TRANSACTIONAL_USERS_VALUE_YES
+                        .equals(transactionalUsers)) {
+                log.debug("***&***  Se detecta entorno TRANSACCIONAL, se ejecuta ALTER CURRENT SCHEMA ");
+                TransactionalUsersConnectionWrapper cnwrap = new TransactionalUsersConnectionWrapper(connection);
+                cambiaCurrentSchemaMultientidad(cnwrap, schema);
+                return cnwrap;
+        } else {
+                log.debug("***&*** Se detecta entorno PROPIETARIO ");
+                return connection;
+        }
+        	
+	}
+	
+    private void cambiaCurrentSchemaMultientidad(TransactionalUsersConnectionWrapper cnx, String schema) throws SQLException {
+		
+		Long dbId = (Long) determineCurrentLookupKey();
+        if (!DataSourceManager.NO_DATASOURCE_ID.equals(dbId)) {
+                Statement st = cnx.createStatement();
+                if (DataSourceManager.MASTER_DATASOURCE_ID.equals(dbId)) {
+                        log.debug("Cambiando la sesión de la BBDD: master");
+                        String masterSchema = appProperties
+                                        .getProperty(DevonPropertiesConstants.DatabaseConfig.MASTER_SCHEMA_KEY);
+                        String sql = "ALTER SESSION SET CURRENT_SCHEMA = "
+                                        + masterSchema;
+                        cnx.setCurrentSchema(masterSchema);
+                        log.debug(sql);
+                        st.execute(sql);
+
+                } else {
+                        log.debug("Cambiando la sesión de la BBDD: entity");
+                        
+                        try {
+                                String entitySchema = schema;
+                                String sql = "ALTER SESSION SET CURRENT_SCHEMA = "
+                                                + entitySchema;
+                                cnx.setCurrentSchema(entitySchema);
+                                log.debug(sql);
+                                st.execute(sql);
+                        } catch (RecoveryDSMConfigurationException ce) {
+                                log.fatal("No se ha podido cambiar el current_schema por problemas con el mapeo de usuarios transaccionales");
+                                throw ce;
+                        }
+                }
+        }
+	}
+
+
         
 }

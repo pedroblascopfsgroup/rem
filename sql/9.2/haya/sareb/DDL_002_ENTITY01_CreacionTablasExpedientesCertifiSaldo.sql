@@ -88,7 +88,4 @@ WHEN OTHERS THEN
   RAISE;
 END;
 /
-EXIT;   
-
-
-
+EXIT;

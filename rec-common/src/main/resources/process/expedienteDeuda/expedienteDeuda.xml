@@ -59,10 +59,10 @@
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>enviarAComiteActionHandler</targetBean>
 		</action>
-		<transition to="DecisionComite"></transition>
+		<transition to="Sancionado"></transition>
 	</node>
 
-	<state name="DecisionComite">
+	<state name="Sancionado">
 		<event type="node-enter">
 			<action name="DecisionComiteAction" config-type="bean"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
@@ -108,7 +108,7 @@
 		</action>
 		<transition to="CompletarExpediente" name="CompletarExpediente"></transition>
 		<transition to="RevisionExpediente" name="RevisionExpediente"></transition>
-		<transition to="DecisionComite" name="DecisionComite"></transition>
+		<transition to="Sancionado" name="Sancionado"></transition>
 		<transition to="EnviarARevision" name="EnviarARevision"></transition>
 		<transition to="EnviarAComite" name="EnviarAComite"></transition>
 		<transition to="FormalizarPropuesta" name="FormalizarPropuesta"></transition>
@@ -130,7 +130,7 @@
 			<targetBean>decisionComiteAutomaticaActionHandler</targetBean>
 		</action>
 		<transition to="ExpedienteDecidido" name="TomarDecision"></transition>
-		<transition to="DecisionComite" name="DecisionComite"></transition>
+		<transition to="Sancionado" name="Sancionado"></transition>
 	</node>
 
 	<state name="FormalizarPropuesta">
@@ -140,7 +140,7 @@
 				<targetBean>formalizarPropuestaActionHandler</targetBean>
 			</action>
 		</event>
-		<transition to="DevolverADecision" name="DevolverADecision"></transition>
+		<transition to="DevolverASancionado" name="DevolverASancionado"></transition>
 		<transition to="Fin Expediente" name="Fin"></transition>
 		<transition to="ExpedienteDecididoFP" name="ExpedienteDecididoFP"></transition>
 		<transition to="GenerarNotificacion" name="GenerarNotificacion"></transition>
@@ -154,12 +154,12 @@
 		<transition to="FormalizarPropuesta"></transition>
 	</node>
 
-	<node name="DevolverADecision">
+	<node name="DevolverASancionado">
 		<action name="DevolverADecisionAction" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>devolverADecisionActionHandler</targetBean>
 		</action>
-		<transition to="DecisionComite"></transition>
+		<transition to="Sancionado"></transition>
 	</node>
 
 	<node name="ExpedienteDecididoFP">
@@ -172,7 +172,7 @@
 
 	<state name="EnSancion">
 		<transition to="DevolverRevision" name="DevolverRevision"></transition>
-		<transition to="EnviarAComite" name="EnviarAComite"></transition>
+		<transition to="EnviarAComite" name="EnviarASancionado"></transition>
 		<transition to="GenerarNotificacion" name="GenerarNotificacion"></transition>
 		<transition to="Fin Expediente" name="Fin "></transition>
 	</state>

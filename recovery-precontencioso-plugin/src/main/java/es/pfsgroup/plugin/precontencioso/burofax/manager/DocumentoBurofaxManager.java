@@ -310,7 +310,7 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		if(!Checks.esNulo(contrato) && !Checks.esNulo(contrato.getContratoPersonaOrdenado()) && 
 				contrato.getContratoPersonaOrdenado().size()>0 ){
 			ContratoPersona cntPers = contrato.getContratoPersonaOrdenado().get(0);
-			mapaVariables.put(TITULAR_ORDEN_MENOR_CONTRATO,construyeNombre(cntPers.getPersona()));
+			mapaVariables.put(TITULAR_ORDEN_MENOR_CONTRATO,construyeNombre(false, cntPers.getPersona(), new PersonaManual()));
 		} else {
 			mapaVariables.put(TITULAR_ORDEN_MENOR_CONTRATO,ERROR_NO_EXISTE_VALOR);
 		}
@@ -348,17 +348,20 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		return resultado;
 	}
 
-	private String construyeNombre(Persona persona) {
+	private String construyeNombre(boolean esManual, Persona persona, PersonaManual pmanual) {
 	
 		String r = "";
-		if (!Checks.esNulo(persona.getNombre())) {
-			r += persona.getNombre().trim() + " ";
+		String nombre = (esManual ? pmanual.getNombre() : persona.getNombre());
+		String ape1 = (esManual ? pmanual.getApellido1() : persona.getApellido1());
+		String ape2 = (esManual ? pmanual.getApellido2() : persona.getApellido2());
+		if (!Checks.esNulo(nombre)) {
+			r += nombre.trim() + " ";
 		}
-		if (!Checks.esNulo(persona.getApellido1())) {
-			r += persona.getApellido1().trim() + " ";
+		if (!Checks.esNulo(ape1)) {
+			r += ape1.trim() + " ";
 		}
-		if (!Checks.esNulo(persona.getApellido2())) {
-			r += persona.getApellido2().trim();
+		if (!Checks.esNulo(ape2)) {
+			r += ape2.trim();
 		}
 		return r.trim().toUpperCase();
 
@@ -367,47 +370,53 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 	private String construyeDireccion1(Direccion dir) {
 		
 		String resultado = "";
-		if (!Checks.esNulo(dir.getTipoVia()) && !Checks.esNulo(dir.getTipoVia().getDescripcion())) {			
-			resultado += dir.getTipoVia().getDescripcion().trim();
-		}
-		if (!Checks.esNulo(dir.getDomicilio())) {			
-			resultado += " " + dir.getDomicilio().trim();
-		}
-		if (!Checks.esNulo(dir.getDomicilio_n())) {
-			resultado += " " + dir.getDomicilio_n().trim();
-		}
-		if (!Checks.esNulo(dir.getPortal())) {
-			resultado += " " + dir.getPortal().trim();
-		}
-		if (!Checks.esNulo(dir.getEscalera())) {
-			resultado += " " + dir.getEscalera().trim();
-		}
-		if (!Checks.esNulo(dir.getPiso())) {
-			resultado += " " + dir.getPiso().trim();
-		}
-		if (!Checks.esNulo(dir.getPuerta())) {
-			resultado += " " + dir.getPuerta().trim();
+		if (!Checks.esNulo(dir)) {
+			if (!Checks.esNulo(dir.getTipoVia()) && !Checks.esNulo(dir.getTipoVia().getDescripcion())) {			
+				resultado += dir.getTipoVia().getDescripcion().trim();
+			}
+			if (!Checks.esNulo(dir.getDomicilio())) {			
+				resultado += " " + dir.getDomicilio().trim();
+			}
+			if (!Checks.esNulo(dir.getDomicilio_n())) {
+				resultado += " " + dir.getDomicilio_n().trim();
+			}
+			if (!Checks.esNulo(dir.getPortal())) {
+				resultado += " " + dir.getPortal().trim();
+			}
+			if (!Checks.esNulo(dir.getEscalera())) {
+				resultado += " " + dir.getEscalera().trim();
+			}
+			if (!Checks.esNulo(dir.getPiso())) {
+				resultado += " " + dir.getPiso().trim();
+			}
+			if (!Checks.esNulo(dir.getPuerta())) {
+				resultado += " " + dir.getPuerta().trim();
+			}
 		}
 		return resultado.trim().toUpperCase();
 	}
 	
 	private String construyeDireccion2(Direccion dir) {
 		String resultado = "";
-		if (!Checks.esNulo(dir.getCodigoPostal())) {
-			resultado += codigoPostalFormat.format(dir.getCodigoPostal()) + " ";
-		}
-		if (!Checks.esNulo(dir.getLocalidad()) && !Checks.esNulo(dir.getLocalidad().getDescripcion())) {
-			resultado += dir.getLocalidad().getDescripcion();
-		} else if (!Checks.esNulo(dir.getMunicipio())) {
-			resultado += dir.getMunicipio();
+		if (!Checks.esNulo(dir)) {
+			if (!Checks.esNulo(dir.getCodigoPostal())) {
+				resultado += codigoPostalFormat.format(dir.getCodigoPostal()) + " ";
+			}
+			if (!Checks.esNulo(dir.getLocalidad()) && !Checks.esNulo(dir.getLocalidad().getDescripcion())) {
+				resultado += dir.getLocalidad().getDescripcion();
+			} else if (!Checks.esNulo(dir.getMunicipio())) {
+				resultado += dir.getMunicipio();
+			}
 		}
 		return resultado.trim().toUpperCase();
 	}
 	
-	private String construyeDireccion3(Direccion dir) {
+	private String construyeDireccion3(Direccion dir) {	
 		String resultado = "";
-		if (!Checks.esNulo(dir.getProvincia()) && !Checks.esNulo(dir.getProvincia().getDescripcion())) {
-			resultado += " (" + dir.getProvincia().getDescripcion() + ")";
+		if (!Checks.esNulo(dir)) {
+			if (!Checks.esNulo(dir.getProvincia()) && !Checks.esNulo(dir.getProvincia().getDescripcion())) {
+				resultado += " (" + dir.getProvincia().getDescripcion() + ")";
+			}
 		}
 		return resultado.trim().toUpperCase();
 	}
@@ -426,9 +435,10 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 			cabecera.put(CABECERA_EXPEDIDORDIR1, construyeExpedidorDir1(esCentroEspecial, oficina));
 			cabecera.put(CABECERA_EXPEDIDORDIR2, construyeExpedidorDir2(esCentroEspecial, oficina));
 			cabecera.put(CABECERA_EXPEDIDORDIR3, construyeExpedidorDir3(esCentroEspecial, oficina));
-			cabecera.put(CABECERA_CONTACTO1, construyeContacto1(envioBurofax.getBurofax().getDemandado()));
-			cabecera.put(CABECERA_CONTACTO2, construyeContacto2(envioBurofax.getBurofax().getDemandado()));
-			cabecera.put(CABECERA_NOMBRE_PERSONA, construyeNombre(envioBurofax.getBurofax().getDemandado()));
+			final BurofaxPCO burofax = envioBurofax.getBurofax();
+			cabecera.put(CABECERA_CONTACTO1, construyeContacto1(burofax.isEsPersonaManual(), burofax.getDemandado(), burofax.getContrato().getPrimerTitular()));
+			cabecera.put(CABECERA_CONTACTO2, construyeContacto2(burofax.isEsPersonaManual(), burofax.getDemandado(), burofax.getContrato().getPrimerTitular()));
+			cabecera.put(CABECERA_NOMBRE_PERSONA, construyeNombre(burofax.isEsPersonaManual(), burofax.getDemandado(), burofax.getDemandadoManual()));
 			cabecera.put(CABECERA_DIRECCION1, construyeDireccion1(envioBurofax.getDireccion()));
 			cabecera.put(CABECERA_DIRECCION2, construyeDireccion2(envioBurofax.getDireccion()));
 			cabecera.put(CABECERA_DIRECCION3, construyeDireccion3(envioBurofax.getDireccion()));
@@ -565,20 +575,20 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 	}
 
 
-	private String construyeContacto1(Persona demandado) {
+	private String construyeContacto1(boolean esManual, Persona demandado, Persona primerTitular) {
 		final String texto = "Persona de contacto: ";
 		try {
-			return texto + demandado.getOficinaGestora().getNombre();
+			return texto + (esManual ? primerTitular.getOficinaGestora().getNombre() : demandado.getOficinaGestora().getNombre());
 		} catch (Exception e) {
 			logger.error("construyeContacto1: " + e.getMessage());
 			return texto + DATO_NO_DISPONIBLE;
 		}
 	}
 
-	private String construyeContacto2(Persona demandado) {
+	private String construyeContacto2(boolean esManual, Persona demandado, Persona primerTitular) {
 		final String texto = "Teléfono: ";
 		try {
-			return texto + demandado.getOficinaGestora().getTelefono1();
+			return texto + (esManual ? primerTitular.getOficinaGestora().getTelefono1() : demandado.getOficinaGestora().getTelefono1());
 		} catch (Exception e) {
 			logger.error("construyeContacto2: " + e.getMessage());
 			return texto + DATO_NO_DISPONIBLE;

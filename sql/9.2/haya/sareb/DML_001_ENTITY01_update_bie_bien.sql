@@ -12,7 +12,8 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
---*/ 
+--*/
+ 
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;

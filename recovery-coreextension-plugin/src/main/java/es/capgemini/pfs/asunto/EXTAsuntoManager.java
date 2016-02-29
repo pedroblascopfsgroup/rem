@@ -1364,7 +1364,9 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			dto.setIdsUsuariosGrupos(idGrpsUsuario);
 		}
 		
-		return asuntoDao.buscarAsuntosPaginatedDinamico(usuarioLogado, dto, params);
+		Page asuntos = asuntoDao.buscarAsuntosPaginatedDinamico(usuarioLogado, dto, params);
+		
+		return asuntos;
 	}
 	
     /**

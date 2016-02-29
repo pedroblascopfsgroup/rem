@@ -34,6 +34,7 @@ import es.capgemini.pfs.utils.JBPMProcessManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.adjudicacion.api.AdjudicacionProcedimientoDelegateApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
@@ -171,21 +172,21 @@ public class SubastaV4HayaConcursalEnterActionHandler extends PROGenericEnterAct
 	}
 
 	private void creaProcedimientoAdjudicacion(Procedimiento procPadre, Bien b, String nombreTarea) {
-		creaProcedimiento(procPadre, b, CODIGO_ADJUDICACION);
+		creaProcedimiento(procPadre, b, CODIGO_ADJUDICACION, true);
 		crearNotificacionManual(procPadre, nombreTarea, "Se inicia trámite de adjudicación por cada bien", CODIGO_GESTOR_LITIGIOS);
 	}
 	
 	private void creaProcedimientoCesionRemate(Procedimiento procPadre, Bien b, String nombreTarea) {
-		creaProcedimiento(procPadre, b, CODIGO_CESION_REMATE);
+		creaProcedimiento(procPadre, b, CODIGO_CESION_REMATE, true);
 		crearNotificacionManual(procPadre, nombreTarea, "Se inicia trámite de cesión remate por cada bien", CODIGO_GESTOR_LITIGIOS);
 	}
 	
 	private void creaProcedimientoInscripcionTitulo(Procedimiento procPadre, Bien b, String nombreTarea) {
-		creaProcedimiento(procPadre, b, CODIGO_INSCRIPCION_TITULO);
+		creaProcedimiento(procPadre, b, CODIGO_INSCRIPCION_TITULO, false);
 		crearNotificacionManual(procPadre, nombreTarea, "Se inicia trámite de inscripción del título por cada bien", CODIGO_GESTOR_LITIGIOS);
 	}
 	
-	private void creaProcedimiento(Procedimiento procPadre, Bien b, String codigoProc){
+	private void creaProcedimiento(Procedimiento procPadre, Bien b, String codigoProc, Boolean tipoActuacionPadre){
 		MEJProcedimiento procHijo = new MEJProcedimiento();
 		
 		procHijo.setAuditoria(Auditoria.getNewInstance());
@@ -208,14 +209,21 @@ public class SubastaV4HayaConcursalEnterActionHandler extends PROGenericEnterAct
 				DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_DERIVADO);
 		procHijo.setEstadoProcedimiento(estadoProcedimiento);
 
-		// seteo el tipo de actuación
-		DDTipoActuacion tipoActuacion = genericDao.get(DDTipoActuacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", procPadre.getTipoActuacion().getCodigo()));
-//		DDTipoActuacion tipoActuacion = (DDTipoActuacion) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDTipoActuacion.class, procPadre.getTipoActuacion());
-		procHijo.setTipoActuacion(tipoActuacion);
-
 		// seteo el tipo de prodecimiento adjudicación
 		TipoProcedimiento tipoProcedimiento = genericDao.get(TipoProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoProc));
 		procHijo.setTipoProcedimiento(tipoProcedimiento);
+		
+		// seteo el tipo de actuación
+		Filter f1 = null;
+		if(tipoActuacionPadre){
+			f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", procPadre.getTipoActuacion().getCodigo());
+		}
+		else{
+			f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", procHijo.getTipoProcedimiento().getTipoActuacion().getCodigo());
+		}
+		DDTipoActuacion tipoActuacion = genericDao.get(DDTipoActuacion.class, f1);
+//		DDTipoActuacion tipoActuacion = (DDTipoActuacion) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDTipoActuacion.class, procPadre.getTipoActuacion());
+		procHijo.setTipoActuacion(tipoActuacion);
 		
 		// seteo el tipo de reclamación heredado del padre		
 		DDTipoReclamacion tipoReclamacion = genericDao.get(DDTipoReclamacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", procPadre.getTipoReclamacion().getCodigo()));

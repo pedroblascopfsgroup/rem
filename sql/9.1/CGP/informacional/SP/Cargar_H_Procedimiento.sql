@@ -2180,6 +2180,73 @@ set  t1.ULT_TAR_PEND_FILTR_DESC_ID = t2.ULT_TAR_PEND_FILTR_DESC_ID
 
 
 
+-- ===============================================================================================
+ -- FASE_TAREA_AGR_ID
+-- ===============================================================================================
+  
+    
+     
+     update H_PRC set FASE_TAREA_AGR_ID = (case when TIPO_PROCEDIMIENTO_DET_ID IN (153) then 1
+                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (35) then 2
+                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (34) then 3
+                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (33) then 4
+                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (1) then 5
+                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (2) then 6
+                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (164) then 7
+                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (162) then 8
+                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (171) then 9
+                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (168) then 10
+                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (21) then 11
+                             when TIPO_PROCEDIMIENTO_DET_ID IN (157) then 12
+                                                     when TIPO_PROCEDIMIENTO_DET_ID  IN (159) then 13
+                             when TIPO_PROCEDIMIENTO_DET_ID  IN (155) then 14
+                             when TIPO_PROCEDIMIENTO_DET_ID  IN (166) then 15
+                             when TIPO_PROCEDIMIENTO_DET_ID  IN (141,142,143,144) then 16
+                             when TIPO_PROCEDIMIENTO_DET_ID  IN (165) then 17
+                             when TIPO_PROCEDIMIENTO_DET_ID  IN (158) then 18
+                             when TIPO_PROCEDIMIENTO_DET_ID  IN (156) then 19
+                             when TIPO_PROCEDIMIENTO_DET_ID  IN (1041) then 20
+                             when TIPO_PROCEDIMIENTO_DET_ID  IN (41) then 21
+                                                     when TIPO_PROCEDIMIENTO_DET_ID IS NULL then -1
+                                                     else -1 end) where DIA_ID = fecha;
+
+     
+     
+ 
+    commit;                                                     
+    
+    
+     
+      update H_PRC set FASE_TAREA_AGR_ID = (case when FASE_ACTUAL_DETALLE_ID IN (153) then 1
+                                                     when FASE_ACTUAL_DETALLE_ID IN (35) then 2
+                                                     when FASE_ACTUAL_DETALLE_ID IN (34) then 3
+                                                     when FASE_ACTUAL_DETALLE_ID IN (33) then 4
+                                                     when FASE_ACTUAL_DETALLE_ID IN (1) then 5
+                                                     when FASE_ACTUAL_DETALLE_ID IN (2) then 6
+                                                     when FASE_ACTUAL_DETALLE_ID IN (164) then 7
+                                                     when FASE_ACTUAL_DETALLE_ID IN (162) then 8
+                                                     when FASE_ACTUAL_DETALLE_ID IN (171) then 9
+                                                     when FASE_ACTUAL_DETALLE_ID IN (168) then 10
+                                                     when FASE_ACTUAL_DETALLE_ID IN (21) then 11
+                             when FASE_ACTUAL_DETALLE_ID IN (157) then 12
+                                                     when FASE_ACTUAL_DETALLE_ID IN (159) then 13
+                             when FASE_ACTUAL_DETALLE_ID IN (155) then 14
+                             when FASE_ACTUAL_DETALLE_ID IN (166) then 15
+                             when FASE_ACTUAL_DETALLE_ID IN (141,142,143,144) then 16
+                             when FASE_ACTUAL_DETALLE_ID IN (165) then 17
+                             when FASE_ACTUAL_DETALLE_ID IN (158) then 18
+                             when FASE_ACTUAL_DETALLE_ID IN (156) then 19
+                             when FASE_ACTUAL_DETALLE_ID IN (1041) then 20
+                             when FASE_ACTUAL_DETALLE_ID IN (41) then 21
+                                                     else FASE_TAREA_AGR_ID end) where DIA_ID = fecha;
+     
+     
+     
+    commit;   
+
+
+
+
 END LOOP;
 CLOSE C_FECHA;
 
@@ -2336,7 +2403,8 @@ fetch c_meses INTO mes;
 			    FASE_TAREA_DETALLE_ID,
 			    ULT_TAR_PEND_FILTR_DESC_ID,	
 			    ULT_TAR_PEND_FILT,
-			    ORDEN_TAREA_FILT
+			    ORDEN_TAREA_FILT,
+                FASE_TAREA_AGR_ID
         )
     select mes, 
         max_dia_mes,
@@ -2453,7 +2521,8 @@ fetch c_meses INTO mes;
 	FASE_TAREA_DETALLE_ID,
 	ULT_TAR_PEND_FILTR_DESC_ID,	
 	ULT_TAR_PEND_FILT,
-	ORDEN_TAREA_FILT   
+	ORDEN_TAREA_FILT ,
+    FASE_TAREA_AGR_ID  
     from H_PRC 
     where DIA_ID = max_dia_mes
     ;
@@ -2632,7 +2701,8 @@ fetch c_trimestre INTO trimestre;
 	    ENTIDAD_CEDENTE_ID,
 	ULT_TAR_PEND_FILTR_DESC_ID,	
 	ULT_TAR_PEND_FILT,
-	ORDEN_TAREA_FILT           
+	ORDEN_TAREA_FILT   ,
+     FASE_TAREA_AGR_ID        
         )
     select trimestre, 
         max_dia_trimestre,
@@ -2744,7 +2814,8 @@ fetch c_trimestre INTO trimestre;
   		ENTIDAD_CEDENTE_ID,
 	ULT_TAR_PEND_FILTR_DESC_ID,	
 	ULT_TAR_PEND_FILT,
-	ORDEN_TAREA_FILT     
+	ORDEN_TAREA_FILT,
+        FASE_TAREA_AGR_ID     
     from H_PRC where DIA_ID = max_dia_trimestre;
 
 
@@ -2910,7 +2981,8 @@ fetch c_anio INTO anio;
 	    ENTIDAD_CEDENTE_ID,
 	ULT_TAR_PEND_FILTR_DESC_ID,	
 	ULT_TAR_PEND_FILT,
-	ORDEN_TAREA_FILT           
+	ORDEN_TAREA_FILT   ,
+    FASE_TAREA_AGR_ID          
         )
     select anio,   
         max_dia_anio,
@@ -3023,7 +3095,8 @@ fetch c_anio INTO anio;
   		ENTIDAD_CEDENTE_ID,
 	ULT_TAR_PEND_FILTR_DESC_ID,	
 	ULT_TAR_PEND_FILT,
-	ORDEN_TAREA_FILT    
+	ORDEN_TAREA_FILT  ,
+    FASE_TAREA_AGR_ID    
     from H_PRC where DIA_ID = max_dia_anio;
 
 

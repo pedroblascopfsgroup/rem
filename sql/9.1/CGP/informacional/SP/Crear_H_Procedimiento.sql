@@ -20,9 +20,9 @@ MY_BLOCK_H_PCR: BEGIN
 -- ===============================================================================================
 -- Autor: Enrique Jiménez Diaz, PFS Group
 -- Fecha creación: Noviembre 2014
--- Responsable última modificación: Enrique Jiménez Diaz, PFS Group
--- Fecha última modificación: 27/11/2014
--- Motivos del cambio: Ajustar para incorporar los ENTIDAD_CEDENTE_ID
+-- Responsable última modificación: María Villanueva, PFS Group
+-- Fecha última modificación: 29/02/2016
+-- Motivos del cambio: Se añade FASE_TAREA_AGR_ID
 -- Cliente: Recovery BI Central de Demandas 
 --
 -- Descripción: Procedimiento almancenado que crea la tabla de hechos Procedimiento.
@@ -114,8 +114,15 @@ CREATE TABLE IF NOT EXISTS H_PRC(
   `TD_REC_DOC_ACEPT_REC_DC_ID` DECIMAL(16,0) NULL,
   `CNT_GARANTIA_REAL_ASOC_ID` DECIMAL(16,0) NULL ,     -- 0 Contrato Garantía Real No Asociado / 1 Contrato Garantía Real Asociado
   `ACT_ESTIMACIONES_ID` DECIMAL(16,0) NULL ,
-  `CARTERA_PROCEDIMIENTO_ID` DECIMAL(16,0) NULL ,          -- 0 NCG BANCO, S.A / 1 SAREB / 2 Compartida  
-  `TITULAR_PROCEDIMIENTO_ID` DECIMAL(16,0) NULL,  -- Rerefencia a PER_ID
+  `ULT_TAR_PEND_FILTR_DESC_ID` DECIMAL(16,0) NULL ,          -- 0 NCG BANCO, S.A / 1 SAREB / 2 Compartida  
+  `NUM_DIAS_INTERPOS_FILT` INT NULL,   
+  `FECHA_ULT_TAR_PEND_FILT` DATE NULL,
+  `PLAZA_ID` DECIMAL(16,0) NULL,
+  `JUZGADO_ID` DECIMAL(16,0) NULL,
+  `PROCURADOR_ID` DECIMAL(16,0) NULL,
+  `FASE_TAREA_DETALLE_ID` DECIMAL(16,0) NULL,
+  `ORDEN_TAREA_FILT` INT NULL, 
+  `FASE_TAREA_AGR_ID` DECIMAL(16,0) NULL,
   -- Métricas
   `NUM_PROCEDIMIENTOS` INT NULL,  
   `NUM_CONTRATOS` INT NULL,  
@@ -232,6 +239,15 @@ CREATE TABLE IF NOT EXISTS H_PRC_MES(
   `ACT_ESTIMACIONES_ID` DECIMAL(16,0) NULL ,
   `CARTERA_PROCEDIMIENTO_ID` DECIMAL(16,0) NULL ,          -- 0 NCG BANCO, S.A / 1 SAREB / 2 Compartida
   `TITULAR_PROCEDIMIENTO_ID` DECIMAL(16,0) NULL,  -- Rerefencia a PER_ID
+  `ULT_TAR_PEND_FILTR_DESC_ID` DECIMAL(16,0) NULL ,         
+  `NUM_DIAS_INTERPOS_FILT` INT NULL,   
+  `FECHA_ULT_TAR_PEND_FILT` DATE NULL,
+  `PLAZA_ID` DECIMAL(16,0) NULL,
+  `JUZGADO_ID` DECIMAL(16,0) NULL,
+  `PROCURADOR_ID` DECIMAL(16,0) NULL,
+  `FASE_TAREA_DETALLE_ID` DECIMAL(16,0) NULL,
+  `ORDEN_TAREA_FILT` INT NULL, 
+  `FASE_TAREA_AGR_ID` DECIMAL(16,0) NULL,
   -- Métricas
   `NUM_PROCEDIMIENTOS` INT NULL,  
   `NUM_CONTRATOS` INT NULL,  
@@ -348,6 +364,15 @@ CREATE TABLE IF NOT EXISTS H_PRC_TRIMESTRE(
   `ACT_ESTIMACIONES_ID` DECIMAL(16,0) NULL ,
   `CARTERA_PROCEDIMIENTO_ID` DECIMAL(16,0) NULL ,          -- 0 NCG BANCO, S.A / 1 SAREB / 2 Compartida
   `TITULAR_PROCEDIMIENTO_ID` DECIMAL(16,0) NULL,  -- Rerefencia a PER_ID
+  `ULT_TAR_PEND_FILTR_DESC_ID` DECIMAL(16,0) NULL ,          
+  `NUM_DIAS_INTERPOS_FILT` INT NULL,   
+  `FECHA_ULT_TAR_PEND_FILT` DATE NULL,
+  `PLAZA_ID` DECIMAL(16,0) NULL,
+  `JUZGADO_ID` DECIMAL(16,0) NULL,
+  `PROCURADOR_ID` DECIMAL(16,0) NULL,
+  `FASE_TAREA_DETALLE_ID` DECIMAL(16,0) NULL,
+  `ORDEN_TAREA_FILT` INT NULL, 
+  `FASE_TAREA_AGR_ID` DECIMAL(16,0) NULL,
   -- Métricas
   `NUM_PROCEDIMIENTOS` INT NULL,  
   `NUM_CONTRATOS` INT NULL,  
@@ -464,6 +489,15 @@ CREATE TABLE IF NOT EXISTS H_PRC_ANIO(
   `ACT_ESTIMACIONES_ID` DECIMAL(16,0) NULL ,
   `CARTERA_PROCEDIMIENTO_ID` DECIMAL(16,0) NULL ,          -- 0 NCG BANCO, S.A / 1 SAREB / 2 Compartida
   `TITULAR_PROCEDIMIENTO_ID` DECIMAL(16,0) NULL,  -- Rerefencia a PER_ID
+  `ULT_TAR_PEND_FILTR_DESC_ID` DECIMAL(16,0) NULL ,         
+  `NUM_DIAS_INTERPOS_FILT` INT NULL,   
+  `FECHA_ULT_TAR_PEND_FILT` DATE NULL,
+  `PLAZA_ID` DECIMAL(16,0) NULL,
+  `JUZGADO_ID` DECIMAL(16,0) NULL,
+  `PROCURADOR_ID` DECIMAL(16,0) NULL,
+  `FASE_TAREA_DETALLE_ID` DECIMAL(16,0) NULL,
+  `ORDEN_TAREA_FILT` INT NULL, 
+  `FASE_TAREA_AGR_ID` DECIMAL(16,0) NULL,
   -- Métricas
   `NUM_PROCEDIMIENTOS` INT NULL,  
   `NUM_CONTRATOS` INT NULL,  
@@ -511,7 +545,64 @@ CREATE TABLE IF NOT EXISTS H_PRC_ANIO(
   `ENTIDAD_CEDENTE_ID` DECIMAL(16,0) NOT NULL 
  );
  
+DROP TABLE H_PRC_PLAZO_MEDIO;
+
+ CREATE TABLE IF NOT EXISTS H_PRC_PLAZO_MEDIO(
+  `DIA_ID` date NOT NULL,
+  `FECHA_CARGA_DATOS` date NOT NULL,
+  `PROCEDIMIENTO_ID` decimal(16,0) NOT NULL,
+  `CATEGORIA_PLAZO_MEDIO` decimal(16,0) DEFAULT NULL,
+  `NUM_DIAS_INTERPOS` int(11) NOT NULL DEFAULT '0',
+  `ENTIDAD_CEDENTE_ID` decimal(16,0) NOT NULL,
+  `colum_dommy` int(11) DEFAULT '1',
+  `FECHA_INTERPOS_DEMANDA` date DEFAULT NULL,
+  `FECHA_FIN_TAREA` date DEFAULT NULL,
+  `TAR_CAT_PM` decimal(16,0) DEFAULT NULL,
+  `ASUNTO_ID` decimal(16,0) DEFAULT NULL,
+  `ESTADO_FASE_ACTUAL_ID` decimal(16,0) DEFAULT NULL,
+  `FASE_ACTUAL_DETALLE_ID` decimal(16,0) DEFAULT NULL,
+  `NUM_DIAS_INTERPOS_2` int(11) NOT NULL DEFAULT '0',
+  `FECHA_VALOR_TAREA` date DEFAULT NULL,
+  `ULT_TAR_FIN_DESC_ID` decimal(16,0) DEFAULT NULL,
+  `PLAZA_ID` decimal(16,0) DEFAULT NULL,
+  `JUZGADO_ID` decimal(16,0) DEFAULT NULL,
+  `PROCURADOR_ID` decimal(16,0) DEFAULT NULL,
+  `PRC_CON_OPOSICION_ID` decimal(16,0) DEFAULT NULL,
+  `FASE_TAREA_DETALLE_ID` decimal(16,0) DEFAULT NULL,
+  `MARCA_HITO_ID` decimal(16,0) DEFAULT NULL,
+  `ORDEN_TAREA` int(11) DEFAULT NULL,
+  `TIPO_PROCEDIMIENTO_DET_ID` decimal(16,0) DEFAULT NULL,
+  `FASE_TAREA_AGR_ID` decimal(16,0) DEFAULT NULL);
+
 -- ***** 
+select count(INDEX_NAME) into HAY from information_schema.statistics  where table_name = 'H_PRC_PLAZO_MEDIO' and table_schema = 'bi_cdd_dwh' and INDEX_NAME = 'H_PRC_PLAZO_MEDIO_IX';
+select count(TABLE_NAME) into HAY_TABLA from information_schema.tables  where table_name = 'H_PRC_PLAZO_MEDIO' and table_schema = 'bi_cdd_dwh';
+if (HAY < 1 && HAY_TABLA = 1) then 
+  CREATE INDEX H_PRC_PLAZO_MEDIO_IX ON H_PRC_PLAZO_MEDIO (DIA_ID, PROCEDIMIENTO_ID, ENTIDAD_CEDENTE_ID);
+  set o_error_status:= concat('Se ha insertado el INDICE H_PRC_PLAZO_MEDIO_IX. Nº [', HAY, ']');
+-- else 
+--  set o_error_status:= concat('Ya existe el INDICE H_PRC_IX. Nº [', HAY, '] o no existe la Tabla. Nº[',HAY_TABLA,']');
+end if;
+
+select count(INDEX_NAME) into HAY from information_schema.statistics  where table_name = 'H_PRC_PLAZO_MEDIO' and table_schema = 'bi_cdd_dwh' and INDEX_NAME = 'H_PRC_PLAZO_MEDIO_IX2';
+select count(TABLE_NAME) into HAY_TABLA from information_schema.tables  where table_name = 'H_PRC_PLAZO_MEDIO' and table_schema = 'bi_cdd_dwh';
+if (HAY < 1 && HAY_TABLA = 1) then 
+  CREATE INDEX H_PRC_PLAZO_MEDIO_IX2 ON H_PRC_PLAZO_MEDIO (CATEGORIA_PLAZO_MEDIO);
+  set o_error_status:= concat('Se ha insertado el INDICE H_PRC_PLAZO_MEDIO_IX2. Nº [', HAY, ']');
+-- else 
+--  set o_error_status:= concat('Ya existe el INDICE H_PRC_IX. Nº [', HAY, '] o no existe la Tabla. Nº[',HAY_TABLA,']');
+end if;
+
+select count(INDEX_NAME) into HAY from information_schema.statistics  where table_name = 'H_PRC_PLAZO_MEDIO' and table_schema = 'bi_cdd_dwh' and INDEX_NAME = 'H_PRC_PLAZO_MEDIO_IX3';
+select count(TABLE_NAME) into HAY_TABLA from information_schema.tables  where table_name = 'H_PRC_PLAZO_MEDIO' and table_schema = 'bi_cdd_dwh';
+if (HAY < 1 && HAY_TABLA = 1) then 
+  CREATE INDEX H_PRC_PLAZO_MEDIO_IX3 ON H_PRC_PLAZO_MEDIO (PROCEDIMIENTO_ID);
+  set o_error_status:= concat('Se ha insertado el INDICE H_PRC_PLAZO_MEDIO_IX3. Nº [', HAY, ']');
+-- else 
+--  set o_error_status:= concat('Ya existe el INDICE H_PRC_IX. Nº [', HAY, '] o no existe la Tabla. Nº[',HAY_TABLA,']');
+end if;
+
+
 select count(INDEX_NAME) into HAY from information_schema.statistics  where table_name = 'H_PRC' and table_schema = 'bi_cdd_dwh' and INDEX_NAME = 'H_PRC_IX';
 select count(TABLE_NAME) into HAY_TABLA from information_schema.tables  where table_name = 'H_PRC' and table_schema = 'bi_cdd_dwh';
 if (HAY < 1 && HAY_TABLA = 1) then 
@@ -725,6 +816,7 @@ CREATE TABLE IF NOT EXISTS H_PRC_DET_CONTRATO_ANIO(
   `ENTIDAD_CEDENTE_ID` DECIMAL(16,0) NOT NULL 
  );
  
+
  
 -- *********************
 select count(INDEX_NAME) into HAY from information_schema.statistics  where table_name = 'H_PRC_DET_CONTRATO' and table_schema = 'bi_cdd_dwh' and INDEX_NAME = 'H_PRC_DET_CONTRATO_IX';

@@ -11,20 +11,7 @@
 --## INSTRUCCIONES:  inyectar los registros que en su momento no se pudieron cargar por culpa de un error
 --## VERSIONES:
 --/*
---##########################################
---## AUTOR=Luis Antonio Prato Paredes
---## FECHA_CREACION=20160225
---## ARTEFACTO=[online|batch]
---## VERSION_ARTEFACTO=X.X.X_rcXX
---## INCIDENCIA_LINK=PROJECTKEY-ISSUENUMBER
---## PRODUCTO=[SI|NO]
---## 
---## Finalidad:Inyectar registros en bi_factu (BKREC-1742)  
---## INSTRUCCIONES:  inyectar los registros que en su momento no se pudieron cargar por culpa de un error
---## VERSIONES:
---##        0.1 Versión inicial
---##########################################
---*/
+
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 DECLARE

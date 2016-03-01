@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.mail.Session;
-
-import org.apache.commons.beanutils.BeanUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
@@ -18,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
@@ -25,7 +23,6 @@ import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.listadoPreProyectado.api.VListadoPreProyectadoCntDao;
 import es.pfsgroup.listadoPreProyectado.dto.ListadoPreProyectadoDTO;
 import es.pfsgroup.listadoPreProyectado.model.VListadoPreProyectadoCnt;
-import es.capgemini.pfs.users.domain.Usuario;
 
 @Repository("VListadoPreProyectadoCntDao")
 public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoPreProyectadoCnt, Long> implements VListadoPreProyectadoCntDao {
@@ -182,7 +179,7 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 				sb.append(" and (");
 				for (int i = 0; i < zonasCnt.length; i++) {
 					String zonaCnt = zonasCnt[i];
-					sb.append(" f.zonCodContrato='" + zonaCnt + "' ");
+					sb.append(" f.zonCodContrato LIKE '%" + zonaCnt + "%' ");
 					if (i<zonasCnt.length-1) {
 						sb.append(" or ");
 					}

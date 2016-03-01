@@ -121,6 +121,12 @@ public final class InternaBusinessOperation {
     public static final String BO_EXP_MGR_FIND_EXPEDIENTES_RECOBRO_PAGINATED_DINAMICO = "expedienteManager.findExpedientesRecobroPaginatedDinamico";
     public static final String BO_EXP_MGR_FIND_EXPEDIENTES_PARA_EXCEL_DINAMICO = "expedienteManager.findExpedientesParaExcelDinamico";
     public static final String BO_EXP_MGR_FIND_EXPEDIENTES_RECOBRO_PARA_EXCEL_DINAMICO = "expedienteManager.findExpedientesRecobroParaExcelDinamico";
+    public static final String BO_EXP_MGR_ELEVAR_EXPEDIENTE_DE_REVISION_A_ENSANCION = "expedienteManager.elevarExpedienteDeREaENSAN";
+    public static final String BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_ENSANCION_A_REVISION = "expedienteManager.devolverExpedienteDeENSANaRE";
+    public static final String BO_EXP_MGR_ELEVAR_EXPEDIENTE_DE_ENSANCION_A_SANCIONADO = "expedienteManager.elevarExpedienteDeENSANaSANC";
+    public static final String BO_EXP_MGR_ELEVAR_EXPEDIENTE_DE_SANCIONADO_A_FORMALIZAR_PROPUESTA = "expedienteManager.elevarExpedienteDeSANCaFP";
+    public static final String BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_SANCIONADO_A_COMPLETAR_EXPEDIENTE = "expedienteManager.devolverExpedienteDeSANCaCE";
+    public static final String BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_FORMALIZAR_PROPUESTA_A_SANCIONADO = "expedienteManager.devolverExpedienteDeFPaENSAN";
     /*****************************************************************************
      ** PoliticaManager.
      ****************************************************************************/

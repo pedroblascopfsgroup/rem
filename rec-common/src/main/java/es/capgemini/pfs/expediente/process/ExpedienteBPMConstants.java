@@ -19,6 +19,8 @@ public interface ExpedienteBPMConstants extends BPMContants {
     String STATE_REVISION_EXPEDIENTE = "RevisionExpediente";
     String STATE_DECISION_COMITE = "DecisionComite";
     String STATE_FORMALIZAR_PROPUESTA = "FormalizarPropuesta";
+    String STATE_EN_SANCION = "EnSancion";
+    String STATE_SANCIONADO = "Sancionado";
     String TRANSITION_ENVIARAREVISION = "EnviarARevision";
     String TRANSITION_ENVIARAFORMALIZARPROPUESTA = "EnviarAFormalizar";
     String TRANSITION_ENVIARADECISIONCOMITE = "EnviarAComite";
@@ -27,6 +29,9 @@ public interface ExpedienteBPMConstants extends BPMContants {
     String TRANSITION_DEVOLVERADECISION = "DevolverADecision";
     String TRANSITION_TOMARDECISION = "TomarDecision";
     String TRANSITION_PRORROGA_EXTRA = "EnviarSolicitarProrrogaExtra";
+    String TRANSITION_ENVIARAENSANCION = "EnviarAEnSancion";
+    String TRANSITION_DEVOLVER_ES_SANCION = "DevolverAEnSancion";
+    String TRANSITION_DEVOLVER_SANCIONADO = "DevolverASancionado";
     String DECISION_COMITE_AUTO = "DecisionComiteAutomatica";
     String GENERAR_NOTIFICACION = "GenerarNotificacion";
     String SOLICITAR_PRORROGA_EXTRA = "SolicitarProrrogaExtra";

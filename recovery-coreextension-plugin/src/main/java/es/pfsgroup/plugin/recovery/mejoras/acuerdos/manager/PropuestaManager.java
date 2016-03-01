@@ -127,11 +127,13 @@ public class PropuestaManager implements PropuestaApi {
 
 			Boolean esEstadoCompletarExp = DDEstadoItinerario.ESTADO_COMPLETAR_EXPEDIENTE.equals(expediente.getEstadoItinerario().getCodigo());
 			Boolean esEstadoRevisarExp = DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE.equals(expediente.getEstadoItinerario().getCodigo());
+			Boolean esEstadoEnSancion = DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION.equals(expediente.getEstadoItinerario().getCodigo());
 			Boolean esEstadoDecisionComite = DDEstadoItinerario.ESTADO_DECISION_COMIT.equals(expediente.getEstadoItinerario().getCodigo());
+			Boolean esEstadoSancionado = DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO.equals(expediente.getEstadoItinerario().getCodigo());
 
-			if (esEstadoCompletarExp || esEstadoRevisarExp) {
+			if (esEstadoCompletarExp || esEstadoRevisarExp || esEstadoEnSancion) {
 				cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_PROPUESTO);
-			} else if (esEstadoDecisionComite) {
+			} else if (esEstadoDecisionComite || esEstadoSancionado) {
 				cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_ACEPTADO);
 			}
 		} else {

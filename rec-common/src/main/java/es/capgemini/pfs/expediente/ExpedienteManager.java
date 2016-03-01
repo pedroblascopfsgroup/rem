@@ -1340,6 +1340,9 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         		}else if(expediente.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA) && estadoNuevo!= null && estadoNuevo.equals(DDEstadoItinerario.ESTADO_DECISION_COMIT)){
         			regla.setCumple(cumplimiendoReglaFPDC(expediente, acuerdos));
         			if(!regla.getCumple()){ return false;}
+        		}else if(expediente.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION) && estadoNuevo!= null && estadoNuevo.equals(DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE)){
+        			regla.setCumple(cumplimientoReglaENSAN(expediente, acuerdos));
+        			if(!regla.getCumple()){ return false;}
         		}
         	}
         }
@@ -1374,6 +1377,51 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         }
     }
 	
+    /**
+     * {@inheritDoc}
+     */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_DE_REVISION_A_ENSANCION)
+    @Transactional(readOnly = false)
+    public void elevarExpedienteDeREaENSAN(Long idExpediente, Boolean isSupervisor) {
+        Expediente exp = expedienteDao.get(idExpediente);
+
+        Boolean permitidoElevar = compruebaElevacion(exp, ExpedienteBPMConstants.STATE_EN_SANCION, isSupervisor);
+        if (!permitidoElevar) { throw new BusinessOperationException("expediente.elevar.falloValidaciones"); }
+        
+        /*El BPM debe cambiar el estado del itinerario en el expediente y los estados de las propuestas que esten en estado "Propuesta" a "Elevado"*/
+        executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, exp.getProcessBpm(),
+                ExpedienteBPMConstants.TRANSITION_ENVIARAENSANCION);
+        
+    }
+	
+	
+    /**
+     * {@inheritDoc}
+     */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_DE_ENSANCION_A_SANCIONADO)
+    @Transactional(readOnly = false)
+    public void elevarExpedienteDeENSANaSANC(Long idExpediente, Boolean isSupervisor) {
+        /*Expediente exp = expedienteDao.get(idExpediente);
+
+        Boolean permitidoElevar = compruebaElevacion(exp, ExpedienteBPMConstants.STATE_COMPLETAR_EXPEDIENTE, isSupervisor);
+        if (!permitidoElevar) { throw new BusinessOperationException("expediente.elevar.falloValidaciones"); }
+
+        Boolean politicasVigentes = (Boolean) executor.execute(InternaBusinessOperation.BO_POL_MGR_MARCAR_POLITICAS_VIGENTES, exp, null, false);
+
+        
+        if (politicasVigentes) {
+            DDEstadoExpediente estadoExpediente = (DDEstadoExpediente) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
+                    DDEstadoExpediente.class, DDEstadoExpediente.ESTADO_EXPEDIENTE_DECIDIDO);
+            exp.setEstadoExpediente(estadoExpediente);
+            saveOrUpdate(exp);
+
+        } else {
+            executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, exp.getProcessBpm(),
+                    ExpedienteBPMConstants.TRANSITION_ENVIARAREVISION);
+        }*/
+    }
+	
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -1390,6 +1438,71 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	        executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, exp.getProcessBpm(),
 	                    ExpedienteBPMConstants.TRANSITION_ENVIARAFORMALIZARPROPUESTA);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_DE_SANCIONADO_A_FORMALIZAR_PROPUESTA)
+	@Transactional(readOnly = false)
+	public void elevarExpedienteDeSancionadoAFormalizarPropuesta(Long idExpediente,Boolean isSupervisor) {
+		 
+		Expediente exp = expedienteDao.get(idExpediente);
+
+	        Boolean permitidoElevar = compruebaElevacion(exp, ExpedienteBPMConstants.STATE_SANCIONADO, isSupervisor);
+	        if (!permitidoElevar) { throw new BusinessOperationException("expediente.elevar.falloValidaciones"); }
+	        
+	        ///Comprobamos que al menos una propuesta esté en estado elevada (PENDIENTE)
+	        DDEstadoItinerario estadoItinerario = exp.getEstadoItinerario();
+	        Estado estado = (Estado) executor.execute(ConfiguracionBusinessOperation.BO_EST_MGR_GET, exp.getArquetipo().getItinerario(),
+	                estadoItinerario);
+	        List<ReglasElevacion> listadoReglas = expedienteDao.getReglasElevacion(estado);
+
+	        //Comprobamos una a una si las reglas se cumplen
+	        List<Acuerdo> acuerdos = genericDao.getList(Acuerdo.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", exp.getId()));
+	        
+	        for (ReglasElevacion regla : listadoReglas) {
+	        	   String codigoTipoRegla = regla.getTipoReglaElevacion().getCodigo();
+	               if(DDTipoReglasElevacion.MARCADO_GESTION_PROPUESTA.equals(codigoTipoRegla)){
+	            	   for(Acuerdo acu : acuerdos){
+	            		   if(acu.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_VIGENTE)){
+	            			   permitidoElevar = false;
+	            		   }
+	            	   }
+	               }
+	        }
+	        
+	        if (!permitidoElevar) { throw new BusinessOperationException("expediente.elevar.falloValidaciones"); }
+
+	        executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, exp.getProcessBpm(),
+	                    ExpedienteBPMConstants.TRANSITION_ENVIARAFORMALIZARPROPUESTA);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_SANCIONADO_A_COMPLETAR_EXPEDIENTE)
+	@Transactional(readOnly = false)
+	public void devolverExpedienteDeSancionadoACompletarExpediente(Long idExpediente,Boolean isSupervisor) {
+		 
+			Expediente exp = expedienteDao.get(idExpediente);
+
+	        executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, exp.getProcessBpm(),
+	                    ExpedienteBPMConstants.TRANSITION_DEVOLVER_ES_SANCION);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_FORMALIZAR_PROPUESTA_A_SANCIONADO)
+	@Transactional(readOnly = false)
+	public void devolverExpedienteDeFormalizarPropuestaASancionado(Long idExpediente,Boolean isSupervisor) {
+		 
+			Expediente exp = expedienteDao.get(idExpediente);
+
+	        executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, exp.getProcessBpm(),
+	                    ExpedienteBPMConstants.TRANSITION_DEVOLVER_SANCIONADO);
+	}
+	
 
 	/**
 	 * {@inheritDoc}
@@ -1565,6 +1678,47 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
             executor.execute(InternaBusinessOperation.BO_POL_MGR_DESHACER_ULTIMAS_POLITICAS, idExpediente);
         } else {
             logger.error("No se puede devoler a REVISION porque el expediente no esta en DECISION_COMITE");
+            throw new BusinessOperationException("expediente.devolucionRevision.errorJBPM");
+        }
+    }
+	
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_ENSANCION_A_REVISION)
+    @Transactional(readOnly = false)
+    public void devolverExpedienteDeEnSancionARevision(Long idExpediente, String respuesta) {
+        Expediente exp = expedienteDao.get(idExpediente);
+        List<Asunto> asuntos = exp.getAsuntos();
+        if (asuntos != null && asuntos.size() > 0) { throw new BusinessOperationException("expediente.devolucionRevision.invalida"); }
+        //comprobamos si se cumple la regla de validacion al devolver a revision
+        Boolean permitidoDevolver = compruebaDevolucion(exp, ExpedienteBPMConstants.STATE_EN_SANCION, DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE);
+        if (!permitidoDevolver) { throw new BusinessOperationException("expediente.elevar.falloValidaciones"); }
+        Long bpmProcess = exp.getProcessBpm();
+        if (bpmProcess == null) { throw new BusinessOperationException("expediente.bpmprocess.error"); }
+        String node = (String) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_ACTUAL_NODE, bpmProcess);
+        if (ExpedienteBPMConstants.STATE_EN_SANCION.equals(node)) {
+
+            executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, bpmProcess, ExpedienteBPMConstants.TRANSITION_DEVOLVERAREVISION);
+            // *** Recuperamos la tarea generada en el BPM para cambiarle la descripción y ponerle los motivos de devolución ***
+            Long idTareaAsociada = (Long) executor
+                    .execute(ComunBusinessOperation.BO_JBPM_MGR_GET_VARIABLES_TO_PROCESS, bpmProcess, TAREA_ASOCIADA_RE);
+            if (idTareaAsociada != null) {
+                TareaNotificacion tarea = (TareaNotificacion) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET, idTareaAsociada);
+                if (tarea != null) {
+                    SubtipoTarea subtipoTarea = (SubtipoTarea) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET_SUBTIPO_TAREA_BY_CODE,
+                            SubtipoTarea.CODIGO_REVISAR_EXPEDIENE);
+                    String descripcionTarea = subtipoTarea.getDescripcionLarga() + " - Devuelto por los motivos " + respuesta;
+                    tarea.setDescripcionTarea(descripcionTarea);
+                    executor.execute(ComunBusinessOperation.BO_TAREA_MGR_SAVE_OR_UPDATE, tarea);
+                }
+            }
+            // *** *** //
+
+            executor.execute(InternaBusinessOperation.BO_POL_MGR_DESHACER_ULTIMAS_POLITICAS, idExpediente);
+        } else {
+            logger.error("No se puede devoler a REVISION porque el expediente no esta en EN SANCION");
             throw new BusinessOperationException("expediente.devolucionRevision.errorJBPM");
         }
     }
@@ -2839,6 +2993,17 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
                             		if(expediente.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT)){
                             			regla.setCumple(cumplimientoReglaDCFP(expediente, acuerdos));                            			
                             		}
+                            		
+                            		///ENSAN
+                            		if(expediente.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION)){
+                            			regla.setCumple(cumplimientoReglaENSAN(expediente, acuerdos));                            			
+                            		}
+                            		
+                            		///SANC
+                            		if(expediente.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO)){
+                            			regla.setCumple(cumplimientoReglaSANC(expediente, acuerdos)); 
+                            		}
+                            		
                             	} else {
                             		//Comprobamos si se cumple la regla Sancionar Propuesta
                             		if (DDTipoReglasElevacion.MARCADO_SANCIONAR_PROPUESTA.equals(codigoTipoRegla)) {
@@ -3087,6 +3252,104 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	  return cumple;
 	  
     }
+    
+    
+    /**
+     * Decide si se ha cumplido la regla para el itinerario En sanción(ENSAN) a SANCIONADO (DC) o REVISAR EXPEDIENTE (RE) la cual consiste en comprobar si en las propuestas del expediente, siempre que exista alguna,
+     * al menos una tenga el estado "vigente", "rechazada, "Cumplida" o "Incumplida"
+     * @param expediente
+     * @param acuerdos
+     * @return
+     */
+    private boolean cumplimientoReglaENSAN(Expediente expediente, List<Acuerdo> acuerdos){
+    	Boolean cumple = false;
+    	int i = 0;
+    	
+    	if(acuerdos != null){
+    		//recorremos las propuestas del expediente
+	    	for(Acuerdo acuerdo: acuerdos){
+	    		//Booleano que controla si hemos encontrado una propuesta en estado elevada
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_VIGENTE)){
+	    			i++;
+	    		}
+	    		//Booleano que controla si hemos encontrado una propuesta en estado rechazada
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_RECHAZADO)){
+	    			i++;
+	    		}
+	    		//Booleano que controla si hemos encontrado una propuesta en estado cumplido
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_CUMPLIDO)){
+	    			i++;
+	    		}
+	    		//Booleano que controla si hemos encontrado una propuesta en estado incumplido
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_INCUMPLIDO)){
+	    			i++;
+	    		}
+	    		
+	    		//las que vengan en estado cancelado no cuentan por tanto se añaden a la lista para que se cumpla la regla
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equalsIgnoreCase(DDEstadoAcuerdo.ACUERDO_CANCELADO)){
+	    			i++;
+				}
+	    	}
+	    	
+	    	//Comprobamos si las propuestas tienen el estado correcto (vigente, rechazado, cumplida, incumplida) para cumplir la regla
+	    	if(acuerdos.size() > 0 && acuerdos.size() == i){
+	    		cumple = true;
+	    	}else{
+	    		cumple = false;
+	    	}
+    	}    	
+    	
+    	return cumple;
+    }
+    
+    /**
+     * Decide si se ha cumplido la regla para el itinerario En sanción(ENSAN) a SANCIONADO (DC) o REVISAR EXPEDIENTE (RE) la cual consiste en comprobar si en las propuestas del expediente, siempre que exista alguna,
+     * al menos una tenga el estado "vigente", "rechazada, "Cumplida" o "Incumplida"
+     * @param expediente
+     * @param acuerdos
+     * @return
+     */
+    private boolean cumplimientoReglaSANC(Expediente expediente, List<Acuerdo> acuerdos){
+    	Boolean cumple = false;
+    	int i = 0;
+    	
+    	if(acuerdos != null){
+    		//recorremos las propuestas del expediente
+	    	for(Acuerdo acuerdo: acuerdos){
+	    		//Booleano que controla si hemos encontrado una propuesta en estado elevada
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_VIGENTE)){
+	    			i++;
+	    		}
+	    		//Booleano que controla si hemos encontrado una propuesta en estado rechazada
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_RECHAZADO)){
+	    			i++;
+	    		}
+	    		//Booleano que controla si hemos encontrado una propuesta en estado cumplido
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_CUMPLIDO)){
+	    			i++;
+	    		}
+	    		//Booleano que controla si hemos encontrado una propuesta en estado incumplido
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_INCUMPLIDO)){
+	    			i++;
+	    		}
+	    		
+	    		//las que vengan en estado cancelado no cuentan por tanto se añaden a la lista para que se cumpla la regla
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equalsIgnoreCase(DDEstadoAcuerdo.ACUERDO_CANCELADO)){
+	    			i++;
+				}
+	    	}
+	    	
+	    	//Comprobamos si las propuestas tienen el estado correcto (vigente, rechazado, cumplida, incumplida) para cumplir la regla
+	    	if(acuerdos.size() > 0 && acuerdos.size() == i){
+	    		cumple = true;
+	    	}else{
+	    		cumple = false;
+	    	}
+    	}    	
+    	
+    	return cumple;
+    }
+    
     
 
     /**

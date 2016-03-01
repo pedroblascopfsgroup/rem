@@ -45,6 +45,7 @@ function(entidad,page){
 	tipoAccion.DEVOLVER_ENSANCION				=11;
 	tipoAccion.ELEVAR_FOR_PROP					=12;
 	tipoAccion.DEVOLVER_COMPL_EXP				=13;
+	tipoAccion.DEVOLVER_SANCIONADO				=14;
 	
 	var cambioEstado=function(tipo){
 		var titulo;
@@ -115,11 +116,13 @@ function(entidad,page){
 				return;
 			
 			case tipoAccion.ELEVAR_ENSANCION:
-				<%-- Realizamos acciones de elevar en sancion--%>
+				<%-- Realizamos acciones de elevar de RE a ENSAN --%>
+				elevarExpedienteDeREaENSAN(toolbar.getIdExpediente(), toolbar.isSupervisor());
 			return;
 			
 			case tipoAccion.ELEVAR_SANCIONADO:
-				<%-- Realizamos acciones de elevar sancionado--%>
+				<%-- Realizamos acciones de elevar de ENSAN a SANC--%>
+				elevarExpedienteDeENSANaSANC(toolbar.getIdExpediente(), toolbar.isSupervisor());
 			return;
 			
 			case tipoAccion.DEVOLVER_ENSANCION:
@@ -127,7 +130,7 @@ function(entidad,page){
 				handler=function(btn, rta){
 					if (btn== 'ok'){
 						maskAll();
-						<%--Realizamos las acciones de devolver a comite --%>
+						devolverExpedienteDeENSANaRE(toolbar.getIdExpediente(), rta);
 					}
 				};				
 				app.prompt(titulo, texto,handler);
@@ -135,6 +138,7 @@ function(entidad,page){
 				
 			case tipoAccion.ELEVAR_FOR_PROP:
 				<%-- Realizamos acciones de elevar formalizar propuesta--%>
+				elevarExpedienteDeSANCaFP(toolbar.getIdExpediente(), toolbar.isSupervisor());
 			return;
 			
 			case tipoAccion.DEVOLVER_COMPL_EXP:
@@ -142,13 +146,92 @@ function(entidad,page){
 				handler=function(btn, rta){
 					if (btn== 'ok'){
 						maskAll();
-						<%--Realizamos las acciones de devolver a completar expediente --%>
+						devolverExpedienteDeSANCaCE(toolbar.getIdExpediente(), rta);
+					}
+				};				
+				app.prompt(titulo, texto,handler);
+				return;
+				
+			case tipoAccion.DEVOLVER_SANCIONADO:
+				titulo='<s:message code="expedientes.menu.devolversancionado" text="**Devolver a Sancionado" />';
+				handler=function(btn, rta){
+					if (btn== 'ok'){
+						maskAll();
+						devolverExpedienteDeFPaENSAN(toolbar.getIdExpediente(), rta);
 					}
 				};				
 				app.prompt(titulo, texto,handler);
 				return;
 		}
 	}
+	
+	var elevarExpedienteDeREaENSAN = function(params, isSupervisor){
+		page.webflow({
+			flow: 'expediente/elevarExpedienteDeREaENSAN' 
+			,eventName: 'elevarExpediente'
+			,params:{id:params, isSupervisor:isSupervisor}
+			,success: function(){
+				Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="dc.elevadoAEnSancion" text="**Elevado a En Sanción" />', entidad.refrescar());
+			}
+			,error:function(){
+				unmaskAll();
+			}	 
+		});
+	};
+	
+	var devolverExpedienteDeENSANaRE = function(params, rta){
+		page.webflow({
+				flow:  'expediente/devolverExpedienteDeENSANaRE'
+				,eventName: 'devolverExpediente'
+				,params:{id:params, respuesta:rta}
+				,success: function(){
+					Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="dc.devueltoARevision" text="**Devuelto a Revisión" />', entidad.refrescar());
+				},error:function(){
+						unmaskAll();
+				}	 
+		});
+	};
+	
+	var elevarExpedienteDeENSANaSANC = function(params, isSupervisor){
+		page.webflow({
+			flow: 'expediente/elevarExpedienteDeENSANaSANC' 
+			,eventName: 'elevarExpediente'
+			,params:{id:params, isSupervisor:isSupervisor}
+			,success: function(){
+				Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="dc.elevadoASancionado" text="**Elevado a Sancionado" />', entidad.refrescar());
+			}
+			,error:function(){
+				unmaskAll();
+			}	 
+		});
+	};
+	
+	var elevarExpedienteDeSANCaFP = function(params, isSupervisor){
+		page.webflow({
+				flow: 'expediente/elevarExpedienteDeSANCaFP'
+				,eventName: 'elevarExpediente'
+				,params:{id:params, isSupervisor:isSupervisor}
+				,success: function(){
+					Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="dc.elevadoAFormalizarPropuesta" text="**Elevado a Formalizar Propuesta" />', entidad.refrescar());
+				}
+				,error:function(){
+						unmaskAll();
+				}	 
+		});
+	};
+
+	var devolverExpedienteDeSANCaCE = function(params, rta){
+		page.webflow({
+				flow:  'expediente/devolverExpedienteDeSANCaCE'
+				,eventName: 'devolverExpediente'
+				,params:{id:params, respuesta:rta}
+				,success: function(){
+					Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="dc.devueltoACompletar" text="**Devuelto a Completar Expediente" />', entidad.refrescar());
+				},error:function(){
+						unmaskAll();
+				}	 
+		});
+	};
 
 	var elevarExpedienteRE = function(params, isSupervisor){
 		page.webflow({
@@ -201,6 +284,20 @@ function(entidad,page){
 				},error:function(){
 					unmaskAll();
 				}	 
+		});
+	};
+	
+	var devolverExpedienteDeFPaENSAN = function(params, isSupervisor){
+		page.webflow({
+			flow: 'expediente/devolverExpedienteDeFPaENSAN' 
+			,eventName: 'elevarExpediente'
+			,params:{id:params, isSupervisor:isSupervisor}
+			,success: function(){
+				Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="dc.devueltoASancionado" text="**Devuelto a sancionado" />', entidad.refrescar());
+			}
+			,error:function(){
+				unmaskAll();
+			}	 
 		});
 	};
 	
@@ -380,6 +477,15 @@ function(entidad,page){
 					,iconCls : 'icon_completar_expediente'
 					,handler:function(){
 						cambioEstado(tipoAccion.DEVOLVER_COMPL_EXP)
+					}
+				}
+				,
+				{
+					text:'<s:message code="expedientes.menu.devolversancionado" text="**Devolver a Sancionado" />'
+					,id : 'expediente-accion15-devolverAsancionado'
+					,iconCls : 'icon_revisar_expediente'
+					,handler:function(){
+						cambioEstado(tipoAccion.DEVOLVER_SANCIONADO)
 					}
 				}
 				,{
@@ -786,7 +892,7 @@ function(entidad,page){
 		}
 		
 		//inicialmente ocultamos todos
-		showHide(false, 'expediente-accion0-elevarRevision', 'expediente-accion1-elevarComite',  'expediente-accion2-devolverRevision',  'expediente-accion3-devolverComite',  'expediente-accion4-solicitarCancelacion',  'expediente-accion5-verCancelacion',  'expediente-accion6-cancelacionExpediente', 'expediente-accion7-formulacionPropuesta', 'expediente-accion8-devolverComite', 'expediente-accion9-aceptarPropuesta','expediente-accion10-elevarEnSancion','expediente-accion11-elevarSancionado','expediente-accion12-devolverEnSancion','expediente-accion13-elevarFormalizarPropuesta','expediente-accion14-devolverCompletarExpediente');
+		showHide(false, 'expediente-accion0-elevarRevision', 'expediente-accion1-elevarComite',  'expediente-accion2-devolverRevision',  'expediente-accion3-devolverComite',  'expediente-accion4-solicitarCancelacion',  'expediente-accion5-verCancelacion',  'expediente-accion6-cancelacionExpediente', 'expediente-accion7-formulacionPropuesta', 'expediente-accion8-devolverComite', 'expediente-accion9-aceptarPropuesta','expediente-accion10-elevarEnSancion','expediente-accion11-elevarSancionado','expediente-accion12-devolverEnSancion','expediente-accion13-elevarFormalizarPropuesta','expediente-accion14-devolverCompletarExpediente','expediente-accion15-devolverAsancionado');
 		if ( solicitudYPermisos){
 			
 			var estados = entidad.getData('estados');
@@ -879,10 +985,15 @@ function(entidad,page){
 					break;
 					
 				case 'FP' :
+					debugger;
 					if(esGestorSupervisorDeFase){
 						for(var i = 0; i < estados.length; i++){
 							if(estados[i].codigo == 'DC'){
 								showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion8-devolverComite');
+							}
+							
+							if(estados[i].codigo == 'SANC'){
+								showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion15-devolverAsancionado');
 							}
 						}	
 					}

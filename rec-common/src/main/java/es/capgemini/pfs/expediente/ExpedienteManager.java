@@ -760,6 +760,35 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
     	return this.crearExpedienteManualSeg(idPersona,null);
     	
     }
+	
+	@SuppressWarnings("unchecked")
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL_GESTION_DEUDA)
+	@Transactional(readOnly=false)
+	public Expediente crearExpedienteManualGestDeuda(Long idPersona, Long idArquetipo) {
+        // Se asigna como contrato de pase el de mayor riesgo de la persona de pase (artf554001)
+        List<Contrato> contratos = (List<Contrato>) executor.execute(
+                PrimariaBusinessOperation.BO_CNT_MGR_OBTENER_CONTRATOS_GENERACION_EXPEDIENTE_MANUAL, idPersona);
+        if (contratos.size()>0) {
+	        Contrato contratoMax = contratos.get(0);
+	        Float riesgoMax = 0F;
+	        for (Contrato contrato : contratos) {
+	            Float riesgo = contrato.getRiesgo();
+	            if (!Checks.esNulo(riesgo)) {
+		            if (riesgo > riesgoMax) {
+		                contratoMax = contrato;
+		                riesgoMax = riesgo;
+		            }
+	            }
+	        }
+	        // Creamos el expediente
+	        Expediente expediente = crearExpedienteManual(idPersona, contratoMax.getId(),idArquetipo);
+	       
+	        return expediente;
+        } else {
+        	return null;
+        }		
+	}
+	
     
 	/**
 	 * {@inheritDoc}
@@ -825,7 +854,11 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         		if (arquetipo!= null)
         			idArquetipo = arquetipo.getId();
         	}
-            executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_CREAR_CLIENTE, idPersona, null, idArquetipo, true);
+        	if (!arquetipoDao.get(idArquetipo).getItinerario().getdDtipoItinerario().getItinerarioGestionDeuda()) {
+        		executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_CREAR_CLIENTE, idPersona, null, idArquetipo, true);
+        	} else {
+        		executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_CREAR_CLIENTE_GEST_DEUDA, idPersona, null, idArquetipo, true);
+        	}
         } else {
         	if (idArquetipo==null)
         		idArquetipo = cliente.getArquetipo().getId();
@@ -866,10 +899,15 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         
         // Seteamos el tipo de expediente
         DDTipoExpediente tipo = null;
-        if(arq !=null && arq.getItinerario()!=null && arq.getItinerario().getdDtipoItinerario().getItinerarioSeguimiento())
+        if(arq !=null && arq.getItinerario()!=null && arq.getItinerario().getdDtipoItinerario().getItinerarioSeguimiento()) {
         	tipo = genericDao.get(DDTipoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoExpediente.TIPO_EXPEDIENTE_SEGUIMIENTO), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
-        else
-        	tipo = genericDao.get(DDTipoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoExpediente.TIPO_EXPEDIENTE_RECUPERACION), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+        } else {
+        	if (arq!=null && arq.getItinerario()!=null && arq.getItinerario().getdDtipoItinerario().getItinerarioGestionDeuda()) {
+        		tipo = genericDao.get(DDTipoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+        	} else {
+        		tipo = genericDao.get(DDTipoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoExpediente.TIPO_EXPEDIENTE_RECUPERACION), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+        	}
+        }
         expediente.setTipoExpediente(tipo); 
 		
 		saveOrUpdate(expediente);
@@ -2351,17 +2389,30 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
                 plazo = (PlazoTareasDefault) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_BUSCAR_PLAZO_TAREA_DEFAULT_POR_CODIGO,
                         PlazoTareasDefault.CODIGO_SOLICITUD_EXPEDIENTE_MANUAL_SEG);
             } else {
-                plazo = (PlazoTareasDefault) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_BUSCAR_PLAZO_TAREA_DEFAULT_POR_CODIGO,
+            	if (exp.getGestionDeuda()) {
+            		plazo = (PlazoTareasDefault)executor.execute(ComunBusinessOperation.BO_TAREA_MGR_BUSCAR_PLAZO_TAREA_DEFAULT_POR_CODIGO,
+            				PlazoTareasDefault.CODIGO_SOLICITUD_EXPEDIENTE_MANUAL_GESTION_DEUDA);
+            	} else {
+            		plazo = (PlazoTareasDefault) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_BUSCAR_PLAZO_TAREA_DEFAULT_POR_CODIGO,
                         PlazoTareasDefault.CODIGO_SOLICITUD_EXPEDIENTE_MANUAL);
+            	}
             }
+            
+            /******************************* JBPM *************************************************/
             executor.execute(ComunBusinessOperation.BO_JBPM_MGR_DETERMINAR_BBDD);
             Map<String, Object> param = new HashMap<String, Object>();
-            param.put(TareaBPMConstants.ID_ENTIDAD_INFORMACION, per.getClienteActivo().getId());
-            param.put(TareaBPMConstants.CODIGO_TIPO_ENTIDAD, DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE);
+            /*param.put(TareaBPMConstants.ID_ENTIDAD_INFORMACION, per.getClienteActivo().getId());
+            param.put(TareaBPMConstants.CODIGO_TIPO_ENTIDAD, DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE);*/
+            param.put(TareaBPMConstants.ID_ENTIDAD_INFORMACION, exp.getId());
+            param.put(TareaBPMConstants.CODIGO_TIPO_ENTIDAD, DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE);
             if (exp.getSeguimiento()) {
                 param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_SEG);
             } else {
-                param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL);
+            	if (exp.getGestionDeuda()) {
+            		param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_GESTION_DEUDA);
+            	} else {
+            		param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL);
+            	}
             }
             param.put(TareaBPMConstants.PLAZO_PROPUESTA, plazo.getPlazo());
 
@@ -2369,10 +2420,15 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
             SubtipoTarea subtipoTarea;
             if (exp.getSeguimiento()) {
                 subtipoTarea = (SubtipoTarea) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET_SUBTIPO_TAREA_BY_CODE,
-                        SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL);
-            } else {
-                subtipoTarea = (SubtipoTarea) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET_SUBTIPO_TAREA_BY_CODE,
                         SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_SEG);
+            } else {
+            	if (exp.getGestionDeuda()) {
+            		subtipoTarea = (SubtipoTarea) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET_SUBTIPO_TAREA_BY_CODE,
+            				SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_GESTION_DEUDA);
+            	} else {
+            		subtipoTarea = (SubtipoTarea) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET_SUBTIPO_TAREA_BY_CODE,
+                        SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL);
+            	}
             }
             String descripcion = subtipoTarea.getDescripcionLarga() + ". " + propuesta.getMotivo().getDescripcionLarga() + ". "
                     + propuesta.getObservaciones() + ".";
@@ -2380,6 +2436,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
                 descripcion = descripcion.substring(0, APPConstants.TAREA_NOTIFICACION_MAX_DESCRIPCION);
             }
 
+            /******************************* JBPM *************************************************/
             Long bpmid = (Long) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_CREATE_PROCESS, TareaBPMConstants.TAREA_PROCESO, param);
 
             Long idTareaAsociada = (Long) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_VARIABLES_TO_PROCESS, bpmid,
@@ -2411,6 +2468,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
             //Elimina los clientes si es que existieran
             eliminarProcesosClientesRelacionados(exp, null);
             executor.execute(ComunBusinessOperation.BO_JBPM_MGR_DETERMINAR_BBDD);
+            /******************************* JBPM *************************************************/
             // Crear proceso de expediente
             Map<String, Object> param = new HashMap<String, Object>();
             param.put(ExpedienteBPMConstants.EXPEDIENTE_MANUAL_ID, exp.getId());

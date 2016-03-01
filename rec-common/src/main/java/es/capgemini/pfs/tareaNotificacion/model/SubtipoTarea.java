@@ -117,6 +117,7 @@ public class SubtipoTarea implements Serializable, Auditable {
     public static final String CODIGO_NOTIFICACION_GESTOR_PROPUESTA_SUBASTA = "NTGPS";
 
     public static final String CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_SEG = "501";
+    public static final String CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_GESTION_DEUDA = "SOLEXPMGDEUDA";
     
     // nuevos tipos para tareas de expediente de recobro
     public static final String CODIGO_TAREA_EXP_RECOBRO_MARCADO="REC_MARCADO_EXP";

@@ -60,6 +60,7 @@ public final class InternaBusinessOperation {
     public static final String BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL_ARQ = "expedienteManager.crearExpedienteManualArq";
     public static final String BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL_SEGUIMIENTO = "expedienteManager.crearExpedienteManualSeg";
     public static final String BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL_SEGUIMIENTO_ARQ = "expedienteManager.crearExpedienteManualSegArq";
+    public static final String BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL_GESTION_DEUDA = "expedienteManager.crearExpedienteManualGestDeuda";
     public static final String BO_EXP_MGR_DELETE_ADJUNTO = "expedienteManager.deleteAdjunto";
     public static final String BO_EXP_MGR_DESCONGELAR_EXPEDIENTE = "expedienteManager.desCongelarExpediente";
     public static final String BO_EXP_MGR_DEVOLVER_EXPEDIENTE_A_COMPLETAR = "expedienteManager.devolverExpedienteACompletar";

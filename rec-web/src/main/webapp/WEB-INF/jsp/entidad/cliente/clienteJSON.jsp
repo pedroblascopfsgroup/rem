@@ -57,7 +57,13 @@
 			<json:property name="id" value="${aSec.id}" />
 			<json:property name="nombre" value="${aSec.nombre}" />
 		</json:object>
-	</json:array>	
+	</json:array>
+	<json:array name="arquetiposGestDeuda" items="${arquetiposGestDeuda}" var="aGestDeu">
+		<json:object>
+			<json:property name="id" value="${aGestDeu.id}" />
+			<json:property name="nombre" value="${aGestDeu.nombre}" />
+		</json:object>
+	</json:array>
 	<json:object name="cabecera">
 		<json:property name="codigo" value="${persona.codClienteEntidad}" />
 		<json:property name="entidadPropietaria" value="${persona.propietario.descripcion}" />

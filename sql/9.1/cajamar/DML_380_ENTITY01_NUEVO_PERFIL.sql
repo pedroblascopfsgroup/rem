@@ -152,7 +152,7 @@ BEGIN
 			DBMS_OUTPUT.PUT_LINE('Relacion G-DIR_ZONA con D-DIR_ZONA ya existe');				
 		END IF;
 	
-	
+	/*
 --Creamos usuario		
 		V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.usu_usuarios usu WHERE usu.usu_username = ''val.dirzona''';
 		DBMS_OUTPUT.PUT_LINE(V_MSQL);
@@ -177,7 +177,7 @@ BEGIN
 		IF V_NUM_TABLAS >= 1 THEN
 			DBMS_OUTPUT.PUT_LINE('--Zonificamos al usuario val.dirzona');  
 			V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.ZON_PEF_USU ZPU (ZPU.ZPU_ID,ZPU.ZON_ID,ZPU.USU_ID,ZPU.PEF_ID,ZPU.USUARIOCREAR,ZPU.FECHACREAR) VALUES ('
-				|| V_ESQUEMA||'.S_ZON_PEF_USU.NEXTVAL,(SELECT ZON.ZON_ID FROM '|| V_ESQUEMA|| '.ZON_ZONIFICACION ZON WHERE ZON.ZON_COD = ''01'' ),'
+				|| V_ESQUEMA||'.S_ZON_PEF_USU.NEXTVAL,(SELECT MAX(ZON.ZON_ID) FROM '|| V_ESQUEMA|| '.ZON_ZONIFICACION ZON WHERE ZON.ZON_NUM_CENTRO = 00240024000 ),'
 				|| '(SELECT USU.USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS USU WHERE USU.USU_USERNAME = ''val.dirzona'' ),'
 				|| '(SELECT PEF.PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES PEF WHERE PEF.PEF_CODIGO = '''||V_COD_PERFIL || ''') ,'
 				|| '''' || V_USUARIO_EJECUTA || ''',SYSDATE)'
@@ -197,7 +197,7 @@ BEGIN
 			DBMS_OUTPUT.PUT_LINE('--Relacion usuario despacho');  
 			V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS(USD_ID,USU_ID,DES_ID,USD_GESTOR_DEFECTO,USD_SUPERVISOR,USUARIOCREAR,FECHACREAR) VALUES ('
 				|| V_ESQUEMA||'.s_usd_usuarios_despachos.nextval,(SELECT USU_ID FROM '|| V_ESQUEMA_M|| '.USU_USUARIOS grupo WHERE grupo.USU_USERNAME =''val.dirzona'' ),'
-				|| '(SELECT DES_ID FROM  '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO despa WHERE despa.DES_CODIGO=''D-DIR_ZONA''),'
+				|| '(SELECT despa.DES_ID FROM  '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO despa WHERE despa.DES_CODIGO=''D-DIR_ZONA''),'
 				|| '1,0,''' || V_USUARIO_EJECUTA || ''',SYSDATE)'
 			;
 			DBMS_OUTPUT.PUT_LINE(V_MSQL);	
@@ -225,7 +225,7 @@ BEGIN
 		ELSE 
 			DBMS_OUTPUT.PUT_LINE('val.dirzona no existe');				
 		END IF;		
-
+*/
 	ELSE 
 		DBMS_OUTPUT.PUT_LINE('El  Procedimiento ' || V_USUARIO_EJECUTA || ' ya se ejecuto, NO se ejecutara de nuevo otra vez.');				
 	END IF;	 

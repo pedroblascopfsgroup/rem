@@ -7,7 +7,7 @@ create or replace PROCEDURE      SP_MIG_A_TABLA_INTERMEDIA IS
                  FROM MIG_PROCEDIMIENTOS_CABECERA
                  --WHERE TIPO_PROCEDIMIENTO = 'P01' --('P01', 'P06', 'P08','P10')
                  --AND ROWNUM < 51
-                 --WHERE CD_PROCEDIMIENTO = 65580--34816 --65580
+                 --where ultimo_hito in ('38','39','57','58')
                  UNION
                  SELECT CD_CONCURSO AS CD_PROCEDIMIENTO,
                         'P90' AS TIPO_PROCEDIMIENTO,
@@ -103,6 +103,8 @@ create or replace PROCEDURE      SP_MIG_A_TABLA_INTERMEDIA IS
   Z NUMBER := 0;
 
   v_MAX_ORDEN NUMBER(1):=0;
+  v_COUNT_TEMP NUMBER:=0;
+  v_COUNT_TEMP_COMMIT NUMBER:=0;
 
 
 BEGIN
@@ -189,6 +191,14 @@ DBMS_OUTPUT.ENABLE(1000000);
     EXECUTE IMMEDIATE 'ANALYZE TABLE '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_DEMANDADOS COMPUTE STATISTICS FOR ALL INDEXES';
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' MIG_PROCEDIMIENTOS_DEMANDADOS ANALIZADA');
 
+    EXECUTE IMMEDIATE ('SELECT COUNT(1) FROM ALL_INDEXES WHERE INDEX_NAME=''IDX_MIG_PRC_BIE_X'' AND OWNER=''CM01''') INTO V_COUNT;
+    IF V_COUNT = 0 THEN
+        EXECUTE IMMEDIATE('CREATE INDEX IDX_MIG_PRC_BIE_X ON '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_BIENES (CD_PROCEDIMIENTO, CD_BIEN) nologging');
+    END IF;
+    EXECUTE IMMEDIATE 'ANALYZE TABLE '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_BIENES COMPUTE STATISTICS FOR ALL INDEXES';
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' MIG_PROCEDIMIENTOS_BIENES ANALIZADA');
+
+
     SELECT COUNT(1)
     INTO V_COUNT
     FROM USER_SEQUENCES
@@ -247,9 +257,16 @@ DBMS_OUTPUT.ENABLE(1000000);
 
         v_COUNT := v_COUNT + 1;
 
-        IF MOD(v_COUNT,5000) = 0 THEN
+        IF MOD(v_COUNT,1000) = 0 THEN
+
+
+            SELECT COUNT(1)
+            INTO v_COUNT_TEMP_COMMIT
+            FROM TEMP_MIG_MAESTRA_HITOS_BIENES;
+
             COMMIT;
             DBMS_OUTPUT.PUT_LINE(TO_CHAR(SYSDATE,'HH24:MI:SS')||' - COMMIT Reached at '||v_COUNT||' / CD_PROCEDIMIENTO = '||v_CD_PROCEDIMIENTO);
+            DBMS_OUTPUT.PUT_LINE('[INFO] '||v_COUNT_TEMP_COMMIT||' CONSULTAS EN TABLA TEMP Realizadas');
 
         END IF;
 
@@ -663,6 +680,13 @@ DBMS_OUTPUT.ENABLE(1000000);
                                v_TAR_FINALIZADA := 0;
 
                                IF v_CONTROL = 3 AND j.ULTIMO_HITO  = 32 THEN
+
+                                   DELETE FROM MIG_MAESTRA_HITOS_VALORES
+                                   WHERE TAR_ID IN (SELECT DISTINCT TAR_ID
+                                                    FROM MIG_MAESTRA_HITOS
+                                                    WHERE CD_PROCEDIMIENTO = j.CD_PROCEDIMIENTO
+                                                    AND TAP_CODIGO IN ('H001_RegistrarCertificadoCargas','H001_ConfirmarNotificacionReqPago')
+                                                    );
 
                                    UPDATE MIG_MAESTRA_HITOS
                                           SET TAR_FECHA = NULL,
@@ -1267,6 +1291,8 @@ DBMS_OUTPUT.ENABLE(1000000);
                               AND DD_TPO_CODIGO = k.DD_TPO_CODIGO
                               AND CD_BIEN = v_CD_BIEN;
 
+                              v_COUNT_TEMP := v_COUNT_TEMP + 1;
+
                             EXCEPTION
                               WHEN NO_DATA_FOUND THEN
 
@@ -1293,6 +1319,8 @@ DBMS_OUTPUT.ENABLE(1000000);
                               AND CD_BIEN = v_CD_BIEN;
 
                               v_ORDEN := v_ORDEN_ADJU;
+
+                              v_COUNT_TEMP := v_COUNT_TEMP + 1;
 
                             END IF;
                             
@@ -1574,6 +1602,8 @@ DBMS_OUTPUT.ENABLE(1000000);
 
     DBMS_OUTPUT.PUT_LINE('PROCESO de MIGRACION a Tabla MAESTRA TERMINADO CORRECTAMENTE. Last CD_PROCEDIMIENTO = '||v_CD_PROCEDIMIENTO);
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_COUNT||' PROCEDIMIENTOS Procesados');
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] '||v_COUNT_TEMP||' CONSULTAS EN TABLA TEMP Realizadas');
 
     EXECUTE IMMEDIATE ('SELECT COUNT(1) FROM ALL_INDEXES WHERE INDEX_NAME=''INDX_MIGRACION_MAE'' AND OWNER=''CM01''') INTO V_COUNT;
 

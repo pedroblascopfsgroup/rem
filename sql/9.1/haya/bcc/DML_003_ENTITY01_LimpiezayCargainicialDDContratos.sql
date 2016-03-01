@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JAVIER DIAZ RAMOS
---## FECHA_CREACION=20150724
+--## FECHA_CREACION=20160226
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3.1
 --## INCIDENCIA_LINK=CMREC-435
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Restauramos versión inicial
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;

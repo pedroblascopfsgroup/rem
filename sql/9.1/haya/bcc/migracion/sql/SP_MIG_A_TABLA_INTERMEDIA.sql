@@ -664,6 +664,13 @@ DBMS_OUTPUT.ENABLE(1000000);
 
                                IF v_CONTROL = 3 AND j.ULTIMO_HITO  = 32 THEN
 
+                                   DELETE FROM MIG_MAESTRA_HITOS_VALORES
+                                   WHERE TAR_ID IN (SELECT DISTINCT TAR_ID
+                                                    FROM MIG_MAESTRA_HITOS
+                                                    WHERE CD_PROCEDIMIENTO = j.CD_PROCEDIMIENTO
+                                                    AND TAP_CODIGO IN ('H001_RegistrarCertificadoCargas','H001_ConfirmarNotificacionReqPago')
+                                                    );
+
                                    UPDATE MIG_MAESTRA_HITOS
                                           SET TAR_FECHA = NULL,
                                               TAR_TAREA_FINALIZADA = v_TAR_FINALIZADA

@@ -95,6 +95,9 @@ else
     if [[ $ESQUEMA_EJECUCION == "BANKMASTER" ]] || [[ $ESQUEMA_EJECUCION == "MASTER" ]] || [[ $ESQUEMA_EJECUCION == "HAYAMASTER" ]]; then
         ESQUEMA_EJECUCION=$ESQUEMA_MASTER
     fi
+    if [[ ${!ESQUEMA_EJECUCION} != '' ]]; then
+        ESQUEMA_EJECUCION=${!ESQUEMA_EJECUCION}
+    fi
 fi
 
 if [ "$CONNECTION" != "" ] ; then

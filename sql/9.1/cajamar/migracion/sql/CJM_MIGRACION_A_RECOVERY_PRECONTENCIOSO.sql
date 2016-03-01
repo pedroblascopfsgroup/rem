@@ -718,7 +718,6 @@ BEGIN
 						    AND EST.DD_PCO_PEP_ID = (SELECT DD_PCO_PEP_ID FROM '||V_ESQUEMA||'.DD_PCO_PRC_ESTADO_PREPARACION WHERE DD_PCO_PEP_CODIGO = ''PA'')
 						)
 			      -- enviados
-				  AND FECHA_REALIZ_ESTUDIO_SOLV is not null
 				  AND FECHA_ENVIO_LETRADO is not null				  
 				  )';
 
@@ -760,7 +759,12 @@ BEGIN
 				-- preparacion
 				AND EXP.FECHA_PREPARADO IS NOT NULL)';
 
-
+        EXECUTE IMMEDIATE V_SQL;
+ 
+        DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '...' || sql%rowcount);
+  
+        COMMIT;
+				
 /*************************************/
 /** INSERTAR ESTADO EN PREPARACION  **/
 /*************************************/

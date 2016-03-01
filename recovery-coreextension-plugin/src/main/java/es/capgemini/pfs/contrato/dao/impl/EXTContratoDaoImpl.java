@@ -311,6 +311,11 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 			hql.append(" and c.tipoProductoEntidad.codigo in ("
 					+ dto.getTiposProductoEntidad() + ")");
 		}
+		if (dto.getMotivoGestionHRE() != null
+				&& !dto.getMotivoGestionHRE().equals("")) {
+			hql.append(" and c.RemuneracionEspecial.codigo = '"
+					+ dto.getMotivoGestionHRE() + "'");
+		}
 		if (cruzaMovimientos) {
 			if (dto.getMaxVolRiesgoVencido() != null
 					&& dto.getMaxVolRiesgoVencido().trim().length() > 0) {

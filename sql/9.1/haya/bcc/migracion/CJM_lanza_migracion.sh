@@ -1,7 +1,6 @@
 #!/bin/bash
-if [ "$#" -ne 3 ] ; then
-    echo "Parametros: <CM01/CM01_pass@host:puerto/ORACLE_SID> <fecha_datos YYYYMMDD> <entorno>" 
-    echo "  <entorno>: desa, pre, pro"
+if [ "$#" -ne 2 ] ; then
+    echo "Parametros: <CM01/CM01_pass@host:puerto/ORACLE_SID> <fecha_datos YYYYMMDD>" 
     exit 1
 fi
 
@@ -9,8 +8,8 @@ export NLS_LANG=SPANISH_SPAIN.AL32UTF8
 
 echo "[INFO] Se ha establecido la variable de entorno NLS_LANG=SPANISH_SPAIN.AL32UTF8"
 
-echo "[INFO] Cogiendo información del entorno correpondiente"
-cp etls/config/$3/config.ini etls/config/
+echo "[INFO] Cogiendo información correpondiente"
+cp ../programas/etl/config/config.ini etls/config/
 
 sh_dir="shells/"
 

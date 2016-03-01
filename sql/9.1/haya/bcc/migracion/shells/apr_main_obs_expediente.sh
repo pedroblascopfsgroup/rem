@@ -1,4 +1,4 @@
-DIR_BASE_ETL=/recovery/batch-server/migracion/etls
+DIR_BASE_ETL=/recovery/batch-server/bcc/migracion/etls
 
 filename=$(basename $0)
 nameETL="${filename%.*}"

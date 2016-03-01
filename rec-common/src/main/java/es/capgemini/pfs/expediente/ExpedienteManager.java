@@ -860,7 +860,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
             Contrato contrato = (Contrato) executor.execute(PrimariaBusinessOperation.BO_CNT_MGR_GET, idContrato);
             expediente.setOficina(contrato.getOficina());
         }
-
+        //TODO Revisar la forma de obtener el nombre del expediente para igualarlo al nuevo batch
         //Le seteamos el nombre ya que ahora no se obtiene a trav�s de una f�rmula
         setearNombreExpediente(expediente);
         

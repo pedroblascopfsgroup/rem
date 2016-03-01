@@ -236,6 +236,7 @@ public class MEJAcuerdoController {
 		// Obtenemos el tipo de acuerdo para PLAN_PAGO
 		DDTipoAcuerdo tipoAcuerdoPlanPago = genericDao.get(DDTipoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAcuerdo.CODIGO_PLAN_PAGO));
 		DDTipoAcuerdo tipoAcuerdoFondosPropios = genericDao.get(DDTipoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAcuerdo.TIPO_EFECTIVO_FONDOS_PROPIOS));
+		DDTipoAcuerdo tipoAcuerdoRegulParcial = genericDao.get(DDTipoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAcuerdo.TIPO_REGUL_PARCIAL));
 		
 		// Obtenemos la lista de Terminos del acuerdo
 		List<ListadoTerminosAcuerdoDto> listadoTerminosAcuerdo = proxyFactory.proxy(MEJAcuerdoApi.class).obtenerListadoTerminosAcuerdoByAcuId(idAcuerdo);
@@ -272,6 +273,7 @@ public class MEJAcuerdoController {
 		map.put("yaHayPlanPago", yaHayPlanPago);
 		map.put("fechaPaseMora", fechaPaseMora);
 		map.put("idTipoAcuerdoFondosPropios", tipoAcuerdoFondosPropios.getId());
+		map.put("idTipoAcuerdoRegulParcial", tipoAcuerdoRegulParcial.getId());
 		
 		return JSP_ALTA_TERMINO_ACUERDO;
 	}	

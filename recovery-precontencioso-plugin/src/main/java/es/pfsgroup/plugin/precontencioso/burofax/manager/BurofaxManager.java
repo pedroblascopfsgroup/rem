@@ -1129,8 +1129,10 @@ public class BurofaxManager implements BurofaxApi {
 			Filter filtroBur1 = genericDao.createFilter(FilterType.EQUALS, "procedimientoPCO.id", idProcedimiento);
 			Filter filtroBur2 = genericDao.createFilter(FilterType.EQUALS, "demandado.id", idPersona);
 			Filter filtroBur3 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", contratoPersona.getContrato().getId());
+			Filter filtroBur4 = genericDao.createFilter(FilterType.EQUALS, "borrado", false);
+
 			
-			List<BurofaxPCO> burofaxes = genericDao.getList(BurofaxPCO.class,filtroBur1,filtroBur2,filtroBur3);
+			List<BurofaxPCO> burofaxes = genericDao.getList(BurofaxPCO.class,filtroBur1,filtroBur2,filtroBur3,filtroBur4);
 			
 			if(burofaxes.size()>0){
 				for(BurofaxPCO b : burofaxes){

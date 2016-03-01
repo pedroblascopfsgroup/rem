@@ -27,7 +27,7 @@
 		<property name="methodName" value="handle" />
 	</bean>
 
-	<!-- Definimos el bean de Creacion clientes de recuperaciones -->	
+	<!-- Definimos el bean de Creacion clientes de recuperaciones -->
 	<bean id="procesoCreacionClientesRecuperacionesHandler"	class="es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoCreacionClientesRecuperacionesJobLauncher" scope="prototype">
 		 <property name="channel" value="procesoCreacionClientesRecuperacionesChannel" /> 
 	</bean>
@@ -38,7 +38,7 @@
 		<property name="methodName" value="handle" />
 	</bean>
 	
-	<!-- Definimos el bean de Creacion expedientes de recuperaciones -->	
+	<!-- Definimos el bean de Creacion expedientes de recuperaciones 	
 	<bean id="procesoCreacionExpedientesRecuperacionesHandler"	class="es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoCreacionExpedientesRecuperacionesJobLauncher" scope="prototype">
 		 <property name="channel" value="procesoCreacionExpedientesRecuperacionesChannel" /> 
 	</bean>
@@ -46,6 +46,17 @@
 	<bean id="procesoCreacionExpedientesRecuperacionesQueueSubscriptor" parent="batch.QueueSubscriptorByFolderGenerator">
 		<property name="channel" value="procesoCreacionExpedientesRecuperacionesChannel" />
 		<property name="beanName" value="procesoCreacionExpedientesRecuperacionesHandler" />
+		<property name="methodName" value="handle" />
+	</bean>
+	-->
+		<!-- Definimos el bean de Creacion expedientes de recuperaciones ETL-->	
+	<bean id="procesoCreacionExpedientesRecuperacionesETLHandler"	class="es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoCreacionExpedientesRecuperacionesETLJobLauncher" scope="prototype">
+		 <property name="channel" value="procesoCreacionExpedientesRecuperacionesETLChannel" /> 
+	</bean>
+	
+	<bean id="procesoCreacionExpedientesRecuperacionesETLQueueSubscriptor" parent="batch.QueueSubscriptorByFolderGenerator">
+		<property name="channel" value="procesoCreacionExpedientesRecuperacionesETLChannel" />
+		<property name="beanName" value="procesoCreacionExpedientesRecuperacionesETLHandler" />
 		<property name="methodName" value="handle" />
 	</bean>
 	

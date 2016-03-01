@@ -70,6 +70,7 @@
 										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.antecedentes.actualizar" />
 										<entry key="severidad" value="error" />
 									</map>
+									<!-- 
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
@@ -134,6 +135,8 @@
 										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.crearNotificacion" />
 										<entry key="severidad" value="error" />
 									</map>
+									
+									-->
 								</list>
 							</property>
 						</bean>

@@ -501,9 +501,25 @@ arrayCampos["codigoPersonaAfectada"]=app.creaNumber('codigoPersonaAfectada', '<s
        ,cls: 'x-btn-text-icon'
        ,handler:function(){
        		var formulario = flujoFieldSet.getForm();
-			debugger;
+			var fechaActual = new Date();
+
        		if(formulario.isValid()){
-       			var dateSolucionPrevista = Date.parse(arrayCampos.fechaSolucionPrevista.getValue());
+       			var dateSolucionPrevista = null;
+       			
+       			if (Ext.getCmp('fechaSolucionPrevista')!=undefined) {
+       				dateSolucionPrevista = Date.parse(Ext.getCmp('fechaSolucionPrevista').getValue());
+       			}
+       			
+       			if(dateSolucionPrevista != null && dateSolucionPrevista < fechaActual){
+       				Ext.Msg.show({
+			   		title:'Aviso',
+			   		msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.fechaActual" text="**Fecha solicitud prevista no puede ser menor a la actual." />',
+			   		buttons: Ext.Msg.OK
+					});
+				
+					return false;
+      			}
+        		
 	       		if(comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && !isNaN(parseFloat(dateSolucionPrevista)) && dateSolucionPrevista > datePaseMora) {		       		
 	       			Ext.Msg.show({
 				   		title:'Aviso',

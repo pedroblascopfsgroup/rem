@@ -1145,12 +1145,8 @@ public class GENINFInformesManager implements GENINFInformesApi {
 			}
 			
 			resultado = new FileItem();
-<<<<<<< HEAD
 			//resultado.setFileName(escrito + (new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + ".docx");
 			resultado.setFileName((new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + "_" + escrito);
-=======
-			resultado.setFileName(escrito + (new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + ".docx");
->>>>>>> producto_backlog_febrero_documentos
 			resultado.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
 			resultado.setFile(fileSalidaTemporal);
 			
@@ -1167,10 +1163,6 @@ public class GENINFInformesManager implements GENINFInformesApi {
 		}
 		return resultado;
 		
-<<<<<<< HEAD
 	}
-=======
-	};
 
->>>>>>> producto_backlog_febrero_documentos
 }

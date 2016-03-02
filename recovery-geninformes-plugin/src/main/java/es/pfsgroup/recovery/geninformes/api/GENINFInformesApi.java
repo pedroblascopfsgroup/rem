@@ -73,11 +73,10 @@ public interface GENINFInformesApi {
 	FileItem generarEscritoConVariables(HashMap<String, Object> mapaVariables, String escrito,InputStream is) throws Throwable;
 	
 	@BusinessOperationDefinition(MSV_GENERAR_ESCRITO_VARIABLES_Y_LOGO)
-	FileItem generarEscritoConVariablesYLogo(HashMap<String, Object> mapaVariables, String escrito,InputStream is, String rutaLogo) throws Throwable;
+	FileItem generarEscritoConVariablesYLogo(HashMap<String, Object> mapaVariables, String escrito,InputStream is, String codigoPropietaria) throws Throwable;
 	
 	@BusinessOperationDefinition(MSV_GENERAR_ESCRITO_PDF_FROM_HTML)
 	InputStream createPdfFileFromHtmlText(String htmlText,String nombreFichero) throws Exception;
 
-	FileItem generarEscritoConVariablesYLogo(HashMap<String, Object> mapaVariables, String escrito,InputStream is, String codigoPropietaria) throws Throwable;
-
+	
 }

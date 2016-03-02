@@ -39,6 +39,10 @@ if [ "$#" -lt 2 ]; then
     print_banner
     echo "   Uso: $0 <tag> CLIENTE"
     echo ""
+    echo "Si deseas que incluya .bat, indica lo siguiente en el fichero setEnvGlobal<CLIENTE>.sh:"
+    echo ""
+    echo "      export GENERATE_BAT='true'"
+    echo ""
     echo "******************************************************************************************"
     echo "******************************************************************************************"
     exit

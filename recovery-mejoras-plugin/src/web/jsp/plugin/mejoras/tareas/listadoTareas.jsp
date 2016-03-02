@@ -415,7 +415,7 @@
 
 	}
 	
-	
+     
 	var panelFiltros = new Ext.Panel({
 		title : '<s:message code="tareas.listado.busqueda" text="**Busqueda de Tareas"/>'
 		,collapsible : true
@@ -1632,7 +1632,7 @@
 			,tbar:new Ext.Toolbar()
 	    });
 	}    
-	
+     
 	mainPanel.getTopToolbar().add(buttonsLPanel);
 	mainPanel.getTopToolbar().add('->');
 	mainPanel.getTopToolbar().add(buttonsRPanel);
@@ -1643,9 +1643,11 @@
 	});
 	
 	tareasStore.on('load',function(){
-           panelFiltros.getTopToolbar().setDisabled(false);
+		panelFiltros.getTopToolbar().setDisabled(false);
+    	if(categoriasStore.data.length == 0){
+    		comboCtgResol.setVisible(false);
+    	}
     });
-	
 	
 	panelFiltros.collapse(true);
 		

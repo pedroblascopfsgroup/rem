@@ -8,11 +8,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.BienLiqVO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.CabeceraLiquidacionLiqVO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.ConceptoLiqVO;
@@ -23,12 +30,19 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBInformacionRegistralBienInfo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBLocalizacionesBienInfo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
+import es.pfsgroup.recovery.ext.impl.contrato.model.EXTInfoAdicionalContrato;
 
 /**
  * Contiene el codigo comun para generar datos para las plantillas de tipo Hipotecario, Personal y Leasing
  * @author jmartin
  */
 public abstract class DatosPlantillaPrestamoAbstract {
+	
+	@Autowired
+	private LiquidacionApi liquidacionApi;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 
 	/**
 	 * @param liquidacion
@@ -51,6 +65,7 @@ public abstract class DatosPlantillaPrestamoAbstract {
 		datosLiquidacion.put("NOMBRES_TITULARES", obtenerNombresTitulares(liquidacion));
 		datosLiquidacion.put("NOMBRES_FIADORES", obtenerNombresFiadores(liquidacion));
 		datosLiquidacion.put("NOMBRE_APODERADO", obtenerNombreApoderado(liquidacion));
+		datosLiquidacion.put("DNI_TITULAR", obtenerDniTitular(liquidacion));
 
 		if (!liquidacion.getContrato().getTitulares().isEmpty()) {
 			Persona titualPrincipal = liquidacion.getContrato().getTitulares().get(0);
@@ -59,6 +74,34 @@ public abstract class DatosPlantillaPrestamoAbstract {
 			throw new BusinessOperationException("obtenerDatosLiquidacionPco: No se encuentra el titular del contrato");
 		}
 
+		String infoEntidadBankia = "de Bankia, S.A. con NIF A-14010342, domiciliada en c/ Pintor Sorolla, 8 - 46002 Valencia";
+		String infoEntidadBFA = "de Banco Financiero y de Ahorros, S.A. con NIF A-86085685, domiciliada en C/ Paseo de la Castellana, 189 – 28046 Madrid";
+		String nombreEntidadBankia = "Bankia S.A.";
+		String nombreEntidadBfa = "Banco Financiero y de Ahorros S.A.";
+		String sucursal_mayor_deuda_exp_bankia = "Bankia";
+		String sucursal_mayor_deuda_exp_bfa = "Banco Financiero y de Ahorros";
+		if(esBfa(liquidacion.getId())){
+			datosLiquidacion.put("INFO_ENTIDAD", infoEntidadBFA);
+			datosLiquidacion.put("NOMBRE_ENTIDAD", nombreEntidadBfa);
+			datosLiquidacion.put("SUCURSAL_MAYOR_DEUDA", sucursal_mayor_deuda_exp_bfa);
+			
+		}else{
+			datosLiquidacion.put("INFO_ENTIDAD", infoEntidadBankia);
+			datosLiquidacion.put("NOMBRE_ENTIDAD", nombreEntidadBankia);
+			datosLiquidacion.put("SUCURSAL_MAYOR_DEUDA", sucursal_mayor_deuda_exp_bankia);
+		}
+		
+		String nombreFiadores = obtenerNombresFiadores(liquidacion);
+		String nombreFiadoresL = nombreFiadores;
+		if(nombreFiadores == "" || nombreFiadores.isEmpty()){
+			datosLiquidacion.put("NOMBRES_FIADORES_C", nombreFiadores);
+			datosLiquidacion.put("NOMBRES_FIADORES_L", nombreFiadores);
+		}else{
+			nombreFiadoresL = "se ha practicado la liquidación con la garantía de D(a) "+nombreFiadores+" de ";
+			nombreFiadores = "con la garantía de D(a)  "+nombreFiadores;
+			datosLiquidacion.put("NOMBRES_FIADORES_C", nombreFiadores);
+			datosLiquidacion.put("NOMBRES_FIADORES_L", nombreFiadoresL);
+		}
 		return datosLiquidacion;
 	}
 
@@ -340,7 +383,7 @@ public abstract class DatosPlantillaPrestamoAbstract {
 		return saldo;
 	}
 
-	private String obtenerNombresFiadores(final LiquidacionPCO liquidacion) {
+	public String obtenerNombresFiadores(final LiquidacionPCO liquidacion) {
 		StringBuilder nombresFiadores = new StringBuilder("");
 		List<ContratoPersona> contratosPersona = liquidacion.getContrato().getContratoPersona();
 		
@@ -374,7 +417,7 @@ public abstract class DatosPlantillaPrestamoAbstract {
             	}
             }
         }
-
+		
 		return nombresFiadores.toString();
 	}
 
@@ -449,5 +492,38 @@ public abstract class DatosPlantillaPrestamoAbstract {
 		datosLiquidacion.put("C15_FIN_NCTAOP", cabeceraLiquidacion.get(tam-1).NCTAOP());
 		datosLiquidacion.put("C15_FIN_DESLIQ", cabeceraLiquidacion.get(tam-1).DESLIQ());
 		return datosLiquidacion;
+	}
+	
+	protected boolean esBfa(Long idLiquidacion) {
+		LiquidacionPCO liquidacion = liquidacionApi.getLiquidacionPCOById(idLiquidacion);
+		Long idCcontrato = liquidacion.getContrato().getId();
+		Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", idCcontrato);
+		Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "tipoInfoContrato.codigo", "char_extra4");
+		List<EXTInfoAdicionalContrato> infoAdicional=(List<EXTInfoAdicionalContrato>) genericDao.getList(EXTInfoAdicionalContrato.class, filtro1,filtro2);
+
+		String ofiCodigo = liquidacion.getContrato().getOficinaContable().getCodigo().toString();
+		
+		for (EXTInfoAdicionalContrato elemento : infoAdicional){
+			if(ofiCodigo.equals("842700")){
+				return true;
+			}
+			if(Checks.esNulo(elemento.getValue()) || !elemento.getValue().equalsIgnoreCase("S")){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	private String obtenerDniTitular(final LiquidacionPCO liquidacion) {
+		String dni;
+		List<Persona> personasTitulares = liquidacion.getContrato().getTitulares();
+
+		int i = 0;
+		for (Persona p : personasTitulares) {
+            i++;
+            dni=p.getDocId();
+            return dni;
+        }
+		return "[NO DISPONIBLE]";
 	}
 }

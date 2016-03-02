@@ -1,6 +1,5 @@
 package es.pfsgroup.recovery.geninformes.api;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +21,7 @@ public interface GENINFInformesApi {
 	public static final String MSV_GENERAR_ESCRITO_VARIABLES = "es.pfsgroup.plugin.recovery.masivo.api.generarEscritoConVariables";
 	public static final String MSV_GENERAR_ESCRITO_PDF_FROM_HTML = "es.pfsgroup.plugin.recovery.masivo.api.createPdfFileFromHtmlText";
 	public static final String MSV_CONVERTIR_DOCX_A_PDF = "es.pfsgroup.plugin.recovery.masivo.api.convertirAPdf";
+	public static final String MSV_GENERAR_ESCRITO_VARIABLES_Y_LOGO = "es.pfsgroup.plugin.recovery.masivo.api.generarEscritoConVariablesYLogo";
 	
 	
 	/**
@@ -72,8 +72,12 @@ public interface GENINFInformesApi {
 	@BusinessOperationDefinition(MSV_GENERAR_ESCRITO_VARIABLES)
 	FileItem generarEscritoConVariables(HashMap<String, Object> mapaVariables, String escrito,InputStream is) throws Throwable;
 	
+	@BusinessOperationDefinition(MSV_GENERAR_ESCRITO_VARIABLES_Y_LOGO)
+	FileItem generarEscritoConVariablesYLogo(HashMap<String, Object> mapaVariables, String escrito,InputStream is, String rutaLogo) throws Throwable;
 	
 	@BusinessOperationDefinition(MSV_GENERAR_ESCRITO_PDF_FROM_HTML)
 	InputStream createPdfFileFromHtmlText(String htmlText,String nombreFichero) throws Exception;
+
+	FileItem generarEscritoConVariablesYLogo(HashMap<String, Object> mapaVariables, String escrito,InputStream is, String codigoPropietaria) throws Throwable;
 
 }

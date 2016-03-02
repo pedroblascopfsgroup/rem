@@ -214,13 +214,20 @@ public class GestorTareasManager implements GestorTareasApi {
         }
 
         Long plazoTarea = getPlazoTarea(idTipoPlaza, idTareaProcedimiento, idTipoJuzgado, idProc);
-        Long idTarea = tareaExternaManager.crearTareaExterna(subtipoTarea, plazoTarea, nombreTarea, idProc, idTareaProcedimiento,
+        
+        if(!Checks.esNulo(procedimiento.getProcessBPM())) {
+        	Long idTarea = tareaExternaManager.crearTareaExterna(subtipoTarea, plazoTarea, nombreTarea, idProc, idTareaProcedimiento,
                 getTokenId(procedimiento.getProcessBPM()));
-
-        if (logger.isDebugEnabled()) {
-            logger.debug(TXT_CREAMOS_LA_TAREA + codigoTarea + ", " + idTarea + ", de subtipo " + subtipoTarea);
-        } else {
-        	System.out.println("[crearTareaEspecial]: " + TXT_CREAMOS_LA_TAREA + codigoTarea + ", " + idTarea + ", de subtipo " + subtipoTarea);
+        	
+        	if (logger.isDebugEnabled()) {
+                logger.debug(TXT_CREAMOS_LA_TAREA + codigoTarea + ", " + idTarea + ", de subtipo " + subtipoTarea);
+            } else {
+            	System.out.println("[crearTareaEspecial]: " + TXT_CREAMOS_LA_TAREA + codigoTarea + ", " + idTarea + ", de subtipo " + subtipoTarea);
+            }
+        	
+        }
+        else {
+        	return false;
         }
 
         return true;

@@ -168,7 +168,7 @@
 			<json:property name="apellido2">${obs.persona.apellido2}</json:property>
 			<json:property name="codClienteEntidad">${obs.persona.codClienteEntidad}</json:property>
 			<json:property name="nif">${obs.persona.docId}</json:property>
-			<json:property name="saldoVencido">${obs.persona.riesgoDirectoVencido}</json:property>
+			<json:property name="saldoVencido">${obs.persona.dispuestoVencido}</json:property>
 			<json:property name="totalRiesgo">${obs.persona.riesgoTotal}</json:property>
 			<json:property name="numContratos">${obs.persona.numContratos}</json:property>
 			<json:property name="situacion">${obs.persona.situacion}</json:property>
@@ -205,7 +205,7 @@
     			</c:if>
 	    		<c:if test="${not empty vencido.tipoVencidoAnterior}">
 	    			<json:property name="tramoPrevio" value="${vencido.tipoVencidoAnterior.descripcion}"/>
-	    		</c:if>
+	    		 </c:if>
     		</c:if>    		
     	</sec:authorize>
 	</json:object>

@@ -32,4 +32,5 @@ public interface DatosLiquidacionDao {
 	 */
 	public List<InteresesContratoLiqVO> getInteresesContratoLiquidacion(Long idLiquidacion);
 
+	public List<InteresesContratoLiqVO> getInteresesContratoLiquidacionOrdinario(Long idLiquidacion);
 }

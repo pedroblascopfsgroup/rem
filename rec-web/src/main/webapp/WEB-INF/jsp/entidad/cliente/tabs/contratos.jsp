@@ -64,6 +64,7 @@
         ,reader: new Ext.data.JsonReader({
             root: 'contratos'
             ,totalProperty : 'total'
+            ,id: 'rowIndex'
         }, Contrato)
         ,storeId : name
        });
@@ -79,7 +80,7 @@
 	tipoRiesgo.PASIVO = 'riesgoPasivo';
 		
 	contratoRiesgoDirecto.on('load', function(){muestraDatosTitulo(contratoRiesgoDirecto, riesgosDirectosGrid, false, tipoRiesgo.DIRECTO, data.numContratos);});
-	contratoRiesgoIndirecto.on('load', function(){muestraDatosTitulo(contratoRiesgoIndirecto, riesgosIndGrid, false, tipoRiesgo.INDIRECTO, contratoRiesgoIndirecto.getTotalCount());});
+	contratoRiesgoIndirecto.on('load', function(){muestraDatosTitulo(contratoRiesgoIndirecto, riesgosIndGrid, false, tipoRiesgo.INDIRECTO, countContratos(contratoRiesgoIndirecto));});
 	contratoRiesgoPasivo.on('load', function(){muestraDatosTitulo(contratoRiesgoPasivo, riesgosDirectosPasivosGrid, true, tipoRiesgo.PASIVO, contratoRiesgoPasivo.getTotalCount());});
 
     var contratosRDCm= new Ext.grid.ColumnModel([
@@ -297,6 +298,20 @@
 		grid.setTitle(texto);
 	};
 	
+	function countContratos(store){
+		var data = store.data;
+		var items = data.items;
+		var nContratos = 0;	
+		for(var i=0;i < items.length;i++){
+        	var item = items[i];
+            var idContrato = item.json["id"];
+            if(idContrato != null && idContrato != ""){
+            	nContratos++;
+            }
+        }
+        return nContratos;
+	}
+
 	panel.getValue = function(){ 
 		return { 
 			titulo1 : riesgosDirectosGrid.title,

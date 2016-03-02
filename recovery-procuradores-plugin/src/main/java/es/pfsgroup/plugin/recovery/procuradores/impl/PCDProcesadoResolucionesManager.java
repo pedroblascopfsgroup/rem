@@ -14,11 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.multigestor.api.GestorAdicionalAsuntoApi;
+import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoHistoricoDao;
 import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.capgemini.pfs.prorroga.dto.DtoSolicitarProrroga;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea;
@@ -38,6 +40,7 @@ import es.pfsgroup.plugin.recovery.masivo.dto.MSVResolucionesDto;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVCampoDinamico;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVDDEstadoProceso;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVResolucion;
+import es.pfsgroup.plugin.recovery.mejoras.PluginMejorasBOConstants;
 import es.pfsgroup.plugin.recovery.mejoras.tareaNotificacion.MEJTareaNoficacionApi;
 import es.pfsgroup.plugin.recovery.mejoras.web.genericForm.GenericFormManagerApi;
 import es.pfsgroup.plugin.recovery.procuradores.api.PCDProcesadoResolucionesApi;
@@ -57,6 +60,12 @@ public class PCDProcesadoResolucionesManager implements PCDProcesadoResoluciones
 
 	@Autowired
 	private Executor executor;
+	
+	@Autowired
+	private EXTGestorAdicionalAsuntoHistoricoDao gestorHistoricoDao;
+	
+	@Autowired
+	private ProcedimientoDao procedimientoDao;
 	
 	//private static final String ESTADO_GUARDAR = MSVDDEstadoProceso.CODIGO_PTE_VALIDAR;
 	//private static final String ESTADO_PROCESADO = MSVDDEstadoProceso.CODIGO_PROCESADO;
@@ -273,6 +282,20 @@ public class PCDProcesadoResolucionesManager implements PCDProcesadoResoluciones
 		
 		dto.setValues(valores);
 		return dto;
-	}	
+	}
+	
+	/**
+	 * Comprueba si el asunto del procedimiento, ha tenido asociado algun despacho integral
+	 * @param idProcedimiento
+	 * @return
+	 */
+	@BusinessOperation(PCD_BO_HISTORICO_DESPACHO_INTEGRAL)
+	public boolean hayDespachoIntegral(Long idProcedimiento) {
+		
+		boolean existeIntegral;
+		existeIntegral = gestorHistoricoDao.hayAlgunDespachoIntegral(procedimientoDao.get(idProcedimiento).getAsunto().getId());
+		
+		return existeIntegral;
+	}
 	
 }

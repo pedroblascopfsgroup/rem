@@ -153,10 +153,11 @@ public class CategoriasController {
 	 */
 	@RequestMapping
 	public String getListaCategoriasDeLaCategorizacionActivaDelUsuario(CategoriaDto dto, ModelMap map){
-		
+		dto.setIdcategorizacion(Long.valueOf(-1));
+
 		Long categorizacionActivaDelUser = configuracionDespachoExternoApi.activoCategorizacion();
-		
-		if(categorizacionActivaDelUser!=null){
+
+		if(categorizacionActivaDelUser != null) {
 			dto.setIdcategorizacion(categorizacionActivaDelUser);
 		}
 		

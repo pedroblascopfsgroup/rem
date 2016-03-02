@@ -59,10 +59,10 @@ public class CommonProjectContextImpl implements CommonProjectContext {
 	    		} 
 	    		
 	    		if (formatoSubstringEnd==null) {
-	    			contratoSubstring = nroContrato.substring(Integer.parseInt(formatoSubstringStart));
+	    			contratoSubstring = StringUtils.substring(nroContrato, Integer.parseInt(formatoSubstringStart));
 	    		} 
 	    		else {
-	    			contratoSubstring = nroContrato.substring(Integer.parseInt(formatoSubstringStart), Integer.parseInt(formatoSubstringEnd));
+	    			contratoSubstring = StringUtils.substring(nroContrato, Integer.parseInt(formatoSubstringStart), Integer.parseInt(formatoSubstringEnd));
 	    		} 
 	    	}
 	    	

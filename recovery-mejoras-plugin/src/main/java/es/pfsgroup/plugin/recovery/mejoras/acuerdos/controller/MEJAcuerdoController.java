@@ -22,9 +22,9 @@ import es.capgemini.pfs.acuerdo.model.AcuerdoConfigAsuntoUsers;
 import es.capgemini.pfs.acuerdo.model.DDMotivoRechazoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDSubTipoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
-import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.contrato.model.DDCondicionesRemuneracion;
 import es.capgemini.pfs.contrato.model.DDTipoProducto;
 import es.capgemini.pfs.core.api.acuerdo.AcuerdoApi;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
@@ -39,7 +39,6 @@ import es.capgemini.pfs.termino.model.DDEstadoGestionTermino;
 import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.capgemini.pfs.termino.model.TerminoBien;
 import es.capgemini.pfs.termino.model.TerminoContrato;
-import es.capgemini.pfs.termino.model.TerminoOperaciones;
 import es.capgemini.pfs.termino.model.ValoresCamposTermino;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -73,6 +72,7 @@ public class MEJAcuerdoController {
 	static final String JSP_EDITAR_TERMINO_ESTADO_GESTION = "plugin/mejoras/acuerdos/edicionEstadoGestionTermino";
 	static final String JSP_RECHAZAR_ACUERDO = "plugin/mejoras/acuerdos/rechazarAcuerdo";
 	static final String OK_KO_RESPUESTA_JSON = "plugin/coreextension/OkRespuestaJSON";
+	static final String JSON_LIST_DD_CONDICIONES_REMUNERACION ="plugin/mejoras/acuerdos/condicionesRemuneracionJSON";
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -849,5 +849,12 @@ public class MEJAcuerdoController {
 		return OK_KO_RESPUESTA_JSON;
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getListDDCondicionesRemuneracionData(ModelMap model){
+		List<DDCondicionesRemuneracion> list = diccionarioManager.dameValoresDiccionario(DDCondicionesRemuneracion.class);
+		model.put("data", list);
+		return JSON_LIST_DD_CONDICIONES_REMUNERACION;
+	}	
 
 }

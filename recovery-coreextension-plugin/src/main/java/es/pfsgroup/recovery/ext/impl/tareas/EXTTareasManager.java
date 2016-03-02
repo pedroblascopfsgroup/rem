@@ -116,9 +116,11 @@ public class EXTTareasManager extends EXTAbstractTareaNotificacionManager
 			return proxyFactory.proxy(EXTTareasApi.class)
 					.buscarTareasPendientesConCarterizacion(dto);
 		} else {
-			return (Page) getExecutor().execute(
+			 Page page = (Page) getExecutor().execute(
 					ComunBusinessOperation.BO_TAREA_MGR_BUSCAR_TAREAS_PENDIETE,
 					dto);
+			 page.getResults();
+			 return page;
 		}
 	}
 

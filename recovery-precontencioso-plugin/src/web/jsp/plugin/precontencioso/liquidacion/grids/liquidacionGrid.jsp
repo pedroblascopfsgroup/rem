@@ -178,6 +178,45 @@ var btnGenerar = new Ext.Button({
 	btnGenerar.hidden = false;
 </sec:authorize>
 
+var abrirPantallaDoc = function(destino) {
+	var w = app.openWindow({
+		flow: destino,
+		params: {idLiquidacion:idLiquidacionSeleccionada()},
+		autoWidth: true,
+		closable: true,
+		title: '<s:message code="plugin.precontencioso.liquidaciones.generar.documentos.titulo" text="**Complete los datos necesarios para generar el documento" />'
+	});
+	w.on(app.event.DONE, function() {
+		w.close();
+	});
+	w.on(app.event.CANCEL, function() {
+		w.close();
+	});
+}
+
+var btnLiqGenDoc = new Ext.Button({
+	id:'btnLiqGenDoc',
+	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.generarDoc" text="**Generar Documento" />',
+	iconCls: 'icon_pdf',
+	cls: 'x-btn-text-icon',
+	menu: {
+		items: [{
+			text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.generarCertSaldo" text="**Certificado de saldo" />',
+			icon:'/pfs/css/page_red.png',
+			handler: function() {
+				abrirPantallaDoc('liquidaciondoc/abrirPopupCertSaldo');
+			}
+		},{
+			text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.generarCartaNotario" text="**Carta al notario" />',
+			icon:'/pfs/css/page_red.png',
+			handler: function() {
+				abrirPantallaDoc('liquidaciondoc/abrirPopupCartaNotario');
+			}
+		}]
+	}
+});
+
+
 <%-- Grid --%>
 var myMask = new Ext.LoadMask(Ext.getBody(), {msg:"Cargando..."});
 
@@ -260,12 +299,13 @@ var gridLiquidaciones = app.crearGrid(storeLiquidaciones, cmLiquidacion, {
 		btnDescartar, 
 		new Ext.Toolbar.Fill(),
 		btnGenerar,
+		btnLiqGenDoc,
 		botonRefresh
 	],
 	</sec:authorize>
 	height: 250,
 	autoWidth: true,
-	style:'padding-top: inherit',
+	style:'padding-top:10px',
 	collapsible: true,
 	sm: new Ext.grid.RowSelectionModel({singleSelect:true})
 });
@@ -287,6 +327,7 @@ var actualizarBotonesLiquidacion = function() {
 			btnVisar.setDisabled(true);
 			btnDescartar.setDisabled(true);
 			btnGenerar.setDisabled(true);
+			btnLiqGenDoc.setDisabled(true);
 			return;
 		}
 	}
@@ -307,6 +348,7 @@ var actualizarBotonesLiquidacion = function() {
 			btnVisar.setDisabled(true);
 			btnDescartar.setDisabled(true);
 			btnGenerar.setDisabled(true);
+			btnLiqGenDoc.setDisabled(true);
 			break;
 
 		case 'SOL':
@@ -316,6 +358,7 @@ var actualizarBotonesLiquidacion = function() {
 			btnVisar.setDisabled(true);
 			btnDescartar.setDisabled(false);
 			btnGenerar.setDisabled(true);
+			btnLiqGenDoc.setDisabled(true);
 			break;
 
 		case 'DES':
@@ -325,6 +368,7 @@ var actualizarBotonesLiquidacion = function() {
 			btnVisar.setDisabled(true);
 			btnDescartar.setDisabled(true);
 			btnGenerar.setDisabled(true);
+			btnLiqGenDoc.setDisabled(true);
 			break;
 
 		case 'CON':
@@ -334,6 +378,7 @@ var actualizarBotonesLiquidacion = function() {
 			btnVisar.setDisabled(false);
 			btnDescartar.setDisabled(false);
 			btnGenerar.setDisabled(false);
+			btnLiqGenDoc.setDisabled(false);
 			break;
 			
 		case 'VIS':
@@ -343,6 +388,7 @@ var actualizarBotonesLiquidacion = function() {
 			btnVisar.setDisabled(true);
 			btnDescartar.setDisabled(false);
 			btnGenerar.setDisabled(false);
+			btnLiqGenDoc.setDisabled(false);
 			break;
 
 		case 'CAL':
@@ -352,6 +398,7 @@ var actualizarBotonesLiquidacion = function() {
 			btnVisar.setDisabled(true);
 			btnDescartar.setDisabled(false);
 			btnGenerar.setDisabled(true);
+			btnLiqGenDoc.setDisabled(true);
 			break;
 
 		case 'INC':
@@ -361,6 +408,7 @@ var actualizarBotonesLiquidacion = function() {
 			btnVisar.setDisabled(true);
 			btnDescartar.setDisabled(false);
 			btnGenerar.setDisabled(true);
+			btnLiqGenDoc.setDisabled(true);
 			break;
 
 		default:
@@ -370,6 +418,7 @@ var actualizarBotonesLiquidacion = function() {
 			btnVisar.setDisabled(true);
 			btnDescartar.setDisabled(true);
 			btnGenerar.setDisabled(true);
+			btnLiqGenDoc.setDisabled(true);
 	}
 	
 	btnConfirmar.setDisabled(btnConfirmar.disabled || !comprobarDatosCalculoRellenos());

@@ -159,12 +159,20 @@ public class Expediente implements Serializable, Auditable, Describible {
             + DDEstadoAsunto.ESTADO_ASUNTO_PROPUESTO + "') " + " and asu.borrado = 0 and asu.exp_id = exp_id)")
     private Long cantidadAsuntos;
 
-    @Formula(value = "(Select NVL(sum(m.mov_deuda_irregular), 0)"
+    @Formula(value = "(Select NVL(sum(m.mov_pos_viva_vencida), 0)"
             + " from mov_movimientos m, cex_contratos_expediente cex, cnt_contratos cnt, DD_TPE_TIPO_PROD_ENTIDAD tpe"
             + " where cex.borrado = 0 and m.cnt_id = cex.cnt_id" + " and cex.exp_id = exp_id AND cnt.cnt_id = cex.cnt_id"
             + " and m.mov_fecha_extraccion = cnt.CNT_FECHA_EXTRACCION" + " and cnt.dd_tpe_id = tpe.dd_tpe_id" + " and m.mov_riesgo > 0)")
     @Basic(fetch = FetchType.LAZY)
     private Double volumenRiesgoVencido;
+    
+    
+    @Formula(value = "(Select NVL(sum(m.mov_deuda_irregular), 0)"
+            + " from mov_movimientos m, cex_contratos_expediente cex, cnt_contratos cnt, DD_TPE_TIPO_PROD_ENTIDAD tpe"
+            + " where cex.borrado = 0 and m.cnt_id = cex.cnt_id" + " and cex.exp_id = exp_id AND cnt.cnt_id = cex.cnt_id"
+            + " and m.mov_fecha_extraccion = cnt.CNT_FECHA_EXTRACCION" + " and cnt.dd_tpe_id = tpe.dd_tpe_id" + " and m.mov_riesgo > 0)")
+    @Basic(fetch = FetchType.LAZY)
+    private Double dispuestoVencido;
 
     //La fecha de vencimiento se calculaba antes así
 //    @Formula(value = "(select tar.tar_fecha_venc from tar_tareas_notificaciones tar, ${master.schema}.DD_STA_SUBTIPO_TAREA_BASE dd_sta "
@@ -187,6 +195,36 @@ public class Expediente implements Serializable, Auditable, Describible {
     public Double getVolumenRiesgo() {
     	
     	Double volumenRiesgo = 0.0;
+    	Double riesgo = 0.0;
+    	
+    	
+    	for (ExpedienteContrato expedienteContrato : contratos) {
+    		Date fechaExtraccion = null;
+    		Contrato contrato = expedienteContrato.getContrato();
+    		for(Movimiento movimiento : contrato.getMovimientos()) {
+    			if(contrato.getFechaExtraccion().equals(movimiento.getFechaExtraccion())) {
+    				
+    				if(fechaExtraccion == null || fechaExtraccion.before(movimiento.getFechaExtraccion())) {
+    					fechaExtraccion = movimiento.getFechaExtraccion();
+    					riesgo = new Double(movimiento.getRiesgo());
+    					
+    				}
+    			}
+    		}
+    		volumenRiesgo = volumenRiesgo +  riesgo;
+    	}
+    	
+    	return volumenRiesgo;
+    }
+    
+    /**
+     * devuelve el volumen de riesgo de este expediente.
+     * Sumatoria de la suma de posicion viva vencida y no venciada de cada contrato
+     * @return el monto del riesgo del expediente.
+     */
+    public Double getDispuestoTotal() {
+    	
+    	Double dispuestoTotal = 0.0;
     	Double dispuesto = 0.0;
     	
     	
@@ -203,10 +241,10 @@ public class Expediente implements Serializable, Auditable, Describible {
     				}
     			}
     		}
-    		volumenRiesgo = volumenRiesgo +  dispuesto;
+    		dispuestoTotal = dispuestoTotal +  dispuesto;
     	}
     	
-    	return volumenRiesgo;
+    	return dispuestoTotal;
     }
 
     /**
@@ -917,6 +955,23 @@ public class Expediente implements Serializable, Auditable, Describible {
     public Double getVolumenRiesgoVencidoAbsoluto() {
         if (volumenRiesgoVencido == null) { return 0D; }
         return Math.abs(volumenRiesgoVencido);
+    }
+    
+    
+    /**
+     * @return el volumen de riesgo en valor absoluto.
+     */
+    public Double getDispuestoAbsoluto() {
+        if (getVolumenRiesgo() == null) { return 0D; }
+        return Math.abs(getDispuestoTotal());
+    }
+
+    /**
+     * @return el volumen de riesgo vencido en valor absoluto.
+     */
+    public Double getDispuestoVencidoAbsoluto() {
+        if (dispuestoVencido == null) { return 0D; }
+        return Math.abs(dispuestoVencido);
     }
 
     /**

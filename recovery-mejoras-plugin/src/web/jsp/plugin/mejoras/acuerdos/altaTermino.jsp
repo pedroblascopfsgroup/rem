@@ -526,13 +526,15 @@ arrayCampos["codigoPersonaAfectada"]=app.creaNumber('codigoPersonaAfectada', '<s
 					return false;
       			}
         		
+        		
+	       		<%--CPI - CMREC-2835 (Se comenta porque aún no tenemos claro de dónde obtener la fecha mora)
 	       		if(comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && !isNaN(parseFloat(dateSolucionPrevista)) && dateSolucionPrevista > datePaseMora) {		       		
 	       			Ext.Msg.show({
 				   		title:'Aviso',
 				   		msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.fondosPropios" text="**Fecha solicitud prevista debe ser menor a la fecha de pase a mora." />',
 				   		buttons: Ext.Msg.OK
 					});
-	       		}else if((comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && !arrayCampos.fechaSolucionPrevista.isValid())) {
+	       		}else --%> if((comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && !arrayCampos.fechaSolucionPrevista.isValid())) {
 	       			return false;
 	       		}else if (yaHayPlanPago=='true' && comboTipoAcuerdo.getValue()==idTipoAcuerdoPlanPago){
 	        		Ext.Msg.show({

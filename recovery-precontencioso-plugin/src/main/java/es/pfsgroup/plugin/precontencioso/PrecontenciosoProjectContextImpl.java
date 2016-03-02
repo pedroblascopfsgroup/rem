@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.plugin.precontencioso.liquidacion.dto.DDPropietarioPCODto;
 
 public class PrecontenciosoProjectContextImpl implements PrecontenciosoProjectContext {
 	
@@ -18,7 +19,7 @@ public class PrecontenciosoProjectContextImpl implements PrecontenciosoProjectCo
 	private List<String> variablesBurofax;
 	
 	private Map<String,Map<String,Map<String,Boolean>>> visibilidadBotones;
-
+	
 	@Override
 	public String getCodigoFaseComun() {
 		return codigoFaseComun;

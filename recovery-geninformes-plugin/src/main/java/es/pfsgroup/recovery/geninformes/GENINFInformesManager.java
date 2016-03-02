@@ -1,6 +1,5 @@
 package es.pfsgroup.recovery.geninformes;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -13,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -24,15 +22,15 @@ import javax.mail.MessagingException;
 import net.sf.jasperreports.engine.DefaultJasperReportsContext;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JRPropertiesUtil;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.export.JRRtfExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
-import net.sf.jasperreports.engine.JRParameter;
+import net.sf.jasperreports.engine.export.JRRtfExporter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -1101,7 +1099,7 @@ public class GENINFInformesManager implements GENINFInformesApi {
 
 	}
 
-public FileItem generarEscritoConVariablesYLogo(HashMap<String, Object> mapaVariables, String escrito,InputStream is, String rutaLogo) throws Throwable {
+	public FileItem generarEscritoConVariablesYLogo(HashMap<String, Object> mapaVariables, String escrito,InputStream is, String rutaLogo) throws Throwable {
 		
 		File fileSalidaTemporal = null;
 		FileItem resultado = null;
@@ -1147,8 +1145,12 @@ public FileItem generarEscritoConVariablesYLogo(HashMap<String, Object> mapaVari
 			}
 			
 			resultado = new FileItem();
+<<<<<<< HEAD
 			//resultado.setFileName(escrito + (new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + ".docx");
 			resultado.setFileName((new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + "_" + escrito);
+=======
+			resultado.setFileName(escrito + (new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + ".docx");
+>>>>>>> producto_backlog_febrero_documentos
 			resultado.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
 			resultado.setFile(fileSalidaTemporal);
 			
@@ -1165,5 +1167,10 @@ public FileItem generarEscritoConVariablesYLogo(HashMap<String, Object> mapaVari
 		}
 		return resultado;
 		
+<<<<<<< HEAD
 	}
+=======
+	};
+
+>>>>>>> producto_backlog_febrero_documentos
 }

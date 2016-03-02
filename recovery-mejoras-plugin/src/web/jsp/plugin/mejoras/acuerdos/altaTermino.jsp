@@ -502,7 +502,13 @@ arrayCampos["codigoPersonaAfectada"]=app.creaNumber('codigoPersonaAfectada', '<s
        ,handler:function(){
        		var formulario = flujoFieldSet.getForm();
 			var fechaActual = new Date();
-
+			
+			fechaActual.setHours(0);
+			fechaActual.setMinutes(0);
+			fechaActual.setSeconds(0);
+			
+			fechaActual = Date.parse(fechaActual);
+			
        		if(formulario.isValid()){
        			var dateSolucionPrevista = null;
        			
@@ -510,7 +516,7 @@ arrayCampos["codigoPersonaAfectada"]=app.creaNumber('codigoPersonaAfectada', '<s
        				dateSolucionPrevista = Date.parse(Ext.getCmp('fechaSolucionPrevista').getValue());
        			}
        			
-       			if(dateSolucionPrevista != null && dateSolucionPrevista < fechaActual){
+       			if(dateSolucionPrevista != null && Ext.getCmp('fechaSolucionPrevista').getValue() < fechaActual){
        				Ext.Msg.show({
 			   		title:'Aviso',
 			   		msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.fechaActual" text="**Fecha solicitud prevista no puede ser menor a la actual." />',

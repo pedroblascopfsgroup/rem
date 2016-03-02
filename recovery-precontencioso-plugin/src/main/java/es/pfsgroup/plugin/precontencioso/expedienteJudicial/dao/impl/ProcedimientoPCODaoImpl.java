@@ -630,7 +630,28 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 			}
 
 		} catch (ParseException e) {
-			logger.error(e.getLocalizedMessage());
+			return parseDateAlternativeFormat(field, dateFrom, dateTo);
+		}
+
+		return where;
+	}
+	
+	private List<Criterion> parseDateAlternativeFormat(String field, String dateFrom, String dateTo) {
+		List<Criterion> where = new ArrayList<Criterion>();
+
+		SimpleDateFormat formatoFechaFiltroWeb2 = new SimpleDateFormat("EEE MMM dd yyyy");
+
+		try {
+			if (!StringUtils.emtpyString(dateFrom)) {
+				where.add(Restrictions.ge(field, formatoFechaFiltroWeb2.parse(dateFrom)));
+			}
+
+			if (!StringUtils.emtpyString(dateTo)) {
+				where.add(Restrictions.le(field, formatoFechaFiltroWeb2.parse(dateTo)));
+			}
+
+		} catch (ParseException ex) {
+			logger.error(ex.getLocalizedMessage());
 			return where;
 		}
 

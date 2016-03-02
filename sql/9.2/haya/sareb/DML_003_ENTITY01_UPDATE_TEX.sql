@@ -2,10 +2,10 @@
 --##########################################
 --## AUTOR=miguel Ángel Sánchez
 --## FECHA_CREACION=20160223
---## ARTEFACTO=
---## VERSION_ARTEFACTO=
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HR-1902
---## PRODUCTO=SI
+--## PRODUCTO=NO
 --## Finalidad: Actualizar filas repetidas.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE

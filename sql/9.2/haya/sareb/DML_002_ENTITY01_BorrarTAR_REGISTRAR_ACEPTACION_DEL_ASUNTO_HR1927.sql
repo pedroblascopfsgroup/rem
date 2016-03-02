@@ -37,7 +37,6 @@ DECLARE
 
 BEGIN
 
------------------------------------------------------------------------------------------------------------------------------------
 
 DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
@@ -68,7 +67,6 @@ ELSE
     DBMS_OUTPUT.PUT_LINE('   [INFO] No existen tareas del tipo ''Registrar aceptación del asunto'' sin TEX');
 END IF;
 
------------------------------------------------------------------------------------------------------------------------------------
 COMMIT;
 
 DBMS_OUTPUT.PUT_LINE('[FIN]');

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=BRUNO ANGLES
---## FECHA_CREACION=20160125
+--## FECHA_CREACION=20160229
 --## ARTEFACTO=web
 --## VERSION_ARTEFACTO=9.1.0-cj-rc36.1-CMREC-1907
 --## INCIDENCIA_LINK=CMREC-1907
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Añadir dos variables nuevas de arquetipacion
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        1.0 Corregido un bug para incluir un campo que no estaba en producto
 --##########################################
 
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -64,6 +65,89 @@ DECLARE
 		DBMS_OUTPUT.PUT_LINE('[INFO] Tabla ' || V_ESQUEMA || '.DATA_RULE_ENGINE.GCL_NOMBRE... Campo añadido.');
 	END IF;
 	
+	 -- Añadir camo DATA_RULE_ENGINE.DD_TGL_ID
+	  V_SQL := 'select count(1) from all_tab_columns ' ||
+	  	'where COLUMN_NAME=''DD_TGL_ID'' and table_name=''DATA_RULE_ENGINE'' and owner=''' || V_ESQUEMA || '''';
+	
+	  EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
+	
+	  IF V_COUNT > 0 THEN
+	  	DBMS_OUTPUT.PUT_LINE('[INFO] Tabla DATA_RULE_ENGINE ya actualizada.');
+	  ELSE
+	  	V_SQL := 'ALTER TABLE ' || V_ESQUEMA || '.DATA_RULE_ENGINE ADD DD_TGL_ID NUMBER(16,0)'; 
+		  EXECUTE IMMEDIATE V_SQL;	
+	  	  DBMS_OUTPUT.PUT_LINE('[INFO] AÑADIDO EL CAMPO DD_TGL_ID');
+	  END IF;
+	
+	 -- Añadir camo DATA_RULE_ENGINE.DD_CRE_ID
+	  V_SQL := 'select count(1) from all_tab_columns ' ||
+		  	'where COLUMN_NAME=''DD_CRE_ID'' and table_name=''DATA_RULE_ENGINE'' and owner=''' || V_ESQUEMA || '''';
+
+	  EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
+
+	  IF V_COUNT > 0 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] Tabla DATA_RULE_ENGINE ya actualizada.');
+	  ELSE
+	 	V_SQL := 'ALTER TABLE ' || V_ESQUEMA || '.DATA_RULE_ENGINE ADD DD_CRE_ID NUMBER(16,0)'; 
+	    EXECUTE IMMEDIATE V_SQL;
+	    DBMS_OUTPUT.PUT_LINE('[INFO] AÑADIDO EL CAMPO DD_CRE_ID');	
+  	  END IF;
+	
+	 -- Añadir camo DATA_RULE_ENGINE.DD_EIC_ID
+	  V_SQL := 'select count(1) from all_tab_columns ' ||
+		  	'where COLUMN_NAME=''DD_EIC_ID'' and table_name=''DATA_RULE_ENGINE'' and owner=''' || V_ESQUEMA || '''';
+
+	  EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
+
+	  IF V_COUNT > 0 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] Tabla DATA_RULE_ENGINE ya actualizada.');
+	  ELSE
+	 	V_SQL := 'ALTER TABLE ' || V_ESQUEMA || '.DATA_RULE_ENGINE ADD DD_EIC_ID NUMBER(16,0)'; 
+	    EXECUTE IMMEDIATE V_SQL;
+	    DBMS_OUTPUT.PUT_LINE('[INFO] AÑADIDO EL CAMPO DD_EIC_ID');	
+  	  END IF;
+	
+	 -- Añadir camo DATA_RULE_ENGINE.DD_GES_ID
+	  V_SQL := 'select count(1) from all_tab_columns ' ||
+		  	'where COLUMN_NAME=''DD_GES_ID'' and table_name=''DATA_RULE_ENGINE'' and owner=''' || V_ESQUEMA || '''';
+
+	  EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
+
+	  IF V_COUNT > 0 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] Tabla DATA_RULE_ENGINE (campo DD_GES_ID) ya actualizada.');
+	  ELSE
+	 	V_SQL := 'ALTER TABLE ' || V_ESQUEMA || '.DATA_RULE_ENGINE ADD DD_GES_ID NUMBER(16,0)'; 
+	    EXECUTE IMMEDIATE V_SQL;
+	    DBMS_OUTPUT.PUT_LINE('[INFO] AÑADIDO EL CAMPO DD_GES_ID');	
+  	  END IF;
+	
+	 -- Añadir camo DATA_RULE_ENGINE.PTO_PUNTUACION
+	  V_SQL := 'select count(1) from all_tab_columns ' ||
+		  	'where COLUMN_NAME=''PTO_PUNTUACION'' and table_name=''DATA_RULE_ENGINE'' and owner=''' || V_ESQUEMA || '''';
+
+	  EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
+
+	  IF V_COUNT > 0 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] Tabla DATA_RULE_ENGINE (campo PTO_PUNTUACION) ya actualizada.');
+	  ELSE
+	 	V_SQL := 'ALTER TABLE ' || V_ESQUEMA || '.DATA_RULE_ENGINE ADD PTO_PUNTUACION NUMBER(38,0)'; 
+	    EXECUTE IMMEDIATE V_SQL;
+	    DBMS_OUTPUT.PUT_LINE('[INFO] AÑADIDO EL CAMPO PTO_PUNTUACION');	
+  	  END IF;
+	
+	 -- Añadir camo DATA_RULE_ENGINE.PTO_INTERVALO
+	  V_SQL := 'select count(1) from all_tab_columns ' ||
+		  	'where COLUMN_NAME=''PTO_INTERVALO'' and table_name=''DATA_RULE_ENGINE'' and owner=''' || V_ESQUEMA || '''';
+
+	  EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
+
+	  IF V_COUNT > 0 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] Tabla DATA_RULE_ENGINE (campo PTO_INTERVALO) ya actualizada.');
+	  ELSE
+	 	V_SQL := 'ALTER TABLE ' || V_ESQUEMA || '.DATA_RULE_ENGINE ADD PTO_INTERVALO VARCHAR2(100 CHAR)'; 
+	    EXECUTE IMMEDIATE V_SQL;
+	    DBMS_OUTPUT.PUT_LINE('[INFO] AÑADIDO EL CAMPO PTO_INTERVALO');	
+  	  END IF;
 	
 	COMMIT;
     

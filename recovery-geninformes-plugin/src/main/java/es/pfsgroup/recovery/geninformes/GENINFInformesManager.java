@@ -1145,8 +1145,10 @@ public class GENINFInformesManager implements GENINFInformesApi {
 			}
 			
 			resultado = new FileItem();
+
 			//resultado.setFileName(escrito + (new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + ".docx");
 			resultado.setFileName((new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + "_" + escrito);
+
 			resultado.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
 			resultado.setFile(fileSalidaTemporal);
 			

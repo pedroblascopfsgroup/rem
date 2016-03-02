@@ -79,4 +79,5 @@ public interface GENINFInformesApi {
 	InputStream createPdfFileFromHtmlText(String htmlText,String nombreFichero) throws Exception;
 
 	
+
 }

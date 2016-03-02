@@ -764,7 +764,7 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			if(procedimientoPco.getTipoProcIniciado() != null) {
 				tipoProcProp = procedimientoPco.getTipoProcIniciado().getCodigo();
 			}
-			else {
+			else if(procedimientoPco.getTipoProcPropuesto() != null){
 				tipoProcProp = procedimientoPco.getTipoProcPropuesto().getCodigo();
 			}
 		} 

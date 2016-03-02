@@ -1514,11 +1514,11 @@
                  , ZON_ZONIFICACION              zon
                  , ${master.schema}.DD_EST_ESTADOS_ITINERARIOS sit
                  , ${master.schema}.DD_EPI_EST_POL_ITINERARIO  epi
-             where tmp.per_id = cmp.per_id
+             Where tmp.per_id = cmp.per_id
                And tmp.exp_id = cmp.exp_id
                And tmp.per_id = per.per_id(+)
                And per.dd_pol_id = pol.dd_pol_id(+)
-               And pol.dd_pol_id = tpl.dd_pol_id(+)
+               And pol.dd_pol_codigo = tpl.tpl_codigo(+)
                And tmp.arq_id = arq.arq_id(+)
                And arq.iti_id = iti.iti_id(+)
                And iti.iti_id = est.iti_id(+)

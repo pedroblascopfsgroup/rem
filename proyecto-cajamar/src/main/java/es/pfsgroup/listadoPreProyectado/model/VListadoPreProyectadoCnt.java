@@ -11,10 +11,12 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Immutable;
 
 @Entity
 @Table(name="V_LIS_PREPROYECT_CNT", schema="${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Immutable
 public class VListadoPreProyectadoCnt implements Serializable {
 	/**
 	 * 

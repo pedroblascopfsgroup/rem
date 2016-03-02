@@ -27,6 +27,7 @@
 	var fechaPaseMora = '${fechaPaseMora}';
 	var ambito = '${ambito}';
 	var idTipoAcuerdoFondosPropios ='${idTipoAcuerdoFondosPropios}';
+	var idTipoAcuerdoRegulParcial = '${idTipoAcuerdoRegulParcial}';
 	
 	var datePaseMora = Date.parse(fechaPaseMora);
 
@@ -338,20 +339,38 @@
        ,cls: 'x-btn-text-icon'
        ,handler:function(){
        		var formulario = flujoFieldSet.getForm();
+       		var fechaActual = new Date();
        		
        		if(formulario.isValid()){
        			var dateSolucionPrevista = null;
        			if (Ext.getCmp('fechaSolucionPrevista')!=undefined) {
        				dateSolucionPrevista = Date.parse(Ext.getCmp('fechaSolucionPrevista').getValue());
        			}
-	       		if(comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && dataSolucionPrevista!=null && dateSolucionPrevista > datePaseMora) {		       		
+       			
+       			if(dateSolucionPrevista != null && dateSolucionPrevista < fechaActual){
+       				Ext.Msg.show({
+				   		title:'Aviso',
+				   		msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.fechaActual" text="**Fecha solicitud prevista no puede ser menor a la actual." />',
+				   		buttons: Ext.Msg.OK
+					});
+					
+					return false;
+       			}
+       			
+       			if(comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && dataSolucionPrevista!=null &&  dateSolucionPrevista > datePaseMora) {
 	       			Ext.Msg.show({
 				   		title:'Aviso',
 				   		msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.fondosPropios" text="**Fecha solicitud prevista debe ser menor a la fecha de pase a mora." />',
 				   		buttons: Ext.Msg.OK
 					});
-	       		}else if(comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && !Ext.getCmp('fechaSolucionPrevista').isValid()) {
+	       		}else if(comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && !Ext.getCmp('fechaSolucionPrevista').isValid() ) {
 	       			return false;
+	       		}else if(comboTipoAcuerdo.getValue() == idTipoAcuerdoRegulParcial && isNaN(parseFloat(dateSolucionPrevista))){
+	       			Ext.Msg.show({
+				   		title:'Aviso',
+				   		msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.regulParcial" text="**La Fecha solicitud prevista es obligatoria." />',
+				   		buttons: Ext.Msg.OK
+					});
 	       		}else if (yaHayPlanPago=='true' && comboTipoAcuerdo.getValue()==idTipoAcuerdoPlanPago){
 	        		Ext.Msg.show({
 				   		title:'Aviso',

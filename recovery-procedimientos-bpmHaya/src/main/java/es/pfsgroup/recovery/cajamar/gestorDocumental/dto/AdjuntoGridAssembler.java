@@ -5,12 +5,17 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.recovery.gestordocumental.dto.AdjuntoGridDto;
 
 public class AdjuntoGridAssembler {
-
+	
+	private static final Log logger = LogFactory.getLog(AdjuntoGridAssembler.class);
+	
 	public static List<AdjuntoGridDto> outputDtoToAdjuntoGridDto (GestorDocumentalOutputDto outputDto) {
 
 		if (outputDto == null) {
@@ -21,9 +26,18 @@ public class AdjuntoGridAssembler {
 		for(GestorDocumentalOutputListDto olDto : outputDto.getLbListadoDocumentos()) {
 			AdjuntoGridDto dto = new AdjuntoGridDto();
 			dto.setId(Long.parseLong(olDto.getIdDocumento()));
-			dto.setNombre(olDto.getDescripcion()+"."+olDto.getExtFichero());
 			dto.setContentType(olDto.getContentType());
-			dto.setDescripcion(olDto.getDescripcion());
+			
+			if(!Checks.esNulo(olDto.getDescripcion())) {			
+				dto.setNombre(olDto.getDescripcion()+"."+olDto.getExtFichero());
+				dto.setDescripcion(olDto.getDescripcion());
+			}
+			else {
+				logger.warn("Método outputDtoToAdjuntoGridDto, el campo descripción está vacío");
+				dto.setNombre(olDto.getNombreTipoDoc()+"."+olDto.getExtFichero());
+				dto.setDescripcion(olDto.getNombreTipoDoc());
+			}
+			
 			dto.setLength("");
 			dto.setFicheroBase64(outputDto.getFicheroBase64());
 			dto.setTipo(olDto.getTipoDoc());

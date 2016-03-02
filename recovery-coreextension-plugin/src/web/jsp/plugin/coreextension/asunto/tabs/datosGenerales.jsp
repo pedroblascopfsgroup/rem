@@ -27,6 +27,65 @@
 		}
 		<app:test id="nombreAsunto" addComa="true"/>
 	});
+	
+	
+	//Campo Nombre Persona Procedimiento Asunto
+	var nombrePersonaProcedimiento = new Ext.form.TextField({
+		fieldLabel:'<s:message code="asuntos.busqueda.filtro.nombrePersonaProcedimiento" text="**Nombre Persona Procedimiento" />'
+		,name:'nombrePersonaProcedimiento'
+		,listeners:{
+			specialkey: function(f,e){  
+	            if (e.getKey() == e.ENTER) {
+	                buscarFunc();
+	            }  
+	        } 
+		}
+		<app:test id="nombrePersonaProcedimiento" addComa="true"/>
+	});
+	
+	//Campo Apellido1 Persona Procedimiento Asunto
+	var apellido1PersonaProcedimiento = new Ext.form.TextField({
+		fieldLabel:'<s:message code="asuntos.busqueda.filtro.apellido1PersonaProcedimiento" text="**Primer apellido" />'
+		,name:'apellido1PersonaProcedimiento'
+		,listeners:{
+			specialkey: function(f,e){  
+	            if (e.getKey() == e.ENTER) {
+	                buscarFunc();
+	            }  
+	        } 
+		}
+		<app:test id="apellido1PersonaProcedimiento" addComa="true"/>
+	});
+	
+	//Campo Apellido2 Persona Procedimiento Asunto
+	var apellido2PersonaProcedimiento = new Ext.form.TextField({
+		fieldLabel:'<s:message code="asuntos.busqueda.filtro.apellido2PersonaProcedimiento" text="**Segundo apellido" />'
+		,name:'apellido2PersonaProcedimiento'
+		,listeners:{
+			specialkey: function(f,e){  
+	            if (e.getKey() == e.ENTER) {
+	                buscarFunc();
+	            }  
+	        } 
+		}
+		<app:test id="apellido2PersonaProcedimiento" addComa="true"/>
+	});
+	
+	//Campo dni/nif Persona Procedimiento Asunto
+	var dniPersonaProcedimiento = new Ext.form.TextField({
+		fieldLabel:'<s:message code="asuntos.busqueda.filtro.dni" text="**Documento DNI/NIF" />'
+		,name:'dniPersonaProcedimiento'
+		,listeners:{
+			specialkey: function(f,e){  
+	            if (e.getKey() == e.ENTER) {
+	                buscarFunc();
+	            }  
+	        } 
+		}
+		<app:test id="dniPersonaProcedimiento" addComa="true"/>
+	});
+		
+	
 	<%-- 
 	//Listado de despachos, viene del flow
 	var dictDespachos = <app:dict value="${despachos}" blankElement="true" blankElementValue="" blankElementText="---"/>;
@@ -309,7 +368,7 @@
  --%>
 
 	//Combo número de contrato... debería ser TextField? Ver con el CU
-	var filtroContrato =new Ext.form.NumberField({
+	var filtroContrato =new Ext.form.TextField({
 		fieldLabel:'<s:message code="menu.clientes.listado.filtro.contrato" text="**Nro. Contrato" />'
 		,enableKeyEvents: true
 		,maxLength:50 
@@ -559,6 +618,20 @@
 		if (nombre.getValue() != '' ){
 			return true;
 		}
+		
+		if (nombrePersonaProcedimiento.getValue() != '' ){
+			return true;
+		}
+		if (apellido1PersonaProcedimiento.getValue() != '' ){
+			return true;
+		}
+		if (apellido2PersonaProcedimiento.getValue() != '' ){
+			return true;
+		}
+		if (dniPersonaProcedimiento.getValue() != '' ){
+			return true;
+		}
+		
 		<%--if (comboDespachos.getValue() != '' ){
 			return true;
 		}
@@ -664,6 +737,10 @@
 		return {
 			codigoAsunto: codigoAsunto.getValue()
 			,nombre:nombre.getValue()
+			,nombrePersonaProcedimiento: nombrePersonaProcedimiento.getValue()
+			,apellido1PersonaProcedimiento: apellido1PersonaProcedimiento.getValue()
+			,apellido2PersonaProcedimiento: apellido2PersonaProcedimiento.getValue()
+			,dniPersonaProcedimiento: dniPersonaProcedimiento.getValue()
 			<%-- ,comboDespachos:comboDespachos.getValue()
 			,comboGestor:comboGestor.getValue()
 			,comboTiposGestor:comboTiposGestor.getValue()--%>
@@ -723,7 +800,7 @@
 					layout:'form'
 					,bodyStyle:'padding:5px;cellspacing:10px'
 					,autoHeight:true
-					,items:[codigoAsunto,nombre,comboEstados,fechaCreacionDesde,fechaCreacionHasta,comboGestion,comboPropiedades
+					,items:[codigoAsunto,nombre,nombrePersonaProcedimiento,apellido1PersonaProcedimiento,apellido2PersonaProcedimiento,dniPersonaProcedimiento,comboEstados,fechaCreacionDesde,fechaCreacionHasta,comboGestion,comboPropiedades
 									 <sec:authorize ifAllGranted="ENVIO_CIERRE_DEUDA">,filtrosCDD</sec:authorize>]}
 			   ,{	layout:'form'
 					,bodyStyle:'padding:5px;cellspacing:10px'
@@ -748,6 +825,10 @@
     		   app.resetCampos([      
     		           codigoAsunto
     		           ,nombre
+    		           ,nombrePersonaProcedimiento
+    		           ,apellido1PersonaProcedimiento
+    		           ,apellido2PersonaProcedimiento
+    		           ,dniPersonaProcedimiento
     		           <%-- ,comboDespachos
     		           ,comboGestor
     		           ,comboTiposGestor--%>

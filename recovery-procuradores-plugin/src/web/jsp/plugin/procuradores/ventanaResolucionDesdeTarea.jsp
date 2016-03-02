@@ -320,14 +320,14 @@ var tipoFicheroRecord = Ext.data.Record.create([
 	]);
 		
 var tipoFicheroStore =	page.getStore({
-	       flow: 'adjuntoasunto/getTiposDeFicheroAdjuntoAsunto'
+	       flow: 'adjuntoasunto/getTiposDeFicheroAdjuntoProcedimiento'
 	       ,reader: new Ext.data.JsonReader({
 	    	 root : 'diccionario'
 	    }, tipoFicheroRecord)
 	       
 	});	
 	
-tipoFicheroStore.webflow({idAsunto:${idAsunto}}); 
+tipoFicheroStore.webflow({idProcedimiento:${idProcedimiento}}); 
 
 var creaVentanaUpload = function(){
 	upload = new Ext.FormPanel({

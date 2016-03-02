@@ -24,6 +24,7 @@
                 <evaluate expression="executor.execute('plugin.mejoras.procedimientoManager.procedimientoParalizado',id)" result="flowScope.paralizado" />
 	    		<evaluate expression="executor.execute('plugin.procuradores.procurador.getProcuradorReal',id)" result="flowScope.procuradorReal" />
 	    		<evaluate expression="executor.execute('plugin.mejoras.web.procuradores.pluginProcuradoresIsInstall')" result="flowScope.tieneProcurador" />
+	    		<evaluate expression="executor.execute('es.pfsgroup.plugin.recovery.procuradores.procesado.api.hayDespachoIntegral',id)" result="flowScope.hayDespachoIntegral" /> 
 	    </on-entry>
     </end-state>	
     

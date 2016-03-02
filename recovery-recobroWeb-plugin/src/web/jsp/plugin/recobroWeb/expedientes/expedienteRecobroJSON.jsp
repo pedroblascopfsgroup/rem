@@ -60,8 +60,8 @@
 		<json:property name="estado" value="${expediente.estadoExpediente.descripcion}" />
 		<json:property name="descripcion" value="${expediente.descripcionExpediente}" />
 		<json:property name="diasVencido" value="${expediente.diasVencido}" />
-		<json:property name="volRiesgos" value="${expediente.volumenRiesgoAbsoluto}" />
-		<json:property name="volRiesgosVenc" value="${expediente.volumenRiesgoVencidoAbsoluto}" />
+		<json:property name="volRiesgos" value="${expediente.dispuestoAbsoluto}" />
+		<json:property name="volRiesgosVenc" value="${expediente.dispuestoVencidoAbsoluto}" />
 		<json:property name="comite" value="${expediente.comite.nombre}" />
 		<json:property name="fechaComite">
 		  <fwk:date value="${expediente.fechaVencimiento}"/>

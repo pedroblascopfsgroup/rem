@@ -1532,6 +1532,25 @@
             V_NUFILAS:=SQL%ROWCOUNT;
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'POL_POLITICA Cargada',V_NUFILAS);
             COMMIT;
+
+
+            -- Analisis politica
+            Insert into APP_ANALISIS_PERSONA_POLITICA
+             (APP_ID, CMP_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+            Select s_app_analisis_per_pol.nextval
+                 , cmp.cmp_id
+                 , 0, '${usuario.crear}', sysdate, 0
+             From (select distinct per_id, exp_id
+                   from BATCH_SEG_DATOS_SALIDA)    tmp
+                 , CMP_CICLO_MARCADO_POLITICA      cmp
+                 , APP_ANALISIS_PERSONA_POLITICA   app
+            Where  tmp.per_id = cmp.per_id
+               And tmp.exp_id = cmp.exp_id;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'POL_POLITICA Cargada',V_NUFILAS);
+            COMMIT;
         END;
         ]]>
     </entry>
@@ -1618,6 +1637,10 @@
              FROM '||cENTITY_SCHEMA||'.EXP_EXPEDIENTES
             WHERE EXP_MANUAL = 0
               AND EXP_PROCESS_BPM IS NULL';
+
+          --LOG
+          V_NUFILAS:=SQL%ROWCOUNT;
+          INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'TMP_BATCH_SV_BPM_INSTANCE Cargada',V_NUFILAS);
           COMMIT;
 
           EXECUTE IMMEDIATE'
@@ -1631,10 +1654,6 @@
           EXECUTE IMMEDIATE'
           Update TMP_BATCH_SV_BPM_INSTANCE set VARIABLEMAP = '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL';
           COMMIT;
-
-          --LOG
-          V_NUFILAS:=SQL%ROWCOUNT;
-          INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'TMP_BATCH_SV_BPM_INSTANCE Cargada',V_NUFILAS);
 
           DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_BATCH_SV_BPM_INSTANCE', estimate_percent => 20);
 

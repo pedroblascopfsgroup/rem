@@ -387,7 +387,10 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 				|| (dto.getAnyoProcedimientoEnJuzgado() != null && !dto
 						.getAnyoProcedimientoEnJuzgado().equals(""))
 				|| (dto.getTiposProcedimiento() != null && dto
-						.getTiposProcedimiento().size() > 0);
+						.getTiposProcedimiento().size() > 0
+				|| (dto.getComboDecisionesFinalizacion()) != null && !dto
+						.getComboDecisionesFinalizacion().equals("")
+						);
 	}
 
 	private boolean requiereContrato(DtoBusquedaAsunto dto) {
@@ -404,6 +407,17 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 						!dto.getApellido2PersonaProcedimiento().equals("")||
 						dto.getDniPersonaProcedimiento() != null &&
 						!dto.getDniPersonaProcedimiento().equals("");
+	}
+	
+	private boolean requiereDecisionFinalizar(EXTDtoBusquedaAsunto dto){
+		return (dto.getComboDecisionesFinalizacion()!=null && 
+				!dto.getComboDecisionesFinalizacion().equals("")
+				
+				);
+	}
+	
+	private String getIdDecisionProcedimiento(String codigo){
+		return "select cdf.id from DDCausaDecisionFinalizar cdf where cdf.codigo = '"+codigo+"'";
 	}
 
 	private String filtroGestorSupervisorAsuntoMonoGestor(
@@ -683,6 +697,10 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		if (requiereProcedimiento(dto) || requierePersona(dto) || requiereContrato(dto)) {
 			hql.append(", Procedimiento prc ");
 		}
+		
+		if(requiereDecisionFinalizar(dto)){
+			hql.append(", DecisionProcedimiento dp");
+		}
 				
 		
 		if (requiereContrato(dto)) {
@@ -707,6 +725,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		if(requierePersona(dto)){
 			hql.append(" JOIN prc.personasAfectadas persAfc");
 		}
+	
 		
 		hql.append(" where asu.auditoria." + Auditoria.UNDELETED_RESTICTION);
 		
@@ -767,7 +786,12 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		}
 		
 		
+		//COMBO DECISIONFINALIZAR
 		
+		if(dto.getComboDecisionesFinalizacion()!=null && !dto.getComboDecisionesFinalizacion().equals("")){
+			hql.append(" and prc.id = dp.procedimiento");
+			hql.append(" and dp.causaDecisionFinalizar IN ("+getIdDecisionProcedimiento(dto.getComboDecisionesFinalizacion())+")");
+		}
 
 		// PERMISOS DEL USUARIO (en caso de que sea externo)
 		if (usuarioLogado.getUsuarioExterno()) {

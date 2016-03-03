@@ -13,6 +13,8 @@ public class EXTDtoBusquedaAsunto extends DtoBusquedaAsunto{
 	private String numeroProcedimientoEnJuzgado;
 	private String anyoProcedimientoEnJuzgado;
 	
+	private String ComboDecisionesFinalizacion;
+	private String ComboTipoAsunto;
 	private String comboGestion;
 	private String comboPropiedades;
 	private String comboErrorPreviCDD;
@@ -26,6 +28,25 @@ public class EXTDtoBusquedaAsunto extends DtoBusquedaAsunto{
 	
 	private List<Long> idsUsuariosGrupos;
 	
+	
+	
+	
+	public String getComboDecisionesFinalizacion() {
+		return ComboDecisionesFinalizacion;
+	}
+
+	public void setComboDecisionesFinalizacion(String comboDecisionesFinalizacion) {
+		ComboDecisionesFinalizacion = comboDecisionesFinalizacion;
+	}
+
+	public String getComboTipoAsunto() {
+		return ComboTipoAsunto;
+	}
+
+	public void setComboTipoAsunto(String comboTipoAsunto) {
+		ComboTipoAsunto = comboTipoAsunto;
+	}
+
 	public void setComboTiposGestor(String comboTiposGestor) {
 		this.comboTiposGestor = comboTiposGestor;
 	}

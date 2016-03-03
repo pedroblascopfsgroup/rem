@@ -162,6 +162,37 @@
 		
 --%>	
 
+	//Listado de Decisiones de finalizacion del asunto, viene del flow
+	var dictDecisiones = <app:dict value="${decisionesFinalizar}" blankElement="true" blankElementValue="" blankElementText="---"/>;
+
+
+	//store generico de combo diccionario
+	var optionsDecisionesFinalizacionStore = new Ext.data.JsonStore({
+	       fields: ['codigo', 'descripcion']
+	       ,root: 'diccionario'
+	       ,data : dictDecisiones
+	});
+
+	//Campo Combo Decisiones Finalizar Asunto
+	var comboDecisionesFinalizacion = new Ext.form.ComboBox({
+		store:optionsDecisionesFinalizacionStore
+		,displayField:'descripcion'
+		,valueField:'codigo'
+		,mode:'local'
+		,editable:false
+		,emptyText:"---"
+		,triggerAction: 'all'
+		,fieldLabel:'<s:message code="asuntos.busqueda.filtro.decisionFinalizacion" text="**Motivo Finalización"/>'
+		<app:test id="comboDecisionesFinalizacion" addComa="true"/>
+	});
+	
+	
+	
+	
+	
+	
+	
+	
 	//Listado de Gestiones, viene del flow
 	var dictPropiedades = <app:dict value="${propiedades}" blankElement="true" blankElementValue="" blankElementText="---"/>;
 
@@ -650,6 +681,9 @@
 		if (comboPropiedades.getValue() != '') {
 			return true;
 		}
+		if (comboDecisionesFinalizacion.getValue() != '') {
+			return true;
+		}
 		if (comboTipoAsunto.getValue() != '' ){
 			return true;
 		}
@@ -747,6 +781,7 @@
 			,comboEstados:comboEstados.getValue()
 			,comboGestion:comboGestion.getValue()
 			,comboPropiedades:comboPropiedades.getValue()
+			,comboDecisionesFinalizacion:comboDecisionesFinalizacion.getValue()
 			,comboTipoAsunto: comboTipoAsunto.getValue()
 			<%--,comboSupervisor:comboSupervisor.getValue() --%>
 			<%--//,estadoAnalisis:estadoAnalisis.getValue() --%>
@@ -800,7 +835,7 @@
 					layout:'form'
 					,bodyStyle:'padding:5px;cellspacing:10px'
 					,autoHeight:true
-					,items:[codigoAsunto,nombre,nombrePersonaProcedimiento,apellido1PersonaProcedimiento,apellido2PersonaProcedimiento,dniPersonaProcedimiento,comboEstados,fechaCreacionDesde,fechaCreacionHasta,comboGestion,comboPropiedades
+					,items:[codigoAsunto,nombre,nombrePersonaProcedimiento,apellido1PersonaProcedimiento,apellido2PersonaProcedimiento,dniPersonaProcedimiento,comboEstados,fechaCreacionDesde,fechaCreacionHasta,comboGestion,comboPropiedades,comboDecisionesFinalizacion
 									 <sec:authorize ifAllGranted="ENVIO_CIERRE_DEUDA">,filtrosCDD</sec:authorize>]}
 			   ,{	layout:'form'
 					,bodyStyle:'padding:5px;cellspacing:10px'
@@ -835,6 +870,7 @@
     		           ,comboEstados
     		           ,comboGestion
     		           ,comboPropiedades
+    		           ,comboDecisionesFinalizacion
     		           ,comboTipoAsunto
     		           <%--,comboSupervisor --%>
     		           <%--//,estadoAnalisis --%>

@@ -20,7 +20,6 @@ public class DtoBusquedaAsunto extends PaginationParamsImpl {
     private String comboDespachos;
     private String comboGestor;
     private String comboEstados;
-    private String comboTipoAsunto;
     private String comboSupervisor;
     private String estadoAnalisis;
     private Double minSaldoTotalContratos;
@@ -44,14 +43,6 @@ public class DtoBusquedaAsunto extends PaginationParamsImpl {
 
     
     
-    
-    public String getComboTipoAsunto() {
-		return comboTipoAsunto;
-	}
-
-	public void setComboTipoAsunto(String comboTipoAsunto) {
-		this.comboTipoAsunto = comboTipoAsunto;
-	}
 
 	/**
      * @return the jerarquia

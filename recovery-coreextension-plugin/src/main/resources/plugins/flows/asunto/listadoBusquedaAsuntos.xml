@@ -21,6 +21,7 @@
 			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDEstadoAsunto')" result="flowScope.estados"/>
 			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDTiposAsunto')" result="flowScope.tipoAsunto"/>
 			<evaluate expression="executor.execute('procedimientoManager.getEstadosProcedimientos')" result="flowScope.estadosAnalisis" />
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDCausaDecisionFinalizar')" result="flowScope.decisionesFinalizar"/>
 			<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
 			<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
 			<evaluate expression="executor.execute('tipoProcedimientoManager.getTipoProcedimientos')" result="flowScope.tipoProcedimientos" />
@@ -40,6 +41,7 @@
 			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDTiposAsunto')" result="flowScope.tipoAsunto"/>
 			<!--  <evaluate expression="executor.execute('dictionaryManager.getList', 'EXTDDTipoGestor')" result="flowScope.tiposGestor"/>-->
 			<evaluate expression="executor.execute('procedimientoManager.getEstadosProcedimientos')" result="flowScope.estadosAnalisis" />
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDCausaDecisionFinalizar')" result="flowScope.decisionesFinalizar"/>
 			<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
 			<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
 			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDSiNo')" result="flowScope.sino" />

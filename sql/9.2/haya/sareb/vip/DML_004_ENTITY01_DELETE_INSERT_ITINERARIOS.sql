@@ -101,19 +101,42 @@ BEGIN
 	END IF;		
 		
 	-- ***************************************************** Estados **************************************
-	-- Creamos el nuevo estado solo para Sareb En Sancion si no existe ya en el mismo orden que el estado Decision Comite
+	-- Actualización del diccionario de estados itinerario
+	-- Primero cambiamos el orden del estado Formalizar Propuesta, para anexar los 2 en medio
+	V_MSQL := 'UPDATE '||V_ESQUEMA_M||'.DD_EST_ESTADOS_ITINERARIOS SET DD_EST_ORDEN = 7 WHERE DD_EST_CODIGO = ''FP'' 
+				AND DD_EIN_ID = (SELECT DD_EIN_ID FROM '||V_ESQUEMA_M||'.DD_EIN_ENTIDAD_INFORMACION WHERE DD_EIN_CODIGO = ''2'')';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Orden del estado Formalizar Propuesta actualizado');
+	
+	-- Creamos el nuevo estado En Sancion si no existe ya en el mismo orden que el estado Decision Comite
 	V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.DD_EST_ESTADOS_ITINERARIOS WHERE DD_EST_CODIGO = ''ENSAN''';
 	EXECUTE IMMEDIATE V_SQL INTO V_NUM;
 	IF V_NUM=0 THEN
 		V_SQL := 'SELECT DD_EIN_ID FROM '||V_ESQUEMA_M||'.DD_EIN_ENTIDAD_INFORMACION WHERE DD_EIN_CODIGO = ''2''';
 		EXECUTE IMMEDIATE V_SQL INTO V_NUM;
 		V_MSQL := 'INSERT INTO '||V_ESQUEMA_M||'.DD_EST_ESTADOS_ITINERARIOS (DD_EST_ID, DD_EIN_ID, DD_EST_ORDEN, DD_EST_CODIGO, DD_EST_DESCRIPCION, DD_EST_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
-					 VALUES ('||V_ESQUEMA_M||'.S_DD_EST_EST_ITI.NEXTVAL, '||V_NUM||', ''6'', ''ENSAN'', ''En sanción'', ''En sanción'', 0, ''DML'', SYSDATE, 0)';
+					 VALUES ('||V_ESQUEMA_M||'.S_DD_EST_EST_ITI.NEXTVAL, '||V_NUM||', ''5'', ''ENSAN'', ''En sanción'', ''En sanción'', 0, ''DML'', SYSDATE, 0)';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Estado: En sanción insertado...');
 	ELSE
 		DBMS_OUTPUT.PUT_LINE('[INFO] Ya existia el estado En sanción');
 	END IF;
+	
+	-- Creamos el nuevo estado Sancionado si no existe ya
+	V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.DD_EST_ESTADOS_ITINERARIOS WHERE DD_EST_CODIGO = ''SANC''';
+	EXECUTE IMMEDIATE V_SQL INTO V_NUM;
+	IF V_NUM=0 THEN
+		V_SQL := 'SELECT DD_EIN_ID FROM '||V_ESQUEMA_M||'.DD_EIN_ENTIDAD_INFORMACION WHER E DD_EIN_CODIGO = ''2''';
+		EXECUTE IMMEDIATE V_SQL INTO V_NUM;
+		V_MSQL := 'INSERT INTO '||V_ESQUEMA_M||'.DD_EST_ESTADOS_ITINERARIOS (DD_EST_ID, DD_EIN_ID, DD_EST_ORDEN, DD_EST_CODIGO, DD_EST_DESCRIPCION, DD_EST_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+					 VALUES ('||V_ESQUEMA_M||'.S_DD_EST_EST_ITI.NEXTVAL, '||V_NUM||', ''6'', ''SANC'', ''Sancionado'', ''Sancionado'', 0, ''DML'', SYSDATE, 0)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Estado: Sancionado insertado...');
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('[INFO] Ya existe el estado Sancionado');
+	END IF;
+	
+	
 		
 		
 	-- Creamos los perfiles de gestión y supervisión para los nuevos estados del itinerario

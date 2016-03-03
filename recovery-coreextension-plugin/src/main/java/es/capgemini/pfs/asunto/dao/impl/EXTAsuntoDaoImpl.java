@@ -703,11 +703,10 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			hql.append(" and cdd2.id = crn.batchAcuerdoCierreDeuda.id ");
 			hql.append(" and asu.id = cdd2.asunto.id ");
 			hql.append(" and crn.resultado = rvn.codigo and crn.descripcionResultado = rvn.descripcion ");
-			
-			hql.append(" and crn.id in ( ");
-			hql.append(" select max(crn1.id) ");
+			hql.append(" and crn.fechaResultado = ( ");
+			hql.append(" select MAX(crn1.fechaResultado) ");
 			hql.append(" from  BatchCDDResultadoNuse crn1 ");
-			hql.append(" group by crn1.codigoExterno, crn1.batchAcuerdoCierreDeuda.id ) ");			
+			hql.append(" WHERE crn.codigoExterno = crn1.codigoExterno) ");			
 		}
 
 		// PERMISOS DEL USUARIO (en caso de que sea externo)

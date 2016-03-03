@@ -27,9 +27,6 @@ import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
-import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
@@ -642,11 +639,11 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		SimpleDateFormat formatoFechaFiltroWeb2 = new SimpleDateFormat("EEE MMM dd yyyy");
 
 		try {
-			if (!StringUtils.emtpyString(dateFrom)) {
+			if (!StringUtils.isBlank(dateFrom)) {
 				where.add(Restrictions.ge(field, formatoFechaFiltroWeb2.parse(dateFrom)));
 			}
 
-			if (!StringUtils.emtpyString(dateTo)) {
+			if (!StringUtils.isBlank(dateTo)) {
 				where.add(Restrictions.le(field, formatoFechaFiltroWeb2.parse(dateTo)));
 			}
 

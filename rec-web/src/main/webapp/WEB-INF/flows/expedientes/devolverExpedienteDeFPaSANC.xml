@@ -8,7 +8,7 @@
 	<!-- eleva el expediente a revision -->
     <end-state id="elevarExpediente" view="default" >
 	    <on-entry>
-	    	<evaluate expression="executor.execute('expedienteManager.devolverExpedienteDeFPaENSAN', id, isSupervisor)"/>
+	    	<evaluate expression="executor.execute('expedienteManager.devolverExpedienteDeFPaSANC', id, isSupervisor)"/>
 	    </on-entry>
     </end-state>
 </flow>

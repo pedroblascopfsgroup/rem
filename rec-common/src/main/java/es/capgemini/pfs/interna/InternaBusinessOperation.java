@@ -127,7 +127,8 @@ public final class InternaBusinessOperation {
     public static final String BO_EXP_MGR_ELEVAR_EXPEDIENTE_DE_ENSANCION_A_SANCIONADO = "expedienteManager.elevarExpedienteDeENSANaSANC";
     public static final String BO_EXP_MGR_ELEVAR_EXPEDIENTE_DE_SANCIONADO_A_FORMALIZAR_PROPUESTA = "expedienteManager.elevarExpedienteDeSANCaFP";
     public static final String BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_SANCIONADO_A_COMPLETAR_EXPEDIENTE = "expedienteManager.devolverExpedienteDeSANCaCE";
-    public static final String BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_FORMALIZAR_PROPUESTA_A_SANCIONADO = "expedienteManager.devolverExpedienteDeFPaENSAN";
+    public static final String BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_FORMALIZAR_PROPUESTA_A_SANCIONADO = "expedienteManager.devolverExpedienteDeFPaSANC";
+    public static final String BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_SANCIONADO_A_EN_SANCION = "expedienteManager.devolverExpedienteDeSANCaENSAN";
     /*****************************************************************************
      ** PoliticaManager.
      ****************************************************************************/

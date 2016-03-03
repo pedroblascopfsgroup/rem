@@ -46,6 +46,7 @@ function(entidad,page){
 	tipoAccion.ELEVAR_FOR_PROP					=12;
 	tipoAccion.DEVOLVER_COMPL_EXP				=13;
 	tipoAccion.DEVOLVER_SANCIONADO				=14;
+	tipoAccion.DEVOLVER_A_ENSANCION				=15;
 	
 	var cambioEstado=function(tipo){
 		var titulo;
@@ -157,7 +158,18 @@ function(entidad,page){
 				handler=function(btn, rta){
 					if (btn== 'ok'){
 						maskAll();
-						devolverExpedienteDeFPaENSAN(toolbar.getIdExpediente(), rta);
+						devolverExpedienteDeFPaSANC(toolbar.getIdExpediente(), rta);
+					}
+				};				
+				app.prompt(titulo, texto,handler);
+				return;
+			
+			case tipoAccion.DEVOLVER_A_ENSANCION:
+				titulo='<s:message code="expedientes.menu.devolverEnSancion" text="**Devolver a en sanción" />';
+				handler=function(btn, rta){
+					if (btn== 'ok'){
+						maskAll();
+						devolverExpedienteDeSANCaENSAN(toolbar.getIdExpediente(), rta);
 					}
 				};				
 				app.prompt(titulo, texto,handler);
@@ -287,9 +299,9 @@ function(entidad,page){
 		});
 	};
 	
-	var devolverExpedienteDeFPaENSAN = function(params, isSupervisor){
+	var devolverExpedienteDeFPaSANC = function(params, isSupervisor){
 		page.webflow({
-			flow: 'expediente/devolverExpedienteDeFPaENSAN' 
+			flow: 'expediente/devolverExpedienteDeFPaSANC' 
 			,eventName: 'elevarExpediente'
 			,params:{id:params, isSupervisor:isSupervisor}
 			,success: function(){
@@ -298,6 +310,19 @@ function(entidad,page){
 			,error:function(){
 				unmaskAll();
 			}	 
+		});
+	};
+	
+	var devolverExpedienteDeSANCaENSAN = function(params, rta){
+		page.webflow({
+				flow:  'expediente/devolverExpedienteDeSANCaENSAN'
+				,eventName: 'devolverExpediente'
+				,params:{id:params, respuesta:rta}
+				,success: function(){
+					Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="dc.devueltoAEnSancion" text="**Devuelto a En Sanción" />', entidad.refrescar());
+				},error:function(){
+						unmaskAll();
+				}	 
 		});
 	};
 	
@@ -469,6 +494,14 @@ function(entidad,page){
 					,iconCls : 'icon_elevar_revision'
 					,handler:function(){
 						cambioEstado(tipoAccion.ELEVAR_FOR_PROP)
+					}
+				},
+				{
+					text:'<s:message code="expedientes.menu.devolverEnSancion" text="**Devolver a En Sanción" />'
+					,id : 'expediente-accion16-devolverAEnSancion'
+					,iconCls : 'icon_completar_expediente'
+					,handler:function(){
+						cambioEstado(tipoAccion.DEVOLVER_A_ENSANCION)
 					}
 				},
 				{
@@ -892,7 +925,7 @@ function(entidad,page){
 		}
 		
 		//inicialmente ocultamos todos
-		showHide(false, 'expediente-accion0-elevarRevision', 'expediente-accion1-elevarComite',  'expediente-accion2-devolverRevision',  'expediente-accion3-devolverComite',  'expediente-accion4-solicitarCancelacion',  'expediente-accion5-verCancelacion',  'expediente-accion6-cancelacionExpediente', 'expediente-accion7-formulacionPropuesta', 'expediente-accion8-devolverComite', 'expediente-accion9-aceptarPropuesta','expediente-accion10-elevarEnSancion','expediente-accion11-elevarSancionado','expediente-accion12-devolverEnSancion','expediente-accion13-elevarFormalizarPropuesta','expediente-accion14-devolverCompletarExpediente','expediente-accion15-devolverAsancionado');
+		showHide(false, 'expediente-accion0-elevarRevision', 'expediente-accion1-elevarComite',  'expediente-accion2-devolverRevision',  'expediente-accion3-devolverComite',  'expediente-accion4-solicitarCancelacion',  'expediente-accion5-verCancelacion',  'expediente-accion6-cancelacionExpediente', 'expediente-accion7-formulacionPropuesta', 'expediente-accion8-devolverComite', 'expediente-accion9-aceptarPropuesta','expediente-accion10-elevarEnSancion','expediente-accion11-elevarSancionado','expediente-accion12-devolverEnSancion','expediente-accion13-elevarFormalizarPropuesta','expediente-accion14-devolverCompletarExpediente','expediente-accion15-devolverAsancionado','expediente-accion16-devolverAEnSancion');
 		if ( solicitudYPermisos){
 			
 			var estados = entidad.getData('estados');
@@ -980,12 +1013,15 @@ function(entidad,page){
 							{
 								showHide(estadoExpediente ==  EXP_ACTIVO ,'expediente-accion14-devolverCompletarExpediente');
 							}
+							
+							if(estados[i].codigo == 'ENSAN'){
+								showHide(estadoExpediente ==  EXP_ACTIVO ,'expediente-accion16-devolverAEnSancion');
+							}
 						}	
 					}
 					break;
 					
 				case 'FP' :
-					debugger;
 					if(esGestorSupervisorDeFase){
 						for(var i = 0; i < estados.length; i++){
 							if(estados[i].codigo == 'DC'){

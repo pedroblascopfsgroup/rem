@@ -124,6 +124,9 @@ public class SubtipoTarea implements Serializable, Auditable {
     public static final String CODIGO_TAREA_EXP_RECOBRO_META_VOLANTE_OK="REC_META_VOL_OK";
     public static final String CODIGO_TAREA_EXP_RECOBRO_META_VOLANTE_KO="REC_META_VOL_KO";
     
+    public static final String CODIGO_TAREA_EN_SANCION="ENSAN";
+    public static final String CODIGO_TAREA_SANCIONADO="SANC";
+    
     // OJO: Todas los c�digos de tareas deben estar en shared.js.jsp, y
     // tenerlo en cuenta tambien en listadoTareas.jsp
 

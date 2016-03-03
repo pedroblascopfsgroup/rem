@@ -1381,6 +1381,9 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         		}else if(expediente.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION) && estadoNuevo!= null && estadoNuevo.equals(DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE)){
         			regla.setCumple(cumplimientoReglaENSAN(expediente, acuerdos));
         			if(!regla.getCumple()){ return false;}
+        		}else if(expediente.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO) && estadoNuevo!= null && estadoNuevo.equals(DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION)){
+        			regla.setCumple(cumplimientoReglaSANC(expediente, acuerdos));
+        			if(!regla.getCumple()){ return false;}
         		}
         	}
         }
@@ -1439,24 +1442,32 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_DE_ENSANCION_A_SANCIONADO)
     @Transactional(readOnly = false)
     public void elevarExpedienteDeENSANaSANC(Long idExpediente, Boolean isSupervisor) {
-        /*Expediente exp = expedienteDao.get(idExpediente);
 
-        Boolean permitidoElevar = compruebaElevacion(exp, ExpedienteBPMConstants.STATE_COMPLETAR_EXPEDIENTE, isSupervisor);
+        Expediente exp = expedienteDao.get(idExpediente);
+
+        Boolean permitidoElevar = compruebaElevacion(exp, ExpedienteBPMConstants.STATE_EN_SANCION, isSupervisor);
         if (!permitidoElevar) { throw new BusinessOperationException("expediente.elevar.falloValidaciones"); }
+
+        //Verifico que tenga un comit� al cual elevar
+        DDZona zonaExpediente = exp.getOficina().getZona();
+        Comite comite = buscaComite(zonaExpediente, exp);
+        if (comite == null) { throw new BusinessOperationException("expediente.comiteInexistente"); }
 
         Boolean politicasVigentes = (Boolean) executor.execute(InternaBusinessOperation.BO_POL_MGR_MARCAR_POLITICAS_VIGENTES, exp, null, false);
 
-        
+        //Si se ha marcado como vigente las pol�ticas, el expediente se decide
         if (politicasVigentes) {
+
             DDEstadoExpediente estadoExpediente = (DDEstadoExpediente) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
                     DDEstadoExpediente.class, DDEstadoExpediente.ESTADO_EXPEDIENTE_DECIDIDO);
             exp.setEstadoExpediente(estadoExpediente);
             saveOrUpdate(exp);
 
+            //Si no se ha marcado como vigente, se siguie en la elevación del expediente
         } else {
             executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, exp.getProcessBpm(),
-                    ExpedienteBPMConstants.TRANSITION_ENVIARAREVISION);
-        }*/
+                    ExpedienteBPMConstants.TRANSITION_ELEVAR_SANCIONADO);
+        }
     }
 	
 	
@@ -1520,12 +1531,38 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	 */
 	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_SANCIONADO_A_COMPLETAR_EXPEDIENTE)
 	@Transactional(readOnly = false)
-	public void devolverExpedienteDeSancionadoACompletarExpediente(Long idExpediente,Boolean isSupervisor) {
+	public void devolverExpedienteDeSancionadoACompletarExpediente(Long idExpediente,String respuesta) {
 		 
 			Expediente exp = expedienteDao.get(idExpediente);
+			
+	        Long bpmProcess = exp.getProcessBpm();
+	        if (bpmProcess == null) { throw new BusinessOperationException("expediente.bpmprocess.error"); }
+	        String node = (String) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_ACTUAL_NODE, bpmProcess);
+	        if (ExpedienteBPMConstants.STATE_SANCIONADO.equals(node)) {
 
-	        executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, exp.getProcessBpm(),
-	                    ExpedienteBPMConstants.TRANSITION_DEVOLVER_ES_SANCION);
+	            executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, bpmProcess, ExpedienteBPMConstants.TRANSITION_DEVOLVER_COMPLETAR_EXPEDIENTE);
+	            
+	            // *** Recuperamos la tarea generada en el BPM para cambiarle la descripción y ponerle los motivos de devolución ***
+	            Long idTareaAsociada = (Long) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_VARIABLES_TO_PROCESS, bpmProcess, TAREA_ASOCIADA_RE);
+	            
+	            if (idTareaAsociada != null) {
+	                TareaNotificacion tarea = (TareaNotificacion) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET, idTareaAsociada);
+	                if (tarea != null) {
+	                    SubtipoTarea subtipoTarea = (SubtipoTarea) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET_SUBTIPO_TAREA_BY_CODE,
+	                            SubtipoTarea.CODIGO_COMPLETAR_EXPEDIENTE);
+	                    String descripcionTarea = subtipoTarea.getDescripcionLarga() + " - Devuelto por los motivos " + respuesta;
+	                    tarea.setDescripcionTarea(descripcionTarea);
+	                    executor.execute(ComunBusinessOperation.BO_TAREA_MGR_SAVE_OR_UPDATE, tarea);
+	                }
+	            }
+	            // *** *** //
+
+	            executor.execute(InternaBusinessOperation.BO_POL_MGR_DESHACER_ULTIMAS_POLITICAS, idExpediente);
+	        } else {
+	            logger.error("No se puede devoler a REVISION porque el expediente no esta en DECISION_COMITE");
+	            throw new BusinessOperationException("expediente.devolucionRevision.errorJBPM");
+	        }
+
 	}
 	
 	/**
@@ -1539,6 +1576,49 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 
 	        executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, exp.getProcessBpm(),
 	                    ExpedienteBPMConstants.TRANSITION_DEVOLVER_SANCIONADO);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_SANCIONADO_A_EN_SANCION)
+	@Transactional(readOnly = false)
+	public void devolverExpedienteDeSancionadoAEnSancion(Long idExpediente,String respuesta) {
+		 
+			Expediente exp = expedienteDao.get(idExpediente);
+			
+	        
+	        Boolean permitidoDevolver = compruebaDevolucion(exp, ExpedienteBPMConstants.STATE_SANCIONADO, DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION);
+	        if (!permitidoDevolver) { throw new BusinessOperationException("expediente.elevar.falloValidaciones"); }
+
+			
+	        Long bpmProcess = exp.getProcessBpm();
+	        if (bpmProcess == null) { throw new BusinessOperationException("expediente.bpmprocess.error"); }
+	        String node = (String) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_ACTUAL_NODE, bpmProcess);
+	        if (ExpedienteBPMConstants.STATE_SANCIONADO.equals(node)) {
+
+		        executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, bpmProcess, ExpedienteBPMConstants.TRANSITION_DEVOLVER_EN_SANCION);
+	            
+	            // *** Recuperamos la tarea generada en el BPM para cambiarle la descripción y ponerle los motivos de devolución ***
+	            Long idTareaAsociada = (Long) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_VARIABLES_TO_PROCESS, bpmProcess, TAREA_ASOCIADA_RE);
+	            
+	            if (idTareaAsociada != null) {
+	                TareaNotificacion tarea = (TareaNotificacion) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET, idTareaAsociada);
+	                if (tarea != null) {
+	                    SubtipoTarea subtipoTarea = (SubtipoTarea) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET_SUBTIPO_TAREA_BY_CODE,
+	                            SubtipoTarea.CODIGO_TAREA_EN_SANCION);
+	                    String descripcionTarea = subtipoTarea.getDescripcionLarga() + " - Devuelto por los motivos " + respuesta;
+	                    tarea.setDescripcionTarea(descripcionTarea);
+	                    executor.execute(ComunBusinessOperation.BO_TAREA_MGR_SAVE_OR_UPDATE, tarea);
+	                }
+	            }
+	            // *** *** //
+
+	            executor.execute(InternaBusinessOperation.BO_POL_MGR_DESHACER_ULTIMAS_POLITICAS, idExpediente);
+	        } else {
+	            logger.error("No se puede devoler a EN SANCION porque el expediente no esta en SANCIONADO");
+	            throw new BusinessOperationException("expediente.devolucionRevision.errorJBPM");
+	        }
 	}
 	
 

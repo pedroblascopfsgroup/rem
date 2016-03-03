@@ -985,6 +985,10 @@ function(entidad,page){
 							</sec:authorize>
 						}
 					}
+					if(!permiteElevar && permiteDevolver){
+						showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion2-devolverRevision');
+					}
+
 					break;
 				
 				case 'ENSAN' :

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.persona.dao.impl.PageSql;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.listadoPreProyectado.api.ListadoPreProyectadoApi;
 import es.pfsgroup.listadoPreProyectado.api.VListadoPreProyectadoCntDao;
@@ -26,17 +27,19 @@ public class ListadoPreProyectadoManager implements ListadoPreProyectadoApi {
 	UsuarioManager usuarioManganer;
 
 	@Override
-	public Page getListPreproyectadoExp(
-			ListadoPreProyectadoDTO dto) {
-		
+	public Page getListPreproyectadoExp(ListadoPreProyectadoDTO dto) {
 		dto.setUsuarioLogado(usuarioManganer.getUsuarioLogado());
-		
-		return vListadoPreProyectadoExpDao.getListadoPreProyectadoExp(dto);
+
+		PageSql page = new PageSql();
+
+		page.setResults(vListadoPreProyectadoExpDao.getListadoPreProyectadoExp(dto));
+		page.setTotalCount(vListadoPreProyectadoExpDao.getListadoPreProyectadoExpCount(dto));
+
+		return page;
 	}
 
 	@Override
-	public List<VListadoPreProyectadoCnt> getListPreproyectadoCnt(
-			ListadoPreProyectadoDTO dto) {
+	public List<VListadoPreProyectadoCnt> getListPreproyectadoCnt(ListadoPreProyectadoDTO dto) {
 
 		dto.setUsuarioLogado(usuarioManganer.getUsuarioLogado());
 		return vListadoPreProyectadoCntDao.getListadoPreProyectadoCnt(dto);
@@ -50,8 +53,7 @@ public class ListadoPreProyectadoManager implements ListadoPreProyectadoApi {
 	}
 
 	@Override
-	public int getCountListadoPreProyectadoCntPaginated(
-			ListadoPreProyectadoDTO dto) {
+	public int getCountListadoPreProyectadoCntPaginated(ListadoPreProyectadoDTO dto) {
 		
 		dto.setUsuarioLogado(usuarioManganer.getUsuarioLogado());
 		return vListadoPreProyectadoCntDao.getCountListadoPreProyectadoCntPaginated(dto);

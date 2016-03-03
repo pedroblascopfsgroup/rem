@@ -126,6 +126,7 @@ app.subtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_RESPONDIDA_DE_GESTOR_EXPTE = '
 app.subtipoTarea.CODIGO_TAREA_COMUNICACION_DE_SUPERVISOR_EXPTE = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_TAREA_COMUNICACION_DE_SUPERVISOR_EXPTE" />';
 app.subtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_DE_GESTOR_EXPTE = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_DE_GESTOR_EXPTE" />';
 app.subtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_DE_SUPERVISOR_EXPTE = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_DE_SUPERVISOR_EXPTE" />';
+app.subtipoTarea.CODIGO_NOTIFICACION_EXPEDIENTE_NUEVO_RIESGO = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_NOTIFICACION_EXPEDIENTE_NUEVO_RIESGO" />';
 
 app.subtipoTarea.CODIGO_NOTIFICACION_INTERCOMUNICACION = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_NOTIFICACION_INTERCOMUNICACION" />';
 app.subtipoTarea.CODIGO_TAREA_COMUNICACION_INTERCOMUNICACION = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_TAREA_COMUNICACION_INTERCOMUNICACION" />';

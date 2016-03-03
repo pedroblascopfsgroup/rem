@@ -554,6 +554,16 @@
 						</bean>
 					</list>
 				</entry>
+				<entry key="R_TR_CNF_NOT">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_TR_CNF_NOT</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
 			</map>
 		</property>
 	</bean>
@@ -770,12 +780,12 @@
 						</bean>
 					</list>
 				</entry>
-				<entry key="R_DOT_DET_OCU">
+				<entry key="R_DOC_DET_OCU">
 					<list>
 						<bean
 							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
 							<property name="codigoInput">
-								<value>I_DOT_DET_OCU</value>
+								<value>I_DOC_DET_OCU</value>
 							</property>
 						</bean>
 					</list>
@@ -1399,16 +1409,6 @@
 						</bean>
 					</list>
 				</entry>
-				<entry key="R_ACT_AUD_PRV">
-					<list>
-						<bean
-							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
-							<property name="codigoInput">
-								<value>I_ACT_AUD_PRV</value>
-							</property>
-						</bean>
-					</list>
-				</entry>
 				<entry key="R_ESC_CON_DEM">
 					<list>
 						<bean
@@ -1421,10 +1421,10 @@
 				</entry>
 				<entry key="R_ACT_AUD_PRV">
 					<list>
-						<bean
+						<bean 
 							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
 							<property name="codigoInput">
-								<value>I_ESC_CON_DEM</value>
+								<value>I_ACT_AUD_PRV</value>
 							</property>
 						</bean>
 					</list>
@@ -2077,6 +2077,16 @@
 							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
 							<property name="codigoInput">
 								<value>I_TR_COS_ENT_SOL_COST</value>
+							</property>
+						</bean>
+					</list>
+				</entry>		
+				<entry key="R_DOC_DET_OCU">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_DOC_DET_OCU</value>
 							</property>
 						</bean>
 					</list>

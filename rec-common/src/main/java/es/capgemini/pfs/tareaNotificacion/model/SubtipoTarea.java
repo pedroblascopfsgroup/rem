@@ -126,7 +126,9 @@ public class SubtipoTarea implements Serializable, Auditable {
     
     public static final String CODIGO_TAREA_EN_SANCION="ENSAN";
     public static final String CODIGO_TAREA_SANCIONADO="SANC";
-    
+
+    public static final String CODIGO_NOTIFICACION_EXPEDIENTE_NUEVO_RIESGO = "1000";
+
     // OJO: Todas los c�digos de tareas deben estar en shared.js.jsp, y
     // tenerlo en cuenta tambien en listadoTareas.jsp
 

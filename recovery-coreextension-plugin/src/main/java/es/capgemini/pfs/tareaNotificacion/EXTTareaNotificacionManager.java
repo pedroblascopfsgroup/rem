@@ -1130,7 +1130,9 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_CIERRA_SESION)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_EXPEDIENTE_DECISION_TOMADA)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_GESTOR_PROPUESTA_SUBASTA)
-                                || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(EXTSubtipoTarea.CODIGO_NOTIFICACION_ACUERDOS)) {
+                                || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(EXTSubtipoTarea.CODIGO_NOTIFICACION_ACUERDOS)
+                                || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(EXTSubtipoTarea.CODIGO_NOTIFICACION_EXPEDIENTE_NUEVO_RIESGO)
+                               ) {
                             param.put("fuerzaChkLeida", "true");
                         }
                     }

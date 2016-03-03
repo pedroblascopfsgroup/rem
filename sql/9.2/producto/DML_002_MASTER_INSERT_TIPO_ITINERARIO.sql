@@ -40,28 +40,6 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] Ya existe el tipo de itinerario: Gestión de deuda.');
 	END IF;
 	
-	-- Actualización del diccionario de estados itinerario
-	-- Primero cambiamos el orden del estado Formalizar Propuesta, para anexar los 2 en medio
-	V_MSQL := 'UPDATE '||V_ESQUEMA_M||'.DD_EST_ESTADOS_ITINERARIOS SET DD_EST_ORDEN = 7 WHERE DD_EST_CODIGO = ''FP'' 
-				AND DD_EIN_ID = (SELECT DD_EIN_ID FROM '||V_ESQUEMA_M||'.DD_EIN_ENTIDAD_INFORMACION WHERE DD_EIN_CODIGO = ''2'')';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] Orden del estado Formalizar Propuesta actualizado');
-	
-	-- Creamos el nuevo estado Sancionado si no existe ya
-	V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.DD_EST_ESTADOS_ITINERARIOS WHERE DD_EST_CODIGO = ''SANC''';
-	EXECUTE IMMEDIATE V_SQL INTO V_NUM;
-	IF V_NUM=0 THEN
-		V_SQL := 'SELECT DD_EIN_ID FROM '||V_ESQUEMA_M||'.DD_EIN_ENTIDAD_INFORMACION WHERE DD_EIN_CODIGO = ''2''';
-		EXECUTE IMMEDIATE V_SQL INTO V_NUM;
-		V_MSQL := 'INSERT INTO '||V_ESQUEMA_M||'.DD_EST_ESTADOS_ITINERARIOS (DD_EST_ID, DD_EIN_ID, DD_EST_ORDEN, DD_EST_CODIGO, DD_EST_DESCRIPCION, DD_EST_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
-					 VALUES ('||V_ESQUEMA_M||'.S_DD_EST_EST_ITI.NEXTVAL, '||V_NUM||', ''6'', ''SANC'', ''Sancionado'', ''Sancionado'', 0, ''DML'', SYSDATE, 0)';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Estado: Sancionado insertado...');
-	ELSE
-		DBMS_OUTPUT.PUT_LINE('[INFO] Ya existe el estado Sancionado');
-	END IF;
-	
-
     COMMIT;
 	
 EXCEPTION

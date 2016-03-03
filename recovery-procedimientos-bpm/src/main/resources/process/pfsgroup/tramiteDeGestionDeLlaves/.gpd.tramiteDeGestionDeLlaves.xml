@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="tramiteDeGestionDeLlaves" width="1071" height="535">
+<root-container name="tramiteDeGestionDeLlaves" width="1176" height="774">
   <node name="Inicio" x="273" y="4" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -25,9 +25,6 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
       <bendpoint w1="-287" h1="-44" w2="-285" h2="51"/>
     </edge>
     <edge>
@@ -35,48 +32,13 @@
       <bendpoint w1="-296" h1="16" w2="-296" h2="16"/>
       <bendpoint w1="-262" h1="-19" w2="-262" h2="-19"/>
     </edge>
-  </node>
-  <node name="P417_RegistrarRecepcionLlaves" x="227" y="292" width="219" height="36">
     <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-      <bendpoint w1="-278" h1="-58" w2="-281" h2="56"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-      <bendpoint w1="-296" h1="9" w2="-296" h2="9"/>
-      <bendpoint w1="-255" h1="-24" w2="-255" h2="-24"/>
+      <label x="3" y="-43"/>
     </edge>
   </node>
-  <node name="P417_RegistrarEnvioLlavesDepFinal" x="218" y="409" width="243" height="36">
+  <node name="P417_RegistrarRecepcionLlavesDepFinal" x="220" y="387" width="301" height="36">
     <edge>
       <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-      <bendpoint w1="-283" h1="-58" w2="-280" h2="59"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-      <bendpoint w1="-295" h1="9" w2="-295" h2="9"/>
-      <bendpoint w1="-270" h1="-20" w2="-270" h2="-20"/>
-    </edge>
-  </node>
-  <node name="P417_RegistrarRecepcionLlavesDepFinal" x="229" y="498" width="301" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-      <bendpoint w1="-331" h1="-43" w2="-291" h2="46"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -85,6 +47,10 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="27" y="-7"/>
+      <bendpoint w1="-304" h1="-107" w2="-273" h2="102"/>
     </edge>
   </node>
   <node name="P417_Decision1" x="820" y="473" width="132" height="36">

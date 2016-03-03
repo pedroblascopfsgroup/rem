@@ -7,13 +7,13 @@ create or replace PROCEDURE      SP_MIG_A_TABLA_INTERMEDIA IS
                  FROM MIG_PROCEDIMIENTOS_CABECERA
                  --WHERE TIPO_PROCEDIMIENTO = 'P01' --('P01', 'P06', 'P08','P10')
                  --AND ROWNUM < 51
-                 --where ultimo_hito in ('38','39','57','58')
+                 --WHERE CD_PROCEDIMIENTO = 51145 --65580--34816 --65580
                  UNION
                  SELECT CD_CONCURSO AS CD_PROCEDIMIENTO,
                         'P90' AS TIPO_PROCEDIMIENTO,
-                        DECODE(SUBSTR(FASE_CONCURSO,1,INSTR(FASE_CONCURSO,'-')-1),'FASE COMUN',70,'FASE CONVENIO',72,'FASE LIQUIDACION',74) AS ULTIMO_HITO
+                        DECODE(SUBSTR(FASE_CONCURSO,1,INSTR(FASE_CONCURSO,'-')-1),'FASE COMUN',70,'FASE CONVENIO',73,'FASE LIQUIDACION',75) AS ULTIMO_HITO
                  FROM MIG_CONCURSOS_CABECERA
---                 WHERE CD_CONCURSO = 23809675
+--                 WHERE CD_CONCURSO = 30797
                  ORDER BY 1;
 
 
@@ -42,7 +42,7 @@ create or replace PROCEDURE      SP_MIG_A_TABLA_INTERMEDIA IS
     					 FROM MIG_PARAM_HITOS_VALORES
     					 WHERE MIG_PARAM_HITO_ID = p_MIG_PARAM_HITO_ID
     					 ORDER BY ORDEN;
-               
+
    CURSOR c_BIENES_PROCEDIMIENTO (p_CD_PROCEDIMIENTO IN VARCHAR2) IS SELECT DISTINCT NVL(CD_BIEN,0) AS CD_BIEN, ULTIMO_HITO_BIEN_PROC
                                                                      FROM MIG_PROCEDIMIENTOS_BIENES
                                                                      WHERE CD_PROCEDIMIENTO = p_CD_PROCEDIMIENTO
@@ -103,8 +103,8 @@ create or replace PROCEDURE      SP_MIG_A_TABLA_INTERMEDIA IS
   Z NUMBER := 0;
 
   v_MAX_ORDEN NUMBER(1):=0;
-  v_COUNT_TEMP NUMBER:=0;
-  v_COUNT_TEMP_COMMIT NUMBER:=0;
+  
+  v_ULTIMO_HITO NUMBER(2) := 0;
 
 
 BEGIN
@@ -192,12 +192,13 @@ DBMS_OUTPUT.ENABLE(1000000);
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' MIG_PROCEDIMIENTOS_DEMANDADOS ANALIZADA');
 
     EXECUTE IMMEDIATE ('SELECT COUNT(1) FROM ALL_INDEXES WHERE INDEX_NAME=''IDX_MIG_PRC_BIE_X'' AND OWNER=''CM01''') INTO V_COUNT;
+
     IF V_COUNT = 0 THEN
         EXECUTE IMMEDIATE('CREATE INDEX IDX_MIG_PRC_BIE_X ON '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_BIENES (CD_PROCEDIMIENTO, CD_BIEN) nologging');
+
     END IF;
     EXECUTE IMMEDIATE 'ANALYZE TABLE '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_BIENES COMPUTE STATISTICS FOR ALL INDEXES';
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' MIG_PROCEDIMIENTOS_BIENES ANALIZADA');
-
 
     SELECT COUNT(1)
     INTO V_COUNT
@@ -258,31 +259,73 @@ DBMS_OUTPUT.ENABLE(1000000);
         v_COUNT := v_COUNT + 1;
 
         IF MOD(v_COUNT,1000) = 0 THEN
-
-
-            SELECT COUNT(1)
-            INTO v_COUNT_TEMP_COMMIT
-            FROM TEMP_MIG_MAESTRA_HITOS_BIENES;
-
             COMMIT;
             DBMS_OUTPUT.PUT_LINE(TO_CHAR(SYSDATE,'HH24:MI:SS')||' - COMMIT Reached at '||v_COUNT||' / CD_PROCEDIMIENTO = '||v_CD_PROCEDIMIENTO);
-            DBMS_OUTPUT.PUT_LINE('[INFO] '||v_COUNT_TEMP_COMMIT||' CONSULTAS EN TABLA TEMP Realizadas');
 
         END IF;
 
-		FOR k IN c_PARAM_HITOS(j.TIPO_PROCEDIMIENTO, j.ULTIMO_HITO) LOOP
 
-        IF k.COD_HITO_ACTUAL = j.ULTIMO_HITO THEN
+       v_ULTIMO_HITO := j.ULTIMO_HITO;
+       
+--       DBMS_OUTPUT.PUT_LINE('v_ULTIMO_HITO = '||v_ULTIMO_HITO);
+
+       --CONCURSOS --NUEVAS FECHAS
+       IF j.TIPO_PROCEDIMIENTO = 'P90' THEN
+
+                 --CALCULO DEL HITO EN CONCURSOS:
+                 IF v_ULTIMO_HITO = 70 THEN
+                 
+                     SELECT DECODE(FECHA_COMUNICACION_CREDITOS,NULL,v_ULTIMO_HITO,71)
+                     INTO v_ULTIMO_HITO
+                     FROM MIG_CONCURSOS_CABECERA
+                     WHERE CD_CONCURSO = j.CD_PROCEDIMIENTO;
+                 
+                 END IF;
+                 
+                 SELECT DECODE(FECHA_APROBACION_CONVENIO,NULL,v_ULTIMO_HITO,74)
+                 INTO v_ULTIMO_HITO
+                 FROM MIG_CONCURSOS_CABECERA
+                 WHERE CD_CONCURSO = j.CD_PROCEDIMIENTO;                                  
+                 
+                 SELECT DECODE(FECHA_APERTURA,NULL,v_ULTIMO_HITO,76)
+                 INTO v_ULTIMO_HITO
+                 FROM MIG_CONCURSOS_CABECERA
+                 WHERE CD_CONCURSO = j.CD_PROCEDIMIENTO;
+                 
+                 SELECT DECODE(FECHA_APROBACION_PLAN,NULL,v_ULTIMO_HITO,77)
+                 INTO v_ULTIMO_HITO
+                 FROM MIG_CONCURSOS_CABECERA
+                 WHERE CD_CONCURSO = j.CD_PROCEDIMIENTO;
+                 
+                 SELECT DECODE(ALEGACIONES_PLAN_LIQUIDACION,NULL,v_ULTIMO_HITO,78)
+                 INTO v_ULTIMO_HITO
+                 FROM MIG_CONCURSOS_CABECERA
+                 WHERE CD_CONCURSO = j.CD_PROCEDIMIENTO;
+          
+                 SELECT DECODE(FECHA_SUBASTA,NULL,v_ULTIMO_HITO,80)
+                 INTO v_ULTIMO_HITO
+                 FROM MIG_CONCURSOS_CABECERA
+                 WHERE CD_CONCURSO = j.CD_PROCEDIMIENTO;
+
+       END IF;
+
+       --DBMS_OUTPUT.PUT_LINE('v_ULTIMO_HITO = '||v_ULTIMO_HITO);
+
+
+
+		FOR k IN c_PARAM_HITOS(j.TIPO_PROCEDIMIENTO, v_ULTIMO_HITO) LOOP
+
+        IF k.COD_HITO_ACTUAL = v_ULTIMO_HITO THEN
 
            v_TAR_FINALIZADA := k.TAR_FINALIZADA;
 
-        ELSIF ((k.TAP_CODIGO = 'H030_SolicitarInformacionCargasAnt' OR k.TAP_CODIGO = 'H058_EstConformidadOAlegacion') AND j.ULTIMO_HITO IN (50,51)) THEN
+        ELSIF ((k.TAP_CODIGO = 'H030_SolicitarInformacionCargasAnt' OR k.TAP_CODIGO = 'H058_EstConformidadOAlegacion') AND v_ULTIMO_HITO IN (50,51)) THEN
 
           v_PTE_CERT_CARGAS := 1;
 
           v_TAR_FINALIZADA := 0;
 
-        ELSIF ((k.TAP_CODIGO = 'H030_SolicitarInformacionCargasAnt' OR k.TAP_CODIGO = 'H058_EstConformidadOAlegacion') AND j.ULTIMO_HITO > 51 AND v_FLAG_VIGILANCIA_EMBARGOS = 1) THEN
+        ELSIF ((k.TAP_CODIGO = 'H030_SolicitarInformacionCargasAnt' OR k.TAP_CODIGO = 'H058_EstConformidadOAlegacion') AND v_ULTIMO_HITO > 51 AND v_FLAG_VIGILANCIA_EMBARGOS = 1) THEN
 
           v_PTE_CERT_CARGAS := 1;
 
@@ -328,7 +371,7 @@ DBMS_OUTPUT.ENABLE(1000000);
 
                     v_ORDEN := v_ORDEN - 1;
 
-                ELSIF (k.DD_TPO_CODIGO IN ('H030','H058') AND v_FLAG_VIGILANCIA_EMBARGOS = 1) OR (j.ULTIMO_HITO IN (50.51)) THEN
+                ELSIF (k.DD_TPO_CODIGO IN ('H030','H058') AND v_FLAG_VIGILANCIA_EMBARGOS = 1) OR (v_ULTIMO_HITO IN (50.51)) THEN
 
                     v_PRC_PRC_ID := v_PRC_EJECUT;
 
@@ -352,7 +395,7 @@ DBMS_OUTPUT.ENABLE(1000000);
                       INTO v_PRC_ID
                       FROM DUAL;
 
-                ELSIF k.DD_TPO_CODIGO = 'H033' AND v_DD_TPO_CODIGO_ANTERIOR = 'H017' THEN
+                ELSIF k.DD_TPO_CODIGO = 'H033' AND v_DD_TPO_CODIGO_ANTERIOR = 'H041' THEN
 
                       v_PRC_PRC_ID := v_PRC_CONCURSO;
 
@@ -441,7 +484,7 @@ DBMS_OUTPUT.ENABLE(1000000);
 
 
 
-                            IF k.ORDEN = 1 AND l.CAMPO_INTERFAZ = 'FECHA_PRESENTACION_DEMANDA' AND v_TEV_VALOR IS NULL AND j.ULTIMO_HITO IN (1,20,10,29,40,59) THEN
+                            IF k.ORDEN = 1 AND l.CAMPO_INTERFAZ = 'FECHA_PRESENTACION_DEMANDA' AND v_TEV_VALOR IS NULL AND v_ULTIMO_HITO IN (1,20,10,29,40,59) THEN
 
                                   v_TAR_FINALIZADA := 0;
 
@@ -453,7 +496,7 @@ DBMS_OUTPUT.ENABLE(1000000);
                             -- VEMOS SI HAY EMBARGOS
                             IF k.TAP_CODIGO = 'H016_confAdmiDecretoEmbargo' AND l.TEV_NOMBRE = 'comboBienes' THEN
 
-                                IF TO_NUMBER(v_TEV_VALOR) > 0 OR j.ULTIMO_HITO = 3 THEN
+                                IF TO_NUMBER(v_TEV_VALOR) > 0 OR v_ULTIMO_HITO = 3 THEN
 
                                    v_FLAG_VIGILANCIA_EMBARGOS := 1;
 
@@ -489,7 +532,7 @@ DBMS_OUTPUT.ENABLE(1000000);
 
                             IF k.TAP_CODIGO = 'H016_registrarDemandaOposicion' AND l.TEV_NOMBRE = 'comboOposicion' AND v_TEV_VALOR = '0' THEN
 
-                               IF j.ULTIMO_HITO = 3 THEN
+                               IF v_ULTIMO_HITO = 3 THEN
 
                                   v_CONTROL := 3;
 
@@ -505,7 +548,7 @@ DBMS_OUTPUT.ENABLE(1000000);
 
                                v_CONTROL := 3;
 
-                               IF j.ULTIMO_HITO = 7 THEN
+                               IF v_ULTIMO_HITO = 7 THEN
 
                                   v_TAR_FINALIZADA := 0;
 
@@ -552,7 +595,7 @@ DBMS_OUTPUT.ENABLE(1000000);
                                               ,v_TAR_FINALIZADA
                                               , NULL
                                               , k.COD_HITO_ACTUAL
-                                              , j.ULTIMO_HITO);
+                                              , v_ULTIMO_HITO);
 
                                         SELECT S_TEV_TAREA_EXTERNA_VALOR.NEXTVAL
                                         INTO v_TEV_ID
@@ -645,7 +688,7 @@ DBMS_OUTPUT.ENABLE(1000000);
                                                     ,0 -- v_TAR_FINALIZADA
                                                     ,NULL
                                                     , k.COD_HITO_ACTUAL
-                                              , j.ULTIMO_HITO);
+                                              , v_ULTIMO_HITO);
 
                                    END IF;
 
@@ -655,13 +698,13 @@ DBMS_OUTPUT.ENABLE(1000000);
 
                             ELSIF v_CONTROL = 3 AND k.DD_TPO_CODIGO = 'H024' AND k.COD_HITO_ACTUAL >= 15 THEN
 
-                               IF j.ULTIMO_HITO = 15 THEN
+                               IF v_ULTIMO_HITO = 15 THEN
 
                                    v_TAR_FINALIZADA := k.TAR_FINALIZADA;
 
                                    v_CONTROL := 0;
 
-                               ELSIF j.ULTIMO_HITO > 15 THEN
+                               ELSIF v_ULTIMO_HITO > 15 THEN
 
                                    v_TAR_FINALIZADA := 1;
 
@@ -679,8 +722,8 @@ DBMS_OUTPUT.ENABLE(1000000);
 
                                v_TAR_FINALIZADA := 0;
 
-                               IF v_CONTROL = 3 AND j.ULTIMO_HITO  = 32 THEN
-
+                               IF v_CONTROL = 3 AND v_ULTIMO_HITO  = 32 THEN
+                               
                                    DELETE FROM MIG_MAESTRA_HITOS_VALORES
                                    WHERE TAR_ID IN (SELECT DISTINCT TAR_ID
                                                     FROM MIG_MAESTRA_HITOS
@@ -702,7 +745,7 @@ DBMS_OUTPUT.ENABLE(1000000);
 
                              END IF;
 
-                             IF k.COD_HITO_ACTUAL = 33 AND j.ULTIMO_HITO = 33 THEN
+                             IF k.COD_HITO_ACTUAL = 33 AND v_ULTIMO_HITO = 33 THEN
 
                                  v_CONTROL := 3;
 
@@ -743,17 +786,17 @@ DBMS_OUTPUT.ENABLE(1000000);
                                                 ,v_TAR_FINALIZADA
                                                 ,NULL
                                                 ,k.COD_HITO_ACTUAL
-                                                ,j.ULTIMO_HITO);
+                                                ,v_ULTIMO_HITO);
 
                                        Z := 1;
 
                                     END IF;
 
-                            ELSIF (k.TAP_CODIGO = 'H001_ConfirmarSiExisteOposicion' AND l.TEV_NOMBRE = 'comboResultado' AND v_TEV_VALOR = '0' AND j.ULTIMO_HITO > 33) THEN
-                            
+                            ELSIF (k.TAP_CODIGO = 'H001_ConfirmarSiExisteOposicion' AND l.TEV_NOMBRE = 'comboResultado' AND v_TEV_VALOR = '0' AND v_ULTIMO_HITO > 33) THEN
+
                                   v_CONTROL := 3;
 
-                            ELSIF k.TAP_CODIGO = 'H001_ConfirmarSiExisteOposicion' AND l.TEV_NOMBRE = 'comboResultado' AND v_TEV_VALOR = '1' AND j.ULTIMO_HITO > 33 THEN
+                            ELSIF k.TAP_CODIGO = 'H001_ConfirmarSiExisteOposicion' AND l.TEV_NOMBRE = 'comboResultado' AND v_TEV_VALOR = '1' AND v_ULTIMO_HITO > 33 THEN
 
                                   v_CONTROL := 0;
 
@@ -770,13 +813,13 @@ DBMS_OUTPUT.ENABLE(1000000);
 
                             IF k.TAP_CODIGO = 'H020_AutoDespaEjecMasDecretoEmbargo' AND l.TEV_NOMBRE = 'bienesEmbargables' THEN
 
-                                IF TO_NUMBER(v_TEV_VALOR) > 0 OR j.ULTIMO_HITO IN (50,51) THEN
+                                IF TO_NUMBER(v_TEV_VALOR) > 0 OR v_ULTIMO_HITO IN (50,51) THEN
 
                                    v_FLAG_VIGILANCIA_EMBARGOS := 1;
 
                                    v_CONTROL := 0;
 
-                                ELSIF TO_NUMBER(v_TEV_VALOR) = 0 AND j.ULTIMO_HITO NOT IN (50,51) AND j.TIPO_PROCEDIMIENTO = 'P03' THEN
+                                ELSIF TO_NUMBER(v_TEV_VALOR) = 0 AND v_ULTIMO_HITO NOT IN (50,51) AND j.TIPO_PROCEDIMIENTO = 'P03' THEN
 
                                     v_FLAG_VIGILANCIA_EMBARGOS := 0;
 
@@ -796,11 +839,11 @@ DBMS_OUTPUT.ENABLE(1000000);
 
                                   v_CONTROL := 0;
 
-                            ELSIF v_FLAG_VIGILANCIA_EMBARGOS = 0 AND j.ULTIMO_HITO IN (50,51) THEN
+                            ELSIF v_FLAG_VIGILANCIA_EMBARGOS = 0 AND v_ULTIMO_HITO IN (50,51) THEN
 
                               v_CONTROL := 0;
 
-                            ELSIF v_FLAG_VIGILANCIA_EMBARGOS = 0 AND j.ULTIMO_HITO NOT IN (50,51) AND j.TIPO_PROCEDIMIENTO = 'P03' THEN
+                            ELSIF v_FLAG_VIGILANCIA_EMBARGOS = 0 AND v_ULTIMO_HITO NOT IN (50,51) AND j.TIPO_PROCEDIMIENTO = 'P03' THEN
 
                               v_CONTROL := 3;
 
@@ -820,7 +863,7 @@ DBMS_OUTPUT.ENABLE(1000000);
 
                                v_CONTROL := 3;
 
-                               IF j.ULTIMO_HITO = 52 AND k.TAP_CODIGO = 'H020_ResolucionFirme' THEN
+                               IF v_ULTIMO_HITO = 52 AND k.TAP_CODIGO = 'H020_ResolucionFirme' THEN
 
                                   IF v_FLAG_VIGILANCIA_EMBARGOS = 0 THEN
 
@@ -857,11 +900,11 @@ DBMS_OUTPUT.ENABLE(1000000);
                                                         ,0 -- v_TAR_FINALIZADA
                                                         ,NULL
                                                         , k.COD_HITO_ACTUAL
-                                                  , j.ULTIMO_HITO);
+                                                  , v_ULTIMO_HITO);
 
                                       END IF;
 
-                               ELSIF j.ULTIMO_HITO > 52 AND k.TAP_CODIGO = 'H020_ResolucionFirme' THEN
+                               ELSIF v_ULTIMO_HITO > 52 AND k.TAP_CODIGO = 'H020_ResolucionFirme' THEN
 
                                    SELECT S_TAR_TAREAS_NOTIFICACIONES.NEXTVAL
                                    INTO v_TAR_ID
@@ -896,7 +939,7 @@ DBMS_OUTPUT.ENABLE(1000000);
                                               ,1 -- v_TAR_FINALIZADA
                                               ,NULL
                                               , k.COD_HITO_ACTUAL
-                                        , j.ULTIMO_HITO);
+                                        , v_ULTIMO_HITO);
 
                                 END IF;
 
@@ -976,7 +1019,7 @@ DBMS_OUTPUT.ENABLE(1000000);
                              END IF;
 
                              -- SUBASTAS:
-                             IF (j.TIPO_PROCEDIMIENTO = 'P01' AND j.ULTIMO_HITO > 34) OR (j.TIPO_PROCEDIMIENTO = 'P03' AND j.ULTIMO_HITO > 53) THEN  -- Si se va a llegar a ADJUDICACION o POSESIÓN:
+                             IF (j.TIPO_PROCEDIMIENTO = 'P01' AND v_ULTIMO_HITO > 34) OR (j.TIPO_PROCEDIMIENTO = 'P03' AND v_ULTIMO_HITO > 53) THEN  -- Si se va a llegar a ADJUDICACION o POSESIÓN:
 
                                  IF k.TAP_CODIGO = 'H002_ValidarInformeDeSubasta' AND l.TEV_NOMBRE = 'comboAtribuciones' AND v_TEV_VALOR ='0' THEN
 
@@ -1042,21 +1085,25 @@ DBMS_OUTPUT.ENABLE(1000000);
                                  END IF;
 
                              END IF; -- Subastas
-
-                             --CONCURSOS:
-                             IF j.ULTIMO_HITO > 73 AND k.DD_TPO_CODIGO = 'H017' THEN  -- SI FASE de LIQUIDACION, Esta será HIJA del T. de FASE COMÚN Y NO SE DAN DE ALTA LAS TAREAS DE FASE de CONVENIO.
-
+                             
+                             
+                             
+                             -- CONCURSOS
+                             IF v_ULTIMO_HITO > 74 AND k.DD_TPO_CODIGO = 'H017' THEN  -- SI FASE de LIQUIDACION, Esta será HIJA del T. de FASE COMÚN Y NO SE DAN DE ALTA LAS TAREAS DE FASE de CONVENIO.
+  
                                 v_CONTROL := 3;
-
+                              
                              ELSIF k.DD_TPO_CODIGO IN ('H009','H033') THEN
-
+                              
                                 v_CONTROL := 0;
-
+                              
                              END IF;
-
-
-
-                             IF v_TAR_FINALIZADA = 1 AND v_CONTROL NOT IN (2,3) AND (l.TEV_NOMBRE LIKE '%fecha%' OR l.TEV_NOMBRE = 'comboAtribuciones' OR l.TEV_NOMBRE = 'comboCelebrada') THEN
+                             
+                            
+                             IF v_TAR_FINALIZADA = 1 AND v_CONTROL NOT IN (2,3) AND (l.TEV_NOMBRE LIKE '%fecha%' OR l.TEV_NOMBRE = 'comboAtribuciones' OR l.TEV_NOMBRE = 'comboCelebrada'
+                                OR (k.DD_TPO_CODIGO = 'H009' AND (l.TEV_NOMBRE = 'comboResultado' OR l.TEV_NOMBRE = 'comboAdmitida' OR l.TEV_NOMBRE = 'observaciones' OR l.TEV_NOMBRE = 'comFavorable'))
+                                OR (k.DD_TPO_CODIGO = 'H033' AND l.TEV_NOMBRE = 'comboAlegaciones'))
+                             THEN
 
                                 IF l.TEV_NOMBRE = 'comboAtribuciones' THEN
 
@@ -1111,7 +1158,7 @@ DBMS_OUTPUT.ENABLE(1000000);
                                             ,v_TAR_FINALIZADA
                                             ,NULL
                                             ,k.COD_HITO_ACTUAL
-                                                ,j.ULTIMO_HITO);
+                                            ,v_ULTIMO_HITO);
 
                               END IF; -- TAR_FINALIZADA = 1
 
@@ -1224,8 +1271,8 @@ DBMS_OUTPUT.ENABLE(1000000);
 
             END IF;--FLAG_ES_FECHA=0
 
---       DBMS_OUTPUT.PUT_LINE('TAP : '||k.TAP_CODIGO||' - v_TAR_FINALIZADA : '||v_TAR_FINALIZADA);
---       DBMS_OUTPUT.PUT_LINE('k.COD_HITO_ACTUAL :'|| k.COD_HITO_ACTUAL || 'j.ULTIMO_HITO : ' || j.ULTIMO_HITO||' - v_CONTROL: '||v_CONTROL);
+       --DBMS_OUTPUT.PUT_LINE('TAP : '||k.TAP_CODIGO||' - v_TAR_FINALIZADA : '||v_TAR_FINALIZADA);
+       --DBMS_OUTPUT.PUT_LINE('k.COD_HITO_ACTUAL :'|| k.COD_HITO_ACTUAL || 'v_ULTIMO_HITO : ' || v_ULTIMO_HITO||' - v_CONTROL: '||v_CONTROL);
 
             IF (v_TAR_FINALIZADA = 1 AND v_CONTROL <> 3) OR (l.TEV_NOMBRE IN ('avaluoInterno','avaluoExterno')) THEN
 
@@ -1255,14 +1302,14 @@ DBMS_OUTPUT.ENABLE(1000000);
             IF k.DD_TPO_CODIGO = 'H002' THEN
 
                 v_CONTROL := 0;
-                
+
                 v_PRC_ID_SUBASTA := v_PRC_ID;
 
              END IF;
 
 
             END IF; --FLAG_POR_cADA_BIEN = 0
-            
+
             -------- HITOS X CADA BIEN (SOLO 38 - ADJUDICACION Y 39 - POSESION)
             IF k.FLAG_POR_CADA_BIEN = 1 THEN --HITOS DE BIENES
 
@@ -1271,7 +1318,7 @@ DBMS_OUTPUT.ENABLE(1000000);
                         v_CD_BIEN := z.CD_BIEN;
 
                         v_MAX_HITO_BIEN := z.ULTIMO_HITO_BIEN_PROC;
-                            
+
                         IF k.COD_HITO_ACTUAL <= v_MAX_HITO_BIEN THEN -- HITO BIEN
 
                             IF k.DD_TPO_CODIGO = 'H002' THEN -- T. DE ADJUDICACION
@@ -1281,7 +1328,7 @@ DBMS_OUTPUT.ENABLE(1000000);
                                v_PRC_PRC_ID := v_PRC_ID_SUBASTA;
 
                             END IF;
-                            
+
                             BEGIN
 
                               SELECT DISTINCT PRC_ID, PRC_PRC_ID
@@ -1290,8 +1337,6 @@ DBMS_OUTPUT.ENABLE(1000000);
                               WHERE CD_PROCEDIMIENTO = j.CD_PROCEDIMIENTO
                               AND DD_TPO_CODIGO = k.DD_TPO_CODIGO
                               AND CD_BIEN = v_CD_BIEN;
-
-                              v_COUNT_TEMP := v_COUNT_TEMP + 1;
 
                             EXCEPTION
                               WHEN NO_DATA_FOUND THEN
@@ -1307,7 +1352,7 @@ DBMS_OUTPUT.ENABLE(1000000);
                                 v_CD_BIEN_ANTERIOR := v_CD_BIEN;
 
                             END;
-                            
+
                             IF k.DD_TPO_CODIGO IN('H015') THEN
 
 
@@ -1320,10 +1365,8 @@ DBMS_OUTPUT.ENABLE(1000000);
 
                               v_ORDEN := v_ORDEN_ADJU;
 
-                              v_COUNT_TEMP := v_COUNT_TEMP + 1;
-
                             END IF;
-                            
+
                         END IF;
 
                         IF l.FLAG_ES_FECHA = 1 THEN
@@ -1331,26 +1374,26 @@ DBMS_OUTPUT.ENABLE(1000000);
                             IF INSTR(l.CAMPO_INTERFAZ,'FECHA') > 0 AND INSTR(l.CAMPO_INTERFAZ,'DECODE') = 0 THEN
 
                                 IF l.TABLA_MIG = 'MIG_PROCEDIMIENTOS_BIENES' THEN
-                        
-                        
+
+
                                     v_SQL := 'SELECT TO_CHAR('||l.CAMPO_INTERFAZ||',''DD-MM-YYYY'')
                                               FROM '||l.TABLA_MIG||'
                                               WHERE CD_PROCEDIMIENTO = '||J.CD_PROCEDIMIENTO||'
                                               AND CD_BIEN = '''||v_CD_BIEN||'''';
 
-                                ELSE -- MIG_PROCEDIMIENTOS_SUBASTAS    
+                                ELSE -- MIG_PROCEDIMIENTOS_SUBASTAS
 
                                       v_SQL := 'SELECT TO_CHAR('||l.CAMPO_INTERFAZ||')
                                                 FROM '||l.TABLA_MIG||'
                                                 WHERE CD_SUBASTA = (SELECT MAX(CD_SUBASTA) FROM '||l.TABLA_MIG||'
                                                                     WHERE CD_PROCEDIMIENTO = '||j.CD_PROCEDIMIENTO||')';
-                                    
+
                                 END IF;
-                            
+
                             END IF;
-                               
+
                         ELSIF l.FLAG_ES_FECHA = 0 THEN
-                        
+
 
                                IF INSTR(l.CAMPO_INTERFAZ,'FECHA') = 0 OR INSTR(l.CAMPO_INTERFAZ,'DECODE') > 0 THEN
 
@@ -1362,25 +1405,25 @@ DBMS_OUTPUT.ENABLE(1000000);
                                ELSE
 
                                       IF l.TABLA_MIG = 'MIG_PROCEDIMIENTOS_BIENES' THEN
-                              
-                              
+
+
                                           v_SQL := 'SELECT TO_CHAR('||l.CAMPO_INTERFAZ||',''DD-MM-YYYY'')
                                                     FROM '||l.TABLA_MIG||'
                                                     WHERE CD_PROCEDIMIENTO = '||J.CD_PROCEDIMIENTO||'
                                                     AND CD_BIEN = '''||v_CD_BIEN||'''';
-      
-                                      ELSE -- MIG_PROCEDIMIENTOS_SUBASTAS    
-      
+
+                                      ELSE -- MIG_PROCEDIMIENTOS_SUBASTAS
+
                                             v_SQL := 'SELECT TO_CHAR('||l.CAMPO_INTERFAZ||')
                                                       FROM '||l.TABLA_MIG||'
                                                       WHERE CD_SUBASTA = (SELECT MAX(CD_SUBASTA) FROM '||l.TABLA_MIG||'
                                                                           WHERE CD_PROCEDIMIENTO = '||j.CD_PROCEDIMIENTO||')';
-                                          
+
                                       END IF;
-                                
-                               END IF;                                
-                                
-                        END IF;                                
+
+                               END IF;
+
+                        END IF;
 
 
                         BEGIN
@@ -1393,7 +1436,7 @@ DBMS_OUTPUT.ENABLE(1000000);
                                  v_TEV_VALOR := NULL;
 
                         END;
-  
+
                         IF (v_TAR_FINALIZADA = 1 AND v_CONTROL <> 3 AND l.FLAG_ES_FECHA = 1) THEN
 
                              INSERT INTO TEMP_MIG_MAESTRA_HITOS_BIENES
@@ -1408,13 +1451,13 @@ DBMS_OUTPUT.ENABLE(1000000);
                                     ,k.DD_TPO_CODIGO
                                     ,v_CD_BIEN);
 
-                             
+
                              SELECT S_TAR_TAREAS_NOTIFICACIONES.NEXTVAL
                              INTO v_TAR_ID
                              FROM DUAL;
 
 
-                             
+
                              INSERT INTO MIG_MAESTRA_HITOS
                                            (CD_PROCEDIMIENTO,
                                             PRC_ID,
@@ -1444,9 +1487,9 @@ DBMS_OUTPUT.ENABLE(1000000);
                                         ,v_TAR_FINALIZADA
                                         ,v_CD_BIEN
                                         ,k.COD_HITO_ACTUAL
-                                        ,j.ULTIMO_HITO);
+                                        ,v_ULTIMO_HITO);
 
-                             
+
                              SELECT S_TEV_TAREA_EXTERNA_VALOR.NEXTVAL
                              INTO v_TEV_ID
                              FROM DUAL;
@@ -1470,9 +1513,9 @@ DBMS_OUTPUT.ENABLE(1000000);
 
                         END IF; --v_CONTROL <> 3
 
-                        IF  (v_TAR_FINALIZADA = 1 AND v_CONTROL <> 3 AND l.FLAG_ES_FECHA = 0) THEN                      
- 
- 
+                        IF  (v_TAR_FINALIZADA = 1 AND v_CONTROL <> 3 AND l.FLAG_ES_FECHA = 0) THEN
+
+
                              SELECT S_TEV_TAREA_EXTERNA_VALOR.NEXTVAL
                              INTO v_TEV_ID
                              FROM DUAL;
@@ -1493,15 +1536,15 @@ DBMS_OUTPUT.ENABLE(1000000);
                                    ,l.ORDEN
                                    ,l.TEV_NOMBRE
                                    ,v_TEV_VALOR);
-                        
+
                         END IF;
 
-                        IF (k.COD_HITO_ACTUAL = j.ULTIMO_HITO AND v_TAR_FINALIZADA = 0 AND v_CONTROL <> 3) THEN --TAREA PENDIENTE X CADA BIEN
+                        IF (k.COD_HITO_ACTUAL = v_ULTIMO_HITO AND v_TAR_FINALIZADA = 0 AND v_CONTROL <> 3) THEN --TAREA PENDIENTE X CADA BIEN
 
                                SELECT S_TAR_TAREAS_NOTIFICACIONES.NEXTVAL
                                INTO v_TAR_ID
                                FROM DUAL;
-              
+
                                INSERT INTO MIG_MAESTRA_HITOS
                                        (CD_PROCEDIMIENTO,
                                         PRC_ID,
@@ -1531,26 +1574,26 @@ DBMS_OUTPUT.ENABLE(1000000);
                                       ,v_TAR_FINALIZADA
                                       ,v_CD_BIEN
                                       ,k.COD_HITO_ACTUAL
-                                      ,j.ULTIMO_HITO);
-              
+                                      ,v_ULTIMO_HITO);
+
                         END IF;
 --       DBMS_OUTPUT.PUT_LINE('TAP : '||k.TAP_CODIGO||' - v_TAR_FINALIZADA : '||v_TAR_FINALIZADA);
---       DBMS_OUTPUT.PUT_LINE('k.COD_HITO_ACTUAL :'|| k.COD_HITO_ACTUAL || 'j.ULTIMO_HITO : ' || j.ULTIMO_HITO||' - v_CONTROL: '||v_CONTROL);
+--       DBMS_OUTPUT.PUT_LINE('k.COD_HITO_ACTUAL :'|| k.COD_HITO_ACTUAL || 'v_ULTIMO_HITO : ' || v_ULTIMO_HITO||' - v_CONTROL: '||v_CONTROL);
 
                 END LOOP; ---BIENES
-            
+
              END IF; -- X CADA BIEN
-             
+
              v_CD_BIEN := NULL;
 
       END LOOP; --l VALORES
 
     IF k.FLAG_POR_CADA_BIEN = 0 THEN
 
-          IF (k.COD_HITO_ACTUAL = j.ULTIMO_HITO AND v_TAR_FINALIZADA = 0 AND v_CONTROL <> 3) OR v_CONTROL = 1 OR (v_PTE_CERT_CARGAS = 1 AND v_TAR_FINALIZADA =0) THEN -- TAREA PENDIENTE DEL PROCEDIMIENTO
+          IF (k.COD_HITO_ACTUAL = v_ULTIMO_HITO AND v_TAR_FINALIZADA = 0 AND v_CONTROL <> 3) OR v_CONTROL = 1 OR (v_PTE_CERT_CARGAS = 1 AND v_TAR_FINALIZADA =0) THEN -- TAREA PENDIENTE DEL PROCEDIMIENTO
 
        --DBMS_OUTPUT.PUT_LINE('TAP : '||k.TAP_CODIGO||' - v_TAR_FINALIZADA : '||v_TAR_FINALIZADA);
-       --DBMS_OUTPUT.PUT_LINE('k.COD_HITO_ACTUAL :'|| k.COD_HITO_ACTUAL || 'j.ULTIMO_HITO : ' || j.ULTIMO_HITO||' - v_CONTROL: '||v_CONTROL);
+       --DBMS_OUTPUT.PUT_LINE('k.COD_HITO_ACTUAL :'|| k.COD_HITO_ACTUAL || 'v_ULTIMO_HITO : ' || v_ULTIMO_HITO||' - v_CONTROL: '||v_CONTROL);
 
 
                  SELECT S_TAR_TAREAS_NOTIFICACIONES.NEXTVAL
@@ -1586,7 +1629,7 @@ DBMS_OUTPUT.ENABLE(1000000);
                         ,v_TAR_FINALIZADA
                         ,NULL
                         ,k.COD_HITO_ACTUAL
-                        ,j.ULTIMO_HITO);
+                        ,v_ULTIMO_HITO);
 
           END IF;
 
@@ -1602,8 +1645,6 @@ DBMS_OUTPUT.ENABLE(1000000);
 
     DBMS_OUTPUT.PUT_LINE('PROCESO de MIGRACION a Tabla MAESTRA TERMINADO CORRECTAMENTE. Last CD_PROCEDIMIENTO = '||v_CD_PROCEDIMIENTO);
     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_COUNT||' PROCEDIMIENTOS Procesados');
-
-    DBMS_OUTPUT.PUT_LINE('[INFO] '||v_COUNT_TEMP||' CONSULTAS EN TABLA TEMP Realizadas');
 
     EXECUTE IMMEDIATE ('SELECT COUNT(1) FROM ALL_INDEXES WHERE INDEX_NAME=''INDX_MIGRACION_MAE'' AND OWNER=''CM01''') INTO V_COUNT;
 
@@ -1624,8 +1665,7 @@ EXCEPTION
 END;
 /
 
-EXEC CM01.SP_MIG_A_TABLA_INTERMEDIA;
+EXEC SP_MIG_A_TABLA_INTERMEDIA;
 /
-
 
 EXIT;

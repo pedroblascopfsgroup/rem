@@ -14,10 +14,12 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.DatosPlantillaFactory;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.dao.DatosLiquidacionDao;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.dao.DatosLiquidacionExtractosDao;
+import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.CabeceraExpedienteLiqVO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.CabeceraLiquidacionLiqVO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.ConceptoLiqVO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.DatosGeneralesLiqVO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.InteresesContratoLiqVO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.MovimientoLiquidacionLiqVO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.RecibosLiqVO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 
@@ -49,7 +51,7 @@ public class DatosPlantillaCredito extends DatosPlantillaPrestamoAbstract implem
 	@Override
 	public HashMap<String, Object> obtenerDatos(Long idLiquidacion) {
 		HashMap<String, Object> datosLiquidacion = new HashMap<String, Object>();
-		String sucursal_mayor_deuda_exp = "Bankia"; //intentar que este valor se recoja de alguna variable global que indique la entidad
+		//String sucursal_mayor_deuda_exp = "Bankia"; //intentar que este valor se recoja de alguna variable global que indique la entidad
 		
 		// data
 		List<DatosGeneralesLiqVO> datosGenerales = datosLiquidacionDao.getDatosGeneralesContratoLiquidacion(idLiquidacion);
@@ -57,6 +59,9 @@ public class DatosPlantillaCredito extends DatosPlantillaPrestamoAbstract implem
 		List<InteresesContratoLiqVO> interesesContratoLiq = datosLiquidacionDao.getInteresesContratoLiquidacion(idLiquidacion);
 		LiquidacionPCO liquidacion = liquidacionApi.getLiquidacionPCOById(idLiquidacion);
 		List<CabeceraLiquidacionLiqVO> cabeceraLiquidacion = datosLiquidacionExtractoDao.getCabeceraLiquidacion(idLiquidacion);
+		//añadido para la unión con extracto
+		List<MovimientoLiquidacionLiqVO> movimientosLiquidacion = datosLiquidacionExtractoDao.getMovimientoLiquidacion(idLiquidacion);
+		List<CabeceraExpedienteLiqVO> cabeceraExpediente = datosLiquidacionExtractoDao.getCabeceraExpedienteLiquidacion(idLiquidacion);
 		
 		if (datosGenerales.isEmpty()) {
 			throw new BusinessOperationException("GenerarLiquidacionBankiaManager.obtenerDatosLiquidacion: No se encuentra datos LQ03");
@@ -66,6 +71,8 @@ public class DatosPlantillaCredito extends DatosPlantillaPrestamoAbstract implem
 		datosLiquidacion.put("LQ03", datosGenerales.get(0));
 		datosLiquidacion.put("LQ04", recibosLiq);
 		datosLiquidacion.put("LQ07", interesesContratoLiq);
+		//añadido para la unión con extracto
+		datosLiquidacion.put("C17", movimientosLiquidacion);
 
 		// calculated data
 		datosLiquidacion.putAll(obtenerDatosLiquidacionPco(liquidacion));
@@ -75,7 +82,9 @@ public class DatosPlantillaCredito extends DatosPlantillaPrestamoAbstract implem
 
 		datosLiquidacion.put("FECHA_FIRMA", datosGenerales.get(0).FEVACM());
 		datosLiquidacion.put("CIUDAD_FIRMA", "Madrid");
-		datosLiquidacion.put("SUCURSAL_MAYOR_DEUDA", sucursal_mayor_deuda_exp);
+		//datosLiquidacion.put("SUCURSAL_MAYOR_DEUDA", sucursal_mayor_deuda_exp);
+		//añadido para la unión con extracto
+		datosLiquidacion.put("COEXPD_GLOBAL", cabeceraExpediente.get(0).COEXPD());
 
 		return datosLiquidacion;
 	}

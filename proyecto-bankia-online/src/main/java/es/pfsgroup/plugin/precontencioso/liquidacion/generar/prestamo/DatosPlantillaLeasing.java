@@ -10,6 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.bo.BusinessOperationException;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.DatosPlantillaFactory;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.dao.DatosLiquidacionDao;
@@ -18,6 +22,9 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.DatosGe
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.InteresesContratoLiqVO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.RecibosLiqVO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
+import es.pfsgroup.recovery.ext.api.contrato.model.EXTDDTipoInfoContratoInfo;
+import es.pfsgroup.recovery.ext.impl.contrato.model.EXTDDTipoInfoContrato;
+import es.pfsgroup.recovery.ext.impl.contrato.model.EXTInfoAdicionalContrato;
 
 /**
  * Clase que obtiene los datos necesarios para rellenar la plantilla de prestamo hipotecario
@@ -35,7 +42,10 @@ public class DatosPlantillaLeasing extends DatosPlantillaPrestamoAbstract implem
 
 	@Autowired
 	private LiquidacionApi liquidacionApi;
-
+	
+	@Autowired
+	private GenericABMDao genericDao;
+	
 	@Override
 	public String codigoTipoLiquidacion() {
 		return CODIGO_TIPO_LIQUIDACION;
@@ -44,11 +54,11 @@ public class DatosPlantillaLeasing extends DatosPlantillaPrestamoAbstract implem
 	@Override
 	public HashMap<String, Object> obtenerDatos(Long idLiquidacion) {
 		HashMap<String, Object> datosLiquidacion = new HashMap<String, Object>();
-
+		
 		// data
 		List<DatosGeneralesLiqVO> datosGenerales = datosLiquidacionDao.getDatosGeneralesContratoLiquidacion(idLiquidacion);
 		List<RecibosLiqVO> recibosLiq = datosLiquidacionDao.getRecibosLiquidacion(idLiquidacion);
-		List<InteresesContratoLiqVO> interesesContratoLiq = datosLiquidacionDao.getInteresesContratoLiquidacion(idLiquidacion);
+		List<InteresesContratoLiqVO> interesesContratoLiq = datosLiquidacionDao.getInteresesContratoLiquidacionOrdinario(idLiquidacion);
 		LiquidacionPCO liquidacion = liquidacionApi.getLiquidacionPCOById(idLiquidacion);
 
 		if (datosGenerales.isEmpty()) {
@@ -71,7 +81,7 @@ public class DatosPlantillaLeasing extends DatosPlantillaPrestamoAbstract implem
 
 		return datosLiquidacion;
 	}
-	
+
 	/**
 	 * @param datosGeneralesLiq
 	 * @param recibosLiq
@@ -99,7 +109,7 @@ public class DatosPlantillaLeasing extends DatosPlantillaPrestamoAbstract implem
 		
 		// Nominal residual
 		BigDecimal capitalResidual = datosGeneralesLiq.getDGC_IMVRE2();
-		saldo = calculateSaldo(saldo, capitalResidual, null);
+		saldo = calculateSaldo(saldo, null, capitalResidual);
 		conceptos.add(new ConceptoLiqVO(datosGeneralesLiq.getDGC_FEFOEZ(), "Nominal residual", null, capitalResidual, saldo));
 
 		// Nominal Amortizado

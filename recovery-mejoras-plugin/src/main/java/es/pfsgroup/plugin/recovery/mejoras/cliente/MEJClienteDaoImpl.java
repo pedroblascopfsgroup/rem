@@ -359,22 +359,21 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 
 		/*
 		 * FIXME Comentamos esta parte para quitar de momento la zonificaciÃ³n
-		 * 
-		 * hql.append("and (")
-		 * 
-		 * // AÃƒÂ±ade la persona si es gestionada por el usuario
-		 * hql.append("(p.per_id in ( ");
-		 * hql.append(generaFiltroPersonaPorGestor(usuarioLogueado,
-		 * parameters)); // hql.append(" ))");
-		 * 
-		 * if ((!Checks.esNulo(clientes.getJerarquia())) ||
-		 * (!Checks.esNulo(clientes.getCodigoZonas()))) {
-		 * hql.append(" union all "); // hql.append("p.per_id in ( ");
-		 * hql.append(generaFiltroPersonaPorJerarquia(clientes, usuarioLogueado,
-		 * parameters)); hql.append(" ))"); } else { hql.append(" ))"); }
-		 * hql.append(") ");
-		 */
-
+		 */ 
+		hql.append("and (");
+			
+		// AÃƒÂ±ade la persona si es gestionada por el usuario
+		hql.append("(p.per_id in ( ");
+		hql.append(generaFiltroPersonaPorGestor(usuarioLogueado,
+		parameters)); // hql.append(" ))");
+		
+		if ((!Checks.esNulo(clientes.getJerarquia())) || (!Checks.esNulo(clientes.getCodigoZonas()))) {
+			hql.append(" union all ");
+			hql.append(generaFiltroPersonaPorJerarquia(clientes, usuarioLogueado, parameters)); hql.append(" ))"); } else { hql.append(" ))"); 
+		}
+		
+		hql.append(") ");
+		
 		// AÃ¯Â¿Â½adimos soporte para perfiles carterizados
 		/*
 		 * if (necesitaCruzarEstado && conCarterizacion) {
@@ -409,8 +408,8 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 					+ "%') ");
 		}
 		if (!Checks.esNulo(clientes.getPropietario())) {
-			hql.append("and (p.dd_pro_id=(select dd_pro_id from DD_PRO_PROPIETARIOS where dd_pro_codigo= '"
-					+ clientes.getPropietario() + "') )");
+			hql.append("AND EXISTS (SELECT 1 from DD_PRO_PROPIETARIOS pro where p.dd_pro_id = pro.dd_pro_id AND dd_pro_codigo= '"
+					+ clientes.getPropietario() + "')");
 		}
 		if (!Checks.esNulo(clientes.getCodigoColectivoSingular())) {
 			hql.append("and (p.DD_COS_ID=(select DD_COS_ID from DD_COS_COLECTIVO_SINGULAR where DD_COS_CODIGO= '"
@@ -578,14 +577,14 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 				if (!StringUtils.isBlank(clientes.getMinSaldoVencido())) {
 					try {
 						Float valor = Float.parseFloat(clientes.getMinSaldoVencido());
-						String filtroFinal = String.format(" AND (%s IS NOT NULL and %s>=%f)", campoBusqueda, campoBusqueda, valor);
+						String filtroFinal = String.format(" AND (%s IS NOT NULL and %s>=%s)", campoBusqueda, campoBusqueda, valor);
 						hql.append(filtroFinal);
 					} catch (NumberFormatException nfe) {}
 				}
 				if (!StringUtils.isBlank(clientes.getMaxSaldoVencido())) {
 					try {
 						Float valor = Float.parseFloat(clientes.getMaxSaldoVencido());
-						String filtroFinal = String.format(" AND (%s IS NOT NULL and %s<=%f)", campoBusqueda, campoBusqueda, valor);
+						String filtroFinal = String.format(" AND (%s IS NOT NULL and %s<=%s)", campoBusqueda, campoBusqueda, valor);
 						hql.append(filtroFinal);
 					} catch (NumberFormatException nfe) {}
 				}
@@ -606,33 +605,28 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 		final StringBuilder srtbuilder = new StringBuilder();
 
 		if (!StringUtils.isBlank(minValue) || !StringUtils.isBlank(maxValue)) {
-			srtbuilder.append("SELECT 1 FROM V_PER_PERSONAS_FORMULAS v WHERE p.PER_ID = v.PER_ID AND TO_NUMBER(REPLACE(NVL(v.DISPUESTO_VENCIDO, 0), ',', '.')) BETWEEN ");
+			srtbuilder.append("SELECT 1 FROM V_PER_PERSONAS_FORMULAS v WHERE v.PER_ID = p.PER_ID AND v.DISPUESTO_VENCIDO IS NOT NULL ");
 						
 			if (!StringUtils.isBlank(minValue)) {
+				srtbuilder.append(" AND TO_NUMBER(REPLACE(LPAD(v.DISPUESTO_VENCIDO, 4, '0'), ',', '.')) >= ");
+				
 				try {
 					Float valor = Float.parseFloat(minValue);
-					String filtroFinal = new DecimalFormat("#.##").format(valor);
+					String filtroFinal = String.format("%s", valor);
 					srtbuilder.append(filtroFinal);
 				} catch (NumberFormatException nfe) {}
 			}
-			else {
-				String filtroFinal = String.format("0");
-				srtbuilder.append(filtroFinal);
-			}
 			
-			srtbuilder.append(" AND ");
 			
 			if (!StringUtils.isBlank(maxValue)) {
+				srtbuilder.append(" AND TO_NUMBER(REPLACE(LPAD(v.DISPUESTO_VENCIDO, 4, '0'), ',', '.')) <= ");
+				
 				try {
 					Float valor = Float.parseFloat(maxValue);
-					String filtroFinal = new DecimalFormat("#.##").format(valor);
+					String filtroFinal = String.format("%s", valor);
 					srtbuilder.append(filtroFinal);
 				} catch (NumberFormatException nfe) {}
-			}
-			else {
-				String filtroFinal =  new DecimalFormat("#.##").format(Float.MAX_VALUE);
-				srtbuilder.append(filtroFinal);
-			}			
+			}		
 			
 			return srtbuilder.toString();
 		} 
@@ -660,14 +654,14 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 		if (!StringUtils.isBlank(clientes.getMinRiesgoTotal())) {
 			try {
 				Float valor = Float.parseFloat(clientes.getMinRiesgoTotal());
-				String filtroFinal = String.format(" AND (p.%s IS NOT NULL and p.%s>=%f)", campoBusqueda, campoBusqueda, valor);
+				String filtroFinal = String.format(" AND (p.%s IS NOT NULL and p.%s>=%s)", campoBusqueda, campoBusqueda, valor);
 				filtroRiesgoBuilder.append(filtroFinal);
 			} catch (NumberFormatException nfe) {}
 		}
 		if (!StringUtils.isBlank(clientes.getMaxRiesgoTotal())) {
 			try {
 				Float valor = Float.parseFloat(clientes.getMaxRiesgoTotal());
-				String filtroFinal = String.format(" AND (p.%s IS NOT NULL and p.%s<=%f)", campoBusqueda, campoBusqueda, valor);
+				String filtroFinal = String.format(" AND (p.%s IS NOT NULL and p.%s<=%s)", campoBusqueda, campoBusqueda, valor);
 				filtroRiesgoBuilder.append(filtroFinal);
 			} catch (NumberFormatException nfe) {}
 		}
@@ -1080,18 +1074,14 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 
 	private boolean compruebaSaldoVencido(MEJBuscarClientesDto clientes) {
 		boolean saldovencido = false;
-		if (clientes.getMaxSaldoVencido() == null
-				|| clientes.getMaxSaldoVencido().length() < 1) {
-			clientes.setMaxSaldoVencido("" + Integer.MAX_VALUE);
-		} else {
+		if (!Checks.esNulo(clientes.getMaxSaldoVencido())) {
 			saldovencido = true;
 		}
-		if (clientes.getMinSaldoVencido() == null
-				|| clientes.getMinSaldoVencido().length() < 1) {
-			clientes.setMinSaldoVencido("" + Integer.MIN_VALUE);
-		} else {
+	
+		if (!Checks.esNulo(clientes.getMinSaldoVencido())) {
 			saldovencido = true;
 		}
+		
 		return saldovencido;
 	}
 
@@ -1365,5 +1355,90 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 		}
 		return queryR.toString();
 	}
+	
+	private String generaFiltroPersonaPorJerarquia(
+			MEJBuscarClientesDto clientes, Usuario usuarioLogueado,
+			Map<String, Object> parameters) {
+		String filtroJerarquia = "";
+		int cantZonas = Checks.estaVacio(clientes.getCodigoZonas()) ? 0
+				: clientes.getCodigoZonas().size();
+		String zonas = null;
+		if (cantZonas > 0) {
+			zonas = " and ( ";
+			for (String codigoZ : clientes.getCodigoZonas()) {
+				if (pasoDeVariables()) {
+					zonas += " zon.zon_cod like :codigo_zona_" + codigoZ
+							+ " OR";
+					parameters.put("codigo_zona_" + codigoZ, codigoZ + "%");
 
+				} else {
+					zonas += " zon.zon_cod like '" + codigoZ + "%' OR";
+				}
+
+			}
+			zonas = zonas.substring(0, zonas.length() - 2);
+
+			zonas += " ) ";
+		}
+
+		String jerarquia = null;
+		if (clientes.getJerarquia() != null
+				&& clientes.getJerarquia().length() > 0) {
+			jerarquia = " and zon.ZON_ID >= " + clientes.getJerarquia();
+			if (zonas != null)
+				jerarquia += zonas;
+		} else if (zonas != null) {
+			jerarquia = zonas;
+		}
+
+		if (jerarquia != null) {
+			// Si es primer titular del contrato de pase buscamos directamente
+			// en los clientes
+			if (clientes.getIsPrimerTitContratoPase() != null
+					&& clientes.getIsPrimerTitContratoPase().booleanValue()) {
+				if (pasoDeVariables()) {
+					filtroJerarquia = "SELECT cli.per_id FROM CLI_CLIENTES cli JOIN OFI_OFICINAS o ON cli.ofi_id = o.ofi_id JOIN ZON_ZONIFICACION zon ON zon.ofi_id = o.ofi_id WHERE cli.borrado = :no_borrado "
+							+ jerarquia;
+				} else {
+					filtroJerarquia = "SELECT cli.per_id FROM CLI_CLIENTES cli JOIN OFI_OFICINAS o ON cli.ofi_id = o.ofi_id JOIN ZON_ZONIFICACION zon ON zon.ofi_id = o.ofi_id WHERE cli.borrado = 0 "
+							+ jerarquia;
+				}
+			} else {
+				if (pasoDeVariables()) {
+					filtroJerarquia = "SELECT cp.per_id FROM CNT_CONTRATOS c, CPE_CONTRATOS_PERSONAS cp, ZON_ZONIFICACION zon "
+							+ " WHERE cp.borrado = :no_borrado and c.borrado = :no_borrado and cp.cnt_id = c.cnt_id AND c.ZON_ID = zon.ZON_ID "
+							+ jerarquia;
+				} else {
+
+					filtroJerarquia = "SELECT cp.per_id FROM CNT_CONTRATOS c, CPE_CONTRATOS_PERSONAS cp, ZON_ZONIFICACION zon "
+							+ " WHERE cp.borrado = 0 and c.borrado = 0 and cp.cnt_id = c.cnt_id AND c.ZON_ID = zon.ZON_ID "
+							+ jerarquia;
+				}
+			}
+
+		}
+		return filtroJerarquia;
+	}
+	
+	private String generaFiltroPersonaPorGestor(Usuario usuLogado,
+			Map<String, Object> parameters) {
+		StringBuffer hql = new StringBuffer();
+		hql.append(" select p.per_id from per_personas p , GE_GESTOR_ENTIDAD ge ");
+
+		if (pasoDeVariables()) {
+			hql.append(" where p.per_id = ge.ug_ID and ge.DD_EIN_ID = :codigo_entidad_cliente");
+			hql.append(" and ge.USU_ID = :usuario_logado");
+
+			parameters.put("usuario_logado", usuLogado.getId());
+			parameters.put("codigo_entidad_cliente",
+					DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE);
+
+		} else {
+			hql.append(" where p.per_id = ge.ug_ID and ge.DD_EIN_ID = '"
+					+ DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE + "'");
+			hql.append(" and ge.USU_ID = " + usuLogado.getId() + " ");
+		}
+
+		return hql.toString();
+	}
 }

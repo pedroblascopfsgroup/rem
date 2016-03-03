@@ -74,6 +74,7 @@ public class PrecontenciosoEnterActionHandler extends PROGenericEnterActionHandl
 
 		Procedimiento prc = getProcedimiento(executionContext);
 		TareaExterna tex = getTareaExterna(executionContext);
+		List<EXTTareaExternaValor> listado = obtenerValoresTareaByTexId(tex.getId());
 		
 		if (PrecontenciosoBPMConstants.PCO_PreTurnadoManual.equals(tex.getTareaProcedimiento().getCodigo())) {
 			

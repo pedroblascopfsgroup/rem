@@ -136,7 +136,8 @@
 	<!--Propuestas del expediente -->	
 	<bean p:entity="tabs.expediente.fast" p:name="propuestasExpediente"  p:order="270"  	
 		p:fileName="/WEB-INF/jsp/plugin/mejoras/acuerdos/tabs/propuestas.jsp" 
-		p:priority="1"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />	
+		p:priority="1"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="ROLE_PUEDE_VER_TAB_EXP_PROPUESTAS" />	
 		
 	<bean p:entity="tabs.procedimiento.fast" p:name="decisionProcedimiento"
 		p:order="500"

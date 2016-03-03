@@ -25,7 +25,7 @@ import es.capgemini.pfs.security.model.UsuarioSecurity;
 @Repository("UsuarioSecurityDao")
 public class UsuarioSecurityDaoImpl extends AbstractMasterDao<UsuarioSecurity, Long> implements UsuarioSecurityDao {
 
-    private static final String SELECT_AUTHORITIES = "select fun.FUN_descripcion from ${master.schema}.USU_USUARIOS usu, pfs01.PEF_PERFILES pef, pfs01.ZON_PEF_USU pu, pfs01.FUN_PEF fp, ${master.schema}.FUN_funciones fun where usu.USU_ID = ? and usu.USU_ID = pu.USU_ID and pef.PEF_ID = pu.PEF_ID and pef.PEF_ID = fp.PEF_ID and fun.FUN_ID = fp.FUN_ID group by fun.FUN_descripcion";
+    private static final String SELECT_AUTHORITIES = "select fun.FUN_descripcion from ${master.schema}.USU_USUARIOS usu, pfs01.PEF_PERFILES pef, pfs01.ZON_PEF_USU pu, pfs01.FUN_PEF fp, ${master.schema}.FUN_funciones fun where usu.USU_ID = ? and usu.USU_ID = pu.USU_ID and pef.PEF_ID = pu.PEF_ID and pef.PEF_ID = fp.PEF_ID and fun.FUN_ID = fp.FUN_ID and pu.borrado = 0 group by fun.FUN_descripcion";
 
     @Resource
     private Properties appProperties;

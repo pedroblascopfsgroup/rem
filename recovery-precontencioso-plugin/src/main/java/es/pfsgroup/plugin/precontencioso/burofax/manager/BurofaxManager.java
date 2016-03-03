@@ -597,15 +597,12 @@ public class BurofaxManager implements BurofaxApi {
 	@BusinessOperation(GENERAR_BUROFAX_PDF)
 	public FileItem generarBurofaxPDF(EnvioBurofaxPCO envioBurofax, String nombreFichero) {
 		
-		String operacionBFA = null;
-		try {
-			operacionBFA = envioBurofax.getBurofax().getContrato().getCharextra4();
-		} catch (NullPointerException e) {
-			logger.error("generarBurofaxPDF: " + e);
-		}
+		final String contexto = precontenciosoContext.getRecovery();
+		boolean esBFA = docBurManager.isOperacionBFA(envioBurofax.getBurofax().getContrato(), contexto);
 		
-		FileItem archivoBurofax = docBurManager.generarDocumentoBurofax(docBurManager.obtenerPlantillaBurofax(precontenciosoContext.getRecovery(), operacionBFA), nombreFichero, 
-				docBurManager.obtenerCabecera(envioBurofax, precontenciosoContext.getRecovery()), envioBurofax.getContenidoBurofax());
+		FileItem archivoBurofax = docBurManager.generarDocumentoBurofax(docBurManager.obtenerPlantillaBurofax(contexto, esBFA), nombreFichero, 
+				docBurManager.obtenerCabecera(envioBurofax, contexto, esBFA), 
+				docBurManager.agregarDisclaimer(envioBurofax.getContenidoBurofax(), docBurManager.obtenerDisclaimer(envioBurofax, contexto, esBFA)));
 		// Transformar el archivo docx en PDF
 		String directorio = parametrizacionDao.buscarParametroPorNombre(DIRECTORIO_PDF_BUROFAX_PCO).getValor();
 		String nombreFicheroPdf = docBurManager.obtenerNombreFicheroPdf(nombreFichero);
@@ -1129,8 +1126,10 @@ public class BurofaxManager implements BurofaxApi {
 			Filter filtroBur1 = genericDao.createFilter(FilterType.EQUALS, "procedimientoPCO.id", idProcedimiento);
 			Filter filtroBur2 = genericDao.createFilter(FilterType.EQUALS, "demandado.id", idPersona);
 			Filter filtroBur3 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", contratoPersona.getContrato().getId());
+			Filter filtroBur4 = genericDao.createFilter(FilterType.EQUALS, "borrado", false);
+
 			
-			List<BurofaxPCO> burofaxes = genericDao.getList(BurofaxPCO.class,filtroBur1,filtroBur2,filtroBur3);
+			List<BurofaxPCO> burofaxes = genericDao.getList(BurofaxPCO.class,filtroBur1,filtroBur2,filtroBur3,filtroBur4);
 			
 			if(burofaxes.size()>0){
 				for(BurofaxPCO b : burofaxes){

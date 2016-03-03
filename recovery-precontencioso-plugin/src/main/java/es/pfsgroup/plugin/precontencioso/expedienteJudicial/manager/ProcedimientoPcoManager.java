@@ -14,6 +14,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.annotation.Resource;
+
 import java.math.BigDecimal;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -678,7 +679,7 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		procedimientoPco.setTipoProcIniciado(null);
 		procedimientoPco.setNumExpInterno("");
 		procedimientoPco.setNumExpExterno("");
-		procedimientoPco.setNombreExpJudicial(procedimiento.getCodigoProcedimientoEnJuzgado());
+		procedimientoPco.setNombreExpJudicial(procedimiento.getNombreProcedimiento());
 		genericDao.save(ProcedimientoPCO.class, procedimientoPco);
 		List<HistoricoEstadoProcedimientoPCO> estadosPreparacionProc = new ArrayList<HistoricoEstadoProcedimientoPCO>();
 		HistoricoEstadoProcedimientoPCO histEstadoInicial = new HistoricoEstadoProcedimientoPCO();
@@ -911,7 +912,7 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	private List<EXTTareaExternaValor> obtenerValoresTareaByTexId(Long texId) {
 		return genericDao.getList(EXTTareaExternaValor.class, genericDao
 				.createFilter(FilterType.EQUALS, "tareaExterna.id", texId),
-				genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+				genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 	}
 	
 	
@@ -1283,6 +1284,20 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			logger.error(e.getMessage());
 		}
 		return resultado;
+	}
+	
+	@Override
+	public String asuntoConProcuradorPrecontencioso(Long idProcedimiento) {
+		
+		try {
+			Procedimiento proc = procedimientoManager.getProcedimiento(idProcedimiento);
+			if (proc.getAsunto().getProcurador() != null) {
+				return "1";
+			}
+		} catch (Exception e) {
+			logger.error("asuntoConProcurador "+ e.getMessage());
+		}
+		return "0";
 	}
 	
 }

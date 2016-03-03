@@ -5,6 +5,7 @@ import java.net.FileNameMap;
 import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
@@ -23,6 +24,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.asunto.dao.AsuntoDao;
 import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
+import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.dao.AdjuntoContratoDao;
@@ -53,6 +55,7 @@ import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalInputDt
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalOutputDto;
 import es.pfsgroup.recovery.cajamar.gestorDocumental.dto.GestorDocumentalOutputListDto;
 import es.pfsgroup.recovery.cajamar.serviciosonline.GestorDocumentalWSApi;
+import es.pfsgroup.recovery.ext.impl.adjunto.dao.EXTAdjuntoAsuntoDao;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.expediente.EXTExpedienteManager;
@@ -110,8 +113,11 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	private AdjuntoContratoDao adjuntoContratoDao;
 	
 	@Autowired
+	private EXTAdjuntoAsuntoDao extAdjuntoAsuntoDao;
+	
+	@Autowired
 	private ApiProxyFactory proxyFactory;
-
+	
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_ALTA_DOCUMENTO)
 	@Transactional(readOnly = false)
 	public String altaDocumento(Long idEntidad, String tipoEntidadGrid, String tipoDocumento, WebFileItem uploadForm) {
@@ -127,14 +133,21 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		}
 
 		Integer max = getLimiteFichero(getParametroLimite(tipoEntidadGrid));
-
+ 
 		if (fileItem.getLength() > max) {
 			AbstractMessageSource ms = MessageUtils.getMessageSource();
 			return ms.getMessage("fichero.limite.tamanyo",
 					new Object[] { (int) ((float) max / 1024f) },
 					MessageUtils.DEFAULT_LOCALE);
 		}
-
+		
+		if (comprobarExtensionNoPermitida(getFileExtension(uploadForm.getFileItem()))) {
+			AbstractMessageSource ms = MessageUtils.getMessageSource();
+			return ms.getMessage("fichero.extension.permitida",
+					new Object[] { getFileExtension(uploadForm.getFileItem()) },
+					MessageUtils.DEFAULT_LOCALE);
+		}
+		
 		String claveRel = guardarRecuperarDatoEntidad(idEntidad, tipoEntidadGrid, uploadForm, tipoDocumento);
 
 		//Obtenemos el codigo mapeado		
@@ -153,6 +166,14 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
 		return outputDto.getTxtError();
 		
+	}
+	
+	private boolean comprobarExtensionNoPermitida(String extension) {
+		List<String> extensionPermitida = Arrays.asList("BMP", "CSV", "DOC", "DOCM", "DOCX", "DOT", "GIF", "HTM", "HTML", "JPEG", "JPG", "MSG", "NOVAL", "ODS", "ODT", "PDF", "PNG", "PPT", "RTF", "SXC", "TIF", "TIFF", "TXT", "ULL", "XLS", "XLST", "XLSX", "XML", "XPS", "XSL", "ZIP");
+		if(!Checks.esNulo(extension) && extensionPermitida.contains(extension.toUpperCase())) {
+			return false;
+		}
+		return true;
 	}
 	
 	private String getFileExtension(FileItem file) { 
@@ -181,53 +202,42 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		
 		if(DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidadGrid) || DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidadGrid)){
 			
+			if(DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidadGrid)) {
+				EXTAsunto asunto = EXTAsunto.instanceOf(asuntoDao.get(idAsuPrc));
+				for(Procedimiento prc : asunto.getProcedimientos()) {
+					MEJProcedimiento procedimiento = extProcedimientoManager.prepareGuid(prc);
+					
+					GestorDocumentalInputDto inputPrcDto = rellenaInputDto(
+							procedimiento.getGuid(), LISTADO_GESTOR_DOC, tipoDocumento,
+							DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO, null);
+					GestorDocumentalOutputDto outputPrcDto = new GestorDocumentalOutputDto();
+					outputPrcDto = gestorDocumentalWSApi.ejecutar(inputPrcDto);
+					outputDto.getLbListadoDocumentos().addAll(outputPrcDto.getLbListadoDocumentos());
+				}
+			}
+			
+			
 			for(GestorDocumentalOutputListDto olDto : outputDto.getLbListadoDocumentos()) {
-				
-				//TODO temporal mientras el WS no nos devuelva el codigo del tipo de documento
-				String fichero = olDto.getDescripcion() + "." + olDto.getExtFichero().toLowerCase();
-				
-				if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidadGrid)) {
-					List<EXTAdjuntoAsunto> adjuntoAsuntoList = genericDao.getList(EXTAdjuntoAsunto.class, 
-														genericDao.createFilter(FilterType.EQUALS, "nombre", fichero), 
-														genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsuPrc));
-					if(!Checks.estaVacio(adjuntoAsuntoList)){
-						olDto.setNombreTipoDoc(adjuntoAsuntoList.get(0).getTipoFichero().getDescripcion());
-					}
-				}
-				if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidadGrid)) {
-					List<EXTAdjuntoAsunto> adjuntoAsuntoList = genericDao.getList(EXTAdjuntoAsunto.class, 
-														genericDao.createFilter(FilterType.EQUALS, "nombre", fichero), 
-														genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idAsuPrc));
-					if(!Checks.estaVacio(adjuntoAsuntoList)){
-						olDto.setNombreTipoDoc(adjuntoAsuntoList.get(0).getTipoFichero().getDescripcion());
-					}
-				}
-				//-------------------------------------------------------------------------------------------------------------------
 				List<MapeoTipoFicheroAdjunto> mapeo = genericDao.getList(MapeoTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "tipoFicheroExterno", olDto.getTipoDoc()));
 				if(!Checks.esNulo(mapeo) && mapeo.size()>0){
-					
 					if(mapeo.size() == 1){
 						olDto.setTipoDoc(mapeo.get(0).getTipoFichero().getCodigo());
+						olDto.setNombreTipoDoc(mapeo.get(0).getTipoFichero().getDescripcion());
 					}else{
-						if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidadGrid)) {
-							
-							EXTAsunto extAsun = genericDao.get(EXTAsunto.class, genericDao.createFilter(FilterType.EQUALS, "guid", claveAsociacion));
-							List<EXTAdjuntoAsunto> adjsAsun = genericDao.getList(EXTAdjuntoAsunto.class, genericDao.createFilter(FilterType.EQUALS, "asunto.id", extAsun.getId()));
-							if(!Checks.esNulo(adjsAsun) && adjsAsun.size() > 0){
-								olDto.setTipoDoc(adjsAsun.get(0).getTipoFichero().getCodigo());
-							}
-							
-						} else if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidadGrid)) {
-							
-							MEJProcedimiento procedimiento = genericDao.get(MEJProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "guid", claveAsociacion));
-							List<EXTAdjuntoAsunto> adjsAsun = genericDao.getList(EXTAdjuntoAsunto.class, genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", procedimiento.getId()));
-							if(!Checks.esNulo(adjsAsun) && adjsAsun.size() > 0){
-								olDto.setTipoDoc(adjsAsun.get(0).getTipoFichero().getCodigo());
-							}
-							
+						String fichero = olDto.getDescripcion() + "." + olDto.getExtFichero().toLowerCase();
+						List<EXTAdjuntoAsunto> adjsAsun = null;
+						if(DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidadGrid)) {
+							adjsAsun = genericDao.getList(EXTAdjuntoAsunto.class, genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsuPrc),
+																					genericDao.createFilter(FilterType.EQUALS, "nombre", fichero));
+						}else{
+							adjsAsun = genericDao.getList(EXTAdjuntoAsunto.class, genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idAsuPrc),
+																					genericDao.createFilter(FilterType.EQUALS, "nombre", fichero));
+						}
+						if(!Checks.esNulo(adjsAsun) && adjsAsun.size() > 0){
+							olDto.setTipoDoc(adjsAsun.get(0).getTipoFichero().getCodigo());
+							olDto.setNombreTipoDoc(adjsAsun.get(0).getTipoFichero().getDescripcion());
 						}
 					}
-					
 				}
 				olDto.setContentType(getMimeType(olDto.getExtFichero()));
 			}	
@@ -262,6 +272,11 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	private GestorDocumentalInputDto rellenaInputDto(String claveAsociacion,
 			String tipoGestion, String tipoDocumento, String tipoEntidadGrid,
 			WebFileItem uploadForm) {
+		
+		if(DDTipoEntidad.CODIGO_ENTIDAD_PERSONA.equals(tipoEntidadGrid)) {
+			claveAsociacion = claveAsociacion.substring(4);
+		}
+		
 		GestorDocumentalInputDto inputDto = new GestorDocumentalInputDto();
 		if (ALTA_GESTOR_DOC.equals(tipoGestion)) {
 			inputDto.setOperacion(ConstantesGestorDocumental.ALTA_DOCUMENTO_OPERACION);
@@ -408,7 +423,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 					DDTipoFicheroAdjunto tipoFicheroAdjunto = genericDao.get(DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoDocumento));
 					adjuntoAsunto.setTipoFichero(tipoFicheroAdjunto);
 				}
-				
+		        adjuntoAsunto.setNombre(obtenerNombreUnico(asunto.getId(), adjuntoAsunto.getNombre(), uploadForm));
 		        adjuntoAsunto.setAsunto(asunto);
 		        Auditoria.save(adjuntoAsunto);
 		        asunto.getAdjuntos().add(adjuntoAsunto);
@@ -424,8 +439,8 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 					DDTipoFicheroAdjunto tipoFicheroAdjunto = genericDao.get(DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoDocumento));
 					adjuntoAsunto.setTipoFichero(tipoFicheroAdjunto);
 				}
-				
-		        adjuntoAsunto.setAsunto(prc.getAsunto());
+		        adjuntoAsunto.setNombre(obtenerNombreUnico(prc.getAsunto().getId(), adjuntoAsunto.getNombre(), uploadForm));
+				adjuntoAsunto.setAsunto(prc.getAsunto());
 		        adjuntoAsunto.setProcedimiento(prc);
 		        Auditoria.save(adjuntoAsunto);
 		        prc.getAsunto().getAdjuntos().add(adjuntoAsunto);
@@ -435,5 +450,15 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		}
 		return claveRel;
 	}
-
+	
+	private String obtenerNombreUnico(Long idAsunto, String nombre, WebFileItem uploadForm) {
+		String nombreAux = nombre.substring(0, nombre.indexOf("."));
+		List<EXTAdjuntoAsunto> list = extAdjuntoAsuntoDao.getAdjuntoAsuntoByNombreByAsu(idAsunto, nombreAux);
+		if(!Checks.estaVacio(list)) {
+			String ext = nombre.substring(nombre.indexOf("."));
+			nombre = nombreAux + "_(" + list.size() + ")" + ext;
+			uploadForm.getFileItem().setFileName(nombre);
+		}
+		return nombre;
+	}
 }

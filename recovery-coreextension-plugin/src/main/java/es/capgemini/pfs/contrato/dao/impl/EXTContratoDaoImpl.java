@@ -8,6 +8,7 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.hibernate.pagination.PaginationManager;
@@ -312,6 +313,102 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 				&& !dto.getTiposProductoEntidad().equals("")) {
 			hql.append(" AND EXISTS (SELECT 1 FROM DDTipoProductoEntidad tpe WHERE c.tipoProductoEntidad = tpe AND tpe.codigo in ("
 					+ dto.getTiposProductoEntidad() + "))");
+		}
+		if (cruzaMovimientos) {
+			if (dto.getMaxVolRiesgoVencido() != null
+					&& dto.getMaxVolRiesgoVencido().trim().length() > 0) {
+				String valor = dto.getMaxVolRiesgoVencido();
+				hql.append(" and mov.posVivaVencida <= " + valor + " ");
+			}
+
+			if (dto.getMinVolRiesgoVencido() != null
+					&& dto.getMinVolRiesgoVencido().trim().length() > 0) {
+				String valor = dto.getMinVolRiesgoVencido();
+				hql.append(" and mov.posVivaVencida >= " + valor + " ");
+			}
+			String maxVolTotalRiesgo = null;
+			String minVolTotalRiesgo = null;
+			if (dto.getMaxVolTotalRiesgo() != null
+					&& dto.getMaxVolTotalRiesgo().trim().length() > 0) {
+				maxVolTotalRiesgo = dto.getMaxVolTotalRiesgo();
+			}
+			if (dto.getMinVolTotalRiesgo() != null
+					&& dto.getMinVolTotalRiesgo().trim().length() > 0) {
+				minVolTotalRiesgo = dto.getMinVolTotalRiesgo();
+			}
+			if (dto.getTieneRiesgo() != null && !dto.getTieneRiesgo()) {
+				maxVolTotalRiesgo = "0";
+				minVolTotalRiesgo = "0";
+			}
+			if (minVolTotalRiesgo != null) {
+				hql.append(" and mov.riesgo >= " + minVolTotalRiesgo + " ");
+			}
+			if (maxVolTotalRiesgo != null) {
+				hql.append(" and mov.riesgo <= " + maxVolTotalRiesgo + " ");
+			}
+			if (dto.getMinDiasVencidos() != null
+					&& dto.getMinDiasVencidos().trim().length() > 0) {
+				hql.append(" and FLOOR(SYSDATE-mov.fechaPosVencida) >= "
+						+ dto.getMinDiasVencidos() + " ");
+			}
+			if (dto.getMaxDiasVencidos() != null
+					&& dto.getMaxDiasVencidos().trim().length() > 0) {
+				hql.append(" and FLOOR(SYSDATE-mov.fechaPosVencida) <= "
+						+ dto.getMaxDiasVencidos() + " ");
+			}
+		}
+
+		if (!Checks.esNulo(dto.getCodigoZonaAdm())) {
+			 
+			 String[] codigosZona = StringUtils.split(dto.getCodigoZonaAdm(), ",");
+			 int cantZonas = codigosZona.length; 
+			 if (cantZonas > 0) { 
+				 hql.append(" and ( "); 
+				 for (int i = 0; i < codigosZona.length; i++) { 
+					 String codigoZ = codigosZona[i]; 
+					 hql.append(" c.oficinaAdministrativa.zona.codigo like '" + codigoZ + "%'"); 
+					 if (i < codigosZona.length - 1) { 
+						 hql.append(" OR"); 
+					 } 
+				 } 
+		 			
+				 // SE PONE ESTE FILTRO AQU�, DEBIDO A QUE PARA VISUALIZAR EL 
+				 // CONTRATO, PUEDE O BIEN PERTENECER A LA ZONA 
+				 // DEL USUARIO LOGEADO, O QUE ESTE SEA GESTOR DEL CONTRATO 
+				 hql.append(" or c.id in (");
+				 hql.append(generaFiltroContratosPorGestor(usuLogado, params));
+				 hql.append(")"); 
+				 hql.append(" ) "); 
+			 } 
+		} 
+
+		if (dto.getCodigosZona() != null && dto.getCodigosZona().size() > 0) {
+			int cantZonas = dto.getCodigosZona().size(); 
+			if (cantZonas > 0) {
+				hql.append(" and ( "); 
+				for (Iterator<String> it = dto.getCodigosZona().iterator(); it .hasNext();) { 
+					String codigoZ = it.next();
+					hql.append(" c.oficinaContable.zona.codigo like '" + codigoZ + "%'");
+	  
+					if (it.hasNext()) { 
+						hql.append(" OR"); 
+					} 
+				} 
+					
+				// SE PONE ESTE FILTRO AQU�, DEBIDO A QUE PARA VISUALIZAR EL 
+				// CONTRATO, PUEDE O BIEN PERTENECER A LA ZONA 
+				// DEL USUARIO LOGEADO, O QUE ESTE SEA GESTOR DEL CONTRATO 
+				hql.append(" or c.id in (");
+				hql.append(generaFiltroContratosPorGestor(usuLogado, params));
+				hql.append(")"); 
+				hql.append(" ) "); 
+			} 
+		} 
+		else {
+			// EN CASO DE QUE NO TENGA ZONAS ASIGNADAS Y SEA GESTOR DEL // CONTRATO // DEBE PODER SEGUIR VISUALIZANDO EL CONTRATO 
+			hql.append(" and c.id in ( ");
+			hql.append(generaFiltroContratosPorGestor(usuLogado, params));
+			hql.append(" ) "); 
 		}
 
 		return hql.toString();
@@ -805,9 +902,11 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 				hql.append(")");
 				hql.append(" ) ");
 			}
-		} else {// EN CASO DE QUE NO TENGA ZONAS ASIGNADAS Y SEA GESTOR DEL
-				// CONTRATO
-				// DEBE PODER SEGUIR VISUALIZANDO EL CONTRATO
+		} 
+		else {
+			// EN CASO DE QUE NO TENGA ZONAS ASIGNADAS Y SEA GESTOR DEL
+			// CONTRATO
+			// DEBE PODER SEGUIR VISUALIZANDO EL CONTRATO
 			hql.append(" and c.id in ( ");
 			hql.append(generaFiltroContratosPorGestor(usuLogado, params));
 			hql.append(" ) ");

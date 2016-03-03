@@ -11,7 +11,7 @@
 	default-autowire="byName">
 	
 	<bean p:entity="tabs.procedimiento.fast" p:name="historicoProcedimiento"  p:order="900" 
-		p:fileName="/WEB-INF/jsp/entidad/procedimiento/tabs/historico.jsp" 
+		p:fileName="/WEB-INF/jsp/plugin/mejoras/procedimientos/tabs/tabHistoricoProcedimiento.jsp" 
 		p:priority="2"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
 	
 	<bean p:entity="tabs.asunto.fast" p:name="historicoAsunto" p:order="2100"

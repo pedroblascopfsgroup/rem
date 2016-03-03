@@ -168,7 +168,7 @@
 			<json:property name="apellido2">${obs.persona.apellido2}</json:property>
 			<json:property name="codClienteEntidad">${obs.persona.codClienteEntidad}</json:property>
 			<json:property name="nif">${obs.persona.docId}</json:property>
-			<json:property name="saldoVencido">${obs.persona.riesgoDirectoVencido}</json:property>
+			<json:property name="saldoVencido">${obs.persona.dispuestoVencido}</json:property>
 			<json:property name="totalRiesgo">${obs.persona.riesgoTotal}</json:property>
 			<json:property name="numContratos">${obs.persona.numContratos}</json:property>
 			<json:property name="situacion">${obs.persona.situacion}</json:property>
@@ -188,13 +188,20 @@
     		<json:property name="charextra10" value="${contrato.estadoEntidad}" />
     	</sec:authorize>
     	<json:property name="flagextra4" value="${contrato.flagextra4}" />
+    	<json:property name="flagextra5" value="${contrato.flagextra5}" />
+    	<json:property name="flagextra6" value="${contrato.flagextra6}" />
     	<json:property name="dateextra2" value="${contrato.dateextra2}" />
     	<json:property name="dateextra3" value="${contrato.dateextra3}" />
     	<json:property name="dateextra4" value="${contrato.dateextra4}" />
     	<json:property name="dateextra5" value="${contrato.dateextra5}" />
     	<json:property name="dateextra6" value="${contrato.dateextra6}" />
+    	<json:property name="dateextra7" value="${contrato.dateextra7}" />
+    	<json:property name="dateextra9" value="${contrato.dateextra9}" />
     	<json:property name="numextra4" value="${contrato.numextra4}" />
     	<json:property name="numextra5" value="${contrato.numextra5}" />
+    	<json:property name="numextra6" value="${contrato.numextra6}" />
+    	<json:property name="numextra7" value="${contrato.numextra7}" />
+    	<json:property name="numextra8" value="${contrato.numextra8}" />
     	<sec:authorize ifAllGranted="TAB_CONTRATO_OTROS,PERSONALIZACION-BCC">
     		<c:if test="${not empty riesgo}">
     			<json:property name="descripcionRiesgo" value="${riesgo.descripcion}"/>
@@ -205,7 +212,7 @@
     			</c:if>
 	    		<c:if test="${not empty vencido.tipoVencidoAnterior}">
 	    			<json:property name="tramoPrevio" value="${vencido.tipoVencidoAnterior.descripcion}"/>
-	    		</c:if>
+	    		 </c:if>
     		</c:if>    		
     	</sec:authorize>
 	</json:object>

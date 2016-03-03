@@ -24,6 +24,11 @@
 	
 	<action-state id="moduloProcuradorDes">
 		<evaluate expression="executor.execute('es.pfsgroup.plugin.recovery.procuradores.configuracion.api.activoDespachoIntegral')" result="flowScope.activoDespachoIntegral" />
+		<transition to="moduloProcuradorHistResoluciones"/>
+	</action-state>
+	
+	<action-state id="moduloProcuradorHistResoluciones">
+	    <evaluate expression="executor.execute('es.pfsgroup.plugin.recovery.procuradores.procesado.api.hayDespachoIntegral',id)" result="flowScope.hayDespachoIntegral" />
 		<transition to="consultaProcedimiento"/>
 	</action-state>
 	
@@ -48,6 +53,7 @@
 			<evaluate expression="executor.execute('plugin.precontencioso.getVisibilidadBotonesPrecontencioso','botonesLiquidaciones',false)" result="flowScope.botonesInvisiblesLiqPco" />
 			<evaluate expression="executor.execute('plugin.precontencioso.getVisibilidadBotonesPrecontencioso','botonesBurofaxes',true)" result="flowScope.botonesVisiblesBurPco" />
 			<evaluate expression="executor.execute('plugin.precontencioso.getVisibilidadBotonesPrecontencioso','botonesBurofaxes',false)" result="flowScope.botonesInvisiblesBurPco" />
+			
 	    </on-entry>
     </end-state>     
 </flow>

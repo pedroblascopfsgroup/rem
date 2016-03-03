@@ -23,6 +23,7 @@ public class DatosGeneralesLiqVO {
 	private String DGC_COIBTQ;
 	private BigDecimal DGC_IMVRE2;
 	private Date DGC_FFCTTO;
+	private BigDecimal DGC_CODICE;
 
 	SimpleDateFormat fechaLargaFormat = new SimpleDateFormat(FormatUtils.DD_DE_MES_DE_YYYY, MessageUtils.DEFAULT_LOCALE);
 
@@ -84,6 +85,10 @@ public class DatosGeneralesLiqVO {
 	public String FFCTTO() {
 		return fechaLargaFormat.format(DGC_FFCTTO);
 	}
+	
+	public String CODICE(){
+		return DGC_CODICE == null ? "[NO DISPONIBLE]" : DGC_CODICE.toString();
+	}
 
 	/*
 	 * GETTERS WITHOUT FORMAT MANIPULATION
@@ -107,5 +112,9 @@ public class DatosGeneralesLiqVO {
 	
 	public BigDecimal getDGC_IMVRE2() {
 		return DGC_IMVRE2;
+	}
+	
+	public BigDecimal getDGC_CODICE() {
+		return DGC_CODICE;
 	}
 }

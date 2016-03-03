@@ -240,7 +240,12 @@
 	});
 
 	tipoDespachoStore.on('load', function(combo) {
-		var numRecord = tipoDespachoStore.findExact('cod', '${liquidacion.apoderadoDespachoId}', 0);
+	
+		 var numRecord = -1;
+                <c:if test="${liquidacion.apoderadoDespachoId != null}">
+
+                        numRecord = tipoDespachoStore.findExact('cod', ${liquidacion.apoderadoDespachoId}, 0);
+                </c:if>
 
 		if (numRecord != -1) {
 			var value = tipoDespachoStore.getAt(numRecord).data[comboTipoDespacho.valueField];
@@ -258,7 +263,12 @@
 	});
 
 	usuarioStore.on('load', function(combo) {
-		var numRecord = usuarioStore.findExact('id', '${liquidacion.apoderadoUsuarioId}', 0);
+	
+				 var numRecord = -1;
+                <c:if test="${liquidacion.apoderadoUsuarioId != null}">
+
+                        numRecord = usuarioStore.findExact('id', ${liquidacion.apoderadoUsuarioId}, 0);
+                </c:if>
 
 		if (numRecord != -1) {
 			var value = usuarioStore.getAt(numRecord).data[comboUsuario.valueField];

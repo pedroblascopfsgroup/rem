@@ -8,5 +8,5 @@ import es.pfsgroup.recovery.ext.impl.contrato.model.AtipicoContrato;
 
 @Repository
 public class AtipicoContratoDaoImpl extends
-		AbstractEntityDao<AtipicoContrato, Long> implements AtipicoContratoDao {
+AbstractEntityDao<AtipicoContrato, Long> implements AtipicoContratoDao {
 }

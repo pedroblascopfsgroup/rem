@@ -1,6 +1,5 @@
 package es.pfsgroup.recovery.geninformes;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -13,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -24,15 +22,15 @@ import javax.mail.MessagingException;
 import net.sf.jasperreports.engine.DefaultJasperReportsContext;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JRPropertiesUtil;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.export.JRRtfExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
-import net.sf.jasperreports.engine.JRParameter;
+import net.sf.jasperreports.engine.export.JRRtfExporter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -81,6 +79,8 @@ import es.pfsgroup.recovery.geninformes.model.GENINFParrafo;
 import fr.opensagres.xdocreport.core.document.SyntaxKind;
 import fr.opensagres.xdocreport.document.IXDocReport;
 import fr.opensagres.xdocreport.document.docx.preprocessor.dom.DOMFontsPreprocessor;
+import fr.opensagres.xdocreport.document.images.FileImageProvider;
+import fr.opensagres.xdocreport.document.images.IImageProvider;
 import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
 import fr.opensagres.xdocreport.template.IContext;
 import fr.opensagres.xdocreport.template.TemplateEngineKind;
@@ -1097,6 +1097,74 @@ public class GENINFInformesManager implements GENINFInformesApi {
 		}
 		return respuesta;
 
+	}
+
+	public FileItem generarEscritoConVariablesYLogo(HashMap<String, Object> mapaVariables, String escrito,InputStream is, String rutaLogo) throws Throwable {
+		
+		File fileSalidaTemporal = null;
+		FileItem resultado = null;
+		OutputStream out = null;
+		
+		try{
+			// Comprobamos que exista la plantilla
+			if (escrito==null || escrito.equals("")) {
+				throw new IllegalStateException("Nombre de fichero de plantilla vacio");
+			}
+						
+			if (is == null) {
+				throw new IllegalStateException("No existe el fichero de plantilla " + escrito);
+			}			
+			
+			// Inicializamos el motor de generación de los escritos
+			IXDocReport report = XDocReportRegistry.getRegistry().loadReport(is, TemplateEngineKind.Freemarker);		
+			IContext context = report.createContext();
+			
+			// Metemos los valores de las variables !! MUY IMPORTANTE: Si hay definidas variables y no se pueblan a continuación , NO FUNCIONA
+			for(Map.Entry<String, Object> entry : mapaVariables.entrySet()){
+				context.put(entry.getKey(),entry.getValue());	
+			}
+			
+			//Poner la imagen del logo
+			FieldsMetadata metadata = report.createFieldsMetadata();
+		    metadata.addFieldAsImage("logo");
+			IImageProvider logo = new FileImageProvider(new File(rutaLogo));
+			logo.setUseImageSize(true);
+		    //logo.setHeight(50f);
+		    //logo.setResize(true);
+		    context.put("logo", logo);
+            
+			context.put(DOMFontsPreprocessor.FONT_SIZE_KEY, "8");
+			// Preparamos el fichero temporal
+			fileSalidaTemporal = File.createTempFile("escrito", ".docx");
+			
+			fileSalidaTemporal.deleteOnExit();
+			if (fileSalidaTemporal.exists()) {
+				// Generamos el escrito
+				out = new FileOutputStream(fileSalidaTemporal);
+				report.process(context, out);
+			}
+			
+			resultado = new FileItem();
+
+			//resultado.setFileName(escrito + (new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + ".docx");
+			resultado.setFileName((new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + "_" + escrito);
+
+			resultado.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+			resultado.setFile(fileSalidaTemporal);
+			
+		}catch(Throwable e){
+			System.out.println("generarEscritoConVariables: " + e);
+			throw e;
+		}finally{
+			if(!Checks.esNulo(out)){
+				out.close();
+			}
+			if(!Checks.esNulo(is)){
+				is.close();
+			}
+		}
+		return resultado;
+		
 	}
 
 }

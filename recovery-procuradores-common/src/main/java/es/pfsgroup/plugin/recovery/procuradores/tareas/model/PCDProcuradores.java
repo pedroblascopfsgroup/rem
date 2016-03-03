@@ -205,7 +205,13 @@ public class PCDProcuradores implements Serializable{
 
 	    @Column(name="SPR_ID", insertable=false, updatable = false)
 	    private Long idProrroga;
-		
+
+	    @Column(name="ZON_COD", insertable=false, updatable = false)
+	    private String zonCodigo;
+
+	    @Column(name="PEF_ID", insertable=false, updatable = false)
+	    private Long idPerfil;
+
 	    public Long getGroupTareas() {
 			return groupTareas;
 		}

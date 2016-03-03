@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.recovery.procuradores.tareas.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,7 +11,9 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.tareaNotificacion.EXTAbstractTareaNotificacionManager;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoBuscarTareaNotificacion;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.recovery.coreextension.utils.EXTModelClassFactory;
@@ -75,8 +79,16 @@ public class PCDProcuradoresManager extends EXTAbstractTareaNotificacionManager 
 		//return proxyFactory.proxy(EXTTareasApi.class).buscarTareasPendientesDelegator(dto);
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		dto.setUsuarioLogado(usuarioLogado);
+		dto.setPerfiles(usuarioLogado.getPerfiles());
+		dto.setZonas(usuarioLogado.getZonas());
 		Long idCategorizacion = configuracionDespachoExternoApi.activoCategorizacion();
 		final Class<? extends DtoResultadoBusquedaTareasBuzones> modelClass = modelClassFactory.getModelFor(EXTTareasApi.EXT_BUSCAR_TAREAS_PENDIENTES_CARTERIZACION,DtoResultadoBusquedaTareasBuzones.class);
+		try {
+			pcdprocuradoresDao.buscarTareasPendientes(dto, comboEstado, comboCtgResol, idCategorizacion , usuarioLogado, modelClass);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		return pcdprocuradoresDao.buscarTareasPendientes(dto, comboEstado, comboCtgResol, idCategorizacion , usuarioLogado, modelClass);
 
 	}

@@ -2,7 +2,6 @@ package es.capgemini.pfs.dsm;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -32,6 +31,7 @@ public class EntityDataSource extends AbstractRoutingDataSource {
         private TransactionalBasicDataSourceWrapper transactionalBasicDataSourceWrapper;
 
 
+	@SuppressWarnings("unused")
 	private Map<Long, String> mappingCache = new HashMap<Long, String>();
 
 	/**
@@ -57,7 +57,7 @@ public class EntityDataSource extends AbstractRoutingDataSource {
 	 * @param targetDataSources
 	 *            datasources
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void registerTargetDataSources(Map targetDataSources) {
 		setTargetDataSources(targetDataSources);
 		super.afterPropertiesSet();
@@ -75,10 +75,9 @@ public class EntityDataSource extends AbstractRoutingDataSource {
 	public Connection getConnectionMultientidad(String schema) throws SQLException {
 		// Sobreescribimos el método para añadirle la gestión de los usuarios
 		// transaccionales
-		Connection cnx = super.getConnection();
-		TransactionalUsersConnectionWrapper cnwrap = new TransactionalUsersConnectionWrapper(cnx);
-		cambiaCurrentSchemaMultientidad(cnwrap, schema);
-		return cnx;
+		
+		return transactionalBasicDataSourceWrapper.getConnectionTxMultientidad(super.getConnection(), schema);
+		
 	}
 
 	
@@ -89,16 +88,6 @@ public class EntityDataSource extends AbstractRoutingDataSource {
             // transaccionales si aplica
             log.debug("***&*** Ha llamado a EntityDataSource.getConnection() ");
             return transactionalBasicDataSourceWrapper.getConnectionTx(super.getConnection(username, password));
-	}
-
-	
-	private void cambiaCurrentSchemaMultientidad(TransactionalUsersConnectionWrapper cnx, String schema) throws SQLException {
-		Statement st = cnx.createStatement();
-		String sql = "ALTER SESSION SET CURRENT_SCHEMA = "
-				+ schema;
-		cnx.setCurrentSchema(schema);
-		log.debug(sql);
-		st.execute(sql);
 	}
 	
 }

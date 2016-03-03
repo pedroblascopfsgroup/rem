@@ -255,6 +255,7 @@ var setearDatos = function(data) {
     var estadoVigente = '<fwk:const value="es.capgemini.pfs.politica.model.DDEstadoItinerarioPolitica.ESTADO_VIGENTE" />';
 
 	var panelActivo = null;
+	var idEstadoItinerario = 0;
 	
     for (var i=0; i < data.politicas.length; i++)
     {
@@ -274,9 +275,10 @@ var setearDatos = function(data) {
 		
 		setearPanel(panel, politica);
 		
-		if (politica.fecha != null && politica.fecha != '')
+		if (politica.idEstadoItinerario > idEstadoItinerario)
 		{
 			panelActivo = panel;
+			idEstadoItinerario = politica.idEstadoItinerario;
 		}
     }
     

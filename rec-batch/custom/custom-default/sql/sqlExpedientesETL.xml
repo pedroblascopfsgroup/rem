@@ -1514,11 +1514,11 @@
                  , ZON_ZONIFICACION              zon
                  , ${master.schema}.DD_EST_ESTADOS_ITINERARIOS sit
                  , ${master.schema}.DD_EPI_EST_POL_ITINERARIO  epi
-             where tmp.per_id = cmp.per_id
+             Where tmp.per_id = cmp.per_id
                And tmp.exp_id = cmp.exp_id
                And tmp.per_id = per.per_id(+)
                And per.dd_pol_id = pol.dd_pol_id(+)
-               And pol.dd_pol_id = tpl.dd_pol_id(+)
+               And pol.dd_pol_codigo = tpl.tpl_codigo(+)
                And tmp.arq_id = arq.arq_id(+)
                And arq.iti_id = iti.iti_id(+)
                And iti.iti_id = est.iti_id(+)
@@ -1612,14 +1612,25 @@
 
           EXECUTE IMMEDIATE
           'Insert /*+append*/ into  '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE
+             (EXP_ID, PROCESSINSTANCE)
            SELECT EXP_ID
                 , '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL as PROCESSINSTANCE
-                , '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL as TOKEN
-                , '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL as MODULEINSTANCE
-                , '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL as VARIABLEMAP
              FROM '||cENTITY_SCHEMA||'.EXP_EXPEDIENTES
             WHERE EXP_MANUAL = 0
               AND EXP_PROCESS_BPM IS NULL';
+          COMMIT;
+
+          EXECUTE IMMEDIATE'
+          Update TMP_BATCH_SV_BPM_INSTANCE set TOKEN = '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL';
+          COMMIT;
+
+          EXECUTE IMMEDIATE'
+          Update TMP_BATCH_SV_BPM_INSTANCE set MODULEINSTANCE = '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL';
+          COMMIT;
+
+          EXECUTE IMMEDIATE'
+          Update TMP_BATCH_SV_BPM_INSTANCE set VARIABLEMAP = '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL';
+          COMMIT;
 
           --LOG
           V_NUFILAS:=SQL%ROWCOUNT;

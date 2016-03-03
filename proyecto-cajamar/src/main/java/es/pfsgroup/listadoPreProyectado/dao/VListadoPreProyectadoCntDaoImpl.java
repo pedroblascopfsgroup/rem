@@ -31,7 +31,7 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 	private StringBuilder construirSql(ListadoPreProyectadoDTO dto) {
 		StringBuilder sb = new StringBuilder();
 		//sb.append("Select distinct c ");
-		sb.append("Select distinct f.cntId, f.contrato, f.expId, f.riesgoTotal, f.deudaIrregular, f.tramo, f.diasVencidos, f.fechaPaseAMoraCnt, f.propuesta, f.estadoGestion, f.fechaPrevReguCnt, f.nomTitular, f.nifTitular ");
+		sb.append("Select distinct f.cntId, f.contrato, f.expId, f.riesgoTotal, f.deudaIrregular, f.tramo, f.diasVencidos, f.fechaPaseAMoraCnt, f.propuesta, f.estadoGestion, f.fechaPrevReguCnt, f.nomTitular, f.nifTitular, f.ofiCodigo ");
 		//sb.append("select distinct f ");
 		sb.append(" from VListadoPreProyectadoCnt f ");
 		sb.append(" where 1=1 ");
@@ -313,6 +313,7 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 			cnt.setFechaPrevReguCnt((Date) item[10]);
 			cnt.setNomTitular((String) item[11]);
 			cnt.setNifTitular((String) item[12]);
+			cnt.setOfiCodigo((String) item[13]);
 			
 			resultado.add(cnt);
 		}

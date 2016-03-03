@@ -1543,13 +1543,12 @@
              From (select distinct per_id, exp_id
                    from BATCH_SEG_DATOS_SALIDA)    tmp
                  , CMP_CICLO_MARCADO_POLITICA      cmp
-                 , APP_ANALISIS_PERSONA_POLITICA   app
             Where  tmp.per_id = cmp.per_id
                And tmp.exp_id = cmp.exp_id;
 
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;
-            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'POL_POLITICA Cargada',V_NUFILAS);
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'APP_ANALISIS_PERSONA_POLITICA Cargada',V_NUFILAS);
             COMMIT;
         END;
         ]]>

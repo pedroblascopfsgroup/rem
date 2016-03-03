@@ -63,6 +63,15 @@ if [ $? != 0 ] ; then
 fi
 echo "[OK] ""$sh_dir""CJM_script_borrado.sh ejecutado correctamente"            
 
+echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_Analiza_haya02.sh"                      
+./"$sh_dir"CJM_Analiza_haya02.sh "$1" 
+if [ $? != 0 ] ; then
+    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CJM_Analiza_haya02.sh"
+    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
+    exit 1           
+fi
+echo "[OK] ""$sh_dir""CJM_Analiza_haya02.sh ejecutado correctamente"      
+
 #Solo para haya ponemos la secuencia de los asuntos para el asu_id a 300000001
 echo "[INFO] Comienza ejecución de: ""$sh_dir""HRE_Inicio_Secuencia_Asuntos_300000001.sh"                               
 ./"$sh_dir"HRE_Inicio_Secuencia_Asuntos_300000001.sh "$1"   
@@ -326,6 +335,25 @@ if [ $? != 0 ] ; then
   exit 1
 fi
 echo "[OK] ""$sh_dir""CMREC-2339_Correccion_asuntos_sin_nombre_HAYA02.sh ejecutado correctamente" 
+
+
+echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_1866_update_nombre_expediente_PCO.sh"                      
+./"$sh_dir"CMREC_1866_update_nombre_expediente_PCO.sh "$1" 
+if [ $? != 0 ] ; then
+    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC_1866_update_nombre_expediente_PCO.sh"
+    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
+    exit 1           
+fi
+echo "[OK] ""$sh_dir""CMREC_1866_update_nombre_expediente_PCO.sh ejecutado correctamente"          
+
+echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_Analiza_haya02.sh"                      
+./"$sh_dir"CJM_Analiza_haya02.sh "$1" 
+if [ $? != 0 ] ; then
+    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CJM_Analiza_haya02.sh"
+    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
+    exit 1           
+fi
+echo "[OK] ""$sh_dir""CJM_Analiza_haya02.sh ejecutado correctamente"           
 
 echo "[INFO] FIN CJM_lanza_migracion.sh. Revise el fichero de log" `date` 
 exit 0

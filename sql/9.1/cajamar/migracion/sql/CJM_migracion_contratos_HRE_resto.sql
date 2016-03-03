@@ -61,6 +61,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] CAJAMAR MIGRACION CONTRATOS MARCA HAYA');
 
     --** Conjunto base de contratos HRE
     ----------------------------------------------
+/*
     v_sql:='Create table '||v_esquema||'.TMP_GUIA_CONTRATOS_HRE nologging as
         select distinct g.cnt_id, g.cnt_cod_entidad, g.cnt_cod_oficina, g.cnt_cod_centro, g.cnt_contrato
              , eop.cd_expediente as cod_recovery
@@ -76,6 +77,32 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] CAJAMAR MIGRACION CONTRATOS MARCA HAYA');
            and eop.cd_Expediente = cab.cd_expediente 
            and cab.fecha_asignacion is not null
            ';
+*/
+
+    --** Conjunto base de contratos HRE
+    ----------------------------------------------
+    v_sql:='Create table '||v_esquema||'.TMP_GUIA_CONTRATOS_HRE nologging as
+	    select distinct g.cnt_id, g.cnt_cod_entidad, g.cnt_cod_oficina, g.cnt_cod_centro, g.cnt_contrato
+		, eop.cd_expediente as cod_recovery
+		, tmp.tmp_cnt_char_extra7
+		, ''AGE'' as cdTipoAct -- Gestion Externa
+	    from '||v_esquema||'.cnt_contratos g
+		, '||v_esquema||'.MIG_EXPEDIENTES_OPERACIONES eop
+		, '||v_esquema||'.MIG_EXPEDIENTES_CABECERA cab
+		, '||v_esquema||'.TMP_CNT_CONTRATOS           tmp
+	    where tmp.tmp_cnt_remu_gest_especial = ''EX''
+		and g.cnt_contrato = eop.numero_contrato
+		and g.cnt_contrato = tmp.tmp_cnt_contrato
+		and eop.cd_Expediente = cab.cd_expediente
+		and cab.fecha_asignacion is not null
+		and tmp.TMP_CNT_COD_GESTION_ESPECIAL = ''HAYA''
+		and NOT EXISTS(SELECT 1
+			     FROM '||v_esquema||'.MIG_PROCEDIMIENTOS_CABECERA C
+			     WHERE C.CD_EXPEDIENTE_NUSE = CAB.CD_EXPEDIENTE) -- LOS QUE EVOLUCIONAN A PROCEDIMIENTOS NO SE MIGRAN COMO PRECONTENCIOSOS.
+	';  
+
+
+
     execute immediate v_sql;
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - Tabla temporal '||v_esquema||'.TMP_GUIA_CONTRATOS_HRE creada. '||SQL%ROWCOUNT||' Filas');
 

@@ -2,17 +2,18 @@
 --##########################################
 --## AUTOR=Daniel Esteve
 --## FECHA_CREACION=20160225
---## ARTEFACTO=[online|batch]
---## VERSION_ARTEFACTO=X.X.X_rcXX
---## INCIDENCIA_LINK=PROJECTKEY-ISSUENUMBER
---## PRODUCTO=[SI|NO]
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HR-2016
+--## PRODUCTO=NO
 --## 
 --## Finalidad: 
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
---*/ 
+--*/
+ 
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;

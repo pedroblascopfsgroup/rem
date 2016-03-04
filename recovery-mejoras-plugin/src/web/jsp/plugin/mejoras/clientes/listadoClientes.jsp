@@ -7,7 +7,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <fwk:page>
-	debugger;
+	
 	var limit=25;
 	
 	var busquedaClientesMask = new Ext.LoadMask(Ext.getBody(), {msg:"Cargando ..."});

@@ -98,7 +98,7 @@
 		  }
 	  });
 
-	debugger;
+	
 	if (isSupervisor==true) {
 		btnNext.setText('<s:message code="expedientes.creacion.activar" text="**Activar"/>');
 		btnNext.enable();

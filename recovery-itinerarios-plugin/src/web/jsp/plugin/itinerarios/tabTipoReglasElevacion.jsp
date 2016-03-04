@@ -206,7 +206,6 @@ for(i = 0; i < panelsToDisplay; i++){
 			text : ''
 			,id: btnAutoName+strSplitterChar+estadosItinerario[i].id+strSplitterChar+i.toString()
 			,handler : function(thisButton, eventObject) {
-			debugger;
 						var nameSplitted = thisButton.getId().split(strSplitterChar);
 						page.webflow({
 							flow: 'plugin/itinerarios/plugin.itinerarios.marcaAutomatico'

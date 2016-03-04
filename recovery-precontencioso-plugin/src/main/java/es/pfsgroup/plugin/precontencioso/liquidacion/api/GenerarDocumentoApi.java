@@ -15,5 +15,9 @@ public interface GenerarDocumentoApi {
 
 	public FileItem generarCartaNotario(Long idLiquidacion, String notario,	String localidadNotario, String adjuntosAdicionales,
 			String codigoPropietaria, String centro, String localidadFirma);
+
+	public FileItem generarDocumentoBienes(Long idProcedimiento, String idsBien, String localidad, String nombreNotario,
+			String localidadNotario, String numProtocolo, String fechaEscritura, 
+			String localidadRegProp, String numeroRegProp);
 	
 }

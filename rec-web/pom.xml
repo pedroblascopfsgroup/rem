@@ -1435,6 +1435,26 @@
         	<artifactId>recovery-bi-plugin</artifactId>
         	<scope>compile</scope>
         </dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-procuradores-plugin</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-procuradores-common</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>pfs-${project.version}</finalName>
@@ -2198,26 +2218,6 @@
 						<exclusion>
 							<groupId>capgemini</groupId>
 							<artifactId>devon-batch</artifactId>
-						</exclusion>
-					</exclusions>
-				</dependency>
-				<dependency>
-					<groupId>es.pfsgroup.plugin</groupId>
-					<artifactId>recovery-procuradores-plugin</artifactId>
-					<exclusions>
-						<exclusion>
-							<groupId>*</groupId>
-							<artifactId>*</artifactId>
-						</exclusion>
-					</exclusions>
-				</dependency>
-				<dependency>
-					<groupId>es.pfsgroup.plugin</groupId>
-					<artifactId>recovery-procuradores-common</artifactId>
-					<exclusions>
-						<exclusion>
-							<groupId>*</groupId>
-							<artifactId>*</artifactId>
 						</exclusion>
 					</exclusions>
 				</dependency>

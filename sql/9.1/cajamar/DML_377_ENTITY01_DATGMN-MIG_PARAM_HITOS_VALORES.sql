@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JUAN GALLEGO MOLERO
---## FECHA_CREACION=20151109
+--## FECHA_CREACION=20160304
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.9
 --## INCIDENCIA_LINK=CMREC-976

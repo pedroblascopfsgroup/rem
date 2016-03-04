@@ -80,6 +80,8 @@ BEGIN
   WHERE sequence_name = ''||SECUENCIA||'';
 
 
+
+
  S_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.'||SECUENCIA||'
  INCREMENT BY 1
  START WITH 1

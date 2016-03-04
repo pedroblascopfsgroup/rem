@@ -58,7 +58,8 @@ COMMIT;
    V_TMP_TIPO_ACTOR:= NULL;
    V_TIPO_ACTOR:= NULL;
    table_count:= NULL;
-   
+
+
   EXCEPTION
     WHEN OTHERS THEN
       DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE));

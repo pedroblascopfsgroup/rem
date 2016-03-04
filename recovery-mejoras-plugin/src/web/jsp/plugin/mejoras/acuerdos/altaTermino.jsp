@@ -515,7 +515,6 @@ arrayCampos["codigoPersonaAfectada"]=app.creaNumber('codigoPersonaAfectada', '<s
        			if (Ext.getCmp('fechaSolucionPrevista')!=undefined) {
        				dateSolucionPrevista = Date.parse(Ext.getCmp('fechaSolucionPrevista').getValue());
        			}
-       			debugger;
        			if(dateSolucionPrevista != null && !isNaN(parseFloat(dateSolucionPrevista)) && Ext.getCmp('fechaSolucionPrevista').getValue() < fechaActual){
        				Ext.Msg.show({
 			   		title:'Aviso',

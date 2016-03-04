@@ -1,15 +1,15 @@
 --/*
 --##########################################
 --## AUTOR=JUAN GALLEGO MOLERO
---## FECHA_CREACION=20151103
+--## FECHA_CREACION=20151109
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.9
---## INCIDENCIA_LINK=CMREC-976 
+--## INCIDENCIA_LINK=CMREC-976
 --## PRODUCTO=NO
 --## 
---## Finalidad: Insertar parametros en MIG_PARAM_HITOS
+--## Finalidad: Insertar parametros en MIG_PARAM_HITOS_VALORES
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
---## VERSIONES:0.4
+--## VERSIONES:0.3
 --##        
 --##########################################
 --*/
@@ -33,9 +33,8 @@ DECLARE
   
  V_ESQUEMA 			     VARCHAR2(25 CHAR):= '#ESQUEMA#'; 				-- Configuracion Esquema
  V_ESQUEMA_MASTER    		     VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; 			-- Configuracion Esquema Master
- TABLA                               VARCHAR(100 CHAR):= 'MIG_PARAM_HITOS';
- SECUENCIA                           VARCHAR(100 CHAR):= 'S_MIG_PARAM_HITOS';
- TABLA_VALORES                       VARCHAR(100 CHAR):= 'MIG_PARAM_HITOS_VALORES';
+ TABLA                               VARCHAR(100 CHAR):= 'MIG_PARAM_HITOS_VALORES';
+ SECUENCIA                           VARCHAR(100 CHAR):= 'S_MIG_PARAM_HITOS_VALORES';
  seq_count 			     NUMBER(3); 						-- Vble. para validar la existencia de las Secuencias.
  table_count 		     	     NUMBER(3); 						-- Vble. para validar la existencia de las Tablas.
  v_column_count  	   	     NUMBER(3); 						-- Vble. para validar la existencia de las Columnas.
@@ -52,206 +51,351 @@ DECLARE
 --Código de tabla
 
    V_MPH T_ARRAY_MPH := T_ARRAY_MPH(
- T_MPH ('1','P06','Cambiario','H016','P. Cambiario - HCJ','1','H016_interposicionDemandaMasBienes','1','Interposición de la demanda más marcado de bienes','0','0')
-, T_MPH ('2','P06','Cambiario','H016','P. Cambiario - HCJ','2','H016_confAdmiDecretoEmbargo','2','Confirmar admisión más marcado bienes decreto embargo','0','0')
-, T_MPH ('3','P06','Cambiario','HC103','T. Provisión Fondos - HCJ','2','HC103_SolicitarProvision','3','Solicitar provisión','0','0')
-, T_MPH ('4','P06','Cambiario','H016','P. Cambiario - HCJ','3','H016_confNotifRequerimientoPago','4','Confirmar notificación requerimiento de pago','0','0')
-, T_MPH ('5','P06','Cambiario','H062','T. Vigilancia y Caducidad Embargos - HCJ','3','H062_confirmarAnotacionRegistro','5','Confirmar anotación en el registro','0','0')
-, T_MPH ('6','P06','Cambiario','H016','P. Cambiario - HCJ','5','H016_registrarDemandaOposicion','6','Registrar demanda de oposición','0','0')
-, T_MPH ('7','P06','Cambiario','H016','P. Cambiario - HCJ','6','H016_registrarJuicioComparecencia','7','Registrar juicio y comparecencia','0','1')
-, T_MPH ('8','P06','Cambiario','H016','P. Cambiario - HCJ','6','H016_registrarResolucion','8','Registrar resolución','0','0')
-, T_MPH ('9','P06','Cambiario','H016','P. Cambiario - HCJ','7','H016_resolucionFirme','9','Resolución firme','0','0')
-, T_MPH ('10','P06','Cambiario','H016','P. Cambiario - HCJ','8','H016_CambiarioDecision','10','Tarea toma de decisión','0','0')
-, T_MPH ('11','P06','Cambiario','H030','T. certificación de cargas y revisión - HCJ','9','H030_SolicitarInformacionCargasAnt','11','Solicitar información de cargas anteriores','0','0')
-, T_MPH ('12','P07','Declarativo Ordinario','H024','P. ordinario - HCJ','10','H024_InterposicionDemanda','1','Interposición de la demanda','0','0')
-, T_MPH ('13','P07','Declarativo Ordinario','H024','P. ordinario - HCJ','11','H024_ConfirmarAdmision','2','Confirmar admisión de la demanda','0','0')
-, T_MPH ('14','P07','Declarativo Ordinario','HC103','T. Provisión Fondos - HCJ','11','HC103_SolicitarProvision','3','Solicitar provisión','0','0')
-, T_MPH ('15','P07','Declarativo Ordinario','H024','P. ordinario - HCJ','12','H024_ConfirmarNotDemanda','4','Confirmar notificación de la demanda','0','0')
-, T_MPH ('16','P07','Declarativo Ordinario','H024','P. ordinario - HCJ','13','H024_ConfirmarOposicion','5','Confirmar si existe oposición','0','1')
-, T_MPH ('17','P07','Declarativo Ordinario','H024','P. ordinario - HCJ','13','H024_RegistrarAudienciaPrevia','6','Registrar audiencia prévia','0','0')
-, T_MPH ('18','P07','Declarativo Ordinario','H024','P. ordinario - HCJ','14','H024_RegistrarJuicio','7','Confirmar celebración juicio','0','0')
-, T_MPH ('19','P07','Declarativo Ordinario','H024','P. ordinario - HCJ','15','H024_RegistrarResolucion','8','Registrar resolucion','0','0')
-, T_MPH ('20','P07','Declarativo Ordinario','H024','P. ordinario - HCJ','16','H024_ResolucionFirme','9','Resolución firme','0','0')
-, T_MPH ('21','P07','Declarativo Ordinario','H024','P. ordinario - HCJ','19','H024_OrdinarioDecision','10','Tarea toma de decisión','0','0')
-, T_MPH ('22','P08','Declarativo Verbal','H026','P. verbal - HCJ','20','H026_InterposicionDemanda','1','Interposición de la demanda','0','0')
-, T_MPH ('23','P08','Declarativo Verbal','H026','P. verbal - HCJ','21','H026_ConfirmarAdmisionDemanda','2','Confirmar admisión de la demanda','0','0')
-, T_MPH ('24','P08','Declarativo Verbal','HC103','T. Provisión Fondos - HCJ','21','HC103_SolicitarProvision','3','Solicitar provisión','0','0')
-, T_MPH ('25','P08','Declarativo Verbal','H026','P. verbal - HCJ','22','H026_ConfirmarNotifiDemanda','4','Confirmar notificación de la demanda','0','0')
-, T_MPH ('26','P08','Declarativo Verbal','H026','P. verbal - HCJ','23','H026_RegistrarJuicio','5','Registrar juicio','0','0')
-, T_MPH ('27','P08','Declarativo Verbal','H026','P. verbal - HCJ','24','H026_RegistrarResolucion','6','Registrar resolución','0','0')
-, T_MPH ('28','P08','Declarativo Verbal','H026','P. verbal - HCJ','25','H026_ResolucionFirme','7','Resolución firme','0','0')
-, T_MPH ('29','P08','Declarativo Verbal','H026','P. verbal - HCJ','27','H026_VerbalDecision','8','Tarea toma de decisión','0','0')
-, T_MPH ('30','P01','Ejecución Hipotecaria','H001','P. hipotecario - HCJ','29','H001_DemandaCertificacionCargas','1','Interposición demanda + Certificación de cargas','0','0')
-, T_MPH ('31','P01','Ejecución Hipotecaria','H001','P. hipotecario - HCJ','30','H001_AutoDespachandoEjecucion','2','Auto despachando ejecución','0','0')
-, T_MPH ('32','P01','Ejecución Hipotecaria','HC103','T. Provisión Fondos - HCJ','30','HC103_SolicitarProvision','3','Solicitar provisión','0','0')
-, T_MPH ('33','P01','Ejecución Hipotecaria','H001','P. hipotecario - HCJ','31','H001_RegistrarCertificadoCargas','4','Cumplimentar mandamiento de certificación de cargas','0','0')
-, T_MPH ('34','P01','Ejecución Hipotecaria','H001','P. hipotecario - HCJ','31','H001_ConfirmarNotificacionReqPago','5','Confirmar notificación del auto despachando ejecución','0','0')
-, T_MPH ('35','P01','Ejecución Hipotecaria','H001','P. hipotecario - HCJ','32','H001_SolicitudOficioJuzgado','6','Solicitud oficio en el juzgado','0','0')
-, T_MPH ('36','P01','Ejecución Hipotecaria','H001','P. hipotecario - HCJ','33','H001_ConfirmarSiExisteOposicion','7','Confirmar si existe oposición','0','1')
-, T_MPH ('37','P01','Ejecución Hipotecaria','H001','P. hipotecario - HCJ','33','H001_PresentarAlegaciones','8','Presentar alegaciones','0','1')
-, T_MPH ('38','P01','Ejecución Hipotecaria','H001','P. hipotecario - HCJ','33','H001_RegistrarComparecencia','9','Registrar comparecencia','0','1')
-, T_MPH ('39','P01','Ejecución Hipotecaria','H001','P. hipotecario - HCJ','33','H001_RegistrarResolucion','10','Registrar resolución','0','1')
-, T_MPH ('40','P01','Ejecución Hipotecaria','H001','P. hipotecario - HCJ','33','H001_ResolucionFirme','11','Resolución firme','0','1')
-, T_MPH ('41','P01','Ejecución Hipotecaria','H002','T. de subasta - HCJ','34','H002_SolicitudSubasta','12','Solicitud de subasta','0','1')
-, T_MPH ('42','P01','Ejecución Hipotecaria','H002','T. de subasta - HCJ','34','H002_SenyalamientoSubasta','13','Señalamiento de subasta','0','1')
-, T_MPH ('43','P01','Ejecución Hipotecaria','H002','T. de subasta - HCJ','34','H002_RevisarDocumentacion','14','Revisar documentación','0','0')
-, T_MPH ('44','P01','Ejecución Hipotecaria','H002','T. de subasta - HCJ','35','H002_PrepararInformeSubasta','16','Preparar propuesta subasta','0','1')
-, T_MPH ('45','P01','Ejecución Hipotecaria','H002','T. de subasta - HCJ','35','H002_ValidarInformeDeSubasta','17','Validar propuesta','0','1')
-, T_MPH ('46','P01','Ejecución Hipotecaria','H002','T. de subasta - HCJ','35','H002_ObtenerValidacionComite','18','Obtener validación comité','0','1')
-, T_MPH ('47','P01','Ejecución Hipotecaria','H002','T. de subasta - HCJ','35','H002_DictarInstruccionesSubasta','19','Dictar instrucciones','0','1')
-, T_MPH ('48','P01','Ejecución Hipotecaria','H002','T. de subasta - HCJ','36','H002_LecturaConfirmacionInstrucciones','20','Lectura y confirmación de instrucciones','0','1')
-, T_MPH ('49','P01','Ejecución Hipotecaria','H002','T. de subasta - HCJ','37','H002_SolicitarSuspenderSubasta','21','Solicitar suspender subasta','0','1')
-, T_MPH ('50','P01','Ejecución Hipotecaria','H002','T. de subasta - HCJ','37','H002_RegistrarResSuspSubasta','22','Registrar resolución suspensión subasta','0','1')
-, T_MPH ('51','P01','Ejecución Hipotecaria','H002','T. de subasta - HCJ','37','H002_DictarInstruccionesDeneSuspension','23','Dictar instrucciones por denegación de suspensión','0','1')
-, T_MPH ('52','P01','Ejecución Hipotecaria','H002','T. de subasta - HCJ','34','H002_CelebracionSubasta','15','Celebración de subasta','0','0')
-, T_MPH ('53','P01','Ejecución Hipotecaria','H005','Trámite de Adjudicación - HCJ','38','H005_SolicitudDecretoAdjudicacion','24','Solicitud de Decreto de Adjudicación','1','1')
-, T_MPH ('54','P01','Ejecución Hipotecaria','H005','Trámite de Adjudicación - HCJ','38','H005_notificacionDecretoAdjudicacionAEntidad','25','Notificación del Decreto de Adjudicación a Entidad','1','1')
-, T_MPH ('55','P01','Ejecución Hipotecaria','H005','Trámite de Adjudicación - HCJ','38','H005_DeclaracionIVAIGIC','26','Declarar IVA e IGIC','1','0')
-, T_MPH ('56','P01','Ejecución Hipotecaria','H005','Trámite de Adjudicación - HCJ','38','H005_notificacionDecretoAdjudicacionAlContrario','27','Notificación del Decreto de Adjudicación al Contrario','1','0')
-, T_MPH ('57','P01','Ejecución Hipotecaria','H005','Trámite de Adjudicación - HCJ','39','H005_SolicitudTestimonioDecretoAdjudicacion','28','Solicitud de Testimonio del Decreto de Adjudicación','1','1')
-, T_MPH ('58','P01','Ejecución Hipotecaria','H005','Trámite de Adjudicación - HCJ','39','H005_ConfirmarTestimonio','29','Confirmar el Testimonio','1','1')
-, T_MPH ('59','P01','Ejecución Hipotecaria','H005','Trámite de Adjudicación - HCJ','39','H005_RegistrarPresentacionEnRegistro','30','Registrar presentación en Registro','1','1')
-, T_MPH ('60','P01','Ejecución Hipotecaria','H005','Trámite de Adjudicación - HCJ','39','H005_RegistrarInscripcionDelTitulo','31','Registrar Inscripción del Título','1','1')
-, T_MPH ('61','P01','Ejecución Hipotecaria','H015','T. de Posesión - HCJ','39','H015_RegistrarSolicitudPosesion','32','Registrar Solicitud de Posesión','1','1')
-, T_MPH ('62','P01','Ejecución Hipotecaria','H015','T. de Posesión - HCJ','39','H015_RegistrarSenyalamientoPosesion','33','Registrar Señalamiento de la Posesión','1','1')
-, T_MPH ('63','P01','Ejecución Hipotecaria','H015','T. de Posesión - HCJ','39','H015_RegistrarPosesionYLanzamiento','34','Registrar posesión y decisión sobre lanzamiento','1','1')
-, T_MPH ('64','P01','Ejecución Hipotecaria','H015','T. de Posesión - HCJ','39','H015_RegistrarSenyalamientoLanzamiento','35','Registrar Señalamiento del Lanzamiento','1','0')
-, T_MPH ('100','P03','Ejecución Ordinaria','H020','P. Ej. de título no judicial - HCJ','40','H020_InterposicionDemandaMasBienes','1','Interposición de la demanda + Marcado de bienes','0','0')
-, T_MPH ('101','P03','Ejecución Ordinaria','H020','P. Ej. de título no judicial - HCJ','41','H020_AutoDespaEjecMasDecretoEmbargo','2','Auto despachando ejecución + Marcado bienes decreto embargo','0','0')
-, T_MPH ('102','P03','Ejecución Ordinaria','HC103','T. Provisión Fondos - HCJ','41','HC103_SolicitarProvision','3','Solicitar provisión','0','0')
-, T_MPH ('103','P03','Ejecución Ordinaria','H020','P. Ej. de título no judicial - HCJ','43','H020_ConfirmarNotifiReqPago','4','Confirmar notificación requerimiento de pago','0','0')
-, T_MPH ('104','P03','Ejecución Ordinaria','H062','T. Vigilancia y Caducidad Embargos - HCJ','43','H062_confirmarAnotacionRegistro','5','Confirmar anotación en el registro','0','0')
-, T_MPH ('105','P03','Ejecución Ordinaria','H020','P. Ej. de título no judicial - HCJ','47','H020_ConfirmarSiExisteOposicion','6','Confirmar si existe oposición','0','0')
-, T_MPH ('106','P03','Ejecución Ordinaria','H030','T. certificación de cargas y revisión - HCJ','50','H030_SolicitudCertificacion','7','Solicitud de certificación de dominios y cargas','0','1')
-, T_MPH ('107','P03','Ejecución Ordinaria','H030','T. certificación de cargas y revisión - HCJ','50','H030_RegistrarCertificacion','8','Registrar certificación','0','1')
-, T_MPH ('108','P03','Ejecución Ordinaria','H030','T. certificación de cargas y revisión - HCJ','50','H030_SolicitarInformacionCargasAnt','9','Solicitar información de cargas anteriores','0','0')
-, T_MPH ('109','P03','Ejecución Ordinaria','H058','T. Valoración de Bienes - HCJ','51','H058_SolicitarAvaluo','10','Solicitud avalúo','0','1')
-, T_MPH ('110','P03','Ejecución Ordinaria','H058','T. Valoración de Bienes - HCJ','51','H058_ObtencionAvaluo','11','Obtención avalúo','0','1')
-, T_MPH ('111','P03','Ejecución Ordinaria','H058','T. Valoración de Bienes - HCJ','51','H058_SolitarTasacionInterna','12','Solicitar tasación interna','0','1')
-, T_MPH ('112','P03','Ejecución Ordinaria','H058','T. Valoración de Bienes - HCJ','51','H058_ObtencionTasacionInterna','13','Obtención tasación interna','0','1')
-, T_MPH ('113','P03','Ejecución Ordinaria','H058','T. Valoración de Bienes - HCJ','51','H058_EstConformidadOAlegacion','14','Estudiar conformidad o alegación','0','0')
-, T_MPH ('114','P03','Ejecución Ordinaria','H020','P. Ej. de título no judicial - HCJ','52','H020_ConfirmarPresentacionImpugnacion','15','Confirmar presentación impugnación','0','1')
-, T_MPH ('115','P03','Ejecución Ordinaria','H020','P. Ej. de título no judicial - HCJ','52','H020_ConfirmarVista','16','Confirmar si hay vista','0','1')
-, T_MPH ('116','P03','Ejecución Ordinaria','H020','P. Ej. de título no judicial - HCJ','52','H020_RegistrarCelebracionVista','17','Registrar celebración vista','0','1')
-, T_MPH ('117','P03','Ejecución Ordinaria','H020','P. Ej. de título no judicial - HCJ','52','H020_RegistrarResolucion','18','Registrar resolución','0','1')
-, T_MPH ('118','P03','Ejecución Ordinaria','H020','P. Ej. de título no judicial - HCJ','52','H020_ResolucionFirme','19','Resolución firme','0','1')
-, T_MPH ('119','P03','Ejecución Ordinaria','H020','P. Ej. de título no judicial - HCJ','52','H020_JudicialDecision','20','Tarea toma de decisión','0','0')
-, T_MPH ('120','P03','Ejecución Ordinaria','H002','T. de subasta - HCJ','53','H002_SolicitudSubasta','21','Solicitud de subasta','0','1')
-, T_MPH ('121','P03','Ejecución Ordinaria','H002','T. de subasta - HCJ','53','H002_SenyalamientoSubasta','22','Señalamiento de subasta','0','1')
-, T_MPH ('122','P03','Ejecución Ordinaria','H002','T. de subasta - HCJ','53','H002_RevisarDocumentacion','23','Revisar documentación','0','0')
-, T_MPH ('123','P03','Ejecución Ordinaria','H002','T. de subasta - HCJ','54','H002_PrepararInformeSubasta','24','Preparar propuesta subasta','0','1')
-, T_MPH ('124','P03','Ejecución Ordinaria','H002','T. de subasta - HCJ','54','H002_ValidarInformeDeSubasta','25','Validar propuesta','0','1')
-, T_MPH ('125','P03','Ejecución Ordinaria','H002','T. de subasta - HCJ','54','H002_ObtenerValidacionComite','26','Obtener validación comité','0','1')
-, T_MPH ('126','P03','Ejecución Ordinaria','H002','T. de subasta - HCJ','54','H002_DictarInstruccionesSubasta','27','Dictar instrucciones','0','1')
-, T_MPH ('127','P03','Ejecución Ordinaria','H002','T. de subasta - HCJ','55','H002_LecturaConfirmacionInstrucciones','28','Lectura y confirmación de instrucciones','0','1')
-, T_MPH ('128','P03','Ejecución Ordinaria','H002','T. de subasta - HCJ','56','H002_SolicitarSuspenderSubasta','29','Solicitar suspender subasta','0','1')
-, T_MPH ('129','P03','Ejecución Ordinaria','H002','T. de subasta - HCJ','56','H002_RegistrarResSuspSubasta','30','Registrar resolución suspensión subasta','0','1')
-, T_MPH ('130','P03','Ejecución Ordinaria','H002','T. de subasta - HCJ','56','H002_DictarInstruccionesDeneSuspension','31','Dictar instrucciones por denegación de suspensión','0','1')
-, T_MPH ('131','P03','Ejecución Ordinaria','H002','T. de subasta - HCJ','53','H002_CelebracionSubasta','32','Celebración de subasta','0','0')
-, T_MPH ('132','P03','Ejecución Ordinaria','H005','Trámite de Adjudicación - HCJ','57','H005_SolicitudDecretoAdjudicacion','24','Solicitud de Decreto de Adjudicación','1','1')
-, T_MPH ('133','P03','Ejecución Ordinaria','H005','Trámite de Adjudicación - HCJ','57','H005_notificacionDecretoAdjudicacionAEntidad','25','Notificación del Decreto de Adjudicación a Entidad','1','1')
-, T_MPH ('134','P03','Ejecución Ordinaria','H005','Trámite de Adjudicación - HCJ','57','H005_DeclaracionIVAIGIC','26','Declarar IVA e IGIC','1','0')
-, T_MPH ('135','P03','Ejecución Ordinaria','H005','Trámite de Adjudicación - HCJ','57','H005_notificacionDecretoAdjudicacionAlContrario','27','Notificación del Decreto de Adjudicación al Contrario','1','0')
-, T_MPH ('136','P03','Ejecución Ordinaria','H005','Trámite de Adjudicación - HCJ','58','H005_SolicitudTestimonioDecretoAdjudicacion','28','Solicitud de Testimonio del Decreto de Adjudicación','1','1')
-, T_MPH ('137','P03','Ejecución Ordinaria','H005','Trámite de Adjudicación - HCJ','58','H005_ConfirmarTestimonio','29','Confirmar el Testimonio','1','1')
-, T_MPH ('138','P03','Ejecución Ordinaria','H005','Trámite de Adjudicación - HCJ','58','H005_RegistrarPresentacionEnRegistro','30','Registrar presentación en Registro','1','1')
-, T_MPH ('139','P03','Ejecución Ordinaria','H005','Trámite de Adjudicación - HCJ','58','H005_RegistrarInscripcionDelTitulo','31','Registrar Inscripción del Título','1','1')
-, T_MPH ('140','P03','Ejecución Ordinaria','H015','T. de Posesión - HCJ','58','H015_RegistrarSolicitudPosesion','32','Registrar Solicitud de Posesión','1','1')
-, T_MPH ('141','P03','Ejecución Ordinaria','H015','T. de Posesión - HCJ','58','H015_RegistrarSenyalamientoPosesion','33','Registrar Señalamiento de la Posesión','1','1')
-, T_MPH ('142','P03','Ejecución Ordinaria','H015','T. de Posesión - HCJ','58','H015_RegistrarPosesionYLanzamiento','34','Registrar posesión y decisión sobre lanzamiento','1','1')
-, T_MPH ('143','P03','Ejecución Ordinaria','H015','T. de Posesión - HCJ','58','H015_RegistrarSenyalamientoLanzamiento','35','Registrar Señalamiento del Lanzamiento','1','0')
-, T_MPH ('150','P02','Monitorio','H022','P. Monitorio - HCJ','59','H022_InterposicionDemanda','1','Interposición de la demanda','0','0')
-, T_MPH ('151','P02','Monitorio','H022','P. Monitorio - HCJ','60','H022_ConfirmarAdmisionDemanda','2','Confirmar admisión de la demanda','0','0')
-, T_MPH ('152','P02','Monitorio','HC103','T. Provisión Fondos - HCJ','60','HC103_SolicitarProvision','3','Solicitar provisión','0','0')
-, T_MPH ('153','P02','Monitorio','H022','P. Monitorio - HCJ','61','H022_ConfirmarNotificacionReqPago','4','Confirmar notificación requerimiento de pago','0','1')
-, T_MPH ('154','P02','Monitorio','H022','P. Monitorio - HCJ','61','H022_ConfirmarOposicionCuantia','5','Confirmar oposición y cuantía','0','0')
-, T_MPH ('155','P02','Monitorio','H024','P. ordinario - HCJ','62','H024_InterposicionDemanda','6','Interposición de la demanda','0','1')
-, T_MPH ('156','P02','Monitorio','H024','P. ordinario - HCJ','62','H024_ConfirmarAdmision','7','Confirmar admisión de la demanda','0','1')
-, T_MPH ('157','P02','Monitorio','H024','P. ordinario - HCJ','62','H024_ConfirmarNotDemanda','8','Confirmar notificación de la demanda','0','0')
-, T_MPH ('158','P02','Monitorio','H018','P. Ej. de Título Judicial - HCJ','62','H018_InterposicionDemanda','9','Interposición de la demanda de título judicial + Marcado de bienes','0','1')
-, T_MPH ('159','P02','Monitorio','H018','P. Ej. de Título Judicial - HCJ','62','H018_AutoDespachando','10','Auto Despachando ejecución + Marcado de bienes decreto embargo','0','1')
-, T_MPH ('160','P02','Monitorio','H018','P. Ej. de Título Judicial - HCJ','62','H018_ConfirmarNotificacion','11','Confirmar notificacion','0','0')
-, T_MPH ('161','P02','Monitorio','H028','P. Verbal desde Monitorio - HCJ','62','H028_RegistrarJuicioVerbal','12','Confirmar celebración del juicio verbal','0','0')
-, T_MPH ('170','P90','Concurso','H009','T. fase común - CJ','70','H009_RegistrarPublicacionBOE','1','Registrar publicación en el BOE','0','0')
-, T_MPH ('171','P90','Concurso','H009','T. fase común - CJ','71','H009_RevisarEjecuciones','2','Revisar ejecuciones','0','1')
-, T_MPH ('172','P90','Concurso','H009','T. fase común - CJ','71','H009_RegistrarInsinuacionCreditos','3','Registrar insinuación de créditos','0','1')
-, T_MPH ('173','P90','Concurso','H009','T. fase común - CJ','71','H009_PresentarEscritoInsinuacion','4','Presentar escrito de insinuación','0','1')
-, T_MPH ('174','P90','Concurso','H009','T. fase común - CJ','71','H009_RevisarInsinuacionCreditos','5','Revisar insinuación de créditos','0','1')
-, T_MPH ('175','P90','Concurso','H009','T. fase común - CJ','71','H009_RegistrarProyectoInventario','6','Registrar proyecto de inventario','0','1')
-, T_MPH ('176','P90','Concurso','H009','T. fase común - CJ','71','H009_RegistrarInformeAdmonConcursal','7','Registrar informe provisional de la Administración Concursal','0','1')
-, T_MPH ('177','P90','Concurso','H009','T. fase común - CJ','71','H009_RevisarResultadoInfAdmon','8','Revisar informe provisional de la Administración Concursal','0','1')
-, T_MPH ('178','P90','Concurso','H009','T. fase común - CJ','71','H009_PresentacionAdenda','9','Presentación adenda','0','1')
-, T_MPH ('179','P90','Concurso','H009','T. fase común - CJ','71','H009_PresentacionJuzgado','10','Presentación juzgado','0','1')
-, T_MPH ('180','P90','Concurso','H009','T. fase común - CJ','71','H009_ResolucionJuzgado','11','Resolución juzgado','0','1')
-, T_MPH ('181','P90','Concurso','H009','T. fase común - CJ','71','H009_ActualizarEstadoCreditos','12','Actualizar estado de los créditos insinuados','0','1')
-, T_MPH ('182','P90','Concurso','H009','T. fase común - CJ','71','H009_AnyadirTextosDefinitivos','13','Añadir textos definitivos','0','1')
-, T_MPH ('183','P90','Concurso','H017','T. fase convenio - CJ','72','H017_AutoApertura','14','Auto Apertura','0','0')
-, T_MPH ('184','P90','Concurso','H017','T. fase convenio - CJ','73','H017_PresentacionPropuesta','15','Presentación propuesta convenio y plan de viabilidad','0','1')
-, T_MPH ('185','P90','Concurso','H017','T. fase convenio - CJ','73','H017_ObtenerInformeAdmConcursal','16','Obtener informe del Adm. Concursal','0','1')
-, T_MPH ('186','P90','Concurso','H017','T. fase convenio - CJ','73','H017_ElaborarInformeJuntaAcreedores','17','Elaborar informe para junta de acreedores','0','1')
-, T_MPH ('187','P90','Concurso','H017','T. fase convenio - CJ','73','H017_ElevarAComite','18','Elevar a comité','0','1')
-, T_MPH ('188','P90','Concurso','H017','T. fase convenio - CJ','73','H017_RegistrarRespuestaComite','19','Registrar respuesta comité','0','1')
-, T_MPH ('189','P90','Concurso','H017','T. fase convenio - CJ','73','H017_LecturaInstrucciones','20','Lectura de instrucciones','0','1')
-, T_MPH ('190','P90','Concurso','H017','T. fase convenio - CJ','73','H017_NotificarInstruccionesProcurador','21','Notificar instrucciones al procurador','0','1')
-, T_MPH ('191','P90','Concurso','H017','T. fase convenio - CJ','73','H017_RegistrarCelebracionJunta','22','Registrar celebración junta','0','1')
-, T_MPH ('192','P90','Concurso','H017','T. fase convenio - CJ','73','H017_AdjuntarActaJunta','23','Adjuntar acta de la junta','0','1')
-, T_MPH ('193','P90','Concurso','H017','T. fase convenio - CJ','73','H017_RegistrarSentenciaFirme','24','Registrar sentencia en firme','0','1')
-, T_MPH ('194','P90','Concurso','H017','T. fase convenio - CJ','73','H017_RevisarEjecucionesParalizadas','25','Revisar Ejecuciones paralizadas o pendientes de instar','0','1')
-, T_MPH ('195','P90','Concurso','H033','T. fase de liquidación - CJ','74','H033_aperturaFase','26','Registrar resolución de apertura fase liquidación','0','0')
-, T_MPH ('196','P90','Concurso','H033','T. fase de liquidación - CJ','75','H033_InformeLiquidacion','27','Registrar Plan de liquidación de la Administración Concursal','0','1')
-, T_MPH ('197','P90','Concurso','H033','T. fase de liquidación - CJ','75','H033_decidirPresentarObs','28','Decisión sobre presentación de observaciones al plan liquidación','0','1')
-, T_MPH ('198','P90','Concurso','H033','T. fase de liquidación - CJ','75','H033_presentarObs','29','Presentar observaciones al plan de liquidación','0','1')
-, T_MPH ('199','P90','Concurso','H033','T. fase de liquidación - CJ','75','H033_RegistrarAutoPlanLiquidacion','30','Registrar auto aprobando plan de liquidación','0','1')
-, T_MPH ('200','P90','Concurso','H033','T. fase de liquidación - CJ','75','H033_regInformeTrimestral1','31','Registrar Primera Inf. trimestral administración concursal','0','1')
-, T_MPH ('201','P90','Concurso','H033','T. fase de liquidación - CJ','75','H033_RendimientoCuentas','32','Rendimiento de cuentas e informe de conclusión','0','1')
-, T_MPH ('202','P90','Concurso','H033','T. fase de liquidación - CJ','75','H033_PresentarAlegaciones','33','Presentar alegaciones','0','1')
-, T_MPH ('203','P90','Concurso','H033','T. fase de liquidación - CJ','75','H033_ResolucionJuzgado','34','Resolución juzgado','0','1')
-, T_MPH ('204','P90','Concurso','H033','T. fase de liquidación - CJ','75','H033_RegistrarAutoConclusion','35','Registrar auto conclusión de concurso','0','1')
+ T_MPH ( '1','1','MIG_PROCEDIMIENTOS_CABECERA','FECHA_PRESENTACION_DEMANDA','1','1','H016_interposicionDemandaMasBienes','fecha')
+, T_MPH ( '2','1','MIG_PROCEDIMIENTOS_CABECERA','PLAZA','2','0','H016_interposicionDemandaMasBienes','comboPlaza')
+, T_MPH ( '3','1','MIG_PROCEDIMIENTOS_CABECERA','FECHA_APROBACION_LITC','3','0','H016_interposicionDemandaMasBienes','fechaCierre')
+, T_MPH ( '4','1','MIG_PROCEDIMIENTOS_CABECERA','IMPORTE_PRINCIPAL','4','0','H016_interposicionDemandaMasBienes','principalDemanda')
+, T_MPH ( '5','1','MIG_PROCEDIMIENTOS_CABECERA','IMPORTE_INTERESES_APROBADOS','5','0','H016_interposicionDemandaMasBienes','interesesOrdinarios')
+, T_MPH ( '6','1','MIG_PROCEDIMIENTOS_CABECERA','1','6','0','H016_interposicionDemandaMasBienes','provisionFondos')
+, T_MPH ( '7','2','MIG_PROCEDIMIENTOS_CABECERA','NVL(FECHA_ADMISION_DEMANDA,FECHA_INADMISION_DEMANDA)','1','1','H016_confAdmiDecretoEmbargo','fecha')
+, T_MPH ( '8','2','MIG_PROCEDIMIENTOS_CABECERA','PLAZA','2','0','H016_confAdmiDecretoEmbargo','comboPlaza')
+, T_MPH ( '9','2','MIG_PROCEDIMIENTOS_CABECERA','JUZGADO','3','0','H016_confAdmiDecretoEmbargo','comboJuzgado')
+, T_MPH ( '10','2','MIG_PROCEDIMIENTOS_CABECERA','NUM_AUTO_SIN_FORMATO','4','0','H016_confAdmiDecretoEmbargo','numProcedimiento')
+, T_MPH ( '11','2','MIG_PROCEDIMIENTOS_CABECERA','DECODE(FECHA_ADMISION_DEMANDA,NULL,0,1)','5','0','H016_confAdmiDecretoEmbargo','comboAdmision')
+, T_MPH ( '12','2','MIG_PROCEDIMIENTOS_EMBARGOS','DECODE(COUNT(1),0,0,1)','6','1','H016_confAdmiDecretoEmbargo','comboBienes')
+, T_MPH ( '13','4','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_REQUERIMIENTO)','1','1','H016_confNotifRequerimientoPago','fecha')
+, T_MPH ( '14','4','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(DECODE(REQUERIDO,''''S'''',1,0))','2','0','H016_confNotifRequerimientoPago','comboResultado')
+, T_MPH ( '15','5','MIG_PROCEDIMIENTOS_EMBARGOS','MIN(FECHA_REGISTRO_EMBARGO)','1','1','H062_confirmarAnotacionRegistro','fecha')
+, T_MPH ( '16','5','MIG_PROCEDIMIENTOS_CABECERA','1','2','0','H062_confirmarAnotacionRegistro','comboAlerta')
+, T_MPH ( '17','6','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(DECODE(OPOSICION,''''S'''',1,0))','1','1','H016_registrarDemandaOposicion','comboOposicion')
+, T_MPH ( '18','6','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_OPOSICION)','2','1','H016_registrarDemandaOposicion','fecha')
+, T_MPH ( '19','6','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_VISTA)','3','0','H016_registrarDemandaOposicion','fechaVista')
+, T_MPH ( '20','7','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_COMPARECENCIA)','1','1','H016_registrarJuicioComparecencia','fecha')
+, T_MPH ( '21','8','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_RESOLUCION)','1','1','H016_registrarResolucion','fecha')
+, T_MPH ( '22','8','MIG_PROCEDIMIENTOS_DEMANDADOS','DECODE(MAX(RESULTADO_RESOLUCION),1,1,0)','2','0','H016_registrarResolucion','comboResultado')
+, T_MPH ( '23','9','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_RESOLUCION)','1','1','H016_resolucionFirme','fecha')
+, T_MPH ( '24','10','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_RESOLUCION)','1','1','H016_CambiarioDecision','fecha')
+, T_MPH ( '25','12','MIG_PROCEDIMIENTOS_CABECERA','FECHA_PRESENTACION_DEMANDA','1','1','H024_InterposicionDemanda','fecha')
+, T_MPH ( '26','12','MIG_PROCEDIMIENTOS_CABECERA','PLAZA','2','0','H024_InterposicionDemanda','plazaJuzgado')
+, T_MPH ( '27','12','MIG_PROCEDIMIENTOS_CABECERA','FECHA_APROBACION_LITC','3','0','H024_InterposicionDemanda','fechaCierre')
+, T_MPH ( '28','12','MIG_PROCEDIMIENTOS_CABECERA','IMPORTE_PRINCIPAL','4','0','H024_InterposicionDemanda','principalDemanda')
+, T_MPH ( '29','12','MIG_PROCEDIMIENTOS_CABECERA','IMPORTE_INTERESES_APROBADOS','5','0','H024_InterposicionDemanda','interesesOrdinarios')
+, T_MPH ( '30','12','MIG_PROCEDIMIENTOS_CABECERA','1','6','0','H024_InterposicionDemanda','provisionFondos')
+, T_MPH ( '32','13','MIG_PROCEDIMIENTOS_CABECERA','PLAZA','2','0','H024_ConfirmarAdmision','nPlaza')
+, T_MPH ( '35','13','MIG_PROCEDIMIENTOS_CABECERA','DECODE(FECHA_ADMISION_DEMANDA,NULL,0,1)','5','0','H024_ConfirmarAdmision','comboResultado')
+, T_MPH ( '31','13','MIG_PROCEDIMIENTOS_CABECERA','NVL(FECHA_ADMISION_DEMANDA,FECHA_INADMISION_DEMANDA)','1','1','H024_ConfirmarAdmision','fecha')
+, T_MPH ( '33','13','MIG_PROCEDIMIENTOS_CABECERA','JUZGADO','3','0','H024_ConfirmarAdmision','numJuzgado')
+, T_MPH ( '34','13','MIG_PROCEDIMIENTOS_CABECERA','NUM_AUTO_SIN_FORMATO','4','0','H024_ConfirmarAdmision','numProcedimiento')
+, T_MPH ( '36','15','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_REQUERIMIENTO)','1','1','H024_ConfirmarNotDemanda','fecha')
+, T_MPH ( '37','15','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(DECODE(REQUERIDO,''''S'''',1,0))','2','0','H024_ConfirmarNotDemanda','comboResultado')
+, T_MPH ( '38','16','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_OPOSICION)','1','1','H024_ConfirmarOposicion','fechaOposicion')
+, T_MPH ( '39','16','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(DECODE(OPOSICION,''''S'''',1,0))','2','0','H024_ConfirmarOposicion','comboResultado')
+, T_MPH ( '40','16','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_VISTA)','3','0','H024_ConfirmarOposicion','fechaAudiencia')
+, T_MPH ( '41','17','MIG_PROCEDIMIENTOS_DEMANDADOS','DECODE(MAX(RESULTADO_VISTA),1,1,0)','1','1','H024_RegistrarAudienciaPrevia','comboResultado')
+, T_MPH ( '42','17','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_VISTA)','2','1','H024_RegistrarAudienciaPrevia','fechaJuicio')
+, T_MPH ( '43','18','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_COMPARECENCIA)','1','1','H024_RegistrarJuicio','fecha')
+, T_MPH ( '44','19','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_RESOLUCION)','1','1','H024_RegistrarResolucion','fecha')
+, T_MPH ( '45','19','MIG_PROCEDIMIENTOS_DEMANDADOS','DECODE(MAX(RESULTADO_RESOLUCION),1,1,0)','2','1','H024_RegistrarResolucion','comboResultado')
+, T_MPH ( '46','20','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_RESOLUCION)','1','1','H024_ResolucionFirme','fecha')
+, T_MPH ( '52','22','MIG_PROCEDIMIENTOS_CABECERA','1','6','0','H026_InterposicionDemanda','provisionFondos')
+, T_MPH ( '47','22','MIG_PROCEDIMIENTOS_CABECERA','FECHA_PRESENTACION_DEMANDA','1','1','H026_InterposicionDemanda','fechainterposicion')
+, T_MPH ( '48','22','MIG_PROCEDIMIENTOS_CABECERA','PLAZA','2','0','H026_InterposicionDemanda','comboPlaza')
+, T_MPH ( '49','22','MIG_PROCEDIMIENTOS_CABECERA','FECHA_APROBACION_LITC','3','0','H026_InterposicionDemanda','fechaCierre')
+, T_MPH ( '50','22','MIG_PROCEDIMIENTOS_CABECERA','IMPORTE_PRINCIPAL','4','0','H026_InterposicionDemanda','principalDemanda')
+, T_MPH ( '51','22','MIG_PROCEDIMIENTOS_CABECERA','IMPORTE_INTERESES_APROBADOS','5','0','H026_InterposicionDemanda','interesesOrdinarios')
+, T_MPH ( '53','23','MIG_PROCEDIMIENTOS_CABECERA','NVL(FECHA_ADMISION_DEMANDA,FECHA_INADMISION_DEMANDA)','1','1','H026_ConfirmarAdmisionDemanda','fecha')
+, T_MPH ( '54','23','MIG_PROCEDIMIENTOS_CABECERA','PLAZA','2','0','H026_ConfirmarAdmisionDemanda','comboPlaza')
+, T_MPH ( '55','23','MIG_PROCEDIMIENTOS_CABECERA','JUZGADO','3','0','H026_ConfirmarAdmisionDemanda','numJuzgado')
+, T_MPH ( '56','23','MIG_PROCEDIMIENTOS_CABECERA','NUM_AUTO_SIN_FORMATO','4','0','H026_ConfirmarAdmisionDemanda','numProcedimiento')
+, T_MPH ( '57','23','MIG_PROCEDIMIENTOS_CABECERA','DECODE(FECHA_ADMISION_DEMANDA,NULL,0,1)','5','0','H026_ConfirmarAdmisionDemanda','comboAdmisionDemanda')
+, T_MPH ( '58','25','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_REQUERIMIENTO)','1','1','H026_ConfirmarNotifiDemanda','fecha')
+, T_MPH ( '59','25','MIG_PROCEDIMIENTOS_DEMANDADOS','DECODE(MAX(REQUERIDO),''''S'''',1,0)','2','0','H026_ConfirmarNotifiDemanda','comboResultado')
+, T_MPH ( '60','26','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_COMPARECENCIA)','1','1','H026_RegistrarJuicio','fecha')
+, T_MPH ( '61','27','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_RESOLUCION)','1','1','H026_RegistrarResolucion','fecha')
+, T_MPH ( '62','27','MIG_PROCEDIMIENTOS_DEMANDADOS','DECODE(MAX(RESULTADO_RESOLUCION),2,1,0)','2','0','H026_RegistrarResolucion','comboResultado')
+, T_MPH ( '63','28','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_RESOLUCION)','1','1','H026_ResolucionFirme','fecha')
+, T_MPH ( '65','30','MIG_PROCEDIMIENTOS_CABECERA','PLAZA','2','0','H001_DemandaCertificacionCargas','plazaJuzgado')
+, T_MPH ( '69','30','MIG_PROCEDIMIENTOS_CABECERA','1','6','0','H001_DemandaCertificacionCargas','provisionFondos')
+, T_MPH ( '64','30','MIG_PROCEDIMIENTOS_CABECERA','FECHA_PRESENTACION_DEMANDA','1','1','H001_DemandaCertificacionCargas','fechaPresentacionDemanda')
+, T_MPH ( '68','30','MIG_PROCEDIMIENTOS_CABECERA','IMPORTE_INTERESES_APROBADOS','5','0','H001_DemandaCertificacionCargas','interesesOrdinariosEnElCierre')
+, T_MPH ( '66','30','MIG_PROCEDIMIENTOS_CABECERA','FECHA_APROBACION_LITC','3','0','H001_DemandaCertificacionCargas','fechaCierreDeuda')
+, T_MPH ( '67','30','MIG_PROCEDIMIENTOS_CABECERA','IMPORTE_PRINCIPAL','4','0','H001_DemandaCertificacionCargas','principalDeLaDemanda')
+, T_MPH ( '70','31','MIG_PROCEDIMIENTOS_CABECERA','NVL(FECHA_ADMISION_DEMANDA,FECHA_INADMISION_DEMANDA)','1','1','H001_AutoDespachandoEjecucion','fecha')
+, T_MPH ( '71','31','MIG_PROCEDIMIENTOS_CABECERA','PLAZA','2','0','H001_AutoDespachandoEjecucion','comboPlaza')
+, T_MPH ( '72','31','MIG_PROCEDIMIENTOS_CABECERA','JUZGADO','3','0','H001_AutoDespachandoEjecucion','numJuzgado')
+, T_MPH ( '73','31','MIG_PROCEDIMIENTOS_CABECERA','NUM_AUTO_SIN_FORMATO','4','0','H001_AutoDespachandoEjecucion','numProcedimiento')
+, T_MPH ( '74','31','MIG_PROCEDIMIENTOS_CABECERA','DECODE(FECHA_ADMISION_DEMANDA,NULL,0,1)','5','0','H001_AutoDespachandoEjecucion','comboResultado')
+, T_MPH ( '75','33','MIG_PROCEDIMIENTOS_BIENES','MAX(FECHA_CERTIFICACION_CARGAS)','1','1','H001_RegistrarCertificadoCargas','fecha')
+, T_MPH ( '76','34','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_REQUERIMIENTO)','1','1','H001_ConfirmarNotificacionReqPago','fecha')
+, T_MPH ( '77','34','MIG_PROCEDIMIENTOS_DEMANDADOS','DECODE(MAX(REQUERIDO),''''S'''',1,0)','2','0','H001_ConfirmarNotificacionReqPago','comboResultado')
+, T_MPH ( '78','35','MIG_PROCEDIMIENTOS_BIENES','NVL(MAX(TOTAL_CARGAS_ANTERIORES),0)','1','1','H001_SolicitudOficioJuzgado','cargasPrevias')
+, T_MPH ( '79','36','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(DECODE(OPOSICION,''''S'''',1,0))','1','1','H001_ConfirmarSiExisteOposicion','comboResultado')
+, T_MPH ( '80','36','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_OPOSICION)','2','1','H001_ConfirmarSiExisteOposicion','fechaOposicion')
+, T_MPH ( '81','36','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_COMPARECENCIA)','3','0','H001_ConfirmarSiExisteOposicion','fechaComparecencia')
+, T_MPH ( '82','37','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_COMPARECENCIA)','1','1','H001_PresentarAlegaciones','fecha')
+, T_MPH ( '83','37','MIG_PROCEDIMIENTOS_DEMANDADOS','DECODE(MAX(FECHA_COMPARECENCIA),NULL,0,1)','2','0','H001_PresentarAlegaciones','comparecencia')
+, T_MPH ( '84','38','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_COMPARECENCIA)','1','1','H001_RegistrarComparecencia','fecha')
+, T_MPH ( '85','39','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_RESOLUCION)','1','1','H001_RegistrarResolucion','fecha')
+, T_MPH ( '86','39','MIG_PROCEDIMIENTOS_DEMANDADOS','DECODE(MAX(RESULTADO_RESOLUCION),2,1,0)','2','0','H001_RegistrarResolucion','resultado')
+, T_MPH ( '87','40','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_RESOLUCION)','1','1','H001_ResolucionFirme','fechaFirmeza')
+, T_MPH ( '88','41','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_SOLICITUD_SUBASTA)','1','1','H002_SolicitudSubasta','fechaSolicitud')
+, T_MPH ( '91','42','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(MINUTA_PROCURADOR)','3','0','H002_SenyalamientoSubasta','costasProcurador')
+, T_MPH ( '89','42','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_SENALAMIENTO_SUBASTA)','1','1','H002_SenyalamientoSubasta','fechaSenyalamiento')
+, T_MPH ( '90','42','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(MINUTA_LETRADO)','2','0','H002_SenyalamientoSubasta','costasLetrado')
+, T_MPH ( '92','43','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_SOLICITUD_SUBASTA)+1','1','1','H002_RevisarDocumentacion','fecha')
+, T_MPH ( '93','44','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_RESOLUCION_PROPUESTA)','1','1','H002_PrepararInformeSubasta','fecha')
+, T_MPH ( '94','45','MIG_PROCEDIMIENTOS_SUBASTAS','DECODE(MIN(TIPO_SUBASTA),1,1,0)','1','1','H002_ValidarInformeDeSubasta','comboAtribuciones')
+, T_MPH ( '95','46','MIG_PROCEDIMIENTOS_SUBASTAS','DECODE(MAX(RESOLUCION_COMITE),0,1,0)','1','1','H002_ObtenerValidacionComite','comboResultado')
+, T_MPH ( '96','46','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_RESOLUCION_PROPUESTA)','2','1','H002_ObtenerValidacionComite','fecha')
+, T_MPH ( '98','47','MIG_PROCEDIMIENTOS_SUBASTAS','DECODE(MAX(RESOLUCION_COMITE),0,0,1)','2','1','H002_DictarInstruccionesSubasta','comboSuspender')
+, T_MPH ( '97','47','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_RESOLUCION_PROPUESTA)+1','1','1','H002_DictarInstruccionesSubasta','fecha')
+, T_MPH ( '99','48','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_RESOLUCION_PROPUESTA)+2','1','1','H002_LecturaConfirmacionInstrucciones','fecha')
+, T_MPH ( '100','49','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_RESOLUCION_PROPUESTA)+3','1','1','H002_SolicitarSuspenderSubasta','fecha')
+, T_MPH ( '101','50','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_RESOLUCION_PROPUESTA)+4','1','1','H002_RegistrarResSuspSubasta','fecha')
+, T_MPH ( '102','51','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_RESOLUCION_PROPUESTA)+4','1','1','H002_DictarInstruccionesDeneSuspension','fecha')
+, T_MPH ( '106','52','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(MOTIVO_SUSPENSION)','4','0','H002_CelebracionSubasta','comboMotivoSuspension')
+, T_MPH ( '103','52','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(SUBASTA_CELEBRADA)','1','1','H002_CelebracionSubasta','comboCelebrada')
+, T_MPH ( '104','52','MIG_PROCS_SUBASTAS_LOTES','MAX(CON_POSTORES)','2','0','H002_CelebracionSubasta','comboPostores')
+, T_MPH ( '105','52','MIG_PROCEDIMIENTOS_SUBASTAS','DECODE(MAX(SUSPENDIDA_POR),1,0,1)','3','0','H002_CelebracionSubasta','comboDecisionSuspension')
+, T_MPH ( '107','53','MIG_PROCEDIMIENTOS_BIENES','ADD_MONTHS(MIN(FECHA_DECRETO_ADJ_NO_FIRME),-3)','1','1','H005_SolicitudDecretoAdjudicacion','fechaSolicitud')
+, T_MPH ( '108','54','MIG_PROCEDIMIENTOS_BIENES','MIN(FECHA_DECRETO_ADJ_NO_FIRME)','1','1','H005_notificacionDecretoAdjudicacionAEntidad','fecha')
+, T_MPH ( '109','54','MIG_PROCEDIMIENTOS_SUBASTAS','MIN(FECHA_DECRETO_ADJUDICACION)','2','0','H005_notificacionDecretoAdjudicacionAEntidad','fechaResol')
+, T_MPH ( '120','55','MIG_PROCEDIMIENTOS_BIENES','ADD_MONTHS(MIN(FECHA_DECRETO_ADJ_NO_FIRME),-2)','1','1','H005_DeclaracionIVAIGIC','fecha')
+, T_MPH ( '110','56','MIG_PROCEDIMIENTOS_BIENES','ADD_MONTHS(MIN(FECHA_DECRETO_ADJ_NO_FIRME),-2)','1','1','H005_notificacionDecretoAdjudicacionAlContrario','fecha')
+, T_MPH ( '111','57','MIG_PROCEDIMIENTOS_BIENES','ADD_MONTHS(MIN(FECHA_DECRETO_ADJ_NO_FIRME),-1)','1','1','H005_SolicitudTestimonioDecretoAdjudicacion','fecha')
+, T_MPH ( '112','58','MIG_PROCEDIMIENTOS_BIENES','MIN(FECHA_DECRETO_ADJ_NO_FIRME)','1','1','H005_ConfirmarTestimonio','fechaTestimonio')
+, T_MPH ( '113','58','MIG_PROCEDIMIENTOS_BIENES','OBSERVACIONES_ADJUDICACION','2','0','H005_ConfirmarTestimonio','observaciones')
+, T_MPH ( '115','59','MIG_PROCEDIMIENTOS_BIENES','MIN(FECHA_SEGUNDA_PRES_REGISTRO)','2','0','H005_RegistrarPresentacionEnRegistro','fechaNuevoTest')
+, T_MPH ( '114','59','MIG_PROCEDIMIENTOS_BIENES','MIN(FECHA_PRESENTACION_REGISTRO)','1','1','H005_RegistrarPresentacionEnRegistro','fechaPresentacion')
+, T_MPH ( '118','60','MIG_PROCEDIMIENTOS_BIENES','MIN(FECHA_ENVIO_AUTO_ADICION)','3','0','H005_RegistrarInscripcionDelTitulo','fechaEnvioDecretoAdicion')
+, T_MPH ( '117','60','MIG_PROCEDIMIENTOS_BIENES','MIN(FECHA_INSCRIPCION_TITULO)','2','1','H005_RegistrarInscripcionDelTitulo','fechaInscripcion')
+, T_MPH ( '116','60','MIG_PROCEDIMIENTOS_BIENES','1','1','0','H005_RegistrarInscripcionDelTitulo','comboSituacionTitulo')
+, T_MPH ( '119','60','MIG_PROCEDIMIENTOS_BIENES','OBSERVACIONES_INSCRIPCION','4','0','H005_RegistrarInscripcionDelTitulo','observaciones')
+, T_MPH ( '297','61','MIG_PROCEDIMIENTOS_BIENES','MAX(VIVIENDA_HABITUAL)','5','0','H015_RegistrarSolicitudPosesion','comboViviendaHab')
+, T_MPH ( '298','61','MIG_PROCEDIMIENTOS_BIENES','DECODE(MAX(FECHA_SOLICITUD_MORATORIA),NULL,0,1)','6','0','H015_RegistrarSolicitudPosesion','comboMoratoria')
+, T_MPH ( '299','61','MIG_PROCEDIMIENTOS_BIENES','MAX(OBSERVACIONES_POSESION)','7','0','H015_RegistrarSolicitudPosesion','observaciones')
+, T_MPH ( '296','61','MIG_PROCEDIMIENTOS_BIENES','MAX(OCUPANTES)','4','0','H015_RegistrarSolicitudPosesion','comboOcupado')
+, T_MPH ( '293','61','MIG_PROCEDIMIENTOS_BIENES','MAX(FECHA_SOLICITUD_POSESION)','1','1','H015_RegistrarSolicitudPosesion','fechaSolicitud')
+, T_MPH ( '294','61','MIG_PROCEDIMIENTOS_BIENES','DECODE(MAX(FECHA_CONTRATO_ARREND),NULL,0,1)','2','0','H015_RegistrarSolicitudPosesion','comboArrendamientoValido')
+, T_MPH ( '295','61','MIG_PROCEDIMIENTOS_BIENES','MAX(POSIBLE_POSESION)','3','0','H015_RegistrarSolicitudPosesion','comboPosesion')
+, T_MPH ( '300','62','MIG_PROCEDIMIENTOS_BIENES','MAX(FECHA_SENYALAMIENTO_POSESION)','1','1','H015_RegistrarSenyalamientoPosesion','fechaSenyalamiento')
+, T_MPH ( '301','63','MIG_PROCEDIMIENTOS_BIENES','MAX(FECHA_REALIZACION_POSESION)','1','1','H015_RegistrarPosesionYLanzamiento','fecha')
+, T_MPH ( '304','63','MIG_PROCEDIMIENTOS_BIENES','MAX(NECESARIA_FUERZA_LANZAMIENTO)','4','0','H015_RegistrarPosesionYLanzamiento','comboLanzamiento')
+, T_MPH ( '303','63','MIG_PROCEDIMIENTOS_BIENES','MAX(NECESARIA_FUERZA_POSESION)','3','0','H015_RegistrarPosesionYLanzamiento','comboFuerzaPublica')
+, T_MPH ( '302','63','MIG_PROCEDIMIENTOS_BIENES','MAX(OCUPANTES_REALIZ_DILIGENCIA)','2','0','H015_RegistrarPosesionYLanzamiento','comboOcupado')
+, T_MPH ( '305','64','MIG_PROCEDIMIENTOS_BIENES','MAX(FECHA_SENYALAMIENTO_POSESION)','1','0','H015_RegistrarSenyalamientoLanzamiento','fecha')
+, T_MPH ( '130','100','MIG_PROCEDIMIENTOS_CABECERA','FECHA_PRESENTACION_DEMANDA','1','1','H020_InterposicionDemandaMasBienes','fechaInterposicion')
+, T_MPH ( '131','100','MIG_PROCEDIMIENTOS_CABECERA','PLAZA','2','0','H020_InterposicionDemandaMasBienes','nPlaza')
+, T_MPH ( '135','100','MIG_PROCEDIMIENTOS_CABECERA','1','6','0','H020_InterposicionDemandaMasBienes','provisionFondos')
+, T_MPH ( '133','100','MIG_PROCEDIMIENTOS_CABECERA','IMPORTE_PRINCIPAL','4','0','H020_InterposicionDemandaMasBienes','principalDemanda')
+, T_MPH ( '134','100','MIG_PROCEDIMIENTOS_CABECERA','IMPORTE_INTERESES_APROBADOS','5','0','H020_InterposicionDemandaMasBienes','interesesOrdinarios')
+, T_MPH ( '132','100','MIG_PROCEDIMIENTOS_CABECERA','FECHA_APROBACION_LITC','3','0','H020_InterposicionDemandaMasBienes','fechaCierre')
+, T_MPH ( '138','101','MIG_PROCEDIMIENTOS_CABECERA','JUZGADO','3','0','H020_AutoDespaEjecMasDecretoEmbargo','numJuzgado')
+, T_MPH ( '139','101','MIG_PROCEDIMIENTOS_CABECERA','NUM_AUTO_SIN_FORMATO','4','0','H020_AutoDespaEjecMasDecretoEmbargo','numProcedimiento')
+, T_MPH ( '140','101','MIG_PROCEDIMIENTOS_CABECERA','DECODE(FECHA_ADMISION_DEMANDA,NULL,0,1)','5','0','H020_AutoDespaEjecMasDecretoEmbargo','comboAdmisionDemanda')
+, T_MPH ( '141','101','MIG_PROCEDIMIENTOS_EMBARGOS','DECODE(COUNT(1),0,0,1)','6','1','H020_AutoDespaEjecMasDecretoEmbargo','bienesEmbargables')
+, T_MPH ( '136','101','MIG_PROCEDIMIENTOS_CABECERA','NVL(FECHA_ADMISION_DEMANDA,FECHA_INADMISION_DEMANDA)','1','1','H020_AutoDespaEjecMasDecretoEmbargo','fecha')
+, T_MPH ( '137','101','MIG_PROCEDIMIENTOS_CABECERA','PLAZA','2','0','H020_AutoDespaEjecMasDecretoEmbargo','comboPlaza')
+, T_MPH ( '142','103','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_REQUERIMIENTO)','1','1','H020_ConfirmarNotifiReqPago','fecha')
+, T_MPH ( '143','103','MIG_PROCEDIMIENTOS_DEMANDADOS','DECODE(MAX(REQUERIDO),''''S'''',1,0)','2','0','H020_ConfirmarNotifiReqPago','comboConfirmacionReqPago')
+, T_MPH ( '144','104','MIG_PROCEDIMIENTOS_EMBARGOS','MIN(FECHA_REGISTRO_EMBARGO)','1','1','H062_confirmarAnotacionRegistro','fecha')
+, T_MPH ( '145','104','MIG_PROCEDIMIENTOS_CABECERA','1','2','0','H062_confirmarAnotacionRegistro','comboAlerta')
+, T_MPH ( '146','105','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(DECODE(OPOSICION,''''S'''',1,0))','1','1','H020_ConfirmarSiExisteOposicion','comboConfirmacion')
+, T_MPH ( '147','105','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_OPOSICION)','2','1','H020_ConfirmarSiExisteOposicion','fecha')
+, T_MPH ( '148','106','MIG_PROCEDIMIENTOS_EMBARGOS','MAX(FECHA_SOLICITUD_EMBARGO)','1','1','H030_SolicitudCertificacion','fecha')
+, T_MPH ( '149','107','MIG_PROCEDIMIENTOS_EMBARGOS','MAX(FECHA_SOLICITUD_EMBARGO)+1','1','1','H030_RegistrarCertificacion','fecha')
+, T_MPH ( '150','109','MIG_PROCEDIMIENTOS_EMBARGOS','MAX(FECHA_AVALUO)-1','1','1','H058_SolicitarAvaluo','fecha')
+, T_MPH ( '151','110','MIG_PROCEDIMIENTOS_EMBARGOS','MAX(FECHA_AVALUO)','1','1','H058_ObtencionAvaluo','fecha')
+, T_MPH ( '152','111','MIG_PROCEDIMIENTOS_EMBARGOS','MAX(FECHA_AVALUO)+1','1','1','H058_SolitarTasacionInterna','fecha')
+, T_MPH ( '153','111','MIG_PROCEDIMIENTOS_EMBARGOS','DECODE(MAX(IMPORTE_TASACION),0,0,1)','2','0','H058_SolitarTasacionInterna','combo')
+, T_MPH ( '154','112','MIG_PROCEDIMIENTOS_EMBARGOS','MAX(FECHA_TASACION)','1','1','H058_ObtencionTasacionInterna','fecha')
+, T_MPH ( '155','113','MIG_PROCEDIMIENTOS_EMBARGOS','MAX(IMPORTE_TASACION)','1','0','H058_EstConformidadOAlegacion','avaluoInterno')
+, T_MPH ( '156','113','MIG_PROCEDIMIENTOS_EMBARGOS','MAX(IMPORTE_AVALUO)','1','0','H058_EstConformidadOAlegacion','avaluoExterno')
+, T_MPH ( '157','114','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_VISTA)-1','1','1','H020_ConfirmarPresentacionImpugnacion','fecha')
+, T_MPH ( '158','115','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(DECODE(FECHA_VISTA,NULL,0,1))','1','1','H020_ConfirmarVista','comboHayVista')
+, T_MPH ( '159','115','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_VISTA)','1','1','H020_ConfirmarVista','fechaVista')
+, T_MPH ( '160','116','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_VISTA)','1','1','H020_RegistrarCelebracionVista','fecha')
+, T_MPH ( '161','117','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_RESOLUCION)','1','1','H020_RegistrarResolucion','fechaResolucion')
+, T_MPH ( '162','117','MIG_PROCEDIMIENTOS_DEMANDADOS','DECODE(MAX(RESULTADO_RESOLUCION),2,1,0)','2','0','H020_RegistrarResolucion','combo')
+, T_MPH ( '163','118','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_RESOLUCION)+1','1','1','H020_ResolucionFirme','fechaResolucion')
+, T_MPH ( '164','120','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_SOLICITUD_SUBASTA)','1','1','H002_SolicitudSubasta','fechaSolicitud')
+, T_MPH ( '165','121','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_SENALAMIENTO_SUBASTA)','1','1','H002_SenyalamientoSubasta','fechaSenyalamiento')
+, T_MPH ( '166','121','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(MINUTA_LETRADO)','2','0','H002_SenyalamientoSubasta','costasLetrado')
+, T_MPH ( '167','121','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(MINUTA_PROCURADOR)','3','0','H002_SenyalamientoSubasta','costasProcurador')
+, T_MPH ( '168','122','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_SOLICITUD_SUBASTA)+1','1','1','H002_RevisarDocumentacion','fecha')
+, T_MPH ( '169','123','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_RESOLUCION_PROPUESTA)','1','1','H002_PrepararInformeSubasta','fecha')
+, T_MPH ( '170','124','MIG_PROCEDIMIENTOS_SUBASTAS','DECODE(MIN(TIPO_SUBASTA),1,1,0)','1','1','H002_ValidarInformeDeSubasta','comboAtribuciones')
+, T_MPH ( '171','125','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(RESOLUCION_COMITE)','1','1','H002_ObtenerValidacionComite','comboResultado')
+, T_MPH ( '172','125','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_RESOLUCION_PROPUESTA)','2','1','H002_ObtenerValidacionComite','fecha')
+, T_MPH ( '173','126','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_RESOLUCION_PROPUESTA)+1','1','1','H002_DictarInstruccionesSubasta','fecha')
+, T_MPH ( '174','126','MIG_PROCEDIMIENTOS_SUBASTAS','DECODE(MAX(RESOLUCION_COMITE),0,1,1)','2','1','H002_DictarInstruccionesSubasta','comboSuspender')
+, T_MPH ( '175','127','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_RESOLUCION_PROPUESTA)+2','1','1','H002_LecturaConfirmacionInstrucciones','fecha')
+, T_MPH ( '176','128','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_RESOLUCION_PROPUESTA)+3','1','1','H002_SolicitarSuspenderSubasta','fecha')
+, T_MPH ( '177','129','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_RESOLUCION_PROPUESTA)+4','1','1','H002_RegistrarResSuspSubasta','fecha')
+, T_MPH ( '178','130','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_RESOLUCION_PROPUESTA)+4','1','1','H002_DictarInstruccionesDeneSuspension','fecha')
+, T_MPH ( '179','131','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(SUBASTA_CELEBRADA)','1','1','H002_CelebracionSubasta','comboCelebrada')
+, T_MPH ( '182','131','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(MOTIVO_SUSPENSION)','4','0','H002_CelebracionSubasta','comboMotivoSuspension')
+, T_MPH ( '181','131','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(SUSPENDIDA_POR)','3','0','H002_CelebracionSubasta','comboDecisionSuspension')
+, T_MPH ( '180','131','MIG_PROCS_SUBASTAS_LOTES','MAX(CON_POSTORES)','2','0','H002_CelebracionSubasta','comboPostores')
+, T_MPH ( '306','132','MIG_PROCEDIMIENTOS_BIENES','ADD_MONTHS(MIN(FECHA_DECRETO_ADJ_NO_FIRME),-3)','1','1','H005_SolicitudDecretoAdjudicacion','fechaSolicitud')
+, T_MPH ( '307','133','MIG_PROCEDIMIENTOS_BIENES','MIN(FECHA_DECRETO_ADJ_NO_FIRME)','1','1','H005_notificacionDecretoAdjudicacionAEntidad','fecha')
+, T_MPH ( '308','133','MIG_PROCEDIMIENTOS_SUBASTAS','MIN(FECHA_DECRETO_ADJUDICACION)','2','0','H005_notificacionDecretoAdjudicacionAEntidad','fechaResol')
+, T_MPH ( '319','134','MIG_PROCEDIMIENTOS_BIENES','ADD_MONTHS(MIN(FECHA_DECRETO_ADJ_NO_FIRME),-2)','1','1','H005_DeclaracionIVAIGIC','fecha')
+, T_MPH ( '309','135','MIG_PROCEDIMIENTOS_BIENES','ADD_MONTHS(MIN(FECHA_DECRETO_ADJ_NO_FIRME),-2)','1','1','H005_notificacionDecretoAdjudicacionAlContrario','fecha')
+, T_MPH ( '310','136','MIG_PROCEDIMIENTOS_BIENES','ADD_MONTHS(MIN(FECHA_DECRETO_ADJ_NO_FIRME),-1)','1','1','H005_SolicitudTestimonioDecretoAdjudicacion','fecha')
+, T_MPH ( '312','137','MIG_PROCEDIMIENTOS_BIENES','OBSERVACIONES_ADJUDICACION','2','0','H005_ConfirmarTestimonio','observaciones')
+, T_MPH ( '311','137','MIG_PROCEDIMIENTOS_BIENES','MIN(FECHA_DECRETO_ADJ_NO_FIRME)','1','1','H005_ConfirmarTestimonio','fechaTestimonio')
+, T_MPH ( '314','138','MIG_PROCEDIMIENTOS_BIENES','MIN(FECHA_SEGUNDA_PRES_REGISTRO)','2','0','H005_RegistrarPresentacionEnRegistro','fechaNuevoTest')
+, T_MPH ( '313','138','MIG_PROCEDIMIENTOS_BIENES','MIN(FECHA_PRESENTACION_REGISTRO)','1','1','H005_RegistrarPresentacionEnRegistro','fechaPresentacion')
+, T_MPH ( '315','139','MIG_PROCEDIMIENTOS_BIENES','1','1','0','H005_RegistrarInscripcionDelTitulo','comboSituacionTitulo')
+, T_MPH ( '316','139','MIG_PROCEDIMIENTOS_BIENES','MIN(FECHA_INSCRIPCION_TITULO)','2','1','H005_RegistrarInscripcionDelTitulo','fechaInscripcion')
+, T_MPH ( '317','139','MIG_PROCEDIMIENTOS_BIENES','MIN(FECHA_ENVIO_AUTO_ADICION)','3','0','H005_RegistrarInscripcionDelTitulo','fechaEnvioDecretoAdicion')
+, T_MPH ( '318','139','MIG_PROCEDIMIENTOS_BIENES','OBSERVACIONES_INSCRIPCION','4','0','H005_RegistrarInscripcionDelTitulo','observaciones')
+, T_MPH ( '320','140','MIG_PROCEDIMIENTOS_BIENES','MAX(FECHA_SOLICITUD_POSESION)','1','1','H015_RegistrarSolicitudPosesion','fechaSolicitud')
+, T_MPH ( '321','140','MIG_PROCEDIMIENTOS_BIENES','DECODE(MAX(FECHA_CONTRATO_ARREND),NULL,0,1)','2','0','H015_RegistrarSolicitudPosesion','comboArrendamientoValido')
+, T_MPH ( '326','140','MIG_PROCEDIMIENTOS_BIENES','MAX(OBSERVACIONES_POSESION)','7','0','H015_RegistrarSolicitudPosesion','observaciones')
+, T_MPH ( '325','140','MIG_PROCEDIMIENTOS_BIENES','DECODE(MAX(FECHA_SOLICITUD_MORATORIA),NULL,0,1)','6','0','H015_RegistrarSolicitudPosesion','comboMoratoria')
+, T_MPH ( '324','140','MIG_PROCEDIMIENTOS_BIENES','MAX(VIVIENDA_HABITUAL)','5','0','H015_RegistrarSolicitudPosesion','comboViviendaHab')
+, T_MPH ( '323','140','MIG_PROCEDIMIENTOS_BIENES','MAX(OCUPANTES)','4','0','H015_RegistrarSolicitudPosesion','comboOcupado')
+, T_MPH ( '322','140','MIG_PROCEDIMIENTOS_BIENES','MAX(POSIBLE_POSESION)','3','0','H015_RegistrarSolicitudPosesion','comboPosesion')
+, T_MPH ( '327','141','MIG_PROCEDIMIENTOS_BIENES','MAX(FECHA_SENYALAMIENTO_POSESION)','1','1','H015_RegistrarSenyalamientoPosesion','fechaSenyalamiento')
+, T_MPH ( '331','142','MIG_PROCEDIMIENTOS_BIENES','MAX(NECESARIA_FUERZA_LANZAMIENTO)','4','0','H015_RegistrarPosesionYLanzamiento','comboLanzamiento')
+, T_MPH ( '330','142','MIG_PROCEDIMIENTOS_BIENES','MAX(NECESARIA_FUERZA_POSESION)','3','0','H015_RegistrarPosesionYLanzamiento','comboFuerzaPublica')
+, T_MPH ( '329','142','MIG_PROCEDIMIENTOS_BIENES','MAX(OCUPANTES_REALIZ_DILIGENCIA)','2','0','H015_RegistrarPosesionYLanzamiento','comboOcupado')
+, T_MPH ( '328','142','MIG_PROCEDIMIENTOS_BIENES','MAX(FECHA_REALIZACION_POSESION)','1','1','H015_RegistrarPosesionYLanzamiento','fecha')
+, T_MPH ( '332','143','MIG_PROCEDIMIENTOS_BIENES','MAX(FECHA_SENYALAMIENTO_POSESION)','1','0','H015_RegistrarSenyalamientoLanzamiento','fecha')
+, T_MPH ( '214','150','MIG_PROCEDIMIENTOS_CABECERA','IMPORTE_INTERESES_APROBADOS','5','0','H022_InterposicionDemanda','interesesOrdinarios')
+, T_MPH ( '213','150','MIG_PROCEDIMIENTOS_CABECERA','IMPORTE_PRINCIPAL','4','1','H022_InterposicionDemanda','principalDemanda')
+, T_MPH ( '212','150','MIG_PROCEDIMIENTOS_CABECERA','FECHA_APROBACION_LITC','3','0','H022_InterposicionDemanda','fechaCierre')
+, T_MPH ( '211','150','MIG_PROCEDIMIENTOS_CABECERA','PLAZA','2','0','H022_InterposicionDemanda','plazaJuzgado')
+, T_MPH ( '210','150','MIG_PROCEDIMIENTOS_CABECERA','FECHA_PRESENTACION_DEMANDA','1','1','H022_InterposicionDemanda','fechaSolicitud')
+, T_MPH ( '215','150','MIG_PROCEDIMIENTOS_CABECERA','1','6','0','H022_InterposicionDemanda','provisionFondos')
+, T_MPH ( '217','151','MIG_PROCEDIMIENTOS_CABECERA','PLAZA','2','0','H022_ConfirmarAdmisionDemanda','nPlaza')
+, T_MPH ( '216','151','MIG_PROCEDIMIENTOS_CABECERA','NVL(FECHA_ADMISION_DEMANDA,FECHA_INADMISION_DEMANDA)','1','1','H022_ConfirmarAdmisionDemanda','fecha')
+, T_MPH ( '218','151','MIG_PROCEDIMIENTOS_CABECERA','JUZGADO','3','0','H022_ConfirmarAdmisionDemanda','numJuzgado')
+, T_MPH ( '219','151','MIG_PROCEDIMIENTOS_CABECERA','NUM_AUTO_SIN_FORMATO','4','0','H022_ConfirmarAdmisionDemanda','numProcedimiento')
+, T_MPH ( '220','151','MIG_PROCEDIMIENTOS_CABECERA','DECODE(FECHA_ADMISION_DEMANDA,NULL,0,1)','5','0','H022_ConfirmarAdmisionDemanda','comboResultado')
+, T_MPH ( '221','153','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_REQUERIMIENTO)','1','1','H016_confNotifRequerimientoPago','fecha')
+, T_MPH ( '222','153','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(DECODE(REQUERIDO,''''S'''',1,0))','2','0','H016_confNotifRequerimientoPago','comboResultado')
+, T_MPH ( '223','154','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(DECODE(OPOSICION,''''S'''',1,0))','1','1','H022_ConfirmarOposicionCuantia','comboResultado')
+, T_MPH ( '224','154','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_OPOSICION)','2','1','H022_ConfirmarOposicionCuantia','fechaOposicion')
+, T_MPH ( '225','154','MIG_PROCEDIMIENTOS_CABECERA','NUM_AUTO_SIN_FORMATO','3','0','H022_ConfirmarOposicionCuantia','procedimiento')
+, T_MPH ( '226','154','MIG_PROCEDIMIENTOS_DEMANDADOS','MAX(FECHA_COMPARECENCIA)','4','0','H022_ConfirmarOposicionCuantia','fechaJuicio')
+, T_MPH ( '228','155','MIG_PROCEDIMIENTOS_CABECERA','PLAZA','2','0','H024_InterposicionDemanda','plazaJuzgado')
+, T_MPH ( '227','155','MIG_PROCEDIMIENTOS_CABECERA','FECHA_PRESENTACION_DEMANDA','1','1','H024_InterposicionDemanda','fecha')
+, T_MPH ( '229','155','MIG_PROCEDIMIENTOS_CABECERA','FECHA_APROBACION_LITC','3','0','H024_InterposicionDemanda','fechaCierre')
+, T_MPH ( '231','155','MIG_PROCEDIMIENTOS_CABECERA','IMPORTE_INTERESES_APROBADOS','5','0','H024_InterposicionDemanda','interesesOrdinarios')
+, T_MPH ( '230','155','MIG_PROCEDIMIENTOS_CABECERA','IMPORTE_PRINCIPAL','4','0','H024_InterposicionDemanda','principalDemanda')
+, T_MPH ( '232','156','MIG_PROCEDIMIENTOS_CABECERA','NVL(FECHA_ADMISION_DEMANDA,FECHA_INADMISION_DEMANDA)','1','1','H024_ConfirmarAdmision','fecha')
+, T_MPH ( '233','156','MIG_PROCEDIMIENTOS_CABECERA','PLAZA','2','0','H024_ConfirmarAdmision','nPlaza')
+, T_MPH ( '234','156','MIG_PROCEDIMIENTOS_CABECERA','JUZGADO','3','0','H024_ConfirmarAdmision','numJuzgado')
+, T_MPH ( '235','156','MIG_PROCEDIMIENTOS_CABECERA','NUM_AUTO_SIN_FORMATO','4','0','H024_ConfirmarAdmision','numProcedimiento')
+, T_MPH ( '236','156','MIG_PROCEDIMIENTOS_CABECERA','DECODE(FECHA_ADMISION_DEMANDA,NULL,0,1)','5','0','H024_ConfirmarAdmision','comboResultado')
+, T_MPH ( '237','158','MIG_PROCEDIMIENTOS_CABECERA','FECHA_PRESENTACION_DEMANDA','1','1','H018_InterposicionDemanda','fecha')
+, T_MPH ( '239','158','MIG_PROCEDIMIENTOS_CABECERA','JUZGADO','3','0','H018_InterposicionDemanda','numJuzgado')
+, T_MPH ( '238','158','MIG_PROCEDIMIENTOS_CABECERA','PLAZA','2','0','H018_InterposicionDemanda','plazaJuzgado')
+, T_MPH ( '240','159','MIG_PROCEDIMIENTOS_CABECERA','NVL(FECHA_ADMISION_DEMANDA,FECHA_INADMISION_DEMANDA)','1','1','H018_AutoDespachando','fecha')
+, T_MPH ( '241','159','MIG_PROCEDIMIENTOS_CABECERA','NUM_AUTO_SIN_FORMATO','2','0','H018_AutoDespachando','nProc')
+, T_MPH ( '242','159','MIG_PROCEDIMIENTOS_CABECERA','DECODE(FECHA_ADMISION_DEMANDA,NULL,0,1)','3','0','H018_AutoDespachando','comboSiNo')
+, T_MPH ( '243','161','MIG_PROCEDIMIENTOS_CABECERA','FECHA_PRESENTACION_DEMANDA','1','1','H028_RegistrarJuicioVerbal','fechaSolicitud')
+, T_MPH ( '257','170','MIG_CONCURSOS_CABECERA','ADM_CONCURSAL_MAIL','8','0','H009_RegistrarPublicacionBOE','admEmail')
+, T_MPH ( '250','170','MIG_CONCURSOS_CABECERA','FECHA_PUBLICACION_BOE','1','1','H009_RegistrarPublicacionBOE','fecha')
+, T_MPH ( '251','170','MIG_CONCURSOS_CABECERA','FECHA_AUTO_DECLAR_CONCURSO','2','0','H009_RegistrarPublicacionBOE','fechaAuto')
+, T_MPH ( '252','170','MIG_CONCURSOS_CABECERA','REPLACE(PLAZA,''''X'''','''''''')','3','0','H009_RegistrarPublicacionBOE','plazaJuzgado')
+, T_MPH ( '253','170','MIG_CONCURSOS_CABECERA','REPLACE(JUZGADO,''''X'''','''''''')','4','0','H009_RegistrarPublicacionBOE','nJuzgado')
+, T_MPH ( '254','170','MIG_CONCURSOS_CABECERA','NUM_AUTO_SIN_FORMATO','5','0','H009_RegistrarPublicacionBOE','nAuto')
+, T_MPH ( '255','170','MIG_CONCURSOS_CABECERA','ADM_CONCURSAL_NOMBRE','6','0','H009_RegistrarPublicacionBOE','admNombre')
+, T_MPH ( '256','170','MIG_CONCURSOS_CABECERA','ADM_CONCURSAL_TELF','7','0','H009_RegistrarPublicacionBOE','admTelefono')
+, T_MPH ( '258','171','MIG_CONCURSOS_CABECERA','(FECHA_PUBLICACION_BOE)+1','1','1','H009_RevisarEjecuciones','fecha')
+, T_MPH ( '259','172','MIG_CONCURSOS_CABECERA','(FECHA_PUBLICACION_BOE)+2','1','1','H009_RegistrarInsinuacionCreditos','fecha')
+, T_MPH ( '260','173','MIG_CONCURSOS_CABECERA','FECHA_COMUNICACION_CREDITOS','1','1','H009_PresentarEscritoInsinuacion','fecha')
+, T_MPH ( '261','173','MIG_CONCURSOS_CABECERA','TOTAL_CONTRA_MASA','2','0','H009_PresentarEscritoInsinuacion','tCredMasa')
+, T_MPH ( '262','173','MIG_CONCURSOS_CABECERA','TOTAL_PRIVILEGIADO','3','0','H009_PresentarEscritoInsinuacion','tCredPrivGen')
+, T_MPH ( '263','173','MIG_CONCURSOS_CABECERA','TOTAL_ORDINARIO','4','0','H009_PresentarEscritoInsinuacion','tCredOrd')
+, T_MPH ( '264','173','MIG_CONCURSOS_CABECERA','TOTAL_SUBORDINADO','5','0','H009_PresentarEscritoInsinuacion','tCredSub')
+, T_MPH ( '265','173','MIG_CONCURSOS_CABECERA','TOTAL_CONTINGENTE','6','0','H009_PresentarEscritoInsinuacion','tCredContigentes')
+, T_MPH ( '266','174','MIG_CONCURSOS_CABECERA','(FECHA_COMUNICACION_CREDITOS)+2','1','1','H009_RevisarInsinuacionCreditos','fecha')
+, T_MPH ( '267','175','MIG_CONCURSOS_CABECERA','DECODE(POSTURA_ENTIDAD_IMPUGNACION,0,1,0)','1','1','H009_RegistrarProyectoInventario','comFavorable')
+, T_MPH ( '268','176','MIG_CONCURSOS_CABECERA','FECHA_INFORME_ADM_CONCURSAL','1','1','H009_RegistrarInformeAdmonConcursal','fecha')
+, T_MPH ( '270','177','MIG_CONCURSOS_CABECERA','0','2','0','H009_RevisarResultadoInfAdmon','comboAdenda')
+, T_MPH ( '269','177','MIG_CONCURSOS_CABECERA','DECODE(POSTURA_ENTIDAD_ADM_CONCURSAL,0,1,0)','1','1','H009_RevisarResultadoInfAdmon','comboResultado')
+, T_MPH ( '271','177','MIG_CONCURSOS_CABECERA','DECODE(FECHA_IMPUGNACION,NULL,0,1)','3','0','H009_RevisarResultadoInfAdmon','comboDemanda')
+, T_MPH ( '272','178','MIG_CONCURSOS_CABECERA','(FECHA_INFORME_ADM_CONCURSAL)+1','1','1','H009_PresentacionAdenda','fecha')
+, T_MPH ( '273','179','MIG_CONCURSOS_CABECERA','(FECHA_INFORME_ADM_CONCURSAL)+2','1','1','H009_PresentacionJuzgado','fecha')
+, T_MPH ( '274','180','MIG_CONCURSOS_CABECERA','1','1','1','H009_ResolucionJuzgado','comboAdmitida')
+, T_MPH ( '275','181','MIG_CONCURSOS_CABECERA','NULL','1','1','H009_ActualizarEstadoCreditos','observaciones')
+, T_MPH ( '276','182','MIG_CONCURSOS_CABECERA','FECHA_RESULTADO_IMPUGNACION','1','1','H009_AnyadirTextosDefinitivos','fecha')
+, T_MPH ( '277','182','MIG_CONCURSOS_CABECERA','DECODE(SUBSTR(FASE_CONCURSO,1,INSTR(FASE_CONCURSO,''''-'''')-1),''''FASE LIQUIDACION'''',1,0)','1','1','H009_AnyadirTextosDefinitivos','comboLiquidacion')
+, T_MPH ( '278','183','MIG_CONCURSOS_CABECERA','FECHA_JUNTA_ACREEDORES','1','1','H017_AutoApertura','fechaJunta')
+, T_MPH ( '279','184','MIG_CONCURSOS_CABECERA','FECHA_JUNTA_ACREEDORES','1','1','H017_PresentacionPropuesta','fecha')
+, T_MPH ( '280','185','MIG_CONCURSOS_CABECERA','FECHA_JUNTA_ACREEDORES','1','1','H017_ObtenerInformeAdmConcursal','fecha')
+, T_MPH ( '281','186','MIG_CONCURSOS_CABECERA','FECHA_JUNTA_ACREEDORES','1','1','H017_ElaborarInformeJuntaAcreedores','fecha')
+, T_MPH ( '282','187','MIG_CONCURSOS_CABECERA','FECHA_JUNTA_ACREEDORES','1','1','H017_ElevarAComite','fecha')
+, T_MPH ( '283','188','MIG_CONCURSOS_CABECERA','FECHA_JUNTA_ACREEDORES','1','1','H017_RegistrarRespuestaComite','fecha')
+, T_MPH ( '284','189','MIG_CONCURSOS_CABECERA','FECHA_JUNTA_ACREEDORES','1','1','H017_LecturaInstrucciones','fecha')
+, T_MPH ( '285','190','MIG_CONCURSOS_CABECERA','FECHA_JUNTA_ACREEDORES','1','1','H017_NotificarInstruccionesProcurador','fecha')
+, T_MPH ( '286','191','MIG_CONCURSOS_CABECERA','FECHA_JUNTA_ACREEDORES','1','1','H017_RegistrarCelebracionJunta','fechaJunta')
+, T_MPH ( '287','191','MIG_CONCURSOS_CABECERA','DECODE(RESULTADO_JUNTA_ACREEDORES,0,1,0)','2','0','H017_RegistrarCelebracionJunta','comboAprobacion')
+, T_MPH ( '288','192','MIG_CONCURSOS_CABECERA','(FECHA_JUNTA_ACREEDORES)+1','1','1','H017_AdjuntarActaJunta','fecha')
+, T_MPH ( '333','193','MIG_CONCURSOS_CABECERA','DECODE(FECHA_APROBACION_CONVENIO,NULL,0,1)','2','0','H017_RegistrarSentenciaFirme','comboAdmision')
+, T_MPH ( '289','193','MIG_CONCURSOS_CABECERA','FECHA_APROBACION_CONVENIO','1','1','H017_RegistrarSentenciaFirme','fecha')
+, T_MPH ( '290','194','MIG_CONCURSOS_CABECERA','FECHA_APROBACION_CONVENIO','1','1','H017_RevisarEjecucionesParalizadas','fecha')
+, T_MPH ( '334','195','MIG_CONCURSOS_CABECERA','FECHA_APERTURA','1','1','H033_aperturaFase','fecha')
+, T_MPH ( '291','196','MIG_CONCURSOS_CABECERA','FECHA_LIQUIDACION','1','1','H033_InformeLiquidacion','fechaInforme')
+, T_MPH ( '292','196','MIG_CONCURSOS_CABECERA','CONSIDERACIONES_LIQUIDACION','2','0','H033_InformeLiquidacion','observaciones')
+, T_MPH ( '336','197','MIG_CONCURSOS_CABECERA','FECHA_LIQUIDACION','1','1','H033_decidirPresentarObs','fecha')
+, T_MPH ( '337','198','MIG_CONCURSOS_CABECERA','FECHA_LIQUIDACION','1','1','H033_presentarObs','fecha')
+, T_MPH ( '338','199','MIG_CONCURSOS_CABECERA','FECHA_APROBACION_PLAN','1','1','H033_RegistrarAutoPlanLiquidacion','fechaResolucion')
+, T_MPH ( '339','200','MIG_CONCURSOS_CABECERA','FECHA_APROBACION_PLAN','1','1','H033_regInformeTrimestral1','fecha')
+, T_MPH ( '340','201','MIG_CONCURSOS_CABECERA','DECODE(ALEGACIONES_PLAN_LIQUIDACION,''''S'''',1,0)','1','1','H033_RendimientoCuentas','comboAlegaciones')
+, T_MPH ( '343','202','MIG_CONCURSOS_CABECERA','FECHA_APROBACION_PLAN','1','1','H033_PresentarAlegaciones','fechaPresentacion')
+, T_MPH ( '341','203','MIG_CONCURSOS_CABECERA','FECHA_APROBACION_PLAN','1','1','H033_ResolucionJuzgado','fechaResolucion')
+, T_MPH ( '342','204','MIG_CONCURSOS_CABECERA','NVL(FECHA_APROBACION_PLAN+7,SYSDATE)','1','1','H033_RegistrarAutoConclusion','fechaAuto')
+, T_MPH ( '344','206','MIG_CONCURSOS_CABECERA','FECHA_SUBASTA','1','1','CJ004_SenyalamientoSubasta','fechaSenyalamiento')
 );
-                                   
+                       
 /*
-##########################################
-## FIN Configuraciones a rellenar
-##########################################
-*/
+--##########################################
+--## FIN Configuraciones a rellenar
+--##########################################
+--*/
 
  V_TMP_MPH T_MPH;
  
- BEGIN 
-
- DBMS_OUTPUT.PUT_LINE('Se borra la configuración de '||TABLA_VALORES||'');
- EXECUTE IMMEDIATE('DELETE FROM '|| V_ESQUEMA||'.'||TABLA_VALORES||'');
+ BEGIN
 
  DBMS_OUTPUT.PUT_LINE('Se borra la configuración de '||TABLA||'');
- EXECUTE IMMEDIATE('DELETE FROM '|| V_ESQUEMA||'.'||TABLA||'');
+ DBMS_OUTPUT.PUT_LINE('DELETE FROM '||V_ESQUEMA||'.'||TABLA||'');
 
-DBMS_OUTPUT.PUT_LINE('Creando '||TABLA||'......');
+
+ EXECUTE IMMEDIATE('DELETE FROM '||V_ESQUEMA||'.'||TABLA||'');
+
+  DBMS_OUTPUT.PUT_LINE('Creando '||TABLA||'......');
  FOR I IN V_MPH.FIRST .. V_MPH.LAST
  LOOP
  
   V_TMP_MPH := V_MPH(I);
-
   
+  --FIN CONTADORES
   
   --INICIO INSERT
  
   DBMS_OUTPUT.PUT_LINE('Creando '||TABLA||': '||V_TMP_MPH(1)); 
+
   
-  V_MSQL := 'INSERT INTO ' ||V_ESQUEMA|| '.MIG_PARAM_HITOS 
-           ( MIG_PARAM_HITO_ID, COD_TIPO_PROCEDIMIENTO, TIPO_PROCEDIMIENTO, DD_TPO_CODIGO, DD_TPO_DESC, COD_HITO_ACTUAL, TAP_CODIGO, ORDEN, TAR_TAREA_PENDIENTE, FLAG_POR_CADA_BIEN, TAR_FINALIZADA)'
-        ||' VALUES ('||V_TMP_MPH(1)||q'[,']'
-                     ||V_TMP_MPH(2)||q'[',']'
-                     ||V_TMP_MPH(3)||q'[',']' 
-                     ||V_TMP_MPH(4)||q'[',']'
-                     ||V_TMP_MPH(5)||q'[',]' 
-                     ||V_TMP_MPH(6)||q'[,']' 
-                     ||V_TMP_MPH(7)||q'[',]'  
-                     ||V_TMP_MPH(8)||q'[,']'  
-                     ||V_TMP_MPH(9)||q'[',]' 
-                     ||V_TMP_MPH(10)||q'[,]' 
-                     ||V_TMP_MPH(11)||q'[)]';
-                 
- EXECUTE IMMEDIATE V_MSQL;
+  
+  V_MSQL:= 'INSERT INTO ' ||V_ESQUEMA|| '.'||TABLA||' 
+           ( MIG_PHV_ID,MIG_PARAM_HITO_ID,TABLA_MIG,CAMPO_INTERFAZ,ORDEN,FLAG_ES_FECHA,TAP_CODIGO,TEV_NOMBRE)'
+	 ||' VALUES ('||V_TMP_MPH(1)||q'[,]'
+                    ||V_TMP_MPH(2)||q'[,']' 
+                    ||V_TMP_MPH(3)||q'[',']' 
+                    ||V_TMP_MPH(4)||q'[',]'
+                    ||V_TMP_MPH(5)||q'[,]' 
+                    ||V_TMP_MPH(6)||q'[,']' 
+                    ||V_TMP_MPH(7)||q'[',']'   
+                    ||V_TMP_MPH(8)||q'[')]';
+--DBMS_OUTPUT.PUT_LINE(V_MSQL);
+   EXECUTE IMMEDIATE V_MSQL;
    END LOOP; 
    V_TMP_MPH := NULL; 
 
@@ -274,4 +418,4 @@ DBMS_OUTPUT.PUT_LINE('Creando '||TABLA||'......');
    RAISE;
  END;
   /
- EXIT;                    
+ EXIT;

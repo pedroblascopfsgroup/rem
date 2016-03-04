@@ -80,6 +80,8 @@ public class BusquedaContratosDto extends PaginationParamsImpl {
     private String tiposProductoEntidad;
     
     private String motivoGestionHRE;
+    
+    private String situacionGestion;
 
     /**
      * @return boolean: <code>true</code> si alguno de los siguientes campos existe:
@@ -556,5 +558,13 @@ public class BusquedaContratosDto extends PaginationParamsImpl {
 	
 	public void setMotivoGestionHRE(String motivoGestionHRE) {
 		this.motivoGestionHRE = motivoGestionHRE;
+	}
+
+	public String getSituacionGestion() {
+		return situacionGestion;
+	}
+
+	public void setSituacionGestion(String situacionGestion) {
+		this.situacionGestion = situacionGestion;
 	}
 }

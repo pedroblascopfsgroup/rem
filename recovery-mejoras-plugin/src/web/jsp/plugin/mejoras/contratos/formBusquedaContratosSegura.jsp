@@ -52,7 +52,37 @@ var formBusquedaContratos=function(){
 	comboMotivoGestionHRE.on('afterrender', function(combo) {
 		optionsCondicionesRemuneracionStore.webflow();
 	});
+	<%--nuevo combo buscador --%>
+	var ddSituacionGestion = Ext.data.Record.create([
+		 {name:'id'}
+		,{name:'descripcion'}
+		,{name:'codigo'}
+	]);
 	
+	var optionsSituacionGestion = page.getStore({
+	       flow: 'mejacuerdo/getListSituacionGestion'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'situacionGestion'
+	    }, ddSituacionGestion)
+	});	
+
+	var comboSituacionGestion = new Ext.form.ComboBox({
+		store:optionsSituacionGestion
+		,id:'situacionGestion'
+		,displayField:'descripcion'
+		,valueField:'codigo'
+		,mode: 'local'
+		,resizable: true
+		,forceSelection: true
+		,emptyText:'---'
+		,triggerAction: 'all'
+		,fieldLabel: '<s:message code="listadoContratos.situacionGestion" text="**Situación Gestión" />'
+		,width: 220		
+	});
+	comboSituacionGestion.on('afterrender', function(combo) {
+		optionsSituacionGestion.webflow();
+	});
+	<%------------------------------------------------------------ --%>
 	//nombre
 	var txtNombre = app.creaText('nombre', '<s:message code="listadoContratos.nombre" text="**Nombre" />');
 
@@ -213,6 +243,7 @@ var formBusquedaContratos=function(){
         		p.codEfecto=txtCodEfecto.getValue();
         		p.codDisposicion=txtCodDisposicion.getValue();
         		p.motivoGestionHRE=comboMotivoGestionHRE.getValue();
+        		p.situacionGestion=comboSituacionGestion.getValue();
         	}
         	if(tabRelaciones){
         		p.nombre=txtNombre.getValue();
@@ -272,6 +303,9 @@ var formBusquedaContratos=function(){
 				return true;
 			}
 			if (comboMotivoGestionHRE.getValue().trim()!=''){
+				return true;
+			}
+			if (comboSituacionGestion.getValue().trim()!=''){
 				return true;
 			}
 		}
@@ -410,7 +444,7 @@ var formBusquedaContratos=function(){
 		,items:[{
 					layout:'form'
 					,items: [txtContrato,txtCodRecibo,txtCodEfecto,txtCodDisposicion
-					<sec:authorize ifAllGranted="PERSONALIZACION-HY">,comboMotivoGestionHRE</sec:authorize>]
+					<sec:authorize ifAllGranted="PERSONALIZACION-HY">,comboMotivoGestionHRE</sec:authorize>, comboSituacionGestion]
 				},{
 					layout:'form'
 					,items: [comboEstadoContrato,comboTiposProducto]
@@ -591,6 +625,7 @@ var formBusquedaContratos=function(){
 		,{name :'dispuesto', sortType:Ext.data.SortTypes.asFloat }
 		,{name :'limiteInicial', sortType:Ext.data.SortTypes.asFloat }
 		,{name :'limiteFinal', sortType:Ext.data.SortTypes.asFloat }
+		,{name : 'situacion2', sortType:Ext.data.SortTypes.asTex}
 		
 	]);
 
@@ -619,7 +654,7 @@ var formBusquedaContratos=function(){
 			,{	header: '<s:message code="listadoContratos.listado.saldo" text="**Saldo vencido"/>',sortable: false , width: 70, dataIndex: 'saldoVencido', renderer:app.format.moneyRenderer, align:'right'}
 			,{	header: '<s:message code="listadoContratos.listado.riesgo" text="**Riesgos"/>',sortable: false , width: 70, dataIndex: 'riesgo', renderer:app.format.moneyRenderer, align:'right'}
 			,{	header: '<s:message code="listadoContratos.listado.primertitular" text="**1er Titular"/>',sortable: false , width:130, dataIndex: 'titular'}
-			,{	header: '<s:message code="listadoContratos.listado.situacion" text="**Situacion"/>',sortable: false , width:60, dataIndex: 'situacion'}
+			,{	header: '<s:message code="listadoContratos.listado.situacion" text="**Situacion"/>',sortable: false , width:60, dataIndex: 'situacion2'}
 		    ,{	header: '<s:message code="listadoContratos.listado.estado" text="**Estado"/>',sortable: false , width: 90, dataIndex: 'estadoContrato', hidden:true}
 		    ,{	header: '<s:message code="listadoContratos.listado.estadoFinanciero" text="**Estado Financiero"/>',sortable: false , width: 90, dataIndex: 'estadoFinanciero'}
 		    ,{	header: '<s:message code="listadoContratos.listado.aplicativoOrigen" text="**Aplicativo origen"/>',sortable: false , dataIndex: 'aplicativoOrigen', hidden:true}
@@ -627,6 +662,7 @@ var formBusquedaContratos=function(){
 			,{	header: '<s:message code="listadoContratos.listado.dispuesto" text="**Dispuesto"/>',sortable: false , dataIndex: 'dispuesto', renderer:app.format.moneyRenderer, hidden:true}
 			,{	header: '<s:message code="listadoContratos.listado.limiteInicial" text="**Limite inicial"/>',sortable: false , dataIndex: 'limiteInicial', renderer:app.format.moneyRenderer, hidden:true}
 			,{	header: '<s:message code="listadoContratos.listado.limiteFinal" text="**Limite final"/>',sortable: false , dataIndex: 'limiteFinal', renderer:app.format.moneyRenderer, hidden:true}
+			<%--,{	header: '<s:message code="listadoContratos.listado.situacion2" text="**Situacion2"/>',sortable: false , width:60, dataIndex: 'situacion2'} --%>
 	]); 
 
 	var pagingBar=fwk.ux.getPaging(contratosStore);

@@ -11,10 +11,12 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Immutable;
 
 @Entity
 @Table(name="V_LIS_PREPROYECT_CNT", schema="${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Immutable
 public class VListadoPreProyectadoCnt implements Serializable {
 	/**
 	 * 
@@ -91,9 +93,20 @@ public class VListadoPreProyectadoCnt implements Serializable {
     
     @Column(name="NOM_CLIENTE")
     private String nomCliente;
-	
+
+    @Column(name="OFI_CODIGO")
+    private String ofiCodigo;
+
 	// -------------------------------------------------------------------
 	
+    
+	public String getOfiCodigo() {
+		return ofiCodigo;
+	}
+
+	public void setOfiCodigo(String ofiCodigo) {
+		this.ofiCodigo = ofiCodigo;
+	}
 
 	public Long getCntId() {
 		return cntId;

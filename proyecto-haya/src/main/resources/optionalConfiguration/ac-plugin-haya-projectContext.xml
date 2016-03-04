@@ -427,6 +427,11 @@
 					<value>RESPRO_SUCONGE</value>
 				</entry>
 			</map>
+		</property>		
+		<property name="tiposGestoresDeProcuradores">
+			<set>
+				<value>GESPROC</value>
+			</set>
 		</property>
 	</bean>
 	

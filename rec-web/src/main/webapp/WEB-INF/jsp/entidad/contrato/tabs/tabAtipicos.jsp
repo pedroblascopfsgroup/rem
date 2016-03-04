@@ -57,17 +57,7 @@
     atipicosStore.addListener('load', function(store, meta) {
 		store.sort('fechaDato', 'DESC');
     });
-    
-
-    atipicosGrid.on('rowdblclick', function(grid, rowIndex, e){
-    if (!app.usuarioLogado.externo){
-         var rec = grid.getStore().getAt(rowIndex);
-      var id = rec.get('id');
-        var desc = rec.get('descripcion');
-        app.abreExpediente(id,desc);
-    }     
-    }); 
-    
+       
     panel.add(atipicosGrid);
   
   	panel.getValue = function(){  }

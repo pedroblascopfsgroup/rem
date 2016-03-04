@@ -1,0 +1,1849 @@
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <!-- PASO 1 - PARTE COMUN A TODOS LOS BATCH. FUSIONAR EN EL FUTURO TAMBIEN RECOBRO AGENCIAS sqlRecobroPreparacionRecobro-->
+    <entry key="comunes.idxdrop.PreparaGeneracionExpedientes.Oracle9iDialect">
+        <![CDATA[
+        BEGIN
+
+         --Log
+         INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,null,'GeneracionExpedientes','comunes.idxdrop.PreparaGeneracionExpedientes','Inicio Generacion de expedientes',null);
+         COMMIT;
+
+         --Operacion_DDL.DDL_INDEX('DROP','IDX_BATCH_SV_DATOS_CNT_1');
+         --Operacion_DDL.DDL_INDEX('DROP','IDX_BATCH_SV_DATOS_CNT_2');
+         EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_CNT_1 UNUSABLE';
+         EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_CNT_2 UNUSABLE';
+        END;
+        ]]>
+    </entry>
+    <entry key="comunes.truncate.PreparaGeneracionExpedientes.Oracle9iDialect">
+        <![CDATA[
+        BEGIN
+         --Operacion_DDL.DDL_Table('TRUNCATE','BATCH_SV_DATOS_CNT');
+         --Operacion_DDL.DDL_Table('TRUNCATE','BATCH_SV_DATOS_GCL');
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SV_DATOS_CNT';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SV_DATOS_GCL';
+        END;
+        ]]>
+    </entry>
+    <entry key="comunes.create.PreparaGeneracionExpedientes.Oracle9iDialect">
+        <![CDATA[
+        Declare
+
+           v_cadena  varchar2(50 char);
+           v_proce   varchar2(50 char);
+           v_paso    varchar2(50 char);
+           v_nufilas number;
+           v_count   number;
+
+        Begin
+
+           v_cadena := '';
+           v_proce := 'GeneracionExpedientes';
+           v_paso := 'comunes.create.PreparaGeneracionExpedientes';
+
+            --** Informacion de contratos
+            Insert /*+append*/ INTO BATCH_SV_DATOS_CNT
+              (cnt_id, ofi_id, cnt_riesgo, pos_viva_vencida)
+              Select /*+parallel*/ cnt.cnt_id
+                   , cnt.ofi_id
+                   , nvl(mov.mov_riesgo, 0) As cnt_riesgo --, nvl(mov.mov_deuda_irregular, 0) AS cnt_riesgo
+                   , nvl(mov.mov_pos_viva_vencida, 0) As pos_viva_vencida
+                From CNT_CONTRATOs cnt
+                Join ${master.schema}.DD_ESC_ESTADO_CNT esc ON cnt.dd_esc_id = esc.dd_esc_id
+                  Join MOV_MOVIMIENTOS mov ON cnt.cnt_id = mov.cnt_id AND cnt.cnt_fecha_extraccion = mov.mov_fecha_extraccion
+               Where cnt.borrado = 0
+                 And esc.dd_esc_codigo = '0';
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SV_DATOS_CNT Cargada',V_NUFILAS);
+            COMMIT;
+
+
+            --** Componentes de grupos
+            ------------------------------
+            Insert /*+append*/ INTO BATCH_SV_DATOS_GCL
+            SELECT DISTINCT pgcl.gcl_id, pgcl.per_id
+              FROM PER_GCL pgcl
+              JOIN GCL_GRUPOS_CLIENTES gcl ON pgcl.gcl_id = gcl.gcl_id
+              JOIN PER_PERSONAS per ON pgcl.per_id = per.per_id
+             WHERE pgcl.borrado = 0
+               AND gcl.borrado = 0;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SV_DATOS_GCL Cargada',V_NUFILAS);
+            COMMIT;
+
+        End;
+        ]]>
+    </entry>
+    <entry key="comunes.idxcreate.PreparaGeneracionExpedientes.Oracle9iDialect">
+        <![CDATA[
+        BEGIN
+         --Operacion_DDL.DDL_INDEX('CREATE','IDX_BATCH_SV_DATOS_CNT_1');
+         --Operacion_DDL.DDL_INDEX('CREATE','IDX_BATCH_SV_DATOS_CNT_2');
+         EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_CNT_1 REBUILD';
+         EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_CNT_2 REBUILD';
+
+         --Operacion_DDL.DDL_Table('STATS','BATCH_SV_DATOS_GCL');
+         --Operacion_DDL.DDL_Table('STATS','BATCH_SV_DATOS_CNT');
+         DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SV_DATOS_GCL', estimate_percent => 20);
+         DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SV_DATOS_CNT', estimate_percent => 20);
+        END;
+        ]]>
+    </entry>
+    <!-- PASO 2 - PARTE COMUN A SEGUIMIENTO Y VENCIDOS -->
+    <entry key="comunes.idxdrop.jobGeneracionExpedientes.Oracle9iDialect">
+        <![CDATA[
+        BEGIN
+         --Operacion_DDL.DDL_INDEX('DROP','IDX_BATCH_SV_DATOS_CNT_EXP');
+         --Operacion_DDL.DDL_INDEX('DROP','IDX_BATCH_SV_DATOS_PER_EXP');
+         --Operacion_DDL.DDL_INDEX('DROP','IDX_BATCH_SV_CLIENTES');
+         EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_CNT_EXP UNUSABLE';
+         EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_PER_EXP UNUSABLE';
+         EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_CLIENTES UNUSABLE';
+        END;
+        ]]>
+    </entry>
+     <entry key="comunes.truncate.jobGeneracionExpedientes.Oracle9iDialect">
+        <![CDATA[
+        BEGIN
+        /*
+         Operacion_DDL.DDL_Table('TRUNCATE','BATCH_SV_DATOS_CNT_PER');
+         Operacion_DDL.DDL_Table('TRUNCATE','BATCH_SV_DATOS_CNT_EXP');
+         Operacion_DDL.DDL_Table('TRUNCATE','BATCH_SV_DATOS_PER_EXP');
+         Operacion_DDL.DDL_Table('TRUNCATE','BATCH_SV_CLIENTES_BASE');
+         Operacion_DDL.DDL_Table('TRUNCATE','BATCH_SV_CLIENTES');
+        */
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SV_DATOS_CNT_PER';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SV_DATOS_CNT_EXP';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SV_DATOS_PER_EXP';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SV_CLIENTES_BASE';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SV_CLIENTES';
+        END;
+        ]]>
+    </entry>
+     <entry key="comunes.create.jobGeneracionExpedientes.Oracle9iDialect">
+        <![CDATA[
+        DECLARE
+
+           v_cadena  varchar2(50 char);
+           v_proce   varchar2(50 char);
+           v_paso    varchar2(50 char);
+           v_nufilas number;
+           v_count   number;
+
+        BEGIN
+
+           v_cadena := '';
+           v_proce := 'GeneracionExpedientes';
+           v_paso := 'comunes.create.jobGeneracionExpedientes';
+
+           --** Relaciones personas-contratos validas
+            -------------------------------------------
+            Insert /*+append*/ INTO BATCH_SV_DATOS_CNT_PER
+            SELECT cpe.cnt_id, cpe.per_id, min(cpe.cpe_orden) AS cpe_orden, MAX(decode(dd_tin_titular,1,1,0)) as arrastre
+              FROM CPE_CONTRATOS_PERSONAS cpe
+               JOIN DD_TIN_TIPO_INTERVENCION tin ON cpe.dd_tin_id = tin.dd_tin_id
+             WHERE cpe.borrado = 0 AND NOT (dd_tin_titular <> 1 AND dd_tin_avalista <> 1) --solo titulares
+             GROUP BY cpe.cnt_id, cpe.per_id;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SV_DATOS_CNT_PER Cargada',V_NUFILAS);
+            COMMIT;
+
+
+            --** Contratos en expedientes de recuperacion o seguimiento (no libres)
+            ------------------------------------------------------------------------
+            Insert /*+append*/ INTO BATCH_SV_DATOS_CNT_EXP
+            Select cex.exp_id, cex.cnt_id, tpx.dd_tpx_codigo
+              From CEX_CONTRATOS_EXPEDIENTE cex
+               Join EXP_EXPEDIENTES exp On cex.exp_id = exp.exp_id
+                Join ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE EEX On exp.dd_eex_id = eex.dd_eex_id
+                Join DD_TPX_TIPO_EXPEDIENTE tpx On exp.dd_tpx_id = tpx.dd_tpx_id
+             Where eex.dd_eex_codigo in ('1','2','4') --activo, bloqueado o congelado
+               And tpx.dd_tpx_codigo in ('SEG','RECU')
+               And eex.borrado = 0
+               And tpx.borrado = 0
+               And cex.borrado = 0
+               And exp.borrado = 0
+            UNION
+            --** Contratos en expedientes con procedimiento en curso - en asunto
+            ---------------------------------------------------------------------
+            Select cex.exp_id, cex.cnt_id, dd_tpx_codigo
+              From CEX_CONTRATOS_EXPEDIENTE cex
+               Inner Join PRC_CEX pce On cex.cex_id = pce.cex_id
+               Inner Join PRC_PROCEDIMIENTOS prc On pce.prc_id = prc.prc_id And prc.borrado = 0
+               Inner Join ${master.schema}.DD_EPR_ESTADO_PROCEDIMIENTO epr On prc.dd_epr_id  = epr.dd_epr_id
+               Join EXP_EXPEDIENTES exp On cex.exp_id = exp.exp_id
+               Join DD_TPX_TIPO_EXPEDIENTE tpx On exp.dd_tpx_id = tpx.dd_tpx_id
+             Where cex.borrado = 0
+               And epr.dd_epr_codigo in (${ddEstadoProcedimiento.propuesto.codigo},
+                                         ${ddEstadoProcedimiento.confirmado.codigo},
+                                         ${ddEstadoProcedimiento.aceptado.codigo},
+                                         ${ddEstadoProcedimiento.derivado.codigo},
+                                         ${ddEstadoProcedimiento.enConformacion.codigo})
+               And not exists (select exr.exp_id from EXR_EXPEDIENTE_RECOBRO exr where cex.exp_id = exr.exp_id);
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SV_DATOS_CNT_EXP Cargada',V_NUFILAS);
+            COMMIT;
+
+
+
+            --** Personas en expedientes de recuperacion o seguimiento (no libres)
+            ------------------------------------------------------------------------
+            Insert /*+append*/ INTO BATCH_SV_DATOS_PER_EXP
+            Select pex.exp_id, pex.per_id, tpx.dd_tpx_codigo
+              From PEX_PERSONAS_EXPEDIENTE pex
+               Join EXP_EXPEDIENTES exp On pex.exp_id = exp.exp_id
+                Join ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE EEX On exp.dd_eex_id = eex.dd_eex_id
+                Join DD_TPX_TIPO_EXPEDIENTE tpx On exp.dd_tpx_id = tpx.dd_tpx_id
+             Where eex.dd_eex_codigo in ('1','2','4') --activo, bloqueado o congelado
+               And tpx.dd_tpx_codigo in ('SEG','RECU')
+               And pex.borrado = 0
+               And exp.borrado = 0
+               And eex.borrado = 0
+               And tpx.borrado = 0;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SV_DATOS_PER_EXP Cargada',V_NUFILAS);
+            COMMIT;
+
+
+            --** Posibles clientes a expedientar
+            -------------------------------------
+            Insert /*+append*/ INTO BATCH_SV_CLIENTES_BASE
+            WITH FECHASESTADOS
+              AS (Select sysdate - ((((sum(est.est_plazo)/1000)/24)/60)/60) fecha, arq_id, arq_prioridad
+                  From ARQ_ARQUETIPOS arq
+                  Inner Join ITI_ITINERARIOS iti On arq.iti_id = iti.iti_id
+                  Inner Join EST_ESTADOS est On iti.iti_id = est.iti_id
+                  Inner Join ${master.schema}.DD_EST_ESTADOS_ITINERARIOS dd_est On est.dd_est_id = dd_est.dd_est_id
+                  --sumamos todos los plazos que esten por debajo de gestionvencidos
+                  And dd_est.dd_est_orden <= (select dd_est_orden from ${master.schema}.DD_EST_ESTADOS_ITINERARIOS where dd_est_codigo = 'GV')
+                  --solo los de la entidad cliente
+                  Inner Join ${master.schema}.DD_EIN_ENTIDAD_INFORMACION dd_ein On dd_est.dd_ein_id = dd_ein.dd_ein_id And dd_ein_codigo = '1'
+                 Where arq.borrado = 0
+                 --agrupamos por arquetipo para poder calcular el plazo del itinerario de los clientes
+                 Group by arq.arq_id, arq.arq_prioridad)
+            SELECT cli.cli_id, cli.per_id, cli.arq_id, arq_prioridad
+              FROM FECHASESTADOS vFechas
+                INNER JOIN CLI_CLIENTES cli ON vFechas.arq_id = cli.arq_id
+                --Solo los que esten en gestionVencidos
+                INNER JOIN ${master.schema}.DD_EST_ESTADOS_ITINERARIOS dd_est ON cli.dd_est_id  = dd_est.dd_est_id AND dd_est_codigo = 'GV'
+                INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION dd_ein ON dd_est.dd_ein_id = dd_ein.dd_ein_id AND dd_ein_codigo = '1'
+             WHERE cli.borrado   = 0
+               AND to_date(cli.cli_fecha_creacion,'DD/MM/RR') <= to_date(vfechas.fecha,'DD/MM/RR')  --Que esten fuera de plazo del itinerario
+               /* Ordenamos por prioridad del arquetipo para crear primero expedientes a los clientes con arq. mas prioritarios y desechar a las personas relacionadas menos prioritarias */
+          --ORDER BY arq_prioridad
+            ;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SV_CLIENTES_BASE Cargada',V_NUFILAS);
+            COMMIT;
+
+            --Operacion_DDL.DDL_Table('STATS','BATCH_SV_CLIENTES_BASE');
+            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SV_CLIENTES_BASE', estimate_percent => 20);
+
+
+
+            --** Buscamos sus umbrales y tipo de itinerarios (recuperacion o seguimiento)
+            ------------------------------------------------------------------------------
+            Insert /*+append*/ INTO BATCH_SV_CLIENTES
+            Select /*+parallel*/ DISTINCT cli.cli_id, cli.per_id, cli.arq_id, cli.arq_prioridad
+                 , per.per_nombre, per.per_apellido1, per.per_apellido2
+                 , aex.dd_aex_codigo, iti.iti_nombre, tit.dd_tit_codigo
+              From BATCH_SV_CLIENTES_BASE                     cli
+                 , PER_PERSONAS                               per
+                 , (select per_id, arq_id, row_number()
+                    over (partition by per_id
+                    order by arq_date desc) as arq_orden
+                    from ARR_ARQ_RECUPERACION_PERSONA)        arr
+                 , ARQ_ARQUETIPOS                             arq
+                 , ITI_ITINERARIOS                            iti
+                 , ${master.schema}.DD_TIT_TIPO_ITINERARIOS   tit
+                 , ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE aex
+             Where cli.per_id = per.per_id
+               And per.per_id = arr.per_id And per.borrado = 0
+               And arr.arq_id = arq.arq_id And arq.borrado = 0
+               And arq.iti_id = iti.iti_id And iti.borrado = 0
+               And iti.dd_tit_id = tit.dd_tit_id And tit.borrado = 0
+               And iti.dd_aex_id = aex.dd_aex_id And aex.borrado = 0
+               And tit.dd_tit_codigo in ('REC','SIS','SIN')
+               -- No este afectado por umbrales
+               And nvl(per.PER_EXP_UMBRAL_FECHA, to_date('19000101','yyyymmdd')) < SYSDATE --fecha unmbral ha pasado
+               And nvl(per.PER_EXP_UMBRAL_IMPORTE, -1) < nvl(per.PER_RIESGO_DIR_VENCIDO,0) --importe vencido superior a importe umbral
+               And arr.arq_orden = 1;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SV_CLIENTES Cargada',V_NUFILAS);
+            COMMIT;
+        END;
+        ]]>
+    </entry>
+    <entry key="comunes.idxcreate.jobGeneracionExpedientes.Oracle9iDialect">
+        <![CDATA[
+        BEGIN
+         --Operacion_DDL.DDL_INDEX('CREATE','IDX_BATCH_SV_DATOS_CNT_EXP');
+         --Operacion_DDL.DDL_INDEX('CREATE','IDX_BATCH_SV_DATOS_PER_EXP');
+         --Operacion_DDL.DDL_INDEX('CREATE','IDX_BATCH_SV_CLIENTES');
+         EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_CNT_EXP REBUILD';
+         EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_PER_EXP REBUILD';
+         EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_CLIENTES REBUILD';
+
+         --Operacion_DDL.DDL_Table('STATS','BATCH_SV_CLIENTES');
+         --Operacion_DDL.DDL_Table('STATS','BATCH_SV_DATOS_PER_EXP');
+         --Operacion_DDL.DDL_Table('STATS','BATCH_SV_DATOS_CNT_PER');
+         --Operacion_DDL.DDL_Table('STATS','BATCH_SV_DATOS_CNT_EXP');
+         DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SV_CLIENTES', estimate_percent => 20);
+         DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SV_DATOS_PER_EXP', estimate_percent => 20);
+         DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SV_DATOS_CNT_PER', estimate_percent => 20);
+         DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SV_DATOS_CNT_EXP', estimate_percent => 20);
+        END;
+        ]]>
+    </entry>
+    <!-- PASO 3 - GENERAMOS EXPEDIENTES DE SEGUIMIENTO -->
+    <entry key="seguimiento.truncate.GeneracionExpedientes.Oracle9iDialect">
+        <![CDATA[
+        Begin
+         /*
+         Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_SEG_DATOS_SALIDA_GUIA');
+         Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_SEG_DATOS_SALIDA_TIT');
+         Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_SEG_DATOS_SALIDA_GCL');
+         Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_SEG_DATOS_SALIDA_BASE');
+         Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_SEG_DATOS_SALIDA_1G_PER');
+         Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_SEG_DATOS_SALIDA_1G_CNT');
+         Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_SEG_DATOS_SALIDA_1GEN');
+         Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_SEG_DATOS_SALIDA_2G_PER');
+         Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_SEG_DATOS_SALIDA_2G_CNT');
+         Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_SEG_DATOS_SALIDA_TODO');
+         Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_SEG_DATOS_SALIDA_EXP_DES');
+         Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_SEG_DATOS_SALIDA_TODO_LM');
+         Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_SEG_DATOS_SALIDA');
+         */
+
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SEG_DATOS_SALIDA_GUIA';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SEG_DATOS_SALIDA_TIT';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SEG_DATOS_SALIDA_GCL';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SEG_DATOS_SALIDA_BASE';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SEG_DATOS_SALIDA_1G_PER';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SEG_DATOS_SALIDA_1G_CNT';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SEG_DATOS_SALIDA_1GEN';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SEG_DATOS_SALIDA_2G_PER';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SEG_DATOS_SALIDA_2G_CNT';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SEG_DATOS_SALIDA_TODO';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SEG_DATOS_SALIDA_EXP_DES';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SEG_DATOS_SALIDA_TODO_LM';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SEG_DATOS_SALIDA';
+        End;
+        ]]>
+    </entry>
+    <entry key="seguimiento.create.GeneracionExpedientes.Oracle9iDialect">
+        <![CDATA[
+        DECLARE
+
+           v_count number;
+           v_limit_per number;
+           v_limit_cnt number;
+
+           v_cadena  varchar2(50 char);
+           v_proce   varchar2(50 char);
+           v_paso    varchar2(50 char);
+           v_nufilas number;
+
+        BEGIN
+
+           v_cadena := '';
+           v_proce := 'GeneracionExpedientes';
+           v_paso := 'seguimiento.create.GeneracionExpedientes';
+
+            --** Filtramos personas ya en exp de seguimiento y buscamos contratos de pase con riesgo
+            -----------------------------------------------------------------------------------------
+            Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_GUIA
+            SELECT s_exp_expedientes.nextval as EXP_ID
+                 , t.*
+              FROM( select trim(cli.PER_NOMBRE||' '||cli.PER_APELLIDO1||' '||cli.PER_APELLIDO2) as EXP_DESCRIPCION
+                         , cli.DD_AEX_CODIGO
+                         , cnt.OFI_ID
+                         , cnt.CNT_RIESGO
+                         , cnt.CNT_ID
+                         , cli.PER_ID
+                         , cpe.CPE_ORDEN
+                         , cli.ARQ_ID
+                         , 1 as CEX_PASE
+                         , 1 as PEX_PASE
+                         , cli.dd_tit_codigo
+                         , 1 as ARRASTRE
+                      From BATCH_SV_CLIENTES       cli
+                         , BATCH_SV_DATOS_PER_EXP  pex
+                         , CCL_CONTRATOS_CLIENTE   ccl
+                         , BATCH_SV_DATOS_CNT_PER  cpe
+                         , BATCH_SV_DATOS_CNT      cnt
+                     Where cli.per_id = pex.per_id(+)
+                       And pex.dd_tpx_codigo(+) = 'SEG'
+                       And pex.exp_id is null  --libre
+                       And cli.cli_id = ccl.cli_id
+                       And ccl.cnt_id = cnt.cnt_id
+                       And ccl.ccl_pase = 1
+                       And cli.per_id = cpe.per_id
+                       And ccl.cnt_id = cpe.cnt_id
+                       And ccl.borrado = 0
+                       And cli.dd_tit_codigo in ('SIS','SIN')
+                     Order by cli.arq_prioridad
+                            , cpe.cpe_orden
+                            , cnt.cnt_riesgo desc
+                  ) t;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA_GUIA Cargada',V_NUFILAS);
+            COMMIT;
+
+            --Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA_GUIA');
+            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_GUIA', estimate_percent => 20);
+
+
+            --** Obtenemos resto de contratos de la persona de pase
+            -------------------------------------------------------
+            Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_TIT
+            Select distinct gui.EXP_ID
+                 , gui.EXP_DESCRIPCION
+                 , gui.DD_AEX_CODIGO
+                 , cnt.OFI_ID
+                 , cnt.CNT_RIESGO
+                 , cpe.CNT_ID
+                 , cpe.PER_ID
+                 , cpe.CPE_ORDEN
+                 , gui.ARQ_ID
+                 , DECODE(gui.CNT_ID, cpe.CNT_ID ,1,0) as CEX_PASE
+                 , DECODE(gui.PER_ID, cpe.PER_ID ,1,0) as PEX_PASE
+                 , gui.dd_tit_codigo
+                 , cpe.ARRASTRE
+              From BATCH_SEG_DATOS_SALIDA_GUIA gui
+                 , BATCH_SV_DATOS_CNT_PER      cpe
+                 , BATCH_SV_DATOS_CNT          cnt
+             Where gui.PER_ID  = cpe.PER_ID
+               And gui.CNT_ID <> cpe.CNT_ID
+               And cpe.CNT_ID = cnt.CNT_ID;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA_TIT Cargada',V_NUFILAS);
+            COMMIT;
+
+            --Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA_TIT');
+            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_TIT', estimate_percent => 20);
+
+
+            --** Obtenemos otras personas del grupo de la persona de pase y sus contratos
+            ------------------------------------------------------------------------------
+            Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_GCL
+            Select distinct gui.EXP_ID
+                 , gui.EXP_DESCRIPCION
+                 , gui.DD_AEX_CODIGO
+                 , cnt.OFI_ID
+                 , cnt.CNT_RIESGO
+                 , cpe.CNT_ID
+                 , cpe.PER_ID
+                 , cpe.CPE_ORDEN
+                 , gui.ARQ_ID
+                 , DECODE(gui.CNT_ID, cpe.CNT_ID ,1 ,0) as CEX_PASE
+                 , DECODE(gui.PER_ID, cpe.PER_ID ,1 ,0) as PEX_PASE
+              From BATCH_SEG_DATOS_SALIDA_GUIA gui
+                 , BATCH_SV_DATOS_GCL          gl1
+                 , BATCH_SV_DATOS_GCL          gl2
+                 , BATCH_SV_DATOS_PER_EXP      pex
+                 , BATCH_SV_DATOS_CNT_PER      cpe
+                 , BATCH_SV_DATOS_CNT          cnt
+             Where gui.PER_ID = gl1.PER_ID
+               And gl1.GCL_ID = gl2.GCL_ID
+               And gl2.PER_ID = pex.PER_ID(+) and pex.exp_id is null --libre
+               And pex.dd_tpx_codigo(+) = 'SEG'
+               And gl2.PER_ID =  cpe.PER_ID
+               And gui.PER_ID <> cpe.PER_ID
+               And cpe.CNT_ID = cnt.CNT_ID
+               And gui.DD_AEX_CODIGO in ('PG','PPGRA', 'PSGRA');
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA_GCL Cargada',V_NUFILAS);
+            COMMIT;
+
+            --Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA_GCL');
+            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_GCL', estimate_percent => 20);
+
+
+            --** Juntamos todas las relaciones
+            ----------------------------------
+            Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_BASE
+            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, MIN(PRIO) as PRIO
+            FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, 1 as PRIO
+                    From BATCH_SEG_DATOS_SALIDA_GUIA
+                  UNION ALL
+                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, 2 as PRIO
+                    From BATCH_SEG_DATOS_SALIDA_TIT)
+            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA_BASE Cargada',V_NUFILAS);
+            COMMIT;
+
+            --Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA_BASE');
+            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_BASE', estimate_percent => 20);
+
+
+            --** Inicio Primera Generacion si hace falta
+            ---------------------------------------------
+
+            -- a) Buscamos otros titulares de los contratos de los que es titular la persona de pase.
+            Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_1G_PER
+            Select distinct gui.EXP_ID
+                 , gui.EXP_DESCRIPCION
+                 , gui.DD_AEX_CODIGO
+                 , cnt.OFI_ID
+                 , cnt.CNT_RIESGO
+                 , cpe.CNT_ID
+                 , cpe.PER_ID
+                 , cpe.CPE_ORDEN
+                 , gui.ARQ_ID
+                 , DECODE(pas.CNT_ID, cpe.CNT_ID ,1 ,0) as CEX_PASE
+                 , DECODE(pas.PER_ID, cpe.PER_ID ,1 ,0) as PEX_PASE
+              From BATCH_SEG_DATOS_SALIDA_BASE  gui
+                 , BATCH_SV_DATOS_CNT_PER       cpe
+                 , BATCH_SV_DATOS_PER_EXP       pex
+                 , BATCH_SV_DATOS_CNT           cnt
+                 , BATCH_SEG_DATOS_SALIDA_GUIA  pas
+             Where gui.CNT_ID =  cpe.CNT_ID
+               And gui.PER_ID <> cpe.PER_ID and cpe.ARRASTRE = 1
+               And cpe.PER_ID = pex.PER_ID(+) and pex.EXP_ID is null --libre
+               And pex.dd_tpx_codigo(+) = 'SEG'
+               And cpe.CNT_ID = cnt.CNT_ID
+               And gui.EXP_ID = pas.EXP_ID
+               And gui.DD_AEX_CODIGO in ('PPGRA', 'PSGRA')
+               And gui.ARRASTRE = 1
+            ;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA_1G_PER Cargada',V_NUFILAS);
+            COMMIT;
+
+            --Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA_1G_PER');
+            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_1G_PER', estimate_percent => 20);
+
+            --b) Buscamos otros contratos de los que sean titulares las personas del paso a).
+            Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_1G_CNT
+            SELECT distinct gui.EXP_ID
+                 , gui.EXP_DESCRIPCION
+                 , gui.DD_AEX_CODIGO
+                 , cnt.OFI_ID
+                 , cnt.CNT_RIESGO
+                 , cpe.CNT_ID
+                 , cpe.PER_ID
+                 , cpe.CPE_ORDEN
+                 , gui.ARQ_ID
+                 , DECODE(pas.CNT_ID, cpe.CNT_ID ,1 ,0) as CEX_PASE
+                 , DECODE(pas.PER_ID, cpe.PER_ID ,1 ,0) as PEX_PASE
+              FROM BATCH_SEG_DATOS_SALIDA_1G_PER gui
+                 , BATCH_SV_DATOS_CNT_PER        cpe
+                 , BATCH_SV_DATOS_CNT            cnt
+                 , BATCH_SEG_DATOS_SALIDA_GUIA   pas
+             WHERE gui.PER_ID =  cpe.PER_ID
+               AND gui.CNT_ID <> cpe.CNT_ID and cpe.ARRASTRE = 1
+               AND cpe.CNT_ID = cnt.CNT_ID
+               AND gui.EXP_ID = pas.EXP_ID
+               AND gui.DD_AEX_CODIGO in ('PPGRA', 'PSGRA')
+               AND pas.CEX_PASE = 1 and pas.PEX_PASE = 1;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA_1G_CNT Cargada',V_NUFILAS);
+            COMMIT;
+
+            --Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA_1G_CNT');
+            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_1G_CNT', estimate_percent => 20);
+
+
+            --** Juntamos todas las relaciones (intervinientes + arrastrados 1Gen)
+            ----------------------------------------------------------------------------------
+            Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_1GEN
+            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, MIN(PRIO) as PRIO
+            FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, PRIO
+                    From BATCH_SEG_DATOS_SALIDA_BASE
+                  UNION ALL
+                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 1 as ARRASTRE, 4 as PRIO
+                    From BATCH_SEG_DATOS_SALIDA_1G_PER
+                  UNION ALL
+                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 1 as ARRASTRE, 5 as PRIO
+                    From BATCH_SEG_DATOS_SALIDA_1G_CNT)
+            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA_1GEN Cargada',V_NUFILAS);
+            COMMIT;
+
+            --Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA_1GEN');
+            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_1GEN', estimate_percent => 20);
+
+
+            --** Inicio Segunda Generacion si hace falta
+            ---------------------------------------------
+
+            -- a) Buscamos otros titulares de los contratos del expediente.
+            Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_2G_PER
+            Select distinct gui.EXP_ID
+                 , gui.EXP_DESCRIPCION
+                 , gui.DD_AEX_CODIGO
+                 , cnt.OFI_ID
+                 , cnt.CNT_RIESGO
+                 , cpe.CNT_ID
+                 , cpe.PER_ID
+                 , cpe.CPE_ORDEN
+                 , gui.ARQ_ID
+                 , DECODE(pas.CNT_ID, cpe.CNT_ID ,1 ,0) as CEX_PASE
+                 , DECODE(pas.PER_ID, cpe.PER_ID ,1 ,0) as PEX_PASE
+              From BATCH_SEG_DATOS_SALIDA_1GEN  gui
+                 , BATCH_SV_DATOS_CNT_PER       cpe
+                 , BATCH_SV_DATOS_PER_EXP       pex
+                 , BATCH_SV_DATOS_CNT           cnt
+                 , BATCH_SEG_DATOS_SALIDA_GUIA  pas
+             Where gui.CNT_ID =  cpe.CNT_ID
+               And gui.PER_ID <> cpe.PER_ID and cpe.ARRASTRE = 1
+               And cpe.PER_ID = pex.PER_ID(+) and pex.EXP_ID is null --libre
+               And pex.dd_tpx_codigo(+) = 'SEG'
+               And cpe.CNT_ID = cnt.CNT_ID
+               And gui.EXP_ID = pas.EXP_ID
+               And gui.DD_AEX_CODIGO = 'PSGRA'
+               And gui.ARRASTRE = 1;
+
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA_2G_PER Cargada',V_NUFILAS);
+            COMMIT;
+
+            --b) Buscamos otros contratos de los que sean titulares las personas del paso a).
+            Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_2G_CNT
+            SELECT distinct gui.EXP_ID
+                 , gui.EXP_DESCRIPCION
+                 , gui.DD_AEX_CODIGO
+                 , cnt.OFI_ID
+                 , cnt.CNT_RIESGO
+                 , cpe.CNT_ID
+                 , cpe.PER_ID
+                 , cpe.CPE_ORDEN
+                 , gui.ARQ_ID
+                 , DECODE(pas.CNT_ID, cpe.CNT_ID ,1 ,0) as CEX_PASE
+                 , DECODE(pas.PER_ID, cpe.PER_ID ,1 ,0) as PEX_PASE
+              FROM BATCH_SEG_DATOS_SALIDA_2G_PER gui
+                 , BATCH_SV_DATOS_CNT_PER        cpe
+                 , BATCH_SV_DATOS_CNT            cnt
+                 , BATCH_SEG_DATOS_SALIDA_GUIA   pas
+             WHERE gui.PER_ID =  cpe.PER_ID
+               AND gui.CNT_ID <> cpe.CNT_ID and cpe.ARRASTRE = 1
+               AND cpe.CNT_ID = cnt.CNT_ID
+               AND gui.EXP_ID = pas.EXP_ID
+               AND gui.DD_AEX_CODIGO = 'CSGRA'
+               And pas.CEX_PASE = 1 and pas.PEX_PASE = 1;
+
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA_2G_CNT Cargada',V_NUFILAS);
+            COMMIT;
+
+            --** Juntamos todas las relaciones
+            -----------------------------------
+            Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_TODO
+            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, MIN(PRIO) as PRIO
+            FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, PRIO
+                    From BATCH_SEG_DATOS_SALIDA_1GEN
+                  UNION
+                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 3 as PRIO
+                    From BATCH_SEG_DATOS_SALIDA_GCL
+                  UNION
+                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 6 as PRIO
+                    From BATCH_SEG_DATOS_SALIDA_2G_PER
+                  UNION
+                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 7 as PRIO
+                    From BATCH_SEG_DATOS_SALIDA_2G_CNT)
+            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE
+            ;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA_TODO Cargada',V_NUFILAS);
+            COMMIT;
+
+            --Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA_TODO');
+            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_TODO', estimate_percent => 20);
+
+         --** Limpiamos relaciones arrastradas en varios expedientes
+         ------------------------------------------------------------
+
+         -- obtenemos valor parametrizado del limite
+
+                 -- obtenemos valor parametrizado del limite
+                 Select PEN_VALOR into v_limit_per From PEN_PARAM_ENTIDAD WHERE pen_param = 'expediente.obtenerPersonasAdicionales.limite';
+                 Select PEN_VALOR into v_limit_cnt From PEN_PARAM_ENTIDAD WHERE pen_param = 'expediente.obtenerContratosAdicionales.limite';
+
+                 v_count := 1;
+                 while v_count > 0
+                   loop
+
+                     -- Quitamos relaciones obtenidas (ninguna la primera vez)
+                     execute immediate 'Truncate table BATCH_SEG_DATOS_SALIDA_TODO_LM';
+                     Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_TODO_LM
+                        WITH BATCH_SEG_FILTRADOS
+                          AS (Select t.EXP_ID, t.EXP_DESCRIPCION, t.DD_AEX_CODIGO, t.OFI_ID, t.CNT_RIESGO, t.CNT_ID, t.PER_ID, t.CPE_ORDEN, t.ARQ_ID, t.CEX_PASE, t.PEX_PASE, t.PRIO
+                                From BATCH_SEG_DATOS_SALIDA_TODO t
+                                   , BATCH_SEG_DATOS_SALIDA_EXP_DES d
+                               Where t.exp_id = d.exp_id(+)
+                                 And t.per_id = d.per_id(+)
+                                 And d.exp_id is null)
+                        Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, PRIO
+                             -- recalculamos posicion de personas y contratos dentro de cada expediente
+                             , dense_rank() over (partition by exp_id order by cex_pase desc, prio, cnt_riesgo  desc, cnt_id) as num_cnt
+                             , dense_rank() over (partition by exp_id order by pex_pase desc, prio, cpe_orden, per_id) as num_per
+                          From BATCH_SEG_FILTRADOS;
+
+                      --Log
+                      v_nufilas := SQL%ROWCOUNT;
+                      INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA_TODO_LM Borrado',V_NUFILAS);
+                      Commit;
+
+
+                     -- Obtenemos relaciones a eliminar
+                     Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_EXP_DES (EXP_ID,PER_ID,PEX_PASE)
+                        WITH BATCH_SEG_DISTRIBUCION
+                          AS (Select distinct per_id, exp_id, min(num_per) as num_per, pex_pase
+                                From BATCH_SEG_DATOS_SALIDA_TODO_LM Where num_cnt <= v_limit_cnt
+                               Group by per_id, exp_id, pex_pase)
+                     Select distinct ko.exp_id, ko.per_id, ko.pex_pase
+                       From BATCH_SEG_DISTRIBUCION ko, BATCH_SEG_DISTRIBUCION ok
+                      Where ko.per_id = ok.per_id
+                        And ko.exp_id > ok.exp_id
+                        And ok.num_per <= v_limit_per; --40;
+
+                     v_count := SQL%ROWCOUNT;
+                     v_nufilas := v_count;
+                     INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA_TODO_LM Borrado',V_NUFILAS);
+                     Commit;
+
+                     -- Si la relacion a eliminar incluye persona de pase, descartamos todo el expediente
+                     delete BATCH_SEG_DATOS_SALIDA_TODO a where exists (select distinct exp_id from BATCH_SEG_DATOS_SALIDA_EXP_DES b where a.exp_id = b.exp_id and b.pex_pase=1);
+                     --Log
+                     v_nufilas := SQL%ROWCOUNT;
+                     INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA_TODO_LM Borrado',V_NUFILAS);
+                     Commit;
+
+                   end loop;
+
+                   -- dejamos limpia la temporal
+                   execute immediate 'Truncate table BATCH_SEG_DATOS_SALIDA_EXP_DES';
+                   --Log
+                   INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA_EXP_DES Truncada',V_NUFILAS);
+                   Commit;
+
+
+            --** Aplicamos limites para todo lo que queda
+            ----------------------------------------------
+            Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA(EXP_ID,EXP_DESCRIPCION,EXP_MANUAL,DD_AEX_CODIGO,DD_EEX_ID,DD_EST_ID,EXP_FECHA_EST_ID,OFI_ID,CNT_ID,PER_ID,ARQ_ID,CEX_PASE,PEX_PASE)
+                    SELECT f.EXP_ID
+                         , f.EXP_DESCRIPCION
+                         , 0 as EXP_MANUAL
+                         , f.DD_AEX_CODIGO
+                         , 2 as DD_EEX_ID
+                         , 3 as DD_EST_ID
+                         , sysdate as EXP_FECHA_EST_ID
+                         , f.OFI_ID
+                         , f.CNT_ID
+                         , f.PER_ID
+                         , f.ARQ_ID
+                         , f.CEX_PASE
+                         , f.PEX_PASE
+                      FROM BATCH_SEG_DATOS_SALIDA_TODO_LM f
+                     WHERE NUM_PER <= v_limit_per
+                       AND NUM_CNT <= v_limit_cnt;
+
+              --LOG
+              V_NUFILAS:=SQL%ROWCOUNT;
+              INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA Cargada',V_NUFILAS);
+              COMMIT;
+
+--              Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA');
+              DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA', estimate_percent => 20);
+        END;
+        ]]>
+    </entry>
+    <!-- PASO 4 - GENERAMOS EXPEDIENTES DE RECUPERACION -->
+    <entry key="recuperacion.truncate.GeneracionExpedientes.Oracle9iDialect">
+        <![CDATA[
+        Begin
+         /*
+         Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_VEN_DATOS_SALIDA_GUIA');
+         Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_VEN_DATOS_SALIDA_TIT');
+         Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_VEN_DATOS_SALIDA_GCL');
+         Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_VEN_DATOS_SALIDA_BASE');
+         Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_VEN_DATOS_SALIDA_1G_PER');
+         Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_VEN_DATOS_SALIDA_1G_CNT');
+         Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_VEN_DATOS_SALIDA_1GEN');
+         Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_VEN_DATOS_SALIDA_2G_PER');
+         Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_VEN_DATOS_SALIDA_2G_CNT');
+         Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_VEN_DATOS_SALIDA_TODO');
+         Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_VEN_DATOS_SALIDA_EXP_DES');
+         Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_VEN_DATOS_SALIDA_TODO_LM');
+         Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_VEN_DATOS_SALIDA');
+         */
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_VEN_DATOS_SALIDA_GUIA';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_VEN_DATOS_SALIDA_TIT';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_VEN_DATOS_SALIDA_GCL';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_VEN_DATOS_SALIDA_BASE';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_VEN_DATOS_SALIDA_1G_PER';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_VEN_DATOS_SALIDA_1G_CNT';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_VEN_DATOS_SALIDA_1GEN';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_VEN_DATOS_SALIDA_2G_PER';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_VEN_DATOS_SALIDA_2G_CNT';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_VEN_DATOS_SALIDA_TODO';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_VEN_DATOS_SALIDA_EXP_DES';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_VEN_DATOS_SALIDA_TODO_LM';
+         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_VEN_DATOS_SALIDA';
+        End;
+        ]]>
+    </entry>
+    <entry key="recuperacion.create.GeneracionExpedientes.Oracle9iDialect">
+        <![CDATA[
+        DECLARE
+
+           v_count number;
+           v_limit_per number;
+           v_limit_cnt number;
+
+           v_cadena  varchar2(50 char);
+           v_proce   varchar2(50 char);
+           v_paso    varchar2(50 char);
+           v_nufilas number;
+
+        BEGIN
+
+           v_cadena := '';
+           v_proce := 'GeneracionExpedientes';
+           v_paso := 'recuperacion.create.GeneracionExpedientes';
+
+            --** Filtramos personas en exp de recuperacion y buscamos contratos de pase con riesgo
+            -----------------------------------------------------------------------------------------
+            Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_GUIA
+              (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,POS_VIVA_VENCIDA,CNT_ID,PER_ID,ARQ_ID,CPE_ORDEN,CEX_PASE,PEX_PASE,DD_TIT_CODIGO,ARRASTRE)
+            SELECT s_exp_expedientes.nextval as EXP_ID --cast(rownum as number(16)) as EXP_ID
+                 , t.*
+            FROM (Select TRIM(cli.PER_NOMBRE||' '||cli.PER_APELLIDO1||' '||cli.PER_APELLIDO2) as EXP_DESCRIPCION
+                       , cli.DD_AEX_CODIGO
+                       , cnt.OFI_ID
+                       , cnt.POS_VIVA_VENCIDA
+                       , cnt.CNT_ID
+                       , cli.PER_ID
+                       , cli.ARQ_ID
+                       , cpe.CPE_ORDEN
+                       , 1 as CEX_PASE
+                       , 1 as PEX_PASE
+                       , cli.dd_tit_codigo
+                       , 1 as ARRASTRE
+                    From BATCH_SV_CLIENTES       cli
+                       , BATCH_SV_DATOS_CNT_EXP  cex
+                       , CCL_CONTRATOS_CLIENTE   ccl
+                       , BATCH_SV_DATOS_CNT_PER  cpe
+                       , BATCH_SV_DATOS_CNT      cnt
+                   Where ccl.cnt_id = cex.cnt_id(+) and cex.exp_id is null  --libre
+                     And cex.dd_tpx_codigo(+) = 'RECU' --expediente de recuperacion
+                     And cli.cli_id = ccl.cli_id
+                     And ccl.cnt_id = cnt.cnt_id
+                     And cli.per_id = cpe.per_id
+                     And ccl.cnt_id = cpe.cnt_id
+                     And ccl.ccl_pase = 1
+                     And ccl.borrado = 0
+                     And cnt.pos_viva_vencida > 0 --con riesgo
+                     And cli.dd_tit_codigo = 'REC' --itinerario de recuperacion
+                    Order by cli.arq_prioridad
+                           , cpe.cpe_orden
+                           , cnt.pos_viva_vencida desc
+                 ) t;
+
+            --LOG
+              V_NUFILAS:=SQL%ROWCOUNT;
+              INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_VEN_DATOS_SALIDA_GUIA Cargada',V_NUFILAS);
+              COMMIT;
+
+              --OPERACION_DDl.DDL_TABLE('STATS','BATCH_VEN_DATOS_SALIDA_GUIA');
+              DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_VEN_DATOS_SALIDA_GUIA', estimate_percent => 20);
+
+
+            --** Obtenemos los intervinientes obligados del contrato de pase.
+            -----------------------------------------------------------------
+            Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_TIT
+             (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,POS_VIVA_VENCIDA,CNT_ID,PER_ID,CPE_ORDEN,ARQ_ID,CEX_PASE,PEX_PASE,DD_TIT_CODIGO,ARRASTRE)
+            Select distinct gui.EXP_ID
+                 , gui.EXP_DESCRIPCION
+                 , gui.DD_AEX_CODIGO
+                 , cnt.OFI_ID
+                 , cnt.POS_VIVA_VENCIDA
+                 , cpe.CNT_ID
+                 , cpe.PER_ID
+                 , cpe.CPE_ORDEN
+                 , gui.ARQ_ID
+                 , DECODE(gui.CNT_ID, cpe.CNT_ID ,1,0) as CEX_PASE
+                 , DECODE(gui.PER_ID, cpe.PER_ID ,1,0) as PEX_PASE
+                 , gui.dd_tit_codigo
+                 , cpe.ARRASTRE
+              From BATCH_VEN_DATOS_SALIDA_GUIA gui
+                 , BATCH_SV_DATOS_CNT_PER      cpe
+                 , BATCH_SV_DATOS_CNT          cnt
+             Where gui.CNT_ID = cpe.CNT_ID
+               And cpe.CNT_ID = cnt.CNT_ID
+               And gui.PER_ID <> cpe.PER_ID
+            ;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_VEN_DATOS_SALIDA_TIT Cargada',V_NUFILAS);
+            COMMIT;
+
+            --** Juntamos todas las relaciones (intervinientes + arrastrados del grupo)
+            -------------------------------------------------------------------------------
+            Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_BASE
+            (EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, PRIO)
+            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, MIN(PRIO) as PRIO
+            FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, 1 as PRIO
+                    from BATCH_VEN_DATOS_SALIDA_GUIA
+                  UNION
+                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, 2 as PRIO
+                    from BATCH_VEN_DATOS_SALIDA_TIT )
+            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_VEN_DATOS_SALIDA_BASE Cargada',V_NUFILAS);
+            COMMIT;
+
+            --OPERACION_DDl.DDL_TABLE('STATS','BATCH_VEN_DATOS_SALIDA_BASE');
+            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_VEN_DATOS_SALIDA_BASE', estimate_percent => 20);
+
+
+            --** Obtenemos otras personas de los grupos de los titulares de contratos de pase y los contratos de los que son titulares.
+            ---------------------------------------------------------------------------------------------------------------------------
+            Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_GCL
+            (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,POS_VIVA_VENCIDA,CNT_ID,PER_ID,CPE_ORDEN,ARQ_ID,CEX_PASE,PEX_PASE)
+            Select distinct gui.EXP_ID
+                           , gui.EXP_DESCRIPCION
+                           , gui.DD_AEX_CODIGO
+                           , cnt.OFI_ID
+                           , cnt.POS_VIVA_VENCIDA
+                           , cpe.CNT_ID
+                           , cpe.PER_ID
+                           , cpe.CPE_ORDEN
+                           , gui.ARQ_ID
+                           , DECODE(gui.CNT_ID, cpe.CNT_ID ,1 ,0) as CEX_PASE
+                           , DECODE(gui.PER_ID, cpe.PER_ID ,1 ,0) as PEX_PASE
+                        From BATCH_VEN_DATOS_SALIDA_BASE gui
+                           , BATCH_SV_DATOS_GCL          gl1
+                           , BATCH_SV_DATOS_GCL          gl2
+                           , BATCH_SV_DATOS_CNT_EXP      cex
+                           , BATCH_SV_DATOS_CNT_PER      cpe
+                           , BATCH_SV_DATOS_CNT          cnt
+                           , BATCH_VEN_DATOS_SALIDA_GUIA pas
+                       Where gui.PER_ID = gl1.PER_ID
+                         And gl1.GCL_ID = gl2.GCL_ID
+                         And gl2.PER_ID =  cpe.PER_ID
+                         And gui.PER_ID <> cpe.PER_ID and cpe.ARRASTRE = 1 --contratos de las personas del grupo (solo si son titulares)
+                         And cpe.CNT_ID = cnt.CNT_ID
+                         And cnt.CNT_ID = cex.CNT_ID(+) and cex.EXP_ID is null --contratos libres
+                         And cex.DD_TPX_CODIGO(+) = 'RECU'
+                         And gui.EXP_ID = pas.EXP_ID
+                         And pas.CEX_PASE = 1 and pas.PEX_PASE = 1
+                         And gui.DD_AEX_CODIGO in ('CG','CPGRA', 'CSGRA')
+                         And gui.ARRASTRE = 1; --grupos solo de los titulares del contrato de pase
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_VEN_DATOS_SALIDA_GCL Cargada.',V_NUFILAS);
+            COMMIT;
+
+
+
+            --** Inicio Primera Generacion si hace falta
+            ---------------------------------------------
+
+            -- a) Buscamos otros contratos de los cuales sean titulares los titulares del contrato de pase
+            Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_1G_CNT
+             (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,POS_VIVA_VENCIDA,CNT_ID,PER_ID,CPE_ORDEN,ARQ_ID,CEX_PASE,PEX_PASE)
+            SELECT distinct gui.EXP_ID
+                 , gui.EXP_DESCRIPCION
+                 , gui.DD_AEX_CODIGO
+                 , cnt.OFI_ID
+                 , cnt.POS_VIVA_VENCIDA
+                 , cpe.CNT_ID
+                 , cpe.PER_ID
+                 , cpe.CPE_ORDEN
+                 , gui.ARQ_ID
+                 , DECODE(pas.CNT_ID, cpe.CNT_ID ,1 ,0) as CEX_PASE
+                 , DECODE(pas.PER_ID, cpe.PER_ID ,1 ,0) as PEX_PASE
+              FROM BATCH_VEN_DATOS_SALIDA_BASE gui
+                 , BATCH_SV_DATOS_CNT_PER      cpe
+                 , BATCH_SV_DATOS_CNT_EXP      cex
+                 , BATCH_SV_DATOS_CNT          cnt
+                 , BATCH_VEN_DATOS_SALIDA_GUIA pas
+             WHERE gui.PER_ID =  cpe.PER_ID
+               AND gui.CNT_ID <> cpe.CNT_ID And cpe.ARRASTRE = 1 --contratos de los que sean titulares
+               And cnt.CNT_ID = cex.CNT_ID(+) And cex.DD_TPX_CODIGO(+) = 'RECU' And cex.EXP_ID is null --libres
+               AND cpe.CNT_ID = cnt.CNT_ID
+               AND gui.EXP_ID = pas.EXP_ID
+               AND gui.ARRASTRE = 1 --solo de titulares
+               AND gui.DD_AEX_CODIGO in ('CPGRA', 'CSGRA')
+               And pas.CEX_PASE = 1 and pas.PEX_PASE = 1;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_VEN_DATOS_SALIDA_1G_CNT Cargada',V_NUFILAS);
+            COMMIT;
+
+
+            --OPERACION_DDl.DDL_TABLE('STATS','BATCH_VEN_DATOS_SALIDA_1G_CNT');
+            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_VEN_DATOS_SALIDA_1G_CNT', estimate_percent => 20);
+
+
+            -- b) Buscamos otros titulares de los contratos del paso a).
+            Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_1G_PER
+             (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,POS_VIVA_VENCIDA,CNT_ID,PER_ID,CPE_ORDEN,ARQ_ID,CEX_PASE,PEX_PASE)
+            Select distinct gui.EXP_ID
+                 , gui.EXP_DESCRIPCION
+                 , gui.DD_AEX_CODIGO
+                 , cnt.OFI_ID
+                 , cnt.POS_VIVA_VENCIDA
+                 , cpe.CNT_ID
+                 , cpe.PER_ID
+                 , cpe.CPE_ORDEN
+                 , gui.ARQ_ID
+                 , DECODE(pas.CNT_ID, cpe.CNT_ID ,1 ,0) as CEX_PASE
+                 , DECODE(pas.PER_ID, cpe.PER_ID ,1 ,0) as PEX_PASE
+              From BATCH_VEN_DATOS_SALIDA_1G_CNT  gui
+                 , BATCH_SV_DATOS_CNT_PER         cpe
+                 , BATCH_SV_DATOS_CNT             cnt
+                 , BATCH_VEN_DATOS_SALIDA_GUIA    pas
+             Where gui.CNT_ID =  cpe.CNT_ID
+               And gui.PER_ID <> cpe.PER_ID and cpe.ARRASTRE = 1
+               And cpe.CNT_ID = cnt.CNT_ID
+               And gui.EXP_ID = pas.EXP_ID
+               And gui.DD_AEX_CODIGO in ('CPGRA', 'CSGRA')
+            ;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_VEN_DATOS_SALIDA_1G_PER Cargada',V_NUFILAS);
+            COMMIT;
+
+
+
+            --** Juntamos relaciones (intervinientes + arrastrados  1Gen)
+            ----------------------------------------------------------------
+            Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_1GEN
+            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, MIN(PRIO) as PRIO
+            FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, PRIO
+                    from BATCH_VEN_DATOS_SALIDA_BASE
+                  UNION
+                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 1 as ARRASTRE, 4 as PRIO
+                    From BATCH_VEN_DATOS_SALIDA_1G_CNT
+                  UNION
+                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 1 as ARRASTRE, 5 as PRIO
+                    From BATCH_VEN_DATOS_SALIDA_1G_PER)
+            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_VEN_DATOS_SALIDA_1GEN Cargada',V_NUFILAS);
+            COMMIT;
+
+            --OPERACION_DDl.DDL_TABLE('STATS','BATCH_VEN_DATOS_SALIDA_1GEN');
+            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_VEN_DATOS_SALIDA_1GEN', estimate_percent => 20);
+
+
+
+            --** Inicio Segunda Generacion si hace falta
+            ---------------------------------------------
+
+            -- a) Buscamos otros contratos de las personas (titulares) del expediente
+            Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_2G_CNT
+             (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,POS_VIVA_VENCIDA,CNT_ID,PER_ID,CPE_ORDEN,ARQ_ID,CEX_PASE,PEX_PASE)
+            SELECT distinct gui.EXP_ID
+                 , gui.EXP_DESCRIPCION
+                 , gui.DD_AEX_CODIGO
+                 , cnt.OFI_ID
+                 , cnt.POS_VIVA_VENCIDA
+                 , cpe.CNT_ID
+                 , cpe.PER_ID
+                 , cpe.CPE_ORDEN
+                 , gui.ARQ_ID
+                 , DECODE(pas.CNT_ID, cpe.CNT_ID ,1 ,0) as CEX_PASE
+                 , DECODE(pas.PER_ID, cpe.PER_ID ,1 ,0) as PEX_PASE
+              FROM BATCH_VEN_DATOS_SALIDA_1GEN gui
+                 , BATCH_SV_DATOS_CNT_PER      cpe
+                 , BATCH_SV_DATOS_CNT_EXP      cex
+                 , BATCH_SV_DATOS_CNT          cnt
+                 , BATCH_VEN_DATOS_SALIDA_GUIA pas
+             WHERE gui.PER_ID =  cpe.PER_ID
+               AND gui.CNT_ID <> cpe.CNT_ID And cpe.ARRASTRE = 1 --contratos de los que sean titulares
+               And cnt.CNT_ID = cex.CNT_ID(+) And cex.DD_TPX_CODIGO(+) = 'RECU' And cex.EXP_ID is null --libres
+               AND cpe.CNT_ID = cnt.CNT_ID
+               AND gui.EXP_ID = pas.EXP_ID
+               AND gui.ARRASTRE = 1 --solo de titulares
+               AND gui.DD_AEX_CODIGO = 'CSGRA'
+               And pas.CEX_PASE = 1 and pas.PEX_PASE = 1;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_VEN_DATOS_SALIDA_2G_CNT Cargada',V_NUFILAS);
+            COMMIT;
+
+            --OPERACION_DDl.DDL_TABLE('STATS','BATCH_VEN_DATOS_SALIDA_2G_CNT');
+            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_VEN_DATOS_SALIDA_2G_CNT', estimate_percent => 20);
+
+
+            -- b) Buscamos titulares relacionadas con los contratos del paso a).
+            Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_2G_PER
+             (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,POS_VIVA_VENCIDA,CNT_ID,PER_ID,CPE_ORDEN,ARQ_ID,CEX_PASE,PEX_PASE)
+            Select distinct gui.EXP_ID
+                 , gui.EXP_DESCRIPCION
+                 , gui.DD_AEX_CODIGO
+                 , cnt.OFI_ID
+                 , cnt.POS_VIVA_VENCIDA
+                 , cpe.CNT_ID
+                 , cpe.PER_ID
+                 , cpe.CPE_ORDEN
+                 , gui.ARQ_ID
+                 , DECODE(pas.CNT_ID, cpe.CNT_ID ,1 ,0) as CEX_PASE
+                 , DECODE(pas.PER_ID, cpe.PER_ID ,1 ,0) as PEX_PASE
+              From BATCH_VEN_DATOS_SALIDA_2G_CNT gui
+                 , BATCH_SV_DATOS_CNT_PER        cpe
+                 , BATCH_SV_DATOS_CNT            cnt
+                 , BATCH_VEN_DATOS_SALIDA_GUIA   pas
+             Where gui.CNT_ID =  cpe.CNT_ID
+               And gui.PER_ID <> cpe.PER_ID and cpe.ARRASTRE = 1
+               And cpe.CNT_ID = cnt.CNT_ID
+               And gui.EXP_ID = pas.EXP_ID
+               And gui.DD_AEX_CODIGO = 'CSGRA';
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_VEN_DATOS_SALIDA_2G_PER Cargada',V_NUFILAS);
+            COMMIT;
+
+
+            --** Juntamos todas las relaciones (intervinientes + arrastrados del grupo + 1Gen + 2Gen)
+            -----------------------------------------------------------------------------------------
+            Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_TODO
+            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, MIN(PRIO) as PRIO
+            FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, PRIO
+                    From BATCH_VEN_DATOS_SALIDA_1GEN
+                  UNION
+                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 3 as PRIO
+                    From BATCH_VEN_DATOS_SALIDA_GCL
+                  UNION
+                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 6 as PRIO
+                    From BATCH_VEN_DATOS_SALIDA_2G_PER
+                  UNION
+                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 7 as PRIO
+                    From BATCH_VEN_DATOS_SALIDA_2G_CNT)
+            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE
+              ;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_VEN_DATOS_SALIDA_TODO Cargada',V_NUFILAS);
+            COMMIT;
+
+            --OPERACION_DDl.DDL_TABLE('STATS','BATCH_VEN_DATOS_SALIDA_TODO');
+            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_VEN_DATOS_SALIDA_TODO', estimate_percent => 20);
+
+
+         --** Limpiamos relaciones arrastradas en varios expedientes
+         ------------------------------------------------------------
+         -- obtenemos valor parametrizado del limite
+         Select PEN_VALOR into v_limit_per From PEN_PARAM_ENTIDAD WHERE pen_param = 'expediente.obtenerPersonasAdicionales.limite';
+         Select PEN_VALOR into v_limit_cnt From PEN_PARAM_ENTIDAD WHERE pen_param = 'expediente.obtenerContratosAdicionales.limite';
+         --   select * from  PEN_PARAM_ENTIDAD
+
+         v_count := 1;
+         while v_count > 0
+           loop
+
+             -- Quitamos relaciones obtenidas (ninguna la primera vez)
+             --OPERACION_DDL.DDL_TABLE('TRUNCATE','BATCH_VEN_DATOS_SALIDA_TODO_LM');
+             EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_VEN_DATOS_SALIDA_TODO_LM';
+
+             Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_TODO_LM
+                WITH BATCH_VEN_FILTRADOS
+                  AS (Select t.EXP_ID, t.EXP_DESCRIPCION, t.DD_AEX_CODIGO, t.OFI_ID, t.POS_VIVA_VENCIDA, t.CNT_ID, t.PER_ID, t.CPE_ORDEN, t.ARQ_ID, t.CEX_PASE, t.PEX_PASE, t.PRIO
+                        From BATCH_VEN_DATOS_SALIDA_TODO t
+                           , BATCH_VEN_DATOS_SALIDA_EXP_DES d
+                       Where t.exp_id = d.exp_id(+)
+                         And t.cnt_id = d.cnt_id(+)
+                         And d.exp_id is null)
+                Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, PRIO
+                     -- recalculamos posicion de personas y contratos dentro de cada expediente
+                     , dense_rank() over (partition by exp_id order by cex_pase desc, prio, pos_viva_vencida  desc, cnt_id) as num_cnt
+                     , dense_rank() over (partition by exp_id order by pex_pase desc, prio, cpe_orden, per_id) as num_per
+                  From BATCH_VEN_FILTRADOS;
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_VEN_DATOS_SALIDA_TODO_LM Cargada',V_NUFILAS);
+            COMMIT;
+
+
+             -- Obtenemos relaciones a eliminar
+             Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_EXP_DES (EXP_ID,CNT_ID,CEX_PASE)
+                WITH BATCH_VEN_DISTRIBUCION
+                  AS (Select distinct cnt_id, exp_id, min(num_cnt) as num_cnt, cex_pase
+                        From BATCH_VEN_DATOS_SALIDA_TODO_LM Where num_per <= v_limit_per --40
+                       Group by cnt_id, exp_id, cex_pase)
+             Select distinct ko.exp_id, ko.cnt_id, ko.cex_pase
+               From BATCH_VEN_DISTRIBUCION ko, BATCH_VEN_DISTRIBUCION ok
+              Where ko.cnt_id = ok.cnt_id
+                And ko.exp_id > ok.exp_id
+                And ok.num_cnt <= v_limit_cnt;    --15
+
+             v_count := SQL%ROWCOUNT;
+
+            --LOG
+            V_NUFILAS:=V_COUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_VEN_DATOS_SALIDA_EXP_DES Cargada',V_NUFILAS);
+            COMMIT;
+
+            -- Si la relacion a eliminar incluye contrato de pase, descartamos todo el expediente
+            delete BATCH_VEN_DATOS_SALIDA_TODO a where exists (select distinct exp_id from BATCH_VEN_DATOS_SALIDA_EXP_DES b where a.exp_id = b.exp_id and b.cex_pase=1);
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_VEN_DATOS_SALIDA_TODO Borrada',V_COUNT);
+            COMMIT;
+
+           end loop;
+
+           -- dejamos limpia la temporal
+           --OPERACION_DDl.DDL_TABLE('TRUNCATE','BATCH_VEN_DATOS_SALIDA_EXP_DES');
+           EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_VEN_DATOS_SALIDA_EXP_DES';
+
+
+
+        --** Aplicamos limites para todo lo que queda
+        -----------------------------------------------
+            Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA
+              (EXP_ID,EXP_DESCRIPCION,EXP_MANUAL,DD_AEX_CODIGO,DD_EEX_ID,DD_EST_ID,EXP_FECHA_EST_ID,OFI_ID,CNT_ID,PER_ID,ARQ_ID,CEX_PASE,PEX_PASE)
+                SELECT f.EXP_ID
+                     , f.EXP_DESCRIPCION
+                     , 0 as EXP_MANUAL
+                     , f.DD_AEX_CODIGO
+                     , 2 as DD_EEX_ID
+                     , 3 as DD_EST_ID
+                     , sysdate as EXP_FECHA_EST_ID
+                     , f.OFI_ID
+                     , f.CNT_ID
+                     , f.PER_ID
+                     , f.ARQ_ID
+                     , f.CEX_PASE
+                     , f.PEX_PASE
+                  FROM BATCH_VEN_DATOS_SALIDA_TODO_LM f
+                 WHERE f.NUM_CNT <= (Select PEN_VALOR From PEN_PARAM_ENTIDAD WHERE pen_param = 'expediente.obtenerContratosAdicionales.limite')
+                   AND f.NUM_PER <= (Select PEN_VALOR From PEN_PARAM_ENTIDAD WHERE pen_param = 'expediente.obtenerPersonasAdicionales.limite');
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_VEN_DATOS_SALIDA Cargada',V_NUFILAS);
+            COMMIT;
+
+            --OPERACION_DDl.DDL_TABLE('STATS','BATCH_VEN_DATOS_SALIDA');
+            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_VEN_DATOS_SALIDA', estimate_percent => 20);
+
+        END;
+        ]]>
+    </entry>
+    <!-- PASO 5 - PERSISTENCIA DE EXPEDIENTES -->
+    <entry key="vencidos.persistencia.expedientes.Oracle9iDialect">
+        <![CDATA[
+        DECLARE
+
+          v_dd_eex_id     number(16);
+          v_dd_est_id     number(16);
+          v_dd_tpx_id_seg number(16);
+          v_dd_tpx_id_ven number(16);
+
+          v_cadena  varchar2(50 char);
+          v_proce   varchar2(50 char);
+          v_paso    varchar2(50 char);
+          v_nufilas number;
+          v_count   number;
+
+        BEGIN
+
+          v_cadena := '';
+          v_proce := 'GeneracionExpedientes';
+          v_paso := 'vencidos.persistencia.expedientes';
+
+             select dd_eex_id into v_dd_eex_id from ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE Where dd_eex_codigo = '1'; --activo
+             select dd_est_id into v_dd_est_id from ${master.schema}.DD_EST_ESTADOS_ITINERARIOS Where dd_est_codigo = 'CE'; --completar expedietne
+             select dd_tpx_id into v_dd_tpx_id_seg from DD_TPX_TIPO_EXPEDIENTE Where dd_tpx_codigo = 'SEG';
+             select dd_tpx_id into v_dd_tpx_id_ven from DD_TPX_TIPO_EXPEDIENTE Where dd_tpx_codigo = 'RECU';
+
+            Insert Into EXP_EXPEDIENTES
+              ( EXP_ID, EXP_DESCRIPCION, DD_EST_ID, EXP_FECHA_EST_ID, OFI_ID, ARQ_ID, DD_EEX_ID
+              , EXP_MANUAL, DD_TPX_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+            Select EXP_ID
+                 , EXP_DESCRIPCION
+                 , 3 as DD_EST_ID
+                 , sysdate as FECHA_EST_ID
+                 , OFI_ID
+                 , ARQ_ID
+                 , v_dd_eex_id as DD_EEX_ID
+                 , 0 as EXP_MANUAL
+                 , DD_TPX_ID
+                 , 0 as VERSION
+                 , '${usuario.crear}' as USUARIOCREAR
+                 , sysdate as FECHACREAR
+                 , 0 as BORRADO
+              From (Select EXP_ID, EXP_DESCRIPCION, OFI_ID, ARQ_ID, CEX_PASE, PEX_PASE, v_dd_tpx_id_seg as DD_TPX_ID, DD_AEX_CODIGO
+                    From BATCH_SEG_DATOS_SALIDA
+                    Union All
+                    Select  EXP_ID, EXP_DESCRIPCION, OFI_ID, ARQ_ID, CEX_PASE, PEX_PASE, v_dd_tpx_id_ven as DD_TPX_ID, DD_AEX_CODIGO
+                    From BATCH_VEN_DATOS_SALIDA) a
+                 , ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE b
+             Where a.dd_aex_codigo = b.dd_aex_codigo
+               And a.cex_pase = 1 And a.pex_pase = 1;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'EXP_EXPEDIENTES Cargada',V_NUFILAS);
+            COMMIT;
+
+            INSERT INTO CEX_CONTRATOS_EXPEDIENTE
+              (CEX_ID, CNT_ID, EXP_ID, DD_AEX_ID, CEX_PASE, VERSION, USUARIOCREAR,FECHACREAR, BORRADO)
+            Select s_cex_contratos_expediente.nextval
+                 , t.CNT_ID
+                 , t.EXP_ID
+                 , t.DD_AEX_ID
+                 , t.CEX_PASE
+                 , 0 as VERSION
+                 , '${usuario.crear}' as USUARIOCREAR
+                 , sysdate as FECHACREAR
+                 , 0 as BORRADO
+              From (select Distinct a.CNT_ID, a.EXP_ID, b.DD_AEX_ID, a.CEX_PASE, a.DD_AEX_CODIGO
+                    from BATCH_SEG_DATOS_SALIDA a, ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE b
+                    where a.dd_aex_codigo = b.dd_aex_codigo
+                    UNION ALL
+                    select Distinct a.CNT_ID, a.EXP_ID, b.DD_AEX_ID, a.CEX_PASE, a.DD_AEX_CODIGO
+                    from BATCH_VEN_DATOS_SALIDA a, ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE b
+                    where a.dd_aex_codigo = b.dd_aex_codigo) t;
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'CEX_CONTRATOS_EXPEDIENTE Cargada',V_NUFILAS);
+            COMMIT;
+
+            INSERT INTO PEX_PERSONAS_EXPEDIENTE
+              (PEX_ID, EXP_ID, PER_ID, DD_AEX_ID, PEX_PASE, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+            select s_pex_personas_expediente.nextval
+                 , t.EXP_ID
+                 , t.PER_ID
+                 , t.DD_AEX_ID
+                 , t.PEX_PASE
+                 , 0 as VERSION
+                 , '${usuario.crear}' as USUARIOCREAR
+                 , sysdate as FECHACREAR
+                 , 0 as BORRADO
+              From (select distinct a.EXP_ID, a.PER_ID, b.DD_AEX_ID, a.PEX_PASE, a.DD_AEX_CODIGO
+                    from BATCH_SEG_DATOS_SALIDA a, ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE b
+                    where a.dd_aex_codigo = b.dd_aex_codigo
+                    UNION ALL
+                    select distinct a.EXP_ID, a.PER_ID, b.DD_AEX_ID, a.PEX_PASE, a.DD_AEX_CODIGO
+                    from BATCH_VEN_DATOS_SALIDA a, ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE b
+                    where a.dd_aex_codigo = b.dd_aex_codigo) t;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'PEX_PERSONAS_EXPEDIENTE Cargada',V_NUFILAS);
+            COMMIT;
+
+            --** Correccion del nombre de expedientes de recuperacion
+            MERGE INTO EXP_EXPEDIENTES old
+            USING (
+                    Select t.exp_id , t.exp_descripcion
+                      From (select gui.exp_id
+                                 , TRIM(per.PER_NOMBRE||' '||per.PER_APELLIDO1||' '||per.PER_APELLIDO2) as EXP_DESCRIPCION
+                                 , row_number() over (partition by gui.exp_id, cpe.cnt_id order by cpe.cpe_orden, decode(gui.per_id,cpe.per_id,1,2), cpe.per_id) as orden_descr
+                              from BATCH_VEN_DATOS_SALIDA_GUIA  gui
+                                 , CPE_CONTRATOS_PERSONAS       cpe
+                                 , PER_PERSONAS                 per
+                                 , DD_TIN_TIPO_INTERVENCION     tin
+                             where gui.cnt_id = cpe.cnt_id
+                               and cpe.per_id = per.per_id
+                               and cpe.dd_tin_id = tin.dd_tin_id
+                               and tin.dd_tin_codigo='01') t
+                     Where orden_descr = 1
+                ) new
+            ON (old.exp_id = new.exp_id)
+            WHEN MATCHED THEN
+             UPDATE SET old.exp_descripcion = new.exp_descripcion;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'Revisa nombres de expediente',V_NUFILAS);
+            COMMIT;
+        END;
+        ]]>
+    </entry>
+    <entry key="vencidos.persistencia.clientes.Oracle9iDialect">
+        <![CDATA[
+        DECLARE
+
+          v_cadena  varchar2(50 char);
+          v_proce   varchar2(50 char);
+          v_paso    varchar2(50 char);
+          v_nufilas number;
+          v_count   number;
+
+        BEGIN
+
+          v_cadena := '';
+          v_proce := 'GeneracionExpedientes';
+          v_paso := 'vencidos.persistencia.clientes';
+
+            --** Eliminar Clientes y sus contratos
+            --------------------------------------
+            update CCL_CONTRATOS_CLIENTE ccl
+               set borrado = 1
+                 , usuarioborrar = '${usuario.crear}'
+                 , fechaborrar = sysdate
+            where exists (select 1 from BATCH_SEG_DATOS_SALIDA tmp, CLI_CLIENTES cli where tmp.per_id = cli.per_id and cli.cli_id = ccl.cli_id);
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'CCL_CONTRATOS_CLIENTE Actualizada',V_NUFILAS);
+
+            Update CLI_CLIENTES cli
+               set borrado=1
+                 , usuarioborrar = '${usuario.crear}'
+                 , fechaborrar = sysdate
+            where exists (select 1 from BATCH_SEG_DATOS_SALIDA tmp where cli.per_id = tmp.per_id);
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'CLI_CLIENTES Actualizada',V_NUFILAS);
+            COMMIT;
+        END;
+        ]]>
+    </entry>
+    <entry key="vencidos.persistencia.politicas.Oracle9iDialect">
+        <![CDATA[
+        DECLARE
+
+          v_cadena  varchar2(50 char);
+          v_proce   varchar2(50 char);
+          v_paso    varchar2(50 char);
+          v_nufilas number;
+          v_count   number;
+
+        BEGIN
+
+          v_cadena := '';
+          v_proce := 'GeneracionExpedientes';
+          v_paso := 'vencidos.persistencia.politicas';
+
+            --** Iniciamos politicas de expediente (seguimiento)
+            --------------------------------------
+            Insert into CMP_CICLO_MARCADO_POLITICA
+              (CMP_ID, PER_ID, EXP_ID, VERSION, USUARIOCREAR, FECHACREAR,BORRADO)
+            Select S_CMP_CICLO_MARCADO_POLITICA.nextval as CMP_ID
+                 , PER_ID
+                 , EXP_ID
+                 , 0 as VERSION
+                 , '${usuario.crear}' as USUARIOCREAR
+                 , sysdate as FECHACREAR
+                 , 0 as BORRADO
+              From (Select distinct per_id, exp_id
+                    From BATCH_SEG_DATOS_SALIDA);
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'CMP_CICLO_MARCADO_POLITICA Cargada',V_NUFILAS);
+            COMMIT;
+
+
+            -- Pre-Politica
+             Insert into POL_POLITICA
+             ( POL_ID, CMP_ID, TPL_ID, DD_ESP_ID, DD_EPI_ID
+             , PEF_ID_GESTOR, PEF_ID_SUPER, ZON_ID_GESTOR, ZON_ID_SUPER
+             , VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+            Select s_pol_politica.nextval as POL_ID
+                 , CMP_ID, TPL_ID, DD_ESP_ID, DD_EPI_ID, PEF_ID_GESTOR, PEF_ID_SUPERVISOR, GESTOR, SUPER
+                 , 0 as VERSION
+                 , '${usuario.crear}' as USUARIOCREAR
+                 , sysdate as FECHACREAR
+                 , 0 as BORRADO
+              From
+             ( select /*+all_rows*/ distinct
+                   cmp.CMP_ID
+                 , nvl(tpl.TPL_ID, iti.tpl_id) as TPL_ID
+                 , (select dd_esp_id from ${master.schema}.DD_ESP_ESTADO_POLITICA where dd_esp_codigo = 'PROP') as DD_ESP_ID --Propuesta
+                 , epi.DD_EPI_ID --Por producto cartesiano
+                 , est.PEF_ID_GESTOR
+                 , est.PEF_ID_SUPERVISOR
+                 , zon.ZON_ID as GESTOR
+                 , zon.ZON_ID as SUPER
+              from BATCH_SEG_DATOS_SALIDA        tmp
+                 , CMP_CICLO_MARCADO_POLITICA    cmp
+                 , PER_PERSONAS                  per
+                 , DD_POL_POLITICAS              pol
+                 , TPL_TIPO_POLITICA             tpl
+                 , ARQ_ARQUETIPOS                arq
+                 , ITI_ITINERARIOS               iti
+                 , EST_ESTADOS                   est
+                 , ZON_ZONIFICACION              zon
+                 , ${master.schema}.DD_EST_ESTADOS_ITINERARIOS sit
+                 , ${master.schema}.DD_EPI_EST_POL_ITINERARIO  epi
+             Where tmp.per_id = cmp.per_id
+               And tmp.exp_id = cmp.exp_id
+               And tmp.per_id = per.per_id(+)
+               And per.dd_pol_id = pol.dd_pol_id(+)
+               And pol.dd_pol_codigo = tpl.tpl_codigo(+)
+               And tmp.arq_id = arq.arq_id(+)
+               And arq.iti_id = iti.iti_id(+)
+               And iti.iti_id = est.iti_id(+)
+               And per.ofi_id = zon.ofi_id(+)
+               And est.dd_est_id =sit.dd_est_id
+               And sit.dd_est_codigo = 'CE'
+               And epi.dd_epi_codigo in ('PRE','CE')
+            );
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'POL_POLITICA Cargada',V_NUFILAS);
+            COMMIT;
+
+
+            -- Analisis politica
+            Insert into APP_ANALISIS_PERSONA_POLITICA
+             (APP_ID, CMP_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+            Select s_app_analisis_per_pol.nextval
+                 , cmp.cmp_id
+                 , 0, '${usuario.crear}', sysdate, 0
+             From (select distinct per_id, exp_id
+                   from BATCH_SEG_DATOS_SALIDA)    tmp
+                 , CMP_CICLO_MARCADO_POLITICA      cmp
+            Where  tmp.per_id = cmp.per_id
+               And tmp.exp_id = cmp.exp_id;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'APP_ANALISIS_PERSONA_POLITICA Cargada',V_NUFILAS);
+            COMMIT;
+        END;
+        ]]>
+    </entry>
+    <entry key="vencidos.persistencia.expedientesbpm.Oracle9iDialect">
+        <![CDATA[
+        DECLARE
+
+           cUSUARIO_BATCH VARCHAR2(10 CHAR);
+           cMASTER_SCHEMA VARCHAR2(10 CHAR);
+           cENTITY_SCHEMA VARCHAR2(10 CHAR);
+
+           cBPM_NAME VARCHAR2(20 CHAR);
+           cNODO_INICIO_NAME VARCHAR2(100 CHAR);
+
+            V_DBID NUMBER(16);
+            V_PROCESSDEFINITION NUMBER(16);
+            V_NODE_INI_ID NUMBER(16);
+
+            V_PROCESSINSTANCE NUMBER(16);
+            V_TOKEN NUMBER(16);
+            V_MODULEINSTANCE NUMBER(16);
+            V_VARIABLEMAP NUMBER(16);
+            V_EXP_PROCESS_BPM   NUMBER(16);
+
+            v_cadena  varchar2(50 char);
+            v_proce   varchar2(50 char);
+            v_paso    varchar2(50 char);
+            v_nufilas number;
+            v_count   number;
+
+        BEGIN
+
+          v_cadena := '';
+          v_proce := 'GeneracionExpedientes';
+          v_paso := 'vencidos.persistencia.expedientesbpm';
+
+          cUSUARIO_BATCH := '${usuario.crear}';
+          cMASTER_SCHEMA := '${master.schema}';
+          cENTITY_SCHEMA := SYS_CONTEXT('userenv','current_schema');
+
+          cBPM_NAME          := 'expediente';
+          cNODO_INICIO_NAME  := 'CreacionExpediente';
+
+          -- obtenemos el id de la db actual
+          EXECUTE IMMEDIATE '
+            SELECT ENTIDAD_ID
+              FROM '||cMASTER_SCHEMA||'.ENTIDADCONFIG
+                WHERE DATAKEY = ''schema''
+                AND UPPER(DATAVALUE) = UPPER('''||cENTITY_SCHEMA||''')'
+          INTO V_DBID;
+
+          --obtenemos el ID para el PROCESSDEFINITION
+          EXECUTE IMMEDIATE '
+            SELECT MAX(ID_)
+              FROM '||cMASTER_SCHEMA||'.JBPM_PROCESSDEFINITION
+             WHERE NAME_ ='''||cBPM_NAME||''''
+          INTO V_PROCESSDEFINITION;
+
+          IF V_PROCESSDEFINITION IS NULL THEN
+            RAISE_APPLICATION_ERROR(-20000, 'EL BPM ['||cBPM_NAME||'] no se ha encontrado desplegado');
+          END IF;
+
+          -- obtenemos el ID para el nodo inicio
+          EXECUTE IMMEDIATE '
+            SELECT ID_
+              FROM '||cMASTER_SCHEMA||'.JBPM_NODE
+             WHERE PROCESSDEFINITION_='||V_PROCESSDEFINITION||'
+               AND NAME_='''||cNODO_INICIO_NAME||''''
+          INTO V_NODE_INI_ID;
+
+          IF V_PROCESSDEFINITION IS NULL THEN
+            RAISE_APPLICATION_ERROR(-20001, 'EL BPM ['||cBPM_NAME||'] no esta correctamente definido. Falta nodo ['||cNODO_INICIO_NAME||']');
+          END IF;
+
+          --** Conjunto base de expedientes sin proceso BPM con sus nuevos IDs
+          --OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_BATCH_SV_BPM_INSTANCE');
+          EXECUTE IMMEDIATE 'TRUNCATE TABLE TMP_BATCH_SV_BPM_INSTANCE';
+
+          EXECUTE IMMEDIATE
+          'Insert /*+append*/ into  '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE
+             (EXP_ID, PROCESSINSTANCE)
+           SELECT EXP_ID
+                , '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL as PROCESSINSTANCE
+             FROM '||cENTITY_SCHEMA||'.EXP_EXPEDIENTES
+            WHERE EXP_MANUAL = 0
+              AND EXP_PROCESS_BPM IS NULL';
+
+          --LOG
+          V_NUFILAS:=SQL%ROWCOUNT;
+          INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'TMP_BATCH_SV_BPM_INSTANCE Cargada',V_NUFILAS);
+          COMMIT;
+
+          EXECUTE IMMEDIATE'
+          Update TMP_BATCH_SV_BPM_INSTANCE set TOKEN = '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL';
+          COMMIT;
+
+          EXECUTE IMMEDIATE'
+          Update TMP_BATCH_SV_BPM_INSTANCE set MODULEINSTANCE = '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL';
+          COMMIT;
+
+          EXECUTE IMMEDIATE'
+          Update TMP_BATCH_SV_BPM_INSTANCE set VARIABLEMAP = '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL';
+          COMMIT;
+
+          DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_BATCH_SV_BPM_INSTANCE', estimate_percent => 20);
+
+          --** Insertamos la instancia
+          EXECUTE IMMEDIATE
+            'INSERT INTO '||cMASTER_SCHEMA||'.JBPM_PROCESSINSTANCE
+             (ID_, VERSION_, START_, END_, ISSUSPENDED_, PROCESSDEFINITION_)
+             SELECT PROCESSINSTANCE
+                  , 1 --VERSION
+                  , SYSDATE --START_
+                  , NULL --END_
+                  , 0 --ISSUSPENDED_
+                  , '||V_PROCESSDEFINITION||' --PRCESSDEFINITION_
+               FROM '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE';
+
+          --** Insertamos el token del BPM
+          EXECUTE IMMEDIATE
+            'INSERT INTO '||cMASTER_SCHEMA||'.JBPM_TOKEN
+             (ID_, VERSION_, START_, END_, NODEENTER_, ISSUSPENDED_, NODE_, PROCESSINSTANCE_, NEXTLOGINDEX_,ISABLETOREACTIVATEPARENT_,ISTERMINATIONIMPLICIT_)
+             SELECT TOKEN
+                  , 1 --VERSION_
+                  , SYSDATE --START_
+                  , NULL --END_
+                  , SYSDATE --NODEENTER_
+                  , 0 --ISSUSPENDED_
+                  , '||V_NODE_INI_ID||' --_ NODE_
+                  , PROCESSINSTANCE --PROCESSINSTANCE_
+                  , 0 --NEXTLOGINDEX_
+                  , 0 --ISABLETOREACTIVATEPARENT_
+                  , 0 --ISTERMINATIONIMPLICIT_
+               FROM '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE';
+
+          --** Asignamos token en ProcessInstance
+          EXECUTE IMMEDIATE
+          'MERGE INTO '||cMASTER_SCHEMA||'.JBPM_PROCESSINSTANCE P
+           USING '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE T
+              ON (P.ID_ = T.PROCESSINSTANCE)
+            WHEN MATCHED THEN UPDATE
+             SET P.ROOTTOKEN_ = T.TOKEN';
+
+          --** Asignamos ID al expediente
+          EXECUTE IMMEDIATE
+            'MERGE INTO '||cENTITY_SCHEMA||'.EXP_EXPEDIENTES E
+             USING '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE T
+                ON (E.EXP_ID = T.EXP_ID)
+              WHEN MATCHED THEN UPDATE
+               SET E.EXP_PROCESS_BPM = T.PROCESSINSTANCE';
+
+          --** Insertamos un modlue instance
+          EXECUTE IMMEDIATE
+            'INSERT INTO '||cMASTER_SCHEMA||'.JBPM_MODULEINSTANCE
+             (ID_, CLASS_, VERSION_, PROCESSINSTANCE_, NAME_)
+             SELECT MODULEINSTANCE
+                  , ''C'' --CLASS_
+                  , 0 --VERSION_
+                  , PROCESSINSTANCE --PROCESSINSTANCE_
+                  , ''org.jbpm.context.exe.ContextInstance'' --NAME_
+               FROM '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE';
+
+          --** Insertamos un mapa de variables
+          EXECUTE IMMEDIATE
+            'INSERT INTO '||cMASTER_SCHEMA||'.JBPM_TOKENVARIABLEMAP
+             (ID_, VERSION_, TOKEN_, CONTEXTINSTANCE_)
+             SELECT VARIABLEMAP
+                  , 0 --VERSION_
+                  , TOKEN --ROOTTOKEN_
+                  , MODULEINSTANCE  --CONTEvencidos.persistencia.expedientesbpm.OracleXTINSTANCE_
+               FROM '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE';
+
+          --** Insertamos variables
+
+            -- a)DB_ID
+            EXECUTE IMMEDIATE
+            'INSERT INTO '||cMASTER_SCHEMA||'.JBPM_VARIABLEINSTANCE
+             (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, LONGVALUE_)
+             SELECT '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL
+                  ,''L'' --CLASS_
+                  , 0 --VERSION_
+                  , ''DB_ID'' --NAME_
+                  , TOKEN --TOKEM_
+                  , VARIABLEMAP --TOKENVARIABLEMAP_
+                  , PROCESSINSTANCE --PROCESSINSTANCE_
+                  , '||V_DBID||' --LONGVLAUE_
+               FROM '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE';
+
+            -- b)idExpediente
+            EXECUTE IMMEDIATE
+            'INSERT INTO '||cMASTER_SCHEMA||'.JBPM_VARIABLEINSTANCE
+             (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, LONGVALUE_)
+             SELECT '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL
+                  ,''L'' --CLASS_
+                  , 0 --VERSION_
+                  , ''idExpediente'' --NAME_
+                  , TOKEN --TOKEM_
+                  , VARIABLEMAP --TOKENVARIABLEMAP_
+                  , PROCESSINSTANCE --PROCESSINSTANCE_
+                  , EXP_ID --LONGVLAUE_
+               FROM '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE';
+
+            -- c) bpmParalizado
+            EXECUTE IMMEDIATE
+            'INSERT INTO '||cMASTER_SCHEMA||'.JBPM_VARIABLEINSTANCE
+             (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, LONGVALUE_)
+             SELECT '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL
+                  ,''L'' --CLASS_
+                  , 0 --VERSION_
+                  , ''bpmParalizado'' --NAME_
+                  , TOKEN --TOKEM_
+                  , VARIABLEMAP --TOKENVARIABLEMAP_
+                  , PROCESSINSTANCE --PROCESSINSTANCE_
+                  , 0 --LONGVLAUE_
+               FROM '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE';
+
+            -- d) id
+            EXECUTE IMMEDIATE
+            'INSERT INTO '||cMASTER_SCHEMA||'.JBPM_VARIABLEINSTANCE
+             (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, LONGVALUE_)
+             SELECT '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL
+                  ,''L'' --CLASS_
+                  , 0 --VERSION_
+                  , ''id'' --NAME_
+                  , TOKEN --TOKEM_
+                  , VARIABLEMAP --TOKENVARIABLEMAP_
+                  , PROCESSINSTANCE --PROCESSINSTANCE_
+                  , null --LONGVLAUE_
+               FROM '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE';
+
+            -- e) idArquetipo
+            EXECUTE IMMEDIATE '
+            INSERT INTO '||cMASTER_SCHEMA||'.JBPM_VARIABLEINSTANCE
+             (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, LONGVALUE_)
+            SELECT '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL
+                 ,''L'' --CLASS_
+                 , 0 --VERSION_
+                 , ''idArquetipo'' --NAME_
+                 , TMP.TOKEN --TOKEM_
+                 , TMP.VARIABLEMAP --TOKENVARIABLEMAP_
+                 , TMP.PROCESSINSTANCE --PROCESSINSTANCE_
+                 , EXP.ARQ_ID --LONGVLAUE_
+              FROM '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE TMP
+                JOIN '||cENTITY_SCHEMA||'.EXP_EXPEDIENTES EXP ON TMP.EXP_ID = EXP.EXP_ID';
+
+
+            --** Comprobamos que la transicion es correcta
+            EXECUTE IMMEDIATE '
+            Insert Into '||cMASTER_SCHEMA||'.JBPM_TRANSITION (id_, name_, processdefinition_, from_, to_, fromindex_)
+            select '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL, DATA.* FROM (
+              select distinct ''CompletarExpediente'' name_, pi.processdefinition_, tr1.from_, tr1.to_, 1
+              from EXP_EXPEDIENTES exp
+                join '||cMASTER_SCHEMA||'.JBPM_PROCESSINSTANCE pi on exp.EXP_PROCESS_BPM = pi.id_
+                join '||cMASTER_SCHEMA||'.JBPM_TOKEN tk on EXP.EXP_PROCESS_BPM = tk.processinstance_
+                join '||cMASTER_SCHEMA||'.JBPM_NODE nd on tk.node_ = nd.id_
+                join '||cMASTER_SCHEMA||'.JBPM_TRANSITION tr1 on nd.id_ = tr1.from_ and tr1.name_ is null
+                left join '||cMASTER_SCHEMA||'.JBPM_TRANSITION tr on nd.id_ = tr.from_ and tr.name_ = ''CompletarExpediente''
+              where nd.name_ = ''CreacionExpediente'' and tr.id_ is null
+            )DATA';
+
+
+            --** Insertamos los timers cadudados
+            EXECUTE IMMEDIATE '
+            Insert into '||cMASTER_SCHEMA||'.jbpm_job
+              (ID_, CLASS_, VERSION_, DUEDATE_, PROCESSINSTANCE_, TOKEN_, TASKINSTANCE_, ISSUSPENDED_, ISEXCLUSIVE_,LOCKOWNER_, LOCKTIME_, EXCEPTION_ , RETRIES_, NAME_, REPEAT_, TRANSITIONNAME_, ACTION_, GRAPHELEMENTTYPE_, GRAPHELEMENT_, NODE_)
+            Select '||cMASTER_SCHEMA||'.hibernate_sequence.nextval as ID_
+                 , ''T'' as CLASS_
+                 , 0 as VERSION_
+                 , sysdate - 2 as DUEDATE_
+                 , PROCESSINSTANCE as PROCESSINSTANCE_
+                 , TOKEN as TOKEN_
+                 , null as TASKINSTANCE_
+                 , 0 ISSUSPENDED_
+                 , 1 ISEXCLUSIVE_
+                 , null LOCKOWNER_
+                 , null LOCKTIME_
+                 , null  EXCEPTION_
+                 , 1 RETRIES_
+                 , ''TIMER_MAN_ELEVAR'' NAME_
+                 , null REPEAT_
+                 , ''CompletarExpediente''  TRANSITIONNAME_
+                 , null ACTION_
+                 , null GRAPHELEMENTTYPE_
+                 , null GRAPHELEMENT_
+                 , null NODE_
+            From '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE';
+
+          --LOG
+          V_NUFILAS:=SQL%ROWCOUNT;
+          INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'Timers caducados insertados correctamente',V_NUFILAS);
+          INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'Fin Generacion de expedientes',null);
+          COMMIT;
+
+        END;
+        ]]>
+    </entry>
+ </properties>

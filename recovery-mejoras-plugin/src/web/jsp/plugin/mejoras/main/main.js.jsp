@@ -264,30 +264,6 @@ Ext.onReady(function() {
 	Ext.QuickTips.init();
 
 	/* global app */
-
-	//control del enlace de logout
-	Ext.get("logout").on('click', function(){
-		Ext.Msg.confirm('<s:message code="app.confirmar" text="**confirmar" />', '<s:message code="main.logout.confirmar" text="**¿Seguro que desea salir de la aplicación?" />', function(boton){
-			if (boton=="yes"){
-				window.location="/${appProperties.appName}/j_spring_security_logout";
-			}
-		});
-	});
-	
-	Ext.get("logoutClose").on('click', function(){
-		Ext.Msg.confirm('<s:message code="app.confirmar" text="**confirmar" />', '<s:message code="main.logout.confirmar" text="**¿Seguro que desea salir de la aplicación?" />', function(boton){
-			if (boton=="yes"){
-				var conn = new Ext.data.Connection();
-				conn.request({
-					url : "/${appProperties.appName}/j_spring_security_logout"
-					,callback : function(){
-						top.window.close();
-						window.location="/${appProperties.appName}/j_spring_security_logout";
-					}
-				});
-			}
-		});
-	});
 	
 	if(Ext.get("comboEntidad") != null) {
 		Ext.get("comboEntidad").on('change', function(){

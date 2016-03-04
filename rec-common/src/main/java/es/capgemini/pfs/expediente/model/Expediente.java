@@ -36,6 +36,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.APPConstants;
 import es.capgemini.pfs.actitudAptitudActuacion.model.ActitudAptitudActuacion;
+import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.arquetipo.model.Arquetipo;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
@@ -103,6 +104,10 @@ public class Expediente implements Serializable, Auditable, Describible {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "COM_ID")
     private Comite comite;
+
+    @OneToMany(mappedBy = "expediente", fetch = FetchType.LAZY)
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private List<Acuerdo> acuerdos;
 
     @OneToMany(mappedBy = "expediente", fetch = FetchType.LAZY)
     @Where(clause = Auditoria.UNDELETED_RESTICTION)

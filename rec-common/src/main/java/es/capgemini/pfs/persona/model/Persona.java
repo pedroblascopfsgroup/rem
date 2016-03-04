@@ -355,6 +355,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	 */
 	@OneToMany(mappedBy = "persona", fetch = FetchType.LAZY)
 	@JoinColumn(name = "PER_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<PersonaGrupo> grupos;
 
 	@Transient

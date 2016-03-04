@@ -24,7 +24,7 @@
         ,{name:'tipoAtipicoContrato'}
         ,{name:'importe'}
         ,{name:'fechaValor'}
-        ,{name:'motivoAtipicoContrato'}
+        ,{name:'motivoAtipicoContrato'} 
     ]);
 	
 	var atipicosStore = page.getStore({

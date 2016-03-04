@@ -113,6 +113,14 @@
                						width:250
            						},{<app:test id="dobleSelPropuesta" />} );	
 	
+	dobleSelPropuesta.on('change', function(field, newVal, oldVal) {
+		if (newVal.search("-1") != -1) {
+			comboEstadoGestion.setDisabled(true);
+			app.resetCampos([comboEstadoGestion]);
+		} else {
+			comboEstadoGestion.setDisabled(false);
+		}
+	});
 	
 	// TAB EXPEDIENTE
 

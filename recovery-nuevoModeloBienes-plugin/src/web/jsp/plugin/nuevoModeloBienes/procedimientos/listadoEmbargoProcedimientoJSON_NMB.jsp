@@ -18,31 +18,32 @@
 			<json:property name="observaciones" value="${rec.observaciones}"/>		
 			<json:property name="numeroActivo" value="${rec.numeroActivo}"/>
 			<json:property name="referenciaCatastral" value="${rec.referenciaCatastral}"/>
-				
-			<c:forEach items="${rec.NMBEmbargosProcedimiento}" var="ins">			
-			    <c:if test="${ins.procedimiento.id == idProcedimiento}">
-					<json:property name="idEmbargo" value="${ins.id}"/>
-					<json:property name="letra" value="${ins.letra}"/>
-					<json:property name="fechaSolicitud" >
-						<fwk:date value="${ins.fechaSolicitud}"/>
-					</json:property>
-					<json:property name="importeTasacion"  value="${ins.importeTasacion}"/>
-					
-					<json:property name="fechaDecreto" >
-						<fwk:date value="${ins.fechaDecreto}"/>
-					</json:property>
-					<json:property name="fechaRegistro" >
-						<fwk:date value="${ins.fechaRegistro}"/>
-					</json:property>
-					<json:property name="fechaAdjudicacion" >
-						<fwk:date value="${ins.fechaAdjudicacion}"/>
-					</json:property>
-					<json:property name="fechaDenegacion" >
-						<fwk:date value="${ins.fechaDenegacion}"/>
-					</json:property>	
-			    </c:if>
-			</c:forEach>
-			
+			<json:property name="embargos" value="${rec.NMBEmbargosProcedimiento}"/>
+			<c:if test="${not empty embargos}">
+				<c:forEach items="${embargos}" var="ins">			
+				    <c:if test="${ins.procedimiento.id == idProcedimiento}">
+						<json:property name="idEmbargo" value="${ins.id}"/>
+						<json:property name="letra" value="${ins.letra}"/>
+						<json:property name="fechaSolicitud" >
+							<fwk:date value="${ins.fechaSolicitud}"/>
+						</json:property>
+						<json:property name="importeTasacion"  value="${ins.importeTasacion}"/>
+						
+						<json:property name="fechaDecreto" >
+							<fwk:date value="${ins.fechaDecreto}"/>
+						</json:property>
+						<json:property name="fechaRegistro" >
+							<fwk:date value="${ins.fechaRegistro}"/>
+						</json:property>
+						<json:property name="fechaAdjudicacion" >
+							<fwk:date value="${ins.fechaAdjudicacion}"/>
+						</json:property>
+						<json:property name="fechaDenegacion" >
+							<fwk:date value="${ins.fechaDenegacion}"/>
+						</json:property>	
+				    </c:if>
+				</c:forEach>
+			</c:if>
 			<c:forEach items="${rec.instruccionesSubasta}" var="ins">
 				<c:if test="${ins.procedimiento.id == idProcedimiento}">
 					<json:property name="instrucciones" value="1"/>

@@ -10,6 +10,64 @@
 
 <fwk:page>
 
+	
+	<%-- Localidad del Registro de la Propiedad --%>
+	
+	var localidadRegProp = new Ext.form.TextField({
+		name : 'localidadRegProp'
+		,allowBlank : true
+		,width : 300
+		,fieldLabel : '<s:message code="plugin.precontencioso.docInstancia.localidadRegProp" text="*Localidad Reg. Propiedad" />'
+	});    
+
+
+	<%-- NÃºmero de Registro de la Propiedad --%>
+	
+	var numeroRegProp = new Ext.form.TextField({
+		name : 'numeroRegProp'
+		,allowBlank : true
+		,width : 300
+		,fieldLabel : '<s:message code="plugin.precontencioso.docInstancia.numeroRegProp" text="**N&#186; Reg. Propiedad" />'
+	});    
+
+
+	<%-- Nombre del notario --%>
+	
+	var nomNotario = new Ext.form.TextField({
+		name : 'nomNotario'
+		,allowBlank : true
+		,width : 300
+		,fieldLabel : '<s:message code="plugin.precontencioso.docInstancia.nomNotario" text="**Nombre del Notario" />'
+	});    
+
+
+	<%-- Localidad del notario --%>
+	
+	var localidadNotario = new Ext.form.TextField({
+		name : 'localidadNotario'
+		,allowBlank : true
+		,width : 300
+		,fieldLabel : '<s:message code="plugin.precontencioso.docInstancia.localidadNotario" text="**Localidad del Notario" />'
+	});    
+
+
+	<%-- NÃºmero de protocolo --%>
+
+	var numProtocolo = new Ext.form.TextField({
+		name : 'numProtocolo'
+		,allowBlank : true
+		,width : 200 
+		,fieldLabel : '<s:message code="plugin.precontencioso.docInstancia.numProtocolo" text="**N&uacute;m. Protocolo" />'
+	});    
+	
+
+	<%-- Fecha de escritura --%>
+	
+	<pfsforms:datefield labelKey="plugin.precontencioso.docInstancia.fechaEscritura" label="**Fecha de escritura" name="fechaEscritura" obligatory="false"/>
+	
+	
+	<%-- Combo de localidades --%>
+	
 	var localidadesRecord = Ext.data.Record.create([
 		{name: 'descripcion'}
 	]);
@@ -33,12 +91,13 @@
 		width: 150,
 		editable: true,
 		emptyText:'<s:message code="rec-web.direccion.form.seleccionar" text="**Seleccionar" />',
-		fieldLabel: '<s:message code="plugin.precontencioso.liquidaciones.generar.localidadFirma" text="**Localidad firma" />'
+		fieldLabel: '<s:message code="plugin.precontencioso.docInstancia.centroRecuperacion" text="**Centro recuperaci&oacute;n" />'
 	});
 	
 	comboLocalidades.on('afterrender', function(combo) {
 		localidadesStore.webflow();
 	});
+	
 	
 	
 	Ext.grid.CheckColumn = function(config){
@@ -94,13 +153,13 @@
       checkColumn
 	    ,{header : '<s:message code="nuevoModeloBienes.agregarExcluirBien.grid.codigo" text="**C&oacute;digo" />', hidden:true, dataIndex : 'codigo'}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.numeroFinca" text="**N&uacute;mero finca" />', dataIndex : 'numFinca'}
-		,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.referenciaCatastral" text="**Referencia catastral"/>', dataIndex : 'referenciaCatastral' }
+		,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.referenciaCatastral" text="**Referencia catastral"/>', dataIndex : 'referenciaCatastral', width : 200 }
 		<sec:authorize ifNotGranted="PERSONALIZACION-BCC">
-			,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.numeroActivo" text="**Número activo"/>', dataIndex : 'numeroActivo' }
+			,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.numeroActivo" text="**Nï¿½mero activo"/>', dataIndex : 'numeroActivo' }
         </sec:authorize>
       	,{header : '<s:message code="nuevoModeloBienes.agregarExcluirBien.grid.origen" text="**Origen" />', dataIndex : 'origen'}
     	,{header : '<s:message code="nuevoModeloBienes.agregarExcluirBien.grid.descripcion" text="**Descripcion" />', dataIndex : 'descripcion'}
-      	,{header : '<s:message code="nuevoModeloBienes.agregarExcluirBien.grid.tipo" text="**Tipo" />', dataIndex : 'tipo'}
+      	,{header : '<s:message code="nuevoModeloBienes.agregarExcluirBien.grid.tipo" text="**Tipo" />', dataIndex : 'tipo', width : 200}
       	,{header : '<s:message code="nuevoModeloBienes.agregarExcluirBien.grid.solvencia" text="**Solvencia" />', dataIndex : 'solvencia'}
    ]);
  
@@ -118,7 +177,7 @@
          ,cm: cmBienes
          ,title : '<s:message code="nuevoModeloBienes.agregarExcluirBien.grid.titulo" text="**Bienes" />'
          ,style : 'margin-bottom:10px;padding-right:0px'
-         ,height : 400
+         ,height : 200
          ,cls:'cursor_pointer'
          ,plugins: checkColumn
          //,clickstoEdit: 'auto'
@@ -150,24 +209,32 @@
 			,iconCls : 'icon_ok'
 	       ,cls: 'x-btn-text-icon'
 	       ,handler:function(){
-				if (comprobarSiHayFilSeleccionada()>=1 && comboLocalidades.getValue() != ''){
-					this.instanciar();
+				if (comprobarSiHayFilSeleccionada()>=1){
+					if (comboLocalidades.getValue() == '') {
+						Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="plugin.precontencioso.docInstancia.faltaLocalidadFirma" text="**Debe informar el centro de recuperaci&oacute;"/>');
+					} else {
+						this.validadBienes();
+					}
 	      		}else{
-					Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="nuevoModeloBienes.agregarExcluirBien.agregar.faltanDatos" text="**Debe seleccionar algún bien"/>');
+					Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="plugin.precontencioso.docInstancia.seleccionarBien" text="**Debe seleccionar al menos un bien"/>');
 	      		}
 	     	}
-	     	,instanciar:function() {
+	     	,validadBienes:function() {
 	     		page.webflow({
-		      		flow:'expedientejudicial/instanciarDocumentoBienes'
+		      		flow:'expedientejudicial/validarDocumentoBienes'
 		      		,params:{idProcedimiento:data.id, idsBien:strIds}
 		      		,success: function(result,request){
-		      			if(result.resultadoOK=='true'){
-	            			page.fireEvent(app.event.DONE);
-	            			
-	            			localidadFirma: comboLocalidades.getValue();
-	            														
+		      			if(result.resultadoOK==''){
+							var flow='/pfs/expedientejudicial/generarDocumentoBienes';
+							var params={idProcedimiento:data.id, idsBien:strIds,
+							  localidad: comboLocalidades.getValue(), nombreNotario: nomNotario.getValue(),
+		      				  localidadNotario: localidadNotario.getValue(), numProtocolo: numProtocolo.getValue(), fechaEscritura: app.format.dateRenderer(fechaEscritura.getValue()),
+		      				  localidadRegProp: localidadRegProp.getValue(), numeroRegProp: numeroRegProp.getValue() 
+		      				};
+							app.openBrowserWindow(flow,params);
+							page.fireEvent(app.event.DONE);
 						}else{
-							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="nuevoModeloBienes.agregarExcluirBien.agregar.faltanDatos.a" text="**HAy algun campo vacio"/>');
+							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="plugin.precontencioso.docInstancia.faltanDatosBienes" text="**Faltan datos de bienes necesarios"/>: ' + result.resultadoOK);
 						}
 	            	}	
 		      	});
@@ -190,6 +257,21 @@
 		panelAlta.el.unmask(); 
 	});
 	
+
+	var panelEdicion = new Ext.Panel({
+		layout: 'table',
+		layoutConfig: { columns: 2 },
+		autoHeight: true,
+		autoWidth: true,
+		border: true,
+		defaults: {xtype: 'fieldset', cellCls: 'vtop', border: false},
+		items: [
+			{
+				items: [ comboLocalidades, localidadRegProp, numeroRegProp, nomNotario, localidadNotario, numProtocolo, fechaEscritura ]
+			}
+		]
+	});
+
 	//-------------------------------------------------
 	var panelAlta = new Ext.form.FormPanel({
 		autoHeight:true
@@ -199,7 +281,14 @@
 				bodyStyle:'padding:5px;cellspacing:10px'
 				,border:false
 				,defaults : {xtype:'panel' ,cellCls : 'vtop'}
-				,items : [comboLocalidades, gridBienes]
+				,items: [
+					{
+						items: [ panelEdicion ]
+					},
+					{
+						items: [ gridBienes ]
+					}
+				]
 		  	}
 		]
 		,bbar : [btnAceptar, btnCancelar]

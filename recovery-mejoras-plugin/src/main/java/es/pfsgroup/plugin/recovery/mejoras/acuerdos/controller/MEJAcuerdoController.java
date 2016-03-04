@@ -25,10 +25,13 @@ import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.DDCondicionesRemuneracion;
+import es.capgemini.pfs.contrato.model.DDSituacionGestion;
 import es.capgemini.pfs.contrato.model.DDTipoProducto;
 import es.capgemini.pfs.core.api.acuerdo.AcuerdoApi;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.itinerario.model.DDTipoItinerario;
+import es.capgemini.pfs.persona.model.PersonaFormulas;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.termino.TerminoOperacionesManager;
 import es.capgemini.pfs.termino.dto.ListadoTerminosAcuerdoDto;
@@ -73,6 +76,7 @@ public class MEJAcuerdoController {
 	static final String JSP_RECHAZAR_ACUERDO = "plugin/mejoras/acuerdos/rechazarAcuerdo";
 	static final String OK_KO_RESPUESTA_JSON = "plugin/coreextension/OkRespuestaJSON";
 	static final String JSON_LIST_DD_CONDICIONES_REMUNERACION ="plugin/mejoras/acuerdos/condicionesRemuneracionJSON";
+	static final String JSON_LIST_DD_SITUACION_GESTION ="plugin/mejoras/acuerdos/situacionGestionJSON";
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -855,6 +859,14 @@ public class MEJAcuerdoController {
 		List<DDCondicionesRemuneracion> list = diccionarioManager.dameValoresDiccionario(DDCondicionesRemuneracion.class);
 		model.put("data", list);
 		return JSON_LIST_DD_CONDICIONES_REMUNERACION;
-	}	
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getListSituacionGestion(ModelMap model){
+		List<DDSituacionGestion> list = diccionarioManager.dameValoresDiccionario(DDSituacionGestion.class);
+		model.put("data", list);
+		return JSON_LIST_DD_SITUACION_GESTION;
+	}
 
 }

@@ -325,5 +325,19 @@ public class ITIEstadoManager {
 		
 	}
 	
+	@BusinessOperation(PluginItinerariosBusinessOperations.EST_MGR_ESTADOGENERICOITI)
+	public Estado dameEstadoDelItinerario(Long idItinerario, String codigoEstado){
+		List<Estado> estadosIti = estadoDao.getEstadosItienario(idItinerario);
+		Estado estado=null;
+		for(Estado est: estadosIti){
+			if (est.getCodigo().equals(codigoEstado) ){
+				estado=est;
+			}
+		}
+		return estado;
+	}
+	
+	
+
 	
 }

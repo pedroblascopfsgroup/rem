@@ -4,10 +4,11 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 	
 	<input name="id" type="java.lang.Long" required="true" />
+	<input name="idEstado" type="java.lang.Long" required="true"/>
 
 	<end-state id="listado" view="plugin/itinerarios/tipoReglasElevacionJSON">
 		<on-entry>
-			<evaluate expression="executor.execute('plugin.itinerarios.reglasElevacion.listaReglasElevacionCE',id)" result="flowScope.reglasElevacion"/>
+			<evaluate expression="executor.execute('plugin.itinerarios.reglasElevacion.listaReglasElevacion',id,idEstado)" result="flowScope.reglasElevacion"/>
 		</on-entry>
 	</end-state>
 </flow>

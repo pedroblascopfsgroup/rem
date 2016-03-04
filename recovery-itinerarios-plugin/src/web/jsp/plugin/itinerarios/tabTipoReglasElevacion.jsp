@@ -1,56 +1,80 @@
 <%@page pageEncoding="iso-8859-1" contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
-<%@ taglib prefix="pfslayout" tagdir="/WEB-INF/tags/pfs/layout" %>
 <%@ taglib prefix="pfs" tagdir="/WEB-INF/tags/pfs" %>
-<%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
 
-<pfslayout:tabpage titleKey="plugin.itinerarios.reglasElevacion.titulo" title="**Reglas de elevacion" 
-	items="panelCE,panelRE,panelDC,panelFP" >
-	var refrescoCompletarActivar = ${ceSiNo};
-	var refrescoRevisarActivar = ${reSiNo};
+
+<%-- Datos JSON, determinan estados a mostrar del itinerario --%>
+var estadosItinerario = <json:array name="estadosItinerario" items="${formEstadosItinerarios}" var="et" >
+	<json:object>
+		<json:property name="id" value="${et.id}" />
+		<json:property name="estadoItinerario" value="${et.estadoItinerario.descripcion}" />
+		<json:property name="codigo" value="${et.estadoItinerario.codigo}" />
+		<json:property name="automatico" value="${et.automatico}" />
+	</json:object>
+</json:array>;
+
+<%-- Constantes --%>
+var estadoCE = '<fwk:const value="es.capgemini.pfs.politica.model.DDEstadoItinerarioPolitica.ESTADO_COMPLETAR_EXPEDIENTE" />';
+var estadoRE = '<fwk:const value="es.capgemini.pfs.politica.model.DDEstadoItinerarioPolitica.ESTADO_REVISAR_EXPEDIENTE" />';
+var strSplitterChar = '_';
+var textFieldName = 'txt';
+var btnName = 'btn';
+var storeName = 'reglaElevacionDS';
+var gridName = 'gridReglas';
+var btnAutoName = 'btnAuto';
+var btnDeleteName = 'btnDelete';
+
+<%-- Variables varias --%>
+var panels = "";
+var panelsToDisplay = estadosItinerario.length;
+var fieldSets = new Array();
+var stores = new Array();
+var refrescoCompletarActivar = ${ceSiNo};
+var refrescoRevisarActivar = ${reSiNo};
+var recargar = function (){
+	app.openTab('${itinerario.nombre}'
+				,'plugin.itinerarios.consultaItinerario'
+				,{id:${itinerario.id}}
+				,{id:'ItinerarioRT${itinerario.id}'}
+			)
+};		
 	
-	var recargar = function (){
-		app.openTab('${itinerario.nombre}'
-					,'plugin.itinerarios.consultaItinerario'
-					,{id:${itinerario.id}}
-					,{id:'ItinerarioRT${itinerario.id}'}
-				)
+<%-- Montar cadena de paneles a utilizar de forma dinamica --%>
+for (i = 0; i < panelsToDisplay; i++) {
+    panels += "panel" + estadosItinerario[i].codigo;
+    if(i < panelsToDisplay -1){
+    	panels += ",";
+    }
+}
+
+<%-- Bucle crear elementos cuerpo --%>
+for(i = 0; i < panelsToDisplay; i++){
+	
+	<%-- Variable Hidden --%>
+	var idEstadoVal = new Ext.form.Hidden({
+			value: estadosItinerario[i].id
+		});
+	
+	<%-- Variable con ID de itinerario e ID de estado --%>
+	var itinerarioParams = function(){
+			return {
+					idEstado : idEstadoVal.getValue()
+	      			,id:${itinerario.id}
+	      			}
 	};
-	
-	<pfs:defineParameters name="itinerarioParams" paramId="${itinerario.id}"/>	
-	
-	<%--
-	<pfs:buttonnew name=""  createTitle="" 
-		createTitleKey="" 
-		flow="" parameters="" 
-		onSuccess="recargar" />
-	 --%>
-	 	
-	<pfs:buttonadd flow="plugin.itinerarios.nuevaReglaElevacionCE" 
-		name="btnAddReglaCE" 
-		windowTitleKey="plugin.itinerarios.reglasElevacion.nuevaCE"
-		windowTitle="**Añadir regla de elevación" 
-		parameters="itinerarioParams"  
-		store_ref="reglasElevacionDSCE"/>
-		
-	<pfs:buttonremove name="btEliminarCE"
-		flow="plugin.itinerarios.bajaReglaElevacionEstado"
-		novalueMsgKey="plugin.itinerarios.reglasElevacion.message.novalue"
-		novalueMsg="**Seleccione una función de la lista"  
-		paramId="idRegla"  
-		datagrid="gridReglasCE" 
-		parameters="itinerarioParams"/>
-	
+
+	<%-- Columnas del datasource --%>
 	<pfs:defineRecordType name="ReglasElevacionRT">
 		<pfs:defineTextColumn name="id"/>
 		<pfs:defineTextColumn name="ddTipoReglasElevacion"/>
 		<pfs:defineTextColumn name="ambitoExpediente"/>
 	</pfs:defineRecordType>
 	
+	<%-- Columnas de la tabla --%>
 	<pfs:defineColumnModel name="reglasElevacionCM">
 		<pfs:defineHeader captionKey="plugin.itinerarios.reglasElevacion.tipoRegla" sortable="false" 
 			dataIndex="ddTipoReglasElevacion" caption="**Tipo de Regla" firstHeader="true"/>
@@ -58,270 +82,196 @@
 			dataIndex="ambitoExpediente" caption="**Ámbito del Expediente" />
 	</pfs:defineColumnModel>
 	
-	<pfs:remoteStore name="reglasElevacionDSCE" 
-		resultRootVar="reglasElevacion" 
-		recordType="ReglasElevacionRT" 
-		dataFlow="plugin.itinerarios.tipoReglasElevacionData"
-		parameters="itinerarioParams"
-		autoload="true"/>
-	 
-	//Ext.util.CSS.createStyleSheet(".icon_elevacion { background-image: url('../img/plugin/itinerarios/rocket-fly.png');}");
-	
-	<%-- <pfsforms:check labelKey="plugin.itinerarios.estados.automatico" label="**Automático" 
-		name="ceAutomatico" value="${ceSiNo}" readOnly="true"/> --%>
-		
-	<pfsforms:textfield name="ceAutomatico" labelKey="plugin.itinerarios.estados.automatico" 
-		label="**Automático" value="" readOnly="true" />
-		
-	if (${ceSiNo}) {
-		ceAutomatico.setValue('<s:message code="plugin.itinerarios.tabReglasElevacion.activado" text="**Activado" />');
-	 } else {
-		ceAutomatico.setValue('<s:message code="plugin.itinerarios.tabReglasElevacion.desactivado" text="**Desactivado" />');
-	}		
-	
-	<pfs:hidden name="idEstado" value="${estadoCE.id}"/>	
-	<pfs:defineParameters name="paramEstadoCE" paramId="${itinerario.id}" 
-		idEstado="idEstado"/>
-	<pfs:button name="btAutomaticoCE" caption=""  captioneKey="" >
-			page.webflow({
-				flow: 'plugin/itinerarios/plugin.itinerarios.marcaAutomatico'
-				,params:paramEstadoCE
-			});	
-			
-			if (!refrescoCompletarActivar) {
-				ceAutomatico.setValue('<s:message code="plugin.itinerarios.tabReglasElevacion.activado" text="**Activado" />');
-				btAutomaticoCE.setText('<s:message code="plugin.itinerarios.tabReglasElevacion.desactivar" text="**Desactivar" />');
-				refrescoCompletarActivar = true;
-			 } else {
-				ceAutomatico.setValue('<s:message code="plugin.itinerarios.tabReglasElevacion.desactivado" text="**Desactivado" />');
-				btAutomaticoCE.setText('<s:message code="plugin.itinerarios.tabReglasElevacion.activar" text="**Activar" />');
-				refrescoCompletarActivar = false;
-			}
-	</pfs:button>
-	
-	if (${ceSiNo}){
-		btAutomaticoCE.setText('<s:message code="plugin.itinerarios.tabReglasElevacion.desactivar" text="**Desactivar" />');
-	}else{
-		btAutomaticoCE.setText('<s:message code="plugin.itinerarios.tabReglasElevacion.activar" text="**Activar" />');
-	}
-	
-	<pfs:grid  name="gridReglasCE" 
-		dataStore="reglasElevacionDSCE"
-		columnModel="reglasElevacionCM" 
-		title="**Reglas de Elevación del Estado Completar Expediente" 
-		collapsible="false" 
-		titleKey="plugin.itinerarios.tipoReglasElevacion.reglasCE"
-		bbar="btnAddReglaCE,btEliminarCE"
-		iconCls="icon_elevacion "
-		width="1050"/>
-	
-	gridReglasCE.height = 200;
-		
-	
-	<pfsforms:fieldset caption="**COMPLETAR EXPEDIENTE" name="panelCE" captioneKey="plugin.itinerarios.reglasElevacion.completarExpediente"
-		items="ceAutomatico,btAutomaticoCE,gridReglasCE" width="1000"/>
-	  
-	<%--
-	<pfs:buttonedit name="btModificar" 
-			flow="plugin/itinerarios/plugin.itinerarios.modificaDatosTelecobro"  
-			windowTitleKey="pfsadmin.cabeceraUsuario.modificar" 
-			parameters="modTelecobroParams" 
-			windowTitle="**Modificar telecobro"
-			 />
-	
-	
-	<pfs:panel titleKey="plugin.itinerarios.reglasElevacion.completarExpediente" name="panelCE" columns="1" 
-		collapsible="true" title="**COMPLETAR EXPEDIENTE"  >
-		<pfs:items items="ceAutomatico,gridReglasCE"/>
-	</pfs:panel>
+	<%-- Data Store (Datos del grid) --%>
+	stores[storeName+strSplitterChar+estadosItinerario[i].codigo]= page.getStore({
+																	remoteSort : true
+																	,flow: 'plugin.itinerarios.tipoReglasElevacionData'
+																	,reader: new Ext.data.JsonReader({
+																    	root : 'reglasElevacion'
+																    }, ReglasElevacionRT)
+																});
+								
+	stores[storeName+strSplitterChar+estadosItinerario[i].codigo].webflow(itinerarioParams());										
 
-	<pfs:buttonnew name="btnAddReglaRE"  createTitle="**Añadir regla de elevación" 
-		createTitleKey="plugin.itinerarios.reglasElevacion.nuevaCE" 
-		flow="plugin.itinerarios.nuevaReglaElevacionRE" parameters="itinerarioParams" 
-		onSuccess="recargar"/>
-			--%>
-	<pfs:buttonadd flow="plugin.itinerarios.nuevaReglaElevacionRE" 
-		name="btnAddReglaRE" 
-		windowTitleKey="plugin.itinerarios.reglasElevacion.nuevaCE"
-		windowTitle="**Añadir regla de elevación" 
-		parameters="itinerarioParams"  
-		store_ref="reglasElevacionDSRE"/>
-		
-	<pfs:buttonremove name="btEliminarRE"
-		flow="plugin.itinerarios.bajaReglaElevacionEstado"
-		novalueMsgKey="plugin.itinerarios.reglasElevacion.message.novalue"
-		novalueMsg="**Seleccione una regla de la lista"  
-		paramId="idRegla"  
-		datagrid="gridReglasRE" 
-		parameters="itinerarioParams"/>
-	
-	
-	<%-- <pfsforms:check labelKey="plugin.itinerarios.estados.automatico" label="**Automático" 
-		name="reAutomatico" value="${reSiNo}" readOnly="true"/> --%>
-		
-	<pfsforms:textfield name="reAutomatico" labelKey="plugin.itinerarios.estados.automatico" 
-		label="**Automático" value="" readOnly="true" />
-		
-	if (${reSiNo}) {
-		reAutomatico.setValue('<s:message code="plugin.itinerarios.tabReglasElevacion.activado" text="**Activado" />');
-	 } else {
-		reAutomatico.setValue('<s:message code="plugin.itinerarios.tabReglasElevacion.desactivado" text="**Desactivado" />');
-	}				
-	
-	<pfs:remoteStore name="reglasElevacionDSRE" 
-		resultRootVar="reglasElevacion" 
-		recordType="ReglasElevacionRT" 
-		dataFlow="plugin.itinerarios.tipoReglasElevacionREData"
-		parameters="itinerarioParams"
-		autoload="true"/>
-		
-	<pfs:defineColumnModel name="reglasElevacionCMRE">
-		<pfs:defineHeader captionKey="plugin.itinerarios.reglasElevacion.tipoRegla" sortable="false" 
-			dataIndex="ddTipoReglasElevacion" caption="**Tipo de Regla" firstHeader="true"/>
-		<pfs:defineHeader captionKey="plugin.itinerarios.reglasElevacion.ambitoExpediente" sortable="false" 
-			dataIndex="ambitoExpediente" caption="**Ámbito del Expediente" />
-	</pfs:defineColumnModel>		
-		
-	<pfs:grid name="gridReglasRE" 
-		dataStore="reglasElevacionDSRE"
-		columnModel="reglasElevacionCMRE" 
-		title="**Reglas de Elevación del Estado Revisar Expediente" 
-		collapsible="false" 
-		titleKey="plugin.itinerarios.tipoReglasElevacion.reglasRE"
-		bbar="btnAddReglaRE,btEliminarRE"
-		iconCls="icon_elevacion "
-		width="1050"/>
-	gridReglasRE.height = 200;
-	
-	<pfs:hidden name="idEstadoRE" value="${estadoRE.id}"/>
-	<pfs:defineParameters name="paramEstadoRE" paramId="${itinerario.id}" 
-		idEstado="idEstadoRE"/>
-	<pfs:button name="btAutomaticoRE" caption=""  captioneKey="" >
-			page.webflow({
-				flow: 'plugin/itinerarios/plugin.itinerarios.marcaAutomatico'
-				,params:paramEstadoRE
-			});			
-			
-			if (!refrescoRevisarActivar) {
-				reAutomatico.setValue('<s:message code="plugin.itinerarios.tabReglasElevacion.activado" text="**Activado" />');
-				btAutomaticoRE.setText('<s:message code="plugin.itinerarios.tabReglasElevacion.desactivar" text="**Desactivar" />');
-				refrescoRevisarActivar = true;
-			 } else {
-				reAutomatico.setValue('<s:message code="plugin.itinerarios.tabReglasElevacion.desactivado" text="**Desactivado" />');
-				btAutomaticoRE.setText('<s:message code="plugin.itinerarios.tabReglasElevacion.activar" text="**Activar" />');
-				refrescoRevisarActivar = false;
+	<%-- Generar botones añadir y borrar --%>
+	var botones = new Array();
+
+	botones.push( new Ext.Button({
+			text : '<s:message code="pfs.tags.buttonadd.agregar" text="**Agregar" />'
+			,iconCls : 'icon_mas'
+			,id: btnName+'Add'+strSplitterChar+i.toString()
+			,handler: function(thisButton, eventObject) {
+					var nameSplitted = thisButton.getId().split(strSplitterChar);
+					var w= app.openWindow({
+							flow: 'plugin.itinerarios.nuevaReglaElevacion'
+							,closable: false
+							,width : 700
+							,title : '<s:message code="plugin.itinerarios.reglasElevacion.nuevaCE" text="**Añadir regla de elevación" />'
+							,params: {
+								id:${itinerario.id}
+		    				 			,estadoItinerario : estadosItinerario[nameSplitted[1]].codigo
+		    						}
+						});
+						w.on(app.event.DONE, function(){
+							w.close();
+							var tmpStoreName = storeName+strSplitterChar+estadosItinerario[nameSplitted[1]].codigo;									
+							stores[tmpStoreName].webflow({
+		    				 			idEstado : estadosItinerario[nameSplitted[1]].id
+		    				 			,id:${itinerario.id}
+		    						});	
+						});
+						w.on(app.event.CANCEL, function(){
+							 w.close(); 
+						});
 			}
-	</pfs:button>
+	}));
 	
-	if (${reSiNo}){
-		btAutomaticoRE.setText('<s:message code="plugin.itinerarios.tabReglasElevacion.desactivar" text="**Desactivar" />');
-	}else{
-		btAutomaticoRE.setText('<s:message code="plugin.itinerarios.tabReglasElevacion.activar" text="**Activar" />');
-	}
+	botones.push( new Ext.Button({
+			text : '<s:message code="pfs.tags.buttonremove.borrar" text="**Borrar" />'
+			,id: btnName+btnDeleteName+strSplitterChar+i.toString()
+			,iconCls : 'icon_menos'
+			,handler : function(thisButton, eventObject){
+			var nameSplitted = thisButton.getId().split(strSplitterChar);
+			var tmpGridName = gridName+strSplitterChar+nameSplitted[1];
+			if (Ext.ComponentMgr.get(tmpGridName).getSelectionModel().getCount()>0){
+				Ext.Msg.confirm('<s:message code="pfs.tags.buttonremove.borrar" text="**Borrar" />', '<s:message code="pfs.tags.buttonremove.pregunta" text="**¿Está seguro de borrar?" />', function(btn){
+    				if (btn == 'yes'){
+    					var parms = {
+	      				 			id: ${itinerario.id}
+	      				 			,idEstado: estadosItinerario[nameSplitted[1]].id
+	      						};
+    					parms.idRegla = Ext.ComponentMgr.get(tmpGridName).getSelectionModel().getSelected().get('id');
+    					page.webflow({
+							flow: 'plugin.itinerarios.bajaReglaElevacionEstado'
+							,params: parms
+							,success : function(){ 
+								Ext.ComponentMgr.get(tmpGridName).store.webflow(parms);
+								<c:if test="${onSuccess != null}">${onSuccess}();</c:if>
+							}
+						});
+	    			}
+				});
+			}else{
+					Ext.Msg.alert('<s:message code="pfs.tags.buttonremove.borrar" text="**Borrar" />','<s:message code="plugin.itinerarios.reglasElevacion.message.novalue" text="**Seleccione una función de la lista" />');
+			}
+			}
+		}));
 	
-	<pfs:panel name="panelAutoRE" columns="2" collapsible="" hideBorder="true">
-		<pfs:items items="reAutomatico" width="300"/>
-		<pfs:items items="btAutomaticoRE" width="300"/>
-	</pfs:panel>
 	
-	<pfsforms:fieldset caption="**REVISAR EXPEDIENTE" name="panelRE" captioneKey="plugin.itinerarios.reglasElevacion.revisarExpediente"
-		items="reAutomatico,btAutomaticoRE,gridReglasRE" width="1000"/>
+	<%-- Tabla de reglas de la seccion --%>
+		var elementos = new Array();
+		var titleGrid = "<s:message code="plugin.itinerarios.tipoReglasElevacion.reglasGenerico" text="**Reglas de Elevación del Estado" />";
+		titleGrid += " " + estadosItinerario[i].estadoItinerario;
+		var grid_cfg={
+		title : titleGrid
+		,id : gridName+strSplitterChar+i.toString()
+		,collapsible : false
+		,collapsed: false
+		,titleCollapse : false
+		,stripeRows:true
+		,bbar : botones
+		,height:200
+		,resizable:true
+		,dontResizeHeight:true
+		,cls:'cursor_pointer'
+		,style:'padding: 10px;'
+		,margin: app.contenido.getSize(true).width-1050
+		,iconCls:'icon_elevacion'
+		};
 		
-	
-	<pfs:buttonadd flow="plugin.itinerarios.nuevaReglaElevacionDC" 
-		name="btnAddReglaDC" 
-		windowTitleKey="plugin.itinerarios.reglasElevacion.nuevaCE"
-		windowTitle="**Añadir regla de elevación" 
-		parameters="itinerarioParams"  
-		store_ref="reglasElevacionDSDC"/>
+		var grid = app.crearGrid(stores[storeName+strSplitterChar+estadosItinerario[i].codigo],reglasElevacionCM,grid_cfg);
+
 		
-	<pfs:buttonremove name="btEliminarDC"
-		flow="plugin.itinerarios.bajaReglaElevacionEstado"
-		novalueMsgKey="plugin.itinerarios.reglasElevacion.message.novalue"
-		novalueMsg="**Seleccione una regla de la lista"  
-		paramId="idRegla"  
-		datagrid="gridReglasDC" 
-		parameters="itinerarioParams"/>
-	
+		<%-- Comprobar si es seccion CE o RE para añadir opcion de automatico al FieldSet --%>
+		if(estadosItinerario[i].codigo == estadoCE || estadosItinerario[i].codigo == estadoRE){
 		
-	<pfs:remoteStore name="reglasElevacionDSDC" 
-		resultRootVar="reglasElevacion" 
-		recordType="ReglasElevacionRT" 
-		dataFlow="plugin.itinerarios.tipoReglasElevacionDCData"
-		parameters="itinerarioParams"
-		autoload="true"/>
+			<%-- Etiqueta de texto automatizar --%>
+			var titleTextField = estadosItinerario[i].codigo+"Automatico";
+			var textField = new Ext.ux.form.StaticTextField({
+				id : textFieldName+strSplitterChar+estadosItinerario[i].id
+				,fieldLabel : '<s:message code='plugin.itinerarios.estados.automatico' text='**Automático' />'
+				,value : ''
+				,name : titleTextField
+				,labelStyle:'font-weight:bolder'
+			});
+			if (estadosItinerario[i].automatico) {
+				textField.setValue('<s:message code="plugin.itinerarios.tabReglasElevacion.activado" text="**Activado" />');
+			} else {
+				textField.setValue('<s:message code="plugin.itinerarios.tabReglasElevacion.desactivado" text="**Desactivado" />');
+			}
+			
+			
+			<%-- Boton automatizar --%>
+			var botonAuto = new Ext.Button({
+			text : ''
+			,id: btnAutoName+strSplitterChar+estadosItinerario[i].id+strSplitterChar+i.toString()
+			,handler : function(thisButton, eventObject) {
+			debugger;
+						var nameSplitted = thisButton.getId().split(strSplitterChar);
+						page.webflow({
+							flow: 'plugin/itinerarios/plugin.itinerarios.marcaAutomatico'
+							,params:{
+										idEstado : nameSplitted[1]
+		     						}
+						});
+						if(estadosItinerario[nameSplitted[2]].codigo == estadoCE){
+							if (!refrescoCompletarActivar) {
+								Ext.ComponentMgr.get(textFieldName+strSplitterChar+nameSplitted[1]).setValue('<s:message code="plugin.itinerarios.tabReglasElevacion.activado" text="**Activado" />');
+								thisButton.setText('<s:message code="plugin.itinerarios.tabReglasElevacion.desactivar" text="**Desactivar" />');
+								refrescoCompletarActivar = true;
+							 } else {
+								Ext.ComponentMgr.get(textFieldName+strSplitterChar+nameSplitted[1]).setValue('<s:message code="plugin.itinerarios.tabReglasElevacion.desactivado" text="**Desactivado" />');
+								thisButton.setText('<s:message code="plugin.itinerarios.tabReglasElevacion.activar" text="**Activar" />');
+								refrescoCompletarActivar = false;
+							}
+						}else if(estadosItinerario[nameSplitted[2]].codigo == estadoRE){
+							if (!refrescoRevisarActivar) {
+								Ext.ComponentMgr.get(textFieldName+strSplitterChar+nameSplitted[1]).setValue('<s:message code="plugin.itinerarios.tabReglasElevacion.activado" text="**Activado" />');
+								thisButton.setText('<s:message code="plugin.itinerarios.tabReglasElevacion.desactivar" text="**Desactivar" />');
+								refrescoRevisarActivar = true;
+							 } else {
+								Ext.ComponentMgr.get(textFieldName+strSplitterChar+nameSplitted[1]).setValue('<s:message code="plugin.itinerarios.tabReglasElevacion.desactivado" text="**Desactivado" />');
+								thisButton.setText('<s:message code="plugin.itinerarios.tabReglasElevacion.activar" text="**Activar" />');
+								refrescoRevisarActivar = false;
+							}
+						}
+					  }
+			});
+			if (estadosItinerario[i].automatico){
+				botonAuto.setText('<s:message code="plugin.itinerarios.tabReglasElevacion.desactivar" text="**Desactivar" />');
+			}else{
+				botonAuto.setText('<s:message code="plugin.itinerarios.tabReglasElevacion.activar" text="**Activar" />');
+			}
+			
+			elementos.push(textField);
+			elementos.push(botonAuto);
 		
-	<pfs:defineColumnModel name="reglasElevacionCMDC">
-		<pfs:defineHeader captionKey="plugin.itinerarios.reglasElevacion.tipoRegla" sortable="false" 
-			dataIndex="ddTipoReglasElevacion" caption="**Tipo de Regla" firstHeader="true"/>
-		<pfs:defineHeader captionKey="plugin.itinerarios.reglasElevacion.ambitoExpediente" sortable="false" 
-			dataIndex="ambitoExpediente" caption="**Ámbito del Expediente" />
-	</pfs:defineColumnModel>		
+		}
 		
-	<pfs:grid  name="gridReglasDC" 
-		dataStore="reglasElevacionDSDC"
-		columnModel="reglasElevacionCMDC" 
-		title="**Reglas de Elevación del Estado Decisión de Comité" 
-		collapsible="false" 
-		titleKey="plugin.itinerarios.tipoReglasElevacion.reglasDC"
-		bbar="btnAddReglaDC,btEliminarDC"
-		iconCls="icon_elevacion "
-		width="1050"/>
-	gridReglasDC.height = 200;
+		elementos.push(grid);
+			
+		<%-- Estados de los itinerarios(FieldSets). Mostrar elementos que lo componen --%>
+		var titleFieldset = "<s:message code="plugin.itinerarios.reglasElevacion.estadoGenerico" text="**"/>";
+		titleFieldset += " " + estadosItinerario[i].estadoItinerario.toUpperCase();
+		fieldSets.push(new Ext.form.FieldSet({
+			title: titleFieldset
+			,autoHeight:true
+			//,border:true
+			//,bodyStyle:'padding:5px;cellspacing:10px;'
+			,width : 1000
+			,defaults : {xtype:'panel' ,cellCls : 'vtop',border:true}
+			,items : elementos
+		}));
 	
-	<pfsforms:fieldset caption="**DECISIÓN DE COMITÉ" name="panelDC" captioneKey="plugin.itinerarios.reglasElevacion.decisionComite"
-		items="gridReglasDC" width="1000"/>
-	
-	<pfs:buttonadd flow="plugin.itinerarios.nuevaReglaElevacionFP" 
-		name="btnAddReglaFP" 
-		windowTitleKey="plugin.itinerarios.reglasElevacion.nuevaCE"
-		windowTitle="**Añadir regla de elevación" 
-		parameters="itinerarioParams"  
-		store_ref="reglasElevacionDCFP"/>
-		
-	<pfs:buttonremove name="btEliminarFP"
-		flow="plugin.itinerarios.bajaReglaElevacionEstado"
-		novalueMsgKey="plugin.itinerarios.reglasElevacion.message.novalue"
-		novalueMsg="**Seleccione una regla de la lista"  
-		paramId="idRegla"  
-		datagrid="gridReglasFP" 
-		parameters="itinerarioParams"/>
-		
-	<pfs:remoteStore name="reglasElevacionDCFP" 
-		resultRootVar="reglasElevacion" 
-		recordType="ReglasElevacionRT" 
-		dataFlow="plugin.itinerarios.tipoReglasElevacionFPData"
-		parameters="itinerarioParams"
-		autoload="true"/>
-	
-	
-	<pfs:defineColumnModel name="reglasElevacionDMFP">
-		<pfs:defineHeader captionKey="plugin.itinerarios.reglasElevacion.tipoRegla" sortable="false" 
-			dataIndex="ddTipoReglasElevacion" caption="**Tipo de Regla" firstHeader="true"/>
-		<pfs:defineHeader captionKey="plugin.itinerarios.reglasElevacion.ambitoExpediente" sortable="false" 
-			dataIndex="ambitoExpediente" caption="**Ámbito del Expediente" />
-	</pfs:defineColumnModel>
-	
-	
-	<pfs:grid name="gridReglasFP"
-		dataStore="reglasElevacionDCFP"
-		columnModel="reglasElevacionDMFP"
-		title="**Reglas de Elevación del Estado Formular Propuesta"
-		collapsible="false"
-		titleKey="plugin.itinerarios.tipoReglasElevacion.reglasFP"
-		bbar="btnAddReglaFP,btEliminarFP"
-		iconCls="icon_elevacion"
-		width="1050"/>
-	gridReglasFP.height = 200;
-	
-	<pfsforms:fieldset caption="**FORMALIZAR PROPUESTA" name="panelFP" captioneKey="plugin.itinerarios.reglasElevacion.formularPropuesta"
-		items="gridReglasFP" width="1000"/>
-	
-	
-	<%--
-	<pfs:panel titleKey="plugin.itinerarios.reglasElevacion.revisarExpediente" name="panelRE" columns="1" 
-		collapsible="true" title="**REVISAR EXPEDIENTE"  >
-		<pfs:items items="reAutomatico,gridReglasRE"/>
-	</pfs:panel>
-	 --%>
-</pfslayout:tabpage>
+}
+
+<%-- Cuerpo entero de la Pestaña (tabpage), rellenar con los fieldSets --%>
+var create_#PARENTNAME#_Tab=function(){
+	var panel = new Ext.Panel({
+		title:'<s:message code="plugin.itinerarios.reglasElevacion.titulo" text="**Reglas de elevacion"/>'
+		,autoHeight:true
+		,bodyStyle:'padding: 10px'
+		,items:[fieldSets]
+	});
+	return panel;
+}

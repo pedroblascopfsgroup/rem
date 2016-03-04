@@ -690,7 +690,7 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		procedimientoPco.setTipoProcIniciado(null);
 		procedimientoPco.setNumExpInterno("");
 		procedimientoPco.setNumExpExterno("");
-		procedimientoPco.setNombreExpJudicial(procedimiento.getCodigoProcedimientoEnJuzgado());
+		procedimientoPco.setNombreExpJudicial(procedimiento.getNombreProcedimiento());
 		genericDao.save(ProcedimientoPCO.class, procedimientoPco);
 		List<HistoricoEstadoProcedimientoPCO> estadosPreparacionProc = new ArrayList<HistoricoEstadoProcedimientoPCO>();
 		HistoricoEstadoProcedimientoPCO histEstadoInicial = new HistoricoEstadoProcedimientoPCO();

@@ -240,6 +240,7 @@ public class MEJAcuerdoController {
 		// Obtenemos el tipo de acuerdo para PLAN_PAGO
 		DDTipoAcuerdo tipoAcuerdoPlanPago = genericDao.get(DDTipoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAcuerdo.CODIGO_PLAN_PAGO));
 		DDTipoAcuerdo tipoAcuerdoFondosPropios = genericDao.get(DDTipoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAcuerdo.TIPO_EFECTIVO_FONDOS_PROPIOS));
+		DDTipoAcuerdo tipoAcuerdoRegulParcial = genericDao.get(DDTipoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAcuerdo.TIPO_REGUL_PARCIAL));
 		
 		// Obtenemos la lista de Terminos del acuerdo
 		List<ListadoTerminosAcuerdoDto> listadoTerminosAcuerdo = proxyFactory.proxy(MEJAcuerdoApi.class).obtenerListadoTerminosAcuerdoByAcuId(idAcuerdo);
@@ -254,17 +255,29 @@ public class MEJAcuerdoController {
 		
 		List<String> contratos = new ArrayList<String>(Arrays.asList(contratosIncluidos.split(",")));
 		List<String> fechasPaseMora = new ArrayList<String>();
+		List<String> fechasPaseMoraFormated = new ArrayList<String>();
 		for(String contrat : contratos) {
 			fechasPaseMora.add(mejAcuerdoApi.getFechaPaseMora(Long.valueOf(contrat)));	
 		}
 		
+		
+		for(String fecha : fechasPaseMora){
+			if(fecha == null){
+				fechasPaseMoraFormated.add("0");
+			}else{
+				fechasPaseMoraFormated.add(fecha);
+			}
+		}
+		
 		Comparator<String> comparador = Collections.reverseOrder();
-		Collections.sort(fechasPaseMora, comparador);
+		Collections.sort(fechasPaseMoraFormated, comparador);
+		
 		String fechaPaseMora = fechasPaseMora.get(0); 
 		map.put("idTipoAcuerdoPlanPago", tipoAcuerdoPlanPago.getId());
 		map.put("yaHayPlanPago", yaHayPlanPago);
 		map.put("fechaPaseMora", fechaPaseMora);
 		map.put("idTipoAcuerdoFondosPropios", tipoAcuerdoFondosPropios.getId());
+		map.put("idTipoAcuerdoRegulParcial", tipoAcuerdoRegulParcial.getId());
 		
 		return JSP_ALTA_TERMINO_ACUERDO;
 	}	

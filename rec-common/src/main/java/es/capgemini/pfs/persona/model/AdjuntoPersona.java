@@ -76,6 +76,10 @@ public class AdjuntoPersona implements Serializable, Auditable {
     
 	@Transient
 	private String refCentera;
+	
+	@Transient
+	private String nombreTipoDoc;
+	
 
     /**
      * Constructor vacio.
@@ -252,5 +256,13 @@ public class AdjuntoPersona implements Serializable, Auditable {
 	
 	public void setRefCentera(String refCentera) {
 		this.refCentera = refCentera;
+	}
+	
+	public String getNombreTipoDoc() {
+		return nombreTipoDoc;
+	}
+	
+	public void setNombreTipoDoc(String nombreTipoDoc) {
+		this.nombreTipoDoc = nombreTipoDoc;
 	}
 }

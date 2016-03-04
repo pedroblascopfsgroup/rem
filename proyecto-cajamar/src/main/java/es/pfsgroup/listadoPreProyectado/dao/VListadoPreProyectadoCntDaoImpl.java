@@ -5,15 +5,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.mail.Session;
-
-import org.apache.commons.beanutils.BeanUtils;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
@@ -21,7 +23,6 @@ import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.listadoPreProyectado.api.VListadoPreProyectadoCntDao;
 import es.pfsgroup.listadoPreProyectado.dto.ListadoPreProyectadoDTO;
 import es.pfsgroup.listadoPreProyectado.model.VListadoPreProyectadoCnt;
-import es.capgemini.pfs.users.domain.Usuario;
 
 @Repository("VListadoPreProyectadoCntDao")
 public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoPreProyectadoCnt, Long> implements VListadoPreProyectadoCntDao {
@@ -30,7 +31,7 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 	private StringBuilder construirSql(ListadoPreProyectadoDTO dto) {
 		StringBuilder sb = new StringBuilder();
 		//sb.append("Select distinct c ");
-		sb.append("Select distinct f.cntId, f.contrato, f.expId, f.riesgoTotal, f.deudaIrregular, f.tramo, f.diasVencidos, f.fechaPaseAMoraCnt, f.propuesta, f.estadoGestion, f.fechaPrevReguCnt ");
+		sb.append("Select distinct f.cntId, f.contrato, f.expId, f.riesgoTotal, f.deudaIrregular, f.tramo, f.diasVencidos, f.fechaPaseAMoraCnt, f.propuesta, f.estadoGestion, f.fechaPrevReguCnt, f.nomTitular, f.nifTitular, f.ofiCodigo ");
 		//sb.append("select distinct f ");
 		sb.append(" from VListadoPreProyectadoCnt f ");
 		sb.append(" where 1=1 ");
@@ -178,7 +179,7 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 				sb.append(" and (");
 				for (int i = 0; i < zonasCnt.length; i++) {
 					String zonaCnt = zonasCnt[i];
-					sb.append(" f.zonCodContrato='" + zonaCnt + "' ");
+					sb.append(" f.zonCodContrato LIKE '" + zonaCnt + "%' ");
 					if (i<zonasCnt.length-1) {
 						sb.append(" or ");
 					}
@@ -249,6 +250,31 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 
 	@SuppressWarnings("unchecked")
 	@Override
+	public List<VListadoPreProyectadoCnt> getListadoPreProyectadoCntExp(List<Long> expsId) {
+		ProjectionList select = Projections.projectionList();
+		select.add(Projections.property("f.cntId").as("cntId"));
+		select.add(Projections.property("f.contrato").as("contrato"));
+		select.add(Projections.property("f.expId").as("expId"));
+		select.add(Projections.property("f.riesgoTotal").as("riesgoTotal"));
+		select.add(Projections.property("f.deudaIrregular").as("deudaIrregular"));
+		select.add(Projections.property("f.tramo").as("tramo"));
+		select.add(Projections.property("f.diasVencidos").as("diasVencidos"));
+		select.add(Projections.property("f.fechaPaseAMoraCnt").as("fechaPaseAMoraCnt"));
+		select.add(Projections.property("f.propuesta").as("propuesta"));
+		select.add(Projections.property("f.estadoGestion").as("estadoGestion"));
+		select.add(Projections.property("f.fechaPrevReguCnt").as("fechaPrevReguCnt"));
+
+		Criteria query = getSession().createCriteria(VListadoPreProyectadoCnt.class, "f");
+		query.setProjection(Projections.distinct(select));
+		query.add(Restrictions.in("f.expId", expsId));
+
+		query.setResultTransformer(Transformers.aliasToBean(VListadoPreProyectadoCnt.class));
+		
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
 	public List<VListadoPreProyectadoCnt> getListadoPreProyectadoCntPaginated(ListadoPreProyectadoDTO dto) {
 		//this.getSession().createSQLQuery("{call DBMS_MVIEW.REFRESH('V_LIS_PREPROYECT_CNT')}").executeUpdate();
 		
@@ -285,6 +311,9 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 			cnt.setPropuesta((String) item[8]);
 			cnt.setEstadoGestion((String)item[9]);
 			cnt.setFechaPrevReguCnt((Date) item[10]);
+			cnt.setNomTitular((String) item[11]);
+			cnt.setNifTitular((String) item[12]);
+			cnt.setOfiCodigo((String) item[13]);
 			
 			resultado.add(cnt);
 		}

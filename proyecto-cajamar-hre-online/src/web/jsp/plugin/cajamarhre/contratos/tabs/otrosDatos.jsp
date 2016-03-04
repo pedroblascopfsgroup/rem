@@ -22,13 +22,20 @@
  	var odCharExtra9 = label('odCharExtra9','<s:message code="contrato.consulta.tabOtrosDatos.charExtra9" text="**Estado expediente GESDACI"/>');
  	var odCharExtra10 = label('odCharExtra10','<s:message code="contrato.consulta.tabOtrosDatos.charExtra10" text="**Estado del Contrato Cajamar"/>');
  	var odFlagExtra4 = label('odFlagExtra4','<s:message code="contrato.consulta.tabOtrosDatos.flagExtra4" text="**Operación Reestructurada"/>');
+ 	var odFlagExtra5 = label('odFlagExtra5','<s:message code="contrato.consulta.tabOtrosDatos.flagExtra5" text="**Licencia Primera Ocupaci&oacute;n"/>');
+ 	var odFlagExtra6 = label('odFlagExtra6','<s:message code="contrato.consulta.tabOtrosDatos.flagExtra6" text="**Certificado fin obra"/>');
  	var odDateExtra2 = label('odDateExtra2','<s:message code="contrato.consulta.tabOtrosDatos.dateExtra2" text="**Fecha de Entrada Actual en Gestión especial"/>');
  	var odDateExtra3 = label('odDateExtra3','<s:message code="contrato.consulta.tabOtrosDatos.dateExtra3" text="**Fecha Próxima Amortización"/>');
+ 	var odDateExtra9 = label('odDateExtra9','<s:message code="contrato.consulta.tabOtrosDatos.dateExtra9" text="**Fecha Próxima Revisión"/>');
  	var odDateExtra4 = label('odDateExtra4','<s:message code="contrato.consulta.tabOtrosDatos.dateExtra4" text="**Fecha Fin de la Carencia"/>');
- 	var odDateExtra5 = label('odDateExtra5','<s:message code="contrato.consulta.tabOtrosDatos.dateExtra5" text="**Fecha Próxima Revisión"/>');
- 	var odDateExtra6 = label('odDateExtra6','<s:message code="contrato.consulta.tabOtrosDatos.dateExtra6" text="**Fecha Test de Cumplimiento"/>');
+ 	var odDateExtra5 = label('odDateExtra5','<s:message code="contrato.consulta.tabOtrosDatos.dateExtra5" text="**Fecha Test de Cumplimiento"/>');
+ 	var odDateExtra6 = label('odDateExtra6','<s:message code="contrato.consulta.tabOtrosDatos.dateExtra6" text="**Fecha de dotaci&oacute;n de la provisi&oacute;n"/>');
+ 	var odDateExtra7 = label('odDateExtra7','<s:message code="contrato.consulta.tabOtrosDatos.dateExtra7" text="**Fecha orden"/>');
  	var odNumExtra4 = label('odNumExtra4','<s:message code="contrato.consulta.tabOtrosDatos.numExtra4" text="**Número de Expediente GESDACI"/>');
  	var odNumExtra5 = label('odNumExtra5','<s:message code="contrato.consulta.tabOtrosDatos.numExtra5" text="**Importe Retenciones"/>');
+ 	var odNumExtra6 = label('odNumExtra6','<s:message code="contrato.consulta.tabOtrosDatos.numExtra6" text="**C&oacute;digo orden"/>');
+ 	var odNumExtra7 = label('odNumExtra7','<s:message code="contrato.consulta.tabOtrosDatos.numExtra7" text="**Porcentaje Grado de Ejecuci&oacute;n de Obra"/>');
+ 	var odNumExtra8 = label('odNumExtra8','<s:message code="contrato.consulta.tabOtrosDatos.numExtra8" text="**Porcentaje Ventas Promoci&oacute;n"/>');
  	
  	//otros
  	var riesgoOperacional = label('riesgoOperacional','<s:message code="contrato.consulta.tabOtrosDatos.riesgoOperacional" text="**Riesgo Operacional"/>');
@@ -44,9 +51,16 @@
  	odDateExtra3.autoHeight = true;
  	odDateExtra4.autoHeight = true;
  	odDateExtra5.autoHeight = true;
- 	odDateExtra6.autoHeight = true;
+ 	odDateExtra9.autoHeight = true;
  	odNumExtra4.autoHeight = true;
  	odNumExtra5.autoHeight = true;
+ 	odNumExtra6.autoHeight = true;
+ 	odNumExtra7.autoHeight = true;
+ 	odNumExtra8.autoHeight = true;
+ 	odDateExtra6.autoHeight = true;
+ 	odDateExtra7.autoHeight = true;
+ 	odFlagExtra5.autoHeight = true;
+ 	odFlagExtra6.autoHeight = true;
  	
  	riesgoOperacional.autoHeight = true;
  	tipoVencido.autoHeight = true;
@@ -92,8 +106,8 @@
 		,layoutConfig:{columns:2}
 		,title:''
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:400, style:'padding:10px; margin:10px'}
-		,items : [{items:[contratoNivel2, odCharExtra9, odFlagExtra4, odDateExtra3, odDateExtra4, odNumExtra4,riesgoOperacional,tipoVencido]}
-				, {items:[odCharExtra7, odCharExtra10, odDateExtra2, odDateExtra5, odDateExtra6, odNumExtra5,tramoPrevio]}]
+		,items : [{items:[contratoNivel2, odCharExtra9, odFlagExtra4, odDateExtra3, odDateExtra4,odDateExtra6, odNumExtra4, odNumExtra6, odNumExtra8, riesgoOperacional,tipoVencido]}
+				, {items:[odCharExtra7, odCharExtra10, odFlagExtra5, odFlagExtra6, odDateExtra2, odDateExtra9, odDateExtra5, odDateExtra7, odNumExtra5, odNumExtra7, tramoPrevio]}]
 	});
 	  
 	//Panel propiamente dicho...
@@ -123,14 +137,45 @@
   		entidad.setLabel('odCharExtra7', d.charextra7);
   		entidad.setLabel('odCharExtra9', d.charextra9);
   		entidad.setLabel('odCharExtra10', d.charextra10);
-  		entidad.setLabel('odFlagExtra4', d.flagextra4);
+  		if(d.flagextra4 != null && d.flagextra4 != ''){
+  			if(d.flagextra4 != 0){
+  				entidad.setLabel('odFlagExtra4', 'SI');
+  			}else{
+  				entidad.setLabel('odFlagExtra4', 'NO');
+  			}
+  		}else{
+  			entidad.setLabel('odFlagExtra4', d.flagextra4);
+  		}
+  		if(d.flagextra5 != null && d.flagextra5 != ''){
+  			if(d.flagextra5 != 0){
+  				entidad.setLabel('odFlagExtra5', 'SI');
+  			}else{
+  				entidad.setLabel('odFlagExtra5', 'NO Promotores');
+  			}
+  		}else{
+  			entidad.setLabel('odFlagExtra5', d.flagextra5);
+  		}
+  		if(d.flagextra6 != null && d.flagextra6 != ''){
+  			if(d.flagextra6 != 0){
+  				entidad.setLabel('odFlagExtra6', 'SI');
+  			}else{
+  				entidad.setLabel('odFlagExtra6', 'NO Promotores');
+  			}
+  		}else{
+  			entidad.setLabel('odFlagExtra6', d.flagextra6);
+  		}		
   		entidad.setLabel('odDateExtra2', d.dateextra2);
   		entidad.setLabel('odDateExtra3', d.dateextra3);
+  		entidad.setLabel('odDateExtra9', d.dateextra9);
   		entidad.setLabel('odDateExtra4', d.dateextra4);
   		entidad.setLabel('odDateExtra5', d.dateextra5);
   		entidad.setLabel('odDateExtra6', d.dateextra6);
+  		entidad.setLabel('odDateExtra7', d.dateextra7);
   		entidad.setLabel('odNumExtra4', d.numextra4);
   		entidad.setLabel('odNumExtra5', d.numextra5);
+  		entidad.setLabel('odNumExtra6', d.numextra6);
+  		entidad.setLabel('odNumExtra7', d.numextra7);
+  		entidad.setLabel('odNumExtra8', d.numextra8);
   		
   		entidad.setLabel('riesgoOperacional', d.descripcionRiesgo);
   		entidad.setLabel('tipoVencido', d.tipoVencido);

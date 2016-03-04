@@ -49,7 +49,6 @@ import es.pfsgroup.recovery.adjunto.AdjuntoAssembler;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 import es.pfsgroup.recovery.gestordocumental.dto.AdjuntoGridDto;
-import es.pfsgroup.tipoFicheroAdjunto.MapeoTipoFicheroAdjunto;
 
 @Service("adjuntoManagerHayaImpl")
 public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
@@ -415,8 +414,8 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	
 	private FileItem generaFileItem(String nombreFichero, String contenido, String extension) throws Throwable {
 		logger.info("Recupera documento generaFileItem...");
-		String nomFichero = nombreFichero.substring(0, nombreFichero.indexOf("."));
-		String ext = nombreFichero.substring(nombreFichero.indexOf(".")+1);
+		String nomFichero = "nomFichero";
+		String ext = nombreFichero.substring(nombreFichero.lastIndexOf(".")+1);
 		
 		File fileSalidaTemporal = null;
 		FileItem resultado = null;
@@ -427,7 +426,11 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 		
 		resultado = new FileItem();
 		resultado.setFileName(nomFichero + (new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + "."+ext);
-		resultado.setContentType(extension);
+		if(Checks.esNulo(extension)) {
+			resultado.setContentType("");			
+		}else{
+			resultado.setContentType(extension);
+		}
 		resultado.setFile(fileSalidaTemporal);
         OutputStream outputStream = resultado.getOutputStream(); // Last step is to get FileItem's output stream, and write your inputStream in it. This is the way to write to your FileItem.
         int read = 0;

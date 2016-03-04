@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:p="http://www.springframework.org/schema/p" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+    default-autowire="byName" default-merge="true">
+
+    <bean id="procesoCreacionExpedientesRecuperacionesETLJob" parent="batch.simpleJob"
+        scope="prototype">
+        <property name="steps">
+            <list>
+                <bean parent="batch.taskletStep" scope="prototype">
+                    <property name="tasklet">
+                        <bean parent="batch.task.MultipleSqlScript" p:dataSource-ref="entityDataSource">
+                            <property name="scripts">
+                                <!-- Lista de scripts SQL ha ejecutar -->
+                                <list>
+                                    <!-- PASO 1 - PARTE COMUN A TODOS LOS EXPEDIENTES. FUSIONAR EN EL FUTURO TAMBIEN RECOBRO AGENCIAS sqlRecobroPreparacionRecobro-->
+                                    <map>
+                                        <entry key="sql">
+                                            <bean parent="sql"
+                                                p:key="comunes.idxdrop.PreparaGeneracionExpedientes.${entity.dialect}" />
+                                        </entry>
+                                        <entry key="message" value="comunes.idxdrop.PreparaGeneracionExpedientes" />
+                                        <entry key="severidad" value="error" />
+                                    </map>
+                                    <map>
+                                        <entry key="sql">
+                                            <bean parent="sql"
+                                                p:key="comunes.truncate.PreparaGeneracionExpedientes.${entity.dialect}" />
+                                        </entry>
+                                        <entry key="message" value="comunes.truncate.PreparaGeneracionExpedientes" />
+                                        <entry key="severidad" value="error" />
+                                    </map>
+                                    <map>
+                                        <entry key="sql">
+                                            <bean parent="sql"
+                                                p:key="comunes.create.PreparaGeneracionExpedientes.${entity.dialect}" />
+                                        </entry>
+                                        <entry key="message" value="recobro.create.PreparaGeneracionExpedientes" />
+                                        <entry key="severidad" value="error" />
+                                    </map>
+                                    <map>
+                                        <entry key="sql">
+                                            <bean parent="sql"
+                                                p:key="comunes.idxcreate.PreparaGeneracionExpedientes.${entity.dialect}" />
+                                        </entry>
+                                        <entry key="message" value="comunes.idxcreate.PreparaGeneracionExpedientes" />
+                                        <entry key="severidad" value="error" />
+                                    </map>
+                                    <!-- PASO 2 - PARTE COMUN A SEGUIMIENTO Y VENCIDOS -->
+                                    <map>
+                                        <entry key="sql">
+                                            <bean parent="sql"
+                                                p:key="comunes.idxdrop.jobGeneracionExpedientes.${entity.dialect}" />
+                                        </entry>
+                                        <entry key="message" value="comunes.idxdrop.jobGeneracionExpedientes" />
+                                        <entry key="severidad" value="error" />
+                                    </map>
+                                    <map>
+                                        <entry key="sql">
+                                            <bean parent="sql"
+                                                p:key="comunes.truncate.jobGeneracionExpedientes.${entity.dialect}" />
+                                        </entry>
+                                        <entry key="message" value="comunes.truncate.jobGeneracionExpedientes" />
+                                        <entry key="severidad" value="error" />
+                                    </map>
+                                    <map>
+                                        <entry key="sql">
+                                            <bean parent="sql"
+                                                p:key="comunes.create.jobGeneracionExpedientes.${entity.dialect}" />
+                                        </entry>
+                                        <entry key="message" value="comunes.create.jobGeneracionExpedientes" />
+                                        <entry key="severidad" value="error" />
+                                    </map>
+                                    <map>
+                                        <entry key="sql">
+                                            <bean parent="sql"
+                                                p:key="comunes.idxcreate.jobGeneracionExpedientes.${entity.dialect}" />
+                                        </entry>
+                                        <entry key="message" value="comunes.idxcreate.jobGeneracionExpedientes" />
+                                        <entry key="severidad" value="error" />
+                                    </map>
+                                    <!-- PASO 3 - GENERAMOS EXPEDIENTES DE SEGUIMIENTO -->
+                                    <map>
+                                        <entry key="sql">
+                                            <bean parent="sql"
+                                                p:key="seguimiento.truncate.GeneracionExpedientes.${entity.dialect}" />
+                                        </entry>
+                                        <entry key="message" value="seguimiento.truncate.GeneracionExpedientes" />
+                                        <entry key="severidad" value="error" />
+                                    </map>
+                                    <map>
+                                        <entry key="sql">
+                                            <bean parent="sql"
+                                                p:key="seguimiento.create.GeneracionExpedientes.${entity.dialect}" />
+                                        </entry>
+                                        <entry key="message" value="seguimiento.create.GeneracionExpedientes" />
+                                        <entry key="severidad" value="error" />
+                                    </map>
+
+                                    <!-- PASO 4 - GENERAMOS EXPEDIENTES DE RECUPERACION -->
+                                    <map>
+                                        <entry key="sql">
+                                            <bean parent="sql"
+                                                p:key="recuperacion.truncate.GeneracionExpedientes.${entity.dialect}" />
+                                        </entry>
+                                        <entry key="message" value="recuperacion.truncate.GeneracionExpedientes" />
+                                        <entry key="severidad" value="error" />
+                                    </map>
+                                    <map>
+                                        <entry key="sql">
+                                            <bean parent="sql"
+                                                p:key="recuperacion.create.GeneracionExpedientes.${entity.dialect}" />
+                                        </entry>
+                                        <entry key="message" value="recuperacion.create.GeneracionExpedientes" />
+                                        <entry key="severidad" value="error" />
+                                    </map>
+                                    <!-- PASO 5 - PERSISTENCIA DE EXPEDIENTES -->
+                                    <map>
+                                        <entry key="sql">
+                                            <bean parent="sql"
+                                                p:key="vencidos.persistencia.expedientes.${entity.dialect}" />
+                                        </entry>
+                                        <entry key="message" value="vencidos.persistencia.expedientes" />
+                                        <entry key="severidad" value="error" />
+                                    </map>
+                                    <map>
+                                        <entry key="sql">
+                                            <bean parent="sql"
+                                                p:key="vencidos.persistencia.clientes.${entity.dialect}" />
+                                        </entry>
+                                        <entry key="message" value="vencidos.persistencia.clientes" />
+                                        <entry key="severidad" value="error" />
+                                    </map>
+                                    <map>
+                                        <entry key="sql">
+                                            <bean parent="sql"
+                                                p:key="vencidos.persistencia.politicas.${entity.dialect}" />
+                                        </entry>
+                                        <entry key="message" value="vencidos.persistencia.politicas" />
+                                        <entry key="severidad" value="error" />
+                                    </map>
+                                    <map>
+                                        <entry key="sql">
+                                            <bean parent="sql"
+                                                p:key="vencidos.persistencia.expedientesbpm.${entity.dialect}" />
+                                        </entry>
+                                        <entry key="message" value="vencidos.persistencia.expedientesbpm" />
+                                        <entry key="severidad" value="error" />
+                                    </map>
+                                </list>
+                            </property>
+                        </bean>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+</beans>

@@ -60,7 +60,7 @@
 		,editable: false
 		,emptyText:'Seleccionar'
 		,triggerAction: 'all'
-		,fieldLabel: (ambito!='asunto') ? '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.flujo.tipoTermino" text="**Soluci�n Propuesta" />':'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.flujo.tipoAcuerdo" text="**Tipo termino" />'
+		,fieldLabel: (ambito!='asunto') ? '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.flujo.tipoTermino" text="**Solución Propuesta" />':'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.flujo.tipoAcuerdo" text="**Tipo termino" />'
 		,labelStyle: 'width:150px'
 		,width: 150		
 	});
@@ -220,7 +220,7 @@
 		,editable: false
 		,emptyText:'Seleccionar'
 		,triggerAction: 'all'
-		,fieldLabel: (ambito!='asunto') ? '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.flujo.subtipoTermino" text="**Subtipo Soluci� Propuesta" />' :'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.flujo.subtipoAcuerdo" text="**Subtipo termino" />'
+		,fieldLabel: (ambito!='asunto') ? '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.flujo.subtipoTermino" text="**Subtipo Solución Propuesta" />' :'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.flujo.subtipoAcuerdo" text="**Subtipo termino" />'
 		,labelStyle: 'width:150px'
 		,width: 150				
 	});
@@ -287,7 +287,7 @@
 	});	
 	
 	var flujoFieldSetContenedor = new Ext.form.FieldSet({
-		title:'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.flujo.titulo" text="**Flujo por soluci�n"/>' 
+		title:'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.flujo.titulo" text="**Flujo por solución"/>' 
 		,border:true
 		,items: [flujoFieldSet]
 	});	
@@ -363,7 +363,8 @@
 					return false;
        			}
        			
-       			<%-- if(comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && dataSolucionPrevista!=null &&  dateSolucionPrevista > datePaseMora) {
+       			<%--CPI - CMREC-2835 (Se comenta porque aún no tenemos claro de dnde obtener la fecha mora) 
+       			if(comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && dataSolucionPrevista!=null &&  dateSolucionPrevista > datePaseMora) {
 	       			Ext.Msg.show({
 				   		title:'Aviso',
 				   		msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.fondosPropios" text="**Fecha solicitud prevista debe ser menor a la fecha de pase a mora." />',
@@ -492,11 +493,11 @@
 				
 	config.store = bienesStore;	
 	
-	var comboBienes = app.creaDblSelect(null,'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.bienes.combo" text="**Bienes del asunto/Bienes para daci�n" />',config); 
+	var comboBienes = app.creaDblSelect(null,'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.bienes.combo" text="**Bienes del asunto/Bienes para dación" />',config); 
 	
 
 	var bienesFieldSet = new Ext.form.FieldSet({
-		title:'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.bienes.titulo" text="**Bienes de la propuesta y garant�as seleccionadas"/>'
+		title:'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.bienes.titulo" text="**Bienes de la propuesta y garantías seleccionadas"/>'
 		,layout:'form'
 		,autoWidth: true
 		,autoHeight: true
@@ -594,4 +595,5 @@
 
 
 </fwk:page>  
+
 

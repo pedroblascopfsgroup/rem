@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=Miguel.Sanchez@pfsgroup.es
+--## AUTOR=Miguel.Sanchez
 --## FECHA_CREACION=20160304
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2

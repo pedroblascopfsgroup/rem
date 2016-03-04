@@ -1,9 +1,9 @@
 --/*
 --##########################################
 --## AUTOR=LUIS RUIZ
---## FECHA_CREACION=20160218
+--## FECHA_CREACION=20160304
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=9.1.19
+--## VERSION_ARTEFACTO=9.1.37
 --## INCIDENCIA_LINK=PRODUCTO-673
 --## PRODUCTO=SI
 --##
@@ -37,7 +37,7 @@ BEGIN
             ( CNT_ID NUMBER(16) not null
             , OFI_ID NUMBER(16) not null
             , CNT_RIESGO NUMBER(14,2)
-            , POS_VIVA_VENCIDA NUMBER(14,2)
+            , IMP_PIVOTE NUMBER(14,2)
             ) NOLOGGING';
 
   IF V_EXISTE = 0 THEN

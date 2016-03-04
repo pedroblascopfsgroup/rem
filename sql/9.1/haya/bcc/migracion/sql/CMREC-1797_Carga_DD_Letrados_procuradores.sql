@@ -1479,7 +1479,7 @@ BEGIN
 
 	-- Si no existe --> INSERT
        IF v_column_count = 0 THEN
-	   DBMS_OUTPUT.PUT_LINE('[INFO] Insertando - DES_DESPACHO_EXTERNO ' ||  V_TMP_LET(1));
+		DBMS_OUTPUT.PUT_LINE('[INFO] Insertando - DES_DESPACHO_EXTERNO ' ||  V_TMP_LET(1));
 
            V_MSQL := 'SELECT '||V_ESQUEMA||'.S_DES_DESPACHO_EXTERNO.NEXTVAL FROM DUAL';
            EXECUTE IMMEDIATE V_MSQL INTO V_ENTIDAD_ID;
@@ -1489,21 +1489,37 @@ BEGIN
                               ' VALUES ('||  V_ENTIDAD_ID || ','''||V_TMP_LET(1)||''','''||SUBSTR(V_TMP_LET(2),1,100)||''',
                                 0,'''||V_USUARIO_CREAR||''',SYSDATE,0,' ||
                                ' (SELECT max(zon_id) FROM '||V_ESQUEMA||'.ZON_ZONIFICACION WHERE ZON_COD = ''01''),' ||
-                               ' (SELECT DD_TDE_ID FROM '||V_ESQUEMA_MASTER||'.DD_TDE_TIPO_DESPACHO WHERE DD_TDE_CODIGO = ''DLETR''))';
-    EXECUTE IMMEDIATE V_MSQL;
+                               ' (SELECT DD_TDE_ID FROM '||V_ESQUEMA_MASTER||'.DD_TDE_TIPO_DESPACHO WHERE DD_TDE_CODIGO = ''GEXT''))';
+		EXECUTE IMMEDIATE V_MSQL;
+		--le calzamos el Grupo
+		DBMS_OUTPUT.PUT_LINE('[INFO] Insertando - GRUPO DE ' ||  V_TMP_LET(1));
+		V_MSQL := 'INSERT INTO '||V_ESQUEMA_MASTER||'.usu_usuarios(usu_id,entidad_id,usu_username,usu_password,usu_nombre,usu_externo,usu_grupo,usuariocrear,fechacrear) VALUES('||V_ESQUEMA_MASTER||'.s_usu_usuarios.nextval,' ||
+			'(SELECT ENT.ID FROM '||V_ESQUEMA_MASTER||'.ENTIDAD ENT WHERE ENT.DESCRIPCION = ''CAJAMAR''),' ||
+			'''GRUP' || V_TMP_LET(1) || ''',''CAJAMAR'',''GRUDES-' || SUBSTR(V_TMP_LET(2),1,40) || ''',1,1,'''||V_USUARIO_CREAR||''', sysdate)'			
+	
+		;
+		EXECUTE IMMEDIATE V_MSQL;
+--le relacionamos despacho y grupo
+		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS (USD_ID,USU_ID,DES_ID,USD_GESTOR_DEFECTO,USD_SUPERVISOR,USUARIOCREAR,FECHACREAR) VALUES ( '||V_ESQUEMA||'.s_usd_usuarios_despachos.nextval,' ||
+			'(SELECT USU_ID FROM '||V_ESQUEMA_MASTER||'.USU_USUARIOS grupo WHERE grupo.USU_USERNAME =''GRUP' || V_TMP_LET(1) || '''),' ||
+			'(SELECT DES_ID FROM '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO despa WHERE despa.DES_CODIGO='''||V_TMP_LET(1)||''' ),' ||
+			'1,0, '''||V_USUARIO_CREAR||''', sysdate)'
+		;
+		EXECUTE IMMEDIATE V_MSQL;		
 	-- Si existe --> UPDATE
 	ELSE
-     
+		DBMS_OUTPUT.PUT_LINE('[INFO] No tocamos ya existe - DES_DESPACHO_EXTERNO ' ||  V_TMP_LET(1) || '-' || V_TMP_LET(2)) ;
+	 /*
 	   DBMS_OUTPUT.PUT_LINE('[INFO] Updateando - DES_DESPACHO_EXTERNO ' ||  V_TMP_LET(1) || '-' || V_TMP_LET(2)) ;
            V_MSQL := 'UPDATE '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO
                       SET  DES_CODIGO = '''||V_TMP_LET(1)||'''
                          , DES_DESPACHO =  ''' ||SUBSTR(V_TMP_LET(2),1,100)|| '''
                          , ZON_ID =  (SELECT max(zon_id) FROM '||V_ESQUEMA||'.ZON_ZONIFICACION WHERE ZON_COD = ''01'')' || 
-                        ', DD_TDE_ID =  (SELECT DD_TDE_ID FROM '||V_ESQUEMA_MASTER||'.DD_TDE_TIPO_DESPACHO WHERE DD_TDE_CODIGO = ''DLETR'')' || 
+                        ', DD_TDE_ID =  (SELECT DD_TDE_ID FROM '||V_ESQUEMA_MASTER||'.DD_TDE_TIPO_DESPACHO WHERE DD_TDE_CODIGO = ''GEXT'')' || 
                         ' WHERE DES_CODIGO = ''' || V_TMP_LET(1) || '''' ;
                       
   
-	   EXECUTE IMMEDIATE V_MSQL;  
+	   EXECUTE IMMEDIATE V_MSQL; */ 
 	END IF;
   
 END LOOP; 
@@ -1536,11 +1552,38 @@ END LOOP;
                               ' VALUES ('||  V_ENTIDAD_ID || ','''||V_TMP_PROC(1)||''','''||SUBSTR(V_TMP_PROC(2),1,100)||''',
                                 0,'''||V_USUARIO_CREAR||''',SYSDATE,0,' ||
                                ' (SELECT max(zon_id) FROM '||V_ESQUEMA||'.ZON_ZONIFICACION WHERE ZON_COD = ''01''),' ||
-                               ' (SELECT DD_TDE_ID FROM '||V_ESQUEMA_MASTER||'.DD_TDE_TIPO_DESPACHO WHERE DD_TDE_CODIGO = ''DLETR''))';
-    EXECUTE IMMEDIATE V_MSQL;
+                               ' (SELECT DD_TDE_ID FROM '||V_ESQUEMA_MASTER||'.DD_TDE_TIPO_DESPACHO WHERE DD_TDE_CODIGO = ''2''))';
+			EXECUTE IMMEDIATE V_MSQL;
+  
+  	  V_MSQL := 'SELECT COUNT(1) FROM ' || V_ESQUEMA_MASTER || '.usu_usuarios WHERE usu_username ='''  || V_TMP_PROC(1) || '''';
+      EXECUTE IMMEDIATE V_MSQL INTO v_column_count;
+      IF v_column_count = 0 THEN
+			--le calzamos el Grupo
+				DBMS_OUTPUT.PUT_LINE('[INFO] Insertando - GRUPO DE ' ||  V_TMP_PROC(1));
+				V_MSQL := 'INSERT INTO '||V_ESQUEMA_MASTER||'.usu_usuarios(usu_id,entidad_id,usu_username,usu_password,usu_nombre,usu_externo,usu_grupo,usuariocrear,fechacrear) VALUES('||V_ESQUEMA_MASTER||'.s_usu_usuarios.nextval,' ||
+						'(SELECT ENT.ID FROM '||V_ESQUEMA_MASTER||'.ENTIDAD ENT WHERE ENT.DESCRIPCION = ''CAJAMAR''),' ||
+						'''GRUP' || V_TMP_PROC(1) || ''',' ||
+						'''CAJAMAR'',''GRUPROC-' || SUBSTR(V_TMP_PROC(2),1,40) || ''',1,1,'''||V_USUARIO_CREAR||''', sysdate)'			
+				
+				;
+			EXECUTE IMMEDIATE V_MSQL;
+      ELSE
+        DBMS_OUTPUT.PUT_LINE('[INFO] No tocamos ya existe - Grupo ' ||  V_TMP_PROC(1) || '-' || V_TMP_PROC(2)) ;
+      END IF;
+  
+  
+  		--le relacionamos despacho y grupo
+				V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS (USD_ID,USU_ID,DES_ID,USD_GESTOR_DEFECTO,USD_SUPERVISOR,USUARIOCREAR,FECHACREAR) VALUES ( '||V_ESQUEMA||'.s_usd_usuarios_despachos.nextval,' ||
+					'(SELECT USU_ID FROM '||V_ESQUEMA_MASTER||'.USU_USUARIOS grupo WHERE grupo.USU_USERNAME =''GRUP' || V_TMP_PROC(1) || '''),' ||
+					'(SELECT DES_ID FROM '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO despa WHERE despa.DES_CODIGO='''||V_TMP_PROC(1)||''' ),' ||
+					'1,0, '''||V_USUARIO_CREAR||''', sysdate)'
+				;
+				EXECUTE IMMEDIATE V_MSQL;
+	
 	-- Si existe --> UPDATE
 	ELSE
-     
+		DBMS_OUTPUT.PUT_LINE('[INFO] No tocamos ya existe - DES_DESPACHO_EXTERNO ' ||  V_TMP_PROC(1) || '-' || V_TMP_PROC(2)) ;
+		/*
 	   DBMS_OUTPUT.PUT_LINE('[INFO] Updateando - DES_DESPACHO_EXTERNO ' ||  V_TMP_PROC(1) || '-' || V_TMP_PROC(2)) ;
            V_MSQL := 'UPDATE '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO
                       SET  DES_CODIGO = '''||V_TMP_PROC(1)||'''
@@ -1551,6 +1594,7 @@ END LOOP;
                       
   
 	   EXECUTE IMMEDIATE V_MSQL;  
+	   */
 	END IF;
   
 END LOOP; 

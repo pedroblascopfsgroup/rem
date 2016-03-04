@@ -26,33 +26,34 @@ DECLARE
   
   
 V_GAA T_ARRAY_GAA := T_ARRAY_GAA(
-         T_GAA('GRUPO-Despacho Dirección recuperaciones','DRECU','Despacho Dirección recuperaciones')
-       , T_GAA('GRUPO-Despacho Gestor admisión','CJ-GAREO','Despacho Gestor admisión')
-       , T_GAA('GRUPO-Despacho Gestor análisis estudio','GAEST','Despacho Gestor análisis estudio')
-       , T_GAA('GRUPO-Despacho Gestor Asesoría Fiscal','GAFIS','Despacho Gestor Asesoría Fiscal')
-       , T_GAA('GRUPO-Despacho Gestor Asesoría jurídica','GAJUR','Despacho Gestor Asesoría jurídica')
-       , T_GAA('GRUPO-Despacho Gestor contabilidad','GCON','Despacho Gestor contabilidad')       
-       , T_GAA('GRUPO-Despacho Gestor contencioso gestión','GCONGE','Despacho Gestor contencioso gestión')
-       , T_GAA('GRUPO-Despacho Gestor contencioso procesal','GCONPR','Despacho Gestor contencioso procesal')       
-       , T_GAA('GRUPO-Despacho Gestor de gestión documentario','GGESDOC','Despacho Gestor de gestión documentario')      
-       , T_GAA('GRUPO-Despacho Gestor HRE gestión llaves','CJ-GESTLLA','Despacho Gestor HRE gestión llaves')
-       , T_GAA('GRUPO-Despacho Supervisor admisión','CJ-SAREO','Despacho Supervisor admisión')
-       , T_GAA('GRUPO-Despacho Supervisor análisis estudio','SAEST','Despacho Supervisor análisis estudio')
-       , T_GAA('GRUPO-Despacho Supervisor Asesoría Fiscal','CJ-SFIS','Despacho Supervisor Asesoría Fiscal')
-       , T_GAA('GRUPO-Despacho Supervisor Asesoría jurídica','SAJUR','Despacho Supervisor Asesoría jurídica')
-       , T_GAA('GRUPO-Despacho Supervisor contabilidad','CJ-SCON','Despacho Supervisor contabilidad')
-       , T_GAA('GRUPO-Despacho Supervisor contencioso','SUCONT','Despacho Supervisor contencioso')
-       , T_GAA('GRUPO-Despacho Supervisor contencioso gestión','SUP','Despacho Supervisor contencioso gestión')
-       , T_GAA('GRUPO-Despacho Supervisor contencioso procesal','SUCONPR','Despacho Supervisor contencioso procesal')       
-       , T_GAA('GRUPO-Despacho Supervisor de gestión documentario','SGESDOC','Despacho Supervisor de gestión documentario')
-       , T_GAA('GRUPO-Despacho Supervisor HRE gestión llaves','SPGL','Despacho Supervisor HRE gestión llaves')
-       , T_GAA('GRUPO-Despacho Supervisor contenciosoGestNiv2','SUCONGEN2','Despacho Supervisor contencioso gestión nivel 2')
-       , T_GAA('GRUPO-Despacho Gestor control gestión HRE','GCTRGE','Despacho Gestor control gestión HRE')
-       , T_GAA('GRUPO-Despacho Supervisor control gestión HRE','SCTRGE','Despacho Supervisor control gestión HRE')  
-       , T_GAA('GRUPO-Supervisor expedientes judiciales','SUP_PCO','Supervisor expedientes judiciales')  
-       , T_GAA('GRUPO-Precontencioso - Gestor de liquidación','CM_GL_PCO','Precontencioso - Gestor de liquidación')  
-       , T_GAA('GRUPO-Precontencioso - Gestor de documentación','CM_GD_PCO','Precontencioso - Gestor de documentación')  
-       , T_GAA('GRUPO-Precontencioso - Gestor de estudio','CM_GE_PCO','Precontencioso - Gestor de estudio')  
+					T_GAA('GRUPO-D-DRECU','DRECU','D-DRECU')
+					,T_GAA('GRUPO-D-CJ-GAREO','CJ-GAREO','D-CJ-GAREO')
+					,T_GAA('GRUPO-D-GAEST','GAEST','D-GAEST')
+					,T_GAA('GRUPO-D-GAFIS','GAFIS','D-GAFIS')
+					,T_GAA('GRUPO-D-GAJUR','GAJUR','D-GAJUR')
+					,T_GAA('GRUPO-D-GCON','GCON','D-GCON')
+					,T_GAA('GRUPO-D-GCONGE','GCONGE','D-GCONGE')
+					,T_GAA('GRUPO-D-GCONPR','GCONPR','D-GCONPR')
+					,T_GAA('GRUPO-D-GGESDOC','GGESDOC','D-GGESDOC')
+					,T_GAA('GRUPO-D-CJ-GESTLLA','CJ-GESTLLA','D-CJ-GESTLLA')
+					,T_GAA('GRUPO-D-CJ-SAREO','CJ-SAREO','D-CJ-SAREO')
+					,T_GAA('GRUPO-D-SAEST','SAEST','D-SAEST')
+					,T_GAA('GRUPO-D-CJ-SFIS','CJ-SFIS','D-CJ-SFIS')
+					,T_GAA('GRUPO-D-SAJUR','SAJUR','D-SAJUR')
+					,T_GAA('GRUPO-D-CJ-SCON','CJ-SCON','D-CJ-SCON')
+					,T_GAA('GRUPO-D-SUCONT','SUCONT','D-SUCONT')
+					,T_GAA('GRUPO-D-SUCONGE','SUP','D-SUCONGE')
+					,T_GAA('GRUPO-D-SUCONPR','SUCONPR','D-SUCONPR')
+					,T_GAA('GRUPO-D-SGESDOC','SGESDOC','D-SGESDOC')
+					,T_GAA('GRUPO-D-SPGL','SPGL','D-SPGL')
+					,T_GAA('GRUPO-D-SUCONGEN2','SUCONGEN2','D-SUCONGEN2')
+					,T_GAA('GRUPO-D-GCTRGE','GCTRGE','D-GCTRGE')
+					,T_GAA('GRUPO-D-SCTRGE','SCTRGE','D-SCTRGE')
+					,T_GAA('GRUPO-SUP_PCO','SUP_PCO','SUP_PCO')
+					,T_GAA('GRUPO-CM_GL_PCO','CM_GL_PCO','CM_GL_PCO')
+					,T_GAA('GRUPO-CM_GD_PCO','CM_GD_PCO','CM_GD_PCO')
+					,T_GAA('GRUPO-CM_GE_PCO','CM_GE_PCO','CM_GE_PCO')
+
  );
    
    V_TMP_GAA T_GAA;
@@ -72,7 +73,7 @@ EXECUTE IMMEDIATE 'delete from  '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO w
    V_SQL:= 'insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
             select '||V_ESQUEMA||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id,
                    (select usd_id from '||V_ESQUEMA||'.des_despacho_externo des inner join '||V_ESQUEMA||'.usd_usuarios_despachos usd on des.des_id = usd.des_id inner join 
-                    '||V_ESQUEMA_MASTER||'.usu_usuarios usu on usu.usu_id = usd.usu_id where TRIM(UPPER(usu.usu_username)) = TRIM(UPPER('''||V_TMP_GAA(1)||''')) and des.des_despacho = '''||V_TMP_GAA(3)||''') usd_id,
+                    '||V_ESQUEMA_MASTER||'.usu_usuarios usu on usu.usu_id = usd.usu_id where TRIM(UPPER(usu.usu_username)) = TRIM(UPPER('''||V_TMP_GAA(1)||''')) and des.DES_CODIGO = '''||V_TMP_GAA(3)||''') usd_id,
                    (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo = '''||V_TMP_GAA(2)||'''), '''||USUARIO||''', sysdate
             from
              (select asu.asu_id

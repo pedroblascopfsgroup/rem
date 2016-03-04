@@ -711,7 +711,7 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		}else if(burofax.getTipoIntervencion().getTitular()){
 			tipoIntervencion="TITULAR";
 		}else{
-			tipoIntervencion="FIADOR";
+			tipoIntervencion="FIADOR SOLIDARIO";
 		}
 		
 		if(burofax.getTipoIntervencion().getAvalista()){

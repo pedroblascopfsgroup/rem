@@ -16,6 +16,7 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	private List<String> codigosDocumentosConFechaCaducidad;
 	private Set<String> tipoGestorLetrado;
 	private Map<String, String> tipoSupervisorProrroga;
+	private Set<String> tiposGestoresDeProcuradores;
 	
 	public CoreProjectContextImpl() {
 		entidadesDesparalizacion = new HashSet<String>();
@@ -105,5 +106,13 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	
 	public void setTipoSupervisorProrroga(Map<String, String>tipoSupervisorProrroga) {
 		this.tipoSupervisorProrroga = tipoSupervisorProrroga;
+	}
+
+	public Set<String> getTiposGestoresDeProcuradores() {
+		return tiposGestoresDeProcuradores;
+	}
+
+	public void setTiposGestoresDeProcuradores(Set<String> tiposGestoresDeProcuradores) {
+		this.tiposGestoresDeProcuradores = tiposGestoresDeProcuradores;
 	}
 }

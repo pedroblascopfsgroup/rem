@@ -2047,6 +2047,19 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		}
 		return false;
 	}
+	
+
+	public boolean tieneActorEnAsunto(Long id, Set<String> listadoGestores) {
+		List<EXTGestorAdicionalAsunto> gestores = getGestoresAdicionalesAsunto(id);
+		if(!gestores.isEmpty()){
+			for(EXTGestorAdicionalAsunto gestor : gestores){
+				if(gestor != null && gestor.getTipoGestor() != null && listadoGestores.contains(gestor.getTipoGestor().getCodigo())){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 }
 

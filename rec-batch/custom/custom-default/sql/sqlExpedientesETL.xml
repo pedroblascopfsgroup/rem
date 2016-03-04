@@ -1514,11 +1514,11 @@
                  , ZON_ZONIFICACION              zon
                  , ${master.schema}.DD_EST_ESTADOS_ITINERARIOS sit
                  , ${master.schema}.DD_EPI_EST_POL_ITINERARIO  epi
-             where tmp.per_id = cmp.per_id
+             Where tmp.per_id = cmp.per_id
                And tmp.exp_id = cmp.exp_id
                And tmp.per_id = per.per_id(+)
                And per.dd_pol_id = pol.dd_pol_id(+)
-               And pol.dd_pol_id = tpl.dd_pol_id(+)
+               And pol.dd_pol_codigo = tpl.tpl_codigo(+)
                And tmp.arq_id = arq.arq_id(+)
                And arq.iti_id = iti.iti_id(+)
                And iti.iti_id = est.iti_id(+)
@@ -1531,6 +1531,24 @@
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'POL_POLITICA Cargada',V_NUFILAS);
+            COMMIT;
+
+
+            -- Analisis politica
+            Insert into APP_ANALISIS_PERSONA_POLITICA
+             (APP_ID, CMP_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+            Select s_app_analisis_per_pol.nextval
+                 , cmp.cmp_id
+                 , 0, '${usuario.crear}', sysdate, 0
+             From (select distinct per_id, exp_id
+                   from BATCH_SEG_DATOS_SALIDA)    tmp
+                 , CMP_CICLO_MARCADO_POLITICA      cmp
+            Where  tmp.per_id = cmp.per_id
+               And tmp.exp_id = cmp.exp_id;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'APP_ANALISIS_PERSONA_POLITICA Cargada',V_NUFILAS);
             COMMIT;
         END;
         ]]>
@@ -1612,11 +1630,9 @@
 
           EXECUTE IMMEDIATE
           'Insert /*+append*/ into  '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE
+             (EXP_ID, PROCESSINSTANCE)
            SELECT EXP_ID
                 , '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL as PROCESSINSTANCE
-                , '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL as TOKEN
-                , '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL as MODULEINSTANCE
-                , '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL as VARIABLEMAP
              FROM '||cENTITY_SCHEMA||'.EXP_EXPEDIENTES
             WHERE EXP_MANUAL = 0
               AND EXP_PROCESS_BPM IS NULL';
@@ -1624,6 +1640,19 @@
           --LOG
           V_NUFILAS:=SQL%ROWCOUNT;
           INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'TMP_BATCH_SV_BPM_INSTANCE Cargada',V_NUFILAS);
+          COMMIT;
+
+          EXECUTE IMMEDIATE'
+          Update TMP_BATCH_SV_BPM_INSTANCE set TOKEN = '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL';
+          COMMIT;
+
+          EXECUTE IMMEDIATE'
+          Update TMP_BATCH_SV_BPM_INSTANCE set MODULEINSTANCE = '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL';
+          COMMIT;
+
+          EXECUTE IMMEDIATE'
+          Update TMP_BATCH_SV_BPM_INSTANCE set VARIABLEMAP = '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL';
+          COMMIT;
 
           DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_BATCH_SV_BPM_INSTANCE', estimate_percent => 20);
 

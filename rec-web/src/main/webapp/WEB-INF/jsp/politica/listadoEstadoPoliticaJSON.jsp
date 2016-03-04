@@ -10,6 +10,7 @@
             <json:property name="id" value="${p.id}" />
             <json:property name="fecha"><fwk:date value="${p.auditoria.fechaCrear}"/></json:property>
             <json:property name="estado" value="${p.estadoItinerarioPolitica.codigo}" />
+            <json:property name="idEstadoItinerario" value="${p.estadoItinerarioPolitica.id}" />
             <c:if test="${p.usuarioCreacion!=null}">
 	            <json:property name="usuario" value="${p.usuarioCreacion.apellidoNombre}" />
             </c:if>

@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -1205,17 +1204,7 @@ public class PoliticaManager {
         for (CicloMarcadoPolitica cmp : listadoCiclos) {
             List<Politica> listadoPoliticas = cmp.getPoliticas();
             
-            Collections.sort(listadoPoliticas, new Comparator<Politica>() {
-            	
-            	public int compare(Politica o1, Politica o2) {
-            		if (o1.getEstadoItinerarioPolitica().getId() > o2.getEstadoItinerarioPolitica().getId()) {
-            			return 1;
-            		}
-            		else {
-            			return 0;
-            		}
-            	};
-			});
+            Collections.sort(listadoPoliticas, new Politica().getEstadoItinerarioComparator());
             
             if (listadoPoliticas.size()>1) {
 	            Politica politicaBorrar = listadoPoliticas.get(listadoPoliticas.size() - 1);

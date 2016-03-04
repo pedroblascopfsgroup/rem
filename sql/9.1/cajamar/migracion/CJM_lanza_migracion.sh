@@ -46,15 +46,6 @@ if [ $? != 0 ] ; then
 fi
 echo "[OK] ""$sh_dir""CJM_backup_ficheros_migracion.sh ejecutado correctamente"               
 
-echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_Analiza_cm01.sh"                      
-./"$sh_dir"CJM_Analiza_cm01.sh "$1" 
-if [ $? != 0 ] ; then
-    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CJM_Analiza_cm01.sh"
-    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
-    exit 1           
-fi
-echo "[OK] ""$sh_dir""CJM_Analiza_cm01.sh ejecutado correctamente"            
-
 echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_migracion_a_tabla_intermedia.sh"                      
 ./"$sh_dir"CJM_migracion_a_tabla_intermedia.sh "$1" 
 if [ $? != 0 ] ; then
@@ -329,6 +320,16 @@ if [ $? != 0 ] ; then
 fi
 echo "[OK] ""$sh_dir""CMREC-2339_Correccion_asuntos_sin_nombre_CM01.sh ejecutado correctamente" 
 
+
+echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_1866_update_nombre_expediente_PCO.sh"                      
+./"$sh_dir"CMREC_1866_update_nombre_expediente_PCO.sh "$1" 
+if [ $? != 0 ] ; then
+    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC_1866_update_nombre_expediente_PCO.sh"
+    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
+    exit 1           
+fi
+echo "[OK] ""$sh_dir""CMREC_1866_update_nombre_expediente_PCO.sh ejecutado correctamente"         
+
 echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_Analiza_cm01.sh"                      
 ./"$sh_dir"CJM_Analiza_cm01.sh "$1" 
 if [ $? != 0 ] ; then
@@ -337,6 +338,7 @@ if [ $? != 0 ] ; then
     exit 1           
 fi
 echo "[OK] ""$sh_dir""CJM_Analiza_cm01.sh ejecutado correctamente"            
+
 
 
 echo "[INFO] FIN CJM_lanza_migracion.sh. Revise el fichero de log" `date` 

@@ -815,8 +815,19 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
      *            expediente
      */
     private void setearEmisorExpediente(TareaNotificacion tareaNotificacion, Expediente exp) {
-        String descZona = exp.getOficina().getZona().getDescripcion();
-        Perfil gestor = exp.getArquetipo().getItinerario().getEstado(exp.getEstadoItinerario().getCodigo()).getGestorPerfil();
+    	String descZona = "";
+    	if (!Checks.esNulo(exp.getOficina()) && (!Checks.esNulo(exp.getOficina().getZona()))) {
+    		descZona = exp.getOficina().getZona().getDescripcion();
+    	}
+    	Perfil gestor = null;
+    	if ((!Checks.esNulo(exp.getArquetipo())) 
+    		&& (!Checks.esNulo(exp.getArquetipo().getItinerario()))
+			&& (!Checks.esNulo(exp.getEstadoItinerario()))
+			&& (!Checks.esNulo(exp.getEstadoItinerario().getCodigo()))
+			&& (!Checks.esNulo(exp.getArquetipo().getItinerario().getEstado(exp.getEstadoItinerario().getCodigo())))) {
+				
+				gestor = exp.getArquetipo().getItinerario().getEstado(exp.getEstadoItinerario().getCodigo()).getGestorPerfil();
+    	}
         String descPerfil = "";
         if (gestor != null) {
             descPerfil = gestor.getDescripcion();

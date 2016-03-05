@@ -1467,6 +1467,7 @@
 		
 			// Por default abre una notificacion standard
 			default:
+				debugger;
 				//Seleccionarmos por tipo de Categoria Tarea
 				switch(categoriaTarea) {
 				
@@ -1479,6 +1480,9 @@
 						break;
 					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_EXP:
 						app.abreExpediente(rec.get('idEntidad'), rec.get('descripcion'));
+						break;
+					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_PER:
+						app.abreCliente(rec.get('idEntidadPersona'), rec.get('descripcion'));
 						break;
 						
 

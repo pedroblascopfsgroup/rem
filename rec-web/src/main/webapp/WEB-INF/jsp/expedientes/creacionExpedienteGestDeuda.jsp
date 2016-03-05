@@ -65,6 +65,7 @@
     var perfilSupervisor = '${expediente.supervisorActual}';
 
 	var updatePropuesta = function() {
+		debugger;
 		if (comboMotivos.getValue() == '') {
 			Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="expediente.error.motivos"/>');
 			return;	
@@ -87,12 +88,25 @@
 		,handler: updatePropuesta
 	  });
 
+	var decide = function(boton) {
+		debugger;
+		if (boton=='yes') {
+			page.webflow({
+				flow: 'expedientes/borrarCreacionManualExpediente'
+				,params: {idExpediente : '${expediente.id}', idPersona : '${idPersona}' }
+				,success: function() { page.fireEvent(app.event.DONE); }
+				,scope:this
+			});
+		}
+	};
+
+
 	var btnCancelar = new Ext.Button({
 		text: '<s:message code="app.cancelar" text="**Cancelar" />'
 		,iconCls: 'icon_cancel'
 		,handler: function() {
 			Ext.Msg.confirm(fwk.constant.confirmar
-			                ,'<s:message code="expedientes.creacion.cancelar" text="**¿Cancelar y borrar el expediente creado?" />'
+			                ,'<s:message code="expedientes.creacion.cancelar" text="**ï¿½Cancelar y borrar el expediente creado?" />'
 			                ,decide
 			                ,this);
 		  }
@@ -122,7 +136,7 @@
 				<json:property name="estadoFinanciero" value="${expContrato.contrato.estadoFinanciero.descripcion}" />
 				<json:property name="pase">
 					<c:if test="${expContrato.pase==1}">
-						<s:message code="mensajes.si" text="**Sí" />
+						<s:message code="mensajes.si" text="**Sï¿½" />
 					</c:if>
 					<c:if test="${expContrato.pase!=1}">
 						<s:message code="mensajes.no" text="**No" />
@@ -143,7 +157,7 @@
 				<json:property name="numContratos" value="${expPersona.persona.numContratos}" />
 				<json:property name="pase">
 					<c:if test="${expPersona.pase==1}">
-						<s:message code="mensajes.si" text="**Sí" />
+						<s:message code="mensajes.si" text="**Sï¿½" />
 					</c:if>
 					<c:if test="${expPersona.pase!=1}">
 						<s:message code="mensajes.no" text="**No" />
@@ -240,8 +254,8 @@
 	//ColumnModel para grids personas
 	var personasCm = new Ext.grid.ColumnModel([
 			{header: '<s:message code="menu.clientes.listado.lista.nombre" text="**Nombre" />',dataIndex:'nombre',sortable:true,width:140}
-			,{header: '<s:message code="listadopersonas.codInterno" text="**Cód. Interno" />', dataIndex: 'id',fixed:true}
-			,{header: '<s:message code="listadopersonas.nroDoc" text="**N° Documento" />',dataIndex:'docId',sortable:true,width:80}
+			,{header: '<s:message code="listadopersonas.codInterno" text="**Cï¿½d. Interno" />', dataIndex: 'id',fixed:true}
+			,{header: '<s:message code="listadopersonas.nroDoc" text="**Nï¿½ Documento" />',dataIndex:'docId',sortable:true,width:80}
 			,{header: '<s:message code="listadopersonas.deudaIrregular" text="**Deuda Irregular" />',dataIndex:'deudaIrregular',sortable:true,renderer:app.format.moneyRenderer,width:100,align:'right'}
 			,{header: '<s:message code="listadopersonas.riesgoTotal" text="**Riesgo Total" />',dataIndex:'totalSaldo',sortable:true,renderer:app.format.moneyRenderer,width:100,align:'right'}
 			,{header: '<s:message code="menu.clientes.listado.lista.nrocontratos" text="**Contratos" />',dataIndex:'numContratos',sortable:true,width:50,align:'right'}
@@ -304,16 +318,6 @@
 			]
 	});
 
-	var decide = function(boton) {
-		if (boton=='yes') {
-			page.webflow({
-				flow: 'expedientes/borrarCreacionManualExpediente'
-				,params: {idExpediente : '${expediente.id}', idPersona : '${idPersona}' }
-				,success: function() { page.fireEvent(app.event.DONE); }
-				,scope:this
-			});
-		}
-	};
 
 	page.add(panel);
 

@@ -2481,10 +2481,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
             /******************************* JBPM *************************************************/
             executor.execute(ComunBusinessOperation.BO_JBPM_MGR_DETERMINAR_BBDD);
             Map<String, Object> param = new HashMap<String, Object>();
-            /*param.put(TareaBPMConstants.ID_ENTIDAD_INFORMACION, per.getClienteActivo().getId());
-            param.put(TareaBPMConstants.CODIGO_TIPO_ENTIDAD, DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE);*/
-            param.put(TareaBPMConstants.ID_ENTIDAD_INFORMACION, exp.getId());
-            param.put(TareaBPMConstants.CODIGO_TIPO_ENTIDAD, DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE);
+            param.put(TareaBPMConstants.ID_ENTIDAD_INFORMACION, per.getClienteActivo().getId());
+            param.put(TareaBPMConstants.CODIGO_TIPO_ENTIDAD, DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE);
+            /*param.put(TareaBPMConstants.ID_ENTIDAD_INFORMACION, exp.getId());
+            param.put(TareaBPMConstants.CODIGO_TIPO_ENTIDAD, DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE);*/
             if (exp.getSeguimiento()) {
                 param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_SEG);
             } else {

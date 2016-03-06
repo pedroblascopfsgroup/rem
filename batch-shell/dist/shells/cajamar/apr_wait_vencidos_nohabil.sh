@@ -7,6 +7,13 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
+if [ -z ${DIR_DESTINO} ]; then
+    echo "$(basename $0) Error: DIR_DESTINO no definido. Compruebe invocación previa a setBatchEnv.sh"
+    exit 1
+fi 
+echo "Limpiando $DIR_DESTINO$ficheros*"
+rm -f $DIR_DESTINO$ficheros*
+
 extensionSem=".sem"
 extensionZip=".zip"
 

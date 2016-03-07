@@ -1,9 +1,9 @@
 --/*
 --##########################################
 --## AUTOR=LUIS RUIZ
---## FECHA_CREACION=20160304
+--## FECHA_CREACION=20160303
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=9.1.37
+--## VERSION_ARTEFACTO=9.1.19
 --## INCIDENCIA_LINK=PRODUCTO-673
 --## PRODUCTO=SI
 --##
@@ -21,7 +21,7 @@ SET DEFINE OFF;
 DECLARE
  V_ESQUEMA    VARCHAR2(25 CHAR):= '#ESQUEMA#';
  V_ESQUEMA_M  VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#';
- TABLA        VARCHAR(30 CHAR) := 'BATCH_VEN_DATOS_SALIDA_GCL';
+ TABLA        VARCHAR(30 CHAR) := 'TMP_CNT_CLI_DES';
  ITABLE_SPACE VARCHAR(25 CHAR) := '#TABLESPACE_INDEX#';
  ERR_NUM      NUMBER;
  ERR_MSG      VARCHAR2(2048 CHAR);
@@ -34,17 +34,7 @@ BEGIN
   SELECT COUNT(*) INTO V_EXISTE  FROM ALL_TABLES WHERE TABLE_NAME = ''||TABLA;
 
   V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||TABLA||'
-            ( EXP_ID           NUMBER(16),
-              EXP_DESCRIPCION  VARCHAR2(310 CHAR),
-              DD_AEX_CODIGO    VARCHAR2(25 CHAR)            NOT NULL,
-              OFI_ID           NUMBER(16)                   NOT NULL,
-              IMP_PIVOTE       NUMBER(14,2),
-              CNT_ID           NUMBER(16)                   NOT NULL,
-              PER_ID           NUMBER(16)                   NOT NULL,
-              CPE_ORDEN        NUMBER,
-              ARQ_ID           NUMBER(16),
-              CEX_PASE         NUMBER,
-              PEX_PASE         NUMBER
+            ( CNT_ID    NUMBER(16,0)
             ) NOLOGGING';
 
   IF V_EXISTE = 0 THEN
@@ -56,6 +46,7 @@ BEGIN
      EXECUTE IMMEDIATE V_MSQL;
      DBMS_OUTPUT.PUT_LINE(TABLA||' CREADA');
   END IF;
+  EXECUTE IMMEDIATE ('CREATE INDEX IDX_TMP_CNT_CLI_DES ON '||V_ESQUEMA||'.'||TABLA||' (CNT_ID) NOLOGGING ');
 
 EXCEPTION
   WHEN OTHERS THEN

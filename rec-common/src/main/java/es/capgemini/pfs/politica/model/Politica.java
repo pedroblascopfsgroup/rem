@@ -1,6 +1,7 @@
 package es.capgemini.pfs.politica.model;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
@@ -120,6 +122,9 @@ public class Politica implements Auditable, Serializable {
     @JoinColumn(name = "POL_ID")
     @OrderBy("id ASC")
     private List<Objetivo> objetivos;
+    
+    @Transient
+    private Comparator<Politica> estadoItinerarioComparator;
 
     @Embedded
     private Auditoria auditoria;
@@ -393,7 +398,16 @@ public class Politica implements Auditable, Serializable {
     public List<Objetivo> getObjetivos() {
         return objetivos;
     }
+    
+    public Comparator<Politica> getEstadoItinerarioComparator() {
+    	
+    	if(estadoItinerarioComparator == null) {
+    		estadoItinerarioComparator = new EstadoItinerarioComparator();
+    	}
 
+    	return estadoItinerarioComparator;
+    }
+    
     /**
      * Crea una copia de la política sin objetivos.
      * @return Politica
@@ -412,5 +426,13 @@ public class Politica implements Auditable, Serializable {
         nuevaPolitica.setZonaGestor(this.getZonaGestor());
         nuevaPolitica.setZonaSupervisor(this.getZonaSupervisor());
         return nuevaPolitica;
+    }
+    
+    private class EstadoItinerarioComparator implements Comparator<Politica> {
+
+		@Override
+		public int compare(Politica o1, Politica o2) {
+			return o1.getEstadoItinerarioPolitica().getId().compareTo(o2.getEstadoItinerarioPolitica().getId());
+		}    	
     }
 }

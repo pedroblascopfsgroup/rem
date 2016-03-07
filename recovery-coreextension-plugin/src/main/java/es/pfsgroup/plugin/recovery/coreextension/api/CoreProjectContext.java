@@ -34,4 +34,6 @@ public interface CoreProjectContext {
 	public Set<String> getTipoGestorLetrado();
 	
 	public Map<String, String> getTipoSupervisorProrroga();
+	
+	Set<String> getTiposGestoresDeProcuradores();
 }

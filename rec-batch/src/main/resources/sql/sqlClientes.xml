@@ -251,6 +251,7 @@
 
    <entry key="clientes.creacionClientes.02.insertTmpPER_Recuperacion.Oracle9iDialect">
   <![CDATA[
+
        /**************************************
       Buscar clientes activos de recuperacion
       ***************************************/
@@ -631,7 +632,20 @@
 
    <entry key="clientes.creacionClientes.04.insertTmpCNTnuevosCLI.Oracle9iDialect">
     <![CDATA[
+     DECLARE
+       v_impPivote  varchar2(200 char);
      BEGIN
+
+     DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_PER_ARQUETIPO_RECUPERACION', estimate_percent => 20);
+
+     Begin
+         EXECUTE IMMEDIATE 'Select PEN_VALOR From PEN_PARAM_ENTIDAD Where PEN_PARAM = ''importePivoteRecuperaciones'''
+         INTO v_impPivote;
+
+         EXCEPTION
+          WHEN NO_DATA_FOUND
+           THEN RAISE_APPLICATION_ERROR(-20000,'Importe pivote no informado en PEN_PARAM_ENTIDAD');
+     End;
 
      INSERT /*+append*/ INTO TMP_CNT_NUEVOS_CLI_VCPE
               /*Obtengo los contratos de los titulares*/
@@ -675,7 +689,7 @@
                        --Para los clientes de recuperación que tengan contratos de recuperación
                        and (tmp.DD_TIT_CODIGO = ${ddTipoItinerario.recuperacion.codigo} and exp.dd_tpx_id = (select tpx.dd_tpx_id from dd_tpx_tipo_expediente TPX where dd_tpx_codigo = 'RECU'))
                    UNION ALL
-                   	   --Que el contrato no esté en algún cliente 'en curso' 
+                       --Que el contrato no esté en algún cliente 'en curso'
                        SELECT ccl.cnt_id FROM ccl_contratos_cliente ccl
                        WHERE ccl.borrado = 0
                        and ccl.cnt_id = c.cnt_id
@@ -684,12 +698,14 @@
          DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CNT_NUEVOS_CLI_VCPE', estimate_percent => 20);
          commit;
 
+     Execute Immediate ('
         INSERT /*+append*/ INTO TMP_CNT_NUEVOS_CLI_MOV
           --De los anteriores personas y titulares, ordenados por pos vencida ó riesgo
-            select vcpe.per_id, row_mov.cnt_id, row_mov.mov_fecha_extraccion, row_mov.mov_pos_viva_vencida, row_mov.mov_riesgo, row_mov.mov_fecha_pos_vencida, vcpe.ofi_id
-              , row_number () over (partition by per_id order by row_mov.mov_pos_viva_vencida desc) n_mov_pos_vencida
+            select vcpe.per_id, row_mov.cnt_id, row_mov.mov_fecha_extraccion, row_mov.'||v_impPivote||', row_mov.mov_riesgo, row_mov.mov_fecha_pos_vencida, vcpe.ofi_id
+              , row_number () over (partition by per_id order by row_mov.'||v_impPivote||' desc) n_mov_pos_vencida
               , row_number () over (partition by per_id order by row_mov.mov_riesgo desc) n_mov_riesgo
-            from TMP_CNT_NUEVOS_CLI_VCPE vcpe inner join mov_movimientos row_mov on vcpe.cnt_id = row_mov.cnt_id  AND row_mov.mov_fecha_extraccion = vcpe.cnt_fecha_extraccion;
+            from TMP_CNT_NUEVOS_CLI_VCPE vcpe inner join mov_movimientos row_mov on vcpe.cnt_id = row_mov.cnt_id  AND row_mov.mov_fecha_extraccion = vcpe.cnt_fecha_extraccion
+     ');
 
     DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CNT_NUEVOS_CLI_MOV', estimate_percent => 20);
     commit;
@@ -881,6 +897,7 @@
 
      <entry key="clientes.revisionClientes.marcarCliPerArq.Oracle9iDialect">
     <![CDATA[
+    BEGIN
 
   /*************************************************
   Insertar los clientes activos, personas, sus respectivos arquetipos
@@ -894,13 +911,17 @@
         ) WHERE ORD = 1
       )
     (
-      SELECT cli.CLI_ID, cli.per_id, cli.arq_id arq_cliente, arr.arq_id arq_persona, arq.arq_gestion
+      SELECT /*+parallel*/ cli.CLI_ID, cli.per_id, cli.arq_id arq_cliente, arr.arq_id arq_persona, arq.arq_gestion
       FROM CLI_CLIENTES cli
         inner join ${master.schema}.DD_ECL_ESTADO_CLIENTE ecl on cli.DD_ECL_ID = ecl.DD_ECL_ID AND ecl.DD_ECL_CODIGO = 1
         inner join arr on cli.per_id = arr.per_id
         inner join arq_arquetipos arq on arr.arq_id = arq.arq_id
       WHERE cli.BORRADO = 0
-    )
+    );
+
+    DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CLI_PER_ARQ', estimate_percent => 20);
+
+    END;
 
   ]]>
   </entry>
@@ -913,6 +934,7 @@
 
     <entry key="clientes.revisionClientes.marcarClientesSinGestion.Oracle9iDialect">
     <![CDATA[
+    BEGIN
     /*********************************************
       Insertamos los clientes a borrar en TMP_CLI_A_CANCELAR
       que su arquetipo ya no sea de gestión
@@ -921,7 +943,11 @@
     INSERT INTO TMP_CLI_A_CANCELAR
       (SELECT CLI_ID
         FROM TMP_CLI_PER_ARQ
-      WHERE ARQ_CLIENTE <> ARQ_PERSONA AND ES_ARQ_GESTION = 0)
+      WHERE ARQ_CLIENTE <> ARQ_PERSONA AND ES_ARQ_GESTION = 0);
+
+    DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CLI_A_CANCELAR', estimate_percent => 20);
+
+    END;
      ]]>
      </entry>
 
@@ -1059,6 +1085,7 @@
 
     <entry key="clientes.revisionClientes.revisarMovimientos.Oracle9iDialect">
     <![CDATA[
+    BEGIN
     /***************************************************
         Revisar movimientos e insertarlo en tabla temporal para tratar a continuación
         -- TODO - y generar notificaciones
@@ -1121,7 +1148,11 @@ WHERE c.dd_tpe_id = t.dd_tpe_id
     AND CNT_ID                 = c.cnt_id
 )
 AND V.CNT_ID = C.CNT_ID
-)
+);
+
+DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_MOV_REVISADOS', estimate_percent => 20);
+
+    END;
     ]]>
     </entry>
 
@@ -1267,10 +1298,69 @@ AND V.CNT_ID = C.CNT_ID
 
     <entry key="clientes.revisionClientes.insertarNuevosContratosCliente.Oracle9iDialect">
     <![CDATA[
+    BEGIN
+
+    EXECUTE IMMEDIATE'TRUNCATE TABLE TMP_CNT_CLI_DES';
+
+    Insert /*+append*/ into TMP_CNT_CLI_DES
+    SELECT cex.cnt_id
+      FROM CEX_CONTRATOS_EXPEDIENTE cex, PRC_CEX pce, PRC_PROCEDIMIENTOS prc, cmmaster.DD_EPR_ESTADO_PROCEDIMIENTO epr
+     WHERE cex.cex_id = pce.cex_id
+       and pce.prc_id = prc.prc_id
+       and cex.borrado = 0 and prc.borrado = 0
+       and prc.dd_epr_id = epr.dd_epr_id
+       and dd_epr_codigo IN (${ddEstadoProcedimiento.propuesto.codigo},
+                             ${ddEstadoProcedimiento.confirmado.codigo},
+                             ${ddEstadoProcedimiento.aceptado.codigo},
+                             ${ddEstadoProcedimiento.derivado.codigo},
+                             ${ddEstadoProcedimiento.enConformacion.codigo});
+    COMMIT;
+
+    Insert /*+append*/ into TMP_CNT_CLI_DES
+    SELECT cex.cnt_id
+      FROM cex_contratos_expediente cex, cmmaster.dd_eex_estado_expediente eex, exp_expedientes exp
+     WHERE exp.exp_id = cex.exp_id
+       and cex.borrado = 0
+       and eex.dd_eex_id = exp.dd_eex_id
+      and eex.dd_eex_codigo IN (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo});
+    COMMIT;
+
+    DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CNT_CLI_DES', estimate_percent => 20);
+
+    INSERT INTO ccl_contratos_cliente
+        (CCL_ID, CNT_ID, CLI_ID, CCL_PASE, USUARIOCREAR, FECHACREAR)
+      SELECT /*+parallel*/ s_ccl_contratos_cliente.nextVal CCL_ID
+           , cpe.cnt_id
+           , cli.cli_id
+           , 0, 'REV-JOB', sysdate
+      FROM CLI_CLIENTES            cli
+         , CPE_CONTRATOS_PERSONAS  cpe
+         , CNT_CONTRATOS           cnt
+         , TMP_CLI_PER_ARQ         tmp
+         , TMP_CNT_CLI_DES         des
+        WHERE cli.cli_id = tmp.cli_id
+          AND cpe.per_id = cli.per_id
+          AND cpe.cnt_id = cnt.cnt_id
+          AND cnt.cnt_id = des.cnt_id(+) and des.cnt_id is null
+          AND cli.borrado = 0 AND cpe.borrado = 0 AND cnt.borrado = 0
+          AND NOT EXISTS ( SELECT cnt_id
+                           FROM ccl_contratos_cliente
+                           WHERE cnt_id = cnt.cnt_id
+                           and cli_id = cli.cli_id
+                           and borrado = 0 );
+
+    COMMIT;
+    END;
+    ]]>
+    </entry>
+
+    <entry key="clientes.revisionClientes.insertarNuevosContratosCliente_Old.Oracle9iDialect">
+    <![CDATA[
     INSERT INTO ccl_contratos_cliente (CCL_ID, CNT_ID, CLI_ID, CCL_PASE, USUARIOCREAR, FECHACREAR)
-      SELECT s_ccl_contratos_cliente.nextVal, cpe.cnt_id, cli_id, 0,  'REV-JOB', sysdate
+      SELECT s_ccl_contratos_cliente.nextVal, cpe.cnt_id, cli.cli_id, 0,  'REV-JOB', sysdate
       FROM cli_clientes cli, cpe_contratos_personas cpe, cnt_contratos cnt
-          WHERE cli.cli_id IN (SELECT CLI_ID FROM TMP_CLI_PER_ARQ)
+         , TMP_CLI_PER_ARQ tmp
+          WHERE cli.cli_id = tmp.cli_id
           AND cpe.per_id = cli.per_id
           AND cpe.cnt_id = cnt.cnt_id
           AND cli.borrado = 0 AND cpe.borrado = 0 AND cnt.borrado = 0
@@ -1313,6 +1403,7 @@ AND V.CNT_ID = C.CNT_ID
 
     <entry key="clientes.revisionClientes.eliminarCliConCntsEnExp.Oracle9iDialect">
     <![CDATA[
+    BEGIN
 
     /*******************************************
     Para asegurarnos que la bd esta ok
@@ -1334,7 +1425,10 @@ AND V.CNT_ID = C.CNT_ID
         SELECT CEX.CNT_ID FROM EXP_EXPEDIENTES EXP INNER JOIN CEX_CONTRATOS_EXPEDIENTE CEX ON EXP.EXP_ID = CEX.EXP_ID
         WHERE EXP.BORRADO = 0 AND
             NOT EXISTS (SELECT 1 FROM exr_expediente_recobro EXR WHERE EXR.EXP_ID = EXP.EXP_ID))
-    )
+    );
+
+    DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CLI_A_CANCELAR', estimate_percent => 20);
+    END;
     ]]>
     </entry>
 

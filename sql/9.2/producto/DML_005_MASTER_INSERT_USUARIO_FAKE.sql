@@ -40,7 +40,7 @@ BEGIN
 	ELSE
 	
 	 	V_SQL := 'INSERT INTO '||V_ESQUEMA_M||'.'||V_DDNAME||' ( usu_id, entidad_id, usu_username, usu_password, usu_nombre, usuariocrear, fechacrear, borrado, usu_externo, usu_fecha_vigencia_pass, usu_grupo, usu_baja_ldap ) VALUES ' ||
-				'(1, (select DATAVALUE from ENTIDADCONFIG where datakey = ''initialId'' and rownum = 1), ''BATCH_USER'', ''BATCH_1234'', ''BATCH_USER'', ''CMREC-2422'', SYSDATE, 0, 0, SYSDATE+365, 0,1)';
+				'(1, (select DATAVALUE from '||V_ESQUEMA_M||'.ENTIDADCONFIG where datakey = ''initialId'' and rownum = 1), ''BATCH_USER'', ''BATCH_1234'', ''BATCH_USER'', ''CMREC-2422'', SYSDATE, 0, 0, SYSDATE+365, 0,1)';
 		DBMS_OUTPUT.put_line(V_SQL);
 		execute immediate V_SQL;
 		DBMS_OUTPUT.PUT_LINE('Usuario Batch añadido OK');

@@ -23,8 +23,8 @@ public class DtoBusquedaAsunto extends PaginationParamsImpl {
     private String comboTipoAsunto;
     private String comboSupervisor;
     private String estadoAnalisis;
-    private Double minSaldoTotalContratos;
-    private Double maxSaldoTotalContratos;
+    private Float minSaldoTotalContratos;
+    private Float maxSaldoTotalContratos;
     private Double minImporteEstimado;
     private Double maxImporteEstimado;
     private Long filtroContrato;
@@ -182,28 +182,28 @@ public class DtoBusquedaAsunto extends PaginationParamsImpl {
     /**
      * @return the minSaldoTotalContratos
      */
-    public Double getMinSaldoTotalContratos() {
+    public Float getMinSaldoTotalContratos() {
         return minSaldoTotalContratos;
     }
 
     /**
      * @param minSaldoTotalContratos the minSaldoTotalContratos to set
      */
-    public void setMinSaldoTotalContratos(Double minSaldoTotalContratos) {
+    public void setMinSaldoTotalContratos(Float minSaldoTotalContratos) {
         this.minSaldoTotalContratos = minSaldoTotalContratos;
     }
 
     /**
      * @return the maxSaldoTotalContratos
      */
-    public Double getMaxSaldoTotalContratos() {
+    public Float getMaxSaldoTotalContratos() {
         return maxSaldoTotalContratos;
     }
 
     /**
      * @param maxSaldoTotalContratos the maxSaldoTotalContratos to set
      */
-    public void setMaxSaldoTotalContratos(Double maxSaldoTotalContratos) {
+    public void setMaxSaldoTotalContratos(Float maxSaldoTotalContratos) {
         this.maxSaldoTotalContratos = maxSaldoTotalContratos;
     }
 

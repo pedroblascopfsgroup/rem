@@ -1629,7 +1629,9 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
      */
     private Boolean puedeMostrarSolapasDecision(Long idExpediente, boolean solapaRecuperacion) {
         Expediente exp = expedienteDao.get(idExpediente);
-
+        
+        if(!exp.getRecuperacion()){
+        
         String nombreTab = "";
         if (exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioRecuperacion()) {
             nombreTab = "DECISION DE COMITE";
@@ -1680,6 +1682,12 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         
         logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO CORRESPONDE AL USUARIO " + usuario.getUsername());
         return Boolean.FALSE;
+        
+        }else{
+        	logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA PORQUE ES EXPEDIENTE DE SEGUIMIENTO ");
+            return Boolean.FALSE;
+        }
+        
     }
     
     
@@ -1693,33 +1701,40 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
      */
     private Boolean puedeMostrarMarcadoPoliticas(Long idExpediente) {
         Expediente exp = expedienteDao.get(idExpediente);
-
-        String nombreTab = "MARCADO DE POLITICAS";
-        logger.debug("EVALUO SI DEBO MOSTRAR LA PESTAÑA " + nombreTab);
         
-        Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
+        if(!exp.getRecuperacion()){
         
-        //VALIDO PRECONDICIONES CU WEB-30
-       
-    	if (!exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT)){
-
-    		//No esta en decisión de comite o no tiene sesiones abiertas.
-            logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO ESTA EN EL ESTADO CORRESPONDIENTE ");
-            return Boolean.FALSE;
+	        String nombreTab = "MARCADO DE POLITICAS";
+	        logger.debug("EVALUO SI DEBO MOSTRAR LA PESTAÑA " + nombreTab);
+	        
+	        Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
+	        
+	        //VALIDO PRECONDICIONES CU WEB-30
+	       
+	    	if (!exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT)){
+	
+	    		//No esta en decisión de comite o no tiene sesiones abiertas.
+	            logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO ESTA EN EL ESTADO CORRESPONDIENTE ");
+	            return Boolean.FALSE;
+	        }
+	       
+	        for (Perfil perfil : usuario.getPerfiles()) {
+	        	
+	        	if(exp.getGestorActual().equalsIgnoreCase(perfil.getDescripcion()) || exp.getSupervisorActual().equalsIgnoreCase(perfil.getDescripcion())){
+	        		logger.debug("MUESTRO EL TAB " + nombreTab);
+	        		return Boolean.TRUE;
+	        	}else{
+	        		logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO ES EL SUPERVISOR O EL GESTOR DEL EXPEDIENTE ");
+	        		return Boolean.FALSE;
+	        	}
+	        }
+	        logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO CORRESPONDE AL USUARIO " + usuario.getUsername());
+	        return Boolean.FALSE;
+        }else{
+        	logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA PORQUE NO ES EXPEDIENTE DE RECUPERACION");
+	        return Boolean.FALSE;
         }
-       
-        for (Perfil perfil : usuario.getPerfiles()) {
-        	
-        	if(exp.getGestorActual().equalsIgnoreCase(perfil.getDescripcion()) || exp.getSupervisorActual().equalsIgnoreCase(perfil.getDescripcion())){
-        		logger.debug("MUESTRO EL TAB " + nombreTab);
-        		return Boolean.TRUE;
-        	}else{
-        		logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO ES EL SUPERVISOR O EL GESTOR DEL EXPEDIENTE ");
-        		return Boolean.FALSE;
-        	}
-        }
-        logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO CORRESPONDE AL USUARIO " + usuario.getUsername());
-        return Boolean.FALSE;
+        
     }
 
     /**

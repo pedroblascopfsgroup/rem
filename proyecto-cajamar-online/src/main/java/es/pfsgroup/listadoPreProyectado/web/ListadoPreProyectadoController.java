@@ -119,6 +119,8 @@ public class ListadoPreProyectadoController {
 			
 			filaExportar.add(ObjectUtils.toString(row.getContrato())); 	//N.Contrato
 			filaExportar.add(ObjectUtils.toString(row.getExpId())); 	//Id expediente
+			filaExportar.add(ObjectUtils.toString(row.getNomTitular())); // Nombre titular
+			filaExportar.add(ObjectUtils.toString(row.getNifTitular())); // Nif titular
 			filaExportar.add(ObjectUtils.toString(row.getRiesgoTotal())); 	//Riesgo total
 			filaExportar.add(ObjectUtils.toString(row.getDeudaIrregular())); 	//Deuda irregular
 			filaExportar.add(ObjectUtils.toString(row.getTramo())); 	//Tramo
@@ -128,6 +130,7 @@ public class ListadoPreProyectadoController {
 			}
 			filaExportar.add(ObjectUtils.toString(row.getPropuesta())); 	//Propuesta
 			filaExportar.add(ObjectUtils.toString(row.getEstadoGestion())); 	//Estado Gestion
+			filaExportar.add(ObjectUtils.toString(row.getOfiCodigo())); 	//Estado Gestion
 			/*if(!Checks.esNulo(row.getFechaPrevReguCnt())){
 				filaExportar.add(ObjectUtils.toString(sdf.format(row.getFechaPrevReguCnt()))); //Fecha prevista regularizacion	
 			}*/
@@ -161,6 +164,8 @@ public class ListadoPreProyectadoController {
 		//Cabecera de las columnas
 		cabeceras.add(formatearString("Nro. contrato"));
 		cabeceras.add(formatearString("ID Expediente"));
+		cabeceras.add(formatearString("Nombre titular"));
+		cabeceras.add(formatearString("Nif titular"));
 		cabeceras.add(formatearString("Riesgo total"));
 		cabeceras.add(formatearString("Deuda irregular"));
 		cabeceras.add(formatearString("Tramo"));
@@ -168,6 +173,7 @@ public class ListadoPreProyectadoController {
 		cabeceras.add(formatearString("Fecha pase a mora"));
 		cabeceras.add(formatearString("Última Propuesta"));
 		cabeceras.add(formatearString("Estado gestión"));
+		cabeceras.add(formatearString("Código oficina"));
 		//cabeceras.add(formatearString("Fecha prevista regularización"));
 		
 		return cabeceras;

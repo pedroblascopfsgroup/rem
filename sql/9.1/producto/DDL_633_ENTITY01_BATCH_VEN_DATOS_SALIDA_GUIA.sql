@@ -1,9 +1,9 @@
 --/*
 --##########################################
 --## AUTOR=LUIS RUIZ
---## FECHA_CREACION=20160218
+--## FECHA_CREACION=20160304
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=9.1.19
+--## VERSION_ARTEFACTO=9.1.37
 --## INCIDENCIA_LINK=PRODUCTO-673
 --## PRODUCTO=SI
 --##
@@ -38,7 +38,7 @@ BEGIN
               EXP_DESCRIPCION  VARCHAR2(310 CHAR),
               DD_AEX_CODIGO    VARCHAR2(25 CHAR)            NOT NULL,
               OFI_ID           NUMBER(16)                   NOT NULL,
-              POS_VIVA_VENCIDA NUMBER(14,2),
+              IMP_PIVOTE       NUMBER(14,2),
               CNT_ID           NUMBER(16)                   NOT NULL,
               PER_ID           NUMBER(16),
               CPE_ORDEN        NUMBER(4)                    NOT NULL,

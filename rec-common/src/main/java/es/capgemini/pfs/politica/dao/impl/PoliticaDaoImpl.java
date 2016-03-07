@@ -13,7 +13,6 @@ import es.capgemini.pfs.politica.dao.PoliticaDao;
 import es.capgemini.pfs.politica.model.CicloMarcadoPolitica;
 import es.capgemini.pfs.politica.model.DDEstadoItinerarioPolitica;
 import es.capgemini.pfs.politica.model.DDEstadoPolitica;
-import es.capgemini.pfs.politica.model.DDTipoPolitica;
 import es.capgemini.pfs.politica.model.Politica;
 
 /**
@@ -64,9 +63,9 @@ public class PoliticaDaoImpl extends AbstractEntityDao<Politica, Long> implement
     @SuppressWarnings("unchecked")
     @Override
     public Politica buscarUltimaPolitica(Long idPersona) {
-        String hql = "select p from CicloMarcadoPolitica c, Politica p" + " where c.auditoria.borrado=false and p.auditoria.borrado=false"
+        String hql = "select p from CicloMarcadoPolitica c, Politica p " + " where c.auditoria.borrado=false and p.auditoria.borrado=false"
                 + " and p.cicloMarcadoPolitica = c" + " and p.estadoPolitica.codigo in ('" + DDEstadoPolitica.ESTADO_VIGENTE + "', '"
-                + DDEstadoPolitica.ESTADO_PROPUESTA + "')" + " and c.persona.id = ? " + " order by p.auditoria.fechaCrear desc";
+                + DDEstadoPolitica.ESTADO_PROPUESTA + "')" + " and c.persona.id = ? " + " order by p.estadoItinerarioPolitica.id desc";
         List<Politica> politicas = getHibernateTemplate().find(hql, idPersona);
         if (politicas.size() > 0) { return politicas.get(0); }
         return null;

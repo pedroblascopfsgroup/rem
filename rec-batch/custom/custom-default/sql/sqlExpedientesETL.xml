@@ -30,11 +30,12 @@
         <![CDATA[
         Declare
 
-           v_cadena  varchar2(50 char);
-           v_proce   varchar2(50 char);
-           v_paso    varchar2(50 char);
-           v_nufilas number;
-           v_count   number;
+           v_cadena     varchar2(50 char);
+           v_proce      varchar2(50 char);
+           v_paso       varchar2(50 char);
+           v_nufilas    number;
+           v_count      number;
+           v_impPivote  varchar2(200 char);
 
         Begin
 
@@ -42,18 +43,34 @@
            v_proce := 'GeneracionExpedientes';
            v_paso := 'comunes.create.PreparaGeneracionExpedientes';
 
-            --** Informacion de contratos
+           Begin
+             EXECUTE IMMEDIATE 'Select PEN_VALOR From PEN_PARAM_ENTIDAD Where PEN_PARAM = ''importePivoteRecuperaciones'''
+             INTO v_impPivote;
+
+             EXCEPTION
+              WHEN NO_DATA_FOUND
+               THEN RAISE_APPLICATION_ERROR(-20000,'Importe pivote no informado en PEN_PARAM_ENTIDAD');
+           End;
+
+           --LOG
+           INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'Se usa como importe Pivote: '||v_impPivote||'',null);
+           COMMIT;
+
+
+           --** Informacion de contratos
+           Execute immediate ('
             Insert /*+append*/ INTO BATCH_SV_DATOS_CNT
-              (cnt_id, ofi_id, cnt_riesgo, pos_viva_vencida)
+              (cnt_id, ofi_id, cnt_riesgo, imp_pivote)
               Select /*+parallel*/ cnt.cnt_id
                    , cnt.ofi_id
-                   , nvl(mov.mov_riesgo, 0) As cnt_riesgo --, nvl(mov.mov_deuda_irregular, 0) AS cnt_riesgo
-                   , nvl(mov.mov_pos_viva_vencida, 0) As pos_viva_vencida
+                   , nvl(mov.mov_riesgo, 0) As cnt_riesgo
+                   , nvl(mov.'||v_impPivote||', 0) As imp_pivote
                 From CNT_CONTRATOs cnt
                 Join ${master.schema}.DD_ESC_ESTADO_CNT esc ON cnt.dd_esc_id = esc.dd_esc_id
                   Join MOV_MOVIMIENTOS mov ON cnt.cnt_id = mov.cnt_id AND cnt.cnt_fecha_extraccion = mov.mov_fecha_extraccion
                Where cnt.borrado = 0
-                 And esc.dd_esc_codigo = '0';
+                 And esc.dd_esc_codigo = ''0''
+             ');
 
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;
@@ -843,13 +860,13 @@
             --** Filtramos personas en exp de recuperacion y buscamos contratos de pase con riesgo
             -----------------------------------------------------------------------------------------
             Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_GUIA
-              (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,POS_VIVA_VENCIDA,CNT_ID,PER_ID,ARQ_ID,CPE_ORDEN,CEX_PASE,PEX_PASE,DD_TIT_CODIGO,ARRASTRE)
+              (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,IMP_PIVOTE,CNT_ID,PER_ID,ARQ_ID,CPE_ORDEN,CEX_PASE,PEX_PASE,DD_TIT_CODIGO,ARRASTRE)
             SELECT s_exp_expedientes.nextval as EXP_ID --cast(rownum as number(16)) as EXP_ID
                  , t.*
             FROM (Select TRIM(cli.PER_NOMBRE||' '||cli.PER_APELLIDO1||' '||cli.PER_APELLIDO2) as EXP_DESCRIPCION
                        , cli.DD_AEX_CODIGO
                        , cnt.OFI_ID
-                       , cnt.POS_VIVA_VENCIDA
+                       , cnt.IMP_PIVOTE
                        , cnt.CNT_ID
                        , cli.PER_ID
                        , cli.ARQ_ID
@@ -871,11 +888,11 @@
                      And ccl.cnt_id = cpe.cnt_id
                      And ccl.ccl_pase = 1
                      And ccl.borrado = 0
-                     And cnt.pos_viva_vencida > 0 --con riesgo
+                     And cnt.imp_pivote > 0 --con riesgo
                      And cli.dd_tit_codigo = 'REC' --itinerario de recuperacion
                     Order by cli.arq_prioridad
                            , cpe.cpe_orden
-                           , cnt.pos_viva_vencida desc
+                           , cnt.imp_pivote desc
                  ) t;
 
             --LOG
@@ -890,12 +907,12 @@
             --** Obtenemos los intervinientes obligados del contrato de pase.
             -----------------------------------------------------------------
             Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_TIT
-             (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,POS_VIVA_VENCIDA,CNT_ID,PER_ID,CPE_ORDEN,ARQ_ID,CEX_PASE,PEX_PASE,DD_TIT_CODIGO,ARRASTRE)
+             (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,IMP_PIVOTE,CNT_ID,PER_ID,CPE_ORDEN,ARQ_ID,CEX_PASE,PEX_PASE,DD_TIT_CODIGO,ARRASTRE)
             Select distinct gui.EXP_ID
                  , gui.EXP_DESCRIPCION
                  , gui.DD_AEX_CODIGO
                  , cnt.OFI_ID
-                 , cnt.POS_VIVA_VENCIDA
+                 , cnt.IMP_PIVOTE
                  , cpe.CNT_ID
                  , cpe.PER_ID
                  , cpe.CPE_ORDEN
@@ -920,14 +937,14 @@
             --** Juntamos todas las relaciones (intervinientes + arrastrados del grupo)
             -------------------------------------------------------------------------------
             Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_BASE
-            (EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, PRIO)
-            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, MIN(PRIO) as PRIO
-            FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, 1 as PRIO
+            (EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, PRIO)
+            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, MIN(PRIO) as PRIO
+            FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, 1 as PRIO
                     from BATCH_VEN_DATOS_SALIDA_GUIA
                   UNION
-                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, 2 as PRIO
+                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, 2 as PRIO
                     from BATCH_VEN_DATOS_SALIDA_TIT )
-            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE;
+            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE;
 
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;
@@ -941,12 +958,12 @@
             --** Obtenemos otras personas de los grupos de los titulares de contratos de pase y los contratos de los que son titulares.
             ---------------------------------------------------------------------------------------------------------------------------
             Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_GCL
-            (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,POS_VIVA_VENCIDA,CNT_ID,PER_ID,CPE_ORDEN,ARQ_ID,CEX_PASE,PEX_PASE)
+            (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,IMP_PIVOTE,CNT_ID,PER_ID,CPE_ORDEN,ARQ_ID,CEX_PASE,PEX_PASE)
             Select distinct gui.EXP_ID
                            , gui.EXP_DESCRIPCION
                            , gui.DD_AEX_CODIGO
                            , cnt.OFI_ID
-                           , cnt.POS_VIVA_VENCIDA
+                           , cnt.IMP_PIVOTE
                            , cpe.CNT_ID
                            , cpe.PER_ID
                            , cpe.CPE_ORDEN
@@ -984,12 +1001,12 @@
 
             -- a) Buscamos otros contratos de los cuales sean titulares los titulares del contrato de pase
             Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_1G_CNT
-             (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,POS_VIVA_VENCIDA,CNT_ID,PER_ID,CPE_ORDEN,ARQ_ID,CEX_PASE,PEX_PASE)
+             (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,IMP_PIVOTE,CNT_ID,PER_ID,CPE_ORDEN,ARQ_ID,CEX_PASE,PEX_PASE)
             SELECT distinct gui.EXP_ID
                  , gui.EXP_DESCRIPCION
                  , gui.DD_AEX_CODIGO
                  , cnt.OFI_ID
-                 , cnt.POS_VIVA_VENCIDA
+                 , cnt.IMP_PIVOTE
                  , cpe.CNT_ID
                  , cpe.PER_ID
                  , cpe.CPE_ORDEN
@@ -1022,12 +1039,12 @@
 
             -- b) Buscamos otros titulares de los contratos del paso a).
             Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_1G_PER
-             (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,POS_VIVA_VENCIDA,CNT_ID,PER_ID,CPE_ORDEN,ARQ_ID,CEX_PASE,PEX_PASE)
+             (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,IMP_PIVOTE,CNT_ID,PER_ID,CPE_ORDEN,ARQ_ID,CEX_PASE,PEX_PASE)
             Select distinct gui.EXP_ID
                  , gui.EXP_DESCRIPCION
                  , gui.DD_AEX_CODIGO
                  , cnt.OFI_ID
-                 , cnt.POS_VIVA_VENCIDA
+                 , cnt.IMP_PIVOTE
                  , cpe.CNT_ID
                  , cpe.PER_ID
                  , cpe.CPE_ORDEN
@@ -1055,16 +1072,16 @@
             --** Juntamos relaciones (intervinientes + arrastrados  1Gen)
             ----------------------------------------------------------------
             Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_1GEN
-            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, MIN(PRIO) as PRIO
-            FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, PRIO
+            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, MIN(PRIO) as PRIO
+            FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, PRIO
                     from BATCH_VEN_DATOS_SALIDA_BASE
                   UNION
-                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 1 as ARRASTRE, 4 as PRIO
+                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 1 as ARRASTRE, 4 as PRIO
                     From BATCH_VEN_DATOS_SALIDA_1G_CNT
                   UNION
-                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 1 as ARRASTRE, 5 as PRIO
+                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 1 as ARRASTRE, 5 as PRIO
                     From BATCH_VEN_DATOS_SALIDA_1G_PER)
-            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE;
+            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE;
 
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;
@@ -1081,12 +1098,12 @@
 
             -- a) Buscamos otros contratos de las personas (titulares) del expediente
             Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_2G_CNT
-             (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,POS_VIVA_VENCIDA,CNT_ID,PER_ID,CPE_ORDEN,ARQ_ID,CEX_PASE,PEX_PASE)
+             (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,IMP_PIVOTE,CNT_ID,PER_ID,CPE_ORDEN,ARQ_ID,CEX_PASE,PEX_PASE)
             SELECT distinct gui.EXP_ID
                  , gui.EXP_DESCRIPCION
                  , gui.DD_AEX_CODIGO
                  , cnt.OFI_ID
-                 , cnt.POS_VIVA_VENCIDA
+                 , cnt.IMP_PIVOTE
                  , cpe.CNT_ID
                  , cpe.PER_ID
                  , cpe.CPE_ORDEN
@@ -1118,12 +1135,12 @@
 
             -- b) Buscamos titulares relacionadas con los contratos del paso a).
             Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_2G_PER
-             (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,POS_VIVA_VENCIDA,CNT_ID,PER_ID,CPE_ORDEN,ARQ_ID,CEX_PASE,PEX_PASE)
+             (EXP_ID,EXP_DESCRIPCION, DD_AEX_CODIGO,OFI_ID,IMP_PIVOTE,CNT_ID,PER_ID,CPE_ORDEN,ARQ_ID,CEX_PASE,PEX_PASE)
             Select distinct gui.EXP_ID
                  , gui.EXP_DESCRIPCION
                  , gui.DD_AEX_CODIGO
                  , cnt.OFI_ID
-                 , cnt.POS_VIVA_VENCIDA
+                 , cnt.IMP_PIVOTE
                  , cpe.CNT_ID
                  , cpe.PER_ID
                  , cpe.CPE_ORDEN
@@ -1149,19 +1166,19 @@
             --** Juntamos todas las relaciones (intervinientes + arrastrados del grupo + 1Gen + 2Gen)
             -----------------------------------------------------------------------------------------
             Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_TODO
-            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, MIN(PRIO) as PRIO
-            FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, PRIO
+            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, MIN(PRIO) as PRIO
+            FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, PRIO
                     From BATCH_VEN_DATOS_SALIDA_1GEN
                   UNION
-                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 3 as PRIO
+                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 3 as PRIO
                     From BATCH_VEN_DATOS_SALIDA_GCL
                   UNION
-                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 6 as PRIO
+                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 6 as PRIO
                     From BATCH_VEN_DATOS_SALIDA_2G_PER
                   UNION
-                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 7 as PRIO
+                  Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 7 as PRIO
                     From BATCH_VEN_DATOS_SALIDA_2G_CNT)
-            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE
+            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE
               ;
 
             --LOG
@@ -1190,15 +1207,15 @@
 
              Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_TODO_LM
                 WITH BATCH_VEN_FILTRADOS
-                  AS (Select t.EXP_ID, t.EXP_DESCRIPCION, t.DD_AEX_CODIGO, t.OFI_ID, t.POS_VIVA_VENCIDA, t.CNT_ID, t.PER_ID, t.CPE_ORDEN, t.ARQ_ID, t.CEX_PASE, t.PEX_PASE, t.PRIO
+                  AS (Select t.EXP_ID, t.EXP_DESCRIPCION, t.DD_AEX_CODIGO, t.OFI_ID, t.IMP_PIVOTE, t.CNT_ID, t.PER_ID, t.CPE_ORDEN, t.ARQ_ID, t.CEX_PASE, t.PEX_PASE, t.PRIO
                         From BATCH_VEN_DATOS_SALIDA_TODO t
                            , BATCH_VEN_DATOS_SALIDA_EXP_DES d
                        Where t.exp_id = d.exp_id(+)
                          And t.cnt_id = d.cnt_id(+)
                          And d.exp_id is null)
-                Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, POS_VIVA_VENCIDA, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, PRIO
+                Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, PRIO
                      -- recalculamos posicion de personas y contratos dentro de cada expediente
-                     , dense_rank() over (partition by exp_id order by cex_pase desc, prio, pos_viva_vencida  desc, cnt_id) as num_cnt
+                     , dense_rank() over (partition by exp_id order by cex_pase desc, prio, imp_pivote  desc, cnt_id) as num_cnt
                      , dense_rank() over (partition by exp_id order by pex_pase desc, prio, cpe_orden, per_id) as num_per
                   From BATCH_VEN_FILTRADOS;
             --LOG
@@ -1514,11 +1531,11 @@
                  , ZON_ZONIFICACION              zon
                  , ${master.schema}.DD_EST_ESTADOS_ITINERARIOS sit
                  , ${master.schema}.DD_EPI_EST_POL_ITINERARIO  epi
-             where tmp.per_id = cmp.per_id
+             Where tmp.per_id = cmp.per_id
                And tmp.exp_id = cmp.exp_id
                And tmp.per_id = per.per_id(+)
                And per.dd_pol_id = pol.dd_pol_id(+)
-               And pol.dd_pol_id = tpl.dd_pol_id(+)
+               And pol.dd_pol_codigo = tpl.tpl_codigo(+)
                And tmp.arq_id = arq.arq_id(+)
                And arq.iti_id = iti.iti_id(+)
                And iti.iti_id = est.iti_id(+)
@@ -1531,6 +1548,24 @@
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'POL_POLITICA Cargada',V_NUFILAS);
+            COMMIT;
+
+
+            -- Analisis politica
+            Insert into APP_ANALISIS_PERSONA_POLITICA
+             (APP_ID, CMP_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+            Select s_app_analisis_per_pol.nextval
+                 , cmp.cmp_id
+                 , 0, '${usuario.crear}', sysdate, 0
+             From (select distinct per_id, exp_id
+                   from BATCH_SEG_DATOS_SALIDA)    tmp
+                 , CMP_CICLO_MARCADO_POLITICA      cmp
+            Where  tmp.per_id = cmp.per_id
+               And tmp.exp_id = cmp.exp_id;
+
+            --LOG
+            V_NUFILAS:=SQL%ROWCOUNT;
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'APP_ANALISIS_PERSONA_POLITICA Cargada',V_NUFILAS);
             COMMIT;
         END;
         ]]>
@@ -1612,11 +1647,9 @@
 
           EXECUTE IMMEDIATE
           'Insert /*+append*/ into  '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE
+             (EXP_ID, PROCESSINSTANCE)
            SELECT EXP_ID
                 , '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL as PROCESSINSTANCE
-                , '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL as TOKEN
-                , '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL as MODULEINSTANCE
-                , '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL as VARIABLEMAP
              FROM '||cENTITY_SCHEMA||'.EXP_EXPEDIENTES
             WHERE EXP_MANUAL = 0
               AND EXP_PROCESS_BPM IS NULL';
@@ -1624,6 +1657,19 @@
           --LOG
           V_NUFILAS:=SQL%ROWCOUNT;
           INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'TMP_BATCH_SV_BPM_INSTANCE Cargada',V_NUFILAS);
+          COMMIT;
+
+          EXECUTE IMMEDIATE'
+          Update TMP_BATCH_SV_BPM_INSTANCE set TOKEN = '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL';
+          COMMIT;
+
+          EXECUTE IMMEDIATE'
+          Update TMP_BATCH_SV_BPM_INSTANCE set MODULEINSTANCE = '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL';
+          COMMIT;
+
+          EXECUTE IMMEDIATE'
+          Update TMP_BATCH_SV_BPM_INSTANCE set VARIABLEMAP = '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL';
+          COMMIT;
 
           DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_BATCH_SV_BPM_INSTANCE', estimate_percent => 20);
 

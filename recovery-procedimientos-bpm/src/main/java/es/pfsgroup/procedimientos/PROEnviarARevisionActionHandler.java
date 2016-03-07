@@ -6,8 +6,13 @@ import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.utils.BPMUtils;
+import es.capgemini.pfs.comun.ComunBusinessOperation;
+import es.capgemini.pfs.expediente.model.DDEstadoExpediente;
+import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.process.ExpedienteBPMConstants;
+import es.capgemini.pfs.interna.InternaBusinessOperation;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.utils.JBPMProcessManager;
 import es.pfsgroup.commons.utils.Checks;
@@ -24,6 +29,10 @@ public class PROEnviarARevisionActionHandler extends PROBaseActionHandler implem
     private final Log logger = LogFactory.getLog(getClass());
 
     private static final long serialVersionUID = 1L;
+    
+	@Autowired
+	private Executor executor;
+
 
     /**
      * Las variables boolean en jbpm se almacenan como String T/F.
@@ -48,24 +57,33 @@ public class PROEnviarARevisionActionHandler extends PROBaseActionHandler implem
         ExpedienteApi expedienteManager = proxyFactory.proxy(ExpedienteApi.class);
         TareaNotificacionApi notificacionManager = proxyFactory.proxy(TareaNotificacionApi.class);
         
-        //Borra el timer en caso de que no se haya ejecutado
-        //BPMUtils.deleteTimer(executionContext);
-
+        Long idExpediente = (Long) executionContext.getVariable(EXPEDIENTE_ID);
+        
+        Boolean politicasVigentes = false;
         //Comprobamos si viene de una transici�n autom�tica (timer desde generar notificaci�n) o viene de una transici�n manual (desde el estado anterior)
         //Si es manual borramos los timers, si es autom�tica no podemos borrar timers porque se est� ejecutando uno de ellos y se embucla
         if (!esAvanceAutomatico(executionContext)) {
             BPMUtils.deleteTimer(executionContext, TIMER_TAREA_CE);
             BPMUtils.deleteTimer(executionContext, TIMER_TAREA_RE);
             BPMUtils.deleteTimer(executionContext, TIMER_TAREA_DC);            
+        } else {
+        	//Si es automático copiamos las políticas
+        	Expediente exp = expedienteManager.getExpediente(idExpediente);
+        	politicasVigentes = (Boolean) executor.execute(InternaBusinessOperation.BO_POL_MGR_MARCAR_POLITICAS_VIGENTES, exp, null, false);
+
+            //Si se ha marcado como vigente las pol�ticas, el expediente se decide
+			if (politicasVigentes) {
+			     DDEstadoExpediente estadoExpediente = (DDEstadoExpediente) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
+			             DDEstadoExpediente.class, DDEstadoExpediente.ESTADO_EXPEDIENTE_DECIDIDO);
+			     
+			     exp.setEstadoExpediente(estadoExpediente);
+			     expedienteManager.saveOrUpdate(exp);
+			
+			     //Si no se ha marcado como vigente, se siguie en la elevaci�n del expediente
+			}
         }
         executionContext.setVariable(AVANCE_AUTOMATICO, Boolean.FALSE);
 
-        //Borra la tarea asociada a CE
-        /*Long idTarea = (Long) executionContext.getVariable(TAREA_ASOCIADA_CE);
-
-        notificacionManager.borrarNotificacionTarea(idTarea);
-        */
-        Long idExpediente = (Long) executionContext.getVariable(EXPEDIENTE_ID);
 
         notificacionManager.eliminarTareasInvalidasElevacionExpediente(idExpediente, DDEstadoItinerario.ESTADO_COMPLETAR_EXPEDIENTE);
 
@@ -74,9 +92,11 @@ public class PROEnviarARevisionActionHandler extends PROBaseActionHandler implem
         }
         executionContext.setVariable(TAREA_ASOCIADA_CE, null);
 
-        expedienteManager.cambiarEstadoItinerarioExpediente(idExpediente, DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE);
-
-        executionContext.getProcessInstance().signal();
+        //Si tiene politicasVigentes el exp. se ha decidido y por tanto ya no avanza ni cambia de estado
+        if (!politicasVigentes) {
+        	expedienteManager.cambiarEstadoItinerarioExpediente(idExpediente, DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE);
+        	executionContext.getProcessInstance().signal();
+        }
     }
 
 }

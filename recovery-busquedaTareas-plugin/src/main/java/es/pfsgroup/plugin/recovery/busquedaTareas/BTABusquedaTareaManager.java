@@ -39,6 +39,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.web.DynamicElement;
 import es.capgemini.pfs.PluginCoreextensionConstantes;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.core.api.web.DynamicElementApi;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
@@ -216,13 +217,13 @@ public class BTABusquedaTareaManager {
 		try {
 			EventFactory.onMethodStart(this.getClass());
 
-			Usuario usuarioLogado = (Usuario) executor
-					.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
+			Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 			List<Perfil> perfiles = usuarioLogado.getPerfiles();
 			List<DDZona> zonas = usuarioLogado.getZonas();
 			dto.setPerfiles(perfiles);
 			dto.setZonas(zonas);
 			dto.setUsuarioLogado(usuarioLogado);
+			
 			List<Class<? extends BTATareaEncontrada>> listaRetorno = new ArrayList<Class<? extends BTATareaEncontrada>>();
 			// if ((!dto.isBusqueda() && dto.getStart() == 0) ||
 			// (dto.getTraerGestionVencidos() != null &&

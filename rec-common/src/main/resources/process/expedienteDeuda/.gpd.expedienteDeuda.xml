@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="expedienteDeuda" width="1499" height="1123">
+<root-container name="expedienteDeuda" width="1315" height="1123">
   <node name="Inicio Expediente" x="456" y="16" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -57,7 +57,7 @@
       <label x="-58" y="-11"/>
     </edge>
   </node>
-  <node name="EnviarAComite" x="260" y="593" width="132" height="36">
+  <node name="EnviarASancionado" x="260" y="593" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -85,13 +85,17 @@
     <edge>
       <label x="-92" y="-15"/>
     </edge>
+    <edge>
+      <label x="116" y="33"/>
+      <bendpoint w1="309" h1="-30" w2="-290" h2="-53"/>
+    </edge>
   </node>
   <node name="DevolverRevision" x="707" y="469" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="DevolverCompletar" x="710" y="301" width="132" height="36">
+  <node name="DevolverCompletar" x="710" y="301" width="173" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -120,7 +124,7 @@
       <bendpoint w1="164" h1="-107" w2="-163" h2="23"/>
     </edge>
     <edge>
-      <label x="-23" y="20"/>
+      <label x="-41" y="19"/>
     </edge>
     <edge>
       <label x="-54" y="6"/>
@@ -129,6 +133,9 @@
     <edge>
       <label x="5" y="-10"/>
       <bendpoint w1="212" h1="95" w2="-254" h2="4"/>
+    </edge>
+    <edge>
+      <label x="-45" y="8"/>
     </edge>
   </node>
   <node name="SolicitarProrrogaExtra" x="923" y="382" width="161" height="36">
@@ -210,4 +217,10 @@
     </edge>
   </node>
   <node name="Fin Expediente" x="465" y="1086" width="132" height="36"/>
+  <node name="AprobadoConCondiciones" x="1083" y="742" width="218" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-4" h1="-669" w2="642" h2="-161"/>
+    </edge>
+  </node>
 </root-container>

@@ -40,8 +40,18 @@
 
 	<decision name="PCO_RegistrarAceptacionPostDecision" expression="#{PCO_RegistrarAceptacionPostDecision}">
 		<transition to="PCO_RevisarNoAceptacionPost" name="no_aceptacion"/>
-		<transition to="forkAceptacion" name="aceptacion"/>
+		<transition to="nodePreasignarProcurador" name="aceptacion"/>
 	</decision>
+	
+	<node name="nodePreasignarProcurador">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>precontenciosoGestorProcuradorHandler
+			</targetBean>
+		</action>
+		<transition to="forkAceptacion" name="avanzaConProcu"></transition>
+		<transition to="PCO_EnviarExpedienteLetrado" name="avanza"></transition>
+	</node>
 		
 	<fork name="forkAceptacion">
 		<transition to="PCO_EnviarExpedienteLetrado" name="enviarExpediente"></transition>
@@ -106,16 +116,31 @@
 
 	<decision name="PCO_RegistrarTomaDecDecision" expression="#{PCO_RegistrarTomaDecDecision}">
 		<transition to="PCO_RevisarSubsanacion" name="requiere_subsanar"/>
-		<transition to="forkOk" name="ok"/>
+		<transition to="nodeConfirmarProcurador" name="ok"/>
 		<transition to="PCO_ValidarCambioProc" name="cambio_proc"></transition>
 	</decision>
 	
+	<node name="nodeConfirmarProcurador">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>precontenciosoGestorProcuradorHandler
+			</targetBean>
+		</action>
+		<transition to="forkOk" name="avanza"></transition>
+		<transition to="forkOkConProcu" name="avanzaConProcu"></transition>
+	</node>
+	
 	<fork name="forkOk">		
+		<transition to="PCO_IniciarProcJudicial" name="iniciarProcJudicial"></transition>
+		<transition to="PCO_BPMTramiteEnvioDemanda" name="tramiteEnvioDemanda"></transition>
+	</fork>
+	
+	<fork name="forkOkConProcu">		
 		<transition to="PCO_IniciarProcJudicial" name="iniciarProcJudicial"></transition>
 		<transition to="PCO_ConfirmarProcurador" name="confirmarProcurador"></transition>
 		<transition to="PCO_BPMTramiteEnvioDemanda" name="tramiteEnvioDemanda"></transition>
 	</fork>
-	
+		
 	<state name="PCO_ConfirmarProcurador">
 		<event type="node-enter">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">

@@ -54,7 +54,7 @@
 		<transition to="EnviarAEnSancion" name="EnviarAEnSancion"></transition>
 	</state>
 
-	<node name="EnviarAComite">
+	<node name="EnviarASancionado">
 		<action name="EnviarAComiteAction" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>enviarAComiteActionHandler</targetBean>
@@ -71,10 +71,11 @@
 		</event>
 		<transition to="ExpedienteDecidido" name="TomarDecision"></transition>
 		<transition to="GenerarNotificacion" name="GenerarNotificacion"></transition>
-        <transition to="DecisionComiteAutomatica" name="DecisionComiteAutomatica"></transition>
+        <transition to="DecisionComiteAutomatica" name="Sancionadoautomatico"></transition>
 		<transition to="Fin Expediente" name="Fin"></transition>
 		<transition to="EnviarAFormalizar" name="EnviarAFormalizar"></transition>
 		<transition to="DevolverAEnSancion" name="DevolverAEnSancion"></transition>
+		<transition to="AprobadoConCondiciones" name="AprobadoConCondiciones"></transition>
 	</state>
 
 	<node name="DevolverRevision">
@@ -110,9 +111,10 @@
 		<transition to="RevisionExpediente" name="RevisionExpediente"></transition>
 		<transition to="Sancionado" name="Sancionado"></transition>
 		<transition to="EnviarARevision" name="EnviarARevision"></transition>
-		<transition to="EnviarAComite" name="EnviarAComite"></transition>
+		<transition to="EnviarASancionado" name="EnviarASancionado"></transition>
 		<transition to="FormalizarPropuesta" name="FormalizarPropuesta"></transition>
 		<transition to="EnSancion" name="EnSancion"></transition>
+		<transition to="EnviarAEnSancion" name="EnviarAEnSancion"></transition>
 	</node>
 
 	<node name="SolicitarProrrogaExtra">
@@ -172,7 +174,7 @@
 
 	<state name="EnSancion">
 		<transition to="DevolverRevision" name="DevolverRevision"></transition>
-		<transition to="EnviarAComite" name="EnviarASancionado"></transition>
+		<transition to="EnviarASancionado" name="EnviarASancionado"></transition>
 		<transition to="GenerarNotificacion" name="GenerarNotificacion"></transition>
 		<transition to="Fin Expediente" name="Fin "></transition>
 	</state>
@@ -183,6 +185,10 @@
 
 	<node name="EnviarAEnSancion">
 		<transition to="EnSancion"></transition>
+	</node>
+
+	<node name="AprobadoConCondiciones">
+		<transition to="CompletarExpediente"></transition>
 	</node>
 
 	<end-state name="Fin Expediente"></end-state>

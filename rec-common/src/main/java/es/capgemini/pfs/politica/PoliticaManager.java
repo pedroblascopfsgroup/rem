@@ -3,6 +3,7 @@ package es.capgemini.pfs.politica;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -1202,6 +1203,9 @@ public class PoliticaManager {
 
         for (CicloMarcadoPolitica cmp : listadoCiclos) {
             List<Politica> listadoPoliticas = cmp.getPoliticas();
+            
+            Collections.sort(listadoPoliticas, new Politica().getEstadoItinerarioComparator());
+            
             if (listadoPoliticas.size()>1) {
 	            Politica politicaBorrar = listadoPoliticas.get(listadoPoliticas.size() - 1);
 	            Politica politicaProponer = listadoPoliticas.get(listadoPoliticas.size() - 2);

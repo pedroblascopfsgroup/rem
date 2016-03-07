@@ -18,6 +18,7 @@
 				<json:property name="diasIrregular" value="${cnt.diasIrregular}" />
 				<json:property name="riesgo" value="${cnt.lastMovimiento.riesgo}" />
 			</c:if>
+			<json:property name="situacion2"  value="${cnt.primerTitular.situacion}" />
 			<json:property name="situacion">
 				<s:message code="situacion.normal" text="**Normal" />
 			</json:property>

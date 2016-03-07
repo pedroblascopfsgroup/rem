@@ -9,6 +9,7 @@ import es.pfsgroup.recovery.ext.impl.multigestor.model.EXTGrupoUsuarios;
 public interface EXTGrupoUsuariosDao extends AbstractDao<EXTGrupoUsuarios, Long>{
 
 	List<Long> buscaGruposUsuario(Usuario usuario);
+	List<Long> buscaGruposUsuarioById(Long usuId);
 	
 	/**
 	 * Devuelve los Ids de los usuarios del grupo al que pertenece el usuario

@@ -93,9 +93,20 @@ public class VListadoPreProyectadoCnt implements Serializable {
     
     @Column(name="NOM_CLIENTE")
     private String nomCliente;
-	
+
+    @Column(name="OFI_CODIGO")
+    private String ofiCodigo;
+
 	// -------------------------------------------------------------------
 	
+    
+	public String getOfiCodigo() {
+		return ofiCodigo;
+	}
+
+	public void setOfiCodigo(String ofiCodigo) {
+		this.ofiCodigo = ofiCodigo;
+	}
 
 	public Long getCntId() {
 		return cntId;

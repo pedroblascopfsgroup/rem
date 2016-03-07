@@ -626,7 +626,7 @@
 		,{  /*Columna 9*/ header: '<s:message code="tareas.listado.supervisor" text="**Supervisor"/>', sortable: false, dataIndex: 'supervisor', hidden:true}
 		,{  /*Columna 10*/ header: '<s:message code="tareas.listado.emisor" text="**Emisor"/>', sortable: true, dataIndex: 'emisor', width:50}		
 		,{  /*Columna 11*/ header: '<s:message code="tareas.listado.id" text="**Id"/>', sortable: true, hidden:true ,dataIndex: 'id'}
-		,{  /*Columna 12*/ header: '<s:message code="tareas.listado.volumenRiesgo" text="**VR"/>',	sortable: true, dataIndex: 'volumenRiesgoSQL' <sec:authorize ifAllGranted="PERSONALIZACION-BCC">,hidden:true </sec:authorize> ,renderer:app.format.moneyRendererNull,align:'right'}
+		,{  /*Columna 12*/ header: '<s:message code="tareas.listado.total" text="**Total"/>',	sortable: true, dataIndex: 'volumenRiesgoSQL' <sec:authorize ifAllGranted="PERSONALIZACION-BCC">,hidden:true </sec:authorize> ,renderer:app.format.moneyRendererNull,align:'right'}
 		,{  /*Columna 13*/ header: '<s:message code="tareas.listado.volumenRiesgoVencido" text="**VRV"/>', sortable: false, dataIndex: 'volumenRiesgoVencido',hidden:true,renderer:app.format.moneyRendererNull,align:'right'}
 		,{  /*Columna 14*/ header: '<s:message code="tareas.listado.vencimiento" text="**vencimiento"/>', 	sortable: false, dataIndex: 'group', hidden:true,renderer:groupRenderer}
 		<sec:authorize ifAllGranted="ROLE_REVISAR_ALERTA">
@@ -650,7 +650,7 @@
 			,{  /*Columna 9*/ header: '<s:message code="tareas.listado.supervisor" text="**Supervisor"/>', sortable: false, dataIndex: 'supervisor', hidden:true}
 			,{  /*Columna 10*/ header: '<s:message code="tareas.listado.emisor" text="**Emisor"/>', sortable: true, dataIndex: 'emisor', width:50}		
 			,{  /*Columna 11*/ header: '<s:message code="tareas.listado.id" text="**Id"/>', sortable: true, hidden:true ,dataIndex: 'id'}
-			,{  /*Columna 12*/ header: '<s:message code="tareas.listado.volumenRiesgo" text="**VR"/>',	sortable: true, dataIndex: 'volumenRiesgoSQL' <sec:authorize ifAllGranted="PERSONALIZACION-BCC">,hidden:true </sec:authorize>,renderer:app.format.moneyRendererNull,align:'right'}
+			,{  /*Columna 12*/ header: '<s:message code="tareas.listado.total" text="**Total"/>',	sortable: true, dataIndex: 'volumenRiesgoSQL' <sec:authorize ifAllGranted="PERSONALIZACION-BCC">,hidden:true </sec:authorize>,renderer:app.format.moneyRendererNull,align:'right'}
 			,{  /*Columna 13*/ header: '<s:message code="tareas.listado.volumenRiesgoVencido" text="**VRV"/>', sortable: false, dataIndex: 'volumenRiesgoVencido', hidden:true,renderer:app.format.moneyRendererNull,align:'right'}
 			,{  /*Columna 14*/ header: '<s:message code="tareas.listado.vencimiento" text="**vencimiento"/>', 	sortable: false, dataIndex: 'group', hidden:true,renderer:groupRenderer}
 			<sec:authorize ifAllGranted="ROLE_REVISAR_ESPERA">
@@ -674,7 +674,7 @@
 			,{  /*Columna 9*/ header: '<s:message code="tareas.listado.supervisor" text="**Supervisor"/>', sortable: false, dataIndex: 'supervisor', hidden:true}
 			,{  /*Columna 10*/ header: '<s:message code="tareas.listado.emisor" text="**Emisor"/>', sortable: true, dataIndex: 'emisor', width:50}		
 			,{  /*Columna 11*/ header: '<s:message code="tareas.listado.id" text="**Id"/>', sortable: true, hidden:true ,dataIndex: 'id'}
-			,{  /*Columna 12*/ header: '<s:message code="tareas.listado.volumenRiesgo" text="**VR"/>',	sortable: true, dataIndex: 'volumenRiesgoSQL'<sec:authorize ifAllGranted="PERSONALIZACION-BCC">,hidden:true </sec:authorize>,renderer:app.format.moneyRendererNull,align:'right'}
+			,{  /*Columna 12*/ header: '<s:message code="tareas.listado.total" text="**Total"/>',	sortable: true, dataIndex: 'volumenRiesgoSQL'<sec:authorize ifAllGranted="PERSONALIZACION-BCC">,hidden:true </sec:authorize>,renderer:app.format.moneyRendererNull,align:'right'}
 			,{  /*Columna 13*/ header: '<s:message code="tareas.listado.volumenRiesgoVencido" text="**VRV"/>', sortable: false, dataIndex: 'volumenRiesgoVencido', hidden:true,renderer:app.format.moneyRendererNull,align:'right'}
 			,{  /*Columna 14*/ header: '<s:message code="tareas.listado.vencimiento" text="**vencimiento"/>', 	sortable: false, dataIndex: 'group', hidden:true,renderer:groupRenderer}
 			<sec:authorize ifAllGranted="ROLE_REVISAR_NOTIFICACION">
@@ -697,7 +697,7 @@
 			,{  /*Columna 9*/ header: '<s:message code="tareas.listado.supervisor" text="**Supervisor"/>', sortable: false, dataIndex: 'supervisor', hidden:true}
 			,{  /*Columna 10*/ header: '<s:message code="tareas.listado.emisor" text="**Emisor"/>', sortable: true, dataIndex: 'emisor', width:50}		
 			,{  /*Columna 11*/ header: '<s:message code="tareas.listado.id" text="**Id"/>', sortable: true, hidden:true ,dataIndex: 'id'}
-			,{  /*Columna 12*/ header: '<s:message code="tareas.listado.volumenRiesgo" text="**VR"/>',	sortable: true, dataIndex: 'volumenRiesgoSQL'<sec:authorize ifAllGranted="PERSONALIZACION-BCC">,hidden:true </sec:authorize>,renderer:app.format.moneyRendererNull,align:'right'}
+			,{  /*Columna 12*/ header: '<s:message code="tareas.listado.total" text="**Total"/>',	sortable: true, dataIndex: 'volumenRiesgoSQL'<sec:authorize ifAllGranted="PERSONALIZACION-BCC">,hidden:true </sec:authorize>,renderer:app.format.moneyRendererNull,align:'right'}
 			,{  /*Columna 13*/ header: '<s:message code="tareas.listado.volumenRiesgoVencido" text="**VRV"/>', sortable: false, dataIndex: 'volumenRiesgoVencido', hidden:true,renderer:app.format.moneyRendererNull,align:'right'}
 			,{  /*Columna 14*/ header: '<s:message code="tareas.listado.vencimiento" text="**vencimiento"/>', 	sortable: false, dataIndex: 'group', hidden:true,renderer:groupRenderer}
 			 <sec:authorize ifAllGranted="ROLE_REVISAR_TAREA">
@@ -1565,7 +1565,7 @@
 			<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
 				tareasNewCm.setHidden(13,true);
 			</sec:authorize>
-			tareasNewCm.setHidden(12,false);
+			tareasNewCm.setHidden(12,true);
 		</sec:authorize>
 		
 			
@@ -1600,7 +1600,7 @@
 			<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
 				tareasNewCm.setHidden(13,true);
 			</sec:authorize>
-			tareasNewCm.setHidden(12,false);
+			tareasNewCm.setHidden(12,true);
 		</sec:authorize>
 	}
 	

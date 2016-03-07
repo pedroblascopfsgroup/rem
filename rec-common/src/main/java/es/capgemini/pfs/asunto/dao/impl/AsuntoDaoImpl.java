@@ -181,7 +181,7 @@ public class AsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements As
     }
 
     private boolean requiereContrato(DtoBusquedaAsunto dto) {
-        return (dto.getCodigoZonas().size() > 0 || (dto.getFiltroContrato() != null && dto.getFiltroContrato() > 0L));
+        return (dto.getCodigoZonas().size() > 0 || (dto.getFiltroContrato() != null && dto.getFiltroContrato() != ""));
     }
 
     /**
@@ -292,7 +292,7 @@ public class AsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements As
         }*/
 
         //CODIGO CONTRATO
-        if (dto.getFiltroContrato() != null && dto.getFiltroContrato() > 0L) {
+        if (dto.getFiltroContrato() != null && dto.getFiltroContrato() != "") {
             hql.append(" and cnt.nroContrato like '%'|| :filtroCnt ||'%'");
             params.put("filtroCnt", dto.getFiltroContrato());
         }

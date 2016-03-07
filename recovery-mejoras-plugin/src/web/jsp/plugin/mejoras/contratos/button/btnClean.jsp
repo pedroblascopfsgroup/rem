@@ -14,6 +14,7 @@ new Ext.Button({
         			txtCodEfecto.reset();
         			txtCodDisposicion.reset();
         			comboMotivoGestionHRE.reset();
+        			comboSituacionGestion.reset();
         		}
         	if(tabRelaciones){
         			txtNombre.reset();

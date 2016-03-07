@@ -15,7 +15,7 @@ new Ext.Button({
 				var w = app.openWindow({
 					flow: 'expedientejudicial/documentoInstanciaRegistro'
 					,title: '<s:message code="plugin.precontencioso.button.documento.instancia.registro" text="**Documento de instancia al registro" />'
-					,width: 640
+					,width: 900
 				});
 				w.on(app.event.DONE, function() {
 					refrescarDocumentosGrid();

@@ -20,14 +20,13 @@ public class DtoBusquedaAsunto extends PaginationParamsImpl {
     private String comboDespachos;
     private String comboGestor;
     private String comboEstados;
-    private String comboTipoAsunto;
     private String comboSupervisor;
     private String estadoAnalisis;
     private Double minSaldoTotalContratos;
     private Double maxSaldoTotalContratos;
     private Double minImporteEstimado;
     private Double maxImporteEstimado;
-    private Long filtroContrato;
+    private String filtroContrato;
     private String fechaCreacionDesde;
     private String fechaCreacionHasta;
     private String jerarquia;
@@ -44,14 +43,6 @@ public class DtoBusquedaAsunto extends PaginationParamsImpl {
 
     
     
-    
-    public String getComboTipoAsunto() {
-		return comboTipoAsunto;
-	}
-
-	public void setComboTipoAsunto(String comboTipoAsunto) {
-		this.comboTipoAsunto = comboTipoAsunto;
-	}
 
 	/**
      * @return the jerarquia
@@ -238,14 +229,14 @@ public class DtoBusquedaAsunto extends PaginationParamsImpl {
     /**
      * @return the filtroContrato
      */
-    public Long getFiltroContrato() {
+    public String getFiltroContrato() {
         return filtroContrato;
     }
 
     /**
      * @param filtroContrato the filtroContrato to set
      */
-    public void setFiltroContrato(Long filtroContrato) {
+    public void setFiltroContrato(String filtroContrato) {
         this.filtroContrato = filtroContrato;
     }
 

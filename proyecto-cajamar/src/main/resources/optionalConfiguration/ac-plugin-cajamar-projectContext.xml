@@ -312,6 +312,11 @@
 				</entry>
 			</map>
 		</property>
+		<property name="tiposGestoresDeProcuradores">
+			<set>
+				<value>GESPROC</value>
+			</set>
+		</property>
 	</bean>
 	
 	<bean id="procedimientosProjectContextCAJAMAR" parent="procedimientosProjectContextDefault">
@@ -368,7 +373,7 @@
 				<value>H019</value> <!-- T. de solicitud de actuaciones o pronunciamientos -->
 				<value>H033</value> <!-- fase liquidacion  -->
 			</set>
-		</property>
+		</property>		
 	</bean>	
 	
 	<bean id="commonProjectContextCAJAMAR" parent="commonProjectContextDefault">

@@ -42,12 +42,12 @@ DECLARE
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
     V_TR_ID VARCHAR2(16 CHAR):= 			'392';
-    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_CONF_VIS';
+    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_CEL_VIS';
     V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Celebración vista';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'OCU';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     
-    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_CONF_VIS';
+    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_CEL_VIS';
     
     V_TPO_CODIGO VARCHAR2(20 CHAR):=		'H048';
     V_NODO VARCHAR2(50 CHAR):=				'H048_RegistrarCelebracionVista';

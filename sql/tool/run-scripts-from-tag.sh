@@ -285,9 +285,11 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
         cp $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DB/DB-scripts.sh
         cp $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh $BASEDIR/tmp/package/DB/DB-scripts-one-user.sh
 
-        cd $BASEDIR/tmp/package
-        zip DDL-scripts.zip -r DDL 
-        cd -
+        if [[ $UNIFIED_PACKAGE == 'false' ]]; then
+            cd $BASEDIR/tmp/package
+            zip DDL-scripts.zip -r DDL 
+            cd -
+        fi
     fi
     if [ -f $BASEDIR/tmp/DML-scripts.sh ] ; then
         cat $BASEDIR/tmp/DML-scripts.sh | tee -a $BASEDIR/tmp/package/DML/DML-scripts.sh $BASEDIR/tmp/package/DB/DB-scripts.sh > /dev/null
@@ -298,13 +300,18 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
         fi
         cp -r $BASEDIR/tmp/DML*reg*.sql $BASEDIR/tmp/package/DML/scripts/
         cp -r $BASEDIR/tmp/DML*reg*.sql $BASEDIR/tmp/package/DB/scripts/
-        cd $BASEDIR/tmp/package
-        zip DML-scripts.zip -r DML 
-        cd -
+
+        if [[ $UNIFIED_PACKAGE == 'false' ]]; then
+            cd $BASEDIR/tmp/package
+            zip DML-scripts.zip -r DML 
+            cd -
+        fi
     fi     
-    cd $BASEDIR/tmp/package
-    zip DB-scripts.zip -r DB
-    cd -
+    if [[ $UNIFIED_PACKAGE != 'false' ]]; then
+        cd $BASEDIR/tmp/package
+        zip DB-scripts.zip -r DB
+        cd -
+    fi
     echo ""
     echo "---------------------------------------------------"
     echo "---- EMPAQUETADOS PARA SOLICITUD DE DESPLIEGUE ----" 
@@ -312,8 +319,8 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
     echo ""
     echo `ls $BASEDIR/tmp/package/*.zip` 
     echo ""
-    echo "Si puedes solicitar DDL y DML juntos, escoge DB-scripts.zip"
-    echo "En caso contrario, tienes los empaquetados por separado ;)"
+    echo "Los scripts DDL y DML se empaquetan juntos o separados, según variable UNIFIED_PACKAGE en setEnvGlobal<CLIENTE>"
+    echo "Por defecto, se empaquetan juntos" 
     echo ""
     echo "---------------------------------------------------"
 

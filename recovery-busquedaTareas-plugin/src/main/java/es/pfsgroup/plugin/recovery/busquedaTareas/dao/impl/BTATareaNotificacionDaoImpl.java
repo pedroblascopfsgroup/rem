@@ -106,6 +106,24 @@ public class BTATareaNotificacionDaoImpl extends AbstractEntityDao<BTATareaEncon
         		hb = buscarTareasIndividual(hb, dto);
         	}
         }
+        
+        // PERMISOS DEL USUARIO (en caso de que sea externo)
+        if (!Checks.esNulo(dto.getUsuarioExterno())	&& dto.getUsuarioExterno()) {
+        	
+        	// Monogestor
+        	//hb.appendWhere(" ((tar.tarea.asunto.gestor.usuario.id = " + dto.getUsuarioId() + ")");
+        	//hb.appendWhere(" tar.tarea.asunto.supervisor.usuario.id = " + dto.getUsuarioId() + ") ");
+                	
+        	// Multigestor
+        	//hb.appendWhere(" tar.asunto.id in (SELECT gaa.asunto.id FROM EXTGestorAdicionalAsunto gaa where gaa.gestor.usuario.id = " + dto.getUsuarioLogado().getId() + " )");
+        	
+        	List<Long> idGrpsUsuario = extGrupoUsuariosDao.buscaGruposUsuarioById(dto.getUsuarioId());
+        	String multigestor = filtroGestorGrupo(idGrpsUsuario);
+        	String condicion = "(tar.tarea.asunto.id in (select gaa.asunto.id from EXTGestorAdicionalAsunto gaa where gaa.gestor.usuario.id = "+ dto.getUsuarioId()+")) or "+multigestor;
+        	
+        	hb.appendWhere(condicion);
+        	     	
+        }
 
         // En espera y Alerta
         if (dto.isEnEspera()) {
@@ -118,7 +136,7 @@ public class BTATareaNotificacionDaoImpl extends AbstractEntityDao<BTATareaEncon
         	HQLBuilder.addFiltroIgualQue(hb, "tar.tarea.subtipoTarea.codigoSubtarea", SubtipoTarea.CODIGO_DECISION_COMITE);
         	
         }
-
+   
         // Pestañas dinámicas
         hb.appendExtensibleDto(dto);
         
@@ -589,25 +607,7 @@ public class BTATareaNotificacionDaoImpl extends AbstractEntityDao<BTATareaEncon
         	
         }
 
-        // PERMISOS DEL USUARIO (en caso de que sea externo)
-        if (!Checks.esNulo(dto.getUsuarioLogado()) && Checks.esNulo(dto.getUsuarioLogado().getUsuarioExterno()) 
-        		&& dto.getUsuarioLogado().getUsuarioExterno()) {
-        	
-        	// Monogestor
-        	hb.appendWhere(" ((tar.asunto.gestor.usuario.id = " + dto.getUsuarioLogado().getId() + ") or (");
-        	hb.appendWhere(" tar.asunto.supervisor.usuario.id = " + dto.getUsuarioLogado().getId() + ") or (");
-        	
-        	// Multigestor
-        	//hb.appendWhere(" tar.asunto.id in (SELECT gaa.asunto.id FROM EXTGestorAdicionalAsunto gaa where gaa.gestor.usuario.id = " + dto.getUsuarioLogado().getId() + " )");
-        	List<Long> idGrpsUsuario = extGrupoUsuariosDao.buscaGruposUsuario(dto.getUsuarioLogado());
-        	String multigestor = filtroGestorGrupo(idGrpsUsuario);
-        	if(!Checks.esNulo(multigestor)){
-        		 hb.appendWhere(multigestor + ")");
-        	}
-        	else
-        		 hb.appendWhere(")");
-        	
-        }
+       
 
         // Filtros de Nivel y Zonificación: Filtramos por las zonas recibidas
         
@@ -675,7 +675,7 @@ public class BTATareaNotificacionDaoImpl extends AbstractEntityDao<BTATareaEncon
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("(asu.id in (");
+		hql.append("(tar.tarea.asunto.id in (");
 		hql.append("select gaa.asunto.id from EXTGestorAdicionalAsunto gaa  ");
 		hql.append("where gaa.gestor.usuario.id IN (");
 		

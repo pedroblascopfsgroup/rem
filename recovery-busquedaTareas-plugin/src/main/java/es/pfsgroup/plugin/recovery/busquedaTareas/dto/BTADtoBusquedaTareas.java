@@ -10,7 +10,7 @@ import es.pfsgroup.commons.utils.web.dto.extensible.ExtensibleDto;
 
 /**
  * Clase que transfiere informaciï¿½n desde la vista hacia el modelo.
- * @author Sergio Alarcón
+ * @author Sergio Alarcï¿½n
  *
  */
 public class BTADtoBusquedaTareas extends ExtensibleDto implements es.capgemini.devon.pagination.PaginationParams{
@@ -44,6 +44,8 @@ public class BTADtoBusquedaTareas extends ExtensibleDto implements es.capgemini.
     private String nombreUsuario;
     private String apellidoUsuario;
     private String usernameUsuario;
+	private Boolean usuarioExterno;
+	private Long usuarioId;
 
     //Campos para busqueda
     // Basicos
@@ -708,6 +710,22 @@ public class BTADtoBusquedaTareas extends ExtensibleDto implements es.capgemini.
 
 	public void setBusquedaUsuario(String busquedaUsuario) {
 		this.busquedaUsuario = busquedaUsuario;
+	}
+
+	public Long getUsuarioId() {
+		return usuarioId;
+	}
+
+	public void setUsuarioId(Long usuarioId) {
+		this.usuarioId = usuarioId;
+	}
+
+	public Boolean getUsuarioExterno() {
+		return usuarioExterno;
+	}
+
+	public void setUsuarioExterno(Boolean usuarioExterno) {
+		this.usuarioExterno = usuarioExterno;
 	}
 	
 }

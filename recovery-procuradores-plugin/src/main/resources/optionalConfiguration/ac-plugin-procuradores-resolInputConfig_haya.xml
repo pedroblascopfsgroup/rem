@@ -800,6 +800,16 @@
 						</bean>
 					</list>
 				</entry>
+				<entry key="R_CEL_VIS">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_CEL_VIS</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
 				<entry key="R_REG_RES_PER">
 					<list>
 						<bean

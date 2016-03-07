@@ -130,7 +130,7 @@ AUTHID CURRENT_USER IS
 				JOIN #ESQUEMA#.bie_cnt bic ON cnt.cnt_id=bic.cnt_id
 				JOIN #ESQUEMA#.bie_localizacion bil ON bic.bie_id=bil.bie_id AND bil.dd_prv_id is not null
 				JOIN #ESQUEMA#.bie_valoraciones val ON val.bie_id=bic.bie_id
-			WHERE asu.asu_id=100002465 AND asu.borrado=0 AND exp.borrado=0 AND cex.borrado=0 AND cnt.borrado=0 AND bic.borrado=0 AND bil.borrado=0 AND val.borrado=0;
+			WHERE asu.asu_id=p_asu_id AND asu.borrado=0 AND exp.borrado=0 AND cex.borrado=0 AND cnt.borrado=0 AND bic.borrado=0 AND bil.borrado=0 AND val.borrado=0;
       
       -- Cursor para elegir despacho segun la provincia elegida  y segun la calidad(litigio/concursal) de la provincia del despacho
 	CURSOR crs_filtro_despacho_prov (

@@ -44,6 +44,13 @@ when matched then
 update set EXP.borrado = 1, EXP.fechaborrar = sysdate, EXP.usuarioborrar = 'BKREC-1373'
 where EXP.borrado = 0;
 
+commit;
+
+update BANK01.EXP_EXPEDIENTES 
+set DD_TPX_ID = (SELECT DD_TPX_ID FROM BANK01.DD_TPX_TIPO_EXPEDIENTE WHERE DD_TPX_CODIGO = 'RECU'), USUARIOMODIFICAR = 'BKREC-1831', FECHAMODIFICAR = SYSDATE 
+where USUARIOCREAR = 'CONVIVE_F2';
+COMMIT;
+
 drop table EXP_DUP_BKREC_1831 purge;
 
 create table EXP_DUP_BKREC_1831 as 
@@ -85,16 +92,7 @@ when matched then
 update set EXP.borrado = 1, EXP.fechaborrar = sysdate, EXP.usuarioborrar = 'BKREC-1831'
 where EXP.borrado = 0;
 
-update BANK01.EXP_EXPEDIENTES set borrado = 0 where usuarioborrar = 'BKREC-1831' and borrado = 1;
-update BANK01.PEX_PERSONAS_EXPEDIENTE set borrado = 0 where usuarioborrar = 'BKREC-1831' and borrado = 1;
-update BANK01.CEX_CONTRATOS_EXPEDIENTE set borrado = 0 where usuarioborrar = 'BKREC-1831' and borrado = 1;
-update BANK01.CRE_CICLO_RECOBRO_EXP set borrado = 0 where usuarioborrar = 'BKREC-1831' and borrado = 1;
 commit;
 
-update BANK01.EXP_EXPEDIENTES 
-set DD_TPX_ID = (SELECT DD_TPX_ID FROM BANK01.DD_TPX_TIPO_EXPEDIENTE WHERE DD_TPX_CODIGO = 'RECU'), USUARIOMODIFICAR = 'BKREC-1831', FECHAMODIFICAR = SYSDATE 
-where USUARIOCREAR = 'CONVIVE_F2';
-
-update BANK01.EXP_EXPEDIENTES set dd_eex_id = 4 where usuariomodificar = 'BKREC-1831' and to_char(fechamodificar,'DD/MM/RRRR') = '10/02/2016' and DD_EEX_ID = 6;
-
+update BANK01.EXP_EXPEDIENTES set dd_eex_id = 4 where usuariomodificar = 'BKREC-1831' and DD_EEX_ID = 6;
 commit;

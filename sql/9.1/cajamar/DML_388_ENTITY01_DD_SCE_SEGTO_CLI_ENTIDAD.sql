@@ -46,7 +46,7 @@ BEGIN
 			IF V_NUM_COLUMN = 0	THEN			  
 			--** Modificamos la tabla
 			V_MSQL := 'insert into '||v_esquema||'.dd_sce_segto_cli_entidad (DD_SCE_ID,DD_SCE_CODIGO, dd_sce_descripcion, dd_sce_descripcion_larga,VERSION,USUARIOCREAR,FECHACREAR)
-					VALUES ('||v_esquema||'.S_DD_SCE_SEGTO_CLI_ENTIDAD.NEXTVAL,''SinDefinir'',''Segmento Cliente no Definido'',''Segmento Cliente no Definido'',0,''DD'',SYSDATE);';
+					VALUES ('||v_esquema||'.S_DD_SCE_SEGTO_CLI_ENTIDAD.NEXTVAL,''SinDefinir'',''Segmento Cliente no Definido'',''Segmento Cliente no Definido'',0,''DD'',SYSDATE)';
 			EXECUTE IMMEDIATE V_MSQL;
 			DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.dd_sce_segto_cli_entidad... CAMPO con codigo SinDefinir creado');
 		    END IF;			

@@ -1918,10 +1918,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
         
         //VALIDO PRECONDICIONES CU WEB-30
-        if(!Checks.esNulo(exp.getTipoExpediente()) && !Checks.esNulo(exp.getEstadoItinerario()) && DDTipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA.equals(exp.getTipoExpediente().getCodigo()) && !exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA) && !exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO) ){
+        if(!Checks.esNulo(exp.getEstadoItinerario()) && DDTipoItinerario.ITINERARIO_GESTION_DEUDA.equals(exp.getArquetipo().getItinerario().getdDtipoItinerario().getCodigo()) && !exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA) && !exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO) ){
         	return Boolean.FALSE;
         }
-        if ((Checks.esNulo(exp.getTipoExpediente()) || Checks.esNulo(exp.getEstadoItinerario()) ||!DDTipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA.equals(exp.getTipoExpediente().getCodigo()) || (DDTipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA.equals(exp.getTipoExpediente().getCodigo()) && !exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA) && !exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO) ))
+        if (( Checks.esNulo(exp.getEstadoItinerario()) ||!DDTipoItinerario.ITINERARIO_GESTION_DEUDA.equals(exp.getArquetipo().getItinerario().getdDtipoItinerario().getCodigo()) || (DDTipoItinerario.ITINERARIO_GESTION_DEUDA.equals(exp.getArquetipo().getItinerario().getdDtipoItinerario().getCodigo()) && !exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA) && !exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO) ))
         	&& !exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT) || (exp.getComite() == null || exp.getComite().getSesiones() == null || exp.getComite().getSesiones().size() == 0)) {
             //No esta en decisión de comite o no tiene sesiones abiertas.
             logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO ESTA EN EL ESTADO CORRESPONDIENTE "

@@ -40,9 +40,13 @@ public interface ExpedienteBPMConstants extends BPMContants {
     String COMPLETAR_EXPEDIENTE = "CompletarExpediente";
     String REVISION_EXPEDIENTE = "RevisionExpediente";
     String DECISION_COMITE = "DecisionComite";
+    String EN_SANCION = "EnSancion";
+    String SANCIONADO = "Sancionado";
     String TAREA_ASOCIADA_CE = "idTareaCE";
     String TAREA_ASOCIADA_RE = "idTareaRE";
     String TAREA_ASOCIADA_DC = "idTareaDC";
+    String TAREA_ASOCIADA_ENSAN = "idTareaEnSan";
+    String TAREA_ASOCIADA_SANC = "idTareaSanc";
     String TAREA_ASOCIADA_FP = "idTareaFP";
     String TIMER_TAREA_CE = "TIMER_CE";
     String TIMER_TAREA_RE = "TIMER_RE";
@@ -57,5 +61,7 @@ public interface ExpedienteBPMConstants extends BPMContants {
     String AVANCE_AUTOMATICO = "AvanceAutomatico";
     String DEVOLVER_COMPLETAR = "DevolverCompletar";
     String DEVOLVER_REVISION = "DevolverRevision";
+    String DEVOLVER_ENSANCION = "DevolverAEnSancion";
+    String DEVOLVER_SANCIONADO = "DevolverASancionado";
     String FORMALIZAR_PROPUESTA = "FormalizarPropuesta";
 }

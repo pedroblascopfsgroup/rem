@@ -81,6 +81,26 @@
 	</bean>
     <bean id="nodoEsperaActionHandler" class="es.pfsgroup.procedimientos.PRONodoEsperaActionHandler">
     </bean>
+    
+    <bean id="completarExpedienteDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PROCompletarExpedienteDeudaActionHandler">
+    </bean>
+    <bean id="devolverCompletarDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PRODevolverCompletarDeudaActionHandler">
+    </bean>
+    <bean id="enviarARevisionDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PROEnviarARevisionDeudaActionHandler">
+    </bean>
+    <bean id="revisionExpedienteDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PRORevisionExpedienteDeudaActionHandler">
+    </bean>
+    <bean id="devolverRevisionDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PRODevolverRevisionDeudaActionHandler">
+    </bean>
+    <bean id="enviarAEnSancionDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PROEnviarAEnSancionDeudaActionHandler">
+    </bean>
+    <bean id="enSancionDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PROEnSancionDeudaActionHandler">
+    </bean>
+    <bean id="enviarASancionadoDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PROEnviarASancionadoDeudaActionHandler">
+    </bean>
+    <bean id="devolverEnSancionDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PRODevolverEnSancionDeudaActionHandler">
+    </bean>
+    
     	
 	<bean id="seleccionProcedimiento.P90_BPMHipotecario" class="es.pfsgroup.procedimientos.PROCambiarEconomicosHijoActionHandler">
 	</bean>

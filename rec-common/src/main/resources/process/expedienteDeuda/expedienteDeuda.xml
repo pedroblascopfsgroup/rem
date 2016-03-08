@@ -24,7 +24,7 @@
 		<event type="node-enter">
 			<action name="CompletarExpedienteAction" config-type="bean"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-				<targetBean>completarExpedienteActionHandler</targetBean>
+				<targetBean>completarExpedienteDeudaActionHandler</targetBean>
 			</action>
 		</event>
 		<transition name="EnviarARevision" to="EnviarARevision"></transition>
@@ -36,7 +36,7 @@
 	<node name="EnviarARevision">
 		<action name="EnviarARevisionAction" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>enviarARevisionActionHandler</targetBean>
+			<targetBean>enviarARevisionDeudaActionHandler</targetBean>
 		</action>
 		<transition to="RevisionExpediente"></transition>
 	</node>
@@ -44,7 +44,7 @@
 		<event type="node-enter">
 			<action name="RevisionExpedienteAction" config-type="bean"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-				<targetBean>revisionExpedienteActionHandler</targetBean>
+				<targetBean>revisionExpedienteDeudaActionHandler</targetBean>
 			</action>
 		</event>
 		<transition to="DevolverCompletar" name="DevolverACompletar"></transition>
@@ -55,9 +55,9 @@
 	</state>
 
 	<node name="EnviarASancionado">
-		<action name="EnviarAComiteAction" config-type="bean"
+		<action name="EnviarASancionadoAction" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>enviarAComiteActionHandler</targetBean>
+			<targetBean>enviarASancionadoDeudaActionHandler</targetBean>
 		</action>
 		<transition to="Sancionado"></transition>
 	</node>
@@ -81,7 +81,7 @@
 	<node name="DevolverRevision">
 		<action name="DevolverRevisionAction" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>devolverRevisionActionHandler</targetBean>
+			<targetBean>devolverRevisionDeudaActionHandler</targetBean>
 		</action>
 		<transition to="RevisionExpediente"></transition>
 	</node>
@@ -89,7 +89,7 @@
 	<node name="DevolverCompletar">
 		<action name="ExpedienteDecididoAction" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>devolverCompletarActionHandler</targetBean>
+			<targetBean>devolverCompletarDeudaActionHandler</targetBean>
 		</action>
 		<transition to="CompletarExpediente"></transition>
 	</node>
@@ -173,6 +173,12 @@
 	</node>
 
 	<state name="EnSancion">
+		<event type="node-enter">
+			<action name="EnSancionAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>enSancionDeudaActionHandler</targetBean>
+			</action>
+		</event>
 		<transition to="DevolverRevision" name="DevolverRevision"></transition>
 		<transition to="EnviarASancionado" name="EnviarASancionado"></transition>
 		<transition to="GenerarNotificacion" name="GenerarNotificacion"></transition>
@@ -180,10 +186,18 @@
 	</state>
 
 	<node name="DevolverAEnSancion">
+		<action name="DevolverAEnSancionAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>devolverEnSancionDeudaActionHandler</targetBean>
+		</action>
 		<transition to="EnSancion"></transition>
 	</node>
 
 	<node name="EnviarAEnSancion">
+		<action name="EnviarAEnSancionAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>enviarAEnSancionDeudaActionHandler</targetBean>
+		</action>
 		<transition to="EnSancion"></transition>
 	</node>
 

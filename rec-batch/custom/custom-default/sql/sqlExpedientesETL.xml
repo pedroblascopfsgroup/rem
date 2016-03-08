@@ -1322,7 +1322,7 @@
               , EXP_MANUAL, DD_TPX_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
             Select EXP_ID
                  , EXP_DESCRIPCION
-                 , 3 as DD_EST_ID
+                 , v_dd_est_id as DD_EST_ID
                  , sysdate as FECHA_EST_ID
                  , OFI_ID
                  , ARQ_ID
@@ -1336,7 +1336,7 @@
               From (Select EXP_ID, EXP_DESCRIPCION, OFI_ID, ARQ_ID, CEX_PASE, PEX_PASE, v_dd_tpx_id_seg as DD_TPX_ID, DD_AEX_CODIGO
                     From BATCH_SEG_DATOS_SALIDA
                     Union All
-                    Select  EXP_ID, EXP_DESCRIPCION, OFI_ID, ARQ_ID, CEX_PASE, PEX_PASE, v_dd_tpx_id_ven as DD_TPX_ID, DD_AEX_CODIGO
+                    Select EXP_ID, EXP_DESCRIPCION, OFI_ID, ARQ_ID, CEX_PASE, PEX_PASE, v_dd_tpx_id_ven as DD_TPX_ID, DD_AEX_CODIGO
                     From BATCH_VEN_DATOS_SALIDA) a
                  , ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE b
              Where a.dd_aex_codigo = b.dd_aex_codigo
@@ -1646,13 +1646,14 @@
           EXECUTE IMMEDIATE 'TRUNCATE TABLE TMP_BATCH_SV_BPM_INSTANCE';
 
           EXECUTE IMMEDIATE
-          'Insert /*+append*/ into  '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE
+          'Insert /*+append*/ into '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE
              (EXP_ID, PROCESSINSTANCE)
            SELECT EXP_ID
                 , '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL as PROCESSINSTANCE
              FROM '||cENTITY_SCHEMA||'.EXP_EXPEDIENTES
-            WHERE EXP_MANUAL = 0
-              AND EXP_PROCESS_BPM IS NULL';
+            WHERE DD_EEX_ID = (select dd_eex_id from '||cMASTER_SCHEMA||'.DD_EEX_ESTADO_EXPEDIENTE Where dd_eex_codigo = ''1'') --activos
+              AND EXP_PROCESS_BPM IS NULL
+              AND EXP_MANUAL = 0';
 
           --LOG
           V_NUFILAS:=SQL%ROWCOUNT;

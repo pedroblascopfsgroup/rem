@@ -2,9 +2,9 @@ create or replace PROCEDURE CARGAR_DIM_BIEN(O_ERROR_STATUS OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Jaime Sánchez-Cuenca, PFS Group
 -- Fecha creacion: Septiembre 2015
--- Responsable ultima modificacion: Jaime Sánchez-Cuenca, PFS Group
--- Fecha ultima modificacion: 03/12/2015
--- Motivos del cambio: CMREC - 1220 : Desarrollo - Informes específicos CM - Bienes y Subastas
+-- Responsable ultima modificacion: María Villanueva, PFS Group
+-- Fecha ultima modificacion: 03/03/2016
+-- Motivos del cambio: SE añade código 3058 a D_BIE_ENTIDAD
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripcion: Procedimiento almancenado que carga las tablas de la dimension Subasta
@@ -402,6 +402,12 @@ BEGIN
        SELECT DISTINCT ENP.DD_ENP_ID, ENP.DD_ENP_DESCRIPCION, ENP.DD_ENP_DESCRIPCION_LARGA
        FROM '||V_DATASTAGE||'.DD_ENP_ENTIDADES_PROPIETARIAS ENP
        ORDER BY 1';
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_BIE_ENTIDAD WHERE ENTIDAD_BIEN_ID = 28;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_BIE_ENTIDAD (ENTIDAD_BIEN_ID, ENTIDAD_BIEN_DESC, ENTIDAD_BIEN_DESC_2)
+    VALUES (28 ,'CAJAMAR', 'CAJAMAR');
+  END IF;     
         
   V_ROWCOUNT := sql%rowcount;     
   commit;

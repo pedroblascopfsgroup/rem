@@ -19,6 +19,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.pagination.PaginationParams;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoBuscarTareaNotificacion;
+import es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.dao.UsuarioDao;
 import es.capgemini.pfs.users.domain.Perfil;
@@ -311,14 +312,18 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
         hb.append(") OR (");
         
 		if (!Checks.esNulo(dto.getZonas()) && dto.getZonas().size()>0) {
-			hb.append(" (");
+			hb.append(" ((");
 			for (DDZona zonCodigo : dto.getZonas()) {
 				hb.append(" vtar.zonCodigo like '")
 						.append(zonCodigo.getCodigo()).append("%' OR");
 			}
 			hb.deleteCharAt(hb.length() - 1);
 			hb.deleteCharAt(hb.length() - 1);
-			hb.append(" )");
+			hb.append(" ) and vtar.subtipoTareaCodigoSubtarea NOT IN (");
+			hb.append(EXTSubtipoTarea.CODIGO_ANOTACION_TAREA);
+			hb.append(",");
+			hb.append(EXTSubtipoTarea.CODIGO_ANOTACION_NOTIFICACION);
+			hb.append("))");
 		}
 		
 		if (!Checks.esNulo(dto.getPerfiles()) && dto.getPerfiles().size()>0) {

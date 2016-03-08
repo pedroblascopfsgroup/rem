@@ -106,6 +106,15 @@ commit;
 DELETE FROM CM01.CLI_CLIENTES WHERE USUARIOBORRAR = 'PARABORRAR';
 commit;
 
+--BORRAR BASURA JBPM_JOB
+delete from cmmaster.jbpm_job where id_ in(
+select jb.id_ from cmmaster.jbpm_job jb inner join cmmaster.JBPM_PROCESSINSTANCE pi
+on jb.PROCESSINSTANCE_ = pi.id_
+inner join cmmaster.JBPM_PROCESSDEFINITION pd 
+on pi.PROCESSDEFINITION_ = pd.id_
+where pd.NAME_ = 'expediente'
+and not exists (select 1 from cm01.exp_expedientes exp where pi.id_ = exp_process_bpm));
+
 TRUNCATE TABLE CM01.ARR_ARQ_RECUPERACION_PERSONA;
 TRUNCATE TABLE CM01.H_ARR_ARQ_RECUPERACION_PERSONA;
 

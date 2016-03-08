@@ -312,7 +312,7 @@ echo "[OK] ""$sh_dir""CMREC-2339_Transiciones_automaticas_CM01.sh ejecutado corr
 
 
 echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC-2339_Correccion_asuntos_sin_nombre_CM01.sh"                               
-./"$sh_dir"CMREC-2102_Corrige_estados_subastas.sh "$1"   
+./"$sh_dir"CMREC-2339_Correccion_asuntos_sin_nombre_CM01.sh "$1"   
 if [ $? != 0 ] ; then 
   echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC-2339_Correccion_asuntos_sin_nombre_CM01.sh"
   echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh [CMREC-2339_Correccion_asuntos_sin_nombre_CM01]"          

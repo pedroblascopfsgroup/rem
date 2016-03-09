@@ -35,6 +35,7 @@ public interface ExpedienteBPMConstants extends BPMContants {
     String TRANSITION_DEVOLVER_COMPLETAR_EXPEDIENTE = "DevolverCompletarExpediente";
     String TRANSITION_ELEVAR_SANCIONADO = "EnviarASancionado";
     String DECISION_COMITE_AUTO = "DecisionComiteAutomatica";
+    String SANCIONADO_AUTO = "SancionadoAutomatico";
     String GENERAR_NOTIFICACION = "GenerarNotificacion";
     String SOLICITAR_PRORROGA_EXTRA = "SolicitarProrrogaExtra";
     String COMPLETAR_EXPEDIENTE = "CompletarExpediente";

@@ -66,12 +66,12 @@
 		<event type="node-enter">
 			<action name="DecisionComiteAction" config-type="bean"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-				<targetBean>desicionComiteActionHandler</targetBean>
+				<targetBean>sancionadoActionHandler</targetBean>
 			</action>
 		</event>
 		<transition to="ExpedienteDecidido" name="TomarDecision"></transition>
 		<transition to="GenerarNotificacion" name="GenerarNotificacion"></transition>
-        <transition to="DecisionComiteAutomatica" name="Sancionadoautomatico"></transition>
+        <transition to="SancionadoAutomatico" name="Sancionadoautomatico"></transition>
 		<transition to="Fin Expediente" name="Fin"></transition>
 		<transition to="EnviarAFormalizar" name="EnviarAFormalizar"></transition>
 		<transition to="DevolverAEnSancion" name="DevolverAEnSancion"></transition>
@@ -97,7 +97,7 @@
 	<node name="ExpedienteDecidido">
 		<action name="ExpedienteDecididoAction" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>expedienteDecididoActionHandler</targetBean>
+			<targetBean>expedienteDecididoDeudaActionHandler</targetBean>
 		</action>
 		<transition to="Fin Expediente"></transition>
 	</node>
@@ -105,7 +105,7 @@
 	<node name="GenerarNotificacion">
 		<action name="GenerarNotificacionAction" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>generarNotificacionExpedienteActionHandler</targetBean>
+			<targetBean>generarNotificacionExpedienteDeudaActionHandler</targetBean>
 		</action>
 		<transition to="CompletarExpediente" name="CompletarExpediente"></transition>
 		<transition to="RevisionExpediente" name="RevisionExpediente"></transition>
@@ -126,10 +126,10 @@
 		<transition to="RevisionExpediente" name="RevisionExpediente"></transition>
 	</node>
     
-    <node name="DecisionComiteAutomatica">
+    <node name="SancionadoAutomatico">
 		<action name="DesisionComiteAutomatica" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>decisionComiteAutomaticaActionHandler</targetBean>
+			<targetBean>sancionadoAutomaticoDeudaActionHandler</targetBean>
 		</action>
 		<transition to="ExpedienteDecidido" name="TomarDecision"></transition>
 		<transition to="Sancionado" name="Sancionado"></transition>
@@ -139,7 +139,7 @@
 		<event type="node-enter">
 			<action name="FormalizarPropuestaAction" config-type="bean"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-				<targetBean>formalizarPropuestaActionHandler</targetBean>
+				<targetBean>formalizarPropuestaDeudaActionHandler</targetBean>
 			</action>
 		</event>
 		<transition to="DevolverASancionado" name="DevolverASancionado"></transition>
@@ -151,7 +151,7 @@
 	<node name="EnviarAFormalizar">
 		<action name="EnviarAFormalizarAction" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>enviarAFormalizarActionHandler</targetBean>
+			<targetBean>enviarAFormalizarDeudaActionHandler</targetBean>
 		</action>
 		<transition to="FormalizarPropuesta"></transition>
 	</node>
@@ -159,7 +159,7 @@
 	<node name="DevolverASancionado">
 		<action name="DevolverADecisionAction" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>devolverADecisionActionHandler</targetBean>
+			<targetBean>devolverASancionadoDeudaActionHandler</targetBean>
 		</action>
 		<transition to="Sancionado"></transition>
 	</node>

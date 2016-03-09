@@ -200,7 +200,9 @@
       <label x="5" y="-10"/>
     </edge>
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-38" y="89"/>
+      <bendpoint w1="-170" h1="167" w2="-149" h2="-375"/>
+      <bendpoint w1="-308" h1="464" w2="-287" h2="-78"/>
     </edge>
   </node>
   <node name="DevolverAEnSancion" x="678" y="604" width="166" height="36">
@@ -216,6 +218,8 @@
   <node name="AprobadoConCondiciones" x="1083" y="742" width="218" height="36">
     <edge>
       <label x="5" y="-10"/>
+      <bendpoint w1="-9" h1="-616" w2="637" h2="-108"/>
+      <bendpoint w1="-379" h1="-606" w2="267" h2="-98"/>
     </edge>
   </node>
   <node name="Fin Expediente" x="465" y="1086" width="132" height="36"/>

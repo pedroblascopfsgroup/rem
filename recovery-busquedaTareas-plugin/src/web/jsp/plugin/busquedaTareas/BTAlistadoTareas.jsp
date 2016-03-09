@@ -625,7 +625,7 @@
 				// Filtros
 			if(tabFiltrosUsuario){
 				p.despacho=comboDespachos.getValue();
-				p.gestores=filtroGestores.getValue();
+				p.gestores=comboGestor.getValue();
 			}
 				//p.nombreUsuario=nombreUsuario.getValue();
 				//p.apellidoUsuario=apellidoUsuario.getValue();

@@ -1,4 +1,4 @@
---/*
+--/* 
 --##########################################
 --## AUTOR=SERGIO HERNANDEZ GASO
 --## FECHA_CREACION=20160308
@@ -7,10 +7,10 @@
 --## INCIDENCIA_LINK=VARIOS
 --## PRODUCTO=NO
 --## 
---## Finalidad: Creación de tabla AUX_EXP_FINALIZADOS
+--## Finalidad: CreaciÃ³n de tabla AUX_EXP_FINALIZADOS
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 VersiÃ³n inicial
 --##########################################
 --*/
 

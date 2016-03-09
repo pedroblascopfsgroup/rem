@@ -1,20 +1,20 @@
---/*
+--/* 
 --##########################################
---## AUTOR=Sergio Hern·ndez GasÛ
+--## AUTOR=Sergio Hern√°ndez Gas√≥
 --## FECHA_CREACION=20160308
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.3-hy-master
 --## INCIDENCIA_LINK=Varios
 --## PRODUCTO=NO
 --##
---## Finalidad: Inserta el Subtipo de tarea "NotificaciÛn por cambio de estado"
+--## Finalidad: Inserta el Subtipo de tarea "Notificaci√≥n por cambio de estado"
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
 --##########################################
 --*/
 
---Para permitir la visualizaci√≥n de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+--Para permitir la visualizaci√É¬≥n de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
@@ -40,7 +40,7 @@ BEGIN
           DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE... Ya existe el DD_STA_SUBTIPO_TAREA_BASE PCO_TAR_APP_EXT');
         ELSE
           V_MSQL := 'INSERT INTO '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE(DD_STA_ID, DD_TAR_ID, DD_STA_CODIGO, DD_STA_DESCRIPCION, DD_STA_DESCRIPCION_LARGA, DD_STA_GESTOR, VERSION, USUARIOCREAR, FECHACREAR,  USUARIOMODIFICAR, FECHAMODIFICAR, USUARIOBORRAR, FECHABORRAR, BORRADO, DD_TGE_ID, DTYPE) 
-                        VALUES('||V_ESQUEMA_M||'.S_DD_STA_SUBTIPO_TAREA_BASE.NEXTVAL, ''1'', ''CAMBIO_ESTADO'', ''NotificaciÛn autom·tica por cambio de estado en el asunto'', ''A travÈs de la presenta notificaciÛn se le informa que el asunto referenciado ha cambiado de estado debido a un cambio de marca en el perÌmetro de gestiÛn del contrato afecto.'', 1, ''0'', ''DD'', sysdate, null, null, null, null, ''0'', null, ''EXTSubtipoTarea'') ';
+                        VALUES('||V_ESQUEMA_M||'.S_DD_STA_SUBTIPO_TAREA_BASE.NEXTVAL, ''1'', ''CAMBIO_ESTADO'', ''Notificaci√≥n autom√°tica por cambio de estado en el asunto'', ''A trav√©s de la presenta notificaci√≥n se le informa que el asunto referenciado ha cambiado de estado debido a un cambio de marca en el per√≠metro de gesti√≥n del contrato afecto.'', 1, ''0'', ''DD'', sysdate, null, null, null, null, ''0'', null, ''EXTSubtipoTarea'') ';
               EXECUTE IMMEDIATE V_MSQL;
         END IF;
     COMMIT;
@@ -52,7 +52,7 @@ EXCEPTION
      WHEN OTHERS THEN
           ERR_NUM := SQLCODE;
           ERR_MSG := SQLERRM;
-          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecuci√≥n:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecuci√É¬≥n:'||TO_CHAR(ERR_NUM));
           DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
           DBMS_OUTPUT.put_line(ERR_MSG);
           ROLLBACK;

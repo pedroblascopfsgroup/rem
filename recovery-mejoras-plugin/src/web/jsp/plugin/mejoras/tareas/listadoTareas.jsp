@@ -307,7 +307,7 @@
 		text:'<s:message code="app.botones.limpiar" text="**Limpiar" />'
 		,iconCls:'icon_limpiar'
 		,handler:function(){
-			app.resetCampos([nombreTarea, comboFechaDesdeOp, comboFechaHastaOp, descTarea, fechaVencDesde, fechaVencHasta]);
+			app.resetCampos([nombreTarea, comboFechaDesdeOp, comboFechaHastaOp, descTarea, fechaVencDesde, fechaVencHasta, comboEstado, comboCtgResol]);
 			tareasStore.webflow(paramsBusquedaInicial);
 			panelFiltros.collapse(true);
 		}

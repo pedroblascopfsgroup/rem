@@ -38,6 +38,7 @@ import es.capgemini.pfs.asunto.model.AdjuntoAsunto;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.asunto.model.HistoricoCambiosAsunto;
 import es.capgemini.pfs.asunto.model.ObservacionAceptacion;
 import es.capgemini.pfs.asunto.model.Procedimiento;
@@ -52,6 +53,7 @@ import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
 import es.capgemini.pfs.expediente.model.Expediente;
@@ -71,6 +73,9 @@ import es.capgemini.pfs.tareaNotificacion.process.TareaBPMConstants;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.utils.ZipUtils;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 
 
 /**
@@ -109,6 +114,9 @@ public class AsuntosManager {
     
     @Autowired
     private ZipUtils zipUtils;
+    
+	@Autowired
+	private GenericABMDao genericDao;
 
     /**
      * Actualiza el estado del asunto (abierto o cerrado) en función de sus procedimientos (abiertos o cerrados)
@@ -1280,5 +1288,15 @@ public class AsuntosManager {
             asunto.setSupervisor(newSupervisor);
             asuntoDao.saveOrUpdate(asunto);
         }
+    }
+    
+    /**
+     * Obtiene los tipos de asunto
+     * @return lista de tipos de asunto
+     */
+    @BusinessOperation(ExternaBusinessOperation.BO_ASU_MGR_GET_LIST_TIPOS_ASUNTO)
+    public List<DDTiposAsunto> obtenerListadoTiposDeAsunto() {
+		Order orderDescripcion = new Order(OrderType.ASC, "descripcion"); 
+		return genericDao.getListOrdered(DDTiposAsunto.class, orderDescripcion);
     }
 }

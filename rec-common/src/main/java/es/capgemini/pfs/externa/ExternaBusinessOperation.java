@@ -58,6 +58,7 @@ public final class ExternaBusinessOperation {
     public static final String BO_ASU_MGR_OBTENER_ACTUACIONES_ASUNTO_JERARQUICO = "asuntosManager.obtenerActuacionesAsuntoJerarquico";
     public static final String BO_ASU_MGR_OBTENER_ACTUACIONES_ASUNTO = "asuntosManager.obtenerActuacionesAsunto";
     public static final String BO_ASU_MGR_GET_BIENES_AS_LIST = "asuntosManager.getBienesDeUnAsunto";
+    public static final String BO_ASU_MGR_GET_LIST_TIPOS_ASUNTO = "asuntosManager.obtenerListadoTiposDeAsunto";
 
     /*****************************************************************************
      ** ProcedimientoManager.

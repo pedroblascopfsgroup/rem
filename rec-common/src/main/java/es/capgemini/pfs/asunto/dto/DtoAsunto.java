@@ -43,7 +43,9 @@ public class DtoAsunto extends WebDto {
     
     private String codigoEstadoAsunto;
     
-    /**
+    private Long tipoDeAsunto;
+
+	/**
      * @return the idGestor
      */
     public Long getIdGestor() {
@@ -188,5 +190,12 @@ public class DtoAsunto extends WebDto {
 	public void setCodigoEstadoAsunto(String codigoEstadoAsunto) {
 		this.codigoEstadoAsunto = codigoEstadoAsunto;
 	}
+	
+	public Long getTipoDeAsunto() {
+		return tipoDeAsunto;
+	}
 
+	public void setTipoDeAsunto(Long tipoDeAsunto) {
+		this.tipoDeAsunto = tipoDeAsunto;
+	}
 }

@@ -32,6 +32,7 @@ import es.capgemini.pfs.asunto.dto.DtoReportAnotacionAgenda;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.asunto.model.FichaAceptacion;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.comite.dao.ComiteDao;
@@ -517,7 +518,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			GestorDespacho supervisor, GestorDespacho procurador,
 			String nombreAsunto, Expediente expediente, String observaciones) {
 		
-		return crearAsuntoConEstado(gestorDespacho, supervisor, procurador, nombreAsunto, expediente, observaciones, null);
+		return crearAsuntoConEstado(gestorDespacho, supervisor, procurador, nombreAsunto, expediente, observaciones, null, null);
 		
 	}
 	
@@ -525,13 +526,14 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 	public Long crearAsuntoConEstado(GestorDespacho gestorDespacho,
 			GestorDespacho supervisor, GestorDespacho procurador,
 			String nombreAsunto, Expediente expediente, String observaciones,
-			String codigoEstadoAsunto) {
+			String codigoEstadoAsunto, DDTiposAsunto tipoAsunto) {
 		EXTAsunto extAsunto = new EXTAsunto();
 
 		extAsunto.setObservacion(observaciones);
 		extAsunto.setSupervisor(supervisor);
 		extAsunto.setGestor(gestorDespacho);
 		extAsunto.setProcurador(procurador);
+		extAsunto.setTipoAsunto(tipoAsunto);
 		// extAsunto.setGestoresAsunto(gestoresAsunto);
 
 		// Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo",

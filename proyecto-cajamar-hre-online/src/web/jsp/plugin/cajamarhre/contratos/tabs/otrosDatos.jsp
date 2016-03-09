@@ -163,7 +163,14 @@
   			}
   		}else{
   			entidad.setLabel('odFlagExtra6', d.flagextra6);
-  		}		
+  		}
+		
+		if(d.numextra5 != null && d.numextra5 != ''){
+			entidad.setLabel('odNumExtra5', d.numextra5 + ' ' + app.EURO);			
+		}else{
+			entidad.setLabel('odNumExtra5', d.numextra5);	
+		}
+	
   		entidad.setLabel('odDateExtra2', d.dateextra2);
   		entidad.setLabel('odDateExtra3', d.dateextra3);
   		entidad.setLabel('odDateExtra9', d.dateextra9);
@@ -172,7 +179,6 @@
   		entidad.setLabel('odDateExtra6', d.dateextra6);
   		entidad.setLabel('odDateExtra7', d.dateextra7);
   		entidad.setLabel('odNumExtra4', d.numextra4);
-  		entidad.setLabel('odNumExtra5', d.numextra5);
   		entidad.setLabel('odNumExtra6', d.numextra6);
   		entidad.setLabel('odNumExtra7', d.numextra7);
   		entidad.setLabel('odNumExtra8', d.numextra8);

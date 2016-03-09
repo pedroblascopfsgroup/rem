@@ -188,7 +188,7 @@
 	<node name="DevolverAEnSancion">
 		<action name="DevolverAEnSancionAction" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>devolverEnSancionDeudaActionHandler</targetBean>
+			<targetBean>aprobadoConCondicionesDeudaActionHandler</targetBean>
 		</action>
 		<transition to="EnSancion"></transition>
 	</node>
@@ -202,6 +202,10 @@
 	</node>
 
 	<node name="AprobadoConCondiciones">
+		<action name="AprobadoConCondicionesAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>enviarAEnSancionDeudaActionHandler</targetBean>
+		</action>
 		<transition to="CompletarExpediente"></transition>
 	</node>
 

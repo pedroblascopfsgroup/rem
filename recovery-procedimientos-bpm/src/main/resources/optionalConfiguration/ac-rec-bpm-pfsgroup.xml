@@ -114,6 +114,8 @@
     </bean>
     <bean id="generarNotificacionExpedienteDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PROGenerarNotificacionExpedienteDeudaActionHandler">
     </bean>
+    <bean id="aprobadoConCondicionesDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PROAprobadoConCondicionesDeudaActionHandler">
+    </bean>
     
     	
 	<bean id="seleccionProcedimiento.P90_BPMHipotecario" class="es.pfsgroup.procedimientos.PROCambiarEconomicosHijoActionHandler">

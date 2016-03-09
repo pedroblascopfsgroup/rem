@@ -216,7 +216,6 @@
   <node name="AprobadoConCondiciones" x="1083" y="742" width="218" height="36">
     <edge>
       <label x="5" y="-10"/>
-      <bendpoint w1="-4" h1="-669" w2="642" h2="-161"/>
     </edge>
   </node>
   <node name="Fin Expediente" x="465" y="1086" width="132" height="36"/>

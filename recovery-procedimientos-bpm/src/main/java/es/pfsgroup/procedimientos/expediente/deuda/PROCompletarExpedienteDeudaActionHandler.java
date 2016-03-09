@@ -64,7 +64,7 @@ public class PROCompletarExpedienteDeudaActionHandler extends PROBaseActionHandl
             Long idTareaAnterior = (Long) executionContext.getVariable(TAREA_ASOCIADA_CE);
             Long fechaFin = obtenerFinTareaAnterior(idTareaAnterior);
             Long plazoRestante = 0L;
-            if (!DEVOLVER_COMPLETAR.equals(comeFrom) && estadoCE.getAutomatico() != null && estadoCE.getAutomatico()) {
+            if (!DEVOLVER_COMPLETAR.equals(comeFrom) && !APROBADO_CON_CONDICIONES.equals(comeFrom) && estadoCE.getAutomatico() != null && estadoCE.getAutomatico()) {
             	plazoRestante = estadoCE.getPlazo();
             } else {            	
             	plazoRestante = calcularTiempoRestante(idExpediente, estadoCE.getPlazo(), fechaFin);
@@ -83,7 +83,7 @@ public class PROCompletarExpedienteDeudaActionHandler extends PROBaseActionHandl
             expedienteManager.setInstanteCambioEstadoExpediente(idExpediente);
             executionContext.setVariable(TAREA_ASOCIADA_CE, idTareaCE);
             //Si venimos de "devolver a completar" se desactiva el avance automático en todos los casos.
-            if (!DEVOLVER_COMPLETAR.equals(comeFrom) && estadoCE.getAutomatico() != null && estadoCE.getAutomatico()) {
+            if (!DEVOLVER_COMPLETAR.equals(comeFrom) && !APROBADO_CON_CONDICIONES.equals(comeFrom) && estadoCE.getAutomatico() != null && estadoCE.getAutomatico()) {
                 executionContext.setVariable(GENERAALERTA, Boolean.TRUE);
                 executionContext.setVariable(WHERE_TO_GO, TRANSITION_ENVIARAREVISION);
             } else {

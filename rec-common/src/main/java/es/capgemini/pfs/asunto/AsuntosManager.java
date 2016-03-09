@@ -76,6 +76,7 @@ import es.capgemini.pfs.utils.ZipUtils;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.Checks;
 
 
 /**
@@ -590,10 +591,10 @@ public class AsuntosManager {
         for (TareaNotificacion tarea : asunto.getTareas()) {
             SubtipoTarea subtipo = tarea.getSubtipoTarea();
             if (SubtipoTarea.CODIGO_ACEPTAR_ASUNTO_GESTOR.equals(subtipo.getCodigoSubtarea())) {
-                if (usuarioLogado.equals(asunto.getGestor().getUsuario())) { return true; }
+                if (!Checks.esNulo(asunto.getGestor()) && usuarioLogado.equals(asunto.getGestor().getUsuario())) { return true; }
             }
             if (SubtipoTarea.CODIGO_ACEPTAR_ASUNTO_SUPERVISOR.equals(subtipo.getCodigoSubtarea())) {
-                if (usuarioLogado.equals(asunto.getSupervisor().getUsuario())) { return true; }
+                if (!Checks.esNulo(asunto.getSupervisor()) && usuarioLogado.equals(asunto.getSupervisor().getUsuario())) { return true; }
             }
         }
         return false;

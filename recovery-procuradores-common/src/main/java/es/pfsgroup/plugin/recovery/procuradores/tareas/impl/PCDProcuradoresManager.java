@@ -83,11 +83,6 @@ public class PCDProcuradoresManager extends EXTAbstractTareaNotificacionManager 
 		dto.setZonas(usuarioLogado.getZonas());
 		Long idCategorizacion = configuracionDespachoExternoApi.activoCategorizacion();
 		final Class<? extends DtoResultadoBusquedaTareasBuzones> modelClass = modelClassFactory.getModelFor(EXTTareasApi.EXT_BUSCAR_TAREAS_PENDIENTES_CARTERIZACION,DtoResultadoBusquedaTareasBuzones.class);
-		try {
-			pcdprocuradoresDao.buscarTareasPendientes(dto, comboEstado, comboCtgResol, idCategorizacion , usuarioLogado, modelClass);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		
 		return pcdprocuradoresDao.buscarTareasPendientes(dto, comboEstado, comboCtgResol, idCategorizacion , usuarioLogado, modelClass);
 

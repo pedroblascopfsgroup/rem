@@ -69,41 +69,49 @@ var aceptacion = items[2];
 var fecha_aceptacion = items[4];
 
 //Conflicto intereses
-var dsConflictos = new Ext.data.JsonStore({
-		fields: ['codigo', 'descripcion']
- 	       ,data : [
- 	       			{"codigo":"S", "descripcion":"Si"}
- 	       			,{"codigo":"N", "descripcion":"No"}
- 	       	
- 	       ]
- 	}); 
+var diccionarioRecord = Ext.data.Record.create([
+	{name : 'id'}
+	,{name : 'codigo'}
+	,{name : 'descripcion'}
+]);
+
+var dsConflictos = page.getStore({
+	flow : 'subasta/getDiccionario'
+	,storeId : 'sinoStore'
+	,reader : new Ext.data.JsonReader({
+		root : 'diccionario'
+	},diccionarioRecord)
+});
+
+dsConflictos.webflow({diccionario: 'es.capgemini.pfs.procesosJudiciales.model.DDSiNo'});
 
 items[1] = new Ext.form.ComboBox({
-							name:conflicto.name
-							,hiddenName:conflicto.name
-							,disabled:conflicto.disabled
-							,value:conflicto.value
-							,allowBlank : true
-							,store:dsConflictos
-							,displayField:'descripcion'
-							,valueField:'codigo'
-							,mode: 'local'
-							,emptyText:''
-							,triggerAction: 'all'
-							,fieldLabel : '<s:message code="plugin.precontencioso.registrar.aceptacion.asunto.conflicto" text="**Conflicto intereses" />'
-					});
+						name:conflicto.name
+						,hiddenName:conflicto.name
+						,disabled:conflicto.disabled
+						,value:conflicto.value
+						,allowBlank : true
+						,store:dsConflictos
+						,displayField:'descripcion'
+						,valueField:'codigo'
+						,mode: 'local'
+						,emptyText:''
+						,triggerAction: 'all'
+						,fieldLabel : '<s:message code="plugin.precontencioso.registrar.aceptacion.asunto.conflicto" text="**Conflicto intereses" />'
+				});
 
 conflicto = items[1];
+
+var dsAceptacion = page.getStore({
+	flow : 'subasta/getDiccionario'
+	,storeId : 'sinoStore'
+	,reader : new Ext.data.JsonReader({
+		root : 'diccionario'
+	},diccionarioRecord)
+});
+
+dsAceptacion.webflow({diccionario: 'es.capgemini.pfs.procesosJudiciales.model.DDSiNo'});
 					
-var dsAceptacion = new Ext.data.JsonStore({
-		fields: ['codigo', 'descripcion']
- 	       ,data : [
- 	       			{"codigo":"S", "descripcion":"Si"}
- 	       			,{"codigo":"N", "descripcion":"No"}
- 	       	
- 	       ]
- 	}); 
- 	
 items[2] = new Ext.form.ComboBox({
 							name:aceptacion.name
 							,hiddenName:aceptacion.name
@@ -116,7 +124,7 @@ items[2] = new Ext.form.ComboBox({
 							,mode: 'local'
 							,emptyText:''
 							,triggerAction: 'all'
-							,fieldLabel : '<s:message code="plugin.precontencioso.registrar.aceptacion.asunto.aceptacionAsunto" text="**Aceptación asunto" />'
+							,fieldLabel : '<s:message code="plugin.precontencioso.registrar.aceptacion.asunto.aceptacionAsunto" text="**Aceptaciï¿½n asunto" />'
 					});
 
 aceptacion = items[2];

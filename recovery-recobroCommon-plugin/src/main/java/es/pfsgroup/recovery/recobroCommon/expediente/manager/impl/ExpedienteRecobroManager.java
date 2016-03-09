@@ -196,7 +196,7 @@ public class ExpedienteRecobroManager implements ExpedienteRecobroApi {
 		Persona persona = (Persona) executor.execute(PrimariaBusinessOperation.BO_PER_MGR_GET, idPersona);
 		Expediente expediente = expedienteDao.get(idExpediente);
 		String codigoSubtipoTarea;
-		if (expediente.getGestionDeuda()) {
+		if (expediente.isGestionDeuda()) {
 			codigoSubtipoTarea = "SOLEXPMGDEUDA";
 		} else {
 			if (expediente.getSeguimiento()) {

@@ -933,8 +933,12 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         eliminarProcesosClientesRelacionados(exp, Long.MIN_VALUE);
         Map<String, Object> param = new HashMap<String, Object>();
         param.put(ExpedienteBPMConstants.EXPEDIENTE_MANUAL_ID, exp.getId());
-
-        Long bpmid = (Long) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_CREATE_PROCESS, ExpedienteBPMConstants.EXPEDIENTE_PROCESO, param);
+        Long bpmid = null;
+        if(exp.isGestionDeuda()){
+        	bpmid = (Long) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_CREATE_PROCESS, ExpedienteBPMConstants.EXPEDIENTE_DEUDA_PROCESO, param);
+        }else{
+        	bpmid = (Long) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_CREATE_PROCESS, ExpedienteBPMConstants.EXPEDIENTE_PROCESO, param);
+        }
         exp.setExpProcessBpm(bpmid);
 
         saveOrUpdate(exp);
@@ -1934,8 +1938,8 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         
         ///Si el espediente no es de recuperacion o gestion de deuda no se muestra la pestaña
         return Boolean.FALSE;
-    }
-    
+        }
+        
     
     /**
      * Indica si se puede mostrar la PESTAÑA de decisión de comit� de la consulta de expediente.
@@ -1947,33 +1951,40 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
      */
     private Boolean puedeMostrarMarcadoPoliticas(Long idExpediente) {
         Expediente exp = expedienteDao.get(idExpediente);
-
-        String nombreTab = "MARCADO DE POLITICAS";
-        logger.debug("EVALUO SI DEBO MOSTRAR LA PESTAÑA " + nombreTab);
         
-        Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
+        if(!exp.getRecuperacion()){
         
-        //VALIDO PRECONDICIONES CU WEB-30
-       
-    	if (!exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT)){
-
-    		//No esta en decisión de comite o no tiene sesiones abiertas.
-            logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO ESTA EN EL ESTADO CORRESPONDIENTE ");
-            return Boolean.FALSE;
+	        String nombreTab = "MARCADO DE POLITICAS";
+	        logger.debug("EVALUO SI DEBO MOSTRAR LA PESTAÑA " + nombreTab);
+	        
+	        Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
+	        
+	        //VALIDO PRECONDICIONES CU WEB-30
+	       
+	    	if (!exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT)){
+	
+	    		//No esta en decisión de comite o no tiene sesiones abiertas.
+	            logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO ESTA EN EL ESTADO CORRESPONDIENTE ");
+	            return Boolean.FALSE;
+	        }
+	       
+	        for (Perfil perfil : usuario.getPerfiles()) {
+	        	
+	        	if(exp.getGestorActual().equalsIgnoreCase(perfil.getDescripcion()) || exp.getSupervisorActual().equalsIgnoreCase(perfil.getDescripcion())){
+	        		logger.debug("MUESTRO EL TAB " + nombreTab);
+	        		return Boolean.TRUE;
+	        	}else{
+	        		logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO ES EL SUPERVISOR O EL GESTOR DEL EXPEDIENTE ");
+	        		return Boolean.FALSE;
+	        	}
+	        }
+	        logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO CORRESPONDE AL USUARIO " + usuario.getUsername());
+	        return Boolean.FALSE;
+        }else{
+        	logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA PORQUE NO ES EXPEDIENTE DE RECUPERACION");
+	        return Boolean.FALSE;
         }
-       
-        for (Perfil perfil : usuario.getPerfiles()) {
-        	
-        	if(exp.getGestorActual().equalsIgnoreCase(perfil.getDescripcion()) || exp.getSupervisorActual().equalsIgnoreCase(perfil.getDescripcion())){
-        		logger.debug("MUESTRO EL TAB " + nombreTab);
-        		return Boolean.TRUE;
-        	}else{
-        		logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO ES EL SUPERVISOR O EL GESTOR DEL EXPEDIENTE ");
-        		return Boolean.FALSE;
-        	}
-        }
-        logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO CORRESPONDE AL USUARIO " + usuario.getUsername());
-        return Boolean.FALSE;
+        
     }
 
     /**
@@ -2478,7 +2489,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
                 plazo = (PlazoTareasDefault) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_BUSCAR_PLAZO_TAREA_DEFAULT_POR_CODIGO,
                         PlazoTareasDefault.CODIGO_SOLICITUD_EXPEDIENTE_MANUAL_SEG);
             } else {
-            	if (exp.getGestionDeuda()) {
+            	if (exp.isGestionDeuda()) {
             		plazo = (PlazoTareasDefault)executor.execute(ComunBusinessOperation.BO_TAREA_MGR_BUSCAR_PLAZO_TAREA_DEFAULT_POR_CODIGO,
             				PlazoTareasDefault.CODIGO_SOLICITUD_EXPEDIENTE_MANUAL_GESTION_DEUDA);
             	} else {
@@ -2487,7 +2498,6 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
             	}
             }
             
-            /******************************* JBPM *************************************************/
             executor.execute(ComunBusinessOperation.BO_JBPM_MGR_DETERMINAR_BBDD);
             Map<String, Object> param = new HashMap<String, Object>();
             param.put(TareaBPMConstants.ID_ENTIDAD_INFORMACION, per.getClienteActivo().getId());
@@ -2497,7 +2507,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
             if (exp.getSeguimiento()) {
                 param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_SEG);
             } else {
-            	if (exp.getGestionDeuda()) {
+            	if (exp.isGestionDeuda()) {
             		param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_GESTION_DEUDA);
             	} else {
             		param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL);
@@ -2511,7 +2521,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
                 subtipoTarea = (SubtipoTarea) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET_SUBTIPO_TAREA_BY_CODE,
                         SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_SEG);
             } else {
-            	if (exp.getGestionDeuda()) {
+            	if (exp.isGestionDeuda()) {
             		subtipoTarea = (SubtipoTarea) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET_SUBTIPO_TAREA_BY_CODE,
             				SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_GESTION_DEUDA);
             	} else {
@@ -2525,7 +2535,6 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
                 descripcion = descripcion.substring(0, APPConstants.TAREA_NOTIFICACION_MAX_DESCRIPCION);
             }
 
-            /******************************* JBPM *************************************************/
             Long bpmid = (Long) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_CREATE_PROCESS, TareaBPMConstants.TAREA_PROCESO, param);
 
             Long idTareaAsociada = (Long) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_VARIABLES_TO_PROCESS, bpmid,
@@ -2557,14 +2566,17 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
             //Elimina los clientes si es que existieran
             eliminarProcesosClientesRelacionados(exp, null);
             executor.execute(ComunBusinessOperation.BO_JBPM_MGR_DETERMINAR_BBDD);
-            /******************************* JBPM *************************************************/
             // Crear proceso de expediente
             Map<String, Object> param = new HashMap<String, Object>();
             param.put(ExpedienteBPMConstants.EXPEDIENTE_MANUAL_ID, exp.getId());
             param.put(ClienteBPMConstants.PERSONA_ID, per.getId());
-
-            Long bpmid = (Long) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_CREATE_PROCESS, ExpedienteBPMConstants.EXPEDIENTE_PROCESO, param);
-            exp.setProcessBpm(bpmid);
+            Long bpmid = null;
+            if(exp.isGestionDeuda()){
+            	bpmid = (Long) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_CREATE_PROCESS, ExpedienteBPMConstants.EXPEDIENTE_DEUDA_PROCESO, param);
+            }else{
+            	bpmid = (Long) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_CREATE_PROCESS, ExpedienteBPMConstants.EXPEDIENTE_PROCESO, param);
+            }
+            	exp.setProcessBpm(bpmid);
             saveOrUpdate(exp);
 
             executor.execute(InternaBusinessOperation.BO_POL_MGR_INICIALIZAR_POLITICAS_EXPEDIENTE, exp);

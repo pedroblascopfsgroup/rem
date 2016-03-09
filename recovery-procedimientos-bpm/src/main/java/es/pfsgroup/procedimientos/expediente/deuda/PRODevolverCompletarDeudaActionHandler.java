@@ -33,7 +33,7 @@ public class PRODevolverCompletarDeudaActionHandler extends PROBaseActionHandler
      */
     @Override
     public void run(ExecutionContext executionContext) throws Exception {
-        logger.debug("---------ENTRE EN DevolverCompletarActionHandler---------");
+        logger.debug("---------ENTRE EN DevolverCompletarDeudaActionHandler---------");
         
         ExpedienteApi expedienteManager = proxyFactory.proxy(ExpedienteApi.class);
         TareaNotificacionApi notificacionManager = proxyFactory.proxy(TareaNotificacionApi.class);

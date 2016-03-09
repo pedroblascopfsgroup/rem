@@ -10,6 +10,7 @@ import es.capgemini.pfs.BPMContants;
 public interface ExpedienteBPMConstants extends BPMContants {
 
     String EXPEDIENTE_PROCESO = "expediente";
+    String EXPEDIENTE_DEUDA_PROCESO = "expedienteDeuda";
     String EXPEDIENTE_MANUAL_ID = "idExpedienteManual";
     String CONTRATO_ID = "idContrato";
     String EXPEDIENTE_ID = "idExpediente";
@@ -35,14 +36,19 @@ public interface ExpedienteBPMConstants extends BPMContants {
     String TRANSITION_DEVOLVER_COMPLETAR_EXPEDIENTE = "DevolverCompletarExpediente";
     String TRANSITION_ELEVAR_SANCIONADO = "EnviarASancionado";
     String DECISION_COMITE_AUTO = "DecisionComiteAutomatica";
+    String SANCIONADO_AUTO = "SancionadoAutomatico";
     String GENERAR_NOTIFICACION = "GenerarNotificacion";
     String SOLICITAR_PRORROGA_EXTRA = "SolicitarProrrogaExtra";
     String COMPLETAR_EXPEDIENTE = "CompletarExpediente";
     String REVISION_EXPEDIENTE = "RevisionExpediente";
     String DECISION_COMITE = "DecisionComite";
+    String EN_SANCION = "EnSancion";
+    String SANCIONADO = "Sancionado";
     String TAREA_ASOCIADA_CE = "idTareaCE";
     String TAREA_ASOCIADA_RE = "idTareaRE";
     String TAREA_ASOCIADA_DC = "idTareaDC";
+    String TAREA_ASOCIADA_ENSAN = "idTareaEnSan";
+    String TAREA_ASOCIADA_SANC = "idTareaSanc";
     String TAREA_ASOCIADA_FP = "idTareaFP";
     String TIMER_TAREA_CE = "TIMER_CE";
     String TIMER_TAREA_RE = "TIMER_RE";
@@ -57,5 +63,8 @@ public interface ExpedienteBPMConstants extends BPMContants {
     String AVANCE_AUTOMATICO = "AvanceAutomatico";
     String DEVOLVER_COMPLETAR = "DevolverCompletar";
     String DEVOLVER_REVISION = "DevolverRevision";
+    String DEVOLVER_ENSANCION = "DevolverAEnSancion";
+    String DEVOLVER_SANCIONADO = "DevolverASancionado";
     String FORMALIZAR_PROPUESTA = "FormalizarPropuesta";
+    String APROBADO_CON_CONDICIONES = "AprobadoConCondiciones";
 }

@@ -650,7 +650,7 @@ public class Expediente implements Serializable, Auditable, Describible {
     /**
      * @return boolean: <code>true</code> si el itineario del expediente es de gestión de deuda
      */    
-    public boolean getGestionDeuda() {
+    public boolean isGestionDeuda() {
     	return arquetipo.getItinerario().getdDtipoItinerario().getItinerarioGestionDeuda();
     }
 

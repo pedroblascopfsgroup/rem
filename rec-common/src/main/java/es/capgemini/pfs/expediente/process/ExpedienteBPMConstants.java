@@ -10,6 +10,7 @@ import es.capgemini.pfs.BPMContants;
 public interface ExpedienteBPMConstants extends BPMContants {
 
     String EXPEDIENTE_PROCESO = "expediente";
+    String EXPEDIENTE_DEUDA_PROCESO = "expedienteDeuda";
     String EXPEDIENTE_MANUAL_ID = "idExpedienteManual";
     String CONTRATO_ID = "idContrato";
     String EXPEDIENTE_ID = "idExpediente";
@@ -65,4 +66,5 @@ public interface ExpedienteBPMConstants extends BPMContants {
     String DEVOLVER_ENSANCION = "DevolverAEnSancion";
     String DEVOLVER_SANCIONADO = "DevolverASancionado";
     String FORMALIZAR_PROPUESTA = "FormalizarPropuesta";
+    String APROBADO_CON_CONDICIONES = "AprobadoConCondiciones";
 }

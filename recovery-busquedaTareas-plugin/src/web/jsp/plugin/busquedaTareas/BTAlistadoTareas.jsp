@@ -854,7 +854,7 @@
 		,{	/*Columna 11*/ header: '<s:message code="plugin.busquedaTareas.cabeceraItinerario" text="**Itinerario"/>', sortable: false, dataIndex: 'itinerario', hidden:true}
 		,{	/*Columna 12*/ header: '<s:message code="plugin.busquedaTareas.cabeceraTipoSolicitud" text="**Tipo solicitud"/>',sortable: false, dataIndex: 'tipoSolicitud', width:75, hidden:true}
 		,{  /*Columna 13*/ header: '<s:message code="plugin.busquedaTareas.cabeceraId" text="**Id"/>', sortable: true,dataIndex: 'id', hidden:true}
-		,{  /*Columna 14*/ header: '<s:message code="plugin.busquedaTareas.cabeceraVR" text="**VR"/>',	sortable: false, dataIndex: 'volumenRiesgo', renderer:app.format.moneyRendererNull, align:'right', hidden:true}
+		,{  /*Columna 14*/ header: '<s:message code="plugin.busquedaTareas.total" text="**Total"/>',	sortable: false, dataIndex: 'volumenRiesgo', renderer:app.format.moneyRendererNull, align:'right', hidden:true}
 		,{  /*Columna 15*/ header: '<s:message code="plugin.busquedaTareas.cabeceraVRV" text="**VRV"/>', sortable: false, dataIndex: 'volumenRiesgoVencido', renderer:app.format.moneyRendererNull,align:'right', hidden:true}
 		,{  /*Columna 16*/ header: '<s:message code="plugin.busquedaTareas.cabeceraVencimiento" text="**vencimiento"/>', sortable: false, dataIndex: 'group',renderer:groupRenderer, hidden:true}
 		,{  /*Columna 17*/ header: '<s:message code="plugin.busquedaTareas.cabeceraZona" text="**Zonificación"/>', sortable: false, dataIndex: 'zona', width:70}

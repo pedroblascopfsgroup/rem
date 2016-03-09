@@ -5,8 +5,8 @@ PROCEDURE CARGAR_H_BIEN (DATE_START IN DATE, DATE_END IN DATE, O_ERROR_STATUS OU
 -- Fecha creación: Septiembre 2015
 -- Responsable ultima modificacion: María Villanueva, PFS Group
 
--- Fecha ultima modificacion: 23/02/2016
--- Motivos del cambio: Desarrollo - Se modifica Fecha de Lanzamiento
+-- Fecha ultima modificacion: 03/02/2016
+-- Motivos del cambio: Desarrollo - Merge provisional para la carga de datos cuando la entidad es 3058 CAJAMAR
 
 -- Cliente: Recovery BI Cajamar
 --
@@ -411,6 +411,26 @@ BEGIN
                                                         ZONA_BIEN_ID = CONTRATO_BIEN.ZON_ID,
                                                         OFICINA_BIEN_ID = CONTRATO_BIEN.OFI_ID,
                                                         ENTIDAD_BIEN_ID = CONTRATO_BIEN.DD_ENP_ID';
+-- Merge provisional para que se carguen los datos de la entidad 3058 CAJAMAR
+        execute immediate 'MERGE INTO TMP_H_BIE TMP USING(
+                               SELECT CNT2.CNT_ID, AUX2.BIE_ID, CNT2.ZON_ID, CNT2.OFI_ID FROM(
+                                  SELECT MAX(AUX.CNT_ID) CNT_ID, AUX.BIE_ID FROM(
+                                      SELECT DISTINCT CNT.CNT_ID, BIE_CNT.BIE_ID, RANK() over (partition by BIE_CNT.BIE_ID order by (MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA) DESC) as ranking
+                                      FROM '||V_DATASTAGE||'.CNT_CONTRATOS CNT, '||V_DATASTAGE||'.MOV_MOVIMIENTOS MOV, '||V_DATASTAGE||'.BIE_CNT BIE_CNT
+                                      WHERE CNT.CNT_ID = MOV.CNT_ID AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION
+                                       AND CNT.CNT_ID = BIE_CNT.CNT_ID) AUX 
+                                    WHERE AUX.RANKING = 1
+                                    GROUP BY AUX.BIE_ID) AUX2, '||V_DATASTAGE||'.CNT_CONTRATOS CNT2
+                               WHERE (AUX2.CNT_ID = CNT2.CNT_ID
+                               AND CNT2.CNT_COD_ENTIDAD = 3058) CONTRATO_BIEN
+                           ON (TMP.BIE_ID = CONTRATO_BIEN.BIE_ID )
+                           WHEN MATCHED THEN UPDATE SET NUM_OPERACION_BIEN_ID = CONTRATO_BIEN.CNT_ID,
+                                                        ZONA_BIEN_ID = CONTRATO_BIEN.ZON_ID,
+                                                        OFICINA_BIEN_ID = CONTRATO_BIEN.OFI_ID,
+                                                        ENTIDAD_BIEN_ID =28
+                                                        where tmp.entidad_bien_id IS NULL';
+--- FIN Merge provisional. Quitar cuando tengamos el código en CM01 DD_ENP_ENTIDADES_PROPIETARIAS
+
                                     
         V_ROWCOUNT := sql%rowcount;
               

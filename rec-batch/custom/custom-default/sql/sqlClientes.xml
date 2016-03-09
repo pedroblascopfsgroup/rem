@@ -129,7 +129,7 @@
   </entry>
 
   <entry key="clientes.insertarNuevosContratosVencidos.MySQLDialect">
-    <![CDATA[
+     <![CDATA[
       INSERT INTO ccl_contratos_cliente (CNT_ID, CLI_ID, CCL_PASE, USUARIOCREAR, FECHACREAR)
       SELECT cpe.cnt_id, cli_id, 0,  '${procesoRevisionJobClientesUser}', CURRENT_DATE()
       FROM cli_clientes cli, cpe_contratos_personas cpe, mov_movimientos mov,dd_tpe_tipo_prod_entidad tipo, cnt_contratos cnt
@@ -631,9 +631,20 @@
 
    <entry key="clientes.creacionClientes.04.insertTmpCNTnuevosCLI.Oracle9iDialect">
     <![CDATA[
+     DECLARE
+       v_impPivote  varchar2(200 char);
      BEGIN
 
      DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_PER_ARQUETIPO_RECUPERACION', estimate_percent => 20);
+
+     Begin
+         EXECUTE IMMEDIATE 'Select PEN_VALOR From PEN_PARAM_ENTIDAD Where PEN_PARAM = ''importePivoteRecuperaciones'''
+         INTO v_impPivote;
+
+         EXCEPTION
+          WHEN NO_DATA_FOUND
+           THEN RAISE_APPLICATION_ERROR(-20000,'Importe pivote no informado en PEN_PARAM_ENTIDAD');
+     End;
 
      INSERT /*+append*/ INTO TMP_CNT_NUEVOS_CLI_VCPE
               /*Obtengo los contratos de los titulares*/
@@ -686,19 +697,21 @@
          DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CNT_NUEVOS_CLI_VCPE', estimate_percent => 20);
          commit;
 
+     Execute Immediate ('
         INSERT /*+append*/ INTO TMP_CNT_NUEVOS_CLI_MOV
           --De los anteriores personas y titulares, ordenados por pos vencida ó riesgo
-            select vcpe.per_id, row_mov.cnt_id, row_mov.mov_fecha_extraccion, row_mov.mov_pos_viva_vencida, row_mov.mov_riesgo, row_mov.mov_fecha_pos_vencida, vcpe.ofi_id
-              , row_number () over (partition by per_id order by row_mov.mov_pos_viva_vencida desc) n_mov_pos_vencida
+            select vcpe.per_id, row_mov.cnt_id, row_mov.mov_fecha_extraccion, row_mov.'||v_impPivote||', row_mov.mov_riesgo, row_mov.mov_fecha_pos_vencida, vcpe.ofi_id
+              , row_number () over (partition by per_id order by row_mov.'||v_impPivote||' desc) n_mov_pos_vencida
               , row_number () over (partition by per_id order by row_mov.mov_riesgo desc) n_mov_riesgo
-            from TMP_CNT_NUEVOS_CLI_VCPE vcpe inner join mov_movimientos row_mov on vcpe.cnt_id = row_mov.cnt_id  AND row_mov.mov_fecha_extraccion = vcpe.cnt_fecha_extraccion;
+            from TMP_CNT_NUEVOS_CLI_VCPE vcpe inner join mov_movimientos row_mov on vcpe.cnt_id = row_mov.cnt_id  AND row_mov.mov_fecha_extraccion = vcpe.cnt_fecha_extraccion
+    ');
 
     DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CNT_NUEVOS_CLI_MOV', estimate_percent => 20);
     commit;
 
     INSERT /*+append*/ INTO TMP_CNT_NUEVOS_CLI
         select mov.per_id, mov.cnt_id, mov.ofi_id, mov.mov_fecha_pos_vencida
-                  ,case when tmp.dd_tit_codigo = ${ddTipoItinerario.recuperacion.codigo} then -- Recuperacion, vamos por mov pos viva vencida
+                  ,case when tmp.dd_tit_codigo = ${ddTipoItinerario.recuperacion.codigo} then -- Recuperacion, vamos por importe pivote
                         case mov.n_mov_pos_vencida when 1 then 1 else 0 end
                       else -- Seguimiento, vamos por riesgo
                         case mov.n_mov_riesgo when 1 then 1 else 0 end

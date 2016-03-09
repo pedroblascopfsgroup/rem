@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=JAVIER RUIZ
---## FECHA_CREACION=20160201
+--## AUTOR=Alberto B.
+--## FECHA_CREACION=20160308
 --## ARTEFACTO=producto
---## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=CMREC-1856
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=CMREC-2723
 --## PRODUCTO=SI
 --##
 --## Finalidad: DML Para hacer completamente dinámico los campos de los términos (Soluciones a propuestas)

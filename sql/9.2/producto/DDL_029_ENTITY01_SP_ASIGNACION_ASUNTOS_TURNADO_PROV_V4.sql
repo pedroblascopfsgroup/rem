@@ -149,8 +149,63 @@ AUTHID CURRENT_USER IS
 				  JOIN #ESQUEMA#.dd_eet_estado_esquema_turnado eet ON etu.dd_eet_id = eet.dd_eet_id AND eet.dd_eet_codigo = 'VIG'
 	            WHERE prv.dd_prv_id = p_dd_prv_id
 	              AND ((tas.dd_tas_codigo='01' and etc.etc_tipo='LC' and daa.etc_id_litigio IS NOT NULL) OR (tas.dd_tas_codigo='02' and etc.etc_tipo='CC' AND daa.etc_id_concurso IS NOT NULL))
+	              AND des.des_id IN (select distinct(des_id) from #ESQUEMA#.usd_usuarios_despachos)
 	              AND prv.borrado=0 AND daa.borrado=0 AND des.borrado=0 AND tas.borrado=0 AND etc.borrado=0
 	              ORDER BY etc.etc_porcentaje DESC);
+	
+	-- PRODUCTO-881
+   -- Con la lista de despachos que trabajan en la provincia encontrada, vemos sus ETC para obtener la suma TOTAL, para luego aplicar una regla de tres para ajustarlo a un 100%
+  CURSOR crs_suma_porcentaje_provincia(p_tas_codigo #ESQUEMA_MASTER#.dd_tas_tipos_asunto.dd_tas_codigo%TYPE, list_despachos SYS.odcinumberlist, p_dd_prv_id	 #ESQUEMA_MASTER#.dd_prv_provincia.dd_prv_id%TYPE)
+    IS
+      select SUM(etc.etc_porcentaje)
+        from #ESQUEMA#.DAA_DESPACHO_AMBITO_ACTUACION daa
+        join #ESQUEMA#.ETC_ESQUEMA_TURNADO_CONFIG etc on daa.etc_id_litigio = etc.etc_id or daa.etc_id_concurso = etc.etc_id
+        join #ESQUEMA#.ETU_ESQUEMA_TURNADO etu on etc.etu_id=etu.etu_id
+        join #ESQUEMA#.DD_EET_ESTADO_ESQUEMA_TURNADO eet on etu.dd_eet_id=eet.dd_eet_id and eet.dd_eet_codigo='VIG'
+        where etc.etc_porcentaje is not null and etc.etc_porcentaje > 0
+          and daa.dd_prv_id = p_dd_prv_id and daa.des_id IN (select * from table(list_despachos))
+          and ((p_tas_codigo='01' and daa.etc_id_litigio = etc.etc_id) or (p_tas_codigo='02' and daa.etc_id_concurso = etc.etc_id))
+          and etc.borrado=0 and daa.borrado=0 and etu.borrado=0 and eet.borrado=0;
+          
+   -- lista con los despachos y su porcentaje calculado y ajustado al 100%       
+  CURSOR crs_despacho_porc_real(p_tas_codigo #ESQUEMA_MASTER#.dd_tas_tipos_asunto.dd_tas_codigo%TYPE,list_despachos SYS.odcinumberlist, p_dd_prv_id	 #ESQUEMA_MASTER#.dd_prv_provincia.dd_prv_id%TYPE, p_calculo NUMBER)
+    IS
+      select daa.des_id, (etc.etc_porcentaje *100)/p_calculo porc_real, null, null
+       from #ESQUEMA#.DAA_DESPACHO_AMBITO_ACTUACION daa
+       join #ESQUEMA#.ETC_ESQUEMA_TURNADO_CONFIG etc on daa.etc_id_litigio = etc.etc_id or daa.etc_id_concurso = etc.etc_id
+       join #ESQUEMA#.ETU_ESQUEMA_TURNADO etu on etc.etu_id=etu.etu_id
+       join #ESQUEMA#.DD_EET_ESTADO_ESQUEMA_TURNADO eet on etu.dd_eet_id=eet.dd_eet_id and eet.dd_eet_codigo='VIG'
+       where etc.etc_porcentaje is not null and etc.etc_porcentaje > 0
+         and daa.dd_prv_id = p_dd_prv_id and daa.des_id IN (select * from table(list_despachos))
+         and ((p_tas_codigo='01' and daa.etc_id_litigio = etc.etc_id) or (p_tas_codigo='02' and daa.etc_id_concurso = etc.etc_id))
+         and etc.borrado=0 and daa.borrado=0 and etu.borrado=0 and eet.borrado=0;
+         
+   -- Recolecta el numero de asuntos totales por despacho-provincia      
+   CURSOR crs_num_asu_prv(p_tas_codigo #ESQUEMA_MASTER#.dd_tas_tipos_asunto.dd_tas_codigo%TYPE, p_dd_prv_id	#ESQUEMA_MASTER#.dd_prv_provincia.dd_prv_id%TYPE)
+      IS
+        select tmp.des_id,tmp.porc_real, count(*) num_asu
+            from #ESQUEMA#.USD_USUARIOS_DESPACHOS usd  
+            join #ESQUEMA#.GAA_GESTOR_ADICIONAL_ASUNTO gaa on usd.usd_id=gaa.usd_id 
+            join #ESQUEMA#.ASU_ASUNTOS asu on asu.asu_id=gaa.asu_id and asu.dd_prv_id=p_dd_prv_id and asu.dd_tas_id=p_tas_codigo
+            join #ESQUEMA_MASTER#.DD_EAS_ESTADO_ASUNTOS eas on asu.dd_eas_id=eas.dd_eas_id
+            join #ESQUEMA#.TMP_CTP_CALCULOS_TURNADO_PRV tmp on usd.des_id=tmp.des_id
+            where gaa.fechacrear > add_months(sysdate, -1) and usd.borrado=0 and gaa.borrado=0 and asu.borrado=0 and eas.borrado=0
+            	and eas.dd_eas_codigo='03'
+              group by tmp.des_id, tmp.porc_real;
+  
+  -- Calcular porcentaje asuntos correspondiente
+  CURSOR crs_porcentaje_asu_prv(p_calculo NUMBER)
+    IS
+      select des_id, (NUM_ASU / p_calculo) * 100 porc_asu
+          from #ESQUEMA#.TMP_CTP_CALCULOS_TURNADO_PRV;
+  
+  -- Elige el despacho con mejor puntuacion que trabaja en la provincia del asunto
+  CURSOR crs_despaco_puntos_prv
+    IS
+      select des_id from 
+        (select des_id, (PORC_REAL - PORC_ASU) res from #ESQUEMA#.TMP_CTP_CALCULOS_TURNADO_PRV order by res DESC)
+      where rownum=1;       
+          
 
    CURSOR crs_filtro_situacion (p_asu_id #ESQUEMA#.asu_asuntos.asu_id%TYPE)
    IS
@@ -283,6 +338,10 @@ AUTHID CURRENT_USER IS
    v_primera_calificacion    VARCHAR2 (2);
    v_dd_prv_id				 #ESQUEMA_MASTER#.DD_PRV_PROVINCIA.dd_prv_id%TYPE;
    v_gah_existente           #ESQUEMA#.gah_gestor_adicional_historico.gah_id%TYPE;
+   v_calculo                 NUMBER;
+   v_resguardo               #ESQUEMA#.TMP_CTP_CALCULOS_TURNADO_PRV%ROWTYPE;
+   v_filtro_numAsuntos       crs_num_asu_prv%ROWTYPE;
+   v_filtro_porcAsuntos      crs_porcentaje_asu_prv%ROWTYPE;
 BEGIN
    -- Se recuperan los datos del asunto
    OPEN crs_datos_asunto (p_asu_id);
@@ -342,7 +401,7 @@ BEGIN
                 ELSE 'N'
              END
         FROM #ESQUEMA#.des_despacho_externo des, #ESQUEMA#.daa_despacho_ambito_actuacion daa
-       WHERE des.des_id = daa.des_id AND des.borrado = 0;
+       WHERE des.des_id = daa.des_id AND des.borrado = 0 AND des.des_id IN (select distinct(des_id) from #ESQUEMA#.usd_usuarios_despachos);
 
    -- Se descartan los letrados que superan el stock interanual
    OPEN crs_filtro_stock (v_datos_asunto.dd_tas_codigo);
@@ -456,8 +515,52 @@ BEGIN
        			
        			IF v_filtro_situacion.COUNT > 0
 	            THEN
-	               	v_des_id := v_filtro_situacion (1);
-                	CLOSE crs_filtro_despacho_prov;
+	               	--v_des_id := v_filtro_situacion (1);
+                  CLOSE crs_filtro_despacho_prov;
+                  
+                  -- Suma porcentajes calidad de los despachos con la provincia hallada
+                  OPEN crs_suma_porcentaje_provincia(v_datos_asunto.dd_tas_codigo, v_filtro_situacion, v_dd_prv_id);
+                    FETCH crs_suma_porcentaje_provincia INTO v_calculo;
+                  CLOSE crs_suma_porcentaje_provincia;
+                  
+                  -- Inserta en temporal el porcentaje adaptado por las calidades provincias de los despachos
+                  OPEN crs_despacho_porc_real(v_datos_asunto.dd_tas_codigo, v_filtro_situacion, v_dd_prv_id,v_calculo);
+                  LOOP
+                    FETCH crs_despacho_porc_real INTO v_resguardo;
+                      EXIT WHEN crs_despacho_porc_real%NOTFOUND;
+                      insert into #ESQUEMA#.TMP_CTP_CALCULOS_TURNADO_PRV
+                        values v_resguardo;
+                  END LOOP;
+                  CLOSE crs_despacho_porc_real;
+                  
+                  -- Insertamos en temporal el numero de asuntos por despacho-provincia
+                  OPEN crs_num_asu_prv(v_datos_asunto.dd_tas_codigo, v_dd_prv_id);
+                  LOOP
+                    FETCH crs_num_asu_prv INTO v_filtro_numAsuntos;
+                      EXIT WHEN crs_num_asu_prv%NOTFOUND;
+                      update #ESQUEMA#.TMP_CTP_CALCULOS_TURNADO_PRV
+                        set num_Asu=v_filtro_numAsuntos.num_Asu
+                        where des_id=v_filtro_numAsuntos.des_id;
+                  END LOOP;
+                  CLOSE crs_num_asu_prv;
+                  
+                  execute immediate 'select sum(num_asu) from #ESQUEMA#.TMP_CTP_CALCULOS_TURNADO_PRV' INTO v_calculo;
+                  
+                  -- Insertamos el % de asuntos que ya tienen asignados los despachos
+                  OPEN crs_porcentaje_asu_prv(v_calculo);
+                  LOOP
+                    FETCH crs_porcentaje_asu_prv INTO v_filtro_porcAsuntos;
+                      EXIT WHEN crs_porcentaje_asu_prv%NOTFOUND;
+                      update #ESQUEMA#.TMP_CTP_CALCULOS_TURNADO_PRV
+                        set porc_Asu=v_filtro_porcAsuntos.porc_Asu
+                        where des_id=v_filtro_porcAsuntos.des_id;
+                  END LOOP;
+                  CLOSE crs_porcentaje_asu_prv;
+                  
+                  -- Se obtiene el despacho con mejor puntuacion
+                  OPEN crs_despaco_puntos_prv;
+                    FETCH crs_despaco_puntos_prv INTO v_des_id;
+                  CLOSE crs_despaco_puntos_prv;
 	            ELSE
                 	CLOSE crs_filtro_despacho_prov;
             	END IF;
@@ -573,9 +676,8 @@ END IF;
 	-- Actualizamos ASU_ASUNTOS, para añadir la provincia que tiene asignada
       IF v_dd_prv_id IS NOT NULL     
       THEN
-      DBMS_OUTPUT.put_line ('prv_id: '|| v_dd_prv_id);
         UPDATE #ESQUEMA#.ASU_ASUNTOS asu
-        SET asu.DD_PRV_ID = v_dd_prv_id
+        SET asu.DD_PRV_ID = v_dd_prv_id, asu.usuariomodificar = p_username, fechamodificar = sysdate
         where asu.asu_id = p_asu_id;
       END IF;	
    

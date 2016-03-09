@@ -319,11 +319,11 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 			}
 			hb.deleteCharAt(hb.length() - 1);
 			hb.deleteCharAt(hb.length() - 1);
-			hb.append(" ) and vtar.subtipoTareaCodigoSubtarea NOT IN (");
+			hb.append(" ) and vtar.subtipoTareaCodigoSubtarea NOT IN ('");
 			hb.append(EXTSubtipoTarea.CODIGO_ANOTACION_TAREA);
-			hb.append(",");
+			hb.append("','");
 			hb.append(EXTSubtipoTarea.CODIGO_ANOTACION_NOTIFICACION);
-			hb.append("))");
+			hb.append("'))");
 		}
 		
 		if (!Checks.esNulo(dto.getPerfiles()) && dto.getPerfiles().size()>0) {

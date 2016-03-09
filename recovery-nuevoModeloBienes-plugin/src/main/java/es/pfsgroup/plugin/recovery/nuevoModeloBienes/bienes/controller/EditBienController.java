@@ -424,6 +424,19 @@ public class EditBienController {
 		
 		List<DDImposicionVenta> imposicionVenta = (List<DDImposicionVenta>) executor
 				.execute("dictionaryManager.getList", "DDImposicionVenta");
+		
+		//HR-2052 - Provisional, para evitar problemas por el cambio de FK y decidan por ucal cambiar los valores antiguos
+		List<DDImposicionVenta> imposicionAuxiliar = new ArrayList<DDImposicionVenta>();
+		for(DDImposicionVenta impVenta : imposicionVenta) {
+			if(!(("4").equals(impVenta.getCodigo()) || ("7").equals(impVenta.getCodigo())  || ("10").equals(impVenta.getCodigo()) || ("21").equals(impVenta.getCodigo()) || ("CCAA").equals(impVenta.getCodigo()) )) {
+				imposicionAuxiliar.add(impVenta);
+			}
+		}
+		
+		for(DDImposicionVenta borraImp : imposicionAuxiliar) {
+			imposicionVenta.remove(borraImp);
+		}
+		
 		//Para ordenar la lista por codigo - Este tiene en cuenta si los codigos de Diccionario son Numeros y Letras
 		Comparator<DDImposicionVenta> comparadorImpVenta = new Comparator<DDImposicionVenta> () {
 		    public int compare(DDImposicionVenta p1, DDImposicionVenta p2) {

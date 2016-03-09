@@ -72,6 +72,8 @@ UPDATE SET ASU2.ASU_NOMBRE = TMP.NOMBRE_ASUNTO;
           
 COMMIT;                  
           
-          
+EXIT;
+/          
+                   
           
  

@@ -37,7 +37,7 @@ BEGIN
 
       v_SQL := 'UPDATE '||V_ESQUEMA||'.EXP_EXPEDIENTES 
                 SET DD_TPX_ID = (select dd_TPX_ID from '||V_ESQUEMA||'.DD_TPX_TIPO_EXPEDIENTE where DD_TPX_CODIGO = ''RECU'')
-                WHERE  usuariocrear = '||V_USUARIO||' AND DD_TPX_ID is null';
+                WHERE  usuariocrear = '''||V_USUARIO||''' AND DD_TPX_ID is null';
       
       EXECUTE IMMEDIATE(v_SQL);
 

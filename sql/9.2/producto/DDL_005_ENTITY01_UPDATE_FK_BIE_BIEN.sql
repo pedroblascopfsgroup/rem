@@ -21,6 +21,9 @@ DECLARE
     V_MSQL VARCHAR2(4000 CHAR);
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    v_numero NUMBER(16);
     seq_count number(3); -- Vble. para validar la existencia de las Secuencias.
     table_count number(3); -- Vble. para validar la existencia de las Tablas.
     v_fk_count number(16);
@@ -32,9 +35,27 @@ DECLARE
 BEGIN
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.BIE_BIEN ... UPDATE FK');
-
-	-- Comprobamos si ya existe la FK
+	V_MSQL := 'SELECT count(1) CONSTRAINT_NAME FROM all_constraints where CONSTRAINT_NAME = ''FK_BIEN_DD_IMV'' AND TABLE_NAME= ''BIE_BIEN'' ';
+	EXECUTE IMMEDIATE V_MSQL INTO v_fk_count;
 	
+	IF v_fk_count = 0 THEN
+		-- Se insertan primero lo datos para uqe no haya problemas al insertar la nueva FK
+		V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA_M||'.DD_TPI_TIPO_IMPOSICION WHERE DD_TPI_ID IN (SELECT DISTINCT DD_TPIV_ID FROM '||V_ESQUEMA||'.BIE_BIEN WHERE DD_TPIV_ID IS NOT NULL) ' ||
+	         ' AND DD_TPI_ID NOT IN (SELECT DD_IMV_ID FROM '||V_ESQUEMA_M||'.DD_IMV_IMPOSICION_VENTA)';
+		
+		EXECUTE IMMEDIATE V_SQL INTO v_numero;
+		
+	  		V_MSQL := 'INSERT INTO '||V_ESQUEMA_M||'.DD_IMV_IMPOSICION_VENTA' ||
+					 ' (DD_IMV_ID, DD_IMV_CODIGO, DD_IMV_DESCRIPCION, DD_IMV_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)' ||
+					 ' SELECT DD_TPI_ID, DD_TPI_ID+1000, DD_TPI_DESCRIPCION, DD_TPI_DESCRIPCION_LARGA, VERSION, ''HR-2052'', SYSDATE, 1 '||
+					' FROM '||V_ESQUEMA_M||'.DD_TPI_TIPO_IMPOSICION WHERE DD_TPI_ID IN (SELECT DISTINCT DD_TPIV_ID FROM '||V_ESQUEMA||'.BIE_BIEN WHERE DD_TPIV_ID IS NOT NULL) ' ||
+	         ' AND DD_TPI_ID NOT IN (SELECT DD_IMV_ID FROM '||V_ESQUEMA_M||'.DD_IMV_IMPOSICION_VENTA)';
+			EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[FIN] '||v_numero||' registros insertados en la tabla DD_IMV_IMPOSICION_VENTA ');
+	END IF;
+	
+	
+	-- Comprobamos si ya existe la FK
 	V_MSQL := 'SELECT count(1) CONSTRAINT_NAME FROM all_constraints where CONSTRAINT_NAME = ''FK_BIEN_DD_TPIV'' AND TABLE_NAME= ''BIE_BIEN'' ';
 	EXECUTE IMMEDIATE V_MSQL INTO v_fk_count;
 	

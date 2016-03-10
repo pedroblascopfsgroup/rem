@@ -2,9 +2,9 @@ create or replace PROCEDURE CARGAR_DIM_PROCEDIMIENTO (O_ERROR_STATUS OUT VARCHAR
 -- ===============================================================================================
 -- Autor:  Gonzalo Martín, PFS Group
 -- Fecha creación: Febrero 2014
--- Responsable ultima modificacion: Pedro S., PFS Group
--- Fecha ultima modificacion: 15/01/2016
--- Motivos del cambio: CMREC-1610 Añadimos detalle soluciones previstas a acuerdos
+-- Responsable ultima modificacion: María Villanueva, PFS Group
+-- Fecha ultima modificacion: 09/03/2016
+-- Motivos del cambio: Cambio provisional para evitar duplicados en Gestores concursales. Se añade el filtro --> gaa.usuariocrear='SAG'
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripción: Procedimiento almacenado que carga las tablas de la dimensión Procedimiento.
@@ -139,6 +139,7 @@ create or replace PROCEDURE CARGAR_DIM_PROCEDIMIENTO (O_ERROR_STATUS OUT VARCHAR
     -- D_PRC_ESTADO_LIQ_PER_ANT
 
 	-- D_PRC_TIPO_SOL_PREVISTA
+  -- D_PRC_PROCURADOR
 
 BEGIN
 DECLARE
@@ -2641,7 +2642,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
                     JOIN '||V_DATASTAGE||'.GAA_GESTOR_ADICIONAL_ASUNTO GAA ON GAA.USD_ID = USD.USD_ID
                     JOIN '||V_DATASTAGE||'.DD_TGE_TIPO_GESTOR TGES ON GAA.DD_TGE_ID = TGES.DD_TGE_ID
                     JOIN '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC ON GAA.ASU_ID = PRC.ASU_ID
-                     WHERE TGES.DD_TGE_DESCRIPCION = ''Gestor concursal''';
+                     WHERE TGES.DD_TGE_DESCRIPCION = ''Gestor concursal'' and gaa.usuariocrear=''SAG''';
 
   EXECUTE IMMEDIATE
   'INSERT INTO TMP_PRC_SUPERVISOR (PROCEDIMIENTO_ID, SUPERVISOR_PRC_ID)
@@ -3344,7 +3345,38 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
      --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TIPO_SOL_PREVISTA. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+
+/*
+  -- ----------------------------------------------------------------------------------------------
+--                                  D_PRC_PROCURADOR
+-- ----------------------------------------------------------------------------------------------
+SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_PROCURADOR WHERE PROCURADOR_PRC_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_PROCURADOR (PROCURADOR_PRC_ID,PROCURADOR_PRC_NOMBRE_COMPLETO,PROCURADOR_PRC_NOMBRE,PROCURADOR_PRC_APELLIDO1,PROCURADOR_PRC_APELLIDO2) VALUES (-1 ,'Desconocido','Desconocido','Desconocido','Desconocido');
+  END IF;
+
+ EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_PROCURADOR (PROCURADOR_PRC_ID,PROCURADOR_PRC_NOMBRE_COMPLETO,PROCURADOR_PRC_NOMBRE,PROCURADOR_PRC_APELLIDO1,PROCURADOR_PRC_APELLIDO2)
+
+
+  select usu.USU_ID,
+   NVL(('' '''|| usu.USU_NOMBRE ||' '' '' ' || usu.USU_APELLIDO1 ||''' '''|| usu.USU_APELLIDO2'), ''Desconocido''),
+    NVL(usu.USU_NOMBRE, ''Desconocido''),
+    NVL(usu.USU_APELLIDO1, ''Desconocido''),
+    NVL(usu.USU_APELLIDO2, ''Desconocido'')
+    from cmmaster.USU_USUARIOS usu
+    left join cm01.USD_USUARIOS_DESPACHOS usd on usd.USU_ID = usu.USU_ID        
+    join cm01.GAA_GESTOR_ADICIONAL_ASUNTO gaa on gaa.USD_ID = usd.USD_ID
+    join cmmaster.dd_tge_tipo_gestor tges on gaa.DD_TGE_ID = tges.DD_TGE_ID
+    where tges.DD_TGE_DESCRIPCION = ''Procurador''';
+
+     V_ROWCOUNT := sql%rowcount;     
+  commit;
   
+     --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_PROCURADOR. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+
+  */
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina ' || V_NOMBRE, 2;
 

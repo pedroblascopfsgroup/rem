@@ -25,5 +25,37 @@ INNER JOIN HAYA01.USD_USUARIOS_DESPACHOS USD ON USD.USD_ID=GAA.USD_ID
 INNER JOIN HAYAMASTER.USU_USUARIOS USU ON USU.USU_ID=USD.USU_ID
 WHERE  TAC.DD_TAC_CODIGO LIKE 'PCO'
 AND TGE.DD_TGE_CODIGO LIKE 'PREDOC'
-
 ;
+
+
+--Merge del campo FC_BUROFAX_REMITIDO
+merge into minirec.VAL_PRE_JUDICIAL pre_jud
+using(
+select asu_id,cnt_id,cnt_contrato,pco_bur_envio_fecha_envio from(
+select  bur.CNT_ID,cnt_contrato,prc.ASU_ID,bur.PCO_PRC_ID,envio.PCO_BUR_ENVIO_FECHA_ENVIO, row_number() over (partition by bur.CNT_ID,prc.ASU_ID order by bur.PCO_PRC_ID,PCO_BUR_ENVIO_FECHA_ENVIO asc) rn from HAYA01.PCO_BUR_BUROFAX bur
+inner join HAYA01.PCO_BUR_ENVIO envio on envio.PCO_BUR_BUROFAX_ID = bur.PCO_BUR_BUROFAX_ID
+inner join HAYA01.PCO_PRC_PROCEDIMIENTOS pco on pco.PCO_PRC_ID = bur.PCO_PRC_ID
+inner join HAYA01.PRC_PROCEDIMIENTOS prc on prc.PRC_ID = pco.PRC_ID
+inner join haya01.cnt_contratos cnt on bur.cnt_id=cnt.cnt_id
+inner join MINIREC.VAL_PRE_JUDICIAL val on val.ID_ASUNTO_HRE=prc.ASU_ID
+)
+where rn=1)res
+on (pre_jud.ID_ASUNTO_HRE=res.asu_id and pre_jud.num_cuenta=res.cnt_contrato)
+when matched then update SET PRE_JUD.FC_BUROFAX_REMITIDO=res.PCO_BUR_ENVIO_FECHA_ENVIO 
+;
+
+
+-- Merge de l campo FC_ACUSE_BUROFAX
+merge into minirec.VAL_PRE_JUDICIAL pre_jud
+using(
+select asu_id,cnt_id,cnt_contrato,PCO_BUR_ENVIO_FECHA_ACUSO from(
+select  bur.CNT_ID,cnt_contrato,prc.ASU_ID,bur.PCO_PRC_ID,envio.PCO_BUR_ENVIO_FECHA_ACUSO, row_number() over (partition by bur.CNT_ID,prc.ASU_ID order by bur.PCO_PRC_ID,PCO_BUR_ENVIO_FECHA_ACUSO desc) rn from HAYA01.PCO_BUR_BUROFAX bur
+inner join HAYA01.PCO_BUR_ENVIO envio on envio.PCO_BUR_BUROFAX_ID = bur.PCO_BUR_BUROFAX_ID and PCO_BUR_ENVIO_FECHA_ACUSO is not null
+inner join HAYA01.PCO_PRC_PROCEDIMIENTOS pco on pco.PCO_PRC_ID = bur.PCO_PRC_ID
+inner join HAYA01.PRC_PROCEDIMIENTOS prc on prc.PRC_ID = pco.PRC_ID
+inner join haya01.cnt_contratos cnt on bur.cnt_id=cnt.cnt_id
+inner join MINIREC.VAL_PRE_JUDICIAL val on val.ID_ASUNTO_HRE=prc.ASU_ID
+)
+where rn=1)res
+on (pre_jud.ID_ASUNTO_HRE=res.asu_id and pre_jud.num_cuenta=res.cnt_contrato)
+when matched then update SET PRE_JUD.FC_ACUSE_BUROFAX=res.PCO_BUR_ENVIO_FECHA_ACUSO;

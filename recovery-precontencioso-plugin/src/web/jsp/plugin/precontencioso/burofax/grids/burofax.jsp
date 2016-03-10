@@ -371,9 +371,6 @@ var pdfRender = function(value, meta, record) {
       		if(myCboxSelModel.getCount() == 0){
       			btnPreparar.setDisabled(true);
       			btnEditar.setDisabled(true);
-				<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
-					btnEditar.setDisabled(false);
-				</sec:authorize>
       			btnNuevaDir.setDisabled(true);
       			btnEnviar.setDisabled(true);
       			btnNotificar.setDisabled(true);
@@ -1133,10 +1130,7 @@ var pdfRender = function(value, meta, record) {
 				btnAniadirEditPersona.setDisabled(true);
 				btnEnviar.setDisabled(true);
 				btnNuevaDir.setDisabled(true);
-				btnEditar.setDisabled(true);
-				<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
-				btnEditar.setDisabled(false);
-				</sec:authorize>
+				btnEditar.setDisabled(true);				
 				btnPreparar.setDisabled(true);
 				btnCancelar.setDisabled(true);
 				btnNotificar.setDisabled(true);
@@ -1186,10 +1180,7 @@ var pdfRender = function(value, meta, record) {
 		}
 		
 		if(!btnEditar.disabled && !validarBotonEditarHabilitado()) {
-			btnEditar.setDisabled(true);
-			<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
-				btnEditar.setDisabled(false);
-			</sec:authorize>
+			btnEditar.setDisabled(true);			
 		}	
 		
 		if(!btnPreparar.disabled && !validarBotonPrepararHabilitado()) {
@@ -1337,16 +1328,13 @@ var pdfRender = function(value, meta, record) {
 		<%-- if(gridBurofax.getSelectionModel().getSelected().get('direccion') == ''){
 			btnPreparar.setDisabled(true);
 		}--%>
-     		<%-- Si el envio esta en estado preparado, habilitamos el boton editar --%>
-		<sec:authorize ifNotGranted="PERSONALIZACION-BCC">
+     	<%-- Si el envio esta en estado preparado, habilitamos el boton editar --%>
 		if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Preparado'){
 			btnEditar.setDisabled(false);
 		}
 		else{
 			btnEditar.setDisabled(true);
 		}
-		</sec:authorize>
-		
 		
 		<%-- Comprobamos que se ha seleccionado un cliente --%>
 		if(gridBurofax.getSelectionModel().getSelected().get('idCliente') != ''){
@@ -1397,10 +1385,7 @@ var pdfRender = function(value, meta, record) {
 			//btnAddPersona.setDisabled(true);
 			btnEnviar.setDisabled(true);
 			//btnNuevaDir.setDisabled(true);
-			btnEditar.setDisabled(true);
-			<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
-				btnEditar.setDisabled(false);
-			</sec:authorize>
+			btnEditar.setDisabled(true);			
 			btnPreparar.setDisabled(true);
 			btnCancelar.setDisabled(true);
 			btnNotificar.setDisabled(true);
@@ -1417,11 +1402,9 @@ var pdfRender = function(value, meta, record) {
 			} else {
 				btnNuevaDir.setDisabled(true);
 			}
-			<sec:authorize ifNotGranted="PERSONALIZACION-BCC">
-				if(!btnEditar.disabled && !validarBotonEditarHabilitado()) {
-					btnEditar.setDisabled(true);
-				}
-			</sec:authorize>
+			if(!btnEditar.disabled && !validarBotonEditarHabilitado()) {
+				btnEditar.setDisabled(true);
+			}
 			if(!btnPreparar.disabled && !validarBotonPrepararHabilitado()) {
 				btnPreparar.setDisabled(true);
 			}
@@ -1483,7 +1466,10 @@ var pdfRender = function(value, meta, record) {
 						if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Solicitado' || gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Enviado' ){
 							btnBorrarDirOrigenManual.setDisabled(true);
 						}else{
-							btnBorrarDirOrigenManual.setDisabled(false);	
+							var estadoActualCodigoProcedimiento = data.precontencioso.estadoActualCodigo;
+							if (data.esExpedienteEditable && (estadoActualCodigoProcedimiento == 'PR'  || estadoActualCodigoProcedimiento == 'SU' || estadoActualCodigoProcedimiento == 'SC')) {
+								btnBorrarDirOrigenManual.setDisabled(false);
+							}
 							<%-- var idClienteComparar = gridBurofax.getSelectionModel().getSelected().get('idCliente');
 							for (var i = 0; i < gridBurofax.getStore().data.length; i++) {
 						    	var element = Ext.get(gridBurofax.getView().getRow(i));

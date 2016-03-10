@@ -98,6 +98,7 @@ import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJFinalizarAsuntoDto;
+import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.ConfiguradorPropuesta;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.MEJDecisionProcedimientoManager;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
@@ -1920,7 +1921,15 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			dtoDecisionProcedimiento
 					.setDecisionProcedimiento(decisionProcedimiento);
 			try {
-				mejDecisionProcedimientoManager.aceptarPropuesta(dtoDecisionProcedimiento);
+				
+				if(sincronizar) {
+					mejDecisionProcedimientoManager.aceptarPropuesta(dtoDecisionProcedimiento);
+				}
+				else {
+					ConfiguradorPropuesta configuradorPropuesta = new ConfiguradorPropuesta();
+					configuradorPropuesta.setConfiguracion(ConfiguradorPropuesta.SIN_ENVIO_DATOS);
+					mejDecisionProcedimientoManager.aceptarPropuestaSinControl(dtoDecisionProcedimiento, configuradorPropuesta);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				logger.error("Ha habido un error al cerrar los procedimientos. "

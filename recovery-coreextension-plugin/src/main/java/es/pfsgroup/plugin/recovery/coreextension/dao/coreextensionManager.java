@@ -152,7 +152,7 @@ public class coreextensionManager implements coreextensionApi {
 	@BusinessOperation(GET_LIST_TIPO_GESTOR_ADICIONAL)
 	public List<EXTDDTipoGestor> getListTipoGestorAdicional() {
 		
-		List<Entidad> listEnt = entidadManager.getListaEntidades();
+		List<Entidad> listEnt = genericDao.getList(Entidad.class);//entidadManager.getListaEntidades();
 		List<EXTDDTipoGestor> listado = new ArrayList<EXTDDTipoGestor>();
 		
 		if(!Checks.esNulo(listEnt) && listEnt.size()>1){

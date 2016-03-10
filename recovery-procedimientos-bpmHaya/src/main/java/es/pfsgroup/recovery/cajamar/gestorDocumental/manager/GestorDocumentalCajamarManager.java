@@ -251,9 +251,17 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
 	private String getMimeType(String fileName) {
 		FileNameMap mimeTypes = URLConnection.getFileNameMap();
-		return mimeTypes.getContentTypeFor("."+fileName);
+		String mimeType = mimeTypes.getContentTypeFor("."+fileName);
+		if(Checks.esNulo(mimeType)) {
+			if("docx".equalsIgnoreCase(fileName)) {
+				mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+			}else if("msg".equalsIgnoreCase(fileName)) {
+				mimeType = "application/vnd.ms-outlook";
+			}
+		}
+		return mimeType;
 	}
-	
+
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_RECUPERACION_DOCUMENTO)
 	@Transactional(readOnly = false)
 	public String recuperacionDocumento(String idRefCentera) {

@@ -102,7 +102,7 @@ inner join MIG_PROPUESTAS_CABECERA cab on cab.id_propuesta = tea.id_propuesta
       INNER JOIN CM01.CEX_CONTRATOS_EXPEDIENTE cex on cnt.cnt_id = cex.cnt_id
       INNER JOIN CM01.EXP_EXPEDIENTES exp on exp.exp_id = cex.exp_id
       LEFT OUTER JOIN CM01.PRC_CEX pcx on pcx.CEX_ID = cex.CEX_ID
-    where cnt.borrado = 0 AND pcx.PRC_ID is null and exp.EXP_MANUAL = 0 and exp.USUARIOCREAR = 'DD'
+    where cnt.borrado = 0 AND pcx.PRC_ID is null and exp.EXP_MANUAL = 0 and exp.USUARIOCREAR = 'REC-BATCH'
       --  AND CNT2.ESTADO_ACUERDO = 0 AND CNT2.TIPO_ACUERDO = 5 -- SIN ESTADO "0" / ALTA DUDOSO "5" (1.233  Filas)  
       -- AND CNT2.ESTADO_ACUERDO = 0 AND CNT2.TIPO_ACUERDO = 6 -- SIN ESTADO "0" / FONDOS PROPIOS "6" (10.598  Filas)
       -- AND CNT2.ESTADO_ACUERDO = 0 AND CNT2.TIPO_ACUERDO = 4 -- SIN ESTADO "0" / REFINANCIACION NOVACION "4" (123  Filas)

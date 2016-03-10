@@ -577,7 +577,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 	@Override
 	public Long modificarAsunto(Long idAsunto, GestorDespacho gestorDespacho,
 			GestorDespacho supervisor, GestorDespacho procurador,
-			String nombreAsunto, String observaciones) {
+			String nombreAsunto, String observaciones, DDTiposAsunto tipoAsunto) {
 		EXTAsunto extAsunto = (EXTAsunto) get(idAsunto);
 		if (!Checks.esNulo(gestorDespacho)
 				&& (gestorDespacho.getId().longValue() != extAsunto.getGestor()
@@ -588,6 +588,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		extAsunto.setObservacion(observaciones);
 		extAsunto.setSupervisor(supervisor);
 		extAsunto.setNombre(nombreAsunto);
+		extAsunto.setTipoAsunto(tipoAsunto);
 
 		// Gestores adicionales Asunto
 		// List<EXTGestorAdicionalAsunto> gestoresAsuntoGet =

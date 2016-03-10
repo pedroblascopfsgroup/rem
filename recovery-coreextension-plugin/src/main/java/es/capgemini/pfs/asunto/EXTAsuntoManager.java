@@ -897,22 +897,22 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			sup = null;
 			procurador = null;
 		}
+		
+		DDTiposAsunto tipoDeAsunto = null;
+		
+		if(!Checks.esNulo(dtoAsunto.getTipoDeAsunto())){
+			tipoDeAsunto = genericdDao.get(DDTiposAsunto.class, genericdDao.createFilter(FilterType.EQUALS, "id", dtoAsunto.getTipoDeAsunto()));
+		}
 
 		if (Checks.esNulo(dtoAsunto.getIdAsunto())) // CREAR EXTASUNTO
 		{
 			exp = (Expediente) executor.execute(InternaBusinessOperation.BO_EXP_MGR_GET_EXPEDIENTE, dtoAsunto.getIdExpediente());
 			
-			DDTiposAsunto tipoDeAsunto = null;
-			
-			if(!Checks.esNulo(dtoAsunto.getTipoDeAsunto())){
-				tipoDeAsunto = genericdDao.get(DDTiposAsunto.class, genericdDao.createFilter(FilterType.EQUALS, "id", dtoAsunto.getTipoDeAsunto()));
-			}
-			
 			id = asuntoDao.crearAsuntoConEstado(gd, sup, procurador, dtoAsunto.getNombreAsunto(), exp, dtoAsunto.getObservaciones(),dtoAsunto.getCodigoEstadoAsunto(),tipoDeAsunto);
 			dtoAsunto.setIdAsunto(id);
 		} else // MODIFICAR EXTASUNTO
 		{
-			id = asuntoDao.modificarAsunto(dtoAsunto.getIdAsunto(), gd, sup, procurador, dtoAsunto.getNombreAsunto(), dtoAsunto.getObservaciones());
+			id = asuntoDao.modificarAsunto(dtoAsunto.getIdAsunto(), gd, sup, procurador, dtoAsunto.getNombreAsunto(), dtoAsunto.getObservaciones(), tipoDeAsunto);
 		}
 
 		if (modeloMultiGestor()) {

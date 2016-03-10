@@ -34,10 +34,11 @@ public interface EXTAsuntoDao extends AbstractDao<Asunto, Long>{
      * @param supervisor el supervisor nuevo.
      * @param nombreAsunto el nuevo nombre del Asunto.
      * @param observaciones las obeservaciones.
+     * @param DDTiposAsunto tipoAsunto
      * @return el id del asunto.
      */
     Long modificarAsunto(Long idAsunto, GestorDespacho gestorDespacho, GestorDespacho supervisor, GestorDespacho procurador, String nombreAsunto,
-            String observaciones);
+            String observaciones, DDTiposAsunto tipoAsunto);
 	
 	/**
      * Busca de entre todos los asuntos si existe otro con el mismo nombre

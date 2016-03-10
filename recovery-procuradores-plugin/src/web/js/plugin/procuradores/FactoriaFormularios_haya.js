@@ -2942,7 +2942,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 
     // id: 390 : T. CERTIFICADO DE CARGAS Y REVISIÓN (CAJAMAR): Registrar certificación
     this.arrayCampos.push([
-        {"xtype": 'datefield', "name": "d_fecha", "fieldLabel": "Fecha solicitud", allowBlank: false,  maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'),  minValue: fechaMinima }
+        {"xtype": 'datefield', "name": "d_fecha", "fieldLabel": "Fecha", allowBlank: false,  maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'),  minValue: fechaMinima }
     ]);
 
     // id: 391 : T. Ocupantes (CAJAMAR): H048_TrasladoDocuDeteccionOcupantes

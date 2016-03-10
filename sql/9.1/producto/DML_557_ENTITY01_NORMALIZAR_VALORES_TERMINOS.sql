@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=JAVIER RUIZ
---## FECHA_CREACION=20160201
+--## AUTOR=Alberto B.
+--## FECHA_CREACION=20160308
 --## ARTEFACTO=producto
---## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=CMREC-1856
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=CMREC-2723
 --## PRODUCTO=SI
 --##
 --## Finalidad: DML Para hacer completamente dinámico los campos de los términos (Soluciones a propuestas)
@@ -49,7 +49,7 @@ BEGIN
             DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.ACU_CAMPOS_TIPO_ACUERDO... Tabla NO existe, imposible continuar');    
     ELSE
     	-- Comprobamos que se han creado previamente los 3 campos para hacerlo dinámico
-    	V_SQL := 'SELECT COUNT(1) FROM SYS.COL WHERE TNAME=''ACU_CAMPOS_TIPO_ACUERDO'' AND (CNAME=''CMP_LABEL'' OR CNAME=''CMP_TIPO_CAMPO'' OR CNAME=''CMP_VALORES_COMBO'')';
+    	V_SQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE TABLE_NAME=''ACU_CAMPOS_TIPO_ACUERDO'' AND COLUMN_NAME IN (''CMP_LABEL'',''CMP_TIPO_CAMPO'',''CMP_VALORES_COMBO'')';
     	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     	IF V_NUM_TABLAS = 3 THEN
 	    	 -- Actualizamos los campos de la tabla

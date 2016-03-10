@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=Carlos Perez
---## FECHA_CREACION=20160307
+--## AUTOR=Alberto B.
+--## FECHA_CREACION=20160309
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2.0
---## INCIDENCIA_LINK=CMREC-2422
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.2.0-HY-BCC
+--## INCIDENCIA_LINK= CMREC-2510
+--## PRODUCTO=NO
 --##
---## Finalidad: Se crea usuario FAKE para que el batch pueda obtener un usuario logado por defecto
+--## Finalidad:
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -17,34 +17,35 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 SET DEFINE OFF;
 DECLARE
-    V_MSQL_1 VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas  
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas  
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.  
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.     
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_DDNAME VARCHAR2(30):= 'USU_USUARIOS';
 BEGIN	
 
-    
-	
-	V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA_M||'.'||V_DDNAME||' WHERE USU_ID= 1';
-	
+	V_SQL := 'SELECT COUNT (1) FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = ''INFOJUDICIAL_SIDHI''';
 	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 	
-	IF V_NUM_TABLAS > 0 THEN    
-	  DBMS_OUTPUT.PUT_LINE('OK no se modifica nada.');
-	  DBMS_OUTPUT.PUT_LINE('[INFO] Ya existe el usuario fake en '||V_DDNAME||'.');
+	IF V_NUM_TABLAS > 0 THEN
+	
+	    V_SQL := 'SELECT COUNT (1) FROM '||V_ESQUEMA||'.FUN_PEF WHERE FUN_ID = (SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = ''INFOJUDICIAL_SIDHI'')';
+	    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+	    
+	    IF V_NUM_TABLAS > 0 THEN
+			V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.FUN_PEF WHERE FUN_ID = (SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = ''INFOJUDICIAL_SIDHI'')';
+			EXECUTE IMMEDIATE V_MSQL;
+			DBMS_OUTPUT.PUT_LINE('OK INSERTADO');
+		ELSE
+			DBMS_OUTPUT.PUT_LINE('NO EXISTEN REGISTROS');
+		END IF;
 	
 	ELSE
 	
-	 	V_SQL := 'INSERT INTO '||V_ESQUEMA_M||'.'||V_DDNAME||' ( usu_id, entidad_id, usu_username, usu_password, usu_nombre, usuariocrear, fechacrear, borrado, usu_externo, usu_fecha_vigencia_pass, usu_grupo, usu_baja_ldap ) VALUES ' ||
-				'(1, (select DATAVALUE from '||V_ESQUEMA_M||'.ENTIDADCONFIG where datakey = ''initialId'' and rownum = 1), ''BATCH_USER'', ''BATCH_1234'', ''BATCH_USER'', ''CMREC-2422'', SYSDATE, 0, 0, SYSDATE+365, 0,1)';
-		DBMS_OUTPUT.put_line(V_SQL);
-		execute immediate V_SQL;
-		DBMS_OUTPUT.PUT_LINE('Usuario Batch añadido OK');
-		
+		DBMS_OUTPUT.PUT_LINE('NO EXISTE LA FUNCION INFOJUDICIAL_SIDHI');
+	
 	END IF;
 	
 	COMMIT;

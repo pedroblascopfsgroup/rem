@@ -100,7 +100,7 @@
     </bean>
     <bean id="devolverEnSancionDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PRODevolverEnSancionDeudaActionHandler">
     </bean>
-    <bean id="sancionadoActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PROSancionadoActionHandler">
+    <bean id="sancionadoDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PROSancionadoDeudaActionHandler">
     </bean>
     <bean id="enviarAFormalizarDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PROEnviarAFormalizarDeudaActionHandler">
     </bean>

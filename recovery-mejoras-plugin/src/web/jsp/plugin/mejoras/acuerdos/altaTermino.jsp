@@ -123,7 +123,7 @@
 				    	case 'combobox':
 				    		var campo = new Ext.form.ComboBox({
 											id: camposDynamics.camposTerminoAcuerdo[i].nombreCampo,
-											name : camposDynamics.camposTerminoAcuerdo[i].nombreCampo,
+											hiddenName : camposDynamics.camposTerminoAcuerdo[i].nombreCampo,
 											fieldLabel: camposDynamics.camposTerminoAcuerdo[i].labelCampo,
 										    triggerAction: 'all',
 										    mode: 'local',

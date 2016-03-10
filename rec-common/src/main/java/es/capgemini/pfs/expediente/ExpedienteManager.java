@@ -102,6 +102,7 @@ import es.capgemini.pfs.politica.dto.DtoPersonaPoliticaExpediente;
 import es.capgemini.pfs.politica.dto.DtoPersonaPoliticaUlt;
 import es.capgemini.pfs.politica.model.CicloMarcadoPolitica;
 import es.capgemini.pfs.politica.model.DDEstadoPolitica;
+import es.capgemini.pfs.politica.model.Objetivo;
 import es.capgemini.pfs.politica.model.Politica;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea;
@@ -1726,9 +1727,6 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	        	if(exp.getGestorActual().equalsIgnoreCase(perfil.getDescripcion()) || exp.getSupervisorActual().equalsIgnoreCase(perfil.getDescripcion())){
 	        		logger.debug("MUESTRO EL TAB " + nombreTab);
 	        		return Boolean.TRUE;
-	        	}else{
-	        		logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO ES EL SUPERVISOR O EL GESTOR DEL EXPEDIENTE ");
-	        		return Boolean.FALSE;
 	        	}
 	        }
 	        logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO CORRESPONDE AL USUARIO " + usuario.getUsername());
@@ -3275,6 +3273,8 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 
             executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, expediente.getProcessBpm(),
                     ExpedienteBPMConstants.TRANSITION_TOMARDECISION);
+            
+           
 
             //Si no se ha marcado como vigente, se lanza una excepci�n porque deber�a
         } else {
@@ -3285,6 +3285,9 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 
         return true;
     }
+	
+	
+	
 
     /**
      * Marca todos los contratos del expediente como sin actuaci�n

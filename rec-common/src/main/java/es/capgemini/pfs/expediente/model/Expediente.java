@@ -176,16 +176,16 @@ public class Expediente implements Serializable, Auditable, Describible {
     private Double dispuestoVencido;
 
     //La fecha de vencimiento se calculaba antes así
-//    @Formula(value = "(select tar.tar_fecha_venc from tar_tareas_notificaciones tar, ${master.schema}.DD_STA_SUBTIPO_TAREA_BASE dd_sta "
-//            + " where tar.exp_id = exp_id and tar.borrado = 0 and tar.DD_STA_ID = dd_sta.DD_STA_ID " + " and dd_sta.dd_sta_codigo in ('"
-//            + SubtipoTarea.CODIGO_COMPLETAR_EXPEDIENTE + "','" + SubtipoTarea.CODIGO_REVISAR_EXPEDIENE + "','" + SubtipoTarea.CODIGO_DECISION_COMITE
-//            + "') )")
-//    
-    @Formula(value = "(SELECT min(M.MOV_FECHA_POS_VENCIDA) "
+    @Formula(value = "(select tar.tar_fecha_venc from tar_tareas_notificaciones tar, ${master.schema}.DD_STA_SUBTIPO_TAREA_BASE dd_sta "
+           + " where tar.exp_id = exp_id and tar.borrado = 0 and tar.DD_STA_ID = dd_sta.DD_STA_ID " + " and dd_sta.dd_sta_codigo in ('"
+           + SubtipoTarea.CODIGO_COMPLETAR_EXPEDIENTE + "','" + SubtipoTarea.CODIGO_REVISAR_EXPEDIENE + "','" + SubtipoTarea.CODIGO_DECISION_COMITE
+           + "','" + SubtipoTarea.CODIGO_FORMALIZAR_PROPUESTA + "') )")
+    
+   /* @Formula(value = "(SELECT min(M.MOV_FECHA_POS_VENCIDA) "
     		+ " FROM mov_movimientos m, cex_contratos_expediente cex, cnt_contratos cnt "
     		+ " WHERE cex.borrado = 0 AND m.borrado = 0 AND cnt.borrado = 0 "
     		+ " AND m.cnt_id = cex.cnt_id AND cex.exp_id = exp_id " 
-    		+ " AND cnt.cnt_id = cex.cnt_id AND m.mov_fecha_extraccion = cnt.CNT_FECHA_EXTRACCION)")
+    		+ " AND cnt.cnt_id = cex.cnt_id AND m.mov_fecha_extraccion = cnt.CNT_FECHA_EXTRACCION)")*/
     private Date fechaVencimiento;
 
     /**

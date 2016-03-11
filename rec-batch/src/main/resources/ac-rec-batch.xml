@@ -535,4 +535,13 @@
  <!-- 
          <tx:method name="buscarParametroPorNombre*" propagation="REQUIRED" isolation="READ_COMMITTED" no-rollback-for="ParametrizationException"/>
   -->
+  
+	<bean id="myincrementer" class="es.pfsgroup.commons.utils.PFSDataFieldMaxValueIncrementerFactory">
+		<constructor-arg ref="masterDataSource"/>
+	</bean>
+	
+	<bean id="batch.jobRepository" class="org.springframework.batch.core.repository.support.JobRepositoryFactoryBean"
+		p:databaseType="${batch.environment}" p:dataSource-ref="masterDataSource"
+		p:incrementerFactory-ref="myincrementer" />
+		
 </beans>

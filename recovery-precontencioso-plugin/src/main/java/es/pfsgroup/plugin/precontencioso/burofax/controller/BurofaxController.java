@@ -165,7 +165,7 @@ public class BurofaxController {
 			
 			for(BurofaxPCO burofax : listaBurofax){
 				BurofaxDTO dto=new BurofaxDTO();
-				dto.setId(burofax.getId());
+				dto.setId(burofax.getId().toString());
 				dto.setIdBurofax(burofax.getId());
 
 				if(!Checks.esNulo(burofax.getTipoIntervencion())){
@@ -219,10 +219,14 @@ public class BurofaxController {
 					
 					for(Direccion direccion : direcciones){
 				    		if(!Checks.esNulo(burofax.getContrato())){
-				    			dto.setId(burofax.getId()+burofax.getContrato().getId()+direccion.getId());
+				    			StringBuilder id = new StringBuilder();
+				    			id.append(burofax.getId()).append(burofax.getContrato().getId()).append(direccion.getId());
+				    			dto.setId(id.toString());
 				    		}
 				    		else{
-				    			dto.setId(burofax.getId()+burofax.getDemandado().getId()+direccion.getId());
+				    			StringBuilder id = new StringBuilder();
+				    			id.append(burofax.getId()).append(burofax.getDemandado().getId()).append(direccion.getId());
+				    			dto.setId(id.toString());
 				    		}
 				    		//dto.setIdCliente(burofax.getDemandado().getId());
 				    		dto.setIdDireccion(direccion.getId());
@@ -291,7 +295,7 @@ public class BurofaxController {
 			    			else{
 						    	listadoBurofax.add(dto);
 				    			dto=new BurofaxDTO();
-				    			dto.setId(direccion.getId());
+				    			dto.setId(direccion.getId().toString());
 			    			}
 				    		
 				    }
@@ -356,6 +360,7 @@ public class BurofaxController {
 	 * @return
 	 * @throws Exception 
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String configurarTipoBurofax(WebRequest request, ModelMap model,Long idTipoBurofax,Long idDireccion,Long idBurofax, Long idDocumento) throws Exception{
 		DocumentoPCO doc = null;
@@ -591,6 +596,7 @@ public class BurofaxController {
 		return DEFAULT;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	private String guardaPersonaYPersonaManual(WebRequest request, 
 			ModelMap model,
@@ -855,7 +861,8 @@ public class BurofaxController {
      * @return
      * @throws Exception 
      */
-    @RequestMapping
+    @SuppressWarnings("unchecked")
+	@RequestMapping
     public String guardarEnvioBurofax(WebRequest request, ModelMap model,Boolean certificado,Long idTipoBurofax,Boolean comboEditable,  Long idDocumento) throws Exception{
     	DocumentoPCO doc = null;
     	

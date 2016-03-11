@@ -152,4 +152,7 @@ public interface ProcedimientoPcoApi {
 	public boolean comprobarExistenciaGestor(Long idProcedimiento);
 	
 	public String asuntoConProcuradorPrecontencioso(Long idProcedimiento);
+
+	public String validarDocumentoBienes(Long idProcedimiento, String idsBien);
+
 }

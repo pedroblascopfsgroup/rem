@@ -39,17 +39,18 @@ DECLARE
 
     BEGIN
 
+
 	V_SQL:= 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_RULE_DEFINITION WHERE UPPER(RD_COLUMN) = ''PER_RIESGO_TOTAL''';
 	EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
 	IF V_COUNT > 0 THEN
 		DBMS_OUTPUT.PUT_LINE('[INFO] Ya existe el registro en la tabla');
 	ELSE
-		V_MSQL:= 'INSERT INTO DD_RULE_DEFINITION (RD_ID,RD_TITLE,RD_COLUMN,RD_TYPE,RD_VALUE_FORMAT,RD_BO_VALUES,RD_TAB,USUARIOCREAR,FECHACREAR,BORRADO) VALUES (S_DD_RULE_DEFINITION.nextval,''Riesgo Total de la Persona - Compara1Valor (Carga)'',''per_riesgo_total'',''compare1'',''number'',null,''Riesgo'',''DD'',sysdate,0)';
+		V_MSQL:= 'INSERT INTO '||V_ESQUEMA||'.DD_RULE_DEFINITION (RD_ID,RD_TITLE,RD_COLUMN,RD_TYPE,RD_VALUE_FORMAT,RD_BO_VALUES,RD_TAB,USUARIOCREAR,FECHACREAR,BORRADO) VALUES ('||V_ESQUEMA||'.S_DD_RULE_DEFINITION.nextval,''Riesgo Total de la Persona - Compara1Valor (Carga)'',''per_riesgo_total'',''compare1'',''number'',null,''Riesgo'',''DD'',sysdate,0)';
 		DBMS_OUTPUT.PUT_LINE(V_MSQL);
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Registro insertado en la tabla');
 
-		V_MSQL:= 'INSERT INTO DD_RULE_DEFINITION (RD_ID,RD_TITLE,RD_COLUMN,RD_TYPE,RD_VALUE_FORMAT,RD_BO_VALUES,RD_TAB,USUARIOCREAR,FECHACREAR,BORRADO) VALUES (S_DD_RULE_DEFINITION.nextval,''Riesgo Total de la Persona - Compara2Valores (Carga)'',''per_riesgo_total'',''compare2'',''number'',null,''Riesgo'',''DD'',sysdate,0)';
+		V_MSQL:= 'INSERT INTO '||V_ESQUEMA||'.DD_RULE_DEFINITION (RD_ID,RD_TITLE,RD_COLUMN,RD_TYPE,RD_VALUE_FORMAT,RD_BO_VALUES,RD_TAB,USUARIOCREAR,FECHACREAR,BORRADO) VALUES ('||V_ESQUEMA||'.S_DD_RULE_DEFINITION.nextval,''Riesgo Total de la Persona - Compara2Valores (Carga)'',''per_riesgo_total'',''compare2'',''number'',null,''Riesgo'',''DD'',sysdate,0)';
 		DBMS_OUTPUT.PUT_LINE(V_MSQL);
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Registro insertado en la tabla');
@@ -61,12 +62,11 @@ DECLARE
 	IF V_COUNT > 0 THEN
 		DBMS_OUTPUT.PUT_LINE('[INFO] Ya existe el registro en la tabla');
 	ELSE
-		V_MSQL:= 'INSERT INTO DD_RULE_DEFINITION (RD_ID,RD_TITLE,RD_COLUMN,RD_TYPE,RD_VALUE_FORMAT,RD_BO_VALUES,RD_TAB,USUARIOCREAR,FECHACREAR,BORRADO) VALUES (S_DD_RULE_DEFINITION.nextval,''Grupo Economico de la Persona - Compara1Valor (Carga)'',''gcl_nombre'',''compare1'',''text'',null,''Persona'',''DD'',sysdate,0)';
+		V_MSQL:= 'INSERT INTO '||V_ESQUEMA||'.DD_RULE_DEFINITION (RD_ID,RD_TITLE,RD_COLUMN,RD_TYPE,RD_VALUE_FORMAT,RD_BO_VALUES,RD_TAB,USUARIOCREAR,FECHACREAR,BORRADO) VALUES ('||V_ESQUEMA||'.S_DD_RULE_DEFINITION.nextval,''Grupo Economico de la Persona - Compara1Valor (Carga)'',''gcl_nombre'',''compare1'',''text'',null,''Persona'',''DD'',sysdate,0)';
 		DBMS_OUTPUT.PUT_LINE(V_MSQL);
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Registro insertado en la tabla');
-	END IF;
-	
+	END IF;	
 	
 	
 	

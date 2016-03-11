@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=BRUNO ANGLES
---## FECHA_CREACION=20160125
+--## FECHA_CREACION=20160229
 --## ARTEFACTO=web
 --## VERSION_ARTEFACTO=9.1.0-cj-rc36.1-CMREC-1907s
 --## INCIDENCIA_LINK=CMREC-1907
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Añadir dos variables nuevas de arquetipacion
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        1.0 Corregido un bug para que compile el procedimiento dado que usaba un campo que no estaba en producto
 --##########################################
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;

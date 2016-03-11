@@ -64,6 +64,7 @@ public class Parametrizacion implements Serializable, Auditable {
     public static final String LIMITE_EXPORT_EXCEL_BUSCADOR_PROCEDIMIENTOS = "limiteExportExcelBuscadorProcedimientos";
     public static final String LIMITE_EXPORT_EXCEL_BUSCADOR_EXPEDIENTES = "limiteExportExcelBuscadorExpedientes";
     public static final String LIMITE_EXPORT_EXCEL_BUSCADOR_TAREAS = "limiteExportExcelBuscadorTareas";
+    public static final String TIEMPO_CARGA_FECHA_CACHEO = "tiempoCargaFechaCacheo";
 
     @Id
     @Column(name = "PEN_ID")

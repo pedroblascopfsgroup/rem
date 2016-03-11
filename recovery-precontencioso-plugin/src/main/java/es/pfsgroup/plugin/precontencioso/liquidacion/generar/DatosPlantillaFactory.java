@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.precontencioso.liquidacion.generar;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public interface DatosPlantillaFactory {
 
@@ -20,4 +21,5 @@ public interface DatosPlantillaFactory {
 	 * @return datos para rellenar la plantilla de liquidacion
 	 */
 	HashMap<String, Object> obtenerDatos(Long idLiquidacion);
+
 }

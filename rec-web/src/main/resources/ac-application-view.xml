@@ -110,4 +110,6 @@
 	<bean p:entity="menu" p:name="ayuda*" p:order="10300" p:fileName="/WEB-INF/jsp/main/menus/boton_ayuda.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
 	<bean p:entity="menu" p:name="maximizar*" p:order="10400" p:fileName="/WEB-INF/jsp/main/menus/boton_maximizar.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
 	<bean p:entity="menu" p:name="cerrarTodas*" p:order="10500" p:fileName="/WEB-INF/jsp/main/menus/boton_cerrar.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+	<bean p:entity="menu" p:name="desconectar*" p:order="10600" p:fileName="/WEB-INF/jsp/main/menus/logout.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+	<bean p:entity="menu" p:name="separador2*" p:order="10700" p:fileName="/WEB-INF/jsp/main/menus/separador.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
 </beans>

@@ -173,8 +173,9 @@ public class PCDProcesadoResolucionesController {
 	private static final String JSON_LISTA_DD_CORRECTO_COBRO = "plugin/procuradores/embargo_salarios/ddCorrectoCobroJSON";
 	
 	private static final String CODIGO_SUBIDA_FICHEROS = "RESOL_ESP_UPLOAD";
-	
+
 	private static final String JSON_LISTA_DICCIONARIO_GENERICO_PAGE = "plugin/procuradores/diccionarioGenericoJSON";
+	private static final String JSON_LISTA_DICCIONARIO_GENERICO_LIST = "plugin/procuradores/diccionarioGenericoListJSON";
 	
 	private static final String JSON_EXISTEN_TAREAS_PENDIENTES_VALIDAR = "plugin/procuradores/tareas/existenTareasPendientesValidarJSON";
 	
@@ -1192,8 +1193,9 @@ public class PCDProcesadoResolucionesController {
     public String getDictionary(String dictionary, ModelMap model) throws ClassNotFoundException {
 
     	List dictionaryData = utilDiccionario.dameValoresDiccionario(Class.forName(dictionary));
+		
         model.put("pagina", dictionaryData);
 
-        return JSON_LISTA_DICCIONARIO_GENERICO_PAGE;
+        return JSON_LISTA_DICCIONARIO_GENERICO_LIST;
     }
 }

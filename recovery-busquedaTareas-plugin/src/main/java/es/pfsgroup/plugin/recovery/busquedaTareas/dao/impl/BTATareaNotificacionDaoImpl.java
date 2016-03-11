@@ -54,6 +54,8 @@ public class BTATareaNotificacionDaoImpl extends AbstractEntityDao<BTATareaEncon
     
 	@Autowired
 	private EXTGrupoUsuariosDao extGrupoUsuariosDao;
+	
+
 
 
     /**
@@ -103,8 +105,26 @@ public class BTATareaNotificacionDaoImpl extends AbstractEntityDao<BTATareaEncon
         	if (dto.getAmbitoTarea().equals("1")) {
         		hb = buscarTareasGrupo(hb, dto);
         	} else {
-        		hb = buscarTareasIndividual(hb, dto);
+        		hb = buscarTareasIndividual(dto);
         	}
+        }
+        
+        // PERMISOS DEL USUARIO (en caso de que sea externo)
+        if (!Checks.esNulo(dto.getUsuarioExterno())	&& dto.getUsuarioExterno()) {
+        	
+        	// Monogestor
+        	//hb.appendWhere(" ((tar.tarea.asunto.gestor.usuario.id = " + dto.getUsuarioId() + ")");
+        	//hb.appendWhere(" tar.tarea.asunto.supervisor.usuario.id = " + dto.getUsuarioId() + ") ");
+                	
+        	// Multigestor
+        	//hb.appendWhere(" tar.asunto.id in (SELECT gaa.asunto.id FROM EXTGestorAdicionalAsunto gaa where gaa.gestor.usuario.id = " + dto.getUsuarioLogado().getId() + " )");
+        	
+        	List<Long> idGrpsUsuario = extGrupoUsuariosDao.buscaGruposUsuarioById(dto.getUsuarioId());
+        	String multigestor = filtroGestorGrupo(idGrpsUsuario);
+        	String condicion = "(tar.tarea.asunto.id in (select gaa.asunto.id from EXTGestorAdicionalAsunto gaa where gaa.gestor.usuario.id = "+ dto.getUsuarioId()+")) or "+multigestor;
+        	
+        	hb.appendWhere(condicion);
+        	     	
         }
 
         // En espera y Alerta
@@ -118,7 +138,7 @@ public class BTATareaNotificacionDaoImpl extends AbstractEntityDao<BTATareaEncon
         	HQLBuilder.addFiltroIgualQue(hb, "tar.tarea.subtipoTarea.codigoSubtarea", SubtipoTarea.CODIGO_DECISION_COMITE);
         	
         }
-
+   
         // Pestañas dinámicas
         hb.appendExtensibleDto(dto);
         
@@ -567,104 +587,35 @@ public class BTATareaNotificacionDaoImpl extends AbstractEntityDao<BTATareaEncon
 		return hb;
 	}
 	
-	public HQLBuilder buscarTareasIndividual(HQLBuilder hb, final BTADtoBusquedaTareas dto) {
+	/**
+	 * 
+	 * @param userID
+	 * @return
+	 */
+	private String obtenerListaGrupoIDDeUsuarioYEntidad(String userID){
+		StringBuffer resultado = new StringBuffer();
+		resultado.append(userID).append(", ");
+		Usuario u = new Usuario();
+		u.setId(Long.valueOf(userID));
+		List<Long> resultados = extGrupoUsuariosDao.buscaGruposUsuario(u);
+		for (Object idUsuario : resultados) {
+			resultado.append(idUsuario.toString()).append(", ");
+		}
+		return resultado.substring(0, resultado.length()-2).toString();
+	}
+	
+	public HQLBuilder buscarTareasIndividual(final BTADtoBusquedaTareas dto) {
+		HQLBuilder hb2;
+		StringBuffer hql = new StringBuffer();
 		
-		 // Gestión por usuario
-        if (dto.getUsernameUsuario() != null && dto.getUsernameUsuario().length() > 0) {
-        	
-        	String esSupervisor = "";
-            String esGestor = "";
-
-            esSupervisor = " ( tar.usuSupervisor.username like '%" + dto.getUsernameUsuario() + "%' and tar.tarea.subtipoTarea.gestor = true ) ";
-            esGestor = " ((tar.usuGestor.username like '%" + dto.getUsernameUsuario() + "%' and tar.tarea.subtipoTarea.gestor = true ) " + "  OR "
-                    + "  (tar.usuSupervisor.username like '%" + dto.getUsernameUsuario() + "%' and tar.tarea.subtipoTarea.gestor != true)) ";
-
-            if (dto.getGestorSupervisorUsuario() == null || dto.getGestorSupervisorUsuario().equals("")) {
-                hb.appendWhere("(( " + esGestor + ") OR ( " + esSupervisor + " )) ");
-            } else if (dto.getGestorSupervisorUsuario().equals("1")) {
-            	hb.appendWhere(esGestor);
-            } else if (dto.getGestorSupervisorUsuario().equals("2")) {
-            	hb.appendWhere(esSupervisor);
-            }
-        	
-        }
-
-        // PERMISOS DEL USUARIO (en caso de que sea externo)
-        if (!Checks.esNulo(dto.getUsuarioLogado()) && Checks.esNulo(dto.getUsuarioLogado().getUsuarioExterno()) 
-        		&& dto.getUsuarioLogado().getUsuarioExterno()) {
-        	
-        	// Monogestor
-        	hb.appendWhere(" ((tar.asunto.gestor.usuario.id = " + dto.getUsuarioLogado().getId() + ") or (");
-        	hb.appendWhere(" tar.asunto.supervisor.usuario.id = " + dto.getUsuarioLogado().getId() + ") or (");
-        	
-        	// Multigestor
-        	//hb.appendWhere(" tar.asunto.id in (SELECT gaa.asunto.id FROM EXTGestorAdicionalAsunto gaa where gaa.gestor.usuario.id = " + dto.getUsuarioLogado().getId() + " )");
-        	List<Long> idGrpsUsuario = extGrupoUsuariosDao.buscaGruposUsuario(dto.getUsuarioLogado());
-        	String multigestor = filtroGestorGrupo(idGrpsUsuario);
-        	if(!Checks.esNulo(multigestor)){
-        		 hb.appendWhere(multigestor + ")");
-        	}
-        	else
-        		 hb.appendWhere(")");
-        	
-        }
-
-        // Filtros de Nivel y Zonificación: Filtramos por las zonas recibidas
+		hql.append("select DISTINCT vtar from VTARTareaVsUsuario vtar"); //Base.
+		hql.append(" where vtar.usuarioPendiente = " + dto.getComboGestor()); // Filtro usuario.
+		hql.append(" or vtar.usuarioPendiente in (select egu.grupo from EXTGrupoUsuarios egu where egu.grupo = " + dto.getComboGestor() + ")"); // Filtro grupo usuario.
+        hql.append(" or vtar.usuarioPendiente in (" + obtenerListaGrupoIDDeUsuarioYEntidad(dto.getComboGestor()) + ")"); // Filtro por entidad.
         
-        if (!Checks.esNulo(dto.getZonasAbuscar())) {
-
-        	List<String> listadoZonasSegunFiltro = getListadoZonasFiltro(dto.getZonasAbuscar());
-            Collection<String> colZonasSegunFiltro = listadoZonasSegunFiltro;
-            HQLBuilder.addFiltroWhereInSiNotNull(hb, "tar.asunto.gestor.despachoExterno.zona.codigo", colZonasSegunFiltro);
-
-        }
-
-        //DESPACHO
-        if (!Checks.esNulo(dto.getDespacho())) {
-
-        	hb.appendWhere(" tar.asunto.id in (SELECT gaa.asunto.id FROM EXTGestorAdicionalAsunto gaa where gaa.gestor.despachoExterno.id = " + dto.getDespacho() + " )");
-
-        }
-        
-        //GESTOR
-        if ((!Checks.esNulo(dto.getGestores())) || (!Checks.esNulo(dto.getBusquedaUsuario()))) {
-        	
-            if (Checks.esNulo(dto.getGestores()) && Checks.esNulo(dto.getTipoGestor())) {
-                throw new IllegalArgumentException("comboGestor y comboTiposGestor están vacíos.");
-            }
-
-            if (!Checks.esNulo(dto.getTipoGestor())) {
-
-                hb.appendWhere(" tar.asunto.id in (SELECT gaa.asunto.id FROM EXTGestorAdicionalAsunto gaa where gaa.tipoGestor.codigo = '" + dto.getTipoGestor() + "' )");
-
-            }
-            if (!Checks.esNulo(dto.getBusquedaUsuario())) {
-
-            	hb.appendWhere(" tar.asunto.id in (SELECT gaa.asunto.id FROM EXTGestorAdicionalAsunto gaa where upper (gaa.gestor.usuario.username) like '%" + dto.getBusquedaUsuario().toUpperCase() + "%' )");
-
-            } else if (!Checks.esNulo(dto.getGestores())) {         
-            	
-            	String usuarios = getUsuarioByGestor(dto.getGestores() );
-            	hb.appendWhere(" tar.usuPendiente.id in  (" + usuarios + " )");
-  
-            }
-        	
-        	
-        	
-            if (!Checks.esNulo(dto.getTipoGestorTarea())) {
-            	
-            	HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tar.tarea.subtipoTarea.tipoGestor.codigo", dto.getTipoGestorTarea());
-            	
-            } 
-            //PBO: UGAS-1901
-            // Eliminamos esta parte del filtro porque es redundante con lo incluido en getIdsAsuntosParaGestor
-            // y además da lugar a que los resultados no sean los esperados (por el tipo de subtarea asociado).
-            /* else if (!Checks.esNulo(dto.getTipoGestor())) {
-                hql.append(" and tn.subtipoTarea.tipoGestor.codigo = '" + dto.getTipoGestor() + "'");
-            } */
-        }		
+		hb2 = new HQLBuilder(hql.toString());
 		
-		return hb;
+		return hb2;
 	}
 	
 	
@@ -675,7 +626,7 @@ public class BTATareaNotificacionDaoImpl extends AbstractEntityDao<BTATareaEncon
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("(asu.id in (");
+		hql.append("(tar.tarea.asunto.id in (");
 		hql.append("select gaa.asunto.id from EXTGestorAdicionalAsunto gaa  ");
 		hql.append("where gaa.gestor.usuario.id IN (");
 		

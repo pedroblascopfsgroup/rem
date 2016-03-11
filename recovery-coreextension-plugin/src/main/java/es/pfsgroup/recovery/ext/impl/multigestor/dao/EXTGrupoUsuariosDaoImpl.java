@@ -16,11 +16,16 @@ public class EXTGrupoUsuariosDaoImpl extends AbstractEntityDao<EXTGrupoUsuarios,
 
 	@Override
 	public List<Long> buscaGruposUsuario(Usuario usuario) {
+		return buscaGruposUsuarioById(usuario.getId());
+	}
+	
+	@Override
+	public List<Long> buscaGruposUsuarioById(Long usuId) {
 		String queryString = "Select distinct gru.usu_id_grupo from ${master.schema}.gru_grupos_usuarios gru "
 				+ " INNER JOIN ${master.schema}.usu_usuarios usg on usg.usu_id = gru.usu_id_grupo "
 				+ " INNER JOIN ${master.schema}.usu_usuarios usu on usu.usu_id = gru.usu_id_usuario and usu.entidad_id = usg.entidad_id "
 				+ " WHERE gru.usu_id_usuario = "
-				+ usuario.getId()
+				+ usuId
 				+ " and gru.borrado=0 ";
 
 		SQLQuery sqlQuery = getHibernateTemplate().getSessionFactory()

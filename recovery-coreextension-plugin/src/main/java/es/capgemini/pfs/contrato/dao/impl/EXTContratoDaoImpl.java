@@ -9,6 +9,7 @@ import java.util.Properties;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.hibernate.pagination.PaginationManager;
@@ -21,17 +22,23 @@ import es.capgemini.pfs.contrato.dao.EXTContratoDao;
 import es.capgemini.pfs.contrato.dto.BusquedaContratosDto;
 import es.capgemini.pfs.contrato.dto.DtoBuscarContrato;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.contrato.model.DDSituacionGestion;
+import es.capgemini.pfs.contrato.model.DDTipoIntervencion;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.expediente.model.DDEstadoExpediente;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.ext.api.contrato.dto.EXTBusquedaContratosDto;
 
 @Repository
 public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 		implements EXTContratoDao {
 
+	@Autowired
+	UtilDiccionarioApi diccionarioApi;
+	
 	@Resource
 	private Properties appProperties;
 
@@ -117,7 +124,7 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 						.length() > 0)
 				|| (dto.getApellido2() != null && dto.getApellido2().trim()
 						.length() > 0) || (dto.getDocumento() != null && dto
-				.getDocumento().trim().length() > 0));
+				.getDocumento().trim().length() > 0) || dto.getSituacionGestion() != null);
 		final boolean cruzaExpediente = (dto.getDescripcionExpediente() != null && dto
 				.getDescripcionExpediente().trim().length() > 0);
 		final boolean cruzaAsuntos = ((dto.getNombreAsunto() != null && dto
@@ -218,6 +225,18 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 						+ dto.getDocumento().toUpperCase() + "%'");
 			}
 
+			if(!Checks.esNulo(dto.getSituacionGestion())){
+				hql.append(" AND EXIST (SELECT 1 FROM PersonaFormulas pf WHERE cp.persona.id = pf.id ");
+				DDSituacionGestion situacion = (DDSituacionGestion) diccionarioApi.dameValorDiccionarioByCod(DDSituacionGestion.class, dto.getSituacionGestion());
+				DDTipoIntervencion intervencion = (DDTipoIntervencion) diccionarioApi.dameValorDiccionarioByCod(DDTipoIntervencion.class, "01");
+				if(situacion.getCodigo() == "SING"){
+					hql.append(" and pf.situacion not in ('En Asunto', 'Normal','En Expediente','En Asunto/En Expediente'");
+				}else{
+					hql.append(" and pf.situacion = '" + situacion.getDescripcion() + "'");
+				}
+				hql.append(" and cp.tipoIntervencion = '" + intervencion.getId() + "') ");
+			}
+
 			hql.append(")");
 		}
 		if (cruzaExpediente || cruzaAsuntos) {
@@ -313,6 +332,12 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 				&& !dto.getTiposProductoEntidad().equals("")) {
 			hql.append(" AND EXISTS (SELECT 1 FROM DDTipoProductoEntidad tpe WHERE c.tipoProductoEntidad = tpe AND tpe.codigo in ("
 					+ dto.getTiposProductoEntidad() + "))");
+		}
+
+		if (dto.getMotivoGestionHRE() != null
+				&& !dto.getMotivoGestionHRE().equals("")) {
+			hql.append(" AND EXISTS ( SELECT 1 FROM DDCondicionesRemuneracion cre WHERE c.RemuneracionEspecial = cre AND cre.codigo in ('"
+					+ dto.getMotivoGestionHRE() + "'))");
 		}
 		if (cruzaMovimientos) {
 			if (dto.getMaxVolRiesgoVencido() != null

@@ -127,19 +127,6 @@
 			<scope>test</scope>
 			<optional>true</optional>
 		</dependency>
-<!-- 	<dependency>
-			<groupId>be.cegeka</groupId>
-			<artifactId>jasminejunitrunner</artifactId>
-			<version>1.0.snapshot.20130228</version>
-			<type>jar</type>
-			<scope>test</scope>
-			<optional>true</optional>
-		</dependency>
- -->
-		<dependency>
-			<groupId>es.pfsgroup.plugin</groupId>
-			<artifactId>recovery-procedimientos-bpmHaya</artifactId>
-		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

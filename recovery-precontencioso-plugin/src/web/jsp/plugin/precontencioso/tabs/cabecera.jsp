@@ -354,6 +354,10 @@
 			<sec:authorize ifAllGranted="ACCIONES_PRECONTENCIOSO">
 				Ext.Element.get('prc-btnAccionesPrecontencioso-padre').hide();
 			</sec:authorize>
+			
+			<sec:authorize ifAllGranted="GENERAR_DOC_PRECONTENCIOSO">
+				Ext.Element.get('prc-btnGenerarDocPrecontencioso-padre').hide();
+			</sec:authorize>
 
 			procedimientoInterno.label.update('<s:message code="procedimiento.tabcabecera.procinterno" text="**Nro. Proc. Interno"/>');
 			procedimientoJuzgado.label.update('<s:message code="procedimiento.tabcabecera.procjuzgado" text="**Nro. Proc. en Juzgado"/>');

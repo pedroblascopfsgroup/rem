@@ -18,11 +18,11 @@
 	<pfslayout:includetab name="tabGestores">
 		<%@ include file="tabGestoresDespachoExterno.jsp"%>
 	</pfslayout:includetab>
-
+	
 	<pfslayout:includetab name="tabSupervisores">
-		<%@ include file="tabSupervisoresDespachoExterno.jsp"%>
+			<%@ include file="tabSupervisoresDespachoExterno.jsp"%>
 	</pfslayout:includetab>
-
+	
 	<c:choose>
 
 		<%-- Es tipo despacho letrado --%>
@@ -57,17 +57,20 @@
 			</c:if>
 
 		</c:when>
-
+		
 		<%-- Es tipo despacho procurador (no debe mostrar el tabSupervisores) --%>
 		<c:when test="${despacho.tipoDespacho.codigo == '2'}">
 			<pfslayout:tabpanel name="tabsDespacho" tabs="tabCabecera, tabGestores" />
 		</c:when>
-
-		<%-- Por defecto y para todos los tipos restantes de despacho se muestra [tabCabecera, tabGestores, tabSupervisores] --%>
-		<c:otherwise>
-			<pfslayout:tabpanel name="tabsDespacho" tabs="tabCabecera, tabGestores, tabSupervisores" />
-		</c:otherwise>
 	</c:choose>
+	
+	<sec:authorize ifAllGranted="ROLE_PUEDE_VER_TAB_SUPERVISORES_DESPACHO">
+		<pfslayout:tabpanel name="tabsDespacho" tabs="tabCabecera, tabGestores, tabSupervisores" />
+	</sec:authorize>
+	
+	<sec:authorize ifNotGranted="ROLE_PUEDE_VER_TAB_SUPERVISORES_DESPACHO">
+		<pfslayout:tabpanel name="tabsDespacho" tabs="tabCabecera, tabGestores" />
+	</sec:authorize>
 
 	var panel = new Ext.Panel({
 		bodyStyle : 'padding : 5px'

@@ -8,6 +8,8 @@
 <%@ taglib prefix="pfs" tagdir="/WEB-INF/tags/pfs"%>
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms"%>
 <%@ taglib prefix="pfslayout" tagdir="/WEB-INF/tags/pfs/layout"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
 
 
 <fwk:page>
@@ -89,6 +91,7 @@
 	</pfslayout:includetab>
 	
 	
+	
 	<pfslayout:includetab name="tabDCA">
 		<%@ include file="tabDecisionComiteAuto.jsp" %>
 	</pfslayout:includetab>
@@ -113,7 +116,12 @@
 	
 	
 	<c:if test="${itinerario.dDtipoItinerario.codigo=='REC'}">
-		<pfslayout:tabpanel name="tabsItinerario" tabs="tabEstados,tabTelecobro,tabDCA,tabTRE,tabComites" />
+		<sec:authorize ifAllGranted="ROLE_PUEDE_VER_TAB_TELECOBRO_ITI">
+			<pfslayout:tabpanel name="tabsItinerario" tabs="tabEstados,tabTelecobro,tabDCA,tabTRE,tabComites" />
+		</sec:authorize>
+		<sec:authorize ifNotGranted="ROLE_PUEDE_VER_TAB_TELECOBRO_ITI">
+			<pfslayout:tabpanel name="tabsItinerario" tabs="tabEstados,tabDCA,tabTRE,tabComites" />
+		</sec:authorize>
 	</c:if>
 	<c:if test="${itinerario.dDtipoItinerario.codigo!='REC'}">
 		<pfslayout:tabpanel name="tabsItinerario" tabs="tabEstados,tabTRE,tabTRV,tabComites" />

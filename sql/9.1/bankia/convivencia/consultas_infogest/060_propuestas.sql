@@ -157,5 +157,3 @@ select prc.asu_id, prc.prc_id,tev.tev_nombre, tev.tev_valor
     and RCV.SITUACION_ACTUAL = 'ANU';
     COMMIT;   
 
-
-

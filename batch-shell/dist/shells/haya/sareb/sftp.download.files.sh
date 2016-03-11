@@ -17,6 +17,7 @@ RM=`which rm`
 FECHA=`date +%G%m%e`
 FECHA_ANT=`date +%G%m%e --date="1 day ago"`
 FECHAYYYYMMDD=`date +%Y%m%d`
+FECHA_PR=`date +%Y%m%d --date="1 day ago"`
 LOG=$DIR_LOG/sftp_download_files-$FECHAYYYYMMDD.log
 
 HOST=192.168.235.59
@@ -52,6 +53,18 @@ dir
 bye
 EOF`
 
+FICHEROS_T_PR=`lftp -u ${USER},${PASS} -p ${PORT} sftp://${HOST} <<EOF
+cd $SFTP_DIR_BASE_BNK/out/aprovisionamiento/troncal_PR
+dir
+bye
+EOF`
+
+FICHEROS_A_PR=`lftp -u ${USER},${PASS} -p ${PORT} sftp://${HOST} <<EOF
+cd $SFTP_DIR_BASE_BNK/out/aprovisionamiento/auxiliar_PR
+dir
+bye
+EOF`
+
 function download_files {
 	ORIGEN=$1
 	DESTINO=$2
@@ -67,6 +80,7 @@ function download_files {
 lftp -u ${USER},${PASS} -p ${PORT} sftp://${HOST} <<EOF
 cd $ORIGEN
 mget $MASK
+mget $BANDERA
 mrm -f $MASK
 mrm -f $BANDERA
 bye
@@ -166,6 +180,82 @@ do
 			FILES_DOWN_AA=(`echo "$FICHEROS_A" | awk '{print $9}' | egrep -i '(TELEFONOS)'`)
                         file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar "apr_env_tlf_haya.txt"
                         file_copy recepcion aprovisionamiento auxiliar
+                fi
+done
+
+BANDERA_T_PR=(`echo "$FICHEROS_T_PR" | awk '{print $9}' | grep .sem`)
+
+for i in "${BANDERA_T_PR[@]}"
+do
+                if [ "${i}" = "PCR_5074_${FECHA_PR}.sem" ]; then
+                        FILES_DOWN_AT=(`echo "$FICHEROS_T_PR" | awk '{print $9}' | egrep -i '(PCR)'`)
+                        file_list "$(echo ${FILES_DOWN_AT[@]})" troncal_PR "PCR_5074_${FECHA_PR}.sem"
+                fi
+		if [ "${i}" = "GCL_5074_${FECHA_PR}.sem" ]; then
+                        FILES_DOWN_AT=(`echo "$FICHEROS_T_PR" | awk '{print $9}' | egrep -i '(GCL)'`)
+                        file_list "$(echo ${FILES_DOWN_AT[@]})" troncal_PR "GCL_5074_${FECHA_PR}.sem"
+                fi
+		if [ "${i}" = "ZONAS_5074_${FECHA_PR}.sem" ]; then
+                        FILES_DOWN_AT=(`echo "$FICHEROS_T_PR" | awk '{print $9}' | egrep -i '(ZONAS)'`)
+                        file_list "$(echo ${FILES_DOWN_AT[@]})" troncal_PR "ZONAS_5074_${FECHA_PR}.sem"
+                fi
+		if [ "${i}" = "OFICINAS_5074_${FECHA_PR}.sem" ]; then
+                        FILES_DOWN_AT=(`echo "$FICHEROS_T_PR" | awk '{print $9}' | egrep -i '(OFICINAS)'`)
+                        file_list "$(echo ${FILES_DOWN_AT[@]})" troncal_PR "OFICINAS_5074_${FECHA_PR}.sem"
+                fi
+		if [ "${i}" = "JERARQUIA_5074_${FECHA_PR}.sem" ]; then
+                        FILES_DOWN_AT=(`echo "$FICHEROS_T_PR" | awk '{print $9}' | egrep -i '(JERARQUIA)'`)
+                        file_list "$(echo ${FILES_DOWN_AT[@]})" troncal_PR "JERARQUIA_5074_${FECHA_PR}.sem"
+                fi
+done
+
+BANDERA_A_PR=(`echo "$FICHEROS_A_PR" | awk '{print $9}' | grep .sem`)
+
+for i in "${BANDERA_A_PR[@]}"
+do
+                if [ "${i}" = "DIRECCIONES_5074_${FECHA_PR}.sem" ]; then
+                        FILES_DOWN_AA=(`echo "$FICHEROS_A_PR" | awk '{print $9}' | egrep -i '(DIRECCIONES)'`)
+                        file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar_PR "DIRECCIONES_5074_${FECHA_PR}.sem"
+                fi
+                if [ "${i}" = "TELEFONOS_5074_${FECHA_PR}.sem" ]; then
+                        FILES_DOWN_AA=(`echo "$FICHEROS_A_PR" | awk '{print $9}' | egrep -i '(TELEFONOS)'`)
+                        file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar_PR "TELEFONOS_5074_${FECHA_PR}.sem"
+                fi
+                if [ "${i}" = "CIRBE_5074_${FECHA_PR}.sem" ]; then
+                        FILES_DOWN_AA=(`echo "$FICHEROS_A_PR" | awk '{print $9}' | egrep -i '(CIRBE)'`)
+                        file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar_PR "CIRBE_5074_${FECHA_PR}.sem"
+                fi
+                if [ "${i}" = "CANCELADOS_5074_${FECHA_PR}.sem" ]; then
+                        FILES_DOWN_AA=(`echo "$FICHEROS_A_PR" | awk '{print $9}' | egrep -i '(CANCELADOS)'`)
+                        file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar_PR "CANCELADOS_5074_${FECHA_PR}.sem"
+                fi
+                if [ "${i}" = "BIENES_5074_${FECHA_PR}.sem" ]; then
+                        FILES_DOWN_AA=(`echo "$FICHEROS_A_PR" | awk '{print $9}' | egrep -i '(BIENES)'`)
+                        file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar_PR "BIENES_5074_${FECHA_PR}.sem"
+                fi
+                if [ "${i}" = "BIENCNT_5074_${FECHA_PR}.sem" ]; then
+                        FILES_DOWN_AA=(`echo "$FICHEROS_A_PR" | awk '{print $9}' | egrep -i '(BIENCNT)'`)
+                        file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar_PR "BIENCNT_5074_${FECHA_PR}.sem"
+                fi
+                if [ "${i}" = "BIENPER_5074_${FECHA_PR}.sem" ]; then
+                        FILES_DOWN_AA=(`echo "$FICHEROS_A_PR" | awk '{print $9}' | egrep -i '(BIENPER)'`)
+                        file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar_PR "BIENPER_5074_${FECHA_PR}.sem"
+                fi
+                if [ "${i}" = "RECIBOS_5074_${FECHA_PR}.sem" ]; then
+                        FILES_DOWN_AA=(`echo "$FICHEROS_A_PR" | awk '{print $9}' | egrep -i '(RECIBOS)'`)
+                        file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar_PR "RECIBOS_5074_${FECHA_PR}.sem"
+                fi
+                if [ "${i}" = "EFECTOS_5074_${FECHA_PR}.sem" ]; then
+                        FILES_DOWN_AA=(`echo "$FICHEROS_A_PR" | awk '{print $9}' | egrep -i '(EFECTOS)'`)
+                        file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar_PR "EFECTOS_5074_${FECHA_PR}.sem"
+                fi
+                if [ "${i}" = "EFECTOS_PERSONAS_5074_${FECHA_PR}.sem" ]; then
+                        FILES_DOWN_AA=(`echo "$FICHEROS_A_PR" | awk '{print $9}' | egrep -i '(EFECTOS_PERSONAS)'`)
+                        file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar_PR "EFECTOS_PERSONAS_5074_${FECHA_PR}.sem"
+                fi
+                if [ "${i}" = "COBROS_5074_${FECHA_PR}.sem" ]; then
+                        FILES_DOWN_AA=(`echo "$FICHEROS_A_PR" | awk '{print $9}' | egrep -i '(COBROS)'`)
+                        file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar_PR "COBROS_5074_${FECHA_PR}.sem"
                 fi
 done
 

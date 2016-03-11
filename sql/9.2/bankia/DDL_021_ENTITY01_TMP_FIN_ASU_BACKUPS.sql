@@ -1,0 +1,195 @@
+--/*
+--#########################################
+--## AUTOR=RAFAEL ARACIL
+--## FECHA_CREACION=20160229
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=BKREC-1757
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Creación de tablas de respaldo para el etl dirigido a 
+--##			finalizar tareas, procedimientos y asuntos por venta de cartera
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+
+DECLARE
+
+V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
+V_TABLA VARCHAR2(40 CHAR);
+V_SENTENCIA VARCHAR2(1600 CHAR);
+V_NUM NUMBER(9,0);
+
+BEGIN
+
+
+--[ FINALIZACION DE ASUNTOS]
+--[ ALMACENAMOS LOS CAMBIOS EN TABLA COMO COPIA DE SEGURIDAD PARA PRUEBAS ]
+
+----## BUSCAR TODAS LAS TAREAS VINCULADAS AL PRC_ID Y FINALIZARLAS ##
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] Comienza el proceso de creación de tablas de respaldo ...');
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] Respaldo de tareas ...');
+	
+	V_TABLA := 'FIN_ASU_TMP_TAR';
+	
+	V_SENTENCIA := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TABLA||''' AND OWNER = '''||V_ESQUEMA||'''';
+	
+	EXECUTE IMMEDIATE V_SENTENCIA INTO V_NUM;
+	
+	IF V_NUM > 0 THEN
+		
+		DBMS_OUTPUT.PUT_LINE('[INFO] La tabla de respaldo de tareas ya existe');
+		
+	ELSE
+	
+	V_SENTENCIA := 'CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||'
+				   (TAR_ID NUMBER(16,0) NOT NULL ENABLE, 
+					USUARIOMODIFICAR VARCHAR2(50 CHAR), 
+					FECHAMODIFICAR TIMESTAMP (6), 
+					TAR_TAREA_FINALIZADA NUMBER(1,0),
+					TAR_FECHA_FIN TIMESTAMP (6)
+				   )
+				   '
+				   ;
+					
+	EXECUTE IMMEDIATE V_SENTENCIA;
+	
+	END IF;
+	
+  
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] Respaldo de tareas externas ...');
+	
+	V_TABLA := 'FIN_ASU_TMP_TEX';
+	
+	V_SENTENCIA := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TABLA||''' AND OWNER = '''||V_ESQUEMA||'''';
+	
+	EXECUTE IMMEDIATE V_SENTENCIA INTO V_NUM;
+	
+	IF V_NUM > 0 THEN
+		
+		DBMS_OUTPUT.PUT_LINE('[INFO] La tabla de respaldo de tareas externas ya existe');
+		
+	ELSE
+	
+	V_SENTENCIA := 'CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||'
+				   (TAR_ID NUMBER(16,0) NOT NULL ENABLE, 
+					USUARIOMODIFICAR VARCHAR2(50 CHAR), 
+					FECHAMODIFICAR TIMESTAMP (6), 
+					USUARIOBORRAR VARCHAR2(50 CHAR), 
+					FECHABORRAR TIMESTAMP (6),
+					BORRADO NUMBER(1,0) NOT NULL ENABLE
+				   )
+				   '
+				   ;
+
+	EXECUTE IMMEDIATE V_SENTENCIA;
+	
+	END IF;
+	
+
+----## BUSCAR EL PRC_ID Y FINALIZARLO: PONER MOTIVO "VENTA DE CARTERA" * A FALTA DE METER TEXTO_VENTA ##
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] Respaldo de procedimientos ...');
+	
+	V_TABLA := 'FIN_ASU_TMP_PRC';
+	
+	V_SENTENCIA := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TABLA||''' AND OWNER = '''||V_ESQUEMA||'''';
+	
+	EXECUTE IMMEDIATE V_SENTENCIA INTO V_NUM;
+	
+	IF V_NUM > 0 THEN
+		
+		DBMS_OUTPUT.PUT_LINE('[INFO] La tabla de respaldo de procedimientos ya existe');
+		
+	ELSE
+	
+	V_SENTENCIA := 'CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||'
+				   (PRC_ID NUMBER(16,0) NOT NULL ENABLE, 
+					USUARIOMODIFICAR VARCHAR2(50 CHAR), 
+					FECHAMODIFICAR TIMESTAMP (6), 
+					DD_EPR_ID NUMBER(16,0)
+				   )
+				   '
+				   ;
+
+	EXECUTE IMMEDIATE V_SENTENCIA;
+	
+	END IF;
+	
+  
+  
+	V_TABLA := 'FIN_ASU_TMP_DPR';
+	
+	V_SENTENCIA := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TABLA||''' AND OWNER = '''||V_ESQUEMA||'''';
+	
+	EXECUTE IMMEDIATE V_SENTENCIA INTO V_NUM;
+	
+	IF V_NUM > 0 THEN
+		
+		DBMS_OUTPUT.PUT_LINE('[INFO] La tabla de respaldo de decisiones procedimientos ya existe');
+		
+	ELSE
+	
+	V_SENTENCIA := 'CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||'
+				   (
+           DPR_ID NUMBER(16,0) NOT NULL ENABLE,
+           PRC_ID NUMBER(16,0) NOT NULL ENABLE, 
+					USUARIOMODIFICAR VARCHAR2(10 CHAR), 
+					FECHAMODIFICAR TIMESTAMP (6), 
+					DD_DFI_ID NUMBER(16,0)
+				   )
+				   '
+				   ;
+					
+	EXECUTE IMMEDIATE V_SENTENCIA;
+	
+	END IF;
+	
+	
+----## BUSCAR EL ASU_ID Y FINALIZARLO ## 
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] Respaldo de asuntos ...');
+	
+	V_TABLA := 'FIN_ASU_TMP_ASU';
+	
+	V_SENTENCIA := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TABLA||''' AND OWNER = '''||V_ESQUEMA||'''';
+	
+	EXECUTE IMMEDIATE V_SENTENCIA INTO V_NUM;
+	
+	IF V_NUM > 0 THEN
+		
+		DBMS_OUTPUT.PUT_LINE('[INFO] La tabla de respaldo de asuntos ya existe');
+		
+	ELSE
+	
+	V_SENTENCIA := 'CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||' 
+					   (ASU_ID NUMBER(16,0) NOT NULL ENABLE, 
+						USUARIOMODIFICAR VARCHAR2(10 CHAR), 
+						FECHAMODIFICAR TIMESTAMP (6), 
+						DD_EAS_ID NUMBER(16,0)
+					   )
+					  '
+					  ;
+	
+	EXECUTE IMMEDIATE V_SENTENCIA;
+	
+	END IF;
+	
+	DBMS_OUTPUT.PUT_LINE('[FIN] Proceso de creación de tablas de respaldo finalizado');
+
+END;
+/
+
+EXIT;

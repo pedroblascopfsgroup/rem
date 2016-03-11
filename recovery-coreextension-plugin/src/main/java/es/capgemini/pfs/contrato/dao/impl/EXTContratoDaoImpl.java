@@ -226,15 +226,21 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 			}
 
 			if(!Checks.esNulo(dto.getSituacionGestion())){
-				hql.append(" AND EXIST (SELECT 1 FROM PersonaFormulas pf WHERE cp.persona.id = pf.id ");
+				//TODO pasar el codigo de tio de intervencion en el dto y obtenido por proyectContext dependiendo de la entidad
 				DDSituacionGestion situacion = (DDSituacionGestion) diccionarioApi.dameValorDiccionarioByCod(DDSituacionGestion.class, dto.getSituacionGestion());
 				DDTipoIntervencion intervencion = (DDTipoIntervencion) diccionarioApi.dameValorDiccionarioByCod(DDTipoIntervencion.class, "01");
-				if(situacion.getCodigo() == "SING"){
-					hql.append(" and pf.situacion not in ('En Asunto', 'Normal','En Expediente','En Asunto/En Expediente'");
-				}else{
-					hql.append(" and pf.situacion = '" + situacion.getDescripcion() + "'");
+				if(intervencion == null){
+					intervencion = (DDTipoIntervencion) diccionarioApi.dameValorDiccionarioByCod(DDTipoIntervencion.class, "10");
 				}
-				hql.append(" and cp.tipoIntervencion = '" + intervencion.getId() + "') ");
+				if(situacion != null && intervencion != null){
+					hql.append(" AND EXIST (SELECT 1 FROM PersonaFormulas pf WHERE cp.persona.id = pf.id ");
+					if(situacion.getCodigo() == "SING"){
+						hql.append(" and pf.situacion not in ('En Asunto', 'Normal','En Expediente','En Asunto/En Expediente'");
+					}else{
+						hql.append(" and pf.situacion = '" + situacion.getDescripcion() + "'");
+					}
+					hql.append(" and cp.tipoIntervencion = '" + intervencion.getId() + "') ");
+				}
 			}
 
 			hql.append(")");

@@ -14,8 +14,10 @@
 --##                  0.2 Se incluyen procedimientos de tipo concursos.
 --##       20151118 - 0.3 Adaptación a migracion HRE. NO migramos concursos.
 --##                                                 LOS_LOTE_SUBASTAS
---##       210151123 - 0.4 Se cruza con la tabla de BIE_BIENES para cargar LOB_LOTE_BIEN y PRB_PRC_BIE
---##       210151127 - 0.5 Ponemos propiedad CAJAMAR - Gestion HAYA
+--##       20151123 - 0.4 Se cruza con la tabla de BIE_BIENES para cargar LOB_LOTE_BIEN y PRB_PRC_BIE
+--##       20151127 - 0.5 Ponemos propiedad CAJAMAR - Gestion HAYA
+--##       20151211 - 0.6 Seleccionamos arquetipo específico migración
+--##       20160114 - 0.7 GMN Se asigna el DD_TPX_ID (tipo de expediente a recuperaciones - RECU)
 --##########################################
 --*/
 
@@ -1083,7 +1085,7 @@ BEGIN
                                              , ARQ.ARQ_ID
                                FROM '||V_ESQUEMA||'.MIG_TMP_PER_ID TPI
                                   , '||V_ESQUEMA||'.PER_PERSONAS PER
-                                  , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Resto''  AND BORRADO = 0) ARQ
+                                  , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Migracion''  AND BORRADO = 1) ARQ
                                WHERE TPI.PER_ID IS NOT NULL
                                  AND TPI.PER_ID = PER.PER_ID
                               )'
@@ -1190,7 +1192,7 @@ BEGIN
            , 0    as BORRADO
            , 4    as DD_EEX_ID
            , null as EXP_DESCRIPCION
-           , null as DD_TPX_ID
+           , (select dd_TPX_ID from '||V_ESQUEMA||'.DD_TPX_TIPO_EXPEDIENTE where DD_TPX_CODIGO = ''RECU'') as DD_TPX_ID
            , PRC.CD_EXPEDIENTE_NUSE
            , PRC.NUMERO_EXP_NUSE
            , PRC.CD_PROCEDIMIENTO
@@ -1201,7 +1203,7 @@ BEGIN
 --    	  SELECT CD_CONCURSO CD_PROCEDIMIENTO, NULL CD_EXPEDIENTE_NUSE , NULL NUMERO_EXP_NUSE FROM '||V_ESQUEMA||'.MIG_CONCURSOS_CABECERA
     	) PRC
     	, (SELECT DISTINCT CD_PROCEDIMIENTO FROM MIG_MAESTRA_HITOS) MAE
-        , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Resto''  AND BORRADO = 0) ARQ             	
+        , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Migracion''  AND BORRADO = 1) ARQ
      WHERE MAE.CD_PROCEDIMIENTO = PRC.CD_PROCEDIMIENTO');
 
     -- 23.316 filas insertadas. <-- 1 CD_PROCEDIMIENTO = 1 EXPEDIENTE. Las mismas que el count distinct cd_procedimiento de mig_maestra_hitos
@@ -1475,7 +1477,7 @@ BEGIN
            , GES.DD_GES_ID as DD_GES_ID
     FROM (SELECT DISTINCT CD_PROCEDIMIENTO FROM '||V_ESQUEMA||'.MIG_MAESTRA_HITOS ) HIT, 
          (SELECT PCAB.CD_PROCEDIMIENTO
-               ,  substr(max (pcab.cd_procedimiento || '' | '' || per_doc_id || '' '' || per_nom50),1,50) AS NOMBRE_ASUNTO
+               ,  substr(max (cnt.cnt_contrato || '' | '' || per_doc_id || '' '' || per_nom50),1,50) AS NOMBRE_ASUNTO               
                ,  (SELECT DD_TAS_ID FROM '||V_ESQUEMA_MASTER||'.DD_TAS_TIPOS_ASUNTO WHERE DD_TAS_DESCRIPCION_LARGA = ''Litigio'') AS DD_TAS_ID
                ,  PCAB.ENTIDAD_PROPIETARIA
                ,  PCAB.GESTION_PLATAFORMA
@@ -1484,6 +1486,10 @@ BEGIN
                       on pdem.CD_PROCEDIMIENTO = pcab.CD_PROCEDIMIENTO
                left join '||V_ESQUEMA||'.per_personas per 
                       on per.per_cod_cliente_entidad = pdem.CODIGO_PERSONA
+               left join '||V_ESQUEMA||'.cpe_contratos_personas cpe
+                      on per.per_id = cpe.per_id
+               left join '||V_ESQUEMA||'.cnt_contratos cnt
+                      on cpe.cnt_id = cnt.cnt_id                                            
              GROUP BY PCAB.CD_PROCEDIMIENTO, PCAB.ENTIDAD_PROPIETARIA, PCAB.GESTION_PLATAFORMA
 --          UNION
 --          SELECT CD_CONCURSO AS CD_PROCEDIMIENTO

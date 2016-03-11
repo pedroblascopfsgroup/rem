@@ -109,11 +109,6 @@ lanzar bloquePCR.sh
 lanzarParalelo bloqueConvivencias.sh bloqueAUX.sh bloqueGCL.sh
 
 
-# BLOQUE SALIDA CONVIVENCIA (FASE2) #
-
-lanzar bloqueConvivenciasF2.sh
-
-
 echo "HA FINALIZADO LA EJECUCION DE LOS PROCESOS: `date`"
 echo "Comprueba el LOG en $LOG y el Batch               " 
 
@@ -121,5 +116,7 @@ echo "                                                  " >> $LOG
 echo "EXPLOTACION FINALIZADA: `date`			" >> $LOG
 echo "Comprueba log de ejecucion batch                  " >> $LOG
 echo "***************************************************" >> $LOG
+
+lanzar sendMail.sh
 
 exit 0

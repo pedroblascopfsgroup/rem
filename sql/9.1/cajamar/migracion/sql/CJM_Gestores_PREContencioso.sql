@@ -30,7 +30,7 @@ DECLARE
     V_TIPO_TFA T_ARRAY_TGE := T_ARRAY_TGE(  
       T_TIPO_TGE( 'CM_GE_PCO','val.gestEstudio','CM_GE_PCO Gestor de Estudio val.gestEstudio'),
       T_TIPO_TGE('CM_GL_PCO','val.gestliquidaciones','CM_GL_PCO	Gestor de Liquidación   val.gestliquidaciones'),
-	  T_TIPO_TGE('SUP_PCO','val.supexpjud','SUP_PCO	Supervisor expediente judicial val.supexpjud'),
+--	  T_TIPO_TGE('SUP_PCO','val.supervisor','SUP_PCO	Supervisor expediente judicial val.supervisor'),
 	  T_TIPO_TGE('CM_GD_PCO','val.gestdocumentacion','CM_GD_PCO	Gestor de Documentación val.gestdocumentacion')
       );
       V_TMP_TIPO_TGE T_TIPO_TGE;
@@ -46,7 +46,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
 		V_MSQL := 'insert into '|| V_ESQUEMA ||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)'
 			|| 'select '|| V_ESQUEMA ||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id,'
-			|| '       (select max(usd_id) from '|| V_ESQUEMA ||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_M||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = '''||V_TMP_TIPO_TGE(2)||''') usd_id,'
+			|| '       (select max(usd_id) from '|| V_ESQUEMA ||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_M||'.usu_usuarios usu on usu.usu_id = usd.usu_id where TRIM(UPPER(usu.usu_username)) = TRIM(UPPER('''||V_TMP_TIPO_TGE(2)||'''))) usd_id,'
 			|| '       (select dd_tge_id from '||V_ESQUEMA_M||'.dd_tge_tipo_gestor where dd_tge_codigo = '''||V_TMP_TIPO_TGE(1)||'''), ''JSV'', sysdate'
 			|| ' from'
 			|| ' (select asu.asu_id'
@@ -70,7 +70,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
 		
 		V_MSQL := 'insert into '|| V_ESQUEMA ||'.GAH_GESTOR_ADICIONAL_HISTORICO gah (gah.GAH_ID, gah.GAH_ASU_ID, gah.GAH_GESTOR_ID, gah.GAH_FECHA_DESDE, gah.GAH_TIPO_GESTOR_ID, usuariocrear, fechacrear)'
 			|| 'select '|| V_ESQUEMA ||'.s_GAH_GESTOR_ADIC_HISTORICO.nextval, aux.asu_id,'
-			|| '       (select max(usd_id) from '|| V_ESQUEMA ||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_M||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = '''||V_TMP_TIPO_TGE(2)||''') usd_id,'
+			|| '       (select max(usd_id) from '|| V_ESQUEMA ||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_M||'.usu_usuarios usu on usu.usu_id = usd.usu_id where TRIM(UPPER(usu.usu_username)) = TRIM(UPPER('''||V_TMP_TIPO_TGE(2)||'''))) usd_id,'
 			|| '       sysdate, (select dd_tge_id from '||V_ESQUEMA_M||'.dd_tge_tipo_gestor where dd_tge_codigo = '''||V_TMP_TIPO_TGE(1)||'''), ''JSV'', sysdate'
 			|| ' from'
 			|| ' (select asu.asu_id'

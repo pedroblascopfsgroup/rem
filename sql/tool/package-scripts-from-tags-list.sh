@@ -69,10 +69,14 @@ while read tagname; do
         git reset --hard HEAD
         git checkout $tagname 
         ./sql/tool/package-scripts-from-tag.sh $tagnametmp $2
+        if [ $? -ne 0 ]; then
+            echo "ERROR al generar el empaquetado"
+            exit 1
+        fi
         mkdir ./package-tags/$count
-        if [ -e ./sql/tool/tmp/package/DDL/DDL-scripts.zip ];then
+        if [ -e ./sql/tool/tmp/package/DDL/DDL-scripts.zip ] || [ -e ./sql/tool/tmp/package/DDL-scripts.zip ] ; then
             cp -r ./sql/tool/tmp/package/DDL ./package-tags/$count/
-            rm ./package-tags/$count/DDL/*.zip
+            rm -f ./package-tags/$count/DDL/*.zip
             for script in `find ./package-tags/$count/DDL/ -name *PREPROYECT_CNT*3.1*`;
             do 
                 sed -e 's/SET DEFINE OFF;/SET DEFINE OFF;\nalter session set "_pred_move_around"=FALSE;\n/g' -i $script
@@ -82,9 +86,9 @@ while read tagname; do
             echo "cd ./$count/DDL/" >> ./package-tags/run-scripts-package.sh
             echo "./DDL-scripts.sh \$1 \$2" >> ./package-tags/run-scripts-package.sh
         fi
-        if [ -e ./sql/tool/tmp/package/DML/DML-scripts.zip ];then
+        if [ -e ./sql/tool/tmp/package/DML/DML-scripts.zip ] || [ -e ./sql/tool/tmp/package/DML-scripts.zip ] ; then
             cp -r ./sql/tool/tmp/package/DML ./package-tags/$count/
-            rm ./package-tags/$count/DML/*.zip
+            rm -f ./package-tags/$count/DML/*.zip
             echo "if [ \$? != 0 ];then  exit 1; fi" >> ./package-tags/run-scripts-package.sh
             echo "cd \$DIR_ORIG" >> ./package-tags/run-scripts-package.sh
             echo "cd ./$count/DML/" >> ./package-tags/run-scripts-package.sh

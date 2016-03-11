@@ -3,7 +3,7 @@
  
 ENTIDAD=2038
 DIR_INPUT=/data/etl/HRE/recepcion/aprovisionamiento/troncal/
-MAX_WAITING_MINUTES=570
+MAX_WAITING_MINUTES=720
 ficheros=OFICINAS,ZONAS
 
 #echo $(basename $0)

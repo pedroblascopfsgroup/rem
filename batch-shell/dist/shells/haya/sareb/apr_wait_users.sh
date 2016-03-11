@@ -3,7 +3,7 @@
  
 ENTIDAD=2038
 DIR_INPUT=/data/etl/HRE/recepcion/aprovisionamiento/troncal/
-MAX_WAITING_MINUTES=10
+MAX_WAITING_MINUTES=720
 ficheros=USUARIOS,ZONPEFUSU
 
 #echo $(basename $0)

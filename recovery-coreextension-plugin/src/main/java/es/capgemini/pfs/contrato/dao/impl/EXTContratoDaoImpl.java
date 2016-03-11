@@ -233,9 +233,9 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 					intervencion = (DDTipoIntervencion) diccionarioApi.dameValorDiccionarioByCod(DDTipoIntervencion.class, "10");
 				}
 				if(situacion != null && intervencion != null){
-					hql.append(" AND EXIST (SELECT 1 FROM PersonaFormulas pf WHERE cp.persona.id = pf.id ");
+					hql.append(" AND EXISTS (SELECT 1 FROM PersonaFormulas pf WHERE cp.persona.id = pf.id ");
 					if(situacion.getCodigo() == "SING"){
-						hql.append(" and pf.situacion not in ('En Asunto', 'Normal','En Expediente','En Asunto/En Expediente'");
+						hql.append(" and pf.situacion not in ('En Asunto', 'Normal','En Expediente','En Asunto/En Expediente')");
 					}else{
 						hql.append(" and pf.situacion = '" + situacion.getDescripcion() + "'");
 					}

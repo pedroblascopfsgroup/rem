@@ -46,8 +46,8 @@ else
         ficheroZip=`ls -Art $mascaraZip | tail -n 1`
 	
         sed -i 's/ //g' $ficheroSem
-        mv $ficheroZip $DIR_HRE_INPUT
-	    mv $ficheroSem $DIR_HRE_INPUT
+        mv $ficheroZip $DIR_BCC_INPUT
+	    mv $ficheroSem $DIR_BCC_INPUT
    done
    echo "$(basename $0) Ficheros encontrados"
    exit 0

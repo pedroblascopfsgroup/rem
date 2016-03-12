@@ -25,5 +25,6 @@ export DIR_HRE_INPUT=/recovery/batch-server/bcc/control/etl/input/aprov-haya/
 export DIR_HRE_OUTPUT=/recovery/batch-server/bcc/control/etl/output/aprov-haya/
 export DIR_BCC_OUTPUT=/recovery/batch-server/bcc/control/etl/output/aprov-cajamar/
 export DIR_BCC_BACKUP=/recovery/batch-server/bcc/control/etl/backup/aprov-cajamar/
+export DIR_BCC_INPUT=/recovery/batch-server/bcc/control/etl/input/aprov-cajamar/
 export DIR_BASE_ETL=/recovery/batch-server/bcc/programas/etl
 export MAX_WAITING_MINUTES=10

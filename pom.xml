@@ -97,7 +97,7 @@
 			<dependency>
 				<groupId>pfs</groupId>
 				<artifactId>plugins</artifactId>
-				<version>1.4.0</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
@@ -563,6 +563,8 @@
 		<module>recovery-sidhi-api</module>
 		<module>recovery-sidhiweb-plugin</module>
 		<module>recovery-bi-plugin</module>
+		<module>recovery-procuradores-common</module>
+		<module>recovery-procuradores-plugin</module>
 	</modules>
 
 	<profiles>
@@ -596,8 +598,6 @@
 				
 				<module>rec-web</module>
 				<module>rec-batch</module>
-				<module>recovery-procuradores-common</module>
-				<module>recovery-procuradores-plugin</module>
 			</modules>
 		</profile>
 

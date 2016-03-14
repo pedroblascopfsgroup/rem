@@ -12,7 +12,7 @@
 	var limit = 25;
 	var isBusqueda = true;
 	var TIP_RES_ACTIVABLE = 1003;
-	
+
 	var paramsBusquedaInicial={
 		start:0
 		,limit:limit
@@ -97,6 +97,7 @@
 				});
 		}
 		,disabled: true
+		,hidden: true
 	});	
 	
 	var tareasGrid=app.crearGrid(tareasStore,tareasCm,{
@@ -171,7 +172,7 @@
 		if(TIP_RES == TIP_RES_ACTIVABLE){
 			btnReasignar.enable();
 		}else{
-			btnReasignar.disable();
+			btnReasignar.enable();
 		}
 		
 	});
@@ -271,7 +272,36 @@
     
     page.add(mainPanel);
     
-        
+	var categoriasRecord = Ext.data.Record.create([
+		 {name:'id'}
+		,{name:'idcategorizacion'}
+        ,{name:'nombre'}
+        ,{name:'descripcion'}
+        ,{name:'orden'}
+    ]);
+
+    var categoriasStore = page.getStore({
+		id: 'categoriasStore'
+		,storeId: 'categoriasStore'
+		,limit: 1
+		,flow: 'categorias/getListaCategoriasDeLaCategorizacionActivaDelUsuario'
+		,reader: new Ext.data.JsonReader({
+			root: 'categorias'
+			,totalProperty: 'total'
+		}, categoriasRecord)
+	});
+
+	categoriasStore.webflow();
+
+	categoriasStore.on('load', function(store, data, options)
+	{
+		var rec = categoriasStore.getAt(0);
+		if (rec != null)
+		{
+			btnReasignar.setVisible(true);
+		}
+	});	
+
    	Ext.onReady(function(){
 		tareasStore.webflow({idCategoria: '${idCategoria}'});
 	});

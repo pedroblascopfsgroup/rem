@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.manager;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,8 +15,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.annotation.Resource;
-
-import java.math.BigDecimal;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.logging.Log;
@@ -35,6 +34,7 @@ import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
 import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
 import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.bien.dao.BienDao;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
@@ -57,10 +57,10 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
 import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDEstadoBurofaxPCO;
@@ -89,6 +89,7 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDEstadoLiquidacionPC
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
@@ -113,6 +114,13 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	private static final String CM_GL_PCO = "CM_GL_PCO";
 	private static final String SUP_PCO = "SUP_PCO";
 	private static final String GESTORIA_PREDOC = "GESTORIA_PREDOC";
+
+	private static final String FALTA_FINCA = "El bien seleccionado (%s) debe tener registrado el número de finca. ";
+	private static final String FALTA_TOMO = "El bien seleccionado (%s) debe tener registrado el tomo. ";
+	private static final String FALTA_LIBRO = "El bien seleccionado (%s) debe tener registrado el libro. ";
+	private static final String FALTA_FOLIO = "El bien seleccionado (%s) debe tener registrado el folio. ";
+	private static final String FALTA_MUNICIPIO = "El bien seleccionado (%s) debe tener registrado elmunicipio. ";
+	private static final String FALTA_DATOS_REGISTRALES = "El bien seleccionado (%s) no tiene datos registrales. ";
 
 	@Resource
 	private Properties appProperties;
@@ -172,6 +180,9 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	
 	@Autowired
     private ParametrizacionDao parametrizacionDao;
+	
+	@Autowired
+    private BienDao bienDao;
 	
 	@BusinessOperation(BO_PCO_COMPROBAR_FINALIZAR_PREPARACION_EXPEDIENTE)
 	@Override
@@ -764,7 +775,7 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			if(procedimientoPco.getTipoProcIniciado() != null) {
 				tipoProcProp = procedimientoPco.getTipoProcIniciado().getCodigo();
 			}
-			else {
+			else if(procedimientoPco.getTipoProcPropuesto() != null){
 				tipoProcProp = procedimientoPco.getTipoProcPropuesto().getCodigo();
 			}
 		} 
@@ -1298,6 +1309,46 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			logger.error("asuntoConProcurador "+ e.getMessage());
 		}
 		return "0";
+	}
+
+	@Override
+	public String validarDocumentoBienes(Long idProcedimiento, String idsBien) {
+		String[] arrBien = idsBien.split(",");
+		Procedimiento proc = procedimientoManager.getProcedimiento(idProcedimiento);
+		String resultado = "";
+		if (!Checks.esNulo(proc)) {
+			for (int i = 0; i < arrBien.length; i++) {
+				NMBBien bien = NMBBien.instanceOf(bienDao.get(Long.parseLong(arrBien[i])));
+				resultado = resultado + validarDatosRegistralesBienErroneo(bien);
+			}
+		}
+		return resultado;
+	}
+	
+	private String validarDatosRegistralesBienErroneo(NMBBien bien) {
+		
+		StringBuilder faltaDatos = new StringBuilder("");
+		String idBien = bien.getId().toString();
+		if(!Checks.esNulo(bien.getDatosRegistralesActivo())) {
+			if (Checks.esNulo(bien.getDatosRegistralesActivo().getNumFinca())) {
+				 faltaDatos = faltaDatos.append(String.format(FALTA_FINCA, idBien));
+			}
+			if (Checks.esNulo(bien.getDatosRegistralesActivo().getTomo())) {
+				 faltaDatos = faltaDatos.append(String.format(FALTA_TOMO, idBien));
+			}
+			if (Checks.esNulo(bien.getDatosRegistralesActivo().getLibro())) {
+				 faltaDatos = faltaDatos.append(String.format(FALTA_LIBRO, idBien));
+			}
+			if (Checks.esNulo(bien.getDatosRegistralesActivo().getFolio())) {
+				 faltaDatos = faltaDatos.append(String.format(FALTA_FOLIO, idBien));
+			}
+			if (Checks.esNulo(bien.getDatosRegistralesActivo().getMunicipoLibro())) {
+				 faltaDatos = faltaDatos.append(String.format(FALTA_MUNICIPIO, idBien));
+			}
+		}else{
+			faltaDatos = faltaDatos.append(String.format(FALTA_DATOS_REGISTRALES, idBien));
+		}
+		return faltaDatos.toString();
 	}
 	
 }

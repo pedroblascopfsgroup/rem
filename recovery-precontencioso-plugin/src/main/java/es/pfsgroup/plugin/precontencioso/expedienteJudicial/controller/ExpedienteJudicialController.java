@@ -1,8 +1,11 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -10,10 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
+import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.asunto.dao.TipoProcedimientoDao;
 import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.contrato.model.DDTipoProductoEntidad;
 import es.capgemini.pfs.core.api.plazaJuzgado.PlazaJuzgadoApi;
 import es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi;
@@ -45,15 +50,20 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.Pr
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.ProcedimientoPcoGridDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDTipoPreparacionPCO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.api.GenerarDocumentoApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDEstadoLiquidacionPCO;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.procedimiento.Dto.BienProcedimientoDTO;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.recoveryapi.BienApi;
 import es.pfsgroup.recovery.ext.api.asunto.EXTAsuntoApi;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
 @Controller
 public class ExpedienteJudicialController {
 
+	protected final Log logger = LogFactory.getLog(getClass());
+	
 	private static final String DEFAULT = "default";
 	private static final String JSON_HISTORICO_ESTADOS = "plugin/precontencioso/historicoEstados/json/historicoEstadosJSON";
 	private static final String JSON_BUSQUEDA_PROCEDIMIENTO = "plugin/precontencioso/busquedas/json/procedimientoPcoJSON";
@@ -65,7 +75,11 @@ public class ExpedienteJudicialController {
 	private static final String JSON_ZONAS = "plugin/precontencioso/busquedas/json/listadoZonasJSON";
 	private static final String LISTA_PROCEDIMIENTOS_JSON = "plugin/precontencioso/acciones/json/tipoProcedimientoJSON";
 	private static final String OK_KO_RESPUESTA_JSON = "plugin/coreextension/OkRespuestaJSON";
-
+	private static final String DOCUMENTO_INSTANCIA_REGISTRO = "plugin/precontencioso/generarDocs/documentoInstanciaRegistro";
+	private static final String JSON_BIENES_PROCEDIMIENTO = "plugin/precontencioso/generarDocs/bienesProcedimientoJSON";
+	private static final String JSON_RESPUESTA_SERVICIO = "plugin/precontencioso/generarDocs/resultadoOKJSON";
+	private static final String JSP_DOWNLOAD_FILE = "plugin/geninformes/download";
+	
 	@Autowired
 	ProcedimientoPcoApi procedimientoPcoApi;
 
@@ -86,6 +100,15 @@ public class ExpedienteJudicialController {
 	
 	@Autowired
 	private DocumentoPCOApi documentoPCOManager;
+	
+	@Autowired
+	private ProcedimientoApi procedimientoApi; 
+
+	@Autowired(required = false)
+	private GenerarDocumentoApi generarDocumentoApi;
+
+	@Autowired
+	private BienApi bienApi;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -439,5 +462,81 @@ public class ExpedienteJudicialController {
 		map.put("esGestoria", !listaGestorDespacho.isEmpty());
 
 		return "plugin/precontencioso/acciones/json/esGestoriaJSON";
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String documentoInstanciaRegistro(ModelMap model) {
+		return DOCUMENTO_INSTANCIA_REGISTRO;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String bienesAsociadosProcedimiento(ModelMap model, @RequestParam(value = "id", required = true) Long idProcedimiento) {
+
+		List<BienProcedimientoDTO> bienes = bienApi.getBienesPersonasContratos(idProcedimiento, null, null, null);
+		model.put("bienesPrc", bienes);
+		
+		return JSON_BIENES_PROCEDIMIENTO;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String validarDocumentoBienes(ModelMap model,
+			@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento,
+			@RequestParam(value = "idsBien", required = true) String idsBien) {
+		
+		String resultadoOK = procedimientoPcoApi.validarDocumentoBienes(idProcedimiento, idsBien);
+		model.put("resultadoOK", resultadoOK);
+		return JSON_RESPUESTA_SERVICIO;
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String generarDocumentoBienes(ModelMap model,
+			@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento,
+			@RequestParam(value = "idsBien", required = true) String idsBien,
+			@RequestParam(value = "localidad", required = true) String localidad,
+			@RequestParam(value = "nombreNotario", required = false) String nombreNotario,
+			@RequestParam(value = "localidadNotario", required = false) String localidadNotario,
+			@RequestParam(value = "numProtocolo", required = false) String numProtocolo,
+			@RequestParam(value = "fechaEscritura", required = false) String fechaEscritura,
+			@RequestParam(value = "localidadRegProp", required = false) String localidadRegProp, 
+			@RequestParam(value = "numeroRegProp", required = false) String numeroRegProp 
+			) {
+		
+		if (generarDocumentoApi == null) {
+			logger.error("LiquidacionDocController.generarCertSaldo: No existe una implementacion para generarDocumentoApi");
+			throw new BusinessOperationException("Not implemented generarDocumentoApi");
+		}
+
+		FileItem instanciaDocumento = generarDocumentoApi.generarDocumentoBienes(idProcedimiento, idsBien, localidad, nombreNotario, localidadNotario, numProtocolo, 
+				fechaEscritura, localidadRegProp, numeroRegProp);
+		model.put("fileItem", instanciaDocumento);
+
+		return JSP_DOWNLOAD_FILE;
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String generarCertSaldo(@RequestParam(value = "idLiquidacion", required = true) Long idLiquidacion, 
+			@RequestParam(value = "idPlantilla", required = true) Long idPlantilla, 
+			@RequestParam(value = "codigoPropietaria", required = true) String codigoPropietaria,
+			@RequestParam(value = "localidadFirma", required = true) String localidadFirma,
+			@RequestParam(value = "notario", required = true) String notario,
+			ModelMap model) {
+
+		if (generarDocumentoApi == null) {
+			logger.error("LiquidacionDocController.generarCertSaldo: No existe una implementacion para generarDocumentoApi");
+			throw new BusinessOperationException("Not implemented generarDocumentoApi");
+		}
+
+		FileItem instanciaDocumento = generarDocumentoApi.generarCertificadoSaldo(idLiquidacion, idPlantilla, codigoPropietaria, localidadFirma, notario);
+		model.put("fileItem", instanciaDocumento);
+
+		return JSP_DOWNLOAD_FILE;
+
 	}
 }

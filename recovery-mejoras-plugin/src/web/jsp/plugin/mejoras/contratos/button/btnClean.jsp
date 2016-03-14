@@ -13,6 +13,8 @@ new Ext.Button({
         			txtCodRecibo.reset();
         			txtCodEfecto.reset();
         			txtCodDisposicion.reset();
+        			comboMotivoGestionHRE.reset();
+        			comboSituacionGestion.reset();
         		}
         	if(tabRelaciones){
         			txtNombre.reset();

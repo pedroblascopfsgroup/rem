@@ -53,6 +53,7 @@
 								<entry key="btnVisar" value="0" />
 								<entry key="btnDescartar" value="1" />
 								<entry key="btnGenerar" value="1" />
+								<entry key="btnLiqGenDoc" value="1" />
 								<entry key="botonRefreshLiq" value="1" />
 							</map>
 						</entry>
@@ -93,6 +94,7 @@
 								<entry key="btnVisar" value="0" />
 								<entry key="btnDescartar" value="1" />
 								<entry key="btnGenerar" value="1" />
+								<entry key="btnLiqGenDoc" value="0" />
 								<entry key="botonRefreshLiq" value="1" />
 							</map>
 						</entry>

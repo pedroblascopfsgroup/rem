@@ -10,19 +10,25 @@ import es.pfsgroup.commons.utils.web.dto.extensible.ExtensibleDto;
 
 /**
  * Clase que transfiere informaciï¿½n desde la vista hacia el modelo.
- * @author Sergio Alarcón
+<<<<<<< Updated upstream
+ * @author Sergio Alarcï¿½n
  *
+=======
+ * 
+ * @author Sergio Alarcï¿½n
+ * 
+>>>>>>> Stashed changes
  */
-public class BTADtoBusquedaTareas extends ExtensibleDto implements es.capgemini.devon.pagination.PaginationParams{
+public class BTADtoBusquedaTareas extends ExtensibleDto implements
+		es.capgemini.devon.pagination.PaginationParams {
 
+	private static final long serialVersionUID = 6015680735564006220L;
 
-    private static final long serialVersionUID = 6015680735564006220L;
-
-    private Long id;
-    private Long idEntidadInformacion;
-    private String idTipoEntidadInformacion;
-    private boolean enEspera;
-    private boolean esAlerta;
+	private Long id;
+	private Long idEntidadInformacion;
+	private String idTipoEntidadInformacion;
+	private boolean enEspera;
+	private boolean esAlerta;
 	private Integer plazo;
 	private String descripcion;
 	private Long perfilUsuario;
@@ -44,6 +50,8 @@ public class BTADtoBusquedaTareas extends ExtensibleDto implements es.capgemini.
     private String nombreUsuario;
     private String apellidoUsuario;
     private String usernameUsuario;
+	private Boolean usuarioExterno;
+	private Long usuarioId;
 
     //Campos para busqueda
     // Basicos
@@ -71,8 +79,8 @@ public class BTADtoBusquedaTareas extends ExtensibleDto implements es.capgemini.
     
     // Individual
     private String busquedaUsuario;
-    private Long despacho;
-    private String gestores;
+	private Long comboDespachos;
+	private String comboGestor;
     private String tipoGestor;
     private String tipoGestorTarea; 
         
@@ -86,20 +94,20 @@ public class BTADtoBusquedaTareas extends ExtensibleDto implements es.capgemini.
     //public static final String SALIDA_LISTADO = "listado";
     
 
-    public Long getDespacho() {
-        return despacho;
+    public Long getComboDespachos() {
+        return comboDespachos;
     }
 
-    public void setDespacho(Long despacho) {
-        this.despacho = despacho;
+    public void setComboDespachos(Long despacho) {
+        this.comboDespachos = despacho;
     }
 
-    public String getGestores() {
-       return gestores;
+    public String getComboGestor() {
+       return comboGestor;
     }
 
-    public void setGestores(String gestores) {
-       this.gestores = gestores;
+    public void setComboGestor(String gestores) {
+       this.comboGestor = gestores;
     }
 
     public String getApellidoUsuario() {
@@ -708,6 +716,22 @@ public class BTADtoBusquedaTareas extends ExtensibleDto implements es.capgemini.
 
 	public void setBusquedaUsuario(String busquedaUsuario) {
 		this.busquedaUsuario = busquedaUsuario;
+	}
+
+	public Long getUsuarioId() {
+		return usuarioId;
+	}
+
+	public void setUsuarioId(Long usuarioId) {
+		this.usuarioId = usuarioId;
+	}
+
+	public Boolean getUsuarioExterno() {
+		return usuarioExterno;
+	}
+
+	public void setUsuarioExterno(Boolean usuarioExterno) {
+		this.usuarioExterno = usuarioExterno;
 	}
 	
 }

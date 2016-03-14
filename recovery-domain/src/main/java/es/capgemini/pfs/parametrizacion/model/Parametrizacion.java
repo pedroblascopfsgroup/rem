@@ -54,6 +54,7 @@ public class Parametrizacion implements Serializable, Auditable {
     public static final String ANOTACIONES_EMAIL_FROM = "AnotacionesEmailFrom";
 	public static final Object ANOTACIONES_MAIL_SMTP_USER = "AnotacionesMailSmtpUser";
 	public static final Object ANOTACIONES_PWD_CORREO = "AnotacionesPwdCorreo";
+	public static final String TIEMPO_CARGA_FECHA_CACHEO = "tiempoCargaFechaCacheo";
     
 
     @Id

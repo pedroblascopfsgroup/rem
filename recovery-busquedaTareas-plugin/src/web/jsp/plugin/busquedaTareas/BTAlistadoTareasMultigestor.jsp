@@ -141,6 +141,8 @@
 			parametros['perfilesAbuscar'] = '';
 			parametros['nivelEnTarea'] = '';
 			parametros['zonasAbuscar'] = '';
+			parametros['usuarioExterno'] = app.usuarioLogado.externo;
+			parametros['usuarioId'] = app.usuarioLogado.id;
 		
             hayParametros = false;
             

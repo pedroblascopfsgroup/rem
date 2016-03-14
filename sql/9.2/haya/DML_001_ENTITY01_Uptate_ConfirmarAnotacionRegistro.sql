@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=José Luis Gauxachs
---## FECHA_CREACION=20160218
+--## FECHA_CREACION=20160314
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=piloto1802
 --## INCIDENCIA_LINK=CMREC-2178
@@ -35,7 +35,7 @@ DECLARE
 
 BEGIN
 
-	V_MSQL:= 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION_JBPM ='||
+	V_MSQL:= 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET USUARIOMODIFICAR= ''CMREC-2178'', FECHAMODIFICAR=SYSDATE, TAP_SCRIPT_VALIDACION_JBPM ='||
 	' ''comprobarBienesAsociadoPrc() ? null : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">No se puede avanzar la tarea, la actuaci&oacute;n no tiene bienes asociados.</div>''''''' ||
 	' WHERE TAP_CODIGO = ''H062_confirmarAnotacionRegistro''';
 	

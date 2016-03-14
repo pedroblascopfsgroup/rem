@@ -69,6 +69,7 @@ public abstract class DatosPlantillaPrestamoAbstract {
 		datosLiquidacion.put("NOMBRES_TITULARES", obtenerNombresTitulares(liquidacion));
 		datosLiquidacion.put("NOMBRES_FIADORES", obtenerNombresFiadores(liquidacion));
 		datosLiquidacion.put("NOMBRE_APODERADO", obtenerNombreApoderado(liquidacion));
+		datosLiquidacion.put("DNI_TITULAR", obtenerDniTitular(liquidacion));
 
 		if (!liquidacion.getContrato().getTitulares().isEmpty()) {
 			Persona titualPrincipal = liquidacion.getContrato().getTitulares().get(0);
@@ -526,5 +527,18 @@ public abstract class DatosPlantillaPrestamoAbstract {
 			}
 		}
 		return true;
+	}
+	
+	private String obtenerDniTitular(final LiquidacionPCO liquidacion) {
+		String dni;
+		List<Persona> personasTitulares = liquidacion.getContrato().getTitulares();
+
+		int i = 0;
+		for (Persona p : personasTitulares) {
+            i++;
+            dni=p.getDocId();
+            return dni;
+        }
+		return "[NO DISPONIBLE]";
 	}
 }

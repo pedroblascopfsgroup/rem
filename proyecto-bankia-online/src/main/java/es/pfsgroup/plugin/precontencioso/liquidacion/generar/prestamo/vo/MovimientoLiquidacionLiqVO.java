@@ -24,11 +24,11 @@ public class MovimientoLiquidacionLiqVO {
 	private final SimpleDateFormat formatoFechaCorta = new SimpleDateFormat("dd/MM/yyyy", MessageUtils.DEFAULT_LOCALE);
 
 	public String FECHAO() {
-		return formatoFechaCorta.format(MLQ_FECHAO);
+		return MLQ_FECHAO == null ? "" : formatoFechaCorta.format(MLQ_FECHAO);
 	}
 	
 	public String FECHAV() {
-		return formatoFechaCorta.format(MLQ_FECHAV);
+		return MLQ_FECHAV == null ? "" : formatoFechaCorta.format(MLQ_FECHAV);
 	}
 	
 	public String IMMOVY() {

@@ -132,7 +132,7 @@
 		for (var i=0; i < store.data.length; i++) {
 			datos = store.getAt(i);
       		if (datos.get('pase')=="Sí") {
-      			if (importeContratoPase < datos.get('riesgo')) {
+      			if (datos.get('riesgo') != "" && importeContratoPase < datos.get('riesgo')) {
       				importeContratoPase=datos.get('riesgo');
       				codigoContrato=datos.get('codigoContrato')
       			}

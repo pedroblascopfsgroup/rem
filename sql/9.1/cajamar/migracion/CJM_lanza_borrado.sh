@@ -6,6 +6,7 @@ fi
 
 export NLS_LANG=SPANISH_SPAIN.AL32UTF8
 
+cd /recovery/batch-server/migracion
 echo "[INFO] Se ha establecido la variable de entorno NLS_LANG=SPANISH_SPAIN.AL32UTF8"
 
 sh_dir="shells/"

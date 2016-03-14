@@ -364,13 +364,13 @@
 							 app.openBrowserWindow('/pfs/tareanotificacion/exportacionTareasPaginaDescarga',parametros);  
 							}else{
 								Ext.MessageBox.hide();
-								Ext.Msg.alert('<s:message code="plugin.mejoras.error" text="**Error" />', '<s:message code="plugin.mejoras.tareas.exportarExcel.limiteSuperado1" text="**Se ha establecido un l�mite m�ximo de " />'+ limit + ' '+
-									'<s:message code="plugin.mejoras.tareas.exportarExcel.limiteSuperado2" text="**Tareas a Exportar. Por favor utilice los filtros para limitar el n�mero de resultados." />');
+								Ext.Msg.alert('<s:message code="plugin.mejoras.error" text="**Error" />', '<s:message code="plugin.mejoras.tareas.exportarExcel.limiteSuperado1" text="**Se ha establecido un l&iacute;mite m&aacute;ximo de " />'+ limit + ' '+
+									'<s:message code="plugin.mejoras.tareas.exportarExcel.limiteSuperado2" text="**Tareas a Exportar. Por favor utilice los filtros para limitar el n&uacute;mero de resultados." />');
 							}							    			
 						},
 						failure: function (result) {
 							Ext.MessageBox.hide();
-							Ext.Msg.alert('<s:message code="plugin.ugas.ws.error" text="**Error" />', '<s:message code="plugin.ugas.asuntos.exportarExcel.errorExportando" text="**Se ha producido un error durante el proceso de validaci�n de la exportaci�n a excel." />');
+							Ext.Msg.alert('<s:message code="plugin.ugas.ws.error" text="**Error" />', '<s:message code="plugin.ugas.asuntos.exportarExcel.errorExportando" text="**Se ha producido un error durante el proceso de validaci&oacute;n de la exportaci&oacute;n a excel." />');
 					    }
 					});
        					

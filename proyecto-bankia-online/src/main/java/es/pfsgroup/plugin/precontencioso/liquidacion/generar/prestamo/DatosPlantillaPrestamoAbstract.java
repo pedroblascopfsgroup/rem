@@ -176,7 +176,7 @@ public abstract class DatosPlantillaPrestamoAbstract {
 				}
 	
 				// Direccion
-				String direccion = nombreVia + " " + numeroDomicilio + " ";
+				String direccion = " " + nombreVia + " " + numeroDomicilio + " ";
 				bienesConcatenados.append(direccion);
 	
 				// Localidad
@@ -257,7 +257,7 @@ public abstract class DatosPlantillaPrestamoAbstract {
 		HashMap<String, Object> datosLiquidacion = new HashMap<String, Object>();
 
 		if (interesesContratoLiq.isEmpty()) {
-			datosLiquidacion.put("INI_LQ07_CDINTS", "[NO-DISPONIBLE]");
+			datosLiquidacion.put("INI_LQ07_CDINTS", "");
 			return datosLiquidacion;
 		}
 
@@ -458,7 +458,7 @@ public abstract class DatosPlantillaPrestamoAbstract {
     	StringBuilder nombreApoderado = new StringBuilder("");
 
     	if (liquidacion.getApoderado() == null) {
-    		nombreApoderado.append("[NO-DISPONIBLE]");
+    		nombreApoderado.append("");
     		return nombreApoderado.toString();
     	}
 
@@ -488,13 +488,13 @@ public abstract class DatosPlantillaPrestamoAbstract {
 		HashMap<String, Object> datosLiquidacion = new HashMap<String, Object>();
 
 		if (cabeceraLiquidacion.isEmpty()) {
-			datosLiquidacion.put("C15_FIN_IMLIAC", "[NO-DISPONIBLE]");
-			datosLiquidacion.put("C15_FIN_FANTLQ", "[NO-DISPONIBLE]");
-			datosLiquidacion.put("C15_FIN_FEVALQ", "[NO-DISPONIBLE]");
-			datosLiquidacion.put("C15_FIN_FEFCON", "[NO-DISPONIBLE]");
-			datosLiquidacion.put("C15_FIN_POINDB", "[NO-DISPONIBLE]");
-			datosLiquidacion.put("C15_FIN_NCTAOP", "[NO-DISPONIBLE]");
-			datosLiquidacion.put("C15_FIN_DESLIQ", "[NO-DISPONIBLE]");
+			datosLiquidacion.put("C15_FIN_IMLIAC", "");
+			datosLiquidacion.put("C15_FIN_FANTLQ", "");
+			datosLiquidacion.put("C15_FIN_FEVALQ", "");
+			datosLiquidacion.put("C15_FIN_FEFCON", "");
+			datosLiquidacion.put("C15_FIN_POINDB", "");
+			datosLiquidacion.put("C15_FIN_NCTAOP", "");
+			datosLiquidacion.put("C15_FIN_DESLIQ", "");
 			return datosLiquidacion;
 		}
 		
@@ -539,6 +539,6 @@ public abstract class DatosPlantillaPrestamoAbstract {
             dni=p.getDocId();
             return dni;
         }
-		return "[NO DISPONIBLE]";
+		return "";
 	}
 }

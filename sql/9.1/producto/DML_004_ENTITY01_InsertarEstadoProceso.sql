@@ -60,7 +60,7 @@ BEGIN
           EXECUTE IMMEDIATE V_MSQL INTO V_ENTIDAD_ID;
           V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.DD_EPF_ESTADO_PROCES_FICH (' ||
                       'DD_EPF_ID, DD_EPF_CODIGO, DD_EPF_DESCRIPCION, DD_EPF_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)' ||
-                      'SELECT '|| V_ENTIDAD_ID || ','''||V_TMP_EPF_ESTADO(1)||''','''||V_TMP_EPF_ESTADO(2)||''','''||V_TMP_EPF_ESTADO(3)||''','''||V_TMP_EPF_ESTADO(4)||''','''||V_TMP_EPF_ESTADO(5)||''','''||V_TMP_EPF_ESTADO(6)||''','''||V_TMP_EPF_ESTADO(7)||''' FROM DUAL';
+                      'SELECT '|| V_ENTIDAD_ID || ','''||V_TMP_EPF_ESTADO(1)||''','''||V_TMP_EPF_ESTADO(2)||''','''||V_TMP_EPF_ESTADO(3)||''','''||V_TMP_EPF_ESTADO(4)||''','''||V_TMP_EPF_ESTADO(5)||''',SYSDATE,'''||V_TMP_EPF_ESTADO(7)||''' FROM DUAL';
               DBMS_OUTPUT.PUT_LINE('INSERTANDO: '''||V_TMP_EPF_ESTADO(1)||'''');
           EXECUTE IMMEDIATE V_MSQL;
         END IF;

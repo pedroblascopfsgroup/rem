@@ -9,6 +9,7 @@
 --	GMN:> Se asigna el DD_TPX_ID (tipo de expediente a recuperaciones - RECU)
 --	GMN:> Reasignación de estados de expedientes
 --	GMN:> incluimos paralizados sin fecha asignación informada
+--	GMN:> incluimos AL en filtro marca HAYA (ALCALA)
 /***************************************/
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -156,7 +157,7 @@ BEGIN
 				, '||V_ESQUEMA||'.MIG_EXPEDIENTES_OPERACIONES eop            
 				where cnt.tmp_cnt_contrato = eop.numero_contrato
 				and cnt.TMP_CNT_COD_GESTION_ESPECIAL = ''HAYA''
-				and cnt.tmp_cnt_remu_gest_especial in (''CN'',''IM'',''AR'',''MA'',''SC'')
+				and cnt.tmp_cnt_remu_gest_especial in (''CN'',''IM'',''AR'',''MA'',''SC'',''AL'')
 			  ) condNew on    condNew.cod_recovery = cab.CD_EXPEDIENTE                 
 			where cab.fecha_asignacion is not null
 			  and NOT EXISTS(SELECT 1

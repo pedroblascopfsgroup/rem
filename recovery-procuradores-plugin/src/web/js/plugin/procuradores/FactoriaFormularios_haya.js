@@ -782,7 +782,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     this.storeDDTipoBienCajamar = new Ext.data.Store({
         url:'/pfs/pcdprocesadoresoluciones/getDictionary.htm'
         ,baseParams: {
-            dictionary: 'es.capgemini.pfs.bien.model.DDTipoBien'
+            dictionary: 'es.pfsgroup.recovery.hrebcc.model.DDTipoBienCajamar'
         }
         ,reader: new Ext.data.JsonReader({
             root: 'diccionario'

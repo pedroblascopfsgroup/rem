@@ -176,7 +176,7 @@ public abstract class DatosPlantillaPrestamoAbstract {
 				}
 	
 				// Direccion
-				String direccion = nombreVia + " " + numeroDomicilio + " ";
+				String direccion = " " + nombreVia + " " + numeroDomicilio + " ";
 				bienesConcatenados.append(direccion);
 	
 				// Localidad

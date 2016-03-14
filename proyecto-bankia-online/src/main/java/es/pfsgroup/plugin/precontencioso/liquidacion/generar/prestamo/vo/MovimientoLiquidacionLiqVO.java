@@ -32,29 +32,29 @@ public class MovimientoLiquidacionLiqVO {
 	}
 	
 	public String IMMOVY() {
-		return MLQ_IMMOVY == null ? "[NO DISPONIBLE]" : MLQ_IMMOVY;
+		return MLQ_IMMOVY == null ? "" : MLQ_IMMOVY;
 	}
 	
 	public String CASALY() {
-		return MLQ_CASALY == null ? "[NO DISPONIBLE]" : MLQ_CASALY;
+		return MLQ_CASALY == null ? "" : MLQ_CASALY;
 	}
 	
 	public String CADISY() {
-		return MLQ_CADISY == null ? "[NO DISPONIBLE]" : MLQ_CADISY;
+		return MLQ_CADISY == null ? "" : MLQ_CADISY;
 	}
 	
 	public String CNCORT() {
-		return MLQ_CNCORT == null ? "[NO DISPONIBLE]" : MLQ_CNCORT;
+		return MLQ_CNCORT == null ? "" : MLQ_CNCORT;
 	}
 
 	public String CANUDY() {
-		return MLQ_CANUDY == null ? "[NO DISPONIBLE]" : MLQ_CANUDY;
+		return MLQ_CANUDY == null ? "" : MLQ_CANUDY;
 	}
 	public String CANUCY() {
-		return MLQ_CANUCY == null ? "[NO DISPONIBLE]" : MLQ_CANUCY;
+		return MLQ_CANUCY == null ? "" : MLQ_CANUCY;
 	}
 	public String CANUEY() {
-		return MLQ_CANUEY == null ? "[NO DISPONIBLE]" : MLQ_CANUEY;
+		return MLQ_CANUEY == null ? "" : MLQ_CANUEY;
 	}
 
 	/* Getters */

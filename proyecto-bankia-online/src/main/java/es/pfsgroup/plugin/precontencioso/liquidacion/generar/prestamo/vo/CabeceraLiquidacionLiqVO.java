@@ -22,11 +22,11 @@ public class CabeceraLiquidacionLiqVO {
 	private final SimpleDateFormat formatoFechaCorta = new SimpleDateFormat("dd/MM/yyyy", MessageUtils.DEFAULT_LOCALE);
 	
 	public String NCTAOP() {
-		return CLQ_NCTAOP == null ? "[NO DISPONIBLE]" : CLQ_NCTAOP;
+		return CLQ_NCTAOP == null ? "" : CLQ_NCTAOP;
 	}
 	
 	public String DESLIQ() {
-		return CLQ_DESLIQ == null ? "[NO DISPONIBLE]" : CLQ_DESLIQ;
+		return CLQ_DESLIQ == null ? "" : CLQ_DESLIQ;
 	}
 
 	public String FEFCON() {

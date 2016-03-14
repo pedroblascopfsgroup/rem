@@ -31,7 +31,7 @@ public class RecibosLiqVO {
 			return "";
 		}
 
-		return RCB_IDRECV == null ? "[NO DISPONIBLE]" : RCB_IDRECV;
+		return RCB_IDRECV == null ? "" : RCB_IDRECV;
 	}
 
 	public String FEVCTR() {

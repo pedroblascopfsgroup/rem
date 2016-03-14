@@ -26,11 +26,11 @@ public class EfectosLiqVO {
 	private final SimpleDateFormat formatoFechaCorta = new SimpleDateFormat("dd/MM/yyyy", MessageUtils.DEFAULT_LOCALE);
 
 	public String IDRECV() {
-		return DEF_IDRECV == null ? "[NO DISPONIBLE]" : DEF_IDRECV;
+		return DEF_IDRECV == null ? "" : DEF_IDRECV;
 	}
 	
 	public String TIPOEF() {
-		return DEF_TIPOEF == null ? "[NO DISPONIBLE]" : DEF_TIPOEF;
+		return DEF_TIPOEF == null ? "" : DEF_TIPOEF;
 	}
 	
 	public String FEVCTR() {
@@ -66,7 +66,7 @@ public class EfectosLiqVO {
 	}
 	
 	public String NOLIB9() {
-		return DEF_IDRECV == null ? "[NO DISPONIBLE]" : DEF_NOLIB9;
+		return DEF_IDRECV == null ? "" : DEF_NOLIB9;
 	}
 	
 	/* Getters */

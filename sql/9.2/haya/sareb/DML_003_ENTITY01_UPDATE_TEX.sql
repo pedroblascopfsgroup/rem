@@ -1,20 +1,25 @@
 --/*
 --##########################################
---## AUTOR=SALVADOR GORRITA
+--## AUTOR=miguel Ángel Sánchez
 --## FECHA_CREACION=20160223
---## ARTEFACTO=batch
+--## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HR-1940
+--## INCIDENCIA_LINK=HR-1902
 --## PRODUCTO=NO
---## 
---## Finalidad: MODIFICAR TABLA COMENTARIOS_VENTA_CARTERA
---## INSTRUCCIONES: EJECUTAR Y LISTO
+--## Finalidad: Actualizar filas repetidas.
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
 --*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
-SET SERVEROUTPUT ON;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
 
 DECLARE
 
@@ -26,20 +31,22 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
+
+
 BEGIN
     
-	V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''PRB_PRC_BIE'' AND OWNER = '''||V_ESQUEMA||'''';
+	V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''TEX_TAREA_EXTERNA'' AND OWNER = '''||V_ESQUEMA||'''';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 	IF V_NUM_TABLAS = 1 THEN
-		V_MSQL:= 'UPDATE '||V_ESQUEMA|| '.PRB_PRC_BIE SET USUARIOBORRAR = NULL, FECHABORRAR = NULL , BORRADO = 0 ' ||
-			' WHERE PRC_ID = 1000000000038617' ||
-	        ' AND BIE_ID = (SELECT BIE_ID FROM '||V_ESQUEMA|| '.BIE_BIEN WHERE BIE_CODIGO_BIEN = 000009290000000000002151091000000000000000)';
+		V_MSQL:= 'UPDATE '||V_ESQUEMA|| '.TEX_TAREA_EXTERNA SET BORRADO = 1, FECHABORRAR=SYSDATE, USUARIOBORRAR = ''HR-1902'' WHERE tex_id IN' ||
+			' (SELECT TEX_ID FROM (SELECT TEX_ID, TAR_ID, ROW_NUMBER() OVER (PARTITION BY TAR_ID ORDER BY TEX_ID ASC) ORD ' ||
+	        'FROM '||V_ESQUEMA|| '.TEX_TAREA_EXTERNA WHERE BORRADO = 0) WHERE ORD > 1)';
 		
 	    DBMS_OUTPUT.PUT_LINE(V_MSQL);
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Registros actualizados en '||V_ESQUEMA||'.PRB_PRC_BIE');
+		DBMS_OUTPUT.PUT_LINE('[INFO] Registros actualizados en '||V_ESQUEMA||'.TEX_TAREA_EXTERNA');
 	ELSE
-		DBMS_OUTPUT.PUT_LINE('[INFO] No se han podido actualizar los registros de la tabla '||V_ESQUEMA||'.PRB_PRC_BIE');
+		DBMS_OUTPUT.PUT_LINE('[INFO] No se han podido actualizar los registros de la tabla '||V_ESQUEMA||'.TEX_TAREA_EXTERNA');
 	END IF;
 	
 COMMIT;
@@ -59,6 +66,7 @@ EXCEPTION
           RAISE;          
 
 END;
+
 /
 
-EXIT;
+EXIT	

@@ -41,7 +41,7 @@
 				<targetBean>genericLeaveActionHandler</targetBean>
 			</action>
 		</event>
-		<transition to="forkTrasAceptacion" name="tramiteAceptacionConcurso"></transition>
+		<transition to="forkTrasAceptacion" name="tramiteAceptacionConcursoPrecontencioso"></transition>
 	</state>
 	
 	

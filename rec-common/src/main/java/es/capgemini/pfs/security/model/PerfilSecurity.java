@@ -17,6 +17,7 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.WhereJoinTable;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -45,6 +46,7 @@ public class PerfilSecurity implements Serializable, Auditable {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "FUN_PEF", schema = "${entity.schema}", joinColumns = { @JoinColumn(name = "PEF_ID") }, inverseJoinColumns = @JoinColumn(name = "FUN_ID"))
+    @WhereJoinTable(clause = "BORRADO = 0")
     private Set<FuncionSecurity> funciones = null;
 
     @Embedded

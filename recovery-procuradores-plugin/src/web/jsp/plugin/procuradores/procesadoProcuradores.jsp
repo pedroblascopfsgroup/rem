@@ -547,7 +547,7 @@ onViewClick : function(doFocus){
 			tipoResolucionStore.webflow({idTarea:record.data.idTarea, idProcedimiento:record.data.idProcedimiento});
 			valoresCamposAntResols(record.data.idProcedimiento)
 			//obtenerCodigoPlaza({idAsunto:record.data.idAsunto});
-			tipoFicheroStore.webflow({idAsunto: record.data.idAsunto}); 
+			tipoFicheroStore.webflow({idProcedimiento: record.data.idProcedimiento}); 
 			habilitaBotonesPopUp(false, false);
 			filtroAsunto.getStore().removeAll();
 			filtroAsunto.lastQuery = filtroAsunto.lastSelectionText;
@@ -991,7 +991,7 @@ var tipoFicheroRecord = Ext.data.Record.create([
 	]);
 		
 var tipoFicheroStore =	page.getStore({
-	       flow: 'adjuntoasunto/getTiposDeFicheroAdjuntoAsunto'
+	       flow: 'adjuntoasunto/getTiposDeFicheroAdjuntoProcedimiento'
 	       ,reader: new Ext.data.JsonReader({
 	    	 root : 'diccionario'
 	    }, tipoFicheroRecord)

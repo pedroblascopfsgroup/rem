@@ -48,58 +48,10 @@
 				</targetBean>
 			</action>
 		</event>	
-		<transition to="P417_RegistrarRecepcionLlaves" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="P417_RegistrarCambioCerradura" name="vueltaAtras"></transition>
 		<transition to="P417_RegistrarEnvioLlaves" name="activarAlerta"></transition>
-	</state>
-
-	<state name="P417_RegistrarRecepcionLlaves">
-		<event type="node-enter">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					genericEnterActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="comprobarBienDatosLlaves"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>adjudicacionLeaveActionHandler
-				</targetBean>
-			</action>
-		</event>	
-		<transition to="P417_RegistrarEnvioLlavesDepFinal" name="avanzaBPM"></transition>
-		<transition to="Fin" name="Fin"></transition>
-		<transition to="P417_RegistrarEnvioLlaves" name="vueltaAtras"></transition>
-		<transition to="P417_RegistrarRecepcionLlaves" name="activarAlerta"></transition>
-	</state>
-
-	<state name="P417_RegistrarEnvioLlavesDepFinal">
-		<event type="node-enter">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					genericEnterActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="comprobarBienDatosLlaves"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>adjudicacionLeaveActionHandler
-				</targetBean>
-			</action>
-		</event>	
 		<transition to="P417_RegistrarRecepcionLlavesDepFinal" name="avanzaBPM"></transition>
-		<transition to="Fin" name="Fin"></transition>
-		<transition to="P417_RegistrarRecepcionLlaves" name="vueltaAtras"></transition>
-		<transition to="P417_RegistrarEnvioLlavesDepFinal" name="activarAlerta"></transition>
 	</state>
 
 	<state name="P417_RegistrarRecepcionLlavesDepFinal">
@@ -121,9 +73,9 @@
 			</action>
 		</event>	
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="P417_RegistrarEnvioLlavesDepFinal" name="vueltaAtras"></transition>
 		<transition to="P417_RegistrarRecepcionLlavesDepFinal" name="activarAlerta"></transition>
 		<transition to="P417_Decision1" name="avanzaBPM"></transition>
+		<transition to="P417_RegistrarEnvioLlaves" name="vueltaAtras"></transition>
 	</state>
 
 	<node name="P417_Decision1">

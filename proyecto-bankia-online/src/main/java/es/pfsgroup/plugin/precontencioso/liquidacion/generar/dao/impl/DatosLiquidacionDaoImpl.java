@@ -71,6 +71,7 @@ public class DatosLiquidacionDaoImpl implements DatosLiquidacionDao {
 			.addScalar("DGC_COIBTQ", Hibernate.STRING)
 			.addScalar("DGC_IMDEUD", Hibernate.BIG_DECIMAL)
 			.addScalar("DGC_IMVRE2", Hibernate.BIG_DECIMAL)
+			.addScalar("DGC_CODICE", Hibernate.BIG_DECIMAL)
 			.addScalar("DGC_FFCTTO", Hibernate.DATE)
 			.setLong("idLiquidacion", idLiquidacion);
 

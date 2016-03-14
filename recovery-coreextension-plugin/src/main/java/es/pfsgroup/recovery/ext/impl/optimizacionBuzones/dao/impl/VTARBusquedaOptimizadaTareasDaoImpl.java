@@ -270,28 +270,10 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
         //Ante todo que cumpla el tipo de tarea
         // Filtro por tipo de tarea
         //HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vtar.codigoTipoTarea", dto.getCodigoTipoTarea());
-        hb.append(" vtar.codigoTipoTarea = " + dto.getCodigoTipoTarea() + " AND (");
+        hb.append(" vtar.codigoTipoTarea = " + dto.getCodigoTipoTarea());
    	
     	
-    	List<Long> grupos = grupoUsuarioDao.buscaGruposUsuario(u);
-    	grupos.add(u.getId()); // incluimos el usuario
-    	StringBuilder listaIdUsuarios = new StringBuilder();
-    	String sep = "";
-    	for (Long str : grupos) {
-    		listaIdUsuarios.append(sep).append(str);
-    	    sep = ",";
-    	}
-    	hb.append(" ( ");
-        if (dto.isEnEspera()) {
-        	String usuIdWhere = String.format(" vtar.usuarioEnEspera in (%s)", listaIdUsuarios);
-        	hb.append(usuIdWhere);
-        } else if (dto.isEsAlerta()) {
-        	String usuIdWhere = String.format(" vtar.usuarioAlerta in (%s)", listaIdUsuarios);
-        	hb.append(usuIdWhere);
-        } else {
-        	String usuIdWhere = String.format(" vtar.usuarioPendiente in (%s)", listaIdUsuarios);
-        	hb.append(usuIdWhere);
-        }
+
 
         // Que la tarea est� pendiente
         if (hb.length()>0)
@@ -308,8 +290,28 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
             // alertasLetradosActivos(hb);
         }
         
+        
+    	List<Long> grupos = grupoUsuarioDao.buscaGruposUsuario(u);
+    	grupos.add(u.getId()); // incluimos el usuario
+    	StringBuilder listaIdUsuarios = new StringBuilder();
+    	String sep = "";
+    	for (Long str : grupos) {
+    		listaIdUsuarios.append(sep).append(str);
+    	    sep = ",";
+    	}
+    	hb.append(" AND ( ");
+        if (dto.isEnEspera()) {
+        	String usuIdWhere = String.format(" vtar.usuarioEnEspera in (%s)", listaIdUsuarios);
+        	hb.append(usuIdWhere);
+        } else if (dto.isEsAlerta()) {
+        	String usuIdWhere = String.format(" vtar.usuarioAlerta in (%s)", listaIdUsuarios);
+        	hb.append(usuIdWhere);
+        } else {
+        	String usuIdWhere = String.format(" vtar.usuarioPendiente in (%s)", listaIdUsuarios);
+        	hb.append(usuIdWhere);
+        }
         //Parte Expedientes
-        hb.append(") OR (");
+        hb.append(" OR (");
         
 		if (!Checks.esNulo(dto.getZonas()) && dto.getZonas().size()>0) {
 			hb.append(" ((");
@@ -337,7 +339,7 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 			hb.append(")");
 			hb.append(") ");
 		}
-		hb.append("))" );
+		hb.append(")))" );
 		
         return hb;
     }

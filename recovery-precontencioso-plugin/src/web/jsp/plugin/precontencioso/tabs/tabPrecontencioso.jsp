@@ -13,6 +13,7 @@
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/documento/grids/documentoGrid.jsp" %>
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/liquidacion/grids/liquidacionGrid.jsp" %>
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/burofax/grids/burofax.jsp" %>
+<%@ include file="/WEB-INF/jsp/plugin/precontencioso/observacion/grids/observacionGrid.jsp" %>
 
 	var panel = new Ext.Panel({
 		title:'<s:message code="procedimiento.precontencioso.expedienteJudicial" text="**Precontencioso"/>'
@@ -32,6 +33,12 @@
 	<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_BUROFAXES">
 		panel.add(gridBurofax);
 	</sec:authorize>
+	
+	<%-- PRO-812 - Falta confirmar que usuarios pueden ver este grid --%>
+	<c:if test="${user.entidad.descripcion eq 'HAYA'}">
+		panel.add(gridObservaciones);
+    </c:if>
+		
 
 	panel.getValue = function() {}
 
@@ -73,6 +80,10 @@
 							ponerVisibilidadBotonesBur(data.botonesVisiblesBurPco, data.botonesInvisiblesBurPco);
 							refrescarBurofaxGrid();
 						</sec:authorize>
+						
+						<%-- PRO-812 - Falta confirmar que usuarios pueden gver este grid --%>
+							
+							refrescarObservacionesGrid();
 					}
 				});	
 			}

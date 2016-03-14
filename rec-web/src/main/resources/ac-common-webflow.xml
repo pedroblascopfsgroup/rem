@@ -29,6 +29,7 @@
     </beans:bean>
 
 	<!-- ViewResolver para el PDF/XLS dinámico de simulación de Scoring & Alertas -->
+<!--
     <beans:bean id="reportFormularioDemandaViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <beans:property name="viewNames" value="reportFormularioDemanda*"/>
         <beans:property name="viewClass" value="es.capgemini.pfs.procedimientos.report.ReportFormularioDemanda"/>
@@ -52,7 +53,7 @@
             </beans:list>
         </beans:property>
     </beans:bean>
-
+-->
 
     
 </beans:beans>

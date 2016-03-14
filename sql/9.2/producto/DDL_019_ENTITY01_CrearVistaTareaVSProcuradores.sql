@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20150623
+--## AUTOR=JORGE MARTIN
+--## FECHA_CREACION=20160118
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.0-X
---## INCIDENCIA_LINK=MITCDD-2068
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=PRODUCTO-585
 --## PRODUCTO=SI
 --##
 --## Finalidad: Vista VTAR_TAREA_VS_PROCURADORES
@@ -41,8 +41,8 @@ BEGIN
 	IF table_count = 1 THEN
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.VTAR_TAREA_VS_PROCURADORES... ya existe, se reemplazará');
 		EXECUTE IMMEDIATE 'DROP VIEW VTAR_TAREA_VS_PROCURADORES';
-		V_MSQL := 'CREATE OR REPLACE VIEW ' ||V_ESQUEMA||'.VTAR_TAREA_VS_PROCURADORES 
-			("USU_PENDIENTES", "TAR_ID", "ASU_ID", "TAR_TAREA", "TAR_DESCRIPCION", "PRC_ID", "TAR_FECHA_VENC", "RES_DESCRIPCION", "ESTADO_PROCES_CODIGO", "RES_ID", "TIPO_RES_ID", "CATEG_ID", "CAT_ID", "USU_ESPERA", "USU_ALERTA", "DD_TGE_ID_PENDIENTE", "DD_TGE_ID_ESPERA", "DD_TGE_ID_ALERTA", "CLI_ID", "EXP_ID", "TAR_TAR_ID", "SPR_ID", "SCX_ID", "DD_EST_ID", "DD_EIN_ID", "DD_STA_ID", "TAR_CODIGO", "TAR_FECHA_FIN", "TAR_FECHA_INI", "TAR_EN_ESPERA", "TAR_ALERTA", "TAR_TAREA_FINALIZADA", "TAR_EMISOR", "VERSION", "USUARIOCREAR", "FECHACREAR", "USUARIOMODIFICAR", "FECHAMODIFICAR", "USUARIOBORRAR", "FECHABORRAR", "BORRADO", "CMB_ID", "SET_ID", "OBJ_ID", "TAR_FECHA_VENC_REAL", "DTYPE", "NFA_TAR_REVISADA", "NFA_TAR_FECHA_REVIS_ALER", "NFA_TAR_COMENTARIOS_ALERTA", "DD_TRA_ID", "CNT_ID", "TAR_DESTINATARIO", "TAR_TIPO_DESTINATARIO", "TAR_ID_DEST", "PER_ID", "RPR_REFERENCIA", "TAR_TIPO_ENT_COD", "TAR_DTYPE", "TAR_SUBTIPO_COD", "TAR_SUBTIPO_DESC", "PLAZO", "ENTIDADINFORMACION", "CODENTIDAD", "GESTOR", "TIPOSOLICITUDSQL", "IDENTIDAD", "FCREACIONENTIDAD", "CODIGOSITUACION", "IDTAREAASOCIADA", "DESCRIPCIONTAREAASOCIADA", "SUPERVISOR", "DIASVENCIDOSQL", "DESCRIPCIONENTIDAD", "SUBTIPOTARCODTAREA", "FECHACREACIONENTIDADFORMATEADA", "DESCRIPCIONEXPEDIENTE", "DESCRIPCIONCONTRATO", "IDENTIDADPERSONA", "VOLUMENRIESGOSQL", "TIPOITINERARIOENTIDAD", "PRORROGAFECHAPROPUESTA", "PRORROGACAUSADESCRIPCION", "CODIGOCONTRATO", "CONTRATO", "TIPO_ACCION_CODIGO", "PROCEDIMIENTO_DESCRIPCION", "GROUPTAREAS") AS 
+		V_MSQL := 'CREATE OR REPLACE VIEW '||V_ESQUEMA||'.VTAR_TAREA_VS_PROCURADORES 
+			("USU_PENDIENTES", "TAR_ID", "ASU_ID", "TAR_TAREA", "TAR_DESCRIPCION", "PRC_ID", "TAR_FECHA_VENC", "RES_DESCRIPCION", "ESTADO_PROCES_CODIGO", "RES_ID", "TIPO_RES_ID", "CATEG_ID", "CAT_ID", "USU_ESPERA", "USU_ALERTA", "DD_TGE_ID_PENDIENTE", "DD_TGE_ID_ESPERA", "DD_TGE_ID_ALERTA", "CLI_ID", "EXP_ID", "TAR_TAR_ID", "SPR_ID", "SCX_ID", "DD_EST_ID", "DD_EIN_ID", "DD_STA_ID", "TAR_CODIGO", "TAR_FECHA_FIN", "TAR_FECHA_INI", "TAR_EN_ESPERA", "TAR_ALERTA", "TAR_TAREA_FINALIZADA", "TAR_EMISOR", "VERSION", "USUARIOCREAR", "FECHACREAR", "USUARIOMODIFICAR", "FECHAMODIFICAR", "USUARIOBORRAR", "FECHABORRAR", "BORRADO", "CMB_ID", "SET_ID", "OBJ_ID", "TAR_FECHA_VENC_REAL", "DTYPE", "NFA_TAR_REVISADA", "NFA_TAR_FECHA_REVIS_ALER", "NFA_TAR_COMENTARIOS_ALERTA", "DD_TRA_ID", "CNT_ID", "TAR_DESTINATARIO", "TAR_TIPO_DESTINATARIO", "TAR_ID_DEST", "PER_ID", "RPR_REFERENCIA", "TAR_TIPO_ENT_COD", "TAR_DTYPE", "TAR_SUBTIPO_COD", "TAR_SUBTIPO_DESC", "PLAZO", "ENTIDADINFORMACION", "CODENTIDAD", "GESTOR", "TIPOSOLICITUDSQL", "IDENTIDAD", "FCREACIONENTIDAD", "CODIGOSITUACION", "IDTAREAASOCIADA", "DESCRIPCIONTAREAASOCIADA", "SUPERVISOR", "DIASVENCIDOSQL", "DESCRIPCIONENTIDAD", "SUBTIPOTARCODTAREA", "FECHACREACIONENTIDADFORMATEADA", "DESCRIPCIONEXPEDIENTE", "DESCRIPCIONCONTRATO", "IDENTIDADPERSONA", "VOLUMENRIESGOSQL", "TIPOITINERARIOENTIDAD", "PRORROGAFECHAPROPUESTA", "PRORROGACAUSADESCRIPCION", "CODIGOCONTRATO", "CONTRATO", "TIPO_ACCION_CODIGO", "PROCEDIMIENTO_DESCRIPCION", "GROUPTAREAS", zon_cod, pef_id) AS 
 	            SELECT vtar.usu_pendientes, vtar.tar_id, vtar.asu_id, vtar.tar_tarea,
 	          vtar.tar_descripcion, vtar.prc_id, vtar.tar_fecha_venc,
 	          tr.dd_tr_descripcion, estf.dd_epf_codigo, res.res_id,
@@ -84,21 +84,23 @@ BEGIN
 	                        THEN ''3''
 	                     ELSE ''4''
 	                  END
-	             FROM DUAL)
-	     FROM vtar_tarea_vs_usuario vtar JOIN res_resoluciones_masivo res
+	             FROM DUAL),
+	          vtar.ZON_COD zon_cod,
+	          vtar.PEF_ID pef_id
+	     FROM '||V_ESQUEMA||'.vtar_tarea_vs_usuario vtar JOIN '||V_ESQUEMA||'.res_resoluciones_masivo res
 	          ON res.res_tar_id = vtar.tar_id AND res.borrado = 0
-	          JOIN dd_tr_tipos_resolucion tr ON tr.dd_tr_id = res.res_tre_id
-	          JOIN bpm_dd_tac_tipo_accion tpa ON tpa.bpm_dd_tac_id =
+	          JOIN '||V_ESQUEMA||'.dd_tr_tipos_resolucion tr ON tr.dd_tr_id = res.res_tre_id
+	          JOIN '||V_ESQUEMA||'.bpm_dd_tac_tipo_accion tpa ON tpa.bpm_dd_tac_id =
 	                                                              tr.bpm_dd_tac_id
-	          JOIN dd_epf_estado_proces_fich estf ON estf.dd_epf_id =
+	          JOIN '||V_ESQUEMA||'.dd_epf_estado_proces_fich estf ON estf.dd_epf_id =
 	                                                                res.res_epf_id
-	          LEFT JOIN rel_categorias_tiporesol relctr ON relctr.tr_id =
+	          LEFT JOIN '||V_ESQUEMA||'.rel_categorias_tiporesol relctr ON relctr.tr_id =
 	                                                                   tr.dd_tr_id
-	          LEFT JOIN rel_categorias relcat ON relcat.rel_id = relctr.rel_id
-	          LEFT JOIN cat_categorias cat ON cat.cat_id = relcat.cat_id
-	          LEFT JOIN rec_res_cat rrc ON rrc.res_id = res.res_id
-	          LEFT JOIN prc_procedimientos prc ON prc.prc_id = vtar.prc_id
-	          LEFT JOIN dd_tpo_tipo_procedimiento tpo ON tpo.dd_tpo_id = prc.dd_tpo_id
+	          LEFT JOIN '||V_ESQUEMA||'.rel_categorias relcat ON relcat.rel_id = relctr.rel_id
+	          LEFT JOIN '||V_ESQUEMA||'.cat_categorias cat ON cat.cat_id = relcat.cat_id
+	          LEFT JOIN '||V_ESQUEMA||'.rec_res_cat rrc ON rrc.res_id = res.res_id
+	          LEFT JOIN '||V_ESQUEMA||'.prc_procedimientos prc ON prc.prc_id = vtar.prc_id
+	          LEFT JOIN '||V_ESQUEMA||'.dd_tpo_tipo_procedimiento tpo ON tpo.dd_tpo_id = prc.dd_tpo_id
 	    WHERE (   (res.res_epf_id = 2)
 	           OR (tr.dd_tr_id = 1003 AND res.res_epf_id = 6)
 	          )';
@@ -108,7 +110,7 @@ BEGIN
 			
 		ELSE
 			V_MSQL := 'CREATE OR REPLACE VIEW ' ||V_ESQUEMA||'.VTAR_TAREA_VS_PROCURADORES 
-			("USU_PENDIENTES", "TAR_ID", "ASU_ID", "TAR_TAREA", "TAR_DESCRIPCION", "PRC_ID", "TAR_FECHA_VENC", "RES_DESCRIPCION", "ESTADO_PROCES_CODIGO", "RES_ID", "TIPO_RES_ID", "CATEG_ID", "CAT_ID", "USU_ESPERA", "USU_ALERTA", "DD_TGE_ID_PENDIENTE", "DD_TGE_ID_ESPERA", "DD_TGE_ID_ALERTA", "CLI_ID", "EXP_ID", "TAR_TAR_ID", "SPR_ID", "SCX_ID", "DD_EST_ID", "DD_EIN_ID", "DD_STA_ID", "TAR_CODIGO", "TAR_FECHA_FIN", "TAR_FECHA_INI", "TAR_EN_ESPERA", "TAR_ALERTA", "TAR_TAREA_FINALIZADA", "TAR_EMISOR", "VERSION", "USUARIOCREAR", "FECHACREAR", "USUARIOMODIFICAR", "FECHAMODIFICAR", "USUARIOBORRAR", "FECHABORRAR", "BORRADO", "CMB_ID", "SET_ID", "OBJ_ID", "TAR_FECHA_VENC_REAL", "DTYPE", "NFA_TAR_REVISADA", "NFA_TAR_FECHA_REVIS_ALER", "NFA_TAR_COMENTARIOS_ALERTA", "DD_TRA_ID", "CNT_ID", "TAR_DESTINATARIO", "TAR_TIPO_DESTINATARIO", "TAR_ID_DEST", "PER_ID", "RPR_REFERENCIA", "TAR_TIPO_ENT_COD", "TAR_DTYPE", "TAR_SUBTIPO_COD", "TAR_SUBTIPO_DESC", "PLAZO", "ENTIDADINFORMACION", "CODENTIDAD", "GESTOR", "TIPOSOLICITUDSQL", "IDENTIDAD", "FCREACIONENTIDAD", "CODIGOSITUACION", "IDTAREAASOCIADA", "DESCRIPCIONTAREAASOCIADA", "SUPERVISOR", "DIASVENCIDOSQL", "DESCRIPCIONENTIDAD", "SUBTIPOTARCODTAREA", "FECHACREACIONENTIDADFORMATEADA", "DESCRIPCIONEXPEDIENTE", "DESCRIPCIONCONTRATO", "IDENTIDADPERSONA", "VOLUMENRIESGOSQL", "TIPOITINERARIOENTIDAD", "PRORROGAFECHAPROPUESTA", "PRORROGACAUSADESCRIPCION", "CODIGOCONTRATO", "CONTRATO", "TIPO_ACCION_CODIGO", "PROCEDIMIENTO_DESCRIPCION", "GROUPTAREAS") AS 
+			("USU_PENDIENTES", "TAR_ID", "ASU_ID", "TAR_TAREA", "TAR_DESCRIPCION", "PRC_ID", "TAR_FECHA_VENC", "RES_DESCRIPCION", "ESTADO_PROCES_CODIGO", "RES_ID", "TIPO_RES_ID", "CATEG_ID", "CAT_ID", "USU_ESPERA", "USU_ALERTA", "DD_TGE_ID_PENDIENTE", "DD_TGE_ID_ESPERA", "DD_TGE_ID_ALERTA", "CLI_ID", "EXP_ID", "TAR_TAR_ID", "SPR_ID", "SCX_ID", "DD_EST_ID", "DD_EIN_ID", "DD_STA_ID", "TAR_CODIGO", "TAR_FECHA_FIN", "TAR_FECHA_INI", "TAR_EN_ESPERA", "TAR_ALERTA", "TAR_TAREA_FINALIZADA", "TAR_EMISOR", "VERSION", "USUARIOCREAR", "FECHACREAR", "USUARIOMODIFICAR", "FECHAMODIFICAR", "USUARIOBORRAR", "FECHABORRAR", "BORRADO", "CMB_ID", "SET_ID", "OBJ_ID", "TAR_FECHA_VENC_REAL", "DTYPE", "NFA_TAR_REVISADA", "NFA_TAR_FECHA_REVIS_ALER", "NFA_TAR_COMENTARIOS_ALERTA", "DD_TRA_ID", "CNT_ID", "TAR_DESTINATARIO", "TAR_TIPO_DESTINATARIO", "TAR_ID_DEST", "PER_ID", "RPR_REFERENCIA", "TAR_TIPO_ENT_COD", "TAR_DTYPE", "TAR_SUBTIPO_COD", "TAR_SUBTIPO_DESC", "PLAZO", "ENTIDADINFORMACION", "CODENTIDAD", "GESTOR", "TIPOSOLICITUDSQL", "IDENTIDAD", "FCREACIONENTIDAD", "CODIGOSITUACION", "IDTAREAASOCIADA", "DESCRIPCIONTAREAASOCIADA", "SUPERVISOR", "DIASVENCIDOSQL", "DESCRIPCIONENTIDAD", "SUBTIPOTARCODTAREA", "FECHACREACIONENTIDADFORMATEADA", "DESCRIPCIONEXPEDIENTE", "DESCRIPCIONCONTRATO", "IDENTIDADPERSONA", "VOLUMENRIESGOSQL", "TIPOITINERARIOENTIDAD", "PRORROGAFECHAPROPUESTA", "PRORROGACAUSADESCRIPCION", "CODIGOCONTRATO", "CONTRATO", "TIPO_ACCION_CODIGO", "PROCEDIMIENTO_DESCRIPCION", "GROUPTAREAS", zon_cod, pef_id) AS 
 	            SELECT vtar.usu_pendientes, vtar.tar_id, vtar.asu_id, vtar.tar_tarea,
 	          vtar.tar_descripcion, vtar.prc_id, vtar.tar_fecha_venc,
 	          tr.dd_tr_descripcion, estf.dd_epf_codigo, res.res_id,
@@ -150,21 +152,23 @@ BEGIN
 	                        THEN ''3''
 	                     ELSE ''4''
 	                  END
-	             FROM DUAL)
-	     FROM vtar_tarea_vs_usuario vtar JOIN res_resoluciones_masivo res
+	             FROM DUAL),
+	          vtar.ZON_COD zon_cod,
+	          vtar.PEF_ID pef_id
+	     FROM '||V_ESQUEMA||'.vtar_tarea_vs_usuario vtar JOIN '||V_ESQUEMA||'.res_resoluciones_masivo res
 	          ON res.res_tar_id = vtar.tar_id AND res.borrado = 0
-	          JOIN dd_tr_tipos_resolucion tr ON tr.dd_tr_id = res.res_tre_id
-	          JOIN bpm_dd_tac_tipo_accion tpa ON tpa.bpm_dd_tac_id =
+	          JOIN '||V_ESQUEMA||'.dd_tr_tipos_resolucion tr ON tr.dd_tr_id = res.res_tre_id
+	          JOIN '||V_ESQUEMA||'.bpm_dd_tac_tipo_accion tpa ON tpa.bpm_dd_tac_id =
 	                                                              tr.bpm_dd_tac_id
-	          JOIN dd_epf_estado_proces_fich estf ON estf.dd_epf_id =
+	          JOIN '||V_ESQUEMA||'.dd_epf_estado_proces_fich estf ON estf.dd_epf_id =
 	                                                                res.res_epf_id
-	          LEFT JOIN rel_categorias_tiporesol relctr ON relctr.tr_id =
+	          LEFT JOIN '||V_ESQUEMA||'.rel_categorias_tiporesol relctr ON relctr.tr_id =
 	                                                                   tr.dd_tr_id
-	          LEFT JOIN rel_categorias relcat ON relcat.rel_id = relctr.rel_id
-	          LEFT JOIN cat_categorias cat ON cat.cat_id = relcat.cat_id
-	          LEFT JOIN rec_res_cat rrc ON rrc.res_id = res.res_id
-	          LEFT JOIN prc_procedimientos prc ON prc.prc_id = vtar.prc_id
-	          LEFT JOIN dd_tpo_tipo_procedimiento tpo ON tpo.dd_tpo_id = prc.dd_tpo_id
+	          LEFT JOIN '||V_ESQUEMA||'.rel_categorias relcat ON relcat.rel_id = relctr.rel_id
+	          LEFT JOIN '||V_ESQUEMA||'.cat_categorias cat ON cat.cat_id = relcat.cat_id
+	          LEFT JOIN '||V_ESQUEMA||'.rec_res_cat rrc ON rrc.res_id = res.res_id
+	          LEFT JOIN '||V_ESQUEMA||'.prc_procedimientos prc ON prc.prc_id = vtar.prc_id
+	          LEFT JOIN '||V_ESQUEMA||'.dd_tpo_tipo_procedimiento tpo ON tpo.dd_tpo_id = prc.dd_tpo_id
 	    WHERE (   (res.res_epf_id = 2)
 	           OR (tr.dd_tr_id = 1003 AND res.res_epf_id = 6)
 	          )';

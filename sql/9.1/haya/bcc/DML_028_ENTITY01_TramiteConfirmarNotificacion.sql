@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=OSCAR DORADO
---## FECHA_CREACION=20160118
+--## AUTOR=CARLOS MARTOS
+--## FECHA_CREACION=20160218
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=PRODUCTO-585
+--## INCIDENCIA_LINK=PRODUCTO-786
 --## PRODUCTO=NO
 --##
---## Finalidad: Realiza las inserciones de la resolución Señalamiento vista de ocupantes para la tarea H048_ConfirmarVista.
+--## Finalidad: Realiza las inserciones de la confirmacion de la notificacion H007_ConfirmarNotificacion.
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
@@ -41,23 +41,24 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			'392';
-    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_CONF_VIS';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Celebración vista';
-    V_TJ_CODIGO VARCHAR2(20 CHAR):=			'OCU';
+    V_TR_ID VARCHAR2(16 CHAR):= 			'438';
+    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_TR_CNF_NOT';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Notificación tasación al contrario';
+    V_TJ_CODIGO VARCHAR2(20 CHAR):=			'TCS';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     
-    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_CONF_VIS';
+    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_TR_CNF_NOT';
     
-    V_TPO_CODIGO VARCHAR2(20 CHAR):=		'H048';
-    V_NODO VARCHAR2(50 CHAR):=				'H048_RegistrarCelebracionVista';
+    V_TPO_CODIGO VARCHAR2(20 CHAR):=		'H007';
+    V_NODO VARCHAR2(50 CHAR):=				'H007_ConfirmarNotificacion';
     
     TYPE T_INPUT IS TABLE OF VARCHAR2(50);
     TYPE T_ARRAY_INPUT IS TABLE OF T_INPUT;
     V_INPUT T_ARRAY_INPUT := T_ARRAY_INPUT(
     	T_INPUT('idAsunto','idAsunto'), -- Está siempre en el factoria, no eliminar.
     	T_INPUT('d_numAutos','numAutos'), -- Está siempre en el factoria, no eliminar.
-    	T_INPUT('d_fechaResolucion','fechaResolucion'),
+    	T_INPUT('d_comboResultado','comboResultado'),
+    	T_INPUT('d_fecha','fecha'),
     	T_INPUT('d_observaciones','observaciones') -- Está siempre en el factoria, no eliminar.
     );
     V_TMP_T_INPUT T_INPUT;

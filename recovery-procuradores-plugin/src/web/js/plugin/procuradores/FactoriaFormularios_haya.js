@@ -2823,7 +2823,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
             }
         }
         ,{"xtype": 'datefield', "name": "d_fechaFinAlegaciones", "fieldLabel": "Fecha fin alegaciones", allowBlank: true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, id: 'd_fechaFinAlegaciones' + this.idFactoria}
-        ,{"xtype":'combo',"store":storeSINO, "name":"d_alegaciones","fieldLabel":"Presentar alegaciones","autoload":true,allowBlank:true,  mode:'local',triggerAction:'all',resizable:true, id:'d_alegaciones'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+        ,{"xtype":'combo',"store":storeSINO, "name":"d_alegaciones","fieldLabel":"Presentar alegaciones","autoload":true,allowBlank:true, filtrar:true, mode:'local',triggerAction:'all',resizable:true, id:'d_alegaciones'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
     ]);
 
     //id: 373 : PROCEDIMIENTO HIPOTECARIO (CAJAMAR) : Cumplimentar mandamiento de certificación de cargas

@@ -57,6 +57,7 @@ import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.dto.DtoBuscarContrato;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
+import es.capgemini.pfs.dsm.model.Entidad;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
 import es.capgemini.pfs.exceptions.NonRollbackException;
@@ -1928,7 +1929,18 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_UPDATE_AAA)
     @Transactional(readOnly = false)
     public void updateActitudAptitudActuacion(DtoActitudAptitudActuacion dtoAAA) {
-        actitudAptitudActuacionDao.saveOrUpdate(dtoAAA.getAaa());
+		if(dtoAAA.getExp() != null){
+			Expediente exp = this.getExpediente(dtoAAA.getExp());
+			//Si el campo AAA de la tabla expediente tiene valor se actualiza si no se inserta uno nuevo.
+			if(exp != null && exp.getAaa() != null){
+				actitudAptitudActuacionDao.saveOrUpdate(dtoAAA.getAaa());		
+			}else{
+				exp.setAaa(dtoAAA.getAaa());
+				expedienteDao.saveOrUpdate(exp);
+				actitudAptitudActuacionDao.saveOrUpdate(dtoAAA.getAaa());
+			}
+		}
+        
     }
 
 	/**
@@ -3274,8 +3286,6 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
             executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, expediente.getProcessBpm(),
                     ExpedienteBPMConstants.TRANSITION_TOMARDECISION);
             
-           
-
             //Si no se ha marcado como vigente, se lanza una excepci�n porque deber�a
         } else {
             logger.error("Alguna de las pol�ticas del expediente " + idExpediente
@@ -3285,8 +3295,6 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 
         return true;
     }
-	
-	
 	
 
     /**

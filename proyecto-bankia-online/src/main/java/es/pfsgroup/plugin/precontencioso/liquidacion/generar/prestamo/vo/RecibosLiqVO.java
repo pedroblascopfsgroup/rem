@@ -35,7 +35,7 @@ public class RecibosLiqVO {
 	}
 
 	public String FEVCTR() {
-		return formatoFechaCorta.format(RCB_FEVCTR);
+		return RCB_FEVCTR == null ? "" : formatoFechaCorta.format(RCB_FEVCTR);
 	}
 
 	public String CDINTS() {

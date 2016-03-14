@@ -34,11 +34,11 @@ public class EfectosLiqVO {
 	}
 	
 	public String FEVCTR() {
-		return formatoFechaCorta.format(DEF_FEVCTR);
+		return DEF_FEVCTR == null ? "" : formatoFechaCorta.format(DEF_FEVCTR);
 	}
 	
 	public String FEREAM() {
-		return formatoFechaCorta.format(DEF_FEREAM);
+		return DEF_FEREAM == null ? "" : formatoFechaCorta.format(DEF_FEREAM);
 	}
 	
 	public String IMCPRC() {
@@ -66,7 +66,7 @@ public class EfectosLiqVO {
 	}
 	
 	public String NOLIB9() {
-		return DEF_IDRECV == null ? "" : DEF_NOLIB9;
+		return DEF_NOLIB9 == null ? "" : DEF_NOLIB9;
 	}
 	
 	/* Getters */

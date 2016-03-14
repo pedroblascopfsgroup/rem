@@ -40,11 +40,11 @@ public class DatosGeneralesLiqVO {
 	}
 
 	public String FEFOEZ() {
-		return fechaLargaFormat.format(DGC_FEFOEZ);
+		return DGC_FEFOEZ == null ? "" : fechaLargaFormat.format(DGC_FEFOEZ);
 	}
 
 	public String FEVACM() {
-		return fechaLargaFormat.format(DGC_FEVACM);
+		return DGC_FEVACM == null ? "" : fechaLargaFormat.format(DGC_FEVACM);
 	}
 
 	public String NOMFED1() {
@@ -83,7 +83,7 @@ public class DatosGeneralesLiqVO {
 	}
 	
 	public String FFCTTO() {
-		return fechaLargaFormat.format(DGC_FFCTTO);
+		return DGC_FFCTTO == null ? "" : fechaLargaFormat.format(DGC_FFCTTO);
 	}
 	
 	public String CODICE(){

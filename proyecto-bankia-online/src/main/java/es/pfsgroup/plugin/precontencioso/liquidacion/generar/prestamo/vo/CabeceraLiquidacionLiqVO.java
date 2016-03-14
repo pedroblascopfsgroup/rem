@@ -30,15 +30,15 @@ public class CabeceraLiquidacionLiqVO {
 	}
 
 	public String FEFCON() {
-		return formatoFechaCorta.format(CLQ_FEFCON);
+		return CLQ_FEFCON == null ? "" : formatoFechaCorta.format(CLQ_FEFCON);
 	}
 	
 	public String FANTLQ() {
-		return formatoFechaCorta.format(CLQ_FANTLQ);
+		return CLQ_FANTLQ == null ? "" : formatoFechaCorta.format(CLQ_FANTLQ);
 	}
 	
 	public String FEVALQ() {
-		return formatoFechaCorta.format(CLQ_FEVALQ);
+		return CLQ_FEVALQ == null ? "" : formatoFechaCorta.format(CLQ_FEVALQ);
 	}
 
 	public String POINDB() {

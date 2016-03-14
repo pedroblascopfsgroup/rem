@@ -9,6 +9,8 @@
 
 (function() {
 
+debugger;
+
 	var panel = new Ext.Panel({
 		title: '<s:message code="cirbe.titulo" text="**CIRBE" />'
 		,autoHeight: true
@@ -21,7 +23,7 @@
 
 	panel.on('render', function(){
 	
-	
+		debugger;
 	
 		fechaInicial1 = '<fwk:date value="${fechaCirbeActual}"/>';
 		fechaInicial2 = '<fwk:date value="${fechaCirbe30Dias}"/>';

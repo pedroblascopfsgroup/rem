@@ -2857,7 +2857,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
        ,{"xtype": 'combo', "store": storeSINO, "name": "d_comboOcupado", "fieldLabel": "Ocupado", allowBlank:false, "autoload":true, mode: 'local',triggerAction: 'all', resizable: true, id:'d_comboOcupado'+this.idFactoria,displayField:'descripcion', valueField:'codigo'}
        ,{"xtype": 'combo', "store": storeSINO, "name": "d_comboMoratoria", "fieldLabel": "Moratoria", allowBlank:false, "autoload":true, mode: 'local',triggerAction: 'all', resizable: true, id:'d_comboMoratoria'+this.idFactoria,displayField:'descripcion', valueField:'codigo'}
        ,{"xtype": 'combo', "store": storeSINO, "name": "d_comboViviendaHab", "fieldLabel": "Vivienda Habitual", allowBlank:false, "autoload":true, mode: 'local',triggerAction: 'all', resizable: true, id:'d_comboViviendaHab'+this.idFactoria,displayField:'descripcion', valueField:'codigo'}
-       ,{"xtype": 'combo', "store": storeSINO, "name": "d_comboArrendamientoValido", "fieldLabel": "Contrato arrendamiento válido", allowBlank: false, "autoload": true, mode: 'local', triggerAction: 'all', resizable: true, id:'d_comboArrendamientoValido' + this.idFactoria, displayField: 'descripcion', valueField: 'codigo'}
+       ,{"xtype": 'combo', "store": storeSINO, "name": "d_comboArrendamientoValido", "fieldLabel": "Contrato arrendamiento válido", filtrar: true, allowBlank: false, "autoload": true, mode: 'local', triggerAction: 'all', resizable: true, id:'d_comboArrendamientoValido' + this.idFactoria, displayField: 'descripcion', valueField: 'codigo'}
     ]);
 
     //id: 378 : TRAMITE DE POSESIÓN (CAJAMAR): Diligencia judicial de la posesión

@@ -3292,7 +3292,23 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
      ,{"xtype":'numberfield',"name":"d_creditoSupl","fieldLabel":"Credito supletorio",allowBlank:false, filtrar:true}      
      ,{"xtype":'combo',"store":storeSINO,"name":"d_provisionFondos","fieldLabel":"Provision Fondos",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_provisionFondos'+this.idFactoria,displayField:'descripcion',valueField:'codigo',filtrar:true}         
      ]);
-	
+
+    //id: 441 : Trámite de Adjudicación - HCJ : Confirmar testimonio Decreto adjudicación H005_ConfirmarTestimonio
+    this.arrayCampos.push([
+        {"xtype":'datefield', "name":"d_fechaTestimonio", "fieldLabel":"Fecha Testimonio", allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
+        ,{"xtype":'datefield', "name":"d_fechaNotificacion", "fieldLabel":"Fecha notificación testimonio", allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
+        ,{"xtype":'combo', "store":storeSINO, "value":"", allowBlank:true, "name":"d_comboSubsanacion", "fieldLabel":"Requiere Subsanación", id:'d_comboSubsanacion' + this.idFactoria, "autoload":true, mode:'local',triggerAction:'all', resizable:true, displayField:'descripcion', valueField:'codigo'}
+        ,{"xtype":'combo', "store":storeSINO, "value":"", allowBlank:true, "name":"d_comboAdicional", "fieldLabel":"Comunicación adicional requerida", id:'d_comboAdicional' + this.idFactoria, "autoload":true, mode:'local',triggerAction:'all', resizable:true, displayField:'descripcion', valueField:'codigo', filtrar:true}
+        ,{"xtype":'datefield', "name":"d_fechaLimite", "fieldLabel":"Fecha límite comunicación", allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, filtrar:true}
+        ,{"xtype":'combo', "store":storeSINO, "value":"", allowBlank:true, "name":"d_comboOcupantes", "fieldLabel":"Constancia de ocupantes", id:'d_comboOcupantes' + this.idFactoria, "autoload":true, mode:'local',triggerAction:'all', resizable:true, displayField:'descripcion', valueField:'codigo'}            
+    ]);
+
+    //id: 442 : Trámite de Adjudicación - HCJ : Registrar presentación en el registro H005_RegistrarPresentacionEnRegistro
+    this.arrayCampos.push([
+        {"xtype":'datefield', "name":"d_fechaPresentacion", "fieldLabel":"Fecha Presentación", allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
+        ,{"xtype":'datefield', "name":"d_fechaNuevoTest", "fieldLabel":"Fecha nuevo testimoio", allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
+    ]);
+
 
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){

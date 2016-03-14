@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.Embedded;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.springframework.orm.hibernate3.HibernateTemplate;
 
 import es.capgemini.devon.utils.ClassUtils;
 import es.capgemini.pfs.auditoria.Auditable;
@@ -32,13 +33,14 @@ public abstract class AbstractHibernateDao<DomainObject extends Serializable, Ke
      */
     @Override
     public List<DomainObject> getList() {
-        if (ClassUtils.containsFieldType(getDomainClass(), Auditoria.class, Embedded.class)) { /*return (getHibernateTemplate().find("from "
-                                                                                               + domainClass.getName() + " where " + Auditoria.UNDELETED_RESTICTION));*/
-
-            return getSession().createQuery("from " + domainClass.getName() + " where " + Auditoria.UNDELETED_RESTICTION).setCacheable(true).list();
+    	HibernateTemplate t = this.getHibernateTemplate();
+    	t.setCacheQueries(true);
+        if (ClassUtils.containsFieldType(getDomainClass(), Auditoria.class, Embedded.class)) { 
+        	/*return (getHibernateTemplate().find("from + domainClass.getName() + " where " + Auditoria.UNDELETED_RESTICTION));*/
+//            return getSession().createQuery("from " + domainClass.getName() + " where " + Auditoria.UNDELETED_RESTICTION).setCacheable(true).list();
+        	return t.find("from " + domainClass.getName() + " where " + Auditoria.UNDELETED_RESTICTION);        	
         }
-
-        return super.getList();
+        return t.find("from " + domainClass.getName());
 
     }
 
@@ -48,7 +50,10 @@ public abstract class AbstractHibernateDao<DomainObject extends Serializable, Ke
      * @return lista de objetos (Incluidos los borrados logicamente)
      */
     public List<DomainObject> getListFull() {
-        return super.getList();
+//        return super.getList();
+    	HibernateTemplate t = this.getHibernateTemplate();
+    	t.setCacheQueries(true);
+    	return t.find("from " + domainClass.getName());
     }
 
     /**

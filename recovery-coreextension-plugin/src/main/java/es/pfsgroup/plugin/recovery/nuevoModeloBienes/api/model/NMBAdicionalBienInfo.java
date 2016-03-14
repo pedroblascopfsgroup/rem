@@ -1,9 +1,9 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.bien.model.DDTipoBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoInmueble;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoProdBancario;
 
@@ -34,7 +34,7 @@ public interface NMBAdicionalBienInfo {
 
 	DDTipoInmueble getTipoInmueble();
 
-	Float getValoracion();
+	BigDecimal getValoracion();
 
 	String getEntidad();
 

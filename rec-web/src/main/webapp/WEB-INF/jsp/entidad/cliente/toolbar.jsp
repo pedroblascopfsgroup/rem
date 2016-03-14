@@ -310,6 +310,9 @@ function(entidad,page){
 	<sec:authorize ifAllGranted="RESPONDER">
 		toolbar.add(botonResponder);
 	</sec:authorize>
+	<sec:authorize ifNotGranted="RESPONDER">
+		toolbar.add(botonComunicacion);
+	</sec:authorize>	
 	
 	toolbar.add(botonComunicacion);
 	toolbar.add(buttonsL_cliente);

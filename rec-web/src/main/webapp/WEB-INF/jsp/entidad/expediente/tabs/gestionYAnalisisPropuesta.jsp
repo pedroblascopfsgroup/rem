@@ -370,7 +370,8 @@
                     flow : 'expedientes/editaGestionyAnalisisPropuesta'
                     ,width:650
                     ,title : '<s:message code="expedientes.consulta.tabgestion.edicion" text="**Editar Gestion Analisis y Propuesta" />' 
-                    ,params : {id:entidad.getData("gestion").aaa}
+                    ,params : {id:entidad.getData("gestion").aaa,
+                    		   expId: entidad.getData("id")}
                   });
                   w.on(app.event.DONE, function(){
                     w.close();

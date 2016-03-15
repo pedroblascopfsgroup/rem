@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -185,31 +184,15 @@ public class DatosPlantillaLeasing extends DatosPlantillaPrestamoAbstract implem
 				i = 0;
 				for (RecibosLiqVO recibo : recibosLiq) {
 					i++;
-				
-					BigDecimal tipoInteresActual = recibo.getRCB_CDINTM();
-
-					// Primera iteracion no tiene un tipo definido
-					if (tipoInteresAgrupado == null) {
-						tipoInteresAgrupado = tipoInteresActual;
-					}
-					
-					// agrupacion de intereses demora del mismo tipo de interes
-					if (tipoInteresAgrupado.equals(tipoInteresActual)) {
-						sumIntereses = sumIntereses.add(recibo.getRCB_IMBIM4());
-					} else {
-						if (!BigDecimal.ZERO.equals(recibo.getRCB_CDINTM())) {
-							// nuevo concepto basado en la sumatoria de los intereses anteriores
-							sumIntereses = sumIntereses.add(recibo.getRCB_IMBIM4());
-							tipoInteresAgrupado = tipoInteresActual;
-						}
-					}
-
+					// nuevo concepto basado en la sumatoria de los intereses anteriores
+					sumIntereses = sumIntereses.add(recibo.getRCB_IMBIM4());
 					// En caso de que sea el ultimo registro de la lista se añade un nuevo concepto
 					if (i == recibosLiq.size()) {
 						saldo = calculateSaldo(saldo, sumIntereses, null);
 						conceptos.add(new ConceptoLiqVO(datosGeneralesLiq.getDGC_FEVACM(), "I.V.A.", sumIntereses, null, saldo));
 					}
 				}
+				
 
 		HashMap<String, Object> datosLiquidacion = new HashMap<String, Object>();
 		datosLiquidacion.put("CONCEPTOS", conceptos);

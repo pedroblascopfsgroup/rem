@@ -1469,7 +1469,10 @@
 		case app.subtipoTarea.CODIGO_CUMPLIMIENTO_ACUERDO:
 				app.abreAsuntoTab(rec.get('idEntidad'), rec.get('descripcion'),'acuerdos');
 		break;
-		
+		case app.subtipoTarea.CODIGO_TAREA_JUSTIFICAR_INCUMPLIMIENTO_OBJETIVO:
+			app.abreClienteTab(rec.get('idEntidadPersona'), rec.get('descripcion'),'politicaPanel');
+			break;
+			
 			// Por default abre una notificacion standard
 			default:
 				//Seleccionarmos por tipo de Categoria Tarea

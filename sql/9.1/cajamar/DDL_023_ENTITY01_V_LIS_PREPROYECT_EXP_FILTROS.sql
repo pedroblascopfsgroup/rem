@@ -5,7 +5,7 @@
 --## ARTEFACTO=web
 --## VERSION_ARTEFACTO=9.2.1-cj
 --## INCIDENCIA_LINK=CMREC-2748
---## PRODUCTO=SI
+--## PRODUCTO=NO
 --## Finalidad: Se modifica la vista DATE_EXTRA1
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE

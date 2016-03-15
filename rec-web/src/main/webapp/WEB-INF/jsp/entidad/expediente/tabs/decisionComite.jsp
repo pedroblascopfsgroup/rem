@@ -285,6 +285,7 @@
 		,{name:'supervisor'}
 		,{name:'principal'}
 		,{name:'tipoAsuntoDescripcion'}
+		,{name:'idAsunto'}
 		//,{name:'despacho'}	
 	]);
 
@@ -380,6 +381,8 @@
 		width:90, dataIndex: 'tipoAsuntoDescripcion',sortable:false
 	},{
 		hidden:true, dataIndex: 'id', fixed:true
+	},{
+		hidden:true, dataIndex: 'idAsunto', fixed:true
 	}]);
 
 
@@ -599,6 +602,7 @@
 			btnEditProcedimiento.disable();
 			btnBorraProcedimiento.disable();
 		} else {
+			idAsuntoSeleccionado = rec.get('idAsunto');
 			btnEditProcedimiento.enable();
 			btnBorraProcedimiento.enable();
 			btnEditar.disable();

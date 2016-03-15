@@ -271,8 +271,10 @@
 
 	var comboPropuestas = new Ext.form.ComboBox({
 	    hiddenName:'propuesta'
+	    ,hiddenValue: 'null'
 	    <app:test id="propuestasCombo" addComa="true" />
 	    ,store: optionsPropuestasStore
+	    ,displayField:'fechaPropuesta'
 	    ,tpl:propuestaTemplate
 	    ,mode: 'local'
 	    ,triggerAction: 'all'
@@ -285,7 +287,7 @@
 	    ,itemSelector: 'div.search-item'
 		,fieldLabel : '<s:message code="procedimientos.edicion.propuestas" text="**Propuestas" />'
 		,onSelect: function(record) {
-			comboPropuestas.setValue(record.data.fechaPropuesta +"  ---  "+record.data.solicitante);
+			comboPropuestas.setValue(record.data.idAcuerdo);
 			comboPropuestas.collapse();
 			comboPropuestas.focus();
 			Ext.Ajax.request({
@@ -312,6 +314,14 @@
 				}
 			});
 		}
+	});
+	
+	optionsPropuestasStore.on('load', function(){
+	  optionsPropuestasStore.add(new optionsPropuestasStore.recordType({
+	    fechaPropuesta: '',
+	    solicitante: '',
+	    idAcuerdo: null,
+	  }, 0));
 	});
 	
 	if(${asunto != null && asunto.tipoAsunto != null}){

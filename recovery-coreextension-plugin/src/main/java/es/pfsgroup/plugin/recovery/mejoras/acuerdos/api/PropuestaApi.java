@@ -137,4 +137,11 @@ public interface PropuestaApi {
      * @param Long idPropuesta
      */
     public List<Contrato> contratosIncluidosEnLosTerminosDeLaPropuesta(Long idPropuesta);
+    
+    /**
+     * 
+     * @param idPropuesta
+     * @param idAsunto
+     */
+    public void asignaPropuestaAlAsunto(Long idPropuesta, Long idAsunto);
 }

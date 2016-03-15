@@ -25,6 +25,7 @@ import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDMotivoRechazoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDSubtipoSolucionAmistosaAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDValoracionActuacionAmistosa;
+import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
@@ -527,5 +528,15 @@ public class PropuestaManager implements PropuestaApi {
 		}
 		
 		return contratos;
+	}
+
+	@Override
+	public void asignaPropuestaAlAsunto(Long idPropuesta, Long idAsunto) {
+		Asunto asunto = genericDao.get(Asunto.class, genericDao.createFilter(FilterType.EQUALS, "id", idAsunto));
+		EXTAcuerdo propuesta = genericDao.get(EXTAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", idPropuesta));
+		if(!Checks.esNulo(asunto) && !Checks.esNulo(propuesta)){
+			propuesta.setAsunto(asunto);
+			acuerdoDao.save(propuesta);
+		}
 	}
 }

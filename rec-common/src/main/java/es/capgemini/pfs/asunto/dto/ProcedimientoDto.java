@@ -50,6 +50,8 @@ public class ProcedimientoDto extends WebDto {
     private BigDecimal saldoOriginalVencido;
     private BigDecimal saldoOriginalNoVencido;
     private String codigoTipoAsunto;
+    private Long propuesta;
+
 
 	private List<Persona> personasAfectadas;
 
@@ -327,6 +329,14 @@ public class ProcedimientoDto extends WebDto {
 
 	public void setCodigoTipoAsunto(String codigoTipoAsunto) {
 		this.codigoTipoAsunto = codigoTipoAsunto;
+	}
+	
+	public Long getPropuesta() {
+		return propuesta;
+	}
+
+	public void setPropuesta(Long propuesta) {
+		this.propuesta = propuesta;
 	}
 
 }

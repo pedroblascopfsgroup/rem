@@ -105,7 +105,7 @@
 		,cm: colM
 		,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
 		,autoWidth: true
-		,autoHeight: true
+		,height: 300
 		,viewConfig : {  forceFit : true}
 		,doLayout: function() {
 			if(this.isVisible()){

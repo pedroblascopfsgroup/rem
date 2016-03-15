@@ -611,7 +611,9 @@ FOR v_letrado IN (SELECT DISTINCT CD_DESPACHO FROM MIG_PROCEDIMIENTOS_CABECERA) 
    --               '||V_ESQUEMA||'.des_despacho_externo   des  on des.des_codigo = '''||v_letrado.CD_DESPACHO||''' inner join 
                '||V_ESQUEMA_MASTER||'.usu_usuarios            usu  on usu.USU_EXTERNO = 1 and usu_username = lhc.dd_lhc_haya_codigo       inner join
                '||V_ESQUEMA_MASTER||'.GRU_GRUPOS_USUARIOS gru on gru.usu_id_usuario = usu.usu_id inner join
-               '||V_ESQUEMA||'.usd_usuarios_despachos      usd  on gru.usu_id_grupo = usd.usu_id                 
+               '||V_ESQUEMA||'.usd_usuarios_despachos      usd  on gru.usu_id_grupo = usd.usu_id 
+--Se añade el gestos por defecto para poner al grupo en la carterizacion				
+				and usd.USD_GESTOR_DEFECTO = 1 
           where not exists (select 1 from '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO gaa where gaa.asu_id = asu.asu_id 
                                                                                            and gaa.dd_tge_id = (select dd_tge_id 
                                                                                                                   from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor 
@@ -651,6 +653,8 @@ FOR v_letrado IN (SELECT DISTINCT CD_DESPACHO FROM MIG_PROCEDIMIENTOS_CABECERA) 
                '||V_ESQUEMA_MASTER||'.usu_usuarios            usu  on usu.USU_EXTERNO = 1 and usu_username = lhc.dd_lhc_haya_codigo       inner join
                '||V_ESQUEMA_MASTER||'.GRU_GRUPOS_USUARIOS gru on gru.usu_id_usuario = usu.usu_id inner join
                '||V_ESQUEMA||'.usd_usuarios_despachos      usd  on gru.usu_id_grupo = usd.usu_id  
+--Se añade el gestos por defecto para poner al grupo en la carterizacion				
+				and usd.USD_GESTOR_DEFECTO = 1 
           where not exists (select 1 from '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gah where gah.gah_asu_id = asu.asu_id 
                                                                                                and GAH_TIPO_GESTOR_ID = (select dd_tge_id 
                                                                                                                            from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor 

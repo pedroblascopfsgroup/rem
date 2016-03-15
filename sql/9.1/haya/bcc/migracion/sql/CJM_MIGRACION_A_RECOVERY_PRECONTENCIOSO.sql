@@ -7,6 +7,7 @@
 --	EJD:> Incluimos filtro por "and cab.fecha_asignacion is null"
 --	EJD:> Incluimos control sobre indice IDX_USUAMOD_PEX
 --	GMN:> Se asigna el DD_TPX_ID (tipo de expediente a recuperaciones - RECU)
+--	GMN:> incluimos AL en filtro marca HAYA (ALCALA)
 /***************************************/
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -125,7 +126,7 @@ BEGIN
                                 inner join '||V_ESQUEMA||'.dd_cre_condiciones_remun_ext r on cnt.dd_cre_id = r.dd_cre_id
                             where 
                                  b.dd_ges_codigo = ''HAYA'' 
-                             and r.dd_cre_codigo  in (''EX'',''CN'',''IM'',''AR'',''MA'',''SC'')                             
+                             and r.dd_cre_codigo  in (''EX'',''CN'',''IM'',''AR'',''MA'',''SC'',''AL'')                             
 --                             and cab.fecha_baja is null and cab.MOTIVO_BAJA is null AND CAB.FECHA_ACEPTACION_LETRADO IS NULL
                              and  cab.fecha_asignacion is not null
 --                                 ( cab.fecha_asignacion is not null                                                          

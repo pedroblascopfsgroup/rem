@@ -102,12 +102,16 @@ BEGIN
                 (select DD_DPA_ID from  '||V_ESQUEMA||'.DD_DPA_DECISION_PARALIZAR      where DD_DPA_CODIGO = ''RD'') as dd_dpa_id,    --> Causa de decisión PDTE RESOLUCIÓN OTRAS OPERACIONES
                 (select DD_EDE_ID from  '||V_ESQUEMA_MASTER||'.DD_EDE_ESTADOS_DECISION where DD_EDE_CODIGO = ''02'') as dd_ede_id,  --> Estado ACEPTADO
                 NULL dpr_process_bpm, 
-                 systimestamp + 700 dpr_fecha_para, -- Fecha hasta la que paralizar
-                ''PDTE RESOLUCIÓN OTRAS OPERACIONES'',
+                systimestamp + 700 dpr_fecha_para, -- Fecha hasta la que paralizar
+		(nvl(cab.MOTIVO_PARALIZACION, ''PDTE RESOLUCIÓN OTRAS OPERACIONES'')||''. Operación Vinculada:[''||nvl(replace(lpad(cab.OPERACION_PARALIZACION_VINCUL,16,''0''), ''0000000000000000'', ''''), ''Sin Informar'')||'']''),
                 '''||USUARIO_C||''', 
                 systimestamp
-            FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC 
-                WHERE USUARIOMODIFICAR = '''||USUARIO_M||'''';
+            FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
+		inner join '||V_ESQUEMA||'.PRC_CEX PCEX ON PCEX.PRC_ID = PRC.PRC_ID
+		INNER JOIN '||V_ESQUEMA||'.CEX_CONTRATOS_EXPEDIENTE CEX ON CEX.CEX_ID = PCEX.CEX_ID
+		INNER JOIN '||V_ESQUEMA||'.EXP_EXPEDIENTES EXP ON EXP.EXP_ID = CEX.EXP_ID
+		INNER JOIN '||V_ESQUEMA||'.MIG_EXPEDIENTES_CABECERA cab ON exp.CD_EXPEDIENTE_NUSE  = cab.cd_expediente 
+           WHERE USUARIOMODIFICAR = '''||USUARIO_M||'''';
 
      EXECUTE IMMEDIATE V_SQL;
 

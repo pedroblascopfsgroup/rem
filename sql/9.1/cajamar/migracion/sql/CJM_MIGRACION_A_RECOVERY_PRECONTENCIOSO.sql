@@ -9,6 +9,7 @@
 --	GMN:> Se asigna el DD_TPX_ID (tipo de expediente a recuperaciones - RECU)
 --	GMN:> Reasignación de estados de expedientes
 --	GMN:> incluimos paralizados sin fecha asignación informada
+--	GMN:> incluimos AL en filtro marca HAYA (ALCALA)
 /***************************************/
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -111,7 +112,8 @@ BEGIN
 	v_SQL := 'ANALYZE TABLE '||V_ESQUEMA||'.MIG_EXPEDIENTES_CABECERA COMPUTE STATISTICS';
 	
 		EXECUTE IMMEDIATE V_SQL;
-	
+
+/*	
 	V_SQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_CREA_ASUNTOSPCO_NUEVOS
                             select DISTINCT
                                    cab.cd_expediente cod_recovery, 
@@ -138,6 +140,37 @@ BEGIN
                                                  where cnt.tmp_cnt_contrato = eop.numero_contrato
                                                    and cnt.tmp_cnt_remu_gest_especial = ''EX'') tmp  
                                                          where tmp.cod_recovery = cab.CD_EXPEDIENTE) ';
+*/
+
+	V_SQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_CREA_ASUNTOSPCO_NUEVOS
+			select DISTINCT
+			       cab.cd_expediente cod_recovery,
+			       cab.cd_expediente cod_workflow,
+			       null fecha_sareb,
+			       null fecha_peticion,
+			       op.NUMERO_CONTRATO cnt_contrato
+			from '||V_ESQUEMA||'.mig_expedientes_cabecera cab
+			inner join '||V_ESQUEMA||'.mig_expedientes_operaciones op on cab.cd_expediente = op.cd_expediente
+			inner join (
+				select distinct eop.cd_expediente as cod_recovery
+				from '||V_ESQUEMA||'.TMP_CNT_CONTRATOS           cnt            
+				, '||V_ESQUEMA||'.MIG_EXPEDIENTES_OPERACIONES eop            
+				where cnt.tmp_cnt_contrato = eop.numero_contrato
+				and cnt.TMP_CNT_COD_GESTION_ESPECIAL = ''HAYA''
+				and cnt.tmp_cnt_remu_gest_especial in (''CN'',''IM'',''AR'',''MA'',''SC'',''AL'')
+			  ) condNew on    condNew.cod_recovery = cab.CD_EXPEDIENTE                 
+			where cab.fecha_asignacion is not null
+			  and NOT EXISTS(SELECT 1
+					    FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA C
+					    WHERE C.CD_EXPEDIENTE_NUSE = CAB.CD_EXPEDIENTE) -- LOS QUE EVOLUCIONAN A PROCEDIMIENTOS NO SE MIGRAN COMO PRECONTENCIOSOS.
+			 AND NOT EXISTS (SELECT 1 FROM (select distinct eop.cd_expediente as cod_recovery
+					from '||V_ESQUEMA||'.TMP_CNT_CONTRATOS           cnt            
+					   , '||V_ESQUEMA||'.MIG_EXPEDIENTES_OPERACIONES eop            
+				       where cnt.tmp_cnt_contrato = eop.numero_contrato
+					 and cnt.tmp_cnt_remu_gest_especial = ''EX'') tmp 
+					       where tmp.cod_recovery = cab.CD_EXPEDIENTE)
+		';
+
 
         COMMIT;
 

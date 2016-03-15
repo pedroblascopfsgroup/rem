@@ -94,6 +94,13 @@ while read tagname; do
             echo "cd ./$count/DML/" >> ./package-tags/run-scripts-package.sh
             echo "./DML-scripts.sh \$1 \$2" >> ./package-tags/run-scripts-package.sh
         fi
+        if [ -e ./sql/tool/tmp/package/DB-scripts.zip ] ; then
+            cp -r ./sql/tool/tmp/package/DB ./package-tags/$count/
+            echo "if [ \$? != 0 ];then  exit 1; fi" >> ./package-tags/run-scripts-package.sh
+            echo "cd \$DIR_ORIG" >> ./package-tags/run-scripts-package.sh
+            echo "cd ./$count/DB/" >> ./package-tags/run-scripts-package.sh
+            echo "./DB-scripts.sh \$1 \$2" >> ./package-tags/run-scripts-package.sh
+        fi
         tagnametmp=$tagname
     fi
     count=$((count + 1))

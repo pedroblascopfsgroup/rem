@@ -1,15 +1,22 @@
  package es.capgemini.pfs.asunto.model;
 
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -30,6 +37,7 @@ public class DDTiposAsunto implements Auditable, Dictionary {
     public static final String CONCURSAL = "02";
     public static final String ESPECIALIZADA = "03";
     public static final String ESPECIALIZADA_SAREB = "04";
+    public static final String ACUERDO = "ACU";
 
     @Id
     @Column(name = "DD_TAS_ID")
@@ -43,8 +51,13 @@ public class DDTiposAsunto implements Auditable, Dictionary {
 
     @Column(name = "DD_TAS_DESCRIPCION_LARGA")
     private String descripcionLarga;
+    
+    @OneToMany(mappedBy = "tipoAsunto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TAS_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private List<DDTipoActuacion> tiposActuacion;
 
-    @Embedded
+	@Embedded
     private Auditoria auditoria;
 
     @Version
@@ -133,6 +146,14 @@ public class DDTiposAsunto implements Auditable, Dictionary {
     public void setVersion(Integer version) {
         this.version = version;
     }
+    
+    public List<DDTipoActuacion> getTiposActuacion() {
+		return tiposActuacion;
+	}
+
+	public void setTiposActuacion(List<DDTipoActuacion> tiposActuacion) {
+		this.tiposActuacion = tiposActuacion;
+	}
 }
 
 

@@ -24,7 +24,8 @@
 	    	<evaluate expression="requestParameters.idExpediente" result="idExpediente" />
             <evaluate expression="executor.execute('asuntosManager.obtenerAsuntosDeUnExpediente',idExpediente)" result="flowScope.asuntos" />
 	    	<evaluate expression="executor.execute('procedimientoManager.getProcedimiento', idProcedimiento)" result="flowScope.procedimiento" />
-	    	<evaluate expression="executor.execute('procedimientoManager.getTiposActuacion')" result="flowScope.tiposActuacion" />
+			<!-- <evaluate expression="executor.execute('procedimientoManager.getTiposActuacion')" result="flowScope.tiposActuacion" /> -->
+			<evaluate expression="executor.execute('procedimientoManager.getTiposActuacionByTipoAsunto', idAsunto)" result="flowScope.tiposActuacion" />
 	    	<evaluate expression="executor.execute('procedimientoManager.getTiposProcedimiento')" result="flowScope.tiposProcedimientos" />
 	    	<evaluate expression="executor.execute('procedimientoManager.getTiposReclamacion')" result="flowScope.tiposReclamacion" />
 	    	<evaluate expression="executor.execute('expedienteManager.findExpedientesContratoPorId', idExpediente)" result="flowScope.contratos" />

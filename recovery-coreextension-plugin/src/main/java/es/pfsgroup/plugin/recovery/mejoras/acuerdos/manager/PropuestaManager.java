@@ -41,12 +41,14 @@ import es.capgemini.pfs.registro.CumplimientoAcuerdoListener;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
+import es.capgemini.pfs.termino.model.TerminoContrato;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
@@ -497,5 +499,33 @@ public class PropuestaManager implements PropuestaApi {
 				l.fireEvent(map);
 			}
 		}
+	}
+	
+	@Override
+	public List<EXTAcuerdo> listadoPropuestasDelExpediente(Long idExpediente, String estadoAcuerdo ) {
+
+		Order order = new Order(OrderType.ASC, "id");
+		Filter fExp = genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente);
+		Filter fEstAcu = null;
+		if(!Checks.esNulo(estadoAcuerdo)){
+			fEstAcu = genericDao.createFilter(FilterType.EQUALS, "estadoAcuerdo.codigo", estadoAcuerdo);
+		}
+		return  genericDao.getListOrdered(EXTAcuerdo.class,order, fExp, fEstAcu);
+	}
+
+	@Override
+	public List<Contrato> contratosIncluidosEnLosTerminosDeLaPropuesta(Long idPropuesta) {
+
+		List<TerminoContrato> teaCnts = genericDao.getList(TerminoContrato.class,genericDao.createFilter(FilterType.EQUALS, "termino.acuerdo.id", idPropuesta), genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+		
+		List<Contrato> contratos = new ArrayList<Contrato>();
+		
+		for(TerminoContrato teaCnt : teaCnts){
+			if(!contratos.contains(teaCnt.getContrato())){
+				contratos.add(teaCnt.getContrato());
+			}
+		}
+		
+		return contratos;
 	}
 }

@@ -237,6 +237,84 @@
 	});
 
 
+	<%-- Comobo para seleccionar propuestas, solo estara visible si el tipo de asunto es ACUERDO --%>
+	
+	var propuestaRecord = Ext.data.Record.create([
+		 {name:'fechaPropuesta'}
+		,{name:'solicitante'}
+		,{name:'idAcuerdo'}
+	]);
+	
+	var optionsPropuestasStore = page.getStore({
+	       flow: 'propuestas/getPropuestasElevadasDelExpediente'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'acuerdos'
+	    }, propuestaRecord)    
+	});
+	
+	var  TIPO_ASUNTO_ACUERDO = "<fwk:const value="es.capgemini.pfs.asunto.model.DDTiposAsunto.ACUERDO" />";
+	
+	var propuestaTemplate = new Ext.XTemplate(
+        '<tpl for="."><div class="search-item">',
+            '<p>{fechaPropuesta}&nbsp;&nbsp;---&nbsp;&nbsp;{solicitante}</p>',
+        '</div></tpl>'
+    );
+
+	var comboPropuestas = new Ext.form.ComboBox({
+	    hiddenName:'propuesta'
+	    <app:test id="propuestasCombo" addComa="true" />
+	    ,store: optionsPropuestasStore
+	    ,tpl:propuestaTemplate
+	    ,mode: 'local'
+	    ,triggerAction: 'all'
+	    ,hidden:true
+	    ,emptyText:'----'
+	    ,valueField: 'idAcuerdo'
+		,width:250
+		,labelStyle:labelStyle
+	    ,editable : false
+	    ,itemSelector: 'div.search-item'
+		,fieldLabel : '<s:message code="procedimientos.edicion.propuestas" text="**Propuestas" />'
+		,onSelect: function(record) {
+			comboPropuestas.setValue(record.data.fechaPropuesta +"  ---  "+record.data.solicitante);
+			comboPropuestas.collapse();
+			comboPropuestas.focus();
+			Ext.Ajax.request({
+				url : page.resolveUrl('propuestas/contratosIncluidosEnLosTerminosDeLaPropuesta'), 
+				params : {
+							idPropuesta:record.data.idAcuerdo
+						},
+				method: 'POST',
+				success: function ( result, request ) {
+						var resultado = Ext.decode(result.responseText);
+						var contratos = new Array();
+						for(i=0;i < resultado.contratos.length; i++){
+							contratos.push(resultado.contratos[i].id);
+						}
+						var position = 0;
+						contratosStore.each( function(record){
+							if(contratos.indexOf(record.data.id) != -1){
+								myCboxSelModelContratos.selectRow(position,true);
+							}else if(myCboxSelModelContratos.isSelected( position )){
+								myCboxSelModelContratos.deselectRow(position,true);
+							}
+							position++;
+    					});
+				}
+			});
+		}
+	});
+	
+	if(${asunto != null && asunto.tipoAsunto != null}){
+		codAsu = "${asunto.tipoAsunto.codigo}";
+		if(codAsu == TIPO_ASUNTO_ACUERDO){
+			optionsPropuestasStore.webflow({idExpediente:${idExpediente}});
+			comboPropuestas.setVisible(true);
+			saldoARecuperar.setVisible(false);
+			recuperacion.setVisible(false);
+			meses.setVisible(false);
+		}
+	}
 
 	var dictTipoActuacion = <app:dict value="${tiposActuacion}" />;
 
@@ -395,7 +473,7 @@
 
 /** DEFINICION DEL CHECK COLUM PARA LA LISTA DE CONTRATOS**/	
 	
-	Ext.grid.CheckColumn2 = function(config){
+<%--	Ext.grid.CheckColumn2 = function(config){
     	Ext.apply(this, config);
 	    if(!this.id){
 	        this.id = Ext.id();
@@ -452,6 +530,60 @@
 	   	}
 	};
 
+ --%>
+ 
+	var myCboxSelModelContratos = new Ext.grid.CheckboxSelectionModel({
+  		singleSelect: false,
+  		header:''
+	});
+	
+    
+    var actualizaDatosContratosMarcados = function(checked, record){
+    
+    	if (!enConformacion) return;
+     	
+        contratosSeleccionados = rearmarArray(contratosSeleccionados,record.data['id']);
+		cexSeleccionados = rearmarArray(cexSeleccionados,record.data['idCex']);
+        contratosSeleccionadosString = armarString(contratosSeleccionados);
+        
+        //Falta el campo hidden para agregar al fieldSetActuacion
+        seleccionContratos.setValue(cexSeleccionados);
+        record.set(this.dataIndex, !eval(record.data[this.dataIndex]));
+        clientesIncluirStore.webflow({
+			contratos:contratosSeleccionadosString,
+			idProcedimiento:<c:if test="${procedimiento!=null}">'${procedimiento.id}'</c:if>
+		                <c:if test="${procedimiento==null}">'0'</c:if>
+		});
+		
+		// Recalculamos los saldos recuperados para el procedimiento
+		var totalSaldoOriginalVencido = new Number(sOrigVenc.getValue());
+		var totalSaldoOriginalNoVencido = new Number(sOrigNoVenc.getValue());
+		
+		if(checked) {
+			totalSaldoOriginalVencido += record.data['saldoIrregular'];
+			totalSaldoOriginalNoVencido += record.data['saldoNoVencido'];
+		} else {
+			totalSaldoOriginalVencido -= record.data['saldoIrregular'];
+			totalSaldoOriginalNoVencido -= record.data['saldoNoVencido'];
+		}
+		
+		sOrigVenc.setValue(totalSaldoOriginalVencido);
+		sOrigNoVenc.setValue(totalSaldoOriginalNoVencido);
+		saldoOriginalVencido.setValue(app.format.moneyRenderer(totalSaldoOriginalVencido));
+		saldoOriginalNoVencido.setValue(app.format.moneyRenderer(totalSaldoOriginalNoVencido));
+    
+    };
+    
+    var contratosRowselectListener = function (el, rowIndex, r){
+		actualizaDatosContratosMarcados(true, r);
+    };
+    
+    var contratosRowDeselectListener = function (el, rowIndex, r){
+		actualizaDatosContratosMarcados(false, r);
+    };
+	
+	myCboxSelModelContratos.addListener('rowselect', contratosRowselectListener);
+	myCboxSelModelContratos.addListener('rowdeselect', contratosRowDeselectListener);
 
 
 /******/
@@ -527,6 +659,7 @@
 
 	contratosStore.webflow({idExpediente:${idExpediente}, idProcedimiento:'${procedimiento.id}'});
 
+<%--
 	var checkColumnContratos = new Ext.grid.CheckColumn2({
 		header : '<s:message code="procedimientos.edicion.grid.incluido" text="**Incluir" />'
 		,width: 100,dataIndex : 'seleccionado'
@@ -558,6 +691,36 @@
 			  Ext.grid.GridPanel.prototype.doLayout.call(this);
 		}
 	});
+ --%>	
+ 
+ 	var contratosCm = new Ext.grid.ColumnModel([
+		{dataIndex : 'idCex', hidden:true, fixed:true}
+		,{dataIndex : 'id', hidden:true, fixed:true}
+		,{header : '<s:message code="procedimientos.edicion.gridContratos.codigo" text="**Contrato"/>',width: 200, dataIndex : 'cc' }
+		,{header : '<s:message code="procedimientos.edicion.gridContratos.tipo" text="**Tipo"/>',width: 200, dataIndex : 'tipo' }
+		,{header : '<s:message code="procedimientos.edicion.gridContratos.saldoVencido" text="**Saldo Vencido"/>',width: 125, dataIndex : 'saldoIrregular', renderer: app.format.moneyRenderer, align:'right' }
+		,{header : '<s:message code="procedimientos.edicion.gridContratos.saldoTotal" text="**Saldo Total"/>',width: 125, dataIndex : 'saldoTotal' , renderer: app.format.moneyRenderer, align:'right' }
+		,myCboxSelModelContratos
+	]);
+	
+	var contratosGrid = app.crearEditorGrid(contratosStore,contratosCm,{
+        title:'<s:message code="procedimientos.edicion.grid.contratos.titulo" text="**Contratos a incluir" />'
+		,sm: myCboxSelModelContratos
+        ,cls:'cursor_pointer'
+		,style:'padding-right:10px'
+        ,iconCls:'icon_personas'
+        ,height:130
+        ,width: 650
+        ,parentWidth:885
+		,loadMask: true
+        ,viewConfig: {forceFit: true}
+        ,autoExpand:true
+        ,clicksToEdit: 1
+       	,style:'padding-top:10px'
+		,cls:'cursor_pointer'
+		,iconCls : 'icon_contratos'
+		,autoWidth: true
+    });
 
 	var inicializarContratosPersonas = function() {
 		for (var i=0; i < contratosStore.getTotalCount(); i++){
@@ -638,6 +801,7 @@
 					,comboTipoReclamacion
 					//,asuntoLabel
 					,comboAsuntos
+					,comboPropuestas
 					//,idAsuntoH
 					,seleccionPersonas
 					,seleccionContratos

@@ -2,7 +2,9 @@ package es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -383,11 +385,28 @@ public class InformeValidacionCDDBean {
 		String tipoProcedimiento = mapaTiposProcedimiento.get(NMBProjectContextImpl.CONST_TIPO_PROCEDIMIENTO_ADJUDICACION);
 		
 		Procedimiento prc = (Procedimiento) proxyFactory.proxy(SubastaApi.class).getProcedimientoBienByIdPadre(nmbBien, this.informeDTO.getSubasta(), tipoProcedimiento);
+		
+		if (prc == null)
+			prc = getProcedimientoBienByIdPadre(nmbBien, informeDTO.getSubasta());
+		
 		ValorNodoTarea valor = (ValorNodoTarea) proxyFactory.proxy(SubastaApi.class).obtenValorNodoPrc(prc, nombreTarea, VALOR_FECHA_TESTIMONIO);
 
 		if(!Checks.esNulo(valor)) {
 			return valor.getValor();
 		}
+		
+		return null;
+	}
+	
+	
+	private Procedimiento getProcedimientoBienByIdPadre(NMBBien nmbBien, Subasta subasta){
+		
+		CharSequence tiposProcedimientos[] = {"H002","H001","H018","H020"};			
+		for (CharSequence proc : tiposProcedimientos) {
+			Procedimiento prc = (Procedimiento) proxyFactory.proxy(SubastaApi.class).getProcedimientoBienByIdPadre(nmbBien, this.informeDTO.getSubasta(), proc.toString());
+			if (prc != null)
+				return prc;
+		}		
 		return null;
 	}
 	

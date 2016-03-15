@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import es.capgemini.pfs.bien.model.DDTipoBien;
@@ -83,7 +84,7 @@ public interface NMBBienInfo {
 	/**
 	 * Devuelve el importe de las cargas registradas
 	 */
-	Float getImporteCargas();
+	BigDecimal getImporteCargas();
 	
 	/**
 	 * Devuelve el c�digo interno del bien

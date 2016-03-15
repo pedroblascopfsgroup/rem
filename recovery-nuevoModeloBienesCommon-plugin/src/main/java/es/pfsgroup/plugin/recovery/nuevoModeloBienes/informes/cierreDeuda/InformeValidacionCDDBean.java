@@ -59,46 +59,56 @@ public class InformeValidacionCDDBean {
 		StringBuilder sb = new StringBuilder();
 		ProcedimientoSubastaCDD procedimientoSubastaCDD = new ProcedimientoSubastaCDD();
 
-		if(Checks.esNulo(subasta.getProcedimiento().getTipoProcedimiento())) {
-			procedimientoSubastaCDD.setTipoProcedimiento(null);
-		}else{
-			procedimientoSubastaCDD.setTipoProcedimiento(subasta.getProcedimiento().getTipoProcedimiento().getCodigo() + " - " + subasta.getProcedimiento().getTipoProcedimiento().getDescripcion());			
+		if (!Checks.esNulo(subasta.getProcedimiento()) && !Checks.esNulo(subasta.getProcedimiento().getTipoProcedimiento())) {
+				procedimientoSubastaCDD.setTipoProcedimiento(subasta.getProcedimiento().getTipoProcedimiento().getCodigo() + " - " + subasta.getProcedimiento().getTipoProcedimiento().getDescripcion());			
 		}
-		if (Checks.esNulo(procedimientoSubastaCDD.getTipoProcedimiento())) {
+		else{
 			sb.append("Tipo procedimiento; ");
 		}
-
-		procedimientoSubastaCDD.setLetrado(subasta.getAsunto().getGestor().getUsuario().getApellidoNombre());
-		if (Checks.esNulo(procedimientoSubastaCDD.getLetrado())) {
+		
+		if (!Checks.esNulo(subasta.getAsunto()) && !Checks.esNulo(subasta.getAsunto().getGestor())
+				&& !Checks.esNulo(subasta.getAsunto().getGestor().getUsuario())) {
+			procedimientoSubastaCDD.setLetrado(subasta.getAsunto().getGestor().getUsuario().getApellidoNombre());
+		}
+		else{
 			sb.append("Letrado; ");
 		}
 
-		if(Checks.esNulo(subasta.getProcedimiento().getJuzgado())) {
-			procedimientoSubastaCDD.setJuzgado(null);
-		}else{
-			procedimientoSubastaCDD.setJuzgado(subasta.getProcedimiento().getJuzgado().getDescripcion());			
+		if (!Checks.esNulo(subasta.getProcedimiento())) {
+			if(!Checks.esNulo(subasta.getProcedimiento().getJuzgado())) {
+				procedimientoSubastaCDD.setJuzgado(subasta.getProcedimiento().getJuzgado().getDescripcion());
+			}else{
+				sb.append("Juzgado; ");			
+			}
+	
+			procedimientoSubastaCDD.setPrincipal(convertObjectString(subasta.getProcedimiento().getSaldoRecuperacion()));
+			if (Checks.esNulo(procedimientoSubastaCDD.getPrincipal())) {
+				sb.append("Principal; ");
+			}
 		}
-		if (Checks.esNulo(procedimientoSubastaCDD.getJuzgado())) {
+		else{
 			sb.append("Juzgado; ");
-		}
-
-		procedimientoSubastaCDD.setPrincipal(convertObjectString(subasta.getProcedimiento().getSaldoRecuperacion()));
-		if (Checks.esNulo(procedimientoSubastaCDD.getPrincipal())) {
 			sb.append("Principal; ");
 		}
-
+		
 		procedimientoSubastaCDD.setDeudaJudicial(convertObjectString(subasta.getDeudaJudicial()));
 		if (Checks.esNulo(procedimientoSubastaCDD.getDeudaJudicial())) {
 			sb.append("Deuda judicial; ");
 		}
 
-		procedimientoSubastaCDD.setCostasLetrado(getCostas(subasta, VALOR_COSTAS_LETRADO));
-		if (Checks.esNulo(procedimientoSubastaCDD.getCostasLetrado())) {
-			sb.append("Costas letrado; ");
+		if (!Checks.esNulo(subasta.getProcedimiento())) {
+			procedimientoSubastaCDD.setCostasLetrado(getCostas(subasta, VALOR_COSTAS_LETRADO));
+			if (Checks.esNulo(procedimientoSubastaCDD.getCostasLetrado())) {
+				sb.append("Costas letrado; ");
+			}
+	
+			procedimientoSubastaCDD.setCostasProcurador(getCostas(subasta, VALOR_COSTAS_PROCURADOR));
+			if (Checks.esNulo(procedimientoSubastaCDD.getCostasProcurador())) {
+				sb.append("Costas procurador; ");
+			}
 		}
-
-		procedimientoSubastaCDD.setCostasProcurador(getCostas(subasta, VALOR_COSTAS_PROCURADOR));
-		if (Checks.esNulo(procedimientoSubastaCDD.getCostasProcurador())) {
+		else{
+			sb.append("Costas letrado; ");
 			sb.append("Costas procurador; ");
 		}
 
@@ -107,11 +117,16 @@ public class InformeValidacionCDDBean {
 			sb.append("Fecha celebracion subasta; ");
 		}
 
-		procedimientoSubastaCDD.setSubastaConPostores((getSubastaConPostores(subasta)) == "01" ? "Si" : "No");
-		if (Checks.esNulo(procedimientoSubastaCDD.getSubastaConPostores())) {
+		if (!Checks.esNulo(subasta.getProcedimiento())) {
+			procedimientoSubastaCDD.setSubastaConPostores((getSubastaConPostores(subasta)) == "01" ? "Si" : "No");
+			if (Checks.esNulo(procedimientoSubastaCDD.getSubastaConPostores())) {
+				sb.append("Subasta con postores; ");
+			}
+		}
+		else{
 			sb.append("Subasta con postores; ");
 		}
-
+		
 		camposVacios += sb.toString();
 		return procedimientoSubastaCDD;
 	}

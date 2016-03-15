@@ -528,8 +528,10 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                 param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_CE);
             } else if (DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE.equals(codigoEstado)) {
                 param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_RE);
-            } else {
+            } else if (DDEstadoItinerario.ESTADO_DECISION_COMIT.equals(codigoEstado)){
                 param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC);
+            }else if(DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA.equals(codigoEstado)){
+            	param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_FP);
             }
         } else if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidad.getCodigo())) {
 

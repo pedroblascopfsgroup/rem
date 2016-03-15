@@ -1154,10 +1154,13 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the expedienteContrato
      */
     public ExpedienteContrato getExpedienteContratoActivo() {
-        for (ExpedienteContrato exp : expedienteContratos) {
-            if (!DDEstadoExpediente.ESTADO_EXPEDIENTE_CANCELADO.equals(exp.getExpediente().getEstadoExpediente().getCodigo())) { return exp; }
+	    for (ExpedienteContrato exp : expedienteContratos) {
+	    	if(exp.getExpediente() != null && exp.getExpediente().getEstadoExpediente() != null) {
+	            if (!DDEstadoExpediente.ESTADO_EXPEDIENTE_CANCELADO.equals(exp.getExpediente().getEstadoExpediente().getCodigo())) { return exp; }
+	    	}
         }
-        return null;
+
+    	return null;
     }
 
     /**

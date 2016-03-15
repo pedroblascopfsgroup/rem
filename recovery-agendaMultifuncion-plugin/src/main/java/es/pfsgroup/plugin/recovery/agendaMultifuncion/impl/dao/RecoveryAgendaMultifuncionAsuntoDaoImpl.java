@@ -309,10 +309,10 @@ public class RecoveryAgendaMultifuncionAsuntoDaoImpl extends AbstractEntityDao<A
         if (requiereProcedimiento(dto) && requiereFiltrarPorSaldoTotal(dto)) {
 
             if (dto.getMaxSaldoTotalContratos() == null) {
-                dto.setMaxSaldoTotalContratos((double) Integer.MAX_VALUE);
+                dto.setMaxSaldoTotalContratos((float) Integer.MAX_VALUE);
             }
             if (dto.getMinSaldoTotalContratos() == null) {
-                dto.setMinSaldoTotalContratos(0d);
+                dto.setMinSaldoTotalContratos(0f);
             }
 
             hql.append(" and a.id in ");

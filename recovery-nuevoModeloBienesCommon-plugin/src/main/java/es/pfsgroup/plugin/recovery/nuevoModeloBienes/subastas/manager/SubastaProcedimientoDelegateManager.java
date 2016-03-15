@@ -586,7 +586,7 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 					}
 					if(Checks.esNulo(v.getImporteValorTasacion())){
 						return "<div align=\"justify\" style=\"font-size: 8pt; font-family: Arial; margin-bottom: 10px;\">Debe completar el importe de tasaci&oacute;n</div>";
-					}else if (v.getImporteValorTasacion() == 0){
+					}else if (v.getImporteValorTasacion().equals(new BigDecimal("0"))){
 						return "<div align=\"justify\" style=\"font-size: 8pt; font-family: Arial; margin-bottom: 10px;\">El importe de tasaci&oacute;n debe ser mayor que cero</div>";
 					}
 				}

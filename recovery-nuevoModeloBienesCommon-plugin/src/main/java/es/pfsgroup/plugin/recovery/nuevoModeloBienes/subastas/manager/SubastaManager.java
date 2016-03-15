@@ -104,6 +104,7 @@ import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 
 
+@SuppressWarnings("deprecation")
 @Service("subastaManager")
 public class SubastaManager implements SubastaApi {
 	
@@ -986,88 +987,86 @@ public class SubastaManager implements SubastaApi {
 	}
 
 	//M�todo que calcula si se puede mostrar el bot�n de solicitar tasaci�n
-	//FIXME Oscar: creo que este método no funciona por culpa de la llamada getSubastasporIdBien
 	@BusinessOperation(BO_NMB_SUBASTA_PERMITE_SOLICITAR_TASACION)
 	public Integer permiteSolicitarTasacion(Long id){
 			
 			try{
-			Integer flag = 1;
-			
-			//Obtenemos el Bien
-			NMBBien bien = nmbBienDao.get(id);
-			
-			//Obtenemos la subasta 
-			Subasta subasta = null;
-			List<Subasta> listaSubastas = subastaDao.getSubastasporIdBien(id);	
-			if(listaSubastas != null && listaSubastas.size()!=0){
-				for(Subasta s : listaSubastas){
-					if(subasta!=null){
-						if(s.getFechaSenyalamiento()!=null && subasta.getFechaSenyalamiento()!=null){
-							if(s.getFechaSenyalamiento().after(subasta.getFechaSenyalamiento())){
-							subasta = s;
+				Integer flag = 1;
+				
+				//Obtenemos el Bien
+				NMBBien bien = nmbBienDao.get(id);
+				
+				// No se permite solicitar tasación si el bien no está incluido en un trámite de subasta
+				boolean esTramiteSubasta = false;
+				for(ProcedimientoBien prcBien : bien.getProcedimientos()) {
+					esTramiteSubasta = (Boolean) executor.execute("es.pfsgroup.recovery.mejoras.procedimiento.api.esTramiteSubastaByPrcId", prcBien.getProcedimiento().getId());
+					if(esTramiteSubasta) {
+						break;
+					}
+				}
+				
+				if(!esTramiteSubasta) {
+					flag=-6;
+				}
+				else {
+				
+					//Obtenemos la subasta 
+					Subasta subasta = null;
+					List<Subasta> listaSubastas = subastaDao.getSubastasporIdBien(id);	
+					if(listaSubastas != null && listaSubastas.size()!=0){
+						for(Subasta s : listaSubastas){
+							if(subasta!=null){
+								if(s.getFechaSenyalamiento()!=null && subasta.getFechaSenyalamiento()!=null){
+									if(s.getFechaSenyalamiento().after(subasta.getFechaSenyalamiento())){
+									subasta = s;
+									}
+								}
+								else{
+									if(subasta.getFechaSenyalamiento()==null && s.getFechaSenyalamiento()!=null){
+										subasta = s;
+									}
+								}	
 							}
-						}
-						else{
-							if(subasta.getFechaSenyalamiento()==null && s.getFechaSenyalamiento()!=null){
+							else{
 								subasta = s;
 							}
-						}	
+						}
 					}
-					else{
-						subasta = s;
-					}
-				}
-			}
-			//-1 --> No se permite solicitar tasaci�n, el bien no est� en ninguna subasta o la subasta no tiene fecha de se�alamiento
-			if(subasta == null || subasta.getFechaSenyalamiento() == null){
-				flag=-1;
-			}
-			else{
-				GregorianCalendar g1 = new GregorianCalendar();
-				GregorianCalendar g2 = new GregorianCalendar();//fecha actual
-				NMBValoracionesBienInfo valoracion = bien.getValoracionActiva(); 
-				
-				//Calculamos la diferencia en meses entre la fecha actual y la fecha de celebraci�n de subasta
-				Integer calculoDifSubasta = null;
-				if(subasta.getFechaSenyalamiento()!=null){
-					g1.setTime(subasta.getFechaSenyalamiento());
-					calculoDifSubasta = getMonths(g2, g1);	
-				}		
-				
-				 //Calculamos  la diferencia entre la fecha actual y la fecha de valor tasaci�n
-				Integer calculoDifTasacion = null;
-				if(valoracion!=null && valoracion.getFechaValorTasacion()!=null){
-					 g1.setTime(valoracion.getFechaValorTasacion());
-					 calculoDifTasacion = getMonths(g1, g2);	
-				}
-				
-				//-2 --> No se permite solicitar tasaci�n, quedan m�s de 3 meses para la celebraci�n de la subasta
-				if(calculoDifSubasta!=null && calculoDifSubasta>=3){
-					flag = -2;
-				}	
-				else{
-					//-3 --> No se permite solicitar tasaci�n, existe una solicitud de tasaci�n en curso
-					if(calculoDifSubasta!=null && calculoDifSubasta<3 && valoracion.getCodigoNuita()!=null && valoracion.getFechaValorTasacion() == null){
+					
+					GregorianCalendar g1 = new GregorianCalendar();
+					GregorianCalendar g2 = new GregorianCalendar();//fecha actual
+					NMBValoracionesBienInfo valoracion = bien.getValoracionActiva(); 
+					
+					//Calculamos la diferencia en meses entre la fecha actual y la fecha de celebraci�n de subasta
+					Integer calculoDifSubasta = null;
+					if(subasta != null && subasta.getFechaSenyalamiento()!=null){
+						g1.setTime(subasta.getFechaSenyalamiento());
+						calculoDifSubasta = getMonths(g2, g1);	
+					}		
+					
+					 //Calculamos  la diferencia entre la fecha actual y la fecha de valor tasaci�n
+					Integer calculoDifTasacion = null;
+					if(valoracion!=null && valoracion.getFechaValorTasacion()!=null){
+						 g1.setTime(valoracion.getFechaValorTasacion());
+						 calculoDifTasacion = getMonths(g1, g2);	
+					}					
+					
+					//-3 --> No se permite solicitar tasación, existe una solicitud de tasación en curso
+					if(valoracion.getCodigoNuita()!=null && valoracion.getFechaValorTasacion() == null){
 						flag = -3;
 					}
 					else{
 						
-						// -4 --> No se permite solicitar tasaci�n, existe una tasaci�n de menos de 3 meses de antig�edad
+						// -4 --> No se permite solicitar tasación, existe una tasación de menos de 3 meses de antigüedad
 						if(calculoDifSubasta!=null && calculoDifSubasta<3 && valoracion.getCodigoNuita()!=null && calculoDifTasacion!=null && calculoDifTasacion < 3 ){
 							flag = -4;
 						}
-						
-						//-5 --> No se permite solicitar tasaci�n, existe una tasaci�n de menos de 3 meses de antig�edad
-						if(calculoDifSubasta!=null && calculoDifSubasta<3 && valoracion.getCodigoNuita()==null && calculoDifTasacion!=null && calculoDifTasacion < 3){
-							flag = -5;
-						}
 					}
-				}
-			
+				}			
+				
+				return flag;
 			}
-			
-			return flag;
-			}catch(Exception e){
+			catch(Exception e){
 				logger.error("SubastaManager.permiteSolicitarTasacion "+e);
 				return 0;
 			}

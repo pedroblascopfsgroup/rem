@@ -120,6 +120,15 @@
 			,value:'${procedimiento.asunto.id}'
 		</c:if>
 	});
+	
+
+	var codTipoAsu = new Ext.form.Hidden({
+		name:'codigoTipoAsunto'
+		<c:if test="${asunto != null && asunto.tipoAsunto != null}">
+        	,value:'${asunto.tipoAsunto.codigo}'
+		</c:if>
+	});
+	
 
 	var saldoARecuperar = 
 		app.creaNumber('saldorecuperar',
@@ -473,64 +482,6 @@
 
 /** DEFINICION DEL CHECK COLUM PARA LA LISTA DE CONTRATOS**/	
 	
-<%--	Ext.grid.CheckColumn2 = function(config){
-    	Ext.apply(this, config);
-	    if(!this.id){
-	        this.id = Ext.id();
-			}
-	    this.renderer = this.renderer.createDelegate(this);
-	};	
-
-	Ext.grid.CheckColumn2.prototype ={
-    	init : function(grid){
-        	this.grid = grid;
-        	this.grid.on('render', function(){
-        	    var view = this.grid.getView();
-    	        view.mainBody.on('mousedown', this.onMouseDown, this);
-        	}, this);
-    	},
-			
-    	onMouseDown : function(e, t){
-			if (!enConformacion) return;
-           	if(t.className && t.className.indexOf('x-grid3-cc-'+this.id) != -1){
-            	e.stopEvent();
-            	var index = this.grid.getView().findRowIndex(t);
-            	var record = this.grid.store.getAt(index);
-            	contratosSeleccionados = rearmarArray(contratosSeleccionados,record.data['id']);
-				cexSeleccionados = rearmarArray(cexSeleccionados,record.data['idCex']);
-            	contratosSeleccionadosString = armarString(contratosSeleccionados);
-            	//Falta el campo hidden para agregar al fieldSetActuacion
-            	seleccionContratos.setValue(cexSeleccionados);
-            	record.set(this.dataIndex, !eval(record.data[this.dataIndex]));
-            	clientesIncluirStore.webflow({
-						contratos:contratosSeleccionadosString,
-						idProcedimiento:<c:if test="${procedimiento!=null}">'${procedimiento.id}'</c:if>
-						                <c:if test="${procedimiento==null}">'0'</c:if>
-	});
-				// Recalculamos los saldos recuperados para el procedimiento
-				var totalSaldoOriginalVencido = new Number(sOrigVenc.getValue());
-				var totalSaldoOriginalNoVencido = new Number(sOrigNoVenc.getValue());
-				if(record.data['seleccionado']==true) {
-					totalSaldoOriginalVencido += record.data['saldoIrregular'];
-					totalSaldoOriginalNoVencido += record.data['saldoNoVencido'];
-				} else {
-					totalSaldoOriginalVencido -= record.data['saldoIrregular'];
-					totalSaldoOriginalNoVencido -= record.data['saldoNoVencido'];
-				}
-				sOrigVenc.setValue(totalSaldoOriginalVencido);
-				sOrigNoVenc.setValue(totalSaldoOriginalNoVencido);
-				saldoOriginalVencido.setValue(app.format.moneyRenderer(totalSaldoOriginalVencido));
-				saldoOriginalNoVencido.setValue(app.format.moneyRenderer(totalSaldoOriginalNoVencido));
-           	}
-    	},
-	
-	    renderer : function(v, p, record){
-        	p.css += ' x-grid3-check-col-td'; 
-	       	return '<div class="x-grid3-check-col'+(v?'-on':'')+' x-grid3-cc-'+this.id+'"> </div>';
-	   	}
-	};
-
- --%>
  
 	var myCboxSelModelContratos = new Ext.grid.CheckboxSelectionModel({
   		singleSelect: false,
@@ -809,6 +760,7 @@
 					,enConformacionHidden
 					,sOrigVenc
 					,sOrigNoVenc
+					,codTipoAsu
 				]
 				,style : 'margin-right:10px'
 				

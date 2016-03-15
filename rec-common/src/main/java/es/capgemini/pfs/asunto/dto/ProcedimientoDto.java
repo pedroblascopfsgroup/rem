@@ -9,6 +9,8 @@ import org.springframework.binding.message.MessageContext;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.validation.ErrorMessageUtils;
 import es.capgemini.devon.validation.ValidationException;
+import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
+import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.persona.model.Persona;
 
@@ -47,8 +49,9 @@ public class ProcedimientoDto extends WebDto {
     private String seleccionPersonas;
     private BigDecimal saldoOriginalVencido;
     private BigDecimal saldoOriginalNoVencido;
+    private String codigoTipoAsunto;
 
-    private List<Persona> personasAfectadas;
+	private List<Persona> personasAfectadas;
 
     private List<ExpedienteContrato> contratosAfectados;
 
@@ -86,15 +89,15 @@ public class ProcedimientoDto extends WebDto {
                 context.addMessage(new MessageBuilder().code(TIPO_ACTUACION_NULO).error().source("").defaultText(
                         "**Debe seleccionar un tipo de Actuación.").build());
             }
-            if (saldorecuperar == null) {
+            if (!DDTiposAsunto.ACUERDO.equals(codigoTipoAsunto) && saldorecuperar == null) {
                 context.addMessage(new MessageBuilder().code(SALDO_RECUPERAR_NULO).error().source("").defaultText(
                         "**Debe introducir un saldo a recuperar.").build());
             }
-            if (recuperacion == null) {
+            if (!DDTiposAsunto.ACUERDO.equals(codigoTipoAsunto) && recuperacion == null) {
                 context.addMessage(new MessageBuilder().code(PORCENTAJE_RECUPERACION_NULO).error().source("").defaultText(
                         "**Debe introducir un porcentaje de recuperación.").build());
             }
-            if (plazo == null) {
+            if (!DDTiposAsunto.ACUERDO.equals(codigoTipoAsunto) && plazo == null) {
                 context.addMessage(new MessageBuilder().code(PLAZO_NULO).error().source("")
                         .defaultText("**Debe introducir un plazo de recuperación.").build());
             }
@@ -317,5 +320,13 @@ public class ProcedimientoDto extends WebDto {
     public void setEnConformacion(Boolean enConformacion) {
         this.enConformacion = enConformacion;
     }
+    
+    public String getCodigoTipoAsunto() {
+		return codigoTipoAsunto;
+	}
+
+	public void setCodigoTipoAsunto(String codigoTipoAsunto) {
+		this.codigoTipoAsunto = codigoTipoAsunto;
+	}
 
 }

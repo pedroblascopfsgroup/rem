@@ -918,8 +918,9 @@
 			btnQuickAceptarProrroga.setVisible(false);
 			return;
 		}
-		
+
 		switch(codigoSubtipoTarea){
+			
 			case app.subtipoTarea.CODIGO_SOLICITUD_CANCELACION_EXPEDIENTE_DE_SUPERVISOR:
 				var idExpediente=rec.get('idEntidad')
 				
@@ -939,6 +940,7 @@
 			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_CE:	
 			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_RE:
 			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC:
+			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_FP:
 				var params={
 					idTipoEntidadInformacion:rec.get('codigoEntidadInformacion')
 					,idEntidadInformacion:rec.get('idEntidad')
@@ -1068,13 +1070,16 @@
 			codigoSubtipoTarea = app.subtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_RESPONDIDA_DE_SUPERVISOR;
 		}
 
+		
 		switch (codigoSubtipoTarea){
+			
 			case app.subtipoTarea.CODIGO_COMPLETAR_EXPEDIENTE:
 			case app.subtipoTarea.CODIGO_REVISAR_EXPEDIENE:
 			case app.subtipoTarea.CODIGO_DECISION_COMITE:
 			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_CE:
 			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_RE:
 			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC:
+			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_FP:
 				app.abreExpediente(rec.get('idEntidad'), rec.get('descripcionExpediente'));
 			break;
 			case app.subtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL:

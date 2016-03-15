@@ -22,9 +22,9 @@
 		,{name  : "id"           }
 		,{name  : "idTareaProcedimiento"           }
 		,{name  : "descTareaProcedimiento"           }
-		,{name : "fechaInicio",type:'date', dateFormat:'d/m/Y'}
-		,{name : "fechaVenc",type:'date', dateFormat:'d/m/Y'}
-		,{name : "fechaFin" ,type:'date', dateFormat:'d/m/Y'}
+		,{name : "fechaInicio",type:'date'}
+		,{name : "fechaVenc",type:'date'}
+		,{name : "fechaFin" ,type:'date'}
 		,{name : "usuario"         }
 		,{name : "prorrogaAsociada"    }
 		,{name : "motivo"    }
@@ -282,9 +282,9 @@
 		,{dataIndex : 'fechaPropuesta', fixed:true, hidden:true}
 		,{dataIndex : 'descPropuesta', fixed:true, hidden:true}
 		,{header : '<s:message code="procedimiento.gridtareas.tarea" text="**tarea"/>', dataIndex : 'tarea', width:275}
-		,{header : '<s:message code="procedimiento.gridtareas.fechaInicio" text="**fecha inicio"/>', dataIndex : 'fechaInicio', renderer:app.format.dateRenderer, width:75}
-		,{header : '<s:message code="procedimiento.gridtareas.fechaVenc" text="**fecha vencimiento"/>', dataIndex : 'fechaVenc', renderer:app.format.dateRenderer, width:75}
-		,{header : '<s:message code="procedimiento.gridtareas.fechaFin" text="**fecha fin"/>', dataIndex : 'fechaFin', renderer:app.format.dateRenderer, width:75}
+		,{header : '<s:message code="procedimiento.gridtareas.fechaInicio" text="**fecha inicio"/>', dataIndex : 'fechaInicio', width:75}
+		,{header : '<s:message code="procedimiento.gridtareas.fechaVenc" text="**fecha vencimiento"/>', dataIndex : 'fechaVenc', width:75}
+		,{header : '<s:message code="procedimiento.gridtareas.fechaFin" text="**fecha fin"/>', dataIndex : 'fechaFin', width:75}
 		,{header : '<s:message code="procedimiento.gridtareas.usuarioCreacion" text="**usuario"/>', dataIndex : 'usuario', width:50}
 	]);
   

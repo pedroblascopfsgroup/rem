@@ -105,3 +105,6 @@ insert into HAYAMASTER.jbpm_transition (id_, name_, processdefinition_, from_, t
       
 commit;      
       
+
+EXIT;
+/

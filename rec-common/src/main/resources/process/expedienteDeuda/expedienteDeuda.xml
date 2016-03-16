@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="expedienteDeuda">
+	
+	<event type="process-end">
+		<action name="processEndAction" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>eliminaTareasExpedienteActionHandler</targetBean>
+		</action>
+	</event>
+	
+	<start-state name="Inicio Expediente">
+		<transition to="CreacionExpediente"></transition>
+	</start-state>
+
+	<node name="CreacionExpediente">
+		<action name="CreacionExpedienteAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>crearExpedienteActionHandler</targetBean>
+		</action>
+		<transition to="CompletarExpediente"></transition>
+	</node>
+
+	<state name="CompletarExpediente">
+		<event type="node-enter">
+			<action name="CompletarExpedienteAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>completarExpedienteDeudaActionHandler</targetBean>
+			</action>
+		</event>
+		<transition name="EnviarARevision" to="EnviarARevision"></transition>
+		<transition to="GenerarNotificacion" name="GenerarNotificacion"></transition>
+		<transition to="SolicitarProrrogaExtra" name="EnviarSolicitarProrrogaExtra"></transition>
+		<transition to="Fin Expediente" name="Fin"></transition>
+	</state>
+
+	<node name="EnviarARevision">
+		<action name="EnviarARevisionAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>enviarARevisionDeudaActionHandler</targetBean>
+		</action>
+		<transition to="RevisionExpediente"></transition>
+	</node>
+	<state name="RevisionExpediente">
+		<event type="node-enter">
+			<action name="RevisionExpedienteAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>revisionExpedienteDeudaActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="DevolverCompletar" name="DevolverACompletar"></transition>
+		<transition to="GenerarNotificacion" name="GenerarNotificacion"></transition>
+		<transition to="SolicitarProrrogaExtra" name="EnviarSolicitarProrrogaExtra"></transition>
+		<transition to="Fin Expediente" name="Fin"></transition>
+		<transition to="EnviarAEnSancion" name="EnviarAEnSancion"></transition>
+	</state>
+
+	<node name="EnviarASancionado">
+		<action name="EnviarASancionadoAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>enviarASancionadoDeudaActionHandler</targetBean>
+		</action>
+		<transition to="Sancionado"></transition>
+	</node>
+
+	<state name="Sancionado">
+		<event type="node-enter">
+			<action name="DecisionComiteAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>sancionadoDeudaActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="ExpedienteDecidido" name="TomarDecision"></transition>
+		<transition to="GenerarNotificacion" name="GenerarNotificacion"></transition>
+        <transition to="SancionadoAutomatico" name="Sancionadoautomatico"></transition>
+		<transition to="Fin Expediente" name="Fin"></transition>
+		<transition to="EnviarAFormalizar" name="EnviarAFormalizar"></transition>
+		<transition to="DevolverAEnSancion" name="DevolverAEnSancion"></transition>
+		<transition to="AprobadoConCondiciones" name="AprobadoConCondiciones"></transition>
+	</state>
+
+	<node name="DevolverRevision">
+		<action name="DevolverRevisionAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>devolverRevisionDeudaActionHandler</targetBean>
+		</action>
+		<transition to="RevisionExpediente"></transition>
+	</node>
+
+	<node name="DevolverCompletar">
+		<action name="ExpedienteDecididoAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>devolverCompletarDeudaActionHandler</targetBean>
+		</action>
+		<transition to="CompletarExpediente"></transition>
+	</node>
+
+	<node name="ExpedienteDecidido">
+		<action name="ExpedienteDecididoAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>expedienteDecididoDeudaActionHandler</targetBean>
+		</action>
+		<transition to="Fin Expediente"></transition>
+	</node>
+
+	<node name="GenerarNotificacion">
+		<action name="GenerarNotificacionAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>generarNotificacionExpedienteDeudaActionHandler</targetBean>
+		</action>
+		<transition to="CompletarExpediente" name="CompletarExpediente"></transition>
+		<transition to="RevisionExpediente" name="RevisionExpediente"></transition>
+		<transition to="Sancionado" name="Sancionado"></transition>
+		<transition to="EnviarARevision" name="EnviarARevision"></transition>
+		<transition to="EnviarASancionado" name="EnviarASancionado"></transition>
+		<transition to="FormalizarPropuesta" name="FormalizarPropuesta"></transition>
+		<transition to="EnSancion" name="EnSancion"></transition>
+		<transition to="EnviarAEnSancion" name="EnviarAEnSancion"></transition>
+	</node>
+
+	<node name="SolicitarProrrogaExtra">
+		<action name="SolicitarProrrogaExtraAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>solicitarProrrogaExtraActionHandler</targetBean>
+		</action>
+		<transition to="CompletarExpediente" name="CompletarExpediente"></transition>
+		<transition to="RevisionExpediente" name="RevisionExpediente"></transition>
+	</node>
+    
+    <node name="SancionadoAutomatico">
+		<action name="DesisionComiteAutomatica" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>sancionadoAutomaticoDeudaActionHandler</targetBean>
+		</action>
+		<transition to="ExpedienteDecidido" name="TomarDecision"></transition>
+		<transition to="Sancionado" name="Sancionado"></transition>
+	</node>
+
+	<state name="FormalizarPropuesta">
+		<event type="node-enter">
+			<action name="FormalizarPropuestaAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>formalizarPropuestaDeudaActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="DevolverASancionado" name="DevolverASancionado"></transition>
+		<transition to="Fin Expediente" name="Fin"></transition>
+		<transition to="ExpedienteDecididoFP" name="ExpedienteDecididoFP"></transition>
+		<transition to="GenerarNotificacion" name="GenerarNotificacion"></transition>
+	</state>
+
+	<node name="EnviarAFormalizar">
+		<action name="EnviarAFormalizarAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>enviarAFormalizarDeudaActionHandler</targetBean>
+		</action>
+		<transition to="FormalizarPropuesta"></transition>
+	</node>
+
+	<node name="DevolverASancionado">
+		<action name="DevolverADecisionAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>devolverASancionadoDeudaActionHandler</targetBean>
+		</action>
+		<transition to="Sancionado"></transition>
+	</node>
+
+	<node name="ExpedienteDecididoFP">
+		<action name="ExpedienteDecididoFPAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>expedienteDecididoActionHandler</targetBean>
+		</action>
+		<transition to="Fin Expediente"></transition>
+	</node>
+
+	<state name="EnSancion">
+		<event type="node-enter">
+			<action name="EnSancionAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>enSancionDeudaActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="DevolverRevision" name="DevolverRevision"></transition>
+		<transition to="EnviarASancionado" name="EnviarASancionado"></transition>
+		<transition to="GenerarNotificacion" name="GenerarNotificacion"></transition>
+		<transition to="Fin Expediente" name="Fin "></transition>
+	</state>
+
+	<node name="DevolverAEnSancion">
+		<action name="DevolverAEnSancionAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>aprobadoConCondicionesDeudaActionHandler</targetBean>
+		</action>
+		<transition to="EnSancion"></transition>
+	</node>
+
+	<node name="EnviarAEnSancion">
+		<action name="EnviarAEnSancionAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>enviarAEnSancionDeudaActionHandler</targetBean>
+		</action>
+		<transition to="EnSancion"></transition>
+	</node>
+
+	<node name="AprobadoConCondiciones">
+		<action name="AprobadoConCondicionesAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>enviarAEnSancionDeudaActionHandler</targetBean>
+		</action>
+		<transition to="CompletarExpediente"></transition>
+	</node>
+
+	<end-state name="Fin Expediente"></end-state>
+
+</process-definition>

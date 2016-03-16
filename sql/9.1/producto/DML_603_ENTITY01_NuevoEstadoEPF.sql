@@ -48,11 +48,7 @@ BEGIN
     	
 	END IF;
 	
-	 
-COMMIT;
-    EXECUTE IMMEDIATE V_MSQL;
-    
-         
+        
     
     COMMIT;
 

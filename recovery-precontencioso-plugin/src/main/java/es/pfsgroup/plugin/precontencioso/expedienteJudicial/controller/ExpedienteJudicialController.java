@@ -46,6 +46,7 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.ActualizarProced
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.HistoricoEstadoProcedimientoDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.ProcedimientoPCODTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.ProcedimientoPcoExcelDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.ProcedimientoPcoGridDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDTipoPreparacionPCO;
@@ -369,20 +370,64 @@ public class ExpedienteJudicialController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String exportarExcel(FiltroBusquedaProcedimientoPcoDTO filter, ModelMap model) 
-	{
+	public String exportarExcel(FiltroBusquedaProcedimientoPcoDTO filter, ModelMap model) {
+
 		filter.setStart(0);
 		filter.setLimit(Integer.MAX_VALUE);
-		
+
 		List<ProcedimientoPcoGridDTO> procedimientosPcoGrid = procedimientoPcoApi.busquedaProcedimientosPcoPorFiltro(filter);
-
-		
-		model.put("expedientes", procedimientosPcoGrid);
-
 		Integer totalCount = procedimientoPcoApi.countBusquedaProcedimientosPorFiltro(filter);
+
+		model.put("expedientes", convertListToExportExcel(procedimientosPcoGrid));
 		model.put("totalCount", totalCount);
 
 		return "reportXLS/plugin/precontencioso/expedientes/listaExpedientes";
+	}
+
+	/**
+	 * Convierte la lista de ProcedimientoPcoGridDTO a ProcedimientoPcoExcelDTO
+	 * para exportarla a excel.
+	 * 
+	 * @param procedimientosPcoGrid
+	 * @return
+	 */
+	private List<ProcedimientoPcoExcelDTO> convertListToExportExcel(List<ProcedimientoPcoGridDTO> procedimientosPcoGrid) {
+
+		final List<ProcedimientoPcoExcelDTO> procedimientosPcoExcel = new ArrayList<ProcedimientoPcoExcelDTO>();
+
+		for (ProcedimientoPcoGridDTO prc : procedimientosPcoGrid) {
+			final ProcedimientoPcoExcelDTO prcExcel = new ProcedimientoPcoExcelDTO();
+
+			prcExcel.setNombreProcedimiento(prc.getNombreProcedimiento());
+			prcExcel.setPrcId(prc.getPrcId());
+			prcExcel.setCodigo(prc.getCodigo());
+			prcExcel.setNombreExpediente(prc.getNombreExpediente());
+			prcExcel.setEstadoExpediente(prc.getEstadoExpediente());
+			prcExcel.setDiasEnGestion(prc.getDiasEnGestion());
+			if (prc.getFechaEstado() != null) {
+				prcExcel.setFechaEstado(prc.getFechaEstado().toString());
+			}
+			prcExcel.setTipoProcPropuesto(prc.getTipoProcPropuesto());
+			prcExcel.setTipoPreparacion(prc.getTipoPreparacion());
+			if (prc.getFechaInicioPreparacion() != null) {
+				prcExcel.setFechaInicioPreparacion(prc.getFechaInicioPreparacion().toString());
+			}
+			prcExcel.setDiasEnPreparacion(prc.getDiasEnPreparacion());
+			prcExcel.setTotalLiquidacion(prc.getTotalLiquidacion());
+			if (prc.getFechaEnvioLetrado() != null) {
+				prcExcel.setFechaEnvioLetrado(prc.getFechaEnvioLetrado().toString());
+			}
+			prcExcel.setAceptadoLetrado(prc.getAceptadoLetrado());
+			prcExcel.setTodosDocumentos(prc.getTodosDocumentos());
+			prcExcel.setTodasLiquidaciones(prc.getTodasLiquidaciones());
+			prcExcel.setTodosBurofaxes(prc.getTodosBurofaxes());
+			prcExcel.setImporte(prc.getImporte());
+
+			procedimientosPcoExcel.add(prcExcel);
+
+		}
+		return procedimientosPcoExcel;
+
 	}
 	
 	@SuppressWarnings("unchecked")

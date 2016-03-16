@@ -12,7 +12,8 @@
     		<evaluate expression="executor.execute('asuntosManager.get',idAsunto)" result="flowScope.asuntoEditar"></evaluate>
     		<evaluate expression="executor.execute('despachoExternoManager.getDespachosExternos')" result="flowScope.despachos" />
 			<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
-			<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />						
+			<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />	
+			<evaluate expression="executor.execute('asuntosManager.obtenerListadoTiposDeAsunto')" result="flowScope.tiposDeAsunto" />					
     	</on-entry>
         <transition on="saveAsunto" to="saveAsunto"/>
 	</view-state> 	

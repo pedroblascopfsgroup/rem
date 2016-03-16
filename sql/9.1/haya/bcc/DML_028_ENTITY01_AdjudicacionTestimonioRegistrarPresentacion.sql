@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=CARLOS GIL
---## FECHA_CREACION=20150623
+--## AUTOR=JORGE MARTIN
+--## FECHA_CREACION=20160314
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.0-X
---## INCIDENCIA_LINK=MITCDD-2068
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=PRODUCTO-931
+--## PRODUCTO=NO
 --##
---## Finalidad: Realiza las inserciones de la resolución Escrito sellado solicitando testimonio de decreto de adjudicacion para la tarea H005_SolicitudTestimonioDecretoAdjudicacion.
+--## Finalidad: Realiza las inserciones de la resolución Confirmar testimonio decreto adjudicacion para la tarea H005_ConfirmarTestimonio.
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
@@ -41,23 +41,24 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			'225';
-    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_TR_ADJ_TEST_DEC_ADJ';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Escrito sellado solicitando testimonio de decreto de adjudicacion';
+    V_TR_ID VARCHAR2(16 CHAR):= 			'442';
+    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_TR_ADJ_REG_PRESE';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Nuevo testimonio adjudicación';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'ADJ';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     
-    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_TR_ADJ_TEST_DEC_ADJ';
+    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_TR_ADJ_REG_PRESE';
     
     V_TPO_CODIGO VARCHAR2(20 CHAR):=		'H005';
-    V_NODO VARCHAR2(50 CHAR):=				'H005_SolicitudTestimonioDecretoAdjudicacion';
+    V_NODO VARCHAR2(50 CHAR):=				'H005_RegistrarPresentacionEnRegistro';
     
     TYPE T_INPUT IS TABLE OF VARCHAR2(50);
     TYPE T_ARRAY_INPUT IS TABLE OF T_INPUT;
     V_INPUT T_ARRAY_INPUT := T_ARRAY_INPUT(
     	T_INPUT('idAsunto','idAsunto'), -- Está siempre en el factoria, no eliminar.
     	T_INPUT('d_numAutos','numAutos'), -- Está siempre en el factoria, no eliminar.
-    	T_INPUT('d_fecha','fecha'),
+    	T_INPUT('d_fechaPresentacion','fechaPresentacion'),
+    	T_INPUT('d_fechaNuevoTest','fechaNuevoTest'),
     	T_INPUT('d_observaciones','observaciones') -- Está siempre en el factoria, no eliminar.
     );
     V_TMP_T_INPUT T_INPUT;

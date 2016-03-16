@@ -32,6 +32,7 @@ import es.capgemini.pfs.asunto.dto.DtoReportAnotacionAgenda;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.asunto.model.FichaAceptacion;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.comite.dao.ComiteDao;
@@ -296,10 +297,10 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		if (requiereProcedimiento(dto) && requiereFiltrarPorSaldoTotal(dto)) {
 
 			if (dto.getMaxSaldoTotalContratos() == null) {
-				dto.setMaxSaldoTotalContratos((double) Integer.MAX_VALUE);
+				dto.setMaxSaldoTotalContratos((float) Integer.MAX_VALUE);
 			}
 			if (dto.getMinSaldoTotalContratos() == null) {
-				dto.setMinSaldoTotalContratos(0d);
+				dto.setMinSaldoTotalContratos(0f);
 			}
 
 			hql.append(" and a.id in ");
@@ -328,10 +329,8 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			hql.append(" ( ");
 			hql.append(" select max(m2.fechaExtraccion) from Movimiento m2 where m2.contrato.id = m.contrato.id  ");
 			hql.append(" ) ");
+			hql.append(" AND (m.posVivaVencida + m.posVivaNoVencida) BETWEEN :minSaldoTotalCnt AND :maxSaldoTotalCnt ");
 			hql.append(" group by a.id ");
-			hql.append(" having (");
-			hql.append(" sum(m.posVivaVencida + m.posVivaNoVencida) between :minSaldoTotalCnt and :maxSaldoTotalCnt ");
-			hql.append(" ) ");
 			hql.append(" ) ");
 
 			params.put("minSaldoTotalCnt", dto.getMinSaldoTotalContratos());
@@ -525,7 +524,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			GestorDespacho supervisor, GestorDespacho procurador,
 			String nombreAsunto, Expediente expediente, String observaciones) {
 		
-		return crearAsuntoConEstado(gestorDespacho, supervisor, procurador, nombreAsunto, expediente, observaciones, null);
+		return crearAsuntoConEstado(gestorDespacho, supervisor, procurador, nombreAsunto, expediente, observaciones, null, null);
 		
 	}
 	
@@ -533,13 +532,14 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 	public Long crearAsuntoConEstado(GestorDespacho gestorDespacho,
 			GestorDespacho supervisor, GestorDespacho procurador,
 			String nombreAsunto, Expediente expediente, String observaciones,
-			String codigoEstadoAsunto) {
+			String codigoEstadoAsunto, DDTiposAsunto tipoAsunto) {
 		EXTAsunto extAsunto = new EXTAsunto();
 
 		extAsunto.setObservacion(observaciones);
 		extAsunto.setSupervisor(supervisor);
 		extAsunto.setGestor(gestorDespacho);
 		extAsunto.setProcurador(procurador);
+		extAsunto.setTipoAsunto(tipoAsunto);
 		// extAsunto.setGestoresAsunto(gestoresAsunto);
 
 		// Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo",
@@ -583,7 +583,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 	@Override
 	public Long modificarAsunto(Long idAsunto, GestorDespacho gestorDespacho,
 			GestorDespacho supervisor, GestorDespacho procurador,
-			String nombreAsunto, String observaciones) {
+			String nombreAsunto, String observaciones, DDTiposAsunto tipoAsunto) {
 		EXTAsunto extAsunto = (EXTAsunto) get(idAsunto);
 		if (!Checks.esNulo(gestorDespacho)
 				&& (gestorDespacho.getId().longValue() != extAsunto.getGestor()
@@ -594,6 +594,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		extAsunto.setObservacion(observaciones);
 		extAsunto.setSupervisor(supervisor);
 		extAsunto.setNombre(nombreAsunto);
+		extAsunto.setTipoAsunto(tipoAsunto);
 
 		// Gestores adicionales Asunto
 		// List<EXTGestorAdicionalAsunto> gestoresAsuntoGet =
@@ -790,11 +791,10 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			hql.append(" and cdd2.id = crn.batchAcuerdoCierreDeuda.id ");
 			hql.append(" and asu.id = cdd2.asunto.id ");
 			hql.append(" and crn.resultado = rvn.codigo and crn.descripcionResultado = rvn.descripcion ");
-			
-			hql.append(" and crn.id in ( ");
-			hql.append(" select max(crn1.id) ");
+			hql.append(" and crn.fechaResultado = ( ");
+			hql.append(" select MAX(crn1.fechaResultado) ");
 			hql.append(" from  BatchCDDResultadoNuse crn1 ");
-			hql.append(" group by crn1.codigoExterno, crn1.batchAcuerdoCierreDeuda.id ) ");			
+			hql.append(" WHERE crn.codigoExterno = crn1.codigoExterno) ");			
 		}
 		
 		
@@ -1098,10 +1098,10 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		if (requiereProcedimiento(dto) && requiereFiltrarPorSaldoTotal(dto)) {
 
 			if (dto.getMaxSaldoTotalContratos() == null) {
-				dto.setMaxSaldoTotalContratos((double) Integer.MAX_VALUE);
+				dto.setMaxSaldoTotalContratos((float) Integer.MAX_VALUE);
 			}
 			if (dto.getMinSaldoTotalContratos() == null) {
-				dto.setMinSaldoTotalContratos(0d);
+				dto.setMinSaldoTotalContratos(0f);
 			}
 
 			hql.append(" and a.id in ");
@@ -1130,10 +1130,8 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			hql.append(" ( ");
 			hql.append(" select max(m2.fechaExtraccion) from Movimiento m2 where m2.contrato.id = m.contrato.id  ");
 			hql.append(" ) ");
+			hql.append(" AND (m.posVivaVencida + m.posVivaNoVencida) BETWEEN :minSaldoTotalCnt and :maxSaldoTotalCnt ");
 			hql.append(" group by a.id ");
-			hql.append(" having (");
-			hql.append(" sum(m.posVivaVencida + m.posVivaNoVencida) between :minSaldoTotalCnt and :maxSaldoTotalCnt ");
-			hql.append(" ) ");
 			hql.append(" ) ");
 
 			params.put("minSaldoTotalCnt", dto.getMinSaldoTotalContratos());

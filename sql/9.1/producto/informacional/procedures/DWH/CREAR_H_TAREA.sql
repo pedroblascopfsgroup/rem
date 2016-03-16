@@ -100,7 +100,10 @@ BEGIN
 							  ESTADO_PRORROGA_ID NUMBER(16,0),
                               -- M?tricas
                               NUM_TAREAS INTEGER ,
-                              NUM_DIAS_VENCIDO INTEGER
+                              NUM_DIAS_VENCIDO INTEGER)
+                            SEGMENT CREATION IMMEDIATE NOLOGGING
+                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
+                           (PARTITION "P1" VALUES LESS THAN (201501)
                                '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_TAR_SEMANA');
@@ -139,7 +142,10 @@ BEGIN
 							  ESTADO_PRORROGA_ID NUMBER(16,0),
                               -- M?tricas
                               NUM_TAREAS INTEGER ,
-                              NUM_DIAS_VENCIDO INTEGER
+                              NUM_DIAS_VENCIDO INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
+                           	(PARTITION "P1" VALUES LESS THAN (201501)
                                '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
 		 
@@ -179,7 +185,10 @@ BEGIN
 							  ESTADO_PRORROGA_ID NUMBER(16,0),
                               -- M?tricas
                               NUM_TAREAS INTEGER ,
-                              NUM_DIAS_VENCIDO INTEGER
+                              NUM_DIAS_VENCIDO INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (201501)
                                '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_TAR_TRIMESTRE');
@@ -218,7 +227,10 @@ BEGIN
 							  ESTADO_PRORROGA_ID NUMBER(16,0),
                               -- M?tricas
                               NUM_TAREAS INTEGER ,
-                              NUM_DIAS_VENCIDO INTEGER
+                              NUM_DIAS_VENCIDO INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (2015)
                                '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_TAR_ANIO');

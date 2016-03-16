@@ -730,7 +730,11 @@ BEGIN
                               SALDO_TOTAL_EXP_CR NUMBER(14,2)  ,        -- Suma de los saldos vencido y no vencido de los contratos asociados al expediente
                               RIESGO_VIVO_EXP_CR NUMBER(14,2)  ,        -- Riesgo vivo de los contratos asociados al expediente
                               DEUDA_IRREGULAR_EXP_CR NUMBER(14,2)       -- Deuda irregular de los contratos asociados al expediente  
-                           '', :error); END;';
+                           )
+                    SEGMENT CREATION IMMEDIATE NOLOGGING
+                    PARTITION BY RANGE ("DIA_ID")
+                    INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
+                    (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))'', :error); END;';
 							 execute immediate V_SQL USING OUT error;
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EXP_DET_CICLO_REC_IX'', ''H_EXP_DET_CICLO_REC (DIA_ID, EXPEDIENTE_ID)'', ''S'', '''', :error); END;';
@@ -831,7 +835,10 @@ BEGIN
                               SALDO_TOTAL_EXP_CR NUMBER(14,2)  ,        -- Suma de los saldos vencido y no vencido de los contratos asociados al expediente
                               RIESGO_VIVO_EXP_CR NUMBER(14,2)  ,        -- Riesgo vivo de los contratos asociados al expediente
                               DEUDA_IRREGULAR_EXP_CR NUMBER(14,2)       -- Deuda irregular de los contratos asociados al expediente  
-                            '', :error); END;';
+                            )
+                            SEGMENT CREATION IMMEDIATE NOLOGGING
+                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
+                           (PARTITION "P1" VALUES LESS THAN (201501)'', :error); END;';
 							 execute immediate V_SQL USING OUT error;
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EXP_DET_CICLO_REC_SEMANA_IX'', ''H_EXP_DET_CICLO_REC_SEMANA (SEMANA_ID, EXPEDIENTE_ID)'', ''S'', '''', :error); END;';
@@ -857,7 +864,10 @@ BEGIN
                               SALDO_TOTAL_EXP_CR NUMBER(14,2)  ,        -- Suma de los saldos vencido y no vencido de los contratos asociados al expediente
                               RIESGO_VIVO_EXP_CR NUMBER(14,2)  ,        -- Riesgo vivo de los contratos asociados al expediente
                               DEUDA_IRREGULAR_EXP_CR NUMBER(14,2)       -- Deuda irregular de los contratos asociados al expediente  
-                            '', :error); END;';
+                            )
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
+                           	(PARTITION "P1" VALUES LESS THAN (201501)'', :error); END;';
 							 execute immediate V_SQL USING OUT error;
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EXP_DET_CICLO_REC_MES_IX'', ''H_EXP_DET_CICLO_REC_MES (MES_ID, EXPEDIENTE_ID)'', ''S'', '''', :error); END;';
@@ -883,7 +893,10 @@ BEGIN
                               SALDO_TOTAL_EXP_CR NUMBER(14,2)  ,        -- Suma de los saldos vencido y no vencido de los contratos asociados al expediente
                               RIESGO_VIVO_EXP_CR NUMBER(14,2)  ,        -- Riesgo vivo de los contratos asociados al expediente
                               DEUDA_IRREGULAR_EXP_CR NUMBER(14,2)       -- Deuda irregular de los contratos asociados al expediente  
-                            '', :error); END;';
+                            )
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (201501)'', :error); END;';
 							 execute immediate V_SQL USING OUT error;
 
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EXP_DET_CICLO_REC_TRI_IX'', ''H_EXP_DET_CICLO_REC_TRIMESTRE (TRIMESTRE_ID, EXPEDIENTE_ID)'', ''S'', '''', :error); END;';
@@ -909,7 +922,10 @@ BEGIN
                               SALDO_TOTAL_EXP_CR NUMBER(14,2)  ,        -- Suma de los saldos vencido y no vencido de los contratos asociados al expediente
                               RIESGO_VIVO_EXP_CR NUMBER(14,2)  ,        -- Riesgo vivo de los contratos asociados al expediente
                               DEUDA_IRREGULAR_EXP_CR NUMBER(14,2)       -- Deuda irregular de los contratos asociados al expediente  
-                           '', :error); END;';
+                           )
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (2015)'', :error); END;';
 							 execute immediate V_SQL USING OUT error;
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EXP_DET_CICLO_REC_ANIO_IX'', ''H_EXP_DET_CICLO_REC_ANIO (ANIO_ID, EXPEDIENTE_ID)'', ''S'', '''', :error); END;';

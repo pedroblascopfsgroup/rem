@@ -22,9 +22,9 @@
 		,{name  : "id"           }
 		,{name  : "idTareaProcedimiento"           }
 		,{name  : "descTareaProcedimiento"           }
-		,{name : "fechaInicio",type:'date'}
-		,{name : "fechaVenc",type:'date'}
-		,{name : "fechaFin" ,type:'date'}
+		,{name : "fechaInicio"}
+		,{name : "fechaVenc"}
+		,{name : "fechaFin"}
 		,{name : "usuario"         }
 		,{name : "prorrogaAsociada"    }
 		,{name : "motivo"    }

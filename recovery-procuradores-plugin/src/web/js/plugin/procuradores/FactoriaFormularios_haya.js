@@ -1219,9 +1219,9 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	// id: 213 : TRAMITE SUBASTA : Acta de subasta
 	this.arrayCampos.push([
 	                       {"xtype":'combo',"store":storeSINO, "name":"d_comboCelebrada","fieldLabel":"Celebrada",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboCelebrada'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       ,{"xtype":'combo',"store":storeSINO, "name":"d_comboPostores","fieldLabel":"Postores",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboPostores'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       ,{"xtype":'combo',"store":this.storeDecisionSuspension, "name":"d_comboDecisionSuspension","fieldLabel":"Decisión suspensión","autoload":true,allowBlank:true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboDecisionSuspension'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       ,{"xtype":'combo',"store":this.storeMotivosSuspension, "name":"d_comboMotivoSuspension","fieldLabel":"Motivo suspensión","autoload":true,allowBlank:true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboMotivoSuspension'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":storeSINO, "name":"d_comboPostores","fieldLabel":"Postores","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboPostores'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":this.storeDecisionSuspension, "name":"d_comboDecisionSuspension","fieldLabel":"Decisión suspensión","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboDecisionSuspension'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":this.storeMotivosSuspension, "name":"d_comboMotivoSuspension","fieldLabel":"Motivo suspensión","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboMotivoSuspension'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	]);
 	
 	// id: 214 : TRAMITE SUBASTA :Escrito sellado solicitando entrega de cantidades consignadas.
@@ -1255,7 +1255,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	this.arrayCampos.push([
 	                       {"xtype":'combo',"store":storeSINO, "name":"d_comboCelebrada","fieldLabel":"Celebrada",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboCelebrada'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       ,{"xtype":'combo',"store":storeSINO, "name":"d_comboPostores","fieldLabel":"Postores",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboPostores'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       ,{"xtype":'combo',"store":this.storeDecisionSuspension, "name":"d_comboDecisionSuspension","fieldLabel":"Decisión suspensión",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboDecisionSuspension'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
+	                       ,{"xtype":'combo',"store":this.storeDecisionSuspension, "name":"d_comboDecisionSuspension","fieldLabel":"Decisión suspensión","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboDecisionSuspension'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
 		   		   				,validator : function(v) {
 			               	   		if(Ext.getCmp('d_comboCelebrada' + idFactoria).getValue() == "02" && Ext.getCmp('d_comboDecisionSuspension' + idFactoria).getValue() == ""){
 			               	   			return false;
@@ -1264,7 +1264,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 			               	   		}
 		      					}
 				   			}
-	                       ,{"xtype":'combo',"store":this.storeMotivosSuspension, "name":"d_comboMotivoSuspension","fieldLabel":"Motivo suspensión",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboMotivoSuspension'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
+	                       ,{"xtype":'combo',"store":this.storeMotivosSuspension, "name":"d_comboMotivoSuspension","fieldLabel":"Motivo suspensión","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboMotivoSuspension'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
 		   		   				,validator : function(v) {
 			               	   		if(Ext.getCmp('d_comboCelebrada' + idFactoria).getValue() == "02" && Ext.getCmp('d_comboMotivoSuspension' + idFactoria).getValue() == ""){
 			               	   			return false;
@@ -1360,7 +1360,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	   				}
 //	   				,{"xtype":'combo',"store":storeSINO,"value":"01", "name":"con_vista_si_no","fieldLabel":"Vista",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'con_vista_si_no'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	   				,{"xtype":'datefield',"name":"d_vistaImpugnacion","fieldLabel":"Fecha vista",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('Y-m-d'), minValue: fechaMinima, id:"d_vistaImpugnacion"+this.idFactoria}
-	   				,{"xtype":'combo',"store":this.storeMotivoImpugnacion,"name":"d_comboResultado","fieldLabel":"Motivo impugnación",allowBlank:true,filtradoProcurador:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
+	   				,{"xtype":'combo',"store":this.storeMotivoImpugnacion,"name":"d_comboResultado","fieldLabel":"Motivo impugnación",filtradoProcurador:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
 	                 	   ,validator : function(v) {
 		               	   		if(Ext.getCmp('d_comboImpugnacion' + idFactoria).getValue() == "01" && Ext.getCmp('d_comboResultado' + idFactoria).getValue() == ""){
 		               	   			return false;
@@ -1575,7 +1575,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	//id: 253 : TRAMITE MORATORIA DE LANZAMIENTO: Registrar admisión y emplazamiento
 	this.arrayCampos.push([
 	                       	{"xtype":'combo',"store":storeSINO,"name":"d_comboAdminEmplaza","fieldLabel":"Admisión y emplazamiento",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAdminEmplaza'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboVista","fieldLabel":"Vista",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboVista'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboVista","fieldLabel":"Vista","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboVista'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
 	                    	   ,validator : function(v) {
 	                    	   		if(Ext.getCmp('d_comboAdminEmplaza' + idFactoria).getValue() == "01" && Ext.getCmp('d_comboVista' + idFactoria).getValue() == ""){
 	                    	   			return false;
@@ -1805,7 +1805,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	//id: 273 : PROCEDIMIENTO MONITORIO: Confirmar admisión de demanda
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima , id:'d_fecha'+this.idFactoria}
-	                       ,{"xtype":'combo',"store":this.dsPlazas,allowBlank:true, "name":"d_nPlaza","hiddenName":"d_nPlaza",sameValue:"d_plazaJuzgado",fieldLabel:"Plaza",triggerAction: 'all',resizable:true, id:'d_nPlaza'+this.idFactoria
+	                       ,{"xtype":'combo',"store":this.dsPlazas, "name":"d_nPlaza","hiddenName":"d_nPlaza",sameValue:"d_plazaJuzgado",fieldLabel:"Plaza",triggerAction: 'all',resizable:true, id:'d_nPlaza'+this.idFactoria
 		                      	 ,displayField:'descripcion',valueField:'codigo',typeAhead: false,loadingText: 'Searching...',width: '300',resizable: true,pageSize: 10,	mode: 'local'
 		                      		,listeners:{afterRender:function(combo){
 		                      			 combo.mode='remote';
@@ -2037,7 +2037,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	//id: 290 : T. CERTIFICADO DE CARGAS Y REVISIÓN: Registrar recepción información cargas extinguidas o minoradas
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       	,{"xtype":'combo',"store":this.storeCompletitud,"name":"d_comboCompletitud","fieldLabel":"Información cargas",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboCompletitud'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeCompletitud,"name":"d_comboCompletitud","fieldLabel":"Información cargas","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboCompletitud'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
 	//id: 291 : T. CERTIFICADO DE CARGAS Y REVISIÓN: Requerir información que falta
@@ -2136,7 +2136,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	//id: 304 : T. MEJORA EMBARGO: Registrar anotacion en registro
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha de anotación de los embargos",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       	,{"xtype":'combo',"store":storeSINO,"name":"d_comboBienes","fieldLabel":"Existen bienes no apremiados",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboBienes'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":storeSINO,"name":"d_comboBienes","fieldLabel":"Existen bienes no apremiados","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboBienes'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
 	
@@ -2618,11 +2618,11 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboRegistro","fieldLabel":"Resultados",allowBlank:false,filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboRegistro'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboAgTribut","fieldLabel":"Agencia tributaria",allowBlank:true,filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAgTribut'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboSegSocial","fieldLabel":"Seg. social",allowBlank:true,filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboSegSocial'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboCatastro","fieldLabel":"Catastro",allowBlank:true,filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboCatastro'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboAyto","fieldLabel":"Ayuntamiento",allowBlank:true,filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAyto'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboOtros","fieldLabel":"Otros",allowBlank:true,filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboOtros'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboAgTribut","fieldLabel":"Agencia tributaria",filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAgTribut'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboSegSocial","fieldLabel":"Seg. social",filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboSegSocial'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboCatastro","fieldLabel":"Catastro",filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboCatastro'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboAyto","fieldLabel":"Ayuntamiento",filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAyto'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboOtros","fieldLabel":"Otros",filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboOtros'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       	,{"xtype":'numberfield',"name":"d_solvencia","fieldLabel":"Solvencia encontrada",allowBlank:true}
 	                       	,{"xtype":'numberfield',"name":"d_impuestos","fieldLabel":"Ingresos encontrados",allowBlank:true,filtrar:true}
 	                       	
@@ -2631,12 +2631,12 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	//id: 349 : T. INVESTIGACIÓN JUDICIAL: Revisar resultado de investigación y actualizacion de datos
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboRegistro","fieldLabel":"Resultados",allowBlank:true,filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboRegistro'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboAgTribut","fieldLabel":"Agesncia tributaria",allowBlank:true,filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAgTribut'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboSegSocial","fieldLabel":"Seg. social",allowBlank:true,filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboSegSocial'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboCatastro","fieldLabel":"Catastro",allowBlank:true,filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboCatastro'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboAyto","fieldLabel":"Ayuntamiento",allowBlank:true,filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAyto'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboOtros","fieldLabel":"Otros",allowBlank:true,filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboOtros'+this.idFactoria,displayField:'descripcion',valueField:'codigo'},{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboAyto","fieldLabel":"Ayuntamiento",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAyto'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboRegistro","fieldLabel":"Resultados",filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboRegistro'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboAgTribut","fieldLabel":"Agesncia tributaria",filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAgTribut'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboSegSocial","fieldLabel":"Seg. social",filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboSegSocial'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboCatastro","fieldLabel":"Catastro",filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboCatastro'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboAyto","fieldLabel":"Ayuntamiento",filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAyto'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboOtros","fieldLabel":"Otros",filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboOtros'+this.idFactoria,displayField:'descripcion',valueField:'codigo'},{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboAyto","fieldLabel":"Ayuntamiento","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAyto'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       	,{"xtype":'numberfield',"name":"d_solvencia","fieldLabel":"Solvencia encontrada",allowBlank:true}
 	                       	,{"xtype":'numberfield',"name":"d_impuestos","fieldLabel":"Ingresos encontrados",allowBlank:true}
 	                      ]);
@@ -2666,7 +2666,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	   	   				,{"xtype":'numberfield',"name":"d_costasProcurador","fieldLabel":"Costas del procurador",allowBlank:false}
 	   	   				,{"xtype":'numberfield',"name":"d_costasLetrado","fieldLabel":"Costas de letrado",allowBlank:false}
 	   	   				,{"xtype":'numberfield',"name":"d_suplidos","fieldLabel":"Suplidos",allowBlank:false}
-	   	   				,{"xtype":'combo',"store":storeSINO,"value":"02", "name":"d_comboImpugnacion","fieldLabel":"Presentación de impugnación",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, 	id:'d_comboImpugnacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	   	   				,{"xtype":'combo',"store":storeSINO,"value":"02", "name":"d_comboImpugnacion","fieldLabel":"Presentación de impugnación","autoload":true, mode:'local',triggerAction:'all',resizable:true, 	id:'d_comboImpugnacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	   	   		]);
 	
     // id: 353 : TRAMITE COSTAS CONTRA ENTIDAD : Escrito sellado impugnando costas
@@ -2823,7 +2823,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
             }
         }
         ,{"xtype": 'datefield', "name": "d_fechaFinAlegaciones", "fieldLabel": "Fecha fin alegaciones", allowBlank: true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, id: 'd_fechaFinAlegaciones' + this.idFactoria}
-        ,{"xtype":'combo',"store":storeSINO, "name":"d_alegaciones","fieldLabel":"Presentar alegaciones","autoload":true,allowBlank:true, filtrar:true, mode:'local',triggerAction:'all',resizable:true, id:'d_alegaciones'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+        ,{"xtype":'combo',"store":storeSINO, "name":"d_alegaciones","fieldLabel":"Presentar alegaciones","autoload":true, filtrar:true, mode:'local',triggerAction:'all',resizable:true, id:'d_alegaciones'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
     ]);
 
     //id: 373 : PROCEDIMIENTO HIPOTECARIO (CAJAMAR) : Cumplimentar mandamiento de certificación de cargas
@@ -2991,7 +2991,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     this.arrayCampos.push([
         {"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
         ,{"xtype":'combo',"store":storeSINO,"name":"d_comboOcupado","fieldLabel":"Ocupado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboOcupado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'} 
-        ,{"xtype":'combo',"store":this.DDTipoBienCajamar,"name":"d_comboBien","fieldLabel":"Tipo de bien",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboBien'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+        ,{"xtype":'combo',"store":this.storeDDTipoBienCajamar,"name":"d_comboBien","fieldLabel":"Tipo de bien",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboBien'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
     ]);
     
     // id: 398 : T. Posesión interina (CAJAMAR): HC105_DecretoAdmision
@@ -3208,7 +3208,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		         						return /[0-9]{5}\/[0-9]{4}$/.test(v)? true : "Debe introducir un n&uacute;mero con formato xxxxx/xxxx";
 		         				}
 		                      }
-		                     ,{"xtype":'combo',"store":storeSINO,"name":"d_comboAdmision","fieldLabel":"Admisión",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAdmision'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+		                     ,{"xtype":'combo',"store":storeSINO,"name":"d_comboAdmision","fieldLabel":"Admisión","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAdmision'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 		                     ,{"xtype":'combo',"store":storeSINO,"name":"d_comboBienes","fieldLabel":"Existen bienes registrables",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboBienes'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
@@ -3231,13 +3231,13 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	//id: 436 : T. EMBARGO DE SALARIOS: Confirmar retenciones practicadas
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       	,{"xtype":'combo',"store":this.storeDDCorrectoCobro,"name":"d_comboCorr","fieldLabel":"Situación",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboCorr'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDCorrectoCobro,"name":"d_comboCorr","fieldLabel":"Situación","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboCorr'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
 	//id: 437 : TRAMITE COSTAS : Autoaprobacion de costas
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       ,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_comboResultado","fieldLabel":"Resultado","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboAprobada","fieldLabel":"Aprobada",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAprobada'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       ,{"xtype":'numberfield',"name":"d_cuantiaLetrado","fieldLabel":"Cuantía letrado",allowBlank:false}
 						   ,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",allowBlank:false}
@@ -3246,7 +3246,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	//id: 438 : TRAMITE COSTAS: Confirmar Notificacion H007_ConfirmarNotificacion
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       	,{"xtype":'combo',"store":storeSINO,"value":"",allowBlank:true, "name":"d_comboResultado","fieldLabel":"Resultado notificación","autoload":true,	mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":storeSINO,"value":"", "name":"d_comboResultado","fieldLabel":"Resultado notificación","autoload":true,	mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
 	//id: 439 : P. CAMBIARIO: Interposicion de la demanda H016_interposicionDemandaMasBienes
@@ -3264,7 +3264,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                       ,{"xtype":'numberfield',"name":"d_capitalVencido","fieldLabel":"Capital vencido (en el cierre)",allowBlank:true,filtrar:true}
 	                       ,{"xtype":'numberfield',"name":"d_interesesOrdinarios","fieldLabel":"Intereses Ordinarios (en el cierre)",allowBlank:true,filtrar:true}
 	                       ,{"xtype":'numberfield',"name":"d_interesesDemora","fieldLabel":"Intereses de demora (en el cierre)",allowBlank:true,filtrar:true}
-	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_provisionFondos","fieldLabel":"Solicitar provisión de fondos",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_provisionFondos'+this.idFactoria,displayField:'descripcion',valueField:'codigo',filtrar:true}
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_provisionFondos","fieldLabel":"Solicitar provisión de fondos","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_provisionFondos'+this.idFactoria,displayField:'descripcion',valueField:'codigo',filtrar:true}
 	                       ]);
 	
 	
@@ -3290,17 +3290,17 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
      ,{"xtype":'numberfield',"name":"d_respHipDem","fieldLabel":"Responsabilidad hipotecaria máxima por demora",allowBlank:false, filtrar:true}
      ,{"xtype":'numberfield',"name":"d_respHipCosGas","fieldLabel":"Responsabilidad hipotecaria máxima por costas y gastos",allowBlank:false, filtrar:true}
      ,{"xtype":'numberfield',"name":"d_creditoSupl","fieldLabel":"Credito supletorio",allowBlank:false, filtrar:true}      
-     ,{"xtype":'combo',"store":storeSINO,"name":"d_provisionFondos","fieldLabel":"Provision Fondos",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_provisionFondos'+this.idFactoria,displayField:'descripcion',valueField:'codigo',filtrar:true}         
+     ,{"xtype":'combo',"store":storeSINO,"name":"d_provisionFondos","fieldLabel":"Provision Fondos","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_provisionFondos'+this.idFactoria,displayField:'descripcion',valueField:'codigo',filtrar:true}         
      ]);
 
     //id: 441 : Trámite de Adjudicación - HCJ : Confirmar testimonio Decreto adjudicación H005_ConfirmarTestimonio
     this.arrayCampos.push([
         {"xtype":'datefield', "name":"d_fechaTestimonio", "fieldLabel":"Fecha Testimonio", allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
         ,{"xtype":'datefield', "name":"d_fechaNotificacion", "fieldLabel":"Fecha notificación testimonio", allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
-        ,{"xtype":'combo', "store":storeSINO, "value":"", allowBlank:true, "name":"d_comboSubsanacion", "fieldLabel":"Requiere Subsanación", id:'d_comboSubsanacion' + this.idFactoria, "autoload":true, mode:'local',triggerAction:'all', resizable:true, displayField:'descripcion', valueField:'codigo'}
-        ,{"xtype":'combo', "store":storeSINO, "value":"", allowBlank:true, "name":"d_comboAdicional", "fieldLabel":"Comunicación adicional requerida", id:'d_comboAdicional' + this.idFactoria, "autoload":true, mode:'local',triggerAction:'all', resizable:true, displayField:'descripcion', valueField:'codigo', filtrar:true}
+        ,{"xtype":'combo', "store":storeSINO, "value":"",  "name":"d_comboSubsanacion", "fieldLabel":"Requiere Subsanación", id:'d_comboSubsanacion' + this.idFactoria, "autoload":true, mode:'local',triggerAction:'all', resizable:true, displayField:'descripcion', valueField:'codigo'}
+        ,{"xtype":'combo', "store":storeSINO, "value":"",  "name":"d_comboAdicional", "fieldLabel":"Comunicación adicional requerida", id:'d_comboAdicional' + this.idFactoria, "autoload":true, mode:'local',triggerAction:'all', resizable:true, displayField:'descripcion', valueField:'codigo', filtrar:true}
         ,{"xtype":'datefield', "name":"d_fechaLimite", "fieldLabel":"Fecha límite comunicación", allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, filtrar:true}
-        ,{"xtype":'combo', "store":storeSINO, "value":"", allowBlank:true, "name":"d_comboOcupantes", "fieldLabel":"Constancia de ocupantes", id:'d_comboOcupantes' + this.idFactoria, "autoload":true, mode:'local',triggerAction:'all', resizable:true, displayField:'descripcion', valueField:'codigo'}            
+        ,{"xtype":'combo', "store":storeSINO, "value":"",  "name":"d_comboOcupantes", "fieldLabel":"Constancia de ocupantes", id:'d_comboOcupantes' + this.idFactoria, "autoload":true, mode:'local',triggerAction:'all', resizable:true, displayField:'descripcion', valueField:'codigo'}            
     ]);
 
     //id: 442 : Trámite de Adjudicación - HCJ : Registrar presentación en el registro H005_RegistrarPresentacionEnRegistro
@@ -3324,7 +3324,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
         // id: 1001 : Autoprórroga
         this.arrayCampos.push([
                 {"xtype":'datefield',"name":"d_fechaProrroga","fieldLabel":"Fecha Prórroga",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-                ,{"xtype":'combo',"editable":"false","store":this.storeMotivosProrroga, width:'250', mode:'local', "name":"d_motivoProrroga","hiddenName":"d_motivoProrroga", id:'d_motivoProrroga_id' + this.idFactoria,"fieldLabel":"Motivo Pr&oacute;rroga",triggerAction: 'all',allowBlank:true,displayField:'descripcion',valueField:'codigo', "autoload":true }
+                ,{"xtype":'combo',"editable":"false","store":this.storeMotivosProrroga, width:'250', mode:'local', "name":"d_motivoProrroga","hiddenName":"d_motivoProrroga", id:'d_motivoProrroga_id' + this.idFactoria,"fieldLabel":"Motivo Pr&oacute;rroga",triggerAction: 'all',displayField:'descripcion',valueField:'codigo', "autoload":true }
         ]);
 
         // id: 1002 : Comunicación

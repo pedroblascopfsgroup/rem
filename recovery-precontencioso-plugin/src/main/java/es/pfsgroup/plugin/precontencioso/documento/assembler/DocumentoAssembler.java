@@ -19,7 +19,7 @@ import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
 public class DocumentoAssembler {
 	
 	
-	private SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	private static SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	
 	/**
 	 * Convierte en una SolicitudDocumentoDTO a partir de un documentoPCO y 

@@ -1,3 +1,21 @@
+--/*
+--##########################################
+--## AUTOR=María V.
+--## FECHA_CREACION=20160316
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=GC-1177
+--## PRODUCTO=NO
+--## 
+--## Finalidad: tipo de politica persona
+--## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
 create or replace procedure CARGAR_H_PER(DATE_START IN date, DATE_END IN date, O_ERROR_STATUS OUT VARCHAR2) AS
 	-- ===============================================================================================
 	-- Autor: Maria Villanueva, PFS Group
@@ -877,3 +895,5 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
 	end;
     
 end cargar_h_per;
+/
+EXIT

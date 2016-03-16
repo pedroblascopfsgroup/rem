@@ -42,6 +42,7 @@ import es.capgemini.pfs.asunto.model.AdjuntoAsunto;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.asunto.model.HistoricoCambiosAsunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -897,15 +898,22 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			sup = null;
 			procurador = null;
 		}
+		
+		DDTiposAsunto tipoDeAsunto = null;
+		
+		if(!Checks.esNulo(dtoAsunto.getTipoDeAsunto())){
+			tipoDeAsunto = genericdDao.get(DDTiposAsunto.class, genericdDao.createFilter(FilterType.EQUALS, "id", dtoAsunto.getTipoDeAsunto()));
+		}
 
 		if (Checks.esNulo(dtoAsunto.getIdAsunto())) // CREAR EXTASUNTO
 		{
 			exp = (Expediente) executor.execute(InternaBusinessOperation.BO_EXP_MGR_GET_EXPEDIENTE, dtoAsunto.getIdExpediente());
-			id = asuntoDao.crearAsuntoConEstado(gd, sup, procurador, dtoAsunto.getNombreAsunto(), exp, dtoAsunto.getObservaciones(),dtoAsunto.getCodigoEstadoAsunto());
+			
+			id = asuntoDao.crearAsuntoConEstado(gd, sup, procurador, dtoAsunto.getNombreAsunto(), exp, dtoAsunto.getObservaciones(),dtoAsunto.getCodigoEstadoAsunto(),tipoDeAsunto);
 			dtoAsunto.setIdAsunto(id);
 		} else // MODIFICAR EXTASUNTO
 		{
-			id = asuntoDao.modificarAsunto(dtoAsunto.getIdAsunto(), gd, sup, procurador, dtoAsunto.getNombreAsunto(), dtoAsunto.getObservaciones());
+			id = asuntoDao.modificarAsunto(dtoAsunto.getIdAsunto(), gd, sup, procurador, dtoAsunto.getNombreAsunto(), dtoAsunto.getObservaciones(), tipoDeAsunto);
 		}
 
 		if (modeloMultiGestor()) {

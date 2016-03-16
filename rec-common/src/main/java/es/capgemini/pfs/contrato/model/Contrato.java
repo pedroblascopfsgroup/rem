@@ -710,7 +710,11 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return monto Float: riesgo o deuda total del contrato, <code>0</code> si no tiene deuda.
      */
     public Float getRiesgo() {
-        return getLastMovimiento().getRiesgo();
+    	if (!Checks.esNulo(getLastMovimiento())) {
+    		return getLastMovimiento().getRiesgo();
+    	} else {
+    		return null;
+    	}
     }
 
     /**

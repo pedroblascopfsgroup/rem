@@ -145,6 +145,10 @@ public class Expediente implements Serializable, Auditable, Describible {
     @Column(name = "EXP_DESCRIPCION")
     private String descripcionExpediente;
     
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SAE_ID")
+    private Sancion sancion;
+
 	@Column(name = "SYS_GUID")
 	private String guid;
 
@@ -642,6 +646,13 @@ public class Expediente implements Serializable, Auditable, Describible {
     public boolean getRecuperacion() {
         return arquetipo.getItinerario().getdDtipoItinerario().getItinerarioRecuperacion();
     }
+    
+    /**
+     * @return boolean: <code>true</code> si el itineario del expediente es de gestión de deuda
+     */    
+    public boolean isGestionDeuda() {
+    	return arquetipo.getItinerario().getdDtipoItinerario().getItinerarioGestionDeuda();
+    }
 
     /**
      * @return String: Descripci�n del itinerario del expediente
@@ -1094,5 +1105,13 @@ public class Expediente implements Serializable, Auditable, Describible {
 
 	public void setGuid(String guid) {
 		this.guid = guid;
+	}
+	
+	public Sancion getSancion() {
+		return sancion;
+	}
+
+	public void setSancion(Sancion sancion) {
+		this.sancion = sancion;
 	}
 }

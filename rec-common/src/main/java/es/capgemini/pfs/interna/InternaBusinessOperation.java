@@ -60,6 +60,7 @@ public final class InternaBusinessOperation {
     public static final String BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL_ARQ = "expedienteManager.crearExpedienteManualArq";
     public static final String BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL_SEGUIMIENTO = "expedienteManager.crearExpedienteManualSeg";
     public static final String BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL_SEGUIMIENTO_ARQ = "expedienteManager.crearExpedienteManualSegArq";
+    public static final String BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL_GESTION_DEUDA = "expedienteManager.crearExpedienteManualGestDeuda";
     public static final String BO_EXP_MGR_DELETE_ADJUNTO = "expedienteManager.deleteAdjunto";
     public static final String BO_EXP_MGR_DESCONGELAR_EXPEDIENTE = "expedienteManager.desCongelarExpediente";
     public static final String BO_EXP_MGR_DEVOLVER_EXPEDIENTE_A_COMPLETAR = "expedienteManager.devolverExpedienteACompletar";
@@ -121,6 +122,13 @@ public final class InternaBusinessOperation {
     public static final String BO_EXP_MGR_FIND_EXPEDIENTES_RECOBRO_PAGINATED_DINAMICO = "expedienteManager.findExpedientesRecobroPaginatedDinamico";
     public static final String BO_EXP_MGR_FIND_EXPEDIENTES_PARA_EXCEL_DINAMICO = "expedienteManager.findExpedientesParaExcelDinamico";
     public static final String BO_EXP_MGR_FIND_EXPEDIENTES_RECOBRO_PARA_EXCEL_DINAMICO = "expedienteManager.findExpedientesRecobroParaExcelDinamico";
+    public static final String BO_EXP_MGR_ELEVAR_EXPEDIENTE_DE_REVISION_A_ENSANCION = "expedienteManager.elevarExpedienteDeREaENSAN";
+    public static final String BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_ENSANCION_A_REVISION = "expedienteManager.devolverExpedienteDeENSANaRE";
+    public static final String BO_EXP_MGR_ELEVAR_EXPEDIENTE_DE_ENSANCION_A_SANCIONADO = "expedienteManager.elevarExpedienteDeENSANaSANC";
+    public static final String BO_EXP_MGR_ELEVAR_EXPEDIENTE_DE_SANCIONADO_A_FORMALIZAR_PROPUESTA = "expedienteManager.elevarExpedienteDeSANCaFP";
+    public static final String BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_SANCIONADO_A_COMPLETAR_EXPEDIENTE = "expedienteManager.devolverExpedienteDeSANCaCE";
+    public static final String BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_FORMALIZAR_PROPUESTA_A_SANCIONADO = "expedienteManager.devolverExpedienteDeFPaSANC";
+    public static final String BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_SANCIONADO_A_EN_SANCION = "expedienteManager.devolverExpedienteDeSANCaENSAN";
     /*****************************************************************************
      ** PoliticaManager.
      ****************************************************************************/

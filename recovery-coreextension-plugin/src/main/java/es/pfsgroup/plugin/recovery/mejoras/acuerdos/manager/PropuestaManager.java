@@ -25,6 +25,7 @@ import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDMotivoRechazoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDSubtipoSolucionAmistosaAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDValoracionActuacionAmistosa;
+import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
@@ -41,12 +42,14 @@ import es.capgemini.pfs.registro.CumplimientoAcuerdoListener;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
+import es.capgemini.pfs.termino.model.TerminoContrato;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
@@ -127,11 +130,13 @@ public class PropuestaManager implements PropuestaApi {
 
 			Boolean esEstadoCompletarExp = DDEstadoItinerario.ESTADO_COMPLETAR_EXPEDIENTE.equals(expediente.getEstadoItinerario().getCodigo());
 			Boolean esEstadoRevisarExp = DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE.equals(expediente.getEstadoItinerario().getCodigo());
+			Boolean esEstadoEnSancion = DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION.equals(expediente.getEstadoItinerario().getCodigo());
 			Boolean esEstadoDecisionComite = DDEstadoItinerario.ESTADO_DECISION_COMIT.equals(expediente.getEstadoItinerario().getCodigo());
+			Boolean esEstadoSancionado = DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO.equals(expediente.getEstadoItinerario().getCodigo());
 
-			if (esEstadoCompletarExp || esEstadoRevisarExp) {
+			if (esEstadoCompletarExp || esEstadoRevisarExp || esEstadoEnSancion) {
 				cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_PROPUESTO);
-			} else if (esEstadoDecisionComite) {
+			} else if (esEstadoDecisionComite || esEstadoSancionado) {
 				cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_ACEPTADO);
 			}
 		} else {
@@ -494,6 +499,44 @@ public class PropuestaManager implements PropuestaApi {
 			for (CumplimientoAcuerdoListener l : listeners) {
 				l.fireEvent(map);
 			}
+		}
+	}
+	
+	@Override
+	public List<EXTAcuerdo> listadoPropuestasDelExpediente(Long idExpediente, String estadoAcuerdo ) {
+
+		Order order = new Order(OrderType.ASC, "id");
+		Filter fExp = genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente);
+		Filter fEstAcu = null;
+		if(!Checks.esNulo(estadoAcuerdo)){
+			fEstAcu = genericDao.createFilter(FilterType.EQUALS, "estadoAcuerdo.codigo", estadoAcuerdo);
+		}
+		return  genericDao.getListOrdered(EXTAcuerdo.class,order, fExp, fEstAcu);
+	}
+
+	@Override
+	public List<Contrato> contratosIncluidosEnLosTerminosDeLaPropuesta(Long idPropuesta) {
+
+		List<TerminoContrato> teaCnts = genericDao.getList(TerminoContrato.class,genericDao.createFilter(FilterType.EQUALS, "termino.acuerdo.id", idPropuesta), genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+		
+		List<Contrato> contratos = new ArrayList<Contrato>();
+		
+		for(TerminoContrato teaCnt : teaCnts){
+			if(!contratos.contains(teaCnt.getContrato())){
+				contratos.add(teaCnt.getContrato());
+			}
+		}
+		
+		return contratos;
+	}
+
+	@Override
+	public void asignaPropuestaAlAsunto(Long idPropuesta, Long idAsunto) {
+		Asunto asunto = genericDao.get(Asunto.class, genericDao.createFilter(FilterType.EQUALS, "id", idAsunto));
+		EXTAcuerdo propuesta = genericDao.get(EXTAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", idPropuesta));
+		if(!Checks.esNulo(asunto) && !Checks.esNulo(propuesta)){
+			propuesta.setAsunto(asunto);
+			acuerdoDao.save(propuesta);
 		}
 	}
 }

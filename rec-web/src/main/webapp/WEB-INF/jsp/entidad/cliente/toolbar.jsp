@@ -194,6 +194,34 @@ function(entidad,page){
 			btnCancelar.on('click', function() {wArq.hide() });
 		}
 	});
+	
+	var creacionExpedienteGestionDeudaButton = new Ext.menu.Item({
+		text : '<s:message code="expedientes.creacion.gestiondeuda" text="**Expediente de Gestión de Deuda" />'
+		,iconCls: 'icon_expediente_manual'
+		,handler : function() {
+			var data = toolbar.getArquetiposGestDeuda();
+			cmbArq.reset();
+			arqStore.loadData(data);
+			wArq.show();
+			btnNext.on('click',function() {
+				var tmpArqId = cmbArq.getValue();
+				wArq.hide();
+				var w = app.openWindow({
+					flow:'expedientes/creacionManualExpedientesGestionDeuda'
+					,width:870
+					,closable:false
+					,title: '<s:message code="expedientes.creacion.gestiondeuda" text="**Expediente de Gestión de Deuda" />'
+					,params:{idPersona: toolbar.getIdPersona(), isGestor:toolbar.isGestor(), isSupervisor:toolbar.isSupervisor(),proponer:proponer,idArquetipo:tmpArqId} 
+				});
+				w.on(app.event.DONE, function() {
+					entidad.refrescar();
+					w.close();
+				});
+				w.on(app.event.CANCEL, function() {w.close();});
+			});
+			btnCancelar.on('click',function() {wArq.hide();});
+		}
+	});
 
 	var tituloCreacionExpedienteRecobro='<s:message code="expedientes.creacion.recobro" text="**Expediente de Recobro" />';
 	var tituloCreacionExpedienteRecuperacion='<s:message code="expedientes.creacion.recuperacion" text="**Expediente de Recuperación" />';
@@ -214,6 +242,7 @@ function(entidad,page){
 			,creacionExpedienteSeguimientoButton 
 			,rechazarExpedienteButton
 			,creacionExpedienteRecobroButton
+			,creacionExpedienteGestionDeudaButton
 		]
 	};
 
@@ -275,7 +304,7 @@ function(entidad,page){
 		}
 	});
 	
-	<sec:authorize ifAnyGranted="SOLICITAR_EXP_MANUAL_RECOBRO, SOLICITAR_EXP_MANUAL_SEGUIMIENTO, SOLICITAR_EXP_MANUAL_RECUPERACIONES">
+	<sec:authorize ifAnyGranted="SOLICITAR_EXP_MANUAL_RECOBRO, SOLICITAR_EXP_MANUAL_SEGUIMIENTO, SOLICITAR_EXP_MANUAL_RECUPERACIONES, SOLICITAR_EXP_MANUAL_GESTION_DEUDA">
 		toolbar.add(menuExpediente);
 	</sec:authorize>
 	<sec:authorize ifAllGranted="RESPONDER">
@@ -389,6 +418,10 @@ function(entidad,page){
 		var data = entidad.get("data");
 		return data.arquetiposSeg;
 	}
+	toolbar.getArquetiposGestDeuda = function() {
+		var data = entidad.get("data");
+		return data.arquetiposGestDeuda;
+	}
 	
 
 	var permiso_SOLICITAR_EXP_MANUAL_RECOBRO  = false <sec:authorize ifAllGranted="SOLICITAR_EXP_MANUAL_RECOBRO"> || true </sec:authorize>;
@@ -404,12 +437,20 @@ function(entidad,page){
 		
 		var esVisible = [
 			[menuExpediente, false]
-			<sec:authorize ifAnyGranted="SOLICITAR_EXP_MANUAL_RECOBRO, SOLICITAR_EXP_MANUAL_SEGUIMIENTO, SOLICITAR_EXP_MANUAL_RECUPERACIONES">
+			<sec:authorize ifAnyGranted="SOLICITAR_EXP_MANUAL_RECOBRO, SOLICITAR_EXP_MANUAL_SEGUIMIENTO, SOLICITAR_EXP_MANUAL_RECUPERACIONES, SOLICITAR_EXP_MANUAL_GESTION_DEUDA">
 				,[menuExpediente, data.noHayExpedientes || !data.expedientePropuesto.isNull]
-				,[creacionExpedienteButton, permiso_SOLICITAR_EXP_MANUAL_RECUPERACIONES]
-				,[creacionExpedienteSeguimientoButton, permiso_SOLICITAR_EXP_MANUAL_SEGUIMIENTO ]
+				<sec:authorize ifAllGranted="SOLICITAR_EXP_MANUAL_RECUPERACIONES">,[creacionExpedienteButton, permiso_SOLICITAR_EXP_MANUAL_RECUPERACIONES]</sec:authorize>
+				<sec:authorize ifNotGranted="SOLICITAR_EXP_MANUAL_RECUPERACIONES">,[creacionExpedienteButton, false]</sec:authorize>
+				
+				<sec:authorize ifAllGranted="SOLICITAR_EXP_MANUAL_SEGUIMIENTO">,[creacionExpedienteSeguimientoButton, permiso_SOLICITAR_EXP_MANUAL_SEGUIMIENTO ]</sec:authorize>
+				<sec:authorize ifNotGranted="SOLICITAR_EXP_MANUAL_SEGUIMIENTO">,[creacionExpedienteSeguimientoButton, false]</sec:authorize>
+				
 				,[rechazarExpedienteButton, !data.expedientePropuesto.isNull && toolbar.isSupervisor()] 
-				,[creacionExpedienteRecobroButton, permiso_SOLICITAR_EXP_MANUAL_RECOBRO]
+				<sec:authorize ifAllGranted="SOLICITAR_EXP_MANUAL_RECOBRO">,[creacionExpedienteRecobroButton, permiso_SOLICITAR_EXP_MANUAL_RECOBRO]</sec:authorize>
+				<sec:authorize ifNotGranted="SOLICITAR_EXP_MANUAL_RECOBRO">,[creacionExpedienteRecobroButton, false]</sec:authorize>
+				
+				<sec:authorize ifAllGranted="SOLICITAR_EXP_MANUAL_GESTION_DEUDA">,[creacionExpedienteGestionDeudaButton, true]</sec:authorize>
+				<sec:authorize ifNotGranted="SOLICITAR_EXP_MANUAL_GESTION_DEUDA">,[creacionExpedienteGestionDeudaButton, false]</sec:authorize>
 			</sec:authorize>	
 			,[botonComunicacion, toolbar.isSupervisor() || toolbar.isGestor()]
 			,[botonResponder, toolbar.isSupervisor() || toolbar.isGestor()]
@@ -426,6 +467,7 @@ function(entidad,page){
 			,[creacionExpedienteSeguimientoButton, ((!data.tieneExpedienteSeguimiento) && data.tieneContratosActivos)] 
 			,[creacionExpedienteRecobroButton, (data.expedientePropuesto.isNull || !data.expedientePropuesto.seguimiento) 
 					&&  !(data.arquetipoPersona.isSeguimiento || !data.arquetipoPersona.isArquetipoGestion || !data.tieneContratosParaCliente)]
+			,[creacionExpedienteGestionDeudaButton, (data.tieneContratosActivos)]
 		];
 
 		var condition = '';

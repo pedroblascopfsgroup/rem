@@ -79,8 +79,7 @@
 			<pfs:items items="ambitoExpediente" width="600" />
 		</pfs:panel>
 	}
-	
-	
+
 	<pfslayout:includetab name="tabEstados" >
 		<%@ include file="tabEstadosItinerario.jsp" %>
 	</pfslayout:includetab>

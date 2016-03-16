@@ -850,7 +850,7 @@ BEGIN
                               NUM_COBROS INTEGER ,
                               IMPORTE_COBRO NUMBER(15,2) ,
                               NUM_DIAS_CREACION_ASU_COBRO INTEGER,
-							  COBRO_ID NUMBER(16,0)
+							  COBRO_ID NUMBER(16,0))
                              SEGMENT CREATION IMMEDIATE 
 					TABLESPACE "RECOVERY_PRODUC_DWH" 
                     PARTITION BY RANGE ("DIA_ID")
@@ -1016,7 +1016,7 @@ BEGIN
                               ASUNTO_ID NUMBER(16,0) NOT NULL,
                               CONTRATO_ID NUMBER(16,0),
                               -- Metricas
-                              NUM_CONTRATOS_PROCEDIMIENTO INTEGER
+                              NUM_CONTRATOS_PROCEDIMIENTO INTEGER)
                              SEGMENT CREATION IMMEDIATE 
 					TABLESPACE "RECOVERY_PRODUC_DWH" 
                     PARTITION BY RANGE ("DIA_ID")

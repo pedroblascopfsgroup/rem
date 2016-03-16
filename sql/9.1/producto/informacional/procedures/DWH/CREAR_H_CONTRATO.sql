@@ -1794,7 +1794,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_CNT_DET_CICLO_REC'',
                               -- Recobro
                               IMPORTE_RECLAMAR_INI_CAMP_REC NUMBER(14,2))
                     SEGMENT CREATION IMMEDIATE NOLOGGING
-                    PARTITION BY RANGE ("DIA_ID")
+                    PARTITION BY RANGE ("FECHA_INICIO_CAMPANA_RECOBRO")
                     INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
                     (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))
                             '', :error); END;';

@@ -10,6 +10,7 @@
     var parametrosTab = new Array();
     var tabDatos=false;
     var tabRiesgos=false;
+    var tabJerarquia=false;
 	
 	//envuelve una lista de controles en un fieldSet
 	var creaFieldSet = function(items, config){
@@ -69,7 +70,6 @@
   				}
 		}
 	});
-
 
     var gestion = <app:dict value="${gestion}" blankElement="true" blankElementValue="" blankElementText="---" />;
     
@@ -353,13 +353,7 @@
 	};
 	
 	var validarEmptyFormRiesgos = function() {
-		if (tabRiesgos) {
-			if (comboJerarquia.getValue() != '' ){
-				return true;
-			}
-			if (listadoCodigoZonas.length > 0 ){
-				return true;
-			}			
+		if (tabRiesgos) {			
 			if (!(mmRiesgoTotal.min.getValue() === '' )){
 				return true;
 			}
@@ -375,16 +369,21 @@
 			if (!(filtroContrato.getValue() === '')){
 				return true;
 			}
-			/*if (comboSegmentos.getValue() != '' ){
+		}			
+		return false;			
+	};	
+	
+	var validarEmptyFormJerarquia = function() {
+		if (tabJerarquia) {
+			if (comboJerarquia.getValue() != '' ){
 				return true;
-			}*/
-		}
-			
-		return false;
-			
+			}
+			if (listadoCodigoZonas.length > 0 ){
+				return true;
+			}			
+		}			
+		return false;			
 	};
-	
-	
 		
 	var validaMinMax = function(){
 		if (tabRiesgos) {
@@ -454,31 +453,37 @@
 			if(mmSVencido.max.getValue()=='undefined' || !mmSVencido.max.getValue()){
 				mmSVencido.max.setValue('');
 			}
-			if(comboJerarquia.getValue()=='undefined' || !comboJerarquia.getValue()){
-				comboJerarquia.setValue('');
+			if(filtroContrato.getValue()=='undefined' || !filtroContrato.getValue()){
+				filtroContrato.setValue('');
 			}
-			
+		}
+		var param = new Object();   		
+		if (tabRiesgos) {
+			param.minRiesgoTotal=mmRiesgoTotal.min.getValue();
+			param.maxRiesgoTotal=mmRiesgoTotal.max.getValue();
+			param.minSaldoVencido=mmSVencido.min.getValue();
+			param.maxSaldoVencido=mmSVencido.max.getValue();
+			param.nroContrato=filtroContrato.getValue();
+		}
+		param.busqueda=true;
+		
+		return param;
+	};
+		
+	var getParametrosJerarquia = function() {  
+		
+		if (tabJerarquia) {		
 			if (comboZonas.getValue()=='undefined' || !comboZonas.getValue()){
 				comboZonas.setValue('');
 			}
 			if(filtroContrato.getValue()=='undefined' || !filtroContrato.getValue()){
 				filtroContrato.setValue('');
 			}
-			/*if(comboSegmentos.getValue()=='undefined' || !comboSegmentos.getValue()){
-				comboSegmentos.setValue('');
-			}*/
-		}
-		
+		}		
    		var param = new Object();   		
-		if (tabRiesgos) {
-			param.minRiesgoTotal=mmRiesgoTotal.min.getValue();
-			param.maxRiesgoTotal=mmRiesgoTotal.max.getValue();
-			param.minSaldoVencido=mmSVencido.min.getValue();
-			param.maxSaldoVencido=mmSVencido.max.getValue();
+		if (tabJerarquia) {
 			param.codigoEntidad=comboJerarquia.getValue();
 			param.codigoZona=listadoCodigoZonas.toString();
-			param.nroContrato=filtroContrato.getValue();
-			//param.segmentos=comboSegmentos.getValue();
 		}
 		param.busqueda=true;
 		
@@ -498,7 +503,7 @@
                   	j++;
             	}
         	}
-    	};
+    };
           
         var error=false;
           
@@ -581,51 +586,13 @@
 	
 	filtrosTabDatosExpediente.on('activate',function(){
 		tabDatos=true;
+		tabJerarquia=false;
+		tabRiesgos=false;
 	});
 	
-	
-var panel1 = new Ext.form.FieldSet({
-		defaults : {cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
-		,border : false
-		,height : 120
-        ,layout : 'table'
-        ,autoWidth : true
-		//,width:panelWidth
-		,items : [
-			{   layout:'table'
-				,layoutConfig:{columns:1}
-				,border:false
-				,defaults : {xtype : 'fieldset',autoHeight:true, border : false ,cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
-				,items:[{items: [mmRiesgoTotal.panel,mmSVencido.panel, filtroContrato]}
-				]
-			},
-			{ xtype : 'errorList', id:'errL' }			
-		]
-	});	
-	
-	var panel2 = new Ext.form.FieldSet({
-		defaults : {cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
-		,border : false
-		,autoHeight:true
-        ,layout : 'table'
-        ,autoWidth : true
-		//,width:panelWidth
-		,items : [
-			{   layout:'table'
-				,layoutConfig:{columns:3}
-				,border:false
-				,defaults : {xtype : 'fieldset',autoHeight:true, border : false ,cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
-				,items:[{items: [ comboJerarquia, comboZonas]}
-						,{items: [ btnIncluir, btnExcluir]}
-						,{items: [ zonasGrid]}
-				]
-			},
-			{ xtype : 'errorList', id:'errL' }			
-		]
-	});	
-	
+//Agrego los filtros al panel
 	var filtrosTabRiesgos = new Ext.Panel({
-		title:'<s:message code="plugin.mejoras.expedientes.busqueda.riesgos" text="**Riesgos" />'
+		title: '<s:message code="plugin.mejoras.expedientes.busqueda.riesgos" text="**Riesgos" />'
 		,autoHeight:true
 		,bodyStyle:'padding: 10px'
 		,layout:'table'
@@ -633,9 +600,8 @@ var panel1 = new Ext.form.FieldSet({
 		,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
 		,items:[{
 					layout:'form'
-					,items: [panel1, panel2]
-				}			
-				]
+					,items: [mmRiesgoTotal.panel,mmSVencido.panel, filtroContrato]
+				}]
 		,listeners:{
 			getParametros: function(anadirParametros, hayError) {
 				if (validarEmptyFormRiesgos()){
@@ -644,13 +610,10 @@ var panel1 = new Ext.form.FieldSet({
 			}			
 			,limpiar: function() {
     		   app.resetCampos([      
-    		   			//comboSegmentos,
 						mmRiesgoTotal.min,
 						mmRiesgoTotal.max,
 						mmSVencido.min,
 						mmSVencido.max,
-						comboJerarquia,
-						comboZonas,
 						filtroContrato
 	           ]); 
 	           zonasStore.removeAll();
@@ -659,11 +622,52 @@ var panel1 = new Ext.form.FieldSet({
 	});
 	
 	filtrosTabRiesgos.on('activate',function(){
+		tabJerarquia=false;
 		tabRiesgos=true;
+		tabDatos=false;
 	});
 	
+	var filtrosTabJerarquia = new Ext.Panel({
+		title: '<s:message code="expedientes.listado.jerarquia" text="**Jerarquia" />'
+		,autoHeight:true
+		,bodyStyle:'padding: 10px'
+		,layout:'table'
+		,layoutConfig:{columns:3}
+		,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
+		,items:[{
+					layout:'form'
+					,items: [comboJerarquia, comboZonas]
+				},{
+					layout:'form'
+					,items: [btnIncluir, btnExcluir]
+				},{
+					layout:'form'
+					,items: [zonasGrid]
+				}]
+		,listeners:{
+			getParametros: function(anadirParametros, hayError) {
+				if (validarEmptyFormJerarquia()){
+					anadirParametros(getParametrosJerarquia());
+				}
+			}			
+			,limpiar: function() {
+    		   app.resetCampos([      
+						comboJerarquia,
+						comboZonas
+	           ]); 
+	           zonasStore.removeAll();
+    		}
+		}
+	});
+	
+	filtrosTabJerarquia.on('activate',function(){
+		tabJerarquia=true;
+		tabRiesgos=false;
+		tabDatos=false;
+	});
+
 	var filtroTabPanel=new Ext.TabPanel({
-		items:[filtrosTabDatosExpediente, filtrosTabRiesgos]
+		items:[filtrosTabDatosExpediente, filtrosTabRiesgos, filtrosTabJerarquia]
 		,id:'idTabFiltrosContrato'
 		,layoutOnTabChange:true 
 		,autoScroll:true
@@ -752,7 +756,7 @@ var panel1 = new Ext.form.FieldSet({
 			,cls:'cursor_pointer'
 			,iconCls : 'icon_expedientes'
 			,dontResizeHeight:true
-			,height:175			
+			,height:240		
 			,bbar : [ botonesTabla  ]
 			<app:test id="listaExpedientes" addComa="true"/>
 		});

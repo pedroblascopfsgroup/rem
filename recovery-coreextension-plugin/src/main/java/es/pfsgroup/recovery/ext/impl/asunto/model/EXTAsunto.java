@@ -1,6 +1,8 @@
 package es.pfsgroup.recovery.ext.impl.asunto.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +32,6 @@ import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
-
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -357,6 +358,45 @@ public class EXTAsunto extends Asunto {
 		return ultimoProc;
 	}
 	
+	
+	/**
+	 * Recupera el último procedimiento del asunto (basado en el ID), considera
+	 * el ID más alto como el último.
+	 * 
+	 * @param asu
+	 * @return
+	 */
+	public Procedimiento getUltimoProcedimientoConTareas() {
+
+		// Se obtienen los procedimientos y se ordenan de forma descendente por id
+		Comparator<Procedimiento> comparator = new Comparator<Procedimiento>() {
+			@Override
+			public int compare(Procedimiento o1, Procedimiento o2) {
+				return o2.getId().compareTo(o1.getId());
+			}
+		};
+		
+		List<Procedimiento> lista = this.getProcedimientos();
+		Collections.sort(lista, comparator);		
+		
+		for (Procedimiento procedimiento : lista) {
+			
+			//Si tiene alguna tarea notificación no finalizada
+			for (TareaNotificacion tarea : procedimiento.getTareas()) {
+				if ((Checks.esNulo(tarea.getTareaFinalizada()) || !tarea.getTareaFinalizada()) 
+						&& !Checks.esNulo(tarea.getTareaExterna())) {
+					//Si tiene tarea_procedimiento
+					if (!Checks.esNulo(tarea.getTareaExterna().getTareaProcedimiento())) {
+						// Nos quedamos con este procedimiento
+						return procedimiento;
+					}
+				}
+			}
+		}
+
+		return null;
+	}	
+
 	@Transient
 	public static EXTAsunto instanceOf(Asunto asunto) {
 		EXTAsunto extAsunto = null;

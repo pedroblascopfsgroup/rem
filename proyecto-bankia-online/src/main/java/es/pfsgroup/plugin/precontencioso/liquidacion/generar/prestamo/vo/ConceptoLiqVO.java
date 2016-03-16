@@ -27,7 +27,7 @@ public class ConceptoLiqVO {
 	}
 
 	public String FECHA() {
-		return fechaCortaFormat.format(fecha);
+		return fecha == null ? "" : fechaCortaFormat.format(fecha);
 	}
 
 	public String CONCEPTO() {

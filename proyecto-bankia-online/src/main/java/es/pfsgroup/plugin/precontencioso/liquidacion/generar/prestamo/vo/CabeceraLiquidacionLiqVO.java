@@ -22,23 +22,23 @@ public class CabeceraLiquidacionLiqVO {
 	private final SimpleDateFormat formatoFechaCorta = new SimpleDateFormat("dd/MM/yyyy", MessageUtils.DEFAULT_LOCALE);
 	
 	public String NCTAOP() {
-		return CLQ_NCTAOP == null ? "[NO DISPONIBLE]" : CLQ_NCTAOP;
+		return CLQ_NCTAOP == null ? "" : CLQ_NCTAOP;
 	}
 	
 	public String DESLIQ() {
-		return CLQ_DESLIQ == null ? "[NO DISPONIBLE]" : CLQ_DESLIQ;
+		return CLQ_DESLIQ == null ? "" : CLQ_DESLIQ;
 	}
 
 	public String FEFCON() {
-		return formatoFechaCorta.format(CLQ_FEFCON);
+		return CLQ_FEFCON == null ? "" : formatoFechaCorta.format(CLQ_FEFCON);
 	}
 	
 	public String FANTLQ() {
-		return formatoFechaCorta.format(CLQ_FANTLQ);
+		return CLQ_FANTLQ == null ? "" : formatoFechaCorta.format(CLQ_FANTLQ);
 	}
 	
 	public String FEVALQ() {
-		return formatoFechaCorta.format(CLQ_FEVALQ);
+		return CLQ_FEVALQ == null ? "" : formatoFechaCorta.format(CLQ_FEVALQ);
 	}
 
 	public String POINDB() {

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -132,7 +133,7 @@ public class AdjudicadosController {
 		return BIENES_PROCEDIMIENTO_JSON;
 	}
 
-	@SuppressWarnings("static-access")
+	@SuppressWarnings({ "unchecked" })
 	@RequestMapping
 	public String openGenericFormCustom(@RequestParam(value = "idAsunto", required = true) Long idAsunto, @RequestParam(value = "idsTareas", required = true) String idsTareas,
 			@RequestParam(value = "nombreTipoProcedimiento", required = true) String nombreTipoProcedimiento, ModelMap map) {
@@ -214,6 +215,7 @@ public class AdjudicadosController {
 		return GENERIC_FORM_CUSTOM;
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String saveValues(WebRequest request, ModelMap map) {
 		String idTareaExterna = request.getParameter("idTarea");
@@ -223,15 +225,14 @@ public class AdjudicadosController {
 		DtoGenericForm dto = rellenaDtoGenericForm(genericForm, request);
 		try {
 			executor.execute("genericFormManager.saveValues",dto);
-		} catch (FrameworkException e) {
-			// TODO Auto-generated catch block
+		} 
+		catch (FrameworkException e) {
 			String txtProcedimientoError = "";
 			if (!Checks.esNulo(genericForm) && !(Checks.esNulo(genericForm.getTareaExterna())) && !(Checks.esNulo(genericForm.getTareaExterna().getTareaPadre())) && !(Checks.esNulo(genericForm.getTareaExterna().getTareaPadre().getProcedimiento()))) {
 				Procedimiento p = genericForm.getTareaExterna().getTareaPadre().getProcedimiento();
 				txtProcedimientoError = "Procedimiento '" + p.getId() + "' devuelve el siguiente mensaje:\n";				
 			}			
-			map.put("msgError", txtProcedimientoError+e.getMessage()+"\n\n");
-//			throw new FrameworkException(txtProcedimientoError+e.getMessage()+"\n\n");
+			map.put("msgError", txtProcedimientoError + StringEscapeUtils.unescapeHtml(StringUtils.substringBeforeLast(StringUtils.substringAfter(e.getMessage(), ">"), "<")) +"\n\n");
 		}
 		
 		return RESPUESTA_JSON;

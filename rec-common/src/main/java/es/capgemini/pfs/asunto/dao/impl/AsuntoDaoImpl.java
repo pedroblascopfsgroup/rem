@@ -380,10 +380,10 @@ public class AsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements As
         //MAX MINS
         if (requiereProcedimiento(dto)) {
             if (dto.getMaxSaldoTotalContratos() == null) {
-                dto.setMaxSaldoTotalContratos((double) Integer.MAX_VALUE);
+                dto.setMaxSaldoTotalContratos((float) Integer.MAX_VALUE);
             }
             if (dto.getMinSaldoTotalContratos() == null) {
-                dto.setMinSaldoTotalContratos(0d);
+                dto.setMinSaldoTotalContratos(0f);
             }
             if (dto.getMaxImporteEstimado() == null) {
                 dto.setMaxImporteEstimado((double) Integer.MAX_VALUE);

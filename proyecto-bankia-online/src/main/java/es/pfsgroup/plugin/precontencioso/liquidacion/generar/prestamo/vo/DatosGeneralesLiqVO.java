@@ -40,27 +40,27 @@ public class DatosGeneralesLiqVO {
 	}
 
 	public String FEFOEZ() {
-		return fechaLargaFormat.format(DGC_FEFOEZ);
+		return DGC_FEFOEZ == null ? "" : fechaLargaFormat.format(DGC_FEFOEZ);
 	}
 
 	public String FEVACM() {
-		return fechaLargaFormat.format(DGC_FEVACM);
+		return DGC_FEVACM == null ? "" : fechaLargaFormat.format(DGC_FEVACM);
 	}
 
 	public String NOMFED1() {
-		return DGC_NOMFED1 == null ? "[NO DISPONIBLE]" : DGC_NOMFED1;
+		return DGC_NOMFED1 == null ? "" : DGC_NOMFED1;
 	}
 
 	public String NMPRTO() {
-		return DGC_NMPRTO == null ? "[NO DISPONIBLE]" : DGC_NMPRTO;
+		return DGC_NMPRTO == null ? "" : DGC_NMPRTO;
 	}
 
 	public String IDPRIG() {
-		return DGC_IDPRIG == null ? "[NO DISPONIBLE]" : DGC_IDPRIG;
+		return DGC_IDPRIG == null ? "" : DGC_IDPRIG;
 	}
 
 	public String COIBTQ() {
-		return DGC_COIBTQ == null ? "[NO DISPONIBLE]" : DGC_COIBTQ;
+		return DGC_COIBTQ == null ? "" : DGC_COIBTQ;
 	}
 
 	public String IMDEUD() {
@@ -75,7 +75,7 @@ public class DatosGeneralesLiqVO {
 			return numberInLetters + "céntimos";
 		}
 
-		return "NO DISPONIBLE";
+		return "";
 	}
 
 	public String IMVRE2() {
@@ -83,11 +83,11 @@ public class DatosGeneralesLiqVO {
 	}
 	
 	public String FFCTTO() {
-		return fechaLargaFormat.format(DGC_FFCTTO);
+		return DGC_FFCTTO == null ? "" : fechaLargaFormat.format(DGC_FFCTTO);
 	}
 	
 	public String CODICE(){
-		return DGC_CODICE == null ? "[NO DISPONIBLE]" : DGC_CODICE.toString();
+		return DGC_CODICE == null ? "" : DGC_CODICE.toString();
 	}
 
 	/*

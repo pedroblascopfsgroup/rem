@@ -46,6 +46,7 @@ public class TareaNotificacionController {
     @Autowired
     private TareaNotificacionDao tareaNotificacionDao;
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String editarAlertaTarea(@RequestParam(value = "id", required = true) Long id, ModelMap map) {
 			
@@ -80,6 +81,7 @@ public class TareaNotificacionController {
 		return JSON_PLUGIN_MEJORAS_TAREAS_CONSULTA_NOTIF_SIN_RESP;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
     public String exportacionTareasExcelCount(@RequestParam(value = "codigoTipoTarea", required = true) String codigoTipoTarea,
     		@RequestParam(value = "perfilUsuario", required = true) Long perfilUsuario,
@@ -113,11 +115,12 @@ public class TareaNotificacionController {
 		dto.setFechaVencimientoHastaOperador(fechaVencimientoHastaOperador);
     	
 		model.put("count", proxyFactory.proxy(TareaNotificacionApi.class).buscarTareasParaExcelCount(dto));
-//		model.put("limit", appProperties.getProperty("exportar.excel.limite.tareas"));
+		model.put("limit", limite);
     	
 		return "plugin/mejoras/tareas/exportacionTareasCountJSON";
     }
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
     public String exportacionTareasPaginaDescarga(@RequestParam(value = "codigoTipoTarea", required = true) String codigoTipoTarea,
     		@RequestParam(value = "perfilUsuario", required = true) Long perfilUsuario,

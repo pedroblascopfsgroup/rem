@@ -288,10 +288,10 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		if (requiereProcedimiento(dto) && requiereFiltrarPorSaldoTotal(dto)) {
 
 			if (dto.getMaxSaldoTotalContratos() == null) {
-				dto.setMaxSaldoTotalContratos((double) Integer.MAX_VALUE);
+				dto.setMaxSaldoTotalContratos((float) Integer.MAX_VALUE);
 			}
 			if (dto.getMinSaldoTotalContratos() == null) {
-				dto.setMinSaldoTotalContratos(0d);
+				dto.setMinSaldoTotalContratos(0f);
 			}
 
 			hql.append(" and a.id in ");
@@ -320,10 +320,8 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			hql.append(" ( ");
 			hql.append(" select max(m2.fechaExtraccion) from Movimiento m2 where m2.contrato.id = m.contrato.id  ");
 			hql.append(" ) ");
+			hql.append(" AND (m.posVivaVencida + m.posVivaNoVencida) BETWEEN :minSaldoTotalCnt AND :maxSaldoTotalCnt ");
 			hql.append(" group by a.id ");
-			hql.append(" having (");
-			hql.append(" sum(m.posVivaVencida + m.posVivaNoVencida) between :minSaldoTotalCnt and :maxSaldoTotalCnt ");
-			hql.append(" ) ");
 			hql.append(" ) ");
 
 			params.put("minSaldoTotalCnt", dto.getMinSaldoTotalContratos());
@@ -778,11 +776,10 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			hql.append(" and cdd2.id = crn.batchAcuerdoCierreDeuda.id ");
 			hql.append(" and asu.id = cdd2.asunto.id ");
 			hql.append(" and crn.resultado = rvn.codigo and crn.descripcionResultado = rvn.descripcion ");
-			
-			hql.append(" and crn.id in ( ");
-			hql.append(" select max(crn1.id) ");
+			hql.append(" and crn.fechaResultado = ( ");
+			hql.append(" select MAX(crn1.fechaResultado) ");
 			hql.append(" from  BatchCDDResultadoNuse crn1 ");
-			hql.append(" group by crn1.codigoExterno, crn1.batchAcuerdoCierreDeuda.id ) ");			
+			hql.append(" WHERE crn.codigoExterno = crn1.codigoExterno) ");			
 		}
 		
 		
@@ -1080,10 +1077,10 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		if (requiereProcedimiento(dto) && requiereFiltrarPorSaldoTotal(dto)) {
 
 			if (dto.getMaxSaldoTotalContratos() == null) {
-				dto.setMaxSaldoTotalContratos((double) Integer.MAX_VALUE);
+				dto.setMaxSaldoTotalContratos((float) Integer.MAX_VALUE);
 			}
 			if (dto.getMinSaldoTotalContratos() == null) {
-				dto.setMinSaldoTotalContratos(0d);
+				dto.setMinSaldoTotalContratos(0f);
 			}
 
 			hql.append(" and a.id in ");
@@ -1112,10 +1109,8 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			hql.append(" ( ");
 			hql.append(" select max(m2.fechaExtraccion) from Movimiento m2 where m2.contrato.id = m.contrato.id  ");
 			hql.append(" ) ");
+			hql.append(" AND (m.posVivaVencida + m.posVivaNoVencida) BETWEEN :minSaldoTotalCnt and :maxSaldoTotalCnt ");
 			hql.append(" group by a.id ");
-			hql.append(" having (");
-			hql.append(" sum(m.posVivaVencida + m.posVivaNoVencida) between :minSaldoTotalCnt and :maxSaldoTotalCnt ");
-			hql.append(" ) ");
 			hql.append(" ) ");
 
 			params.put("minSaldoTotalCnt", dto.getMinSaldoTotalContratos());

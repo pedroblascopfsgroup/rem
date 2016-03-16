@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -32,7 +33,7 @@ public interface NMBValoracionesBienInfo {
 	 * Importe valor subjetivo para el bien
 	 * @return
 	 */
-	Float getImporteValorSubjetivo();
+	BigDecimal getImporteValorSubjetivo();
 
 	/**
 	 * Fecha valor apreciaci�n para el bien
@@ -43,7 +44,7 @@ public interface NMBValoracionesBienInfo {
 	 * Importe valor apreciaci�n para el bien
 	 * @return
 	 */
-	Float getImporteValorApreciacion();
+	BigDecimal getImporteValorApreciacion();
 	
 	/**
 	 * Fecha valor tasaci�n para el bien
@@ -54,7 +55,7 @@ public interface NMBValoracionesBienInfo {
 	 * Importe valor tasaci�n para el bien
 	 * @return
 	 */
-	Float getImporteValorTasacion();	
+	BigDecimal getImporteValorTasacion();	
 	
 	/**
 	 * Auditoria

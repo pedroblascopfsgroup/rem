@@ -44,5 +44,7 @@ public interface MEJExpedienteApi {
 
 	@BusinessOperationDefinition(OBTENER_ZONAS_JERARQUIA_BY_COD_OR_DESC)
 	public List<DDZona> getZonasJerarquiaByCodDesc(Integer idNivel, String codDesc);
+	
+	public void guardaSancionExpediente(Long idExpediente, String decionSancion, String observaciones);
     
 }

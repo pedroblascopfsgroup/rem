@@ -179,6 +179,7 @@
 		<json:property name="usuarioExterno" value="${usuario.usuarioExterno}"/>
 	</json:object>
 	<json:property name="esSupervisor" value="${esSupervisor}"/>
+	<json:property name="esGestor" value="${esGestor}"/>
 	<json:property name="esAgencia" value="${esAgencia}"/>
 	<json:property name="esGestorSupervisorActual" value="${esGestorSupervisorActual}"/>
 	<json:array name= "estados" items = "${expediente.arquetipo.itinerario.estados}" var= "est">
@@ -187,4 +188,11 @@
 			<json:property name = "codigo" value = "${est.estadoItinerario.codigo}"/>
 		</json:object>
 	</json:array>
+	<json:object name="sancion">
+		<c:if test="${expediente.sancion!=null}">
+			<json:property name='observaciones' value="${expediente.sancion.observaciones}" />
+			<json:property name='codDecision' value="${expediente.sancion.decision.codigo}" />
+			<json:property name='descDecision' value="${expediente.sancion.decision.descripcion}" />
+		</c:if>
+	</json:object>
 </fwk:json>

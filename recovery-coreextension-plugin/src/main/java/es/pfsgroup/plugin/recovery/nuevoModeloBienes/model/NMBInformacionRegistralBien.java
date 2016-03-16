@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -45,10 +46,10 @@ public class NMBInformacionRegistralBien implements  Serializable, Auditable, NM
     private String referenciaCatastralBien;   
 	
 	@Column(name = "BIE_DREG_SUPERFICIE")
-    private Float superficie;
+    private BigDecimal superficie;
 	
 	@Column(name = "BIE_DREG_SUPERFICIE_CONSTRUIDA")
-    private Float superficieConstruida;
+    private BigDecimal superficieConstruida;
 	
 	@Column(name = "BIE_DREG_TOMO")
 	private String tomo;
@@ -114,19 +115,19 @@ public class NMBInformacionRegistralBien implements  Serializable, Auditable, NM
 		this.referenciaCatastralBien = referenciaCatastral;
 	}
 
-	public Float getSuperficie() {
+	public BigDecimal getSuperficie() {
 		return superficie;
 	}
 
-	public void setSuperficie(Float superficie) {
+	public void setSuperficie(BigDecimal superficie) {
 		this.superficie = superficie;
 	}
 
-	public Float getSuperficieConstruida() {
+	public BigDecimal getSuperficieConstruida() {
 		return superficieConstruida;
 	}
 
-	public void setSuperficieConstruida(Float superficieConstruida) {
+	public void setSuperficieConstruida(BigDecimal superficieConstruida) {
 		this.superficieConstruida = superficieConstruida;
 	}
 

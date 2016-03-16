@@ -18,6 +18,7 @@ import com.tc.aspectwerkz.transform.inlining.compiler.CompilationInfo.Model;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
+import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDMotivoRechazoAcuerdo;
 import es.capgemini.pfs.core.api.acuerdo.AcuerdoApi;
 import es.capgemini.pfs.core.api.acuerdo.CumplimientoAcuerdoDto;
@@ -45,7 +46,8 @@ public class PropuestasController {
 	private static final String LISTADO_PROPUESTAS_EXPLORAR_JSON =  "plugin/mejoras/acuerdos/propuestasExplorarJSON";
 	private static final String JSON_LISTADO_BIENES_PROPUESTA = "plugin/mejoras/acuerdos/listadoBienesAcuerdoJSON";
 	private static final String JSP_CUMPLIMIENTO_PROPUESTA = "plugin/mejoras/acuerdos/cumplimientoPropuesta";
-
+	private static final String LISTADO_CONTRATOS_TERMINOS_PROPUESTAS_JSON =  "plugin/mejoras/acuerdos/contratosIncluidosEnTerminosJSON";
+	
 
 	@Autowired 
 	private DictionaryManager dictionaryManager; 
@@ -244,4 +246,28 @@ public class PropuestasController {
 	private CumplimientoAcuerdoDto creaDto(final WebRequest request) {
 		return DynamicDtoUtils.create(CumplimientoAcuerdoDto.class, request);
 	}
+	
+	/**
+     * Obtiene un listado de las propuestas asignadas al expediente en estado Elevado.
+     * @param idExpediente
+     */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+    public String getPropuestasElevadasDelExpediente(@RequestParam(value = "idExpediente", required = true)Long idExpediente,ModelMap model) {
+		model.put("acuerdos",propuestaApi.listadoPropuestasDelExpediente(idExpediente, DDEstadoAcuerdo.ACUERDO_ACEPTADO));
+		return LISTADO_PROPUESTAS_JSON;
+	}
+	
+	
+	/**
+	 * Obtiene un listado de los contratos que estan incluidos en los términos de la propuesta 
+	 * 
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+    public String contratosIncluidosEnLosTerminosDeLaPropuesta(@RequestParam(value = "idPropuesta", required = true)Long idPropuesta,ModelMap model) {
+		model.put("contratos",propuestaApi.contratosIncluidosEnLosTerminosDeLaPropuesta(idPropuesta));
+		return LISTADO_CONTRATOS_TERMINOS_PROPUESTAS_JSON;
+	}
+	
 }

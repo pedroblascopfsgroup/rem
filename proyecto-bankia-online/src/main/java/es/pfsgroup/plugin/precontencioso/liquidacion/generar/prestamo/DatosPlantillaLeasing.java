@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -10,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.bo.BusinessOperationException;
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.DatosPlantillaFactory;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.dao.DatosLiquidacionDao;
@@ -22,9 +18,6 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.DatosGe
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.InteresesContratoLiqVO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo.vo.RecibosLiqVO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
-import es.pfsgroup.recovery.ext.api.contrato.model.EXTDDTipoInfoContratoInfo;
-import es.pfsgroup.recovery.ext.impl.contrato.model.EXTDDTipoInfoContrato;
-import es.pfsgroup.recovery.ext.impl.contrato.model.EXTInfoAdicionalContrato;
 
 /**
  * Clase que obtiene los datos necesarios para rellenar la plantilla de prestamo hipotecario
@@ -96,7 +89,7 @@ public class DatosPlantillaLeasing extends DatosPlantillaPrestamoAbstract implem
 		List<ConceptoLiqVO> conceptos = new ArrayList<ConceptoLiqVO>();
 
 		if (recibosLiq.isEmpty()) {
-			return new HashMap<String, Object>();
+			throw new BusinessOperationException("GenerarLiquidacionBankiaManager.obtenerDatosLiquidacion: No se encuentra datos LQ04");
 		}
 
 		// saldo variable calculado en cada concepto respecto al anterior
@@ -121,7 +114,6 @@ public class DatosPlantillaLeasing extends DatosPlantillaPrestamoAbstract implem
 		BigDecimal tipoInteresAgrupado = null;
 		BigDecimal sumIntereses = BigDecimal.ZERO;
 		int i = 0;
-		Date fechaAuxIntOrd = null;
 		for (RecibosLiqVO recibo : recibosLiq) {
 			i++;
 
@@ -131,28 +123,22 @@ public class DatosPlantillaLeasing extends DatosPlantillaPrestamoAbstract implem
 			if (tipoInteresAgrupado == null) {
 				tipoInteresAgrupado = tipoInteresActual;
 			}
-
+			
 			// agrupacion de intereses ordinarios del mismo tipo de interes
 			if (tipoInteresAgrupado.equals(tipoInteresActual)) {
 				sumIntereses = sumIntereses.add(recibo.getRCB_IMPRTV());
-				fechaAuxIntOrd = recibo.getRCB_FEVCTR();
 			} else {
 				if (!BigDecimal.ZERO.equals(recibo.getRCB_CDINTS())) {
 					// nuevo concepto basado en la sumatoria de los intereses anteriores
-					saldo = calculateSaldo(saldo, sumIntereses, null);
-					conceptos.add(new ConceptoLiqVO(fechaAuxIntOrd, "Carga financiera (interés)", sumIntereses, null, saldo));
-	
-					sumIntereses = BigDecimal.ZERO;
 					sumIntereses = sumIntereses.add(recibo.getRCB_IMPRTV());
 					tipoInteresAgrupado = tipoInteresActual;
-					fechaAuxIntOrd = recibo.getRCB_FEVCTR();
 				}
 			}
 
 			// En caso de que sea el ultimo registro de la lista se añade un nuevo concepto
 			if (i == recibosLiq.size()) {
 				saldo = calculateSaldo(saldo, sumIntereses, null);
-				conceptos.add(new ConceptoLiqVO(recibo.getRCB_FEVCTR(), "Carga financiera (Intereses al " + formateaImporteDecimal(tipoInteresAgrupado) + ")", sumIntereses, null, saldo));
+				conceptos.add(new ConceptoLiqVO(recibo.getRCB_FEVCTR(), "Carga financiera", sumIntereses, null, saldo));
 			}
 		}
 
@@ -198,35 +184,15 @@ public class DatosPlantillaLeasing extends DatosPlantillaPrestamoAbstract implem
 				i = 0;
 				for (RecibosLiqVO recibo : recibosLiq) {
 					i++;
-				
-					BigDecimal tipoInteresActual = recibo.getRCB_CDINTM();
-
-					// Primera iteracion no tiene un tipo definido
-					if (tipoInteresAgrupado == null) {
-						tipoInteresAgrupado = tipoInteresActual;
-					}
-
-					// agrupacion de intereses demora del mismo tipo de interes
-					if (tipoInteresAgrupado.equals(tipoInteresActual)) {
-						sumIntereses = sumIntereses.add(recibo.getRCB_IMBIM4());
-					} else {
-						if (!BigDecimal.ZERO.equals(recibo.getRCB_CDINTM())) {
-							// nuevo concepto basado en la sumatoria de los intereses anteriores
-							saldo = calculateSaldo(saldo, sumIntereses, null);
-							conceptos.add(new ConceptoLiqVO(datosGeneralesLiq.getDGC_FEVACM(), "I.V.A.", sumIntereses, null, saldo));
-			
-							sumIntereses = BigDecimal.ZERO;
-							sumIntereses = sumIntereses.add(recibo.getRCB_IMBIM4());
-							tipoInteresAgrupado = tipoInteresActual;
-						}
-					}
-
+					// nuevo concepto basado en la sumatoria de los intereses anteriores
+					sumIntereses = sumIntereses.add(recibo.getRCB_IMBIM4());
 					// En caso de que sea el ultimo registro de la lista se añade un nuevo concepto
 					if (i == recibosLiq.size()) {
 						saldo = calculateSaldo(saldo, sumIntereses, null);
 						conceptos.add(new ConceptoLiqVO(datosGeneralesLiq.getDGC_FEVACM(), "I.V.A.", sumIntereses, null, saldo));
 					}
 				}
+				
 
 		HashMap<String, Object> datosLiquidacion = new HashMap<String, Object>();
 		datosLiquidacion.put("CONCEPTOS", conceptos);

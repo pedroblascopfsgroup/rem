@@ -25,7 +25,9 @@ DECLARE
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
-    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
+    V_MAX NUMBER(16);
+   	V_SEQ  NUMBER(16);
     seq_count number(3); -- Vble. para validar la existencia de las Secuencias.
     table_count number(3); -- Vble. para validar la existencia de las Tablas.
     v_column_count number(3); -- Vble. para validar la existencia de las Columnas.
@@ -53,7 +55,25 @@ DECLARE
     
 
 BEGIN    
-    -- LOOP Insertando valores en FUN_FUNCIONES
+   -- Comprobar que la secuencia este al dia
+    DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA_M||'.S_FUN_FUNCIONES... Comprobacion de secuencias');
+    V_MSQL := 'SELECT '|| V_ESQUEMA_M ||'.S_FUN_FUNCIONES.NEXTVAL FROM DUAL';
+    EXECUTE IMMEDIATE V_MSQL INTO V_SEQ;
+    V_MSQL := 'SELECT MAX(FUN_ID) FROM '|| V_ESQUEMA_M ||'.FUN_FUNCIONES';
+    EXECUTE IMMEDIATE V_MSQL INTO V_MAX;
+    
+    IF V_MAX >= V_SEQ THEN   
+   	  DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA_M||'.S_FUN_FUNCIONES... ACTUALIZANDO LA SECUNECIA, actualmente esta a '||V_SEQ||'');
+	    
+   	  	FOR I IN V_SEQ .. V_MAX
+	      LOOP	
+	      		 V_MSQL := ' SELECT '|| V_ESQUEMA_M ||'.S_FUN_FUNCIONES.NEXTVAL FROM DUAL ';	
+	      		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+	    END LOOP;	    
+    END IF;
+	
+    
+     -- LOOP Insertando valores en FUN_FUNCIONES
     DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA_M||'.FUN_FUNCIONES... Empezando a insertar funciones');
     
     FOR I IN V_FUNCION_DESC_LARGA.FIRST .. V_FUNCION_DESC_LARGA.LAST

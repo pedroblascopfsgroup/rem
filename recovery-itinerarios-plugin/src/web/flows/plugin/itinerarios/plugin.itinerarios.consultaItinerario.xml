@@ -24,6 +24,8 @@
 			
 			<evaluate expression="executor.execute('plugin.itinerarios.estado.getReglasExclusionCE',id)" result="flowScope.reglasExclusionCE"/> 
 			<evaluate expression="executor.execute('plugin.itinerarios.estado.getReglasExclusionRE',id)" result="flowScope.reglasExclusionRE"/> 
+			<evaluate expression="executor.execute('plugin.itinerarios.estados.listaEstadosItinerario',id)" result="flowScope.formEstadosItinerarios"/>
+
 			 <!-- -->      
 			 
 		</on-entry>

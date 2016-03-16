@@ -45,6 +45,7 @@
             <evaluate expression="executor.execute('personaManager.getZonaPersona', id)" result="flowScope.zonaPersona" />
             <evaluate expression="executor.execute('arquetipoManager.getListRecuperacion')" result="flowScope.arquetiposRecup" />
             <evaluate expression="executor.execute('arquetipoManager.getListSeguimiento')" result="flowScope.arquetiposSeg" />
+            <evaluate expression="executor.execute('arquetipoManager.getListGestDeuda')" result="flowScope.arquetiposGestDeuda" />
 			
 			<evaluate expression="zonaPersona != null ? executor.execute('zonaManager.getZonaTerritorial', zonaPersona) : null" result="flowScope.zonaTerritorial" />
 			

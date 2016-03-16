@@ -49,7 +49,7 @@ public class GestionIplusBankia implements GestionIplus {
 
 	private static final String SI = "SI";
 	
-	private static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	private static DecimalFormat df = new DecimalFormat("000");
 
 	@Autowired

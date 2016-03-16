@@ -11,7 +11,7 @@ public class DictionaryComparatorFactory {
 	
 	private static DictionaryComparatorFactory dictionaryComparatorFactory;
 	
-	public static DictionaryComparatorFactory getInstance() 
+	public static synchronized DictionaryComparatorFactory getInstance() 
 	{
 		if(dictionaryComparatorFactory == null) {
 			dictionaryComparatorFactory = new DictionaryComparatorFactory();

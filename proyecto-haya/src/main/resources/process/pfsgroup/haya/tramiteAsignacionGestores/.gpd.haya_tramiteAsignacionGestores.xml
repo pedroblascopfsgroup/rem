@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteAsignacionGestores" width="1520" height="619">
+<root-container name="haya_tramiteAsignacionGestores" width="1150" height="572">
   <node name="Inicio" x="319" y="11" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -36,11 +36,14 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
-      <bendpoint w1="184" h1="-1" w2="429" h2="-369"/>
-      <bendpoint w1="189" h1="326" w2="759" h2="3"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="180" h1="-3" w2="738" h2="-296"/>
+      <bendpoint w1="185" h1="286" w2="743" h2="-7"/>
     </edge>
   </node>
-  <node name="H067_transicionProcedimiento" x="270" y="428" width="269" height="36">
+  <node name="H067_transicionProcedimiento" x="249" y="433" width="269" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -59,13 +62,22 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
-      <bendpoint w1="529" h1="187" w2="688" h2="-129"/>
+      <bendpoint w1="-3" h1="211" w2="156" h2="-105"/>
     </edge>
   </node>
-  <node name="H067_transicionProcedimientoConc" x="627" y="414" width="302" height="36">
+  <node name="H067_transicionProcedimientoConc" x="645" y="388" width="302" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Fin" x="339" y="553" width="132" height="36"/>
+  <node name="join1" x="855" y="461" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="0" h1="47" w2="596" h2="-21"/>
+    </edge>
+  </node>
+  <node name="Fin" x="319" y="523" width="132" height="36"/>
 </root-container>

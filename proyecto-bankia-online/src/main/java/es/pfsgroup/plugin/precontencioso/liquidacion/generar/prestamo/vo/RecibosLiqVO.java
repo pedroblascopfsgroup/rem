@@ -31,11 +31,11 @@ public class RecibosLiqVO {
 			return "";
 		}
 
-		return RCB_IDRECV == null ? "[NO DISPONIBLE]" : RCB_IDRECV;
+		return RCB_IDRECV == null ? "" : RCB_IDRECV;
 	}
 
 	public String FEVCTR() {
-		return formatoFechaCorta.format(RCB_FEVCTR);
+		return RCB_FEVCTR == null ? "" : formatoFechaCorta.format(RCB_FEVCTR);
 	}
 
 	public String CDINTS() {

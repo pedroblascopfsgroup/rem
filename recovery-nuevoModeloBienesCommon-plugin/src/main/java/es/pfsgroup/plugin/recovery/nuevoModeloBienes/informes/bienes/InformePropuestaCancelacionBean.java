@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBInformacionRegistralBienInfo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBValoracionesBienInfo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.bienes.dto.BienCargaDto;
@@ -46,8 +47,8 @@ public class InformePropuestaCancelacionBean {
 
 		// NMBValoracionesBienInfo
 		NMBValoracionesBienInfo valoracionesBien = bien.getValoracionActiva();
-		if (valoracionesBien != null) {
-			reportDto.setImporteTasacion(valoracionesBien.getImporteValorTasacion());
+		if (valoracionesBien != null && !Checks.esNulo(valoracionesBien.getImporteValorTasacion())) {
+			reportDto.setImporteTasacion(valoracionesBien.getImporteValorTasacion().floatValue());
 		}
 
 		// NMBAdjudicacionBien

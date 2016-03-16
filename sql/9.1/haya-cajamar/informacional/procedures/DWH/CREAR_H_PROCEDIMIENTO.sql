@@ -717,7 +717,6 @@ BEGIN
                               FECHA_PARALIZACION DATE,
                               MOTIVO_PARALIZACION_ID  NUMBER(16,0),
                               FASE_ACTUAL_AGR_ID NUMBER(16,0) ,
-                              FASE_ACTUAL_AGR_ID NUMBER(16,0) , 
                               PRC_FINALIZADO_ID NUMBER(16,0) ,
                               FECHA_FINALIZACION DATE,
                               MOTIVO_FINALIZACION_ID  NUMBER(16,0))
@@ -852,7 +851,6 @@ BEGIN
                               FECHA_PARALIZACION DATE,
                               MOTIVO_PARALIZACION_ID  NUMBER(16,0),
                               FASE_ACTUAL_AGR_ID NUMBER(16,0) ,
-                              FASE_ACTUAL_AGR_ID NUMBER(16,0) , 
                               PRC_FINALIZADO_ID NUMBER(16,0) ,
                               FECHA_FINALIZACION DATE,
                               MOTIVO_FINALIZACION_ID  NUMBER(16,0))

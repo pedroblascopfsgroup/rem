@@ -451,7 +451,10 @@ BEGIN
                               FASE_ACTUAL_AGR_ID NUMBER(16,0)  , 
                               PRC_FINALIZADO_ID NUMBER(16,0) ,
                               FECHA_FINALIZACION DATE,
-                              MOTIVO_FINALIZACION_ID  NUMBER(16,0) 
+                              MOTIVO_FINALIZACION_ID  NUMBER(16,0))
+                            SEGMENT CREATION IMMEDIATE NOLOGGING
+                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
+                           (PARTITION "P1" VALUES LESS THAN (201501) 
 
 
 
@@ -582,7 +585,10 @@ BEGIN
                               FASE_ACTUAL_AGR_ID NUMBER(16,0)  , 
                               PRC_FINALIZADO_ID NUMBER(16,0) ,
                               FECHA_FINALIZACION DATE,
-                              MOTIVO_FINALIZACION_ID  NUMBER(16,0)
+                              MOTIVO_FINALIZACION_ID  NUMBER(16,0))
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
+                           	(PARTITION "P1" VALUES LESS THAN (201501)
 
 
 
@@ -714,7 +720,10 @@ BEGIN
                               FASE_ACTUAL_AGR_ID NUMBER(16,0) , 
                               PRC_FINALIZADO_ID NUMBER(16,0) ,
                               FECHA_FINALIZACION DATE,
-                              MOTIVO_FINALIZACION_ID  NUMBER(16,0) 
+                              MOTIVO_FINALIZACION_ID  NUMBER(16,0))
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (201501) 
 
 
 
@@ -846,7 +855,10 @@ BEGIN
                               FASE_ACTUAL_AGR_ID NUMBER(16,0) , 
                               PRC_FINALIZADO_ID NUMBER(16,0) ,
                               FECHA_FINALIZACION DATE,
-                              MOTIVO_FINALIZACION_ID  NUMBER(16,0) 
+                              MOTIVO_FINALIZACION_ID  NUMBER(16,0))
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (2015) 
 
 
 
@@ -932,7 +944,10 @@ BEGIN
                               NUM_COBROS INTEGER ,
                               IMPORTE_COBRO NUMBER(15,2) ,
                               NUM_DIAS_CREACION_ASU_COBRO INTEGER,
-							  COBRO_ID NUMBER(16,0)
+							  COBRO_ID NUMBER(16,0))
+                            SEGMENT CREATION IMMEDIATE NOLOGGING
+                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
+                           (PARTITION "P1" VALUES LESS THAN (201501)
                                 '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_COBRO_SEMANA');
@@ -959,7 +974,10 @@ BEGIN
                               NUM_COBROS INTEGER ,
                               IMPORTE_COBRO NUMBER(15,2) ,
                               NUM_DIAS_CREACION_ASU_COBRO INTEGER,
-							  COBRO_ID NUMBER(16,0)
+							  COBRO_ID NUMBER(16,0))
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
+                           	(PARTITION "P1" VALUES LESS THAN (201501)
                                 '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_COBRO_MES');
@@ -986,7 +1004,10 @@ BEGIN
                               NUM_COBROS INTEGER ,
                               IMPORTE_COBRO NUMBER(15,2) ,
                               NUM_DIAS_CREACION_ASU_COBRO INTEGER,
-							  COBRO_ID NUMBER(16,0)
+							  COBRO_ID NUMBER(16,0))
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (201501)
                                 '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_COBRO_TRIMESTRE');
@@ -1013,7 +1034,10 @@ BEGIN
                               NUM_COBROS INTEGER ,
                               IMPORTE_COBRO NUMBER(15,2) ,
                               NUM_DIAS_CREACION_ASU_COBRO INTEGER,
-							  COBRO_ID NUMBER(16,0)
+							  COBRO_ID NUMBER(16,0))
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (2015)
                                '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_COBRO_ANIO');
@@ -1071,7 +1095,10 @@ BEGIN
                               ASUNTO_ID NUMBER(16,0) NOT NULL,
                               CONTRATO_ID NUMBER(16,0),
                               -- Metricas
-                              NUM_CONTRATOS_PROCEDIMIENTO INTEGER
+                              NUM_CONTRATOS_PROCEDIMIENTO INTEGER)
+                            SEGMENT CREATION IMMEDIATE NOLOGGING
+                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
+                           (PARTITION "P1" VALUES LESS THAN (201501)
                                 '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_CONTRATO_SEMANA');
@@ -1089,7 +1116,10 @@ BEGIN
                               ASUNTO_ID NUMBER(16,0) NOT NULL,
                               CONTRATO_ID NUMBER(16,0),
                               -- Metricas
-                              NUM_CONTRATOS_PROCEDIMIENTO INTEGER
+                              NUM_CONTRATOS_PROCEDIMIENTO INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
+                           	(PARTITION "P1" VALUES LESS THAN (201501)
                                 '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_CONTRATO_MES');
@@ -1107,7 +1137,10 @@ BEGIN
                               ASUNTO_ID NUMBER(16,0) NOT NULL,
                               CONTRATO_ID NUMBER(16,0),
                               -- Metricas
-                              NUM_CONTRATOS_PROCEDIMIENTO INTEGER
+                              NUM_CONTRATOS_PROCEDIMIENTO INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (201501)
                                 '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_CONTRATO_TRIMESTRE');
@@ -1125,7 +1158,10 @@ BEGIN
                               ASUNTO_ID NUMBER(16,0) NOT NULL,
                               CONTRATO_ID NUMBER(16,0),
                               -- Metricas
-                              NUM_CONTRATOS_PROCEDIMIENTO INTEGER
+                              NUM_CONTRATOS_PROCEDIMIENTO INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (2015)
                                 '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_CONTRATO_ANIO');
@@ -1152,7 +1188,11 @@ BEGIN
 							SUPERVISOR_PRC_ID NUMBER(16,0),  
 							IMPORTE_ACORDADO NUMBER(16,2), 
 							SALDO_IMPAGADO NUMBER(16,2),
-						    SALDO_TOTAL NUMBER(16,2)
+						    SALDO_TOTAL NUMBER(16,2))
+                    SEGMENT CREATION IMMEDIATE NOLOGGING
+                    PARTITION BY RANGE ("DIA_ID")
+                    INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
+                    (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))
 						     '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_ACUERDO');
@@ -1205,7 +1245,10 @@ BEGIN
 							SUPERVISOR_PRC_ID NUMBER(16,0), 
 							IMPORTE_ACORDADO NUMBER(16,2), 
 							SALDO_IMPAGADO NUMBER(16,2), 
-							SALDO_TOTAL NUMBER(16,2)
+							SALDO_TOTAL NUMBER(16,2))
+                            SEGMENT CREATION IMMEDIATE NOLOGGING
+                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
+                           (PARTITION "P1" VALUES LESS THAN (201501)
 						     '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_ACUERDO_SEMANA');
@@ -1232,7 +1275,10 @@ BEGIN
 							SUPERVISOR_PRC_ID NUMBER(16,0), 
 							IMPORTE_ACORDADO NUMBER(16,2), 
 							SALDO_IMPAGADO NUMBER(16,2), 
-							SALDO_TOTAL NUMBER(16,2)
+							SALDO_TOTAL NUMBER(16,2))
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
+                           	(PARTITION "P1" VALUES LESS THAN (201501)
 					 '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_ACUERDO_MES');
@@ -1259,7 +1305,10 @@ BEGIN
 							SUPERVISOR_PRC_ID NUMBER(16,0), 
 							IMPORTE_ACORDADO NUMBER(16,2), 
 							SALDO_IMPAGADO NUMBER(16,2), 
-							SALDO_TOTAL NUMBER(16,2)
+							SALDO_TOTAL NUMBER(16,2))
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (201501)
 						    '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_ACUERDO_TRIMESTRE');
@@ -1286,7 +1335,10 @@ BEGIN
 							SUPERVISOR_PRC_ID NUMBER(16,0), 
 							IMPORTE_ACORDADO NUMBER(16,2), 
 							SALDO_IMPAGADO NUMBER(16,2), 
-							SALDO_TOTAL NUMBER(16,2)
+							SALDO_TOTAL NUMBER(16,2))
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (2015)
 						     '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_ACUERDO_ANIO');

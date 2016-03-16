@@ -82,7 +82,7 @@ public class DocumentoPCOController {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
-	private static SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	private SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
 	@Autowired
 	private UsuarioManager usuarioManager;

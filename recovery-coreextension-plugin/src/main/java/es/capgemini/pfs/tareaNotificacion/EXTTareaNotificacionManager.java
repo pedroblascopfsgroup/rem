@@ -1,6 +1,7 @@
 package es.capgemini.pfs.tareaNotificacion;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -26,6 +27,8 @@ import jxl.write.WritableCellFormat;
 import jxl.write.WritableFont;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
+import jxl.write.WriteException;
+import jxl.write.biff.RowsExceededException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -1291,25 +1294,18 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                                 row = new Label(10, i, VACIO);
                             }
                             sheet1.addCell(row);
-                            try {
-                                if (dto.getVolumenRiesgoSQL() != null) {
-                                    row = new Label(11, i, dto.getVolumenRiesgoSQL().toString());
-                                } else {
-                                    row = new Label(11, i, VACIO);
-                                }
-                            } catch (Throwable e) {
+                            if (dto.getVolumenRiesgoSQL() != null) {
+                                row = new Label(11, i, dto.getVolumenRiesgoSQL().toString());
+                            } else {
                                 row = new Label(11, i, VACIO);
-                            }
+                            }                 
                             sheet1.addCell(row);
-                            try {
-                                if (dto.getVolumenRiesgoSQL() != null) {
-                                    row = new Label(12, i, dto.getVolumenRiesgoSQL().toString());
-                                } else {
-                                    row = new Label(12, i, VACIO);
-                                }
-                            } catch (Throwable e) {
+                            if (dto.getVolumenRiesgoSQL() != null) {
+                            	row = new Label(12, i, dto.getVolumenRiesgoSQL().toString());
+                            } else {
                                 row = new Label(12, i, VACIO);
                             }
+                            
                             sheet1.addCell(row);
                             i++;
                         }
@@ -1321,19 +1317,27 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                     }
                 }
             }
-        } catch (Throwable ex) {
-            logger.error(ex);
+        } catch (IOException ioex) {
+            logger.error(ioex);
+        } catch (RowsExceededException reex) {
+            logger.error(reex);
+        } catch (WriteException wex) {
+            logger.error(wex);   
         } finally {
             try {
-                workbook1.close();
-            } catch (Throwable e) {
-                logger.error(e);
+            	if(workbook1 != null){
+            		workbook1.close();
+            	}
+            } catch (WriteException we) {
+                logger.error(we);
+            } catch (IOException ix) {
+                logger.error(ix);
             }
         }
         return null;
     }
 
-    private void inicializaPoolExportacionExcel() {
+    private synchronized void inicializaPoolExportacionExcel() {
         String fileNameExtension = ".xls";
         exportarExcelPool = new ExportarTareasBean[Integer.parseInt(appProperties.getProperty(EXPORTAR_ASUNTOS_LIMITE_SIMULTANEO))];
         ExportarTareasBean bean = null;

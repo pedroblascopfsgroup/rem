@@ -320,7 +320,7 @@
 	  optionsPropuestasStore.add(new optionsPropuestasStore.recordType({
 	    fechaPropuesta: '',
 	    solicitante: '',
-	    idAcuerdo: null,
+	    idAcuerdo: null
 	  }, 0));
 	});
 	

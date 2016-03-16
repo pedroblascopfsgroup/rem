@@ -98,7 +98,7 @@ public class BTABusquedaTareaManager {
 	private final static String VACIO = "";
 	public final static String EXPORTAR_BTA_LIMITE_SIMULTANEO = "exportar.excel.limite.busqueda.tareas.simultaneos";
 	private final static String EXPORTAR_BTA_RUTA = "exportar.excel.limite.busqueda.tareas.ruta";
-	private static ExportarTareasBean[] exportarExcelPool = null;
+	private ExportarTareasBean[] exportarExcelPool = null;
 
 	private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -596,7 +596,9 @@ public class BTABusquedaTareaManager {
             logger.error(ex);
         } finally {
             try {
-                workbook1.close();
+            	if(workbook1 != null){
+            		workbook1.close();
+            	}
             } catch (Throwable e) {
                 logger.error(e);
             }

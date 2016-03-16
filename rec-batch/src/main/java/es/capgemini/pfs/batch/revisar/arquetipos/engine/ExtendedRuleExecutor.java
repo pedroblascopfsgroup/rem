@@ -1,6 +1,7 @@
 package es.capgemini.pfs.batch.revisar.arquetipos.engine;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -103,9 +104,10 @@ public class ExtendedRuleExecutor extends RuleExecutor {
 				return new ArrayList<RuleResult>();
 			}
 			// Si no continuamos
+			Connection cnn = null;
 			try {
 				logger.debug("Inicio del procesado de las relgas.");
-				final Connection cnn = cnnFacade.openConnection();
+				cnn = cnnFacade.openConnection();
 				
 				// Borramos la tabla temporal si existiera.
 				try{
@@ -114,7 +116,7 @@ public class ExtendedRuleExecutor extends RuleExecutor {
 					// Si existía avisamos
 					logger.warn(builder.getTempTableName(config) + ": Se ha borrado la tabla existente de una ejecución anterior, probablemente inacabada.");
 				}catch (CannotExecuteDDLException e){
-					logger.debug("Tabla temporal no encontrada, esto es normal, continuamos.");
+					logger.debug("Tabla temporal no encontrada, esto es normal, continuamos. " + e.getMessage());
 				}
 				logger.debug("Creamos la tabla temporal");
 				cnnFacade.executeDDL(cnn, builder.buildDDL4CreateTemp(config, currentDate), true);
@@ -154,6 +156,14 @@ public class ExtendedRuleExecutor extends RuleExecutor {
 				logger.fatal("Ha habido un error en la ejecución de los DDL's.",
 						e);
 				throw new ExtendedRuleExecutorException(e);
+			}finally{
+				if(cnn != null){
+					try {
+						cnn.close();
+					} catch (SQLException e) {
+						logger.warn("No se ha podido cerrar la conexión: " + e.getMessage());
+					}
+				}
 			}
 		} else {
 			// Si no es XML fallamos

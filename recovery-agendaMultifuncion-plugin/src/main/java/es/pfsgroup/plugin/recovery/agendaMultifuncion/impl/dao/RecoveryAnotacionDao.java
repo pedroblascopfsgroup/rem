@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dao;
 
 import java.util.Collection;
+import java.util.HashMap;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
@@ -16,9 +17,13 @@ public class RecoveryAnotacionDao extends AbstractEntityDao implements RecoveryA
     @Override
     public Collection<? extends Usuario> getGestores(String query) {
         StringBuilder hql = new StringBuilder();
+		HashMap<String, Object> params = new HashMap<String, Object>();
+
         hql.append("from Usuario ");
         hql.append("where auditoria.borrado = 0 ");
-        hql.append("and upper(concat(username, ' ', nombre, ' ', apellido1, ' ', apellido2)) like '%" + query.toUpperCase() + "%' ");
+        hql.append("and upper(concat(username, ' ', nombre, ' ', apellido1, ' ', apellido2)) like '%|| :query ||%' ");
+        params.put("query", query.toUpperCase());
+//        hql.append("and upper(concat(username, ' ', nombre, ' ', apellido1, ' ', apellido2)) like '%" + query.toUpperCase() + "%' ");
 
         hql.append("order by nombre, apellido1, apellido2");
 

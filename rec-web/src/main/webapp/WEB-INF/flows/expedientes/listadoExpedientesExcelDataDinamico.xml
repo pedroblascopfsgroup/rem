@@ -9,7 +9,7 @@
     <end-state id="listado" view="reportXLS/listadoExpedientesXLS" >
 		<on-entry>
 			<evaluate expression="binder.bindAndValidate(flowRequestContext, dto)" />
-			<evaluate expression="executor.execute('expedienteManager.findExpedientesRecobroParaExcelDinamico', dto, params)" result="flowScope.lista"/>
+			<evaluate expression="executor.execute('expedienteManager.findExpedientesParaExcelDinamico', dto, params)" result="flowScope.lista"/>
 		</on-entry>
 	</end-state>
 	

@@ -91,7 +91,7 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 						getHibernateTemplate(), query, dto, params);
 			} else {
 				return paginationManager.getHibernatePage(
-						getHibernateTemplate(), query, dto);
+						getHibernateTemplate(), query, dto, params);
 			}
 
 		} catch (RuntimeException rte) {
@@ -116,7 +116,6 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 	private String generarHQLBuscarContratosPaginados(BusquedaContratosDto dto,
 			Usuario usuLogado, Map<String, Object> params) {
 		StringBuffer hql = new StringBuffer();
-
 		final boolean cruzaMovimientos = (dto.existenCamposMinMaxCargados()) ; //|| dto.isInclusion());
 		final boolean cruzaPersonas = ((dto.getNombre() != null && dto
 				.getNombre().trim().length() > 0)
@@ -239,47 +238,81 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 		}
 		// codigo de efecto
 		if (!Checks.esNulo(dto.getCodEfecto())) {
-			hql.append("and  (efecto.codigoEfecto like '%" + dto.getCodEfecto()
-					+ "%')");
+			
+			hql.append(" and (efecto.codigoEfecto like '%'|| :codEfec ||'%')");
+			params.put("codEfec", dto.getCodEfecto());
+			
+//			hql.append("and  (efecto.codigoEfecto like '%" + dto.getCodEfecto()
+//					+ "%')");
 		}
 		// codigo de disposicion
 		if (!Checks.esNulo(dto.getCodDisposicion())) {
-			hql.append("and  (disp.codigoDisposicion like '%"
-					+ dto.getCodDisposicion() + "%')");
+			
+			hql.append(" and (disp.codigoDisposicion like '%'|| :codDisp ||'%')");
+			params.put("codDisp", dto.getCodDisposicion());
+			
+//			hql.append("and  (disp.codigoDisposicion like '%"
+//					+ dto.getCodDisposicion() + "%')");
 		}
 		// codigo de recibo
 		if (!Checks.esNulo(dto.getCodRecibo())) {
-			hql.append("and  (recibo.codigoRecibo like '%" + dto.getCodRecibo()
-					+ "%')");
+			
+			hql.append(" and (recibo.codigoRecibo like '%'|| :codReci ||'%')");
+			params.put("codReci", dto.getCodRecibo());
+			
+//			hql.append("and  (recibo.codigoRecibo like '%" + dto.getCodRecibo()
+//					+ "%')");
 		}
 		// Nombre
 		if (dto.getNombre() != null && dto.getNombre().trim().length() > 0) {
-			hql.append(" and upper(p.nombre) like '%"
-					+ dto.getNombre().trim().toUpperCase() + "%'");
+			
+			hql.append(" and upper(p.nombre) like '%'|| :nombre ||'%'");
+			params.put("nombre", dto.getNombre().trim().toUpperCase());
+			
+//			hql.append(" and upper(p.nombre) like '%"
+//					+ dto.getNombre().trim().toUpperCase() + "%'");
 		}
 		// Apellido1
 		if (dto.getApellido1() != null
 				&& dto.getApellido1().trim().length() > 0) {
-			hql.append(" and upper(p.apellido1) like '%"
-					+ dto.getApellido1().trim().toUpperCase() + "%'");
+			
+			hql.append(" and upper(p.apellido1) like '%'|| :apellido1 ||'%'");
+			params.put("apellido1", dto.getApellido1().trim().toUpperCase());
+			
+//			hql.append(" and upper(p.apellido1) like '%"
+//					+ dto.getApellido1().trim().toUpperCase() + "%'");
 		}
 		// Apellido2
 		if (dto.getApellido2() != null
 				&& dto.getApellido2().trim().length() > 0) {
-			hql.append(" and upper(p.apellido2) like '%"
-					+ dto.getApellido2().trim().toUpperCase() + "%'");
+			
+			hql.append(" and upper(p.apellido2) like '%'|| :apellido2 ||'%'");
+			params.put("apellido2", dto.getApellido2().trim().toUpperCase());
+			
+//			hql.append(" and upper(p.apellido2) like '%"
+//					+ dto.getApellido2().trim().toUpperCase() + "%'");
 		}
 		// DNI
 		if (dto.getDocumento() != null
 				&& dto.getDocumento().trim().length() > 0) {
-			hql.append(" and upper(p.docId) like '%"
-					+ dto.getDocumento().toUpperCase() + "%'");
+			
+			hql.append(" and upper(p.docId) like '%'|| :docId ||'%'");
+			params.put("docId", dto.getDocumento().toUpperCase());
+			
+//			hql.append(" and upper(p.docId) like '%"
+//					+ dto.getDocumento().toUpperCase() + "%'");
 		}
 		// Nombre del Expediente
 		if (dto.getDescripcionExpediente() != null
 				&& dto.getDescripcionExpediente().trim().length() > 0) {
-			hql.append(" and UPPER(e.descripcionExpediente) like '%"
-					+ dto.getDescripcionExpediente().toUpperCase() + "%' ");
+			
+			hql.append(" and UPPER(e.descripcionExpediente) like '%'|| :descExp ||'%'");
+			params.put("descExp", dto.getDescripcionExpediente().toUpperCase());
+			
+			
+//			hql.append(" and UPPER(e.descripcionExpediente) like '%"
+//					+ dto.getDescripcionExpediente().toUpperCase() + "%' ");
+			
 //			hql.append(" and e.estadoExpediente.codigo NOT IN ("
 //					+ DDEstadoExpediente.ESTADO_EXPEDIENTE_CANCELADO + ", "
 //					+ DDEstadoExpediente.ESTADO_EXPEDIENTE_DECIDIDO + ") ");
@@ -287,12 +320,19 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 		// Nombre del Asunto
 		if (dto.getNombreAsunto() != null
 				&& dto.getNombreAsunto().trim().length() > 0) {
-			hql.append(" and UPPER(asu.nombre) like '%"
-					+ dto.getNombreAsunto().toUpperCase()
-					+ "%' and cex.sinActuacion = 0 ");
+			
+			hql.append(" and UPPER(asu.nombre) like '%'|| :nombreAsu ||'%' and cex.sinActuacion = 0");
+			params.put("nombreAsu", dto.getNombreAsunto().toUpperCase());
 			hql.append(" and asu.estadoAsunto.codigo NOT IN ("
 					+ DDEstadoAsunto.ESTADO_ASUNTO_CANCELADO + ", "
 					+ DDEstadoAsunto.ESTADO_ASUNTO_CERRADO + ")");
+			
+//			hql.append(" and UPPER(asu.nombre) like '%"
+//					+ dto.getNombreAsunto().toUpperCase()
+//					+ "%' and cex.sinActuacion = 0 ");
+//			hql.append(" and asu.estadoAsunto.codigo NOT IN ("
+//					+ DDEstadoAsunto.ESTADO_ASUNTO_CANCELADO + ", "
+//					+ DDEstadoAsunto.ESTADO_ASUNTO_CERRADO + ")");
 		}
 		// Usuario externo, muestra solo los contratos que est�n en sus asuntos
 		if (usuLogado.getUsuarioExterno()) {
@@ -539,11 +579,11 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 //		String multigestor = "(asu.id in (select gaa.asunto.id from EXTGestorAdicionalAsunto gaa where gaa.gestor.usuario.id = "
 //				+ +usuLogado.getId() + "))";
 //		return "and (" + monogestor + " or " + multigestor + ")";
-		String monogestor = "(EXISTS (select 1 from Asunto a where a.id = asu.id and a.gestor.usuario.id = "
+		String monogestor = " (EXISTS (select 1 from Asunto a where a.id = asu.id and a.gestor.usuario.id = "
 				+ usuLogado.getId() + "))";
-		String multigestor = "(EXISTS (select 1 from EXTGestorAdicionalAsunto gaa where gaa.asunto.id = asu.id and gaa.gestor.usuario.id = "
+		String multigestor = " (EXISTS (select 1 from EXTGestorAdicionalAsunto gaa where gaa.asunto.id = asu.id and gaa.gestor.usuario.id = "
 				+ +usuLogado.getId() + "))";
-		return "and (" + monogestor + " or " + multigestor + ")";
+		return " and (" + monogestor + " or " + multigestor + ")";
 
 	}
 
@@ -639,12 +679,12 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 			Usuario usuLogado) {
 
 		final HashMap<String, Object> parameters = new HashMap<String, Object>();
-		;
-		final String query = generarHQLBuscarContratosPaginados(null, dto,
+		
+		final String query = generarHQLBuscarContratosPaginados(dto,
 				usuLogado, parameters);
 
 		return paginationManager.getHibernatePage(getHibernateTemplate(),
-				query, dto);
+				query, dto, parameters);
 		// return paginationManager.getHibernatePage(getHibernateTemplate(),
 		// query, dto, parameters);
 	}
@@ -657,10 +697,15 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 		final HashMap<String, Object> parameters = new HashMap<String, Object>();
 		
 
-		String hql = createQueryForCount(generarHQLBuscarContratosPaginados(dto,
-				usuLogado, parameters));
-
-		return ((Long) getHibernateTemplate().find(hql).get(0)).intValue();
+//		String hql = createQueryForCount(generarHQLBuscarContratosPaginados(dto,
+//				usuLogado, parameters));
+		
+		final String query = generarHQLBuscarContratosPaginados(dto,
+				usuLogado, parameters);
+		int prue= paginationManager.getHibernatePage(getHibernateTemplate(), query, dto,parameters).getResults().size();
+		
+		return prue;
+		//return ((Long) getHibernateTemplate().find(hql).get(0)).intValue();
 	}
 
 	/**
@@ -1058,9 +1103,19 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 				params.put("value2f2", value2f2);
 				params.put("value2f3", value2f3);
 			} else {
-				cadReturn = " and (" + campoBusqueda + " like '" + value2f1
-						+ "' or " + campoBusqueda + " like '" + value2f2
-						+ "' or " + campoBusqueda + " like '" + value2f3 + "')";
+				
+				cadReturn = " and (" + campoBusqueda + " like '%'|| :value2f1||'%'"
+						+ " or " + campoBusqueda + " like '%'|| :value2f2||'%'" + " or "
+						+ campoBusqueda + " like '%'|| :value2f3||'%'" + ")";
+
+				params.put("value2f1", value2f1);
+				params.put("value2f2", value2f2);
+				params.put("value2f3", value2f3);
+				
+				
+//				cadReturn = " and (" + campoBusqueda + " like '" + value2f1
+//						+ "' or " + campoBusqueda + " like '" + value2f2
+//						+ "' or " + campoBusqueda + " like '" + value2f3 + "')";
 			}
 		}
 		return cadReturn;

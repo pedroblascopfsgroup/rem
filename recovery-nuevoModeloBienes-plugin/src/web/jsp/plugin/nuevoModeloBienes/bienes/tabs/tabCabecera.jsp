@@ -449,7 +449,7 @@
 				if (false) {
 					Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="acuerdos.conclusiones.observaciones.error"/>');
 				} else {	
-					if(solicitarTas<=0)
+					if(solicitarTas<=-3 || solicitarTas==0)
 					{
 					    var mensaje;
 					    if(solicitarTas==0){
@@ -460,7 +460,7 @@
 							icon:Ext.MessageBox.WARNING
 							});
 					    }
-					    if(solicitarTas==-1){
+					    else if(solicitarTas==-1){
 					    	Ext.Msg.show({
 							title:'Advertencia',
 							msg: '<s:message code="plugin.nuevoModeloBienes.uvem.tasacion.ko1"/>',
@@ -468,7 +468,7 @@
 							icon:Ext.MessageBox.WARNING
 							});
 					    }
-					   	if(solicitarTas==-2){
+					   	else if(solicitarTas==-2){
 					    	Ext.Msg.show({
 							title:'Advertencia',
 							msg: '<s:message code="plugin.nuevoModeloBienes.uvem.tasacion.ko2"/>',
@@ -476,7 +476,7 @@
 							icon:Ext.MessageBox.WARNING
 							});
 					    }
-					   	if(solicitarTas==-3){
+					   	else if(solicitarTas==-3){
 					    	Ext.Msg.show({
 							title:'Advertencia',
 							msg: '<s:message code="plugin.nuevoModeloBienes.uvem.tasacion.ko3"/>',
@@ -484,7 +484,7 @@
 							icon:Ext.MessageBox.WARNING
 							});
 					    }
-					   	if(solicitarTas==-4){
+					   	else if(solicitarTas==-4){
 					    	Ext.Msg.show({
 							title:'Advertencia',
 							msg: '<s:message code="plugin.nuevoModeloBienes.uvem.tasacion.ko4"/>',
@@ -492,7 +492,7 @@
 							icon:Ext.MessageBox.WARNING
 							});
 					    }
-					   	if(solicitarTas==-5){
+					   	else if(solicitarTas==-5){
 					    	Ext.Msg.show({
 							title:'Advertencia',
 							msg: '<s:message code="plugin.nuevoModeloBienes.uvem.tasacion.ko5"/>',
@@ -500,7 +500,14 @@
 							icon:Ext.MessageBox.WARNING
 							});
 					   	}
-						
+						else if(solicitarTas==-6){
+					    	Ext.Msg.show({
+							title:'Advertencia',
+							msg: '<s:message code="plugin.nuevoModeloBienes.uvem.tasacion.ko6"/>',
+							buttons: Ext.Msg.OK,
+							icon:Ext.MessageBox.WARNING
+							});
+					   	}
 					}
 					else{			
 			      		page.webflow({

@@ -1,11 +1,11 @@
 --/*
 --##########################################
---## AUTOR=CARLOS GIL
---## FECHA_CREACION=20150623
+--## AUTOR=JORGE MARTIN
+--## FECHA_CREACION=20160314
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.0-X
---## INCIDENCIA_LINK=MITCDD-2068
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=PRODUCTO-931
+--## PRODUCTO=NO
 --##
 --## Finalidad: Realiza las inserciones de la resolución Confirmar testimonio decreto adjudicacion para la tarea H005_ConfirmarTestimonio.
 --## INSTRUCCIONES: 
@@ -41,9 +41,9 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			'226';
+    V_TR_ID VARCHAR2(16 CHAR):= 			'441';
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_TR_ADJ_CONF_TEST';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Confirmar testimonio decreto adjudicacion';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Testimonio decreto adjudicación';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'ADJ';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     
@@ -58,8 +58,11 @@ DECLARE
     	T_INPUT('idAsunto','idAsunto'), -- Está siempre en el factoria, no eliminar.
     	T_INPUT('d_numAutos','numAutos'), -- Está siempre en el factoria, no eliminar.
     	T_INPUT('d_fechaTestimonio','fechaTestimonio'),
-    	T_INPUT('d_comboSubsanacion','comboSubsanacion'),
-    	T_INPUT('d_fechaEnvioGestoria','fechaEnvioGestoria'),
+        T_INPUT('d_comboSubsanacion','comboSubsanacion'),
+        T_INPUT('d_comboAdicional','comboAdicional'),
+    	T_INPUT('d_comboOcupantes','comboOcupantes'),
+        T_INPUT('d_fechaNotificacion','fechaNotificacion'),
+    	T_INPUT('d_fechaLimite','fechaLimite'),
     	T_INPUT('d_observaciones','observaciones') -- Está siempre en el factoria, no eliminar.
     );
     V_TMP_T_INPUT T_INPUT;

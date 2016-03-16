@@ -32,24 +32,17 @@ CREATE OR REPLACE PROCEDURE EXP_SALDO_IRREGULAR AUTHID CURRENT_USER IS
 		' VALUES (#ESQUEMA#.S_TAR_TAREAS_NOTIFICACIONES.NEXTVAL, :1, :2, :3, :4, :5, :6, :7, SYSDATE, :8, :9, SYSDATE) ';
 
 	CURSOR C_CONSULTA IS
-		select exp.exp_id
-			from #ESQUEMA#.exp_expedientes exp
-			inner join #ESQUEMA#.cex_contratos_expediente cex
-			on cex.exp_id = exp.exp_id
-			inner join #ESQUEMA#.mov_movimientos mov
-			on mov.cnt_id                = cex.cnt_id
-			and mov.MOV_FECHA_EXTRACCION =
-			  (select max(mov_fecha_extraccion)
-			  from #ESQUEMA#.mov_movimientos
-			  )
-			where mov.MOV_FECHA_EXTRACCION > exp.fechacrear
-			and mov.mov_pos_viva_vencida   > 0
-			and nvl(
-			  (select min(mov_pos_viva_vencida)
-			  from #ESQUEMA#.mov_movimientos movi
-			  where movi.cnt_id             = cex.cnt_id
-			  and movi.MOV_FECHA_EXTRACCION < mov.MOV_FECHA_EXTRACCION
-			  ),1)                          = 0;
+		select exp.exp_id EXP_ID
+		from #ESQUEMA#.exp_expedientes exp inner join
+		#ESQUEMA#.cex_contratos_expediente cex on cex.exp_id = exp.exp_id inner join
+		#ESQUEMA#.mov_movimientos mov on mov.cnt_id = cex.cnt_id and mov.MOV_FECHA_EXTRACCION = (select max(mov_fecha_extraccion) from #ESQUEMA#.mov_movimientos)
+		where
+		mov.MOV_FECHA_EXTRACCION > exp.fechacrear and 
+		mov.mov_pos_viva_vencida > 0 and
+		(select mov_pos_viva_vencida 
+		from #ESQUEMA#.mov_movimientos movi 
+		where movi.cnt_id = cex.cnt_id and
+		movi.MOV_FECHA_EXTRACCION < mov.MOV_FECHA_EXTRACCION) = 0;
 	V_CONS C_CONSULTA%ROWTYPE;
 
 	V_DD_EST_ID NUMBER(16,0);

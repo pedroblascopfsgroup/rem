@@ -272,12 +272,16 @@ public class MEJAcuerdoController {
 		Comparator<String> comparador = Collections.reverseOrder();
 		Collections.sort(fechasPaseMoraFormated, comparador);
 		
-		String fechaPaseMora = fechasPaseMora.get(0); 
-		map.put("idTipoAcuerdoPlanPago", tipoAcuerdoPlanPago.getId());
+		String fechaPaseMora = null; 
+		if(!Checks.estaVacio(fechasPaseMora)){
+			fechaPaseMora = fechasPaseMora.get(0); 
+		}
+		
+		if(!Checks.esNulo(tipoAcuerdoPlanPago)){ map.put("idTipoAcuerdoPlanPago", tipoAcuerdoPlanPago.getId());}
 		map.put("yaHayPlanPago", yaHayPlanPago);
 		map.put("fechaPaseMora", fechaPaseMora);
-		map.put("idTipoAcuerdoFondosPropios", tipoAcuerdoFondosPropios.getId());
-		map.put("idTipoAcuerdoRegulParcial", tipoAcuerdoRegulParcial.getId());
+		if(!Checks.esNulo(tipoAcuerdoFondosPropios)){map.put("idTipoAcuerdoFondosPropios", tipoAcuerdoFondosPropios.getId());}
+		if(!Checks.esNulo(tipoAcuerdoRegulParcial)){map.put("idTipoAcuerdoRegulParcial", tipoAcuerdoRegulParcial.getId());}
 		
 		return JSP_ALTA_TERMINO_ACUERDO;
 	}	

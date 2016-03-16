@@ -23,20 +23,25 @@ import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.core.api.web.DynamicElementApi;
 import es.capgemini.pfs.expediente.dao.ExpedienteContratoDao;
 import es.capgemini.pfs.expediente.dao.ExpedienteDao;
+import es.capgemini.pfs.expediente.dao.SancionDao;
 import es.capgemini.pfs.expediente.dto.DtoInclusionExclusionContratoExpediente;
 import es.capgemini.pfs.expediente.model.DDAmbitoExpediente;
+import es.capgemini.pfs.expediente.model.DDDecisionSancion;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.expediente.model.ExpedientePersona;
+import es.capgemini.pfs.expediente.model.Sancion;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.dao.ZonaDao;
 import es.capgemini.pfs.zona.model.DDZona;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.mejoras.PluginMejorasBOConstants;
 import es.pfsgroup.plugin.recovery.mejoras.expediente.dao.MEJEventoDao;
 
@@ -69,6 +74,9 @@ public class MEJExpedienteManager implements MEJExpedienteApi {
     
     @Autowired
     private ZonaDao zonaDao;
+    
+    @Autowired
+    private SancionDao sancionDao;
 
     @Override
     @BusinessOperation(PluginMejorasBOConstants.MEJ_BO_EXPEDIENTE_BUTTONS_LEFT)
@@ -275,5 +283,34 @@ public class MEJExpedienteManager implements MEJExpedienteApi {
                 .getCodigoZonas();
         return zonaDao.getZonasJerarquiaByCodDesc(idNivel, codigoZonasUsuario, codDesc);
     }
+
+	@Override
+	@Transactional(readOnly = false)
+	public void guardaSancionExpediente(Long idExpediente, String codDecionSancion,String observaciones) {
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idExpediente);
+		Expediente exp = genericDao.get(Expediente.class, filtro);
+		
+		if(!Checks.esNulo(exp)){
+			
+			Filter filtroSancion = genericDao.createFilter(FilterType.EQUALS, "codigo", codDecionSancion);
+			DDDecisionSancion decision = genericDao.get(DDDecisionSancion.class, filtroSancion);
+			
+			Sancion sancion = new Sancion();
+			if(!Checks.esNulo(exp.getSancion())){
+				sancion = exp.getSancion();
+			}
+			
+			sancion.setDecision(decision);
+			sancion.setObservaciones(observaciones);
+			sancion.setAuditoria(Auditoria.getNewInstance());
+			sancionDao.saveOrUpdate(sancion);
+			
+			exp.setSancion(sancion);
+			genericDao.save(Expediente.class, exp);
+		}
+		
+		
+	}
 
 }

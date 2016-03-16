@@ -528,8 +528,10 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                 param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_CE);
             } else if (DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE.equals(codigoEstado)) {
                 param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_RE);
-            } else {
+            } else if (DDEstadoItinerario.ESTADO_DECISION_COMIT.equals(codigoEstado)){
                 param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC);
+            }else if(DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA.equals(codigoEstado)){
+            	param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_FP);
             }
         } else if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidad.getCodigo())) {
 
@@ -815,8 +817,19 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
      *            expediente
      */
     private void setearEmisorExpediente(TareaNotificacion tareaNotificacion, Expediente exp) {
-        String descZona = exp.getOficina().getZona().getDescripcion();
-        Perfil gestor = exp.getArquetipo().getItinerario().getEstado(exp.getEstadoItinerario().getCodigo()).getGestorPerfil();
+    	String descZona = "";
+    	if (!Checks.esNulo(exp.getOficina()) && (!Checks.esNulo(exp.getOficina().getZona()))) {
+    		descZona = exp.getOficina().getZona().getDescripcion();
+    	}
+    	Perfil gestor = null;
+    	if ((!Checks.esNulo(exp.getArquetipo())) 
+    		&& (!Checks.esNulo(exp.getArquetipo().getItinerario()))
+			&& (!Checks.esNulo(exp.getEstadoItinerario()))
+			&& (!Checks.esNulo(exp.getEstadoItinerario().getCodigo()))
+			&& (!Checks.esNulo(exp.getArquetipo().getItinerario().getEstado(exp.getEstadoItinerario().getCodigo())))) {
+				
+				gestor = exp.getArquetipo().getItinerario().getEstado(exp.getEstadoItinerario().getCodigo()).getGestorPerfil();
+    	}
         String descPerfil = "";
         if (gestor != null) {
             descPerfil = gestor.getDescripcion();

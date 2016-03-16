@@ -42,6 +42,7 @@ import es.capgemini.pfs.asunto.model.AdjuntoAsunto;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.asunto.model.HistoricoCambiosAsunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -98,6 +99,7 @@ import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJFinalizarAsuntoDto;
+import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.ConfiguradorPropuesta;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.MEJDecisionProcedimientoManager;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
@@ -896,15 +898,22 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			sup = null;
 			procurador = null;
 		}
+		
+		DDTiposAsunto tipoDeAsunto = null;
+		
+		if(!Checks.esNulo(dtoAsunto.getTipoDeAsunto())){
+			tipoDeAsunto = genericdDao.get(DDTiposAsunto.class, genericdDao.createFilter(FilterType.EQUALS, "id", dtoAsunto.getTipoDeAsunto()));
+		}
 
 		if (Checks.esNulo(dtoAsunto.getIdAsunto())) // CREAR EXTASUNTO
 		{
 			exp = (Expediente) executor.execute(InternaBusinessOperation.BO_EXP_MGR_GET_EXPEDIENTE, dtoAsunto.getIdExpediente());
-			id = asuntoDao.crearAsuntoConEstado(gd, sup, procurador, dtoAsunto.getNombreAsunto(), exp, dtoAsunto.getObservaciones(),dtoAsunto.getCodigoEstadoAsunto());
+			
+			id = asuntoDao.crearAsuntoConEstado(gd, sup, procurador, dtoAsunto.getNombreAsunto(), exp, dtoAsunto.getObservaciones(),dtoAsunto.getCodigoEstadoAsunto(),tipoDeAsunto);
 			dtoAsunto.setIdAsunto(id);
 		} else // MODIFICAR EXTASUNTO
 		{
-			id = asuntoDao.modificarAsunto(dtoAsunto.getIdAsunto(), gd, sup, procurador, dtoAsunto.getNombreAsunto(), dtoAsunto.getObservaciones());
+			id = asuntoDao.modificarAsunto(dtoAsunto.getIdAsunto(), gd, sup, procurador, dtoAsunto.getNombreAsunto(), dtoAsunto.getObservaciones(), tipoDeAsunto);
 		}
 
 		if (modeloMultiGestor()) {
@@ -1364,7 +1373,9 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			dto.setIdsUsuariosGrupos(idGrpsUsuario);
 		}
 		
-		return asuntoDao.buscarAsuntosPaginatedDinamico(usuarioLogado, dto, params);
+		Page asuntos = asuntoDao.buscarAsuntosPaginatedDinamico(usuarioLogado, dto, params);
+		
+		return asuntos;
 	}
 	
     /**
@@ -1918,7 +1929,15 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			dtoDecisionProcedimiento
 					.setDecisionProcedimiento(decisionProcedimiento);
 			try {
-				mejDecisionProcedimientoManager.aceptarPropuesta(dtoDecisionProcedimiento);
+				
+				if(sincronizar) {
+					mejDecisionProcedimientoManager.aceptarPropuesta(dtoDecisionProcedimiento);
+				}
+				else {
+					ConfiguradorPropuesta configuradorPropuesta = new ConfiguradorPropuesta();
+					configuradorPropuesta.setConfiguracion(ConfiguradorPropuesta.SIN_ENVIO_DATOS);
+					mejDecisionProcedimientoManager.aceptarPropuestaSinControl(dtoDecisionProcedimiento, configuradorPropuesta);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				logger.error("Ha habido un error al cerrar los procedimientos. "

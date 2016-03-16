@@ -532,7 +532,7 @@ public class InformeSubastaSarebBean extends InformeSubastaCommon {
 								lb.setTipoSubasta70(Checks.esNulo(tipoSubasta) ? null : tipoSubasta * 0.70F);
 								Float valorTasacion = null;
 								if (!Checks.esNulo(nmbBienLote.getValoraciones()) && nmbBienLote.getValoraciones().size() > 0) {
-									valorTasacion = nmbBienLote.getValoraciones().get(0).getImporteValorTasacion();
+									valorTasacion = Checks.esNulo(nmbBienLote.getValoraciones().get(0).getImporteValorTasacion()) ? null : nmbBienLote.getValoraciones().get(0).getImporteValorTasacion().floatValue();
 								}
 								lb.setTasacionActualizada(valorTasacion);
 								lb.setTasacionActualizada70(Checks.esNulo(valorTasacion) ? null : valorTasacion * 0.70F);

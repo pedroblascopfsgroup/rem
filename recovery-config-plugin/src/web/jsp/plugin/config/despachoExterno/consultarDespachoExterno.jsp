@@ -22,19 +22,23 @@
 	<pfslayout:includetab name="tabSupervisores">
 		<%@ include file="tabSupervisoresDespachoExterno.jsp"%>
 	</pfslayout:includetab>
-
+	
 	<c:choose>
 
 		<%-- Es tipo despacho letrado --%>
 		<c:when test="${despacho.tipoDespacho.codigo == codigoTipoDespachoLetradoValido}">
 			tabsDespacho = new Ext.TabPanel({
 				autoHeight: true
-				,items: [tabCabecera, tabGestores, tabSupervisores]
+				,items: [tabCabecera, tabGestores]
 				,layoutOnTabChange: true 
 				,activeItem: ${numTab == null ? 0 : numTab}
 				,autoScroll: true
 				,border: false
 			})
+
+			<sec:authorize ifAllGranted="ROLE_PUEDE_VER_TAB_SUPERVISORES_DESPACHO">
+				tabsDespacho.add(tabSupervisores);
+			</sec:authorize>
 
 			<%-- Es tipo despacho letrado y es bankia se añade el tab turnado --%>
 			<c:if test="${usuarioEntidad == 'BANKIA'}">
@@ -63,9 +67,15 @@
 			<pfslayout:tabpanel name="tabsDespacho" tabs="tabCabecera, tabGestores" />
 		</c:when>
 
-		<%-- Por defecto y para todos los tipos restantes de despacho se muestra [tabCabecera, tabGestores, tabSupervisores] --%>
+		<%-- Por defecto y para todos los tipos restantes de despacho se muestra [tabCabecera, tabGestores] y tabSupervisores --%>
 		<c:otherwise>
-			<pfslayout:tabpanel name="tabsDespacho" tabs="tabCabecera, tabGestores, tabSupervisores" />
+			<sec:authorize ifAllGranted="ROLE_PUEDE_VER_TAB_SUPERVISORES_DESPACHO">
+				<pfslayout:tabpanel name="tabsDespacho" tabs="tabCabecera, tabGestores, tabSupervisores" />
+			</sec:authorize>
+
+			<sec:authorize ifNotGranted="ROLE_PUEDE_VER_TAB_SUPERVISORES_DESPACHO">
+				<pfslayout:tabpanel name="tabsDespacho" tabs="tabCabecera, tabGestores" />
+			</sec:authorize>
 		</c:otherwise>
 	</c:choose>
 

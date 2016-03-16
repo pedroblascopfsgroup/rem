@@ -233,21 +233,21 @@
     	    var apellido2Str = separa[1]; 
     	    var nombreStr    = separa[2]; 
     	    
-    	    if(apellido1Str != null && apellido1Str.length > 0)
+    	    if(apellido1Str.length > 0 && apellido1Str != "null")
     	    {
     	       apellidosNombreStr = apellidosNombreStr + apellido1Str;
     	    }
-    	    if( apellido2Str != null && apellido2Str.length > 0)
+    	    if(apellido2Str.length > 0 && apellido2Str != "null")
     	    {
     	       apellidosNombreStr = apellidosNombreStr + " " + apellido2Str;
     	    }
     	    
-    	    if(apellidosNombreStr!= null && apellidosNombreStr.length > 0)
+    	    if(apellidosNombreStr.length > 0)
     	    {
     	       apellidosNombreStr = apellidosNombreStr + ", ";
     	    }
     	    
-    	    if(nombreStr!= null && nombreStr.length > 0)
+    	    if(nombreStr.length > 0)
     	    {
     	       apellidosNombreStr = apellidosNombreStr + nombreStr;
     	    }

@@ -51,6 +51,8 @@ public class DDEstadoItinerario implements Dictionary, Auditable {
     public static final String ESTADO_PERSONA_ASUNTO = "ASUNTO";
     public static final String ESTADO_PERSONA_EXPEDIENTE = "EXPEDIMENTADO";
     public static final String ESTADO_PERSONA_REGULAR = "REGULAR";
+    public static final String ESTADO_ITINERARIO_SANCIONADO = "SANC";
+    public static final String ESTADO_ITINERARIO_EN_SANCION = "ENSAN";
 
     private static final String[] ESTADOS_ORDENADOS = { ESTADO_GESTION_VENCIDOS_CARENCIA, ESTADO_GESTION_VENCIDOS, ESTADO_COMPLETAR_EXPEDIENTE,
             ESTADO_REVISAR_EXPEDIENTE, ESTADO_DECISION_COMIT, ESTADO_ASUNTO };

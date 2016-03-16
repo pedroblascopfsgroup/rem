@@ -131,11 +131,13 @@
 	}
 
 	var buscarFunc = function() {
-	
             parametros = new Array();
             parametros['busquedaUsuario'] = '';
 			parametros['despacho'] = '';
 			parametros['gestores'] = '';
+			parametros['tipoActuacion'] = '';
+			parametros['tipoProcedimiento'] = '';
+			parametros['tipoTarea'] = '';
 			parametros['tipoGestor'] = '';
 			parametros['tipoGestorTarea'] = '';
 			parametros['perfilesAbuscar'] = '';
@@ -150,7 +152,6 @@
   
                 for (var i in newParametros) {
                     hayParametros = true;
-					
                     parametros[i] = newParametros[i];
                     if(i == 'params'){
                     	
@@ -245,6 +246,9 @@
 							busquedaUsuario: parametros.busquedaUsuario,
 							despacho: parametros.despacho,
 							gestores: parametros.gestores,
+							tipoActuacion: parametros.tipoActuacion,
+							tipoProcedimiento: parametros.tipoProcedimiento,
+							tipoTarea: parametros.tipoTarea,
 							tipoGestor: parametros.tipoGestor,
 							tipoGestorTarea: parametros.tipoGestorTarea,
 							perfilesAbuscar: parametros.perfilesAbuscar,
@@ -868,13 +872,15 @@
 							busquedaUsuario: parametros.busquedaUsuario,
 							despacho: parametros.despacho,
 							gestores: parametros.gestores,
+							tipoActuacion: parametros.tipoActuacion,
+							tipoProcedimiento: parametros.tipoProcedimiento,
+							tipoTarea: parametros.tipoTarea,
 							tipoGestor: parametros.tipoGestor,
 							tipoGestorTarea: parametros.tipoGestorTarea,
 							perfilesAbuscar: parametros.perfilesAbuscar,
 							nivelEnTarea: parametros.nivelEnTarea,
 							zonasAbuscar: parametros.zonasAbuscar,
 							params: parametros.params};
-            
         return p;
     }  
     

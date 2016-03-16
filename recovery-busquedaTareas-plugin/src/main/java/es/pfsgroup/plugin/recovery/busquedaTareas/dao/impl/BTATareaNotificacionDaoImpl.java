@@ -607,11 +607,28 @@ public class BTATareaNotificacionDaoImpl extends AbstractEntityDao<BTATareaEncon
 	public HQLBuilder buscarTareasIndividual(final BTADtoBusquedaTareas dto) {
 		HQLBuilder hb2;
 		StringBuffer hql = new StringBuffer();
+		String idTarea = dto.getComboTipoTarea();
+		String idActuacion = dto.getComboTipoActuacion();
+  		String idProcedimiento = dto.getComboTipoProcedimiento();
+  		
 		
-		hql.append("select DISTINCT vtar from VTARTareaVsUsuario vtar"); //Base.
-		hql.append(" where vtar.usuarioPendiente = " + dto.getComboGestor()); // Filtro usuario.
+		hql.append("select DISTINCT vtar from VTARTareaVsUsuario vtar, TareaProcedimiento tarea"); // Base.
+		//hql.append(" inner join TareaNotificacion as tar on tar.tarea = vtar.nombreTarea"); // Filtro por tareas.
+		//hql.append(" inner join vtar.nombreTarea tar"); // Filtro por tareas.
+		hql.append(" where tarea.descripcion = vtar.nombreTarea and (vtar.usuarioPendiente = " + dto.getComboGestor()); // Filtro usuario.
 		hql.append(" or vtar.usuarioPendiente in (select egu.grupo from EXTGrupoUsuarios egu where egu.grupo = " + dto.getComboGestor() + ")"); // Filtro grupo usuario.
-        hql.append(" or vtar.usuarioPendiente in (" + obtenerListaGrupoIDDeUsuarioYEntidad(dto.getComboGestor()) + ")"); // Filtro por entidad.
+        hql.append(" or vtar.usuarioPendiente in (" + obtenerListaGrupoIDDeUsuarioYEntidad(dto.getComboGestor()) + "))"); // Filtro por entidad.
+        
+  		if(idActuacion != null && idActuacion != ""){
+  			hql.append(" and vtar.idActuacion = " + dto.getComboTipoActuacion()); // Filtro por actuacion.
+  		}
+  		if(idProcedimiento != null && idProcedimiento != ""){
+  			hql.append(" and vtar.idProcedimiento   = " + dto.getComboTipoProcedimiento()); // Filtro por procedimiento.
+  		}
+  		if(idTarea != null && idTarea != ""){
+  			//hql.append(" and tar.id = " + dto.getComboTipoTarea()); // Filtro por tareas.
+  			hql.append(" and tarea.id = " + dto.getComboTipoTarea()); // Filtro por tareas.
+  		}
         
 		hb2 = new HQLBuilder(hql.toString());
 		

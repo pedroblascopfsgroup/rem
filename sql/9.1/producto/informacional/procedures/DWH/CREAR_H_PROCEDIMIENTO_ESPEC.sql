@@ -265,7 +265,10 @@ BEGIN
                           P_AUTO_FC_REG_RESOL_APER_LIQ_C INTEGER ,
                           CUANTIA_CONVENIO NUMBER(14,2) ,
                           QUITA_CONVENIO NUMBER(14,2) ,
-						  FASE_SUBASTA_CONCURSAL_ID NUMBER(16,0)
+						  FASE_SUBASTA_CONCURSAL_ID NUMBER(16,0))
+                            SEGMENT CREATION IMMEDIATE NOLOGGING
+                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
+                           (PARTITION "P1" VALUES LESS THAN (201501)
 
                         '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -315,7 +318,10 @@ BEGIN
                           P_AUTO_FC_REG_RESOL_APER_LIQ_C INTEGER ,
                           CUANTIA_CONVENIO NUMBER(14,2) ,
                           QUITA_CONVENIO NUMBER(14,2) ,
-						  FASE_SUBASTA_CONCURSAL_ID NUMBER(16,0)
+						  FASE_SUBASTA_CONCURSAL_ID NUMBER(16,0))
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
+                           	(PARTITION "P1" VALUES LESS THAN (201501)
 
                          '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -364,7 +370,10 @@ BEGIN
                           P_AUTO_FC_REG_RESOL_APER_LIQ_C INTEGER ,
                           CUANTIA_CONVENIO NUMBER(14,2) ,
                           QUITA_CONVENIO NUMBER(14,2) ,
-						  FASE_SUBASTA_CONCURSAL_ID NUMBER(16,0)
+						  FASE_SUBASTA_CONCURSAL_ID NUMBER(16,0))
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (201501)
 
                           '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -414,7 +423,10 @@ BEGIN
                           P_AUTO_FC_REG_RESOL_APER_LIQ_C INTEGER ,
                           CUANTIA_CONVENIO NUMBER(14,2) ,
                           QUITA_CONVENIO NUMBER(14,2) ,
-						  FASE_SUBASTA_CONCURSAL_ID NUMBER(16,0)
+						  FASE_SUBASTA_CONCURSAL_ID NUMBER(16,0))
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (2015)
 
                           '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -639,7 +651,10 @@ BEGIN
                           TD_ID_DECL_RESOL_FIRME_ID NUMBER(16,0) ,
                           -- M?tricas
                           NUM_DECLARATIVOS INTEGER ,
-                          P_ID_DECL_RESOL_FIRME INTEGER
+                          P_ID_DECL_RESOL_FIRME INTEGER)
+                            SEGMENT CREATION IMMEDIATE NOLOGGING
+                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
+                           (PARTITION "P1" VALUES LESS THAN (201501)
 
                           '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -667,7 +682,10 @@ BEGIN
                           TD_ID_DECL_RESOL_FIRME_ID NUMBER(16,0) ,
                           -- M?tricas
                           NUM_DECLARATIVOS INTEGER ,
-                          P_ID_DECL_RESOL_FIRME INTEGER
+                          P_ID_DECL_RESOL_FIRME INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
+                           	(PARTITION "P1" VALUES LESS THAN (201501)
 
                           '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -694,7 +712,10 @@ BEGIN
                           TD_ID_DECL_RESOL_FIRME_ID NUMBER(16,0) ,
                           -- M?tricas
                           NUM_DECLARATIVOS INTEGER ,
-                          P_ID_DECL_RESOL_FIRME INTEGER
+                          P_ID_DECL_RESOL_FIRME INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (201501)
 
                           '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -722,7 +743,10 @@ BEGIN
                           TD_ID_DECL_RESOL_FIRME_ID NUMBER(16,0) ,
                           -- M?tricas
                           NUM_DECLARATIVOS INTEGER ,
-                          P_ID_DECL_RESOL_FIRME INTEGER
+                          P_ID_DECL_RESOL_FIRME INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (2015)
 
                           '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -864,7 +888,10 @@ BEGIN
                               TD_ID_ORD_INI_APREMIO_ID NUMBER(16,0) ,
                               -- M?tricas
                               NUM_EJECUCION_ORDINARIAS INTEGER ,
-                              P_ID_ORD_INI_APREMIO INTEGER
+                              P_ID_ORD_INI_APREMIO INTEGER)
+                            SEGMENT CREATION IMMEDIATE NOLOGGING
+                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
+                           (PARTITION "P1" VALUES LESS THAN (201501)
 
                             '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -890,7 +917,10 @@ BEGIN
                               TD_ID_ORD_INI_APREMIO_ID NUMBER(16,0) ,
                               -- M?tricas
                               NUM_EJECUCION_ORDINARIAS INTEGER ,
-                              P_ID_ORD_INI_APREMIO INTEGER
+                              P_ID_ORD_INI_APREMIO INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
+                           	(PARTITION "P1" VALUES LESS THAN (201501)
 
                             '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -916,7 +946,10 @@ BEGIN
                               TD_ID_ORD_INI_APREMIO_ID NUMBER(16,0) ,
                               -- M?tricas
                               NUM_EJECUCION_ORDINARIAS INTEGER ,
-                              P_ID_ORD_INI_APREMIO INTEGER
+                              P_ID_ORD_INI_APREMIO INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (201501)
 
                            '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -942,7 +975,10 @@ BEGIN
                               TD_ID_ORD_INI_APREMIO_ID NUMBER(16,0) ,
                               -- M?tricas
                               NUM_EJECUCION_ORDINARIAS INTEGER ,
-                              P_ID_ORD_INI_APREMIO INTEGER
+                              P_ID_ORD_INI_APREMIO INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (2015)
 
                             '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -1129,7 +1165,10 @@ BEGIN
                           P_SUB_SOL_SUB_CEL INTEGER,
                           P_SUB_CEL_CESION_REMATE INTEGER,
                           P_CEL_ADJUDICACION INTEGER,
-                          P_ENTRA_REG_RECEPCION INTEGER
+                          P_ENTRA_REG_RECEPCION INTEGER)
+                            SEGMENT CREATION IMMEDIATE NOLOGGING
+                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
+                           (PARTITION "P1" VALUES LESS THAN (201501)
 
                           '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -1180,7 +1219,10 @@ BEGIN
                           P_SUB_SOL_SUB_CEL INTEGER,
                           P_SUB_CEL_CESION_REMATE INTEGER,
                           P_CEL_ADJUDICACION INTEGER,
-                          P_ENTRA_REG_RECEPCION INTEGER
+                          P_ENTRA_REG_RECEPCION INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
+                           	(PARTITION "P1" VALUES LESS THAN (201501)
 
                           '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -1230,7 +1272,10 @@ BEGIN
                           P_SUB_SOL_SUB_CEL INTEGER,
                           P_SUB_CEL_CESION_REMATE INTEGER,
                           P_CEL_ADJUDICACION INTEGER,
-                          P_ENTRA_REG_RECEPCION INTEGER
+                          P_ENTRA_REG_RECEPCION INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (201501)
 
                          '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -1281,7 +1326,10 @@ BEGIN
                           P_SUB_SOL_SUB_CEL INTEGER,
                           P_SUB_CEL_CESION_REMATE INTEGER,
                           P_CEL_ADJUDICACION INTEGER,
-                          P_ENTRA_REG_RECEPCION INTEGER
+                          P_ENTRA_REG_RECEPCION INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (2015)
 
                          '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -1437,7 +1485,10 @@ BEGIN
                           TD_ID_MON_DECRETO_FIN_ID NUMBER(16,0) ,
                           -- M?tricas
                           NUM_MONITORIOS INTEGER,
-                          P_ID_MON_DECRETO_FIN INTEGER
+                          P_ID_MON_DECRETO_FIN INTEGER)
+                            SEGMENT CREATION IMMEDIATE NOLOGGING
+                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
+                           (PARTITION "P1" VALUES LESS THAN (201501)
 
                          '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -1465,7 +1516,10 @@ BEGIN
                           TD_ID_MON_DECRETO_FIN_ID NUMBER(16,0) ,
                           -- M?tricas
                           NUM_MONITORIOS INTEGER,
-                          P_ID_MON_DECRETO_FIN INTEGER
+                          P_ID_MON_DECRETO_FIN INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
+                           	(PARTITION "P1" VALUES LESS THAN (201501)
 
                          '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -1492,7 +1546,10 @@ BEGIN
                           TD_ID_MON_DECRETO_FIN_ID NUMBER(16,0) ,
                           -- M?tricas
                           NUM_MONITORIOS INTEGER,
-                          P_ID_MON_DECRETO_FIN INTEGER
+                          P_ID_MON_DECRETO_FIN INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (201501)
 
                           '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -1520,7 +1577,10 @@ BEGIN
                           TD_ID_MON_DECRETO_FIN_ID NUMBER(16,0) ,
                           -- M?tricas
                           NUM_MONITORIOS INTEGER,
-                          P_ID_MON_DECRETO_FIN INTEGER
+                          P_ID_MON_DECRETO_FIN INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (2015)
 
                           '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -1659,7 +1719,10 @@ BEGIN
                           FECHA_SUBASTA_EJEC_NOT DATE ,
                           F_SUBASTA_EJEC_NOTARIAL_ID NUMBER(16,0),
                           -- M?tricas
-                          NUM_EJECUCIONES_NOTARIALES INTEGER
+                          NUM_EJECUCIONES_NOTARIALES INTEGER)
+                            SEGMENT CREATION IMMEDIATE NOLOGGING
+                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
+                           (PARTITION "P1" VALUES LESS THAN (201501)
 
                           '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -1684,7 +1747,10 @@ BEGIN
                           FECHA_SUBASTA_EJEC_NOT DATE ,
                           F_SUBASTA_EJEC_NOTARIAL_ID NUMBER(16,0),
                           -- M?tricas
-                          NUM_EJECUCIONES_NOTARIALES INTEGER
+                          NUM_EJECUCIONES_NOTARIALES INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
+                           	(PARTITION "P1" VALUES LESS THAN (201501)
 
                          '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -1709,7 +1775,10 @@ BEGIN
                           FECHA_SUBASTA_EJEC_NOT DATE ,
                           F_SUBASTA_EJEC_NOTARIAL_ID NUMBER(16,0),
                           -- M?tricas
-                          NUM_EJECUCIONES_NOTARIALES INTEGER
+                          NUM_EJECUCIONES_NOTARIALES INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (201501)
 
                          '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -1734,7 +1803,10 @@ BEGIN
                           FECHA_SUBASTA_EJEC_NOT DATE ,
                           F_SUBASTA_EJEC_NOTARIAL_ID NUMBER(16,0),
                           -- M?tricas
-                          NUM_EJECUCIONES_NOTARIALES INTEGER
+                          NUM_EJECUCIONES_NOTARIALES INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (2015)
 
                           '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -1881,7 +1953,10 @@ BEGIN
                           FECHA_PREP_DEC_PROP DATE ,
                           FECHA_ULT_PROPUESTA DATE ,
                           -- M?tricas
-                          NUM_PRE_CONCURSOS INTEGER
+                          NUM_PRE_CONCURSOS INTEGER)
+                            SEGMENT CREATION IMMEDIATE NOLOGGING
+                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
+                           (PARTITION "P1" VALUES LESS THAN (201501)
 
                          '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -1909,7 +1984,10 @@ BEGIN
                           FECHA_PREP_DEC_PROP DATE ,
                           FECHA_ULT_PROPUESTA DATE ,
                           -- M?tricas
-                          NUM_PRE_CONCURSOS INTEGER
+                          NUM_PRE_CONCURSOS INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
+                           	(PARTITION "P1" VALUES LESS THAN (201501)
 
                          '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -1937,7 +2015,10 @@ BEGIN
                           FECHA_PREP_DEC_PROP DATE ,
                           FECHA_ULT_PROPUESTA DATE ,
                           -- M?tricas
-                          NUM_PRE_CONCURSOS INTEGER
+                          NUM_PRE_CONCURSOS INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (201501)
 
                           '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
@@ -1965,7 +2046,10 @@ BEGIN
                           FECHA_PREP_DEC_PROP DATE ,
                           FECHA_ULT_PROPUESTA DATE ,
                           -- M?tricas
-                          NUM_PRE_CONCURSOS INTEGER
+                          NUM_PRE_CONCURSOS INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (2015)
 
                           '', :error); END;';
 		 execute immediate V_SQL USING OUT error;

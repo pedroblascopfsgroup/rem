@@ -1339,7 +1339,10 @@ BEGIN
                               INT_REMUNERATORIOS_FACTURA NUMBER(16,2) ,
                               INT_MORATORIOS_FACTURA NUMBER(16,2) ,
                               COMISIONES_FACTURA NUMBER(16,2) ,
-                              GASTOS_FACTURA NUMBER(16,2)
+                              GASTOS_FACTURA NUMBER(16,2))
+                            SEGMENT CREATION IMMEDIATE NOLOGGING
+                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
+                           (PARTITION "P1" VALUES LESS THAN (201501)
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -1396,7 +1399,10 @@ BEGIN
                               INT_REMUNERATORIOS_FACTURA NUMBER(16,2) ,
                               INT_MORATORIOS_FACTURA NUMBER(16,2) ,
                               COMISIONES_FACTURA NUMBER(16,2) ,
-                              GASTOS_FACTURA NUMBER(16,2)
+                              GASTOS_FACTURA NUMBER(16,2))
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
+                           	(PARTITION "P1" VALUES LESS THAN (201501)
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -1452,7 +1458,10 @@ BEGIN
                               INT_REMUNERATORIOS_FACTURA NUMBER(16,2) ,
                               INT_MORATORIOS_FACTURA NUMBER(16,2) ,
                               COMISIONES_FACTURA NUMBER(16,2) ,
-                              GASTOS_FACTURA NUMBER(16,2)
+                              GASTOS_FACTURA NUMBER(16,2))
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (201501)
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -1507,7 +1516,10 @@ BEGIN
                               INT_REMUNERATORIOS_FACTURA NUMBER(16,2) ,
                               INT_MORATORIOS_FACTURA NUMBER(16,2) ,
                               COMISIONES_FACTURA NUMBER(16,2) ,
-                              GASTOS_FACTURA NUMBER(16,2)
+                              GASTOS_FACTURA NUMBER(16,2))
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (2015)
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -1617,7 +1629,10 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_CNT_DET_CICLO_REC'',
                               COMISIONES_CICLO_REC NUMBER(16,2) ,
                               GASTOS_CICLO_REC NUMBER(16,2) ,
                               IMPUESTOS_CICLO_REC NUMBER(16,2),
-                              DEUDA_IRREGULAR_CICLO_REC NUMBER(14,2)
+                              DEUDA_IRREGULAR_CICLO_REC NUMBER(14,2))
+                            SEGMENT CREATION IMMEDIATE NOLOGGING
+                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
+                           (PARTITION "P1" VALUES LESS THAN (201501)
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_CNT_DET_CICLO_REC_SEMANA');
@@ -1652,7 +1667,10 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_CNT_DET_CICLO_REC'',
                               COMISIONES_CICLO_REC NUMBER(16,2) ,
                               GASTOS_CICLO_REC NUMBER(16,2) ,
                               IMPUESTOS_CICLO_REC NUMBER(16,2),
-                              DEUDA_IRREGULAR_CICLO_REC NUMBER(14,2)
+                              DEUDA_IRREGULAR_CICLO_REC NUMBER(14,2))
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
+                           	(PARTITION "P1" VALUES LESS THAN (201501)
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -1686,7 +1704,10 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_CNT_DET_CICLO_REC'',
                               COMISIONES_CICLO_REC NUMBER(16,2) ,
                               GASTOS_CICLO_REC NUMBER(16,2) ,
                               IMPUESTOS_CICLO_REC NUMBER(16,2),
-                              DEUDA_IRREGULAR_CICLO_REC NUMBER(14,2)
+                              DEUDA_IRREGULAR_CICLO_REC NUMBER(14,2))
+                              SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (201501)
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -1722,7 +1743,10 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_CNT_DET_CICLO_REC'',
                               COMISIONES_CICLO_REC NUMBER(16,2) ,
                               GASTOS_CICLO_REC NUMBER(16,2) ,
                               IMPUESTOS_CICLO_REC NUMBER(16,2),
-                              DEUDA_IRREGULAR_CICLO_REC NUMBER(14,2)
+                              DEUDA_IRREGULAR_CICLO_REC NUMBER(14,2))
+                              SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (2015)
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -1768,7 +1792,11 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_CNT_DET_CICLO_REC'',
                               RIESGO_GARANTIA_INI_CAMP_REC NUMBER(14,2)  ,
                               SALDO_EXCE_INI_CAMP_REC NUMBER(14,2)  ,
                               -- Recobro
-                              IMPORTE_RECLAMAR_INI_CAMP_REC NUMBER(14,2)
+                              IMPORTE_RECLAMAR_INI_CAMP_REC NUMBER(14,2))
+                    SEGMENT CREATION IMMEDIATE NOLOGGING
+                    PARTITION BY RANGE ("DIA_ID")
+                    INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
+                    (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -1867,7 +1895,10 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_CNT_DET_CICLO_REC'',
                               ENVIADO_AGENCIA_ACUERDO_ID NUMBER(16,0) NULL,
                               -- Metricas
                               NUM_ACUERDOS INTEGER ,
-                              IMPORTE_PAGO NUMBER(16,2)
+                              IMPORTE_PAGO NUMBER(16,2))
+                              SEGMENT CREATION IMMEDIATE NOLOGGING
+                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
+                           (PARTITION "P1" VALUES LESS THAN (201501)
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -1896,7 +1927,10 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_ACUERDO_SEMANA_
                               ENVIADO_AGENCIA_ACUERDO_ID NUMBER(16,0) NULL,
                               -- Metricas
                               NUM_ACUERDOS INTEGER ,
-                              IMPORTE_PAGO NUMBER(16,2) 
+                              IMPORTE_PAGO NUMBER(16,2))
+                              SEGMENT CREATION IMMEDIATE NOLOGGING
+                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
+                           	(PARTITION "P1" VALUES LESS THAN (201501) 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -1925,7 +1959,10 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_ACUERDO_SEMANA_
                               ENVIADO_AGENCIA_ACUERDO_ID NUMBER(16,0) NULL,
                               -- Metricas
                               NUM_ACUERDOS INTEGER ,
-                              IMPORTE_PAGO NUMBER(16,2) 
+                              IMPORTE_PAGO NUMBER(16,2))
+                              SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (201501) 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -1954,7 +1991,10 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_ACUERDO_SEMANA_
                               ENVIADO_AGENCIA_ACUERDO_ID NUMBER(16,0) NULL,
                               -- Metricas
                               NUM_ACUERDOS INTEGER ,
-                              IMPORTE_PAGO NUMBER(16,2) 
+                              IMPORTE_PAGO NUMBER(16,2))
+                              SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (2015) 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -2038,7 +2078,10 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_IX'', '' H
                               AGENCIA_INCIDENCIA_ID NUMBER(16,0) NULL,
                               ENVIADO_AGENCIA_INCI_ID NUMBER(16,0) NULL,
                               -- Metricas
-                              NUM_INCIDENCIAS INTEGER 
+                              NUM_INCIDENCIAS INTEGER)
+                            SEGMENT CREATION IMMEDIATE NOLOGGING
+                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
+                           (PARTITION "P1" VALUES LESS THAN (201501) 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -2066,7 +2109,10 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_SEMANA_IX'
                               AGENCIA_INCIDENCIA_ID NUMBER(16,0) NULL,
                               ENVIADO_AGENCIA_INCI_ID NUMBER(16,0) NULL,
                               -- Metricas
-                              NUM_INCIDENCIAS INTEGER 
+                              NUM_INCIDENCIAS INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
+                           	(PARTITION "P1" VALUES LESS THAN (201501) 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -2093,7 +2139,10 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_SEMANA_IX'
                               AGENCIA_INCIDENCIA_ID NUMBER(16,0) NULL,
                               ENVIADO_AGENCIA_INCI_ID NUMBER(16,0) NULL,
                               -- Metricas
-                              NUM_INCIDENCIAS INTEGER 
+                              NUM_INCIDENCIAS INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (201501) 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -2120,7 +2169,10 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_SEMANA_IX'
                               AGENCIA_INCIDENCIA_ID NUMBER(16,0) NULL,
                               ENVIADO_AGENCIA_INCI_ID NUMBER(16,0) NULL,
                               -- Metricas
-                              NUM_INCIDENCIAS INTEGER 
+                              NUM_INCIDENCIAS INTEGER)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (2015) 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -2194,7 +2246,10 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_SEMANA_IX'
                               -- Metricas
                               ER_IMPORTE_COBRO NUMBER(14,2),
                               ER_DEUDA_IRREGULAR_STOCK_INI NUMBER(14,2),
-                              ER_DEUDA_IRREGULAR_ENTRADAS NUMBER(14,2) 
+                              ER_DEUDA_IRREGULAR_ENTRADAS NUMBER(14,2))
+                            SEGMENT CREATION IMMEDIATE NOLOGGING
+                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
+                           (PARTITION "P1" VALUES LESS THAN (201501) 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_CNT_DET_EFICACIA_SEMANA');
@@ -2218,7 +2273,10 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_SEMANA_IX'
                               -- Metricas
                               ER_IMPORTE_COBRO NUMBER(14,2),
                               ER_DEUDA_IRREGULAR_STOCK_INI NUMBER(14,2),
-                              ER_DEUDA_IRREGULAR_ENTRADAS NUMBER(14,2) 
+                              ER_DEUDA_IRREGULAR_ENTRADAS NUMBER(14,2))
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
+                           	(PARTITION "P1" VALUES LESS THAN (201501) 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_CNT_DET_EFICACIA_MES');
@@ -2241,7 +2299,10 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_SEMANA_IX'
                               -- Metricas
                               ER_IMPORTE_COBRO NUMBER(14,2),
                               ER_DEUDA_IRREGULAR_STOCK_INI NUMBER(14,2),
-                              ER_DEUDA_IRREGULAR_ENTRADAS NUMBER(14,2) 
+                              ER_DEUDA_IRREGULAR_ENTRADAS NUMBER(14,2))
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (201501) 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -2265,7 +2326,10 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_SEMANA_IX'
                               -- Metricas
                               ER_IMPORTE_COBRO NUMBER(14,2),
                               ER_DEUDA_IRREGULAR_STOCK_INI NUMBER(14,2),
-                              ER_DEUDA_IRREGULAR_ENTRADAS NUMBER(14,2) 
+                              ER_DEUDA_IRREGULAR_ENTRADAS NUMBER(14,2))
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (2015) 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -2356,7 +2420,10 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_SEMANA_IX'
                                   NUM_CREDITO_INSINUADO NUMBER NULL,
                                   PRINCIPAL_INICIAL NUMBER(16,2) NULL,
                                   PRINCIPAL_GESTOR NUMBER(16,2) NULL,
-                                  PRINCIPAL_FINAL NUMBER(16,2) NULL 
+                                  PRINCIPAL_FINAL NUMBER(16,2) NULL)
+                            SEGMENT CREATION IMMEDIATE NOLOGGING
+                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
+                           (PARTITION "P1" VALUES LESS THAN (201501) 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
  
@@ -2383,7 +2450,10 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_SEMANA_IX'
                                   NUM_CREDITO_INSINUADO NUMBER NULL,
                                   PRINCIPAL_INICIAL NUMBER(16,2) NULL,
                                   PRINCIPAL_GESTOR NUMBER(16,2) NULL,
-                                  PRINCIPAL_FINAL NUMBER(16,2) NULL 
+                                  PRINCIPAL_FINAL NUMBER(16,2) NULL)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
+                           	(PARTITION "P1" VALUES LESS THAN (201501) 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
  
@@ -2409,7 +2479,10 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_SEMANA_IX'
                                   NUM_CREDITO_INSINUADO NUMBER NULL,
                                   PRINCIPAL_INICIAL NUMBER(16,2) NULL,
                                   PRINCIPAL_GESTOR NUMBER(16,2) NULL,
-                                  PRINCIPAL_FINAL NUMBER(16,2) NULL 
+                                  PRINCIPAL_FINAL NUMBER(16,2) NULL)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (201501) 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
  
@@ -2436,7 +2509,10 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_SEMANA_IX'
                                   NUM_CREDITO_INSINUADO NUMBER NULL,
                                   PRINCIPAL_INICIAL NUMBER(16,2) NULL,
                                   PRINCIPAL_GESTOR NUMBER(16,2) NULL,
-                                  PRINCIPAL_FINAL NUMBER(16,2) NULL 
+                                  PRINCIPAL_FINAL NUMBER(16,2) NULL)
+                            	SEGMENT CREATION IMMEDIATE NOLOGGING
+                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
+                            	(PARTITION "P1" VALUES LESS THAN (2015) 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
  

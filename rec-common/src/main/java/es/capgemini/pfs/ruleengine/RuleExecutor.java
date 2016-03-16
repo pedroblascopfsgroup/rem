@@ -202,14 +202,14 @@ public class RuleExecutor {
         }
 
         int rows = -1;
+        ResultSet rs = null;
         try {
             connection.setAutoCommit(false);
             logger.info("Comprobando regla");
             logger.info("                [" + sql.toString() + "]");
-            ResultSet rs = connection.prepareStatement(sql.toString()).executeQuery();
+            rs = connection.prepareStatement(sql.toString()).executeQuery();
             rs.next();
             rows = rs.getInt(1);
-            rs.close();
             result.finishOK(rows);
             logger.info("-> Regla comprobada! - [Rows: " + rows + ", Tiempo: " + result.getTimeInSeconds() + " segs]");
 
@@ -218,6 +218,13 @@ public class RuleExecutor {
             result.finishWithErrors(e);
             return result;
         } finally {
+        	if (rs != null){
+        		try {
+					rs.close();
+				} catch (SQLException e) {
+					logger.error(e);
+				}
+        	}
             if (connection != null) {
                 try {
                     connection.close();

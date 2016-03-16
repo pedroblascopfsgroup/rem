@@ -626,6 +626,15 @@
 			if(tabFiltrosUsuario){
 				p.despacho=comboDespachos.getValue();
 				p.gestores=comboGestor.getValue();
+				if(comboTipoActuacion.getValue()!=null && comboTipoActuacion.getValue()!=''){
+					p.tipoActuacion=comboTipoActuacion.getValue();
+				}
+				if(comboTipoProcedimiento.getValue()!=null && comboTipoProcedimiento.getValue()!=''){
+					p.tipoProcedimiento=comboTipoProcedimiento.getValue();
+				}
+				if(comboTipoTarea.getValue()!=null && comboTipoTarea.getValue()!=''){
+					p.tipoTarea=.getValue();
+				}
 			}
 				//p.nombreUsuario=nombreUsuario.getValue();
 				//p.apellidoUsuario=apellidoUsuario.getValue();

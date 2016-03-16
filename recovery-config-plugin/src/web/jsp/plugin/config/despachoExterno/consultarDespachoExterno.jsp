@@ -18,9 +18,9 @@
 	<pfslayout:includetab name="tabGestores">
 		<%@ include file="tabGestoresDespachoExterno.jsp"%>
 	</pfslayout:includetab>
-	
+
 	<pfslayout:includetab name="tabSupervisores">
-			<%@ include file="tabSupervisoresDespachoExterno.jsp"%>
+		<%@ include file="tabSupervisoresDespachoExterno.jsp"%>
 	</pfslayout:includetab>
 	
 	<c:choose>
@@ -29,12 +29,16 @@
 		<c:when test="${despacho.tipoDespacho.codigo == codigoTipoDespachoLetradoValido}">
 			tabsDespacho = new Ext.TabPanel({
 				autoHeight: true
-				,items: [tabCabecera, tabGestores, tabSupervisores]
+				,items: [tabCabecera, tabGestores]
 				,layoutOnTabChange: true 
 				,activeItem: ${numTab == null ? 0 : numTab}
 				,autoScroll: true
 				,border: false
 			})
+
+			<sec:authorize ifAllGranted="ROLE_PUEDE_VER_TAB_SUPERVISORES_DESPACHO">
+				tabsDespacho.add(tabSupervisores);
+			</sec:authorize>
 
 			<%-- Es tipo despacho letrado y es bankia se añade el tab turnado --%>
 			<c:if test="${usuarioEntidad == 'BANKIA'}">
@@ -57,20 +61,23 @@
 			</c:if>
 
 		</c:when>
-		
+
 		<%-- Es tipo despacho procurador (no debe mostrar el tabSupervisores) --%>
 		<c:when test="${despacho.tipoDespacho.codigo == '2'}">
 			<pfslayout:tabpanel name="tabsDespacho" tabs="tabCabecera, tabGestores" />
 		</c:when>
+
+		<%-- Por defecto y para todos los tipos restantes de despacho se muestra [tabCabecera, tabGestores] y tabSupervisores --%>
+		<c:otherwise>
+			<sec:authorize ifAllGranted="ROLE_PUEDE_VER_TAB_SUPERVISORES_DESPACHO">
+				<pfslayout:tabpanel name="tabsDespacho" tabs="tabCabecera, tabGestores, tabSupervisores" />
+			</sec:authorize>
+
+			<sec:authorize ifNotGranted="ROLE_PUEDE_VER_TAB_SUPERVISORES_DESPACHO">
+				<pfslayout:tabpanel name="tabsDespacho" tabs="tabCabecera, tabGestores" />
+			</sec:authorize>
+		</c:otherwise>
 	</c:choose>
-	
-	<sec:authorize ifAllGranted="ROLE_PUEDE_VER_TAB_SUPERVISORES_DESPACHO">
-		<pfslayout:tabpanel name="tabsDespacho" tabs="tabCabecera, tabGestores, tabSupervisores" />
-	</sec:authorize>
-	
-	<sec:authorize ifNotGranted="ROLE_PUEDE_VER_TAB_SUPERVISORES_DESPACHO">
-		<pfslayout:tabpanel name="tabsDespacho" tabs="tabCabecera, tabGestores" />
-	</sec:authorize>
 
 	var panel = new Ext.Panel({
 		bodyStyle : 'padding : 5px'

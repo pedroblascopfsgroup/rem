@@ -75,7 +75,7 @@ public class GestorTareasManager implements GestorTareasApi {
 	@Autowired
 	private ProcedimientoPCODao procedimientoPcoDao;
 
-    private static List<GestorTareasLineaConfigPCO> lineasConfig = null;
+    private List<GestorTareasLineaConfigPCO> lineasConfig = null;
     
     @BusinessOperation(BO_PCO_GESTOR_TAREAS_RECALCULAR)
 	@Override

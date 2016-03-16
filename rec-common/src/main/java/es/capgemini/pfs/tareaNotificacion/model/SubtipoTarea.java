@@ -98,6 +98,7 @@ public class SubtipoTarea implements Serializable, Auditable {
     public static final String CODIGO_TAREA_UMBRAL = "53";
 
     public static final String CODIGO_SOLICITAR_PRORROGA_DC = "54";
+    public static final String CODIGO_SOLICITAR_PRORROGA_FP = "SOLPRORRFP";
     public static final String CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_DC = "55";
 
     public static final String CODIGO_TAREA_PROPUESTA_BORRADO_OBJETIVO = "57";
@@ -117,12 +118,16 @@ public class SubtipoTarea implements Serializable, Auditable {
     public static final String CODIGO_NOTIFICACION_GESTOR_PROPUESTA_SUBASTA = "NTGPS";
 
     public static final String CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_SEG = "501";
+    public static final String CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_GESTION_DEUDA = "SOLEXPMGDEUDA";
     
     // nuevos tipos para tareas de expediente de recobro
     public static final String CODIGO_TAREA_EXP_RECOBRO_MARCADO="REC_MARCADO_EXP";
     public static final String CODIGO_TAREA_EXP_RECOBRO_META_VOLANTE_OK="REC_META_VOL_OK";
     public static final String CODIGO_TAREA_EXP_RECOBRO_META_VOLANTE_KO="REC_META_VOL_KO";
     
+    public static final String CODIGO_TAREA_EN_SANCION="ENSAN";
+    public static final String CODIGO_TAREA_SANCIONADO="SANC";
+
     public static final String CODIGO_NOTIFICACION_EXPEDIENTE_NUEVO_RIESGO = "1000";
 
     // OJO: Todas los c�digos de tareas deben estar en shared.js.jsp, y

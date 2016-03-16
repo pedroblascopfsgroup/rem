@@ -56,6 +56,7 @@
 			</action>
 		</event>			
 		<transition to="H067_SeleccionarProcedimientoAsignarGestor" name="activarAlerta"></transition>
+		<transition to="join1" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state>
 
@@ -95,9 +96,14 @@
 	<node name="H067_transicionProcedimientoConc">
 		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>asignacionHayaEnterActionHandler</targetBean>
-		</action>	
+		</action>
+		<transition to="join1" name="avanzaBPM"></transition>	
 		<transition to="Fin" name="Fin"></transition>		
 	</node>
+	
+	<join name="join1">
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</join>
 
 	<end-state name="Fin">
 		<event type="node-enter">

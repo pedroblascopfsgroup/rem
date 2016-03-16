@@ -514,7 +514,7 @@ public class InformeSubastaBean extends InformeSubastaCommon {
 								System.out.println("[INFO] - check lotebien - TipoSubasta70:" + lb.getTipoSubasta70());
 								Float valorTasacion = null;
 								if (!Checks.esNulo(nmbBienLote.getValoraciones()) && nmbBienLote.getValoraciones().size() > 0) {
-									valorTasacion = Checks.esNulo(nmbBienLote.getValoraciones().get(0).getImporteValorTasacion()) ? null : nmbBienLote.getValoraciones().get(0).getImporteValorTasacion();
+									valorTasacion = Checks.esNulo(nmbBienLote.getValoraciones().get(0).getImporteValorTasacion()) ? null : nmbBienLote.getValoraciones().get(0).getImporteValorTasacion().floatValue();
 								}
 								lb.setTasacionActualizada(valorTasacion);
 								System.out.println("[INFO] - check lotebien - Tasacion Actualizada:" + lb.getTasacionActualizada());

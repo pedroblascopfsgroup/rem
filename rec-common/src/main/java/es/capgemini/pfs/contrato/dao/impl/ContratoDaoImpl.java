@@ -124,7 +124,7 @@ public class ContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
-	public Date getUltimaFechaCarga() {
+	public synchronized Date getUltimaFechaCarga() {
 		long valor=0;
 		
 		try {

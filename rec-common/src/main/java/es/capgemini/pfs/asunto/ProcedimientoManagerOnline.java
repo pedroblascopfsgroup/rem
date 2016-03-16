@@ -339,5 +339,15 @@ public class ProcedimientoManagerOnline {
 	public String getTipoProcedimientoOriginal(Long idProcedimiento) {
 		return procedimientoMgr.getTipoProcedimientoOriginal(idProcedimiento);
 	}
+	
+	/**
+	 * Devuelve los tipos de actuacion.
+	 * 
+	 * @return la lista de Tipos de actuación
+	 */
+	@BusinessOperation(ExternaBusinessOperation.BO_PRC_MGR_GET_TIPOS_ACTUACION_BY_TIPO_ASUNTO)
+	public List<DDTipoActuacion> getTiposActuacionByTipoAsunto(Long idAsunto) {
+		return procedimientoMgr.getTiposActuacionByIdTipoAsunto(idAsunto);
+	}
 
 }

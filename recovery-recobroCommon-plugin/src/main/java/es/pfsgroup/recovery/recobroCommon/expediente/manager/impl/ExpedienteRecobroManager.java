@@ -196,12 +196,17 @@ public class ExpedienteRecobroManager implements ExpedienteRecobroApi {
 		Persona persona = (Persona) executor.execute(PrimariaBusinessOperation.BO_PER_MGR_GET, idPersona);
 		Expediente expediente = expedienteDao.get(idExpediente);
 		String codigoSubtipoTarea;
-		if (expediente.getSeguimiento()) {
-			codigoSubtipoTarea = "501"; // FIXME
-										// SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_SEG;
+		if (expediente.isGestionDeuda()) {
+			codigoSubtipoTarea = "SOLEXPMGDEUDA";
 		} else {
-			codigoSubtipoTarea = SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL;
+			if (expediente.getSeguimiento()) {
+				codigoSubtipoTarea = "501"; // FIXME
+											// SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_SEG;
+			} else {
+				codigoSubtipoTarea = SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL;
+			}
 		}
+		
 		Cliente clienteActivo = persona.getClienteActivo();
 		cancelacionExp(idExpediente, true);
 

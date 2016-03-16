@@ -364,13 +364,13 @@
 							 app.openBrowserWindow('/pfs/tareanotificacion/exportacionTareasPaginaDescarga',parametros);  
 							}else{
 								Ext.MessageBox.hide();
-								Ext.Msg.alert('<s:message code="plugin.mejoras.error" text="**Error" />', '<s:message code="plugin.mejoras.tareas.exportarExcel.limiteSuperado1" text="**Se ha establecido un l�mite m�ximo de " />'+ limit + ' '+
-									'<s:message code="plugin.mejoras.tareas.exportarExcel.limiteSuperado2" text="**Tareas a Exportar. Por favor utilice los filtros para limitar el n�mero de resultados." />');
+								Ext.Msg.alert('<s:message code="plugin.mejoras.error" text="**Error" />', '<s:message code="plugin.mejoras.tareas.exportarExcel.limiteSuperado1" text="**Se ha establecido un l&iacute;mite m&aacute;ximo de " />'+ limit + ' '+
+									'<s:message code="plugin.mejoras.tareas.exportarExcel.limiteSuperado2" text="**Tareas a Exportar. Por favor utilice los filtros para limitar el n&uacute;mero de resultados." />');
 							}							    			
 						},
 						failure: function (result) {
 							Ext.MessageBox.hide();
-							Ext.Msg.alert('<s:message code="plugin.ugas.ws.error" text="**Error" />', '<s:message code="plugin.ugas.asuntos.exportarExcel.errorExportando" text="**Se ha producido un error durante el proceso de validaci�n de la exportaci�n a excel." />');
+							Ext.Msg.alert('<s:message code="plugin.ugas.ws.error" text="**Error" />', '<s:message code="plugin.ugas.asuntos.exportarExcel.errorExportando" text="**Se ha producido un error durante el proceso de validaci&oacute;n de la exportaci&oacute;n a excel." />');
 					    }
 					});
        					
@@ -918,8 +918,9 @@
 			btnQuickAceptarProrroga.setVisible(false);
 			return;
 		}
-		
+
 		switch(codigoSubtipoTarea){
+			
 			case app.subtipoTarea.CODIGO_SOLICITUD_CANCELACION_EXPEDIENTE_DE_SUPERVISOR:
 				var idExpediente=rec.get('idEntidad')
 				
@@ -939,6 +940,7 @@
 			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_CE:	
 			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_RE:
 			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC:
+			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_FP:
 				var params={
 					idTipoEntidadInformacion:rec.get('codigoEntidadInformacion')
 					,idEntidadInformacion:rec.get('idEntidad')
@@ -1068,13 +1070,16 @@
 			codigoSubtipoTarea = app.subtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_RESPONDIDA_DE_SUPERVISOR;
 		}
 
+		
 		switch (codigoSubtipoTarea){
+			
 			case app.subtipoTarea.CODIGO_COMPLETAR_EXPEDIENTE:
 			case app.subtipoTarea.CODIGO_REVISAR_EXPEDIENE:
 			case app.subtipoTarea.CODIGO_DECISION_COMITE:
 			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_CE:
 			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_RE:
 			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC:
+			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_FP:
 				app.abreExpediente(rec.get('idEntidad'), rec.get('descripcionExpediente'));
 			break;
 			case app.subtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL:
@@ -1464,9 +1469,13 @@
 		case app.subtipoTarea.CODIGO_CUMPLIMIENTO_ACUERDO:
 				app.abreAsuntoTab(rec.get('idEntidad'), rec.get('descripcion'),'acuerdos');
 		break;
-		
+		case app.subtipoTarea.CODIGO_TAREA_JUSTIFICAR_INCUMPLIMIENTO_OBJETIVO:
+			app.abreClienteTab(rec.get('idEntidadPersona'), rec.get('descripcion'),'politicaPanel');
+			break;
+			
 			// Por default abre una notificacion standard
 			default:
+				debugger;
 				//Seleccionarmos por tipo de Categoria Tarea
 				switch(categoriaTarea) {
 				
@@ -1479,6 +1488,9 @@
 						break;
 					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_EXP:
 						app.abreExpediente(rec.get('idEntidad'), rec.get('descripcion'));
+						break;
+					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_PER:
+						app.abreCliente(rec.get('idEntidadPersona'), rec.get('descripcion'));
 						break;
 						
 

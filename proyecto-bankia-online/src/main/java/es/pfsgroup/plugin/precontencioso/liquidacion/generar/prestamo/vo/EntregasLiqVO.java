@@ -21,11 +21,11 @@ public class EntregasLiqVO {
 	private final SimpleDateFormat formatoFechaCorta = new SimpleDateFormat("dd/MM/yyyy", MessageUtils.DEFAULT_LOCALE);
 	
 	public String FEDOEN() {
-		return formatoFechaCorta.format(ECL_FEDOEN);
+		return ECL_FEDOEN == null ? "" : formatoFechaCorta.format(ECL_FEDOEN);
 	}
 	
 	public String FEREAM() {
-		return formatoFechaCorta.format(ECL_FEREAM);
+		return ECL_FEREAM == null ? "" : formatoFechaCorta.format(ECL_FEREAM);
 	}
 	
 	public String IMENOP() {

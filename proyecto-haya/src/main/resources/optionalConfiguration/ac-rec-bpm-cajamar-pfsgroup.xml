@@ -300,11 +300,6 @@
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "DECADM");
 	            }
 
-	            def comprobarExisteDocumentoSOLCONS = {
-	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "SOLCONS");
-	            }
-
 	            def comprobarExisteDocumentoDTCCE = {
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "DTCCE");

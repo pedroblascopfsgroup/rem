@@ -91,7 +91,7 @@ public class MEJRecursoManager implements MEJRecursoAPI {
 				genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 
 		List<Recurso> recursos = prc.getRecursos();
-		if (recursos != null || recursos.size() > 0){
+		if (recursos != null && recursos.size() > 0){
 			for (Recurso recurso : recursos) {
 				if (!recursoFinalizado(recurso)){
 					return false;

@@ -171,8 +171,10 @@
 		entidad.cacheOrLoad(data, marcadoObligatorioStore, {idExpediente:getIdExpediente()});
 		entidad.cacheOrLoad(data, marcadoOpcionalStore, {idExpediente:getIdExpediente()});
 		
+		var esGestorSupervisorDeFase = entidad.get("data").esGestorSupervisorActual;
+		
 		var esVisible = [
-			[btnCerrar, estaCongelado]
+			[btnCerrar, estaCongelado && esGestorSupervisorDeFase]
 		];
 		entidad.setVisible(esVisible);
 		

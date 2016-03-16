@@ -67,6 +67,7 @@ app.subtipoTarea.CODIGO_DECISION_COMITE = '<fwk:const value="es.capgemini.pfs.ta
 app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_CE = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_CE" />';
 app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_RE = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_RE" />';
 app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC" />';
+app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_FP = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_FP" />';
 app.subtipoTarea.CODIGO_NOTIFICACION_CONTRATO_CANCELADO = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_NOTIFICACION_CONTRATO_CANCELADO" />';
 app.subtipoTarea.CODIGO_NOTIFICACION_SALDO_REDUCIDO = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_NOTIFICACION_SALDO_REDUCIDO" />';
 app.subtipoTarea.CODIGO_NOTIFICACION_CLIENTE_CANCELADO  = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_NOTIFICACION_CLIENTE_CANCELADO" />';
@@ -161,6 +162,7 @@ app.categoriaSubTipoTarea={};
 app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_TOMA_DECISION = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION" />';
 app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_TAREA_PROCEDIMIENTO = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_ABRIR_TAREA_PROCEDIMIENTO" />';
 app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_EXP = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_ABRIR_EXP" />';
+app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_PER = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_ABRIR_PER" />';
 
 app.tipoDestinatario={};
 app.tipoDestinatario.CODIGO_DESTINATARIO_GESTOR = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion.CODIGO_DESTINATARIO_GESTOR" />';
@@ -182,6 +184,7 @@ app.estItinerario.ESTADO_RE = '<fwk:const value="es.capgemini.pfs.itinerario.mod
 app.estItinerario.ESTADO_DECISION_COMITE = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_DECISION_COMIT" />';
 app.estItinerario.ESTADO_FORMALIZAR_PROPUESTA = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA" />';
 app.estItinerario.ESTADO_REVISAR_EXPEDIENTE = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE" />';
+app.estItinerario.ESTADO_ITINERARIO_EN_SANCION = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION" />';
 
 app.tipoBien={};
 app.tipoBien.CODIGO_TIPOBIEN_PISO = '<fwk:const value="es.capgemini.pfs.bien.model.DDTipoBien.CODIGO_TIPOBIEN_PISO" />';
@@ -211,6 +214,14 @@ app.codigoAcuerdoFinalizado = '<fwk:const value="es.capgemini.pfs.acuerdo.model.
 app.codigoAcuerdoEnviado = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_ENVIADO" />';
 app.codigoAcuerdoIncumplido = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_INCUMPLIDO" />';
 app.codigoAcuerdoCumplido = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_CUMPLIDO" />';
+
+app.decisionSancion={};
+app.decisionSancion.CODIGO_DECISION_SANCION_APROBADA = '<fwk:const value="es.capgemini.pfs.expediente.model.Sancion.CODIGO_DECISION_SANCION_APROBADA" />';
+app.decisionSancion.CODIGO_DECISION_SANCION_APROBADA_CON_CONDICIONES = '<fwk:const value="es.capgemini.pfs.expediente.model.Sancion.CODIGO_DECISION_SANCION_APROBADA_CON_CONDICIONES" />';
+app.decisionSancion.CODIGO_DECISION_SANCION_RECHAZADA = '<fwk:const value="es.capgemini.pfs.expediente.model.Sancion.CODIGO_DECISION_SANCION_RECHAZADA" />';
+
+app.tipoExpediente={};
+app.tipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA = '<fwk:const value="es.capgemini.pfs.expediente.model.DDTipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA" />';
 
 
 /**

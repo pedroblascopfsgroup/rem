@@ -344,6 +344,10 @@
 
 			comprobarExpedienteEditable();
 			comprobarUsuarioGestoria();
+			
+			<sec:authorize ifAllGranted="GENERAR_DOC_PRECONTENCIOSO">
+				Ext.Element.get('prc-btnGenerarDocPrecontencioso-padre').show();
+			</sec:authorize>
 
 		} else {
 			panelProcedimientoPrecontencioso.hide();

@@ -653,10 +653,10 @@
 		,{header: '<s:message code="preproyectado.expedientes.fechaVtoTarea" text="**Fecha vto tarea" />',dataIndex: 'fechaVtoTarea',sortable:true, css: cssExp}
 		,{header: '<s:message code="preproyectado.expedientes.numContratos" text="**Nro. contratos" />',dataIndex: 'numContratos',sortable:true, align: 'right', css: cssExp}
 		,{header: '<s:message code="preproyectado.expedientes.volRiesgoExp" text="**Vol. Riesgo Exp." />',dataIndex: 'volRiesgoExp',sortable:true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}		
-		,{header: '<s:message code="preproyectado.expedientes.importeInicialExp" text="**Importe inicial" />',dataIndex: 'importeInicialExp',sortable:true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}
-		,{header: '<s:message code="preproyectado.expedientes.regularizadoExp" text="**Regularizado" />',dataIndex: 'regularizadoExp',sortable:true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}
-		,{header: '<s:message code="preproyectado.expedientes.importeActual" text="**Importe Actual" />',dataIndex: 'importeActual',sortable:true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}
-		,{header: '<s:message code="preproyectado.expedientes.importePteDifer" text="**Importe a diferir" />',dataIndex: 'importePteDifer',sortable:true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}
+		,{header: '<s:message code="preproyectado.expedientes.importeInicialExp" text="**Importe inicial" />',dataIndex: 'importeInicialExp',sortable:true, hidden: true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}
+		,{header: '<s:message code="preproyectado.expedientes.regularizadoExp" text="**Regularizado" />',dataIndex: 'regularizadoExp',sortable:true,hidden: true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}
+		,{header: '<s:message code="preproyectado.expedientes.importeActual" text="**Importe Actual" />',dataIndex: 'importeActual',sortable:true,hidden: true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}
+		,{header: '<s:message code="preproyectado.expedientes.importePteDifer" text="**Importe a diferir" />',dataIndex: 'importePteDifer',sortable:true,hidden: true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}
 		,{header: '<s:message code="preproyectado.expedientes.tramoExp" text="**Tramo" />',dataIndex: 'tramoExp',sortable:true, css: cssExp}
 		,{header: '<s:message code="preproyectado.expedientes.diasVencidosExp" text="**Días vencidos" />',dataIndex: 'diasVencidosExp',sortable:true, align: 'right', css: cssExp}
 		,{header: '<s:message code="preproyectado.expedientes.fechaPaseAMoraExp" text="**Fecha pase a mora" />',dataIndex: 'fechaPaseAMoraExp',sortable:true, css: cssExp}

@@ -262,4 +262,7 @@ public interface BurofaxApi {
 	public void borrarBurofaxContratoPersona(ContratoPersona cp, Long prcId);
 	
 	public boolean comprobarBorrarBurofaxContratoPersona(ContratoPersona cp, Long prcId);
+
+	public FileItem obtenerBurofaxPDF(String nombreFichero);
+	
 }

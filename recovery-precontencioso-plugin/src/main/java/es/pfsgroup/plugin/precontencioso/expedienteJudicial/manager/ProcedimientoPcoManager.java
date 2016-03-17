@@ -119,7 +119,7 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	private static final String FALTA_TOMO = "El bien seleccionado (%s) debe tener registrado el tomo. ";
 	private static final String FALTA_LIBRO = "El bien seleccionado (%s) debe tener registrado el libro. ";
 	private static final String FALTA_FOLIO = "El bien seleccionado (%s) debe tener registrado el folio. ";
-	private static final String FALTA_MUNICIPIO = "El bien seleccionado (%s) debe tener registrado elmunicipio. ";
+	private static final String FALTA_MUNICIPIO = "El bien seleccionado (%s) debe tener registrado el municipio. ";
 	private static final String FALTA_DATOS_REGISTRALES = "El bien seleccionado (%s) no tiene datos registrales. ";
 
 	@Resource
@@ -1342,7 +1342,8 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			if (Checks.esNulo(bien.getDatosRegistralesActivo().getFolio())) {
 				 faltaDatos = faltaDatos.append(String.format(FALTA_FOLIO, idBien));
 			}
-			if (Checks.esNulo(bien.getDatosRegistralesActivo().getMunicipoLibro())) {
+			if (Checks.esNulo(bien.getDatosRegistralesActivo().getMunicipoLibro()) &&
+					Checks.esNulo(bien.getDatosRegistralesActivo().getLocalidad())) {
 				 faltaDatos = faltaDatos.append(String.format(FALTA_MUNICIPIO, idBien));
 			}
 		}else{

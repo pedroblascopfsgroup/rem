@@ -22,7 +22,7 @@ cp config/$1/devon.properties /recovery/app-server/
 
 echo "Creando directorio para salida de burofax ..."
 mkdir -p /recovery/app-server/output/burofax
-chmod -R og+rwx /recovery/app-server/output/burofax
+chmod -R og+rwx /recovery/app-server/output
 
 echo "Copiando plantillas ..."
 mkdir -p /recovery/app-server/plantillas

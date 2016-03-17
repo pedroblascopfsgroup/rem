@@ -1129,9 +1129,6 @@
 		<!-- PERFIL CAJAMAR PARA EL BATCH -->
 		<profile>
 			<id>cajamar</id>
-            <properties>
-                <master.schema>CMMASTER</master.schema>
-            </properties>
 			<dependencies>
 				<!-- PARA JMS **************** -->
 				<dependency>

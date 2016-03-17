@@ -83,7 +83,8 @@ public class EnvioBurofaxPCO implements Serializable, Auditable {
 	@Embedded
 	private Auditoria auditoria;
 
-	
+	@Column(name = "PCO_BUR_MANUAL")
+	private Boolean manual;
 
 	/*
 	 * GETTERS & SETTERS
@@ -197,5 +198,12 @@ public class EnvioBurofaxPCO implements Serializable, Auditable {
 		this.contenidoBurofax = contenidoBurofax;
 	}
 
+	public Boolean getManual() {
+		return manual;
+	}
+
+	public void setManual(Boolean manual) {
+		this.manual = manual;
+	}
 	
 }

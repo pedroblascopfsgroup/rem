@@ -996,7 +996,7 @@ var pdfRender = function(value, meta, record) {
 					 //Abrimos ventana
 					 var w = app.openWindow({
 						  flow : 'burofax/getEnvioBurofax'
-						  ,width:320
+						  ,width:520
 						  ,autoWidth:true
 						  ,closable:true
 						  ,title : '<s:message code="plugin.precontencioso.grid.burofax.envio" text="**Envio Burofaxes" />'

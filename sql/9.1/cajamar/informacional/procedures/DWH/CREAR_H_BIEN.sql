@@ -59,6 +59,8 @@ BEGIN
                                 OFICINA_BIEN_ID NUMBER(16,0),
                                 ENTIDAD_BIEN_ID NUMBER(16,0),
                                 FECHA_LANZAMIENTO_BIEN DATE,
+                                BIE_ESTADO_FASE_ACTUAL_ID NUMBER(16),
+                                BIE_FASE_ACTUAL NUMBER(16),
 								FECHA_INTERP_DEM_HIP DATE
          '', :error); END;';
 		 execute immediate V_SQL USING OUT error;

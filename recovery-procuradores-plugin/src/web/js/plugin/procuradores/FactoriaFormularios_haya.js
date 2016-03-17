@@ -780,7 +780,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     ]);
 
     this.storeDDTipoBienCajamar = new Ext.data.Store({
-        url:'/pfs/pcdprocesadoresoluciones/getDictionary.htm'
+        url:'/pfs/pcdprocesadoresoluciones/getDictionaryDenormalized.htm'
         ,baseParams: {
             dictionary: 'es.pfsgroup.recovery.hrebcc.model.DDTipoBienCajamar'
         }
@@ -799,7 +799,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     this.storeDDPosesionInterinaResolucion = new Ext.data.Store({
         url:'/pfs/pcdprocesadoresoluciones/getDictionary.htm'
         ,baseParams: {
-            dictionary: 'DDPosesionInterinaResolucion'
+            dictionary: 'es.pfsgroup.recovery.hrebcc.model.DDPosesionInterinaResolucion'
         }
         ,reader: new Ext.data.JsonReader({
             root: 'diccionario'

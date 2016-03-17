@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=María V.
---## FECHA_CREACION=20160316
+--## AUTOR=Jaime S-C.
+--## FECHA_CREACION=20160317
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=GC-1177
+--## INCIDENCIA_LINK=GC-1271
 --## PRODUCTO=NO
 --## 
---## Finalidad: tipo de politica persona
+--## Finalidad: Se obtiene la ZONA dela Oficina de la Persona
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -20,9 +20,9 @@ create or replace procedure CARGAR_H_PER(DATE_START IN date, DATE_END IN date, O
 	-- ===============================================================================================
 	-- Autor: Maria Villanueva, PFS Group
 	-- Fecha creación:Septiembre 2015
-  -- Responsable ultima modificacion: María Villanueva, PFS Group
-  -- Fecha ultima modificacion: 16/03/2016
-  -- Motivos del cambio: Modificación del tipo politica persona (merge)
+  -- Responsable ultima modificacion: Jaime Sánchez-Cuenca, PFS Group
+  -- Fecha ultima modificacion: 17/03/2016
+  -- Motivos del cambio: Se obtiene la ZONA dela Oficina de la Persona
   -- Cliente: Recovery BI CAJAMAR
 	--
 	-- Descripci�n: Procedimiento almancenado que carga las tablas hechos H_PER.
@@ -33,6 +33,8 @@ begin
 		--                           Declaracaci�n de variables
 		-- ===============================================================================================
 		v_num_row             number(10);
+
+
 
 
 		v_datastage           VARCHAR2(100);
@@ -114,10 +116,15 @@ begin
 
 
 
+
+
+
+
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_H_PER_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
          execute immediate V_SQL USING OUT O_ERROR_STATUS;	
     commit;
     
+
 
   
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_H_PER'', '''', :O_ERROR_STATUS); END;';
@@ -151,28 +158,26 @@ begin
                           -1, 
                           NVL(DD_REX_ID,-1), 
                           -1,
-                          NVL(ZON_ID,-1),
-                          NVL(OFI_ID,-1), 
+                          NVL(ZON.ZON_ID,-1),
+                          NVL(PER.OFI_ID,-1), 
                           -1, 
                           -1, 
-                          1
-                      from '||v_datastage||'.PER_PERSONAS
-                      where BORRADO = 0';
+                           1
+                      from '||v_datastage||'.PER_PERSONAS PER, '||v_datastage||'.ZON_ZONIFICACION ZON
+                      where PER.BORRADO = 0
+                      AND PER.OFI_ID = ZON.OFI_ID (+)';
                           
     v_rowcount := sql%rowcount;
-    commit;
+
     --Log_Proceso
-    execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' using in v_nombre, 'TMP_H_PER. Registros insertadosh: ' || to_char(v_rowcount), 4;
+    execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' using in v_nombre, 'TMP_H_PER. Registros insertados: ' || to_char(v_rowcount), 4;
     commit;
 
     -- Crear indices TMP_H_PER
 
-
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_H_PER_IX'', ''TMP_H_PER (DIA_ID, PER_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
 
-
-
-            execute immediate V_SQL USING OUT O_ERROR_STATUS;
+    execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
     
     -- Fecha de analisis en H_MOV_MOVIMIENTOS (fecha menor que el ultimno d�a de H_MOV_MOVIMIENTOS o mayor que este, pero menor que el pen�ltimo dia de MOV_MOVIMIENTOS)
@@ -193,10 +198,16 @@ begin
             per.POS_VENCIDA = crc.POS_VENCIDA,            
             per.POS_NO_VENCIDA = crc.POS_NO_VENCIDA            
         where per.DIA_ID = '''||fecha||'''';
+
+      v_rowcount := sql%rowcount;
+      
+      --Log_Proceso
+      execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' using in v_nombre, 'TMP_H_PER. Update (1): ' || to_char(v_rowcount), 4;
       commit;
-        
+
     -- Fecha de an�lisis en MOV_MOVIMIENTOS - Pen�ltimo o �ltimo d�a
     elsif(fecha = penult_dia_mov or fecha = max_dia_mov) then
+
       execute immediate 'merge into TMP_H_PER per            
         using (select cpe.PER_ID, sum(mov.MOV_RIESGO) as VOLUMEN_RIESGO, sum(mov.MOV_POS_VIVA_VENCIDA) as POS_VENCIDA, sum(mov.MOV_POS_VIVA_NO_VENCIDA) as POS_NO_VENCIDA 
               from '||v_datastage||'.CPE_CONTRATOS_PERSONAS cpe 
@@ -209,7 +220,13 @@ begin
             per.POS_VENCIDA = crc.POS_VENCIDA,            
             per.POS_NO_VENCIDA = crc.POS_NO_VENCIDA            
         where per.DIA_ID = '''||fecha||'''';
-    commit;
+
+      v_rowcount := sql%rowcount;
+      
+      --Log_Proceso
+      execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' using in v_nombre, 'TMP_H_PER. Update (1): ' || to_char(v_rowcount), 4;
+      commit;
+
     end if;
     
     -- ----------------------------- updates -------------------------------
@@ -217,6 +234,7 @@ begin
     select  max(DIA_ID) into dia_periodo_ant from H_PER	where DIA_ID < fecha;
     
     if dia_periodo_ant is not null then
+    
       merge into TMP_H_PER t1
       using (select PERSONA_ID, POLITICA_PERSONA_ID, TIPO_POLITICA_PERSONA_ID, RATING_ID from H_PER where DIA_ID = dia_periodo_ant) t2
       on (t1.PERSONA_ID = t2.PERSONA_ID)
@@ -226,25 +244,31 @@ begin
             t1.RATING_ANT_ID  = t2.RATING_ID
       where DIA_ID = fecha; 
       commit;
+
+      v_rowcount := sql%rowcount;
+      
+      --Log_Proceso
+      execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' using in v_nombre, 'TMP_H_PER. Update (2) - Politica Anterior: ' || to_char(v_rowcount), 4;
+      commit;
+
     end if;
           
+
     execute immediate 'merge into TMP_H_PER per 
-                         using (select cmp.per_id,tpo.tpl_id,tpo.dd_pol_id from '||v_datastage||'.CMP_CICLO_MARCADO_POLITICA cmp 
- join '||v_datastage||'.pol_politica pol on cmp.cmp_id=pol.cmp_id
- join '||v_datastage||'.tpl_tipo_politica tpo on pol.tpl_id= tpo.tpl_id
- join '||v_datastage||'.dd_pol_politicas dpo on tpo.dd_pol_id= dpo.dd_pol_id and tpo.tpl_codigo= dpo.dd_pol_codigo
- where pol.borrado=0) tpol
-                         on (per.POLITICA_PERSONA_ID = tpol.DD_POL_ID and per.persona_id=tpol.per_id)
-                         when matched then update
-                         set per.TIPO_POLITICA_PERSONA_ID = tpol.TPL_ID 
-                         where per.DIA_ID = '''||fecha||'''';
-      commit;
+                       using (select cmp.per_id,tpo.tpl_id,tpo.dd_pol_id from '||v_datastage||'.CMP_CICLO_MARCADO_POLITICA cmp 
+                              join '||v_datastage||'.pol_politica pol on cmp.cmp_id=pol.cmp_id
+                              join '||v_datastage||'.tpl_tipo_politica tpo on pol.tpl_id= tpo.tpl_id
+                              join '||v_datastage||'.dd_pol_politicas dpo on tpo.dd_pol_id= dpo.dd_pol_id and tpo.tpl_codigo= dpo.dd_pol_codigo
+                              where pol.borrado=0) tpol
+                      on (per.POLITICA_PERSONA_ID = tpol.DD_POL_ID and per.persona_id=tpol.per_id)
+                      when matched then update set per.TIPO_POLITICA_PERSONA_ID = tpol.TPL_ID 
+                      where per.DIA_ID = '''||fecha||'''';
       
-			--Log_Proceso
-			execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' using in v_nombre,'TMP_H_PER. Update TIPO_POLITICA_PERSONA 1',4;
-			--Log_Proceso
-			execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' using in v_nombre,'TMP_H_PER. Termina Updates',4;
-			commit;
+      v_rowcount := sql%rowcount;
+
+      --Log_Proceso
+      execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' using in v_nombre, 'TMP_H_PER. Update (3) - Politica Actual: ' || to_char(v_rowcount), 4;
+      commit;
       
       
       update TMP_H_PER set TRAMO_VOLUMEN_RIESGO_ID = (case when VOLUMEN_RIESGO <= 1000 then 0
@@ -271,6 +295,11 @@ begin
                                                          when NUM_ALERTAS >= 6 then 6
                                                          else -1 end)
                          where per.DIA_ID = '''||fecha||'''';
+
+      v_rowcount := sql%rowcount;
+
+      --Log_Proceso
+      execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' using in v_nombre, 'TMP_H_PER. Update (4) - Alertas: ' || to_char(v_rowcount), 4;
       commit;
       
       
@@ -289,21 +318,24 @@ begin
                                                        when PUNTUACION >= 3000 then 4
                                                        else -1 end)
                    where per.DIA_ID = '''||fecha||'''';
+
+      v_rowcount := sql%rowcount;
+
+      --Log_Proceso
+      execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' using in v_nombre, 'TMP_H_PER. Update (4) - Tramo Puntuacion: ' || to_char(v_rowcount), 4;
       commit;
       
     
-			-- Borrado indices H_PER
+		-- Borrado indices H_PER
 
-
-
-
-			 V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PER_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
-         execute immediate V_SQL USING OUT O_ERROR_STATUS;	
-			commit;
+	  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PER_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+    execute immediate V_SQL USING OUT O_ERROR_STATUS;	
+		
+    commit;
       
-			-- Borrado del día a insertar
-			delete from H_PER where DIA_ID = fecha;
-			commit;
+		-- Borrado del día a insertar
+		delete from H_PER where DIA_ID = fecha;
+		commit;
       
 			insert into H_PER
 					(
@@ -362,7 +394,15 @@ begin
 
 
 
+
+
+
+
+
 		 V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PER_IX'', ''H_PER (DIA_ID, PERSONA_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
 
 
 
@@ -377,6 +417,8 @@ begin
 execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' using in v_nombre, 'H_PER_SEMANA. Empieza bucle', 3;
 
   -- Calculamos las Fechas h (tabla hechos) y ANT (Periodo anterior)
+
+
 
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -405,6 +447,10 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
       select max(DIA_H) into max_dia_semana from TMP_FECHA where SEMANA_H = semana;
 
 			-- Borrado indices H_PER_SEMANA
+
+
+
+
 
 
 
@@ -473,6 +519,14 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
 
 
 
+
+
+
+
+
+
+
+
 			
       
     -- Semana anterior    
@@ -484,6 +538,7 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
       on (t1.PERSONA_ID = t2.PERSONA_ID)
       when matched then update 
         set t1.POLITICA_PERSONA_ANT_ID = t2.POLITICA_PERSONA_ID,
+
             t1.RATING_ANT_ID  = t2.RATING_ID
       where SEMANA_ID = semana;   
       commit;
@@ -495,7 +550,12 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
    -- Crear indices H_PER_SEMANA
 
 
+
+
 			 V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PER_SEMANA_IX'', ''H_PER_SEMANA (SEMANA_ID, PERSONA_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
 
 
 
@@ -512,6 +572,7 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
 --Log_Proceso
 execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' using in v_nombre, 'H_PER_MES. Empieza bucle',	3;
   -- Calculamos las Fechas h (tabla hechos) y ANT (Periodo anterior)
+
 
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -536,6 +597,10 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
 			select max(dia_h) into max_dia_mes from tmp_fecha where mes_h = mes;
       
 			-- Borrado indices H_PER_MES
+
+
+
+
 
 
 
@@ -604,6 +669,14 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
 
 
 
+
+
+
+
+
+
+
+
    
     
     -- Mes anterior    
@@ -628,7 +701,12 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
     -- Crear indices H_PER_MES
 
 
+
+
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PER_MES_IX'', ''H_PER_MES (MES_ID, PERSONA_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
 
 
 
@@ -646,6 +724,7 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
   execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' using in v_nombre, 'H_PER_TRIMESTRE. Empieza bucle', 3;
 
   -- Calculamos las Fechas h (tabla hechos) y ANT (Periodo anterior)
+
 
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -670,6 +749,10 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
 			select  max(dia_h) into max_dia_trimestre	from tmp_fecha	where trimestre_h = trimestre;
         
 			-- Borrar indices H_PER_TRIMESTRE
+
+
+
+
 
 
 
@@ -731,7 +814,12 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
       -- Crear indices H_PER_TRIMESTRE
 
 
+
+
 			 V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PER_TRIMESTRE_IX'', ''H_PER_TRIMESTRE (TRIMESTRE_ID, PERSONA_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
 
 
 
@@ -767,6 +855,7 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
   
   -- Calculamos las Fechas h (tabla hechos) y ANT (Periodo anterior)
 
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', :O_ERROR_STATUS); END;';
@@ -790,6 +879,10 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
 			select max(dia_h) into max_dia_anio from tmp_fecha where anio_h = anio;
       
 			-- Crear indices H_PER_ANIO
+
+
+
+
 
 
 
@@ -858,6 +951,14 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
 
 
 
+
+
+
+
+
+
+
+
     	
       
     -- Año anterior    
@@ -869,6 +970,7 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
       on (t1.PERSONA_ID = t2.PERSONA_ID)
       when matched then update 
         set t1.POLITICA_PERSONA_ANT_ID = t2.POLITICA_PERSONA_ID,
+
             t1.RATING_ANT_ID  = t2.RATING_ID
       where ANIO_ID = anio;    
       commit;
@@ -880,7 +982,12 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
    -- Crear indices H_PER_ANIO
 
 
+
+
 			V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PER_ANIO_IX'', ''H_PER_ANIO (ANIO_ID, PERSONA_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
 
 
 

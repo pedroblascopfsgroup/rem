@@ -487,7 +487,11 @@
 	}
 
 	panel.setVisibleTab = function(data){
-		return entidad.get("data").toolbar.tipoExpediente != 'REC';
+		var visible = entidad.get("data").toolbar.tipoExpediente != 'REC';
+		<sec:authorize ifAnyGranted="PERSONALIZACION-BCC, PERSONALIZACION-HY">
+			visible = entidad.get("data").toolbar.tipoExpediente === 'RECU';
+		</sec:authorize>
+		return visible;
    	}
    	
 	return panel;

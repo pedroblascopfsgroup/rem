@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JUAN GALLEGO MOLERO
---## FECHA_CREACION=20151109
+--## FECHA_CREACION=20160316
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.9
 --## INCIDENCIA_LINK=CMREC-976
@@ -10,7 +10,7 @@
 --## Finalidad: Insertar parametros en MIG_PARAM_HITOS_VALORES
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:0.3
---##        
+--##           0.4 se reejecuta para completar mig param hitos.
 --##########################################
 --*/
 

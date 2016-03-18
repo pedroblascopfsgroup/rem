@@ -135,50 +135,66 @@ if [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]] && [[ "$3" != "null" ]]; then
     DIRECTORIO="$3/"
 fi
 
-#PRODUCTO
-for file in `git diff $1 --name-only sql/**/producto/$DIRECTORIO*.sql`
-do
-    if [ "$MULTIENTIDAD" != "" ] ; then
-        IFS=',' read -a entidades <<< "$MULTIENTIDAD"
-        for entidad in "${entidades[@]}"
-        do
-            connectionParam=`getConnectionParam $file ${!entidad} $3`
-            registerSQLScript $file $BASEDIR/tmp/product-list-from-tag.txt $connectionParam
-        done
-    else
-        registerSQLScript $file $BASEDIR/tmp/product-list-from-tag.txt $3
-    fi
-done
-
-#CLIENTE
-for file in `git diff $1 --name-only sql/**/$CUSTOMER_IN_LOWERCASE/$DIRECTORIO*.sql`
-do
-    if [ "$MULTIENTIDAD" != "" ] ; then
-        IFS=',' read -a entidades <<< "$MULTIENTIDAD"
-        for entidad in "${entidades[@]}"
-        do
-            connectionParam=`getConnectionParam $file ${!entidad} $3`
-            registerSQLScript $file $BASEDIR/tmp/customer-list-from-tag.txt $connectionParam
-        done
-    else
-        registerSQLScript $file $BASEDIR/tmp/customer-list-from-tag.txt $3
-    fi
-done
-
-#SUBCLIENTE EN CASO DE MULTIENTIDAD
-if [ "$MULTIENTIDAD" != "" ] ; then
-    IFS=',' read -a entidades <<< "$MULTIENTIDAD"
-    for entidad in "${entidades[@]}"
+if [ "$1" != "null" ]; then
+    #PRODUCTO
+    for file in `git diff $1 --name-only sql/**/producto/$DIRECTORIO*.sql`
     do
-        SUBENTITY=`echo $entidad | tr '[:upper:]' '[:lower:]'`
-        for file in `git diff $1 --name-only sql/**/$CUSTOMER_IN_LOWERCASE/$SUBENTITY/*.sql`
-        do
-            connectionParam=`getConnectionParam $file ${!entidad} $3`
-            registerSQLScript $file $BASEDIR/tmp/customer-list-from-tag.txt $connectionParam
-        done
+        if [ "$MULTIENTIDAD" != "" ] ; then
+            IFS=',' read -a entidades <<< "$MULTIENTIDAD"
+            for entidad in "${entidades[@]}"
+            do
+                connectionParam=`getConnectionParam $file ${!entidad} $3`
+                registerSQLScript $file $BASEDIR/tmp/product-list-from-tag.txt $connectionParam
+            done
+        else
+            registerSQLScript $file $BASEDIR/tmp/product-list-from-tag.txt $3
+        fi
     done
+    
+    #CLIENTE
+    for file in `git diff $1 --name-only sql/**/$CUSTOMER_IN_LOWERCASE/$DIRECTORIO*.sql`
+    do
+        if [ "$MULTIENTIDAD" != "" ] ; then
+            IFS=',' read -a entidades <<< "$MULTIENTIDAD"
+            for entidad in "${entidades[@]}"
+            do
+                connectionParam=`getConnectionParam $file ${!entidad} $3`
+                registerSQLScript $file $BASEDIR/tmp/customer-list-from-tag.txt $connectionParam
+            done
+        else
+            registerSQLScript $file $BASEDIR/tmp/customer-list-from-tag.txt $3
+        fi
+    done
+    
+    #SUBCLIENTE EN CASO DE MULTIENTIDAD
+    if [ "$MULTIENTIDAD" != "" ] ; then
+        IFS=',' read -a entidades <<< "$MULTIENTIDAD"
+        for entidad in "${entidades[@]}"
+        do
+            SUBENTITY=`echo $entidad | tr '[:upper:]' '[:lower:]'`
+            for file in `git diff $1 --name-only sql/**/$CUSTOMER_IN_LOWERCASE/$SUBENTITY/*.sql`
+            do
+                connectionParam=`getConnectionParam $file ${!entidad} $3`
+                registerSQLScript $file $BASEDIR/tmp/customer-list-from-tag.txt $connectionParam
+            done
+        done
+    fi
+else
+    for file in `cat SQLs-list.txt`
+    do
+        if [ "$MULTIENTIDAD" != "" ] ; then
+            IFS=',' read -a entidades <<< "$MULTIENTIDAD"
+            for entidad in "${entidades[@]}"
+            do
+                connectionParam=`getConnectionParam $file ${!entidad} $3`
+                registerSQLScript $file $BASEDIR/tmp/customer-list-from-tag.txt $connectionParam
+            done
+        else
+            registerSQLScript $file $BASEDIR/tmp/customer-list-from-tag.txt $3
+        fi
+    done    
 fi
-
+    
 if [ -f $BASEDIR/tmp/product-list-from-tag.txt ] ; then
     cat $BASEDIR/tmp/product-list-from-tag.txt | sort > $BASEDIR/tmp/list-from-tag.txt
 fi
@@ -245,7 +261,13 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
         sed -e s/#ENTITY#/"${passtring}"/g $BASEDIR/scripts/DxL-scripts.sh > $BASEDIR/tmp/package/DDL/DDL-scripts.sh
     fi
     cp $BASEDIR/scripts/DxL-scripts-one-user.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh
-    echo "export NLS_LANG=.AL32UTF8" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null 
+    if [ $CUSTOMER_IN_UPPERCASE == 'CAJAMAR' ] ; then
+        echo "export NLS_LANG=SPANISH_SPAIN.AL32UTF8" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null
+        echo "export NLS_DATE_FORMAT=\"DD/MM/RR\"" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null
+        echo "export NLS_TIMESTAMP_FORMAT=\"DD/MM/RR HH24:MI:SSXFF\"" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null
+    else
+        echo "export NLS_LANG=.AL32UTF8" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null 
+    fi
     cp $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DB/DB-scripts.sh
     cp $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DML/DML-scripts.sh
     cp $BASEDIR/scripts/DxL-scripts-one-user.sh $BASEDIR/tmp/package/DML/DML-scripts-one-user.sh

@@ -118,7 +118,7 @@ public class EditBienController {
 	private static final String BIENES_PRC_JSON = "plugin/nuevoModeloBienes/procedimientos/bienesJSON";
 	private static final String BIENES_PROCEDIMIENTO_JSON = "plugin/nuevoModeloBienes/adjudicacion/marcadoBienesJSON";
 	private static final String DEFAULT = "default";
-	private static final String DICCIONARIO_JSON = "plugin/nuebien.getImporteCargas()voModeloBienes/bienes/diccionarioJSON";
+	private static final String DICCIONARIO_JSON = "plugin/nuevoModeloBienes/bienes/diccionarioJSON";
 	private static final String TIPO_USUARIO_JSON = "plugin/coreextension/asunto/tipoUsuarioJSON";
 	private static final String JSON_LIST_LOCALIDADES = "plugin/nuevoModeloBienes/bienes/LocalidadesJSON";
 	private static final String JSON_LIST_UNIDADES_POBLACIONALES = "plugin/nuevoModeloBienes/bienes/UnidadesPoblacionalesJSON";

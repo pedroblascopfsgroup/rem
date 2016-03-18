@@ -27,11 +27,25 @@ import es.pfsgroup.listadoPreProyectado.model.VListadoPreProyectadoCnt;
 @Repository("VListadoPreProyectadoCntDao")
 public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoPreProyectadoCnt, Long> implements VListadoPreProyectadoCntDao {
 
-
-	private StringBuilder construirSql(ListadoPreProyectadoDTO dto) {
+	
+	/**
+	 * Construye la sql de búsqueda.
+	 * 
+	 * @param dto
+	 * 
+	 * @param isBuscadorProyectado
+	 *            true: en caso de que los resultados se vayan a visualizar en
+	 *            el grid de resultados del buscador.
+	 * @return
+	 */
+	private StringBuilder construirSql(final ListadoPreProyectadoDTO dto, final boolean isBuscadorProyectado) {
 		StringBuilder sb = new StringBuilder();
 		//sb.append("Select distinct c ");
-		sb.append("Select distinct f.cntId, f.contrato, f.expId, f.riesgoTotal, f.deudaIrregular, f.tramo, f.diasVencidos, f.fechaPaseAMoraCnt, f.propuesta, f.estadoGestion, f.fechaPrevReguCnt, f.nomTitular, f.nifTitular, f.ofiCodigo ");
+		if (isBuscadorProyectado) {
+			sb.append("Select distinct f.cntId, f.contrato, f.expId, f.riesgoTotal, f.deudaIrregular, f.tramo, f.diasVencidos, f.fechaPaseAMoraCnt, f.propuesta, f.estadoGestion ");
+		} else {
+			sb.append("Select distinct f.cntId, f.contrato, f.expId, f.riesgoTotal, f.deudaIrregular, f.tramo, f.diasVencidos, f.fechaPaseAMoraCnt, f.propuesta, f.estadoGestion, f.fechaPrevReguCnt, f.nomTitular, f.nifTitular, f.ofiCodigo ");
+		}
 		//sb.append("select distinct f ");
 		sb.append(" from VListadoPreProyectadoCnt f ");
 		sb.append(" where 1=1 ");
@@ -213,10 +227,10 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 	@Override
 	public List<VListadoPreProyectadoCnt> getListadoPreProyectadoCnt(ListadoPreProyectadoDTO dto) {
 		
-		StringBuilder sb = construirSql(dto);
+		StringBuilder sb = construirSql(dto,false);
 		
 		List<Object[]> lista = getHibernateTemplate().find(sb.toString());
-		return castearListado(lista);
+		return castearListado(lista, false);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -245,7 +259,7 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 		}*/	
 		
 		List<Object[]> lista = getHibernateTemplate().find(sb.toString());
-		return castearListado(lista);
+		return castearListado(lista, false);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -278,24 +292,34 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 	public List<VListadoPreProyectadoCnt> getListadoPreProyectadoCntPaginated(ListadoPreProyectadoDTO dto) {
 		//this.getSession().createSQLQuery("{call DBMS_MVIEW.REFRESH('V_LIS_PREPROYECT_CNT')}").executeUpdate();
 		
-		StringBuilder sb = construirSql(dto);
+		StringBuilder sb = construirSql(dto,true);
 		
 		//List<Object[]> lista = getHibernateTemplate().find(sb.toString());
 		HQLBuilder hb = new HQLBuilder(sb.toString());
 		Page pagina = HibernateQueryUtils.page(this, hb, dto);
-		return castearListado((List<Object[]>) pagina.getResults());
+		return castearListado((List<Object[]>) pagina.getResults(), true);
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public int getCountListadoPreProyectadoCntPaginated(ListadoPreProyectadoDTO dto) {
-		StringBuilder sb = construirSql(dto);
+		StringBuilder sb = construirSql(dto,true);
 		
 		List<Object[]> lista = getHibernateTemplate().find(sb.toString());
 		return lista.size();
 	}
 	
-	private List<VListadoPreProyectadoCnt> castearListado(List<Object[]> lista) {
+	/**
+	 * Castea los resultados del buscador.
+	 * 
+	 * @param lista
+	 *            lista de objectos
+	 * @param isBuscadorProyectado
+	 *            true: en caso de que los resultados se vayan a visualizar en
+	 *            el grid de resultados del buscador.
+	 * @return
+	 */
+	private List<VListadoPreProyectadoCnt> castearListado(final List<Object[]> lista, final boolean isBuscadorProyectado) {
 		List<VListadoPreProyectadoCnt> resultado = new ArrayList<VListadoPreProyectadoCnt>();
 		
 		for (Object[] item : lista) {
@@ -310,14 +334,17 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 			cnt.setFechaPaseAMoraCnt((Date) item[7]);
 			cnt.setPropuesta((String) item[8]);
 			cnt.setEstadoGestion((String)item[9]);
-			cnt.setFechaPrevReguCnt((Date) item[10]);
-			cnt.setNomTitular((String) item[11]);
-			cnt.setNifTitular((String) item[12]);
-			cnt.setOfiCodigo((String) item[13]);
+			if (!isBuscadorProyectado) {
+				cnt.setFechaPrevReguCnt((Date) item[10]);
+				cnt.setNomTitular((String) item[11]);
+				cnt.setNifTitular((String) item[12]);
+				cnt.setOfiCodigo((String) item[13]);
+			}
 			
 			resultado.add(cnt);
 		}
 		
 		return resultado;
 	}
+
 }

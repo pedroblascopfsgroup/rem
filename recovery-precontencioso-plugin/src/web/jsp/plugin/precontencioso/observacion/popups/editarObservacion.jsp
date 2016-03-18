@@ -12,17 +12,12 @@
 <fwk:page>
 	var labelStyle='font-weight:bolder;width:150px';
  	
- 	var observaciones = new Ext.form.HtmlEditor({
+ 	var observaciones = new Ext.form.TextArea({
     	hideParent:true
        	,fieldLabel:'<s:message code="plugin.mejoras.analisisAsunto.observaciones" text="**Observaciones" />'
        	,hideLabel:true
-		,enableColors: false
-       	,enableFont:false
-       	,enableFontSize:false
-       	,enableFormat:true
-       	,enableAlignments: false
-       	,enableLists:false
-       	,enableSourceEdit:false
+		,autoScroll:true
+       	,style:"font-size:100%"
        	,height:350
        	,width:550
        	,readOnly:false

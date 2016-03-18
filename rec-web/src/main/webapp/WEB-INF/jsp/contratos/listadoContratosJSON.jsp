@@ -43,7 +43,10 @@
 			<json:property name="limiteFinal" value="${cnt.limiteFinal}"/>
 			<json:property name="condEspeciales" value="${cnt.condicionesEspeciales}"/>
 			<json:property name="estadoFinanciero" value="${cnt.estadoFinanciero.descripcion}"/>
-			<json:property name="segmentoCartera" value="${cnt.segmentoCartera}"/>			
+			<json:property name="segmentoCartera" value="${cnt.segmentoCartera}"/>	
+			<json:property name="oficina" value="${cnt.oficina.codigoOficinaFormat} ${cnt.oficina.nombre}"/>	
+			<json:property name="oficinaContable" value="${cnt.oficinaContable.codigoOficinaFormat} ${cnt.oficinaContable.nombre}"/>	
+			<json:property name="oficinaAdministrativa" value="${cnt.oficinaAdministrativa.codigoOficinaFormat} ${cnt.oficinaAdministrativa.nombre}"/>	
 		</json:object>
 	</json:array>
 </fwk:json>	 		 

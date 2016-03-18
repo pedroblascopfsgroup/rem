@@ -1,13 +1,11 @@
-create or replace
-PROCEDURE CARGAR_H_BIEN (DATE_START IN DATE, DATE_END IN DATE, O_ERROR_STATUS OUT VARCHAR2) AS
+create or replace PROCEDURE CARGAR_H_BIEN (DATE_START IN DATE, DATE_END IN DATE, O_ERROR_STATUS OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Jaime Sánchez-Cuenca Bellido, PFS Group
 -- Fecha creación: Septiembre 2015
--- Responsable ultima modificacion: María Villanueva, PFS Group
+-- Responsable ultima modificacion: Jaime Sánchez-Cuenca Bellido, PFS Group
 
--- Fecha ultima modificacion: 03/02/2016
--- Motivos del cambio: Desarrollo - Merge provisional para la carga de datos cuando la entidad es 3058 CAJAMAR
-
+-- Fecha ultima modificacion: 17/03/2016
+-- Motivos del cambio: CMREC-2249 - No correspondencia del asunto y contrato con la persona que sale en el lanzamiento.
 -- Cliente: Recovery BI Cajamar
 --
 -- Descripción: Procedimiento almancenado que carga las tablas de hechos de Bien
@@ -198,14 +196,6 @@ BEGIN
         commit;
         
         
-		execute immediate '
-        UPDATE TMP_H_BIE TMP
-        SET FASE_ACTUAL_DETALLE_ID = (SELECT DD_TPO_ID FROM '|| V_DATASTAGE ||'.PRC_PROCEDIMIENTOS PRC WHERE PRC.PRC_ID = (SELECT MAX(PRC_ID) 
-                                                                                                                            FROM '|| V_DATASTAGE ||'.PRC_PROCEDIMIENTOS PRC2
-                                                                                                                            WHERE PRC2.ASU_ID = TMP.ASUNTO_ID
-                                                                                                                            AND trunc(PRC2.FECHACREAR) <= ''' || fecha || ''' ))';
-
-		
 		execute immediate '																													
 		merge into TMP_H_BIE t1 using 
 			(SELECT B.DD_TPO_ID, B.PRC_ID, A.ASU_ID, A.BIE_ID
@@ -289,12 +279,25 @@ BEGIN
                                                      
                                                      
         EXECUTE IMMEDIATE '
-        UPDATE TMP_H_BIE TMP
-        SET TITULAR_PROCEDIMIENTO_ID = (SELECT MAX(PRCPER.PER_ID)
-                                        from '|| V_DATASTAGE ||'.CPE_CONTRATOS_PERSONAS CPE, '|| V_DATASTAGE ||'.PRC_PER PRCPER, '|| V_DATASTAGE ||'.DD_TIN_TIPO_INTERVENCION TIN
-                                        WHERE CPE.PER_ID = PRCPER.PER_ID
-                                        AND CPE.DD_TIN_ID = TIN.DD_TIN_ID AND TIN.DD_TIN_TITULAR = 1
-                                        AND PRCPER.PRC_ID = TMP.PROCEDIMIENTO_ID)';
+        MERGE INTO TMP_H_BIE TMP USING
+                    (SELECT AUX_TITULARES.BIE_ID, AUX_TITULARES.PRC_ID, AUX_TITULARES.CNT_ID, MIN(AUX_TITULARES.PER_ID) PER_ID FROM(
+                        SELECT DISTINCT PER.PER_ID, PRB.BIE_ID, PRB.PRC_ID, AUX.CNT_ID, CPE.CPE_ORDEN, rank() over (partition by PRB.BIE_ID order by cpe.cpe_orden) as ranking2 FROM(
+                                SELECT DISTINCT BIE_CNT.bie_id ,CNT.CNT_ID, MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA, rank() over (partition by BIE_CNT.BIE_ID order by (MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA) DESC, MOV_ID) as ranking
+                                FROM '|| V_DATASTAGE ||'.BIE_CNT, '|| V_DATASTAGE ||'.CNT_CONTRATOS CNT, '|| V_DATASTAGE ||'.MOV_MOVIMIENTOS MOV
+                                WHERE BIE_CNT.CNT_ID = cnt.cnt_id
+                                AND CNT.CNT_ID = MOV.CNT_ID
+                                AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION
+                    ) AUX,
+                    '|| V_DATASTAGE ||'.CPE_CONTRATOS_PERSONAS CPE, '|| V_DATASTAGE ||'.DD_TIN_TIPO_INTERVENCION TIN, '|| V_DATASTAGE ||'.PER_PERSONAS PER, '|| V_DATASTAGE ||'.PRB_PRC_BIE PRB
+                        WHERE AUX.BIE_ID = PRB.BIE_ID
+                        AND AUX.CNT_ID = CPE.CNT_ID
+                        AND CPE.DD_TIN_ID = TIN.DD_TIN_ID AND TIN.DD_TIN_TITULAR = 1
+                        AND CPE.PER_ID = PER.PER_ID AND PER.BORRADO = 0
+                        AND AUX.RANKING = 1) AUX_TITULARES
+                     WHERE AUX_TITULARES.RANKING2 = 1
+                     GROUP BY AUX_TITULARES.BIE_ID, AUX_TITULARES.BIE_ID, AUX_TITULARES.PRC_ID, AUX_TITULARES.CNT_ID) TITULAR_BIEN
+	ON (TMP.BIE_ID = TITULAR_BIEN.BIE_ID AND TMP.PROCEDIMIENTO_ID = TITULAR_BIEN.PRC_ID)
+	WHEN MATCHED THEN UPDATE SET TMP.TITULAR_PROCEDIMIENTO_ID = TITULAR_BIEN.PER_ID';
    
         V_ROWCOUNT := sql%rowcount;
         
@@ -366,22 +369,29 @@ BEGIN
         execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_BIE. Registros Insertados (3): ' || TO_CHAR(V_ROWCOUNT), 4;
         commit;
         
-        execute immediate 'MERGE INTO TMP_H_BIE TMP USING
-                    (SELECT AUX_TITULARES.BIE_ID, MAX(AUX_TITULARES.PER_ID) PER_ID FROM(
-                        SELECT DISTINCT PER.PER_ID, BIE_CNT.BIE_ID, AUX.CNT_ID, CPE.CPE_ORDEN, rank() over (partition by CPE.CNT_ID order by cpe.cpe_orden) as ranking2 FROM(
-                          SELECT DISTINCT CNT.CNT_ID, rank() over (partition by CNT.CNT_ID order by (MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA) DESC) as ranking
-                          FROM '||V_DATASTAGE||'.CNT_CONTRATOS CNT, '||V_DATASTAGE||'.MOV_MOVIMIENTOS MOV
-                          WHERE CNT.CNT_ID = MOV.CNT_ID AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION) AUX,
-                         '||V_DATASTAGE||'.CPE_CONTRATOS_PERSONAS CPE, '||V_DATASTAGE||'.DD_TIN_TIPO_INTERVENCION TIN, '||V_DATASTAGE||'.PER_PERSONAS PER, '||V_DATASTAGE||'.BIE_CNT --BIE_CNT
-                        WHERE CPE.CNT_ID = AUX.CNT_ID
-                        AND CPE.CNT_ID = BIE_CNT.CNT_ID
+        execute immediate '
+        MERGE INTO TMP_H_BIE TMP USING
+                    (SELECT AUX_TITULARES.BIE_ID, AUX_TITULARES.CNT_ID, MIN(AUX_TITULARES.PER_ID) PER_ID FROM(
+                        SELECT DISTINCT PER.PER_ID, AUX.BIE_ID, AUX.CNT_ID, CPE.CPE_ORDEN, rank() over (partition by BC.BIE_ID order by cpe.cpe_orden) as ranking2 FROM(
+                                SELECT DISTINCT BIE_CNT.bie_id ,CNT.CNT_ID, MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA, rank() over (partition by BIE_ID order by (MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA) DESC, MOV_ID) as ranking
+                                FROM '|| V_DATASTAGE ||'.BIE_CNT, '|| V_DATASTAGE ||'.CNT_CONTRATOS CNT, '|| V_DATASTAGE ||'.MOV_MOVIMIENTOS MOV
+                                WHERE BIE_CNT.CNT_ID = cnt.cnt_id
+                                AND CNT.CNT_ID = MOV.CNT_ID
+                                AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION
+                    ) AUX,
+                    '|| V_DATASTAGE ||'.CPE_CONTRATOS_PERSONAS CPE, '|| V_DATASTAGE ||'.DD_TIN_TIPO_INTERVENCION TIN, '|| V_DATASTAGE ||'.PER_PERSONAS PER, '|| V_DATASTAGE ||'.BIE_CNT BC
+                        WHERE AUX.BIE_ID = BC.BIE_ID
+                        AND AUX.CNT_ID = BC.CNT_ID
+			AND BC.CNT_ID = CPE.CNT_ID
                         AND CPE.DD_TIN_ID = TIN.DD_TIN_ID AND TIN.DD_TIN_TITULAR = 1
                         AND CPE.PER_ID = PER.PER_ID AND PER.BORRADO = 0
                         AND AUX.RANKING = 1) AUX_TITULARES
                      WHERE AUX_TITULARES.RANKING2 = 1
-                     GROUP BY AUX_TITULARES.BIE_ID) TITULAR_BIEN
-                     ON (TMP.BIE_ID = TITULAR_BIEN.BIE_ID)
-                     WHEN MATCHED THEN UPDATE SET TMP.PRIMER_TITULAR_BIE_ID = TITULAR_BIEN.PER_ID';
+                     GROUP BY AUX_TITULARES.BIE_ID, AUX_TITULARES.CNT_ID) TITULAR_BIEN
+	ON (TMP.BIE_ID = TITULAR_BIEN.BIE_ID)
+	WHEN MATCHED THEN UPDATE SET TMP.PRIMER_TITULAR_BIE_ID = TITULAR_BIEN.PER_ID,
+                             	     TMP.NUM_OPERACION_BIEN_ID = TITULAR_BIEN.CNT_ID';
+   
                   
         V_ROWCOUNT := sql%rowcount;
         
@@ -396,41 +406,14 @@ BEGIN
         COMMIT;
         
         execute immediate 'MERGE INTO TMP_H_BIE TMP USING(
-                               SELECT CNT2.CNT_ID, AUX2.BIE_ID, CNT2.ZON_ID, CNT2.OFI_ID, ENP.DD_ENP_ID FROM(
-                                  SELECT MAX(AUX.CNT_ID) CNT_ID, AUX.BIE_ID FROM(
-                                      SELECT DISTINCT CNT.CNT_ID, BIE_CNT.BIE_ID, RANK() over (partition by BIE_CNT.BIE_ID order by (MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA) DESC) as ranking
-                                      FROM '||V_DATASTAGE||'.CNT_CONTRATOS CNT, '||V_DATASTAGE||'.MOV_MOVIMIENTOS MOV, '||V_DATASTAGE||'.BIE_CNT BIE_CNT
-                                      WHERE CNT.CNT_ID = MOV.CNT_ID AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION
-                                       AND CNT.CNT_ID = BIE_CNT.CNT_ID) AUX 
-                                    WHERE AUX.RANKING = 1
-                                    GROUP BY AUX.BIE_ID) AUX2, '||V_DATASTAGE||'.CNT_CONTRATOS CNT2, '||V_DATASTAGE||'.DD_ENP_ENTIDADES_PROPIETARIAS ENP
-                               WHERE AUX2.CNT_ID = CNT2.CNT_ID
-                               AND CNT2.CNT_COD_ENTIDAD = ENP.DD_ENP_CODIGO) CONTRATO_BIEN
-                           ON (TMP.BIE_ID = CONTRATO_BIEN.BIE_ID )
-                           WHEN MATCHED THEN UPDATE SET NUM_OPERACION_BIEN_ID = CONTRATO_BIEN.CNT_ID,
-                                                        ZONA_BIEN_ID = CONTRATO_BIEN.ZON_ID,
+                               SELECT BC.BIE_ID, CNT.CNT_ID, CNT.ZON_ID, CNT.OFI_ID, ENP.DD_ENP_ID 
+                               FROM '||V_DATASTAGE||'.BIE_CNT BC, '||V_DATASTAGE||'.CNT_CONTRATOS CNT, '||V_DATASTAGE||'.DD_ENP_ENTIDADES_PROPIETARIAS ENP
+                               WHERE BC.CNT_ID = CNT.CNT_ID
+                               AND CNT.CNT_COD_ENTIDAD = ENP.DD_ENP_CODIGO) CONTRATO_BIEN
+                           ON (TMP.BIE_ID = CONTRATO_BIEN.BIE_ID AND TMP.NUM_OPERACION_BIEN_ID = CONTRATO_BIEN.CNT_ID)
+                           WHEN MATCHED THEN UPDATE SET ZONA_BIEN_ID = CONTRATO_BIEN.ZON_ID,
                                                         OFICINA_BIEN_ID = CONTRATO_BIEN.OFI_ID,
                                                         ENTIDAD_BIEN_ID = CONTRATO_BIEN.DD_ENP_ID';
--- Merge provisional para que se carguen los datos de la entidad 3058 CAJAMAR
-        execute immediate 'MERGE INTO TMP_H_BIE TMP USING(
-                               SELECT CNT2.CNT_ID, AUX2.BIE_ID, CNT2.ZON_ID, CNT2.OFI_ID FROM(
-                                  SELECT MAX(AUX.CNT_ID) CNT_ID, AUX.BIE_ID FROM(
-                                      SELECT DISTINCT CNT.CNT_ID, BIE_CNT.BIE_ID, RANK() over (partition by BIE_CNT.BIE_ID order by (MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA) DESC) as ranking
-                                      FROM '||V_DATASTAGE||'.CNT_CONTRATOS CNT, '||V_DATASTAGE||'.MOV_MOVIMIENTOS MOV, '||V_DATASTAGE||'.BIE_CNT BIE_CNT
-                                      WHERE CNT.CNT_ID = MOV.CNT_ID AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION
-                                       AND CNT.CNT_ID = BIE_CNT.CNT_ID) AUX 
-                                    WHERE AUX.RANKING = 1
-                                    GROUP BY AUX.BIE_ID) AUX2, '||V_DATASTAGE||'.CNT_CONTRATOS CNT2
-                               WHERE (AUX2.CNT_ID = CNT2.CNT_ID
-                               AND CNT2.CNT_COD_ENTIDAD = 3058) CONTRATO_BIEN
-                           ON (TMP.BIE_ID = CONTRATO_BIEN.BIE_ID )
-                           WHEN MATCHED THEN UPDATE SET NUM_OPERACION_BIEN_ID = CONTRATO_BIEN.CNT_ID,
-                                                        ZONA_BIEN_ID = CONTRATO_BIEN.ZON_ID,
-                                                        OFICINA_BIEN_ID = CONTRATO_BIEN.OFI_ID,
-                                                        ENTIDAD_BIEN_ID =28
-                                                        where tmp.entidad_bien_id IS NULL';
---- FIN Merge provisional. Quitar cuando tengamos el código en CM01 DD_ENP_ENTIDADES_PROPIETARIAS
-
                                     
         V_ROWCOUNT := sql%rowcount;
               
@@ -461,7 +444,7 @@ BEGIN
         WHERE ENTIDAD_BIEN_ID IS NULL;
 
         COMMIT;
-
+        
         -- LANZAMIENTOS:
         -- 01 - Entrega Voluntaria - Dacion en Pago
         EXECUTE IMMEDIATE'
@@ -472,41 +455,51 @@ BEGIN
             AND TEA.DD_TPA_ID = 1 --Dacion en Pago
             AND TRUNC(BIE_TEA.FECHACREAR) <= ''' || fecha || ''') BIENES
         ON (TMP.BIE_ID = BIENES.BIE_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 1';
-                                     -- TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA_LANZAMIENTO_BIEN';
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 1,
+                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA_LANZAMIENTO_BIEN';
                                      
-        COMMIT;
+        V_ROWCOUNT := sql%rowcount;
+              
+        --Log_Proceso
+        execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_BIE. Lanzamientos (1): ' || TO_CHAR(V_ROWCOUNT), 4;
+        commit;          
                                        
          
         -- 02 - Entrega Voluntaria - Otros
         EXECUTE IMMEDIATE'
         MERGE INTO TMP_H_BIE TMP USING (
-            SELECT PRC.BIE_ID, MAX(TRUNC(TAR.TAR_FECHA_FIN)) AS FECHA
-            FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRC
+            SELECT DISTINCT PRB.BIE_ID, TAR.ASU_ID, TRUNC(TAR.TAR_FECHA_FIN) AS FECHA
+            FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRB
             WHERE TEV.TEX_ID = TEX.TEX_ID
             AND TEX.TAP_ID = 10000000002965 -- Registrar posesión y decisión sobre lanzamiento
             AND TEV.TEV_NOMBRE = ''comboLanzamiento''
             AND TEV.TEV_VALOR = ''02'' -- NO
             AND TEX.TAR_ID = TAR.TAR_ID
-            AND TAR.PRC_ID = PRC.PRC_ID
-            AND TRUNC(TAR.TAR_FECHA_FIN) <= ''' || fecha || '''
-            GROUP BY PRC.BIE_ID) BIENES
-        ON (TMP.BIE_ID = BIENES.BIE_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 2';
-                                     -- TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA'; 
+            AND TAR.PRC_ID = PRB.PRC_ID
+            AND TRUNC(TAR.TAR_FECHA_FIN) <= ''' || fecha || ''') BIENES
+        ON (TMP.BIE_ID = BIENES.BIE_ID AND TMP.ASUNTO_ID = BIENES.ASU_ID)
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 2,
+                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA'; 
 
-        COMMIT;
+        V_ROWCOUNT := sql%rowcount;
+              
+        --Log_Proceso
+        execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_BIE. Lanzamientos (2): ' || TO_CHAR(V_ROWCOUNT), 4;
+        commit;          
          
         -- 03 - Lanzamiento Celebrado - Vivienda no ocupada
         EXECUTE IMMEDIATE '
         MERGE INTO TMP_H_BIE TMP USING (
-              SELECT PRC.BIE_ID, MAX(TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'')) AS FECHA
-              FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRC
+              SELECT DISTINCT PRB.BIE_ID, ASU.ASU_ID, TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'') AS FECHA
+              FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRB,
+                   '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC, '||V_DATASTAGE||'.ASU_ASUNTOS ASU
               WHERE TEV.TEX_ID = TEX.TEX_ID
               AND TEX.TAP_ID = 10000000002967 -- Registrar lanzamiento efectuado
               AND TEV.TEV_NOMBRE = ''fecha''
               AND TEX.TAR_ID = TAR.TAR_ID
-              AND TAR.PRC_ID = PRC.PRC_ID
+              AND TAR.PRC_ID = PRB.PRC_ID
+              AND PRB.PRC_ID = PRC.PRC_ID
+              AND PRC.ASU_ID = ASU.ASU_ID
               AND TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'') <= ''' || fecha || '''
               AND EXISTS(SELECT 1
                          FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV2, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX2, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR2
@@ -516,24 +509,30 @@ BEGIN
                          AND TEV2.TEV_VALOR = ''02''
                          AND TEX2.TAR_ID = TAR2.TAR_ID
                          AND TAR2.PRC_ID = PRC.PRC_ID)
-              GROUP BY PRC.BIE_ID           
                          ) BIENES
-        ON (TMP.BIE_ID = BIENES.BIE_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 3';
-                                     -- TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
+        ON (TMP.BIE_ID = BIENES.BIE_ID AND TMP.ASUNTO_ID = BIENES.ASU_ID)
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 3,
+                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
 
-        COMMIT;
+        V_ROWCOUNT := sql%rowcount;
+              
+        --Log_Proceso
+        execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_BIE. Lanzamientos (3): ' || TO_CHAR(V_ROWCOUNT), 4;
+        commit;          
                                      
         -- 04 -  Lanzamiento Celebrado - Vivienda ocupada
         EXECUTE IMMEDIATE '
         MERGE INTO TMP_H_BIE TMP USING (
-              SELECT PRC.BIE_ID, MAX(TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'')) AS FECHA
-              FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRC
+              SELECT DISTINCT PRB.BIE_ID, ASU.ASU_ID, TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'') AS FECHA
+              FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRB,
+                   '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC, '||V_DATASTAGE||'.ASU_ASUNTOS ASU
               WHERE TEV.TEX_ID = TEX.TEX_ID
               AND TEX.TAP_ID = 10000000002967 -- -- Registrar lanzamiento efectuado
               AND TEV.TEV_NOMBRE = ''fecha''
               AND TEX.TAR_ID = TAR.TAR_ID
-              AND TAR.PRC_ID = PRC.PRC_ID
+              AND TAR.PRC_ID = PRB.PRC_ID
+              AND PRB.PRC_ID = PRC.PRC_ID
+              AND PRC.ASU_ID = ASU.ASU_ID
               AND TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'') <= ''' || fecha || '''
               AND EXISTS(SELECT 1
                          FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV2, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX2, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR2
@@ -543,24 +542,30 @@ BEGIN
                          AND TEV2.TEV_VALOR = ''01''
                          AND TEX2.TAR_ID = TAR2.TAR_ID
                          AND TAR2.PRC_ID = PRC.PRC_ID)
-               GROUP BY PRC.BIE_ID          
                          ) BIENES
-        ON (TMP.BIE_ID = BIENES.BIE_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 4';
-                                     -- TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
+        ON (TMP.BIE_ID = BIENES.BIE_ID AND TMP.ASUNTO_ID = BIENES.ASU_ID)
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 4,
+                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
 
-        COMMIT;
+        V_ROWCOUNT := sql%rowcount;
+              
+        --Log_Proceso
+        execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_BIE. Lanzamientos (4): ' || TO_CHAR(V_ROWCOUNT), 4;
+        commit;          
 
         -- 05 -  Lanzamiento Celebrado - Intervención FF.OO.
         EXECUTE IMMEDIATE '
         MERGE INTO TMP_H_BIE TMP USING (
-              SELECT PRC.BIE_ID, MAX(TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'')) AS FECHA
-              FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRC
+              SELECT DISTINCT PRB.BIE_ID, ASU.ASU_ID, TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'') AS FECHA
+              FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRB,
+                   '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC, '||V_DATASTAGE||'.ASU_ASUNTOS ASU
               WHERE TEV.TEX_ID = TEX.TEX_ID
               AND TEX.TAP_ID = 10000000002967 -- Registrar lanzamiento efectuado
               AND TEV.TEV_NOMBRE = ''fecha''
               AND TEX.TAR_ID = TAR.TAR_ID
-              AND TAR.PRC_ID = PRC.PRC_ID
+              AND TAR.PRC_ID = PRB.PRC_ID
+              AND PRB.PRC_ID = PRC.PRC_ID
+              AND PRC.ASU_ID = ASU.ASU_ID
               AND TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'') <= ''' || fecha || '''
               AND EXISTS(SELECT 1
                          FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV2, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX2, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR2
@@ -570,42 +575,54 @@ BEGIN
                          AND TEV2.TEV_VALOR = ''01''
                          AND TEX2.TAR_ID = TAR2.TAR_ID
                          AND TAR2.PRC_ID = PRC.PRC_ID)
-              GROUP BY PRC.BIE_ID           
                          ) BIENES
-        ON (TMP.BIE_ID = BIENES.BIE_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 5';
-                                     -- TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
+        ON (TMP.BIE_ID = BIENES.BIE_ID AND TMP.ASUNTO_ID = BIENES.ASU_ID)
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 5,
+                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
 
-        COMMIT;
+        V_ROWCOUNT := sql%rowcount;
+              
+        --Log_Proceso
+        execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_BIE. Lanzamientos (5): ' || TO_CHAR(V_ROWCOUNT), 4;
+        commit;          
 
         
         -- 06 - Lanzamiento Suspendido (por el Juzgado) - Por RD 27/2012-Ley 01/2013
         EXECUTE IMMEDIATE'
         MERGE INTO TMP_H_BIE TMP USING(
-            SELECT PRB.BIE_ID, NVL(DPR_FECHA_PARA, DPR.FECHACREAR) AS FECHA
-            FROM '||V_DATASTAGE||'.DPR_DECISIONES_PROCEDIMIENTOS DPR, '||V_DATASTAGE||'.PRB_PRC_BIE PRB
+            SELECT PRB.BIE_ID, ASU.ASU_ID, DPR.FECHACREAR AS FECHA
+            FROM '||V_DATASTAGE||'.DPR_DECISIONES_PROCEDIMIENTOS DPR, '||V_DATASTAGE||'.PRB_PRC_BIE PRB, '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC, '||V_DATASTAGE||'.ASU_ASUNTOS ASU
             WHERE DPR.PRC_ID = PRB.PRC_ID
+            AND PRB.PRC_ID = PRC.PRC_ID
+            AND PRC.ASU_ID = ASU.ASU_ID
             AND (DPR_PARALIZA = 1 OR DPR_FINALIZA = 1)
             AND DPR.DD_DPA_ID = (SELECT DD_DPA_ID FROM '||V_DATASTAGE||'.DD_DPA_DECISION_PARALIZAR WHERE DD_DPA_CODIGO = ''OPOSI'') -- Oposición Ley hipotecaria 1/2013
-            AND NVL(DPR_FECHA_PARA, DPR.FECHACREAR) <= ''' || fecha || '''
+            AND DPR.FECHACREAR <= ''' || fecha || '''
             ) BIENES
-        ON (TMP.BIE_ID = BIENES.BIE_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 6';
-                                     -- TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
+        ON (TMP.BIE_ID = BIENES.BIE_ID AND TMP.ASUNTO_ID = BIENES.ASU_ID)
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 6,
+                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
 
-        COMMIT;
+        V_ROWCOUNT := sql%rowcount;
+              
+        --Log_Proceso
+        execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_BIE. Lanzamientos (6): ' || TO_CHAR(V_ROWCOUNT), 4;
+        commit;          
         
         -- 07 - Lanzamiento Suspendido (por el Juzgado) - Por título reconocido
         EXECUTE IMMEDIATE'
         MERGE INTO TMP_H_BIE TMP USING (
-              SELECT PRC.BIE_ID, MAX(TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'')) AS FECHA
-              FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRC
+              SELECT DISTINCT PRB.BIE_ID, ASU.ASU_ID, TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'') AS FECHA
+              FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRB,
+                   '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC, '||V_DATASTAGE||'.ASU_ASUNTOS ASU
               WHERE TEV.TEX_ID = TEX.TEX_ID
               AND TEX.TAP_ID = 10000000002934 -- H011_RegistrarResolucion
               AND TEV.TEV_NOMBRE = ''fechaFinMoratoria''
               AND TEX.TAR_ID = TAR.TAR_ID
-              AND TAR.PRC_ID = PRC.PRC_ID
-              AND TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'') >= ''' || fecha || '''
+              AND TAR.PRC_ID = PRB.PRB_ID
+              AND PRB.PRC_ID = PRC.PRC_ID
+              AND PRC.ASU_ID = ASU.ASU_ID
+              AND TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'') <= ''' || fecha || '''
               AND EXISTS(SELECT 1
                          FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV2, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX2, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR2
                          WHERE TEV2.TEX_ID = TEX2.TEX_ID
@@ -614,28 +631,34 @@ BEGIN
                          AND TEV2.TEV_VALOR = ''02'' -- NO
                          AND TEX2.TAR_ID = TAR2.TAR_ID
                          AND TAR2.PRC_ID = PRC.PRC_ID)
-              GROUP BY PRC.BIE_ID           
                          ) BIENES
-        ON (TMP.BIE_ID = BIENES.BIE_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 7';
-                                     -- TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA'; 
+        ON (TMP.BIE_ID = BIENES.BIE_ID AND TMP.ASUNTO_ID = BIENES.ASU_ID)
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 7,
+                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA'; 
 
 
-        COMMIT;
+        V_ROWCOUNT := sql%rowcount;
+              
+        --Log_Proceso
+        execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_BIE. Lanzamientos (7): ' || TO_CHAR(V_ROWCOUNT), 4;
+        commit;          
         
         -- 08 - Lanzamiento Suspendido (por la Entidad) - Celebrado alquiler
 
         -- O esta situacion:
         EXECUTE IMMEDIATE'
         MERGE INTO TMP_H_BIE TMP USING (
-            SELECT PRC.BIE_ID, MAX(TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'')) AS FECHA
-            FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRC
+            SELECT DISTINCT PRB.BIE_ID, ASU.ASU_ID, TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'') AS FECHA
+            FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRB,
+                 '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC, '||V_DATASTAGE||'.ASU_ASUNTOS ASU
             WHERE TEV.TEX_ID = TEX.TEX_ID
             AND TEX.TAP_ID = 10000000004093 -- H015_FormalizacionAlquilerSocial
             AND TEV.TEV_NOMBRE = ''fecha''
             AND TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'') <= ''' || fecha || '''
             AND TEX.TAR_ID = TAR.TAR_ID
-            AND TAR.PRC_ID = PRC.PRC_ID
+            AND TAR.PRC_ID = PRB.PRC_ID
+            AND PRB.PRC_ID = PRC.PRC_ID
+            AND PRC.ASU_ID = ASU.ASU_ID
             AND EXISTS(SELECT 1
                        FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV3, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX3, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR3
                        WHERE TEV3.TEX_ID = TEX3.TEX_ID
@@ -650,23 +673,31 @@ BEGIN
                        AND TEX2.TAR_ID = TAR2.TAR_ID
                        AND TAR2.TAR_FECHA_FIN IS NOT NULL
                        AND TAR2.PRC_ID = PRC.PRC_ID)
-             GROUP BY PRC.BIE_ID          
                        ) BIENES
-        ON (TMP.BIE_ID = BIENES.BIE_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 8';
-                                     -- TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA'; 
+        ON (TMP.BIE_ID = BIENES.BIE_ID AND TMP.ASUNTO_ID = BIENES.ASU_ID)
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 8,
+                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA'; 
+
+        V_ROWCOUNT := sql%rowcount;
+              
+        --Log_Proceso
+        execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_BIE. Lanzamientos (8-A): ' || TO_CHAR(V_ROWCOUNT), 4;
+        commit;          
                                      
         -- O esta otra:
         EXECUTE IMMEDIATE'
         MERGE INTO TMP_H_BIE TMP USING (
-            SELECT PRC.BIE_ID, MAX(TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'')) AS FECHA
-            FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRC
+            SELECT DISTINCT PRB.BIE_ID, ASU.ASU_ID, TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'') AS FECHA
+            FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRB,
+                 '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC, '||V_DATASTAGE||'.ASU_ASUNTOS ASU
             WHERE TEV.TEX_ID = TEX.TEX_ID
             AND TEX.TAP_ID = 10000000004520 -- H015_ConfirmarFormalizacion
             AND TEV.TEV_NOMBRE = ''fecha''
             AND TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'') <= ''' || fecha || '''
             AND TEX.TAR_ID = TAR.TAR_ID
             AND TAR.PRC_ID = PRC.PRC_ID
+            AND PRB.PRC_ID = PRC.PRC_ID
+            AND PRC.ASU_ID = ASU.ASU_ID
             AND EXISTS(SELECT 1
                        FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV3, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX3, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR3
                        WHERE TEV3.TEX_ID = TEX3.TEX_ID
@@ -682,25 +713,31 @@ BEGIN
                        AND TEX2.TAR_ID = TAR2.TAR_ID
                        AND TAR2.TAR_FECHA_FIN IS NOT NULL
                        AND TAR2.PRC_ID = PRC.PRC_ID)
-            GROUP BY PRC.BIE_ID           
                        ) BIENES
-        ON (TMP.BIE_ID = BIENES.BIE_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 8';
-                                     -- TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
+        ON (TMP.BIE_ID = BIENES.BIE_ID AND TMP.ASUNTO_ID = BIENES.ASU_ID)
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 8,
+                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
                                      
-        COMMIT;
+        V_ROWCOUNT := sql%rowcount;
+              
+        --Log_Proceso
+        execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_BIE. Lanzamientos (8-B): ' || TO_CHAR(V_ROWCOUNT), 4;
+        commit;          
         
         -- 09 - Lanzamiento Suspendido (por la Entidad) - Pdte. Aprob. Alquiler
         EXECUTE IMMEDIATE'
         MERGE INTO TMP_H_BIE TMP USING (
-            SELECT PRC.BIE_ID, MAX(TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'')) AS FECHA
-            FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRC
+            SELECT DISTINCT PRB.BIE_ID, ASU.ASU_ID, TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'') AS FECHA
+            FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRB,
+                 '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC, '||V_DATASTAGE||'.ASU_ASUNTOS ASU
             WHERE TEV.TEX_ID = TEX.TEX_ID
             AND TEX.TAP_ID = 10000000004094 -- H015_SuspensionLanzamiento
             AND TEV.TEV_NOMBRE = ''fechaParalizacion''
-            AND TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'') <= TRUNC(SYSDATE)
+            AND TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'') <= ''' || fecha || '''
             AND TEX.TAR_ID = TAR.TAR_ID
-            AND TAR.PRC_ID = PRC.PRC_ID
+            AND TAR.PRC_ID = PRB.PRC_ID
+            AND PRB.PRC_ID = PRC.PRC_ID
+            AND PRC.ASU_ID = ASU.ASU_ID
             AND EXISTS(SELECT 1
                        FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV3, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX3, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR3
                        WHERE TEV3.TEX_ID = TEX3.TEX_ID
@@ -722,66 +759,86 @@ BEGIN
                        AND TEV4.TEV_NOMBRE = ''alquilerFormalizado''
                        AND TEV4.TEV_VALOR = ''02'' -- NO
                        AND TAR4.PRC_ID = PRC.PRC_ID)
-            GROUP BY PRC.BIE_ID           
                        ) BIENES
-        ON (TMP.BIE_ID = BIENES.BIE_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 9';
-                                     -- TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
+        ON (TMP.BIE_ID = BIENES.BIE_ID AND TMP.ASUNTO_ID = BIENES.ASU_ID)
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 9,
+                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
                                      
-        COMMIT;
+        V_ROWCOUNT := sql%rowcount;
+              
+        --Log_Proceso
+        execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_BIE. Lanzamientos (9): ' || TO_CHAR(V_ROWCOUNT), 4;
+        commit;          
         
         -- 10 - Lanzamiento Suspendido (por la Entidad) – Otros
         EXECUTE IMMEDIATE'
         MERGE INTO TMP_H_BIE TMP USING(
-            SELECT PRB.BIE_ID, NVL(DPR_FECHA_PARA, DPR.FECHACREAR) AS FECHA
-            FROM '||V_DATASTAGE||'.DPR_DECISIONES_PROCEDIMIENTOS DPR, '||V_DATASTAGE||'.PRB_PRC_BIE PRB
+            SELECT PRB.BIE_ID, ASU.ASU_ID, DPR.FECHACREAR AS FECHA
+            FROM '||V_DATASTAGE||'.DPR_DECISIONES_PROCEDIMIENTOS DPR, '||V_DATASTAGE||'.PRB_PRC_BIE PRB, '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC, '||V_DATASTAGE||'.ASU_ASUNTOS ASU
             WHERE DPR.PRC_ID = PRB.PRC_ID
+            AND PRB.PRC_ID = PRC.PRC_ID
+            AND PRC.ASU_ID = ASU.ASU_ID
             AND (DPR_PARALIZA = 1 OR DPR_FINALIZA = 1)
             AND DPR.DD_DPA_ID = (SELECT DD_DPA_ID FROM '||V_DATASTAGE||'.DD_DPA_DECISION_PARALIZAR WHERE DD_DPA_CODIGO = ''INSTR'') -- Instrucciones de la entidad
-            AND NVL(DPR_FECHA_PARA, DPR.FECHACREAR) <= ''' || fecha || '''
+            AND DPR.FECHACREAR <= ''' || fecha || '''
             ) BIENES
-        ON (TMP.BIE_ID = BIENES.BIE_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 10';
-                                     -- TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
+        ON (TMP.BIE_ID = BIENES.BIE_ID AND TMP.ASUNTO_ID = BIENES.ASU_ID)
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 10,
+                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
 
-        COMMIT;
+        V_ROWCOUNT := sql%rowcount;
+              
+        --Log_Proceso
+        execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_BIE. Lanzamientos (10): ' || TO_CHAR(V_ROWCOUNT), 4;
+        commit;          
         
         -- 11 - Lanzamiento Suspendido (por el Juzgado) – Otros
         EXECUTE IMMEDIATE'
         MERGE INTO TMP_H_BIE TMP USING(
-            SELECT PRB.BIE_ID, NVL(DPR_FECHA_PARA, DPR.FECHACREAR) AS FECHA
-            FROM '||V_DATASTAGE||'.DPR_DECISIONES_PROCEDIMIENTOS DPR, '||V_DATASTAGE||'.PRB_PRC_BIE PRB
+            SELECT PRB.BIE_ID, ASU.ASU_ID, DPR.FECHACREAR AS FECHA
+            FROM '||V_DATASTAGE||'.DPR_DECISIONES_PROCEDIMIENTOS DPR, '||V_DATASTAGE||'.PRB_PRC_BIE PRB, '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC, '||V_DATASTAGE||'.ASU_ASUNTOS ASU
             WHERE DPR.PRC_ID = PRB.PRC_ID
+            AND PRB.PRC_ID = PRC.PRC_ID
+            AND PRC.ASU_ID = ASU.ASU_ID
             AND (DPR_PARALIZA = 1 OR DPR_FINALIZA = 1)
             AND DPR.DD_DPA_ID = (SELECT DD_DPA_ID FROM '||V_DATASTAGE||'.DD_DPA_DECISION_PARALIZAR WHERE DD_DPA_CODIGO = ''OTRA'') -- Otras causa
-            AND NVL(DPR_FECHA_PARA, DPR.FECHACREAR) <= ''' || fecha || '''
+            AND DPR.FECHACREAR <= ''' || fecha || '''
             ) BIENES
-        ON (TMP.BIE_ID = BIENES.BIE_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 11';
-                                     -- TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
+        ON (TMP.BIE_ID = BIENES.BIE_ID AND TMP.ASUNTO_ID = BIENES.ASU_ID)
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 11,
+                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
 
-        COMMIT;
+        V_ROWCOUNT := sql%rowcount;
+              
+        --Log_Proceso
+        execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_BIE. Lanzamientos (11): ' || TO_CHAR(V_ROWCOUNT), 4;
+        commit;          
 		
 		--12 - Fecha interposicion demanda hipotecario
 		
 				EXECUTE IMMEDIATE'
 		merge into TMP_H_BIE a
-    using (select c.PROCEDIMIENTO_ID, max(TRUNC(c.FECHA_FORMULARIO)) as FECHA_FORMULARIO from (select  b.PROCEDIMIENTO_ID, b.BIE_FASE_ACTUAL, tar.TAR_ID, tar.TAR_TAREA, tar.TAR_FECHA_INI, tar.TAR_FECHA_FIN ,TAP_ID,tar.TAR_ID,tex.TEX_ID, TEV_NOMBRE, TO_date(TEV_VALOR,''YYYY-MM-DD'')as FECHA_FORMULARIO
+    using (select c.BIE_ID, c.PROCEDIMIENTO_ID, max(TRUNC(c.FECHA_FORMULARIO)) as FECHA_FORMULARIO from (select  b.BIE_ID, b.PROCEDIMIENTO_ID, b.BIE_FASE_ACTUAL, tar.TAR_ID, tar.TAR_TAREA, tar.TAR_FECHA_INI, tar.TAR_FECHA_FIN ,TAP_ID,tar.TAR_ID,tex.TEX_ID, TEV_NOMBRE, TO_date(TEV_VALOR,''YYYY-MM-DD'')as FECHA_FORMULARIO
     from TMP_H_BIE b
     join '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES tar on b.BIE_FASE_ACTUAL = tar.PRC_ID and tar.TAR_FECHA_FIN is not null and TRUNC(tar.TAR_FECHA_FIN) <= ''' || fecha || '''
     join '||V_DATASTAGE||'.TEX_TAREA_EXTERNA tex on tar.TAR_ID = tex.TAR_ID and tex.tap_id in (10000000004049)
     join '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR tev on tex.TEX_ID = tev.TEX_ID and tev.TEV_NOMBRE in (''fechaPresentacionDemanda'')
-    where b.DIA_ID =''' || fecha || ''')c group by c.PROCEDIMIENTO_ID) d
-    on (d.PROCEDIMIENTO_ID = a.PROCEDIMIENTO_ID)
+    where b.DIA_ID =''' || fecha || ''')c group by c.BIE_ID, c.PROCEDIMIENTO_ID) d
+    on (d.BIE_ID = a.BIE_ID AND d.PROCEDIMIENTO_ID = a.PROCEDIMIENTO_ID)
     when matched then update set a.FECHA_INTERP_DEM_HIP = d.FECHA_FORMULARIO
 		';
 
+        V_ROWCOUNT := sql%rowcount;
+              
+        --Log_Proceso
+        execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_BIE. Update Fecha Interposicion Demanda: ' || TO_CHAR(V_ROWCOUNT), 4;
+        commit;          
 
     -- Fecha_Lanzamiento
 
         EXECUTE IMMEDIATE'
         MERGE INTO TMP_H_BIE TMP USING (
-            SELECT PRC.BIE_ID, MAX(TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'')) AS FECHA
+            SELECT PRC.BIE_ID, TAR.ASU_ID, MAX(TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'')) AS FECHA
             FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRC
             WHERE TEV.TEX_ID = TEX.TEX_ID
             AND TEX.TAP_ID = 10000000002967 -- Registrar lanzamiento efectuado
@@ -789,14 +846,17 @@ BEGIN
             AND TEX.TAR_ID = TAR.TAR_ID
             AND TAR.PRC_ID = PRC.PRC_ID
             AND TRUNC(TAR.TAR_FECHA_FIN) <= ''' || fecha || '''
-            GROUP BY PRC.BIE_ID) BIENES
-        ON (TMP.BIE_ID = BIENES.BIE_ID)
+            GROUP BY PRC.BIE_ID, TAR.ASU_ID) BIENES
+        ON (TMP.BIE_ID = BIENES.BIE_ID AND TMP.ASUNTO_ID = BIENES.ASU_ID)
         WHEN MATCHED THEN UPDATE SET TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA'; 
 
-        COMMIT;
 
+        V_ROWCOUNT := sql%rowcount;
+              
         --Log_Proceso
-        execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_BIE. Merges LANZAMIENTOS realizados (7).', 4;
+        execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_BIE. Update Fecha Lanzamiento: ' || TO_CHAR(V_ROWCOUNT), 4;
+        commit;          
+
 
 
         V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_H_BIE_IX'', ''TMP_H_BIE (DIA_ID,LOTE_ID,BIE_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
@@ -1380,4 +1440,3 @@ EXCEPTION
 end;
 
 END CARGAR_H_BIEN;
-

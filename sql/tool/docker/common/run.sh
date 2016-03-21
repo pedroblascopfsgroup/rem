@@ -23,7 +23,6 @@ fi
 
 
 IMAGE_NAME=filemon/oracle_11g
-DOCKER_PS="$(docker ps -a | grep $CONTAINER_NAME)"
 SQL_PACKAGE_DIR=$(pwd)/../../../tool/tmp/package
 DUMP_DIRECTORY=$(pwd)/DUMP
 ORADATA_HOST_DIR=~/oradata-$CONTAINER_NAME
@@ -150,6 +149,8 @@ else
 	echo "[INFO]: Mostramos el mensaje de ayuda al no especificar parámetros."
 	show_help
 fi
+
+DOCKER_PS="$(docker ps -a | grep $CONTAINER_NAME)"
 
 cd $(pwd)/$(dirname $0)
 ##

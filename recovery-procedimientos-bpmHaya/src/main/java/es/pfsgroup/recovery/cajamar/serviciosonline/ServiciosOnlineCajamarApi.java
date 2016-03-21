@@ -11,7 +11,7 @@ public interface ServiciosOnlineCajamarApi {
 	 * @return 
 	 * 
 	 * */
-	boolean solicitarTasacion(Long idBien, Long cuenta, String persona, Long telefono, String observaciones);
+	String solicitarTasacion(Long idBien, Long cuenta, String persona, Long telefono, String observaciones);
 
 	/**
 	 * Consulta de saldos al servidor financiero de CAJAMAR

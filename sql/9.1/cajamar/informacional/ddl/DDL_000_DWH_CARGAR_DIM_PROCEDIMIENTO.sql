@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=María V.
---## FECHA_CREACION=20160310
+--## AUTOR=María Villanueva
+--## FECHA_CREACION=20160321
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=GC-1177
+--## INCIDENCIA_LINK=GC-1271
 --## PRODUCTO=NO
 --## 
---## Finalidad: duplicidades gestor concursal
+--## Finalidad:D_PRC_PROCURADOR
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -22,7 +22,7 @@ create or replace PROCEDURE CARGAR_DIM_PROCEDIMIENTO (O_ERROR_STATUS OUT VARCHAR
 -- Fecha creación: Febrero 2014
 -- Responsable ultima modificacion: María Villanueva, PFS Group
 -- Fecha ultima modificacion: 09/03/2016
--- Motivos del cambio: Cambio provisional para evitar duplicados en Gestores concursales. Se añade el filtro --> gaa.usuariocrear='SAG'
+-- Motivos del cambio: D_PRC_PROCURADOR
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripción: Procedimiento almacenado que carga las tablas de la dimensión Procedimiento.
@@ -3364,7 +3364,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
      --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_TIPO_SOL_PREVISTA. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
 
-/*
+
   -- ----------------------------------------------------------------------------------------------
 --                                  D_PRC_PROCURADOR
 -- ----------------------------------------------------------------------------------------------
@@ -3394,7 +3394,7 @@ SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_PROCURADOR WHERE PROCURADOR_PRC_ID = -
      --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_PROCURADOR. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
 
-  */
+  
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina ' || V_NOMBRE, 2;
 

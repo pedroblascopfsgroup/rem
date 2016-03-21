@@ -1,4 +1,21 @@
+--/*
+--##########################################
+--## AUTOR=María Villanueva
+--## FECHA_CREACION=20160321
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=GC-1271
+--## PRODUCTO=NO
+--## 
+--## Finalidad:D_PRC_PROCURADOR
+--## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
 
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
 create or replace PROCEDURE CREAR_H_PROCEDIMIENTO (error OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Gonzalo Martin, PFS Group
@@ -1878,3 +1895,5 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_ACUERD_SOL_SEMA
   end;
 
 END CREAR_H_PROCEDIMIENTO;
+/
+EXIT

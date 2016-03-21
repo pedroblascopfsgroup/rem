@@ -271,7 +271,7 @@ public class ContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 	public Page buscarContratosExpediente(DtoBuscarContrato dto) {
 		HashMap<String, Object> param = new HashMap<String, Object>();
 		StringBuffer hql = new StringBuffer();
-		hql.append(" select ec.contrato from ");
+		hql.append(" select ec.contrato, ec.pase from ");
 		hql.append(" ExpedienteContrato ec, Contrato c, Movimiento m ");
 		hql.append(" where ec.expediente.id = :expediente ");
 		hql.append(" and ec.auditoria.borrado = false ");

@@ -51,9 +51,10 @@ VAR_DB_EXISTS=no
 
 function show_help () {
 	echo "Uso: "
-	echo " MODO 1: $0 [-help] [-remove] [-restart] [-oradata=<directorio datafiles>] [-port=<oracle port>] [-ignoredmp]"
-	echo "            [-dmpdir=<directorio dumps>] [-errorlog=<fichero_logs>] [-piterdebug]"
+	echo " MODO 1: $0 [-help] [-remove] [-restart] [-oradata=<directorio datafiles>] [-port=<oracle port>] [-name=<containte name>]"
+	echo "            [-ignoredmp] [-dmpdir=<directorio dumps>] [-errorlog=<fichero_logs>] [-piterdebug]"
 	echo " MODO 2: $0 -impdp=<fichero_dump_a_importar> [-remove] [-help] [-oradata=<directorio datafiles>] [-port=<oracle port>]"
+	echo "            [-name=<containte name>]"
 	echo " MODO 3: $0 -flashback [-help]"
 	echo " MODO 4: $0 -scripts [-help] [-errorlog=<fichero_logs>] [-piterdebug] [-fromtag=<tag_de_partida>]"
 	echo " -------------------------------------------------------------------------------------------------------------------"
@@ -66,6 +67,7 @@ function show_help () {
 	echo "                 Pipeline de integración contínua, en caso contrario no tiene sentido especificarlo"
 	echo "     -statistics: Actualiza las estadísticas en la BD"
 	echo "     -port=: Puerto por el que escuchará la BBDD"
+	echo "     -name=: Nombre que le queremos dar al contenedor"
 	echo ""
 	echo " OPCIONES MODO 1. Línea base."
 	echo "    -remove: Indicar este parámetro si se quiere volver a generar el contenedor, implica reiniciar"
@@ -140,6 +142,8 @@ if [[ "x$@" != "x" ]]; then
 			OPTION_STATISTICS=yes
 		elif [[ "x$op" == x-port=* ]]; then
 			OPTION_PORT=$(echo $op | cut -f2 -d=)
+		elif [[ "x$op" == x-name=* ]]; then
+			CONTAINER_NAME=$(echo $op | cut -f2 -d=)
 		fi
 	done
 else

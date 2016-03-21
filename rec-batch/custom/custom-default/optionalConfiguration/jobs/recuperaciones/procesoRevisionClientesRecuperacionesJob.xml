@@ -87,6 +87,14 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
+												p:key="clientes.revisionClientes.revisarMovimientos.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.revisarMovimientos" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
 												p:key="clientes.revisionClientes.informarContratosReducidos.${entity.dialect}" />
 										</entry>
 										<entry key="message" value="clientes.revisionClientes.informarContratosReducidos" />

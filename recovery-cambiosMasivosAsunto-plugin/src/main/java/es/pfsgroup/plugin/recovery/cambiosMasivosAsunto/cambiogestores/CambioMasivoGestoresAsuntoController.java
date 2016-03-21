@@ -61,10 +61,10 @@ public class CambioMasivoGestoresAsuntoController {
 	@RequestMapping
 	public String abreVentana(ModelMap model) {
 		List<EXTDDTipoGestor> tiposGestor = proxyFactory.proxy(CambioMasivoGestoresAsuntoApi.class).getTiposGestor();
-		List<DespachoExterno> despachos = proxyFactory.proxy(CambioMasivoGestoresAsuntoApi.class).getTodosLosDespachos();
+		//List<DespachoExterno> despachos = proxyFactory.proxy(CambioMasivoGestoresAsuntoApi.class).getTodosLosDespachos();
 
 		model.put("tiposGestor", tiposGestor);
-		model.put("despachos", despachos);
+		// model.put("despachos", despachos);
 		return JSP_VENTANA_PETICION;
 	}
 	
@@ -96,11 +96,11 @@ public class CambioMasivoGestoresAsuntoController {
 	}
 
 	/**
-	 * Mediante esta petición se anotan los cambios solicitados en una Tabla
+	 * Mediante esta peticiï¿½n se anotan los cambios solicitados en una Tabla
 	 * para su posterior proceso Batch
 	 * 
 	 * @param dto
-	 *            Petición para el cambio masivo de Gestores
+	 *            Peticiï¿½n para el cambio masivo de Gestores
 	 * @param request
 	 * @return
 	 */

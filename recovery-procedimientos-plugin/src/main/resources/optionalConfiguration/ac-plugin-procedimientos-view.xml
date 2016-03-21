@@ -19,13 +19,15 @@
 		  p:fileName="/WEB-INF/jsp/plugin/procedimientos/concursal/tabConcursoConvenios.jsp" 
 		  p:priority="1"  class="es.capgemini.pfs.web.asuntos.ConcursalTab"  />
 	
-	<bean p:entity="tabs.asunto.fast" p:name="fasecomun"  p:order="810" 
+ 	<bean p:entity="tabs.asunto.fast" p:name="fasecomun"  p:order="810" 
 		  p:fileName="/WEB-INF/jsp/plugin/procedimientos/concursal/tabConcursoFaseComunFast.jsp" 
-		  p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"  />
+		  p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		  p:permission="TAB_ASUNTO_FASECOMUN"  />
 	
 	<bean p:entity="tabs.asunto.fast" p:name="convenios" p:order="910" 
 		  p:fileName="/WEB-INF/jsp/plugin/procedimientos/concursal/tabConcursoConveniosFast.jsp" 
-		  p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"  />
+		  p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		  p:permission="TAB_ASUNTO_CONVENIOS"  />
 
 
 	<bean parent="clasesDiccionarioAnotadas">

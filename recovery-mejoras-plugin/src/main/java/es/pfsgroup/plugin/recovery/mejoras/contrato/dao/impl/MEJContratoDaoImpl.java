@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.hibernate.pagination.PaginationManager;
@@ -15,8 +16,11 @@ import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.contrato.dto.DtoBuscarContrato;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.expediente.model.DDEstadoExpediente;
+import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.recovery.mejoras.contrato.dao.MEJContratoDao;
 import es.pfsgroup.plugin.recovery.mejoras.contrato.dto.MEJBusquedaContratosDto;
 
@@ -26,7 +30,9 @@ public class MEJContratoDaoImpl extends AbstractEntityDao<Contrato, Long> implem
 	 @Resource
 	 private PaginationManager paginationManager;
 
-	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
+
 	@Override
 	public Page buscarContratosCliente(DtoBuscarContrato dto) {
         HashMap<String, Object> param = new HashMap<String, Object>();
@@ -42,19 +48,17 @@ public class MEJContratoDaoImpl extends AbstractEntityDao<Contrato, Long> implem
         case 0:
             //ver persona.getContratosRiesgoDirectoActivo
             hql.append(" and cp.tipoIntervencion.titular= true ");
-            hql.append(" and cp.contrato.tipoProductoEntidad.activo = true");
             hql.append(" and (m.riesgo + m.posVivaNoVencida + m.posVivaVencida + m.movIntRemuneratorios + m.movIntMoratorios + m.comisiones + m.gastos ) > 0 ");
             break;
         case 1:
             //ver persona.getContratosRiesgoDirectoPasivo
             hql.append(" and cp.tipoIntervencion.titular= true ");
-            hql.append(" and cp.contrato.tipoProductoEntidad.activo = false");
             hql.append(" and (m.riesgo + m.posVivaNoVencida + m.posVivaVencida + m.movIntRemuneratorios + m.movIntMoratorios + m.comisiones + m.gastos ) = 0 ");
             break;
         case 2:
             //ver persona.getContratosRiesgosIndirectos
             hql.append(" and cp.tipoIntervencion.titular = false");
-            hql.append(" and cp.contrato.tipoProductoEntidad.activo = true");
+            appendFiltroAvalista(hql);
             hql.append(" and (m.riesgo + m.posVivaNoVencida + m.posVivaVencida + m.movIntRemuneratorios + m.movIntMoratorios + m.comisiones + m.gastos ) > 0 ");
             break;
         default:
@@ -64,11 +68,10 @@ public class MEJContratoDaoImpl extends AbstractEntityDao<Contrato, Long> implem
 
         return paginationManager.getHibernatePage(getHibernateTemplate(), hql.toString(), dto, param);
     }
-	
+
 	/**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public HashMap<String, Object> buscarTotalContratosCliente(DtoBuscarContrato dto) {
         StringBuffer hql = new StringBuffer();
         hql.append("select sum(abs(m.posVivaNoVencida)), sum(abs(m.posVivaVencida)), sum(abs(m.saldoPasivo)) from ");
@@ -81,19 +84,17 @@ public class MEJContratoDaoImpl extends AbstractEntityDao<Contrato, Long> implem
         case 0:
             //ver persona.getContratosRiesgoDirectoActivo
             hql.append(" and cp.tipoIntervencion.titular= true ");
-            hql.append(" and cp.contrato.tipoProductoEntidad.activo = true");
             hql.append(" and (m.riesgo + m.posVivaNoVencida + m.posVivaVencida + m.movIntRemuneratorios + m.movIntMoratorios + m.comisiones + m.gastos ) > 0 ");
             break;
         case 1:
             //ver persona.getContratosRiesgoDirectoPasivo
             hql.append(" and cp.tipoIntervencion.titular= true ");
-            hql.append(" and cp.contrato.tipoProductoEntidad.activo = false");
             hql.append(" and (m.riesgo + m.posVivaNoVencida + m.posVivaVencida + m.movIntRemuneratorios + m.movIntMoratorios + m.comisiones + m.gastos ) = 0 ");
             break;
         case 2:
             //ver persona.getContratosRiesgosIndirectos
             hql.append(" and cp.tipoIntervencion.titular = false");
-            hql.append(" and cp.contrato.tipoProductoEntidad.activo = true");
+            appendFiltroAvalista(hql);
             hql.append(" and (m.riesgo + m.posVivaNoVencida + m.posVivaVencida + m.movIntRemuneratorios + m.movIntMoratorios + m.comisiones + m.gastos ) > 0 ");
             break;
         default:
@@ -101,7 +102,7 @@ public class MEJContratoDaoImpl extends AbstractEntityDao<Contrato, Long> implem
 
         }
 
-        List lista = getHibernateTemplate().find(hql.toString(), new Object[] { dto.getIdPersona() });
+        List<?> lista = getHibernateTemplate().find(hql.toString(), new Object[] { dto.getIdPersona() });
 
         Object[] r = (Object[]) lista.get(0);
         HashMap<String, Object> map = new HashMap<String, Object>();
@@ -111,10 +112,17 @@ public class MEJContratoDaoImpl extends AbstractEntityDao<Contrato, Long> implem
 
         return map;
     }
-	
-   
 
-	
+    /** Añade la condición de avalista para las entidades "HAYA" y "CAJAMAR".
+	 * 
+	 * @param hql
+	 */
+	private void appendFiltroAvalista(final StringBuffer hql){
+		final Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+        if("CAJAMAR".equals(usuario.getEntidad().getDescripcion()) || "HAYA".equals(usuario.getEntidad().getDescripcion())){
+        	hql.append(" and cp.tipoIntervencion.avalista = true");
+        }
+	}
 
     public Page buscarContratosExpedienteSinAsignar(DtoBuscarContrato dto) {
         HashMap<String, Object> param = new HashMap<String, Object>();

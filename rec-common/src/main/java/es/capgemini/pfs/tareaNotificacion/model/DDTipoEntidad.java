@@ -33,6 +33,7 @@ public class DDTipoEntidad implements Dictionary, Auditable {
     public static final String CODIGO_ENTIDAD_CONTRATO = "6";
     public static final String CODIGO_ENTIDAD_OBJETIVO = "7";
     public static final String CODIGO_ENTIDAD_NOTIFICACION = "10";
+    public static final String CODIGO_ENTIDAD_PERSONA = "9";
 
     /**
      * serial.

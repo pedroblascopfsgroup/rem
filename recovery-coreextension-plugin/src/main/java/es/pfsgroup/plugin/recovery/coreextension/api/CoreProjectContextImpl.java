@@ -13,6 +13,10 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	private Set<String> tiposGestorGestoria;
 	private Set<String> tiposGestorProcurador;
 	private Set<String> entidadesDesparalizacion;
+	private List<String> codigosDocumentosConFechaCaducidad;
+	private Set<String> tipoGestorLetrado;
+	private Map<String, String> tipoSupervisorProrroga;
+	private Set<String> tiposGestoresDeProcuradores;
 	
 	public CoreProjectContextImpl() {
 		entidadesDesparalizacion = new HashSet<String>();
@@ -74,5 +78,41 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 
 	public void setEntidadesDesparalizacion(Set<String> entidadesDesparalizacion) {
 		this.entidadesDesparalizacion = entidadesDesparalizacion;
-	}	
+	}
+
+	@Override
+	public List<String> getCodigosDocumentosConFechaCaducidad() 
+	{		
+		return this.codigosDocumentosConFechaCaducidad;
+	}
+	
+	public void setCodigosDocumentosConFechaCaducidad(List<String> codigosDocumentosConFechaCaducidad) 
+	{
+		this.codigosDocumentosConFechaCaducidad = codigosDocumentosConFechaCaducidad;
+	}
+
+	public Set<String> getTipoGestorLetrado() {
+		return tipoGestorLetrado;
+	}
+
+	public void setTipoGestorLetrado(Set<String> tipoGestorLetrado) {
+		this.tipoGestorLetrado = tipoGestorLetrado;
+	}
+
+	@Override
+	public Map<String, String> getTipoSupervisorProrroga() {
+		return this.tipoSupervisorProrroga;
+	}
+	
+	public void setTipoSupervisorProrroga(Map<String, String>tipoSupervisorProrroga) {
+		this.tipoSupervisorProrroga = tipoSupervisorProrroga;
+	}
+
+	public Set<String> getTiposGestoresDeProcuradores() {
+		return tiposGestoresDeProcuradores;
+	}
+
+	public void setTiposGestoresDeProcuradores(Set<String> tiposGestoresDeProcuradores) {
+		this.tiposGestoresDeProcuradores = tiposGestoresDeProcuradores;
+	}
 }

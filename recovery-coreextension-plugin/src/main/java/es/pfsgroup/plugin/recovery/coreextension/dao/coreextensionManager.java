@@ -25,6 +25,8 @@ import es.capgemini.pfs.despachoExterno.DespachoExternoManager;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.dsm.EntidadManager;
+import es.capgemini.pfs.dsm.model.Entidad;
 import es.capgemini.pfs.multigestor.EXTDDTipoGestorManager;
 import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoDao;
 import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoHistoricoDao;
@@ -37,6 +39,7 @@ import es.capgemini.pfs.multigestor.model.EXTTipoGestorPropiedad;
 import es.capgemini.pfs.persona.dao.impl.PageSql;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -93,6 +96,12 @@ public class coreextensionManager implements coreextensionApi {
 	@Autowired
 	CoreProjectContext coreProjectContext;
 	
+	@Autowired
+	private UsuarioManager usuarioManager;
+	
+	@Autowired
+	private EntidadManager entidadManager;
+	 
 	@Override
 	@BusinessOperation(GET_LIST_TIPO_GESTOR)
 	public List<EXTDDTipoGestor> getList(String ugCodigo) {		
@@ -143,8 +152,18 @@ public class coreextensionManager implements coreextensionApi {
 	@BusinessOperation(GET_LIST_TIPO_GESTOR_ADICIONAL)
 	public List<EXTDDTipoGestor> getListTipoGestorAdicional() {
 		
-		Order order = new Order(OrderType.ASC, "descripcion");
-		List<EXTDDTipoGestor> listado = genericDao.getListOrdered(EXTDDTipoGestor.class, order, genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+		List<Entidad> listEnt = genericDao.getList(Entidad.class);//entidadManager.getListaEntidades();
+		List<EXTDDTipoGestor> listado = new ArrayList<EXTDDTipoGestor>();
+		
+		if(!Checks.esNulo(listEnt) && listEnt.size()>1){
+			Entidad entidad = genericDao.get(Entidad.class, 
+					genericDao.createFilter(FilterType.EQUALS, "id", usuarioManager.getUsuarioLogado().getEntidad().getId()));
+			listado = entidad.getTiposDeGestores();
+		}else{
+			Order order = new Order(OrderType.ASC, "descripcion");
+			listado = genericDao.getListOrdered(EXTDDTipoGestor.class, order, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));	
+		}
+		
 		
 		return listado;
 	}

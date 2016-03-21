@@ -57,6 +57,7 @@ import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.dto.DtoBuscarContrato;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
+import es.capgemini.pfs.dsm.model.Entidad;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
 import es.capgemini.pfs.exceptions.NonRollbackException;
@@ -102,6 +103,7 @@ import es.capgemini.pfs.politica.dto.DtoPersonaPoliticaExpediente;
 import es.capgemini.pfs.politica.dto.DtoPersonaPoliticaUlt;
 import es.capgemini.pfs.politica.model.CicloMarcadoPolitica;
 import es.capgemini.pfs.politica.model.DDEstadoPolitica;
+import es.capgemini.pfs.politica.model.Objetivo;
 import es.capgemini.pfs.politica.model.Politica;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea;
@@ -252,7 +254,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	@SuppressWarnings("unchecked")
     @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_EXPEDIENTES_PARA_EXCEL_DINAMICO)
     public List<Expediente> findExpedientesParaExcelDinamico(DtoBuscarExpedientes dto, String params) {
-        Page p = this.findExpedientesPaginatedDinamico(dto, params, 2000, false);
+		Parametrizacion param = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+                Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_EXPEDIENTES);
+        int limit = Integer.parseInt(param.getValor());
+		Page p = this.findExpedientesPaginatedDinamico(dto, params, limit, false);
         return (List<Expediente>) p.getResults();
     }
     
@@ -1629,53 +1634,109 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
      */
     private Boolean puedeMostrarSolapasDecision(Long idExpediente, boolean solapaRecuperacion) {
         Expediente exp = expedienteDao.get(idExpediente);
-
-        String nombreTab = "";
-        if (exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioRecuperacion()) {
-            nombreTab = "DECISION DE COMITE";
-        } else if (exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioSeguimiento()) {
-            nombreTab = "MARCADO DE POLITICAS";
-        }
-        logger.debug("EVALUO SI DEBO MOSTRAR LA PESTAÑA " + nombreTab);
-        //VALIDO PRECONDICIONES CU WEB-30
-        if (!exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT)
-                || (exp.getComite() == null || exp.getComite().getSesiones() == null || exp.getComite().getSesiones().size() == 0)) {
-            //No est� en decisión de comit� o no tiene sesiones abiertas.
-            logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO ESTA EN EL ESTADO CORRESPONDIENTE "
-                    + "O PORQUE NO HAY SESIONES ABIERTAS DE EL COMITE");
+        
+        if(exp.getRecuperacion()){
+        
+	        String nombreTab = "";
+	        if (exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioRecuperacion()) {
+	            nombreTab = "DECISION DE COMITE";
+	        } else if (exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioSeguimiento()) {
+	            nombreTab = "MARCADO DE POLITICAS";
+	        }
+	        logger.debug("EVALUO SI DEBO MOSTRAR LA PESTAÑA " + nombreTab);
+	        
+	        Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
+	        
+	        //VALIDO PRECONDICIONES CU WEB-30
+	        
+	        if (!exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT)
+	                || (exp.getComite() == null || exp.getComite().getSesiones() == null || exp.getComite().getSesiones().size() == 0)) {
+	            //No esta en decisión de comite o no tiene sesiones abiertas.
+	            logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO ESTA EN EL ESTADO CORRESPONDIENTE "
+	                    + "O PORQUE NO HAY SESIONES ABIERTAS DE EL COMITE");
+	            return Boolean.FALSE;
+	        }
+	        if ((solapaRecuperacion && exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioSeguimiento())
+	                || (!solapaRecuperacion && exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioRecuperacion())) {
+	            //No esta en decisión de comite o no tiene sesiones abiertas.
+	            logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE EL EXPEDIENTE NO ESTÁ EN EL ITINERARIO CORRESPONDIENTE ");
+	            return Boolean.FALSE;
+	        }
+	        //VALIDO CONDICIONES DE ACTIVACION CU WEB-30
+	        //La condicion del estado ya la valido en el if anterior
+	        for (Perfil perfil : usuario.getPerfiles()) {
+	            for (PuestosComite puestoComite : perfil.getPuestosComites()) {
+	                //La condicion de la sesion abierta tambien la valido en el punto anterior
+	                if (puestoComite.getComite().getId().equals(exp.getComite().getId()) && Comite.INICIADO.equals(exp.getComite().getEstado())) {
+	                    if (exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioRecuperacion()
+	                            && !puestoComite.getComite().isComiteRecuperacion()) {
+	                        logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE EL COMITE DEL EXPEDIENTE, O LOS "
+	                                + "DEL USUARIO LOGUEADO NO SON DEL TIPO DE ITINERARIO DE RECUPERACION");
+	                        return Boolean.FALSE;
+	                    } else if (exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioSeguimiento()
+	                            && !puestoComite.getComite().isComiteSeguimiento()) {
+	                        logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE EL COMITE DEL EXPEDIENTE, O LOS "
+	                                + "DEL USUARIO LOGUEADO NO SON DEL TIPO DE ITINERARIO DE SEGUIMIENTO");
+	                        return Boolean.FALSE;
+	                    }
+	                    logger.debug("MUESTRO EL TAB " + nombreTab);
+	                    return Boolean.TRUE;
+	                }
+	            }
+	        }
+        
+	        logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO CORRESPONDE AL USUARIO " + usuario.getUsername());
+	        return Boolean.FALSE;
+        
+        }else{
+        	logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA PORQUE ES EXPEDIENTE DE SEGUIMIENTO ");
             return Boolean.FALSE;
         }
-        if ((solapaRecuperacion && exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioSeguimiento())
-                || (!solapaRecuperacion && exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioRecuperacion())) {
-            //No est� en decisión de comit� o no tiene sesiones abiertas.
-            logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE EL EXPEDIENTE NO ESTÁ EN EL ITINERARIO CORRESPONDIENTE ");
-            return Boolean.FALSE;
+        
+    }
+    
+    
+    /**
+     * Indica si se puede mostrar la PESTAÑA de decisión de comit� de la consulta de expediente.
+     * Cumple con los campos de precondiciones y activación del CU WEB-30,
+     * los permisos a nivel de funciones de perfil los maneja la vista con los tags.
+     * @param idExpediente Long: el id del expediente que se quiere ver.
+     * @param tipoItinerario String: tipo de itinerario del expediente
+     * @return un Boolean indicando si se puede o no ver el tab de DC.
+     */
+    private Boolean puedeMostrarMarcadoPoliticas(Long idExpediente) {
+        Expediente exp = expedienteDao.get(idExpediente);
+        
+        if(!exp.getRecuperacion()){
+        
+	        String nombreTab = "MARCADO DE POLITICAS";
+	        logger.debug("EVALUO SI DEBO MOSTRAR LA PESTAÑA " + nombreTab);
+	        
+	        Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
+	        
+	        //VALIDO PRECONDICIONES CU WEB-30
+	       
+	    	if (!exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT)){
+	
+	    		//No esta en decisión de comite o no tiene sesiones abiertas.
+	            logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO ESTA EN EL ESTADO CORRESPONDIENTE ");
+	            return Boolean.FALSE;
+	        }
+	       
+	        for (Perfil perfil : usuario.getPerfiles()) {
+	        	
+	        	if(exp.getGestorActual().equalsIgnoreCase(perfil.getDescripcion()) || exp.getSupervisorActual().equalsIgnoreCase(perfil.getDescripcion())){
+	        		logger.debug("MUESTRO EL TAB " + nombreTab);
+	        		return Boolean.TRUE;
+	        	}
+	        }
+	        logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO CORRESPONDE AL USUARIO " + usuario.getUsername());
+	        return Boolean.FALSE;
+        }else{
+        	logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA PORQUE ES EXPEDIENTE DE RECUPERACION");
+	        return Boolean.FALSE;
         }
-        Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
-        //VALIDO CONDICIONES DE ACTIVACION CU WEB-30
-        //La condici�n del estado ya la valid� en el if anterior
-        for (Perfil perfil : usuario.getPerfiles()) {
-            for (PuestosComite puestoComite : perfil.getPuestosComites()) {
-                //La condici�n de la sesion abierta tambi�n la valid� en el punto anterior
-                if (puestoComite.getComite().getId().equals(exp.getComite().getId()) && Comite.INICIADO.equals(exp.getComite().getEstado())) {
-                    if (exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioRecuperacion()
-                            && !puestoComite.getComite().isComiteRecuperacion()) {
-                        logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE EL COMITE DEL EXPEDIENTE, O LOS "
-                                + "DEL USUARIO LOGUEADO NO SON DEL TIPO DE ITINERARIO DE RECUPERACION");
-                        return Boolean.FALSE;
-                    } else if (exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioSeguimiento()
-                            && !puestoComite.getComite().isComiteSeguimiento()) {
-                        logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE EL COMITE DEL EXPEDIENTE, O LOS "
-                                + "DEL USUARIO LOGUEADO NO SON DEL TIPO DE ITINERARIO DE SEGUIMIENTO");
-                        return Boolean.FALSE;
-                    }
-                    logger.debug("MUESTRO EL TAB " + nombreTab);
-                    return Boolean.TRUE;
-                }
-            }
-        }
-        logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO CORRESPONDE AL USUARIO " + usuario.getUsername());
-        return Boolean.FALSE;
+        
     }
 
     /**
@@ -1691,7 +1752,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	 */
 	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_PUEDE_MOSTRAR_SOLAPA_MARCADO_POLITICA)
     public Boolean puedeMostrarSolapaMarcadoPoliticas(Long idExpediente) {
-        return puedeMostrarSolapasDecision(idExpediente, false);
+        return puedeMostrarMarcadoPoliticas(idExpediente);
     }
 
 	/**
@@ -1868,7 +1929,18 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_UPDATE_AAA)
     @Transactional(readOnly = false)
     public void updateActitudAptitudActuacion(DtoActitudAptitudActuacion dtoAAA) {
-        actitudAptitudActuacionDao.saveOrUpdate(dtoAAA.getAaa());
+		if(dtoAAA.getExp() != null){
+			Expediente exp = this.getExpediente(dtoAAA.getExp());
+			//Si el campo AAA de la tabla expediente tiene valor se actualiza si no se inserta uno nuevo.
+			if(exp != null && exp.getAaa() != null){
+				actitudAptitudActuacionDao.saveOrUpdate(dtoAAA.getAaa());		
+			}else{
+				exp.setAaa(dtoAAA.getAaa());
+				expedienteDao.saveOrUpdate(exp);
+				actitudAptitudActuacionDao.saveOrUpdate(dtoAAA.getAaa());
+			}
+		}
+        
     }
 
 	/**
@@ -3213,7 +3285,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 
             executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, expediente.getProcessBpm(),
                     ExpedienteBPMConstants.TRANSITION_TOMARDECISION);
-
+            
             //Si no se ha marcado como vigente, se lanza una excepci�n porque deber�a
         } else {
             logger.error("Alguna de las pol�ticas del expediente " + idExpediente
@@ -3223,6 +3295,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 
         return true;
     }
+	
 
     /**
      * Marca todos los contratos del expediente como sin actuaci�n

@@ -36,7 +36,7 @@ CURRENT_DUMP_NAME=export_cajamar_19Oct2015.dmp
 STARTING_TAG=cj-dmp-19oct
 TAG_LISTS_FILE=$(pwd)/../../../../tags-list.txt
 PACKAGE_TAGS_DIR=$(pwd)/../../../../package-tags
-
+PREVIOUS_SCRIPTS_DIR=$(pwd)/../../../9.1/cajamar/00-createEnv4Test
 
 OPTION_REMOVE=no
 OPTION_IGNORE_DUMP=no
@@ -46,6 +46,7 @@ OPTION_PITERDEBUG=no
 OPTION_FLASHBACK_MODE=no
 OPTION_SCRIPTS_MODE=no
 OPTION_STATISTICS=no
+OPTION_PORT=1521
 
 DOCKER_INNER_ERROR_LOG=/tmp/scriptslog/error.log
 VAR_OUTTER_ERROR_LOG=""
@@ -56,8 +57,8 @@ VAR_DB_EXISTS=no
 
 function show_help () {
 	echo "Uso: "
-	echo " MODO 1: $0 [-help] [-remove] [-restart] [-oradata=<directorio datafiles>] [-ignoredmp] [-dmpdir=<directorio dumps>]"
-	echo "            [-errorlog=<fichero_logs>] [-piterdebug]"
+	echo " MODO 1: $0 [-help] [-remove] [-restart] [-oradata=<directorio datafiles>] [-port=<oracle port>] [-ignoredmp] [-ignoredmp]"
+	echo "            [-dmpdir=<directorio dumps>] [-errorlog=<fichero_logs>] [-piterdebug]"
 	echo " MODO 2: $0 -impdp=<fichero_dump_a_importar> [-remove] [-help] [-oradata=<directorio datafiles>]"
 	echo " MODO 3: $0 -flashback [-help]"
 	echo " MODO 4: $0 -scripts [-help] [-errorlog=<fichero_logs>] [-piterdebug] [-fromtag=<tag_de_partida>]"
@@ -70,6 +71,7 @@ function show_help () {
 	echo "    -workspace=: Cambia el workspace de la tool. Esta opción es útil si montamos una"
 	echo "                 Pipeline de integración contínua, en caso contrario no tiene sentido especificarlo"
 	echo "     -statistics: Actualiza las estadísticas en la BD"
+	echo "     -port=: Puerto por el que escuchará la BBDD"
 	echo ""
 	echo " OPCIONES MODO 1. Línea base."
 	echo "    -remove: Indicar este parámetro si se quiere volver a generar el contenedor, implica reiniciar"
@@ -142,6 +144,10 @@ if [[ "x$@" != "x" ]]; then
 			VAR_WORKSPACE_CHANGED=yes
 		elif [[ "x$op" == "x-statistics" ]]; then
 			OPTION_STATISTICS=yes
+		elif [[ "x$op" == x-port=* ]]; then
+			OPTION_PORT=$(echo $op | cut -f2 -d=)
+		elif [[ "x$op" == x-name=* ]]; then
+			CONTAINER_NAME=$(echo $op | cut -f2 -d=)
 		fi
 	done
 else
@@ -204,8 +210,22 @@ function package_sql () {
 		else
 			ws_package_dir=$WORKSPACE_DIR/package
 		fi
+
 		cp -R $SQL_PACKAGE_DIR $ws_package_dir
-		chmod -R go+w $ws_package_dir/*
+
+        #Previous scripts after dump
+        cp $PREVIOUS_SCRIPTS_DIR/after_cj-dmp-19oct_previous_package.sh $ws_package_dir/
+        cp $PREVIOUS_SCRIPTS_DIR/DML_361_MASTER_DAT_JADR_ARREGLA_SECUENCIAS.sql $ws_package_dir/
+        cp $PREVIOUS_SCRIPTS_DIR/DML_360_ENTITY01_DAT_JADR_ARREGLA_SECUENCIAS.sql $ws_package_dir/
+        cp $PREVIOUS_SCRIPTS_DIR/DML_008_ENTITY_LIMPIEZA_TABLAS_RESIDUALES_ARQUETIPOS.sql $ws_package_dir/
+        cp $PREVIOUS_SCRIPTS_DIR/DML_009_MASTER_CARGA_TODAS_FUNCIONES.sql $ws_package_dir/
+        cp $PREVIOUS_SCRIPTS_DIR/DML_010_ENTITY_CARGA_TODOS_PERFILES.sql $ws_package_dir/
+
+        # FIX: Bug de la versión que tenemos de Oracle. Problema con MERGE
+        # ORA-00600: internal error code, arguments: [kkmupsViewDestFro_4], [76107],[75624], [], [], [], [], [], [], [], [], []
+        sed -e 's/DD_SCL_ID NUEVO_DD_SCL_ID/DD_SCL_ID NUEVO_DD_SCL_ID, ROWNUM/g' -i $ws_package_dir/**/**/scripts/DML_382_ENTITY01_DATJPB_MergeSCE_SCL_en_PER_PERSONAS*.sql
+
+		chmod -R go+w $ws_package_dir
 		for sh in $(find $ws_package_dir -name '*.sh'); do
 			chmod ugo+x $sh
 		done
@@ -225,6 +245,7 @@ function run_container () {
 	rm -Rf $WORKSPACE_DIR/*
 	cp $(pwd)/*.sh $WORKSPACE_DIR && chmod ugo+rx $WORKSPACE_DIR/*.sh
 	cp -R $(pwd)/SQL-SCRIPTS $WORKSPACE_DIR && chmod ugo+r $WORKSPACE_DIR/SQL-SCRIPTS/*
+	echo $WORKSPACE_DIR > $WORKSPACE_DIR/workspace.path
 
 	if [[ "x$VAR_OUTTER_ERROR_LOG" != "x" ]]; then
 		outter_log_dir=$(dirname $VAR_OUTTER_ERROR_LOG)
@@ -267,7 +288,7 @@ function run_container () {
 		VAR_SCRIPTS_DONE=yes
 	fi
 	echo -n "[INFO]: $CONTAINER_NAME: Generando el contenedor a partir de la imagen [$IMAGE_NAME]: "
-	docker run -d -p=22 -p 1521:1521 \
+	docker run -d -p=22 -p $OPTION_PORT:1521 \
 				-v /etc/localtime:/etc/localtime:ro \
 				-v $WORKSPACE_DIR:/setup $errorlog_volume \
 				-v $DUMP_DIRECTORY:/DUMP \
@@ -366,13 +387,29 @@ function restore_or_confirm_flahsback () {
 	echo "Pulsa Ctrl + C para salir"
 }
 
+function verify_workspace () {
+	local _ws
+	if [[ ! -z "$(docker ps | grep $CONTAINER_NAME)" ]]; then
+		_ws="$(docker exec $CONTAINER_NAME cat /setup/workspace.path)"
+		if [[ "$WORKSPACE_DIR" == "$_ws" && -d $WORKSPACE_DIR ]]; then
+			echo "[INFO] Directorio de trabajo verificado."
+		else
+			echo "[ERROR] El directorio de trabajo no coincide con el del contenedor, o no existe"
+			echo -e "container ws dir = '$_ws'"
+			exit 1
+		fi
+	else
+		echo "[ERROR] $CONTAINER_NAME no está levantado."
+		exit 1
+	fi
+}
+
 # Creamos el workspace
 if [[ "x$VAR_WORKSPACE_CHANGED" == "xyes" ]]; then
 	echo "[INFO] Se va a usar el siguiente directorio como WORKSPACE: $WORKSPACE_DIR"
 else
 	echo "[WARNING] Se va a usar el siguiente directorio como WORKSPACE: $WORKSPACE_DIR"
-	echo "[WARNING]  esto no es conveniente si se quiere conservar el estado de la BD"
-	echo "[WARNING]  independiente del repositorio de versiones."
+	echo "[WARNING]  esto no es conveniente si se quiere conservar el estado de la BD independiente del repositorio de versiones."
 	echo "[WARNING] Usa el parámetro -workspace para ocultar este aviso."
 fi
 
@@ -435,6 +472,8 @@ else
 
 	if [[ "x$OPTION_SCRIPTS_MODE" == "xyes" && "x$VAR_SCRIPTS_DONE" == "xno"
 			&& "x$OPTION_RANDOM_DUMP" == "xno"  && "x$OPTION_REMOVE" == "xno" ]]; then
+		echo "[INFO] Verificando directorio de trabajo..."
+		verify_workspace
 		echo "[INFO] Empaquetando y ejecutando scripts DDL y DML"
 		package_sql $STARTING_TAG $CLIENTE
 		$(pwd)/execute-scripts.sh $CONTAINER_NAME $DOCKER_INNER_ERROR_LOG

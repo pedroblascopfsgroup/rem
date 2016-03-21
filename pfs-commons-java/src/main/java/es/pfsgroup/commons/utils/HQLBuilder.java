@@ -272,6 +272,10 @@ public class HQLBuilder {
 	private boolean hasWhere = false;
 	
 
+	public void setHasWhere(boolean hasWhere) {
+		this.hasWhere = hasWhere;
+	}
+
 	public HQLBuilder(final String st) {
 		int open = buscaCaracter(st, '(');
 		int close = buscaCaracter(st, ')');

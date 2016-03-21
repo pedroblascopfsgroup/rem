@@ -21,6 +21,7 @@ import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.core.api.web.DynamicElementApi;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
+import es.capgemini.pfs.persona.model.DDSituacConcursal;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.capgemini.pfs.users.FuncionManager;
@@ -29,7 +30,6 @@ import es.capgemini.pfs.utils.ObjetoResultado;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.plugin.recovery.coreextension.model.DDSituacConcursal;
 import es.pfsgroup.plugin.recovery.mejoras.PluginMejorasBOConstants;
 import es.pfsgroup.plugin.recovery.mejoras.cliente.dao.MEJClienteDao;
 import es.pfsgroup.plugin.recovery.mejoras.cliente.dto.MEJBuscarClientesDto;
@@ -170,7 +170,7 @@ public class MEJClienteManager implements MEJClienteApi {
 
         clientes.setCodigoZonas(getCodigosDeZona(clientes));
         Parametrizacion param = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
-                Parametrizacion.LIMITE_EXPORT_EXCEL);
+                Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_CLIENTES);
         int limit = Integer.parseInt(param.getValor());
         clientes.setLimit(0); // No queremos que el DAO pagine para hacer el count
         int cant = mejClienteDao.buscarClientesPaginadosCount(clientes, usuLogado, false);

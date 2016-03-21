@@ -12,14 +12,15 @@
 	
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/precontencioso/precontencioso.xml" p:version="31"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/precontenciosohaya/precontenciosohaya.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/precontenciosobankia/precontenciosobankia.xml" p:version="4"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/precontenciosocajamar/precontenciosocajamar.xml" p:version="4"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/precontenciosobankia/precontenciosobankia.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/precontenciosocajamar/precontenciosocajamar.xml" p:version="-1"/>
 	
 	<bean id="precontenciosoLeaveActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoLeaveActionHandler"></bean>
 	<bean id="precontenciosoEnterActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoEnterActionHandler"></bean>
 	<bean id="precontenciosoDecisionActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoUserDecisionActionHandler"></bean>
  	<bean id="precontenciosoHayaDecisionActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoHayaUserDecisionActionHandler"></bean>
  	<bean id="precontenciosoHayaLeaveActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoHayaLeaveActionHandler"></bean>
+ 	<bean id="precontenciosoGestorProcuradorHandler" class="es.pfsgroup.plugin.precontencioso.handler.PrecontenciosoGestorProcuradorHandler"></bean>
  	
 	<bean id="jbpmUtilPrecontencioso" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.manager.JBPMProcessPrecontenciosoManager" >
   	<property name="contextScripts">
@@ -44,6 +45,11 @@
 			def dameTipoTurnado = {
 				 def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
 				 return procedimientoPcoManager.dameTipoTurnado(idProcedimiento);
+			}
+			
+			def dameDecisionPrepararExpediente = {
+				 def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
+				 return procedimientoPcoManager.dameDecisionPrepararExpediente(idProcedimiento);
 			}
 			
 			def noExisteGestorDocumentacionAsignadoAsunto = {
@@ -96,6 +102,19 @@
 				return riesgoOperacionalManager.comprobarRiesgoProcedimiento(idProcedimiento);
 			}
 			
+			def getEstadoLimiteImporteConcurso = {
+				 def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
+				 return procedimientoPcoManager.getEstadoLimiteImporteConcurso(idProcedimiento);
+			}
+
+			def comprobarExistenciaGestor = {
+				 def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
+				 return procedimientoPcoManager.comprobarExistenciaGestor(idProcedimiento);
+			}
+            def asuntoConProcuradorPrecontencioso = {
+                def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
+                return procedimientoPcoManager.asuntoConProcuradorPrecontencioso(idProcedimiento);
+            }
 			]]></value>
   		</list>
   	</property>
@@ -107,6 +126,7 @@
     	<list merge="true">    
     		<value>es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDTipoProblemaDocPco</value>
     		<value>es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDMotivoAsignacionLetrado</value>
+    		<value>es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDTipoGestionRevisarExpJudicial</value>
     	</list>
     </property>
    </bean>

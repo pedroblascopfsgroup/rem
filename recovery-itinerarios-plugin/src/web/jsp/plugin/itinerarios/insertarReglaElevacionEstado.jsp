@@ -16,10 +16,10 @@
 		obligatory="true" />
 	
 		
-	<!--<pfsforms:ddCombo name="ambitoExpediente"
+	<%--<pfsforms:ddCombo name="ambitoExpediente"
 		labelKey="plugin.itinerarios.alta.ambitoExpediente"
 		label="**Ámbito del expediente" value="${itinerario.ambitoExpediente.id}" dd="${ddAmbitoExpediente}" 
-		width="490"/>-->
+		width="490"/>--%>
 		
 	var ambito = Ext.data.Record.create([
 		{name:'id'}

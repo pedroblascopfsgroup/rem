@@ -15,9 +15,9 @@
 	var cfg = {labelStyle:"width:400;font-weight:bolder",width:400};
 	
 
-	var riesgoDirecto=app.creaLabel('<s:message code="menu.clientes.consultacliente.datosTab.volRiesgoDirecto" text="**riesgoDirecto" />',app.format.moneyRenderer('${persona.riesgoDirecto}') , {},cfg);
+	var riesgoDirecto=app.creaLabel('<s:message code="menu.clientes.consultacliente.datosTab.volRiesgoDirecto" text="**riesgoDirecto" />',app.format.moneyRenderer('${persona.riesgoTotal}') , {},cfg);
 	var riesgoIndirecto=app.creaLabel('<s:message code="menu.clientes.consultacliente.datosTab.volRiesgoIndirecto" text="**riesgoIndirecto" />',app.format.moneyRenderer('${persona.riesgoIndirecto}') , {},cfg);
-	var riesgoIrregular=app.creaLabel('<s:message code="menu.clientes.consultacliente.datosTab.riesgoIrregular" text="**riesgoIrregular" />',app.format.moneyRenderer('${persona.deudaIrregularDirecta}') , {},cfg);
+	var riesgoIrregular=app.creaLabel('<s:message code="menu.clientes.consultacliente.datosTab.riesgoIrregular" text="**riesgoIrregular" />',app.format.moneyRenderer('${persona.riesgoDirectoDanyado}') , {},cfg);
 	var riesgoGarantizado=app.creaLabel('<s:message code="menu.clientes.consultacliente.datosTab.riesgoGarantizado" text="**riesgoGarantizado" />',app.format.moneyRenderer('${persona.riesgoGarantizadoPersona}') , {},cfg);
 	var riesgoNoGantizado=app.creaLabel('<s:message code="menu.clientes.consultacliente.datosTab.riesgoNoGarantizado" text="**riesgoNoGantizado" />',app.format.moneyRenderer('${persona.riesgoNoGarantizadoPersona}') , {},cfg);
 	
@@ -456,7 +456,7 @@
     
         var submitAcepto = function(){
             page.submit({
-                    even/var/tomcat/desahaya/webapps/pfs/WEB-INF/jsp/politica/editObjetivo.jsptName : 'aceptar'
+                    eventName : 'aceptar'
                     ,formPanel : objetivoForm
                     ,success : function(){ page.fireEvent(app.event.DONE) }
                 });

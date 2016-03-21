@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
@@ -24,6 +25,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.tipoFicheroAdjuntoEntidad.DDTipoAdjuntoEntidad;
 
 /**
  * Clase que representa a un fichero.
@@ -61,12 +63,19 @@ public class AdjuntoExpediente implements Serializable, Auditable {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "ADJ_ID")
     private Adjunto adjunto;
+    
+    @ManyToOne
+    @JoinColumn(name = "DD_TAE_ID")
+    private DDTipoAdjuntoEntidad tipoAdjuntoEntidad;
 
-    @Version
+	@Version
     private Integer version;
 
     @Embedded
     private Auditoria auditoria;
+    
+	@Transient
+	private String refCentera;
 
     /**
      * Constructor vacio.
@@ -80,6 +89,20 @@ public class AdjuntoExpediente implements Serializable, Auditable {
      */
     public AdjuntoExpediente(FileItem fileItem) {
         Adjunto adjunto = new Adjunto(fileItem);
+        this.setAdjunto(adjunto);
+        this.setContentType(fileItem.getContentType());
+        this.setNombre(fileItem.getFileName());
+        this.setLength(fileItem.getLength());
+    }
+    
+    /**
+     * Constructor.
+     * @param fileItem FileItem
+     * @param DDTipoAdjuntoEntidad
+     */
+    public AdjuntoExpediente(FileItem fileItem, DDTipoAdjuntoEntidad tipoAdjunto) {
+        Adjunto adjunto = new Adjunto(fileItem);
+        this.setTipoAdjuntoEntidad(tipoAdjunto);
         this.setAdjunto(adjunto);
         this.setContentType(fileItem.getContentType());
         this.setNombre(fileItem.getFileName());
@@ -216,4 +239,19 @@ public class AdjuntoExpediente implements Serializable, Auditable {
         this.expediente = expediente;
     }
 
+    public DDTipoAdjuntoEntidad getTipoAdjuntoEntidad() {
+		return tipoAdjuntoEntidad;
+	}
+
+	public void setTipoAdjuntoEntidad(DDTipoAdjuntoEntidad tipoAdjuntoEntidad) {
+		this.tipoAdjuntoEntidad = tipoAdjuntoEntidad;
+	}
+	
+	public String getRefCentera() {
+		return refCentera;
+	}
+	
+	public void setRefCentera(String refCentera) {
+		this.refCentera = refCentera;
+	}
 }

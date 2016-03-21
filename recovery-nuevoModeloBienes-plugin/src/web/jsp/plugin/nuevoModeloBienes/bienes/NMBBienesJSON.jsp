@@ -13,7 +13,7 @@
 			<json:property name="tipo" value="${bie.tipoBien.descripcion}"/>
 			<json:property name="descripcionBien" value="${bie.descripcionBien}"/>
 			<json:property name="refCatastral" value="${bie.datosRegistralesActivo.referenciaCatastralBien}" />
-			<json:property name="poblacion" value="${bie.localizacionActual.poblacion}" />
+			<json:property name="poblacion" value="${bie.localizacionActual.localidad.descripcion}" />
 			<json:property name="valorActual" value="${bie.valorActual}" />
 			<json:property name="superficie" value="${bie.datosRegistralesActivo.superficie}" />
 			<json:property name="origen" value="${bie.origen.descripcion}" />

@@ -105,7 +105,7 @@
 		,cm: colM
 		,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
 		,autoWidth: true
-		,autoHeight: true
+		,height: 300
 		,viewConfig : {  forceFit : true}
 		,doLayout: function() {
 			if(this.isVisible()){
@@ -157,10 +157,10 @@
 		 entidad.setLabel("grupoNombre", data.grupo.nombre);
 		 entidad.setLabel("grupoTipo", data.grupo.tipo);
 		 entidad.setLabel("grupoComp", data.grupo.numComp);
-		 entidad.setLabel("volRiesgo", app.format.moneyRenderer(data.grupo.volRiesgo));
+		 entidad.setLabel("grupoRiesgo", app.format.moneyRenderer(data.grupo.volRiesgo));
 		 entidad.setLabel("riesgoIndirecto", app.format.moneyRenderer(data.grupo.riesgoIndirecto));
-		 entidad.setLabel("volRiesgoV", app.format.moneyRenderer(data.grupo.volRiesgoV));
-		 entidad.setLabel("volRiesgoDDG", app.format.moneyRenderer(data.grupo.volRiesgoDDG));
+		 entidad.setLabel("grupoRiesgoV", app.format.moneyRenderer(data.grupo.volRiesgoV));
+		 entidad.setLabel("grupoRiesgoDDG", app.format.moneyRenderer(data.grupo.volRiesgoDDG));
 
 		 entidad.setVisible(esVisible);
 	}

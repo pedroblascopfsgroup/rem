@@ -71,7 +71,7 @@ public class AcuerdoManager {
 
     @Autowired
     private AnalisisAcuerdoDao analisisAcuerdoDao;
-
+    
     private static final long ULTIMO_ACUERDO = -2L;
 
     /**
@@ -487,7 +487,14 @@ public class AcuerdoManager {
 	@Transactional(readOnly = false)
 	public void prepareGuid(ActuacionesRealizadasAcuerdo actuacion) {
 		if (Checks.esNulo(actuacion.getGuid())) {
-			actuacion.setGuid(Guid.getNewInstance().toString());
+			
+			String guid = Guid.getNewInstance().toString();
+			
+			while(actuacionesRealizadasAcuerdoDao.getByGuid(guid) != null) {
+				guid = Guid.getNewInstance().toString();
+			}
+			
+			actuacion.setGuid(guid);
 			actuacionesRealizadasAcuerdoDao.saveOrUpdate(actuacion);
 		}
 	}
@@ -495,7 +502,13 @@ public class AcuerdoManager {
 	@Transactional(readOnly = false)
 	public void prepareGuid(ActuacionesAExplorarAcuerdo actuacion) {
 		if (Checks.esNulo(actuacion.getGuid())) {
-			actuacion.setGuid(Guid.getNewInstance().toString());
+			
+			String guid = Guid.getNewInstance().toString();
+			while(actuacionesAExplorarAcuerdoDao.getByGuid(guid) != null) {
+				guid = Guid.getNewInstance().toString();
+			}
+			
+			actuacion.setGuid(guid);
 			actuacionesAExplorarAcuerdoDao.saveOrUpdate(actuacion);
 		}
 	}

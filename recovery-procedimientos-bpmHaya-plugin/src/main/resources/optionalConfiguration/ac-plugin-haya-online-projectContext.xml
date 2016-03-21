@@ -14,7 +14,7 @@
 		parent="mapaTabsPorTipoBienDefault">
 		<property name="mapaTabsTipoBien">
 			<map>
-				<entry key="01">
+				<entry key="1">
 					<bean
 						class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
 						<property name="listaTabs">
@@ -23,13 +23,12 @@
 								<value>pestanaValoraciones</value>
 								<value>pestanaDatosRegistrales</value>
 								<value>pestanaLocalizacion</value>
-								<value>pestanaOtros</value>
 								<value>pestanaObservaciones</value>
 							</list>
 						</property>
 					</bean>
 				</entry>
-				<entry key="02">
+				<entry key="2">
 					<bean
 						class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
 						<property name="listaTabs">
@@ -42,7 +41,7 @@
 						</property>
 					</bean>
 				</entry>
-				<entry key="03">
+				<entry key="3">
 					<bean
 						class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
 						<property name="listaTabs">
@@ -55,7 +54,7 @@
 						</property>
 					</bean>
 				</entry>
-				<entry key="04">
+				<entry key="4">
 					<bean
 						class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
 						<property name="listaTabs">
@@ -70,7 +69,7 @@
 						</property>
 					</bean>
 				</entry>
-				<entry key="05">
+				<entry key="5">
 					<bean id="tabsValoresDEFAULT"
 						class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
 						<property name="listaTabs">

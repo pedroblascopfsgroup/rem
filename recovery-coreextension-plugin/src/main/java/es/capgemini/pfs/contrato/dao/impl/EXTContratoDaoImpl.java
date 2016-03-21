@@ -1,6 +1,5 @@
 package es.capgemini.pfs.contrato.dao.impl;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -9,6 +8,8 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.hibernate.pagination.PaginationManager;
@@ -21,20 +22,23 @@ import es.capgemini.pfs.contrato.dao.EXTContratoDao;
 import es.capgemini.pfs.contrato.dto.BusquedaContratosDto;
 import es.capgemini.pfs.contrato.dto.DtoBuscarContrato;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.contrato.model.DDSituacionGestion;
+import es.capgemini.pfs.contrato.model.DDTipoIntervencion;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.expediente.model.DDEstadoExpediente;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.HQLBuilder;
-import es.pfsgroup.commons.utils.HibernateQueryUtils;
-import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.ext.api.contrato.dto.EXTBusquedaContratosDto;
 
 @Repository
 public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 		implements EXTContratoDao {
 
+	@Autowired
+	UtilDiccionarioApi diccionarioApi;
+	
 	@Resource
 	private Properties appProperties;
 
@@ -120,7 +124,7 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 						.length() > 0)
 				|| (dto.getApellido2() != null && dto.getApellido2().trim()
 						.length() > 0) || (dto.getDocumento() != null && dto
-				.getDocumento().trim().length() > 0));
+				.getDocumento().trim().length() > 0) || dto.getSituacionGestion() != null);
 		final boolean cruzaExpediente = (dto.getDescripcionExpediente() != null && dto
 				.getDescripcionExpediente().trim().length() > 0);
 		final boolean cruzaAsuntos = ((dto.getNombreAsunto() != null && dto
@@ -130,34 +134,9 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 		// flag para el paso de variables a Oracle
 		final boolean flagVariables = pasoDeVariables();
 
-		hql.append("select distinct c ");
-		hql.append("from ");
+		hql.append("from Contrato c ");
 
 		// LAS TABLAS QUE NECESITO
-		hql.append("Contrato c ");
-
-		if (cruzaMovimientos) {
-			hql.append(", Movimiento mov");
-		}
-		if (cruzaPersonas) {
-			hql.append(", Persona p, ContratoPersona cp");
-		}
-		if (cruzaExpediente || cruzaAsuntos) {
-			hql.append(", Expediente e, ExpedienteContrato cex");
-		}
-		if (cruzaAsuntos) {
-			hql.append(", Asunto asu");
-		}
-		if (!Checks.esNulo(dto.getCodEfecto())) {
-			hql.append(", EfectoContrato efecto");
-		}
-		if (!Checks.esNulo(dto.getCodDisposicion())) {
-			hql.append(", Disposicion disp");
-		}
-		if (!Checks.esNulo(dto.getCodRecibo())) {
-			hql.append(", Recibo recibo");
-		}
-
 		if (flagVariables) {
 			hql.append(" where 1 = :one ");
 			params.put("one", 1);
@@ -168,130 +147,176 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 		// *** LOS CRUCES CON LAS TABLAS ***
 
 		if (cruzaMovimientos) {
-			hql.append(" and mov.contrato = c");
-			hql.append(" and mov.fechaExtraccion = c.fechaExtraccion"); // selec.
+			hql.append(" AND EXISTS (SELECT 1 FROM Movimiento mov WHERE mov.contrato = c");
+			hql.append(" AND mov.fechaExtraccion = c.fechaExtraccion"); // selec.
 																		// de
 																		// �ltim.
 																		// mov.
+			if (dto.getMaxVolRiesgoVencido() != null
+					&& dto.getMaxVolRiesgoVencido().trim().length() > 0) {
+				String valor = dto.getMaxVolRiesgoVencido();
+				hql.append(" AND mov.posVivaVencida <= " + valor + " ");
+			}
+
+			if (dto.getMinVolRiesgoVencido() != null
+					&& dto.getMinVolRiesgoVencido().trim().length() > 0) {
+				String valor = dto.getMinVolRiesgoVencido();
+				hql.append(" AND mov.posVivaVencida >= " + valor + " ");
+			}
+			String maxVolTotalRiesgo = null;
+			String minVolTotalRiesgo = null;
+			if (dto.getMaxVolTotalRiesgo() != null
+					&& dto.getMaxVolTotalRiesgo().trim().length() > 0) {
+				maxVolTotalRiesgo = dto.getMaxVolTotalRiesgo();
+			}
+			if (dto.getMinVolTotalRiesgo() != null
+					&& dto.getMinVolTotalRiesgo().trim().length() > 0) {
+				minVolTotalRiesgo = dto.getMinVolTotalRiesgo();
+			}
+			if (dto.getTieneRiesgo() != null && !dto.getTieneRiesgo()) {
+				maxVolTotalRiesgo = "0";
+				minVolTotalRiesgo = "0";
+			}
+			if (minVolTotalRiesgo != null) {
+				hql.append(" AND mov.riesgo >= " + minVolTotalRiesgo + " ");
+			}
+			if (maxVolTotalRiesgo != null) {
+				hql.append(" AND mov.riesgo <= " + maxVolTotalRiesgo + " ");
+			}
+			if (dto.getMinDiasVencidos() != null
+					&& dto.getMinDiasVencidos().trim().length() > 0) {
+				hql.append(" AND FLOOR(SYSDATE-mov.fechaPosVencida) >= "
+						+ dto.getMinDiasVencidos() + " ");
+			}
+			if (dto.getMaxDiasVencidos() != null
+					&& dto.getMaxDiasVencidos().trim().length() > 0) {
+				hql.append(" AND FLOOR(SYSDATE-mov.fechaPosVencida) <= "
+						+ dto.getMaxDiasVencidos() + " ");
+			}
+			
+			hql.append(")");
 		}
+		
 		if (cruzaPersonas) {
-			hql.append(" and cp.persona = p and cp.contrato = c ");
-                        //hql.append(" and cp.auditoria.borrado = 0 ");
-			//hql.append(" and cp.tipoIntervencion.titular = true and cp.orden = 1 ");
+			hql.append(" AND EXISTS (SELECT 1 FROM Persona p, ContratoPersona cp WHERE cp.persona = p and cp.contrato = c ");
+			
+			// Nombre
+			if (dto.getNombre() != null && dto.getNombre().trim().length() > 0) {
+				hql.append(" and upper(p.nombre) like '%"
+						+ dto.getNombre().trim().toUpperCase() + "%'");
+			}
+			
+			// Apellido1
+			if (dto.getApellido1() != null
+					&& dto.getApellido1().trim().length() > 0) {
+				hql.append(" and upper(p.apellido1) like '%"
+						+ dto.getApellido1().trim().toUpperCase() + "%'");
+			}
+			// Apellido2
+			if (dto.getApellido2() != null
+					&& dto.getApellido2().trim().length() > 0) {
+				hql.append(" and upper(p.apellido2) like '%"
+						+ dto.getApellido2().trim().toUpperCase() + "%'");
+			}
+			// DNI
+			if (dto.getDocumento() != null
+					&& dto.getDocumento().trim().length() > 0) {
+				hql.append(" and upper(p.docId) like '%"
+						+ dto.getDocumento().toUpperCase() + "%'");
+			}
+
+			if(!Checks.esNulo(dto.getSituacionGestion())){
+				//TODO pasar el codigo de tio de intervencion en el dto y obtenido por proyectContext dependiendo de la entidad
+				DDSituacionGestion situacion = (DDSituacionGestion) diccionarioApi.dameValorDiccionarioByCod(DDSituacionGestion.class, dto.getSituacionGestion());
+				DDTipoIntervencion intervencion = (DDTipoIntervencion) diccionarioApi.dameValorDiccionarioByCod(DDTipoIntervencion.class, "01");
+				if(intervencion == null){
+					intervencion = (DDTipoIntervencion) diccionarioApi.dameValorDiccionarioByCod(DDTipoIntervencion.class, "10");
+				}
+				if(situacion != null && intervencion != null){
+					hql.append(" AND EXISTS (SELECT 1 FROM PersonaFormulas pf WHERE cp.persona.id = pf.id ");
+					if(situacion.getCodigo() == "SING"){
+						hql.append(" and pf.situacion not in ('En Asunto', 'Normal','En Expediente','En Asunto/En Expediente')");
+					}else{
+						hql.append(" and pf.situacion = '" + situacion.getDescripcion() + "'");
+					}
+					hql.append(" and cp.tipoIntervencion = '" + intervencion.getId() + "') ");
+				}
+			}
+
+			hql.append(")");
 		}
 		if (cruzaExpediente || cruzaAsuntos) {
                         //hql.append(" and cex.auditoria.borrado = 0 ");
-			hql.append(" and cex.contrato = c and cex.expediente = e ");
-		}
-		if (cruzaAsuntos) {
-                        //hql.append(" and asu.auditoria.borrado = 0 ");
-			hql.append(" and asu.expediente = e ");
-		}
+			hql.append(" and EXISTS (SELECT 1 FROM Expediente e, ExpedienteContrato cex WHERE cex.contrato = c and cex.expediente = e ");
+			
+			// Nombre del Expediente
+			if (dto.getDescripcionExpediente() != null
+					&& dto.getDescripcionExpediente().trim().length() > 0) {
+				hql.append(" and UPPER(e.descripcionExpediente) like '%"
+						+ dto.getDescripcionExpediente().toUpperCase() + "%' ");
+			}
+			
+			if (cruzaAsuntos) {
+                //hql.append(" and asu.auditoria.borrado = 0 ");
+				hql.append(" AND EXISTS (SELECT 1 FROM Asunto asu WHERE asu.expediente = e ");
+				
+				// Nombre del Asunto
+				if (dto.getNombreAsunto() != null
+						&& dto.getNombreAsunto().trim().length() > 0) {
+					hql.append(" and UPPER(asu.nombre) like '%"
+							+ dto.getNombreAsunto().toUpperCase()
+							+ "%' and cex.sinActuacion = 0 ");
+					hql.append(" and asu.estadoAsunto.codigo NOT IN ("
+							+ DDEstadoAsunto.ESTADO_ASUNTO_CANCELADO + ", "
+							+ DDEstadoAsunto.ESTADO_ASUNTO_CERRADO + ")");
+				}
+				// Usuario externo, muestra solo los contratos que est�n en sus asuntos
+				if (usuLogado.getUsuarioExterno()) {
+					hql.append(hqlFiltroEsGestorAsunto(usuLogado)
+							+ " and cex.sinActuacion = 0 ");
+					hql.append(" and asu.estadoAsunto.codigo NOT IN ("
+							+ DDEstadoAsunto.ESTADO_ASUNTO_CANCELADO + ", "
+							+ DDEstadoAsunto.ESTADO_ASUNTO_CERRADO + ")");
+				}
+				
+				hql.append(")");
+			}
 
-		// *** LAS CONDICIONES ***
-		// En caso de que sea una b�squeda para una inclusi�n de contratos a un
-		// expediente (F3_WEB-10)
-//		if (dto.isInclusion()) {
-//			String columnaRelacion = "c.id";
-			// Que no est� en procedimientos (mirando si son o no cancelados)
-//			hql.append(" and c.id not in (")
-//					.append(getHqlContratosEnProcedimientos(columnaRelacion))
-//					.append(")");
-			// Que no est� en expedientes (mirando si son o no cancelados)
-//			hql.append(" and c.id not in (")
-//					.append(getHqlContratosEnExpedientes(columnaRelacion))
-//					.append(")");
-			// Que sea activo o pasivo negativo
-//			hql.append(" and mov.riesgo > 0 ");
-//		}
+			hql.append(")");
+		}
+		
 		// Numero de contrato
 		if (dto.getNroContrato() != null
 				&& dto.getNroContrato().trim().length() > 0) {
 			hql.append(this.createHQLNroContrato(dto.getNroContrato(), params));
-
-			// hql.append(" and (c.nroContrato like '%"
-			// + dto.getNroContrato().trim().replaceFirst("^0*", "")
-			// + "%' or c.nroContrato like '%"
-			// + dto.getNroContrato().trim() + "%'"
-			// + "or c.nroContrato like '%"
-			// + dto.getNroContrato().replaceAll(" ",
-			// "").trim().replaceFirst("^0*", "")
-			// + "%' )");
 		}
+		
 		// codigo de efecto
 		if (!Checks.esNulo(dto.getCodEfecto())) {
-			hql.append("and  (efecto.codigoEfecto like '%" + dto.getCodEfecto()
+			hql.append(" AND EXISTS (SELECT 1 FROM EfectoContrato efecto WHERE c = efecto.contrato AND  efecto.codigoEfecto like '%" + dto.getCodEfecto()
 					+ "%')");
 		}
 		// codigo de disposicion
 		if (!Checks.esNulo(dto.getCodDisposicion())) {
-			hql.append("and  (disp.codigoDisposicion like '%"
-					+ dto.getCodDisposicion() + "%')");
+			hql.append(" AND EXISTS (SELECT 1 FROM Disposicion disp WHERE c = disp.contrato AND disp.codigoDisposicion like '%"
+					+ dto.getCodDisposicion() + "%'))");
 		}
 		// codigo de recibo
 		if (!Checks.esNulo(dto.getCodRecibo())) {
-			hql.append("and  (recibo.codigoRecibo like '%" + dto.getCodRecibo()
-					+ "%')");
+			hql.append(" AND EXISTS (SELECT 1 FROM Recibo recibo WHERE c = recibo.contrato AND recibo.codigoRecibo like '%" + dto.getCodRecibo()
+					+ "%'))");
 		}
-		// Nombre
-		if (dto.getNombre() != null && dto.getNombre().trim().length() > 0) {
-			hql.append(" and upper(p.nombre) like '%"
-					+ dto.getNombre().trim().toUpperCase() + "%'");
-		}
-		// Apellido1
-		if (dto.getApellido1() != null
-				&& dto.getApellido1().trim().length() > 0) {
-			hql.append(" and upper(p.apellido1) like '%"
-					+ dto.getApellido1().trim().toUpperCase() + "%'");
-		}
-		// Apellido2
-		if (dto.getApellido2() != null
-				&& dto.getApellido2().trim().length() > 0) {
-			hql.append(" and upper(p.apellido2) like '%"
-					+ dto.getApellido2().trim().toUpperCase() + "%'");
-		}
-		// DNI
-		if (dto.getDocumento() != null
-				&& dto.getDocumento().trim().length() > 0) {
-			hql.append(" and upper(p.docId) like '%"
-					+ dto.getDocumento().toUpperCase() + "%'");
-		}
-		// Nombre del Expediente
-		if (dto.getDescripcionExpediente() != null
-				&& dto.getDescripcionExpediente().trim().length() > 0) {
-			hql.append(" and UPPER(e.descripcionExpediente) like '%"
-					+ dto.getDescripcionExpediente().toUpperCase() + "%' ");
-//			hql.append(" and e.estadoExpediente.codigo NOT IN ("
-//					+ DDEstadoExpediente.ESTADO_EXPEDIENTE_CANCELADO + ", "
-//					+ DDEstadoExpediente.ESTADO_EXPEDIENTE_DECIDIDO + ") ");
-		}
-		// Nombre del Asunto
-		if (dto.getNombreAsunto() != null
-				&& dto.getNombreAsunto().trim().length() > 0) {
-			hql.append(" and UPPER(asu.nombre) like '%"
-					+ dto.getNombreAsunto().toUpperCase()
-					+ "%' and cex.sinActuacion = 0 ");
-			hql.append(" and asu.estadoAsunto.codigo NOT IN ("
-					+ DDEstadoAsunto.ESTADO_ASUNTO_CANCELADO + ", "
-					+ DDEstadoAsunto.ESTADO_ASUNTO_CERRADO + ")");
-		}
-		// Usuario externo, muestra solo los contratos que est�n en sus asuntos
-		if (usuLogado.getUsuarioExterno()) {
-			hql.append(hqlFiltroEsGestorAsunto(usuLogado)
-					+ " and cex.sinActuacion = 0 ");
-			hql.append(" and asu.estadoAsunto.codigo NOT IN ("
-					+ DDEstadoAsunto.ESTADO_ASUNTO_CANCELADO + ", "
-					+ DDEstadoAsunto.ESTADO_ASUNTO_CERRADO + ")");
-		}
+
 		// Estado del contrato
 		if (dto.getEstadosContrato() != null
 				&& dto.getEstadosContrato().size() > 0) {
 			addFiltroEstadoContrato(dto, hql, params);
 		}
+		
 		// Estado financiero
 		if (dto.getEstadosFinancieros() != null
 				&& dto.getEstadosFinancieros().size() > 0) {
-			hql.append(" and c.estadoFinanciero.codigo IN (");
+			hql.append(" AND EXISTS (SELECT 1 FROM DDEstadoFinanciero ef WHERE c.estadoFinanciero = ef AND ef.codigo IN (");
 			for (Iterator<String> it = dto.getEstadosFinancieros().iterator(); it
 					.hasNext();) {
 				String codigo = it.next();
@@ -300,19 +325,25 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 					hql.append(", ");
 				}
 			}
-			hql.append(")");
+			hql.append("))");
 		}
 		// Tipo de producto
 		if (dto.getTiposProducto() != null
 				&& !dto.getTiposProducto().equals("")) {
-			hql.append(" and c.tipoProducto.codigo in ("
-					+ dto.getTiposProducto() + ")");
+			hql.append(" AND EXISTS (SELECT 1 FROM DDTipoProducto tp WHERE c.tipoProducto = tp AND tp.codigo in ("
+					+ dto.getTiposProducto() + "))");
 		}
 		// Tipo de producto entidad
 		if (dto.getTiposProductoEntidad() != null
 				&& !dto.getTiposProductoEntidad().equals("")) {
-			hql.append(" and c.tipoProductoEntidad.codigo in ("
-					+ dto.getTiposProductoEntidad() + ")");
+			hql.append(" AND EXISTS (SELECT 1 FROM DDTipoProductoEntidad tpe WHERE c.tipoProductoEntidad = tpe AND tpe.codigo in ("
+					+ dto.getTiposProductoEntidad() + "))");
+		}
+
+		if (dto.getMotivoGestionHRE() != null
+				&& !dto.getMotivoGestionHRE().equals("")) {
+			hql.append(" AND EXISTS ( SELECT 1 FROM DDCondicionesRemuneracion cre WHERE c.RemuneracionEspecial = cre AND cre.codigo in ('"
+					+ dto.getMotivoGestionHRE() + "'))");
 		}
 		if (cruzaMovimientos) {
 			if (dto.getMaxVolRiesgoVencido() != null
@@ -357,40 +388,59 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 						+ dto.getMaxDiasVencidos() + " ");
 			}
 		}
-		/*
-		 * FIXME deshabilitado de momento para probar if
-		 * (dto.getCodigosZonaAdm() != null && dto.getCodigosZonaAdm().size() >
-		 * 0) { int cantZonas = dto.getCodigosZona().size(); if (cantZonas > 0)
-		 * { hql.append(" and ( "); for (Iterator<String> it =
-		 * dto.getCodigosZona().iterator(); it .hasNext();) { String codigoZ =
-		 * it.next(); hql.append(" c.oficinaAdministrativa.zona.codigo like '" +
-		 * codigoZ + "%'"); if (it.hasNext()) { hql.append(" OR"); } } // SE
-		 * PONE ESTE FILTRO AQU�, DEBIDO A QUE PARA VISUALIZAR EL // CONTRATO,
-		 * PUEDE O BIEN PERTENECER A LA ZONA // DEL USUARIO LOGEADO, O QUE ESTE
-		 * SEA GESTOR DEL CONTRATO hql.append(" or c.id in (");
-		 * hql.append(generaFiltroContratosPorGestor(usuLogado, params));
-		 * hql.append(")"); hql.append(" ) "); } } else { if
-		 * (dto.getCodigosZona() != null && dto.getCodigosZona().size() > 0) {
-		 * int cantZonas = dto.getCodigosZona().size(); if (cantZonas > 0) {
-		 * hql.append(" and ( "); for (Iterator<String> it =
-		 * dto.getCodigosZona().iterator(); it .hasNext();) { String codigoZ =
-		 * it.next();
-		 * hql.append(" c.oficinaContable.zona.codigo like :codigo_zona_" +
-		 * codigoZ);
-		 * 
-		 * params.put("codigo_zona_" + codigoZ, "" + codigoZ + "%");
-		 * 
-		 * if (it.hasNext()) { hql.append(" OR"); } } // SE PONE ESTE FILTRO
-		 * AQU�, DEBIDO A QUE PARA VISUALIZAR EL // CONTRATO, PUEDE O BIEN
-		 * PERTENECER A LA ZONA // DEL USUARIO LOGEADO, O QUE ESTE SEA GESTOR
-		 * DEL CONTRATO hql.append(" or c.id in (");
-		 * hql.append(generaFiltroContratosPorGestor(usuLogado, params));
-		 * hql.append(")"); hql.append(" ) "); } } else {// EN CASO DE QUE NO
-		 * TENGA ZONAS ASIGNADAS Y SEA GESTOR DEL // CONTRATO // DEBE PODER
-		 * SEGUIR VISUALIZANDO EL CONTRATO hql.append(" and c.id in ( ");
-		 * hql.append(generaFiltroContratosPorGestor(usuLogado, params));
-		 * hql.append(" ) "); } }
-		 */
+
+		if (!Checks.esNulo(dto.getCodigoZonaAdm())) {
+			 
+			 String[] codigosZona = StringUtils.split(dto.getCodigoZonaAdm(), ",");
+			 int cantZonas = codigosZona.length; 
+			 if (cantZonas > 0) { 
+				 hql.append(" and ( "); 
+				 for (int i = 0; i < codigosZona.length; i++) { 
+					 String codigoZ = codigosZona[i]; 
+					 hql.append(" c.oficinaAdministrativa.zona.codigo like '" + codigoZ + "%'"); 
+					 if (i < codigosZona.length - 1) { 
+						 hql.append(" OR"); 
+					 } 
+				 } 
+		 			
+				 // SE PONE ESTE FILTRO AQU�, DEBIDO A QUE PARA VISUALIZAR EL 
+				 // CONTRATO, PUEDE O BIEN PERTENECER A LA ZONA 
+				 // DEL USUARIO LOGEADO, O QUE ESTE SEA GESTOR DEL CONTRATO 
+				 hql.append(" or c.id in (");
+				 hql.append(generaFiltroContratosPorGestor(usuLogado, params));
+				 hql.append(")"); 
+				 hql.append(" ) "); 
+			 } 
+		} 
+
+		if (dto.getCodigosZona() != null && dto.getCodigosZona().size() > 0) {
+			int cantZonas = dto.getCodigosZona().size(); 
+			if (cantZonas > 0) {
+				hql.append(" and ( "); 
+				for (Iterator<String> it = dto.getCodigosZona().iterator(); it .hasNext();) { 
+					String codigoZ = it.next();
+					hql.append(" c.oficinaContable.zona.codigo like '" + codigoZ + "%'");
+	  
+					if (it.hasNext()) { 
+						hql.append(" OR"); 
+					} 
+				} 
+					
+				// SE PONE ESTE FILTRO AQU�, DEBIDO A QUE PARA VISUALIZAR EL 
+				// CONTRATO, PUEDE O BIEN PERTENECER A LA ZONA 
+				// DEL USUARIO LOGEADO, O QUE ESTE SEA GESTOR DEL CONTRATO 
+				hql.append(" or c.id in (");
+				hql.append(generaFiltroContratosPorGestor(usuLogado, params));
+				hql.append(")"); 
+				hql.append(" ) "); 
+			} 
+		} 
+		else {
+			// EN CASO DE QUE NO TENGA ZONAS ASIGNADAS Y SEA GESTOR DEL // CONTRATO // DEBE PODER SEGUIR VISUALIZANDO EL CONTRATO 
+			hql.append(" and c.id in ( ");
+			hql.append(generaFiltroContratosPorGestor(usuLogado, params));
+			hql.append(" ) "); 
+		}
 
 		return hql.toString();
 	}
@@ -547,7 +597,7 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 	/**
 	 * {@inheritDoc}
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes" })
 	public HashMap<String, Object> buscarTotalContratosCliente(
 			DtoBuscarContrato dto) {
 		StringBuffer hql = new StringBuffer();
@@ -883,9 +933,11 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 				hql.append(")");
 				hql.append(" ) ");
 			}
-		} else {// EN CASO DE QUE NO TENGA ZONAS ASIGNADAS Y SEA GESTOR DEL
-				// CONTRATO
-				// DEBE PODER SEGUIR VISUALIZANDO EL CONTRATO
+		} 
+		else {
+			// EN CASO DE QUE NO TENGA ZONAS ASIGNADAS Y SEA GESTOR DEL
+			// CONTRATO
+			// DEBE PODER SEGUIR VISUALIZANDO EL CONTRATO
 			hql.append(" and c.id in ( ");
 			hql.append(generaFiltroContratosPorGestor(usuLogado, params));
 			hql.append(" ) ");
@@ -1081,7 +1133,7 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 
 	private void addFiltroEstadoContrato(BusquedaContratosDto dto,
 			StringBuffer hql, Map<String, Object> params) {
-		hql.append(" and c.estadoContrato.codigo IN (");
+		hql.append(" and EXISTS (SELECT 1 FROM DDEstadoContrato ec WHERE ec = c.estadoContrato AND ec.codigo IN (");
 		if (pasoDeVariables() && (params != null)) { // ¿paso de variables?
 			hql.append(":listaEstados");
 			params.put("listaEstados",
@@ -1097,7 +1149,7 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 			}
 
 		} // fin ¿paso de variables?
-		hql.append(")");
+		hql.append("))");
 	}
 
 	/**

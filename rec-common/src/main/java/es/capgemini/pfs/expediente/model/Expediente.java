@@ -36,6 +36,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.APPConstants;
 import es.capgemini.pfs.actitudAptitudActuacion.model.ActitudAptitudActuacion;
+import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.arquetipo.model.Arquetipo;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
@@ -47,6 +48,7 @@ import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.exclusionexpedientecliente.model.ExclusionExpedienteCliente;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.itinerario.model.Estado;
+import es.capgemini.pfs.movimiento.model.Movimiento;
 import es.capgemini.pfs.oficina.model.Oficina;
 import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
@@ -105,6 +107,10 @@ public class Expediente implements Serializable, Auditable, Describible {
 
     @OneToMany(mappedBy = "expediente", fetch = FetchType.LAZY)
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private List<Acuerdo> acuerdos;
+
+    @OneToMany(mappedBy = "expediente", fetch = FetchType.LAZY)
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<Asunto> asuntos;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -138,6 +144,9 @@ public class Expediente implements Serializable, Auditable, Describible {
 
     @Column(name = "EXP_DESCRIPCION")
     private String descripcionExpediente;
+    
+	@Column(name = "SYS_GUID")
+	private String guid;
 
     @Embedded
     private Auditoria auditoria;
@@ -151,31 +160,32 @@ public class Expediente implements Serializable, Auditable, Describible {
             + DDEstadoAsunto.ESTADO_ASUNTO_PROPUESTO + "') " + " and asu.borrado = 0 and asu.exp_id = exp_id)")
     private Long cantidadAsuntos;
 
-    @Formula(value = "(Select NVL(sum(m.mov_riesgo),0)"
-            + " from mov_movimientos m, cex_contratos_expediente cex, cnt_contratos cnt, DD_TPE_TIPO_PROD_ENTIDAD tpe"
-            + " where cex.borrado = 0 and m.cnt_id = cex.cnt_id" + " and cex.exp_id = exp_id AND cnt.cnt_id = cex.cnt_id"
-            + " and m.mov_fecha_extraccion = cnt.CNT_FECHA_EXTRACCION" + " and cnt.dd_tpe_id = tpe.dd_tpe_id)")
-    @Basic(fetch = FetchType.LAZY)
-    private Double volumenRiesgo;
-
-    @Formula(value = "(Select NVL(sum(m.mov_deuda_irregular), 0)"
+    @Formula(value = "(Select NVL(sum(m.mov_pos_viva_vencida), 0)"
             + " from mov_movimientos m, cex_contratos_expediente cex, cnt_contratos cnt, DD_TPE_TIPO_PROD_ENTIDAD tpe"
             + " where cex.borrado = 0 and m.cnt_id = cex.cnt_id" + " and cex.exp_id = exp_id AND cnt.cnt_id = cex.cnt_id"
             + " and m.mov_fecha_extraccion = cnt.CNT_FECHA_EXTRACCION" + " and cnt.dd_tpe_id = tpe.dd_tpe_id" + " and m.mov_riesgo > 0)")
     @Basic(fetch = FetchType.LAZY)
     private Double volumenRiesgoVencido;
+    
+    
+    @Formula(value = "(Select NVL(sum(m.mov_deuda_irregular), 0)"
+            + " from mov_movimientos m, cex_contratos_expediente cex, cnt_contratos cnt, DD_TPE_TIPO_PROD_ENTIDAD tpe"
+            + " where cex.borrado = 0 and m.cnt_id = cex.cnt_id" + " and cex.exp_id = exp_id AND cnt.cnt_id = cex.cnt_id"
+            + " and m.mov_fecha_extraccion = cnt.CNT_FECHA_EXTRACCION" + " and cnt.dd_tpe_id = tpe.dd_tpe_id" + " and m.mov_riesgo > 0)")
+    @Basic(fetch = FetchType.LAZY)
+    private Double dispuestoVencido;
 
     //La fecha de vencimiento se calculaba antes así
-//    @Formula(value = "(select tar.tar_fecha_venc from tar_tareas_notificaciones tar, ${master.schema}.DD_STA_SUBTIPO_TAREA_BASE dd_sta "
-//            + " where tar.exp_id = exp_id and tar.borrado = 0 and tar.DD_STA_ID = dd_sta.DD_STA_ID " + " and dd_sta.dd_sta_codigo in ('"
-//            + SubtipoTarea.CODIGO_COMPLETAR_EXPEDIENTE + "','" + SubtipoTarea.CODIGO_REVISAR_EXPEDIENE + "','" + SubtipoTarea.CODIGO_DECISION_COMITE
-//            + "') )")
-//    
-    @Formula(value = "(SELECT min(M.MOV_FECHA_POS_VENCIDA) "
+    @Formula(value = "(select tar.tar_fecha_venc from tar_tareas_notificaciones tar, ${master.schema}.DD_STA_SUBTIPO_TAREA_BASE dd_sta "
+           + " where tar.exp_id = exp_id and tar.borrado = 0 and tar.DD_STA_ID = dd_sta.DD_STA_ID " + " and dd_sta.dd_sta_codigo in ('"
+           + SubtipoTarea.CODIGO_COMPLETAR_EXPEDIENTE + "','" + SubtipoTarea.CODIGO_REVISAR_EXPEDIENE + "','" + SubtipoTarea.CODIGO_DECISION_COMITE
+           + "','" + SubtipoTarea.CODIGO_FORMALIZAR_PROPUESTA + "') )")
+    
+   /* @Formula(value = "(SELECT min(M.MOV_FECHA_POS_VENCIDA) "
     		+ " FROM mov_movimientos m, cex_contratos_expediente cex, cnt_contratos cnt "
     		+ " WHERE cex.borrado = 0 AND m.borrado = 0 AND cnt.borrado = 0 "
     		+ " AND m.cnt_id = cex.cnt_id AND cex.exp_id = exp_id " 
-    		+ " AND cnt.cnt_id = cex.cnt_id AND m.mov_fecha_extraccion = cnt.CNT_FECHA_EXTRACCION)")
+    		+ " AND cnt.cnt_id = cex.cnt_id AND m.mov_fecha_extraccion = cnt.CNT_FECHA_EXTRACCION)")*/
     private Date fechaVencimiento;
 
     /**
@@ -184,7 +194,58 @@ public class Expediente implements Serializable, Auditable, Describible {
      * @return el monto del riesgo del expediente.
      */
     public Double getVolumenRiesgo() {
-        return volumenRiesgo;
+    	
+    	Double volumenRiesgo = 0.0;
+    	Double riesgo = 0.0;
+    	
+    	
+    	for (ExpedienteContrato expedienteContrato : contratos) {
+    		Date fechaExtraccion = null;
+    		Contrato contrato = expedienteContrato.getContrato();
+    		for(Movimiento movimiento : contrato.getMovimientos()) {
+    			if(contrato.getFechaExtraccion().equals(movimiento.getFechaExtraccion())) {
+    				
+    				if(fechaExtraccion == null || fechaExtraccion.before(movimiento.getFechaExtraccion())) {
+    					fechaExtraccion = movimiento.getFechaExtraccion();
+    					riesgo = new Double(movimiento.getRiesgo());
+    					
+    				}
+    			}
+    		}
+    		volumenRiesgo = volumenRiesgo +  riesgo;
+    	}
+    	
+    	return volumenRiesgo;
+    }
+    
+    /**
+     * devuelve el volumen de riesgo de este expediente.
+     * Sumatoria de la suma de posicion viva vencida y no venciada de cada contrato
+     * @return el monto del riesgo del expediente.
+     */
+    public Double getDispuestoTotal() {
+    	
+    	Double dispuestoTotal = 0.0;
+    	Double dispuesto = 0.0;
+    	
+    	
+    	for (ExpedienteContrato expedienteContrato : contratos) {
+    		Date fechaExtraccion = null;
+    		Contrato contrato = expedienteContrato.getContrato();
+    		for(Movimiento movimiento : contrato.getMovimientos()) {
+    			if(contrato.getFechaExtraccion().equals(movimiento.getFechaExtraccion())) {
+    				
+    				if(fechaExtraccion == null || fechaExtraccion.before(movimiento.getFechaExtraccion())) {
+    					fechaExtraccion = movimiento.getFechaExtraccion();
+    					dispuesto = new Double(movimiento.getDispuesto());
+    					
+    				}
+    			}
+    		}
+    		dispuestoTotal = dispuestoTotal +  dispuesto;
+    	}
+    	
+    	return dispuestoTotal;
     }
 
     /**
@@ -878,8 +939,8 @@ public class Expediente implements Serializable, Auditable, Describible {
      * @return el volumen de riesgo en valor absoluto.
      */
     public Double getVolumenRiesgoAbsoluto() {
-        if (volumenRiesgo == null) { return 0D; }
-        return Math.abs(volumenRiesgo);
+        if (getVolumenRiesgo() == null) { return 0D; }
+        return Math.abs(getVolumenRiesgo());
     }
 
     /**
@@ -888,6 +949,23 @@ public class Expediente implements Serializable, Auditable, Describible {
     public Double getVolumenRiesgoVencidoAbsoluto() {
         if (volumenRiesgoVencido == null) { return 0D; }
         return Math.abs(volumenRiesgoVencido);
+    }
+    
+    
+    /**
+     * @return el volumen de riesgo en valor absoluto.
+     */
+    public Double getDispuestoAbsoluto() {
+        if (getVolumenRiesgo() == null) { return 0D; }
+        return Math.abs(getDispuestoTotal());
+    }
+
+    /**
+     * @return el volumen de riesgo vencido en valor absoluto.
+     */
+    public Double getDispuestoVencidoAbsoluto() {
+        if (dispuestoVencido == null) { return 0D; }
+        return Math.abs(dispuestoVencido);
     }
 
     /**
@@ -899,7 +977,8 @@ public class Expediente implements Serializable, Auditable, Describible {
             if (estadoItinerario.getCodigo().equals(tarea.getEstadoItinerario().getCodigo())
                     && (SubtipoTarea.CODIGO_COMPLETAR_EXPEDIENTE.equals(tarea.getSubtipoTarea().getCodigoSubtarea())
                             || SubtipoTarea.CODIGO_REVISAR_EXPEDIENE.equals(tarea.getSubtipoTarea().getCodigoSubtarea()) || SubtipoTarea.CODIGO_DECISION_COMITE
-                            .equals(tarea.getSubtipoTarea().getCodigoSubtarea()))) { return tarea.getId(); }
+                            .equals(tarea.getSubtipoTarea().getCodigoSubtarea())
+                            || SubtipoTarea.CODIGO_FORMALIZAR_PROPUESTA.equals(tarea.getSubtipoTarea().getCodigoSubtarea()) )) { return tarea.getId(); }
         }
         return null;
     }
@@ -1009,4 +1088,11 @@ public class Expediente implements Serializable, Auditable, Describible {
 		this.tipoExpediente = tipoExpediente;
 	}
 
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
 }

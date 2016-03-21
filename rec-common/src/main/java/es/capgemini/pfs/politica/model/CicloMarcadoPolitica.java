@@ -1,6 +1,7 @@
 package es.capgemini.pfs.politica.model;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -160,6 +161,8 @@ public class CicloMarcadoPolitica implements Auditable, Serializable {
     public Politica getUltimaPolitica() {
         if (politicas == null || politicas.size() == 0) { return null; }
 
+        Collections.sort(politicas, new Politica().getEstadoItinerarioComparator());
+        
         return politicas.get(politicas.size() - 1);
     }
 

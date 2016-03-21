@@ -2,6 +2,7 @@ package es.capgemini.pfs.multigestor.dao.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,28 @@ public class EXTGestorAdicionalAsuntoDaoImpl extends
 			listUsuario.add(gestorAA.getGestor().getUsuario());
 		}
 		return listUsuario;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<EXTGestorAdicionalAsunto> findGestoresByAsuntoTipos(Long idAsunto, Set<String> tiposGestor) {
+		StringBuffer hql = new StringBuffer();		
+		hql.append("from EXTGestorAdicionalAsunto p ");
+		hql.append(" where p.auditoria.borrado= false ");
+		if (!Checks.esNulo(idAsunto)) {
+			hql.append(" and p.asunto.id=" + idAsunto);
+		}
+		if (!Checks.estaVacio(tiposGestor)) {
+			hql.append (" and ( ");
+			for (String tipoGestor : tiposGestor) {
+				hql.append("p.tipoGestor.codigo='" + tipoGestor + "' OR ");
+			}
+			hql.delete(hql.length() - 3, hql.length());
+			hql.append(" ) ");
+		}
+		
+		Query query = getSession().createQuery(hql.toString());
+		return query.list();
 	}
 	
 	@Override

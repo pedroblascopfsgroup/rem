@@ -7,11 +7,36 @@
   	<input name="tarea" type="java.lang.Long"/>
 	<input name="fechaVenc" type="java.lang.String"/>
 	
+	
+	<action-state id="tienePluginProcurador">
+		<evaluate expression="executor.execute('plugin.mejoras.web.procuradores.pluginProcuradoresIsInstall')" result="flowScope.tieneProcurador" />
+		<transition to="decisionTieneProcurador"/>
+	</action-state>
+	
+	<decision-state id="decisionTieneProcurador">
+		<if test="tieneProcurador" then="moduloProcurador" else="consultaProcedimiento"/>
+	</decision-state>
+	
+	<action-state id="moduloProcurador">
+	    <evaluate expression="executor.execute('plugin.procuradores.procurador.getProcuradorReal',id)" result="flowScope.procuradorReal" />
+		<transition to="moduloProcuradorDes"/>
+	</action-state>
+	
+	<action-state id="moduloProcuradorDes">
+		<evaluate expression="executor.execute('es.pfsgroup.plugin.recovery.procuradores.configuracion.api.activoDespachoIntegral')" result="flowScope.activoDespachoIntegral" />
+		<transition to="moduloProcuradorHistResoluciones"/>
+	</action-state>
+	
+	<action-state id="moduloProcuradorHistResoluciones">
+	    <evaluate expression="executor.execute('es.pfsgroup.plugin.recovery.procuradores.procesado.api.hayDespachoIntegral',id)" result="flowScope.hayDespachoIntegral" />
+		<transition to="consultaProcedimiento"/>
+	</action-state>
+	
 	<!-- renderiza el formulario -->
     <end-state id="consultaProcedimiento" view="entidad/procedimiento/procedimientoJSON" >
 	    <on-entry>
-	    	<evaluate expression="fechaVenc" result="flowScope.fechaVenc" />
-	    	<evaluate expression="tarea" result="flowScope.tarea" />
+<!-- 	    	<evaluate expression="fechaVenc" result="flowScope.fechaVenc" /> -->
+<!-- 	    	<evaluate expression="tarea" result="flowScope.tarea" /> -->
 	    	<evaluate expression="executor.execute('core.procedimiento.getContratoPrincipal',id)" result="flowScope.contratoPrincipal" />
 			<evaluate expression="executor.execute('procedimientoManager.getProcedimiento',id)" result="flowScope.procedimiento" />
 	    	<evaluate expression="executor.execute('procedimientoManager.esGestor',id)" result="flowScope.esGestor" />
@@ -28,6 +53,7 @@
 			<evaluate expression="executor.execute('plugin.precontencioso.getVisibilidadBotonesPrecontencioso','botonesLiquidaciones',false)" result="flowScope.botonesInvisiblesLiqPco" />
 			<evaluate expression="executor.execute('plugin.precontencioso.getVisibilidadBotonesPrecontencioso','botonesBurofaxes',true)" result="flowScope.botonesVisiblesBurPco" />
 			<evaluate expression="executor.execute('plugin.precontencioso.getVisibilidadBotonesPrecontencioso','botonesBurofaxes',false)" result="flowScope.botonesInvisiblesBurPco" />
+			
 	    </on-entry>
     </end-state>     
 </flow>

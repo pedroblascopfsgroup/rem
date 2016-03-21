@@ -24,6 +24,9 @@ if [ -x $BATCH_INSTALL_DIR/run.sh ]; then
 	while [ $BATCH_ON = false ]; do
 	        status=$(cat $BATCH_INSTALL_DIR/nohup.out | grep 'JobExecutor started!')
 	        if [ "x$status" != "x" ]; then
+	        	status=$(cat $BATCH_INSTALL_DIR/nohup.out | grep 'JobExecutor ignored!')
+	        fi
+	        if [ "x$status" != "x" ]; then
         	        BATCH_ON=true
 	        else
 	                echo -n "."

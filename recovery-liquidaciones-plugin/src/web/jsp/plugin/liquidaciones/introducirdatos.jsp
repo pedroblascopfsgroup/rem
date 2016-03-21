@@ -49,12 +49,15 @@
 		
 		 
 	<pfsforms:datefield labelKey="plugin.liquidaciones.introducirdatos.control.fechacierre" label="**Fecha de cierre" name="fechacierre" obligatory="true"/>
-	<pfsforms:numberfield name="intereses" labelKey="plugin.liquidaciones.introducirdatos.control.intereses" label="**Intereses de demora" value="" obligatory="true" allowDecimals="true"/>
+	<pfsforms:numberfield name="intereses" labelKey="plugin.liquidaciones.introducirdatos.control.intereses" label="**Tipo Intereses demora" value="" obligatory="true" allowDecimals="true"/>
 	<pfsforms:numberfield name="principal" labelKey="plugin.liquidaciones.introducirdatos.control.principal" label="**Principal" value="" obligatory="true" allowDecimals="true" />
 	<pfsforms:textfield name="nombre" labelKey="plugin.liquidaciones.introducirdatos.control.nombre" label="**Nombre" value="" obligatory="true" width="500"/>
 	<pfsforms:textfield name="dni" labelKey="plugin.liquidaciones.introducirdatos.control.dni" label="**D.N.I." value="" obligatory="true"/>
 	<pfsforms:datefield labelKey="plugin.liquidaciones.introducirdatos.control.fechaliquidacion" label="xxxx" name="fechaliquidacion" obligatory="true"/>
-	
+
+	fechacierre.on('render', function() {this.validate();});
+	fechaliquidacion.on('render', function() {this.validate();});
+
 	intereses.width = 50;
 	
 	actuaciones.on('select',function (){
@@ -103,15 +106,48 @@
 		
 	<pfs:buttoncancel name="btCancelar"/>
 	
+	var validarForm = function() {
+		if (!actuaciones.isValid())
+			return false;
+		
+		if (!contratos.isValid())
+			return false;
+		
+		if (!fechacierre.isValid())
+			return false;
+			
+		if (!intereses.isValid())
+			return false;
+		
+		if (!principal.isValid())
+			return false;
+			
+		if (!nombre.isValid())
+			return false;
+			
+		if (!dni.isValid())
+			return false;
+		
+		if (!fechaliquidacion.isValid())
+			return false;
+		
+		return true;
+	}	
+	
+	
 	<pfs:button name="btAceptar" caption="**Aceptar"  captioneKey="plugin.liquidaciones.introducirdatos.action.aceptar" iconCls="icon_ok">
-		var flow='plugin.liquidaciones.openReport';
-		var tipo='generaPDF';
-		var p=parametros();
-		var params='actuacion='+p.actuacion+'&contrato='+p.contrato+'&fechaCierre='+p.fechaCierre+'&intereses='+p.intereses+'&principal='+p.principal+'&nombre='+p.nombre+'&dni='+p.dni;
-		params = params + '&fechaLiquidacion='+p.fechaLiquidacion
-		//var params='id='+ '${expediente.id}'+'&REPORT_NAME=reporteExpediente'+'${expediente.id}'+'.pdf';
-		app.openPDF(flow,tipo,params);
-		page.fireEvent(app.event.DONE);
+		if (validarForm()) {
+			var flow='plugin.liquidaciones.openReport';
+			var tipo='generaPDF';
+			var p=parametros();
+			var params='actuacion='+p.actuacion+'&contrato='+p.contrato+'&fechaCierre='+p.fechaCierre+'&intereses='+p.intereses+'&principal='+p.principal+'&nombre='+p.nombre+'&dni='+p.dni;
+			params = params + '&fechaLiquidacion='+p.fechaLiquidacion
+			//var params='id='+ '${expediente.id}'+'&REPORT_NAME=reporteExpediente'+'${expediente.id}'+'.pdf';
+			app.openPDF(flow,tipo,params);
+			page.fireEvent(app.event.DONE);
+		} else {
+			Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.message.obligatorios" text="**Debe rellenar todos los campos obligatorios" />');
+		}
 	</pfs:button>
 
 

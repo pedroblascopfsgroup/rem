@@ -28,6 +28,7 @@ public class DDTipoDespachoExterno implements Auditable, Dictionary {
     public static final String CODIGO_DESPACHO_PROCURADOR = "2";
     public static final String CODIGO_AGENCIA_RECOBRO ="AGER";
     public static final String CODIGO_GESTORIA_PCO = "GESTORIA_PREDOC";
+    public static final String CODIGO_DESPACHO_LETRADO_CJ = "D-CJ-LETR";
 
     @Id
     @Column(name = "DD_TDE_ID")

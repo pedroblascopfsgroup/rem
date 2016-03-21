@@ -4,6 +4,7 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <fwk:page>
 
 	var labelStyle='font-weight:bolder;width:100';
@@ -198,8 +199,10 @@
 	var bottomBar = [];
 	
 	<c:if test="${recurso.fechaResolucion == null && !isConsulta}">
-		bottomBar.push(btnGuardar);
-		bottomBar.push(btnRevisado);
+		<sec:authorize ifNotGranted="SOLO_CONSULTA"> 
+			bottomBar.push(btnGuardar);
+			bottomBar.push(btnRevisado);
+		</sec:authorize> 
 	</c:if>
 
 	bottomBar.push(btnCancelar);

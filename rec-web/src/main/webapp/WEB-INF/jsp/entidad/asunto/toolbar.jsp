@@ -324,6 +324,10 @@ var botonFinalizarAsunto =  new Ext.Button({
 	for (i=0; i < buttonsL_asunto.length; i++){
 		if(buttonsL_asunto[i].getText().localeCompare("Finalizar asunto") == 0)
 			buttonsL_asunto.remove(buttonsL_asunto[i]);
+		<%--PRODUCTO-671 Boton 'Alta Direcciones' borrado para usuarios con funcion SOLO_CONSULTA --%>
+		if(buttonsL_asunto[i].getText().localeCompare("Alta de Direcciones") == 0) {
+			<sec:authorize ifAllGranted="SOLO_CONSULTA">buttonsL_asunto.remove(buttonsL_asunto[i]);</sec:authorize>
+		}
 	}
 	
 	toolbar.add(botonFinalizarAsunto);

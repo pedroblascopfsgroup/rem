@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -41,6 +42,7 @@ import es.capgemini.pfs.contrato.dto.BusquedaContratosDto;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.diccionarios.comparator.DictionaryComparatorFactory;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
@@ -78,6 +80,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.bienes.InformeProp
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDDocAdjudicacion;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDImposicionVenta;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionPosesoria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionTitulo;
@@ -115,7 +118,7 @@ public class EditBienController {
 	private static final String BIENES_PRC_JSON = "plugin/nuevoModeloBienes/procedimientos/bienesJSON";
 	private static final String BIENES_PROCEDIMIENTO_JSON = "plugin/nuevoModeloBienes/adjudicacion/marcadoBienesJSON";
 	private static final String DEFAULT = "default";
-	private static final String DICCIONARIO_JSON = "plugin/nuevoModeloBienes/bienes/diccionarioJSON";
+	private static final String DICCIONARIO_JSON = "plugin/nuebien.getImporteCargas()voModeloBienes/bienes/diccionarioJSON";
 	private static final String TIPO_USUARIO_JSON = "plugin/coreextension/asunto/tipoUsuarioJSON";
 	private static final String JSON_LIST_LOCALIDADES = "plugin/nuevoModeloBienes/bienes/LocalidadesJSON";
 	private static final String JSON_LIST_UNIDADES_POBLACIONALES = "plugin/nuevoModeloBienes/bienes/UnidadesPoblacionalesJSON";
@@ -372,9 +375,18 @@ public class EditBienController {
 		List<DDTasadora> tasadora = (List<DDTasadora>) executor.execute(
 				"dictionaryManager.getList", "DDTasadora");
 		map.put("tasadora", tasadora);
-		List<DDTipoTributacion> tributacion = (List<DDTipoTributacion>) executor
+		
+		List<DDTipoTributacion	> tributacion = (List<DDTipoTributacion>) executor
 				.execute("dictionaryManager.getList", "DDTipoTributacion");
+		//Para ordenar la lista por descripcion
+		Comparator<DDTipoTributacion> comparador = new Comparator<DDTipoTributacion> () {
+		    public int compare(DDTipoTributacion p1, DDTipoTributacion p2) {
+		    	return new String(p1.getDescripcion()).compareTo(new String(p2.getDescripcion()));
+		    }
+		};
+		Collections.sort(tributacion, comparador);
 		map.put("tributacion", tributacion);
+		
 		Map<String, NMBconfigTabsTipoBien> mapaTabs = nmbConfigTabs
 				.getMapaTabsTipoBien();
 		List<DDimpuestoCompra> impuestoCompra = (List<DDimpuestoCompra>) executor
@@ -391,7 +403,53 @@ public class EditBienController {
 		
 		List<DDTipoImposicion> imposicion = (List<DDTipoImposicion>) executor
 				.execute("dictionaryManager.getList", "DDTipoImposicion");
+		//HR-1316 Funcion provisional para que no muestre el valor 16 que debe desaparecer del diccionario
+		for(int i=0; i<imposicion.size();i++)
+			if(imposicion.get(i).getCodigo().equals("16") || imposicion.get(i).getCodigo().equals("20")) {
+				imposicion.remove(i);
+			}
+		//Para ordenar la lista por codigo - Este tiene en cuenta si los codigos de Diccionario son Numeros y Letras
+		Comparator<DDTipoImposicion> comparadorImp = new Comparator<DDTipoImposicion> () {
+		    public int compare(DDTipoImposicion p1, DDTipoImposicion p2) {
+		    	if((int)p1.getCodigo().charAt(0)>= 48 && (int)p1.getCodigo().charAt(0) <= 57 && 
+		    			(int)p2.getCodigo().charAt(0)>= 48 && (int)p2.getCodigo().charAt(0)	<= 57) {
+		    		return new Integer(Integer.parseInt(p1.getCodigo())).compareTo(new Integer(Integer.parseInt(p2.getCodigo())));
+		    	}
+		    	else
+		    		return new String(p1.getCodigo()).compareTo(new String(p2.getCodigo()));
+		    }
+		};
+		Collections.sort(imposicion, comparadorImp);
 		map.put("imposicion", imposicion);
+		
+		List<DDImposicionVenta> imposicionVenta = (List<DDImposicionVenta>) executor
+				.execute("dictionaryManager.getList", "DDImposicionVenta");
+		
+		//HR-2052 - Provisional, para evitar problemas por el cambio de FK y decidan por ucal cambiar los valores antiguos
+		List<DDImposicionVenta> imposicionAuxiliar = new ArrayList<DDImposicionVenta>();
+		for(DDImposicionVenta impVenta : imposicionVenta) {
+			if(!(("4").equals(impVenta.getCodigo()) || ("7").equals(impVenta.getCodigo())  || ("10").equals(impVenta.getCodigo()) || ("21").equals(impVenta.getCodigo()) || ("CCAA").equals(impVenta.getCodigo()) )) {
+				imposicionAuxiliar.add(impVenta);
+			}
+		}
+		
+		for(DDImposicionVenta borraImp : imposicionAuxiliar) {
+			imposicionVenta.remove(borraImp);
+		}
+		
+		//Para ordenar la lista por codigo - Este tiene en cuenta si los codigos de Diccionario son Numeros y Letras
+		Comparator<DDImposicionVenta> comparadorImpVenta = new Comparator<DDImposicionVenta> () {
+		    public int compare(DDImposicionVenta p1, DDImposicionVenta p2) {
+		    	if((int)p1.getCodigo().charAt(0)>= 48 && (int)p1.getCodigo().charAt(0) <= 57 && 
+		    			(int)p2.getCodigo().charAt(0)>= 48 && (int)p2.getCodigo().charAt(0)	<= 57) {
+		    		return new Integer(Integer.parseInt(p1.getCodigo())).compareTo(new Integer(Integer.parseInt(p2.getCodigo())));
+		    	}
+		    	else
+		    		return new String(p1.getCodigo()).compareTo(new String(p2.getCodigo()));
+		    }
+		};
+		Collections.sort(imposicionVenta, comparadorImpVenta);
+		map.put("imposicionVenta", imposicionVenta);
 		
 		List<DDSiNo> sino = (List<DDSiNo>) executor
 				.execute("dictionaryManager.getList", "DDSiNo");
@@ -475,6 +533,10 @@ public class EditBienController {
 				.execute("dictionaryManager.getList", "DDTipoImposicion");
 		map.put("imposicion", imposicion);
 		
+		List<DDImposicionVenta> imposicionVenta = (List<DDImposicionVenta>) executor
+				.execute("dictionaryManager.getList", "DDImposicionVenta");
+		map.put("imposicionVenta", imposicionVenta);
+		
 		List<DDSiNo> sino = (List<DDSiNo>) executor
 				.execute("dictionaryManager.getList", "DDSiNo");
 		map.put("sino", sino);
@@ -523,6 +585,10 @@ public class EditBienController {
 		List<DDTipoImposicion> imposicion = (List<DDTipoImposicion>) executor
 				.execute("dictionaryManager.getList", "DDTipoImposicion");
 		map.put("imposicion", imposicion);
+		
+		List<DDImposicionVenta> imposicionVenta = (List<DDImposicionVenta>) executor
+				.execute("dictionaryManager.getList", "DDImposicionVenta");
+		map.put("imposicionVenta", imposicionVenta);
 		
 		List<DDSiNo> sino = (List<DDSiNo>) executor
 				.execute("dictionaryManager.getList", "DDSiNo");
@@ -578,6 +644,10 @@ public class EditBienController {
 		List<DDTipoImposicion> imposicion = (List<DDTipoImposicion>) executor
 				.execute("dictionaryManager.getList", "DDTipoImposicion");
 		map.put("imposicion", imposicion);
+		
+		List<DDImposicionVenta> imposicionVenta = (List<DDImposicionVenta>) executor
+				.execute("dictionaryManager.getList", "DDImposicionVenta");
+		map.put("imposicionVenta", imposicionVenta);
 		
 		List<DDSiNo> sino = (List<DDSiNo>) executor
 				.execute("dictionaryManager.getList", "DDSiNo");
@@ -637,7 +707,7 @@ public class EditBienController {
 		if (!Checks.esNulo(request.getParameter("oldValorActual")))
 			dto.setValorActual(new BigDecimal(request.getParameter("oldValorActual")));
 		if (!Checks.esNulo(request.getParameter("oldImporteCargas")))
-			dto.setImporteCargas(new Float(request
+			dto.setImporteCargas(new BigDecimal(request
 					.getParameter("oldImporteCargas")));
 		if (!Checks.esNulo(request.getParameter("oldFechaVerificacion")))
 			dto.setFechaVerificacion(request
@@ -646,7 +716,7 @@ public class EditBienController {
 			dto.setReferenciaCatastral(request
 					.getParameter("oldReferenciaCatastral"));
 		if (!Checks.esNulo(request.getParameter("oldSuperficie")))
-			dto.setBieSuperficie(new Float(request
+			dto.setBieSuperficie(new BigDecimal(request
 					.getParameter("oldSuperficie")));
 		if (!Checks.esNulo(request.getParameter("oldDatosRegistrales")))
 			dto.setDatosRegistrales(request.getParameter("oldDatosRegistrales"));
@@ -660,7 +730,7 @@ public class EditBienController {
 		if (!Checks.esNulo(request.getParameter("valorActual")))
 			dto.setValorActual(new BigDecimal(request.getParameter("valorActual")));
 		if (!Checks.esNulo(request.getParameter("importeCargas")))
-			dto.setImporteCargas(new Float(request
+			dto.setImporteCargas(new BigDecimal(request
 					.getParameter("importeCargas")));
 		if (!Checks.esNulo(request.getParameter("descripcionBien")))
 			dto.setDescripcionBien(request.getParameter("descripcionBien"));
@@ -718,9 +788,9 @@ public class EditBienController {
 			dto.setReferenciaCatastralBien(request
 					.getParameter("referenciaCatastralBien"));
 		if (!Checks.esNulo(request.getParameter("superficie")))
-			dto.setSuperficie(new Float(request.getParameter("superficie")));
+			dto.setSuperficie(new BigDecimal(request.getParameter("superficie")));
 		if (!Checks.esNulo(request.getParameter("superficieConstruida")))
-			dto.setSuperficieConstruida(new Float(request
+			dto.setSuperficieConstruida(new BigDecimal(request
 					.getParameter("superficieConstruida")));
 		if (!Checks.esNulo(request.getParameter("tomo")))
 			dto.setTomo(request.getParameter("tomo"));
@@ -787,19 +857,19 @@ public class EditBienController {
 			dto.setFechaValorSubjetivo(request
 					.getParameter("fechaValorSubjetivo"));
 		if (!Checks.esNulo(request.getParameter("importeValorSubjetivo")))
-			dto.setImporteValorSubjetivo(new Float(request
+			dto.setImporteValorSubjetivo(new BigDecimal(request
 					.getParameter("importeValorSubjetivo")));
 		if (!Checks.esNulo(request.getParameter("fechaValorApreciacion")))
 			dto.setFechaValorApreciacion(request
 					.getParameter("fechaValorApreciacion"));
 		if (!Checks.esNulo(request.getParameter("importeValorApreciacion")))
-			dto.setImporteValorApreciacion(new Float(request
+			dto.setImporteValorApreciacion(new BigDecimal(request
 					.getParameter("importeValorApreciacion")));
 		if (!Checks.esNulo(request.getParameter("fechaValorTasacion")))
 			dto.setFechaValorTasacion(request
 					.getParameter("fechaValorTasacion"));
 		if (!Checks.esNulo(request.getParameter("importeValorTasacion")))
-			dto.setImporteValorTasacion(new Float(request
+			dto.setImporteValorTasacion(new BigDecimal(request
 					.getParameter("importeValorTasacion")));
 
 		if (!Checks.esNulo(request.getParameter("solvenciaNoEncontrada")))
@@ -807,7 +877,7 @@ public class EditBienController {
 					.getParameter("solvenciaNoEncontrada")));
 
 		if (!Checks.esNulo(request.getParameter("valorTasacionExterna")))
-			dto.setValorTasacionExterna(Float.parseFloat(request
+			dto.setValorTasacionExterna(new BigDecimal(request
 					.getParameter("valorTasacionExterna")));
 
 		if (!Checks.esNulo(request.getParameter("fechaTasacionExterna")))
@@ -867,7 +937,7 @@ public class EditBienController {
 		if (!Checks.esNulo(request.getParameter("tipoInmueble")))
 			dto.setTipoInmueble(request.getParameter("tipoInmueble"));
 		if (!Checks.esNulo(request.getParameter("valoracion")))
-			dto.setValoracion(new Float(request.getParameter("valoracion")));
+			dto.setValoracion(new BigDecimal(request.getParameter("valoracion")));
 		if (!Checks.esNulo(request.getParameter("entidad")))
 			dto.setEntidad(request.getParameter("entidad"));
 		if (!Checks.esNulo(request.getParameter("numCuenta")))
@@ -981,6 +1051,7 @@ public class EditBienController {
 		return saveEmbargo(request);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String generarInformePropCancelacionCargas(
 			@RequestParam(value = "id", required = true) Long idBien,
@@ -1555,6 +1626,17 @@ public class EditBienController {
 					.getParameter("importeCesionRemate")));
 		} else {
 			adjudicacion.setImporteCesionRemate(null);
+		}
+		
+		if (!Checks.esNulo(request.getParameter("fechaContabilidad"))) {
+			try {
+				adjudicacion.setFechaContabilidad(DateFormat.toDate(request
+						.getParameter("fechaContabilidad")));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		} else {
+			adjudicacion.setFechaContabilidad(null);
 		}
 
 		bien.setAdjudicacion(adjudicacion);
@@ -3381,7 +3463,6 @@ public class EditBienController {
 	private void saveAdjudicaciones(BienesAdjudicaciones bienesAdjudicaciones) {
 		NMBAdjudicacionBien adjudicacion = new NMBAdjudicacionBien();
 		NMBBien bien = null;
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
 		SimpleDateFormat formatText = new SimpleDateFormat("dd/MM/yyyy");
 		// 1901-05-23T00:00:00
 		for (BienAdjudicacion bienAdjudicacion : bienesAdjudicaciones
@@ -4177,6 +4258,9 @@ public class EditBienController {
 	public String getListLocalidades(ModelMap model, String codProvincia) {
 		List<Localidad> list = proxyFactory.proxy(BienApi.class)
 				.getListLocalidades(codProvincia);
+		
+		Collections.sort(list, DictionaryComparatorFactory.getInstance().create(DictionaryComparatorFactory.COMPARATOR_BY_DESCRIPCION));
+		
 		model.put("listLocalidades", list);
 		return JSON_LIST_LOCALIDADES;
 	}

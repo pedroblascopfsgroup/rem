@@ -9,11 +9,11 @@ import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.dao.AbstractEntityDao;
-import es.capgemini.pfs.despachoExterno.model.DespachoAmbitoActuacion;
 import es.pfsgroup.commons.utils.Assertions;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.recovery.config.despachoExterno.dao.ADMDespachoAmbitoActuacionDao;
+import es.pfsgroup.recovery.ext.turnadodespachos.DespachoAmbitoActuacion;
 
 @Repository("ADMDespachoAmbitoActuacionDao")
 public class ADMDespachoAmbitoActuacionDaoImpl extends
@@ -51,7 +51,7 @@ public class ADMDespachoAmbitoActuacionDaoImpl extends
         crit.add(Restrictions.eq("auditoria.borrado", false));
 		
 		if(listadoProvincias != null && !listadoProvincias.equals("")) {
-			crit.createCriteria("provincia").add(Restrictions.not(Restrictions.in("codigo", StringUtils.split(listadoComunidades, ","))));
+			crit.createCriteria("provincia").add(Restrictions.not(Restrictions.in("codigo", StringUtils.split(listadoProvincias, ","))));
         }
         else {
 			crit.add(Restrictions.isNotNull("provincia"));
@@ -86,7 +86,7 @@ public class ADMDespachoAmbitoActuacionDaoImpl extends
 		HQLBuilder b = new HQLBuilder("from DespachoAmbitoActuacion d");
 		b.appendWhere("d.auditoria." + Auditoria.UNDELETED_RESTICTION);
 		HQLBuilder.addFiltroIgualQue(b, "d.despacho.id", idDespacho);
-		HQLBuilder.addFiltroIgualQue(b, "d.comunidad.codigo", codigoProvincia);
+		HQLBuilder.addFiltroIgualQue(b, "d.provincia.codigo", codigoProvincia);
 		return HibernateQueryUtils.uniqueResult(this, b);
 	}    
 }

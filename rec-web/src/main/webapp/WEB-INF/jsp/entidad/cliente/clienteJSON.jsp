@@ -24,6 +24,7 @@
 	<json:property name="tieneContratosParaCliente" value="${tieneContratos==true}" />
 	<json:property name="tieneContratosActivos" value="${tieneContratosActivos}" />
 	<json:property name="tieneContratosLibres" value="${tieneContratosLibres}" />
+	<json:property name="numContratos" value="${persona.numContratos}" />
 	<json:property name="idCliente" value="${persona.clienteActivo.id}" />
 	<json:property name="fechaCreacion" >
 		<fwk:date value="${persona.fechaCreacion}"/>
@@ -110,7 +111,7 @@
 		<json:property name="pasivoPlazo" value="${persona.pasivoPlazo}" />
 		<json:property name="puntuacion" value="${persona.puntuacionTotalActiva.puntuacion}" />
 		<json:property name="prepolitica" value="${persona.prepolitica.descripcion}" />
-		<json:property name="politica" value="${persona.politicaVigente.tipoPolitica.descripcion}" />
+		<json:property name="politica" value="${ultimaPolitica.tipoPolitica.descripcion}" />
 		<json:property name="isNullGrupo" value="${persona.grupo==null}" />
 		<json:property name="nombreGrupo" value="${persona.grupo.grupoCliente.nombre}" />
 		<json:property name="ultimaOperacionConcedida" value="${persona.ultimaOperacionConcedida}" />
@@ -195,7 +196,7 @@
 		</json:property>
 		<json:property name="ratingExterno" value="${persona.ratingExterno.descripcion}" />
 		<json:property name="servicioNominaPension" value="${persona.servicioNominaPension}" />
-		<json:property name="ultimaActuacion" value="${persona.ultimaActuacion}" />
+		<json:property name="ultimaActuacion" value="${ultimaPolitica.tipoPolitica.descripcion}" />
 		<json:property name="situacionConcursal">
 			<c:if test="${persona.situacionConcursal}">
 				<s:message code="mensajes.si"/>
@@ -204,6 +205,7 @@
 				<s:message code="mensajes.no"/>
 			</c:if>
 		</json:property>
+		<json:property name="sitConcursal" value="${persona.sitConcursal.descripcion}" />
 		<json:property name="fechaSituacionConcursal" value="${persona.fechaSituacionConcursal}"/>
 		<json:property name="clienteReestructurado">
 			<c:if test="${persona.clienteReestructurado}">

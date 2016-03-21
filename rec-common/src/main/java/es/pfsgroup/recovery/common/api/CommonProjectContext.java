@@ -19,9 +19,22 @@ public interface CommonProjectContext {
 	public String getNroContratoFormateado(String nroContrato);
 
 	/**
-	 * Devuelve el mapa con el formato del número de contrato definidio en el projectContext
+	 * Devuelve el mapa con el formato del número de contrato definido en el projectContext
 	 * 
 	 * @return Map<String, String>
 	 */
 	Map<String, String> getFormatoNroContrato();
+	
+	/**
+	 * Devuelve un mapa con el tipo de gestores definido en el projectContext
+	 * @return Map<String, String>
+	 */
+	public Map<String, String> getTipoGestores();
+
+	/**
+	 * Recupera el tipo de gestor definido en el mapa de gestores
+	 * @param tipoGestor: clave del tipo de gestor
+	 * @return String
+	 */
+	public String getTipoGestor(String tipoGestor);
 }

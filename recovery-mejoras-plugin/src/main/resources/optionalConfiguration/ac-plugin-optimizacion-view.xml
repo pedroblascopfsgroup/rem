@@ -38,7 +38,7 @@
 		
 	<bean p:entity="tabs.contrato.fast" p:name="atipicosContrato"  p:order="111" 
 		p:fileName="/WEB-INF/jsp/entidad/contrato/tabs/tabAtipicos.jsp" 
-		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="TAB_ATIPICOS" />
 
 	<!-- CLIENTES FAST -->	
 	
@@ -114,11 +114,13 @@
 	
 	<bean p:entity="tabs.asunto.fast" p:name="titulos"  p:order="400" 
 		p:fileName="/WEB-INF/jsp/entidad/asunto/tabs/titulos.jsp" 
-		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="TAB_ASUNTO_TITULOS" />
 
 	<bean p:entity="tabs.asunto.fast" p:name="acuerdos"  p:order="500" 	
 		p:fileName="/WEB-INF/jsp/entidad/asunto/tabs/acuerdos.jsp" 
-		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="TAB_ASUNTO_ACUERDOS" />
 	
 	<bean p:entity="tabs.asunto.fast" p:name="cobropago"  p:order="700" 
 		p:fileName="/WEB-INF/jsp/entidad/asunto/tabs/cobroPago.jsp" 
@@ -129,13 +131,16 @@
 		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
 		p:permission="ROLE_COMITE"/>
 		
+		<!-- Se comenta este bean para que no muestre la pestaña eventos en los asuntos -->
+	<!-- 	
 	<bean p:entity="tabs.asunto.fast" p:name="historicoEventosAsuntos"  p:order="1000" 
 		p:fileName="/WEB-INF/jsp/entidad/asunto/tabs/eventos.jsp" 
-		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />  -->
 	
 	<bean p:entity="tabs.asunto.fast" p:name="adjuntosAsunto"  p:order="1100" 	
 		p:fileName="/WEB-INF/jsp/entidad/asunto/tabs/adjuntos.jsp" 
-		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="TAB_ASUNTO_ADJUNTOS" />
 <!-- 
 	<bean p:entity="tabs.asunto.fast" p:name="historicoAsunto"  p:order="2000" 
 		p:fileName="/WEB-INF/jsp/entidad/asunto/tabs/historico.jsp" 
@@ -238,7 +243,8 @@
 		
 	<bean p:entity="tabs.procedimiento.fast" p:name="contratosProcedimiento"  p:order="200"
 		p:fileName="/WEB-INF/jsp/entidad/procedimiento/tabs/contratos.jsp" 
-		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="TAB_PRC_CONTRATO" />
 		
 	<bean p:entity="tabs.procedimiento.fast" p:name="embargosProcedimiento"  p:order="300" 
 		p:fileName="/WEB-INF/jsp/entidad/procedimiento/tabs/embargo.jsp" 
@@ -251,11 +257,12 @@
 	<bean p:entity="tabs.procedimiento.fast" p:name="decisionProcedimiento"  p:order="500" 
 		p:fileName="/WEB-INF/jsp/entidad/procedimiento/tabs/decisiones.jsp" 
 		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
-		/>
+		p:permission="TAB_PRC_DECISION" />
 		
 	<bean p:entity="tabs.procedimiento.fast" p:name="tareasProcedimiento"  p:order="600" 
 		p:fileName="/WEB-INF/jsp/entidad/procedimiento/tabs/tareas.jsp" 
-		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		 />
 		
 <!-- <bean p:entity="tabs.procedimiento.fast" p:name="docRequeridaProcedimiento" p:order="700" 
 		p:fileName="/WEB-INF/jsp/entidad/procedimiento/tabs/documentacion.jsp" 
@@ -263,7 +270,8 @@
  -->	
 	<bean p:entity="tabs.procedimiento.fast" p:name="adjuntosProcedimiento" p:order="800" 
 		p:fileName="/WEB-INF/jsp/entidad/procedimiento/tabs/adjuntos.jsp" 
-		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="TAB_PRC_ADJUNTO" 	/>
 		
 	<bean p:entity="tabs.procedimiento.fast" p:name="historicoProcedimiento"  p:order="900" 
 		p:fileName="/WEB-INF/jsp/entidad/procedimiento/tabs/historico.jsp" 

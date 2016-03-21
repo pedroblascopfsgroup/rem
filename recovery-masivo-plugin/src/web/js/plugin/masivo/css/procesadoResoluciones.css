@@ -60,6 +60,11 @@
     background-repeat:no-repeat;background-position:left;
 }
 
+.tipo_accion_NOTIFICACION {
+	background-image: url('../../../../img/plugin/masivo/building_edit.png');
+    background-repeat:no-repeat;background-position:left;
+}
+
 
 .cssEstadoProcedimiento { padding: 20px 10px; background-repeat:no-repeat;background-position:left;}
 

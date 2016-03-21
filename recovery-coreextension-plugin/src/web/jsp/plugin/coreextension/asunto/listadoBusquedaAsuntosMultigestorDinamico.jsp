@@ -64,7 +64,7 @@
         text:'<s:message code="menu.clientes.listado.filtro.exportar.xls" text="**Exportar a Excel" />'
         ,iconCls:'icon_exportar_csv'
         ,handler: function() {
-            var parametros = new Array();
+            var parametros = new Object();
             var hayParametros = false;
             var anadirParametros = function(newParametros) {
                 for (var i in newParametros) {
@@ -92,72 +92,47 @@
             }
             
             if (hayParametros) {
-            
-            	var y = 0;
+			
+				var y = 0;
 				var paramAux;
 				for(var i in parametrosTab){
-					paramAux = paramAux+'_param_'+parametrosTab[i];	
+						paramAux = paramAux+'_param_'+parametrosTab[i];	
 				}
 				parametros['params'] = paramAux;
-						
-				debugger;
-						
-				//var flow='asuntos/exportAsuntos';
-		        var flow='plugin/coreextension/asunto/core.exportAsuntos';
-		        var params=parametros;
-		               
-		        parametros.tipoSalida='<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.SALIDA_XLS" />';
-		        
-		        debugger;
 				
-				Ext.Ajax.request({
-	            	url: page.resolveUrl('extasunto/exportacionAsuntosCount')
-	                ,method: 'POST'
-	                ,params: {
-	                	anyoProcedimientoEnJuzgado: parametros.anyoProcedimientoEnJuzgado,
-	                	codigoAsunto: parametros.codigoAsunto,
-	                	codigoZona: parametros.codigoZona,
-	                	comboErrorPostCDD: parametros.comboErrorPostCDD,
-	                	comboErrorPreviCDD: parametros.comboErrorPreviCDD,
-	                	comboEstados: parametros.comboEstados,
-	                	comboGestion: parametros.comboGestion,
-	                	comboPropiedades: parametros.comboPropiedades,
-	                	comboSituacionCDD: parametros.comboSituacionCDD,
-	                	comboTipoAsunto: parametros.comboTipoAsunto,
-	                	fechaCreacionDesde: parametros.fechaCreacionDesde,
-	                	fechaCreacionHasta: parametros.fechaCreacionHasta,
-	                	fechaEntregaDesde: parametros.fechaEntregaDesde,
-	                	fechaEntregaHasta: parametros.fechaEntregaHasta,
-	                	filtroContrato: parametros.filtroContrato,
-	                	jerarquia: parametros.jerarquia,
-	                	maxImporteEstimado: parametros.maxImporteEstimado,
-	                	maxSaldoTotalContratos: parametros.maxSaldoTotalContratos,
-	                	minImporteEstimado: parametros.minImporteEstimado,
-	                	minSaldoTotalContratos: parametros.minSaldoTotalContratos,
-	                	nombre: parametros.nombre,
-	                	numeroProcedimientoEnJuzgado: parametros.numeroProcedimientoEnJuzgado,
-	                	params: parametros.params,
-	                	tipoProcedimiento: parametros.tipoProcedimiento,
-	                	tipoSalida: parametros.tipoSalida
-	                }
-	                ,success: function (result, request){
-	                	debugger;
-	                    var r = Ext.util.JSON.decode(result.responseText);
-	                    
-	                    if(r.success) {       
-		                    app.openBrowserWindow(flow,parametros);
-					        parametrosTab = new Array();
-						}   
-					}
-					,failure: function (result, request){
-	                	debugger;
-	                }
-				});
+                var params=parametros;
+               
+               Ext.Ajax.request({
+					url: page.resolveUrl('extasunto/exportacionAsuntosCount')
+					,params: params
+					,method: 'POST'
+					,success: function (result, request){
+						var r = Ext.util.JSON.decode(result.responseText);
+						if(r.count <= r.limit) {
+						    var flow = '/pfs/extasunto/exportarExcelAsuntos';
+             			
+							parametros.tipoSalida='<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.SALIDA_XLS" />';
+    			            app.openBrowserWindow(flow,parametros);
+    			            
+    			            parametrosTab = new Array();            
+				   		}
+			    		else {
+			    			if(r.count != undefined && r.limit != undefined) {
+			    				Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>', '<s:message code="plugin.coreextension.asuntos.exportarExcel.limiteSuperado1"/>' + r.limit + ' <s:message code="plugin.coreextension.asuntos.exportarExcel.limiteSuperado2"/>');
+			    			}
+			    				
+			    			return false;
+			    		}	
+		    		}
+				});				
+               
             } else {
                 Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="expedientes.listado.criterios"/>');
             }
         }
-    });   
+    });
+    
+    
     
     var btnBuscar=app.crearBotonBuscar({
         handler : function() {
@@ -279,13 +254,13 @@
     	    var separa = value.split("-");
     	    var apellido1Str = separa[0]; 
     	    var apellido2Str = separa[1]; 
-    	    var nombreStr    = separa[2]; 
+    	    var nombreStr    = separa[2];   	    
     	    
-    	    if(apellido1Str.length > 0)
+    	    if(apellido1Str.length > 0 && apellido1Str != "null")
     	    {
     	       apellidosNombreStr = apellidosNombreStr + apellido1Str;
     	    }
-    	    if(apellido2Str.length > 0)
+    	    if(apellido2Str.length > 0 && apellido2Str != "null")
     	    {
     	       apellidosNombreStr = apellidosNombreStr + " " + apellido2Str;
     	    }
@@ -388,4 +363,5 @@
 	    ,border: false
     });
 	page.add(mainPanel);
+
 </fwk:page>

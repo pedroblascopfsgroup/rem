@@ -26,6 +26,24 @@ public class EXTContrato extends Contrato  {
   			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
   			+ APPConstants.NUM_EXTRA5 + "'))")
   	private String numextra5;
+  	
+  	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+  			+ "  and iac.dd_ifc_id = ("
+  			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.NUM_EXTRA6 + "'))")
+  	private String numextra6;
+  	
+  	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+  			+ "  and iac.dd_ifc_id = ("
+  			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.NUM_EXTRA7 + "'))")
+  	private String numextra7;
+  	
+  	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+  			+ "  and iac.dd_ifc_id = ("
+  			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.NUM_EXTRA8 + "'))")
+  	private String numextra8;
 
   	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
   			+ "  and iac.dd_ifc_id = ("
@@ -56,6 +74,18 @@ public class EXTContrato extends Contrato  {
   			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
   			+ APPConstants.DATE_EXTRA6 + "'))")
   	private String dateextra6;
+  	
+  	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+  			+ "  and iac.dd_ifc_id = ("
+  			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.DATE_EXTRA7 + "'))")
+  	private String dateextra7;
+  	
+  	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+  			+ "  and iac.dd_ifc_id = ("
+  			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.DATE_EXTRA9 + "'))")
+  	private String dateextra9;
 
   	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
   			+ "  and iac.dd_ifc_id = ("
@@ -74,6 +104,18 @@ public class EXTContrato extends Contrato  {
   			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
   			+ APPConstants.FLAG_EXTRA4 + "'))")
   	private String flagextra4;
+  	
+  	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+  			+ "  and iac.dd_ifc_id = ("
+  			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.FLAG_EXTRA5 + "'))")
+  	private String flagextra5;
+  	
+  	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+  			+ "  and iac.dd_ifc_id = ("
+  			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.FLAG_EXTRA6 + "'))")
+  	private String flagextra6;
 
 	/**
 	 * @return the contratoPadreNivel2
@@ -228,4 +270,61 @@ public class EXTContrato extends Contrato  {
 	public void setFlagextra4(String flagextra4) {
 		this.flagextra4 = flagextra4;
 	}
+
+	public String getNumextra6() {
+		return numextra6;
+	}
+
+	public void setNumextra6(String numextra6) {
+		this.numextra6 = numextra6;
+	}
+
+	public String getNumextra7() {
+		return numextra7;
+	}
+
+	public void setNumextra7(String numextra7) {
+		this.numextra7 = numextra7;
+	}
+
+	public String getNumextra8() {
+		return numextra8;
+	}
+
+	public void setNumextra8(String numextra8) {
+		this.numextra8 = numextra8;
+	}
+
+	public String getDateextra7() {
+		return dateextra7;
+	}
+
+	public void setDateextra7(String dateextra7) {
+		this.dateextra7 = dateextra7;
+	}
+
+	public String getFlagextra5() {
+		return flagextra5;
+	}
+
+	public void setFlagextra5(String flagextra5) {
+		this.flagextra5 = flagextra5;
+	}
+
+	public String getFlagextra6() {
+		return flagextra6;
+	}
+
+	public void setFlagextra6(String flagextra6) {
+		this.flagextra6 = flagextra6;
+	}
+
+	public String getDateextra9() {
+		return dateextra9;
+	}
+
+	public void setDateextra9(String dateextra9) {
+		this.dateextra9 = dateextra9;
+	}
+	
 }

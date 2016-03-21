@@ -7,8 +7,10 @@
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags"%>
 <%@ taglib prefix="pfs" tagdir="/WEB-INF/tags/pfs"%>
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <fwk:page>
 
+	<sec:authentication var="user" property="principal" />
 	var arrayIdEnvios='${arrayIdEnvios}';
 	var arrayIdContrato='${arrayIdContrato}';
 	
@@ -25,14 +27,50 @@
     var arrayIdDirecciones='${arrayIdDirecciones}';
     var comboEditable='${comboEditable}';
     
-   
+ 	var listadoDocumentos = Ext.data.Record.create([
+		 {name:'idDoc'}
+		,{name:'tipoDocumento'}
+		,{name:'contrato'}
+	]);
+		
+	var storeDocumentos = page.getStore({
+	       flow: 'burofax/getDocuemtosPCONoDescartados'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'solicitudesDocumento'
+	    }, listadoDocumentos)	       
+	});	
+
+	var documento = new Ext.form.ComboBox({
+		store:storeDocumentos
+		,name:'documento'
+		,displayField:'tipoDocumento'
+		,valueField:'idDoc'
+		,allowBlank : true
+		,mode: 'local'
+		,width: 350
+		,resizable: true
+		,forceSelection: true
+		,tpl: new Ext.XTemplate('<tpl for="."><div class="x-combo-list-item">{contrato} - {tipoDocumento}</div></tpl>')
+		,emptyText:'<s:message code="rec-web.direccion.form.seleccionar" text="**Seleccionar" />'
+		,triggerAction: 'all'
+		,fieldLabel: '<s:message code="plugin.precontencioso.grid.burofax.tituloDocumento" text="**Titulo del documento" />'
+	});
+		
+	documento.on('select', function(box, record, index) {
+			var r = documento.getStore().find('idDoc',documento.getValue());
+			documento.setRawValue(documento.getStore().getAt(r).get('contrato')+" - "+documento.getStore().getAt(r).get('tipoDocumento'));
+	});
    
    <c:if test="${comboEditable}">
    
 	<pfsforms:ddCombo name="tipoBurofax"  
 		labelKey="plugin.precontencioso.grid.burofax.tipoBurofax" 
  		label="**Tipo Burofax" value="${idTipoBurofax}" dd="${listaTipoBurofax}" 
-		propertyCodigo="id" propertyDescripcion="descripcion" obligatory="true"/>   	
+		propertyCodigo="id" propertyDescripcion="descripcion" obligatory="true"/> 
+		
+		<c:if test="${user.entidad.descripcion eq 'CAJAMAR' || user.entidad.descripcion eq 'HAYA'}">
+			storeDocumentos.webflow({idProcedimientoPCO: data.precontencioso.id});  	
+		</c:if>
 		
   </c:if>
   
@@ -63,13 +101,21 @@
 				return;
 			}else{
 				mask.show();
-				Ext.Ajax.request({
-					url : page.resolveUrl('burofax/guardarEnvioBurofax'), 
-					params : {arrayIdEnvios:arrayIdEnvios,arrayIdContrato:arrayIdContrato,certificado:certificado.getValue(),idTipoBurofax:tipoBurofax.getValue(),arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax,comboEditable:comboEditable},
-					method: 'POST',
+				page.webflow({
+					flow: 'burofax/guardarEnvioBurofax', 
+					params : {arrayIdEnvios:arrayIdEnvios,arrayIdContrato:arrayIdContrato,certificado:certificado.getValue(),idTipoBurofax:tipoBurofax.getValue(),arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax,comboEditable:comboEditable,idDocumento:documento.value},
 					success: function ( result, request ) {
-						mask.hide();
-						page.fireEvent(app.event.DONE);
+						if(result.msgError==''){
+							mask.hide();
+							page.fireEvent(app.event.DONE);
+						}else{
+							mask.hide();
+							Ext.Msg.show({
+								title: fwk.constant.alert,
+								msg: result.msgError,
+								buttons: Ext.Msg.OK
+							});
+						}
 					}
 				});
 			}
@@ -95,7 +141,7 @@
 			,width:700
 			,bodyStyle:'padding:10px;cellspacing:20px'
 			,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
-			,items : [certificado,tipoBurofax]
+			,items : [certificado,tipoBurofax <c:if test="${user.entidad.descripcion eq 'CAJAMAR' || user.entidad.descripcion eq 'HAYA'}">,documento</c:if>]
 			,bbar:bottomBar
 		});
 	</c:if>

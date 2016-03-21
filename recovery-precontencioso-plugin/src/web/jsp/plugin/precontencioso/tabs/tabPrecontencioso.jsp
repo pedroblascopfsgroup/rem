@@ -13,6 +13,7 @@
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/documento/grids/documentoGrid.jsp" %>
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/liquidacion/grids/liquidacionGrid.jsp" %>
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/burofax/grids/burofax.jsp" %>
+<%@ include file="/WEB-INF/jsp/plugin/precontencioso/observacion/grids/observacionGrid.jsp" %>
 
 	var panel = new Ext.Panel({
 		title:'<s:message code="procedimiento.precontencioso.expedienteJudicial" text="**Precontencioso"/>'
@@ -32,6 +33,12 @@
 	<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_BUROFAXES">
 		panel.add(gridBurofax);
 	</sec:authorize>
+	
+	<%-- PRO-812 - Falta confirmar que usuarios pueden ver este grid --%>
+	<c:if test="${user.entidad.descripcion eq 'HAYA'}">
+		panel.add(gridObservaciones);
+    </c:if>
+		
 
 	panel.getValue = function() {}
 
@@ -47,22 +54,38 @@
 			{
 				var r = Ext.util.JSON.decode(result.responseText);
 				data.esExpedienteEditable = r.isEditable;
-
-				<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_DOCUMENTOS">
-					ponerVisibilidadBotonesDoc(data.botonesVisiblesDocPco, data.botonesInvisiblesDocPco);
-					refrescarDocumentosGrid();
-				</sec:authorize>
-		
-				<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_LIQUIDACIONES">
-					ponerVisibilidadBotonesLiq(data.botonesVisiblesLiqPco, data.botonesInvisiblesLiqPco);
-					refrescarLiquidacionesGrid();
-					ocultarColumnasGrid();
-				</sec:authorize>
-		
-				<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_BUROFAXES">
-					ponerVisibilidadBotonesBur(data.botonesVisiblesBurPco, data.botonesInvisiblesBurPco);
-					refrescarBurofaxGrid();
-				</sec:authorize>
+				
+				Ext.Ajax.request({
+					url: page.resolveUrl('expedientejudicial/isGestoria')
+					,params: {idProcedimiento:data.id}
+					,method: 'POST'
+					,success: function (result, request)
+					{
+						var r = Ext.util.JSON.decode(result.responseText);
+						data.esUsuarioGestoria = r.esUsuarioGestoria;
+				
+						<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_DOCUMENTOS">
+							ponerVisibilidadBotonesDoc(data.botonesVisiblesDocPco, data.botonesInvisiblesDocPco);
+							refrescarDocumentosGrid();
+							cargaTiposDeDocumentosFiltro();
+						</sec:authorize>
+				
+						<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_LIQUIDACIONES">
+							ponerVisibilidadBotonesLiq(data.botonesVisiblesLiqPco, data.botonesInvisiblesLiqPco);
+							refrescarLiquidacionesGrid();
+							ocultarColumnasGrid();
+						</sec:authorize>
+				
+						<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_BUROFAXES">
+							ponerVisibilidadBotonesBur(data.botonesVisiblesBurPco, data.botonesInvisiblesBurPco);
+							refrescarBurofaxGrid();
+						</sec:authorize>
+						
+						<%-- PRO-812 - Falta confirmar que usuarios pueden gver este grid --%>
+							
+							refrescarObservacionesGrid();
+					}
+				});	
 			}
 		});
 	}

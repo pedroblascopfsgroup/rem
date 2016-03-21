@@ -1,10 +1,12 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.impl;
 
-import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +15,6 @@ import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
@@ -24,9 +25,6 @@ import org.springframework.stereotype.Repository;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
-import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.pfsgroup.commons.utils.Checks;
@@ -81,7 +79,6 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		ProjectionList select = Projections.projectionList();
 
 		// Distinct por procedimiento id
-
 		select.add(Projections.property("id").as("id"));
 		select.add(Projections.property("procedimientoPco.procedimiento").as("procedimiento"));
 		select.add(Projections.property("procedimiento.id").as("prcId"));
@@ -102,7 +99,6 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		select.add(Projections.property("procedimientoPco.importe").as("importe"));
 		select.add(Projections.property("procedimientoPco.fechaFinalizado").as("fechaFinalizado"));
 		select.add(Projections.property("procedimientoPco.fechaCancelado").as("fechaCancelado"));
-
 
 		Criteria query = queryBusquedaPorFiltro(filtro);
 		query.setProjection(select);
@@ -143,7 +139,8 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 	public List<HashMap<String, Object>> busquedaDocumentosPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
 		ProjectionList select = Projections.projectionList();
 
-		select.add(Projections.distinct(Projections.property("documento.id").as("id")));
+		addDefaultProcedimientoProjection(select);
+
 		select.add(Projections.property("estadoDocumento.descripcion").as("estado"));
 		select.add(Projections.property("resultadoSolicitud.descripcion").as("ultimaRespuesta"));
 		select.add(Projections.property("solicitud.actor").as("ultimoActor"));
@@ -151,9 +148,6 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		select.add(Projections.property("solicitud.fechaResultado").as("fechaResultado"));
 		select.add(Projections.property("solicitud.fechaEnvio").as("fechaEnvio"));
 		select.add(Projections.property("solicitud.fechaRecepcion").as("fechaRecepcion"));
-		select.add(Projections.property("solicitud.fechaSolicitud").as("fechaSolicitud"));
-		
-		addDefaultProcedimientoProjection(select);
 
 		Criteria query = queryBusquedaPorFiltro(filtro);
 		query.setProjection(select);
@@ -170,15 +164,14 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 	public List<HashMap<String, Object>> busquedaLiquidacionesPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
 		ProjectionList select = Projections.projectionList();
 
-		select.add(Projections.distinct(Projections.property("liquidacion.id").as("id")));
+		addDefaultProcedimientoProjection(select);
+
 		select.add(Projections.property("estadoLiquidacion.descripcion").as("estado"));
 		select.add(Projections.property("liqcontrato.nroContrato").as("contrato"));
 		select.add(Projections.property("liquidacion.fechaConfirmacion").as("fechaConfirmacion"));
 		select.add(Projections.property("liquidacion.fechaCierre").as("fechaCierre"));
 		select.add(Projections.property("liquidacion.fechaRecepcion").as("fechaRecepcion"));
 		select.add(Projections.property("liquidacion.total").as("total"));
-
-		addDefaultProcedimientoProjection(select);
 
 		Criteria query = queryBusquedaPorFiltro(filtro);
 		query.setProjection(select);
@@ -196,15 +189,16 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 	public List<HashMap<String, Object>> busquedaBurofaxPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
 		ProjectionList select = Projections.projectionList();
 
-		select.add(Projections.distinct(Projections.property("burofax.id").as("id")));
+		addDefaultProcedimientoProjection(select);
+
 		select.add(Projections.property("estadoBurofax.descripcion").as("estado"));
 		select.add(Projections.property("burofax.demandado").as("demandado"));
 		select.add(Projections.property("enviosBurofax.fechaSolicitud").as("fechaSolicitud"));
 		select.add(Projections.property("enviosBurofax.fechaEnvio").as("fechaEnvio"));
 		select.add(Projections.property("enviosBurofax.fechaAcuse").as("fechaAcuse"));
+		select.add(Projections.property("enviosBurofax.refExternaEnvio").as("refExternaEnvio"));
+		select.add(Projections.property("burofax.esPersonaManual").as("esPersonaManual"));
 		select.add(Projections.property("resultadoBurofax.descripcion").as("resultado"));
-
-		addDefaultProcedimientoProjection(select);
 
 		Criteria query = queryBusquedaPorFiltro(filtro);
 		query.setProjection(select);
@@ -271,16 +265,6 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		// Añadir filtros a la consulta
 		for (Criterion condicion : where) {
 			query.add(condicion);
-		}
-		
-		if(filtro.getSort() != null) {
-			try {
-				Method method = Order.class.getMethod(filtro.getDir().toLowerCase(), filtro.getSort().getClass());
-				query.addOrder((Order) method.invoke(null, filtro.getSort()));
-			}
-			catch(Exception e) {
-				logger.error("Error en el método queryBusquedaPorFiltro: " + e.getMessage());
-			}
 		}
 
 		//query.addOrder(Order.asc("id")); // workaround
@@ -445,8 +429,21 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		if (!StringUtils.isBlank(filtro.getProCentroContable())) {
 			query.createAlias("contrato.oficinaContable", "oficinaContable");
 			query.createAlias("oficinaContable.zona", "oficinaContableZona");
-
-			where.add(Restrictions.in("oficinaContableZona.codigo", filtro.getProCentroContable().split(",")));
+			
+			Criterion criterion = null;
+			
+			List<String> lCodigosZona = Arrays.asList(filtro.getProCentroContable().split(","));
+			for(String codigoZona : lCodigosZona) {
+				
+				if(criterion == null) {
+					criterion = Restrictions.like("oficinaContableZona.codigo", codigoZona, MatchMode.START);
+				}
+				else {
+					criterion = Restrictions.or(criterion, Restrictions.like("oficinaContableZona.codigo", codigoZona, MatchMode.START));
+				}
+			}			
+			
+			where.add(criterion);
 		}
 
 		return where;
@@ -516,7 +513,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 				where.add(Restrictions.in("actorUsuario.id", getListLongFromStringCsv(filtro.getDocGestor())));
 			}
 
-			where.addAll(dateRangeFilter("solicitud.fechaSolicitud", filtro.getLiqFechaSolicitudDesde(), filtro.getDocFechaSolicitudHasta()));
+			where.addAll(dateRangeFilter("solicitud.fechaSolicitud", filtro.getDocFechaSolicitudDesde(), filtro.getDocFechaSolicitudHasta()));
 			where.addAll(dateRangeFilter("solicitud.fechaEnvio", filtro.getDocFechaEnvioDesde(), filtro.getDocFechaEnvioHasta()));
 			where.addAll(dateRangeFilter("solicitud.fechaResultado", filtro.getDocFechaResultadoDesde(), filtro.getDocFechaResultadoHasta()));
 			where.addAll(dateRangeFilter("solicitud.fechaRecepcion", filtro.getDocFechaRecepcionDesde(), filtro.getDocFechaRecepcionHasta()));
@@ -551,7 +548,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 			where.add(Restrictions.ge("liquidacion.diasEnGestion", Integer.valueOf(filtro.getLiqDiasGestion())));
 		}
 
-		where.addAll(floatRangeFilter("liquidacion.total", filtro.getLiqTotalDesde(), filtro.getLiqTotalHasta()));
+		where.addAll(bigDecimalRangeFilter("liquidacion.total", filtro.getLiqTotalDesde(), filtro.getLiqTotalHasta()));
 		where.addAll(dateRangeFilter("liquidacion.fechaSolicitud", filtro.getLiqFechaSolicitudDesde(), filtro.getLiqFechaSolicitudHasta()));
 		where.addAll(dateRangeFilter("liquidacion.fechaConfirmacion", filtro.getLiqFechaConfirmacionDesde(), filtro.getLiqFechaConfirmacionHasta()));
 		where.addAll(dateRangeFilter("liquidacion.fechaCierre", filtro.getLiqFechaCierreDesde(), filtro.getLiqFechaCierreHasta()));
@@ -576,17 +573,35 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		}
 
 		query.createAlias("procedimientoPco.burofaxes", "burofax");
-		query.createAlias("enviosBurofax.resultadoBurofax", "resultadoBurofax", CriteriaSpecification.LEFT_JOIN);
+		
+		if (!StringUtils.isBlank(filtro.getBurRegManual())) {
+			where.add(Restrictions.eq("burofax.esPersonaManual", "01".equals(filtro.getBurRegManual())));
+		}
 
 		// Si se realiza una busqueda por burofaxes deberán salir aquellos burofaxes que aun no tengan ningun envio.
-		if (esBusquedaPorBurofax) {
+		if (esBusquedaPorBurofax || !StringUtils.isBlank(filtro.getBurRegManual())) {
 			query.createAlias("burofax.enviosBurofax", "enviosBurofax", CriteriaSpecification.LEFT_JOIN);
 		} else {
 			query.createAlias("burofax.enviosBurofax", "enviosBurofax");
 		}
 
+		query.createAlias("enviosBurofax.resultadoBurofax", "resultadoBurofax", CriteriaSpecification.LEFT_JOIN);
+
 		if (!StringUtils.isBlank(filtro.getBurResultadoEnvio())) {
 			where.add(Restrictions.in("resultadoBurofax.codigo", filtro.getBurResultadoEnvio().split(",")));
+		}
+
+		if (!StringUtils.isBlank(filtro.getBurAcuseRecibo())) {
+			// true = is not null - false = is null
+			if ("01".equals(filtro.getBurAcuseRecibo())) {
+				where.add(Restrictions.isNotNull("enviosBurofax.acuseRecibo"));
+			} else {
+				where.add(Restrictions.isNull("enviosBurofax.acuseRecibo"));
+			}
+		}
+
+		if (!StringUtils.isBlank(filtro.getBurRefExternaEnvio())) {
+			where.add(Restrictions.like("enviosBurofax.refExternaEnvio", filtro.getBurRefExternaEnvio(), MatchMode.ANYWHERE));
 		}
 
 		where.addAll(dateRangeFilter("enviosBurofax.fechaSolicitud", filtro.getBurFechaSolicitudDesde(), filtro.getBurFechaSolicitudHasta()));
@@ -612,7 +627,28 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 			}
 
 		} catch (ParseException e) {
-			logger.error(e.getLocalizedMessage());
+			return parseDateAlternativeFormat(field, dateFrom, dateTo);
+		}
+
+		return where;
+	}
+	
+	private List<Criterion> parseDateAlternativeFormat(String field, String dateFrom, String dateTo) {
+		List<Criterion> where = new ArrayList<Criterion>();
+
+		SimpleDateFormat formatoFechaFiltroWeb2 = new SimpleDateFormat("EEE MMM dd yyyy");
+
+		try {
+			if (!StringUtils.isBlank(dateFrom)) {
+				where.add(Restrictions.ge(field, formatoFechaFiltroWeb2.parse(dateFrom)));
+			}
+
+			if (!StringUtils.isBlank(dateTo)) {
+				where.add(Restrictions.le(field, formatoFechaFiltroWeb2.parse(dateTo)));
+			}
+
+		} catch (ParseException ex) {
+			logger.error(ex.getLocalizedMessage());
 			return where;
 		}
 
@@ -628,6 +664,21 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		if (!StringUtils.isBlank(to)) {
 			where.add(Restrictions.le(field, Float.parseFloat(to)));
+		}
+
+		return where;
+	}
+	
+	private Collection<? extends Criterion> bigDecimalRangeFilter(
+			String field, String from, String to) {
+		List<Criterion> where = new ArrayList<Criterion>();
+
+		if (!StringUtils.isBlank(from)) {
+			where.add(Restrictions.ge(field, new BigDecimal(from)));
+		}
+
+		if (!StringUtils.isBlank(to)) {
+			where.add(Restrictions.le(field, new BigDecimal(to)));
 		}
 
 		return where;
@@ -663,6 +714,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<TareaExterna> getTareasPrecedentes(Long idProcedimiento,List<TareaProcedimiento> precedentes,String order) {
 		

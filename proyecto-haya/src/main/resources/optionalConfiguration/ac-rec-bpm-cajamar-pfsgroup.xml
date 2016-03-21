@@ -17,7 +17,9 @@
 	<bean id="subastaV4HayaEjecucionNotarialEnterActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaV4HayaEjecucionNotarialEnterActionHandler"></bean>
  	<bean id="subastaV4HayaEjecucionNotarialLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaV4HayaEjecucionNotarialLeaveActionHandler"></bean>
  	<bean id="subastaComprobarProcedeSubastaSuspendidaHandler" class="es.pfsgroup.procedimientos.subasta.SubastaComprobarProcedeSubastaSuspendidaHandler"></bean>
- 	 	    
+ 	<bean id="bccPrecontenciosoLeaveActionHandler" class="es.pfsgroup.procedimientos.precontencioso.BCCPrecontenciosoLeaveActionHandler" />
+ 	<bean id="costasProcuradorHandler" class="es.pfsgroup.procedimientos.costas.CostasProcuradorHandler"></bean>
+
 	<!-- BPM activos -->
 	<!-- Nacho -->
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSubasta/hcj_tramiteSubasta.xml" p:version="-1"/>
@@ -29,6 +31,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteAdjudicacion/hcj_tramiteAdjudicacion.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCesionRemate/hcj_tramiteCesionRemate.xml" p:version="-1"/>		
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSaneamientoCargas/hcj_tramiteSaneamientoCargas.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoProvisionFondosProcu/hcj_provisionFondosProcu.xml" p:version="-1"/>
 	
 	<!-- Alberto -->
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoCambiario/haya_procedimientoCambiario.xml" p:version="-1"/>
@@ -66,6 +69,8 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteElevacionCajamar/hcj_elevacionCajamar.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteEjecucionNotarial/hcj_ejecucionNotarial.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramitePosesionInterina/hcj_posesionInterina.xml" p:version="-1"/>
+	
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteEnvioDemanda/haya_tramiteEnvioDemanda.xml" p:version="-1"/>
 	
 	<!-- 
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubastaSareb/haya_tramiteSubastaSareb.xml" p:version="-1"/>				
@@ -293,11 +298,6 @@
 	            def comprobarExisteDocumentoDECADM = {
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "DECADM");
-	            }
-
-	            def comprobarExisteDocumentoSOLCONS = {
-	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "SOLCONS");
 	            }
 
 	            def comprobarExisteDocumentoDTCCE = {

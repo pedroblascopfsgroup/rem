@@ -18,15 +18,19 @@ fi
 LOCAL_PATH=`pwd`
 
 cp config/$1/devon.properties /recovery/batch-server/
+cp config/$1/config.ini /recovery/batch-server/programas/etl/config/
 unzip zip/batch*.zip
 rm -rf /recovery/batch-server/programas/batch/*
 cp -r batch/* /recovery/batch-server/programas/batch/
-chmod -R a+rw /recovery/batch-server/programas/batch/*
-chmod a+x /recovery/batch-server/programas/batch/*.sh
+chmod -R a+rwx /recovery/batch-server/programas/batch/*
 cd $LOCAL_PATH
 rm -f /recovery/batch-server/shells/*.sh
 cp scripts/shells/* /recovery/batch-server/shells/
-chmod a+x /recovery/batch-server/shells/*.sh
+sed -e 's/ENTORNO/$1/g' -i /recovery/batch-server/shells/unzip-messages-to-queue.sh
+sed -e 's/ENTORNO/$1/g' -i /recovery/batch-server/shells/zip-messages-from-queue.sh
+chmod a+rx /recovery/batch-server/shells/*.sh
+rm -rf /recovery/batch-server/programas/etl/apr_*
+rm -rf /recovery/batch-server/programas/etl/APR_*
 cp etl/* /recovery/batch-server/programas/etl/
 cd /recovery/batch-server/programas/etl/
 for etl in `ls *.zip`
@@ -37,8 +41,8 @@ do
 done
 for directory in `ls -d */`
 do
-    chmod -f 777 ${directory}
-    chmod -f a+x ${directory}/*.sh
+    chmod -fR a+rwx ${directory}
 done
 rm *.zip
 cd $LOCAL_PATH
+cp scripts/batch/*.sh /recovery/batch-server/programas/

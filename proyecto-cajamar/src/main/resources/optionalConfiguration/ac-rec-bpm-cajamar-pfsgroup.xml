@@ -25,6 +25,7 @@
 		</property>
 	</bean>	
 	<bean id="tramiteAceptacionUserDecisionActionHandler" class="es.pfsgroup.procedimientos.handlers.TramiteAceptacionUserDecisionActionHandler"></bean>
+	<bean id="costasProcuradorHandler" class="es.pfsgroup.procedimientos.handlers.CostasProcuradorHandler"></bean>
  	    
 	<!-- BPM activos -->
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDeclaracionIVAIGIC/hcj_declaracionIVAIGIC.xml" p:version="-1"/>
@@ -330,6 +331,14 @@
 					return (tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre()!=null && 
 						(tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='CJ105' || 
 						tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='CJ106'));
+				}
+				
+				def noExistenTantosCreditosInsinuados = {
+					def concursoManager = ctx.getBean("concursoManager");
+					def nCreditosInsinuados = concursoManager.dameCreditosInsinuados(idProcedimiento).size();
+					def nCreditosRectificados = Integer.valueOf(it);
+					
+					return nCreditosRectificados > nCreditosInsinuados;					
 				}
 				
   			 ]]>

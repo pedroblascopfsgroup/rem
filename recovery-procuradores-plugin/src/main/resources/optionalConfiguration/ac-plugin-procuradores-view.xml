@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+	
+	<bean p:entity="menu" p:name="procuradores" p:order="500"
+	 p:fileName="/WEB-INF/jsp/plugin/procuradores/menu/menuProcuradores.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+	 p:permission="MENU_PROCURADORES_GENERAL" />
+	
+	<bean p:entity="menu" p:name="procuradores/procesadoProcuradores" p:order="511"
+	p:fileName="/WEB-INF/jsp/plugin/procuradores/menu/procesadoProcuradores-menu.jsp"
+	p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+	p:permission="MENU_PROCESADO_PROCURADORES" />
+	
+	<bean p:entity="menu" p:name="configuracion/mantenimientoCategorias" p:order="512"
+	p:fileName="/WEB-INF/jsp/plugin/procuradores/categorias/menuCategorias.jsp"
+	p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+	p:permission="MANTENIMIENTO_CATEGORIAS" />
+
+<!--  	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.openInitTabFuncition" p:name="default"  p:order="1"    -->
+<!--     p:fileName="/WEB-INF/jsp/plugin/procuradores/main/openNothingProcFn.jsp"  -->
+<!--     p:priority="1"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"  -->
+<!--     /> -->
+    	
+ 	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.openInitTabFuncition" p:name="default"  p:order="1"   
+    p:fileName="/WEB-INF/jsp/plugin/procuradores/main/openResolucionesFn.jsp" 
+    p:priority="2"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+    p:permission="INITIAL_TAB_RESOL_PROC"/>
+	
+		<!--  
+    <bean p:entity="plugin.mejoras.mainpage.dynamicelements.openInitTabFuncition" p:name="default"  p:order="1"   
+       p:fileName="/WEB-INF/jsp/plugin/lindorff/main/openResolucionesFn.jsp" 
+        p:priority="2"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+-->
+	<!-- Xml donde se define la configuración de inputs, relación de tareas, valores, inputs y plantillas  -->	
+<!-- 	 <import resource="classpath:optionalConfiguration/ac-plugin-procuradores-inputConfig.xml" /> -->	
+	<!-- Xml donde se definen las relaciones entre resoluciones e inputs  -->	
+
+	 <alias name="mapaResolInputProc_${resoluciones.config}" alias="selectorProperty" />
+	
+<!-- 	 <import resource="classpath:optionalConfiguration/ac-plugin-procuradores-resolInputConfig.xml" />	 -->
+<!--  	 <import resource="classpath:optionalConfiguration/ac-plugin-procuradores-resolInputConfig_haya.xml" /> -->
+
+
+	<bean p:entity="tabs.procedimiento.fast" p:name="tareasProcedimiento"  p:order="600" 
+		p:fileName="/WEB-INF/jsp/plugin/procuradores/procedimientos/tabs/tareas.jsp" 
+		p:priority="2"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+
+	 <bean p:entity="menu" p:name="procuradores" p:order="500"
+	 p:fileName="/WEB-INF/jsp/plugin/procuradores/menu/menuProcuradores.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+	 p:permission="MENU_PROCURADORES_GENERAL" />
+	
+	<bean p:entity="menu" p:name="procuradores/procesadoProcuradores" p:order="511"
+	p:fileName="/WEB-INF/jsp/plugin/procuradores/menu/procesadoProcuradores-menu.jsp"
+	p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+	p:permission="PROCU_PROCESADO_RESOLUCIONES" />
+	
+	<!--  Muestra la rama de tareas de procuradores en el árbol de tareas -->
+	<bean p:entity="plugin.mejoras.web.buzonTareas.nodosDinamicos" p:name="arbolResoluciones" p:priority="1" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/procuradores/arbol/arbolResoluciones.jsp"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+
+	<bean p:entity="plugin.mejoras.web.buzonTareas.nodosDinamicos" p:name="arbolRecordatorios" p:priority="1" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/procuradores/arbol/arbolRecordatorios.jsp"
+		class="es.pfsgroup.plugins.web.menu.ElementoDinamicoPorLogica">
+		<property name="logica">
+			<bean id="usuarioConCategorias" class="es.pfsgroup.plugin.recovery.procuradores.categorias.dynamicelements.UsuarioConCategorias"/>
+		</property>
+	</bean>
+
+	<!-- <bean p:entity="plugin.mejoras.web.buzonTareas.nodosDinamicos" p:name="arbolResoluciones" p:priority="1" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/procuradores/arbol/arbolResoluciones.jsp"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="RAMA_TAREAS_PENDIENTES_VALIDAR" /> DESCOMENTAR Y CAMBIAR POR EL DE ARRIBA PARA OCULTAR LA RAMA-->
+	
+	<!--
+	Rama para mostrar las resoluciones pausadas 	
+	<bean p:entity="plugin.mejoras.web.buzonTareas.nodosDinamicos" p:name="resolucionesPausadas" p:priority="1" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/procuradores/arbol/resolucionesPausadas.jsp"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+	 -->
+	
+	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.jsLibraries"
+		p:name="jsControladorAsincronoProc" p:order="1"
+		p:fileName="../js/plugin/procuradores/ControladorAsincrono.js" p:priority="1"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+	
+	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.jsLibraries"
+		p:name="jsFactoriaFormulariosProc" p:order="2"
+		p:fileName="../js/plugin/procuradores/FactoriaFormularios_${resoluciones.config}.js" p:priority="1"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.jsLibraries"
+		p:name="jsItemSelectorProc" p:order="3"
+		p:fileName="../js/plugin/procuradores/ItemSelector.js" p:priority="0"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.jsLibraries"
+		p:name="jsMultiSelectProc" p:order="4"
+		p:fileName="../js/plugin/procuradores/MultiSelect.js" p:priority="0"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	<!-- Carlos comentar para utilizar el jsp de el plugin rec-web -->
+<!-- 	<bean p:entity="tabs.procedimiento.fast" p:name="cabeceraProcedimiento"  p:order="100" -->
+<!-- 		p:fileName="/WEB-INF/jsp/plugin/procuradores/procedimientos/tabs/cabecera.jsp"  -->
+<!-- 		p:priority="1"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" /> -->
+		
+	<!-- PRODUCTO-671 
+		De las dos siguentes pestañas, solo se mostrará una, dependiendo si el asunto ha tenido asociado
+		algun despacho integral (mostrará historicoProcedimientoResoluciones, y sino historicoProcedimiento -->
+	<bean p:entity="tabs.procedimiento.fast" p:name="historicoProcedimientoResoluciones"
+		p:order="1000"
+		p:fileName="/WEB-INF/jsp/plugin/procuradores/procedimientos/tabs/tabHistoricoPrcResoluciones.jsp"
+		p:priority="3" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		 />
+	<bean p:entity="tabs.procedimiento.fast" p:name="historicoProcedimiento"
+		p:order="900"
+		p:fileName="/WEB-INF/jsp/plugin/mejoras/procedimientos/tabs/tabHistoricoProcedimiento.jsp"
+		p:priority="3" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		 />
+		
+<!--		<bean p:entity="tabs.procedimiento.fast" p:name="historicoProcedimiento" -->
+<!--			p:order="900" -->
+<!--			p:fileName="/WEB-INF/jsp/plugin/masivo/procedimientos/tabs/tabHistoricoPrcResoluciones.jsp" -->
+<!--			p:priority="3" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" /> -->
+		
+<!-- 	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.openInitTabFuncition" p:name="default"  p:order="1"    -->
+<!--         p:fileName="/WEB-INF/jsp/plugin/procuradores/main/openTareasPendientesFn.jsp"  -->
+<!--         p:priority="2"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" /> -->
+        
+	<!-- estilos css -->
+	
+	<!--
+	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.cssStyles"
+		p:name="cssLindorff" p:order="1"
+		p:fileName="../js/plugin/lindorff/css/lindorff.css"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+	-->
+
+	<!-- 
+	<bean p:entity="tabs.contrato.fast" p:name="cabeceraContrato"  p:order="100" 
+		p:fileName="/WEB-INF/jsp/plugin/cdc/contratos/tabs/cabecera.jsp" 
+		p:priority="2"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+	  -->	
+	
+	<!-- 
+	<bean p:entity="tabs.expediente" p:name="cabeceraExpediente"  p:order="100" 
+		p:fileName="/WEB-INF/jsp/plugin/cdc/expedientes/cabecera.jsp" 
+		p:priority="2"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+	
+	<bean p:entity="tabs.expediente" p:name="clientesExpediente"  p:order="200" 
+		p:fileName="/WEB-INF/jsp/plugin/cdc/expedientes/tabClientesExpediente.jsp" 
+		p:priority="2"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />	
+	  --> 
+	  
+<!--  	<bean p:entity="tabs.expediente.fast" p:name="cabeceraExpediente"  p:order="100" 
+		p:fileName="/WEB-INF/jsp/plugin/cdc/expedientes/cabecera.jsp" 
+		p:priority="1"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		/> -->
+			  
+<!-- 	<bean p:entity="menu" p:name="busquedas/expedientes"  p:order="120" 
+		p:fileName="/WEB-INF/jsp/plugin/cdc/expedientes/menuBusquedaExpedientes.jsp" 
+		p:priority="1"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />	 	
+		
+	<bean p:entity="tabs.expediente.fast" p:name="Operaciones"  p:order="150" 
+		p:fileName="/WEB-INF/jsp/plugin/cdc/propuestas/tabs/propuestas.jsp" 
+		p:priority="2"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="TAB_EXPEDIENTE_OPERACIONES" />
+	  	
+	<bean p:entity="tabs.expediente.fast" p:name="Intervinientes"  p:order="160" 
+		p:fileName="/WEB-INF/jsp/plugin/cdc/intervinientes/tabs/intervinientes.jsp" 
+		p:priority="2"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="TAB_EXPEDIENTE_INTERVINIENTES"/>	
+	 
+	<bean p:entity="tabs.expediente.fast" p:name="Garantias"  p:order="170" 
+		p:fileName="/WEB-INF/jsp/plugin/cdc/garantias/tabs/garantias.jsp" 
+		p:priority="2"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="TAB_EXPEDIENTE_GARANTIAS"/> -->	
+	<!--   
+	<bean p:entity="tabs.expediente.fast" p:name="Liquidaciones"  p:order="180" 
+		p:fileName="/WEB-INF/jsp/plugin/cdc/liquidaciones/tabs/liquidaciones.jsp" 
+		p:priority="2"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />	
+	 -->	
+		
+	<!-- <bean p:entity="tabs.expediente.fast" p:name="Evidencias"  p:order="190" 
+		p:fileName="/WEB-INF/jsp/plugin/cdc/evidencias/tabs/evidencias.jsp" 
+		p:priority="2"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		/> -->	
+		
+<!-- 	<bean p:entity="tabs.expediente.fast" p:name="Recepcion Doc."  p:order="200" 
+		p:fileName="/WEB-INF/jsp/plugin/cdc/documentacion/tabs/documentacion.jsp" 
+		p:priority="2"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="ROLE_AUDITOR"/>	
+		
+		
+	<bean p:entity="tabs.expediente.fast" p:name="adjuntosExpedientes"
+		p:order="1100" p:fileName="/WEB-INF/jsp/plugin/cdc/expedientes/tabAdjuntosEvidencias.jsp"
+		p:priority="1000" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	<bean p:entity="tabs.expediente.fast" p:name="adjuntosExpedientesLegales"
+		p:order="1200" p:fileName="/WEB-INF/jsp/plugin/cdc/expedientes/tabAdjuntosLegales.jsp"
+		p:priority="1000" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	 Muestra la rama de vinculaciones en el árbol de tareas
+	<bean p:entity="plugin.mejoras.web.buzonTareas.nodosDinamicos" p:name="arbolVinculaciones" p:priority="1" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/cdc/arbol/arbolVinculaciones.jsp"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="ROLE_AUDITOR"/>	 -->
+			
+	<!-- 
+	<bean p:entity="tabs.expediente.fast" p:name="adjuntosExpedientes" p:order="1000"
+		p:fileName="/WEB-INF/jsp/entidad/expediente/tabs/adjuntos.jsp" 
+		p:priority="1000"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="ROLE_XXX"/>			
+	  --> 
+	 
+	 <!-- Ocultamos las pestañas no requeridas -->
+	 
+	 <!-- 
+	<bean p:entity="tabs.expediente.fast" p:name="clientesExpediente"  p:order="200"
+		p:fileName="/WEB-INF/jsp/entidad/expediente/tabs/clientes.jsp" 
+		p:priority="1000"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="ROLE_KEBAB"/>
+		
+	<bean p:entity="tabs.expediente.fast" p:name="titulos"  p:order="400"
+		p:fileName="/WEB-INF/jsp/entidad/expediente/tabs/titulos.jsp" 
+		p:priority="1000" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="ROLE_KEBAB" />
+		
+	<bean p:entity="tabs.expediente.fast" p:name="gestionYanalisis"  p:order="500"
+		p:fileName="/WEB-INF/jsp/entidad/expediente/tabs/gestionYanalisis.jsp" 
+		p:priority="1000" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="ROLE_KEBAB"/>
+		
+	<bean p:entity="tabs.expediente.fast" p:name="nivelCumplimiento"  p:order="800"
+		p:fileName="/WEB-INF/jsp/entidad/expediente/tabs/cumplimiento.jsp" 
+		p:priority="1000" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="ROLE_KEBAB"/>
+		
+	<bean p:entity="tabs.expediente.fast" p:name="historicoEventos"  p:order="900"
+		p:fileName="/WEB-INF/jsp/entidad/expediente/tabs/eventos.jsp" 
+		p:priority="1000" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="ROLE_KEBAB"/>
+	
+	 --> 	
+	<!-- <bean p:entity="tabs.expediente.fast" p:name="historicoEventos"  p:order="1200"
+		p:fileName="/WEB-INF/jsp/plugin/cdc/evidencias/tabs/evidencias.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" /> -->	 
+	 
+	 
+	<!--  
+	<bean p:entity="menu" p:name="direccion" p:order="800"
+		p:fileName="/WEB-INF/jsp/plugin/cdc/test.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+	 -->	
+	
+	<!--  	
+	<bean p:entity="menu" p:name="liquidaciones" p:order="800"
+		p:fileName="/WEB-INF/jsp/plugin/cdc/testLiquidaciones.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>	
+	-->
+	
+	<!-- 	
+	<bean p:entity="menu" p:name="operaciones" p:order="800"
+		p:fileName="/WEB-INF/jsp/plugin/cdc/testOperaciones.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>	
+	 -->
+	
+	<!--  
+	<bean p:entity="menu" p:name="garantias" p:order="800"
+		p:fileName="/WEB-INF/jsp/plugin/cdc/testGarantias.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>	
+	-->		
+		
+
+		
+</beans>

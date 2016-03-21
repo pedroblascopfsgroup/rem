@@ -2,7 +2,7 @@
 
 function(entidad,page){
 
-	var labelStyle='font-weight:normal;font-size:11px;margin-bottom:1px;margin-top:1px;width:120px;border:false';
+	var labelStyle='font-weight:normal;font-size:11px;margin-bottom:1px;margin-top:1px;width:120px;border:0px';
 
 	var toolbar=new Ext.Toolbar();
 	
@@ -58,8 +58,8 @@ function(entidad,page){
 	});
 	
 	var labelHelp = new Ext.form.Label({
-		text:'<s:message code="expedientes.creacion.lblHelpSelArquetipo" text="**Seleccione el arquetipo deseado para el expediente manual, el cual determinará el itinerario de gestión a seguir por el nuevo expediente." />'
-		,style:labelStyle
+		text:'<s:message code="expedientes.creacion.lblHelpSelArquetipo" text="**Seleccione el arquetipo deseado para el expediente manual, el cual determinará el itinerario de gestión a seguir por el nuevo expediente." />'		
+		,style:'font-weight:normal;font-size:11px;margin-bottom:1px;margin-top:1px;border:0px'
 	});
 	
 	var labelcmbArq = new Ext.form.Label({
@@ -141,6 +141,7 @@ function(entidad,page){
 		,handler : function(){
 			var data = toolbar.getArquetiposRecup();
 			cmbArq.reset();
+			btnNext.setDisabled(true);
 			arqStore.loadData(data);
 			wArq.show();
 			btnNext.on('click',function() {
@@ -170,6 +171,7 @@ function(entidad,page){
 		,handler : function(){
 			var data = toolbar.getArquetiposSeg();
 			cmbArq.reset();
+			btnNext.setDisabled(true);
 			arqStore.loadData(data);
 			wArq.show();
 			btnNext.on('click',function() {
@@ -279,6 +281,9 @@ function(entidad,page){
 	<sec:authorize ifAllGranted="RESPONDER">
 		toolbar.add(botonResponder);
 	</sec:authorize>
+	<sec:authorize ifNotGranted="RESPONDER">
+		toolbar.add(botonComunicacion);
+	</sec:authorize>	
 	
 	toolbar.add(botonComunicacion);
 	toolbar.add(buttonsL_cliente);

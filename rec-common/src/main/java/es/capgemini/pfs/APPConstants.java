@@ -54,9 +54,9 @@ public class APPConstants {
 	public static final String MEJ_EXP_GET_CONTRATOS_PARA_CONCURSO = "plugin.mejoras.expediente.getContratosParaConcurso";
 	public static final String MEJ_EXP_GET_CONTRATOS_PARA_NO_CONCURSO = "plugin.mejoras.expediente.getContratosParaNoConcurso";
 	
-	public static final String OPERADOR_MAYOR_IGUAL = "ME";
-	public static final String OPERADOR_MENOR_IGUAL = "LE";
-	public static final String OPERADOR_IGUAL = "E";
+	public static final String OPERADOR_MAYOR_IGUAL = ">=";
+	public static final String OPERADOR_MENOR_IGUAL = "<=";
+	public static final String OPERADOR_IGUAL = "=";
 	
     public static final String ESTADO_PROCEDIMIENTO_REORGANIZADO = "9";
 
@@ -82,16 +82,23 @@ public class APPConstants {
 	public static final String NUM_EXTRA3 = "num_extra3";
 	public static final String NUM_EXTRA4 = "num_extra4";
 	public static final String NUM_EXTRA5 = "num_extra5";
+	public static final String NUM_EXTRA6 = "num_extra6";
+	public static final String NUM_EXTRA7 = "num_extra7";
+	public static final String NUM_EXTRA8 = "num_extra8";
 	public static final String DATE_EXTRA1 = "date_extra1";
 	public static final String DATE_EXTRA2 = "date_extra2";
 	public static final String DATE_EXTRA3 = "date_extra3";
 	public static final String DATE_EXTRA4 = "date_extra4";
 	public static final String DATE_EXTRA5 = "date_extra5";
 	public static final String DATE_EXTRA6 = "date_extra6";
+	public static final String DATE_EXTRA7 = "date_extra7";
+	public static final String DATE_EXTRA9 = "date_extra9";
 	public static final String FLAG_EXTR3 = "flag_extra3";
 	public static final String FLAG_EXTRA2 = "flag_extra2";
 	public static final String FLAG_EXTRA1 = "flag_extra1";
 	public static final String FLAG_EXTRA4 = "flag_extra4";
+	public static final String FLAG_EXTRA5 = "flag_extra5";
+	public static final String FLAG_EXTRA6 = "flag_extra6";
 	public static final String CHAR_EXTRA8 = "char_extra8";
 	public static final String CHAR_EXTRA7 = "char_extra7";
 	public static final String CHAR_EXTRA6 = "char_extra6";

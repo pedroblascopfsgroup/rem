@@ -242,336 +242,559 @@
           );
     ]]>
   </entry>
-  
+
    <entry key="clientes.creacionClientes.01.truncateTmpPER.Oracle9iDialect">
     <![CDATA[
-      	TRUNCATE TABLE TMP_PER_ARQUETIPO_RECUPERACION
+        TRUNCATE TABLE TMP_PER_ARQUETIPO_RECUPERACION
     ]]>
   </entry>
-  
-  <entry key="clientes.creacionClientes.02.insertTmpPER_Recuperacion.Oracle9iDialect">
+
+   <entry key="clientes.creacionClientes.02.insertTmpPER_Recuperacion.Oracle9iDialect">
   <![CDATA[
-	  /**************************************
-	  Buscar clientes activos de recuperacion
-	  ***************************************/
-	  INSERT INTO TMP_PER_ARQUETIPO_RECUPERACION (PER_ID, ARQ_ID, CLI_ID, DD_TIT_CODIGO)
-		WITH ARR_TMP AS (
-		  SELECT DISTINCT PER_ID, ARQ_ID, ORD FROM (
-		              SELECT PER_ID, ARQ_ID, ROW_NUMBER() OVER (PARTITION BY PER_ID ORDER BY ARQ_DATE DESC) ORD
-		              FROM ARR_ARQ_RECUPERACION_PERSONA
-		            ) WHERE ORD <=2
-		)
-		, ARR_1 AS (SELECT * FROM ARR_TMP WHERE ORD=1)
-		, ARR_2 AS (SELECT * FROM ARR_TMP WHERE ORD=2)
-		, VARR AS (
-			SELECT A1.PER_ID, A1.ARQ_ID ARQ_ID_CALCULADO, A2.ARQ_ID --,p.per_ultima_operacion
-				FROM ARR_1 A1 LEFT JOIN ARR_2 A2 ON A1.PER_ID = A2.PER_ID
-				inner join per_personas p on a1.per_id = p.per_id
-		)
-		SELECT PER_ID, ARR_ID, S_CLI_CLIENTES.NEXTVAL AS CLI_ID, ${tipoGestionArquetipo.recuperacion} FROM (
-  			SELECT DISTINCT arr.per_id, arr.arq_id_calculado arr_id
-	           FROM VARR arr
-	             LEFT JOIN arq_arquetipos arq_per ON arr.arq_id = arq_per.arq_id  --arquetipo anterior
-	             JOIN arq_arquetipos arq_cal ON arr.arq_id_calculado = arq_cal.arq_id  --arquetipo calculado
-	           WHERE           
-		           /* Que tenga un arquetipo ACTUAL con fecha de disparo que cuadre*/
-		           /* Esto de momento, solo aplica a los exp. de seguimiento*/ 
-		           /*(arq_per.arq_plazo_disparo is null OR arr.per_ultima_operacion is null OR (sysdate-arr.per_ultima_operacion > arq_per.arq_plazo_disparo))*/
-		           /* Que tenga un arquetipo NUEVO gestionable */
-	           arq_cal.arq_gestion = 1
-	    	       /* Que tenga un NUEVO arquetipo que sea de recuperacion */
-	           AND EXISTS (SELECT iti.iti_id FROM iti_itinerarios iti JOIN ${master.schema}.dd_tit_tipo_itinerarios tit ON iti.dd_tit_id = tit.dd_tit_id WHERE arq_cal.iti_id = iti.iti_id AND tit.dd_tit_codigo = ${ddTipoItinerario.recuperacion.codigo})
-	        	   /* De momento el nivel y salto solo para los de exp. de seguimiento
-	           AND
-	           (
-	             CASE WHEN arq_per.dd_tsn_id is null THEN 1
-	             ELSE CASE WHEN arq_cal.arq_nivel <> arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ${ddTipoSaltoNivel.cualquierSalto.codigo}) THEN 1
-	                ELSE CASE WHEN arq_cal.arq_nivel > arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ${ddTipoSaltoNivel.saltoArriba.codigo}) THEN 1
-	                    ELSE CASE WHEN arq_cal.arq_nivel < arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ${ddTipoSaltoNivel.saltoAbajo.codigo}) THEN 1 
-	                        ELSE 0 END END END END
-	           ) = 1
-	           */
-	           /* Que la persona no esté atrapada en ningún expediente de seguimiento */
-	           AND NOT EXISTS (
-	             SELECT pex.per_id 
-	                 FROM pex_personas_expediente pex
-	                     JOIN exp_expedientes exp ON pex.exp_id = exp.exp_id
-	                     JOIN ${master.schema}.dd_eex_estado_expediente eex ON exp.dd_eex_id = eex.dd_eex_id
-	                     JOIN ARQ_ARQUETIPOS arq ON exp.arq_id = arq.arq_id
-	                     JOIN iti_itinerarios iti ON arq.iti_id = iti.iti_id 
-	                     JOIN ${master.schema}.dd_tit_tipo_itinerarios tit ON iti.dd_tit_id = tit.dd_tit_id 
-	                 WHERE pex.borrado = 0
-	                     AND tit.dd_tit_codigo IN (${ddTipoItinerario.sintomatico.codigo}, ${ddTipoItinerario.sistematico.codigo})
-	                     AND pex.per_id = arr.per_id
-	                     AND eex.dd_eex_codigo IN (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo})
-	                      --No sea un expediente de recobro
-	                   	 AND NOT EXISTS (select exr.exp_id from exr_expediente_recobro exr where exp.exp_id = exr.exp_id)
-	           )
-	           /* Que la persona no tenga un cliente creado */
-	           AND NOT EXISTS (
-	             SELECT c.per_id 
-	                 FROM CLI_CLIENTES c
-	                 WHERE c.borrado = 0
-	                     AND c.per_id = arr.per_id
-	           )          
-	           /* Que la persona tenga algún contrato que esté libre */
-	           AND EXISTS (
-	             SELECT c.cnt_id 
-	               FROM cnt_contratos c
-	                 JOIN  mov_movimientos m ON m.cnt_id = c.cnt_id AND m.mov_fecha_extraccion = c.cnt_fecha_extraccion
-	                 JOIN cpe_contratos_personas cpe ON cpe.cnt_id = c.cnt_id
-	                 JOIN dd_tin_tipo_intervencion tin ON cpe.DD_TIN_ID = tin.DD_TIN_ID
-	                 JOIN ${master.schema}.dd_esc_estado_cnt e ON c.dd_esc_id = e.dd_esc_id
-	             WHERE cpe.per_id = arr.per_id
-	               /* Que tenga un contrato vencido */
-	               AND m.mov_deuda_irregular > 0
-	               AND m.mov_fecha_pos_vencida IS NOT NULL 
-	               /* Que sea titular del contrato */
-	               AND tin.DD_TIN_TITULAR = 1
-	               /* Que el contrato no esté ni borrado ni cancelado (Se considera cancelado cualquiera que no sea activo)*/ 
-	               AND c.borrado = 0 AND e.dd_esc_codigo = ${estadoContrato.Activo.codigo}
-	               /* Que el contrato no esté en algún procedimiento 'en curso' */
-	               AND NOT EXISTS (
-	                   SELECT DISTINCT cex.cnt_id FROM CEX_CONTRATOS_EXPEDIENTE cex, PRC_CEX pce, PRC_PROCEDIMIENTOS prc, ${master.schema}.DD_EPR_ESTADO_PROCEDIMIENTO epr
-	                   WHERE cex.cex_id = pce.cex_id
-	                   and pce.prc_id = prc.prc_id
-	                   and cex.borrado = 0 and prc.borrado = 0
-	                   and prc.dd_epr_id = epr.dd_epr_id
-	                   and dd_epr_codigo IN (${ddEstadoProcedimiento.propuesto.codigo}, 
-	                   ${ddEstadoProcedimiento.confirmado.codigo}, 
-	                   ${ddEstadoProcedimiento.aceptado.codigo}, 
-	                   ${ddEstadoProcedimiento.derivado.codigo}, 
-	                   ${ddEstadoProcedimiento.enConformacion.codigo})
-	                   and cex.cnt_id = c.cnt_id
-	               UNION	
-	               		/* Que el contrato no esté algún expediente 'en curso' */
-	               	   SELECT DISTINCT cex.cnt_id FROM cex_contratos_expediente cex, ${master.schema}.dd_eex_estado_expediente eex, exp_expedientes exp 
-	                   WHERE exp.exp_id = cex.exp_id 
-	                   and cex.borrado = 0 
-	                   and eex.dd_eex_id = exp.dd_eex_id
-	                   and eex.dd_eex_codigo IN (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo})
-	                   and cex.cnt_id = c.cnt_id
-	                    --No sea un expediente de recobro
-	                   and not exists (select exr.exp_id from exr_expediente_recobro exr where exp.exp_id = exr.exp_id)	                   
-	               UNION           
-	               /* Que el contrato no esté en algún cliente 'en curso' */
-	                   SELECT DISTINCT ccl.cnt_id FROM ccl_contratos_cliente ccl 
-	                   WHERE ccl.borrado = 0
-	                   and ccl.cnt_id = c.cnt_id
-	               )
-	          )
-  		)
-  ]]></entry>
-  
-  
-    <entry key="clientes.creacionClientes.02.insertTmpPER_Seguimiento.Oracle9iDialect">
-    <![CDATA[
+
        /**************************************
-	  Buscar clientes activos de seguimiento
-	  ***************************************/
-	  INSERT INTO TMP_PER_ARQUETIPO_RECUPERACION (PER_ID, ARQ_ID, CLI_ID, DD_TIT_CODIGO)
-		WITH ARR_TMP AS (
-		  SELECT DISTINCT PER_ID, ARQ_ID, ORD FROM (
-		              SELECT PER_ID, ARQ_ID, ROW_NUMBER() OVER (PARTITION BY PER_ID ORDER BY ARQ_DATE DESC) ORD
-		              FROM ARR_ARQ_RECUPERACION_PERSONA
-		            ) WHERE ORD <=2
-		)
-		, ARR_1 AS (SELECT * FROM ARR_TMP WHERE ORD=1)
-		, ARR_2 AS (SELECT * FROM ARR_TMP WHERE ORD=2)
-		, VARR AS (
-			SELECT A1.PER_ID, A1.ARQ_ID ARQ_ID_CALCULADO, A2.ARQ_ID --, p.per_ultima_operacion
-				FROM ARR_1 A1 LEFT JOIN ARR_2 A2 ON A1.PER_ID = A2.PER_ID
-				inner join per_personas p on a1.per_id = p.per_id
-		)
-		SELECT PER_ID, ARR_ID, S_CLI_CLIENTES.NEXTVAL AS CLI_ID, ${tipoGestionArquetipo.seguimiento} FROM (
-  			SELECT DISTINCT arr.per_id, arr.arq_id_calculado arr_id
-		          FROM VARR arr
-		            LEFT JOIN arq_arquetipos arq_per ON arr.arq_id = arq_per.arq_id  --arquetipo anterior
-		            JOIN arq_arquetipos arq_cal ON arr.arq_id_calculado = arq_cal.arq_id  --arquetipo calculado 
-		          WHERE 
-		          /* Que tenga un arquetipo NUEVO gestionable */
-		          arq_cal.arq_gestion = 1
-		          /* Que tenga un NUEVO arquetipo que sea de seguimiento */
-		          AND EXISTS (SELECT iti.iti_id FROM iti_itinerarios iti JOIN ${master.schema}.dd_tit_tipo_itinerarios tit ON iti.dd_tit_id = tit.dd_tit_id WHERE arq_cal.iti_id = iti.iti_id AND tit.dd_tit_codigo IN (${ddTipoItinerario.sintomatico.codigo}, ${ddTipoItinerario.sistematico.codigo}))
-		          AND
-		          (
-		            /* Si tiene fecha de vigencia que se cumpla/* Si tiene fecha de vigencia que se cumpla, o si tiene plazo de disparo que salte  */
-	                /* MISMO ARQUETIPO AYER Y HOY */
-	                /* SYSDATE - FECHA INICIO VIGENCIA > PLAZO DE DISPARO DE MI ARQUETIPO */
-	                /* Si no hay plazo de disparo salta al día siguiente*/
-		            (
-                  	NVL(arq_cal.arq_plazo_disparo,0) < (
-                      SELECT sysdate - NVL(pol.pol_fecha_vigencia , sysdate - NVL(arq_cal.arq_plazo_disparo+1,1))
-                      	 FROM CMP_CICLO_MARCADO_POLITICA cmp
-		                    JOIN POL_POLITICA pol ON pol.cmp_id = cmp.cmp_id
-		                    JOIN ${master.schema}.DD_ESP_ESTADO_POLITICA esp ON pol.DD_ESP_ID = esp.DD_ESP_ID
-		                    where 1=1
-		                        AND cmp.per_id = arr.per_id
-		                        AND esp.dd_esp_codigo = ${ddEstadoPolitica.vigente.codigo}
-		                        AND (arq_cal.arq_id = arq_per.arq_id) 
-		               )
-		            )            
-		            /* O, si hay un salto suficientemente grande de nivel de arquetipo como indica el arquetipo actual*/
-	                /* MI ARQUETIPO DE HOY ES DISTINTO AL DE AYER */
-	                /* CUAL ERA MI TIPO DE SALTO EN ARQUETIPO AYER Y QUE NIVEL TENGO EN ARQUETIPO ACTUAL RESPECTO AL ANTERIOR */
-		            OR 
-		            (
-		              CASE WHEN arq_per.dd_tsn_id is null THEN 1
-		              ELSE CASE WHEN arq_cal.arq_nivel <> arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ${ddTipoSaltoNivel.cualquierSalto.codigo}) THEN 1
-		                 ELSE CASE WHEN arq_cal.arq_nivel > arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ${ddTipoSaltoNivel.saltoArriba.codigo}) THEN 1
-		                     ELSE CASE WHEN arq_cal.arq_nivel < arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ${ddTipoSaltoNivel.saltoAbajo.codigo}) THEN 1 
-		                         ELSE 0 END END END END
-		            ) = 1
-		          )
-		          /*  SE HA MODIFICADO POR LA FECHA POLITICA VIGENTE */
-	              /* Que tenga un arquetipo ACTUAL con fecha de disparo que cuadre */
-			      /* AND (arq_per.arq_plazo_disparo is null OR arr.per_ultima_operacion is null OR (sysdate-arr.per_ultima_operacion > arq_per.arq_plazo_disparo)) */
-			      /* Que la persona no esté atrapada en ningún expediente */
-		          AND NOT EXISTS (
-		            SELECT pex.per_id 
-		                FROM pex_personas_expediente pex
-		                    JOIN exp_expedientes exp ON pex.exp_id = exp.exp_id
-		                    JOIN ${master.schema}.dd_eex_estado_expediente eex ON exp.dd_eex_id = eex.dd_eex_id
-		                WHERE pex.borrado = 0
-		                    AND pex.per_id = arr.per_id
-		                    AND eex.dd_eex_codigo IN (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo})
-		                     --No sea un expediente de recobro
-	                   		AND not exists (select exr.exp_id from exr_expediente_recobro exr where exp.exp_id = exr.exp_id)
-		          )
-		          /* Que la persona no tenga un cliente creado */
-		          AND NOT EXISTS (
-		            SELECT c.per_id 
-		                FROM CLI_CLIENTES c
-		                WHERE c.borrado = 0
-		                    AND c.per_id = arr.per_id
-		          )
-		          /* Que la persona tenga algún contrato que esté libre */
-		          AND EXISTS (
-		            SELECT c.cnt_id 
-		              FROM cnt_contratos c
-		                JOIN cpe_contratos_personas cpe ON cpe.cnt_id = c.cnt_id
-		                JOIN dd_tin_tipo_intervencion tin ON cpe.DD_TIN_ID = tin.DD_TIN_ID
-		                JOIN ${master.schema}.dd_esc_estado_cnt e ON c.dd_esc_id = e.dd_esc_id
-		            WHERE cpe.per_id = arr.per_id
-		              /* Que sea titular del contrato */
-		              AND tin.DD_TIN_TITULAR = 1
-		              /* Que el contrato no esté ni borrado ni cancelado (Se considera cancelado cualquiera que no este activo)*/ 
-		              AND c.borrado = 0 AND e.dd_esc_codigo = ${estadoContrato.Activo.codigo}
-		              /* Que el contrato no esté en algún procedimiento 'en curso' */
-		              AND NOT EXISTS (
-		                  SELECT DISTINCT cex.cnt_id FROM CEX_CONTRATOS_EXPEDIENTE cex, PRC_CEX pce, PRC_PROCEDIMIENTOS prc, ${master.schema}.DD_EPR_ESTADO_PROCEDIMIENTO epr
-		                  WHERE cex.cex_id = pce.cex_id
-		                  and pce.prc_id = prc.prc_id
-		                  and cex.borrado = 0 and prc.borrado = 0
-		                  and prc.dd_epr_id = epr.dd_epr_id
-		                  and dd_epr_codigo IN (${ddEstadoProcedimiento.propuesto.codigo}, 
-	                   ${ddEstadoProcedimiento.confirmado.codigo}, 
-	                   ${ddEstadoProcedimiento.aceptado.codigo}, 
-	                   ${ddEstadoProcedimiento.derivado.codigo}, 
-	                   ${ddEstadoProcedimiento.enConformacion.codigo})
-		                  and cex.cnt_id = c.cnt_id
-		                   --No sea un expediente de recobro
-	                   	  and not exists (select exr.exp_id from exr_expediente_recobro exr where cex.exp_id = exr.exp_id)
-		              /* Que el contrato no esté algún expediente de recuperacion 'en curso' */
-		              UNION
-		                  SELECT DISTINCT cex.cnt_id 
-		                  FROM cex_contratos_expediente cex, 
-		                  ${master.schema}.dd_eex_estado_expediente eex, 
-		                  exp_expedientes exp
-		                  JOIN ARQ_ARQUETIPOS arq ON exp.arq_id = arq.arq_id
-		                     JOIN iti_itinerarios iti ON arq.iti_id = iti.iti_id 
-		                     JOIN ${master.schema}.dd_tit_tipo_itinerarios tit ON iti.dd_tit_id = tit.dd_tit_id 
-		                  WHERE exp.exp_id = cex.exp_id 
-		                  AND tit.dd_tit_codigo = ${ddTipoItinerario.recuperacion.codigo}
-		                  and cex.borrado = 0 
-		                  and eex.dd_eex_id = exp.dd_eex_id
-		                  and eex.dd_eex_codigo IN (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo})
-		                  and cex.cnt_id = c.cnt_id
-		              /* Que el contrato no esté en algún cliente 'en curso' */
-		              UNION
-		                  SELECT DISTINCT ccl.cnt_id FROM ccl_contratos_cliente ccl 
-		                  WHERE ccl.borrado = 0 and ccl.cnt_id = c.cnt_id
-		              )
-		     	)		    
-		)       
-    ]]>
-  </entry>
-  
-  
-   <entry key="clientes.creacionClientes.03.truncateTmpCNTnuevosCLI.Oracle9iDialect">
-    <![CDATA[
-      	TRUNCATE TABLE TMP_CNT_NUEVOS_CLI
-    ]]>
-  </entry>
-  
-   <entry key="clientes.creacionClientes.04.insertTmpCNTnuevosCLI.Oracle9iDialect">
-    <![CDATA[
-      	INSERT INTO TMP_CNT_NUEVOS_CLI
-        with vcpe as (
-              /*Obtengo los contratos de los titulares*/
-              SELECT distinct cpe.per_id, cpe.cnt_id, c.cnt_fecha_extraccion, c.ofi_id		             
-	               FROM cpe_contratos_personas cpe
-                    /*Que el contrato no esté borrado*/
-	                 INNER JOIN cnt_contratos c ON cpe.cnt_id = c.cnt_id AND c.borrado = 0
-                   INNER JOIN mov_movimientos m ON m.cnt_id = cpe.cnt_id AND m.mov_fecha_extraccion = c.cnt_fecha_extraccion	                 
+      Buscar clientes activos de recuperacion
+      ***************************************/
+      INSERT INTO TMP_PER_ARQUETIPO_RECUPERACION (PER_ID, ARQ_ID, CLI_ID, DD_TIT_CODIGO)
+        WITH ARR_TMP AS (
+          SELECT DISTINCT PER_ID, ARQ_ID, ORD FROM (
+                      SELECT PER_ID, ARQ_ID, ROW_NUMBER() OVER (PARTITION BY PER_ID ORDER BY ARQ_DATE DESC) ORD
+                      FROM ARR_ARQ_RECUPERACION_PERSONA
+                    ) WHERE ORD <=1
+        )
+        , ARR_1 AS (SELECT * FROM ARR_TMP WHERE ORD=1)
+        --, ARR_2 AS (SELECT * FROM ARR_TMP WHERE ORD=2)
+        , VARR AS (
+            SELECT A1.PER_ID, A1.ARQ_ID ARQ_ID_CALCULADO--, A2.ARQ_ID --,p.per_ultima_operacion
+                FROM ARR_1 A1
+                --LEFT JOIN ARR_2 A2 ON A1.PER_ID = A2.PER_ID
+                inner join per_personas p on a1.per_id = p.per_id
+        )
+        SELECT PER_ID, ARR_ID, S_CLI_CLIENTES.NEXTVAL AS CLI_ID, ${tipoGestionArquetipo.recuperacion} FROM (
+            SELECT DISTINCT arr.per_id, arr.arq_id_calculado arr_id
+               FROM VARR arr
+                 --LEFT JOIN arq_arquetipos arq_per ON arr.arq_id = arq_per.arq_id  --arquetipo anterior
+                 JOIN arq_arquetipos arq_cal ON arr.arq_id_calculado = arq_cal.arq_id  --arquetipo calculado
+               WHERE
+                   /* Que tenga un arquetipo ACTUAL con fecha de disparo que cuadre*/
+                   /* Esto de momento, solo aplica a los exp. de seguimiento*/
+                   /*(arq_per.arq_plazo_disparo is null OR arr.per_ultima_operacion is null OR (sysdate-arr.per_ultima_operacion > arq_per.arq_plazo_disparo))*/
+                   /* Que tenga un arquetipo NUEVO gestionable */
+               arq_cal.arq_gestion = 1
+                   /* Que tenga un NUEVO arquetipo que sea de recuperacion */
+               AND EXISTS (SELECT iti.iti_id FROM iti_itinerarios iti JOIN ${master.schema}.dd_tit_tipo_itinerarios tit ON iti.dd_tit_id = tit.dd_tit_id WHERE arq_cal.iti_id = iti.iti_id AND tit.dd_tit_codigo = ${ddTipoItinerario.recuperacion.codigo})
+                   /* De momento el nivel y salto solo para los de exp. de seguimiento
+               AND
+               (
+                 CASE WHEN arq_per.dd_tsn_id is null THEN 1
+                 ELSE CASE WHEN arq_cal.arq_nivel <> arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ${ddTipoSaltoNivel.cualquierSalto.codigo}) THEN 1
+                    ELSE CASE WHEN arq_cal.arq_nivel > arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ${ddTipoSaltoNivel.saltoArriba.codigo}) THEN 1
+                        ELSE CASE WHEN arq_cal.arq_nivel < arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ${ddTipoSaltoNivel.saltoAbajo.codigo}) THEN 1
+                            ELSE 0 END END END END
+               ) = 1
+               */
+               /* Que la persona no esté atrapada en ningún expediente de seguimiento */
+               /* --HABILITAMOS LA GESTION MIXTA
+               AND NOT EXISTS (
+                 SELECT pex.per_id
+                     FROM pex_personas_expediente pex
+                         JOIN exp_expedientes exp ON pex.exp_id = exp.exp_id
+                         JOIN ${master.schema}.dd_eex_estado_expediente eex ON exp.dd_eex_id = eex.dd_eex_id
+                         JOIN ARQ_ARQUETIPOS arq ON exp.arq_id = arq.arq_id
+                         JOIN iti_itinerarios iti ON arq.iti_id = iti.iti_id
+                         JOIN ${master.schema}.dd_tit_tipo_itinerarios tit ON iti.dd_tit_id = tit.dd_tit_id
+                     WHERE pex.borrado = 0
+                         AND tit.dd_tit_codigo IN (${ddTipoItinerario.sintomatico.codigo}, ${ddTipoItinerario.sistematico.codigo})
+                         AND pex.per_id = arr.per_id
+                         AND eex.dd_eex_codigo IN (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo})
+                          --No sea un expediente de recobro
+                         AND NOT EXISTS (select exr.exp_id from exr_expediente_recobro exr where exp.exp_id = exr.exp_id)
+               )
+               */
+               /* Que la persona no tenga un cliente creado */
+               AND NOT EXISTS (
+                 SELECT c.per_id
+                     FROM CLI_CLIENTES c
+                     WHERE c.borrado = 0
+                         AND c.per_id = arr.per_id
+               )
+               /* Que la persona tenga algún contrato que esté libre */
+               AND EXISTS (
+                 SELECT c.cnt_id
+                   FROM cnt_contratos c
+                     JOIN  mov_movimientos m ON m.cnt_id = c.cnt_id AND m.mov_fecha_extraccion = c.cnt_fecha_extraccion
+                     JOIN cpe_contratos_personas cpe ON cpe.cnt_id = c.cnt_id
+                     JOIN dd_tin_tipo_intervencion tin ON cpe.DD_TIN_ID = tin.DD_TIN_ID
+                     JOIN ${master.schema}.dd_esc_estado_cnt e ON c.dd_esc_id = e.dd_esc_id
+                 WHERE cpe.per_id = arr.per_id
+                   /* Que tenga un contrato vencido */
+                   AND m.mov_deuda_irregular > 0
+                   AND m.mov_fecha_pos_vencida IS NOT NULL
                    /* Que sea titular del contrato */
-	                 INNER JOIN dd_tin_tipo_intervencion tin ON cpe.DD_TIN_ID = tin.DD_TIN_ID AND tin.DD_TIN_TITULAR = 1
-	                 INNER JOIN ${master.schema}.dd_esc_estado_cnt e ON c.dd_esc_id = e.dd_esc_id
-	             WHERE --cpe.per_id = arr.per_id	              
-	               /* Que el contrato no esté cancelado (Se considera cancelado cualquiera que no este activo)*/ 
-	               e.dd_esc_codigo = ${estadoContrato.Activo.codigo}
-	               /* Que el contrato no esté en algún procedimiento 'en curso' */
-	               AND NOT EXISTS (
-                       SELECT cex.cnt_id FROM 
-                        CEX_CONTRATOS_EXPEDIENTE cex INNER JOIN PRC_CEX pce ON cex.cex_id = pce.cex_id
-                        INNER JOIN PRC_PROCEDIMIENTOS prc ON pce.prc_id = prc.prc_id and prc.borrado = 0
-                        INNER JOIN ${master.schema}.DD_EPR_ESTADO_PROCEDIMIENTO epr ON prc.dd_epr_id  = epr.dd_epr_id                        
-                       WHERE cex.borrado = 0                        
-                       and epr.dd_epr_codigo IN (${ddEstadoProcedimiento.propuesto.codigo}, 
-	                   ${ddEstadoProcedimiento.confirmado.codigo}, 
-	                   ${ddEstadoProcedimiento.aceptado.codigo}, 
-	                   ${ddEstadoProcedimiento.derivado.codigo}, 
-	                   ${ddEstadoProcedimiento.enConformacion.codigo})
+                   AND tin.DD_TIN_TITULAR = 1
+                   /* Que el contrato no esté ni borrado ni cancelado (Se considera cancelado cualquiera que no sea activo)*/
+                   AND c.borrado = 0 AND e.dd_esc_codigo = ${estadoContrato.Activo.codigo}
+                   /* Que el contrato no esté en algún procedimiento 'en curso' */
+                   AND NOT EXISTS (
+                       SELECT DISTINCT cex.cnt_id FROM CEX_CONTRATOS_EXPEDIENTE cex, PRC_CEX pce, PRC_PROCEDIMIENTOS prc, ${master.schema}.DD_EPR_ESTADO_PROCEDIMIENTO epr
+                       WHERE cex.cex_id = pce.cex_id
+                       and pce.prc_id = prc.prc_id
+                       and cex.borrado = 0 and prc.borrado = 0
+                       and prc.dd_epr_id = epr.dd_epr_id
+                       and dd_epr_codigo IN (${ddEstadoProcedimiento.propuesto.codigo},
+                       ${ddEstadoProcedimiento.confirmado.codigo},
+                       ${ddEstadoProcedimiento.aceptado.codigo},
+                       ${ddEstadoProcedimiento.derivado.codigo},
+                       ${ddEstadoProcedimiento.enConformacion.codigo})
                        and cex.cnt_id = c.cnt_id
+                   UNION ALL
+                        /* Que el contrato no esté algún expediente 'en curso' */
+                       SELECT DISTINCT cex.cnt_id FROM cex_contratos_expediente cex, ${master.schema}.dd_eex_estado_expediente eex, exp_expedientes exp
+                       WHERE exp.exp_id = cex.exp_id
+                       and cex.borrado = 0
+                       and eex.dd_eex_id = exp.dd_eex_id
+                       and eex.dd_eex_codigo IN (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo})
+                       and cex.cnt_id = c.cnt_id
+                       AND EXP.dd_tpx_id = (select tpx.dd_tpx_id from dd_tpx_tipo_expediente TPX where dd_tpx_codigo = 'RECU')
                         --No sea un expediente de recobro
-                       and not exists (select exr.exp_id from exr_expediente_recobro exr where cex.exp_id = exr.exp_id)
-                   UNION
-                      /* Que el contrato no esté algún expediente 'en curso' */
-                       SELECT cex.cnt_id FROM cex_contratos_expediente cex                       
-                       INNER JOIN exp_expedientes exp ON exp.exp_id = cex.exp_id
-                       INNER JOIN ${master.schema}.dd_eex_estado_expediente eex ON eex.dd_eex_id = exp.dd_eex_id
-                       WHERE cex.borrado = 0 
+                       and not exists (select exr.exp_id from exr_expediente_recobro exr where exp.exp_id = exr.exp_id)
+                   UNION ALL
+                   /* Que el contrato no esté en algún cliente 'en curso' */
+                       SELECT DISTINCT ccl.cnt_id FROM ccl_contratos_cliente ccl
+                       WHERE ccl.borrado = 0
+                       and ccl.cnt_id = c.cnt_id
+                   )
+              )
+        )
+  ]]></entry>
+
+  <entry key="clientes.creacionClientes.02.insertTmpPER_Recuperacion_NO_MIXTA.Oracle9iDialect">
+  <![CDATA[
+       /**************************************
+      Buscar clientes activos de recuperacion
+      ***************************************/
+      INSERT INTO TMP_PER_ARQUETIPO_RECUPERACION (PER_ID, ARQ_ID, CLI_ID, DD_TIT_CODIGO)
+        WITH ARR_TMP AS (
+          SELECT DISTINCT PER_ID, ARQ_ID, ORD FROM (
+                      SELECT PER_ID, ARQ_ID, ROW_NUMBER() OVER (PARTITION BY PER_ID ORDER BY ARQ_DATE DESC) ORD
+                      FROM ARR_ARQ_RECUPERACION_PERSONA
+                    ) WHERE ORD <=1
+        )
+        , ARR_1 AS (SELECT * FROM ARR_TMP WHERE ORD=1)
+        --, ARR_2 AS (SELECT * FROM ARR_TMP WHERE ORD=2)
+        , VARR AS (
+            SELECT A1.PER_ID, A1.ARQ_ID ARQ_ID_CALCULADO --, A2.ARQ_ID --,p.per_ultima_operacion
+                FROM ARR_1 A1
+                --LEFT JOIN ARR_2 A2 ON A1.PER_ID = A2.PER_ID
+                inner join per_personas p on a1.per_id = p.per_id
+        )
+        SELECT PER_ID, ARR_ID, S_CLI_CLIENTES.NEXTVAL AS CLI_ID, ${tipoGestionArquetipo.recuperacion} FROM (
+            SELECT DISTINCT arr.per_id, arr.arq_id_calculado arr_id
+               FROM VARR arr
+                 --LEFT JOIN arq_arquetipos arq_per ON arr.arq_id = arq_per.arq_id  --arquetipo anterior
+                 JOIN arq_arquetipos arq_cal ON arr.arq_id_calculado = arq_cal.arq_id  --arquetipo calculado
+               WHERE
+                   /* Que tenga un arquetipo ACTUAL con fecha de disparo que cuadre*/
+                   /* Esto de momento, solo aplica a los exp. de seguimiento*/
+                   /*(arq_per.arq_plazo_disparo is null OR arr.per_ultima_operacion is null OR (sysdate-arr.per_ultima_operacion > arq_per.arq_plazo_disparo))*/
+                   /* Que tenga un arquetipo NUEVO gestionable */
+               arq_cal.arq_gestion = 1
+                   /* Que tenga un NUEVO arquetipo que sea de recuperacion */
+               AND EXISTS (SELECT iti.iti_id FROM iti_itinerarios iti JOIN ${master.schema}.dd_tit_tipo_itinerarios tit ON iti.dd_tit_id = tit.dd_tit_id WHERE arq_cal.iti_id = iti.iti_id AND tit.dd_tit_codigo = ${ddTipoItinerario.recuperacion.codigo})
+                   /* De momento el nivel y salto solo para los de exp. de seguimiento
+               AND
+               (
+                 CASE WHEN arq_per.dd_tsn_id is null THEN 1
+                 ELSE CASE WHEN arq_cal.arq_nivel <> arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ${ddTipoSaltoNivel.cualquierSalto.codigo}) THEN 1
+                    ELSE CASE WHEN arq_cal.arq_nivel > arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ${ddTipoSaltoNivel.saltoArriba.codigo}) THEN 1
+                        ELSE CASE WHEN arq_cal.arq_nivel < arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ${ddTipoSaltoNivel.saltoAbajo.codigo}) THEN 1
+                            ELSE 0 END END END END
+               ) = 1
+               */
+               /* Que la persona no esté atrapada en ningún expediente de seguimiento */
+               AND NOT EXISTS (
+                 SELECT pex.per_id
+                     FROM pex_personas_expediente pex
+                         JOIN exp_expedientes exp ON pex.exp_id = exp.exp_id
+                         JOIN ${master.schema}.dd_eex_estado_expediente eex ON exp.dd_eex_id = eex.dd_eex_id
+                         JOIN ARQ_ARQUETIPOS arq ON exp.arq_id = arq.arq_id
+                         JOIN iti_itinerarios iti ON arq.iti_id = iti.iti_id
+                         JOIN ${master.schema}.dd_tit_tipo_itinerarios tit ON iti.dd_tit_id = tit.dd_tit_id
+                     WHERE pex.borrado = 0
+                         AND tit.dd_tit_codigo IN (${ddTipoItinerario.sintomatico.codigo}, ${ddTipoItinerario.sistematico.codigo})
+                         AND pex.per_id = arr.per_id
+                         AND eex.dd_eex_codigo IN (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo})
+                          --No sea un expediente de recobro
+                         AND NOT EXISTS (select exr.exp_id from exr_expediente_recobro exr where exp.exp_id = exr.exp_id)
+               )
+               /* Que la persona no tenga un cliente creado */
+               AND NOT EXISTS (
+                 SELECT c.per_id
+                     FROM CLI_CLIENTES c
+                     WHERE c.borrado = 0
+                         AND c.per_id = arr.per_id
+               )
+               /* Que la persona tenga algún contrato que esté libre */
+               AND EXISTS (
+                 SELECT c.cnt_id
+                   FROM cnt_contratos c
+                     JOIN  mov_movimientos m ON m.cnt_id = c.cnt_id AND m.mov_fecha_extraccion = c.cnt_fecha_extraccion
+                     JOIN cpe_contratos_personas cpe ON cpe.cnt_id = c.cnt_id
+                     JOIN dd_tin_tipo_intervencion tin ON cpe.DD_TIN_ID = tin.DD_TIN_ID
+                     JOIN ${master.schema}.dd_esc_estado_cnt e ON c.dd_esc_id = e.dd_esc_id
+                 WHERE cpe.per_id = arr.per_id
+                   /* Que tenga un contrato vencido */
+                   AND m.mov_deuda_irregular > 0
+                   AND m.mov_fecha_pos_vencida IS NOT NULL
+                   /* Que sea titular del contrato */
+                   AND tin.DD_TIN_TITULAR = 1
+                   /* Que el contrato no esté ni borrado ni cancelado (Se considera cancelado cualquiera que no sea activo)*/
+                   AND c.borrado = 0 AND e.dd_esc_codigo = ${estadoContrato.Activo.codigo}
+                   /* Que el contrato no esté en algún procedimiento 'en curso' */
+                   AND NOT EXISTS (
+                       SELECT DISTINCT cex.cnt_id FROM CEX_CONTRATOS_EXPEDIENTE cex, PRC_CEX pce, PRC_PROCEDIMIENTOS prc, ${master.schema}.DD_EPR_ESTADO_PROCEDIMIENTO epr
+                       WHERE cex.cex_id = pce.cex_id
+                       and pce.prc_id = prc.prc_id
+                       and cex.borrado = 0 and prc.borrado = 0
+                       and prc.dd_epr_id = epr.dd_epr_id
+                       and dd_epr_codigo IN (${ddEstadoProcedimiento.propuesto.codigo},
+                       ${ddEstadoProcedimiento.confirmado.codigo},
+                       ${ddEstadoProcedimiento.aceptado.codigo},
+                       ${ddEstadoProcedimiento.derivado.codigo},
+                       ${ddEstadoProcedimiento.enConformacion.codigo})
+                       and cex.cnt_id = c.cnt_id
+                   UNION ALL
+                        /* Que el contrato no esté algún expediente 'en curso' */
+                       SELECT DISTINCT cex.cnt_id FROM cex_contratos_expediente cex, ${master.schema}.dd_eex_estado_expediente eex, exp_expedientes exp
+                       WHERE exp.exp_id = cex.exp_id
+                       and cex.borrado = 0
+                       and eex.dd_eex_id = exp.dd_eex_id
                        and eex.dd_eex_codigo IN (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo})
                        and cex.cnt_id = c.cnt_id
                         --No sea un expediente de recobro
-                       and not exists (select exr.exp_id from exr_expediente_recobro exr where exp.exp_id = exr.exp_id)	                   
-                   UNION	                   
+                       and not exists (select exr.exp_id from exr_expediente_recobro exr where exp.exp_id = exr.exp_id)
+                   UNION ALL
                    /* Que el contrato no esté en algún cliente 'en curso' */
-                       SELECT ccl.cnt_id FROM ccl_contratos_cliente ccl 
+                       SELECT DISTINCT ccl.cnt_id FROM ccl_contratos_cliente ccl
                        WHERE ccl.borrado = 0
                        and ccl.cnt_id = c.cnt_id
-	               )
-          )   
+                   )
+              )
+        )
+  ]]></entry>
+
+
+    <entry key="clientes.creacionClientes.02.insertTmpPER_Seguimiento.Oracle9iDialect">
+    <![CDATA[
+       /**************************************
+      Buscar clientes activos de seguimiento
+      ***************************************/
+      INSERT INTO TMP_PER_ARQUETIPO_RECUPERACION (PER_ID, ARQ_ID, CLI_ID, DD_TIT_CODIGO)
+        WITH ARR_TMP AS (
+          SELECT DISTINCT PER_ID, ARQ_ID, ORD FROM (
+                      SELECT PER_ID, ARQ_ID, ROW_NUMBER() OVER (PARTITION BY PER_ID ORDER BY ARQ_DATE DESC) ORD
+                      FROM ARR_ARQ_RECUPERACION_PERSONA
+                    ) WHERE ORD <=2
+        )
+        , ARR_1 AS (SELECT * FROM ARR_TMP WHERE ORD=1)
+        , ARR_2 AS (SELECT * FROM ARR_TMP WHERE ORD=2)
+        , VARR AS (
+            SELECT A1.PER_ID, A1.ARQ_ID ARQ_ID_CALCULADO, A2.ARQ_ID --, p.per_ultima_operacion
+                FROM ARR_1 A1 LEFT JOIN ARR_2 A2 ON A1.PER_ID = A2.PER_ID
+                inner join per_personas p on a1.per_id = p.per_id
+        )
+        SELECT PER_ID, ARR_ID, S_CLI_CLIENTES.NEXTVAL AS CLI_ID, ${tipoGestionArquetipo.seguimiento} FROM (
+            SELECT DISTINCT arr.per_id, arr.arq_id_calculado arr_id
+                  FROM VARR arr
+                    LEFT JOIN arq_arquetipos arq_per ON arr.arq_id = arq_per.arq_id  --arquetipo anterior
+                    JOIN arq_arquetipos arq_cal ON arr.arq_id_calculado = arq_cal.arq_id  --arquetipo calculado
+                  WHERE
+                  /* Que tenga un arquetipo NUEVO gestionable */
+                  arq_cal.arq_gestion = 1
+                  /* Que tenga un NUEVO arquetipo que sea de seguimiento */
+                  AND EXISTS (SELECT iti.iti_id FROM iti_itinerarios iti JOIN ${master.schema}.dd_tit_tipo_itinerarios tit ON iti.dd_tit_id = tit.dd_tit_id WHERE arq_cal.iti_id = iti.iti_id AND tit.dd_tit_codigo IN (${ddTipoItinerario.sintomatico.codigo}, ${ddTipoItinerario.sistematico.codigo}))
+                  AND
+                  (
+                    /* Si tiene fecha de vigencia que se cumpla/* Si tiene fecha de vigencia que se cumpla, o si tiene plazo de disparo que salte  */
+                    /* MISMO ARQUETIPO AYER Y HOY */
+                    /* SYSDATE - FECHA INICIO VIGENCIA > PLAZO DE DISPARO DE MI ARQUETIPO */
+                    /* Si no hay plazo de disparo salta al día siguiente*/
+                    (
+                    NVL(arq_cal.arq_plazo_disparo,0) < (
+                      SELECT sysdate - NVL(pol.pol_fecha_vigencia , sysdate - NVL(arq_cal.arq_plazo_disparo+1,1))
+                         FROM CMP_CICLO_MARCADO_POLITICA cmp
+                            JOIN POL_POLITICA pol ON pol.cmp_id = cmp.cmp_id
+                            JOIN ${master.schema}.DD_ESP_ESTADO_POLITICA esp ON pol.DD_ESP_ID = esp.DD_ESP_ID
+                            where 1=1
+                                AND cmp.per_id = arr.per_id
+                                AND esp.dd_esp_codigo = ${ddEstadoPolitica.vigente.codigo}
+                                AND (arq_cal.arq_id = arq_per.arq_id)
+                       )
+                    )
+                    /* O, si hay un salto suficientemente grande de nivel de arquetipo como indica el arquetipo actual*/
+                    /* MI ARQUETIPO DE HOY ES DISTINTO AL DE AYER */
+                    /* CUAL ERA MI TIPO DE SALTO EN ARQUETIPO AYER Y QUE NIVEL TENGO EN ARQUETIPO ACTUAL RESPECTO AL ANTERIOR */
+                    OR
+                    (
+                      CASE WHEN arq_per.dd_tsn_id is null THEN 1
+                      ELSE CASE WHEN arq_cal.arq_nivel <> arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ${ddTipoSaltoNivel.cualquierSalto.codigo}) THEN 1
+                         ELSE CASE WHEN arq_cal.arq_nivel > arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ${ddTipoSaltoNivel.saltoArriba.codigo}) THEN 1
+                             ELSE CASE WHEN arq_cal.arq_nivel < arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ${ddTipoSaltoNivel.saltoAbajo.codigo}) THEN 1
+                                 ELSE 0 END END END END
+                    ) = 1
+                  )
+                  /*  SE HA MODIFICADO POR LA FECHA POLITICA VIGENTE */
+                  /* Que tenga un arquetipo ACTUAL con fecha de disparo que cuadre */
+                  /* AND (arq_per.arq_plazo_disparo is null OR arr.per_ultima_operacion is null OR (sysdate-arr.per_ultima_operacion > arq_per.arq_plazo_disparo)) */
+                  /* Que la persona no esté atrapada en ningún expediente de seguimiento */
+                  AND NOT EXISTS (
+                    SELECT pex.per_id
+                        FROM pex_personas_expediente pex
+                            JOIN exp_expedientes exp ON pex.exp_id = exp.exp_id
+                            JOIN ${master.schema}.dd_eex_estado_expediente eex ON exp.dd_eex_id = eex.dd_eex_id
+                        WHERE pex.borrado = 0
+                            AND pex.per_id = arr.per_id
+                            AND eex.dd_eex_codigo IN (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo})
+                            AND exp.dd_tpx_id = (select tpx.dd_tpx_id from dd_tpx_tipo_expediente TPX where dd_tpx_codigo = 'SEG')
+                             --No sea un expediente de recobro
+                            AND not exists (select exr.exp_id from exr_expediente_recobro exr where exp.exp_id = exr.exp_id)
+                  )
+                  /* Que la persona no tenga un cliente creado */
+                  AND NOT EXISTS (
+                    SELECT c.per_id
+                        FROM CLI_CLIENTES c
+                        WHERE c.borrado = 0
+                            AND c.per_id = arr.per_id
+                  )
+                  /* Que la persona tenga algún contrato que esté libre */
+                  AND EXISTS (
+                    SELECT c.cnt_id
+                      FROM cnt_contratos c
+                        JOIN cpe_contratos_personas cpe ON cpe.cnt_id = c.cnt_id
+                        JOIN dd_tin_tipo_intervencion tin ON cpe.DD_TIN_ID = tin.DD_TIN_ID
+                        JOIN ${master.schema}.dd_esc_estado_cnt e ON c.dd_esc_id = e.dd_esc_id
+                    WHERE cpe.per_id = arr.per_id
+                      /* Que sea titular del contrato */
+                      AND tin.DD_TIN_TITULAR = 1
+                      /* Que el contrato no esté ni borrado ni cancelado (Se considera cancelado cualquiera que no este activo)*/
+                      AND c.borrado = 0 AND e.dd_esc_codigo = ${estadoContrato.Activo.codigo}
+                      /* Que el contrato no esté en algún procedimiento 'en curso' */
+                      AND NOT EXISTS (
+                          SELECT DISTINCT cex.cnt_id FROM CEX_CONTRATOS_EXPEDIENTE cex, PRC_CEX pce, PRC_PROCEDIMIENTOS prc, ${master.schema}.DD_EPR_ESTADO_PROCEDIMIENTO epr
+                          WHERE cex.cex_id = pce.cex_id
+                          and pce.prc_id = prc.prc_id
+                          and cex.borrado = 0 and prc.borrado = 0
+                          and prc.dd_epr_id = epr.dd_epr_id
+                          and dd_epr_codigo IN (${ddEstadoProcedimiento.propuesto.codigo},
+                       ${ddEstadoProcedimiento.confirmado.codigo},
+                       ${ddEstadoProcedimiento.aceptado.codigo},
+                       ${ddEstadoProcedimiento.derivado.codigo},
+                       ${ddEstadoProcedimiento.enConformacion.codigo})
+                          and cex.cnt_id = c.cnt_id
+                           --No sea un expediente de recobro
+                          and not exists (select exr.exp_id from exr_expediente_recobro exr where cex.exp_id = exr.exp_id)
+                      /* Que el contrato no esté algún expediente de recuperacion 'en curso' */
+                      UNION ALL
+                          SELECT DISTINCT cex.cnt_id
+                          FROM cex_contratos_expediente cex,
+                          ${master.schema}.dd_eex_estado_expediente eex,
+                          exp_expedientes exp
+                          JOIN ARQ_ARQUETIPOS arq ON exp.arq_id = arq.arq_id
+                             JOIN iti_itinerarios iti ON arq.iti_id = iti.iti_id
+                             JOIN ${master.schema}.dd_tit_tipo_itinerarios tit ON iti.dd_tit_id = tit.dd_tit_id
+                          WHERE exp.exp_id = cex.exp_id
+                          AND tit.dd_tit_codigo = ${ddTipoItinerario.recuperacion.codigo}
+                          and cex.borrado = 0
+                          and eex.dd_eex_id = exp.dd_eex_id
+                          and eex.dd_eex_codigo IN (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo})
+                          and cex.cnt_id = c.cnt_id
+                      /* Que el contrato no esté en algún cliente 'en curso' */
+                      UNION ALL
+                          SELECT DISTINCT ccl.cnt_id FROM ccl_contratos_cliente ccl
+                          WHERE ccl.borrado = 0 and ccl.cnt_id = c.cnt_id
+                      )
+                )
+        )
+    ]]>
+  </entry>
+
+
+   <entry key="clientes.creacionClientes.03.truncateTmpCNTnuevosCLI.Oracle9iDialect">
+    <![CDATA[
+    BEGIN
+        EXECUTE IMMEDIATE 'TRUNCATE TABLE TMP_CNT_NUEVOS_CLI';
+        EXECUTE IMMEDIATE 'TRUNCATE TABLE TMP_CNT_NUEVOS_CLI_DES';
+        EXECUTE IMMEDIATE 'TRUNCATE TABLE TMP_CNT_NUEVOS_CLI_VCPE';
+        EXECUTE IMMEDIATE 'TRUNCATE TABLE TMP_CNT_NUEVOS_CLI_MOV';
+    END;
+    ]]>
+  </entry>
+
+   <entry key="clientes.creacionClientes.04.insertTmpCNTnuevosCLI.Oracle9iDialect">
+    <![CDATA[
+     DECLARE
+       v_impPivote  varchar2(200 char);
+     BEGIN
+
+     DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_PER_ARQUETIPO_RECUPERACION', estimate_percent => 20);
+
+     Begin
+         EXECUTE IMMEDIATE 'Select PEN_VALOR From PEN_PARAM_ENTIDAD Where PEN_PARAM = ''importePivoteRecuperaciones'''
+         INTO v_impPivote;
+
+         EXCEPTION
+          WHEN NO_DATA_FOUND
+           THEN RAISE_APPLICATION_ERROR(-20000,'Importe pivote no informado en PEN_PARAM_ENTIDAD');
+     End;
+
+     INSERT /*+append*/ INTO TMP_CNT_NUEVOS_CLI_VCPE
+              /*Obtengo los contratos de los titulares*/
+              SELECT distinct cpe.per_id, cpe.cnt_id, c.cnt_fecha_extraccion, c.ofi_id
+                  FROM cpe_contratos_personas cpe
+                    /*Que el contrato no esté borrado*/
+                    INNER JOIN cnt_contratos c ON cpe.cnt_id = c.cnt_id AND c.borrado = 0
+                   INNER JOIN mov_movimientos m ON m.cnt_id = cpe.cnt_id AND m.mov_fecha_extraccion = c.cnt_fecha_extraccion
+                   /* Que sea titular del contrato */
+                    INNER JOIN dd_tin_tipo_intervencion tin ON cpe.DD_TIN_ID = tin.DD_TIN_ID AND tin.DD_TIN_TITULAR = 1
+                    INNER JOIN ${master.schema}.dd_esc_estado_cnt e ON c.dd_esc_id = e.dd_esc_id
+                    INNER JOIN TMP_PER_ARQUETIPO_RECUPERACION tmp on cpe.per_id = tmp.per_id
+                WHERE --cpe.per_id = arr.per_id
+                  /* Que el contrato no esté cancelado (Se considera cancelado cualquiera que no este activo)*/
+                  e.dd_esc_codigo = ${estadoContrato.Activo.codigo}
+                  /* Que el contrato no esté en algún procedimiento 'en curso' */
+                  AND NOT EXISTS (
+                       SELECT cex.cnt_id FROM
+                        CEX_CONTRATOS_EXPEDIENTE cex INNER JOIN PRC_CEX pce ON cex.cex_id = pce.cex_id
+                        INNER JOIN PRC_PROCEDIMIENTOS prc ON pce.prc_id = prc.prc_id and prc.borrado = 0
+                        INNER JOIN ${master.schema}.DD_EPR_ESTADO_PROCEDIMIENTO epr ON prc.dd_epr_id  = epr.dd_epr_id
+                       WHERE cex.borrado = 0
+                       and epr.dd_epr_codigo IN (${ddEstadoProcedimiento.propuesto.codigo},
+                      ${ddEstadoProcedimiento.confirmado.codigo},
+                      ${ddEstadoProcedimiento.aceptado.codigo},
+                      ${ddEstadoProcedimiento.derivado.codigo},
+                      ${ddEstadoProcedimiento.enConformacion.codigo})
+                       and cex.cnt_id = c.cnt_id
+                        --No sea un expediente de recobro
+                       and not exists (select exr.exp_id from exr_expediente_recobro exr where cex.exp_id = exr.exp_id)
+                   UNION ALL
+                      /* Que el contrato no esté algún expediente 'en curso' de recuperación si el cliente es de recuperación*/
+                       SELECT cex.cnt_id FROM cex_contratos_expediente cex
+                       INNER JOIN exp_expedientes exp ON exp.exp_id = cex.exp_id
+                       INNER JOIN ${master.schema}.dd_eex_estado_expediente eex ON eex.dd_eex_id = exp.dd_eex_id
+                       WHERE cex.borrado = 0
+                       and eex.dd_eex_codigo IN (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo})
+                       and cex.cnt_id = c.cnt_id
+                        --No sea un expediente de recobro
+                       and not exists (select exr.exp_id from exr_expediente_recobro exr where exp.exp_id = exr.exp_id)
+                       --Para los clientes de recuperación que tengan contratos de recuperación
+                       and (tmp.DD_TIT_CODIGO = ${ddTipoItinerario.recuperacion.codigo} and exp.dd_tpx_id = (select tpx.dd_tpx_id from dd_tpx_tipo_expediente TPX where dd_tpx_codigo = 'RECU'))
+                   UNION ALL
+                       --Que el contrato no esté en algún cliente 'en curso'
+                       SELECT ccl.cnt_id FROM ccl_contratos_cliente ccl
+                       WHERE ccl.borrado = 0
+                       and ccl.cnt_id = c.cnt_id
+                  );
+
+         DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CNT_NUEVOS_CLI_VCPE', estimate_percent => 20);
+         commit;
+
+     Execute Immediate ('
+        INSERT /*+append*/ INTO TMP_CNT_NUEVOS_CLI_MOV
+          --De los anteriores personas y titulares, ordenados por pos vencida ó riesgo
+            select vcpe.per_id, row_mov.cnt_id, row_mov.mov_fecha_extraccion, row_mov.'||v_impPivote||', row_mov.mov_riesgo, row_mov.mov_fecha_pos_vencida, vcpe.ofi_id
+              , row_number () over (partition by per_id order by row_mov.'||v_impPivote||' desc) n_mov_pos_vencida
+              , row_number () over (partition by per_id order by row_mov.mov_riesgo desc) n_mov_riesgo
+            from TMP_CNT_NUEVOS_CLI_VCPE vcpe inner join mov_movimientos row_mov on vcpe.cnt_id = row_mov.cnt_id  AND row_mov.mov_fecha_extraccion = vcpe.cnt_fecha_extraccion
+     ');
+
+    DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CNT_NUEVOS_CLI_MOV', estimate_percent => 20);
+    commit;
+
+    INSERT /*+append*/ INTO TMP_CNT_NUEVOS_CLI
+        select mov.per_id, mov.cnt_id, mov.ofi_id, mov.mov_fecha_pos_vencida
+                  ,case when tmp.dd_tit_codigo = ${ddTipoItinerario.recuperacion.codigo} then -- Recuperacion, vamos por mov pos viva vencida
+                        case mov.n_mov_pos_vencida when 1 then 1 else 0 end
+                      else -- Seguimiento, vamos por riesgo
+                        case mov.n_mov_riesgo when 1 then 1 else 0 end
+                      end es_cnt_pase
+        from TMP_PER_ARQUETIPO_RECUPERACION tmp
+          join TMP_CNT_NUEVOS_CLI_MOV mov on tmp.per_id = mov.per_id;
+
+
+          DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CNT_NUEVOS_CLI', estimate_percent => 20);
+    commit;
+    END;
+    ]]>
+  </entry>
+
+    <entry key="clientes.creacionClientes.04.insertTmpCNTnuevosCLI_OLD.Oracle9iDialect">
+    <![CDATA[
+        INSERT INTO TMP_CNT_NUEVOS_CLI
+        with vcpe as (
+              /*Obtengo los contratos de los titulares*/
+              SELECT distinct cpe.per_id, cpe.cnt_id, c.cnt_fecha_extraccion, c.ofi_id
+                  FROM cpe_contratos_personas cpe
+                    /*Que el contrato no esté borrado*/
+                    INNER JOIN cnt_contratos c ON cpe.cnt_id = c.cnt_id AND c.borrado = 0
+                   INNER JOIN mov_movimientos m ON m.cnt_id = cpe.cnt_id AND m.mov_fecha_extraccion = c.cnt_fecha_extraccion
+                   /* Que sea titular del contrato */
+                    INNER JOIN dd_tin_tipo_intervencion tin ON cpe.DD_TIN_ID = tin.DD_TIN_ID AND tin.DD_TIN_TITULAR = 1
+                    INNER JOIN ${master.schema}.dd_esc_estado_cnt e ON c.dd_esc_id = e.dd_esc_id
+                WHERE --cpe.per_id = arr.per_id
+                  /* Que el contrato no esté cancelado (Se considera cancelado cualquiera que no este activo)*/
+                  e.dd_esc_codigo = ${estadoContrato.Activo.codigo}
+                  /* Que el contrato no esté en algún procedimiento 'en curso' */
+                  AND NOT EXISTS (
+                       SELECT cex.cnt_id FROM
+                        CEX_CONTRATOS_EXPEDIENTE cex INNER JOIN PRC_CEX pce ON cex.cex_id = pce.cex_id
+                        INNER JOIN PRC_PROCEDIMIENTOS prc ON pce.prc_id = prc.prc_id and prc.borrado = 0
+                        INNER JOIN ${master.schema}.DD_EPR_ESTADO_PROCEDIMIENTO epr ON prc.dd_epr_id  = epr.dd_epr_id
+                       WHERE cex.borrado = 0
+                       and epr.dd_epr_codigo IN (${ddEstadoProcedimiento.propuesto.codigo},
+                      ${ddEstadoProcedimiento.confirmado.codigo},
+                      ${ddEstadoProcedimiento.aceptado.codigo},
+                      ${ddEstadoProcedimiento.derivado.codigo},
+                      ${ddEstadoProcedimiento.enConformacion.codigo})
+                       and cex.cnt_id = c.cnt_id
+                        --No sea un expediente de recobro
+                       and not exists (select exr.exp_id from exr_expediente_recobro exr where cex.exp_id = exr.exp_id)
+                   UNION ALL
+                      /* Que el contrato no esté algún expediente 'en curso' */
+                       SELECT cex.cnt_id FROM cex_contratos_expediente cex
+                       INNER JOIN exp_expedientes exp ON exp.exp_id = cex.exp_id
+                       INNER JOIN ${master.schema}.dd_eex_estado_expediente eex ON eex.dd_eex_id = exp.dd_eex_id
+                       WHERE cex.borrado = 0
+                       and eex.dd_eex_codigo IN (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo})
+                       and cex.cnt_id = c.cnt_id
+                        --No sea un expediente de recobro
+                       and not exists (select exr.exp_id from exr_expediente_recobro exr where exp.exp_id = exr.exp_id)
+                   UNION ALL
+                   /* Que el contrato no esté en algún cliente 'en curso' */
+                       SELECT ccl.cnt_id FROM ccl_contratos_cliente ccl
+                       WHERE ccl.borrado = 0
+                       and ccl.cnt_id = c.cnt_id
+                  )
+          )
         , mov as (  --De los anteriores personas y titulares, ordenados por pos vencida ó riesgo
             select vcpe.per_id, row_mov.cnt_id, row_mov.mov_fecha_extraccion, row_mov.mov_pos_viva_vencida, row_mov.mov_riesgo, row_mov.mov_fecha_pos_vencida, vcpe.ofi_id
               , row_number () over (partition by per_id order by row_mov.mov_pos_viva_vencida desc) n_mov_pos_vencida
               , row_number () over (partition by per_id order by row_mov.mov_riesgo desc) n_mov_riesgo
-            from vcpe inner join mov_movimientos row_mov on vcpe.cnt_id = row_mov.cnt_id  AND row_mov.mov_fecha_extraccion = vcpe.cnt_fecha_extraccion            
+            from vcpe inner join mov_movimientos row_mov on vcpe.cnt_id = row_mov.cnt_id  AND row_mov.mov_fecha_extraccion = vcpe.cnt_fecha_extraccion
         )
         select mov.per_id, mov.cnt_id, mov.ofi_id, mov.mov_fecha_pos_vencida
                   ,case when tmp.dd_tit_codigo = ${ddTipoItinerario.recuperacion.codigo} then -- Recuperacion, vamos por mov pos viva vencida
                         case mov.n_mov_pos_vencida when 1 then 1 else 0 end
                       else -- Seguimiento, vamos por riesgo
                         case mov.n_mov_riesgo when 1 then 1 else 0 end
-                      end es_cnt_pase        
-        from TMP_PER_ARQUETIPO_RECUPERACION tmp                  
-          join mov on tmp.per_id = mov.per_id    
+                      end es_cnt_pase
+        from TMP_PER_ARQUETIPO_RECUPERACION tmp
+          join mov on tmp.per_id = mov.per_id
     ]]>
   </entry>
-  
+
    <entry key="clientes.creacionClientes.05.insertCLIENTES.Oracle9iDialect">
     <![CDATA[
-      	INSERT INTO CLI_CLIENTES
+        INSERT INTO CLI_CLIENTES
           (
             CLI_ID, PER_ID,ARQ_ID, DD_EST_ID, CLI_FECHA_EST_ID, CLI_PROCESS_BPM, DD_ECL_ID,
             VERSION, USUARIOCREAR, FECHACREAR, BORRADO,
@@ -580,11 +803,15 @@
           )
         SELECT TMP.CLI_ID, TMP.PER_ID, TMP.ARQ_ID, EST.DD_EST_ID
           , SYSDATE AS CLI_FECHA_EST_ID
-          , NULL AS CLI_PROCESS_BPM 
-          , ECL.DD_ECL_ID 
+          , NULL AS CLI_PROCESS_BPM
+          , ECL.DD_ECL_ID
           , 0 AS VERSION , 'BATCH' AS USUARIOCREAR ,SYSDATE AS FECHACREAR , 0 AS BORRADO -- Auditoria
           , TMP_CNT.OFI_ID
-          , NVL(TMP_CNT.FECHA_POS_VENCIDA, SYSDATE) AS CLI_FECHA_CREACION
+          ,CASE WHEN DD_TIT_CODIGO = ${tipoGestionArquetipo.seguimiento} THEN
+            SYSDATE --SEGUIMIENTO, EL ITINERARIO EMPIEZA A CONTAR DESDE LA FECHA DE CREACION
+          ELSE
+            NVL(TMP_CNT.FECHA_POS_VENCIDA, SYSDATE) --RECUPERACION, EL ITINERARIO EMP. A CONTAR DESDE LA F.POS.VENCIDA, SI NULL = FECHA CREACION
+          END AS CLI_FECHA_CREACION
           , NULL AS PTE_ID --PROVEEDOR TELECOBRO
           , '0' AS CLI_TELECOBRO --CLIENTE TELECOBRO
           , NULL AS CLI_FECHA_GV -- FECHA GESTION VENCIDOS
@@ -594,334 +821,349 @@
           JOIN TMP_CNT_NUEVOS_CLI TMP_CNT ON TMP.PER_ID = TMP_CNT.PER_ID AND TMP_CNT.ES_CNT_PASE = 1
     ]]>
   </entry>
-  
+
    <entry key="clientes.creacionClientes.06.insertCONTRATOS_CLIENTE.Oracle9iDialect">
     <![CDATA[
-      	INSERT INTO CCL_CONTRATOS_CLIENTE
+        INSERT INTO CCL_CONTRATOS_CLIENTE
         (CCL_ID, CLI_ID, CNT_ID, CCL_PASE,VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
         WITH contratos AS (
           SELECT DISTINCT TMP.CLI_ID, TCNT.CNT_ID, NVL(TCNT.ES_CNT_PASE, 0) AS CCL_PASE
-            FROM TMP_PER_ARQUETIPO_RECUPERACION TMP 
+            FROM TMP_PER_ARQUETIPO_RECUPERACION TMP
             JOIN TMP_CNT_NUEVOS_CLI TCNT ON TMP.PER_ID = TCNT.PER_ID
-        )  
+        )
         SELECT S_CCL_CONTRATOS_CLIENTE.NEXTVAL, CNT.CLI_ID, CNT.CNT_ID, CNT.CCL_PASE
           , 0 AS VERSION , 'BATCH' AS USUARIOCREAR ,SYSDATE AS FECHACREAR , 0 AS BORRADO
         FROM contratos CNT
     ]]>
   </entry>
-  
-  
-  
+
+
+
   <entry key="clientes.carenciaToGestionVencidos.Oracle9iDialect">
-	  <![CDATA[
-	  MERGE INTO CLI_CLIENTES CLI USING
-		( WITH fechasEstados AS
-		  (SELECT SYSDATE - ((((SUM(est.est_plazo)/1000)/24)/60)/60) fecha,
-		    ARQ_ID
-		  FROM arq_arquetipos arq
-		  INNER JOIN iti_itinerarios iti
-		    ON arq.iti_id = iti.iti_id
-		  INNER JOIN est_estados est
-		    ON iti.iti_id = est.iti_id
-		  INNER JOIN ${master.schema}.dd_est_estados_itinerarios dd_est
-		    ON est.dd_est_id         = dd_est.dd_est_id
-		    AND DD_EST.DD_EST_ORDEN <= --Sumamos todos los plazos que estén por debajo de Carencia si los hubiera
-		      (SELECT DD_EST_ORDEN
-		      FROM ${master.schema}.DD_EST_ESTADOS_ITINERARIOS
-		      WHERE DD_EST_CODIGO = ${ddEstadoItinerario.carencia.codigo}
-		      )
-		  INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Solo los de la entidad cliente
-		    ON DD_EST.DD_EIN_ID = DD_EIN.DD_EIN_ID
-		    AND DD_EIN_CODIGO   = ${ddEntidadInformacion.Cliente.codigo}
-		  GROUP BY ARQ.ARQ_ID
-		  )
-		  SELECT cli.cli_id
-		  FROM cli_clientes cli
-		  INNER JOIN fechasEstados vFechas
-		    ON cli.arq_id = vFechas.arq_id
-		  INNER JOIN ${master.schema}.dd_est_estados_itinerarios dd_est --Los itinerarios de Carencia
-		    ON cli.dd_est_id  = dd_est.dd_est_id
-		    AND dd_est.dd_est_codigo = 'CAR'
-		  INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Los de la entidad cliente
-		    ON DD_EST.DD_EIN_ID                             = DD_EIN.DD_EIN_ID
-		    AND DD_EIN_CODIGO                               = ${ddEntidadInformacion.Cliente.codigo}
-		  WHERE CLI.BORRADO                               = 0
-		    AND TO_DATE(CLI.CLI_FECHA_CREACION,'DD/MM/RR') <= TO_DATE(vFechas.fecha,'DD/MM/RR')  --Que no haya pasado el plazo del itinerario
-		) ORIGEN ON (CLI.CLI_ID = ORIGEN.CLI_ID)
-		WHEN MATCHED THEN
-		  UPDATE
-		  SET CLI.DD_EST_ID = --Cambiamos el estado a GestiónVencidos de la entidad cliente
-		    (SELECT dd_est.dd_est_id
-		    FROM ${master.schema}.dd_est_estados_itinerarios dd_est
-		    INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN
-		    ON DD_EST.DD_EIN_ID = DD_EIN.DD_EIN_ID
-		    AND DD_EIN_CODIGO   = ${ddEntidadInformacion.Cliente.codigo}
-		    WHERE dd_est_codigo = ${ddEstadoItinerario.gestionVencidos.codigo}
-		    ) ,
-		    CLI_FECHA_EST_ID = SYSDATE --Fecha que cambió el estado
-	  ]]>
+      <![CDATA[
+      MERGE INTO CLI_CLIENTES CLI USING
+        ( WITH fechasEstados AS
+          (SELECT SYSDATE - ((((SUM(est.est_plazo)/1000)/24)/60)/60) fecha,
+            ARQ_ID
+          FROM arq_arquetipos arq
+          INNER JOIN iti_itinerarios iti
+            ON arq.iti_id = iti.iti_id
+          INNER JOIN est_estados est
+            ON iti.iti_id = est.iti_id
+          INNER JOIN ${master.schema}.dd_est_estados_itinerarios dd_est
+            ON est.dd_est_id         = dd_est.dd_est_id
+            AND DD_EST.DD_EST_ORDEN <= --Sumamos todos los plazos que estén por debajo de Carencia si los hubiera
+              (SELECT DD_EST_ORDEN
+              FROM ${master.schema}.DD_EST_ESTADOS_ITINERARIOS
+              WHERE DD_EST_CODIGO = ${ddEstadoItinerario.carencia.codigo}
+              )
+          INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Solo los de la entidad cliente
+            ON DD_EST.DD_EIN_ID = DD_EIN.DD_EIN_ID
+            AND DD_EIN_CODIGO   = ${ddEntidadInformacion.Cliente.codigo}
+          GROUP BY ARQ.ARQ_ID
+          )
+          SELECT cli.cli_id
+          FROM cli_clientes cli
+          INNER JOIN fechasEstados vFechas
+            ON cli.arq_id = vFechas.arq_id
+          INNER JOIN ${master.schema}.dd_est_estados_itinerarios dd_est --Los itinerarios de Carencia
+            ON cli.dd_est_id  = dd_est.dd_est_id
+            AND dd_est.dd_est_codigo = 'CAR'
+          INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Los de la entidad cliente
+            ON DD_EST.DD_EIN_ID                             = DD_EIN.DD_EIN_ID
+            AND DD_EIN_CODIGO                               = ${ddEntidadInformacion.Cliente.codigo}
+          WHERE CLI.BORRADO                               = 0
+            AND TO_DATE(CLI.CLI_FECHA_CREACION,'DD/MM/RR') <= TO_DATE(vFechas.fecha,'DD/MM/RR')  --Que no haya pasado el plazo del itinerario
+        ) ORIGEN ON (CLI.CLI_ID = ORIGEN.CLI_ID)
+        WHEN MATCHED THEN
+          UPDATE
+          SET CLI.DD_EST_ID = --Cambiamos el estado a GestiónVencidos de la entidad cliente
+            (SELECT dd_est.dd_est_id
+            FROM ${master.schema}.dd_est_estados_itinerarios dd_est
+            INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN
+            ON DD_EST.DD_EIN_ID = DD_EIN.DD_EIN_ID
+            AND DD_EIN_CODIGO   = ${ddEntidadInformacion.Cliente.codigo}
+            WHERE dd_est_codigo = ${ddEstadoItinerario.gestionVencidos.codigo}
+            ) ,
+            CLI_FECHA_EST_ID = SYSDATE --Fecha que cambió el estado
+      ]]>
   </entry>
-  
+
   <entry key="clientes.revisionClientes.limpiarTMPCliPerArq.Oracle9iDialect">
     <![CDATA[
-    	TRUNCATE TABLE TMP_CLI_PER_ARQ
+        TRUNCATE TABLE TMP_CLI_PER_ARQ
     ]]>
     </entry>
-    
+
      <entry key="clientes.revisionClientes.marcarCliPerArq.Oracle9iDialect">
     <![CDATA[
-  
+    BEGIN
+
   /*************************************************
   Insertar los clientes activos, personas, sus respectivos arquetipos
   y si son de gestion en TMP_CLI_PER_ARQ
   **************************************************/
-  INSERT INTO TMP_CLI_PER_ARQ 
+  INSERT INTO TMP_CLI_PER_ARQ
     WITH ARR AS (
       SELECT DISTINCT PER_ID, ARQ_ID FROM (
           SELECT PER_ID, ARQ_ID, ROW_NUMBER() OVER (PARTITION BY PER_ID ORDER BY ARQ_DATE DESC) ORD
           FROM ARR_ARQ_RECUPERACION_PERSONA
         ) WHERE ORD = 1
       )
-    (      
-      SELECT cli.CLI_ID, cli.per_id, cli.arq_id arq_cliente, arr.arq_id arq_persona, arq.arq_gestion            
-      FROM CLI_CLIENTES cli             
+    (
+      SELECT /*+parallel*/ cli.CLI_ID, cli.per_id, cli.arq_id arq_cliente, arr.arq_id arq_persona, arq.arq_gestion
+      FROM CLI_CLIENTES cli
         inner join ${master.schema}.DD_ECL_ESTADO_CLIENTE ecl on cli.DD_ECL_ID = ecl.DD_ECL_ID AND ecl.DD_ECL_CODIGO = 1
-        inner join arr on cli.per_id = arr.per_id          
-        inner join arq_arquetipos arq on arr.arq_id = arq.arq_id            
-      WHERE cli.BORRADO = 0                
-    )
-  
+        inner join arr on cli.per_id = arr.per_id
+        inner join arq_arquetipos arq on arr.arq_id = arq.arq_id
+      WHERE cli.BORRADO = 0
+    );
+
+    DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CLI_PER_ARQ', estimate_percent => 20);
+
+    END;
+
   ]]>
   </entry>
-  
+
   <entry key="clientes.revisionClientes.limpiarTMPCliACancelar.Oracle9iDialect">
-  <![CDATA[       
-	  TRUNCATE TABLE TMP_CLI_A_CANCELAR
+  <![CDATA[
+      TRUNCATE TABLE TMP_CLI_A_CANCELAR
   ]]>
   </entry>
-  
- 	<entry key="clientes.revisionClientes.marcarClientesSinGestion.Oracle9iDialect">
+
+    <entry key="clientes.revisionClientes.marcarClientesSinGestion.Oracle9iDialect">
     <![CDATA[
+    BEGIN
     /*********************************************
-	  Insertamos los clientes a borrar en TMP_CLI_A_CANCELAR
-	  que su arquetipo ya no sea de gestión
-	  *********************************************/
-	
-	INSERT INTO TMP_CLI_A_CANCELAR      
-      (SELECT CLI_ID        
-        FROM TMP_CLI_PER_ARQ        
-      WHERE ARQ_CLIENTE <> ARQ_PERSONA AND ES_ARQ_GESTION = 0)
+      Insertamos los clientes a borrar en TMP_CLI_A_CANCELAR
+      que su arquetipo ya no sea de gestión
+      *********************************************/
+
+    INSERT INTO TMP_CLI_A_CANCELAR
+      (SELECT CLI_ID
+        FROM TMP_CLI_PER_ARQ
+      WHERE ARQ_CLIENTE <> ARQ_PERSONA AND ES_ARQ_GESTION = 0);
+
+    DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CLI_A_CANCELAR', estimate_percent => 20);
+
+    END;
      ]]>
      </entry>
-     
- 	<entry key="clientes.revisionClientes.asignarNuevosArquetipos.Oracle9iDialect">
+
+    <entry key="clientes.revisionClientes.asignarNuevosArquetipos.Oracle9iDialect">
     <![CDATA[
     /*************************************************
-	  Asignar nuevo arquetipo al cliente
-	************************************************/
-    MERGE INTO CLI_CLIENTES CLI USING 
+      Asignar nuevo arquetipo al cliente
+    ************************************************/
+    MERGE INTO CLI_CLIENTES CLI USING
     (
-      SELECT CLI_ID, ARQ_PERSONA 
-        FROM TMP_CLI_PER_ARQ   
+      SELECT CLI_ID, ARQ_PERSONA
+        FROM TMP_CLI_PER_ARQ
         WHERE ARQ_CLIENTE <> ARQ_PERSONA  AND ES_ARQ_GESTION = 1
     ) ORIGEN ON (CLI.CLI_ID = ORIGEN.CLI_ID)
     WHEN MATCHED THEN
-      UPDATE 
+      UPDATE
         SET CLI.ARQ_ID = ARQ_PERSONA,
           USUARIOMODIFICAR = 'REV-JOB',
-          FECHAMODIFICAR = SYSDATE 
-	 ]]>
-	 </entry>
+          FECHAMODIFICAR = SYSDATE
+     ]]>
+     </entry>
 
- 	<entry key="clientes.revisionClientes.carenciaToGestionVencidos.Oracle9iDialect">
+    <entry key="clientes.revisionClientes.carenciaToGestionVencidos.Oracle9iDialect">
     <![CDATA[
     MERGE INTO CLI_CLIENTES CLI USING
-		(     
-    	WITH fechasEstados AS
-		  (SELECT SYSDATE - ((((SUM(est.est_plazo)/1000)/24)/60)/60) fecha,
-		    ARQ_ID
-		  FROM arq_arquetipos arq
-		  INNER JOIN iti_itinerarios iti
-		    ON arq.iti_id = iti.iti_id
-		  INNER JOIN est_estados est
-		    ON iti.iti_id = est.iti_id
-		  INNER JOIN ${master.schema}.dd_est_estados_itinerarios dd_est
-		    ON est.dd_est_id         = dd_est.dd_est_id
-		    AND DD_EST.DD_EST_ORDEN <= --Sumamos todos los plazos que estén por debajo de Carencia si los hubiera
-		      (SELECT DD_EST_ORDEN
-		      FROM ${master.schema}.DD_EST_ESTADOS_ITINERARIOS
-		      WHERE DD_EST_CODIGO = ${ddEstadoItinerario.carencia.codigo}
-		      )
-		  INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Solo los de la entidad cliente
-		    ON DD_EST.DD_EIN_ID = DD_EIN.DD_EIN_ID
-		    AND DD_EIN_CODIGO   = ${ddEntidadInformacion.Cliente.codigo}
-		  GROUP BY ARQ.ARQ_ID
-		  )
-		  SELECT cli.cli_id
-		  FROM cli_clientes cli
-		  INNER JOIN fechasEstados vFechas
-		    ON cli.arq_id = vFechas.arq_id
-		  INNER JOIN ${master.schema}.dd_est_estados_itinerarios dd_est --Los itinerarios de Carencia
-		    ON cli.dd_est_id  = dd_est.dd_est_id
-		    AND dd_est.dd_est_codigo = 'CAR'
-		  INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Los de la entidad cliente
-		    ON DD_EST.DD_EIN_ID                             = DD_EIN.DD_EIN_ID
-		    AND DD_EIN_CODIGO                               = ${ddEntidadInformacion.Cliente.codigo}
-		  WHERE CLI.BORRADO                               = 0
-		    AND TO_DATE(CLI.CLI_FECHA_CREACION,'DD/MM/RR') <= TO_DATE(vFechas.fecha,'DD/MM/RR')  --Que no haya pasado el plazo del itinerario
-		) ORIGEN ON (CLI.CLI_ID = ORIGEN.CLI_ID)
-		WHEN MATCHED THEN
-		  UPDATE
-		  SET CLI.DD_EST_ID = --Cambiamos el estado a GestiónVencidos de la entidad cliente
-		    (SELECT dd_est.dd_est_id
-		    FROM ${master.schema}.dd_est_estados_itinerarios dd_est
-		    INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN
-		    ON DD_EST.DD_EIN_ID = DD_EIN.DD_EIN_ID
-		    AND DD_EIN_CODIGO   = ${ddEntidadInformacion.Cliente.codigo}
-		    WHERE dd_est_codigo = ${ddEstadoItinerario.gestionVencidos.codigo}
-		    ) ,
-		    CLI_FECHA_EST_ID = SYSDATE,
+        (
+        WITH fechasEstados AS
+          (SELECT SYSDATE - ((((SUM(est.est_plazo)/1000)/24)/60)/60) fecha,
+            ARQ_ID
+          FROM arq_arquetipos arq
+          INNER JOIN iti_itinerarios iti
+            ON arq.iti_id = iti.iti_id
+          INNER JOIN est_estados est
+            ON iti.iti_id = est.iti_id
+          INNER JOIN ${master.schema}.dd_est_estados_itinerarios dd_est
+            ON est.dd_est_id         = dd_est.dd_est_id
+            AND DD_EST.DD_EST_ORDEN <= --Sumamos todos los plazos que estén por debajo de Carencia si los hubiera
+              (SELECT DD_EST_ORDEN
+              FROM ${master.schema}.DD_EST_ESTADOS_ITINERARIOS
+              WHERE DD_EST_CODIGO = ${ddEstadoItinerario.carencia.codigo}
+              )
+          INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Solo los de la entidad cliente
+            ON DD_EST.DD_EIN_ID = DD_EIN.DD_EIN_ID
+            AND DD_EIN_CODIGO   = ${ddEntidadInformacion.Cliente.codigo}
+          GROUP BY ARQ.ARQ_ID
+          )
+          SELECT cli.cli_id
+          FROM cli_clientes cli
+          INNER JOIN fechasEstados vFechas
+            ON cli.arq_id = vFechas.arq_id
+          INNER JOIN ${master.schema}.dd_est_estados_itinerarios dd_est --Los itinerarios de Carencia
+            ON cli.dd_est_id  = dd_est.dd_est_id
+            AND dd_est.dd_est_codigo = 'CAR'
+          INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Los de la entidad cliente
+            ON DD_EST.DD_EIN_ID                             = DD_EIN.DD_EIN_ID
+            AND DD_EIN_CODIGO                               = ${ddEntidadInformacion.Cliente.codigo}
+          WHERE CLI.BORRADO                               = 0
+            AND TO_DATE(CLI.CLI_FECHA_CREACION,'DD/MM/RR') <= TO_DATE(vFechas.fecha,'DD/MM/RR')  --Que no haya pasado el plazo del itinerario
+        ) ORIGEN ON (CLI.CLI_ID = ORIGEN.CLI_ID)
+        WHEN MATCHED THEN
+          UPDATE
+          SET CLI.DD_EST_ID = --Cambiamos el estado a GestiónVencidos de la entidad cliente
+            (SELECT dd_est.dd_est_id
+            FROM ${master.schema}.dd_est_estados_itinerarios dd_est
+            INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN
+            ON DD_EST.DD_EIN_ID = DD_EIN.DD_EIN_ID
+            AND DD_EIN_CODIGO   = ${ddEntidadInformacion.Cliente.codigo}
+            WHERE dd_est_codigo = ${ddEstadoItinerario.gestionVencidos.codigo}
+            ) ,
+            CLI_FECHA_EST_ID = SYSDATE,
         USUARIOMODIFICAR = 'REV-JOB',
         FECHAMODIFICAR = SYSDATE --Fecha que cambió el estado
     ]]>
     </entry>
-    
+
     <entry key="clientes.revisionClientes.gestionVencidosToCarencia.Oracle9iDialect">
     <![CDATA[
-   	 MERGE INTO CLI_CLIENTES CLI USING
-		(            
-	    WITH fechasEstados AS
-			  (SELECT SYSDATE - ((((SUM(est.est_plazo)/1000)/24)/60)/60) fecha,
-		    ARQ_ID
-		  FROM arq_arquetipos arq
-		  INNER JOIN iti_itinerarios iti
-		    ON arq.iti_id = iti.iti_id
-		  INNER JOIN est_estados est
-		    ON iti.iti_id = est.iti_id
-		  INNER JOIN ${master.schema}.dd_est_estados_itinerarios dd_est
-		    ON est.dd_est_id         = dd_est.dd_est_id
-		    AND DD_EST.DD_EST_ORDEN <= --Sumamos todos los plazos que estén por debajo de Carencia si los hubiera
-		      (SELECT DD_EST_ORDEN
-		      FROM ${master.schema}.DD_EST_ESTADOS_ITINERARIOS
-		      WHERE DD_EST_CODIGO = ${ddEstadoItinerario.carencia.codigo}
-		      )
-		  INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Solo los de la entidad cliente
-		    ON DD_EST.DD_EIN_ID = DD_EIN.DD_EIN_ID
-		    AND DD_EIN_CODIGO   = ${ddEntidadInformacion.Cliente.codigo}
-		  GROUP BY ARQ.ARQ_ID
-		  )
-		  SELECT cli.cli_id, cli.cli_fecha_creacion, vFechas.fecha
-		  FROM cli_clientes cli
-		  INNER JOIN fechasEstados vFechas
-		    ON cli.arq_id = vFechas.arq_id
-		  INNER JOIN ${master.schema}.dd_est_estados_itinerarios dd_est --Los itinerarios de Carencia
-		    ON cli.dd_est_id  = dd_est.dd_est_id
-		    AND dd_est.dd_est_codigo = 'GV'
-		  INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Los de la entidad cliente
-		    ON DD_EST.DD_EIN_ID                             = DD_EIN.DD_EIN_ID
-		    AND DD_EIN_CODIGO                               = ${ddEntidadInformacion.Cliente.codigo}
-		  WHERE CLI.BORRADO                               = 0
-		    AND TO_DATE(CLI.CLI_FECHA_CREACION,'DD/MM/RR') >= TO_DATE(vFechas.fecha,'DD/MM/RR')  --Que haya pasado el plazo del itinerario
-	) ORIGEN ON (CLI.CLI_ID = ORIGEN.CLI_ID)
-		WHEN MATCHED THEN
-		  UPDATE
-		  SET CLI.DD_EST_ID = --Cambiamos el estado a GestiónVencidos de la entidad cliente
-		    (SELECT dd_est.dd_est_id
-		    FROM ${master.schema}.dd_est_estados_itinerarios dd_est
-		    INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN
-		    ON DD_EST.DD_EIN_ID = DD_EIN.DD_EIN_ID
-		    AND DD_EIN_CODIGO   = ${ddEntidadInformacion.Cliente.codigo}
-		    WHERE dd_est_codigo = ${ddEstadoItinerario.gestionVencidos.codigo}
-		    ) ,
-		    CLI_FECHA_EST_ID = SYSDATE,
+     MERGE INTO CLI_CLIENTES CLI USING
+        (
+        WITH fechasEstados AS
+              (SELECT SYSDATE - ((((SUM(est.est_plazo)/1000)/24)/60)/60) fecha,
+            ARQ_ID
+          FROM arq_arquetipos arq
+          INNER JOIN iti_itinerarios iti
+            ON arq.iti_id = iti.iti_id
+          INNER JOIN est_estados est
+            ON iti.iti_id = est.iti_id
+          INNER JOIN ${master.schema}.dd_est_estados_itinerarios dd_est
+            ON est.dd_est_id         = dd_est.dd_est_id
+            AND DD_EST.DD_EST_ORDEN <= --Sumamos todos los plazos que estén por debajo de Carencia si los hubiera
+              (SELECT DD_EST_ORDEN
+              FROM ${master.schema}.DD_EST_ESTADOS_ITINERARIOS
+              WHERE DD_EST_CODIGO = ${ddEstadoItinerario.carencia.codigo}
+              )
+          INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Solo los de la entidad cliente
+            ON DD_EST.DD_EIN_ID = DD_EIN.DD_EIN_ID
+            AND DD_EIN_CODIGO   = ${ddEntidadInformacion.Cliente.codigo}
+          GROUP BY ARQ.ARQ_ID
+          )
+          SELECT cli.cli_id, cli.cli_fecha_creacion, vFechas.fecha
+          FROM cli_clientes cli
+          INNER JOIN fechasEstados vFechas
+            ON cli.arq_id = vFechas.arq_id
+          INNER JOIN ${master.schema}.dd_est_estados_itinerarios dd_est --Los itinerarios de Carencia
+            ON cli.dd_est_id  = dd_est.dd_est_id
+            AND dd_est.dd_est_codigo = 'GV'
+          INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Los de la entidad cliente
+            ON DD_EST.DD_EIN_ID                             = DD_EIN.DD_EIN_ID
+            AND DD_EIN_CODIGO                               = ${ddEntidadInformacion.Cliente.codigo}
+          WHERE CLI.BORRADO                               = 0
+            AND TO_DATE(CLI.CLI_FECHA_CREACION,'DD/MM/RR') >= TO_DATE(vFechas.fecha,'DD/MM/RR')  --Que haya pasado el plazo del itinerario
+    ) ORIGEN ON (CLI.CLI_ID = ORIGEN.CLI_ID)
+        WHEN MATCHED THEN
+          UPDATE
+          SET CLI.DD_EST_ID = --Cambiamos el estado a GestiónVencidos de la entidad cliente
+            (SELECT dd_est.dd_est_id
+            FROM ${master.schema}.dd_est_estados_itinerarios dd_est
+            INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN
+            ON DD_EST.DD_EIN_ID = DD_EIN.DD_EIN_ID
+            AND DD_EIN_CODIGO   = ${ddEntidadInformacion.Cliente.codigo}
+            WHERE dd_est_codigo = ${ddEstadoItinerario.gestionVencidos.codigo}
+            ) ,
+            CLI_FECHA_EST_ID = SYSDATE,
         USUARIOMODIFICAR = 'REV-JOB',
         FECHAMODIFICAR = SYSDATE
     ]]>
     </entry>
- 	 
- 	 
- 	<entry key="clientes.revisionClientes.limpiarTMPMovRevisados.Oracle9iDialect">
-    <![CDATA[	     
-  		TRUNCATE TABLE TMP_MOV_REVISADOS
-  	]]>
-  	</entry>
-  	
-  	<entry key="clientes.revisionClientes.revisarMovimientos.Oracle9iDialect">
+
+
+    <entry key="clientes.revisionClientes.limpiarTMPMovRevisados.Oracle9iDialect">
     <![CDATA[
+        TRUNCATE TABLE TMP_MOV_REVISADOS
+    ]]>
+    </entry>
+
+    <entry key="clientes.revisionClientes.revisarMovimientos.Oracle9iDialect">
+    <![CDATA[
+    BEGIN
     /***************************************************
-  		Revisar movimientos e insertarlo en tabla temporal para tratar a continuación
-  		-- TODO - y generar notificaciones
-  	*****************************************************/
-  	
-  	
-    INSERT INTO TMP_MOV_REVISADOS 
+        Revisar movimientos e insertarlo en tabla temporal para tratar a continuación
+        -- TODO - y generar notificaciones
+    *****************************************************/
+
+
+    INSERT INTO TMP_MOV_REVISADOS
       WITH vTMP_CNT AS /*Obtenemos los contratos de los clientes que el iti. es de gestión*/
-      (             
-      SELECT ccl.CNT_ID, tmp.cli_id, tmp.arq_persona, dd_tit.dd_tit_codigo, ccl.ccl_pase es_pase      
-        FROM tmp_cli_per_arq tmp      
+      (
+      SELECT ccl.CNT_ID, tmp.cli_id, tmp.arq_persona, dd_tit.dd_tit_codigo, ccl.ccl_pase es_pase
+        FROM tmp_cli_per_arq tmp
         INNER JOIN ccl_contratos_cliente ccl ON tmp.cli_id  = ccl.cli_id  AND tmp.es_arq_gestion = 1 and ccl.borrado = 0
         inner join arq_arquetipos arq on tmp.arq_cliente = arq.arq_id and arq.borrado=0
         inner join iti_itinerarios iti on arq.iti_id = iti.iti_id and iti.borrado=0
-        inner join ${master.schema}.dd_tit_tipo_itinerarios dd_tit on iti.dd_tit_id = dd_tit.dd_tit_id and dd_tit.borrado=0      
+        inner join ${master.schema}.dd_tit_tipo_itinerarios dd_tit on iti.dd_tit_id = dd_tit.dd_tit_id and dd_tit.borrado=0
       )
-(SELECT C.CNT_ID, v.CLI_ID, v.arq_persona, v.dd_tit_codigo, v.es_pase,     
-CASE 
-    WHEN e.dd_esc_codigo <> ${estadoContrato.Activo.codigo} --Cancelado es cualquier tipo que no sea activo, no solo el 7   
-      THEN 1        
-    ELSE 0      
-  END Cancelado,      
-CASE 
-    WHEN (movAct.mov_deuda_irregular = 0)        
-      THEN 1        
-    ELSE 0      
-  END SaldadoSinMovAnterior,      
-CASE        
-    WHEN (movAct.mov_deuda_irregular = 0 AND movAnt.mov_deuda_irregular  <> 0)        
-      THEN 1        
-    ELSE 0      
-  END Saldado,      
-  NVL(movAnt.mov_deuda_irregular - movAct.mov_deuda_irregular, 0) Diferencia,      
-  movAct.mov_deuda_irregular Importe,      
-  movAnt.mov_deuda_irregular ImporteAnterior,      
-  t.dd_tpe_activo activo,      
-  movAnt.MOV_FECHA_POS_VENCIDA fechaVencido,      
-  movAct.mov_fecha_extraccion fechaExtraccion    
-FROM cnt_contratos c,      
-  dd_tpe_tipo_prod_entidad t,      
-  mov_movimientos movAct,      
-  mov_movimientos movAnt,      
-  ${master.schema}.dd_esc_estado_cnt e,      
-  VTMP_CNT V    
-WHERE c.dd_tpe_id = t.dd_tpe_id    
-  --AND C.CNT_ID IN (SELECT CNT_ID FROM vTMP_CNT)          
-  AND c.dd_esc_id                 = e.dd_esc_id    
-  AND movAct.cnt_id               = c.cnt_id    
-  AND movAct.MOV_FECHA_EXTRACCION = c.cnt_fecha_extraccion    
-  AND movAnt.cnt_id               = c.cnt_id    
-  AND movAnt.MOV_FECHA_EXTRACCION =      
-  (SELECT        
-    CASE          
-        WHEN MAX(mov_fecha_extraccion)IS NULL          
-          THEN c.cnt_fecha_extraccion          
-        ELSE MAX(mov_fecha_extraccion)        
-    END      
-  FROM mov_movimientos      
-  WHERE mov_fecha_extraccion < c.cnt_fecha_extraccion      
-    AND CNT_ID                 = c.cnt_id      
-)    
-AND V.CNT_ID = C.CNT_ID  
+(SELECT C.CNT_ID, v.CLI_ID, v.arq_persona, v.dd_tit_codigo, v.es_pase,
+CASE
+    WHEN e.dd_esc_codigo <> ${estadoContrato.Activo.codigo} --Cancelado es cualquier tipo que no sea activo, no solo el 7
+      THEN 1
+    ELSE 0
+  END Cancelado,
+CASE
+    WHEN (movAct.mov_deuda_irregular = 0)
+      THEN 1
+    ELSE 0
+  END SaldadoSinMovAnterior,
+CASE
+    WHEN (movAct.mov_deuda_irregular = 0 AND movAnt.mov_deuda_irregular  <> 0)
+      THEN 1
+    ELSE 0
+  END Saldado,
+  NVL(movAnt.mov_deuda_irregular - movAct.mov_deuda_irregular, 0) Diferencia,
+  movAct.mov_deuda_irregular Importe,
+  movAnt.mov_deuda_irregular ImporteAnterior,
+  t.dd_tpe_activo activo,
+  movAnt.MOV_FECHA_POS_VENCIDA fechaVencido,
+  movAct.mov_fecha_extraccion fechaExtraccion
+FROM cnt_contratos c,
+  dd_tpe_tipo_prod_entidad t,
+  mov_movimientos movAct,
+  mov_movimientos movAnt,
+  ${master.schema}.dd_esc_estado_cnt e,
+  VTMP_CNT V
+WHERE c.dd_tpe_id = t.dd_tpe_id
+  --AND C.CNT_ID IN (SELECT CNT_ID FROM vTMP_CNT)
+  AND c.dd_esc_id                 = e.dd_esc_id
+  AND movAct.cnt_id               = c.cnt_id
+  AND movAct.MOV_FECHA_EXTRACCION = c.cnt_fecha_extraccion
+  AND movAnt.cnt_id               = c.cnt_id
+  AND movAnt.MOV_FECHA_EXTRACCION =
+  (SELECT
+    CASE
+        WHEN MAX(mov_fecha_extraccion)IS NULL
+          THEN c.cnt_fecha_extraccion
+        ELSE MAX(mov_fecha_extraccion)
+    END
+  FROM mov_movimientos
+  WHERE mov_fecha_extraccion < c.cnt_fecha_extraccion
+    AND CNT_ID                 = c.cnt_id
 )
+AND V.CNT_ID = C.CNT_ID
+);
+
+DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_MOV_REVISADOS', estimate_percent => 20);
+
+    END;
     ]]>
     </entry>
-    
+
     <entry key="clientes.revisionClientes.informarContratosReducidos.Oracle9iDialect">
     <![CDATA[
     /******************************************
     Inserta en rec_recuperaciones la variación de saldo
-    --TODO - Modificar este insert y hacerlo lo más parecido a: 
+    --TODO - Modificar este insert y hacerlo lo más parecido a:
     "expedientes.recuperacion.revisionExpedientes.informarContratosReducidos.Oracle9iDialect"
     ******************************************/
-    
+
     INSERT INTO REC_RECUPERACIONES (REC_ID, CNT_ID, REC_FECHA_ENTREGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
       WITH V_MOV AS (
       SELECT DISTINCT (TMP_MOV.CNT_ID), TMP_MOV.FECHAEXTRACCION
@@ -930,68 +1172,68 @@ AND V.CNT_ID = C.CNT_ID
       AND NOT EXISTS
         (SELECT rec_id
         FROM rec_recuperaciones
-        WHERE cnt_id           = TMP_MOV.CNT_ID  
+        WHERE cnt_id           = TMP_MOV.CNT_ID
         AND rec_fecha_entrega  = TMP_MOV.FECHAEXTRACCION
         )
       )
   SELECT S_REC_RECUPERACIONES.NEXTVAL,  CCL.cnt_id,  V_MOV.FECHAEXTRACCION,  0 ,  'REV-JOB',  SYSDATE,  0
     FROM V_MOV INNER JOIN ccl_contratos_cliente CCL ON V_MOV.CNT_ID = CCL.CNT_ID AND CCL.BORRADO = 0
-    
+
     ]]>
     </entry>
-    
+
     <entry key="clientes.revisionClientes.antecedentes.incrementar.Oracle9iDialect">
     <![CDATA[
     /***************************
-	SI LOS CONTRATOS ESTÁN SALDADOS SE ACTUALIZAN LOS ANTECEDENTES
-	****************************/
+    SI LOS CONTRATOS ESTÁN SALDADOS SE ACTUALIZAN LOS ANTECEDENTES
+    ****************************/
 
-  	/********************************
-  	INCREMENTAR ANTECEDENTES
-  	********************************/	
-  
-  	UPDATE ant_antecedentes
+    /********************************
+    INCREMENTAR ANTECEDENTES
+    ********************************/
+
+    UPDATE ant_antecedentes
         SET ANT_REINCIDENCIA_INTERNOS=NVL(ANT_REINCIDENCIA_INTERNOS+1, 1),
             USUARIOMODIFICAR='REV-JOB',
             FECHAMODIFICAR=SYSDATE
-        WHERE ANT_ID IN 
+        WHERE ANT_ID IN
         (
-          SELECT p.ant_id 
-          FROM cpe_contratos_personas cpe, per_personas p, 
+          SELECT p.ant_id
+          FROM cpe_contratos_personas cpe, per_personas p,
             dd_tin_tipo_intervencion tin
           WHERE p.per_id = cpe.per_id
             AND tin.DD_TIN_ID = cpe.DD_TIN_ID
-            AND tin.DD_TIN_TITULAR = 1 
+            AND tin.DD_TIN_TITULAR = 1
             AND EXISTS
-            (          
+            (
               SELECT TMP_MOV.CNT_ID
-                FROM TMP_MOV_REVISADOS TMP_MOV    
-                  INNER JOIN ccl_contratos_cliente CCL    
-                    ON TMP_MOV.CNT_ID                = CCL.CNT_ID    
-                WHERE     
-                  TMP_MOV.CANCELADO = 0 
-                  AND TMP_MOV.SALDADO = 1  
-                  AND NOT tmp_mov.fechavencido IS NULL         
+                FROM TMP_MOV_REVISADOS TMP_MOV
+                  INNER JOIN ccl_contratos_cliente CCL
+                    ON TMP_MOV.CNT_ID                = CCL.CNT_ID
+                WHERE
+                  TMP_MOV.CANCELADO = 0
+                  AND TMP_MOV.SALDADO = 1
+                  AND NOT tmp_mov.fechavencido IS NULL
                   AND tmp_mov.cnt_id = cpe.cnt_id
             )
         )
-    
+
     ]]>
     </entry>
-    
+
     <entry key="clientes.revisionClientes.antecedentes.actualizar.Oracle9iDialect">
     <![CDATA[
     MERGE INTO AIN_ANTECEDENTEINTERNOS AIN USING (
     SELECT DISTINCT TMP_MOV.CNT_ID, tmp_mov.fechaextraccion-TMP_MOV.FECHAVENCIDO DIAS_DESCUBIERTO, TMP_MOV.IMPORTEANTERIOR, TMP_MOV.FECHAEXTRACCION
-        FROM TMP_MOV_REVISADOS TMP_MOV    
-        INNER JOIN ccl_contratos_cliente CCL ON TMP_MOV.CNT_ID      = CCL.CNT_ID    
-        WHERE     
-          TMP_MOV.CANCELADO = 0 
-          AND TMP_MOV.SALDADO = 1  
+        FROM TMP_MOV_REVISADOS TMP_MOV
+        INNER JOIN ccl_contratos_cliente CCL ON TMP_MOV.CNT_ID      = CCL.CNT_ID
+        WHERE
+          TMP_MOV.CANCELADO = 0
+          AND TMP_MOV.SALDADO = 1
           AND NOT tmp_mov.fechavencido IS NULL
   ) ORIGEN ON (AIN.CNT_ID = ORIGEN.CNT_ID)
   WHEN MATCHED THEN
-  UPDATE 
+  UPDATE
     SET AIN_POS_IRREGULAR_MAX=CASE WHEN(ABS(AIN_POS_IRREGULAR_MAX ) > ABS(ORIGEN.IMPORTEANTERIOR)) THEN AIN_POS_IRREGULAR_MAX ELSE ORIGEN.IMPORTEANTERIOR END,
             AIN_DIAS_MAX_IRREGULAR=CASE WHEN(AIN_DIAS_MAX_IRREGULAR > ORIGEN.DIAS_DESCUBIERTO) THEN AIN_DIAS_MAX_IRREGULAR ELSE ORIGEN.DIAS_DESCUBIERTO END,
             AIN_FECHA_ULT_REGULARIZACION= ORIGEN.FECHAEXTRACCION, --to_date(?, 'yyyy-MM-dd'),
@@ -1002,70 +1244,129 @@ AND V.CNT_ID = C.CNT_ID
         values (s_ain_antecedenteinternos.nextVal, ORIGEN.CNT_ID, ORIGEN.IMPORTEANTERIOR, ORIGEN.DIAS_DESCUBIERTO, ORIGEN.FECHAEXTRACCION, 'REV-JOB', SYSDATE)
     ]]>
     </entry>
-    
+
     <entry key="clientes.revisionClientes.revisarContratosPase.cancelados.Oracle9iDialect">
     <![CDATA[
      /***********************************
-    CONTRATOS CANCELADOS DE PASE - Se cancelan siempre todos los clientes    
+    CONTRATOS CANCELADOS DE PASE - Se cancelan siempre todos los clientes
     ***********************************/
-     MERGE INTO TMP_CLI_A_CANCELAR TMP_CLI USING 
-        (    
-          SELECT DISTINCT (CCL.CLI_ID)    
-            FROM TMP_MOV_REVISADOS TMP_MOV    
-            INNER JOIN ccl_contratos_cliente CCL    
-              ON TMP_MOV.CNT_ID   = CCL.CNT_ID 
-              AND CCL.CCL_PASE    = 1   
+     MERGE INTO TMP_CLI_A_CANCELAR TMP_CLI USING
+        (
+          SELECT DISTINCT (CCL.CLI_ID)
+            FROM TMP_MOV_REVISADOS TMP_MOV
+            INNER JOIN ccl_contratos_cliente CCL
+              ON TMP_MOV.CNT_ID   = CCL.CNT_ID
+              AND CCL.CCL_PASE    = 1
               AND CCL.BORRADO     = 0
-          WHERE     
+          WHERE
             (TMP_MOV.CANCELADO = 1)
-              AND TMP_MOV.ES_PASE = 1              
+              AND TMP_MOV.ES_PASE = 1
         ) ORIGEN ON (TMP_CLI.CLI_ID  = ORIGEN.CLI_ID)
-        WHEN NOT MATCHED THEN  
+        WHEN NOT MATCHED THEN
           INSERT (CLI_ID) VALUES (ORIGEN.CLI_ID)
     ]]>
     </entry>
-    
+
     <entry key="clientes.revisionClientes.revisarContratosPase.saldados.Oracle9iDialect">
     <![CDATA[
      /**************************************
-    CONTRATOS SALDADOS DE PASE - Cancelamos los clientes que 
+    CONTRATOS SALDADOS DE PASE - Cancelamos los clientes que
     su itinerario sea de recuperación
     **************************************/
-    MERGE INTO TMP_CLI_A_CANCELAR TMP_CLI USING 
-        (    
-          SELECT DISTINCT (CCL.CLI_ID)    
-            FROM TMP_MOV_REVISADOS TMP_MOV    
-            INNER JOIN ccl_contratos_cliente CCL    
-              ON TMP_MOV.CNT_ID   = CCL.CNT_ID 
+    MERGE INTO TMP_CLI_A_CANCELAR TMP_CLI USING
+        (
+          SELECT DISTINCT (CCL.CLI_ID)
+            FROM TMP_MOV_REVISADOS TMP_MOV
+            INNER JOIN ccl_contratos_cliente CCL
+              ON TMP_MOV.CNT_ID   = CCL.CNT_ID
               AND CCL.CCL_PASE    = 1
               AND CCL.BORRADO     = 0
-          WHERE     
-          (TMP_MOV.CANCELADO = 0 
+          WHERE
+          (TMP_MOV.CANCELADO = 0
           AND (
-                TMP_MOV.SALDADO = 1 
-                  OR 
+                TMP_MOV.SALDADO = 1
+                  OR
                 TMP_MOV.SALDADOSINMOVANTERIOR = 1)
-              )    
-          AND TMP_MOV.ES_PASE       = 1          
-          AND TMP_MOV.DD_TIT_CODIGO = ${ddTipoItinerario.recuperacion.codigo}          
+              )
+          AND TMP_MOV.ES_PASE       = 1
+          AND TMP_MOV.DD_TIT_CODIGO = ${ddTipoItinerario.recuperacion.codigo}
       ) ORIGEN ON (TMP_CLI.CLI_ID      = ORIGEN.CLI_ID)
-        WHEN NOT MATCHED THEN  
+        WHEN NOT MATCHED THEN
           INSERT (CLI_ID) VALUES (ORIGEN.CLI_ID)
     ]]>
     </entry>
-    
+
     <entry key="clientes.revisionClientes.insertarNuevosContratosCliente.Oracle9iDialect">
     <![CDATA[
-    INSERT INTO ccl_contratos_cliente (CCL_ID, CNT_ID, CLI_ID, CCL_PASE, USUARIOCREAR, FECHACREAR)
-      SELECT s_ccl_contratos_cliente.nextVal, cpe.cnt_id, cli_id, 0,  'REV-JOB', sysdate
-      FROM cli_clientes cli, cpe_contratos_personas cpe, cnt_contratos cnt
-          WHERE cli.cli_id IN (SELECT CLI_ID FROM TMP_CLI_PER_ARQ)
+    BEGIN
+
+    EXECUTE IMMEDIATE'TRUNCATE TABLE TMP_CNT_CLI_DES';
+
+    Insert /*+append*/ into TMP_CNT_CLI_DES
+    SELECT cex.cnt_id
+      FROM CEX_CONTRATOS_EXPEDIENTE cex, PRC_CEX pce, PRC_PROCEDIMIENTOS prc, cmmaster.DD_EPR_ESTADO_PROCEDIMIENTO epr
+     WHERE cex.cex_id = pce.cex_id
+       and pce.prc_id = prc.prc_id
+       and cex.borrado = 0 and prc.borrado = 0
+       and prc.dd_epr_id = epr.dd_epr_id
+       and dd_epr_codigo IN (${ddEstadoProcedimiento.propuesto.codigo},
+                             ${ddEstadoProcedimiento.confirmado.codigo},
+                             ${ddEstadoProcedimiento.aceptado.codigo},
+                             ${ddEstadoProcedimiento.derivado.codigo},
+                             ${ddEstadoProcedimiento.enConformacion.codigo});
+    COMMIT;
+
+    Insert /*+append*/ into TMP_CNT_CLI_DES
+    SELECT cex.cnt_id
+      FROM cex_contratos_expediente cex, cmmaster.dd_eex_estado_expediente eex, exp_expedientes exp
+     WHERE exp.exp_id = cex.exp_id
+       and cex.borrado = 0
+       and eex.dd_eex_id = exp.dd_eex_id
+      and eex.dd_eex_codigo IN (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo});
+    COMMIT;
+
+    DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CNT_CLI_DES', estimate_percent => 20);
+
+    INSERT INTO ccl_contratos_cliente
+        (CCL_ID, CNT_ID, CLI_ID, CCL_PASE, USUARIOCREAR, FECHACREAR)
+      SELECT /*+parallel*/ s_ccl_contratos_cliente.nextVal CCL_ID
+           , cpe.cnt_id
+           , cli.cli_id
+           , 0, 'REV-JOB', sysdate
+      FROM CLI_CLIENTES            cli
+         , CPE_CONTRATOS_PERSONAS  cpe
+         , CNT_CONTRATOS           cnt
+         , TMP_CLI_PER_ARQ         tmp
+         , TMP_CNT_CLI_DES         des
+        WHERE cli.cli_id = tmp.cli_id
           AND cpe.per_id = cli.per_id
-          AND cpe.cnt_id = cnt.cnt_id        
+          AND cpe.cnt_id = cnt.cnt_id
+          AND cnt.cnt_id = des.cnt_id(+) and des.cnt_id is null
+          AND cli.borrado = 0 AND cpe.borrado = 0 AND cnt.borrado = 0
+          AND NOT EXISTS ( SELECT cnt_id
+                           FROM ccl_contratos_cliente
+                           WHERE cnt_id = cnt.cnt_id
+                           and cli_id = cli.cli_id
+                           and borrado = 0 );
+
+    COMMIT;
+    END;
+    ]]>
+    </entry>
+
+    <entry key="clientes.revisionClientes.insertarNuevosContratosCliente_Old.Oracle9iDialect">
+    <![CDATA[
+    INSERT INTO ccl_contratos_cliente (CCL_ID, CNT_ID, CLI_ID, CCL_PASE, USUARIOCREAR, FECHACREAR)
+      SELECT s_ccl_contratos_cliente.nextVal, cpe.cnt_id, cli.cli_id, 0,  'REV-JOB', sysdate
+      FROM cli_clientes cli, cpe_contratos_personas cpe, cnt_contratos cnt
+         , TMP_CLI_PER_ARQ tmp
+          WHERE cli.cli_id = tmp.cli_id
+          AND cpe.per_id = cli.per_id
+          AND cpe.cnt_id = cnt.cnt_id
           AND cli.borrado = 0 AND cpe.borrado = 0 AND cnt.borrado = 0
           /* Que el contrato no esté en algún procedimiento en curso */
           AND NOT EXISTS (
-              SELECT DISTINCT cex.cnt_id 
+              SELECT DISTINCT cex.cnt_id
               FROM CEX_CONTRATOS_EXPEDIENTE cex, PRC_CEX pce, PRC_PROCEDIMIENTOS prc, ${master.schema}.DD_EPR_ESTADO_PROCEDIMIENTO epr
               WHERE cex.cnt_id = cnt.cnt_id
               and cex.cex_id = pce.cex_id
@@ -1073,102 +1374,106 @@ AND V.CNT_ID = C.CNT_ID
               and cex.borrado = 0 and prc.borrado = 0
               and prc.dd_epr_id = epr.dd_epr_id
               and dd_epr_codigo IN (
-              	${ddEstadoProcedimiento.propuesto.codigo},
-				${ddEstadoProcedimiento.confirmado.codigo},
-				${ddEstadoProcedimiento.aceptado.codigo},
-				${ddEstadoProcedimiento.derivado.codigo},
-				${ddEstadoProcedimiento.enConformacion.codigo}
-			)
+                ${ddEstadoProcedimiento.propuesto.codigo},
+                ${ddEstadoProcedimiento.confirmado.codigo},
+                ${ddEstadoProcedimiento.aceptado.codigo},
+                ${ddEstadoProcedimiento.derivado.codigo},
+                ${ddEstadoProcedimiento.enConformacion.codigo}
+            )
           )
           /* Que el contrato no esté en algún expediente en curso */
           AND NOT EXISTS (
-              SELECT DISTINCT cex.cnt_id 
-              FROM cex_contratos_expediente cex, ${master.schema}.dd_eex_estado_expediente eex, exp_expedientes exp 
-              WHERE cnt.cnt_id = cnt.cnt_id 
-              and exp.exp_id = cex.exp_id 
-              and cex.borrado = 0 
+              SELECT DISTINCT cex.cnt_id
+              FROM cex_contratos_expediente cex, ${master.schema}.dd_eex_estado_expediente eex, exp_expedientes exp
+              WHERE cnt.cnt_id = cnt.cnt_id
+              and exp.exp_id = cex.exp_id
+              and cex.borrado = 0
               and eex.dd_eex_id = exp.dd_eex_id
               and eex.dd_eex_codigo IN (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo})
-          ) 
+          )
           /* Que ese mismo contrato no pertenezca ya al cliente */
           AND NOT EXISTS (
-              SELECT cnt_id FROM ccl_contratos_cliente 
+              SELECT cnt_id FROM ccl_contratos_cliente
               WHERE cnt_id = cnt.cnt_id
-              and cli_id = cli.cli_id 
+              and cli_id = cli.cli_id
               and borrado = 0
           )
     ]]>
     </entry>
-     
+
     <entry key="clientes.revisionClientes.eliminarCliConCntsEnExp.Oracle9iDialect">
-    <![CDATA[   
-	 
-	/*******************************************	
-	Para asegurarnos que la bd esta ok	
-	Eliminamos los clientes que tengan contratos 
-	en expedientes ya creados 
-	*******************************************/
-	
-	/*****
-	TODO - Habrá que eliminar los clientes que estén en un exp. de seguimiento activo
-	y los contratos que estén en un exp. de recuperación activo o en un asunto.
-	****/  
-    
-    INSERT INTO TMP_CLI_A_CANCELAR  
-	 (SELECT cli.cli_id FROM CLI_CLIENTES CLI INNER JOIN CCL_CONTRATOS_CLIENTE CCL ON CLI.CLI_ID = CCL.CLI_ID 
-	WHERE 
-		CLI.BORRADO = 0
-		AND CCL.BORRADO = 0 
-		AND CCL.CNT_ID IN (
-		SELECT CEX.CNT_ID FROM EXP_EXPEDIENTES EXP INNER JOIN CEX_CONTRATOS_EXPEDIENTE CEX ON EXP.EXP_ID = CEX.EXP_ID
-		WHERE EXP.BORRADO = 0 AND
-			NOT EXISTS (SELECT 1 FROM exr_expediente_recobro EXR WHERE EXR.EXP_ID = EXP.EXP_ID))
-	)
+    <![CDATA[
+    BEGIN
+
+    /*******************************************
+    Para asegurarnos que la bd esta ok
+    Eliminamos los clientes que tengan contratos
+    en expedientes ya creados
+    *******************************************/
+
+    /*****
+    TODO - Habrá que eliminar los clientes que estén en un exp. de seguimiento activo
+    y los contratos que estén en un exp. de recuperación activo o en un asunto.
+    ****/
+
+    INSERT INTO TMP_CLI_A_CANCELAR
+     (SELECT cli.cli_id FROM CLI_CLIENTES CLI INNER JOIN CCL_CONTRATOS_CLIENTE CCL ON CLI.CLI_ID = CCL.CLI_ID
+    WHERE
+        CLI.BORRADO = 0
+        AND CCL.BORRADO = 0
+        AND CCL.CNT_ID IN (
+        SELECT CEX.CNT_ID FROM EXP_EXPEDIENTES EXP INNER JOIN CEX_CONTRATOS_EXPEDIENTE CEX ON EXP.EXP_ID = CEX.EXP_ID
+        WHERE EXP.BORRADO = 0 AND
+            NOT EXISTS (SELECT 1 FROM exr_expediente_recobro EXR WHERE EXR.EXP_ID = EXP.EXP_ID))
+    );
+
+    DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CLI_A_CANCELAR', estimate_percent => 20);
+    END;
     ]]>
     </entry>
-    
+
     <entry key="clientes.revisionClientes.cancelarClientes.borrarContratos.Oracle9iDialect">
-    <![CDATA[   
-    UPDATE CCL_CONTRATOS_CLIENTE CCL      
-      SET BORRADO    =1,        
-          USUARIOBORRAR='REV-JOB',        
-          FECHABORRAR  = SYSDATE      
-      WHERE EXISTS        
+    <![CDATA[
+    UPDATE CCL_CONTRATOS_CLIENTE CCL
+      SET BORRADO    =1,
+          USUARIOBORRAR='REV-JOB',
+          FECHABORRAR  = SYSDATE
+      WHERE EXISTS
         (SELECT CLI_ID FROM TMP_CLI_A_CANCELAR TMP WHERE CCL.CLI_ID = TMP.CLI_ID)
     ]]>
     </entry>
-    
+
     <entry key="clientes.revisionClientes.cancelarClientes.borrarClientes.Oracle9iDialect">
-    <![CDATA[   
-    UPDATE CLI_CLIENTES CLI      
-      SET BORRADO    =1,        
-          USUARIOBORRAR='REV-JOB',        
-          FECHABORRAR  =SYSDATE,        
-          DD_ECL_ID    =        
-            (SELECT DD_ECL_ID        
-            FROM ${master.schema}.DD_ECL_ESTADO_CLIENTE        
-            WHERE DD_ECL_CODIGO = ${ddEstadoCliente.cancelado.codigo})      
-      WHERE EXISTS        
+    <![CDATA[
+    UPDATE CLI_CLIENTES CLI
+      SET BORRADO    =1,
+          USUARIOBORRAR='REV-JOB',
+          FECHABORRAR  =SYSDATE,
+          DD_ECL_ID    =
+            (SELECT DD_ECL_ID
+            FROM ${master.schema}.DD_ECL_ESTADO_CLIENTE
+            WHERE DD_ECL_CODIGO = ${ddEstadoCliente.cancelado.codigo})
+      WHERE EXISTS
         (SELECT CLI_ID FROM TMP_CLI_A_CANCELAR TMP WHERE CLI.CLI_ID = TMP.CLI_ID)
     ]]>
     </entry>
-    
+
     <entry key="clientes.revisionClientes.cancelarContratos.Oracle9iDialect">
     <![CDATA[
-    MERGE INTO CCL_CONTRATOS_CLIENTE CCL USING 
-        (    
-          SELECT DISTINCT (TMP_MOV.CNT_ID)    
-            FROM TMP_MOV_REVISADOS TMP_MOV            
-          WHERE     
+    MERGE INTO CCL_CONTRATOS_CLIENTE CCL USING
+        (
+          SELECT DISTINCT (TMP_MOV.CNT_ID)
+            FROM TMP_MOV_REVISADOS TMP_MOV
+          WHERE
             (TMP_MOV.CANCELADO = 1)
-              AND TMP_MOV.ES_PASE = 0              
+              AND TMP_MOV.ES_PASE = 0
         ) ORIGEN ON (CCL.CNT_ID  = ORIGEN.CNT_ID)
-        WHEN MATCHED THEN 
+        WHEN MATCHED THEN
         UPDATE
           SET BORRADO = 1,
               USUARIOBORRAR = 'REV-JOB',
               FECHABORRAR = SYSDATE
       ]]>
       </entry>
-    
+
 </properties>

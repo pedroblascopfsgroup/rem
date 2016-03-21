@@ -5,10 +5,12 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 
 <fwk:json>
+  <json:property name="tieneProcurador" value="${tieneProcurador}" />
+  <json:property name="activoDespachoIntegral" value="${activoDespachoIntegral}" />
   <json:property name="id" value="${procedimiento.id}" />
   <json:property name="nombreTab" value="${nombreTab}" />
-  <json:property name="fechaVenc" value="${fechaVenc}" />
-  <json:property name="tarea" value="${tarea}" />
+<%--  <json:property name="fechaVenc" value="${fechaVenc}" /> --%>
+<%--  <json:property name="tarea" value="${tarea}" /> --%>
   <json:property name="paralizado" value="${paralizado}" />
   <json:property name="esGestor" value="${esGestor}" />
   <json:property name="esSupervisor" value="${esSupervisor}" />
@@ -19,6 +21,7 @@
   <json:property name="nombreProcedimiento" value="${procedimiento.nombreProcedimiento}" />
   <json:property name="hayPrecontencioso" value="${precontencioso.id != null}" />
   <json:property name="estadoPrecontencioso" value="${precontencioso.estadoActualCodigo}" />
+  <json:property name="hayDespachoIntegral" value="${hayDespachoIntegral}" />
   <json:object name="toolbar">
 	  <json:property name="fechaCreacionFormateada" value="${procedimiento.asunto.fechaCreacionFormateada}" />
 	  <json:property name="estadoItinerario" value="${procedimiento.asunto.estadoItinerario.descripcion}" />
@@ -33,6 +36,7 @@
 	  <json:property name="gestor" value="${procedimiento.asunto.gestor.usuario.apellidoNombre}" />
 	  <json:property name="supervisor" value="${procedimiento.asunto.supervisor.usuario.apellidoNombre}" />
 	  <json:property name="procurador" value="${procedimiento.asunto.procurador.usuario.apellidoNombre}" />
+	  <json:property name="procuradorReal" value="${procuradorReal}" />
 	  <json:property name="fechaInicio">
 		<fwk:date value="${procedimiento.auditoria.fechaCrear}" />
 	  </json:property>

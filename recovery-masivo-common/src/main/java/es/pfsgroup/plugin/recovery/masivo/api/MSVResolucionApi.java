@@ -30,6 +30,7 @@ public interface MSVResolucionApi {
 	public static final String MSV_BO_GET_TIPOS_RESOLUCION = "es.pfsgroup.plugin.recovery.masivo.api.getTiposDeResolucion";
 	public static final String MSV_BO_GET_TIPO_RESOLUCION = "es.pfsgroup.plugin.recovery.masivo.api.getTipoResolucion";
 	public static final String MSV_BO_GUARDAR_RESOLUCION = "es.pfsgroup.plugin.recovery.masivo.api.guardarResolucion";
+	public static final String MSV_BO_GUARDAR_ARCHIVO_ADJUNTO_RESOLUCION = "es.pfsgroup.plugin.recovery.masivo.api.guardarAdjuntoResolucion";
 
 	public static final String MSV_BO_GET_TIPO_RESOLUCION_POR_CODIGO = "es.pfsgroup.plugin.recovery.masivo.api.getTipoResolucionPorCodigo";
 	public static final String MSV_BO_GET_TIPO_RESOLUCION_POR_TAREA_RESOLUCION = "es.pfsgroup.plugin.recovery.masivo.api.getResolucionByTareaNotificacion";
@@ -121,5 +122,13 @@ public interface MSVResolucionApi {
 	
 	@BusinessOperationDefinition(MSV_BO_GET_TIPO_RESOLUCION_POR_TAREA_RESOLUCION)
 	public MSVResolucion getResolucionByTareaNotificacion(Long idTareaNotificacion);
+	
+	/**
+	 * Guarda el adjunto en la resolución. 
+	 * @param dtoResolucion
+	 * @return
+	 */
+	@BusinessOperationDefinition(MSV_BO_GUARDAR_ARCHIVO_ADJUNTO_RESOLUCION)
+	public MSVResolucion guardarAdjuntoResolucion(MSVResolucionesDto dtoResolucion);
 
 }

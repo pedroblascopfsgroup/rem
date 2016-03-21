@@ -38,6 +38,7 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 	private String proDisponibleLiquidaciones;
 	private String proDisponibleBurofaxes;
 	private String proDiasGestion;
+	
 	private String proTipoGestor;
 	private String proDespacho;
 	private String proGestor;
@@ -95,6 +96,9 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 	private String burFechaAcuseHasta;
 	private String burFechaEnvioDesde;
 	private String burFechaEnvioHasta;
+	private String burRefExternaEnvio;
+	private String burRegManual;
+	private String burAcuseRecibo;
 
 	/**
 	 * Comprueba si está informado el filtro de persona
@@ -191,7 +195,10 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 			|| !StringUtils.emtpyString(getBurFechaAcuseDesde())
 			|| !StringUtils.emtpyString(getBurFechaAcuseHasta())
 			|| !StringUtils.emtpyString(getBurFechaEnvioDesde())
-			|| !StringUtils.emtpyString(getBurFechaEnvioHasta()));
+			|| !StringUtils.emtpyString(getBurFechaEnvioHasta())
+			|| !StringUtils.emtpyString(getBurAcuseRecibo())
+			|| !StringUtils.emtpyString(getBurRefExternaEnvio())
+			|| !StringUtils.emtpyString(getBurRegManual()));
 		return filtroBurofaxInformado;
 	}
 
@@ -619,21 +626,35 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 	public void setDocGestor(String docGestor) {
 		this.docGestor = docGestor;
 	}
-
 	public String getImporteDesde() {
 		return importeDesde;
 	}
-
 	public void setImporteDesde(String importeDesde) {
 		this.importeDesde = importeDesde;
 	}
-
 	public String getImporteHasta() {
 		return importeHasta;
 	}
-
 	public void setImporteHasta(String importeHasta) {
 		this.importeHasta = importeHasta;
+	}
+	public String getBurRefExternaEnvio() {
+		return burRefExternaEnvio;
+	}
+	public void setBurRefExternaEnvio(String burRefExternaEnvio) {
+		this.burRefExternaEnvio = burRefExternaEnvio;
+	}
+	public String getBurRegManual() {
+		return burRegManual;
+	}
+	public void setBurRegManual(String burRegManual) {
+		this.burRegManual = burRegManual;
+	}
+	public String getBurAcuseRecibo() {
+		return burAcuseRecibo;
+	}
+	public void setBurAcuseRecibo(String burAcuseRecibo) {
+		this.burAcuseRecibo = burAcuseRecibo;
 	}
 	
 }

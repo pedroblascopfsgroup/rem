@@ -68,6 +68,7 @@
 							,params: parms
 							,success : function(){ 
 								${datagrid}.store.webflow(parms); 
+								<c:if test="${onSuccess != null}">${onSuccess}();</c:if>
 							}
 						});
     				}

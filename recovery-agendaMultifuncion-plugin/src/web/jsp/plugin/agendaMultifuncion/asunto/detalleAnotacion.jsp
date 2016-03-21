@@ -9,6 +9,8 @@
 
 <fwk:page>
 
+	<c:set var="TIP_REASIGNAR_ACTIVABLE" scope="session" value="${1003}"/>
+
 	<c:if test="${data.emisor != null}">
 		var emisor='${data.emisor}';
 		//textfield que va a contener el emisor
@@ -69,6 +71,11 @@
 	var titulolabeltareaOriginal = new Ext.form.Label({
 	    	text:'<s:message code="ext.comunicaciones.generarnotificacion.textoComunicacion" text="**Breve descripcion" />'
 			,style:'font-weight:bolder; font-size:11',bodyStyle:'padding:5px'
+			});
+			
+	var tituloLabelArchivoAdjunto = new Ext.form.Label({
+	    	text:'<s:message code="ext.comunicaciones.generarnotificacion.ficheroAdjunto" text="**Fichero Adjunto" />'
+			,style:'font-weight:bolder; font-size:11; margin-right:15px',bodyStyle:'padding:5px'
 			});
 			
 	
@@ -278,6 +285,17 @@
 				,idEntidad
 				<c:if test="${data.tieneResponder == true}">,txtRespuesta,labeltareaRespuesta</c:if>
 				<c:if test="${data.fechaVencimiento == null}">,chkLeida</c:if>
+				<c:if test="${data.idArchivoAdjunto != null}">
+					,tituloLabelArchivoAdjunto
+					,{
+					    xtype: 'component',
+					    autoEl: {
+					        tag: 'a',
+					        href: '/pfs/procuradores/descargarAdjunto.htm?idResolucion=${data.idResolucion}',
+					        html: '${data.nombreAdjunto}'
+					    }
+					}
+				</c:if>
 				]
 				, style : 'margin-right:15px' }
 		]
@@ -307,6 +325,32 @@
 		<app:test id="btnGuardarABM" addComa="true"/>
 	});
 	
+	<c:if test="${data.idTipoResolucion != null && data.idTipoResolucion == TIP_REASIGNAR_ACTIVABLE}">
+		var btnReasignar=new Ext.Button({
+			text:'<s:message code="app.botones.reasignar" text="**Reasignar" />'
+			,iconCls:'icon_limpiar'
+			,handler:function(){
+					var titulo = "Reasignar categoria";
+					var w = app.openWindow({
+					  flow : 'categorias/abreVentanaReasignarCategoriasTarea'
+					  //,width:320
+					  ,autoWidth:true
+					  ,closable:true
+					  ,title : titulo
+					  ,params:{idResolucion:'${data.idResolucion}'}
+					
+					});
+					w.on(app.event.DONE, function(){      
+					  w.close();
+					  app.recargaResolucionesTree();
+					});
+					w.on(app.event.CANCEL, function(){
+					  w.close();
+					});
+			}
+		});
+	</c:if>
+	
 	var panelEdicion = new Ext.form.FormPanel({
 		height:490
 		,bodyStyle : 'padding:5px'
@@ -321,7 +365,11 @@
 			}
 		]
 		,bbar : [
-			btnGuardar,btnCancelar
+			btnGuardar
+			<c:if test="${data.idTipoResolucion != null && data.idTipoResolucion == TIP_REASIGNAR_ACTIVABLE}">
+				,btnReasignar
+			</c:if>
+			,btnCancelar
 		]
 	});
 	page.add(panelEdicion);

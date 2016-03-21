@@ -67,6 +67,7 @@ app.subtipoTarea.CODIGO_DECISION_COMITE = '<fwk:const value="es.capgemini.pfs.ta
 app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_CE = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_CE" />';
 app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_RE = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_RE" />';
 app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC" />';
+app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_FP = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_FP" />';
 app.subtipoTarea.CODIGO_NOTIFICACION_CONTRATO_CANCELADO = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_NOTIFICACION_CONTRATO_CANCELADO" />';
 app.subtipoTarea.CODIGO_NOTIFICACION_SALDO_REDUCIDO = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_NOTIFICACION_SALDO_REDUCIDO" />';
 app.subtipoTarea.CODIGO_NOTIFICACION_CLIENTE_CANCELADO  = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_NOTIFICACION_CLIENTE_CANCELADO" />';
@@ -126,6 +127,7 @@ app.subtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_RESPONDIDA_DE_GESTOR_EXPTE = '
 app.subtipoTarea.CODIGO_TAREA_COMUNICACION_DE_SUPERVISOR_EXPTE = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_TAREA_COMUNICACION_DE_SUPERVISOR_EXPTE" />';
 app.subtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_DE_GESTOR_EXPTE = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_DE_GESTOR_EXPTE" />';
 app.subtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_DE_SUPERVISOR_EXPTE = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_DE_SUPERVISOR_EXPTE" />';
+app.subtipoTarea.CODIGO_NOTIFICACION_EXPEDIENTE_NUEVO_RIESGO = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_NOTIFICACION_EXPEDIENTE_NUEVO_RIESGO" />';
 
 app.subtipoTarea.CODIGO_NOTIFICACION_INTERCOMUNICACION = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_NOTIFICACION_INTERCOMUNICACION" />';
 app.subtipoTarea.CODIGO_TAREA_COMUNICACION_INTERCOMUNICACION = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_TAREA_COMUNICACION_INTERCOMUNICACION" />';
@@ -1419,6 +1421,8 @@ app.crearEditorGrid=	function(myStore,columnModel, config){
 		if (config.height) cfg.height=config.height;
 		if (config.plugins) cfg.plugins=config.plugins;
 		if (config.cls) cfg.cls=config.cls;
+		if (config.sm) cfg.sm=config.sm;
+		if (config.clicksToEdit) cfg.clicksToEdit=config.clicksToEdit;
 
 		//implementa el tooltip para ver el contenido de las celdas
 		cfg.onRender = function() {

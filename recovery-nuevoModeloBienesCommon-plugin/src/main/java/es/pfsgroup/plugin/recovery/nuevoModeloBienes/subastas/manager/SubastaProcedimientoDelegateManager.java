@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.manager;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -255,7 +256,7 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 									return false;
 								} else if(Checks.esNulo(((NMBBien) b).getAdjudicacion().getEntidadAdjudicataria())){
 										return false;
-								} else if(Checks.esNulo((((NMBBien) b)).getAdjudicacion().getImporteAdjudicacion())){
+								} else if(Checks.esNulo((((NMBBien) b)).getAdjudicacion().getImporteAdjudicacion())|| (((NMBBien) b)).getAdjudicacion().getImporteAdjudicacion().equals(new BigDecimal(0))){
 											return false;
 								} else if(!Checks.esNulo(((NMBBien) b).getAdjudicacion().getCesionRemate()) && ((NMBBien) b).getAdjudicacion().getCesionRemate()){
 									if(!((NMBBien) b).getAdjudicacion().getEntidadAdjudicataria().getCodigo().equals(DDEntidadAdjudicataria.ENTIDAD)){
@@ -294,7 +295,7 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 									return false;
 								} else if(Checks.esNulo(((NMBBien) b).getAdjudicacion().getEntidadAdjudicataria())){
 									return false;
-								} else if(Checks.esNulo((((NMBBien) b)).getAdjudicacion().getImporteAdjudicacion())){
+								} else if(Checks.esNulo((((NMBBien) b)).getAdjudicacion().getImporteAdjudicacion())|| (((NMBBien) b)).getAdjudicacion().getImporteAdjudicacion().equals(new BigDecimal(0))){
 									return false;
 								} else if(((NMBBien) b).getAdjudicacion().getEntidadAdjudicataria().getCodigo().compareTo(DDEntidadAdjudicataria.ENTIDAD) == 0 && Checks.esNulo(((NMBBien) b).getAdjudicacion().getTipoDocAdjudicacion())){
 									return false;
@@ -313,6 +314,7 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 		}
 		return true;
 	}
+	//|| (((NMBBien) b)).getAdjudicacion().getImporteAdjudicacion().equals(0)
 	
 	@Override
 	@BusinessOperation(overrides = BO_SUBASTA_DECIDIR_REGISTRAR_ACTA_SUBASTA)
@@ -584,7 +586,7 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 					}
 					if(Checks.esNulo(v.getImporteValorTasacion())){
 						return "<div align=\"justify\" style=\"font-size: 8pt; font-family: Arial; margin-bottom: 10px;\">Debe completar el importe de tasaci&oacute;n</div>";
-					}else if (v.getImporteValorTasacion() == 0){
+					}else if (v.getImporteValorTasacion().equals(new BigDecimal("0"))){
 						return "<div align=\"justify\" style=\"font-size: 8pt; font-family: Arial; margin-bottom: 10px;\">El importe de tasaci&oacute;n debe ser mayor que cero</div>";
 					}
 				}

@@ -19,6 +19,7 @@ public class BurofaxDTO extends WebDto{
 	private String tipoIntervencion;
 	private String contrato;
 	private String estado;
+	private String refExternaEnvio;
 	private String direccion;
 	private String tipo;
 	private String tipoDescripcion;
@@ -26,6 +27,11 @@ public class BurofaxDTO extends WebDto{
 	private Date fechaEnvio;
 	private Date fechaAcuse;
 	private String resultado;
+	private String esPersonaManual;
+	private boolean tienePersona;
+
+	// id ADJ_ADJUNTOS
+	private Long acuseRecibo;
 	
 	
 	public String getCliente() {
@@ -134,7 +140,30 @@ public class BurofaxDTO extends WebDto{
 	public void setTipoDescripcion(String tipoDescripcion) {
 		this.tipoDescripcion = tipoDescripcion;
 	}
+	public Long getAcuseRecibo() {
+		return acuseRecibo;
+	}
+	public void setAcuseRecibo(Long acuseRecibo) {
+		this.acuseRecibo = acuseRecibo;
+	}
+	public String getRefExternaEnvio() {
+		return refExternaEnvio;
+	}
+	public void setRefExternaEnvio(String refExternaEnvio) {
+		this.refExternaEnvio = refExternaEnvio;
+	}
 
-	
+	public String getEsPersonaManual() {
+		return esPersonaManual;
+	}
+	public void setEsPersonaManual(String esPersonaManual) {
+		this.esPersonaManual = esPersonaManual;
+	}
 
+	public boolean isTienePersona() {
+		return tienePersona;
+	}
+	public void setTienePersona(boolean tienePersona) {
+		this.tienePersona = tienePersona;
+	}
 }

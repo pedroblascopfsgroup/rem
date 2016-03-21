@@ -15,19 +15,17 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
-import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.expediente.api.ExpedienteManagerApi;
-import es.capgemini.pfs.expediente.dao.PropuestaExpedienteManualDao;
+import es.capgemini.pfs.expediente.dao.ExpedienteContratoDao;
 import es.capgemini.pfs.expediente.dto.DtoBuscarExpedientes;
-import es.capgemini.pfs.expediente.model.DDEstadoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
-import es.capgemini.pfs.expediente.process.ExpedienteBPMConstants;
 import es.capgemini.pfs.interna.InternaBusinessOperation;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.api.PropuestaApi;
@@ -38,6 +36,7 @@ import es.pfsgroup.recovery.ext.api.multigestor.EXTMultigestorApi;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
 import es.pfsgroup.recovery.ext.impl.expediente.dao.EXTExpedienteDao;
 import es.pfsgroup.recovery.ext.impl.perfil.model.EXTPerfil;
+import es.pfsgroup.recovery.integration.Guid;
 
 @Component
 public class EXTExpedienteManager extends BaseExpedienteManager implements EXTExpedienteApi{
@@ -57,6 +56,9 @@ public class EXTExpedienteManager extends BaseExpedienteManager implements EXTEx
 	
 	@Autowired
 	private PropuestaApi propuestaManager;
+	
+	@Autowired
+	private ExpedienteContratoDao expedienteContratoDao;
 
 	/**
 	 * Busca expedients que contengan un determinado contrato
@@ -344,5 +346,24 @@ public class EXTExpedienteManager extends BaseExpedienteManager implements EXTEx
         } else {
         	throw new BusinessOperationException("expediente.devolver.falloEstadoPropuestas");
         }
+	}
+	
+	public Expediente prepareGuid(Expediente expediente) {
+		boolean modificados = false;
+		if (Checks.esNulo(expediente.getGuid())) {
+
+			String guid = Guid.getNewInstance().toString();
+			while(extExpedienteDao.getByGuid(guid) != null) {
+				guid = Guid.getNewInstance().toString();
+			}
+			
+			expediente.setGuid(guid);
+			modificados = true;
+		}
+		// En caso de haber cambiado algo se guarda el estado
+		if (modificados) {
+			extExpedienteDao.saveOrUpdate(expediente);
+		}
+		return expediente;
 	}
 }

@@ -3,14 +3,30 @@
     xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
 	<var name="dto" class="es.capgemini.pfs.tareaNotificacion.dto.DtoBuscarTareaNotificacion"/>
+
 	<input name="traerGestionVencidos" type="java.lang.String"/>
+	<input name="estado" type="java.lang.String"/>
+	<input name="categorizacion" type="java.lang.Long"/>
 	
+	<action-state id="tienePluginProcurador">
+		<evaluate expression="executor.execute('plugin.mejoras.web.procuradores.pluginProcuradoresIsInstall')" result="flowScope.tieneProcurador" />
+		<transition to="decisionTieneProcurador"/>
+	</action-state>
 	
- 	<action-state id="esBuzonOptimizado">
+	<decision-state id="decisionTieneProcurador">
+		<if test="tieneProcurador" then="listadoBusquedaAvanzadaProcurador" else="esBuzonOptimizado"/>
+	</decision-state>
+	
+	<decision-state id="listadoBusquedaAvanzadaProcurador">
+		<!--if test="(estado=='Todas' || estado==null)" then="esBuzonOptimizado" else="BusquedaAvanzadaProcurador"/-->
+		<if test="(estado=='Todas' || estado==null)" then="esBuzonOptimizado" else="esBuzonOptimizado"/>
+	</decision-state>
+	
+	<action-state id="esBuzonOptimizado">
 		<evaluate expression="executor.execute('es.pfsgroup.recovery.ext.api.tareas.opciones.tieneOpcionBuzonOptimizado')" result="flowScope.buzonOptimizado" />
 		<transition to="decisionBuzonOptimizado"/>
 	</action-state>
-    
+	
 	<decision-state id="decisionBuzonOptimizado">
 		<if test="!decisionBuzonOptimizado &amp;&amp; traerGestionVencidos=='true'" then="listado" else="listadoOptimizado"/>
 	</decision-state>
@@ -26,6 +42,14 @@
 		<on-entry>
 			<evaluate expression="binder.bindAndValidate(flowRequestContext, dto)" />
 			<evaluate expression="executor.execute('es.pfsgroup.recovery.ext.api.tareass.buscarTareasPendientesDelegator', dto)" result="flowScope.tareas" />
+	    </on-entry>
+    </end-state>
+    
+     <!-- Procuradores -->
+     <end-state id="BusquedaAvanzadaProcurador" view="plugin/mejoras/tareas/listadoTareasOptimizadoJSON" >	
+		<on-entry>
+			<evaluate expression="binder.bindAndValidate(flowRequestContext, dto)" />
+			<evaluate expression="executor.execute('es.pfsgroup.es.plugin.recovery.procuradores.tareas.api.buscarTareasPendientesDelegator', dto, estado, categorizacion)" result="flowScope.tareas" />
 	    </on-entry>
     </end-state>
 

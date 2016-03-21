@@ -31,6 +31,7 @@
 				<value>TOTAL_LIQUIDACION</value>
 				<value>FECHA_CIERRE_LIQUIDACION</value>
 				<value>MOV_FECHA_POS_VIVA_VENCIDA</value>
+				<value>CODIGO_DE_CONTRATO</value>
 				<value>CODIGO_DE_CONTRATO_DE_17_DIGITOS</value>
 				<value>totalLiq</value>
 				<value>fechaLiquidacion</value>
@@ -71,6 +72,7 @@
 							<entry key="btnVisar" value="0" />
 							<entry key="btnDescartar" value="1" />
 							<entry key="btnGenerar" value="1" />
+							<entry key="btnLiqGenDoc" value="1" />
 							<entry key="botonRefreshLiq" value="1" />
 						</map>
 					</entry>
@@ -111,6 +113,7 @@
 							<entry key="btnVisar" value="1" />
 							<entry key="btnDescartar" value="1" />
 							<entry key="btnGenerar" value="0" />
+							<entry key="btnLiqGenDoc" value="0" />
 							<entry key="botonRefreshLiq" value="1" />
 						</map>
 					</entry>
@@ -151,6 +154,7 @@
 							<entry key="btnVisar" value="0" />
 							<entry key="btnDescartar" value="1" />
 							<entry key="btnGenerar" value="0" />
+							<entry key="btnLiqGenDoc" value="1" />
 							<entry key="botonRefreshLiq" value="1" />
 						</map>
 					</entry>

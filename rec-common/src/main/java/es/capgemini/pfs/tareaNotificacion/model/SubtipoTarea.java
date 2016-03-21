@@ -98,6 +98,7 @@ public class SubtipoTarea implements Serializable, Auditable {
     public static final String CODIGO_TAREA_UMBRAL = "53";
 
     public static final String CODIGO_SOLICITAR_PRORROGA_DC = "54";
+    public static final String CODIGO_SOLICITAR_PRORROGA_FP = "SOLPRORRFP";
     public static final String CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_DC = "55";
 
     public static final String CODIGO_TAREA_PROPUESTA_BORRADO_OBJETIVO = "57";
@@ -123,6 +124,8 @@ public class SubtipoTarea implements Serializable, Auditable {
     public static final String CODIGO_TAREA_EXP_RECOBRO_META_VOLANTE_OK="REC_META_VOL_OK";
     public static final String CODIGO_TAREA_EXP_RECOBRO_META_VOLANTE_KO="REC_META_VOL_KO";
     
+    public static final String CODIGO_NOTIFICACION_EXPEDIENTE_NUEVO_RIESGO = "1000";
+
     // OJO: Todas los c�digos de tareas deben estar en shared.js.jsp, y
     // tenerlo en cuenta tambien en listadoTareas.jsp
 

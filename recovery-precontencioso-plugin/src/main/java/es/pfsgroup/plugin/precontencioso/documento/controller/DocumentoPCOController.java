@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.precontencioso.documento.controller;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -18,10 +19,12 @@ import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.asunto.model.Asunto;
+import es.capgemini.pfs.asunto.model.DDTipoActuacion;
 import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.diccionarios.Dictionary;
+import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.multigestor.api.GestorAdicionalAsuntoApi;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
@@ -30,6 +33,7 @@ import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.precontencioso.documento.api.DocumentoPCOApi;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentosUGPCODto;
@@ -46,8 +50,10 @@ import es.pfsgroup.plugin.precontencioso.documento.model.DDUnidadGestionPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.recovery.ext.api.tipoFicheroAdjunto.dao.DDTipoFicheroAdjuntoDao;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
 
@@ -72,6 +78,7 @@ public class DocumentoPCOController {
 	private static final String CREAR_SOLICITUDES = "plugin/precontencioso/documento/popups/crearSolicitudes";
 	private static final String TIPO_GESTOR_JSON = "plugin/coreextension/asunto/tipoGestorJSON";
 	private static final String VALIDACION_DOCUMENTO_UNICO = "plugin/precontencioso/documento/json/validacionDocUnicoJSON";
+	private static final String TIPO_FICHERO_ADJUNTO_JSON = "plugin/coreextension/tipoFicheroAdjunto/tipoFicheroAdjuntoJSON";
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -88,10 +95,16 @@ public class DocumentoPCOController {
 	
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
+	
+	@Autowired
+	private ProcedimientoPCODao procedimientoPCODao;
+	
+    @Autowired
+    private DDTipoFicheroAdjuntoDao tipoFicheroAdjuntoDao;
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String getSolicitudesDocumentosPorProcedimientoId(@RequestParam(value = "idProcedimientoPCO", required = true) Long idProcedimientoPCO, ModelMap model) {
+	public String getSolicitudesDocumentosPorProcedimientoId(@RequestParam(value = "idProcedimientoPCO", required = true) Long idProcedimientoPCO, Long idTipoDocumento, ModelMap model) {
 	
 		boolean esDocumento;	
 		boolean tieneSolicitud;
@@ -99,7 +112,7 @@ public class DocumentoPCOController {
 		
 		List<SolicitudDocumentoPCODto> solicitudesDoc = new ArrayList<SolicitudDocumentoPCODto>();
 		
-		List<DocumentoPCO> listDocumentos = documentoPCOApi.getDocumentosPorIdProcedimientoPCO(idProcedimientoPCO);
+		List<DocumentoPCO> listDocumentos = documentoPCOApi.getDocumentosPorIdProcedimientoPCO(idProcedimientoPCO,idTipoDocumento);
 		List<DocumentoPCO> documentos = documentoPCOApi.getDocumentosOrdenadosByUnidadGestion(listDocumentos);
 
 		for (DocumentoPCO doc : documentos) {
@@ -183,6 +196,8 @@ public class DocumentoPCOController {
 			@RequestParam(value = "fechaEnvio", required = true) String fechaEnvio, 
 			@RequestParam(value = "fechaRecepcion", required = true) String fechaRecepcion, 
 			@RequestParam(value = "existeSolDisponible", required = true) String existeSolDisponible,
+			@RequestParam(value = "arrayIdDocs", required = false) List<String> arrayIdDocs,
+			@RequestParam(value = "arrayIdSolicitudes", required = false) List<String> arrayIdSolicitudes,
 			ModelMap model) {
 
 		InformarDocumentoDto dto = new InformarDocumentoDto();
@@ -234,6 +249,13 @@ public class DocumentoPCOController {
 		model.put("ddSiNo", ddsino);
 		model.put("ddSiNoNoAplica", ddsinonoaplica);
 		model.put("existeSolDisponible", ("true".equals(existeSolDisponible) ? true : false));
+		/*añadimos los model put en caso de que haya un informar masivo*/
+		if(!Checks.esNulo(arrayIdDocs)) {
+			model.put("arrayIdDocs", arrayIdDocs);			
+		}
+		if(!Checks.esNulo(arrayIdSolicitudes)) {
+			model.put("arrayIdSolicitudes", arrayIdSolicitudes);			
+		}
 		
 		return INFORMAR_DOC;
 	}
@@ -247,21 +269,22 @@ public class DocumentoPCOController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String abrirIncluirDocumento(ModelMap model) {
+	public String abrirIncluirDocumento(ModelMap model, @RequestParam(value = "idPCO", required = true) Long idPCO) {
 
-		List<DDTipoFicheroAdjunto> listaTipoDocumentos = null;
 		List<DDUnidadGestionPCO> listaUG = null;
+		List<DDProvincia> listaProvincias = null;
 		
 		IncluirDocumentoDto dto = new IncluirDocumentoDto();
 	
-		// Lista tipo documentos
-		listaTipoDocumentos = documentoPCOApi.getTiposDocumento();
 		
 		// Lista Unidades Gestion
 		listaUG = documentoPCOApi.getUnidadesGestion();
 		
-		model.put("tiposDocumento", listaTipoDocumentos);
+		// Lista provincias
+		listaProvincias = documentoPCOApi.getProvincias();
+		
 		model.put("unidadesGestion", listaUG);
+		model.put("listaProvincias", listaProvincias);
 		
 		model.put("dtoDoc", dto);
 		
@@ -281,8 +304,13 @@ public class DocumentoPCOController {
 			@RequestParam(value = "idDocumento", required = true) Long idDocumento, ModelMap model) {
 		DocumentoPCODto docDto = new DocumentoPCODto();
 		docDto = documentoPCOApi.getDocumentoPorIdDocumentoPCO(idDocumento);
+		List<DDProvincia> listaProvincias = null;
+		// Lista provincias
+		listaProvincias = documentoPCOApi.getProvincias();
+		model.put("listaProvincias", listaProvincias);
 		
 		model.put("dtoDoc", docDto);
+		
 		
 		return EDITAR_DOC;
 	}
@@ -432,6 +460,7 @@ public class DocumentoPCOController {
 		docDto.setNumRegistro(webRequest.getParameter("numRegistro"));
 		docDto.setPlaza(webRequest.getParameter("plaza"));
 		docDto.setIdufir(webRequest.getParameter("idufir"));
+		docDto.setProvinciaNotario(webRequest.getParameter("provinciaNotario"));
 		
 		documentoPCOApi.editarDocumento(docDto);
 		
@@ -492,7 +521,8 @@ public class DocumentoPCOController {
 			docDto.setTomo(request.getParameter("tomo"));	
 			docDto.setTipoDocumento(request.getParameter("comboTipoDocumento"));
 			docDto.setPlaza(request.getParameter("plaza"));
-			docDto.setFechaEscritura(request.getParameter("fechaEscritura"));					
+			docDto.setFechaEscritura(request.getParameter("fechaEscritura"));
+			docDto.setProvinciaNotario(request.getParameter("provinciaNotario"));
 			docDto.setTipoUG(tipoUG);
 			docDto.setIdProc(prcId);
 			docDto.setEstado(DDEstadoDocumentoPCO.PENDIENTE_SOLICITAR);
@@ -605,29 +635,40 @@ public class DocumentoPCOController {
 	 */
 	@RequestMapping 
 	private String saveInformarSolicitud(WebRequest request, ModelMap model) {
-        
-		SaveInfoSolicitudDTO dto = new SaveInfoSolicitudDTO();
-        
-        dto.setIdDoc(request.getParameter("idDoc"));
-        dto.setActor(request.getParameter("actor"));
-        dto.setIdSolicitud(request.getParameter("idSolicitud"));
-        dto.setEstado(request.getParameter("estado"));
-        dto.setAdjuntado(request.getParameter("adjuntado"));
-        if (!Checks.esNulo(request.getParameter("ejecutivo"))) {
-        	DDSiNoNoAplica siNoAplica = (DDSiNoNoAplica) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDSiNoNoAplica.class, request.getParameter("ejecutivo"));
-        	dto.setEjecutivo(siNoAplica.getId());        	
-        }
-        dto.setFechaResultado(parseaFecha(request.getParameter("fechaResultado")));
-        dto.setResultado(request.getParameter("resultado"));
-        dto.setFechaEnvio(parseaFecha(request.getParameter("fechaEnvio")));
-        dto.setFechaRecepcion(parseaFecha(request.getParameter("fechaRecepcion")));
-        dto.setComentario(request.getParameter("comentario"));
-     
-        documentoPCOApi.saveInformarSolicitud(dto);
-        
-		DocumentoPCO doc = proxyFactory.proxy(DocumentoPCOApi.class).getDocumentoPCOById(new Long(request.getParameter("idDoc")));
-		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(doc.getProcedimientoPCO().getProcedimiento().getId());
-        
+
+		List<String> arrayIdDocs = new ArrayList<String>();
+		List<String> arrayIdSolicitudes = new ArrayList<String>();
+		
+		arrayIdDocs = dameListPersonalizada(request.getParameter("arrayIdDocs"));
+		arrayIdSolicitudes = dameListPersonalizada(request.getParameter("arrayIdSolicitudes"));
+		
+		//añadimos el for, para en el caso de informar masivo que lo haga n veces
+		for(int i=0; i<arrayIdDocs.size(); i++){
+			
+			SaveInfoSolicitudDTO dto = new SaveInfoSolicitudDTO();
+	        
+
+			dto.setIdDoc(arrayIdDocs.get(i));
+			dto.setIdSolicitud(arrayIdSolicitudes.get(i));
+			
+	        dto.setEstado(request.getParameter("estado"));
+	        dto.setAdjuntado(request.getParameter("adjuntado"));
+	        if (!Checks.esNulo(request.getParameter("ejecutivo"))) {
+	        	DDSiNoNoAplica siNoAplica = (DDSiNoNoAplica) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDSiNoNoAplica.class, request.getParameter("ejecutivo"));
+	        	dto.setEjecutivo(siNoAplica.getId());        	
+	        }
+	        dto.setFechaResultado(parseaFecha(request.getParameter("fechaResultado")));
+	        dto.setResultado(request.getParameter("resultado"));
+	        dto.setFechaEnvio(parseaFecha(request.getParameter("fechaEnvio")));
+	        dto.setFechaRecepcion(parseaFecha(request.getParameter("fechaRecepcion")));
+	        dto.setComentario(request.getParameter("comentario"));
+	     
+	        documentoPCOApi.saveInformarSolicitud(dto);
+	        
+			DocumentoPCO doc = proxyFactory.proxy(DocumentoPCOApi.class).getDocumentoPCOById(new Long(request.getParameter("idDoc")));
+			proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(doc.getProcedimientoPCO().getProcedimiento().getId());
+		}//del for de arrayDocs
+		
         return DEFAULT;
 	}
 	
@@ -685,5 +726,33 @@ public class DocumentoPCOController {
 		}
 
 		return "default";
+	}
+	
+	public List<String> dameListPersonalizada(String arrayTmp) {
+		
+		int ultimaPos = arrayTmp.length();
+		arrayTmp = arrayTmp.substring(1,ultimaPos-1);
+		List<String> items = Arrays.asList(arrayTmp.split("\\s*,\\s*"));
+        
+		return items;
+	}
+	
+	/**
+	 * Obtiene los tipos de documento del tipo de actuación PCO
+	 * 
+	 * @param request
+	 * @param model
+	 * @param idPCO
+	 * @return
+	 */
+	@RequestMapping
+	public String getTiposDocumentoPorTipoActuacion(WebRequest request, ModelMap model, @RequestParam(value = "idPCO", required = true) Long idPCO) {
+		
+		List<DDTipoActuacion> actuaciones = new ArrayList<DDTipoActuacion>();
+		actuaciones.add(procedimientoPCODao.get(idPCO).getProcedimiento().getTipoActuacion());
+		
+		model.put("tipoFicherosAdjunto", tipoFicheroAdjuntoDao.getListaPorTipoDeActuacion(actuaciones));
+		
+		return TIPO_FICHERO_ADJUNTO_JSON;
 	}
  }

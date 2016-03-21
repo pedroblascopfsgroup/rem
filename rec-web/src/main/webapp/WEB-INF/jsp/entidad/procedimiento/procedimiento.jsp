@@ -13,7 +13,6 @@ var buttonsL_procedimiento = <app:includeArray files="${buttonsLeft}" />;
 var procedimientoToolbar = <%@ include file="toolbar.jsp" %>;
 
 app.abreProcedimientoFast = function(id,nombre,params){
-	
 	if (params && typeof(params)=="object")
 		var nombreTab = params.nombreTab
 	else

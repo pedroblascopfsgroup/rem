@@ -2,6 +2,9 @@ package es.pfsgroup.plugin.recovery.mejoras.acuerdos.controller;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -19,23 +22,27 @@ import es.capgemini.pfs.acuerdo.model.AcuerdoConfigAsuntoUsers;
 import es.capgemini.pfs.acuerdo.model.DDMotivoRechazoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDSubTipoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
-import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.contrato.model.DDCondicionesRemuneracion;
+import es.capgemini.pfs.contrato.model.DDSituacionGestion;
 import es.capgemini.pfs.contrato.model.DDTipoProducto;
 import es.capgemini.pfs.core.api.acuerdo.AcuerdoApi;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.itinerario.model.DDTipoItinerario;
+import es.capgemini.pfs.persona.model.PersonaFormulas;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.termino.TerminoOperacionesManager;
 import es.capgemini.pfs.termino.dto.ListadoTerminosAcuerdoDto;
 import es.capgemini.pfs.termino.dto.TerminoAcuerdoDto;
 import es.capgemini.pfs.termino.dto.TerminoOperacionesDto;
+import es.capgemini.pfs.termino.model.CamposTerminoTipoAcuerdo;
 import es.capgemini.pfs.termino.model.DDEstadoGestionTermino;
 import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.capgemini.pfs.termino.model.TerminoBien;
 import es.capgemini.pfs.termino.model.TerminoContrato;
-import es.capgemini.pfs.termino.model.TerminoOperaciones;
+import es.capgemini.pfs.termino.model.ValoresCamposTermino;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -68,6 +75,8 @@ public class MEJAcuerdoController {
 	static final String JSP_EDITAR_TERMINO_ESTADO_GESTION = "plugin/mejoras/acuerdos/edicionEstadoGestionTermino";
 	static final String JSP_RECHAZAR_ACUERDO = "plugin/mejoras/acuerdos/rechazarAcuerdo";
 	static final String OK_KO_RESPUESTA_JSON = "plugin/coreextension/OkRespuestaJSON";
+	static final String JSON_LIST_DD_CONDICIONES_REMUNERACION ="plugin/mejoras/acuerdos/condicionesRemuneracionJSON";
+	static final String JSON_LIST_DD_SITUACION_GESTION ="plugin/mejoras/acuerdos/situacionGestionJSON";
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -230,6 +239,8 @@ public class MEJAcuerdoController {
 		
 		// Obtenemos el tipo de acuerdo para PLAN_PAGO
 		DDTipoAcuerdo tipoAcuerdoPlanPago = genericDao.get(DDTipoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAcuerdo.CODIGO_PLAN_PAGO));
+		DDTipoAcuerdo tipoAcuerdoFondosPropios = genericDao.get(DDTipoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAcuerdo.TIPO_EFECTIVO_FONDOS_PROPIOS));
+		DDTipoAcuerdo tipoAcuerdoRegulParcial = genericDao.get(DDTipoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAcuerdo.TIPO_REGUL_PARCIAL));
 		
 		// Obtenemos la lista de Terminos del acuerdo
 		List<ListadoTerminosAcuerdoDto> listadoTerminosAcuerdo = proxyFactory.proxy(MEJAcuerdoApi.class).obtenerListadoTerminosAcuerdoByAcuId(idAcuerdo);
@@ -242,8 +253,35 @@ public class MEJAcuerdoController {
 			}		
 		}
 		
-		map.put("idTipoAcuerdoPlanPago", tipoAcuerdoPlanPago.getId());
+		List<String> contratos = new ArrayList<String>(Arrays.asList(contratosIncluidos.split(",")));
+		List<String> fechasPaseMora = new ArrayList<String>();
+		List<String> fechasPaseMoraFormated = new ArrayList<String>();
+		for(String contrat : contratos) {
+			fechasPaseMora.add(mejAcuerdoApi.getFechaPaseMora(Long.valueOf(contrat)));	
+		}
+		
+		
+		for(String fecha : fechasPaseMora){
+			if(fecha == null){
+				fechasPaseMoraFormated.add("0");
+			}else{
+				fechasPaseMoraFormated.add(fecha);
+			}
+		}
+		
+		Comparator<String> comparador = Collections.reverseOrder();
+		Collections.sort(fechasPaseMoraFormated, comparador);
+		
+		String fechaPaseMora = null; 
+		if(!Checks.estaVacio(fechasPaseMora)){
+			fechaPaseMora = fechasPaseMora.get(0); 
+		}
+		
+		if(!Checks.esNulo(tipoAcuerdoPlanPago)){ map.put("idTipoAcuerdoPlanPago", tipoAcuerdoPlanPago.getId());}
 		map.put("yaHayPlanPago", yaHayPlanPago);
+		map.put("fechaPaseMora", fechaPaseMora);
+		if(!Checks.esNulo(tipoAcuerdoFondosPropios)){map.put("idTipoAcuerdoFondosPropios", tipoAcuerdoFondosPropios.getId());}
+		if(!Checks.esNulo(tipoAcuerdoRegulParcial)){map.put("idTipoAcuerdoRegulParcial", tipoAcuerdoRegulParcial.getId());}
 		
 		return JSP_ALTA_TERMINO_ACUERDO;
 	}	
@@ -259,15 +297,37 @@ public class MEJAcuerdoController {
 	@RequestMapping
 	public String openDetalleTermino(ModelMap map, @RequestParam(value = "ambito", required = true) String ambito ,@RequestParam(value = "id", required = true) Long id, 
 							@RequestParam(value = "idAcuerdo", required = true) Long idAcuerdo,
+							@RequestParam(value = "contratosIncluidos", required = true) String contratosIncluidos,
 							@RequestParam(value = "soloConsulta", required = true) String soloConsulta) {
 		
 		TerminoAcuerdo termino = proxyFactory.proxy(MEJAcuerdoApi.class).getTerminoAcuerdo(id);
+		if (termino.getAcuerdo().getExpediente()!=null) {
+			map.put("idExpediente", termino.getAcuerdo().getExpediente().getId());
+			map.put("esPropuesta",true);
+		} else {
+			map.put("esPropuesta",false);
+		}
+			
+		if (!contratosIncluidos.equals("")) {
+			map.put("contratosIncluidos", contratosIncluidos);
+		} else {
+			String contratosDelTermino = "";
+			for (TerminoContrato contrato : termino.getContratosTermino()) {
+				contratosDelTermino += contrato.getId() + ",";
+			}
+			if (contratosDelTermino.length()>0) {
+				contratosDelTermino = contratosDelTermino.substring(0,contratosDelTermino.length()-1);
+			}
+			map.put("contratosIncluidos", contratosDelTermino);
+		}
+		
 		// Sacamos los bienes que tiene asignado este termino
-		List<TerminoBien> tbList = genericDao.getList(TerminoBien.class, genericDao.createFilter(FilterType.EQUALS, "termino.id", termino.getId()));
+		List<TerminoBien> tbList = genericDao.getList(TerminoBien.class, genericDao.createFilter(FilterType.EQUALS, "termino.id", termino.getId()),genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 		termino.setBienes(tbList);		
 		map.put("termino", termino);
 		
-		map.put("operacionesPorTipo", terminoOperacionesManager.getOperacionesPorTipoAcuerdo(termino.getOperaciones()));
+		//map.put("operacionesPorTipo", terminoOperacionesManager.getOperacionesPorTipoAcuerdo(termino.getOperaciones()));
+		map.put("operacionesPorTipo", termino.getValoresCampos());
 		
 		map.put("idAcuerdo", idAcuerdo);
 		map.put("ambito", ambito);
@@ -382,6 +442,7 @@ public class MEJAcuerdoController {
 	 * @return
 	 * @throws ParseException 
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String crearTerminoAcuerdo(TerminoOperacionesDto termOpDto, WebRequest request, ModelMap model) throws ParseException{
 		
@@ -420,35 +481,71 @@ public class MEJAcuerdoController {
 		ta.setPeriodoVariable(taDTO.getPeriodoVariable());
 		ta.setInformeLetrado(taDTO.getInformeLetrado());
 		
-		TerminoOperaciones terminooperaciones;
-		// Borramos la operacion asociada al termino
-		if (terminoId != null && terminoId.length()>0){
-			terminooperaciones = genericDao.get(TerminoOperaciones.class, genericDao.createFilter(FilterType.EQUALS, "termino.id", new Long(terminoId)));
-			proxyFactory.proxy(MEJAcuerdoApi.class).deleteTerminoOperaciones(terminooperaciones);
+		//Borramos los contratos incluidos en el termino
+		/*
+		if (ta.getContratosTermino()!=null) {
+			for (TerminoContrato contrato : ta.getContratosTermino()) {
+				mejAcuerdoApi.deleteTerminoContrato(contrato);
+			}
+		}*/
+		
+		//Borramos los bienes seleccionados previamente
+		if (ta.getBienes()!=null) {
+			for (TerminoBien bien : ta.getBienes()) {
+				mejAcuerdoApi.deleteTerminoBien(bien);	
+			}
 		}
+		
+		//Borramos si tenia valores terminos antes
+		mejAcuerdoApi.deleteAllValoresTermino(ta);
+		
 		TerminoAcuerdo taSaved = proxyFactory.proxy(MEJAcuerdoApi.class).saveTerminoAcuerdo(ta);
 		
-		terminooperaciones = terminoOperacionesManager.creaTerminoOperaciones(termOpDto);
-		terminooperaciones.setTermino(taSaved);
-		Auditoria.save(terminooperaciones);
-		terminoOperacionesManager.guardaTerminoOperaciones(terminooperaciones);
+		//Y creamos los nuevos
+		List<ValoresCamposTermino> valores = new ArrayList<ValoresCamposTermino>();
+		List<CamposTerminoTipoAcuerdo> campos = terminoOperacionesManager.getCamposOperacionesPorTipoAcuerdo(ta.getTipoAcuerdo().getId());
+		for (CamposTerminoTipoAcuerdo campo : campos) {
+			if (request.getParameterMap().containsKey(campo.getNombreCampo())) {
+				if (!Checks.esNulo(request.getParameter(campo.getNombreCampo()))) {
+					ValoresCamposTermino va = new ValoresCamposTermino();
+					va.setCampo(campo);
+					va.setTermino(taSaved);
+					if (!campo.getTipoCampo().equals("combobox")) {
+						va.setValor(request.getParameter(campo.getNombreCampo()));
+					} else {
+						//Buscamos el value del text enviado
+						for (List<String> value : campo.getArrayValoresCombo()) {
+							if (value.get(1).equals(request.getParameter(campo.getNombreCampo()))) {
+								va.setValor(value.get(0));
+							}
+						}
+					}
+					
+					valores.add(va);
+				}
+			}
+		}
+		if (valores.size()>0) {
+			taSaved.setValoresCampos(valores);
+		} else {
+			taSaved.setValoresCampos(null);
+		}
+		mejAcuerdoApi.saveAllValoresTermino(taSaved);		
 		
+		// Creamos los bienes asociados al termino
+		if (bienesIncluidos.trim().length()>0) {	
+			crearBienesTermino(taSaved, bienesIncluidos);
+		}
+		
+
 		// Creamos los contratos asociados al termino
 		if (contratosIncluidos.trim().length()>0) 
 			crearContratosTermino(taSaved, contratosIncluidos);
 		
-		// Creamos los bienes asociados al termino
-		if (bienesIncluidos.trim().length()>0) {	
-			if (terminoId != null && terminoId.length()>0){
-				eliminarBienesTermino(new Long(terminoId));
-			}
-			crearBienesTermino(taSaved, bienesIncluidos);
-		}
 
 		return "default";
 	}	
 	
-
 	/**
 	 * Creación del DTO de TerminoAcuerdo
 	 * 
@@ -628,6 +725,10 @@ public class MEJAcuerdoController {
 		eliminarBienesTermino(Long.parseLong(idTerminoAcuerdo));
 		
 		TerminoAcuerdo ta = genericDao.get(TerminoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(idTerminoAcuerdo)));
+
+		//eliminar los Valores asociados al Termino
+		mejAcuerdoApi.deleteAllValoresTermino(ta);
+		
 		
 		proxyFactory.proxy(MEJAcuerdoApi.class).deleteTerminoAcuerdo(ta);
 		
@@ -769,5 +870,20 @@ public class MEJAcuerdoController {
 		return OK_KO_RESPUESTA_JSON;
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getListDDCondicionesRemuneracionData(ModelMap model){
+		List<DDCondicionesRemuneracion> list = diccionarioManager.dameValoresDiccionario(DDCondicionesRemuneracion.class);
+		model.put("data", list);
+		return JSON_LIST_DD_CONDICIONES_REMUNERACION;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getListSituacionGestion(ModelMap model){
+		List<DDSituacionGestion> list = diccionarioManager.dameValoresDiccionario(DDSituacionGestion.class);
+		model.put("data", list);
+		return JSON_LIST_DD_SITUACION_GESTION;
+	}
 
 }

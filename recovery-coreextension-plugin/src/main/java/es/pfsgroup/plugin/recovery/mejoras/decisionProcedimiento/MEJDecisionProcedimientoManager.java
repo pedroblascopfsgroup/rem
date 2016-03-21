@@ -666,7 +666,8 @@ public class MEJDecisionProcedimientoManager extends
 		ConfiguradorPropuesta configuradorPropuesta = new ConfiguradorPropuesta();
 		Procedimiento p = prcManager.getProcedimiento(dtoDecisionProcedimiento.getIdProcedimiento());
 		MEJProcedimiento procedimiento = MEJProcedimiento.instanceOf(p);
-		if(procedimiento.getProcessBPM() == null && procedimiento.getGuid() != null) {
+		//Comprobamos si pasa por un lado u otro, si el PrcRemoto, del procedimiento, es 1 se pondra el estado en conformacion
+		if(!Checks.esNulo(procedimiento.getPrcRemoto()) && procedimiento.getPrcRemoto() == 1 && procedimiento.getGuid() != null) {
 			configuradorPropuesta.setConfiguracion(ConfiguradorPropuesta.SOLO_ENVIAR);
 			dtoDecisionProcedimiento.setStrEstadoDecision(DDEstadoDecision.ESTADO_EN_CONFORMACION);
 		}
@@ -1056,7 +1057,12 @@ public class MEJDecisionProcedimientoManager extends
 		if(decisionProcedimiento != null && decisionProcedimiento.getId() != null) {
 		
 			if ( Checks.esNulo(decisionProcedimiento.getGuid())) {
-				decisionProcedimiento.setGuid(Guid.getNewInstance().toString());
+				
+				String guid = Guid.getNewInstance().toString();
+				while(getDecisionProcedimientoByGuid(guid) != null) {
+					guid = Guid.getNewInstance().toString();
+				}
+				decisionProcedimiento.setGuid(guid);
 				decisionProcedimientoDao.saveOrUpdate(decisionProcedimiento);
 				
 				extProcedimientoManager.prepareGuid(decisionProcedimiento.getProcedimiento());
@@ -1079,7 +1085,13 @@ public class MEJDecisionProcedimientoManager extends
 		ProcedimientoDerivado procedimientoDerivado = dtoProcedimientoDerivado.getProcedimientoDerivado();
 		if(procedimientoDerivado != null) {
 			if (Checks.esNulo(procedimientoDerivado.getGuid())) {
-				procedimientoDerivado.setGuid(Guid.getNewInstance().toString());
+				
+				String guid = Guid.getNewInstance().toString();
+				while(procedimientoDerivadoDao.getByGuid(guid) != null) {
+					guid = Guid.getNewInstance().toString();
+				}
+				
+				procedimientoDerivado.setGuid(guid);
 				genericDao.save(ProcedimientoDerivado.class, procedimientoDerivado);
 				
 				extProcedimientoManager.prepareGuid(procedimientoDerivado.getProcedimiento());

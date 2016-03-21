@@ -1,7 +1,5 @@
 package es.pfsgroup.recovery.ext.impl.tareas;
 
-import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -45,7 +43,6 @@ import es.pfsgroup.recovery.ext.api.tareas.EXTOpcionesBusquedaTareasApi;
 import es.pfsgroup.recovery.ext.api.tareas.EXTTareasApi;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.impl.ResultadoBusquedaTareasBuzonesDto;
 import es.pfsgroup.recovery.ext.services.EXTRemoteServicesScan;
-import es.pfsgroup.recovery.ext.services.EXTTareasService;
 
 @Component
 public class EXTTareasManager extends EXTAbstractTareaNotificacionManager
@@ -119,9 +116,11 @@ public class EXTTareasManager extends EXTAbstractTareaNotificacionManager
 			return proxyFactory.proxy(EXTTareasApi.class)
 					.buscarTareasPendientesConCarterizacion(dto);
 		} else {
-			return (Page) getExecutor().execute(
+			 Page page = (Page) getExecutor().execute(
 					ComunBusinessOperation.BO_TAREA_MGR_BUSCAR_TAREAS_PENDIETE,
 					dto);
+			 page.getResults();
+			 return page;
 		}
 	}
 
@@ -312,7 +311,7 @@ public class EXTTareasManager extends EXTAbstractTareaNotificacionManager
 						.setEstadoItinerario(asu.getEstadoItinerario());
 
 			}
-			// A PARTIR DE AQUÍ ES AÑADIDO
+			// A PARTIR DE AQUï¿½ ES Aï¿½ADIDO
 			else if (DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO
 					.equals(codigoTipoEntidad)) {
 				System.out.println("Entra  a decodificar contrato");

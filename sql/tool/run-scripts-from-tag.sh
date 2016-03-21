@@ -127,7 +127,8 @@ if [ ! -f $SETENVGLOBAL ]; then
 fi
 source $SETENVGLOBAL
 
-rm -rf $BASEDIR/tmp/*.txt $BASEDIR/tmp/*.log $BASEDIR/tmp/*.sh $BASEDIR/tmp/*.sql $BASEDIR/tmp/**/*
+mkdir -p $BASEDIR/tmp
+rm -rf $BASEDIR/tmp/*.txt $BASEDIR/tmp/*.log $BASEDIR/tmp/*.sh $BASEDIR/tmp/*.bat $BASEDIR/tmp/*.sql $BASEDIR/tmp/**/*
 
 DIRECTORIO=""
 if [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]] && [[ "$3" != "null" ]]; then
@@ -185,6 +186,11 @@ if [ -f $BASEDIR/tmp/customer-list-from-tag.txt ] ; then
     cat $BASEDIR/tmp/customer-list-from-tag.txt | sort >> $BASEDIR/tmp/list-from-tag.txt
 fi
 
+if [ ! -f $BASEDIR/tmp/list-from-tag.txt ] ; then
+    echo ""
+    echo "No se encontraron scripts para los parámetros suministrados."
+    exit 1
+fi
 
 if [[ "$#" -ge 4 ]] && [[ "$4" == "go!" ]]; then
 
@@ -212,7 +218,7 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
         NEW_LINE=$line
         if [ "$MULTIENTIDAD" == "" ] ; then
             NEW_LINE=`echo $line | cut -d' ' -f1`
-            NEW_LINE=$NEWLINE' pass'
+            NEW_LINE=$NEW_LINE' pass'
         fi
         $BASEDIR/run-single-script.sh $NEW_LINE $CUSTOMER_IN_UPPERCASE -p
         if [[ "$?" != 0 ]]; then
@@ -220,11 +226,9 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
             exit 1
         fi
     done < $BASEDIR/tmp/list-from-tag.txt
-    mkdir -p $BASEDIR/tmp/package
-    mkdir $BASEDIR/tmp/package/DDL
-    mkdir $BASEDIR/tmp/package/DDL/scripts/
-    mkdir $BASEDIR/tmp/package/DML
-    mkdir $BASEDIR/tmp/package/DML/scripts/
+    mkdir -p $BASEDIR/tmp/package/DB/scripts/
+    mkdir -p $BASEDIR/tmp/package/DDL/scripts/
+    mkdir -p $BASEDIR/tmp/package/DML/scripts/
     passtring=''
     if [ "$MULTIENTIDAD" != "" ] ; then
         IFS=',' read -a entidades <<< "$MULTIENTIDAD"
@@ -241,14 +245,14 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
         sed -e s/#ENTITY#/"${passtring}"/g $BASEDIR/scripts/DxL-scripts.sh > $BASEDIR/tmp/package/DDL/DDL-scripts.sh
     fi
     cp $BASEDIR/scripts/DxL-scripts-one-user.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh
-    if [ $CUSTOMER_IN_UPPERCASE == 'CAJAMAR' ] ; then
-        echo "export NLS_LANG=AMERICAN.AL32UTF8" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null
-        echo "export NLS_DATE_FORMAT=\"DD-MON-RR\"" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null
-    else
-        echo "export NLS_LANG=.AL32UTF8" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null 
-    fi
+    echo "export NLS_LANG=.AL32UTF8" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null 
+    cp $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DB/DB-scripts.sh
     cp $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DML/DML-scripts.sh
     cp $BASEDIR/scripts/DxL-scripts-one-user.sh $BASEDIR/tmp/package/DML/DML-scripts-one-user.sh
+    cp $BASEDIR/scripts/DxL-scripts-one-user.sh $BASEDIR/tmp/package/DB/DB-scripts-one-user.sh
+
+    chmod +x $BASEDIR/tmp/package/**/*.sh
+
     if [ -f $BASEDIR/tmp/DDL-scripts.sh ] ; then 
 
         # Herramientas de Pitertul (actualización)
@@ -265,28 +269,59 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
             fi
         done
         cp $BASEDIR/tmp/DDL_000_$ESQUEMA.sql $BASEDIR/tmp/package/DDL/scripts/
+        cp $BASEDIR/tmp/DDL_000_$ESQUEMA.sql $BASEDIR/tmp/package/DB/scripts/
 
         cat $BASEDIR/tmp/DDL-scripts.sh >> $BASEDIR/tmp/package/DDL/DDL-scripts.sh
         cat $BASEDIR/tmp/DDL-scripts-one-user.sh >> $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh
+
+        if [[ $GENERATE_BAT == 'true' ]]; then
+            cp $BASEDIR/tmp/DDL-scripts.bat $BASEDIR/tmp/package/DDL/
+            cp $BASEDIR/tmp/DDL-scripts.bat $BASEDIR/tmp/package/DB/DB-scripts.bat
+        fi
+
         cp -r $BASEDIR/tmp/DDL*reg*.sql $BASEDIR/tmp/package/DDL/scripts/
-        cd $BASEDIR/tmp/package/DDL
-        zip DDL-scripts.zip -r *
-        cd -
+        cp -r $BASEDIR/tmp/DDL*reg*.sql $BASEDIR/tmp/package/DB/scripts/
+
+        cp $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DB/DB-scripts.sh
+        cp $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh $BASEDIR/tmp/package/DB/DB-scripts-one-user.sh
+
+        if [[ $UNIFIED_PACKAGE == 'false' ]]; then
+            cd $BASEDIR/tmp/package
+            zip DDL-scripts.zip -r DDL 
+            cd -
+        fi
     fi
     if [ -f $BASEDIR/tmp/DML-scripts.sh ] ; then
-        cat $BASEDIR/tmp/DML-scripts.sh >> $BASEDIR/tmp/package/DML/DML-scripts.sh
-        cat $BASEDIR/tmp/DML-scripts-one-user.sh >> $BASEDIR/tmp/package/DML/DML-scripts-one-user.sh
+        cat $BASEDIR/tmp/DML-scripts.sh | tee -a $BASEDIR/tmp/package/DML/DML-scripts.sh $BASEDIR/tmp/package/DB/DB-scripts.sh > /dev/null
+        cat $BASEDIR/tmp/DML-scripts-one-user.sh | tee -a $BASEDIR/tmp/package/DML/DML-scripts-one-user.sh $BASEDIR/tmp/package/DB/DB-scripts-one-user.sh > /dev/null
+        if [[ $GENERATE_BAT == 'true' ]]; then
+            cp $BASEDIR/tmp/DML-scripts.bat $BASEDIR/tmp/package/DML/
+            cat $BASEDIR/tmp/DML-scripts.bat >> $BASEDIR/tmp/package/DB/DB-scripts.bat
+        fi
         cp -r $BASEDIR/tmp/DML*reg*.sql $BASEDIR/tmp/package/DML/scripts/
-        cd $BASEDIR/tmp/package/DML
-        zip DML-scripts.zip -r *
+        cp -r $BASEDIR/tmp/DML*reg*.sql $BASEDIR/tmp/package/DB/scripts/
+
+        if [[ $UNIFIED_PACKAGE == 'false' ]]; then
+            cd $BASEDIR/tmp/package
+            zip DML-scripts.zip -r DML 
+            cd -
+        fi
+    fi     
+    if [[ $UNIFIED_PACKAGE != 'false' ]]; then
+        cd $BASEDIR/tmp/package
+        zip DB-scripts.zip -r DB
         cd -
-    fi      
+    fi
     echo ""
     echo "---------------------------------------------------"
     echo "---- EMPAQUETADOS PARA SOLICITUD DE DESPLIEGUE ----" 
     echo "---------------------------------------------------"
     echo ""
-    echo `ls $BASEDIR/tmp/package/**/*.zip` 
+    echo `ls $BASEDIR/tmp/package/*.zip` 
+    echo ""
+    echo "Los scripts DDL y DML se empaquetan juntos o separados, según variable UNIFIED_PACKAGE en setEnvGlobal<CLIENTE>"
+    echo "Por defecto, se empaquetan juntos" 
+    echo ""
     echo "---------------------------------------------------"
 
 else

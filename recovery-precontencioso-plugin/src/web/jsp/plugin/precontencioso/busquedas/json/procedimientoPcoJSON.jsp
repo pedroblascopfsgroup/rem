@@ -73,6 +73,8 @@
 			<json:property name="burFechaAcuse">
 				<fwk:date value="${p.burofax.fechaAcuse}" />
 			</json:property>
+			<json:property name="burRegManual" value="${p.burofax.regManual}" />
+			<json:property name="burRefExternaEnvio" value="${p.burofax.refExternaEnvio}" />
 			<json:property name="burResultado" value="${p.burofax.resultado}" />
 
 		</json:object>

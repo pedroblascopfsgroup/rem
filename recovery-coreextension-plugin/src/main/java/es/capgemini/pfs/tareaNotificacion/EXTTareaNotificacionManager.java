@@ -61,6 +61,7 @@ import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.persona.dao.impl.PageSql;
 import es.capgemini.pfs.politica.model.Objetivo;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
+import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
 import es.capgemini.pfs.prorroga.dto.DtoSolicitarProrroga;
 import es.capgemini.pfs.prorroga.model.Prorroga;
 import es.capgemini.pfs.registro.AceptarProrrogaListener;
@@ -85,7 +86,9 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.utils.EXTModelClassFactory;
+import es.pfsgroup.recovery.ext.factory.dao.dto.DtoResultadoBusquedaTareasBuzones;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.VTARBusquedaOptimizadaTareasDao;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.impl.ResultadoBusquedaTareasBuzonesDto;
 import es.pfsgroup.recovery.ext.impl.tareas.ExportarTareasBean;
@@ -134,6 +137,9 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
 
 	@Autowired
 	private IntegracionBpmService integracionBPMService;
+	
+	@Autowired
+	private CoreProjectContext coreProjectContext;
     
     @Override
     @BusinessOperation(overrides = ComunBusinessOperation.BO_TAREA_MGR_GET)
@@ -522,8 +528,10 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                 param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_CE);
             } else if (DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE.equals(codigoEstado)) {
                 param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_RE);
-            } else {
+            } else if (DDEstadoItinerario.ESTADO_DECISION_COMIT.equals(codigoEstado)){
                 param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC);
+            }else if(DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA.equals(codigoEstado)){
+            	param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_FP);
             }
         } else if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidad.getCodigo())) {
 
@@ -536,7 +544,21 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
             // BPMContants.TRANSICION_ACTIVAR_APLAZAMIENTO);
             param.put(TareaBPMConstants.ID_ENTIDAD_INFORMACION, proc.getId());
             param.put(TareaBPMConstants.CODIGO_TIPO_ENTIDAD, DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO);
-            param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_PROCEDIMIENTO);
+            
+            ///Comprobamos si el supervisor de la tarea tiene un subtipo de tarea
+            EXTTareaProcedimiento ExtTareaPro = genericDao.get(EXTTareaProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", prorroga.getTareaAsociada().getTareaExterna().getTareaProcedimiento().getId()));
+            if(!Checks.esNulo(ExtTareaPro) && !Checks.esNulo(ExtTareaPro.getTipoGestorSupervisor())){
+                String sbt = coreProjectContext.getTipoSupervisorProrroga().get(ExtTareaPro.getTipoGestorSupervisor().getCodigo());
+                if(!Checks.esNulo(sbt)){
+                	param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, sbt); 
+                }else{
+                	param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_PROCEDIMIENTO);	
+                }
+            }else{
+            	param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_PROCEDIMIENTO);
+            }
+
+            
         } else if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidad.getCodigo())) {
             Procedimiento proc = (Procedimiento) executor.execute(ExternaBusinessOperation.BO_PRC_MGR_GET_PROCEDIMIMENTO, dto.getIdEntidadInformacion());
             param.put(TareaBPMConstants.ID_ENTIDAD_INFORMACION, proc.getId());
@@ -883,7 +905,7 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
             }
         }
 
-        final Class<? extends ResultadoBusquedaTareasBuzonesDto> modelClass = modelClassFactory.getModelFor(ComunBusinessOperation.BO_TAREA_MGR_BUSCAR_TAREAS_PENDIETE, ResultadoBusquedaTareasBuzonesDto.class);
+        final Class<? extends DtoResultadoBusquedaTareasBuzones> modelClass = modelClassFactory.getModelFor(ComunBusinessOperation.BO_TAREA_MGR_BUSCAR_TAREAS_PENDIETE, DtoResultadoBusquedaTareasBuzones.class);
         return busquedaGenericaTareas(dto, null, modelClass);
     }
 
@@ -1110,7 +1132,9 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_CIERRA_SESION)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_EXPEDIENTE_DECISION_TOMADA)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_GESTOR_PROPUESTA_SUBASTA)
-                                || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(EXTSubtipoTarea.CODIGO_NOTIFICACION_ACUERDOS)) {
+                                || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(EXTSubtipoTarea.CODIGO_NOTIFICACION_ACUERDOS)
+                                || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(EXTSubtipoTarea.CODIGO_NOTIFICACION_EXPEDIENTE_NUEVO_RIESGO)
+                               ) {
                             param.put("fuerzaChkLeida", "true");
                         }
                     }
@@ -1334,7 +1358,13 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
 		EXTTareaNotificacion extTareaNotif = EXTTareaNotificacion.instanceOf(tareaNotif); 
 		if (tareaNotif == null) return null;
 		if (Checks.esNulo(extTareaNotif.getGuid())) {
-			extTareaNotif.setGuid(Guid.getNewInstance().toString());
+			
+			String guid = Guid.getNewInstance().toString();
+			while(getTareaNoficiacionByGuid(guid) != null) {
+				guid = Guid.getNewInstance().toString();
+			}
+			
+			extTareaNotif.setGuid(guid);
 			genericDao.save(EXTTareaNotificacion.class, extTareaNotif);
 		}
 		return extTareaNotif;

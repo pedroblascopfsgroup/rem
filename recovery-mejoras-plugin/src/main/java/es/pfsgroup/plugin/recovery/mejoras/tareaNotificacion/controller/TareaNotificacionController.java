@@ -12,7 +12,10 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import es.capgemini.devon.bo.Executor;
+import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
+import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.tareaNotificacion.dao.TareaNotificacionDao;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoBuscarTareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
@@ -35,11 +38,15 @@ public class TareaNotificacionController {
 	private ApiProxyFactory proxyFactory;
 	
 	@Autowired
+    private Executor executor;
+	
+	@Autowired
 	private GenericABMDao genericDao;
 	
     @Autowired
     private TareaNotificacionDao tareaNotificacionDao;
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String editarAlertaTarea(@RequestParam(value = "id", required = true) Long id, ModelMap map) {
 			
@@ -74,6 +81,7 @@ public class TareaNotificacionController {
 		return JSON_PLUGIN_MEJORAS_TAREAS_CONSULTA_NOTIF_SIN_RESP;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
     public String exportacionTareasExcelCount(@RequestParam(value = "codigoTipoTarea", required = true) String codigoTipoTarea,
     		@RequestParam(value = "perfilUsuario", required = true) Long perfilUsuario,
@@ -93,7 +101,10 @@ public class TareaNotificacionController {
 		dto.setPerfilUsuario(perfilUsuario);
 		dto.setEnEspera(enEspera);
 		dto.setEsAlerta(esAlerta);
-		dto.setLimit(limit);
+		Parametrizacion param = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+                Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_TAREAS);
+        int limite = Integer.parseInt(param.getValor());
+		dto.setLimit(limite);
 		dto.setBusqueda(true);
 		dto.setStart(0);
 		dto.setNombreTarea(nombreTarea);
@@ -104,11 +115,12 @@ public class TareaNotificacionController {
 		dto.setFechaVencimientoHastaOperador(fechaVencimientoHastaOperador);
     	
 		model.put("count", proxyFactory.proxy(TareaNotificacionApi.class).buscarTareasParaExcelCount(dto));
-		model.put("limit", appProperties.getProperty("exportar.excel.limite.tareas"));
+		model.put("limit", limite);
     	
 		return "plugin/mejoras/tareas/exportacionTareasCountJSON";
     }
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
     public String exportacionTareasPaginaDescarga(@RequestParam(value = "codigoTipoTarea", required = true) String codigoTipoTarea,
     		@RequestParam(value = "perfilUsuario", required = true) Long perfilUsuario,

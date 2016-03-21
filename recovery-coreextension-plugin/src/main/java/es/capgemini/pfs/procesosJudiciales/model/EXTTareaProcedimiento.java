@@ -39,6 +39,12 @@ public class EXTTareaProcedimiento extends TareaProcedimiento implements EXTTare
 	@Column(name = "TAP_BUCLE_BPM", nullable = true)
 	private String expresionBucleBPM;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+    @JoinColumn(name = "DD_TSUP_ID")
+	private EXTDDTipoGestor tipoGestorSupervisor;
+	
+
 	public Boolean getEvitarReorganizacion() {
 		return evitarReorganizacion;
 	}
@@ -88,5 +94,13 @@ public class EXTTareaProcedimiento extends TareaProcedimiento implements EXTTare
     public void setExpresionBucleBPM(String expresionBucleBPM) {
         this.expresionBucleBPM = expresionBucleBPM;
     }
+    
+	public EXTDDTipoGestor getTipoGestorSupervisor() {
+		return tipoGestorSupervisor;
+	}
+
+	public void setTipoGestorSupervisor(EXTDDTipoGestor tipoGestorSupervisor) {
+		this.tipoGestorSupervisor = tipoGestorSupervisor;
+	}
 
 }

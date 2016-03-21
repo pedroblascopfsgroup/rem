@@ -16,4 +16,6 @@ public interface VListadoPreProyectadoCntDao {
 	List<VListadoPreProyectadoCnt> getListadoPreProyectadoCntPaginated(ListadoPreProyectadoDTO dto);
 
 	int getCountListadoPreProyectadoCntPaginated(ListadoPreProyectadoDTO dto);
+
+	List<VListadoPreProyectadoCnt> getListadoPreProyectadoCntExp(List<Long> expsId);
 }

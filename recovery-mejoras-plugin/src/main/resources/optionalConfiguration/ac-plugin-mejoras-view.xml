@@ -35,7 +35,8 @@
 
 	<bean p:entity="tabs.asunto.fast" p:name="adjuntosAsunto"  p:order="1100" 	
 		p:fileName="/WEB-INF/jsp/plugin/mejoras/asuntos/tabs/adjuntos.jsp" 
-		p:priority="1"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		p:priority="1"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="TAB_ASUNTO_ADJUNTOS" />
 		
 	<bean p:entity="tabs.asuntos" p:name="cabeceraAsunto" p:order="100"
 		p:fileName="/WEB-INF/jsp/plugin/mejoras/asuntos/tabs/tabCabeceraAsunto.jsp"
@@ -47,7 +48,8 @@
 				
 	<bean p:entity="tabs.asunto.fast" p:name="acuerdos"  p:order="500" 	
 		p:fileName="/WEB-INF/jsp/plugin/mejoras/acuerdos/tabs/acuerdos.jsp" 
-		p:priority="2"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		p:priority="2"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="TAB_ASUNTO_ACUERDOS" />
  
 	<bean p:entity="tabs.asuntos" p:name="decisionComite" p:order="750"
 		p:fileName="/WEB-INF/jsp/plugin/mejoras/asuntos/tabs/tabDecisionComiteAsunto.jsp"
@@ -113,7 +115,7 @@
 	 <bean p:entity="tabs.procedimiento.fast" p:name="docRequeridaProcedimiento"  p:order="700"
 		p:fileName="/WEB-INF/jsp/plugin/mejoras/procedimientos/tabs/tabDocumentacion.jsp" 
 		p:priority="1"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
-		p:permission="TAB_PRC_DOCUMENTACION"/>	
+		p:permission="TAB_PRC_DOCUMENTACION" />	
 
 	<bean p:entity="tabs.procedimiento" p:name="historicoProcedimiento"
 		p:order="800"
@@ -123,25 +125,30 @@
 
 	<bean p:entity="tabs.procedimiento.fast" p:name="contratosProcedimiento"  p:order="200"
 		p:fileName="/WEB-INF/jsp/plugin/mejoras/procedimientos/tabs/contratos.jsp" 
-		p:priority="1"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />	
+		p:priority="1"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="TAB_PRC_CONTRATO" />	
 		
 	<bean p:entity="tabs.procedimiento.fast" p:name="tareasProcedimiento"  p:order="600"  	
 		p:fileName="/WEB-INF/jsp/plugin/mejoras/procedimientos/tabs/tareas.jsp" 
-		p:priority="1"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />	
+		p:priority="1"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		 />	
 		
 	<!--Propuestas del expediente -->	
 	<bean p:entity="tabs.expediente.fast" p:name="propuestasExpediente"  p:order="270"  	
 		p:fileName="/WEB-INF/jsp/plugin/mejoras/acuerdos/tabs/propuestas.jsp" 
-		p:priority="1"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />	
+		p:priority="1"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="ROLE_PUEDE_VER_TAB_EXP_PROPUESTAS" />	
 		
 	<bean p:entity="tabs.procedimiento.fast" p:name="decisionProcedimiento"
 		p:order="500"
 		p:fileName="/WEB-INF/jsp/plugin/mejoras/procedimientos/tabs/decisiones.jsp"
-		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="TAB_PRC_DECISION" />
 	
 	<bean p:entity="tabs.procedimiento.fast" p:name="adjuntosProcedimiento" p:order="800" 
 		p:fileName="/WEB-INF/jsp/plugin/mejoras/procedimientos/tabs/adjuntos.jsp" 
-		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="TAB_PRC_ADJUNTO" />
 	
 	<bean p:entity="tabs.expediente" p:name="adjuntosExpedientes"
 		p:order="1000" p:fileName="/WEB-INF/jsp/plugin/mejoras/expedientes/tabs/tabAdjuntos.jsp"

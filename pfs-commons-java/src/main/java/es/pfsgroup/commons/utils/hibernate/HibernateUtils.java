@@ -42,8 +42,17 @@ public class HibernateUtils extends HibernateDaoSupport //implements Application
 	public void flushSession() {
 		getSession().flush();
 	}
-	
-//	@Override
+
+	public static void refresh(Object objeto) {
+		HibernateUtils u = (HibernateUtils) ApplicationContextUtil.getBean("hibernateUtils");
+		u.refreshSession(objeto);
+	}
+
+	public void refreshSession(Object objeto) {
+		getSession().refresh(objeto);
+	}
+
+	//	@Override
 //	public void setApplicationContext(ApplicationContext applicationContext)
 //			throws BeansException {
 //		ctx = applicationContext;

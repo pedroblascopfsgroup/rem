@@ -13,7 +13,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.resources.overwrite>true</maven.resources.overwrite>
 
-		<devon.version.web>1.1.1</devon.version.web>
+		<devon.version.web>1.1.2</devon.version.web>
 		<devon.version.webflow>1.1.1</devon.version.webflow>
 	</properties>
 
@@ -472,6 +472,16 @@
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-precontencioso-plugin</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-cambiosMasivosAsunto-plugin</artifactId>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
@@ -1420,6 +1430,31 @@
 			<scope>provided</scope>
 		</dependency>
 		<!-- Fin provided -->
+	    <dependency>
+        	<groupId>es.pfsgroup.plugin</groupId>
+        	<artifactId>recovery-bi-plugin</artifactId>
+        	<scope>compile</scope>
+        </dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-procuradores-plugin</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-procuradores-common</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>pfs-${project.version}</finalName>
@@ -1599,11 +1634,6 @@
 					<scope>compile</scope>
 				</dependency>
 				<!-- Fin versión de AspectJ -->
-				<dependency>
-            		<groupId>es.pfsgroup.plugin</groupId>
-            		<artifactId>recovery-bi-plugin</artifactId>
-            		<scope>compile</scope>
-        		</dependency>
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>proyecto-bankia-online</artifactId>
@@ -1814,11 +1844,6 @@
 					<scope>compile</scope>
 				</dependency>
 				<!-- Fin versión de AspectJ -->
-				<dependency>
-            		<groupId>es.pfsgroup.plugin</groupId>
-            		<artifactId>recovery-bi-plugin</artifactId>
-            		<scope>compile</scope>
-        		</dependency>
 			</dependencies>
 			<build>
 				<resources>
@@ -1874,11 +1899,6 @@
 					<scope>compile</scope>
 				</dependency>
 				<!-- Fin versión de AspectJ -->
-				<dependency>
-            		<groupId>es.pfsgroup.plugin</groupId>
-            		<artifactId>recovery-bi-plugin</artifactId>
-            		<scope>compile</scope>
-        		</dependency>
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-integracionuvem-plugin</artifactId>
@@ -2076,11 +2096,6 @@
 				</dependency>
 				<!-- Fin versión de AspectJ -->
 				<dependency>
-            		<groupId>es.pfsgroup.plugin</groupId>
-            		<artifactId>recovery-bi-plugin</artifactId>
-            		<scope>compile</scope>
-        		</dependency>
-				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-procedimientos-bpmHaya</artifactId>
 					<exclusions>
@@ -2237,11 +2252,6 @@
 					<artifactId>spring-ldap-core</artifactId>
 					<version>1.3.0.RELEASE</version>
 				</dependency>
-				<dependency>
-            		<groupId>es.pfsgroup.plugin</groupId>
-            		<artifactId>recovery-bi-plugin</artifactId>
-            		<scope>compile</scope>
-        		</dependency>
 			</dependencies>
 			<build>
 				<resources>
@@ -2384,6 +2394,7 @@
                                     <includes>
                                         <include>login.jsp</include>
                                         <include>img/cliente_logo.png</include>
+                                        <include>img/logo.png</include>
                                     </includes>
                                     <filtering>true</filtering>
                                 </resource>

@@ -508,7 +508,13 @@ public class ConvenioManager {
 
 	public Convenio prepareGuid(Convenio convenio) {
 		if (Checks.esNulo(convenio.getGuid())) {
-			convenio.setGuid(Guid.getNewInstance().toString());
+			
+			String guid = Guid.getNewInstance().toString();
+			while(getConvenioByGuid(guid) != null) {
+				guid = Guid.getNewInstance().toString();
+			}
+			
+			convenio.setGuid(guid);
 			convenioDao.saveOrUpdate(convenio);
 		}
 	
@@ -523,7 +529,13 @@ public class ConvenioManager {
 
 	private ConvenioCredito prepareGuid(ConvenioCredito convenioCredito) {
 		if (Checks.esNulo(convenioCredito.getGuid())) {
-			convenioCredito.setGuid(Guid.getNewInstance().toString());
+			
+			String guid = Guid.getNewInstance().toString();
+			while(getConvenioCreditoByGuid(guid) != null) {
+				guid = Guid.getNewInstance().toString();
+			}
+			
+			convenioCredito.setGuid(guid);
 			genericDao.save(ConvenioCredito.class, convenioCredito);
 		}
 		

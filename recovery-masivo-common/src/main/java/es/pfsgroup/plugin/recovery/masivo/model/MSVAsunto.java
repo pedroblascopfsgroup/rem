@@ -57,6 +57,9 @@ public class MSVAsunto implements Serializable {
     @Column(name = "COD_ESTADO_PRC")
     private String codEstadoPrc;
     
+    @Column(name = "TAR_TAREA")
+    private String tarTarea;
+    
 	public Long getId() {
 		return id;
 	}
@@ -159,6 +162,14 @@ public class MSVAsunto implements Serializable {
 
 	public void setCodEstadoPrc(String codEstadoPrc) {
 		this.codEstadoPrc = codEstadoPrc;
+	}
+	
+	public String getTarTarea() {
+		return tarTarea;
+	}
+
+	public void setTarTarea(String tarTarea) {
+		this.tarTarea = tarTarea;
 	}
 
 

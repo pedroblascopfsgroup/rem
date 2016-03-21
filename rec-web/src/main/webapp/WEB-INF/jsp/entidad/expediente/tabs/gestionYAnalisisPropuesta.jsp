@@ -88,6 +88,13 @@
 	   });
    </sec:authorize>
    
+   var heightActuacionesRealizadasGrid = 384;
+   
+   <sec:authorize ifAllGranted="ACTUACIONES_EXPLORAR_GESTANA_EXP">
+   		heightActuacionesRealizadasGrid = 162;
+   </sec:authorize>
+   
+   
    	var actuacionesRealizadasGrid = new Ext.grid.GridPanel({
    	 	title : '&nbsp;'<app:test id="actuacionesGrid" addComa="true" /> 
 		,store:actuacionesRealizadasStore
@@ -97,7 +104,7 @@
 		,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
 		,style:'padding:50px;'
 		,autoWidth:true
-		,height:162
+		,height:heightActuacionesRealizadasGrid 
 		,bbar : [<sec:authorize ifAllGranted="EDITAR_GYA"> 
  	        	btnAltaActuacion,btnEditActuacion 
  	        </sec:authorize>]
@@ -339,7 +346,7 @@
 			,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
 			,items:[{layout:'form'
 						,bodyStyle:'padding:5px;cellspacing:10px'
-						,items:[fieldSetActuacionesRealizadas, fieldSetActuaciones, panelRevision]}
+						,items:[fieldSetActuacionesRealizadas, <sec:authorize ifAllGranted="ACTUACIONES_EXPLORAR_GESTANA_EXP"> fieldSetActuaciones,</sec:authorize> panelRevision]}
 					,{layout:'form'
 						,bodyStyle:'padding:5px;cellspacing:10px'
 						,items:[panelGestion]}
@@ -363,7 +370,8 @@
                     flow : 'expedientes/editaGestionyAnalisisPropuesta'
                     ,width:650
                     ,title : '<s:message code="expedientes.consulta.tabgestion.edicion" text="**Editar Gestion Analisis y Propuesta" />' 
-                    ,params : {id:entidad.getData("gestion").aaa}
+                    ,params : {id:entidad.getData("gestion").aaa,
+                    		   expId: entidad.getData("id")}
                   });
                   w.on(app.event.DONE, function(){
                     w.close();

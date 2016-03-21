@@ -46,6 +46,7 @@ import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
+import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoDao;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
@@ -67,6 +68,7 @@ import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.capgemini.pfs.termino.model.TerminoBien;
 import es.capgemini.pfs.termino.model.TerminoContrato;
 import es.capgemini.pfs.termino.model.TerminoOperaciones;
+import es.capgemini.pfs.termino.model.ValoresCamposTermino;
 import es.capgemini.pfs.users.FuncionManager;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -78,6 +80,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.recovery.ext.api.tareas.EXTCrearTareaException;
 import es.pfsgroup.recovery.ext.api.tareas.EXTTareasApi;
@@ -157,6 +160,12 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 	
 	@Autowired
 	DDTipoAcuerdoDao tipoAcuerdoDao;
+	
+	@Autowired
+	CoreProjectContext coreProjectContext;
+	
+	@Autowired
+	EXTGestorAdicionalAsuntoDao gestorAdicionalAsuntoDao;
 		
 	/**
 	 * Pasa un acuerdo a estado Rechazado.
@@ -595,7 +604,26 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
     	genericDao.deleteById(TerminoAcuerdo.class, ta.getId());
     	
 		integracionBpmService.enviarDatos(ta);
-	}	
+	}
+    
+	@BusinessOperationDefinition(BO_ACUERDO_MGR_DELETE_VALORES_TERMINO)
+	@Transactional(readOnly = false)    
+    public void deleteAllValoresTermino(TerminoAcuerdo ta) {
+		if (ta.getValoresCampos()!=null) {
+	    	for (ValoresCamposTermino valor : ta.getValoresCampos()) {
+				genericDao.deleteById(ValoresCamposTermino.class, valor.getId());
+			}
+		}
+    }
+	
+	@Transactional(readOnly = false)
+	public void saveAllValoresTermino(TerminoAcuerdo ta) {
+		if (ta.getValoresCampos()!=null) {
+			for (ValoresCamposTermino valor: ta.getValoresCampos()) {
+				genericDao.save(ValoresCamposTermino.class, valor);
+			}
+		}
+	}
     
 	/**
      * @param to TerminoOperaciones
@@ -1115,8 +1143,12 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 		return idTarea;
 	}
 	
+	/**
+	 * @deprecated Usar ExtGestorAdicionalAsuntoManager.obtnerLetradoDelAsunto
+	 */
+	@Deprecated
 	protected Usuario obtenerLetradoDelAsunto(Long idAsunto){
-		List<EXTGestorAdicionalAsunto> gestoresAsunto =  genericDao.getList(EXTGestorAdicionalAsunto.class, genericDao.createFilter(FilterType.EQUALS, "tipoGestor.codigo", "LETR"), genericDao.createFilter(FilterType.EQUALS, "asunto.id",idAsunto));
+		List<EXTGestorAdicionalAsunto> gestoresAsunto = gestorAdicionalAsuntoDao.findGestoresByAsuntoTipos(idAsunto, coreProjectContext.getTipoGestorLetrado());
 		
 		Usuario letradoAsunto = null;
 
@@ -1287,4 +1319,12 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 		
 		return res;
 	}
+	
+	@BusinessOperation(BO_ACUERDO_MGR_GET_FECHA_PASE_MORA)
+    @Transactional(readOnly = false)
+	@Override
+	public String getFechaPaseMora(Long idContrato) {
+		return acuerdoDao.getFechaPaseMora(idContrato);
+	}
+	
 }

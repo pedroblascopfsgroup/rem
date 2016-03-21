@@ -12,6 +12,7 @@
  	<bean id="aceptacionHayaEnterActionHandler" class="es.pfsgroup.procedimientos.aceptacion.AceptacionHayaEnterActionHandler"></bean>
  	<bean id="asignacionHayaEnterActionHandler" class="es.pfsgroup.procedimientos.asignacion.AsignacionHayaEnterActionHandler"></bean>
  	<bean id="asignacionHayaDecidirTipoAsuntoHandler" class="es.pfsgroup.procedimientos.asignacion.AsignacionHayaDecidirTipoAsuntoHandler"></bean>
+ 	<bean id="cesionRemateHayaLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.CesionRemateHayaLeaveActionHandler"></bean>
 		    
 	<!-- BPM activos -->
 	<!-- Cambios Rober -->
@@ -76,6 +77,8 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteInscripcionDelTitulo/haya_tramiteInscripcionDelTitulo.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteAsignacionGestores/haya_tramiteAsignacionGestores.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteAceptacionLitigios/haya_tramiteAceDecLitigios.xml" p:version="-1"/>
+	
+	
 	
 	<!-- Groovy's -->
   	<bean id="jbpmUtilHreSareb" class="es.pfsgroup.recovery.haya.utils.JBPMProcessHayaManager" >

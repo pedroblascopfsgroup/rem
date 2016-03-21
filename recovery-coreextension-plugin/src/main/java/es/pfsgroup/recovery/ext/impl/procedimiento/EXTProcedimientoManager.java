@@ -213,8 +213,13 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 		MEJProcedimiento mejProc = MEJProcedimiento.instanceOf(procedimiento);
 		boolean modificados = false;
 		if (Checks.esNulo(mejProc.getGuid())) {
-			//logger.debug(String.format("[INTEGRACION] Asignando nuevo GUID para procedimiento %d", procedimiento.getId()));
-			mejProc.setGuid(Guid.getNewInstance().toString());
+
+			String guid = Guid.getNewInstance().toString();
+			while(getProcedimientoByGuid(guid) != null) {
+				guid = Guid.getNewInstance().toString();
+			}
+
+			mejProc.setGuid(guid);
 			modificados = true;
 		}
 		

@@ -4,6 +4,8 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
 <fwk:page>
 array = [];
 array['uno']=1;
@@ -59,6 +61,12 @@ var cb_ffpp = items[4 + offset];
 var cb_lanzamiento = items[5 + offset];
 var dt_fechaSolLanz = items[6 + offset];
 
+<sec:authorize ifAnyGranted="PERSONALIZACION-BCC, PERSONALIZACION-HY">
+	cb_ffpp = items[3 + offset];
+	cb_lanzamiento = items[4 + offset];
+	dt_fechaSolLanz = items[5 + offset];
+</sec:authorize>
+
 cb_ocupado.on('select', function(){
 	//Borramos todos los combos dependientes ante cualquier cambio
 	dt_fecha.setValue('');
@@ -99,10 +107,10 @@ cb_lanzamiento.on('select', function(){
 	if(cb_lanzamiento.getValue() == '01') {//si
 		dt_fechaSolLanz.setDisabled(false);
 		dt_fechaSolLanz.allowBlank = false;
-	}
-	else if(cb_ocupado.getValue() == '02') {//no
+	}else if(cb_lanzamiento.getValue() == '02') {//no
 		dt_fechaSolLanz.setDisabled(true);
 		dt_fechaSolLanz.allowBlank = true;
+		dt_fechaSolLanz.setValue('');
 	}
 });
 

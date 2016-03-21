@@ -71,6 +71,7 @@ import es.capgemini.pfs.tareaNotificacion.process.TareaBPMConstants;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.utils.ZipUtils;
+import es.pfsgroup.commons.utils.Checks;
 
 
 /**
@@ -582,10 +583,10 @@ public class AsuntosManager {
         for (TareaNotificacion tarea : asunto.getTareas()) {
             SubtipoTarea subtipo = tarea.getSubtipoTarea();
             if (SubtipoTarea.CODIGO_ACEPTAR_ASUNTO_GESTOR.equals(subtipo.getCodigoSubtarea())) {
-                if (usuarioLogado.equals(asunto.getGestor().getUsuario())) { return true; }
+                if (!Checks.esNulo(asunto.getGestor()) && usuarioLogado.equals(asunto.getGestor().getUsuario())) { return true; }
             }
             if (SubtipoTarea.CODIGO_ACEPTAR_ASUNTO_SUPERVISOR.equals(subtipo.getCodigoSubtarea())) {
-                if (usuarioLogado.equals(asunto.getSupervisor().getUsuario())) { return true; }
+                if (!Checks.esNulo(asunto.getSupervisor()) && usuarioLogado.equals(asunto.getSupervisor().getUsuario())) { return true; }
             }
         }
         return false;
@@ -927,6 +928,8 @@ public class AsuntosManager {
      * @param adjuntoId adjunto
      * @return file
      */
+    
+    /*
     @BusinessOperation(ExternaBusinessOperation.BO_ASU_MGR_BAJAR_ADJUNTO)
     public FileItem bajarAdjunto(Long asuntoId, Long adjuntoId) {
         Asunto asunto = (Asunto) executor.execute(ExternaBusinessOperation.BO_ASU_MGR_GET, asuntoId);
@@ -939,6 +942,8 @@ public class AsuntosManager {
             return adjunto;
         }
     }
+    Se traslada esta funcionalidad a AdjuntosApi
+    */
 
    
     

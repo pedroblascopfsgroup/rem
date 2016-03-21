@@ -39,6 +39,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.web.DynamicElement;
 import es.capgemini.pfs.PluginCoreextensionConstantes;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.core.api.web.DynamicElementApi;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
@@ -113,7 +114,7 @@ public class BTABusquedaTareaManager {
 	public List<TareaNotificacion> buscarTareasParaExcel(BTADtoBusquedaTareas dto) {
 		EventFactory.onMethodStart(this.getClass());
 
-		dto.setLimit(Integer.MAX_VALUE - 1);
+		dto.setLimit(Integer.MAX_VALUE -1);
 		Usuario usuarioLogado = (Usuario) executor
 				.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
 		List<Perfil> perfiles = usuarioLogado.getPerfiles();
@@ -136,7 +137,7 @@ public class BTABusquedaTareaManager {
 	private List<BTATareaEncontrada> buscarTareasParaExcelDinamico(BTADtoBusquedaTareas dto, String params) {
 		EventFactory.onMethodStart(this.getClass());
 		
-		dto.setLimit(Integer.MAX_VALUE - 1);
+		dto.setLimit(Integer.MAX_VALUE -1);
 		Usuario usuarioLogado = (Usuario) executor
 				.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
 		List<Perfil> perfiles = usuarioLogado.getPerfiles();
@@ -216,13 +217,13 @@ public class BTABusquedaTareaManager {
 		try {
 			EventFactory.onMethodStart(this.getClass());
 
-			Usuario usuarioLogado = (Usuario) executor
-					.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
+			Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 			List<Perfil> perfiles = usuarioLogado.getPerfiles();
 			List<DDZona> zonas = usuarioLogado.getZonas();
 			dto.setPerfiles(perfiles);
 			dto.setZonas(zonas);
 			dto.setUsuarioLogado(usuarioLogado);
+			
 			List<Class<? extends BTATareaEncontrada>> listaRetorno = new ArrayList<Class<? extends BTATareaEncontrada>>();
 			// if ((!dto.isBusqueda() && dto.getStart() == 0) ||
 			// (dto.getTraerGestionVencidos() != null &&
@@ -516,10 +517,10 @@ public class BTABusquedaTareaManager {
                                 row = new Label(3, i, VACIO);
                             }
                             sheet1.addCell(row);
-                            if (dto.getTarea() != null && dto.getAsuDesc() != null) {
-                            	String desc = dto.getAsuDesc();
-                            	if (dto.getTipoPrcDesc() != null){
-                            		desc = desc + " - " + dto.getTipoPrcDesc();
+                            if (dto.getTarea() != null && dto.getTarea().getAsunto() != null && dto.getTarea().getAsunto().getNombre() != null) {
+                            	String desc = dto.getTarea().getAsunto().getNombre();
+                            	if (dto.getTarea().getProcedimiento() != null && dto.getTarea().getProcedimiento().getTipoProcedimiento() != null && dto.getTarea().getProcedimiento().getTipoProcedimiento().getDescripcion() != null){
+                            		desc = desc + " - " + dto.getTarea().getProcedimiento().getTipoProcedimiento().getDescripcion();
                             	}
                                 row = new Label(4, i, desc);
                             } else {
@@ -556,14 +557,14 @@ public class BTABusquedaTareaManager {
                                 row = new Label(8, i, VACIO);
                             }
                             sheet1.addCell(row);
-                            if (dto.getUsuGestor() != null && dto.getUsuGestor().getApellidoNombre() != null) {
-                                row = new Label(9, i, dto.getUsuGestor().getApellidoNombre());
+                            if (dto.getTarea() != null && dto.getTarea().getDescGestor() != null) {
+                                row = new Label(9, i, dto.getTarea().getDescGestor());
                             } else {
                                 row = new Label(9, i, VACIO);
                             }
                             sheet1.addCell(row);
-                            if (dto.getUsuSupervisor() != null && dto.getUsuSupervisor().getApellidoNombre() != null) {
-                                row = new Label(10, i, dto.getUsuSupervisor().getApellidoNombre());
+                            if (dto.getTarea() != null && dto.getTarea().getDescSupervisor() != null) {
+                                row = new Label(10, i, dto.getTarea().getDescSupervisor());
                             } else {
                                 row = new Label(10, i, VACIO);
                             }

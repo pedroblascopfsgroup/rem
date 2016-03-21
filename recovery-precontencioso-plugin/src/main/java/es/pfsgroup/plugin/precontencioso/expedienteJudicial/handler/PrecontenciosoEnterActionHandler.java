@@ -74,8 +74,7 @@ public class PrecontenciosoEnterActionHandler extends PROGenericEnterActionHandl
 
 		Procedimiento prc = getProcedimiento(executionContext);
 		TareaExterna tex = getTareaExterna(executionContext);
-		List<EXTTareaExternaValor> listado = obtenerValoresTareaByTexId(tex.getId());
-
+		
 		if (PrecontenciosoBPMConstants.PCO_PreTurnadoManual.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
 			executor.execute("plugin.precontencioso.cambiarEstadoExpediete", prc.getId(), PrecontenciosoBPMConstants.PCO_PRETURNADO);
@@ -92,20 +91,10 @@ public class PrecontenciosoEnterActionHandler extends PROGenericEnterActionHandl
 			
 		} else if (PrecontenciosoBPMConstants.PCO_PrepararExpediente.equals(tex.getTareaProcedimiento().getCodigo())) {
 
-			
-			if(PrecontenciosoProjectContextImpl.RECOVERY_HAYA.equals(precontenciosoContext.getRecovery()) ||
-					PrecontenciosoProjectContextImpl.RECOVERY_CAJAMAR.equals(precontenciosoContext.getRecovery()) ){
-				//Si es CONCURSO invocar inicializacion
-				if (DDTiposAsunto.CONCURSAL.equals(prc.getAsunto().getTipoAsunto().getCodigo())) {
-					if (prc.getProcessBPM() == null) {
-						prc.setProcessBPM(executionContext.getProcessInstance().getId());
-					}
-					executor.execute("plugin.precontencioso.inicializarPco", prc);
-				}
-			}
 			if (prc.getProcessBPM() == null) {
 				prc.setProcessBPM(executionContext.getProcessInstance().getId());
 			}
+			
 			if(!PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(precontenciosoContext.getRecovery())){
 
 				//Si es CONCURSO invocar inicializacion

@@ -16,6 +16,11 @@
 		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"	
 		p:permission="ACCIONES_PRECONTENCIOSO" />
 
+	<bean p:entity="entidad.procedimiento.buttons.left.fast" p:name="generarDocPrecontencioso"  p:order="200" 
+		p:fileName="/WEB-INF/jsp/plugin/precontencioso/button/btnGenerarDocPrecontencioso.jsp"
+		p:priority="1"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="GENERAR_DOC_PRECONTENCIOSO" />
+
 	<bean p:entity="tabs.procedimiento.fast" p:name="cabeceraProcedimiento"  p:order="100" 
 		p:fileName="/WEB-INF/jsp/plugin/precontencioso/tabs/cabecera.jsp" 
 		p:priority="1"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 

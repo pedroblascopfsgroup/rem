@@ -10,6 +10,9 @@ public class EsquemaTurnadoDespachoDto {
     private String turnadoCodigoCalidadLitigios;
     private String listaComunidades;
     private String listaProvincias;
+    private String nombreProvincia;
+    private String provinciaCalidadLitigio;
+    private String provinciaCalidadConcurso;
     
 	public Long getId() {
 		return id;
@@ -92,6 +95,26 @@ public class EsquemaTurnadoDespachoDto {
 	public void setListaProvincias(String listaProvincias) {
 		this.listaProvincias = listaProvincias;
 	}
+	
+	public String getNombreProvincia() {
+		return nombreProvincia;
+	}
+	public void setNombreProvincia(String nombreProvincia) {
+		this.nombreProvincia = nombreProvincia;
+	}
+	public String getProvinciaCalidadLitigio() {
+		return provinciaCalidadLitigio;
+	}
+	public void setProvinciaCalidadLitigio(String provinciaCalidadLitigio) {
+		this.provinciaCalidadLitigio = provinciaCalidadLitigio;
+	}
+	public String getProvinciaCalidadConcurso() {
+		return provinciaCalidadConcurso;
+	}
+	public void setProvinciaCalidadConcurso(String provinciaCalidadConcurso) {
+		this.provinciaCalidadConcurso = provinciaCalidadConcurso;
+	}
+	
 	/**
 	 * Valida el Dto para comprobar que está todo correcto.
 	 * 

@@ -153,7 +153,7 @@
 
 	grid.on('rowdblclick', function(grid, rowIndex, e) {
 		var rec = grid.getStore().getAt(rowIndex);
-		window.open("/pfs/bajarAdjuntoContrato.htm?id="+rec.get('id'));
+		window.open("/pfs/bajarAdjuntoContrato.htm?id="+rec.get('id')+"&nombre="+rec.data.nombre+"&extension="+rec.data.contentType);
 	});
 
 	var panel = new Ext.Panel({

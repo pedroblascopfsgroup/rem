@@ -2,7 +2,9 @@ package es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +27,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContext;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContextImpl;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDDocAdjudicacion;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBContratoBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.recoveryapi.BienApi;
@@ -58,46 +61,56 @@ public class InformeValidacionCDDBean {
 		StringBuilder sb = new StringBuilder();
 		ProcedimientoSubastaCDD procedimientoSubastaCDD = new ProcedimientoSubastaCDD();
 
-		if(Checks.esNulo(subasta.getProcedimiento().getTipoProcedimiento())) {
-			procedimientoSubastaCDD.setTipoProcedimiento(null);
-		}else{
-			procedimientoSubastaCDD.setTipoProcedimiento(subasta.getProcedimiento().getTipoProcedimiento().getCodigo() + " - " + subasta.getProcedimiento().getTipoProcedimiento().getDescripcion());			
+		if (!Checks.esNulo(subasta.getProcedimiento()) && !Checks.esNulo(subasta.getProcedimiento().getTipoProcedimiento())) {
+				procedimientoSubastaCDD.setTipoProcedimiento(subasta.getProcedimiento().getTipoProcedimiento().getCodigo() + " - " + subasta.getProcedimiento().getTipoProcedimiento().getDescripcion());			
 		}
-		if (Checks.esNulo(procedimientoSubastaCDD.getTipoProcedimiento())) {
+		else{
 			sb.append("Tipo procedimiento; ");
 		}
-
-		procedimientoSubastaCDD.setLetrado(subasta.getAsunto().getGestor().getUsuario().getApellidoNombre());
-		if (Checks.esNulo(procedimientoSubastaCDD.getLetrado())) {
+		
+		if (!Checks.esNulo(subasta.getAsunto()) && !Checks.esNulo(subasta.getAsunto().getGestor())
+				&& !Checks.esNulo(subasta.getAsunto().getGestor().getUsuario())) {
+			procedimientoSubastaCDD.setLetrado(subasta.getAsunto().getGestor().getUsuario().getApellidoNombre());
+		}
+		else{
 			sb.append("Letrado; ");
 		}
 
-		if(Checks.esNulo(subasta.getProcedimiento().getJuzgado())) {
-			procedimientoSubastaCDD.setJuzgado(null);
-		}else{
-			procedimientoSubastaCDD.setJuzgado(subasta.getProcedimiento().getJuzgado().getDescripcion());			
+		if (!Checks.esNulo(subasta.getProcedimiento())) {
+			if(!Checks.esNulo(subasta.getProcedimiento().getJuzgado())) {
+				procedimientoSubastaCDD.setJuzgado(subasta.getProcedimiento().getJuzgado().getDescripcion());
+			}else{
+				sb.append("Juzgado; ");			
+			}
+	
+			procedimientoSubastaCDD.setPrincipal(convertObjectString(subasta.getProcedimiento().getSaldoRecuperacion()));
+			if (Checks.esNulo(procedimientoSubastaCDD.getPrincipal())) {
+				sb.append("Principal; ");
+			}
 		}
-		if (Checks.esNulo(procedimientoSubastaCDD.getJuzgado())) {
+		else{
 			sb.append("Juzgado; ");
-		}
-
-		procedimientoSubastaCDD.setPrincipal(convertObjectString(subasta.getProcedimiento().getSaldoRecuperacion()));
-		if (Checks.esNulo(procedimientoSubastaCDD.getPrincipal())) {
 			sb.append("Principal; ");
 		}
-
+		
 		procedimientoSubastaCDD.setDeudaJudicial(convertObjectString(subasta.getDeudaJudicial()));
 		if (Checks.esNulo(procedimientoSubastaCDD.getDeudaJudicial())) {
 			sb.append("Deuda judicial; ");
 		}
 
-		procedimientoSubastaCDD.setCostasLetrado(getCostas(subasta, VALOR_COSTAS_LETRADO));
-		if (Checks.esNulo(procedimientoSubastaCDD.getCostasLetrado())) {
-			sb.append("Costas letrado; ");
+		if (!Checks.esNulo(subasta.getProcedimiento())) {
+			procedimientoSubastaCDD.setCostasLetrado(getCostas(subasta, VALOR_COSTAS_LETRADO));
+			if (Checks.esNulo(procedimientoSubastaCDD.getCostasLetrado())) {
+				sb.append("Costas letrado; ");
+			}
+	
+			procedimientoSubastaCDD.setCostasProcurador(getCostas(subasta, VALOR_COSTAS_PROCURADOR));
+			if (Checks.esNulo(procedimientoSubastaCDD.getCostasProcurador())) {
+				sb.append("Costas procurador; ");
+			}
 		}
-
-		procedimientoSubastaCDD.setCostasProcurador(getCostas(subasta, VALOR_COSTAS_PROCURADOR));
-		if (Checks.esNulo(procedimientoSubastaCDD.getCostasProcurador())) {
+		else{
+			sb.append("Costas letrado; ");
 			sb.append("Costas procurador; ");
 		}
 
@@ -106,11 +119,16 @@ public class InformeValidacionCDDBean {
 			sb.append("Fecha celebracion subasta; ");
 		}
 
-		procedimientoSubastaCDD.setSubastaConPostores((getSubastaConPostores(subasta)) == "01" ? "Si" : "No");
-		if (Checks.esNulo(procedimientoSubastaCDD.getSubastaConPostores())) {
+		if (!Checks.esNulo(subasta.getProcedimiento())) {
+			procedimientoSubastaCDD.setSubastaConPostores((getSubastaConPostores(subasta)) == "01" ? "Si" : "No");
+			if (Checks.esNulo(procedimientoSubastaCDD.getSubastaConPostores())) {
+				sb.append("Subasta con postores; ");
+			}
+		}
+		else{
 			sb.append("Subasta con postores; ");
 		}
-
+		
 		camposVacios += sb.toString();
 		return procedimientoSubastaCDD;
 	}
@@ -308,13 +326,18 @@ public class InformeValidacionCDDBean {
 					infobien.setTipoInmueble(nmbBien.getAdicional().getTipoInmueble().getDescripcion());
 				}				
 			}
-
+			
+			if(!Checks.esNulo(nmbBien.getAdjudicacion())){
+				if(!Checks.esNulo(nmbBien.getAdjudicacion().getTipoDocAdjudicacion())){
+					infobien.setCodigoDocAdjudicacion(nmbBien.getAdjudicacion().getTipoDocAdjudicacion().getCodigo());					
+				}
+			}
                         // Esta validaci�n no debe hacerse si el CDD proviene de un Subasta Bankia. En el resto de T. subasta del resto de clientes, si debe hacerse.
 			if(!nmbProjectContext.getCodigoSubastaBankia().equals(loteSubasta.getSubasta().getProcedimiento().getTipoProcedimiento().getCodigo())) {
 				infobien.setFechaTestimonioAdjudicacionSareb(getFechaTestimonioAdjudicacionSareb(nmbBien));
-				if (Checks.esNulo(infobien.getFechaTestimonioAdjudicacionSareb())) {
+				if (Checks.esNulo(infobien.getFechaTestimonioAdjudicacionSareb()) && !DDDocAdjudicacion.ESCRITURA.equalsIgnoreCase(infobien.getCodigoDocAdjudicacion())) {
 					sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Fecha testimonio adjudicacion sareb; ");
-				}				
+				}		
 			}
 			listInfoBienes.add(infobien);
 		}
@@ -362,11 +385,28 @@ public class InformeValidacionCDDBean {
 		String tipoProcedimiento = mapaTiposProcedimiento.get(NMBProjectContextImpl.CONST_TIPO_PROCEDIMIENTO_ADJUDICACION);
 		
 		Procedimiento prc = (Procedimiento) proxyFactory.proxy(SubastaApi.class).getProcedimientoBienByIdPadre(nmbBien, this.informeDTO.getSubasta(), tipoProcedimiento);
+		
+		if (prc == null)
+			prc = getProcedimientoBienByIdPadre(nmbBien, informeDTO.getSubasta());
+		
 		ValorNodoTarea valor = (ValorNodoTarea) proxyFactory.proxy(SubastaApi.class).obtenValorNodoPrc(prc, nombreTarea, VALOR_FECHA_TESTIMONIO);
 
 		if(!Checks.esNulo(valor)) {
 			return valor.getValor();
 		}
+		
+		return null;
+	}
+	
+	
+	private Procedimiento getProcedimientoBienByIdPadre(NMBBien nmbBien, Subasta subasta){
+		
+		CharSequence tiposProcedimientos[] = {"H002","H001","H018","H020"};			
+		for (CharSequence proc : tiposProcedimientos) {
+			Procedimiento prc = (Procedimiento) proxyFactory.proxy(SubastaApi.class).getProcedimientoBienByIdPadre(nmbBien, this.informeDTO.getSubasta(), proc.toString());
+			if (prc != null)
+				return prc;
+		}		
 		return null;
 	}
 	

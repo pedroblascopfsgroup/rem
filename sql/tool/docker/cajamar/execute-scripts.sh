@@ -65,8 +65,10 @@ function run_scripts() {
 
 if [[ -d $PACKAGE_TAGS_DIR ]]; then
 	echo "<Docker [$CONTAINER_NAME] WARNING> Se van a ejecutar los scripts DxL por etapas."
+    run_scripts $PACKAGE_TAGS_DIR/after_cj-dmp-19oct_previous_package.sh #Previous scripts after dump
 	run_scripts $PACKAGE_TAGS_DIR/run-scripts-package.sh
 elif [[ -d $PACKAGE_DIR ]]; then
+    run_scripts $PACKAGE_TAGS_DIR/after_cj-dmp-19oct_previous_package.sh #Previous scripts after dump
 	run_scripts $PACKAGE_DIR/DDL/DDL-scripts.sh $PACKAGE_DIR/DML/DML-scripts.sh
 else
 	echo "<Docker [$CONTAINER_NAME] ERROR> $PACKAGE_DIR no existe."

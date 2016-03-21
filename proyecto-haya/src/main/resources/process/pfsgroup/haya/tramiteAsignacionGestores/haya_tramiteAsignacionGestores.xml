@@ -13,7 +13,7 @@
 			</targetBean>
 		</action>
 		<transition to="H067_seleccionarProcedimiento" name="litigio"></transition>
-		<transition to="H067_SeleccionarProcedimientoAsignarGestor" name="concurso"></transition>
+		<transition to="fork1" name="concurso"></transition>
 	</node>
 
 	<state name="H067_seleccionarProcedimiento">
@@ -56,8 +56,8 @@
 			</action>
 		</event>			
 		<transition to="H067_SeleccionarProcedimientoAsignarGestor" name="activarAlerta"></transition>
+		<transition to="join1" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="H067_transicionProcedimiento" name="avanzaBPM"></transition>
 	</state>
 
 	<node name="H067_transicionProcedimiento">
@@ -66,6 +66,44 @@
       	</action>	
       	<transition to="Fin" name="Fin"></transition>
 	</node>
+
+	<fork name="fork1">
+		<transition to="H067_seleccionarProcedimientoConc" name="concurso"></transition>
+		<transition to="H067_SeleccionarProcedimientoAsignarGestor" name="asignarGestoresExp"></transition>
+	</fork>
+
+	<state name="H067_seleccionarProcedimientoConc">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>			
+		<transition to="H067_transicionProcedimientoConc" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<node name="H067_transicionProcedimientoConc">
+		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>asignacionHayaEnterActionHandler</targetBean>
+		</action>
+		<transition to="join1" name="avanzaBPM"></transition>	
+		<transition to="Fin" name="Fin"></transition>		
+	</node>
+	
+	<join name="join1">
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</join>
 
 	<end-state name="Fin">
 		<event type="node-enter">

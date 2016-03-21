@@ -1,16 +1,19 @@
 package es.capgemini.pfs.acuerdo.dao.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Hibernate;
+import org.hibernate.SQLQuery;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
 import es.capgemini.pfs.dao.AbstractEntityDao;
-import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.users.domain.Usuario;
-import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.Checks;
 
 /**
@@ -102,4 +105,22 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
         if (acuerdos != null) { return acuerdos.size() > 0; }
         return false;
     }
+    
+	public String getFechaPaseMora(Long idContrato){
+		StringBuffer query = new StringBuffer();
+	    query.append("SELECT  ");
+	    query.append("CASE WHEN TRUNC(SYSDATE-MOV.MOV_FECHA_POS_VENCIDA) < 0 ");
+	    query.append("THEN NULL ");
+	    query.append("ELSE TO_CHAR((SYSDATE+90) - TRUNC(SYSDATE-MOV.MOV_FECHA_POS_VENCIDA), 'dd/MM/yyyy') ");
+	    query.append("END FECHA_PASE_A_MORA_CNT ");
+	    query.append("FROM MOV_MOVIMIENTOS mov ");
+	    query.append("JOIN CNT_CONTRATOS cnt ON cnt.CNT_ID = mov.CNT_ID ");
+	    query.append("WHERE cnt.CNT_ID = ");
+	    query.append(idContrato);
+	    query.append(" AND mov.MOV_FECHA_EXTRACCION = cnt.CNT_FECHA_EXTRACCION ");
+	    
+	    SQLQuery sqlQuery = getHibernateTemplate().getSessionFactory().getCurrentSession().createSQLQuery(query.toString());
+	    return (String) sqlQuery.uniqueResult();
+    }
+
 }

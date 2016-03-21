@@ -355,6 +355,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	 */
 	@OneToMany(mappedBy = "persona", fetch = FetchType.LAZY)
 	@JoinColumn(name = "PER_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<PersonaGrupo> grupos;
 
 	@Transient
@@ -519,6 +520,10 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	@LazyToOne(LazyToOneOption.PROXY)
 	private PersonaFormulas formulas;
 	
+	@OneToOne(fetch = FetchType.LAZY)
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	@JoinColumn(name = "DD_SIC_ID")
+	private DDSituacConcursal sitConcursal;	
 
 	/**
 	 * @return the id
@@ -3106,4 +3111,17 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 		this.personasTelefono = personasTelefono;
 	}
 
+	/**
+	 * @return the sitConcursal
+	 */
+	public DDSituacConcursal getSitConcursal() {
+		return sitConcursal;
+	}
+
+	/**
+	 * @param sitConcursal the sitConcursal to set
+	 */
+	public void setSitConcursal(DDSituacConcursal sitConcursal) {
+		this.sitConcursal = sitConcursal;
+	}
 }

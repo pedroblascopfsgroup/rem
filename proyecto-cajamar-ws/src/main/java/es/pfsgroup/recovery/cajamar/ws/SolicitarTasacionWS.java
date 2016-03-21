@@ -49,7 +49,6 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 	private final static String FINALIDAD = "03";
 	private final static String INCO = "N";
 	private final static String TENC = "1";
-	private final static String ADJU = "N";
 	private final static String CKCA = "1";
 	
 	private Map<String, String> mapaTIMN;
@@ -133,18 +132,21 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 			for (NMBValoracionesBien val : valoraciones) {
 				if (val.getId() == valoracionActiva.getId() ) 
 					nueva = val;
-					nueva.setCodigoNuita(new Integer(output.getIDTA()));
+				
+					nueva.setCodigoNuita(new Long(output.getIDTA()));
 					nueva.setFechaSolicitudTasacion(new Date());
 					Auditoria auditoria = Auditoria.getNewInstance();
 					nueva.setAuditoria(auditoria);
 					break;
 	        }
 		} else {
-			nueva.setCodigoNuita(new Integer(output.getIDTA()));
+			nueva.setCodigoNuita(new Long(output.getIDTA()));
 			nueva.setBien(bien);
 			Auditoria auditoria = Auditoria.getNewInstance();
 			nueva.setAuditoria(auditoria);
 		}
+		
+		nueva.setFechaSolicitudTasacion(new Date());
 		
 		String codigoTasadora = output.getTASA();
 		if(codigoTasadora != null) {
@@ -163,26 +165,50 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 		
 		// Se selecciona el contrato que tiene mayor importe garantizado
 		String numeroContrato = "";
-		float importeGarantizado = 0;
-		float secuenciaGarantia = 0; 
+		Float importeGarantizado = 0f;
+		Integer secuenciaGarantia = 0; 
 		
 		for(NMBContratoBien contratoBien : contratosBien) {
 			
-			if(contratoBien.getContrato().getNroContrato() != null && contratoBien.getImporteGarantizado() != null && contratoBien.getImporteGarantizado() > importeGarantizado ) {
-				numeroContrato = contratoBien.getContrato().getNroContrato();
-				importeGarantizado = contratoBien.getImporteGarantizado();
-				secuenciaGarantia = contratoBien.getSecuenciaGarantia();
+			if(contratoBien.getContrato().getNroContrato() != null) {
+			
+				if(contratoBien.getImporteGarantizado() != null) {
+					if(contratoBien.getImporteGarantizado() > importeGarantizado) {
+						numeroContrato = contratoBien.getContrato().getNroContrato();
+						importeGarantizado = contratoBien.getImporteGarantizado();
+						secuenciaGarantia = contratoBien.getSecuenciaGarantia();
+					}
+				}
+				else {
+					if("".equals(numeroContrato)) {
+						numeroContrato = contratoBien.getContrato().getNroContrato();
+						secuenciaGarantia = contratoBien.getSecuenciaGarantia();
+					}
+				}
 			}
 		}
 		
-		logger.info("NCTA: " + numeroContrato);
-		input.setNCTA(numeroContrato);
+		if(numeroContrato != null) {
+			logger.info("NCTA: " + numeroContrato);
+			input.setNCTA(numeroContrato);
+		}
+		else {
+			logger.info("NCTA: ");
+			input.setNCTA("");
+		}
 
-		logger.info("NSEC: " + secuenciaGarantia);
-		input.setNSECUENCIA(String.valueOf(secuenciaGarantia));
+		if(secuenciaGarantia != null) {
+			logger.info("NSECUENCIA: " + secuenciaGarantia);
+			input.setNSECUENCIA(String.valueOf(secuenciaGarantia));
+		}
+		else {
+			logger.info("NSECUENCIA: ");
+			input.setNSECUENCIA("");
+		}
 		
 		// Se selecciona la persona que tiene una mayor participación. En caso de igualdad, el primer registro
 		Long nPersona = null;
+		String codEntidad = "";
 		if(bien.getPersonas() != null) {
 			
 			float participacion = -1;
@@ -190,82 +216,83 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 				if(personaBien.getParticipacion() != null && personaBien.getParticipacion() > participacion) {
 					nPersona = personaBien.getPersona().getCodClienteEntidad();
 					participacion = personaBien.getParticipacion();
+					codEntidad = personaBien.getPersona().getCodigoEntidad();
 				}
 			}			
 		}
-		
-		logger.info("NPER: " + nPersona);
-		
+				
 		String sPersona = "";
 		if(nPersona != null) {
 			sPersona = nPersona.toString();
+			
+			if(sPersona.startsWith(codEntidad)) {
+				sPersona = StringUtils.substringAfter(sPersona, codEntidad);
+			}
 		}
 		
-		input.setNPERSONA(StringUtils.substring(sPersona, 0, 10));
-		
-		logger.info("CTAC: " + cuenta);
+		logger.info("NPERSONA: " + StringUtils.substring(sPersona, 0, 10));
+		input.setNPERSONA(StringUtils.substring(sPersona, 0, 10));		
 		
 		String sCuenta = "";
 		if(cuenta != null) {
-			sCuenta = cuenta.toString();
+			sCuenta = StringUtils.leftPad(cuenta.toString(), 20, "0");
 		}
 		
+		logger.info("CTAC: " + sCuenta);
 		input.setCTAC(sCuenta);
 		
-		logger.info("FINA: " + FINALIDAD);
+		logger.info("FINALIDAD: " + FINALIDAD);
 		input.setFINALIDAD(FINALIDAD);
 
-		String codBien = null;
+		String codBien = "";
 		if(bien.getTipoBien() != null) {
 			codBien = bien.getTipoBien().getCodigo();
 		}
-		logger.info("BIEN: " + codBien);
-		input.setTBIEN(codBien);
-
-		logger.info("ESTA: " + null);
-		input.setESTADOBIEN(null);
-
-		logger.info("OCUP: " + null);
-		input.setOCUPACIONBIEN(null);
-
-		logger.info("SITU: " + null);
-		input.setSITUACIONBIEN(null);
 		
-		String codTipoVia = null;
-		if(bien.getLocalizacionActual() != null && bien.getLocalizacionActual().getTipoVia() != null) {
-			codTipoVia = bien.getLocalizacionActual().getTipoVia().getCodigo();
+		if(codBien != null) {
+			logger.info("TBIEN: " + codBien);
+			input.setTBIEN(codBien);
 		}
-		
-		logger.info("CODC: " + codTipoVia);
-		input.setCODDIR(codTipoVia);
-		
-		String nombreVia = "";
-		if(bien.getLocalizacionActual() != null && bien.getLocalizacionActual().getNombreVia() != null) {
-			nombreVia = bien.getLocalizacionActual().getNombreVia();
+		else {
+			logger.info("TBIEN: ");
+			input.setTBIEN("");
 		}
-		logger.info("NOMC: " + nombreVia);
-		//input.setNOMC(nombreVia);
+
+		logger.info("ESTADOBIEN: ");
+		input.setESTADOBIEN("");
+
+		logger.info("OCUPACIONBIEN: ");
+		input.setOCUPACIONBIEN("");
+
+		logger.info("SITUACIONBIEN: ");
+		input.setSITUACIONBIEN("");
 		
-		logger.info("NUMC: " + bien.getNumDomicilio());
-		//input.setNUMC(bien.getNumDomicilio());
+		if(bien.getIdDireccion() != null) {
+			logger.info("RINM: " + bien.getIdDireccion());
+			input.setCODDIR(bien.getIdDireccion());
+		}
+		else {
+			logger.info("RINM: ");
+			input.setCODDIR("");
+		}
 		
 		String poblacion = "";
 		if(bien.getLocalizacionActual() != null && bien.getLocalizacionActual().getPoblacion() != null) {
 			poblacion = bien.getLocalizacionActual().getPoblacion();
 		}
 		
-		logger.info("POBL: " + poblacion);
+		logger.info("LOCALIDAD: " + StringUtils.substring(poblacion, 0, 30));
 		input.setLOCALIDAD(StringUtils.substring(poblacion, 0, 30));
 
-		logger.info("PROV: " + null);
-		input.setPROVINCIA(null);
+		logger.info("PROVINCIA: ");
+		input.setPROVINCIA("");
 
 		String codPostal = "";
 		if(bien.getLocalizacionActual() != null && bien.getLocalizacionActual().getCodPostal() != null && NumberUtils.isNumber(bien.getLocalizacionActual().getCodPostal())) {
 			codPostal = bien.getLocalizacionActual().getCodPostal();
 		}
 		
-		logger.info("CPOS: " + codPostal);
+		logger.info("CODPOSTAL: " + StringUtils.substring(codPostal, 0, 6));
 		input.setCODPOSTAL(StringUtils.substring(codPostal, 0, 6));
 
 		String numFinca = "";
@@ -273,19 +300,19 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 			numFinca = bien.getLocalizacionActual().getNumeroDomicilio();
 		}
 				
-		logger.info("NFCA: " + numFinca);
-		input.setNFINCAREG(StringUtils.substring(numFinca, 0, 10) );
+		logger.info("NFINCAREG: " + StringUtils.substring(numFinca, 0, 10));
+		input.setNFINCAREG(StringUtils.substring(numFinca, 0, 10));
 
-		logger.info("FOLI: " + null);
-		input.setFOLIO(null);
+		logger.info("FOLIO: ");
+		input.setFOLIO("");
 
-		logger.info("LBRO: " + null);
-		input.setLIBRO(null);
+		logger.info("LIBRO: ");
+		input.setLIBRO("");
 
-		logger.info("TOMO: " + null);
-		input.setTOMO(null);
+		logger.info("TOMO: ");
+		input.setTOMO("");
 
-		logger.info("PERS: " + personaContacto);
+		logger.info("NOMBPERSCONT: " + personaContacto);
 		input.setNOMBPERSCONT(personaContacto);
 
 		String sTelefono = "";
@@ -295,55 +322,25 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 		logger.info("TLF1: " + sTelefono);
 		input.setTLF1(sTelefono);
 
-		logger.info("TLF2: " + null);
-		input.setTLF2(null);
+		logger.info("TLF2: ");
+		input.setTLF2("");
+				
+		logger.info("INSCRIP: ");
+		input.setINSCRIP("");
 		
-		logger.info("OBSE: " + null);
-		//input.setOBSE(null);
-
-		logger.info("NRPR: " + null);
-		//input.setNRPR(null);
-		
-		logger.info("INSC: " + null);
-		input.setINSCRIP(null);
-		
-		logger.info("CAUT: " + null);
-		input.setCOMAUT(null);
-
-		logger.info("IDTA: " + null);
-		//input.setIDTA(null);
-		
-		logger.info("FECH: " + null);
-		//input.setFECH(null);
-		
-		logger.info("SECU: " + null);
-		//input.setSECU(null);
-		
-		logger.info("MODI: " + null);
-		//input.setMODI(null);
-		
-		logger.info("OPER: " + null);
-		//input.setOPER(null);
-		
-		logger.info("TASA: " + null);
-		//input.setTASA(null);
+		logger.info("COMAUT: ");
+		input.setCOMAUT("");
 
 		logger.info("INCO: " + INCO);
 		input.setINCO(INCO);
 		
-		logger.info("TENC: " + TENC);
+		logger.info("TIPOPER: " + TENC);
 		input.setTIPOPER(TENC);
 		
-		logger.info("ADJU: " + ADJU);
-		//input.setADJU(ADJU); 
-		
-		logger.info("IMPO: " + null);
-		input.setIMPORIESGVIV(null);
-		
-		logger.info("PRET: " + null);
-		//input.setPRET(null);
+		logger.info("IMPORIESGVIV: ");
+		input.setIMPORIESGVIV("");
 				
-		String tinmu = null;
+		String tinmu = "";
 		if(bien.getTipoBien() != null) {
 			tinmu = mapaTIMN.get(bien.getTipoBien().getCodigo());
 		}		
@@ -351,20 +348,20 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 		logger.info("TINMU: " + tinmu);
 		input.setTINMU(tinmu);
 		
-		logger.info("OBSE2: " + observaciones);
+		logger.info("OBSERV: " + observaciones);
 		input.setOBSERV(observaciones);			
 
-		logger.info("RINM: " + bien.getIdDireccion());
-		//input.setRINM(bien.getIdDireccion());
-		
-		logger.info("CKCA: " + CKCA);
+		logger.info("SOLICITANTE: " + CKCA);
 		input.setSOLICITANTE(CKCA);
-		
-		logger.info("NPCE: " + null);
-		//input.setNPCE(null);
-		
-		logger.info("CTCE: " + null);
-		//input.setCTCE(null);
+
+		logger.info("NRPROP: ");
+		input.setNRPROP("");
+
+		logger.info("TELFNCONTAS: ");
+		input.setTELFNCONTAS("");
+
+		logger.info("TENCRELA: ");
+		input.setTENCRELA("");	
 	}
 
 	/**

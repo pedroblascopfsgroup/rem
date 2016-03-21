@@ -12,7 +12,6 @@
 	var comboWidth = 300;
 	var fieldSetsWidth = 430;
 
-	 	
 	var tipoGestor = Ext.data.Record.create([
 		 {name:'id'}
 		,{name:'descripcion'}
@@ -45,7 +44,7 @@
 		,width: comboWidth
 		,resizable: true
 		,forceSelection: true
-		,editable: false
+		,editable: true
 		,emptyText:'Seleccionar'
 		,triggerAction: 'all'
 		,fieldLabel: '<s:message
@@ -54,56 +53,37 @@
 		,allowBlank : false
 	});
 	
-	
-	var despachosRecord = Ext.data.Record.create([
-		 {name:'id'}
-		,{name:'tipo'}
-		,{name:'codigo'}
-		,{name:'nombre'}
+
+	//store generico de combo diccionario
+	var optionsDespachosRecord = Ext.data.Record.create([
+		 {name:'cod'}
+		,{name:'descripcion'}
 	]);
 	
-	
-	var optionsDespachosStore = page.getStore({
-		reader: new Ext.data.JsonReader({
-			root : 'data'
-	      }, despachosRecord)
-	     }); 
-
-
-	var cargaoptionsDespachos = function() {
-	     var despachosJSON = <json:array name="data" items="${despachos}"
-		var="rec">
-		<json:object>
-			<json:property name="id" value="${rec.id}" />
-			<json:property name="nombre" value="${rec.despacho}" />
-		</json:object>
-	</json:array>
-	     optionsDespachosStore.loadData({data:despachosJSON});
-	}
-	cargaoptionsDespachos .defer(1);
-	
-	var comboDespachosOriginal = new Ext.form.ComboBox({
-		store:optionsDespachosStore
-		,displayField:'nombre'
-		,valueField:'id'
-		,mode: 'local'
-		,width: comboWidth
-		,resizable: true
-		,forceSelection: true
-		,editable: false
-		,emptyText:'Seleccionar'
-		,triggerAction: 'all'
-		,fieldLabel: '<s:message
-		code="plugin.cambiosMasivosAsuntos.cambiogestores.despacho"
-		text="**Despacho" />'
-		,allowBlank : false
-		,disabled:true
-		,typeAhead: true
-		,forceSelection: false
-		,triggerAction: 'all'
-		,enableKeyEvents: true
-		,editable:true
+	var optionsDespachoStore = page.getStore({
+	       flow: 'coreextension/getListTipoDespachoData'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'listadoDespachos'
+	    }, optionsDespachosRecord)	       
 	});
+	
+
+	//Campo Combo Despacho
+    var comboDespachosOriginal = new Ext.form.ComboBox({
+				store:optionsDespachoStore
+				,displayField:'descripcion'
+				,valueField:'cod'
+				,mode: 'local'
+				,emptyText:'---'
+				,forceSelection: true
+				,editable: true
+				,triggerAction: 'all'
+				,disabled:true
+				,resizable:true
+				,fieldLabel : '<s:message code="asuntos.busqueda.filtro.despacho" text="**Despacho"/>'
+				<app:test id="comboDespachos" addComa="true"/>
+	});
+	
 	 
 	 
 	var Gestor = Ext.data.Record.create([
@@ -127,7 +107,7 @@
 		,width: comboWidth
 		,resizable: true
 		,forceSelection: true
-		,editable: false
+		,editable: true
 		,emptyText:'Seleccionar'
 		,triggerAction: 'all'
 		,fieldLabel: '<s:message
@@ -212,8 +192,8 @@
 	
 	var mismosDespachos = function(){
 		if (comboDespachosOriginal.getValue()){
-			if (${idDespacho}){
-				var b = comboDespachosOriginal.getValue() == ${idDespacho};
+			if ('${idDespacho}'!=''){
+				var b = comboDespachosOriginal.getValue() == '${idDespacho}';
 				if (! b){
 					Ext.Msg.alert('Incoherencia de datos', 'Para cambiar este tipo de gestor, el despacho/grupo debe coincidir con el seleccionado en la pantalla anterior');
 				}
@@ -272,8 +252,8 @@
 		,items : [
 		    {
 				title:'<s:message
-		code="plugin.cambiosMasivosAsuntos.cambiogestores.gestorOriginal"
-		text="**Gestor original" />'
+		code="plugin.cambiosMasivosAsuntos.cambiogestores.gestorDestino"
+		text="**Cambiar por" />'
 				,width: fieldSetsWidth
 				,items:[comboTipoGestor, comboDespachosOriginal, comboGestorOriginal]
 			},
@@ -287,18 +267,20 @@
   		]
 	});	
 	
-	comboDespachosOriginal.tipoGestor = null;
-	
 	comboTipoGestor.on('select', function(){
+		comboDespachosOriginal.reset();
+		optionsDespachoStore.webflow({'idTipoGestor': comboTipoGestor.getValue(), 'incluirBorrados': true}); 
+		
+		comboGestorOriginal.reset();
+		comboGestorOriginal.setValue('');
+		optionsGestorOriginalStore.removeAll();
+		
+		comboDespachosOriginal.setDisabled(false);		
 		if (this.value) {
 			comboDespachosOriginal.setDisabled(false);
-			if (comboDespachosOriginal.getValue()){
-				optionsGestorOriginalStore.webflow({despacho:comboDespachosOriginal.getValue()});
-			}
 		}else{
 			comboDespachosOriginal.setDisabled(true);
 		}
-		comboDespachosOriginal.tipoGestor = this.value;
 	});
 	
 	comboDespachosOriginal.on('select',function(){
@@ -312,7 +294,7 @@
 	
 	optionsGestorOriginalStore.on('load',function(){
 		if (this.getCount() < 1){
-			Ext.Msg.alert('Sin gestores', 'No se han encontrado gestores de éste tipo en el despacho.');
+			Ext.Msg.alert('Sin gestores', 'No se han encontrado gestores de ï¿½ste tipo en el despacho.');
 		}
 	});
 	 

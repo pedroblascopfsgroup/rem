@@ -203,6 +203,25 @@ public class EXTContratoManager implements EXTContratoApi {
 		return contratoDao.buscarContratosPaginadosAvanzado(dto, usuLogado);
 	}
 	
+
+    /**
+     * Hace la búsqueda de contratos de acuerdo a los filtros que vienen en el DTO,
+     * pero para el export a PDF, validando antes que la cant. de resultados no
+     * supere una determinada cant.
+     * @param dto contiene los filtros de la búsqueda.
+     * @return la lista de contratos que cumplen con los filtros.
+     */
+    @BusinessOperation(overrides = PrimariaBusinessOperation.BO_CNT_MGR_EXPORT_CONTRATOS)
+    public Page exportContratos(BusquedaContratosDto dto) {
+    	final Usuario usuLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+        //Seteamos las zonas del formulario o por defecto las zonas del usuario logado
+        dto.setCodigosZona(getCodigosDeZona(dto));
+        dto.setEstadosContrato(getEstadosContrato(dto));
+        dto.setLimit(Integer.MAX_VALUE); // La verificación del topo la hace superaLimiteExport
+        return contratoDao.buscarContratosPaginados(dto, usuLogado);
+    }
+
+	
 	/**
      * Verifica si no se supera el lÃ­mite tolerado de resultados para el export a XLS de
      * la bÃºsqueda de contratos. TambiÃ©n verifica que el resultado no sea vacÃ­o.
@@ -220,7 +239,7 @@ public class EXTContratoManager implements EXTContratoApi {
         dto.setCodigosZona(getCodigosDeZona(dto));
         dto.setEstadosContrato(getEstadosContrato(dto));
         Parametrizacion param = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
-                Parametrizacion.LIMITE_EXPORT_EXCEL);
+                Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_CONTRATOS);
         int limit = Integer.parseInt(param.getValor());
         dto.setLimit(limit + 2); // Se suma 2 al limite, 1 porque el limite es el Ã­ndice,
         // no la cant. de registros, +1 para verificar que se

@@ -23,7 +23,6 @@
 	var buzonOptimizado='${buzonOptimizado}';
 		
 	var nombreTareaField = (buzonOptimizado == 'true') ? 'nombreTarea' : 'descripcionTarea';
-		
 	var codigoTipoTarea="${codigoTipoTarea}";
 	var esAlerta="${alerta}";
 	var enEspera="${espera}";
@@ -68,6 +67,7 @@
 	//Fitros	
 	var comboFechaDesdeOp=new Ext.form.ComboBox({
 		store:[">=",">","=","<>"]
+		,hidden: true
 		,triggerAction : 'all'
 		,mode:'local'
 		//,labelSeparator:""
@@ -96,6 +96,70 @@
 		}	
 	});
 	
+	
+	var comboEstado=new Ext.form.ComboBox({
+		store:["Todas","Pendientes validar"]
+		,name: 'comboEstado'
+		,triggerAction : 'all'
+		,mode:'local'
+		,editable: false
+    	,emptyText: 'Seleccionar...'
+		,fieldLabel:'<s:message code="tareas.filtro.procuradores.estado" text="**Estado" />'
+		,width:100
+		,listeners:{
+			specialkey: function(f,e){  
+	            if(e.getKey()==e.ENTER){  
+	                buscarFunc();
+	            }  
+	        } 
+		}
+		,value:'${estado}'
+	})
+	
+	
+	comboEstado.on('select', function(){
+		if(comboEstado.getValue()=="Pendientes validar")
+		{
+			comboCtgResol.setDisabled(false);
+		}else{
+			comboCtgResol.setDisabled(true);
+		}
+	});
+	
+	
+	var categoriasRecord = Ext.data.Record.create([
+		 {name:'id'}
+        ,{name:'nombre'}
+    ]);
+       
+    var categoriasStore = page.getStore({   
+		flow : 'categorias/getListaCategorias'
+		,limit: limit
+		,baseParams:paramsBusquedaInicial
+		,reader : new Ext.data.JsonReader({root:'categorias', totalProperty : 'total'}, categoriasRecord)
+	});
+
+<c:if test="${tieneProcurador == true && activoDespachoIntegral==true}">
+	categoriasStore.webflow({idcategorizacion: "${idCategorizacion}"});
+</c:if>
+
+	//Combo Categorias Resoluciones
+	var comboCtgResol = new Ext.form.ComboBox({
+		name: 'comboCtgResol'
+    	//,store: categorizacionesStore
+    	,store: categoriasStore
+    	,id: 'comboCtgResol'
+    	,displayField: 'nombre'
+    	,valueField: 'id'
+    	,mode: 'local'
+    	,triggerAction: 'all'
+    	,editable: false
+    	,emptyText: 'Seleccionar...'
+   		,fieldLabel: '<s:message code="tareas.filtro.procuradores.categorias" text="**Categorías" />'
+		,labelStyle: 'width:100'
+		,forceSelection: true
+	});
+	
 	var fechaVencDesde = new Ext.ux.form.XDateField({
 		width:100
 		,height:20
@@ -107,12 +171,13 @@
 	            }  
 	        } 
 		}
-		,fieldLabel:'<s:message code="tareas.filtros.fvencimiento" text="**F. Vencimiento" />'
+		,fieldLabel:'<s:message code="tareas.filtros.fvencimiento.desde" text="**F. Vencimiento desde" />'
 		,value:'${fechaVencDesde}'
 	});
 	
 	var comboFechaHastaOp=new Ext.form.ComboBox({
 		store:["<=","<"]
+		,hidden: true
 		,triggerAction : 'all'
 		,mode:'local'
 		,fieldLabel:'<s:message code="tareas.filtros.hasta" text="**Venc hasta" />'
@@ -138,7 +203,7 @@
 	            }  
 	        } 
 		}
-		,fieldLabel:'<s:message code="tareas.filtros.fvencimiento" text="**F. Vencimiento" />'
+		,fieldLabel:'<s:message code="tareas.filtros.fvencimiento.hasta" text="**F. Vencimiento hasta" />'
 		,value:'${fechaVencHasta}'
 	});
 	
@@ -169,9 +234,11 @@
 			return true;
 		if(nombreTarea.getValue()!='')
 			return true;
-		if(fechaVencDesde.getValue()!='' && comboFechaDesdeOp.getValue()!='')
+		if(fechaVencDesde.getValue()!='')
 			return true;
-		if(fechaVencHasta.getValue()!='' && comboFechaHastaOp.getValue()!='')
+		if(fechaVencHasta.getValue()!='')
+			return true;
+		if(${tieneProcurador} == true && comboEstado.getValue()!='') 
 			return true;
 	}
 	
@@ -180,18 +247,11 @@
 		if(fechaVencDesde.getValue()!='' && fechaVencHasta.getValue()!=''){
 			valid = (fechaVencDesde.getValue()<= fechaVencHasta.getValue())
 		}
-		if(comboFechaDesdeOp.getValue()=='>=' || comboFechaDesdeOp.getValue()=='>'){
-			if (fechaVencHasta.getValue()!='' && comboFechaHastaOp.getValue()!='') 
-				if(fechaVencDesde.getValue()=='')
-					valid = valid && false;
-				else
-					valid = valid && true;
-		}
 		return valid;
 	}
 	
 	var getParametrosBusqueda=function(){
-		return {
+		var params = {
 			codigoTipoTarea:codigoTipoTarea
 			,perfilUsuario:perfilUsuario
 			,enEspera:enEspera
@@ -206,10 +266,23 @@
 			,fechaVencDesdeOperador:operadorFechaDesde
 			,fechaVencimientoHasta:app.format.dateRenderer(fechaVencHasta.getValue())
 			,fechaVencimientoHastaOperador:operadorFechaHasta
+		};
+		
+		if(${tieneProcurador} == true) {
+			params.estado = comboEstado.getValue();
+			params.categorizacion = comboCtgResol.getValue();
 		}
+
+		
+		return params;
 	}
 	
 	var buscarFunc=function(){
+		if(${tieneProcurador} == true) {
+			var estado = comboEstado.getValue();
+			var categorizacion = comboCtgResol.getValue();
+		}
+		
 		if(validarForm()){
 			if(validaFechasVenc()){
 				isBusqueda=true;
@@ -244,7 +317,6 @@
         text:'<s:message code="menu.clientes.listado.filtro.exportar.xls" text="**exportar a xls" />'
         ,iconCls:'icon_exportar_csv'
         ,handler: function() {
-
 			if(validarForm()|| (panelFiltros.validate && panelFiltros.validate())){
 				if(validaFechasVenc()){
 					
@@ -285,7 +357,6 @@
 							,fechaVencimientoHasta:app.format.dateRenderer(fechaVencHasta.getValue())
 							,fechaVencimientoHastaOperador:operadorFechaHasta},
 						success : function(data) {
-
 							var data = Ext.decode(data.responseText);
 							var count = data.count;
 							var limit = data.limit;
@@ -293,13 +364,13 @@
 							 app.openBrowserWindow('/pfs/tareanotificacion/exportacionTareasPaginaDescarga',parametros);  
 							}else{
 								Ext.MessageBox.hide();
-								Ext.Msg.alert('<s:message code="plugin.mejoras.error" text="**Error" />', '<s:message code="plugin.mejoras.tareas.exportarExcel.limiteSuperado1" text="**Se ha establecido un lï¿½mite mï¿½ximo de " />'+ limit + ' '+
-									'<s:message code="plugin.mejoras.tareas.exportarExcel.limiteSuperado2" text="**Tareas a Exportar. Por favor utilice los filtros para limitar el nï¿½mero de resultados." />');
+								Ext.Msg.alert('<s:message code="plugin.mejoras.error" text="**Error" />', '<s:message code="plugin.mejoras.tareas.exportarExcel.limiteSuperado1" text="**Se ha establecido un l&iacute;mite m&aacute;ximo de " />'+ limit + ' '+
+									'<s:message code="plugin.mejoras.tareas.exportarExcel.limiteSuperado2" text="**Tareas a Exportar. Por favor utilice los filtros para limitar el n&uacute;mero de resultados." />');
 							}							    			
 						},
 						failure: function (result) {
 							Ext.MessageBox.hide();
-							Ext.Msg.alert('<s:message code="plugin.ugas.ws.error" text="**Error" />', '<s:message code="plugin.ugas.asuntos.exportarExcel.errorExportando" text="**Se ha producido un error durante el proceso de validaciï¿½n de la exportaciï¿½n a excel." />');
+							Ext.Msg.alert('<s:message code="plugin.ugas.ws.error" text="**Error" />', '<s:message code="plugin.ugas.asuntos.exportarExcel.errorExportando" text="**Se ha producido un error durante el proceso de validaci&oacute;n de la exportaci&oacute;n a excel." />');
 					    }
 					});
        					
@@ -344,6 +415,7 @@
 
 	}
 	
+     
 	var panelFiltros = new Ext.Panel({
 		title : '<s:message code="tareas.listado.busqueda" text="**Busqueda de Tareas"/>'
 		,collapsible : true
@@ -356,16 +428,34 @@
 				layout:'form'
 				,defaults:{xtype:'fieldset',border:false}
 				,width:'320px'
-				,items:[nombreTarea, comboFechaDesdeOp, comboFechaHastaOp]
+				<c:choose>
+				    <c:when test="${tieneProcurador == true && activoDespachoIntegral==true}">
+				       ,items:[nombreTarea, fechaVencDesde, comboFechaDesdeOp, comboFechaHastaOp, comboEstado]
+				    </c:when>
+				    <c:otherwise>
+				        ,items:[nombreTarea, fechaVencDesde, comboFechaDesdeOp, comboFechaHastaOp]
+				    </c:otherwise>
+				</c:choose>
 			},{
 				layout:'form' 
 				,width:'320px'
 				,defaults:{xtype:'fieldset',border:false}
-				,items:[descTarea, fechaVencDesde, fechaVencHasta]
+				<c:choose>
+				    <c:when test="${tieneProcurador == true && activoDespachoIntegral==true}">
+				       ,items:[descTarea, fechaVencHasta, comboCtgResol]
+				    </c:when>
+				    <c:otherwise>
+				        ,items:[descTarea, fechaVencHasta]
+				    </c:otherwise>
+				</c:choose>
 			}
 		]              
 		,tbar:new Ext.Toolbar()
 	});
+	
+	<c:if test="${tieneProcurador == true && activoDespachoIntegral==true}">
+		comboCtgResol.setDisabled(true);
+	</c:if>
 	
 	if(!eval(enEspera) && ("${codigoTipoTarea}" == "3")){
 		panelFiltros.getTopToolbar().add(btnBuscar,btnClean,btnExportarXls,buttonsLNot,'->',buttonsRNot);
@@ -426,6 +516,7 @@
 		,{name:'fechaRevisionAlerta'}
 		,{name:'dtype'}
 		,{name:'categoriaTarea'}
+		,{name:'esPeticionProrroga'}
 	]);
 	
 	Ext.grid.CheckColumn = function(config){ 
@@ -481,6 +572,7 @@
 	    }, tarea)
 	});
 	
+	
 	tareasStore.addListener('load', agrupa);
 	tareasStore.setDefaultSort('fechaVenc', 'ASC');
 	function agrupa(store, meta) {
@@ -519,6 +611,7 @@
 	}
 	
 	if(eval(esAlerta)){
+	
 	var tareasNewCm=new Ext.grid.ColumnModel([
 		{	/*Columna 0*/ header: '<s:message code="tareas.listado.tarea" text="**Tarea"/>', sortable: true, dataIndex: nombreTareaField}
 		,{	/*Columna 2*/ header: '<s:message code="tareas.listado.descripcion" text="**Descripcion"/>', sortable: false, dataIndex: 'descripcion'}
@@ -533,8 +626,8 @@
 		,{  /*Columna 9*/ header: '<s:message code="tareas.listado.supervisor" text="**Supervisor"/>', sortable: false, dataIndex: 'supervisor', hidden:true}
 		,{  /*Columna 10*/ header: '<s:message code="tareas.listado.emisor" text="**Emisor"/>', sortable: true, dataIndex: 'emisor', width:50}		
 		,{  /*Columna 11*/ header: '<s:message code="tareas.listado.id" text="**Id"/>', sortable: true, hidden:true ,dataIndex: 'id'}
-		,{  /*Columna 12*/ header: '<s:message code="tareas.listado.volumenRiesgo" text="**VR"/>',	sortable: true, dataIndex: 'volumenRiesgoSQL', hidden:false,renderer:app.format.moneyRendererNull,align:'right'}
-		,{  /*Columna 13*/ header: '<s:message code="tareas.listado.volumenRiesgoVencido" text="**VRV"/>', sortable: false, dataIndex: 'volumenRiesgoVencido', hidden:true,renderer:app.format.moneyRendererNull,align:'right'}
+		,{  /*Columna 12*/ header: '<s:message code="tareas.listado.total" text="**Total"/>',	sortable: true, dataIndex: 'volumenRiesgoSQL' <sec:authorize ifAllGranted="PERSONALIZACION-BCC">,hidden:true </sec:authorize> ,renderer:app.format.moneyRendererNull,align:'right'}
+		,{  /*Columna 13*/ header: '<s:message code="tareas.listado.volumenRiesgoVencido" text="**VRV"/>', sortable: false, dataIndex: 'volumenRiesgoVencido',hidden:true,renderer:app.format.moneyRendererNull,align:'right'}
 		,{  /*Columna 14*/ header: '<s:message code="tareas.listado.vencimiento" text="**vencimiento"/>', 	sortable: false, dataIndex: 'group', hidden:true,renderer:groupRenderer}
 		<sec:authorize ifAllGranted="ROLE_REVISAR_ALERTA">
 				,revisada_edit
@@ -557,7 +650,7 @@
 			,{  /*Columna 9*/ header: '<s:message code="tareas.listado.supervisor" text="**Supervisor"/>', sortable: false, dataIndex: 'supervisor', hidden:true}
 			,{  /*Columna 10*/ header: '<s:message code="tareas.listado.emisor" text="**Emisor"/>', sortable: true, dataIndex: 'emisor', width:50}		
 			,{  /*Columna 11*/ header: '<s:message code="tareas.listado.id" text="**Id"/>', sortable: true, hidden:true ,dataIndex: 'id'}
-			,{  /*Columna 12*/ header: '<s:message code="tareas.listado.volumenRiesgo" text="**VR"/>',	sortable: true, dataIndex: 'volumenRiesgoSQL', hidden:false,renderer:app.format.moneyRendererNull,align:'right'}
+			,{  /*Columna 12*/ header: '<s:message code="tareas.listado.total" text="**Total"/>',	sortable: true, dataIndex: 'volumenRiesgoSQL' <sec:authorize ifAllGranted="PERSONALIZACION-BCC">,hidden:true </sec:authorize>,renderer:app.format.moneyRendererNull,align:'right'}
 			,{  /*Columna 13*/ header: '<s:message code="tareas.listado.volumenRiesgoVencido" text="**VRV"/>', sortable: false, dataIndex: 'volumenRiesgoVencido', hidden:true,renderer:app.format.moneyRendererNull,align:'right'}
 			,{  /*Columna 14*/ header: '<s:message code="tareas.listado.vencimiento" text="**vencimiento"/>', 	sortable: false, dataIndex: 'group', hidden:true,renderer:groupRenderer}
 			<sec:authorize ifAllGranted="ROLE_REVISAR_ESPERA">
@@ -581,7 +674,7 @@
 			,{  /*Columna 9*/ header: '<s:message code="tareas.listado.supervisor" text="**Supervisor"/>', sortable: false, dataIndex: 'supervisor', hidden:true}
 			,{  /*Columna 10*/ header: '<s:message code="tareas.listado.emisor" text="**Emisor"/>', sortable: true, dataIndex: 'emisor', width:50}		
 			,{  /*Columna 11*/ header: '<s:message code="tareas.listado.id" text="**Id"/>', sortable: true, hidden:true ,dataIndex: 'id'}
-			,{  /*Columna 12*/ header: '<s:message code="tareas.listado.volumenRiesgo" text="**VR"/>',	sortable: true, dataIndex: 'volumenRiesgoSQL', hidden:false,renderer:app.format.moneyRendererNull,align:'right'}
+			,{  /*Columna 12*/ header: '<s:message code="tareas.listado.total" text="**Total"/>',	sortable: true, dataIndex: 'volumenRiesgoSQL'<sec:authorize ifAllGranted="PERSONALIZACION-BCC">,hidden:true </sec:authorize>,renderer:app.format.moneyRendererNull,align:'right'}
 			,{  /*Columna 13*/ header: '<s:message code="tareas.listado.volumenRiesgoVencido" text="**VRV"/>', sortable: false, dataIndex: 'volumenRiesgoVencido', hidden:true,renderer:app.format.moneyRendererNull,align:'right'}
 			,{  /*Columna 14*/ header: '<s:message code="tareas.listado.vencimiento" text="**vencimiento"/>', 	sortable: false, dataIndex: 'group', hidden:true,renderer:groupRenderer}
 			<sec:authorize ifAllGranted="ROLE_REVISAR_NOTIFICACION">
@@ -604,7 +697,7 @@
 			,{  /*Columna 9*/ header: '<s:message code="tareas.listado.supervisor" text="**Supervisor"/>', sortable: false, dataIndex: 'supervisor', hidden:true}
 			,{  /*Columna 10*/ header: '<s:message code="tareas.listado.emisor" text="**Emisor"/>', sortable: true, dataIndex: 'emisor', width:50}		
 			,{  /*Columna 11*/ header: '<s:message code="tareas.listado.id" text="**Id"/>', sortable: true, hidden:true ,dataIndex: 'id'}
-			,{  /*Columna 12*/ header: '<s:message code="tareas.listado.volumenRiesgo" text="**VR"/>',	sortable: true, dataIndex: 'volumenRiesgoSQL', hidden:false,renderer:app.format.moneyRendererNull,align:'right'}
+			,{  /*Columna 12*/ header: '<s:message code="tareas.listado.total" text="**Total"/>',	sortable: true, dataIndex: 'volumenRiesgoSQL'<sec:authorize ifAllGranted="PERSONALIZACION-BCC">,hidden:true </sec:authorize>,renderer:app.format.moneyRendererNull,align:'right'}
 			,{  /*Columna 13*/ header: '<s:message code="tareas.listado.volumenRiesgoVencido" text="**VRV"/>', sortable: false, dataIndex: 'volumenRiesgoVencido', hidden:true,renderer:app.format.moneyRendererNull,align:'right'}
 			,{  /*Columna 14*/ header: '<s:message code="tareas.listado.vencimiento" text="**vencimiento"/>', 	sortable: false, dataIndex: 'group', hidden:true,renderer:groupRenderer}
 			 <sec:authorize ifAllGranted="ROLE_REVISAR_TAREA">
@@ -825,8 +918,9 @@
 			btnQuickAceptarProrroga.setVisible(false);
 			return;
 		}
-		
+
 		switch(codigoSubtipoTarea){
+			
 			case app.subtipoTarea.CODIGO_SOLICITUD_CANCELACION_EXPEDIENTE_DE_SUPERVISOR:
 				var idExpediente=rec.get('idEntidad')
 				
@@ -846,6 +940,7 @@
 			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_CE:	
 			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_RE:
 			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC:
+			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_FP:
 				var params={
 					idTipoEntidadInformacion:rec.get('codigoEntidadInformacion')
 					,idEntidadInformacion:rec.get('idEntidad')
@@ -913,10 +1008,32 @@
 				break;
 			--%>	
 			default:
-				btnQuickAceptarCancelacion.setVisible(false);
-				btnQuickRechazarCancelacion.setVisible(false);
-				btnQuickRechazarProrroga.setVisible(false);
-				btnQuickAceptarProrroga.setVisible(false);
+				if(rec.get('esPeticionProrroga')){
+					var params ={
+							idEntidadInformacion: rec.get('idEntidad')
+							,isConsulta:false
+							,fechaVencimiento: app.format.dateRenderer(rec.get('fechaVenc'))
+							,fechaCreacion: rec.get('fcreacionEntidad')
+							,situacion:'Asunto' 
+							,destareaOri:  rec.get(nombreTareaField)
+							,idTipoEntidadInformacion: '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO" />'
+							,fechaPropuesta: rec.get('fechaPropuesta')
+							,motivo: rec.get('motivo')
+							,idTareaOriginal: rec.get('id')	
+							,descripcion:"Toma decision procedimiento"		
+							,codigoTipoProrroga: '<fwk:const value="es.capgemini.pfs.prorroga.model.DDTipoProrroga.TIPO_PRORROGA_EXTERNA" />'
+					}
+					btnQuickAceptarProrroga.setHandler(function(){
+							redefinirFuncionContestarProrroga(params)
+						});	
+					btnQuickAceptarProrroga.setVisible(true);
+				}else{
+					btnQuickAceptarCancelacion.setVisible(false);
+					btnQuickRechazarCancelacion.setVisible(false);
+					btnQuickRechazarProrroga.setVisible(false);
+					btnQuickAceptarProrroga.setVisible(false);
+				}
+
 				break;
 		}
 		if(tipoTareaNotificacion=='EXTTareaNotificacion'){
@@ -933,7 +1050,6 @@
 	
 	
 	tareasGrid.on('rowdblclick', function(grid, rowIndex, e) {
-		debugger;
 		//agregar funcionalidad....
 		var rec = grid.getStore().getAt(rowIndex);
 		
@@ -954,14 +1070,16 @@
 			codigoSubtipoTarea = app.subtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_RESPONDIDA_DE_SUPERVISOR;
 		}
 
-
+		
 		switch (codigoSubtipoTarea){
+			
 			case app.subtipoTarea.CODIGO_COMPLETAR_EXPEDIENTE:
 			case app.subtipoTarea.CODIGO_REVISAR_EXPEDIENE:
 			case app.subtipoTarea.CODIGO_DECISION_COMITE:
 			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_CE:
 			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_RE:
 			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC:
+			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_FP:
 				app.abreExpediente(rec.get('idEntidad'), rec.get('descripcionExpediente'));
 			break;
 			case app.subtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL:
@@ -969,7 +1087,7 @@
 				app.abreCliente(rec.get('idEntidadPersona'), rec.get('descripcion'));
 			break;
 			case app.subtipoTarea.CODIGO_GESTION_VENCIDOS:
-				app.openTab("<s:message code="tareas.gv" text="**Gesti&oacute;n de Vencidos"/>", "clientes/listadoClientes", {gv:true,gsis:false,gsin:false},{id:'GV',iconCls:'icon_busquedas'});
+				app.openTab("<s:message code="tareas.gv" text="**Gesti&oacute;n de Vencidos"/>", "gestionclientes/getListadoVencidos", {gv:true,gsis:false,gsin:false},{id:'GV',iconCls:'icon_busquedas'});
 			break;
 			case app.subtipoTarea.CODIGO_GESTION_SEGUIMIENTO_SISTEMATICO:
 				app.openTab("<s:message code="tareas.gsis" text="**Gesti&oacute;n de Seguimiento Sistem&aacute;tico"/>", "clientes/listadoClientes", {gv:false,gsis:true,gsin:false},{id:'GSIN',iconCls:'icon_busquedas'});
@@ -1173,6 +1291,8 @@
 			case '101':			
 			case '105':
 			case '102':
+			case '543':
+			case 'TGP':
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
 				break;			
 			case '103':
@@ -1349,7 +1469,10 @@
 		case app.subtipoTarea.CODIGO_CUMPLIMIENTO_ACUERDO:
 				app.abreAsuntoTab(rec.get('idEntidad'), rec.get('descripcion'),'acuerdos');
 		break;
-		
+		case app.subtipoTarea.CODIGO_TAREA_JUSTIFICAR_INCUMPLIMIENTO_OBJETIVO:
+			app.abreClienteTab(rec.get('idEntidadPersona'), rec.get('descripcion'),'politicaPanel');
+			break;
+			
 			// Por default abre una notificacion standard
 			default:
 				//Seleccionarmos por tipo de Categoria Tarea
@@ -1440,9 +1563,17 @@
 		
 		//Muestro las columnas VR y VRV si lo permite el perfil
 		<sec:authorize ifAllGranted="MOSTRAR_VR_TAREAS">
-			tareasNewCm.setHidden(12,false);
-			tareasNewCm.setHidden(13,false);
+			<sec:authorize ifNotGranted="PERSONALIZACION-BCC">
+				tareasNewCm.setHidden(13,false);
+			</sec:authorize>
+			<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
+				tareasNewCm.setHidden(13,true);
+			</sec:authorize>
+			tareasNewCm.setHidden(12,true);
 		</sec:authorize>
+		
+			
+		
 		
 	}
 	if(!eval(enEspera) && ("${codigoTipoTarea}" == "3")){
@@ -1462,12 +1593,18 @@
 		//muestro columna tipo solicitud
 		tareasNewCm.setHidden(6,false);
 	}
+	
 	if(!(eval(enEspera) || ("${codigoTipoTarea}" == "3"))){
 		//Listado de tareas
 		//Muestro las columnas VR y VRV si lo permite el perfil
 		<sec:authorize ifAllGranted="MOSTRAR_VR_TAREAS">
-			tareasNewCm.setHidden(12,false);
-			tareasNewCm.setHidden(13,false);
+			<sec:authorize ifNotGranted="PERSONALIZACION-BCC">
+				tareasNewCm.setHidden(13,false);
+			</sec:authorize>
+			<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
+				tareasNewCm.setHidden(13,true);
+			</sec:authorize>
+			tareasNewCm.setHidden(12,true);
 		</sec:authorize>
 	}
 	
@@ -1503,7 +1640,7 @@
 			,tbar:new Ext.Toolbar()
 	    });
 	}    
-	
+     
 	mainPanel.getTopToolbar().add(buttonsLPanel);
 	mainPanel.getTopToolbar().add('->');
 	mainPanel.getTopToolbar().add(buttonsRPanel);
@@ -1514,9 +1651,11 @@
 	});
 	
 	tareasStore.on('load',function(){
-           panelFiltros.getTopToolbar().setDisabled(false);
+		panelFiltros.getTopToolbar().setDisabled(false);
+    	if(categoriasStore.data.length == 0){
+    		comboCtgResol.setVisible(false);
+    	}
     });
-	
 	
 	panelFiltros.collapse(true);
 		

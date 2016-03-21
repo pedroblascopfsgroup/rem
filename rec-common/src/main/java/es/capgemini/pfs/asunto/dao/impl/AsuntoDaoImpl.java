@@ -181,7 +181,7 @@ public class AsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements As
     }
 
     private boolean requiereContrato(DtoBusquedaAsunto dto) {
-        return (dto.getCodigoZonas().size() > 0 || (dto.getFiltroContrato() != null && dto.getFiltroContrato() > 0L));
+        return (dto.getCodigoZonas().size() > 0 || (dto.getFiltroContrato() != null && dto.getFiltroContrato() != ""));
     }
 
     /**
@@ -292,7 +292,7 @@ public class AsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements As
         }*/
 
         //CODIGO CONTRATO
-        if (dto.getFiltroContrato() != null && dto.getFiltroContrato() > 0L) {
+        if (dto.getFiltroContrato() != null && dto.getFiltroContrato() != "") {
             hql.append(" and cnt.nroContrato like '%'|| :filtroCnt ||'%'");
             params.put("filtroCnt", dto.getFiltroContrato());
         }
@@ -380,10 +380,10 @@ public class AsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements As
         //MAX MINS
         if (requiereProcedimiento(dto)) {
             if (dto.getMaxSaldoTotalContratos() == null) {
-                dto.setMaxSaldoTotalContratos((double) Integer.MAX_VALUE);
+                dto.setMaxSaldoTotalContratos((float) Integer.MAX_VALUE);
             }
             if (dto.getMinSaldoTotalContratos() == null) {
-                dto.setMinSaldoTotalContratos(0d);
+                dto.setMinSaldoTotalContratos(0f);
             }
             if (dto.getMaxImporteEstimado() == null) {
                 dto.setMaxImporteEstimado((double) Integer.MAX_VALUE);

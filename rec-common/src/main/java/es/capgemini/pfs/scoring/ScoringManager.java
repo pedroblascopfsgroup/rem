@@ -33,6 +33,7 @@ import es.capgemini.pfs.scoring.dto.DtoSimulacion;
 import es.capgemini.pfs.scoring.model.PuntuacionParcial;
 import es.capgemini.pfs.scoring.model.PuntuacionTotal;
 import es.capgemini.pfs.utils.ObjetoResultado;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * Clase que realiza las tareas de calculo de scoring en el common.
@@ -157,7 +158,13 @@ public class ScoringManager {
      * @return true si debe procesar.
      */
     private boolean debeProcesarAlerta(PuntuacionParcial pp) {
-        Long time = pp.getAlerta().getTipoAlerta().getPlazoVisibilidad() + pp.getAlerta().getFechaExtraccion().getTime();
+    	Long time = 0L;
+    	if (Checks.esNulo(pp.getAlerta().getTipoAlerta().getPlazoVisibilidad())) {
+    		logger.error("scoringManager.debeProcesarAlerta - El plazo de la visibilidad del tipo de alerta no puede ser null");
+    		time = pp.getAlerta().getFechaExtraccion().getTime();
+    	} else {
+    		time = pp.getAlerta().getTipoAlerta().getPlazoVisibilidad() + pp.getAlerta().getFechaExtraccion().getTime();
+    	}
         return System.currentTimeMillis() < time;
     }
 
@@ -248,7 +255,12 @@ public class ScoringManager {
 
             //Y creo la celda de grupo
             cellTotalFecha.setName(tituloColumna);
-            cellTotalFecha.setValue(puntuacionTotal.getPuntuacion().toString());
+            if (Checks.esNulo(puntuacionTotal.getPuntuacion().toString())) {
+            	logger.error("scoringManager.mergePuntuacionesTotales - La puntuación total no puede ser null");
+            	cellTotalFecha.setValue("0");
+            } else {
+            	cellTotalFecha.setValue(puntuacionTotal.getPuntuacion().toString());
+            }
             rowTotal.addCell(cellTotalFecha);
         }
 
@@ -280,10 +292,10 @@ public class ScoringManager {
         // ***    Iteramos para todas las puntuaciones parciales    *** //
         // ************************************************************ //
         for (PuntuacionParcial pp : listadoPuntuaciones) {
-            String codigoGrupo = pp.getAlerta().getTipoAlerta().getGrupoAlerta().getCodigo();
-            String codigoAlerta = pp.getAlerta().getTipoAlerta().getCodigo();
+            String codigoGrupo = pp.getAlerta().getTipoAlerta().getGrupoAlerta().getCodigo() + " - " + pp.getAlerta().getTipoAlerta().getGrupoAlerta().getDescripcion();
+            String codigoAlerta = pp.getAlerta().getTipoAlerta().getCodigo()  + " - " + pp.getAlerta().getTipoAlerta().getDescripcion();
             Long puntuacionAlerta = pp.getPuntuacion();
-            String codigoGravedad = pp.getAlerta().getNivelGravedad().getCodigo();
+            String codigoGravedad = pp.getAlerta().getNivelGravedad().getCodigo()  + " - " + pp.getAlerta().getNivelGravedad().getDescripcion();
 
             //Recupero el row del grupo y si no existe lo creo
             DtoDynamicRow rowGrupo = getRowForName(rows, GRUPO, codigoGrupo);
@@ -387,7 +399,9 @@ public class ScoringManager {
         for (Date fecha : fechasList) {
             //Traigo los datos para una de las fechas. 
             PuntuacionTotal puntuacionTotal = puntuacionTotalDao.buscarPorFechaYPersona(fecha, idPersona);
-            mergePuntuacionesTotales(puntuacionTotal, rows, fecha);
+            if (!Checks.esNulo(puntuacionTotal)) {
+            	mergePuntuacionesTotales(puntuacionTotal, rows, fecha);
+            }
         }
 
         return dto;
@@ -448,23 +462,23 @@ public class ScoringManager {
             metadata.setName(C + String.valueOf(fecha.getTime()));
             String titulo = sdf1.format(fecha);
             if(contador==fechas.size()){
-            	titulo = titulo + messageService.getMessage("scoring.grid.fechaSeleccionada");
+            	titulo = titulo + " " + messageService.getMessage("scoring.grid.fechaSeleccionada");
             }
             switch (contador) {
 			case 1:
-				titulo = titulo + messageService.getMessage("scoring.grid.fechaHoy");
+				titulo = titulo + " " + messageService.getMessage("scoring.grid.fechaHoy");
 				break;
 			case 2:
-				titulo = titulo + messageService.getMessage("scoring.grid.fecha1MesPasado");
+				titulo = titulo + " " + messageService.getMessage("scoring.grid.fecha1MesPasado");
 				break;
 			case 3:
-				titulo = titulo + messageService.getMessage("scoring.grid.fecha2MesesPasado");
+				titulo = titulo + " " + messageService.getMessage("scoring.grid.fecha2MesesPasado");
 				break;
 			case 4:
-				titulo = titulo + messageService.getMessage("scoring.grid.fecha3MesesPasado");
+				titulo = titulo + " " + messageService.getMessage("scoring.grid.fecha3MesesPasado");
 				break;
 			case 5:
-				titulo = titulo + messageService.getMessage("scoring.grid.fecha365DiasPasado");
+				titulo = titulo + " " + messageService.getMessage("scoring.grid.fecha365DiasPasado");
 				break;
 			
             }

@@ -24,6 +24,7 @@ import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.users.FuncionManager;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.commons.utils.Checks;
@@ -85,6 +86,9 @@ public class ADMUsuarioManager {
 
 	@Autowired
 	private FuncionManager funcionManager;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
 
 	public ADMUsuarioManager() {
 
@@ -198,13 +202,19 @@ public class ADMUsuarioManager {
 		List<Usuario> lista = null;
 		if(!Checks.esNulo(dto.getId())){
 			Usuario usu = getUsuario(dto.getId());
+			Usuario usuLogado = getUsuarioLogado();
 			List<Long> idsGrupos = proxyFactory.proxy(EXTGrupoUsuariosApi.class).buscaIdsGrupos(usu);
 			Iterator<Long> it = idsGrupos.iterator();
 			lista = new ArrayList<Usuario>();
 			while (it.hasNext()) {
 				Long id = (Long) it.next();
 				if(!Checks.esNulo(id)){
-					lista.add(getUsuario(id));
+					
+					// Se recupera el grupo para comprobar que su entidad sea la misma que la del usuario logado
+					Usuario usuGrupo =  getUsuario(id);
+					if(usuGrupo != null && usuGrupo.getEntidad().getId().equals(usuLogado.getEntidad().getId())) {
+						lista.add(usuGrupo);
+					}
 				}
 			}
 			resultado.put("results", lista);
@@ -219,13 +229,15 @@ public class ADMUsuarioManager {
 	
 	/**
 	 * 
-	 * @return
+	 * @return usuarioManager.getUsuarioLogado().getEntidad().getId()
 	 */
 	@BusinessOperation("ADMUsuarioManager.getGrupos")
 	public List<ADMDiccionarioGrupoUsuario> getGrupos() {
 		List<ADMDiccionarioGrupoUsuario> resultado = new ArrayList<ADMDiccionarioGrupoUsuario>();
 		ADMDiccionarioGrupoUsuario bean = null;
-		List<Usuario> usuarios = genericDao.getList(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "usuarioGrupo", true));
+		List<Usuario> usuarios = genericDao.getList(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "usuarioGrupo", true)
+				,genericDao.createFilter(FilterType.EQUALS, "entidad.id", usuarioManager.getUsuarioLogado().getEntidad().getId())
+				,genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 		Iterator<Usuario> it = usuarios.iterator();
 		while (it.hasNext()) {
 			Usuario usuario = (Usuario) it.next();

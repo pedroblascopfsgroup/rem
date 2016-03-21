@@ -326,7 +326,6 @@ close c_semana;
         TIPO_SOL_PREVISTA_ID, 
         NUM_SOL_PREVISTA
     from H_CNT_DET_ACUERD_SOL where DIA_ID = max_dia_mes;
-    commit;
 
     V_ROWCOUNT := sql%rowcount;     
     commit;

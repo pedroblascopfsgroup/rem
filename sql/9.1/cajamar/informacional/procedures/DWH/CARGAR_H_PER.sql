@@ -2,9 +2,9 @@ create or replace procedure CARGAR_H_PER(DATE_START IN date, DATE_END IN date, O
 	-- ===============================================================================================
 	-- Autor: Maria Villanueva, PFS Group
 	-- Fecha creación:Septiembre 2015
-  -- Responsable ultima modificacion: Jaime Sánchez-Cuenca, PFS Group
-  -- Fecha ultima modificacion: 17/03/2016
-  -- Motivos del cambio: Se obtiene la ZONA dela Oficina de la Persona
+  -- Responsable ultima modificacion: María Villanueva, PFS Group
+  -- Fecha ultima modificacion: 21/03/2016
+  -- Motivos del cambio: Distinct en carga de politicas y control de FECHACREAR
   -- Cliente: Recovery BI CAJAMAR
 	--
 	-- Descripci�n: Procedimiento almancenado que carga las tablas hechos H_PER.
@@ -237,11 +237,12 @@ begin
           
 
     execute immediate 'merge into TMP_H_PER per 
-                       using (select cmp.per_id,tpo.tpl_id,tpo.dd_pol_id from '||v_datastage||'.CMP_CICLO_MARCADO_POLITICA cmp 
+                       using (select distinct cmp.per_id,tpo.tpl_id,tpo.dd_pol_id from '||v_datastage||'.CMP_CICLO_MARCADO_POLITICA cmp 
                               join '||v_datastage||'.pol_politica pol on cmp.cmp_id=pol.cmp_id
                               join '||v_datastage||'.tpl_tipo_politica tpo on pol.tpl_id= tpo.tpl_id
                               join '||v_datastage||'.dd_pol_politicas dpo on tpo.dd_pol_id= dpo.dd_pol_id and tpo.tpl_codigo= dpo.dd_pol_codigo
-                              where pol.borrado=0) tpol
+                              where pol.borrado=0
+                              and pol.FECHACREAR<= '''||fecha||''') tpol
                       on (per.POLITICA_PERSONA_ID = tpol.DD_POL_ID and per.persona_id=tpol.per_id)
                       when matched then update set per.TIPO_POLITICA_PERSONA_ID = tpol.TPL_ID 
                       where per.DIA_ID = '''||fecha||'''';

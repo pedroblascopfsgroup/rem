@@ -2341,7 +2341,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		           				}
 	                        }
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboAdmisionDemanda","fieldLabel":"Admisión",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAdmisionDemanda'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_bienesEmbargables","fieldLabel":"Existen bienes embargables",allowBlank:false,filtradoProcurador:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_bienesEmbargables'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_bienesEmbargables","fieldLabel":"Existen bienes embargables",filtradoProcurador:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_bienesEmbargables'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]); 
 	
 	//id: 322 : T. EJECUCIÓN TÍTULO NO JUDICIAL: Auto despachando ejecucion - marcado de bienes decreto embargo (clausulas abusivas)

@@ -89,16 +89,16 @@
 					},
 					method: 'POST',
 					success: function ( result, request ) {
-					
-						var r = Ext.util.JSON.decode(result.responseText)
-						if(r.solicitudRealizada) {
+						var r = Ext.util.JSON.decode(result.responseText);
+						if(r.solicitudRealizada === 'OK') {
 							page.fireEvent(app.event.DONE);
 						}
 						else {
 							Ext.Msg.show({
-								title:'Operaci&oacute;n no disponible',
-								msg: '<s:message code="plugin.cajamarbienes.tasacion.ko"/>',
+								title:'La operaci&oacute;n no se pudo realizar',
+								msg: r.solicitudRealizada,
 								buttons: Ext.Msg.OK,
+								width: 300,
 								icon:Ext.MessageBox.INFO
 							});
 						}	

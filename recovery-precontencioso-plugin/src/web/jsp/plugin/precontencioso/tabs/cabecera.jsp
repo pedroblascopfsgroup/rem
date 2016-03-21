@@ -47,10 +47,26 @@
 	var fechaInicio = label('fechaInicio', '<s:message code="procedimiento.tabcabecera.fechainicio" text="**Fecha Inicio"/>');
 	var contratoPase = label('contratoPase', '<s:message code="plugin.mejoras.procedimiento.tabcabecera.contratoPase" text="**Contrato pase"/>');
 	var nExpedienteInterno = label('nExpedienteInterno', '<s:message code="plugin.precontencioso.cabecera.nroexpedienteInt" text="**Nro. expediente interno"/>');
+	
+	<%--NUEVOS PARA ACUERDO --%>
+	var asuntoAcuerdo = new Ext.ux.form.StaticTextField({
+		fieldLabel : '<s:message code="asunto.tabcabecera.asunto" text="**Asunto"/>'
+		,rawvalue: ""
+		,labelStyle : labelStyle2
+		,itemCls : 'no-margin'
+		,autoHeight: true
+	});
+	var fechaInicioAcuerdo = label('fechaInicioAcuerdo', '<s:message code="procedimiento.tabcabecera.fechainicio" text="**Fecha Inicio"/>');
+	var contratoPaseAcuerdo = label('contratoPaseAcuerdo', '<s:message code="plugin.mejoras.procedimiento.tabcabecera.contratoPase" text="**Contrato pase"/>');
 
 	var panelAsunto = fieldset('<s:message code="asunto.tabcabecera.asunto" text="**Asunto"/>',
 		[{items:[asunto, despacho, fechaInicio, contratoPase]},
                  {items:[gestor,supervisor,procurador, nExpedienteInterno]}
+	]);
+	<%--NUEVO PARA ACUERDO --%>
+	var panelAsuntoAcuerdo = fieldset('<s:message code="asunto.tabcabecera.asunto" text="**Asunto"/>',
+		[{items:[asuntoAcuerdo, fechaInicioAcuerdo]},
+                 {items:[contratoPaseAcuerdo]}
 	]);
 
 	var nExpedienteExterno = label('nExpedienteExterno', '<s:message code="plugin.precontencioso.cabecera.nroexpedienteExt" text="**Nro. expediente externo:"/>');
@@ -105,10 +121,21 @@
 	var plazaJuzgado = label('plazaJuzgado', '<s:message code="procedimiento.tabcabecera.plaza" text="**Plaza"/>');
 	var reclamacion = label('reclamacion', '<s:message code="procedimiento.tabcabecera.reclamacion" text="**Reclamacion"/>');
 	var estado = label('estado', '<s:message code="procedimiento.tabcabecera.estado" text="**Estado"/>');
+	
+	<%--NUEVOS PARA ACUERDO --%>
+	var procedimientoAcuerdo = label('procedimientoAcuerdo', '<s:message code="procedimiento.tabcabecera.procedimiento" text="**Procedimiento"/>');
+	var procedimientoInternoAcuerdo = label('procedimientoInternoAcuerdo', '<s:message code="procedimiento.tabcabecera.procinterno" text="**Nro. Proc. Interno"/>');
+	var estadoAcuerdo = label('estadoAcuerdo', '<s:message code="procedimiento.tabcabecera.estado" text="**Estado"/>');
   
   var panelProcedimiento = fieldset('<s:message code="procedimiento.tabcabecera.procedimiento" text="**Procedimiento"/>',
 		 [{items:[procedimiento,procedimientoInterno,procedimientoJuzgado]},
                   {items:[juzgado,plazaJuzgado, estado]} ]
+  );
+  
+  <%--NUEVO PARA ACUERDO--%>
+  var panelProcedimientoAcuerdo = fieldset('<s:message code="procedimiento.tabcabecera.procedimiento" text="**Procedimiento"/>',
+		 [{items:[procedimientoAcuerdo,procedimientoInternoAcuerdo]},
+                  {items:[estadoAcuerdo]} ]
   );
 
 
@@ -119,10 +146,21 @@
   var saldoRecuperar = label('saldoRecuperar', '<s:message code="procedimiento.tabcabecera.saldorecuperar" text="**Saldo a Recuperar"/>');
   var recuperacion = label('recuperacion', '<s:message code="procedimiento.tabcabecera.recuperacion" text="**% Recuperacion"/>');
   var meses = label('meses', '<s:message code="procedimiento.tabcabecera.tiempo" text="**Tiempo"/>');
+  <%--NUEVOS PARA ACUERDO--%>
+  var saldoVencidoAcuerdo = label('saldoVencidoAcuerdo', '<s:message code="procedimiento.tabcabecera.saldovencido" text="**Saldo Vencido Actual"/>');
+  var saldoNoVencidoAcuerdo = label('saldoNoVencidoAcuerdo', '<s:message code="procedimiento.tabcabecera.saldonovencido" text="**Saldo No Vencido Actual"/>');
+  var saldoOriginalVencidoAcuerdo = label('saldoOriginalVencidoAcuerdo', '<s:message code="procedimiento.tabcabecera.saldovencidooriginal" text="**Saldo Original Vencido"/>');
+  var saldoOriginalNoVencidoAcuerdo = label('saldoOriginalNoVencidoAcuerdo', '<s:message code="procedimiento.tabcabecera.saldonovencidooriginal" text="**Saldo Original No Vencido"/>');
   
   var panelRecuperacion = fieldset('<s:message code="procedimiento.tabcabecera.estimacionrecuperacion" text="**Estimacion Recuperacion"/>',
                  [{items:[saldoVencido,saldoNoVencido,saldoOriginalVencido, saldoOriginalNoVencido]},
             {items:[reclamacion,saldoRecuperar,recuperacion,meses]} ]
+  );
+  
+  <%--NUEVO PARA ACUERDO--%>
+  var panelRecuperacionAcuerdo = fieldset('<s:message code="procedimiento.tabcabecera.estimacionrecuperacionacuerdo" text="**Estimacion Recuperacion"/>',
+                 [{items:[saldoVencidoAcuerdo,saldoNoVencidoAcuerdo]},
+            {items:[saldoOriginalVencidoAcuerdo, saldoOriginalNoVencidoAcuerdo]} ]
   );
   
   
@@ -264,7 +302,7 @@
 				columns:1
 			}
 			,defaults : {autoHeight : true, border : true ,cellCls : 'vtop', width:780,style:'cellspacing:5px'}
-			,items:[panelAsunto,panelProcedimientoPrecontencioso,panelProcedimiento,panelRecuperacion]
+			,items:[panelAsunto,panelAsuntoAcuerdo,panelProcedimientoPrecontencioso,panelProcedimiento,panelProcedimientoAcuerdo,panelRecuperacion,panelRecuperacionAcuerdo]
 		},clientesGrid]
 		,nombreTab : 'cabeceraProcedimiento'
 		,bbar:[<sec:authorize ifAllGranted="ROLE_EDIT_CABECERA_PROCEDIMIENTO">
@@ -318,6 +356,7 @@
 		clientesIncluirStore.loadData( d.clientes );
 
 		refreshPrecontenciosoFields();
+		comprobarAcuerdo();
    	}
 
 	function refreshPrecontenciosoFields() 
@@ -368,6 +407,50 @@
 			procedimientoInterno.setValue();
 			entidad.setLabel('procedimientoInterno', entidad.get("data").cabecera.procedimientoInterno);
 		}
+	}
+	
+	function comprobarAcuerdo(){
+	
+		var data=entidad.get("data");
+		var d = data.cabecera;
+		var codigo = data.codigoTipoActuacion;
+		var href = 'javascript:app.abreAsunto('+d.asuntoId+', &quot;'+d.asunto+'&quot;,null);'
+		var link = '<a href="'+href+'">'+d.asunto+'</a>';
+		
+		if(codigo != "ASU"){
+		
+			panelAsunto.hide();
+			panelAsuntoAcuerdo.show();
+			panelProcedimiento.hide();
+			panelProcedimientoAcuerdo.show();
+			panelRecuperacion.hide();
+			panelRecuperacionAcuerdo.show();
+			<%--PANEL ASUNTO--%>	
+			asuntoAcuerdo.setRawValue(link);
+			entidad.setLabel('fechaInicioAcuerdo',d.fechaInicio);
+			entidad.setLabel('contratoPaseAcuerdo',entidad.get("data").contratoPrincipal.codigoContrato);
+			<%--PANEL PROCEDIMIENTO--%>
+			entidad.setLabel('procedimientoAcuerdo',d.procedimiento);
+			entidad.setLabel('procedimientoInternoAcuerdo',d.procedimientoInterno);
+			entidad.setLabel('estadoAcuerdo',d.estado);
+			<%--PANEL RECUPERACION--%>
+			entidad.setLabel('saldoVencidoAcuerdo',app.format.moneyRenderer(''+d.saldoVencido));
+			entidad.setLabel('saldoNoVencidoAcuerdo',app.format.moneyRenderer(''+d.saldoNoVencido));
+			entidad.setLabel('saldoOriginalVencidoAcuerdo',app.format.moneyRenderer(''+d.saldoOriginalVencido));
+			entidad.setLabel('saldoOriginalNoVencidoAcuerdo',app.format.moneyRenderer(''+d.saldoOriginalNoVencido));
+			<%--BOTON EDITAR--%>
+			btnEditarCabeceraProcedimiento.hide();
+			
+		}else{
+			panelAsunto.show();
+			panelAsuntoAcuerdo.hide();
+			panelProcedimiento.show();
+			panelProcedimientoAcuerdo.hide();
+			panelRecuperacion.show();
+			panelRecuperacionAcuerdo.hide();
+			btnEditarCabeceraProcedimiento.show();
+		}
+	
 	}
 	
 	var comprobarExpedienteEditable = function(){

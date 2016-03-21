@@ -43,10 +43,13 @@
     	    <evaluate expression="executor.execute('asuntosManager.esGestorDecision',id)" result="flowScope.esGestorDecision" />		    	
 	    	<evaluate expression="executor.execute('procedimientoManager.esSupervisor',id)" result="flowScope.esSupervisor" />
             <evaluate expression="executor.execute('procedimientoManager.buscarTareaPendiente',id)" result="flowScope.tareaPendiente" />
+            <evaluate expression="executor.execute('plugin.mejoras.acuerdoProcedimientoManager.verTabRecursos',id)" result="flowScope.verTabRecursos" />
+            <evaluate expression="executor.execute('plugin.mejoras.acuerdoProcedimientoManager.verTabInfRequerida',id)" result="flowScope.verTabInfRequerida" />
+            <evaluate expression="executor.execute('plugin.mejoras.acuerdoProcedimientoManager.codigoTipoActuacion',id)" result="flowScope.codigoTipoActuacion" />
 	    	<evaluate expression="executor.execute('recursoManager.puedeCrearRecurso',id)" result="flowScope.puedeCrearRecurso" />
 	    	<evaluate expression="executor.execute('consultaProcedimientoManager.getTabs',id)" result="flowScope.tabsProcedimiento" />
 			<evaluate expression="executor.execute('plugin.mejoras.procedimientoManager.procedimientoParalizado',id)" result="flowScope.paralizado" />
-			<evaluate expression="executor.execute('plugin.precontencioso.getPrecontenciosoPorProcedimientoId',id)" result="flowScope.precontencioso" />
+			<evaluate expression="executor.execute('plugin.precontencioso.getPrecontenciosoPorProcedimientoId',id)" result="flowScope.precontencioso" />		
 			<evaluate expression="executor.execute('plugin.precontencioso.getVisibilidadBotonesPrecontencioso','botonesDocumentos',true)" result="flowScope.botonesVisiblesDocPco" />
 			<evaluate expression="executor.execute('plugin.precontencioso.getVisibilidadBotonesPrecontencioso','botonesDocumentos',false)" result="flowScope.botonesInvisiblesDocPco" />
 			<evaluate expression="executor.execute('plugin.precontencioso.getVisibilidadBotonesPrecontencioso','botonesLiquidaciones',true)" result="flowScope.botonesVisiblesLiqPco" />

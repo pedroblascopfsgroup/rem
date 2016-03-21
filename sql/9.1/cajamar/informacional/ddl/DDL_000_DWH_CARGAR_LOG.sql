@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=Pedro Sebasti·n
+--## AUTOR=Pedro Sebasti√°n
 --## FECHA_CREACION=20160321
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
@@ -10,7 +10,7 @@
 --## Finalidad:Orden Cajamar
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 VersiÛn inicial
+--##        0.1 Versi√≥n inicial
 --##########################################
 --*/
 
@@ -18,7 +18,7 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 create or replace PROCEDURE CARGAR_LOG (error OUT VARCHAR2) AS
 -- ===============================================================================================
--- Autor: Diego PÈrez, PFS Group
+-- Autor: Diego P√©rez, PFS Group
 -- Fecha creacion: Febrero 2015
 -- Responsable ultima modificacion: Pedro S., PFS Group
 -- Fecha ultima modificacion: 19/02/2016

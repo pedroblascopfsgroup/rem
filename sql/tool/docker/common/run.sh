@@ -209,6 +209,22 @@ function package_sql () {
 		fi
 
 		cp -R $SQL_PACKAGE_DIR $ws_package_dir
+
+		if [[ -d $PROJECT_BASE/post-package ]]; then
+			echo "[INFO]: Ejecutando scripts post-empaquetado"
+			echo "[INFO]: Exportando variables [ws_package_dir] "
+			export ws_package_dir
+			for script in $PROJECT_BASE/post-package/*; do
+				echo "[INFO]: Ejecutando $(basename $script)"
+				chmod +x $script
+				$script
+				if [[ $? -ne 0 ]]; then
+					echo "[ERRR] Fallo al ejecutar $script"
+					exit 1
+				fi
+			done
+		fi
+
 		chmod -R go+w $ws_package_dir
 		for sh in $(find $ws_package_dir -name '*.sh'); do
 			chmod ugo+x $sh

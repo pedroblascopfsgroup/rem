@@ -47,7 +47,7 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 
-	private static final String ERROR_TAMANYO_MINIMO = "El fichero tiene que tener un mínimo de dos filas";
+	private static final String ERROR_TAMANYO_MINIMO = "El fichero tiene que tener un mï¿½nimo de dos filas";
 	private static final String ERROR_TAMANYO_MAXIMO = "El fichero tiene mas filas de las permitidas";
 	private static final String ERROR_SIN_CABECERA = "No se encuentran las cabeceras en el excel";
 	private static final String ERROR_FICHERO_NOT_FOUND = "No se ha podido recuperar el fichero excel";
@@ -58,15 +58,15 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 
 	/**
 	 * validarFormatoFichero; recorre una hoja excel y comprueba las
-	 * validaciones de formato especificadas (se encuentran a través del dtoFile
-	 * que recupera el tipo de operación)
+	 * validaciones de formato especificadas (se encuentran a travï¿½s del dtoFile
+	 * que recupera el tipo de operaciï¿½n)
 	 * 
 	 * @param exc
 	 *            MSVHojaExcel : descriptor de la hoja excel
 	 * @param dtoFile
-	 *            MSVExcelFileItemDto: contiene la información del tipo de
-	 *            operación
-	 * @return MSVDtoValidacionFormato: contiene la información de la validacion
+	 *            MSVExcelFileItemDto: contiene la informaciï¿½n del tipo de
+	 *            operaciï¿½n
+	 * @return MSVDtoValidacionFormato: contiene la informaciï¿½n de la validacion
 	 * 
 	 * @author pedro
 	 */
@@ -118,16 +118,27 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 	 * 
 	 * @param contentValidators
 	 *            Validadores de contenido, es requerido si se quiere hacer una
-	 *            validación de negocio. Este parámetro puede ser null si sólo
-	 *            se quiere realizar una validación de formato
+	 *            validaciï¿½n de negocio. Este parï¿½metro puede ser null si sï¿½lo
+	 *            se quiere realizar una validaciï¿½n de formato
 	 * 
-	 * @return MSVDtoValidacion contiene la información de la validacion
+	 * @return MSVDtoValidacion contiene la informaciï¿½n de la validacion
 	 * 
 	 * @author pedro
 	 */
 	@SuppressWarnings("deprecation")
 	public MSVDtoValidacion recorrerFichero(MSVHojaExcel exc, MSVHojaExcel excPlantilla, List<String> listaValidacion, MSVBusinessValidators contentValidators, 
 			MSVBusinessCompositeValidators compositeValidators, boolean validacionFormato) {
+		
+		/////////////////////////////
+		//EspecÃ­fico para la operaciÃ³n del tipo CA_AC (CarterizaciÃ³n de acreditados)
+		boolean esTipoCA=false;
+		ArrayList<String> listaAcreditados = new ArrayList<String>();
+		if(listaValidacion.size()==1 && listaValidacion.get(0).equals("CA_AC"))
+		{
+			listaValidacion = new ArrayList<String>();
+			esTipoCA=true;
+		}
+		//////////////////////////////
 
 		try {
 			MSVDtoValidacion dto = new MSVDtoValidacion();
@@ -135,13 +146,13 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 
 			// nos creamos una lista que va a tener una entrada por cada fila
 			// del fichero excel
-			// cada string contendrá la concatenación de los errores de cada
+			// cada string contendrï¿½ la concatenaciï¿½n de los errores de cada
 			// columna
-			// si una fila no tiene ningún error se le pasará un string vacío
+			// si una fila no tiene ningï¿½n error se le pasarï¿½ un string vacï¿½o
 			List<String> listaErrores = new ArrayList<String>();
 
-			// validamos las especificaciones básicas
-			// si tiene errores previos no será necesario analizar el fichero
+			// validamos las especificaciones bï¿½sicas
+			// si tiene errores previos no serï¿½ necesario analizar el fichero
 			Boolean erroresPrevios = false;
 
 			List<String> cabecerasExcel = null;
@@ -154,7 +165,7 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 			// recuperamos las cabeceras del excel
 			if (!Checks.esNulo(exc)) {
 				try {
-					// validacion tamaño minimo
+					// validacion tamaï¿½o minimo
 					if (exc.getNumeroFilas() < 2) {
 						erroresPrevios = true;
 						listaErrores.add(ERROR_TAMANYO_MINIMO);
@@ -167,7 +178,7 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 						erroresPrevios = true;
 						listaErrores.add(ERROR_TAMANYO_MAXIMO);
 					}
-					// validacion de que tiene el número de columnas que
+					// validacion de que tiene el nï¿½mero de columnas que
 					// esperamos
 					if (validacionFormato && (!Checks.esNulo(cabecerasExcel)) && (!Checks.estaVacio(cabecerasExcel))) {
 						if (cabecerasExcel.size() != listaValidacion.size()) {
@@ -191,11 +202,11 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 				erroresPrevios = true;
 				listaErrores.add(ERROR_FICHERO_NOT_FOUND);
 			}
-			// validacion tamaño maximo
+			// validacion tamaï¿½o maximo
 
 			boolean erroresContenido = false;
 			if (!erroresPrevios) {
-				// validar cada una de las líneas del fichero
+				// validar cada una de las lï¿½neas del fichero
 				for (int fila = 1; fila < exc.getNumeroFilas(); fila++) {
 					StringBuilder errorDesc = new StringBuilder();
 					// PBO: Preparar la recogida de datos para las validaciones multivalor (compuesta)
@@ -207,16 +218,31 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 						if (validacionFormato) {
 							resultadoValidacion = validaCelda(listaValidacion.get(columna), contenidoCelda, cabecerasExcel.get(columna));
 						} else {
+							
+							///////////////////////////////
+							/* PRODUCTO-858
+							Esta parte del cÃ³digo se utiliza para hacer algo especÃ­fico del tipo de operaciÃ³n masiva CC_AA (CarterizaciÃ³n de acreditados)
+							En concreto, se utiliza para la validaciÃ³n de duplicados de un campo, ID_Acreditado en este caso.
+							En caso de que estemos con una operaciÃ³n del tipo CA_AC y en la columna ID_Acreditado, llamamos al mÃ©todo 
+							hayErrorDuplicadoId que aÃ±ade un nuevo error no definido en el ac-plugin-masivo-SQL-ErrorMessages.xml */
+							if(esTipoCA==true && cabecerasExcel.get(columna).equals("ID_Acreditado"))
+							{
+								errorDesc = hayErrorDuplicadoId(listaAcreditados,contenidoCelda);
+								if(errorDesc.length()>0)
+									erroresContenido=true;										
+							}
+							///////////////////////////////
+							
 							resultadoValidacion = validaContenidoCelda(cabecerasExcel.get(columna), contenidoCelda, contentValidators);
 						}
-						errorDesc.append((resultadoValidacion.getErroresFila() != null ? resultadoValidacion.getErroresFila() : ""));
+						errorDesc.append((resultadoValidacion.getErroresFila() != null ? resultadoValidacion.getErroresFila() + ", " : ""));
 						if (!resultadoValidacion.getValido()) {
 							erroresContenido = true;
 						}
-						//PBO: recuperar los valores con sus columnas, para pasarlo a la validación multivalor (compuesta)
+						//PBO: recuperar los valores con sus columnas, para pasarlo a la validaciï¿½n multivalor (compuesta)
 						mapaDatos.put(cabecerasExcel.get(columna), contenidoCelda);
 					}
-					//PBO: Invocar a la validación multivalor (compuesta)
+					//PBO: Invocar a la validaciï¿½n multivalor (compuesta)
 					if (!validacionFormato) {
 						ResultadoValidacion resultadoValidacionCompuesta = validaContenidoFila(mapaDatos, exc.getCabeceras(), compositeValidators);
 						errorDesc.append((resultadoValidacionCompuesta.getErroresFila() != null ? resultadoValidacionCompuesta.getErroresFila() : ""));
@@ -245,6 +271,19 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 			throw new RuntimeException("Error inesperado al recorrer el fichero", e);
 		}
 	}
+	
+	private StringBuilder hayErrorDuplicadoId(List<String> listaAcreditados,String contenidoCelda) {
+		StringBuilder errorDesc = new StringBuilder();
+		
+		if(listaAcreditados.contains(contenidoCelda))
+		{
+			errorDesc.append("ID_Acreditado duplicado con la fila ");
+			errorDesc.append(listaAcreditados.indexOf(contenidoCelda)+2 + ", ");
+		}		
+			listaAcreditados.add(contenidoCelda);		
+
+		return errorDesc;
+	}
 
 	private boolean validarNombreCabeceras(List<String> cabecerasExcel,
 			List<String> cabecerasExcelPlantilla) {
@@ -260,7 +299,7 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 	}
 
 	/**
-	 * Devuelve un tipo de operación
+	 * Devuelve un tipo de operaciï¿½n
 	 * 
 	 * @param idTipoOperacion
 	 * @return
@@ -273,11 +312,11 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 	private ResultadoValidacion validaCelda(String validacion, String contenidoCelda, String cabecera) {
 
 		String inicioTextoError = "El campo '" + cabecera + "' ";
-		String errObligatorio = inicioTextoError + "no puede estar vacío. ";
-		String errNumerico = inicioTextoError + "debe ser numérico. ";
-		String errImporte = inicioTextoError + "no es un importe válido. ";
-		String errFecha = inicioTextoError + "no es una fecha válida. ";
-		String errLongitud = inicioTextoError + "debe tener una longitud máxima de ";
+		String errObligatorio = inicioTextoError + "no puede estar vacio. ";
+		String errNumerico = inicioTextoError + "debe ser numerico. ";
+		String errImporte = inicioTextoError + "no es un importe valido. ";
+		String errFecha = inicioTextoError + "no es una fecha valida. ";
+		String errLongitud = inicioTextoError + "debe tener una longitud maxima de ";
 		String errBooleano = inicioTextoError + "debe ser uno de estos valores 'S', 'SI', 'N' o 'NO' ";
 
 		ResultadoValidacion resultado = new ResultadoValidacion();
@@ -289,7 +328,7 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 				resultado.setErroresFila(errObligatorio);
 			} else if (Checks.esNulo(contenidoCelda) && (!validacion.contains("*"))) {
 				// Bruno 26/2/2013 En este caso no hacemos nada, si el campo no
-				// es obligatorio y está vacío valida
+				// es obligatorio y estï¿½ vacï¿½o valida
 			} else if (MSVExcelValidator.CODIFICACION_NUMERICA.equals(validacion.substring(0, 1))) {
 				try {
 					Long.parseLong(contenidoCelda);
@@ -364,18 +403,18 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 	}
 
 	/**
-	 * Este método comprueba que el objeto excelFile esté correcto, es decir:
+	 * Este mï¿½todo comprueba que el objeto excelFile estï¿½ correcto, es decir:
 	 * <ol>
 	 * <li>Que contenga un fileItem</li>
 	 * <li>Que el fileItem contenga un File</li>
 	 * <ol>
-	 * Si todo es correcto éste método termina con normalidad, si no lanza una
-	 * excepción de tipo IllegalStateException
+	 * Si todo es correcto ï¿½ste mï¿½todo termina con normalidad, si no lanza una
+	 * excepciï¿½n de tipo IllegalStateException
 	 * 
 	 * @param excelFile
 	 * 
 	 * @throws IllegalStateExcepcion
-	 *             Lanza esta excepción si el excelFile es null o si alguna de
+	 *             Lanza esta excepciï¿½n si el excelFile es null o si alguna de
 	 *             las condiciones no se cumple
 	 * 
 	 * @author bruno

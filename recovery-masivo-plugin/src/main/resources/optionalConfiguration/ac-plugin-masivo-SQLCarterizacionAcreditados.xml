@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName"> 
+
+<bean class="es.pfsgroup.plugin.recovery.masivo.bvfactory.impl.validators.querys.MSVFactoriaQuerysSQLValidarCarterizacionAcreditados" init-method="init">
+	<property name="configValidacion">
+		<map>	
+			<entry key="0" value-ref="MSVSQLOk"/>		
+			<entry key="1" value-ref="MSVSQLNoExisteAcreditado"/>
+			<entry key="2" value-ref="MSVSQLNoExisteUsuarioGestor"/>
+			<entry key="3" value-ref="MSVSQLAcreditadoEnExpediente"/>
+			<entry key="4" value-ref="MSVSQLGestorSinPerfilCarterizar"/>
+			
+		</map>
+	</property>
+	<property name="sqlValidacion">
+		<map>
+			<entry>
+				<key><value>ID_ACREDITADO</value></key>
+				<value>
+					<![CDATA[
+						SELECT CASE
+				          	WHEN (select COUNT(*) from PER_PERSONAS where PER_DOC_ID = 'VALUETOKEN') = 0
+				        then 1 /*Que exista el acreditado*/
+				        
+				          	WHEN (SELECT COUNT (EXP_ID) FROM PEX_PERSONAS_EXPEDIENTE WHERE PER_ID IN 
+							(SELECT PER_ID FROM PER_PERSONAS WHERE PER_DOC_ID = 'VALUETOKEN') 
+							AND EXP_ID IN (SELECT EXP_ID FROM EXP_EXPEDIENTES E, DD_TPX_TIPO_EXPEDIENTE TE 
+							WHERE E.DD_TPX_ID = TE.DD_TPX_ID AND TE.DD_TPX_CODIGO = 'GESDEU') 
+              				AND EXP_ID IN (SELECT EXP_ID FROM EXP_EXPEDIENTES E, ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE ES 
+             			    WHERE E.DD_EEX_ID = ES.DD_EEX_ID AND (DD_EEX_CODIGO = '1' OR DD_EEX_CODIGO = '2'))) > 0
+				        then 3 /*Que el acreditado ya esté en un expediente en gestión*/
+				          ELSE 0
+				       END RESULT
+				  FROM DUAL				        
+				    ]]>					
+				</value>
+			</entry>
+			<entry>
+				<key><value>USUARIO_GESTOR</value></key>
+				<value>
+					<![CDATA[
+						SELECT CASE
+				          	WHEN (select COUNT(*) from ${master.schema}.USU_USUARIOS where usu_username = 'VALUETOKEN') = 0
+				        then 2 /*Que exista el usuario gestor*/
+				        
+				        WHEN (SELECT COUNT(*) FROM ZON_PEF_USU WHERE USU_ID IN 
+				          	(SELECT USU_ID FROM ${master.schema}.USU_USUARIOS WHERE USU_USERNAME = 'VALUETOKEN') AND PEF_ID IN 
+				          	(SELECT PEF_ID FROM PEF_PERFILES WHERE PEF_CODIGO = 'FPFCARTERIZ')) = 0
+				        then 4 /*Que el usuario gestor no tenga el perfil de carterizacion de acreditados pef_codigo = FPFCARTERIZ */
+				          ELSE 0
+				       END RESULT
+				  FROM DUAL				        
+				    ]]>					
+				</value>
+			</entry>					
+		</map>
+	</property>	
+  </bean> 
+ 
+</beans>	
+

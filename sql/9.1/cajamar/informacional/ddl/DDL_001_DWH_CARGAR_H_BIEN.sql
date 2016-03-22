@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Jaime S-C.
---## FECHA_CREACION=20160317
+--## FECHA_CREACION=20160322
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=GC-1271
+--## INCIDENCIA_LINK=GC-1289
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Corrección del NUMERO_OPERACION_ID y PRIMER_TITULAR del BIEN para que coincida con el Nombre del Asunto
@@ -22,7 +22,7 @@ create or replace PROCEDURE CARGAR_H_BIEN (DATE_START IN DATE, DATE_END IN DATE,
 -- Fecha creación: Septiembre 2015
 -- Responsable ultima modificacion: Jaime Sánchez-Cuenca Bellido, PFS Group
 
--- Fecha ultima modificacion: 17/03/2016
+-- Fecha ultima modificacion: 22/03/2016
 -- Motivos del cambio: CMREC-2249 - No correspondencia del asunto y contrato con la persona que sale en el lanzamiento.
 -- Cliente: Recovery BI Cajamar
 --
@@ -301,9 +301,8 @@ BEGIN
                     (SELECT AUX_TITULARES.BIE_ID, AUX_TITULARES.PRC_ID, AUX_TITULARES.CNT_ID, MIN(AUX_TITULARES.PER_ID) PER_ID FROM(
                         SELECT DISTINCT PER.PER_ID, PRB.BIE_ID, PRB.PRC_ID, AUX.CNT_ID, CPE.CPE_ORDEN, rank() over (partition by PRB.BIE_ID order by cpe.cpe_orden) as ranking2 FROM(
                                 SELECT DISTINCT BIE_CNT.bie_id ,CNT.CNT_ID, MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA, rank() over (partition by BIE_CNT.BIE_ID order by (MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA) DESC, MOV_ID) as ranking
-                                FROM '|| V_DATASTAGE ||'.BIE_CNT, '|| V_DATASTAGE ||'.CNT_CONTRATOS CNT, '|| V_DATASTAGE ||'.MOV_MOVIMIENTOS MOV
-                                WHERE BIE_CNT.CNT_ID = cnt.cnt_id
-                                AND CNT.CNT_ID = MOV.CNT_ID
+                                FROM '|| V_DATASTAGE ||'.CNT_CONTRATOS CNT, '|| V_DATASTAGE ||'.MOV_MOVIMIENTOS MOV
+                                WHERE CNT.CNT_ID = MOV.CNT_ID
                                 AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION
                     ) AUX,
                     '|| V_DATASTAGE ||'.CPE_CONTRATOS_PERSONAS CPE, '|| V_DATASTAGE ||'.DD_TIN_TIPO_INTERVENCION TIN, '|| V_DATASTAGE ||'.PER_PERSONAS PER, '|| V_DATASTAGE ||'.PRB_PRC_BIE PRB
@@ -388,27 +387,28 @@ BEGIN
         commit;
         
         execute immediate '
-        MERGE INTO TMP_H_BIE TMP USING
-                    (SELECT AUX_TITULARES.BIE_ID, AUX_TITULARES.CNT_ID, MIN(AUX_TITULARES.PER_ID) PER_ID FROM(
-                        SELECT DISTINCT PER.PER_ID, AUX.BIE_ID, AUX.CNT_ID, CPE.CPE_ORDEN, rank() over (partition by BC.BIE_ID order by cpe.cpe_orden) as ranking2 FROM(
-                                SELECT DISTINCT BIE_CNT.bie_id ,CNT.CNT_ID, MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA, rank() over (partition by BIE_ID order by (MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA) DESC, MOV_ID) as ranking
-                                FROM '|| V_DATASTAGE ||'.BIE_CNT, '|| V_DATASTAGE ||'.CNT_CONTRATOS CNT, '|| V_DATASTAGE ||'.MOV_MOVIMIENTOS MOV
-                                WHERE BIE_CNT.CNT_ID = cnt.cnt_id
-                                AND CNT.CNT_ID = MOV.CNT_ID
+        MERGE INTO TMP_H_BIE TMP USING(
+                    SELECT AUX_TITULARES.ASU_ID, AUX_TITULARES.CNT_ID, MIN(AUX_TITULARES.PER_ID) PER_ID FROM(
+                        SELECT DISTINCT PER.PER_ID, AUX.ASU_ID, AUX.CNT_ID, CPE.CPE_ORDEN, rank() over (partition by AUX.ASU_ID order by cpe.cpe_orden) as ranking2 FROM(
+                                SELECT DISTINCT ASU.ASU_ID, CNT.CNT_ID, MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA, rank() over (partition by ASU.ASU_ID order by (MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA) DESC, MOV_ID) as ranking
+                                FROM '||V_DATASTAGE||'.CNT_CONTRATOS CNT, '||V_DATASTAGE||'.MOV_MOVIMIENTOS MOV, '||V_DATASTAGE||'.CEX_CONTRATOS_EXPEDIENTE CEX, '||V_DATASTAGE||'.EXP_EXPEDIENTES EXP,
+                                     '||V_DATASTAGE||'.ASU_ASUNTOS ASU
+                                WHERE CNT.CNT_ID = MOV.CNT_ID
                                 AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION
+                                AND CNT.CNT_ID = CEX.CNT_ID
+                                AND CEX.EXP_ID = EXP.EXP_ID
+                                AND EXP.EXP_ID = ASU.EXP_ID
                     ) AUX,
-                    '|| V_DATASTAGE ||'.CPE_CONTRATOS_PERSONAS CPE, '|| V_DATASTAGE ||'.DD_TIN_TIPO_INTERVENCION TIN, '|| V_DATASTAGE ||'.PER_PERSONAS PER, '|| V_DATASTAGE ||'.BIE_CNT BC
-                        WHERE AUX.BIE_ID = BC.BIE_ID
-                        AND AUX.CNT_ID = BC.CNT_ID
-			AND BC.CNT_ID = CPE.CNT_ID
+                    '||V_DATASTAGE||'.CPE_CONTRATOS_PERSONAS CPE, '||V_DATASTAGE||'.DD_TIN_TIPO_INTERVENCION TIN, '||V_DATASTAGE||'.PER_PERSONAS PER
+                        WHERE AUX.CNT_ID = CPE.CNT_ID
                         AND CPE.DD_TIN_ID = TIN.DD_TIN_ID AND TIN.DD_TIN_TITULAR = 1
                         AND CPE.PER_ID = PER.PER_ID AND PER.BORRADO = 0
                         AND AUX.RANKING = 1) AUX_TITULARES
                      WHERE AUX_TITULARES.RANKING2 = 1
-                     GROUP BY AUX_TITULARES.BIE_ID, AUX_TITULARES.CNT_ID) TITULAR_BIEN
-	ON (TMP.BIE_ID = TITULAR_BIEN.BIE_ID)
-	WHEN MATCHED THEN UPDATE SET TMP.PRIMER_TITULAR_BIE_ID = TITULAR_BIEN.PER_ID,
-                             	     TMP.NUM_OPERACION_BIEN_ID = TITULAR_BIEN.CNT_ID';
+                     GROUP BY AUX_TITULARES.ASU_ID, AUX_TITULARES.CNT_ID) TITULAR_BIEN
+        ON (TMP.ASUNTO_ID = TITULAR_BIEN.ASU_ID )
+        WHEN MATCHED THEN UPDATE SET TMP.PRIMER_TITULAR_BIE_ID = TITULAR_BIEN.PER_ID,
+                                     TMP.NUM_OPERACION_BIEN_ID = TITULAR_BIEN.CNT_ID';
    
                   
         V_ROWCOUNT := sql%rowcount;
@@ -424,11 +424,10 @@ BEGIN
         COMMIT;
         
         execute immediate 'MERGE INTO TMP_H_BIE TMP USING(
-                               SELECT BC.BIE_ID, CNT.CNT_ID, CNT.ZON_ID, CNT.OFI_ID, ENP.DD_ENP_ID 
-                               FROM '||V_DATASTAGE||'.BIE_CNT BC, '||V_DATASTAGE||'.CNT_CONTRATOS CNT, '||V_DATASTAGE||'.DD_ENP_ENTIDADES_PROPIETARIAS ENP
-                               WHERE BC.CNT_ID = CNT.CNT_ID
-                               AND CNT.CNT_COD_ENTIDAD = ENP.DD_ENP_CODIGO) CONTRATO_BIEN
-                           ON (TMP.BIE_ID = CONTRATO_BIEN.BIE_ID AND TMP.NUM_OPERACION_BIEN_ID = CONTRATO_BIEN.CNT_ID)
+                               SELECT CNT.CNT_ID, CNT.ZON_ID, CNT.OFI_ID, ENP.DD_ENP_ID 
+                               FROM '||V_DATASTAGE||'.CNT_CONTRATOS CNT, '||V_DATASTAGE||'.DD_ENP_ENTIDADES_PROPIETARIAS ENP
+                               WHERE CNT.CNT_COD_ENTIDAD = ENP.DD_ENP_CODIGO) CONTRATO_BIEN
+                           ON (TMP.NUM_OPERACION_BIEN_ID = CONTRATO_BIEN.CNT_ID)
                            WHEN MATCHED THEN UPDATE SET ZONA_BIEN_ID = CONTRATO_BIEN.ZON_ID,
                                                         OFICINA_BIEN_ID = CONTRATO_BIEN.OFI_ID,
                                                         ENTIDAD_BIEN_ID = CONTRATO_BIEN.DD_ENP_ID';

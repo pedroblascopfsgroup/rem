@@ -1,9 +1,27 @@
+--/*
+--##########################################
+--## AUTOR=Jaime S-C.
+--## FECHA_CREACION=20160322
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=GC-1289
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Corrección del NUMERO_OPERACION_ID y PRIMER_TITULAR del BIEN para que coincida con el Nombre del Asunto
+--## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
 create or replace PROCEDURE CARGAR_DIM_BIEN(O_ERROR_STATUS OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Jaime Sánchez-Cuenca, PFS Group
 -- Fecha creacion: Septiembre 2015
 -- Responsable ultima modificacion: Jaime Sánchez-Cuenca, PFS Group
--- Fecha ultima modificacion: 03/12/2015
+-- Fecha ultima modificacion: 22/03/2016
 -- Motivos del cambio: CMREC - 1220 : Desarrollo - Informes específicos CM - Bienes y Subastas
 -- Cliente: Recovery BI CAJAMAR
 --
@@ -446,3 +464,7 @@ EXCEPTION
     --ROLLBACK;
 END;
 END CARGAR_DIM_BIEN;
+/
+EXIT
+
+

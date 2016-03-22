@@ -1,21 +1,4 @@
---/*
---##########################################
---## AUTOR=María Villanueva
---## FECHA_CREACION=20160321
---## ARTEFACTO=batch
---## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=GC-1271
---## PRODUCTO=NO
---## 
---## Finalidad:D_PRC_PROCURADOR
---## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
---## VERSIONES:
---##        0.1 Versión inicial
---##########################################
---*/
 
-WHENEVER SQLERROR EXIT SQL.SQLCODE;
-SET SERVEROUTPUT ON;
 create or replace PROCEDURE CREAR_DIM_PROCEDIMIENTO (error OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Gonzalo Martín, PFS Group
@@ -157,9 +140,9 @@ create or replace PROCEDURE CREAR_DIM_PROCEDIMIENTO (error OUT VARCHAR2) AS
     -- D_PRC_ENT_CEDENTE
     -- D_PRC_PROP_SAREB
 
-	-- D_PRC_TIPO_SOL_PREVISTA
+    -- D_PRC_TIPO_SOL_PREVISTA
     -- D_PRC_PROCURADOR
-	
+    
 BEGIN
 
 declare
@@ -1186,7 +1169,7 @@ declare
     
 V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_GESTOR_IX'', ''TMP_PRC_GESTOR (PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT error;
-			
+            
     
 
     ----------------------------- TMP_PRC_SUPERVISOR --------------------------
@@ -1255,16 +1238,16 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_SUPER_IX'', ''TMP
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_TIPO_GESTOR');
     
-	
-	----------------------------- D_PRC_FASE_SUBASTA_CONCURSAL --------------------------
+    
+    ----------------------------- D_PRC_FASE_SUBASTA_CONCURSAL --------------------------
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PRC_FASE_SUBASTA_CONCURSAL'', 
                           ''FASE_SUBASTA_CONCURSAL_ID NUMBER(16,0) NOT NULL,
-							FASE_SUBASTA_CONCURSAL_DESC VARCHAR2(250 CHAR),
-							PRIMARY KEY (FASE_SUBASTA_CONCURSAL_ID)'', 
+                            FASE_SUBASTA_CONCURSAL_DESC VARCHAR2(250 CHAR),
+                            PRIMARY KEY (FASE_SUBASTA_CONCURSAL_ID)'', 
                             :error); END;';
     execute immediate V_SQL USING OUT error;
-	  DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_FASE_SUBASTA_CONCURSAL');
-	
+      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_FASE_SUBASTA_CONCURSAL');
+    
   
     ------------------------------ D_PRC_PROPIETARIO--------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PRC_PROPIETARIO'', 
@@ -1381,7 +1364,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_SUPER_IX'', ''TMP
                             :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_ESTADO_DOCUMENTO');
-	  
+      
 
         
 
@@ -1518,7 +1501,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_SUPER_IX'', ''TMP
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_ENT_CEDENTE');
         
-	
+    
     ------------------------------ D_PRC_PROP_SAREB--------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PRC_PROP_SAREB'', 
                           ''PROP_SAREB_ID NUMBER(16,0) NOT NULL,
@@ -1530,11 +1513,11 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_SUPER_IX'', ''TMP
         
     ------------------------------ D_PRC_TIPO_SOL_PREVISTA --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PRC_TIPO_SOL_PREVISTA'', 
-						  ''TIPO_SOL_PREVISTA_ID NUMBER(16,0) NOT NULL,
+                          ''TIPO_SOL_PREVISTA_ID NUMBER(16,0) NOT NULL,
                             TIPO_SOL_PREVISTA_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (TIPO_SOL_PREVISTA_ID)'', :error); END;'; 		 
+                            PRIMARY KEY (TIPO_SOL_PREVISTA_ID)'', :error); END;';        
  execute immediate V_SQL USING OUT error;
-      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_TIPO_SOL_PREVISTA');.
+      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_TIPO_SOL_PREVISTA');
 
     ------------------------------ D_PRC_PROCURADOR --------------------------
 
@@ -1548,12 +1531,10 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_SUPER_IX'', ''TMP
                             :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_PROCURADOR');
-		
+        
     --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina ' || V_NOMBRE, 2;
 
  end;
 
 END CREAR_DIM_PROCEDIMIENTO;
-/
-EXIT

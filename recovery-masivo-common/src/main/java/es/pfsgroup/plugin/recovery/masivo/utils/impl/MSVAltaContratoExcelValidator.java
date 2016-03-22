@@ -51,6 +51,17 @@ public class MSVAltaContratoExcelValidator extends MSVExcelValidatorAbstract {
 		MSVHojaExcel excPlantilla = excelParser.getExcel(recuperarPlantilla(dtoFile.getIdTipoOperacion()));
 		MSVBusinessValidators validators = validationFactory.getValidators(getTipoOperacion(dtoFile.getIdTipoOperacion()));
 		MSVBusinessCompositeValidators compositeValidators = validationFactory.getCompositeValidators(getTipoOperacion(dtoFile.getIdTipoOperacion()));
+		/* PRODUCTO-858
+		El método validarContenidoFichero se utiliza al subir el archivo excel en recovery y al validarlo. 
+		En el primer caso la variable lista contiene validaciones de formato (tipos de valores de los campos(String, numérico,etc) y obligatoriedad de los mismos). 
+		Para el tipo de operacion CA_AC la lista contendría lo siguiente: [s*,s,s,s,s*].
+		En el segundo caso, cuando se valida el fichero subido, la variable lista está vacía, de modo que usaremos esta variable para guardar en ella el tipo de operacion CA_AC
+		cuando se llama al método recorrer fichero que se encuentra más abajo. Dentro del método recorrerFichero veremos que se hace con el contenido de esta lista. */
+		
+		if(getTipoOperacion(dtoFile.getIdTipoOperacion()).getCodigo().equals("CA_AC"))
+		{
+			lista.add(getTipoOperacion(dtoFile.getIdTipoOperacion()).getCodigo());
+		}
 		MSVDtoValidacion dtoValidacionContenido = recorrerFichero(exc, excPlantilla, lista, validators, compositeValidators, false);
 		return dtoValidacionContenido;
 	}

@@ -162,10 +162,17 @@ function package_sql () {
 		local package_script=./sql/tool/package-scripts-from-tag.sh
 		local tag_or_list=$1
 		local cliente=$2
+		POST_PKG_SCRIPTS_DIR=$WORKSPACE_DIR/post-package
 		rm -Rf $WORKSPACE_DIR/package*
 		rm -Rf $SQL_PACKAGE_DIR
 		rm -Rf $PACKAGE_TAGS_DIR
+		rm -Rf $POST_PKG_SCRIPTS_DIR
 		cd ../../../..
+
+		if [[ -d $PROJECT_BASE/post-package ]]; then
+			cp -R $PROJECT_BASE/post-package $WORKSPACE_DIR
+			chmod -R 777 $POST_PKG_SCRIPTS_DIR
+		fi
 
 		if [[ -f $TAG_LISTS_FILE ]]; then
 			tag_or_list=$(basename $TAG_LISTS_FILE)
@@ -210,11 +217,11 @@ function package_sql () {
 
 		cp -R $SQL_PACKAGE_DIR $ws_package_dir
 
-		if [[ -d $PROJECT_BASE/post-package ]]; then
+		if [[ -d $POST_PKG_SCRIPTS_DIR ]]; then
 			echo "[INFO]: Ejecutando scripts post-empaquetado"
 			echo "[INFO]: Exportando variables [ws_package_dir] "
 			export ws_package_dir
-			for script in $PROJECT_BASE/post-package/*; do
+			for script in $POST_PKG_SCRIPTS_DIR/*; do
 				echo "[INFO]: Ejecutando $(basename $script)"
 				chmod +x $script
 				$script

@@ -94,7 +94,8 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] CAJAMAR MIGRACION CONTRATOS MARCA HAYA');
              , '||v_esquema||'.MIG_EXPEDIENTES_OPERACIONES eop
              , '||v_esquema||'.MIG_EXPEDIENTES_CABECERA cab
              , '||v_esquema||'.TMP_CNT_CONTRATOS           tmp
-         where tmp.tmp_cnt_remu_gest_especial = ''EX''
+--         where tmp.tmp_cnt_remu_gest_especial = ''EX''
+         where tmp.tmp_cnt_char_extra7 is not null         
            and g.cnt_contrato = eop.numero_contrato
            and g.cnt_contrato = tmp.tmp_cnt_contrato
            and eop.cd_Expediente = cab.cd_expediente 

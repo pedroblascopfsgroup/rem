@@ -75,7 +75,13 @@
 	</state>
 
 
-	<end-state name="Fin"></end-state>
+	<end-state name="Fin">
+	  <event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>endProcessActionHandler</targetBean>
+         </action>
+      </event>  
+    </end-state>
 
 
 </process-definition>

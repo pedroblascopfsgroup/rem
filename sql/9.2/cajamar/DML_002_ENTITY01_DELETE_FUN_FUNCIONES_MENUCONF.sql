@@ -5,7 +5,7 @@
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2.0
 --## INCIDENCIA_LINK=PRODUCTO-703
---## PRODUCTO=SI
+--## PRODUCTO=NO
 --##
 --## Finalidad:
 --## INSTRUCCIONES: 

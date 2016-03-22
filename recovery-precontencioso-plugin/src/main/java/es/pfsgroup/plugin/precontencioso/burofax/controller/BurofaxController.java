@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.burofax.controller;
 
+import java.io.File;
 import java.text.Collator;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -84,6 +85,7 @@ public class BurofaxController {
 	private static final String JSP_EDITAR_BUROFAX  ="plugin/precontencioso/burofax/jsp/editarBurofax";
 	
 	private static final String JSP_ENVIAR_BUROFAX  ="plugin/precontencioso/burofax/jsp/enviarBurofax";
+	private static final String JSP_ENVIAR_BUROFAX_CAJAMAR  ="plugin/precontencioso/burofax/jsp/enviarBurofaxCajamar";
 	
 	private static final String JSP_AGREGAR_NOTIFICACION  ="plugin/precontencioso/burofax/jsp/pantallaNotificacion";
 	
@@ -850,8 +852,13 @@ public class BurofaxController {
     	model.put("arrayIdBurofax",idBurofax);
     	model.put("arrayIdEnvios",arrayIdEnvios);
 		
-    	
-    	return JSP_ENVIAR_BUROFAX;
+    	//CAJAMAR y HAYA-CAJAMAR tienen su propio JSP
+		Usuario userLogged = usuarioManager.getUsuarioLogado(); 
+		if (userLogged.getEntidad().getDescripcion().equals("CAJAMAR")) {
+			return JSP_ENVIAR_BUROFAX_CAJAMAR;
+		} else {
+			return JSP_ENVIAR_BUROFAX;
+		}
     }
     
     /**
@@ -949,23 +956,27 @@ public class BurofaxController {
 	@RequestMapping
 	private String descargarBurofax(WebRequest request, ModelMap model,@RequestParam(value = "idEnvio", required = true) Long idEnvio){
 		
-    	BurofaxEnvioIntegracionPCO burofaxEnvio=burofaxManager.getBurofaxEnvioIntegracionByIdEnvio(idEnvio);
+    	BurofaxEnvioIntegracionPCO envioIntegracion=burofaxManager.getBurofaxEnvioIntegracionByIdEnvio(idEnvio);
 
-		if(!Checks.esNulo(burofaxEnvio) && !Checks.esNulo(burofaxEnvio.getContenido())){
-			EnvioBurofaxPCO envioBurofax = burofaxManager.getEnvioBurofaxById(idEnvio);
-			if(!Checks.esNulo(envioBurofax)){
-				
-				FileItem fileitem = burofaxManager.generarBurofaxPDF(envioBurofax, burofaxEnvio.getNombreFichero());
+		if(!Checks.esNulo(envioIntegracion) && !Checks.esNulo(envioIntegracion.getContenido())){
+			Usuario userLogged = usuarioManager.getUsuarioLogado();
+			FileItem fileitem = null;
+			if (userLogged.getEntidad().getDescripcion().equals("CAJAMAR")) {
+				fileitem = burofaxManager.obtenerBurofaxPDF(envioIntegracion.getNombreFichero());
 				fileitem.setContentType("application/pdf");
-				if(!Checks.esNulo(burofaxEnvio.getNombreFichero())){
-					fileitem.setFileName(burofaxEnvio.getNombreFichero());
+			} else {
+				EnvioBurofaxPCO envioBurofax = burofaxManager.getEnvioBurofaxById(idEnvio);
+				if(!Checks.esNulo(envioBurofax)){
+					fileitem = burofaxManager.generarBurofaxPDF(envioBurofax, envioIntegracion.getNombreFichero());
+					fileitem.setContentType("application/pdf");
+					if(!Checks.esNulo(envioIntegracion.getNombreFichero())){
+						fileitem.setFileName(envioIntegracion.getNombreFichero());
+					} else {
+						fileitem.setFileName("BUROFAX-"+envioIntegracion.getCliente().replace(",","").trim()+".pdf");
+					}
 				}
-				else{
-					fileitem.setFileName("BUROFAX-"+burofaxEnvio.getCliente().replace(",","").trim()+".pdf");
-				}
-				model.put("fileItem", fileitem);
-			
 			}
+			model.put("fileItem", fileitem);
 		}
 
 		return JSP_DOWNLOAD_FILE;

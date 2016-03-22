@@ -1289,4 +1289,23 @@ public class BurofaxManager implements BurofaxApi {
 		return true;
 	}
 
+	public FileItem obtenerBurofaxPDF(String nombreFichero) {
+	
+		final String DEVON_HOME = "DEVON_HOME";
+
+		String directorio =  File.separator + System.getenv(DEVON_HOME); 
+		try {
+			directorio = parametrizacionDao.buscarParametroPorNombre(DIRECTORIO_PDF_BUROFAX_PCO).getValor();
+		} catch (Exception e) {
+			logger.info("No se puede recuperar el parámetro " + DIRECTORIO_PDF_BUROFAX_PCO + " :" + e.getMessage());
+		}
+
+		File archivoBurofaxPDF = new File(directorio + File.separator + nombreFichero);
+		FileItem fi = new FileItem();
+		fi.setFile(archivoBurofaxPDF);
+		fi.setFileName(nombreFichero);
+		fi.setContentType("application/pdf");
+		fi.setLength(archivoBurofaxPDF.length());
+		return fi;
+	}
 }

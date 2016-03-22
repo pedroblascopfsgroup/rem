@@ -8,4 +8,5 @@ bin
 /RemoteSystemsTempFiles/
 *.log
 package.sh
+*~
 

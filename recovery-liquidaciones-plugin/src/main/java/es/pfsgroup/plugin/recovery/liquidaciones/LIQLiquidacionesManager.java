@@ -126,7 +126,7 @@ public class LIQLiquidacionesManager {
 		if (!Checks.esNulo(proc.getAsunto())) {
 			if (!Checks.esNulo(proc.getAsunto().getProcurador())) {
 				if (!Checks.esNulo(proc.getAsunto().getProcurador().getUsuario())) {
-					proc.getAsunto().getProcurador().getUsuario().getApellidoNombre();
+					response.getCabecera().setProcurador(proc.getAsunto().getProcurador().getUsuario().getApellidoNombre());
 				}
 			}
 		}

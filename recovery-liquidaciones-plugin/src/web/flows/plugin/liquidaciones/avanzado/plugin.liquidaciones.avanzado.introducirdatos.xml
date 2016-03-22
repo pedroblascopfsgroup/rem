@@ -3,11 +3,14 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
-	<input name="id" required="true" type="java.lang.Long"/>
+	<input name="idAsunto" required="true" type="java.lang.Long"/>
 
-	<end-state id="persona" view="plugin/liquidaciones/personaJSON">
+	<end-state id="formulario" view="plugin/liquidaciones/avanzado/introducirdatos">
+
 		<on-entry>
-			<evaluate expression="executor.execute('plugin.liquidaciones.liquidacionesManager.findpPrimerTitular', id)" result="flowScope.persona" />
+			<evaluate expression="executor.execute('asuntosManager.obtenerActuacionesAsunto',idAsunto)"
+				result="flowScope.actuaciones" />
 		</on-entry>
 	</end-state>
+
 </flow>

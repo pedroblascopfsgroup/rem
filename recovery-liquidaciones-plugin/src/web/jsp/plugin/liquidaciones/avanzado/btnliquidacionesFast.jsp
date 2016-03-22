@@ -5,12 +5,13 @@
 
 new Ext.Button({
 	text : '<s:message code="plugin.liquidaciones.btnliquidaciones.caption" text="**Liquidar" />'
+	,conodition : '' 
 	,handler : function() {
 		var w = app.openWindow({
-			flow : 'plugin.liquidaciones.introducirdatos'
+			flow : 'plugin.liquidaciones.avanzado.introducirdatos'
 			,width:950
 			,title : '<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Liquidaciones" />' 
-			,params : {idAsunto:"${asunto.id}"}
+			,params : {idAsunto:data.id}
 		});
 		w.on(app.event.DONE, function(){
 			w.close();

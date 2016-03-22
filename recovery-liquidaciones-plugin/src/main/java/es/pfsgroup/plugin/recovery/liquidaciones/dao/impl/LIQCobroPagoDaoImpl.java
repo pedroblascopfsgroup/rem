@@ -25,7 +25,7 @@ public class LIQCobroPagoDaoImpl extends AbstractEntityDao<LIQCobroPago, Long> i
 		b.appendWhere("cp.subTipo.codigo = 'EC'");
 		HQLBuilder.addFiltroBetweenSiNotNull(b, "cp.fecha", fechaCierre, fechaLiquidacion);
 		b.appendWhere("cp.estado.codigo = '04'");
-		b.orderBy("cp.fecha", HQLBuilder.ORDER_ASC);
+		b.orderBy("cp.fechaValor", HQLBuilder.ORDER_ASC);
 		
 		return HibernateQueryUtils.list(this, b);
 	}

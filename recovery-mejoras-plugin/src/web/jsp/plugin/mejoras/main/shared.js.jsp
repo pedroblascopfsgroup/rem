@@ -871,6 +871,55 @@ app.openPDF=function(flow,tipo,params){
 };
 
 /**
+descarga un fichero enviado los parametros por POST
+*/
+app.downloadFile = function(config){
+    config = config || {};
+    var url = app.resolveFlow(config.flow);
+    var method = config.method || 'POST'; // Either GET or POST. Default is POST.
+    var params = config.params || {};
+
+    // Create form panel. It contains a basic form that we need for the file download.
+    var fp = new Ext.form.FormPanel({
+        standardSubmit: false
+        ,url: url
+        ,method: method
+        ,renderTo: Ext.getBody()
+        ,target : '_blank'
+    });
+
+    // Call the submit to begin the file download.
+    var form = fp.getForm();
+    
+    if (config.params && !fp.paramsAdded) {
+        // add hidden items for all params
+        for (i in config.params) {
+            fp.add({
+                xtype: 'hidden',
+                name: i,
+                value: config.params[i]
+            });
+        }
+        fp.doLayout();
+        // set a custom flag to prevent re-adding
+        fp.paramsAdded = true;
+    }    
+    
+     var el = form.getEl().dom;
+     var target = document.createAttribute("target");
+     target.nodeValue = "_blank";
+     el.setAttributeNode(target);
+     el.action = form.url;
+     el.submit();     
+    
+    // Clean-up the form after 100 milliseconds.
+    // Once the submit is called, the browser does not care anymore with the form object.
+    /*Ext.defer(function(){
+        fp.close();
+    }, 100);*/
+}	
+
+/**
 abre una nueva ventana del navegador con el flow y par�metros que se le pasan
 */
 app.openBrowserWindow = function(flow, params){

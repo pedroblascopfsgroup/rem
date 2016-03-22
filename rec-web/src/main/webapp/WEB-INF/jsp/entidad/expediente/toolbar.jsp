@@ -1008,9 +1008,6 @@ function(entidad,page){
 				case 'SANC' :
 					if(esGestorSupervisorDeFase){
 						for(var i = 0; i < estados.length; i++){
-							if(estados[i].codigo == 'FP'){
-								showHide(estadoExpediente ==  EXP_ACTIVO ,'expediente-accion13-elevarFormalizarPropuesta');
-							}
 												
 							if(estados[i].codigo == 'CE')
 							{

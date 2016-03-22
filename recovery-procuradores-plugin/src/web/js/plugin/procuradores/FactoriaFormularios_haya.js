@@ -220,17 +220,29 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     	resolucionesSinAdjunto.push({idResolucion:311, validateFunction:null});
     	resolucionesSinAdjunto.push({idResolucion:314, validateFunction:null});
     	resolucionesSinAdjunto.push({idResolucion:340, validateFunction:null});
-    	resolucionesSinAdjunto.push({idResolucion:325, validateFunction:null});
-    	resolucionesSinAdjunto.push({idResolucion:328, validateFunction:null});
-    	resolucionesSinAdjunto.push({idResolucion:331, validateFunction:null});
-    	resolucionesSinAdjunto.push({idResolucion:275, validateFunction:null});
-    	resolucionesSinAdjunto.push({idResolucion:268, validateFunction:null});
-    	resolucionesSinAdjunto.push({idResolucion:279, validateFunction:null});
-    	resolucionesSinAdjunto.push({idResolucion:282, validateFunction:null});
-    	resolucionesSinAdjunto.push({idResolucion:242, validateFunction:null});
-    	resolucionesSinAdjunto.push({idResolucion:249, validateFunction:null});
-    	resolucionesSinAdjunto.push({idResolucion:343, validateFunction:null});
-    	resolucionesSinAdjunto.push({idResolucion:206, validateFunction:function(v){
+        resolucionesSinAdjunto.push({idResolucion:328, validateFunction:null});
+        resolucionesSinAdjunto.push({idResolucion:331, validateFunction:null});
+        resolucionesSinAdjunto.push({idResolucion:268, validateFunction:null});
+        resolucionesSinAdjunto.push({idResolucion:279, validateFunction:null});
+        resolucionesSinAdjunto.push({idResolucion:282, validateFunction:null});
+        resolucionesSinAdjunto.push({idResolucion:343, validateFunction:null});
+
+        resolucionesSinAdjunto.push({idResolucion:325, validateFunction:function(v) {
+            // Valida la resolucion cuando el combo confirmacion tenga un valor NO o bien se haya adjuntado un archivo
+            return (Ext.getCmp('d_comboConfirmacion' + idf).getValue() == "02" || Ext.getCmp('file_upload_ok').getValue() != "");
+        }});
+
+        resolucionesSinAdjunto.push({idResolucion:275, validateFunction:function(v) {
+            // Valida la resolucion cuando el combo resultado tenga un valor NO o bien se haya adjuntado un archivo
+            return (Ext.getCmp('d_comboResultado' + idf).getValue() == "02" || Ext.getCmp('file_upload_ok').getValue() != "");
+        }});
+
+        resolucionesSinAdjunto.push({idResolucion:249, validateFunction:function(v) {
+            // Valida la resolucion cuando el combo vista tenga un valor NO o bien se haya adjuntado un archivo
+            return (Ext.getCmp('d_comboVista' + idf).getValue() == "02" || Ext.getCmp('file_upload_ok').getValue() != "");
+        }});
+
+        resolucionesSinAdjunto.push({idResolucion:206, validateFunction:function(v){
 			if(Ext.getCmp('d_comboResultado' + idf).getValue() == "02"){
 				return true;
 			}else if(Ext.getCmp('file_upload_ok').getValue() != ""){
@@ -780,7 +792,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     ]);
 
     this.storeDDTipoBienCajamar = new Ext.data.Store({
-        url:'/pfs/pcdprocesadoresoluciones/getDictionary.htm'
+        url:'/pfs/pcdprocesadoresoluciones/getDictionaryDenormalized.htm'
         ,baseParams: {
             dictionary: 'es.pfsgroup.recovery.hrebcc.model.DDTipoBienCajamar'
         }
@@ -799,7 +811,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     this.storeDDPosesionInterinaResolucion = new Ext.data.Store({
         url:'/pfs/pcdprocesadoresoluciones/getDictionary.htm'
         ,baseParams: {
-            dictionary: 'DDPosesionInterinaResolucion'
+            dictionary: 'es.pfsgroup.recovery.hrebcc.model.DDPosesionInterinaResolucion'
         }
         ,reader: new Ext.data.JsonReader({
             root: 'diccionario'
@@ -1859,7 +1871,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 							}
 							,{"xtype":'textfield',"name":"d_deuda","fieldLabel":"Principal",allowBlank:false,id:'d_deuda'+this.idFactoria}
 							,{"xtype":'combo',"store":storeSINO,"name":"d_comboResultado","fieldLabel":"Existe oposición",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-							,{"xtype":'datefield',"name":"d_fechaOposicion","fieldLabel":"Fecha Oposición",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, id:'d_fechaOposicion'+this.idFactoria
+							,{"xtype":'datefield',"name":"d_fechaOposicion","fieldLabel":"Fecha notificación",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, id:'d_fechaOposicion'+this.idFactoria
 								,validator : function(v) {
 								   		if(Ext.getCmp('d_comboResultado' + idFactoria).getValue() == "01" && Ext.getCmp('d_fechaOposicion' + idFactoria).getValue() == ""){
 								   			return false;
@@ -1947,7 +1959,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	this.arrayCampos.push([
 	                       	{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboResultado","fieldLabel":"Resultado notificación",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       	,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha notificación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       	,{"xtype":'datefield',"name":"d_fechaJuicio","fieldLabel":"Fecha juicio",allowBlank:false, filtradoProcurador:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       	,{"xtype":'datefield',"name":"d_fechaJuicio","fieldLabel":"Fecha juicio",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
 	//id: 279 : PROCEDIMIENTO VERBAL: REGISTRAR JUICIO
@@ -1990,13 +2002,13 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	//id: 284 : PROCEDIMIENTO VERBAL DESDE MONITORIO: REGISTRAR RESOLUCIÓN DESFAVORABLE
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       	,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
 	//id: 285 : PROCEDIMIENTO VERBAL DESDE MONITORIO: REGISTRAR RESOLUCIÓN FAVORABLE
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       	,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
 	//id: 286 : PROCEDIMIENTO VERBAL DESDE MONITORIO: RESOLUCIÓN FIRME
@@ -2341,7 +2353,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		           				}
 	                        }
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboAdmisionDemanda","fieldLabel":"Admisión",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAdmisionDemanda'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_bienesEmbargables","fieldLabel":"Existen bienes embargables",allowBlank:false,filtradoProcurador:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_bienesEmbargables'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_bienesEmbargables","fieldLabel":"Existen bienes embargables",filtradoProcurador:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_bienesEmbargables'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]); 
 	
 	//id: 322 : T. EJECUCIÓN TÍTULO NO JUDICIAL: Auto despachando ejecucion - marcado de bienes decreto embargo (clausulas abusivas)

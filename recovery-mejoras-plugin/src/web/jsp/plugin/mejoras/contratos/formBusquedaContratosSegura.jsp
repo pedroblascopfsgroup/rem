@@ -625,8 +625,10 @@ var formBusquedaContratos=function(){
 		,{name :'dispuesto', sortType:Ext.data.SortTypes.asFloat }
 		,{name :'limiteInicial', sortType:Ext.data.SortTypes.asFloat }
 		,{name :'limiteFinal', sortType:Ext.data.SortTypes.asFloat }
-		,{name : 'situacion2', sortType:Ext.data.SortTypes.asTex}
-		
+		,{name :'situacion2', sortType:Ext.data.SortTypes.asTex}
+		,{name :'oficina', sortType:Ext.data.SortTypes.asTex }
+		,{name :'oficinaAdministrativa', sortType:Ext.data.SortTypes.asTex }
+		,{name :'oficinaContable', sortType:Ext.data.SortTypes.asTex}		
 	]);
 
 	
@@ -661,8 +663,10 @@ var formBusquedaContratos=function(){
 			,{	header: '<s:message code="listadoContratos.listado.cuotaImporte" text="**Cuota importe"/>',sortable: false , dataIndex: 'cuotaImporte', renderer:app.format.moneyRenderer, hidden:true}
 			,{	header: '<s:message code="listadoContratos.listado.dispuesto" text="**Dispuesto"/>',sortable: false , dataIndex: 'dispuesto', renderer:app.format.moneyRenderer, hidden:true}
 			,{	header: '<s:message code="listadoContratos.listado.limiteInicial" text="**Limite inicial"/>',sortable: false , dataIndex: 'limiteInicial', renderer:app.format.moneyRenderer, hidden:true}
-			,{	header: '<s:message code="listadoContratos.listado.limiteFinal" text="**Limite final"/>',sortable: false , dataIndex: 'limiteFinal', renderer:app.format.moneyRenderer, hidden:true}
-			<%--,{	header: '<s:message code="listadoContratos.listado.situacion2" text="**Situacion2"/>',sortable: false , width:60, dataIndex: 'situacion2'} --%>
+			,{	header: '<s:message code="listadoContratos.listado.limiteFinal" text="**Limite final"/>',sortable: false , dataIndex: 'limiteFinal', renderer:app.format.moneyRenderer, hidden:true}		
+			,{	header: '<s:message code="listadoContratos.listado.oficina" text="**Oficina"/>',sortable: false , dataIndex: 'oficina', hidden:true}
+			,{	header: '<s:message code="listadoContratos.listado.oficinaContable" text="**Oficina Cont."/>',sortable: false , dataIndex: 'oficinaContable', hidden:true}			
+			,{	header: '<s:message code="listadoContratos.listado.oficinaAdministrativa" text="**Oficina Adm."/>',sortable: false , dataIndex: 'oficinaAdministrativa', hidden:true}
 	]); 
 
 	var pagingBar=fwk.ux.getPaging(contratosStore);

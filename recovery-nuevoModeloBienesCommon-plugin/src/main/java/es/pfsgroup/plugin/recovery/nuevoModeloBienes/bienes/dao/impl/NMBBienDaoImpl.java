@@ -101,13 +101,19 @@ public class NMBBienDaoImpl extends AbstractEntityDao<NMBBien, Long> implements 
         
         hql.append(" WHERE ".concat(NAME_OF_ENTITY_NMB).concat(".auditoria.borrado = 0 "));
         
+        if(!Checks.esNulo(dto.getPoblacion()) || !Checks.esNulo(dto.getCodPostal()) || !Checks.esNulo(dto.getDireccion()) || !Checks.esNulo(dto.getProvincia()) || !Checks.esNulo(dto.getLocalidad()) || !Checks.esNulo(dto.getCodigoPostal())) {
+        	//hql.append(" LEFT JOIN ".concat(NAME_OF_ENTITY_NMB).concat(".localizaciones loc "));
+        	hql.append(" AND ".concat(NAME_OF_ENTITY_NMB).concat(".poblacion ='".concat(dto.getPoblacion())+"'"));
+        	
+        }
+        
         if(dto.isSolvenciaNoEncontrada()){
         	hql.append(" AND ".concat(NAME_OF_ENTITY_NMB).concat(".solvenciaNoEncontrada = true "));
         }
         if (dto.getId() != null){
         	hql.append(" AND ".concat(NAME_OF_ENTITY_NMB).concat(".id = ".concat(dto.getId().toString())));
         }
- 
+
         if (!Checks.esNulo(dto.getPoblacion())){
         	
         	hql.append(" AND UPPER(loc.localidad.descripcion) LIKE '%'|| :poblacion ||'%'");
@@ -178,7 +184,8 @@ public class NMBBienDaoImpl extends AbstractEntityDao<NMBBien, Long> implements 
         	hql.append(" AND ".concat(NAME_OF_ENTITY_NMB).concat(".numeroActivo = '").concat(dto.getNumActivo().toString()).concat("'"));
         }
         if (dto.getNumRegistro() != null){
-        	hql.append(" AND ".concat(NAME_OF_ENTITY_NMB).concat(".codigoInterno = ".concat(dto.getNumRegistro().toString())));
+        	//hql.append(" AND ".concat(NAME_OF_ENTITY_NMB).concat(".codigoInterno = ".concat(dto.getNumRegistro().toString())));
+        	hql.append(" AND ".concat(NAME_OF_ENTITY_NMB).concat(".datosRegistrales like '%".concat(dto.getNumRegistro().toString())+"%'"));
         }
         if (!Checks.esNulo(dto.getReferenciaCatastral())){
         	
@@ -189,10 +196,10 @@ public class NMBBienDaoImpl extends AbstractEntityDao<NMBBien, Long> implements 
         	//TODO
         }
         if (dto.getTasacionDesde() != null){
-        	hql.append(" AND val.valorTasacionExterna >= ".concat(dto.getTasacionDesde().toString()));
+        	hql.append(" AND val.importeValorTasacion >= ".concat(dto.getTasacionDesde().toString()));
         }
         if (dto.getTasacionHasta() != null){
-        	hql.append(" AND val.valorTasacionExterna <= ".concat(dto.getTasacionHasta().toString()));
+        	hql.append(" AND val.importeValorTasacion <= ".concat(dto.getTasacionHasta().toString()));
         }
         if (dto.getTipoSubastaDesde() != null){
         	hql.append(" AND ".concat(NAME_OF_ENTITY_NMB).concat(".tipoSubasta >= ".concat(dto.getTipoSubastaDesde().toString())));

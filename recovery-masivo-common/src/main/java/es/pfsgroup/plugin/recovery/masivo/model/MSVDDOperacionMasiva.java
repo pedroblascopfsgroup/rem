@@ -52,10 +52,12 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 	public static final String CODIGO_LANZAMIENTO_ETJ_DESDE_FM = "LEFM";
 	public static final String CODIGO_ADMISION_DEMANDA = "ADM_DEM";
 	public static final String CODIGO_PRESENTACION_DEMANDA = "PRE_DEM";
+	public static final String CODIGO_CARTERIZACION_ACREDITADOS = "CA_AC"; //AÃ±adido
+
 
 	public static final String CODIGO_ENVIO_IMPRESION = "IMP_MASIVO";
 
-	// CÓDIGOS DE TIPOS DE INPUTS QUE GENERARA CADA TIPO DE OPERACION
+	// Cï¿½DIGOS DE TIPOS DE INPUTS QUE GENERARA CADA TIPO DE OPERACION
 	
 	public static final String CODIGO_INPUT_CONTRATO_ORIGINAL_RECIBIDO = "CNT_ORIGINAL_RECIBIDO";
 	public static final String CODIGO_INPUT_CONTRATO_ORIGINAL_NO_RECIBIDO = "CNT_ORIGINAL_NO_RECIBIDO";

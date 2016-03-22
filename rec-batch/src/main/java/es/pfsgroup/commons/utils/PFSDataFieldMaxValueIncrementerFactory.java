@@ -1,5 +1,8 @@
 package es.pfsgroup.commons.utils;
 
+import java.util.Properties;
+
+import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 import org.springframework.batch.item.database.support.DefaultDataFieldMaxValueIncrementerFactory;
@@ -9,6 +12,9 @@ import org.springframework.jdbc.support.incrementer.OracleSequenceMaxValueIncrem
 
 public class PFSDataFieldMaxValueIncrementerFactory extends
 		DefaultDataFieldMaxValueIncrementerFactory {
+	
+	@Resource
+	protected Properties appProperties;
 
 	public class PFSIncrementer extends OracleSequenceMaxValueIncrementer
 			implements DataFieldMaxValueIncrementer {
@@ -19,7 +25,13 @@ public class PFSDataFieldMaxValueIncrementerFactory extends
 
 		@Override
 		protected String getSequenceQuery() {
-			return "select ${master.schema}.batch_job_seq.nextval from dual";
+			String schema = appProperties.getProperty("master.schema");
+			if ((schema != null) &&  (!"".equals(schema))){
+				return "select " + schema + ".batch_job_seq.nextval from dual";
+			}else{
+				throw new IllegalStateException("master.schema: variable desconocida.");
+			}
+			
 		}
 
 	}

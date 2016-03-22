@@ -73,8 +73,8 @@
         {header:'<s:message code="contrato.tabRecEfecDis.importeImpagado" text="**importe Impagado" />',dataIndex:'importeImpagado',width:120,renderer:app.format.moneyRenderer,align:'right'},
 		{header:'<s:message code="contrato.tabRecEfecDis.capital" text="**Capital" />',dataIndex:'capital',width:120,renderer:app.format.moneyRenderer,align:'right'},
         {header:'<s:message code="contrato.tabRecEfecDis.situacionRecibo" text="**Situación Recibo" />',dataIndex:'DDsituacionRecibo',width:120},
-        {header:'<s:message code="contrato.tabRecEfecDis.motivoDevolucion" text="**Motivo Devolucion" />',dataIndex:'DDMotivoDevolucion',width:120},
-        {header:'<s:message code="contrato.tabRecEfecDis.motivoRechazo" text="**Motivo Rechazo" />',dataIndex:'DDMotivoRechazo',width:120},
+        {header:'<s:message code="contrato.tabRecEfecDis.motivoDevolucion" text="**Motivo Devolucion" />',dataIndex:'DDmotivoDevolucion',width:120},
+        {header:'<s:message code="contrato.tabRecEfecDis.motivoRechazo" text="**Motivo Rechazo" />',dataIndex:'DDmotivoRechazo',width:120},
         
         {header:'<s:message code="contrato.tabRecEfecDis.ccDomiciliacion" text="**CC. Domiciliación" />',dataIndex:'ccDomiciliacion',width:120,hidden:true},
         {header:'<s:message code="contrato.tabRecEfecDis.intOrdinarios" text="**Int. Ordinarios" />',dataIndex:'interesesOrdinarios',width:120,renderer:app.format.moneyRenderer,align:'right',hidden:true},

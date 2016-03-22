@@ -1,3 +1,21 @@
+--/*
+--##########################################
+--## AUTOR=María Villanueva
+--## FECHA_CREACION=20160322
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=GC-1271
+--## PRODUCTO=NO
+--## 
+--## Finalidad:D_PRC_PROCURADOR
+--## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
 create or replace PROCEDURE TRUNCAR_DIM_PROCEDIMIENTO (error OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Agustin Mompo, PFS Group
@@ -280,3 +298,5 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_PRC_ULT_TAR_PEND_DESC
 
 
 END TRUNCAR_DIM_PROCEDIMIENTO;
+/
+EXIT

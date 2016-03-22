@@ -1,3 +1,21 @@
+--/*
+--##########################################
+--## AUTOR=María Villanueva
+--## FECHA_CREACION=20160322
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=GC-1271
+--## PRODUCTO=NO
+--## 
+--## Finalidad:D_PRC_PROCURADOR
+--## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
 create or replace PROCEDURE CARGAR_H_PROCEDIMIENTO (DATE_START IN date, DATE_END IN date, O_ERROR_STATUS OUT VARCHAR2) AS 
 -- ===============================================================================================
 -- Autor: Gonzalo Martín, PFS Group
@@ -3217,3 +3235,5 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_DET_CONTRATO_ANIO_IX'
     --ROLLBACK;  
 end;
 end CARGAR_H_PROCEDIMIENTO;
+/
+EXIT

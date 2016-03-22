@@ -109,7 +109,7 @@
 	<json:property name="numExpExterno" value="${precontencioso.numExpExterno}" />
 	<json:property name="cntPrincipal" value="${precontencioso.cntPrincipal}" />
   </json:object>  
-  
+  <!-- UTILIZAR EN EL ITEM PRODUCTO-1046  
   <json:object name="acuerdo">
   	<json:property name="importeAPagar" value="${acuerdo.importeAPagar}"/>
   	<json:property name="importeVencido" value="${acuerdo.importeVencido}"/>
@@ -139,7 +139,7 @@
   	<json:property name="fContabilizacion" value="${acuerdo.fContabilizacion}"/>
   	<json:property name="fCierreSareb" value="${acuerdo.fCierreSareb}"/>
   </json:object>
-  
+  -->
   <json:array name="botonesVisiblesDocPco" items="${botonesVisiblesDocPco}" var="bot">
 		<json:object>
 			<json:property name="boton" value="${bot}"/>

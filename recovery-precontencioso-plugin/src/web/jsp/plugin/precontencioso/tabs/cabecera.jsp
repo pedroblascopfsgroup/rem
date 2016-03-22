@@ -417,7 +417,7 @@
 		var href = 'javascript:app.abreAsunto('+d.asuntoId+', &quot;'+d.asunto+'&quot;,null);'
 		var link = '<a href="'+href+'">'+d.asunto+'</a>';
 		
-		if(codigo != "ASU"){
+		if(codigo == "ASU"){
 		
 			panelAsunto.hide();
 			panelAsuntoAcuerdo.show();

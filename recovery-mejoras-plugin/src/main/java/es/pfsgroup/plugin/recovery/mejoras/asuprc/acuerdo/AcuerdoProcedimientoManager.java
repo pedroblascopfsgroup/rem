@@ -61,6 +61,7 @@ public class AcuerdoProcedimientoManager extends BusinessOperationOverrider<Acue
      * @param idProcedimiento el id del procedimiento.
      * @return true o false.
      */
+	//CAMBIAR EN EL ITEM PRODUCTO-1046 TODO
 	@BusinessOperation(BO_ACU_PRC_VER_TAB_INF_REQUERIDA)
     public boolean verTabInfRequerida(Long idProcedimiento) {
 
@@ -69,7 +70,7 @@ public class AcuerdoProcedimientoManager extends BusinessOperationOverrider<Acue
 		
 		if (!Checks.esNulo(codigo)){
 			if(codigo == "ACU"){
-				return true;
+				return false;
 			}
 		}
 		return false;

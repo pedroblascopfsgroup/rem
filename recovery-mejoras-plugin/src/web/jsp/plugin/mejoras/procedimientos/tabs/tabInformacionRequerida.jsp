@@ -101,8 +101,12 @@
 	
 	panel.setValue = function(){
 		var data = entidad.get("data");
-		var d = data.acuerdo;
+		//var d = data.acuerdo;
 	}
+	
+	panel.setVisibleTab = function(data){
+    	return data.verTabInfRequerida;
+  	}
 	
 return panel;
 })

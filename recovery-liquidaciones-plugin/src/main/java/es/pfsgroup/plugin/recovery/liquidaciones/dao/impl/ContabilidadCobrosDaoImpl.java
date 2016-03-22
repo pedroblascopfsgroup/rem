@@ -7,12 +7,12 @@ import org.springframework.stereotype.Repository;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
-import es.pfsgroup.plugin.recovery.liquidaciones.api.ContabilidadCobrosApi;
+import es.pfsgroup.plugin.recovery.liquidaciones.dao.ContabilidadCobrosDao;
 import es.pfsgroup.plugin.recovery.liquidaciones.dto.DtoContabilidadCobros;
 import es.pfsgroup.plugin.recovery.liquidaciones.model.ContabilidadCobros;
 
-@Repository("ContabilidadCobrosApi")
-public class ContabilidadCobrosDaoImpl extends AbstractEntityDao<ContabilidadCobros, Long> implements ContabilidadCobrosApi{
+@Repository("ContabilidadCobrosDaoImpl")
+public class ContabilidadCobrosDaoImpl extends AbstractEntityDao<ContabilidadCobros, Long> implements ContabilidadCobrosDao{
 
 	@Override
 	public List<ContabilidadCobros> getListadoContabilidadCobros(DtoContabilidadCobros dto) {

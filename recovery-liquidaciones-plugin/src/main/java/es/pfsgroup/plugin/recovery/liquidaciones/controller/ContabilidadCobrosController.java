@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
+import es.pfsgroup.plugin.recovery.liquidaciones.api.ContabilidadCobrosApi;
+import es.pfsgroup.plugin.recovery.liquidaciones.dao.ContabilidadCobrosDao;
 import es.pfsgroup.plugin.recovery.liquidaciones.dao.impl.ContabilidadCobrosDaoImpl;
 import es.pfsgroup.plugin.recovery.liquidaciones.dto.DtoContabilidadCobros;
 import es.pfsgroup.plugin.recovery.liquidaciones.model.ContabilidadCobros;
@@ -22,10 +24,14 @@ public class ContabilidadCobrosController {
 
 	static final String CONTABILIDAD_COBROS_JSON = "plugin/liquidaciones/listadoContabilidadCobrosJSON";
 	static final String NEW_CONTABILIDAD_COBRO = "plugin/liquidaciones/contabilidadCobro";
+	private static final String DEFAULT = "default";
 
 
 	@Autowired
-	private ContabilidadCobrosDaoImpl contabilidadPagos;
+	private ContabilidadCobrosDao contabilidadPagos;
+	
+	@Autowired
+	private ContabilidadCobrosApi contabilidadCobrosApi;
 	
 	@Autowired
 	private DictionaryManager dictionary;
@@ -67,5 +73,22 @@ public class ContabilidadCobrosController {
 		model.put("contabilidadCobro", cc);
 		
 		return NEW_CONTABILIDAD_COBRO;
+	}
+	
+
+	@RequestMapping
+	public String saveContabilidadCobro(ModelMap model, DtoContabilidadCobros dto) {
+
+		contabilidadCobrosApi.saveContabilidadCobro(dto);
+		
+		return DEFAULT;
+	}
+	
+	@RequestMapping
+	public String deleteContabilidadCobro(ModelMap model, Long idContabilidadCobro) {
+
+		contabilidadCobrosApi.deleteContabilidadCobro(idContabilidadCobro);
+		
+		return DEFAULT;
 	}
 }

@@ -2,9 +2,9 @@ create or replace PROCEDURE CARGAR_DIM_BIEN(O_ERROR_STATUS OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Jaime Sánchez-Cuenca, PFS Group
 -- Fecha creacion: Septiembre 2015
--- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha ultima modificacion: 03/03/2016
--- Motivos del cambio: SE añade código 3058 a D_BIE_ENTIDAD
+-- Responsable ultima modificacion: Jaime Sánchez-Cuenca, PFS Group
+-- Fecha ultima modificacion: 03/12/2015
+-- Motivos del cambio: CMREC - 1220 : Desarrollo - Informes específicos CM - Bienes y Subastas
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripcion: Procedimiento almancenado que carga las tablas de la dimension Subasta
@@ -300,17 +300,22 @@ BEGIN
   EXECUTE IMMEDIATE
       'INSERT INTO D_BIE_PRIMER_TITULAR (PRIMER_TITULAR_BIE_ID, PRIMER_TITULAR_BIE_DOCUMENT_ID, PRIMER_TITULAR_BIE_NOMBRE, PRIMER_TITULAR_BIE_APELLIDO_1, PRIMER_TITULAR_BIE_APELLIDO_2)
       SELECT MAX(AUX_TITULARES.PER_ID) PER_ID, AUX_TITULARES.PER_DOC_ID, AUX_TITULARES.PER_NOMBRE, AUX_TITULARES.PER_APELLIDO1, AUX_TITULARES.PER_APELLIDO2 FROM(
-        SELECT DISTINCT PER.PER_ID, PER.PER_DOC_ID, PER.PER_NOMBRE, PER.PER_APELLIDO1, PER.PER_APELLIDO2, AUX.CNT_ID, CPE.CPE_ORDEN, rank() over (partition by CPE.CNT_ID order by cpe.cpe_orden) as ranking2 FROM(
-          SELECT DISTINCT CNT.CNT_ID, rank() over (partition by CNT.CNT_ID order by (MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA) DESC) as ranking
-          FROM '||V_DATASTAGE||'.CNT_CONTRATOS CNT, '||V_DATASTAGE||'.MOV_MOVIMIENTOS MOV
-          WHERE CNT.CNT_ID = MOV.CNT_ID AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION) AUX,
-         '||V_DATASTAGE||'.CPE_CONTRATOS_PERSONAS CPE, '||V_DATASTAGE||'.DD_TIN_TIPO_INTERVENCION TIN, '||V_DATASTAGE||'.PER_PERSONAS PER, '||V_DATASTAGE||'.BIE_CNT BIE_CNT
-        WHERE CPE.CNT_ID = AUX.CNT_ID
-        AND CPE.CNT_ID = BIE_CNT.CNT_ID
-        AND CPE.DD_TIN_ID = TIN.DD_TIN_ID AND TIN.DD_TIN_TITULAR = 1
-        AND CPE.PER_ID = PER.PER_ID AND PER.BORRADO = 0
-        AND AUX.RANKING = 1) AUX_TITULARES
-     WHERE AUX_TITULARES.RANKING2 = 1
+        SELECT DISTINCT PER.PER_ID, PER.PER_DOC_ID, PER.PER_NOMBRE, PER.PER_APELLIDO1, PER.PER_APELLIDO2, CPE.CPE_ORDEN, rank() over (partition by AUX.ASU_ID order by cpe.cpe_orden) as ranking2 FROM(
+                                SELECT DISTINCT ASU.ASU_ID, CNT.CNT_ID, MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA, rank() over (partition by ASU.ASU_ID order by (MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA) DESC, MOV_ID) as ranking
+                                FROM '||V_DATASTAGE||'.CNT_CONTRATOS CNT, '||V_DATASTAGE||'.MOV_MOVIMIENTOS MOV, '||V_DATASTAGE||'.CEX_CONTRATOS_EXPEDIENTE CEX, '||V_DATASTAGE||'.EXP_EXPEDIENTES EXP,
+                                     '||V_DATASTAGE||'.ASU_ASUNTOS ASU
+                                WHERE CNT.CNT_ID = MOV.CNT_ID
+                                AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION
+                                AND CNT.CNT_ID = CEX.CNT_ID
+                                AND CEX.EXP_ID = EXP.EXP_ID
+                                AND EXP.EXP_ID = ASU.EXP_ID
+                    ) AUX,
+                    '||V_DATASTAGE||'.CPE_CONTRATOS_PERSONAS CPE, '||V_DATASTAGE||'.DD_TIN_TIPO_INTERVENCION TIN, '||V_DATASTAGE||'.PER_PERSONAS PER
+                        WHERE AUX.CNT_ID = CPE.CNT_ID
+                        AND CPE.DD_TIN_ID = TIN.DD_TIN_ID AND TIN.DD_TIN_TITULAR = 1
+                        AND CPE.PER_ID = PER.PER_ID AND PER.BORRADO = 0
+                        AND AUX.RANKING = 1) AUX_TITULARES
+                     WHERE AUX_TITULARES.RANKING2 = 1
      GROUP BY AUX_TITULARES.PER_DOC_ID, AUX_TITULARES.PER_NOMBRE, AUX_TITULARES.PER_APELLIDO1, AUX_TITULARES.PER_APELLIDO2
      ORDER BY 1';
      
@@ -332,12 +337,17 @@ BEGIN
 
   EXECUTE IMMEDIATE
       'INSERT INTO D_BIE_NUM_OPERACION (NUM_OPERACION_BIEN_ID, NUM_OPERACION_BIEN_DESC, NUM_OPERACION_BIEN_DESC_2)
-       SELECT DISTINCT AUX.CNT_ID, AUX.CNT_CCC_DOMICILIACION, NULL FROM(
-            SELECT DISTINCT CNT.CNT_ID, CNT.CNT_CCC_DOMICILIACION, rank() over (partition by CNT.CNT_ID order by (MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA) DESC) as ranking
-            FROM '||V_DATASTAGE||'.CNT_CONTRATOS CNT, '||V_DATASTAGE||'.MOV_MOVIMIENTOS MOV
-            WHERE CNT.CNT_ID = MOV.CNT_ID AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION) AUX, '||V_DATASTAGE||'.BIE_CNT BIE_CNT
-          WHERE AUX.CNT_ID = BIE_CNT.CNT_ID
-            AND AUX.RANKING = 1
+       SELECT DISTINCT AUX.CNT_ID, LPAD(AUX.CNT_CONTRATO,16,''0''), AUX.CNT_CCC_DOMICILIACION FROM(
+                                SELECT DISTINCT ASU.ASU_ID, CNT.CNT_ID, CNT.CNT_CONTRATO, CNT.CNT_CCC_DOMICILIACION, MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA, rank() over (partition by ASU.ASU_ID order by (MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA) DESC, MOV_ID) as ranking
+                                FROM '||V_DATASTAGE||'.CNT_CONTRATOS CNT, '||V_DATASTAGE||'.MOV_MOVIMIENTOS MOV, '||V_DATASTAGE||'.CEX_CONTRATOS_EXPEDIENTE CEX, '||V_DATASTAGE||'.EXP_EXPEDIENTES EXP,
+                                     '||V_DATASTAGE||'.ASU_ASUNTOS ASU
+                                WHERE CNT.CNT_ID = MOV.CNT_ID
+                                AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION
+                                AND CNT.CNT_ID = CEX.CNT_ID
+                                AND CEX.EXP_ID = EXP.EXP_ID
+                                AND EXP.EXP_ID = ASU.EXP_ID
+                    ) AUX
+                WHERE AUX.RANKING = 1
         ORDER BY 1';
         
   V_ROWCOUNT := sql%rowcount;     
@@ -402,8 +412,6 @@ BEGIN
        SELECT DISTINCT ENP.DD_ENP_ID, ENP.DD_ENP_DESCRIPCION, ENP.DD_ENP_DESCRIPCION_LARGA
        FROM '||V_DATASTAGE||'.DD_ENP_ENTIDADES_PROPIETARIAS ENP
        ORDER BY 1';
-
-  
         
   V_ROWCOUNT := sql%rowcount;     
   commit;

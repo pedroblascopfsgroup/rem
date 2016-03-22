@@ -9,22 +9,16 @@
 
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 
-(function(page,entidad){
-
-	var panel=new Ext.Panel({
-		title : '<s:message code="acuerdos.titulo" text="**Acuerdos"/>'
-		,layout:'form'
+<%--JSP creado como copia de acuerdos.jsp con algun cambio
+	para mostrar acuerdos dentro de la cabecera de los asuntos de tipo acuerdo --%>
+	
+	var panelAcu=new Ext.Panel({
+		layout:'form'
 		,border : false
-		/*,layoutConfig: { columns: 1 }*/
 		,autoScroll:true
-		,bodyStyle:'padding:5px;margin:5px'
+		,bodyStyle:'padding:0px;margin:0px'
 		,autoHeight:true
 		,autoWidth : true
-		,nombreTab : 'acuerdos'
-		/*,items : [{items:acuerdosTabs
-				,border:false
-				,style:'margin-top: 7px; margin-left:5px'}
-			]*/
 	});
 	
 	var acuerdoSeleccionado = null;
@@ -57,9 +51,9 @@
       ,{header : '<s:message code="acuerdos.codigo.idTipoAcuerdo" text="**id tipo acuerdo" />',dataIndex : 'idTipoAcuerdo', hidden:true}
    ]);
  
-   var acuerdosStore = page.getStore({
+   var acuerdosStoreAcu = page.getStore({
         flow: 'plugin/mejoras/acuerdos/plugin.mejoras.acuerdos.acuerdosAsunto'
-        ,storeId : 'acuerdosStore'
+        ,storeId : 'acuerdosStoreAcu'
         ,reader : new Ext.data.JsonReader(
             {root:'acuerdos'}
             , acuerdo
@@ -68,9 +62,9 @@
    
    
    <%--    Desactivamos el boton de proponer si esxisten acuerdos en conformacion, propuesto o aceptado --%>
-   acuerdosStore.on('load', function () {
+   acuerdosStoreAcu.on('load', function () {
    		var btnDisbled = false
-	    acuerdosStore.data.each(function() {
+	    acuerdosStoreAcu.data.each(function() {
 	    	var codEstad = this.data['codigoEstado'];
 	    	if(codEstad == app.codigoAcuerdoEnConformacion || codEstad == app.codigoAcuerdoPropuesto || codEstad == app.codigoAcuerdoAceptado || codEstad == app.codigoAcuerdoVigente){
 	    		btnDisbled = true;
@@ -84,18 +78,18 @@
 	    }
 	    
 	    
-	    if (panel != null){
+	    if (panelAcu != null){
 		    if (acuerdosTabs != null){
-		    	panel.remove(acuerdosTabs);
+		    	panelAcu.remove(acuerdosTabs);
 		    }	
 			if (panelAnterior != null){
-				panel.remove(panelAnterior);
+				panelAcu.remove(panelAnterior);
 			}
 			if (panelAnteriorTerminos != null){
-				panel.remove(panelAnteriorTerminos);
+				panelAcu.remove(panelAnteriorTerminos);
 			}
 			if(cumplimientoAcuerdo != null){
-				panel.remove(cumplimientoAcuerdo);
+				panelAcu.remove(cumplimientoAcuerdo);
 			}
 			despuesDeNuevoAcuerdo();
 			ocultarBotones();
@@ -103,18 +97,18 @@
 	});
    
    var despuesDeNuevoAcuerdo = function(){
-   		var ultimoRegistro = acuerdosStore.getCount();
+   		var ultimoRegistro = acuerdosStoreAcu.getCount();
    		if(ultimoRegistro > 0){
    			acuerdosGrid.getSelectionModel().selectRow((ultimoRegistro-1));
 			acuerdosGrid.fireEvent('rowclick', acuerdosGrid, (ultimoRegistro-1));
-			acuerdosStore.un('load',despuesDeNuevoAcuerdo);
+			acuerdosStoreAcu.un('load',despuesDeNuevoAcuerdo);
    		}
    }
    
    var despuesDeEvento = function(){
    		acuerdosGrid.getSelectionModel().selectRow(indexAcuerdoSeleccionado);
 		acuerdosGrid.fireEvent('rowclick', acuerdosGrid, indexAcuerdoSeleccionado);
-		acuerdosStore.un('load',despuesDeEvento);
+		acuerdosStoreAcu.un('load',despuesDeEvento);
    }
 
   
@@ -134,7 +128,7 @@
    		analisisTab.remove(panelAnterior);
 		panelAnterior = recargarAcuerdo(-2);
 		analisisTab.add(panelAnterior);
-		panel.doLayout();
+		panelAcu.doLayout();
 		
    };
 
@@ -150,11 +144,11 @@
 		          ,closable:false
 		          ,width : 750
 		          ,title : '<s:message code="app.nuevoRegistro" text="**Nuevo registro" />'
-		          ,params : {idAsunto:panel.getAsuntoId(), readOnly:"false"}
+		          ,params : {idAsunto:panelAcu.getAsuntoId(), readOnly:"false"}
 		       });
 		       w.on(app.event.DONE, function(){
-		          acuerdosStore.on('load',despuesDeNuevoAcuerdo);
-		          acuerdosStore.webflow({id:panel.getAsuntoId()});
+		          acuerdosStoreAcu.on('load',despuesDeNuevoAcuerdo);
+		          acuerdosStoreAcu.webflow({id:panelAcu.getAsuntoId()});
 		          w.close();
 		       });
 		       w.on(app.event.CANCEL, function(){ w.close(); });
@@ -176,8 +170,8 @@
 		          ,params : {idAcuerdo:acuerdoSeleccionado}
 		       });
 		       w.on(app.event.DONE, function(){
-<%-- 		          acuerdosStore.on('load',despuesDeNuevoAcuerdo); --%>
-		          	acuerdosStore.webflow({id:panel.getAsuntoId()});
+<%-- 		          acuerdosStoreAcu.on('load',despuesDeNuevoAcuerdo); --%>
+		          	acuerdosStoreAcu.webflow({id:panelAcu.getAsuntoId()});
 		          w.close();
 <%-- 		          cargarUltimoAcuerdo(); --%>
 		       });
@@ -232,8 +226,8 @@
 				       	});
 				       	w.on(app.event.DONE, function(){
 				       	  btnRegistrarFinalizacionAcuerdo.setVisible(false);
-<%-- 				          acuerdosStore.on('load',despuesDeNuevoAcuerdo); --%>
-				          acuerdosStore.webflow({id:panel.getAsuntoId()});
+<%-- 				          acuerdosStoreAcu.on('load',despuesDeNuevoAcuerdo); --%>
+				          acuerdosStoreAcu.webflow({id:panelAcu.getAsuntoId()});
 				          w.close();
 				          cargarUltimoAcuerdo();
 				       	});
@@ -276,8 +270,8 @@
 			      				idAcuerdo:acuerdoSeleccionado
 			   				}
 			      			,success: function(){
-			           		 	acuerdosStore.on('load',despuesDeEvento);
-			           		 	acuerdosStore.webflow({id:panel.getAsuntoId()});
+			           		 	acuerdosStoreAcu.on('load',despuesDeEvento);
+			           		 	acuerdosStoreAcu.webflow({id:panelAcu.getAsuntoId()});
 			           		 	btnProponerAcuerdo.hide();
 			           		 	btnIncumplirAcuerdo.hide();
 			           		}
@@ -345,8 +339,8 @@
       				idAcuerdo:acuerdoSeleccionado
    				}
       			,success: function(){
-           		 	acuerdosStore.on('load',despuesDeEvento);
-           		 	acuerdosStore.webflow({id:panel.getAsuntoId()});
+           		 	acuerdosStoreAcu.on('load',despuesDeEvento);
+           		 	acuerdosStoreAcu.webflow({id:panelAcu.getAsuntoId()});
 					btnCerrarAcuerdo.hide();
            		 	btnIncumplirAcuerdo.hide();
 					btnRechazarAcuerdo.hide();
@@ -370,8 +364,8 @@
 	      				idAcuerdo:acuerdoSeleccionado
 	   				}
 	      			,success: function(){
-	           		 	acuerdosStore.on('load',despuesDeEvento);
-	           		 	acuerdosStore.webflow({id:panel.getAsuntoId()});
+	           		 	acuerdosStoreAcu.on('load',despuesDeEvento);
+	           		 	acuerdosStoreAcu.webflow({id:panelAcu.getAsuntoId()});
 	           		 	ocultarBotones();
 	           		}
 		      	});
@@ -396,8 +390,8 @@
       				idAcuerdo:acuerdoSeleccionado
    				}
       			,success: function(){
-           		 	acuerdosStore.on('load',despuesDeEvento);
-           		 	acuerdosStore.webflow({id:panel.getAsuntoId()});
+           		 	acuerdosStoreAcu.on('load',despuesDeEvento);
+           		 	acuerdosStoreAcu.webflow({id:panelAcu.getAsuntoId()});
            		 	btnAceptarAcuerdo.hide();
            		 	btnRechazarAcuerdo.hide();
            		 	btnIncumplirAcuerdo.setVisible(false);
@@ -428,8 +422,8 @@
 	      				idAcuerdo:acuerdoSeleccionado
 	   				}
 	      			,success: function(){
-<%-- 	           		 	acuerdosStore.on('load',despuesDeEvento); --%>
-	           		 	acuerdosStore.webflow({id:panel.getAsuntoId()});
+<%-- 	           		 	acuerdosStoreAcu.on('load',despuesDeEvento); --%>
+	           		 	acuerdosStoreAcu.webflow({id:panelAcu.getAsuntoId()});
 	           		 	btnAceptarAcuerdo.hide();
 	           		 	btnRechazarAcuerdo.hide();
 	           		 	btnVigenteAcuerdo.hide();
@@ -467,8 +461,8 @@
 <%--       				,motivo: text --%>
 <%--    				} --%>
 <%--    				,success: function(){ --%>
-<%-- 	   				acuerdosStore.on('load',despuesDeEvento); --%>
-<%-- 		   		 	acuerdosStore.webflow({id:panel.getAsuntoId()}); --%>
+<%-- 	   				acuerdosStoreAcu.on('load',despuesDeEvento); --%>
+<%-- 		   		 	acuerdosStoreAcu.webflow({id:panel.getAsuntoId()}); --%>
 <%-- 		   		 	btnAceptarAcuerdo.hide(); --%>
 <%-- 		   		 	btnRechazarAcuerdo.hide(); --%>
 <%-- 		   		 	btnCerrarAcuerdo.hide(); --%>
@@ -491,8 +485,8 @@
 		       	});
 		       	w.on(app.event.DONE, function(){
 					w.close();
-					acuerdosStore.on('load',despuesDeEvento);
-		   		 	acuerdosStore.webflow({id:panel.getAsuntoId()});
+					acuerdosStoreAcu.on('load',despuesDeEvento);
+		   		 	acuerdosStoreAcu.webflow({id:panelAcu.getAsuntoId()});
 		   		 	btnAceptarAcuerdo.hide();
 		   		 	btnRechazarAcuerdo.hide();
 		   		 	btnCerrarAcuerdo.hide();
@@ -507,29 +501,15 @@
        		
 	});
 	
-	
-	var acuerdosGrid = app.crearGrid(acuerdosStore,cmAcuerdos,{
-         title : '<s:message code="acuerdos.grid.titulo" text="**Acuerdos" />'
+	//del acuerdosGeneric
+	var acuerdosGrid = app.crearGrid(acuerdosStoreAcu,cmAcuerdos,{
+		id: 'datosAcuerdo'
+         ,title : '<s:message code="acuerdos.grid.titulo" text="**Acuerdos" />'
          <app:test id="acuerdosGrid" addComa="true" />
          ,style:'padding-right:10px'
          ,autoHeight : true
          ,cls:'cursor_pointer'
          ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
-
-         ,bbar : [
-          	<sec:authorize ifAllGranted="PROPONER-ACUERDO">
-          		btnAltaAcuerdo,
-	        	btnProponerAcuerdo,	
-	        </sec:authorize>
-        	btnIncumplirAcuerdo,
-     	   	btnCerrarAcuerdo,
-        	btnAceptarAcuerdo,
-        	btnRechazarAcuerdo,
-			btnCumplimientoAcuerdo,
-			btnRegistrarFinalizacionAcuerdo,
-			btnVigenteAcuerdo
-	      ]
-
 	}); 
 
 	var reload = function(){
@@ -541,22 +521,11 @@
 		if (analisisTab !=null) {
 			analisisTab.add(panelAnterior);
 		}
-		panel.doLayout();
-		acuerdosStore.webflow({id:panel.getAsuntoId()});
+		panelAcu.doLayout();
+		acuerdosStoreAcu.webflow({id:panelAcu.getAsuntoId()});
 	}
-	
-	/*
-	var reloadTerminos = function(){
-		panel.remove(panelAnteriorTerminos);
 
-		panelAnteriorTerminos = recargarAcuerdo(acuerdoSeleccionado);
-		panel.add(panelAnteriorTerminos);
-		panel.doLayout();
-		acuerdosStore.webflow({id:panel.getAsuntoId()});
-	}
-	*/
-	
-	panel.add(acuerdosGrid);
+	panelAcu.add(acuerdosGrid);
 
 
 	// Variables para las pestañas de análisis y términos
@@ -578,7 +547,7 @@
 		var idTipoAcuerdo = rec.get('idTipoAcuerdo');
 		acuerdoSeleccionado = idAcuerdo;
 		indexAcuerdoSeleccionado = rowIndex;
-		panel.el.mask('<s:message code="fwk.ui.form.cargando" text="**Cargando" />','x-mask-loading');
+		<%--panelAcu.el.mask('<s:message code="fwk.ui.form.cargando" text="**Cargando" />','x-mask-loading'); --%>
 		//Muestro o no los botones que corresponden
 		var codigoEstado = rec.get('codigoEstado');
 		
@@ -592,7 +561,7 @@
 			,method: 'POST'
 			,params:{
 						idTipoDespachoProponente : idTipoDespacho
-						,idAsunto:panel.getAsuntoId()
+						,idAsunto:panelAcu.getAsuntoId()
 					}
 			,success: function (result, request){
 						
@@ -652,10 +621,10 @@
 					noPuedeEditarEstGest = false;
 				}
 				
-				panel.remove(acuerdosTabs);	
-				panel.remove(panelAnterior);
-				panel.remove(panelAnteriorTerminos);
-				panel.remove(cumplimientoAcuerdo);
+				panelAcu.remove(acuerdosTabs);	
+				panelAcu.remove(panelAnterior);
+				panelAcu.remove(panelAnteriorTerminos);
+				panelAcu.remove(cumplimientoAcuerdo);
 		
 				analisisTab = new Ext.Panel({
 					title:'<s:message code="plugin.mejoras.acuerdos.tabAnalisis" text="**Análisis"/>'
@@ -664,21 +633,27 @@
 				});
 			
 				terminosTab = new Ext.Panel({
-					title:'<s:message code="plugin.mejoras.acuerdos.tabTerminosAcuerdos" text="**Términos"/>'
-					,id:'asunto-terminosTabs-${asunto.id}'
-					,autoHeight:true
-					,autoWidth: true
-				});
-		
-				acuerdosTabs = new Ext.TabPanel({
-					id:'asunto-acuerdosTabs-${asunto.id}'
-					,items:[
-						terminosTab, analisisTab
-					]
-					,style:'padding-right:10px;margin-top: 20px;'
+					<%-- title:'<s:message code="plugin.mejoras.acuerdos.tabTerminosAcuerdos" text="**Términos"/>'
+					,--%>id:'asunto-terminosTabs-${asunto.id}'
+					,layout:'form'
+					,border : false
+					,autoScroll:true
+					,bodyStyle:'padding:0px;margin:0px'
 					,autoHeight:true
 					,autoWidth : true
-					,border: true
+				});
+		
+				acuerdosTabs = new Ext.Panel({
+					id:'asunto-acuerdosTabs-${asunto.id}'
+					,items:[
+						terminosTab<%--, analisisTab --%>
+					]
+					,layout:'form'
+					,border : false
+					,autoScroll:true
+					,bodyStyle:'padding:0px;margin:0px'
+					,autoHeight:true
+					,autoWidth : true
 				  });     
 				    
 		
@@ -688,7 +663,8 @@
 				analisisTab.add(panelAnterior);
 				terminosTab.add(panelAnteriorTerminos);
 				
-				acuerdosTabs.setActiveTab(terminosTab);                                                                                                                                                           
+				<%--acuerdosTabs.setActiveTab(terminosTab); --%>
+				acuerdosTabs.add(terminosTab);                                                                                                                                                           
 				acuerdosTabs.setHeight('auto');	
 				
 				var store = panelAnteriorTerminos.terminosAcuerdoGrid.getStore();
@@ -709,10 +685,10 @@
 						}
 					}
 					
-					panel.add(acuerdosTabs);
-					//panel.add(panelAnterior);
-					panel.doLayout();
-					panel.show();
+					panelAcu.add(acuerdosTabs);
+					//panelAcu.add(panelAnterior);
+					panelAcu.doLayout();
+					panelAcu.show();
 			   	});
 				
 
@@ -734,7 +710,7 @@
 		config = config || {};
 		var autoLoad = {url : url+"?"+Math.random()
 				,scripts: true
-				,params: {id:idAcuerdo,idAsunto:panel.getAsuntoId()}
+				,params: {id:idAcuerdo,idAsunto:panelAcu.getAsuntoId()}
 				};
 		var cfg = {
 			autoLoad : autoLoad
@@ -759,11 +735,11 @@
 
 	
 	var recargarAcuerdoTerminos = function(idAcuerdo,noPuedeModificar, noPuedeEditarEstadoGestion){
-		
+	
 		<%@ include file="/WEB-INF/jsp/plugin/mejoras/acuerdos/detalleTerminos.jsp" %>
 
 		var panTerminos = crearTerminosAsuntos(noPuedeModificar,false, noPuedeEditarEstadoGestion);
-
+		ocultarBotones();
 		return panTerminos;
 		
 	};	
@@ -778,7 +754,7 @@
 
 	
 	
-	panel.getValue = function(){
+	panelAcu.getValue = function(){
 		var estado = entidad.get("acuerdos");
 		rowsSelected = acuerdosGrid.getSelectionModel().getSelections();
 		if (rowsSelected != ''){
@@ -794,55 +770,27 @@
 		}
 	}
 	
-	panel.setValue = function(){
+	panelAcu.setValue = function(){
 		var data = entidad.get("data");
-		entidad.cacheOrLoad(data,acuerdosStore, {id : data.id });
-		
-		<%--
-		var estado = entidad.get("acuerdos");
-		if (estado){
-			panel.remove(panelAnterior);
-
-			panelAnterior = recargarAcuerdo(estado.idAcuerdo);
-			panel.add(panelAnterior);
-			panel.doLayout();
-		} else {
-			// vaciar el grid
-			panel.remove(panelAnterior);
-		}
-		 --%>
-		
-<%-- 		var esVisible = [ --%>
-<%-- 			 [btnAltaAcuerdo, data.toolbar.esGestor || data.toolbar.esSupervisor] --%>
-<%-- 			,[btnCumplimientoAcuerdo, data.toolbar.esGestor || data.toolbar.esSupervisor] --%>
-<%-- 		]; --%>
-
-		//entidad.setVisible(esVisible);
-		//Por defecto establecemos el botón como no visible
+		entidad.cacheOrLoad(data, acuerdosStoreAcu, {id: data.id });
 		btnCumplimientoAcuerdo.setVisible(false);
-		//terminosTab.hide();
-		//analisisTab.hide();
+		btnAltaAcuerdo.hide();
 	}
 
-	panel.getAsuntoId = function(){
+	panelAcu.getAsuntoId = function(){
 		return entidad.get("data").id;
 	}
 
-	panel.esSupervisor = function(){
+	panelAcu.esSupervisor = function(){
 		return entidad.get("data").toolbar.esSupervisor;
 	}
 
-	panel.esGestor = function(){
+	panelAcu.esGestor = function(){
 		return entidad.get("data").toolbar.esGestor;
 	}
 
-	panel.setVisibleTab = function(data){
+	panelAcu.setVisibleTab = function(data){
 		return data.aceptacion.estaAceptado;
 	}
-	
-	panel.setVisibleTab = function(data){
-		return data.toolbar.puedeVerTabAcuerdos;
-	}
 
-	return panel;
-})
+	

@@ -20,6 +20,17 @@
 	  <json:property name="asunto" value="${asunto.nombre}" />
 	  <json:property name="estado" value="${asunto.estadoAsunto.descripcion}" />
 	  <json:property name="codigoExterno" value="${asunto.codigoExterno}" />
+	  <c:if test="${asunto.idAsuOrigen != null}">
+	  	<json:property name="idAsuOrigen" value="${asunto.idAsuOrigen}" />
+	  	<json:property name="idOrigen" value="${asuntoOrigen.id}" />
+	  	<json:property name="nombreOrigen" value="${asuntoOrigen.nombre}" />
+	  	<json:property name="codigoOrigen" value="${asuntoOrigen.tipoAsunto.codigo}" />
+	  </c:if>
+	  <c:if test="${asunto.idExpOrigen != null}">
+	  	<json:property name="idExpOrigen" value="${asunto.idExpOrigen}" />
+	  	<json:property name="idExp" value="${expedienteOrigen.id}" />
+	  	<json:property name="nombreExp" value="${expedienteOrigen.descripcionExpediente}" />
+	  </c:if>
 	  <c:if test="${asunto.propiedadAsunto != null}">
 	  	<json:property name="propiedadAsunto" value="${asunto.propiedadAsunto.descripcion}" />
 	  </c:if>
@@ -89,6 +100,9 @@
 		<json:property name="puedeVerTabAdjudicados" value="${puedeVerTabAdjudicados}" />		
 	    <json:property name="provision" value="${provision}" />
 	    <json:property name="puedeFinalizarAsunto" value="${puedeFinalizarAsunto}" />
+	    <c:if test="${puedeVerTabAcuerdos != null}">
+	    	<json:property name="puedeVerTabAcuerdos" value="${puedeVerTabAcuerdos}" />
+	    </c:if>
 	</json:object>
 	<json:object name="concursal">
 		<json:property name="procedimientosConcursales" value="${procedimientosConcursales}" />

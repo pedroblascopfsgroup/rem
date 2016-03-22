@@ -100,10 +100,24 @@ public class LIQCobroPago implements Auditable, Serializable{
     @Column(name = "CPA_REVISADO")
     private Integer revisado;
     
+    @Column(name = "CPA_FECHA_VALOR")
+    private Date fechaValor;
    
+    @Column(name = "CPA_CAPITAL")
+    private Float capital;
     
-   
-
+    @Column(name="CPA_INTERESES_ORDINAR")
+    private Float interesesOrdinarios;
+    
+    @Column(name="CPA_IMPUESTOS")
+    private Float impuestos;
+    
+    @Column(name="CPA_COMISIONES")
+    private Float comisiones;
+    
+    @Column(name="CPA_GASTOS")
+    private Float gastos;
+    
     /**
      * @return the id
      */
@@ -276,6 +290,54 @@ public class LIQCobroPago implements Auditable, Serializable{
 
 	public void setTipoImputacion(DDTipoImputacion tipoImputacion) {
 		this.tipoImputacion = tipoImputacion;
+	}
+
+	public Date getFechaValor() {
+		return fechaValor;
+	}
+
+	public void setFechaValor(Date fechaValor) {
+		this.fechaValor = fechaValor;
+	}
+
+	public Float getCapital() {
+		return capital;
+	}
+
+	public void setCapital(Float capital) {
+		this.capital = capital;
+	}
+
+	public Float getInteresesOrdinarios() {
+		return interesesOrdinarios;
+	}
+
+	public void setInteresesOrdinarios(Float interesesOrdinarios) {
+		this.interesesOrdinarios = interesesOrdinarios;
+	}
+
+	public Float getImpuestos() {
+		return impuestos;
+	}
+
+	public void setImpuestos(Float impuestos) {
+		this.impuestos = impuestos;
+	}
+
+	public Float getComisiones() {
+		return comisiones;
+	}
+
+	public void setComisiones(Float comisiones) {
+		this.comisiones = comisiones;
+	}
+
+	public Float getGastos() {
+		return gastos;
+	}
+
+	public void setGastos(Float gastos) {
+		this.gastos = gastos;
 	}
 	
 }

@@ -268,7 +268,7 @@ var botonFinalizarAsunto =  new Ext.Button({
 		var esSupervisor = toolbar.get('esSupervisor');
 		var esSupervisorOriginal = toolbar.get('esSupervisorOriginal');
 		var puedeFinalizarAsunto = toolbar.get('puedeFinalizarAsunto');
-		var puedeVerAcuerdos = toolbar.get('puedeVerTabAcuerdos');
+		var esAsuntoAcuerdo = toolbar.get('esAsuntoAcuerdo');
 		var esVisible = [];
 		
 		
@@ -297,7 +297,7 @@ var botonFinalizarAsunto =  new Ext.Button({
 				condition = eval(buttonsL_asunto[i].condition);
 				esVisible.push([buttonsL_asunto[i], condition]);
 			}
-			if(!puedeVerAcuerdos){
+			if(esAsuntoAcuerdo){
 				var tmp = buttonsL_asunto[i].getText();
 				if(buttonsL_asunto[i].getText().localeCompare("Exportar informes") == 0 || buttonsL_asunto[i].getText().localeCompare("Alta de Direcciones") == 0){
 					buttonsL_asunto[i].hide();

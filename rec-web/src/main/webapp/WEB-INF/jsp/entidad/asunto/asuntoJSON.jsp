@@ -100,8 +100,8 @@
 		<json:property name="puedeVerTabAdjudicados" value="${puedeVerTabAdjudicados}" />		
 	    <json:property name="provision" value="${provision}" />
 	    <json:property name="puedeFinalizarAsunto" value="${puedeFinalizarAsunto}" />
-	    <c:if test="${puedeVerTabAcuerdos != null}">
-	    	<json:property name="puedeVerTabAcuerdos" value="${puedeVerTabAcuerdos}" />
+	    <c:if test="${esAsuntoAcuerdo != null}">
+	    	<json:property name="esAsuntoAcuerdo" value="${esAsuntoAcuerdo}" />
 	    </c:if>
 	</json:object>
 	<json:object name="concursal">

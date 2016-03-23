@@ -129,7 +129,7 @@
     panelNombreAsunto.autoHeight = true;
     panelNombreAsunto.style='margin:0px';   
 			
-	btnEditarNombre.hide()
+	btnEditarNombre.hide();
 	
 	<pfs:panel name="panelNombreAsuntoAcuerdo" columns="2" collapsible="false" hideBorder="true">
 		<pfs:items items="asuntoAcuerdo"/>
@@ -140,7 +140,7 @@
 	asuntoAcuerdo.autoHeight = true;
     panelNombreAsuntoAcuerdo.autoHeight = true;
     panelNombreAsuntoAcuerdo.style='margin:0px';   
-    btnEditarNombreAcuerdo.hide()
+    btnEditarNombreAcuerdo.hide();
 	<sec:authorize ifAllGranted="ROLE_EDIT_CABECERA_ASUNTO">
 		btnEditarNombre.show();
 		btnEditarNombreAcuerdo.show();

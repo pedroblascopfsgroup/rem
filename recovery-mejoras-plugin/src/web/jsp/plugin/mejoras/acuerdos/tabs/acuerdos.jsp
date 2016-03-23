@@ -841,7 +841,11 @@
 	}
 	
 	panel.setVisibleTab = function(data){
-		return data.toolbar.puedeVerTabAcuerdos;
+		if(data.toolbar.esAsuntoAcuerdo){
+			return false;
+		}else{
+			return true;
+		}
 	}
 
 	return panel;

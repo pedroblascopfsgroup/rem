@@ -30,7 +30,7 @@
                 <evaluate expression="executor.execute('MEJAsuntosManager.puedeFinalizarAsunto',id)" result="flowScope.puedeFinalizarAsunto" /> 
                 <evaluate expression="executor.execute('AsuntoAcuerdoManager.asuntoOrigen',id)" result="flowScope.asuntoOrigen" />
                 <evaluate expression="executor.execute('AsuntoAcuerdoManager.expedienteOrigen',id)" result="flowScope.expedienteOrigen" />
-                <evaluate expression="executor.execute('AsuntoAcuerdoManager.puedeVerTabAcuerdos',id)" result="flowScope.puedeVerTabAcuerdos" />
+                <evaluate expression="executor.execute('AsuntoAcuerdoManager.esAsuntoAcuerdo',id)" result="flowScope.esAsuntoAcuerdo" />
 	    </on-entry>
     </end-state> 	
     

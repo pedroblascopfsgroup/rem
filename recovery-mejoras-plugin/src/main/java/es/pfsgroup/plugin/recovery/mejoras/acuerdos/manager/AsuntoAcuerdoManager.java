@@ -63,18 +63,17 @@ public class AsuntoAcuerdoManager extends BusinessOperationOverrider<AsuntoAcuer
 		return null;
 	}
 	
-	@BusinessOperation(BO_CORE_ASUNTO_PUEDER_VER_TAB_ACUERDOS)
-	public Boolean puedeVerTabAcuerdos(Long idAsunto) {
+	@BusinessOperation(BO_CORE_ASUNTO_ACUERDO)
+	public Boolean esAsuntoAcuerdo(Long idAsunto) {
 		EXTAsunto asunto = extAsuntoMnager.getAsuntoById(idAsunto);
 		if(!Checks.esNulo(asunto.getTipoAsunto())){
 			String codigoAsunto = asunto.getTipoAsunto().getCodigo();
 			if(!Checks.esNulo(codigoAsunto)){
 				if(codigoAsunto.equals("ACU")){
-					return false;
+					return true;
 				}
 			}
 		}
-		return true;
+		return false;
 	}
-	
 }

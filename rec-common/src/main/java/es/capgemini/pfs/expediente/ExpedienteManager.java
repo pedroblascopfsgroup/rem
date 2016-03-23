@@ -1432,7 +1432,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
     public void elevarExpedienteDeREaENSAN(Long idExpediente, Boolean isSupervisor) {
         Expediente exp = expedienteDao.get(idExpediente);
 
-        Boolean permitidoElevar = compruebaElevacion(exp, ExpedienteBPMConstants.STATE_EN_SANCION, isSupervisor);
+        Boolean permitidoElevar = compruebaElevacion(exp, ExpedienteBPMConstants.STATE_REVISION_EXPEDIENTE, isSupervisor);
         if (!permitidoElevar) { throw new BusinessOperationException("expediente.elevar.falloValidaciones"); }
         
         /*El BPM debe cambiar el estado del itinerario en el expediente y los estados de las propuestas que esten en estado "Propuesta" a "Elevado"*/
@@ -1818,7 +1818,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         if (asuntos != null && asuntos.size() > 0) { throw new BusinessOperationException("expediente.devolucionRevision.invalida"); }
         //comprobamos si se cumple la regla de validacion al devolver a revision
         Boolean permitidoDevolver = compruebaDevolucion(exp, ExpedienteBPMConstants.STATE_EN_SANCION, DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE);
-        if (!permitidoDevolver) { throw new BusinessOperationException("expediente.elevar.falloValidaciones"); }
+        if (!permitidoDevolver) { throw new BusinessOperationException("expediente.devolver.falloEstadoPropuestas"); }
         Long bpmProcess = exp.getProcessBpm();
         if (bpmProcess == null) { throw new BusinessOperationException("expediente.bpmprocess.error"); }
         String node = (String) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_ACTUAL_NODE, bpmProcess);

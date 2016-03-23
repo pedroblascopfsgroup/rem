@@ -227,7 +227,7 @@
 		    var newTipoInteresRecord = tiposInteresStore.recordType;
 	   		var t = new newTipoInteresRecord({
 	   			fecha: newFecha.value,
-	   			tipoInteres: newTipoInteres.value,
+	   			tipoInteres: newTipoInteres.value
 	   		});
 			tiposInteresStore.insert(0,t);			
 			

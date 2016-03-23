@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="tramiteFormalizacionPignoracion" width="736" height="519">
+<root-container name="tramiteFormalizacionPignoracion" width="739" height="522">
   <node name="inicio" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>

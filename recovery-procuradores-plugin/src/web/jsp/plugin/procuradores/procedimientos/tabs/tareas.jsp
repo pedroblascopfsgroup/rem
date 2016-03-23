@@ -137,7 +137,7 @@
                 idEntidadInformacion:panel.getProcedimientoId()
                 ,fechaCreacion: panel.getData().tareas.fechaCreacion
                 ,situacion: panel.getData().tareas.estadoItinerario
-                ,fechaVencimiento: app.format.dateRenderer(fechaVenciProrroga)
+                ,fechaVencimiento: fechaVenciProrroga
                 ,idTipoEntidadInformacion: '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO" />'
                 ,descripcion: descTareaProrroga
                 ,idTareaAsociada:idTareaProrroga
@@ -164,7 +164,7 @@
 				idEntidadInformacion: panel.getProcedimientoId()
 				,fechaCreacion: panel.getData().tareas.fechaCreacion
 				,situacion: panel.getData().tareas.estadoItinerario
-				,fechaVencimiento: app.format.dateRenderer(fechaVenciProrroga)
+				,fechaVencimiento: fechaVenciProrroga
 				,idTipoEntidadInformacion: '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO" />'
 				,descripcion: descTareaProrroga
 				,idTareaAsociada: idTareaProrroga
@@ -193,7 +193,7 @@
 		,params : {
 				idEntidadInformacion:panel.getProcedimientoId()
 				,isConsulta:false
-				,fechaVencimiento: app.format.dateRenderer(fechaVenciProrroga)
+				,fechaVencimiento: fechaVenciProrroga
 				,fechaCreacion: panel.getData().tareas.fechaCreacion 
 				,situacion: panel.getData().tareas.estadoItinerario
 				,destareaOri: descPropuestaProrroga

@@ -42,40 +42,63 @@
 	});
 	
 	<%-- Combo Tipo Entrega --%>
-	var dictDDTipoEntrega = <app:dict value="${ddTipoEntrega}" />; 
-
-	var comboDDTipoEntrega = app.creaCombo({
-		fields: ['codigo', 'descripcion']
-	    ,root: 'diccionario'
-	    ,data: dictDDTipoEntrega
-	    ,allowBlank: false
+	var dictDDTipoEntrega = <app:dict value="${ddTipoEntrega}" />;
+	
+	var storeTipoEntrega =  new Ext.data.JsonStore({
+		fields : ['codigo', 'descripcion']
+		,root : 'diccionario'
+		,data : dictDDTipoEntrega
+	});
+	
+	var comboDDTipoEntrega =new Ext.form.ComboBox({
+		store: storeTipoEntrega
+		,allowBlank: false
+		,blankElementText: '--'
+		,disabled: false
+		,displayField: 'descripcion'
+		,valueField: 'codigo'
+		,resizable: true
+		,hiddenName: 'DDTipoEntrega'
 		,labelStyle:labelStyle
-		,fieldLabel : '<s:message code="contabilidad.tipoEntrega" text="**Tipo Estado"/>'
-		,width : 550
-		,editable : true
+		,fieldLabel : '<s:message code="contabilidad.tipoEntrega" text="**Tipo Entrega"/>'
+		,triggerAction : 'all'
+		,mode:'local'
+		,width:550
 		<c:if test="${contabilidadCobro.tipoEntrega!=null}" >
-			,value:'${contabilidadCobro.tipoEntrega.descripcion}'
+			,value:'${contabilidadCobro.tipoEntrega.codigo}'
 		</c:if>
+		
 	});
 
 	 <%-- Combo Concepto Entrega --%>
 	var dictDDConceptoEntrega = <app:dict value="${ddConceptoEntrega}" />;
-
-	var comboDDConceptoEntrega = app.creaCombo({
-		fields: ['codigo', 'descripcion']
-        ,root: 'diccionario'
-        ,data : dictDDConceptoEntrega
-        ,allowBlank: false
-		,labelStyle:labelStyle
-		,fieldLabel : '<s:message code="contabilidad.conceptoEntrega" text="**Concepto Entrega"/>'
-		,width : 550
-		,editable : true
-		, forceSelection : true
-		<c:if test="${contabilidadCobro.conceptoEntrega!=null}" >
-			,value:'${contabilidadCobro.conceptoEntrega.descripcion}'
-		</c:if>
+	
+	var storeConceptoEntrega =  new Ext.data.JsonStore({
+		fields : ['codigo', 'descripcion']
+		,root : 'diccionario'
+		,data : dictDDConceptoEntrega
 	});
 	
+	var comboDDConceptoEntrega =new Ext.form.ComboBox({
+		store: storeConceptoEntrega
+		,allowBlank: false
+		,blankElementText: '--'
+		,disabled: false
+		,displayField: 'descripcion'
+		,valueField: 'codigo'
+		,resizable: true
+		,hiddenName: 'DDConceptoEntrega'
+		,labelStyle:labelStyle
+		,fieldLabel : '<s:message code="contabilidad.conceptoEntrega" text="**Concepto Entrega"/>'
+		,triggerAction : 'all'
+		,mode:'local'
+		,width:550
+		<c:if test="${contabilidadCobro.conceptoEntrega!=null}" >
+			,value:'${contabilidadCobro.conceptoEntrega.codigo}'
+		</c:if>
+		
+	});
+
 	<%-- Entrada de Texto Numero Nominal --%>
 	var nominal  = app.creaNumber('contabilidadCobro.nominal',
 		'<s:message code="contabilidad.nominal" text="**Nominal" />',
@@ -111,6 +134,7 @@
 		}
 	);
 	
+	intereses.addListener('keyup', refreshTotalEntrega);
 	
 	<%-- Entrada de Texto Numero Demoras --%>
 	var demoras  = app.creaNumber('contabilidadCobro.demoras',
@@ -128,6 +152,8 @@
 		}
 	);
 	
+	demoras.addListener('keyup', refreshTotalEntrega);
+	
 	<%-- Entrada de Texto Numero Impuestos --%>
 	var impuestos  = app.creaNumber('contabilidadCobro.impuestos',
 		'<s:message code="contabilidad.impuestos" text="**Impuestos" />',
@@ -143,6 +169,8 @@
 			</c:if>
 		}
 	);
+	
+	impuestos.addListener('keyup', refreshTotalEntrega);
 	
 	<%-- Entrada de Texto Numero Gastos Procurador --%>
 	var gastosProcurador  = app.creaNumber('contabilidadCobro.gastosProcurador',
@@ -160,6 +188,8 @@
 		}
 	);
 	
+	gastosProcurador.addListener('keyup', refreshTotalEntrega);
+	
 	<%-- Entrada de Texto Numero Gastos Letrado --%>
 	var gastosLetrado  = app.creaNumber('contabilidadCobro.gastosLetrado',
 		'<s:message code="contabilidad.gastosLetrado" text="**Gastos Letrado" />',
@@ -175,6 +205,8 @@
 			</c:if>
 		}
 	);
+	
+	gastosLetrado.addListener('keyup', refreshTotalEntrega);
 	
 	<%-- Entrada de Texto Numero Otros Gastos --%>
 	var otrosGastos  = app.creaNumber('contabilidadCobro.otrosGastos',
@@ -192,6 +224,8 @@
 		}
 	);
 	
+	otrosGastos.addListener('keyup', refreshTotalEntrega);
+	
 	<%-- Entrada de Texto Numero Quita Nominal --%>
 	var quitaNominal  = app.creaNumber('contabilidadCobro.quitaNominal',
 		'<s:message code="contabilidad.quitaNominal" text="**Quita Nominal" />',
@@ -207,6 +241,8 @@
 			</c:if>
 		}
 	);
+	
+	quitaNominal.addListener('keyup', refreshTotalEntrega);
 	
 	<%-- Entrada de Texto Numero Quita Intereses --%>
 	var quitaIntereses  = app.creaNumber('contabilidadCobro.quitaIntereses',
@@ -224,6 +260,7 @@
 		}
 	);
 	
+	quitaIntereses.addListener('keyup', refreshTotalEntrega);
 		
 	<%-- Entrada de Texto Numero Quita Demoras --%>
 	var quitaDemoras  = app.creaNumber('contabilidadCobro.quitaDemoras',
@@ -241,6 +278,8 @@
 		}
 	);
 	
+	quitaDemoras.addListener('keyup', refreshTotalEntrega);
+	
 	<%-- Entrada de Texto Numero Quita Impuestos --%>
 	var quitaImpuestos  = app.creaNumber('contabilidadCobro.quitaImpuestos',
 		'<s:message code="contabilidad.quitaImpuestos" text="**Quita Impuestos" />',
@@ -256,6 +295,8 @@
 			</c:if>
 		}
 	);
+	
+	quitaImpuestos.addListener('keyup', refreshTotalEntrega);
 	
 	<%-- Entrada de Texto Numero Quita Gastos Procurador --%>
 	var quitaGastosProcurador  = app.creaNumber('contabilidadCobro.quitaGastosProcurador',
@@ -273,6 +314,8 @@
 		}
 	);
 	
+	quitaGastosProcurador.addListener('keyup', refreshTotalEntrega);
+	
 	<%-- Entrada de Texto Numero Quita Gastos Letrado --%>
 	var quitaGastosLetrado  = app.creaNumber('contabilidadCobro.quitaGastosLetrado',
 		'<s:message code="contabilidad.quitaGastosLetrado" text="**Quita Gastos Letrado" />',
@@ -289,6 +332,8 @@
 		}
 	);
 	
+	quitaGastosLetrado.addListener('keyup', refreshTotalEntrega);
+	
 	<%-- Entrada de Texto Numero Quita Otros Gastos --%>
 	var quitaOtrosGastos  = app.creaNumber('contabilidadCobro.quitaOtrosGastos',
 		'<s:message code="contabilidad.quitaOtrosGastos" text="**Quita Otros Gastos" />',
@@ -304,6 +349,8 @@
 			</c:if>
 		}
 	);
+	
+	quitaOtrosGastos.addListener('keyup', refreshTotalEntrega);
 	
 	<%-- Entrada de Texto Numero Total Entrega --%>
 	var totalEntrega  = app.creaNumber('contabilidadCobro.totalEntrega',
@@ -454,16 +501,13 @@
 		,handler : function(){
 			if(validarCamposObligatorios){
 			<%-- Si las validaciones son correctas --%>
-				page.submit({
-					eventName : 'update'
-					,formPanel : panelEdicion
-					,params:{
+				var parametros = {
 						id:'${contabilidadCobro.id}'
 						,asunto:'${contabilidadCobro.asunto.id}'
-						,fechaEntrega:fechaEntrega.getValue()
-						,fechaValor:fechaValor.getValue()
-						,tipoEntrega:comboDDEstadoCobroPago.getValue()
-						,conceptoEntrega:comboDDConceptoEntrega.getValue
+						,fechaEntrega:fechaEntrega.getRawValue()
+						,fechaValor:fechaValor.getRawValue()
+						,tipoEntrega:comboDDTipoEntrega.getValue()
+						,conceptoEntrega:comboDDConceptoEntrega.getValue()
 						,nominal:nominal.getValue()
 						,intereses:intereses.getValue()
 						,demoras:demoras.getValue()
@@ -475,13 +519,23 @@
 						,quitaIntereses:quitaIntereses.getValue()
 						,quitaDemoras:quitaDemoras.getValue()
 						,quitaImpuestos:quitaImpuestos.getValue()
-						,quitaGastosProcurador:quitaGastosProcurador.getValu()
+						,quitaGastosProcurador:quitaGastosProcurador.getValue()
 						,quitaGastosLetrado:quitaGastosLetrado.getValue()
 						,quitaOtrosGastos:quitaOtrosGastos.getValue()
 						,totalEntrega:totalEntrega.getValue()
 						,observaciones:observaciones.getValue()
-					}
-					,success : function(){ page.fireEvent(app.event.DONE) }
+					};
+				Ext.Ajax.request({
+    				url: page.resolveUrl('contabilidadcobros/saveContabilidadCobro')
+   					,params: parametros
+  					,method: 'POST'
+   					,success: function (result, request){
+   						page.fireEvent(app.event.DONE)
+   					 }
+   					,error : function (result, request){
+	   				 }
+       				,failure: function (response, options){
+					 }
 				});
 			}
 		}

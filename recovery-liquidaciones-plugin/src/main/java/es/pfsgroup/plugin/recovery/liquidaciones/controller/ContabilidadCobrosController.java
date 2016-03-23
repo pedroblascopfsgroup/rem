@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
 import es.pfsgroup.plugin.recovery.liquidaciones.api.ContabilidadCobrosApi;
-import es.pfsgroup.plugin.recovery.liquidaciones.dao.ContabilidadCobrosDao;
-import es.pfsgroup.plugin.recovery.liquidaciones.dao.impl.ContabilidadCobrosDaoImpl;
 import es.pfsgroup.plugin.recovery.liquidaciones.dto.DtoContabilidadCobros;
 import es.pfsgroup.plugin.recovery.liquidaciones.model.ContabilidadCobros;
 
@@ -26,12 +24,9 @@ public class ContabilidadCobrosController {
 	static final String NEW_CONTABILIDAD_COBRO = "plugin/liquidaciones/contabilidadCobro";
 	private static final String DEFAULT = "default";
 
-
-	@Autowired
-	private ContabilidadCobrosDao contabilidadPagos;
 	
 	@Autowired
-	private ContabilidadCobrosApi contabilidadCobrosApi;
+	private ContabilidadCobrosApi contabilidadCobrosManager;
 	
 	@Autowired
 	private DictionaryManager dictionary;
@@ -40,7 +35,7 @@ public class ContabilidadCobrosController {
 	@RequestMapping
 	public String getListadoContabilidadCobros(ModelMap model, DtoContabilidadCobros dto) {
 
-		List<ContabilidadCobros> list = (List<ContabilidadCobros>) contabilidadPagos.getListadoContabilidadCobros(dto);
+		List<ContabilidadCobros> list = (List<ContabilidadCobros>) contabilidadCobrosManager.getListadoContabilidadCobros(dto);
 		model.put("listado", list);
 
 		return CONTABILIDAD_COBROS_JSON;
@@ -69,7 +64,7 @@ public class ContabilidadCobrosController {
 		List<Dictionary> conceptoEntrega = dictionary.getList("DDAdjContableConceptoEntrega");
 		model.put("ddConceptoEntrega", conceptoEntrega);
 		
-		ContabilidadCobros cc = (ContabilidadCobros) contabilidadPagos.getContabilidadCobroByID(dto);
+		ContabilidadCobros cc = (ContabilidadCobros) contabilidadCobrosManager.getContabilidadCobroByID(dto);
 		model.put("contabilidadCobro", cc);
 		
 		return NEW_CONTABILIDAD_COBRO;
@@ -79,7 +74,7 @@ public class ContabilidadCobrosController {
 	@RequestMapping
 	public String saveContabilidadCobro(ModelMap model, DtoContabilidadCobros dto) {
 
-		contabilidadCobrosApi.saveContabilidadCobro(dto);
+		contabilidadCobrosManager.saveContabilidadCobro(dto);
 		
 		return DEFAULT;
 	}
@@ -87,7 +82,7 @@ public class ContabilidadCobrosController {
 	@RequestMapping
 	public String deleteContabilidadCobro(ModelMap model, Long idContabilidadCobro) {
 
-		contabilidadCobrosApi.deleteContabilidadCobro(idContabilidadCobro);
+		contabilidadCobrosManager.deleteContabilidadCobro(idContabilidadCobro);
 		
 		return DEFAULT;
 	}

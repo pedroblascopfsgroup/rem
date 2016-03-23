@@ -156,6 +156,9 @@
 		title:'<s:message code="contabilidad.grid.titulo" text="**Contabilidad Cobros" />'
 		,height : 420
 		,style:'padding-right:10px'
+		,width: '100%'
+		,autoScroll: true
+		,minColumnWidth: 200
 		,bbar:[ btnNuevo,btnEditar,btnBorrar ]
 	});
 	  
@@ -167,10 +170,10 @@
 		if(!id)
 			return;
 	    var w = app.openWindow({
-	        flow : 'asuntos/contabilidadCobros'
+	        flow : 'contabilidadcobros/showEditContabilidadCobro'
 			,width:700
-			,title : '<s:message code="contabilidadCobros.edicion" text="**Editar contabilidadCobros" />'
-	        ,params : {id:id,idAsunto:panel.getAsuntoId()}
+			,title : '<s:message code="contabilidadCobros.edicion" text="**Editar Contabilidad Cobros" />'
+	        ,params : {id:id,asunto:panel.getAsuntoId()}
 	    });
 	    w.on(app.event.DONE, function(){
 	        w.close();

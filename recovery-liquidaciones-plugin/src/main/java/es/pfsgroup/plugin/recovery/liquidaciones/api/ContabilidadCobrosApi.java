@@ -1,6 +1,9 @@
 package es.pfsgroup.plugin.recovery.liquidaciones.api;
 
+import java.util.List;
+
 import es.pfsgroup.plugin.recovery.liquidaciones.dto.DtoContabilidadCobros;
+import es.pfsgroup.plugin.recovery.liquidaciones.model.ContabilidadCobros;
 
 
 
@@ -26,5 +29,24 @@ public interface ContabilidadCobrosApi {
 	 * @param dto
 	 */
 	void deleteContabilidadCobro(Long idContabilidadCobro);
+
+
+	/**
+	 * Obtiene una lista de Contabilidad Cobros por asunto ID.
+	 * 
+	 * @param dto
+	 * @return
+	 */
+	List<ContabilidadCobros> getListadoContabilidadCobros(
+			DtoContabilidadCobros dto);
+
+
+	/**
+	 * Obtiene un rgistro de Contabilidad Cobro por ID.
+	 * 
+	 * @param dto
+	 * @return
+	 */
+	ContabilidadCobros getContabilidadCobroByID(DtoContabilidadCobros dto);
 	
 }

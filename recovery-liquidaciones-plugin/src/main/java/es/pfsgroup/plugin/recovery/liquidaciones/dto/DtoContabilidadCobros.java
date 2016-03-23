@@ -1,8 +1,7 @@
 package es.pfsgroup.plugin.recovery.liquidaciones.dto;
 
-import java.sql.Date;
-
 import es.capgemini.devon.dto.WebDto;
+
 /*
  * DTO de Contabilidad Cobros.
  */
@@ -11,13 +10,14 @@ public class DtoContabilidadCobros extends WebDto {
 	 * 
 	 */
 	private static final long serialVersionUID = 1643924123392046504L;
-	
+
 	private Long id;
-	private Date fechaEntrega;
+	private String fechaEntrega;
+	private String fechaValor;
 	private Float valor;
 	private Float importe;
-	private Long tipoEntrega;
-	private Long conceptoEntrega;
+	private String tipoEntrega;
+	private String conceptoEntrega;
 	private Float nominal;
 	private Float intereses;
 	private Float demoras;
@@ -30,7 +30,7 @@ public class DtoContabilidadCobros extends WebDto {
 	private Float quitaDemoras;
 	private Float quitaImpuestos;
 	private Float quitaGastosProcurador;
-	private Float quitaGastosLEtrado;
+	private Float quitaGastosLetrado;
 	private Float quitaOtrosGastos;
 	private Float totalEntrega;
 	private Long numEnlace;
@@ -38,266 +38,224 @@ public class DtoContabilidadCobros extends WebDto {
 	private Long numCheque;
 	private String observaciones;
 	private Long asunto;
-	
 
 	public DtoContabilidadCobros() {
 	}
-
 
 	public Long getId() {
 		return id;
 	}
 
-
 	public void setId(Long id) {
 		this.id = id;
 	}
 
-
-	public Date getFechaEntrega() {
+	public String getFechaEntrega() {
 		return fechaEntrega;
 	}
 
+	public void setFechaEntrega(String fechaEntrega) {
 
-	public void setFechaEntrega(Date fechaEntrega) {
 		this.fechaEntrega = fechaEntrega;
+
 	}
 
+	public String getFechaValor() {
+		return fechaValor;
+	}
+
+	public void setFechaValor(String fechaValor) {
+
+		this.fechaValor = fechaValor;
+	}
 
 	public Float getValor() {
 		return valor;
 	}
 
-
 	public void setValor(Float valor) {
 		this.valor = valor;
 	}
 
-
-	public Long getTipoEntrega() {
+	public String getTipoEntrega() {
 		return tipoEntrega;
 	}
 
-
-	public void setTipoEntrega(Long tipoEntrega) {
+	public void setTipoEntrega(String tipoEntrega) {
 		this.tipoEntrega = tipoEntrega;
 	}
 
-
-	public Long getConceptoEntrega() {
+	public String getConceptoEntrega() {
 		return conceptoEntrega;
 	}
 
-
-	public void setConceptoEntrega(Long conceptoEntrega) {
+	public void setConceptoEntrega(String conceptoEntrega) {
 		this.conceptoEntrega = conceptoEntrega;
 	}
-
 
 	public Float getNominal() {
 		return nominal;
 	}
 
-
 	public void setNominal(Float nominal) {
 		this.nominal = nominal;
 	}
-
 
 	public Float getIntereses() {
 		return intereses;
 	}
 
-
 	public void setIntereses(Float intereses) {
 		this.intereses = intereses;
 	}
-
 
 	public Float getDemoras() {
 		return demoras;
 	}
 
-
 	public void setDemoras(Float demoras) {
 		this.demoras = demoras;
 	}
-
 
 	public Float getImpuestos() {
 		return impuestos;
 	}
 
-
 	public void setImpuestos(Float impuestos) {
 		this.impuestos = impuestos;
 	}
-
 
 	public Float getGastosProcurador() {
 		return gastosProcurador;
 	}
 
-
 	public void setGastosProcurador(Float gastosProcurador) {
 		this.gastosProcurador = gastosProcurador;
 	}
-
 
 	public Float getGastosLetrado() {
 		return gastosLetrado;
 	}
 
-
 	public void setGastosLetrado(Float gastosLetrado) {
 		this.gastosLetrado = gastosLetrado;
 	}
-
 
 	public Float getOtrosGastos() {
 		return otrosGastos;
 	}
 
-
 	public void setOtrosGastos(Float otrosGastos) {
 		this.otrosGastos = otrosGastos;
 	}
-
 
 	public Float getQuitaNominal() {
 		return quitaNominal;
 	}
 
-
 	public void setQuitaNominal(Float quitaNominal) {
 		this.quitaNominal = quitaNominal;
 	}
-
 
 	public Float getQuitaIntereses() {
 		return quitaIntereses;
 	}
 
-
 	public void setQuitaIntereses(Float quitaIntereses) {
 		this.quitaIntereses = quitaIntereses;
 	}
-
 
 	public Float getQuitaDemoras() {
 		return quitaDemoras;
 	}
 
-
 	public void setQuitaDemoras(Float quitaDemoras) {
 		this.quitaDemoras = quitaDemoras;
 	}
-
 
 	public Float getQuitaImpuestos() {
 		return quitaImpuestos;
 	}
 
-
 	public void setQuitaImpuestos(Float quitaImpuestos) {
 		this.quitaImpuestos = quitaImpuestos;
 	}
-
 
 	public Float getQuitaGastosProcurador() {
 		return quitaGastosProcurador;
 	}
 
-
 	public void setQuitaGastosProcurador(Float quitaGastosProcurador) {
 		this.quitaGastosProcurador = quitaGastosProcurador;
 	}
 
-
-	public Float getQuitaGastosLEtrado() {
-		return quitaGastosLEtrado;
+	public Float getQuitaGastosLetrado() {
+		return quitaGastosLetrado;
 	}
 
-
-	public void setQuitaGastosLEtrado(Float quitaGastosLEtrado) {
-		this.quitaGastosLEtrado = quitaGastosLEtrado;
+	public void setQuitaGastosLetrado(Float quitaGastosLetrado) {
+		this.quitaGastosLetrado = quitaGastosLetrado;
 	}
-
 
 	public Float getQuitaOtrosGastos() {
 		return quitaOtrosGastos;
 	}
 
-
 	public void setQuitaOtrosGastos(Float quitaOtrosGastos) {
 		this.quitaOtrosGastos = quitaOtrosGastos;
 	}
-
 
 	public Float getTotalEntrega() {
 		return totalEntrega;
 	}
 
-
 	public void setTotalEntrega(Float totalEntrega) {
 		this.totalEntrega = totalEntrega;
 	}
-
 
 	public Long getNumEnlace() {
 		return numEnlace;
 	}
 
-
 	public void setNumEnlace(Long numEnlace) {
 		this.numEnlace = numEnlace;
 	}
-
 
 	public Long getNumMandamiento() {
 		return numMandamiento;
 	}
 
-
 	public void setNumMandamiento(Long numMandamiento) {
 		this.numMandamiento = numMandamiento;
 	}
-
 
 	public Long getNumCheque() {
 		return numCheque;
 	}
 
-
 	public void setNumCheque(Long numCheque) {
 		this.numCheque = numCheque;
 	}
-
 
 	public String getObservaciones() {
 		return observaciones;
 	}
 
-
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
 	}
-
 
 	public Float getImporte() {
 		return importe;
 	}
 
-
 	public void setImporte(Float importe) {
 		this.importe = importe;
 	}
 
-
 	public Long getAsunto() {
 		return asunto;
 	}
-
 
 	public void setAsunto(Long asunto) {
 		this.asunto = asunto;

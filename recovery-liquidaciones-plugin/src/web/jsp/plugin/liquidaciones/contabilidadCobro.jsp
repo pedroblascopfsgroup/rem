@@ -503,7 +503,7 @@
 			<%-- Si las validaciones son correctas --%>
 				var parametros = {
 						id:'${contabilidadCobro.id}'
-						,asunto:'${contabilidadCobro.asunto.id}'
+						,asunto:'${idAsunto}'
 						,fechaEntrega:fechaEntrega.getRawValue()
 						,fechaValor:fechaValor.getRawValue()
 						,tipoEntrega:comboDDTipoEntrega.getValue()

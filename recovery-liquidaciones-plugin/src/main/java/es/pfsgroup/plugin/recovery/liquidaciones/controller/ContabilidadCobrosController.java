@@ -43,7 +43,7 @@ public class ContabilidadCobrosController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String showNewContabilidadCobro(ModelMap model) {
+	public String showNewContabilidadCobro(ModelMap model, Long idAsunto) {
 
 		List<Dictionary> tipoEntrega = dictionary.getList("DDAdjContableTipoEntrega");
 		model.put("ddTipoEntrega", tipoEntrega);
@@ -51,12 +51,14 @@ public class ContabilidadCobrosController {
 		List<Dictionary> conceptoEntrega = dictionary.getList("DDAdjContableConceptoEntrega");
 		model.put("ddConceptoEntrega", conceptoEntrega);
 		
+		model.put("idAsunto", idAsunto);
+		
 		return NEW_CONTABILIDAD_COBRO;
 	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String showEditContabilidadCobro(ModelMap model, DtoContabilidadCobros dto) {
+	public String showEditContabilidadCobro(ModelMap model, DtoContabilidadCobros dto, Long asunto) {
 
 		List<Dictionary> tipoEntrega = dictionary.getList("DDAdjContableTipoEntrega");
 		model.put("ddTipoEntrega", tipoEntrega);
@@ -66,6 +68,8 @@ public class ContabilidadCobrosController {
 		
 		ContabilidadCobros cc = (ContabilidadCobros) contabilidadCobrosManager.getContabilidadCobroByID(dto);
 		model.put("contabilidadCobro", cc);
+		
+		model.put("idAsunto", asunto);
 		
 		return NEW_CONTABILIDAD_COBRO;
 	}

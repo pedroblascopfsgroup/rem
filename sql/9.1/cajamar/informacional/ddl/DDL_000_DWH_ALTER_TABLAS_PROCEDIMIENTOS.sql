@@ -60,8 +60,8 @@ ALTER TABLE
    recovery_cm_dwh.tmp_h_prc 
 ADD 
    (
-      PROCURADOR_PRC_ID2             NUMBER(16,0)
+      PROCURADOR_PRC_ID             NUMBER(16,0)
    );
-   
+
 /
 EXIT

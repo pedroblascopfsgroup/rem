@@ -21,7 +21,7 @@
 	});
 
 	panel.getAsuntoId = function(){ return entidad.get("data").id; }
-	panel.puedeEditar = function(){ return entidad.get("data").contabilidadCobros.estadoAsunto==CODIGO_ASUNTO_ACEPTADO; }
+	panel.puedeEditar = function(){ return true; }
    	panel.esSupervisor = function(){ return entidad.get("data").toolbar.esSupervisor; }
    	panel.esGestor = function(){ return entidad.get("data").toolbar.esGestor; }
 

@@ -110,13 +110,17 @@
 			,allowNegative: false
 			,enableKeyEvents: true
 			,maxLength:13
+			,listeners : {keyup : function(){
+							refreshTotalEntrega()
+						}
+			}
 			<c:if test="${contabilidadCobro.nominal!=null}" >
 				,value:'${contabilidadCobro.nominal}'
 			</c:if>
 		}
 	);
 	
-	nominal.addListener('keyup', refreshTotalEntrega);
+	
 	
 	<%-- Entrada de Texto Numero Intereses --%>
 	var intereses  = app.creaNumber('contabilidadCobro.intereses',
@@ -128,13 +132,17 @@
 			,allowDecimals: true
 			,allowNegative: false
 			,maxLength:13
+			,listeners : {keyup : function(){
+							refreshTotalEntrega()
+						}
+			}
 			<c:if test="${contabilidadCobro.intereses!=null}" >
 				,value:'${contabilidadCobro.intereses}'
 			</c:if>
 		}
 	);
 	
-	intereses.addListener('keyup', refreshTotalEntrega);
+	
 	
 	<%-- Entrada de Texto Numero Demoras --%>
 	var demoras  = app.creaNumber('contabilidadCobro.demoras',

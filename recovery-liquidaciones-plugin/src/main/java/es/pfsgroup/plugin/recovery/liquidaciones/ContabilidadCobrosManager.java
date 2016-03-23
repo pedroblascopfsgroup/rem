@@ -1,6 +1,6 @@
 package es.pfsgroup.plugin.recovery.liquidaciones;
 
-import java.sql.Timestamp;
+import java.sql.Date;
 import java.text.ParseException;
 import java.util.List;
 
@@ -58,8 +58,13 @@ public class ContabilidadCobrosManager implements ContabilidadCobrosApi {
 		cnt.setConceptoEntrega((DDAdjContableConceptoEntrega) conceptoEntrega);
 		cnt.setDemoras(dto.getDemoras());
 		try {
-			cnt.setFechaEntrega(DateFormat.toDate(dto.getFechaEntrega()));
-			cnt.setFechaValor(DateFormat.toDate(dto.getFechaValor()));
+			Date sqlFE = new java.sql.Date(DateFormat.toDate(dto.getFechaEntrega()).getTime());
+			//cnt.setFechaEntrega(DateFormat.toDate(dto.getFechaEntrega()));
+			cnt.setFechaEntrega(sqlFE);
+			Date sqlFV = new java.sql.Date(DateFormat.toDate(dto.getFechaValor()).getTime());
+			//cnt.setFechaValor(DateFormat.toDate(dto.getFechaValor()));
+			cnt.setFechaValor(sqlFV);
+			
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}

@@ -116,6 +116,12 @@ public class EXTAsunto extends Asunto {
 	@Column(name = "SYS_GUID")
 	private String guid;
 
+	@Column(name = "ASU_ID_ORIGEN")
+    private Long idAsuOrigen;
+    
+    @Column(name = "EXP_ID_ORIGEN")
+    private Long idExpOrigen;
+    
 	public String getGuid() {
 		return guid;
 	}
@@ -316,6 +322,22 @@ public class EXTAsunto extends Asunto {
 		return this.importeEstimado;
 	}
 
+	public Long getIdAsuOrigen() {
+		return idAsuOrigen;
+	}
+
+	public void setIdAsuOrigen(Long idAsuOrigen) {
+		this.idAsuOrigen = idAsuOrigen;
+	}
+
+	public Long getIdExpOrigen() {
+		return idExpOrigen;
+	}
+
+	public void setIdExpOrigen(Long idExpOrigen) {
+		this.idExpOrigen = idExpOrigen;
+	}
+		
 	/**
 	 * Volumen de Riesgo de los procedimientos contenidos en el asunto (suma del
 	 * principal del procedimiento).

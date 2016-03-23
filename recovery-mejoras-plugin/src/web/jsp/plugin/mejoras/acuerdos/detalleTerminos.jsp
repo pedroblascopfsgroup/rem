@@ -9,6 +9,7 @@
 
 var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEstadoGestion){
    var ambito = entidad.id;
+   var codigoAsunto = data.cabecera.tipoAsuntoCodigo;
    
    var panelTerminos=new Ext.Panel({
 		layout:'form'
@@ -426,7 +427,16 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
    panelTerminos.terminosAcuerdoGrid=terminosAcuerdoGrid;
    
    panelTerminos.add(contratosAsuntoGrid);
-   panelTerminos.contratosAsuntoGrid=contratosAsuntoGrid;      
+   panelTerminos.contratosAsuntoGrid=contratosAsuntoGrid;
+   
+   if(codigoAsunto == "ACU"){
+   		terminosAcuerdoGrid.bottomToolbar.hide();
+   		contratosAsuntoGrid.hide();
+		btnBorrarTermino.hide();
+        btnVerTermino.hide();
+        btnEditarEstado.hide();
+        btnAltaTermino.hide();
+   }
 
    return panelTerminos;
 

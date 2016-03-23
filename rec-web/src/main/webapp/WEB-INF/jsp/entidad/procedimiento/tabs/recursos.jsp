@@ -142,6 +142,10 @@
   panel.getProcedimientoId = function(){
     return entidad.get("data").id;
   }
+  
+  panel.setVisibleTab = function(data){
+    return data.verTabRecursos;
+  }
 
   return panel;
 

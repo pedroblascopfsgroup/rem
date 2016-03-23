@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.recovery.mejoras.asuprc.api;
+package es.pfsgroup.plugin.recovery.mejoras.acuerdos.api;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.asunto.model.Asunto;

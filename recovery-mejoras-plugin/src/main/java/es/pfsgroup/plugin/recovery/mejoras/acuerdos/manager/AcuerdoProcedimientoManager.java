@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.recovery.mejoras.asuprc.acuerdo;
+package es.pfsgroup.plugin.recovery.mejoras.acuerdos.manager;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -8,7 +8,7 @@ import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
-import es.pfsgroup.plugin.recovery.mejoras.asuprc.api.AcuerdoProcedimientoApi;
+import es.pfsgroup.plugin.recovery.mejoras.acuerdos.api.AcuerdoProcedimientoApi;
 
 @Component
 public class AcuerdoProcedimientoManager extends BusinessOperationOverrider<AcuerdoProcedimientoApi> implements AcuerdoProcedimientoApi {

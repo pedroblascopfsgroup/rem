@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.recovery.mejoras.asuprc.acuerdo;
+package es.pfsgroup.plugin.recovery.mejoras.acuerdos.manager;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.plugin.recovery.mejoras.asuprc.api.AsuntoAcuerdoApi;
+import es.pfsgroup.plugin.recovery.mejoras.acuerdos.api.AsuntoAcuerdoApi;
 import es.pfsgroup.recovery.api.ExpedienteApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 

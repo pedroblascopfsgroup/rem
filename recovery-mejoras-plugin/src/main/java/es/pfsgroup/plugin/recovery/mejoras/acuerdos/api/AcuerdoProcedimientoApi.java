@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.recovery.mejoras.asuprc.api;
+package es.pfsgroup.plugin.recovery.mejoras.acuerdos.api;
 
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 

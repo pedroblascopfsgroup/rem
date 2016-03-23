@@ -960,13 +960,13 @@ public class BurofaxController {
 			} else {
 				EnvioBurofaxPCO envioBurofax = burofaxManager.getEnvioBurofaxById(idEnvio);
 				if(!Checks.esNulo(envioBurofax)){
-					fileitem = burofaxManager.generarBurofaxPDF(envioBurofax, envioIntegracion.getNombreFichero());
-					fileitem.setContentType("application/pdf");
-					if(!Checks.esNulo(envioIntegracion.getNombreFichero())){
-						fileitem.setFileName(envioIntegracion.getNombreFichero());
-					} else {
-						fileitem.setFileName("BUROFAX-"+envioIntegracion.getCliente().replace(",","").trim()+".pdf");
+					String nombreFichero = envioIntegracion.getNombreFichero(); 
+					if(Checks.esNulo(nombreFichero)){
+						nombreFichero = "BUROFAX-"+envioIntegracion.getCliente().replace(",","").replace(".","").trim()+".pdf";
 					}
+					fileitem = burofaxManager.generarBurofaxPDF(envioBurofax, nombreFichero);
+					fileitem.setFileName(nombreFichero);
+					fileitem.setContentType("application/pdf");
 				}
 			}
 			model.put("fileItem", fileitem);

@@ -5,7 +5,7 @@
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-671
---## PRODUCTO=SI
+--## PRODUCTO=NO
 --## Finalidad: DML
 --## 
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE

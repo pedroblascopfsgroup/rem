@@ -33,7 +33,7 @@ public class AcuerdoProcedimientoManager extends BusinessOperationOverrider<Acue
 		String codigo = proc.getTipoActuacion().getCodigo();
 		
 		if (!Checks.esNulo(codigo)){
-			if(codigo == "ACU"){
+			if(codigo.equals("ACU")){
 				return false;
 			}
 		}
@@ -69,7 +69,7 @@ public class AcuerdoProcedimientoManager extends BusinessOperationOverrider<Acue
 		String codigo = proc.getTipoActuacion().getCodigo();
 		
 		if (!Checks.esNulo(codigo)){
-			if(codigo == "ACU"){
+			if(codigo.equals("ACU")){
 				return false;
 			}
 		}

@@ -17,7 +17,7 @@
   <json:property name="esGestorDecision" value="${esGestorDecision}" />  
   <json:property name="procedimientoAceptado" value="${procedimiento.estaAceptado}" />
   <json:property name="puedeCrearRecurso" value="${puedeCrearRecurso}" />
-  <json:property name="verTabRecursos" value="${verTabRecursos}" />
+  <json:property name="esProcedimientoAcuerdo" value="${esProcedimientoAcuerdo}" />
   <json:property name="verTabInfRequerida" value="${verTabInfRequerida}" />
   <json:property name="codigoTipoActuacion" value="${codigoTipoActuacion}" />
   <json:property name="derivacionAceptada" value="${procedimiento.derivacionAceptada}" />

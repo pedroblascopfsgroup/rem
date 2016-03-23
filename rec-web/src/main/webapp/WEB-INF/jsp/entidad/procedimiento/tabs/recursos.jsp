@@ -144,7 +144,11 @@
   }
   
   panel.setVisibleTab = function(data){
-    return data.verTabRecursos;
+  if(data.esProcedimientoAcuerdo){
+    	return false;
+    }else{
+    	return true;
+    }
   }
 
   return panel;

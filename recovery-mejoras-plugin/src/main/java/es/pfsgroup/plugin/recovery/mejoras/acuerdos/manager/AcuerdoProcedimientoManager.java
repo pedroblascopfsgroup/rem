@@ -26,18 +26,18 @@ public class AcuerdoProcedimientoManager extends BusinessOperationOverrider<Acue
      * @param idProcedimiento el id del procedimiento.
      * @return true o false.
      */
-	@BusinessOperation(BO_ACU_PRC_VER_TAB_RECURSOS)
-    public boolean verTabRecursos(Long idProcedimiento) {
-
+	@BusinessOperation(BO_ACU_PRC_ACUERDO)
+    public boolean esProcedimientoAcuerdo(Long idProcedimiento) {
+		
 		Procedimiento proc = procedimientoDao.get(idProcedimiento);
 		String codigo = proc.getTipoActuacion().getCodigo();
 		
 		if (!Checks.esNulo(codigo)){
 			if(codigo.equals("ACU")){
-				return false;
+				return true;
 			}
 		}
-		return true;
+		return false;
     }
 
 	/**

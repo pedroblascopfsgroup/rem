@@ -70,4 +70,396 @@
 		</constructor-arg>
 	</bean>
 	
+	
+	<bean id="mapaTabsPorTipoBienHREBCC"
+		parent="mapaTabsPorTipoBienDefault">
+		<property name="mapaTabsTipoBien">
+			<map>
+				<!-- TIPOS DE BIEN SAREB -->				
+				<entry key="01">
+					<bean
+						class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
+						<property name="listaTabs">
+							<list>
+								<value>pestanaPrincipal</value>
+								<value>pestanaValoraciones</value>
+								<value>pestanaDatosRegistrales</value>
+								<value>pestanaLocalizacion</value>
+								<value>pestanaObservaciones</value>
+							</list>
+						</property>
+					</bean>
+				</entry>
+				<entry key="02">
+					<bean
+						class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
+						<property name="listaTabs">
+							<list>
+								<value>pestanaPrincipal</value>
+								<value>pestanaLocalizacion</value>
+								<value>pestanaOtros</value>
+								<value>pestanaObservaciones</value>
+							</list>
+						</property>
+					</bean>
+				</entry>
+				<entry key="03">
+					<bean
+						class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
+						<property name="listaTabs">
+							<list>
+								<value>pestanaPrincipal</value>
+								<value>pestanaCuentaBancaria</value>
+								<value>pestanaOtros</value>
+								<value>pestanaObservaciones</value>
+							</list>
+						</property>
+					</bean>
+				</entry>
+				<entry key="04">
+					<bean
+						class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
+						<property name="listaTabs">
+							<list>
+								<value>pestanaPrincipal</value>
+								<value>pestanaLocalizacion</value>
+								<!-- <value>pestanaValoraciones</value> <value>pestanaVehiculo</value> 
+									<value>pestanaEmpresa</value> <value>pestanaIAE</value> <value>pestanaCuentaBancaria</value> -->
+								<value>pestanaOtros</value>
+								<value>pestanaObservaciones</value>
+							</list>
+						</property>
+					</bean>
+				</entry>
+				<entry key="05">
+					<bean id="tabsValoresDEFAULT"
+						class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
+						<property name="listaTabs">
+							<list>
+								<value>pestanaPrincipal</value>
+								<value>pestanaProductosBanco</value>
+								<value>pestanaOtros</value>
+								<value>pestanaObservaciones</value>
+							</list>
+						</property>
+					</bean>
+				</entry>
+				
+				<!-- TIPOS DE BIEN CAJAMAR -->
+				
+				<entry key="1">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="2">
+					<ref local="inmuebleCajamar"/>					
+				</entry>
+				<entry key="3">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="4">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="5">
+					<ref local="inmuebleCajamar"/>					
+				</entry>
+				<entry key="6">
+					<ref local="inmuebleCajamar"/>
+				</entry>				
+				<entry key="7">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="8">
+					<ref local="inmuebleCajamar"/>					
+				</entry>
+				<entry key="9">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="10">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="11">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="12">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="13">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="14">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="15">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="16">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="17">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="18">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="19">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="20">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="21">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="22">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="23">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="24">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="25">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="26">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="27">
+					<ref local="vehiculoCajamar"/>
+				</entry>
+				<entry key="28">
+					<ref local="vehiculoCajamar"/>
+				</entry>
+				<entry key="29">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="30">
+					<ref local="vehiculoCajamar"/>
+				</entry>
+				<entry key="31">
+					<ref local="vehiculoCajamar"/>
+				</entry>
+				<entry key="32">
+					<ref local="vehiculoCajamar"/>
+				</entry>
+				<entry key="33">
+					<ref local="vehiculoCajamar"/>
+				</entry>
+				<entry key="34">
+					<ref local="vehiculoCajamar"/>
+				</entry>
+				<entry key="35">
+					<ref local="vehiculoCajamar"/>
+				</entry>
+				<entry key="36">
+					<ref local="vehiculoCajamar"/>
+				</entry>
+				<entry key="37">
+					<ref local="basicoCajamar"/>
+				</entry>
+				<entry key="39">
+					<ref local="basicoCajamar"/>
+				</entry>
+				<entry key="40">
+					<ref local="basicoCajamar"/>
+				</entry>
+				<entry key="41">
+					<ref local="prodBancarioCajamar"/>
+				</entry>
+				<entry key="42">
+					<ref local="prodBancarioCajamar"/>
+				</entry>
+				<entry key="43">
+					<ref local="prodBancarioCajamar"/>
+				</entry>
+				<entry key="44">
+					<ref local="prodBancarioCajamar"/>
+				</entry>
+				<entry key="45">
+					<ref local="prodBancarioCajamar"/>
+				</entry>
+				<entry key="46">
+					<ref local="prodBancarioCajamar"/>
+				</entry>
+				<entry key="47">
+					<ref local="prodBancarioCajamar"/>
+				</entry>
+				<entry key="48">
+					<ref local="prodBancarioCajamar"/>
+				</entry>
+				<entry key="49">
+					<ref local="prodBancarioCajamar"/>
+				</entry>
+				<entry key="50">
+					<ref local="prodBancarioCajamar"/>
+				</entry>
+				<entry key="51">
+					<ref local="prodBancarioCajamar"/>
+				</entry>
+				<entry key="52">
+					<ref local="prodBancarioCajamar"/>
+				</entry>
+				<entry key="53">
+					<ref local="basicoCajamar"/>
+				</entry>
+				<entry key="54">
+					<ref local="basicoCajamar"/>
+				</entry>
+				<entry key="55">
+					<ref local="basicoCajamar"/>
+				</entry>
+				<entry key="56">
+					<ref local="basicoCajamar"/>
+				</entry>
+				<entry key="57">
+					<ref local="basicoCajamar"/>
+				</entry>
+				<entry key="58">
+					<ref local="basicoCajamar"/>
+				</entry>
+				<entry key="59">
+					<ref local="basicoCajamar"/>
+				</entry>
+				<entry key="60">
+					<ref local="basicoCajamar"/>
+				</entry>
+				<entry key="61">
+					<ref local="basicoCajamar"/>
+				</entry>
+				<entry key="62">
+					<ref local="basicoCajamar"/>
+				</entry>
+				<entry key="63">
+					<ref local="basicoCajamar"/>
+				</entry>
+				<entry key="64">
+					<ref local="basicoCajamar"/>
+				</entry>
+				<entry key="65">
+					<ref local="prodBancarioCajamar"/>
+				</entry>
+				<entry key="66">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="67">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="68">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="69">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="70">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="71">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="72">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="76">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="77">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="78">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="79">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="80">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="81">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				<entry key="82">
+					<ref local="inmuebleCajamar"/>
+				</entry>
+				
+				
+				
+				<entry key="DEFECTO">
+					<bean
+						class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
+						<property name="listaTabs">
+							<list>
+								<value>pestanaPrincipal</value>
+								<value>pestanaValoraciones</value>
+								<value>pestanaDatosRegistrales</value>
+								<value>pestanaLocalizacion</value>
+								<value>pestanaCuentaBancaria</value>
+								<value>pestanaProductosBanco</value>
+								<value>pestanaOtros</value>
+								<value>pestanaObservaciones</value>
+							</list>
+						</property>
+					</bean>
+				</entry>
+				
+			</map>
+		</property>
+	</bean>
+	
+	
+	<bean id="inmuebleCajamar"
+		class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
+		<property name="listaTabs">
+			<list>
+				<value>pestanaPrincipal</value>
+				<value>pestanaValoraciones</value>
+				<value>pestanaDatosRegistrales</value>
+				<value>pestanaLocalizacion</value>
+				<value>pestanaOtros</value>
+				<value>pestanaObservaciones</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="vehiculoCajamar"
+		class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
+		<property name="listaTabs">
+			<list>
+				<value>pestanaPrincipal</value>
+				<value>pestanaValoraciones</value>
+				<value>pestanaVehiculo</value>
+				<value>pestanaOtros</value>
+				<value>pestanaObservaciones</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="prodBancarioCajamar"
+		class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
+		<property name="listaTabs">
+			<list>
+				<value>pestanaPrincipal</value>
+				<value>pestanaValoraciones</value>
+				<value>pestanaCuentaBancaria</value>
+				<value>pestanaProductosBanco</value>
+				<value>pestanaOtros</value>
+				<value>pestanaObservaciones</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="basicoCajamar"
+		class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
+		<property name="listaTabs">
+			<list>
+				<value>pestanaPrincipal</value>
+				<value>pestanaValoraciones</value>
+				<value>pestanaOtros</value>
+				<value>pestanaObservaciones</value>
+			</list>
+		</property>
+	</bean>
+
+	<alias name="mapaTabsPorTipoBienHREBCC" alias="mapaTabsPorTipoBien"/>
+	
 </beans>	

@@ -58,10 +58,10 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 		
 	@Override
 	@Transactional(readOnly = false)
-	public boolean altaSolicitud(NMBBien bien, List<NMBPersonasBien> personasBien, List<NMBContratoBien> contratosBien, Long cuenta, String personaContacto, Long telefono, String observaciones) {
+	public String altaSolicitud(NMBBien bien, List<NMBPersonasBien> personasBien, List<NMBContratoBien> contratosBien, Long cuenta, String personaContacto, Long telefono, String observaciones) {
 		
 		logger.info("Inicio del método altaSolicitud");
-		boolean resultado = true;
+		String resultado = "OK";
 		
 		try {
 			ObjectFactory objectFactory = new ObjectFactory();
@@ -74,8 +74,9 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 			resultado = ejecutaServicio(input, bien);			
 		}
 		catch(Exception e) {
-			logger.error("Error en el método altaSolicitud: " + e.getMessage());
-			resultado = false;
+			final String errorMsg = "Error en el método altaSolicitud: " + e.getMessage();
+			logger.error(errorMsg);
+			resultado = errorMsg;
 		}
 		
 		logger.info("Fin del método altaSolicitud");
@@ -83,7 +84,7 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 		return resultado;
 	}
 
-	private boolean ejecutaServicio(INPUT input, NMBBien bien) throws MalformedURLException {
+	private String ejecutaServicio(INPUT input, NMBBien bien) throws MalformedURLException {
 		
 		String urlWSDL = getWSURL();
 		String targetNamespace = getWSNamespace();
@@ -93,8 +94,9 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 		logger.info(String.format("LLamada [%s] [%s] [%s]", targetNamespace, name, urlWSDL));
 		
 		if(urlWSDL == null || targetNamespace == null || name == null) {
-			logger.error("Error en la ejecución del WS de Alta Tasación: no se han configurado correctamente las propiedades para la llamada al WS");
-			return false;
+			final String errorMsg = "Error en la ejecución del WS de Alta Tasación: no se han configurado correctamente las propiedades para la llamada al WS";
+			logger.error(errorMsg);
+			return errorMsg;
 		}
 
 		URL wsdlLocation = new URL(urlWSDL);
@@ -114,13 +116,13 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 		
 		if(output.getESTADO().equals("1")) {
 			logger.error(String.format("Error en la ejecución del WS de Alta Tasación: [%s] - [%s]", output.getCODERROR(), output.getTXTERROR()));
-			return false;
+			return output.getTXTERROR();
 		}
 		else {
 			guardarRespuesta(output, bien);
 		}
 		
-		return true;
+		return "OK";
 	}
 
 	private void guardarRespuesta(OUTPUT output, NMBBien bien) {

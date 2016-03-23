@@ -35,8 +35,7 @@ DECLARE
   join  ' || V_ESQUEMA || '.PRO_PROVISIONES_ASUNTO pro on asu.asu_id = pro.asu_id
   left join ' || V_ESQUEMA || '.CNV_AUX_PRC_PRO aux on aux.CODIGO_PROCEDIMIENTO = asu.ASU_ID_EXTERNO
   where aux.codigo_procedimiento  is null
-    and trunc(pro.pro_fecha_baja) is null
-    and asu.dd_eas_id not in (5,6))';
+    and trunc(pro.pro_fecha_baja) is null)';
 
 EXECUTE IMMEDIATE V_MSQL;
  EXCEPTION

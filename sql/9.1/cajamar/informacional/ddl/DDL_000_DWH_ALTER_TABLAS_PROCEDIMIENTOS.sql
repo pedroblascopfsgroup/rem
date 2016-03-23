@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=María V.
---## FECHA_CREACION=20160323
+--## FECHA_CREACION=20160324
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
 --## INCIDENCIA_LINK=GC-1058

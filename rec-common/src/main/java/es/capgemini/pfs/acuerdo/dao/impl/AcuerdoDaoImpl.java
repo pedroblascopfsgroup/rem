@@ -110,7 +110,7 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 		StringBuffer query = new StringBuffer();
 	    query.append("SELECT  ");
 	    query.append("CASE WHEN TRUNC(SYSDATE-MOV.MOV_FECHA_POS_VENCIDA) < 0 ");
-	    query.append("THEN NULL ");
+	    query.append("THEN TO_CHAR(TRUNC(SYSDATE + 90), 'dd/MM/yyyy') ");
 	    //query.append("ELSE TO_CHAR((SYSDATE+90) - TRUNC(SYSDATE-MOV.MOV_FECHA_POS_VENCIDA), 'dd/MM/yyyy') ");
 	    query.append("ELSE TO_CHAR(TRUNC(MOV.MOV_FECHA_POS_VENCIDA + 90), 'dd/MM/yyyy') ");
 	    query.append("END FECHA_PASE_A_MORA_CNT ");

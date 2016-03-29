@@ -1,6 +1,6 @@
 ## Configuración del cliente y Locales
 export CLIENTE=CAJAMAR
-export CONTAINER_NAME=cajamar-bbdd-ARQ-583
+export CONTAINER_NAME=cajamar-bbdd
 export CUSTOM_NLS_LANG=SPANISH_SPAIN.AL32UTF8
 export CUSTOM_LANG=es_ES.UTF-8
 

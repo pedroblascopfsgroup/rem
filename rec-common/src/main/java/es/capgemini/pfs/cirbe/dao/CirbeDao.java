@@ -28,6 +28,16 @@ public interface CirbeDao extends AbstractDao<Cirbe, Long> {
      * donde el cliente tenga una carga.
      */
     List<Date> getFechasExtraccionPersona(Long idPersona, Date fecha1, Date fecha2, Date fecha3);
+    
+    /**
+     * @param idPersona Long
+     * @param fecha1 la fecha seleccionada en el combo 1
+     * @param fecha2 la fecha seleccionada en el combo 2
+     * @param fecha3 la fecha seleccionada en el combo 3
+     * @return List Date: todas las fechas de actualización cirbe
+     * donde el cliente tenga una carga.
+     */
+    List<Date> getFechasActualizacionPersona(Long idPersona, Date fecha1, Date fecha2, Date fecha3);
 
     /**
      * @param idPersona Long

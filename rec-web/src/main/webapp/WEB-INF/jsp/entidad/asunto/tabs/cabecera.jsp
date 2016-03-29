@@ -396,10 +396,8 @@
 			if(idAsuOrigen != null){
 				var nombreOrigen = data.cabecera.nombreOrigen;
 				var codigoOrigen = data.cabecera.codigoOrigen;
-				var tipoAsu = "Litigio";
-				if(codigoOrigen == "02"){
-					tipoAsu = "Concurso";
-				}
+				var tipoAsu = data.cabecera.tipoAsuntoOrigen;
+				
 				var href = 'javascript:app.abreAsunto('+idAsuOrigen+', &quot;'+nombreOrigen+'&quot;,null);'
 				var link = tipoAsu+' - <a href="'+href+'">'+nombreOrigen+'</a>';
 				origen.setRawValue(link);

@@ -29,13 +29,12 @@ import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-
 import es.pfsgroup.commons.utils.Checks;
 
 @Entity
@@ -115,12 +114,14 @@ public class EXTAsunto extends Asunto {
 
 	@Column(name = "SYS_GUID")
 	private String guid;
-
-	@Column(name = "ASU_ID_ORIGEN")
-    private Long idAsuOrigen;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ASU_ID_ORIGEN")
+    private Asunto asuOrigen;
     
-    @Column(name = "EXP_ID_ORIGEN")
-    private Long idExpOrigen;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "EXP_ID_ORIGEN")
+    private Expediente expOrigen;
     
 	public String getGuid() {
 		return guid;
@@ -322,20 +323,20 @@ public class EXTAsunto extends Asunto {
 		return this.importeEstimado;
 	}
 
-	public Long getIdAsuOrigen() {
-		return idAsuOrigen;
+	public Asunto getAsuOrigen() {
+		return asuOrigen;
 	}
 
-	public void setIdAsuOrigen(Long idAsuOrigen) {
-		this.idAsuOrigen = idAsuOrigen;
+	public void setAsuOrigen(Asunto asuOrigen) {
+		this.asuOrigen = asuOrigen;
 	}
 
-	public Long getIdExpOrigen() {
-		return idExpOrigen;
+	public Expediente getExpOrigen() {
+		return expOrigen;
 	}
 
-	public void setIdExpOrigen(Long idExpOrigen) {
-		this.idExpOrigen = idExpOrigen;
+	public void setExpOrigen(Expediente expOrigen) {
+		this.expOrigen = expOrigen;
 	}
 		
 	/**

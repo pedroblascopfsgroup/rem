@@ -20,14 +20,15 @@
 	  <json:property name="asunto" value="${asunto.nombre}" />
 	  <json:property name="estado" value="${asunto.estadoAsunto.descripcion}" />
 	  <json:property name="codigoExterno" value="${asunto.codigoExterno}" />
-	  <c:if test="${asunto.idAsuOrigen != null}">
-	  	<json:property name="idAsuOrigen" value="${asunto.idAsuOrigen}" />
-	  	<json:property name="idOrigen" value="${asuntoOrigen.id}" />
+	  <c:if test="${asunto.asuOrigen.id != null}">
+	  	<json:property name="idAsuOrigen" value="${asunto.asuOrigen.id}" />
+	  	<json:property name="idOrigen" value="${asuOrigen.id}" />
 	  	<json:property name="nombreOrigen" value="${asuntoOrigen.nombre}" />
 	  	<json:property name="codigoOrigen" value="${asuntoOrigen.tipoAsunto.codigo}" />
+	  	<json:property name="tipoAsuntoOrigen" value="${asuntoOrigen.tipoAsunto.descripcion}" />
 	  </c:if>
-	  <c:if test="${asunto.idExpOrigen != null}">
-	  	<json:property name="idExpOrigen" value="${asunto.idExpOrigen}" />
+	  <c:if test="${asunto.expOrigen.id != null}">
+	  	<json:property name="idExpOrigen" value="${asunto.expOrigen.id}" />
 	  	<json:property name="idExp" value="${expedienteOrigen.id}" />
 	  	<json:property name="nombreExp" value="${expedienteOrigen.descripcionExpediente}" />
 	  </c:if>

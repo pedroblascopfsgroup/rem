@@ -23,7 +23,7 @@ public interface AsuntoAcuerdoApi {
 	 * Método que devuelve el origen del asunto
 	 * @param asuId
 	 */
-    @BusinessOperationDefinition(BO_ASUNTO_ORIGEN)
+    @BusinessOperationDefinition(BO_EXPEDIENTE_ORIGEN)
     public Expediente expedienteOrigen(Long idAsunto);
     
     @BusinessOperation(BO_CORE_ASUNTO_ACUERDO)

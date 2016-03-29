@@ -7,6 +7,7 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.asunto.EXTAsuntoManager;
 import es.capgemini.pfs.asunto.model.Asunto;
+import es.capgemini.pfs.core.api.expediente.EXTExpedientesApi;
 import es.capgemini.pfs.expediente.EXTExpedientesManager;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.pfsgroup.commons.utils.Checks;
@@ -30,10 +31,13 @@ public class AsuntoAcuerdoManager extends BusinessOperationOverrider<AsuntoAcuer
 	private ApiProxyFactory proxyFactory;
 	
 	@Autowired
-	private EXTAsuntoManager extAsuntoMnager;
+	private EXTAsuntoManager extAsuntoManager;
 	
 	@Autowired
 	private EXTExpedientesManager extExpedienteManager;
+	
+	@Autowired
+	private EXTExpedientesApi extExpedientesApi;
 
 	@Override
 	public String managerName() {
@@ -43,29 +47,33 @@ public class AsuntoAcuerdoManager extends BusinessOperationOverrider<AsuntoAcuer
 	
 	@BusinessOperation(BO_ASUNTO_ORIGEN)
 	public Asunto asuntoOrigen(Long idAsunto) {
-		EXTAsunto asunto = extAsuntoMnager.getAsuntoById(idAsunto);
-		Long idOrigen = asunto.getIdAsuOrigen();
-		if(!Checks.esNulo(idOrigen)){
-			EXTAsunto asuntoOrigen = extAsuntoMnager.getAsuntoById(idOrigen);
-			return asuntoOrigen;
+		EXTAsunto asunto = extAsuntoManager.getAsuntoById(idAsunto);
+		if(!Checks.esNulo(asunto.getAsuOrigen())){
+			Long idOrigen = asunto.getAsuOrigen().getId();
+			if(!Checks.esNulo(idOrigen)){
+				EXTAsunto asuntoOrigen = extAsuntoManager.getAsuntoById(idOrigen);
+				return asuntoOrigen;
+			}
 		}
 		return null;
 	}
 	
 	@BusinessOperation(BO_EXPEDIENTE_ORIGEN)
 	public Expediente expedienteOrigen(Long idAsunto) {
-		EXTAsunto asunto = extAsuntoMnager.getAsuntoById(idAsunto);
-		Long idOrigen = asunto.getIdExpOrigen();
-		if(!Checks.esNulo(idOrigen)){
-			Expediente expediente = proxyFactory.proxy(ExpedienteApi.class).getExpediente(idOrigen);
-			return expediente;
+		EXTAsunto asunto = extAsuntoManager.getAsuntoById(idAsunto);
+		if(!Checks.esNulo(asunto.getExpOrigen())){
+			Long idOrigen = asunto.getExpOrigen().getId();
+			if(!Checks.esNulo(idOrigen)){
+				Expediente expediente = extExpedientesApi.getExpediente(idOrigen);
+				return expediente;
+			}
 		}
 		return null;
 	}
 	
 	@BusinessOperation(BO_CORE_ASUNTO_ACUERDO)
 	public Boolean esAsuntoAcuerdo(Long idAsunto) {
-		EXTAsunto asunto = extAsuntoMnager.getAsuntoById(idAsunto);
+		EXTAsunto asunto = extAsuntoManager.getAsuntoById(idAsunto);
 		if(!Checks.esNulo(asunto.getTipoAsunto())){
 			String codigoAsunto = asunto.getTipoAsunto().getCodigo();
 			if(!Checks.esNulo(codigoAsunto)){

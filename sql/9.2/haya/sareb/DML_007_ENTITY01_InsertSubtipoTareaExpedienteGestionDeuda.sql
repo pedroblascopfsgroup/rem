@@ -39,8 +39,8 @@ DECLARE
     TYPE T_STA_SUBTIPO IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_STA IS TABLE OF T_STA_SUBTIPO;
     V_STA_SUBTIPO T_ARRAY_STA := T_ARRAY_STA(
-      T_STA_SUBTIPO(1, 'ENSAN', 'En Sanción', 'En Sanción', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, null, 'EXTSubtipoTarea'),
-      T_STA_SUBTIPO(1, 'SANC', 'Sancionado', 'Sancionado', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, null, 'EXTSubtipoTarea')
+      T_STA_SUBTIPO(1, 'ENSAN', 'En Sanción', 'En Sanción', 1, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, null, 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'SANC', 'Sancionado', 'Sancionado', 1, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, null, 'EXTSubtipoTarea')
     );   
     V_TMP_STA_SUBTIPO T_STA_SUBTIPO;
 

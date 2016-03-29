@@ -59,10 +59,8 @@ public class ContabilidadCobrosManager implements ContabilidadCobrosApi {
 		cnt.setDemoras(dto.getDemoras());
 		try {
 			Date sqlFE = new java.sql.Date(DateFormat.toDate(dto.getFechaEntrega()).getTime());
-			//cnt.setFechaEntrega(DateFormat.toDate(dto.getFechaEntrega()));
 			cnt.setFechaEntrega(sqlFE);
 			Date sqlFV = new java.sql.Date(DateFormat.toDate(dto.getFechaValor()).getTime());
-			//cnt.setFechaValor(DateFormat.toDate(dto.getFechaValor()));
 			cnt.setFechaValor(sqlFV);
 			
 		} catch (ParseException e) {
@@ -88,13 +86,15 @@ public class ContabilidadCobrosManager implements ContabilidadCobrosApi {
 		cnt.setQuitaOtrosGastos(dto.getOtrosGastos());
 		cnt.setTipoEntrega((DDAdjContableTipoEntrega) tipoEntrega);
 		cnt.setTotalEntrega(dto.getTotalEntrega());
+		cnt.setOperacionesTramite(dto.getOperacionesTramite());
 
 		genericDao.save(ContabilidadCobros.class, cnt);
 	}
 
 	@Override
+	@Transactional(readOnly=false)
 	public void deleteContabilidadCobro(Long idContabilidadCobro) {
-		contabilidadCobrosDao.deleteById(idContabilidadCobro);
+		genericDao.deleteById(ContabilidadCobros.class, idContabilidadCobro);
 	}
 
 	@Override

@@ -10,6 +10,7 @@
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 
 (function(page,entidad){
+
 	<%-- Panel (TAB) --%>
 	var panel = new Ext.Panel({
 		autoHeight : true
@@ -28,6 +29,8 @@
 	<%-- Variables --%>
 	var CODIGO_ASUNTO_ACEPTADO = "<fwk:const value="es.capgemini.pfs.asunto.model.DDEstadoAsunto.ESTADO_ASUNTO_ACEPTADO" />";
 	var estadoAsunto='${asunto.estadoAsunto.codigo}';
+	<sec:authentication var="user" property="principal" />
+	var userLogado = '${user.username}';
 	
 	<%-- Store Modelo --%>
 	var contabilidadCobros = Ext.data.Record.create([
@@ -57,6 +60,8 @@
 			,{name:"numCheque"}
 			,{name:"observaciones"}
 			,{name:"asunto"}
+			,{name:"operacionesTramite"}
+			,{name:"usuarioCrear"}
 	]);
 	<%-- Store Grid --%>
 	var contabilidadCobrosStore = page.getStore({
@@ -82,18 +87,19 @@
 		,{header : '<s:message code="contabilidad.gastosProcurador" text="**Gastos Procurador"/>', dataIndex : 'gastosProcurador'}
 		,{header : '<s:message code="contabilidad.gastosLetrado" text="**Gastos Letrado"/>', dataIndex : 'gastosLetrado'}
 		,{header : '<s:message code="contabilidad.otrosGastos" text="**Otros Gastos"/>', dataIndex : 'otrosGastos'}
-		,{header : '<s:message code="contabilidad.quitaNominal" text="**Quita Nominal"/>', dataIndex : 'quitaNominal'}
-		,{header : '<s:message code="contabilidad.quitaIntereses" text="**Quita Intereses"/>', dataIndex : 'quitaIntereses'}
-		,{header : '<s:message code="contabilidad.quitaDemoras" text="**Quita Demoras"/>', dataIndex : 'quitaDemoras'}
-		,{header : '<s:message code="contabilidad.quitaImpuestos" text="**Quita Impuestos"/>', dataIndex : 'quitaImpuestos'}
-		,{header : '<s:message code="contabilidad.quitaGastosProcurador" text="**Quita Gastos Procurador"/>', dataIndex : 'quitaGastosProcurador'}
-		,{header : '<s:message code="contabilidad.quitaGastosLetrado" text="**Quita Gastos Letrado"/>', dataIndex : 'quitaGastosLetrado'}
-		,{header : '<s:message code="contabilidad.quitaOtrosGastos" text="**Quita Otros Gastos"/>', dataIndex : 'quitaOtrosGastos'}
+		,{header : '<s:message code="contabilidad.quitaNominal" text="**Quita Nominal"/>', dataIndex : 'quitaNominal', hidden:true}
+		,{header : '<s:message code="contabilidad.quitaIntereses" text="**Quita Intereses"/>', dataIndex : 'quitaIntereses', hidden:true}
+		,{header : '<s:message code="contabilidad.quitaDemoras" text="**Quita Demoras"/>', dataIndex : 'quitaDemoras', hidden:true}
+		,{header : '<s:message code="contabilidad.quitaImpuestos" text="**Quita Impuestos"/>', dataIndex : 'quitaImpuestos', hidden:true}
+		,{header : '<s:message code="contabilidad.quitaGastosProcurador" text="**Quita Gastos Procurador"/>', dataIndex : 'quitaGastosProcurador', hidden:true}
+		,{header : '<s:message code="contabilidad.quitaGastosLetrado" text="**Quita Gastos Letrado"/>', dataIndex : 'quitaGastosLetrado', hidden:true}
+		,{header : '<s:message code="contabilidad.quitaOtrosGastos" text="**Quita Otros Gastos"/>', dataIndex : 'quitaOtrosGastos', hidden:true}
 		,{header : '<s:message code="contabilidad.totalEntrega" text="**Total Entrega"/>', dataIndex : 'totalEntrega'}
-		,{header : '<s:message code="contabilidad.numEnlace" text="**Número Enlace"/>', dataIndex : 'numEnlace'}
-		,{header : '<s:message code="contabilidad.numMandamiento" text="**Número Mandamiento"/>', dataIndex : 'numMandamiento'}
-		,{header : '<s:message code="contabilidad.numCheque" text="**Número Cheque"/>', dataIndex : 'numCheque'}
+		,{header : '<s:message code="contabilidad.numEnlace" text="**NºEnlace"/>', dataIndex : 'numEnlace'}
+		,{header : '<s:message code="contabilidad.numMandamiento" text="**NºMandamiento"/>', dataIndex : 'numMandamiento'}
+		,{header : '<s:message code="contabilidad.numCheque" text="**NºCheque"/>', dataIndex : 'numCheque'}
 		,{header : '<s:message code="contabilidad.observaciones" text="**Observaciones"/>', dataIndex : 'observaciones'}
+		,{hidden:true, dataIndex : 'usuarioCrear'}
 	]);
 	 
 	 <%-- Botones Grid --%>
@@ -123,7 +129,8 @@
 		 ,handler:function(){
 				var rec =  contabilidadCobrosGrid.getSelectionModel().getSelected();
 				if (!rec) return;
-					var id = rec.get("id");
+				
+				var id = rec.get("id");
 				var parametros = {
 						asunto: panel.getAsuntoId(),
 						id: id
@@ -142,6 +149,8 @@
 		}
 	});
 	
+	btnEditar.disabled = true;
+	
 	var btnBorrar = app.crearBotonBorrar({
 		text : '<s:message code="app.borrar" text="**Borrar" />'
 		,flow : 'contabilidadcobros/deleteContabilidadCobro'
@@ -150,6 +159,19 @@
 		}
 		,page : page
 	});
+	
+	btnBorrar.disabled = true;
+	
+	var btnEnviarContabilidad = new Ext.Button({
+		 text: '<s:message code="contabilidad.enviarContabilidad" text="**Enviar a contabilidad" />'
+		 ,iconCls : 'icon_asuntos'
+		 ,cls: 'x-btn-text-icon'
+		 ,handler:function(){
+				<%--TODO --%>
+		}
+	});
+	
+	btnEnviarContabilidad.disabled = true;
 
 <%-- Grid --%>
 	var contabilidadCobrosGrid = app.crearGrid(contabilidadCobrosStore,contabilidadCobrosCm,{
@@ -159,30 +181,27 @@
 		,width: '100%'
 		,autoScroll: true
 		,minColumnWidth: 200
-		,bbar:[ btnNuevo,btnEditar,btnBorrar ]
+		,bbar:[ 
+			<sec:authorize ifAllGranted="ROLE_PUEDE_VER_BOTONES_GRID_CONTABILIDAD_COBRO">btnNuevo,btnEditar,btnBorrar,btnEnviarContabilidad</sec:authorize>
+		]
 	});
 	  
-	contabilidadCobrosGrid.on('rowdblclick',function(grid, rowIndex, e){
-		if(!panel.puedeEditar()) return; 
-		if ( !(panel.esGestor() || panel.esSupervisor())) return;
-	   	var rec = grid.getSelectionModel().getSelected();
-	    var id= rec.get('id');  
-		if(!id)
-			return;
-	    var w = app.openWindow({
-	        flow : 'contabilidadcobros/showEditContabilidadCobro'
-			,width:700
-			,title : '<s:message code="contabilidadCobros.edicion" text="**Editar Contabilidad Cobros" />'
-	        ,params : {id:id,asunto:panel.getAsuntoId()}
-	    });
-	    w.on(app.event.DONE, function(){
-	        w.close();
-			contabilidadCobrosStore.webflow({id:panel.getAsuntoId()});
-	    });
-	    w.on(app.event.CANCEL, function(){ w.close(); });
+	contabilidadCobrosGrid.on('rowclick',function(grid, rowIndex, e){
+		<%-- Comprobar usuario --%>
+		var usu = grid.getSelectionModel().getSelected().get("usuarioCrear");
+		if(usu != userLogado){
+			<%-- Si el usuario actual NO es quien ha lo creado --%>
+			btnEditar.disabled = true;
+			btnBorrar.disabled = true;
+		} else {
+			<%-- Si el usuario actual es quien ha lo creado --%>
+			btnEditar.disabled = false;
+			btnBorrar.disabled = false;
+		}
 	});
 
 	panel.add(contabilidadCobrosGrid);
+
 
 	panel.getValue = function(){
 	}

@@ -10,7 +10,7 @@
 	<%-- Variables --%>
 	var labelStyle='font-weight:bolder;width:100';
 	var style='margin-bottom:2px;margin-top:1px';
-	var stylePanelDerecha='margin-bottom:-10px;margin-left:25px';
+	var stylePanelDerecha='margin-bottom:-5px;margin-left:25px';
 	var styleColumnas='margin-bottom:-15px;margin-top:-8px;margin-left:-10px';
 	var id = new Ext.form.Hidden({
 		id:'contabilidadCobro.id'
@@ -109,8 +109,8 @@
 			,allowDecimals: true
 			,allowNegative: false
 			,enableKeyEvents: true
-			,maxLength:13
-			,listeners : {keyup : function(){
+			,maxLength:16
+			,listeners : {blur : function(){
 							refreshTotalEntrega()
 						}
 			}
@@ -131,8 +131,8 @@
 			,style:style
 			,allowDecimals: true
 			,allowNegative: false
-			,maxLength:13
-			,listeners : {keyup : function(){
+			,maxLength:16
+			,listeners : {blur : function(){
 							refreshTotalEntrega()
 						}
 			}
@@ -153,14 +153,16 @@
 			,style:style
 			,allowDecimals: true
 			,allowNegative: false
-			,maxLength:13
+			,maxLength:16
+			,listeners : {blur : function(){
+							refreshTotalEntrega()
+						}
+			}
 			<c:if test="${contabilidadCobro.demoras!=null}" >
 				,value:'${contabilidadCobro.demoras}'
 			</c:if>
 		}
 	);
-	
-	demoras.addListener('keyup', refreshTotalEntrega);
 	
 	<%-- Entrada de Texto Numero Impuestos --%>
 	var impuestos  = app.creaNumber('contabilidadCobro.impuestos',
@@ -171,14 +173,16 @@
 			,style:style
 			,allowDecimals: true
 			,allowNegative: false
-			,maxLength:13
+			,maxLength:16
+			,listeners : {blur : function(){
+							refreshTotalEntrega()
+						}
+			}
 			<c:if test="${contabilidadCobro.impuestos!=null}" >
 				,value:'${contabilidadCobro.impuestos}'
 			</c:if>
 		}
 	);
-	
-	impuestos.addListener('keyup', refreshTotalEntrega);
 	
 	<%-- Entrada de Texto Numero Gastos Procurador --%>
 	var gastosProcurador  = app.creaNumber('contabilidadCobro.gastosProcurador',
@@ -189,14 +193,16 @@
 			,style:style
 			,allowDecimals: true
 			,allowNegative: false
-			,maxLength:13
+			,maxLength:16
+			,listeners : {blur : function(){
+							refreshTotalEntrega()
+						}
+			}
 			<c:if test="${contabilidadCobro.gastosProcurador!=null}" >
 				,value:'${contabilidadCobro.gastosProcurador}'
 			</c:if>
 		}
 	);
-	
-	gastosProcurador.addListener('keyup', refreshTotalEntrega);
 	
 	<%-- Entrada de Texto Numero Gastos Letrado --%>
 	var gastosLetrado  = app.creaNumber('contabilidadCobro.gastosLetrado',
@@ -207,14 +213,16 @@
 			,style:style
 			,allowDecimals: true
 			,allowNegative: false
-			,maxLength:13
+			,maxLength:16
+			,listeners : {blur : function(){
+							refreshTotalEntrega()
+						}
+			}
 			<c:if test="${contabilidadCobro.gastosLetrado!=null}" >
 				,value:'${contabilidadCobro.gastosLetrado}'
 			</c:if>
 		}
 	);
-	
-	gastosLetrado.addListener('keyup', refreshTotalEntrega);
 	
 	<%-- Entrada de Texto Numero Otros Gastos --%>
 	var otrosGastos  = app.creaNumber('contabilidadCobro.otrosGastos',
@@ -225,14 +233,16 @@
 			,style:style
 			,allowDecimals: true
 			,allowNegative: false
-			,maxLength:13
+			,maxLength:16
+			,listeners : {blur : function(){
+							refreshTotalEntrega()
+						}
+			}
 			<c:if test="${contabilidadCobro.otrosGastos!=null}" >
 				,value:'${contabilidadCobro.otrosGastos}'
 			</c:if>
 		}
 	);
-	
-	otrosGastos.addListener('keyup', refreshTotalEntrega);
 	
 	<%-- Entrada de Texto Numero Quita Nominal --%>
 	var quitaNominal  = app.creaNumber('contabilidadCobro.quitaNominal',
@@ -243,14 +253,16 @@
 			,style:style
 			,allowDecimals: true
 			,allowNegative: false
-			,maxLength:13
+			,maxLength:16
+			,listeners : {blur : function(){
+							refreshTotalEntrega()
+						}
+			}
 			<c:if test="${contabilidadCobro.quitaNominal!=null}" >
 				,value:'${contabilidadCobro.quitaNominal}'
 			</c:if>
 		}
 	);
-	
-	quitaNominal.addListener('keyup', refreshTotalEntrega);
 	
 	<%-- Entrada de Texto Numero Quita Intereses --%>
 	var quitaIntereses  = app.creaNumber('contabilidadCobro.quitaIntereses',
@@ -261,14 +273,16 @@
 			,style:style
 			,allowDecimals: true
 			,allowNegative: false
-			,maxLength:13
+			,maxLength:16
+			,listeners : {blur : function(){
+							refreshTotalEntrega()
+						}
+			}
 			<c:if test="${contabilidadCobro.quitaIntereses!=null}" >
 				,value:'${contabilidadCobro.quitaIntereses}'
 			</c:if>
 		}
 	);
-	
-	quitaIntereses.addListener('keyup', refreshTotalEntrega);
 		
 	<%-- Entrada de Texto Numero Quita Demoras --%>
 	var quitaDemoras  = app.creaNumber('contabilidadCobro.quitaDemoras',
@@ -279,14 +293,16 @@
 			,style:style
 			,allowDecimals: true
 			,allowNegative: false
-			,maxLength:13
+			,maxLength:16
+			,listeners : {blur : function(){
+							refreshTotalEntrega()
+						}
+			}
 			<c:if test="${contabilidadCobro.quitaDemoras!=null}" >
 				,value:'${contabilidadCobro.quitaDemoras}'
 			</c:if>
 		}
 	);
-	
-	quitaDemoras.addListener('keyup', refreshTotalEntrega);
 	
 	<%-- Entrada de Texto Numero Quita Impuestos --%>
 	var quitaImpuestos  = app.creaNumber('contabilidadCobro.quitaImpuestos',
@@ -297,14 +313,16 @@
 			,style:style
 			,allowDecimals: true
 			,allowNegative: false
-			,maxLength:13
+			,maxLength:16
+			,listeners : {blur : function(){
+							refreshTotalEntrega()
+						}
+			}
 			<c:if test="${contabilidadCobro.quitaImpuestos!=null}" >
 				,value:'${contabilidadCobro.quitaImpuestos}'
 			</c:if>
 		}
 	);
-	
-	quitaImpuestos.addListener('keyup', refreshTotalEntrega);
 	
 	<%-- Entrada de Texto Numero Quita Gastos Procurador --%>
 	var quitaGastosProcurador  = app.creaNumber('contabilidadCobro.quitaGastosProcurador',
@@ -315,14 +333,16 @@
 			,style:style
 			,allowDecimals: true
 			,allowNegative: false
-			,maxLength:13
+			,maxLength:16
+			,listeners : {blur : function(){
+							refreshTotalEntrega()
+						}
+			}
 			<c:if test="${contabilidadCobro.quitaGastosProcurador!=null}" >
 				,value:'${contabilidadCobro.quitaGastosProcurador}'
 			</c:if>
 		}
 	);
-	
-	quitaGastosProcurador.addListener('keyup', refreshTotalEntrega);
 	
 	<%-- Entrada de Texto Numero Quita Gastos Letrado --%>
 	var quitaGastosLetrado  = app.creaNumber('contabilidadCobro.quitaGastosLetrado',
@@ -333,14 +353,16 @@
 			,style:style
 			,allowDecimals: true
 			,allowNegative: false
-			,maxLength:13
+			,maxLength:16
+			,listeners : {blur : function(){
+							refreshTotalEntrega()
+						}
+			}
 			<c:if test="${contabilidadCobro.quitaGastosLetrado!=null}" >
 				,value:'${contabilidadCobro.quitaGastosLetrado}'
 			</c:if>
 		}
 	);
-	
-	quitaGastosLetrado.addListener('keyup', refreshTotalEntrega);
 	
 	<%-- Entrada de Texto Numero Quita Otros Gastos --%>
 	var quitaOtrosGastos  = app.creaNumber('contabilidadCobro.quitaOtrosGastos',
@@ -351,14 +373,16 @@
 			,style:style
 			,allowDecimals: true
 			,allowNegative: false
-			,maxLength:13
+			,maxLength:16
+			,listeners : {blur : function(){
+							refreshTotalEntrega()
+						}
+			}
 			<c:if test="${contabilidadCobro.quitaOtrosGastos!=null}" >
 				,value:'${contabilidadCobro.quitaOtrosGastos}'
 			</c:if>
 		}
 	);
-	
-	quitaOtrosGastos.addListener('keyup', refreshTotalEntrega);
 	
 	<%-- Entrada de Texto Numero Total Entrega --%>
 	var totalEntrega  = app.creaNumber('contabilidadCobro.totalEntrega',
@@ -371,7 +395,7 @@
 			,allowBlank: false
 			,allowNegative: false
 			,readOnly:true
-			,maxLength:13
+			,maxLength:16
 			<c:if test="${contabilidadCobro.totalEntrega!=null}" >
 				,value:'${contabilidadCobro.totalEntrega}'
 			</c:if>
@@ -427,71 +451,80 @@
 	}
 	
 	<%-- Campo de Texto Numero Num Enlace --%>
-	var numEnlace  = app.creaNumber('contabilidadCobro.numEnlace',
-		'<s:message code="contabilidad.numEnlace" text="**Número Enlace" />',
-		'${contabilidadCobro.numEnlace}',
-		{
-			labelStyle:labelStyle
-			,style:style
-			,allowDecimals: false
-			,allowNegative: false
-			,readOnly:true
-			,maxLength:13
-			<c:if test="${contabilidadCobro.numEnlace!=null}" >
-				,value:'${contabilidadCobro.numEnlace}'
-			</c:if>
+	var numEnlace  = new Ext.form.TextArea({
+		fieldLabel:'<s:message code="contabilidad.numEnlace" text="**Número Enlace" />'
+		,labelStyle:labelStyle
+		,style:style
+		,width:135
+		,height:21
+		<c:if test="${contabilidadCobro.numEnlace!=null}" >
+			,value:'${contabilidadCobro.numEnlace}'
+		</c:if>
 		}
 	);
 	
 	<%-- Campo de Texto Numero Num Mandamiento --%>
-	var numMandamiento  = app.creaNumber('contabilidadCobro.numMandamiento',
-		'<s:message code="contabilidad.numMandamiento" text="**Número Mandamiento" />',
-		'${contabilidadCobro.numMandamiento}',
-		{
-			labelStyle:labelStyle
-			,style:style
-			,allowDecimals: false
-			,allowNegative: false
-			,readOnly:true
-			,maxLength:13
-			<c:if test="${contabilidadCobro.numMandamiento!=null}" >
-				,value:'${contabilidadCobro.numMandamiento}'
-			</c:if>
+	var numMandamiento  = new Ext.form.TextArea({
+		fieldLabel:'<s:message code="contabilidad.numMandamiento" text="**Número Mandamiento" />'
+		,labelStyle:labelStyle
+		,style:style
+		,width:135
+		,height:21
+		<c:if test="${contabilidadCobro.numMandamiento!=null}" >
+			,value:'${contabilidadCobro.numMandamiento}'
+		</c:if>
 		}
 	);
 	
 	<%-- Campo de Texto Numero Num Cheque --%>
-	var numCheque  = app.creaNumber('contabilidadCobro.numCheque',
-		'<s:message code="contabilidad.numCheque" text="**Número Cheque" />',
-		'${contabilidadCobro.numCheque}',
-		{
-			labelStyle:labelStyle
-			,style:style
-			,allowDecimals: false
-			,allowNegative: false
-			,readOnly:true
-			,maxLength:13
-			<c:if test="${contabilidadCobro.numCheque!=null}" >
-				,value:'${contabilidadCobro.numCheque}'
-			</c:if>
-		}
-	);
+	var numCheque  = new Ext.form.TextArea({
+		fieldLabel:'<s:message code="contabilidad.numCheque" text="**Número Cheque" />'
+		,labelStyle:labelStyle
+		,width:135
+		,height:21
+		,style:style
+		<c:if test="${contabilidadCobro.numCheque!=null}" >
+			,value:'${contabilidadCobro.numCheque}'
+		</c:if>
+		});
 
 	<%-- Campo Texto Observaciones --%>
 	var observaciones=new Ext.form.TextArea({
 		fieldLabel:'<s:message code="contabilidad.observaciones" text="**Observaciones" />'
 		,width:550
 		,height:80
-		,maxLength:500
+		,maxLength:100
 		,style:style
 		,labelStyle:labelStyle
 	    ,name: 'contabilidadCobro.observaciones'
-		,value:'${contabilidadCobro.observaciones}'
+	    <c:if test="${contabilidadCobro.observaciones!=null}" >
+			,value:'${contabilidadCobro.observaciones}'
+		</c:if>
 	});
+	
+	<%-- CheckBox operaciones en tramite --%>
+	var opTramite = new Ext.form.CheckboxGroup({
+    id:'opTramite',
+    xtype: 'checkboxgroup',
+    itemCls: 'x-check-group-alt',
+    columns: 1,
+    style:style,
+	labelStyle:labelStyle,
+    items: [
+        {fieldLabel: '<s:message code="contabilidad.operacionesTramite" text="**Operaciones Trámite" />'
+        ,name: 'cb-1'
+        ,style:style
+		,labelStyle:labelStyle
+		<c:if test="${contabilidadCobro.operacionesTramite==true}" >
+			,checked: true
+		</c:if>
+		}
+    ]
+});
 	
 	<%-- Validaciones Formulario --%>
 	var validarCamposObligatorios = function(){
-		if(fechaEntrega.getValue != null || fechaValor.getValue() != null || comboDDTipoEntrega.getValue() != null || comboDDConceptoEntrega.getValue()){
+		if(fechaEntrega.getValue != null && fechaValor.getValue() != null && comboDDTipoEntrega.getValue() != null && comboDDConceptoEntrega.getValue()){
 			return true;
 		} else {
 			return false;
@@ -507,7 +540,7 @@
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){
-			if(validarCamposObligatorios){
+			if(validarCamposObligatorios()){
 			<%-- Si las validaciones son correctas --%>
 				var parametros = {
 						id:'${contabilidadCobro.id}'
@@ -532,6 +565,7 @@
 						,quitaOtrosGastos:quitaOtrosGastos.getValue()
 						,totalEntrega:totalEntrega.getValue()
 						,observaciones:observaciones.getValue()
+						,operacionesTramite:opTramite.items.items[0].getValue()
 					};
 				Ext.Ajax.request({
     				url: page.resolveUrl('contabilidadcobros/saveContabilidadCobro')
@@ -557,29 +591,52 @@
 			}
 	});
 	
-	<%-- Seccion Izquierda --%>
-	var panelIzquierdo =  new Ext.Container({
+	<%-- Seccion Superior Izquierda --%>
+	var panelSuperiorIzquierdo =  new Ext.Container({
+		layout: 'form'
+		,items : [fechaValor]
+	});
+	
+	<%-- Seccion Superior Derecha --%>
+	var panelSuperiorDerecha =  new Ext.Container({
+		layout: 'form'
+		,items : [opTramite]
+	});
+	
+	<%-- Columnas Superior --%>
+	var columnasSuperior = new Ext.form.FieldSet({
+		autoHeight:'true'
+		,layout: 'table'
+		,border:false
+		,style: styleColumnas
+		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop'}
+		,items : [panelSuperiorIzquierdo,panelSuperiorDerecha]
+	 });
+	
+	<%-- Seccion Inferior Izquierda --%>
+	var panelInferiorIzquierdo =  new Ext.Container({
 		layout: 'form'
 		,items : [nominal,intereses,demoras,impuestos,
 			gastosProcurador,gastosLetrado,otrosGastos]
 	});
 	
-	<%-- Seccion Derecha --%>
-	var panelDerecha =  new Ext.Container({
+	
+	<%-- Seccion Inferior Derecha --%>
+	var panelInferiorDerecha =  new Ext.Container({
 		layout: 'form'
 		,style: stylePanelDerecha
 		,items : [quitaNominal,quitaIntereses,quitaDemoras,quitaImpuestos,quitaGastosProcurador,
 			quitaGastosLetrado,quitaOtrosGastos]
 	});
 	
-	<%-- Columnas --%>
-	var columnas = new Ext.form.FieldSet({
+	<%-- Columnas Inferior --%>
+	var columnasInferior = new Ext.form.FieldSet({
 		autoHeight:'true'
 		,layout: 'table'
 		,border:false
 		,style: styleColumnas
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop'}
-		,items : [panelIzquierdo,panelDerecha]
+		,items : [panelInferiorIzquierdo,panelInferiorDerecha]
 	 }); 
 	
 	<%-- Panel --%>	
@@ -595,7 +652,7 @@
 			,viewConfig : { columns : 2 }
 			,defaults :  {layout:'form', autoHeight : true, border : false,width:680 }
 			,items : [
-			{ items : [fechaEntrega,fechaValor,comboDDTipoEntrega,comboDDConceptoEntrega,columnas,totalEntrega,numEnlace,numMandamiento,numCheque,observaciones]
+			{ items : [fechaEntrega,columnasSuperior,comboDDTipoEntrega,comboDDConceptoEntrega,columnasInferior,totalEntrega,numEnlace,numMandamiento,numCheque,observaciones]
 			,style : 'margin-right:10px' }
 			]
 		}

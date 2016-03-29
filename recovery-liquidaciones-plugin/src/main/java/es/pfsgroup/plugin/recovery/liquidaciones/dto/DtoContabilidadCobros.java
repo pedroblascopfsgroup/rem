@@ -33,11 +33,12 @@ public class DtoContabilidadCobros extends WebDto {
 	private Float quitaGastosLetrado;
 	private Float quitaOtrosGastos;
 	private Float totalEntrega;
-	private Long numEnlace;
-	private Long numMandamiento;
-	private Long numCheque;
+	private String numEnlace;
+	private String numMandamiento;
+	private String numCheque;
 	private String observaciones;
 	private Long asunto;
+	private Boolean operacionesTramite;
 
 	public DtoContabilidadCobros() {
 	}
@@ -213,27 +214,27 @@ public class DtoContabilidadCobros extends WebDto {
 		this.totalEntrega = totalEntrega;
 	}
 
-	public Long getNumEnlace() {
+	public String getNumEnlace() {
 		return numEnlace;
 	}
 
-	public void setNumEnlace(Long numEnlace) {
+	public void setNumEnlace(String numEnlace) {
 		this.numEnlace = numEnlace;
 	}
 
-	public Long getNumMandamiento() {
+	public String getNumMandamiento() {
 		return numMandamiento;
 	}
 
-	public void setNumMandamiento(Long numMandamiento) {
+	public void setNumMandamiento(String numMandamiento) {
 		this.numMandamiento = numMandamiento;
 	}
 
-	public Long getNumCheque() {
+	public String getNumCheque() {
 		return numCheque;
 	}
 
-	public void setNumCheque(Long numCheque) {
+	public void setNumCheque(String numCheque) {
 		this.numCheque = numCheque;
 	}
 
@@ -259,6 +260,14 @@ public class DtoContabilidadCobros extends WebDto {
 
 	public void setAsunto(Long asunto) {
 		this.asunto = asunto;
+	}
+
+	public Boolean getOperacionesTramite() {
+		return operacionesTramite;
+	}
+
+	public void setOperacionesTramite(Boolean operacionesTramite) {
+		this.operacionesTramite = operacionesTramite;
 	}
 
 }

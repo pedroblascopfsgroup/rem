@@ -20,8 +20,8 @@ import es.pfsgroup.plugin.recovery.liquidaciones.model.ContabilidadCobros;
 @Controller
 public class ContabilidadCobrosController {
 
-	static final String CONTABILIDAD_COBROS_JSON = "plugin/liquidaciones/listadoContabilidadCobrosJSON";
-	static final String NEW_CONTABILIDAD_COBRO = "plugin/liquidaciones/contabilidadCobro";
+	private static final String CONTABILIDAD_COBROS_JSON = "plugin/liquidaciones/listadoContabilidadCobrosJSON";
+	private static final String NEW_CONTABILIDAD_COBRO = "plugin/liquidaciones/contabilidadCobro";
 	private static final String DEFAULT = "default";
 
 	
@@ -84,9 +84,9 @@ public class ContabilidadCobrosController {
 	}
 	
 	@RequestMapping
-	public String deleteContabilidadCobro(ModelMap model, Long idContabilidadCobro) {
+	public String deleteContabilidadCobro(ModelMap model, DtoContabilidadCobros dto) {
 
-		contabilidadCobrosManager.deleteContabilidadCobro(idContabilidadCobro);
+		contabilidadCobrosManager.deleteContabilidadCobro(dto.getId());
 		
 		return DEFAULT;
 	}

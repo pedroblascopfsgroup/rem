@@ -103,16 +103,19 @@ public class ContabilidadCobros implements Auditable, Serializable{
 	private Float totalEntrega;
 	
 	@Column(name = "CCO_NUM_ENLACE")
-	private Long numEnlace;
+	private String numEnlace;
 	
 	@Column(name = "CCO_NUM_MANDAMIENTO")
-	private Long numMandamiento;
+	private String numMandamiento;
 	
 	@Column(name = "CCO_CHEQUE")
-	private Long numCheque;
+	private String numCheque;
 	
 	@Column(name = "CCO_OBSERVACIONES")
 	private String observaciones;
+	
+	@Column(name = "CCO_OPERACIONES_TRAMITE")
+	private Boolean operacionesTramite;
 	
 	@ManyToOne
 	@JoinColumn(name = "ASU_ID")
@@ -329,32 +332,32 @@ public class ContabilidadCobros implements Auditable, Serializable{
 	}
 
 
-	public Long getNumEnlace() {
+	public String getNumEnlace() {
 		return numEnlace;
 	}
 
 
-	public void setNumEnlace(Long numEnlace) {
+	public void setNumEnlace(String numEnlace) {
 		this.numEnlace = numEnlace;
 	}
 
 
-	public Long getNumMandamiento() {
+	public String getNumMandamiento() {
 		return numMandamiento;
 	}
 
 
-	public void setNumMandamiento(Long numMandamiento) {
+	public void setNumMandamiento(String numMandamiento) {
 		this.numMandamiento = numMandamiento;
 	}
 
 
-	public Long getNumCheque() {
+	public String getNumCheque() {
 		return numCheque;
 	}
 
 
-	public void setNumCheque(Long numCheque) {
+	public void setNumCheque(String numCheque) {
 		this.numCheque = numCheque;
 	}
 
@@ -423,6 +426,16 @@ public class ContabilidadCobros implements Auditable, Serializable{
 
 	public Integer getSerialversionuid() {
 		return version;
+	}
+
+
+	public Boolean getOperacionesTramite() {
+		return operacionesTramite;
+	}
+
+
+	public void setOperacionesTramite(Boolean operacionesTramite) {
+		this.operacionesTramite = operacionesTramite;
 	}
 
 }

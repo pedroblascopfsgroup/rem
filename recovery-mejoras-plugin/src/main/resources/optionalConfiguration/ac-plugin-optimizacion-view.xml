@@ -128,7 +128,7 @@
 
 <bean p:entity="tabs.asunto.fast" p:name="contabilidadcobros"  p:order="900" 
 		p:fileName="/WEB-INF/jsp/entidad/asunto/tabs/contabilidadCobros.jsp" 
-		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="ROLE_PUEDE_VER_TAB_CONTABILIDAD_COBROS"/>
 	
 	<bean p:entity="tabs.asunto.fast" p:name="decisionComite"  p:order="800" 
 		p:fileName="/WEB-INF/jsp/entidad/asunto/tabs/decisionComite.jsp" 

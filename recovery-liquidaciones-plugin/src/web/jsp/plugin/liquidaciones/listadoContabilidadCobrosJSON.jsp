@@ -33,6 +33,8 @@
 		<json:property name="numCheque" value="${rec.numCheque}"/>
 		<json:property name="observaciones" value="${rec.observaciones}"/>
 		<json:property name="asunto" value="${rec.asunto}"/>
+		<json:property name="operacionesTramite" value="${rec.operacionesTramite}"/>
+		<json:property name="usuarioCrear" value="${rec.auditoria.usuarioCrear}"/>
 		
 	</json:object>
 	</json:array>

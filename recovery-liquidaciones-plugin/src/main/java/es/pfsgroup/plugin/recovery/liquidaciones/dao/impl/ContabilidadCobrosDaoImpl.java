@@ -17,7 +17,7 @@ public class ContabilidadCobrosDaoImpl extends AbstractEntityDao<ContabilidadCob
 	@Override
 	public List<ContabilidadCobros> getListadoContabilidadCobros(DtoContabilidadCobros dto) {
 		HQLBuilder hb = new HQLBuilder("from ContabilidadCobros cco");
-		hb.appendWhere("cco.asunto.id = "+dto.getId()); // ID de asunto.
+		hb.appendWhere("cco.asunto.id = "+dto.getId() + " and cco.auditoria.borrado = 0 "); // ID de asunto y borrado.
 		hb.orderBy("fechaValor", HQLBuilder.ORDER_DESC);
 
 		return HibernateQueryUtils.list(this, hb);

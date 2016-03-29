@@ -41,7 +41,6 @@
 		<json:property name='tareaPendienteDescripcion' value="${tareaPendiente.descripcionTarea}" escapeXml="false"/>
 		<json:property name='esRecuperacion' value="${expediente.arquetipo.itinerario.dDtipoItinerario.itinerarioRecuperacion == true}"/>
 		<json:property name='esSeguimiento' value="${expediente.arquetipo.itinerario.dDtipoItinerario.itinerarioSeguimiento == true}"/>
-		
 		<json:property name='comiteElevarNull' value="${comiteElevar==null}"/>
 		<json:property name='comiteElevar' value="${comiteElevar.id}"/>
 		<json:property name='comitesDelegarNull' value="${comitesDelegarNull==null}"/>

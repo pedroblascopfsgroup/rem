@@ -1546,7 +1546,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	        String node = (String) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_ACTUAL_NODE, bpmProcess);
 	        if (ExpedienteBPMConstants.STATE_SANCIONADO.equals(node)) {
 
-	            executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, bpmProcess, ExpedienteBPMConstants.TRANSITION_DEVOLVER_COMPLETAR_EXPEDIENTE);
+	            executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, bpmProcess, ExpedienteBPMConstants.TRANSITION_APROBADOCONCONDICIONES);
 	            
 	            // *** Recuperamos la tarea generada en el BPM para cambiarle la descripción y ponerle los motivos de devolución ***
 	            Long idTareaAsociada = (Long) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_VARIABLES_TO_PROCESS, bpmProcess, TAREA_ASOCIADA_RE);
@@ -1589,13 +1589,14 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	 */
 	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_SANCIONADO_A_EN_SANCION)
 	@Transactional(readOnly = false)
-	public void devolverExpedienteDeSancionadoAEnSancion(Long idExpediente,String respuesta) {
+	public void devolverExpedienteDeSancionadoAEnSancion(Long idExpediente,String respuesta, Boolean isSupervisor) {
 		 
 			Expediente exp = expedienteDao.get(idExpediente);
 			
-	        
-	        Boolean permitidoDevolver = compruebaDevolucion(exp, ExpedienteBPMConstants.STATE_SANCIONADO, DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION);
-	        if (!permitidoDevolver) { throw new BusinessOperationException("expediente.elevar.falloValidaciones"); }
+	        if(!isSupervisor){
+	        	Boolean permitidoDevolver = compruebaDevolucion(exp, ExpedienteBPMConstants.STATE_SANCIONADO, DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION);
+	        	if (!permitidoDevolver) { throw new BusinessOperationException("expediente.elevar.falloValidaciones"); }
+	        }
 
 			
 	        Long bpmProcess = exp.getProcessBpm();

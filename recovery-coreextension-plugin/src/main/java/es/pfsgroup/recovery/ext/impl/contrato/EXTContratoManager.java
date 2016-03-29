@@ -7,8 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.AbstractMessageSource;
 import org.springframework.stereotype.Component;
@@ -16,13 +14,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.devon.hibernate.pagination.PageHibernate;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.devon.pagination.PaginationParams;
+import es.capgemini.devon.pagination.PaginationParamsImpl;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.dao.EXTContratoDao;
 import es.capgemini.pfs.contrato.dto.BusquedaContratosDto;
 import es.capgemini.pfs.contrato.dto.DtoBuscarContrato;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.efectos.model.EfectoContrato;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.movimiento.model.Movimiento;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
@@ -30,24 +32,22 @@ import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.utils.ObjetoResultado;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.recovery.api.UsuarioApi;
 import es.pfsgroup.recovery.ext.api.contrato.EXTContratoApi;
+import es.pfsgroup.recovery.ext.api.contrato.dto.EXTBusquedaContratosDto;
 import es.pfsgroup.recovery.ext.api.contrato.model.EXTInfoAdicionalContratoInfo;
 import es.pfsgroup.recovery.ext.impl.contrato.model.EXTInfoAdicionalContrato;
-import es.pfsgroup.recovery.ext.api.contrato.dto.EXTBusquedaContratosDto;
-import es.pfsgroup.recovery.api.UsuarioApi;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 
 @Component
 public class EXTContratoManager implements EXTContratoApi {
 	
 	
 	private static final String BO_CNT_MGR_BUSCAR_CONTRATOS_CLIENTE_UGAS = "plugin.coreextension.contrato.buscarContratosClienteUgas";
-
-	private final Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -118,7 +118,7 @@ public class EXTContratoManager implements EXTContratoApi {
      * @param dto params
      * @param pagina pagina
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void agregarTotalizadorCliente(DtoBuscarContrato dto, es.capgemini.devon.pagination.PageImpl pagina) {
         HashMap<String, Object> mapa = contratoDao.buscarTotalContratosCliente(dto);
         Contrato c = new Contrato();
@@ -205,10 +205,10 @@ public class EXTContratoManager implements EXTContratoApi {
 	
 
     /**
-     * Hace la búsqueda de contratos de acuerdo a los filtros que vienen en el DTO,
+     * Hace la bï¿½squeda de contratos de acuerdo a los filtros que vienen en el DTO,
      * pero para el export a PDF, validando antes que la cant. de resultados no
      * supere una determinada cant.
-     * @param dto contiene los filtros de la búsqueda.
+     * @param dto contiene los filtros de la bï¿½squeda.
      * @return la lista de contratos que cumplen con los filtros.
      */
     @BusinessOperation(overrides = PrimariaBusinessOperation.BO_CNT_MGR_EXPORT_CONTRATOS)
@@ -217,7 +217,7 @@ public class EXTContratoManager implements EXTContratoApi {
         //Seteamos las zonas del formulario o por defecto las zonas del usuario logado
         dto.setCodigosZona(getCodigosDeZona(dto));
         dto.setEstadosContrato(getEstadosContrato(dto));
-        dto.setLimit(Integer.MAX_VALUE); // La verificación del topo la hace superaLimiteExport
+        dto.setLimit(Integer.MAX_VALUE); // La verificaciï¿½n del topo la hace superaLimiteExport
         return contratoDao.buscarContratosPaginados(dto, usuLogado);
     }
 
@@ -288,4 +288,36 @@ public class EXTContratoManager implements EXTContratoApi {
 		Filter fContrato = genericDao.createFilter(FilterType.EQUALS, "nroContrato", nroContrato);
 		return genericDao.get(Contrato.class, fContrato);
 	}
+	
+	public Page getEfectosContrato(Long idContrato, Integer start, Integer limit) {
+		try {
+			EventFactory.onMethodStart(this.getClass());
+			PaginationParams params = new PaginationParamsImpl();
+			params.setSort(" fechaVencimiento ");
+			params.setDir("DESC");
+			
+			if(start == null) {
+				params.setStart(0);
+			}
+			else {
+				params.setStart(start);
+			}
+			
+			if(limit == null) {
+				params.setLimit(50);
+			}
+			else {
+				params.setLimit(limit);
+			}
+			
+			Filter filtro = (Filter) genericDao.createFilter(FilterType.EQUALS, "contrato.id", idContrato);
+			
+			PageHibernate page = (PageHibernate) genericDao.getPage(EfectoContrato.class, params,filtro);
+			EventFactory.onMethodStop(this.getClass());
+			return page;
+		} catch (Throwable t) {
+			return null;
+		}
+	}
+
 }

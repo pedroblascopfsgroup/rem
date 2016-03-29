@@ -263,6 +263,10 @@ public class TareaNotificacionManager {
                 param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_CE);
             } else if (DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE.equals(codigoEstado)) {
                 param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_RE);
+            } else if (DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION.equals(codigoEstado)) {
+                param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_ENSAN);
+            } else if (DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO.equals(codigoEstado)) {
+                param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_SANC);
             } else {
                 param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC);
             }
@@ -390,6 +394,12 @@ public class TareaNotificacionManager {
             } else if (DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE.equals(codigoEstado)) {
                 subtipoTarea = SubtipoTarea.CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_RE;
                 timerName = ExpedienteBPMConstants.TIMER_TAREA_RE;
+            } else if (DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION.equals(codigoEstado)) {
+                subtipoTarea = SubtipoTarea.CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_ENSAN;
+                timerName = ExpedienteBPMConstants.TIMER_TAREA_ENSAN;
+            } else if (DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO.equals(codigoEstado)) {
+                subtipoTarea = SubtipoTarea.CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_SANC;
+                timerName = ExpedienteBPMConstants.TIMER_TAREA_SANC;
             } else {
                 subtipoTarea = SubtipoTarea.CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_DC;
                 timerName = ExpedienteBPMConstants.TIMER_TAREA_DC;

@@ -169,7 +169,7 @@ function(entidad,page){
 				handler=function(btn, rta){
 					if (btn== 'ok'){
 						maskAll();
-						devolverExpedienteDeSANCaENSAN(toolbar.getIdExpediente(), rta);
+						devolverExpedienteDeSANCaENSAN(toolbar.getIdExpediente(), rta, toolbar.isSupervisor());
 					}
 				};				
 				app.prompt(titulo, texto,handler);

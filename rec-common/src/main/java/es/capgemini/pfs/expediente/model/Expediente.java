@@ -1017,7 +1017,8 @@ public class Expediente implements Serializable, Auditable, Describible {
             if (estadoItinerario.getCodigo().equals(tarea.getEstadoItinerario().getCodigo())
                     && (SubtipoTarea.CODIGO_COMPLETAR_EXPEDIENTE.equals(tarea.getSubtipoTarea().getCodigoSubtarea())
                             || SubtipoTarea.CODIGO_REVISAR_EXPEDIENE.equals(tarea.getSubtipoTarea().getCodigoSubtarea()) || SubtipoTarea.CODIGO_DECISION_COMITE
-                            .equals(tarea.getSubtipoTarea().getCodigoSubtarea())
+                            .equals(tarea.getSubtipoTarea().getCodigoSubtarea()) || SubtipoTarea.CODIGO_TAREA_EN_SANCION.equals(tarea.getSubtipoTarea().getCodigoSubtarea()) 
+                            || SubtipoTarea.CODIGO_TAREA_SANCIONADO.equals(tarea.getSubtipoTarea().getCodigoSubtarea()) 
                             || SubtipoTarea.CODIGO_FORMALIZAR_PROPUESTA.equals(tarea.getSubtipoTarea().getCodigoSubtarea()) )) { return tarea.getId(); }
         }
         return null;

@@ -715,7 +715,7 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		}
 		
 		if(burofax.getTipoIntervencion().getAvalista()){
-			aNombreDe = "A NOMBRE DE ${TITULAR_ORDEN_MENOR_CONTRATO} <br />";
+			aNombreDe = "A NOMBRE DE ${TITULAR_ORDEN_MENOR_CONTRATO} ";
 		}
 		
 		List<Bien> bienes = procedimientoManager.getBienesDeUnProcedimiento(burofax.getProcedimientoPCO().getProcedimiento().getId());

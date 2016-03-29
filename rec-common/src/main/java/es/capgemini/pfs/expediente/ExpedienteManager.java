@@ -1963,7 +1963,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	        
 	        //VALIDO PRECONDICIONES CU WEB-30
 	       
-	    	if (!exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT)){
+	    	if (!exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT) && !exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO)){
 	
 	    		//No esta en decisión de comite o no tiene sesiones abiertas.
 	            logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO ESTA EN EL ESTADO CORRESPONDIENTE ");

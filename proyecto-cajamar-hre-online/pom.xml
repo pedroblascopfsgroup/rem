@@ -15,6 +15,15 @@
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-procedimientos-bpmHaya</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-precontencioso-plugin</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup</groupId>
+			<artifactId>recovery-domain</artifactId>
+			<type>jar</type>
+		</dependency>
 	</dependencies>
 
 	<build>

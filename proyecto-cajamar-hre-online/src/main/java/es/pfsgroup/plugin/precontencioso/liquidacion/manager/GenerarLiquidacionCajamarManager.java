@@ -332,8 +332,12 @@ public class GenerarLiquidacionCajamarManager implements GenerarDocumentoApi {
 	}
 
 	private BienesVO mapeDatosRegistralesBien(NMBBien bien) {
+		String municipio = bien.getDatosRegistralesActivo().getMunicipoLibro();
+		if (Checks.esNulo(municipio)) {
+			municipio = bien.getDatosRegistralesActivo().getLocalidad().getDescripcion();
+		}
 		return new BienesVO(bien.getDatosRegistralesActivo().getNumFinca(),
-				bien.getDatosRegistralesActivo().getMunicipoLibro(), bien.getDatosRegistralesActivo().getTomo(), 
+				municipio, bien.getDatosRegistralesActivo().getTomo(), 
 				bien.getDatosRegistralesActivo().getLibro(), bien.getDatosRegistralesActivo().getFolio());
 	}
 

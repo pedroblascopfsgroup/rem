@@ -67,6 +67,7 @@ app.subtipoTarea.CODIGO_DECISION_COMITE = '<fwk:const value="es.capgemini.pfs.ta
 app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_CE = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_CE" />';
 app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_RE = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_RE" />';
 app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC" />';
+app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_FP = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_FP" />';
 app.subtipoTarea.CODIGO_NOTIFICACION_CONTRATO_CANCELADO = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_NOTIFICACION_CONTRATO_CANCELADO" />';
 app.subtipoTarea.CODIGO_NOTIFICACION_SALDO_REDUCIDO = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_NOTIFICACION_SALDO_REDUCIDO" />';
 app.subtipoTarea.CODIGO_NOTIFICACION_CLIENTE_CANCELADO  = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_NOTIFICACION_CLIENTE_CANCELADO" />';

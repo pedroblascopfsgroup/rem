@@ -15,11 +15,11 @@ public class CabeceraExpedienteLiqVO {
 
 	public String COEXPD() {
 		//return NumberFormat.getInstance(new Locale("es", "ES")).format(CEL_COEXPD);
-		return CEL_COEXPD == null ? "[NO DISPONIBLE]" : CEL_COEXPD;
+		return CEL_COEXPD == null ? "" : CEL_COEXPD;
 	}
 	
 	public String NOMBRE() {
-		return CEL_NOMBRE == null ? "[NO DISPONIBLE]" : CEL_NOMBRE;
+		return CEL_NOMBRE == null ? "" : CEL_NOMBRE;
 	}
 
 	public String NUCTOP() {
@@ -31,7 +31,7 @@ public class CabeceraExpedienteLiqVO {
 	}
 	
 	public String NCTAOP() {
-		return CEL_NCTAOP == null ? "[NO DISPONIBLE]" : CEL_NCTAOP;
+		return CEL_NCTAOP == null ? "" : CEL_NCTAOP;
 	}
 
 	/* Getters */

@@ -22,9 +22,9 @@
 		,{name  : "id"           }
 		,{name  : "idTareaProcedimiento"           }
 		,{name  : "descTareaProcedimiento"           }
-		,{name : "fechaInicio",type:'date', dateFormat:'d/m/Y'}
-		,{name : "fechaVenc",type:'date', dateFormat:'d/m/Y'}
-		,{name : "fechaFin" ,type:'date', dateFormat:'d/m/Y'}
+		,{name : "fechaInicio"}
+		,{name : "fechaVenc"}
+		,{name : "fechaFin"}
 		,{name : "usuario"         }
 		,{name : "prorrogaAsociada"    }
 		,{name : "motivo"    }
@@ -137,7 +137,7 @@
                 idEntidadInformacion:panel.getProcedimientoId()
                 ,fechaCreacion: panel.getData().tareas.fechaCreacion
                 ,situacion: panel.getData().tareas.estadoItinerario
-                ,fechaVencimiento: app.format.dateRenderer(fechaVenciProrroga)
+                ,fechaVencimiento: fechaVenciProrroga
                 ,idTipoEntidadInformacion: '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO" />'
                 ,descripcion: descTareaProrroga
                 ,idTareaAsociada:idTareaProrroga
@@ -164,7 +164,7 @@
 				idEntidadInformacion: panel.getProcedimientoId()
 				,fechaCreacion: panel.getData().tareas.fechaCreacion
 				,situacion: panel.getData().tareas.estadoItinerario
-				,fechaVencimiento: app.format.dateRenderer(fechaVenciProrroga)
+				,fechaVencimiento: fechaVenciProrroga
 				,idTipoEntidadInformacion: '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO" />'
 				,descripcion: descTareaProrroga
 				,idTareaAsociada: idTareaProrroga
@@ -193,7 +193,7 @@
 		,params : {
 				idEntidadInformacion:panel.getProcedimientoId()
 				,isConsulta:false
-				,fechaVencimiento: app.format.dateRenderer(fechaVenciProrroga)
+				,fechaVencimiento: fechaVenciProrroga
 				,fechaCreacion: panel.getData().tareas.fechaCreacion 
 				,situacion: panel.getData().tareas.estadoItinerario
 				,destareaOri: descPropuestaProrroga
@@ -282,9 +282,9 @@
 		,{dataIndex : 'fechaPropuesta', fixed:true, hidden:true}
 		,{dataIndex : 'descPropuesta', fixed:true, hidden:true}
 		,{header : '<s:message code="procedimiento.gridtareas.tarea" text="**tarea"/>', dataIndex : 'tarea', width:275}
-		,{header : '<s:message code="procedimiento.gridtareas.fechaInicio" text="**fecha inicio"/>', dataIndex : 'fechaInicio', renderer:app.format.dateRenderer, width:75}
-		,{header : '<s:message code="procedimiento.gridtareas.fechaVenc" text="**fecha vencimiento"/>', dataIndex : 'fechaVenc', renderer:app.format.dateRenderer, width:75}
-		,{header : '<s:message code="procedimiento.gridtareas.fechaFin" text="**fecha fin"/>', dataIndex : 'fechaFin', renderer:app.format.dateRenderer, width:75}
+		,{header : '<s:message code="procedimiento.gridtareas.fechaInicio" text="**fecha inicio"/>', dataIndex : 'fechaInicio', width:75}
+		,{header : '<s:message code="procedimiento.gridtareas.fechaVenc" text="**fecha vencimiento"/>', dataIndex : 'fechaVenc', width:75}
+		,{header : '<s:message code="procedimiento.gridtareas.fechaFin" text="**fecha fin"/>', dataIndex : 'fechaFin', width:75}
 		,{header : '<s:message code="procedimiento.gridtareas.usuarioCreacion" text="**usuario"/>', dataIndex : 'usuario', width:50}
 	]);
   

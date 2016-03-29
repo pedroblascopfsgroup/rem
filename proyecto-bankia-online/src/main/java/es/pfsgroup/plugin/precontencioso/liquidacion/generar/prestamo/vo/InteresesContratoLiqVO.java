@@ -22,10 +22,10 @@ public class InteresesContratoLiqVO {
 	}
 	
 	public String FEPTDE() {
-		return formatoFechaCorta.format(INC_FEPTDE);
+		return INC_FEPTDE == null ? "" : formatoFechaCorta.format(INC_FEPTDE);
 	}
 
 	public String FEPTHA() {
-		return formatoFechaCorta.format(INC_FEPTHA);
+		return INC_FEPTHA == null ? "" : formatoFechaCorta.format(INC_FEPTHA);
 	}
 }

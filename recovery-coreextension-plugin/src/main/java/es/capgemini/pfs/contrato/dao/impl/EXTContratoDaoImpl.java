@@ -345,49 +345,6 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 			hql.append(" AND EXISTS ( SELECT 1 FROM DDCondicionesRemuneracion cre WHERE c.RemuneracionEspecial = cre AND cre.codigo in ('"
 					+ dto.getMotivoGestionHRE() + "'))");
 		}
-		if (cruzaMovimientos) {
-			if (dto.getMaxVolRiesgoVencido() != null
-					&& dto.getMaxVolRiesgoVencido().trim().length() > 0) {
-				String valor = dto.getMaxVolRiesgoVencido();
-				hql.append(" and mov.posVivaVencida <= " + valor + " ");
-			}
-
-			if (dto.getMinVolRiesgoVencido() != null
-					&& dto.getMinVolRiesgoVencido().trim().length() > 0) {
-				String valor = dto.getMinVolRiesgoVencido();
-				hql.append(" and mov.posVivaVencida >= " + valor + " ");
-			}
-			String maxVolTotalRiesgo = null;
-			String minVolTotalRiesgo = null;
-			if (dto.getMaxVolTotalRiesgo() != null
-					&& dto.getMaxVolTotalRiesgo().trim().length() > 0) {
-				maxVolTotalRiesgo = dto.getMaxVolTotalRiesgo();
-			}
-			if (dto.getMinVolTotalRiesgo() != null
-					&& dto.getMinVolTotalRiesgo().trim().length() > 0) {
-				minVolTotalRiesgo = dto.getMinVolTotalRiesgo();
-			}
-			if (dto.getTieneRiesgo() != null && !dto.getTieneRiesgo()) {
-				maxVolTotalRiesgo = "0";
-				minVolTotalRiesgo = "0";
-			}
-			if (minVolTotalRiesgo != null) {
-				hql.append(" and mov.riesgo >= " + minVolTotalRiesgo + " ");
-			}
-			if (maxVolTotalRiesgo != null) {
-				hql.append(" and mov.riesgo <= " + maxVolTotalRiesgo + " ");
-			}
-			if (dto.getMinDiasVencidos() != null
-					&& dto.getMinDiasVencidos().trim().length() > 0) {
-				hql.append(" and FLOOR(SYSDATE-mov.fechaPosVencida) >= "
-						+ dto.getMinDiasVencidos() + " ");
-			}
-			if (dto.getMaxDiasVencidos() != null
-					&& dto.getMaxDiasVencidos().trim().length() > 0) {
-				hql.append(" and FLOOR(SYSDATE-mov.fechaPosVencida) <= "
-						+ dto.getMaxDiasVencidos() + " ");
-			}
-		}
 
 		if (!Checks.esNulo(dto.getCodigoZonaAdm())) {
 			 

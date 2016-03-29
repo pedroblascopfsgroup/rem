@@ -102,19 +102,35 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 	}
 
 	private String obtenerTipoComisionApert(LiquidacionPCO liquidacion,	String campo) {
-		return noDisponible(campo);
+		String resultado = noDisponible(campo);
+		if (!Checks.esNulo(liquidacion.getComisiones())) {
+			resultado = currencyInstance.format( liquidacion.getComisiones());
+		}
+		return resultado;
 	}
 
 	private String obtenerImporteComisionesPagadas(LiquidacionPCO liquidacion, String campo) {
-		return noDisponible(campo);
+		String resultado = noDisponible(campo);
+		if (!Checks.esNulo(liquidacion.getComisiones())) {
+			resultado = currencyInstance.format( liquidacion.getComisiones());
+		}
+		return resultado;
 	}
 
 	private String obtenerImporteIntereseCreditoDispuesto(LiquidacionPCO liquidacion, String campo) {
-		return noDisponible(campo);
+		String resultado = noDisponible(campo);
+		if (!Checks.esNulo(liquidacion.getInteresesOrdinarios())) {
+			resultado = currencyInstance.format( liquidacion.getInteresesOrdinarios());
+		}
+		return resultado;
 	}
 
 	private String obtenerTipoComision(LiquidacionPCO liquidacion, String campo) {
-		return noDisponible(campo);
+		String resultado = noDisponible(campo);
+		if (!Checks.esNulo(liquidacion.getComisiones())) {
+			resultado = currencyInstance.format( liquidacion.getComisiones());
+		}
+		return resultado;
 	}
 
 	private String obtenerTipoInteresPrestamo(Contrato contrato, String campo) {

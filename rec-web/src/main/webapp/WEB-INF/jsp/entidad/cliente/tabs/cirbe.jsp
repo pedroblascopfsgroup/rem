@@ -10,7 +10,6 @@
 
 (function(page,entidad) {
 
-debugger;
 
 	var panel = new Ext.Panel({
 		title: '<s:message code="cirbe.titulo" text="**CIRBE" />'

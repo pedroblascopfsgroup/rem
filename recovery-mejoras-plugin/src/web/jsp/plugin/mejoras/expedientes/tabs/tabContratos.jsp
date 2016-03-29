@@ -153,7 +153,6 @@
 	       		}
 	});
 	excluirContrato.disable();
-debugger;
 	var contratosExpedienteGrid = app.crearGrid(contratosExpedienteStore,contratosExpedienteCm,{
 			title:'<s:message code="expedientes.consulta.tabcabecera.contratos" text="**Contratos del expediente"/>'
 			,style : 'margin-bottom:10px;padding-right:10px'
@@ -195,7 +194,6 @@ debugger;
 		    	var rec = grid.getStore().getAt(rowIndex);
 				var cc = rec.get('cc');
 				idContrato = rec.get('id');
-				debugger;
 				if(cc != '') {
 					excluirContrato.enable();
 				} else {

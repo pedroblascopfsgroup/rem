@@ -32,7 +32,7 @@
 		<json:property name="capitalNoVencido" value="${rec.capitalNoVencido}"/>
 		<json:property name="comisiones" value="${rec.comisiones}"/>
 		<json:property name="nominal" value="${rec.capital + rec.capitalNoVencido}"/>
-		<json:property name="totalEntrega" value="${rec.capitalVencido + rec.capitalNoVencido + rec.interesesOrdinarios + rec.interesesMoratorios + rec.impuestos + rec.gastosProcurador + rec.gastosAbogado + rec.gastosOtros}"/>
+		<json:property name="totalEntrega" value="${rec.capital + rec.capitalNoVencido + rec.interesesOrdinarios + rec.interesesMoratorios + rec.impuestos}"/>
 		<json:property name="gastosProcurador" value="${rec.gastosProcurador}"/>
 		<json:property name="gastosAbogado" value="${rec.gastosAbogado}"/>
 		<json:property name="gastosOtros" value="${rec.gastosOtros}"/>

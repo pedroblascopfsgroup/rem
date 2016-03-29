@@ -125,6 +125,10 @@
 	<bean p:entity="tabs.asunto.fast" p:name="cobropago"  p:order="700" 
 		p:fileName="/WEB-INF/jsp/entidad/asunto/tabs/cobroPago.jsp" 
 		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="ROLE_TAB_COBROS_PAGOS"/>
+		
+	<bean p:entity="tabs.asunto.fast" p:name="entegras"  p:order="710" 
+		p:fileName="/WEB-INF/jsp/entidad/asunto/tabs/entregas.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="ROLE_PUEDE_VER_TAB_ENTREGAS_ASUNTO"/>
 	
 	<bean p:entity="tabs.asunto.fast" p:name="decisionComite"  p:order="800" 
 		p:fileName="/WEB-INF/jsp/entidad/asunto/tabs/decisionComite.jsp" 

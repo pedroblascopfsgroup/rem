@@ -3,9 +3,15 @@ package es.pfsgroup.recovery.hrebcc.model;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -13,6 +19,7 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 
 @Entity
 @Table(name = "DD_ATE_ADJ_TPO_ENTREGA", schema = "${entity.schema}")
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class DDAdjContableTipoEntrega implements Auditable, Dictionary{
     
 	/**
@@ -22,6 +29,8 @@ public class DDAdjContableTipoEntrega implements Auditable, Dictionary{
 
 	@Id
     @Column(name = "DD_ATE_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDAdjContableTipoEntrega")
+    @SequenceGenerator(name = "DDAdjContableTipoEntrega", sequenceName = "S_DD_TPO_TIPO_PROCEDIMIENTO")
     private Long id;
 
     @Column(name = "DD_ATE_CODIGO")

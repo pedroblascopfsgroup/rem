@@ -22,7 +22,7 @@ SET DEFINE OFF;
 create or replace PROCEDURE CALCULO_ANTECEDENTES (RESULT_EXE OUT VARCHAR2 ) AUTHID CURRENT_USER AS
 
     --v_esquema_u   VARCHAR2(25 CHAR):= user; -- Configuracion Esquema actual (PFSRECOVERY en Prod)
-    v_esquema     VARCHAR2(25 CHAR):= 'CM01'; -- Configuracion Esquema Datos
+    v_esquema     VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema Datos
     err_num       NUMBER; -- Numero de errores
     err_msg       VARCHAR2(2048); -- Mensaje de error
     v_msql        VARCHAR2(12000 CHAR);

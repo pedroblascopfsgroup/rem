@@ -5,7 +5,7 @@
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-896
---## PRODUCTO=NO
+--## PRODUCTO=SI
 --## Finalidad: DML de creacion de nuevo tipo de actuacion para DD_TAC_TIPO_ACTUACION
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE

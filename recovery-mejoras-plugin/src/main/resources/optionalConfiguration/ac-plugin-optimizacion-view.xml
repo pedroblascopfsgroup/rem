@@ -286,6 +286,10 @@
 		p:fileName="/WEB-INF/jsp/entidad/procedimiento/tabs/historico.jsp" 
 		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
 	
+	<bean p:entity="tabs.procedimiento.fast" p:name="tabInformacionRequerida" p:order="150" 
+		p:fileName="/WEB-INF/jsp/plugin/mejoras/procedimientos/tabs/tabInformacionRequerida.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
 	<!-- botones -->
 	
 	<bean p:entity="entidad.procedimiento.buttons.left.fast" p:name="btnReactivarProcedimiento" p:order="1"

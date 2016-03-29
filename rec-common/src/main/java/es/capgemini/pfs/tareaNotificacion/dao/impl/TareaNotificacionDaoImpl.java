@@ -454,11 +454,12 @@ public class TareaNotificacionDaoImpl extends AbstractEntityDao<TareaNotificacio
         List<Object> params = new ArrayList<Object>();
         String query = "select tn from TareaNotificacion tn where tn.expediente.id = ?";
         query += " and tn.auditoria.borrado = false ";
-        query += " and tn.subtipoTarea.codigoSubtarea in (?, ?, ?)";
+        query += " and tn.subtipoTarea.codigoSubtarea in (?, ?, ?, ?)";
         params.add(idExpediente);
         params.add(SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_CE);
         params.add(SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_RE);
         params.add(SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC);
+        params.add(SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_FP);
         List<TareaNotificacion> notificaciones = getHibernateTemplate().find(query, params.toArray());
 
         return notificaciones;

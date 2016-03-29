@@ -33,17 +33,12 @@
 				,fieldLabel : '<s:message code="plugin.mejoras.asunto.finalizarAsunto.causa" text="**Causa" />'				
 	});
 	
-	
-	
-
-	
 	<%--motivoFinalizacion.on('select',function(){
 		alert(motivoFinalizacion.getValue());
 	}); --%>
 	var labelStyle='font-weight:bolder;width:150';
 	var labelStyle2='font-weight:bolder;width:50';
 	
-
 	var titulodescripcion = new Ext.form.Label({
    	text:'<s:message code="plugin.mejoras.asunto.finalizarAsunto.observaciones" text="**Observaciones" />'
 	,style:'font-weight:bolder; font-size:11'
@@ -60,8 +55,6 @@
 		<app:test id="campoParaComunicacion" addComa="true"/>
 	});
 
-	
-
 	//date chooser 
 	var fecha = new Ext.ux.form.XDateField({
 		fieldLabel:'<s:message code="generartarea.fecha" text="**Fecha" />'		
@@ -72,8 +65,33 @@
         ,value:''
 		<app:test id="campoFechaRespuesta" addComa="true"/>
 	});
-
-
+	
+	var cumplidoData = <app:dict value="${ddSiNo}" />
+	//No ocultar para los tipo ACUERDO, lo negamos porque comprueba si el asunto es acuerdo.
+	var ocultarCumplidoYNegarBlanco = ${!esAsuntoAcuerdo}
+	
+	var cumplidoStore = new Ext.data.JsonStore({
+	       fields: ['codigo', 'descripcion']
+	       ,root: 'diccionario'
+	       ,data : cumplidoData
+	});
+	
+	var cumplidoSelect = new Ext.form.ComboBox({
+				store:cumplidoStore
+				,displayField:'descripcion'
+				,valueField:'codigo'
+				,id:'cumplidoSelect'
+				,name:'cumplidoSelect'
+				,mode: 'local'
+				,editable:false
+				,triggerAction: 'all'
+				,labelWidth:20
+				,labelStyle:labelStyle2
+				,fieldLabel : '<s:message code="plugin.mejoras.asunto.acuerdo.finalizarAsunto.cumplido" text="**Cumplido" />'
+				,allowBlank : ocultarCumplidoYNegarBlanco
+				,hidden : ocultarCumplidoYNegarBlanco	
+			});
+			
 
 	var contenedor=new Ext.Panel({
 		border:false
@@ -83,10 +101,12 @@
 		,layoutConfig:{columns:2}
 		,defaults :  {xtype : 'fieldset', autoHeight : true, border : false }
 		,items : [				
-					{ items : fecha,colspan:2}
-					,{ items : motivoFinalizacion,colspan:2}									
+					 { items : fecha,colspan:2}
+					,{ items : motivoFinalizacion,colspan:2}
+					,{ items : cumplidoSelect,colspan:2}									
 					,{ items : titulodescripcion,colspan:2}
 					,{ items : descripcion,colspan:2}
+					
 					,idAsunto				
 			]
 	});

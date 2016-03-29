@@ -268,7 +268,7 @@ var botonFinalizarAsunto =  new Ext.Button({
 		var esSupervisor = toolbar.get('esSupervisor');
 		var esSupervisorOriginal = toolbar.get('esSupervisorOriginal');
 		var puedeFinalizarAsunto = toolbar.get('puedeFinalizarAsunto');
-
+		var esAsuntoAcuerdo = toolbar.get('esAsuntoAcuerdo');
 		var esVisible = [];
 		
 		
@@ -293,19 +293,27 @@ var botonFinalizarAsunto =  new Ext.Button({
 		var condition = '';
 		for (i=0; i < buttonsL_asunto.length; i++){
 			
-		
 			if (buttonsL_asunto[i].condition!=null && buttonsL_asunto[i].condition!=''){
 				condition = eval(buttonsL_asunto[i].condition);
 				esVisible.push([buttonsL_asunto[i], condition]);
 			}
+			if(esAsuntoAcuerdo){
+				var tmp = buttonsL_asunto[i].getText();
+				if(buttonsL_asunto[i].getText().localeCompare("Exportar informes") == 0 || buttonsL_asunto[i].getText().localeCompare("Alta de Direcciones") == 0){
+					buttonsL_asunto[i].hide();
+				}
+			}else{
+				buttonsL_asunto[i].show();
+			}
 		}
+		
 		for (i=0; i < buttonsR_asunto.length; i++){
 			if (buttonsR_asunto[i].condition!=null && buttonsR_asunto[i].condition!=''){
 				condition = eval(buttonsR_asunto[i].condition);
 				esVisible.push([buttonsR_asunto[i], condition]);
 			}
 		}
-
+		
 		entidad.setVisible(esVisible);
 	}
  

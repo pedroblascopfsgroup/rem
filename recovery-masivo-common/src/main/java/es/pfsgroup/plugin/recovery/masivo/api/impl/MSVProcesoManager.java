@@ -46,9 +46,11 @@ import es.pfsgroup.plugin.recovery.masivo.callbacks.bpmBO.MSVProcedimientoBackOf
 import es.pfsgroup.plugin.recovery.masivo.callbacks.impulsoProcesal.MSVImpulsoProcesalBPMCallback;
 import es.pfsgroup.plugin.recovery.masivo.callbacks.lanzarEJTdesdeFM.MSVLanzarETJdesdeFMBPMCallback;
 import es.pfsgroup.plugin.recovery.masivo.callbacks.redaccDem.MSVRedaccDemBPMCallback;
+import es.pfsgroup.plugin.recovery.masivo.dao.MSVCarterizacionAcreditadosDao;
 import es.pfsgroup.plugin.recovery.masivo.dao.MSVFicheroDao;
 import es.pfsgroup.plugin.recovery.masivo.dao.MSVProcesoDao;
 import es.pfsgroup.plugin.recovery.masivo.dao.MSVRevisionProcedimientoDao;
+import es.pfsgroup.plugin.recovery.masivo.dto.MSVCarterizarAcreditadosDto;
 import es.pfsgroup.plugin.recovery.masivo.dto.MSVDtoAltaProceso;
 import es.pfsgroup.plugin.recovery.masivo.dto.MSVDtoFiltroProcesos;
 import es.pfsgroup.plugin.recovery.masivo.factories.MSVLoteGeneratorFactory;
@@ -105,6 +107,8 @@ public class MSVProcesoManager implements MSVProcesoApi {
 
 	private final String[] cabecerasRedaccionDemanda = {"Num. Caso NOVA", "FECHA REDACCION"};
 	private final String[] camposInputRedaccionDemanda = {"idAsunto", "d_numAutos", "d_fecRedaccDemand", "d_observaciones"};
+	
+	private final String[] cabecerasCarterizacionAcreditados = {"ID_Acreditado","Nombre o Razon social", "Apellido1", "Apellido2", "Usuario gestor"};
 
 	private final static String CODIGO_ETJ = "P72";
 	
@@ -119,6 +123,9 @@ public class MSVProcesoManager implements MSVProcesoApi {
 	
 	@Autowired(required=false)
 	MSVRevisionProcedimientoDao msvRevisionProcedimientoDao;
+	
+	@Autowired(required=false)
+	MSVCarterizacionAcreditadosDao msvCarterizacionAcreditadosDao;
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -322,6 +329,8 @@ public class MSVProcesoManager implements MSVProcesoApi {
 				this.liberarTipoOperacionRedaccionDemanda(fichero, tipoOperacion);
 			} else if(comprobarTipoOperacionLanzarTramite(tipoOperacion)){
 				this.liberarTipoOperacionLanzarTramite(fichero, tipoOperacion);
+			} else if (comprobarTipoOperacionCarterizacionAcreditados(tipoOperacion)){ 
+				this.liberarTipoOperacionCarterizacionAcreditados(fichero, tipoOperacion);
 			} else {
 				MSVLiberator lib = factoriaLiberators.dameLiberator(tipoOperacion);
 				if (!Checks.esNulo(lib)) lib.liberaFichero(fichero);
@@ -1333,6 +1342,59 @@ public class MSVProcesoManager implements MSVProcesoApi {
 			}
 
 		}	
+		
+	}
+	
+	/**
+	 * Genera inputs de este tipo de operación por cada fila del fichero
+	 * @param fichero
+	 * @throws IOException 
+	 * @throws IllegalArgumentException 
+	 */
+	private void liberarTipoOperacionCarterizacionAcreditados(
+				MSVDocumentoMasivo fichero, MSVDDOperacionMasiva tipoOperacion)
+			throws IllegalArgumentException, IOException {
+		
+		MSVHojaExcel exc = getHojaExcel(fichero);
+		List<String> listaCabeceras=exc.getCabeceras();
+		
+		for (int fila = 1; fila < exc.getNumeroFilas(); fila++) {
+			
+			MSVCarterizarAcreditadosDto dto = new MSVCarterizarAcreditadosDto();
+
+			for (int columna = 0; columna < exc.getCabeceras().size(); columna++) {
+				String dato = exc.dameCelda(fila, columna);
+				if(listaCabeceras.get(columna).equals(cabecerasCarterizacionAcreditados[0])) {
+					dto.setAcreditadoCif(dato);
+				}
+				if(listaCabeceras.get(columna).equals(cabecerasCarterizacionAcreditados[4])) {
+					dto.setGestorUsername(dato);
+				}
+			}
+			
+			dto.setUsuariocrear(getUsername());
+			dto.setProcesoMasivoId(fichero.getProcesoMasivo().getId());
+			boolean resultado=msvCarterizacionAcreditadosDao.insertarRegistroOPMCarterizacion(dto);
+
+			
+		}	
+	}
+	
+	/**
+	 * Comprueba si el tipo de operación es de Carterizar Acreditados de forma masiva
+	 * @param tipoOperacion tipo de operación {@link MSVDDOperacionMasiva}
+	 * @return true o false.
+	 */
+	private boolean comprobarTipoOperacionCarterizacionAcreditados(MSVDDOperacionMasiva tipoOperacion) {
+
+		boolean resultado = false;
+		
+		if (tipoOperacion != null && tipoOperacion.getCodigo() != null &&
+				tipoOperacion.getCodigo().equals(MSVDDOperacionMasiva.CODIGO_CARTERIZACION_ACREDITADOS)) {
+			resultado = true;
+		}
+		
+		return resultado;
 		
 	}
 

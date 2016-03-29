@@ -1,8 +1,10 @@
 package es.pfsgroup.procedimientos.subasta;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -19,6 +21,7 @@ import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.contrato.model.DDEstadoContrato;
 import es.capgemini.pfs.movimiento.model.Movimiento;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -36,10 +39,14 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDEstadoSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDTipoSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienCargas;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBContratoBien;
 import es.pfsgroup.procedimientos.context.api.ProcedimientosProjectContext;
+import es.pfsgroup.recovery.ext.impl.asunto.model.DDGestionAsunto;
+import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 /**
@@ -52,6 +59,8 @@ import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 public class SubastaCalculoManager {
 
 	protected final Log logger = LogFactory.getLog(getClass());
+	private final BigDecimal MILLON = new BigDecimal("1000000");
+	private final BigDecimal FIFTEEN_THOUSAND = new BigDecimal("15000");
 	
 	@Autowired
 	private ProcedimientosProjectContext procedimientosProjectContext;
@@ -73,7 +82,10 @@ public class SubastaCalculoManager {
 
     @Autowired
     private IntegracionBpmService bpmIntegracionService;
-	
+    
+    @Autowired
+    private UtilDiccionarioApi utilDiccionario;
+
 	/**
 	 * Actualiza la subasta con los datos del procedimiento, crea la subasta si no existe.
 	 * 
@@ -408,35 +420,138 @@ public class SubastaCalculoManager {
 	/**
 	 * Determina el tipo de subasta tras la propuesta de lotes de subasta 
 	 * 
+	 * PRODUCTO-700 -> Logica para determinar si una subasta es delegada o no delegada.
+	 * 
 	 * @param prc
 	 * @return
 	 */
-	public void determinarTipoSubastaTrasPropuesta(Subasta sub) {
+	public void determinarTipoSubastaTrasPropuesta(Subasta subasta) {
 
 		// Las NO DELEGADAS no hace nada.
-		if (DDTipoSubasta.NDE.equals(sub.getTipoSubasta().getCodigo())) {
+		if (subasta.getTipoSubasta() != null && DDTipoSubasta.NDE.equals(subasta.getTipoSubasta().getCodigo())) {
 			return;
 		}
-		
-		// busca un lote con riesgo consignación
-		boolean riesgoEncontrado = false;
-		for (LoteSubasta lote : sub.getLotesSubasta()) {
-			if (lote.getRiesgoConsignacion()) {
-				riesgoEncontrado = true;
-				break;
+
+		EXTAsunto asuntoSubasta = (EXTAsunto) subasta.getAsunto();
+
+		// Si la gestión del asunto donde está la subasta es Haya.
+		if (asuntoSubasta.getGestionAsunto() != null && DDGestionAsunto.HAYA.equals(asuntoSubasta.getGestionAsunto().getCodigo())) {
+			modificarTipoSubastaNoDelegada(subasta);
+			return;
+		}
+
+		// Si el asunto donde está la subasta es un concurso.
+		if (asuntoSubasta.getTipoAsunto() != null && DDTiposAsunto.CONCURSAL.equals(asuntoSubasta.getTipoAsunto().getCodigo())) {
+			modificarTipoSubastaNoDelegada(subasta);
+			return;
+		}
+
+		// Si existe algún bien en la subasta que tenga cargas anteriores.
+		if (!"0".equals(subasta.getCargasAnteriores())) {
+			modificarTipoSubastaNoDelegada(subasta);
+			return;
+		}
+
+		// Si la deuda de las operaciones relacionadas con los bienes/garantías es mayor a 1 millon de €.
+		if (deudaOperacionesRelacionadasMayor1M(subasta)) {
+			modificarTipoSubastaNoDelegada(subasta);
+			return;
+		}
+
+		// Si el riesgo de consignación supera el umbral.
+		if (riesgoConsignacionSuperaUmbral(subasta)) {
+			modificarTipoSubastaNoDelegada(subasta);
+			return;
+		}
+	}
+
+	/**
+	 * Cambia el tipo de subasta a no delegada
+	 * @param subasta
+	 */
+	private void modificarTipoSubastaNoDelegada(Subasta subasta) {
+		DDTipoSubasta tipoSubastaNoDelegada = (DDTipoSubasta) utilDiccionario.dameValorDiccionarioByCod(DDTipoSubasta.class, DDTipoSubasta.NDE);
+
+		subasta.setTipoSubasta(tipoSubastaNoDelegada);
+		genericDao.update(Subasta.class, subasta);
+	}
+
+	/**
+	 * Si la deuda de las operaciones relacionadas con los bienes/garantías de la subasta es mayor a 1 millon de €.
+	 * 
+	 *		Sacamos todos los bienes de los lotes de la subasta.
+	 *		Buscamos los contratos relacionados con los bienes anteriores, cuyo estado sea distinto de "No recibido".
+	 *		Sumamos el importe de deuda irregular + capital no vencido de cada uno de esos contratos.
+	 * 
+	 * @param subasta
+	 * @return
+	 */
+	private boolean deudaOperacionesRelacionadasMayor1M(Subasta subasta) {
+		List<Bien> bienesSubasta = new ArrayList<Bien>();
+
+		for (LoteSubasta lote : subasta.getLotesSubasta()) {
+			bienesSubasta.addAll(lote.getBienes());
+		}
+
+		List<Contrato> contratos = new ArrayList<Contrato>();
+		for (Bien bien : bienesSubasta) {
+			for (NMBContratoBien contratoBien : ((NMBBien) bien).getContratos()) {
+				Contrato contrato = contratoBien.getContrato();
+
+				// cuyo estado sea distinto de "No recibido".
+				if (!DDEstadoContrato.ESTADO_CONTRATO_NORECIBIDO.equals(contrato.getEstadoContrato())) {
+					contratos.add(contrato);
+				}
 			}
 		}
 
-		// No hay riesgo, lo deja como está.
-		if (!riesgoEncontrado) {
-			return;
+		BigDecimal sumatorioDeuda = BigDecimal.ZERO;
+		for (Contrato contrato : contratos) {
+			Movimiento ultimoMovimiento = contrato.getLastMovimiento();
+			BigDecimal deudaIrregular = new BigDecimal(Float.toString(ultimoMovimiento.getDeudaIrregular()));
+			BigDecimal capitalNoVencido = new BigDecimal(Float.toString(ultimoMovimiento.getPosVivaNoVencida()));
+
+			sumatorioDeuda = sumatorioDeuda.add(deudaIrregular.add(capitalNoVencido));
 		}
 
-		// hay riesgo, cambia a NO DELEGADA
-		sub.setTipoSubasta(genericDao.get(DDTipoSubasta.class, genericDao.createFilter(FilterType.EQUALS, "borrado", false),
-				genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoSubasta.NDE)));
-		genericDao.update(Subasta.class, sub);
-		
+		return MILLON.compareTo(sumatorioDeuda) < 0;
 	}
-	
+
+	private boolean riesgoConsignacionSuperaUmbral(Subasta subasta) {
+		// Deuda entidad = vencido (deuda irregular) + no vencido de todas las operaciones del procedimiento + costas de letrado y procurador
+		BigDecimal sumatorioDeudaEntidad = new BigDecimal(subasta.getCostasLetrado());
+
+		Set<Contrato> contratos = subasta.getProcedimiento().getAsunto().getContratos();
+		for (Contrato contrato : contratos) {
+			Movimiento ultimoMovimiento = contrato.getLastMovimiento();
+
+			BigDecimal deudaIrregular = BigDecimal.valueOf(ultimoMovimiento.getDeudaIrregular());
+			BigDecimal capitalNoVencido = BigDecimal.valueOf(ultimoMovimiento.getPosVivaNoVencida());
+
+			sumatorioDeudaEntidad = sumatorioDeudaEntidad.add(deudaIrregular.add(capitalNoVencido));
+		}
+
+		for (LoteSubasta lote : subasta.getLotesSubasta()) {
+			BigDecimal pujaSinPostores = BigDecimal.valueOf(lote.getInsPujaSinPostores());
+
+			// Donde Riesgo de Consignación = Puja sin postores - Deuda entidad
+			BigDecimal riesgodeConsignacion = pujaSinPostores.subtract(sumatorioDeudaEntidad);
+
+			// 10% deuda entidad
+			BigDecimal tenPercentDeudaEntidad = sumatorioDeudaEntidad.multiply(new BigDecimal("0.1"));
+
+			if (lote.getRiesgoConsignacion() 
+					&& !isNegative(riesgodeConsignacion)
+					&& (riesgodeConsignacion.compareTo(tenPercentDeudaEntidad) > 0  
+							|| riesgodeConsignacion.compareTo(FIFTEEN_THOUSAND) > 0)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+    private boolean isNegative(BigDecimal b) {
+        return b.signum() == -1;
+    }
 }

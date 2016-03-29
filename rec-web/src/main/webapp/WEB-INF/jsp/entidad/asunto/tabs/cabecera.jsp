@@ -13,6 +13,8 @@
 
 (function(page,entidad){
 
+<%@ include file="/WEB-INF/jsp/plugin/mejoras/acuerdos/tabs/acuerdosGeneric.jsp" %>
+
    	function label(id,text){
 		  return app.creaLabel(text,"",  {id:'entidad-asunto-'+id});
 	 }
@@ -45,9 +47,45 @@
   	var fondo = label('fondo','<s:message code="asunto.tabcabecera.fondo" text="**Fondo"/>')
         var msgErrorEnvioCDD = new Ext.form.Label({text : '', id : 'entidad-asunto-msgErrorEnvioCDD', style: 'color:red; font-size:smaller' });
   	
+  	<%--ASUNTO TIPO ACUERDO variables para montar el panel "datos principales" --%>
+  	var asuntoAcuerdo = label('asuntoAcuerdo', '<s:message code="asunto.tabcabecera.asunto" text="**Asunto"/>');
+  	var codigoAsuntoAcuerdo = label('codigoAsuntoAcuerdo','<s:message code="asuntos.listado.codigo" text="**Codigo"/>');
+  	var estadoAcuerdo = label('estadoAcuerdo', '<s:message code="asunto.tabcabecera.estado" text="**Estado"/>');
+  	var fechaAcuerdo = label('fechaAcuerdo', '<s:message code="asunto.tabcabecera.fechaconformacion" text="**Fecha Conformacion"/>');
+  	var tipoAsuntoAcuerdo = label('tipoAsuntoAcuerdo','<s:message code="asunto.tabcabecera.tipo.asunto" text="**Tipo Asunto"/>');
+  	var codigoExternoAcuerdo = label('codigoExternoAcuerdo', '<s:message code="asunto.tabcabecera.codigoExterno" text="**codigoExterno"/>');
+  	
+	var origen = new Ext.ux.form.StaticTextField(
+	{
+		fieldLabel: '<s:message code="asunto.tabcabecera.origen" text="**Origen"/>'
+		,labelStyle: 'font-weight: bolder; padding-bottom: 20px'
+	});
+  	
 	// formulario para editar el nombre del asunto.
 		
 	var btnEditarNombre = new Ext.Button({
+		text : '<s:message code="pfs.tags.buttonedit.modificar" text="**Modificar" />'
+		,iconCls : 'icon_edit'
+		,handler : 	function() {
+						var allowClose= false;
+						var w= app.openWindow({
+							flow: 'editasunto/open'
+							,closable: allowClose
+							,width : 700
+							,title : '<s:message code="plugin.mejoras.asunto.tabCabecera.editar" text="plugin.mejoras.asunto.tabCabecera.editar" />'
+							,params: {id: panel.getAsuntoId()}
+						});
+						w.on(app.event.DONE, function(){
+							w.close();
+							entidad.refrescar();
+						});
+						w.on(app.event.CANCEL, function(){
+							 w.close(); 
+						});
+					}
+	});
+	
+	var btnEditarNombreAcuerdo = new Ext.Button({
 		text : '<s:message code="pfs.tags.buttonedit.modificar" text="**Modificar" />'
 		,iconCls : 'icon_edit'
 		,handler : 	function() {
@@ -85,21 +123,54 @@
 		<pfs:items items="asunto"/>
 		<pfs:items items="btnEditarNombre"/>
 	</pfs:panel>
-		
+	
 	panelNombreAsunto.setWidth(350);	
 	asunto.autoHeight = true;
-        panelNombreAsunto.autoHeight = true;
-        panelNombreAsunto.style='margin:0px';   
+    panelNombreAsunto.autoHeight = true;
+    panelNombreAsunto.style='margin:0px';   
 			
-	btnEditarNombre.hide()
+	btnEditarNombre.hide();
 	
+	<pfs:panel name="panelNombreAsuntoAcuerdo" columns="2" collapsible="false" hideBorder="true">
+		<pfs:items items="asuntoAcuerdo"/>
+		<pfs:items items="btnEditarNombreAcuerdo"/>
+	</pfs:panel>
+	
+	panelNombreAsuntoAcuerdo.setWidth(350);	
+	asuntoAcuerdo.autoHeight = true;
+    panelNombreAsuntoAcuerdo.autoHeight = true;
+    panelNombreAsuntoAcuerdo.style='margin:0px';   
+    btnEditarNombreAcuerdo.hide();
 	<sec:authorize ifAllGranted="ROLE_EDIT_CABECERA_ASUNTO">
 		btnEditarNombre.show();
+		btnEditarNombreAcuerdo.show();
 	</sec:authorize>
 
-	
+	<%--Creamos un fieldset para el asunto de tipo acuerdo
+		el cual activaremos o desactivaremos dependiendo del asunto --%>
+	var DatosFieldSetAcuerdo = new Ext.form.FieldSet({
+		id:'datos1'
+		,autoHeight:'false'
+		,style:'padding:0px'
+ 		,border:true
+		,layout : 'table'
+		,layoutConfig:{
+			columns:2
+		}
+		,width:785
+		,title:'<s:message code="asunto.tabcabecera.fieldset.titulo" text="**Datos Principales"/>'
+		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
+		,items : [
+				  
+				  { items:[ panelNombreAsuntoAcuerdo,codigoAsuntoAcuerdo,fechaAcuerdo,tipoAsuntoAcuerdo]}
+				,{ items:[ codigoExternoAcuerdo, origen, estadoAcuerdo]}
+		 	 
+		]
+	});	
+
 	var DatosFieldSet = new Ext.form.FieldSet({
-		autoHeight:'false'
+		id:'datos2'
+		,autoHeight:'false'
 		,style:'padding:0px'
  		,border:true
 		,layout : 'table'
@@ -116,7 +187,8 @@
 		 	 
 		]
 	});	
-
+	
+	
 	 var procedimiento = Ext.data.Record.create([
          'id'
          ,'activo'
@@ -235,16 +307,14 @@
                    }
            });
    }
-
-        
-	
-          
 	var panel = new Ext.Panel({
 		title:'<s:message code="asunto.tabcabecera.titulo" text="**Cabecera"/>'
 		,autoHeight:true
 		,bodyStyle:'padding: 10px'
 		,items:[
-				DatosFieldSet
+				DatosFieldSetAcuerdo
+				,DatosFieldSet
+				,panelAcu
 				,btnCargaListaPrc
 				,procedimientosGrid
 			]
@@ -304,9 +374,56 @@
 		if (buttonInformeFGConcurso!=null && cabecera.tipoAsuntoCodigo=='02') {
 			buttonInformeFGConcurso.show();
 		}
-	
+		<%--llamamos a esta funcion para aplicar las modificaciones a los asuntos de tipo acuerdo --%>
+		refreshTipoAsuntoAcuerdo();
 	}
         
+     function refreshTipoAsuntoAcuerdo(){
+    	var codigoAsunto = data.cabecera.tipoAsuntoCodigo;
+    	var idAsuOrigen = data.cabecera.idAsuOrigen;
+    	var idExpOrigen = data.cabecera.idExpOrigen;
+    	if(codigoAsunto == "ACU"){
+			entidad.cacheOrLoad(data, acuerdosStoreAcu, {id: data.id });
+			btnCumplimientoAcuerdo.setVisible(false);
+			
+    		entidad.setLabel("asuntoAcuerdo", cabecera.asunto);
+    		entidad.setLabel("codigoAsuntoAcuerdo", data.id);
+    		entidad.setLabel("fechaAcuerdo", cabecera.fechaConformacion);
+			entidad.setLabel("estadoAcuerdo", cabecera.estado);
+			entidad.setLabel("tipoAsuntoAcuerdo", cabecera.tipoAsunto);
+			entidad.setLabel("codigoExternoAcuerdo", cabecera.codigoExterno);
+
+			if(idAsuOrigen != null){
+				var nombreOrigen = data.cabecera.nombreOrigen;
+				var codigoOrigen = data.cabecera.codigoOrigen;
+				var tipoAsu = "Litigio";
+				if(codigoOrigen == "02"){
+					tipoAsu = "Concurso";
+				}
+				var href = 'javascript:app.abreAsunto('+idAsuOrigen+', &quot;'+nombreOrigen+'&quot;,null);'
+				var link = tipoAsu+' - <a href="'+href+'">'+nombreOrigen+'</a>';
+				origen.setRawValue(link);
+			}else if(idExpOrigen != null){
+				var nombreOrigen = data.cabecera.nombreExp;
+				var href = 'javascript:app.abreExpediente('+idExpOrigen+', &quot;'+nombreOrigen+'&quot;,null);'
+				var link = 'Expediente - <a href="'+href+'">'+nombreOrigen+'</a>';
+				origen.setRawValue(link);
+			}else{
+				origen.setRawValue("");
+			}
+    		DatosFieldSet.hide();
+    		DatosFieldSetAcuerdo.show();
+    		ocultarBotones();
+    		btnProponerAcuerdo.hide();
+    		panelAcu.show();
+    		btnAltaAcuerdo.hide();
+    	}else{
+    		DatosFieldSetAcuerdo.hide();
+    		panelAcu.hide();
+    		DatosFieldSet.show();
+    	}
+    }
+       
 	return panel;
 })
 

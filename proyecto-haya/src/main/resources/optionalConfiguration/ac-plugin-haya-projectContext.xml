@@ -255,6 +255,8 @@
 				<entry key="ABRIR_EXP">
 					<set>
 						<value>FZAR_PPUESTA</value>
+						<value>ENSAN</value>
+						<value>SANC</value>
 					</set>
 				</entry>
 				<entry key="ABRIR_PER">

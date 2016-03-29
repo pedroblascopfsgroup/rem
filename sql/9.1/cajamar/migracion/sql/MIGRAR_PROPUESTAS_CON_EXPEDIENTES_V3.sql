@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=GUSTAVO MORA, ENRIQUE JIMENEZ
+--## AUTOR=GUSTAVO MORA, ENRIQUE JIMENEZ, LORENZO LERATE
 --## FECHA_CREACION=20160217
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
+--##        0.2 Utilización de usuario por defecto
 --##########################################
 --*/
 
@@ -27,6 +28,7 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_MSQL VARCHAR2(8500 CHAR);
     V_EXISTE NUMBER (1);
+    V_USER_ID NUMBER; --Vble auxiliar para insertar en acu_user_proponente
 
     /*
     -- <<<....... CURSORES .......>>>>
@@ -123,6 +125,18 @@ inner join MIG_PROPUESTAS_CABECERA cab on cab.id_propuesta = tea.id_propuesta
         -- DBMS_OUTPUT.PUT_LINE('HOLA MUNDO!!.' );
         DBMS_OUTPUT.PUT_LINE('Contrato para trabajar como Fondos Propios... CNT [ ' || V_FOND_PROP.CNT_CONTRATO || ' ], EXP ['|| V_FOND_PROP.EXP_ID ||'].' );
         
+      
+      --configura V_USER_ID
+      BEGIN
+		V_MSQL:= 'SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = ''PROYFORMS''';
+			EXECUTE IMMEDIATE V_MSQL INTO V_USER_ID;
+		EXCEPTION
+			WHEN NO_DATA_FOUND THEN
+				V_MSQL:= 'SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_ID = (SELECT MAX(USU_ID) FROM '||V_ESQUEMA_M||'.USU_USUARIOS)';
+			EXECUTE IMMEDIATE V_MSQL INTO V_USER_ID;
+    END;
+      DBMS_OUTPUT.put_line('=========V_USER_ID: ' ||V_USER_ID||'========');
+        
         /*
         Valores a configurarar:> 
             -- DD_EST_ID => CE Completar Expediente (3) [********* 101 Formalizar Propuesta. (Estado del Itinerario)]
@@ -132,6 +146,7 @@ inner join MIG_PROPUESTAS_CABECERA cab on cab.id_propuesta = tea.id_propuesta
        */          
  
        -- dd_eac_id => 1 En preparación
+       
        
        V_MSQL  := q'[INSERT INTO CM01.acu_acuerdo_procedimientos
                       (acu_id, dd_sol_id, dd_eac_id, acu_fecha_propuesta, acu_fecha_estado, VERSION,
@@ -152,7 +167,7 @@ inner join MIG_PROPUESTAS_CABECERA cab on cab.id_propuesta = tea.id_propuesta
                                                          ON mpta.id_termino = cnt2.id_termino
                                                          INNER JOIN cm01.mig_propuestas_cabecera mpc
                                                          ON mpc.id_propuesta = mpta.id_propuesta
-                                                   WHERE cnt2.numero_contrato = ]'|| V_FOND_PROP.CNT_CONTRATO ||q'[), 34863
+                                                   WHERE cnt2.numero_contrato = ]'|| V_FOND_PROP.CNT_CONTRATO ||q'[), '||V_USER_ID||'
                       )]';       
        
        
@@ -265,7 +280,7 @@ inner join MIG_PROPUESTAS_CABECERA cab on cab.id_propuesta = tea.id_propuesta
                        FROM cm01.mig_propuestas_termi_operac cnt2 
                           INNER JOIN cm01.mig_propuestas_termino_acuerdo mpta ON mpta.id_termino = cnt2.id_termino
                           INNER JOIN cm01.mig_propuestas_cabecera mpc ON mpc.id_propuesta = mpta.id_propuesta
-                       WHERE cnt2.numero_contrato = ]'|| V_ALTA_DUDOSO.CNT_CONTRATO ||q'[), 34863
+                       WHERE cnt2.numero_contrato = ]'|| V_ALTA_DUDOSO.CNT_CONTRATO ||q'[), '||V_USER_ID||'
                       )]';       
        
        
@@ -384,7 +399,7 @@ inner join MIG_PROPUESTAS_CABECERA cab on cab.id_propuesta = tea.id_propuesta
                                                                                                          ON mpta.id_termino = cnt2.id_termino
                                                                                                          INNER JOIN cm01.mig_propuestas_cabecera mpc
                                                                                                          ON mpc.id_propuesta = mpta.id_propuesta
-                                                                                                   WHERE cnt2.numero_contrato = ]'|| V_REF_NOVA1.CNT_CONTRATO ||q'[), 34863
+                                                                                                   WHERE cnt2.numero_contrato = ]'|| V_REF_NOVA1.CNT_CONTRATO ||q'[), '||V_USER_ID||'
                       )]';       
        
        
@@ -510,7 +525,7 @@ inner join MIG_PROPUESTAS_CABECERA cab on cab.id_propuesta = tea.id_propuesta
                                                                                                          ON mpta.id_termino = cnt2.id_termino
                                                                                                          INNER JOIN cm01.mig_propuestas_cabecera mpc
                                                                                                          ON mpc.id_propuesta = mpta.id_propuesta
-                                                                                                   WHERE cnt2.numero_contrato = ]'|| V_REF_NOVA2.CNT_CONTRATO ||q'[), 34863
+                                                                                                   WHERE cnt2.numero_contrato = ]'|| V_REF_NOVA2.CNT_CONTRATO ||q'[), '||V_USER_ID||'
                       )]';       
        
        

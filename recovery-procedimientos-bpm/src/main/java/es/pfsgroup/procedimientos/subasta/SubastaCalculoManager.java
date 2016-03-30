@@ -415,8 +415,7 @@ public class SubastaCalculoManager {
 		return acumulado;
 		
 	}
-	
-	
+
 	/**
 	 * Determina el tipo de subasta tras la propuesta de lotes de subasta 
 	 * 
@@ -514,7 +513,7 @@ public class SubastaCalculoManager {
 			sumatorioDeuda = sumatorioDeuda.add(deudaIrregular.add(capitalNoVencido));
 		}
 
-		return MILLON.compareTo(sumatorioDeuda) < 0;
+		return sumatorioDeuda.compareTo(MILLON) > 0;
 	}
 
 	private boolean riesgoConsignacionSuperaUmbral(Subasta subasta) {

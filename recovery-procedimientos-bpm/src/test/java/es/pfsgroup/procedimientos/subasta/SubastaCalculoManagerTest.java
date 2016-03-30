@@ -10,10 +10,6 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang.math.RandomUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,11 +20,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.DDTiposAsunto;
+import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.DDEstadoContrato;
-import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.movimiento.model.Movimiento;
@@ -53,11 +48,6 @@ public class SubastaCalculoManagerTest {
 
 	@InjectMocks
 	private SubastaCalculoManager subastaCalculoManager;
-
-	/**
-	 * Generic Id
-	 */
-	private static final Long ID_RANDOM = RandomUtils.nextLong();
 
 	@Before
 	public void initialize() {
@@ -118,14 +108,13 @@ public class SubastaCalculoManagerTest {
 	 */
 	@Test
 	public void testDeterminarTipoSubastaSiSubastaTieneAsuntoConcurso() {
-		Subasta subastaToTest = newSubastaToTest();
-
 		DDTiposAsunto tipoAsuntoConcursal = new DDTiposAsunto();
 		tipoAsuntoConcursal.setCodigo(DDTiposAsunto.CONCURSAL);
 
 		EXTAsunto asuntoSubasta = new EXTAsunto();
 		asuntoSubasta.setTipoAsunto(tipoAsuntoConcursal);
 
+		Subasta subastaToTest = newSubastaToTest();
 		subastaToTest.setAsunto(asuntoSubasta);
 
 		// Method to test
@@ -147,7 +136,7 @@ public class SubastaCalculoManagerTest {
 
 		comprobarSiLaSubastaHaSidoModificadaANoDelegada();
 	}
-	
+
 	/**
 	 * Si la deuda de las operaciones relacionadas es mayor a un millon
 	 */
@@ -156,15 +145,15 @@ public class SubastaCalculoManagerTest {
 		float deudaIrregular = 1000000.23F;
 		float posVivaNoVencida = 2000.34F;
 		String estadoActivo = DDEstadoContrato.ESTADO_CONTRATO_ACTIVO;
-				
+
 		Subasta subastaToTest = newSubastaToTestDeudaMayor1Millon(deudaIrregular, posVivaNoVencida, estadoActivo);
-		
+
 		// Method to test
 		subastaCalculoManager.determinarTipoSubastaTrasPropuesta(subastaToTest);
-		
+
 		comprobarSiLaSubastaHaSidoModificadaANoDelegada();
 	}
-	
+
 	/**
 	 * Si la deuda de las operaciones relacionadas es mayor a un millon y el estado es no recibido
 	 * 
@@ -177,18 +166,16 @@ public class SubastaCalculoManagerTest {
 		float deudaIrregular = 1000000.23F;
 		float posVivaNoVencida = 2000.34F;
 		String estadoNoRecibido = DDEstadoContrato.ESTADO_CONTRATO_NORECIBIDO;
-		
+
 		Subasta subastaToTest = newSubastaToTestDeudaMayor1Millon(deudaIrregular, posVivaNoVencida, estadoNoRecibido);
-		
+
 		// Method to test
 		subastaCalculoManager.determinarTipoSubastaTrasPropuesta(subastaToTest);
-		
+
 		// verify never call update
 		verify(genericDao, never()).update(eq(Subasta.class), any(Subasta.class));
 	}
 
-	
-	
 	/**
 	 * Si la subasta cumple las condiciones:
 	 * 
@@ -198,21 +185,20 @@ public class SubastaCalculoManagerTest {
 	 *  Resultado esperado: El estado es cambiado
 	 *  
 	*/
-	
 	@Test
 	public void testDeterminarTipoSubastaRiesgoConsignacionSuperaUmbralSiRiesgoMayor10PorCiento(){
 		float deudaIrregular = 5000f;
 		float posVivaNoVencida = 5000f;
 		float insPujasSinPostores = 12000.0f;
-		
+
 		Subasta subastaToTest = newSubastaToTestRiesgoDeConsignacionSuperaUmbral(deudaIrregular, posVivaNoVencida, insPujasSinPostores);
-		
+
 		// Method to test
 		subastaCalculoManager.determinarTipoSubastaTrasPropuesta(subastaToTest);
 
 		comprobarSiLaSubastaHaSidoModificadaANoDelegada();
 	}
-	
+
 	/**
 	 * Si la subasta cumple las condiciones:
 	 * 
@@ -229,9 +215,9 @@ public class SubastaCalculoManagerTest {
 		float deudaIrregular = 5000.0f;
 		float posVivaNoVencida = 5000.0f;
 		float insPujasSinPostores = 5000.0f;
-		
+
 		Subasta subastaToTest = newSubastaToTestRiesgoDeConsignacionSuperaUmbral(deudaIrregular, posVivaNoVencida, insPujasSinPostores);
-		
+
 		// Method to test
 		subastaCalculoManager.determinarTipoSubastaTrasPropuesta(subastaToTest);
 
@@ -255,17 +241,18 @@ public class SubastaCalculoManagerTest {
 		float deudaIrregular = 0.0f;
 		float posVivaNoVencida = 5000.0f;
 		float insPujasSinPostores = 5000.1f;
-		
+
 		Subasta subastaToTest = newSubastaToTestRiesgoDeConsignacionSuperaUmbral(deudaIrregular, posVivaNoVencida, insPujasSinPostores);
-		
+
 		// Method to test
 		subastaCalculoManager.determinarTipoSubastaTrasPropuesta(subastaToTest);
 
 		// verify never call update
 		verify(genericDao, never()).update(eq(Subasta.class), any(Subasta.class));
 	}
-	
+
 	/**
+	 * Dummy
 	 * provee una subasta de tipo por defecto (delegada) que posee una deuda mayor de un millon
 	 * 
 	 * @return
@@ -273,30 +260,30 @@ public class SubastaCalculoManagerTest {
 	private Subasta newSubastaToTestDeudaMayor1Millon(float deudaIrregular, float posVivaNoVencida, String estadoNoRecibido) {
 		DDEstadoContrato estadoContrato = new DDEstadoContrato();
 		estadoContrato.setCodigo(estadoNoRecibido);	
-		
+
 		Movimiento movimiento = new Movimiento();
 		movimiento.setDeudaIrregular(deudaIrregular);
 		movimiento.setPosVivaNoVencida(posVivaNoVencida);
-		
+
 		List<Movimiento> movimientos = new ArrayList<Movimiento>();
 		movimientos.add(movimiento);
-		
+
 		Contrato contrato = new Contrato();		
 		contrato.setEstadoContrato(estadoContrato);			
 		contrato.setMovimientos(movimientos);		
-				
+
 		NMBContratoBien contratoBien = new NMBContratoBien();
 		contratoBien.setContrato(contrato);
-		
+
 		List<NMBContratoBien> contratosBien = new ArrayList<NMBContratoBien>();
 		contratosBien.add(contratoBien);
-		
+
 		NMBBien bien  = new NMBBien();
 		bien.setContratos(contratosBien);
-				
+
 		List<Bien> listadoBienes = new ArrayList<Bien>();
 		listadoBienes.add(bien);
-				
+
 		LoteSubasta lote = new LoteSubasta();
 		lote.setBienes(listadoBienes);
 		lote.setRiesgoConsignacion(false);
@@ -306,63 +293,67 @@ public class SubastaCalculoManagerTest {
 
 		Subasta subastaToTest = newSubastaToTest();	
 		subastaToTest.setLotesSubasta(loteSubasta);
+
 		return subastaToTest;
 	}
 	
 	/**
+	 * Dummy
 	 * provee una subasta de tipo por defecto (delegada) que el riesgo de consignacion supera el umbral
 	 * 
-	 * @return
+	 * @return dummy
 	 */
 	private Subasta newSubastaToTestRiesgoDeConsignacionSuperaUmbral(float deudaIrregular, float posVivaNoVencida, float insPujasSinPostores) {
 		Movimiento movimiento = new Movimiento();
 		movimiento.setDeudaIrregular(deudaIrregular);
 		movimiento.setPosVivaNoVencida(posVivaNoVencida);
-		
+
 		ArrayList<Movimiento> arrayMovimientos = new ArrayList<Movimiento>();
 		arrayMovimientos.add(movimiento);
-		
+
 		Contrato contrato = new Contrato();
 		contrato.setMovimientos(arrayMovimientos);
-		
+
 		Expediente expediente = new Expediente();
-		
+
 		ExpedienteContrato expedienteContrato = new ExpedienteContrato();
 		expedienteContrato.setContrato(contrato);
 		expedienteContrato.setExpediente(expediente);
-		
+
 		ArrayList<ExpedienteContrato> arrayExpedienteContratos = new ArrayList<ExpedienteContrato>();
 		arrayExpedienteContratos.add(expedienteContrato);
-		
+
 		Procedimiento procedimiento = new Procedimiento();
-		
+
 		ArrayList<Procedimiento> arrayProcedimientos = new ArrayList<Procedimiento>();
 		arrayProcedimientos.add(procedimiento);
-		
+
 		Asunto asunto = new Asunto();
 		asunto.setProcedimientos(arrayProcedimientos);
-		
+
 		procedimiento.setAsunto(asunto);
 		procedimiento.setExpedienteContratos(arrayExpedienteContratos);
-		
+
 		LoteSubasta lote = new LoteSubasta();
 		lote.setRiesgoConsignacion(true);
 		lote.setInsPujaSinPostores(insPujasSinPostores);
 		lote.setBienes(new ArrayList<Bien>());
-		
+
 		ArrayList<LoteSubasta> arrayLotes = new ArrayList<LoteSubasta>();
 		arrayLotes.add(lote);
-		
+
 		Subasta subastaToTest = newSubastaToTest();
 		subastaToTest.setLotesSubasta(arrayLotes);
 		subastaToTest.setProcedimiento(procedimiento);
+
 		return subastaToTest;
 	}
 
 	/**
+	 * Dummy
 	 * provee una subasta de tipo por defecto (delegada) que no cumple ninguna condicion para que se cambie el tipo a no delegada.
 	 * 
-	 * @return
+	 * @return dummy
 	 */
 	private Subasta newSubastaToTest() {
 		// Asunto
@@ -375,7 +366,7 @@ public class SubastaCalculoManagerTest {
 		EXTAsunto asuntoSubasta = new EXTAsunto();
 		asuntoSubasta.setGestionAsunto(gestionAsuntoRandom);
 		asuntoSubasta.setTipoAsunto(tipoAsunto);
-				
+
 		// Subasta
 		DDTipoSubasta tipoDelegada = new DDTipoSubasta();
 		// Por defecto todas las subastas son de tipo delegada
@@ -384,10 +375,10 @@ public class SubastaCalculoManagerTest {
 		// Procedimiento Asunto
 		Asunto asunto = new Asunto();
 		asunto.setProcedimientos(new ArrayList<Procedimiento>());
-		
+
 		Procedimiento procedimiento = new Procedimiento();
 		procedimiento.setAsunto(asunto);
-		
+
 		List<LoteSubasta> loteSubasta = new ArrayList<LoteSubasta>();
 
 		Subasta subasta = new Subasta();
@@ -396,7 +387,7 @@ public class SubastaCalculoManagerTest {
 		subasta.setCargasAnteriores("0");
 		subasta.setLotesSubasta(loteSubasta);
 		subasta.setProcedimiento(procedimiento);
-		
+
 		return subasta;
 	}
 

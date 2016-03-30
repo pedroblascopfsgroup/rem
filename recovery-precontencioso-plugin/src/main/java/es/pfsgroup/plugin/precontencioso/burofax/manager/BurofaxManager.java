@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.precontencioso.burofax.manager;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.exception.UserException;
+import es.capgemini.devon.files.FileException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.security.SecurityUtils;
@@ -612,6 +615,21 @@ public class BurofaxManager implements BurofaxApi {
 		fi.setFileName(nombreFicheroPdf);
 		fi.setContentType("application/pdf");
 		fi.setLength(archivoBurofaxPDF.length());
+		
+//		try {
+//			OutputStream outputStream = fi.getOutputStream(); // Last step is to get FileItem's output stream, and write your inputStream in it. This is the way to write to your FileItem.
+//			int read = 0;
+//			byte[] bytes = new byte[1024];
+//			while ((read = archivoBurofax.getInputStream().read(bytes)) != -1) {
+//			     outputStream.write(bytes, 0, read);
+//			}
+//			outputStream.close();
+//		} catch (FileException e) {
+//			logger.error("generarBurofaxPDF: " + e);
+//		} catch (IOException e) {
+//			logger.error("generarBurofaxPDF: " + e);
+//		}
+//	               
 		return fi;
 	}
 	

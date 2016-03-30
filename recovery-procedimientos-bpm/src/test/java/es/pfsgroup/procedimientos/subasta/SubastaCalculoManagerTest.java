@@ -153,48 +153,41 @@ public class SubastaCalculoManagerTest {
 	 */
 	@Test
 	public void testDeterminarTipoSubastaConDeudaMayorDeUnMillon(){
-		
+		float deudaIrregular = 1000000.23F;
+		float posVivaNoVencida = 2000.34F;
+		String estadoActivo = DDEstadoContrato.ESTADO_CONTRATO_ACTIVO;
 				
-		DDEstadoContrato estadoContrato = new DDEstadoContrato();
-		estadoContrato.setCodigo(DDEstadoContrato.ESTADO_CONTRATO_ACTIVO);	
-		
-		Movimiento movimiento = new Movimiento();
-		movimiento.setDeudaIrregular(1000000.23F);
-		movimiento.setPosVivaNoVencida(2000.34F);
-		
-		List<Movimiento> movimientos = new ArrayList<Movimiento>();
-		movimientos.add(movimiento);
-		
-		Contrato contrato = new Contrato();		
-		contrato.setEstadoContrato(estadoContrato);			
-		contrato.setMovimientos(movimientos);		
-				
-		NMBContratoBien contratoBien = new NMBContratoBien();
-		contratoBien.setContrato(contrato);
-		
-		List<NMBContratoBien> contratosBien = new ArrayList<NMBContratoBien>();
-		contratosBien.add(contratoBien);
-		
-		NMBBien bien  = new NMBBien();
-		bien.setContratos(contratosBien);
-				
-		List<Bien> listadoBienes = new ArrayList<Bien>();
-		listadoBienes.add(bien);
-				
-		LoteSubasta lote = new LoteSubasta();
-		lote.setBienes(listadoBienes);
-
-		List<LoteSubasta> loteSubasta = new ArrayList<LoteSubasta>();
-		loteSubasta.add(lote);
-
-		Subasta subastaToTest = newSubastaToTest();	
-		subastaToTest.setLotesSubasta(loteSubasta);
+		Subasta subastaToTest = newSubastaToTestDeudaMayor1Millon(deudaIrregular, posVivaNoVencida, estadoActivo);
 		
 		// Method to test
 		subastaCalculoManager.determinarTipoSubastaTrasPropuesta(subastaToTest);
 		
 		comprobarSiLaSubastaHaSidoModificadaANoDelegada();
 	}
+	
+	/**
+	 * Si la deuda de las operaciones relacionadas es mayor a un millon y el estado es no recibido
+	 * 
+	 * Resultado esperado:
+	 * 
+	 * 	Que el tipo subasta no sea modificado 
+	 */
+	@Test
+	public void testDeterminarTipoSubastaConDeudaMayorDeUnMillonYEstadoNoRecibido(){
+		float deudaIrregular = 1000000.23F;
+		float posVivaNoVencida = 2000.34F;
+		String estadoNoRecibido = DDEstadoContrato.ESTADO_CONTRATO_NORECIBIDO;
+		
+		Subasta subastaToTest = newSubastaToTestDeudaMayor1Millon(deudaIrregular, posVivaNoVencida, estadoNoRecibido);
+		
+		// Method to test
+		subastaCalculoManager.determinarTipoSubastaTrasPropuesta(subastaToTest);
+		
+		// verify never call update
+		verify(genericDao, never()).update(eq(Subasta.class), any(Subasta.class));
+	}
+
+	
 	
 	/**
 	 * Si la subasta cumple las condiciones:
@@ -212,7 +205,7 @@ public class SubastaCalculoManagerTest {
 		float posVivaNoVencida = 5000f;
 		float insPujasSinPostores = 12000.0f;
 		
-		Subasta subastaToTest = newSubastaToTestRiesgoConsignacion(deudaIrregular, posVivaNoVencida, insPujasSinPostores);
+		Subasta subastaToTest = newSubastaToTestRiesgoDeConsignacionSuperaUmbral(deudaIrregular, posVivaNoVencida, insPujasSinPostores);
 		
 		// Method to test
 		subastaCalculoManager.determinarTipoSubastaTrasPropuesta(subastaToTest);
@@ -237,7 +230,7 @@ public class SubastaCalculoManagerTest {
 		float posVivaNoVencida = 5000.0f;
 		float insPujasSinPostores = 5000.0f;
 		
-		Subasta subastaToTest = newSubastaToTestRiesgoConsignacion(deudaIrregular, posVivaNoVencida, insPujasSinPostores);
+		Subasta subastaToTest = newSubastaToTestRiesgoDeConsignacionSuperaUmbral(deudaIrregular, posVivaNoVencida, insPujasSinPostores);
 		
 		// Method to test
 		subastaCalculoManager.determinarTipoSubastaTrasPropuesta(subastaToTest);
@@ -263,7 +256,7 @@ public class SubastaCalculoManagerTest {
 		float posVivaNoVencida = 5000.0f;
 		float insPujasSinPostores = 5000.1f;
 		
-		Subasta subastaToTest = newSubastaToTestRiesgoConsignacion(deudaIrregular, posVivaNoVencida, insPujasSinPostores);
+		Subasta subastaToTest = newSubastaToTestRiesgoDeConsignacionSuperaUmbral(deudaIrregular, posVivaNoVencida, insPujasSinPostores);
 		
 		// Method to test
 		subastaCalculoManager.determinarTipoSubastaTrasPropuesta(subastaToTest);
@@ -271,9 +264,57 @@ public class SubastaCalculoManagerTest {
 		// verify never call update
 		verify(genericDao, never()).update(eq(Subasta.class), any(Subasta.class));
 	}
+	
+	/**
+	 * provee una subasta de tipo por defecto (delegada) que posee una deuda mayor de un millon
+	 * 
+	 * @return
+	 */
+	private Subasta newSubastaToTestDeudaMayor1Millon(float deudaIrregular, float posVivaNoVencida, String estadoNoRecibido) {
+		DDEstadoContrato estadoContrato = new DDEstadoContrato();
+		estadoContrato.setCodigo(estadoNoRecibido);	
+		
+		Movimiento movimiento = new Movimiento();
+		movimiento.setDeudaIrregular(deudaIrregular);
+		movimiento.setPosVivaNoVencida(posVivaNoVencida);
+		
+		List<Movimiento> movimientos = new ArrayList<Movimiento>();
+		movimientos.add(movimiento);
+		
+		Contrato contrato = new Contrato();		
+		contrato.setEstadoContrato(estadoContrato);			
+		contrato.setMovimientos(movimientos);		
+				
+		NMBContratoBien contratoBien = new NMBContratoBien();
+		contratoBien.setContrato(contrato);
+		
+		List<NMBContratoBien> contratosBien = new ArrayList<NMBContratoBien>();
+		contratosBien.add(contratoBien);
+		
+		NMBBien bien  = new NMBBien();
+		bien.setContratos(contratosBien);
+				
+		List<Bien> listadoBienes = new ArrayList<Bien>();
+		listadoBienes.add(bien);
+				
+		LoteSubasta lote = new LoteSubasta();
+		lote.setBienes(listadoBienes);
+		lote.setRiesgoConsignacion(false);
 
-	private Subasta newSubastaToTestRiesgoConsignacion(float deudaIrregular,
-			float posVivaNoVencida, float insPujasSinPostores) {
+		List<LoteSubasta> loteSubasta = new ArrayList<LoteSubasta>();
+		loteSubasta.add(lote);
+
+		Subasta subastaToTest = newSubastaToTest();	
+		subastaToTest.setLotesSubasta(loteSubasta);
+		return subastaToTest;
+	}
+	
+	/**
+	 * provee una subasta de tipo por defecto (delegada) que el riesgo de consignacion supera el umbral
+	 * 
+	 * @return
+	 */
+	private Subasta newSubastaToTestRiesgoDeConsignacionSuperaUmbral(float deudaIrregular, float posVivaNoVencida, float insPujasSinPostores) {
 		Movimiento movimiento = new Movimiento();
 		movimiento.setDeudaIrregular(deudaIrregular);
 		movimiento.setPosVivaNoVencida(posVivaNoVencida);

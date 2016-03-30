@@ -540,10 +540,10 @@
 	
 	<decision name="P456_AnalisisEvolucionPDVDecision" expression="#{P456_AnalisisEvolucionPDVDecision}">
 		<transition to="Fin" name="Si"></transition>
-		<transition to="P457_ComunicacionAcreditadoRenovacion" name="No"></transition>
+		<transition to="P456_ComunicacionAcreditadoRenovacion" name="No"></transition>
 	</decision>
 	
-	<start-state name="P457_ComunicacionAcreditadoRenovacion">
+	<start-state name="P456_ComunicacionAcreditadoRenovacion">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"

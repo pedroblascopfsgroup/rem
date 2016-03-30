@@ -499,7 +499,7 @@ public class SubastaCalculoManager {
 				Contrato contrato = contratoBien.getContrato();
 
 				// cuyo estado sea distinto de "No recibido".
-				if (!DDEstadoContrato.ESTADO_CONTRATO_NORECIBIDO.equals(contrato.getEstadoContrato())) {
+				if (!DDEstadoContrato.ESTADO_CONTRATO_NORECIBIDO.equals(contrato.getEstadoContrato().getCodigo())) {
 					contratos.add(contrato);
 				}
 			}

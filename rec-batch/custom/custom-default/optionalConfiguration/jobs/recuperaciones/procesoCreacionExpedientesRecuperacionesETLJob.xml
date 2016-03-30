@@ -18,17 +18,17 @@
                                     <map>
                                         <entry key="sql">
                                             <bean parent="sql"
-                                                p:key="comunes.idxdrop.PreparaGeneracionExpedientes.${entity.dialect}" />
+                                                p:key="comunes.truncate.PreparaGeneracionExpedientes.${entity.dialect}" />
                                         </entry>
-                                        <entry key="message" value="comunes.idxdrop.PreparaGeneracionExpedientes" />
+                                        <entry key="message" value="comunes.truncate.PreparaGeneracionExpedientes" />
                                         <entry key="severidad" value="error" />
                                     </map>
                                     <map>
                                         <entry key="sql">
                                             <bean parent="sql"
-                                                p:key="comunes.truncate.PreparaGeneracionExpedientes.${entity.dialect}" />
+                                                p:key="comunes.idxdrop.PreparaGeneracionExpedientes.${entity.dialect}" />
                                         </entry>
-                                        <entry key="message" value="comunes.truncate.PreparaGeneracionExpedientes" />
+                                        <entry key="message" value="comunes.idxdrop.PreparaGeneracionExpedientes" />
                                         <entry key="severidad" value="error" />
                                     </map>
                                     <map>
@@ -51,17 +51,17 @@
                                     <map>
                                         <entry key="sql">
                                             <bean parent="sql"
-                                                p:key="comunes.idxdrop.jobGeneracionExpedientes.${entity.dialect}" />
+                                                p:key="comunes.truncate.jobGeneracionExpedientes.${entity.dialect}" />
                                         </entry>
-                                        <entry key="message" value="comunes.idxdrop.jobGeneracionExpedientes" />
+                                        <entry key="message" value="comunes.truncate.jobGeneracionExpedientes" />
                                         <entry key="severidad" value="error" />
                                     </map>
                                     <map>
                                         <entry key="sql">
                                             <bean parent="sql"
-                                                p:key="comunes.truncate.jobGeneracionExpedientes.${entity.dialect}" />
+                                                p:key="comunes.idxdrop.jobGeneracionExpedientes.${entity.dialect}" />
                                         </entry>
-                                        <entry key="message" value="comunes.truncate.jobGeneracionExpedientes" />
+                                        <entry key="message" value="comunes.idxdrop.jobGeneracionExpedientes" />
                                         <entry key="severidad" value="error" />
                                     </map>
                                     <map>

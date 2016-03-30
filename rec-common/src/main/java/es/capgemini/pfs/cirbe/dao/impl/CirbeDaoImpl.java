@@ -89,6 +89,44 @@ public class CirbeDaoImpl extends AbstractEntityDao<Cirbe, Long> implements Cirb
         hql.append("  order by cir.fechaExtraccionCirbe desc");
         return getHibernateTemplate().find(hql.toString(), params);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public List<Date> getFechasActualizacionPersona(Long idPersona, Date fecha1, Date fecha2, Date fecha3) {
+        StringBuilder hql = new StringBuilder("select distinct cir.fechaCargaActualizacion from Cirbe cir ");
+        hql.append("where cir.persona.id = ? and cir.auditoria." + Auditoria.UNDELETED_RESTICTION);
+        Object[] params = null;
+        if (fecha3 != null && fecha2 != null && fecha1 != null) {
+            params = new Object[4];
+        } else if ((fecha1 != null && fecha2 != null && fecha3 == null) || (fecha3 != null && fecha2 != null && fecha1 == null)
+                || (fecha1 != null && fecha3 != null && fecha2 == null)) {
+            params = new Object[3];
+        } else if ((fecha1 != null && fecha2 == null && fecha3 == null) || (fecha2 != null && fecha1 == null && fecha3 == null)
+                || (fecha3 != null && fecha1 == null && fecha2 == null)) {
+            params = new Object[2];
+        } else if (fecha1 == null && fecha2 == null && fecha3 == null) {
+            params = new Object[1];
+        }
+        int i = 0;
+        params[i++] = idPersona;
+        if (fecha1 != null) {
+            hql.append(" and cir.fechaCargaActualizacion != ? ");
+            params[i++] = fecha1;
+        }
+        if (fecha2 != null) {
+            hql.append(" and cir.fechaCargaActualizacion != ? ");
+            params[i++] = fecha2;
+        }
+        if (fecha3 != null) {
+            hql.append(" and cir.fechaCargaActualizacion != ? ");
+            params[i++] = fecha3;
+        }
+
+        hql.append("  order by cir.fechaCargaActualizacion desc");
+        return getHibernateTemplate().find(hql.toString(), params);
+    }
 
     /**
      * {@inheritDoc}
@@ -134,7 +172,7 @@ public class CirbeDaoImpl extends AbstractEntityDao<Cirbe, Long> implements Cirb
         hql.append("c1.tipoVencimientoCirbe,c1.importeDispuesto,c1.importeDisponible");
         hql.append(" from Cirbe c1");
         hql.append(" where c1.persona.id = ?");
-        hql.append(" and c1.fechaExtraccionCirbe = ?");
+        hql.append(" and c1.fechaCargaActualizacion = ?");
         Query query = getSession().createQuery(hql.toString());
         query.setParameters(new Object[] { idPersona, fecha }, new org.hibernate.type.Type[] { Hibernate.LONG, Hibernate.DATE });
         List<Object[]> result = query.list();

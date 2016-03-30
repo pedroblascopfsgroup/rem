@@ -195,7 +195,6 @@
 		    	var rec = grid.getStore().getAt(rowIndex);
 				var cc = rec.get('cc');
 				idContrato = rec.get('id');
-				debugger;
 				if(cc != '') {
 					excluirContrato.enable();
 				} else {

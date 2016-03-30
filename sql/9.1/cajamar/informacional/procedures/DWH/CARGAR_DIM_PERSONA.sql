@@ -3,8 +3,8 @@ create or replace PROCEDURE CARGAR_DIM_PERSONA(O_ERROR_STATUS OUT VARCHAR2) AS
 -- Autor: María Villanueva, PFS Group
 -- Fecha creacion: Agosto 2015
 -- Responsable ultima modificacion: María Villaueva, PFS Group
--- Fecha ultima modificacion: 02/11/2015
--- Motivos del cambio: Se corrige referencia a datastage
+-- Fecha ultima modificacion: 30/03/2016
+-- Motivos del cambio: Se añade CODIGO_RECOVERY a D_PER
 -- Cliente: Recovery BI Cajamar
 --
 -- Descripcion: Procedimiento almancenado que carga las tablas de la dimension Persona
@@ -791,7 +791,8 @@ execute immediate'
     SEXO_ID,
     TIPO_DOCUMENTO_ID,
     TIPO_PERSONA_ID,
-	GRUPO_ECONOMICO_ID
+	GRUPO_ECONOMICO_ID,
+ CODIGO_RECOVERY
    )
   select PER_ID, 
         PER_DOC_ID,
@@ -815,7 +816,8 @@ execute immediate'
         NVL(PER_SEXO, -1),
         NVL(DD_TDI_ID, -1),
         NVL(DD_TPE_ID, -1),
-		-1
+		-1,
+    PER_COD_CLIENTE_ENTIDAD
   FROM '||V_DATASTAGE||'.PER_PERSONAS WHERE BORRADO = 0';
 
   V_ROWCOUNT := sql%rowcount;     

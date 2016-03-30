@@ -3,8 +3,8 @@ create or replace PROCEDURE CREAR_DIM_PERSONA (error OUT VARCHAR2) AS
 -- Autor: María Villanueva, PFS Group
 -- Fecha creacion: Agosto 2015
 -- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha ultima modificacion: 30/11/2015
--- Motivos del cambio:usuario propietario
+-- Fecha ultima modificacion: 30/03/2016
+-- Motivos del cambio:Se añade CODIGO_RECOVERY a D_PER
 -- Cliente: Recovery BI Cajamar
 --
 -- Descripcion: Procedimiento almancenado que crea las tablas de la dimension Persona
@@ -455,7 +455,8 @@ DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_GRUPO_ECONOMICO');
                            SEXO_ID   NUMBER(16,0),
                            TIPO_DOCUMENTO_ID   NUMBER(16,0),
                            TIPO_PERSONA_ID   NUMBER(16,0),
-						   GRUPO_ECONOMICO_ID  NUMBER(16,0),
+						               GRUPO_ECONOMICO_ID  NUMBER(16,0),
+                           CODIGO_RECOVERY  NUMBER(16,0),
                            CONSTRAINT D_PER_PK PRIMARY KEY (PERSONA_ID)'', 
                       :error); END;';
     execute immediate V_SQL USING OUT error;

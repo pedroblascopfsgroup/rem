@@ -3,8 +3,8 @@ create or replace PROCEDURE CARGAR_H_PRC_DET_COBRO(DATE_START IN date, DATE_END 
 -- Autor: María Villanueva, PFS Group
 -- Fecha creación: Julio 2015
 -- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha ultima modificacion: 24/11/2015
--- Motivos del cambio: USUARIO PROPIETARIO
+-- Fecha ultima modificacion: 30/03/2016
+-- Motivos del cambio: Manejo de nulos en TIPO_COBRO_DETALLE_ID
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripción: Procedimiento almancenado que carga las tablas hechos H_PRC_DET_COBRO.
@@ -122,7 +122,7 @@ INTO TMP_H_PRC_DET_COBRO
   cnt.COBRO_ID,
   cnt.FECHA_COBRO,
   prc.FECHA_CREACION_ASUNTO as FECHA_ASUNTO,
-  cnt.TIPO_COBRO_DET_ID as TIPO_COBRO_DETALLE_ID,
+  NVL(cnt.TIPO_COBRO_DET_ID,-1) as TIPO_COBRO_DETALLE_ID,
   cnt.NUM_COBROS,
   cnt.IMPORTE_COBRO,
   (cnt.FECHA_COBRO -prc.FECHA_CREACION_ASUNTO) as NUM_DIAS_CREACION_ASU_COBRO

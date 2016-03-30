@@ -3,8 +3,8 @@ create or replace PROCEDURE CARGAR_H_CNT_DET_COBRO (DATE_START IN date, DATE_END
 -- Autor: Gonzalo Martín, PFS Group
 -- Fecha creación: Mayo 2015
 -- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha ultima modificacion: 23/11/2015
--- Motivos del cambio:usuario propietario
+-- Fecha ultima modificacion: 30/03/2016
+-- Motivos del cambio: TIPO_COBRO_DET_ID se pasa a coger de CPA_COBROS_PAGOS.DD_TCP_ID
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripción: Procedimiento almancenado que carga las tablas hechos H_CNT_DET_COBRO.
@@ -90,9 +90,6 @@ BEGIN
 
 
 
-
-
-
           V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_H_CNT_DET_COBRO_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
          execute immediate V_SQL USING OUT O_ERROR_STATUS;
 		 
@@ -132,7 +129,7 @@ BEGIN
          cpa.CNT_ID,
          cpa.CPA_ID,
          trunc(cpa.CPA_FECHA_VALOR),
-         cpa.DD_SCP_ID,
+         nvl(cpa.DD_TCP_ID,-1)
          0,
 
          1,

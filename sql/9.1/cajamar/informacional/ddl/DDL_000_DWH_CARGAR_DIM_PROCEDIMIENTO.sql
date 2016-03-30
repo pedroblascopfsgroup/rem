@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=María Villanueva
---## FECHA_CREACION=20160322
+--## AUTOR=Pedro S.
+--## FECHA_CREACION=20160330
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=GC-1271
+--## INCIDENCIA_LINK=CMREC-2314
 --## PRODUCTO=NO
 --## 
---## Finalidad:D_PRC_PROCURADOR
+--## Finalidad: Se añade GESTOR_HAYA, CON POSTOR
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -20,9 +20,9 @@ create or replace PROCEDURE CARGAR_DIM_PROCEDIMIENTO (O_ERROR_STATUS OUT VARCHAR
 -- ===============================================================================================
 -- Autor:  Gonzalo Martín, PFS Group
 -- Fecha creación: Febrero 2014
--- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha ultima modificacion: 09/03/2016
--- Motivos del cambio: D_PRC_PROCURADOR
+-- Responsable ultima modificacion: Pedro S., PFS Group
+-- Fecha ultima modificacion: 23/03/2016
+-- Motivos del cambio: D_PRC_DESPACHO_GESTOR_HAYA, D_PRC_GESTOR_HAYA y D_PRC_CON_POSTORES
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripción: Procedimiento almacenado que carga las tablas de la dimensión Procedimiento.
@@ -158,6 +158,9 @@ create or replace PROCEDURE CARGAR_DIM_PROCEDIMIENTO (O_ERROR_STATUS OUT VARCHAR
 
   -- D_PRC_TIPO_SOL_PREVISTA
   -- D_PRC_PROCURADOR
+  -- D_PRC_DESPACHO_GESTOR_HAYA
+  -- D_PRC_GESTOR_HAYA 
+  -- D_PRC_CON_POSTORES
 
 BEGIN
 DECLARE
@@ -2632,14 +2635,18 @@ select count(1) into V_NUM_ROW from  D_PRC_COBRO_TIPO where TIPO_COBRO_ID = -1;
     ANIO_CODIGO_AUTO,
     ASUNTO_ID,
     JUZGADO_ID,
-    TIPO_RECLAMACION_ID
+    TIPO_RECLAMACION_ID,
+	GESTOR_PRC_HAYA_ID,
+	CON_POSTORES_ID
    )
   SELECT PRC_ID,
     NVL(PRC_COD_PROC_EN_JUZGADO, ''Desconocido''),
     NVL(SUBSTR(PRC_COD_PROC_EN_JUZGADO, -4,4), ''Desconocido''),    -- Actualizar para recoger los que tienen la fecha en la izquierda (mal introducidos).
     ASU_ID,
     NVL(DD_JUZ_ID, -1),
-    NVL(DD_TRE_ID, -1)
+    NVL(DD_TRE_ID, -1),
+	-1,
+	-1
   FROM '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS
   WHERE PRC_PRC_ID IS NULL';
 
@@ -2678,6 +2685,35 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
   UPDATE D_PRC DPRC SET SUPERVISOR_PRC_ID =(SELECT NVL(SUPERVISOR_PRC_ID, -1) FROM TMP_PRC_SUPERVISOR TPS WHERE DPRC.PROCEDIMIENTO_ID = TPS.PROCEDIMIENTO_ID);
   UPDATE D_PRC SET SUPERVISOR_PRC_ID = -1 WHERE  SUPERVISOR_PRC_ID IS NULL;
 
+ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_PRC_GESTOR'', '''', :O_ERROR_STATUS); END;';
+execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+  EXECUTE IMMEDIATE
+  'INSERT INTO TMP_PRC_GESTOR (PROCEDIMIENTO_ID, GESTOR_PRC_ID)
+  SELECT DISTINCT PRC.PRC_ID, USU.USU_ID FROM '||V_DATASTAGE||'.USD_USUARIOS_DESPACHOS USD
+                    JOIN '||V_DATASTAGE||'.USU_USUARIOS USU ON USD.USU_ID = USU.USU_ID
+                    JOIN '||V_DATASTAGE||'.GAA_GESTOR_ADICIONAL_ASUNTO GAA ON GAA.USD_ID = USD.USD_ID
+                    JOIN '||V_DATASTAGE||'.DD_TGE_TIPO_GESTOR TGES ON GAA.DD_TGE_ID = TGES.DD_TGE_ID AND TGES.DD_TGE_DESCRIPCION LIKE ''%Gestor%control%HRE%''
+                    JOIN '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC ON GAA.ASU_ID = PRC.ASU_ID
+                     ';
+  
+  UPDATE D_PRC DPRC SET GESTOR_PRC_HAYA_ID = (SELECT distinct GESTOR_PRC_ID FROM TMP_PRC_GESTOR TPG WHERE DPRC.PROCEDIMIENTO_ID =  TPG.PROCEDIMIENTO_ID);
+
+  EXECUTE IMMEDIATE
+  'MERGE INTO D_PRC a 
+	using (select tar.ASU_ID, max(tev_valor) max_tev_valor
+			from '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES tar 
+				join '||V_DATASTAGE||'.TEX_TAREA_EXTERNA tex on tar.TAR_ID = tex.TAR_ID and tex.TAP_ID in (10000000003294, 10000000003050, 10000000003320) 
+				join '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR tev on tex.TEX_ID = tev.TEX_ID and tev.TEV_NOMBRE = ''comboPostores''
+				group by tar.ASU_ID) b
+	on (b.ASU_ID = a.ASUNTO_ID)
+    when matched then update set a.CON_POSTORES_ID = (case when b.max_tev_valor = ''02'' or b.max_tev_valor = ''2'' then 0
+														when b.max_tev_valor = ''01'' or b.max_tev_valor = ''1'' then 1 
+														else -1
+													end)';
+    commit;
+  
+  
   COMMIT;
 
   --Log_Proceso
@@ -3394,7 +3430,93 @@ SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_PROCURADOR WHERE PROCURADOR_PRC_ID = -
      --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_PROCURADOR. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
 
+  -- ----------------------------------------------------------------------------------------------
+--                                  D_PRC_DESPACHO_GESTOR_HAYA
+-- ----------------------------------------------------------------------------------------------  
+  
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_DESPACHO_GESTOR_HAYA WHERE DESPACHO_GESTOR_PRC_HAYA_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_DESPACHO_GESTOR_HAYA (DESPACHO_GESTOR_PRC_HAYA_ID, DESPACHO_GESTOR_PRC_HAYA_DESC, TIPO_DESP_GESTOR_PRC_HAYA_ID, ZONA_DESP_GESTOR_PRC_HAYA_ID) VALUES (-1 ,'Desconocido', -1, -1);
+  END IF;
 
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_PRC_DESPACHO_GESTOR_HAYA(DESPACHO_GESTOR_PRC_HAYA_ID, DESPACHO_GESTOR_PRC_HAYA_DESC, TIPO_DESP_GESTOR_PRC_HAYA_ID, ZONA_DESP_GESTOR_PRC_HAYA_ID)
+     SELECT DES_ID, DES_DESPACHO, NVL(DD_TDE_ID, -1), NVL(ZON_ID, -1) FROM '||V_DATASTAGE||'.DES_DESPACHO_EXTERNO';
+
+  V_ROWCOUNT := sql%rowcount;
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_DESPACHO_GESTOR_HAYA. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+
+-- ----------------------------------------------------------------------------------------------
+--                                 D_PRC_GESTOR_HAYA
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_GESTOR_HAYA WHERE GESTOR_PRC_HAYA_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_GESTOR_HAYA(
+      GESTOR_PRC_HAYA_ID,
+      GESTOR_PRC_HAYA_NOMBRE_COMPLET,
+      GESTOR_PRC_HAYA_NOMBRE,
+      GESTOR_PRC_HAYA_APELLIDO1,
+      GESTOR_PRC_HAYA_APELLIDO2,
+      ENTIDAD_GESTOR_PRC_HAYA_ID,
+      DESPACHO_GESTOR_PRC_HAYA_ID) VALUES (-1 ,'Sin Gestor Asignado','Sin Gestor Asignado', 'Sin Gestor Asignado', 'Sin Gestor Asignado', -1, -1);
+  END IF;
+
+  EXECUTE IMMEDIATE
+  'INSERT INTO D_PRC_GESTOR_HAYA (
+      GESTOR_PRC_HAYA_ID,
+      GESTOR_PRC_HAYA_NOMBRE_COMPLET,
+      GESTOR_PRC_HAYA_NOMBRE,
+      GESTOR_PRC_HAYA_APELLIDO1,
+      GESTOR_PRC_HAYA_APELLIDO2,
+      ENTIDAD_GESTOR_PRC_HAYA_ID,
+      DESPACHO_GESTOR_PRC_HAYA_ID
+      )
+  SELECT DISTINCT USU.USU_ID,
+      NVL(TRIM(REPLACE(USU.USU_NOMBRE||'' ''||USU.USU_APELLIDO1||'' ''||USU.USU_APELLIDO2,'' '',''  '')), ''Desconocido''),
+      NVL(USU.USU_NOMBRE, ''Desconocido''),
+      NVL(USU.USU_APELLIDO1, ''Desconocido''),
+      NVL(USU.USU_APELLIDO2, ''Desconocido''),
+      USU.ENTIDAD_ID,
+      USD.DES_ID
+  FROM '||V_DATASTAGE||'.USD_USUARIOS_DESPACHOS USD
+    JOIN '||V_DATASTAGE||'.USU_USUARIOS USU ON USD.USU_ID = USU.USU_ID
+    JOIN '||V_DATASTAGE||'.GAA_GESTOR_ADICIONAL_ASUNTO GAA ON GAA.USD_ID = USD.USD_ID
+    JOIN '||V_DATASTAGE||'.DD_TGE_TIPO_GESTOR TGES ON GAA.DD_TGE_ID = TGES.DD_TGE_ID AND TGES.DD_TGE_DESCRIPCION LIKE ''%Gestor%control%HRE%''';
+
+  V_ROWCOUNT := sql%rowcount;
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_GESTOR_HAYA. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+
+-- ----------------------------------------------------------------------------------------------
+
+--                                      D_PRC_CON_POSTORES
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_CON_POSTORES WHERE CON_POSTORES_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_CON_POSTORES (CON_POSTORES_ID, CON_POSTORES_DESC) VALUES (1 ,'Si');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_CON_POSTORES WHERE CON_POSTORES_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_CON_POSTORES (CON_POSTORES_ID, CON_POSTORES_DESC) VALUES (0 ,'No');
+  END IF;
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PRC_CON_POSTORES WHERE CON_POSTORES_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_PRC_CON_POSTORES (CON_POSTORES_ID, CON_POSTORES_DESC) VALUES (-1 ,' ');
+  END IF;  
+  
+  COMMIT;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_CON_POSTORES. Realizados INSERTS', 3;
+  
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina ' || V_NOMBRE, 2;
 
@@ -3403,3 +3525,5 @@ END;
 END CARGAR_DIM_PROCEDIMIENTO;
 /
 EXIT
+
+

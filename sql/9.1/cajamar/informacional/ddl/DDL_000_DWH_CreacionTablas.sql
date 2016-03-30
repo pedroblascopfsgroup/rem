@@ -1,0 +1,218 @@
+--/*
+--##########################################
+--## AUTOR=Pedro S.
+--## FECHA_CREACION=20160330
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=CMREC-2314
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Creacion de tabla D_BIE_GARANTIA_NUM_OPER_BIE_AGR , D_BIE_GARANTIA_NUM_OPER_BIE , D_PRC_GESTOR_HAYA , D_PRC_DESPACHO_GESTOR_HAYA y D_PRC_CON_POSTORES 
+--## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+
+
+DECLARE
+
+ V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA_DWH#'; 			-- Configuracion Esquema
+ V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; 		-- Configuracion Esquema Master
+ TABLA VARCHAR(30) :='D_BIE_GARANTIA_NUM_OPE_BIE';
+ ITABLE_SPACE VARCHAR(25) :='#TABLESPACE_INDEX#';
+ err_num NUMBER;
+ err_msg VARCHAR2(2048 CHAR); 
+ V_MSQL VARCHAR2(8500 CHAR);
+ V_EXISTE NUMBER (1);
+
+
+BEGIN 
+
+--Validamos si la tabla existe antes de crearla
+
+  V_MSQL := 'SELECT COUNT(1) 
+			FROM ALL_TABLES
+			WHERE TABLE_NAME = '''||TABLA||'''';
+
+  EXECUTE IMMEDIATE V_MSQL INTO V_EXISTE;
+  
+  
+  V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||TABLA||' 
+            (GARANTIA_NUM_OPE_BIE_ID NUMBER(16,0) NOT NULL,
+            GARANTIA_NUM_OPE_BIE_DESC VARCHAR2(50 CHAR),
+            GARANTIA_NUM_OPE_BIE_DESC_2 VARCHAR2(250 CHAR),
+            GARANTIA_NUM_OPE_BIE_AGR_ID NUMBER(16,0),
+            PRIMARY KEY (GARANTIA_NUM_OPE_BIE_ID))';
+ 
+ 
+ 
+  IF V_EXISTE = 0 THEN   
+     EXECUTE IMMEDIATE V_MSQL;
+     DBMS_OUTPUT.PUT_LINE(TABLA||' CREADA');
+  ELSE   
+     EXECUTE IMMEDIATE ('DROP TABLE '||V_ESQUEMA||'.'||TABLA||' CASCADE CONSTRAINTS ');
+     DBMS_OUTPUT.PUT_LINE(TABLA||' BORRADA');
+     EXECUTE IMMEDIATE V_MSQL;
+     DBMS_OUTPUT.PUT_LINE(TABLA||' CREADA');  
+    
+  END IF;   
+
+--Fin crear tabla
+TABLA := 'D_BIE_GARANTIA_NUM_OPE_BIE_AGR';
+--Validamos si la tabla existe antes de crearla
+
+  V_EXISTE := 0;
+
+  V_MSQL := 'SELECT COUNT(1) 
+			FROM ALL_TABLES
+			WHERE TABLE_NAME = '''||TABLA||'''';
+
+  EXECUTE IMMEDIATE V_MSQL INTO V_EXISTE;
+
+  
+  V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||TABLA||' 
+             (GARANTIA_NUM_OPE_BIE_AGR_ID NUMBER(16,0) NOT NULL,
+             GARANTIA_NUM_OPE_BIE_AGR_DESC VARCHAR2(50 CHAR),
+             PRIMARY KEY (GARANTIA_NUM_OPE_BIE_AGR_ID))';
+ 
+ 
+ 
+  IF V_EXISTE = 0 THEN   
+     EXECUTE IMMEDIATE V_MSQL;
+     DBMS_OUTPUT.PUT_LINE(TABLA||' CREADA');
+  ELSE   
+     EXECUTE IMMEDIATE ('DROP TABLE '||V_ESQUEMA||'.'||TABLA||' CASCADE CONSTRAINTS ');
+     DBMS_OUTPUT.PUT_LINE(TABLA||' BORRADA');
+     EXECUTE IMMEDIATE V_MSQL;
+     DBMS_OUTPUT.PUT_LINE(TABLA||' CREADA');  
+    
+  END IF;   
+
+--Fin crear tabla
+
+TABLA := 'D_PRC_GESTOR_HAYA';
+--Validamos si la tabla existe antes de crearla
+
+  V_EXISTE := 0;
+
+  V_MSQL := 'SELECT COUNT(1) 
+			FROM ALL_TABLES
+			WHERE TABLE_NAME = '''||TABLA||'''';
+
+  EXECUTE IMMEDIATE V_MSQL INTO V_EXISTE;
+
+  
+  V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||TABLA||' 
+             (GESTOR_PRC_HAYA_ID NUMBER(16,0) NOT NULL,
+                            GESTOR_PRC_HAYA_NOMBRE_COMPLET VARCHAR2(250),
+                            GESTOR_PRC_HAYA_NOMBRE VARCHAR2(250),
+                            GESTOR_PRC_HAYA_APELLIDO1 VARCHAR2(250),
+                            GESTOR_PRC_HAYA_APELLIDO2 VARCHAR2(250),
+                            ENTIDAD_GESTOR_PRC_HAYA_ID NUMBER(16,0),
+                            DESPACHO_GESTOR_PRC_HAYA_ID NUMBER(16,0),
+                            GESTOR_EN_RECOVERY_PRC_ID NUMBER(16,0),
+                            PRIMARY KEY (GESTOR_PRC_HAYA_ID,DESPACHO_GESTOR_PRC_HAYA_ID))';
+ 
+ 
+ 
+  IF V_EXISTE = 0 THEN   
+     EXECUTE IMMEDIATE V_MSQL;
+     DBMS_OUTPUT.PUT_LINE(TABLA||' CREADA');
+  ELSE   
+     EXECUTE IMMEDIATE ('DROP TABLE '||V_ESQUEMA||'.'||TABLA||' CASCADE CONSTRAINTS ');
+     DBMS_OUTPUT.PUT_LINE(TABLA||' BORRADA');
+     EXECUTE IMMEDIATE V_MSQL;
+     DBMS_OUTPUT.PUT_LINE(TABLA||' CREADA');  
+    
+  END IF;   
+
+--Fin crear tabla
+
+TABLA := 'D_PRC_DESPACHO_GESTOR_HAYA';
+--Validamos si la tabla existe antes de crearla
+
+  V_EXISTE := 0;
+
+  V_MSQL := 'SELECT COUNT(1) 
+			FROM ALL_TABLES
+			WHERE TABLE_NAME = '''||TABLA||'''';
+
+  EXECUTE IMMEDIATE V_MSQL INTO V_EXISTE;
+
+  
+  V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||TABLA||' 
+             (DESPACHO_GESTOR_PRC_HAYA_ID NUMBER(16,0) NOT NULL,
+                            DESPACHO_GESTOR_PRC_HAYA_DESC VARCHAR2(250 CHAR),
+                            TIPO_DESP_GESTOR_PRC_HAYA_ID NUMBER(16,0),
+                            ZONA_DESP_GESTOR_PRC_HAYA_ID NUMBER(16,0),
+                            PRIMARY KEY (DESPACHO_GESTOR_PRC_HAYA_ID))';
+ 
+ 
+ 
+  IF V_EXISTE = 0 THEN   
+     EXECUTE IMMEDIATE V_MSQL;
+     DBMS_OUTPUT.PUT_LINE(TABLA||' CREADA');
+  ELSE   
+     EXECUTE IMMEDIATE ('DROP TABLE '||V_ESQUEMA||'.'||TABLA||' CASCADE CONSTRAINTS ');
+     DBMS_OUTPUT.PUT_LINE(TABLA||' BORRADA');
+     EXECUTE IMMEDIATE V_MSQL;
+     DBMS_OUTPUT.PUT_LINE(TABLA||' CREADA');  
+    
+  END IF;   
+
+--Fin crear tabla
+
+TABLA := 'D_PRC_CON_POSTORES';
+--Validamos si la tabla existe antes de crearla
+
+  V_EXISTE := 0;
+
+  V_MSQL := 'SELECT COUNT(1) 
+			FROM ALL_TABLES
+			WHERE TABLE_NAME = '''||TABLA||'''';
+
+  EXECUTE IMMEDIATE V_MSQL INTO V_EXISTE;
+
+  
+  V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||TABLA||' 
+             (CON_POSTORES_ID NUMBER(16,0) NOT NULL,
+                            CON_POSTORES_DESC VARCHAR2(255 CHAR),
+                            PRIMARY KEY (CON_POSTORES_ID))';
+ 
+ 
+ 
+  IF V_EXISTE = 0 THEN   
+     EXECUTE IMMEDIATE V_MSQL;
+     DBMS_OUTPUT.PUT_LINE(TABLA||' CREADA');
+  ELSE   
+     EXECUTE IMMEDIATE ('DROP TABLE '||V_ESQUEMA||'.'||TABLA||' CASCADE CONSTRAINTS ');
+     DBMS_OUTPUT.PUT_LINE(TABLA||' BORRADA');
+     EXECUTE IMMEDIATE V_MSQL;
+     DBMS_OUTPUT.PUT_LINE(TABLA||' CREADA');  
+    
+  END IF;   
+
+--Fin crear tabla
+
+
+--Excepciones
+          
+
+EXCEPTION
+WHEN OTHERS THEN  
+  err_num := SQLCODE;
+  err_msg := SQLERRM;
+
+  DBMS_OUTPUT.put_line('Error:'||TO_CHAR(err_num));
+  DBMS_OUTPUT.put_line(err_msg);
+  
+  ROLLBACK;
+  RAISE;
+END;
+/
+EXIT

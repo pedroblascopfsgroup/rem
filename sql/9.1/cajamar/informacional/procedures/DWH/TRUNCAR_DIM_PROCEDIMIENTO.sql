@@ -2,9 +2,9 @@ create or replace PROCEDURE TRUNCAR_DIM_PROCEDIMIENTO (error OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Agustin Mompo, PFS Group
 -- Fecha creacion: Mayo 2014
--- Responsable ultima modificacion: Pedro S., PFS Group
--- Fecha ultima modificacion: 15/01/2016
--- Motivos del cambio: CMREC-1610 Añadimos detalle soluciones previstas a acuerdos
+-- Responsable ultima modificacion:Pedro S., PFS Group
+-- Fecha ultima modificacion: 22/03/2016
+-- Motivos del cambio: Se añade GESTOR_HAYA, CON POSTOR
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripcion: Procedimiento almancenado que trunca las tablas de la dimension Procedimiento
@@ -271,7 +271,13 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_PRC_ULT_TAR_PEND_DESC
  execute immediate V_SQL USING OUT error;
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_PRC_TIPO_SOL_PREVISTA'', '''', :O_ERROR_STATUS); END;';
  execute immediate V_SQL USING OUT error;
-  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', '' D_PRC_PROCURADOR'', '''', :O_ERROR_STATUS); END;';
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_PRC_PROCURADOR'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_PRC_GESTOR_HAYA'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_PRC_DESPACHO_GESTOR_HAYA'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_PRC_CON_POSTORES'', '''', :O_ERROR_STATUS); END;';
  execute immediate V_SQL USING OUT error;
   commit;
   --Log_Proceso

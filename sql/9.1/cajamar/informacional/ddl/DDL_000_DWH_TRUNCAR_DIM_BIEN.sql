@@ -1,3 +1,21 @@
+--/*
+--##########################################
+--## AUTOR=Pedro S.
+--## FECHA_CREACION=20160330
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=CMREC-2314
+--## PRODUCTO=NO
+--## 
+--## Finalidad: GARANTIA_NUM_OPE_BIE
+--## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
 create or replace PROCEDURE TRUNCAR_DIM_BIEN (error OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Gonzalo Martín, PFS Group
@@ -58,3 +76,7 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina ' || V_NOMBRE, 2;
   
 END TRUNCAR_DIM_BIEN;
+/
+EXIT
+
+

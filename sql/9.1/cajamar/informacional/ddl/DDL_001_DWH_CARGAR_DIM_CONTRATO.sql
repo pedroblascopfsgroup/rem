@@ -1,14 +1,13 @@
-
 --/*
 --##########################################
---## AUTOR=Maria V.
---## FECHA_CREACION=20160309
+--## AUTOR=Pedro S.
+--## FECHA_CREACION=20160330
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=GC-1177
+--## INCIDENCIA_LINK=CMREC-2314
 --## PRODUCTO=NO
 --## 
---## Finalidad: duplicidades lanzamientos
+--## Finalidad: Corrijo GARANTIA_CONTRATO
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -21,9 +20,9 @@ create or replace PROCEDURE CARGAR_DIM_CONTRATO(O_ERROR_STATUS OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: María Villanueva, PFS Group
 -- Fecha creacion: Septiembre 2015
--- Responsable ultima modificacion: María.V, PFS Group
--- Fecha ultima modificacion: 22/02/2016
--- Motivos del cambio: Se añade a d_cnt_entidad la entidad 3058, CAJAMAR
+-- Responsable ultima modificacion: Pedro S., PFS Group
+-- Fecha ultima modificacion: 28/03/2016
+-- Motivos del cambio: Corrijo GARANTIA_CONTRATO
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripcion: Procedimiento almancenado que carga las tablas de la dimension contrato
@@ -591,16 +590,16 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_CNT_GARANTIA_CONTRATO. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
 
   -- Incluimos GARANTIA_CONTRATO_AGR_ID
-  -- 0 - Hipotecario
-  update D_CNT_GARANTIA_CONTRATO SET GARANTIA_CONTRATO_AGR_ID = 0 where GARANTIA_CONTRATO_ID IN (1,2,3,4,5,6,7);
-  -- 1 - Resto Garantía Real
-  update D_CNT_GARANTIA_CONTRATO SET GARANTIA_CONTRATO_AGR_ID = 1 where GARANTIA_CONTRATO_ID IN (8,9,11,12,13);
-  -- 2 - Formal
-  update D_CNT_GARANTIA_CONTRATO SET GARANTIA_CONTRATO_AGR_ID = 2 where GARANTIA_CONTRATO_ID IN (10,15,16,17,18,19,20,21);
+  -- 0 - Real Hipotecaria
+  update D_CNT_GARANTIA_CONTRATO SET GARANTIA_CONTRATO_AGR_ID = 0 where GARANTIA_CONTRATO_ID IN (2,3,4,5,1,6,7,8,9,11,10,35);
+  -- 1 - Resto
+  update D_CNT_GARANTIA_CONTRATO SET GARANTIA_CONTRATO_AGR_ID = 1 where GARANTIA_CONTRATO_ID IN (33,32,31,30,29,27,26,25,28);
+  -- 2 - Real Pignoraticias
+  update D_CNT_GARANTIA_CONTRATO SET GARANTIA_CONTRATO_AGR_ID = 2 where GARANTIA_CONTRATO_ID IN (13,12,17,21,20,19,18,16,15,23,22,14,24);
   -- 3 - Personal
-  update D_CNT_GARANTIA_CONTRATO SET GARANTIA_CONTRATO_AGR_ID = 3 where GARANTIA_CONTRATO_ID IN (14,22,23,24);
-  -- 4 - Resto
-  update D_CNT_GARANTIA_CONTRATO SET GARANTIA_CONTRATO_AGR_ID = 4 where GARANTIA_CONTRATO_AGR_ID is null;
+  update D_CNT_GARANTIA_CONTRATO SET GARANTIA_CONTRATO_AGR_ID = 3 where GARANTIA_CONTRATO_ID IN (34);
+  -- 1 - Resto (sin identificar)
+  update D_CNT_GARANTIA_CONTRATO SET GARANTIA_CONTRATO_AGR_ID = 1 where GARANTIA_CONTRATO_AGR_ID is null;
 
   commit;
 
@@ -1524,23 +1523,19 @@ BEGIN
   end if;
   select count(*) into V_NUM_ROW from D_CNT_GARANTIA_CONTRATO_AGR where GARANTIA_CONTRATO_AGR_ID = 0;
   if (V_NUM_ROW = 0) then
-    insert into D_CNT_GARANTIA_CONTRATO_AGR (GARANTIA_CONTRATO_AGR_ID, GARANTIA_CONTRATO_AGR_DESC) values (0 ,'Hipotecaria');
+    insert into D_CNT_GARANTIA_CONTRATO_AGR (GARANTIA_CONTRATO_AGR_ID, GARANTIA_CONTRATO_AGR_DESC) values (0 ,'Real Hipotecaria');
   end if;
   select count(*) into V_NUM_ROW from D_CNT_GARANTIA_CONTRATO_AGR where GARANTIA_CONTRATO_AGR_ID = 1;
   if (V_NUM_ROW = 0) then
-    insert into D_CNT_GARANTIA_CONTRATO_AGR (GARANTIA_CONTRATO_AGR_ID, GARANTIA_CONTRATO_AGR_DESC) values (1 ,'Resto Garantía Real');
+    insert into D_CNT_GARANTIA_CONTRATO_AGR (GARANTIA_CONTRATO_AGR_ID, GARANTIA_CONTRATO_AGR_DESC) values (1 ,'Resto');
   end if;
   select count(*) into V_NUM_ROW from D_CNT_GARANTIA_CONTRATO_AGR where GARANTIA_CONTRATO_AGR_ID = 2;
   if (V_NUM_ROW = 0) then
-    insert into D_CNT_GARANTIA_CONTRATO_AGR (GARANTIA_CONTRATO_AGR_ID, GARANTIA_CONTRATO_AGR_DESC) values (2 ,'Formal');
+    insert into D_CNT_GARANTIA_CONTRATO_AGR (GARANTIA_CONTRATO_AGR_ID, GARANTIA_CONTRATO_AGR_DESC) values (2 ,'Real Pignoraticias');
   end if;
   select count(*) into V_NUM_ROW from D_CNT_GARANTIA_CONTRATO_AGR where GARANTIA_CONTRATO_AGR_ID = 3;
   if (V_NUM_ROW = 0) then
     insert into D_CNT_GARANTIA_CONTRATO_AGR (GARANTIA_CONTRATO_AGR_ID, GARANTIA_CONTRATO_AGR_DESC) values (3 ,'Personal');
-  end if;
-  select count(*) into V_NUM_ROW from D_CNT_GARANTIA_CONTRATO_AGR where GARANTIA_CONTRATO_AGR_ID = 4;
-  if (V_NUM_ROW = 0) then
-    insert into D_CNT_GARANTIA_CONTRATO_AGR (GARANTIA_CONTRATO_AGR_ID, GARANTIA_CONTRATO_AGR_DESC) values (4 ,'Resto');
   end if;
 
   commit;
@@ -4841,3 +4836,5 @@ end;
 end CARGAR_DIM_CONTRATO;
 /
 EXIT
+
+

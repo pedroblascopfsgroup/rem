@@ -128,8 +128,8 @@
 		
 	}--%>
 	
-<!-- 	comboDDTipoCobroPago.on('change',recargarComboSubtipo);
- -->	
+<%-- 	comboDDTipoCobroPago.on('change',recargarComboSubtipo);
+ --%>	
  	var procedimientos={"procedimientos":<json:array name="procedimientos" items='${procedimientos}' var="rec" >
 		<json:object>
 			<json:property name="id" value="${rec.id}"/>
@@ -196,7 +196,7 @@
 	}); --%>
 	
 	
-	<!-- nuevos -->
+	<%-- nuevos --%>
 	
 	var fechaEntrega = new Ext.ux.form.XDateField({
 		fieldLabel:'<s:message code="entregas.fecha" text="**Fecha Cobro" />'
@@ -534,11 +534,11 @@
 						,gastos: gastos.getValue()
 						,importePago: importePago.getValue()
 						,observaciones: observaciones.getValue()
-						<!-- ,'liqCobroPago.subTipo':subtipo -->
+						<%-- ,'liqCobroPago.subTipo':subtipo --%>
 						,procedimiento:comboProcedimientos.getValue()
 						 ,contrato:comboContratos.getValue()
-						<!-- ,origenCobro:comboDDOrigenCobro.getValue() -->
-						<!-- ,modalidadCobro:comboDDModalidadCobro.getValue() -->
+						<%-- ,origenCobro:comboDDOrigenCobro.getValue() --%>
+						<%-- ,modalidadCobro:comboDDModalidadCobro.getValue() --%>
 					}
                     ,method: 'POST'
                     ,success : function(result, request){ page.fireEvent(app.event.DONE) }
@@ -574,11 +574,11 @@
 	 comboContratos.labelStyle = labelStyle;
 	
 	 var enableDisableContratos = function(){ 
-		<!-- if (comboDDSubtipoCobroPago.getValue() == 'EC'){ -->
-			<!-- comboContratos.enable(); -->
-		<!-- }else{ -->
-			<!-- comboContratos.disable(); -->
-		<!-- } -->
+		<%-- if (comboDDSubtipoCobroPago.getValue() == 'EC'){ --%>
+			<%-- comboContratos.enable(); --%>
+		<%-- }else{ --%>
+			<%-- comboContratos.disable(); --%>
+		<%-- } --%>
 		
 		 if(comboContratos.getValue() != ''){
 			 comboContratos.reload(false);
@@ -587,9 +587,9 @@
 	 };
 	 
 	
-	<!-- comboDDSubtipoCobroPago.on('select',function(){ -->
-		<!-- enableDisableContratos(); -->
-	<!-- }); -->
+	<%-- comboDDSubtipoCobroPago.on('select',function(){ --%>
+		<%-- enableDisableContratos(); --%>
+	<%-- }); --%>
  	 comboProcedimientos.on('select',function (){comboContratos.reload()});
 	
 	var panelEdicion = new Ext.form.FormPanel({
@@ -622,8 +622,8 @@
 		optionsDDSubtipoCobroPagoStore.webflow({tipo:'${liqCobroPago.subTipo.tipoCobroPago.codigo}'});	
 	} --%>
 	
-<!-- 	g_combo = comboDDSubtipoCobroPago;
- -->	g_panel = panelEdicion;	
+<%-- 	g_combo = comboDDSubtipoCobroPago;
+ --%>	g_panel = panelEdicion;	
 	
 	 enableDisableContratos();
 	page.add(panelEdicion);

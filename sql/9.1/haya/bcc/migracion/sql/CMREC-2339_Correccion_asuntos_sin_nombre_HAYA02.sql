@@ -20,7 +20,7 @@ WITH MIG_NOM_ASUNTO AS (
   WHERE RANKING = 1   
 )
 SELECT       PCAB.CD_PROCEDIMIENTO
-          ,  substr(lpad(pop.numero_contrato,16,'0') || ' | ' || per_doc_id || ' ' || per_nom50,1,50) AS NOMBRE_ASUNTO
+          ,  substr(lpad(pop.numero_contrato,16,'0') || ' | ' || per_doc_id || ' | ' || per_nom50,1,50) AS NOMBRE_ASUNTO
           ,  PCAB.ENTIDAD_PROPIETARIA
           ,  PCAB.GESTION_PLATAFORMA
           ,  ASU.ASU_ID
@@ -56,7 +56,7 @@ WITH MIG_NOM_ASUNTO AS (
   WHERE RANKING = 1   
 )
 SELECT       PCAB.CD_PROCEDIMIENTO
-          ,  substr(lpad(pop.numero_contrato,16,'0') || ' | ' || per_doc_id || ' ' || per_nom50,1,50) AS NOMBRE_ASUNTO
+          ,  substr(lpad(pop.numero_contrato,16,'0') || ' | ' || per_doc_id || ' | ' || per_nom50,1,50) AS NOMBRE_ASUNTO
           ,  PCAB.ENTIDAD_PROPIETARIA
           ,  PCAB.GESTION_PLATAFORMA
           ,  ASU.ASU_ID

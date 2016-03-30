@@ -23,7 +23,9 @@
 			<json:property name="tipoSolicitud" value="${evento.tarea.tipoSolicitud}" />
 			<c:if test="${evento.tipoEvento == 1}">
 				<json:property name="descripcionEntidad" value="Anotacion"/>
-				<json:property name="tipoSolicitud" value="${evento.tipoAnotacion}" />
+				<c:if test="${evento.class.simpleName == 'MEJEvento'}">
+					<json:property name="tipoSolicitud" value="${evento.tipoAnotacion}" />
+				</c:if>
 			</c:if>
 			<json:property name="fcreacionEntidad" value="${evento.tarea.fechaCreacionEntidadFormateada}" />
 			<json:property name="codigoSituacion" value="${evento.tarea.situacionEntidad}" />

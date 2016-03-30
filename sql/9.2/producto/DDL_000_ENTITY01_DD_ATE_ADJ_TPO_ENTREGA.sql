@@ -40,7 +40,7 @@ DECLARE
     DBMS_OUTPUT.PUT_LINE('******** DD_ATE_ADJ_TPO_ENTREGA ********'); 
     DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.DD_ATE_ADJ_TPO_ENTREGA... Comprobaciones previas'); 
     --Comprobamos si existen PK de esa tabla
-    V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''DD_ATE_ADJ_TPO_ENTREGA'' and owner = '''||V_ESQUEMA||'';
+    V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''DD_ATE_ADJ_TPO_ENTREGA'' and owner = '''||V_ESQUEMA||''' ';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     -- Si no existe la tabla
     IF V_NUM_TABLAS < 1 THEN	 

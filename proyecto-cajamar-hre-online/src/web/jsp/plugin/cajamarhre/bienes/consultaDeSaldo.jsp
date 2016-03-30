@@ -251,7 +251,6 @@
     	</c:otherwise>
  </c:choose>	
 	
-	debugger;
 	
 	var btnCerrar= new Ext.Button({
 		text : '<s:message code="app.aceptar" text="**Aceptar" />'

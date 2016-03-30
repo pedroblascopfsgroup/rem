@@ -3,7 +3,7 @@ package es.capgemini.pfs.primaria;
 /**
  * Constantes para los business operations
  * relacionadas con Persona, Cliente, Contrato, Antecedente, Titulo.
- * @author Andrés Esteban
+ * @author Andrï¿½s Esteban
  *
  */
 public final class PrimariaBusinessOperation {
@@ -216,6 +216,7 @@ public final class PrimariaBusinessOperation {
      ** CirbeManager.
      ****************************************************************************/
     public static final String BO_CIRBE_MGR_GET_FECHAS_EXTRAC_PERSONA = "cirbeManager.getFechasExtraccionPersona";
+    public static final String BO_CIRBE_MGR_GET_FECHAS_ACTUALIZACION_PERSONA = "cirbeManager.getFechasActualizacionPersona";
     public static final String BO_CIRBE_MGR_GET_FECHAS_EXTRAC_PERSONA_DESDE = "cirbeManager.getFechasExtraccionPersonaDesde";
     public static final String BO_CIRBE_MGR_GET_FECHAS_EXTRAC_PERSONA_HASTA = "cirbeManager.getFechasExtraccionPersonaHasta";
     public static final String BO_CIRBE_MGR_GET_CIRBE_DATA = "cirbeManager.getCirbeData";

@@ -313,11 +313,11 @@ function(entidad,page){
 		});
 	};
 	
-	var devolverExpedienteDeSANCaENSAN = function(params, rta){
+	var devolverExpedienteDeSANCaENSAN = function(params, rta, isSupervisor){
 		page.webflow({
 				flow:  'expediente/devolverExpedienteDeSANCaENSAN'
 				,eventName: 'devolverExpediente'
-				,params:{id:params, respuesta:rta}
+				,params:{id:params, respuesta:rta, isSupervisor:isSupervisor}
 				,success: function(){
 					Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="dc.devueltoAEnSancion" text="**Devuelto a En Sanción" />', entidad.refrescar());
 				},error:function(){

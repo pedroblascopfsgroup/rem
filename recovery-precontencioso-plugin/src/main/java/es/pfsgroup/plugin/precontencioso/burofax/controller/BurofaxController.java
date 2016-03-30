@@ -962,7 +962,7 @@ public class BurofaxController {
 				if(!Checks.esNulo(envioBurofax)){
 					String nombreFichero = envioIntegracion.getNombreFichero(); 
 					if(Checks.esNulo(nombreFichero)){
-						nombreFichero = "BUROFAX-"+envioIntegracion.getCliente().replace(",","").replace(".","").trim()+".pdf";
+						nombreFichero = "BUROFAX-"+idEnvio+".pdf";
 					}
 					fileitem = burofaxManager.generarBurofaxPDF(envioBurofax, nombreFichero);
 					fileitem.setFileName(nombreFichero);

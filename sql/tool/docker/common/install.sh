@@ -16,14 +16,21 @@ OPTION_REMOVE=$1
 shift
 DOCKER_INNER_ERROR_LOG=$1
 shift
+OPTION_IGNORE_DUMP=$1
+shift
 OPTIONAL_IMPDP_OPTIONS=$1
 shift
 
 if [[ "x$CURRENT_DUMP_NAME" == "x" || "x$STARTING_TAG" == "x" || "x$CONTAINER_NAME" == "x" 
 		|| "x$CUSTOM_NLS_LANG" == "x" || "x$CUSTOM_LANG" == "x" || "x$OPTION_RANDOM_DUMP" == "x" || "x$OPTION_REMOVE" == "x"
-		|| "x$DOCKER_INNER_ERROR_LOG" == "x" ]]; then
-	echo "ERROR: No se puede continuar con la instalación de la BD"
-	echo "ERROR: Uso: $0 CURRENT_DUMP_NAME STARTING_TAG CONTAINER_NAME CUSTOM_NLS_LANG OPTION_RANDOM_DUMP OPTION_REMOVE DOCKER_INNER_ERROR_LOG"
+		|| "x$DOCKER_INNER_ERROR_LOG" == "x" || "x$OPTION_IGNORE_DUMP" == "x" ]]; then
+	echo "[ERROR]: No se puede continuar con la instalación de la BD"
+	echo "[ERROR]: Uso: $0 CURRENT_DUMP_NAME STARTING_TAG CONTAINER_NAME CUSTOM_NLS_LANG OPTION_RANDOM_DUMP OPTION_REMOVE DOCKER_INNER_ERROR_LOG OPTION_IGNORE_DUMP"
+	exit 1
+fi
+
+if [[ "$OPTION_IGNORE_DUMP" != "yes" && "$OPTION_IGNORE_DUMP" != "no" ]]; then
+	echo "[ERROR]: valor incorrecto para OPTION_IGNORE_DUMP: $OPTION_IGNORE_DUMP"
 	exit 1
 fi
 
@@ -35,7 +42,7 @@ INNER_DUMP_DIRECTORY=/DUMP
 DUMP_FILE_OUT_DOCKER=DUMP/$CURRENT_DUMP_NAME
 if [[ "x$(hostname)" != "x$CONTAINER_NAME" ]]; then
 	docker exec $CONTAINER_NAME /setup/install.sh "$CURRENT_DUMP_NAME" "$STARTING_TAG" "$CONTAINER_NAME" "$CUSTOM_NLS_LANG" \
-				"$CUSTOM_LANG" "$OPTION_RANDOM_DUMP" "$OPTION_REMOVE" "$DOCKER_INNER_ERROR_LOG" "$OPTIONAL_IMPDP_OPTIONS"
+				"$CUSTOM_LANG" "$OPTION_RANDOM_DUMP" "$OPTION_REMOVE" "$DOCKER_INNER_ERROR_LOG" "$OPTION_IGNORE_DUMP" "$OPTIONAL_IMPDP_OPTIONS"
 	exit $?
 fi
 
@@ -155,9 +162,13 @@ if [[ -f $DUMP_FILE_PATH  ]]; then
 	fi
 
 	if [[ $? -ne 0 ]]; then
-		echo "<Docker [$CONTAINER_NAME]>:[ERROR] Ha ocurrido un error al importar el dump"
-		echo -e "\t\t Tool Version = $(cat /setup/version.txt)"
-		exit 1
+		if [[ "$OPTION_IGNORE_DUMP" != "yes" ]]; then
+			echo "<Docker [$CONTAINER_NAME]>:[ERROR] Ha ocurrido un error al importar el dump"
+			echo -e "\t\t Tool Version = $(cat /setup/version.txt)"
+			exit 1
+		else
+			echo "<Docker [$CONTAINER_NAME]>:[WARNING] Ha ocurrido algún error al importar el dump"
+		fi
 	fi
 
 	if [[ "x$OPTION_REMOVE" == "xyes" ]]; then

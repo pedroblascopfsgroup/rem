@@ -64,13 +64,13 @@ function show_help () {
 	echo "                  por defecto $ORADATA_HOST_DIR. Sólo sirve si hacemos un -remove o -impdp"
 	echo "    -workspace=: Cambia el workspace de la tool. Esta opción es útil si montamos una"
 	echo "                 Pipeline de integración contínua, en caso contrario no tiene sentido especificarlo"
-	echo "     -statistics: Actualiza las estadísticas en la BD"
-	echo "     -port=: Puerto por el que escuchará la BBDD"
-	echo "     -name=: Nombre que le queremos dar al contenedor"
+	echo "    -statistics: Actualiza las estadísticas en la BD"
+	echo "    -port=: Puerto por el que escuchará la BBDD"
+	echo "    -name=: Nombre que le queremos dar al contenedor"
 	echo ""
 	echo " OPCIONES MODO 1. Línea base."
 	echo "    -remove: Indicar este parámetro si se quiere volver a generar el contenedor, implica reiniciar"
-	echo "    -ignoredmp: Continua la ejecución si no encentra el DUMP"
+	echo "    -ignoredmp: Continua la ejecución si no encentra el DUMP o si ocurren errores al importar"
 	echo "    -dmpdir=: Especifica dónde está el directorio de los DUMPS"
 	echo "                  por defecto $DUMP_DIRECTORY"
 	echo "    -errorlog=: Fichero en el que queremos volcar la salida de los scripts DxL"
@@ -143,6 +143,8 @@ if [[ "x$@" != "x" ]]; then
 			OPTION_PORT=$(echo $op | cut -f2 -d=)
 		elif [[ "x$op" == x-name=* ]]; then
 			CONTAINER_NAME=$(echo $op | cut -f2 -d=)
+		else
+			echo "[WARNING] desconozco esta opción: $op"
 		fi
 	done
 else
@@ -376,7 +378,7 @@ function show_install_info () {
 
 function do_install () {
 	$(pwd)/install.sh "$CURRENT_DUMP_NAME" "$STARTING_TAG" "$CONTAINER_NAME" "$CUSTOM_NLS_LANG" "$CUSTOM_LANG" "$OPTION_RANDOM_DUMP" "$OPTION_REMOVE" \
-						"$DOCKER_INNER_ERROR_LOG" "$OPTIONAL_IMPDP_OPTIONS"
+						"$DOCKER_INNER_ERROR_LOG" "$OPTION_IGNORE_DUMP" "$OPTIONAL_IMPDP_OPTIONS"
 }
 
 function restore_or_confirm_flahsback () {
@@ -506,6 +508,7 @@ else
 		package_sql $STARTING_TAG $CLIENTE
 		$(pwd)/execute-scripts.sh $CONTAINER_NAME $DOCKER_INNER_ERROR_LOG
         if [[ $? != 0 ]]; then
+        	echo "[ERROR] Puedes consultar el log en $VAR_OUTTER_ERROR_LOG"
             exit 1
         fi
 	fi

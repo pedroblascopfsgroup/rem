@@ -21,4 +21,4 @@ if [[ ! -d $DMP_DIR ]]; then
 	chmod 777 $DMP_DIR
 fi
 
-./run.sh -remove -statistics -dmpdir=$DMP_DIR -oradata=$DATA_DIR -workspace=$WS_DIR -errorlog=$BASE/error.log
+./run.sh -remove -statistics -ignoredmp -dmpdir=$DMP_DIR -oradata=$DATA_DIR -workspace=$WS_DIR -errorlog=$BASE/error.log

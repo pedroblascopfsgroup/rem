@@ -115,7 +115,19 @@ inner join MIG_PROPUESTAS_CABECERA cab on cab.id_propuesta = tea.id_propuesta
     
     DBMS_OUTPUT.PUT_LINE('[INFO] Insertamos tabla temporal.... '||TABLA||' -----.... ' );
     
-   
+      --configura V_USER_ID
+      BEGIN
+		V_MSQL:= 'SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = ''PROYFORMS''';
+			EXECUTE IMMEDIATE V_MSQL INTO V_USER_ID;
+		EXCEPTION
+			WHEN NO_DATA_FOUND THEN
+				V_MSQL:= 'SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_ID = (SELECT MAX(USU_ID) FROM '||V_ESQUEMA_M||'.USU_USUARIOS)';
+			EXECUTE IMMEDIATE V_MSQL INTO V_USER_ID;
+      END;
+      DBMS_OUTPUT.put_line('=========V_USER_ID: ' ||V_USER_ID||'========');
+
+    
+    
    -- SIN ESTADO "0" / FONDOS PROPIOS "6" (10.598  Filas)
    OPEN C_CONTRATOS_FP;
    LOOP
@@ -126,17 +138,7 @@ inner join MIG_PROPUESTAS_CABECERA cab on cab.id_propuesta = tea.id_propuesta
         DBMS_OUTPUT.PUT_LINE('Contrato para trabajar como Fondos Propios... CNT [ ' || V_FOND_PROP.CNT_CONTRATO || ' ], EXP ['|| V_FOND_PROP.EXP_ID ||'].' );
         
       
-      --configura V_USER_ID
-      BEGIN
-		V_MSQL:= 'SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = ''PROYFORMS''';
-			EXECUTE IMMEDIATE V_MSQL INTO V_USER_ID;
-		EXCEPTION
-			WHEN NO_DATA_FOUND THEN
-				V_MSQL:= 'SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_ID = (SELECT MAX(USU_ID) FROM '||V_ESQUEMA_M||'.USU_USUARIOS)';
-			EXECUTE IMMEDIATE V_MSQL INTO V_USER_ID;
-    END;
-      DBMS_OUTPUT.put_line('=========V_USER_ID: ' ||V_USER_ID||'========');
-        
+      
         /*
         Valores a configurarar:> 
             -- DD_EST_ID => CE Completar Expediente (3) [********* 101 Formalizar Propuesta. (Estado del Itinerario)]

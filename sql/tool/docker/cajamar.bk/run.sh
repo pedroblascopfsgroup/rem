@@ -1,35 +1,42 @@
 #!/bin/bash
 
-$(pwd)/$(dirname $0)/showbanner.sh
-echo ""
-
-# Se esperan  que estén cargadas las siguientes variables en el contexto del bash
-# Oblitatorias
-# - PROJECT_BASE
-# - CLIENTE
-# - CUSTOM_NLS_LANG
-# - CUSTOM_LANG
-# - CURRENT_DUMP_NAME
-# - STARTING_TAG
-# - CONTAINER_NAME
-# Opcionales
-# - OPTIONAL_IMPDP_OPTIONS
-
-if [[ "x$PROJECT_BASE" == "x" || "x$CLIENTE" == "x" || "x$CUSTOM_NLS_LANG" == "x" || "x$CUSTOM_LANG" == "x" 
-	|| "x$CURRENT_DUMP_NAME" == "x" || "x$STARTING_TAG" == "x" || "x$CONTAINER_NAME" == "x" ]]; then
-	echo "[ERROR] No se puede iniciar por no encontrar la configuración en las variables de entorno."
-	exit 1
-fi
+# Cambios desde el refactor
+# - ARQ-438 Mejorar DB CI con nuevo script de Pitertul
 
 
+#
+# Formas de ejecutar la utilidad
+#
+# No re-generar la BD
+# ./run.sh | ./run.sh -help: Mostramos mensaje de ayuda y salimos
+# ./run.sh -restart: Reiniciar la BD
+#
+# Regenerar en MODO 1: línea base
+# ./run.sh -remove [-oradata=<directorio datafiles>] [-ignoredmp] [-dmpdir=<directorio dumps>]
+#
+# Regenerar en MODO 2: importar un DUMP aleatorio
+# ./run.sh -impdp=<fichero_dump_a_importar> [-oradata=<directorio datafiles>]
+
+## Configuración del cliente y Locales
+CLIENTE=CAJAMAR
+CUSTOM_NLS_LANG=SPANISH_SPAIN.AL32UTF8
+CUSTOM_LANG=es_ES.UTF-8
+
+CONTAINER_NAME=cajamar-bbdd
 IMAGE_NAME=filemon/oracle_11g
+DOCKER_PS="$(docker ps -a | grep $CONTAINER_NAME)"
 SQL_PACKAGE_DIR=$(pwd)/../../../tool/tmp/package
 DUMP_DIRECTORY=$(pwd)/DUMP
 ORADATA_HOST_DIR=~/oradata-$CONTAINER_NAME
 SET_ENV_FILE=~/setEnvGlobal$CLIENTE.sh
-WORKSPACE_DIR=$PROJECT_BASE/.workspace
+WORKSPACE_DIR=$(pwd)/.workspace
+
+# Estado de la BD
+CURRENT_DUMP_NAME=export_cajamar_19Oct2015.dmp
+STARTING_TAG=cj-dmp-19oct
 TAG_LISTS_FILE=$(pwd)/../../../../tags-list.txt
 PACKAGE_TAGS_DIR=$(pwd)/../../../../package-tags
+PREVIOUS_SCRIPTS_DIR=$(pwd)/../../../9.1/cajamar/00-createEnv4Test
 
 OPTION_REMOVE=no
 OPTION_IGNORE_DUMP=no
@@ -50,10 +57,9 @@ VAR_DB_EXISTS=no
 
 function show_help () {
 	echo "Uso: "
-	echo " MODO 1: $0 [-help] [-remove] [-restart] [-oradata=<directorio datafiles>] [-port=<oracle port>] [-name=<containte name>]"
-	echo "            [-ignoredmp] [-dmpdir=<directorio dumps>] [-errorlog=<fichero_logs>] [-piterdebug]"
-	echo " MODO 2: $0 -impdp=<fichero_dump_a_importar> [-remove] [-help] [-oradata=<directorio datafiles>] [-port=<oracle port>]"
-	echo "            [-name=<containte name>]"
+	echo " MODO 1: $0 [-help] [-remove] [-restart] [-oradata=<directorio datafiles>] [-port=<oracle port>] [-ignoredmp] [-ignoredmp]"
+	echo "            [-dmpdir=<directorio dumps>] [-errorlog=<fichero_logs>] [-piterdebug]"
+	echo " MODO 2: $0 -impdp=<fichero_dump_a_importar> [-remove] [-help] [-oradata=<directorio datafiles>]"
 	echo " MODO 3: $0 -flashback [-help]"
 	echo " MODO 4: $0 -scripts [-help] [-errorlog=<fichero_logs>] [-piterdebug] [-fromtag=<tag_de_partida>]"
 	echo " -------------------------------------------------------------------------------------------------------------------"
@@ -66,7 +72,6 @@ function show_help () {
 	echo "                 Pipeline de integración contínua, en caso contrario no tiene sentido especificarlo"
 	echo "     -statistics: Actualiza las estadísticas en la BD"
 	echo "     -port=: Puerto por el que escuchará la BBDD"
-	echo "     -name=: Nombre que le queremos dar al contenedor"
 	echo ""
 	echo " OPCIONES MODO 1. Línea base."
 	echo "    -remove: Indicar este parámetro si se quiere volver a generar el contenedor, implica reiniciar"
@@ -150,8 +155,6 @@ else
 	show_help
 fi
 
-DOCKER_PS="$(docker ps -a | grep $CONTAINER_NAME)"
-
 cd $(pwd)/$(dirname $0)
 ##
 # $1 -> tag
@@ -162,17 +165,10 @@ function package_sql () {
 		local package_script=./sql/tool/package-scripts-from-tag.sh
 		local tag_or_list=$1
 		local cliente=$2
-		POST_PKG_SCRIPTS_DIR=$WORKSPACE_DIR/post-package
 		rm -Rf $WORKSPACE_DIR/package*
 		rm -Rf $SQL_PACKAGE_DIR
 		rm -Rf $PACKAGE_TAGS_DIR
-		rm -Rf $POST_PKG_SCRIPTS_DIR
 		cd ../../../..
-
-		if [[ -d $PROJECT_BASE/post-package ]]; then
-			cp -R $PROJECT_BASE/post-package $WORKSPACE_DIR
-			chmod -R 777 $POST_PKG_SCRIPTS_DIR
-		fi
 
 		if [[ -f $TAG_LISTS_FILE ]]; then
 			tag_or_list=$(basename $TAG_LISTS_FILE)
@@ -217,20 +213,17 @@ function package_sql () {
 
 		cp -R $SQL_PACKAGE_DIR $ws_package_dir
 
-		if [[ -d $POST_PKG_SCRIPTS_DIR ]]; then
-			echo "[INFO]: Ejecutando scripts post-empaquetado"
-			echo "[INFO]: Exportando variables [ws_package_dir] "
-			export ws_package_dir
-			for script in $POST_PKG_SCRIPTS_DIR/*; do
-				echo "[INFO]: Ejecutando $(basename $script)"
-				chmod +x $script
-				$script
-				if [[ $? -ne 0 ]]; then
-					echo "[ERRR] Fallo al ejecutar $script"
-					exit 1
-				fi
-			done
-		fi
+        #Previous scripts after dump
+        cp $PREVIOUS_SCRIPTS_DIR/after_cj-dmp-19oct_previous_package.sh $ws_package_dir/
+        cp $PREVIOUS_SCRIPTS_DIR/DML_361_MASTER_DAT_JADR_ARREGLA_SECUENCIAS.sql $ws_package_dir/
+        cp $PREVIOUS_SCRIPTS_DIR/DML_360_ENTITY01_DAT_JADR_ARREGLA_SECUENCIAS.sql $ws_package_dir/
+        cp $PREVIOUS_SCRIPTS_DIR/DML_008_ENTITY_LIMPIEZA_TABLAS_RESIDUALES_ARQUETIPOS.sql $ws_package_dir/
+        cp $PREVIOUS_SCRIPTS_DIR/DML_009_MASTER_CARGA_TODAS_FUNCIONES.sql $ws_package_dir/
+        cp $PREVIOUS_SCRIPTS_DIR/DML_010_ENTITY_CARGA_TODOS_PERFILES.sql $ws_package_dir/
+
+        # FIX: Bug de la versión que tenemos de Oracle. Problema con MERGE
+        # ORA-00600: internal error code, arguments: [kkmupsViewDestFro_4], [76107],[75624], [], [], [], [], [], [], [], [], []
+        sed -e 's/DD_SCL_ID NUEVO_DD_SCL_ID/DD_SCL_ID NUEVO_DD_SCL_ID, ROWNUM/g' -i $ws_package_dir/**/**/scripts/DML_382_ENTITY01_DATJPB_MergeSCE_SCL_en_PER_PERSONAS*.sql
 
 		chmod -R go+w $ws_package_dir
 		for sh in $(find $ws_package_dir -name '*.sh'); do
@@ -251,22 +244,7 @@ function run_container () {
 	mkdir -p $WORKSPACE_DIR
 	rm -Rf $WORKSPACE_DIR/*
 	cp $(pwd)/*.sh $WORKSPACE_DIR && chmod ugo+rx $WORKSPACE_DIR/*.sh
-	cp -R $PROJECT_BASE/SQL-SCRIPTS $WORKSPACE_DIR
-	if [[ -d $PROJECT_BASE/pre-scripts ]]; then
-		cp -R $PROJECT_BASE/pre-scripts $WORKSPACE_DIR
-		chmod 777 $WORKSPACE_DIR/pre-scripts
-		chmod +x $WORKSPACE_DIR/pre-scripts/*.sh
-	fi
-	if [[ -d $PROJECT_BASE/post-scripts ]]; then 
-		cp -R $PROJECT_BASE/post-scripts $WORKSPACE_DIR
-		chmod 777 $WORKSPACE_DIR/post-scripts
-		chmod +x $WORKSPACE_DIR/post-scripts/*.sh
-	fi
-	scripts_dir=$WORKSPACE_DIR/SQL-SCRIPTS/
-	cp $(pwd)/sql-files/*.sql $scripts_dir
-	chmod ugo+r $scripts_dir/*
-	$(pwd)/showversion.sh > $WORKSPACE_DIR/version.txt
-	chmod go+r $WORKSPACE_DIR/version.txt
+	cp -R $(pwd)/SQL-SCRIPTS $WORKSPACE_DIR && chmod ugo+r $WORKSPACE_DIR/SQL-SCRIPTS/*
 	echo $WORKSPACE_DIR > $WORKSPACE_DIR/workspace.path
 
 	if [[ "x$VAR_OUTTER_ERROR_LOG" != "x" ]]; then
@@ -295,6 +273,7 @@ function run_container () {
 				$(which tree) $ORADATA_HOST_DIR
 			fi
 			exit 1
+
 	fi
 	touch $ORADATA_HOST_DIR/test
 	if [[ $? -eq 0 ]]; then
@@ -308,14 +287,13 @@ function run_container () {
 		package_sql $STARTING_TAG $CLIENTE
 		VAR_SCRIPTS_DONE=yes
 	fi
-	echo -n "[INFO]: $CONTAINER_NAME: Generando el contenedor a partir de la imágen [$IMAGE_NAME]: "
+	echo -n "[INFO]: $CONTAINER_NAME: Generando el contenedor a partir de la imagen [$IMAGE_NAME]: "
 	docker run -d -p=22 -p $OPTION_PORT:1521 \
 				-v /etc/localtime:/etc/localtime:ro \
 				-v $WORKSPACE_DIR:/setup $errorlog_volume \
 				-v $DUMP_DIRECTORY:/DUMP \
 				-v $ORADATA_HOST_DIR:/oradata \
 				-h $CONTAINER_NAME --name $CONTAINER_NAME $IMAGE_NAME
-
 }
 
 function remove_container () {
@@ -375,8 +353,7 @@ function show_install_info () {
 
 
 function do_install () {
-	$(pwd)/install.sh "$CURRENT_DUMP_NAME" "$STARTING_TAG" "$CONTAINER_NAME" "$CUSTOM_NLS_LANG" "$CUSTOM_LANG" "$OPTION_RANDOM_DUMP" "$OPTION_REMOVE" \
-						"$DOCKER_INNER_ERROR_LOG" "$OPTIONAL_IMPDP_OPTIONS"
+	$(pwd)/install.sh $CURRENT_DUMP_NAME $STARTING_TAG $CONTAINER_NAME $CUSTOM_NLS_LANG $CUSTOM_LANG $OPTION_RANDOM_DUMP $OPTION_REMOVE $DOCKER_INNER_ERROR_LOG
 }
 
 function restore_or_confirm_flahsback () {
@@ -436,11 +413,6 @@ else
 	echo "[WARNING] Usa el parámetro -workspace para ocultar este aviso."
 fi
 
-if [[ ! -d $WORKSPACE_DIR ]]; then
-	mkdir $WORKSPACE_DIR
-	chmod go+rwx $WORKSPACE_DIR
-fi
-
 if [[ "x$VAR_OUTTER_ERROR_LOG" != "x" ]]; then
 	outter_log_dir=$(dirname $VAR_OUTTER_ERROR_LOG)
 	if [[ ! -f VAR_OUTTER_ERROR_LOG ]]; then
@@ -454,8 +426,8 @@ if [[ "x$DOCKER_PS" == "x" ]]; then
 	# Si el contenedor no existe
 	OPTION_REMOVE=yes
 	check_dump
-	echo "[INFO]: El contenedor está parado. Se va a generar desde cero a partir de la imágen."
-	echo "[INFO]: Si la imágen $IMAGE_NAME no existe en el repositorio Docker local puede que tarde un poco en descargarse."
+	echo "[INFO]: El contenedor está parado. Se va a generar desde cero a partir de la imagen."
+	echo "[INFO]: Si la imagen $IMAGE_NAME no existe en el repositorio Docker local puede que tarde un poco en descargarse."
 	run_container
 	if [[ $? -eq 0 ]]; then
 		do_install
@@ -483,7 +455,7 @@ else
 			if [[ $? -eq 0 ]]; then
 				do_install
 				if [[ $? -ne 0 ]]; then
-					echo "[ERROR]: Han ocurrido errores al generar $CONTAINER_NAME"
+					echo "[ERROR]: No se ha podido generar $CONTAINER_NAME"
 					exit 1
 				fi
 			fi

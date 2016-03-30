@@ -195,6 +195,12 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
             } else if (DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE.equals(codigoEstado)) {
                 subtipoTarea = SubtipoTarea.CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_RE;
                 timerName = ExpedienteBPMConstants.TIMER_TAREA_RE;
+            } else if (DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION.equals(codigoEstado)) {
+                subtipoTarea = SubtipoTarea.CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_ENSAN;
+                timerName = ExpedienteBPMConstants.TIMER_TAREA_ENSAN;
+            } else if (DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO.equals(codigoEstado)) {
+                subtipoTarea = SubtipoTarea.CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_SANC;
+                timerName = ExpedienteBPMConstants.TIMER_TAREA_SANC;
             } else {
                 subtipoTarea = SubtipoTarea.CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_DC;
                 timerName = ExpedienteBPMConstants.TIMER_TAREA_DC;
@@ -533,6 +539,10 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                 param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_RE);
             } else if (DDEstadoItinerario.ESTADO_DECISION_COMIT.equals(codigoEstado)){
                 param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC);
+            } else if (DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION.equals(codigoEstado)){
+                param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_ENSAN);
+            } else if (DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO.equals(codigoEstado)){
+                param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_SANC);
             }else if(DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA.equals(codigoEstado)){
             	param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_FP);
             }
@@ -1139,6 +1149,8 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_CE_VENCIDA)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_RE_VENCIDA)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_DC_VENCIDA)
+                                || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_ENSAN_VENCIDA)
+                                || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_SANC_VENCIDA)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_EXPEDIENTE_CERRADO)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_SOLICITUD_CANCELACION_EXPEDIENTE_RECHAZADA)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_CE)
@@ -1148,6 +1160,7 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_GESTOR_PROPUESTA_SUBASTA)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(EXTSubtipoTarea.CODIGO_NOTIFICACION_ACUERDOS)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(EXTSubtipoTarea.CODIGO_NOTIFICACION_EXPEDIENTE_NUEVO_RIESGO)
+                                || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(EXTSubtipoTarea.CODIGO_NOTIFICACION_EXPEDIENTE_SCORING_GRAVE)
                                ) {
                             param.put("fuerzaChkLeida", "true");
                         }

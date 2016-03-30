@@ -132,6 +132,7 @@
 						<value>823</value>
 						<value>824</value>
 						<value>825</value>
+						<value>PCO_DPREDOC</value>						
 						<value>PCO_DPREDOC</value>
 						
 						<!-- HRE-BCC -->
@@ -254,6 +255,8 @@
 				<entry key="ABRIR_EXP">
 					<set>
 						<value>FZAR_PPUESTA</value>
+						<value>ENSAN</value>
+						<value>SANC</value>
 					</set>
 				</entry>
 				<entry key="ABRIR_PER">

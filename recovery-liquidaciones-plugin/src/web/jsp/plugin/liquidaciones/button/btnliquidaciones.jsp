@@ -8,7 +8,7 @@ new Ext.Button({
 	,handler : function() {
 		var w = app.openWindow({
 			flow : 'plugin.liquidaciones.introducirdatos'
-			,width:700
+			,width:950
 			,title : '<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Liquidaciones" />' 
 			,params : {idAsunto:"${asunto.id}"}
 		});

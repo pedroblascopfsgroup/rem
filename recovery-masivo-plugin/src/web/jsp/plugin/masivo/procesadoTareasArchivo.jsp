@@ -438,8 +438,10 @@ var creaVentanaUpload = function(){
 		        ,buttons: [{
 		            text: 'Subir',
 		            handler: function(){
+		            if(upload.getForm().isValid()){
 		            controlador.nuevoProceso(comboTiposOperacion.getValue(),upload.getForm(), fn_nuevoProcesoOk);
 		            win.hide();
+		            }
 		            }
 		        },{
 		            text: 'Cancelar',

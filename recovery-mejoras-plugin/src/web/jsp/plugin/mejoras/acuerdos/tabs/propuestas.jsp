@@ -489,7 +489,11 @@
 	panel.setVisibleTab = function(data){
 		var visible = entidad.get("data").toolbar.tipoExpediente != 'REC';
 		<sec:authorize ifAnyGranted="PERSONALIZACION-BCC, PERSONALIZACION-HY">
-			visible = entidad.get("data").toolbar.tipoExpediente === 'RECU';
+			if(entidad.get("data").toolbar.tipoExpediente == 'RECU' || entidad.get("data").toolbar.tipoExpediente === 'GESDEU'){
+				visible = true;
+			}else{
+				visible = false;
+			}
 		</sec:authorize>
 		return visible;
    	}

@@ -169,7 +169,7 @@ function(entidad,page){
 				handler=function(btn, rta){
 					if (btn== 'ok'){
 						maskAll();
-						devolverExpedienteDeSANCaENSAN(toolbar.getIdExpediente(), rta);
+						devolverExpedienteDeSANCaENSAN(toolbar.getIdExpediente(), rta, toolbar.isSupervisor());
 					}
 				};				
 				app.prompt(titulo, texto,handler);
@@ -853,6 +853,7 @@ function(entidad,page){
 	var EXP_PROPUESTO =  '<fwk:const value="es.capgemini.pfs.expediente.model.DDEstadoExpediente.ESTADO_EXPEDIENTE_PROPUESTO" />';
 	var EXP_BLOQUEADO =  '<fwk:const value="es.capgemini.pfs.expediente.model.DDEstadoExpediente.ESTADO_EXPEDIENTE_BLOQUEADO" />';
 	var EXP_CANCELADO =  '<fwk:const value="es.capgemini.pfs.expediente.model.DDEstadoExpediente.ESTADO_EXPEDIENTE_CANCELADO" />';
+	var EXP_DECIDIDO =  '<fwk:const value="es.capgemini.pfs.expediente.model.DDEstadoExpediente.ESTADO_EXPEDIENTE_DECIDIDO" />';
     
 	toolbar.getIdExpediente = function(){
 		var data = entidad.get("data");
@@ -1008,9 +1009,6 @@ function(entidad,page){
 				case 'SANC' :
 					if(esGestorSupervisorDeFase){
 						for(var i = 0; i < estados.length; i++){
-							if(estados[i].codigo == 'FP'){
-								showHide(estadoExpediente ==  EXP_ACTIVO ,'expediente-accion13-elevarFormalizarPropuesta');
-							}
 												
 							if(estados[i].codigo == 'CE')
 							{
@@ -1058,7 +1056,7 @@ function(entidad,page){
 				showHide(true, 'expediente-accion6-cancelacionExpediente');
 			}
 		}
-		if (entidad.getData('esSupervisor')  && ([EXP_ACTIVO	, EXP_PROPUESTO, EXP_CONGELADO, EXP_BLOQUEADO].indexOf(estadoExpediente)>=0) ){
+		if (entidad.getData('esSupervisor')  && ([EXP_ACTIVO, EXP_PROPUESTO, EXP_CONGELADO, EXP_BLOQUEADO].indexOf(estadoExpediente)>=0) ){
 			if (solicitud!=null && solicitud!=""){	
 				showHide(true, 'expediente-accion5-verCancelacion');
 			}else{
@@ -1075,8 +1073,13 @@ function(entidad,page){
 		var tieneTareaNotificacion = entidad.getData('toolbar.tieneTareaNotificacion');
 
 		var prorroga = entidad.getData('toolbar.prorrogaPendiente');
+		
+		var estadosExpediente = [EXP_ACTIVO, EXP_CONGELADO];
+		
+		if (d.codigoEstado == 'FP')
+			estadosExpediente = [EXP_ACTIVO, EXP_CONGELADO, EXP_DECIDIDO];
 
-		if (tieneTareaNotificacion && permisosGestor && ([EXP_ACTIVO, EXP_CONGELADO].indexOf(estadoExpediente)>=0)){
+		if (tieneTareaNotificacion && permisosGestor && (estadosExpediente.indexOf(estadoExpediente)>=0)){
 			<sec:authorize ifAllGranted="SOLICITAR_PRORROGA">
 				if (prorroga==null || prorroga == ''){
 					if (solicitud==null || solicitud==""){
@@ -1087,8 +1090,13 @@ function(entidad,page){
 				}
 			</sec:authorize>
 		}
+		
+		estadosExpediente = [EXP_ACTIVO, EXP_CONGELADO, EXP_BLOQUEADO];
+		
+		if (d.codigoEstado == 'FP')
+			estadosExpediente = [EXP_ACTIVO, EXP_CONGELADO, EXP_BLOQUEADO, EXP_DECIDIDO];
 
-		if (tieneTareaNotificacion && permisosSupervisor && [EXP_ACTIVO, EXP_CONGELADO, EXP_BLOQUEADO].indexOf(estadoExpediente)>=0){
+		if (tieneTareaNotificacion && permisosSupervisor && estadosExpediente.indexOf(estadoExpediente)>=0){
 			<sec:authorize ifAllGranted="SOLICITAR_PRORROGA">
 				if (prorroga != null &&  prorroga != ''){
 					if (solicitud == null || solicitud == ''){
@@ -1097,8 +1105,12 @@ function(entidad,page){
 				}
 			</sec:authorize>
 		}
-	  
-		showHide( tieneTareaNotificacion && subMenusVisibles>0 && [EXP_ACTIVO, EXP_CONGELADO].indexOf(estadoExpediente)>=0, 'expediente-menu-prorroga');
+		
+		estadosExpediente = [EXP_ACTIVO, EXP_CONGELADO];
+		if (d.codigoEstado == 'FP')
+			estadosExpediente = [EXP_ACTIVO, EXP_CONGELADO, EXP_DECIDIDO];
+		
+		showHide( tieneTareaNotificacion && subMenusVisibles>0 && estadosExpediente.indexOf(estadoExpediente)>=0, 'expediente-menu-prorroga');
 
 		//menu de datosClientes
 		<sec:authorize ifAllGranted="EXCLUIR_CLIENTES">

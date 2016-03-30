@@ -101,7 +101,7 @@ var createCobroPagoTab=function(){
 	</c:if>
 	var panel = new Ext.Panel({
 		autoHeight : true
-		,title:'<s:message code="cobroPago.titulo" text="**Cobros/Pagos" />'
+		,title: '<s:message code="cobroPago.titulo" text="**Cobros/Pagos" />'
 		,autoWidth:true
 		,bodyStyle : 'padding:10px'
 		,border : false

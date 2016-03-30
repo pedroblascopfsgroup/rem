@@ -51,7 +51,11 @@ public class BPRProcedimientoDaoImpl extends
 		hb.appendWhere("p.auditoria.borrado = false");
 
 		if (!Checks.esNulo(dto.getAsunto())) {
-			hb.appendWhere(String.format("upper(asunto.nombre) LIKE '%%%s%%'", dto.getAsunto().toUpperCase()));
+			
+			hb.appendWhere("upper(asunto.nombre) LIKE '%'|| :asuNom ||'%'");
+			hb.getParameters().put("asuNom", dto.getAsunto().toUpperCase());
+			
+//			hb.appendWhere(String.format("upper(asunto.nombre) LIKE '%%%s%%'", dto.getAsunto().toUpperCase()));
 		}
 		
 		/*
@@ -151,14 +155,29 @@ public class BPRProcedimientoDaoImpl extends
 				"p.codigoProcedimientoEnJuzgado", "undefined".compareTo(dto.getCodigoProcedimientoEnJuzgado()) == 0 ? null : dto.getCodigoProcedimientoEnJuzgado());
 		
 		if (!Checks.esNulo(dto.getNumeroProcedimientoEnJuzgado()) && !Checks.esNulo(dto.getAnyoProcedimientoEnJuzgado())){
-			hb.appendWhere("p.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%-%"+dto.getAnyoProcedimientoEnJuzgado()+"%'" +
-							" or p.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%/%"+dto.getAnyoProcedimientoEnJuzgado()+"%'");
+			
+			hb.appendWhere("p.codigoProcedimientoEnJuzgado like '%'|| :numProJuz ||'%-%'|| :anyoProJuz ||'%' or p.codigoProcedimientoEnJuzgado like '%'|| :numProJuz ||'%/%'|| :anyoProJuz ||'%'");
+			hb.getParameters().put("numProJuz", dto.getNumeroProcedimientoEnJuzgado());
+			hb.getParameters().put("anyoProJuz", dto.getAnyoProcedimientoEnJuzgado());
+			
+			
+//			hb.appendWhere("p.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%-%"+dto.getAnyoProcedimientoEnJuzgado()+"%'" +
+//							" or p.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%/%"+dto.getAnyoProcedimientoEnJuzgado()+"%'");
 		}else if(!Checks.esNulo(dto.getNumeroProcedimientoEnJuzgado())){
-			hb.appendWhere("p.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%-%'" +
-							" or p.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%/%'");
+			
+			hb.appendWhere("p.codigoProcedimientoEnJuzgado like '%'|| :numProJuz ||'%-%' or p.codigoProcedimientoEnJuzgado like '%'|| :numProJuz ||'%/%'");
+			hb.getParameters().put("numProJuz", dto.getNumeroProcedimientoEnJuzgado());
+			
+//			hb.appendWhere("p.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%-%'" +
+//							" or p.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%/%'");
 		}else if(!Checks.esNulo(dto.getAnyoProcedimientoEnJuzgado())){
-			hb.appendWhere("p.codigoProcedimientoEnJuzgado like '%-%"+dto.getAnyoProcedimientoEnJuzgado()+"%'" +
-							" or p.codigoProcedimientoEnJuzgado like '%/%"+dto.getAnyoProcedimientoEnJuzgado()+"%'");
+			
+			hb.appendWhere("p.codigoProcedimientoEnJuzgado like '%'|| :anyoProJuz ||'%-%' or p.codigoProcedimientoEnJuzgado like '%'|| :anyoProJuz ||'%/%'");
+			hb.getParameters().put("anyoProJuz", dto.getAnyoProcedimientoEnJuzgado());
+
+			
+//			hb.appendWhere("p.codigoProcedimientoEnJuzgado like '%-%"+dto.getAnyoProcedimientoEnJuzgado()+"%'" +
+//							" or p.codigoProcedimientoEnJuzgado like '%/%"+dto.getAnyoProcedimientoEnJuzgado()+"%'");
 		}
 		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "p.tipoProcedimiento.tipoActuacion.id", dto
@@ -250,7 +269,8 @@ public class BPRProcedimientoDaoImpl extends
 			//hb.appendWhere("p in (select pce.procedimiento from ProcedimientoContratoExpediente pce where pce.expedienteContrato.contrato.nroContrato =" + dto.getCodigoContrato() + ")");
 			hb.appendWhere("p.id in" +
 					"					(select procedimiento from ProcedimientoContratoExpediente where expedienteContrato in" +
-					"							(select id from ExpedienteContrato where contrato.nroContrato ="+dto.getCodigoContrato()+")) ");
+					"							(select id from ExpedienteContrato where contrato.nroContrato = :codCon)) ");
+			hb.getParameters().put("codCon", dto.getCodigoContrato());
 		}
 		
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "per.persona.codClienteEntidad",
@@ -359,7 +379,11 @@ public class BPRProcedimientoDaoImpl extends
 		
 		//DEMANDADO
 		if(!Checks.esNulo(dto.getDemandado())){
-			hb.appendWhere("per.persona.id = '"+dto.getDemandado()+"'");
+			
+			hb.appendWhere("per.persona.id = '|| :proDem ||'");
+			hb.getParameters().put("proDem",dto.getDemandado());
+			
+//			hb.appendWhere("per.persona.id = '"+dto.getDemandado()+"'");
 		}
 		
 		Page pagina = HibernateQueryUtils.page(this, hb, dto);
@@ -425,9 +449,15 @@ public class BPRProcedimientoDaoImpl extends
 	@Override
 	public Collection<? extends Persona> getDemandadosInstant(String query, Usuario usuLogado) {
 		StringBuilder hql = new StringBuilder();
+		final HashMap<String, Object> params = new HashMap<String, Object>();
+		
         hql.append("from Persona p ");
         hql.append("where p.auditoria.borrado = 0 ");
-        hql.append("and p.nom50 like '%" + query.toUpperCase() + "%' ");
+        
+        hql.append("and p.nom50 like '%|| :proDem ||%'");
+        params.put("proDem",query.toUpperCase());
+        
+//        hql.append("and p.nom50 like '%" + query.toUpperCase() + "%' ");
         
         if(tieneFuncion(usuLogado, "SOLO_DEMANDADOS_CARTERIZADOS"))
         	esCarterizado(usuLogado, hql);

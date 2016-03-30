@@ -19,5 +19,11 @@
     	p:fileName="/WEB-INF/jsp/plugin/cajamar/listadoPreProyectado/busqueda/preProyectado.jsp" 
     	class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
     	p:permission="MENU-LIST-PROPRE"/>	
+    	
+	<!-- Botón generar liquidaciones avanzado -->
+	<bean p:entity="entidad.asunto.buttons.left.fast" p:name="btnLiquidaciones" p:order="14"
+		p:fileName="/WEB-INF/jsp/plugin/liquidaciones/avanzado/btnliquidacionesFast.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="GENERAR-LIQUIDACIONES"/>    	
 	
 </beans>

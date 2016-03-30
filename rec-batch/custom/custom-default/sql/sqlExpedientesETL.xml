@@ -11,8 +11,8 @@
 
          --Operacion_DDL.DDL_INDEX('DROP','IDX_BATCH_SV_DATOS_CNT_1');
          --Operacion_DDL.DDL_INDEX('DROP','IDX_BATCH_SV_DATOS_CNT_2');
-         EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_CNT_1 UNUSABLE';
-         EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_CNT_2 UNUSABLE';
+         --EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_CNT_1 UNUSABLE';
+         --EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_CNT_2 UNUSABLE';
         END;
         ]]>
     </entry>
@@ -101,8 +101,8 @@
         BEGIN
          --Operacion_DDL.DDL_INDEX('CREATE','IDX_BATCH_SV_DATOS_CNT_1');
          --Operacion_DDL.DDL_INDEX('CREATE','IDX_BATCH_SV_DATOS_CNT_2');
-         EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_CNT_1 REBUILD';
-         EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_CNT_2 REBUILD';
+         --EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_CNT_1 REBUILD';
+         --EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_CNT_2 REBUILD';
 
          --Operacion_DDL.DDL_Table('STATS','BATCH_SV_DATOS_GCL');
          --Operacion_DDL.DDL_Table('STATS','BATCH_SV_DATOS_CNT');
@@ -173,9 +173,10 @@
             COMMIT;
 
 
-            --** Contratos en expedientes de recuperacion o seguimiento (no libres)
-            ------------------------------------------------------------------------
+            --** Contratos que no se consideran por no estar libres
+            ---------------------------------------------------------
             Insert /*+append*/ INTO BATCH_SV_DATOS_CNT_EXP
+            -- Contratos en expedientes activos de recuperacion o seguimiento
             Select cex.exp_id, cex.cnt_id, tpx.dd_tpx_codigo
               From CEX_CONTRATOS_EXPEDIENTE cex
                Join EXP_EXPEDIENTES exp On cex.exp_id = exp.exp_id
@@ -188,21 +189,46 @@
                And cex.borrado = 0
                And exp.borrado = 0
             UNION
-            --** Contratos en expedientes con procedimiento en curso - en asunto
-            ---------------------------------------------------------------------
+            -- Litigios: Todos los contratos
             Select cex.exp_id, cex.cnt_id, dd_tpx_codigo
               From CEX_CONTRATOS_EXPEDIENTE cex
                Inner Join PRC_CEX pce On cex.cex_id = pce.cex_id
                Inner Join PRC_PROCEDIMIENTOS prc On pce.prc_id = prc.prc_id And prc.borrado = 0
                Inner Join ${master.schema}.DD_EPR_ESTADO_PROCEDIMIENTO epr On prc.dd_epr_id  = epr.dd_epr_id
-               Join EXP_EXPEDIENTES exp On cex.exp_id = exp.exp_id
-               Join DD_TPX_TIPO_EXPEDIENTE tpx On exp.dd_tpx_id = tpx.dd_tpx_id
+               Inner Join EXP_EXPEDIENTES exp On cex.exp_id = exp.exp_id
+               Inner Join DD_TPX_TIPO_EXPEDIENTE tpx On exp.dd_tpx_id = tpx.dd_tpx_id
+               Inner Join ASU_ASUNTOS asu On exp.exp_id = asu.exp_id
+               Inner Join ${master.schema}.DD_TAS_TIPOS_ASUNTO tas On asu.dd_tas_id = tas.dd_tas_id
              Where cex.borrado = 0
                And epr.dd_epr_codigo in (${ddEstadoProcedimiento.propuesto.codigo},
                                          ${ddEstadoProcedimiento.confirmado.codigo},
                                          ${ddEstadoProcedimiento.aceptado.codigo},
                                          ${ddEstadoProcedimiento.derivado.codigo},
                                          ${ddEstadoProcedimiento.enConformacion.codigo})
+               And prc.prc_prc_id is null
+               And tas.dd_tas_codigo <> '02'
+            UNION
+            -- Concursos: Solo contratos con riesgo directo de la persona concursada
+            Select cex.exp_id, cex.cnt_id, dd_tpx_codigo
+              From CEX_CONTRATOS_EXPEDIENTE cex
+               Inner Join PRC_CEX pce On cex.cex_id = pce.cex_id
+               Inner Join PRC_PROCEDIMIENTOS prc On pce.prc_id = prc.prc_id And prc.borrado = 0
+               Inner Join PRC_PER per On prc.prc_id = per.prc_id
+               Inner Join CPE_CONTRATOS_PERSONAS cpe On per.per_id = cpe.per_id And cex.cnt_id = cpe.cnt_id And cpe.borrado = 0
+               Inner Join DD_TIN_TIPO_INTERVENCION tin On cpe.dd_tin_id = tin.dd_tin_id And tin.dd_tin_titular = 1 And tin.borrado = 0
+               Inner Join ${master.schema}.DD_EPR_ESTADO_PROCEDIMIENTO epr On prc.dd_epr_id  = epr.dd_epr_id
+               Inner Join EXP_EXPEDIENTES exp On cex.exp_id = exp.exp_id
+               Inner Join DD_TPX_TIPO_EXPEDIENTE tpx On exp.dd_tpx_id = tpx.dd_tpx_id
+               Inner Join ASU_ASUNTOS asu On exp.exp_id = asu.exp_id
+               Inner Join ${master.schema}.DD_TAS_TIPOS_ASUNTO tas On asu.dd_tas_id = tas.dd_tas_id
+             Where cex.borrado = 0
+               And prc.prc_prc_id is null
+               And epr.dd_epr_codigo in (${ddEstadoProcedimiento.propuesto.codigo},
+                                         ${ddEstadoProcedimiento.confirmado.codigo},
+                                         ${ddEstadoProcedimiento.aceptado.codigo},
+                                         ${ddEstadoProcedimiento.derivado.codigo},
+                                         ${ddEstadoProcedimiento.enConformacion.codigo})
+               And tas.dd_tas_codigo = '02'
                And not exists (select exr.exp_id from EXR_EXPEDIENTE_RECOBRO exr where cex.exp_id = exr.exp_id);
 
             --LOG
@@ -1394,6 +1420,8 @@
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'PEX_PERSONAS_EXPEDIENTE Cargada',V_NUFILAS);
             COMMIT;
 
+        /* COMENTAMOS CORRECCION NOMBRE EXP >> CMREC-1316
+
             --** Correccion del nombre de expedientes de recuperacion
             MERGE INTO EXP_EXPEDIENTES old
             USING (
@@ -1418,6 +1446,9 @@
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'Revisa nombres de expediente',V_NUFILAS);
+
+        FIN COMENTARIO*/
+
             COMMIT;
         END;
         ]]>

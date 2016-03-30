@@ -10,7 +10,6 @@
 			<json:property name="descripcion" value="${evento.descripcion}"/>
 			<json:property name="fechaInicio" ><fwk:date value="${evento.tarea.fechaInicio}"/></json:property>
 			<json:property name="fechaFin" ><fwk:date value="${evento.tarea.fechaFin}"/></json:property>
-			<json:property name="tipoSolicitud" value="${evento.tarea.tipoSolicitud}" />
 			<json:property name="fechaVenc" ><fwk:date value="${evento.tarea.fechaVenc}"/></json:property>
 			<json:property name="alertada" value="${evento.tarea.alerta}"/>
 			<json:property name="finalizada" value="${evento.tarea.auditoria.borrado}"/>
@@ -21,6 +20,11 @@
 			<json:property name="codigoEntidadInformacion" value="${evento.tarea.tipoEntidad.codigo}" />
 			<json:property name="descripcionTarea" value="${evento.tarea.descripcionTarea}"/>
 			<json:property name="descripcionEntidad" value="${evento.tarea.descripcionEntidad}"/>
+			<json:property name="tipoSolicitud" value="${evento.tarea.tipoSolicitud}" />
+			<c:if test="${evento.tipoEvento == 1}">
+				<json:property name="descripcionEntidad" value="Anotacion"/>
+				<json:property name="tipoSolicitud" value="${evento.tipoAnotacion}" />
+			</c:if>
 			<json:property name="fcreacionEntidad" value="${evento.tarea.fechaCreacionEntidadFormateada}" />
 			<json:property name="codigoSituacion" value="${evento.tarea.situacionEntidad}" />
 			<json:property name="id" value="${evento.tarea.id}" />

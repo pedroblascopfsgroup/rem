@@ -276,7 +276,7 @@
 		}
 		]
 		,bbar : [
-			btnGuardar, btnCancelar
+			btnGuardar,btnCancelar
 		]
 	});
 	

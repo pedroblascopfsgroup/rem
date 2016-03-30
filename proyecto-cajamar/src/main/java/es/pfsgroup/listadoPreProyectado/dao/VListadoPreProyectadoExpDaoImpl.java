@@ -277,18 +277,14 @@ public class VListadoPreProyectadoExpDaoImpl extends AbstractEntityDao<VListadoP
 		// solo contratos activos
 		where.add(Restrictions.eq("estadoContrato.codigo", DDEstadoContrato.ESTADO_CONTRATO_ACTIVO));
 
-		// expedientes que no se encuentren en estado decidido y cancelado
+		// expedientes que no se encuentren en estado cancelado
 		where.add(
 				Restrictions.not(
-						Restrictions.in("estadoExpediente.codigo", new String[]{DDEstadoExpediente.ESTADO_EXPEDIENTE_DECIDIDO, DDEstadoExpediente.ESTADO_EXPEDIENTE_CANCELADO})));
+						Restrictions.in("estadoExpediente.codigo", new String[]{DDEstadoExpediente.ESTADO_EXPEDIENTE_CANCELADO})));
 
 		// solo expedientes de recuperacion
 		query.createAlias("expediente.tipoExpediente", "tipoExpediente");
 		where.add(Restrictions.eq("tipoExpediente.codigo", DDTipoExpediente.TIPO_EXPEDIENTE_RECUPERACION));
-
-		// solo expedientes que no tengan asunto
-		query.createAlias("expediente.asuntos", "asuntos", CriteriaSpecification.LEFT_JOIN);
-		where.add(Restrictions.isNull("asuntos.id"));
 
 		return where;
 	}

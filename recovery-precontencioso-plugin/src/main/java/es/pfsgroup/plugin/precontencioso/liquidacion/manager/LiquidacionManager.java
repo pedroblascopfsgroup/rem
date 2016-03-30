@@ -79,6 +79,12 @@ public class LiquidacionManager implements LiquidacionApi {
 		List<LiquidacionDTO> liquidacionesDto = LiquidacionAssembler.entityToDto(liquidaciones);
 		return liquidacionesDto;
 	}
+	
+	@Override
+	@BusinessOperation("plugin.liquidaciones.liquidacionManager.getLiquidacionByCnt")
+	public LiquidacionPCO getLiquidacionByCnt(Long cntId) {
+		return liquidacionDao.getLiquidacionDelContrato(cntId);
+	}
 
 	@Override
 	public LiquidacionDTO getLiquidacionPorId(Long id) {

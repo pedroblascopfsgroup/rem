@@ -120,6 +120,12 @@
         <appender-ref ref="email" />
     </logger>
     
+    <!-- Ejecutor reglas Arquetipos -->
+    <logger name="es.capgemini.pfs.ruleengine.executor.imp.ArquetiposRuleExecutor" additivity="false">
+        <level value="info"/> 
+        <appender-ref ref="console" />
+        <appender-ref ref="file" />
+    </logger>
     
     <!-- Descomentar para Ver las SQL-->
     <!-- 

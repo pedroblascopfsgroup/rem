@@ -22,6 +22,7 @@ public interface ExpedienteBPMConstants extends BPMContants {
     String STATE_FORMALIZAR_PROPUESTA = "FormalizarPropuesta";
     String STATE_EN_SANCION = "EnSancion";
     String STATE_SANCIONADO = "Sancionado";
+    String TRANSITION_APROBADOCONCONDICIONES = "AprobadoConCondiciones";
     String TRANSITION_ENVIARAREVISION = "EnviarARevision";
     String TRANSITION_ENVIARAFORMALIZARPROPUESTA = "EnviarAFormalizar";
     String TRANSITION_ENVIARADECISIONCOMITE = "EnviarAComite";

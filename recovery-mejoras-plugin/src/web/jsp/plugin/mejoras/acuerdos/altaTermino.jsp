@@ -29,7 +29,7 @@
 	var idTipoAcuerdoFondosPropios ='${idTipoAcuerdoFondosPropios}';
 	var idTipoAcuerdoRegulParcial = '${idTipoAcuerdoRegulParcial}';
 	
-	var datePaseMora = Date.parse(fechaPaseMora);
+	
 
     var tipoAcu = Ext.data.Record.create([
 		 {name:'id'}
@@ -362,15 +362,17 @@
 					
 					return false;
        			}
-       			
-       			<%--CPI - CMREC-2835 (Se comenta porque aún no tenemos claro de dnde obtener la fecha mora) 
-       			if(comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && dataSolucionPrevista!=null &&  dateSolucionPrevista > datePaseMora) {
+       			if(dateSolucionPrevista!=null &&  dateSolucionPrevista > fechaPaseMora ) {
+       				var date = new Date(parseFloat(fechaPaseMora));
+       				date = Ext.util.Format.date(date, "d/m/y");
 	       			Ext.Msg.show({
 				   		title:'Aviso',
-				   		msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.fondosPropios" text="**Fecha solicitud prevista debe ser menor a la fecha de pase a mora." />',
+				   		msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.fondosPropios" text="**Fecha solicitud prevista debe ser menor a la fecha de pase a mora " /> (' + date + ').',
 				   		buttons: Ext.Msg.OK
 					});
-	       		}else--%> if(comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && !Ext.getCmp('fechaSolucionPrevista').isValid() ) {
+					return false;
+	       		}  
+	       		if(comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && !Ext.getCmp('fechaSolucionPrevista').isValid() ) {
 	       			return false;
 	       		}else if(comboTipoAcuerdo.getValue() == idTipoAcuerdoRegulParcial && isNaN(parseFloat(dateSolucionPrevista))){
 	       			Ext.Msg.show({

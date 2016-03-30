@@ -220,17 +220,29 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     	resolucionesSinAdjunto.push({idResolucion:311, validateFunction:null});
     	resolucionesSinAdjunto.push({idResolucion:314, validateFunction:null});
     	resolucionesSinAdjunto.push({idResolucion:340, validateFunction:null});
-    	resolucionesSinAdjunto.push({idResolucion:325, validateFunction:null});
-    	resolucionesSinAdjunto.push({idResolucion:328, validateFunction:null});
-    	resolucionesSinAdjunto.push({idResolucion:331, validateFunction:null});
-    	resolucionesSinAdjunto.push({idResolucion:275, validateFunction:null});
-    	resolucionesSinAdjunto.push({idResolucion:268, validateFunction:null});
-    	resolucionesSinAdjunto.push({idResolucion:279, validateFunction:null});
-    	resolucionesSinAdjunto.push({idResolucion:282, validateFunction:null});
-    	resolucionesSinAdjunto.push({idResolucion:242, validateFunction:null});
-    	resolucionesSinAdjunto.push({idResolucion:249, validateFunction:null});
-    	resolucionesSinAdjunto.push({idResolucion:343, validateFunction:null});
-    	resolucionesSinAdjunto.push({idResolucion:206, validateFunction:function(v){
+        resolucionesSinAdjunto.push({idResolucion:328, validateFunction:null});
+        resolucionesSinAdjunto.push({idResolucion:331, validateFunction:null});
+        resolucionesSinAdjunto.push({idResolucion:268, validateFunction:null});
+        resolucionesSinAdjunto.push({idResolucion:279, validateFunction:null});
+        resolucionesSinAdjunto.push({idResolucion:282, validateFunction:null});
+        resolucionesSinAdjunto.push({idResolucion:343, validateFunction:null});
+
+        resolucionesSinAdjunto.push({idResolucion:325, validateFunction:function(v) {
+            // Valida la resolucion cuando el combo confirmacion tenga un valor NO o bien se haya adjuntado un archivo
+            return (Ext.getCmp('d_comboConfirmacion' + idf).getValue() == "02" || Ext.getCmp('file_upload_ok').getValue() != "");
+        }});
+
+        resolucionesSinAdjunto.push({idResolucion:275, validateFunction:function(v) {
+            // Valida la resolucion cuando el combo resultado tenga un valor NO o bien se haya adjuntado un archivo
+            return (Ext.getCmp('d_comboResultado' + idf).getValue() == "02" || Ext.getCmp('file_upload_ok').getValue() != "");
+        }});
+
+        resolucionesSinAdjunto.push({idResolucion:249, validateFunction:function(v) {
+            // Valida la resolucion cuando el combo vista tenga un valor NO o bien se haya adjuntado un archivo
+            return (Ext.getCmp('d_comboVista' + idf).getValue() == "02" || Ext.getCmp('file_upload_ok').getValue() != "");
+        }});
+
+        resolucionesSinAdjunto.push({idResolucion:206, validateFunction:function(v){
 			if(Ext.getCmp('d_comboResultado' + idf).getValue() == "02"){
 				return true;
 			}else if(Ext.getCmp('file_upload_ok').getValue() != ""){

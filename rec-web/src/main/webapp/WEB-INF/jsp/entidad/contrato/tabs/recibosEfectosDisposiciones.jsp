@@ -10,6 +10,8 @@
 
 (function(page,entidad){
    
+   var limit = 50;
+   
     var panel = new Ext.Panel({
         title:'<s:message code="contrato.tabRecEfecDis.titulo" text="**Recibos/Disposiciones/Efectos"/>'
         ,bodyStyle:'padding:10px'   
@@ -228,11 +230,14 @@
     ]);
 	
    var efectosStore = page.getStore({
-       flow:'contrato/getEfectos'
+   		limit:limit
+       , flow:'contrato/getEfectos' 
        ,storeId: 'efectosContratoStore'
        ,reader: new Ext.data.JsonReader({
            root: 'efectos'
+           ,totalProperty : 'total'
        }, Efecto)
+       , remoteSort: true       
    });
     
  
@@ -281,9 +286,30 @@
         ,clicksToEdit:1
         ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
         ,height:210
-        ,bbar : [  pagingBarEfecto ]
+        ,bbar : [ pagingBarEfecto  ]
     });
 
+	efectosStore.on('load', function(efectosStore){
+
+		var me = pagingBarEfecto;
+        
+        if(me.displayItem){
+            var count = 0;
+            
+			for(var i = 0; i < me.store.data.length; i++) {
+            	if(!isNaN(me.store.data.items[i].id)) {
+            		count++;
+            	}
+            }
+            var msg = count == 0 ?
+                me.emptyMsg :
+                String.format(
+                    me.displayMsg,
+                    me.cursor+1, me.cursor+count, me.store.getTotalCount()
+                );
+            me.displayItem.setText(msg);
+        }
+	});
 
 //FIN EFECTOS     
 

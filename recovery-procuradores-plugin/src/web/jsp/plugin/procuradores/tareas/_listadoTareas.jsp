@@ -539,6 +539,8 @@
 		,{name:'revisada', type:'bool'}
 		,{name:'fechaRevisionAlerta'}
 		,{name:'dtype'}
+		,{name:'categoriaTarea'}
+		,{name:'esPeticionProrroga'}
 	]);
 	
 	Ext.grid.CheckColumn = function(config){ 
@@ -1023,10 +1025,32 @@
 				break;
 			--%>	
 			default:
-				btnQuickAceptarCancelacion.setVisible(false);
-				btnQuickRechazarCancelacion.setVisible(false);
-				btnQuickRechazarProrroga.setVisible(false);
-				btnQuickAceptarProrroga.setVisible(false);
+				if(rec.get('esPeticionProrroga')){
+					var params ={
+							idEntidadInformacion: rec.get('idEntidad')
+							,isConsulta:false
+							,fechaVencimiento: app.format.dateRenderer(rec.get('fechaVenc'))
+							,fechaCreacion: rec.get('fcreacionEntidad')
+							,situacion:'Asunto' 
+							,destareaOri:  rec.get(nombreTareaField)
+							,idTipoEntidadInformacion: '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO" />'
+							,fechaPropuesta: rec.get('fechaPropuesta')
+							,motivo: rec.get('motivo')
+							,idTareaOriginal: rec.get('id')	
+							,descripcion:"Toma decision procedimiento"		
+							,codigoTipoProrroga: '<fwk:const value="es.capgemini.pfs.prorroga.model.DDTipoProrroga.TIPO_PRORROGA_EXTERNA" />'
+					}
+					btnQuickAceptarProrroga.setHandler(function(){
+							redefinirFuncionContestarProrroga(params)
+						});	
+					btnQuickAceptarProrroga.setVisible(true);
+				}else{
+					btnQuickAceptarCancelacion.setVisible(false);
+					btnQuickRechazarCancelacion.setVisible(false);
+					btnQuickRechazarProrroga.setVisible(false);
+					btnQuickAceptarProrroga.setVisible(false);
+				}
+
 				break;
 		}
 		if(tipoTareaNotificacion=='EXTTareaNotificacion'){
@@ -1047,7 +1071,7 @@
 		var rec = grid.getStore().getAt(rowIndex);
 		
 		var codigoSubtipoTarea = rec.get('codigoSubtipoTarea');
-		
+		var categoriaTarea = rec.get('categoriaTarea');
 		
 		
 		
@@ -1382,6 +1406,26 @@
 		break;
 			// Por default abre una notificacion standard
 			default:
+			
+			//Seleccionarmos por tipo de Categoria Tarea
+				switch(categoriaTarea) {
+				
+					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_TOMA_DECISION:
+						app.openTab(rec.get('descripcion'), 'procedimientos/consultaProcedimiento', {id:rec.get('idEntidad'),tarea:rec.get('id'),fechaVenc:rec.get('fechaVenc'),nombreTab:'decision'} , {id:'procedimiento'+rec.get('idEntidad'),iconCls:'icon_procedimiento'});
+						//app.addFavorite(rec.get('idEntidad'), rec.get('descripcion'), app.constants.FAV_TIPO_PROCEDIMIENTO);
+						break;
+					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_TAREA_PROCEDIMIENTO:
+						app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
+						break;
+					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_EXP:
+						app.abreExpediente(rec.get('idEntidad'), rec.get('descripcion'));
+						break;
+					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_PER:
+						app.abreCliente(rec.get('idEntidadPersona'), rec.get('descripcion'));
+						break;
+						
+
+					default:
 				
 				var w = app.openWindow({
 						flow : 'tareas/consultaNotificacion'

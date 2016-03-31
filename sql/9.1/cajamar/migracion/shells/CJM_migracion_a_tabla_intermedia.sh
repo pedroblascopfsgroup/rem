@@ -18,11 +18,5 @@ if [ $? != 0 ] ; then
    exit 1
 fi
 
-$ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"INSERTs_en_MIG_MAESTRA_HITOS_SOLO_CAJAMAR.sql  
-if [ $? != 0 ] ; then
-   echo -e "\n\n======>>> "Error en @"$sql_dir"INSERTs_en_MIG_MAESTRA_HITOS_SOLO_CAJAMAR.sql
-   exit 1
-fi
-
 echo "Fin MIGRACION_A_TABLA_INTERMEDIA.sql. Revise el fichero de log" 
 exit 0

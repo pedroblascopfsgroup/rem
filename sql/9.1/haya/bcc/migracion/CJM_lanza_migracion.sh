@@ -366,6 +366,16 @@ fi
 echo "[OK] ""$sh_dir""CMREC_2874_Modifica_Descripcion_expediente.sh ejecutado correctamente"         
 
 
+echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_Inclusion_Bur_Doc_otros_estados.sh"                      
+./"$sh_dir"CJM_Inclusion_Bur_Doc_otros_estados.sh "$1" 
+if [ $? != 0 ] ; then
+    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CJM_Inclusion_Bur_Doc_otros_estados.sh"
+    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
+    exit 1           
+fi
+echo "[OK] ""$sh_dir""CJM_Inclusion_Bur_Doc_otros_estados.sh ejecutado correctamente"         
+
+
 echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_Analiza_haya02.sh"                      
 ./"$sh_dir"CJM_Analiza_haya02.sh "$1" 
 if [ $? != 0 ] ; then

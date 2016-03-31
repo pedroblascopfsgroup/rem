@@ -3,7 +3,7 @@ create or replace package body OPERACION_DDL as
 -- Autor: Diego Pérez, PFS Group
 -- Fecha creacion: Agosto 2015
 -- Responsable ultima modificacion:Pedro S.
--- Fecha ?ltima modificaci?n: 31/03/2016
+-- Fecha ultima modificacion: 31/03/2016
 -- Motivos del cambio: añado parámetro a parallel.
 -- Cliente: Recovery BI CAJAMAR
 --

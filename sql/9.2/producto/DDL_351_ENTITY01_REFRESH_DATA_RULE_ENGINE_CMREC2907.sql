@@ -279,7 +279,7 @@ DECLARE
         ,GCL.DD_TGL_ID
         ,NVL(PER.PER_RIESGO_TOTAL,0) PER_RIESGO_TOTAL
         ,NVL(GCL.GCL_NOMBRE,''DESCONOCIDO'') GCL_NOMBRE
-        ,(tmp_per.TMP_NUM_EXTRA3 - tmp_per.TMP_NUM_EXTRA6) as PER_RIESGO_TOTAL_FALLIDO
+        ,(NVL(tmp_per.TMP_NUM_EXTRA3,0) - NVL(tmp_per.TMP_NUM_EXTRA6,0)) as PER_RIESGO_TOTAL_FALLIDO
     FROM  ' || V_ESQUEMA || '.per_personas per
       LEFT JOIN  ' || V_ESQUEMA || '.cpe_contratos_personas cpe ON per.per_id = cpe.per_id --PER_CPE
       LEFT JOIN  ' || V_ESQUEMA || '.dd_tin_tipo_intervencion tin ON cpe.dd_tin_id = tin.dd_tin_id

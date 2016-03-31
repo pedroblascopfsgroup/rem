@@ -397,6 +397,11 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 			hql.append(generaFiltroContratosPorGestor(usuLogado, params));
 			hql.append(" ) "); 
 		}
+		
+		// Se comprueba si recibe el identificador de procedimiento como parámetro. En ese caso se filtran los contratos que ya pertenecen al procedimiento
+		if(!Checks.esNulo(dto.getIdProcedimiento())) {
+			hql.append(" AND NOT EXISTS (SELECT 1 FROM ProcedimientoContratoExpediente pce, ExpedienteContrato eco WHERE pce.procedimiento = " + dto.getIdProcedimiento() +" AND c.id = eco.contrato.id AND eco.id = pce.expedienteContrato)");
+		}
 
 		return hql.toString();
 	}

@@ -169,7 +169,7 @@ inner join MIG_PROPUESTAS_CABECERA cab on cab.id_propuesta = tea.id_propuesta
                                                          ON mpta.id_termino = cnt2.id_termino
                                                          INNER JOIN cm01.mig_propuestas_cabecera mpc
                                                          ON mpc.id_propuesta = mpta.id_propuesta
-                                                   WHERE cnt2.numero_contrato = ]'|| V_FOND_PROP.CNT_CONTRATO ||q'[), '||V_USER_ID||'
+                                                   WHERE cnt2.numero_contrato = ]'|| V_FOND_PROP.CNT_CONTRATO ||q'[), ]'||V_USER_ID||q'[
                       )]';       
        
        
@@ -228,7 +228,7 @@ inner join MIG_PROPUESTAS_CABECERA cab on cab.id_propuesta = tea.id_propuesta
                                                            WHERE acu_id = (SELECT MAX (acu_id)
                                                                              FROM CM01.acu_acuerdo_procedimientos
                                                                             WHERE exp_id = ]'|| V_FOND_PROP.EXP_ID ||q'[))
-                                                                                       , 0, 'CAJAMAR', SYSTIMESTAMP, 0, SYSDATE,
+                                                                                       , 0, 'MIGCM01PROPEX', SYSTIMESTAMP, 0, SYSDATE,
                      (SELECT MAX (mpc.motivo)
                         FROM cm01.mig_propuestas_cabecera mpc INNER JOIN cm01.mig_propuestas_termino_acuerdo mpta ON mpc.id_propuesta = mpta.id_propuesta
                              INNER JOIN cm01.mig_propuestas_termi_operac mpto ON mpto.id_termino = mpta.id_termino
@@ -282,7 +282,7 @@ inner join MIG_PROPUESTAS_CABECERA cab on cab.id_propuesta = tea.id_propuesta
                        FROM cm01.mig_propuestas_termi_operac cnt2 
                           INNER JOIN cm01.mig_propuestas_termino_acuerdo mpta ON mpta.id_termino = cnt2.id_termino
                           INNER JOIN cm01.mig_propuestas_cabecera mpc ON mpc.id_propuesta = mpta.id_propuesta
-                       WHERE cnt2.numero_contrato = ]'|| V_ALTA_DUDOSO.CNT_CONTRATO ||q'[), '||V_USER_ID||'
+                       WHERE cnt2.numero_contrato = ]'|| V_ALTA_DUDOSO.CNT_CONTRATO ||q'[), ]'||V_USER_ID||q'[
                       )]';       
        
        
@@ -401,7 +401,7 @@ inner join MIG_PROPUESTAS_CABECERA cab on cab.id_propuesta = tea.id_propuesta
                                                                                                          ON mpta.id_termino = cnt2.id_termino
                                                                                                          INNER JOIN cm01.mig_propuestas_cabecera mpc
                                                                                                          ON mpc.id_propuesta = mpta.id_propuesta
-                                                                                                   WHERE cnt2.numero_contrato = ]'|| V_REF_NOVA1.CNT_CONTRATO ||q'[), '||V_USER_ID||'
+                                                                                                   WHERE cnt2.numero_contrato = ]'|| V_REF_NOVA1.CNT_CONTRATO ||q'[), ]'||V_USER_ID||q'[
                       )]';       
        
        
@@ -527,7 +527,7 @@ inner join MIG_PROPUESTAS_CABECERA cab on cab.id_propuesta = tea.id_propuesta
                                                                                                          ON mpta.id_termino = cnt2.id_termino
                                                                                                          INNER JOIN cm01.mig_propuestas_cabecera mpc
                                                                                                          ON mpc.id_propuesta = mpta.id_propuesta
-                                                                                                   WHERE cnt2.numero_contrato = ]'|| V_REF_NOVA2.CNT_CONTRATO ||q'[), '||V_USER_ID||'
+                                                                                                   WHERE cnt2.numero_contrato = ]'|| V_REF_NOVA2.CNT_CONTRATO ||q'[), ]'||V_USER_ID||q'[
                       )]';       
        
        

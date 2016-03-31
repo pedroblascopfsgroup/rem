@@ -20,17 +20,32 @@
 		,border : false
 		,nombretab : 'contabilidadcobros'
 	});
-
+	
+	<%-- Variables --%>
 	panel.getAsuntoId = function(){ return entidad.get("data").id; }
 	panel.puedeEditar = function(){ return true; }
    	panel.esSupervisor = function(){ return entidad.get("data").toolbar.esSupervisor; }
    	panel.esGestor = function(){ return entidad.get("data").toolbar.esGestor; }
-
-	<%-- Variables --%>
-	var CODIGO_ASUNTO_ACEPTADO = "<fwk:const value="es.capgemini.pfs.asunto.model.DDEstadoAsunto.ESTADO_ASUNTO_ACEPTADO" />";
 	var estadoAsunto='${asunto.estadoAsunto.codigo}';
 	<sec:authentication var="user" property="principal" />
 	var userLogado = '${user.username}';
+	panel.getValue = function(){}
+	panel.setValue = function(){
+		var data = entidad.get("data");
+		var d=data.contabilidadCobros;
+		entidad.cacheOrLoad(data, contabilidadCobrosStore, { id : data.id } );
+		var puedeEditar = panel.puedeEditar();
+		var esVisible = [
+			[btnNuevo, puedeEditar]
+			,[btnEditar, puedeEditar]
+			,[btnBorrar, puedeEditar]
+		];
+		entidad.setVisible(esVisible);
+	}
+	panel.setVisibleTab = function(data){
+	//	return data.toolbar.esSupervisor || data.toolbar.esGestor;
+		return true;
+	}
 	
 	<%-- Store Modelo --%>
 	var contabilidadCobros = Ext.data.Record.create([
@@ -148,7 +163,7 @@
 				w.on(app.event.CANCEL, function(){ w.close(); });
 		}
 	});
-	
+	<%-- Por defecto desahabilitado hasta que se selecciona elemento del grid --%>
 	btnEditar.disabled = true;
 	
 	var btnBorrar = app.crearBotonBorrar({
@@ -159,7 +174,7 @@
 		}
 		,page : page
 	});
-	
+	<%-- Por defecto desahabilitado hasta que se selecciona elemento del grid --%>
 	btnBorrar.disabled = true;
 	
 	var btnEnviarContabilidad = new Ext.Button({
@@ -167,11 +182,30 @@
 		 ,iconCls : 'icon_asuntos'
 		 ,cls: 'x-btn-text-icon'
 		 ,handler:function(){
-				<%--TODO --%>
+				var parametros = {
+						codigoTipoEntidad: '3'
+						,idEntidad: panel.getAsuntoId()
+						,descripcion: 'Solicitud de contabilidad de cobro'
+						,subtipoTarea: 'CONTACOBR'
+						,enEspera: false
+						,esAlerta: false
+				};
+				Ext.Ajax.request({
+    				url: page.resolveUrl('tareanotificacion/crearNuevaTarea')
+   					,params: parametros
+  					,method: 'POST'
+   					,success: function (result, request){
+   						Ext.MessageBox.alert('<s:message code="contabilidad.msgNuevaTareaInfoTitle" text="**Información" />', '<s:message code="contabilidad.msgNuevaTareaInfo" text="**Se ha generado una nueva tarea para el gestor de contabilidad" />');
+   					 }
+   					,error : function (result, request){
+   						Ext.MessageBox.alert('<s:message code="contabilidad.msgNuevaTareaErrorTitle" text="**Error" />', '<s:message code="contabilidad.msgNuevaTareaError" text="**No se ha podido generar una nueva tarea para el gestor de contabilidad" />');
+	   				 }
+       				,failure: function (response, options){
+       					Ext.MessageBox.alert('<s:message code="contabilidad.msgNuevaTareaErrorTitle" text="**Error" />', '<s:message code="contabilidad.msgNuevaTareaError" text="**No se ha podido generar una nueva tarea para el gestor de contabilidad" />');
+	   				 }
+				});
 		}
 	});
-	
-	btnEnviarContabilidad.disabled = true;
 
 <%-- Grid --%>
 	var contabilidadCobrosGrid = app.crearGrid(contabilidadCobrosStore,contabilidadCobrosCm,{
@@ -201,28 +235,6 @@
 	});
 
 	panel.add(contabilidadCobrosGrid);
-
-
-	panel.getValue = function(){
-	}
-
-	panel.setValue = function(){
-		var data = entidad.get("data");
-		var d=data.contabilidadCobros;
-		entidad.cacheOrLoad(data, contabilidadCobrosStore, { id : data.id } );
-		var puedeEditar = panel.puedeEditar();
-		var esVisible = [
-			[btnNuevo, puedeEditar]
-			,[btnEditar, puedeEditar]
-			,[btnBorrar, puedeEditar]
-		];
-		entidad.setVisible(esVisible);
-	}
-
-	panel.setVisibleTab = function(data){
-	//	return data.toolbar.esSupervisor || data.toolbar.esGestor;
-		return true;
-	}
   
 	return panel;
 })

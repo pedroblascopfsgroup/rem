@@ -38,6 +38,8 @@ import es.pfsgroup.recovery.api.ProcedimientoApi;
 @Service
 public class MSVNotificacionDemandadosManager implements MSVNotificacionDemandadosApi{
 
+	public static final String DATE_FORMAT = "dd/MM/yyyy";
+
 	@Autowired
 	MSVDemandadosDao msvDemandadosDao;
 	
@@ -210,7 +212,7 @@ public class MSVNotificacionDemandadosManager implements MSVNotificacionDemandad
 
 	private void populateFechasNotificacion(MSVFechasNotificacionDto dto, MSVDireccionFechaNotificacion msvDireccionFechaNotificacion) throws ParseException {
 
-		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat df = new SimpleDateFormat(DATE_FORMAT);
 
 		if (!Checks.esNulo(dto.getFechaSolicitud()))
 			msvDireccionFechaNotificacion .setFechaSolicitud(df.parse(dto.getFechaSolicitud()));

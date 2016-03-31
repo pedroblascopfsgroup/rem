@@ -19,6 +19,7 @@ import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.test.tareaNotificacion.EXTTareaNotificacionManager.AbstractExtTareaNotificacionManagerTests;
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 /**
  * Comprobaciones de la operación de negocio de contestar prórroga
@@ -63,6 +64,9 @@ public class ContestarProrrogaTest extends AbstractExtTareaNotificacionManagerTe
 
 	@Mock
 	private CausaProrroga mockCausaProrroga;
+	
+	@Mock
+	private IntegracionBpmService integracionBPMService;
 
 	@Override
 	public void setUpChildTest() {

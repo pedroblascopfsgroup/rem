@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20160331
 --## ARTEFACTO=9.1
 --## VERSION_ARTEFACTO=1.0
---## INCIDENCIA_LINK=
+--## INCIDENCIA_LINK=HR-1466
 --## PRODUCTO=NO
 --## Finalidad: DDL modificación tabla TMP_PCO_REC_BUROFAX
 --##           

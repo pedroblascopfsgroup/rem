@@ -5,10 +5,13 @@
 
 
 	<start-state name="inicio">
-		<transition to="P455_ObtenerAprobacionCN"></transition>
-		<transition to="P455_ConfeccionarBorradorContratoAcreditado"></transition>
+		<transition to="fork4" name="fork4Inicio"></transition>
 	</start-state>
 
+	<fork name="fork4">
+		<transition to="P455_ObtenerAprobacionCN" name="obtenerAprobacionCN"></transition>
+		<transition to="P455_ConfeccionarBorradorContratoAcreditado" name="confeccionarBorradorContratoAcreditado"></transition>
+	</fork>
 
 	<state name="P455_ObtenerAprobacionCN">
 		<event type="node-enter">
@@ -28,9 +31,13 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="P455_ComunicacionAcreditadoCN" name="avanzaBPM"></transition>
-		
+		<transition to="P455_ObtenerAprobacionCNDecision" name="avanzaBPM"></transition>
 	</state>
+	
+	<decision name="P455_ObtenerAprobacionCNDecision" expression="#{P455_ObtenerAprobacionCNDecision}">
+		<transition to="Fin" name="Si"></transition>
+		<transition to="P455_ComunicacionAcreditadoCN" name="No"></transition>
+	</decision>
 
 	<state name="P455_ConfeccionarBorradorContratoAcreditado">
 		<event type="node-enter">
@@ -213,8 +220,13 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="P455_EnviarDesistirWFEscrituras" name="avanzaBPM"></transition>
+		<transition to="P455_PeticionEscriturasCaracterEjecutivoDecision" name="avanzaBPM"></transition>
 	</state>
+	
+	<decision name="P455_PeticionEscriturasCaracterEjecutivoDecision" expression="#{P455_PeticionEscriturasCaracterEjecutivoDecision}">
+		<transition to="Fin" name="Si"></transition>
+		<transition to="P455_EnviarDesistirWFEscrituras" name="No"></transition>
+	</decision>
 	
 	<state name="P455_EnviarDesistirWFEscrituras">
 		<event type="node-enter">
@@ -255,7 +267,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="P455_PrepararContratoDecision" name="avanzaBPM"></transition>
+		<transition to="P455_EnviarDesistirWFEscriturasDecision" name="avanzaBPM"></transition>
 	</state>
 	
 	<decision name="P455_PrepararContratoDecision" expression="#{P455_PrepararContratoDecision}">

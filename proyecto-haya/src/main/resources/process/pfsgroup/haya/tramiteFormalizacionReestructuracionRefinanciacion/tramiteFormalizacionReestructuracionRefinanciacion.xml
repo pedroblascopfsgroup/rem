@@ -5,12 +5,16 @@
 
 
 	<start-state name="inicio">
-		<transition to="P451_ObtenerAprobacionCN"></transition>
-		<transition to="P451_ConfeccionarBorradorContratoAcreditado"></transition>
+		<transition to="fork3" name="fork3Inicio"></transition>
 	</start-state>
+	
+	<fork name="fork3">
+		<transition to="P451_ObtenerAprobacionCN" name="obtenerAprobacionCN"></transition>
+		<transition to="P451_ConfeccionarBorradorContratoAcreditado" name="confeccionarBorradorContratoAcreditado"></transition>
+	</fork>
 
-	<start-state name="P451_ObtenerAprobacionCN">
-	<event type="node-enter">
+	<state name="P451_ObtenerAprobacionCN">
+		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
@@ -27,11 +31,16 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="P451_ComunicacionAcreditadoCN" name="avanzaBPM"></transition>
-	</start-state>
+		<transition to="P451_ObtenerAprobacionCNDecision" name="avanzaBPM"></transition>
+	</state>
 	
-	<start-state name="P451_ComunicacionAcreditadoCN">
-	<event type="node-enter">
+	<decision name="P451_ObtenerAprobacionCNDecision" expression="#{P451_ObtenerAprobacionCNDecision}">
+		<transition to="Fin" name="Si"></transition>
+		<transition to="P451_ComunicacionAcreditadoCN" name="No"></transition>
+	</decision>
+	
+	<state name="P451_ComunicacionAcreditadoCN">
+		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
@@ -49,10 +58,10 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="P451_EnviarDesistirWFCN" name="avanzaBPM"></transition>
-	</start-state>
+	</state>
 	
-	<start-state name="P451_EnviarDesistirWFCN">
-	<event type="node-enter">
+	<state name="P451_EnviarDesistirWFCN">
+		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
@@ -70,10 +79,10 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="Fin" name="avanzaBPM"></transition>
-	</start-state>
+	</state>
 	
-	<start-state name="P451_ConfeccionarBorradorContratoAcreditado">
-	<event type="node-enter">
+	<state name="P451_ConfeccionarBorradorContratoAcreditado">
+		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
@@ -91,15 +100,15 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="P451_ConfeccionarBorradorContratoAcreditadoDecision" name="avanzaBPM"></transition>
-	</start-state>
+	</state>
 	
 	<decision name="P451_ConfeccionarBorradorContratoAcreditadoDecision" expression="#{P451_ConfeccionarBorradorContratoAcreditadoDecision}">
 		<transition to="P451_ValidarBorradorContratoAJ" name="Si"></transition>
 		<transition to="P451_EnvioBorradorContratoAcreditado" name="No"></transition>
 	</decision>
 	
-	<start-state name="P451_ValidarBorradorContratoAJ">
-	<event type="node-enter">
+	<state name="P451_ValidarBorradorContratoAJ">
+		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
@@ -117,15 +126,15 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="P451_ValidarBorradorContratoAJDecision" name="avanzaBPM"></transition>
-	</start-state>
+	</state>
 	
 	<decision name="P451_ValidarBorradorContratoAJDecision" expression="#{P451_ValidarBorradorContratoAJDecision}">
 		<transition to="P451_EnvioBorradorContratoAcreditado" name="Aprobada"></transition>
 		<transition to="P451_ComunicacionAcreditadoAJ" name="Rechazada"></transition>
 	</decision>
 	
-	<start-state name="P451_ComunicacionAcreditadoAJ">
-	<event type="node-enter">
+	<state name="P451_ComunicacionAcreditadoAJ">
+		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
@@ -143,10 +152,10 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="P451_EnviarDesistirWFAJ" name="avanzaBPM"></transition>
-	</start-state>
+	</state>
 	
-	<start-state name="P451_EnviarDesistirWFAJ">
-	<event type="node-enter">
+	<state name="P451_EnviarDesistirWFAJ">
+		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
@@ -164,10 +173,10 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="Fin" name="avanzaBPM"></transition>
-	</start-state>
+	</state>
 	
-	<start-state name="P451_EnvioBorradorContratoAcreditado">
-	<event type="node-enter">
+	<state name="P451_EnvioBorradorContratoAcreditado">
+		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
@@ -185,10 +194,10 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="P451_AcordarFechaFirma" name="avanzaBPM"></transition>
-	</start-state>
+	</state>
 	
-	<start-state name="P451_AcordarFechaFirma">
-	<event type="node-enter">
+	<state name="P451_AcordarFechaFirma">
+		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
@@ -206,7 +215,7 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="P451_AcordarFechaFirmaDecision" name="avanzaBPM"></transition>
-	</start-state>
+	</state>
 	
 	<decision name="P451_AcordarFechaFirmaDecision" expression="#{P451_AcordarFechaFirmaDecision}">
 		<transition to="P451_RevisarPropuesta" name="ReconsiderarPropuesta"></transition>
@@ -219,8 +228,8 @@
 		<transition to="P451_PrepararContrato" name="prepararContrato"></transition>
 	</fork>
 	
-	<start-state name="P451_RevisarPropuesta">
-	<event type="node-enter">
+	<state name="P451_RevisarPropuesta">
+		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
@@ -238,10 +247,10 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="P451_ElevarSareb" name="avanzaBPM"></transition>
-	</start-state>
+	</state>
 	
-	<start-state name="P451_ElevarSareb">
-	<event type="node-enter">
+	<state name="P451_ElevarSareb">
+		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
@@ -259,10 +268,10 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="P451_RegistrarResolucionSareb" name="avanzaBPM"></transition>
-	</start-state>
+	</state>
 	
-	<start-state name="P451_RegistrarResolucionSareb">
-	<event type="node-enter">
+	<state name="P451_RegistrarResolucionSareb">
+		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
@@ -280,15 +289,15 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="P451_RegistrarResolucionSarebDecision" name="avanzaBPM"></transition>
-	</start-state>
+	</state>
 	
 	<decision name="P451_RegistrarResolucionSarebDecision" expression="#{P451_RegistrarResolucionSarebDecision}">
 		<transition to="P451_ConfeccionarBorradorContratoAcreditado" name="Aceptada"></transition>
 		<transition to="P451_ComunicacionAcreditadoSareb" name="Rechazada"></transition>
 	</decision>
 	
-	<start-state name="P451_ComunicacionAcreditadoSareb">
-	<event type="node-enter">
+	<state name="P451_ComunicacionAcreditadoSareb">
+		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
@@ -306,10 +315,10 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="P451_EnviarDesistirWFSareb" name="avanzaBPM"></transition>
-	</start-state>
+	</state>
 	
-	<start-state name="P451_EnviarDesistirWFSareb">
-	<event type="node-enter">
+	<state name="P451_EnviarDesistirWFSareb">
+		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
@@ -327,10 +336,10 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="Fin" name="avanzaBPM"></transition>
-	</start-state>
+	</state>
 	
-	<start-state name="P451_EnviarDesistirPreviaFirmaOperacion">
-	<event type="node-enter">
+	<state name="P451_EnviarDesistirPreviaFirmaOperacion">
+		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
@@ -348,10 +357,10 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="Fin" name="avanzaBPM"></transition>
-	</start-state>
+	</state>
 	
-	<start-state name="P451_PrepararContrato">
-	<event type="node-enter">
+	<state name="P451_PrepararContrato">
+		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
@@ -369,15 +378,15 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="P451_PrepararContratoDecision" name="avanzaBPM"></transition>
-	</start-state>
+	</state>
 	
 	<decision name="P451_PrepararContratoDecision" expression="#{P451_PrepararContratoDecision}">
 		<transition to="P451_ValidacionContratoAJ" name="Si"></transition>
 		<transition to="P451_EnvioContratoAcreditado" name="No"></transition>
 	</decision>
 	
-	<start-state name="P451_ValidacionContratoAJ">
-	<event type="node-enter">
+	<state name="P451_ValidacionContratoAJ">
+		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
@@ -395,15 +404,15 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="P451_ValidacionContratoAJDecision" name="avanzaBPM"></transition>
-	</start-state>
+	</state>
 	
 	<decision name="P451_ValidacionContratoAJDecision" expression="#{P451_ValidacionContratoAJDecision}">
 		<transition to="P451_EnvioContratoAcreditado" name="Validado"></transition>
 		<transition to="P451_PrepararContrato" name="NoValidado"></transition>
 	</decision>
 	
-	<start-state name="P451_EnvioContratoAcreditado">
-	<event type="node-enter">
+	<state name="P451_EnvioContratoAcreditado">
+		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
@@ -421,10 +430,10 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="Fin" name="avanzaBPM"></transition>
-	</start-state>
+	</state>
 	
-	<start-state name="P451_FirmarOperacion">
-	<event type="node-enter">
+	<state name="P451_FirmarOperacion">
+		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
@@ -442,7 +451,7 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="P451_FirmarOperacionDecision" name="avanzaBPM"></transition>
-	</start-state>
+	</state>
 	
 	<decision name="P451_FirmarOperacionDecision" expression="#{P451_FirmarOperacionDecision}">
 		<transition to="P451_EnviarDesistirPreviaFirmaOperacion" name="Rechazada"></transition>
@@ -454,8 +463,8 @@
 		<transition to="P451_ContabilizarOperacion" name="contabilizarOperacion"></transition>
 	</fork>
 	
-	<start-state name="P451_ObtenerDocumentacionOriginal">
-	<event type="node-enter">
+	<state name="P451_ObtenerDocumentacionOriginal">
+		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
@@ -473,10 +482,10 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="P451_InformarCierreSareb" name="avanzaBPM"></transition>
-	</start-state>
+	</state>
 	
-	<start-state name="P451_ContabilizarOperacion">
-	<event type="node-enter">
+	<state name="P451_ContabilizarOperacion">
+		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
@@ -494,10 +503,10 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="Fin" name="avanzaBPM"></transition>
-	</start-state>
+	</state>
 	
-	<start-state name="P451_InformarCierreSareb">
-	<event type="node-enter">
+	<state name="P451_InformarCierreSareb">
+		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
@@ -515,7 +524,7 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="Fin" name="avanzaBPM"></transition>
-	</start-state>
+	</state>
 	
 
 	<end-state name="Fin">

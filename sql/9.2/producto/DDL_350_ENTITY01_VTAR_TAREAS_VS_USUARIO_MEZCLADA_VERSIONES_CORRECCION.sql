@@ -254,7 +254,7 @@ GROUP BY cex.exp_id
       WHEN ''5'' --Procedimiento
         THEN NVL (VRE_PRC.VRE, 0) --vre_via_prc 
 	  WHEN ''2'' --Expediente
-        THEN NVL tmp_riesgo.riesgo --vre_via_prc 
+        THEN TMP_RIESGO.RIESGO --vre_via_prc 
           -- TODO poner para el resto de unidades de gestion 
       ELSE 0 
     END VOLUMENRIESGOSQL 

@@ -80,7 +80,7 @@
 	
 	<!-- Cambios acuerdos --> 
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteFormalizacionPignoracion/tramiteFormalizacionPignoracion.xml" p:version="-1"/>
-	
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteVentaDeDeuda/tramiteVentaDeDeuda.xml" p:version="-1"/>
 	
 	
 	<!-- Groovy's -->

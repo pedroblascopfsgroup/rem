@@ -164,7 +164,7 @@
 		}
 	});
 	<%-- Por defecto desahabilitado hasta que se selecciona elemento del grid --%>
-	btnEditar.disabled = true;
+	btnEditar.setDisabled(true);
 	
 	var btnBorrar = app.crearBotonBorrar({
 		text : '<s:message code="app.borrar" text="**Borrar" />'
@@ -175,7 +175,7 @@
 		,page : page
 	});
 	<%-- Por defecto desahabilitado hasta que se selecciona elemento del grid --%>
-	btnBorrar.disabled = true;
+	btnBorrar.setDisabled(true);
 	
 	var btnEnviarContabilidad = new Ext.Button({
 		 text: '<s:message code="contabilidad.enviarContabilidad" text="**Enviar a contabilidad" />'
@@ -225,12 +225,12 @@
 		var usu = grid.getSelectionModel().getSelected().get("usuarioCrear");
 		if(usu != userLogado){
 			<%-- Si el usuario actual NO es quien ha lo creado --%>
-			btnEditar.disabled = true;
-			btnBorrar.disabled = true;
+			btnEditar.setDisabled(true);
+			btnBorrar.setDisabled(true);
 		} else {
 			<%-- Si el usuario actual es quien ha lo creado --%>
-			btnEditar.disabled = false;
-			btnBorrar.disabled = false;
+			btnEditar.setDisabled(false);
+			btnBorrar.setDisabled(false);
 		}
 	});
 

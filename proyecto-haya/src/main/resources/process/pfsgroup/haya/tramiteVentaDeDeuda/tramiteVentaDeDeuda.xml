@@ -23,9 +23,14 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="P454_ComunicacionAcreditado" name="avanzaBPM"></transition>
+		<transition to="P454_ObtenerAprobacionCNDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state>
+
+	<decision name="P454_ObtenerAprobacionCNDecision" expression="#{P454_ObtenerAprobacionCNDecision}">
+		<transition to="Fin" name="si"/>
+		<transition to="P454_ComunicacionAcreditado" name="no"/>
+	</decision>
 
 	<state name="P454_ComunicacionAcreditado">
 		<event type="node-enter">
@@ -93,9 +98,14 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="P454_EnviarDesistirWFEscrituras" name="avanzaBPM"></transition>
+		<transition to="P454_PeticionEscriturasCaracterEjecutivoDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state>
+
+	<decision name="P454_PeticionEscriturasCaracterEjecutivoDecision" expression="#{P454_PeticionEscriturasCaracterEjecutivoDecision}">
+		<transition to="Fin" name="si"/>
+		<transition to="P454_EnviarDesistirWFEscrituras" name="no"/>
+	</decision>
 
 	<state name="P454_EnviarDesistirWFEscrituras">
 		<event type="node-enter">
@@ -136,7 +146,7 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="P454_RequiereValidacionDecision" name="avanzaBPM"></transition>
+		<transition to="P454_PrepararContratoDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state>
 
@@ -164,6 +174,7 @@
 		</event>
 		<transition to="P454_ValidarContratoAJDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
+		<transition to="P454_PrepararContrato" name="vueltaAtras"/>
 	</state>
 
 	<decision name="P454_ValidarContratoAJDecision" expression="#{P454_ValidarContratoAJDecision}">
@@ -237,11 +248,12 @@
 				</targetBean>
 			</action>
 		</event>
+		<transition to="P454_FirmarOperacionDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="P454_AcordarFechaFirma" name="vueltaAtras"></transition>
 	</state>
 
-	<decision name="P454_AcordarFechaFirmaDecision" expression="#{P454_ValidarContratoAJDecision}">
+	<decision name="P454_FirmarOperacionDecision" expression="#{P454_FirmarOperacionDecision}">
 		<transition to="forkObtenerYContabilizar" name="aprobada"></transition>
 		<transition to="P454_EnviarDesistirPreviaFirmaOperacion" name="rechazada"></transition>
 	</decision>
@@ -291,6 +303,28 @@
 		</event>
 		<transition to="P454_InformarCierreSareb" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="P454_InformarCierreSareb">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P454_ObtenerDocumentacionOriginal" name="vueltaAtras"></transition>
 	</state>
 
 	<state name="P454_ContabilizarOperacion">

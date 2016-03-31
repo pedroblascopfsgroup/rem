@@ -2,9 +2,9 @@ create or replace package body OPERACION_DDL as
 -- ===============================================================================================
 -- Autor: Diego Pérez, PFS Group
 -- Fecha creacion: Agosto 2015
--- Responsable ultima modificacion:María Villanueva
--- Fecha ?ltima modificaci?n: 04/11/2015
--- Motivos del cambio: Modificación create log
+-- Responsable ultima modificacion:Pedro S.
+-- Fecha ?ltima modificaci?n: 31/03/2016
+-- Motivos del cambio: añado parámetro a parallel.
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripcion: Cabecera Paquete de Operaciones DDL
@@ -284,7 +284,7 @@ create or replace package body OPERACION_DDL as
           execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
       Else 
           If V_DESACTIVAR = 'S' then 
-            OPERACION_DDL.ejecuta_str('ALTER INDEX ' || V_ESQUEMA || '.' || V_NOMBRE || ' REBUILD PARALLEL');
+            OPERACION_DDL.ejecuta_str('ALTER INDEX ' || V_ESQUEMA || '.' || V_NOMBRE || ' REBUILD PARALLEL 2');
             execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
           else 
             Raise OBJECTEXISTS;          

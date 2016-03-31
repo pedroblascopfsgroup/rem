@@ -1,3 +1,21 @@
+--/*
+--##########################################
+--## AUTOR=Pedro S.
+--## FECHA_CREACION=20160331
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=CMREC-xxxx
+--## PRODUCTO=NO
+--## 
+--## Finalidad: parámetro parallel
+--## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
 create or replace package body OPERACION_DDL as
 -- ===============================================================================================
 -- Autor: Diego Pérez, PFS Group
@@ -10,7 +28,7 @@ create or replace package body OPERACION_DDL as
 -- Descripcion: Cabecera Paquete de Operaciones DDL
 -- ===============================================================================================
 /*
- CREATE TABLE "LOG_OPERACION_DLL" 
+    CREATE TABLE "LOG_OPERACION_DLL" 
    (	"FILA_ID" NUMBER NOT NULL ENABLE, 
 	"FECHA_INICIO" TIMESTAMP (6) NOT NULL ENABLE, 
 	"FECHA_FIN" TIMESTAMP (6) NOT NULL ENABLE, 
@@ -19,7 +37,7 @@ create or replace package body OPERACION_DDL as
 	"OPERACION" VARCHAR2(100 BYTE), 
 	"ESQUEMA" VARCHAR2(100 BYTE), 
 	"OBJETO" VARCHAR2(100 BYTE), 
-	"PARAMETROS" VARCHAR2(502 BYTE), 
+	"PARAMETROS" VARCHAR2(254 BYTE), 
 	"ESTADO" VARCHAR2(254 BYTE)
    );
     commit;
@@ -37,7 +55,7 @@ create or replace package body OPERACION_DDL as
   PROCEDURE  INSERTAR_LOG_OPERACION_DLL (TIPO IN VARCHAR2, OPERACION IN VARCHAR2, ESQUEMA IN VARCHAR2, OBJETO IN VARCHAR2, PARAMETROS IN VARCHAR2, ESTADO IN VARCHAR2, INICIO IN TIMESTAMP) AS
   
     V_SID NUMBER;    
-    V_PARAMETROS varchar2(250 CHAR);
+    V_PARAMETROS varchar2(250);
     --V_ESQUEMA VARCHAR2(250);
     
   BEGIN
@@ -47,7 +65,7 @@ create or replace package body OPERACION_DDL as
     V_PARAMETROS := substr(PARAMETROS, 1, 250);
     
     insert into LOG_OPERACION_DLL (FILA_ID, FECHA_INICIO, FECHA_FIN, NUM_SID, TIPO, OPERACION, ESQUEMA, OBJETO, PARAMETROS, ESTADO)
-    values (INCR_LOG_OPERACION_DLL.nextval, INICIO, systimestamp,  V_SID, substr(TIPO, 1, 100), substr(OPERACION, 1, 100), substr(ESQUEMA, 1, 100), substr(OBJETO, 1, 100), substr(V_PARAMETROS, 1, 250), substr(ESTADO, 1, 250));
+    values (INCR_LOG_OPERACION_DLL.nextval, INICIO, systimestamp,  V_SID, substr(TIPO, 1, 100), substr(OPERACION, 1, 100), substr(ESQUEMA, 1, 100), substr(OBJETO, 1, 100), V_PARAMETROS, substr(ESTADO, 1, 250));
     --values (INCR_LOG_OPERACION_DLL.nextval, INICIO, systimestamp,  V_SID, substr(TIPO, 1, 100), substr(OPERACION, 1, 100), substr(ESQUEMA, 1, 100), substr(OBJETO, 1, 100), substr(PARAMETROS, 1, 250), substr(ESTADO, 1, 250));
     commit;   
   END;
@@ -129,7 +147,7 @@ create or replace package body OPERACION_DDL as
     
     select sys_context('USERENV','CURRENT_USER') into V_ESQUEMA from dual;
 
-    if V_OPERACION in ('DROP', 'TRUNCATE', 'ALTER', 'ANALYZE', 'ALTER_CONSTRAINT') then
+    if V_OPERACION in ('DROP', 'TRUNCATE', 'ALTER', 'ANALYZE') then
       If OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE)  Then 
           OPERACION_DDL.ejecuta_str(''|| V_OPERACION || ' ' || V_TIPO || ' ' || V_ESQUEMA || '.' || V_NOMBRE || ' ' || V_PARAMETROS||'');
           execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
@@ -513,3 +531,7 @@ create or replace package body OPERACION_DDL as
   end DDL_Materialized_View;
 
 end OPERACION_DDL;
+/
+EXIT
+
+

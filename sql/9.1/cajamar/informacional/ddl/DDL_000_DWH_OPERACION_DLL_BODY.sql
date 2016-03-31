@@ -1,3 +1,21 @@
+--/*
+--##########################################
+--## AUTOR=Pedro S.
+--## FECHA_CREACION=20160331
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=CMREC-xxxx
+--## PRODUCTO=NO
+--## 
+--## Finalidad: parámetro parallel
+--## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
 create or replace package body OPERACION_DDL as
 -- ===============================================================================================
 -- Autor: Diego Pérez, PFS Group
@@ -513,3 +531,7 @@ create or replace package body OPERACION_DDL as
   end DDL_Materialized_View;
 
 end OPERACION_DDL;
+/
+EXIT
+
+

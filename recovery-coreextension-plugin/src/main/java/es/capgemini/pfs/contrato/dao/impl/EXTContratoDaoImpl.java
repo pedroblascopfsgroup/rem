@@ -202,27 +202,28 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 			
 			// Nombre
 			if (dto.getNombre() != null && dto.getNombre().trim().length() > 0) {
-				hql.append(" and upper(p.nombre) like '%'|| :nombre ||'%'");
-				params.put("nombre", dto.getNombre().trim().toUpperCase());
+//				hql.append(" and upper(p.nombre) like '%|| :nombre ||%'");
+				hql.append(" and upper(p.nombre) like '%"+dto.getNombre().replace("'", "''")+"%'");
+			//	params.put("nombre", dto.getNombre().trim().toUpperCase());
 			}
 			
 			// Apellido1
 			if (dto.getApellido1() != null
 					&& dto.getApellido1().trim().length() > 0) {
-				hql.append(" and upper(p.apellido1) like '%'|| :apellido1 ||'%'");
-				params.put("apellido1", dto.getApellido1().trim().toUpperCase());
+				hql.append(" and upper(p.apellido1) like '%"+dto.getApellido1().replace("'", "''")+"%'");
+				//params.put("apellido1", dto.getApellido1().trim().toUpperCase());
 			}
 			// Apellido2
 			if (dto.getApellido2() != null
 					&& dto.getApellido2().trim().length() > 0) {
-				hql.append(" and upper(p.apellido2) like '%'|| :apellido2 ||'%'");
-				params.put("apellido2", dto.getApellido2().trim().toUpperCase());
+				hql.append(" and upper(p.apellido2) like '%"+dto.getApellido2().replace("'", "''")+"%'");
+				//params.put("apellido2", dto.getApellido2().trim().toUpperCase());
 			}
 			// DNI
 			if (dto.getDocumento() != null
 					&& dto.getDocumento().trim().length() > 0) {
-				hql.append(" and upper(p.docId) like '%'|| :docId ||'%'");
-				params.put("docId", dto.getDocumento().toUpperCase());
+				hql.append(" and upper(p.docId) like '%"+dto.getDocumento().replace("'", "''")+"%'");
+				//params.put("docId", dto.getDocumento().toUpperCase());
 			}
 
 			if(!Checks.esNulo(dto.getSituacionGestion())){
@@ -252,8 +253,8 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 			// Nombre del Expediente
 			if (dto.getDescripcionExpediente() != null
 					&& dto.getDescripcionExpediente().trim().length() > 0) {
-				hql.append(" and UPPER(e.descripcionExpediente) like '%'|| :descExp ||'%'");
-				params.put("descExp", dto.getDescripcionExpediente().toUpperCase());
+				hql.append(" and UPPER(e.descripcionExpediente) like '%"+dto.getDescripcionExpediente().replace("'", "''")+"%'");
+				//params.put("descExp", dto.getDescripcionExpediente().toUpperCase());
 			}
 			
 			if (cruzaAsuntos) {
@@ -263,7 +264,7 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 				// Nombre del Asunto
 				if (dto.getNombreAsunto() != null
 						&& dto.getNombreAsunto().trim().length() > 0) {
-					hql.append(" and UPPER(asu.nombre) like '%'|| :nombreAsu ||'%' and cex.sinActuacion = 0");
+					hql.append(" and UPPER(asu.nombre) like '%"+dto.getNombreAsunto().replace("'", "''")+"%' and cex.sinActuacion = 0");
 					params.put("nombreAsu", dto.getNombreAsunto().toUpperCase());
 					hql.append(" and asu.estadoAsunto.codigo NOT IN ("
 							+ DDEstadoAsunto.ESTADO_ASUNTO_CANCELADO + ", "

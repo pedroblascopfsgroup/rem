@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=CARLOS GIL GIMENO
---## FECHA_CREACION=20160311
+--## FECHA_CREACION=20160312
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2.0-cj
 --## INCIDENCIA_LINK=PRODUCTO-894

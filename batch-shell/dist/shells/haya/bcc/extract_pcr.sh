@@ -12,6 +12,7 @@ extensionZip=".zip"
 
 arrayFicheros=$ficheros
 
+./ftp/ftp_get_pcr.sh $1
 for fichero in $arrayFicheros
 do
         mascaraZip=$DIR_INPUT_TR$fichero$mascara$extensionZip

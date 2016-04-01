@@ -25,10 +25,12 @@ do
 	ficheroSem=$DIR_INPUT_AUX$fichero$mascara$extensionSem
     ficheroZip=$DIR_INPUT_AUX$fichero$mascara$extensionZip
 
-    #echo "$ficheroSem"
+    echo "$ficheroSem"
+    ./ftp/ftp_get_aux_files.sh $1 $fichero
 	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -a ! -e $ficheroZip ]; do
 	   sleep 10
 	   hora_actual=`date +%Y%m%d%H%M%S`
+	   ./ftp/ftp_get_aux_files.sh $1 $fichero
 	   #echo "$hora_actual"
 	done
 done

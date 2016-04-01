@@ -138,7 +138,6 @@ function(entidad,page){
 	});
 
 	var openWizzard = function(flow,title,params) {
-		debugger;
 		var w = app.openWindow({
 			flow:flow
 			,width:870
@@ -162,6 +161,7 @@ function(entidad,page){
 			btnNext.setDisabled(true);
 			arqStore.loadData(data);
 			wArq.show();
+			btnNext.purgeListeners();			
 			btnNext.on('click',function() {
 				var tmpArqId = cmbArq.getValue();
 				wArq.hide();
@@ -199,8 +199,10 @@ function(entidad,page){
 			if (entidad.get("data").expedientePropuesto.isNull || !entidad.get("data").expedientePropuesto.isGestionDeuda) {
 				var data = toolbar.getArquetiposGestDeuda();
 				cmbArq.reset();
+				btnNext.setDisabled(true);
 				arqStore.loadData(data);
 				wArq.show();
+				btnNext.purgeListeners();
 				btnNext.on('click',function() {
 					var tmpArqId = cmbArq.getValue();
 					wArq.hide();

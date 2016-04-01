@@ -10,6 +10,7 @@
 --	GMN:> Reasignación de estados de expedientes
 --	GMN:> incluimos paralizados sin fecha asignación informada
 --	GMN:> incluimos AL en filtro marca HAYA (ALCALA)
+--	GMN:> 20160401 Creamos asuntos para contratos activos TMP_ESTADO_CONTRATO = 0
 /***************************************/
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -158,6 +159,7 @@ BEGIN
 				where cnt.tmp_cnt_contrato = eop.numero_contrato
 				and cnt.TMP_CNT_COD_GESTION_ESPECIAL = ''HAYA''
 				and cnt.tmp_cnt_remu_gest_especial in (''CN'',''IM'',''AR'',''MA'',''SC'',''AL'')
+		                and cnt.TMP_ESTADO_CONTRATO = 0				
 			  ) condNew on    condNew.cod_recovery = cab.CD_EXPEDIENTE                 
 			where cab.fecha_asignacion is not null
 			  and NOT EXISTS(SELECT 1

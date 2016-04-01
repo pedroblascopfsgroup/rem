@@ -15,6 +15,7 @@
  Si NO recibimos la marca de agencia, y TAMPOCO recibimos información de expediente de precontencioso
          Confirmar con BCC que hay que lanzar una actuación de preparación de expediente judicial, completar la tarea de "estudio", indicando que se marca como "sin gestión" y finalizar la actuación o si se trata de un error
 
+         GMN 2060401: Se añade el filtro para crear asuntos solo a contratos activos. (TMP_ESTADO_CONTRATO = 0)
 *********************************************************/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON
@@ -100,7 +101,11 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] CAJAMAR MIGRACION CONTRATOS MARCA HAYA');
            and g.cnt_contrato = tmp.tmp_cnt_contrato
            and eop.cd_Expediente = cab.cd_expediente 
            and tmp.TMP_CNT_COD_GESTION_ESPECIAL = ''HAYA''
+           and tmp.TMP_ESTADO_CONTRATO = 0           
            and cab.fecha_asignacion is not null
+           and NOT EXISTS(SELECT 1
+                            FROM '||v_esquema||'.MIG_PROCEDIMIENTOS_CABECERA C
+                            WHERE C.CD_EXPEDIENTE_NUSE = CAB.CD_EXPEDIENTE) -- LOS QUE EVOLUCIONAN A PROCEDIMIENTOS NO SE MIGRAN COMO PRECONTENCIOSOS.           
            ';
            
     execute immediate v_sql;

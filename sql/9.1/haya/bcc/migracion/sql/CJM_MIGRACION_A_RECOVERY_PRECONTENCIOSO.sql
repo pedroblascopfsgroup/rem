@@ -9,6 +9,7 @@
 --	GMN:> Se asigna el DD_TPX_ID (tipo de expediente a recuperaciones - RECU)
 --	GMN:> incluimos AL en filtro marca HAYA (ALCALA)
 --	GMN:> CMREC-2850: EXLUIMOS SC en filtro marca HAYA 
+--	GMN:> 20160401 Creamos asuntos para contratos activos ESTADO_CONTRATO = 0
 /***************************************/
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -125,11 +126,13 @@ BEGIN
                                 inner join '||V_ESQUEMA||'.cnt_contratos cnt on op.numero_contrato = cnt.cnt_contrato
                                 inner join '||V_ESQUEMA||'.dd_ges_gestion_especial b on cnt.dd_ges_id = b.dd_ges_id 
                                 inner join '||V_ESQUEMA||'.dd_cre_condiciones_remun_ext r on cnt.dd_cre_id = r.dd_cre_id
+                                inner join '||V_ESQUEMA_MASTER||'.DD_ESC_ESTADO_CNT esc on cnt.dd_esc_id = esc.dd_esc_id
                             where 
                                  b.dd_ges_codigo = ''HAYA'' 
                              and r.dd_cre_codigo  in (''EX'',''CN'',''IM'',''AR'',''MA'',''AL'')                             
 --                             and cab.fecha_baja is null and cab.MOTIVO_BAJA is null AND CAB.FECHA_ACEPTACION_LETRADO IS NULL
                              and  cab.fecha_asignacion is not null
+                             and esc.dd_esc_codigo = 0
 --                                 ( cab.fecha_asignacion is not null                                                          
 --                                   OR (cab.fecha_asignacion is null and fecha_paralizacion is not null))                                  
                               and NOT EXISTS(SELECT 1 

@@ -1,23 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="tramitePDV" width="1067" height="542">
+<root-container name="tramitePDV" width="1549" height="845">
   <node name="inicio" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
   </node>
-  <node name="P456_ObtenerAprobacionCN" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="P456_ConfeccionarBorradorContratoAcreditado" x="0" y="0" width="132" height="36">
+  <node name="forkInicio" x="0" y="0" width="252" height="24">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -32,27 +21,6 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
-  </node>
-  <node name="P456_ComunicacionAcreditadoCN" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="P456_EnviarDesistirWFCN" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="P456_ValidarBorradorContratoAJ" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -64,38 +32,14 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
-  </node>
-  <node name="P456_ComunicacionAcreditadoAJ" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P456_EnvioBorradorContradoAcreditado" x="0" y="0" width="132" height="36">
+  <node name="P456_AcordarFechaFirmaDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="fork1" x="0" y="0" width="252" height="24">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="P456_PrepararContrato" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

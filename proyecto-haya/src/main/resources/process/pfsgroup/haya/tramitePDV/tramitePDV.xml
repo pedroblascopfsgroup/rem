@@ -4,10 +4,14 @@
 	name="tramitePDV">
 
 	<start-state name="inicio">
+		<transition to="forkInicio" name="iniciarProceso"></transition>
+	</start-state>
+	
+	<fork name="forkInicio">
 		<transition to="P456_ObtenerAprobacionCN"></transition>
 		<transition to="P456_ConfeccionarBorradorContratoAcreditado"></transition>
-	</start-state>
-
+	</fork>	
+	
 	<start-state name="P456_ObtenerAprobacionCN">
 	<event type="node-enter">
 			<action name="miTarea"
@@ -26,8 +30,14 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="P456_ComunicacionAcreditadoCN" name="avanzaBPM"></transition>
+		<transition to="P456_ComunicacionAcreditadoCNDecision" name="avanzaBPM"></transition>
 	</start-state>
+	
+	<decision name="P456_ComunicacionAcreditadoCNDecision" expression="#{P456_ComunicacionAcreditadoCNDecision}">
+		<transition to="Fin" name="Si"></transition>
+		<transition to="P456_ComunicacionAcreditadoCN" name="No"></transition>
+	</decision>
+	
 	
 	<start-state name="P456_ComunicacionAcreditadoCN">
 	<event type="node-enter">
@@ -47,6 +57,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
+		<transition to="P456_ObtenerAprobacionCN" name="vueltaAtras"></transition>
 		<transition to="P456_EnviarDesistirWFCN" name="avanzaBPM"></transition>
 	</start-state>
 	
@@ -68,6 +79,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
+		<transition to="P456_ComunicacionAcreditadoCN" name="vueltaAtras"></transition>
 		<transition to="Fin" name="avanzaBPM"></transition>
 	</start-state>
 	
@@ -115,6 +127,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
+		<transition to="P456_ConfeccionarBorradorContratoAcreditado" name="vueltaAtras"></transition>
 		<transition to="P456_ValidarBorradorContratoAJDecision" name="avanzaBPM"></transition>
 	</start-state>
 	
@@ -141,6 +154,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
+		<transition to="P456_ValidarBorradorContratoAJ" name="vueltaAtras"></transition>
 		<transition to="P456_EnviarDesistirWFAJ" name="avanzaBPM"></transition>
 	</start-state>
 	
@@ -162,6 +176,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
+		<transition to="P456_ComunicacionAcreditadoAJ" name="vueltaAtras"></transition>
 		<transition to="Fin" name="avanzaBPM"></transition>
 	</start-state>
 	
@@ -204,6 +219,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
+		<transition to="P456_EnvioBorradorContratoAcreditado" name="vueltaAtras"></transition>
 		<transition to="P456_AcordarFechaFirmaDecision" name="avanzaBPM"></transition>
 	</start-state>
 	
@@ -236,6 +252,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
+		<transition to="P456_AcordarFechaFirma" name="vueltaAtras"></transition>
 		<transition to="P456_ElevarSareb" name="avanzaBPM"></transition>
 	</start-state>
 	
@@ -257,6 +274,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
+		<transition to="P456_RevisarPropuesta" name="vueltaAtras"></transition>
 		<transition to="P456_RegistrarResolucionSareb" name="avanzaBPM"></transition>
 	</start-state>
 	
@@ -278,6 +296,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
+		<transition to="P456_ElevarSareb" name="vueltaAtras"></transition>
 		<transition to="P456_RegistrarResolucionSarebDecision" name="avanzaBPM"></transition>
 	</start-state>
 	
@@ -304,6 +323,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
+		<transition to="P456_RegistrarResolucionSareb" name="vueltaAtras"></transition>
 		<transition to="P456_EnviarDesistirWFSareb" name="avanzaBPM"></transition>
 	</start-state>
 	
@@ -325,6 +345,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
+		<transition to="P456_ComunicacionAcreditadoSareb" name="vueltaAtras"></transition>
 		<transition to="Fin" name="avanzaBPM"></transition>
 	</start-state>
 	
@@ -393,6 +414,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
+		<transition to="P456_PrepararContrato" name="vueltaAtras"></transition>
 		<transition to="P456_ValidacionContratoAJDecision" name="avanzaBPM"></transition>
 	</start-state>
 	
@@ -466,6 +488,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
+		<transition to="P456_FirmarOperacion" name="vueltaAtras"></transition>
 		<transition to="fork2" name="avanzaBPM"></transition>
 	</start-state>
 	
@@ -561,6 +584,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
+		<transition to="P456_AnalisisEvolucionPDV" name="vueltaAtras"></transition>
 		<transition to="Fin" name="avanzaBPM"></transition>
 	</start-state>
 

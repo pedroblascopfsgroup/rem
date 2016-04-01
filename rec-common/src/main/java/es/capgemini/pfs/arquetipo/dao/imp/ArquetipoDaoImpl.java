@@ -123,5 +123,24 @@ public class ArquetipoDaoImpl extends AbstractEntityDao<Arquetipo, Long> impleme
 
 		return arquetiposSeg;
 	}
+	
+	@Override
+	public List<Arquetipo> getListGestDeuda() {
+		List<Arquetipo> arquetipos = this.getList();
+		
+		List<Arquetipo> arquetiposGestDeuda = new ArrayList<Arquetipo>();
+		
+		if (!Checks.esNulo(arquetipos))
+		for (Arquetipo arquetipo : arquetipos) {
+			if ( (!Checks.esNulo(arquetipo)) &&
+				(!Checks.esNulo(arquetipo.getItinerario())) &&
+				(arquetipo.getItinerario().getdDtipoItinerario().getItinerarioGestionDeuda()) &&
+				(!arquetipo.getAuditoria().isBorrado()) ) {
+				arquetiposGestDeuda.add(arquetipo);
+			}
+		}
+		
+		return arquetiposGestDeuda;
+	}
 
 }

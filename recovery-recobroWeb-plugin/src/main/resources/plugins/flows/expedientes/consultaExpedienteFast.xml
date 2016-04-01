@@ -28,6 +28,7 @@
 	    	<evaluate expression="executor.execute('es.pfsgroup.recovery.ext.api.expediente.esSupervisorCaracterizado',id)" result="flowScope.isSupervisorCaracterizado" />
 	    	<evaluate expression="executor.execute('expedienteRecobroApi.getCabeceraExpedienteRecobro',id)" result="flowScope.cabeceraRecobro" />
 	    	<evaluate expression="executor.execute('expedienteRecobroApi.esSupervisorRecobroExpediente',id,0)" result="flowScope.esSupervisor" />
+	    	<evaluate expression="executor.execute('expedienteRecobroApi.esGestorRecobroExpediente',id,0)" result="flowScope.esGestor" />
 	    	<evaluate expression="executor.execute('expedienteRecobroApi.esAgenciaRecobroExpediente',id,0)" result="flowScope.esAgencia" />
 			<evaluate expression="executor.execute('propuestaApi.usuarioLogadoEsGestorSupervisorActual',id)" result="flowScope.esGestorSupervisorActual" />
    		</on-render>	

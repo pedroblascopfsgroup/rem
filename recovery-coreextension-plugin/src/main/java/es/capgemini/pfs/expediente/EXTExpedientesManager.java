@@ -207,7 +207,7 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 	}
 
 	
-	private Expediente getExpediente(Long id) {
+	public Expediente getExpediente(Long id) {
 		Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "id", id);
 		Expediente exp = genericDao.get(Expediente.class, filtroExpediente);
 		return exp;

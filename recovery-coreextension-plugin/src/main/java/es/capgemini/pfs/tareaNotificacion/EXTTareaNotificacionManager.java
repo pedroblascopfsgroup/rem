@@ -1,6 +1,7 @@
 package es.capgemini.pfs.tareaNotificacion;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -26,6 +27,8 @@ import jxl.write.WritableCellFormat;
 import jxl.write.WritableFont;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
+import jxl.write.WriteException;
+import jxl.write.biff.RowsExceededException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -192,6 +195,12 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
             } else if (DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE.equals(codigoEstado)) {
                 subtipoTarea = SubtipoTarea.CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_RE;
                 timerName = ExpedienteBPMConstants.TIMER_TAREA_RE;
+            } else if (DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION.equals(codigoEstado)) {
+                subtipoTarea = SubtipoTarea.CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_ENSAN;
+                timerName = ExpedienteBPMConstants.TIMER_TAREA_ENSAN;
+            } else if (DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO.equals(codigoEstado)) {
+                subtipoTarea = SubtipoTarea.CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_SANC;
+                timerName = ExpedienteBPMConstants.TIMER_TAREA_SANC;
             } else {
                 subtipoTarea = SubtipoTarea.CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_DC;
                 timerName = ExpedienteBPMConstants.TIMER_TAREA_DC;
@@ -530,6 +539,10 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                 param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_RE);
             } else if (DDEstadoItinerario.ESTADO_DECISION_COMIT.equals(codigoEstado)){
                 param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC);
+            } else if (DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION.equals(codigoEstado)){
+                param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_ENSAN);
+            } else if (DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO.equals(codigoEstado)){
+                param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_SANC);
             }else if(DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA.equals(codigoEstado)){
             	param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_FP);
             }
@@ -817,8 +830,19 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
      *            expediente
      */
     private void setearEmisorExpediente(TareaNotificacion tareaNotificacion, Expediente exp) {
-        String descZona = exp.getOficina().getZona().getDescripcion();
-        Perfil gestor = exp.getArquetipo().getItinerario().getEstado(exp.getEstadoItinerario().getCodigo()).getGestorPerfil();
+    	String descZona = "";
+    	if (!Checks.esNulo(exp.getOficina()) && (!Checks.esNulo(exp.getOficina().getZona()))) {
+    		descZona = exp.getOficina().getZona().getDescripcion();
+    	}
+    	Perfil gestor = null;
+    	if ((!Checks.esNulo(exp.getArquetipo())) 
+    		&& (!Checks.esNulo(exp.getArquetipo().getItinerario()))
+			&& (!Checks.esNulo(exp.getEstadoItinerario()))
+			&& (!Checks.esNulo(exp.getEstadoItinerario().getCodigo()))
+			&& (!Checks.esNulo(exp.getArquetipo().getItinerario().getEstado(exp.getEstadoItinerario().getCodigo())))) {
+				
+				gestor = exp.getArquetipo().getItinerario().getEstado(exp.getEstadoItinerario().getCodigo()).getGestorPerfil();
+    	}
         String descPerfil = "";
         if (gestor != null) {
             descPerfil = gestor.getDescripcion();
@@ -1125,6 +1149,8 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_CE_VENCIDA)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_RE_VENCIDA)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_DC_VENCIDA)
+                                || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_ENSAN_VENCIDA)
+                                || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_SANC_VENCIDA)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_EXPEDIENTE_CERRADO)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_SOLICITUD_CANCELACION_EXPEDIENTE_RECHAZADA)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_CE)
@@ -1281,25 +1307,18 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                                 row = new Label(10, i, VACIO);
                             }
                             sheet1.addCell(row);
-                            try {
-                                if (dto.getVolumenRiesgoSQL() != null) {
-                                    row = new Label(11, i, dto.getVolumenRiesgoSQL().toString());
-                                } else {
-                                    row = new Label(11, i, VACIO);
-                                }
-                            } catch (Throwable e) {
+                            if (dto.getVolumenRiesgoSQL() != null) {
+                                row = new Label(11, i, dto.getVolumenRiesgoSQL().toString());
+                            } else {
                                 row = new Label(11, i, VACIO);
-                            }
+                            }                 
                             sheet1.addCell(row);
-                            try {
-                                if (dto.getVolumenRiesgoSQL() != null) {
-                                    row = new Label(12, i, dto.getVolumenRiesgoSQL().toString());
-                                } else {
-                                    row = new Label(12, i, VACIO);
-                                }
-                            } catch (Throwable e) {
+                            if (dto.getVolumenRiesgoSQL() != null) {
+                            	row = new Label(12, i, dto.getVolumenRiesgoSQL().toString());
+                            } else {
                                 row = new Label(12, i, VACIO);
                             }
+                            
                             sheet1.addCell(row);
                             i++;
                         }
@@ -1311,19 +1330,27 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                     }
                 }
             }
-        } catch (Throwable ex) {
-            logger.error(ex);
+        } catch (IOException ioex) {
+            logger.error(ioex);
+        } catch (RowsExceededException reex) {
+            logger.error(reex);
+        } catch (WriteException wex) {
+            logger.error(wex);   
         } finally {
             try {
-                workbook1.close();
-            } catch (Throwable e) {
-                logger.error(e);
+            	if(workbook1 != null){
+            		workbook1.close();
+            	}
+            } catch (WriteException we) {
+                logger.error(we);
+            } catch (IOException ix) {
+                logger.error(ix);
             }
         }
         return null;
     }
 
-    private void inicializaPoolExportacionExcel() {
+    private synchronized void inicializaPoolExportacionExcel() {
         String fileNameExtension = ".xls";
         exportarExcelPool = new ExportarTareasBean[Integer.parseInt(appProperties.getProperty(EXPORTAR_ASUNTOS_LIMITE_SIMULTANEO))];
         ExportarTareasBean bean = null;

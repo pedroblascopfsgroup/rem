@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<input name="id" required="true" type="java.lang.Long"/>
+
+	<end-state id="persona" view="plugin/liquidaciones/avanzado/liquidacionJSON">
+		<on-entry>
+			<evaluate expression="executor.execute('plugin.liquidaciones.liquidacionesManager.findpPrimerTitular', id)" result="flowScope.persona" />
+			<evaluate expression="executor.execute('plugin.liquidaciones.liquidacionManager.getLiquidacionByCnt', id)" result="flowScope.liquidacion" />
+		</on-entry>
+	</end-state>
+</flow>

@@ -361,20 +361,28 @@ public class ADMUsuarioManager {
 				if (g.getUsuario().getId().equals(dto.getId())) {
 					if (!g.getDespachoExterno().getId().equals(dto.getDespachoExterno())){
 						checkAsuntosUsuario(dto.getId());
+						
+						if(!Checks.esNulo(dto.getDespachoExterno())){
+							
+							if(!g.getDespachoExterno().equals(dto.getDespachoExterno())){
+								gestorDespachoDao.deleteById(g.getId());
+								
+								GestorDespacho gd = new GestorDespacho();
+								gd.setDespachoExterno(despachoExternoDao.get(dto
+										.getDespachoExterno()));
+								gd.setUsuario(usuarioDao.get(u.getId()));
+								gd.setGestorPorDefecto(Boolean.FALSE);
+								gd.setSupervisor(Boolean.FALSE);
+								gestorDespachoDao.saveOrUpdate(gd);
+								
+							}
+						}
 					}
-					gestorDespachoDao.deleteById(g.getId());
+					
+					
 				}
 			}
-			if(!Checks.esNulo(dto.getDespachoExterno()))
-			{
-				GestorDespacho gd = new GestorDespacho();
-				gd.setDespachoExterno(despachoExternoDao.get(dto
-						.getDespachoExterno()));
-				gd.setUsuario(usuarioDao.get(u.getId()));
-				gd.setGestorPorDefecto(Boolean.FALSE);
-				gd.setSupervisor(Boolean.FALSE);
-				gestorDespachoDao.saveOrUpdate(gd);
-			}
+			
 		} else {
 			if(u.getUsuarioExterno()){
 				checkAsuntosUsuario(dto.getId());
@@ -382,7 +390,18 @@ public class ADMUsuarioManager {
 			for (GestorDespacho g : lgd) {
 				if (g.getUsuario().getId().equals(dto.getId())
 						&& !g.getSupervisor()) {
+					
+					if(dto.getDespachoExterno()!=null){
 					gestorDespachoDao.deleteById(g.getId());
+					
+					GestorDespacho gd = new GestorDespacho();
+					gd.setDespachoExterno(g.getDespachoExterno());
+					gd.setUsuario(usuarioDao.get(u.getId()));
+					gd.setGestorPorDefecto(g.getGestorPorDefecto());
+					gd.setSupervisor(g.getSupervisor());
+					gestorDespachoDao.saveOrUpdate(gd);
+					
+					}
 				}
 			}
 		}

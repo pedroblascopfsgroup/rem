@@ -120,6 +120,7 @@ public final class ConfiguracionBusinessOperation {
     public static final String BO_ARQ_MGR_GET_RECUPERACION_BY_PERSONA = "arquetipoManager.getArquetipoRecuperacionByPersonaId";
     public static final String BO_ARQ_MGR_GET_LIST_RECUPERACION = "arquetipoManager.getListRecuperacion";
     public static final String BO_ARQ_MGR_GET_LIST_SEGUIMIENTO = "arquetipoManager.getListSeguimiento";
+    public static final String BO_ARQ_MGR_GET_LIST_GESTDEUDA = "arquetipoManager.getListGestDeuda";
     
     /*****************************************************************************
      ** DDEstadoItinerarioManager.

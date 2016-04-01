@@ -227,11 +227,13 @@ public class EXTTareaNotifiacionDaoImpl extends
 	public Date buscarFechaFinEstadoExpediente(Long idExpediente) {
 		List<Object> params = new ArrayList<Object>();
 		String query = "select tn from TareaNotificacion tn left join  tn.expediente.estadoItinerario est where tn.estadoItinerario.codigo = est.codigo and tn.expediente.id = ? and tn.auditoria.borrado = 0";
-		query += " and tn.subtipoTarea.codigoSubtarea in ( ?, ?, ?)";
+		query += " and tn.subtipoTarea.codigoSubtarea in ( ?, ?, ?, ?, ?)";
 		params.add(idExpediente);
 		params.add(SubtipoTarea.CODIGO_COMPLETAR_EXPEDIENTE);
 		params.add(SubtipoTarea.CODIGO_REVISAR_EXPEDIENE);
 		params.add(SubtipoTarea.CODIGO_DECISION_COMITE);
+		params.add(SubtipoTarea.CODIGO_TAREA_EN_SANCION);
+		params.add(SubtipoTarea.CODIGO_TAREA_SANCIONADO);
 		List<TareaNotificacion> tareas = getHibernateTemplate().find(query,
 				params.toArray());
 		if (tareas != null && tareas.size() > 0) {
@@ -557,11 +559,13 @@ public class EXTTareaNotifiacionDaoImpl extends
 		List<Object> params = new ArrayList<Object>();
 		String query = "select tn from TareaNotificacion tn where tn.expediente.id = ?";
 		query += " and tn.auditoria.borrado = false ";
-		query += " and tn.subtipoTarea.codigoSubtarea in (?, ?, ?)";
+		query += " and tn.subtipoTarea.codigoSubtarea in (?, ?, ?, ?, ?)";
 		params.add(idExpediente);
 		params.add(SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_CE);
 		params.add(SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_RE);
 		params.add(SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC);
+		params.add(SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_ENSAN);
+		params.add(SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_SANC);
 		List<TareaNotificacion> notificaciones = getHibernateTemplate().find(
 				query, params.toArray());
 

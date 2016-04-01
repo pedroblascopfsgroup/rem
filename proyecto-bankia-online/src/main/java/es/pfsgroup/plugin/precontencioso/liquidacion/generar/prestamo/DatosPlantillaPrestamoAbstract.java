@@ -124,7 +124,11 @@ public abstract class DatosPlantillaPrestamoAbstract {
 		List<BienLiqVO> bienes = new ArrayList<BienLiqVO>(); 
 
 		StringBuffer bienesConcatenados = new StringBuffer();
-		List<String> aBienesConcatenados = new ArrayList<String>();
+		int i=0;
+		int size=0;
+		if(!Checks.esNulo(liquidacion.getContrato().getBienes()) || !liquidacion.getContrato().getBienes().isEmpty()){
+			size = liquidacion.getContrato().getBienes().size();
+		}
 		
 		for (Bien bien : liquidacion.getContrato().getBienes()) {
 			NMBBien nmbBien = (NMBBien) bien;
@@ -147,7 +151,7 @@ public abstract class DatosPlantillaPrestamoAbstract {
 				// Numero finca
 				String numFinca = "";
 				if (infoRegistral != null && infoRegistral.getNumFinca() != null) {
-					numFinca = " FINCA " + infoRegistral.getNumFinca();	
+					numFinca = "FINCA " + infoRegistral.getNumFinca();	
 					bienesConcatenados.append(numFinca);
 				}
 	
@@ -185,20 +189,18 @@ public abstract class DatosPlantillaPrestamoAbstract {
 					localidad = localizacion.getLocalidad().getDescripcion();
 					bienesConcatenados.append(localidad);
 				}
-				
-				aBienesConcatenados.add(bienesConcatenados.toString());
+
+				i++;
+	 			if(i == size-1) bienesConcatenados.append(" y ");
+	 			else if(i<size) bienesConcatenados.append(", ");
+
 				BienLiqVO bienVo = new BienLiqVO(numFinca + numRegistro + locRegistro, direccion, localidad);
 				bienes.add(bienVo);
 			}
 		}
 
-		String sBienesConcatenados = StringUtils.join(aBienesConcatenados.toArray(), ", ");
-		if(StringUtils.contains(sBienesConcatenados, ",")) {
-			sBienesConcatenados = StringUtils.substringBeforeLast(sBienesConcatenados, ",") + " y" + StringUtils.substringAfterLast(sBienesConcatenados, ","); 
-		}
-		
 		datosBienes.put("BIENES", bienes);
-		datosBienes.put("BIENES_CONCATENADOS", sBienesConcatenados);
+		datosBienes.put("BIENES_CONCATENADOS", bienesConcatenados);
 
 		return datosBienes;
 	}

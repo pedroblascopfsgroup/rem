@@ -213,6 +213,31 @@
 		 />
 		
 	comboJerarquia.disabled=cambioGestor||cambioSupervisor;	
+	
+	<%-- Creamos el combo tipo de asunto --%>
+	var listaTiposDeAsunto = <fwk:json>
+						<json:array name="tipoAsunto" items="${tiposDeAsunto}" var="tasu">
+							<json:object>
+								<json:property name="id" value="${tasu.id}" />
+								<json:property name="descripcion" value="${tasu.descripcion}" />
+							</json:object>
+						</json:array>
+					</fwk:json>;
+	
+	<pfsforms:combo name="tipoDeAsunto" 
+		dict="listaTiposDeAsunto" 
+		displayField="descripcion" 
+		root="tipoAsunto" 
+		labelKey="expedientes.nuevo.asunto.tipo.asunto"
+		label="**Tipo de asunto"
+		value="0" 
+		valueField="id"
+		labelStyle="font-weight:bolder;"
+		 />
+		 
+	tipoDeAsunto.setValue("${asuntoEditar.tipoAsunto.id}");	 
+	
+	<%-- Fin creacion combo tipo de asunto  --%>
 
     var zonasRecord = Ext.data.Record.create([
 		 {name:'codigo'}
@@ -603,7 +628,8 @@
  					<c:if test="${codigoEstadoAsunto!=null}" >
                     	,codigoEstadoAsunto: '${codigoEstadoAsunto}'
                     </c:if>
-                    ,listaGestoresId: Ext.encode(getGestoresId())				
+                    ,listaGestoresId: Ext.encode(getGestoresId())
+                    ,tipoDeAsunto: tipoDeAsunto.getValue()				
 				}
 				,success :  function(){ 
                   				page.fireEvent(app.event.DONE);
@@ -645,7 +671,7 @@
 						,defaults:{xtype:'fieldset',border:false,autoHeight:true}
 						,items:[
 							{
-								items:[txtNombreAsunto,comboJerarquia]
+								items:[txtNombreAsunto,comboJerarquia,tipoDeAsunto]
 							},{
 								items:[comboZonas]
 								,style:'padding:5px'

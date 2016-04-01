@@ -126,4 +126,22 @@ public interface PropuestaApi {
      * @param dto CumplimientoAcuerdoDto
      */
     public void registraCumplimientoPropuesta(CumplimientoAcuerdoDto dto);
+    
+    /**
+     * @param Long idExpediente
+     * @param String estadoAcuerdo
+     */
+    public List<EXTAcuerdo> listadoPropuestasDelExpediente(Long idExpediente, String estadoAcuerdo);
+    
+    /**
+     * @param Long idPropuesta
+     */
+    public List<Contrato> contratosIncluidosEnLosTerminosDeLaPropuesta(Long idPropuesta);
+    
+    /**
+     * 
+     * @param idPropuesta
+     * @param idAsunto
+     */
+    public void asignaPropuestaAlAsunto(Long idPropuesta, Long idAsunto);
 }

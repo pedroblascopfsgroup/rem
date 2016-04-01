@@ -3,7 +3,6 @@
 <%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <fwk:json>
-	<json:property name="total" value="${pagina.totalCount}" />
 	<json:array name="diccionario" items="${pagina}" var="res">
 		<json:object>			 
 			<json:property name="id" value="${res.id}" />

@@ -18,6 +18,7 @@ import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.interna.InternaBusinessOperation;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
+import es.capgemini.pfs.itinerario.model.DDTipoItinerario;
 import es.capgemini.pfs.itinerario.model.Estado;
 import es.capgemini.pfs.itinerario.model.Itinerario;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -190,6 +191,8 @@ public class ProrrogaManager {
                 Estado estadoCE = itinerario.getEstado(DDEstadoItinerario.ESTADO_COMPLETAR_EXPEDIENTE);
                 Estado estadoRE = itinerario.getEstado(DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE);
                 Estado estadoDC = itinerario.getEstado(DDEstadoItinerario.ESTADO_DECISION_COMIT);
+                Estado estadoENSAN = itinerario.getEstado(DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION);
+                Estado estadoSANC = itinerario.getEstado(DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO);
 
                 Long now = System.currentTimeMillis();
                 Long fechaIni = exp.getAuditoria().getFechaCrear().getTime();
@@ -212,12 +215,37 @@ public class ProrrogaManager {
 
                     //Si ya hemos sobrepasado el día de vencimiento calculamos lo que le puede quedar
                     if (now > fechaVenc) {
-                        plazoUtil = fechaIni - now + estadoCE.getPlazo() + estadoRE.getPlazo() + estadoDC.getPlazo();
+                    	if(DDTipoItinerario.ITINERARIO_GESTION_DEUDA.equals(itinerario.getdDtipoItinerario())){
+                    		plazoUtil = fechaIni - now + estadoCE.getPlazo() + estadoRE.getPlazo() + estadoENSAN.getPlazo();
+                    	}else{
+                    		plazoUtil = fechaIni - now + estadoCE.getPlazo() + estadoRE.getPlazo() + estadoDC.getPlazo();
+                    	}
                     } else {
                         //Si no, el plazo será todo el tiempo disponible de la siguiente etapa
-                        plazoUtil = estadoDC.getPlazo();
+                    	if(DDTipoItinerario.ITINERARIO_GESTION_DEUDA.equals(itinerario.getdDtipoItinerario())){
+                    		plazoUtil = estadoENSAN.getPlazo();
+                    	}else{
+                    		plazoUtil = estadoDC.getPlazo();
+                    	}
                     }
                 } else if (DDEstadoItinerario.ESTADO_DECISION_COMIT.equals(exp.getEstadoItinerario().getCodigo())) {
+                    //El plazo será el plazo de la tarea por defecto
+                    PlazoTareasDefault plazoDefault = (PlazoTareasDefault)executor.execute(
+                    		ComunBusinessOperation.BO_TAREA_MGR_BUSCAR_PLAZO_TAREA_DEFAULT_POR_CODIGO, 
+                    		PlazoTareasDefault.CODIGO_PLAZO_PRORROGA_DC);
+                    
+                    plazoUtil = plazoDefault.getPlazo();
+                } else if(DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION.equals(exp.getEstadoItinerario().getCodigo())){
+                	Long fechaVenc = fechaIni + estadoCE.getPlazo() + estadoRE.getPlazo() + estadoENSAN.getPlazo();
+                	
+                	//Si ya hemos sobrepasado el día de vencimiento calculamos lo que le puede quedar
+                	if (now > fechaVenc) {
+                         plazoUtil = fechaIni - now + estadoCE.getPlazo() + estadoRE.getPlazo() + estadoENSAN.getPlazo() + estadoSANC.getPlazo();
+                     } else {
+                         //Si no, el plazo será todo el tiempo disponible de la siguiente etapa
+                         plazoUtil = estadoSANC.getPlazo();
+                     }
+                }  else if (DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO.equals(exp.getEstadoItinerario().getCodigo())) {
                     //El plazo será el plazo de la tarea por defecto
                     PlazoTareasDefault plazoDefault = (PlazoTareasDefault)executor.execute(
                     		ComunBusinessOperation.BO_TAREA_MGR_BUSCAR_PLAZO_TAREA_DEFAULT_POR_CODIGO, 

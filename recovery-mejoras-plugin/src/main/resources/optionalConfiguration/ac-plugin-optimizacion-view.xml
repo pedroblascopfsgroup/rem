@@ -125,6 +125,14 @@
 	<bean p:entity="tabs.asunto.fast" p:name="cobropago"  p:order="700" 
 		p:fileName="/WEB-INF/jsp/entidad/asunto/tabs/cobroPago.jsp" 
 		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="ROLE_TAB_COBROS_PAGOS"/>
+		
+	<bean p:entity="tabs.asunto.fast" p:name="entregas"  p:order="710" 
+		p:fileName="/WEB-INF/jsp/entidad/asunto/tabs/entregas.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="ROLE_PUEDE_VER_TAB_ENTREGAS_ASUNTO"/>
+
+<bean p:entity="tabs.asunto.fast" p:name="contabilidadcobros"  p:order="900" 
+		p:fileName="/WEB-INF/jsp/entidad/asunto/tabs/contabilidadCobros.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="ROLE_PUEDE_VER_TAB_CONTABILIDAD_COBROS"/>
 	
 	<bean p:entity="tabs.asunto.fast" p:name="decisionComite"  p:order="800" 
 		p:fileName="/WEB-INF/jsp/entidad/asunto/tabs/decisionComite.jsp" 
@@ -211,26 +219,31 @@
 		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
 		p:permission="ROLE_PUEDE_VER_TAB_EXP_GESTION" />
 		
-	<bean p:entity="tabs.expediente.fast" p:name="decisionComite"  p:order="600"
+	<bean p:entity="tabs.expediente.fast" p:name="sancionar"  p:order="600"
+		p:fileName="/WEB-INF/jsp/entidad/expediente/tabs/sancion.jsp" 
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="ROLE_PUEDE_VER_TAB_EXP_SANCION"/>
+		
+	<bean p:entity="tabs.expediente.fast" p:name="decisionComite"  p:order="700"
 		p:fileName="/WEB-INF/jsp/entidad/expediente/tabs/decisionComite.jsp" 
 		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
 		p:permission="ROLE_COMITE" />
 
-	<bean p:entity="tabs.expediente.fast" p:name="marcadoPolitica"  p:order="700"
+	<bean p:entity="tabs.expediente.fast" p:name="marcadoPolitica"  p:order="800"
 		p:fileName="/WEB-INF/jsp/entidad/expediente/tabs/politica.jsp" 
 		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
 		p:permission="ROLE_COMITE"/>
 
-	<bean p:entity="tabs.expediente.fast" p:name="nivelCumplimiento"  p:order="800"
+	<bean p:entity="tabs.expediente.fast" p:name="nivelCumplimiento"  p:order="900"
 		p:fileName="/WEB-INF/jsp/entidad/expediente/tabs/cumplimiento.jsp" 
 		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
 		p:permission="ROLE_PUEDE_VER_TAB_EXP_CUMPLIMIENTO" />
 		
-	<bean p:entity="tabs.expediente.fast" p:name="historicoEventos"  p:order="900"
+	<bean p:entity="tabs.expediente.fast" p:name="historicoEventos"  p:order="1000"
 		p:fileName="/WEB-INF/jsp/entidad/expediente/tabs/eventos.jsp" 
 		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
 
-	<bean p:entity="tabs.expediente.fast" p:name="adjuntosExpedientes" p:order="1000"
+	<bean p:entity="tabs.expediente.fast" p:name="adjuntosExpedientes" p:order="1100"
 		p:fileName="/WEB-INF/jsp/entidad/expediente/tabs/adjuntos.jsp" 
 		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
 		p:permission="TAB_EXPEDIENTE_ADJUNTOS"/>
@@ -277,6 +290,10 @@
 		p:fileName="/WEB-INF/jsp/entidad/procedimiento/tabs/historico.jsp" 
 		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
 	
+	<bean p:entity="tabs.procedimiento.fast" p:name="tabInformacionRequerida" p:order="150" 
+		p:fileName="/WEB-INF/jsp/plugin/mejoras/procedimientos/tabs/tabInformacionRequerida.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
 	<!-- botones -->
 	
 	<bean p:entity="entidad.procedimiento.buttons.left.fast" p:name="btnReactivarProcedimiento" p:order="1"

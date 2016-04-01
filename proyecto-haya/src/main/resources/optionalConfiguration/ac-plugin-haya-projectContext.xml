@@ -255,8 +255,17 @@
 				<entry key="ABRIR_EXP">
 					<set>
 						<value>FZAR_PPUESTA</value>
+						<value>ENSAN</value>
+						<value>SANC</value>
 					</set>
 				</entry>
+				<entry key="ABRIR_PER">
+					<!-- Tareas tipo abrir cliente -->
+					<set>
+						<value>29</value>
+						<value>SOLEXPMGDEUDA</value>
+					</set>
+				</entry>				
 			</map>
 		</property>
 		<property name="tiposProcedimientosAdjudicados">

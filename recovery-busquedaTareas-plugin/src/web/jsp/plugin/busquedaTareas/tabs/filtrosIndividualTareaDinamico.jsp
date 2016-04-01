@@ -119,7 +119,7 @@ var limit=25;
 		    	,toData : []
 		        ,msHeight : config.height || 130
 				,labelStyle:config.labelStyle || ''
-		        ,msWidth : config.width || 300
+		        ,msWidth : config.width || 260
 		        ,drawTopIcon:false
 		        ,drawBotIcon:false
 		        ,drawUpIcon:false
@@ -206,42 +206,166 @@ var recargarComboGestores = function(){
 		return {
 			comboDespachos:comboDespachos.getValue()
 			,comboGestor:comboGestor.getValue()
+			,comboTipoActuacion:comboTipoActuacion.getValue()
+			,comboTipoProcedimiento:comboTipoProcedimiento.getValue()
+			,comboTipoTarea:comboTipoTarea.getValue()
 			,comboTiposGestor:comboTiposGestor.getValue()
 		};
 	};
 
+	<%-- Datos para Campo Tipo de Actuacion --%>
+	var TipoAct = Ext.data.Record.create([
+		 {name:'id'}
+		,{name:'descripcion'}
+	]);
 	
-	var tabFiltrosUsuario = false;		
+	var optionsActuacionesStore = page.getStore({
+	       flow: 'revisionprocedimiento/getListTipoActuacionData'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'listadoActuaciones'
+	    }, TipoAct)	       
+	});
+	
+	<%-- Campo Tipo de Actuacion --%>
+	var comboTipoActuacion = new Ext.form.ComboBox({
+		store:optionsActuacionesStore
+		,displayField:'descripcion'
+		,valueField:'id'
+		,mode: 'remote'
+		,width: 280
+		,resizable: true
+		,forceSelection: true
+		,disabled: false
+		,editable: false
+		,emptyText:'Seleccionar'
+		,triggerAction: 'all'
+		,fieldLabel: '<s:message code="plugin.mejoras.asuntos.cmbTipoActuacion" text="**Tipo actuacion" />'
+	});
+	
+	comboTipoActuacion.on('select', function(){
+		optionsProcedimientosStore.webflow({'idTipoAct': comboTipoActuacion.getValue()}); 
+		comboTipoProcedimiento.reset();
+		comboTipoTarea.reset();
+		comboTipoProcedimiento.setDisabled(false);
+		comboTipoTarea.setDisabled(true);
+	});						
+	
+	<%-- Datos para Campo Tipo de Procedimiento --%>
+	 var TipoProd = Ext.data.Record.create([
+		 {name:'id'}
+		,{name:'descripcion'}
+	]);
+	
+	var optionsProcedimientosStore = page.getStore({
+	       flow: 'revisionprocedimiento/getListTipoProcedimientoData'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'listadoProcedimientos'
+	    }, TipoProd)	       
+	});			
+	<%-- Campo Tipo de Procedimiento --%>
+	var comboTipoProcedimiento = new Ext.form.ComboBox({
+		store:optionsProcedimientosStore
+		,displayField:'descripcion'
+		,valueField:'id'
+		,mode: 'remote'
+		,width: 280
+		,resizable: true
+		,forceSelection: true
+		,editable: false
+		,disabled: true
+		,emptyText:'Seleccionar'
+		,triggerAction: 'all'
+		,fieldLabel: '<s:message code="plugin.mejoras.asuntos.cmbTipoProcedimiento" text="**Tipo actuacion" />'
+	});
+	
+	comboTipoProcedimiento.on('select', function(){
+		optionsTareasStore.webflow({'idTipoPro': comboTipoProcedimiento.getValue()}); 
+		comboTipoTarea.reset();
+		comboTipoTarea.setDisabled(false);
+	});
+	
+	<%-- Datos para Campo Tipo de Tarea --%>
+	var TipoTar = Ext.data.Record.create([
+		 {name:'id'}
+		,{name:'descripcion'}
+	]);
+	
+	var optionsTareasStore = page.getStore({
+	       flow: 'revisionprocedimiento/getListTipoTareaData'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'listadoTareas'
+	    }, TipoTar)	       
+	});			
+	
+	<%-- Campo Tipo de Tarea --%>
+	var comboTipoTarea = new Ext.form.ComboBox({
+		store:optionsTareasStore
+		,displayField:'descripcion'
+		,valueField:'id'
+		,mode: 'remote'
+		,width: 280
+		,resizable: true
+		,forceSelection: true
+		,editable: false
+		,disabled: true
+		,emptyText:'Seleccionar'
+		,triggerAction: 'all'
+		,fieldLabel: '<s:message code="plugin.mejoras.asuntos.cmbTipoTarea" text="**Tipo actuacion" />'
+	}); 
+	
+	<%-- Columna de la Derecha --%>
+	var panelDer =  new Ext.Container({
+		layout: 'form'
+		,style: {
+            padding: '5px'
+        }
+		,items : [comboTipoActuacion, comboTipoProcedimiento, comboTipoTarea]
+	});	
+	
+	<%-- Columna de la Izquierda --%>
+	var panelIzq = new Ext.Container({
+	 	layout: 'form'
+	 	,xtype: 'panel'
+		,style: {
+            padding: '5px'
+        }
+		,items :[comboTiposGestor, comboDespachos, comboGestor]
+	 });
+
+	
 	<%-- Tab --%>
 	var filtrosDeUsuarioTabBuscaTareas = new Ext.Panel({
 		title:'<s:message code="plugin.busquedaTareas.tituloPestanaFiltros4" text="**Tareas Individuales" />'
 		,autoHeight:true
 		,bodyStyle:'padding:5px;cellspacing:10px'
 		,layout:'table'
-		,layoutConfig:{columns:1}
+		,layoutConfig:{columns:2}
 		,header: false
 	    ,border:false
 		,defaults : {xtype:'panel', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
-		,items:[{items:[comboTiposGestor]}
-				,{items:[comboDespachos]}
-				,{items:[comboGestor]}]
+		,items:[panelIzq, panelDer]
 		,listeners:{
 			getParametros: function(anadirParametros, hayError) {
 		        if (validarEmptyForm()){
     	                anadirParametros(getParametros());
     	        }
 			}
-			,limpiar: function() {
-    		   			app.resetCampos([      
-    		           comboDespachos
-    		           ,comboGestor
-    		           ,comboTiposGestor
-    		           ]);
-    		           comboGestor.setDisabled(true);
-	          		   comboDespachos.setDisabled(true);
-	          		   optionsGestoresStore.webflow({'idTipoDespacho': 0});
-    				}
-    			}
+		,limpiar: function() {
+   		   			app.resetCampos([      
+   		           comboDespachos
+   		           ,comboGestor
+   		           ,comboTiposGestor
+   		           ,comboTipoActuacion
+   		           ,comboTipoProcedimiento
+   		           ,comboTipoTarea
+   		           ]);
+   		           comboGestor.setDisabled(true);
+          		   comboDespachos.setDisabled(true);
+          		   comboTipoProcedimiento.setDisable(true);
+          		   comboTipoTarea.setDisable(true)
+          		   optionsGestoresStore.webflow({'idTipoDespacho': 0});
+   				}
+		}
 	});
 	
     Ext.onReady(function(){

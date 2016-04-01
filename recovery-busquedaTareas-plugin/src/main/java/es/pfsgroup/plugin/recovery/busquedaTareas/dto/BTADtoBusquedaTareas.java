@@ -82,7 +82,10 @@ public class BTADtoBusquedaTareas extends ExtensibleDto implements
 	private Long comboDespachos;
 	private String comboGestor;
     private String tipoGestor;
-    private String tipoGestorTarea; 
+    private String tipoGestorTarea;
+    private String comboTipoActuacion;
+    private String comboTipoProcedimiento;
+    private String comboTipoTarea;
         
     // Grupo
     private String perfilesAbuscar;
@@ -110,7 +113,31 @@ public class BTADtoBusquedaTareas extends ExtensibleDto implements
        this.comboGestor = gestores;
     }
 
-    public String getApellidoUsuario() {
+    public String getComboTipoActuacion() {
+		return comboTipoActuacion;
+	}
+
+	public void setComboTipoActuacion(String tipoActuacion) {
+		this.comboTipoActuacion = tipoActuacion;
+	}
+
+	public String getComboTipoProcedimiento() {
+		return comboTipoProcedimiento;
+	}
+
+	public void setComboTipoProcedimiento(String tipoProcedimiento) {
+		this.comboTipoProcedimiento = tipoProcedimiento;
+	}
+
+	public String getComboTipoTarea() {
+		return comboTipoTarea;
+	}
+
+	public void setComboTipoTarea(String tipoTarea) {
+		this.comboTipoTarea = tipoTarea;
+	}
+
+	public String getApellidoUsuario() {
         return apellidoUsuario;
     }
 

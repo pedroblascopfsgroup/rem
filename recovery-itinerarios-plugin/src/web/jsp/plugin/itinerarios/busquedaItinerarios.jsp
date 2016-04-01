@@ -6,6 +6,7 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <fwk:page>
 
@@ -86,11 +87,12 @@
 	</pfs:searchPage>
 
 	btnNuevo.hide();
-	
-	 <pfs:button caption="**Nuevo itinerario" name="btAgregar" 
-	 	captioneKey="plugin.itinerarios.listado.nuevo" iconCls="icon_mas">
-	 	alert('El alta un nuevo itinerario se hará como copia y modificación de uno ya existente');
-	 </pfs:button>
+	<sec:authorize ifAllGranted="ROLE_PUEDE_VER_BOT_NUEVO_ITI">
+		 <pfs:button caption="**Nuevo itinerario" name="btAgregar" 
+		 	captioneKey="plugin.itinerarios.listado.nuevo" iconCls="icon_mas">
+		 	alert('El alta un nuevo itinerario se hará como copia y modificación de uno ya existente');
+		 </pfs:button>
+	 </sec:authorize>
 	 filtroForm.getTopToolbar().add(btAgregar);
 	 btnNuevo.hide();
 	 filtroForm.getTopToolbar().add(buttonsL,'->', buttonsR);

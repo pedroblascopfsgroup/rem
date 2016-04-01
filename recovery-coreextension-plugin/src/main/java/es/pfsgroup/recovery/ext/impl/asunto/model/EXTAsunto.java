@@ -29,6 +29,7 @@ import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
@@ -80,17 +81,15 @@ public class EXTAsunto extends Asunto {
 			+ " and prc.PRC_PRC_ID is null and prc.dd_epr_id not in ( '"
 			+ PluginCoreextensionConstantes.ESTADO_PROCEDIMIENTO_REORGANIZADO
 			+ "')" + " group by prc.asu_id" + ")")*/
-	/*
-	@Formula("(SELECT PRO.PRC_SALDO_RECUPERACION FROM " +
-			"(SELECT PRC.PRC_ID, PRC.ASU_ID, PRC.PRC_SALDO_RECUPERACION,  ROW_NUMBER() OVER (PARTITION BY PRC.ASU_ID ORDER BY PRC.PRC_ID DESC) ROWNUMBER " +
-			"FROM PRC_PROCEDIMIENTOS PRC " + 
-			"INNER JOIN TAR_TAREAS_NOTIFICACIONES TAR ON TAR.PRC_ID = PRC.PRC_ID AND TAR.TAR_TAREA_FINALIZADA IS NULL AND TAR.BORRADO = 0 " + 
-	        "INNER JOIN TEX_TAREA_EXTERNA TEX ON TEX.TAR_ID = TEX.TAR_ID AND TEX.BORRADO = 0 " + 
-	        "INNER JOIN TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = TEX.TAP_ID AND TAR.BORRADO = 0 " + 
-	        "WHERE PRC.BORRADO = 0 AND PRC.ASU_ID = ASU_ID) PRO " +
-	        "WHERE PRO.ROWNUMBER = 1)")
-	*/
-	//private Double importeEstimado;
+	
+	@Formula("(select prc.prc_saldo_recuperacion " +
+		  "     from prc_procedimientos prc " +
+		  "     where prc.prc_id in  " +
+		  "     (select   max (p1.prc_id) " +
+		  "          from prc_procedimientos p1" +
+		  "         where p1.asu_id = ASU_ID and p1.borrado = 0 " +
+		  "      ))")	
+	private Double importeEstimado;
 
 	/*
 	@Formula("(" + _GESTOR_DESPACHO_GEXT + ")")
@@ -115,7 +114,15 @@ public class EXTAsunto extends Asunto {
 
 	@Column(name = "SYS_GUID")
 	private String guid;
-
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ASU_ID_ORIGEN")
+    private Asunto asuOrigen;
+    
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "EXP_ID_ORIGEN")
+    private Expediente expOrigen;
+    
 	public String getGuid() {
 		return guid;
 	}
@@ -312,15 +319,26 @@ public class EXTAsunto extends Asunto {
 		}
 	}
 
-	public void setImporteEstimado(Double importeEstimado) {
-		//this.importeEstimado = importeEstimado;
-	}
-
 	public Double getImporteEstimado() {
-		Procedimiento ultimoProc = this.getUltimoProcedimientoConTareas();
-		return (ultimoProc!=null) ? ultimoProc.getSaldoRecuperacion().doubleValue() : null;
+		return this.importeEstimado;
 	}
 
+	public Asunto getAsuOrigen() {
+		return asuOrigen;
+	}
+
+	public void setAsuOrigen(Asunto asuOrigen) {
+		this.asuOrigen = asuOrigen;
+	}
+
+	public Expediente getExpOrigen() {
+		return expOrigen;
+	}
+
+	public void setExpOrigen(Expediente expOrigen) {
+		this.expOrigen = expOrigen;
+	}
+		
 	/**
 	 * Volumen de Riesgo de los procedimientos contenidos en el asunto (suma del
 	 * principal del procedimiento).

@@ -142,6 +142,7 @@ var formBusquedaContratos=function(){
     			,jerarquia:comboJerarquia.getValue()
     			,tiposProducto:comboTiposProducto.getValue()
         		,busquedaOrInclusion:'${busquedaOrInclusion}'
+        		, idProcedimiento: '${idProcedimiento}'
             };
     }
 

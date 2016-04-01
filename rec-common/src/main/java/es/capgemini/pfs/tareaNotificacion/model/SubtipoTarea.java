@@ -118,12 +118,22 @@ public class SubtipoTarea implements Serializable, Auditable {
     public static final String CODIGO_NOTIFICACION_GESTOR_PROPUESTA_SUBASTA = "NTGPS";
 
     public static final String CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_SEG = "501";
+    public static final String CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_GESTION_DEUDA = "SOLEXPMGDEUDA";
     
     // nuevos tipos para tareas de expediente de recobro
     public static final String CODIGO_TAREA_EXP_RECOBRO_MARCADO="REC_MARCADO_EXP";
     public static final String CODIGO_TAREA_EXP_RECOBRO_META_VOLANTE_OK="REC_META_VOL_OK";
     public static final String CODIGO_TAREA_EXP_RECOBRO_META_VOLANTE_KO="REC_META_VOL_KO";
     
+    public static final String CODIGO_TAREA_EN_SANCION="ENSAN";
+    public static final String CODIGO_TAREA_SANCIONADO="SANC";
+    public static final String CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_ENSAN = "PRRECENSAN";
+    public static final String CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_SANC = "PRRECSANC";
+    public static final String CODIGO_NOTIFICACION_ENSAN_VENCIDA = "VENENSAN";
+    public static final String CODIGO_NOTIFICACION_SANC_VENCIDA = "VENSANC";
+    public static final String CODIGO_SOLICITAR_PRORROGA_ENSAN = "SOLPRENSAN";
+    public static final String CODIGO_SOLICITAR_PRORROGA_SANC = "SOLPRSANC";
+
     public static final String CODIGO_NOTIFICACION_EXPEDIENTE_NUEVO_RIESGO = "1000";
     public static final String CODIGO_NOTIFICACION_EXPEDIENTE_SCORING_GRAVE = "999";
 

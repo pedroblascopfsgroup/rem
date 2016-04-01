@@ -1198,4 +1198,14 @@ public class PCDProcesadoResolucionesController {
 
         return JSON_LISTA_DICCIONARIO_GENERICO_LIST;
     }
+
+    @RequestMapping
+    public String getDictionaryDenormalized(String dictionary, ModelMap model) throws ClassNotFoundException {
+
+    	List dictionaryData = utilDiccionario.dameValoresDiccionarioSinBorrado(Class.forName(dictionary));
+		
+        model.put("pagina", dictionaryData);
+
+        return JSON_LISTA_DICCIONARIO_GENERICO_LIST;
+    }
 }

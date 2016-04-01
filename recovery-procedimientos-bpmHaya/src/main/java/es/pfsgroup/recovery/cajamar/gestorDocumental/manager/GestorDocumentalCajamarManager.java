@@ -261,7 +261,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		}
 		return mimeType;
 	}
-	
+
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_RECUPERACION_DOCUMENTO)
 	@Transactional(readOnly = false)
 	public String recuperacionDocumento(String idRefCentera) {

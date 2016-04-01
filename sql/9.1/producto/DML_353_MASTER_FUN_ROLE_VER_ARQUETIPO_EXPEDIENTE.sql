@@ -41,7 +41,7 @@ EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 IF V_NUM_TABLAS = 0 THEN
 	DBMS_OUTPUT.PUT_LINE('[INFO] Creamos el permiso ROLE_VER_ARQUETIPO_EXPEDIENTE');
 	V_MSQL := 'INSERT INTO '|| V_ESQUEMA_M ||'.FUN_FUNCIONES (FUN_ID, FUN_DESCRIPCION_LARGA, FUN_DESCRIPCION,  VERSION, USUARIOCREAR, FECHACREAR,  BORRADO )  VALUES '||
-				'( '|| V_ESQUEMA_M ||'.S_FUN_FUNCIONES.NEXTVAL, '' Permite ver el campo arquetipo e itinerario en los expedientes de recuperaciones o de seguimiento'', ''ROLE_VER_ARQUETIPO_EXPEDIENTE'', 0, ''DML'', SYSDATE, 0)';
+				'('|| V_ESQUEMA_M ||'.S_FUN_FUNCIONES.NEXTVAL, '' Permite ver el campo arquetipo e itinerario en los expedientes de recuperaciones o de seguimiento'', ''ROLE_VER_ARQUETIPO_EXPEDIENTE'', 0, ''DML'', SYSDATE, 0)';
 	EXECUTE IMMEDIATE V_MSQL;
 END IF;
 

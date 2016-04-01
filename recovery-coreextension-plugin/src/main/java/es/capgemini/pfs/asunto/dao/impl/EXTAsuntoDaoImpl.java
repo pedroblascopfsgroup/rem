@@ -32,6 +32,7 @@ import es.capgemini.pfs.asunto.dto.DtoReportAnotacionAgenda;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.asunto.model.FichaAceptacion;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.comite.dao.ComiteDao;
@@ -183,7 +184,11 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 //		}
 //		
 		if (dto.getFiltroContrato() != null && dto.getFiltroContrato()!="") {
-			hql.append(" and TO_CHAR(cnt.nroContrato) like '%"+dto.getFiltroContrato()+"%'");
+			hql.append(" and TO_CHAR(cnt.nroContrato) like '%'|| :numeroContrato ||'%'");
+			params.put("numeroContrato", dto.getFiltroContrato());
+
+			
+			//hql.append(" and TO_CHAR(cnt.nroContrato) like '%"+dto.getFiltroContrato()+"%'");
 			
 			
 		}
@@ -258,10 +263,14 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			// Codigo de procedimiento en juzgado
 			if (dto.getCodigoProcedimientoEnJuzgado() != null
 					&& !dto.getCodigoProcedimientoEnJuzgado().equals("")) {
-				hql.append(" and (");
-				hql.append(" prc.codigoProcedimientoEnJuzgado like '%"
-						+ dto.getCodigoProcedimientoEnJuzgado() + "%' ");
-				hql.append(" ) ");
+				
+				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%'|| :codProcJuz ||'%')");
+				params.put("codProcJuz", dto.getCodigoProcedimientoEnJuzgado());
+				
+//				hql.append(" and (");
+//				hql.append(" prc.codigoProcedimientoEnJuzgado like '%"
+//						+ dto.getCodigoProcedimientoEnJuzgado() + "%' ");
+//				hql.append(" ) ");
 			}
 			// Tipos de procedimiento
 			if (dto.getTiposProcedimiento() != null
@@ -515,7 +524,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			GestorDespacho supervisor, GestorDespacho procurador,
 			String nombreAsunto, Expediente expediente, String observaciones) {
 		
-		return crearAsuntoConEstado(gestorDespacho, supervisor, procurador, nombreAsunto, expediente, observaciones, null);
+		return crearAsuntoConEstado(gestorDespacho, supervisor, procurador, nombreAsunto, expediente, observaciones, null, null);
 		
 	}
 	
@@ -523,13 +532,14 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 	public Long crearAsuntoConEstado(GestorDespacho gestorDespacho,
 			GestorDespacho supervisor, GestorDespacho procurador,
 			String nombreAsunto, Expediente expediente, String observaciones,
-			String codigoEstadoAsunto) {
+			String codigoEstadoAsunto, DDTiposAsunto tipoAsunto) {
 		EXTAsunto extAsunto = new EXTAsunto();
 
 		extAsunto.setObservacion(observaciones);
 		extAsunto.setSupervisor(supervisor);
 		extAsunto.setGestor(gestorDespacho);
 		extAsunto.setProcurador(procurador);
+		extAsunto.setTipoAsunto(tipoAsunto);
 		// extAsunto.setGestoresAsunto(gestoresAsunto);
 
 		// Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo",
@@ -573,7 +583,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 	@Override
 	public Long modificarAsunto(Long idAsunto, GestorDespacho gestorDespacho,
 			GestorDespacho supervisor, GestorDespacho procurador,
-			String nombreAsunto, String observaciones) {
+			String nombreAsunto, String observaciones, DDTiposAsunto tipoAsunto) {
 		EXTAsunto extAsunto = (EXTAsunto) get(idAsunto);
 		if (!Checks.esNulo(gestorDespacho)
 				&& (gestorDespacho.getId().longValue() != extAsunto.getGestor()
@@ -584,6 +594,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		extAsunto.setObservacion(observaciones);
 		extAsunto.setSupervisor(supervisor);
 		extAsunto.setNombre(nombreAsunto);
+		extAsunto.setTipoAsunto(tipoAsunto);
 
 		// Gestores adicionales Asunto
 		// List<EXTGestorAdicionalAsunto> gestoresAsuntoGet =
@@ -735,19 +746,23 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			
 			if(dto.getNombrePersonaProcedimiento()!= ""){
 				
-				hql.append(" and persAfc.nombre like '%"+dto.getNombrePersonaProcedimiento().toUpperCase()+"%'");
+				hql.append(" and persAfc.nombre like '%'|| :nomPers ||'%'");
+				params.put("nomPers", dto.getNombrePersonaProcedimiento().toUpperCase());
 			}
 			
 			if(dto.getApellido1PersonaProcedimiento()!= ""){
-					hql.append(" and persAfc.apellido1 like '%"+dto.getApellido1PersonaProcedimiento().toUpperCase()+"%'");
+				hql.append(" and persAfc.apellido1 like '%'|| :ape1Pers ||'%'");
+				params.put("ape1Pers", dto.getApellido1PersonaProcedimiento().toUpperCase());
 			}		
 					
 			if(dto.getApellido2PersonaProcedimiento()!= ""){
-					hql.append(" and persAfc.apellido2 like '%"+dto.getApellido2PersonaProcedimiento().toUpperCase()+"%'");
+				hql.append(" and persAfc.apellido2 like '%'|| :ape2Pers ||'%'");
+				params.put("ape2Pers", dto.getApellido2PersonaProcedimiento().toUpperCase());
 			}
 			
 			if(dto.getDniPersonaProcedimiento()!="" && dto.getDniPersonaProcedimiento()!=null){
-				hql.append(" and persAfc.docId like '%"+dto.getDniPersonaProcedimiento().toUpperCase()+"%'");
+				hql.append(" and persAfc.docId like '%'|| :dni ||'%'");
+				params.put("dni", dto.getDniPersonaProcedimiento().toUpperCase());
 			}
 
 		}
@@ -886,7 +901,9 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 //		}
 		
 		if (dto.getFiltroContrato() != null && dto.getFiltroContrato()!="") {
-			hql.append(" and cnt.nroContrato like '%"+dto.getFiltroContrato()+"%'");
+			
+			hql.append(" and cnt.nroContrato like '%'|| :nroContrato ||'%'");
+			params.put("nroContrato", dto.getFiltroContrato());
 			
 			
 		}
@@ -1026,30 +1043,36 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			// Codigo de procedimiento en juzgado
 			if (dto.getCodigoProcedimientoEnJuzgado() != null
 					&& !dto.getCodigoProcedimientoEnJuzgado().equals("")) {
-				hql.append(" and (");
-				hql.append(" prc.codigoProcedimientoEnJuzgado like '%"
-						+ dto.getCodigoProcedimientoEnJuzgado() + "%' ");
-				hql.append(" ) ");
+				
+				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%'|| :codProcJuz ||'%')");
+				params.put("codProcJuz", dto.getCodigoProcedimientoEnJuzgado());
+				
 			}
 			// UGAS-188
 			if (!Checks.esNulo(dto.getNumeroProcedimientoEnJuzgado())
 					&& !Checks.esNulo(dto.getAnyoProcedimientoEnJuzgado())) {
-				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%"
-						+ dto.getNumeroProcedimientoEnJuzgado() + "%-%"
-						+ dto.getAnyoProcedimientoEnJuzgado() + "%'");
-				hql.append(" or prc.codigoProcedimientoEnJuzgado like '%"
-						+ dto.getNumeroProcedimientoEnJuzgado() + "%/%"
-						+ dto.getAnyoProcedimientoEnJuzgado() + "%')");
+				
+				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%-%"+dto.getAnyoProcedimientoEnJuzgado()+"%'");
+				hql.append(" or prc.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%/%"+dto.getAnyoProcedimientoEnJuzgado()+"%')");
+
+				//hql.append(" or prc.codigoProcedimientoEnJuzgado= '"+dto.getNumeroProcedimientoEnJuzgado()+"/"+dto.getAnyoProcedimientoEnJuzgado()+"' )");
+
+				
+//				params.put("numProcJuz", dto.getNumeroProcedimientoEnJuzgado());
+//				params.put("anyoProjuz", dto.getAnyoProcedimientoEnJuzgado());
+				
 			} else if (!Checks.esNulo(dto.getNumeroProcedimientoEnJuzgado())) {
-				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%"
-						+ dto.getNumeroProcedimientoEnJuzgado() + "%-%'");
-				hql.append(" or prc.codigoProcedimientoEnJuzgado like '%"
-						+ dto.getNumeroProcedimientoEnJuzgado() + "%/%')");
+				
+				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%-%'");
+				hql.append(" or prc.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%/%')");
+//				params.put("numProcJuz", dto.getNumeroProcedimientoEnJuzgado());
+				
 			} else if (!Checks.esNulo(dto.getAnyoProcedimientoEnJuzgado())) {
-				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%-%"
-						+ dto.getAnyoProcedimientoEnJuzgado() + "%'");
-				hql.append(" or prc.codigoProcedimientoEnJuzgado like '%/%"
-						+ dto.getAnyoProcedimientoEnJuzgado() + "%')");
+				
+				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%-%"+dto.getAnyoProcedimientoEnJuzgado()+"%'");
+				hql.append(" or prc.codigoProcedimientoEnJuzgado like '%/%"+dto.getAnyoProcedimientoEnJuzgado()+"%')");
+//				params.put("anyoProjuz", dto.getAnyoProcedimientoEnJuzgado());
+
 			}
 
 			// Tipos de procedimiento

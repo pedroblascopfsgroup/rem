@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
@@ -464,8 +465,9 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 			Usuario usuLogado) {
 		// Establece el orden de la b�squeda
 		setSortSubastas(dto);
+		final HashMap<String, Object> params = new HashMap<String, Object>();
 		return paginationManager.getHibernatePage(getHibernateTemplate(),
-				generarHQLBuscarSubastasPaginados(dto, usuLogado), dto);
+				generarHQLBuscarSubastasPaginados(dto, usuLogado, params), dto, params);
 	}
 
 	private String anyadirApostrofesParaSql(String cadena) {
@@ -494,7 +496,9 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	}
 	
 	private String generarHQLBuscarSubastasPaginados(NMBDtoBuscarSubastas dto,
-			Usuario usuLogado) {
+			Usuario usuLogado, HashMap<String, Object> params) {
+		
+		
 		StringBuffer hqlSelect = new StringBuffer();
 		StringBuffer hqlFrom = new StringBuffer();
 		StringBuffer hqlWhere = new StringBuffer();
@@ -543,38 +547,76 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		}
 
 		if (!StringUtils.emtpyString(dto.getNumAutos())) {
-			hqlWhere.append(" and s.procedimiento.codigoProcedimientoEnJuzgado like ('%"
-					.concat(dto.getNumAutos()).concat("%')"));
+			
+			hqlWhere.append(" and s.procedimiento.codigoProcedimientoEnJuzgado like '%'|| :numAut ||'%'");
+			params.put("numAut", dto.getNumAutos());
+			
+			
+//			hqlWhere.append(" and s.procedimiento.codigoProcedimientoEnJuzgado like ('%"
+//					.concat(dto.getNumAutos()).concat("%')"));
 		}
 
 		if (!StringUtils.emtpyString(dto.getFechaSolicitudDesde())) {
-			hqlWhere.append(sqlFechaMayorOIgual(dto.getFechaSolicitudDesde(),
-					"s.fechaSolicitud"));
+			
+			if(Pattern.matches("\\d\\d/\\d\\d/\\d\\d\\d\\d", dto.getFechaSolicitudDesde())){
+				hqlWhere.append(sqlFechaMayorOIgual(dto.getFechaSolicitudDesde(),
+						"s.fechaSolicitud"));
+			}
 		}
 
 		if (!StringUtils.emtpyString(dto.getFechaSolicitudHasta())) {
-			hqlWhere.append(sqlFechaMenorOIgual(dto.getFechaSolicitudHasta(),
-					"s.fechaSolicitud"));
+			
+			if(Pattern.matches("\\d\\d/\\d\\d/\\d\\d\\d\\d", dto.getFechaSolicitudHasta())){
+				hqlWhere.append(sqlFechaMenorOIgual(dto.getFechaSolicitudHasta(),
+						"s.fechaSolicitud"));
+			}
+			
+//			hqlWhere.append(sqlFechaMenorOIgual(dto.getFechaSolicitudHasta(),
+//					"s.fechaSolicitud"));
 		}
 
 		if (!StringUtils.emtpyString(dto.getFechaAnuncioDesde())) {
-			hqlWhere.append(sqlFechaMayorOIgual(dto.getFechaAnuncioDesde(),
-					"s.fechaAnuncio"));
+			
+			if(Pattern.matches("\\d\\d/\\d\\d/\\d\\d\\d\\d", dto.getFechaAnuncioDesde())){
+				hqlWhere.append(sqlFechaMayorOIgual(dto.getFechaAnuncioDesde(),
+						"s.fechaAnuncio"));
+			}
+			
+//			hqlWhere.append(sqlFechaMayorOIgual(dto.getFechaAnuncioDesde(),
+//					"s.fechaAnuncio"));
 		}
 
 		if (!StringUtils.emtpyString(dto.getFechaAnuncioHasta())) {
-			hqlWhere.append(sqlFechaMenorOIgual(dto.getFechaAnuncioHasta(),
-					"s.fechaAnuncio"));
+			
+			if(Pattern.matches("\\d\\d/\\d\\d/\\d\\d\\d\\d", dto.getFechaAnuncioHasta())){
+				hqlWhere.append(sqlFechaMenorOIgual(dto.getFechaAnuncioHasta(),
+						"s.fechaAnuncio"));
+			}
+			
+//			hqlWhere.append(sqlFechaMenorOIgual(dto.getFechaAnuncioHasta(),
+//					"s.fechaAnuncio"));
 		}
 
 		if (!StringUtils.emtpyString(dto.getFechaSenyalamientoDesde())) {
-			hqlWhere.append(sqlFechaMayorOIgual(
-					dto.getFechaSenyalamientoDesde(), "s.fechaSenyalamiento"));
+			
+			if(Pattern.matches("\\d\\d/\\d\\d/\\d\\d\\d\\d", dto.getFechaSenyalamientoDesde())){
+				hqlWhere.append(sqlFechaMayorOIgual(dto.getFechaSenyalamientoDesde(),
+						"s.fechaSenyalamiento"));
+			}
+			
+//			hqlWhere.append(sqlFechaMayorOIgual(
+//					dto.getFechaSenyalamientoDesde(), "s.fechaSenyalamiento"));
 		}
 
 		if (!StringUtils.emtpyString(dto.getFechaSenyalamientoHasta())) {
-			hqlWhere.append(sqlFechaMenorOIgual(
-					dto.getFechaSenyalamientoHasta(), "s.fechaSenyalamiento"));
+			
+			if(Pattern.matches("\\d\\d/\\d\\d/\\d\\d\\d\\d", dto.getFechaSenyalamientoHasta())){
+				hqlWhere.append(sqlFechaMenorOIgual(dto.getFechaSenyalamientoHasta(),
+						"s.fechaSenyalamiento"));
+			}
+			
+//			hqlWhere.append(sqlFechaMenorOIgual(
+//					dto.getFechaSenyalamientoHasta(), "s.fechaSenyalamiento"));
 		}
 
 		if (!StringUtils.emtpyString(dto.getIdComboInfLetradoCompleto())) {
@@ -637,23 +679,46 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		}
 
 		if (!StringUtils.emtpyString(dto.getTotalCargasAnterioresDesde())) {
-			hqlWhere.append(" and to_number(s.cargasAnteriores)>= ".concat(dto
-					.getTotalCargasAnterioresDesde()));
+			
+			if(Pattern.matches("^\\d+|^\\d+\\.?\\d+",dto.getTotalCargasAnterioresDesde())){
+				hqlWhere.append(" and to_number(s.cargasAnteriores)>= ".concat(dto
+						.getTotalCargasAnterioresDesde()));
+			}
+			
+//			hqlWhere.append(" and to_number(s.cargasAnteriores)>= ".concat(dto
+//					.getTotalCargasAnterioresDesde()));
 		}
 
 		if (!StringUtils.emtpyString(dto.getTotalCargasAnterioresHasta())) {
-			hqlWhere.append(" and to_number(s.cargasAnteriores)<= ".concat(dto
-					.getTotalCargasAnterioresHasta()));
+			
+			if(Pattern.matches("^\\d+|^\\d+\\.?\\d+",dto.getTotalCargasAnterioresHasta())){
+				hqlWhere.append(" and to_number(s.cargasAnteriores)<= ".concat(dto
+						.getTotalCargasAnterioresHasta()));
+			}
+//			hqlWhere.append(" and to_number(s.cargasAnteriores)<= ".concat(dto
+//					.getTotalCargasAnterioresHasta()));
 		}
 
 		if (!StringUtils.emtpyString(dto.getTotalImporteAdjudicadoDesde())) {
-			hqlWhere.append(" and to_number(s.totalImporteAdjudicado)>= "
-					.concat(dto.getTotalImporteAdjudicadoDesde()));
+			
+			if(Pattern.matches("^\\d+|^\\d+\\.?\\d+",dto.getTotalImporteAdjudicadoDesde())){
+				hqlWhere.append(" and to_number(s.totalImporteAdjudicado)<= ".concat(dto
+						.getTotalImporteAdjudicadoDesde()));
+			}
+			
+//			hqlWhere.append(" and to_number(s.totalImporteAdjudicado)>= "
+//					.concat(dto.getTotalImporteAdjudicadoDesde()));
 		}
 
 		if (!StringUtils.emtpyString(dto.getTotalImporteAdjudicadoHasta())) {
-			hqlWhere.append(" and to_number(s.totalImporteAdjudicado)<= "
-					.concat(dto.getTotalImporteAdjudicadoHasta()));
+			
+			if(Pattern.matches("^\\d+|^\\d+\\.?\\d+",dto.getTotalImporteAdjudicadoHasta())){
+				hqlWhere.append(" and to_number(s.totalImporteAdjudicado)<= ".concat(dto
+						.getTotalImporteAdjudicadoHasta()));
+			}
+			
+//			hqlWhere.append(" and to_number(s.totalImporteAdjudicado)<= "
+//					.concat(dto.getTotalImporteAdjudicadoHasta()));
 		}
 
 		if (!StringUtils.emtpyString(dto.getIdComboTasacionCompletada())) {
@@ -683,23 +748,39 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		}
 
 		if (!StringUtils.emtpyString(dto.getCodigoCliente())) {
-			hqlWhere.append(" and pers.codClienteEntidad like '%"
-					+ dto.getCodigoCliente() + "%' ");
+			
+			hqlWhere.append(" and pers.codClienteEntidad like '%'|| :codCli ||'%'");
+			params.put("codCli", dto.getCodigoCliente());
+			
+//			hqlWhere.append(" and pers.codClienteEntidad like '%"
+//					+ dto.getCodigoCliente() + "%' ");
 		}
 
 		if (!StringUtils.emtpyString(dto.getNombre())) {
-			hqlWhere.append(" and upper(pers.nombre) like '%"
-					+ dto.getNombre().toUpperCase() + "%' ");
+			
+			hqlWhere.append(" and upper(pers.nombre) like '%'|| :nomCli ||'%'");
+			params.put("nomCli", dto.getNombre().toUpperCase());
+			
+//			hqlWhere.append(" and upper(pers.nombre) like '%"
+//					+ dto.getNombre().toUpperCase() + "%' ");
 		}
 
 		if (!StringUtils.emtpyString(dto.getApellidos())) {
-			hqlWhere.append(" and upper(pers.apellido1)||' '||upper(pers.apellido2) like '%"
-					+ dto.getApellidos().toUpperCase() + "%' ");
+			
+			hqlWhere.append(" and upper(pers.apellido1)||' '||upper(pers.apellido2) like '%'|| :apeCli ||'%'");
+			params.put("apeCli", dto.getApellidos().toUpperCase());
+			
+//			hqlWhere.append(" and upper(pers.apellido1)||' '||upper(pers.apellido2) like '%"
+//					+ dto.getApellidos().toUpperCase() + "%' ");
 		}
 
 		if (!StringUtils.emtpyString(dto.getNif())) {
-			hqlWhere.append(" and upper(pers.docId) like '%"
-					+ dto.getNif().toUpperCase() + "%' ");
+			
+			hqlWhere.append(" and upper(pers.docId) like '%'|| :docCli ||'%'");
+			params.put("docCli", dto.getNif().toUpperCase());
+			
+//			hqlWhere.append(" and upper(pers.docId) like '%"
+//					+ dto.getNif().toUpperCase() + "%' ");
 		}
 
 		if (!StringUtils.emtpyString(dto.getTipoPersona())) {
@@ -725,8 +806,12 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		}
 
 		if (!StringUtils.emtpyString(dto.getNroContrato())) {
-			hqlWhere.append(" and c.nroContrato like '%" + dto.getNroContrato()
-					+ "%' ");
+			
+			hqlWhere.append(" and c.nroContrato like '%'|| :nroCon ||'%'");
+			params.put("nroCon", dto.getNroContrato());
+			
+//			hqlWhere.append(" and c.nroContrato like '%" + dto.getNroContrato()
+//					+ "%' ");
 		}
 
 		/* FIXME Volver a activar este filtro, para ello hay que relacionar esta entidad con 
@@ -1122,8 +1207,13 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		}
 
 		if (!StringUtils.emtpyString(dto.getTotalCargasAnterioresDesde())) {
-			hqlWhere.append(" and to_number(lot.subasta.cargasAnteriores)>= ".concat(dto
-					.getTotalCargasAnterioresDesde()));
+			
+			if(Pattern.matches("\\d+\\.*\\d+",dto.getTotalCargasAnterioresDesde())){
+				hqlWhere.append(" and to_number(lot.subasta.cargasAnteriores)>= ".concat(dto
+						.getTotalCargasAnterioresDesde()));
+			}
+			
+			
 		}
 
 		if (!StringUtils.emtpyString(dto.getTotalCargasAnterioresHasta())) {
@@ -1358,9 +1448,9 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 
 	@Override
 	public Integer buscarSubastasExcelCount(NMBDtoBuscarSubastas dto, Usuario usuLogado) {
-		
+		final HashMap<String, Object> params = new HashMap<String, Object>();
 		Query query = getSession().createQuery(
-				generarHQLBuscarSubastasPaginados(dto, usuLogado));
+				generarHQLBuscarSubastasPaginados(dto, usuLogado,params));
 		return query.list().size();
 	}
 	@Override

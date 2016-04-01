@@ -307,7 +307,7 @@
 		text:'<s:message code="app.botones.limpiar" text="**Limpiar" />'
 		,iconCls:'icon_limpiar'
 		,handler:function(){
-			app.resetCampos([nombreTarea, comboFechaDesdeOp, comboFechaHastaOp, descTarea, fechaVencDesde, fechaVencHasta]);
+			app.resetCampos([nombreTarea, comboFechaDesdeOp, comboFechaHastaOp, descTarea, fechaVencDesde, fechaVencHasta, comboEstado, comboCtgResol]);
 			tareasStore.webflow(paramsBusquedaInicial);
 			panelFiltros.collapse(true);
 		}
@@ -1475,6 +1475,7 @@
 			
 			// Por default abre una notificacion standard
 			default:
+				debugger;
 				//Seleccionarmos por tipo de Categoria Tarea
 				switch(categoriaTarea) {
 				
@@ -1487,6 +1488,9 @@
 						break;
 					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_EXP:
 						app.abreExpediente(rec.get('idEntidad'), rec.get('descripcion'));
+						break;
+					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_PER:
+						app.abreCliente(rec.get('idEntidadPersona'), rec.get('descripcion'));
 						break;
 						
 

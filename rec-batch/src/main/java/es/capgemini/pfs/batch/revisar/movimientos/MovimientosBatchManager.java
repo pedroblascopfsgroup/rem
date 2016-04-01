@@ -46,7 +46,7 @@ public class MovimientosBatchManager {
 
     /**
      * Revisa los movimientos del contrato indicado y generara las
-     * notificaciones según corresponda.
+     * notificaciones segï¿½n corresponda.
      * Retorna true si el contrato fue cancelado o saldado
      *
      * @param cntId long
@@ -73,7 +73,7 @@ public class MovimientosBatchManager {
             Double importe = new Double(results.get("Importe").toString());
             Double importeAnt = new Double(results.get("ImporteAnterior").toString());
 
-            // Verifico si el contrato está cancelado
+            // Verifico si el contrato estï¿½ cancelado
             if (results.get("Cancelado").toString().equals("1")) {
                 //Comprobamos si el mensaje no ha sido enviado ninguna vez
                 SubtipoTarea subtipoTarea = tareaNotificacionManager.buscarSubtipoTareaPorCodigo(SubtipoTarea.CODIGO_NOTIFICACION_CONTRATO_CANCELADO);
@@ -81,22 +81,22 @@ public class MovimientosBatchManager {
 
                 Integer nNotif = tareaNotificacionDao.getNumNotificaciones(mensaje, cliId, expId, asuId);
 
-                // está cencelado y no se ha enviado todavía ninguna notificación, envío notificación
+                // estï¿½ cencelado y no se ha enviado todavï¿½a ninguna notificaciï¿½n, envï¿½o notificaciï¿½n
                 if (nNotif.intValue() == 0) {
 
-                    logger.debug("El contrato " + cntId + " está cancelado");
+                    logger.debug("El contrato " + cntId + " estï¿½ cancelado");
                     if (generarNotificacion) {
                         enviarNotificacion(cliId, expId, asuId, cntId, diff, SubtipoTarea.CODIGO_NOTIFICACION_CONTRATO_CANCELADO);
                     }
                 }
-                //CU WEB-20 F3. Si el contrato fue saldado y era el único contrato del procedimiento se debe eliminar el procedimiento.
+                //CU WEB-20 F3. Si el contrato fue saldado y era el ï¿½nico contrato del procedimiento se debe eliminar el procedimiento.
                 //No se tiene claro que se debe hacer en caso de cancelar el contrato dentro de un procedimiento propuesto (en decision)
                 //contratoManager.eliminarProcedimientoPorCancelacion(cntId, expId);
                 respuesta = true;
             } else if (contratoSaldado) {
 
-                // No está cancelado, busco reducciones
-                logger.debug("El contrato " + cntId + " NO está cancelado");
+                // No estï¿½ cancelado, busco reducciones
+                logger.debug("El contrato " + cntId + " NO estï¿½ cancelado");
 
                 //Comprobamos si el mensaje no ha sido enviado ninguna vez
                 SubtipoTarea subtipoTarea = tareaNotificacionManager.buscarSubtipoTareaPorCodigo(SubtipoTarea.CODIGO_NOTIFICACION_CONTRATO_PAGADO);
@@ -104,26 +104,26 @@ public class MovimientosBatchManager {
 
                 Integer nNotif = tareaNotificacionDao.getNumNotificaciones(mensaje, cliId, expId, asuId);
 
-                // está Cancelado y no se ha enviado todavía ninguna notificación, envío notificación
+                // estï¿½ Cancelado y no se ha enviado todavï¿½a ninguna notificaciï¿½n, envï¿½o notificaciï¿½n
                 if (nNotif.intValue() == 0) {
-                    // Cancelación total de la deuda
+                    // Cancelaciï¿½n total de la deuda
                     logger.debug("El contrato " + cntId + " fue pagado en su totalidad");
                     if (generarNotificacion) {
                         enviarNotificacion(cliId, expId, asuId, cntId, diff, SubtipoTarea.CODIGO_NOTIFICACION_CONTRATO_PAGADO);
                     }
                 }
 
-                //Solo se registra un antecedente si se ha saldado y además tiene fecha pos vencido en el movAnterior
+                //Solo se registra un antecedente si se ha saldado y ademï¿½s tiene fecha pos vencido en el movAnterior
                 if (fechaVencido != null) antecedentesBatchManager.registrarAntecedenteInterno(cntId, fecha, importeAnt);
 
-                //CU WEB-20 F3. Si el contrato fue saldado y era el único contrato del procedimiento se debe eliminar el procedimiento.
+                //CU WEB-20 F3. Si el contrato fue saldado y era el ï¿½nico contrato del procedimiento se debe eliminar el procedimiento.
                 //No se tiene claro que se debe hacer en caso de cancelar el contrato dentro de un procedimiento propuesto (en decision)
                 //contratoManager.eliminarProcedimientoPorCancelacion(cntId, expId);
-                respuesta = indicarContratoSaldado & true;
+                respuesta = indicarContratoSaldado;
             } else {
                 //Se comprueba el saldado sin llegar a contrastar con el movimiento anterior, para liberar contratos NO vencidos
                 if (contratoSaldadoSinMovAnterior) {
-                    respuesta = indicarContratoSaldado & true;
+                    respuesta = indicarContratoSaldado;
                 }
             }
 
@@ -135,24 +135,24 @@ public class MovimientosBatchManager {
                     return false;
                 }
                 contratosBatchManager.registrarRecuperacion(cntId, cliId, expId, asuId, diff);
-                logger.debug("El contrato " + cntId + " tuvo una reducción, pasó de $" + importeAnt + " a $" + importe);
-                // Evalúo el porcentaje de disminución contra los establecidos por la entidad.
+                logger.debug("El contrato " + cntId + " tuvo una reducciï¿½n, pasï¿½ de $" + importeAnt + " a $" + importe);
+                // Evalï¿½o el porcentaje de disminuciï¿½n contra los establecidos por la entidad.
                 double porcentaje = calcularPorcentajeDisminucion(importeAnt, importe);
                 if (porcentaje >= movimientosDao.getPorcentajeDisminucion()) {
-                    // Genero notificación para el gestor y el supervisor del asunto
-                    logger.debug("El contrato " + cntId + " tuvo una disminución del %" + porcentaje + " MAYOR al %"
+                    // Genero notificaciï¿½n para el gestor y el supervisor del asunto
+                    logger.debug("El contrato " + cntId + " tuvo una disminuciï¿½n del %" + porcentaje + " MAYOR al %"
                             + movimientosDao.getPorcentajeDisminucion());
                     if (generarNotificacion) {
                         enviarNotificacion(cliId, expId, asuId, cntId, diff, SubtipoTarea.CODIGO_NOTIFICACION_SALDO_REDUCIDO);
                     }
                 } else {
-                    // no hay disminución
-                    logger.debug("El contrato " + cntId + " NO tuvo la disminución esperada %" + porcentaje + " MENOR al %"
+                    // no hay disminuciï¿½n
+                    logger.debug("El contrato " + cntId + " NO tuvo la disminuciï¿½n esperada %" + porcentaje + " MENOR al %"
                             + movimientosDao.getPorcentajeDisminucion());
                 }
             } else {
-                // No hubo reducción, termina el proceso.
-                logger.debug("El contrato " + cntId + " NO tuvo una reducción");
+                // No hubo reducciï¿½n, termina el proceso.
+                logger.debug("El contrato " + cntId + " NO tuvo una reducciï¿½n");
             }
             /*
                 }
@@ -162,14 +162,14 @@ public class MovimientosBatchManager {
                 }
             */
         } catch (Exception e) {
-            logger.error("Hubo algún problema al revisar el movimiento para [cnt: " + cntId + ", cli: " + cliId + ", exp: " + expId + ", asu: "
+            logger.error("Hubo algï¿½n problema al revisar el movimiento para [cnt: " + cntId + ", cli: " + cliId + ", exp: " + expId + ", asu: "
                     + asuId + ", fecha: " + fecha + "]", e);
         }
         return respuesta;
     }
 
     /**
-     * Genera tarea de notificación.
+     * Genera tarea de notificaciï¿½n.
      * @param idCliente Long
      * @param idExpediente Long
      * @param idAsunto Long
@@ -220,7 +220,7 @@ public class MovimientosBatchManager {
     }
 
     /**
-     * Retorna la cantidad de dias que estuvo descubierta la posición vencida
+     * Retorna la cantidad de dias que estuvo descubierta la posiciï¿½n vencida
      * desde el movimiento anterior.
      *
      * @param contratoId long

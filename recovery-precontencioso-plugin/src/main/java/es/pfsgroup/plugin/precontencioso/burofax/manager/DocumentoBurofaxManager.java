@@ -108,7 +108,7 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 	private static final String NOMBRE_BFA = "BANCO FINANCIERO Y DE AHORRO, S.A.";
 	private static final String CODIGO_BANKIA = "2038";
 	
-	private static final SimpleDateFormat fechaFormat = new SimpleDateFormat(FormatUtils.DD_DE_MES_DE_YYYY,MessageUtils.DEFAULT_LOCALE);
+	private final SimpleDateFormat fechaFormat = new SimpleDateFormat(FormatUtils.DD_DE_MES_DE_YYYY,MessageUtils.DEFAULT_LOCALE);
 	private static final NumberFormat currencyInstance = NumberFormat.getCurrencyInstance(new Locale("es","ES"));
 	private static final NumberFormat codigoPostalFormat = new DecimalFormat("00000");
 

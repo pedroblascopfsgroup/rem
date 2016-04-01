@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.asunto;
 
+import java.util.HashMap;
+
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -21,6 +23,7 @@ public class AgendaMultifuncionBusquedaAsuntoFiltro implements
 
 	@Override
 	public String obtenerFiltro(String paramsDinamicos) {
+		HashMap<String, Object> params = new HashMap<String, Object>();
 		StringBuffer filtro = new StringBuffer();
 		filtro.append(" select distinct v.id from BusquedaAsuntosFiltroAgendaBean v ");
 		RecoveryAgendaMultifuncionDtoBusquedaAsunto dto = creaDtoParametros(paramsDinamicos);
@@ -35,7 +38,11 @@ public class AgendaMultifuncionBusquedaAsuntoFiltro implements
         	filtro.append(" and v.dd_trg_codigo = '"+MEJDDTipoRegistro.CODIGO_ENVIO_EMAILS +"' ");
             if (StringUtils.hasText(dto.getDestinatarioEmail())) {
             	filtro.append(" and v.irg_clave = '"+MEJDDTipoRegistro.RegistroEmail.CLAVE_EMAIL_DESTINO +"' ");
-            	filtro.append(" and v.irg_valor = '"+dto.getDestinatarioEmail().toLowerCase()+"' ");
+            	
+            	filtro.append(" and v.irg_valor = '|| :destEmail ||'");
+            	params.put("destEmail", dto.getDestinatarioEmail().toLowerCase());
+            	
+//            	filtro.append(" and v.irg_valor = '"+dto.getDestinatarioEmail().toLowerCase()+"' ");
             }
         }
         if (StringUtils.hasText(dto.getTipoAnotacion())) {

@@ -18,6 +18,8 @@ import es.capgemini.devon.bpm.ProcessManager;
 import es.capgemini.devon.web.DynamicElement;
 import es.capgemini.devon.web.DynamicElementManager;
 import es.capgemini.pfs.BPMContants;
+import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
+import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
 import es.capgemini.pfs.asunto.dao.EstadoProcedimientoDao;
 import es.capgemini.pfs.asunto.dao.ProcedimientoContratoExpedienteDao;
 import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
@@ -60,6 +62,7 @@ import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.recovery.mejoras.MEJConstantes;
 import es.pfsgroup.plugin.recovery.mejoras.PluginMejorasBOConstants;
+import es.pfsgroup.plugin.recovery.mejoras.acuerdos.api.PropuestaApi;
 import es.pfsgroup.plugin.recovery.mejoras.asunto.dao.MEJProcedimientoContratoExpedienteDao;
 import es.pfsgroup.plugin.recovery.mejoras.expediente.MEJExpedienteFacade;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.dto.MEJDtoBloquearProcedimientos;
@@ -68,6 +71,7 @@ import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.Dao.MEJRecursoDao;
 import es.pfsgroup.recovery.api.ExpedienteApi;
 import es.pfsgroup.recovery.api.ProcedimientoApi;
+import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoDto;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
@@ -121,7 +125,12 @@ public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProce
 	
 	@Autowired
 	private DecisionProcedimientoManager decisionProcedimientoManager;
+	
+	@Autowired
+	private AcuerdoDao propuestaDao;
 
+	@Autowired
+	private PropuestaApi propuestaApi;
 
 	
 	@BusinessOperation("procedimiento.buttons")
@@ -228,6 +237,16 @@ public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProce
 	@Transactional(readOnly = false)
 	public Long salvarProcedimiento(ProcedimientoDto dto) {
 		MEJProcedimiento p = saveOrUpdateProcedimiento(dto);
+		
+		///Si tenemos una propuesta asociada al procedimiento
+		if(!Checks.esNulo(dto.getPropuesta())){
+			EXTAcuerdo propuesta = (EXTAcuerdo) propuestaDao.get(dto.getPropuesta());
+			
+			///cambiamos el estado de la propuesta a vigente
+			propuestaApi.cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_VIGENTE, false);
+			///Asociamos la propuesta al asunto
+			propuestaApi.asignaPropuestaAlAsunto(dto.getPropuesta(),dto.getAsunto());
+		}
 
 		// Al crear una nueva lista borramos la anterior (de contratos
 		// relacionados con el proc.)

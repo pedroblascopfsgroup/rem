@@ -81,6 +81,42 @@
 	</bean>
     <bean id="nodoEsperaActionHandler" class="es.pfsgroup.procedimientos.PRONodoEsperaActionHandler">
     </bean>
+    
+    <bean id="completarExpedienteDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PROCompletarExpedienteDeudaActionHandler">
+    </bean>
+    <bean id="devolverCompletarDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PRODevolverCompletarDeudaActionHandler">
+    </bean>
+    <bean id="enviarARevisionDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PROEnviarARevisionDeudaActionHandler">
+    </bean>
+    <bean id="revisionExpedienteDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PRORevisionExpedienteDeudaActionHandler">
+    </bean>
+    <bean id="devolverRevisionDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PRODevolverRevisionDeudaActionHandler">
+    </bean>
+    <bean id="enviarAEnSancionDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PROEnviarAEnSancionDeudaActionHandler">
+    </bean>
+    <bean id="enSancionDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PROEnSancionDeudaActionHandler">
+    </bean>
+    <bean id="enviarASancionadoDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PROEnviarASancionadoDeudaActionHandler">
+    </bean>
+    <bean id="devolverEnSancionDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PRODevolverEnSancionDeudaActionHandler">
+    </bean>
+    <bean id="sancionadoDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PROSancionadoDeudaActionHandler">
+    </bean>
+    <bean id="enviarAFormalizarDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PROEnviarAFormalizarDeudaActionHandler">
+    </bean>
+    <bean id="devolverASancionadoDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PRODevolverASancionadoDeudaActionHandler">
+    </bean>
+    <bean id="formalizarPropuestaDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PROFormalizarPropuestaDeudaActionHandler">
+    </bean>
+    <bean id="sancionadoAutomaticoDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PROSancionadoAutomaticoDeudaActionHandler">
+    </bean>
+    <bean id="expedienteDecididoDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PROExpedienteDecididoDeudaActionHandler">
+    </bean>
+    <bean id="generarNotificacionExpedienteDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PROGenerarNotificacionExpedienteDeudaActionHandler">
+    </bean>
+    <bean id="aprobadoConCondicionesDeudaActionHandler" class="es.pfsgroup.procedimientos.expediente.deuda.PROAprobadoConCondicionesDeudaActionHandler">
+    </bean>
+    
     	
 	<bean id="seleccionProcedimiento.P90_BPMHipotecario" class="es.pfsgroup.procedimientos.PROCambiarEconomicosHijoActionHandler">
 	</bean>

@@ -6,11 +6,13 @@ function(entidad,page){
 
 	var toolbar=new Ext.Toolbar();
 	
+	var tituloCreacionExpedienteRecobro='<s:message code="expedientes.creacion.recobro" text="**Expediente de Recobro" />';	
 	var tituloCreacionExpedienteRecuperacion='<s:message code="expedientes.creacion.recuperacion" text="**Expediente de Recuperación" />';
 	var tituloCreacionExpedienteSeguimiento='<s:message code="expedientes.creacion.seguimiento" text="**Expediente de Seguimiento" />';
 	var proponer=true;
 	<sec:authorize ifAllGranted="SUPERUSUARIO_CREACION_EXPEDIENTE">
 		proponer=false;
+		tituloCreacionExpedienteRecobro='<s:message code="expedientes.creacion.recobroSinProponer" text="**Crear Expediente de Recobro" />';
 		tituloCreacionExpedienteRecuperacion='<s:message code="expedientes.creacion.recuperacionSinProponer" text="**Crear Expediente de Recuperación" />';
 		tituloCreacionExpedienteSeguimiento='<s:message code="expedientes.creacion.seguimientoSinProponer" text="**Crear Expediente de Seguimiento" />';
 	</sec:authorize>
@@ -134,6 +136,22 @@ function(entidad,page){
 		,modal: true
 		,items: [botonesPanelArq]
 	});
+
+	var openWizzard = function(flow,title,params) {
+		debugger;
+		var w = app.openWindow({
+			flow:flow
+			,width:870
+			,closable: (!data.expedientePropuesto.isNull)
+			,title: title
+			,params: params 
+		});
+		w.on(app.event.DONE, function() {
+			entidad.refrescar();
+			w.close();
+		});
+		w.on(app.event.CANCEL, function() {w.close();});				
+	}
            
 	var creacionExpedienteButton = new Ext.menu.Item({
 		text : tituloCreacionExpedienteRecuperacion
@@ -147,19 +165,8 @@ function(entidad,page){
 			btnNext.on('click',function() {
 				var tmpArqId = cmbArq.getValue();
 				wArq.hide();
-				var w = app.openWindow({
-					flow:'expedientes/creacionManualExpediente_GV'
-					,width:870
-					,closable:false
-					,title : tituloCreacionExpedienteRecuperacion
-					,params:{idPersona:toolbar.getIdPersona(), isGestor:toolbar.isGestor(), isSupervisor:toolbar.isSupervisor(),proponer:proponer,idArquetipo:tmpArqId}
-				});
-				w.on(app.event.DONE, function(){
-					entidad.refrescar();
-					w.close();
-					//recargarTab();
-				});
-				w.on(app.event.CANCEL, function(){ w.close();});
+				openWizzard('expedientes/creacionManualExpediente_GV',tituloCreacionExpedienteRecuperacion
+					,{idPersona:toolbar.getIdPersona(), isGestor:toolbar.isGestor(), isSupervisor:toolbar.isSupervisor(),proponer:proponer,idArquetipo:tmpArqId});
 			});
 			btnCancelar.on('click', function() { wArq.hide() });				
 		}
@@ -176,20 +183,9 @@ function(entidad,page){
 			wArq.show();
 			btnNext.on('click',function() {
 				var tmpArqId = cmbArq.getValue();
-				wArq.hide();	
-				var w = app.openWindow({
-					flow:'expedientes/creacionManualExpedienteSeguimiento'
-					,width:870
-					,closable:false
-					,title : tituloCreacionExpedienteSeguimiento
-					,params:{idPersona: toolbar.getIdPersona(), isGestor:toolbar.isGestor(), isSupervisor:toolbar.isSupervisor(),proponer:proponer,idArquetipo:tmpArqId}
-				});
-				w.on(app.event.DONE, function(){
-					entidad.refrescar();
-					w.close();
-					//recargarTab();
-				});
-				w.on(app.event.CANCEL, function(){ w.close(); });
+				wArq.hide();
+				openWizzard('expedientes/creacionManualExpedienteSeguimiento',tituloCreacionExpedienteSeguimiento
+					,{idPersona: toolbar.getIdPersona(), isGestor:toolbar.isGestor(), isSupervisor:toolbar.isSupervisor(),proponer:proponer,idArquetipo:tmpArqId});					
 			});
 			btnCancelar.on('click', function() {wArq.hide() });
 		}
@@ -199,41 +195,27 @@ function(entidad,page){
 		text : '<s:message code="expedientes.creacion.gestiondeuda" text="**Expediente de Gestión de Deuda" />'
 		,iconCls: 'icon_expediente_manual'
 		,handler : function() {
-			var data = toolbar.getArquetiposGestDeuda();
-			cmbArq.reset();
-			arqStore.loadData(data);
-			wArq.show();
-			btnNext.on('click',function() {
-				var tmpArqId = cmbArq.getValue();
-				wArq.hide();
-				var w = app.openWindow({
-					flow:'expedientes/creacionManualExpedientesGestionDeuda'
-					,width:870
-					,closable:false
-					,title: '<s:message code="expedientes.creacion.gestiondeuda" text="**Expediente de Gestión de Deuda" />'
-					,params:{idPersona: toolbar.getIdPersona(), isGestor:toolbar.isGestor(), isSupervisor:toolbar.isSupervisor(),proponer:proponer,idArquetipo:tmpArqId} 
+			<%-- Si no hay un expediente Propuesto o este no es de Gestión de Deuda, mostramos la ventan de selección de arquetipo --%>
+			if (entidad.get("data").expedientePropuesto.isNull || !entidad.get("data").expedientePropuesto.isGestionDeuda) {
+				var data = toolbar.getArquetiposGestDeuda();
+				cmbArq.reset();
+				arqStore.loadData(data);
+				wArq.show();
+				btnNext.on('click',function() {
+					var tmpArqId = cmbArq.getValue();
+					wArq.hide();
+					openWizzard('expedientes/creacionManualExpedientesGestionDeuda','<s:message code="expedientes.creacion.gestiondeuda" text="**Expediente de Gestión de Deuda" />'
+						,{idPersona: toolbar.getIdPersona(), isGestor:toolbar.isGestor(), isSupervisor:toolbar.isSupervisor(),proponer:proponer,idArquetipo:tmpArqId});
 				});
-				w.on(app.event.DONE, function() {
-					entidad.refrescar();
-					w.close();
-				});
-				w.on(app.event.CANCEL, function() {w.close();});
-			});
-			btnCancelar.on('click',function() {wArq.hide();});
+				btnCancelar.on('click',function() {wArq.hide();});
+			} else {
+				<%-- Se lanza el wizard sin pasar por la ventana de selección del arquetipo (Si hay un expediente propuesto que es de tipo Gestión de Deuda --%>
+				openWizzard('expedientes/creacionManualExpedientesGestionDeuda','<s:message code="expedientes.creacion.gestiondeuda" text="**Expediente de Gestión de Deuda" />'
+							,{idPersona: toolbar.getIdPersona(), isGestor:toolbar.isGestor(), isSupervisor:toolbar.isSupervisor(),proponer:proponer,idArquetipo:toolbar.getIdArquetipoPropuesto()});
+			}
 		}
 	});
 
-	var tituloCreacionExpedienteRecobro='<s:message code="expedientes.creacion.recobro" text="**Expediente de Recobro" />';
-	var tituloCreacionExpedienteRecuperacion='<s:message code="expedientes.creacion.recuperacion" text="**Expediente de Recuperación" />';
-	var tituloCreacionExpedienteSeguimiento='<s:message code="expedientes.creacion.seguimiento" text="**Expediente de Seguimiento" />';
-	var proponer=true;
-	
-	<sec:authorize ifAllGranted="SUPERUSUARIO_CREACION_EXPEDIENTE">
-		proponer=false;
-		tituloCreacionExpedienteRecobro='<s:message code="expedientes.creacion.recobroSinProponer" text="**Crear Expediente de Recobro" />';		
-		tituloCreacionExpedienteRecuperacion='<s:message code="expedientes.creacion.recuperacionSinProponer" text="**Crear Expediente de Recuperación" />';
-		tituloCreacionExpedienteSeguimiento='<s:message code="expedientes.creacion.seguimientoSinProponer" text="**Crear Expediente de Seguimiento" />';
-	</sec:authorize>
 
 	var menuExpediente={
 		text : '<s:message code="expedientes.creacion.titulo" text="**Creación Manual Expediente" />'
@@ -326,7 +308,7 @@ function(entidad,page){
                 var w = app.openWindow({
                     flow:'clientes/exclusionTelecobro'
                     ,width:500
-                    ,closable:true
+                    ,closable: false
                     ,title : '<s:message code="clientes.menu.solicitarExclusionTelecobro" text="**Solicitar Exclusion de Telecobro" />'
                     ,params:{idCliente:toolbar.getClienteActivoId()}
                 });
@@ -393,6 +375,10 @@ function(entidad,page){
 	toolbar.getIdExpediente = function(){
 	  var data = entidad.get("data");
 	  return data.expedientePropuesto.id;
+	}
+	toolbar.getIdArquetipoPropuesto = function(){
+		var data = entidad.get("data");
+		return data.expedientePropuesto.arquetipo;
 	}
 	toolbar.getDescEstado = function(){
 		var data = entidad.get("data");
@@ -469,6 +455,13 @@ function(entidad,page){
 					&&  !(data.arquetipoPersona.isSeguimiento || !data.arquetipoPersona.isArquetipoGestion || !data.tieneContratosParaCliente)]
 			,[creacionExpedienteGestionDeudaButton, (data.tieneContratosActivos)]
 		];
+		
+		<%-- Si hay un expediente propuesto y es usuario supevisor, se cambio el menú para que indique que se va a activar el expediente --%>
+		if (!data.expedientePropuesto.isNull && toolbar.isSupervisor()) {
+			creacionExpedienteGestionDeudaButton.setText('<s:message code="expedientes.activar.gestiondeuda" text="**Activar Expediente de Gestión de Deuda" />');
+		} else {
+			creacionExpedienteGestionDeudaButton.setText('<s:message code="expedientes.creacion.gestiondeuda" text="**Expediente de Gestión de Deuda" />');
+		}
 
 		var condition = '';
 		for (i=0; i < buttonsL_cliente.length; i++){

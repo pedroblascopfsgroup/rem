@@ -131,7 +131,7 @@ function(entidad,page){
 				handler=function(btn, rta){
 					if (btn== 'ok'){
 						maskAll();
-						devolverExpedienteDeENSANaRE(toolbar.getIdExpediente(), rta);
+						devolverExpedienteDeENSANaRE(toolbar.getIdExpediente(), rta, toolbar.isSupervisor());
 					}
 				};				
 				app.prompt(titulo, texto,handler);
@@ -147,7 +147,7 @@ function(entidad,page){
 				handler=function(btn, rta){
 					if (btn== 'ok'){
 						maskAll();
-						devolverExpedienteDeSANCaCE(toolbar.getIdExpediente(), rta);
+						devolverExpedienteDeSANCaCE(toolbar.getIdExpediente(), rta, toolbar.isSupervisor());
 					}
 				};				
 				app.prompt(titulo, texto,handler);
@@ -191,11 +191,11 @@ function(entidad,page){
 		});
 	};
 	
-	var devolverExpedienteDeENSANaRE = function(params, rta){
+	var devolverExpedienteDeENSANaRE = function(params, rta, isSupervisor){
 		page.webflow({
 				flow:  'expediente/devolverExpedienteDeENSANaRE'
 				,eventName: 'devolverExpediente'
-				,params:{id:params, respuesta:rta}
+				,params:{id:params, respuesta:rta, isSupervisor:isSupervisor}
 				,success: function(){
 					Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="dc.devueltoARevision" text="**Devuelto a Revisión" />', entidad.refrescar());
 				},error:function(){
@@ -232,11 +232,11 @@ function(entidad,page){
 		});
 	};
 
-	var devolverExpedienteDeSANCaCE = function(params, rta){
+	var devolverExpedienteDeSANCaCE = function(params, rta, isSupervisor){
 		page.webflow({
 				flow:  'expediente/devolverExpedienteDeSANCaCE'
 				,eventName: 'devolverExpediente'
-				,params:{id:params, respuesta:rta}
+				,params:{id:params, respuesta:rta, isSupervisor:isSupervisor}
 				,success: function(){
 					Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="dc.devueltoACompletar" text="**Devuelto a Completar Expediente" />', entidad.refrescar());
 				},error:function(){
@@ -313,11 +313,11 @@ function(entidad,page){
 		});
 	};
 	
-	var devolverExpedienteDeSANCaENSAN = function(params, rta){
+	var devolverExpedienteDeSANCaENSAN = function(params, rta, isSupervisor){
 		page.webflow({
 				flow:  'expediente/devolverExpedienteDeSANCaENSAN'
 				,eventName: 'devolverExpediente'
-				,params:{id:params, respuesta:rta}
+				,params:{id:params, respuesta:rta, isSupervisor:isSupervisor}
 				,success: function(){
 					Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="dc.devueltoAEnSancion" text="**Devuelto a En Sanción" />', entidad.refrescar());
 				},error:function(){
@@ -338,7 +338,12 @@ function(entidad,page){
 		w.on(app.event.DONE, function(){
 			w.close();
 			maskAll();
-			Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="expedientes.consulta.solicitudCancelacionRealizada" text="**expedientes.consulta.solicitudCancelacionRealizada" />', entidad.refrescar());
+			if(esSupervisor){
+				Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="expedientes.consulta.decisionCancelacionOk" text="**Cancelacion Confirmada" />', entidad.refrescar());
+			}else{
+				Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="expedientes.consulta.solicitudCancelacionRealizada" text="**expedientes.consulta.solicitudCancelacionRealizada" />', entidad.refrescar());
+			}
+			
 		});
 		w.on(app.event.CANCEL, function(){ w.close(); });
 	};
@@ -1012,11 +1017,11 @@ function(entidad,page){
 												
 							if(estados[i].codigo == 'CE')
 							{
-								showHide(estadoExpediente ==  EXP_ACTIVO ,'expediente-accion14-devolverCompletarExpediente');
+								showHide((estadoExpediente ==  EXP_ACTIVO || estadoExpediente ==  EXP_CONGELADO) ,'expediente-accion14-devolverCompletarExpediente');
 							}
 							
 							if(estados[i].codigo == 'ENSAN'){
-								showHide(estadoExpediente ==  EXP_ACTIVO ,'expediente-accion16-devolverAEnSancion');
+								showHide((estadoExpediente ==  EXP_ACTIVO || estadoExpediente ==  EXP_CONGELADO) ,'expediente-accion16-devolverAEnSancion');
 							}
 						}	
 					}

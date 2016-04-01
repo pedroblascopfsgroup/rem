@@ -415,8 +415,7 @@ public class SubastaCalculoManager {
 		return acumulado;
 		
 	}
-	
-	
+
 	/**
 	 * Determina el tipo de subasta tras la propuesta de lotes de subasta 
 	 * 
@@ -499,7 +498,7 @@ public class SubastaCalculoManager {
 				Contrato contrato = contratoBien.getContrato();
 
 				// cuyo estado sea distinto de "No recibido".
-				if (!DDEstadoContrato.ESTADO_CONTRATO_NORECIBIDO.equals(contrato.getEstadoContrato())) {
+				if (!DDEstadoContrato.ESTADO_CONTRATO_NORECIBIDO.equals(contrato.getEstadoContrato().getCodigo())) {
 					contratos.add(contrato);
 				}
 			}
@@ -514,13 +513,15 @@ public class SubastaCalculoManager {
 			sumatorioDeuda = sumatorioDeuda.add(deudaIrregular.add(capitalNoVencido));
 		}
 
-		return MILLON.compareTo(sumatorioDeuda) < 0;
+		return sumatorioDeuda.compareTo(MILLON) > 0;
 	}
 
 	private boolean riesgoConsignacionSuperaUmbral(Subasta subasta) {
 		// Deuda entidad = vencido (deuda irregular) + no vencido de todas las operaciones del procedimiento + costas de letrado y procurador
-		BigDecimal sumatorioDeudaEntidad = new BigDecimal(subasta.getCostasLetrado());
-
+		BigDecimal sumatorioDeudaEntidad = BigDecimal.ZERO;
+		if (!Checks.esNulo(subasta.getCostasLetrado())){
+			sumatorioDeudaEntidad = BigDecimal.valueOf(subasta.getCostasLetrado());
+		}
 		Set<Contrato> contratos = subasta.getProcedimiento().getAsunto().getContratos();
 		for (Contrato contrato : contratos) {
 			Movimiento ultimoMovimiento = contrato.getLastMovimiento();
@@ -530,10 +531,11 @@ public class SubastaCalculoManager {
 
 			sumatorioDeudaEntidad = sumatorioDeudaEntidad.add(deudaIrregular.add(capitalNoVencido));
 		}
-
+		BigDecimal pujaSinPostores = BigDecimal.ZERO;
 		for (LoteSubasta lote : subasta.getLotesSubasta()) {
-			BigDecimal pujaSinPostores = BigDecimal.valueOf(lote.getInsPujaSinPostores());
-
+			if(!Checks.esNulo(lote.getInsPujaSinPostores())){
+				pujaSinPostores = BigDecimal.valueOf(lote.getInsPujaSinPostores());
+			}
 			// Donde Riesgo de Consignación = Puja sin postores - Deuda entidad
 			BigDecimal riesgodeConsignacion = pujaSinPostores.subtract(sumatorioDeudaEntidad);
 

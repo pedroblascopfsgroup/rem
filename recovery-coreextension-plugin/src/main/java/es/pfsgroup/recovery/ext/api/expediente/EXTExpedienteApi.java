@@ -84,4 +84,39 @@ public interface EXTExpedienteApi extends ExpedienteApi{
 	 */
 	@BusinessOperationDefinition(InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_A_DECISION_COMITE)
 	public void devolverExpedienteADecisionComite(Long idExpediente, String respuesta);
+	
+	/**
+	 * Elevar un expediente de Revisión a Ensanción
+	 * @param idExpediente
+	 * @param isSupervisor
+	 */
+	@BusinessOperationDefinition(InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_DE_REVISION_A_ENSANCION)
+	public void elevarExpedienteDeREaENSAN(Long idExpediente, Boolean isSupervisor);
+	
+	/**
+	 * Devolver un expediente de Ensanción a Revisión
+	 * @param idExpediente
+	 * @param respuesta
+	 */
+	@BusinessOperationDefinition(InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_ENSANCION_A_REVISION)
+	public void devolverExpedienteDeEnSancionARevision(Long idExpediente, String respuesta,Boolean isSupervisor);
+	
+	/**
+	 * Elevar un expediente de Ensanción a Sancionado
+	 * @param idExpediente
+	 * @param isSupervisor
+	 */
+	@BusinessOperationDefinition(InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_DE_ENSANCION_A_SANCIONADO)
+	public void elevarExpedienteDeENSANaSANC(Long idExpediente, Boolean isSupervisor);
+	
+	/**
+	 * Devolver un expediente de Sancionado a Completar expediente
+	 * @param idExpediente
+	 * @param respuesta
+	 */
+	@BusinessOperationDefinition(InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_SANCIONADO_A_COMPLETAR_EXPEDIENTE)
+	public void devolverExpedienteDeSancionadoACompletarExpediente(Long idExpediente,String respuesta, Boolean isSupervisor);
+	
+	 
+	
 }

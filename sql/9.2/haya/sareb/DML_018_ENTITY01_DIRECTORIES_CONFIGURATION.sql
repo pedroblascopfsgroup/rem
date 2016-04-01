@@ -26,8 +26,8 @@ DECLARE
     TYPE T_TIPO IS TABLE OF VARCHAR2(500 CHAR);
     TYPE T_ARRAY IS TABLE OF T_TIPO;
     V_TIPO T_ARRAY := T_ARRAY(
-      T_TIPO('directorioPdfBurofaxPCO', '/recovery/haya/app-server/bcc/output/burofax', 'Directorio donde se generan los burofaxes'),
-      T_TIPO('directorioPlantillasLiquidacion', '/recovery/haya/app-server/bcc/plantillas/', 'Directorio donde se almacenan las plantillas de los documentos de LIQUIDACION')
+      T_TIPO('directorioPdfBurofaxPCO', '/recovery/haya/app-server/sareb/output/burofax', 'Directorio donde se generan los burofaxes'),
+      T_TIPO('directorioPlantillasLiquidacion', '/recovery/haya/app-server/sareb/plantillas/', 'Directorio donde se almacenan las plantillas de los documentos de LIQUIDACION')
     );
     V_TMP_TIPO T_TIPO;
 

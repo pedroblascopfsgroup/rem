@@ -524,9 +524,12 @@
 	
 	<%-- Validaciones Formulario --%>
 	var validarCamposObligatorios = function(){
-		if(fechaEntrega.getValue != null && fechaValor.getValue() != null && comboDDTipoEntrega.getValue() != null && comboDDConceptoEntrega.getValue()){
+		if(fechaEntrega.getValue() != null && fechaEntrega.getValue() != "" && fechaValor.getValue() != null && fechaValor.getValue() != "" &&
+		 comboDDTipoEntrega.getValue() != null && comboDDTipoEntrega.getValue() != "" && comboDDConceptoEntrega.getValue() != null && comboDDConceptoEntrega.getValue() != "" &&
+		 totalEntrega.getValue() != 0 && totalEntrega.getValue() != "" && totalEntrega.getValue() != null){
 			return true;
 		} else {
+			Ext.MessageBox.alert('<s:message code="contabilidad.msgValidationErrorTitle" text="**Error" />', '<s:message code="contabilidad.msgValidationError" text="**Falta algún parámetro obligatorio" />');
 			return false;
 		}
 	}
@@ -565,6 +568,9 @@
 						,quitaOtrosGastos:quitaOtrosGastos.getValue()
 						,totalEntrega:totalEntrega.getValue()
 						,observaciones:observaciones.getValue()
+						,numEnlace:numEnlace.getValue()
+						,numMandamiento:numMandamiento.getValue()
+						,numCheque:numCheque.getValue()
 						,operacionesTramite:opTramite.items.items[0].getValue()
 					};
 				Ext.Ajax.request({

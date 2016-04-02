@@ -169,7 +169,8 @@ BEGIN
 					from '||V_ESQUEMA||'.TMP_CNT_CONTRATOS           cnt            
 					   , '||V_ESQUEMA||'.MIG_EXPEDIENTES_OPERACIONES eop            
 				       where cnt.tmp_cnt_contrato = eop.numero_contrato
-					 and cnt.tmp_cnt_remu_gest_especial = ''EX'') tmp 
+					-- and cnt.tmp_cnt_remu_gest_especial = ''EX''
+					 and cnt.tmp_cnt_char_extra7 is not null      ) tmp 
 					       where tmp.cod_recovery = cab.CD_EXPEDIENTE)
 		';
 

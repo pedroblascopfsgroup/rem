@@ -92,7 +92,7 @@ FOR v_procurador IN (SELECT DISTINCT CD_PROCURADOR FROM MIG_PROCEDIMIENTOS_CABEC
             , (select ID from '||V_ESQUEMA_MASTER||'.ENTIDAD where DESCRIPCION = ''CAJAMAR'')
             , '''||v_procurador.CD_PROCURADOR||'''
             , ''1234''
-            , (select DES_DESPACHO from '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO where DES_CODIGO = '''||v_procurador.CD_PROCURADOR||''')
+            , (select DES_DESPACHO from '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO where borrado = 0 and DES_CODIGO = '''||v_procurador.CD_PROCURADOR||'''  )
             , ''''
             , ''''
             , '''' 

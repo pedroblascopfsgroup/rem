@@ -30,10 +30,10 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="P456_ComunicacionAcreditadoCNDecision" name="avanzaBPM"></transition>
+		<transition to="P456_ObtenerAprobacionCNDecision" name="avanzaBPM"></transition>
 	</state>
 	
-	<decision name="P456_ComunicacionAcreditadoCNDecision" expression="#{P456_ComunicacionAcreditadoCNDecision}">
+	<decision name="P456_ObtenerAprobacionCNDecision" expression="#{P456_ObtenerAprobacionCNDecision}">
 		<transition to="Fin" name="Si"></transition>
 		<transition to="P456_ComunicacionAcreditadoCN" name="No"></transition>
 	</decision>
@@ -224,9 +224,9 @@
 	</state>
 	
 	<decision name="P456_AcordarFechaFirmaDecision" expression="#{P456_AcordarFechaFirmaDecision}">
-		<transition to="P456_RevisarPropuesta" name="reconsiderar"></transition>
+		<transition to="P456_RevisarPropuesta" name="Reconsiderar"></transition>
 		<transition to="fork1" name="Aceptada"></transition>
-		<transition to="P456_EnviarDesistirPreviaFirmaOperacion" name="Rechazada"></transition>
+		<transition to="P456_EnviarDesistirPreviaFirmaOperacion" name="Desistir"></transition>
 	</decision>
 	
 	<fork name="fork1">

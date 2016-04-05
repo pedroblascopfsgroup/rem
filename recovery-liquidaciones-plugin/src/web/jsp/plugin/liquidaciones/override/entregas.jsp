@@ -14,8 +14,6 @@
 		,value:'${liqCobroPago.id}'
 	});
 	
-
-
 	 
 	var dictDDTipoCobroPago = <app:dict value="${tipo}" />;
 	
@@ -155,8 +153,6 @@
 		,width:550
 		,resizable:true
 		,style:style
-		,allowBlank: false
-		,forceSelection : true
 		,fieldLabel : '<s:message code="cobroPago.procedimiento" text="**procedimiento"/>'
 		<c:if test="${liqCobroPago.procedimiento!=null}" >
 		,value:'${liqCobroPago.procedimiento.id}'
@@ -504,6 +500,10 @@
 			return false;
 		}
 	};
+	
+	
+
+	
 
 	
 	var btnGuardar = new Ext.Button({
@@ -586,11 +586,13 @@
 		 }
 	 };
 	 
-	
+
 	<%-- comboDDSubtipoCobroPago.on('select',function(){ --%>
 		<%-- enableDisableContratos(); --%>
 	<%-- }); --%>
  	 comboProcedimientos.on('select',function (){comboContratos.reload()});
+	
+
 	
 	var panelEdicion = new Ext.form.FormPanel({
 		autoHeight : true
@@ -626,6 +628,15 @@
  --%>	g_panel = panelEdicion;	
 	
 	 enableDisableContratos();
+	 if('${liqCobroPago.fechaValor}' != null || '${liqCobroPago.fechaValor}' != ""){
+		comboProcedimientos.setDisabled(true);
+		comboContratos.setDisabled(true);
+	}
+	
+	if('${liqCobroPago.fechaValor}' == null || '${liqCobroPago.fechaValor}' == ""){
+		comboProcedimientos.setDisabled(false);
+		comboContratos.setDisabled(false);
+	}
 	page.add(panelEdicion);
 </fwk:page>
 

@@ -65,6 +65,8 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 	private String resultadoMoratoria;
 	
 	private String plantillaReportPropuestaCancelacionCargas;
+	
+	private Map<String, String> mapaClasesExpeGesDoc;
 
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
@@ -116,6 +118,15 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 
 	public void setMapaTiposPrc(Map<String, String> mapaTiposPrc) {
 		this.mapaTiposPrc = mapaTiposPrc;
+	}
+	
+	@Override
+	public Map<String, String> getMapaClasesExpeGesDoc() {
+		return mapaClasesExpeGesDoc;
+	}
+
+	public void setMapaClasesExpeGesDoc(Map<String, String> mapaClasesExpeGesDoc) {
+		this.mapaClasesExpeGesDoc = mapaClasesExpeGesDoc;
 	}
 	
 	

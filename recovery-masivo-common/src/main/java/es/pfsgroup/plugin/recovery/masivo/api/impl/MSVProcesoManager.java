@@ -108,7 +108,7 @@ public class MSVProcesoManager implements MSVProcesoApi {
 	private final String[] cabecerasRedaccionDemanda = {"Num. Caso NOVA", "FECHA REDACCION"};
 	private final String[] camposInputRedaccionDemanda = {"idAsunto", "d_numAutos", "d_fecRedaccDemand", "d_observaciones"};
 	
-	private final String[] cabecerasCarterizacionAcreditados = {"ID_Acreditado","Nombre o Razon social", "Apellido1", "Apellido2", "Usuario gestor"};
+	private final String[] cabecerasCarterizacionAcreditados = {"CIF/NIF Acreditado","Nombre o Razon social", "Apellido1", "Apellido2", "Usuario gestor"};
 
 	private final static String CODIGO_ETJ = "P72";
 	

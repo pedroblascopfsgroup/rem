@@ -2,9 +2,14 @@
 	name="tramiteVentaDeDeuda">
 
 	<start-state name="inicio">
-		<transition to="P454_ObtenerAprobacionCN"></transition>
-		<transition to="forkPreparaYPeticion"></transition>
+		<transition to="forkPreparaPeticionObtener"></transition>
 	</start-state>
+	
+	<fork name="forkPreparaPeticionObtener">
+		<transition to="P454_ObtenerAprobacionCN" name="obtenerAprobacionCN"></transition>
+		<transition to="P454_PeticionEscriturasCaracterEjecutivo" name="peticionEscrituras"></transition>
+		<transition to="P454_PrepararContrato" name="prepararContrato"></transition>
+	</fork>
 
 	<state name="P454_ObtenerAprobacionCN">
 		<event type="node-enter">
@@ -29,10 +34,10 @@
 
 	<decision name="P454_ObtenerAprobacionCNDecision" expression="#{P454_ObtenerAprobacionCNDecision}">
 		<transition to="Fin" name="si"/>
-		<transition to="P454_ComunicacionAcreditado" name="no"/>
+		<transition to="P454_ComunicacionAcreditadoCN" name="no"/>
 	</decision>
 
-	<state name="P454_ComunicacionAcreditado">
+	<state name="P454_ComunicacionAcreditadoCN">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
@@ -71,15 +76,10 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="Fin" name="avanzaBPM"></transition>
+		<transition to="FinProcedimiento" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="P454_ComunicacionAcreditado" name="vueltaAtras"></transition>
+		<transition to="P454_ComunicacionAcreditadoCN" name="vueltaAtras"></transition>
 	</state>
-
-	<fork name="forkPreparaYPeticion">
-		<transition to="P454_PeticionEscriturasCaracterEjecutivo" name="peticionEscrituras"></transition>
-		<transition to="P454_PrepararContrato" name="prepararContrato"></transition>
-	</fork>
 
 	<state name="P454_PeticionEscriturasCaracterEjecutivo">
 		<event type="node-enter">
@@ -124,7 +124,7 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="Fin" name="avanzaBPM"></transition>
+		<transition to="FinProcedimiento" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="P454_PeticionEscriturasCaracterEjecutivo" name="vueltaAtras"></transition>
 	</state>
@@ -172,14 +172,14 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="P454_ValidarContratoAJDecision" name="avanzaBPM"></transition>
+		<transition to="P454_ValidacionContratoAJDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="P454_PrepararContrato" name="vueltaAtras"/>
 	</state>
 
-	<decision name="P454_ValidarContratoAJDecision" expression="#{P454_ValidarContratoAJDecision}">
-		<transition to="P454_EnvioContratoAcreditado" name="validado"/>
-		<transition to="P454_PrepararContrato" name="noValidado"/>
+	<decision name="P454_ValidacionContratoAJDecision" expression="#{P454_ValidacionContratoAJDecision}">
+		<transition to="P454_EnvioContratoAcreditado" name="si"/>
+		<transition to="P454_PrepararContrato" name="no"/>
 	</decision>
 	
 	<state name="P454_EnvioContratoAcreditado">
@@ -225,9 +225,9 @@
 		<transition to="P454_EnvioContratoAcreditado" name="vueltaAtras"></transition>
 	</state>
 
-	<decision name="P454_AcordarFechaFirmaDecision" expression="#{P454_ValidarContratoAJDecision}">
+	<decision name="P454_AcordarFechaFirmaDecision" expression="#{P454_AcordarFechaFirmaDecision}">
 		<transition to="P454_FirmarOperacion" name="aprobada"></transition>
-		<transition to="P454_EnviarDesistirPreviaFirmaOperacion" name="rechazada"></transition>
+		<transition to="P454_EnviarDesistirPreviaFirmaOperacion" name="desistir"></transition>
 		<transition to="P454_PrepararContrato" name="reconsiderarPropuesta"></transition>
 	</decision>
 
@@ -275,7 +275,7 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="Fin" name="avanzaBPM"></transition>
+		<transition to="FinProcedimiento" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state>
 	
@@ -355,5 +355,13 @@
          </action>
       </event>  
     </end-state>
+    
+    <end-state name="FinProcedimiento">
+         <event type="node-enter">
+        <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+           <targetBean>endProcedimientoProcessActionHandler</targetBean>
+        </action>
+     </event>  
+   </end-state>
 
 </process-definition>

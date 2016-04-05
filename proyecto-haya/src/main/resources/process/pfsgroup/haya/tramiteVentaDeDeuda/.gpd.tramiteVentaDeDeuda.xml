@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="tramiteVentaDeDeuda" width="1276" height="836">
+<root-container name="tramiteVentaDeDeuda" width="1543" height="836">
   <node name="inicio" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="forkPreparaPeticionObtener" x="0" y="0" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -10,6 +18,14 @@
     </edge>
   </node>
   <node name="P454_ObtenerAprobacionCN" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P454_ObtenerAprobacionCNDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -39,7 +55,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="forkPreparaYPeticion" x="0" y="0" width="252" height="24">
+  <node name="P454_PeticionEscriturasCaracterEjecutivo" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -47,7 +63,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P454_PeticionEscriturasCaracterEjecutivo" x="0" y="0" width="132" height="36">
+  <node name="P454_PeticionEscriturasCaracterEjecutivoDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -83,6 +99,9 @@
     </edge>
   </node>
   <node name="P454_ValidacionContratoAJ" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -135,8 +154,11 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
   </node>
-  <node name="P454_AcordarFechaFirmaDecision" x="0" y="0" width="132" height="36">
+  <node name="P454_FirmarOperacionDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -161,6 +183,17 @@
     </edge>
   </node>
   <node name="P454_ObtenerDocumentacionOriginal" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P454_InformarCierreSareb" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>

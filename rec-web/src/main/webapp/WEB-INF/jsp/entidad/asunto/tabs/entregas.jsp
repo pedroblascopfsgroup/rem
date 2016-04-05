@@ -75,7 +75,7 @@
 		,{header : '<s:message code="entregas.otrosGastos" text="**Otros Gastos"/>', dataIndex : 'gastosOtros'}
 		,{header : '<s:message code="entregas.totalGastos" text="**Total Gastos "/>', dataIndex : 'gastos'}
 		,{header : '<s:message code="entregas.comisiones" text="**Comisiones"/>', dataIndex : 'comisiones'}
-		,{header : '<s:message code="entregas.totalEntrega" text="**Total Entrega "/>', dataIndex : 'totalEntrega'}
+		,{header : '<s:message code="entregas.totalEntrega" text="**Total Entrega "/>', dataIndex : 'importe'}
 		
 	]);
 	 

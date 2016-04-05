@@ -75,7 +75,7 @@ public class EntregasController{
 	@RequestMapping
 	public String getListbyAsuntoId(Long id, ModelMap model) {
 		// TODO Auto-generated method stub
-		List<LIQCobroPago> lista = cobroPagoDao.getByIdAsunto(id); 
+		List<LIQCobroPago> lista = cobroPagoDao.getByIdAsuntoContrato(id); 
 		model.put("listado", lista);
         
 		return LISTADO_COBRO_PAGO_JSON; 
@@ -111,7 +111,8 @@ public class EntregasController{
 		List<Dictionary> tipoEntrega= (List<Dictionary>)dictionaryManager.getList("DDAdjContableTipoEntrega");
 		List<Dictionary> conceptoEntrega= (List<Dictionary>)dictionaryManager.getList("DDAdjContableConceptoEntrega");
 		
-		List<LIQCobroPago> lista = cobroPagoDao.getByIdAsunto(idAsunto); 
+		List<LIQCobroPago> lista = cobroPagoDao.getByIdAsuntoContrato(idAsunto);
+		
 		LIQCobroPago LIQCP= null;
 		
 		for(LIQCobroPago lc: lista){
@@ -121,7 +122,7 @@ public class EntregasController{
 		}
 		
 		
-		model.put("tipo", LIQCP.getTipoCobroPago());
+		//model.put("tipo", LIQCP.getTipoCobroPago());
 		model.put("liqCobroPago.fecha", LIQCP.getFecha());
 		model.put("liqCobroPago.fechaValor", LIQCP.getFechaValor());
 		

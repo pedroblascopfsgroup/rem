@@ -427,7 +427,7 @@
                   FROM VARR arr
                     LEFT JOIN arq_arquetipos arq_per ON arr.arq_id = arq_per.arq_id  --arquetipo anterior
                     JOIN arq_arquetipos arq_cal ON arr.arq_id_calculado = arq_cal.arq_id  --arquetipo calculado
-                     JOIN iti_itinerarios iti ON arq_cal.iti_id = iti.iti_id JOIN hayamaster.dd_tit_tipo_itinerarios tit ON iti.dd_tit_id = tit.dd_tit_id
+                     JOIN iti_itinerarios iti ON arq_cal.iti_id = iti.iti_id JOIN ${master.schema}.dd_tit_tipo_itinerarios tit ON iti.dd_tit_id = tit.dd_tit_id
                   WHERE
                   /* Que tenga un arquetipo NUEVO gestionable */
                   arq_cal.arq_gestion = 1
@@ -1273,7 +1273,7 @@ DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_MOV_REVISADOS',
 
     Insert /*+append*/ into TMP_CNT_CLI_DES
     SELECT cex.cnt_id
-      FROM cex_contratos_expediente cex, cmmaster.dd_eex_estado_expediente eex, exp_expedientes exp
+      FROM cex_contratos_expediente cex, ${master.schema}.dd_eex_estado_expediente eex, exp_expedientes exp
      WHERE exp.exp_id = cex.exp_id
        and cex.borrado = 0
        and eex.dd_eex_id = exp.dd_eex_id

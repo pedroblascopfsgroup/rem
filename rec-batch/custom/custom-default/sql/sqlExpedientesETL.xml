@@ -1413,9 +1413,10 @@
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'PEX_PERSONAS_EXPEDIENTE Cargada',V_NUFILAS);
             COMMIT;
 
-        /* COMENTAMOS CORRECCION NOMBRE EXP >> CMREC-1316
-
-            --** Correccion datos adicionales de expedientes
+           --** Correccion datos adicionales de expedientes
+           -------------------------------------------------
+            
+           /* COMENTAMOS CORRECCION NOMBRE y OFICINA EXP >> CMREC-1316
            MERGE INTO EXP_EXPEDIENTES old
             USING (
                     Select t.exp_id , t.exp_descripcion, t.ofi_id, t.origen
@@ -1424,34 +1425,42 @@
                                  , per.OFI_ID
                                  , row_number() over (partition by gui.exp_id, cpe.cnt_id order by cpe.cpe_orden, decode(gui.per_id,cpe.per_id,1,2), cpe.per_id) as orden_descr
                                  , 'SEG' as origen
-                              from --COMENTAMOS CORRECCION NOMBRE EXP >> CMREC-1316
-                                   --(Select 'REC' Origen, exp_id, cnt_id, per_id 
-                                   -- From BATCH_VEN_DATOS_SALIDA_GUIA
-                                   -- Union all
-                                   -- Select 'SEG' Origen, exp_id, cnt_id, per_id
-                                   -- From BATCH_SEG_DATOS_SALIDA_GUIA
-                                   -- Where dd_tit_codigo = 'DEU') gui
-                                   BATCH_SEG_DATOS_SALIDA_GUIA   gui
+                              from (Select 'REC' Origen, exp_id, cnt_id, per_id 
+                                    From BATCH_VEN_DATOS_SALIDA_GUIA
+                                    Union all
+                                    Select 'SEG' Origen, exp_id, cnt_id, per_id
+                                    From BATCH_SEG_DATOS_SALIDA_GUIA
+                                    Where dd_tit_codigo = 'DEU') gui
                                  , CPE_CONTRATOS_PERSONAS        cpe
                                  , PER_PERSONAS                  per
                                  , DD_TIN_TIPO_INTERVENCION      tin
                              where gui.cnt_id = cpe.cnt_id
                                and cpe.per_id = per.per_id
                                and cpe.dd_tin_id = tin.dd_tin_id
-                               and tin.dd_tin_codigo='01'
-                               and gui.dd_tit_codigo = 'DEU') t
+                               and tin.dd_tin_codigo='01') t
                      Where orden_descr = 1
                 ) new
             ON (old.exp_id = new.exp_id)
             WHEN MATCHED THEN
-             UPDATE SET --COMENTAMOS CORRECCION NOMBRE EXP >> CMREC-1316old.exp_descripcion = decode(Origen, 'REC', new.exp_descripcion, old.exp_descripcion),
-                        old.ofi_id = new.ofi_id; --decode(Origen, 'SEG', new.ofi_id, old.ofi_id);
+             UPDATE SET old.exp_descripcion = decode(Origen, 'REC', new.exp_descripcion, old.exp_descripcion)
+                      , decode(Origen, 'SEG', new.ofi_id, old.ofi_id);
+            FIN CMREC-1316 */
+            
+            --** Oficina de la persona de pase para Gestion de deuda 
+            --   (integrar en batch_seg_datos_guia si se confirma requerimiento)
+            MERGE INTO EXP_EXPEDIENTES old
+            USING ( select gui.exp_id, per.OFI_ID
+                      from BATCH_SEG_DATOS_SALIDA_GUIA gui
+                         , PER_PERSONAS per
+                     where gui.per_id = per.per_id 
+                       and gui.dd_tit_codigo = 'DEU') new
+            ON (old.exp_id = new.exp_id)
+            WHEN MATCHED THEN
+             UPDATE SET old.ofi_id = new.ofi_id;
 
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;
-            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'Revisa nombres de expediente',V_NUFILAS);
-
-        FIN COMENTARIO*/
+            INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'Revisa oficina de expedientes GESTION DEUDA',V_NUFILAS);
 
             COMMIT;
         END;

@@ -1,9 +1,9 @@
 #!/bin/bash
 
 function set_diag(){
-	/usr/java/jdk1.6.0_27/bin/java -jar /etl/HRE/shells/cmdline-jmxclient-0.10.3.jar jmx_admin:pfs_admin localhost:2099 devon:type=logger setLoggerLevel=es.capgemini.pfs.batch.common,$1
-	/usr/java/jdk1.6.0_27/bin/java -jar /etl/HRE/shells/cmdline-jmxclient-0.10.3.jar jmx_admin:pfs_admin localhost:2099 devon:type=logger setLoggerLevel=es.capgemini.pfs.batch.revisar.arquetipos,$1
-	/usr/java/jdk1.6.0_27/bin/java -jar /etl/HRE/shells/cmdline-jmxclient-0.10.3.jar jmx_admin:pfs_admin localhost:2099 devon:type=logger setLoggerLevel=es.capgemini.pfs.batch.revisar.arquetipos.engine,$1
+	$JAVA_HOME/bin/java -jar /etl/HRE/shells/cmdline-jmxclient-0.10.3.jar jmx_admin:pfs_admin localhost:2099 devon:type=logger setLoggerLevel=es.capgemini.pfs.batch.common,$1
+	$JAVA_HOME/bin/java -jar /etl/HRE/shells/cmdline-jmxclient-0.10.3.jar jmx_admin:pfs_admin localhost:2099 devon:type=logger setLoggerLevel=es.capgemini.pfs.batch.revisar.arquetipos,$1
+	$JAVA_HOME/bin/java -jar /etl/HRE/shells/cmdline-jmxclient-0.10.3.jar jmx_admin:pfs_admin localhost:2099 devon:type=logger setLoggerLevel=es.capgemini.pfs.batch.revisar.arquetipos.engine,$1
 }
 
 reinicio=NO
@@ -33,9 +33,9 @@ reinicio=SI
 if [ "$reinicio" == "SI" ] 
 then
       echo "*** Es necesario reiniciar el Batch"
-      /etl/HRE/programas/stopBatch.sh
+      $DIR_PROGRAMAS/stopBatch.sh
       echo "*** Batch detenido"
-      /home/ops-haya/batch/run.sh
+      $DIR_PROGRAMAS/run.sh
       echo "*** Batch arrancado de nuevo"
       set_diag DEBUG
       echo "*** Establecido valor de diagnostico"

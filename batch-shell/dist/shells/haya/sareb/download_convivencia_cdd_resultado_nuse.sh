@@ -1,6 +1,6 @@
 #!/bin/bash
 
-USUARIO=ops-haya
+USUARIO=$BATCH_USER
 DIR_BASE=/home/$USUARIO
 
 . $DIR_BASE/.bash_profile
@@ -9,16 +9,7 @@ RM=`which rm`
 CP=`which cp`
 FECHA=`date +%G%m%e`
 MKDIR=`which mkdir`
-
-HOST=192.168.235.59
-USER=ftpsocpart
-PASS=tempo.99
-PORT=2153
 HORA=`date +%T`
-SFTP_DIR_BNK=/mnt/fs_servicios/socpart/SGPAR/RecoveryHaya/out/aprovisionamiento/troncal
-DIR_ORI=/data/etl/HRE/recepcion/aprovisionamiento/convivencia/entrada
-DIR_SFT_HAYA=/sftp_haya/recepcion/convivencia
-DIR_SFT_HRE=/sftp_hre/recepcion
 ESPERA=1
 
 echo "********************************************************"
@@ -44,20 +35,20 @@ mrm -f $MASK
 mrm -f $BANDERA_T
 bye
 EOF
-	echo "Eliminando y copiando fichero de ORIGEN a SFTP_HAYA ($DIR_SFT_HAYA)"
-        $RM -f $DIR_SFT_HAYA/$MASK
-	$RM -rf -mtime +7 $DIR_SFT_HRE
-	echo "Copiando fichero de ORIGEN a SFTP_HAYA ($DIR_SFT_HAYA)"
-        $CP $MASK $DIR_SFT_HAYA
-	$MKDIR -p $DIR_SFT_HRE/$FECHA
-	$CP $MASK $DIR_SFT_HRE/$FECHA
+	echo "Eliminando y copiando fichero de ORIGEN a SFTP_HAYA ($DIR_SFT_HAYA_RECEPCION)"
+        $RM -f $DIR_SFT_HAYA_RECEPCION/$MASK
+	$RM -rf -mtime +7 $DIR_SFT_HRE_RECEPCION
+	echo "Copiando fichero de ORIGEN a SFTP_HAYA ($DIR_SFT_HAYA_RECEPCION)"
+        $CP $MASK $DIR_SFT_HAYA_RECEPCION
+	$MKDIR -p $DIR_SFT_HRE_RECEPCION/$FECHA
+	$CP $MASK $DIR_SFT_HRE_RECEPCION/$FECHA
 }
 
 
 while [ `date +%H` -ne 21 ]; do
 
 	BANDERA=`lftp -u ${USER},${PASS} -p ${PORT} sftp://${HOST} <<EOF
-cd $SFTP_DIR_BNK
+cd $SFTP_DIR_BNK_OUT_APR_TR
 dir
 bye
 EOF`
@@ -67,9 +58,9 @@ EOF`
 	if [ "$BANDERA_T" == "rechazos.txt" ]; then
 		for FMASK in "${FICHEROS[@]}";	
 		do
-			download_files $DIR_ORI $SFTP_DIR_BNK ${FMASK}
-			/etl/HRE/shells/convivencia_cdd_resultado_nuse.sh >> /etl/HRE/shells/convivencia_cdd_resultado_nuse.log
-                        /etl/HRE/shells/nuseMail.sh >> /etl/HRE/shells/nuseMail.log
+			download_files $DIR_INPUT_CONV $SFTP_DIR_BNK_OUT_APR_TR ${FMASK}
+			$DIR_SHELLS/convivencia_cdd_resultado_nuse.sh >> $DIR_SHELLS/convivencia_cdd_resultado_nuse.log
+                        $DIR_SHELLS/nuseMail.sh >> $DIR_SHELLS/nuseMail.log
 			echo "Fin de la ejecucion!! $HORA"
 			exit 0
 		done

@@ -1,4 +1,3 @@
-DIR_INPUT=/data/etl/HRE/recepcion/aprovisionamiento/convivencia/entrada/
 MAX_WAITING_MINUTES=1
 ficheros=
 
@@ -13,7 +12,7 @@ hora_actual=`date +%Y%m%d%H%M%S`
 
 for fichero in $arrayFicheros
 do
-        ficheroZip=$DIR_INPUT$fichero
+        ficheroZip=$DIR_INPUT_CONV$fichero
 
         echo "$ficheroZip"
 	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroZip ]; do

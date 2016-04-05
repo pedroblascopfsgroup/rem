@@ -1,6 +1,6 @@
 #!/bin/bash
 
-USUARIO=ops-haya
+USUARIO=$BATCH_USER
 DIR_BASE=/home/$USUARIO
 DIR_SCRIPTS=$DIR_BASE/shells
 DIR_TMP=$DIR_SCRIPTS/tmp
@@ -20,13 +20,6 @@ FECHAYYYYMMDD=`date +%Y%m%d`
 FECHA_PR=`date +%Y%m%d --date="1 day ago"`
 LOG=$DIR_LOG/sftp_download_files-$FECHAYYYYMMDD.log
 
-HOST=192.168.235.59
-USER=ftpsocpart
-PASS=tempo.99
-PORT=2153
-ORACLE_HOME="/opt/app/oracle/product/10.2.0/db_1"
-SFTP_DIR_BASE_BNK=/mnt/fs_servicios/socpart/SGPAR/RecoveryHaya
-
 TIPO_ORI=envio
 DIR_SFTP_ORI=/sftp_haya/$TIPO_ORI
 DIR_APROV_ORI=$DIR_SFTP_ORI/aprovisionamiento
@@ -34,8 +27,6 @@ DIR_APROV_ORI=$DIR_SFTP_ORI/aprovisionamiento
 TIPO_DES=recepcion
 DIR_SFTP_DES=/sftp_haya/$TIPO_DES
 DIR_APROV_DES=$DIR_SFTP_DES/aprovisionamiento
-
-DIR_ETL=/data/etl/HRE
 
 echo "****************************************"
 echo "**** DESCARGA DE FICHEROS $FECHA *******"
@@ -106,7 +97,7 @@ function file_copy {
 	TIPO3=$3
 	echo "Copiando $TIPO3...."
 	cd $DIR_APROV_DES/$TIPO3
-	cp *.* $DIR_ETL/$TIPO/$TIPO2/$TIPO3
+	cp *.* $DIR_CONTROL_ETL/$TIPO/$TIPO2/$TIPO3
 	mv *.* backup/
 }
 

@@ -1,18 +1,12 @@
 #!/bin/bash
 
-USUARIO=ops-haya
+USUARIO=$BATCH_USER
 DIR_BASE=/home/$USUARIO
 
 . $DIR_BASE/.bash_profile
 
 RM=`which rm`
 FECHA=`date +%G%m%e`
-
-HOST=192.168.235.59
-USER=ftpsocpart
-PASS=tempo.99
-PORT=2153
-SFTP_DIR_BNK=/mnt/fs_servicios/socpart/SGPAR/RecoveryHaya/out/aprovisionamiento
 DIR_ORI=/backup/dumps_HAYA-BANKIA
 BANDERA=/backup/dumps_HAYA-BANKIA/BANDERA.txt
 
@@ -44,7 +38,7 @@ if [ -f $BANDERA ]; then
 	echo "Ya se esta ejecutando"
 else
 	echo " " > $BANDERA
-	download_files $DIR_ORI $SFTP_DIR_BNK $FICHERO
+	download_files $DIR_ORI $SFTP_DIR_BNK_OUT_APR $FICHERO
 fi
 
 exit 0

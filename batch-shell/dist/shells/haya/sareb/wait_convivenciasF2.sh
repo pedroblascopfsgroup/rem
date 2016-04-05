@@ -1,14 +1,11 @@
 #!/bin/bash
 # Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
 
-ENTIDAD=2038
-DIR_INPUT=/data/etl/HRE/recepcion/aprovisionamiento/troncal/
+ENTIDAD=5074
 MAX_WAITING_MINUTES=570
 ficheros=ALTA_PROCEDIMIENTOS_,ALTA_PROCEDIMIENTOS_BIENES_,ALTA_PROCEDIMIENTOS_CONTRATOS_,ALTA_PROCEDIMIENTOS_PERSONAS_
 
 #echo $(basename $0)
-
-DIR_DESTINO=/data/etl/HRE/recepcion/aprovisionamiento/convivencia/entrada/
 
 mascara=????????
 extension=".dat"
@@ -24,7 +21,7 @@ hora_actual=`date +%Y%m%d%H%M%S`
 
 for fichero in $arrayFicheros
 do
-	ficheroDat=$DIR_INPUT$fichero$mascara$extension
+	ficheroDat=$DIR_INPUT_TR$fichero$mascara$extension
 
         #echo "$ficheroSem"
 	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroDat ]; do
@@ -41,10 +38,10 @@ then
 else
    for fichero in $arrayFicheros
    do
-	mascaraDat=$DIR_INPUT$fichero$mascara$extension
+	mascaraDat=$DIR_INPUT_TR$fichero$mascara$extension
         ficheroDat=`ls -Art $mascaraDat | tail -n 1`
 
-	mv $ficheroDat $DIR_DESTINO
+	mv $ficheroDat $DIR_INPUT_CONV
    done
    echo "$(basename $0) Ficheros encontrados"
    exit 0

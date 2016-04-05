@@ -177,7 +177,7 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="P456_ComunicacionAcreditadoAJ" name="vueltaAtras"></transition>
-		<transition to="FinProcedimiento" name="avanzaBPM"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
 	</state>
 	
 	<state name="P456_EnvioBorradorContratoAcreditado">
@@ -346,7 +346,7 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="P456_ComunicacionAcreditadoSareb" name="vueltaAtras"></transition>
-		<transition to="FinProcedimiento" name="avanzaBPM"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
 	</state>
 	
 	<state name="P456_EnviarDesistirPreviaFirmaOperacion">
@@ -367,7 +367,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="FinProcedimiento" name="avanzaBPM"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
 	</state>
 	
 	<state name="P456_PrepararContrato">
@@ -588,7 +588,7 @@
 		<transition to="Fin" name="avanzaBPM"></transition>
 	</state>
 
-	<end-state name="FinProcedimiento">
+	<end-state name="Finrocedimiento">
 	  <event type="node-enter">
          <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
             <targetBean>endProcedimientoProcessActionHandler</targetBean>

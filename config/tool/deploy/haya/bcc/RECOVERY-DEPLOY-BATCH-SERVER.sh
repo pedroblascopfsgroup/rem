@@ -16,23 +16,24 @@
 #fi
 
 LOCAL_PATH=`pwd`
+BASE_DIR=/recovery/haya/batch-server/bcc
 
-#cp config/$1/devon.properties /recovery/batch-server/
-#cp config/$1/config.ini /recovery/batch-server/programas/etl/config/
+#cp config/$1/devon.properties $BASE_DIR/
+#cp config/$1/config.ini $BASE_DIR/programas/etl/config/
 #unzip zip/batch*.zip
-#rm -rf /recovery/batch-server/programas/batch/*
-#cp -r batch/* /recovery/batch-server/programas/batch/
-#chmod -R a+rwx /recovery/batch-server/programas/batch/*
+#rm -rf $BASE_DIR/programas/batch/*
+#cp -r batch/* $BASE_DIR/programas/batch/
+#chmod -R a+rwx $BASE_DIR/programas/batch/*
 #cd $LOCAL_PATH
-rm -f /recovery/batch-server/bcc/shells/*.sh
-cp scripts/shells/* /recovery/batch-server/bcc/shells/
-#sed -e 's/ENTORNO/$1/g' -i /recovery/batch-server/shells/unzip-messages-to-queue.sh
-#sed -e 's/ENTORNO/$1/g' -i /recovery/batch-server/shells/zip-messages-from-queue.sh
-chmod a+rx /recovery/batch-server/bcc/shells/*.sh
-rm -rf /recovery/batch-server/bcc/programas/etl/apr_*
-rm -rf /recovery/batch-server/bcc/programas/etl/APR_*
-cp etl/* /recovery/batch-server/bcc/programas/etl/
-cd /recovery/batch-server/bcc/programas/etl/
+rm -f $BASE_DIR/shells/*.sh
+cp scripts/shells/* $BASE_DIR/shells/
+#sed -e 's/ENTORNO/$1/g' -i $BASE_DIR/shells/unzip-messages-to-queue.sh
+#sed -e 's/ENTORNO/$1/g' -i $BASE_DIR/shells/zip-messages-from-queue.sh
+chmod a+rx $BASE_DIR/shells/*.sh
+rm -rf $BASE_DIR/programas/etl/apr_*
+rm -rf $BASE_DIR/programas/etl/APR_*
+cp etl/* $BASE_DIR/programas/etl/
+cd $BASE_DIR/programas/etl/
 for etl in `ls *.zip`
 do
     ZIPNAME=`echo ${etl} | cut -d- -f1`
@@ -45,4 +46,4 @@ do
 done
 rm *.zip
 #cd $LOCAL_PATH
-#cp scripts/batch/*.sh /recovery/batch-server/programas/
+#cp scripts/batch/*.sh $BASE_DIR/programas/

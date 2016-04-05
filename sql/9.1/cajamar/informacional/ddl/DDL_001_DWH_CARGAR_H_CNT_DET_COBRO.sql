@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=María V.
---## FECHA_CREACION=20160331
+--## FECHA_CREACION=20160405
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
 --## INCIDENCIA_LINK=CMREC-2898
@@ -147,7 +147,7 @@ BEGIN
          cpa.CNT_ID,
          cpa.CPA_ID,
          trunc(cpa.CPA_FECHA_VALOR),
-         nvl(cpa.DD_TCP_ID,-1)
+         nvl(cpa.DD_TCP_ID,-1),
          0,
 
          1,

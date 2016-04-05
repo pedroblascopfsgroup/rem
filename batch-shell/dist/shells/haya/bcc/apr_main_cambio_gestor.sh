@@ -1,8 +1,7 @@
 #!/bin/bash
 # Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
 
-#El DIR_BASE_ETL debería ir en el setBatchEnv.
-#DIR_BASE_ETL=/aplicaciones/recovecb/programas/etl
+
 
 filename=$(basename $0)
 nameETL="${filename%.*}"
@@ -28,4 +27,4 @@ else
     echo "$(basename $0) Error en $filename: no se ha encontrado  $MAINSH"
     exit 1
 fi
-
+	

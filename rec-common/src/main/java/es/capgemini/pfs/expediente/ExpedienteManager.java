@@ -2290,7 +2290,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         for (Asunto a : asuntos) {
             if (automatico || a.getProcedimientos().size() > 0) {
                 DDEstadoAsunto estadoAsuntoConfirmado = (DDEstadoAsunto) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
-                        DDEstadoAsunto.class, DDEstadoAsunto.ESTADO_ASUNTO_CONFIRMADO);
+                        DDEstadoAsunto.class, DDEstadoAsunto.ESTADO_ASUNTO_ACEPTADO);
                 a.setEstadoAsunto(estadoAsuntoConfirmado);
                 a.setComite(comite);
                 a.setSupervisorComite(sesion.getSupervisorSesionComite());

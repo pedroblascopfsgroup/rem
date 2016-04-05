@@ -423,7 +423,7 @@
         )
         SELECT PER_ID, ARR_ID, S_CLI_CLIENTES.NEXTVAL AS CLI_ID, DD_TIT_CODIGO
           FROM (
-            SELECT DISTINCT arr.per_id, arr.arq_id_calculado arr_id
+            SELECT DISTINCT arr.per_id, arr.arq_id_calculado arr_id, tit.dd_tit_codigo
                   FROM VARR arr
                     LEFT JOIN arq_arquetipos arq_per ON arr.arq_id = arq_per.arq_id  --arquetipo anterior
                     JOIN arq_arquetipos arq_cal ON arr.arq_id_calculado = arq_cal.arq_id  --arquetipo calculado

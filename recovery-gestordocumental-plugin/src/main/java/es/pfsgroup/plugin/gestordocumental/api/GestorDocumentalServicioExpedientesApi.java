@@ -12,7 +12,7 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.gestorDocumental.model.RespuestaGeneral;
 import es.pfsgroup.plugin.gestorDocumental.model.servicios.RespuestaCrearExpediente;
 
-public interface GestDocCrearServiciosApi {
+public interface GestorDocumentalServicioExpedientesApi {
 
 	RespuestaGeneral crearRelacion(CrearRelacionDto crearRelacion) throws GestorDocumentalException;
 

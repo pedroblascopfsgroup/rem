@@ -15,7 +15,7 @@ import es.pfsgroup.plugin.gestordocumental.dto.documentos.DescargaDocumentosExpe
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.DocumentosExpedienteDto;
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.ModificarMetadatosDto;
 
-public interface GestorDocumentalApi {
+public interface GestorDocumentalServicioDocumentosApi {
 
 	/**
 	 * Permite obtener un listado de documentos dentro de un expediente (con o sin relaciones)

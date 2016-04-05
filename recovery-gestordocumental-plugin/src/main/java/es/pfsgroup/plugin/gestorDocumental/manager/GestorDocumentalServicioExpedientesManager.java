@@ -16,11 +16,11 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.gestorDocumental.model.RespuestaGeneral;
 import es.pfsgroup.plugin.gestorDocumental.model.ServerRequest;
 import es.pfsgroup.plugin.gestorDocumental.model.servicios.RespuestaCrearExpediente;
-import es.pfsgroup.plugin.gestordocumental.api.GestDocCrearServiciosApi;
+import es.pfsgroup.plugin.gestordocumental.api.GestorDocumentalServicioExpedientesApi;
 import es.pfsgroup.plugin.gestordocumental.api.RestClientApi;
 
 @Component
-public class GestDocCrearServiciosManager implements GestDocCrearServiciosApi {
+public class GestorDocumentalServicioExpedientesManager implements GestorDocumentalServicioExpedientesApi {
 
 	private static final String URL_REST_CLIENT_GESTOR_DOCUMENTAL_EXPEDIENTES = "rest.client.gestor.documental.expedientes";
 	

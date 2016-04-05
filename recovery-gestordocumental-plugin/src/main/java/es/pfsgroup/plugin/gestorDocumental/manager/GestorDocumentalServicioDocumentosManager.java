@@ -14,7 +14,7 @@ import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCatalogoDoc
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCrearDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDocumentosExpedientes;
-import es.pfsgroup.plugin.gestordocumental.api.GestorDocumentalApi;
+import es.pfsgroup.plugin.gestordocumental.api.GestorDocumentalServicioDocumentosApi;
 import es.pfsgroup.plugin.gestordocumental.api.RestClientApi;
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.BajaDocumentoDto;
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.CabeceraPeticionRestClientDto;
@@ -26,7 +26,7 @@ import es.pfsgroup.plugin.gestordocumental.dto.documentos.DocumentosExpedienteDt
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.ModificarMetadatosDto;
 
 @Component
-public class GestorDocumentalManager implements GestorDocumentalApi {
+public class GestorDocumentalServicioDocumentosManager implements GestorDocumentalServicioDocumentosApi {
 
 	@Autowired
 	private RestClientApi restClientApi;

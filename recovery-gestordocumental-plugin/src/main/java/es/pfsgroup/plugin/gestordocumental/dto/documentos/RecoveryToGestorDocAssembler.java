@@ -13,10 +13,10 @@ public class RecoveryToGestorDocAssembler {
 	private static final String USUARIO = "srv.rem_ot";
 	private static final String PASSWORD = "Futures9";
 
-	public static CabeceraPeticionRestClientDto getCabeceraPeticionRestClient(String numActivo, String tipoExp, String claseExp) {
+	public static CabeceraPeticionRestClientDto getCabeceraPeticionRestClient(String id, String tipoExp, String claseExp) {
 
 		CabeceraPeticionRestClientDto cabecera = new CabeceraPeticionRestClientDto();
-		cabecera.setIdExpedienteHaya(numActivo);
+		cabecera.setIdExpedienteHaya(id);
 		cabecera.setCodTipo(tipoExp); 
 		cabecera.setCodClase(claseExp);
 		return cabecera;

@@ -44,6 +44,13 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.gestorDocumental.api.GestorDocumentalApi;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
+import es.pfsgroup.plugin.gestorDocumental.model.GestorDocumentalConstants;
+import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCrearDocumento;
+import es.pfsgroup.plugin.gestordocumental.api.GestorDocumentalServicioDocumentosApi;
+import es.pfsgroup.plugin.gestordocumental.dto.documentos.CabeceraPeticionRestClientDto;
+import es.pfsgroup.plugin.gestordocumental.dto.documentos.CrearDocumentoDto;
+import es.pfsgroup.plugin.gestordocumental.dto.documentos.RecoveryToGestorDocAssembler;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.recovery.adjunto.AdjuntoAssembler;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
@@ -60,6 +67,9 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	
 	@Autowired
 	private GestorDocumentalApi gestorDocumentalApi;
+	
+	@Autowired
+	private GestorDocumentalServicioDocumentosApi gestorDocumentalServicioDocumentosApi;
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -183,7 +193,24 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 					return altaDocumento(Long.parseLong(uploadForm.getParameter("id")), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, uploadForm.getParameter("comboTipoFichero"), uploadForm);	
 				}
 			}else{
-				return super.upload(uploadForm);
+				Procedimiento prc = null;
+				if (!Checks.esNulo(uploadForm.getParameter("prcId"))){
+					Long idProcedimiento = Long.parseLong(uploadForm.getParameter("prcId"));
+					prc = genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", idProcedimiento));
+					
+				}
+				Long idAsunto = Long.parseLong(uploadForm.getParameter("id"));
+				
+				CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idAsunto.toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, prc.getTipoProcedimiento().getCodigo());
+				Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+				CrearDocumentoDto crearDoc = RecoveryToGestorDocAssembler.getCrearDocumentoDto(uploadForm, usuario.getUsername(), uploadForm.getParameter("comboTipoFichero"));
+				try {
+					gestorDocumentalServicioDocumentosApi.crearDocumento(cabecera, crearDoc);
+				} catch (GestorDocumentalException e) {
+					logger.error("upload error: " + e);
+				}
+				return null;
+//				return super.upload(uploadForm);
 			}
 		}else{
 			return null;

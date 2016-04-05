@@ -165,14 +165,14 @@
             --** Contratos que no se consideran por no estar libres
             ---------------------------------------------------------
             Insert /*+append*/ INTO BATCH_SV_DATOS_CNT_EXP
-            -- Contratos en expedientes activos de recuperacion o seguimiento
+            -- Contratos en expedientes activos de recuperacion, seguimiento o gestion de deuda
             Select cex.exp_id, cex.cnt_id, tpx.dd_tpx_codigo
               From CEX_CONTRATOS_EXPEDIENTE cex
                Join EXP_EXPEDIENTES exp On cex.exp_id = exp.exp_id
                 Join ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE EEX On exp.dd_eex_id = eex.dd_eex_id
                 Join DD_TPX_TIPO_EXPEDIENTE tpx On exp.dd_tpx_id = tpx.dd_tpx_id
              Where eex.dd_eex_codigo in ('1','2','4') --activo, bloqueado o congelado
-               And tpx.dd_tpx_codigo in ('SEG','RECU')
+               And tpx.dd_tpx_codigo in ('SEG','RECU','GESDEU')
                And eex.borrado = 0
                And tpx.borrado = 0
                And cex.borrado = 0
@@ -227,8 +227,8 @@
 
 
 
-            --** Personas en expedientes de recuperacion o seguimiento (no libres)
-            ------------------------------------------------------------------------
+            --** Personas en expedientes de recuperacion, seguimiento o gestion de deuda
+            -----------------------------------------------------------------------------
             Insert /*+append*/ INTO BATCH_SV_DATOS_PER_EXP
             Select pex.exp_id, pex.per_id, tpx.dd_tpx_codigo
               From PEX_PERSONAS_EXPEDIENTE pex
@@ -236,7 +236,7 @@
                 Join ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE EEX On exp.dd_eex_id = eex.dd_eex_id
                 Join DD_TPX_TIPO_EXPEDIENTE tpx On exp.dd_tpx_id = tpx.dd_tpx_id
              Where eex.dd_eex_codigo in ('1','2','4') --activo, bloqueado o congelado
-               And tpx.dd_tpx_codigo in ('SEG','RECU')
+               And tpx.dd_tpx_codigo in ('SEG','RECU','GESDEU')
                And pex.borrado = 0
                And exp.borrado = 0
                And eex.borrado = 0
@@ -286,8 +286,8 @@
 
 
 
-            --** Buscamos sus umbrales y tipo de itinerarios (recuperacion o seguimiento)
-            ------------------------------------------------------------------------------
+            --** Buscamos sus umbrales y tipo de itinerarios (recuperacion, seguimiento o gestion de deuda)
+            ------------------------------------------------------------------------------------------------
             Insert /*+append*/ INTO BATCH_SV_CLIENTES
             Select /*+parallel*/ DISTINCT cli.cli_id, cli.per_id, cli.arq_id, cli.arq_prioridad
                  , per.per_nombre, per.per_apellido1, per.per_apellido2
@@ -308,7 +308,7 @@
                And arq.iti_id = iti.iti_id And iti.borrado = 0
                And iti.dd_tit_id = tit.dd_tit_id And tit.borrado = 0
                And iti.dd_aex_id = aex.dd_aex_id And aex.borrado = 0
-               And tit.dd_tit_codigo in ('REC','SIS','SIN')
+               And tit.dd_tit_codigo in ('REC','SIS','SIN','DEU')
                -- No este afectado por umbrales
                And nvl(per.PER_EXP_UMBRAL_FECHA, to_date('19000101','yyyymmdd')) < SYSDATE --fecha unmbral ha pasado
                And nvl(per.PER_EXP_UMBRAL_IMPORTE, -1) < nvl(per.PER_RIESGO_DIR_VENCIDO,0) --importe vencido superior a importe umbral
@@ -395,8 +395,9 @@
            v_proce := 'GeneracionExpedientes';
            v_paso := 'seguimiento.create.GeneracionExpedientes';
 
-            --** Filtramos personas ya en exp de seguimiento y buscamos contratos de pase con riesgo
-            -----------------------------------------------------------------------------------------
+            --** Filtramos personas ya en exp de seguimiento o gestion de deuda
+            --   y buscamos contratos de pase con riesgo
+            --------------------------------------------------------------------
             Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_GUIA
             SELECT s_exp_expedientes.nextval as EXP_ID
                  , t.*
@@ -418,7 +419,7 @@
                          , BATCH_SV_DATOS_CNT_PER  cpe
                          , BATCH_SV_DATOS_CNT      cnt
                      Where cli.per_id = pex.per_id(+)
-                       And pex.dd_tpx_codigo(+) = 'SEG'
+                       And pex.dd_tpx_codigo(+) in ('SEG','GESDEU')
                        And pex.exp_id is null  --libre
                        And cli.cli_id = ccl.cli_id
                        And ccl.cnt_id = cnt.cnt_id
@@ -426,7 +427,7 @@
                        And cli.per_id = cpe.per_id
                        And ccl.cnt_id = cpe.cnt_id
                        And ccl.borrado = 0
-                       And cli.dd_tit_codigo in ('SIS','SIN')
+                       And cli.dd_tit_codigo in ('SIS','SIN','DEU')
                      Order by cli.arq_prioridad
                             , cpe.cpe_orden
                             , cnt.cnt_riesgo desc
@@ -496,7 +497,7 @@
              Where gui.PER_ID = gl1.PER_ID
                And gl1.GCL_ID = gl2.GCL_ID
                And gl2.PER_ID = pex.PER_ID(+) and pex.exp_id is null --libre
-               And pex.dd_tpx_codigo(+) = 'SEG'
+               And pex.dd_tpx_codigo(+) in ('SEG','GESDEU')
                And gl2.PER_ID =  cpe.PER_ID
                And gui.PER_ID <> cpe.PER_ID
                And cpe.CNT_ID = cnt.CNT_ID
@@ -555,7 +556,7 @@
              Where gui.CNT_ID =  cpe.CNT_ID
                And gui.PER_ID <> cpe.PER_ID and cpe.ARRASTRE = 1
                And cpe.PER_ID = pex.PER_ID(+) and pex.EXP_ID is null --libre
-               And pex.dd_tpx_codigo(+) = 'SEG'
+               And pex.dd_tpx_codigo(+) in ('SEG','GESDEU')
                And cpe.CNT_ID = cnt.CNT_ID
                And gui.EXP_ID = pas.EXP_ID
                And gui.DD_AEX_CODIGO in ('PPGRA', 'PSGRA')
@@ -650,7 +651,7 @@
              Where gui.CNT_ID =  cpe.CNT_ID
                And gui.PER_ID <> cpe.PER_ID and cpe.ARRASTRE = 1
                And cpe.PER_ID = pex.PER_ID(+) and pex.EXP_ID is null --libre
-               And pex.dd_tpx_codigo(+) = 'SEG'
+               And pex.dd_tpx_codigo(+) in ('SEG','GESDEU')
                And cpe.CNT_ID = cnt.CNT_ID
                And gui.EXP_ID = pas.EXP_ID
                And gui.DD_AEX_CODIGO = 'PSGRA'
@@ -788,7 +789,8 @@
 
             --** Aplicamos limites para todo lo que queda
             ----------------------------------------------
-            Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA(EXP_ID,EXP_DESCRIPCION,EXP_MANUAL,DD_AEX_CODIGO,DD_EEX_ID,DD_EST_ID,EXP_FECHA_EST_ID,OFI_ID,CNT_ID,PER_ID,ARQ_ID,CEX_PASE,PEX_PASE)
+            Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA
+            (EXP_ID,EXP_DESCRIPCION,EXP_MANUAL,DD_AEX_CODIGO,DD_EEX_ID,DD_EST_ID,EXP_FECHA_EST_ID,OFI_ID,CNT_ID,PER_ID,ARQ_ID,CEX_PASE,PEX_PASE,DD_TPX_CODIGO)
                     SELECT f.EXP_ID
                          , f.EXP_DESCRIPCION
                          , 0 as EXP_MANUAL
@@ -802,9 +804,12 @@
                          , f.ARQ_ID
                          , f.CEX_PASE
                          , f.PEX_PASE
+                         , decode(g.dd_tit_codigo,'SIS','SEG','SIN','SEG','DEU','GESDEU') as dd_tpx_codigo
                       FROM BATCH_SEG_DATOS_SALIDA_TODO_LM f
-                     WHERE NUM_PER <= v_limit_per
-                       AND NUM_CNT <= v_limit_cnt;
+                         , BATCH_SEG_DATOS_SALIDA_GUIA g
+                     WHERE f.EXP_ID = g.EXP_ID
+                       AND f.NUM_PER <= v_limit_per
+                       AND f.NUM_CNT <= v_limit_cnt;
 
               --LOG
               V_NUFILAS:=SQL%ROWCOUNT;
@@ -1310,7 +1315,7 @@
 
           v_dd_eex_id     number(16);
           v_dd_est_id     number(16);
-          v_dd_tpx_id_seg number(16);
+          --v_dd_tpx_id_seg number(16);
           v_dd_tpx_id_ven number(16);
 
           v_cadena  varchar2(50 char);
@@ -1327,7 +1332,7 @@
 
              select dd_eex_id into v_dd_eex_id from ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE Where dd_eex_codigo = '1'; --activo
              select dd_est_id into v_dd_est_id from ${master.schema}.DD_EST_ESTADOS_ITINERARIOS Where dd_est_codigo = 'CE'; --completar expedietne
-             select dd_tpx_id into v_dd_tpx_id_seg from DD_TPX_TIPO_EXPEDIENTE Where dd_tpx_codigo = 'SEG';
+             --select dd_tpx_id into v_dd_tpx_id_seg from DD_TPX_TIPO_EXPEDIENTE Where dd_tpx_codigo = 'SEG';
              select dd_tpx_id into v_dd_tpx_id_ven from DD_TPX_TIPO_EXPEDIENTE Where dd_tpx_codigo = 'RECU';
 
             Insert Into EXP_EXPEDIENTES
@@ -1346,10 +1351,11 @@
                  , '${usuario.crear}' as USUARIOCREAR
                  , sysdate as FECHACREAR
                  , 0 as BORRADO
-              From (Select EXP_ID, EXP_DESCRIPCION, OFI_ID, ARQ_ID, CEX_PASE, PEX_PASE, v_dd_tpx_id_seg as DD_TPX_ID, DD_AEX_CODIGO
-                    From BATCH_SEG_DATOS_SALIDA
+              From (Select s.EXP_ID, s.EXP_DESCRIPCION, s.OFI_ID, s.ARQ_ID, s.CEX_PASE, s.PEX_PASE, d.DD_TPX_ID, s.DD_AEX_CODIGO
+                    From BATCH_SEG_DATOS_SALIDA s, DD_TPX_TIPO_EXPEDIENTE d
+                    Where s.DD_TPX_CODIGO = d.DD_TPX_CODIGO
                     Union All
-                    Select EXP_ID, EXP_DESCRIPCION, OFI_ID, ARQ_ID, CEX_PASE, PEX_PASE, v_dd_tpx_id_ven as DD_TPX_ID, DD_AEX_CODIGO
+                    Select  EXP_ID, EXP_DESCRIPCION, OFI_ID, ARQ_ID, CEX_PASE, PEX_PASE, v_dd_tpx_id_ven as DD_TPX_ID, DD_AEX_CODIGO
                     From BATCH_VEN_DATOS_SALIDA) a
                  , ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE b
              Where a.dd_aex_codigo = b.dd_aex_codigo
@@ -1409,26 +1415,37 @@
 
         /* COMENTAMOS CORRECCION NOMBRE EXP >> CMREC-1316
 
-            --** Correccion del nombre de expedientes de recuperacion
-            MERGE INTO EXP_EXPEDIENTES old
+            --** Correccion datos adicionales de expedientes
+           MERGE INTO EXP_EXPEDIENTES old
             USING (
-                    Select t.exp_id , t.exp_descripcion
+                    Select t.exp_id , t.exp_descripcion, t.ofi_id, t.origen
                       From (select gui.exp_id
                                  , TRIM(per.PER_NOMBRE||' '||per.PER_APELLIDO1||' '||per.PER_APELLIDO2) as EXP_DESCRIPCION
+                                 , per.OFI_ID
                                  , row_number() over (partition by gui.exp_id, cpe.cnt_id order by cpe.cpe_orden, decode(gui.per_id,cpe.per_id,1,2), cpe.per_id) as orden_descr
-                              from BATCH_VEN_DATOS_SALIDA_GUIA  gui
-                                 , CPE_CONTRATOS_PERSONAS       cpe
-                                 , PER_PERSONAS                 per
-                                 , DD_TIN_TIPO_INTERVENCION     tin
+                                 , 'SEG' as origen
+                              from --COMENTAMOS CORRECCION NOMBRE EXP >> CMREC-1316
+                                   --(Select 'REC' Origen, exp_id, cnt_id, per_id 
+                                   -- From BATCH_VEN_DATOS_SALIDA_GUIA
+                                   -- Union all
+                                   -- Select 'SEG' Origen, exp_id, cnt_id, per_id
+                                   -- From BATCH_SEG_DATOS_SALIDA_GUIA
+                                   -- Where dd_tit_codigo = 'DEU') gui
+                                   BATCH_SEG_DATOS_SALIDA_GUIA   gui
+                                 , CPE_CONTRATOS_PERSONAS        cpe
+                                 , PER_PERSONAS                  per
+                                 , DD_TIN_TIPO_INTERVENCION      tin
                              where gui.cnt_id = cpe.cnt_id
                                and cpe.per_id = per.per_id
                                and cpe.dd_tin_id = tin.dd_tin_id
-                               and tin.dd_tin_codigo='01') t
+                               and tin.dd_tin_codigo='01'
+                               and gui.dd_tit_codigo = 'DEU') t
                      Where orden_descr = 1
                 ) new
             ON (old.exp_id = new.exp_id)
             WHEN MATCHED THEN
-             UPDATE SET old.exp_descripcion = new.exp_descripcion;
+             UPDATE SET --COMENTAMOS CORRECCION NOMBRE EXP >> CMREC-1316old.exp_descripcion = decode(Origen, 'REC', new.exp_descripcion, old.exp_descripcion),
+                        old.ofi_id = new.ofi_id; --decode(Origen, 'SEG', new.ofi_id, old.ofi_id);
 
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;
@@ -1497,7 +1514,8 @@
           v_proce := 'GeneracionExpedientes';
           v_paso := 'vencidos.persistencia.politicas';
 
-            --** Iniciamos politicas de expediente (seguimiento)
+            --** Iniciamos politicas de expediente
+            --   (seguimiento o gestion de deuda)
             --------------------------------------
             Insert into CMP_CICLO_MARCADO_POLITICA
               (CMP_ID, PER_ID, EXP_ID, VERSION, USUARIOCREAR, FECHACREAR,BORRADO)

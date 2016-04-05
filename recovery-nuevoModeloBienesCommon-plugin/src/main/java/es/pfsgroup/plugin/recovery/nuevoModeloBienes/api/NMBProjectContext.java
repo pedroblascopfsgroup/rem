@@ -60,6 +60,10 @@ public interface NMBProjectContext {
 	
 	//void setMapaTiposPrc(Map<String, String> mapaTiposPrc);
 	
+	Map<String, String> getMapaClasesExpeGesDoc();
+	
+	//void setMapaTiposPrcGesDoc(Map<String, String> mapaClasesExpeGesDoc);
+	
 	Map<String, String> getTareasCierreDeuda();
 	/**
 	 * Devuelve los cÃ³digos de las subastas sobre las que hacer la validacion PRE en la tarea Confirmar testimonio del trÃ¡mite de adjudicaciÃ³n. 
@@ -76,9 +80,9 @@ public interface NMBProjectContext {
 	List<String> getCodigosSubastas();
 
 	/**
-	 * Devuelve el código de Subasta Sareb
+	 * Devuelve el cï¿½digo de Subasta Sareb
 	 * 
-	 * @return Códgio Subasta Sareb
+	 * @return Cï¿½dgio Subasta Sareb
 	 */        
         String getCodigoSubastaBankia();
         

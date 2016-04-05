@@ -47,28 +47,29 @@ DECLARE
     TYPE T_TIPO_TAP IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
-       T_TIPO_TAP('P456','P456_ObtenerAprobacionCN',null,null,null,null,null,'0','Obtener aprobación CN','0','PRODUCTO-945','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
+       T_TIPO_TAP('P456','P456_ObtenerAprobacionCN',null,null,null,'valores[''P456_ObtenerAprobacionCN''][''obtencionAprobacion''] == DDSiNo.SI ? ''Si'' : ''No''',null,'0','Obtener aprobación CN','0','PRODUCTO-945','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
        ,T_TIPO_TAP('P456','P456_ComunicacionAcreditadoCN',null,null,null,null,null,'0','Comunicación al acreditado CN','0','PRODUCTO-945','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
        ,T_TIPO_TAP('P456','P456_EnviarDesistirWFCN',null,null,null,null,null,'0','Enviar a desistir WF CN','0','PRODUCTO-945','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
-       ,T_TIPO_TAP('P456','P456_ConfeccionarBorradorContratoAcreditado',null,null,null,null,null,'0','Confeccionar borrador contrato acreditado','0','PRODUCTO-945','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
-       ,T_TIPO_TAP('P456','P456_ValidarBorradorContratoAJ',null,null,null,null,null,'0','Confeccionar borrador contrato acreditado','0','PRODUCTO-945','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'TAJUR',null,null,null)
+       ,T_TIPO_TAP('P456','P456_ConfeccionarBorradorContratoAcreditado',null,null,null,'valores[''ConfeccionarBorradorContratoAcreditado''][''requiereValidacion''] == DDSiNo.Si ? ''Si'' : ''No''',null,'0','Confeccionar borrador contrato acreditado','0','PRODUCTO-945','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
+       ,T_TIPO_TAP('P456','P456_ValidarBorradorContratoAJ',null,null,null,'valores[''P456_ValidarBorradorContratoAJ''][''valida''] == ''01'' ? ''Aprobado'' ? ''Rechazado''',null,'0','Confeccionar borrador contrato acreditado','0','PRODUCTO-945','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'TAJUR',null,null,null)
        ,T_TIPO_TAP('P456','P456_ComunicacionAcreditadoAJ',null,null,null,null,null,'0','Comunicación al acreditado AJ','0','PRODUCTO-945','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'TAJUR',null,null,null)
        ,T_TIPO_TAP('P456','P456_EnviarDesistirWFAJ',null,null,null,null,null,'0','Enviar a desistir WF AJ','0','PRODUCTO-945','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
        ,T_TIPO_TAP('P456','P456_EnvioBorradorContradoAcreditado',null,null,null,null,null,'0','Envío borrador contrato al Acreditado','0','PRODUCTO-945','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
-       ,T_TIPO_TAP('P456','P456_AcordarFechaFirma',null,null,null,null,null,'0','Acordar fecha firma','0','PRODUCTO-945','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
+       ,T_TIPO_TAP('P456','P456_AcordarFechaFirma',null,null,null,'valores[''P456_AcordarFechaFirma''][''comboAprobacion''] == ''01'' ? ''Aceptada'' : (valores[''P456_AcordarFechaFirma''][''comboAprobacion''] == ''02'' ? ''Rechazada'' : (valores[''P456_AcordarFechaFirma''][''comboAprobacion''] == ''reconsiderar'' ? ''reconsiderar'' : null)) ',null,'0','Acordar fecha firma','0','PRODUCTO-945','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
        ,T_TIPO_TAP('P456','P456_RevisarPropuesta',null,null,null,null,null,'0','Revisar propuesta','0','PRODUCTO-945','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
        ,T_TIPO_TAP('P456','P456_ElevarSareb',null,null,null,null,null,'0','Elevar a Sareb','0','PRODUCTO-945','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'805',null,null,null)
-       ,T_TIPO_TAP('P456','P456_RegistrarResolucionSareb',null,null,null,null,null,'0','Registrar resolución Sareb','0','PRODUCTO-945','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'805',null,null,null)
+       ,T_TIPO_TAP('P456','P456_RegistrarResolucionSareb',null,null,null,'valores[''P456_RegistrarResolucionSareb''][''comboResolucion''] == ''01'' ? ''Aprobada'' : ''Rechazada''',null,'0','Registrar resolución Sareb','0','PRODUCTO-945','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'805',null,null,null)
        ,T_TIPO_TAP('P456','P456_ComunicacionAcreditadoRenovacion',null,null,null,null,null,'0','Comunicación al acreditado Sareb','0','PRODUCTO-945','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
+       ,T_TIPO_TAP('P456','P456_ComunicacionAcreditadoSareb',null,null,null,null,null,'0','Comunicación al Acreditado Sareb','0','PRODUCTO-945','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'805',null,null,null)
        ,T_TIPO_TAP('P456','P456_EnviarDesistirWFSareb',null,null,null,null,null,'0','Enviar a desistir WF Sareb','0','PRODUCTO-945','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
-       ,T_TIPO_TAP('P456','P456_PrepararContrato',null,null,null,null,null,'0','Preparar contrato','0','PRODUCTO-945','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'805',null,null,null)
-       ,T_TIPO_TAP('P456','P456_ValidacionContratoAJ',null,null,null,null,null,'0','Validación contrato AJ','0','PRODUCTO-945','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'TAJUR',null,null,null)
+       ,T_TIPO_TAP('P456','P456_PrepararContrato',null,null,null,'valores[''P456_PrepararContrato''][''requiereValidacion''] == DDSiNo.Si ? ''Si'' : ''No''',null,'0','Preparar contrato','0','PRODUCTO-945','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'805',null,null,null)
+       ,T_TIPO_TAP('P456','P456_ValidacionContratoAJ',null,null,null,'valores[''P456_ValidacionContratoAJ''][''valida''] == ''01'' ? ''Validado'' : ''NoValidado''',null,'0','Validación contrato AJ','0','PRODUCTO-945','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'TAJUR',null,null,null)
        ,T_TIPO_TAP('P456','P456_EnvioContratoAcreditado',null,null,null,null,null,'0','Envío del contrato al acreditado','0','PRODUCTO-945','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
-       ,T_TIPO_TAP('P456','P456_FirmarOperacion',null,null,null,null,null,'0','Firmar operación','0','PRODUCTO-945','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
+       ,T_TIPO_TAP('P456','P456_FirmarOperacion',null,null,null,'valores[''P456_FirmarOperacion''][''P456_FirmarOperacion''] == ''01'' ? ''Aceptada'' : ''Rechazada''',null,'0','Firmar operación','0','PRODUCTO-945','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
        ,T_TIPO_TAP('P456','P456_EnviarDesistirPreviaFirmaOperacion',null,null,null,null,null,'0','Enviar a desistir WF previa firma operación','0','PRODUCTO-945','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
        ,T_TIPO_TAP('P456','P456_VolcadoCondicionesResolucion',null,null,null,null,null,'0','Volcado de condiciones resolución','0','PRODUCTO-945','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
        ,T_TIPO_TAP('P456','P456_InformarCierreSareb',null,null,null,null,null,'0','Informar cierre a Sareb','0','PRODUCTO-945','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
-       ,T_TIPO_TAP('P456','P456_AnalisisEvolucionPDV',null,null,null,null,null,'0','Análisis evolución PDV','0','PRODUCTO-945','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
+       ,T_TIPO_TAP('P456','P456_AnalisisEvolucionPDV',null,null,null,'valores[''P456_AnalisisEvolucionPDV''][''resultadoRevision''] == DDSiNo.SI ? ''Si'' : ''No''',null,'0','Análisis evolución PDV','0','PRODUCTO-945','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
        ,T_TIPO_TAP('P456','P456_ObtenerDocumentacionOriginal',null,null,null,null,null,'0','Obtener documentación original','0','PRODUCTO-945','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
     ); 
     V_TMP_TIPO_TAP T_TIPO_TAP;
@@ -89,6 +90,7 @@ DECLARE
       ,T_TIPO_PLAZAS(null,null,'P456_RevisarPropuesta','15*24*60*60*1000L','0','0','PRODUCTO-945') 
       ,T_TIPO_PLAZAS(null,null,'P456_ElevarSareb','1*24*60*60*1000L','0','0','PRODUCTO-945') 
       ,T_TIPO_PLAZAS(null,null,'P456_RegistrarResolucionSareb','15*24*60*60*1000L','0','0','PRODUCTO-945') 
+      ,T_TIPO_PLAZAS(null,null,'P456_ComunicacionAcreditadoRenovacion','3*24*60*60*1000L','0','0','PRODUCTO-945') 
       ,T_TIPO_PLAZAS(null,null,'P456_ComunicacionAcreditadoSareb','3*24*60*60*1000L','0','0','PRODUCTO-945')
       ,T_TIPO_PLAZAS(null,null,'P456_EnviarDesistirWFSareb','5*24*60*60*1000L','0','0','PRODUCTO-945') 
       ,T_TIPO_PLAZAS(null,null,'P456_PrepararContrato','3*24*60*60*1000L','0','0','PRODUCTO-945') 
@@ -100,7 +102,6 @@ DECLARE
       ,T_TIPO_PLAZAS(null,null,'P456_InformarCierreSareb','5*24*60*60*1000L','0','0','PRODUCTO-945') 
       ,T_TIPO_PLAZAS(null,null,'P456_AnalisisEvolucionPDV','60*24*60*60*1000L','0','0','PRODUCTO-945') 
       ,T_TIPO_PLAZAS(null,null,'P456_ObtenerDocumentacionOriginal','2*24*60*60*1000L','0','0','PRODUCTO-945') 
-      ,T_TIPO_PLAZAS(null,null,'P456_ComunicacionAcreditadoRenovacion','3*24*60*60*1000L','0','0','PRODUCTO-945') 
     ); 
     V_TMP_TIPO_PLAZAS T_TIPO_PLAZAS;
     
@@ -205,12 +206,12 @@ DECLARE
 	    		
         ,T_TIPO_TFI('P456_VolcadoCondicionesResolucion','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">A través de esta pantalla deberá indicar si acepta el Asunto asignado por la entidad o no. En el campo "Conflicto de intereses" deberá consignar la existencia de conflicto o no, que le impida aceptar la dirección de la acción a instar, en caso de que haya conflicto de intereses no se le permitirá la aceptación del Asunto. En el campo "Aceptación del asunto " deberá indicar si acepta o no el asunto, si ha marcado con anterioridad que existe conflicto de intereses, deberá marcar, en todo caso, la no aceptación del asunto.</p>En el campo observaciones consignar cualquier aspecto relevante que le interesa quede reflejado en este punto.</p>Una vez rellene esta pantalla la siguiente tarea será "Revisar asignación de letrado”  en caso de no haber aceptado el asunto se creará una tarea al supervisor para que tenga en cuenta su respuesta a la vez que reasigna el asunto a otro letrado, en caso de haber aceptado el asunto se dará por terminada esta actuación.</p></div>',null,null,null,null,'0','PRODUCTO-945')
         ,T_TIPO_TFI('P456_VolcadoCondicionesResolucion','1','number','numeroPrestamo','Número préstamo promotor',null,null,null,null,'0','PRODUCTO-945')
-		,T_TIPO_TFI('P456_VolcadoCondicionesResolucion','2','number','numeroPDV','Número PDV','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',,null,null,'0','PRODUCTO-945')
+		,T_TIPO_TFI('P456_VolcadoCondicionesResolucion','2','number','numeroPDV','Número PDV','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','PRODUCTO-945')
 		,T_TIPO_TFI('P456_VolcadoCondicionesResolucion','3','date','fechaInicio','Fecha inicio de PDV','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','PRODUCTO-945')
         ,T_TIPO_TFI('P456_VolcadoCondicionesResolucion','4','date','fechaFin','Fecha fin de vigencia PDV','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','PRODUCTO-945')
-        ,T_TIPO_TFI('P456_VolcadoCondicionesResolucion','5','number','periodo','Periodo de carencia','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',,null,null,'0','PRODUCTO-945')
+        ,T_TIPO_TFI('P456_VolcadoCondicionesResolucion','5','number','periodo','Periodo de carencia','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','PRODUCTO-945')
 		,T_TIPO_TFI('P456_VolcadoCondicionesResolucion','6','combo','gestionVenta','Gestión de venta','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','PRODUCTO-945')
-		,T_TIPO_TFI('P456_VolcadoCondicionesResolucion','7','number','seguimiento','Seguimiento periódico','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',,null,null,'0','PRODUCTO-945')
+		,T_TIPO_TFI('P456_VolcadoCondicionesResolucion','7','number','seguimiento','Seguimiento periódico','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','PRODUCTO-945')
 		,T_TIPO_TFI('P456_VolcadoCondicionesResolucion','8','date','fechaAlta','Fecha de alta en UVEM','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','PRODUCTO-945')
         ,T_TIPO_TFI('P456_VolcadoCondicionesResolucion','9','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-945')
 	    

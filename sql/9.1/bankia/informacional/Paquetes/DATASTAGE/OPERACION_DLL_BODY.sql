@@ -3,7 +3,7 @@ create or replace package body OPERACION_DDL as
 -- Autor: Diego Pérez, PFS Group
 -- Fecha creacion: Agosto 2015
 -- Responsable ultima modificacion:
--- Fecha ?ltima modificaci?n: 
+-- Fecha ultima modificacion: 
 -- Motivos del cambio: 
 -- Cliente: Recovery BI Bankia
 --
@@ -323,7 +323,7 @@ create or replace package body OPERACION_DDL as
       Else 
           If V_DESACTIVAR = 'S' then 
             --**PFS - Función para rebuild indices
-			--OPERACION_DDL.ejecuta_str('ALTER INDEX ' || V_ESQUEMA || '.' || V_NOMBRE || ' REBUILD PARALLEL');
+			--OPERACION_DDL.ejecuta_str('ALTER INDEX ' || V_ESQUEMA || '.' || V_NOMBRE || ' REBUILD PARALLEL 2');
 			--**Bankia - ALTER_INDEX función bankia para rebuild indices
 			OPERACION_DDL.ejecuta_str('BEGIN ALTER_INDEX('''||v_esquema||''', '''||v_nombre||''', ''REBUILD''); END;');
             execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      

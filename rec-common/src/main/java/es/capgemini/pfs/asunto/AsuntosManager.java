@@ -510,7 +510,7 @@ public class AsuntosManager {
             if (!usuarioLogado.equals(usuarioGestor)) { throw new BusinessOperationException("asunto.aceptacion.usuarioErroneo"); }
         }
         //Validar que estoy en el estado Confirmado
-        if (!DDEstadoAsunto.ESTADO_ASUNTO_CONFIRMADO.equals(asunto.getEstadoAsunto().getCodigo())) { throw new BusinessOperationException(
+       /* if (!DDEstadoAsunto.ESTADO_ASUNTO_CONFIRMADO.equals(asunto.getEstadoAsunto().getCodigo())) { throw new BusinessOperationException(
                 "asunto.aceptacion.estadoErroneo"); }
         //Cambiar de estado el asunto
         DDEstadoAsunto estadoAsuntoAceptado = (DDEstadoAsunto) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
@@ -518,7 +518,7 @@ public class AsuntosManager {
         DDEstadoAsunto estadoAceptado = estadoAsuntoAceptado;
         asunto.setEstadoAsunto(estadoAceptado);
         executor.execute(ExternaBusinessOperation.BO_ASU_MGR_SAVE_OR_UDPATE, asunto);
-        //this.saveOrUpdateAsunto(asunto);
+        //this.saveOrUpdateAsunto(asunto);*/
 
         //Finalizo la tarea de confirmacion de asunto.
         if (!automatico) {

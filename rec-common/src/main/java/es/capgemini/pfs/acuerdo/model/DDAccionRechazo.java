@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -45,7 +46,10 @@ public class DDAccionRechazo implements Dictionary, Auditable {
     @Column(name = "DD_DES_DESCRIPCION_LARGA")
     private String descripcionLarga;
 
-    @Embedded
+    @Version
+	private Integer version;
+
+	@Embedded
     private Auditoria auditoria;
 
 
@@ -119,4 +123,11 @@ public class DDAccionRechazo implements Dictionary, Auditable {
         this.auditoria = auditoria;
     }
 
+    public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
 }

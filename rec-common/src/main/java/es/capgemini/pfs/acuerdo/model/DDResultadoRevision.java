@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -46,6 +47,9 @@ public class DDResultadoRevision implements Dictionary, Auditable {
     @Column(name = "DD_RRE_DESCRIPCION_LARGA")
     private String descripcionLarga;
 
+    @Version
+	private Integer version;
+    
     @Embedded
     private Auditoria auditoria;
 
@@ -119,5 +123,13 @@ public class DDResultadoRevision implements Dictionary, Auditable {
     public void setAuditoria(Auditoria auditoria) {
         this.auditoria = auditoria;
     }
+    
+    public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
 
 }

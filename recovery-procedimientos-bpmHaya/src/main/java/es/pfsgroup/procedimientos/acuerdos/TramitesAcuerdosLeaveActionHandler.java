@@ -25,7 +25,7 @@ public class TramitesAcuerdosLeaveActionHandler extends PROGenericLeaveActionHan
 	private ExecutionContext executionContext;
 	
 	@Autowired
-	//TODO
+	TramitesAcuerdosApi tramitesAcuerdosApi;
 
 	@Override
 	protected void process(Object delegateTransitionClass, Object delegateSpecificClass,
@@ -65,9 +65,8 @@ public class TramitesAcuerdosLeaveActionHandler extends PROGenericLeaveActionHan
 	}
 
 	/**
-	 * Este método consultará todos los datos de los bienes para determinar que
-	 * caracteristicas tiene, y así devolver la rama correspondiente A, B, CEH,
-	 * DEFGH,...
+	 * Este método consultará todos los datos para determinar que
+	 * caracteristicas tiene, y así devolver la rama correspondiente A, B, C
 	 * 
 	 * @return Array con los valores para decidir, uno por cada Rama en orden
 	 *         0-Primera rama, 1-Segunda rama,...
@@ -75,9 +74,9 @@ public class TramitesAcuerdosLeaveActionHandler extends PROGenericLeaveActionHan
 	protected Boolean[] getValoresRamas() {
 		Procedimiento proc = getProcedimiento(executionContext);
 
-		// Consulta los contratos.
-		//Boolean[] valores = (Boolean[]) executor.execute("es.pfsgroup.recovery.subasta.bpmGetValoresRamasCelebracion",				proc, getTareaExterna(executionContext));
-		return null;
+		Boolean[] valores = (Boolean[]) tramitesAcuerdosApi.bpmGetValoresRamasDefinirDocumentacion(proc, getTareaExterna(executionContext));
+		
+		return valores;
 	}
 
 }

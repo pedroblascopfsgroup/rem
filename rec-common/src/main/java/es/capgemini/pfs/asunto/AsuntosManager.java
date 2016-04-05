@@ -14,6 +14,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.tools.ant.taskdefs.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.AbstractMessageSource;
 import org.springframework.stereotype.Service;
@@ -75,6 +76,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.utils.ZipUtils;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.Checks;
 
@@ -1298,6 +1300,6 @@ public class AsuntosManager {
     @BusinessOperation(ExternaBusinessOperation.BO_ASU_MGR_GET_LIST_TIPOS_ASUNTO)
     public List<DDTiposAsunto> obtenerListadoTiposDeAsunto() {
 		Order orderDescripcion = new Order(OrderType.ASC, "descripcion"); 
-		return genericDao.getListOrdered(DDTiposAsunto.class, orderDescripcion);
+		return genericDao.getListOrdered(DDTiposAsunto.class, orderDescripcion,genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
     }
 }

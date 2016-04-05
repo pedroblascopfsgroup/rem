@@ -287,32 +287,37 @@
 	    ,itemSelector: 'div.search-item'
 		,fieldLabel : '<s:message code="procedimientos.edicion.propuestas" text="**Propuestas" />'
 		,onSelect: function(record) {
-			comboPropuestas.setValue(record.data.idAcuerdo);
-			comboPropuestas.collapse();
-			comboPropuestas.focus();
-			Ext.Ajax.request({
-				url : page.resolveUrl('propuestas/contratosIncluidosEnLosTerminosDeLaPropuesta'), 
-				params : {
-							idPropuesta:record.data.idAcuerdo
-						},
-				method: 'POST',
-				success: function ( result, request ) {
-						var resultado = Ext.decode(result.responseText);
-						var contratos = new Array();
-						for(i=0;i < resultado.contratos.length; i++){
-							contratos.push(resultado.contratos[i].id);
-						}
-						var position = 0;
-						contratosStore.each( function(record){
-							if(contratos.indexOf(record.data.id) != -1){
-								myCboxSelModelContratos.selectRow(position,true);
-							}else if(myCboxSelModelContratos.isSelected( position )){
-								myCboxSelModelContratos.deselectRow(position,true);
+			if(record.data.idAcuerdo != null){
+				comboPropuestas.setValue(record.data.idAcuerdo);
+				comboPropuestas.collapse();
+				comboPropuestas.focus();
+				Ext.Ajax.request({
+					url : page.resolveUrl('propuestas/contratosIncluidosEnLosTerminosDeLaPropuesta'), 
+					params : {
+								idPropuesta:record.data.idAcuerdo
+							},
+					method: 'POST',
+					success: function ( result, request ) {
+							var resultado = Ext.decode(result.responseText);
+							var contratos = new Array();
+							for(i=0;i < resultado.contratos.length; i++){
+								contratos.push(resultado.contratos[i].id);
 							}
-							position++;
-    					});
-				}
-			});
+							var position = 0;
+							contratosStore.each( function(record){
+								if(contratos.indexOf(record.data.id) != -1){
+									myCboxSelModelContratos.selectRow(position,true);
+								}else if(myCboxSelModelContratos.isSelected( position )){
+									myCboxSelModelContratos.deselectRow(position,true);
+								}
+								position++;
+	    					});
+					}
+				});
+			}else{
+				comboPropuestas.collapse();
+				comboPropuestas.focus();			
+			}
 		}
 	});
 	

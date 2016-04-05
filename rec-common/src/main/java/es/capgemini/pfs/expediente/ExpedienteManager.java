@@ -2269,8 +2269,9 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         Comite comite = (Comite) executor.execute(InternaBusinessOperation.BO_COMITE_MGR_GET_WITH_SESSIONS, exp.getComite().getId());
         if (exp.getEstaDecidido()) { throw new BusinessOperationException("expediente.tomarDecision.decisionYaTomada"); }
 
-        if (!DDEstadoItinerario.ESTADO_DECISION_COMIT.equalsIgnoreCase(exp.getEstadoItinerario().getCodigo())) { throw new BusinessOperationException(
-                "expediente.tomarDecision.estadoInvalido"); }
+        if (!DDEstadoItinerario.ESTADO_DECISION_COMIT.equalsIgnoreCase(exp.getEstadoItinerario().getCodigo()) && !DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO.equalsIgnoreCase(exp.getEstadoItinerario().getCodigo())) { 
+        	throw new BusinessOperationException("expediente.tomarDecision.estadoInvalido"); 
+        }
 
         if (!Comite.INICIADO.equalsIgnoreCase(comite.getEstado())) { throw new BusinessOperationException("expediente.tomarDecision.sesionInvalida"); }
         marcarSinActuacionContratosPasivosNoVencidos(exp);

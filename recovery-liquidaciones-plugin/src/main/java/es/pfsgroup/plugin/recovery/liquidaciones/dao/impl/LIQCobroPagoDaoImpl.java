@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.recovery.liquidaciones.dao.impl;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Query;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
 import org.springframework.stereotype.Repository;
@@ -53,5 +54,26 @@ public class LIQCobroPagoDaoImpl extends AbstractEntityDao<LIQCobroPago, Long> i
 		
 		return HibernateQueryUtils.list(this, hb);
     }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+	public List<LIQCobroPago> getByIdAsuntoContrato(Long idAsunto){
+    	 String hql= "select cp from LIQCobroPago cp,ExpedienteContrato ec,Asunto asu where cp.contrato = ec.contrato and ec.expediente = asu.expediente and asu.id = "+idAsunto+" and cp.auditoria.borrado=false";
+//    	 hql += " inner join ExpedienteContrato ec where cp.contrato = ec.contrato";
+//    	 hql+= " inner join Asunto asu where ec.expediente = asu.expediente";
+//    	 hql+= " where asu.id = "+idAsunto+" and cp.auditoria.borrado=false;";
+    	
+//    	HQLBuilder hb = new HQLBuilder("from LIQCobroPago cobro");
+//		hb.appendWhere("cobro.auditoria.borrado=false");
+//		
+//
+//		HQLBuilder.addFiltroIgualQue(hb, "asunto.id", idAsunto);
+//		
+//		hb.orderBy("fecha", HQLBuilder.ORDER_DESC);
+    	 Query query = getSession().createQuery(hql);
+    	 
+    	 return (List<LIQCobroPago>) query.list();
+    }
+
 
 }

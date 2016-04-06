@@ -361,8 +361,44 @@ onViewClick : function(doFocus){
 			
 		});
 		
+		btnLanzarProvision = new Ext.Button({
+			text: '<s:message code="plugin.procuradores.procesadoResoluciones.btnLanzarProvision" text="**Provisión" />',
+			icon:'/pfs/css/book_next.png',
+			disabled: true,
+			handler: function() {
+				Ext.Msg.show({
+					title:'<s:message code="plugin.procuradores.procesadoResoluciones.btnLanzarProvision" text="**Provisión" />',
+					msg:"<s:message code="plugin.procuradores.procesadoResoluciones.btnLanzarProvision.msg" text="**Se va a crear una nueva actuación de tipo 'Provisión de fondos procurador'" />",
+					buttons: Ext.Msg.YESNO,
+					icon: Ext.MessageBox.QUESTION,
+					fn: function(opt) {
+						if (opt == 'yes') {
+							var params = {};
+							params["idProcedimiento"] = idProcedimiento.getValue();
+		
+							var mask = new Ext.LoadMask(Ext.getBody(), {msg:'<s:message code="fwk.ui.form.cargando" text="**Cargando.."/>'});
+							mask.show();
+		
+							Ext.Ajax.request({
+								url: page.resolveUrl('procedimientoprocurador/lanzarTramiteProvisionFondos'),
+								params: params,
+								method: 'POST',
+								success: function (result, request) {
+									mask.hide();
+								}
+								,error: function(){
+									mask.hide();
+									mensajeFinalizacionError('<s:message code="plugin.procuradores.procesadoResoluciones.btnLanzarProvision.msgKO" text="**Se ha producido un error. Consulte con soporte" />');
+							    }
+							});	
+						}
+					}
+				});
+			}
+		});
+
 		var botones = {
-        	items:[btnGuardar, btnAdjuntar, btnCancelar, btnAyuda]
+        	items:[btnGuardar, btnAdjuntar, btnCancelar, btnLanzarProvision , btnAyuda]
         };
         
         return botones;		
@@ -1142,6 +1178,7 @@ var habilitaBotonesPopUp = function(asunto, proc) {
 	btnAbreAnotacion.setDisabled(asunto);
 	btnAbreAsunto.setDisabled(asunto);
 	btnAbrePrc.setDisabled(proc);
+	btnLanzarProvision.setDisabled(proc);
 }
 
 var updateBotonGuardar  = function(){

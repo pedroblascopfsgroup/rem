@@ -111,7 +111,7 @@ DECLARE
 	,T_TIPO_TFI('P454_PeticionEscriturasCaracterEjecutivo','3','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-947')
 
 	,T_TIPO_TFI('P454_EnviarDesistirWFEscrituras','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Tras rechazo de la firma por parte del Acreditado ya que no se adjuntan escrituras, el Gestor de Deuda deberá realizar todas aquellas acciones para cerrar el WF.</p>Una vez completada esta tarea, se dará por finalizada la formalización de la operación.</p>En el campo observaciones deberá informar cualquier aspecto relevante que le interese que quede reflejado en este punto del procedimiento.</p></div>',null,null,null,null,'0','PRODUCTO-947')
-    ,T_TIPO_TFI('P454_EnviarDesistirWFEscrituras','1','combo','adjuntarNuevoContrato','Adjuntar nuevo contrato','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','PRODUCTO-709')
+    ,T_TIPO_TFI('P454_EnviarDesistirWFEscrituras','1','combo','adjuntarNuevoContrato','Adjuntar nuevo contrato','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','PRODUCTO-947')
 	,T_TIPO_TFI('P454_EnviarDesistirWFEscrituras','2','date','fechaCierreWFEscrituras','Fecha Cierre WF','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','PRODUCTO-947')
 	,T_TIPO_TFI('P454_EnviarDesistirWFEscrituras','3','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-947')
 	    

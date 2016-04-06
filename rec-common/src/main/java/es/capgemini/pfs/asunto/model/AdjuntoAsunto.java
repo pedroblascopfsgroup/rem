@@ -65,8 +65,11 @@ public class AdjuntoAsunto implements Serializable, Auditable {
     @ManyToOne
     @JoinColumn(name = "PRC_ID")
     private Procedimiento procedimiento;
+    
+    @Column(name = "SERVICER_ID")
+    private Long servicerId;
 
-    @Version
+	@Version
     private Integer version;
 
     @Embedded
@@ -226,6 +229,14 @@ public class AdjuntoAsunto implements Serializable, Auditable {
 
 	public void setProcedimiento(Procedimiento procedimiento) {
 		this.procedimiento = procedimiento;
+	}
+
+    public Long getServicerId() {
+		return servicerId;
+	}
+
+	public void setServicerId(Long servicerId) {
+		this.servicerId = servicerId;
 	}
 
 }

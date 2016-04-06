@@ -449,6 +449,11 @@
 				<value>GESPROC</value>
 			</set>
 		</property>
+		<property name="perfilesConsulta">
+			<set>
+				<value>HAYACONSULTA</value>
+			</set>
+		</property>
 	</bean>
 	
 	<bean id="procedimientosProjectContextHaya" parent="procedimientosProjectContextDefault">

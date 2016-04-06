@@ -32,7 +32,7 @@ public class LiquidacionesController {
 		LIQDtoLiquidacionResumen resumen = liquidacionesManager.crearResumen(request,cuerpo);
 		
 		String logo = usuarioManager.getUsuarioLogado().getEntidad().configValue("logo");
-		model.put("logo", "/img/"+logo);
+		model.put("logo", logo);
 		model.put("usuario", usuarioManager.getUsuarioLogado());
 		model.put("cabecera", cabecera);
 		model.put("cuerpo", cuerpo);

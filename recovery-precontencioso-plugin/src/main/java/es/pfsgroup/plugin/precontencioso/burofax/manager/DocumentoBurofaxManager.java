@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -28,6 +30,7 @@ import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.contrato.model.DDTipoIntervencion;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.diccionarios.DictionaryManager;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Direccion;
 import es.capgemini.pfs.movimiento.model.Movimiento;
@@ -52,6 +55,8 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.dao.LiquidacionDao;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienEntidad;
+import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
+import es.pfsgroup.recovery.ext.impl.utils.EXTNumberToLetterConverter;
 import es.pfsgroup.recovery.geninformes.GENINFInformesManager;
 
 @Service
@@ -97,6 +102,9 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 	private static final String INICIO_CUERPO = "<br />";
 	private static final String FIN_CUERPO = "";
 
+	private static final String FECHA_ACTUAL = "FECHA_ACTUAL";
+	private static final String TOTAL_LIQUIDACION_LETRA = "TOTAL_LIQUIDACION_LETRA";
+
 	private static final String ERROR_NO_EXISTE_VALOR = "[ERROR - No existe valor]";
 
 	private static final String DIRECTORIO_PLANTILLAS_LIQUIDACION = "directorioPlantillasLiquidacion";
@@ -130,6 +138,9 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 	@Autowired
 	private UsuarioApi usuarioManager;
 	
+	@Autowired 
+	private DictionaryManager dictionaryManager;
+
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@Override
@@ -185,8 +196,9 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 			contrato = envioBurofax.getBurofax().getContrato();
 		} catch (NullPointerException npe) {}
 			
+		//TODO: 
 		try {
-			mapaVariables.put(ORIGEN_CONTRATO,contrato.getAplicativoOrigen().getDescripcion());
+			mapaVariables.put(ORIGEN_CONTRATO,contrato.getEntidadOrigen());
 		} catch (NullPointerException npe) {
 			mapaVariables.put(ORIGEN_CONTRATO,ERROR_NO_EXISTE_VALOR);
 		}
@@ -210,8 +222,15 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		}
 
 		try {
-			mapaVariables.put(ENTIDAD_ORIGEN,contrato.getEntidadOrigen());
-		} catch (NullPointerException npe) {
+			String propietarioCodigo = contrato.getCharextra5();
+			String entidadOrigen = ERROR_NO_EXISTE_VALOR;
+			if(!Checks.esNulo(propietarioCodigo)){
+				DDPropietario propietario = (DDPropietario) dictionaryManager.getByCode(DDPropietario.class, propietarioCodigo);
+				entidadOrigen = propietario.getDescripcion();
+			}
+			mapaVariables.put(ENTIDAD_ORIGEN,entidadOrigen);
+		} catch (Exception e) {
+			logger.error("Error al obtener Entidad de Origen: " + e.getMessage());
 			mapaVariables.put(ENTIDAD_ORIGEN,ERROR_NO_EXISTE_VALOR);
 		}
 		
@@ -294,11 +313,14 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		if(!Checks.esNulo(liquPCO) && (!Checks.esNulo(liquPCO.getTotal()) || !Checks.esNulo(liquPCO.getTotalOriginal()))){
 			if(!Checks.esNulo(liquPCO.getTotal())) {
 				mapaVariables.put(TOTAL_LIQUIDACION,currencyInstance.format(liquPCO.getTotal()));
+				mapaVariables.put(TOTAL_LIQUIDACION_LETRA, pasaALetras(liquPCO.getTotal()));
 			} else {
 				mapaVariables.put(TOTAL_LIQUIDACION,currencyInstance.format(liquPCO.getTotalOriginal()));
+				mapaVariables.put(TOTAL_LIQUIDACION_LETRA, pasaALetras(liquPCO.getTotalOriginal()));
 			}
 		} else{
 			mapaVariables.put(TOTAL_LIQUIDACION,ERROR_NO_EXISTE_VALOR);
+			mapaVariables.put(TOTAL_LIQUIDACION_LETRA,ERROR_NO_EXISTE_VALOR);
 		}
 				
 		if(!Checks.esNulo(contrato) && !Checks.esNulo(contrato.getCharextra8()) && !contrato.getCharextra8().equals("0")){
@@ -332,6 +354,8 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 			mapaVariables.put(BIENES_ENT,ERROR_NO_EXISTE_VALOR);
 		}
 
+		mapaVariables.put(FECHA_ACTUAL,fechaFormat.format(new Date()));
+		
 		return mapaVariables;
 	}
 
@@ -641,7 +665,6 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		try {
 			documentoBurofax  = informesManager.generarEscritoConContenidoHTML(cabecera, contenidoParseadoFinal, nombreFichero, plantillaBurofax);
 		} catch (Throwable e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return documentoBurofax;
@@ -685,13 +708,13 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 				localidadNotario = doc.getProvinciaNotario().getDescripcion();
 			}
 			if(!Checks.esNulo(doc.getFechaEscritura())){
-				SimpleDateFormat df = new SimpleDateFormat("dd");
+				SimpleDateFormat df = new SimpleDateFormat("dd",MessageUtils.DEFAULT_LOCALE);
 				diaEscritura = df.format(doc.getFechaEscritura());
-				df = new SimpleDateFormat("yyyy");
+				df = new SimpleDateFormat("yyyy",MessageUtils.DEFAULT_LOCALE);
 				anyoEscritura = df.format(doc.getFechaEscritura());
-				df = new SimpleDateFormat("MM");
+				df = new SimpleDateFormat("MMMM",MessageUtils.DEFAULT_LOCALE);
 				mesEscritura = df.format(doc.getFechaEscritura());
-				df = new SimpleDateFormat("dd/MM/yyyy");
+				df = new SimpleDateFormat("dd/MM/yyyy",MessageUtils.DEFAULT_LOCALE);
 				fechaEscritura = df.format(doc.getFechaEscritura());
 			}
 			
@@ -841,4 +864,16 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 	}
 	
 
+	private String pasaALetras(BigDecimal valor) {
+		String numberInLetters = EXTNumberToLetterConverter.convertNumberToLetter(valor.doubleValue());
+		if (numberInLetters != null) {
+			if (numberInLetters.contains(" CON ")) {
+				numberInLetters = numberInLetters.replace("CON", "EUROS CON");
+				numberInLetters = numberInLetters.trim() + " CÉNTIMOS";
+			} else {
+				numberInLetters = numberInLetters.trim() + " EUROS";
+			}
+		}
+		return numberInLetters;
+	}
 }

@@ -1,10 +1,11 @@
+
 create or replace PROCEDURE CARGAR_DIM_PROCEDIMIENTO (O_ERROR_STATUS OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor:  Gonzalo Martín, PFS Group
 -- Fecha creación: Febrero 2014
 -- Responsable ultima modificacion: Pedro S., PFS Group
 -- Fecha ultima modificacion: 01/04/2016
--- Motivos del cambio: D_PRC_GESTOR_HAYA cambio por el usuario crear de las tareas de haya
+-- Motivos del cambio: Se cambia la carga de D_PRC_COBRO_TIPO_DET para que se cargue como D_PRC_COBRO_TIPO
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripción: Procedimiento almacenado que carga las tablas de la dimensión Procedimiento.
@@ -2396,13 +2397,19 @@ select count(1) into V_NUM_ROW from D_PRC_COBRO_TIPO_DET where TIPO_COBRO_ID = -
    execute immediate(V_SQL);
   end if;
 
-  V_SQL :=  'insert into D_PRC_COBRO_TIPO_DET (TIPO_COBRO_DETALLE_ID, TIPO_COBRO_DETALLE_DESC, TIPO_COBRO_ID)
-    select DD_SCP_ID, DD_SCP_DESCRIPCION, DD_TCP_ID from ' || V_DATASTAGE || '.DD_SCP_SUBTIPO_COBRO_PAGO scp
-  where not exists (select 1 from D_PRC_COBRO_TIPO_DET prc where prc.TIPO_COBRO_DETALLE_ID = scp.DD_SCP_ID)';
+  V_SQL :=  'insert into D_PRC_COBRO_TIPO_DET (TIPO_COBRO_DETALLE_ID, TIPO_COBRO_DETALLE_DESC)
+    select DD_TCP_ID, DD_TCP_DESCRIPCION from ' || V_DATASTAGE || '.DD_TCP_TIPO_COBRO_PAGO tcp
+  where not exists (select 1 from D_PRC_COBRO_TIPO_DET prc where prc.TIPO_COBRO_DETALLE_ID = tcp.DD_TCP_ID)';
   execute immediate (V_SQL);
+
 
   V_ROWCOUNT := sql%rowcount;
   commit;
+
+  V_SQL :=  'update D_PRC_COBRO_TIPO_DET set tipo_cobro_id= tipo_cobro_detalle_id';
+  execute immediate (V_SQL);
+  commit;
+
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PRC_COBRO_TIPO_DET. Realizados INSERTS', 3;
 

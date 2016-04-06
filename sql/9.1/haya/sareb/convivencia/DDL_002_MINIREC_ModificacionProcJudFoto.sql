@@ -21,7 +21,7 @@ SET SERVEROUTPUT ON;
 
 DECLARE
 
- V_ESQUEMA VARCHAR2(25 CHAR):=   '#ESQUEMA#'; 			-- Configuracion Esquema
+ V_ESQUEMA VARCHAR2(25 CHAR):=   '#ESQUEMA_MINIREC#'; 			-- Configuracion Esquema
  V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; 		-- Configuracion Esquema Master
  TABLA VARCHAR(30) :='PROCEDIMIENTO_JUDICIAL_FOTO';
  err_num NUMBER;

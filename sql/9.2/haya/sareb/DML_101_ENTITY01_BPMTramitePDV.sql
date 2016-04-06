@@ -152,7 +152,7 @@ DECLARE
 		,T_TIPO_TFI('P456_AcordarFechaFirma','3','combo','comboRechazo','Acción del rechazo',null,null,null,'DDAccionRechazo','0','PRODUCTO-945')
 		,T_TIPO_TFI('P456_AcordarFechaFirma','4','date','fechaPrevista','Fecha prevista de firma',null, null,null,null,'0','PRODUCTO-945')
         ,T_TIPO_TFI('P456_AcordarFechaFirma','5','combo','firmaNotario','Firma en Notaría','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','PRODUCTO-945')
-		,T_TIPO_TFI('P456_AcordarFechaFirma','6','combo','notario','Notario',null,null,null,'DDSiNo','0','PRODUCTO-945')
+		,T_TIPO_TFI('P456_AcordarFechaFirma','6','text','notario','Notario',null,null,null,null,'0','PRODUCTO-945')
 		,T_TIPO_TFI('P456_AcordarFechaFirma','7','combo','comboAsistencia','Asistencia a firma por',null,null,null,'DDAsistenciaAFirma','0','PRODUCTO-945')
 		,T_TIPO_TFI('P456_AcordarFechaFirma','8','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-945')
 	   

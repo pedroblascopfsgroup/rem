@@ -5,10 +5,13 @@
 
 
 	<start-state name="inicio">
-		<transition to="P453_DefinirDocumentacionAportar"></transition>
-		<transition to="P453_ConfeccionarNegociarSupervisarMinuta"></transition>
+		<transition to="fork1"></transition>
 	</start-state>
 
+	<fork name="fork1">
+		<transition to="P453_DefinirDocumentacionAportar" name="definirDocumentacionAportar"></transition>
+		<transition to="P453_ConfeccionarNegociarSupervisarMinuta" name="confeccionarNegociarSupervisarMinuta"></transition>
+	</fork>
 
 	<state name="P453_DefinirDocumentacionAportar">
 		<event type="node-enter">
@@ -23,7 +26,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>genericLeaveActionHandler
+				<targetBean>tramitesAcuerdosLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>
@@ -116,8 +119,8 @@
 	</state>
 
 	<decision name="P453_ObtenerAprobacionCNDecision" expression="#{P453_ObtenerAprobacionCNDecision}">
-		<transition to="Fin" name="Si"></transition>
-		<transition to="P453_ComunicacionAcreditado" name="No"></transition>
+		<transition to="Fin" name="si"></transition>
+		<transition to="P453_ComunicacionAcreditado" name="no"></transition>
 	</decision>
 
 	<state name="P453_ComunicacionAcreditado">
@@ -186,8 +189,8 @@
 	</state>
 
 	<decision name="P453_ConfeccionarNegociarSupervisarMinutaDecision" expression="#{P453_ConfeccionarNegociarSupervisarMinutaDecision}">
-		<transition to="P453_RegistrarValidacionMinutaPorSareb" name="Si"></transition>
-		<transition to="P453_AcordarFechaFirma" name="No"></transition>
+		<transition to="P453_RegistrarValidacionMinutaPorSareb" name="si"></transition>
+		<transition to="P453_AcordarFechaFirma" name="no"></transition>
 	</decision>
 
 	<state name="P453_RegistrarValidacionMinutaPorSareb">
@@ -213,8 +216,8 @@
 	</state>
 
 	<decision name="P453_RegistrarValidacionMinutaPorSarebDecision" expression="#{P453_RegistrarValidacionMinutaPorSarebDecision}">
-		<transition to="P453_AcordarFechaFirma" name="Si"></transition>
-		<transition to="P453_ComunicacionAcreditadoSareb" name="No"></transition>
+		<transition to="P453_AcordarFechaFirma" name="si"></transition>
+		<transition to="P453_ComunicacionAcreditadoSareb" name="no"></transition>
 	</decision>
 
 	<state name="P453_ComunicacionAcreditadoSareb">
@@ -283,8 +286,8 @@
 	</state>
 
 	<decision name="P453_AcordarFechaFirmaDecision" expression="#{P453_AcordarFechaFirmaDecision}">
-		<transition to="P453_FirmarOperacion" name="Si"></transition>
-		<transition to="P453_EnviarDesisitirPreviaFirmaOperacion" name="No"></transition>
+		<transition to="P453_FirmarOperacion" name="si"></transition>
+		<transition to="P453_EnviarDesisitirPreviaFirmaOperacion" name="no"></transition>
 	</decision>
 
 	<state name="P453_EnviarDesisitirPreviaFirmaOperacion">
@@ -331,15 +334,35 @@
 	</state>
 
 	<decision name="P453_FirmarOperacionDecision" expression="#{P453_FirmarOperacionDecision}">
-		<transition to="fork2" name="Si"></transition>
-		<transition to="P453_EnviarDesisitirPreviaFirmaOperacion" name="No"></transition>
+		<transition to="fork2" name="si"></transition>
+		<transition to="P453_EnviarDesisitirPreviaFirmaOperacion" name="no"></transition>
 	</decision>
 
 	<fork name="fork2">
 		<transition to="P453_ContabilizarOperacion" name="contabilizarOperacion"></transition>
 		<transition to="P453_ObtenerDocumentacionOriginal" name="obtenerDocumentacionOriginal"></transition>
-		<transition to="H066_BPMTramiteInscripcionDelTitulo" name="tramiteInscripcionDelTitulo"></transition>
+		<transition to="P453_BPMTramiteInscripcionDelTitulo" name="haya_tramiteInscripcionDelTitulo"></transition>
 	</fork>
+
+	<state name="P453_BPMTramiteInscripcionDelTitulo">
+	    <event type="node-enter">
+	        <action name="miTarea"
+	            class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+	            config-type="bean">
+	            <targetBean>genericEnterActionHandler
+	            </targetBean>
+	        </action>
+	    </event>
+	    <event type="node-leave">
+	        <action name="miTarea"
+	            class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+	            config-type="bean">
+	            <targetBean>genericLeaveActionHandler
+	            </targetBean>
+	        </action>
+	    </event>     
+	    <transition to="Fin" name="haya_tramiteInscripcionDelTitulo"></transition>
+	</state>
 
 	<state name="P453_ContabilizarOperacion">
 		<event type="node-enter">

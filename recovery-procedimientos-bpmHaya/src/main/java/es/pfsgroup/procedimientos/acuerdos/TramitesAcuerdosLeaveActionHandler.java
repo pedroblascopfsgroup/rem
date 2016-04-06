@@ -45,7 +45,7 @@ public class TramitesAcuerdosLeaveActionHandler extends PROGenericLeaveActionHan
 				.proxy(SubastaProcedimientoApi.class)).obtenerValoresTareaByTexId(tex.getId());
 
 		if (executionContext.getNode().getName().contains("DefinirDocumentacionAportar")) {
-			estableceContexto();
+			estableceContexto(executionContext);
 		}
 
 	}
@@ -55,8 +55,8 @@ public class TramitesAcuerdosLeaveActionHandler extends PROGenericLeaveActionHan
 	 * 
 	 * @param executionContext
 	 */
-	private void estableceContexto() {
-		Boolean[] valoresRamas = getValoresRamas();
+	private void estableceContexto(ExecutionContext executionContext) {
+		Boolean[] valoresRamas = getValoresRamas(executionContext);
 		for (int i = 0; i < valoresRamas.length; i++) {
 			String variableName = String.format(SALIDA_ETIQUETA, i + 1);
 			String valor = (valoresRamas[i]) ? SALIDA_SI : SALIDA_NO;
@@ -71,7 +71,7 @@ public class TramitesAcuerdosLeaveActionHandler extends PROGenericLeaveActionHan
 	 * @return Array con los valores para decidir, uno por cada Rama en orden
 	 *         0-Primera rama, 1-Segunda rama,...
 	 */
-	protected Boolean[] getValoresRamas() {
+	protected Boolean[] getValoresRamas(ExecutionContext executionContext) {
 		Procedimiento proc = getProcedimiento(executionContext);
 
 		Boolean[] valores = (Boolean[]) tramitesAcuerdosApi.bpmGetValoresRamasDefinirDocumentacion(proc, getTareaExterna(executionContext));

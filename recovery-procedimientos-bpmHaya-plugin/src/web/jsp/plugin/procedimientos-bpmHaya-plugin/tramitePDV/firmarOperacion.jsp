@@ -72,16 +72,6 @@ campo1.on('select', function(){
 	}
 });	
 
-campo5.on('select', function(){	
-	if(campo5.getValue() == '01') {//si
-		campo6.setDisabled(false);
-	}
-	else if(campo5.getValue() == '02') {//no
-		campo6.setDisabled(true);
-		campo6.reset();
-	}
-});	
-
 </c:if>
 
 

@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2"
+	name="tramiteFormalizacionQuita">
+
+
+	<start-state name="inicio">
+		<transition to="fork3" name="fork3Inicio"></transition>
+	</start-state>
+	
+	<fork name="fork3">
+		<transition to="P452_ObtenerAprobacionCN" name="obtenerAprobacionCN"></transition>
+		<transition to="P452_ConfeccionarBorradorContratoAcreditado" name="confeccionarBorradorContratoAcreditado"></transition>
+	</fork>
+
+	<state name="P452_ObtenerAprobacionCN">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P452_ObtenerAprobacionCNDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="P452_ObtenerAprobacionCNDecision" expression="#{P452_ObtenerAprobacionCNDecision}">
+		<transition to="Fin" name="Si"></transition>
+		<transition to="P452_ComunicacionAcreditadoCN" name="No"></transition>
+	</decision>
+	
+	<state name="P452_ComunicacionAcreditadoCN">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P452_EnviarDesistirWFCN" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="P452_EnviarDesistirWFCN">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="P452_ConfeccionarBorradorContratoAcreditado">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P452_ConfeccionarBorradorContratoAcreditadoDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="P452_ConfeccionarBorradorContratoAcreditadoDecision" expression="#{P452_ConfeccionarBorradorContratoAcreditadoDecision}">
+		<transition to="P452_ValidarBorradorContratoAJ" name="Si"></transition>
+		<transition to="P452_EnvioBorradorContratoAcreditado" name="No"></transition>
+	</decision>
+	
+	<state name="P452_ValidarBorradorContratoAJ">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P452_ValidarBorradorContratoAJDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="P452_ValidarBorradorContratoAJDecision" expression="#{P452_ValidarBorradorContratoAJDecision}">
+		<transition to="P452_EnvioBorradorContratoAcreditado" name="Aprobada"></transition>
+		<transition to="P452_ComunicacionAcreditadoAJ" name="Rechazada"></transition>
+	</decision>
+	
+	<state name="P452_ComunicacionAcreditadoAJ">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P452_EnviarDesistirWFAJ" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="P452_EnviarDesistirWFAJ">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="P452_EnvioBorradorContratoAcreditado">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P452_AcordarFechaFirma" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="P452_AcordarFechaFirma">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P452_AcordarFechaFirmaDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="P452_AcordarFechaFirmaDecision" expression="#{P452_AcordarFechaFirmaDecision}">
+		<transition to="P452_RevisarPropuesta" name="ReconsiderarPropuesta"></transition>
+		<transition to="fork" name="Aceptada"></transition>
+		<transition to="P452_EnviarDesistirPreviaFirmaOperacion" name="Rechazada"></transition>
+	</decision>
+	
+	<fork name="fork1">
+		<transition to="P452_FirmarOperacion" name="firmarOperacion"></transition>
+		<transition to="P452_PrepararContrato" name="prepararContrato"></transition>
+	</fork>
+	
+	<state name="P452_RevisarPropuesta">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P452_ElevarSareb" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="P452_ElevarSareb">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P452_RegistrarResolucionSareb" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="P452_RegistrarResolucionSareb">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P452_RegistrarResolucionSarebDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="P452_RegistrarResolucionSarebDecision" expression="#{P452_RegistrarResolucionSarebDecision}">
+		<transition to="P452_ConfeccionarBorradorContratoAcreditado" name="Aceptada"></transition>
+		<transition to="P452_ComunicacionAcreditadoSareb" name="Rechazada"></transition>
+	</decision>
+	
+	<state name="P452_ComunicacionAcreditadoSareb">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P452_EnviarDesistirWFSareb" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="P452_EnviarDesistirWFSareb">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="P452_EnviarDesistirPreviaFirmaOperacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="P452_PrepararContrato">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P452_PrepararContratoDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="P452_PrepararContratoDecision" expression="#{P452_PrepararContratoDecision}">
+		<transition to="P452_ValidacionContratoAJ" name="Si"></transition>
+		<transition to="P452_EnvioContratoAcreditado" name="No"></transition>
+	</decision>
+	
+	<state name="P452_ValidacionContratoAJ">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P452_ValidacionContratoAJDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="P452_ValidacionContratoAJDecision" expression="#{P452_ValidacionContratoAJDecision}">
+		<transition to="P452_EnvioContratoAcreditado" name="Validado"></transition>
+		<transition to="P452_PrepararContrato" name="NoValidado"></transition>
+	</decision>
+	
+	<state name="P452_EnvioContratoAcreditado">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="P452_FirmarOperacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P452_FirmarOperacionDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="P452_FirmarOperacionDecision" expression="#{P452_FirmarOperacionDecision}">
+		<transition to="P452_EnviarDesistirPreviaFirmaOperacion" name="Rechazada"></transition>
+		<transition to="fork2" name="Aceptada"></transition>
+	</decision>
+	
+	<fork name="fork2">
+		<transition to="P452_ObtenerDocumentacionOriginal" name="obtenerDocumentacionOriginal"></transition>
+		<transition to="P452_ContabilizarOperacion" name="contabilizarOperacion"></transition>
+	</fork>
+	
+	<state name="P452_ObtenerDocumentacionOriginal">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P452_InformarCierreSareb" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="P452_ContabilizarOperacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="P452_InformarCierreSareb">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</state>
+	
+
+	<end-state name="Fin">
+	  <event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>endProcessActionHandler</targetBean>
+         </action>
+      </event>  
+    </end-state>
+
+
+</process-definition>

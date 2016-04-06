@@ -488,7 +488,7 @@ function(entidad,page){
 				{
 					text:'<s:message code="expedientes.menu.devolverrevision" text="**Devolver a Revisin" />'
 					,id : 'expediente-accion12-devolverEnSancion'
-					,iconCls : 'icon_revisar_expediente'
+					,iconCls : 'icon_completar_expediente'
 					,handler:function(){
 						cambioEstado(tipoAccion.DEVOLVER_ENSANCION)
 					}

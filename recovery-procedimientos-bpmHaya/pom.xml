@@ -52,11 +52,6 @@
 			<artifactId>pfs-commons-java</artifactId>
 			<optional>true</optional>
 		</dependency>
-		<dependency>
-			<groupId>es.pfsgroup.plugin</groupId>
-			<artifactId>recovery-gestordocumental-plugin</artifactId>
-			<optional>true</optional>
-		</dependency>
 	</dependencies>
 
 	<build>

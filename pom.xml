@@ -602,7 +602,6 @@
 				<module>proyecto-cajamar-ws</module>
 				<module>proyecto-haya</module>
 				<module>recovery-procedimientos-bpmHaya-plugin</module>
-				
 				<module>rec-web</module>
 				<module>rec-batch</module>
 			</modules>

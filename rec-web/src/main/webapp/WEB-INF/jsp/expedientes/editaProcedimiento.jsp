@@ -269,6 +269,7 @@
         '</div></tpl>'
     );
 
+
 	var comboPropuestas = new Ext.form.ComboBox({
 	    hiddenName:'propuesta'
 	    ,hiddenValue: 'null'
@@ -327,6 +328,7 @@
 	    solicitante: '',
 	    idAcuerdo: null
 	  }, 0));
+	  comboPropuestas.setValue('${procedimiento.propuesta.id}');
 	});
 	
 	if(${asunto != null && asunto.tipoAsunto != null}){

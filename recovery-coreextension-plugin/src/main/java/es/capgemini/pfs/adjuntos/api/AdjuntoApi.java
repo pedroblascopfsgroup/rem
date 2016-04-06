@@ -71,5 +71,8 @@ public interface AdjuntoApi {
 	
 	@Transactional(readOnly = false)
 	public FileItem bajarAdjuntoPersona(String adjuntoId, String nombre, String extension);
+	
+	@Transactional(readOnly = false)
+	String uploadDoc(WebFileItem uploadForm, Long idDocumento);
 
 }

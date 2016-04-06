@@ -310,11 +310,9 @@ public class AdjuntoManager implements AdjuntoApi{
 	}
 	
 	
-	
 	@Override
 	@Transactional(readOnly = false)
-	public String upload(WebFileItem uploadForm) {
-
+	public String uploadDoc(WebFileItem uploadForm, Long idDocumento) {
 		String comboTipoFichero = uploadForm.getParameter("comboTipoFichero");
 		
 		FileItem fileItem = uploadForm.getFileItem();
@@ -349,24 +347,27 @@ public class AdjuntoManager implements AdjuntoApi{
 				adjuntoAsunto.setProcedimiento(procedimiento);
 			}
         }
+        // Id del documento del gestor documental
+        adjuntoAsunto.setServicerId(idDocumento);
         
         Auditoria.save(adjuntoAsunto);
 		asunto.getAdjuntos().add(adjuntoAsunto);
 
-		// asunto.addAdjunto(fileItem);
 		proxyFactory.proxy(AsuntoApi.class).saveOrUpdateAsunto(asunto);
-        
-        
-//        Asunto asunto = asuntoDao.get(Long.parseLong(uploadForm.getParameter("id")));        
-//        asunto.addAdjunto(fileItem);
-//        asuntoDao.save(asunto);
 
-		//Integracion con IPLUS, si está configurado el flag correspondiente en devon.properties
         if (iplus != null && iplus.instalado()) {
         	iplus.almacenar(asunto, adjuntoAsunto);
         }
         
         return null;
+		
+	}
+
+	
+	@Override
+	@Transactional(readOnly = false)
+	public String upload(WebFileItem uploadForm) {
+		return uploadDoc(uploadForm, null);
 	}
 	
 	

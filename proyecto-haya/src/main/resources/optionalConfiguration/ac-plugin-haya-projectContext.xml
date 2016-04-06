@@ -28,26 +28,6 @@
 				<entry key="MORATORIA" value="H011"/>
 			</map>
 		</property>
-		<property name="mapaClasesExpeGesDoc">
-			<map>
-				<entry key="H001" value="01"/>
-				<entry key="H018" value="02"/>
-				<entry key="H020" value="02"/>
-				<entry key="H024" value="03"/>
-				<entry key="CodigoApelacion" value="04"/>
-				<entry key="H022" value="05"/>
-				<entry key="H016" value="06"/>
-				<entry key="H026" value="07"/>
-				<entry key="H028" value="07"/>
-				<entry key="H004" value="08"/>
-				<entry key="H003" value="08"/>
-				<entry key="H021" value="09"/>
-				<entry key="H043" value="09"/>
-				<entry key="P421" value="09"/>
-				<entry key="CodigoRecuperaciones" value="10"/>
-				<entry key="PCO" value="11"/>
-			</map>
-		</property>
 		<property name="tareasCierreDeuda"> 
 			<map>
 				<entry key="ConfirmarTestimonio" value="H005_ConfirmarTestimonio"/>
@@ -545,6 +525,26 @@
 		</property>
 		<property name="tareaInicioConcurso">
 			<value>H009</value>
+		</property>
+		<property name="mapaClasesExpeGesDoc">
+			<map>
+				<entry key="H001" value="01"/>
+				<entry key="H018" value="02"/>
+				<entry key="H020" value="02"/>
+				<entry key="H024" value="03"/>
+				<entry key="CodigoApelacion" value="04"/>
+				<entry key="H022" value="05"/>
+				<entry key="H016" value="06"/>
+				<entry key="H026" value="07"/>
+				<entry key="H028" value="07"/>
+				<entry key="H004" value="08"/>
+				<entry key="H003" value="08"/>
+				<entry key="H021" value="09"/>
+				<entry key="H043" value="09"/>
+				<entry key="P421" value="09"/>
+				<entry key="CodigoRecuperaciones" value="10"/>
+				<entry key="PCO" value="11"/>
+			</map>
 		</property>
 	</bean>  
 	

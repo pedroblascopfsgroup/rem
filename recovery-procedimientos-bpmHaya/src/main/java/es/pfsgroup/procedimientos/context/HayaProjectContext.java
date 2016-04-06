@@ -1,6 +1,7 @@
 package es.pfsgroup.procedimientos.context;
 
 import java.util.List;
+import java.util.Map;
 
 public interface HayaProjectContext {
 
@@ -29,5 +30,7 @@ public interface HayaProjectContext {
 	public String getFechaDemandaOrdinario();
 
 	public String getTareaInicioConcurso();
+	
+	public Map<String, String> getMapaClasesExpeGesDoc();
 
 }

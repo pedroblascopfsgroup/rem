@@ -2,6 +2,7 @@ package es.pfsgroup.recovery.haya.adjunto;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
@@ -46,6 +47,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.gestorDocumental.api.GestorDocumentalApi;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.gestorDocumental.model.GestorDocumentalConstants;
+import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCrearDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDocumentosExpedientes;
 import es.pfsgroup.plugin.gestordocumental.api.GestorDocumentalServicioDocumentosApi;
@@ -55,10 +57,12 @@ import es.pfsgroup.plugin.gestordocumental.dto.documentos.CrearDocumentoDto;
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.DocumentosExpedienteDto;
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.RecoveryToGestorDocAssembler;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
+import es.pfsgroup.procedimientos.context.HayaProjectContext;
 import es.pfsgroup.recovery.adjunto.AdjuntoAssembler;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 import es.pfsgroup.recovery.gestordocumental.dto.AdjuntoGridDto;
+import es.pfsgroup.recovery.haya.gestorDocumental.GestorDocToRecoveryAssembler;
 
 @Service("adjuntoManagerHayaImpl")
 public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
@@ -91,6 +95,9 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	@Autowired
 	private EXTAsuntoManager extAsuntoManager;
 	
+	@Autowired
+	private HayaProjectContext hayaProjectContext;
+	
     @Resource
     Properties appProperties;
     
@@ -110,12 +117,13 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 		}else{
 			CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(id.toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, asun.getTipoAsunto().getCodigo());
 			DocumentosExpedienteDto docExpDto = RecoveryToGestorDocAssembler.getDocumentosExpedienteDto();
+			RespuestaDocumentosExpedientes respuesta = null;
 			try {
-				RespuestaDocumentosExpedientes respuesta = gestorDocumentalServicioDocumentosApi.documentosExpediente(cabecera, docExpDto);
+				respuesta = gestorDocumentalServicioDocumentosApi.documentosExpediente(cabecera, docExpDto);
 			} catch (GestorDocumentalException e) {
 				logger.error("getAdjuntosConBorrado error: " + e);
 			}
-			return null;
+			return adjuntoAssembler.listAdjuntoGridDtoToEXTAdjuntoDto(GestorDocToRecoveryAssembler.outputDtoToAdjuntoGridDto(respuesta), false);
 //			return super.getAdjuntosConBorrado(id);
 		}
 	}
@@ -211,11 +219,13 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 				}else{
 					
 				}
-				CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idAsunto, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, prc.getTipoProcedimiento().getCodigo());
+				String claseExpe = hayaProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
+				CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idAsunto, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, claseExpe);
 				Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 				CrearDocumentoDto crearDoc = RecoveryToGestorDocAssembler.getCrearDocumentoDto(uploadForm, usuario.getUsername(), uploadForm.getParameter("comboTipoFichero"));
 				try {
-					gestorDocumentalServicioDocumentosApi.crearDocumento(cabecera, crearDoc);
+					RespuestaCrearDocumento respuesta = gestorDocumentalServicioDocumentosApi.crearDocumento(cabecera, crearDoc);
+					super.uploadDoc(uploadForm, new Long(respuesta.getIdDocumento()));
 				} catch (GestorDocumentalException e) {
 					logger.error("upload error: " + e);
 				}
@@ -379,13 +389,19 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 		if(esEntidadCajamar()){
 			return recuperacionDocumento(adjuntoId, nombre, extension);	
 		}else{
+			RespuestaDescargarDocumento respuesta = null;
 			Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 			BajaDocumentoDto baja = RecoveryToGestorDocAssembler.getBajaDocumentoDto(usuario.getUsername());
 			try {
-				RespuestaDescargarDocumento respuesta = gestorDocumentalServicioDocumentosApi.descargarDocumento(Long.valueOf(adjuntoId), baja);
+				respuesta = gestorDocumentalServicioDocumentosApi.descargarDocumento(Long.valueOf(adjuntoId), baja);
 			} catch (NumberFormatException e) {
 				logger.error("bajarAdjuntoAsunto error: " + e);
 			} catch (GestorDocumentalException e) {
+				logger.error("bajarAdjuntoAsunto error: " + e);
+			}
+			try {
+				return GestorDocToRecoveryAssembler.getFileItem(respuesta);
+			} catch (IOException e) {
 				logger.error("bajarAdjuntoAsunto error: " + e);
 			}
 			return null;

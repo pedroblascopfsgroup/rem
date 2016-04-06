@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="tramiteFormalizacionReestructuracionRefinanciacion" width="1038" height="730">
+<root-container name="tramiteFormalizacionVentaCredito" width="1038" height="730">
   <node name="inicio" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="fork3" x="0" y="0" width="252" height="24">
+  <node name="fork4" x="0" y="0" width="252" height="24">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -14,7 +14,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_ObtenerAprobacionCN" x="0" y="0" width="132" height="36">
+  <node name="P455_ObtenerAprobacionCN" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -22,7 +22,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_ObtenerAprobacionCNDecision" x="0" y="0" width="132" height="36">
+  <node name="P455_ObtenerAprobacionCNDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -30,7 +30,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_ComunicacionAcreditadoCN" x="0" y="0" width="132" height="36">
+  <node name="P455_ConfeccionarBorradorContratoAcreditado" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -38,7 +38,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_EnviarDesistirWFCN" x="0" y="0" width="132" height="36">
+  <node name="P455_ConfeccionarBorradorContratoAcreditadoDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -46,7 +46,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_ConfeccionarBorradorContratoAcreditado" x="0" y="0" width="132" height="36">
+  <node name="P455_ComunicacionAcreditadoCN" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -54,7 +54,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_ConfeccionarBorradorContratoAcreditadoDecision" x="0" y="0" width="132" height="36">
+  <node name="P455_EnviarDesistirWFCN" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -62,7 +62,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_ValidarBorradorContratoAJ" x="0" y="0" width="132" height="36">
+  <node name="P455_ValidarBorradorContratoAJ" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -70,7 +70,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_ValidarBorradorContratoAJDecision" x="0" y="0" width="132" height="36">
+  <node name="P455_ValidarBorradorContratoAJDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -78,7 +78,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_ComunicacionAcreditadoAJ" x="0" y="0" width="132" height="36">
+  <node name="P455_ComunicacionAcreditadoAJ" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -86,7 +86,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_EnviarDesistirWFAJ" x="0" y="0" width="132" height="36">
+  <node name="P455_EnviarDesistirWFAJ" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -94,26 +94,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_EnvioBorradorContratoAcreditado" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="P451_AcordarFechaFirma" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="P451_AcordarFechaFirmaDecision" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
+  <node name="P455_EnvioBorradorContratoAcreditado" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -129,7 +110,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_RevisarPropuesta" x="0" y="0" width="132" height="36">
+  <node name="P455_PeticionEscriturasCaracterEjecutivo" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -137,7 +118,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_ElevarSareb" x="0" y="0" width="132" height="36">
+  <node name="P455_PeticionEscriturasCaracterEjecutivoDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -145,7 +126,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_RegistrarResolucionSareb" x="0" y="0" width="132" height="36">
+  <node name="P455_EnviarDesistirWFEscrituras" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -153,7 +134,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_RegistrarResolucionSarebDecision" x="0" y="0" width="132" height="36">
+  <node name="P455_PrepararContrato" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -161,7 +142,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_ComunicacionAcreditadoSareb" x="0" y="0" width="132" height="36">
+  <node name="P455_PrepararContratoDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -169,7 +150,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_EnviarDesistirWFSareb" x="0" y="0" width="132" height="36">
+  <node name="P455_ValidacionContratoAJ" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -177,7 +158,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_EnviarDesistirPreviaFirmaOperacion" x="0" y="0" width="132" height="36">
+  <node name="P455_ValidacionContratoAJDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -185,7 +166,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_PrepararContrato" x="0" y="0" width="132" height="36">
+  <node name="P455_EnvioContratoAcreditado" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -193,7 +174,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_PrepararContratoDecision" x="0" y="0" width="132" height="36">
+  <node name="P455_FirmarOperacion" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -201,7 +182,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_ValidacionContratoAJ" x="0" y="0" width="132" height="36">
+  <node name="P455_FirmarOperacionDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -209,7 +190,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_ValidacionContratoAJDecision" x="0" y="0" width="132" height="36">
+  <node name="P455_AcordarFechaFirma" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -217,15 +198,10 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_EnvioContratoAcreditado" x="0" y="0" width="132" height="36">
+  <node name="P455_AcordarFechaFirmaDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="P451_FirmarOperacion" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -233,7 +209,15 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_FirmarOperacionDecision" x="0" y="0" width="132" height="36">
+  <node name="fork3" x="0" y="0" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P455_EnviarDesistirPreviaFirmaOperacion" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -249,7 +233,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_ObtenerDocumentacionOriginal" x="0" y="0" width="132" height="36">
+  <node name="P455_ObtenerDocumentacionOriginal" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -257,7 +241,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_ContabilizarOperacion" x="0" y="0" width="132" height="36">
+  <node name="P455_InformarCierreSareb" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -265,7 +249,55 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P451_InformarCierreSareb" x="0" y="0" width="132" height="36">
+  <node name="P455_ContabilizarOperacion" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P455_RevisarPropuesta" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P455_ElevarSareb" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P455_RegistrarResolucionSareb" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P455_RegistrarResolucionSarebDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P455_ComunicacionAcreditadoSareb" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P455_EnviarDesistirWFSareb" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

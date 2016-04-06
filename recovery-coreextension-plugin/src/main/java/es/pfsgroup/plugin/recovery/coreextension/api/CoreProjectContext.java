@@ -36,4 +36,6 @@ public interface CoreProjectContext {
 	public Map<String, String> getTipoSupervisorProrroga();
 	
 	Set<String> getTiposGestoresDeProcuradores();
+	
+	Set<String> getPerfilesConsulta();
 }

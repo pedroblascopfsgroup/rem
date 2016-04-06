@@ -226,7 +226,7 @@
 	</state>
 
 	<decision name="P454_AcordarFechaFirmaDecision" expression="#{P454_AcordarFechaFirmaDecision}">
-		<transition to="P454_FirmarOperacion" name="aprobada"></transition>
+		<transition to="P454_FirmarOperacion" name="aceptada"></transition>
 		<transition to="P454_EnviarDesistirPreviaFirmaOperacion" name="desistir"></transition>
 		<transition to="P454_PrepararContrato" name="reconsiderarPropuesta"></transition>
 	</decision>

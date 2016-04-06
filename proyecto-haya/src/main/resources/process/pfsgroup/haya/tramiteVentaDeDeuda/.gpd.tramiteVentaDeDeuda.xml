@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="tramiteVentaDeDeuda" width="1543" height="836">
+<root-container name="tramiteVentaDeDeuda" width="1130" height="836">
   <node name="inicio" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -33,7 +33,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P454_ComunicacionAcreditado" x="0" y="0" width="132" height="36">
+  <node name="P454_ComunicacionAcreditadoCN" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -109,7 +109,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P454_ValidarContratoAJDecision" x="0" y="0" width="132" height="36">
+  <node name="P454_ValidacionContratoAJDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -210,4 +210,5 @@
     </edge>
   </node>
   <node name="Fin" x="0" y="0" width="132" height="36"/>
+  <node name="FinProcedimiento" x="0" y="0" width="132" height="36"/>
 </root-container>

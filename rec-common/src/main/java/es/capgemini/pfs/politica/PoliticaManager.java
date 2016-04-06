@@ -399,8 +399,11 @@ public class PoliticaManager {
     public void cerrarDecisionPolitica(Long idExpediente) {
         Expediente expediente = (Expediente) executor.execute(InternaBusinessOperation.BO_EXP_MGR_GET_EXPEDIENTE, idExpediente);
 
-        if (!expediente.getComite().isComiteSeguimiento()) { throw new BusinessOperationException("cerrarDecisionPolitica.expedienteNoSeguimiento",
-                idExpediente); }
+        //Si el tipo de expediente no coincide con el el tipo de comite
+        //Se emite un error
+        if (expediente.getSeguimiento() && !expediente.getComite().isComiteSeguimiento()) { throw new BusinessOperationException("cerrarDecisionPolitica.expedienteNoSeguimiento", idExpediente); }
+        if (expediente.isGestionDeuda() && !expediente.getComite().isComiteGestionDeuda()) { throw new BusinessOperationException("cerrarDecisionPolitica.expedienteNoGestionDeuda", idExpediente); }
+        
         executor.execute(InternaBusinessOperation.BO_EXP_MGR_CERRAR_DECISION_POLITICA, idExpediente);
     }
 

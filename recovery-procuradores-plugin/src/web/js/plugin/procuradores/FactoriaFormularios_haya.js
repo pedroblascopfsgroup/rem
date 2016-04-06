@@ -2553,7 +2553,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		   	               	   		}
 	         					}   
 	                       }
-	                       ,{"xtype":'textfield',"name":"d_motivo","fieldLabel":"Motivo oposición",allowBlank:true,filtradoProcurador:true,id:'d_motivo'+this.idFactoria}
+	                       ,{"xtype":'textfield',"name":"d_motivo","fieldLabel":"Motivo oposición",allowBlank:true,filtradoProcurador:true,filtrar:true,id:'d_motivo'+this.idFactoria}
 	                      ]);
 	
 	//id: 338 : T. EJECUCIÓN TÍTULO JUDICIAL: Confirmar presentar impugnacion

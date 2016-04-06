@@ -15,6 +15,7 @@ public interface CoreProjectContext {
 	public static final String CATEGORIA_SUBTAREA_ABRIR_TAREA_PROCEDIMIENTO = "ABRIR_TAREA_PROCEDIMIENTO";
 	public static final String CATEGORIA_SUBTAREA_ABRIR_EXP = "ABRIR_EXP";
 	public static final String CATEGORIA_SUBTAREA_ABRIR_PER = "ABRIR_PER";
+	public static final String CATEGORIA_SUBTAREA_ABRIR_ASUNTOS_COBRO_PAGO = "ABRIR_COBROS_PAGOS";
 	
 	/**
 	 * Devuelve los codigos (DD_STA_CODIGO) agrupadas por categorias (DECISION, ....)

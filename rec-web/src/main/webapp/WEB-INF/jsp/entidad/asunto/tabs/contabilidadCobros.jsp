@@ -18,7 +18,7 @@
 		,autoWidth:true
 		,bodyStyle : 'padding:10px'
 		,border : false
-		,nombretab : 'contabilidadcobros'
+		,nombreTab : 'contabilidadcobros'
 	});
 	
 	<%-- Variables --%>
@@ -183,24 +183,24 @@
 		 ,cls: 'x-btn-text-icon'
 		 ,handler:function(){
 				var parametros = {
-						codigoTipoEntidad: '3'
-						,idEntidad: panel.getAsuntoId()
-						,descripcion: 'Solicitud de contabilidad de cobro'
-						,subtipoTarea: 'CONTACOBR'
-						,enEspera: false
-						,esAlerta: false
+						idEntidad: panel.getAsuntoId()
 				};
 				Ext.Ajax.request({
-    				url: page.resolveUrl('tareanotificacion/crearNuevaTarea')
+    				url: page.resolveUrl('contabilidadcobros/crearNuevaTarea')
    					,params: parametros
   					,method: 'POST'
-   					,success: function (result, request){
-   						Ext.MessageBox.alert('<s:message code="contabilidad.msgNuevaTareaInfoTitle" text="**Información" />', '<s:message code="contabilidad.msgNuevaTareaInfo" text="**Se ha generado una nueva tarea para el gestor de contabilidad" />');
-   					 }
-   					,error : function (result, request){
+   					,success: function (data){
+	   					var result = JSON.parse(data.responseText);
+   						if(result.msgOK == true){
+   							Ext.MessageBox.alert('<s:message code="contabilidad.msgNuevaTareaInfoTitle" text="**Información" />', result.message);
+   						} else {
+   							Ext.MessageBox.alert('<s:message code="contabilidad.msgNuevaTareaErrorTitle" text="**Error" />', result.message);
+   						}
+   					}
+   					,error : function (data){
    						Ext.MessageBox.alert('<s:message code="contabilidad.msgNuevaTareaErrorTitle" text="**Error" />', '<s:message code="contabilidad.msgNuevaTareaError" text="**No se ha podido generar una nueva tarea para el gestor de contabilidad" />');
 	   				 }
-       				,failure: function (response, options){
+       				,failure: function (data){
        					Ext.MessageBox.alert('<s:message code="contabilidad.msgNuevaTareaErrorTitle" text="**Error" />', '<s:message code="contabilidad.msgNuevaTareaError" text="**No se ha podido generar una nueva tarea para el gestor de contabilidad" />');
 	   				 }
 				});
@@ -216,7 +216,13 @@
 		,autoScroll: true
 		,minColumnWidth: 200
 		,bbar:[ 
-			<sec:authorize ifAllGranted="ROLE_PUEDE_VER_BOTONES_GRID_CONTABILIDAD_COBRO">btnNuevo,btnEditar,btnBorrar,btnEnviarContabilidad</sec:authorize>
+			<sec:authorize ifAllGranted="ROLE_PUEDE_VER_BOTONES_GRID_CONTABILIDAD_COBRO">btnNuevo,btnEditar,btnBorrar
+			<sec:authorize ifAllGranted="ROLE_PUEDE_VER_BOTON_ENVIAR_CONTABILIDAD_COBRO">,btnEnviarContabilidad</sec:authorize>
+			</sec:authorize>
+			
+			<sec:authorize ifNotGranted="ROLE_PUEDE_VER_BOTONES_GRID_CONTABILIDAD_COBRO">
+			<sec:authorize ifAllGranted="ROLE_PUEDE_VER_BOTON_ENVIAR_CONTABILIDAD_COBRO">btnEnviarContabilidad</sec:authorize>
+			</sec:authorize>
 		]
 	});
 	  

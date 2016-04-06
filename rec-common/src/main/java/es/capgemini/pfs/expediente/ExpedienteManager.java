@@ -2290,7 +2290,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         for (Asunto a : asuntos) {
             if (automatico || a.getProcedimientos().size() > 0) {
                 DDEstadoAsunto estadoAsuntoConfirmado = (DDEstadoAsunto) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
-                        DDEstadoAsunto.class, DDEstadoAsunto.ESTADO_ASUNTO_CONFIRMADO);
+                        DDEstadoAsunto.class, DDEstadoAsunto.ESTADO_ASUNTO_ACEPTADO);
                 a.setEstadoAsunto(estadoAsuntoConfirmado);
                 a.setComite(comite);
                 a.setSupervisorComite(sesion.getSupervisorSesionComite());
@@ -3700,12 +3700,23 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         Comite comite = (Comite) executor.execute(InternaBusinessOperation.BO_COMITE_MGR_GET_WITH_SESSIONS, expediente.getComite().getId());
         if (expediente.getEstaDecidido()) { throw new BusinessOperationException("expediente.tomarDecision.decisionYaTomada"); }
 
-        if (!DDEstadoItinerario.ESTADO_DECISION_COMIT.equalsIgnoreCase(expediente.getEstadoItinerario().getCodigo())) { throw new BusinessOperationException(
+        if (expediente.isGestionDeuda()) {
+        	if (!DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO.equalsIgnoreCase(expediente.getEstadoItinerario().getCodigo())) { throw new BusinessOperationException(
+        			"expediente.tomarDecision.estadoInvalido"); }
+        } else {
+        	if (!DDEstadoItinerario.ESTADO_DECISION_COMIT.equalsIgnoreCase(expediente.getEstadoItinerario().getCodigo())) { throw new BusinessOperationException(
                 "expediente.tomarDecision.estadoInvalido"); }
+        }
 
         if (!Comite.INICIADO.equalsIgnoreCase(comite.getEstado())) { throw new BusinessOperationException("expediente.tomarDecision.sesionInvalida"); }
 
-        Boolean permitidoElevar = compruebaElevacion(expediente, ExpedienteBPMConstants.DECISION_COMITE, true);
+        Boolean permitidoElevar = false;
+        
+        if (expediente.isGestionDeuda()) {
+        	permitidoElevar = compruebaElevacion(expediente, ExpedienteBPMConstants.SANCIONADO, true);
+        } else {
+        	permitidoElevar = compruebaElevacion(expediente, ExpedienteBPMConstants.DECISION_COMITE, true);
+        }
         if (!permitidoElevar) { throw new BusinessOperationException("expediente.cerrarDecisionPolitica.errorValidacion"); }
 
         Boolean politicasVigentes = (Boolean) executor
@@ -3718,15 +3729,20 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
             dc.setSesion(comite.getUltimaSesion());
             dc.setObservaciones("");
             executor.execute(InternaBusinessOperation.BO_DECISIONN_COMITE_MRG_SAVE, dc);
-
-            DDEstadoExpediente estadoDecidido = (DDEstadoExpediente) dictionaryManager.getByCode(DDEstadoExpediente.class,
-                    DDEstadoExpediente.ESTADO_EXPEDIENTE_DECIDIDO);
             expediente.setDecisionComite(dc);
-            expediente.setEstadoExpediente(estadoDecidido);
+            
+            //Si el expediente no es de gestión de deuda, se decide
+            if (!expediente.isGestionDeuda()) {
+            	DDEstadoExpediente estadoDecidido = (DDEstadoExpediente) dictionaryManager.getByCode(DDEstadoExpediente.class, DDEstadoExpediente.ESTADO_EXPEDIENTE_DECIDIDO);
+            
+            	expediente.setEstadoExpediente(estadoDecidido);
+            }
             expedienteDao.saveOrUpdate(expediente);
 
-            executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, expediente.getProcessBpm(),
-                    ExpedienteBPMConstants.TRANSITION_TOMARDECISION);
+            if (!expediente.isGestionDeuda()) {
+	            executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, expediente.getProcessBpm(),
+	                    ExpedienteBPMConstants.TRANSITION_TOMARDECISION);
+            }
             
             //Si no se ha marcado como vigente, se lanza una excepci�n porque deber�a
         } else {

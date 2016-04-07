@@ -2,9 +2,9 @@ create or replace PROCEDURE CARGAR_H_PROCEDIMIENTO_ESPEC (DATE_START IN DATE, DA
 -- ===============================================================================================
 -- Autor: Gonzalo Martín, PFS Group
 -- Fecha creación: Febrero 2014
--- Responsable ultima modificación: María Villanueva, PFS Group
--- Fecha ultima modificación: 24/11/2015
--- Motivos del cambio: Usuario propietario
+-- Responsable ultima modificación: Pedro S., PFS Group
+-- Fecha ultima modificación: 07/04/2016
+-- Motivos del cambio: Control carga en periodos
 
 -- Cliente: Recovery BI PRODUCTO
 --
@@ -1838,6 +1838,7 @@ BEGIN
 			
   end loop;
 
+
   commit;
 
   --Log_Proceso
@@ -1852,7 +1853,7 @@ BEGIN
 
   for f in c_trimestre loop
 		
-      select max(H.DIA_ID) into max_dia_carga from D_F_DIA D, H_CONCU H where D.TRIMESTRE_ID = f.TRIMESTRE_H AND D.DIA_ID = H.DIA_ID; 
+      select max(H.DIA_ID) into max_dia_carga from D_F_DIA D, H_DECL H where D.TRIMESTRE_ID = f.TRIMESTRE_H AND D.DIA_ID = H.DIA_ID; 
 	  
 	  select max(DIA_H) into max_dia_trimestre from TMP_FECHA  where TRIMESTRE_H = f.TRIMESTRE_H;
 
@@ -2233,6 +2234,7 @@ BEGIN
 		
   end loop;
 
+
   commit;
 
   --Log_Proceso
@@ -2315,6 +2317,7 @@ BEGIN
 
   end loop;
 
+
   commit;
 
   --Log_Proceso
@@ -2380,6 +2383,7 @@ BEGIN
 		
 		end if;
   end loop;
+
 
   commit;
 
@@ -2953,6 +2957,7 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_HIPO_SEMANA. Empieza Carga', 3;
 
 
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
@@ -3192,6 +3197,8 @@ BEGIN
 	end if;
   end loop;
 
+
+
   commit;
 
   --Log_Proceso
@@ -3417,6 +3424,8 @@ BEGIN
 	end if;
   end loop;
 
+
+
   commit;
 
   --Log_Proceso
@@ -3604,6 +3613,7 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_MON_SEMANA. Empieza Carga', 3;
 
 
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
@@ -3672,6 +3682,7 @@ BEGIN
 	end if;
   end loop;
 
+
   commit;
 
   --Log_Proceso
@@ -3683,6 +3694,7 @@ BEGIN
 -- ----------------------------------------------------------------------------------------------
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_MON_MES. Empieza Carga', 3;
+
 
 
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
@@ -3820,6 +3832,7 @@ BEGIN
 	end if;
   END loop;
 
+
   commit;
 
   --Log_Proceso
@@ -3885,6 +3898,8 @@ BEGIN
 	
 	end if;
   end loop;
+
+
 
   commit;
 
@@ -4233,6 +4248,7 @@ BEGIN
 	end if;
   end loop;
 
+
   commit;
 
   --Log_Proceso
@@ -4295,6 +4311,7 @@ BEGIN
 	
 	end if;
   end loop;
+
 
   commit;
 
@@ -4708,6 +4725,7 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PRE_CONCU_MES. Empieza Carga', 3;
 
 
+
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
@@ -4776,6 +4794,7 @@ BEGIN
 	
 	end if;
   end loop;
+
 
     commit;
 
@@ -4914,6 +4933,7 @@ BEGIN
 	
 	end if;
   end loop;
+
 
   commit;
 

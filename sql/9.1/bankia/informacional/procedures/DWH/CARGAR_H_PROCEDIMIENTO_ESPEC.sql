@@ -109,6 +109,7 @@ BEGIN
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_PRC_ESPEC_JRQ_ITER_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_PRC_ESPEC_JRQ_FASE_ACT_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT O_ERROR_STATUS;
   
@@ -248,6 +249,7 @@ BEGIN
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_ESPEC_JRQ_ITER_IX'', ''TMP_PRC_ESPECIFICO_JERARQUIA (DIA_ID, ITER)'', ''S'', '''', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_ESPEC_JRQ_FASE_ACT_IX'', ''TMP_PRC_ESPECIFICO_JERARQUIA (DIA_ID, FASE_ACTUAL)'', ''S'', '''', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
@@ -312,6 +314,7 @@ BEGIN
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_CONCU_JRQ_FASE_ACT_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_CONCU_JERARQUIA'', '''', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
@@ -350,6 +353,7 @@ BEGIN
     -- Borrado índices TMP_CONCU_DETALLE
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_CONCU_DETALLE_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
 
     -- Calculo las fechas de los hitos a medir
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_CONCU_DETALLE'', '''', :O_ERROR_STATUS); END;';
@@ -417,6 +421,7 @@ BEGIN
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_CONCU_TAREA'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
 
     execute immediate '
     insert into TMP_CONCU_TAREA (ITER, FASE, TAREA, DESCRIPCION_TAREA, FECHA_INI, FECHA_FIN, TAP_ID, TAR_ID, TEX_ID, DESCRIPCION_FORMULARIO, FECHA_FORMULARIO)
@@ -1036,9 +1041,7 @@ BEGIN
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_CONCU_MES. Empieza Carga', 3;
 
-    -- Borrar Indices H_CONCU_MES
-    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_CONCU_MES_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
-    execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
     
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -1054,81 +1057,99 @@ BEGIN
 
     for a IN c_mes loop
 
-      -- Borrado de los meses a insertar
-      delete from H_CONCU_MES where MES_ID = a.MES_H;
-      commit;
-
+      select max(H.DIA_ID) into max_dia_carga from D_F_DIA D, H_CONCU H where D.MES_ID = a.MES_H AND D.DIA_ID = H.DIA_ID; 
+		
       select max(DIA_H) into max_dia_mes from TMP_FECHA where MES_H = a.MES_H;
+	  
+		if max_dia_mes >= max_dia_carga  then --actualizamos periodo
+		
+		    -- Borrar Indices H_CONCU_MES
+			V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_CONCU_MES_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+			execute immediate V_SQL USING OUT O_ERROR_STATUS;
+			commit;
+			  -- Borrado de los meses a insertar
+			  delete from H_CONCU_MES where MES_ID = a.MES_H;
+			  commit;
 
-      insert into H_CONCU_MES
-      (MES_ID,
-       FECHA_CARGA_DATOS,
-       PROCEDIMIENTO_ID,
-       FECHA_AUTO_FASE_COMUN,
-       FECHA_LIQUIDACION,
-       FECHA_PUBLICACION_BOE,
-       FECHA_INSINUACION_FINAL_CRED,
-       FECHA_AUTO_APERTURA_CONVENIO,
-       FECHA_REGISTRAR_IAC,
-       FECHA_INTERPOSICION_DEMANDA,
-       FECHA_JUNTA_ACREEDORES,
-       FECHA_REG_RESOL_APERTURA_LIQ,
-       ESTADO_CONVENIO_ID,
-       SEGUIMIENTO_CONVENIO_ID,
-       GARANTIA_CONCURSO_ID,
-       T_PORCENTAJE_QUITA_ID,
-       TD_AUTO_FC_DIA_ANALISIS_ID,
-       TD_AUTO_FC_LIQUIDACION_ID,
-       NUM_CONCURSOS,
-       P_AUTO_FC_DIA_ANALISIS,
-       P_AUTO_FC_LIQUIDACION,
-       P_PUB_BOE_INSI_CRE,
-       P_AUTO_FC_AUTO_APER_CONV,
-       P_REG_IAC_INTERP_DEM,
-       P_AUTO_APER_CONV_J_ACREE,
-       P_AUTO_FC_REG_RESOL_APER_LIQ_D,
-       P_AUTO_FC_REG_RESOL_APER_LIQ_C,
-       CUANTIA_CONVENIO,
-       QUITA_CONVENIO
-      )
-      select a.MES_H,
-       max_dia_mes,
-       PROCEDIMIENTO_ID,
-       FECHA_AUTO_FASE_COMUN,
-       FECHA_LIQUIDACION,
-       FECHA_PUBLICACION_BOE,
-       FECHA_INSINUACION_FINAL_CRED,
-       FECHA_AUTO_APERTURA_CONVENIO,
-       FECHA_REGISTRAR_IAC,
-       FECHA_INTERPOSICION_DEMANDA,
-       FECHA_JUNTA_ACREEDORES,
-       FECHA_REG_RESOL_APERTURA_LIQ,
-       ESTADO_CONVENIO_ID,
-       SEGUIMIENTO_CONVENIO_ID,
-       GARANTIA_CONCURSO_ID,
-       T_PORCENTAJE_QUITA_ID,
-       TD_AUTO_FC_DIA_ANALISIS_ID,
-       TD_AUTO_FC_LIQUIDACION_ID,
-       NUM_CONCURSOS,
-       P_AUTO_FC_DIA_ANALISIS,
-       P_AUTO_FC_LIQUIDACION,
-       P_PUB_BOE_INSI_CRE,
-       P_AUTO_FC_AUTO_APER_CONV,
-       P_REG_IAC_INTERP_DEM,
-       P_AUTO_APER_CONV_J_ACREE,
-       P_AUTO_FC_REG_RESOL_APER_LIQ_D,
-       P_AUTO_FC_REG_RESOL_APER_LIQ_C,
-       CUANTIA_CONVENIO,
-       QUITA_CONVENIO
-      from H_CONCU
-      where DIA_ID = max_dia_mes;
+
+			  insert into H_CONCU_MES
+			  (MES_ID,
+			   FECHA_CARGA_DATOS,
+			   PROCEDIMIENTO_ID,
+			   FECHA_AUTO_FASE_COMUN,
+			   FECHA_LIQUIDACION,
+			   FECHA_PUBLICACION_BOE,
+			   FECHA_INSINUACION_FINAL_CRED,
+			   FECHA_AUTO_APERTURA_CONVENIO,
+			   FECHA_REGISTRAR_IAC,
+			   FECHA_INTERPOSICION_DEMANDA,
+			   FECHA_JUNTA_ACREEDORES,
+			   FECHA_REG_RESOL_APERTURA_LIQ,
+			   ESTADO_CONVENIO_ID,
+			   SEGUIMIENTO_CONVENIO_ID,
+			   GARANTIA_CONCURSO_ID,
+			   T_PORCENTAJE_QUITA_ID,
+			   TD_AUTO_FC_DIA_ANALISIS_ID,
+			   TD_AUTO_FC_LIQUIDACION_ID,
+			   NUM_CONCURSOS,
+			   P_AUTO_FC_DIA_ANALISIS,
+			   P_AUTO_FC_LIQUIDACION,
+			   P_PUB_BOE_INSI_CRE,
+			   P_AUTO_FC_AUTO_APER_CONV,
+			   P_REG_IAC_INTERP_DEM,
+			   P_AUTO_APER_CONV_J_ACREE,
+			   P_AUTO_FC_REG_RESOL_APER_LIQ_D,
+			   P_AUTO_FC_REG_RESOL_APER_LIQ_C,
+			   CUANTIA_CONVENIO,
+			   QUITA_CONVENIO
+			  )
+			  select a.MES_H,
+			   max_dia_mes,
+			   PROCEDIMIENTO_ID,
+			   FECHA_AUTO_FASE_COMUN,
+			   FECHA_LIQUIDACION,
+			   FECHA_PUBLICACION_BOE,
+			   FECHA_INSINUACION_FINAL_CRED,
+			   FECHA_AUTO_APERTURA_CONVENIO,
+			   FECHA_REGISTRAR_IAC,
+			   FECHA_INTERPOSICION_DEMANDA,
+			   FECHA_JUNTA_ACREEDORES,
+			   FECHA_REG_RESOL_APERTURA_LIQ,
+			   ESTADO_CONVENIO_ID,
+			   SEGUIMIENTO_CONVENIO_ID,
+			   GARANTIA_CONCURSO_ID,
+			   T_PORCENTAJE_QUITA_ID,
+			   TD_AUTO_FC_DIA_ANALISIS_ID,
+			   TD_AUTO_FC_LIQUIDACION_ID,
+			   NUM_CONCURSOS,
+			   P_AUTO_FC_DIA_ANALISIS,
+			   P_AUTO_FC_LIQUIDACION,
+			   P_PUB_BOE_INSI_CRE,
+			   P_AUTO_FC_AUTO_APER_CONV,
+			   P_REG_IAC_INTERP_DEM,
+			   P_AUTO_APER_CONV_J_ACREE,
+			   P_AUTO_FC_REG_RESOL_APER_LIQ_D,
+			   P_AUTO_FC_REG_RESOL_APER_LIQ_C,
+			   CUANTIA_CONVENIO,
+			   QUITA_CONVENIO
+			  from H_CONCU
+			  where DIA_ID = max_dia_mes;
+			commit;
+			--Log_Proceso
+			execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_CONCU_MES. Periodo actualizado', 4;
+
+			
+			-- Crear indices H_CONCU_MES_IX
+			V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CONCU_MES_IX'', ''H_CONCU_MES (MES_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+            execute immediate V_SQL USING OUT O_ERROR_STATUS;
+			
+		else
+			--Log_Proceso
+			execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_CONCU_MES. Periodo NO actualizado', 4;
+			
+		end if;
     commit;
-  end loop;
-
-    -- Crear indices H_CONCU_MES_IX
-    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CONCU_MES_IX'', ''H_CONCU_MES (MES_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
-    execute immediate V_SQL USING OUT O_ERROR_STATUS;
-    
+  end loop;    
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_CONCU_MES. Termina Carga', 3;
 
@@ -1536,44 +1557,61 @@ BEGIN
   when matched then update set dc.MES_H = cf.MES_ID, dc.TRIMESTRE_H = cf.TRIMESTRE_ID, dc.ANIO_H = cf.ANIO_ID;
   commit;
 
-  -- Borrar Indices H_DECL_MES
-  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_DECL_MES_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
-  execute immediate V_SQL USING OUT O_ERROR_STATUS;
   
   -- Bucle que recorre los meses
   for e in c_mes loop
 
-      delete from H_DECL_MES where MES_ID = e.MES_H;
-      commit;
+  	select max(H.DIA_ID) into max_dia_carga from D_F_DIA D, H_DECL H where D.MES_ID = e.MES_H AND D.DIA_ID = H.DIA_ID; 
+		  
+	select max(DIA_H) into max_dia_mes from TMP_FECHA  where MES_H = e.MES_H;
 
-      select max(DIA_H) into max_dia_mes from TMP_FECHA  where MES_H = e.MES_H;
+		if max_dia_mes >= max_dia_carga  then --actualizamos periodo
+  
+			-- Borrar Indices H_DECL_MES
+			V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_DECL_MES_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+			execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
-      insert into H_DECL_MES
-      (MES_ID,
-       FECHA_CARGA_DATOS,
-       PROCEDIMIENTO_ID,
-       FECHA_INTERP_DEM_DECLARATIVO,
-       FECHA_RESOLUCION_FIRME,
-       TD_ID_DECL_RESOL_FIRME_ID,
-       NUM_DECLARATIVOS,
-       P_ID_DECL_RESOL_FIRME
-      )
-      select e.MES_H,
-       max_dia_mes,
-       PROCEDIMIENTO_ID,
-       FECHA_INTERP_DEM_DECLARATIVO,
-       FECHA_RESOLUCION_FIRME,
-       TD_ID_DECL_RESOL_FIRME_ID,
-       NUM_DECLARATIVOS,
-       P_ID_DECL_RESOL_FIRME
-      from H_DECL
-      where DIA_ID = max_dia_mes;
-      commit;
+
+			delete from H_DECL_MES where MES_ID = e.MES_H;
+			  commit;
+
+
+			  insert into H_DECL_MES
+			  (MES_ID,
+			   FECHA_CARGA_DATOS,
+			   PROCEDIMIENTO_ID,
+			   FECHA_INTERP_DEM_DECLARATIVO,
+			   FECHA_RESOLUCION_FIRME,
+			   TD_ID_DECL_RESOL_FIRME_ID,
+			   NUM_DECLARATIVOS,
+			   P_ID_DECL_RESOL_FIRME
+			  )
+			  select e.MES_H,
+			   max_dia_mes,
+			   PROCEDIMIENTO_ID,
+			   FECHA_INTERP_DEM_DECLARATIVO,
+			   FECHA_RESOLUCION_FIRME,
+			   TD_ID_DECL_RESOL_FIRME_ID,
+			   NUM_DECLARATIVOS,
+			   P_ID_DECL_RESOL_FIRME
+			  from H_DECL
+			  where DIA_ID = max_dia_mes;
+			  commit;
+		  --Log_Proceso
+		  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_DECL_MES. Periodo actualizado', 4;
+
+		  
+		  -- Crear indices H_DECL_MES
+		  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_DECL_MES_IX'', ''H_DECL_MES (MES_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+		  execute immediate V_SQL USING OUT O_ERROR_STATUS;
+		
+		else
+			--Log_Proceso
+			execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_DECL_MES. Periodo NO actualizado', 4;
+			
+		end if;
   end loop;
 
-  -- Crear indices H_DECL_MES
-  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_DECL_MES_IX'', ''H_DECL_MES (MES_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
-  execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_DECL_MES. Termina Carga', 3;
@@ -1716,6 +1754,7 @@ BEGIN
 
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_EJEC_ORD_JRQ_FASE_ACT_IX'', ''TMP_EJEC_ORD_JERARQUIA (DIA_ID, FASE_ACTUAL)'', ''S'', '''', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
 
   -- Borrar Indices H_EJEC_ORD
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_EJEC_ORD_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
@@ -1896,9 +1935,7 @@ BEGIN
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_EJEC_ORD_MES. Empieza Carga', 3;
 
-  -- Borrar Indices H_EJEC_ORD_MES
-  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_EJEC_ORD_MES_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
-  execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
 
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -1915,39 +1952,57 @@ BEGIN
 
 -- Bucle que recorre los meses
   for i IN c_mes loop
-      -- Borrado de los meses a insertar
-      delete from H_EJEC_ORD_MES where MES_ID = i.MES_H;
-      commit;
+	  select max(H.DIA_ID) into max_dia_carga from D_F_DIA D, H_EJEC_ORD H where D.MES_ID = i.MES_H AND D.DIA_ID = H.DIA_ID; 
+	  
+	  select max(DIA_H) into max_dia_mes from TMP_FECHA where MES_H = i.MES_H;	  
+	  
+	  if max_dia_mes >= max_dia_carga  then --actualizamos periodo
+	  
+		  -- Borrar Indices H_EJEC_ORD_MES
+		  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_EJEC_ORD_MES_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+		  execute immediate V_SQL USING OUT O_ERROR_STATUS;
+		  commit;
+		  -- Borrado de los meses a insertar
+		  delete from H_EJEC_ORD_MES where MES_ID = i.MES_H;
+		  commit;
 
-      select max(DIA_H) into max_dia_mes from TMP_FECHA where MES_H = i.MES_H;
+		  insert into H_EJEC_ORD_MES
+			(MES_ID,
+			 FECHA_CARGA_DATOS,
+			 PROCEDIMIENTO_ID,
+			 FECHA_INTERP_DEM_EJEC_ORD,
+			 FECHA_INICIO_APREMIO,
+			 TD_ID_ORD_INI_APREMIO_ID,
+			 NUM_EJECUCION_ORDINARIAS,
+			 P_ID_ORD_INI_APREMIO
+			)
+			select i.MES_H,
+			 max_dia_mes,
+			 PROCEDIMIENTO_ID,
+			 FECHA_INTERP_DEM_EJEC_ORD,
+			 FECHA_INICIO_APREMIO,
+			 TD_ID_ORD_INI_APREMIO_ID,
+			 NUM_EJECUCION_ORDINARIAS,
+			 P_ID_ORD_INI_APREMIO
+		  from H_EJEC_ORD
+		  where DIA_ID = max_dia_mes;
+		commit;
 
-      insert into H_EJEC_ORD_MES
-        (MES_ID,
-         FECHA_CARGA_DATOS,
-         PROCEDIMIENTO_ID,
-         FECHA_INTERP_DEM_EJEC_ORD,
-         FECHA_INICIO_APREMIO,
-         TD_ID_ORD_INI_APREMIO_ID,
-         NUM_EJECUCION_ORDINARIAS,
-         P_ID_ORD_INI_APREMIO
-        )
-        select i.MES_H,
-         max_dia_mes,
-         PROCEDIMIENTO_ID,
-         FECHA_INTERP_DEM_EJEC_ORD,
-         FECHA_INICIO_APREMIO,
-         TD_ID_ORD_INI_APREMIO_ID,
-         NUM_EJECUCION_ORDINARIAS,
-         P_ID_ORD_INI_APREMIO
-      from H_EJEC_ORD
-      where DIA_ID = max_dia_mes;
-    commit;
+		--Log_Proceso
+		execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_EJEC_ORD_MES. Periodo actualizado', 4;
 
+		
+		-- Crear indices H_EJEC_ORD_MES
+		V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EJEC_ORD_MES_IX'', ''H_EJEC_ORD_MES (MES_ID,PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+		execute immediate V_SQL USING OUT O_ERROR_STATUS;
+		
+	else
+		
+		--Log_Proceso
+		execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_EJEC_ORD_MES. Periodo NO actualizado', 4;
+		
+	end if;
   end loop;
-
-  -- Crear indices H_EJEC_ORD_MES
-  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EJEC_ORD_MES_IX'', ''H_EJEC_ORD_MES (MES_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
-  execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_EJEC_ORD_MES. Termina Carga', 3;
@@ -2072,6 +2127,7 @@ BEGIN
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_HIPO_JRQ_FASE_ACT_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_HIPO_JERARQUIA'', '''', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
@@ -2093,6 +2149,7 @@ BEGIN
   -- Crear indices TMP_HIPO_JERARQUIA
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_HIPO_JRQ_ITER_IX'', ''TMP_HIPO_JERARQUIA (DIA_ID, ITER)'', ''S'', '''', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
 
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_HIPO_JRQ_FASE_ACT_IX'', ''TMP_HIPO_JERARQUIA (DIA_ID, FASE_ACTUAL)'', ''S'', '''', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -2386,6 +2443,7 @@ BEGIN
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_HIPO_IX'', ''H_HIPO (DIA_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT O_ERROR_STATUS;  
 
+
   update H_HIPO set TD_ID_HIP_SUBASTA_ID = (case when P_ID_HIP_SUBASTA >= 0 and P_ID_HIP_SUBASTA <= 30 then 0
                                                         when P_ID_HIP_SUBASTA > 30 and P_ID_HIP_SUBASTA <= 60 then 1
                                                         when P_ID_HIP_SUBASTA > 60 and P_ID_HIP_SUBASTA <= 90 then 2
@@ -2524,9 +2582,6 @@ BEGIN
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_HIPO_MES. Empieza Carga', 3;
 
-  -- Borrar Indices H_HIPO_MES
-  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_HIPO_MES_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
-  execute immediate V_SQL USING OUT O_ERROR_STATUS;
   
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -2542,73 +2597,92 @@ BEGIN
   commit;
 
   for m in c_mes loop
-     -- Borrado de los meses a insertar
-      delete from H_HIPO_MES where MES_ID = m.mes_H;
-      commit;
+	  select max(H.DIA_ID) into max_dia_carga from D_F_DIA D, H_HIPO H where D.MES_ID = m.MES_H AND D.DIA_ID = H.DIA_ID; 
+	  
+	  select max(DIA_H) into max_dia_mes from TMP_FECHA where MES_H = m.mes_H;
+  
+	  if max_dia_mes >= max_dia_carga  then --actualizamos periodo	
+  
+		  -- Borrar Indices H_HIPO_MES
+		  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_HIPO_MES_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+		  execute immediate V_SQL USING OUT O_ERROR_STATUS;
+		  commit;
+		 -- Borrado de los meses a insertar
+		  delete from H_HIPO_MES where MES_ID = m.mes_H;
+		  commit;
 
-      select max(DIA_H) into max_dia_mes from TMP_FECHA where MES_H = m.mes_H;
 
-      insert into H_HIPO_MES
-        (MES_ID,
-         FECHA_CARGA_DATOS,
-         PROCEDIMIENTO_ID,
-         FECHA_CREACION_ASUNTO,
-         FECHA_INTERP_DEM_HIP,
-         FECHA_SUBASTA_SOLICITADA,
-         FECHA_SUBASTA,
-         FECHA_CESION_REMATE,
-         FECHA_ADJUDICACION,
-         FECHA_CELEBRACION_SUBASTA,
-         FASE_SUBASTA_HIPOTECARIO_ID,
-         ULT_TAR_FASE_HIP_ID,
-         TD_ID_HIP_SUBASTA_ID,
-         TD_SUB_SOL_SUB_CEL_ID,
-         TD_SUB_CEL_CESION_REMATE_ID,
-         NUM_HIPOTECARIOS,
-         P_CREACION_ASU_SUBASTA,
-         P_CREACION_ASU_CESION_REMATE,
-         P_CREACION_ASU_ADJUDICACION,
-         P_ID_HIP_SUBASTA,
-         P_INTERP_DEM_HIP_CESION_REMATE,
-         P_INTERP_DEM_HIP_ADJUDICACION,
-         P_SUBASTA_ADJUDICACION,
-         P_SUB_SOL_SUB_CEL,
-         P_SUB_CEL_CESION_REMATE
-        )
-      select m.mes_H,
-         max_dia_mes,
-         PROCEDIMIENTO_ID,
-         FECHA_CREACION_ASUNTO,
-         FECHA_INTERP_DEM_HIP,
-         FECHA_SUBASTA_SOLICITADA,
-         FECHA_SUBASTA,
-         FECHA_CESION_REMATE,
-         FECHA_ADJUDICACION,
-         FECHA_CELEBRACION_SUBASTA,
-         FASE_SUBASTA_HIPOTECARIO_ID,
-         ULT_TAR_FASE_HIP_ID,
-         TD_ID_HIP_SUBASTA_ID,
-         TD_SUB_SOL_SUB_CEL_ID,
-         TD_SUB_CEL_CESION_REMATE_ID,
-         NUM_HIPOTECARIOS,
-         P_CREACION_ASU_SUBASTA,
-         P_CREACION_ASU_CESION_REMATE,
-         P_CREACION_ASU_ADJUDICACION,
-         P_ID_HIP_SUBASTA,
-         P_INTERP_DEM_HIP_CESION_REMATE,
-         P_INTERP_DEM_HIP_ADJUDICACION,
-         P_SUBASTA_ADJUDICACION,
-         P_SUB_SOL_SUB_CEL,
-         P_SUB_CEL_CESION_REMATE
-      from H_HIPO
-      where DIA_ID = max_dia_mes;
-    commit;
+		  insert into H_HIPO_MES
+			(MES_ID,
+			 FECHA_CARGA_DATOS,
+			 PROCEDIMIENTO_ID,
+			 FECHA_CREACION_ASUNTO,
+			 FECHA_INTERP_DEM_HIP,
+			 FECHA_SUBASTA_SOLICITADA,
+			 FECHA_SUBASTA,
+			 FECHA_CESION_REMATE,
+			 FECHA_ADJUDICACION,
+			 FECHA_CELEBRACION_SUBASTA,
+			 FASE_SUBASTA_HIPOTECARIO_ID,
+			 ULT_TAR_FASE_HIP_ID,
+			 TD_ID_HIP_SUBASTA_ID,
+			 TD_SUB_SOL_SUB_CEL_ID,
+			 TD_SUB_CEL_CESION_REMATE_ID,
+			 NUM_HIPOTECARIOS,
+			 P_CREACION_ASU_SUBASTA,
+			 P_CREACION_ASU_CESION_REMATE,
+			 P_CREACION_ASU_ADJUDICACION,
+			 P_ID_HIP_SUBASTA,
+			 P_INTERP_DEM_HIP_CESION_REMATE,
+			 P_INTERP_DEM_HIP_ADJUDICACION,
+			 P_SUBASTA_ADJUDICACION,
+			 P_SUB_SOL_SUB_CEL,
+			 P_SUB_CEL_CESION_REMATE
+			)
+		  select m.mes_H,
+			 max_dia_mes,
+			 PROCEDIMIENTO_ID,
+			 FECHA_CREACION_ASUNTO,
+			 FECHA_INTERP_DEM_HIP,
+			 FECHA_SUBASTA_SOLICITADA,
+			 FECHA_SUBASTA,
+			 FECHA_CESION_REMATE,
+			 FECHA_ADJUDICACION,
+			 FECHA_CELEBRACION_SUBASTA,
+			 FASE_SUBASTA_HIPOTECARIO_ID,
+			 ULT_TAR_FASE_HIP_ID,
+			 TD_ID_HIP_SUBASTA_ID,
+			 TD_SUB_SOL_SUB_CEL_ID,
+			 TD_SUB_CEL_CESION_REMATE_ID,
+			 NUM_HIPOTECARIOS,
+			 P_CREACION_ASU_SUBASTA,
+			 P_CREACION_ASU_CESION_REMATE,
+			 P_CREACION_ASU_ADJUDICACION,
+			 P_ID_HIP_SUBASTA,
+			 P_INTERP_DEM_HIP_CESION_REMATE,
+			 P_INTERP_DEM_HIP_ADJUDICACION,
+			 P_SUBASTA_ADJUDICACION,
+			 P_SUB_SOL_SUB_CEL,
+			 P_SUB_CEL_CESION_REMATE
+		  from H_HIPO
+		  where DIA_ID = max_dia_mes;
+		commit;
+		--Log_Proceso
+		execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_HIPO_MES. Periodo actualizado', 4;
+
+		
+	   -- Crear indices H_HIPO_MES
+	   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_HIPO_MES_IX'', ''H_HIPO_MES (MES_ID,PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+	   execute immediate V_SQL USING OUT O_ERROR_STATUS;		
+		
+	else
+	
+		--Log_Proceso
+		execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_HIPO_MES. Periodo NO actualizado', 4;
+	
+	end if;
   end loop;
 
-  -- Crear indices H_HIPO_MES
-  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_HIPO_MES_IX'', ''H_HIPO_MES (MES_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
-  execute immediate V_SQL USING OUT O_ERROR_STATUS;  
-  
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_HIPO_MES. Termina Carga', 3;
 
@@ -2799,6 +2873,7 @@ BEGIN
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_MON_JRQ_FASE_ACT_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_MON_JERARQUIA'', '''', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
@@ -2818,6 +2893,7 @@ BEGIN
     -- Crear indices TMP_MON_JERARQUIA
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_MON_JRQ_ITER_IX'', ''TMP_MON_JERARQUIA (DIA_ID, ITER)'', ''S'', '''', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT O_ERROR_STATUS;  
+
 
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_MON_JRQ_FASE_ACT_IX'', ''TMP_MON_JERARQUIA (DIA_ID, FASE_ACTUAL)'', ''S'', '''', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT O_ERROR_STATUS;  
@@ -2996,9 +3072,6 @@ BEGIN
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_MON_MES. Empieza Carga', 3;
 
-  -- Borrar Indices H_MON_MES
-  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_MON_MES_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
-  execute immediate V_SQL USING OUT O_ERROR_STATUS;
   
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -3014,40 +3087,57 @@ BEGIN
   commit;
 
   for q in c_mes loop
-      -- Borrado de los meses a insertar
-      delete from H_MON_MES where MES_ID = q.mes_H;
-      commit;
+	select max(H.DIA_ID) into max_dia_carga from D_F_DIA D, H_MON H where D.MES_ID = q.MES_H AND D.DIA_ID = H.DIA_ID; 
+	
+	select max(DIA_H) into max_dia_mes from TMP_FECHA where MES_H = q.mes_H;
 
-      select max(DIA_H) into max_dia_mes from TMP_FECHA where MES_H = q.mes_H;
+	if max_dia_mes >= max_dia_carga  then --actualizamos periodo
+	
+		  -- Borrar Indices H_MON_MES
+		  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_MON_MES_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+		  execute immediate V_SQL USING OUT O_ERROR_STATUS;
+		  commit;
+		  -- Borrado de los meses a insertar
+		  delete from H_MON_MES where MES_ID = q.mes_H;
+		  commit;
 
-      insert into H_MON_MES
-        (MES_ID,
-         FECHA_CARGA_DATOS,
-         PROCEDIMIENTO_ID,
-         FECHA_INTERP_DEM_MON,
-         FECHA_DECRETO_FINALIZACION,
-         TD_ID_MON_DECRETO_FIN_ID,
-         NUM_MONITORIOS,
-         P_ID_MON_DECRETO_FIN
-        )
-      select q.mes_H,
-             max_dia_mes,
-             PROCEDIMIENTO_ID,
-             FECHA_INTERP_DEM_MON,
-             FECHA_DECRETO_FINALIZACION,
-             TD_ID_MON_DECRETO_FIN_ID,
-             NUM_MONITORIOS,
-             P_ID_MON_DECRETO_FIN
-      from H_MON
-      where DIA_ID = max_dia_mes;
-    commit;
+		  insert into H_MON_MES
+			(MES_ID,
+			 FECHA_CARGA_DATOS,
+			 PROCEDIMIENTO_ID,
+			 FECHA_INTERP_DEM_MON,
+			 FECHA_DECRETO_FINALIZACION,
+			 TD_ID_MON_DECRETO_FIN_ID,
+			 NUM_MONITORIOS,
+			 P_ID_MON_DECRETO_FIN
+			)
+		  select q.mes_H,
+				 max_dia_mes,
+				 PROCEDIMIENTO_ID,
+				 FECHA_INTERP_DEM_MON,
+				 FECHA_DECRETO_FINALIZACION,
+				 TD_ID_MON_DECRETO_FIN_ID,
+				 NUM_MONITORIOS,
+				 P_ID_MON_DECRETO_FIN
+		  from H_MON
+		  where DIA_ID = max_dia_mes;
+		commit;
+		
+		--Log_Proceso
+		execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_MON_MES. Periodo actualizado', 4;
+		
+		-- Crear indices H_MON_MES
+		V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_MON_MES_IX'', ''H_MON_MES (MES_ID,PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+		execute immediate V_SQL USING OUT O_ERROR_STATUS;
+		
+	else
+	
+		--Log_Proceso
+		execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_MON_MES. Periodo NO actualizado', 4;
+	
+	end if;		
   end loop;
 
-
-  -- Crear indices H_MON_MES
-  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_MON_MES_IX'', ''H_MON_MES (MES_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
-  execute immediate V_SQL USING OUT O_ERROR_STATUS;  
-  
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_MON_MES. Termina Carga', 3;
 
@@ -3383,10 +3473,7 @@ BEGIN
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_EJEC_NOT_MES. Empieza Carga', 3;
 
-  -- Borrar Indices H_EJEC_NOT_MES
-  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_EJEC_NOT_MES_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
-  execute immediate V_SQL USING OUT O_ERROR_STATUS;
-  
+    
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
@@ -3402,34 +3489,56 @@ BEGIN
 
   for u in c_mes loop
 
-      -- Borrado de los meses a insertar
-    delete from H_EJEC_NOT_MES where MES_ID = u.mes_H;
-    commit;
+    select max(H.DIA_ID) into max_dia_carga from D_F_DIA D, H_EJEC_NOT H where D.MES_ID = u.MES_H AND D.DIA_ID = H.DIA_ID; 
+	
+	select max(DIA_H) into max_dia_mes from TMP_FECHA where MES_H = u.mes_H;
 
-    select max(DIA_H) into max_dia_mes from TMP_FECHA where MES_H = u.mes_H;
+	if max_dia_mes >= max_dia_carga  then --actualizamos periodo
+	
+		-- Borrar Indices H_EJEC_NOT_MES
+		V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_EJEC_NOT_MES_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+		execute immediate V_SQL USING OUT O_ERROR_STATUS;
+		commit;
+		  -- Borrado de los meses a insertar
+		delete from H_EJEC_NOT_MES where MES_ID = u.mes_H;
+		commit;
 
-    insert into H_EJEC_NOT_MES
-          (MES_ID,
-           FECHA_CARGA_DATOS,
-           PROCEDIMIENTO_ID,
-           FECHA_SUBASTA_EJEC_NOT,
-           F_SUBASTA_EJEC_NOTARIAL_ID,
-           NUM_EJECUCIONES_NOTARIALES
-          )
-    select u.mes_H,
-           max_dia_mes,
-           PROCEDIMIENTO_ID,
-           FECHA_SUBASTA_EJEC_NOT,
-           F_SUBASTA_EJEC_NOTARIAL_ID,
-           NUM_EJECUCIONES_NOTARIALES
-    from H_EJEC_NOT
-    where DIA_ID = max_dia_mes;
-    commit;
+
+		insert into H_EJEC_NOT_MES
+			  (MES_ID,
+			   FECHA_CARGA_DATOS,
+			   PROCEDIMIENTO_ID,
+			   FECHA_SUBASTA_EJEC_NOT,
+			   F_SUBASTA_EJEC_NOTARIAL_ID,
+			   NUM_EJECUCIONES_NOTARIALES
+			  )
+		select u.mes_H,
+			   max_dia_mes,
+			   PROCEDIMIENTO_ID,
+			   FECHA_SUBASTA_EJEC_NOT,
+			   F_SUBASTA_EJEC_NOTARIAL_ID,
+			   NUM_EJECUCIONES_NOTARIALES
+		from H_EJEC_NOT
+		where DIA_ID = max_dia_mes;
+		commit;
+		
+		--Log_Proceso
+		execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_EJEC_NOT_MES. Periodo actualizado', 4;
+
+		
+		-- Crear indices H_EJEC_NOT_MES
+		V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EJEC_NOT_MES_IX'', ''H_EJEC_NOT_MES (MES_ID,PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+		execute immediate V_SQL USING OUT O_ERROR_STATUS;
+		
+	else
+	
+		--Log_Proceso
+		execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_EJEC_NOT_MES. Periodo NO actualizado', 4;
+	
+	end if;
   end loop;
 
-  -- Crear indices H_EJEC_NOT_MES
-  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EJEC_NOT_MES_IX'', ''H_EJEC_NOT_MES (MES_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
-  execute immediate V_SQL USING OUT O_ERROR_STATUS;  
+
   
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_EJEC_NOT_MES. Termina Carga', 3;

@@ -37,7 +37,9 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.gestorDocumental.api.GestorDocumentalApi;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.gestorDocumental.model.GestorDocumentalConstants;
@@ -53,6 +55,7 @@ import es.pfsgroup.plugin.gestordocumental.dto.documentos.UsuarioPasswordDto;
 import es.pfsgroup.procedimientos.context.HayaProjectContext;
 import es.pfsgroup.recovery.adjunto.AdjuntoAssembler;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
+import es.pfsgroup.recovery.haya.contenedor.model.ContenedorGestorDocumental;
 import es.pfsgroup.recovery.haya.gestorDocumental.GestorDocToRecoveryAssembler;
 
 @Service("adjuntoManagerHayaImpl")
@@ -91,6 +94,15 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	@Transactional(readOnly = false)
 	public List<? extends EXTAdjuntoDto> getAdjuntosConBorrado(Long id) {
 		Asunto asun = genericDao.get(Asunto.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
+		
+		for(Procedimiento prc : asun.getProcedimientos()) {
+			if( buscarTPRCsinContenedor(prc)) {
+				//Si entra, este procedimiento requiere un contenedor y no existe.
+				//AQUI LA LLAMADA A crearPropuesta
+				
+			}
+		}
+		
 		List<RespuestaDocumentosExpedientes> listRespuesta = new ArrayList<RespuestaDocumentosExpedientes>();
 		try {
 			for(String claseExpediente : getDistinctTipoProcedimientoFromAsunto(asun)) {
@@ -142,6 +154,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 			}else{
 				
 			}
+			//List<String> listaContenedores = getContenedoresByAsunto(Long.parseLong(idAsunto));
 			String claseExpe = hayaProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
 			CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idAsunto, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, claseExpe);
 			Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
@@ -323,4 +336,49 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 		Parametrizacion parametro = proxyFactory.proxy(ParametrizacionApi.class).buscarParametroPorNombre(Parametrizacion.GESTOR_DOCUMENTAL_REST_CLIENT_PASSWORD);
 		return parametro.getValor();
 	}
+	
+	/**
+	 * Busca si NO hay contenedor para el tipo de prc.
+	 * @param prc
+	 * @return 0 - Ya existe contenedor; 1 - No existe contenedor y hay que crearlo; 2 - Tipo PRC no requiere contenedor
+	 */
+	public boolean buscarTPRCsinContenedor(Procedimiento prc) {
+		
+		boolean resultado = false;
+		
+		String claseExpe = hayaProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
+		if(Checks.esNulo(claseExpe) || claseExpe=="")
+		{
+			//Para este tipo de procedimiento no se requiere contendor
+			return false;
+		}
+		ContenedorGestorDocumental contenedor = genericDao.get(ContenedorGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "asunto", prc.getAsunto()), genericDao.createFilter(FilterType.EQUALS, "codigoClase", claseExpe));
+		
+		if(Checks.esNulo(contenedor)) {
+			//Se requiere contenedor y no existe actualmente
+			resultado = true;
+		}
+		
+		return resultado;		
+	}
+	
+	/**
+	 * Devuelve un lista de la clase de expediente que contiene el asunto ordenada por su fecha de creación
+	 * @param asu
+	 * @return
+	 */
+	private List<String> getContenedoresByAsunto(Long idAsu) {
+
+		Asunto asu = genericDao.get(Asunto.class, genericDao.createFilter(FilterType.EQUALS, "id", idAsu));
+		Order order = new Order(OrderType.DESC, "auditoria.fechaCrear");
+		List<ContenedorGestorDocumental> listaContenedor = genericDao.getListOrdered(ContenedorGestorDocumental.class, order ,genericDao.createFilter(FilterType.EQUALS, "asunto", asu));
+		List<String> listaClaseExp = new ArrayList<String>();
+		
+		for(ContenedorGestorDocumental contenedor : listaContenedor) {
+			listaClaseExp.add(contenedor.getCodigoClase());
+		}
+		
+		return listaClaseExp;
+	}
+	
 }

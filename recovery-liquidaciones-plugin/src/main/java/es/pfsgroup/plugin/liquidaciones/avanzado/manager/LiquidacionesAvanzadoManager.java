@@ -73,6 +73,7 @@ public class LiquidacionesAvanzadoManager {
 		cabecera.setCapital(new BigDecimal(cont.getLimiteInicial().toString()));
 		cabecera.setFechaVencimiento(fechaCierre);
 		cabecera.setInteres(request.getInteresesOrdinarios());
+		cabecera.setTipoInteres(request.getTipoInteres());
 		cabecera.setTipoIntDemora(request.getTipoDemoraCierre());
 		
 		cabecera.setFechaCertifDeuda(fechaCierre);
@@ -301,6 +302,8 @@ public class LiquidacionesAvanzadoManager {
 		if (ultTramo!= null) {
 			//Cogemos el último saldo
 			totalDeuda = totalDeuda.add(ultTramo.getSaldo());
+			//Y le sumamos los intereses pendientes por pagar
+			totalDeuda = totalDeuda.add(ultTramo.getInteresesPendientes());
 			// Y le sumamos todos los intereses demora calculados
 			for (LIQDtoTramoLiquidacion tramo : cuerpo) {
 				if (tramo.getInteresesDemora()!=null) {
@@ -339,6 +342,7 @@ public class LiquidacionesAvanzadoManager {
 		totalPagar = totalPagar.add(request.getCostasLetrado()!=null?request.getCostasLetrado():BigDecimal.ZERO);
 		totalPagar = totalPagar.add(request.getCostasProcurador()!=null?request.getCostasProcurador():BigDecimal.ZERO);
 		totalPagar = totalPagar.add(request.getOtrosGastos()!=null?request.getOtrosGastos():BigDecimal.ZERO);
+		
 		resumen.setTotalPagar(totalPagar);
 		
 		return resumen;

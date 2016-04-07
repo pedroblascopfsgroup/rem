@@ -109,7 +109,7 @@ public interface PropuestaApi {
 	 */
 	@BusinessOperationDefinition(BO_PROPUESTA_CAMBIAR_ESTADO)
 	@Transactional(readOnly = false)
-	public void cambiarEstadoPropuesta(Acuerdo propuesta, String nuevoCodigoEstado, boolean generarEvento);
+	public void cambiarEstadoPropuesta(EXTAcuerdo propuesta, String nuevoCodigoEstado, boolean generarEvento);
 	
 	/**
 	 * Valida que AL MENOS UNA las propuestas pasadas cumplan con alguno de los Estados validos pasados

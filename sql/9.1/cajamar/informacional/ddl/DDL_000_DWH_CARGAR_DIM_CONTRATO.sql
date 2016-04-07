@@ -1,3 +1,21 @@
+--/*
+--##########################################
+--## AUTOR=María V.
+--## FECHA_CREACION=20160407
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=CMREC-2898
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Se cambia la carga de D_PRC_COBRO_TIPO_DET para que se cargue como D_PRC_COBRO_TIPO
+--## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
 create or replace PROCEDURE CARGAR_DIM_CONTRATO(O_ERROR_STATUS OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: María Villanueva, PFS Group
@@ -4821,3 +4839,5 @@ SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_CALIF_FINAL_CREDITO WHERE CALIFICACION
     --ROLLBACK;*/
 end;
 end CARGAR_DIM_CONTRATO;
+/
+EXIT

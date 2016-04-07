@@ -1,3 +1,21 @@
+--/*
+--##########################################
+--## AUTOR=María V.
+--## FECHA_CREACION=20160407
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=CMREC-1930
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Se modifica la carga de tipo_vencido
+--## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
 create or replace PROCEDURE CARGAR_H_CONTRATO (DATE_START IN date, DATE_END IN date, O_ERROR_STATUS OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: María Villanueva, PFS Group
@@ -3212,3 +3230,5 @@ close c_semana;
 end;
 
 end CARGAR_H_CONTRATO;
+/
+EXIT

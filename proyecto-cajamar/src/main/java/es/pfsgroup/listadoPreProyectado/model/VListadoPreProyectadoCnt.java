@@ -96,6 +96,9 @@ public class VListadoPreProyectadoCnt implements Serializable {
 
     @Column(name="OFI_CODIGO")
     private String ofiCodigo;
+    
+    @Column(name="IMPORTE_PTE_DIFER")
+    private String importePteDifer;
 
 	// -------------------------------------------------------------------
 	
@@ -293,6 +296,14 @@ public class VListadoPreProyectadoCnt implements Serializable {
 
 	public void setNomCliente(String nomCliente) {
 		this.nomCliente = nomCliente;
+	}
+
+	public String getImportePteDifer() {
+		return importePteDifer;
+	}
+
+	public void setImportePteDifer(String importePteDifer) {
+		this.importePteDifer = importePteDifer;
 	}
 
 	

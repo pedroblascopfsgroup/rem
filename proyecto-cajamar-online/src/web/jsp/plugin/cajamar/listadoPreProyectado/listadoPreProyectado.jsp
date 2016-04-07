@@ -490,6 +490,7 @@
 		,{name:'propuesta'}
 		,{name:'estadoGestion'}
 		,{name:'fechaPrevReguCnt'}
+		,{name: 'importePteDifer'}
 	]);
 
 	 var preProCntsStore = page.getStore({
@@ -515,6 +516,7 @@
 		,{header: '<s:message code="preproyectado.contratos.fechaPaseAMora" text="**Fecha pase a mora" />',dataIndex: 'fechaPaseAMoraCnt',sortable:true}
 		,{header: '<s:message code="preproyectado.contratos.propuesta" text="**Última Propuesta" />',dataIndex: 'propuesta',sortable:true}
 		,{header: '<s:message code="preproyectado.contratos.estadoGestion" text="**Estado Gestión" />',dataIndex: 'estadoGestion',sortable:true}
+		,{header: '<s:message code="preproyectado.contratos.importePteDifer" text="**Imp. Pdte. Diferir" />',dataIndex: 'importePteDifer',sortable:true}
 		<%-- ,{header: '<s:message code="preproyectado.contratos.fechaPrevistaRegularizacion" text="**Fecha prevista regularización" />',dataIndex: 'fechaPrevReguCnt',sortable:true} --%>
 	]);
 	
@@ -607,7 +609,8 @@
 						,'fechaPaseAMoraCnt'
 						,'propuesta'
 						,'estadoGestion'
-						,'fechaPrevReguCnt'				
+						,'fechaPrevReguCnt'
+						,'importePteDifer'				
 				],
 				data: contratos
 			});

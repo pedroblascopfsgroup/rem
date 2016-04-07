@@ -772,7 +772,7 @@
       <![CDATA[
       MERGE INTO CLI_CLIENTES CLI USING
         ( WITH fechasEstados AS
-          (SELECT SYSDATE - ((((SUM(est.est_plazo)/1000)/24)/60)/60) fecha,
+          (SELECT SYSDATE - ((((SUM(nvl(est.est_plazo,0))/1000)/24)/60)/60) fecha,
             ARQ_ID
           FROM arq_arquetipos arq
           INNER JOIN iti_itinerarios iti
@@ -905,7 +905,7 @@
     MERGE INTO CLI_CLIENTES CLI USING
         (
         WITH fechasEstados AS
-          (SELECT SYSDATE - ((((SUM(est.est_plazo)/1000)/24)/60)/60) fecha,
+          (SELECT SYSDATE - ((((SUM(nvl(est.est_plazo,0))/1000)/24)/60)/60) fecha,
             ARQ_ID
           FROM arq_arquetipos arq
           INNER JOIN iti_itinerarios iti
@@ -958,7 +958,7 @@
      MERGE INTO CLI_CLIENTES CLI USING
         (
         WITH fechasEstados AS
-              (SELECT SYSDATE - ((((SUM(est.est_plazo)/1000)/24)/60)/60) fecha,
+              (SELECT SYSDATE - ((((SUM(nvl(est.est_plazo,0))/1000)/24)/60)/60) fecha,
             ARQ_ID
           FROM arq_arquetipos arq
           INNER JOIN iti_itinerarios iti

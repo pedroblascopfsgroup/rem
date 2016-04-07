@@ -4,6 +4,12 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.Authentication;
+import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
+import org.springframework.security.providers.ldap.LdapAuthenticationProvider;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
@@ -14,6 +20,8 @@ import es.capgemini.pfs.users.domain.Usuario;
 @Component
 public class PasswordManager implements PasswordApi {
 
+	private final Log logger = LogFactory.getLog(getClass());
+	
 	private static final String DRIVER_KERBEROS = "autorizacion.kerberos.driver";
 	private static final String DRIVER_BANKIA = "es.pfs.bankia.security.KerberosBankiaDriver";
 
@@ -21,19 +29,22 @@ public class PasswordManager implements PasswordApi {
 
 	@Resource
 	private Properties appProperties;
+	
+	@Autowired(required = false)
+	private LdapAuthenticationProvider ldapAuthenticationProvider;
 
 	private KerberosDriver driver;
 	private boolean driverBuscado = false;
 	
 	/**
 	 * 
-	 * Comprueba si la contraseña es correcta, teniendo en cuenta el posible caso de que 
-	 * caso de que la clase driver de Bankia esté presente habrá que hacer uso de su función correspondiente.
+	 * Comprueba si la contraseï¿½a es correcta, teniendo en cuenta el posible caso de que 
+	 * caso de que la clase driver de Bankia estï¿½ presente habrï¿½ que hacer uso de su funciï¿½n correspondiente.
 	 * 
 	 * @author pedro 
 	 * 
 	 * @param Usuario usuario
-	 * @param password contraeña a comprobar
+	 * @param password contraeï¿½a a comprobar
 	 * @return boolean
 	 */
 	@Override
@@ -43,10 +54,27 @@ public class PasswordManager implements PasswordApi {
 		obtenerDriver();
 		
 		if (driver == null) {
-			return (usuario.getPassword().equals(password));
+			return checkPwNoDriver(usuario, password);
 		} else {
 			return (driver.pwCorrecta(usuario.getUsername(), password));
 		}
+	}
+	
+	private boolean checkPwNoDriver(Usuario usuario, final String password) {
+		final UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(usuario.getUsername(), password);
+
+		//try ldap authentication
+		if (ldapAuthenticationProvider != null) {
+			try {
+				final Authentication authentication = ldapAuthenticationProvider.authenticate(auth);
+				return authentication.isAuthenticated();
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
+		}
+
+		//db authentication
+		return password.equals(usuario.getPassword());
 	}
 
 	private void obtenerDriver() {
@@ -74,3 +102,5 @@ public class PasswordManager implements PasswordApi {
 	}
 
 }
+
+	

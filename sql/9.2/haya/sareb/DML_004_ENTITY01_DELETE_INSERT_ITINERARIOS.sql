@@ -335,7 +335,43 @@ BEGIN
 		EXECUTE IMMEDIATE V_SQL INTO V_EST_SANC;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Ya estaba insertado el estado Sancionado al itinerario: Estándar con id, EST_ID: '||V_EST_SANC);
 	END IF;		
-		
+	
+	-- CAR Carencia
+	V_SQL := 'SELECT DD_EST_ID FROM '||V_ESQUEMA_M||'.DD_EST_ESTADOS_ITINERARIOS WHERE DD_EST_CODIGO=''CAR'' AND DD_EIN_ID = 1';
+	EXECUTE IMMEDIATE V_SQL INTO V_DD_EST;
+	V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.EST_ESTADOS WHERE ITI_ID = '||V_ITI||' AND DD_EST_ID = '||V_DD_EST||' AND BORRADO = 0';
+	EXECUTE IMMEDIATE V_SQL INTO V_NUM;
+	IF V_NUM = 0 THEN		
+		V_SQL := 'SELECT '||V_ESQUEMA||'.S_EST_ESTADOS.NEXTVAL FROM DUAL';
+		EXECUTE IMMEDIATE V_SQL INTO V_EST_ENSAN;
+		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.EST_ESTADOS (EST_ID, PEF_ID_GESTOR, PEF_ID_SUPERVISOR, ITI_ID, DD_EST_ID, EST_TELECOBRO, EST_PLAZO, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) 
+					VALUES ('||V_EST_ENSAN||', '||V_PEF_GESTOR||', '||V_PEF_GESTOR||', '||V_ITI||', '||V_DD_EST||', 0, 0, 0, ''DML'', SYSDATE, 0)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Insertado estado En sanción al itinerario: Estándar.');
+	ELSE
+		V_SQL := 'SELECT EST_ID FROM '||V_ESQUEMA||'.EST_ESTADOS WHERE ITI_ID = '||V_ITI||' AND DD_EST_ID = '||V_DD_EST||' AND BORRADO = 0 AND ROWNUM = 1';
+		EXECUTE IMMEDIATE V_SQL INTO V_EST_ENSAN;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Ya estaba insertado el estado En sancion al itinerario: Estándar con id, EST_ID: '||V_EST_ENSAN);
+	END IF;
+	
+	-- GV Gestión de vencidos
+	V_SQL := 'SELECT DD_EST_ID FROM '||V_ESQUEMA_M||'.DD_EST_ESTADOS_ITINERARIOS WHERE DD_EST_CODIGO=''GV'' AND DD_EIN_ID = 1';
+	EXECUTE IMMEDIATE V_SQL INTO V_DD_EST;
+	V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.EST_ESTADOS WHERE ITI_ID = '||V_ITI||' AND DD_EST_ID = '||V_DD_EST||' AND BORRADO = 0';
+	EXECUTE IMMEDIATE V_SQL INTO V_NUM;
+	IF V_NUM = 0 THEN		
+		V_SQL := 'SELECT '||V_ESQUEMA||'.S_EST_ESTADOS.NEXTVAL FROM DUAL';
+		EXECUTE IMMEDIATE V_SQL INTO V_EST_ENSAN;
+		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.EST_ESTADOS (EST_ID, PEF_ID_GESTOR, PEF_ID_SUPERVISOR, ITI_ID, DD_EST_ID, EST_TELECOBRO, EST_PLAZO, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) 
+					VALUES ('||V_EST_ENSAN||', '||V_PEF_GESTOR||', '||V_PEF_GESTOR||', '||V_ITI||', '||V_DD_EST||', 0, 0, 0, ''DML'', SYSDATE, 0)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Insertado estado En sanción al itinerario: Estándar.');
+	ELSE
+		V_SQL := 'SELECT EST_ID FROM '||V_ESQUEMA||'.EST_ESTADOS WHERE ITI_ID = '||V_ITI||' AND DD_EST_ID = '||V_DD_EST||' AND BORRADO = 0 AND ROWNUM = 1';
+		EXECUTE IMMEDIATE V_SQL INTO V_EST_ENSAN;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Ya estaba insertado el estado En sancion al itinerario: Estándar con id, EST_ID: '||V_EST_ENSAN);
+	END IF;
+	
 	-- ***************************************************** Reglas de elevación **************************************
 	-- ***************************************************** CE Completar expediente **************************************
 	DBMS_OUTPUT.PUT_LINE('[INFO] Reglas elevación para estado CE Completar expediente.********************************');

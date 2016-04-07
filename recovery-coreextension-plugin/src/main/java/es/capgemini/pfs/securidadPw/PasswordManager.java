@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.Authentication;
+import org.springframework.security.BadCredentialsException;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 import org.springframework.security.providers.ldap.LdapAuthenticationProvider;
 import org.springframework.stereotype.Component;
@@ -68,7 +69,9 @@ public class PasswordManager implements PasswordApi {
 			try {
 				final Authentication authentication = ldapAuthenticationProvider.authenticate(auth);
 				return authentication.isAuthenticated();
-			} catch (Exception e) {
+			} catch (final BadCredentialsException bce) {
+				return false;
+			} catch (final Exception e){
 				logger.error(e.getMessage());
 			}
 		}

@@ -134,16 +134,20 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	@Override
 	public String upload(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
-			String idAsunto = uploadForm.getParameter("id");
+			Long idAsunto = Long.parseLong(uploadForm.getParameter("id"));
 			Procedimiento prc = null;
+			String claseExp = "";
+			
 			if (!Checks.esNulo(uploadForm.getParameter("prcId"))){
 				Long idProcedimiento = Long.parseLong(uploadForm.getParameter("prcId"));
 				prc = genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", idProcedimiento));
+				claseExp = getClaseExpedienteByProcedimientoPadre(prc);
 			}else{
-				
+				Asunto asun = genericDao.get(Asunto.class, genericDao.createFilter(FilterType.EQUALS, "id", idAsunto));
+				claseExp = getDistinctTipoProcedimientoFromAsunto(asun).get(0);	
 			}
-			String claseExpe = hayaProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
-			CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idAsunto, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, claseExpe);
+			
+			CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idAsunto.toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, claseExp);
 			Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 			UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), usuario.getUsername());
 			CrearDocumentoDto crearDoc = RecoveryToGestorDocAssembler.getCrearDocumentoDto(uploadForm, usuPass, uploadForm.getParameter("comboTipoFichero"));
@@ -153,9 +157,21 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 			} catch (GestorDocumentalException e) {
 				logger.error("upload error: " + e);
 			}
-//				return super.upload(uploadForm);
 		}
 		return null;
+	}
+	
+	private String getClaseExpedienteByProcedimientoPadre(Procedimiento prc) {
+		String claseExp = "";
+		Procedimiento padre = prc.getProcedimientoPadre();
+		while(Checks.esNulo(claseExp)) {
+			if(hayaProjectContext.getMapaClasesExpeGesDoc().get(padre.getTipoProcedimiento().getCodigo()) == null){
+				padre = padre.getProcedimientoPadre();
+			}else{
+				claseExp = hayaProjectContext.getMapaClasesExpeGesDoc().get(padre.getTipoProcedimiento().getCodigo());
+			}
+		}
+		return claseExp;
 	}
 
 	@Override
@@ -234,7 +250,6 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 			logger.error("bajarAdjuntoAsunto error: " + e);
 		}
 		return null;
-//			return super.bajarAdjuntoAsunto(asuntoId, adjuntoId, nombre, extension);
 	}
 	
 	@Override

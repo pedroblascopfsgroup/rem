@@ -25,6 +25,7 @@ import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
+import es.capgemini.pfs.expediente.api.ExpedienteManagerApi;
 import es.capgemini.pfs.expediente.model.DDAmbitoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedientePersona;
@@ -88,6 +89,9 @@ public class PoliticaManager {
     
     @Autowired
     private PersonaDao personaDao;
+    
+    @Autowired
+    private ExpedienteManagerApi expedienteManager;
 
     private final Log logger = LogFactory.getLog(getClass());
 
@@ -404,7 +408,7 @@ public class PoliticaManager {
         if (expediente.getSeguimiento() && !expediente.getComite().isComiteSeguimiento()) { throw new BusinessOperationException("cerrarDecisionPolitica.expedienteNoSeguimiento", idExpediente); }
         if (expediente.isGestionDeuda() && !expediente.getComite().isComiteGestionDeuda()) { throw new BusinessOperationException("cerrarDecisionPolitica.expedienteNoGestionDeuda", idExpediente); }
         
-        executor.execute(InternaBusinessOperation.BO_EXP_MGR_CERRAR_DECISION_POLITICA, idExpediente);
+        expedienteManager.cerrarDecisionPolitica(idExpediente);
     }
 
     /**

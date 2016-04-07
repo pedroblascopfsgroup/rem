@@ -15,7 +15,8 @@ function print_use() {
     echo "      ./config/tool/properties/build_config_files.sh <cliente> <entorno>"
     echo ""
     echo "Parámetros:"
-    echo "      <entorno>: desa, pre, pro01, pro02, etc."
+    echo "      <cliente>: bankia, cajamar, haya/bcc haya/sareb"
+    echo "      <entorno>: inte, val01, desa, pre, pro01, pro02, etc."
     echo ""
 }
 

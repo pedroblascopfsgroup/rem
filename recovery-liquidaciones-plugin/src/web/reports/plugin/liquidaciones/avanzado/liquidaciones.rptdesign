@@ -339,13 +339,11 @@ return true;]]></method>
                 <property name="width">4.104166666666667in</property>
             </column>
             <row id="381">
-                <property name="height">0.7395833333333334in</property>
                 <cell id="382">
                     <property name="fontSize">8pt</property>
                     <property name="verticalAlign">bottom</property>
                     <image name="logotipo" id="380">
-                        <property name="height">0.625in</property>
-                        <property name="width">3.0694444444444446in</property>
+                        <property name="size">size-to-image</property>
                         <property name="source">url</property>
                         <expression name="uri">params["img_src"].value+logo</expression>
                     </image>
@@ -418,7 +416,7 @@ return true;]]></method>
                         <property name="marginBottom">0pt</property>
                         <property name="textAlign">left</property>
                         <property name="contentType">auto</property>
-                        <text-property name="content"><![CDATA[LIQUIDACION JUZGADO]]></text-property>
+                        <text-property name="content"><![CDATA[LIQUIDACIÓN]]></text-property>
                     </text>
                 </cell>
             </row>
@@ -567,7 +565,7 @@ this.text = d.format(cabecera.getFechaVencimiento());</expression>
                                     <property name="fontSize">6pt</property>
                                     <property name="textAlign">right</property>
                                     <property name="canShrink">true</property>
-                                    <expression name="valueExpr">formatter.format(cabecera.getInteres());</expression>
+                                    <expression name="valueExpr">cabecera.getTipoInteres() +' %';</expression>
                                     <property name="contentType">html</property>
                                 </text-data>
                             </cell>
@@ -654,7 +652,7 @@ this.text = d.format(cabecera.getFechaVencimiento());</expression>
                                     <property name="textAlign">right</property>
                                     <expression name="valueExpr">importPackage(java.text);
 var d = new SimpleDateFormat("dd/MM/yyyy");
-this.text = d.format(cabecera.getFechaLiquidacion());</expression>
+this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                                     <property name="contentType">html</property>
                                 </text-data>
                             </cell>

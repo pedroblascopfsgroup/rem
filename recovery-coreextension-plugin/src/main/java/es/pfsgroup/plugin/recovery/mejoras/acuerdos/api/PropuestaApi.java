@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.acuerdo.CumplimientoAcuerdoDto;
@@ -27,6 +28,7 @@ public interface PropuestaApi {
 	public static final String BO_PROPUESTA_GET_ACTUACION_EXPLORAR_EXPEDIENTE = "propuestaApi.getActuacionExplorarExpediente";
 	public static final String BO_PROPUESTA_SAVE_ACTUACION_EXPLORAR_EXPEDIENTE = "propuestaApi.saveActuacionesExplorarExpediente";
 	public static final String BO_PROPUESTA_GET_EXPEDIENTES = "propuestaApi.getBienesDelExpedienteParaLaPropuesta";
+	public static final String BO_PROPUESTA_CAMBIAR_ESTADO = "propuestaApi.cambiarEstadoPropuesta";
 	
 
 	@BusinessOperationDefinition(BO_PROPUESTA_GET_LISTADO_PROPUESTAS)
@@ -105,6 +107,8 @@ public interface PropuestaApi {
 	 * @param nuevoCodigoEstado
 	 * @param generarEvento
 	 */
+	@BusinessOperationDefinition(BO_PROPUESTA_CAMBIAR_ESTADO)
+	@Transactional(readOnly = false)
 	public void cambiarEstadoPropuesta(EXTAcuerdo propuesta, String nuevoCodigoEstado, boolean generarEvento);
 	
 	/**

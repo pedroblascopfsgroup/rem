@@ -3320,7 +3320,30 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
         {"xtype":'datefield', "name":"d_fechaPresentacion", "fieldLabel":"Fecha Presentación", allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
         ,{"xtype":'datefield', "name":"d_fechaNuevoTest", "fieldLabel":"Fecha nuevo testimoio", allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
     ]);
-
+    
+  //id: 443 : PROCEDIMIENTO MONITORIO: Interposición de la demanda
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaSolicitud","fieldLabel":"Fecha presentación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'combo',"store": this.dsPlazas,allowBlank:false, "name":"d_plazaJuzgado","hiddenName":"d_plazaJuzgado",fieldLabel:"Plaza del juzgado",triggerAction: 'all',resizable:true, id:'d_plazaJuzgado'+this.idFactoria
+	                      	 ,displayField:'descripcion',valueField:'codigo',typeAhead: false,loadingText: 'Searching...',width: '300',resizable: true,pageSize: 10,	mode: 'local'
+	                      		,listeners:{afterRender:function(combo){
+	                      			 combo.mode='remote';
+	                      		 		}
+	                      		 }
+	                        }
+	                       ,{"xtype":'datefield',"name":"d_fechaCierre","fieldLabel":"Fecha cierre de la déuda",allowBlank:false,filtrar:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'numberfield',"name":"d_principalDemanda","fieldLabel":"Principal de la demanda",allowBlank:false}
+	                       ,{"xtype":'numberfield',"name":"d_capitalVencido","fieldLabel":"Capital vencido (en el cierre)",allowBlank:false,filtrar:true}
+	                       ,{"xtype":'numberfield',"name":"d_interesesOrdinarios","fieldLabel":"Intereses Ordinarios (en el cierre)",allowBlank:false,filtrar:true}
+	                       ,{"xtype":'numberfield',"name":"d_interesesDemora","fieldLabel":"Intereses de demora (en el cierre)",allowBlank:false,filtrar:true}
+	                       ,{"xtype":'combo', "store":storeSINO, "value":"",  "name":"d_provisionFondos", "fieldLabel":"Solicitar provisión de fondos", id:'d_provisionFondos' + this.idFactoria, "autoload":true, mode:'local',triggerAction:'all', resizable:true, displayField:'descripcion', valueField:'codigo', filtrar:true}
+	                       ]);
+	
+	//id: 444 : TRAMITE COSTAS: Confirmar Notificacion H007_ConfirmarNotificacion
+	this.arrayCampos.push([
+	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       	,{"xtype":'combo',"store":storeSINO,"value":"", "name":"d_comboResultado","fieldLabel":"Resultado notificación","autoload":true,	mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo',allowBlank:false}
+	                      ]);
 
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){

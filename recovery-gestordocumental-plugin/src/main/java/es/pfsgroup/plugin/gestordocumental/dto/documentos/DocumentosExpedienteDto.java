@@ -1,16 +1,7 @@
 package es.pfsgroup.plugin.gestordocumental.dto.documentos;
 
 
-public class DocumentosExpedienteDto {
-
-	/**
-	 * Login del usuario que llama al servicio
-	 */
-	private String usuario;
-	/**
-	 * Password del usuario
-	 */
-	private String password;
+public class DocumentosExpedienteDto extends UsuarioPasswordDto {
 
 	/**
 	 * Identificador que diferencia el tipo de relación (por expediente o por
@@ -32,22 +23,6 @@ public class DocumentosExpedienteDto {
 	 */
 	private Boolean vinculoExpediente;
 	
-
-	public String getUsuario() {
-		return usuario;
-	}
-
-	public void setUsuario(String usuario) {
-		this.usuario = usuario;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
 
 	public String getTipoConsulta() {
 		return tipoConsulta;

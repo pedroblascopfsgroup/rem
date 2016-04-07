@@ -16,7 +16,6 @@ import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDo
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDocumentosExpedientes;
 import es.pfsgroup.plugin.gestordocumental.api.GestorDocumentalServicioDocumentosApi;
 import es.pfsgroup.plugin.gestordocumental.api.RestClientApi;
-import es.pfsgroup.plugin.gestordocumental.dto.documentos.BajaDocumentoDto;
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.CabeceraPeticionRestClientDto;
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.CrearDocumentoDto;
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.CrearVersionDto;
@@ -24,6 +23,7 @@ import es.pfsgroup.plugin.gestordocumental.dto.documentos.CrearVersionMetadatosD
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.DescargaDocumentosExpedienteDto;
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.DocumentosExpedienteDto;
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.ModificarMetadatosDto;
+import es.pfsgroup.plugin.gestordocumental.dto.documentos.UsuarioPasswordDto;
 
 @Component
 public class GestorDocumentalServicioDocumentosManager implements GestorDocumentalServicioDocumentosApi {
@@ -112,7 +112,7 @@ public class GestorDocumentalServicioDocumentosManager implements GestorDocument
 	}
 	
 	@Override
-	public RespuestaDescargarDocumento descargarDocumento(Long idDocumento, BajaDocumentoDto login) throws GestorDocumentalException {
+	public RespuestaDescargarDocumento descargarDocumento(Long idDocumento, UsuarioPasswordDto login) throws GestorDocumentalException {
 		ServerRequest serverRequest =  new ServerRequest();
 		serverRequest.setMethod(RestClientManager.METHOD_GET);
 		serverRequest.setPath(getPathDescargarDoc(idDocumento, login));		
@@ -124,7 +124,7 @@ public class GestorDocumentalServicioDocumentosManager implements GestorDocument
 		return respuesta;
 	}
 	
-	private String getPathDescargarDoc(Long idDocumento, BajaDocumentoDto login) {
+	private String getPathDescargarDoc(Long idDocumento, UsuarioPasswordDto login) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("/descargarDocumento");
 		sb.append("/").append(idDocumento);
@@ -229,11 +229,11 @@ public class GestorDocumentalServicioDocumentosManager implements GestorDocument
 	}
 
 	@Override
-	public RespuestaGeneral bajaDocumento(BajaDocumentoDto baja, Integer idDocumento) throws GestorDocumentalException {
+	public RespuestaGeneral bajaDocumento(UsuarioPasswordDto login, Integer idDocumento) throws GestorDocumentalException {
 		ServerRequest serverRequest =  new ServerRequest();
 		serverRequest.setMethod(RestClientManager.METHOD_PUT);
-		serverRequest.setPath(getPathBajaDoc(baja, new Long(idDocumento)));
-		serverRequest.setMultipart(getMultipartBajaDoc(baja));
+		serverRequest.setPath(getPathBajaDoc(login, new Long(idDocumento)));
+		serverRequest.setMultipart(getMultipartBajaDoc(login));
 		serverRequest.setResponseClass(RespuestaGeneral.class);
 		RespuestaGeneral respuesta = (RespuestaGeneral) getResponse(serverRequest);
 		if(!Checks.esNulo(respuesta.getCodigoError())) {
@@ -242,22 +242,22 @@ public class GestorDocumentalServicioDocumentosManager implements GestorDocument
 		return respuesta;
 	}	
 	
-	private String getPathBajaDoc(BajaDocumentoDto baja, Long idDocumento) {
+	private String getPathBajaDoc(UsuarioPasswordDto login, Long idDocumento) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("/bajaDocumento");
 		sb.append("/").append(idDocumento);
-		sb.append("?").append(USUARIO_PATH).append(baja.getUsuario());
-		sb.append("&").append(PASSWORD_PATH).append(baja.getPassword());
-		sb.append("&").append(USUARIO_OPERACIONAL_PATH).append(baja.getUsuarioOperacional());
+		sb.append("?").append(USUARIO_PATH).append(login.getUsuario());
+		sb.append("&").append(PASSWORD_PATH).append(login.getPassword());
+		sb.append("&").append(USUARIO_OPERACIONAL_PATH).append(login.getUsuarioOperacional());
 		return sb.toString();
 	}
 	
 	
-	private MultiPart getMultipartBajaDoc(BajaDocumentoDto baja){
+	private MultiPart getMultipartBajaDoc(UsuarioPasswordDto login){
 		final MultiPart multipart = new FormDataMultiPart()
-				.field(USUARIO, baja.getUsuario())
-				.field(PASSWORD,  baja.getPassword())
-				.field(USUARIO_OPERACIONAL, baja.getUsuarioOperacional());
+				.field(USUARIO, login.getUsuario())
+				.field(PASSWORD,  login.getPassword())
+				.field(USUARIO_OPERACIONAL, login.getUsuarioOperacional());
 		return multipart;
 	}
 

@@ -6,7 +6,6 @@ import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCatalogoDoc
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCrearDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDocumentosExpedientes;
-import es.pfsgroup.plugin.gestordocumental.dto.documentos.BajaDocumentoDto;
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.CabeceraPeticionRestClientDto;
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.CrearDocumentoDto;
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.CrearVersionDto;
@@ -14,6 +13,7 @@ import es.pfsgroup.plugin.gestordocumental.dto.documentos.CrearVersionMetadatosD
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.DescargaDocumentosExpedienteDto;
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.DocumentosExpedienteDto;
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.ModificarMetadatosDto;
+import es.pfsgroup.plugin.gestordocumental.dto.documentos.UsuarioPasswordDto;
 
 public interface GestorDocumentalServicioDocumentosApi {
 
@@ -45,7 +45,7 @@ public interface GestorDocumentalServicioDocumentosApi {
 	 * @return RespuestaDescargarDocumento
 	 * @throws GestorDocumentalException 
 	 */
-	RespuestaDescargarDocumento descargarDocumento(Long idDocumento, BajaDocumentoDto login) throws GestorDocumentalException;
+	RespuestaDescargarDocumento descargarDocumento(Long idDocumento, UsuarioPasswordDto login) throws GestorDocumentalException;
 
 	/**
 	 * Permite obtener un listado de documentos dentro de un expediente (con o sin relaciones)
@@ -95,7 +95,7 @@ public interface GestorDocumentalServicioDocumentosApi {
 	 * @return RespuestaGeneral
 	 * @throws GestorDocumentalException 
 	 */
-	RespuestaGeneral bajaDocumento(BajaDocumentoDto login, Integer idDocumento) throws GestorDocumentalException;
+	RespuestaGeneral bajaDocumento(UsuarioPasswordDto login, Integer idDocumento) throws GestorDocumentalException;
 
 	/**
 	 * Permite introducir una relación entre un documento y un expediente

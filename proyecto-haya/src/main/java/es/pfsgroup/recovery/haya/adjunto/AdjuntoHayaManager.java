@@ -6,11 +6,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
-
-import javax.annotation.Resource;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
@@ -29,8 +27,10 @@ import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.core.api.asunto.AdjuntoDto;
 import es.capgemini.pfs.core.api.asunto.EXTAdjuntoDto;
+import es.capgemini.pfs.core.api.parametrizacion.ParametrizacionApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.expediente.api.ExpedienteManagerApi;
+import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.users.domain.Funcion;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -45,11 +45,11 @@ import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCrearDocume
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDocumentosExpedientes;
 import es.pfsgroup.plugin.gestordocumental.api.GestorDocumentalServicioDocumentosApi;
-import es.pfsgroup.plugin.gestordocumental.dto.documentos.BajaDocumentoDto;
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.CabeceraPeticionRestClientDto;
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.CrearDocumentoDto;
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.DocumentosExpedienteDto;
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.RecoveryToGestorDocAssembler;
+import es.pfsgroup.plugin.gestordocumental.dto.documentos.UsuarioPasswordDto;
 import es.pfsgroup.procedimientos.context.HayaProjectContext;
 import es.pfsgroup.recovery.adjunto.AdjuntoAssembler;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
@@ -85,28 +85,36 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	private EXTAsuntoManager extAsuntoManager;
 	
 	@Autowired
-	private HayaProjectContext hayaProjectContext;
-	
-    @Resource
-    Properties appProperties;
+	private HayaProjectContext hayaProjectContext;    
     
-    private final static String GESTOR_DOCUMENTAL_WS_ACTIVADO = "gestor.documental.cajamar.ws.activado"; 
-
-	@Override
+    @Override
 	@Transactional(readOnly = false)
 	public List<? extends EXTAdjuntoDto> getAdjuntosConBorrado(Long id) {
 		Asunto asun = genericDao.get(Asunto.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
-		CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(id.toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, asun.getTipoAsunto().getCodigo());
-		DocumentosExpedienteDto docExpDto = RecoveryToGestorDocAssembler.getDocumentosExpedienteDto();
-		RespuestaDocumentosExpedientes respuesta = null;
+		List<RespuestaDocumentosExpedientes> listRespuesta = new ArrayList<RespuestaDocumentosExpedientes>();
 		try {
-			respuesta = gestorDocumentalServicioDocumentosApi.documentosExpediente(cabecera, docExpDto);
+			for(String claseExpediente : getDistinctTipoProcedimientoFromAsunto(asun)) {
+				UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), null);
+				CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(id.toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, claseExpediente);
+				DocumentosExpedienteDto docExpDto = RecoveryToGestorDocAssembler.getDocumentosExpedienteDto(usuPass);
+				listRespuesta.add(gestorDocumentalServicioDocumentosApi.documentosExpediente(cabecera, docExpDto));			
+			}
 		} catch (GestorDocumentalException e) {
 			logger.error("getAdjuntosConBorrado error: " + e);
 		}
-		return adjuntoAssembler.listAdjuntoGridDtoToEXTAdjuntoDto(GestorDocToRecoveryAssembler.outputDtoToAdjuntoGridDto(respuesta), false);
-//			return super.getAdjuntosConBorrado(id);
+		return adjuntoAssembler.listAdjuntoGridDtoToEXTAdjuntoDto(GestorDocToRecoveryAssembler.outputDtoToAdjuntoGridDto(listRespuesta), false);
 	}
+    
+    private List<String> getDistinctTipoProcedimientoFromAsunto(Asunto asun) {
+    	List<String> listTipoProcedimiento = new ArrayList<String>();
+    	for (Procedimiento prc : asun.getProcedimientos()) {
+    		String claseExpe = hayaProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
+    		if(!listTipoProcedimiento.contains(claseExpe) && !Checks.esNulo(claseExpe)) {
+    			listTipoProcedimiento.add(claseExpe);
+    		}
+    	}
+    	return listTipoProcedimiento;
+    }
 
 	@Override
 	public List<ExtAdjuntoGenericoDto> getAdjuntosContratosAsu(Long id) {
@@ -137,7 +145,8 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 			String claseExpe = hayaProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
 			CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idAsunto, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, claseExpe);
 			Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-			CrearDocumentoDto crearDoc = RecoveryToGestorDocAssembler.getCrearDocumentoDto(uploadForm, usuario.getUsername(), uploadForm.getParameter("comboTipoFichero"));
+			UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), usuario.getUsername());
+			CrearDocumentoDto crearDoc = RecoveryToGestorDocAssembler.getCrearDocumentoDto(uploadForm, usuPass, uploadForm.getParameter("comboTipoFichero"));
 			try {
 				RespuestaCrearDocumento respuesta = gestorDocumentalServicioDocumentosApi.crearDocumento(cabecera, crearDoc);
 				super.uploadDoc(uploadForm, new Long(respuesta.getIdDocumento()));
@@ -211,9 +220,9 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	public FileItem bajarAdjuntoAsunto(Long asuntoId, String adjuntoId, String nombre, String extension) {
 		RespuestaDescargarDocumento respuesta = null;
 		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		BajaDocumentoDto baja = RecoveryToGestorDocAssembler.getBajaDocumentoDto(usuario.getUsername());
+		UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), usuario.getUsername());
 		try {
-			respuesta = gestorDocumentalServicioDocumentosApi.descargarDocumento(Long.valueOf(adjuntoId), baja);
+			respuesta = gestorDocumentalServicioDocumentosApi.descargarDocumento(Long.valueOf(adjuntoId), usuPass);
 		} catch (NumberFormatException e) {
 			logger.error("bajarAdjuntoAsunto error: " + e);
 		} catch (GestorDocumentalException e) {
@@ -305,4 +314,13 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 		
 	}
 	
+	private String getUsuarioGestorDocumental() {
+		Parametrizacion parametro = proxyFactory.proxy(ParametrizacionApi.class).buscarParametroPorNombre(Parametrizacion.GESTOR_DOCUMENTAL_REST_CLIENT_USUARIO);
+		return parametro.getValor();
+	}
+	
+	private String getPasswordGestorDocumental() {
+		Parametrizacion parametro = proxyFactory.proxy(ParametrizacionApi.class).buscarParametroPorNombre(Parametrizacion.GESTOR_DOCUMENTAL_REST_CLIENT_PASSWORD);
+		return parametro.getValor();
+	}
 }

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -13,6 +14,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.IdentificacionDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDocumentosExpedientes;
@@ -22,16 +25,26 @@ public class GestorDocToRecoveryAssembler {
 
 	private static final Log logger = LogFactory.getLog(GestorDocToRecoveryAssembler.class);
 	
-	public static List<AdjuntoGridDto> outputDtoToAdjuntoGridDto (RespuestaDocumentosExpedientes documentosExp) {
+	public static List<AdjuntoGridDto> outputDtoToAdjuntoGridDto (List<RespuestaDocumentosExpedientes> documentosExp) {
 
-		if (documentosExp == null) {
+		if (Checks.estaVacio(documentosExp)) {
 			return null;
 		}
 		List<AdjuntoGridDto> list = new ArrayList<AdjuntoGridDto>();
-		for(IdentificacionDocumento olDto : documentosExp.getDocumentos()) {
-			AdjuntoGridDto dto = new AdjuntoGridDto();
-			dto.setId(new Long(olDto.getIdentificadorNodo()));
-			list.add(dto);
+		for(RespuestaDocumentosExpedientes respuesta : documentosExp) {
+			for(IdentificacionDocumento olDto : respuesta.getDocumentos()) {
+				AdjuntoGridDto dto = new AdjuntoGridDto();
+				dto.setId(new Long(olDto.getIdentificadorNodo()));
+				dto.setNombre("");
+				dto.setContentType("");
+				dto.setLength("");
+				dto.setDescripcion("");
+				dto.setAuditoria(new Auditoria());
+				dto.getAuditoria().setFechaCrear(new Date());
+				dto.setTipo("");
+				
+				list.add(dto);
+			}			
 		}
 
 		return list;

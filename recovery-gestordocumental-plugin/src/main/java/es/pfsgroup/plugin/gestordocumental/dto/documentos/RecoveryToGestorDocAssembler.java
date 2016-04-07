@@ -10,9 +10,6 @@ public class RecoveryToGestorDocAssembler {
 
 	private static final Log logger = LogFactory.getLog(RecoveryToGestorDocAssembler.class);
 	
-	private static final String USUARIO = "srv.rem_ot";
-	private static final String PASSWORD = "Futures9";
-
 	public static CabeceraPeticionRestClientDto getCabeceraPeticionRestClient(String id, String tipoExp, String claseExp) {
 
 		CabeceraPeticionRestClientDto cabecera = new CabeceraPeticionRestClientDto();
@@ -22,33 +19,23 @@ public class RecoveryToGestorDocAssembler {
 		return cabecera;
 	}
 
-	public static DocumentosExpedienteDto getDocumentosExpedienteDto() {
+	public static DocumentosExpedienteDto getDocumentosExpedienteDto(UsuarioPasswordDto usuario) {
 
 		DocumentosExpedienteDto doc = new DocumentosExpedienteDto();
-		doc.setUsuario(USUARIO);
-		doc.setPassword(PASSWORD);
+		doc.setUsuario(usuario.getUsuario());
+		doc.setPassword(usuario.getPassword());
 		doc.setTipoConsulta(null);
 		doc.setVinculoDocumento(false);
 		doc.setVinculoExpediente(false);
 		return doc;
-	}
-	
-	public static BajaDocumentoDto getDescargaDocumentoDto() {
-		BajaDocumentoDto login = new BajaDocumentoDto();
+	}	
 
-		login.setUsuario(USUARIO);
-		login.setPassword(PASSWORD);
-		
-		return login;
-	}
-	
-
-	public static CrearDocumentoDto getCrearDocumentoDto(WebFileItem webFileItem, String userLogin, String matricula) {
+	public static CrearDocumentoDto getCrearDocumentoDto(WebFileItem webFileItem, UsuarioPasswordDto usuario, String matricula) {
 		CrearDocumentoDto doc = new CrearDocumentoDto();
 		String[] arrayMatricula = matricula.split("-");
-		doc.setUsuario(USUARIO);
-		doc.setPassword(PASSWORD);
-		doc.setUsuarioOperacional(userLogin);
+		doc.setUsuario(usuario.getUsuario());
+		doc.setPassword(usuario.getPassword());
+		doc.setUsuarioOperacional(usuario.getUsuarioOperacional());
 		doc.setDocumento(webFileItem.getFileItem().getFile());
 		doc.setDescripcionDocumento(webFileItem.getFileItem().getFileName());
 		doc.setGeneralDocumento(rellenarGeneralDocumento(arrayMatricula[1], arrayMatricula[2], arrayMatricula[3]));
@@ -94,11 +81,11 @@ public class RecoveryToGestorDocAssembler {
 		return sb.toString();
 	}
 	
-	public static CrearVersionDto getCrearVersionDto(String login) {
+	public static CrearVersionDto getCrearVersionDto(UsuarioPasswordDto usuario, String login) {
 		CrearVersionDto dto = new CrearVersionDto();
 		
-		dto.setUsuario(USUARIO);
-		dto.setPassword(PASSWORD);
+		dto.setUsuario(usuario.getUsuario());
+		dto.setPassword(usuario.getPassword());
 		dto.setUsuarioOperacional(login);
 		dto.setDocumento(null);
 		
@@ -106,11 +93,11 @@ public class RecoveryToGestorDocAssembler {
 	}
 	
 	
-	public static CrearVersionMetadatosDto getCrearVersionMetadatosDto(String login){
+	public static CrearVersionMetadatosDto getCrearVersionMetadatosDto(UsuarioPasswordDto usuario, String login){
 		CrearVersionMetadatosDto dto = new CrearVersionMetadatosDto();
 		
-		dto.setUsuario(USUARIO);
-		dto.setPassword(PASSWORD);
+		dto.setUsuario(usuario.getUsuario());
+		dto.setPassword(usuario.getPassword());
 		dto.setUsuarioOperacional(login);
 		dto.setGeneralDocumentoModif(rellenarGeneralDocumentoModif());
 		dto.setDocumento(null);
@@ -120,11 +107,11 @@ public class RecoveryToGestorDocAssembler {
 	}
 	
 	
-	public static ModificarMetadatosDto getModificarMetadatosDto(String login) {
+	public static ModificarMetadatosDto getModificarMetadatosDto(UsuarioPasswordDto usuario, String login) {
 		ModificarMetadatosDto dto = new ModificarMetadatosDto();
 		
-		dto.setUsuario(USUARIO);
-		dto.setPassword(PASSWORD);
+		dto.setUsuario(usuario.getUsuario());
+		dto.setPassword(usuario.getPassword());
 		dto.setUsuarioOperacional(login);
 		dto.setGeneralDocumentoModif(rellenarGeneralDocumentoModif());
 		dto.setArchivoFisico(rellenarArchivoFisico());
@@ -132,13 +119,13 @@ public class RecoveryToGestorDocAssembler {
 		return dto;
 	}
 	
-	public static BajaDocumentoDto getBajaDocumentoDto(String login) {
-		BajaDocumentoDto baja = new BajaDocumentoDto();
-		
-		baja.setUsuario(USUARIO);
-		baja.setPassword(PASSWORD);
-		baja.setUsuarioOperacional(login);
-		return baja;
+	public static UsuarioPasswordDto getUsuarioPasswordDto(String usuario, String password, String usuarioOperacional) {
+		UsuarioPasswordDto usuarioPass = new UsuarioPasswordDto();
+
+		usuarioPass.setUsuario(usuario);
+		usuarioPass.setPassword(password); 
+		usuarioPass.setUsuarioOperacional(usuarioOperacional);
+		return usuarioPass;
 	}
 	
 }

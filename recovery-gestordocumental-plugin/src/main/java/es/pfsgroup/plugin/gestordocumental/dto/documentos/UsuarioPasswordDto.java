@@ -1,7 +1,7 @@
 package es.pfsgroup.plugin.gestordocumental.dto.documentos;
 
 
-public class BajaDocumentoDto {
+public class UsuarioPasswordDto {
 
 	/**
 	 * Login del usuario que llama al servicio
@@ -16,8 +16,8 @@ public class BajaDocumentoDto {
 	 * Login del usuario que identifica al usuario en la aplicación externa (control de auditorías)
 	 */
 	private String usuarioOperacional;
-	
 
+	
 	public String getUsuario() {
 		return usuario;
 	}
@@ -41,5 +41,4 @@ public class BajaDocumentoDto {
 	public void setUsuarioOperacional(String usuarioOperacional) {
 		this.usuarioOperacional = usuarioOperacional;
 	}
-
 }

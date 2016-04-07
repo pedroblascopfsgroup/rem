@@ -517,7 +517,7 @@
                			id: '${liqCobroPago.id}'
                			,idAsunto:'${idAsunto}'
 	               		,subtipo: 'EC'
-						,estado: '03'
+						,estado: '04'
 						,tipoEntrega: comboDDAdjContableTipoEntrega.getValue()
 						,conceptoEntrega: comboDDAdjContableConceptoEntrega.getValue()
 						,fechaEntrega: fechaEntrega.getRawValue()

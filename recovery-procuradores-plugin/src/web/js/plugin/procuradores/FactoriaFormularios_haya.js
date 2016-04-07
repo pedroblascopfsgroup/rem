@@ -97,9 +97,9 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     
     
     updateStores: function(idTipoResolucion){
-
+    	
         campos = this.arrayCampos[idTipoResolucion];
-
+        this.dsDatosAdicionales.load({params:{idProcedimiento:this.idProcedimiento}});
         for (var i=0;i<campos.length;i++)
         {        
                 var campo=campos[i];
@@ -601,6 +601,8 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     	
     	var datosAdicionalesRecord = Ext.data.Record.create([
     	                                                     {name : 'conTestimonio'} 
+    	                                                     ,{name : 'cuantiaLetrado'} 
+    	                                                     ,{name : 'cuantiaProcurador'} 
     	                                                    ]);
 
 		this.dsDatosAdicionales = new Ext.data.Store({
@@ -978,8 +980,9 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 
     	this.dsDatosAdicionales.on('load', function(store, r, options) {
 
+    		var i=0;
 			var conTestimonio = Ext.getCmp('d_contratoRecibido_id');
-			if (conTestimonio != '' && conTestimonio != null && store.getAt(0).get('conTestimonio') != '' ) {
+			if (conTestimonio != '' && conTestimonio != null && store.getAt(i).get('conTestimonio') != '' ) {
 				var valor = "";
 				if(store.getAt(0).get('conTestimonio') == "S"){
 					valor = "SI"
@@ -988,6 +991,23 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 				}
 				conTestimonio.setValue(valor);
 				conTestimonio.setReadOnly(true);
+				i++;
+			}
+			
+			var cuantiaLetrado = Ext.getCmp('d_cuantiaLetrado_id');
+			if (cuantiaLetrado != '' && cuantiaLetrado != null && store.getAt(i).get('cuantiaLetrado') != '' ) {
+				
+				cuantiaLetrado.setValue(store.getAt(i).get('cuantiaLetrado'));
+				cuantiaLetrado.setReadOnly(false);
+				i++;
+			}
+			
+			var cuantiaProcurador = Ext.getCmp('d_cuantiaProcurador_id');
+			if (cuantiaProcurador != '' && cuantiaProcurador != null && store.getAt(i).get('cuantiaProcurador') != '' ) {
+				
+				cuantiaProcurador.setValue(store.getAt(i).get('cuantiaProcurador'));
+				cuantiaProcurador.setReadOnly(false);
+				i++
 			}
 		});
     	
@@ -1347,15 +1367,15 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     // id: 227 : TRAMITE COSTAS : Solicitud de tasación de costas
 	this.arrayCampos.push([
 	   				{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	   				,{"xtype":'numberfield',"name":"d_cuantiaLetrado","fieldLabel":"Cuantía letrado",allowBlank:true, filtrar:true}
-					,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",allowBlank:false}
+	   				,{"xtype":'numberfield',"name":"d_cuantiaLetrado","fieldLabel":"Cuantía letrado",id:'d_cuantiaLetrado_id',allowBlank:true, filtrar:true}
+					,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",id:'d_cuantiaProcurador_id',allowBlank:false}
 	   		]);
 	
     // id: 228 : TRAMITE COSTAS : Tasación de costas del juzgado
 	   		this.arrayCampos.push([
 	   			   				{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	   			   				,{"xtype":'numberfield',"name":"d_cuantiaLetrado","fieldLabel":"Cuantía letrado",allowBlank:false}
-	   							,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",allowBlank:false}
+	   			   				,{"xtype":'numberfield',"name":"d_cuantiaLetrado","fieldLabel":"Cuantía letrado",allowBlank:false,id:'d_cuantiaLetrado_id'}
+	   							,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",allowBlank:false,id:'d_cuantiaProcurador_id'}
 	   			   		]);
 	
      //id: 229 : TRAMITE COSTAS : Impugnación tasación de costas del juzgado
@@ -1388,13 +1408,13 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	   				]);
 	
-    //id: 231 : TRAMITE COSTAS : Autoaprobacion de costas
+    //id: 231 : TRAMITE COSTAS : Auto aprobacion de costas
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboAprobada","fieldLabel":"Aprobada",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAprobada'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       ,{"xtype":'numberfield',"name":"d_cuantiaLetrado","fieldLabel":"Cuantía letrado",allowBlank:false}
-						   ,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",allowBlank:false}
+	                       ,{"xtype":'numberfield',"name":"d_cuantiaLetrado","fieldLabel":"Cuantía letrado",allowBlank:false, id:'d_cuantiaLetrado_id'}
+						   ,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",allowBlank:false, id:'d_cuantiaProcurador_id'}
 	   				]);
 	
 
@@ -3251,8 +3271,8 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_comboResultado","fieldLabel":"Resultado","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboAprobada","fieldLabel":"Aprobada",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAprobada'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       ,{"xtype":'numberfield',"name":"d_cuantiaLetrado","fieldLabel":"Cuantía letrado",allowBlank:false}
-						   ,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",allowBlank:false}
+	                       ,{"xtype":'numberfield',"name":"d_cuantiaLetrado","fieldLabel":"Cuantía letrado",allowBlank:false,id:'d_cuantiaLetrado_id'}
+						   ,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",allowBlank:false,id:'d_cuantiaProcurador_id'}
 	   				]);
 	
 	//id: 438 : TRAMITE COSTAS: Confirmar Notificacion H007_ConfirmarNotificacion

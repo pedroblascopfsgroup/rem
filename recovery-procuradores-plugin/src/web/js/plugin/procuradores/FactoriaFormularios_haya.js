@@ -3348,6 +3348,12 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	//id: 445 : TRAMITE DE INTERESES: Registrar Vista
 	this.arrayCampos.push([{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha vista",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }]);
 	
+	//id: 446 : TRAMITE DE INTERESES: Solicitar liquidación de intereses
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaRec","fieldLabel":"Fecha de recepción",allowBlank:false,filtrar:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'datefield',"name":"d_fechaPre","fieldLabel":"Fecha de presentación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'numberfield',"name":"d_intereses","fieldLabel":"Importe intereses",allowBlank:false}
+	   				]);
 
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){

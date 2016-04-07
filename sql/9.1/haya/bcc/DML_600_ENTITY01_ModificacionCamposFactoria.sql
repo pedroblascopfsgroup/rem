@@ -141,6 +141,11 @@ BEGIN
     V_MSQL := 'delete '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dd_tr_codigo  =''R_PR_HIP_DEM_SELLADA''';
     EXECUTE IMMEDIATE V_MSQL;
         
+    DBMS_OUTPUT.PUT_LINE('De 272 a 443 - R_SOL_INI_MON');
+    V_MSQL := 'delete from '||V_ESQUEMA||'.res_resoluciones_masivo mas where res_tre_id = (select dd_tr_id from '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION res where dd_tr_codigo = ''R_SOL_INI_MON'')';
+    EXECUTE IMMEDIATE V_MSQL;
+    V_MSQL := 'update '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION set dd_tr_id = ''443'', usuariomodificar = ''PRODUCTO-1055'', fechamodificar=sysdate where dd_tr_codigo = ''R_SOL_INI_MON''';
+    EXECUTE IMMEDIATE V_MSQL;
     
     COMMIT;
 

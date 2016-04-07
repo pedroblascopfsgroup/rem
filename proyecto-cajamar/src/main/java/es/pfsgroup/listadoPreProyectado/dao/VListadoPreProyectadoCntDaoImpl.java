@@ -48,7 +48,7 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 		}
 		//sb.append("select distinct f ");
 		sb.append(" from VListadoPreProyectadoCnt f ");
-		sb.append(" where 1=1 ");
+		sb.append(" where f.diasVencidos BETWEEN 1 AND 120 ");
 		//sb.append(" where c.cntId IN (select distinct f.cntId from VListadoPreProyectadoCntFiltros f where 1=1 ");
 		
 		if (!Checks.esNulo(dto.getCodEstadoGestion())) {

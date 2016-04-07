@@ -163,14 +163,14 @@
 	fechaCierre.on('render', function() {this.validate();});
 	
 
-	<pfsforms:fieldset name="fieldDatosCierre" caption="**Datos Cierre" captioneKey="plugin.liquidaciones.introducirdatos.datoscierre" border="true" width="260" height="260"
+	<pfsforms:fieldset name="fieldDatosCierre" caption="**Datos Cierre" captioneKey="plugin.liquidaciones.introducirdatos.datoscierre" border="true" width="280" height="260"
 		items="capital,interesesOrdinarios,interesesDemora,comisiones,gastos,impuestos,tipoInteres,fechaCierre" />
 		
 	<pfsforms:numberfield name="costasLetrado" labelKey="plugin.liquidaciones.introducirdatos.control.costasLetrado" label="**Costas Letrado" value="" obligatory="false" allowDecimals="true"/>
 	<pfsforms:numberfield name="costasProcurador" labelKey="plugin.liquidaciones.introducirdatos.control.costasProcurador" label="**Costas Procurador" value="" obligatory="false" allowDecimals="true"/>
 	<pfsforms:numberfield name="otrosGastos" labelKey="plugin.liquidaciones.introducirdatos.control.otrosGastos" label="**Otros Gastos" value="" obligatory="false" allowDecimals="true"/>
 		
-	<pfsforms:fieldset name="fieldOtrosGastos" caption="**Datos Cierre" captioneKey="plugin.liquidaciones.introducirdatos.control.otrosGastos" border="true" width="260" height="260"
+	<pfsforms:fieldset name="fieldOtrosGastos" caption="**Datos Cierre" captioneKey="plugin.liquidaciones.introducirdatos.control.otrosGastos" border="true" width="280" height="260"
 		items="costasLetrado,costasProcurador,otrosGastos" />
 	
 	<%--<pfsforms:numberfield name="baseCalculo" labelKey="plugin.liquidaciones.introducirdatos.control.baseCalculo" label="**Base de Cálculo" value="" obligatory="true" allowDecimals="true"/>  --%>
@@ -184,7 +184,7 @@
 	<pfsforms:numberfield name="tipoDemoraCierre" labelKey="plugin.liquidaciones.introducirdatos.control.tipoDemoraCierre" label="**Tipo Demora al Cierre" value="" 
 		obligatory="true" allowDecimals="true" allowNegative="false" />
 
-	<pfsforms:fieldset name="fieldParametrosLiquidacion" caption="**Parámetros Liquidación" captioneKey="plugin.liquidaciones.introducirdatos.control.parametrosLiquidacion" border="true" width="260" height="260"
+	<pfsforms:fieldset name="fieldParametrosLiquidacion" caption="**Parámetros Liquidación" captioneKey="plugin.liquidaciones.introducirdatos.control.parametrosLiquidacion" border="true" width="280" height="260"
 		items="baseCalculo,fechaDeLiquidacion,tipoDemoraCierre" />
 
 	var fieldImportes = new Ext.Panel({

@@ -277,7 +277,8 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 		select.add(Projections.property("f.propuesta").as("propuesta"));
 		select.add(Projections.property("f.estadoGestion").as("estadoGestion"));
 		select.add(Projections.property("f.fechaPrevReguCnt").as("fechaPrevReguCnt"));
-
+		select.add(Projections.property("f.importePteDifer").as("importePteDifer"));
+		
 		Criteria query = getSession().createCriteria(VListadoPreProyectadoCnt.class, "f");
 		query.setProjection(Projections.distinct(select));
 		query.add(Restrictions.in("f.expId", expsId));

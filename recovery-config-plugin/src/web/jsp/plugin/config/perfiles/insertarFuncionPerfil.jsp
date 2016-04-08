@@ -36,7 +36,7 @@
 		idsFuncion="funciones"
 		password="password"/>
 
-	<pfs:editForm saveOrUpdateFlow="plugin/config/perfiles/ADMguardarFuncionPerfil"
+	<pfs:editForm saveOrUpdateFlow="plugin/config/perfiles/ADMguardarFuncionPerfilSeguro"
 		leftColumFields="descripcion,descripcionLarga,funciones,password"
 		parameters="parametros" />
 

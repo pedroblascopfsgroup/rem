@@ -1,7 +1,6 @@
 #!/bin/bash
 
 DIR_INPUT=/sftp_docalia/burofax/entrega/
-DIR_OUTPUT=/home/ops_haya/etl/input/
 
 fichero_entrada=ENVIO_BUROFAX_
 fichero_salida=RECEP_BUROFAX_
@@ -20,7 +19,7 @@ fn=$(basename $fichero_entrada$mascara_in$extension)
 substr=$(echo $fn | cut -d'_' -f 3)
 
 ficherotxt=$DIR_INPUT$fichero_entrada$mascara_in$extension
-ficherosalida=$DIR_OUTPUT$fichero_salida$substr
+ficherosalida=$DIR_DESTINO$fichero_salida$substr
 fichero=$DIR_INPUT$fichero_salida$mascara_in$extension
 
 if [ $existe_fichero == "????????.txt" ]

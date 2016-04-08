@@ -15,7 +15,8 @@ function print_use() {
     echo "      ./config/tool/properties/build_config_files.sh <cliente> <entorno>"
     echo ""
     echo "Parámetros:"
-    echo "      <entorno>: desa, pre, pro01, pro02, etc."
+    echo "      <cliente>: cajamar, bankia, haya/bcc, haya/sareb"
+    echo "      <entorno>: val01, val02, desa, pre, pro, etc."
     echo ""
 }
 
@@ -33,7 +34,8 @@ if [ "$#" -lt 2 ]; then
 fi 
 
 print_banner
-cliente=$1
+cliente_cartera=$1
+cliente=`echo $cliente_cartera | cut -d/ -f1`
 entorno=$2
 
 
@@ -59,10 +61,11 @@ if [[ ! -f ./config/tool/properties/${cliente}/${entorno}.properties ]] ; then
 fi
 
 mkdir -p config/tmp/batch/$cliente/
+mkdir -p config/tmp/batch/$cliente_cartera/
 mkdir -p config/tmp/web/$cliente/
 
 cp config/batch/${cliente}/devon.properties config/tmp/batch/$cliente/devon.properties
-cp config/batch/${cliente}/config.ini config/tmp/batch/$cliente/config.ini
+cp config/batch/${cliente_cartera}/config.ini config/tmp/batch/$cliente_cartera/config.ini
 cp config/web/${cliente}/devon.properties config/tmp/web/$cliente/devon.properties
 
 source ./config/tool/properties/${cliente}/${entorno}.properties
@@ -75,7 +78,7 @@ while read line; do
             VALUE=${VALUE//:/\\\\:}
         fi
         sed -e "s/${KEY}/${VALUE}/g" -i config/tmp/batch/${cliente}/devon.properties
-        sed -e "s/${KEY}/${VALUE}/g" -i config/tmp/batch/${cliente}/config.ini
+        sed -e "s/${KEY}/${VALUE}/g" -i config/tmp/batch/${cliente_cartera}/config.ini
         sed -e "s/${KEY}/${VALUE}/g" -i config/tmp/web/${cliente}/devon.properties
     fi 
 done < ./config/tool/properties/${cliente}/${entorno}.properties
@@ -83,6 +86,6 @@ done < ./config/tool/properties/${cliente}/${entorno}.properties
 echo "Ficheros generados:"
 echo ""
 ls config/tmp/batch/${cliente}/devon.properties
-ls config/tmp/batch/${cliente}/config.ini
+ls config/tmp/batch/${cliente_cartera}/config.ini
 ls config/tmp/web/${cliente}/devon.properties
 echo ""

@@ -1,14 +1,14 @@
 --/*
 --##########################################
 --## AUTOR=Luis Antonio Prato Paredes
---## FECHA_CREACION=20160307
+--## FECHA_CREACION=20160331
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=BKREC-1715
+--## VERSION_ARTEFACTO=1.0
+--## INCIDENCIA_LINK=BKREC-1716
 --## PRODUCTO=NO
 --## 
---## Finalidad: Actualizar el campo 
---## INSTRUCCIONES:  Actualizar el campo PRO_FECHA_BAJA, USUARIO_MODIFICAR, FECHA_MODIFICAR de la tabla: PRO_PROVISIONES_ASUNTOS debido a un error en el ETL
+--## Finalidad: crear la tabla de rechazos para CNV_AUX_PRC_PRO
+--## INSTRUCCIONES: crear tabla con las columnas de fila erronea, codigo de error, mensaje de error y como añadido fecha del error
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
@@ -26,21 +26,21 @@ DECLARE
     err_msg VARCHAR2(2048); -- Mensaje de error
     V_MSQL VARCHAR2(4000 CHAR);
 
- 
+    -- Otras variables
 
  BEGIN
+	V_MSQL:='create table ' || V_ESQUEMA || '.CNV_AUX_PRC_PRO_REJECT(ROW_REJECTED VARCHAR(1024 BYTE),ERROR_CODE VARCHAR(255 BYTE), ERROR_MESSAGE VARCHAR(255 BYTE), ERROR_DATE TIMESTAMP(6))';
+   
+	EXECUTE IMMEDIATE V_MSQL;
 
-        V_MSQL := 'Update ' || V_ESQUEMA || '.PRO_PROVISIONES_ASUNTO set PRO_FECHA_BAJA=SYSDATE, USUARIOMODIFICAR=''BKREC-1716'', FECHAMODIFICAR = SYSDATE WHERE ASU_ID In (select asu.ASU_ID  from 
-	' || V_ESQUEMA || '.ASU_ASUNTOS asu
-  join  ' || V_ESQUEMA || '.PRO_PROVISIONES_ASUNTO pro on asu.asu_id = pro.asu_id
-  left join ' || V_ESQUEMA || '.CNV_AUX_PRC_PRO aux on aux.CODIGO_PROCEDIMIENTO = asu.ASU_ID_EXTERNO
-  where aux.codigo_procedimiento  is null
-    and trunc(pro.pro_fecha_baja) is null)';
-
-EXECUTE IMMEDIATE V_MSQL;
  EXCEPTION
 
-    
+    -- Opcional: Excepciones particulares que se quieran tratar
+    -- Como esta, por ejemplo:
+    -- WHEN TABLE_EXISTS_EXCEPTION THEN
+        -- DBMS_OUTPUT.PUT_LINE('Ya se ha realizado la copia en la tabla TMP_MOV_'||TODAY);
+
+    -- SIEMPRE DEBE HABER UN OTHERS
     WHEN OTHERS THEN
         DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE));
         DBMS_OUTPUT.put_line('-----------------------------------------------------------');
